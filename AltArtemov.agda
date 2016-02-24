@@ -17,12 +17,9 @@ mutual
     ∅   : Cx
     _,_ : ∀{n} → (Γ : Cx) → Ty n → Cx
 
-  data In : ∀{n} → Cx → Ty n → Set where
-    vz : ∀{Γ n} {A : Ty n}
-       → In (Γ , A) A
-    vs : ∀{Γ n m} {A : Ty n} {B : Ty m}
-       → In Γ A
-       → In (Γ , B) A
+  data _In_ {n} (A : Ty n) : Cx → Set where
+    vz : ∀{Γ} → A In (Γ , A)
+    vs : ∀{Γ m} {B : Ty m} → A In Γ → A In (Γ , B)
 
   data Tm (Γ : Cx) : (n : ℕ) → Ty n → Set where
     fst  : ∀{n A B} → Tm Γ n (A ∧ B) → Tm Γ n A
@@ -31,7 +28,7 @@ mutual
   
     app : ∀{n A B} → Tm Γ n (A ⊃ B) → Tm Γ n A → Tm Γ n B
     fun : ∀{n A B} → Tm (Γ , A) n B → Tm Γ n (A ⊃ B)
-    var : ∀{n A} → In Γ A → Tm Γ n A
+    var : ∀{n A} → A In Γ → Tm Γ n A
   
     reflect : ∀{n A M}
             → Tm Γ (n + 1) (Γ ⊢ A ∋ M)
@@ -82,5 +79,4 @@ module Dummy (Γ : Cx) where
 module ForAugur where
   p : ∀{Γ n A B} {M : Tm Γ n A} {N : Tm Γ n B}
     → Tm Γ (n + 1) ((Γ ⊢ A ∋ M) ⊃ (Γ ⊢ B ∋ N) ⊃ (Γ ⊢ A ∧ B ∋ pair M N))
-  p = fun (fun {! !})
-
+  p = fun (fun {!?!})
