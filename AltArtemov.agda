@@ -4,25 +4,41 @@ open import Data.Nat using ( ℕ ; _+_ ; zero ; suc )
 
 infixl 3 _∧_
 infixr 2 _⊃_
-infixl 1 _∋_
+infixl 1 _⊢_∋_
 
 mutual
   data Ty : ℕ → Set where
-    ⊥   : ∀{n} → Ty n
-    _∧_ : ∀{n} → Ty n → Ty n → Ty n
-    _∋_ : ∀{n} → (A : Ty n) → Tm n A → Ty (n + 1)
-    _⊃_ : ∀{n} → Ty n → Ty n → Ty n
+    ⊥     : ∀{n} → Ty n
+    _∧_   : ∀{n} → Ty n → Ty n → Ty n
+    _⊃_   : ∀{n} → Ty n → Ty n → Ty n
+    _⊢_∋_ : ∀{n} → (Γ : Cx) → (A : Ty n) → Tm Γ n A → Ty (n + 1)
+  
+  data Cx : Set where
+    ∅   : Cx
+    _,_ : ∀{n} → (Γ : Cx) → Ty n → Cx
 
-  data Tm : (n : ℕ) → Ty n → Set where
-    fst  : ∀{n A B} → Tm n (A ∧ B) → Tm n A
-    snd  : ∀{n A B} → Tm n (A ∧ B) → Tm n B
-    pair : ∀{n A B} → Tm n A → Tm n B → Tm n (A ∧ B)
+  data In : ∀{n} → Cx → Ty n → Set where
+    vz : ∀{Γ n} {A : Ty n}
+       → In (Γ , A) A
+    vs : ∀{Γ n m} {A : Ty n} {B : Ty m}
+       → In Γ A
+       → In (Γ , B) A
 
-    reflect : ∀{n A M} → Tm (n + 1) (A ∋ M) → Tm n A
-    reify   : ∀{n A} → (M : Tm n A) → Tm (n + 1) (A ∋ M)
-
-    app : ∀{n A B} → Tm n (A ⊃ B) → Tm n A → Tm n B
-    -- fun : ∀{n A B} → ???
+  data Tm (Γ : Cx) : (n : ℕ) → Ty n → Set where
+    fst  : ∀{n A B} → Tm Γ n (A ∧ B) → Tm Γ n A
+    snd  : ∀{n A B} → Tm Γ n (A ∧ B) → Tm Γ n B
+    pair : ∀{n A B} → Tm Γ n A → Tm Γ n B → Tm Γ n (A ∧ B)
+  
+    app : ∀{n A B} → Tm Γ n (A ⊃ B) → Tm Γ n A → Tm Γ n B
+    fun : ∀{n A B} → Tm (Γ , A) n B → Tm Γ n (A ⊃ B)
+    var : ∀{n A} → In Γ A → Tm Γ n A
+  
+    reflect : ∀{n A M}
+            → Tm Γ (n + 1) (Γ ⊢ A ∋ M)
+            → Tm Γ n A
+    reify   : ∀{n A}
+            → (M : Tm Γ n A)
+            → Tm Γ (n + 1) (Γ ⊢ A ∋ M)
 
 ⊤ : ∀{n} → Ty n
 ⊤ = ⊥ ⊃ ⊥
@@ -44,29 +60,27 @@ A ∋ M₁ ∋ M₂ is a type₂
 M₃ is a term₂ of type₂ A ∋ M₁ ∋ M₂
 -}
 
-module Example where
+module Dummy (Γ : Cx) where
   A : Ty 0
   A = ⊤
 
-  postulate
-    M₁ : Tm 0 A
+  M₁ : Tm Γ 0 ⊤
+  M₁ = fun (var vz)
 
-  M₂ : Tm 1 (A ∋ M₁)
+  M₂ : Tm Γ 1 (Γ ⊢ A ∋ M₁)
   M₂ = reify M₁
   
-  M₃ : Tm 2 (A ∋ M₁ ∋ M₂)
+  M₃ : Tm Γ 2 (Γ ⊢ (Γ ⊢ A ∋ M₁) ∋ M₂)
   M₃ = reify M₂
 
-  M₂' : Tm 1 (A ∋ M₁)
+  M₂' : Tm Γ 1 (Γ ⊢ A ∋ M₁)
   M₂' = reflect M₃
 
-  M₁' : Tm 0 A
+  M₁' : Tm Γ 0 A
   M₁' = reflect M₂'
 
-{-
-fun₁ binds a term₀ of type₀ A
-fun₂ binds a term₁ of type₁ A ∋ M₁
-fun₃ binds a term₂ of type₂ A ∋ M₁ ∋ M₂
+module ForAugur where
+  p : ∀{Γ n A B} {M : Tm Γ n A} {N : Tm Γ n B}
+    → Tm Γ (n + 1) ((Γ ⊢ A ∋ M) ⊃ (Γ ⊢ B ∋ N) ⊃ (Γ ⊢ A ∧ B ∋ pair M N))
+  p = fun (fun {! !})
 
-TODO
--}
