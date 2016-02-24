@@ -22,7 +22,7 @@ mutual
     reify   : ∀{n A} → (M : Tm n A) → Tm (n + 1) (A ∋ M)
 
     app : ∀{n A B} → Tm n (A ⊃ B) → Tm n A → Tm n B
-    --fun : ∀{n A B} → ???
+    -- fun : ∀{n A B} → ???
 
 ⊤ : ∀{n} → Ty n
 ⊤ = ⊥ ⊃ ⊥
