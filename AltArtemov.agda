@@ -191,8 +191,7 @@ data _⊢_ (Γ : Cx) : Ty → Set where
       → Γ ⊢ ⇓² t₂ ∷ ⇓ t₁ ∷ A
 
 
-  -- TODO: Inference rules for level n terms
-
+-- TODO: Inference rules for level n terms
 
 
 -- Theorems of λ∞
