@@ -22,6 +22,7 @@ infixr 3 _∷_
 infix 2 _,_
 infix 1 _∈_
 infix 0 _⊢_
+infix 0 ⊩_
 
 
 -- Term judgement
@@ -203,29 +204,31 @@ data _⊢_ (Γ : Cx) : Ty → Set where
 -- Example 1 ([1] p.28)
 
 e11 : ∀{x y A}
-    → ⊩ (F y ⇒ (⇓ y) ∷ (x ∷ A) ⊃ A)
+    → ⊩ F y ⇒ (⇓ y) ∷ (x ∷ A) ⊃ A
 e11 = RF (R⇓ (Rx vz))
 
 e12 : ∀{x y A}
-    → ⊩ (F y ⇒ (⇑ y) ∷ (x ∷ A) ⊃ (! x ∷ x ∷ A))
+    → ⊩ F y ⇒ (⇑ y) ∷ (x ∷ A) ⊃ (! x ∷ x ∷ A)
 e12 = RF (R⇑ (Rx vz))
 
 e13 : ∀{u x A v y B}
-    → ⊩ ((F² u ⇒ (F² v ⇒ P²⟨ u , v ⟩))
+    → ⊩ (F² u ⇒ (F² v ⇒ P²⟨ u , v ⟩))
       ∷ (F x ⇒ (F y ⇒ P⟨ x , y ⟩))
-      ∷ A ⊃ B ⊃ A ∧ B)
-e13 = RF² (RF² (RP² (Rx (vs vz)) (Rx vz)))
+      ∷ A ⊃ B ⊃ A ∧ B
+e13 = RF² (RF² (RP² (Rx (vs vz))
+                    (Rx vz)))
 
 e14 : ∀{u x A v y B}
-    → ⊩ ((F u ⇒ (F v ⇒ ⇑ P²⟨ u , v ⟩))
-      ∷ (x ∷ A) ⊃ (y ∷ B) ⊃ (! P⟨ x , y ⟩ ∷ P⟨ x , y ⟩ ∷ A ∧ B))
-e14 = RF (RF (R⇑ (RP² (Rx (vs vz)) (Rx vz))))
+    → ⊩ (F u ⇒ (F v ⇒ ⇑ P²⟨ u , v ⟩))
+      ∷ (x ∷ A) ⊃ (y ∷ B) ⊃ (! P⟨ x , y ⟩ ∷ P⟨ x , y ⟩ ∷ A ∧ B)
+e14 = RF (RF (R⇑ (RP² (Rx (vs vz))
+                      (Rx vz))))
 
 
 -- Example 2 ([1] pp.31–32)
 
 e2 : ∀{x₃ x₂ x₁ A}
-   → ⊩ ((F² x₃ ⇒ ⇓² ⇑² x₃)
+   → ⊩ (F² x₃ ⇒ ⇓² ⇑² x₃)
      ∷ (F x₂ ⇒ ⇓ ⇑ x₂)
-     ∷ (x₁ ∷ A) ⊃ (x₁ ∷ A))
+     ∷ (x₁ ∷ A) ⊃ (x₁ ∷ A)
 e2 = RF² (R⇓² (R⇑² (Rx vz)))
