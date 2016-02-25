@@ -123,9 +123,13 @@ P²⟨ t , s ⟩ = Pⁿ⟨ t , s ⟩# 2
 ⇓² t = ⇓ⁿ t # 2
 
 
--- Inference rules for level 1 terms
+-- Typing judgement
 
 data _⊢_ (Γ : Cx) : Ty → Set where
+
+
+  -- Inference rules for level 1 terms
+  
   Rx : ∀{x A}
      → x ∷ A ∈ Γ
      → Γ ⊢ x ∷ A
