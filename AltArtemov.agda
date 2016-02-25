@@ -164,21 +164,21 @@ data _⊢_ : Cx → Ty → Set where
 ⊩ A = ∀{Γ} → Γ ⊢ A
 
 
-e1-1 : ∀{x y A}
-     → ⊩ (f y ⇒ (⇓ y) ∷ (x ∷ A) ⊃ A)
-e1-1 = Rf (R⇓ (Rx vz))
+e11 : ∀{x y A}
+    → ⊩ (f y ⇒ (⇓ y) ∷ (x ∷ A) ⊃ A)
+e11 = Rf (R⇓ (Rx vz))
 
-e1-2 : ∀{x y A}
-     → ⊩ (f y ⇒ (⇑ y) ∷ (x ∷ A) ⊃ (! x ∷ x ∷ A))
-e1-2 = Rf (R⇑ (Rx vz))
+e12 : ∀{x y A}
+    → ⊩ (f y ⇒ (⇑ y) ∷ (x ∷ A) ⊃ (! x ∷ x ∷ A))
+e12 = Rf (R⇑ (Rx vz))
 
-e1-3 : ∀{u v x y A B}
-     → ⊩ ((f² u ⇒ (f² v ⇒ p²⟨ u , v ⟩)) ∷ (f x ⇒ (f y ⇒ p⟨ x , y ⟩)) ∷ A ⊃ B ⊃ A ∧ B)
-e1-3 = Rf² (Rf² (Rp² (Rx (vs vz)) (Rx vz)))
+e13 : ∀{u v x y A B}
+    → ⊩ ((f² u ⇒ (f² v ⇒ p²⟨ u , v ⟩)) ∷ (f x ⇒ (f y ⇒ p⟨ x , y ⟩)) ∷ A ⊃ B ⊃ A ∧ B)
+e13 = Rf² (Rf² (Rp² (Rx (vs vz)) (Rx vz)))
 
-e1-4 : ∀{u v x y A B}
-     → ⊩ ((f u ⇒ (f v ⇒ ⇑ p²⟨ u , v ⟩)) ∷ (x ∷ A) ⊃ (y ∷ B) ⊃ (! p⟨ x , y ⟩ ∷ p⟨ x , y ⟩ ∷ A ∧ B))
-e1-4 = Rf (Rf (R⇑ (Rp² (Rx (vs vz)) (Rx vz))))
+e14 : ∀{u v x y A B}
+    → ⊩ ((f u ⇒ (f v ⇒ ⇑ p²⟨ u , v ⟩)) ∷ (x ∷ A) ⊃ (y ∷ B) ⊃ (! p⟨ x , y ⟩ ∷ p⟨ x , y ⟩ ∷ A ∧ B))
+e14 = Rf (Rf (R⇑ (Rp² (Rx (vs vz)) (Rx vz))))
 
 
 e2 : ∀{x₃ x₂ x₁ A}
