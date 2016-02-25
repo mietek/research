@@ -18,9 +18,14 @@ module AltArtemov where
 open import Data.Nat using (ℕ)
 
 
+infixr 9 !_
+infixl 8 _∘_
+infixl 8 _∘²_
+infixr 7 _∷_
+infixr 6 ¬_
 infixl 5 _∧_
 infixr 4 _⊃_
-infixr 3 _∷_
+infixr 3 _⊃⊂_
 infix 2 _,_
 infix 1 _∈_
 infix 0 _⊢_
@@ -30,9 +35,9 @@ infix 0 ⊩_
 -- Term judgement
 
 data Tm : Set where
-  Fⁿ_⇒_#_   : Tm → Tm → ℕ → Tm -- Originally λⁿ
+  Fⁿ_⇒_#_   : Tm → Tm → ℕ → Tm -- Originally λⁿ_._
   _∘ⁿ_#_    : Tm → Tm → ℕ → Tm
-  Pⁿ⟨_,_⟩#_ : Tm → Tm → ℕ → Tm -- Originally pⁿ
+  Pⁿ⟨_,_⟩#_ : Tm → Tm → ℕ → Tm -- Originally pⁿ(_,_)
   π₀ⁿ_#_    : Tm → ℕ → Tm
   π₁ⁿ_#_    : Tm → ℕ → Tm
   ⇑ⁿ_#_     : Tm → ℕ → Tm
@@ -44,8 +49,8 @@ data Tm : Set where
 
 data Ty : Set where
   _∧_ : Ty → Ty → Ty
-  _⊃_ : Ty → Ty → Ty -- Originally →
-  _∷_ : Tm → Ty → Ty -- Originally ∶
+  _⊃_ : Ty → Ty → Ty -- Originally _→_
+  _∷_ : Tm → Ty → Ty -- Originally _∶_
   ⊥   : Ty
 
 
@@ -132,22 +137,24 @@ data _⊢_ (Γ : Cx) : Ty → Set where
 
   RF : ∀{x A t B}
      → Γ , x ∷ A ⊢ t ∷ B
-     → Γ ⊢ F x ⇒ t ∷ A ⊃ B
+     → Γ ⊢ F x ⇒ t ∷ (A ⊃ B)
 
   R∘ : ∀{t A s B}
-     → Γ ⊢ t ∷ A ⊃ B → Γ ⊢ s ∷ A
-     → Γ ⊢ t ∘ s ∷ B
+     → Γ ⊢ t ∷ (A ⊃ B)
+     → Γ ⊢ s ∷ A
+     → Γ ⊢ (t ∘ s) ∷ B
 
   RP : ∀{t A s B}
-     → Γ ⊢ t ∷ A → Γ ⊢ s ∷ B
-     → Γ ⊢ P⟨ t , s ⟩ ∷ A ∧ B
+     → Γ ⊢ t ∷ A
+     → Γ ⊢ s ∷ B
+     → Γ ⊢ P⟨ t , s ⟩ ∷ (A ∧ B)
 
   Rπ₀ : ∀{t A B}
-      → Γ ⊢ t ∷ A ∧ B
+      → Γ ⊢ t ∷ (A ∧ B)
       → Γ ⊢ π₀ t ∷ A
 
   Rπ₁ : ∀{t A B}
-      → Γ ⊢ t ∷ A ∧ B
+      → Γ ⊢ t ∷ (A ∧ B)
       → Γ ⊢ π₁ t ∷ B
 
   R⇑ : ∀{t u A}
@@ -167,22 +174,24 @@ data _⊢_ (Γ : Cx) : Ty → Set where
 
   RF² : ∀{x₂ x₁ A t₂ t₁ B}
       → Γ , x₂ ∷ x₁ ∷ A ⊢ t₂ ∷ t₁ ∷ B
-      → Γ ⊢ (F² x₂ ⇒ t₂) ∷ (F x₁ ⇒ t₁) ∷ A ⊃ B
+      → Γ ⊢ F² x₂ ⇒ t₂ ∷ F x₁ ⇒ t₁ ∷ (A ⊃ B)
 
   R∘² : ∀{t₂ t₁ A s₂ s₁ B}
-      → Γ ⊢ t₂ ∷ t₁ ∷ A ⊃ B → Γ ⊢ s₂ ∷ s₁ ∷ A
-      → Γ ⊢ t₂ ∘² s₂ ∷ t₁ ∘ s₁ ∷ B
+      → Γ ⊢ t₂ ∷ t₁ ∷ (A ⊃ B)
+      → Γ ⊢ s₂ ∷ s₁ ∷ A
+      → Γ ⊢ (t₂ ∘² s₂) ∷ (t₁ ∘ s₁) ∷ B
 
   RP² : ∀{t₂ t₁ A s₂ s₁ B}
-      → Γ ⊢ t₂ ∷ t₁ ∷ A → Γ ⊢ s₂ ∷ s₁ ∷ B
-      → Γ ⊢ P²⟨ t₂ , s₂ ⟩ ∷ P⟨ t₁ , s₁ ⟩ ∷ A ∧ B
+      → Γ ⊢ t₂ ∷ t₁ ∷ A
+      → Γ ⊢ s₂ ∷ s₁ ∷ B
+      → Γ ⊢ P²⟨ t₂ , s₂ ⟩ ∷ P⟨ t₁ , s₁ ⟩ ∷ (A ∧ B)
 
   Rπ₀² : ∀{t₂ t₁ A B}
-       → Γ ⊢ t₂ ∷ t₁ ∷ A ∧ B
+       → Γ ⊢ t₂ ∷ t₁ ∷ (A ∧ B)
        → Γ ⊢ π₀² t₂ ∷ π₀ t₁ ∷ A
 
   Rπ₁² : ∀{t₂ t₁ A B}
-       → Γ ⊢ t₂ ∷ t₁ ∷ A ∧ B
+       → Γ ⊢ t₂ ∷ t₁ ∷ (A ∧ B)
        → Γ ⊢ π₁² t₂ ∷ π₁ t₁ ∷ B
 
   R⇑² : ∀{t₂ t₁ u A}
@@ -206,23 +215,21 @@ data _⊢_ (Γ : Cx) : Ty → Set where
 -- Example 1 ([1] p.28)
 
 e11 : ∀{x y A}
-    → ⊩ F y ⇒ (⇓ y) ∷ (x ∷ A) ⊃ A
+    → ⊩ F y ⇒ ⇓ y ∷ (x ∷ A ⊃ A)
 e11 = RF (R⇓ (Rx vz))
 
 e12 : ∀{x y A}
-    → ⊩ F y ⇒ (⇑ y) ∷ (x ∷ A) ⊃ (! x ∷ x ∷ A)
+    → ⊩ F y ⇒ ⇑ y ∷ (x ∷ A ⊃ ! x ∷ x ∷ A)
 e12 = RF (R⇑ (Rx vz))
 
 e13 : ∀{u x A v y B}
-    → ⊩ (F² u ⇒ (F² v ⇒ P²⟨ u , v ⟩))
-      ∷ (F x ⇒ (F y ⇒ P⟨ x , y ⟩))
-      ∷ A ⊃ B ⊃ A ∧ B
+    → ⊩ F² u ⇒ F² v ⇒ P²⟨ u , v ⟩ ∷ F x ⇒ F y ⇒ P⟨ x , y ⟩ ∷ (A ⊃ B ⊃ A ∧ B)
 e13 = RF² (RF² (RP² (Rx (vs vz))
                     (Rx vz)))
 
 e14 : ∀{u x A v y B}
-    → ⊩ (F u ⇒ (F v ⇒ ⇑ P²⟨ u , v ⟩))
-      ∷ (x ∷ A) ⊃ (y ∷ B) ⊃ (! P⟨ x , y ⟩ ∷ P⟨ x , y ⟩ ∷ A ∧ B)
+    → ⊩ F u ⇒ F v ⇒ ⇑ P²⟨ u , v ⟩
+      ∷ (x ∷ A ⊃ y ∷ B ⊃ ! P⟨ x , y ⟩ ∷ P⟨ x , y ⟩ ∷ (A ∧ B))
 e14 = RF (RF (R⇑ (RP² (Rx (vs vz))
                       (Rx vz))))
 
@@ -230,7 +237,5 @@ e14 = RF (RF (R⇑ (RP² (Rx (vs vz))
 -- Example 2 ([1] pp.31–32)
 
 e2 : ∀{x₃ x₂ x₁ A}
-   → ⊩ (F² x₃ ⇒ ⇓² ⇑² x₃)
-     ∷ (F x₂ ⇒ ⇓ ⇑ x₂)
-     ∷ (x₁ ∷ A) ⊃ (x₁ ∷ A)
+   → ⊩ F² x₃ ⇒ ⇓² ⇑² x₃ ∷ F x₂ ⇒ ⇓ ⇑ x₂ ∷ (x₁ ∷ A ⊃ x₁ ∷ A)
 e2 = RF² (R⇓² (R⇑² (Rx vz)))
