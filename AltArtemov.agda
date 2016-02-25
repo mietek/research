@@ -2,99 +2,106 @@ module AltArtemov where
 
 open import Data.Nat using (ℕ ; _+_ ; zero ; suc)
 
-infixl 3 _∧_
-infixr 2 _⊃_
-infixl 1 _∋_
-
-mutual
-  data Ty : ℕ → Set where
-    ⊥   : ∀{n} → Ty n
-    _∧_ : ∀{n} → Ty n → Ty n → Ty n
-    _⊃_ : ∀{n} → Ty n → Ty n → Ty n
-    _∋_ : ∀{Γ n} → (A : Ty n) → Tm Γ n A → Ty (n + 1)
+module New where
+  infixl 5 _∧_
+  infixr 4 _⊃_
+  infixr 3 _∷_
+  infix 2 _,_
+  infix 1 _∈_
+  infix 0 _⊢_
   
+  data Tm : Set where
+    !_       : Tm → Tm
+    f_⇒_#_   : Tm → Tm → ℕ → Tm
+    _∘_#_    : Tm → Tm → ℕ → Tm
+    p⟨_,_⟩#_ : Tm → Tm → ℕ → Tm
+    π₀_#_    : Tm → ℕ → Tm
+    π₁_#_    : Tm → ℕ → Tm
+    ⇑_#_     : Tm → ℕ → Tm
+    ⇓_#_     : Tm → ℕ → Tm
+
+  data Ty : Set where
+    ⊥   : Ty
+    _∧_ : Ty → Ty → Ty
+    _⊃_ : Ty → Ty → Ty
+    _∷_ : Tm → Ty → Ty
+
   data Cx : Set where
     []  : Cx
-    _,_ : ∀{n} → (Γ : Cx) → Ty n → Cx
+    _,_ : Cx → Ty → Cx
 
-  data _In_ {n} : Ty n → Cx → Set where
-    vz  : ∀{Γ A} → A In (Γ , A)
-    vs  : ∀{Γ A m} {B : Ty m} → A In Γ → A In (Γ , B)
-    get : ∀{Γ Δ A M} → (_∋_ {Γ = Δ} A M) In Γ → A In Γ
+  data _∈_ (A : Ty) : Cx → Set where
+    vz : ∀{Γ} → A ∈ Γ , A
+    vs : ∀{Γ}{B : Ty} → A ∈ Γ → A ∈ Γ , B
 
-  data Tm (Γ : Cx) : (n : ℕ) → Ty n → Set where
-    fst  : ∀{n A B} → Tm Γ n (A ∧ B) → Tm Γ n A
-    snd  : ∀{n A B} → Tm Γ n (A ∧ B) → Tm Γ n B
-    pair : ∀{n A B} → Tm Γ n A → Tm Γ n B → Tm Γ n (A ∧ B)
+  f¹_⇒_ : Tm → Tm → Tm
+  f¹ x ⇒ t = f x ⇒ t # 1
   
-    app  : ∀{n A B} → Tm Γ n (A ⊃ B) → Tm Γ n A → Tm Γ n B
-    fun  : ∀{n A B} → Tm (Γ , A) n B → Tm Γ n (A ⊃ B)
-    var  : ∀{n A} → A In Γ → Tm Γ n A
-    
-    reflect : ∀{Δ n A M}
-            → Tm Γ (n + 1) (_∋_ {Γ = Δ} A M)
-            → Tm Γ n A
-    reify   : ∀{Δ n A}
-            → (M : Tm Δ n A)
-            → Tm Γ (n + 1) (A ∋ M)
+  f²_⇒_ : Tm → Tm → Tm
+  f² x ⇒ t = f x ⇒ t # 2
 
-⊤ : ∀{n} → Ty n
-⊤ = ⊥ ⊃ ⊥
+  p¹⟨_,_⟩ : Tm → Tm → Tm
+  p¹⟨ t , s ⟩ = p⟨ t , s ⟩# 1
 
-¬_ : ∀{n} → Ty n → Ty n
-¬ A = A ⊃ ⊥
+  p²⟨_,_⟩ : Tm → Tm → Tm
+  p²⟨ t , s ⟩ = p⟨ t , s ⟩# 2
 
-_⊃⊂_ : ∀{n} → Ty n → Ty n → Ty n
-A ⊃⊂ B = A ⊃ B ∧ B ⊃ A
+  ⇑¹_ : Tm → Tm
+  ⇑¹ t = ⇑ t # 1
 
-{-
-A is a type₀
-M₁ is a term₀ of type₀ A
+  ⇓¹_ : Tm → Tm
+  ⇓¹ t = ⇓ t # 1
 
-A ∋ M₁ is a type₁
-M₂ is a term₁ of type₁ A ∋ M₁
+  data _⊢_ : Cx → Ty → Set where
+    Rx : ∀{Γ x A}
+       → x ∷ A ∈ Γ
+       → Γ ⊢ x ∷ A
+       
+    Rf¹ : ∀{Γ x₁ t₁ A B}
+       → Γ , x₁ ∷ A ⊢ t₁ ∷ B
+       → Γ ⊢ f¹ x₁ ⇒ t₁ ∷ A ⊃ B
+       
+    Rf² : ∀{Γ x₂ x₁ t₂ t₁ A B}
+        → Γ , x₂ ∷ x₁ ∷ A ⊢ t₂ ∷ t₁ ∷ B
+        → Γ ⊢ (f² x₂ ⇒ t₂) ∷ (f¹ x₁ ⇒ t₁) ∷ A ⊃ B
+       
+    R∘ : ∀{n Γ t s A B}
+       → Γ ⊢ t ∷ A ⊃ B → Γ ⊢ s ∷ B
+       → Γ ⊢ t ∘ s # n ∷ B
 
-A ∋ M₁ ∋ M₂ is a type₂
-M₃ is a term₂ of type₂ A ∋ M₁ ∋ M₂
--}
+    Rp : ∀{n Γ t s A B}
+       → Γ ⊢ t ∷ A → Γ ⊢ s ∷ B
+       → Γ ⊢ p⟨ t , s ⟩# n ∷ A ∧ B
 
-module Dummy (Γ : Cx) where
-  A : Ty 0
-  A = ⊤
+    Rp² : ∀{Γ t₁ t₂ s₁ s₂ A B}
+        → Γ ⊢ t₂ ∷ t₁ ∷ A → Γ ⊢ s₂ ∷ s₁ ∷ B
+        → Γ ⊢ p²⟨ t₂ , s₂ ⟩ ∷ p¹⟨ t₁ , s₁ ⟩ ∷ A ∧ B
+       
+    Rπ₀ : ∀{n Γ t A B}
+        → Γ ⊢ t ∷ A ∧ B
+        → Γ ⊢ π₀ t # n ∷ A
+        
+    Rπ₁ : ∀{n Γ t A B}
+        → Γ ⊢ t ∷ A ∧ B
+        → Γ ⊢ π₁ t # n ∷ B
+        
+    R⇑ : ∀{n Γ t u A}
+       → Γ ⊢ t ∷ u ∷ A
+       → Γ ⊢ ⇑ t # n ∷ ! u ∷ u ∷ A
 
-  M₁ : Tm Γ 0 ⊤
-  M₁ = fun (var vz)
+    R⇓ : ∀{n Γ t u A}
+       → Γ ⊢ t ∷ u ∷ A
+       → Γ ⊢ ⇓ t # n ∷ A
 
-  M₂ : Tm Γ 1 (A ∋ M₁)
-  M₂ = reify M₁
+  module Examples where
+    e1 : ∀{Γ x y A} → Γ ⊢ f¹ y ⇒ (⇓¹ y) ∷ (x ∷ A) ⊃ A
+    e1 = Rf¹ (R⇓ (Rx vz))
 
-  M₂'' : Tm (Γ , (A ∋ M₁)) 1 (A ∋ M₁)
-  M₂'' = var vz
-  
-  M₂''' : Tm (Γ , (A ∋ M₁)) 0 A
-  M₂''' = var (get vz)
+    e2 : ∀{Γ x y A} → Γ ⊢ f¹ y ⇒ (⇑¹ y) ∷ (x ∷ A) ⊃ (! x ∷ x ∷ A)
+    e2 = Rf¹ (R⇑ (Rx vz))
 
-  M₃ : Tm Γ 2 (A ∋ M₁ ∋ M₂)
-  M₃ = reify M₂
+    e3 : ∀{Γ u v x y A B} → Γ ⊢ (f² u ⇒ (f² v ⇒ p²⟨ u , v ⟩)) ∷ (f¹ x ⇒ (f¹ y ⇒ p¹⟨ x , y ⟩)) ∷ A ⊃ B ⊃ A ∧ B
+    e3 = Rf² (Rf² (Rp² (Rx (vs vz)) (Rx vz)))
 
-  M₂' : Tm Γ 1 (A ∋ M₁)
-  M₂' = reflect M₃
-
-  M₁' : Tm Γ 0 A
-  M₁' = reflect M₂'
-
-module ForAugur where
-  p : ∀{Γ n A B} {M : Tm Γ n A} {N : Tm Γ n B}
-    → Tm Γ (n + 1) ((A ∋ M) ⊃ (B ∋ N) ⊃ (A ∧ B ∋ pair M N))
-  p = fun (fun (reify (pair {!var ?!} {!var ?!})))
-  -- Should be:
-  --p = fun (fun (reify (pair (var (get (vs vz))) (var (get vz)))))
-
-module Cheating where
-  p : ∀{Γ n A B} {M : Tm Γ n A} {N : Tm Γ n B}
-    → Tm Γ (n + 1) ((A ∋ M) ⊃ (B ∋ N) ⊃ (A ∧ B ∋ pair M N))
-  p {M = M} {N = N} = fun (fun (reify (pair M N)))
-  
-  p2 : ∀{Γ n A B} {M : Tm Γ n A} {N : Tm Γ n B}
-     → Tm Γ (n + 1) (A ∧ B ∋ pair M N)
-  p2 {M = M} {N = N} = reify (pair M N)
+    e4 : ∀{Γ u v x y A B} → Γ ⊢ (f¹ u ⇒ (f¹ v ⇒ ⇑¹ p²⟨ u , v ⟩)) ∷ ((x ∷ A) ⊃ (y ∷ B) ⊃ (! p¹⟨ x , y ⟩ ∷ p¹⟨ x , y ⟩ ∷ A ∧ B))
+    e4 = Rf¹ (Rf¹ (R⇑ (Rp² (Rx (vs vz)) (Rx vz))))
