@@ -103,7 +103,7 @@ data _⊢_ : Cx → Ty → Set where
      → Γ ⊢ f x ⇒ t ∷ A ⊃ B
 
   R∘ : ∀{Γ t s A B}
-     → Γ ⊢ t ∷ A ⊃ B → Γ ⊢ s ∷ B
+     → Γ ⊢ t ∷ A ⊃ B → Γ ⊢ s ∷ A
      → Γ ⊢ t ∘ s ∷ B
 
   Rp : ∀{Γ t s A B}
@@ -136,7 +136,7 @@ data _⊢_ : Cx → Ty → Set where
       → Γ ⊢ (f² x₂ ⇒ t₂) ∷ (f x₁ ⇒ t₁) ∷ A ⊃ B
 
   R∘² : ∀{Γ t₂ t₁ s₂ s₁ A B}
-      → Γ ⊢ t₂ ∷ t₁ ∷ A ⊃ B → Γ ⊢ s₂ ∷ s₁ ∷ B
+      → Γ ⊢ t₂ ∷ t₁ ∷ A ⊃ B → Γ ⊢ s₂ ∷ s₁ ∷ A
       → Γ ⊢ t₂ ∘² s₂ ∷ t₁ ∘ s₁ ∷ B
 
   Rp² : ∀{Γ t₂ t₁ s₂ s₁ A B}
