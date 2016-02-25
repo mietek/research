@@ -98,15 +98,15 @@ data _⊢_ (Γ : Cx) : Ty → Set where
      → x ∷ A ∈ Γ
      → Γ ⊢ x ∷ A
 
-  Rf : ∀{x t A B}
+  Rf : ∀{x A t B}
      → Γ , x ∷ A ⊢ t ∷ B
      → Γ ⊢ f x ⇒ t ∷ A ⊃ B
 
-  R∘ : ∀{t s A B}
+  R∘ : ∀{t A s B}
      → Γ ⊢ t ∷ A ⊃ B → Γ ⊢ s ∷ A
      → Γ ⊢ t ∘ s ∷ B
 
-  Rp : ∀{t s A B}
+  Rp : ∀{t A s B}
      → Γ ⊢ t ∷ A → Γ ⊢ s ∷ B
      → Γ ⊢ p⟨ t , s ⟩ ∷ A ∧ B
 
@@ -131,15 +131,15 @@ data _⊢_ (Γ : Cx) : Ty → Set where
      → x₂ ∷ x₁ ∷ A ∈ Γ
      → Γ ⊢ x₂ ∷ x₁ ∷ A
 
-  Rf² : ∀{x₂ x₁ t₂ t₁ A B}
+  Rf² : ∀{x₂ x₁ A t₂ t₁ B}
       → Γ , x₂ ∷ x₁ ∷ A ⊢ t₂ ∷ t₁ ∷ B
       → Γ ⊢ (f² x₂ ⇒ t₂) ∷ (f x₁ ⇒ t₁) ∷ A ⊃ B
 
-  R∘² : ∀{t₂ t₁ s₂ s₁ A B}
+  R∘² : ∀{t₂ t₁ A s₂ s₁ B}
       → Γ ⊢ t₂ ∷ t₁ ∷ A ⊃ B → Γ ⊢ s₂ ∷ s₁ ∷ A
       → Γ ⊢ t₂ ∘² s₂ ∷ t₁ ∘ s₁ ∷ B
 
-  Rp² : ∀{t₂ t₁ s₂ s₁ A B}
+  Rp² : ∀{t₂ t₁ A s₂ s₁ B}
       → Γ ⊢ t₂ ∷ t₁ ∷ A → Γ ⊢ s₂ ∷ s₁ ∷ B
       → Γ ⊢ p²⟨ t₂ , s₂ ⟩ ∷ p⟨ t₁ , s₁ ⟩ ∷ A ∧ B
 
@@ -172,11 +172,11 @@ e12 : ∀{x y A}
     → ⊩ (f y ⇒ (⇑ y) ∷ (x ∷ A) ⊃ (! x ∷ x ∷ A))
 e12 = Rf (R⇑ (Rx vz))
 
-e13 : ∀{u v x y A B}
+e13 : ∀{u x A v y B}
     → ⊩ ((f² u ⇒ (f² v ⇒ p²⟨ u , v ⟩)) ∷ (f x ⇒ (f y ⇒ p⟨ x , y ⟩)) ∷ A ⊃ B ⊃ A ∧ B)
 e13 = Rf² (Rf² (Rp² (Rx (vs vz)) (Rx vz)))
 
-e14 : ∀{u v x y A B}
+e14 : ∀{u x A v y B}
     → ⊩ ((f u ⇒ (f v ⇒ ⇑ p²⟨ u , v ⟩)) ∷ (x ∷ A) ⊃ (y ∷ B) ⊃ (! p⟨ x , y ⟩ ∷ p⟨ x , y ⟩ ∷ A ∧ B))
 e14 = Rf (Rf (R⇑ (Rp² (Rx (vs vz)) (Rx vz))))
 
