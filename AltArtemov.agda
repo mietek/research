@@ -88,8 +88,8 @@ data _⊢_ : Cx → Ty → Set where
      → Γ ⊢ x ∷ A
      
   Rf¹ : ∀{Γ x₁ t₁ A B}
-     → Γ , x₁ ∷ A ⊢ t₁ ∷ B
-     → Γ ⊢ f¹ x₁ ⇒ t₁ ∷ A ⊃ B
+      → Γ , x₁ ∷ A ⊢ t₁ ∷ B
+      → Γ ⊢ f¹ x₁ ⇒ t₁ ∷ A ⊃ B
      
   Rf² : ∀{Γ x₂ x₁ t₂ t₁ A B}
       → Γ , x₂ ∷ x₁ ∷ A ⊢ t₂ ∷ t₁ ∷ B
@@ -104,8 +104,8 @@ data _⊢_ : Cx → Ty → Set where
       → Γ ⊢ t₂ ∘² s₂ ∷ t₁ ∘¹ s₁ ∷ B
 
   Rp¹ : ∀{Γ t₁ s₁ A B}
-     → Γ ⊢ t₁ ∷ A → Γ ⊢ s₁ ∷ B
-     → Γ ⊢ p¹⟨ t₁ , s₁ ⟩ ∷ A ∧ B
+      → Γ ⊢ t₁ ∷ A → Γ ⊢ s₁ ∷ B
+      → Γ ⊢ p¹⟨ t₁ , s₁ ⟩ ∷ A ∧ B
 
   Rp² : ∀{Γ t₁ t₂ s₁ s₂ A B}
       → Γ ⊢ t₂ ∷ t₁ ∷ A → Γ ⊢ s₂ ∷ s₁ ∷ B
@@ -136,12 +136,12 @@ data _⊢_ : Cx → Ty → Set where
       → Γ ⊢ ⇑² t₂ ∷ ⇑¹ t₁ ∷ ! u ∷ u ∷ A
 
   R⇓¹ : ∀{Γ t₁ u A}
-     → Γ ⊢ t₁ ∷ u ∷ A
-     → Γ ⊢ ⇓¹ t₁ ∷ A
+      → Γ ⊢ t₁ ∷ u ∷ A
+      → Γ ⊢ ⇓¹ t₁ ∷ A
 
   R⇓² : ∀{Γ t₁ t₂ u A}
-     → Γ ⊢ t₂ ∷ t₁ ∷ u ∷ A
-     → Γ ⊢ ⇓² t₂ ∷ ⇓¹ t₁ ∷ A
+      → Γ ⊢ t₂ ∷ t₁ ∷ u ∷ A
+      → Γ ⊢ ⇓² t₂ ∷ ⇓¹ t₁ ∷ A
 
 
 ⊩_ : Ty → Set
