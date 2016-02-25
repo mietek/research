@@ -169,8 +169,8 @@ data _⊢_ (Γ : Cx) : Ty → Set where
   -- Inference rules for level 2 terms
 
   Rx² : ∀{x₂ x₁ A}
-     → x₂ ∷ x₁ ∷ A ∈ Γ
-     → Γ ⊢ x₂ ∷ x₁ ∷ A
+      → x₂ ∷ x₁ ∷ A ∈ Γ
+      → Γ ⊢ x₂ ∷ x₁ ∷ A
 
   RF² : ∀{x₂ x₁ A t₂ t₁ B}
       → Γ , x₂ ∷ x₁ ∷ A ⊢ t₂ ∷ t₁ ∷ B
