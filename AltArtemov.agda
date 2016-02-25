@@ -2,6 +2,8 @@
 
 A partial implementation of the Alt-Artemov system λ∞[1].
 
+Miëtek Bak <mietek@bak.io>
+
 Thanks to Darryl McAdams and Paolo Giarrusso for comments and discussion.
 
 [1]: Alt, J., Artëmov, S. (2001) Reflective λ-calculus, Proceedings of the
