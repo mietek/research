@@ -1,6 +1,6 @@
 {-
 
-A partial implementation of the Alt-Artemov system λ∞[1].
+A partial implementation of the Alt-Artëmov system λ∞[1].
 
 Miëtek Bak <mietek@bak.io>
 
