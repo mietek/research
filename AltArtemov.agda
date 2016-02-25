@@ -93,69 +93,69 @@ p²⟨ t , s ⟩ = pⁿ⟨ t , s ⟩# 2
 ⇓² t = ⇓ⁿ t # 2
 
 
-data _⊢_ : Cx → Ty → Set where
-  Rx : ∀{Γ x A}
+data _⊢_ (Γ : Cx) : Ty → Set where
+  Rx : ∀{x A}
      → x ∷ A ∈ Γ
      → Γ ⊢ x ∷ A
 
-  Rf : ∀{Γ x t A B}
+  Rf : ∀{x t A B}
      → Γ , x ∷ A ⊢ t ∷ B
      → Γ ⊢ f x ⇒ t ∷ A ⊃ B
 
-  R∘ : ∀{Γ t s A B}
+  R∘ : ∀{t s A B}
      → Γ ⊢ t ∷ A ⊃ B → Γ ⊢ s ∷ A
      → Γ ⊢ t ∘ s ∷ B
 
-  Rp : ∀{Γ t s A B}
+  Rp : ∀{t s A B}
      → Γ ⊢ t ∷ A → Γ ⊢ s ∷ B
      → Γ ⊢ p⟨ t , s ⟩ ∷ A ∧ B
 
-  Rπ₀ : ∀{Γ t A B}
+  Rπ₀ : ∀{t A B}
       → Γ ⊢ t ∷ A ∧ B
       → Γ ⊢ π₀ t ∷ A
 
-  Rπ₁ : ∀{Γ t A B}
+  Rπ₁ : ∀{t A B}
       → Γ ⊢ t ∷ A ∧ B
       → Γ ⊢ π₁ t ∷ B
 
-  R⇑ : ∀{Γ t u A}
+  R⇑ : ∀{t u A}
      → Γ ⊢ t ∷ u ∷ A
      → Γ ⊢ ⇑ t ∷ ! u ∷ u ∷ A
 
-  R⇓ : ∀{Γ t u A}
+  R⇓ : ∀{t u A}
      → Γ ⊢ t ∷ u ∷ A
      → Γ ⊢ ⇓ t ∷ A
 
 
-  Rx² : ∀{Γ x₂ x₁ A}
+  Rx² : ∀{x₂ x₁ A}
      → x₂ ∷ x₁ ∷ A ∈ Γ
      → Γ ⊢ x₂ ∷ x₁ ∷ A
 
-  Rf² : ∀{Γ x₂ x₁ t₂ t₁ A B}
+  Rf² : ∀{x₂ x₁ t₂ t₁ A B}
       → Γ , x₂ ∷ x₁ ∷ A ⊢ t₂ ∷ t₁ ∷ B
       → Γ ⊢ (f² x₂ ⇒ t₂) ∷ (f x₁ ⇒ t₁) ∷ A ⊃ B
 
-  R∘² : ∀{Γ t₂ t₁ s₂ s₁ A B}
+  R∘² : ∀{t₂ t₁ s₂ s₁ A B}
       → Γ ⊢ t₂ ∷ t₁ ∷ A ⊃ B → Γ ⊢ s₂ ∷ s₁ ∷ A
       → Γ ⊢ t₂ ∘² s₂ ∷ t₁ ∘ s₁ ∷ B
 
-  Rp² : ∀{Γ t₂ t₁ s₂ s₁ A B}
+  Rp² : ∀{t₂ t₁ s₂ s₁ A B}
       → Γ ⊢ t₂ ∷ t₁ ∷ A → Γ ⊢ s₂ ∷ s₁ ∷ B
       → Γ ⊢ p²⟨ t₂ , s₂ ⟩ ∷ p⟨ t₁ , s₁ ⟩ ∷ A ∧ B
 
-  Rπ₀² : ∀{Γ t₂ t₁ A B}
+  Rπ₀² : ∀{t₂ t₁ A B}
        → Γ ⊢ t₂ ∷ t₁ ∷ A ∧ B
        → Γ ⊢ π₀² t₂ ∷ π₀ t₁ ∷ A
 
-  Rπ₁² : ∀{Γ t₂ t₁ A B}
+  Rπ₁² : ∀{t₂ t₁ A B}
        → Γ ⊢ t₂ ∷ t₁ ∷ A ∧ B
        → Γ ⊢ π₁² t₂ ∷ π₁ t₁ ∷ B
 
-  R⇑² : ∀{Γ t₂ t₁ u A}
+  R⇑² : ∀{t₂ t₁ u A}
       → Γ ⊢ t₂ ∷ t₁ ∷ u ∷ A
       → Γ ⊢ ⇑² t₂ ∷ ⇑ t₁ ∷ ! u ∷ u ∷ A
 
-  R⇓² : ∀{Γ t₂ t₁ u A}
+  R⇓² : ∀{t₂ t₁ u A}
       → Γ ⊢ t₂ ∷ t₁ ∷ u ∷ A
       → Γ ⊢ ⇓² t₂ ∷ ⇓ t₁ ∷ A
 
