@@ -212,7 +212,7 @@ data _⊢_ (Γ : Cx) : Ty → Set where
 ⊩ A = ∀{Γ} → Γ ⊢ A
 
 
--- Example 1 ([1] p.28)
+-- Example 1 (p. 28[1])
 
 e11 : ∀{x y A}
     → ⊩ F y ⇒ ⇓ y ∷ (x ∷ A ⊃ A)
@@ -228,14 +228,17 @@ e13 = RF² (RF² (RP² (Rx (vs vz))
                     (Rx vz)))
 
 e14 : ∀{u x A v y B}
-    → ⊩ F u ⇒ F v ⇒ ⇑ P²⟨ u , v ⟩
-      ∷ (x ∷ A ⊃ y ∷ B ⊃ ! P⟨ x , y ⟩ ∷ P⟨ x , y ⟩ ∷ (A ∧ B))
+    → ⊩ F u ⇒ F v ⇒ ⇑ P²⟨ u , v ⟩ ∷ (x ∷ A ⊃ y ∷ B ⊃ ! P⟨ x , y ⟩ ∷ P⟨ x , y ⟩ ∷ (A ∧ B))
 e14 = RF (RF (R⇑ (RP² (Rx (vs vz))
                       (Rx vz))))
 
 
--- Example 2 ([1] pp.31–32)
+-- Example 2 (pp. 31–32[1])
 
-e2 : ∀{x₃ x₂ x₁ A}
-   → ⊩ F² x₃ ⇒ ⇓² ⇑² x₃ ∷ F x₂ ⇒ ⇓ ⇑ x₂ ∷ (x₁ ∷ A ⊃ x₁ ∷ A)
-e2 = RF² (R⇓² (R⇑² (Rx vz)))
+e2a : ∀{x₃ x₂ x₁ A}
+    → ⊩ F² x₃ ⇒ ⇓² ⇑² x₃ ∷ F x₂ ⇒ ⇓ ⇑ x₂ ∷ (x₁ ∷ A ⊃ x₁ ∷ A)
+e2a = RF² (R⇓² (R⇑² (Rx vz)))
+
+e2b : ∀{x₃ x₂ x₁ A}
+    → ⊩ F² x₃ ⇒ x₃ ∷ F x₂ ⇒ x₂ ∷ (x₁ ∷ A ⊃ x₁ ∷ A)
+e2b = RF² (Rx vz)
