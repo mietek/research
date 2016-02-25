@@ -12,7 +12,7 @@ infix 0 _⊢_
 
 
 data Tm : Set where
-  λⁿ_⇒_#_   : Tm → Tm → ℕ → Tm
+  fⁿ_⇒_#_   : Tm → Tm → ℕ → Tm
   _∘ⁿ_#_    : Tm → Tm → ℕ → Tm
   pⁿ⟨_,_⟩#_ : Tm → Tm → ℕ → Tm
   π₀ⁿ_#_    : Tm → ℕ → Tm
@@ -49,8 +49,8 @@ data _∈_ (A : Ty) : Cx → Set where
   vs : ∀{Γ}{B : Ty} → A ∈ Γ → A ∈ Γ , B
 
 
-λ¹_⇒_ : Tm → Tm → Tm
-λ¹ x ⇒ t = λⁿ x ⇒ t # 1
+f_⇒_ : Tm → Tm → Tm
+f x ⇒ t = fⁿ x ⇒ t # 1
 
 _∘_ : Tm → Tm → Tm
 t ∘ s = t ∘ⁿ s # 1
@@ -71,8 +71,8 @@ p⟨ t , s ⟩ = pⁿ⟨ t , s ⟩# 1
 ⇓ t = ⇓ⁿ t # 1
 
 
-λ²_⇒_ : Tm → Tm → Tm
-λ² x ⇒ t = λⁿ x ⇒ t # 2
+f²_⇒_ : Tm → Tm → Tm
+f² x ⇒ t = fⁿ x ⇒ t # 2
 
 _∘²_ : Tm → Tm → Tm
 t ∘² s = t ∘ⁿ s # 2
@@ -98,9 +98,9 @@ data _⊢_ : Cx → Ty → Set where
      → x ∷ A ∈ Γ
      → Γ ⊢ x ∷ A
 
-  Rλ : ∀{Γ x t A B}
+  Rf : ∀{Γ x t A B}
      → Γ , x ∷ A ⊢ t ∷ B
-     → Γ ⊢ λ¹ x ⇒ t ∷ A ⊃ B
+     → Γ ⊢ f x ⇒ t ∷ A ⊃ B
 
   R∘ : ∀{Γ t s A B}
      → Γ ⊢ t ∷ A ⊃ B → Γ ⊢ s ∷ B
@@ -131,9 +131,9 @@ data _⊢_ : Cx → Ty → Set where
      → x₂ ∷ x₁ ∷ A ∈ Γ
      → Γ ⊢ x₂ ∷ x₁ ∷ A
 
-  Rλ² : ∀{Γ x₂ x₁ t₂ t₁ A B}
+  Rf² : ∀{Γ x₂ x₁ t₂ t₁ A B}
       → Γ , x₂ ∷ x₁ ∷ A ⊢ t₂ ∷ t₁ ∷ B
-      → Γ ⊢ (λ² x₂ ⇒ t₂) ∷ (λ¹ x₁ ⇒ t₁) ∷ A ⊃ B
+      → Γ ⊢ (f² x₂ ⇒ t₂) ∷ (f x₁ ⇒ t₁) ∷ A ⊃ B
 
   R∘² : ∀{Γ t₂ t₁ s₂ s₁ A B}
       → Γ ⊢ t₂ ∷ t₁ ∷ A ⊃ B → Γ ⊢ s₂ ∷ s₁ ∷ B
@@ -165,22 +165,22 @@ data _⊢_ : Cx → Ty → Set where
 
 
 e11 : ∀{x y A}
-    → ⊩ (λ¹ y ⇒ (⇓ y) ∷ (x ∷ A) ⊃ A)
-e11 = Rλ (R⇓ (Rx vz))
+    → ⊩ (f y ⇒ (⇓ y) ∷ (x ∷ A) ⊃ A)
+e11 = Rf (R⇓ (Rx vz))
 
 e12 : ∀{x y A}
-    → ⊩ (λ¹ y ⇒ (⇑ y) ∷ (x ∷ A) ⊃ (! x ∷ x ∷ A))
-e12 = Rλ (R⇑ (Rx vz))
+    → ⊩ (f y ⇒ (⇑ y) ∷ (x ∷ A) ⊃ (! x ∷ x ∷ A))
+e12 = Rf (R⇑ (Rx vz))
 
 e13 : ∀{u v x y A B}
-    → ⊩ ((λ² u ⇒ (λ² v ⇒ p²⟨ u , v ⟩)) ∷ (λ¹ x ⇒ (λ¹ y ⇒ p⟨ x , y ⟩)) ∷ A ⊃ B ⊃ A ∧ B)
-e13 = Rλ² (Rλ² (Rp² (Rx (vs vz)) (Rx vz)))
+    → ⊩ ((f² u ⇒ (f² v ⇒ p²⟨ u , v ⟩)) ∷ (f x ⇒ (f y ⇒ p⟨ x , y ⟩)) ∷ A ⊃ B ⊃ A ∧ B)
+e13 = Rf² (Rf² (Rp² (Rx (vs vz)) (Rx vz)))
 
 e14 : ∀{u v x y A B}
-    → ⊩ ((λ¹ u ⇒ (λ¹ v ⇒ ⇑ p²⟨ u , v ⟩)) ∷ (x ∷ A) ⊃ (y ∷ B) ⊃ (! p⟨ x , y ⟩ ∷ p⟨ x , y ⟩ ∷ A ∧ B))
-e14 = Rλ (Rλ (R⇑ (Rp² (Rx (vs vz)) (Rx vz))))
+    → ⊩ ((f u ⇒ (f v ⇒ ⇑ p²⟨ u , v ⟩)) ∷ (x ∷ A) ⊃ (y ∷ B) ⊃ (! p⟨ x , y ⟩ ∷ p⟨ x , y ⟩ ∷ A ∧ B))
+e14 = Rf (Rf (R⇑ (Rp² (Rx (vs vz)) (Rx vz))))
 
 
 e2 : ∀{x₃ x₂ x₁ A}
-   → ⊩ ((λ² x₃ ⇒ ⇓² ⇑² x₃) ∷ (λ¹ x₂ ⇒ ⇓ ⇑ x₂) ∷ (x₁ ∷ A) ⊃ (x₁ ∷ A))
-e2 = Rλ² (R⇓² (R⇑² (Rx vz)))
+   → ⊩ ((f² x₃ ⇒ ⇓² ⇑² x₃) ∷ (f x₂ ⇒ ⇓ ⇑ x₂) ∷ (x₁ ∷ A) ⊃ (x₁ ∷ A))
+e2 = Rf² (R⇓² (R⇑² (Rx vz)))
