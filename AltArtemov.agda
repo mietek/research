@@ -30,9 +30,9 @@ infix 0 ⊩_
 -- Term judgement
 
 data Tm : Set where
-  Fⁿ_⇒_#_   : Tm → Tm → ℕ → Tm -- Originally: λⁿ
+  Fⁿ_⇒_#_   : Tm → Tm → ℕ → Tm -- Originally λⁿ
   _∘ⁿ_#_    : Tm → Tm → ℕ → Tm
-  Pⁿ⟨_,_⟩#_ : Tm → Tm → ℕ → Tm -- Originally: pⁿ
+  Pⁿ⟨_,_⟩#_ : Tm → Tm → ℕ → Tm -- Originally pⁿ
   π₀ⁿ_#_    : Tm → ℕ → Tm
   π₁ⁿ_#_    : Tm → ℕ → Tm
   ⇑ⁿ_#_     : Tm → ℕ → Tm
@@ -44,8 +44,8 @@ data Tm : Set where
 
 data Ty : Set where
   _∧_ : Ty → Ty → Ty
-  _⊃_ : Ty → Ty → Ty -- Originally: →
-  _∷_ : Tm → Ty → Ty -- Originally: ∶
+  _⊃_ : Ty → Ty → Ty -- Originally →
+  _∷_ : Tm → Ty → Ty -- Originally ∶
   ⊥   : Ty
 
 
