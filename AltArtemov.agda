@@ -29,8 +29,6 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
 module AltArtemov where
 
 open import Data.Nat using (ℕ)
-open import Relation.Binary.PropositionalEquality
-open ≡-Reasoning
 
 
 infixr 9 !_
@@ -222,31 +220,31 @@ data _⊢_ (Γ : Cx) : Ty → Set where
 
 -- Example 1 (p. 28[1])
 
-e11 : ∀{Γ x y A}
+e1₁ : ∀{Γ x y A}
     → Γ ⊢ 𝜆 y ． ⇓ y ∶ (x ∶ A ⊃ A)
-e11 = R𝜆 (R⇓ (RAx vz))
+e1₁ = R𝜆 (R⇓ (RAx vz))
 
-e12 : ∀{Γ x y A}
+e1₂ : ∀{Γ x y A}
     → Γ ⊢ 𝜆 y ． ⇑ y ∶ (x ∶ A ⊃ ! x ∶ x ∶ A)
-e12 = R𝜆 (R⇑ (RAx vz))
+e1₂ = R𝜆 (R⇑ (RAx vz))
 
-e13 : ∀{Γ u x A v y B}
+e1₃ : ∀{Γ u x A v y B}
     → Γ ⊢ 𝜆² u ． 𝜆² v ． 𝗽²⟨ u , v ⟩ ∶ 𝜆 x ． 𝜆 y ． 𝗽⟨ x , y ⟩ ∶ (A ⊃ B ⊃ A ∧ B)
-e13 = R𝜆² (R𝜆² (R𝗽² (RAx (vs vz))
+e1₃ = R𝜆² (R𝜆² (R𝗽² (RAx (vs vz))
                     (RAx vz)))
 
-e14 : ∀{Γ u x A v y B}
+e1₄ : ∀{Γ u x A v y B}
     → Γ ⊢ 𝜆 u ． 𝜆 v ． ⇑ 𝗽²⟨ u , v ⟩ ∶ (x ∶ A ⊃ y ∶ B ⊃ ! 𝗽⟨ x , y ⟩ ∶ 𝗽⟨ x , y ⟩ ∶ (A ∧ B))
-e14 = R𝜆 (R𝜆 (R⇑ (R𝗽² (RAx (vs vz))
+e1₄ = R𝜆 (R𝜆 (R⇑ (R𝗽² (RAx (vs vz))
                       (RAx vz))))
 
 
 -- Example 2 (pp. 31–32[1])
 
-e2a : ∀{Γ x₃ x₂ x₁ A}
-    → Γ ⊢ 𝜆² x₃ ． ⇓² ⇑² x₃ ∶ 𝜆 x₂ ． ⇓ ⇑ x₂ ∶ (x₁ ∶ A ⊃ x₁ ∶ A)
-e2a = R𝜆² (R⇓² (R⇑² (RAx vz)))
+e2 : ∀{Γ x₃ x₂ x₁ A}
+   → Γ ⊢ 𝜆² x₃ ． ⇓² ⇑² x₃ ∶ 𝜆 x₂ ． ⇓ ⇑ x₂ ∶ (x₁ ∶ A ⊃ x₁ ∶ A)
+e2 = R𝜆² (R⇓² (R⇑² (RAx vz)))
 
-e2b : ∀{Γ x₃ x₂ x₁ A}
+e2' : ∀{Γ x₃ x₂ x₁ A}
     → Γ ⊢ 𝜆² x₃ ． x₃ ∶ 𝜆 x₂ ． x₂ ∶ (x₁ ∶ A ⊃ x₁ ∶ A)
-e2b = R𝜆² (RAx vz)
+e2' = R𝜆² (RAx vz)
