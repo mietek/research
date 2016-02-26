@@ -6,7 +6,7 @@ Miëtek Bak <mietek@bak.io>
 
 Thanks to Darryl McAdams and Paolo Giarrusso for comments and discussion.
 
-For easy editing with the Emacs agda-mode:
+For easy editing with Emacs agda-mode, add to your .emacs file:
  '(agda-input-user-translations
    (quote
     (("if" "⊃") ("iff" "⊃⊂") ("not" "¬") ("ent" "⊢")
