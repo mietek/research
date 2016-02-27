@@ -152,30 +152,33 @@ t ∘² s = t ∘ⁿ s # 2
 -- Term vectors
 
 data Tms : ℕ → Set where
-  tmone : (t : Tm) → Tms 0
-  tmsuc : {n : ℕ} (t : Tm) (𝒕 : Tms n) → Tms n
+  tm₁ : (t : Tm) → Tms 0
+  tmₙ : {n : ℕ} (t : Tm) (𝒕 : Tms n) → Tms n
 
 Vt_∶_ : {n : ℕ} (𝒕 : Tms n) (A : Ty) → Ty
-Vt_∶_ (tmone t₁)   A = t₁ ∶ A
-Vt_∶_ (tmsuc tₙ 𝒕) A = tₙ ∶ Vt 𝒕 ∶ A
+Vt_∶_ (tm₁ t₁)   A = t₁ ∶ A
+Vt_∶_ (tmₙ tₙ 𝒕) A = tₙ ∶ Vt 𝒕 ∶ A
 
 
 -- Variable vectors
 
 data Vars : ℕ → Set where
-  varone : (x : Var) → Vars 0
-  varsuc : {n : ℕ} (x : Var) (𝒙 : Vars n) → Vars n
+  var₁ : (x : Var) → Vars 0
+  varₙ : {n : ℕ} (x : Var) (𝒙 : Vars n) → Vars n
 
 Vx_∶_ : {n : ℕ} (𝒙 : Vars n) (A : Ty) → Ty
-Vx_∶_ (varone x₁)   A = 𝑣 x₁ ∶ A
-Vx_∶_ (varsuc xₙ 𝒙) A = 𝑣 xₙ ∶ Vx 𝒙 ∶ A
+Vx_∶_ (var₁ x₁)   A = 𝑣 x₁ ∶ A
+Vx_∶_ (varₙ xₙ 𝒙) A = 𝑣 xₙ ∶ Vx 𝒙 ∶ A
 
 
 -- Implication vectors
 
-Vλ_．_∶_ : {n : ℕ} (𝒙 : Vars n) (𝒕 : Tms n) (C : Ty) → Ty
-Vλ_．_∶_ {0} (varone x₁) (tmone t₁) C = 𝜆 x₁ ． t₁ ∶ C
-Vλ_．_∶_ {n} (varsuc .{n} xₙ 𝒙) (tmsuc .{n} tₙ 𝒕) C = 𝜆ⁿ xₙ ． tₙ # 1 ∶ C    -- TODO
+V : {n : ℕ} (𝒙 : Vars n) (𝒕 : Tms n) (C : Ty) → Ty
+V (var₁ x) (tm₁ t) C = {!!}
+V (var₁ x) (tmₙ t 𝒕) C = {!!}
+V (varₙ x 𝒙) (tm₁ t) C = {!!}
+V (varₙ x 𝒙) (tmₙ t 𝒕) C = {!!}
+
 
 {-
 Incomplete pattern matching for Vλ_．_∶_. Missing cases:
@@ -191,12 +194,12 @@ data _⊢_ (Γ : Cx) : Ty → Set where
        → Vx 𝒙 ∶ A ∈ Γ
        → Γ ⊢ Vx 𝒙 ∶ A
 
-  RRλ  : {n : ℕ} {𝒙 : Vars n} {𝒕 : Tms n} {A B : Ty}
-       → Γ , Vx 𝒙 ∶ A ⊢ Vt 𝒕 ∶ B
-       → Γ ⊢ Vλ 𝒙 ． 𝒕 ∶ (A ⊃ B) 
+--  RRλ  : {n : ℕ} {𝒙 : Vars n} {𝒕 : Tms n} {A B : Ty}
+--       → Γ , Vx 𝒙 ∶ A ⊢ Vt 𝒕 ∶ B
+--       → Γ ⊢ Vλ 𝒙 ． 𝒕 ∶ (A ⊃ B) 
 
 
-  -- Typing for level 1 terms
+  -- Typing rules for level 1 terms
 
   R𝑣  : {x : Var} {A : Ty}
       → 𝑣 x ∶ A ∈ Γ
@@ -231,7 +234,7 @@ data _⊢_ (Γ : Cx) : Ty → Set where
       → Γ ⊢ ⇓ t ∶ A
 
 
-  -- Typing for level 2 terms
+  -- Typing rules for level 2 terms
 
   R𝑣²  : {x₂ x₁ : Var} {A : Ty}
        → 𝑣 x₂ ∶ 𝑣 x₁ ∶ A ∈ Γ
@@ -264,9 +267,6 @@ data _⊢_ (Γ : Cx) : Ty → Set where
   R⇓²  : {t₂ t₁ u : Tm} {A : Ty}
        → Γ ⊢ t₂ ∶ t₁ ∶ u ∶ A
        → Γ ⊢ ⇓² t₂ ∶ ⇓ t₁ ∶ A
-
-
--- TODO: Typing for level n terms
 
 
 -- Theorems
