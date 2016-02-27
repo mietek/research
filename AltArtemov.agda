@@ -229,6 +229,7 @@ data _⊢_ (Γ : Cx) : Ty → Set where
 
 
 -- Theorems
+
 ⊩_ : Ty → Set
 ⊩ A = ∀{Γ} → Γ ⊢ A
 
