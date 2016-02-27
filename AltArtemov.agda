@@ -93,10 +93,6 @@ data TmV : ℕ → Set where
   _∶⋯ : (t₁ : Tm)                     → TmV zero
   _∶_ : (tₙ : Tm) {n : ℕ} (𝒕 : TmV n) → TmV (suc n)
 
-V_∶_ : {n : ℕ} (𝒕 : TmV n) (A : Ty) → Ty
-V t₁ ∶⋯  ∶ A = t₁ ∶ A
-V tₙ ∶ 𝒕 ∶ A = tₙ ∶ V 𝒕 ∶ A
-
 
 -- Variable vectors
 
@@ -104,54 +100,64 @@ data VarV : ℕ → Set where
   _∶⋯ : (x₁ : Var)                      → VarV zero
   _∶_ : (xₙ : Var) {n : ℕ} (𝒙 : VarV n) → VarV (suc n)
 
+
+-- Term vector expansion
+
+V_∶_ : {n : ℕ} (𝒕 : TmV n) (A : Ty) → Ty
+V t₁ ∶⋯  ∶ A = t₁ ∶ A
+V tₙ ∶ 𝒕 ∶ A = tₙ ∶ V 𝒕 ∶ A
+
+
+-- Variable vector expansion
+
 V𝑣_∶_ : {n : ℕ} (𝒙 : VarV n) (A : Ty) → Ty
 V𝑣 x₁ ∶⋯  ∶ A = 𝑣 x₁ ∶ A
 V𝑣 xₙ ∶ 𝒙 ∶ A = 𝑣 xₙ ∶ V𝑣 𝒙 ∶ A
 
 
--- Abstraction vectors
+-- Abstraction vector expansion
 
 V𝜆ⁿ_．_∶_ : {n : ℕ} (𝒙 : VarV n) (𝒕 : TmV n) (A : Ty) → Ty
 V𝜆ⁿ_．_∶_ {zero}  (x₁ ∶⋯)  (t₁ ∶⋯)  A = 𝜆ⁿ x₁ ． t₁ # zero  ∶ A
 V𝜆ⁿ_．_∶_ {suc n} (xₙ ∶ 𝒙) (tₙ ∶ 𝒕) A = 𝜆ⁿ xₙ ． tₙ # suc n ∶ V𝜆ⁿ 𝒙 ． 𝒕 ∶ A
 
 
--- Application vectors
+-- Application vector expansion
 
 _V∘ⁿ_∶_ : {n : ℕ} (𝒕 𝒔 : TmV n) (A : Ty) → Ty
 _V∘ⁿ_∶_ {zero}  (t₁ ∶⋯)  (s₁ ∶⋯)  A = t₁ ∘ⁿ s₁ # zero  ∶ A
 _V∘ⁿ_∶_ {suc n} (tₙ ∶ 𝒕) (sₙ ∶ 𝒔) A = tₙ ∘ⁿ sₙ # suc n ∶ 𝒕 V∘ⁿ 𝒔 ∶ A
 
 
--- Conjunction vectors
+-- Conjunction vector expansion
 
 V𝗽ⁿ⟨_,_⟩∶_ : {n : ℕ} (𝒕 𝒔 : TmV n) (A : Ty) → Ty
 V𝗽ⁿ⟨_,_⟩∶_ {zero}  (t₁ ∶⋯)  (s₁ ∶⋯)  A = 𝗽ⁿ⟨ t₁ , s₁ ⟩# zero  ∶ A
 V𝗽ⁿ⟨_,_⟩∶_ {suc n} (tₙ ∶ 𝒕) (sₙ ∶ 𝒔) A = 𝗽ⁿ⟨ tₙ , sₙ ⟩# suc n ∶ V𝗽ⁿ⟨ 𝒕 , 𝒔 ⟩∶ A
 
 
--- Left projection vectors
+-- Left projection vector expansion
 
 V𝛑₀ⁿ_∶_ : {n : ℕ} (𝒕 : TmV n) (A : Ty) → Ty
 V𝛑₀ⁿ_∶_ {zero}  (t₁ ∶⋯)  A = 𝛑₀ⁿ t₁ # zero  ∶ A
 V𝛑₀ⁿ_∶_ {suc n} (tₙ ∶ 𝒕) A = 𝛑₀ⁿ tₙ # suc n ∶ V𝛑₀ⁿ 𝒕 ∶ A
 
 
--- Right projection vectors
+-- Right projection vector expansion
 
 V𝛑₁ⁿ_∶_ : {n : ℕ} (𝒕 : TmV n) (A : Ty) → Ty
 V𝛑₁ⁿ_∶_ {zero}  (t₁ ∶⋯)  A = 𝛑₁ⁿ t₁ # zero  ∶ A
 V𝛑₁ⁿ_∶_ {suc n} (tₙ ∶ 𝒕) A = 𝛑₁ⁿ tₙ # suc n ∶ V𝛑₁ⁿ 𝒕 ∶ A
 
 
--- Reification vectors
+-- Reification vector expansion
 
 V⇑ⁿ_∶_ : {n : ℕ} (𝒕 : TmV n) (A : Ty) → Ty
 V⇑ⁿ_∶_ {zero}  (t₁ ∶⋯)  A = ⇑ⁿ t₁ # zero  ∶ A
 V⇑ⁿ_∶_ {suc n} (tₙ ∶ 𝒕) A = ⇑ⁿ tₙ # suc n ∶ V⇑ⁿ 𝒕 ∶ A
 
 
--- Reflection vectors
+-- Reflection vector expansion
 
 V⇓ⁿ_∶_ : {n : ℕ} (𝒕 : TmV n) (A : Ty) → Ty
 V⇓ⁿ_∶_ {zero}  (t₁ ∶⋯)  A = ⇓ⁿ t₁ # zero  ∶ A
