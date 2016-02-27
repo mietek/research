@@ -9,8 +9,9 @@ Thanks to Darryl McAdams and Paolo Giarrusso for comments and discussion.
 For easy editing with Emacs agda-mode, add to your .emacs file:
  '(agda-input-user-translations
    (quote
-    (("imp" "⊃") ("iff" "⊃⊂") ("not" "¬") ("ent" "⊢") ("thm" "⊩")
-     ("v" "𝜈")
+    (("imp" "⊃") ("iff" "⊃⊂") ("not" "¬") ("ent" "⊢") ("thm" "⊩") ("N" "ℕ")
+     ("s" "𝒔") ("t" "𝒕") ("x" "𝒙") ("y" "𝒚")
+     ("v" "𝑣") ("ts" "𝑡𝑠") ("vs" "𝑣𝑠")
      ("l" "𝜆") ("l1" "𝜆") ("l2" "𝜆²") ("ln" "𝜆ⁿ") ("." "．")
      ("o" "∘") ("o1" "∘") ("o2" "∘²") ("on" "∘ⁿ")
      ("p" "𝗽") ("p1" "𝗽") ("p2" "𝗽²") ("pn" "𝗽ⁿ")
@@ -29,11 +30,11 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
 
 module AltArtemov where
 
-open import Data.Nat using (ℕ)
+open import Data.Nat using (ℕ ; _+_)
 open import Data.Product using (_×_)
 
 infixl 8 _∘_ _∘²_ _∘ⁿ_#_
-infixr 7 ⇓_ ⇓²_ ⇓ⁿ_#_ ⇑_ ⇑²_ ⇑ⁿ_#_ !_ 𝜈_
+infixr 7 ⇓_ ⇓²_ ⇓ⁿ_#_ ⇑_ ⇑²_ ⇑ⁿ_#_ !_ 𝑣_
 infixr 6 𝜆_．_ 𝜆²_．_ 𝜆ⁿ_．_#_ _∶_
 infixr 5 ¬_
 infixl 4 _∧_
@@ -54,7 +55,7 @@ mutual
   -- Term formation
 
   data Tm : Set where
-    𝜈_        : (x : Var) → Tm                     -- Variable referencing
+    𝑣_        : (x : Var) → Tm                     -- Variable referencing
     𝜆ⁿ_．_#_   : (x : Var) (t : Tm) (n : ℕ) → Tm    -- Implication introduction
     _∘ⁿ_#_    : (t s : Tm) (n : ℕ) → Tm            -- Implication elimination
     𝗽ⁿ⟨_,_⟩#_ : (t s : Tm) (n : ℕ) → Tm            -- Conjunction introduction
@@ -72,7 +73,7 @@ mutual
     _⊃_ : (A B : Ty) → Ty           -- Implication
     _∧_ : (A B : Ty) → Ty           -- Conjunction
     _∶_ : (x : Tm) (A : Ty) → Ty    -- Explicit provability
-
+ 
 
 -- Contexts
 
@@ -90,10 +91,10 @@ data _∈_ (A : Ty) : Cx → Set where
 
 -- Notation for types
 
-⊤ : Ty    -- Truth
+⊤ : Ty                    -- Truth
 ⊤ = ⊥ ⊃ ⊥
 
-¬_ : (A : Ty) → Ty    -- Negation
+¬_ : (A : Ty) → Ty        -- Negation
 ¬ A = A ⊃ ⊥
 
 _⊃⊂_ : (A B : Ty) → Ty    -- Equivalence
@@ -148,17 +149,61 @@ t ∘² s = t ∘ⁿ s # 2
 ⇓² t = ⇓ⁿ t # 2
 
 
+-- Term vectors
+
+data Tms : ℕ → Set where
+  tmone : (t : Tm) → Tms 0
+  tmsuc : {n : ℕ} (t : Tm) (𝒕 : Tms n) → Tms n
+
+Vt_∶_ : {n : ℕ} (𝒕 : Tms n) (A : Ty) → Ty
+Vt_∶_ (tmone t₁)   A = t₁ ∶ A
+Vt_∶_ (tmsuc tₙ 𝒕) A = tₙ ∶ Vt 𝒕 ∶ A
+
+
+-- Variable vectors
+
+data Vars : ℕ → Set where
+  varone : (x : Var) → Vars 0
+  varsuc : {n : ℕ} (x : Var) (𝒙 : Vars n) → Vars n
+
+Vx_∶_ : {n : ℕ} (𝒙 : Vars n) (A : Ty) → Ty
+Vx_∶_ (varone x₁)   A = 𝑣 x₁ ∶ A
+Vx_∶_ (varsuc xₙ 𝒙) A = 𝑣 xₙ ∶ Vx 𝒙 ∶ A
+
+
+-- Implication vectors
+
+Vλ_．_∶_ : {n : ℕ} (𝒙 : Vars n) (𝒕 : Tms n) (C : Ty) → Ty
+Vλ_．_∶_ {0} (varone x₁) (tmone t₁) C = 𝜆 x₁ ． t₁ ∶ C
+Vλ_．_∶_ {n} (varsuc .{n} xₙ 𝒙) (tmsuc .{n} tₙ 𝒕) C = 𝜆ⁿ xₙ ． tₙ # 1 ∶ C    -- TODO
+
+{-
+Incomplete pattern matching for Vλ_．_∶_. Missing cases:
+  Vλ_．_∶_ {Data.Nat.zero} (varone _) (tmsuc {._} _ _) _
+  Vλ_．_∶_ {Data.Nat.zero} (varsuc {._} _ _) (tmone _) _
+when checking the definition of Vλ_．_∶_
+-}
+
 
 data _⊢_ (Γ : Cx) : Ty → Set where
 
+  RRx  : {n : ℕ} {𝒙 : Vars n} {A : Ty}
+       → Vx 𝒙 ∶ A ∈ Γ
+       → Γ ⊢ Vx 𝒙 ∶ A
+
+  RRλ  : {n : ℕ} {𝒙 : Vars n} {𝒕 : Tms n} {A B : Ty}
+       → Γ , Vx 𝒙 ∶ A ⊢ Vt 𝒕 ∶ B
+       → Γ ⊢ Vλ 𝒙 ． 𝒕 ∶ (A ⊃ B) 
+
+
   -- Typing for level 1 terms
 
-  R𝜈  : {x : Var} {A : Ty}
-      → 𝜈 x ∶ A ∈ Γ
-      → Γ ⊢ 𝜈 x ∶ A
+  R𝑣  : {x : Var} {A : Ty}
+      → 𝑣 x ∶ A ∈ Γ
+      → Γ ⊢ 𝑣 x ∶ A
 
   R𝜆  : {x : Var} {t : Tm} {A B : Ty}
-      → Γ , 𝜈 x ∶ A ⊢ t ∶ B
+      → Γ , 𝑣 x ∶ A ⊢ t ∶ B
       → Γ ⊢ 𝜆 x ． t ∶ (A ⊃ B)
 
   R∘  : {t s : Tm} {A B : Ty}
@@ -188,12 +233,12 @@ data _⊢_ (Γ : Cx) : Ty → Set where
 
   -- Typing for level 2 terms
 
-  R𝜈²  : {x₂ x₁ : Var} {A : Ty}
-       → 𝜈 x₂ ∶ 𝜈 x₁ ∶ A ∈ Γ
-       → Γ ⊢ 𝜈 x₂ ∶ 𝜈 x₁ ∶ A
+  R𝑣²  : {x₂ x₁ : Var} {A : Ty}
+       → 𝑣 x₂ ∶ 𝑣 x₁ ∶ A ∈ Γ
+       → Γ ⊢ 𝑣 x₂ ∶ 𝑣 x₁ ∶ A
 
   R𝜆²  : {x₂ x₁ : Var} {t₂ t₁ : Tm} {A B : Ty}
-       → Γ , 𝜈 x₂ ∶ 𝜈 x₁ ∶ A ⊢ t₂ ∶ t₁ ∶ B
+       → Γ , 𝑣 x₂ ∶ 𝑣 x₁ ∶ A ⊢ t₂ ∶ t₁ ∶ B
        → Γ ⊢ 𝜆² x₂ ． t₂ ∶ 𝜆 x₁ ． t₁ ∶ (A ⊃ B)
 
   R∘²  : {t₂ t₁ s₂ s₁ : Tm} {A B : Ty}
@@ -233,30 +278,30 @@ data _⊢_ (Γ : Cx) : Ty → Set where
 -- Example 1 (p. 28[1])
 
 e1₁ : {x y : Var} {A : Ty}
-    → ⊩ 𝜆 y ． ⇓ 𝜈 y ∶ (𝜈 x ∶ A ⊃ A)
-e1₁ = R𝜆 (R⇓ (R𝜈 Z))
+    → ⊩ 𝜆 y ． ⇓ 𝑣 y ∶ (𝑣 x ∶ A ⊃ A)
+e1₁ = R𝜆 (R⇓ (R𝑣 Z))
 
 e1₂ : {x y : Var} {A : Ty}
-    → ⊩ 𝜆 y ． ⇑ 𝜈 y ∶ (𝜈 x ∶ A ⊃ ! 𝜈 x ∶ 𝜈 x ∶ A)
-e1₂ = R𝜆 (R⇑ (R𝜈 Z))
+    → ⊩ 𝜆 y ． ⇑ 𝑣 y ∶ (𝑣 x ∶ A ⊃ ! 𝑣 x ∶ 𝑣 x ∶ A)
+e1₂ = R𝜆 (R⇑ (R𝑣 Z))
 
 e1₃ : {u x v y : Var} {A B : Ty}
-    → ⊩ 𝜆² u ． 𝜆² v ． 𝗽²⟨ 𝜈 u , 𝜈 v ⟩ ∶ 𝜆 x ． 𝜆 y ． 𝗽⟨ 𝜈 x , 𝜈 y ⟩ ∶ (A ⊃ B ⊃ A ∧ B)
-e1₃ = R𝜆² (R𝜆² (R𝗽² (R𝜈² (S Z))
-                    (R𝜈² Z)))
+    → ⊩ 𝜆² u ． 𝜆² v ． 𝗽²⟨ 𝑣 u , 𝑣 v ⟩ ∶ 𝜆 x ． 𝜆 y ． 𝗽⟨ 𝑣 x , 𝑣 y ⟩ ∶ (A ⊃ B ⊃ A ∧ B)
+e1₃ = R𝜆² (R𝜆² (R𝗽² (R𝑣² (S Z))
+                    (R𝑣² Z)))
 
 e1₄ : {u x v y : Var} {A B : Ty}
-    → ⊩ 𝜆 u ． 𝜆 v ． ⇑ 𝗽²⟨ 𝜈 u , 𝜈 v ⟩ ∶ (𝜈 x ∶ A ⊃ 𝜈 y ∶ B ⊃ ! 𝗽⟨ 𝜈 x , 𝜈 y ⟩ ∶ 𝗽⟨ 𝜈 x , 𝜈 y ⟩ ∶ (A ∧ B))
-e1₄ = R𝜆 (R𝜆 (R⇑ (R𝗽² (R𝜈 (S Z))
-                      (R𝜈 Z))))
+    → ⊩ 𝜆 u ． 𝜆 v ． ⇑ 𝗽²⟨ 𝑣 u , 𝑣 v ⟩ ∶ (𝑣 x ∶ A ⊃ 𝑣 y ∶ B ⊃ ! 𝗽⟨ 𝑣 x , 𝑣 y ⟩ ∶ 𝗽⟨ 𝑣 x , 𝑣 y ⟩ ∶ (A ∧ B))
+e1₄ = R𝜆 (R𝜆 (R⇑ (R𝗽² (R𝑣 (S Z))
+                      (R𝑣 Z))))
 
 
 -- Example 2 (pp. 31–32[1])
 
 e2  : {x₃ x₂ x₁ : Var} {A : Ty}
-    → ⊩ 𝜆² x₃ ． ⇓² ⇑² 𝜈 x₃ ∶ 𝜆 x₂ ． ⇓ ⇑ 𝜈 x₂ ∶ (𝜈 x₁ ∶ A ⊃ 𝜈 x₁ ∶ A)
-e2 = R𝜆² (R⇓² (R⇑² (R𝜈² Z)))
+    → ⊩ 𝜆² x₃ ． ⇓² ⇑² 𝑣 x₃ ∶ 𝜆 x₂ ． ⇓ ⇑ 𝑣 x₂ ∶ (𝑣 x₁ ∶ A ⊃ 𝑣 x₁ ∶ A)
+e2 = R𝜆² (R⇓² (R⇑² (R𝑣² Z)))
 
 e2' : {x₃ x₂ x₁ : Var} {A : Ty}
-    → ⊩ 𝜆² x₃ ． 𝜈 x₃ ∶ 𝜆 x₂ ． 𝜈 x₂ ∶ (𝜈 x₁ ∶ A ⊃ 𝜈 x₁ ∶ A)
-e2' = R𝜆² (R𝜈² Z)
+    → ⊩ 𝜆² x₃ ． 𝑣 x₃ ∶ 𝜆 x₂ ． 𝑣 x₂ ∶ (𝑣 x₁ ∶ A ⊃ 𝑣 x₁ ∶ A)
+e2' = R𝜆² (R𝑣² Z)
