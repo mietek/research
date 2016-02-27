@@ -9,7 +9,7 @@ Thanks to Darryl McAdams and Paolo Giarrusso for comments and discussion.
 For easy editing with Emacs agda-mode, add to your .emacs file:
  '(agda-input-user-translations
    (quote
-    (("imp" "⊃") ("iff" "⊃⊂") ("not" "¬") ("ent" "⊢") ("thm" "⊩") ("N" "ℕ")
+    (("N" "ℕ") ("not" "¬") ("imp" "⊃") ("iff" "⊃⊂") ("ent" "⊢") ("thm" "⊩") 
      ("s" "𝒔") ("t" "𝒕") ("x" "𝒙") ("y" "𝒚")
      ("v" "𝑣") ("v1" "𝑣") ("v2" "𝑣²") ("vn" "𝑣ⁿ")
      ("l" "𝜆") ("l1" "𝜆") ("l2" "𝜆²") ("ln" "𝜆ⁿ") ("." "．")
