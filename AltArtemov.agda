@@ -54,36 +54,39 @@ mutual
   -- Term formation
 
   data Tm : Set where
-    𝜈_        : Var → Tm
-    𝜆ⁿ_．_#_   : Var → Tm → ℕ → Tm
-    _∘ⁿ_#_    : Tm → Tm → ℕ → Tm
-    𝗽ⁿ⟨_,_⟩#_ : Tm → Tm → ℕ → Tm
-    𝛑₀ⁿ_#_    : Tm → ℕ → Tm
-    𝛑₁ⁿ_#_    : Tm → ℕ → Tm
-    !_        : Tm → Tm
-    ⇑ⁿ_#_     : Tm → ℕ → Tm
-    ⇓ⁿ_#_     : Tm → ℕ → Tm
+    𝜈_        : Var → Tm          -- Variable referencing
+    𝜆ⁿ_．_#_   : Var → Tm → ℕ → Tm -- Implication introduction
+    _∘ⁿ_#_    : Tm → Tm → ℕ → Tm  -- Implication elimination
+    𝗽ⁿ⟨_,_⟩#_ : Tm → Tm → ℕ → Tm  -- Conjunction introduction
+    𝛑₀ⁿ_#_    : Tm → ℕ → Tm       -- Left conjunction elimination
+    𝛑₁ⁿ_#_    : Tm → ℕ → Tm       -- Right conjunction elimination
+    !_        : Tm → Tm           -- Proof checking
+    ⇑ⁿ_#_     : Tm → ℕ → Tm       -- Proof reification
+    ⇓ⁿ_#_     : Tm → ℕ → Tm       -- Proof reflection
 
 
   -- Type formation
 
   data Ty : Set where
-    _∧_ : Ty → Ty → Ty
-    _⊃_ : Ty → Ty → Ty
-    _∶_ : Tm → Ty → Ty
-    ⊥   : Ty
+    ⊥   : Ty           -- Falsehood
+    _⊃_ : Ty → Ty → Ty -- Implication
+    _∧_ : Ty → Ty → Ty -- Conjunction
+    _∶_ : Tm → Ty → Ty -- Explicit provability
 
 
 -- Notation for types
 
-_⊃⊂_ : Ty → Ty → Ty
-A ⊃⊂ B = A ⊃ B ∧ B ⊃ A
+-- Truth
+⊤ : Ty
+⊤ = ⊥ ⊃ ⊥
 
+-- Negation
 ¬_ : Ty → Ty
 ¬ A = A ⊃ ⊥
 
-⊤ : Ty
-⊤ = ⊥ ⊃ ⊥
+-- Equivalence
+_⊃⊂_ : Ty → Ty → Ty 
+A ⊃⊂ B = A ⊃ B ∧ B ⊃ A
 
 
 -- Context formation
@@ -151,14 +154,13 @@ t ∘² s = t ∘ⁿ s # 2
 
 data _⊢_ (Γ : Cx) : Ty → Set where
 
-
   -- Typing for level 1 terms
 
-  R𝜈 : ∀{x : Var}{A}
+  R𝜈 : ∀{x A}
      → 𝜈 x ∶ A ∈ Γ
      → Γ ⊢ 𝜈 x ∶ A
 
-  R𝜆 : ∀{x : Var}{A t B}
+  R𝜆 : ∀{x A t B}
      → Γ , 𝜈 x ∶ A ⊢ t ∶ B
      → Γ ⊢ 𝜆 x ． t ∶ (A ⊃ B)
 
@@ -191,11 +193,11 @@ data _⊢_ (Γ : Cx) : Ty → Set where
 
   -- Typing for level 2 terms
 
-  R𝜈² : ∀{x₂ x₁ : Var}{A}
+  R𝜈² : ∀{x₂ x₁ A}
       → 𝜈 x₂ ∶ 𝜈 x₁ ∶ A ∈ Γ
       → Γ ⊢ 𝜈 x₂ ∶ 𝜈 x₁ ∶ A
 
-  R𝜆² : ∀{x₂ x₁ : Var}{A t₂ t₁ B}
+  R𝜆² : ∀{x₂ x₁ A t₂ t₁ B}
       → Γ , 𝜈 x₂ ∶ 𝜈 x₁ ∶ A ⊢ t₂ ∶ t₁ ∶ B
       → Γ ⊢ 𝜆² x₂ ． t₂ ∶ 𝜆 x₁ ． t₁ ∶ (A ⊃ B)
 
@@ -226,25 +228,25 @@ data _⊢_ (Γ : Cx) : Ty → Set where
       → Γ ⊢ ⇓² t₂ ∶ ⇓ t₁ ∶ A
 
 
--- TODO: Inference rules for level n terms
+-- TODO: Typing for level n terms
 
 
 -- Example 1 (p. 28[1])
 
-e1₁ : ∀{Γ}{x y : Var}{A}
+e1₁ : ∀{Γ x y A}
     → Γ ⊢ 𝜆 y ． ⇓ 𝜈 y ∶ (𝜈 x ∶ A ⊃ A)
 e1₁ = R𝜆 (R⇓ (R𝜈 Z))
 
-e1₂ : ∀{Γ}{x y : Var}{A}
-    → Γ ⊢ 𝜆 y ． ⇑ 𝜈 y ∶ (𝜈 x ∶ A ⊃ ! (𝜈 x) ∶ 𝜈 x ∶ A)
+e1₂ : ∀{Γ x y A}
+    → Γ ⊢ 𝜆 y ． ⇑ 𝜈 y ∶ (𝜈 x ∶ A ⊃ ! 𝜈 x ∶ 𝜈 x ∶ A)
 e1₂ = R𝜆 (R⇑ (R𝜈 Z))
 
-e1₃ : ∀{Γ}{u x : Var}{A}{v y : Var}{B}
+e1₃ : ∀{Γ u x A v y B}
     → Γ ⊢ 𝜆² u ． 𝜆² v ． 𝗽²⟨ 𝜈 u , 𝜈 v ⟩ ∶ 𝜆 x ． 𝜆 y ． 𝗽⟨ 𝜈 x , 𝜈 y ⟩ ∶ (A ⊃ B ⊃ A ∧ B)
 e1₃ = R𝜆² (R𝜆² (R𝗽² (R𝜈² (S Z))
                     (R𝜈² Z)))
 
-e1₄ : ∀{Γ}{u x : Var}{A}{v y : Var}{B}
+e1₄ : ∀{Γ u x A v y B}
     → Γ ⊢ 𝜆 u ． 𝜆 v ． ⇑ 𝗽²⟨ 𝜈 u , 𝜈 v ⟩ ∶ (𝜈 x ∶ A ⊃ 𝜈 y ∶ B ⊃ ! 𝗽⟨ 𝜈 x , 𝜈 y ⟩ ∶ 𝗽⟨ 𝜈 x , 𝜈 y ⟩ ∶ (A ∧ B))
 e1₄ = R𝜆 (R𝜆 (R⇑ (R𝗽² (R𝜈 (S Z))
                       (R𝜈 Z))))
@@ -252,10 +254,10 @@ e1₄ = R𝜆 (R𝜆 (R⇑ (R𝗽² (R𝜈 (S Z))
 
 -- Example 2 (pp. 31–32[1])
 
-e2 : ∀{Γ}{x₃ x₂ x₁ : Var}{A}
+e2 : ∀{Γ x₃ x₂ x₁ A}
    → Γ ⊢ 𝜆² x₃ ． ⇓² ⇑² 𝜈 x₃ ∶ 𝜆 x₂ ． ⇓ ⇑ 𝜈 x₂ ∶ (𝜈 x₁ ∶ A ⊃ 𝜈 x₁ ∶ A)
 e2 = R𝜆² (R⇓² (R⇑² (R𝜈² Z)))
 
-e2' : ∀{Γ}{x₃ x₂ x₁ : Var}{A}
+e2' : ∀{Γ x₃ x₂ x₁ A}
     → Γ ⊢ 𝜆² x₃ ． 𝜈 x₃ ∶ 𝜆 x₂ ． 𝜈 x₂ ∶ (𝜈 x₁ ∶ A ⊃ 𝜈 x₁ ∶ A)
 e2' = R𝜆² (R𝜈² Z)
