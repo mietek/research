@@ -11,7 +11,7 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
    (quote
     (("imp" "⊃") ("iff" "⊃⊂") ("not" "¬") ("ent" "⊢") ("thm" "⊩") ("N" "ℕ")
      ("s" "𝒔") ("t" "𝒕") ("x" "𝒙") ("y" "𝒚")
-     ("v" "𝑣")
+     ("v" "𝑣") ("v1" "𝑣") ("v2" "𝑣²") ("vn" "𝑣ⁿ")
      ("l" "𝜆") ("l1" "𝜆") ("l2" "𝜆²") ("ln" "𝜆ⁿ") ("." "．")
      ("o" "∘") ("o1" "∘") ("o2" "∘²") ("on" "∘ⁿ")
      ("p" "𝗽") ("p1" "𝗽") ("p2" "𝗽²") ("pn" "𝗽ⁿ")
@@ -30,7 +30,7 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
 
 module AltArtemov where
 
-open import Data.Nat using (ℕ ; zero ; suc)
+open import Data.Nat using (ℕ ; zero ; suc ; _+_)
 open import Data.Product using (_×_)
 
 infixl 8 _∘_ _∘²_ _∘ⁿ_#_
@@ -149,84 +149,98 @@ t ∘² s = t ∘ⁿ s # 1
 ⇓² t = ⇓ⁿ t # 1
 
 
-{- Work in progress
+{-
+
+t₁
+tmZ t₁
+n = zero
+
+t₂ ∶ t₁
+tmS t₂ (tmZ t₁)
+n = suc zero
+
+t₃ ∶ t₂ ∶ t₁
+tmS t₃ (tmS t₂ (tmZ t₁))
+n = suc (suc zero)
+
+-}
+
 
 -- Term vectors
 
 data TmV : ℕ → Set where
-  tm₁ : {n : ℕ} (t : Tm)             → TmV zero
-  tmₙ : {n : ℕ} (t : Tm) (𝒕 : TmV n) → TmV (suc n)
+  tmZ : (t₁ : Tm)                     → TmV zero
+  tmS : (tₙ : Tm) {n : ℕ} (𝒕 : TmV n) → TmV (suc n)
 
 V_∷_ : {n : ℕ} (𝒕 : TmV n) (A : Ty) → Ty
-V_∷_ (tm₁ t₁)   A = t₁ ∶ A
-V_∷_ (tmₙ tₙ 𝒕) A = tₙ ∶ V 𝒕 ∷ A
+V_∷_ (tmZ t₁)   A = t₁ ∶ A
+V_∷_ (tmS tₙ 𝒕) A = tₙ ∶ V 𝒕 ∷ A
 
 
 -- Variable vectors
 
 data VarV : ℕ → Set where
-  var₁ : {n : ℕ} (x : Var)              → VarV zero
-  varₙ : {n : ℕ} (x : Var) (𝒙 : VarV n) → VarV (suc n)
+  varZ : (x₁ : Var)                      → VarV zero
+  varS : (xₙ : Var) {n : ℕ} (𝒙 : VarV n) → VarV (suc n)
 
 V𝑣_∷_ : {n : ℕ} (𝒙 : VarV n) (A : Ty) → Ty
-V𝑣_∷_ (var₁ x₁)   A = 𝑣 x₁ ∶ A
-V𝑣_∷_ (varₙ xₙ 𝒙) A = 𝑣 xₙ ∶ V𝑣 𝒙 ∷ A
+V𝑣_∷_ (varZ x₁)   A = 𝑣 x₁ ∶ A
+V𝑣_∷_ (varS xₙ 𝒙) A = 𝑣 xₙ ∶ V𝑣 𝒙 ∷ A
 
 
 -- Abstraction vectors
 
 V𝜆ⁿ_．_∷_ : {n : ℕ} (𝒙 : VarV n) (𝒕 : TmV n) (A : Ty) → Ty
-V𝜆ⁿ_．_∷_ {zero}  (var₁ x₁)   (tm₁ t₁)   A = 𝜆ⁿ x₁ ． t₁ # zero  ∶ A
-V𝜆ⁿ_．_∷_ {suc n} (varₙ xₙ 𝒙) (tmₙ tₙ 𝒕) A = 𝜆ⁿ xₙ ． tₙ # suc n ∶ V𝜆ⁿ 𝒙 ． 𝒕 ∷ A
+V𝜆ⁿ_．_∷_ {zero}  (varZ x₁)   (tmZ t₁)   A = 𝜆ⁿ x₁ ． t₁ # zero  ∶ A
+V𝜆ⁿ_．_∷_ {suc n} (varS xₙ 𝒙) (tmS tₙ 𝒕) A = 𝜆ⁿ xₙ ． tₙ # suc n ∶ V𝜆ⁿ 𝒙 ． 𝒕 ∷ A
 
 
 -- Application vectors
 
 _V∘ⁿ_∷_ : {n : ℕ} (𝒕 𝒔 : TmV n) (A : Ty) → Ty
-_V∘ⁿ_∷_ {zero}  (tm₁ t₁)   (tm₁ s₁)   A = t₁ ∘ⁿ s₁ # zero  ∶ A
-_V∘ⁿ_∷_ {suc n} (tmₙ tₙ 𝒕) (tmₙ sₙ 𝒔) A = tₙ ∘ⁿ sₙ # suc n ∶ 𝒕 V∘ⁿ 𝒔 ∷ A
+_V∘ⁿ_∷_ {zero}  (tmZ t₁)   (tmZ s₁)   A = t₁ ∘ⁿ s₁ # zero  ∶ A
+_V∘ⁿ_∷_ {suc n} (tmS tₙ 𝒕) (tmS sₙ 𝒔) A = tₙ ∘ⁿ sₙ # suc n ∶ 𝒕 V∘ⁿ 𝒔 ∷ A
 
 
 -- Conjunction vectors
 
 V𝗽ⁿ⟨_,_⟩∷_ : {n : ℕ} (𝒕 𝒔 : TmV n) (A : Ty) → Ty
-V𝗽ⁿ⟨_,_⟩∷_ {zero}  (tm₁ t₁)   (tm₁ s₁)   A = 𝗽ⁿ⟨ t₁ , s₁ ⟩# zero  ∶ A
-V𝗽ⁿ⟨_,_⟩∷_ {suc n} (tmₙ tₙ 𝒕) (tmₙ sₙ 𝒔) A = 𝗽ⁿ⟨ tₙ , sₙ ⟩# suc n ∶ V𝗽ⁿ⟨ 𝒕 , 𝒔 ⟩∷ A
+V𝗽ⁿ⟨_,_⟩∷_ {zero}  (tmZ t₁)   (tmZ s₁)   A = 𝗽ⁿ⟨ t₁ , s₁ ⟩# zero  ∶ A
+V𝗽ⁿ⟨_,_⟩∷_ {suc n} (tmS tₙ 𝒕) (tmS sₙ 𝒔) A = 𝗽ⁿ⟨ tₙ , sₙ ⟩# suc n ∶ V𝗽ⁿ⟨ 𝒕 , 𝒔 ⟩∷ A
 
 
 -- Left projection vectors
 
 V𝛑₀ⁿ_∷_ : {n : ℕ} (𝒕 : TmV n) (A : Ty) → Ty
-V𝛑₀ⁿ_∷_ {zero}  (tm₁ t₁)   A = 𝛑₀ⁿ t₁ # zero  ∶ A
-V𝛑₀ⁿ_∷_ {suc n} (tmₙ tₙ 𝒕) A = 𝛑₀ⁿ tₙ # suc n ∶ V𝛑₀ⁿ 𝒕 ∷ A
+V𝛑₀ⁿ_∷_ {zero}  (tmZ t₁)   A = 𝛑₀ⁿ t₁ # zero  ∶ A
+V𝛑₀ⁿ_∷_ {suc n} (tmS tₙ 𝒕) A = 𝛑₀ⁿ tₙ # suc n ∶ V𝛑₀ⁿ 𝒕 ∷ A
 
 
 -- Right projection vectors
 
 V𝛑₁ⁿ_∷_ : {n : ℕ} (𝒕 : TmV n) (A : Ty) → Ty
-V𝛑₁ⁿ_∷_ {zero}  (tm₁ t₁)   A = 𝛑₁ⁿ t₁ # zero  ∶ A
-V𝛑₁ⁿ_∷_ {suc n} (tmₙ tₙ 𝒕) A = 𝛑₁ⁿ tₙ # suc n ∶ V𝛑₁ⁿ 𝒕 ∷ A
+V𝛑₁ⁿ_∷_ {zero}  (tmZ t₁)   A = 𝛑₁ⁿ t₁ # zero  ∶ A
+V𝛑₁ⁿ_∷_ {suc n} (tmS tₙ 𝒕) A = 𝛑₁ⁿ tₙ # suc n ∶ V𝛑₁ⁿ 𝒕 ∷ A
 
 
 -- Reification vectors
 
 V⇑ⁿ_∷_ : {n : ℕ} (𝒕 : TmV n) (A : Ty) → Ty
-V⇑ⁿ_∷_ {zero}  (tm₁ t₁)   A = ⇑ⁿ t₁ # zero  ∶ A
-V⇑ⁿ_∷_ {suc n} (tmₙ tₙ 𝒕) A = ⇑ⁿ tₙ # suc n ∶ V⇑ⁿ 𝒕 ∷ A
+V⇑ⁿ_∷_ {zero}  (tmZ t₁)   A = ⇑ⁿ t₁ # zero  ∶ A
+V⇑ⁿ_∷_ {suc n} (tmS tₙ 𝒕) A = ⇑ⁿ tₙ # suc n ∶ V⇑ⁿ 𝒕 ∷ A
 
 
 -- Reflection vectors
 
 V⇓ⁿ_∷_ : {n : ℕ} (𝒕 : TmV n) (A : Ty) → Ty
-V⇓ⁿ_∷_ {zero}  (tm₁ t₁)   A = ⇓ⁿ t₁ # zero  ∶ A
-V⇓ⁿ_∷_ {suc n} (tmₙ tₙ 𝒕) A = ⇓ⁿ tₙ # suc n ∶ V⇓ⁿ 𝒕 ∷ A
-
--}
+V⇓ⁿ_∷_ {zero}  (tmZ t₁)   A = ⇓ⁿ t₁ # zero  ∶ A
+V⇓ⁿ_∷_ {suc n} (tmS tₙ 𝒕) A = ⇓ⁿ tₙ # suc n ∶ V⇓ⁿ 𝒕 ∷ A
 
 
 data _⊢_ (Γ : Cx) : Ty → Set where
 
-  -- Typing rules for level 1 terms
+{-
+  -- To be removed: Typing rules for level 1 terms
 
   R𝑣  : {x : Var} {A : Ty}
       → 𝑣 x ∶ A ∈ Γ
@@ -261,7 +275,7 @@ data _⊢_ (Γ : Cx) : Ty → Set where
       → Γ ⊢ ⇓ t ∶ A
 
 
-  -- Typing rules for level 2 terms
+  -- To be removed: Typing rules for level 2 terms
 
   R𝑣²  : {x₂ x₁ : Var} {A : Ty}
        → 𝑣 x₂ ∶ 𝑣 x₁ ∶ A ∈ Γ
@@ -294,44 +308,127 @@ data _⊢_ (Γ : Cx) : Ty → Set where
   R⇓²  : {t₂ t₁ u : Tm} {A : Ty}
        → Γ ⊢ t₂ ∶ t₁ ∶ u ∶ A
        → Γ ⊢ ⇓² t₂ ∶ ⇓ t₁ ∶ A
-
-
-{- Work in progress
+-}
 
   -- Typing rules for level n terms
 
-  RR𝑣  : {n : ℕ} {𝒙 : VarV n} {A : Ty}
+  R𝑣ⁿ  : {n : ℕ} {𝒙 : VarV n} {A : Ty}
        → V𝑣 𝒙 ∷ A ∈ Γ
        → Γ ⊢ V𝑣 𝒙 ∷ A
 
-  RR𝜆  : {n : ℕ} {𝒙 : VarV n} {𝒕 : TmV n} {A B : Ty}
+  R𝜆ⁿ  : {n : ℕ} {𝒙 : VarV n} {𝒕 : TmV n} {A B : Ty}
        → Γ , V𝑣 𝒙 ∷ A ⊢ V 𝒕 ∷ B
        → Γ ⊢ V𝜆ⁿ 𝒙 ． 𝒕 ∷ (A ⊃ B)
 
-  RR∘  : {n : ℕ} {𝒕 𝒔 : TmV n} {A B : Ty}
+  R∘ⁿ  : {n : ℕ} {𝒕 𝒔 : TmV n} {A B : Ty}
        → Γ ⊢ V 𝒕 ∷ (A ⊃ B)    → Γ ⊢ V 𝒔 ∷ A
        → Γ ⊢ 𝒕 V∘ⁿ 𝒔 ∷ B
 
-  RR𝗽  : {n : ℕ} {𝒕 𝒔 : TmV n} {A B : Ty}
+  R𝗽ⁿ  : {n : ℕ} {𝒕 𝒔 : TmV n} {A B : Ty}
        → Γ ⊢ V 𝒕 ∷ A    → Γ ⊢ V 𝒔 ∷ B
        → Γ ⊢ V𝗽ⁿ⟨ 𝒕 , 𝒔 ⟩∷ (A ∧ B)
 
-  RR𝛑₀ : {n : ℕ} {𝒕 : TmV n} {A B : Ty}
+  R𝛑₀ⁿ : {n : ℕ} {𝒕 : TmV n} {A B : Ty}
        → Γ ⊢ V 𝒕 ∷ (A ∧ B)
        → Γ ⊢ V𝛑₀ⁿ 𝒕 ∷ A
 
-  RR𝛑₁ : {n : ℕ} {𝒕 : TmV n} {A B : Ty}
+  R𝛑₁ⁿ : {n : ℕ} {𝒕 : TmV n} {A B : Ty}
        → Γ ⊢ V 𝒕 ∷ (A ∧ B)
-       → Γ ⊢ V𝛑₁ⁿ 𝒕 ∷ A
+       → Γ ⊢ V𝛑₁ⁿ 𝒕 ∷ B
 
-  RR⇑  : {n : ℕ} {𝒕 : TmV n} {u : Tm} {A : Ty}
+  R⇑ⁿ  : {n : ℕ} {𝒕 : TmV n} {u : Tm} {A : Ty}
        → Γ ⊢ V 𝒕 ∷ (u ∶ A)
        → Γ ⊢ V⇑ⁿ 𝒕 ∷ (! u ∶ u ∶ A)
 
-  RR⇓  : {n : ℕ} {𝒕 : TmV n} {u : Tm} {A : Ty}
+  R⇓ⁿ  : {n : ℕ} {𝒕 : TmV n} {u : Tm} {A : Ty}
        → Γ ⊢ V 𝒕 ∷ (u ∶ A)
        → Γ ⊢ V⇓ⁿ 𝒕 ∷ A
--}
+
+
+-- Notation for typing rules for level 1 terms
+
+R𝑣 : {x : Var} {A : Ty} {Γ : Cx}
+   → 𝑣 x ∶ A ∈ Γ
+   → Γ ⊢ 𝑣 x ∶ A
+R𝑣 {x} e = R𝑣ⁿ {𝒙 = varZ x} e
+
+R𝜆 : {x : Var} {t : Tm} {A B : Ty} {Γ : Cx}
+   → Γ , 𝑣 x ∶ A ⊢ t ∶ B
+   → Γ ⊢ 𝜆 x ． t ∶ (A ⊃ B)
+R𝜆 {x} {t} e = R𝜆ⁿ {𝒙 = varZ x} {𝒕 = tmZ t} e
+
+R∘ : {t s : Tm} {A B : Ty} {Γ : Cx}
+   → Γ ⊢ t ∶ (A ⊃ B)    → Γ ⊢ s ∶ A
+   → Γ ⊢ t ∘ s ∶ B
+R∘ {t} {s} e f = R∘ⁿ {𝒕 = tmZ t} {𝒔 = tmZ s} e f
+
+R𝗽 : {t s : Tm} {A B : Ty} {Γ : Cx}
+   → Γ ⊢ t ∶ A    → Γ ⊢ s ∶ B
+   → Γ ⊢ 𝗽⟨ t , s ⟩ ∶ (A ∧ B)
+R𝗽 {t} {s} e f = R𝗽ⁿ {𝒕 = tmZ t} {𝒔 = tmZ s} e f
+
+R𝛑₀ : {t : Tm} {A B : Ty} {Γ : Cx}
+    → Γ ⊢ t ∶ (A ∧ B)
+    → Γ ⊢ 𝛑₀ t ∶ A
+R𝛑₀ {t} e = R𝛑₀ⁿ {𝒕 = tmZ t} e
+
+R𝛑₁ : {t : Tm} {A B : Ty} {Γ : Cx}
+    → Γ ⊢ t ∶ (A ∧ B)
+    → Γ ⊢ 𝛑₁ t ∶ B
+R𝛑₁ {t} e = R𝛑₁ⁿ {𝒕 = tmZ t} e
+
+R⇑ : {t u : Tm} {A : Ty} {Γ : Cx}
+   → Γ ⊢ t ∶ u ∶ A
+   → Γ ⊢ ⇑ t ∶ ! u ∶ u ∶ A
+R⇑ {t} e = R⇑ⁿ {𝒕 = tmZ t} e
+
+R⇓ : {t u : Tm} {A : Ty} {Γ : Cx}
+   → Γ ⊢ t ∶ u ∶ A
+   → Γ ⊢ ⇓ t ∶ A
+R⇓ {t} e = R⇓ⁿ {𝒕 = tmZ t} e
+
+
+-- Notation for typing rules for level 2 terms
+
+R𝑣² : {x₂ x₁ : Var} {A : Ty} {Γ : Cx}
+    → 𝑣 x₂ ∶ 𝑣 x₁ ∶ A ∈ Γ
+    → Γ ⊢ 𝑣 x₂ ∶ 𝑣 x₁ ∶ A
+R𝑣² {x₂} {x₁} = R𝑣ⁿ {𝒙 = varS x₂ (varZ x₁)}
+
+R𝜆² : {x₂ x₁ : Var} {t₂ t₁ : Tm} {A B : Ty} {Γ : Cx}
+    → Γ , 𝑣 x₂ ∶ 𝑣 x₁ ∶ A ⊢ t₂ ∶ t₁ ∶ B
+    → Γ ⊢ 𝜆² x₂ ． t₂ ∶ 𝜆 x₁ ． t₁ ∶ (A ⊃ B)
+R𝜆² {x₂} {x₁} {t₂} {t₁} = R𝜆ⁿ {𝒙 = varS x₂ (varZ x₁)} {𝒕 = tmS t₂ (tmZ t₁)}
+
+R∘² : {t₂ t₁ s₂ s₁ : Tm} {A B : Ty} {Γ : Cx}
+    → Γ ⊢ t₂ ∶ t₁ ∶ (A ⊃ B)    → Γ ⊢ s₂ ∶ s₁ ∶ A
+    → Γ ⊢ t₂ ∘² s₂ ∶ t₁ ∘ s₁ ∶ B
+R∘² {t₂} {t₁} {s₂} {s₁} = R∘ⁿ {𝒕 = tmS t₂ (tmZ t₁)} {𝒔 = tmS s₂ (tmZ s₁)}
+
+R𝗽² : {t₂ t₁ s₂ s₁ : Tm} {A B : Ty} {Γ : Cx}
+    → Γ ⊢ t₂ ∶ t₁ ∶ A    → Γ ⊢ s₂ ∶ s₁ ∶ B
+    → Γ ⊢ 𝗽²⟨ t₂ , s₂ ⟩ ∶ 𝗽⟨ t₁ , s₁ ⟩ ∶ (A ∧ B)
+R𝗽² {t₂} {t₁} {s₂} {s₁} = R𝗽ⁿ {𝒕 = tmS t₂ (tmZ t₁)} {𝒔 = tmS s₂ (tmZ s₁)}
+
+R𝛑₀² : {t₂ t₁ : Tm} {A B : Ty} {Γ : Cx}
+     → Γ ⊢ t₂ ∶ t₁ ∶ (A ∧ B)
+     → Γ ⊢ 𝛑₀² t₂ ∶ 𝛑₀ t₁ ∶ A
+R𝛑₀² {t₂} {t₁} = R𝛑₀ⁿ {𝒕 = tmS t₂ (tmZ t₁)}
+
+R𝛑₁² : {t₂ t₁ : Tm} {A B : Ty} {Γ : Cx}
+     → Γ ⊢ t₂ ∶ t₁ ∶ (A ∧ B)
+     → Γ ⊢ 𝛑₁² t₂ ∶ 𝛑₁ t₁ ∶ B
+R𝛑₁² {t₂} {t₁} = R𝛑₁ⁿ {𝒕 = tmS t₂ (tmZ t₁)}
+
+R⇑² : {t₂ t₁ u : Tm} {A : Ty} {Γ : Cx}
+    → Γ ⊢ t₂ ∶ t₁ ∶ u ∶ A
+    → Γ ⊢ ⇑² t₂ ∶ ⇑ t₁ ∶ ! u ∶ u ∶ A
+R⇑² {t₂} {t₁} = R⇑ⁿ {𝒕 = tmS t₂ (tmZ t₁)}
+
+R⇓² : {t₂ t₁ u : Tm} {A : Ty} {Γ : Cx}
+    → Γ ⊢ t₂ ∶ t₁ ∶ u ∶ A
+    → Γ ⊢ ⇓² t₂ ∶ ⇓ t₁ ∶ A
+R⇓² {t₂} {t₁} = R⇓ⁿ {𝒕 = tmS t₂ (tmZ t₁)}
 
 
 -- Theorems
