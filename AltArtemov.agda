@@ -348,10 +348,6 @@ R⇓² : {t₂ t₁ u : Tm} {A : Ty} {Γ : Cx}
 R⇓² {t₂} {t₁} = R⇓ⁿ {𝒕 = t₂ ∶ t₁ ∶⋯}
 
 
-----
-
--- Examples
-
 -- Example 1 (p. 28[1])
 
 e1₁ : {x y : Var} {A : Ty}
