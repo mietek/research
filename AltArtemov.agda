@@ -14,9 +14,9 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
      ("v" "𝑣") ("v1" "𝑣") ("v2" "𝑣²") ("vn" "𝑣ⁿ")
      ("l" "𝜆") ("l1" "𝜆") ("l2" "𝜆²") ("ln" "𝜆ⁿ") ("." "．")
      ("o" "∘") ("o1" "∘") ("o2" "∘²") ("on" "∘ⁿ")
-     ("p" "𝗽") ("p1" "𝗽") ("p2" "𝗽²") ("pn" "𝗽ⁿ")
-     ("pi0" "𝛑₀") ("pi01" "𝛑₀") ("pi02" "𝛑₀²") ("pi0n" "𝛑₀ⁿ")
-     ("pi1" "𝛑₁") ("pi11" "𝛑₁") ("pi12" "𝛑₁²") ("pi1n" "𝛑₁ⁿ")
+     ("p" "𝑝") ("p1" "𝑝") ("p2" "𝑝²") ("pn" "𝑝ⁿ")
+     ("pi0" "𝜋₀") ("pi01" "𝜋₀") ("pi02" "𝜋₀²") ("pi0n" "𝜋₀ⁿ")
+     ("pi1" "𝜋₁") ("pi11" "𝜋₁") ("pi12" "𝜋₁²") ("pi1n" "𝜋₁ⁿ")
      ("u" "⇑") ("u1" "⇑") ("u2" "⇑²") ("un" "⇑ⁿ")
      ("d" "⇓") ("d1" "⇓") ("d2" "⇓²") ("dn" "⇓ⁿ"))))
 
@@ -58,9 +58,9 @@ mutual
     𝑣_        : (x : Var)                  → Tm    -- Variable
     𝜆ⁿ_．_#_   : (x : Var) (t : Tm) (n : ℕ) → Tm    -- Abstraction
     _∘ⁿ_#_    : (t s : Tm)         (n : ℕ) → Tm    -- Application
-    𝗽ⁿ⟨_,_⟩#_ : (t s : Tm)         (n : ℕ) → Tm    -- Pairing
-    𝛑₀ⁿ_#_    : (t : Tm)           (n : ℕ) → Tm    -- Left projection
-    𝛑₁ⁿ_#_    : (t : Tm)           (n : ℕ) → Tm    -- Right projection
+    𝑝ⁿ⟨_,_⟩#_ : (t s : Tm)         (n : ℕ) → Tm    -- Pairing
+    𝜋₀ⁿ_#_    : (t : Tm)           (n : ℕ) → Tm    -- Left projection
+    𝜋₁ⁿ_#_    : (t : Tm)           (n : ℕ) → Tm    -- Right projection
     !_        : (t : Tm)                   → Tm    -- Proof checking
     ⇑ⁿ_#_     : (t : Tm)           (n : ℕ) → Tm    -- Reification
     ⇓ⁿ_#_     : (t : Tm)           (n : ℕ) → Tm    -- Reflection
@@ -119,17 +119,17 @@ _V∘ⁿ_∶_ : {n : ℕ} (𝒕 𝒔 : TmV n) (A : Ty) → Ty
 _V∘ⁿ_∶_ {zero}  (t₁ ∶⋯)  (s₁ ∶⋯)  A = t₁ ∘ⁿ s₁ # zero  ∶ A
 _V∘ⁿ_∶_ {suc n} (tₙ ∶ 𝒕) (sₙ ∶ 𝒔) A = tₙ ∘ⁿ sₙ # suc n ∶ 𝒕 V∘ⁿ 𝒔 ∶ A
 
-V𝗽ⁿ⟨_,_⟩∶_ : {n : ℕ} (𝒕 𝒔 : TmV n) (A : Ty) → Ty
-V𝗽ⁿ⟨_,_⟩∶_ {zero}  (t₁ ∶⋯)  (s₁ ∶⋯)  A = 𝗽ⁿ⟨ t₁ , s₁ ⟩# zero  ∶ A
-V𝗽ⁿ⟨_,_⟩∶_ {suc n} (tₙ ∶ 𝒕) (sₙ ∶ 𝒔) A = 𝗽ⁿ⟨ tₙ , sₙ ⟩# suc n ∶ V𝗽ⁿ⟨ 𝒕 , 𝒔 ⟩∶ A
+V𝑝ⁿ⟨_,_⟩∶_ : {n : ℕ} (𝒕 𝒔 : TmV n) (A : Ty) → Ty
+V𝑝ⁿ⟨_,_⟩∶_ {zero}  (t₁ ∶⋯)  (s₁ ∶⋯)  A = 𝑝ⁿ⟨ t₁ , s₁ ⟩# zero  ∶ A
+V𝑝ⁿ⟨_,_⟩∶_ {suc n} (tₙ ∶ 𝒕) (sₙ ∶ 𝒔) A = 𝑝ⁿ⟨ tₙ , sₙ ⟩# suc n ∶ V𝑝ⁿ⟨ 𝒕 , 𝒔 ⟩∶ A
 
-V𝛑₀ⁿ_∶_ : {n : ℕ} (𝒕 : TmV n) (A : Ty) → Ty
-V𝛑₀ⁿ_∶_ {zero}  (t₁ ∶⋯)  A = 𝛑₀ⁿ t₁ # zero  ∶ A
-V𝛑₀ⁿ_∶_ {suc n} (tₙ ∶ 𝒕) A = 𝛑₀ⁿ tₙ # suc n ∶ V𝛑₀ⁿ 𝒕 ∶ A
+V𝜋₀ⁿ_∶_ : {n : ℕ} (𝒕 : TmV n) (A : Ty) → Ty
+V𝜋₀ⁿ_∶_ {zero}  (t₁ ∶⋯)  A = 𝜋₀ⁿ t₁ # zero  ∶ A
+V𝜋₀ⁿ_∶_ {suc n} (tₙ ∶ 𝒕) A = 𝜋₀ⁿ tₙ # suc n ∶ V𝜋₀ⁿ 𝒕 ∶ A
 
-V𝛑₁ⁿ_∶_ : {n : ℕ} (𝒕 : TmV n) (A : Ty) → Ty
-V𝛑₁ⁿ_∶_ {zero}  (t₁ ∶⋯)  A = 𝛑₁ⁿ t₁ # zero  ∶ A
-V𝛑₁ⁿ_∶_ {suc n} (tₙ ∶ 𝒕) A = 𝛑₁ⁿ tₙ # suc n ∶ V𝛑₁ⁿ 𝒕 ∶ A
+V𝜋₁ⁿ_∶_ : {n : ℕ} (𝒕 : TmV n) (A : Ty) → Ty
+V𝜋₁ⁿ_∶_ {zero}  (t₁ ∶⋯)  A = 𝜋₁ⁿ t₁ # zero  ∶ A
+V𝜋₁ⁿ_∶_ {suc n} (tₙ ∶ 𝒕) A = 𝜋₁ⁿ tₙ # suc n ∶ V𝜋₁ⁿ 𝒕 ∶ A
 
 V⇑ⁿ_∶_ : {n : ℕ} (𝒕 : TmV n) (A : Ty) → Ty
 V⇑ⁿ_∶_ {zero}  (t₁ ∶⋯)  A = ⇑ⁿ t₁ # zero  ∶ A
@@ -169,17 +169,17 @@ data _⊢_ (Γ : Cx) : Ty → Set where
        → Γ ⊢ V 𝒕 ∶ (A ⊃ B)    → Γ ⊢ V 𝒔 ∶ A
        → Γ ⊢ 𝒕 V∘ⁿ 𝒔 ∶ B
 
-  R𝗽ⁿ  : {n : ℕ} {𝒕 𝒔 : TmV n} {A B : Ty}
+  R𝑝ⁿ  : {n : ℕ} {𝒕 𝒔 : TmV n} {A B : Ty}
        → Γ ⊢ V 𝒕 ∶ A    → Γ ⊢ V 𝒔 ∶ B
-       → Γ ⊢ V𝗽ⁿ⟨ 𝒕 , 𝒔 ⟩∶ (A ∧ B)
+       → Γ ⊢ V𝑝ⁿ⟨ 𝒕 , 𝒔 ⟩∶ (A ∧ B)
 
-  R𝛑₀ⁿ : {n : ℕ} {𝒕 : TmV n} {A B : Ty}
+  R𝜋₀ⁿ : {n : ℕ} {𝒕 : TmV n} {A B : Ty}
        → Γ ⊢ V 𝒕 ∶ (A ∧ B)
-       → Γ ⊢ V𝛑₀ⁿ 𝒕 ∶ A
+       → Γ ⊢ V𝜋₀ⁿ 𝒕 ∶ A
 
-  R𝛑₁ⁿ : {n : ℕ} {𝒕 : TmV n} {A B : Ty}
+  R𝜋₁ⁿ : {n : ℕ} {𝒕 : TmV n} {A B : Ty}
        → Γ ⊢ V 𝒕 ∶ (A ∧ B)
-       → Γ ⊢ V𝛑₁ⁿ 𝒕 ∶ B
+       → Γ ⊢ V𝜋₁ⁿ 𝒕 ∶ B
 
   R⇑ⁿ  : {n : ℕ} {𝒕 : TmV n} {u : Tm} {A : Ty}
        → Γ ⊢ V 𝒕 ∶ (u ∶ A)
@@ -204,14 +204,14 @@ data _⊢_ (Γ : Cx) : Ty → Set where
 _∘_ : (t s : Tm) → Tm
 t ∘ s = t ∘ⁿ s # 0
 
-𝗽⟨_,_⟩ : (t s : Tm) → Tm
-𝗽⟨ t , s ⟩ = 𝗽ⁿ⟨ t , s ⟩# 0
+𝑝⟨_,_⟩ : (t s : Tm) → Tm
+𝑝⟨ t , s ⟩ = 𝑝ⁿ⟨ t , s ⟩# 0
 
-𝛑₀_ : (t : Tm) → Tm
-𝛑₀ t = 𝛑₀ⁿ t # 0
+𝜋₀_ : (t : Tm) → Tm
+𝜋₀ t = 𝜋₀ⁿ t # 0
 
-𝛑₁_ : (t : Tm) → Tm
-𝛑₁ t = 𝛑₁ⁿ t # 0
+𝜋₁_ : (t : Tm) → Tm
+𝜋₁ t = 𝜋₁ⁿ t # 0
 
 ⇑_ : (t : Tm) → Tm
 ⇑ t = ⇑ⁿ t # 0
@@ -228,14 +228,14 @@ t ∘ s = t ∘ⁿ s # 0
 _∘²_ : (t s : Tm) → Tm
 t ∘² s = t ∘ⁿ s # 1
 
-𝗽²⟨_,_⟩ : (t s : Tm) → Tm
-𝗽²⟨ t , s ⟩ = 𝗽ⁿ⟨ t , s ⟩# 1
+𝑝²⟨_,_⟩ : (t s : Tm) → Tm
+𝑝²⟨ t , s ⟩ = 𝑝ⁿ⟨ t , s ⟩# 1
 
-𝛑₀²_ : (t : Tm) → Tm
-𝛑₀² t = 𝛑₀ⁿ t # 1
+𝜋₀²_ : (t : Tm) → Tm
+𝜋₀² t = 𝜋₀ⁿ t # 1
 
-𝛑₁²_ : (t : Tm) → Tm
-𝛑₁² t = 𝛑₁ⁿ t # 1
+𝜋₁²_ : (t : Tm) → Tm
+𝜋₁² t = 𝜋₁ⁿ t # 1
 
 ⇑²_ : (t : Tm) → Tm
 ⇑² t = ⇑ⁿ t # 1
@@ -261,20 +261,20 @@ R∘ : {t s : Tm} {A B : Ty} {Γ : Cx}
    → Γ ⊢ t ∘ s ∶ B
 R∘ {t} {s} e f = R∘ⁿ {𝒕 = t ∶⋯} {𝒔 = s ∶⋯} e f
 
-R𝗽 : {t s : Tm} {A B : Ty} {Γ : Cx}
+R𝑝 : {t s : Tm} {A B : Ty} {Γ : Cx}
    → Γ ⊢ t ∶ A    → Γ ⊢ s ∶ B
-   → Γ ⊢ 𝗽⟨ t , s ⟩ ∶ (A ∧ B)
-R𝗽 {t} {s} e f = R𝗽ⁿ {𝒕 = t ∶⋯} {𝒔 = s ∶⋯} e f
+   → Γ ⊢ 𝑝⟨ t , s ⟩ ∶ (A ∧ B)
+R𝑝 {t} {s} e f = R𝑝ⁿ {𝒕 = t ∶⋯} {𝒔 = s ∶⋯} e f
 
-R𝛑₀ : {t : Tm} {A B : Ty} {Γ : Cx}
+R𝜋₀ : {t : Tm} {A B : Ty} {Γ : Cx}
     → Γ ⊢ t ∶ (A ∧ B)
-    → Γ ⊢ 𝛑₀ t ∶ A
-R𝛑₀ {t} e = R𝛑₀ⁿ {𝒕 = t ∶⋯} e
+    → Γ ⊢ 𝜋₀ t ∶ A
+R𝜋₀ {t} e = R𝜋₀ⁿ {𝒕 = t ∶⋯} e
 
-R𝛑₁ : {t : Tm} {A B : Ty} {Γ : Cx}
+R𝜋₁ : {t : Tm} {A B : Ty} {Γ : Cx}
     → Γ ⊢ t ∶ (A ∧ B)
-    → Γ ⊢ 𝛑₁ t ∶ B
-R𝛑₁ {t} e = R𝛑₁ⁿ {𝒕 = t ∶⋯} e
+    → Γ ⊢ 𝜋₁ t ∶ B
+R𝜋₁ {t} e = R𝜋₁ⁿ {𝒕 = t ∶⋯} e
 
 R⇑ : {t u : Tm} {A : Ty} {Γ : Cx}
    → Γ ⊢ t ∶ u ∶ A
@@ -304,20 +304,20 @@ R∘² : {t₂ t₁ s₂ s₁ : Tm} {A B : Ty} {Γ : Cx}
     → Γ ⊢ t₂ ∘² s₂ ∶ t₁ ∘ s₁ ∶ B
 R∘² {t₂} {t₁} {s₂} {s₁} = R∘ⁿ {𝒕 = t₂ ∶ t₁ ∶⋯} {𝒔 = s₂ ∶ s₁ ∶⋯}
 
-R𝗽² : {t₂ t₁ s₂ s₁ : Tm} {A B : Ty} {Γ : Cx}
+R𝑝² : {t₂ t₁ s₂ s₁ : Tm} {A B : Ty} {Γ : Cx}
     → Γ ⊢ t₂ ∶ t₁ ∶ A    → Γ ⊢ s₂ ∶ s₁ ∶ B
-    → Γ ⊢ 𝗽²⟨ t₂ , s₂ ⟩ ∶ 𝗽⟨ t₁ , s₁ ⟩ ∶ (A ∧ B)
-R𝗽² {t₂} {t₁} {s₂} {s₁} = R𝗽ⁿ {𝒕 = t₂ ∶ t₁ ∶⋯} {𝒔 = s₂ ∶ s₁ ∶⋯}
+    → Γ ⊢ 𝑝²⟨ t₂ , s₂ ⟩ ∶ 𝑝⟨ t₁ , s₁ ⟩ ∶ (A ∧ B)
+R𝑝² {t₂} {t₁} {s₂} {s₁} = R𝑝ⁿ {𝒕 = t₂ ∶ t₁ ∶⋯} {𝒔 = s₂ ∶ s₁ ∶⋯}
 
-R𝛑₀² : {t₂ t₁ : Tm} {A B : Ty} {Γ : Cx}
+R𝜋₀² : {t₂ t₁ : Tm} {A B : Ty} {Γ : Cx}
      → Γ ⊢ t₂ ∶ t₁ ∶ (A ∧ B)
-     → Γ ⊢ 𝛑₀² t₂ ∶ 𝛑₀ t₁ ∶ A
-R𝛑₀² {t₂} {t₁} = R𝛑₀ⁿ {𝒕 = t₂ ∶ t₁ ∶⋯}
+     → Γ ⊢ 𝜋₀² t₂ ∶ 𝜋₀ t₁ ∶ A
+R𝜋₀² {t₂} {t₁} = R𝜋₀ⁿ {𝒕 = t₂ ∶ t₁ ∶⋯}
 
-R𝛑₁² : {t₂ t₁ : Tm} {A B : Ty} {Γ : Cx}
+R𝜋₁² : {t₂ t₁ : Tm} {A B : Ty} {Γ : Cx}
      → Γ ⊢ t₂ ∶ t₁ ∶ (A ∧ B)
-     → Γ ⊢ 𝛑₁² t₂ ∶ 𝛑₁ t₁ ∶ B
-R𝛑₁² {t₂} {t₁} = R𝛑₁ⁿ {𝒕 = t₂ ∶ t₁ ∶⋯}
+     → Γ ⊢ 𝜋₁² t₂ ∶ 𝜋₁ t₁ ∶ B
+R𝜋₁² {t₂} {t₁} = R𝜋₁ⁿ {𝒕 = t₂ ∶ t₁ ∶⋯}
 
 R⇑² : {t₂ t₁ u : Tm} {A : Ty} {Γ : Cx}
     → Γ ⊢ t₂ ∶ t₁ ∶ u ∶ A
@@ -341,13 +341,13 @@ e1₂ : {x y : Var} {A : Ty}
 e1₂ = R𝜆 (R⇑ (R𝑣 Z))
 
 e1₃ : {u x v y : Var} {A B : Ty}
-    → ⊩ 𝜆² u ． 𝜆² v ． 𝗽²⟨ 𝑣 u , 𝑣 v ⟩ ∶ 𝜆 x ． 𝜆 y ． 𝗽⟨ 𝑣 x , 𝑣 y ⟩ ∶ (A ⊃ B ⊃ A ∧ B)
-e1₃ = R𝜆² (R𝜆² (R𝗽² (R𝑣² (S Z))
+    → ⊩ 𝜆² u ． 𝜆² v ． 𝑝²⟨ 𝑣 u , 𝑣 v ⟩ ∶ 𝜆 x ． 𝜆 y ． 𝑝⟨ 𝑣 x , 𝑣 y ⟩ ∶ (A ⊃ B ⊃ A ∧ B)
+e1₃ = R𝜆² (R𝜆² (R𝑝² (R𝑣² (S Z))
                     (R𝑣² Z)))
 
 e1₄ : {u x v y : Var} {A B : Ty}
-    → ⊩ 𝜆 u ． 𝜆 v ． ⇑ 𝗽²⟨ 𝑣 u , 𝑣 v ⟩ ∶ (𝑣 x ∶ A ⊃ 𝑣 y ∶ B ⊃ ! 𝗽⟨ 𝑣 x , 𝑣 y ⟩ ∶ 𝗽⟨ 𝑣 x , 𝑣 y ⟩ ∶ (A ∧ B))
-e1₄ = R𝜆 (R𝜆 (R⇑ (R𝗽² (R𝑣 (S Z))
+    → ⊩ 𝜆 u ． 𝜆 v ． ⇑ 𝑝²⟨ 𝑣 u , 𝑣 v ⟩ ∶ (𝑣 x ∶ A ⊃ 𝑣 y ∶ B ⊃ ! 𝑝⟨ 𝑣 x , 𝑣 y ⟩ ∶ 𝑝⟨ 𝑣 x , 𝑣 y ⟩ ∶ (A ∧ B))
+e1₄ = R𝜆 (R𝜆 (R⇑ (R𝑝² (R𝑣 (S Z))
                       (R𝑣 Z))))
 
 
