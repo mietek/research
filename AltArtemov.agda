@@ -101,14 +101,11 @@ data VarV : ℕ → Set where
   _∶_ : (xₙ : Var) {n : ℕ} (𝒙 : VarV n) → VarV (suc n)
 
 
--- Term vector expansion
+-- Vector expansion
 
 V_∶_ : {n : ℕ} (𝒕 : TmV n) (A : Ty) → Ty
 V t₁ ∶⋯  ∶ A = t₁ ∶ A
 V tₙ ∶ 𝒕 ∶ A = tₙ ∶ V 𝒕 ∶ A
-
-
--- Vector expansion
 
 V𝑣_∶_ : {n : ℕ} (𝒙 : VarV n) (A : Ty) → Ty
 V𝑣 x₁ ∶⋯  ∶ A = 𝑣 x₁ ∶ A
