@@ -30,13 +30,13 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
 
 module AltArtemov where
 
-open import Data.Nat using (ℕ ; _+_)
+open import Data.Nat using (ℕ ; zero ; suc)
 open import Data.Product using (_×_)
 
 infixl 8 _∘_ _∘²_ _∘ⁿ_#_
 infixr 7 ⇓_ ⇓²_ ⇓ⁿ_#_ ⇑_ ⇑²_ ⇑ⁿ_#_ !_ 𝑣_
-infixr 6 𝜆_．_ 𝜆²_．_ 𝜆ⁿ_．_#_ _∶_
-infixr 5 ¬_
+infixr 6 𝜆_．_ 𝜆²_．_ 𝜆ⁿ_．_#_
+infixr 5 ¬_ _∶_
 infixl 4 _∧_
 infixr 3 _⊃_ _⊃⊂_
 infixl 2 _,_
@@ -55,37 +55,37 @@ mutual
   -- Term formation
 
   data Tm : Set where
-    𝑣_        : (x : Var) → Tm                     -- Variable referencing
+    𝑣_        : (x : Var)                  → Tm    -- Variable referencing
     𝜆ⁿ_．_#_   : (x : Var) (t : Tm) (n : ℕ) → Tm    -- Implication introduction
-    _∘ⁿ_#_    : (t s : Tm) (n : ℕ) → Tm            -- Implication elimination
-    𝗽ⁿ⟨_,_⟩#_ : (t s : Tm) (n : ℕ) → Tm            -- Conjunction introduction
-    𝛑₀ⁿ_#_    : (t : Tm) (n : ℕ) → Tm              -- Left conjunction elimination
-    𝛑₁ⁿ_#_    : (t : Tm) (n : ℕ) → Tm              -- Right conjunction elimination
-    !_        : (t : Tm) → Tm                      -- Proof checking
-    ⇑ⁿ_#_     : (t : Tm) (n : ℕ) → Tm              -- Proof reification
-    ⇓ⁿ_#_     : (t : Tm) (n : ℕ) → Tm              -- Proof reflection
+    _∘ⁿ_#_    : (t s : Tm)         (n : ℕ) → Tm    -- Implication elimination
+    𝗽ⁿ⟨_,_⟩#_ : (t s : Tm)         (n : ℕ) → Tm    -- Conjunction introduction
+    𝛑₀ⁿ_#_    : (t : Tm)           (n : ℕ) → Tm    -- Left conjunction elimination
+    𝛑₁ⁿ_#_    : (t : Tm)           (n : ℕ) → Tm    -- Right conjunction elimination
+    !_        : (t : Tm)                   → Tm    -- Proof checking
+    ⇑ⁿ_#_     : (t : Tm)           (n : ℕ) → Tm    -- Proof reification
+    ⇓ⁿ_#_     : (t : Tm)           (n : ℕ) → Tm    -- Proof reflection
 
 
   -- Type formation
 
   data Ty : Set where
-    ⊥   : Ty                        -- Falsehood
-    _⊃_ : (A B : Ty) → Ty           -- Implication
-    _∧_ : (A B : Ty) → Ty           -- Conjunction
+    ⊥   :                     Ty    -- Falsehood
+    _⊃_ : (A B : Ty)        → Ty    -- Implication
+    _∧_ : (A B : Ty)        → Ty    -- Conjunction
     _∶_ : (x : Tm) (A : Ty) → Ty    -- Explicit provability
  
 
 -- Contexts
 
 data Cx : Set where
-  ∅   : Cx
+  ∅   :           Cx
   _,_ : Cx → Ty → Cx
 
 
 -- Context membership evidence
 
 data _∈_ (A : Ty) : Cx → Set where
-  Z : {Γ : Cx} → A ∈ Γ , A
+  Z : {Γ : Cx}                  → A ∈ Γ , A
   S : {Γ : Cx} {B : Ty} → A ∈ Γ → A ∈ Γ , B
 
 
@@ -104,99 +104,89 @@ A ⊃⊂ B = A ⊃ B ∧ B ⊃ A
 -- Notation for level 1 terms
 
 𝜆_．_ : (x : Var) (t : Tm) → Tm
-𝜆 x ． t = 𝜆ⁿ x ． t # 1
+𝜆 x ． t = 𝜆ⁿ x ． t # 0
 
 _∘_ : (t s : Tm) → Tm
-t ∘ s = t ∘ⁿ s # 1
+t ∘ s = t ∘ⁿ s # 0
 
 𝗽⟨_,_⟩ : (t s : Tm) → Tm
-𝗽⟨ t , s ⟩ = 𝗽ⁿ⟨ t , s ⟩# 1
+𝗽⟨ t , s ⟩ = 𝗽ⁿ⟨ t , s ⟩# 0
 
 𝛑₀_ : (t : Tm) → Tm
-𝛑₀ t = 𝛑₀ⁿ t # 1
+𝛑₀ t = 𝛑₀ⁿ t # 0
 
 𝛑₁_ : (t : Tm) → Tm
-𝛑₁ t = 𝛑₁ⁿ t # 1
+𝛑₁ t = 𝛑₁ⁿ t # 0
 
 ⇑_ : (t : Tm) → Tm
-⇑ t = ⇑ⁿ t # 1
+⇑ t = ⇑ⁿ t # 0
 
 ⇓_ : (t : Tm) → Tm
-⇓ t = ⇓ⁿ t # 1
+⇓ t = ⇓ⁿ t # 0
 
 
 -- Notation for level 2 terms
 
 𝜆²_．_ : (x : Var) (t : Tm) → Tm
-𝜆² x ． t = 𝜆ⁿ x ． t # 2
+𝜆² x ． t = 𝜆ⁿ x ． t # 1
 
 _∘²_ : (t s : Tm) → Tm
-t ∘² s = t ∘ⁿ s # 2
+t ∘² s = t ∘ⁿ s # 1
 
 𝗽²⟨_,_⟩ : (t s : Tm) → Tm
-𝗽²⟨ t , s ⟩ = 𝗽ⁿ⟨ t , s ⟩# 2
+𝗽²⟨ t , s ⟩ = 𝗽ⁿ⟨ t , s ⟩# 1
 
 𝛑₀²_ : (t : Tm) → Tm
-𝛑₀² t = 𝛑₀ⁿ t # 2
+𝛑₀² t = 𝛑₀ⁿ t # 1
 
 𝛑₁²_ : (t : Tm) → Tm
-𝛑₁² t = 𝛑₁ⁿ t # 2
+𝛑₁² t = 𝛑₁ⁿ t # 1
 
 ⇑²_ : (t : Tm) → Tm
-⇑² t = ⇑ⁿ t # 2
+⇑² t = ⇑ⁿ t # 1
 
 ⇓²_ : (t : Tm) → Tm
-⇓² t = ⇓ⁿ t # 2
+⇓² t = ⇓ⁿ t # 1
 
 
 -- Term vectors
 
 data Tms : ℕ → Set where
-  tm₁ : (t : Tm) → Tms 0
-  tmₙ : {n : ℕ} (t : Tm) (𝒕 : Tms n) → Tms n
+  tms₁ : {n : ℕ} (t : Tm)             → Tms zero
+  tmsₙ : {n : ℕ} (t : Tm) (𝒕 : Tms n) → Tms (suc n)
 
 Vt_∶_ : {n : ℕ} (𝒕 : Tms n) (A : Ty) → Ty
-Vt_∶_ (tm₁ t₁)   A = t₁ ∶ A
-Vt_∶_ (tmₙ tₙ 𝒕) A = tₙ ∶ Vt 𝒕 ∶ A
+Vt_∶_ (tms₁ t₁)   A = t₁ ∶ A
+Vt_∶_ (tmsₙ tₙ 𝒕) A = tₙ ∶ Vt 𝒕 ∶ A
 
 
 -- Variable vectors
 
 data Vars : ℕ → Set where
-  var₁ : (x : Var) → Vars 0
-  varₙ : {n : ℕ} (x : Var) (𝒙 : Vars n) → Vars n
+  vars₁ : {n : ℕ} (x : Var)              → Vars zero
+  varsₙ : {n : ℕ} (x : Var) (𝒙 : Vars n) → Vars (suc n)
 
 Vx_∶_ : {n : ℕ} (𝒙 : Vars n) (A : Ty) → Ty
-Vx_∶_ (var₁ x₁)   A = 𝑣 x₁ ∶ A
-Vx_∶_ (varₙ xₙ 𝒙) A = 𝑣 xₙ ∶ Vx 𝒙 ∶ A
+Vx_∶_ (vars₁ x₁)   A = 𝑣 x₁ ∶ A
+Vx_∶_ (varsₙ xₙ 𝒙) A = 𝑣 xₙ ∶ Vx 𝒙 ∶ A
 
 
 -- Implication vectors
 
-V : {n : ℕ} (𝒙 : Vars n) (𝒕 : Tms n) (C : Ty) → Ty
-V (var₁ x) (tm₁ t) C = {!!}
-V (var₁ x) (tmₙ t 𝒕) C = {!!}
-V (varₙ x 𝒙) (tm₁ t) C = {!!}
-V (varₙ x 𝒙) (tmₙ t 𝒕) C = {!!}
-
-
-{-
-Incomplete pattern matching for Vλ_．_∶_. Missing cases:
-  Vλ_．_∶_ {Data.Nat.zero} (varone _) (tmsuc {._} _ _) _
-  Vλ_．_∶_ {Data.Nat.zero} (varsuc {._} _ _) (tmone _) _
-when checking the definition of Vλ_．_∶_
--}
+Vλ_．_∶_ : {n : ℕ} (𝒙 : Vars n) (𝒕 : Tms n) (A : Ty) → Ty
+Vλ_．_∶_ {zero}  (vars₁ x₁)   (tms₁ t₁)   A = 𝜆 x₁ ． t₁ ∶ A
+Vλ_．_∶_ {suc n} (varsₙ xₙ 𝒙) (tmsₙ tₙ 𝒕) A = 𝜆ⁿ xₙ ． tₙ # n ∶ Vλ 𝒙 ． 𝒕 ∶ A
 
 
 data _⊢_ (Γ : Cx) : Ty → Set where
 
-  RRx  : {n : ℕ} {𝒙 : Vars n} {A : Ty}
+  RR𝑣  : {n : ℕ} {𝒙 : Vars n} {A : Ty}
        → Vx 𝒙 ∶ A ∈ Γ
        → Γ ⊢ Vx 𝒙 ∶ A
 
---  RRλ  : {n : ℕ} {𝒙 : Vars n} {𝒕 : Tms n} {A B : Ty}
---       → Γ , Vx 𝒙 ∶ A ⊢ Vt 𝒕 ∶ B
---       → Γ ⊢ Vλ 𝒙 ． 𝒕 ∶ (A ⊃ B) 
+  RR𝜆  : {n : ℕ} {𝒙 : Vars n} {𝒕 : Tms n} {A B : Ty}
+       → Γ , Vx 𝒙 ∶ A ⊢ Vt 𝒕 ∶ B
+       → Γ ⊢ Vλ 𝒙 ． 𝒕 ∶ (A ⊃ B) 
 
 
   -- Typing rules for level 1 terms
