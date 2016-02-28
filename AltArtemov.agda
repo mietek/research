@@ -52,7 +52,7 @@ mutual
   Var = ℕ × Ty
 
 
-  -- Terms
+  -- Term constructors
 
   data Tm : Set where
     𝑣_        : (x : Var)                  → Tm    -- Variable
@@ -66,7 +66,7 @@ mutual
     ⇓ⁿ_#_     : (t : Tm)           (n : ℕ) → Tm    -- Reflection
 
 
-  -- Types
+  -- Type constructors
 
   data Ty : Set where
     ⊥   :                     Ty    -- Falsehood
@@ -75,7 +75,7 @@ mutual
     _∶_ : (x : Tm) (A : Ty) → Ty    -- Provability
 
 
--- Additional types
+-- Notational definitions of additional types
 
 ⊤ : Ty                    -- Truth
 ⊤ = ⊥ ⊃ ⊥
@@ -93,25 +93,28 @@ data Vec (X : Set) : ℕ → Set where
   _∶⋯ : (x₁ : X)                       → Vec X zero
   _∶_ : (xₙ : X) {n : ℕ} (𝒙 : Vec X n) → Vec X (suc n)
 
+
+-- Vector notation for variables
+
 VarV : ℕ → Set
 VarV n = Vec Var n
-
-TmV : ℕ → Set
-TmV n = Vec Tm n
-
-
--- Vector notation
 
 V_∶_ : {n : ℕ} (𝒙 : VarV n) (A : Ty) → Ty
 V x₁ ∶⋯  ∶ A = 𝑣 x₁ ∶ A
 V xₙ ∶ 𝒙 ∶ A = 𝑣 xₙ ∶ V 𝒙 ∶ A
+
+
+-- Vector notation for terms
+
+TmV : ℕ → Set
+TmV n = Vec Tm n
 
 T_∶_ : {n : ℕ} (𝒕 : TmV n) (A : Ty) → Ty
 T t₁ ∶⋯  ∶ A = t₁ ∶ A
 T tₙ ∶ 𝒕 ∶ A = tₙ ∶ T 𝒕 ∶ A
 
 
--- Additional vector notation
+-- Vector notation for term constructors
 
 T𝜆ⁿ_．_∶_ : {n : ℕ} (𝒙 : VarV n) (𝒕 : TmV n) (A : Ty) → Ty
 T𝜆ⁿ_．_∶_ {zero}  (x₁ ∶⋯)  (t₁ ∶⋯)  A = 𝜆ⁿ x₁ ． t₁ # zero  ∶ A
