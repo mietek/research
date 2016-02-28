@@ -201,49 +201,49 @@ data _⊢_ (Γ : Cx) : Ty → Set where
 -- Notation for level 1 terms
 
 𝜆_．_ : (x : Var) (t : Tm) → Tm
-𝜆 x ． t = 𝜆ⁿ x ． t # 0
+𝜆 x ． t = 𝜆ⁿ x ． t # zero
 
 _∘_ : (t s : Tm) → Tm
-t ∘ s = t ∘ⁿ s # 0
+t ∘ s = t ∘ⁿ s # zero
 
 𝑝⟨_,_⟩ : (t s : Tm) → Tm
-𝑝⟨ t , s ⟩ = 𝑝ⁿ⟨ t , s ⟩# 0
+𝑝⟨ t , s ⟩ = 𝑝ⁿ⟨ t , s ⟩# zero
 
 𝜋₀_ : (t : Tm) → Tm
-𝜋₀ t = 𝜋₀ⁿ t # 0
+𝜋₀ t = 𝜋₀ⁿ t # zero
 
 𝜋₁_ : (t : Tm) → Tm
-𝜋₁ t = 𝜋₁ⁿ t # 0
+𝜋₁ t = 𝜋₁ⁿ t # zero
 
 ⇑_ : (t : Tm) → Tm
-⇑ t = ⇑ⁿ t # 0
+⇑ t = ⇑ⁿ t # zero
 
 ⇓_ : (t : Tm) → Tm
-⇓ t = ⇓ⁿ t # 0
+⇓ t = ⇓ⁿ t # zero
 
 
 -- Notation for level 2 terms
 
 𝜆²_．_ : (x : Var) (t : Tm) → Tm
-𝜆² x ． t = 𝜆ⁿ x ． t # 1
+𝜆² x ． t = 𝜆ⁿ x ． t # suc zero
 
 _∘²_ : (t s : Tm) → Tm
-t ∘² s = t ∘ⁿ s # 1
+t ∘² s = t ∘ⁿ s # suc zero
 
 𝑝²⟨_,_⟩ : (t s : Tm) → Tm
-𝑝²⟨ t , s ⟩ = 𝑝ⁿ⟨ t , s ⟩# 1
+𝑝²⟨ t , s ⟩ = 𝑝ⁿ⟨ t , s ⟩# suc zero
 
 𝜋₀²_ : (t : Tm) → Tm
-𝜋₀² t = 𝜋₀ⁿ t # 1
+𝜋₀² t = 𝜋₀ⁿ t # suc zero
 
 𝜋₁²_ : (t : Tm) → Tm
-𝜋₁² t = 𝜋₁ⁿ t # 1
+𝜋₁² t = 𝜋₁ⁿ t # suc zero
 
 ⇑²_ : (t : Tm) → Tm
-⇑² t = ⇑ⁿ t # 1
+⇑² t = ⇑ⁿ t # suc zero
 
 ⇓²_ : (t : Tm) → Tm
-⇓² t = ⇓ⁿ t # 1
+⇓² t = ⇓ⁿ t # suc zero
 
 
 -- Notation for level 1 typing rules
