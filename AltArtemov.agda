@@ -98,7 +98,7 @@ V t₁ ∶⋯  ∶ A = t₁ ∶ A
 V tₙ ∶ 𝒕 ∶ A = tₙ ∶ V 𝒕 ∶ A
 
 
--- Variable vectors
+-- Variable term vectors
 
 data VarV : ℕ → Set where
   _∶⋯ : (x₁ : Var)                      → VarV zero
@@ -109,7 +109,7 @@ V𝑣 x₁ ∶⋯  ∶ A = 𝑣 x₁ ∶ A
 V𝑣 xₙ ∶ 𝒙 ∶ A = 𝑣 xₙ ∶ V𝑣 𝒙 ∶ A
 
 
--- Additional vector expansion
+-- Other term vectors
 
 V𝜆ⁿ_．_∶_ : {n : ℕ} (𝒙 : VarV n) (𝒕 : TmV n) (A : Ty) → Ty
 V𝜆ⁿ_．_∶_ {zero}  (x₁ ∶⋯)  (t₁ ∶⋯)  A = 𝜆ⁿ x₁ ． t₁ # zero  ∶ A
@@ -196,7 +196,7 @@ data _⊢_ (Γ : Cx) : Ty → Set where
 ⊩ A = {Γ : Cx} → Γ ⊢ A
 
 
--- Notation for level 1 terms
+-- Level 1 terms
 
 𝜆_．_ : (x : Var) (t : Tm) → Tm
 𝜆 x ． t = 𝜆ⁿ x ． t # 0
@@ -220,7 +220,7 @@ t ∘ s = t ∘ⁿ s # 0
 ⇓ t = ⇓ⁿ t # 0
 
 
--- Notation for level 2 terms
+-- Level 2 terms
 
 𝜆²_．_ : (x : Var) (t : Tm) → Tm
 𝜆² x ． t = 𝜆ⁿ x ． t # 1
@@ -244,7 +244,7 @@ t ∘² s = t ∘ⁿ s # 1
 ⇓² t = ⇓ⁿ t # 1
 
 
--- Notation for level 1 typing rules
+-- Level 1 typing rules
 
 R𝑣 : {x : Var} {A : Ty} {Γ : Cx}
    → 𝑣 x ∶ A ∈ Γ
@@ -287,7 +287,7 @@ R⇓ : {t u : Tm} {A : Ty} {Γ : Cx}
 R⇓ {t} e = R⇓ⁿ {𝒕 = t ∶⋯} e
 
 
--- Notation for level 2 typing rules
+-- Level 2 typing rules
 
 R𝑣² : {x₂ x₁ : Var} {A : Ty} {Γ : Cx}
     → 𝑣 x₂ ∶ 𝑣 x₁ ∶ A ∈ Γ
