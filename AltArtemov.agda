@@ -94,55 +94,55 @@ data Vec (X : Set) : ℕ → Set where
   _∶_ : (xₙ : X) {n : ℕ} (𝒙 : Vec X n) → Vec X (suc n)
 
 
--- Vector notation for variables
-
-VarV : ℕ → Set
-VarV n = Vec Var n
-
-V_∶_ : {n : ℕ} (𝒙 : VarV n) (A : Ty) → Ty
-V x₁ ∶⋯  ∶ A = 𝑣 x₁ ∶ A
-V xₙ ∶ 𝒙 ∶ A = 𝑣 xₙ ∶ V 𝒙 ∶ A
-
-
 -- Vector notation for terms
 
-TmV : ℕ → Set
-TmV n = Vec Tm n
+VTm : ℕ → Set
+VTm n = Vec Tm n
 
-T_∶_ : {n : ℕ} (𝒕 : TmV n) (A : Ty) → Ty
-T t₁ ∶⋯  ∶ A = t₁ ∶ A
-T tₙ ∶ 𝒕 ∶ A = tₙ ∶ T 𝒕 ∶ A
+V_∶_ : {n : ℕ} (𝒕 : VTm n) (A : Ty) → Ty
+V t₁ ∶⋯  ∶ A = t₁ ∶ A
+V tₙ ∶ 𝒕 ∶ A = tₙ ∶ V 𝒕 ∶ A
+
+
+-- Vector notation for variables
+
+VVar : ℕ → Set
+VVar n = Vec Var n
+
+V𝑣_∶_ : {n : ℕ} (𝒙 : VVar n) (A : Ty) → Ty
+V𝑣 x₁ ∶⋯  ∶ A = 𝑣 x₁ ∶ A
+V𝑣 xₙ ∶ 𝒙 ∶ A = 𝑣 xₙ ∶ V𝑣 𝒙 ∶ A
 
 
 -- Vector notation for term constructors
 
-T𝜆ⁿ_．_∶_ : {n : ℕ} (𝒙 : VarV n) (𝒕 : TmV n) (A : Ty) → Ty
-T𝜆ⁿ_．_∶_ {zero}  (x₁ ∶⋯)  (t₁ ∶⋯)  A = 𝜆ⁿ x₁ ． t₁ # zero  ∶ A
-T𝜆ⁿ_．_∶_ {suc n} (xₙ ∶ 𝒙) (tₙ ∶ 𝒕) A = 𝜆ⁿ xₙ ． tₙ # suc n ∶ T𝜆ⁿ 𝒙 ． 𝒕 ∶ A
+V𝜆ⁿ_．_∶_ : {n : ℕ} (𝒙 : VVar n) (𝒕 : VTm n) (A : Ty) → Ty
+V𝜆ⁿ_．_∶_ {zero}  (x₁ ∶⋯)  (t₁ ∶⋯)  A = 𝜆ⁿ x₁ ． t₁ # zero  ∶ A
+V𝜆ⁿ_．_∶_ {suc n} (xₙ ∶ 𝒙) (tₙ ∶ 𝒕) A = 𝜆ⁿ xₙ ． tₙ # suc n ∶ V𝜆ⁿ 𝒙 ． 𝒕 ∶ A
 
-_T∘ⁿ_∶_ : {n : ℕ} (𝒕 𝒔 : TmV n) (A : Ty) → Ty
-_T∘ⁿ_∶_ {zero}  (t₁ ∶⋯)  (s₁ ∶⋯)  A = t₁ ∘ⁿ s₁ # zero  ∶ A
-_T∘ⁿ_∶_ {suc n} (tₙ ∶ 𝒕) (sₙ ∶ 𝒔) A = tₙ ∘ⁿ sₙ # suc n ∶ 𝒕 T∘ⁿ 𝒔 ∶ A
+_V∘ⁿ_∶_ : {n : ℕ} (𝒕 𝒔 : VTm n) (A : Ty) → Ty
+_V∘ⁿ_∶_ {zero}  (t₁ ∶⋯)  (s₁ ∶⋯)  A = t₁ ∘ⁿ s₁ # zero  ∶ A
+_V∘ⁿ_∶_ {suc n} (tₙ ∶ 𝒕) (sₙ ∶ 𝒔) A = tₙ ∘ⁿ sₙ # suc n ∶ 𝒕 V∘ⁿ 𝒔 ∶ A
 
-T𝑝ⁿ⟨_,_⟩∶_ : {n : ℕ} (𝒕 𝒔 : TmV n) (A : Ty) → Ty
-T𝑝ⁿ⟨_,_⟩∶_ {zero}  (t₁ ∶⋯)  (s₁ ∶⋯)  A = 𝑝ⁿ⟨ t₁ , s₁ ⟩# zero  ∶ A
-T𝑝ⁿ⟨_,_⟩∶_ {suc n} (tₙ ∶ 𝒕) (sₙ ∶ 𝒔) A = 𝑝ⁿ⟨ tₙ , sₙ ⟩# suc n ∶ T𝑝ⁿ⟨ 𝒕 , 𝒔 ⟩∶ A
+V𝑝ⁿ⟨_,_⟩∶_ : {n : ℕ} (𝒕 𝒔 : VTm n) (A : Ty) → Ty
+V𝑝ⁿ⟨_,_⟩∶_ {zero}  (t₁ ∶⋯)  (s₁ ∶⋯)  A = 𝑝ⁿ⟨ t₁ , s₁ ⟩# zero  ∶ A
+V𝑝ⁿ⟨_,_⟩∶_ {suc n} (tₙ ∶ 𝒕) (sₙ ∶ 𝒔) A = 𝑝ⁿ⟨ tₙ , sₙ ⟩# suc n ∶ V𝑝ⁿ⟨ 𝒕 , 𝒔 ⟩∶ A
 
-T𝜋₀ⁿ_∶_ : {n : ℕ} (𝒕 : TmV n) (A : Ty) → Ty
-T𝜋₀ⁿ_∶_ {zero}  (t₁ ∶⋯)  A = 𝜋₀ⁿ t₁ # zero  ∶ A
-T𝜋₀ⁿ_∶_ {suc n} (tₙ ∶ 𝒕) A = 𝜋₀ⁿ tₙ # suc n ∶ T𝜋₀ⁿ 𝒕 ∶ A
+V𝜋₀ⁿ_∶_ : {n : ℕ} (𝒕 : VTm n) (A : Ty) → Ty
+V𝜋₀ⁿ_∶_ {zero}  (t₁ ∶⋯)  A = 𝜋₀ⁿ t₁ # zero  ∶ A
+V𝜋₀ⁿ_∶_ {suc n} (tₙ ∶ 𝒕) A = 𝜋₀ⁿ tₙ # suc n ∶ V𝜋₀ⁿ 𝒕 ∶ A
 
-T𝜋₁ⁿ_∶_ : {n : ℕ} (𝒕 : TmV n) (A : Ty) → Ty
-T𝜋₁ⁿ_∶_ {zero}  (t₁ ∶⋯)  A = 𝜋₁ⁿ t₁ # zero  ∶ A
-T𝜋₁ⁿ_∶_ {suc n} (tₙ ∶ 𝒕) A = 𝜋₁ⁿ tₙ # suc n ∶ T𝜋₁ⁿ 𝒕 ∶ A
+V𝜋₁ⁿ_∶_ : {n : ℕ} (𝒕 : VTm n) (A : Ty) → Ty
+V𝜋₁ⁿ_∶_ {zero}  (t₁ ∶⋯)  A = 𝜋₁ⁿ t₁ # zero  ∶ A
+V𝜋₁ⁿ_∶_ {suc n} (tₙ ∶ 𝒕) A = 𝜋₁ⁿ tₙ # suc n ∶ V𝜋₁ⁿ 𝒕 ∶ A
 
-T⇑ⁿ_∶_ : {n : ℕ} (𝒕 : TmV n) (A : Ty) → Ty
-T⇑ⁿ_∶_ {zero}  (t₁ ∶⋯)  A = ⇑ⁿ t₁ # zero  ∶ A
-T⇑ⁿ_∶_ {suc n} (tₙ ∶ 𝒕) A = ⇑ⁿ tₙ # suc n ∶ T⇑ⁿ 𝒕 ∶ A
+V⇑ⁿ_∶_ : {n : ℕ} (𝒕 : VTm n) (A : Ty) → Ty
+V⇑ⁿ_∶_ {zero}  (t₁ ∶⋯)  A = ⇑ⁿ t₁ # zero  ∶ A
+V⇑ⁿ_∶_ {suc n} (tₙ ∶ 𝒕) A = ⇑ⁿ tₙ # suc n ∶ V⇑ⁿ 𝒕 ∶ A
 
-T⇓ⁿ_∶_ : {n : ℕ} (𝒕 : TmV n) (A : Ty) → Ty
-T⇓ⁿ_∶_ {zero}  (t₁ ∶⋯)  A = ⇓ⁿ t₁ # zero  ∶ A
-T⇓ⁿ_∶_ {suc n} (tₙ ∶ 𝒕) A = ⇓ⁿ tₙ # suc n ∶ T⇓ⁿ 𝒕 ∶ A
+V⇓ⁿ_∶_ : {n : ℕ} (𝒕 : VTm n) (A : Ty) → Ty
+V⇓ⁿ_∶_ {zero}  (t₁ ∶⋯)  A = ⇓ⁿ t₁ # zero  ∶ A
+V⇓ⁿ_∶_ {suc n} (tₙ ∶ 𝒕) A = ⇓ⁿ tₙ # suc n ∶ V⇓ⁿ 𝒕 ∶ A
 
 
 -- Contexts
@@ -162,37 +162,37 @@ data _∈_ (A : Ty) : Cx → Set where
 -- Typing rules
 
 data _⊢_ (Γ : Cx) : Ty → Set where
-  R𝑣ⁿ  : {n : ℕ} {𝒙 : VarV n} {A : Ty}
-       → V 𝒙 ∶ A ∈ Γ
-       → Γ ⊢ V 𝒙 ∶ A
+  R𝑣ⁿ  : {n : ℕ} {𝒙 : VVar n} {A : Ty}
+       → V𝑣 𝒙 ∶ A ∈ Γ
+       → Γ ⊢ V𝑣 𝒙 ∶ A
 
-  R𝜆ⁿ  : {n : ℕ} {𝒙 : VarV n} {𝒕 : TmV n} {A B : Ty}
-       → Γ , V 𝒙 ∶ A ⊢ T 𝒕 ∶ B
-       → Γ ⊢ T𝜆ⁿ 𝒙 ． 𝒕 ∶ (A ⊃ B)
+  R𝜆ⁿ  : {n : ℕ} {𝒙 : VVar n} {𝒕 : VTm n} {A B : Ty}
+       → Γ , V𝑣 𝒙 ∶ A ⊢ V 𝒕 ∶ B
+       → Γ ⊢ V𝜆ⁿ 𝒙 ． 𝒕 ∶ (A ⊃ B)
 
-  R∘ⁿ  : {n : ℕ} {𝒕 𝒔 : TmV n} {A B : Ty}
-       → Γ ⊢ T 𝒕 ∶ (A ⊃ B)    → Γ ⊢ T 𝒔 ∶ A
-       → Γ ⊢ 𝒕 T∘ⁿ 𝒔 ∶ B
+  R∘ⁿ  : {n : ℕ} {𝒕 𝒔 : VTm n} {A B : Ty}
+       → Γ ⊢ V 𝒕 ∶ (A ⊃ B)    → Γ ⊢ V 𝒔 ∶ A
+       → Γ ⊢ 𝒕 V∘ⁿ 𝒔 ∶ B
 
-  R𝑝ⁿ  : {n : ℕ} {𝒕 𝒔 : TmV n} {A B : Ty}
-       → Γ ⊢ T 𝒕 ∶ A    → Γ ⊢ T 𝒔 ∶ B
-       → Γ ⊢ T𝑝ⁿ⟨ 𝒕 , 𝒔 ⟩∶ (A ∧ B)
+  R𝑝ⁿ  : {n : ℕ} {𝒕 𝒔 : VTm n} {A B : Ty}
+       → Γ ⊢ V 𝒕 ∶ A    → Γ ⊢ V 𝒔 ∶ B
+       → Γ ⊢ V𝑝ⁿ⟨ 𝒕 , 𝒔 ⟩∶ (A ∧ B)
 
-  R𝜋₀ⁿ : {n : ℕ} {𝒕 : TmV n} {A B : Ty}
-       → Γ ⊢ T 𝒕 ∶ (A ∧ B)
-       → Γ ⊢ T𝜋₀ⁿ 𝒕 ∶ A
+  R𝜋₀ⁿ : {n : ℕ} {𝒕 : VTm n} {A B : Ty}
+       → Γ ⊢ V 𝒕 ∶ (A ∧ B)
+       → Γ ⊢ V𝜋₀ⁿ 𝒕 ∶ A
 
-  R𝜋₁ⁿ : {n : ℕ} {𝒕 : TmV n} {A B : Ty}
-       → Γ ⊢ T 𝒕 ∶ (A ∧ B)
-       → Γ ⊢ T𝜋₁ⁿ 𝒕 ∶ B
+  R𝜋₁ⁿ : {n : ℕ} {𝒕 : VTm n} {A B : Ty}
+       → Γ ⊢ V 𝒕 ∶ (A ∧ B)
+       → Γ ⊢ V𝜋₁ⁿ 𝒕 ∶ B
 
-  R⇑ⁿ  : {n : ℕ} {𝒕 : TmV n} {u : Tm} {A : Ty}
-       → Γ ⊢ T 𝒕 ∶ (u ∶ A)
-       → Γ ⊢ T⇑ⁿ 𝒕 ∶ (! u ∶ u ∶ A)
+  R⇑ⁿ  : {n : ℕ} {𝒕 : VTm n} {u : Tm} {A : Ty}
+       → Γ ⊢ V 𝒕 ∶ (u ∶ A)
+       → Γ ⊢ V⇑ⁿ 𝒕 ∶ (! u ∶ u ∶ A)
 
-  R⇓ⁿ  : {n : ℕ} {𝒕 : TmV n} {u : Tm} {A : Ty}
-       → Γ ⊢ T 𝒕 ∶ (u ∶ A)
-       → Γ ⊢ T⇓ⁿ 𝒕 ∶ A
+  R⇓ⁿ  : {n : ℕ} {𝒕 : VTm n} {u : Tm} {A : Ty}
+       → Γ ⊢ V 𝒕 ∶ (u ∶ A)
+       → Γ ⊢ V⇓ⁿ 𝒕 ∶ A
 
 
 -- Theorems
@@ -337,31 +337,31 @@ R⇓² {t₂} {t₁} = R⇓ⁿ {𝒕 = t₂ ∶ t₁ ∶⋯}
 
 -- Example 1 (p. 28[1])
 
-e1₁ : {x y : Var} {A : Ty}
+E1₁ : {x y : Var} {A : Ty}
     → ⊩ 𝜆 y ． ⇓ 𝑣 y ∶ (𝑣 x ∶ A ⊃ A)
-e1₁ = R𝜆 (R⇓ (R𝑣 Z))
+E1₁ = R𝜆 (R⇓ (R𝑣 Z))
 
-e1₂ : {x y : Var} {A : Ty}
+E1₂ : {x y : Var} {A : Ty}
     → ⊩ 𝜆 y ． ⇑ 𝑣 y ∶ (𝑣 x ∶ A ⊃ ! 𝑣 x ∶ 𝑣 x ∶ A)
-e1₂ = R𝜆 (R⇑ (R𝑣 Z))
+E1₂ = R𝜆 (R⇑ (R𝑣 Z))
 
-e1₃ : {u x v y : Var} {A B : Ty}
+E1₃ : {u x v y : Var} {A B : Ty}
     → ⊩ 𝜆² u ． 𝜆² v ． 𝑝²⟨ 𝑣 u , 𝑣 v ⟩ ∶ 𝜆 x ． 𝜆 y ． 𝑝⟨ 𝑣 x , 𝑣 y ⟩ ∶ (A ⊃ B ⊃ A ∧ B)
-e1₃ = R𝜆² (R𝜆² (R𝑝² (R𝑣² (S Z))
+E1₃ = R𝜆² (R𝜆² (R𝑝² (R𝑣² (S Z))
                     (R𝑣² Z)))
 
-e1₄ : {u x v y : Var} {A B : Ty}
+E1₄ : {u x v y : Var} {A B : Ty}
     → ⊩ 𝜆 u ． 𝜆 v ． ⇑ 𝑝²⟨ 𝑣 u , 𝑣 v ⟩ ∶ (𝑣 x ∶ A ⊃ 𝑣 y ∶ B ⊃ ! 𝑝⟨ 𝑣 x , 𝑣 y ⟩ ∶ 𝑝⟨ 𝑣 x , 𝑣 y ⟩ ∶ (A ∧ B))
-e1₄ = R𝜆 (R𝜆 (R⇑ (R𝑝² (R𝑣 (S Z))
+E1₄ = R𝜆 (R𝜆 (R⇑ (R𝑝² (R𝑣 (S Z))
                       (R𝑣 Z))))
 
 
 -- Example 2 (pp. 31–32[1])
 
-e2  : {x₃ x₂ x₁ : Var} {A : Ty}
+E2  : {x₃ x₂ x₁ : Var} {A : Ty}
     → ⊩ 𝜆² x₃ ． ⇓² ⇑² 𝑣 x₃ ∶ 𝜆 x₂ ． ⇓ ⇑ 𝑣 x₂ ∶ (𝑣 x₁ ∶ A ⊃ 𝑣 x₁ ∶ A)
-e2  = R𝜆² (R⇓² (R⇑² (R𝑣² Z)))
+E2  = R𝜆² (R⇓² (R⇑² (R𝑣² Z)))
 
-e2' : {x₃ x₂ x₁ : Var} {A : Ty}
+E2' : {x₃ x₂ x₁ : Var} {A : Ty}
     → ⊩ 𝜆² x₃ ． 𝑣 x₃ ∶ 𝜆 x₂ ． 𝑣 x₂ ∶ (𝑣 x₁ ∶ A ⊃ 𝑣 x₁ ∶ A)
-e2' = R𝜆² (R𝑣² Z)
+E2' = R𝜆² (R𝑣² Z)
