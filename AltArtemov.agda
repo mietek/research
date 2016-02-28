@@ -212,7 +212,7 @@ data _⊢_ (Γ : Cx) : Ty → Set where
 ⊩ A = {Γ : Cx} → Γ ⊢ A
 
 
--- Simplified notation for level 0 terms
+-- Simplified notation for level 1 terms
 
 𝜆_．_ : (x : Var) (t : Tm) → Tm
 𝜆 x ． t = 0 #𝜆ⁿ x ． t
@@ -236,7 +236,7 @@ t ∘ s = 0 # t ∘ⁿ s
 ⇓ t = 0 #⇓ⁿ t
 
 
--- Simplified notation for level 1 terms
+-- Simplified notation for level 2 terms
 
 𝜆²_．_ : (x : Var) (t : Tm) → Tm
 𝜆² x ． t = 1 #𝜆ⁿ x ． t
@@ -260,7 +260,7 @@ t ∘² s = 1 # t ∘ⁿ s
 ⇓² t = 1 #⇓ⁿ t
 
 
--- Simplified notation for level 0 typing rules
+-- Simplified notation for level 1 typing rules
 
 R𝑣 : {x : Var} {A : Ty} {Γ : Cx}
    → 𝑣 x ∶ A ∈ Γ
@@ -303,7 +303,7 @@ R⇓ : {t u : Tm} {A : Ty} {Γ : Cx}
 R⇓ {t} = R⇓ⁿ {𝒕 = t ∶⋯}
 
 
--- Simplified notation for level 1 typing rules
+-- Simplified notation for level 2 typing rules
 
 R𝑣² : {x₂ x₁ : Var} {A : Ty} {Γ : Cx}
     → 𝑣 x₂ ∶ 𝑣 x₁ ∶ A ∈ Γ
@@ -376,30 +376,3 @@ E2  = R𝜆² (R⇓² (R⇑² (R𝑣² Z)))
 E2' : {x₃ x₂ x₁ : Var} {A : Ty}
     → ⊩ 𝜆² x₃ ． 𝑣 x₃ ∶ 𝜆 x₂ ． 𝑣 x₂ ∶ (𝑣 x₁ ∶ A ⊃ 𝑣 x₁ ∶ A)
 E2' = R𝜆² (R𝑣² Z)
-
-
--- Theorem 1. Internalisation property
-
-VTy : ℕ → Set
-VTy n = Vec Ty n
-
-_V,_ : {n : ℕ} (Γ : Cx) (𝒕 : VTy n) → Cx
-Γ V, 𝒕 = Vfold (λ t Γ → Γ , t) 𝒕 Γ
-
-_V∶_ : {n : ℕ} (𝒙 : VTm n) (𝑨 : VTy n) → VTy n
-𝒙 V∶ 𝑨 = Vmap2 _∶_ 𝒙 𝑨
-
-{-
-T1 : {m : ℕ} {𝑨 : VTy m} {B : Ty} {𝒙 : VTm m} {Γ : Cx}
-   → Γ V, 𝑨 ⊢ B
-   → {t : VTm m → Tm}
-   → Γ V, (𝒙 V∶ 𝑨) ⊢ t 𝒙 ∶ B
-T1 (R𝑣ⁿ e)   = {!!}
-T1 (R𝜆ⁿ e)   = {!!}
-T1 (R∘ⁿ e f) = {!!}
-T1 (R𝑝ⁿ e f) = {!!}
-T1 (R𝜋₀ⁿ e)  = {!!}
-T1 (R𝜋₁ⁿ e)  = {!!}
-T1 (R⇑ⁿ e)   = {!!}
-T1 (R⇓ⁿ e)   = {!!}
--}
