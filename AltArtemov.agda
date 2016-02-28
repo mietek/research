@@ -130,7 +130,7 @@ V𝑣_∶_ : {n : ℕ} (𝒙 : VVar n) (A : Ty) → Ty
 V𝑣 𝒙 ∶ A = V (Vmap 𝑣_ 𝒙) ∶ A
 
 
--- Vector notation for term constructors
+-- Vector notation for nested term constructors
 
 V𝜆ⁿ_．_∶_ : {n : ℕ} (𝒙 : VVar n) (𝒕 : VTm n) (A : Ty) → Ty
 V𝜆ⁿ 𝒙 ． 𝒕 ∶ A = V (Vmap2# _#𝜆ⁿ_．_ 𝒙 𝒕) ∶ A
@@ -210,7 +210,7 @@ data _⊢_ (Γ : Cx) : Ty → Set where
 ⊩ A = {Γ : Cx} → Γ ⊢ A
 
 
--- Non-vector notation for level 0 terms
+-- Simplified notation for level 0 terms
 
 𝜆_．_ : (x : Var) (t : Tm) → Tm
 𝜆 x ． t = 0 #𝜆ⁿ x ． t
@@ -234,7 +234,7 @@ t ∘ s = 0 # t ∘ⁿ s
 ⇓ t = 0 #⇓ⁿ t
 
 
--- Non-vector notation for level 1 terms
+-- Simplified notation for level 1 terms
 
 𝜆²_．_ : (x : Var) (t : Tm) → Tm
 𝜆² x ． t = 1 #𝜆ⁿ x ． t
@@ -258,7 +258,7 @@ t ∘² s = 1 # t ∘ⁿ s
 ⇓² t = 1 #⇓ⁿ t
 
 
--- Non-vector notation for level 0 typing rules
+-- Simplified notation for level 0 typing rules
 
 R𝑣 : {x : Var} {A : Ty} {Γ : Cx}
    → 𝑣 x ∶ A ∈ Γ
@@ -301,7 +301,7 @@ R⇓ : {t u : Tm} {A : Ty} {Γ : Cx}
 R⇓ {t} e = R⇓ⁿ {𝒕 = t ∶⋯} e
 
 
--- Non-vector notation for level 1 typing rules
+-- Simplified notation for level 1 typing rules
 
 R𝑣² : {x₂ x₁ : Var} {A : Ty} {Γ : Cx}
     → 𝑣 x₂ ∶ 𝑣 x₁ ∶ A ∈ Γ
