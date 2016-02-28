@@ -93,13 +93,21 @@ data Vec (X : Set) : ℕ → Set where
   _∶⋯ : (x₁ : X)                       → Vec X zero
   _∶_ : (xₙ : X) {n : ℕ} (𝒙 : Vec X n) → Vec X (suc n)
 
-Vfold : {n : ℕ} {X Y : Set} (f : ℕ → X → Y → Y) (𝒙 : Vec X n) (y₁ : Y) → Y
-Vfold {zero}  f (x₁ ∶⋯)  y = f zero x₁ y
-Vfold {suc n} f (xₙ ∶ 𝒙) y = f (suc n) xₙ (Vfold f 𝒙 y)
+Vfold : {n : ℕ} {X Y : Set} (f : X → Y → Y) (𝒙 : Vec X n) (y₁ : Y) → Y
+Vfold f (x₁ ∶⋯)  y = f x₁ y
+Vfold f (xₙ ∶ 𝒙) y = f xₙ (Vfold f 𝒙 y)
 
-Vfold2 : {n : ℕ} {X Y Z : Set} (f : ℕ → X → Y → Z → Z) (𝒙 : Vec X n) (𝒚 : Vec Y n) (z₁ : Z) → Z
-Vfold2 {zero}  f (x₁ ∶⋯)  (y₁ ∶⋯)  z = f zero x₁ y₁ z
-Vfold2 {suc n} f (xₙ ∶ 𝒙) (yₙ ∶ 𝒚) z = f (suc n) xₙ yₙ (Vfold2 f 𝒙 𝒚 z)
+Vmap : {n : ℕ} {X Y : Set} (f : X → Y) (𝒙 : Vec X n) → Vec Y n
+Vmap f (x₁ ∶⋯)  = f x₁ ∶⋯
+Vmap f (xₙ ∶ 𝒙) = f xₙ ∶ Vmap f 𝒙
+
+Vmap# : {n : ℕ} {X Y : Set} (f : ℕ → X → Y) (𝒙 : Vec X n) → Vec Y n
+Vmap# {zero}  f (x₁ ∶⋯)  = f zero    x₁ ∶⋯
+Vmap# {suc n} f (xₙ ∶ 𝒙) = f (suc n) xₙ ∶ Vmap# f 𝒙
+
+Vmap2# : {n : ℕ} {X Y Z : Set} (f : ℕ → X → Y → Z) (𝒙 : Vec X n) (𝒚 : Vec Y n) → Vec Z n
+Vmap2# {zero}  f (x₁ ∶⋯)  (y₁ ∶⋯)  = f zero    x₁ y₁ ∶⋯
+Vmap2# {suc n} f (xₙ ∶ 𝒙) (yₙ ∶ 𝒚) = f (suc n) xₙ yₙ ∶ Vmap2# f 𝒙 𝒚
 
 
 -- Vector notation for terms
@@ -107,8 +115,8 @@ Vfold2 {suc n} f (xₙ ∶ 𝒙) (yₙ ∶ 𝒚) z = f (suc n) xₙ yₙ (Vfold2
 VTm : ℕ → Set
 VTm n = Vec Tm n
 
-V_∶_ : {n : ℕ} (𝒕 : VTm n) (A₀ : Ty) → Ty
-V_∶_ = Vfold λ _ t A → t ∶ A
+V_∶_ : {n : ℕ} (𝒕 : VTm n) (A : Ty) → Ty
+V 𝒕 ∶ A = Vfold _∶_ 𝒕 A
 
 
 -- Vector notation for variables
@@ -117,31 +125,31 @@ VVar : ℕ → Set
 VVar n = Vec Var n
 
 V𝑣_∶_ : {n : ℕ} (𝒙 : VVar n) (A : Ty) → Ty
-V𝑣_∶_ = Vfold λ _ x A → 𝑣 x ∶ A
+V𝑣 𝒙 ∶ A = V (Vmap 𝑣_ 𝒙) ∶ A
 
 
 -- Vector notation for term constructors
 
 V𝜆ⁿ_．_∶_ : {n : ℕ} (𝒙 : VVar n) (𝒕 : VTm n) (A : Ty) → Ty
-V𝜆ⁿ_．_∶_ = Vfold2 λ n x t A → n #𝜆ⁿ x ． t ∶ A
+V𝜆ⁿ 𝒙 ． 𝒕 ∶ A = V (Vmap2# _#𝜆ⁿ_．_ 𝒙 𝒕) ∶ A
 
 _V∘ⁿ_∶_ : {n : ℕ} (𝒕 𝒔 : VTm n) (A : Ty) → Ty
-_V∘ⁿ_∶_ = Vfold2 λ n t s A → n # t ∘ⁿ s ∶ A
+𝒕 V∘ⁿ 𝒔 ∶ A = V (Vmap2# _#_∘ⁿ_ 𝒕 𝒔) ∶ A
 
 V𝑝ⁿ⟨_,_⟩∶_ : {n : ℕ} (𝒕 𝒔 : VTm n) (A : Ty) → Ty
-V𝑝ⁿ⟨_,_⟩∶_ = Vfold2 λ n t s A → n #𝑝ⁿ⟨ t , s ⟩ ∶ A
+V𝑝ⁿ⟨ 𝒕 , 𝒔 ⟩∶ A = V (Vmap2# _#𝑝ⁿ⟨_,_⟩ 𝒕 𝒔) ∶ A
 
 V𝜋₀ⁿ_∶_ : {n : ℕ} (𝒕 : VTm n) (A : Ty) → Ty
-V𝜋₀ⁿ_∶_ = Vfold λ n t A → n #𝜋₀ⁿ t ∶ A
+V𝜋₀ⁿ 𝒕 ∶ A = V (Vmap# _#𝜋₀ⁿ_ 𝒕) ∶ A
 
 V𝜋₁ⁿ_∶_ : {n : ℕ} (𝒕 : VTm n) (A : Ty) → Ty
-V𝜋₁ⁿ_∶_ = Vfold λ n t A → n #𝜋₁ⁿ t ∶ A
+V𝜋₁ⁿ 𝒕 ∶ A = V (Vmap# _#𝜋₁ⁿ_ 𝒕) ∶ A
 
 V⇑ⁿ_∶_ : {n : ℕ} (𝒕 : VTm n) (A : Ty) → Ty
-V⇑ⁿ_∶_ = Vfold λ n t A → n #⇑ⁿ t ∶ A
+V⇑ⁿ 𝒕 ∶ A = V (Vmap# _#⇑ⁿ_ 𝒕) ∶ A
 
 V⇓ⁿ_∶_ : {n : ℕ} (𝒕 : VTm n) (A : Ty) → Ty
-V⇓ⁿ_∶_ = Vfold λ n t A → n #⇓ⁿ t ∶ A
+V⇓ⁿ 𝒕 ∶ A = V (Vmap# _#⇓ⁿ_ 𝒕) ∶ A
 
 
 -- Contexts
