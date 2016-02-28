@@ -199,7 +199,7 @@ data _⊢_ (Γ : Cx) : Ty → Set where
 ⊩ A = {Γ : Cx} → Γ ⊢ A
 
 
--- Level 1 terms
+-- Notation for level 1 terms
 
 𝜆_．_ : (x : Var) (t : Tm) → Tm
 𝜆 x ． t = 𝜆ⁿ x ． t # 0
@@ -223,7 +223,7 @@ t ∘ s = t ∘ⁿ s # 0
 ⇓ t = ⇓ⁿ t # 0
 
 
--- Level 2 terms
+-- Notation for level 2 terms
 
 𝜆²_．_ : (x : Var) (t : Tm) → Tm
 𝜆² x ． t = 𝜆ⁿ x ． t # 1
@@ -247,7 +247,7 @@ t ∘² s = t ∘ⁿ s # 1
 ⇓² t = ⇓ⁿ t # 1
 
 
--- Level 1 typing rules
+-- Notation for level 1 typing rules
 
 R𝑣 : {x : Var} {A : Ty} {Γ : Cx}
    → 𝑣 x ∶ A ∈ Γ
@@ -290,7 +290,7 @@ R⇓ : {t u : Tm} {A : Ty} {Γ : Cx}
 R⇓ {t} e = R⇓ⁿ {𝒕 = t ∶⋯} e
 
 
--- Level 2 typing rules
+-- Notation for level 2 typing rules
 
 R𝑣² : {x₂ x₁ : Var} {A : Ty} {Γ : Cx}
     → 𝑣 x₂ ∶ 𝑣 x₁ ∶ A ∈ Γ
