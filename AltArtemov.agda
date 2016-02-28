@@ -87,7 +87,7 @@ _⊃⊂_ : (A B : Ty) → Ty    -- Equivalence
 A ⊃⊂ B = A ⊃ B ∧ B ⊃ A
 
 
--- Vectors
+-- Non-empty vectors
 
 data Vec (X : Set) : ℕ → Set where
   _∶⋯ : (x₁ : X)                       → Vec X zero
