@@ -32,9 +32,9 @@ module AltArtemov where
 open import Data.Nat using (ℕ ; zero ; suc)
 open import Data.Product using (_×_)
 
-infixl 9 _∘_ _∘²_ _∘ⁿ_#_ 
-infixr 8 𝑣_ !_ ⇓_ ⇑_ ⇓²_ ⇑²_ ⇓ⁿ_#_ ⇑ⁿ_#_ 
-infixr 7 𝜆_．_ 𝜆²_．_ 𝜆ⁿ_．_#_
+infixl 9 _∘_ _∘²_ _#_∘ⁿ_
+infixr 8 𝑣_ !_ ⇓_ ⇑_ ⇓²_ ⇑²_ _#⇓ⁿ_ _#⇑ⁿ_ 
+infixr 7 𝜆_．_ 𝜆²_．_ _#𝜆ⁿ_．_
 infixr 6 _∶_
 infixr 5 ¬_
 infixl 4 _∧_
@@ -55,15 +55,15 @@ mutual
   -- Term constructors
 
   data Tm : Set where
-    𝑣_        : (x : Var)                  → Tm    -- Variable
-    𝜆ⁿ_．_#_   : (x : Var) (t : Tm) (n : ℕ) → Tm    -- Abstraction
-    _∘ⁿ_#_    : (t s : Tm)         (n : ℕ) → Tm    -- Application
-    𝑝ⁿ⟨_,_⟩#_ : (t s : Tm)         (n : ℕ) → Tm    -- Pairing
-    𝜋₀ⁿ_#_    : (t : Tm)           (n : ℕ) → Tm    -- Left projection
-    𝜋₁ⁿ_#_    : (t : Tm)           (n : ℕ) → Tm    -- Right projection
-    !_        : (t : Tm)                   → Tm    -- Proof checking
-    ⇑ⁿ_#_     : (t : Tm)           (n : ℕ) → Tm    -- Reification
-    ⇓ⁿ_#_     : (t : Tm)           (n : ℕ) → Tm    -- Reflection
+    𝑣_        :         (x : Var)          → Tm    -- Variable
+    _#𝜆ⁿ_．_   : (n : ℕ) (x : Var) (t : Tm) → Tm    -- Abstraction
+    _#_∘ⁿ_    : (n : ℕ) (t s : Tm)         → Tm    -- Application
+    _#𝑝ⁿ⟨_,_⟩ : (n : ℕ) (t s : Tm)         → Tm    -- Pairing
+    _#𝜋₀ⁿ_    : (n : ℕ) (t : Tm)           → Tm    -- Left projection
+    _#𝜋₁ⁿ_    : (n : ℕ) (t : Tm)           → Tm    -- Right projection
+    !_        :         (t : Tm)           → Tm    -- Proof checking
+    _#⇑ⁿ_     : (n : ℕ) (t : Tm)           → Tm    -- Reification
+    _#⇓ⁿ_     : (n : ℕ) (t : Tm)           → Tm    -- Reflection
 
 
   -- Type constructors
@@ -93,15 +93,22 @@ data Vec (X : Set) : ℕ → Set where
   _∶⋯ : (x₁ : X)                       → Vec X zero
   _∶_ : (xₙ : X) {n : ℕ} (𝒙 : Vec X n) → Vec X (suc n)
 
+Vfold : {n : ℕ} {X Y : Set} (f : ℕ → X → Y → Y) (𝒙 : Vec X n) (y₁ : Y) → Y
+Vfold {zero}  f (x₁ ∶⋯)  y = f zero x₁ y
+Vfold {suc n} f (xₙ ∶ 𝒙) y = f (suc n) xₙ (Vfold f 𝒙 y)
+
+Vfold2 : {n : ℕ} {X Y Z : Set} (f : ℕ → X → Y → Z → Z) (𝒙 : Vec X n) (𝒚 : Vec Y n) (z₁ : Z) → Z
+Vfold2 {zero}  f (x₁ ∶⋯)  (y₁ ∶⋯)  z = f zero x₁ y₁ z
+Vfold2 {suc n} f (xₙ ∶ 𝒙) (yₙ ∶ 𝒚) z = f (suc n) xₙ yₙ (Vfold2 f 𝒙 𝒚 z)
+
 
 -- Vector notation for terms
 
 VTm : ℕ → Set
 VTm n = Vec Tm n
 
-V_∶_ : {n : ℕ} (𝒕 : VTm n) (A : Ty) → Ty
-V t₁ ∶⋯  ∶ A = t₁ ∶ A
-V tₙ ∶ 𝒕 ∶ A = tₙ ∶ V 𝒕 ∶ A
+V_∶_ : {n : ℕ} (𝒕 : VTm n) (A₀ : Ty) → Ty
+V_∶_ = Vfold λ _ t A → t ∶ A
 
 
 -- Vector notation for variables
@@ -110,39 +117,31 @@ VVar : ℕ → Set
 VVar n = Vec Var n
 
 V𝑣_∶_ : {n : ℕ} (𝒙 : VVar n) (A : Ty) → Ty
-V𝑣 x₁ ∶⋯  ∶ A = 𝑣 x₁ ∶ A
-V𝑣 xₙ ∶ 𝒙 ∶ A = 𝑣 xₙ ∶ V𝑣 𝒙 ∶ A
+V𝑣_∶_ = Vfold λ _ x A → 𝑣 x ∶ A
 
 
 -- Vector notation for term constructors
 
 V𝜆ⁿ_．_∶_ : {n : ℕ} (𝒙 : VVar n) (𝒕 : VTm n) (A : Ty) → Ty
-V𝜆ⁿ_．_∶_ {zero}  (x₁ ∶⋯)  (t₁ ∶⋯)  A = 𝜆ⁿ x₁ ． t₁ # zero  ∶ A
-V𝜆ⁿ_．_∶_ {suc n} (xₙ ∶ 𝒙) (tₙ ∶ 𝒕) A = 𝜆ⁿ xₙ ． tₙ # suc n ∶ V𝜆ⁿ 𝒙 ． 𝒕 ∶ A
+V𝜆ⁿ_．_∶_ = Vfold2 λ n x t A → n #𝜆ⁿ x ． t ∶ A
 
 _V∘ⁿ_∶_ : {n : ℕ} (𝒕 𝒔 : VTm n) (A : Ty) → Ty
-_V∘ⁿ_∶_ {zero}  (t₁ ∶⋯)  (s₁ ∶⋯)  A = t₁ ∘ⁿ s₁ # zero  ∶ A
-_V∘ⁿ_∶_ {suc n} (tₙ ∶ 𝒕) (sₙ ∶ 𝒔) A = tₙ ∘ⁿ sₙ # suc n ∶ 𝒕 V∘ⁿ 𝒔 ∶ A
+_V∘ⁿ_∶_ = Vfold2 λ n t s A → n # t ∘ⁿ s ∶ A
 
 V𝑝ⁿ⟨_,_⟩∶_ : {n : ℕ} (𝒕 𝒔 : VTm n) (A : Ty) → Ty
-V𝑝ⁿ⟨_,_⟩∶_ {zero}  (t₁ ∶⋯)  (s₁ ∶⋯)  A = 𝑝ⁿ⟨ t₁ , s₁ ⟩# zero  ∶ A
-V𝑝ⁿ⟨_,_⟩∶_ {suc n} (tₙ ∶ 𝒕) (sₙ ∶ 𝒔) A = 𝑝ⁿ⟨ tₙ , sₙ ⟩# suc n ∶ V𝑝ⁿ⟨ 𝒕 , 𝒔 ⟩∶ A
+V𝑝ⁿ⟨_,_⟩∶_ = Vfold2 λ n t s A → n #𝑝ⁿ⟨ t , s ⟩ ∶ A
 
 V𝜋₀ⁿ_∶_ : {n : ℕ} (𝒕 : VTm n) (A : Ty) → Ty
-V𝜋₀ⁿ_∶_ {zero}  (t₁ ∶⋯)  A = 𝜋₀ⁿ t₁ # zero  ∶ A
-V𝜋₀ⁿ_∶_ {suc n} (tₙ ∶ 𝒕) A = 𝜋₀ⁿ tₙ # suc n ∶ V𝜋₀ⁿ 𝒕 ∶ A
+V𝜋₀ⁿ_∶_ = Vfold λ n t A → n #𝜋₀ⁿ t ∶ A
 
 V𝜋₁ⁿ_∶_ : {n : ℕ} (𝒕 : VTm n) (A : Ty) → Ty
-V𝜋₁ⁿ_∶_ {zero}  (t₁ ∶⋯)  A = 𝜋₁ⁿ t₁ # zero  ∶ A
-V𝜋₁ⁿ_∶_ {suc n} (tₙ ∶ 𝒕) A = 𝜋₁ⁿ tₙ # suc n ∶ V𝜋₁ⁿ 𝒕 ∶ A
+V𝜋₁ⁿ_∶_ = Vfold λ n t A → n #𝜋₁ⁿ t ∶ A
 
 V⇑ⁿ_∶_ : {n : ℕ} (𝒕 : VTm n) (A : Ty) → Ty
-V⇑ⁿ_∶_ {zero}  (t₁ ∶⋯)  A = ⇑ⁿ t₁ # zero  ∶ A
-V⇑ⁿ_∶_ {suc n} (tₙ ∶ 𝒕) A = ⇑ⁿ tₙ # suc n ∶ V⇑ⁿ 𝒕 ∶ A
+V⇑ⁿ_∶_ = Vfold λ n t A → n #⇑ⁿ t ∶ A
 
 V⇓ⁿ_∶_ : {n : ℕ} (𝒕 : VTm n) (A : Ty) → Ty
-V⇓ⁿ_∶_ {zero}  (t₁ ∶⋯)  A = ⇓ⁿ t₁ # zero  ∶ A
-V⇓ⁿ_∶_ {suc n} (tₙ ∶ 𝒕) A = ⇓ⁿ tₙ # suc n ∶ V⇓ⁿ 𝒕 ∶ A
+V⇓ⁿ_∶_ = Vfold λ n t A → n #⇓ⁿ t ∶ A
 
 
 -- Contexts
@@ -204,49 +203,49 @@ data _⊢_ (Γ : Cx) : Ty → Set where
 -- Non-vector notation for level 0 terms
 
 𝜆_．_ : (x : Var) (t : Tm) → Tm
-𝜆 x ． t = 𝜆ⁿ x ． t # zero
+𝜆 x ． t = 0 #𝜆ⁿ x ． t
 
 _∘_ : (t s : Tm) → Tm
-t ∘ s = t ∘ⁿ s # zero
+t ∘ s = 0 # t ∘ⁿ s
 
 𝑝⟨_,_⟩ : (t s : Tm) → Tm
-𝑝⟨ t , s ⟩ = 𝑝ⁿ⟨ t , s ⟩# zero
+𝑝⟨ t , s ⟩ = 0 #𝑝ⁿ⟨ t , s ⟩
 
 𝜋₀_ : (t : Tm) → Tm
-𝜋₀ t = 𝜋₀ⁿ t # zero
+𝜋₀ t = 0 #𝜋₀ⁿ t
 
 𝜋₁_ : (t : Tm) → Tm
-𝜋₁ t = 𝜋₁ⁿ t # zero
+𝜋₁ t = 0 #𝜋₁ⁿ t
 
 ⇑_ : (t : Tm) → Tm
-⇑ t = ⇑ⁿ t # zero
+⇑ t = 0 #⇑ⁿ t
 
 ⇓_ : (t : Tm) → Tm
-⇓ t = ⇓ⁿ t # zero
+⇓ t = 0 #⇓ⁿ t
 
 
 -- Non-vector notation for level 1 terms
 
 𝜆²_．_ : (x : Var) (t : Tm) → Tm
-𝜆² x ． t = 𝜆ⁿ x ． t # suc zero
+𝜆² x ． t = 1 #𝜆ⁿ x ． t
 
 _∘²_ : (t s : Tm) → Tm
-t ∘² s = t ∘ⁿ s # suc zero
+t ∘² s = 1 # t ∘ⁿ s
 
 𝑝²⟨_,_⟩ : (t s : Tm) → Tm
-𝑝²⟨ t , s ⟩ = 𝑝ⁿ⟨ t , s ⟩# suc zero
+𝑝²⟨ t , s ⟩ = 1 #𝑝ⁿ⟨ t , s ⟩
 
 𝜋₀²_ : (t : Tm) → Tm
-𝜋₀² t = 𝜋₀ⁿ t # suc zero
+𝜋₀² t = 1 #𝜋₀ⁿ t
 
 𝜋₁²_ : (t : Tm) → Tm
-𝜋₁² t = 𝜋₁ⁿ t # suc zero
+𝜋₁² t = 1 #𝜋₁ⁿ t
 
 ⇑²_ : (t : Tm) → Tm
-⇑² t = ⇑ⁿ t # suc zero
+⇑² t = 1 #⇑ⁿ t
 
 ⇓²_ : (t : Tm) → Tm
-⇓² t = ⇓ⁿ t # suc zero
+⇓² t = 1 #⇓ⁿ t
 
 
 -- Non-vector notation for level 0 typing rules
