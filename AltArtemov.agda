@@ -365,4 +365,3 @@ e2  = R𝜆² (R⇓² (R⇑² (R𝑣² Z)))
 e2' : {x₃ x₂ x₁ : Var} {A : Ty}
     → ⊩ 𝜆² x₃ ． 𝑣 x₃ ∶ 𝜆 x₂ ． 𝑣 x₂ ∶ (𝑣 x₁ ∶ A ⊃ 𝑣 x₁ ∶ A)
 e2' = R𝜆² (R𝑣² Z)
-Notational definitions of a
