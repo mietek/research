@@ -12,7 +12,7 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
  '(agda-input-user-translations
    (quote
     (("N" "ℕ") ("not" "¬") ("imp" "⊃") ("iff" "⊃⊂") ("ent" "⊢") ("thm" "⊩") 
-     ("s" "𝒔") ("t" "𝒕") ("x" "𝒙") ("y" "𝒚")
+     ("s" "𝒔") ("t" "𝒕") ("x" "𝒙") ("y" "𝒚") ("A" "𝑨")
      ("v" "𝑣") ("v1" "𝑣") ("v2" "𝑣²") ("vn" "𝑣ⁿ")
      ("l" "𝜆") ("l1" "𝜆") ("l2" "𝜆²") ("ln" "𝜆ⁿ") ("." "．")
      ("o" "∘") ("o1" "∘") ("o2" "∘²") ("on" "∘ⁿ")
@@ -99,23 +99,25 @@ Vfold : {n : ℕ} {X Y : Set} (f : X → Y → Y) (𝒙 : Vec X n) (y₁ : Y) �
 Vfold f (x₁ ∶⋯)  y = f x₁ y
 Vfold f (xₙ ∶ 𝒙) y = f xₙ (Vfold f 𝒙 y)
 
-Vmap : {n : ℕ} {X Y : Set} (f : X → Y) (𝒙 : Vec X n) → Vec Y n
-Vmap f (x₁ ∶⋯)  = f x₁ ∶⋯
-Vmap f (xₙ ∶ 𝒙) = f xₙ ∶ Vmap f 𝒙
-
 Vmap# : {n : ℕ} {X Y : Set} (f : ℕ → X → Y) (𝒙 : Vec X n) → Vec Y n
 Vmap# {zero}  f (x₁ ∶⋯)  = f zero    x₁ ∶⋯
 Vmap# {suc n} f (xₙ ∶ 𝒙) = f (suc n) xₙ ∶ Vmap# f 𝒙
+
+Vmap : {n : ℕ} {X Y : Set} (f : X → Y) (𝒙 : Vec X n) → Vec Y n
+Vmap f 𝒙 = Vmap# (λ _ x → f x) 𝒙
 
 Vmap2# : {n : ℕ} {X Y Z : Set} (f : ℕ → X → Y → Z) (𝒙 : Vec X n) (𝒚 : Vec Y n) → Vec Z n
 Vmap2# {zero}  f (x₁ ∶⋯)  (y₁ ∶⋯)  = f zero    x₁ y₁ ∶⋯
 Vmap2# {suc n} f (xₙ ∶ 𝒙) (yₙ ∶ 𝒚) = f (suc n) xₙ yₙ ∶ Vmap2# f 𝒙 𝒚
 
+Vmap2 : {n : ℕ} {X Y Z : Set} (f : X → Y → Z) (𝒙 : Vec X n) (𝒚 : Vec Y n) → Vec Z n
+Vmap2 f 𝒙 𝒚 = Vmap2# (λ _ x y → f x y) 𝒙 𝒚
+
 
 -- Vector notation for terms
 
 VTm : ℕ → Set
-VTm n = Vec Tm n
+VTm = Vec Tm
 
 V_∶_ : {n : ℕ} (𝒕 : VTm n) (A : Ty) → Ty
 V 𝒕 ∶ A = Vfold _∶_ 𝒕 A
@@ -124,7 +126,7 @@ V 𝒕 ∶ A = Vfold _∶_ 𝒕 A
 -- Vector notation for variables
 
 VVar : ℕ → Set
-VVar n = Vec Var n
+VVar = Vec Var
 
 V𝑣_∶_ : {n : ℕ} (𝒙 : VVar n) (A : Ty) → Ty
 V𝑣 𝒙 ∶ A = V (Vmap 𝑣_ 𝒙) ∶ A
@@ -263,42 +265,42 @@ t ∘² s = 1 # t ∘ⁿ s
 R𝑣 : {x : Var} {A : Ty} {Γ : Cx}
    → 𝑣 x ∶ A ∈ Γ
    → Γ ⊢ 𝑣 x ∶ A
-R𝑣 {x} e = R𝑣ⁿ {𝒙 = x ∶⋯} e
+R𝑣 {x} = R𝑣ⁿ {𝒙 = x ∶⋯}
 
 R𝜆 : {x : Var} {t : Tm} {A B : Ty} {Γ : Cx}
    → Γ , 𝑣 x ∶ A ⊢ t ∶ B
    → Γ ⊢ 𝜆 x ． t ∶ (A ⊃ B)
-R𝜆 {x} {t} e = R𝜆ⁿ {𝒙 = x ∶⋯} {𝒕 = t ∶⋯} e
+R𝜆 {x} {t} = R𝜆ⁿ {𝒙 = x ∶⋯} {𝒕 = t ∶⋯}
 
 R∘ : {t s : Tm} {A B : Ty} {Γ : Cx}
    → Γ ⊢ t ∶ (A ⊃ B)    → Γ ⊢ s ∶ A
    → Γ ⊢ t ∘ s ∶ B
-R∘ {t} {s} e f = R∘ⁿ {𝒕 = t ∶⋯} {𝒔 = s ∶⋯} e f
+R∘ {t} {s} = R∘ⁿ {𝒕 = t ∶⋯} {𝒔 = s ∶⋯}
 
 R𝑝 : {t s : Tm} {A B : Ty} {Γ : Cx}
    → Γ ⊢ t ∶ A    → Γ ⊢ s ∶ B
    → Γ ⊢ 𝑝⟨ t , s ⟩ ∶ (A ∧ B)
-R𝑝 {t} {s} e f = R𝑝ⁿ {𝒕 = t ∶⋯} {𝒔 = s ∶⋯} e f
+R𝑝 {t} {s} = R𝑝ⁿ {𝒕 = t ∶⋯} {𝒔 = s ∶⋯}
 
 R𝜋₀ : {t : Tm} {A B : Ty} {Γ : Cx}
     → Γ ⊢ t ∶ (A ∧ B)
     → Γ ⊢ 𝜋₀ t ∶ A
-R𝜋₀ {t} e = R𝜋₀ⁿ {𝒕 = t ∶⋯} e
+R𝜋₀ {t} = R𝜋₀ⁿ {𝒕 = t ∶⋯}
 
 R𝜋₁ : {t : Tm} {A B : Ty} {Γ : Cx}
     → Γ ⊢ t ∶ (A ∧ B)
     → Γ ⊢ 𝜋₁ t ∶ B
-R𝜋₁ {t} e = R𝜋₁ⁿ {𝒕 = t ∶⋯} e
+R𝜋₁ {t} = R𝜋₁ⁿ {𝒕 = t ∶⋯}
 
 R⇑ : {t u : Tm} {A : Ty} {Γ : Cx}
    → Γ ⊢ t ∶ u ∶ A
    → Γ ⊢ ⇑ t ∶ ! u ∶ u ∶ A
-R⇑ {t} e = R⇑ⁿ {𝒕 = t ∶⋯} e
+R⇑ {t} = R⇑ⁿ {𝒕 = t ∶⋯}
 
 R⇓ : {t u : Tm} {A : Ty} {Γ : Cx}
    → Γ ⊢ t ∶ u ∶ A
    → Γ ⊢ ⇓ t ∶ A
-R⇓ {t} e = R⇓ⁿ {𝒕 = t ∶⋯} e
+R⇓ {t} = R⇓ⁿ {𝒕 = t ∶⋯}
 
 
 -- Simplified notation for level 1 typing rules
@@ -374,3 +376,30 @@ E2  = R𝜆² (R⇓² (R⇑² (R𝑣² Z)))
 E2' : {x₃ x₂ x₁ : Var} {A : Ty}
     → ⊩ 𝜆² x₃ ． 𝑣 x₃ ∶ 𝜆 x₂ ． 𝑣 x₂ ∶ (𝑣 x₁ ∶ A ⊃ 𝑣 x₁ ∶ A)
 E2' = R𝜆² (R𝑣² Z)
+
+
+-- Theorem 1. Internalisation property
+
+VTy : ℕ → Set
+VTy n = Vec Ty n
+
+_V,_ : {n : ℕ} (Γ : Cx) (𝒕 : VTy n) → Cx
+Γ V, 𝒕 = Vfold (λ t Γ → Γ , t) 𝒕 Γ
+
+_V∶_ : {n : ℕ} (𝒙 : VTm n) (𝑨 : VTy n) → VTy n
+𝒙 V∶ 𝑨 = Vmap2 _∶_ 𝒙 𝑨
+
+{-
+T1 : {m : ℕ} {𝑨 : VTy m} {B : Ty} {𝒙 : VTm m} {Γ : Cx}
+   → Γ V, 𝑨 ⊢ B
+   → {t : VTm m → Tm}
+   → Γ V, (𝒙 V∶ 𝑨) ⊢ t 𝒙 ∶ B
+T1 (R𝑣ⁿ e)   = {!!}
+T1 (R𝜆ⁿ e)   = {!!}
+T1 (R∘ⁿ e f) = {!!}
+T1 (R𝑝ⁿ e f) = {!!}
+T1 (R𝜋₀ⁿ e)  = {!!}
+T1 (R𝜋₁ⁿ e)  = {!!}
+T1 (R⇑ⁿ e)   = {!!}
+T1 (R⇓ⁿ e)   = {!!}
+-}
