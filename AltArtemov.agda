@@ -6,6 +6,8 @@ Miëtek Bak <mietek@bak.io>
 
 Thanks to Darryl McAdams and Paolo Giarrusso for comments and discussion.
 
+Checked with Agda 2.4.2.5.
+
 For easy editing with Emacs agda-mode, add to your .emacs file:
  '(agda-input-user-translations
    (quote
