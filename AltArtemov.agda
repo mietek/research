@@ -75,7 +75,7 @@ mutual
     _∶_ : (x : Tm) (A : Ty) → Ty    -- Provability
 
 
--- Notational definitions of additional types
+-- Additional types
 
 ⊤ : Ty                    -- Truth
 ⊤ = ⊥ ⊃ ⊥
@@ -201,7 +201,7 @@ data _⊢_ (Γ : Cx) : Ty → Set where
 ⊩ A = {Γ : Cx} → Γ ⊢ A
 
 
--- Notation for level 1 terms
+-- Non-vector notation for level 0 terms
 
 𝜆_．_ : (x : Var) (t : Tm) → Tm
 𝜆 x ． t = 𝜆ⁿ x ． t # zero
@@ -225,7 +225,7 @@ t ∘ s = t ∘ⁿ s # zero
 ⇓ t = ⇓ⁿ t # zero
 
 
--- Notation for level 2 terms
+-- Non-vector notation for level 1 terms
 
 𝜆²_．_ : (x : Var) (t : Tm) → Tm
 𝜆² x ． t = 𝜆ⁿ x ． t # suc zero
@@ -249,7 +249,7 @@ t ∘² s = t ∘ⁿ s # suc zero
 ⇓² t = ⇓ⁿ t # suc zero
 
 
--- Notation for level 1 typing rules
+-- Non-vector notation for level 0 typing rules
 
 R𝑣 : {x : Var} {A : Ty} {Γ : Cx}
    → 𝑣 x ∶ A ∈ Γ
@@ -292,7 +292,7 @@ R⇓ : {t u : Tm} {A : Ty} {Γ : Cx}
 R⇓ {t} e = R⇓ⁿ {𝒕 = t ∶⋯} e
 
 
--- Notation for level 2 typing rules
+-- Non-vector notation for level 1 typing rules
 
 R𝑣² : {x₂ x₁ : Var} {A : Ty} {Γ : Cx}
     → 𝑣 x₂ ∶ 𝑣 x₁ ∶ A ∈ Γ
@@ -365,3 +365,4 @@ e2  = R𝜆² (R⇓² (R⇑² (R𝑣² Z)))
 e2' : {x₃ x₂ x₁ : Var} {A : Ty}
     → ⊩ 𝜆² x₃ ． 𝑣 x₃ ∶ 𝜆 x₂ ． 𝑣 x₂ ∶ (𝑣 x₁ ∶ A ⊃ 𝑣 x₁ ∶ A)
 e2' = R𝜆² (R𝑣² Z)
+Notational definitions of a
