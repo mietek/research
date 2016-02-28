@@ -55,13 +55,13 @@ mutual
   -- Term constructors
 
   data Tm : Set where
-    𝑣_        :         (x : Var)          → Tm    -- Variable
+    𝑣_        : (x : Var)                  → Tm    -- Variable
     _#𝜆ⁿ_．_   : (n : ℕ) (x : Var) (t : Tm) → Tm    -- Abstraction
     _#_∘ⁿ_    : (n : ℕ) (t s : Tm)         → Tm    -- Application
     _#𝑝ⁿ⟨_,_⟩ : (n : ℕ) (t s : Tm)         → Tm    -- Pairing
     _#𝜋₀ⁿ_    : (n : ℕ) (t : Tm)           → Tm    -- Left projection
     _#𝜋₁ⁿ_    : (n : ℕ) (t : Tm)           → Tm    -- Right projection
-    !_        :         (t : Tm)           → Tm    -- Proof checking
+    !_        : (t : Tm)                   → Tm    -- Proof checking
     _#⇑ⁿ_     : (n : ℕ) (t : Tm)           → Tm    -- Reification
     _#⇓ⁿ_     : (n : ℕ) (t : Tm)           → Tm    -- Reflection
 
@@ -90,8 +90,8 @@ A ⊃⊂ B = A ⊃ B ∧ B ⊃ A
 -- Non-empty vectors
 
 data Vec (X : Set) : ℕ → Set where
-  _∶⋯ : (x₁ : X)                       → Vec X zero
-  _∶_ : (xₙ : X) {n : ℕ} (𝒙 : Vec X n) → Vec X (suc n)
+  _∶⋯ : (x₁ : X)                      → Vec X zero
+  _∶_ : {n : ℕ} (xₙ : X) (𝒙 : Vec X n) → Vec X (suc n)
 
 Vfold : {n : ℕ} {X Y : Set} (f : X → Y → Y) (𝒙 : Vec X n) (y₁ : Y) → Y
 Vfold f (x₁ ∶⋯)  y = f x₁ y
