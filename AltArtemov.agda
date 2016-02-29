@@ -32,7 +32,7 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
 module AltArtemov where
 
 open import Data.Nat using (ℕ ; zero ; suc)
-open import Data.Product using (_×_)
+open import Data.Product using (Σ ; proj₁ ; proj₂ ; _×_) renaming (_,_ to _*_)
 
 infixl 9 _∘_ _∘²_ _#_∘ⁿ_
 infixr 8 𝑣_ !_ ⇓_ ⇑_ ⇓²_ ⇑²_ _#⇓ⁿ_ _#⇑ⁿ_ 
@@ -95,9 +95,13 @@ data Vec (X : Set) : ℕ → Set where
   _∶⋯ : (x₁ : X)                      → Vec X zero
   _∶_ : {n : ℕ} (xₙ : X) (𝒙 : Vec X n) → Vec X (suc n)
 
-Vfold : {n : ℕ} {X Y : Set} (f : X → Y → Y) (𝒙 : Vec X n) (y₁ : Y) → Y
-Vfold f (x₁ ∶⋯)  y = f x₁ y
-Vfold f (xₙ ∶ 𝒙) y = f xₙ (Vfold f 𝒙 y)
+Vfoldl : {n : ℕ} {X Y : Set} (f : Y → X → Y) (𝒙 : Vec X n) (y : Y) → Y
+Vfoldl f (x₁ ∶⋯)  y = f y x₁
+Vfoldl f (xₙ ∶ 𝒙) y = f (Vfoldl f 𝒙 y) xₙ
+
+Vfoldr : {n : ℕ} {X Y : Set} (f : X → Y → Y) (𝒙 : Vec X n) (y : Y) → Y
+Vfoldr f (x₁ ∶⋯)  y = f x₁ y
+Vfoldr f (xₙ ∶ 𝒙) y = f xₙ (Vfoldr f 𝒙 y)
 
 Vmap# : {n : ℕ} {X Y : Set} (f : ℕ → X → Y) (𝒙 : Vec X n) → Vec Y n
 Vmap# {zero}  f (x₁ ∶⋯)  = f zero    x₁ ∶⋯
@@ -120,7 +124,7 @@ VTm : ℕ → Set
 VTm = Vec Tm
 
 V_∶_ : {n : ℕ} (𝒕 : VTm n) (A : Ty) → Ty
-V 𝒕 ∶ A = Vfold _∶_ 𝒕 A
+V 𝒕 ∶ A = Vfoldr _∶_ 𝒕 A
 
 
 -- Vector notation for variables
@@ -382,14 +386,14 @@ E2' = R𝜆² (R𝑣² Z)
 
 ------------------------------------------------------------------------------
 
-{--- Work in progress
+-- Work in progress
 
 
 VTy : ℕ → Set
 VTy n = Vec Ty n
 
 _V,_ : {n : ℕ} (Γ : Cx) (𝑨 : VTy n) → Cx
-Γ V, 𝑨 = Vfold (λ A Γ → Γ , A) 𝑨 Γ
+Γ V, 𝑨 = Vfoldl _,_ 𝑨 Γ
 
 _V𝑣∶_ : {n : ℕ} (𝒙 : VVar n) (𝑨 : VTy n) → VTy n
 𝒙 V𝑣∶ 𝑨 = Vmap2 _∶_ (Vmap 𝑣_ 𝒙) 𝑨
@@ -400,17 +404,21 @@ _V𝑣∶_ : {n : ℕ} (𝒙 : VVar n) (𝑨 : VTy n) → VTy n
 -- Then one can build a well-defined term t(x₁, x₂, …, xₘ) with fresh variables 𝒙 such that λ∞ also derives
 --  x₁ ∶ A₁, x₂ ∶ A₂, …, xₘ ∶ Aₘ ⊢ t(x₁, x₂, …, xₘ) ∶ B.
 
-T1 : {m : ℕ} {𝑨 : VTy m} {B : Ty} {𝒙 : VVar m} {t : VVar m → Tm} {Γ : Cx} 
+T1 : {m : ℕ} {𝑨 : VTy m} {B : Ty} {𝒙 : VVar m} {Γ : Cx}
   → Γ V, 𝑨 ⊢ B
-  → Γ V, (𝒙 V𝑣∶ 𝑨) ⊢ t 𝒙 ∶ B
-T1 (R𝑣ⁿ e)   = {!!}
-T1 (R𝜆ⁿ e)   = {!!}
+  → Σ (VVar m → Tm) (λ t → Γ V, (𝒙 V𝑣∶ 𝑨) ⊢ t 𝒙 ∶ B)
+T1 (R𝑣ⁿ e) = {!!}
+T1 {m} {𝑨} {_} {𝒙} {Γ} (R𝜆ⁿ {n} {𝒚} {𝒕} {A} {B} e) =
+  let s * f = T1 {𝑨 = (V𝑣 𝒚 ∶ A) ∶ 𝑨} {𝒙 = {!!} ∶ 𝒙} e in record
+    { proj₁ = λ 𝒙 → suc n #𝜆ⁿ {!!} ． s ({!!} ∶ 𝒙)
+    ; proj₂ = R𝜆ⁿ {n = suc n} {𝒙 = {!!} ∶ 𝒚} {𝒕 = s ({!!} ∶ 𝒙) ∶ 𝒕} f
+    }
 T1 (R∘ⁿ e f) = {!!}
 T1 (R𝑝ⁿ e f) = {!!}
-T1 (R𝜋₀ⁿ e)  = {!!}
-T1 (R𝜋₁ⁿ e)  = {!!}
-T1 (R⇑ⁿ e)   = {!!}
-T1 (R⇓ⁿ e)   = {!!}
+T1 (R𝜋₀ⁿ e) = {!!}
+T1 (R𝜋₁ⁿ e) = {!!}
+T1 (R⇑ⁿ e) = {!!}
+T1 (R⇓ⁿ e) = {!!}
 
 
 lev : {A : Ty} {Γ : Cx}
@@ -425,5 +433,3 @@ lev (R𝜋₁ⁿ {n} _)  = n
 lev (R⇑ⁿ {n} _)   = n
 lev (R⇓ⁿ {n} _)   = n
 
-
--}
