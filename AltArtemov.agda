@@ -125,22 +125,19 @@ map2 : {n : ℕ} {X Y Z : Set} (f : X → Y → Z) (𝒙 : Vec X n) (𝒚 : Vec 
 map2 f 𝒙 𝒚 = map2# (λ _ x y → f x y) 𝒙 𝒚
 
 
--- XXX
+-- Vector notation
 
 VVar : ℕ → Set
-VVar = Vec Var
+VVar n = Vec Var n
 
 VTm : ℕ → Set
-VTm = Vec Tm
+VTm n = Vec Tm n
 
 VTy : ℕ → Set
 VTy n = Vec Ty n
 
 V_∶_ : {n : ℕ} (𝒕 : VTm n) (A : Ty) → Ty
 V 𝒕 ∶ A = foldr _∶_ 𝒕 A
-
-
--- Vector notation for nested term constructors
 
 𝑣ⁿ_∶_ : {n : ℕ} (𝒙 : VVar n) (A : Ty) → Ty
 𝑣ⁿ 𝒙 ∶ A = V (map 𝑣_ 𝒙) ∶ A
