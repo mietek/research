@@ -443,7 +443,7 @@ _,ⁿ_∶_ : {n : ℕ} (Γ : Cx) (𝒙 : VVar n) (𝑨 : VTy n) → Cx
 -- entitled to use variables of type F as new axioms."
 
 postulate
-  lemma1 : {n : ℕ} {x : Var} {𝒙 : VVar n} {A B : Ty} {Γ : Cx}    -- XXX: How to prove this?
+  lem1 : {n : ℕ} {x : Var} {𝒙 : VVar n} {A B : Ty} {Γ : Cx}    -- XXX: How to prove this?
     → Γ ,     𝑣ⁿ 𝒙 ∶ A ⊢ B
     → Γ , 𝑣ⁿ x ∷ 𝒙 ∶ A ⊢ B
 
@@ -457,47 +457,47 @@ fresh {n} = suc n    -- XXX: Prove freshness!
 -- variables 𝒙 such that λ∞ also derives
 --   x₁ ∶ A₁, x₂ ∶ A₂, …, xₘ ∶ Aₘ ⊢ t(x₁, x₂, …, xₘ) ∶ B."
  
-theorem1 : {m : ℕ} {𝒙 : VVar m} {𝑨 : VTy m} {B : Ty} {Γ : Cx}
+thm1 : {m : ℕ} {𝒙 : VVar m} {𝑨 : VTy m} {B : Ty} {Γ : Cx}
   → Γ ,ⁿ 𝒙 ∶ 𝑨 ⊢ B
   → Σ (VVar m → Tm) (λ t → (Γ ,ⁿ 𝒙 ∶ 𝑨) ⊢ t 𝒙 ∶ B)
 
-theorem1 {m} {𝒙} (R𝑣ⁿ {n} {𝒚} D) =
-  theorem1 {𝒙 = 𝒙} (R𝑣ⁿ {𝒙 = 𝒚} D)    -- XXX: Prove termination!
+thm1 {m} {𝒙} (R𝑣ⁿ {n} {𝒚} D) =
+  thm1 {𝒙 = 𝒙} (R𝑣ⁿ {𝒙 = 𝒚} D)    -- XXX: Prove termination!
 
-theorem1 {m} {𝒙} {𝑨} (R𝜆ⁿ {n} {𝒚} {𝒕} {A} D) =
+thm1 {m} {𝒙} {𝑨} (R𝜆ⁿ {n} {𝒚} {𝒕} {A} D) =
   let xₘ₊₁  = fresh {𝒙 = 𝒙}
-      s , E = theorem1 {𝒙 = xₘ₊₁ ∷ 𝒙} {𝑨 = 𝑣ⁿ 𝒚 ∶ A ∷ 𝑨} (lemma1 {𝒙 = 𝒚} D)    -- XXX: Prove termination!
+      s , E = thm1 {𝒙 = xₘ₊₁ ∷ 𝒙} {𝑨 = 𝑣ⁿ 𝒚 ∶ A ∷ 𝑨} (lem1 {𝒙 = 𝒚} D)    -- XXX: Prove termination!
   in  (λ 𝒙 → 𝜆^[ suc n ] xₘ₊₁ ． s (xₘ₊₁ ∷ 𝒙))
     , R𝜆ⁿ {𝒙 = xₘ₊₁ ∷ 𝒚} {𝒕 = s (xₘ₊₁ ∷ 𝒙) ∷ 𝒕} E
 
-theorem1 {m} {𝒙} (R∘ⁿ {n} {𝒕} {𝒔} Dₜ Dₛ) =
-  let sₜ , Eₜ = theorem1 {𝒙 = 𝒙} Dₜ
-      sₛ , Eₛ = theorem1 {𝒙 = 𝒙} Dₛ
+thm1 {m} {𝒙} (R∘ⁿ {n} {𝒕} {𝒔} Dₜ Dₛ) =
+  let sₜ , Eₜ = thm1 {𝒙 = 𝒙} Dₜ
+      sₛ , Eₛ = thm1 {𝒙 = 𝒙} Dₛ
   in  (λ 𝒙 → sₜ 𝒙 ∘^[ suc n ] sₛ 𝒙)
     , R∘ⁿ {𝒕 = sₜ 𝒙 ∷ 𝒕} {𝒔 = sₛ 𝒙 ∷ 𝒔} Eₜ Eₛ
     
-theorem1 {m} {𝒙} (R𝑝ⁿ {n} {𝒕} {𝒔} Dₜ Dₛ) =
-  let sₜ , Eₜ = theorem1 {𝒙 = 𝒙} Dₜ
-      sₛ , Eₛ = theorem1 {𝒙 = 𝒙} Dₛ
+thm1 {m} {𝒙} (R𝑝ⁿ {n} {𝒕} {𝒔} Dₜ Dₛ) =
+  let sₜ , Eₜ = thm1 {𝒙 = 𝒙} Dₜ
+      sₛ , Eₛ = thm1 {𝒙 = 𝒙} Dₛ
   in  (λ 𝒙 → 𝑝^[ suc n ]⟨ sₜ 𝒙 , sₛ 𝒙 ⟩)
     , R𝑝ⁿ {𝒕 = sₜ 𝒙 ∷ 𝒕} {𝒔 = sₛ 𝒙 ∷ 𝒔} Eₜ Eₛ
     
-theorem1 {m} {𝒙} (R𝜋₀ⁿ {n} {𝒕} D) =
-  let s , E = theorem1 {𝒙 = 𝒙} D
+thm1 {m} {𝒙} (R𝜋₀ⁿ {n} {𝒕} D) =
+  let s , E = thm1 {𝒙 = 𝒙} D
   in  (λ 𝒙 → 𝜋₀^[ suc n ] s 𝒙)
     , R𝜋₀ⁿ {𝒕 = s 𝒙 ∷ 𝒕} E
     
-theorem1 {m} {𝒙} (R𝜋₁ⁿ {n} {𝒕} D) =
-  let s , E = theorem1 {𝒙 = 𝒙} D
+thm1 {m} {𝒙} (R𝜋₁ⁿ {n} {𝒕} D) =
+  let s , E = thm1 {𝒙 = 𝒙} D
   in  (λ 𝒙 → 𝜋₁^[ suc n ] s 𝒙)
     , R𝜋₁ⁿ {𝒕 = s 𝒙 ∷ 𝒕} E
     
-theorem1 {m} {𝒙} (R⇑ⁿ {n} {𝒕} D) =
-  let s , E = theorem1 {𝒙 = 𝒙} D
+thm1 {m} {𝒙} (R⇑ⁿ {n} {𝒕} D) =
+  let s , E = thm1 {𝒙 = 𝒙} D
   in  (λ 𝒙 → ⇑^[ suc n ] s 𝒙)
     , R⇑ⁿ {𝒕 = s 𝒙 ∷ 𝒕} E
     
-theorem1 {m} {𝒙} (R⇓ⁿ {n} {𝒕} D) =
-  let s , E = theorem1 {𝒙 = 𝒙} D
+thm1 {m} {𝒙} (R⇓ⁿ {n} {𝒕} D) =
+  let s , E = thm1 {𝒙 = 𝒙} D
   in  (λ 𝒙 → ⇓^[ suc n ] s 𝒙)
     , R⇓ⁿ {𝒕 = s 𝒙 ∷ 𝒕} E
