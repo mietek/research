@@ -447,8 +447,8 @@ postulate
     → Γ ,     𝑣ⁿ 𝒙 ∶ A ⊢ B
     → Γ , 𝑣ⁿ x ∷ 𝒙 ∶ A ⊢ B
 
-fresh : {n : ℕ} (𝒙 : VVar n) → Var
-fresh {n} 𝒙 = suc n    -- XXX: Prove freshness!
+fresh : {n : ℕ} {𝒙 : VVar n} → Var
+fresh {n} = suc n    -- XXX: Prove freshness!
 
 
 -- "Let λ∞ derive
@@ -465,7 +465,7 @@ theorem1 {m} {𝒙} (R𝑣ⁿ {n} {𝒚} D) =
   theorem1 {𝒙 = 𝒙} (R𝑣ⁿ {𝒙 = 𝒚} D)    -- XXX: Prove termination!
 
 theorem1 {m} {𝒙} {𝑨} (R𝜆ⁿ {n} {𝒚} {𝒕} {A} D) =
-  let xₘ₊₁  = fresh 𝒙
+  let xₘ₊₁  = fresh {𝒙 = 𝒙}
       s , E = theorem1 {𝒙 = xₘ₊₁ ∷ 𝒙} {𝑨 = 𝑣ⁿ 𝒚 ∶ A ∷ 𝑨} (lemma1 {𝒙 = 𝒚} D)    -- XXX: Prove termination!
   in  (λ 𝒙 → 𝜆^[ suc n ] xₘ₊₁ ． s (xₘ₊₁ ∷ 𝒙))
     , R𝜆ⁿ {𝒙 = xₘ₊₁ ∷ 𝒚} {𝒕 = s (xₘ₊₁ ∷ 𝒙) ∷ 𝒕} E
