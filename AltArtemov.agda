@@ -10,19 +10,19 @@ Checked with Agda 2.4.2.5.
 
 For easy editing with Emacs agda-mode, add to your .emacs file:
  '(agda-input-user-translations
-   (quote
-    (("N" "ℕ") ("0" "₀") ("1" "₁") ("2" "²")
-     ("n" "ₙ") ("n" "ⁿ") ("m" "ₘ") ("m+1" "ₘ₊₁")
+   (quote 
+    (("N" "ℕ")
      ("not" "¬") ("imp" "⊃") ("iff" "⊃⊂") ("ent" "⊢") ("thm" "⊩") 
-     ("s" "𝒔") ("t" "𝒕") ("x" "𝒙") ("y" "𝒚") ("A" "𝑨")
-     ("v" "𝑣") ("v1" "𝑣") ("v2" "𝑣²") ("vn" "𝑣ⁿ")
-     ("l" "𝜆") ("l1" "𝜆") ("l2" "𝜆²") ("ln" "𝜆ⁿ") ("." "．")
-     ("o" "∘") ("o1" "∘") ("o2" "∘²") ("on" "∘ⁿ")
-     ("p" "𝑝") ("p1" "𝑝") ("p2" "𝑝²") ("pn" "𝑝ⁿ")
-     ("pi0" "𝜋₀") ("pi01" "𝜋₀") ("pi02" "𝜋₀²") ("pi0n" "𝜋₀ⁿ")
-     ("pi1" "𝜋₁") ("pi11" "𝜋₁") ("pi12" "𝜋₁²") ("pi1n" "𝜋₁ⁿ")
-     ("u" "⇑") ("u1" "⇑") ("u2" "⇑²") ("un" "⇑ⁿ")
-     ("d" "⇓") ("d1" "⇓") ("d2" "⇓²") ("dn" "⇓ⁿ"))))
+     ("x" "𝒙") ("y" "𝒚") ("t" "𝒕") ("s" "𝒔") ("A" "𝑨")
+     ("*n" "⋆ⁿ")
+     ("v" "𝑣") ("v2" "𝑣²") ("vn" "𝑣ⁿ")
+     ("l" "𝜆") ("l2" "𝜆²") ("l2" "𝜆ⁿ") ("." "．")
+     ("o2" "∘²") ("on" "∘ⁿ")
+     ("p" "𝑝") ("p2" "𝑝²") ("pn" "𝑝ⁿ")
+     ("1" "𝜋₀") ("12" "𝜋₀²") ("1n" "𝜋₀ⁿ")
+     ("2" "𝜋₁") ("12" "𝜋₁²") ("2n" "𝜋₁ⁿ")
+     ("u" "⇑") ("u2" "⇑²") ("un" "⇑ⁿ")
+     ("d" "⇓") ("d2" "⇓²") ("dn" "⇓ⁿ"))))
 
 [1]: Alt, J., Artëmov, S. (2001) Reflective λ-calculus, Proceedings of the
      2001 International Seminar on Proof Theory in Computer Science (PTCS’01),
@@ -30,6 +30,8 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
      http://dx.doi.org/10.1007/3-540-45504-3_2
 
 -}
+
+{-# OPTIONS --no-termination-check #-}    -- XXX: Temporary!
 
 module AltArtemov where
 
@@ -178,7 +180,7 @@ data Cx : Set where
 -- Context membership evidence
 
 data _∈_ (A : Ty) : Cx → Set where
-  Z : {Γ : Cx}                  → A ∈ Γ , A
+  Z : {Γ : Cx}          → A ∈ Γ , A
   S : {Γ : Cx} {B : Ty} → A ∈ Γ → A ∈ Γ , B
 
 
@@ -365,17 +367,20 @@ R⇓² {t₂} {t₁} = R⇓ⁿ {𝒕 = t₂ ∷ t₁ ⋯}
 -- IKS combinators
 
 EI : {x : Var} {A : Ty}
-   → ⊩ 𝜆 x ． 𝑣 x ∶ (A ⊃ A)
+   → ⊩ 𝜆 x ． 𝑣 x
+       ∶ (A ⊃ A)
 EI = R𝜆 (R𝑣 Z)
 
 
 EK : {x y : Var} {A B : Ty}
-   → ⊩ 𝜆 x ． 𝜆 y ． 𝑣 x ∶ (A ⊃ B ⊃ A)
+   → ⊩ 𝜆 x ． 𝜆 y ． 𝑣 x
+       ∶ (A ⊃ B ⊃ A)
 EK = R𝜆 (R𝜆 (R𝑣 (S Z)))
 
 
 ES : {f g x : Var} {A B C : Ty}
-   → ⊩ 𝜆 f ． 𝜆 g ． 𝜆 x ． ((𝑣 f) ∘ (𝑣 x)) ∘ ((𝑣 g) ∘ (𝑣 x)) ∶ ((A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C)
+   → ⊩ 𝜆 f ． 𝜆 g ． 𝜆 x ． ((𝑣 f) ∘ (𝑣 x)) ∘ ((𝑣 g) ∘ (𝑣 x))
+       ∶ ((A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C)
 ES = R𝜆 (R𝜆 (R𝜆 (R∘ (R∘ (R𝑣 (S (S Z)))
                         (R𝑣 Z))
                     (R∘ (R𝑣 (S Z))
@@ -385,20 +390,25 @@ ES = R𝜆 (R𝜆 (R𝜆 (R∘ (R∘ (R𝑣 (S (S Z)))
 -- Example 1 (p. 28[1])
 
 E1₁ : {x y : Var} {A : Ty}
-    → ⊩ 𝜆 y ． ⇓ 𝑣 y ∶ (𝑣 x ∶ A ⊃ A)
+    → ⊩ 𝜆 y ． ⇓ 𝑣 y
+        ∶ (𝑣 x ∶ A ⊃ A)
 E1₁ = R𝜆 (R⇓ (R𝑣 Z))
 
 E1₂ : {x y : Var} {A : Ty}
-    → ⊩ 𝜆 y ． ⇑ 𝑣 y ∶ (𝑣 x ∶ A ⊃ ! 𝑣 x ∶ 𝑣 x ∶ A)
+    → ⊩ 𝜆 y ． ⇑ 𝑣 y
+        ∶ (𝑣 x ∶ A ⊃ ! 𝑣 x ∶ 𝑣 x ∶ A)
 E1₂ = R𝜆 (R⇑ (R𝑣 Z))
 
 E1₃ : {u x v y : Var} {A B : Ty}
-    → ⊩ 𝜆² u ． 𝜆² v ． 𝑝²⟨ 𝑣 u , 𝑣 v ⟩ ∶ 𝜆 x ． 𝜆 y ． 𝑝⟨ 𝑣 x , 𝑣 y ⟩ ∶ (A ⊃ B ⊃ A ∧ B)
+    → ⊩ 𝜆² u ． 𝜆² v ． 𝑝²⟨ 𝑣 u , 𝑣 v ⟩
+        ∶ 𝜆 x ． 𝜆 y ． 𝑝⟨ 𝑣 x , 𝑣 y ⟩
+          ∶ (A ⊃ B ⊃ A ∧ B)
 E1₃ = R𝜆² (R𝜆² (R𝑝² (R𝑣² (S Z))
                     (R𝑣² Z)))
 
 E1₄ : {u x v y : Var} {A B : Ty}
-    → ⊩ 𝜆 u ． 𝜆 v ． ⇑ 𝑝²⟨ 𝑣 u , 𝑣 v ⟩ ∶ (𝑣 x ∶ A ⊃ 𝑣 y ∶ B ⊃ ! 𝑝⟨ 𝑣 x , 𝑣 y ⟩ ∶ 𝑝⟨ 𝑣 x , 𝑣 y ⟩ ∶ (A ∧ B))
+    → ⊩ 𝜆 u ． 𝜆 v ． ⇑ 𝑝²⟨ 𝑣 u , 𝑣 v ⟩
+        ∶ (𝑣 x ∶ A ⊃ 𝑣 y ∶ B ⊃ ! 𝑝⟨ 𝑣 x , 𝑣 y ⟩ ∶ 𝑝⟨ 𝑣 x , 𝑣 y ⟩ ∶ (A ∧ B))
 E1₄ = R𝜆 (R𝜆 (R⇑ (R𝑝² (R𝑣 (S Z))
                       (R𝑣 Z))))
 
@@ -406,11 +416,15 @@ E1₄ = R𝜆 (R𝜆 (R⇑ (R𝑝² (R𝑣 (S Z))
 -- Example 2 (pp. 31–32[1])
 
 E2  : {x₃ x₂ x₁ : Var} {A : Ty}
-    → ⊩ 𝜆² x₃ ． ⇓² ⇑² 𝑣 x₃ ∶ 𝜆 x₂ ． ⇓ ⇑ 𝑣 x₂ ∶ (𝑣 x₁ ∶ A ⊃ 𝑣 x₁ ∶ A)
+    → ⊩ 𝜆² x₃ ． ⇓² ⇑² 𝑣 x₃
+        ∶ 𝜆 x₂ ． ⇓ ⇑ 𝑣 x₂
+          ∶ (𝑣 x₁ ∶ A ⊃ 𝑣 x₁ ∶ A)
 E2  = R𝜆² (R⇓² (R⇑² (R𝑣² Z)))
 
 E2' : {x₃ x₂ x₁ : Var} {A : Ty}
-    → ⊩ 𝜆² x₃ ． 𝑣 x₃ ∶ 𝜆 x₂ ． 𝑣 x₂ ∶ (𝑣 x₁ ∶ A ⊃ 𝑣 x₁ ∶ A)
+    → ⊩ 𝜆² x₃ ． 𝑣 x₃
+        ∶ 𝜆 x₂ ． 𝑣 x₂
+          ∶ (𝑣 x₁ ∶ A ⊃ 𝑣 x₁ ∶ A)
 E2' = R𝜆² (R𝑣² Z)
 
 
@@ -419,86 +433,71 @@ E2' = R𝜆² (R𝑣² Z)
 -- Work in progress
 
 
-_V,_∶_ : {n : ℕ} (Γ : Cx) (𝒙 : VVar n) (𝑨 : VTy n) → Cx
-Γ V, (x₁ ⋯)   ∶ (A₁ ⋯)   = Γ            , (𝑣 x₁ ∶ A₁)
-Γ V, (xₙ ∷ 𝒙) ∶ (Aₙ ∷ 𝑨) = (Γ V, 𝒙 ∶ 𝑨) , (𝑣 xₙ ∶ Aₙ)
+_,ⁿ_∶_ : {n : ℕ} (Γ : Cx) (𝒙 : VVar n) (𝑨 : VTy n) → Cx
+Γ ,ⁿ (x₁ ⋯)   ∶ (A₁ ⋯)   = Γ            , (𝑣 x₁ ∶ A₁)
+Γ ,ⁿ (xₙ ∷ 𝒙) ∶ (Aₙ ∷ 𝑨) = (Γ ,ⁿ 𝒙 ∶ 𝑨) , (𝑣 xₙ ∶ Aₙ)
 
 
--- "Note that the set of axioms is thus also defined inductively according to λ∞:
--- as soon as we are able to establish that F is a type we are entitled to use
--- variables of type F as new axioms."
+-- "Note that the set of axioms is thus also defined inductively according
+-- to λ∞: as soon as we are able to establish that F is a type we are
+-- entitled to use variables of type F as new axioms."
 
-postulate -- XXX: How to prove this?
-  lem1 : {n m : ℕ} {x : Var} {𝒙 : VVar n} {𝒚 : VVar m} {A B : Ty} {Γ : Cx}
-    → 𝑣ⁿ 𝒚 ∶ B ∈ Γ ,     𝑣ⁿ 𝒙 ∶ A
-    → 𝑣ⁿ 𝒚 ∶ B ∈ Γ , 𝑣ⁿ x ∷ 𝒙 ∶ A
+postulate
+  lemma1 : {n : ℕ} {x : Var} {𝒙 : VVar n} {A B : Ty} {Γ : Cx}    -- XXX: How to prove this?
+    → Γ ,     𝑣ⁿ 𝒙 ∶ A ⊢ B
+    → Γ , 𝑣ⁿ x ∷ 𝒙 ∶ A ⊢ B
 
-  lem2 : {n m : ℕ} {x : Var} {𝒙 : VVar n} {𝒚 : VVar m} {𝒕 : VTm m} {A B C : Ty} {Γ : Cx}
-    → (Γ ,     𝑣ⁿ 𝒙 ∶ A) , 𝑣ⁿ 𝒚 ∶ B ⊢ ⋆ⁿ 𝒕 ∶ C
-    → (Γ , 𝑣ⁿ x ∷ 𝒙 ∶ A) , 𝑣ⁿ 𝒚 ∶ B ⊢ ⋆ⁿ 𝒕 ∶ C
-
-
-weak : {n : ℕ} {x : Var} {𝒙 : VVar n} {A B : Ty} {Γ : Cx}
-  → Γ ,     𝑣ⁿ 𝒙 ∶ A ⊢ B
-  → Γ , 𝑣ⁿ x ∷ 𝒙 ∶ A ⊢ B
-weak {n} {x} {𝒙} (R𝑣ⁿ {m} {𝒚} D)     = R𝑣ⁿ {𝒙 = 𝒚} (lem1 {𝒙 = 𝒙} {𝒚 = 𝒚} D)
-weak {n} {x} {𝒙} (R𝜆ⁿ {m} {𝒚} {𝒕} D) = R𝜆ⁿ {𝒙 = 𝒚} {𝒕 = 𝒕} (lem2 {𝒙 = 𝒙} {𝒚 = 𝒚} {𝒕 = 𝒕} D)
-weak {n} (R∘ⁿ {m} D₀ D₁)             = R∘ⁿ  {n = m} (weak {n} D₀) (weak {n} D₁)
-weak {n} (R𝑝ⁿ {m} D₀ D₁)             = R𝑝ⁿ  {n = m} (weak {n} D₀) (weak {n} D₁)
-weak {n} (R𝜋₀ⁿ {m} D)                = R𝜋₀ⁿ {n = m} (weak {n} D)
-weak {n} (R𝜋₁ⁿ {m} D)                = R𝜋₁ⁿ {n = m} (weak {n} D)
-weak {n} (R⇑ⁿ {m} D)                 = R⇑ⁿ  {n = m} (weak {n} D)
-weak {n} (R⇓ⁿ {m} D)                 = R⇓ⁿ  {n = m} (weak {n} D)
+fresh : {n : ℕ} (𝒙 : VVar n) → Var
+fresh {n} 𝒙 = suc n    -- XXX: Prove freshness!
 
 
 -- "Let λ∞ derive
 --   A₁, A₂, …, Aₘ ⊢ B.
--- Then one can build a well-defined term t(x₁, x₂, …, xₘ) with fresh variables 𝒙 such that λ∞ also derives
+-- Then one can build a well-defined term t(x₁, x₂, …, xₘ) with fresh
+-- variables 𝒙 such that λ∞ also derives
 --   x₁ ∶ A₁, x₂ ∶ A₂, …, xₘ ∶ Aₘ ⊢ t(x₁, x₂, …, xₘ) ∶ B."
+ 
+theorem1 : {m : ℕ} {𝒙 : VVar m} {𝑨 : VTy m} {B : Ty} {Γ : Cx}
+  → Γ ,ⁿ 𝒙 ∶ 𝑨 ⊢ B
+  → Σ (VVar m → Tm) (λ t → (Γ ,ⁿ 𝒙 ∶ 𝑨) ⊢ t 𝒙 ∶ B)
 
-T1 : {Γ : Cx} {m : ℕ} (𝒙 : VVar m) {𝑨 : VTy m} {B : Ty}
-  → Γ V, 𝒙 ∶ 𝑨 ⊢ B
-  → Σ (VVar m → Tm) (λ t → (Γ V, 𝒙 ∶ 𝑨) ⊢ t 𝒙 ∶ B)
+theorem1 {m} {𝒙} (R𝑣ⁿ {n} {𝒚} D) =
+  theorem1 {𝒙 = 𝒙} (R𝑣ⁿ {𝒙 = 𝒚} D)    -- XXX: Prove termination!
 
-T1 𝒙 (R𝑣ⁿ {n} {𝒚} D) =
-  T1 𝒙 (R𝑣ⁿ {𝒙 = 𝒚} D) -- XXX: What should be done in this case?
+theorem1 {m} {𝒙} {𝑨} (R𝜆ⁿ {n} {𝒚} {𝒕} {A} D) =
+  let xₘ₊₁  = fresh 𝒙
+      s , E = theorem1 {𝒙 = xₘ₊₁ ∷ 𝒙} {𝑨 = 𝑣ⁿ 𝒚 ∶ A ∷ 𝑨} (lemma1 {𝒙 = 𝒚} D)    -- XXX: Prove termination!
+  in  (λ 𝒙 → 𝜆^[ suc n ] xₘ₊₁ ． s (xₘ₊₁ ∷ 𝒙))
+    , R𝜆ⁿ {𝒙 = xₘ₊₁ ∷ 𝒚} {𝒕 = s (xₘ₊₁ ∷ 𝒙) ∷ 𝒕} E
 
-T1 {Γ} {m} 𝒙 {𝑨} (R𝜆ⁿ {n} {𝒚} {𝒕} {A} D) =
-  let xₘ₊₁  = suc m -- XXX: How to guarantee this to be a fresh variable?
-      Aₘ₊₁  = 𝑣ⁿ 𝒚 ∶ A
-      s , E = T1 (xₘ₊₁ ∷ 𝒙) {Aₘ₊₁ ∷ 𝑨} (weak {𝒙 = 𝒚} D) -- XXX: How to push this through the termination check?
-  in (λ 𝒙 → 𝜆^[ suc n ] xₘ₊₁ ． s (xₘ₊₁ ∷ 𝒙))
-    , R𝜆ⁿ {Γ = Γ V, 𝒙 ∶ 𝑨} {𝒙 = xₘ₊₁ ∷ 𝒚} {𝒕 = s (xₘ₊₁ ∷ 𝒙) ∷ 𝒕} E
-     
-T1 𝒙 (R∘ⁿ {n} {𝒕} {𝒔} Dₜ Dₛ) =
-  let sₜ , Eₜ = T1 𝒙 Dₜ
-      sₛ , Eₛ = T1 𝒙 Dₛ
+theorem1 {m} {𝒙} (R∘ⁿ {n} {𝒕} {𝒔} Dₜ Dₛ) =
+  let sₜ , Eₜ = theorem1 {𝒙 = 𝒙} Dₜ
+      sₛ , Eₛ = theorem1 {𝒙 = 𝒙} Dₛ
   in  (λ 𝒙 → sₜ 𝒙 ∘^[ suc n ] sₛ 𝒙)
     , R∘ⁿ {𝒕 = sₜ 𝒙 ∷ 𝒕} {𝒔 = sₛ 𝒙 ∷ 𝒔} Eₜ Eₛ
-     
-T1 𝒙 (R𝑝ⁿ {n} {𝒕} {𝒔} Dₜ Dₛ) =
-  let sₜ , Eₜ = T1 𝒙 Dₜ
-      sₛ , Eₛ = T1 𝒙 Dₛ
+    
+theorem1 {m} {𝒙} (R𝑝ⁿ {n} {𝒕} {𝒔} Dₜ Dₛ) =
+  let sₜ , Eₜ = theorem1 {𝒙 = 𝒙} Dₜ
+      sₛ , Eₛ = theorem1 {𝒙 = 𝒙} Dₛ
   in  (λ 𝒙 → 𝑝^[ suc n ]⟨ sₜ 𝒙 , sₛ 𝒙 ⟩)
     , R𝑝ⁿ {𝒕 = sₜ 𝒙 ∷ 𝒕} {𝒔 = sₛ 𝒙 ∷ 𝒔} Eₜ Eₛ
-     
-T1 𝒙 (R𝜋₀ⁿ {n} {𝒕} D) =
-  let s , E = T1 𝒙 D
+    
+theorem1 {m} {𝒙} (R𝜋₀ⁿ {n} {𝒕} D) =
+  let s , E = theorem1 {𝒙 = 𝒙} D
   in  (λ 𝒙 → 𝜋₀^[ suc n ] s 𝒙)
     , R𝜋₀ⁿ {𝒕 = s 𝒙 ∷ 𝒕} E
-     
-T1 𝒙 (R𝜋₁ⁿ {n} {𝒕} D) =
-  let s , E = T1 𝒙 D
+    
+theorem1 {m} {𝒙} (R𝜋₁ⁿ {n} {𝒕} D) =
+  let s , E = theorem1 {𝒙 = 𝒙} D
   in  (λ 𝒙 → 𝜋₁^[ suc n ] s 𝒙)
     , R𝜋₁ⁿ {𝒕 = s 𝒙 ∷ 𝒕} E
-     
-T1 𝒙 (R⇑ⁿ {n} {𝒕} D) =
-  let s , E = T1 𝒙 D
+    
+theorem1 {m} {𝒙} (R⇑ⁿ {n} {𝒕} D) =
+  let s , E = theorem1 {𝒙 = 𝒙} D
   in  (λ 𝒙 → ⇑^[ suc n ] s 𝒙)
     , R⇑ⁿ {𝒕 = s 𝒙 ∷ 𝒕} E
-     
-T1 𝒙 (R⇓ⁿ {n} {𝒕} D) =
-  let s , E = T1 𝒙 D
+    
+theorem1 {m} {𝒙} (R⇓ⁿ {n} {𝒕} D) =
+  let s , E = theorem1 {𝒙 = 𝒙} D
   in  (λ 𝒙 → ⇓^[ suc n ] s 𝒙)
     , R⇓ⁿ {𝒕 = s 𝒙 ∷ 𝒕} E
-
