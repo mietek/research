@@ -41,7 +41,7 @@ open import Data.Product using (Σ ; _,_ ; proj₁ ; proj₂ ; _×_)
 infixl 9 _∘_ _∘²_ _∘^[_]_
 infixr 8 𝑣_ !_ ⇓_ ⇑_ ⇓²_ ⇑²_ ⇓^[_]_ ⇑^[_]_ 
 infixr 7 𝜆_．_ 𝜆²_．_ 𝜆^[_]_．_
-infixr 6 _∶_
+infixr 6 _∶_ _∷_
 infixr 5 ¬_
 infixl 4 _∧_
 infixr 3 _⊃_ _⊃⊂_
@@ -63,25 +63,25 @@ data _∈_ {X : Set} (x : X) : List X → Set where
   S : {L : List X} {y : X} → x ∈ L → x ∈ L , y
 
 
--- Generic non-empty vectors
+-- Generic vectors
 
 data Vec (X : Set) : ℕ → Set where
-  _∷⋯ : (x₁ : X)                       → Vec X zero
+  ∅   :                                  Vec X zero
   _∷_ : (xₙ : X) {n : ℕ} (𝒙 : Vec X n) → Vec X (suc n)
 
 foldl : {n : ℕ} {X Y : Set}
       → (f : Y → X → Y) (𝒙 : Vec X n) (y : Y) → Y
-foldl f (x₁ ∷⋯)  y = f y             x₁
+foldl f ∅        y = y
 foldl f (xₙ ∷ 𝒙) y = f (foldl f 𝒙 y) xₙ
 
 foldr : {n : ℕ} {X Y : Set}
       → (f : X → Y → Y) (𝒙 : Vec X n) (y : Y) → Y
-foldr f (x₁ ∷⋯)  y = f x₁ y
+foldr f ∅        y = y
 foldr f (xₙ ∷ 𝒙) y = f xₙ (foldr f 𝒙 y)
 
 map# : {n : ℕ} {X Y : Set}
      → (f : ℕ → X → Y) (𝒙 : Vec X n) → Vec Y n
-map# {zero}  f (x₁ ∷⋯)  = f zero    x₁ ∷⋯
+map# {zero}  f ∅        = ∅
 map# {suc n} f (xₙ ∷ 𝒙) = f (suc n) xₙ ∷ map# f 𝒙
 
 map : {n : ℕ} {X Y : Set}
@@ -90,7 +90,7 @@ map f 𝒙 = map# (λ _ x → f x) 𝒙
 
 map2# : {n : ℕ} {X Y Z : Set}
       → (f : ℕ → X → Y → Z) (𝒙 : Vec X n) (𝒚 : Vec Y n) → Vec Z n
-map2# {zero}  f (x₁ ∷⋯)  (y₁ ∷⋯)  = f zero    x₁ y₁ ∷⋯
+map2# {zero}  f ∅        ∅        = ∅
 map2# {suc n} f (xₙ ∷ 𝒙) (yₙ ∷ 𝒚) = f (suc n) xₙ yₙ ∷ map2# f 𝒙 𝒚
 
 map2 : {n : ℕ} {X Y Z : Set}
@@ -168,7 +168,7 @@ VTy n = Vec Ty n
 -- Vector notation for nesting context extension
 
 _,ⁿ_∶_ : {n : ℕ} (Γ : Cx) (𝒙 : VVar n) (𝑨 : VTy n) → Cx
-Γ ,ⁿ (x₁ ∷⋯)  ∶ (A₁ ∷⋯)  = Γ            , (𝑣 x₁ ∶ A₁)
+Γ ,ⁿ ∅        ∶ ∅        = Γ
 Γ ,ⁿ (xₙ ∷ 𝒙) ∶ (Aₙ ∷ 𝑨) = (Γ ,ⁿ 𝒙 ∶ 𝑨) , (𝑣 xₙ ∶ Aₙ)
 
 
@@ -249,52 +249,93 @@ data _⊢_ (Γ : Cx) : Ty → Set where
 
 ------------------------------------------------------------------------------
 
+-- Simplified notation for level 0 typing rules
+
+R𝑣⁰ : {A : Ty} {Γ : Cx}
+    → A ∈ Γ
+    → Γ ⊢ A
+R𝑣⁰ = R𝑣ⁿ {𝒙 = ∅}
+
+R𝜆⁰ : {A B : Ty} {Γ : Cx}
+    → Γ , A ⊢ B
+    → Γ ⊢ A ⊃ B
+R𝜆⁰ = R𝜆ⁿ {𝒙 = ∅} {𝒕 = ∅}
+
+R∘⁰ : {A B : Ty} {Γ : Cx}
+    → Γ ⊢ A ⊃ B    → Γ ⊢ A
+    → Γ ⊢ B
+R∘⁰ = R∘ⁿ {𝒕 = ∅} {𝒔 = ∅}
+
+R𝑝⁰ : {A B : Ty} {Γ : Cx}
+    → Γ ⊢ A    → Γ ⊢ B
+    → Γ ⊢ A ∧ B
+R𝑝⁰ = R𝑝ⁿ {𝒕 = ∅} {𝒔 = ∅}
+
+R𝜋₀⁰ : {A B : Ty} {Γ : Cx}
+     → Γ ⊢ A ∧ B
+     → Γ ⊢ A
+R𝜋₀⁰ = R𝜋₀ⁿ {𝒕 = ∅}
+
+R𝜋₁⁰ : {A B : Ty} {Γ : Cx}
+     → Γ ⊢ A ∧ B
+     → Γ ⊢ B
+R𝜋₁⁰ = R𝜋₁ⁿ {𝒕 = ∅}
+
+R⇑⁰ : {u : Tm} {A : Ty} {Γ : Cx}
+    → Γ ⊢ u ∶ A
+    → Γ ⊢ ! u ∶ u ∶ A
+R⇑⁰ = R⇑ⁿ {𝒕 = ∅}
+
+R⇓⁰ : {u : Tm} {A : Ty} {Γ : Cx}
+    → Γ ⊢ u ∶ A
+    → Γ ⊢ A
+R⇓⁰ = R⇓ⁿ {𝒕 = ∅}
+
+
+-- Simple level 0 examples
+
+exmI⁰ : {x : Var} {A : Ty}
+      → ⊩ A ⊃ A
+exmI⁰ = R𝜆⁰ (R𝑣⁰ Z)
+
+
+exmK⁰ : {x y : Var} {A B : Ty}
+      → ⊩ A ⊃ B ⊃ A
+exmK⁰ = R𝜆⁰ (R𝜆⁰ (R𝑣⁰ (S Z)))
+
+
+exmS⁰ : {f g x : Var} {A B C : Ty}
+      → ⊩ (A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C
+exmS⁰ = R𝜆⁰ (R𝜆⁰ (R𝜆⁰ (R∘⁰ (R∘⁰ (R𝑣⁰ (S (S Z)))
+                           (R𝑣⁰ Z))
+                      (R∘⁰ (R𝑣⁰ (S Z))
+                           (R𝑣⁰ Z)))))
+
+
+------------------------------------------------------------------------------
+
 -- Simplified notation for level 1 terms
 
 𝜆_．_ : (x : Var) (t : Tm) → Tm
-𝜆 x ． t = 𝜆^[ 0 ] x ． t
+𝜆 x ． t = 𝜆^[ 1 ] x ． t
 
 _∘_ : (t s : Tm) → Tm
-t ∘ s = t ∘^[ 0 ] s
+t ∘ s = t ∘^[ 1 ] s
 
 𝑝⟨_,_⟩ : (t s : Tm) → Tm
-𝑝⟨ t , s ⟩ = 𝑝^[ 0 ]⟨ t , s ⟩
+𝑝⟨ t , s ⟩ = 𝑝^[ 1 ]⟨ t , s ⟩
 
 𝜋₀_ : (t : Tm) → Tm
-𝜋₀ t = 𝜋₀^[ 0 ] t
+𝜋₀ t = 𝜋₀^[ 1 ] t
 
 𝜋₁_ : (t : Tm) → Tm
-𝜋₁ t = 𝜋₁^[ 0 ] t
+𝜋₁ t = 𝜋₁^[ 1 ] t
 
 ⇑_ : (t : Tm) → Tm
-⇑ t = ⇑^[ 0 ] t
+⇑ t = ⇑^[ 1 ] t
 
 ⇓_ : (t : Tm) → Tm
-⇓ t = ⇓^[ 0 ] t
-
-
--- Simplified notation for level 2 terms
-
-𝜆²_．_ : (x : Var) (t : Tm) → Tm
-𝜆² x ． t = 𝜆^[ 1 ] x ． t
-
-_∘²_ : (t s : Tm) → Tm
-t ∘² s = t ∘^[ 1 ] s
-
-𝑝²⟨_,_⟩ : (t s : Tm) → Tm
-𝑝²⟨ t , s ⟩ = 𝑝^[ 1 ]⟨ t , s ⟩
-
-𝜋₀²_ : (t : Tm) → Tm
-𝜋₀² t = 𝜋₀^[ 1 ] t
-
-𝜋₁²_ : (t : Tm) → Tm
-𝜋₁² t = 𝜋₁^[ 1 ] t
-
-⇑²_ : (t : Tm) → Tm
-⇑² t = ⇑^[ 1 ] t
-
-⇓²_ : (t : Tm) → Tm
-⇓² t = ⇓^[ 1 ] t
+⇓ t = ⇓^[ 1 ] t
 
 
 -- Simplified notation for level 1 typing rules
@@ -302,90 +343,45 @@ t ∘² s = t ∘^[ 1 ] s
 R𝑣 : {x : Var} {A : Ty} {Γ : Cx}
    → 𝑣 x ∶ A ∈ Γ
    → Γ ⊢ 𝑣 x ∶ A
-R𝑣 {x} = R𝑣ⁿ {𝒙 = x ∷⋯}
+R𝑣 {x} = R𝑣ⁿ {𝒙 = x ∷ ∅}
 
 R𝜆 : {x : Var} {t : Tm} {A B : Ty} {Γ : Cx}
    → Γ , (𝑣 x ∶ A) ⊢ t ∶ B
    → Γ ⊢ 𝜆 x ． t ∶ (A ⊃ B)
-R𝜆 {x} {t} = R𝜆ⁿ {𝒙 = x ∷⋯} {𝒕 = t ∷⋯}
+R𝜆 {x} {t} = R𝜆ⁿ {𝒙 = x ∷ ∅} {𝒕 = t ∷ ∅}
 
 R∘ : {t s : Tm} {A B : Ty} {Γ : Cx}
    → Γ ⊢ t ∶ (A ⊃ B)    → Γ ⊢ s ∶ A
    → Γ ⊢ t ∘ s ∶ B
-R∘ {t} {s} = R∘ⁿ {𝒕 = t ∷⋯} {𝒔 = s ∷⋯}
+R∘ {t} {s} = R∘ⁿ {𝒕 = t ∷ ∅} {𝒔 = s ∷ ∅}
 
 R𝑝 : {t s : Tm} {A B : Ty} {Γ : Cx}
    → Γ ⊢ t ∶ A    → Γ ⊢ s ∶ B
    → Γ ⊢ 𝑝⟨ t , s ⟩ ∶ (A ∧ B)
-R𝑝 {t} {s} = R𝑝ⁿ {𝒕 = t ∷⋯} {𝒔 = s ∷⋯}
+R𝑝 {t} {s} = R𝑝ⁿ {𝒕 = t ∷ ∅} {𝒔 = s ∷ ∅}
 
 R𝜋₀ : {t : Tm} {A B : Ty} {Γ : Cx}
     → Γ ⊢ t ∶ (A ∧ B)
     → Γ ⊢ 𝜋₀ t ∶ A
-R𝜋₀ {t} = R𝜋₀ⁿ {𝒕 = t ∷⋯}
+R𝜋₀ {t} = R𝜋₀ⁿ {𝒕 = t ∷ ∅}
 
 R𝜋₁ : {t : Tm} {A B : Ty} {Γ : Cx}
     → Γ ⊢ t ∶ (A ∧ B)
     → Γ ⊢ 𝜋₁ t ∶ B
-R𝜋₁ {t} = R𝜋₁ⁿ {𝒕 = t ∷⋯}
+R𝜋₁ {t} = R𝜋₁ⁿ {𝒕 = t ∷ ∅}
 
 R⇑ : {t u : Tm} {A : Ty} {Γ : Cx}
    → Γ ⊢ t ∶ u ∶ A
    → Γ ⊢ ⇑ t ∶ ! u ∶ u ∶ A
-R⇑ {t} = R⇑ⁿ {𝒕 = t ∷⋯}
+R⇑ {t} = R⇑ⁿ {𝒕 = t ∷ ∅}
 
 R⇓ : {t u : Tm} {A : Ty} {Γ : Cx}
    → Γ ⊢ t ∶ u ∶ A
    → Γ ⊢ ⇓ t ∶ A
-R⇓ {t} = R⇓ⁿ {𝒕 = t ∷⋯}
+R⇓ {t} = R⇓ⁿ {𝒕 = t ∷ ∅}
 
 
--- Simplified notation for level 2 typing rules
-
-R𝑣² : {x₂ x₁ : Var} {A : Ty} {Γ : Cx}
-    → 𝑣 x₂ ∶ 𝑣 x₁ ∶ A ∈ Γ
-    → Γ ⊢ 𝑣 x₂ ∶ 𝑣 x₁ ∶ A
-R𝑣² {x₂} {x₁} = R𝑣ⁿ {𝒙 = x₂ ∷ x₁ ∷⋯}
-
-R𝜆² : {x₂ x₁ : Var} {t₂ t₁ : Tm} {A B : Ty} {Γ : Cx}
-    → Γ , (𝑣 x₂ ∶ 𝑣 x₁ ∶ A) ⊢ t₂ ∶ t₁ ∶ B
-    → Γ ⊢ 𝜆² x₂ ． t₂ ∶ 𝜆 x₁ ． t₁ ∶ (A ⊃ B)
-R𝜆² {x₂} {x₁} {t₂} {t₁} = R𝜆ⁿ {𝒙 = x₂ ∷ x₁ ∷⋯} {𝒕 = t₂ ∷ t₁ ∷⋯}
-
-R∘² : {t₂ t₁ s₂ s₁ : Tm} {A B : Ty} {Γ : Cx}
-    → Γ ⊢ t₂ ∶ t₁ ∶ (A ⊃ B)    → Γ ⊢ s₂ ∶ s₁ ∶ A
-    → Γ ⊢ t₂ ∘² s₂ ∶ t₁ ∘ s₁ ∶ B
-R∘² {t₂} {t₁} {s₂} {s₁} = R∘ⁿ {𝒕 = t₂ ∷ t₁ ∷⋯} {𝒔 = s₂ ∷ s₁ ∷⋯}
-
-R𝑝² : {t₂ t₁ s₂ s₁ : Tm} {A B : Ty} {Γ : Cx}
-    → Γ ⊢ t₂ ∶ t₁ ∶ A    → Γ ⊢ s₂ ∶ s₁ ∶ B
-    → Γ ⊢ 𝑝²⟨ t₂ , s₂ ⟩ ∶ 𝑝⟨ t₁ , s₁ ⟩ ∶ (A ∧ B)
-R𝑝² {t₂} {t₁} {s₂} {s₁} = R𝑝ⁿ {𝒕 = t₂ ∷ t₁ ∷⋯} {𝒔 = s₂ ∷ s₁ ∷⋯}
-
-R𝜋₀² : {t₂ t₁ : Tm} {A B : Ty} {Γ : Cx}
-     → Γ ⊢ t₂ ∶ t₁ ∶ (A ∧ B)
-     → Γ ⊢ 𝜋₀² t₂ ∶ 𝜋₀ t₁ ∶ A
-R𝜋₀² {t₂} {t₁} = R𝜋₀ⁿ {𝒕 = t₂ ∷ t₁ ∷⋯}
-
-R𝜋₁² : {t₂ t₁ : Tm} {A B : Ty} {Γ : Cx}
-     → Γ ⊢ t₂ ∶ t₁ ∶ (A ∧ B)
-     → Γ ⊢ 𝜋₁² t₂ ∶ 𝜋₁ t₁ ∶ B
-R𝜋₁² {t₂} {t₁} = R𝜋₁ⁿ {𝒕 = t₂ ∷ t₁ ∷⋯}
-
-R⇑² : {t₂ t₁ u : Tm} {A : Ty} {Γ : Cx}
-    → Γ ⊢ t₂ ∶ t₁ ∶ u ∶ A
-    → Γ ⊢ ⇑² t₂ ∶ ⇑ t₁ ∶ ! u ∶ u ∶ A
-R⇑² {t₂} {t₁} = R⇑ⁿ {𝒕 = t₂ ∷ t₁ ∷⋯}
-
-R⇓² : {t₂ t₁ u : Tm} {A : Ty} {Γ : Cx}
-    → Γ ⊢ t₂ ∶ t₁ ∶ u ∶ A
-    → Γ ⊢ ⇓² t₂ ∶ ⇓ t₁ ∶ A
-R⇓² {t₂} {t₁} = R⇓ⁿ {𝒕 = t₂ ∷ t₁ ∷⋯}
-
-
-------------------------------------------------------------------------------
-
--- Simple examples
+-- Simple level 1 examples
 
 exmI : {x : Var} {A : Ty}
      → ⊩ 𝜆 x ． 𝑣 x
@@ -407,6 +403,103 @@ exmS = R𝜆 (R𝜆 (R𝜆 (R∘ (R∘ (R𝑣 (S (S Z)))
                       (R∘ (R𝑣 (S Z))
                           (R𝑣 Z)))))
 
+
+------------------------------------------------------------------------------
+
+-- Simplified notation for level 2 terms
+
+𝜆²_．_ : (x : Var) (t : Tm) → Tm
+𝜆² x ． t = 𝜆^[ 2 ] x ． t
+
+_∘²_ : (t s : Tm) → Tm
+t ∘² s = t ∘^[ 2 ] s
+
+𝑝²⟨_,_⟩ : (t s : Tm) → Tm
+𝑝²⟨ t , s ⟩ = 𝑝^[ 2 ]⟨ t , s ⟩
+
+𝜋₀²_ : (t : Tm) → Tm
+𝜋₀² t = 𝜋₀^[ 2 ] t
+
+𝜋₁²_ : (t : Tm) → Tm
+𝜋₁² t = 𝜋₁^[ 2 ] t
+
+⇑²_ : (t : Tm) → Tm
+⇑² t = ⇑^[ 2 ] t
+
+⇓²_ : (t : Tm) → Tm
+⇓² t = ⇓^[ 2 ] t
+
+
+-- Simplified notation for level 2 typing rules
+
+R𝑣² : {x₂ x₁ : Var} {A : Ty} {Γ : Cx}
+    → 𝑣 x₂ ∶ 𝑣 x₁ ∶ A ∈ Γ
+    → Γ ⊢ 𝑣 x₂ ∶ 𝑣 x₁ ∶ A
+R𝑣² {x₂} {x₁} = R𝑣ⁿ {𝒙 = x₂ ∷ x₁ ∷ ∅}
+
+R𝜆² : {x₂ x₁ : Var} {t₂ t₁ : Tm} {A B : Ty} {Γ : Cx}
+    → Γ , (𝑣 x₂ ∶ 𝑣 x₁ ∶ A) ⊢ t₂ ∶ t₁ ∶ B
+    → Γ ⊢ 𝜆² x₂ ． t₂ ∶ 𝜆 x₁ ． t₁ ∶ (A ⊃ B)
+R𝜆² {x₂} {x₁} {t₂} {t₁} = R𝜆ⁿ {𝒙 = x₂ ∷ x₁ ∷ ∅} {𝒕 = t₂ ∷ t₁ ∷ ∅}
+
+R∘² : {t₂ t₁ s₂ s₁ : Tm} {A B : Ty} {Γ : Cx}
+    → Γ ⊢ t₂ ∶ t₁ ∶ (A ⊃ B)    → Γ ⊢ s₂ ∶ s₁ ∶ A
+    → Γ ⊢ t₂ ∘² s₂ ∶ t₁ ∘ s₁ ∶ B
+R∘² {t₂} {t₁} {s₂} {s₁} = R∘ⁿ {𝒕 = t₂ ∷ t₁ ∷ ∅} {𝒔 = s₂ ∷ s₁ ∷ ∅}
+
+R𝑝² : {t₂ t₁ s₂ s₁ : Tm} {A B : Ty} {Γ : Cx}
+    → Γ ⊢ t₂ ∶ t₁ ∶ A    → Γ ⊢ s₂ ∶ s₁ ∶ B
+    → Γ ⊢ 𝑝²⟨ t₂ , s₂ ⟩ ∶ 𝑝⟨ t₁ , s₁ ⟩ ∶ (A ∧ B)
+R𝑝² {t₂} {t₁} {s₂} {s₁} = R𝑝ⁿ {𝒕 = t₂ ∷ t₁ ∷ ∅} {𝒔 = s₂ ∷ s₁ ∷ ∅}
+
+R𝜋₀² : {t₂ t₁ : Tm} {A B : Ty} {Γ : Cx}
+     → Γ ⊢ t₂ ∶ t₁ ∶ (A ∧ B)
+     → Γ ⊢ 𝜋₀² t₂ ∶ 𝜋₀ t₁ ∶ A
+R𝜋₀² {t₂} {t₁} = R𝜋₀ⁿ {𝒕 = t₂ ∷ t₁ ∷ ∅}
+
+R𝜋₁² : {t₂ t₁ : Tm} {A B : Ty} {Γ : Cx}
+     → Γ ⊢ t₂ ∶ t₁ ∶ (A ∧ B)
+     → Γ ⊢ 𝜋₁² t₂ ∶ 𝜋₁ t₁ ∶ B
+R𝜋₁² {t₂} {t₁} = R𝜋₁ⁿ {𝒕 = t₂ ∷ t₁ ∷ ∅}
+
+R⇑² : {t₂ t₁ u : Tm} {A : Ty} {Γ : Cx}
+    → Γ ⊢ t₂ ∶ t₁ ∶ u ∶ A
+    → Γ ⊢ ⇑² t₂ ∶ ⇑ t₁ ∶ ! u ∶ u ∶ A
+R⇑² {t₂} {t₁} = R⇑ⁿ {𝒕 = t₂ ∷ t₁ ∷ ∅}
+
+R⇓² : {t₂ t₁ u : Tm} {A : Ty} {Γ : Cx}
+    → Γ ⊢ t₂ ∶ t₁ ∶ u ∶ A
+    → Γ ⊢ ⇓² t₂ ∶ ⇓ t₁ ∶ A
+R⇓² {t₂} {t₁} = R⇓ⁿ {𝒕 = t₂ ∷ t₁ ∷ ∅}
+
+
+-- Simple level 2 examples
+
+exmI² : {u x : Var} {A : Ty}
+      → ⊩ 𝜆² u ． 𝑣 u
+          ∶ 𝜆 x ． 𝑣 x
+            ∶ (A ⊃ A)
+exmI² = R𝜆² (R𝑣² Z)
+
+
+exmK² : {u x v y : Var} {A B : Ty}
+      → ⊩ 𝜆² u ． 𝜆² v ． 𝑣 u
+          ∶ 𝜆 x ． 𝜆 y ． 𝑣 x
+            ∶ (A ⊃ B ⊃ A)
+exmK² = R𝜆² (R𝜆² (R𝑣² (S Z)))
+
+
+exmS² : {f g x : Var} {A B C : Ty}
+      → ⊩ 𝜆² f ． 𝜆² g ． 𝜆² x ． ((𝑣 f) ∘² (𝑣 x)) ∘² ((𝑣 g) ∘² (𝑣 x))
+          ∶ 𝜆 f ． 𝜆 g ． 𝜆 x ． ((𝑣 f) ∘ (𝑣 x)) ∘ ((𝑣 g) ∘ (𝑣 x))
+            ∶ ((A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C)
+exmS² = R𝜆² (R𝜆² (R𝜆² (R∘² (R∘² (R𝑣² (S (S Z)))
+                           (R𝑣² Z))
+                      (R∘² (R𝑣² (S Z))
+                           (R𝑣² Z)))))
+
+
+------------------------------------------------------------------------------
 
 -- Example 1 (p. 28[1])
 
@@ -459,12 +552,12 @@ exm2b = R𝜆² (R𝑣² Z)
 -- entitled to use variables of type F as new axioms."
 
 postulate
-  lem1 : {n : ℕ} {x : Var} {𝒙 : VVar n} {A B : Ty} {Γ : Cx}    -- XXX: How to prove this?
+  lem1 : {m : ℕ} {x : Var} {𝒙 : VVar m} {A B : Ty} {Γ : Cx}    -- XXX: How to prove this?
     → Γ ,     𝑣ⁿ 𝒙 ∶ A ⊢ B
     → Γ , 𝑣ⁿ x ∷ 𝒙 ∶ A ⊢ B
 
-fresh : {n : ℕ} {𝒙 : VVar n} → Var
-fresh {n} = suc n    -- XXX: Prove freshness!
+fresh : {m : ℕ} {𝒙 : VVar m} → Var
+fresh {m} = suc m    -- XXX: Prove freshness!
 
 
 -- "Let λ∞ derive
