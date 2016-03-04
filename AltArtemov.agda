@@ -249,7 +249,7 @@ data _⊢_ (Γ : Cx) : Ty → Set where
 
 ------------------------------------------------------------------------------
 
--- Simplified notation for level 0 typing rules
+-- Simple notation for level 0 typing rules
 
 R𝑣⁰ : {A : Ty} {Γ : Cx}
     → A ∈ Γ
@@ -314,7 +314,7 @@ exmS⁰ = R𝜆⁰ (R𝜆⁰ (R𝜆⁰ (R∘⁰ (R∘⁰ (R𝑣⁰ (S (S Z)))
 
 ------------------------------------------------------------------------------
 
--- Simplified notation for level 1 terms
+-- Simple notation for level 1 terms
 
 𝜆_．_ : (x : Var) (t : Tm) → Tm
 𝜆 x ． t = 𝜆^[ 1 ] x ． t
@@ -338,7 +338,7 @@ t ∘ s = t ∘^[ 1 ] s
 ⇓ t = ⇓^[ 1 ] t
 
 
--- Simplified notation for level 1 typing rules
+-- Simple notation for level 1 typing rules
 
 R𝑣 : {x : Var} {A : Ty} {Γ : Cx}
    → 𝑣 x ∶ A ∈ Γ
@@ -406,7 +406,7 @@ exmS = R𝜆 (R𝜆 (R𝜆 (R∘ (R∘ (R𝑣 (S (S Z)))
 
 ------------------------------------------------------------------------------
 
--- Simplified notation for level 2 terms
+-- Simple notation for level 2 terms
 
 𝜆²_．_ : (x : Var) (t : Tm) → Tm
 𝜆² x ． t = 𝜆^[ 2 ] x ． t
@@ -430,7 +430,7 @@ t ∘² s = t ∘^[ 2 ] s
 ⇓² t = ⇓^[ 2 ] t
 
 
--- Simplified notation for level 2 typing rules
+-- Simple notation for level 2 typing rules
 
 R𝑣² : {x₂ x₁ : Var} {A : Ty} {Γ : Cx}
     → 𝑣 x₂ ∶ 𝑣 x₁ ∶ A ∈ Γ
