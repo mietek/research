@@ -544,7 +544,47 @@ exm2b = R𝜆² (R𝑣² Z)
 
 ------------------------------------------------------------------------------
 
--- Theorem 1. (Internalization property for λ∞)
+-- Hypothesis principle
+
+hyp : {n : ℕ} {𝒙 : VVar n} {A : Ty} {Γ : Cx}
+    → 𝑣ⁿ 𝒙 ∶ A ∈ Γ
+    → Γ ⊢ 𝑣ⁿ 𝒙 ∶ A
+hyp {_} {𝒙} = R𝑣ⁿ {𝒙 = 𝒙}
+
+
+-- Generalised weakening principle
+
+weak : {A : Ty} {Γ Δ : Cx}
+     → (Γ⊆Δ : Set)    → Γ ⊢ A
+     → Δ ⊢ A
+weak Γ⊆Δ (R𝑣ⁿ x) = {!!}
+weak Γ⊆Δ (R𝜆ⁿ D) = {!!}
+weak Γ⊆Δ (R∘ⁿ Dₜ Dₛ) = {!!}
+weak Γ⊆Δ (R𝑝ⁿ Dₜ Dₛ) = {!!}
+weak Γ⊆Δ (R𝜋₀ⁿ D) = {!!}
+weak Γ⊆Δ (R𝜋₁ⁿ D) = {!!}
+weak Γ⊆Δ (R⇑ⁿ D) = {!!}
+weak Γ⊆Δ (R⇓ⁿ D) = {!!}
+
+
+-- Substitution principle
+
+subst : {A B : Ty} {Γ : Cx}
+      → Γ ⊢ A    → Γ , A ⊢ B
+      → Γ ⊢ B
+subst C (R𝑣ⁿ x) = {!!}
+subst C (R𝜆ⁿ D) = {!!}
+subst C (R∘ⁿ Dₜ Dₛ) = {!!}
+subst C (R𝑝ⁿ Dₜ Dₛ) = {!!}
+subst C (R𝜋₀ⁿ D) = {!!}
+subst C (R𝜋₁ⁿ D) = {!!}
+subst C (R⇑ⁿ D) = {!!}
+subst C (R⇓ⁿ D) = {!!}
+
+
+------------------------------------------------------------------------------
+
+-- Theorem 1.  Internalisation principle
 
 
 -- "Note that the set of axioms is thus also defined inductively according
@@ -553,8 +593,8 @@ exm2b = R𝜆² (R𝑣² Z)
 
 postulate
   lem1 : {m : ℕ} {x : Var} {𝒙 : VVar m} {A B : Ty} {Γ : Cx}    -- XXX: How to prove this?
-    → Γ ,     𝑣ⁿ 𝒙 ∶ A ⊢ B
-    → Γ , 𝑣ⁿ x ∷ 𝒙 ∶ A ⊢ B
+       → Γ ,     𝑣ⁿ 𝒙 ∶ A ⊢ B
+       → Γ , 𝑣ⁿ x ∷ 𝒙 ∶ A ⊢ B
 
 fresh : {m : ℕ} {𝒙 : VVar m} → Var
 fresh {m} = suc m    -- XXX: Prove freshness!
@@ -567,8 +607,8 @@ fresh {m} = suc m    -- XXX: Prove freshness!
 --   x₁ ∶ A₁, x₂ ∶ A₂, …, xₘ ∶ Aₘ ⊢ t(x₁, x₂, …, xₘ) ∶ B."
  
 thm1 : {m : ℕ} {𝒙 : VVar m} {𝑨 : VTy m} {B : Ty} {Γ : Cx}
-  → Γ ,ⁿ 𝒙 ∶ 𝑨 ⊢ B
-  → Σ (VVar m → Tm) (λ t → (Γ ,ⁿ 𝒙 ∶ 𝑨) ⊢ t 𝒙 ∶ B)
+     → Γ ,ⁿ 𝒙 ∶ 𝑨 ⊢ B
+     → Σ (VVar m → Tm) (λ t → (Γ ,ⁿ 𝒙 ∶ 𝑨) ⊢ t 𝒙 ∶ B)
 
 thm1 {m} {𝒙} (R𝑣ⁿ {n} {𝒚} D) =
   thm1 {𝒙 = 𝒙} (R𝑣ⁿ {𝒙 = 𝒚} D)    -- XXX: Prove termination!
