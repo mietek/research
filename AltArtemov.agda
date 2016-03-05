@@ -1,12 +1,10 @@
 {-
 
-A partial implementation of the Alt-Artëmov system λ∞[1].
+An implementation of the Alt-Artëmov system λ∞
 
 Miëtek Bak <mietek@bak.io>
 
-Thanks to Darryl McAdams and Paolo Giarrusso for comments and discussion.
-
-Checked with Agda 2.4.2.5.
+Checked with Agda 2.4.2.5
 
 For easy editing with Emacs agda-mode, add to your .emacs file:
  '(agda-input-user-translations
@@ -14,9 +12,9 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
     (("N" "ℕ")
      ("not" "¬") ("imp" "⊃") ("iff" "⊃⊂") ("ent" "⊢") ("thm" "⊩") 
      ("x" "𝒙") ("y" "𝒚") ("t" "𝒕") ("s" "𝒔") ("A" "𝑨")
-     ("*n" "⋆ⁿ")
+     ("*n" "⋆ⁿ") (",n" ",ⁿ")
      ("v" "𝑣") ("v2" "𝑣²") ("vn" "𝑣ⁿ")
-     ("l" "𝜆") ("l2" "𝜆²") ("l2" "𝜆ⁿ") ("." "．")
+     ("l" "𝜆") ("l2" "𝜆²") ("ln" "𝜆ⁿ") ("." "．")
      ("o2" "∘²") ("on" "∘ⁿ")
      ("p" "𝑝") ("p2" "𝑝²") ("pn" "𝑝ⁿ")
      ("1" "𝜋₀") ("12" "𝜋₀²") ("1n" "𝜋₀ⁿ")
@@ -24,10 +22,10 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
      ("u" "⇑") ("u2" "⇑²") ("un" "⇑ⁿ")
      ("d" "⇓") ("d2" "⇓²") ("dn" "⇓ⁿ"))))
 
-[1]: Alt, J., Artëmov, S. (2001) Reflective λ-calculus, Proceedings of the
-     2001 International Seminar on Proof Theory in Computer Science (PTCS’01),
-     Lecture Notes in Computer Science, vol. 2183, pp. 22–37.
-     http://dx.doi.org/10.1007/3-540-45504-3_2
+Alt, J., Artëmov, S. (2001) Reflective λ-calculus, Proceedings of the
+2001 International Seminar on Proof Theory in Computer Science (PTCS’01),
+Lecture Notes in Computer Science, vol. 2183, pp. 22–37.
+http://dx.doi.org/10.1007/3-540-45504-3_2
 
 -}
 
@@ -46,7 +44,7 @@ infixr 5 ¬_
 infixl 4 _∧_
 infixr 3 _⊃_ _⊃⊂_
 infixl 2 _,_
-infixr 1 _∈_
+infixr 1 _∈_ _⊆_
 infixr 0 _⊢_ ⊩_
 
 
@@ -547,43 +545,27 @@ exm2b = R𝜆² (R𝑣² Z)
 
 ------------------------------------------------------------------------------
 
--- Hypothesis principle
-
-hyp : {n : ℕ} {𝒙 : VVar n} {A : Ty} {Γ : Cx}
-    → 𝑣ⁿ 𝒙 ∶ A ∈ Γ
-    → Γ ⊢ 𝑣ⁿ 𝒙 ∶ A
-hyp {_} {𝒙} = R𝑣ⁿ {𝒙 = 𝒙}
-
-
 -- Generalised weakening principle
 
-weak : {A : Ty} {Γ Δ : Cx}
-     → (Γ⊆Δ : Set)    → Γ ⊢ A
-     → Δ ⊢ A
-weak Γ⊆Δ (R𝑣ⁿ  x) = {!!}    -- XXX: How to prove this?
-weak Γ⊆Δ (R𝜆ⁿ  {_} {𝒙} {𝒕} D)     = R𝜆ⁿ  {𝒙 = 𝒙} {𝒕 = 𝒕} (weak Γ⊆Δ D)
-weak Γ⊆Δ (R∘ⁿ  {_} {𝒕} {𝒔} Dₜ Dₛ) = R∘ⁿ  {𝒕 = 𝒕} {𝒔 = 𝒔} (weak Γ⊆Δ Dₜ) (weak Γ⊆Δ Dₛ)
-weak Γ⊆Δ (R𝑝ⁿ  {_} {𝒕} {𝒔} Dₜ Dₛ) = R𝑝ⁿ  {𝒕 = 𝒕} {𝒔 = 𝒔} (weak Γ⊆Δ Dₜ) (weak Γ⊆Δ Dₛ)
-weak Γ⊆Δ (R𝜋₀ⁿ {_} {𝒕} D)         = R𝜋₀ⁿ {𝒕 = 𝒕} (weak Γ⊆Δ D)
-weak Γ⊆Δ (R𝜋₁ⁿ {_} {𝒕} D)         = R𝜋₁ⁿ {𝒕 = 𝒕} (weak Γ⊆Δ D)
-weak Γ⊆Δ (R⇑ⁿ  {_} {𝒕} D)         = R⇑ⁿ  {𝒕 = 𝒕} (weak Γ⊆Δ D)
-weak Γ⊆Δ (R⇓ⁿ  {_} {𝒕} D)         = R⇓ⁿ  {𝒕 = 𝒕} (weak Γ⊆Δ D)
+data _⊆_ : (Γ Γ′ : Cx) → Set where
+  base :                                     ∅ ⊆ ∅
+  keep : {Γ Γ′ : Cx} {A : Ty} → Γ ⊆ Γ′ → Γ , A ⊆ Γ′ , A
+  drop : {Γ Γ′ : Cx} {A : Ty} → Γ ⊆ Γ′ →     Γ ⊆ Γ′ , A
 
+weak∈ : {Γ Γ′ : Cx} {A : Ty} → Γ ⊆ Γ′ → A ∈ Γ → A ∈ Γ′
+weak∈ (keep Γ⊆Γ′) Z     = Z
+weak∈ (keep Γ⊆Γ′) (S i) = S (weak∈ Γ⊆Γ′ i)
+weak∈ (drop Γ⊆Γ′) i     = S (weak∈ Γ⊆Γ′ i)
 
--- Substitution principle
-
-subst : {A B : Ty} {Γ : Cx}
-      → Γ ⊢ A    → Γ , A ⊢ B
-      → Γ ⊢ B
-subst C (R𝑣ⁿ  x) = {!!}    -- XXX: How to prove this?
-subst C (R𝜆ⁿ  D) = {!!}    -- XXX: How to prove this?
-subst C (R∘ⁿ  {_} {𝒕} {𝒔} Dₜ Dₛ) = R∘ⁿ  {𝒕 = 𝒕} {𝒔 = 𝒔} (subst C Dₜ) (subst C Dₛ)
-subst C (R𝑝ⁿ  {_} {𝒕} {𝒔} Dₜ Dₛ) = R𝑝ⁿ  {𝒕 = 𝒕} {𝒔 = 𝒔} (subst C Dₜ) (subst C Dₛ)
-subst C (R𝜋₀ⁿ {_} {𝒕} D)         = R𝜋₀ⁿ {𝒕 = 𝒕} (subst C D)
-subst C (R𝜋₁ⁿ {_} {𝒕} D)         = R𝜋₁ⁿ {𝒕 = 𝒕} (subst C D)
-subst C (R⇑ⁿ  {_} {𝒕} D)         = R⇑ⁿ  {𝒕 = 𝒕} (subst C D)
-subst C (R⇓ⁿ  {_} {𝒕} D)         = R⇓ⁿ  {𝒕 = 𝒕} (subst C D)
-
+weak⊢ : {Γ Γ′ : Cx} {A : Ty} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
+weak⊢ Γ⊆Γ′ (R𝑣ⁿ  {_} {𝒙} i)         = R𝑣ⁿ  {𝒙 = 𝒙} (weak∈ Γ⊆Γ′ i)
+weak⊢ Γ⊆Γ′ (R𝜆ⁿ  {_} {𝒙} {𝒕} d)     = R𝜆ⁿ  {𝒙 = 𝒙} {𝒕 = 𝒕} (weak⊢ (keep Γ⊆Γ′) d)
+weak⊢ Γ⊆Γ′ (R∘ⁿ  {_} {𝒕} {𝒔} dₜ dₛ) = R∘ⁿ  {𝒕 = 𝒕} {𝒔 = 𝒔} (weak⊢ Γ⊆Γ′ dₜ) (weak⊢ Γ⊆Γ′ dₛ)
+weak⊢ Γ⊆Γ′ (R𝑝ⁿ  {_} {𝒕} {𝒔} dₜ dₛ) = R𝑝ⁿ  {𝒕 = 𝒕} {𝒔 = 𝒔} (weak⊢ Γ⊆Γ′ dₜ) (weak⊢ Γ⊆Γ′ dₛ)
+weak⊢ Γ⊆Γ′ (R𝜋₀ⁿ {_} {𝒕} d)         = R𝜋₀ⁿ {𝒕 = 𝒕} (weak⊢ Γ⊆Γ′ d)
+weak⊢ Γ⊆Γ′ (R𝜋₁ⁿ {_} {𝒕} d)         = R𝜋₁ⁿ {𝒕 = 𝒕} (weak⊢ Γ⊆Γ′ d)
+weak⊢ Γ⊆Γ′ (R⇑ⁿ  {_} {𝒕} d)         = R⇑ⁿ  {𝒕 = 𝒕} (weak⊢ Γ⊆Γ′ d)
+weak⊢ Γ⊆Γ′ (R⇓ⁿ  {_} {𝒕} d)         = R⇓ⁿ  {𝒕 = 𝒕} (weak⊢ Γ⊆Γ′ d)
 
 
 ------------------------------------------------------------------------------
@@ -612,7 +594,8 @@ fresh {m} = suc m    -- XXX: Prove freshness!
 -- Then one can build a well-defined term t(x₁, x₂, …, xₘ) with fresh
 -- variables 𝒙 such that λ∞ also derives
 --   x₁ ∶ A₁, x₂ ∶ A₂, …, xₘ ∶ Aₘ ⊢ t(x₁, x₂, …, xₘ) ∶ B."
- 
+
+{-
 thm1 : {m : ℕ} {𝑨 : VTy m} {B : Ty} {Γ : Cx}
      → Γ ,ⁿ 𝑨 ⊢ B
      → Σ (VVar m → Tm) (λ t → {𝒙 : VVar m} → (Γ ,,ⁿ 𝒙 ∶ 𝑨) ⊢ t 𝒙 ∶ B)
@@ -657,3 +640,4 @@ thm1 {_} {𝑨} (R⇓ⁿ {n} {𝒕} D) =
   let s , E = thm1 {𝑨 = 𝑨} D
   in  (λ 𝒙 → ⇓^[ suc n ] s 𝒙)
     , (λ {𝒙} → R⇓ⁿ {𝒕 = s 𝒙 ∷ 𝒕} E)
+-}
