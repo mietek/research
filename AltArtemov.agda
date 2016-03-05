@@ -617,7 +617,7 @@ thm1 : {m : ℕ} {𝑨 : VTy m} {B : Ty} {Γ : Cx}
      → Γ ,ⁿ 𝑨 ⊢ B
      → Σ (VVar m → Tm) (λ t → {𝒙 : VVar m} → (Γ ,,ⁿ 𝒙 ∶ 𝑨) ⊢ t 𝒙 ∶ B)
 
-thm1 {_} {𝒙} (R𝑣ⁿ {_} {𝒚} D) = {!!}    -- XXX: How to prove this?
+thm1 {_} {𝑨} (R𝑣ⁿ {_} {𝒚} D) = {!!}    -- XXX: How to prove this?
 
 thm1 {_} {𝑨} (R𝜆ⁿ {n} {𝒚} {𝒕} {A} D) =
   let s , E = thm1 {𝑨 = 𝑣ⁿ 𝒚 ∶ A ∷ 𝑨} (lem2 {𝑨 = 𝑨} {𝒚 = 𝒚} D)    -- XXX: Does this terminate?
