@@ -52,74 +52,6 @@ infixr 1 _∈_ _⊆_
 infixr 0 _⊢_ ⊩_
 
 
--- ---------------------------------------------------------------------------
-
--- Generic lists
-
-data List (X : Set) : Set where
-  ∅   :              List X
-  _,_ : List X → X → List X
-
-
-data _∈_ {X : Set} (x : X) : List X → Set where
-
-  𝑧  : {Γ : List X}
-     → x ∈ Γ , x
-
-  𝑠_ : {Γ : List X} {y : X}
-     → x ∈ Γ
-     → x ∈ Γ , y
-
-
-data _⊆_ {X : Set} : List X → List X → Set where
-
-  base : ∅ ⊆ ∅
-
-  keep : {Γ F : List X} {x : X}
-       → Γ ⊆ F
-       → Γ , x ⊆ F , x
-
-  drop : {Γ F : List X} {x : X}
-       → Γ ⊆ F
-       → Γ ⊆ F , x
-
-
--- Generic vectors
-
-data Vec (X : Set) : ℕ → Set where
-  ∅   :                      Vec X zero
-  _∷_ : ∀{n} → X → Vec X n → Vec X (suc n)
-
-
-foldl : ∀{n} {X Y : Set} → (Y → X → Y) → Y → Vec X n → Y
-foldl f y₀ ∅       = y₀
-foldl f y₀ (x ∷ 𝐱) = f (foldl f y₀ 𝐱) x
-
-foldr : ∀{n} {X Y : Set} → (X → Y → Y) → Vec X n → Y → Y
-foldr f ∅       y₀ = y₀
-foldr f (x ∷ 𝐱) y₀ = f x (foldr f 𝐱 y₀)
-
-
-map# : ∀{n} {X Y : Set} → (ℕ → X → Y) → Vec X n → Vec Y n
-map# {zero}  f ∅       = ∅
-map# {suc n} f (x ∷ 𝐱) = f (suc n) x ∷ map# f 𝐱
-
-map2# : ∀{n} {X Y Z : Set} → (ℕ → X → Y → Z) → Vec X n → Vec Y n → Vec Z n
-map2# {zero}  f ∅       ∅       = ∅
-map2# {suc n} f (x ∷ 𝐱) (y ∷ 𝐲) = f (suc n) x y ∷ map2# f 𝐱 𝐲
-
-
-map : ∀{n} {X Y : Set} → (X → Y) → Vec X n → Vec Y n
-map f = map# (λ _ x → f x)
-
-map2 : ∀{n} {X Y Z : Set} → (X → Y → Z) → Vec X n → Vec Y n → Vec Z n
-map2 f = map2# (λ _ x y → f x y)
-
-
--- ---------------------------------------------------------------------------
-
--- Untyped syntax
-
 mutual
 
   -- Variables
@@ -150,7 +82,7 @@ mutual
     _∶_ : Tm → Ty → Ty    -- Provability
 
 
--- Additional types
+-- Type examples
 
 ⊤      : Ty               -- Truth
 ⊤      = ⊥ ⊃ ⊥
@@ -164,13 +96,36 @@ A ⊃⊂ B = A ⊃ B ∧ B ⊃ A
 
 -- ---------------------------------------------------------------------------
 
--- Typing contexts
+-- Generic vectors
 
-Cx : Set
-Cx = List Ty
+data Vec (X : Set) : ℕ → Set where
+  ∅   :                      Vec X zero
+  _∷_ : ∀{n} → X → Vec X n → Vec X (suc n)
+
+foldl : ∀{n} {X Y : Set} → (Y → X → Y) → Y → Vec X n → Y
+foldl f y₀ ∅       = y₀
+foldl f y₀ (x ∷ 𝐱) = f (foldl f y₀ 𝐱) x
+
+foldr : ∀{n} {X Y : Set} → (X → Y → Y) → Vec X n → Y → Y
+foldr f ∅       y₀ = y₀
+foldr f (x ∷ 𝐱) y₀ = f x (foldr f 𝐱 y₀)
+
+map# : ∀{n} {X Y : Set} → (ℕ → X → Y) → Vec X n → Vec Y n
+map# {zero}  f ∅       = ∅
+map# {suc n} f (x ∷ 𝐱) = f (suc n) x ∷ map# f 𝐱
+
+map2# : ∀{n} {X Y Z : Set} → (ℕ → X → Y → Z) → Vec X n → Vec Y n → Vec Z n
+map2# {zero}  f ∅       ∅       = ∅
+map2# {suc n} f (x ∷ 𝐱) (y ∷ 𝐲) = f (suc n) x y ∷ map2# f 𝐱 𝐲
+
+map : ∀{n} {X Y : Set} → (X → Y) → Vec X n → Vec Y n
+map f = map# (λ _ x → f x)
+
+map2 : ∀{n} {X Y Z : Set} → (X → Y → Z) → Vec X n → Vec Y n → Vec Z n
+map2 f = map2# (λ _ x y → f x y)
 
 
--- Vectors
+-- Vector notation
 
 VVar : ℕ → Set
 VVar = Vec Var
@@ -180,9 +135,6 @@ VTm  = Vec Tm
 
 VTy  : ℕ → Set
 VTy  = Vec Ty
-
-
--- Vector notation
 
 ⋆ⁿ_∶_          : ∀{n} → VTm n → Ty → Ty
 ⋆ⁿ 𝐭 ∶ A       = foldr _∶_ 𝐭 A
@@ -212,10 +164,28 @@ _∘ⁿ_∶_         : ∀{n} → VTm n → VTm n → Ty → Ty
 ⇓ⁿ 𝐭 ∶ A       = ⋆ⁿ (map# ⇓^[_]_ 𝐭) ∶ A
 
 
+-- ---------------------------------------------------------------------------
+
+-- Generic lists
+
+data List (X : Set) : Set where
+  ∅   :              List X
+  _,_ : List X → X → List X
+
+data _∈_ {X : Set} (x : X) : List X → Set where
+  𝑧   : {Γ : List X}                 → x ∈ Γ , x
+  𝑠_  : {Γ : List X} {y : X} → x ∈ Γ → x ∈ Γ , y
+
+
+-- Typing contexts
+
+Cx : Set
+Cx = List Ty
+
+
 -- Typing rules
 
 data _⊢_ (Γ : Cx) : Ty → Set where
-
   R𝜈ⁿ  : ∀{n k} {𝐱 : VVar n} {𝐰 : VVar k} {A : Ty}
        → 𝜈ⁿ 𝐱 ∶ A ∈ Γ
        → Γ ⊢ 𝜈ⁿ 𝐰 ∶ 𝜈ⁿ 𝐱 ∶ A
@@ -249,16 +219,6 @@ data _⊢_ (Γ : Cx) : Ty → Set where
        → Γ ⊢ ⇓ⁿ 𝐭 ∶ A
 
 
-{- “As soon as we are able to establish that F is a type (…), we are entitled
-    to use variables of type F as new axioms.” (p. 27[1]) -}
-
-R+𝜈ⁿ : ∀{n A Γ} {𝐱 : VVar n}
-     → A ∈ Γ
-     → Γ ⊢ 𝜈ⁿ 𝐱 ∶ A
-R+𝜈ⁿ {𝐱 = 𝐱}
-     = R𝜈ⁿ {𝐱 = ∅} {𝐰 = 𝐱}
-
-
 -- Theorems
 
 ⊩_  : Ty → Set
@@ -267,7 +227,21 @@ R+𝜈ⁿ {𝐱 = 𝐱}
 
 -- ---------------------------------------------------------------------------
 
--- Simple notation for level 0 typing rules
+-- Corollary of variable typing rule
+
+{- “As soon as we are able to establish that A is a type (…), we are entitled
+    to use variables of type A as new axioms.” (p. 27 [1]) -}
+
+R𝜈ⁿ′ : ∀{n A Γ} {𝐱 : VVar n}
+     → A ∈ Γ
+     → Γ ⊢ 𝜈ⁿ 𝐱 ∶ A
+R𝜈ⁿ′ {𝐱 = 𝐱}
+     = R𝜈ⁿ {𝐱 = ∅} {𝐰 = 𝐱}
+
+
+-- ---------------------------------------------------------------------------
+
+-- Level 0: Simplified typing rules
 
 R𝜈⁰  : ∀{A Γ}
      → A ∈ Γ
@@ -300,7 +274,7 @@ R𝜋₁⁰ : ∀{A B Γ}
 R𝜋₁⁰ = R𝜋₁ⁿ {𝐭 = ∅}
 
 
--- Simple level 0 examples
+-- Level 0: Examples
 
 eI⁰ : ∀{A}
     → ⊩ A ⊃ A
@@ -322,7 +296,7 @@ eS⁰ = R𝜆⁰ (R𝜆⁰ (R𝜆⁰ (R∘⁰ (R∘⁰ (R𝜈⁰ (𝑠 𝑠 𝑧
 
 -- ---------------------------------------------------------------------------
 
--- Simple notation for level 1 terms
+-- Level 1: Simplified term constructors
 
 𝜆_．_       : Var → Tm → Tm
 𝜆 x ． t    = 𝜆^[ 1 ] x ． t
@@ -346,7 +320,7 @@ t ∘ s      = t ∘^[ 1 ] s
 ⇓ t        = ⇓^[ 1 ] t
 
 
--- Simple notation for level 1 typing rules
+-- Level 1: Simplified typing rules
 
 R𝜈  : ∀{x A Γ}
     → 𝜈 x ∶ A ∈ Γ
@@ -397,7 +371,7 @@ R⇓ {t}
     = R⇓ⁿ {𝐭 = t ∷ ∅}
 
 
--- Simple level 1 examples
+-- Level 1: Examples
 
 eI : ∀{x A}
    → ⊩ 𝜆 x ． 𝜈 x
@@ -422,7 +396,7 @@ eS = R𝜆 (R𝜆 (R𝜆 (R∘ (R∘ (R𝜈 (𝑠 𝑠 𝑧))
 
 -- ---------------------------------------------------------------------------
 
--- Simple notation for level 2 terms
+-- Level 2: Simplified term constructors
 
 𝜆²_．_       : Var → Tm → Tm
 𝜆² x ． t    = 𝜆^[ 2 ] x ． t
@@ -446,7 +420,7 @@ t ∘² s      = t ∘^[ 2 ] s
 ⇓² t        = ⇓^[ 2 ] t
 
 
--- Simple notation for level 2 typing rules
+-- Level 2: Simplified typing rules
 
 R𝜈²  : ∀{x₂ x₁ A Γ}
      → 𝜈 x₂ ∶ 𝜈 x₁ ∶ A ∈ Γ
@@ -497,7 +471,7 @@ R⇓² {t₂} {t₁}
      = R⇓ⁿ {𝐭 = t₂ ∷ t₁ ∷ ∅}
 
 
--- Simple level 2 examples
+-- Level 2: Examples
 
 eI² : ∀{u x A}
     → ⊩ 𝜆² u ． 𝜈 u
@@ -525,12 +499,13 @@ eS² = R𝜆² (R𝜆² (R𝜆² (R∘² (R∘² (R𝜈² (𝑠 𝑠 𝑧))
 
 -- ---------------------------------------------------------------------------
 
--- Example 1 (p. 28[1])
+-- Example 1 (p. 28 [1])
 
 e1a : ∀{x y A}
     → ⊩ 𝜆 y ． ⇓ 𝜈 y
         ∶ (𝜈 x ∶ A ⊃ A)
 e1a = R𝜆 (R⇓ (R𝜈 𝑧))
+
 
 e1b : ∀{x y A}
     → ⊩ 𝜆 y ． ⇑ 𝜈 y
@@ -545,6 +520,7 @@ e1c : ∀{u x v y A B}
 e1c = R𝜆² (R𝜆² (R𝑝² (R𝜈² (𝑠 𝑧))
                     (R𝜈² 𝑧)))
 
+
 e1d : ∀{u x v y A B}
     → ⊩ 𝜆 u ． 𝜆 v ． ⇑ 𝑝²⟨ 𝜈 u , 𝜈 v ⟩
         ∶ (𝜈 x ∶ A ⊃ 𝜈 y ∶ B ⊃ ! 𝑝⟨ 𝜈 x , 𝜈 y ⟩ ∶ 𝑝⟨ 𝜈 x , 𝜈 y ⟩ ∶ (A ∧ B))
@@ -552,13 +528,14 @@ e1d = R𝜆 (R𝜆 (R⇑ (R𝑝² (R𝜈 (𝑠 𝑧))
                       (R𝜈 𝑧))))
 
 
--- Example 2 (pp. 31–32[1])
+-- Example 2 (pp. 31–32 [1])
 
 e2a : ∀{x₃ x₂ x₁ A}
     → ⊩ 𝜆² x₃ ． ⇓² ⇑² 𝜈 x₃
         ∶ 𝜆 x₂ ． ⇓ ⇑ 𝜈 x₂
           ∶ (𝜈 x₁ ∶ A ⊃ 𝜈 x₁ ∶ A)
 e2a = R𝜆² (R⇓² (R⇑² (R𝜈² 𝑧)))
+
 
 e2b : ∀{x₃ x₂ x₁ A}
     → ⊩ 𝜆² x₃ ． 𝜈 x₃
@@ -570,6 +547,18 @@ e2b = R𝜆² (R𝜈² 𝑧)
 -- ---------------------------------------------------------------------------
 
 -- Generalised weakening principle
+
+data _⊆_ {X : Set} : List X → List X → Set where
+  base : ∅ ⊆ ∅
+
+  keep : {Γ F : List X} {x : X}
+       → Γ ⊆ F
+       → Γ , x ⊆ F , x
+
+  drop : {Γ F : List X} {x : X}
+       → Γ ⊆ F
+       → Γ ⊆ F , x
+
 
 wk∈ : {Γ F : Cx} {A : Ty}
     → Γ ⊆ F    → A ∈ Γ
@@ -610,11 +599,12 @@ wk⊢ Γ⊆F (R⇓ⁿ {𝐭 = 𝐭} d)
 
 -- ---------------------------------------------------------------------------
 
--- Theorem 1.  Internalisation principle
+-- Theorem 1: Internalisation principle
 
 
 mk : ∀{n} → Cx → VTy n → Cx
 mk = foldl _,_
+
 
 mk2 : ∀{n} → Cx → VVar n → VTy n → Cx
 mk2 Γ 𝐱 𝐀 = mk Γ (map2 _∶_ (map 𝜈_ 𝐱) 𝐀)
