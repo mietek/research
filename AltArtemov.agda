@@ -36,19 +36,26 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
 
 module AltArtemov where
 
-open import Data.Fin using (Fin ; zero ; suc)
-open import Data.Nat using (ℕ ; zero ; suc)
-open import Data.Product using (Σ ; _×_) renaming (_,_ to _∙_)
+open import Data.Nat
+  using (ℕ ; zero ; suc ; _+_)
+
+open import Data.Product
+  using (Σ ; _×_)
+  renaming (_,_ to _∙_)
+
+open import Data.Vec
+  using (Vec ; _∷_ ; _∈_ ; foldl ; foldr ; map ; zipWith)
+  renaming ([] to ∅ ; here to Z ; there to S)
 
 infixl 9 !_ 𝜈_
 infixl 8 _∘_ _∘²_ _∘^[_]_
 infixr 7 ⇑_ ⇑²_ ⇑^[_]_ ⇓_ ⇓²_ ⇓^[_]_
 infixr 6 𝜆_．_ 𝜆²_．_ 𝜆^[_]_．_
-infixr 5 _∶_ _∷_
+infixr 5 _∶_
 infixr 4 ¬_
-infixl 3 _,_ _∧_
+infixl 3 _∧_ _,_
 infixr 2 _⊃_ _⊃⊂_
-infixr 1 _∈_ _⊆_ _%_
+infixr 1 _⊆_ _%_
 infixr 0 _⊢_ ⊩_
 
 
@@ -98,31 +105,13 @@ A ⊃⊂ B = A ⊃ B ∧ B ⊃ A
 
 -- Vectors
 
-data Vec (X : Set) : ℕ → Set where
-  ∅   :                      Vec X zero
-  _∷_ : ∀{n} → X → Vec X n → Vec X (suc n)
+ixMap : ∀{n} {X Y : Set} → (ℕ → X → Y) → Vec X n → Vec Y n
+ixMap {zero}  f ∅       = ∅
+ixMap {suc n} f (x ∷ 𝐱) = f (suc n) x ∷ ixMap f 𝐱
 
-foldl : ∀{n} {X Y : Set} → (Y → X → Y) → Y → Vec X n → Y
-foldl f y₀ ∅       = y₀
-foldl f y₀ (x ∷ 𝐱) = f (foldl f y₀ 𝐱) x
-
-foldr : ∀{n} {X Y : Set} → (X → Y → Y) → Vec X n → Y → Y
-foldr f ∅       y₀ = y₀
-foldr f (x ∷ 𝐱) y₀ = f x (foldr f 𝐱 y₀)
-
-map# : ∀{n} {X Y : Set} → (ℕ → X → Y) → Vec X n → Vec Y n
-map# {zero}  f ∅       = ∅
-map# {suc n} f (x ∷ 𝐱) = f (suc n) x ∷ map# f 𝐱
-
-map2# : ∀{n} {X Y Z : Set} → (ℕ → X → Y → Z) → Vec X n → Vec Y n → Vec Z n
-map2# {zero}  f ∅       ∅       = ∅
-map2# {suc n} f (x ∷ 𝐱) (y ∷ 𝐲) = f (suc n) x y ∷ map2# f 𝐱 𝐲
-
-map : ∀{n} {X Y : Set} → (X → Y) → Vec X n → Vec Y n
-map f = map# (λ _ x → f x)
-
-map2 : ∀{n} {X Y Z : Set} → (X → Y → Z) → Vec X n → Vec Y n → Vec Z n
-map2 f = map2# (λ _ x y → f x y)
+ixZipWith : ∀{n} {X X′ Y : Set} → (ℕ → X → X′ → Y) → Vec X n → Vec X′ n → Vec Y n
+ixZipWith {zero}  f ∅       ∅       = ∅
+ixZipWith {suc n} f (x ∷ 𝐱) (y ∷ 𝐲) = f (suc n) x y ∷ ixZipWith f 𝐱 𝐲
 
 
 -- Vector notation
@@ -137,61 +126,50 @@ VTy  : ℕ → Set
 VTy  = Vec Ty
 
 *ⁿ_∶_          : ∀{n} → VTm n → Ty → Ty
-*ⁿ 𝐭 ∶ A       = foldr _∶_ 𝐭 A
+*ⁿ 𝐭 ∶ A       = foldr (λ _ → Ty) _∶_ A 𝐭
 
 𝜈ⁿ_∶_          : ∀{n} → VVar n → Ty → Ty
 𝜈ⁿ 𝐱 ∶ A       = *ⁿ (map 𝜈_ 𝐱) ∶ A
 
 𝜆ⁿ_．_∶_        : ∀{n} → VVar n → VTm n → Ty → Ty
-𝜆ⁿ 𝐱 ． 𝐭 ∶ A   = *ⁿ (map2# 𝜆^[_]_．_ 𝐱 𝐭) ∶ A
+𝜆ⁿ 𝐱 ． 𝐭 ∶ A   = *ⁿ (ixZipWith 𝜆^[_]_．_ 𝐱 𝐭) ∶ A
 
 _∘ⁿ_∶_         : ∀{n} → VTm n → VTm n → Ty → Ty
-𝐭 ∘ⁿ 𝐬 ∶ A     = *ⁿ (map2# (λ n t s → t ∘^[ n ] s) 𝐭 𝐬) ∶ A
+𝐭 ∘ⁿ 𝐬 ∶ A     = *ⁿ (ixZipWith (λ n t s → t ∘^[ n ] s) 𝐭 𝐬) ∶ A
 
 𝑝ⁿ⟨_,_⟩∶_      : ∀{n} → VTm n → VTm n → Ty → Ty
-𝑝ⁿ⟨ 𝐭 , 𝐬 ⟩∶ A = *ⁿ (map2# 𝑝^[_]⟨_,_⟩ 𝐭 𝐬) ∶ A
+𝑝ⁿ⟨ 𝐭 , 𝐬 ⟩∶ A = *ⁿ (ixZipWith 𝑝^[_]⟨_,_⟩ 𝐭 𝐬) ∶ A
 
 𝜋₀ⁿ_∶_         : ∀{n} → VTm n → Ty → Ty
-𝜋₀ⁿ 𝐭 ∶ A      = *ⁿ (map# 𝜋₀^[_]_ 𝐭) ∶ A
+𝜋₀ⁿ 𝐭 ∶ A      = *ⁿ (ixMap 𝜋₀^[_]_ 𝐭) ∶ A
 
 𝜋₁ⁿ_∶_         : ∀{n} → VTm n → Ty → Ty
-𝜋₁ⁿ 𝐭 ∶ A      = *ⁿ (map# 𝜋₁^[_]_ 𝐭) ∶ A
+𝜋₁ⁿ 𝐭 ∶ A      = *ⁿ (ixMap 𝜋₁^[_]_ 𝐭) ∶ A
 
 ⇑ⁿ_∶_          : ∀{n} → VTm n → Ty → Ty
-⇑ⁿ 𝐭 ∶ A       = *ⁿ (map# ⇑^[_]_ 𝐭) ∶ A
+⇑ⁿ 𝐭 ∶ A       = *ⁿ (ixMap ⇑^[_]_ 𝐭) ∶ A
 
 ⇓ⁿ_∶_          : ∀{n} → VTm n → Ty → Ty
-⇓ⁿ 𝐭 ∶ A       = *ⁿ (map# ⇓^[_]_ 𝐭) ∶ A
+⇓ⁿ 𝐭 ∶ A       = *ⁿ (ixMap ⇓^[_]_ 𝐭) ∶ A
 
 
 -- ------------------------------------------------------------------------------------------------
 
--- Lists
-
-data List (X : Set) : Set where
-  ∅   :              List X
-  _,_ : List X → X → List X
-
-
--- List membership
-
-data _∈_ {X : Set} (x : X) : List X → Set where
-  Z   : {Γ : List X}                 → x ∈ Γ , x
-  S   : {Γ : List X} {y : X} → x ∈ Γ → x ∈ Γ , y
-
-
 -- Typing contexts
 
-Cx : Set
-Cx = List Ty
+Cx : ℕ → Set
+Cx = Vec Ty
+
+_,_ : {h : ℕ} → Cx h → Ty → Cx (suc h)
+Γ , A = A ∷ Γ
 
 
 -- Typing rules
 
-data _⊢_ (Γ : Cx) : Ty → Set where
-  R𝜈ⁿ  : ∀{n k} {𝐱 : VVar n} {𝐚 : VVar k} {A : Ty}
+data _⊢_ {h : ℕ} (Γ : Cx h) : Ty → Set where
+  R𝜈ⁿ  : ∀{n} {𝐱 : VVar n} {A : Ty}
        → 𝜈ⁿ 𝐱 ∶ A ∈ Γ
-       → Γ ⊢ 𝜈ⁿ 𝐚 ∶ 𝜈ⁿ 𝐱 ∶ A
+       → Γ ⊢ 𝜈ⁿ 𝐱 ∶ A
 
   R𝜆ⁿ  : ∀{n} {𝐱 : VVar n} {𝐭 : VTm n} {A B : Ty}
        → Γ , 𝜈ⁿ 𝐱 ∶ A ⊢ *ⁿ 𝐭 ∶ B
@@ -222,53 +200,42 @@ data _⊢_ (Γ : Cx) : Ty → Set where
        → Γ ⊢ ⇓ⁿ 𝐭 ∶ A
 
 
--- Corollary of variable typing rule
-
-{- “As soon as we are able to establish that A is a type (…), we are entitled
-    to use variables of type A as new axioms.” (p. 27 [1]) -}
-
-R𝜈ⁿ′ : ∀{n A Γ} {𝐱 : VVar n}
-     → A ∈ Γ
-     → Γ ⊢ 𝜈ⁿ 𝐱 ∶ A
-R𝜈ⁿ′ {𝐱 = 𝐱} = R𝜈ⁿ {𝐱 = ∅} {𝐚 = 𝐱}
-
-
 -- Theorems
 
 ⊩_  : Ty → Set
-⊩ A = ∀{Γ} → Γ ⊢ A
+⊩ A = ∀{h} {Γ : Cx h} → Γ ⊢ A
 
 
 -- ------------------------------------------------------------------------------------------------
 
 -- Level 0: Simplified typing rules
 
-R𝜈⁰  : ∀{A Γ}
+R𝜈⁰  : ∀{A h} {Γ : Cx h}
      → A ∈ Γ
      → Γ ⊢ A
-R𝜈⁰ = R𝜈ⁿ {𝐱 = ∅} {𝐚 = ∅}
+R𝜈⁰ = R𝜈ⁿ {𝐱 = ∅}
 
-R𝜆⁰  : ∀{A B Γ}
+R𝜆⁰  : ∀{A B h} {Γ : Cx h}
      → Γ , A ⊢ B
      → Γ ⊢ A ⊃ B
 R𝜆⁰ = R𝜆ⁿ {𝐱 = ∅} {𝐭 = ∅}
 
-R∘⁰  : ∀{A B Γ}
+R∘⁰  : ∀{A B h} {Γ : Cx h}
      → Γ ⊢ A ⊃ B    → Γ ⊢ A
      → Γ ⊢ B
 R∘⁰ = R∘ⁿ {𝐭 = ∅} {𝐬 = ∅}
 
-R𝑝⁰  : ∀{A B Γ}
+R𝑝⁰  : ∀{A B h} {Γ : Cx h}
      → Γ ⊢ A        → Γ ⊢ B
      → Γ ⊢ A ∧ B
 R𝑝⁰ = R𝑝ⁿ {𝐭 = ∅} {𝐬 = ∅}
 
-R𝜋₀⁰ : ∀{A B Γ}
+R𝜋₀⁰ : ∀{A B h} {Γ : Cx h}
      → Γ ⊢ A ∧ B
      → Γ ⊢ A
 R𝜋₀⁰ = R𝜋₀ⁿ {𝐭 = ∅}
 
-R𝜋₁⁰ : ∀{A B Γ}
+R𝜋₁⁰ : ∀{A B h} {Γ : Cx h}
      → Γ ⊢ A ∧ B
      → Γ ⊢ B
 R𝜋₁⁰ = R𝜋₁ⁿ {𝐭 = ∅}
@@ -322,42 +289,42 @@ t ∘ s      = t ∘^[ 1 ] s
 
 -- Level 1: Simplified typing rules
 
-R𝜈  : ∀{x A Γ}
+R𝜈  : ∀{x A h} {Γ : Cx h}
     → 𝜈 x ∶ A ∈ Γ
     → Γ ⊢ 𝜈 x ∶ A
-R𝜈 {x} = R𝜈ⁿ {𝐱 = x ∷ ∅} {𝐚 = ∅}
+R𝜈 {x} = R𝜈ⁿ {𝐱 = x ∷ ∅}
 
-R𝜆  : ∀{x t A B Γ}
+R𝜆  : ∀{x t A B h} {Γ : Cx h}
     → Γ , 𝜈 x ∶ A ⊢ t ∶ B
     → Γ ⊢ 𝜆 x ． t ∶ (A ⊃ B)
 R𝜆 {x} {t} = R𝜆ⁿ {𝐱 = x ∷ ∅} {𝐭 = t ∷ ∅}
 
-R∘  : ∀{t s A B Γ}
+R∘  : ∀{t s A B h} {Γ : Cx h}
     → Γ ⊢ t ∶ (A ⊃ B)    → Γ ⊢ s ∶ A
     → Γ ⊢ t ∘ s ∶ B
 R∘ {t} {s} = R∘ⁿ {𝐭 = t ∷ ∅} {𝐬 = s ∷ ∅}
 
-R𝑝  : ∀{t s A B Γ}
+R𝑝  : ∀{t s A B h} {Γ : Cx h}
     → Γ ⊢ t ∶ A          → Γ ⊢ s ∶ B
     → Γ ⊢ 𝑝⟨ t , s ⟩ ∶ (A ∧ B)
 R𝑝 {t} {s} = R𝑝ⁿ {𝐭 = t ∷ ∅} {𝐬 = s ∷ ∅}
 
-R𝜋₀ : ∀{t A B Γ}
+R𝜋₀ : ∀{t A B h} {Γ : Cx h}
     → Γ ⊢ t ∶ (A ∧ B)
     → Γ ⊢ 𝜋₀ t ∶ A
 R𝜋₀ {t} = R𝜋₀ⁿ {𝐭 = t ∷ ∅}
 
-R𝜋₁ : ∀{t A B Γ}
+R𝜋₁ : ∀{t A B h} {Γ : Cx h}
     → Γ ⊢ t ∶ (A ∧ B)
     → Γ ⊢ 𝜋₁ t ∶ B
 R𝜋₁ {t} = R𝜋₁ⁿ {𝐭 = t ∷ ∅}
 
-R⇑  : ∀{t u A Γ}
+R⇑  : ∀{t u A h} {Γ : Cx h}
     → Γ ⊢ t ∶ u ∶ A
     → Γ ⊢ ⇑ t ∶ ! u ∶ u ∶ A
 R⇑ {t} = R⇑ⁿ {𝐭 = t ∷ ∅}
 
-R⇓  : ∀{t u A Γ}
+R⇓  : ∀{t u A h} {Γ : Cx h}
     → Γ ⊢ t ∶ u ∶ A
     → Γ ⊢ ⇓ t ∶ A
 R⇓ {t} = R⇓ⁿ {𝐭 = t ∷ ∅}
@@ -414,42 +381,42 @@ t ∘² s      = t ∘^[ 2 ] s
 
 -- Level 2: Simplified typing rules
 
-R𝜈²  : ∀{x₂ x₁ A Γ}
+R𝜈²  : ∀{x₂ x₁ A h} {Γ : Cx h}
      → 𝜈 x₂ ∶ 𝜈 x₁ ∶ A ∈ Γ
      → Γ ⊢ 𝜈 x₂ ∶ 𝜈 x₁ ∶ A
-R𝜈² {x₂} {x₁} = R𝜈ⁿ {𝐱 = x₂ ∷ x₁ ∷ ∅} {𝐚 = ∅}
+R𝜈² {x₂} {x₁} = R𝜈ⁿ {𝐱 = x₂ ∷ x₁ ∷ ∅}
 
-R𝜆²  : ∀{x₂ x₁ t₂ t₁ A B Γ}
+R𝜆²  : ∀{x₂ x₁ t₂ t₁ A B h} {Γ : Cx h}
      → Γ , 𝜈 x₂ ∶ 𝜈 x₁ ∶ A ⊢ t₂ ∶ t₁ ∶ B
      → Γ ⊢ 𝜆² x₂ ． t₂ ∶ 𝜆 x₁ ． t₁ ∶ (A ⊃ B)
 R𝜆² {x₂} {x₁} {t₂} {t₁} = R𝜆ⁿ {𝐱 = x₂ ∷ x₁ ∷ ∅} {𝐭 = t₂ ∷ t₁ ∷ ∅}
 
-R∘²  : ∀{t₂ t₁ s₂ s₁ A B Γ}
+R∘²  : ∀{t₂ t₁ s₂ s₁ A B h} {Γ : Cx h}
      → Γ ⊢ t₂ ∶ t₁ ∶ (A ⊃ B)    → Γ ⊢ s₂ ∶ s₁ ∶ A
      → Γ ⊢ t₂ ∘² s₂ ∶ t₁ ∘ s₁ ∶ B
 R∘² {t₂} {t₁} {s₂} {s₁} = R∘ⁿ {𝐭 = t₂ ∷ t₁ ∷ ∅} {𝐬 = s₂ ∷ s₁ ∷ ∅}
 
-R𝑝²  : ∀{t₂ t₁ s₂ s₁ A B Γ}
+R𝑝²  : ∀{t₂ t₁ s₂ s₁ A B h} {Γ : Cx h}
      → Γ ⊢ t₂ ∶ t₁ ∶ A          → Γ ⊢ s₂ ∶ s₁ ∶ B
      → Γ ⊢ 𝑝²⟨ t₂ , s₂ ⟩ ∶ 𝑝⟨ t₁ , s₁ ⟩ ∶ (A ∧ B)
 R𝑝² {t₂} {t₁} {s₂} {s₁} = R𝑝ⁿ {𝐭 = t₂ ∷ t₁ ∷ ∅} {𝐬 = s₂ ∷ s₁ ∷ ∅}
 
-R𝜋₀² : ∀{t₂ t₁ A B Γ}
+R𝜋₀² : ∀{t₂ t₁ A B h} {Γ : Cx h}
      → Γ ⊢ t₂ ∶ t₁ ∶ (A ∧ B)
      → Γ ⊢ 𝜋₀² t₂ ∶ 𝜋₀ t₁ ∶ A
 R𝜋₀² {t₂} {t₁} = R𝜋₀ⁿ {𝐭 = t₂ ∷ t₁ ∷ ∅}
 
-R𝜋₁² : ∀{t₂ t₁ A B Γ}
+R𝜋₁² : ∀{t₂ t₁ A B h} {Γ : Cx h}
      → Γ ⊢ t₂ ∶ t₁ ∶ (A ∧ B)
      → Γ ⊢ 𝜋₁² t₂ ∶ 𝜋₁ t₁ ∶ B
 R𝜋₁² {t₂} {t₁} = R𝜋₁ⁿ {𝐭 = t₂ ∷ t₁ ∷ ∅}
 
-R⇑²  : ∀{t₂ t₁ u A Γ}
+R⇑²  : ∀{t₂ t₁ u A h} {Γ : Cx h}
      → Γ ⊢ t₂ ∶ t₁ ∶ u ∶ A
      → Γ ⊢ ⇑² t₂ ∶ ⇑ t₁ ∶ ! u ∶ u ∶ A
 R⇑² {t₂} {t₁} = R⇑ⁿ {𝐭 = t₂ ∷ t₁ ∷ ∅}
 
-R⇓²  : ∀{t₂ t₁ u A Γ}
+R⇓²  : ∀{t₂ t₁ u A h} {Γ : Cx h}
      → Γ ⊢ t₂ ∶ t₁ ∶ u ∶ A
      → Γ ⊢ ⇓² t₂ ∶ ⇓ t₁ ∶ A
 R⇓² {t₂} {t₁} = R⇓ⁿ {𝐭 = t₂ ∷ t₁ ∷ ∅}
@@ -532,172 +499,173 @@ e2b = R𝜆² (R𝜈² Z)
 
 -- Weakening
 
-data _⊆_ : Cx → Cx → Set where
+data _⊆_ : ∀{h h′} → Cx h → Cx h′ → Set where
   base : ∅ ⊆ ∅
 
-  keep : ∀{A Γ F}
-       → Γ ⊆ F
-       → Γ , A ⊆ F , A
+  keep : ∀{A h h′} {Γ : Cx h} {Γ′ : Cx h′}
+       → Γ ⊆ Γ′
+       → Γ , A ⊆ Γ′ , A
 
-  drop : ∀{A Γ F}
-       → Γ ⊆ F
-       → Γ ⊆ F , A
+  drop : ∀{A h h′} {Γ : Cx h} {Γ′ : Cx h′}
+       → Γ ⊆ Γ′
+       → Γ ⊆ Γ′ , A
 
 
 -- Weakening: List membership
 
-wk∈ : ∀{A Γ F}
-    → Γ ⊆ F    → A ∈ Γ
-    → A ∈ F
-wk∈ (keep Γ⊆F) Z     = Z
-wk∈ (keep Γ⊆F) (S 𝑖) = S (wk∈ Γ⊆F 𝑖)
-wk∈ (drop Γ⊆F) 𝑖     = S (wk∈ Γ⊆F 𝑖)
+
+wk∈ : ∀{A h h′} {Γ : Cx h} {Γ′ : Cx h′}
+    → Γ ⊆ Γ′    → A ∈ Γ
+    → A ∈ Γ′
+wk∈ (keep Γ⊆Γ′) Z     = Z
+wk∈ (keep Γ⊆Γ′) (S 𝑖) = S (wk∈ Γ⊆Γ′ 𝑖)
+wk∈ (drop Γ⊆Γ′) 𝑖     = S (wk∈ Γ⊆Γ′ 𝑖)
 
 
 -- Weakening: Typing rules
 
-wk⊢ : ∀{A Γ F}
-    → Γ ⊆ F    → Γ ⊢ A
-    → F ⊢ A
-wk⊢ Γ⊆F (R𝜈ⁿ  {𝐱 = 𝐱} {𝐚 = 𝐚} 𝑖)     = R𝜈ⁿ  {𝐱 = 𝐱} {𝐚 = 𝐚} (wk∈ Γ⊆F 𝑖)
-wk⊢ Γ⊆F (R𝜆ⁿ  {𝐱 = 𝐱} {𝐭 = 𝐭} 𝒟)     = R𝜆ⁿ  {𝐱 = 𝐱} {𝐭 = 𝐭} (wk⊢ (keep Γ⊆F) 𝒟)
-wk⊢ Γ⊆F (R∘ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} 𝒟ₜ 𝒟ₛ) = R∘ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} (wk⊢ Γ⊆F 𝒟ₜ) (wk⊢ Γ⊆F 𝒟ₛ)
-wk⊢ Γ⊆F (R𝑝ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} 𝒟ₜ 𝒟ₛ) = R𝑝ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} (wk⊢ Γ⊆F 𝒟ₜ) (wk⊢ Γ⊆F 𝒟ₛ)
-wk⊢ Γ⊆F (R𝜋₀ⁿ {𝐭 = 𝐭} 𝒟)             = R𝜋₀ⁿ {𝐭 = 𝐭} (wk⊢ Γ⊆F 𝒟)
-wk⊢ Γ⊆F (R𝜋₁ⁿ {𝐭 = 𝐭} 𝒟)             = R𝜋₁ⁿ {𝐭 = 𝐭} (wk⊢ Γ⊆F 𝒟)
-wk⊢ Γ⊆F (R⇑ⁿ  {𝐭 = 𝐭} 𝒟)             = R⇑ⁿ  {𝐭 = 𝐭} (wk⊢ Γ⊆F 𝒟)
-wk⊢ Γ⊆F (R⇓ⁿ  {𝐭 = 𝐭} 𝒟)             = R⇓ⁿ  {𝐭 = 𝐭} (wk⊢ Γ⊆F 𝒟)
+wk⊢ : ∀{A h h′} {Γ : Cx h} {Γ′ : Cx h′}
+    → Γ ⊆ Γ′    → Γ ⊢ A
+    → Γ′ ⊢ A
+wk⊢ Γ⊆Γ′ (R𝜈ⁿ  {𝐱 = 𝐱} 𝑖)             = R𝜈ⁿ  {𝐱 = 𝐱} (wk∈ Γ⊆Γ′ 𝑖)
+wk⊢ Γ⊆Γ′ (R𝜆ⁿ  {𝐱 = 𝐱} {𝐭 = 𝐭} 𝒟)     = R𝜆ⁿ  {𝐱 = 𝐱} {𝐭 = 𝐭} (wk⊢ (keep Γ⊆Γ′) 𝒟)
+wk⊢ Γ⊆Γ′ (R∘ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} 𝒟ₜ 𝒟ₛ) = R∘ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} (wk⊢ Γ⊆Γ′ 𝒟ₜ) (wk⊢ Γ⊆Γ′ 𝒟ₛ)
+wk⊢ Γ⊆Γ′ (R𝑝ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} 𝒟ₜ 𝒟ₛ) = R𝑝ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} (wk⊢ Γ⊆Γ′ 𝒟ₜ) (wk⊢ Γ⊆Γ′ 𝒟ₛ)
+wk⊢ Γ⊆Γ′ (R𝜋₀ⁿ {𝐭 = 𝐭} 𝒟)             = R𝜋₀ⁿ {𝐭 = 𝐭} (wk⊢ Γ⊆Γ′ 𝒟)
+wk⊢ Γ⊆Γ′ (R𝜋₁ⁿ {𝐭 = 𝐭} 𝒟)             = R𝜋₁ⁿ {𝐭 = 𝐭} (wk⊢ Γ⊆Γ′ 𝒟)
+wk⊢ Γ⊆Γ′ (R⇑ⁿ  {𝐭 = 𝐭} 𝒟)             = R⇑ⁿ  {𝐭 = 𝐭} (wk⊢ Γ⊆Γ′ 𝒟)
+wk⊢ Γ⊆Γ′ (R⇓ⁿ  {𝐭 = 𝐭} 𝒟)             = R⇓ⁿ  {𝐭 = 𝐭} (wk⊢ Γ⊆Γ′ 𝒟)
 
 
 -- ------------------------------------------------------------------------------------------------
 
 -- Exchange
 
-data _%_ : Cx → Cx → Set where
+data _%_ : ∀{h h′} → Cx h → Cx h′ → Set where
   base : ∅ % ∅
 
-  weak : ∀{A Γ F}
-       → Γ % F
-       → Γ , A % F , A
+  weak : ∀{A h h′} {Γ : Cx h} {Γ′ : Cx h′}
+       → Γ % Γ′
+       → Γ , A % Γ′ , A
 
-  same : ∀{A B Γ F}
-       → Γ % F
-       → Γ , A , B % F , A , B
+  same : ∀{A B h h′} {Γ : Cx h} {Γ′ : Cx h′}
+       → Γ % Γ′
+       → Γ , A , B % Γ′ , A , B
 
-  diff : ∀{A B Γ F}
-       → Γ % F
-       → Γ , B , A % F , A , B
+  diff : ∀{A B h h′} {Γ : Cx h} {Γ′ : Cx h′}
+       → Γ % Γ′
+       → Γ , B , A % Γ′ , A , B
 
 
 -- Exchange: List membership
 
-ex∈ : ∀{A Γ F}
-    → Γ % F    → A ∈ Γ
-    → A ∈ F
-ex∈ base       𝑖         = 𝑖
-ex∈ (weak Γ%F) Z         = Z
-ex∈ (weak Γ%F) (S 𝑖)     = S (ex∈ Γ%F 𝑖)
-ex∈ (same Γ%F) Z         = Z
-ex∈ (same Γ%F) (S Z)     = S Z
-ex∈ (same Γ%F) (S (S 𝑖)) = S (S (ex∈ Γ%F 𝑖))
-ex∈ (diff Γ%F) Z         = S Z
-ex∈ (diff Γ%F) (S Z)     = Z
-ex∈ (diff Γ%F) (S (S 𝑖)) = S (S (ex∈ Γ%F 𝑖))
+ex∈ : ∀{A h h′} {Γ : Cx h} {Γ′ : Cx h′}
+    → Γ % Γ′    → A ∈ Γ
+    → A ∈ Γ′
+ex∈ base        𝑖         = 𝑖
+ex∈ (weak Γ%Γ′) Z         = Z
+ex∈ (weak Γ%Γ′) (S 𝑖)     = S (ex∈ Γ%Γ′ 𝑖)
+ex∈ (same Γ%Γ′) Z         = Z
+ex∈ (same Γ%Γ′) (S Z)     = S Z
+ex∈ (same Γ%Γ′) (S (S 𝑖)) = S (S (ex∈ Γ%Γ′ 𝑖))
+ex∈ (diff Γ%Γ′) Z         = S Z
+ex∈ (diff Γ%Γ′) (S Z)     = Z
+ex∈ (diff Γ%Γ′) (S (S 𝑖)) = S (S (ex∈ Γ%Γ′ 𝑖))
 
 
 -- Exchange: Typing rules
 
-ex⊢ : ∀{A Γ F}
-    → Γ % F    → Γ ⊢ A
-    → F ⊢ A
-ex⊢ Γ%F (R𝜈ⁿ  {𝐱 = 𝐱} {𝐚 = 𝐚} 𝑖)     = R𝜈ⁿ  {𝐱 = 𝐱} {𝐚 = 𝐚} (ex∈ Γ%F 𝑖)
-ex⊢ Γ%F (R𝜆ⁿ  {𝐱 = 𝐱} {𝐭 = 𝐭} 𝒟)     = R𝜆ⁿ  {𝐱 = 𝐱} {𝐭 = 𝐭} (ex⊢ (weak Γ%F) 𝒟)
-ex⊢ Γ%F (R∘ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} 𝒟ₜ 𝒟ₛ) = R∘ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} (ex⊢ Γ%F 𝒟ₜ) (ex⊢ Γ%F 𝒟ₛ)
-ex⊢ Γ%F (R𝑝ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} 𝒟ₜ 𝒟ₛ) = R𝑝ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} (ex⊢ Γ%F 𝒟ₜ) (ex⊢ Γ%F 𝒟ₛ)
-ex⊢ Γ%F (R𝜋₀ⁿ {𝐭 = 𝐭} 𝒟)             = R𝜋₀ⁿ {𝐭 = 𝐭} (ex⊢ Γ%F 𝒟)
-ex⊢ Γ%F (R𝜋₁ⁿ {𝐭 = 𝐭} 𝒟)             = R𝜋₁ⁿ {𝐭 = 𝐭} (ex⊢ Γ%F 𝒟)
-ex⊢ Γ%F (R⇑ⁿ  {𝐭 = 𝐭} 𝒟)             = R⇑ⁿ  {𝐭 = 𝐭} (ex⊢ Γ%F 𝒟)
-ex⊢ Γ%F (R⇓ⁿ  {𝐭 = 𝐭} 𝒟)             = R⇓ⁿ  {𝐭 = 𝐭} (ex⊢ Γ%F 𝒟)
+ex⊢ : ∀{A h h′} {Γ : Cx h} {Γ′ : Cx h′}
+    → Γ % Γ′    → Γ ⊢ A
+    → Γ′ ⊢ A
+ex⊢ Γ%Γ′ (R𝜈ⁿ  {𝐱 = 𝐱} 𝑖)             = R𝜈ⁿ  {𝐱 = 𝐱} (ex∈ Γ%Γ′ 𝑖)
+ex⊢ Γ%Γ′ (R𝜆ⁿ  {𝐱 = 𝐱} {𝐭 = 𝐭} 𝒟)     = R𝜆ⁿ  {𝐱 = 𝐱} {𝐭 = 𝐭} (ex⊢ (weak Γ%Γ′) 𝒟)
+ex⊢ Γ%Γ′ (R∘ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} 𝒟ₜ 𝒟ₛ) = R∘ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} (ex⊢ Γ%Γ′ 𝒟ₜ) (ex⊢ Γ%Γ′ 𝒟ₛ)
+ex⊢ Γ%Γ′ (R𝑝ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} 𝒟ₜ 𝒟ₛ) = R𝑝ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} (ex⊢ Γ%Γ′ 𝒟ₜ) (ex⊢ Γ%Γ′ 𝒟ₛ)
+ex⊢ Γ%Γ′ (R𝜋₀ⁿ {𝐭 = 𝐭} 𝒟)             = R𝜋₀ⁿ {𝐭 = 𝐭} (ex⊢ Γ%Γ′ 𝒟)
+ex⊢ Γ%Γ′ (R𝜋₁ⁿ {𝐭 = 𝐭} 𝒟)             = R𝜋₁ⁿ {𝐭 = 𝐭} (ex⊢ Γ%Γ′ 𝒟)
+ex⊢ Γ%Γ′ (R⇑ⁿ  {𝐭 = 𝐭} 𝒟)             = R⇑ⁿ  {𝐭 = 𝐭} (ex⊢ Γ%Γ′ 𝒟)
+ex⊢ Γ%Γ′ (R⇓ⁿ  {𝐭 = 𝐭} 𝒟)             = R⇓ⁿ  {𝐭 = 𝐭} (ex⊢ Γ%Γ′ 𝒟)
 
 
 -- ------------------------------------------------------------------------------------------------
 
 -- Work in progress
 
-mk⁰ : ∀{n} → Cx → VTy n → Cx
-mk⁰ = foldl _,_
+-- mk⁰ : ∀{h n} → Cx h → VTy n → Cx (n + a)
+-- mk⁰ {a} Γ 𝐀 = foldl (λ k → Cx (k + a)) _,_ Γ 𝐀
 
-mk : ∀{n} → Cx → VVar n → VTy n → Cx
-mk Γ 𝐱 𝐀 = mk⁰ Γ (map2 _∶_ (map 𝜈_ 𝐱) 𝐀)
+-- mk : ∀{h n} → Cx h → VVar n → VTy n → Cx (n + a)
+-- mk Γ 𝐱 𝐀 = mk⁰ Γ (zipWith _∶_ (map 𝜈_ 𝐱) 𝐀)
 
-postulate    -- XXX: Fix this!
-  fresh : ∀{n} → VVar n → Var
+-- postulate    -- XXX: Fix this!
+--   fresh : ∀{n} → VVar n → Var
 
-  lm1 : ∀{n A Γ}
-     → (𝐱 : VVar n)    → (𝐀 : VTy n)    → A ∈ mk⁰ Γ 𝐀
-     → A ∈ mk Γ 𝐱 𝐀
+--   lm1 : ∀{A h n} {Γ : Cx h}
+--      → (𝐱 : VVar n)    → (𝐀 : VTy n)    → A ∈ mk⁰ Γ 𝐀
+--      → A ∈ mk Γ 𝐱 𝐀
 
 
--- Theorem 1: Internalisation principle
+-- -- Theorem 1: Internalisation principle
 
-{- “Let λ∞ derive
-        A₁, A₂, …, Aₘ ⊢ B.
-    Then one can build a well-defined term t(x₁, x₂, …, xₘ) with fresh
-    variables 𝐱 such that λ∞ also derives
-        x₁ ∶ A₁, x₂ ∶ A₂, …, xₘ ∶ Aₘ ⊢ t(x₁, x₂, …, xₘ) ∶ B.” -}
+-- {- “Let λ∞ derive
+--         A₁, A₂, …, Aₘ ⊢ B.
+--     Then one can build a well-defined term t(x₁, x₂, …, xₘ) with fresh
+--     variables 𝐱 such that λ∞ also derives
+--         x₁ ∶ A₁, x₂ ∶ A₂, …, xₘ ∶ Aₘ ⊢ t(x₁, x₂, …, xₘ) ∶ B.” -}
 
-th1 : ∀{m} {B : Ty} {Γ : Cx}
-    → (𝐀 : VTy m)    → mk⁰ Γ 𝐀 ⊢ B
-    → Σ (VVar m → Tm)
-        (λ t → {𝐱 : VVar m} → mk Γ 𝐱 𝐀 ⊢ t 𝐱 ∶ B)
+-- th1 : ∀{h m} {B : Ty} {Γ : Cx h}
+--     → (𝐀 : VTy m)    → mk⁰ Γ 𝐀 ⊢ B
+--     → Σ (VVar m → Tm)
+--         (λ t → {𝐱 : VVar m} → mk Γ 𝐱 𝐀 ⊢ t 𝐱 ∶ B)
 
-th1 𝐀 (R𝜈ⁿ {𝐱 = 𝐲} {𝐚} {A} 𝑖)
-    = (λ 𝐱   → let xₘ₊₁ = fresh 𝐱 in 𝜈 xₘ₊₁)
-    ∙ (λ {𝐱} → let xₘ₊₁ = fresh 𝐱 in
-                 R𝜈ⁿ {𝐱 = 𝐲} {𝐚 = xₘ₊₁ ∷ 𝐚} (lm1 𝐱 𝐀 𝑖))
+-- th1 𝐀 (R𝜈ⁿ {𝐱 = 𝐲} {𝐱′} {A} 𝑖)
+--     = (λ 𝐱   → let xₘ₊₁ = fresh 𝐱 in 𝜈 xₘ₊₁)
+--     ∙ (λ {𝐱} → let xₘ₊₁ = fresh 𝐱 in
+--                  R𝜈ⁿ {𝐱 = 𝐲} {𝐱′ = xₘ₊₁ ∷ 𝐱′} (lm1 𝐱 𝐀 𝑖))
 
-th1 𝐀 (R𝜆ⁿ {n} {𝐲} {𝐭} {A} 𝒟)
-    = let s ∙ 𝒞 = th1 (𝜈ⁿ 𝐲 ∶ A ∷ 𝐀) 𝒟
-      in
-        (λ 𝐱   → let xₘ₊₁ = fresh 𝐱 in
-                   𝜆^[ suc n ] xₘ₊₁ ． s (xₘ₊₁ ∷ 𝐱))
-      ∙ (λ {𝐱} → let xₘ₊₁ = fresh 𝐱 in
-                   R𝜆ⁿ {𝐱 = xₘ₊₁ ∷ 𝐲} {𝐭 = s (xₘ₊₁ ∷ 𝐱) ∷ 𝐭} 𝒞)
+-- th1 𝐀 (R𝜆ⁿ {n} {𝐲} {𝐭} {A} 𝒟) = ?
+--     = let s ∙ 𝒞 = th1 (𝜈ⁿ 𝐲 ∶ A ∷ 𝐀) 𝒟
+--       in
+--         (λ 𝐱   → let xₘ₊₁ = fresh 𝐱 in
+--                    𝜆^[ suc n ] xₘ₊₁ ． s (xₘ₊₁ ∷ 𝐱))
+--       ∙ (λ {𝐱} → let xₘ₊₁ = fresh 𝐱 in
+--                    R𝜆ⁿ {𝐱 = xₘ₊₁ ∷ 𝐲} {𝐭 = s (xₘ₊₁ ∷ 𝐱) ∷ 𝐭} 𝒞)
 
-th1 𝐀 (R∘ⁿ {n} {𝐭} {𝐬} 𝒟ₜ 𝒟ₛ)
-    = let sₜ ∙ 𝒞ₜ = th1 𝐀 𝒟ₜ
-          sₛ ∙ 𝒞ₛ = th1 𝐀 𝒟ₛ
-      in
-        (λ 𝐱   → sₜ 𝐱 ∘^[ suc n ] sₛ 𝐱)
-      ∙ (λ {𝐱} → R∘ⁿ {𝐭 = sₜ 𝐱 ∷ 𝐭} {𝐬 = sₛ 𝐱 ∷ 𝐬} 𝒞ₜ 𝒞ₛ)
+-- th1 𝐀 (R∘ⁿ {n} {𝐭} {𝐬} 𝒟ₜ 𝒟ₛ)
+--     = let sₜ ∙ 𝒞ₜ = th1 𝐀 𝒟ₜ
+--           sₛ ∙ 𝒞ₛ = th1 𝐀 𝒟ₛ
+--       in
+--         (λ 𝐱   → sₜ 𝐱 ∘^[ suc n ] sₛ 𝐱)
+--       ∙ (λ {𝐱} → R∘ⁿ {𝐭 = sₜ 𝐱 ∷ 𝐭} {𝐬 = sₛ 𝐱 ∷ 𝐬} 𝒞ₜ 𝒞ₛ)
 
-th1 𝐀 (R𝑝ⁿ {n} {𝐭} {𝐬} 𝒟ₜ 𝒟ₛ)
-    = let sₜ ∙ 𝒞ₜ = th1 𝐀 𝒟ₜ
-          sₛ ∙ 𝒞ₛ = th1 𝐀 𝒟ₛ
-      in
-        (λ 𝐱   → 𝑝^[ suc n ]⟨ sₜ 𝐱 , sₛ 𝐱 ⟩)
-      ∙ (λ {𝐱} → R𝑝ⁿ {𝐭 = sₜ 𝐱 ∷ 𝐭} {𝐬 = sₛ 𝐱 ∷ 𝐬} 𝒞ₜ 𝒞ₛ)
+-- th1 𝐀 (R𝑝ⁿ {n} {𝐭} {𝐬} 𝒟ₜ 𝒟ₛ)
+--     = let sₜ ∙ 𝒞ₜ = th1 𝐀 𝒟ₜ
+--           sₛ ∙ 𝒞ₛ = th1 𝐀 𝒟ₛ
+--       in
+--         (λ 𝐱   → 𝑝^[ suc n ]⟨ sₜ 𝐱 , sₛ 𝐱 ⟩)
+--       ∙ (λ {𝐱} → R𝑝ⁿ {𝐭 = sₜ 𝐱 ∷ 𝐭} {𝐬 = sₛ 𝐱 ∷ 𝐬} 𝒞ₜ 𝒞ₛ)
 
-th1 𝐀 (R𝜋₀ⁿ {n} {𝐭} 𝒟)
-    = let s ∙ 𝒞 = th1 𝐀 𝒟
-      in
-        (λ 𝐱   → 𝜋₀^[ suc n ] s 𝐱)
-      ∙ (λ {𝐱} → R𝜋₀ⁿ {𝐭 = s 𝐱 ∷ 𝐭} 𝒞)
+-- th1 𝐀 (R𝜋₀ⁿ {n} {𝐭} 𝒟)
+--     = let s ∙ 𝒞 = th1 𝐀 𝒟
+--       in
+--         (λ 𝐱   → 𝜋₀^[ suc n ] s 𝐱)
+--       ∙ (λ {𝐱} → R𝜋₀ⁿ {𝐭 = s 𝐱 ∷ 𝐭} 𝒞)
 
-th1 𝐀 (R𝜋₁ⁿ {n} {𝐭} 𝒟)
-    = let s ∙ 𝒞 = th1 𝐀 𝒟
-      in
-        (λ 𝐱   → 𝜋₁^[ suc n ] s 𝐱)
-      ∙ (λ {𝐱} → R𝜋₁ⁿ {𝐭 = s 𝐱 ∷ 𝐭} 𝒞)
+-- th1 𝐀 (R𝜋₁ⁿ {n} {𝐭} 𝒟)
+--     = let s ∙ 𝒞 = th1 𝐀 𝒟
+--       in
+--         (λ 𝐱   → 𝜋₁^[ suc n ] s 𝐱)
+--       ∙ (λ {𝐱} → R𝜋₁ⁿ {𝐭 = s 𝐱 ∷ 𝐭} 𝒞)
 
-th1 𝐀 (R⇑ⁿ {n} {𝐭} 𝒟)
-    = let s ∙ 𝒞 = th1 𝐀 𝒟
-      in
-        (λ 𝐱   → ⇑^[ suc n ] s 𝐱)
-      ∙ (λ {𝐱} → R⇑ⁿ {𝐭 = s 𝐱 ∷ 𝐭} 𝒞)
+-- th1 𝐀 (R⇑ⁿ {n} {𝐭} 𝒟)
+--     = let s ∙ 𝒞 = th1 𝐀 𝒟
+--       in
+--         (λ 𝐱   → ⇑^[ suc n ] s 𝐱)
+--       ∙ (λ {𝐱} → R⇑ⁿ {𝐭 = s 𝐱 ∷ 𝐭} 𝒞)
 
-th1 𝐀 (R⇓ⁿ {n} {𝐭} 𝒟)
-    = let s ∙ 𝒞 = th1 𝐀 𝒟
-      in
-        (λ 𝐱   → ⇓^[ suc n ] s 𝐱)
-      ∙ (λ {𝐱} → R⇓ⁿ {𝐭 = s 𝐱 ∷ 𝐭} 𝒞)
+-- th1 𝐀 (R⇓ⁿ {n} {𝐭} 𝒟)
+--     = let s ∙ 𝒞 = th1 𝐀 𝒟
+--       in
+--         (λ 𝐱   → ⇓^[ suc n ] s 𝐱)
+--       ∙ (λ {𝐱} → R⇓ⁿ {𝐭 = s 𝐱 ∷ 𝐭} 𝒞)
