@@ -622,18 +622,18 @@ ex⊢ Γ%F (R⇓ⁿ  {𝐭 = 𝐭} D)             = R⇓ⁿ  {𝐭 = 𝐭} (ex�
 
 -- Work in progress
 
-mk : ∀{n} → Cx → VTy n → Cx
-mk = foldl _,_
+mk⁰ : ∀{n} → Cx → VTy n → Cx
+mk⁰ = foldl _,_
 
-mk2 : ∀{n} → Cx → VVar n → VTy n → Cx
-mk2 Γ 𝐱 𝐀 = mk Γ (map2 _∶_ (map 𝜈_ 𝐱) 𝐀)
+mk : ∀{n} → Cx → VVar n → VTy n → Cx
+mk Γ 𝐱 𝐀 = mk⁰ Γ (map2 _∶_ (map 𝜈_ 𝐱) 𝐀)
 
 postulate    -- XXX: Fix this!
   fresh : ∀{n} → VVar n → Var
 
   lm1 : ∀{n A Γ}
-     → (𝐱 : VVar n)    → (𝐀 : VTy n)    → A ∈ mk Γ 𝐀
-     → A ∈ mk2 Γ 𝐱 𝐀
+     → (𝐱 : VVar n)    → (𝐀 : VTy n)    → A ∈ mk⁰ Γ 𝐀
+     → A ∈ mk Γ 𝐱 𝐀
 
 
 -- Theorem 1: Internalisation principle
@@ -645,9 +645,9 @@ postulate    -- XXX: Fix this!
         x₁ ∶ A₁, x₂ ∶ A₂, …, xₘ ∶ Aₘ ⊢ t(x₁, x₂, …, xₘ) ∶ B.” -}
 
 th1 : ∀{m} {B : Ty} {Γ : Cx}
-    → (𝐀 : VTy m)    → mk Γ 𝐀 ⊢ B
+    → (𝐀 : VTy m)    → mk⁰ Γ 𝐀 ⊢ B
     → Σ (VVar m → Tm)
-        (λ t → {𝐱 : VVar m} → mk2 Γ 𝐱 𝐀 ⊢ t 𝐱 ∶ B)
+        (λ t → {𝐱 : VVar m} → mk Γ 𝐱 𝐀 ⊢ t 𝐱 ∶ B)
 
 th1 𝐀 (R𝜈ⁿ {𝐱 = 𝐲} {𝐚} {A} i)
     = (λ 𝐱   → let xₘ₊₁ = fresh 𝐱 in 𝜈 xₘ₊₁)
