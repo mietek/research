@@ -64,7 +64,7 @@ data List (X : Set) : Set where
 data _∈_ {X : Set} (x : X) : List X → Set where
   𝑧 : {L : List X}
     → x ∈ L , x
-    
+
   𝑠 : {L : List X} {y : X}
     → x ∈ L
     → x ∈ L , y
@@ -72,11 +72,11 @@ data _∈_ {X : Set} (x : X) : List X → Set where
 
 data _⊆_ {X : Set} : (L L′ : List X) → Set where
   base : ∅ ⊆ ∅
-  
+
   keep : {x : X} {L L′ : List X}
        → L ⊆ L′
        → L , x ⊆ L′ , x
-       
+
   drop : {x : X} {L L′ : List X}
        → L ⊆ L′
        → L ⊆ L′ , x
