@@ -36,6 +36,7 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
 
 module AltArtemov where
 
+open import Data.Fin using (Fin ; zero ; suc)
 open import Data.Nat using (ℕ ; zero ; suc)
 open import Data.Product using (Σ ; _×_) renaming (_,_ to _∙_)
 
@@ -531,23 +532,23 @@ e2b = R𝜆² (R𝜈² Z)
 
 -- Weakening
 
-data _⊆_ {X : Set} : List X → List X → Set where
+data _⊆_ : Cx → Cx → Set where
   base : ∅ ⊆ ∅
 
-  keep : {Γ F : List X} {x : X}
+  keep : ∀{A Γ F}
        → Γ ⊆ F
-       → Γ , x ⊆ F , x
+       → Γ , A ⊆ F , A
 
-  drop : {Γ F : List X} {x : X}
+  drop : ∀{A Γ F}
        → Γ ⊆ F
-       → Γ ⊆ F , x
+       → Γ ⊆ F , A
 
 
 -- Weakening: List membership
 
-wk∈ : {X : Set} {Γ F : List X} {x : X}
-    → Γ ⊆ F    → x ∈ Γ
-    → x ∈ F
+wk∈ : ∀{A Γ F}
+    → Γ ⊆ F    → A ∈ Γ
+    → A ∈ F
 wk∈ (keep Γ⊆F) Z     = Z
 wk∈ (keep Γ⊆F) (S 𝑖) = S (wk∈ Γ⊆F 𝑖)
 wk∈ (drop Γ⊆F) 𝑖     = S (wk∈ Γ⊆F 𝑖)
@@ -555,7 +556,7 @@ wk∈ (drop Γ⊆F) 𝑖     = S (wk∈ Γ⊆F 𝑖)
 
 -- Weakening: Typing rules
 
-wk⊢ : {Γ F : Cx} {A : Ty}
+wk⊢ : ∀{A Γ F}
     → Γ ⊆ F    → Γ ⊢ A
     → F ⊢ A
 wk⊢ Γ⊆F (R𝜈ⁿ  {𝐱 = 𝐱} {𝐚 = 𝐚} 𝑖)     = R𝜈ⁿ  {𝐱 = 𝐱} {𝐚 = 𝐚} (wk∈ Γ⊆F 𝑖)
@@ -572,27 +573,27 @@ wk⊢ Γ⊆F (R⇓ⁿ  {𝐭 = 𝐭} 𝒟)             = R⇓ⁿ  {𝐭 = 𝐭} 
 
 -- Exchange
 
-data _%_ {X : Set} : List X → List X → Set where
+data _%_ : Cx → Cx → Set where
   base : ∅ % ∅
 
-  weak : {Γ F : List X} {x : X}
+  weak : ∀{A Γ F}
        → Γ % F
-       → Γ , x % F , x
+       → Γ , A % F , A
 
-  same : {Γ F : List X} {x y : X}
+  same : ∀{A B Γ F}
        → Γ % F
-       → Γ , x , y % F , x , y
+       → Γ , A , B % F , A , B
 
-  diff : {Γ F : List X} {x y : X}
+  diff : ∀{A B Γ F}
        → Γ % F
-       → Γ , y , x % F , x , y
+       → Γ , B , A % F , A , B
 
 
 -- Exchange: List membership
 
-ex∈ : {X : Set} {Γ F : List X} {x : X}
-    → Γ % F    → x ∈ Γ
-    → x ∈ F
+ex∈ : ∀{A Γ F}
+    → Γ % F    → A ∈ Γ
+    → A ∈ F
 ex∈ base       𝑖         = 𝑖
 ex∈ (weak Γ%F) Z         = Z
 ex∈ (weak Γ%F) (S 𝑖)     = S (ex∈ Γ%F 𝑖)
@@ -606,7 +607,7 @@ ex∈ (diff Γ%F) (S (S 𝑖)) = S (S (ex∈ Γ%F 𝑖))
 
 -- Exchange: Typing rules
 
-ex⊢ : {Γ F : Cx} {A : Ty}
+ex⊢ : ∀{A Γ F}
     → Γ % F    → Γ ⊢ A
     → F ⊢ A
 ex⊢ Γ%F (R𝜈ⁿ  {𝐱 = 𝐱} {𝐚 = 𝐚} 𝑖)     = R𝜈ⁿ  {𝐱 = 𝐱} {𝐚 = 𝐚} (ex∈ Γ%F 𝑖)
