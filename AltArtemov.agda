@@ -94,7 +94,7 @@ A ⊃⊂ B = A ⊃ B ∧ B ⊃ A
 
 -- ---------------------------------------------------------------------------
 
--- Generic vectors
+-- Vectors
 
 data Vec (X : Set) : ℕ → Set where
   ∅   :                      Vec X zero
@@ -164,11 +164,14 @@ _∘ⁿ_∶_         : ∀{n} → VTm n → VTm n → Ty → Ty
 
 -- ---------------------------------------------------------------------------
 
--- Generic lists
+-- Lists
 
 data List (X : Set) : Set where
   ∅   :              List X
   _,_ : List X → X → List X
+
+
+-- List membership
 
 data _∈_ {X : Set} (x : X) : List X → Set where
   Z   : {Γ : List X}                 → x ∈ Γ , x
@@ -217,14 +220,6 @@ data _⊢_ (Γ : Cx) : Ty → Set where
        → Γ ⊢ ⇓ⁿ 𝐭 ∶ A
 
 
--- Theorems
-
-⊩_  : Ty → Set
-⊩ A = ∀{Γ} → Γ ⊢ A
-
-
--- ---------------------------------------------------------------------------
-
 -- Corollary of variable typing rule
 
 {- “As soon as we are able to establish that A is a type (…), we are entitled
@@ -235,6 +230,12 @@ R𝜈ⁿ′ : ∀{n A Γ} {𝐱 : VVar n}
      → Γ ⊢ 𝜈ⁿ 𝐱 ∶ A
 R𝜈ⁿ′ {𝐱 = 𝐱}
      = R𝜈ⁿ {𝐱 = ∅} {𝐰 = 𝐱}
+
+
+-- Theorems
+
+⊩_  : Ty → Set
+⊩ A = ∀{Γ} → Γ ⊢ A
 
 
 -- ---------------------------------------------------------------------------
@@ -544,7 +545,7 @@ e2b = R𝜆² (R𝜈² Z)
 
 -- ---------------------------------------------------------------------------
 
--- Generalised weakening principle
+-- List extension
 
 data _⊆_ {X : Set} : List X → List X → Set where
   base : ∅ ⊆ ∅
@@ -558,13 +559,17 @@ data _⊆_ {X : Set} : List X → List X → Set where
        → Γ ⊆ F , x
 
 
-wk∈ : {Γ F : Cx} {A : Ty}
-    → Γ ⊆ F    → A ∈ Γ
-    → A ∈ F
+-- List membership weakening
+
+wk∈ : {X : Set} {Γ F : List X} {x : X}
+    → Γ ⊆ F    → x ∈ Γ
+    → x ∈ F
 wk∈ (keep Γ⊆F) Z     = Z
 wk∈ (keep Γ⊆F) (S i) = S (wk∈ Γ⊆F i)
 wk∈ (drop Γ⊆F) i     = S (wk∈ Γ⊆F i)
 
+
+-- Generalised weakening
 
 wk⊢ : {Γ F : Cx} {A : Ty}
     → Γ ⊆ F    → Γ ⊢ A
@@ -597,16 +602,13 @@ wk⊢ Γ⊆F (R⇓ⁿ {𝐭 = 𝐭} D)
 
 -- ---------------------------------------------------------------------------
 
--- Theorem 1: Internalisation principle
-
+-- Work in progress
 
 mk : ∀{n} → Cx → VTy n → Cx
 mk = foldl _,_
 
-
 mk2 : ∀{n} → Cx → VVar n → VTy n → Cx
 mk2 Γ 𝐱 𝐀 = mk Γ (map2 _∶_ (map 𝜈_ 𝐱) 𝐀)
-
 
 postulate    -- XXX: Fix this!
   fresh : ∀{n} → VVar n → Var
@@ -615,6 +617,8 @@ postulate    -- XXX: Fix this!
      → (𝐱 : VVar n)    → (𝐀 : VTy n)    → A ∈ mk Γ 𝐀
      → A ∈ mk2 Γ 𝐱 𝐀
 
+
+-- Theorem 1: Internalisation principle
 
 {- “Let λ∞ derive
         A₁, A₂, …, Aₘ ⊢ B.
