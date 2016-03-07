@@ -595,6 +595,9 @@ ex⊢ P (R⇓ⁿ  {𝐭 = 𝐭} D)         = R⇓ⁿ  {𝐭 = 𝐭} (ex⊢ P D)
     variables 𝐱 such that λ∞ also derives
         x₁ ∶ A₁, x₂ ∶ A₂, …, xₘ ∶ Aₘ ⊢ t(x₁, x₂, …, xₘ) ∶ B.” -}
 
+postulate fresh : Var    -- XXX: Fix this!
+
+
 data 𝜈ⁿ_∶_~_ : ∀{m} → VVar m → Cx m → Cx m → Set where
   base : 𝜈ⁿ ∅ ∶ ∅ ~ ∅
 
@@ -611,9 +614,6 @@ in∈ (x ∷ _) (step P) Z     = ⟨ x , Z ⟩
 in∈ (_ ∷ 𝐱) (step P) (S i) = let ⟨ y , j ⟩ = in∈ 𝐱 P i
                              in
                                ⟨ y , S j ⟩
-
-
-postulate fresh : Var    -- XXX: Fix this!
 
 
 in⊢ : ∀{B m} {Γ Γ′ : Cx m}
