@@ -15,7 +15,6 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
     (("N" "ℕ")
      ("not" "¬") ("imp" "⊃") ("iff" "⊃⊂") ("ent" "⊢") ("thm" "⊩")
      ("A" "𝐀") ("a" "𝐚") ("s" "𝐬") ("t" "𝐭") ("x" "𝐱") ("y" "𝐲")
-     ("C" "𝒞") ("D" "𝒟") ("P" "𝑃") ("i" "𝑖") ("j" "𝑗")
      ("v" "𝜈") ("v0" "𝜈⁰") ("v1" "𝜈") ("v2" "𝜈²") ("vn" "𝜈ⁿ")
      ("l" "𝜆") ("l0" "𝜆⁰") ("l1" "𝜆") ("l2" "𝜆²") ("ln" "𝜆ⁿ") ("." "．")
      ("o" "∘") ("o0" "∘⁰") ("o1" "∘") ("o2" "∘²") ("on" "∘ⁿ")
@@ -125,6 +124,7 @@ VTm  = Vec Tm
 
 VTy  : ℕ → Set
 VTy  = Vec Ty
+
 
 *ⁿ_∶_          : ∀{n} → VTm n → Ty → Ty
 *ⁿ 𝐭 ∶ A       = foldr (λ _ → Ty) _∶_ A 𝐭
@@ -538,9 +538,9 @@ wk∈ : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
     → Γ ⊆ Γ′    → A ∈ Γ
     → A ∈ Γ′
 wk∈ base        ()
-wk∈ (keep 𝑃) Z     = Z
-wk∈ (keep 𝑃) (S 𝑖) = S (wk∈ 𝑃 𝑖)
-wk∈ (drop 𝑃) 𝑖     = S (wk∈ 𝑃 𝑖)
+wk∈ (keep P) Z     = Z
+wk∈ (keep P) (S i) = S (wk∈ P i)
+wk∈ (drop P) i     = S (wk∈ P i)
 
 
 -- Weakening: Typing rules
@@ -548,14 +548,14 @@ wk∈ (drop 𝑃) 𝑖     = S (wk∈ 𝑃 𝑖)
 wk⊢ : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
     → Γ ⊆ Γ′    → Γ ⊢ A
     → Γ′ ⊢ A
-wk⊢ 𝑃 (R𝜈ⁿ  {𝐱 = 𝐱} 𝑖)             = R𝜈ⁿ  {𝐱 = 𝐱} (wk∈ 𝑃 𝑖)
-wk⊢ 𝑃 (R𝜆ⁿ  {𝐱 = 𝐱} {𝐭 = 𝐭} 𝒟)     = R𝜆ⁿ  {𝐱 = 𝐱} {𝐭 = 𝐭} (wk⊢ (keep 𝑃) 𝒟)
-wk⊢ 𝑃 (R∘ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} 𝒟ₜ 𝒟ₛ) = R∘ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} (wk⊢ 𝑃 𝒟ₜ) (wk⊢ 𝑃 𝒟ₛ)
-wk⊢ 𝑃 (R𝑝ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} 𝒟ₜ 𝒟ₛ) = R𝑝ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} (wk⊢ 𝑃 𝒟ₜ) (wk⊢ 𝑃 𝒟ₛ)
-wk⊢ 𝑃 (R𝜋₀ⁿ {𝐭 = 𝐭} 𝒟)             = R𝜋₀ⁿ {𝐭 = 𝐭} (wk⊢ 𝑃 𝒟)
-wk⊢ 𝑃 (R𝜋₁ⁿ {𝐭 = 𝐭} 𝒟)             = R𝜋₁ⁿ {𝐭 = 𝐭} (wk⊢ 𝑃 𝒟)
-wk⊢ 𝑃 (R⇑ⁿ  {𝐭 = 𝐭} 𝒟)             = R⇑ⁿ  {𝐭 = 𝐭} (wk⊢ 𝑃 𝒟)
-wk⊢ 𝑃 (R⇓ⁿ  {𝐭 = 𝐭} 𝒟)             = R⇓ⁿ  {𝐭 = 𝐭} (wk⊢ 𝑃 𝒟)
+wk⊢ P (R𝜈ⁿ  {𝐱 = 𝐱} i)             = R𝜈ⁿ  {𝐱 = 𝐱} (wk∈ P i)
+wk⊢ P (R𝜆ⁿ  {𝐱 = 𝐱} {𝐭 = 𝐭} D)     = R𝜆ⁿ  {𝐱 = 𝐱} {𝐭 = 𝐭} (wk⊢ (keep P) D)
+wk⊢ P (R∘ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} Dₜ Dₛ) = R∘ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} (wk⊢ P Dₜ) (wk⊢ P Dₛ)
+wk⊢ P (R𝑝ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} Dₜ Dₛ) = R𝑝ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} (wk⊢ P Dₜ) (wk⊢ P Dₛ)
+wk⊢ P (R𝜋₀ⁿ {𝐭 = 𝐭} D)             = R𝜋₀ⁿ {𝐭 = 𝐭} (wk⊢ P D)
+wk⊢ P (R𝜋₁ⁿ {𝐭 = 𝐭} D)             = R𝜋₁ⁿ {𝐭 = 𝐭} (wk⊢ P D)
+wk⊢ P (R⇑ⁿ  {𝐭 = 𝐭} D)             = R⇑ⁿ  {𝐭 = 𝐭} (wk⊢ P D)
+wk⊢ P (R⇓ⁿ  {𝐭 = 𝐭} D)             = R⇓ⁿ  {𝐭 = 𝐭} (wk⊢ P D)
 
 
 -- ------------------------------------------------------------------------------------------------
@@ -583,15 +583,15 @@ data _%_ : ∀{m} → Cx m → Cx m → Set where
 ex∈ : ∀{A m} {Γ Γ′ : Cx m}
     → Γ % Γ′    → A ∈ Γ
     → A ∈ Γ′
-ex∈ base        𝑖         = 𝑖
-ex∈ (just 𝑃) Z         = Z
-ex∈ (just 𝑃) (S 𝑖)     = S (ex∈ 𝑃 𝑖)
-ex∈ (same 𝑃) Z         = Z
-ex∈ (same 𝑃) (S Z)     = S Z
-ex∈ (same 𝑃) (S (S 𝑖)) = S (S (ex∈ 𝑃 𝑖))
-ex∈ (diff 𝑃) Z         = S Z
-ex∈ (diff 𝑃) (S Z)     = Z
-ex∈ (diff 𝑃) (S (S 𝑖)) = S (S (ex∈ 𝑃 𝑖))
+ex∈ base     i         = i
+ex∈ (just P) Z         = Z
+ex∈ (just P) (S i)     = S (ex∈ P i)
+ex∈ (same P) Z         = Z
+ex∈ (same P) (S Z)     = S Z
+ex∈ (same P) (S (S i)) = S (S (ex∈ P i))
+ex∈ (diff P) Z         = S Z
+ex∈ (diff P) (S Z)     = Z
+ex∈ (diff P) (S (S i)) = S (S (ex∈ P i))
 
 
 -- Exchange: Typing rules
@@ -599,14 +599,14 @@ ex∈ (diff 𝑃) (S (S 𝑖)) = S (S (ex∈ 𝑃 𝑖))
 ex⊢ : ∀{A m} {Γ Γ′ : Cx m}
     → Γ % Γ′    → Γ ⊢ A
     → Γ′ ⊢ A
-ex⊢ 𝑃 (R𝜈ⁿ  {𝐱 = 𝐱} 𝑖)             = R𝜈ⁿ  {𝐱 = 𝐱} (ex∈ 𝑃 𝑖)
-ex⊢ 𝑃 (R𝜆ⁿ  {𝐱 = 𝐱} {𝐭 = 𝐭} 𝒟)     = R𝜆ⁿ  {𝐱 = 𝐱} {𝐭 = 𝐭} (ex⊢ (just 𝑃) 𝒟)
-ex⊢ 𝑃 (R∘ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} 𝒟ₜ 𝒟ₛ) = R∘ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} (ex⊢ 𝑃 𝒟ₜ) (ex⊢ 𝑃 𝒟ₛ)
-ex⊢ 𝑃 (R𝑝ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} 𝒟ₜ 𝒟ₛ) = R𝑝ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} (ex⊢ 𝑃 𝒟ₜ) (ex⊢ 𝑃 𝒟ₛ)
-ex⊢ 𝑃 (R𝜋₀ⁿ {𝐭 = 𝐭} 𝒟)             = R𝜋₀ⁿ {𝐭 = 𝐭} (ex⊢ 𝑃 𝒟)
-ex⊢ 𝑃 (R𝜋₁ⁿ {𝐭 = 𝐭} 𝒟)             = R𝜋₁ⁿ {𝐭 = 𝐭} (ex⊢ 𝑃 𝒟)
-ex⊢ 𝑃 (R⇑ⁿ  {𝐭 = 𝐭} 𝒟)             = R⇑ⁿ  {𝐭 = 𝐭} (ex⊢ 𝑃 𝒟)
-ex⊢ 𝑃 (R⇓ⁿ  {𝐭 = 𝐭} 𝒟)             = R⇓ⁿ  {𝐭 = 𝐭} (ex⊢ 𝑃 𝒟)
+ex⊢ P (R𝜈ⁿ  {𝐱 = 𝐱} i)             = R𝜈ⁿ  {𝐱 = 𝐱} (ex∈ P i)
+ex⊢ P (R𝜆ⁿ  {𝐱 = 𝐱} {𝐭 = 𝐭} D)     = R𝜆ⁿ  {𝐱 = 𝐱} {𝐭 = 𝐭} (ex⊢ (just P) D)
+ex⊢ P (R∘ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} Dₜ Dₛ) = R∘ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} (ex⊢ P Dₜ) (ex⊢ P Dₛ)
+ex⊢ P (R𝑝ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} Dₜ Dₛ) = R𝑝ⁿ  {𝐭 = 𝐭} {𝐬 = 𝐬} (ex⊢ P Dₜ) (ex⊢ P Dₛ)
+ex⊢ P (R𝜋₀ⁿ {𝐭 = 𝐭} D)             = R𝜋₀ⁿ {𝐭 = 𝐭} (ex⊢ P D)
+ex⊢ P (R𝜋₁ⁿ {𝐭 = 𝐭} D)             = R𝜋₁ⁿ {𝐭 = 𝐭} (ex⊢ P D)
+ex⊢ P (R⇑ⁿ  {𝐭 = 𝐭} D)             = R⇑ⁿ  {𝐭 = 𝐭} (ex⊢ P D)
+ex⊢ P (R⇓ⁿ  {𝐭 = 𝐭} D)             = R⇓ⁿ  {𝐭 = 𝐭} (ex⊢ P D)
 
 
 -- ------------------------------------------------------------------------------------------------
@@ -635,13 +635,13 @@ in∈ : ∀{A m} {𝐱 : VVar m} {Γ Γ′ : Cx m}
 
 in∈ base ()
 
-in∈ (step {x = x} 𝑃) Z
+in∈ (step {x = x} P) Z
     = x ∙ Z
 
-in∈ (step 𝑃) (S 𝑖)
-    = let x ∙ 𝑗 = in∈ 𝑃 𝑖
+in∈ (step P) (S i)
+    = let x ∙ j = in∈ P i
       in
-        x ∙ S 𝑗
+        x ∙ S j
 
 
 -- Internalisation: Typing rules
@@ -652,53 +652,53 @@ in⊢ : ∀{B m} {𝐱 : VVar m} {Γ Γ′ : Cx m}
     → 𝜈ⁿ 𝐱 ∶ Γ ~ Γ′    → Γ ⊢ B
     → Σ (VVar m → Tm) (λ t → Γ′ ⊢ t 𝐱 ∶ B)
 
-in⊢ 𝑃 (R𝜈ⁿ {𝐱 = 𝐲} 𝑖)
-    = let x ∙ 𝑗 = in∈ 𝑃 𝑖
+in⊢ P (R𝜈ⁿ {𝐱 = 𝐲} i)
+    = let x ∙ j = in∈ P i
       in
         (λ _ → 𝜈 x)
-      ∙ R𝜈ⁿ {𝐱 = x ∷ 𝐲} 𝑗
+      ∙ R𝜈ⁿ {𝐱 = x ∷ 𝐲} j
 
-in⊢ {𝐱 = 𝐱} 𝑃 (R𝜆ⁿ {n} {𝐱 = 𝐲} {𝐭} {A} 𝒟)
+in⊢ {𝐱 = 𝐱} P (R𝜆ⁿ {n} {𝐱 = 𝐲} {𝐭} {A} D)
     = let xₘ₊₁  = fresh
-          s ∙ 𝒞 = in⊢ (step {x = xₘ₊₁} {A = 𝜈ⁿ 𝐲 ∶ A} 𝑃) 𝒟
+          s ∙ C = in⊢ (step {x = xₘ₊₁} {A = 𝜈ⁿ 𝐲 ∶ A} P) D
       in
         (λ 𝐱 → 𝜆^[ suc n ] xₘ₊₁ ． s (xₘ₊₁ ∷ 𝐱))
-      ∙ R𝜆ⁿ {𝐱 = xₘ₊₁ ∷ 𝐲} {𝐭 = s (xₘ₊₁ ∷ 𝐱) ∷ 𝐭} 𝒞
+      ∙ R𝜆ⁿ {𝐱 = xₘ₊₁ ∷ 𝐲} {𝐭 = s (xₘ₊₁ ∷ 𝐱) ∷ 𝐭} C
 
-in⊢ {𝐱 = 𝐱} 𝑃 (R∘ⁿ {n} {𝐭} {𝐬} 𝒟ₜ 𝒟ₛ)
-    = let sₜ ∙ 𝒞ₜ = in⊢ 𝑃 𝒟ₜ
-          sₛ ∙ 𝒞ₛ = in⊢ 𝑃 𝒟ₛ
+in⊢ {𝐱 = 𝐱} P (R∘ⁿ {n} {𝐭} {𝐬} Dₜ Dₛ)
+    = let sₜ ∙ Cₜ = in⊢ P Dₜ
+          sₛ ∙ Cₛ = in⊢ P Dₛ
       in
         (λ 𝐱 → sₜ 𝐱 ∘^[ suc n ] sₛ 𝐱)
-      ∙ R∘ⁿ {𝐭 = sₜ 𝐱 ∷ 𝐭} {𝐬 = sₛ 𝐱 ∷ 𝐬} 𝒞ₜ 𝒞ₛ
+      ∙ R∘ⁿ {𝐭 = sₜ 𝐱 ∷ 𝐭} {𝐬 = sₛ 𝐱 ∷ 𝐬} Cₜ Cₛ
 
-in⊢ {𝐱 = 𝐱} 𝑃 (R𝑝ⁿ {n} {𝐭} {𝐬} 𝒟ₜ 𝒟ₛ)
-    = let sₜ ∙ 𝒞ₜ = in⊢ 𝑃 𝒟ₜ
-          sₛ ∙ 𝒞ₛ = in⊢ 𝑃 𝒟ₛ
+in⊢ {𝐱 = 𝐱} P (R𝑝ⁿ {n} {𝐭} {𝐬} Dₜ Dₛ)
+    = let sₜ ∙ Cₜ = in⊢ P Dₜ
+          sₛ ∙ Cₛ = in⊢ P Dₛ
       in
         (λ 𝐱 → 𝑝^[ suc n ]⟨ sₜ 𝐱 , sₛ 𝐱 ⟩)
-      ∙ R𝑝ⁿ {𝐭 = sₜ 𝐱 ∷ 𝐭} {𝐬 = sₛ 𝐱 ∷ 𝐬} 𝒞ₜ 𝒞ₛ
+      ∙ R𝑝ⁿ {𝐭 = sₜ 𝐱 ∷ 𝐭} {𝐬 = sₛ 𝐱 ∷ 𝐬} Cₜ Cₛ
 
-in⊢ {𝐱 = 𝐱} 𝑃 (R𝜋₀ⁿ {n} {𝐭} 𝒟)
-    = let s ∙ 𝒞 = in⊢ 𝑃 𝒟
+in⊢ {𝐱 = 𝐱} P (R𝜋₀ⁿ {n} {𝐭} D)
+    = let s ∙ C = in⊢ P D
       in
         (λ 𝐱 → 𝜋₀^[ suc n ] s 𝐱)
-      ∙ R𝜋₀ⁿ {𝐭 = s 𝐱 ∷ 𝐭} 𝒞
+      ∙ R𝜋₀ⁿ {𝐭 = s 𝐱 ∷ 𝐭} C
 
-in⊢ {𝐱 = 𝐱} 𝑃 (R𝜋₁ⁿ {n} {𝐭} 𝒟)
-    = let s ∙ 𝒞 = in⊢ 𝑃 𝒟
+in⊢ {𝐱 = 𝐱} P (R𝜋₁ⁿ {n} {𝐭} D)
+    = let s ∙ C = in⊢ P D
       in
         (λ 𝐱 → 𝜋₁^[ suc n ] s 𝐱)
-      ∙ R𝜋₁ⁿ {𝐭 = s 𝐱 ∷ 𝐭} 𝒞
+      ∙ R𝜋₁ⁿ {𝐭 = s 𝐱 ∷ 𝐭} C
 
-in⊢ {𝐱 = 𝐱} 𝑃 (R⇑ⁿ {n} {𝐭} 𝒟)
-    = let s ∙ 𝒞 = in⊢ 𝑃 𝒟
+in⊢ {𝐱 = 𝐱} P (R⇑ⁿ {n} {𝐭} D)
+    = let s ∙ C = in⊢ P D
       in
         (λ 𝐱 → ⇑^[ suc n ] s 𝐱)
-      ∙ R⇑ⁿ {𝐭 = s 𝐱 ∷ 𝐭} 𝒞
+      ∙ R⇑ⁿ {𝐭 = s 𝐱 ∷ 𝐭} C
 
-in⊢ {𝐱 = 𝐱} 𝑃 (R⇓ⁿ {n} {𝐭} 𝒟)
-    = let s ∙ 𝒞 = in⊢ 𝑃 𝒟
+in⊢ {𝐱 = 𝐱} P (R⇓ⁿ {n} {𝐭} D)
+    = let s ∙ C = in⊢ P D
       in
         (λ 𝐱 → ⇓^[ suc n ] s 𝐱)
-      ∙ R⇓ⁿ {𝐭 = s 𝐱 ∷ 𝐭} 𝒞
+      ∙ R⇓ⁿ {𝐭 = s 𝐱 ∷ 𝐭} C
