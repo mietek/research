@@ -504,20 +504,20 @@ e2′ = R𝜆² (R𝜈² Z)
 
 -- Weakening
 
-data _⊆_ : ∀{m m′} → Cx m → Cx m′ → Set where
-  base : ∅ ⊆ ∅
+data _≲_ : ∀{m m′} → Cx m → Cx m′ → Set where
+  base : ∅ ≲ ∅
 
   keep : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
-       → Γ ⊆ Γ′
-       → (Γ , A) ⊆ (Γ′ , A)
+       → Γ ≲ Γ′
+       → (Γ , A) ≲ (Γ′ , A)
 
   drop : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
-       → Γ ⊆ Γ′
-       → Γ ⊆ (Γ′ , A)
+       → Γ ≲ Γ′
+       → Γ ≲ (Γ′ , A)
 
 
 wk∈ : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
-    → Γ ⊆ Γ′    → A ∈ Γ
+    → Γ ≲ Γ′    → A ∈ Γ
     → A ∈ Γ′
 wk∈ base     ()
 wk∈ (keep P) Z     = Z
@@ -526,7 +526,7 @@ wk∈ (drop P) i     = S (wk∈ P i)
 
 
 wk⊢ : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
-    → Γ ⊆ Γ′    → Γ ⊢ A
+    → Γ ≲ Γ′    → Γ ⊢ A
     → Γ′ ⊢ A
 wk⊢ P (R𝜈ⁿ  {𝐱 = 𝐱} i)         = R𝜈ⁿ  {𝐱 = 𝐱} (wk∈ P i)
 wk⊢ P (R𝜆ⁿ  {𝐱 = 𝐱} {𝐭} D)     = R𝜆ⁿ  {𝐱 = 𝐱} {𝐭} (wk⊢ (keep P) D)
@@ -540,26 +540,65 @@ wk⊢ P (R⇓ⁿ  {𝐭 = 𝐭} D)         = R⇓ⁿ  {𝐭 = 𝐭} (wk⊢ P D)
 
 -- --------------------------------------------------------------------------
 
+-- Contraction
+
+data _≳_ : ∀{m m′} → Cx m → Cx m′ → Set where
+  base : ∅ ≳ ∅
+
+  once : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
+       → Γ ≳ Γ′
+       → (Γ , A) ≳ (Γ′ , A)
+
+  more : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
+       → Γ ≳ Γ′
+       → (Γ , A , A) ≳ (Γ′ , A)
+
+
+cn∈ : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
+    → Γ ≳ Γ′    → A ∈ Γ
+    → A ∈ Γ′
+cn∈ base     ()
+cn∈ (once P) Z     = Z
+cn∈ (once P) (S i) = S (cn∈ P i)
+cn∈ (more P) Z     = Z
+cn∈ (more P) (S i) = cn∈ (once P) i
+
+
+cn⊢ : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
+    → Γ ≳ Γ′    → Γ ⊢ A
+    → Γ′ ⊢ A
+cn⊢ P (R𝜈ⁿ  {𝐱 = 𝐱} i)         = R𝜈ⁿ  {𝐱 = 𝐱} (cn∈ P i)
+cn⊢ P (R𝜆ⁿ  {𝐱 = 𝐱} {𝐭} D)     = R𝜆ⁿ  {𝐱 = 𝐱} {𝐭} (cn⊢ (once P) D)
+cn⊢ P (R∘ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = R∘ⁿ  {𝐭 = 𝐭} {𝐬} (cn⊢ P Dₜ) (cn⊢ P Dₛ)
+cn⊢ P (R𝑝ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = R𝑝ⁿ  {𝐭 = 𝐭} {𝐬} (cn⊢ P Dₜ) (cn⊢ P Dₛ)
+cn⊢ P (R𝜋₀ⁿ {𝐭 = 𝐭} D)         = R𝜋₀ⁿ {𝐭 = 𝐭} (cn⊢ P D)
+cn⊢ P (R𝜋₁ⁿ {𝐭 = 𝐭} D)         = R𝜋₁ⁿ {𝐭 = 𝐭} (cn⊢ P D)
+cn⊢ P (R⇑ⁿ  {𝐭 = 𝐭} D)         = R⇑ⁿ  {𝐭 = 𝐭} (cn⊢ P D)
+cn⊢ P (R⇓ⁿ  {𝐭 = 𝐭} D)         = R⇓ⁿ  {𝐭 = 𝐭} (cn⊢ P D)
+
+
+-- --------------------------------------------------------------------------
+
 -- Exchange
 
-data _%_ : ∀{m} → Cx m → Cx m → Set where
-  base : ∅ % ∅
+data _≈_ : ∀{m} → Cx m → Cx m → Set where
+  base : ∅ ≈ ∅
 
   just : ∀{A m} {Γ Γ′ : Cx m}
-       → Γ % Γ′
-       → (Γ , A) % (Γ′ , A)
+       → Γ ≈ Γ′
+       → (Γ , A) ≈ (Γ′ , A)
 
   same : ∀{A B m} {Γ Γ′ : Cx m}
-       → Γ % Γ′
-       → (Γ , A , B) % (Γ′ , A , B)
+       → Γ ≈ Γ′
+       → (Γ , A , B) ≈ (Γ′ , A , B)
 
   diff : ∀{A B m} {Γ Γ′ : Cx m}
-       → Γ % Γ′
-       → (Γ , B , A) % (Γ′ , A , B)
+       → Γ ≈ Γ′
+       → (Γ , B , A) ≈ (Γ′ , A , B)
 
 
 ex∈ : ∀{A m} {Γ Γ′ : Cx m}
-    → Γ % Γ′    → A ∈ Γ
+    → Γ ≈ Γ′    → A ∈ Γ
     → A ∈ Γ′
 ex∈ base     ()
 ex∈ (just P) Z         = Z
@@ -573,7 +612,7 @@ ex∈ (diff P) (S (S i)) = S (S (ex∈ P i))
 
 
 ex⊢ : ∀{A m} {Γ Γ′ : Cx m}
-    → Γ % Γ′    → Γ ⊢ A
+    → Γ ≈ Γ′    → Γ ⊢ A
     → Γ′ ⊢ A
 ex⊢ P (R𝜈ⁿ  {𝐱 = 𝐱} i)         = R𝜈ⁿ  {𝐱 = 𝐱} (ex∈ P i)
 ex⊢ P (R𝜆ⁿ  {𝐱 = 𝐱} {𝐭} D)     = R𝜆ⁿ  {𝐱 = 𝐱} {𝐭} (ex⊢ (just P) D)
