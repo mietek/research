@@ -762,3 +762,18 @@ eI²′ = nec eI
 eI³′ : ∀{u x A m} {Γ : Cx m}
      → Σ Tm (λ t → ⊩ t ∶ 𝜆² u ． 𝜈 u ∶ 𝜆 x ． 𝜈 x ∶ (A ⊃ A))
 eI³′ = nec eI²
+
+
+eI²″ : ∀{A m} {Γ : Cx m}
+     → Σ Tm (λ t → ⊩ t ∶ 𝜆 fresh ． 𝜈 fresh ∶ (A ⊃ A))    -- XXX: Fix this!
+eI²″ {A = A} {Γ = Γ}
+     = let ⟨ t , D ⟩ = eI′ {A = A} {Γ = Γ}
+       in
+         nec D
+
+eI³″ : ∀{A m} {Γ : Cx m}
+     → Σ Tm (λ t → ⊩ t ∶ 𝜆² fresh ． 𝜈 fresh ∶ 𝜆 fresh ． 𝜈 fresh ∶ (A ⊃ A))    -- XXX: Fix this!
+eI³″ {A = A} {Γ = Γ}
+     = let ⟨ t , D ⟩ = eI²′ {A = A} {Γ = Γ}
+       in
+         nec D
