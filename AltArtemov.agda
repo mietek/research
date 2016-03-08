@@ -39,7 +39,7 @@ open import Data.Nat
   using (ℕ ; zero ; suc)
 
 open import Data.Product
-  using (Σ)
+  using (Σ ; proj₂)
   renaming (_,_ to ⟨_,_⟩)
 
 open import Data.Vec
@@ -766,12 +766,8 @@ eI³′ = nec eI²
 
 eI²″ : ∀{A m} {Γ : Cx m}
      → Σ Tm (λ t → ⊩ t ∶ 𝜆 fresh ． 𝜈 fresh ∶ (A ⊃ A))    -- XXX: Fix this!
-eI²″ {Γ = Γ} = let ⟨ _ , D ⟩ = eI′ {Γ = Γ}
-               in
-                 nec D
+eI²″ {Γ = Γ} = nec (proj₂ (eI′ {Γ = Γ}))
 
 eI³″ : ∀{A m} {Γ : Cx m}
      → Σ Tm (λ t → ⊩ t ∶ 𝜆² fresh ． 𝜈 fresh ∶ 𝜆 fresh ． 𝜈 fresh ∶ (A ⊃ A))    -- XXX: Fix this!
-eI³″ {Γ = Γ} = let ⟨ _ , D ⟩ = eI²′ {Γ = Γ}
-               in
-                 nec D
+eI³″ {Γ = Γ} = nec (proj₂ (eI²′ {Γ = Γ}))
