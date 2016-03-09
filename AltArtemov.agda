@@ -737,37 +737,45 @@ mk~ {𝐱 = ∅}     {Γ = ∅}     = base
 mk~ {𝐱 = x ∷ 𝐱} {Γ = A ∷ Γ} = step (mk~ {𝐱 = 𝐱} {Γ = Γ})
 
 
-int : ∀{B m} {𝐱 : VVar m} {Γ : Cx m}
-    → Γ ⊢ B
-    → Σ (VVar m → Tm) (λ t → 𝐱 ⅋ Γ ⊢ t 𝐱 ∶ B)
+int : ∀{A m} {𝐱 : VVar m} {Γ : Cx m}
+    → Γ ⊢ A
+    → Σ (VVar m → Tm) (λ t → 𝐱 ⅋ Γ ⊢ t 𝐱 ∶ A)
 int D = in⊢ mk~ D
 
 
-nec : ∀{B}
-    → ∅ ⊢ B
-    → Σ Tm (λ t → ∀{m} {Γ : Cx m} → Γ ⊢ t ∶ B)
+nec : ∀{A}
+    → ∅ ⊢ A
+    → Σ Tm (λ t → ∅ ⊢ t ∶ A)
 nec D = let ⟨ s , C ⟩ = int D
         in
-          ⟨ s ∅ , wk⊢ mk≲ C ⟩
+          ⟨ s ∅ , C ⟩
+
+
+wknec : ∀{A}
+      → ∅ ⊢ A
+      → Σ Tm (λ t → ∀{m} {Γ : Cx m} → Γ ⊢ t ∶ A)
+wknec D = let ⟨ s , C ⟩ = int D
+          in
+            ⟨ s ∅ , wk⊢ mk≲ C ⟩
 
 
 eI′  : ∀{A m} {Γ : Cx m}
      → Σ Tm (λ t → ⊩ t ∶ (A ⊃ A))
-eI′  = nec eI⁰
+eI′  = wknec eI⁰
 
 eI²′ : ∀{x A m} {Γ : Cx m}
      → Σ Tm (λ t → ⊩ t ∶ 𝜆 x ． 𝜈 x ∶ (A ⊃ A))
-eI²′ = nec eI
+eI²′ = wknec eI
 
 eI³′ : ∀{u x A m} {Γ : Cx m}
      → Σ Tm (λ t → ⊩ t ∶ 𝜆² u ． 𝜈 u ∶ 𝜆 x ． 𝜈 x ∶ (A ⊃ A))
-eI³′ = nec eI²
+eI³′ = wknec eI²
 
 
 eI²″ : ∀{A m} {Γ : Cx m}
      → Σ Tm (λ t → ⊩ t ∶ 𝜆 fresh ． 𝜈 fresh ∶ (A ⊃ A))    -- XXX: Fix this!
-eI²″ {Γ = Γ} = nec (proj₂ (eI′ {Γ = Γ}))
+eI²″ {Γ = Γ} = wknec (proj₂ (eI′ {Γ = Γ}))
 
 eI³″ : ∀{A m} {Γ : Cx m}
      → Σ Tm (λ t → ⊩ t ∶ 𝜆² fresh ． 𝜈 fresh ∶ 𝜆 fresh ． 𝜈 fresh ∶ (A ⊃ A))    -- XXX: Fix this!
-eI³″ {Γ = Γ} = nec (proj₂ (eI²′ {Γ = Γ}))
+eI³″ {Γ = Γ} = wknec (proj₂ (eI²′ {Γ = Γ}))
