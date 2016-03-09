@@ -14,7 +14,7 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
    (quote
     (("imp" "⊃") ("iff" "⊃⊂") ("not" "¬") ("ent" "⊢") ("thm" "⊩")
      ("s" "𝐬") ("t" "𝐭") ("x" "𝐱") ("y" "𝐲") ("N" "ℕ")
-     ("v" "𝜈") ("v0" "𝜈⁰") ("v1" "𝜈") ("v2" "𝜈²") ("vn" "𝜈ⁿ")
+     ("v" "𝑣") ("v0" "𝑣⁰") ("v1" "𝑣") ("v2" "𝑣²") ("vn" "𝑣ⁿ")
      ("l" "𝜆") ("l0" "𝜆⁰") ("l1" "𝜆") ("l2" "𝜆²") ("ln" "𝜆ⁿ") ("." "．")
      ("o" "∘") ("o0" "∘⁰") ("o1" "∘") ("o2" "∘²") ("on" "∘ⁿ")
      ("p" "𝑝") ("p0" "𝑝⁰") ("p1" "𝑝") ("p2" "𝑝²") ("pn" "𝑝ⁿ")
@@ -46,7 +46,7 @@ open import Data.Vec
   using (Vec ; _∷_ ; _∈_ ; foldr ; map ; zipWith)
   renaming ([] to ∅ ; here to Z ; there to S)
 
-infixl 9 !_ 𝜈_
+infixl 9 !_ 𝑣_
 infixl 8 _∘_ _∘²_ _∘^[_]_
 infixr 7 ⇑_ ⇑²_ ⇑^[_]_ ⇓_ ⇓²_ ⇓^[_]_
 infixr 6 𝜆_．_ 𝜆²_．_ 𝜆^[_]_．_
@@ -67,7 +67,7 @@ mutual
   -- Term constructors
 
   data Tm : Set where
-    𝜈_         : Var            → Tm    -- Variable
+    𝑣_         : Var            → Tm    -- Variable
     𝜆^[_]_．_   : ℕ   → Var → Tm → Tm    -- Abstraction
     _∘^[_]_    : Tm  → ℕ   → Tm → Tm    -- Application
     𝑝^[_]⟨_,_⟩ : ℕ   → Tm  → Tm → Tm    -- Pairing
@@ -129,8 +129,8 @@ VTy  = Vec Ty
 *ⁿ_∶_          : ∀{n} → VTm n → Ty → Ty
 *ⁿ 𝐭 ∶ A       = foldr (λ _ → Ty) _∶_ A 𝐭
 
-𝜈ⁿ_∶_          : ∀{n} → VVar n → Ty → Ty
-𝜈ⁿ 𝐱 ∶ A       = *ⁿ (map 𝜈_ 𝐱) ∶ A
+𝑣ⁿ_∶_          : ∀{n} → VVar n → Ty → Ty
+𝑣ⁿ 𝐱 ∶ A       = *ⁿ (map 𝑣_ 𝐱) ∶ A
 
 𝜆ⁿ_．_∶_        : ∀{n} → VVar n → VTm n → Ty → Ty
 𝜆ⁿ 𝐱 ． 𝐭 ∶ A   = *ⁿ (ixZipWith 𝜆^[_]_．_ 𝐱 𝐭) ∶ A
@@ -168,12 +168,12 @@ _,_ : {m : ℕ} → Cx m → Ty → Cx (suc m)
 -- Typing rules
 
 data _⊢_ {m : ℕ} (Γ : Cx m) : Ty → Set where
-  R𝜈ⁿ  : ∀{n} {𝐱 : VVar n} {A : Ty}
-       → 𝜈ⁿ 𝐱 ∶ A ∈ Γ
-       → Γ ⊢ 𝜈ⁿ 𝐱 ∶ A
+  R𝑣ⁿ  : ∀{n} {𝐱 : VVar n} {A : Ty}
+       → 𝑣ⁿ 𝐱 ∶ A ∈ Γ
+       → Γ ⊢ 𝑣ⁿ 𝐱 ∶ A
 
   R𝜆ⁿ  : ∀{n} {𝐱 : VVar n} {𝐭 : VTm n} {A B : Ty}
-       → Γ , 𝜈ⁿ 𝐱 ∶ A ⊢ *ⁿ 𝐭 ∶ B
+       → Γ , 𝑣ⁿ 𝐱 ∶ A ⊢ *ⁿ 𝐭 ∶ B
        → Γ ⊢ 𝜆ⁿ 𝐱 ． 𝐭 ∶ (A ⊃ B)
 
   R∘ⁿ  : ∀{n} {𝐭 𝐬 : VTm n} {A B : Ty}
@@ -209,10 +209,10 @@ data _⊢_ {m : ℕ} (Γ : Cx m) : Ty → Set where
 
 -- Simplified notation for level 0 typing rules
 
-R𝜈⁰  : ∀{A m} {Γ : Cx m}
+R𝑣⁰  : ∀{A m} {Γ : Cx m}
      → A ∈ Γ
      → Γ ⊢ A
-R𝜈⁰ = R𝜈ⁿ {𝐱 = ∅}
+R𝑣⁰ = R𝑣ⁿ {𝐱 = ∅}
 
 R𝜆⁰  : ∀{A B m} {Γ : Cx m}
      → Γ , A ⊢ B
@@ -254,20 +254,20 @@ R⇓⁰ = R⇓ⁿ {𝐭 = ∅}
 
 eI⁰ : ∀{A}
     → ⊩ A ⊃ A
-eI⁰ = R𝜆⁰ (R𝜈⁰ Z)
+eI⁰ = R𝜆⁰ (R𝑣⁰ Z)
 
 
 eK⁰ : ∀{A B}
     → ⊩ A ⊃ B ⊃ A
-eK⁰ = R𝜆⁰ (R𝜆⁰ (R𝜈⁰ (S Z)))
+eK⁰ = R𝜆⁰ (R𝜆⁰ (R𝑣⁰ (S Z)))
 
 
 eS⁰ : ∀{A B C}
     → ⊩ (A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C
-eS⁰ = R𝜆⁰ (R𝜆⁰ (R𝜆⁰ (R∘⁰ (R∘⁰ (R𝜈⁰ (S (S Z)))
-                              (R𝜈⁰ Z))
-                         (R∘⁰ (R𝜈⁰ (S Z))
-                              (R𝜈⁰ Z)))))
+eS⁰ = R𝜆⁰ (R𝜆⁰ (R𝜆⁰ (R∘⁰ (R∘⁰ (R𝑣⁰ (S (S Z)))
+                              (R𝑣⁰ Z))
+                         (R∘⁰ (R𝑣⁰ (S Z))
+                              (R𝑣⁰ Z)))))
 
 
 -- --------------------------------------------------------------------------
@@ -298,13 +298,13 @@ t ∘ s      = t ∘^[ 1 ] s
 
 -- Simplified notation for level 1 typing rules
 
-R𝜈  : ∀{x A m} {Γ : Cx m}
-    → 𝜈 x ∶ A ∈ Γ
-    → Γ ⊢ 𝜈 x ∶ A
-R𝜈 {x} = R𝜈ⁿ {𝐱 = x ∷ ∅}
+R𝑣  : ∀{x A m} {Γ : Cx m}
+    → 𝑣 x ∶ A ∈ Γ
+    → Γ ⊢ 𝑣 x ∶ A
+R𝑣 {x} = R𝑣ⁿ {𝐱 = x ∷ ∅}
 
 R𝜆  : ∀{x t A B m} {Γ : Cx m}
-    → Γ , 𝜈 x ∶ A ⊢ t ∶ B
+    → Γ , 𝑣 x ∶ A ⊢ t ∶ B
     → Γ ⊢ 𝜆 x ． t ∶ (A ⊃ B)
 R𝜆 {x} {t} = R𝜆ⁿ {𝐱 = x ∷ ∅} {𝐭 = t ∷ ∅}
 
@@ -342,24 +342,24 @@ R⇓ {t} = R⇓ⁿ {𝐭 = t ∷ ∅}
 -- Level 1 examples
 
 eI : ∀{x A}
-   → ⊩ 𝜆 x ． 𝜈 x
+   → ⊩ 𝜆 x ． 𝑣 x
        ∶ (A ⊃ A)
-eI = R𝜆 (R𝜈 Z)
+eI = R𝜆 (R𝑣 Z)
 
 
 eK : ∀{x y A B}
-   → ⊩ 𝜆 x ． 𝜆 y ． 𝜈 x
+   → ⊩ 𝜆 x ． 𝜆 y ． 𝑣 x
        ∶ (A ⊃ B ⊃ A)
-eK = R𝜆 (R𝜆 (R𝜈 (S Z)))
+eK = R𝜆 (R𝜆 (R𝑣 (S Z)))
 
 
 eS : ∀{f g x A B C}
-   → ⊩ 𝜆 f ． 𝜆 g ． 𝜆 x ． (𝜈 f ∘ 𝜈 x) ∘ (𝜈 g ∘ 𝜈 x)
+   → ⊩ 𝜆 f ． 𝜆 g ． 𝜆 x ． (𝑣 f ∘ 𝑣 x) ∘ (𝑣 g ∘ 𝑣 x)
        ∶ ((A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C)
-eS = R𝜆 (R𝜆 (R𝜆 (R∘ (R∘ (R𝜈 (S (S Z)))
-                        (R𝜈 Z))
-                    (R∘ (R𝜈 (S Z))
-                        (R𝜈 Z)))))
+eS = R𝜆 (R𝜆 (R𝜆 (R∘ (R∘ (R𝑣 (S (S Z)))
+                        (R𝑣 Z))
+                    (R∘ (R𝑣 (S Z))
+                        (R𝑣 Z)))))
 
 
 -- --------------------------------------------------------------------------
@@ -390,13 +390,13 @@ t ∘² s      = t ∘^[ 2 ] s
 
 -- Simplified notation for level 2 typing rules
 
-R𝜈²  : ∀{x₂ x₁ A m} {Γ : Cx m}
-     → 𝜈 x₂ ∶ 𝜈 x₁ ∶ A ∈ Γ
-     → Γ ⊢ 𝜈 x₂ ∶ 𝜈 x₁ ∶ A
-R𝜈² {x₂} {x₁} = R𝜈ⁿ {𝐱 = x₂ ∷ x₁ ∷ ∅}
+R𝑣²  : ∀{x₂ x₁ A m} {Γ : Cx m}
+     → 𝑣 x₂ ∶ 𝑣 x₁ ∶ A ∈ Γ
+     → Γ ⊢ 𝑣 x₂ ∶ 𝑣 x₁ ∶ A
+R𝑣² {x₂} {x₁} = R𝑣ⁿ {𝐱 = x₂ ∷ x₁ ∷ ∅}
 
 R𝜆²  : ∀{x₂ x₁ t₂ t₁ A B m} {Γ : Cx m}
-     → Γ , 𝜈 x₂ ∶ 𝜈 x₁ ∶ A ⊢ t₂ ∶ t₁ ∶ B
+     → Γ , 𝑣 x₂ ∶ 𝑣 x₁ ∶ A ⊢ t₂ ∶ t₁ ∶ B
      → Γ ⊢ 𝜆² x₂ ． t₂ ∶ 𝜆 x₁ ． t₁ ∶ (A ⊃ B)
 R𝜆² {x₂} {x₁} {t₂} {t₁} = R𝜆ⁿ {𝐱 = x₂ ∷ x₁ ∷ ∅} {𝐭 = t₂ ∷ t₁ ∷ ∅}
 
@@ -434,27 +434,27 @@ R⇓² {t₂} {t₁} = R⇓ⁿ {𝐭 = t₂ ∷ t₁ ∷ ∅}
 -- Level 2 examples
 
 eI² : ∀{u x A}
-    → ⊩ 𝜆² u ． 𝜈 u
-        ∶ 𝜆 x ． 𝜈 x
+    → ⊩ 𝜆² u ． 𝑣 u
+        ∶ 𝜆 x ． 𝑣 x
           ∶ (A ⊃ A)
-eI² = R𝜆² (R𝜈² Z)
+eI² = R𝜆² (R𝑣² Z)
 
 
 eK² : ∀{u x v y A B}
-    → ⊩ 𝜆² u ． 𝜆² v ． 𝜈 u
-        ∶ 𝜆 x ． 𝜆 y ． 𝜈 x
+    → ⊩ 𝜆² u ． 𝜆² v ． 𝑣 u
+        ∶ 𝜆 x ． 𝜆 y ． 𝑣 x
           ∶ (A ⊃ B ⊃ A)
-eK² = R𝜆² (R𝜆² (R𝜈² (S Z)))
+eK² = R𝜆² (R𝜆² (R𝑣² (S Z)))
 
 
 eS² : ∀{f g x A B C}
-    → ⊩ 𝜆² f ． 𝜆² g ． 𝜆² x ． (𝜈 f ∘² 𝜈 x) ∘² (𝜈 g ∘² 𝜈 x)
-        ∶ 𝜆 f ． 𝜆 g ． 𝜆 x ． (𝜈 f ∘ 𝜈 x) ∘ (𝜈 g ∘ 𝜈 x)
+    → ⊩ 𝜆² f ． 𝜆² g ． 𝜆² x ． (𝑣 f ∘² 𝑣 x) ∘² (𝑣 g ∘² 𝑣 x)
+        ∶ 𝜆 f ． 𝜆 g ． 𝜆 x ． (𝑣 f ∘ 𝑣 x) ∘ (𝑣 g ∘ 𝑣 x)
           ∶ ((A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C)
-eS² = R𝜆² (R𝜆² (R𝜆² (R∘² (R∘² (R𝜈² (S (S Z)))
-                              (R𝜈² Z))
-                         (R∘² (R𝜈² (S Z))
-                              (R𝜈² Z)))))
+eS² = R𝜆² (R𝜆² (R𝜆² (R∘² (R∘² (R𝑣² (S (S Z)))
+                              (R𝑣² Z))
+                         (R∘² (R𝑣² (S Z))
+                              (R𝑣² Z)))))
 
 
 -- --------------------------------------------------------------------------
@@ -462,42 +462,42 @@ eS² = R𝜆² (R𝜆² (R𝜆² (R∘² (R∘² (R𝜈² (S (S Z)))
 -- Example 1, p. 28 [1]
 
 e11 : ∀{x y A}
-    → ⊩ 𝜆 y ． ⇓ 𝜈 y
-        ∶ (𝜈 x ∶ A ⊃ A)
-e11 = R𝜆 (R⇓ (R𝜈 Z))
+    → ⊩ 𝜆 y ． ⇓ 𝑣 y
+        ∶ (𝑣 x ∶ A ⊃ A)
+e11 = R𝜆 (R⇓ (R𝑣 Z))
 
 e12 : ∀{x y A}
-    → ⊩ 𝜆 y ． ⇑ 𝜈 y
-        ∶ (𝜈 x ∶ A ⊃ ! 𝜈 x ∶ 𝜈 x ∶ A)
-e12 = R𝜆 (R⇑ (R𝜈 Z))
+    → ⊩ 𝜆 y ． ⇑ 𝑣 y
+        ∶ (𝑣 x ∶ A ⊃ ! 𝑣 x ∶ 𝑣 x ∶ A)
+e12 = R𝜆 (R⇑ (R𝑣 Z))
 
 e13 : ∀{u x v y A B}
-    → ⊩ 𝜆² u ． 𝜆² v ． 𝑝²⟨ 𝜈 u , 𝜈 v ⟩
-        ∶ 𝜆 x ． 𝜆 y ． 𝑝⟨ 𝜈 x , 𝜈 y ⟩
+    → ⊩ 𝜆² u ． 𝜆² v ． 𝑝²⟨ 𝑣 u , 𝑣 v ⟩
+        ∶ 𝜆 x ． 𝜆 y ． 𝑝⟨ 𝑣 x , 𝑣 y ⟩
           ∶ (A ⊃ B ⊃ A ∧ B)
-e13 = R𝜆² (R𝜆² (R𝑝² (R𝜈² (S Z))
-                    (R𝜈² Z)))
+e13 = R𝜆² (R𝜆² (R𝑝² (R𝑣² (S Z))
+                    (R𝑣² Z)))
 
 e14 : ∀{u x v y A B}
-    → ⊩ 𝜆 u ． 𝜆 v ． ⇑ 𝑝²⟨ 𝜈 u , 𝜈 v ⟩
-        ∶ (𝜈 x ∶ A ⊃ 𝜈 y ∶ B ⊃ ! 𝑝⟨ 𝜈 x , 𝜈 y ⟩ ∶ 𝑝⟨ 𝜈 x , 𝜈 y ⟩ ∶ (A ∧ B))
-e14 = R𝜆 (R𝜆 (R⇑ (R𝑝² (R𝜈 (S Z))
-                      (R𝜈 Z))))
+    → ⊩ 𝜆 u ． 𝜆 v ． ⇑ 𝑝²⟨ 𝑣 u , 𝑣 v ⟩
+        ∶ (𝑣 x ∶ A ⊃ 𝑣 y ∶ B ⊃ ! 𝑝⟨ 𝑣 x , 𝑣 y ⟩ ∶ 𝑝⟨ 𝑣 x , 𝑣 y ⟩ ∶ (A ∧ B))
+e14 = R𝜆 (R𝜆 (R⇑ (R𝑝² (R𝑣 (S Z))
+                      (R𝑣 Z))))
 
 
 -- Example 2, pp. 31–32 [1]
 
 e2 : ∀{x₃ x₂ x₁ A}
-   → ⊩ 𝜆² x₃ ． ⇓² ⇑² 𝜈 x₃
-       ∶ 𝜆 x₂ ． ⇓ ⇑ 𝜈 x₂
-         ∶ (𝜈 x₁ ∶ A ⊃ 𝜈 x₁ ∶ A)
-e2 = R𝜆² (R⇓² (R⇑² (R𝜈² Z)))
+   → ⊩ 𝜆² x₃ ． ⇓² ⇑² 𝑣 x₃
+       ∶ 𝜆 x₂ ． ⇓ ⇑ 𝑣 x₂
+         ∶ (𝑣 x₁ ∶ A ⊃ 𝑣 x₁ ∶ A)
+e2 = R𝜆² (R⇓² (R⇑² (R𝑣² Z)))
 
 e2′ : ∀{x₃ x₂ x₁ A}
-    → ⊩ 𝜆² x₃ ． 𝜈 x₃
-        ∶ 𝜆 x₂ ． 𝜈 x₂
-          ∶ (𝜈 x₁ ∶ A ⊃ 𝜈 x₁ ∶ A)
-e2′ = R𝜆² (R𝜈² Z)
+    → ⊩ 𝜆² x₃ ． 𝑣 x₃
+        ∶ 𝜆 x₂ ． 𝑣 x₂
+          ∶ (𝑣 x₁ ∶ A ⊃ 𝑣 x₁ ∶ A)
+e2′ = R𝜆² (R𝑣² Z)
 
 
 -- --------------------------------------------------------------------------
@@ -528,7 +528,7 @@ wk∈ (drop P) i     = S (wk∈ P i)
 wk⊢ : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
     → Γ ≲ Γ′    → Γ ⊢ A
     → Γ′ ⊢ A
-wk⊢ P (R𝜈ⁿ  {𝐱 = 𝐱} i)         = R𝜈ⁿ  {𝐱 = 𝐱} (wk∈ P i)
+wk⊢ P (R𝑣ⁿ  {𝐱 = 𝐱} i)         = R𝑣ⁿ  {𝐱 = 𝐱} (wk∈ P i)
 wk⊢ P (R𝜆ⁿ  {𝐱 = 𝐱} {𝐭} D)     = R𝜆ⁿ  {𝐱 = 𝐱} {𝐭} (wk⊢ (keep P) D)
 wk⊢ P (R∘ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = R∘ⁿ  {𝐭 = 𝐭} {𝐬} (wk⊢ P Dₜ) (wk⊢ P Dₛ)
 wk⊢ P (R𝑝ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = R𝑝ⁿ  {𝐭 = 𝐭} {𝐬} (wk⊢ P Dₜ) (wk⊢ P Dₛ)
@@ -567,7 +567,7 @@ cn∈ (more P) (S i) = cn∈ (once P) i
 cn⊢ : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
     → Γ ≳ Γ′    → Γ ⊢ A
     → Γ′ ⊢ A
-cn⊢ P (R𝜈ⁿ  {𝐱 = 𝐱} i)         = R𝜈ⁿ  {𝐱 = 𝐱} (cn∈ P i)
+cn⊢ P (R𝑣ⁿ  {𝐱 = 𝐱} i)         = R𝑣ⁿ  {𝐱 = 𝐱} (cn∈ P i)
 cn⊢ P (R𝜆ⁿ  {𝐱 = 𝐱} {𝐭} D)     = R𝜆ⁿ  {𝐱 = 𝐱} {𝐭} (cn⊢ (once P) D)
 cn⊢ P (R∘ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = R∘ⁿ  {𝐭 = 𝐭} {𝐬} (cn⊢ P Dₜ) (cn⊢ P Dₛ)
 cn⊢ P (R𝑝ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = R𝑝ⁿ  {𝐭 = 𝐭} {𝐬} (cn⊢ P Dₜ) (cn⊢ P Dₛ)
@@ -614,7 +614,7 @@ ex∈ (diff P) (S (S i)) = S (S (ex∈ P i))
 ex⊢ : ∀{A m} {Γ Γ′ : Cx m}
     → Γ ≈ Γ′    → Γ ⊢ A
     → Γ′ ⊢ A
-ex⊢ P (R𝜈ⁿ  {𝐱 = 𝐱} i)         = R𝜈ⁿ  {𝐱 = 𝐱} (ex∈ P i)
+ex⊢ P (R𝑣ⁿ  {𝐱 = 𝐱} i)         = R𝑣ⁿ  {𝐱 = 𝐱} (ex∈ P i)
 ex⊢ P (R𝜆ⁿ  {𝐱 = 𝐱} {𝐭} D)     = R𝜆ⁿ  {𝐱 = 𝐱} {𝐭} (ex⊢ (just P) D)
 ex⊢ P (R∘ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = R∘ⁿ  {𝐭 = 𝐭} {𝐬} (ex⊢ P Dₜ) (ex⊢ P Dₛ)
 ex⊢ P (R𝑝ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = R𝑝ⁿ  {𝐭 = 𝐭} {𝐬} (ex⊢ P Dₜ) (ex⊢ P Dₛ)
@@ -642,12 +642,12 @@ data _⅋_~_ : ∀{m} → VVar m → Cx m → Cx m → Set where
 
   step : ∀{x A m} {𝐱 : VVar m} {Γ Γ′ : Cx m}
        → 𝐱 ⅋ Γ ~ Γ′
-       → (x ∷ 𝐱) ⅋ (Γ , A) ~ (Γ′ , 𝜈 x ∶ A)
+       → (x ∷ 𝐱) ⅋ (Γ , A) ~ (Γ′ , 𝑣 x ∶ A)
 
 
 in∈ : ∀{A m} {𝐱 : VVar m} {Γ Γ′ : Cx m}
     → 𝐱 ⅋ Γ ~ Γ′    → A ∈ Γ
-    → Σ Var (λ x → 𝜈 x ∶ A ∈ Γ′)
+    → Σ Var (λ x → 𝑣 x ∶ A ∈ Γ′)
 in∈ {𝐱 = ∅}              base     ()
 in∈ {𝐱 = x ∷ _} (step P) Z     = ⟨ x , Z ⟩
 in∈ {𝐱 = _ ∷ 𝐱} (step P) (S i) = let ⟨ y , j ⟩ = in∈ {𝐱 = 𝐱} P i
@@ -659,11 +659,11 @@ in⊢ : ∀{B m} {𝐱 : VVar m} {Γ Γ′ : Cx m}
     → 𝐱 ⅋ Γ ~ Γ′    → Γ ⊢ B
     → Σ (VVar m → Tm) (λ t → Γ′ ⊢ t 𝐱 ∶ B)
 
-in⊢ {𝐱 = 𝐱} P (R𝜈ⁿ {𝐱 = 𝐲} i)
+in⊢ {𝐱 = 𝐱} P (R𝑣ⁿ {𝐱 = 𝐲} i)
     = let ⟨ x , j ⟩ = in∈ {𝐱 = 𝐱} P i
       in
-        ⟨ (λ _ → 𝜈 x)
-        , R𝜈ⁿ {𝐱 = x ∷ 𝐲} j
+        ⟨ (λ _ → 𝑣 x)
+        , R𝑣ⁿ {𝐱 = x ∷ 𝐲} j
         ⟩
 
 in⊢ {𝐱 = 𝐱} P (R𝜆ⁿ {n} {𝐱 = 𝐲} {𝐭} D)
@@ -729,7 +729,7 @@ mk≲ {Γ = x ∷ Γ} = drop (mk≲ {Γ = Γ})
 
 
 _⅋_ : ∀{m} → VVar m → Cx m → Cx m
-𝐱 ⅋ Γ = zipWith _∶_ (map 𝜈_ 𝐱) Γ
+𝐱 ⅋ Γ = zipWith _∶_ (map 𝑣_ 𝐱) Γ
 
 
 mk~ : ∀{m} {𝐱 : VVar m} {Γ : Cx m} → 𝐱 ⅋ Γ ~ (𝐱 ⅋ Γ)
@@ -764,18 +764,18 @@ eI′  : ∀{A m} {Γ : Cx m}
 eI′  = wknec eI⁰
 
 eI²′ : ∀{x A m} {Γ : Cx m}
-     → Σ Tm (λ t → ⊩ t ∶ 𝜆 x ． 𝜈 x ∶ (A ⊃ A))
+     → Σ Tm (λ t → ⊩ t ∶ 𝜆 x ． 𝑣 x ∶ (A ⊃ A))
 eI²′ = wknec eI
 
 eI³′ : ∀{u x A m} {Γ : Cx m}
-     → Σ Tm (λ t → ⊩ t ∶ 𝜆² u ． 𝜈 u ∶ 𝜆 x ． 𝜈 x ∶ (A ⊃ A))
+     → Σ Tm (λ t → ⊩ t ∶ 𝜆² u ． 𝑣 u ∶ 𝜆 x ． 𝑣 x ∶ (A ⊃ A))
 eI³′ = wknec eI²
 
 
 eI²″ : ∀{A m} {Γ : Cx m}
-     → Σ Tm (λ t → ⊩ t ∶ 𝜆 fresh ． 𝜈 fresh ∶ (A ⊃ A))    -- XXX: Fix this!
+     → Σ Tm (λ t → ⊩ t ∶ 𝜆 fresh ． 𝑣 fresh ∶ (A ⊃ A))    -- XXX: Fix this!
 eI²″ {Γ = Γ} = wknec (proj₂ (eI′ {Γ = Γ}))
 
 eI³″ : ∀{A m} {Γ : Cx m}
-     → Σ Tm (λ t → ⊩ t ∶ 𝜆² fresh ． 𝜈 fresh ∶ 𝜆 fresh ． 𝜈 fresh ∶ (A ⊃ A))    -- XXX: Fix this!
+     → Σ Tm (λ t → ⊩ t ∶ 𝜆² fresh ． 𝑣 fresh ∶ 𝜆 fresh ． 𝑣 fresh ∶ (A ⊃ A))    -- XXX: Fix this!
 eI³″ {Γ = Γ} = wknec (proj₂ (eI²′ {Γ = Γ}))
