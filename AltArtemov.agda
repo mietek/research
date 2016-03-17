@@ -40,7 +40,7 @@ open import Data.Nat
   using (ℕ ; zero ; suc)
 
 open import Data.Product
-  using (Σ ; proj₂)
+  using (Σ ; proj₁ ; proj₂)
   renaming (_,_ to ⟨_,_⟩)
 
 infixl 9 !_ 𝑣_
@@ -57,14 +57,12 @@ infixr 0 _⊢_ ⊩_
 
 -- --------------------------------------------------------------------------
 --
--- Untyped syntax
+-- Type and term constructors
 
 
 Var : Set
 Var = ℕ
 
-
--- Type and term constructors
 
 mutual
   data Ty : Set where
@@ -860,7 +858,7 @@ in⊢ {𝐱 = 𝐱} (M⇓ⁿ {n} {𝐭} D)
 
 
 -- --------------------------------------------------------------------------
-
+--
 -- Constructive necessitation
 
 
