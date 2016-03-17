@@ -43,11 +43,13 @@ open import Data.Product
   using (Σ ; proj₁ ; proj₂ ; _×_)
   renaming (_,_ to ⟨_,_⟩)
 
-infixl 9 !_ 𝑣_
-infixl 8 𝜋₀_ 𝜋₀²_ 𝜋₁_ 𝜋₁²_
-infixl 7 _∘_ _∘²_
-infixr 6 ⇑_ ⇑²_ ⇓_ ⇓²_
-infixr 5 𝜆_ 𝜆²_
+infixl 9 !_ 𝑣_ M𝑣_
+infixl 8 𝜋₀_ 𝜋₀²_ M𝜋₀_ M𝜋₀²_ M𝜋₀³_
+infixl 8 𝜋₁_ 𝜋₁²_ M𝜋₁_ M𝜋₁²_ M𝜋₁³_
+infixl 7 _∘_ _∘²_ _M∘_ _M∘²_ _M∘³_
+infixr 6 ⇑_ ⇑²_ M⇑_ M⇑²_ M⇑³_
+infixr 6 ⇓_ ⇓²_ M⇓_ M⇓²_ M⇓³_
+infixr 5 𝜆_ 𝜆²_ M𝜆_ M𝜆²_ M𝜆³_
 infixr 4 _∶_ _∷_
 infixr 3 ¬_
 infixl 2 _,_ _∧_
@@ -233,7 +235,11 @@ Tms = Vec Tm
 
 
 *ⁿ_∷_ : ∀{n} → Tms n → Ty → Ty
-*ⁿ 𝐭 ∷ A = foldr (λ _ → Ty) _∶_ A 𝐭
+*ⁿ []      ∷ A = A
+*ⁿ (x ∷ 𝐭) ∷ A = x ∶ *ⁿ 𝐭 ∷ A
+
+𝑣[_]_∷_ : ℕ → Var → Ty → Ty
+𝑣[ n ] x ∷ A = *ⁿ (replicate n (𝑣 x)) ∷ A
 
 𝜆ⁿ_∷_ : ∀{n} → Tms n → Ty → Ty
 𝜆ⁿ 𝐭 ∷ A = *ⁿ (ixMap 𝜆[_]_ 𝐭) ∷ A
@@ -271,22 +277,13 @@ data Cx : ℕ → Set where
   _,_ : ∀{m} → Cx m → Hyp → Cx (suc m)
 
 
-data _∈_  : ∀{m} → Hyp → Cx m → Set where
+data _∈[_]_ : ∀{m} → Hyp → ℕ → Cx m → Set where
   Z  : ∀{m} {Γ : Cx m} {A : Hyp}
-     → A ∈ (Γ , A)
+     → A ∈[ zero ] (Γ , A)
 
-  S_ : ∀{m} {Γ : Cx m} {A B : Hyp}
-     → A ∈ Γ
-     → A ∈ (Γ , B)
-
-
-toℕ : ∀{m} {Γ : Cx m} {A : Hyp} → A ∈ Γ → ℕ
-toℕ Z     = zero
-toℕ (S i) = suc (toℕ i)
-
-
-𝑣[_]_∷_ : (n : ℕ) → Var → Ty → Ty
-𝑣[ n ] x ∷ A = *ⁿ (replicate n (𝑣 x)) ∷ A
+  S_ : ∀{m x} {Γ : Cx m} {A B : Hyp}
+     → A ∈[ x ] Γ
+     → A ∈[ suc x ] (Γ , B)
 
 
 -- --------------------------------------------------------------------------
@@ -295,41 +292,41 @@ toℕ (S i) = suc (toℕ i)
 
 
 data _⊢_ {m : ℕ} (Γ : Cx m) : Ty → Set where
-  M𝑣   : ∀{n} {A : Ty}
-       → (i : ⟨ n , A ⟩ ∈ Γ)
-       → Γ ⊢ 𝑣[ n ] (toℕ i) ∷ A
+  M𝑣_ : ∀{n x} {A : Ty}
+      → ⟨ n , A ⟩ ∈[ x ] Γ
+      → Γ ⊢ 𝑣[ n ] x ∷ A
 
-  M𝜆ⁿ  : ∀{n} {𝐭 : Tms n} {A B : Ty}
-       → Γ , ⟨ n , A ⟩ ⊢ *ⁿ 𝐭 ∷ B
-       → Γ ⊢ 𝜆ⁿ 𝐭 ∷ (A ⊃ B)
+  M𝜆ⁿ_ : ∀{n} {𝐭 : Tms n} {A B : Ty}
+      → Γ , ⟨ n , A ⟩ ⊢ *ⁿ 𝐭 ∷ B
+      → Γ ⊢ 𝜆ⁿ 𝐭 ∷ (A ⊃ B)
 
-  M∘ⁿ  : ∀{n} {𝐭 𝐬 : Tms n} {A B : Ty}
-       → Γ ⊢ *ⁿ 𝐭 ∷ (A ⊃ B)    → Γ ⊢ *ⁿ 𝐬 ∷ A
-       → Γ ⊢ 𝐭 ∘ⁿ 𝐬 ∷ B
+  _M∘ⁿ_ : ∀{n} {𝐭 𝐬 : Tms n} {A B : Ty}
+      → Γ ⊢ *ⁿ 𝐭 ∷ (A ⊃ B)    → Γ ⊢ *ⁿ 𝐬 ∷ A
+      → Γ ⊢ 𝐭 ∘ⁿ 𝐬 ∷ B
 
-  M𝑝ⁿ  : ∀{n} {𝐭 𝐬 : Tms n} {A B : Ty}
-       → Γ ⊢ *ⁿ 𝐭 ∷ A          → Γ ⊢ *ⁿ 𝐬 ∷ B
-       → Γ ⊢ 𝑝ⁿ⟨ 𝐭 , 𝐬 ⟩∷ (A ∧ B)
+  M𝑝ⁿ⟨_,_⟩ : ∀{n} {𝐭 𝐬 : Tms n} {A B : Ty}
+      → Γ ⊢ *ⁿ 𝐭 ∷ A          → Γ ⊢ *ⁿ 𝐬 ∷ B
+      → Γ ⊢ 𝑝ⁿ⟨ 𝐭 , 𝐬 ⟩∷ (A ∧ B)
 
-  M𝜋₀ⁿ : ∀{n} {𝐭 : Tms n} {A B : Ty}
-       → Γ ⊢ *ⁿ 𝐭 ∷ (A ∧ B)
-       → Γ ⊢ 𝜋₀ⁿ 𝐭 ∷ A
+  M𝜋₀ⁿ_ : ∀{n} {𝐭 : Tms n} {A B : Ty}
+      → Γ ⊢ *ⁿ 𝐭 ∷ (A ∧ B)
+      → Γ ⊢ 𝜋₀ⁿ 𝐭 ∷ A
 
-  M𝜋₁ⁿ : ∀{n} {𝐭 : Tms n} {A B : Ty}
-       → Γ ⊢ *ⁿ 𝐭 ∷ (A ∧ B)
-       → Γ ⊢ 𝜋₁ⁿ 𝐭 ∷ B
+  M𝜋₁ⁿ_ : ∀{n} {𝐭 : Tms n} {A B : Ty}
+      → Γ ⊢ *ⁿ 𝐭 ∷ (A ∧ B)
+      → Γ ⊢ 𝜋₁ⁿ 𝐭 ∷ B
 
-  M⇑ⁿ  : ∀{n} {𝐭 : Tms n} {u : Tm} {A : Ty}
-       → Γ ⊢ *ⁿ 𝐭 ∷ (u ∶ A)
-       → Γ ⊢ ⇑ⁿ 𝐭 ∷ (! u ∶ u ∶ A)
+  M⇑ⁿ_ : ∀{n} {𝐭 : Tms n} {u : Tm} {A : Ty}
+      → Γ ⊢ *ⁿ 𝐭 ∷ (u ∶ A)
+      → Γ ⊢ ⇑ⁿ 𝐭 ∷ (! u ∶ u ∶ A)
 
-  M⇓ⁿ  : ∀{n} {𝐭 : Tms n} {u : Tm} {A : Ty}
-       → Γ ⊢ *ⁿ 𝐭 ∷ (u ∶ A)
-       → Γ ⊢ ⇓ⁿ 𝐭 ∷ A
+  M⇓ⁿ_ : ∀{n} {𝐭 : Tms n} {u : Tm} {A : Ty}
+      → Γ ⊢ *ⁿ 𝐭 ∷ (u ∶ A)
+      → Γ ⊢ ⇓ⁿ 𝐭 ∷ A
 
 
 ⊩_  : Ty → Set
-⊩ A = ∀{m} {Γ : Cx m} → Γ ⊢ A
+⊩ A = ∅ ⊢ A
 
 
 -- --------------------------------------------------------------------------
@@ -337,40 +334,40 @@ data _⊢_ {m : ℕ} (Γ : Cx m) : Ty → Set where
 -- Simplified notation for level 1 typing rules
 
 
-M𝜆  : ∀{A B m} {Γ : Cx m}
+M𝜆_ : ∀{A B m} {Γ : Cx m}
     → Γ , ⟨ 0 , A ⟩ ⊢ B
     → Γ ⊢ A ⊃ B
-M𝜆 = M𝜆ⁿ {𝐭 = []}
+M𝜆_ = M𝜆ⁿ_ {𝐭 = []}
 
-M∘  : ∀{A B m} {Γ : Cx m}
+_M∘_ : ∀{A B m} {Γ : Cx m}
     → Γ ⊢ A ⊃ B    → Γ ⊢ A
     → Γ ⊢ B
-M∘ = M∘ⁿ {𝐭 = []} {𝐬 = []}
+_M∘_ = _M∘ⁿ_ {𝐭 = []} {𝐬 = []}
 
-M𝑝  : ∀{A B m} {Γ : Cx m}
+M𝑝⟨_,_⟩ : ∀{A B m} {Γ : Cx m}
     → Γ ⊢ A        → Γ ⊢ B
     → Γ ⊢ A ∧ B
-M𝑝 = M𝑝ⁿ {𝐭 = []} {𝐬 = []}
+M𝑝⟨_,_⟩ = M𝑝ⁿ⟨_,_⟩ {𝐭 = []} {𝐬 = []}
 
-M𝜋₀ : ∀{A B m} {Γ : Cx m}
+M𝜋₀_ : ∀{A B m} {Γ : Cx m}
     → Γ ⊢ A ∧ B
     → Γ ⊢ A
-M𝜋₀ = M𝜋₀ⁿ {𝐭 = []}
+M𝜋₀_ = M𝜋₀ⁿ_ {𝐭 = []}
 
-M𝜋₁ : ∀{A B m} {Γ : Cx m}
+M𝜋₁_ : ∀{A B m} {Γ : Cx m}
     → Γ ⊢ A ∧ B
     → Γ ⊢ B
-M𝜋₁ = M𝜋₁ⁿ {𝐭 = []}
+M𝜋₁_ = M𝜋₁ⁿ_ {𝐭 = []}
 
-M⇑  : ∀{u A m} {Γ : Cx m}
+M⇑_ : ∀{u A m} {Γ : Cx m}
     → Γ ⊢ u ∶ A
     → Γ ⊢ ! u ∶ u ∶ A
-M⇑ = M⇑ⁿ {𝐭 = []}
+M⇑_ = M⇑ⁿ_ {𝐭 = []}
 
-M⇓  : ∀{u A m} {Γ : Cx m}
+M⇓_ : ∀{u A m} {Γ : Cx m}
     → Γ ⊢ u ∶ A
     → Γ ⊢ A
-M⇓ = M⇓ⁿ {𝐭 = []}
+M⇓_ = M⇓ⁿ_ {𝐭 = []}
 
 
 -- --------------------------------------------------------------------------
@@ -378,40 +375,40 @@ M⇓ = M⇓ⁿ {𝐭 = []}
 -- Simplified notation for level 2 typing rules
 
 
-M𝜆²  : ∀{t A B m} {Γ : Cx m}
-     → Γ , ⟨ 1 , A ⟩ ⊢ t ∶ B
-     → Γ ⊢ 𝜆 t ∶ (A ⊃ B)
-M𝜆² {t} = M𝜆ⁿ {𝐭 = t ∷ []}
+M𝜆²_ : ∀{t A B m} {Γ : Cx m}
+    → Γ , ⟨ 1 , A ⟩ ⊢ t ∶ B
+    → Γ ⊢ 𝜆 t ∶ (A ⊃ B)
+M𝜆²_ {t} = M𝜆ⁿ_ {𝐭 = t ∷ []}
 
-M∘²  : ∀{t s A B m} {Γ : Cx m}
-     → Γ ⊢ t ∶ (A ⊃ B)    → Γ ⊢ s ∶ A
-     → Γ ⊢ t ∘ s ∶ B
-M∘² {t} {s} = M∘ⁿ {𝐭 = t ∷ []} {𝐬 = s ∷ []}
+_M∘²_ : ∀{t s A B m} {Γ : Cx m}
+    → Γ ⊢ t ∶ (A ⊃ B)    → Γ ⊢ s ∶ A
+    → Γ ⊢ t ∘ s ∶ B
+_M∘²_ {t} {s} = _M∘ⁿ_ {𝐭 = t ∷ []} {𝐬 = s ∷ []}
 
-M𝑝²  : ∀{t s A B m} {Γ : Cx m}
-     → Γ ⊢ t ∶ A          → Γ ⊢ s ∶ B
-     → Γ ⊢ 𝑝⟨ t , s ⟩ ∶ (A ∧ B)
-M𝑝² {t} {s} = M𝑝ⁿ {𝐭 = t ∷ []} {𝐬 = s ∷ []}
+M𝑝²⟨_,_⟩ : ∀{t s A B m} {Γ : Cx m}
+    → Γ ⊢ t ∶ A          → Γ ⊢ s ∶ B
+    → Γ ⊢ 𝑝⟨ t , s ⟩ ∶ (A ∧ B)
+M𝑝²⟨_,_⟩ {t} {s} = M𝑝ⁿ⟨_,_⟩ {𝐭 = t ∷ []} {𝐬 = s ∷ []}
 
-M𝜋₀² : ∀{t A B m} {Γ : Cx m}
-     → Γ ⊢ t ∶ (A ∧ B)
-     → Γ ⊢ 𝜋₀ t ∶ A
-M𝜋₀² {t} = M𝜋₀ⁿ {𝐭 = t ∷ []}
+M𝜋₀²_ : ∀{t A B m} {Γ : Cx m}
+    → Γ ⊢ t ∶ (A ∧ B)
+    → Γ ⊢ 𝜋₀ t ∶ A
+M𝜋₀²_ {t} = M𝜋₀ⁿ_ {𝐭 = t ∷ []}
 
-M𝜋₁² : ∀{t A B m} {Γ : Cx m}
-     → Γ ⊢ t ∶ (A ∧ B)
-     → Γ ⊢ 𝜋₁ t ∶ B
-M𝜋₁² {t} = M𝜋₁ⁿ {𝐭 = t ∷ []}
+M𝜋₁²_ : ∀{t A B m} {Γ : Cx m}
+    → Γ ⊢ t ∶ (A ∧ B)
+    → Γ ⊢ 𝜋₁ t ∶ B
+M𝜋₁²_ {t} = M𝜋₁ⁿ_ {𝐭 = t ∷ []}
 
-M⇑²  : ∀{t u A m} {Γ : Cx m}
-     → Γ ⊢ t ∶ u ∶ A
-     → Γ ⊢ ⇑ t ∶ ! u ∶ u ∶ A
-M⇑² {t} = M⇑ⁿ {𝐭 = t ∷ []}
+M⇑²_ : ∀{t u A m} {Γ : Cx m}
+    → Γ ⊢ t ∶ u ∶ A
+    → Γ ⊢ ⇑ t ∶ ! u ∶ u ∶ A
+M⇑²_ {t} = M⇑ⁿ_ {𝐭 = t ∷ []}
 
-M⇓²  : ∀{t u A m} {Γ : Cx m}
-     → Γ ⊢ t ∶ u ∶ A
-     → Γ ⊢ ⇓ t ∶ A
-M⇓² {t} = M⇓ⁿ {𝐭 = t ∷ []}
+M⇓²_ : ∀{t u A m} {Γ : Cx m}
+    → Γ ⊢ t ∶ u ∶ A
+    → Γ ⊢ ⇓ t ∶ A
+M⇓²_ {t} = M⇓ⁿ_ {𝐭 = t ∷ []}
 
 
 -- --------------------------------------------------------------------------
@@ -419,40 +416,40 @@ M⇓² {t} = M⇓ⁿ {𝐭 = t ∷ []}
 -- Simplified notation for level 3 typing rules
 
 
-M𝜆³  : ∀{t₂ t₁ A B m} {Γ : Cx m}
-     → Γ , ⟨ 2 , A ⟩ ⊢ t₂ ∶ t₁ ∶ B
-     → Γ ⊢ 𝜆² t₂ ∶ 𝜆 t₁ ∶ (A ⊃ B)
-M𝜆³ {t₂} {t₁} = M𝜆ⁿ {𝐭 = t₂ ∷ t₁ ∷ []}
+M𝜆³_ : ∀{t₂ t₁ A B m} {Γ : Cx m}
+    → Γ , ⟨ 2 , A ⟩ ⊢ t₂ ∶ t₁ ∶ B
+    → Γ ⊢ 𝜆² t₂ ∶ 𝜆 t₁ ∶ (A ⊃ B)
+M𝜆³_ {t₂} {t₁} = M𝜆ⁿ_ {𝐭 = t₂ ∷ t₁ ∷ []}
 
-M∘³  : ∀{t₂ t₁ s₂ s₁ A B m} {Γ : Cx m}
-     → Γ ⊢ t₂ ∶ t₁ ∶ (A ⊃ B)    → Γ ⊢ s₂ ∶ s₁ ∶ A
-     → Γ ⊢ t₂ ∘² s₂ ∶ t₁ ∘ s₁ ∶ B
-M∘³ {t₂} {t₁} {s₂} {s₁} = M∘ⁿ {𝐭 = t₂ ∷ t₁ ∷ []} {𝐬 = s₂ ∷ s₁ ∷ []}
+_M∘³_ : ∀{t₂ t₁ s₂ s₁ A B m} {Γ : Cx m}
+    → Γ ⊢ t₂ ∶ t₁ ∶ (A ⊃ B)    → Γ ⊢ s₂ ∶ s₁ ∶ A
+    → Γ ⊢ t₂ ∘² s₂ ∶ t₁ ∘ s₁ ∶ B
+_M∘³_ {t₂} {t₁} {s₂} {s₁} = _M∘ⁿ_ {𝐭 = t₂ ∷ t₁ ∷ []} {𝐬 = s₂ ∷ s₁ ∷ []}
 
-M𝑝³  : ∀{t₂ t₁ s₂ s₁ A B m} {Γ : Cx m}
-     → Γ ⊢ t₂ ∶ t₁ ∶ A          → Γ ⊢ s₂ ∶ s₁ ∶ B
-     → Γ ⊢ 𝑝²⟨ t₂ , s₂ ⟩ ∶ 𝑝⟨ t₁ , s₁ ⟩ ∶ (A ∧ B)
-M𝑝³ {t₂} {t₁} {s₂} {s₁} = M𝑝ⁿ {𝐭 = t₂ ∷ t₁ ∷ []} {𝐬 = s₂ ∷ s₁ ∷ []}
+M𝑝³⟨_,_⟩ : ∀{t₂ t₁ s₂ s₁ A B m} {Γ : Cx m}
+    → Γ ⊢ t₂ ∶ t₁ ∶ A          → Γ ⊢ s₂ ∶ s₁ ∶ B
+    → Γ ⊢ 𝑝²⟨ t₂ , s₂ ⟩ ∶ 𝑝⟨ t₁ , s₁ ⟩ ∶ (A ∧ B)
+M𝑝³⟨_,_⟩ {t₂} {t₁} {s₂} {s₁} = M𝑝ⁿ⟨_,_⟩ {𝐭 = t₂ ∷ t₁ ∷ []} {𝐬 = s₂ ∷ s₁ ∷ []}
 
-M𝜋₀³ : ∀{t₂ t₁ A B m} {Γ : Cx m}
-     → Γ ⊢ t₂ ∶ t₁ ∶ (A ∧ B)
-     → Γ ⊢ 𝜋₀² t₂ ∶ 𝜋₀ t₁ ∶ A
-M𝜋₀³ {t₂} {t₁} = M𝜋₀ⁿ {𝐭 = t₂ ∷ t₁ ∷ []}
+M𝜋₀³_ : ∀{t₂ t₁ A B m} {Γ : Cx m}
+    → Γ ⊢ t₂ ∶ t₁ ∶ (A ∧ B)
+    → Γ ⊢ 𝜋₀² t₂ ∶ 𝜋₀ t₁ ∶ A
+M𝜋₀³_ {t₂} {t₁} = M𝜋₀ⁿ_ {𝐭 = t₂ ∷ t₁ ∷ []}
 
-M𝜋₁³ : ∀{t₂ t₁ A B m} {Γ : Cx m}
-     → Γ ⊢ t₂ ∶ t₁ ∶ (A ∧ B)
-     → Γ ⊢ 𝜋₁² t₂ ∶ 𝜋₁ t₁ ∶ B
-M𝜋₁³ {t₂} {t₁} = M𝜋₁ⁿ {𝐭 = t₂ ∷ t₁ ∷ []}
+M𝜋₁³_ : ∀{t₂ t₁ A B m} {Γ : Cx m}
+    → Γ ⊢ t₂ ∶ t₁ ∶ (A ∧ B)
+    → Γ ⊢ 𝜋₁² t₂ ∶ 𝜋₁ t₁ ∶ B
+M𝜋₁³_ {t₂} {t₁} = M𝜋₁ⁿ_ {𝐭 = t₂ ∷ t₁ ∷ []}
 
-M⇑³  : ∀{t₂ t₁ u A m} {Γ : Cx m}
-     → Γ ⊢ t₂ ∶ t₁ ∶ u ∶ A
-     → Γ ⊢ ⇑² t₂ ∶ ⇑ t₁ ∶ ! u ∶ u ∶ A
-M⇑³ {t₂} {t₁} = M⇑ⁿ {𝐭 = t₂ ∷ t₁ ∷ []}
+M⇑³_ : ∀{t₂ t₁ u A m} {Γ : Cx m}
+    → Γ ⊢ t₂ ∶ t₁ ∶ u ∶ A
+    → Γ ⊢ ⇑² t₂ ∶ ⇑ t₁ ∶ ! u ∶ u ∶ A
+M⇑³_ {t₂} {t₁} = M⇑ⁿ_ {𝐭 = t₂ ∷ t₁ ∷ []}
 
-M⇓³  : ∀{t₂ t₁ u A m} {Γ : Cx m}
-     → Γ ⊢ t₂ ∶ t₁ ∶ u ∶ A
-     → Γ ⊢ ⇓² t₂ ∶ ⇓ t₁ ∶ A
-M⇓³ {t₂} {t₁} = M⇓ⁿ {𝐭 = t₂ ∷ t₁ ∷ []}
+M⇓³_ : ∀{t₂ t₁ u A m} {Γ : Cx m}
+    → Γ ⊢ t₂ ∶ t₁ ∶ u ∶ A
+    → Γ ⊢ ⇓² t₂ ∶ ⇓ t₁ ∶ A
+M⇓³_ {t₂} {t₁} = M⇓ⁿ_ {𝐭 = t₂ ∷ t₁ ∷ []}
 
 
 -- --------------------------------------------------------------------------
@@ -463,67 +460,58 @@ M⇓³ {t₂} {t₁} = M⇓ⁿ {𝐭 = t₂ ∷ t₁ ∷ []}
 -- S4: A ⊃ A
 eI : ∀{A}
    → ⊩ A ⊃ A
-eI = M𝜆 (M𝑣 Z)
+eI = M𝜆 M𝑣 Z
 
 -- S4: □(A ⊃ A)
 eI² : ∀{A}
     → ⊩ 𝜆 𝑣 0
         ∶ (A ⊃ A)
-eI² = M𝜆² (M𝑣 Z)
+eI² = M𝜆² M𝑣 Z
 
 -- S4: □□(A ⊃ A)
 eI³ : ∀{A}
     → ⊩ 𝜆² 𝑣 0
         ∶ 𝜆 𝑣 0
           ∶ (A ⊃ A)
-eI³ = M𝜆³ (M𝑣 Z)
+eI³ = M𝜆³ M𝑣 Z
 
 
 -- S4: A ⊃ B ⊃ A
 eK : ∀{A B}
    → ⊩ A ⊃ B ⊃ A
-eK = M𝜆 (M𝜆 (M𝑣 (S Z)))
+eK = M𝜆 M𝜆 M𝑣 S Z
 
 -- S4: □(A ⊃ B ⊃ A)
 eK² : ∀{A B}
     → ⊩ 𝜆 𝜆 𝑣 1
         ∶ (A ⊃ B ⊃ A)
-eK² = M𝜆² (M𝜆² (M𝑣 (S Z)))
+eK² = M𝜆² M𝜆² M𝑣 S Z
 
 -- S4: □□(A ⊃ B ⊃ A)
 eK³ : ∀{A B}
     → ⊩ 𝜆² 𝜆² 𝑣 1
         ∶ 𝜆 𝜆 𝑣 1
           ∶ (A ⊃ B ⊃ A)
-eK³ = M𝜆³ (M𝜆³ (M𝑣 (S Z)))
+eK³ = M𝜆³ M𝜆³ M𝑣 S Z
 
 
 -- S4: (A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C
 eS : ∀{A B C}
    → ⊩ (A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C
-eS = M𝜆 (M𝜆 (M𝜆 (M∘ (M∘ (M𝑣 (S S Z))
-                        (M𝑣 Z))
-                    (M∘ (M𝑣 (S Z))
-                        (M𝑣 Z)))))
+eS = M𝜆 M𝜆 M𝜆 (M𝑣 S S Z M∘ M𝑣 Z) M∘ (M𝑣 S Z M∘ M𝑣 Z)
 
 -- S4: □((A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C)
 eS² : ∀{A B C}
     → ⊩ 𝜆 𝜆 𝜆 (𝑣 2 ∘ 𝑣 0) ∘ (𝑣 1 ∘ 𝑣 0)
         ∶ ((A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C)
-eS² = M𝜆² (M𝜆² (M𝜆² (M∘² (M∘² (M𝑣 (S S Z))
-                              (M𝑣 Z))
-                         (M∘² (M𝑣 (S Z))
-                              (M𝑣 Z)))))
+eS² = M𝜆² M𝜆² M𝜆² (M𝑣 S S Z M∘² M𝑣 Z) M∘² (M𝑣 S Z M∘² M𝑣 Z)
 
 -- S4: □□((A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C)
 eS³ : ∀{A B C}
     → ⊩ 𝜆² 𝜆² 𝜆² (𝑣 2 ∘² 𝑣 0) ∘² (𝑣 1 ∘² 𝑣 0)
         ∶ 𝜆 𝜆 𝜆 (𝑣 2 ∘ 𝑣 0) ∘ (𝑣 1 ∘ 𝑣 0)
           ∶ ((A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C)
-eS³ = M𝜆³ (M𝜆³ (M𝜆³ (M∘³ (M∘³ (M𝑣 (S S Z))
-                              (M𝑣 Z))
-                         (M∘³ (M𝑣 (S Z))
-                              (M𝑣 Z)))))
+eS³ = M𝜆³ M𝜆³ M𝜆³ (M𝑣 S S Z M∘³ M𝑣 Z) M∘³ (M𝑣 S Z M∘³ M𝑣 Z)
 
 
 -- --------------------------------------------------------------------------
@@ -534,25 +522,23 @@ eS³ = M𝜆³ (M𝜆³ (M𝜆³ (M∘³ (M∘³ (M𝑣 (S S Z))
 -- S4: □(A ⊃ B) ⊃ □A ⊃ □B
 axK : ∀{A B f x}
     → ⊩ (f ∶ (A ⊃ B)) ⊃ x ∶ A ⊃ (f ∘ x) ∶ B
-axK = M𝜆 (M𝜆 (M∘² (M𝑣 (S Z))
-                  (M𝑣 Z)))
+axK = M𝜆 M𝜆 (M𝑣 S Z M∘² M𝑣 Z)
 
 -- S4: □(□(A ⊃ B) ⊃ □A ⊃ □B)
 axK² : ∀{A B f x}
      → ⊩ 𝜆 𝜆 𝑣 1 ∘² 𝑣 0
          ∶ (f ∶ (A ⊃ B) ⊃ x ∶ A ⊃ (f ∘ x) ∶ B)
-axK² = M𝜆² (M𝜆² (M∘³ (M𝑣 (S Z))
-                     (M𝑣 Z)))
+axK² = M𝜆² M𝜆² (M𝑣 S Z M∘³ M𝑣 Z)
 
 -- S4: □A ⊃ A
 axT : ∀{A x}
     → ⊩ x ∶ A ⊃ A
-axT = M𝜆 (M⇓ (M𝑣 Z))
+axT = M𝜆 M⇓ M𝑣 Z
 
 -- S4: □A ⊃ □□A
 ax4 : ∀{A x}
      → ⊩ x ∶ A ⊃ ! x ∶ x ∶ A
-ax4 = M𝜆 (M⇑ (M𝑣 Z))
+ax4 = M𝜆 M⇑ M𝑣 Z
 
 
 -- --------------------------------------------------------------------------
@@ -564,28 +550,26 @@ ax4 = M𝜆 (M⇑ (M𝑣 Z))
 e11 : ∀{A x}
     → ⊩ 𝜆 ⇓ 𝑣 0
         ∶ (x ∶ A ⊃ A)
-e11 = M𝜆² (M⇓² (M𝑣 Z))
+e11 = M𝜆² M⇓² M𝑣 Z
 
 -- S4: □(□A ⊃ □□A)
 e12 : ∀{A x}
     → ⊩ 𝜆 ⇑ 𝑣 0
         ∶ (x ∶ A ⊃ ! x ∶ x ∶ A)
-e12 = M𝜆² (M⇑² (M𝑣 Z))
+e12 = M𝜆² M⇑² M𝑣 Z
 
 -- S4: □□(A ⊃ B ⊃ A ∧ B)
 e13 : ∀{A B}
     → ⊩ 𝜆² 𝜆² 𝑝²⟨ 𝑣 1 , 𝑣 0 ⟩
         ∶ 𝜆 𝜆 𝑝⟨ 𝑣 1 , 𝑣 0 ⟩
           ∶ (A ⊃ B ⊃ A ∧ B)
-e13 = M𝜆³ (M𝜆³ (M𝑝³ (M𝑣 (S Z))
-                    (M𝑣 Z)))
+e13 = M𝜆³ M𝜆³ M𝑝³⟨ M𝑣 S Z , M𝑣 Z ⟩
 
 -- S4: □(□A ⊃ □B ⊃ □□(A ∧ B))
 e14 : ∀{A B x y}
     → ⊩ 𝜆 𝜆 ⇑ 𝑝²⟨ 𝑣 1 , 𝑣 0 ⟩
         ∶ (x ∶ A ⊃ y ∶ B ⊃ ! 𝑝⟨ x , y ⟩ ∶ 𝑝⟨ x , y ⟩ ∶ (A ∧ B))
-e14 = M𝜆² (M𝜆² (M⇑² (M𝑝³ (M𝑣 (S Z))
-                         (M𝑣 Z))))
+e14 = M𝜆² M𝜆² M⇑² M𝑝³⟨ M𝑣 S Z , M𝑣 Z ⟩
 
 
 -- --------------------------------------------------------------------------
@@ -597,22 +581,19 @@ e14 = M𝜆² (M𝜆² (M⇑² (M𝑝³ (M𝑣 (S Z))
 ex1 : ∀{A B x y}
     → ⊩ 𝜆 𝜆 𝑝²⟨ 𝑣 1 , 𝑣 0 ⟩
         ∶ (x ∶ A ⊃ y ∶ B ⊃ 𝑝⟨ x , y ⟩ ∶ (A ∧ B))
-ex1 = M𝜆² (M𝜆² (M𝑝³ (M𝑣 (S Z))
-                    (M𝑣 Z)))
+ex1 = M𝜆² M𝜆² M𝑝³⟨ M𝑣 S Z , M𝑣 Z ⟩
 
 -- S4: □(□A ∧ □B ⊃ □□(A ∧ B))
 ex2 : ∀{A B x y}
     → ⊩ 𝜆 ⇑ 𝑝²⟨ 𝜋₀ 𝑣 0 , 𝜋₁ 𝑣 0 ⟩
         ∶ (x ∶ A ∧ y ∶ B ⊃ ! 𝑝⟨ x , y ⟩ ∶ 𝑝⟨ x , y ⟩ ∶ (A ∧ B))
-ex2 = M𝜆² (M⇑² (M𝑝³ (M𝜋₀² (M𝑣 Z))
-                    (M𝜋₁² (M𝑣 Z))))
+ex2 = M𝜆² M⇑² M𝑝³⟨ M𝜋₀² M𝑣 Z , M𝜋₁² M𝑣 Z ⟩
 
 -- S4: □(□A ∧ □B ⊃ □(A ∧ B))
 ex3 : ∀{A B x y}
     → ⊩ 𝜆 𝑝²⟨ 𝜋₀ 𝑣 0 , 𝜋₁ 𝑣 0 ⟩
         ∶ (x ∶ A ∧ y ∶ B ⊃ 𝑝⟨ x , y ⟩ ∶ (A ∧ B))
-ex3 = M𝜆² (M𝑝³ (M𝜋₀² (M𝑣 Z))
-               (M𝜋₁² (M𝑣 Z)))
+ex3 = M𝜆² M𝑝³⟨ M𝜋₀² M𝑣 Z , M𝜋₁² M𝑣 Z ⟩
 
 
 -- --------------------------------------------------------------------------
@@ -624,171 +605,13 @@ e2 : ∀{A x}
    → ⊩ 𝜆² ⇓² ⇑² 𝑣 0
        ∶ 𝜆 ⇓ ⇑ 𝑣 0
          ∶ (x ∶ A ⊃ x ∶ A)
-e2 = M𝜆³ (M⇓³ (M⇑³ (M𝑣 Z)))
+e2 = M𝜆³ M⇓³ M⇑³ M𝑣 Z
 
 e2′ : ∀{A x}
     → ⊩ 𝜆² 𝑣 0
         ∶ 𝜆 𝑣 0
           ∶ (x ∶ A ⊃ x ∶ A)
-e2′ = M𝜆³ (M𝑣 Z)
-
-
--- --------------------------------------------------------------------------
---
--- Weakening
-
-
-data _≲_ : ∀{m m′} → Cx m → Cx m′ → Set where
-  base : ∅ ≲ ∅
-
-  drop : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
-       → Γ ≲ Γ′
-       → Γ ≲ (Γ′ , A)
-
-  keep : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
-       → Γ ≲ Γ′
-       → (Γ , A) ≲ (Γ′ , A)
-
-
-∅≲Γ : ∀{m} {Γ : Cx m} → ∅ ≲ Γ
-∅≲Γ {Γ = ∅}     = base
-∅≲Γ {Γ = Γ , A} = drop ∅≲Γ
-
-
-Γ≲Γ : ∀{m} {Γ : Cx m} → Γ ≲ Γ
-Γ≲Γ {Γ = ∅}     = base
-Γ≲Γ {Γ = Γ , A} = keep Γ≲Γ
-
-
-{-
-wk∈ : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
-    → Γ ≲ Γ′    → A ∈ Γ
-    → A ∈ Γ′
-wk∈ base     ()
-wk∈ (keep P) Z     = Z
-wk∈ (keep P) (S i) = S (wk∈ P i)
-wk∈ (drop P) i     = S (wk∈ P i)
--}
-
-postulate
-  pwk∈ : ∀{n A m m′} {Γ : Cx m} {Γ′ : Cx m′}
-      → Γ ≲ Γ′  → (i : ⟨ n , A ⟩ ∈ Γ)
-      → Γ′ ⊢ 𝑣[ n ] (toℕ i) ∷ A
-
-
-wk⊢ : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
-    → Γ ≲ Γ′    → Γ ⊢ A
-    → Γ′ ⊢ A
-wk⊢ P (M𝑣 i)                   = pwk∈ P i
-wk⊢ P (M𝜆ⁿ  {𝐭 = 𝐭} D)         = M𝜆ⁿ  {𝐭 = 𝐭} (wk⊢ (keep P) D)
-wk⊢ P (M∘ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = M∘ⁿ  {𝐭 = 𝐭} {𝐬} (wk⊢ P Dₜ) (wk⊢ P Dₛ)
-wk⊢ P (M𝑝ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = M𝑝ⁿ  {𝐭 = 𝐭} {𝐬} (wk⊢ P Dₜ) (wk⊢ P Dₛ)
-wk⊢ P (M𝜋₀ⁿ {𝐭 = 𝐭} D)         = M𝜋₀ⁿ {𝐭 = 𝐭} (wk⊢ P D)
-wk⊢ P (M𝜋₁ⁿ {𝐭 = 𝐭} D)         = M𝜋₁ⁿ {𝐭 = 𝐭} (wk⊢ P D)
-wk⊢ P (M⇑ⁿ  {𝐭 = 𝐭} D)         = M⇑ⁿ  {𝐭 = 𝐭} (wk⊢ P D)
-wk⊢ P (M⇓ⁿ  {𝐭 = 𝐭} D)         = M⇓ⁿ  {𝐭 = 𝐭} (wk⊢ P D)
-
-
--- --------------------------------------------------------------------------
---
--- Contraction
-
-
-data _≳_ : ∀{m m′} → Cx m → Cx m′ → Set where
-  base : ∅ ≳ ∅
-
-  once : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
-       → Γ ≳ Γ′
-       → (Γ , A) ≳ (Γ′ , A)
-
-  more : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
-       → Γ ≳ Γ′
-       → (Γ , A , A) ≳ (Γ′ , A)
-
-
-{-
-cn∈ : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
-    → Γ ≳ Γ′    → A ∈ Γ
-    → A ∈ Γ′
-cn∈ base     ()
-cn∈ (once P) Z     = Z
-cn∈ (once P) (S i) = S (cn∈ P i)
-cn∈ (more P) Z     = Z
-cn∈ (more P) (S i) = cn∈ (once P) i
--}
-
-postulate
-  pcn∈ : ∀{n A m m′} {Γ : Cx m} {Γ′ : Cx m′}
-      → Γ ≳ Γ′  → (i : ⟨ n , A ⟩ ∈ Γ)
-      → Γ′ ⊢ 𝑣[ n ] (toℕ i) ∷ A
-
-
-cn⊢ : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
-    → Γ ≳ Γ′    → Γ ⊢ A
-    → Γ′ ⊢ A
-cn⊢ P (M𝑣 i)                   = pcn∈ P i
-cn⊢ P (M𝜆ⁿ  {𝐭 = 𝐭} D)         = M𝜆ⁿ  {𝐭 = 𝐭} (cn⊢ (once P) D)
-cn⊢ P (M∘ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = M∘ⁿ  {𝐭 = 𝐭} {𝐬} (cn⊢ P Dₜ) (cn⊢ P Dₛ)
-cn⊢ P (M𝑝ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = M𝑝ⁿ  {𝐭 = 𝐭} {𝐬} (cn⊢ P Dₜ) (cn⊢ P Dₛ)
-cn⊢ P (M𝜋₀ⁿ {𝐭 = 𝐭} D)         = M𝜋₀ⁿ {𝐭 = 𝐭} (cn⊢ P D)
-cn⊢ P (M𝜋₁ⁿ {𝐭 = 𝐭} D)         = M𝜋₁ⁿ {𝐭 = 𝐭} (cn⊢ P D)
-cn⊢ P (M⇑ⁿ  {𝐭 = 𝐭} D)         = M⇑ⁿ  {𝐭 = 𝐭} (cn⊢ P D)
-cn⊢ P (M⇓ⁿ  {𝐭 = 𝐭} D)         = M⇓ⁿ  {𝐭 = 𝐭} (cn⊢ P D)
-
-
--- --------------------------------------------------------------------------
---
--- Exchange
-
-
-data _≈_ : ∀{m} → Cx m → Cx m → Set where
-  base : ∅ ≈ ∅
-
-  just : ∀{A m} {Γ Γ′ : Cx m}
-       → Γ ≈ Γ′
-       → (Γ , A) ≈ (Γ′ , A)
-
-  same : ∀{A B m} {Γ Γ′ : Cx m}
-       → Γ ≈ Γ′
-       → (Γ , A , B) ≈ (Γ′ , A , B)
-
-  diff : ∀{A B m} {Γ Γ′ : Cx m}
-       → Γ ≈ Γ′
-       → (Γ , B , A) ≈ (Γ′ , A , B)
-
-
-{-
-ex∈ : ∀{A m} {Γ Γ′ : Cx m}
-    → Γ ≈ Γ′    → A ∈ Γ
-    → A ∈ Γ′
-ex∈ base     ()
-ex∈ (just P) Z         = Z
-ex∈ (just P) (S i)     = S (ex∈ P i)
-ex∈ (same P) Z         = Z
-ex∈ (same P) (S Z)     = S Z
-ex∈ (same P) (S (S i)) = S (S (ex∈ P i))
-ex∈ (diff P) Z         = S Z
-ex∈ (diff P) (S Z)     = Z
-ex∈ (diff P) (S (S i)) = S (S (ex∈ P i))
--}
-
-postulate
-  pex∈ : ∀{n A m} {Γ Γ′ : Cx m}
-      → Γ ≈ Γ′  → (i : ⟨ n , A ⟩ ∈ Γ)
-      → Γ′ ⊢ 𝑣[ n ] (toℕ i) ∷ A
-
-
-ex⊢ : ∀{A m} {Γ Γ′ : Cx m}
-    → Γ ≈ Γ′    → Γ ⊢ A
-    → Γ′ ⊢ A
-ex⊢ P (M𝑣 i)                   = pex∈ P i
-ex⊢ P (M𝜆ⁿ  {𝐭 = 𝐭} D)         = M𝜆ⁿ  {𝐭 = 𝐭} (ex⊢ (just P) D)
-ex⊢ P (M∘ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = M∘ⁿ  {𝐭 = 𝐭} {𝐬} (ex⊢ P Dₜ) (ex⊢ P Dₛ)
-ex⊢ P (M𝑝ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = M𝑝ⁿ  {𝐭 = 𝐭} {𝐬} (ex⊢ P Dₜ) (ex⊢ P Dₛ)
-ex⊢ P (M𝜋₀ⁿ {𝐭 = 𝐭} D)         = M𝜋₀ⁿ {𝐭 = 𝐭} (ex⊢ P D)
-ex⊢ P (M𝜋₁ⁿ {𝐭 = 𝐭} D)         = M𝜋₁ⁿ {𝐭 = 𝐭} (ex⊢ P D)
-ex⊢ P (M⇑ⁿ  {𝐭 = 𝐭} D)         = M⇑ⁿ  {𝐭 = 𝐭} (ex⊢ P D)
-ex⊢ P (M⇓ⁿ  {𝐭 = 𝐭} D)         = M⇓ⁿ  {𝐭 = 𝐭} (ex⊢ P D)
+e2′ = M𝜆³ M𝑣 Z
 
 
 -- --------------------------------------------------------------------------
@@ -801,76 +624,69 @@ prefix ∅               = ∅
 prefix (Γ , ⟨ n , A ⟩) = prefix Γ , ⟨ suc n , A ⟩
 
 
-{-
-in∈ : ∀{n A m} {Γ : Cx m}
-    → ⟨ n , A ⟩ ∈ Γ
-    → ⟨ suc n , A ⟩ ∈ prefix Γ
+in∈ : ∀{n A m k} {Γ : Cx m}
+    → ⟨ n , A ⟩ ∈[ k ] Γ
+    → ⟨ suc n , A ⟩ ∈[ k ] prefix Γ
 in∈ Z     = Z
 in∈ (S i) = S (in∈ i)
--}
-
-postulate
-  pin∈ : ∀{n A m} {Γ : Cx m}
-      → (i : ⟨ n , A ⟩ ∈ Γ)
-      → prefix Γ ⊢ 𝑣[ suc n ] (toℕ i) ∷ A
 
 
 in⊢ : ∀{A m} {Γ : Cx m}
     → Γ ⊢ A
-    → Σ Tm (λ t → prefix Γ ⊢ t ∶ A)
+    → Σ Tm λ t → prefix Γ ⊢ t ∶ A
 
-in⊢ (M𝑣 {n} i)
-    = ⟨ 𝑣 (toℕ i) , pin∈ i ⟩
+in⊢ (M𝑣_ {n} {k} i)
+    = ⟨ 𝑣 k , M𝑣 (in∈ i) ⟩
 
-in⊢ (M𝜆ⁿ {n} {𝐭} D)
+in⊢ (M𝜆ⁿ_ {n} {𝐭} D)
     = let ⟨ s , C ⟩ = in⊢ D
       in
         ⟨ 𝜆[ suc n ] s
-        , M𝜆ⁿ {𝐭 = s ∷ 𝐭} C
+        , M𝜆ⁿ_ {𝐭 = s ∷ 𝐭} C
         ⟩
 
-in⊢ (M∘ⁿ {n} {𝐭} {𝐬} Dₜ Dₛ)
+in⊢ (_M∘ⁿ_ {n} {𝐭} {𝐬} Dₜ Dₛ)
     = let ⟨ sₜ , Cₜ ⟩ = in⊢ Dₜ
           ⟨ sₛ , Cₛ ⟩ = in⊢ Dₛ
       in
         ⟨ sₜ ∘[ suc n ] sₛ
-        , M∘ⁿ {𝐭 = sₜ ∷ 𝐭} {𝐬 = sₛ ∷ 𝐬} Cₜ Cₛ
+        , _M∘ⁿ_ {𝐭 = sₜ ∷ 𝐭} {𝐬 = sₛ ∷ 𝐬} Cₜ Cₛ
         ⟩
 
-in⊢ (M𝑝ⁿ {n} {𝐭} {𝐬} Dₜ Dₛ)
+in⊢ (M𝑝ⁿ⟨_,_⟩ {n} {𝐭} {𝐬} Dₜ Dₛ)
     = let ⟨ sₜ , Cₜ ⟩ = in⊢ Dₜ
           ⟨ sₛ , Cₛ ⟩ = in⊢ Dₛ
       in
         ⟨ 𝑝[ suc n ]⟨ sₜ , sₛ ⟩
-        , M𝑝ⁿ {𝐭 = sₜ ∷ 𝐭} {𝐬 = sₛ ∷ 𝐬} Cₜ Cₛ
+        , M𝑝ⁿ⟨_,_⟩ {𝐭 = sₜ ∷ 𝐭} {𝐬 = sₛ ∷ 𝐬} Cₜ Cₛ
         ⟩
 
-in⊢ (M𝜋₀ⁿ {n} {𝐭} D)
+in⊢ (M𝜋₀ⁿ_ {n} {𝐭} D)
     = let ⟨ s , C ⟩ = in⊢ D
       in
         ⟨ 𝜋₀[ suc n ] s
-        , M𝜋₀ⁿ {𝐭 = s ∷ 𝐭} C
+        , M𝜋₀ⁿ_ {𝐭 = s ∷ 𝐭} C
         ⟩
 
-in⊢ (M𝜋₁ⁿ {n} {𝐭} D)
+in⊢ (M𝜋₁ⁿ_ {n} {𝐭} D)
     = let ⟨ s , C ⟩ = in⊢ D
       in
         ⟨ 𝜋₁[ suc n ] s
-        , M𝜋₁ⁿ {𝐭 = s ∷ 𝐭} C
+        , M𝜋₁ⁿ_ {𝐭 = s ∷ 𝐭} C
         ⟩
 
-in⊢ (M⇑ⁿ {n} {𝐭} D)
+in⊢ (M⇑ⁿ_ {n} {𝐭} D)
     = let ⟨ s , C ⟩ = in⊢ D
       in
         ⟨ ⇑[ suc n ] s
-        , M⇑ⁿ {𝐭 = s ∷ 𝐭} C
+        , M⇑ⁿ_ {𝐭 = s ∷ 𝐭} C
         ⟩
 
-in⊢ (M⇓ⁿ {n} {𝐭} D)
+in⊢ (M⇓ⁿ_ {n} {𝐭} D)
     = let ⟨ s , C ⟩ = in⊢ D
       in
         ⟨ ⇓[ suc n ] s
-        , M⇓ⁿ {𝐭 = s ∷ 𝐭} C
+        , M⇓ⁿ_ {𝐭 = s ∷ 𝐭} C
         ⟩
 
 
@@ -880,30 +696,36 @@ in⊢ (M⇓ⁿ {n} {𝐭} D)
 
 
 nec : ∀{A}
-    → ∅ ⊢ A
-    → Σ Tm (λ t → ⊩ t ∶ A)
+    → ⊩ A
+    → Σ Tm λ t
+       → ⊩ t ∶ A
 nec D = let ⟨ s , C ⟩ = in⊢ D
         in
-          ⟨ s , wk⊢ ∅≲Γ C ⟩
+          ⟨ s , C ⟩
 
 
 eI²′ : ∀{A}
-     → Σ Tm (λ t → ⊩ t ∶ (A ⊃ A))
+    → Σ Tm λ t
+       → ⊩ t ∶ (A ⊃ A)
 eI²′ = nec eI
 
 eI³′ : ∀{A}
-     → Σ Tm (λ t → ⊩ t ∶ 𝜆 𝑣 0 ∶ (A ⊃ A))
+    → Σ Tm λ t
+       → ⊩ t ∶ 𝜆 𝑣 0 ∶ (A ⊃ A)
 eI³′ = nec eI²
 
 eI⁴′ : ∀{A}
-     → Σ Tm (λ t → ⊩ t ∶ 𝜆² 𝑣 0 ∶ 𝜆 𝑣 0 ∶ (A ⊃ A))
+    → Σ Tm λ t
+       → ⊩ t ∶ 𝜆² 𝑣 0 ∶ 𝜆 𝑣 0 ∶ (A ⊃ A)
 eI⁴′ = nec eI³
 
 
 eI³″ : ∀{A}
-     → Σ Tm (λ t → ⊩ t ∶ 𝜆 𝑣 0 ∶ (A ⊃ A))
+    → Σ Tm λ t
+       → ⊩ t ∶ 𝜆 𝑣 0 ∶ (A ⊃ A)
 eI³″ = nec (proj₂ (eI²′))
 
 eI⁴″ : ∀{A}
-     → Σ Tm (λ t → ⊩ t ∶ 𝜆² 𝑣 0 ∶ 𝜆 𝑣 0 ∶ (A ⊃ A))
+    → Σ Tm λ t
+       → ⊩ t ∶ 𝜆² 𝑣 0 ∶ 𝜆 𝑣 0 ∶ (A ⊃ A)
 eI⁴″ = nec (proj₂ (eI³′))
