@@ -89,7 +89,7 @@ mutual
 
 
   data Tm : Set where
-    -- Variable index
+    -- Variable
     𝑣_ : Var → Tm
 
     -- Abstraction (⊃I)
@@ -238,9 +238,6 @@ zipWith f = ixZipWith (λ _ x y → f x y)
 --
 -- Vector notation for level n type assertions
 
-
-Vars : ℕ → Set
-Vars = Vec Var
 
 Tms : ℕ → Set
 Tms = Vec Tm
