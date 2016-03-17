@@ -280,9 +280,9 @@ data _∈_  : ∀{m} → Ty → Cx m → Set where
 
 
 data _⊢_ {m : ℕ} (Γ : Cx m) : Ty → Set where
-  M𝑣ⁿ  : ∀{n} {𝐭 : Tms n} {A : Ty}
-       → *ⁿ 𝐭 ∷ A ∈ Γ
-       → Γ ⊢ *ⁿ 𝐭 ∷ A
+  M𝑣   : {A : Ty}
+       → A ∈ Γ
+       → Γ ⊢ A
 
   M𝜆ⁿ  : ∀{n} {𝐱 : Vars n} {𝐭 : Tms n} {A B : Ty}
        → Γ , 𝑣ⁿ 𝐱 ∷ A ⊢ *ⁿ 𝐭 ∷ B
@@ -321,11 +321,6 @@ data _⊢_ {m : ℕ} (Γ : Cx m) : Ty → Set where
 --
 -- Simplified notation for level 0 typing rules
 
-
-M𝑣⁰  : ∀{A m} {Γ : Cx m}
-     → A ∈ Γ
-     → Γ ⊢ A
-M𝑣⁰ = M𝑣ⁿ {𝐭 = []}
 
 M𝜆⁰  : ∀{A B m} {Γ : Cx m}
      → Γ , A ⊢ B
@@ -368,11 +363,6 @@ M⇓⁰ = M⇓ⁿ {𝐭 = []}
 -- Simplified notation for level 1 typing rules
 
 
-M𝑣¹  : ∀{t A m} {Γ : Cx m}
-     → (t ∶ A) ∈ Γ
-     → Γ ⊢ t ∶ A
-M𝑣¹{t} = M𝑣ⁿ {𝐭 = t ∷ []}
-
 M𝜆¹  : ∀{x t A B m} {Γ : Cx m}
      → Γ , 𝑣 x ∶ A ⊢ t ∶ B
      → Γ ⊢ 𝜆 x · t ∶ (A ⊃ B)
@@ -413,11 +403,6 @@ M⇓¹ {t} = M⇓ⁿ {𝐭 = t ∷ []}
 --
 -- Simplified notation for level 2 typing rules
 
-
-M𝑣²  : ∀{t₂ t₁ A m} {Γ : Cx m}
-     → (t₂ ∶ t₁ ∶ A) ∈ Γ
-     → Γ ⊢ t₂ ∶ t₁ ∶ A
-M𝑣² {t₂} {t₁} = M𝑣ⁿ {𝐭 = t₂ ∷ t₁ ∷ []}
 
 M𝜆²  : ∀{x₂ x₁ t₂ t₁ A B m} {Γ : Cx m}
      → Γ , 𝑣 x₂ ∶ 𝑣 x₁ ∶ A ⊢ t₂ ∶ t₁ ∶ B
@@ -463,67 +448,67 @@ M⇓² {t₂} {t₁} = M⇓ⁿ {𝐭 = t₂ ∷ t₁ ∷ []}
 -- S4: A ⊃ A
 eI⁰ : ∀{A}
     → ⊩ A ⊃ A
-eI⁰ = M𝜆⁰ (M𝑣⁰ Z)
+eI⁰ = M𝜆⁰ (M𝑣 Z)
 
 -- S4: □(A ⊃ A)
 eI¹ : ∀{A x}
     → ⊩ 𝜆 x · 𝑣 x
         ∶ (A ⊃ A)
-eI¹ = M𝜆¹ (M𝑣¹ Z)
+eI¹ = M𝜆¹ (M𝑣 Z)
 
 -- S4: □□(A ⊃ A)
 eI² : ∀{A x u}
     → ⊩ 𝜆² u · 𝑣 u
         ∶ 𝜆 x · 𝑣 x
           ∶ (A ⊃ A)
-eI² = M𝜆² (M𝑣² Z)
+eI² = M𝜆² (M𝑣 Z)
 
 
 -- S4: A ⊃ B ⊃ A
 eK⁰ : ∀{A B}
     → ⊩ A ⊃ B ⊃ A
-eK⁰ = M𝜆⁰ (M𝜆⁰ (M𝑣⁰ (S Z)))
+eK⁰ = M𝜆⁰ (M𝜆⁰ (M𝑣 (S Z)))
 
 -- S4: □(A ⊃ B ⊃ A)
 eK¹ : ∀{A B x y}
     → ⊩ 𝜆 x · 𝜆 y · 𝑣 x
         ∶ (A ⊃ B ⊃ A)
-eK¹ = M𝜆¹ (M𝜆¹ (M𝑣¹ (S Z)))
+eK¹ = M𝜆¹ (M𝜆¹ (M𝑣 (S Z)))
 
 -- S4: □□(A ⊃ B ⊃ A)
 eK² : ∀{A B x y u v}
     → ⊩ 𝜆² u · 𝜆² v · 𝑣 u
         ∶ 𝜆 x · 𝜆 y · 𝑣 x
           ∶ (A ⊃ B ⊃ A)
-eK² = M𝜆² (M𝜆² (M𝑣² (S Z)))
+eK² = M𝜆² (M𝜆² (M𝑣 (S Z)))
 
 
 -- S4: (A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C
 eS⁰ : ∀{A B C}
     → ⊩ (A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C
-eS⁰ = M𝜆⁰ (M𝜆⁰ (M𝜆⁰ (M∘⁰ (M∘⁰ (M𝑣⁰ (S S Z))
-                              (M𝑣⁰ Z))
-                    (M∘⁰ (M𝑣⁰ (S Z))
-                         (M𝑣⁰ Z)))))
+eS⁰ = M𝜆⁰ (M𝜆⁰ (M𝜆⁰ (M∘⁰ (M∘⁰ (M𝑣 (S S Z))
+                              (M𝑣 Z))
+                         (M∘⁰ (M𝑣 (S Z))
+                              (M𝑣 Z)))))
 
 -- S4: □((A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C)
 eS¹ : ∀{A B C f g x}
     → ⊩ 𝜆 f · 𝜆 g · 𝜆 x · (𝑣 f ∘ 𝑣 x) ∘ (𝑣 g ∘ 𝑣 x)
         ∶ ((A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C)
-eS¹ = M𝜆¹ (M𝜆¹ (M𝜆¹ (M∘¹ (M∘¹ (M𝑣¹ (S S Z))
-                              (M𝑣¹ Z))
-                    (M∘¹ (M𝑣¹ (S Z))
-                         (M𝑣¹ Z)))))
+eS¹ = M𝜆¹ (M𝜆¹ (M𝜆¹ (M∘¹ (M∘¹ (M𝑣 (S S Z))
+                              (M𝑣 Z))
+                         (M∘¹ (M𝑣 (S Z))
+                              (M𝑣 Z)))))
 
 -- S4: □□((A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C)
 eS² : ∀{A B C f g x p q u}
     → ⊩ 𝜆² p · 𝜆² q · 𝜆² u · (𝑣 p ∘² 𝑣 u) ∘² (𝑣 q ∘² 𝑣 u)
         ∶ 𝜆 f · 𝜆 g · 𝜆 x · (𝑣 f ∘ 𝑣 x) ∘ (𝑣 g ∘ 𝑣 x)
           ∶ ((A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C)
-eS² = M𝜆² (M𝜆² (M𝜆² (M∘² (M∘² (M𝑣² (S S Z))
-                              (M𝑣² Z))
-                    (M∘² (M𝑣² (S Z))
-                         (M𝑣² Z)))))
+eS² = M𝜆² (M𝜆² (M𝜆² (M∘² (M∘² (M𝑣 (S S Z))
+                              (M𝑣 Z))
+                         (M∘² (M𝑣 (S Z))
+                              (M𝑣 Z)))))
 
 
 -- --------------------------------------------------------------------------
@@ -534,25 +519,25 @@ eS² = M𝜆² (M𝜆² (M𝜆² (M∘² (M∘² (M𝑣² (S S Z))
 -- S4: □(A ⊃ B) ⊃ □A ⊃ □B
 axK⁰ : ∀{A B f x}
      → ⊩ (f ∶ (A ⊃ B)) ⊃ x ∶ A ⊃ (f ∘ x) ∶ B
-axK⁰ = M𝜆⁰ (M𝜆⁰ (M∘¹ (M𝑣⁰ (S Z))
-                     (M𝑣⁰ Z)))
+axK⁰ = M𝜆⁰ (M𝜆⁰ (M∘¹ (M𝑣 (S Z))
+                     (M𝑣 Z)))
 
 -- S4: □(□(A ⊃ B) ⊃ □A ⊃ □B)
 axK¹ : ∀{A B f x p u}
      → ⊩ 𝜆 p · 𝜆 u · 𝑣 p ∘² 𝑣 u
          ∶ (f ∶ (A ⊃ B) ⊃ x ∶ A ⊃ (f ∘ x) ∶ B)
-axK¹ = M𝜆¹ (M𝜆¹ (M∘² (M𝑣¹ (S Z))
-                     (M𝑣¹ Z)))
+axK¹ = M𝜆¹ (M𝜆¹ (M∘² (M𝑣 (S Z))
+                     (M𝑣 Z)))
 
 -- S4: □A ⊃ A
 axT⁰ : ∀{A x}
      → ⊩ x ∶ A ⊃ A
-axT⁰ = M𝜆⁰ (M⇓⁰ (M𝑣¹ Z))
+axT⁰ = M𝜆⁰ (M⇓⁰ (M𝑣 Z))
 
 -- S4: □A ⊃ □□A
 ax4⁰ : ∀{A x}
      → ⊩ x ∶ A ⊃ ! x ∶ x ∶ A
-ax4⁰ = M𝜆⁰ (M⇑⁰ (M𝑣¹ Z))
+ax4⁰ = M𝜆⁰ (M⇑⁰ (M𝑣 Z))
 
 
 -- --------------------------------------------------------------------------
@@ -564,28 +549,28 @@ ax4⁰ = M𝜆⁰ (M⇑⁰ (M𝑣¹ Z))
 e11 : ∀{A x y}
     → ⊩ 𝜆 y · ⇓ 𝑣 y
         ∶ (x ∶ A ⊃ A)
-e11 = M𝜆¹ (M⇓¹ (M𝑣² Z))
+e11 = M𝜆¹ (M⇓¹ (M𝑣 Z))
 
 -- S4: □(□A ⊃ □□A)
 e12 : ∀{A x y}
     → ⊩ 𝜆 y · ⇑ 𝑣 y
         ∶ (x ∶ A ⊃ ! x ∶ x ∶ A)
-e12 = M𝜆¹ (M⇑¹ (M𝑣² Z))
+e12 = M𝜆¹ (M⇑¹ (M𝑣 Z))
 
 -- S4: □□(A ⊃ B ⊃ A ∧ B)
 e13 : ∀{A B x y u v}
     → ⊩ 𝜆² u · 𝜆² v · 𝑝²⟨ 𝑣 u , 𝑣 v ⟩
         ∶ 𝜆 x · 𝜆 y · 𝑝⟨ 𝑣 x , 𝑣 y ⟩
           ∶ (A ⊃ B ⊃ A ∧ B)
-e13 = M𝜆² (M𝜆² (M𝑝² (M𝑣² (S Z))
-                    (M𝑣² Z)))
+e13 = M𝜆² (M𝜆² (M𝑝² (M𝑣 (S Z))
+                    (M𝑣 Z)))
 
 -- S4: □(□A ⊃ □B ⊃ □□(A ∧ B))
 e14 : ∀{A B x y u v}
     → ⊩ 𝜆 u · 𝜆 v · ⇑ 𝑝²⟨ 𝑣 u , 𝑣 v ⟩
         ∶ (x ∶ A ⊃ y ∶ B ⊃ ! 𝑝⟨ x , y ⟩ ∶ 𝑝⟨ x , y ⟩ ∶ (A ∧ B))
-e14 = M𝜆¹ (M𝜆¹ (M⇑¹ (M𝑝² (M𝑣¹ (S Z))
-                         (M𝑣¹ Z))))
+e14 = M𝜆¹ (M𝜆¹ (M⇑¹ (M𝑝² (M𝑣 (S Z))
+                         (M𝑣 Z))))
 
 
 -- --------------------------------------------------------------------------
@@ -597,22 +582,22 @@ e14 = M𝜆¹ (M𝜆¹ (M⇑¹ (M𝑝² (M𝑣¹ (S Z))
 ex1 : ∀{A B x y u v}
     → ⊩ 𝜆 u · 𝜆 v · 𝑝²⟨ 𝑣 u , 𝑣 v ⟩
         ∶ (x ∶ A ⊃ y ∶ B ⊃ 𝑝⟨ x , y ⟩ ∶ (A ∧ B))
-ex1 = M𝜆¹ (M𝜆¹ (M𝑝² (M𝑣¹ (S Z))
-                    (M𝑣¹ Z)))
+ex1 = M𝜆¹ (M𝜆¹ (M𝑝² (M𝑣 (S Z))
+                    (M𝑣 Z)))
 
 -- S4: □(□A ∧ □B ⊃ □□(A ∧ B))
 ex2 : ∀{A B x y u}
     → ⊩ 𝜆 u · ⇑ 𝑝²⟨ 𝜋₀ 𝑣 u , 𝜋₁ 𝑣 u ⟩
         ∶ (x ∶ A ∧ y ∶ B ⊃ ! 𝑝⟨ x , y ⟩ ∶ 𝑝⟨ x , y ⟩ ∶ (A ∧ B))
-ex2 = M𝜆¹ (M⇑¹ (M𝑝² (M𝜋₀¹ (M𝑣¹ Z))
-                    (M𝜋₁¹ (M𝑣¹ Z))))
+ex2 = M𝜆¹ (M⇑¹ (M𝑝² (M𝜋₀¹ (M𝑣 Z))
+                    (M𝜋₁¹ (M𝑣 Z))))
 
 -- S4: □(□A ∧ □B ⊃ □(A ∧ B))
 ex3 : ∀{A B x y u}
     → ⊩ 𝜆 u · 𝑝²⟨ 𝜋₀ 𝑣 u , 𝜋₁ 𝑣 u ⟩
         ∶ (x ∶ A ∧ y ∶ B ⊃ 𝑝⟨ x , y ⟩ ∶ (A ∧ B))
-ex3 = M𝜆¹ (M𝑝² (M𝜋₀¹ (M𝑣¹ Z))
-               (M𝜋₁¹ (M𝑣¹ Z)))
+ex3 = M𝜆¹ (M𝑝² (M𝜋₀¹ (M𝑣 Z))
+               (M𝜋₁¹ (M𝑣 Z)))
 
 
 -- --------------------------------------------------------------------------
@@ -624,13 +609,13 @@ e2 : ∀{A x₃ x₂ x₁}
    → ⊩ 𝜆² x₃ · ⇓² ⇑² 𝑣 x₃
        ∶ 𝜆 x₂ · ⇓ ⇑ 𝑣 x₂
          ∶ (x₁ ∶ A ⊃ x₁ ∶ A)
-e2 = M𝜆² (M⇓² (M⇑² (M𝑣² Z)))
+e2 = M𝜆² (M⇓² (M⇑² (M𝑣 Z)))
 
 e2′ : ∀{A x₃ x₂ x₁}
     → ⊩ 𝜆² x₃ · 𝑣 x₃
         ∶ 𝜆 x₂ · 𝑣 x₂
           ∶ (x₁ ∶ A ⊃ x₁ ∶ A)
-e2′ = M𝜆² (M𝑣² Z)
+e2′ = M𝜆² (M𝑣 Z)
 
 
 -- --------------------------------------------------------------------------
@@ -672,7 +657,7 @@ wk∈ (drop P) i     = S (wk∈ P i)
 wk⊢ : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
     → Γ ≲ Γ′    → Γ ⊢ A
     → Γ′ ⊢ A
-wk⊢ P (M𝑣ⁿ  {𝐭 = 𝐭} i)         = M𝑣ⁿ  {𝐭 = 𝐭} (wk∈ P i)
+wk⊢ P (M𝑣 i)                   = M𝑣 (wk∈ P i)
 wk⊢ P (M𝜆ⁿ  {𝐱 = 𝐱} {𝐭} D)     = M𝜆ⁿ  {𝐱 = 𝐱} {𝐭} (wk⊢ (keep P) D)
 wk⊢ P (M∘ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = M∘ⁿ  {𝐭 = 𝐭} {𝐬} (wk⊢ P Dₜ) (wk⊢ P Dₛ)
 wk⊢ P (M𝑝ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = M𝑝ⁿ  {𝐭 = 𝐭} {𝐬} (wk⊢ P Dₜ) (wk⊢ P Dₛ)
@@ -712,7 +697,7 @@ cn∈ (more P) (S i) = cn∈ (once P) i
 cn⊢ : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
     → Γ ≳ Γ′    → Γ ⊢ A
     → Γ′ ⊢ A
-cn⊢ P (M𝑣ⁿ  {𝐭 = 𝐭} i)         = M𝑣ⁿ  {𝐭 = 𝐭} (cn∈ P i)
+cn⊢ P (M𝑣 i)                   = M𝑣 (cn∈ P i)
 cn⊢ P (M𝜆ⁿ  {𝐱 = 𝐱} {𝐭} D)     = M𝜆ⁿ  {𝐱 = 𝐱} {𝐭} (cn⊢ (once P) D)
 cn⊢ P (M∘ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = M∘ⁿ  {𝐭 = 𝐭} {𝐬} (cn⊢ P Dₜ) (cn⊢ P Dₛ)
 cn⊢ P (M𝑝ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = M𝑝ⁿ  {𝐭 = 𝐭} {𝐬} (cn⊢ P Dₜ) (cn⊢ P Dₛ)
@@ -760,7 +745,7 @@ ex∈ (diff P) (S (S i)) = S (S (ex∈ P i))
 ex⊢ : ∀{A m} {Γ Γ′ : Cx m}
     → Γ ≈ Γ′    → Γ ⊢ A
     → Γ′ ⊢ A
-ex⊢ P (M𝑣ⁿ  {𝐭 = 𝐭} i)         = M𝑣ⁿ  {𝐭 = 𝐭} (ex∈ P i)
+ex⊢ P (M𝑣 i)                   = M𝑣 (ex∈ P i)
 ex⊢ P (M𝜆ⁿ  {𝐱 = 𝐱} {𝐭} D)     = M𝜆ⁿ  {𝐱 = 𝐱} {𝐭} (ex⊢ (just P) D)
 ex⊢ P (M∘ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = M∘ⁿ  {𝐭 = 𝐭} {𝐬} (ex⊢ P Dₜ) (ex⊢ P Dₛ)
 ex⊢ P (M𝑝ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = M𝑝ⁿ  {𝐭 = 𝐭} {𝐬} (ex⊢ P Dₜ) (ex⊢ P Dₛ)
@@ -797,11 +782,11 @@ in⊢ : ∀{A m} {𝐱 : Vars m} {Γ : Cx m}
     → Γ ⊢ A
     → Σ (Vars m → Tm) (λ t → prefix 𝐱 Γ ⊢ t 𝐱 ∶ A)
 
-in⊢ {𝐱 = 𝐱} (M𝑣ⁿ {𝐭 = 𝐭} i)
+in⊢ {𝐱 = 𝐱} (M𝑣 {A = A} i)
     = let ⟨ x , j ⟩ = in∈ {𝐱 = 𝐱} i
       in
         ⟨ (λ _ → 𝑣 x)
-        , M𝑣ⁿ {𝐭 = 𝑣 x ∷ 𝐭} j
+        , M𝑣 {A = 𝑣 x ∶ A} j
         ⟩
 
 in⊢ {𝐱 = 𝐱} (M𝜆ⁿ {n} {𝐱 = 𝐲} {𝐭} D)
