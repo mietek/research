@@ -47,7 +47,7 @@ open import Data.Nat
   using (ℕ ; zero ; suc)
 
 open import Data.Product
-  using (Σ ; proj₁ ; proj₂ ; _×_)
+  using (Σ ; proj₁ ; proj₂)
   renaming (_,_ to ⟨_,_⟩)
 
 infixl 9 !_ 𝑣_ 𝒗_
@@ -277,8 +277,11 @@ _∘ⁿ_∷_ : ∀{n} → Tms n → Tms n → Ty → Ty
 -- Typing contexts
 
 
-Hyp : Set
-Hyp = ℕ × Ty
+record Hyp : Set where
+  constructor ⟪_,_⟫
+  field
+    vars : ℕ
+    ty   : Ty
 
 
 data Cx : ℕ → Set where
@@ -317,11 +320,11 @@ data _∈[_]_ : ∀{m} → Hyp → ℕ → Cx m → Set where
 
 data _⊢_ {m : ℕ} (Γ : Cx m) : Ty → Set where
   𝒗_ : ∀{n x} {A : Ty}
-      → ⟨ n , A ⟩ ∈[ x ] Γ
+      → ⟪ n , A ⟫ ∈[ x ] Γ
       → Γ ⊢ 𝑣[ n ] x ∷ A
 
   𝝀ⁿ_ : ∀{n} {𝐭 : Tms n} {A B : Ty}
-      → Γ , ⟨ n , A ⟩ ⊢ * 𝐭 ∷ B
+      → Γ , ⟪ n , A ⟫ ⊢ * 𝐭 ∷ B
       → Γ ⊢ 𝜆ⁿ 𝐭 ∷ (A ⊃ B)
 
   _∙ⁿ_ : ∀{n} {𝐭 𝐬 : Tms n} {A B : Ty}
@@ -359,7 +362,7 @@ data _⊢_ {m : ℕ} (Γ : Cx m) : Ty → Set where
 
 
 𝝀_ : ∀{A B m} {Γ : Cx m}
-    → Γ , ⟨ 0 , A ⟩ ⊢ B
+    → Γ , ⟪ 0 , A ⟫ ⊢ B
     → Γ ⊢ A ⊃ B
 𝝀_ = 𝝀ⁿ_ {𝐭 = []}
 
@@ -400,7 +403,7 @@ _∙_ = _∙ⁿ_ {𝐭 = []} {𝐬 = []}
 
 
 𝝀²_ : ∀{t A B m} {Γ : Cx m}
-    → Γ , ⟨ 1 , A ⟩ ⊢ t ∶ B
+    → Γ , ⟪ 1 , A ⟫ ⊢ t ∶ B
     → Γ ⊢ 𝜆 t ∶ (A ⊃ B)
 𝝀²_ {t} = 𝝀ⁿ_ {𝐭 = t ∷ []}
 
@@ -441,7 +444,7 @@ _∙²_ {t} {s} = _∙ⁿ_ {𝐭 = t ∷ []} {𝐬 = s ∷ []}
 
 
 𝝀³_ : ∀{t₂ t₁ A B m} {Γ : Cx m}
-    → Γ , ⟨ 2 , A ⟩ ⊢ t₂ ∶ t₁ ∶ B
+    → Γ , ⟪ 2 , A ⟫ ⊢ t₂ ∶ t₁ ∶ B
     → Γ ⊢ 𝜆² t₂ ∶ 𝜆 t₁ ∶ (A ⊃ B)
 𝝀³_ {t₂} {t₁} = 𝝀ⁿ_ {𝐭 = t₂ ∷ t₁ ∷ []}
 
@@ -645,12 +648,12 @@ ex2′ = 𝝀³ 𝒗 𝟎
 
 prefix : ∀{m} → Cx m → Cx m
 prefix ∅               = ∅
-prefix (Γ , ⟨ n , A ⟩) = prefix Γ , ⟨ suc n , A ⟩
+prefix (Γ , ⟪ n , A ⟫) = prefix Γ , ⟪ suc n , A ⟫
 
 
 in∈ : ∀{n A m k} {Γ : Cx m}
-    → ⟨ n , A ⟩ ∈[ k ] Γ
-    → ⟨ suc n , A ⟩ ∈[ k ] prefix Γ
+    → ⟪ n , A ⟫ ∈[ k ] Γ
+    → ⟪ suc n , A ⟫ ∈[ k ] prefix Γ
 in∈ here      = here
 in∈ (there i) = there (in∈ i)
 
