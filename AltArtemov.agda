@@ -870,23 +870,23 @@ nec D = let ⟨ s , C ⟩ = in⊢ D
           ⟨ s [] , wk⊢ ∅≲Γ C ⟩
 
 
-eI¹′ : ∀{A m} {Γ : Cx m}
+eI¹′ : ∀{A}
      → Σ Tm (λ t → ⊩ t ∶ (A ⊃ A))
 eI¹′ = nec eI⁰
 
-eI²′ : ∀{x A m} {Γ : Cx m}
+eI²′ : ∀{x A}
      → Σ Tm (λ t → ⊩ t ∶ 𝜆 x · 𝑣 x ∶ (A ⊃ A))
 eI²′ = nec eI¹
 
-eI³′ : ∀{u x A m} {Γ : Cx m}
+eI³′ : ∀{u x A}
      → Σ Tm (λ t → ⊩ t ∶ 𝜆² u · 𝑣 u ∶ 𝜆 x · 𝑣 x ∶ (A ⊃ A))
 eI³′ = nec eI²
 
 
-eI²″ : ∀{A m} {Γ : Cx m}
+eI²″ : ∀{A}
      → Σ Tm (λ t → ⊩ t ∶ 𝜆 fresh · 𝑣 fresh ∶ (A ⊃ A))    -- XXX: Fix this!
-eI²″ {Γ = Γ} = nec (proj₂ (eI¹′ {Γ = Γ}))
+eI²″ = nec (proj₂ (eI¹′))
 
-eI³″ : ∀{A m} {Γ : Cx m}
+eI³″ : ∀{A}
      → Σ Tm (λ t → ⊩ t ∶ 𝜆² fresh · 𝑣 fresh ∶ 𝜆 fresh · 𝑣 fresh ∶ (A ⊃ A))    -- XXX: Fix this!
-eI³″ {Γ = Γ} = nec (proj₂ (eI²′ {Γ = Γ}))
+eI³″ = nec (proj₂ (eI²′))
