@@ -143,7 +143,7 @@ A ⫗ B = (A ⊃ B) ∧ (B ⊃ A)
 
 -- --------------------------------------------------------------------------
 --
--- Simplified notation for term constructors at level 1
+-- Notation for term constructors at level 1
 
 
 𝜆_ : Tm → Tm
@@ -170,7 +170,7 @@ t ∘ s = t ∘[ 1 ] s
 
 -- --------------------------------------------------------------------------
 --
--- Simplified notation for term constructors at level 2
+-- Notation for term constructors at level 2
 
 
 𝜆²_ : Tm → Tm
@@ -197,7 +197,7 @@ t₂ ∘² s₂ = t₂ ∘[ 2 ] s₂
 
 -- --------------------------------------------------------------------------
 --
--- Simplified notation for term constructors at level 3
+-- Notation for term constructors at level 3
 
 
 𝜆³_ : Tm → Tm
@@ -224,25 +224,18 @@ t₃ ∘³ s₃ = t₃ ∘[ 3 ] s₃
 
 -- --------------------------------------------------------------------------
 --
--- Generic vector functions
-
-
--- Transforming each element dependent on its index
-ixMap : ∀{n} {X Y : Set}
-    → (ℕ → X → Y) → Vec X n → Vec Y n
-ixMap {zero}  f []      = []
-ixMap {suc n} f (x ∷ 𝐱) = f (suc n) x ∷ ixMap f 𝐱
-
--- Transforming each pair of elements dependent on their index
-ixZipWith : ∀{n} {X Y Z : Set}
-    → (ℕ → X → Y → Z) → Vec X n → Vec Y n → Vec Z n
-ixZipWith {zero}  f []      []       = []
-ixZipWith {suc n} f (x ∷ 𝐱) (y ∷ 𝐲) = f (suc n) x y ∷ ixZipWith f 𝐱 𝐲
-
-
--- --------------------------------------------------------------------------
---
 -- Vector notation for type assertions at level n, p. 27 [1]
+
+
+map# : ∀{n} {X Y : Set}
+    → (ℕ → X → Y) → Vec X n → Vec Y n
+map# {zero}  f []      = []
+map# {suc n} f (x ∷ 𝐱) = f (suc n) x ∷ map# f 𝐱
+
+zipWith# : ∀{n} {X Y Z : Set}
+    → (ℕ → X → Y → Z) → Vec X n → Vec Y n → Vec Z n
+zipWith# {zero}  f []      []       = []
+zipWith# {suc n} f (x ∷ 𝐱) (y ∷ 𝐲) = f (suc n) x y ∷ zipWith# f 𝐱 𝐲
 
 
 -- Term vectors
@@ -261,31 +254,31 @@ Tms = Vec Tm
 
 -- 𝜆ⁿ tₙ ∶ 𝜆ⁿ⁻¹ tₙ₋₁ ∶ ⋯ ∶ 𝜆 t₁ ∶ A
 𝜆ⁿ_∷_ : ∀{n} → Tms n → Ty → Ty
-𝜆ⁿ 𝐭 ∷ A = * ixMap 𝜆[_]_ 𝐭 ∷ A
+𝜆ⁿ 𝐭 ∷ A = * map# 𝜆[_]_ 𝐭 ∷ A
 
 -- tₙ ∘ⁿ sₙ ∶ tₙ₋₁ ∘ⁿ⁻¹ ∶ sₙ₋₁ ∶ ⋯ ∶ t₁ ∘ s₁ ∶ A
 _∘ⁿ_∷_ : ∀{n} → Tms n → Tms n → Ty → Ty
-𝐭 ∘ⁿ 𝐬 ∷ A = * ixZipWith (λ n t s → t ∘[ n ] s) 𝐭 𝐬 ∷ A
+𝐭 ∘ⁿ 𝐬 ∷ A = * zipWith# (λ n t s → t ∘[ n ] s) 𝐭 𝐬 ∷ A
 
 -- 𝑝ⁿ⟨ tₙ , sₙ ⟩ ∶ 𝑝ⁿ⁻¹⟨ tₙ₋₁ , sₙ₋₁ ⟩ ∶ ⋯ ∶ p⟨ t₁ , s₁ ⟩ ∶ A
 𝑝ⁿ⟨_,_⟩∷_ : ∀{n} → Tms n → Tms n → Ty → Ty
-𝑝ⁿ⟨ 𝐭 , 𝐬 ⟩∷ A = * ixZipWith 𝑝[_]⟨_,_⟩ 𝐭 𝐬 ∷ A
+𝑝ⁿ⟨ 𝐭 , 𝐬 ⟩∷ A = * zipWith# 𝑝[_]⟨_,_⟩ 𝐭 𝐬 ∷ A
 
 -- 𝜋₀ⁿ tₙ ∶ 𝜋₀ⁿ⁻¹ tₙ₋₁ ∶ ⋯ ∶ 𝜋₀ t₁ ∶ A
 𝜋₀ⁿ_∷_ : ∀{n} → Tms n → Ty → Ty
-𝜋₀ⁿ 𝐭 ∷ A = * ixMap 𝜋₀[_]_ 𝐭 ∷ A
+𝜋₀ⁿ 𝐭 ∷ A = * map# 𝜋₀[_]_ 𝐭 ∷ A
 
 -- 𝜋₁ⁿ tₙ ∶ 𝜋₁ⁿ⁻¹ tₙ₋₁ ∶ ⋯ ∶ 𝜋₁ t₁ ∶ A
 𝜋₁ⁿ_∷_ : ∀{n} → Tms n → Ty → Ty
-𝜋₁ⁿ 𝐭 ∷ A = * ixMap 𝜋₁[_]_ 𝐭 ∷ A
+𝜋₁ⁿ 𝐭 ∷ A = * map# 𝜋₁[_]_ 𝐭 ∷ A
 
 -- ⇑ⁿ tₙ ∶ ⇑ⁿ⁻¹ tₙ₋₁ ∶ ⋯ ∶ ⇑ t₁ ∶ A
 ⇑ⁿ_∷_ : ∀{n} → Tms n → Ty → Ty
-⇑ⁿ 𝐭 ∷ A = * ixMap ⇑[_]_ 𝐭 ∷ A
+⇑ⁿ 𝐭 ∷ A = * map# ⇑[_]_ 𝐭 ∷ A
 
 -- ⇓ⁿ tₙ ∶ ⇑ⁿ⁻¹ tₙ₋₁ ∶ ⋯ ∶ ⇑ t₁ ∶ A
 ⇓ⁿ_∷_ : ∀{n} → Tms n → Ty → Ty
-⇓ⁿ 𝐭 ∷ A = * ixMap ⇓[_]_ 𝐭 ∷ A
+⇓ⁿ 𝐭 ∷ A = * map# ⇓[_]_ 𝐭 ∷ A
 
 
 -- --------------------------------------------------------------------------
@@ -356,7 +349,7 @@ data _⊢_ {m : ℕ} (Γ : Cx m) : Ty → Set where
 
 -- --------------------------------------------------------------------------
 --
--- Simplified notation for context membership evidence
+-- Notation for context membership evidence
 
 
 𝟎 : ∀{m A} {Γ : Cx m} → A ∈[ 0 ] (Γ , A)
@@ -374,7 +367,7 @@ data _⊢_ {m : ℕ} (Γ : Cx m) : Ty → Set where
 
 -- --------------------------------------------------------------------------
 --
--- Simplified notation for typing rules at level 1
+-- Notation for typing rules at level 1
 
 
 𝝀_ : ∀{A B m} {Γ : Cx m}
@@ -415,7 +408,7 @@ _∙_ = _∙ⁿ_ {𝐭 = []} {𝐬 = []}
 
 -- --------------------------------------------------------------------------
 --
--- Simplified notation for typing rules at level 2
+-- Notation for typing rules at level 2
 
 
 𝝀²_ : ∀{t A B m} {Γ : Cx m}
@@ -456,7 +449,7 @@ _∙²_ {t} {s} = _∙ⁿ_ {𝐭 = t ∷ []} {𝐬 = s ∷ []}
 
 -- --------------------------------------------------------------------------
 --
--- Simplified notation for typing rules at level 3
+-- Notation for typing rules at level 3
 
 
 𝝀³_ : ∀{t₂ t₁ A B m} {Γ : Cx m}
@@ -655,55 +648,55 @@ prefix ∅               = ∅
 prefix (Γ , ⟨ n , A ⟩) = prefix Γ , ⟨ suc n , A ⟩
 
 
-in∈ : ∀{n A m k} {Γ : Cx m}
+int∈ : ∀{n A m k} {Γ : Cx m}
     → ⟨ n , A ⟩ ∈[ k ] Γ
     → ⟨ suc n , A ⟩ ∈[ k ] prefix Γ
-in∈ 𝐙     = 𝐙
-in∈ (𝐒 i) = 𝐒 (in∈ i)
+int∈ 𝐙     = 𝐙
+int∈ (𝐒 i) = 𝐒 (int∈ i)
 
 
-in⊢ : ∀{A m} {Γ : Cx m}
+int⊢ : ∀{A m} {Γ : Cx m}
     → Γ ⊢ A
     → Σ Tm λ t → prefix Γ ⊢ t ∶ A
-in⊢ (𝒗_ {n} {k} i)
-    = let j = in∈ i in
+int⊢ (𝒗_ {n} {k} i)
+    = let j = int∈ i in
         ⟨ 𝑣 k
         , 𝒗 j
         ⟩
-in⊢ (𝝀ⁿ_ {n} {𝐭} D)
-    = let ⟨ s , C ⟩ = in⊢ D in
+int⊢ (𝝀ⁿ_ {n} {𝐭} D)
+    = let ⟨ s , C ⟩ = int⊢ D in
         ⟨ 𝜆[ suc n ] s
         , 𝝀ⁿ_ {𝐭 = s ∷ 𝐭} C
         ⟩
-in⊢ (_∙ⁿ_ {n} {𝐭} {𝐬} Dₜ Dₛ)
-    = let ⟨ sₜ , Cₜ ⟩ = in⊢ Dₜ
-          ⟨ sₛ , Cₛ ⟩ = in⊢ Dₛ in
+int⊢ (_∙ⁿ_ {n} {𝐭} {𝐬} Dₜ Dₛ)
+    = let ⟨ sₜ , Cₜ ⟩ = int⊢ Dₜ
+          ⟨ sₛ , Cₛ ⟩ = int⊢ Dₛ in
         ⟨ sₜ ∘[ suc n ] sₛ
         , _∙ⁿ_ {𝐭 = sₜ ∷ 𝐭} {𝐬 = sₛ ∷ 𝐬} Cₜ Cₛ
         ⟩
-in⊢ (𝒑ⁿ⟨_,_⟩ {n} {𝐭} {𝐬} Dₜ Dₛ)
-    = let ⟨ sₜ , Cₜ ⟩ = in⊢ Dₜ
-          ⟨ sₛ , Cₛ ⟩ = in⊢ Dₛ in
+int⊢ (𝒑ⁿ⟨_,_⟩ {n} {𝐭} {𝐬} Dₜ Dₛ)
+    = let ⟨ sₜ , Cₜ ⟩ = int⊢ Dₜ
+          ⟨ sₛ , Cₛ ⟩ = int⊢ Dₛ in
         ⟨ 𝑝[ suc n ]⟨ sₜ , sₛ ⟩
         , 𝒑ⁿ⟨_,_⟩ {𝐭 = sₜ ∷ 𝐭} {𝐬 = sₛ ∷ 𝐬} Cₜ Cₛ
         ⟩
-in⊢ (𝝅₀ⁿ_ {n} {𝐭} D)
-    = let ⟨ s , C ⟩ = in⊢ D in
+int⊢ (𝝅₀ⁿ_ {n} {𝐭} D)
+    = let ⟨ s , C ⟩ = int⊢ D in
         ⟨ 𝜋₀[ suc n ] s
         , 𝝅₀ⁿ_ {𝐭 = s ∷ 𝐭} C
         ⟩
-in⊢ (𝝅₁ⁿ_ {n} {𝐭} D)
-    = let ⟨ s , C ⟩ = in⊢ D in
+int⊢ (𝝅₁ⁿ_ {n} {𝐭} D)
+    = let ⟨ s , C ⟩ = int⊢ D in
         ⟨ 𝜋₁[ suc n ] s
         , 𝝅₁ⁿ_ {𝐭 = s ∷ 𝐭} C
         ⟩
-in⊢ (⬆ⁿ_ {n} {𝐭} D)
-    = let ⟨ s , C ⟩ = in⊢ D in
+int⊢ (⬆ⁿ_ {n} {𝐭} D)
+    = let ⟨ s , C ⟩ = int⊢ D in
         ⟨ ⇑[ suc n ] s
         , ⬆ⁿ_ {𝐭 = s ∷ 𝐭} C
         ⟩
-in⊢ (⬇ⁿ_ {n} {𝐭} D)
-    = let ⟨ s , C ⟩ = in⊢ D in
+int⊢ (⬇ⁿ_ {n} {𝐭} D)
+    = let ⟨ s , C ⟩ = int⊢ D in
         ⟨ ⇓[ suc n ] s
         , ⬇ⁿ_ {𝐭 = s ∷ 𝐭} C
         ⟩
@@ -717,7 +710,7 @@ in⊢ (⬇ⁿ_ {n} {𝐭} D)
 nec : ∀{A}
     → ⊩ A
     → Σ Tm λ t → ⊩ t ∶ A
-nec = in⊢
+nec = int⊢
 
 
 I²′ : ∀{A} → Σ Tm λ t
