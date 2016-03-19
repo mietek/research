@@ -52,7 +52,8 @@ open import Data.Product
 open import Data.Vec
   using (Vec ; [] ; _∷_ ; replicate)
 
-infixl 9 !_ 𝑣_ 𝒗_
+infixl 9 !_
+infixl 9 𝑣_ 𝒗_
 infixl 8 𝜋₀_ 𝜋₀²_ 𝜋₀³_ 𝝅₀_ 𝝅₀²_ 𝝅₀³_
 infixl 8 𝜋₁_ 𝜋₁²_ 𝜋₁³_ 𝝅₁_ 𝝅₁²_ 𝝅₁³_
 infixl 7 _∘_ _∘²_ _∘³_ _∙_ _∙²_ _∙³_
@@ -61,7 +62,8 @@ infixr 6 ⇓_ ⇓²_ ⇓³_ ⬇_ ⬇²_ ⬇³_
 infixr 5 𝜆_ 𝜆²_ 𝜆³_ 𝝀_ 𝝀²_ 𝝀³_
 infixr 4 _∶_
 infixr 3 ¬_
-infixl 2 _∧_ _,_
+infixl 2 _∧_
+infixl 2 _,_
 infixr 1 _⊃_ _⫗_
 infixr 0 _⊢_ ⊩_
 
