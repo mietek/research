@@ -37,6 +37,10 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
      vol. 2183, pp. 22–37.
      http://dx.doi.org/10.1007/3-540-45504-3_2
 
+[2]: Artëmov, S. (2001) Explicit provability and constructive semantics
+     Bulletin of Symbolic Logic, vol. 7, no. 1, pp. 1–36.
+     http://dx.doi.org/10.2307/2687821
+
 -}
 
 
@@ -224,7 +228,7 @@ t₃ ∘³ s₃ = t₃ ∘[ 3 ] s₃
 
 -- --------------------------------------------------------------------------
 --
--- Vector notation for type assertions at level n, p. 27 [1]
+-- Vector notation for type assertions at level n (p. 27 [1])
 
 
 map# : ∀{n} {X Y : Set}
@@ -490,7 +494,7 @@ _∙³_ {t₂} {t₁} {s₂} {s₁} = _∙ⁿ_ {𝐭 = t₂ ∷ t₁ ∷ []} {�
 
 -- --------------------------------------------------------------------------
 --
--- Example terms corresponding to SKI combinators at levels 1, 2, and 3
+-- Example terms corresponding to S4 theorems at levels 1, 2, and 3
 
 
 -- S4: A ⊃ A
@@ -579,7 +583,7 @@ ax4² = 𝝀² ⬆² 𝒗 𝟎
 
 -- --------------------------------------------------------------------------
 --
--- Terms of example 1, p. 28 [1]
+-- Terms of example 1 (p. 28 [1])
 
 
 -- S4: □(□A ⊃ A)
@@ -605,7 +609,7 @@ ex14 = 𝝀² 𝝀² ⬆² 𝒑³⟨ 𝒗 𝟏 , 𝒗 𝟎 ⟩
 
 -- --------------------------------------------------------------------------
 --
--- Additional example terms
+-- Additional example terms corresponding to S4 theorems
 
 
 -- S4: □(□A ⊃ □B ⊃ □(A ∧ B))
@@ -626,7 +630,7 @@ exC = 𝝀² 𝒑³⟨ 𝝅₀² 𝒗 𝟎 , 𝝅₁² 𝒗 𝟎 ⟩
 
 -- --------------------------------------------------------------------------
 --
--- Terms of example 2, pp. 31–32 [1]
+-- Terms of example 2 (pp. 31–32 [1])
 
 
 ex2 : ∀{A x}
@@ -640,16 +644,16 @@ ex2′ = 𝝀³  𝒗 𝟎
 
 -- --------------------------------------------------------------------------
 --
--- Theorem 1 (Internalisation principle), p. 29 [1]
+-- Internalisation (theorem 1, p. 29 [1]; lemma 5.4, pp. 9–10 [2])
 
 
--- A₁ , A₂ , … , Aₘ  →  x₁ ∶ A₁ , x₂ ∶ A₂ , … , xₘ ∶ Aₘ
+-- A₁, A₂, …, Aₘ  →  x₁ ∶ A₁, x₂ ∶ A₂, …, xₘ ∶ Aₘ
 prefix : ∀{m} → Cx m → Cx m
 prefix ∅               = ∅
 prefix (Γ , ⟨ n , A ⟩) = prefix Γ , ⟨ suc n , A ⟩
 
 
--- xₙ ∶ xₙ₋₁ ∶ … ∶ x₁ ∶ A ∈ Γ  →  xₙ₊₁ ∶ xₙ ∶ xₙ₋₁ ∶ … ∶ x₁ ∶ A ∈ prefix Γ
+-- yₙ ∶ yₙ₋₁ ∶ … ∶ y₁ ∶ Aᵢ ∈ A₁, A₂, …, Aₘ  →  xᵢ ∶ yₙ ∶ yₙ₋₁ ∶ … ∶ y₁ ∶ Aᵢ ∈ x₁ ∶ A₁, x₂ ∶ A₂, …, xₘ ∶ Aₘ
 int∈ : ∀{n A m k} {Γ : Cx m}
     → ⟨ n , A ⟩ ∈[ k ] Γ
     → ⟨ suc n , A ⟩ ∈[ k ] prefix Γ
@@ -657,7 +661,7 @@ int∈ 𝐙     = 𝐙
 int∈ (𝐒 i) = 𝐒 (int∈ i)
 
 
--- A₁ , A₂ , … , Aₘ ⊢ B  →  x₁ ∶ A₁ , x₂ ∶ A₂ , … xₘ ∶ Aₘ ⊢ (t x₁ x₂ … xₘ) ∶ B
+-- A₁, A₂, …, Aₘ ⊢ B  →  x₁ ∶ A₁, x₂ ∶ A₂, … xₘ ∶ Aₘ ⊢ t(x₁, x₂, …, xₘ) ∶ B
 int⊢ : ∀{B m} {Γ : Cx m}
     → Γ ⊢ B
     → Σ Tm λ t → prefix Γ ⊢ t ∶ B
@@ -707,7 +711,7 @@ int⊢ (⬇ⁿ_ {n} {𝐭} D)
 
 -- --------------------------------------------------------------------------
 --
--- Constructive necessitation
+-- Constructive necessitation (corollary 5.5, p. 10 [2])
 
 
 -- ⊩ B  →  ⊩ t ∶ B
@@ -719,7 +723,7 @@ nec = int⊢
 
 -- --------------------------------------------------------------------------
 --
--- Example constructively necessitated terms at levels 2, 3, and 4
+-- Example necessitated terms at levels 2, 3, and 4
 
 
 -- A ⊃ A
