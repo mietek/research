@@ -311,7 +311,7 @@ data _∈[_]_ : ∀{m} → Hyp → ℕ → Cx m → Set where
       → A ∈[ suc x ] (Γ , B)
 
 
--- Typing rules
+-- Typed terms
 data _⊢_ {m : ℕ} (Γ : Cx m) : Ty → Set where
   𝒗_ : ∀{n x} {A}
       → ⟨ n , A ⟩ ∈[ x ] Γ
@@ -356,22 +356,22 @@ data _⊢_ {m : ℕ} (Γ : Cx m) : Ty → Set where
 -- Notation for context membership evidence
 
 
-𝟎 : ∀{m A} {Γ : Cx m} → A ∈[ 0 ] (Γ , A)
+𝟎 : ∀{A m} {Γ : Cx m} → A ∈[ 0 ] (Γ , A)
 𝟎 = 𝐙
 
-𝟏 : ∀{m A B} {Γ : Cx m} → A ∈[ 1 ] (Γ , A , B)
+𝟏 : ∀{A B m} {Γ : Cx m} → A ∈[ 1 ] (Γ , A , B)
 𝟏 = 𝐒 𝐙
 
-𝟐 : ∀{m A B C} {Γ : Cx m} → A ∈[ 2 ] (Γ , A , B , C)
+𝟐 : ∀{A B C m} {Γ : Cx m} → A ∈[ 2 ] (Γ , A , B , C)
 𝟐 = 𝐒 𝐒 𝐙
 
-𝟑 : ∀{m A B C D} {Γ : Cx m} → A ∈[ 3 ] (Γ , A , B , C , D)
+𝟑 : ∀{A B C D m} {Γ : Cx m} → A ∈[ 3 ] (Γ , A , B , C , D)
 𝟑 = 𝐒 𝐒 𝐒 𝐙
 
 
 -- --------------------------------------------------------------------------
 --
--- Notation for typing rules at level 1
+-- Notation for typed terms at level 1
 
 
 𝝀_ : ∀{A B m} {Γ : Cx m}
@@ -412,7 +412,7 @@ _∙_ = _∙ⁿ_ {𝐭 = []} {𝐬 = []}
 
 -- --------------------------------------------------------------------------
 --
--- Notation for typing rules at level 2
+-- Notation for typed terms at level 2
 
 
 𝝀²_ : ∀{t A B m} {Γ : Cx m}
@@ -453,7 +453,7 @@ _∙²_ {t} {s} = _∙ⁿ_ {𝐭 = t ∷ []} {𝐬 = s ∷ []}
 
 -- --------------------------------------------------------------------------
 --
--- Notation for typing rules at level 3
+-- Notation for typed terms at level 3
 
 
 𝝀³_ : ∀{t₂ t₁ A B m} {Γ : Cx m}
