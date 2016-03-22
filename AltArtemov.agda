@@ -736,17 +736,17 @@ int⊢ (𝝀ⁿ_ {n} {𝐭} D)
         ⟨ 𝜆[ suc n ] s
         , 𝝀ⁿ_ {𝐭 = s ∷ 𝐭} C
         ⟩
-int⊢ (_∙ⁿ_ {n} {𝐭} {𝐬} Dₜ Dₛ)
-    = let ⟨ sₜ , Cₜ ⟩ = int⊢ Dₜ
-          ⟨ sₛ , Cₛ ⟩ = int⊢ Dₛ in
-        ⟨ sₜ ∘[ suc n ] sₛ
-        , _∙ⁿ_ {𝐭 = sₜ ∷ 𝐭} {𝐬 = sₛ ∷ 𝐬} Cₜ Cₛ
+int⊢ (_∙ⁿ_ {n} {𝐭} {𝐬} D₀ D₁)
+    = let ⟨ s₀ , C₀ ⟩ = int⊢ D₀
+          ⟨ s₁ , C₁ ⟩ = int⊢ D₁ in
+        ⟨ s₀ ∘[ suc n ] s₁
+        , _∙ⁿ_ {𝐭 = s₀ ∷ 𝐭} {𝐬 = s₁ ∷ 𝐬} C₀ C₁
         ⟩
-int⊢ (𝒑ⁿ⟨_,_⟩ {n} {𝐭} {𝐬} Dₜ Dₛ)
-    = let ⟨ sₜ , Cₜ ⟩ = int⊢ Dₜ
-          ⟨ sₛ , Cₛ ⟩ = int⊢ Dₛ in
-        ⟨ 𝑝[ suc n ]⟨ sₜ , sₛ ⟩
-        , 𝒑ⁿ⟨_,_⟩ {𝐭 = sₜ ∷ 𝐭} {𝐬 = sₛ ∷ 𝐬} Cₜ Cₛ
+int⊢ (𝒑ⁿ⟨_,_⟩ {n} {𝐭} {𝐬} D₀ D₁)
+    = let ⟨ s₀ , C₀ ⟩ = int⊢ D₀
+          ⟨ s₁ , C₁ ⟩ = int⊢ D₁ in
+        ⟨ 𝑝[ suc n ]⟨ s₀ , s₁ ⟩
+        , 𝒑ⁿ⟨_,_⟩ {𝐭 = s₀ ∷ 𝐭} {𝐬 = s₁ ∷ 𝐬} C₀ C₁
         ⟩
 int⊢ (𝝅₀ⁿ_ {n} {𝐭} D)
     = let ⟨ s , C ⟩ = int⊢ D in
