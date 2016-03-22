@@ -358,34 +358,44 @@ data _⊢_ {m : ℕ} (Γ : Cx m) : Ty → Set where
 -- Notation for context membership evidence
 
 
-𝟎 : ∀{A m} {Γ : Cx m} → A ∈[ 0 ] (Γ , A)
+𝟎 : ∀{A m} {Γ : Cx m}
+    → A ∈[ 0 ] (Γ , A)
 𝟎 = 𝐙
 
-𝟏 : ∀{A B m} {Γ : Cx m} → A ∈[ 1 ] (Γ , A , B)
+𝟏 : ∀{A B m} {Γ : Cx m}
+    → A ∈[ 1 ] (Γ , A , B)
 𝟏 = 𝐒 𝟎
 
-𝟐 : ∀{A B C m} {Γ : Cx m} → A ∈[ 2 ] (Γ , A , B , C)
+𝟐 : ∀{A B C m} {Γ : Cx m}
+    → A ∈[ 2 ] (Γ , A , B , C)
 𝟐 = 𝐒 𝟏
 
-𝟑 : ∀{A B C D m} {Γ : Cx m} → A ∈[ 3 ] (Γ , A , B , C , D)
+𝟑 : ∀{A B C D m} {Γ : Cx m}
+    → A ∈[ 3 ] (Γ , A , B , C , D)
 𝟑 = 𝐒 𝟐
 
-𝟒 : ∀{A B C D E m} {Γ : Cx m} → A ∈[ 4 ] (Γ , A , B , C , D , E)
+𝟒 : ∀{A B C D E m} {Γ : Cx m}
+    → A ∈[ 4 ] (Γ , A , B , C , D , E)
 𝟒 = 𝐒 𝟑
 
-𝟓 : ∀{A B C D E F m} {Γ : Cx m} → A ∈[ 5 ] (Γ , A , B , C , D , E , F)
+𝟓 : ∀{A B C D E F m} {Γ : Cx m}
+    → A ∈[ 5 ] (Γ , A , B , C , D , E , F)
 𝟓 = 𝐒 𝟒
 
-𝟔 : ∀{A B C D E F G m} {Γ : Cx m} → A ∈[ 6 ] (Γ , A , B , C , D , E , F , G)
+𝟔 : ∀{A B C D E F G m} {Γ : Cx m}
+    → A ∈[ 6 ] (Γ , A , B , C , D , E , F , G)
 𝟔 = 𝐒 𝟓
 
-𝟕 : ∀{A B C D E F G H m} {Γ : Cx m} → A ∈[ 7 ] (Γ , A , B , C , D , E , F , G , H)
+𝟕 : ∀{A B C D E F G H m} {Γ : Cx m}
+    → A ∈[ 7 ] (Γ , A , B , C , D , E , F , G , H)
 𝟕 = 𝐒 𝟔
 
-𝟖 : ∀{A B C D E F G H I m} {Γ : Cx m} → A ∈[ 8 ] (Γ , A , B , C , D , E , F , G , H , I)
+𝟖 : ∀{A B C D E F G H I m} {Γ : Cx m}
+    → A ∈[ 8 ] (Γ , A , B , C , D , E , F , G , H , I)
 𝟖 = 𝐒 𝟕
 
-𝟗 : ∀{A B C D E F G H I J m} {Γ : Cx m} → A ∈[ 9 ] (Γ , A , B , C , D , E , F , G , H , I , J)
+𝟗 : ∀{A B C D E F G H I J m} {Γ : Cx m}
+    → A ∈[ 9 ] (Γ , A , B , C , D , E , F , G , H , I , J)
 𝟗 = 𝐒 𝟖
 
 
