@@ -298,24 +298,24 @@ Hyp = ℕ × Ty
 
 
 -- Contexts
-data Cx : ℕ → Set where
-  ∅   : Cx zero
-  _,_ : ∀{m} → Cx m → Hyp → Cx (suc m)
+data Cx : Set where
+  ∅   : Cx
+  _,_ : Cx → Hyp → Cx
 
 
 -- Context membership evidence
-data _∈[_]_ : ∀{m} → Hyp → ℕ → Cx m → Set where
-  𝐙 : ∀{m A} {Γ : Cx m}
+data _∈[_]_ : Hyp → ℕ → Cx → Set where
+  𝐙 : ∀{A Γ}
       → A ∈[ zero ] (Γ , A)
 
-  𝐒_ : ∀{m A B x} {Γ : Cx m}
+  𝐒_ : ∀{A B x Γ}
       → A ∈[ x ] Γ
       → A ∈[ suc x ] (Γ , B)
 
 
 -- Typed terms
-data _⊢_ {m : ℕ} (Γ : Cx m) : Ty → Set where
-  𝒗_ : ∀{n x} {A}
+data _⊢_ (Γ : Cx) : Ty → Set where
+  𝒗_ : ∀{n x A}
       → ⟨ n , A ⟩ ∈[ x ] Γ
       → Γ ⊢ 𝑣[ n ] x ∷ A
 
@@ -348,7 +348,6 @@ data _⊢_ {m : ℕ} (Γ : Cx m) : Ty → Set where
       → Γ ⊢ ⇓ⁿ 𝐭 ∷ A
 
 
--- Theorems
 ⊩_  : Ty → Set
 ⊩ A = ∅ ⊢ A
 
@@ -358,43 +357,43 @@ data _⊢_ {m : ℕ} (Γ : Cx m) : Ty → Set where
 -- Notation for context membership evidence
 
 
-𝟎 : ∀{A m} {Γ : Cx m}
+𝟎 : ∀{A Γ}
     → A ∈[ 0 ] (Γ , A)
 𝟎 = 𝐙
 
-𝟏 : ∀{A B m} {Γ : Cx m}
+𝟏 : ∀{A B Γ}
     → A ∈[ 1 ] (Γ , A , B)
 𝟏 = 𝐒 𝟎
 
-𝟐 : ∀{A B C m} {Γ : Cx m}
+𝟐 : ∀{A B C Γ}
     → A ∈[ 2 ] (Γ , A , B , C)
 𝟐 = 𝐒 𝟏
 
-𝟑 : ∀{A B C D m} {Γ : Cx m}
+𝟑 : ∀{A B C D Γ}
     → A ∈[ 3 ] (Γ , A , B , C , D)
 𝟑 = 𝐒 𝟐
 
-𝟒 : ∀{A B C D E m} {Γ : Cx m}
+𝟒 : ∀{A B C D E Γ}
     → A ∈[ 4 ] (Γ , A , B , C , D , E)
 𝟒 = 𝐒 𝟑
 
-𝟓 : ∀{A B C D E F m} {Γ : Cx m}
+𝟓 : ∀{A B C D E F Γ}
     → A ∈[ 5 ] (Γ , A , B , C , D , E , F)
 𝟓 = 𝐒 𝟒
 
-𝟔 : ∀{A B C D E F G m} {Γ : Cx m}
+𝟔 : ∀{A B C D E F G Γ}
     → A ∈[ 6 ] (Γ , A , B , C , D , E , F , G)
 𝟔 = 𝐒 𝟓
 
-𝟕 : ∀{A B C D E F G H m} {Γ : Cx m}
+𝟕 : ∀{A B C D E F G H Γ}
     → A ∈[ 7 ] (Γ , A , B , C , D , E , F , G , H)
 𝟕 = 𝐒 𝟔
 
-𝟖 : ∀{A B C D E F G H I m} {Γ : Cx m}
+𝟖 : ∀{A B C D E F G H I Γ}
     → A ∈[ 8 ] (Γ , A , B , C , D , E , F , G , H , I)
 𝟖 = 𝐒 𝟕
 
-𝟗 : ∀{A B C D E F G H I J m} {Γ : Cx m}
+𝟗 : ∀{A B C D E F G H I J Γ}
     → A ∈[ 9 ] (Γ , A , B , C , D , E , F , G , H , I , J)
 𝟗 = 𝐒 𝟖
 
@@ -404,37 +403,37 @@ data _⊢_ {m : ℕ} (Γ : Cx m) : Ty → Set where
 -- Notation for typed terms at level 1
 
 
-𝝀_ : ∀{A B m} {Γ : Cx m}
+𝝀_ : ∀{A B Γ}
     → Γ , ⟨ 0 , A ⟩ ⊢ B
     → Γ ⊢ A ⊃ B
 𝝀_ = 𝝀ⁿ_ {𝐭 = []}
 
-_∙_ : ∀{A B m} {Γ : Cx m}
+_∙_ : ∀{A B Γ}
     → Γ ⊢ A ⊃ B    → Γ ⊢ A
     → Γ ⊢ B
 _∙_ = _∙ⁿ_ {𝐭 = []} {𝐬 = []}
 
-𝒑⟨_,_⟩ : ∀{A B m} {Γ : Cx m}
+𝒑⟨_,_⟩ : ∀{A B Γ}
     → Γ ⊢ A        → Γ ⊢ B
     → Γ ⊢ A ∧ B
 𝒑⟨_,_⟩ = 𝒑ⁿ⟨_,_⟩ {𝐭 = []} {𝐬 = []}
 
-𝝅₀_ : ∀{A B m} {Γ : Cx m}
+𝝅₀_ : ∀{A B Γ}
     → Γ ⊢ A ∧ B
     → Γ ⊢ A
 𝝅₀_ = 𝝅₀ⁿ_ {𝐭 = []}
 
-𝝅₁_ : ∀{A B m} {Γ : Cx m}
+𝝅₁_ : ∀{A B Γ}
     → Γ ⊢ A ∧ B
     → Γ ⊢ B
 𝝅₁_ = 𝝅₁ⁿ_ {𝐭 = []}
 
-⬆_ : ∀{u A m} {Γ : Cx m}
+⬆_ : ∀{u A Γ}
     → Γ ⊢ u ∶ A
     → Γ ⊢ ! u ∶ u ∶ A
 ⬆_ = ⬆ⁿ_ {𝐭 = []}
 
-⬇_ : ∀{u A m} {Γ : Cx m}
+⬇_ : ∀{u A Γ}
     → Γ ⊢ u ∶ A
     → Γ ⊢ A
 ⬇_ = ⬇ⁿ_ {𝐭 = []}
@@ -445,43 +444,43 @@ _∙_ = _∙ⁿ_ {𝐭 = []} {𝐬 = []}
 -- Notation for typed terms at level 2
 
 
-𝝀²_ : ∀{t A B m} {Γ : Cx m}
+𝝀²_ : ∀{t A B Γ}
     → Γ , ⟨ 1 , A ⟩ ⊢ t ∶ B
     → Γ ⊢ 𝜆 t ∶ (A ⊃ B)
 𝝀²_ {t} =
     𝝀ⁿ_ {𝐭 = t ∷ []}
 
-_∙²_ : ∀{t s A B m} {Γ : Cx m}
+_∙²_ : ∀{t s A B Γ}
     → Γ ⊢ t ∶ (A ⊃ B)    → Γ ⊢ s ∶ A
     → Γ ⊢ t ∘ s ∶ B
 _∙²_ {t} {s} =
     _∙ⁿ_ {𝐭 = t ∷ []} {𝐬 = s ∷ []}
 
-𝒑²⟨_,_⟩ : ∀{t s A B m} {Γ : Cx m}
+𝒑²⟨_,_⟩ : ∀{t s A B Γ}
     → Γ ⊢ t ∶ A          → Γ ⊢ s ∶ B
     → Γ ⊢ 𝑝⟨ t , s ⟩ ∶ (A ∧ B)
 𝒑²⟨_,_⟩ {t} {s} =
     𝒑ⁿ⟨_,_⟩ {𝐭 = t ∷ []} {𝐬 = s ∷ []}
 
-𝝅₀²_ : ∀{t A B m} {Γ : Cx m}
+𝝅₀²_ : ∀{t A B Γ}
     → Γ ⊢ t ∶ (A ∧ B)
     → Γ ⊢ 𝜋₀ t ∶ A
 𝝅₀²_ {t} =
     𝝅₀ⁿ_ {𝐭 = t ∷ []}
 
-𝝅₁²_ : ∀{t A B m} {Γ : Cx m}
+𝝅₁²_ : ∀{t A B Γ}
     → Γ ⊢ t ∶ (A ∧ B)
     → Γ ⊢ 𝜋₁ t ∶ B
 𝝅₁²_ {t} =
     𝝅₁ⁿ_ {𝐭 = t ∷ []}
 
-⬆²_ : ∀{t u A m} {Γ : Cx m}
+⬆²_ : ∀{t u A Γ}
     → Γ ⊢ t ∶ u ∶ A
     → Γ ⊢ ⇑ t ∶ ! u ∶ u ∶ A
 ⬆²_ {t} =
     ⬆ⁿ_ {𝐭 = t ∷ []}
 
-⬇²_ : ∀{t u A m} {Γ : Cx m}
+⬇²_ : ∀{t u A Γ}
     → Γ ⊢ t ∶ u ∶ A
     → Γ ⊢ ⇓ t ∶ A
 ⬇²_ {t} =
@@ -493,43 +492,43 @@ _∙²_ {t} {s} =
 -- Notation for typed terms at level 3
 
 
-𝝀³_ : ∀{t₂ t₁ A B m} {Γ : Cx m}
+𝝀³_ : ∀{t₂ t₁ A B Γ}
     → Γ , ⟨ 2 , A ⟩ ⊢ t₂ ∶ t₁ ∶ B
     → Γ ⊢ 𝜆² t₂ ∶ 𝜆 t₁ ∶ (A ⊃ B)
 𝝀³_ {t₂} {t₁} =
     𝝀ⁿ_ {𝐭 = t₂ ∷ t₁ ∷ []}
 
-_∙³_ : ∀{t₂ t₁ s₂ s₁ A B m} {Γ : Cx m}
+_∙³_ : ∀{t₂ t₁ s₂ s₁ A B Γ}
     → Γ ⊢ t₂ ∶ t₁ ∶ (A ⊃ B)    → Γ ⊢ s₂ ∶ s₁ ∶ A
     → Γ ⊢ t₂ ∘² s₂ ∶ t₁ ∘ s₁ ∶ B
 _∙³_ {t₂} {t₁} {s₂} {s₁} =
     _∙ⁿ_ {𝐭 = t₂ ∷ t₁ ∷ []} {𝐬 = s₂ ∷ s₁ ∷ []}
 
-𝒑³⟨_,_⟩ : ∀{t₂ t₁ s₂ s₁ A B m} {Γ : Cx m}
+𝒑³⟨_,_⟩ : ∀{t₂ t₁ s₂ s₁ A B Γ}
     → Γ ⊢ t₂ ∶ t₁ ∶ A          → Γ ⊢ s₂ ∶ s₁ ∶ B
     → Γ ⊢ 𝑝²⟨ t₂ , s₂ ⟩ ∶ 𝑝⟨ t₁ , s₁ ⟩ ∶ (A ∧ B)
 𝒑³⟨_,_⟩ {t₂} {t₁} {s₂} {s₁} =
     𝒑ⁿ⟨_,_⟩ {𝐭 = t₂ ∷ t₁ ∷ []} {𝐬 = s₂ ∷ s₁ ∷ []}
 
-𝝅₀³_ : ∀{t₂ t₁ A B m} {Γ : Cx m}
+𝝅₀³_ : ∀{t₂ t₁ A B Γ}
     → Γ ⊢ t₂ ∶ t₁ ∶ (A ∧ B)
     → Γ ⊢ 𝜋₀² t₂ ∶ 𝜋₀ t₁ ∶ A
 𝝅₀³_ {t₂} {t₁} =
     𝝅₀ⁿ_ {𝐭 = t₂ ∷ t₁ ∷ []}
 
-𝝅₁³_ : ∀{t₂ t₁ A B m} {Γ : Cx m}
+𝝅₁³_ : ∀{t₂ t₁ A B Γ}
     → Γ ⊢ t₂ ∶ t₁ ∶ (A ∧ B)
     → Γ ⊢ 𝜋₁² t₂ ∶ 𝜋₁ t₁ ∶ B
 𝝅₁³_ {t₂} {t₁} =
     𝝅₁ⁿ_ {𝐭 = t₂ ∷ t₁ ∷ []}
 
-⬆³_ : ∀{t₂ t₁ u A m} {Γ : Cx m}
+⬆³_ : ∀{t₂ t₁ u A Γ}
     → Γ ⊢ t₂ ∶ t₁ ∶ u ∶ A
     → Γ ⊢ ⇑² t₂ ∶ ⇑ t₁ ∶ ! u ∶ u ∶ A
 ⬆³_ {t₂} {t₁} =
     ⬆ⁿ_ {𝐭 = t₂ ∷ t₁ ∷ []}
 
-⬇³_ : ∀{t₂ t₁ u A m} {Γ : Cx m}
+⬇³_ : ∀{t₂ t₁ u A Γ}
     → Γ ⊢ t₂ ∶ t₁ ∶ u ∶ A
     → Γ ⊢ ⇓² t₂ ∶ ⇓ t₁ ∶ A
 ⬇³_ {t₂} {t₁} =
@@ -541,43 +540,43 @@ _∙³_ {t₂} {t₁} {s₂} {s₁} =
 -- Notation for typed terms at level 4
 
 
-𝝀⁴_ : ∀{t₃ t₂ t₁ A B m} {Γ : Cx m}
+𝝀⁴_ : ∀{t₃ t₂ t₁ A B Γ}
     → Γ , ⟨ 3 , A ⟩ ⊢ t₃ ∶ t₂ ∶ t₁ ∶ B
     → Γ ⊢ 𝜆³ t₃ ∶ 𝜆² t₂ ∶ 𝜆 t₁ ∶ (A ⊃ B)
 𝝀⁴_ {t₃} {t₂} {t₁} =
     𝝀ⁿ_ {𝐭 = t₃ ∷ t₂ ∷ t₁ ∷ []}
 
-_∙⁴_ : ∀{t₃ t₂ t₁ s₃ s₂ s₁ A B m} {Γ : Cx m}
+_∙⁴_ : ∀{t₃ t₂ t₁ s₃ s₂ s₁ A B Γ}
     → Γ ⊢ t₃ ∶ t₂ ∶ t₁ ∶ (A ⊃ B)    → Γ ⊢ s₃ ∶ s₂ ∶ s₁ ∶ A
     → Γ ⊢ t₃ ∘³ s₃ ∶ t₂ ∘² s₂ ∶ t₁ ∘ s₁ ∶ B
 _∙⁴_ {t₃} {t₂} {t₁} {s₃} {s₂} {s₁} =
     _∙ⁿ_ {𝐭 = t₃ ∷ t₂ ∷ t₁ ∷ []} {𝐬 = s₃ ∷ s₂ ∷ s₁ ∷ []}
 
-𝒑⁴⟨_,_⟩ : ∀{t₃ t₂ t₁ s₃ s₂ s₁ A B m} {Γ : Cx m}
+𝒑⁴⟨_,_⟩ : ∀{t₃ t₂ t₁ s₃ s₂ s₁ A B Γ}
     → Γ ⊢ t₃ ∶ t₂ ∶ t₁ ∶ A          → Γ ⊢ s₃ ∶ s₂ ∶ s₁ ∶ B
     → Γ ⊢ 𝑝³⟨ t₃ , s₃ ⟩ ∶ 𝑝²⟨ t₂ , s₂ ⟩ ∶ 𝑝⟨ t₁ , s₁ ⟩ ∶ (A ∧ B)
 𝒑⁴⟨_,_⟩ {t₃} {t₂} {t₁} {s₃} {s₂} {s₁} =
     𝒑ⁿ⟨_,_⟩ {𝐭 = t₃ ∷ t₂ ∷ t₁ ∷ []} {𝐬 = s₃ ∷ s₂ ∷ s₁ ∷ []}
 
-𝝅₀⁴_ : ∀{t₃ t₂ t₁ A B m} {Γ : Cx m}
+𝝅₀⁴_ : ∀{t₃ t₂ t₁ A B Γ}
     → Γ ⊢ t₃ ∶ t₂ ∶ t₁ ∶ (A ∧ B)
     → Γ ⊢ 𝜋₀³ t₃ ∶ 𝜋₀² t₂ ∶ 𝜋₀ t₁ ∶ A
 𝝅₀⁴_ {t₃} {t₂} {t₁} =
     𝝅₀ⁿ_ {𝐭 = t₃ ∷ t₂ ∷ t₁ ∷ []}
 
-𝝅₁⁴_ : ∀{t₃ t₂ t₁ A B m} {Γ : Cx m}
+𝝅₁⁴_ : ∀{t₃ t₂ t₁ A B Γ}
     → Γ ⊢ t₃ ∶ t₂ ∶ t₁ ∶ (A ∧ B)
     → Γ ⊢ 𝜋₁³ t₃ ∶ 𝜋₁² t₂ ∶ 𝜋₁ t₁ ∶ B
 𝝅₁⁴_ {t₃} {t₂} {t₁} =
     𝝅₁ⁿ_ {𝐭 = t₃ ∷ t₂ ∷ t₁ ∷ []}
 
-⬆⁴_ : ∀{t₃ t₂ t₁ u A m} {Γ : Cx m}
+⬆⁴_ : ∀{t₃ t₂ t₁ u A Γ}
     → Γ ⊢ t₃ ∶ t₂ ∶ t₁ ∶ u ∶ A
     → Γ ⊢ ⇑³ t₃ ∶ ⇑² t₂ ∶ ⇑ t₁ ∶ ! u ∶ u ∶ A
 ⬆⁴_ {t₃} {t₂} {t₁} =
     ⬆ⁿ_ {𝐭 = t₃ ∷ t₂ ∷ t₁ ∷ []}
 
-⬇⁴_ : ∀{t₃ t₂ t₁ u A m} {Γ : Cx m}
+⬇⁴_ : ∀{t₃ t₂ t₁ u A Γ}
     → Γ ⊢ t₃ ∶ t₂ ∶ t₁ ∶ u ∶ A
     → Γ ⊢ ⇓³ t₃ ∶ ⇓² t₂ ∶ ⇓ t₁ ∶ A
 ⬇⁴_ {t₃} {t₂} {t₁} =
@@ -643,32 +642,32 @@ tS³ = 𝝀³ 𝝀³ 𝝀³ (𝒗 𝟐 ∙³ 𝒗 𝟎) ∙³ (𝒗 𝟏 ∙³ �
 
 
 -- S4: □(A ⊃ B) ⊃ □A ⊃ □B
-tAK : ∀{A B f x}
+tAK : ∀{f x A B}
     → ⊩  (f ∶ (A ⊃ B)) ⊃ x ∶ A ⊃ (f ∘ x) ∶ B
 tAK = 𝝀 𝝀 (𝒗 𝟏 ∙² 𝒗 𝟎)
 
 -- S4: □(□(A ⊃ B) ⊃ □A ⊃ □B)
-tAK² : ∀{A B f x}
+tAK² : ∀{f x A B}
     → ⊩  𝜆 𝜆 𝑣 1 ∘² 𝑣 0  ∶  (f ∶ (A ⊃ B) ⊃ x ∶ A ⊃ (f ∘ x) ∶ B)
 tAK² = 𝝀² 𝝀² (𝒗 𝟏 ∙³ 𝒗 𝟎)
 
 -- S4: □A ⊃ A
-tAT : ∀{A x}
+tAT : ∀{x A}
     → ⊩  x ∶ A ⊃ A
 tAT = 𝝀 ⬇ 𝒗 𝟎
 
 -- S4: □(□A ⊃ A)
-tAT² : ∀{A x}
+tAT² : ∀{x A}
     → ⊩  𝜆 ⇓ 𝑣 0  ∶  (x ∶ A ⊃ A)
 tAT² = 𝝀² ⬇² 𝒗 𝟎
 
 -- S4: □A ⊃ □□A
-tA4 : ∀{A x}
+tA4 : ∀{x A}
     → ⊩  x ∶ A ⊃ ! x ∶ x ∶ A
 tA4 = 𝝀 ⬆ 𝒗 𝟎
 
 -- S4: □(□A ⊃ □□A)
-tA4² : ∀{A x}
+tA4² : ∀{x A}
     → ⊩  𝜆 ⇑ 𝑣 0  ∶  (x ∶ A ⊃ ! x ∶ x ∶ A)
 tA4² = 𝝀² ⬆² 𝒗 𝟎
 
@@ -679,12 +678,12 @@ tA4² = 𝝀² ⬆² 𝒗 𝟎
 
 
 -- S4: □(□A ⊃ A)
-tE11 : ∀{A x}
+tE11 : ∀{x A}
     → ⊩  𝜆 ⇓ 𝑣 0  ∶  (x ∶ A ⊃ A)
 tE11 = tAT²
 
 -- S4: □(□A ⊃ □□A)
-tE12 : ∀{A x}
+tE12 : ∀{x A}
     → ⊩  𝜆 ⇑ 𝑣 0  ∶  (x ∶ A ⊃ ! x ∶ x ∶ A)
 tE12 = tA4²
 
@@ -694,7 +693,7 @@ tE13 : ∀{A B}
 tE13 = 𝝀³ 𝝀³ 𝒑³⟨ 𝒗 𝟏 , 𝒗 𝟎 ⟩
 
 -- S4: □(□A ⊃ □B ⊃ □□(A ∧ B))
-tE14 : ∀{A B x y}
+tE14 : ∀{x y A B}
     → ⊩  𝜆 𝜆 ⇑ 𝑝²⟨ 𝑣 1 , 𝑣 0 ⟩  ∶  (x ∶ A ⊃ y ∶ B ⊃ ! 𝑝⟨ x , y ⟩ ∶ 𝑝⟨ x , y ⟩ ∶ (A ∧ B))
 tE14 = 𝝀² 𝝀² ⬆² 𝒑³⟨ 𝒗 𝟏 , 𝒗 𝟎 ⟩
 
@@ -705,17 +704,17 @@ tE14 = 𝝀² 𝝀² ⬆² 𝒑³⟨ 𝒗 𝟏 , 𝒗 𝟎 ⟩
 
 
 -- S4: □(□A ⊃ □B ⊃ □(A ∧ B))
-tE14a : ∀{A B x y}
+tE14a : ∀{x y A B}
     → ⊩  𝜆 𝜆 𝑝²⟨ 𝑣 1 , 𝑣 0 ⟩  ∶  (x ∶ A ⊃ y ∶ B ⊃ 𝑝⟨ x , y ⟩ ∶ (A ∧ B))
 tE14a = 𝝀² 𝝀² 𝒑³⟨ 𝒗 𝟏 , 𝒗 𝟎 ⟩
 
 -- S4: □(□A ∧ □B ⊃ □□(A ∧ B))
-tE14b : ∀{A B x y}
+tE14b : ∀{x y A B}
     → ⊩  𝜆 ⇑ 𝑝²⟨ 𝜋₀ 𝑣 0 , 𝜋₁ 𝑣 0 ⟩  ∶  (x ∶ A ∧ y ∶ B ⊃ ! 𝑝⟨ x , y ⟩ ∶ 𝑝⟨ x , y ⟩ ∶ (A ∧ B))
 tE14b = 𝝀² ⬆² 𝒑³⟨ 𝝅₀² 𝒗 𝟎 , 𝝅₁² 𝒗 𝟎 ⟩
 
 -- S4: □(□A ∧ □B ⊃ □(A ∧ B))
-tE14c : ∀{A B x y}
+tE14c : ∀{x y A B}
     → ⊩  𝜆 𝑝²⟨ 𝜋₀ 𝑣 0 , 𝜋₁ 𝑣 0 ⟩  ∶  (x ∶ A ∧ y ∶ B ⊃ 𝑝⟨ x , y ⟩ ∶ (A ∧ B))
 tE14c = 𝝀² 𝒑³⟨ 𝝅₀² 𝒗 𝟎 , 𝝅₁² 𝒗 𝟎 ⟩
 
@@ -725,11 +724,11 @@ tE14c = 𝝀² 𝒑³⟨ 𝝅₀² 𝒗 𝟎 , 𝝅₁² 𝒗 𝟎 ⟩
 -- Terms of example 2 (pp. 31–32 [1])
 
 
-tE2 : ∀{A x}
+tE2 : ∀{x A}
     → ⊩  𝜆² ⇓² ⇑² 𝑣 0  ∶  𝜆 ⇓ ⇑ 𝑣 0  ∶  (x ∶ A ⊃ x ∶ A)
 tE2 = 𝝀³ ⬇³ ⬆³ 𝒗 𝟎
 
-tE2′ : ∀{A x}
+tE2′ : ∀{x A}
     → ⊩ 𝜆² 𝑣 0  ∶  𝜆 𝑣 0  ∶  (x ∶ A ⊃ x ∶ A)
 tE2′ = 𝝀³  𝒗 𝟎
 
@@ -740,21 +739,21 @@ tE2′ = 𝝀³  𝒗 𝟎
 
 
 -- A₁, A₂, …, Aₘ  →  x₁ ∶ A₁, x₂ ∶ A₂, …, xₘ ∶ Aₘ
-prefix : ∀{m} → Cx m → Cx m
+prefix : Cx → Cx
 prefix ∅               = ∅
 prefix (Γ , ⟨ n , A ⟩) = prefix Γ , ⟨ suc n , A ⟩
 
 
 -- yₙ ∶ yₙ₋₁ ∶ … ∶ y₁ ∶ Aᵢ ∈ A₁, A₂, …, Aₘ  →  xᵢ ∶ yₙ ∶ yₙ₋₁ ∶ … ∶ y₁ ∶ Aᵢ ∈ x₁ ∶ A₁, x₂ ∶ A₂, …, xₘ ∶ Aₘ
-int∈ : ∀{n A m k} {Γ : Cx m}
-    → ⟨ n , A ⟩ ∈[ k ] Γ
-    → ⟨ suc n , A ⟩ ∈[ k ] prefix Γ
+int∈ : ∀{n x A Γ}
+    → ⟨ n , A ⟩ ∈[ x ] Γ
+    → ⟨ suc n , A ⟩ ∈[ x ] prefix Γ
 int∈ 𝐙     = 𝐙
 int∈ (𝐒 i) = 𝐒 (int∈ i)
 
 
 -- A₁, A₂, …, Aₘ ⊢ B  →  x₁ ∶ A₁, x₂ ∶ A₂, … xₘ ∶ Aₘ ⊢ t(x₁, x₂, …, xₘ) ∶ B
-int⊢ : ∀{B m} {Γ : Cx m}
+int⊢ : ∀{B Γ}
     → Γ ⊢ B
     → Σ Tm λ t → prefix Γ ⊢ t ∶ B
 int⊢ (𝒗_ {n} {k} i) =
