@@ -84,49 +84,49 @@ Var : Set
 Var = ℕ
 
 
--- Type and term constructors
-mutual
-  data Ty : Set where
-    -- Falsehood
-    ⊥ : Ty
+-- Term constructors
+data Tm : Set where
+  -- Variable reference
+  𝑣_ : Var → Tm
 
-    -- Implication
-    _⊃_ : Ty → Ty → Ty
+  -- Abstraction (⊃I) at level n
+  𝜆[_]_ : ℕ → Tm → Tm
 
-    -- Conjunction
-    _∧_ : Ty → Ty → Ty
+  -- Application (⊃E) at level n
+  _∘[_]_ : Tm → ℕ → Tm → Tm
 
-    -- Explicit provability
-    _∶_ : Tm → Ty → Ty
+  -- Pairing (∧I) at level n
+  𝑝[_]⟨_,_⟩ : ℕ → Tm → Tm → Tm
+
+  -- 0th projection (∧E₀) at level n
+  𝜋₀[_]_ : ℕ → Tm → Tm
+
+  -- 1st projection (∧E₁) at level n
+  𝜋₁[_]_ : ℕ → Tm → Tm
+
+  -- Artëmov’s “proof checker”
+  !_ : Tm → Tm
+
+  -- Reification at level n
+  ⇑[_]_ : ℕ → Tm → Tm
+
+  -- Reflection at level n
+  ⇓[_]_ : ℕ → Tm → Tm
 
 
-  data Tm : Set where
-    -- Variable reference
-    𝑣_ : Var → Tm
+-- Type constructors
+data Ty : Set where
+  -- Falsehood
+  ⊥ : Ty
 
-    -- Abstraction (⊃I) at level n
-    𝜆[_]_ : ℕ → Tm → Tm
+  -- Implication
+  _⊃_ : Ty → Ty → Ty
 
-    -- Application (⊃E) at level n
-    _∘[_]_ : Tm → ℕ → Tm → Tm
+  -- Conjunction
+  _∧_ : Ty → Ty → Ty
 
-    -- Pairing (∧I) at level n
-    𝑝[_]⟨_,_⟩ : ℕ → Tm → Tm → Tm
-
-    -- 0th projection (∧E₀) at level n
-    𝜋₀[_]_ : ℕ → Tm → Tm
-
-    -- 1st projection (∧E₁) at level n
-    𝜋₁[_]_ : ℕ → Tm → Tm
-
-    -- Artëmov’s “proof checker”
-    !_ : Tm → Tm
-
-    -- Reification at level n
-    ⇑[_]_ : ℕ → Tm → Tm
-
-    -- Reflection at level n
-    ⇓[_]_ : ℕ → Tm → Tm
+  -- Explicit provability
+  _∶_ : Tm → Ty → Ty
 
 
 -- --------------------------------------------------------------------------
