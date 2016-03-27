@@ -1,12 +1,18 @@
 {-
 
-An implementation of the Alt-Artëmov system λ∞
-==============================================
+Extended reflective λ-calculus
+==============================
 
 Miëtek Bak  <mietek@bak.io>
 
 
-Work in progress.  Checked with Agda 2.4.2.5.
+A work-in-progress implementation of the Alt-Artëmov system λ∞,
+extended with ⊥-elimination via the principle of explosion.
+
+Summary of basic and extended system:
+https://www.dropbox.com/s/o33cc8vk23oqlt2/2016-03-27-extended.pdf
+
+Checked with Agda 2.4.2.5.
 
 For easy editing with Emacs agda-mode, add to your .emacs file:
 
