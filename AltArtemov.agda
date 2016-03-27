@@ -1,7 +1,7 @@
 {-
 
-Extended reflective λ-calculus
-==============================
+An extension of reflective λ-calculus
+=====================================
 
 Miëtek Bak  <mietek@bak.io>
 
