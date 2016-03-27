@@ -9,7 +9,7 @@ Miëtek Bak  <mietek@bak.io>
 A work-in-progress implementation of the Alt-Artëmov system λ∞,
 extended with ⊥-elimination via the principle of explosion.
 
-Summary of basic and extended system:
+See a summary of the basic and extended system:
 https://www.dropbox.com/s/o33cc8vk23oqlt2/2016-03-27-extended.pdf
 
 Checked with Agda 2.4.2.5.
@@ -28,7 +28,7 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
      ("pi1" "𝜋₁") ("pi12" "𝜋₁²") ("pi13" "𝜋₁³") ("pi14" "𝜋₁⁴") ("pi1n" "𝜋₁ⁿ")
      ("u" "⇑") ("u2" "⇑²") ("u3" "⇑³") ("u4" "⇑⁴") ("un" "⇑ⁿ")
      ("d" "⇓") ("d2" "⇓²") ("d3" "⇓³") ("d4" "⇓⁴") ("dn" "⇓ⁿ")
-     ("x" "✴") ("x2" "✴²") ("x3" "✴³") ("x4" "✴⁴") ("xn" "✴ⁿ")
+     ("x" "☆") ("x2" "☆²") ("x3" "☆³") ("x4" "☆⁴") ("xn" "☆ⁿ")
      ("b" "□")
      ("mv" "𝒗")
      ("ml" "𝝀") ("ml2" "𝝀²") ("ml3" "𝝀³") ("ml4" "𝝀⁴") ("mln" "𝝀ⁿ")
