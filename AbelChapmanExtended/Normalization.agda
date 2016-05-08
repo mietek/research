@@ -31,13 +31,13 @@ mutual
                       π₂-reduce v
 
 
-  ∞eval : ∀ {i Γ Δ a b} → Tm (Γ , a) b → Env Δ Γ → Val Δ a → ∞Delay i (Val Δ b)
-  force (∞eval t γ v) = eval t (γ , v)
+  ∞eval : ∀ {i Γ Δ a} → Tm Γ a → Env Δ Γ → ∞Delay i (Val Δ a)
+  force (∞eval t γ) = eval t γ
 
 
   β-reduce : ∀ {i Δ a b} → Val Δ (a ⇒ b) → Val Δ a → Delay i (Val Δ b)
   β-reduce (ne v)    w = now (ne (app v w))
-  β-reduce (lam t γ) w = later (∞eval t γ w)
+  β-reduce (lam t γ) w = later (∞eval t (γ , w))
 
 
   π₁-reduce : ∀ {i Δ a b} → Val Δ (a ∧ b) → Delay i (Val Δ a)

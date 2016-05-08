@@ -143,16 +143,15 @@ mutual
     where open ≈-Reasoning
 
 
-  ren-∞eval : ∀ {i Γ Δ Δ′ a b} (ρ : Δ′ ≥ Δ) →
-              (t : Tm (Γ , a) b) → (γ : Env Δ Γ) (v : Val Δ a) →
-              ren-val ρ ∞<$> ∞eval t γ v ∞≈⟨ i ⟩≈ ∞eval t (ren-env ρ γ) (ren-val ρ v)
-  ≈force (ren-∞eval ρ t γ v) = ren-eval ρ t (γ , v)
+  ren-∞eval : ∀ {i Γ Δ Δ′ a} (ρ : Δ′ ≥ Δ) (t : Tm Γ a) (γ : Env Δ Γ) →
+              ren-val ρ ∞<$> ∞eval t γ ∞≈⟨ i ⟩≈ ∞eval t (ren-env ρ γ)
+  ≈force (ren-∞eval ρ t γ) = ren-eval ρ t γ
 
 
   ren-β-reduce : ∀ {i Δ Δ′ a b} (ρ : Δ′ ≥ Δ) (v : Val Δ (a ⇒ b)) (w : Val Δ a) →
                  ren-val ρ <$> β-reduce v w ≈⟨ i ⟩≈ β-reduce (ren-val ρ v) (ren-val ρ w)
   ren-β-reduce ρ (ne v)    w = ≈refl
-  ren-β-reduce ρ (lam t γ) w = ≈later (ren-∞eval ρ t γ w)
+  ren-β-reduce ρ (lam t γ) w = ≈later (ren-∞eval ρ t (γ , w))
 
 
   ren-π₁-reduce : ∀ {i Δ Δ′ a b} (ρ : Δ′ ≥ Δ) (v : Val Δ (a ∧ b)) →
