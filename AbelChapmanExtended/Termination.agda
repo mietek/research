@@ -99,7 +99,7 @@ ren-E⟦⟧ ρ (γ , v) (⟦γ⟧ , ⟦v⟧) = (ren-E⟦⟧ ρ γ ⟦γ⟧ , ren
         C⟦ b ⟧ (v ← v? ⁏
                 w ← w? ⁏
                 β-reduce v w)
-⟦app⟧ {w? = w?} (v , ⇓v , ⟦v⟧) (w , ⇓w , ⟦w⟧) =
+⟦app⟧ (v , ⇓v , ⟦v⟧) (w , ⇓w , ⟦w⟧) =
       let (vw , ⇓vw , ⟦vw⟧) = ⟦v⟧ id w ⟦w⟧
           ⇓vw′              = ⇓bind ⇓v (⇓bind ⇓w (subst (λ v → β-reduce v w ⇓ vw)
                                                         (ren-val-id v)
@@ -126,20 +126,14 @@ ren-E⟦⟧ ρ (γ , v) (⟦γ⟧ , ⟦v⟧) = (ren-E⟦⟧ ρ γ ⟦γ⟧ , ren
         C⟦ a ∧ b ⟧ v? →
         C⟦ a ⟧ (v ← v? ⁏
                 π₁-reduce v)
-⟦fst⟧ {v? = v?} (v , ⇓v , (c₁ , c₂)) =
-      let (v₁ , ⇓v₁ , ⟦v₁⟧) = c₁
-          ⇓v₁′              = ⇓bind ⇓v ⇓v₁
-      in  (v₁ , ⇓v₁′ , ⟦v₁⟧)
+⟦fst⟧ (v , ⇓v , ((v₁ , ⇓v₁ , ⟦v₁⟧) , c₂)) = (v₁ , ⇓bind ⇓v ⇓v₁ , ⟦v₁⟧)
 
 
 ⟦snd⟧ : ∀ {Δ a b} {v? : Delay ∞ (Val Δ (a ∧ b))} →
         C⟦ a ∧ b ⟧ v? →
         C⟦ b ⟧ (v ← v? ⁏
                 π₂-reduce v)
-⟦snd⟧ {v? = v?} (v , ⇓v , (c₁ , c₂)) =
-      let (v₂ , ⇓v₂ , ⟦v₂⟧) = c₂
-          ⇓v₂′              = ⇓bind ⇓v ⇓v₂
-      in  (v₂ , ⇓v₂′ , ⟦v₂⟧)
+⟦snd⟧ (v , ⇓v , (c₁ , (v₂ , ⇓v₂ , ⟦v₂⟧))) = (v₂ , ⇓bind ⇓v ⇓v₂ , ⟦v₂⟧)
 
 
 term : ∀ {Γ Δ a} (t : Tm Γ a) (γ : Env Δ Γ) (⟦γ⟧ : E⟦ Γ ⟧ γ) → C⟦ a ⟧ (eval t γ)
@@ -200,8 +194,7 @@ normalize : (Γ : Cx) (a : Ty) (t : Tm Γ a) → ∃ λ n → nf? t ⇓ n
 normalize Γ a t =
       let (v , ⇓v , ⟦v⟧) = term t (id-env Γ) (⟦id-env⟧ Γ)
           (n , ⇓n)       = reify a v ⟦v⟧
-          ⇓n′            = ⇓bind ⇓v ⇓n
-      in  (n , ⇓n′)
+      in  (n , ⇓bind ⇓v ⇓n)
 
 
 nf : ∀ {Γ a} → Tm Γ a → Nf Γ a
