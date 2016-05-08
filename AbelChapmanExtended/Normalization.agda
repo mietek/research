@@ -9,14 +9,6 @@ open import AbelChapmanExtended.Renaming
 
 
 
-wk : ∀ {Γ a} → (Γ , a) ≥ Γ
-wk = weak id
-
-
-vk : ∀ {Δ a c} → Val Δ c → Val (Δ , a) c
-vk = ren-val wk
-
-
 lookup : ∀ {Γ Δ a} → Var Γ a → Env Δ Γ → Val Δ a
 lookup top     (γ , v) = v
 lookup (pop x) (γ , v) = lookup x γ
@@ -79,7 +71,7 @@ mutual
 
 
   ∞η-expand : ∀ {i Δ a b} → Val Δ (a ⇒ b) → ∞Delay i (Nf Δ (a ⇒ b))
-  force (∞η-expand v) = v′ ← β-reduce (ren-val wk v) (ne (var top)) ⁏
+  force (∞η-expand v) = v′ ← β-reduce (ren-val (weak id) v) (ne (var top)) ⁏
                         n′ ← readback v′ ⁏
                         now (lam n′)
 
@@ -94,7 +86,7 @@ mutual
 
 id-env : (Γ : Cx) → Env Γ Γ
 id-env ∅       = ∅
-id-env (Γ , a) = ren-env wk (id-env Γ) , ne (var top)
+id-env (Γ , a) = ren-env (weak id) (id-env Γ) , ne (var top)
 
 
 nf? : ∀ {Γ a} → Tm Γ a → Delay ∞ (Nf Γ a)

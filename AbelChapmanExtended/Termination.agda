@@ -159,7 +159,7 @@ mutual
   reify (a ⇒ b) v      ⟦v⟧       =
         let w                 = ne (var top)
             ⟦w⟧               = reflect a (var top) (var top , ⇓now)
-            (vw , ⇓vw , ⟦vw⟧) = ⟦v⟧ wk w ⟦w⟧
+            (vw , ⇓vw , ⟦vw⟧) = ⟦v⟧ (weak id) w ⟦w⟧
             (n , ⇓n)          = reify b vw ⟦vw⟧
             ⇓z                = ⇓later (⇓bind ⇓vw (⇓bind ⇓n ⇓now))
         in  (lam n , ⇓z)
@@ -196,7 +196,7 @@ reflect-var {a = a} x = reflect a (var x) (var x , ⇓now)
 
 ⟦id-env⟧ : (Γ : Cx) → E⟦ Γ ⟧ (id-env Γ)
 ⟦id-env⟧ ∅       = unit
-⟦id-env⟧ (Γ , a) = (ren-E⟦⟧ wk (id-env Γ) (⟦id-env⟧ Γ) , reflect-var {Γ = Γ , a} top)
+⟦id-env⟧ (Γ , a) = (ren-E⟦⟧ (weak id) (id-env Γ) (⟦id-env⟧ Γ) , reflect-var {Γ = Γ , a} top)
 
 
 normalize : (Γ : Cx) (a : Ty) (t : Tm Γ a) → ∃ λ n → nf? t ⇓ n

@@ -117,47 +117,47 @@ mutual
                   ren-nf ρ ∞<$> ∞η-expand v ∞≈⟨ i ⟩≈ ∞η-expand (ren-val ρ v)
   ≈force (ren-∞η-expand ρ v) =
     proof
-          ren-nf ρ <$> (v′ ← β-reduce (vk v) (ne (var top)) ⁏
+          ren-nf ρ <$> (v′ ← β-reduce (ren-val (weak id) v) (ne (var top)) ⁏
                         n′ ← readback v′ ⁏
                         now (lam n′))
-    ≈⟨ ⮦ β-reduce (vk v) (ne (var top)) ⟩
-          v′ ← β-reduce (vk v) nev₀ ⁏
+    ≈⟨ ⮦ β-reduce (ren-val (weak id) v) (ne (var top)) ⟩
+          v′ ← β-reduce (ren-val (weak id) v) nev₀ ⁏
           ren-nf ρ <$> (n′ ← readback v′ ⁏
                         now (lam n′))
-    ≈⟨ v′ ⇚ β-reduce (vk v) nev₀ ⁏
+    ≈⟨ v′ ⇚ β-reduce (ren-val (weak id) v) nev₀ ⁏
        ⮦ readback v′ ⟩
-          v′ ← β-reduce (vk v) nev₀ ⁏
+          v′ ← β-reduce (ren-val (weak id) v) nev₀ ⁏
           n′ ← readback v′ ⁏
           ren-nf ρ <$> now (lam n′)
-    ≈⟨ v′ ⇚ β-reduce (vk v) nev₀ ⁏
+    ≈⟨ v′ ⇚ β-reduce (ren-val (weak id) v) nev₀ ⁏
        n′ ⇚ readback v′ ⁏
        ≈now (lam (ren-nf (lift ρ) n′)) ⟩
-          v′ ← β-reduce (vk v) nev₀ ⁏
+          v′ ← β-reduce (ren-val (weak id) v) nev₀ ⁏
           n′ ← readback v′ ⁏
           n″ ← now (ren-nf (lift ρ) n′) ⁏
           now (lam n″)
-    ≈⟨ v′ ⇚ β-reduce (vk v) nev₀ ⁏
+    ≈⟨ v′ ⇚ β-reduce (ren-val (weak id) v) nev₀ ⁏
        ⮥ readback v′ ⟩
-          v′ ← β-reduce (vk v) nev₀ ⁏
+          v′ ← β-reduce (ren-val (weak id) v) nev₀ ⁏
           n″ ← ren-nf (lift ρ) <$> readback v′ ⁏
           now (lam n″)
-    ≈⟨ v′ ⇚ β-reduce (vk v) nev₀ ⁏
+    ≈⟨ v′ ⇚ β-reduce (ren-val (weak id) v) nev₀ ⁏
        ∵ ren-readback (lift ρ) v′ ⟩
-          v′ ← β-reduce (vk v) nev₀ ⁏
+          v′ ← β-reduce (ren-val (weak id) v) nev₀ ⁏
           n″ ← readback (ren-val (lift ρ) v′) ⁏
           now (lam n″)
-    ≈⟨ ⮥ β-reduce (vk v) nev₀ ⟩
-          v″ ← ren-val (lift ρ) <$> β-reduce (vk v) nev₀ ⁏
+    ≈⟨ ⮥ β-reduce (ren-val (weak id) v) nev₀ ⟩
+          v″ ← ren-val (lift ρ) <$> β-reduce (ren-val (weak id) v) nev₀ ⁏
           n″ ← readback v″ ⁏
           now (lam n″)
-    ≈⟨ ∵ ren-β-reduce (lift ρ) (vk v) nev₀ ⟩
-          v″ ← β-reduce (ren-val (lift ρ) (vk v)) nev₀ ⁏
+    ≈⟨ ∵ ren-β-reduce (lift ρ) (ren-val (weak id) v) nev₀ ⟩
+          v″ ← β-reduce (ren-val (lift ρ) (ren-val (weak id) v)) nev₀ ⁏
           n″ ← readback v″ ⁏
           now (lam n″)
     ≡⟨ cong (λ v → (v′ ← β-reduce v nev₀ ⁏
                      n′ ← readback v′ ⁏
                      now (lam n′)))
-            (ren-val-• (lift ρ) wk v) ⟩
+            (ren-val-• (lift ρ) (weak id) v) ⟩
           v″ ← β-reduce (ren-val (weak (ρ • id)) v) nev₀ ⁏
           n″ ← readback v″ ⁏
           now (lam n″)
@@ -171,8 +171,8 @@ mutual
     ≡⟨ cong (λ v → (v′ ← β-reduce v nev₀ ⁏
                      n′ ← readback v′ ⁏
                      now (lam n′)))
-            (sym (ren-val-• wk ρ v)) ⟩
-          v″ ← β-reduce (vk (ren-val ρ v)) nev₀ ⁏
+            (sym (ren-val-• (weak id) ρ v)) ⟩
+          v″ ← β-reduce (ren-val (weak id) (ren-val ρ v)) nev₀ ⁏
           n″ ← readback v″ ⁏
           now (lam n″)
     ∎
