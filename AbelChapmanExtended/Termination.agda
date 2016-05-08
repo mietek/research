@@ -119,8 +119,7 @@ ren-E⟦⟧ ρ (γ , v) (⟦γ⟧ , ⟦v⟧) = (ren-E⟦⟧ ρ γ ⟦γ⟧ , ren
 ⟦pair⟧ t u γ ⟦γ⟧ (v , ⇓v , ⟦v⟧) (w , ⇓w , ⟦w⟧) =
       let c   = (v , ⇓now , ⟦v⟧)
           d   = (w , ⇓now , ⟦w⟧)
-          ⇓z  = ⇓bind ⇓v (⇓bind ⇓w ⇓now)
-      in  (pair v w , ⇓z , c , d)
+      in  (pair v w , ⇓bind ⇓v (⇓bind ⇓w ⇓now) , c , d)
 
 
 ⟦fst⟧ : ∀ {Δ a b} {v? : Delay ∞ (Val Δ (a ∧ b))} →
@@ -161,16 +160,14 @@ mutual
             ⟦w⟧               = reflect a (var top) (var top , ⇓now)
             (vw , ⇓vw , ⟦vw⟧) = ⟦v⟧ (weak id) w ⟦w⟧
             (n , ⇓n)          = reify b vw ⟦vw⟧
-            ⇓z                = ⇓later (⇓bind ⇓vw (⇓bind ⇓n ⇓now))
-        in  (lam n , ⇓z)
+        in  (lam n , ⇓later (⇓bind ⇓vw (⇓bind ⇓n ⇓now)))
   reify ⊤       v      ⟦v⟧       = unit , ⇓now
   reify (a ∧ b)  v      (c₁ , c₂) =
         let (v₁ , ⇓v₁ , ⟦v₁⟧) = c₁
             (v₂ , ⇓v₂ , ⟦v₂⟧) = c₂
             (n₁ , ⇓n₁)        = reify a v₁ ⟦v₁⟧
             (n₂ , ⇓n₂)        = reify b v₂ ⟦v₂⟧
-            ⇓z                = ⇓later (⇓bind ⇓v₁ (⇓bind ⇓v₂ (⇓bind ⇓n₁ (⇓bind ⇓n₂ ⇓now))))
-        in  (pair n₁ n₂ , ⇓z)
+        in  (pair n₁ n₂ , ⇓later (⇓bind ⇓v₁ (⇓bind ⇓v₂ (⇓bind ⇓n₁ (⇓bind ⇓n₂ ⇓now)))))
 
   reflect : ∀ {Γ} (a : Ty) (v : Ne Val Γ a) → readback-ne v ⇓ → V⟦ a ⟧ (ne v)
   reflect ★        v ⇓v       = ⇓v
