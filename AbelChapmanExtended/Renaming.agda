@@ -61,6 +61,7 @@ mutual
   ren-nen ρ (app n m) = app (ren-nen ρ n) (ren-nf ρ m)
   ren-nen ρ (fst n)   = fst (ren-nen ρ n)
   ren-nen ρ (snd n)   = snd (ren-nen ρ n)
+  ren-nen ρ (loop n)  = loop (ren-nen ρ n)
 
 
   ren-nev : ∀ {Δ Δ′} → Δ′ ≥ Δ → Ren (Ne Val) Δ Δ′
@@ -68,6 +69,7 @@ mutual
   ren-nev ρ (app v w) = app (ren-nev ρ v) (ren-val ρ w)
   ren-nev ρ (fst v)   = fst (ren-nev ρ v)
   ren-nev ρ (snd v)   = snd (ren-nev ρ v)
+  ren-nev ρ (loop v)  = loop (ren-nev ρ v)
 
 
   ren-nf : ∀ {Δ Δ′} → Δ′ ≥ Δ → Ren Nf Δ Δ′
@@ -99,6 +101,7 @@ mutual
   ren-nev-id (app v w) = cong₂ app (ren-nev-id v) (ren-val-id w)
   ren-nev-id (fst v)   = cong fst (ren-nev-id v)
   ren-nev-id (snd v)   = cong snd (ren-nev-id v)
+  ren-nev-id (loop v)  = cong loop (ren-nev-id v)
 
 
   ren-val-id : ∀ {Δ a} (v : Val Δ a) → ren-val id v ≡ v
@@ -130,6 +133,7 @@ mutual
   ren-nev-• ρ′ ρ (app v w) = cong₂ app (ren-nev-• ρ′ ρ v) (ren-val-• ρ′ ρ w)
   ren-nev-• ρ′ ρ (fst v)   = cong fst (ren-nev-• ρ′ ρ v)
   ren-nev-• ρ′ ρ (snd v)   = cong snd (ren-nev-• ρ′ ρ v)
+  ren-nev-• ρ′ ρ (loop v)  = cong loop (ren-nev-• ρ′ ρ v)
 
 
   ren-val-• : ∀ {Δ Δ′ Δ″ a} (ρ′ : Δ″ ≥ Δ′) (ρ : Δ′ ≥ Δ) (v : Val Δ a) →

@@ -32,6 +32,7 @@ mutual
   ren-readback {a = a ⇒ b} ρ v      = ≈later (ren-∞η-expand ρ v)
   ren-readback {a = ⊤}     ρ v      = ≈now unit
   ren-readback {a = a ∧ b}  ρ v      = ≈later (ren-∞π-expand ρ v)
+  ren-readback {a = ⊥}     ρ v      = ≈later (ren-∞ω-expand ρ v)
 
 
   ren-readback-ne : ∀ {i Δ Δ′ a} (ρ : Δ′ ≥ Δ) (v : Ne Val Δ a) →
@@ -109,6 +110,24 @@ mutual
     ≈⟨ ∵ ren-readback-ne ρ v ⟩
           n′ ← readback-ne (ren-nev ρ v) ⁏
           now (snd n′)
+    ∎
+    where open ≈-Reasoning
+  ren-readback-ne ρ (loop v) =
+    proof
+          ren-nen ρ <$> (n ← readback-ne v ⁏
+                         now (loop n))
+    ≈⟨ ⮦ readback-ne v ⟩
+          n ← readback-ne v ⁏
+          ren-nen ρ <$> now (loop n)
+    ≡⟨⟩
+          n ← readback-ne v ⁏
+          now (loop (ren-nen ρ n))
+    ≈⟨ ⮥ readback-ne v ⟩
+          n′ ← ren-nen ρ <$> readback-ne v ⁏
+          now (loop n′)
+    ≈⟨ ∵ ren-readback-ne ρ v ⟩
+          n′ ← readback-ne (ren-nev ρ v) ⁏
+          now (loop n′)
     ∎
     where open ≈-Reasoning
 
@@ -290,3 +309,8 @@ mutual
           now (pair n″ m″)
     ∎
     where open ≈-Reasoning
+
+
+  ren-∞ω-expand : ∀ {i Δ Δ′} (ρ : Δ′ ≥ Δ) (v : Val Δ ⊥) →
+                  (ren-nf ρ ∞<$> ∞ω-expand v) ∞≈⟨ i ⟩≈ ∞ω-expand (ren-val ρ v)
+  ≈force (ren-∞ω-expand ρ v) = ≈later (ren-∞ω-expand ρ v)

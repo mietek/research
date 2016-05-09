@@ -141,6 +141,25 @@ mutual
           π₂-reduce v′
     ∎
     where open ≈-Reasoning
+  ren-eval ρ (loop t) γ =
+    proof
+          ren-val ρ <$> (v ← eval t γ ⁏
+                         ω-reduce v)
+    ≈⟨ ⮦ eval t γ ⟩
+          v ← eval t γ ⁏
+          ren-val ρ <$> ω-reduce v
+    ≈⟨ v ⇚ eval t γ ⁏
+       ren-ω-reduce ρ v ⟩
+          v ← eval t γ ⁏
+          ω-reduce (ren-val ρ v)
+    ≈⟨ ⮥ eval t γ ⟩
+          v′ ← ren-val ρ <$> eval t γ ⁏
+          ω-reduce v′
+    ≈⟨ ∵ ren-eval ρ t γ ⟩
+          v′ ← eval t (ren-env ρ γ) ⁏
+          ω-reduce v′
+    ∎
+    where open ≈-Reasoning
 
 
   ren-∞eval : ∀ {i Γ Δ Δ′ a} (ρ : Δ′ ≥ Δ) (t : Tm Γ a) (γ : Env Δ Γ) →
@@ -164,3 +183,8 @@ mutual
                   ren-val ρ <$> π₂-reduce v ≈⟨ i ⟩≈ π₂-reduce (ren-val ρ v)
   ren-π₂-reduce ρ (ne v)     = ≈refl
   ren-π₂-reduce ρ (pair v w) = ≈refl
+
+
+  ren-ω-reduce : ∀ {i Δ Δ′ a} (ρ : Δ′ ≥ Δ) (v : Val Δ ⊥) →
+                 ren-val ρ <$> ω-reduce v ≈⟨ i ⟩≈ ω-reduce {a = a} (ren-val ρ v)
+  ren-ω-reduce ρ (ne v)     = ≈refl

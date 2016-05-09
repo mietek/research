@@ -1,5 +1,6 @@
 module AbelChapmanExtended.Termination where
 
+open import Data.Empty using () renaming (⊥ to Empty ; ⊥-elim to explode)
 open import Data.Product using (∃ ; _×_ ; _,_)
 open import Data.Unit using () renaming (⊤ to Unit ; tt to unit)
 open import Relation.Binary.PropositionalEquality using (sym ; subst)
@@ -23,6 +24,7 @@ mutual
                      V⟦ a ⟧ w → C⟦ b ⟧ (β-reduce (ren-val ρ v) w)
   V⟦ ⊤ ⟧     v    = Unit
   V⟦ a ∧ b ⟧  v    = C⟦ a ⟧ (π₁-reduce v) × C⟦ b ⟧ (π₂-reduce v)
+  V⟦ ⊥ ⟧     v    = Empty
 
 
   C⟦_⟧_ : ∀ {Γ} (a : Ty) → Delay ∞ (Val Γ a) → Set
@@ -69,6 +71,7 @@ ren-V⟦⟧ (a ∧ b)  ρ v      (c₁ , c₂)    =
           ⟦v₁⟧′             = ren-V⟦⟧ a ρ v₁ ⟦v₁⟧
           ⟦v₂⟧′             = ren-V⟦⟧ b ρ v₂ ⟦v₂⟧
       in  (v₁′ , ⇓v₁′ , ⟦v₁⟧′) , (v₂′ , ⇓v₂′ , ⟦v₂⟧′)
+ren-V⟦⟧ ⊥       ρ v      ()
 
 
 ren-E⟦⟧ : ∀ {Γ Δ Δ′} (ρ : Δ′ ≥ Δ) (γ : Env Δ Γ) →
@@ -139,6 +142,13 @@ ren-E⟦⟧ ρ (γ , v) (⟦γ⟧ , ⟦v⟧) = (ren-E⟦⟧ ρ γ ⟦γ⟧ , ren
 ⟦snd⟧ (v , ⇓v , (c₁ , (v₂ , ⇓v₂ , ⟦v₂⟧))) = (v₂ , ⇓bind ⇓v ⇓v₂ , ⟦v₂⟧)
 
 
+⟦loop⟧ : ∀ {Δ a} {v? : Delay ∞ (Val Δ ⊥)} →
+         C⟦ ⊥ ⟧ v? →
+         C⟦ a ⟧ (v ← v? ⁏
+                 ω-reduce v)
+⟦loop⟧ (v , ⇓v , ())
+
+
 term : ∀ {Γ Δ a} (t : Tm Γ a) (γ : Env Δ Γ) (⟦γ⟧ : E⟦ Γ ⟧ γ) → C⟦ a ⟧ (eval t γ)
 term (var x)    γ ⟦γ⟧ = ⟦var⟧ x γ ⟦γ⟧
 term (lam t)    γ ⟦γ⟧ = ⟦lam⟧ t γ ⟦γ⟧ (λ ρ w ⟦w⟧ →
@@ -148,6 +158,7 @@ term unit       γ ⟦γ⟧ = ⟦unit⟧
 term (pair t u) γ ⟦γ⟧ = ⟦pair⟧ t u γ ⟦γ⟧ (term t γ ⟦γ⟧) (term u γ ⟦γ⟧)
 term (fst t)    γ ⟦γ⟧ = ⟦fst⟧ (term t γ ⟦γ⟧)
 term (snd t)    γ ⟦γ⟧ = ⟦snd⟧ (term t γ ⟦γ⟧)
+term (loop t)   γ ⟦γ⟧ = ⟦loop⟧ (term t γ ⟦γ⟧)
 
 
 mutual
@@ -166,7 +177,9 @@ mutual
             (n₁ , ⇓n₁)        = reify a v₁ ⟦v₁⟧
             (n₂ , ⇓n₂)        = reify b v₂ ⟦v₂⟧
         in  (pair n₁ n₂ , ⇓later (⇓bind ⇓v₁ (⇓bind ⇓v₂ (⇓bind ⇓n₁ (⇓bind ⇓n₂ ⇓now)))))
+  reify ⊥       v      ()
 
+  {-# TERMINATING #-}
   reflect : ∀ {Γ} (a : Ty) (v : Ne Val Γ a) → readback-ne v ⇓ → V⟦ a ⟧ (ne v)
   reflect ★        v ⇓v       = ⇓v
   reflect (a ⇒ b) v (n , ⇓n) = λ ρ w ⟦w⟧ →
@@ -183,6 +196,10 @@ mutual
             ⟦v₁⟧ = reflect a v₁ (fst n , ⇓bind ⇓n ⇓now)
             ⟦v₂⟧ = reflect b v₂ (snd n , ⇓bind ⇓n ⇓now)
         in  (ne v₁ , ⇓now , ⟦v₁⟧) , (ne v₂ , ⇓now , ⟦v₂⟧)
+  reflect ⊥       v (n , ⇓n) =
+        let v∞   = loop v
+            ⟦v∞⟧ = reflect ⊥ v∞ (loop n , ⇓bind ⇓n ⇓now)
+        in  explode ⟦v∞⟧
 
 
 reflect-var : ∀ {Γ a} (x : Var Γ a) → V⟦ a ⟧ ne (var x)

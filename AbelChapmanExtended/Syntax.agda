@@ -8,6 +8,7 @@ data Ty : Set where
   _⇒_ : (a b : Ty) → Ty
   ⊤   :               Ty
   _∧_  : (a b : Ty) → Ty
+  ⊥   :               Ty
 
 infixr 5 _⇒_
 
@@ -30,6 +31,7 @@ data Tm (Γ : Cx) : Ty → Set where
   pair : ∀ {a b} (t : Tm Γ a)        (u : Tm Γ b) → Tm Γ (a ∧ b)
   fst  : ∀ {a b} (t : Tm Γ (a ∧ b))               → Tm Γ a
   snd  : ∀ {a b} (t : Tm Γ (a ∧ b))               → Tm Γ b
+  loop : ∀ {c}   (t : Tm Γ ⊥)                    → Tm Γ c
 
 
 data Ne (Ξ : Cx → Ty → Set) (Γ : Cx) : Ty → Set where
@@ -37,6 +39,7 @@ data Ne (Ξ : Cx → Ty → Set) (Γ : Cx) : Ty → Set where
   app : ∀ {a b} → Ne Ξ Γ (a ⇒ b) → Ξ Γ a → Ne Ξ Γ b
   fst : ∀ {a b} → Ne Ξ Γ (a ∧ b)           → Ne Ξ Γ a
   snd : ∀ {a b} → Ne Ξ Γ (a ∧ b)           → Ne Ξ Γ b
+  loop : ∀ {c}   → Ne Ξ Γ ⊥                → Ne Ξ Γ c
 
 
 data Nf (Δ : Cx) : Ty → Set where

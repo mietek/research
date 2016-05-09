@@ -29,6 +29,8 @@ mutual
                       π₁-reduce v
   eval (snd t)    γ = v ← eval t γ ⁏
                       π₂-reduce v
+  eval (loop t)   γ = v ← eval t γ ⁏
+                      ω-reduce v
 
 
   ∞eval : ∀ {i Γ Δ a} → Tm Γ a → Env Δ Γ → ∞Delay i (Val Δ a)
@@ -50,6 +52,9 @@ mutual
   π₂-reduce (pair v w) = now w
 
 
+  ω-reduce : ∀ {i Δ a} → Val Δ ⊥ → Delay i (Val Δ a)
+  ω-reduce (ne v) = now (ne (loop v))
+
 
 mutual
   readback : ∀ {i Δ a} → Val Δ a → Delay i (Nf Δ a)
@@ -57,6 +62,7 @@ mutual
   readback {a = a ⇒ b} v      = later (∞η-expand v)
   readback {a = ⊤}     v      = now unit
   readback {a = a ∧ b}  v      = later (∞π-expand v)
+  readback {a = ⊥}     v      = later (∞ω-expand v)
 
 
   readback-ne : ∀ {i Δ a} → Ne Val Δ a → Delay i (Ne Nf Δ a)
@@ -68,6 +74,8 @@ mutual
                           now (fst n)
   readback-ne (snd v)   = n ← readback-ne v ⁏
                           now (snd n)
+  readback-ne (loop v)  = n ← readback-ne v ⁏
+                          now (loop n)
 
 
   ∞η-expand : ∀ {i Δ a b} → Val Δ (a ⇒ b) → ∞Delay i (Nf Δ (a ⇒ b))
@@ -82,6 +90,10 @@ mutual
                         n′ ← readback v′ ⁏
                         m′ ← readback w′ ⁏
                         now (pair n′ m′)
+
+
+  ∞ω-expand : ∀ {i Δ} → Val Δ ⊥ → ∞Delay i (Nf Δ ⊥)
+  force (∞ω-expand v) = later (∞ω-expand v)
 
 
 id-env : (Γ : Cx) → Env Γ Γ
