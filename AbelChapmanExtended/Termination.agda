@@ -52,7 +52,7 @@ E⟦ Γ , a ⟧ (γ , v) = E⟦ Γ ⟧ γ × V⟦ a ⟧ v
 ren-V⟦⟧ : ∀ {Δ Δ′} (a : Ty) (ρ : Δ′ ≥ Δ) (v : Val Δ a) →
           V⟦ a ⟧ v → V⟦ a ⟧ (ren-val ρ v)
 ren-V⟦⟧ ★        ρ (ne v) (v′ , ⇓v′)   = (ren-nen ρ v′ , ⇓ren-readback-ne ρ v ⇓v′)
-ren-V⟦⟧ (a ⇒ b) ρ v      ⟦v⟧ ρ′ w ⟦w⟧ =
+ren-V⟦⟧ (a ⇒ b) ρ v      ⟦v⟧          = λ ρ′ w ⟦w⟧ →
       let (vw , ⇓vw , ⟦vw⟧) = ⟦v⟧ (ρ′ • ρ) w ⟦w⟧
           ⇓vw′              = subst (λ v′ → β-reduce v′ w ⇓ vw)
                                     (sym (ren-val-• ρ′ ρ v))
@@ -89,9 +89,12 @@ ren-E⟦⟧ ρ (γ , v) (⟦γ⟧ , ⟦v⟧) = (ren-E⟦⟧ ρ γ ⟦γ⟧ , ren
 
 
 ⟦lam⟧ : ∀ {Γ Δ a b} (t : Tm (Γ , a) b) (γ : Env Δ Γ) (⟦γ⟧ : E⟦ Γ ⟧ γ) →
-        (∀ {Δ′} (ρ : Δ′ ≥ Δ) (w : Val Δ′ a) (⟦w⟧ : V⟦ a ⟧ w) → C⟦ b ⟧ (eval t (ren-env ρ γ , w))) →
+        (∀ {Δ′} (ρ : Δ′ ≥ Δ) (w : Val Δ′ a)
+         (⟦w⟧ : V⟦ a ⟧ w) → C⟦ b ⟧ (eval t (ren-env ρ γ , w))) →
         C⟦ a ⇒ b ⟧ (now (lam t γ))
-⟦lam⟧ t γ ⟦γ⟧ h = (lam t γ , ⇓now , (λ ρ w ⟦w⟧ → β-reduce-sound t (ren-env ρ γ) (h ρ w ⟦w⟧)))
+⟦lam⟧ t γ ⟦γ⟧ h =
+      (lam t γ , ⇓now , λ ρ w ⟦w⟧ →
+            β-reduce-sound t (ren-env ρ γ) (h ρ w ⟦w⟧))
 
 
 ⟦app⟧ : ∀ {Δ a b} {v? : Delay ∞ (Val Δ (a ⇒ b))} {w? : Delay ∞ (Val Δ a)} →
@@ -108,7 +111,7 @@ ren-E⟦⟧ ρ (γ , v) (⟦γ⟧ , ⟦v⟧) = (ren-E⟦⟧ ρ γ ⟦γ⟧ , ren
 
 
 ⟦unit⟧ : ∀ {Δ} → C⟦_⟧_ {Δ} ⊤ (now unit)
-⟦unit⟧ = unit , ⇓now , unit
+⟦unit⟧ = (unit , ⇓now , unit)
 
 
 ⟦pair⟧ : ∀ {Γ Δ a b} (t : Tm Γ a) (u : Tm Γ b) (γ : Env Δ Γ) (⟦γ⟧ : E⟦ Γ ⟧ γ) →
@@ -138,7 +141,8 @@ ren-E⟦⟧ ρ (γ , v) (⟦γ⟧ , ⟦v⟧) = (ren-E⟦⟧ ρ γ ⟦γ⟧ , ren
 
 term : ∀ {Γ Δ a} (t : Tm Γ a) (γ : Env Δ Γ) (⟦γ⟧ : E⟦ Γ ⟧ γ) → C⟦ a ⟧ (eval t γ)
 term (var x)    γ ⟦γ⟧ = ⟦var⟧ x γ ⟦γ⟧
-term (lam t)    γ ⟦γ⟧ = ⟦lam⟧ t γ ⟦γ⟧ (λ ρ w ⟦w⟧ → term t (ren-env ρ γ , w) (ren-E⟦⟧ ρ γ ⟦γ⟧ , ⟦w⟧))
+term (lam t)    γ ⟦γ⟧ = ⟦lam⟧ t γ ⟦γ⟧ (λ ρ w ⟦w⟧ →
+      term t (ren-env ρ γ , w) (ren-E⟦⟧ ρ γ ⟦γ⟧ , ⟦w⟧))
 term (app t u)  γ ⟦γ⟧ = ⟦app⟧ (term t γ ⟦γ⟧) (term u γ ⟦γ⟧)
 term unit       γ ⟦γ⟧ = ⟦unit⟧
 term (pair t u) γ ⟦γ⟧ = ⟦pair⟧ t u γ ⟦γ⟧ (term t γ ⟦γ⟧) (term u γ ⟦γ⟧)
@@ -167,13 +171,13 @@ mutual
   reflect ★        v ⇓v       = ⇓v
   reflect (a ⇒ b) v (n , ⇓n) = λ ρ w ⟦w⟧ →
         let (m , ⇓m) = reify a w ⟦w⟧
-            n′      = ren-nen ρ n
-            ⇓n′     = ⇓ren-readback-ne ρ v ⇓n
-            vw      = app (ren-nev ρ v) w
-            ⟦vw⟧    = reflect b vw (app n′ m , ⇓bind ⇓n′ (⇓bind ⇓m ⇓now))
+            n′       = ren-nen ρ n
+            ⇓n′      = ⇓ren-readback-ne ρ v ⇓n
+            vw       = app (ren-nev ρ v) w
+            ⟦vw⟧     = reflect b vw (app n′ m , ⇓bind ⇓n′ (⇓bind ⇓m ⇓now))
         in  (ne vw , ⇓now , ⟦vw⟧)
   reflect ⊤       v ⇓v       = unit
-  reflect (a ∧ b) v (n , ⇓n)  =
+  reflect (a ∧ b)  v (n , ⇓n) =
         let v₁   = fst v
             v₂   = snd v
             ⟦v₁⟧ = reflect a v₁ (fst n , ⇓bind ⇓n ⇓now)
