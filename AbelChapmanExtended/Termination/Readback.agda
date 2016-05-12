@@ -16,7 +16,7 @@ open import AbelChapmanExtended.Termination.Eval
 mutual
   ren-readback : ∀ {i Δ Δ′} {a : Ty} (ρ : Δ′ ≥ Δ) (v : Val Δ a) →
                  ren-nf ρ <$> readback v ≈⟨ i ⟩≈ readback (ren-val ρ v)
-  ren-readback {a = ★}      ρ (ne v) =
+  ren-readback {a = ⊥}     ρ (ne v) =
     proof
           ren-nf ρ <$> (ne <$> readback-ne v)
     ≈⟨ ⮦ readback-ne v ⟩
@@ -32,7 +32,6 @@ mutual
   ren-readback {a = a ⇒ b} ρ v      = ≈later (ren-∞η-expand ρ v)
   ren-readback {a = ⊤}     ρ v      = ≈now unit
   ren-readback {a = a ∧ b}  ρ v      = ≈later (ren-∞π-expand ρ v)
-  ren-readback {a = ⊥}     ρ v      = ≈later (ren-∞ω-expand ρ v)
 
 
   ren-readback-ne : ∀ {i Δ Δ′ a} (ρ : Δ′ ≥ Δ) (v : Ne Val Δ a) →
@@ -309,8 +308,3 @@ mutual
           now (pair n″ m″)
     ∎
     where open ≈-Reasoning
-
-
-  ren-∞ω-expand : ∀ {i Δ Δ′} (ρ : Δ′ ≥ Δ) (v : Val Δ ⊥) →
-                  (ren-nf ρ ∞<$> ∞ω-expand v) ∞≈⟨ i ⟩≈ ∞ω-expand (ren-val ρ v)
-  ≈force (ren-∞ω-expand ρ v) = ≈later (ren-∞ω-expand ρ v)

@@ -58,11 +58,10 @@ mutual
 
 mutual
   readback : ∀ {i Δ a} → Val Δ a → Delay i (Nf Δ a)
-  readback {a = ★}      (ne v) = ne <$> readback-ne v
+  readback {a = ⊥}     (ne v) = ne <$> readback-ne v
   readback {a = a ⇒ b} v      = later (∞η-expand v)
   readback {a = ⊤}     v      = now unit
   readback {a = a ∧ b}  v      = later (∞π-expand v)
-  readback {a = ⊥}     v      = later (∞ω-expand v)
 
 
   readback-ne : ∀ {i Δ a} → Ne Val Δ a → Delay i (Ne Nf Δ a)
@@ -90,10 +89,6 @@ mutual
                         n′ ← readback v′ ⁏
                         m′ ← readback w′ ⁏
                         now (pair n′ m′)
-
-
-  ∞ω-expand : ∀ {i Δ} → Val Δ ⊥ → ∞Delay i (Nf Δ ⊥)
-  force (∞ω-expand v) = later (∞ω-expand v)
 
 
 id-env : (Γ : Cx) → Env Γ Γ

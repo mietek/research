@@ -4,11 +4,10 @@ module AbelChapmanExtended.Syntax where
 
 
 data Ty : Set where
-  ★    :               Ty
+  ⊥   :               Ty
   _⇒_ : (a b : Ty) → Ty
   ⊤   :               Ty
   _∧_  : (a b : Ty) → Ty
-  ⊥   :               Ty
 
 infixr 5 _⇒_
 
@@ -43,7 +42,7 @@ data Ne (Ξ : Cx → Ty → Set) (Γ : Cx) : Ty → Set where
 
 
 data Nf (Δ : Cx) : Ty → Set where
-  ne   :          (n : Ne Nf Δ ★)           → Nf Δ ★
+  ne   :          (n : Ne Nf Δ ⊥)          → Nf Δ ⊥
   lam  : ∀ {a b} (n : Nf (Δ , a) b)        → Nf Δ (a ⇒ b)
   unit :                                       Nf Δ ⊤
   pair : ∀ {a b} (n : Nf Δ a) (m : Nf Δ b) → Nf Δ (a ∧ b)
