@@ -14,3 +14,6 @@ open import AbelChapmanExtended.Semantics
 open import AbelChapmanExtended.Reflection
 open import AbelChapmanExtended.Termination
 open import AbelChapmanExtended.Examples
+
+open import TowardsAltArtemov.SyntaxCatholic
+open import TowardsAltArtemov.NormalizationCatholic
