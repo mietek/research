@@ -19,11 +19,11 @@ mutual
   ren-readback {a = ⊥}     ρ (ne v) =
     proof
           ren-nf ρ <$> (ne <$> readback-ne v)
-    ≈⟨ ⮦ readback-ne v ⟩
+    ≈⟨ ⋘ readback-ne v ⟩
           (ren-nf ρ ∘ ne) <$> readback-ne v
     ≡⟨⟩
           (ne ∘ ren-nen ρ) <$> readback-ne v
-    ≈⟨ ⮥ readback-ne v ⟩
+    ≈⟨ ⋙ readback-ne v ⟩
           ne <$> (ren-nen ρ <$> readback-ne v)
     ≈⟨ ∵ ren-readback-ne ρ v ⟩
           ne <$> readback-ne (ren-nev ρ v)
@@ -42,12 +42,12 @@ mutual
           ren-nen ρ <$> (n ← readback-ne v ⁏
                          m ← readback w ⁏
                          now (app n m))
-    ≈⟨ ⮦ readback-ne v ⟩
+    ≈⟨ ⋘ readback-ne v ⟩
           n ← readback-ne v ⁏
           ren-nen ρ <$> (m ← readback w ⁏
                          now (app n m))
     ≈⟨ n ⇚ readback-ne v ⁏
-       ⮦ readback w ⟩
+       ⋘ readback w ⟩
           n ← readback-ne v ⁏
           m ← readback w ⁏
           ren-nen ρ <$> now (app n m)
@@ -56,11 +56,11 @@ mutual
           m ← readback w ⁏
           now (app (ren-nen ρ n) (ren-nf ρ m))
     ≈⟨ n ⇚ readback-ne v ⁏
-       ⮥ readback w ⟩
+       ⋙ readback w ⟩
           n  ← readback-ne v ⁏
           m′ ← ren-nf ρ <$> readback w ⁏
           now (app (ren-nen ρ n) m′)
-    ≈⟨ ⮥ readback-ne v ⟩
+    ≈⟨ ⋙ readback-ne v ⟩
           n′ ← ren-nen ρ <$> readback-ne v ⁏
           m′ ← ren-nf ρ <$> readback w ⁏
           now (app n′ m′)
@@ -79,13 +79,13 @@ mutual
     proof
           ren-nen ρ <$> (n ← readback-ne v ⁏
                          now (fst n))
-    ≈⟨ ⮦ readback-ne v ⟩
+    ≈⟨ ⋘ readback-ne v ⟩
           n ← readback-ne v ⁏
           ren-nen ρ <$> now (fst n)
     ≡⟨⟩
           n ← readback-ne v ⁏
           now (fst (ren-nen ρ n))
-    ≈⟨ ⮥ readback-ne v ⟩
+    ≈⟨ ⋙ readback-ne v ⟩
           n′ ← ren-nen ρ <$> readback-ne v ⁏
           now (fst n′)
     ≈⟨ ∵ ren-readback-ne ρ v ⟩
@@ -97,13 +97,13 @@ mutual
     proof
           ren-nen ρ <$> (n ← readback-ne v ⁏
                          now (snd n))
-    ≈⟨ ⮦ readback-ne v ⟩
+    ≈⟨ ⋘ readback-ne v ⟩
           n ← readback-ne v ⁏
           ren-nen ρ <$> now (snd n)
     ≡⟨⟩
           n ← readback-ne v ⁏
           now (snd (ren-nen ρ n))
-    ≈⟨ ⮥ readback-ne v ⟩
+    ≈⟨ ⋙ readback-ne v ⟩
           n′ ← ren-nen ρ <$> readback-ne v ⁏
           now (snd n′)
     ≈⟨ ∵ ren-readback-ne ρ v ⟩
@@ -115,13 +115,13 @@ mutual
     proof
           ren-nen ρ <$> (n ← readback-ne v ⁏
                          now (loop n))
-    ≈⟨ ⮦ readback-ne v ⟩
+    ≈⟨ ⋘ readback-ne v ⟩
           n ← readback-ne v ⁏
           ren-nen ρ <$> now (loop n)
     ≡⟨⟩
           n ← readback-ne v ⁏
           now (loop (ren-nen ρ n))
-    ≈⟨ ⮥ readback-ne v ⟩
+    ≈⟨ ⋙ readback-ne v ⟩
           n′ ← ren-nen ρ <$> readback-ne v ⁏
           now (loop n′)
     ≈⟨ ∵ ren-readback-ne ρ v ⟩
@@ -138,12 +138,12 @@ mutual
           ren-nf ρ <$> (v′ ← β-reduce (ren-val (weak id) v) (ne (var top)) ⁏
                         n′ ← readback v′ ⁏
                         now (lam n′))
-    ≈⟨ ⮦ β-reduce (ren-val (weak id) v) (ne (var top)) ⟩
+    ≈⟨ ⋘ β-reduce (ren-val (weak id) v) (ne (var top)) ⟩
           v′ ← β-reduce (ren-val (weak id) v) nev₀ ⁏
           ren-nf ρ <$> (n′ ← readback v′ ⁏
                         now (lam n′))
     ≈⟨ v′ ⇚ β-reduce (ren-val (weak id) v) nev₀ ⁏
-       ⮦ readback v′ ⟩
+       ⋘ readback v′ ⟩
           v′ ← β-reduce (ren-val (weak id) v) nev₀ ⁏
           n′ ← readback v′ ⁏
           ren-nf ρ <$> now (lam n′)
@@ -155,7 +155,7 @@ mutual
           n″ ← now (ren-nf (lift ρ) n′) ⁏
           now (lam n″)
     ≈⟨ v′ ⇚ β-reduce (ren-val (weak id) v) nev₀ ⁏
-       ⮥ readback v′ ⟩
+       ⋙ readback v′ ⟩
           v′ ← β-reduce (ren-val (weak id) v) nev₀ ⁏
           n″ ← ren-nf (lift ρ) <$> readback v′ ⁏
           now (lam n″)
@@ -164,7 +164,7 @@ mutual
           v′ ← β-reduce (ren-val (weak id) v) nev₀ ⁏
           n″ ← readback (ren-val (lift ρ) v′) ⁏
           now (lam n″)
-    ≈⟨ ⮥ β-reduce (ren-val (weak id) v) nev₀ ⟩
+    ≈⟨ ⋙ β-reduce (ren-val (weak id) v) nev₀ ⟩
           v″ ← ren-val (lift ρ) <$> β-reduce (ren-val (weak id) v) nev₀ ⁏
           n″ ← readback v″ ⁏
           now (lam n″)
@@ -206,14 +206,14 @@ mutual
                         n′ ← readback v′ ⁏
                         m′ ← readback w′ ⁏
                         now (pair n′ m′))
-    ≈⟨ ⮦ π₁-reduce v ⟩
+    ≈⟨ ⋘ π₁-reduce v ⟩
           v′ ← π₁-reduce v ⁏
           ren-nf ρ <$> (w′ ← π₂-reduce v ⁏
                         n′ ← readback v′ ⁏
                         m′ ← readback w′ ⁏
                         now (pair n′ m′))
     ≈⟨ v′ ⇚ π₁-reduce v ⁏
-       ⮦ π₂-reduce v ⟩
+       ⋘ π₂-reduce v ⟩
           v′ ← π₁-reduce v ⁏
           w′ ← π₂-reduce v ⁏
           ren-nf ρ <$> (n′ ← readback v′ ⁏
@@ -221,7 +221,7 @@ mutual
                         now (pair n′ m′))
     ≈⟨ v′ ⇚ π₁-reduce v ⁏
        w′ ⇚ π₂-reduce v ⁏
-       ⮦ readback v′ ⟩
+       ⋘ readback v′ ⟩
           v′ ← π₁-reduce v ⁏
           w′ ← π₂-reduce v ⁏
           n′ ← readback v′ ⁏
@@ -230,7 +230,7 @@ mutual
     ≈⟨ v′ ⇚ π₁-reduce v ⁏
        w′ ⇚ π₂-reduce v ⁏
        n′ ⇚ readback v′ ⁏
-       ⮦ readback w′ ⟩
+       ⋘ readback w′ ⟩
           v′ ← π₁-reduce v ⁏
           w′ ← π₂-reduce v ⁏
           n′ ← readback v′ ⁏
@@ -249,7 +249,7 @@ mutual
     ≈⟨ v′ ⇚ π₁-reduce v ⁏
        w′ ⇚ π₂-reduce v ⁏
        n′ ⇚ readback v′ ⁏
-       ⮥ readback w′ ⟩
+       ⋙ readback w′ ⟩
           v′ ← π₁-reduce v ⁏
           w′ ← π₂-reduce v ⁏
           n′ ← readback v′ ⁏
@@ -257,7 +257,7 @@ mutual
           now (pair (ren-nf ρ n′) m″)
     ≈⟨ v′ ⇚ π₁-reduce v ⁏
        w′ ⇚ π₂-reduce v ⁏
-       ⮥ readback v′ ⟩
+       ⋙ readback v′ ⟩
           v′ ← π₁-reduce v ⁏
           w′ ← π₂-reduce v ⁏
           n″ ← ren-nf ρ <$>  readback v′ ⁏
@@ -281,13 +281,13 @@ mutual
           m″ ← readback (ren-val ρ w′) ⁏
           now (pair n″ m″)
     ≈⟨ v′ ⇚ (π₁-reduce v) ⁏
-       ⮥ π₂-reduce v ⟩
+       ⋙ π₂-reduce v ⟩
           v′ ← π₁-reduce v ⁏
           w″ ← ren-val ρ <$> π₂-reduce v ⁏
           n″ ← readback (ren-val ρ v′) ⁏
           m″ ← readback w″ ⁏
           now (pair n″ m″)
-    ≈⟨ ⮥ π₁-reduce v ⟩
+    ≈⟨ ⋙ π₁-reduce v ⟩
           v″ ← ren-val ρ <$> π₁-reduce v ⁏
           w″ ← ren-val ρ <$> π₂-reduce v ⁏
           n″ ← readback v″ ⁏

@@ -27,12 +27,12 @@ mutual
           ren-val ρ <$> (v ← eval t γ ⁏
                          w ← eval u γ ⁏
                          β-reduce v w)
-    ≈⟨ ⮦ eval t γ ⟩
+    ≈⟨ ⋘ eval t γ ⟩
           v ← eval t γ ⁏
           ren-val ρ <$> (w ← eval u γ ⁏
                          β-reduce v w)
     ≈⟨ v ⇚ eval t γ ⁏
-       ⮦ eval u γ ⟩
+       ⋘ eval u γ ⟩
           v ← eval t γ ⁏
           w ← eval u γ ⁏
           ren-val ρ <$> β-reduce v w
@@ -43,7 +43,7 @@ mutual
           w ← eval u γ ⁏
           β-reduce (ren-val ρ v) (ren-val ρ w)
     ≈⟨ v ⇚ eval t γ ⁏
-       ⮥ eval u γ ⟩
+       ⋙ eval u γ ⟩
           v  ← eval t γ ⁏
           w′ ← ren-val ρ <$> eval u γ ⁏
           β-reduce (ren-val ρ v) w′
@@ -52,7 +52,7 @@ mutual
           v  ← eval t γ ⁏
           w′ ← eval u (ren-env ρ γ) ⁏
           β-reduce (ren-val ρ v) w′
-    ≈⟨ ⮥ eval t γ ⟩
+    ≈⟨ ⋙ eval t γ ⟩
           v′ ← ren-val ρ <$> eval t γ ⁏
           w′ ← eval u (ren-env ρ γ) ⁏
           β-reduce v′ w′
@@ -68,12 +68,12 @@ mutual
           ren-val ρ <$> (v ← eval t γ ⁏
                          w ← eval u γ ⁏
                          now (pair v w))
-    ≈⟨ ⮦ eval t γ ⟩
+    ≈⟨ ⋘ eval t γ ⟩
           v ← eval t γ ⁏
           ren-val ρ <$> (w ← eval u γ ⁏
                          now (pair v w))
     ≈⟨ v ⇚ eval t γ ⁏
-       ⮦ eval u γ ⟩
+       ⋘ eval u γ ⟩
           v ← eval t γ ⁏
           w ← eval u γ ⁏
           ren-val ρ <$> now (pair v w)
@@ -84,7 +84,7 @@ mutual
           w ← eval u γ ⁏
           now (pair (ren-val ρ v) (ren-val ρ w))
     ≈⟨ v ⇚ eval t γ ⁏
-       ⮥ eval u γ ⟩
+       ⋙ eval u γ ⟩
           v  ← eval t γ ⁏
           w′ ← ren-val ρ <$> eval u γ ⁏
           now (pair (ren-val ρ v) w′)
@@ -93,7 +93,7 @@ mutual
           v  ← eval t γ ⁏
           w′ ← eval u (ren-env ρ γ) ⁏
           now (pair (ren-val ρ v) w′)
-    ≈⟨ ⮥ eval t γ ⟩
+    ≈⟨ ⋙ eval t γ ⟩
           v′ ← ren-val ρ <$> eval t γ ⁏
           w′ ← eval u (ren-env ρ γ) ⁏
           now (pair v′ w′)
@@ -107,14 +107,14 @@ mutual
     proof
           ren-val ρ <$> (v ← eval t γ ⁏
                          π₁-reduce v)
-    ≈⟨ ⮦ eval t γ ⟩
+    ≈⟨ ⋘ eval t γ ⟩
           v ← eval t γ ⁏
           ren-val ρ <$> π₁-reduce v
     ≈⟨ v ⇚ eval t γ ⁏
        ren-π₁-reduce ρ v ⟩
           v ← eval t γ ⁏
           π₁-reduce (ren-val ρ v)
-    ≈⟨ ⮥ eval t γ ⟩
+    ≈⟨ ⋙ eval t γ ⟩
           v′ ← ren-val ρ <$> eval t γ ⁏
           π₁-reduce v′
     ≈⟨ ∵ ren-eval ρ t γ ⟩
@@ -126,14 +126,14 @@ mutual
     proof
           ren-val ρ <$> (v ← eval t γ ⁏
                          π₂-reduce v)
-    ≈⟨ ⮦ eval t γ ⟩
+    ≈⟨ ⋘ eval t γ ⟩
           v ← eval t γ ⁏
           ren-val ρ <$> π₂-reduce v
     ≈⟨ v ⇚ eval t γ ⁏
        ren-π₂-reduce ρ v ⟩
           v ← eval t γ ⁏
           π₂-reduce (ren-val ρ v)
-    ≈⟨ ⮥ eval t γ ⟩
+    ≈⟨ ⋙ eval t γ ⟩
           v′ ← ren-val ρ <$> eval t γ ⁏
           π₂-reduce v′
     ≈⟨ ∵ ren-eval ρ t γ ⟩
@@ -145,14 +145,14 @@ mutual
     proof
           ren-val ρ <$> (v ← eval t γ ⁏
                          ω-reduce v)
-    ≈⟨ ⮦ eval t γ ⟩
+    ≈⟨ ⋘ eval t γ ⟩
           v ← eval t γ ⁏
           ren-val ρ <$> ω-reduce v
     ≈⟨ v ⇚ eval t γ ⁏
        ren-ω-reduce ρ v ⟩
           v ← eval t γ ⁏
           ω-reduce (ren-val ρ v)
-    ≈⟨ ⮥ eval t γ ⟩
+    ≈⟨ ⋙ eval t γ ⟩
           v′ ← ren-val ρ <$> eval t γ ⁏
           ω-reduce v′
     ≈⟨ ∵ ren-eval ρ t γ ⟩
