@@ -66,3 +66,16 @@ fst-pair≡K = refl
 
 snd-pair≡flip-K : nf (snd-pair {∅} {⊥} {⊥ ⇒ ⊥}) ≡ nf (app flip K)
 snd-pair≡flip-K = refl
+
+
+contradiction : ∀ {Γ a b} → Tm Γ (a ⇒ ¬ a ⇒ b)
+contradiction = lam (lam (boom (app v₀ v₁)))
+
+contraposition : ∀ {Γ a b} → Tm Γ ((a ⇒ b) ⇒ ¬ b ⇒ ¬ a)
+contraposition = lam (lam (lam (app (app contradiction (app v₂ v₀)) v₁)))
+
+¬-flip : ∀ {Γ a b} → Tm Γ ((a ⇒ ¬ b) ⇒ b ⇒ ¬ a)
+¬-flip = flip
+
+¬¬-map : ∀ {Γ a b} → Tm Γ ((a ⇒ b) ⇒ ¬ ¬ a ⇒ ¬ ¬ b)
+¬¬-map = lam (app contraposition (app contraposition v₀))

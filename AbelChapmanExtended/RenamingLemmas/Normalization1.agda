@@ -30,9 +30,33 @@ ren-π₂-reduce η (ne v)     = ≈refl
 ren-π₂-reduce η (pair v w) = ≈refl
 
 
+ren-ω-reduce : ∀ {i Δ Δ′ a} (η : Δ′ ⊇ Δ) (v : Val Δ ⊥) →
+               ren-val η <$> ω-reduce v ≈⟨ i ⟩≈ ω-reduce {a = a} (ren-val η v)
+ren-ω-reduce η (ne v)     = ≈refl
+
+
 mutual
   ren-eval : ∀ {i Γ Δ Δ′ a} (η : Δ′ ⊇ Δ) (t : Tm Γ a) (ρ : Env Δ Γ) →
              ren-val η <$> eval t ρ ≈⟨ i ⟩≈ eval t (ren-env η ρ)
+  ren-eval η (boom t) ρ =
+    proof
+          ren-val η <$> (v ← eval t ρ ⁏
+                         ω-reduce v)
+    ≈⟨ ⋘ eval t ρ ⟩
+          v ← eval t ρ ⁏
+          ren-val η <$> ω-reduce v
+    ≈⟨ v ⇚ eval t ρ ⁏
+       ren-ω-reduce η v ⟩
+          v ← eval t ρ ⁏
+          ω-reduce (ren-val η v)
+    ≈⟨ ⋙ eval t ρ ⟩
+          v′ ← ren-val η <$> eval t ρ ⁏
+          ω-reduce v′
+    ≈⟨ ∵ ren-eval η t ρ ⟩
+          v′ ← eval t (ren-env η ρ) ⁏
+          ω-reduce v′
+    ∎
+    where open ≈-Reasoning
   ren-eval η (var x)   ρ rewrite ren-lookup η x ρ = ≈now (lookup x (ren-env η ρ))
   ren-eval η (lam t)   ρ = ≈now (lam t (ren-env η ρ))
   ren-eval η (app t u) ρ =

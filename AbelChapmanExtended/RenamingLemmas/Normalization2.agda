@@ -38,6 +38,24 @@ mutual
 
   ren-readback-ne : ∀ {i Δ Δ′ a} (η : Δ′ ⊇ Δ) (v : Ne Val Δ a) →
                     ren-nen η <$> readback-ne v ≈⟨ i ⟩≈ readback-ne (ren-nev η v)
+  ren-readback-ne η (boom v) =
+    proof
+          ren-nen η <$> (n ← readback-ne v ⁏
+                         now (boom n))
+    ≈⟨ ⋘ readback-ne v ⟩
+          n ← readback-ne v ⁏
+          ren-nen η <$> now (boom n)
+    ≡⟨⟩
+          n ← readback-ne v ⁏
+          now (boom (ren-nen η n))
+    ≈⟨ ⋙ readback-ne v ⟩
+          n′ ← ren-nen η <$> readback-ne v ⁏
+          now (boom n′)
+    ≈⟨ ∵ ren-readback-ne η v ⟩
+          n′ ← readback-ne (ren-nev η v) ⁏
+          now (boom n′)
+    ∎
+    where open ≈-Reasoning
   ren-readback-ne η (var x)   = ≈now (var (ren-var η x))
   ren-readback-ne η (app v w) =
     proof

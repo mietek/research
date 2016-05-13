@@ -22,6 +22,7 @@ data Var : Cx → Ty → Set where
 
 
 data Tm (Γ : Cx) : Ty → Set where
+  boom : ∀ {c}   (t : Tm Γ ⊥)                    → Tm Γ c
   var  : ∀ {a}   (x : Var Γ a)                    → Tm Γ a
   lam  : ∀ {a b} (t : Tm (Γ , a) b)               → Tm Γ (a ⇒ b)
   app  : ∀ {a b} (t : Tm Γ (a ⇒ b)) (u : Tm Γ a) → Tm Γ b
@@ -32,6 +33,7 @@ data Tm (Γ : Cx) : Ty → Set where
 
 
 data Ne (Ξ : Cx → Ty → Set) (Γ : Cx) : Ty → Set where
+  boom : ∀ {c}   → Ne Ξ Γ ⊥                → Ne Ξ Γ c
   var  : ∀ {a}   → Var Γ a                  → Ne Ξ Γ a
   app  : ∀ {a b} → Ne Ξ Γ (a ⇒ b) → Ξ Γ a → Ne Ξ Γ b
   fst  : ∀ {a b} → Ne Ξ Γ (a ∧ b)           → Ne Ξ Γ a
@@ -55,6 +57,10 @@ mutual
     _,_ : ∀ {Γ a} (ρ : Env Δ Γ) (w : Val Δ a) → Env Δ (Γ , a)
 
 
+
+
+¬_ : Ty → Ty
+¬ a = a ⇒ ⊥
 
 
 v₀ : ∀ {Γ a} → Tm (Γ , a) a

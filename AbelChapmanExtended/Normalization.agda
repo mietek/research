@@ -13,6 +13,9 @@ lookup : ∀ {Γ Δ a} → Var Γ a → Env Δ Γ → Val Δ a
 lookup top     (ρ , v) = v
 lookup (pop x) (ρ , v) = lookup x ρ
 
+ω-reduce : ∀ {i Δ a} → Val Δ ⊥ → Delay i (Val Δ a)
+ω-reduce (ne v) = now (ne (boom v))
+
 π₁-reduce : ∀ {i Δ a b} → Val Δ (a ∧ b) → Delay i (Val Δ a)
 π₁-reduce (ne v)     = now (ne (fst v))
 π₁-reduce (pair v w) = now v
@@ -24,6 +27,8 @@ lookup (pop x) (ρ , v) = lookup x ρ
 
 mutual
   eval : ∀ {i Γ Δ b} → Tm Γ b → Env Δ Γ → Delay i (Val Δ b)
+  eval (boom t)   ρ = v ← eval t ρ ⁏
+                      ω-reduce v
   eval (var x)    ρ = now (lookup x ρ)
   eval (lam t)    ρ = now (lam t ρ)
   eval (app t u)  ρ = v ← eval t ρ ⁏
@@ -54,6 +59,8 @@ mutual
   readback {a = ⊤}     v      = now unit
 
   readback-ne : ∀ {i Δ a} → Ne Val Δ a → Delay i (Ne Nf Δ a)
+  readback-ne (boom v)  = n ← readback-ne v ⁏
+                          now (boom n)
   readback-ne (var x)   = now (var x)
   readback-ne (app v w) = n ← readback-ne v ⁏
                           m ← readback w ⁏

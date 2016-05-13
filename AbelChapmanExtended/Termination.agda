@@ -25,6 +25,16 @@ open import AbelChapmanExtended.Syntax
 β-reduce-sound t ρ (v , ⇓v , ⟦v⟧) = (v , ⇓later ⇓v , ⟦v⟧)
 
 
+⟦boom⟧ : ∀ {Δ c} {v? : Delay ∞ (Val Δ ⊥)} →
+         C⟦ ⊥ ⟧ v? →
+         C⟦ c ⟧ (v ← v? ⁏
+                 ω-reduce v)
+⟦boom⟧ {c = c} (ne v , ⇓v , (n , ⇓n)) =
+      let v′   = ne (boom v)
+          ⟦v′⟧ = reflect c (boom v) (boom n , ⇓map boom ⇓n)
+      in  (v′ , ⇓bind ⇓v ⇓now , ⟦v′⟧)
+
+
 ⟦var⟧ : ∀ {Γ Δ a} (x : Var Γ a) (ρ : Env Δ Γ) →
         E⟦ Γ ⟧ ρ → C⟦ a ⟧ (now (lookup x ρ))
 ⟦var⟧ top     (ρ , v) (⟦ρ⟧ , ⟦v⟧) = (v , ⇓now , ⟦v⟧)
@@ -88,6 +98,7 @@ open import AbelChapmanExtended.Syntax
 
 
 term : ∀ {Γ Δ a} (t : Tm Γ a) (ρ : Env Δ Γ) (⟦ρ⟧ : E⟦ Γ ⟧ ρ) → C⟦ a ⟧ (eval t ρ)
+term (boom t)   ρ ⟦ρ⟧ = ⟦boom⟧ (term t ρ ⟦ρ⟧)
 term (var x)    ρ ⟦ρ⟧ = ⟦var⟧ x ρ ⟦ρ⟧
 term (lam t)    ρ ⟦ρ⟧ = ⟦lam⟧ t ρ ⟦ρ⟧ (λ η w ⟦w⟧ → term t (ren-env η ρ , w)
                                                            (ren-E⟦⟧ η ρ ⟦ρ⟧ , ⟦w⟧))
