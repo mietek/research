@@ -140,9 +140,8 @@ sym-bind-assoc : ∀ {i A B C} (a? : Delay ∞ A) →
                  (a? >>= λ a → f a >>= g) ≈⟨ i ⟩≈ ((a? >>= f) >>= g)
 sym-bind-assoc a? = ≈sym (bind-assoc a?)
 
-
-syntax bind-assoc     a?             = ⮦ a?
-syntax sym-bind-assoc a?             = ⮥ a?
+syntax bind-assoc     a?             = ⋘ a?
+syntax sym-bind-assoc a?             = ⋙ a?
 syntax bind-cong-r    a? (λ a → b?) = a ⇚ a? ⁏ b?
 syntax bind-cong-l    a≈a′           = ∵ a≈a′
 

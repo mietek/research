@@ -37,7 +37,8 @@ delayMonad {i} = record
   }
 
 module _ {i : Size} where
-  open module DelayMonad = RawMonad (delayMonad {i = i}) public using (_>>=_) renaming (_⊛_ to _<*>_)
+  open module DelayMonad = RawMonad (delayMonad {i = i}) public
+    using (_>>=_) renaming (_⊛_ to _<*>_)
 
 
 _<$>_ : ∀ {i A B} → (A → B) → Delay i A → Delay i B
