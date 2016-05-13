@@ -50,6 +50,41 @@ E⟦ Γ , a ⟧ (γ , v) = E⟦ Γ ⟧ γ × V⟦ a ⟧ v
 ⇓ren-π₂-reduce ρ v ⇓v′ = ⇓≈subst (⇓map (ren-val ρ) ⇓v′) (ren-π₂-reduce ρ v)
 
 
+mutual
+  reify : ∀ {Γ} (a : Ty) (v : Val Γ a) → V⟦ a ⟧ v → readback v ⇓
+  reify ⊥       (ne v) (n , ⇓n)  = ne n , ⇓map ne ⇓n
+  reify (a ⇒ b) v      ⟦v⟧       =
+        let w                 = ne (var top)
+            ⟦w⟧               = reflect a (var top) (var top , ⇓now)
+            (vw , ⇓vw , ⟦vw⟧) = ⟦v⟧ (weak id) w ⟦w⟧
+            (n , ⇓n)          = reify b vw ⟦vw⟧
+        in  (lam n , ⇓later (⇓bind ⇓vw (⇓bind ⇓n ⇓now)))
+  reify ⊤       v      ⟦v⟧       = unit , ⇓now
+  reify (a ∧ b)  v      (c₁ , c₂) =
+        let (v₁ , ⇓v₁ , ⟦v₁⟧) = c₁
+            (v₂ , ⇓v₂ , ⟦v₂⟧) = c₂
+            (n₁ , ⇓n₁)        = reify a v₁ ⟦v₁⟧
+            (n₂ , ⇓n₂)        = reify b v₂ ⟦v₂⟧
+        in  (pair n₁ n₂ , ⇓later (⇓bind ⇓v₁ (⇓bind ⇓v₂ (⇓bind ⇓n₁ (⇓bind ⇓n₂ ⇓now)))))
+
+  reflect : ∀ {Γ} (a : Ty) (v : Ne Val Γ a) → readback-ne v ⇓ → V⟦ a ⟧ (ne v)
+  reflect ⊥       v ⇓v       = ⇓v
+  reflect (a ⇒ b) v (n , ⇓n) = λ ρ w ⟦w⟧ →
+        let (m , ⇓m) = reify a w ⟦w⟧
+            n′       = ren-nen ρ n
+            ⇓n′      = ⇓ren-readback-ne ρ v ⇓n
+            vw       = app (ren-nev ρ v) w
+            ⟦vw⟧     = reflect b vw (app n′ m , ⇓bind ⇓n′ (⇓bind ⇓m ⇓now))
+        in  (ne vw , ⇓now , ⟦vw⟧)
+  reflect ⊤       v ⇓v       = unit
+  reflect (a ∧ b)  v (n , ⇓n) =
+        let v₁   = fst v
+            v₂   = snd v
+            ⟦v₁⟧ = reflect a v₁ (fst n , ⇓bind ⇓n ⇓now)
+            ⟦v₂⟧ = reflect b v₂ (snd n , ⇓bind ⇓n ⇓now)
+        in  (ne v₁ , ⇓now , ⟦v₁⟧) , (ne v₂ , ⇓now , ⟦v₂⟧)
+
+
 ren-V⟦⟧ : ∀ {Δ Δ′} (a : Ty) (ρ : Δ′ ≥ Δ) (v : Val Δ a) →
           V⟦ a ⟧ v → V⟦ a ⟧ (ren-val ρ v)
 ren-V⟦⟧ ⊥       ρ (ne v) (v′ , ⇓v′)   = (ren-nen ρ v′ , ⇓ren-readback-ne ρ v ⇓v′)
@@ -144,7 +179,7 @@ ren-E⟦⟧ ρ (γ , v) (⟦γ⟧ , ⟦v⟧) = (ren-E⟦⟧ ρ γ ⟦γ⟧ , ren
          C⟦ ⊥ ⟧ v? →
          C⟦ c ⟧ (v ← v? ⁏
                  ω-reduce v)
-⟦loop⟧ (ne v , ⇓v , (n , ⇓n)) = {!!}
+⟦loop⟧ {c = c} (ne v , ⇓v , (n , ⇓n)) = (ne (loop v) , ⇓bind ⇓v ⇓now , reflect c (loop v) (loop n , ⇓map loop ⇓n) )
 
 
 term : ∀ {Γ Δ a} (t : Tm Γ a) (γ : Env Δ Γ) (⟦γ⟧ : E⟦ Γ ⟧ γ) → C⟦ a ⟧ (eval t γ)
@@ -157,41 +192,6 @@ term (pair t u) γ ⟦γ⟧ = ⟦pair⟧ t u γ ⟦γ⟧ (term t γ ⟦γ⟧) (t
 term (fst t)    γ ⟦γ⟧ = ⟦fst⟧ (term t γ ⟦γ⟧)
 term (snd t)    γ ⟦γ⟧ = ⟦snd⟧ (term t γ ⟦γ⟧)
 term (loop t)   γ ⟦γ⟧ = ⟦loop⟧ (term t γ ⟦γ⟧)
-
-
-mutual
-  reify : ∀ {Γ} (a : Ty) (v : Val Γ a) → V⟦ a ⟧ v → readback v ⇓
-  reify ⊥       (ne v) (n , ⇓n)  = ne n , ⇓map ne ⇓n
-  reify (a ⇒ b) v      ⟦v⟧       =
-        let w                 = ne (var top)
-            ⟦w⟧               = reflect a (var top) (var top , ⇓now)
-            (vw , ⇓vw , ⟦vw⟧) = ⟦v⟧ (weak id) w ⟦w⟧
-            (n , ⇓n)          = reify b vw ⟦vw⟧
-        in  (lam n , ⇓later (⇓bind ⇓vw (⇓bind ⇓n ⇓now)))
-  reify ⊤       v      ⟦v⟧       = unit , ⇓now
-  reify (a ∧ b)  v      (c₁ , c₂) =
-        let (v₁ , ⇓v₁ , ⟦v₁⟧) = c₁
-            (v₂ , ⇓v₂ , ⟦v₂⟧) = c₂
-            (n₁ , ⇓n₁)        = reify a v₁ ⟦v₁⟧
-            (n₂ , ⇓n₂)        = reify b v₂ ⟦v₂⟧
-        in  (pair n₁ n₂ , ⇓later (⇓bind ⇓v₁ (⇓bind ⇓v₂ (⇓bind ⇓n₁ (⇓bind ⇓n₂ ⇓now)))))
-
-  reflect : ∀ {Γ} (a : Ty) (v : Ne Val Γ a) → readback-ne v ⇓ → V⟦ a ⟧ (ne v)
-  reflect ⊥       v ⇓v       = ⇓v
-  reflect (a ⇒ b) v (n , ⇓n) = λ ρ w ⟦w⟧ →
-        let (m , ⇓m) = reify a w ⟦w⟧
-            n′       = ren-nen ρ n
-            ⇓n′      = ⇓ren-readback-ne ρ v ⇓n
-            vw       = app (ren-nev ρ v) w
-            ⟦vw⟧     = reflect b vw (app n′ m , ⇓bind ⇓n′ (⇓bind ⇓m ⇓now))
-        in  (ne vw , ⇓now , ⟦vw⟧)
-  reflect ⊤       v ⇓v       = unit
-  reflect (a ∧ b)  v (n , ⇓n) =
-        let v₁   = fst v
-            v₂   = snd v
-            ⟦v₁⟧ = reflect a v₁ (fst n , ⇓bind ⇓n ⇓now)
-            ⟦v₂⟧ = reflect b v₂ (snd n , ⇓bind ⇓n ⇓now)
-        in  (ne v₁ , ⇓now , ⟦v₁⟧) , (ne v₂ , ⇓now , ⟦v₂⟧)
 
 
 reflect-var : ∀ {Γ a} (x : Var Γ a) → V⟦ a ⟧ ne (var x)

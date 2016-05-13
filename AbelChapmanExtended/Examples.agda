@@ -21,28 +21,28 @@ S = lam (lam (lam (app (app v₂ v₀) (app v₁ v₀))))
 II : ∀ {Γ a} → Tm Γ (a ⇒ a)
 II = app I I
 
-II≡I : nf (II {∅} {★}) ≡ nf I
+II≡I : nf (II {∅} {⊥}) ≡ nf I
 II≡I = refl
 
 
 SKK : ∀ {Γ a} → Tm Γ (a ⇒ a)
 SKK {a = a} = app (app S K) (K {b = a ⇒ a})
 
-SKK≡I : nf (SKK {∅} {★}) ≡ nf I
+SKK≡I : nf (SKK {∅} {⊥}) ≡ nf I
 SKK≡I = refl
 
 
 SKSK : ∀ {Γ a b} → Tm Γ (a ⇒ b ⇒ a)
 SKSK = app (app (app S K) S) K
 
-SKSK≡K : nf (SKSK {∅} {★} {★ ⇒ ★}) ≡ nf K
+SKSK≡K : nf (SKSK {∅} {⊥} {⊥ ⇒ ⊥}) ≡ nf K
 SKSK≡K = refl
 
 
 flip : ∀ {Γ a b c} → Tm Γ ((a ⇒ b ⇒ c) ⇒ b ⇒ a ⇒ c)
 flip = lam (lam (lam (app (app v₂ v₀) v₁)))
 
-flip-flip-K≡K : nf (app flip (app flip (K {∅} {★} {★ ⇒ ★}))) ≡ nf K
+flip-flip-K≡K : nf (app flip (app flip (K {∅} {⊥} {⊥ ⇒ ⊥}))) ≡ nf K
 flip-flip-K≡K = refl
 
 
@@ -61,8 +61,8 @@ fst-pair = lam (lam (app fst′ (app (app pair′ v₁) v₀)))
 snd-pair : ∀ {Γ a b} → Tm Γ (a ⇒ b ⇒ b)
 snd-pair = lam (lam (app snd′ (app (app pair′ v₁) v₀)))
 
-fst-pair≡K : nf (fst-pair {∅} {★} {★ ⇒ ★}) ≡ nf K
+fst-pair≡K : nf (fst-pair {∅} {⊥} {⊥ ⇒ ⊥}) ≡ nf K
 fst-pair≡K = refl
 
-snd-pair≡flip-K : nf (snd-pair {∅} {★} {★ ⇒ ★}) ≡ nf (app flip K)
+snd-pair≡flip-K : nf (snd-pair {∅} {⊥} {⊥ ⇒ ⊥}) ≡ nf (app flip K)
 snd-pair≡flip-K = refl
