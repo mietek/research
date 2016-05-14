@@ -18,14 +18,14 @@ open import AbelChapmanExtended.Syntax
 
 ren-V⟦⟧ : ∀ {Δ Δ′} (a : Ty) (η : Δ′ ⊇ Δ) (v : Val Δ a) →
           V⟦ a ⟧ v → V⟦ a ⟧ (ren-val η v)
-ren-V⟦⟧ ⊥       η (ne v) (v′ , ⇓v′)   = (ren-nen η v′ , ⇓ren-readback-ne η v ⇓v′)
-ren-V⟦⟧ (a ⇒ b) η v      ⟦v⟧          = λ η′ w ⟦w⟧ →
+ren-V⟦⟧ ⊥       η (ne v)  (v′ , ⇓v′)     = (ren-nen η v′ , ⇓ren-readback-ne η v ⇓v′)
+ren-V⟦⟧ (a ⇒ b) η v       ⟦v⟧            = λ η′ w ⟦w⟧ →
       let (vw , ⇓vw , ⟦vw⟧) = ⟦v⟧ (η′ • η) w ⟦w⟧
           ⇓vw′              = subst (λ v′ → β-reduce v′ w ⇓ vw)
                                     (sym (ren-val-• η′ η v))
                                     ⇓vw
       in  (vw , ⇓vw′ , ⟦vw⟧)
-ren-V⟦⟧ (a ∧ b)  η v      (c₁ , c₂)    =
+ren-V⟦⟧ (a ∧ b)  η v       (c₁ , c₂)      =
       let (v₁ , ⇓v₁ , ⟦v₁⟧) = c₁
           (v₂ , ⇓v₂ , ⟦v₂⟧) = c₂
           v₁′               = ren-val η v₁
@@ -35,7 +35,7 @@ ren-V⟦⟧ (a ∧ b)  η v      (c₁ , c₂)    =
           ⟦v₁⟧′             = ren-V⟦⟧ a η v₁ ⟦v₁⟧
           ⟦v₂⟧′             = ren-V⟦⟧ b η v₂ ⟦v₂⟧
       in  (v₁′ , ⇓v₁′ , ⟦v₁⟧′) , (v₂′ , ⇓v₂′ , ⟦v₂⟧′)
-ren-V⟦⟧ ⊤       η v      unit         = unit
+ren-V⟦⟧ ⊤       η v       unit          = unit
 
 
 ren-E⟦⟧ : ∀ {Γ Δ Δ′} (η : Δ′ ⊇ Δ) (ρ : Env Δ Γ) →

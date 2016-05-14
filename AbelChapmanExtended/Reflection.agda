@@ -15,26 +15,26 @@ open import AbelChapmanExtended.Syntax
 
 mutual
   reify : ∀ {Γ} (a : Ty) (v : Val Γ a) → V⟦ a ⟧ v → readback v ⇓
-  reify ⊥       (ne v) (n , ⇓n)  = (ne n , ⇓map ne ⇓n)
-  reify (a ⇒ b) v      ⟦v⟧       =
+  reify ⊥       (ne v)  (n , ⇓n)          = (ne n , ⇓map ne ⇓n)
+  reify (a ⇒ b) v       ⟦v⟧               =
         let w                 = nev₀
             ⟦w⟧               = reflect a (var top) (var top , ⇓now)
             (vw , ⇓vw , ⟦vw⟧) = ⟦v⟧ wk w ⟦w⟧
             (n , ⇓n)          = reify b vw ⟦vw⟧
             ⇓λn               = ⇓bind ⇓vw (⇓bind ⇓n ⇓now)
         in  (lam n , ⇓later ⇓λn)
-  reify (a ∧ b)  v      (c₁ , c₂) =
+  reify (a ∧ b)  v       (c₁ , c₂)         =
         let (v₁ , ⇓v₁ , ⟦v₁⟧) = c₁
             (v₂ , ⇓v₂ , ⟦v₂⟧) = c₂
             (n₁ , ⇓n₁)        = reify a v₁ ⟦v₁⟧
             (n₂ , ⇓n₂)        = reify b v₂ ⟦v₂⟧
             ⇓ψn               = ⇓bind ⇓v₁ (⇓bind ⇓v₂ (⇓bind ⇓n₁ (⇓bind ⇓n₂ ⇓now)))
         in  (pair n₁ n₂ , ⇓later ⇓ψn)
-  reify ⊤       v      ⟦v⟧       = (unit , ⇓now)
+  reify ⊤       v       ⟦v⟧               = (unit , ⇓now)
 
 
   reflect : ∀ {Γ} (a : Ty) (v : Ne Val Γ a) → readback-ne v ⇓ → V⟦ a ⟧ (ne v)
-  reflect ⊥       v ⇓v       = ⇓v
+  reflect ⊥       v ⟦v⟧      = ⟦v⟧
   reflect (a ⇒ b) v (n , ⇓n) = λ η w ⟦w⟧ →
         let (m , ⇓m) = reify a w ⟦w⟧
             n′       = ren-nen η n
@@ -48,7 +48,7 @@ mutual
             ⟦v₁⟧ = reflect a v₁ (fst n , ⇓bind ⇓n ⇓now)
             ⟦v₂⟧ = reflect b v₂ (snd n , ⇓bind ⇓n ⇓now)
         in  (ne v₁ , ⇓now , ⟦v₁⟧) , (ne v₂ , ⇓now , ⟦v₂⟧)
-  reflect ⊤       v ⇓v       = unit
+  reflect ⊤       v ⟦v⟧      = unit
 
 
 reflect-var : ∀ {Γ a} (x : Var Γ a) → V⟦ a ⟧ ne (var x)

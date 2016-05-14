@@ -10,26 +10,27 @@ Ren : ∀ {X : Set} → (Cx → X → Set) → Cx → Cx → Set
 Ren Ξ Γ Γ′ = ∀ {x} → Ξ Γ x → Ξ Γ′ x
 
 
-mutual
-  ren-var : ∀ {Γ Γ′} → Γ′ ⊇ Γ → Ren Var Γ Γ′
-  ren-var id       x       = x
-  ren-var (weak η) x       = pop (ren-var η x)
-  ren-var (lift η) top     = top
-  ren-var (lift η) (pop x) = pop (ren-var η x)
+ren-var : ∀ {Γ Γ′} → Γ′ ⊇ Γ → Ren Var Γ Γ′
+ren-var id       x       = x
+ren-var (weak η) x       = pop (ren-var η x)
+ren-var (lift η) top     = top
+ren-var (lift η) (pop x) = pop (ren-var η x)
 
+
+mutual
   ren-nen : ∀ {Δ Δ′} → Δ′ ⊇ Δ → Ren (Ne Nf) Δ Δ′
-  ren-nen η (boom n)  = boom (ren-nen η n)
-  ren-nen η (var x)   = var (ren-var η x)
-  ren-nen η (app n m) = app (ren-nen η n) (ren-nf η m)
-  ren-nen η (fst n)   = fst (ren-nen η n)
-  ren-nen η (snd n)   = snd (ren-nen η n)
+  ren-nen η (boom n)       = boom (ren-nen η n)
+  ren-nen η (var x)        = var (ren-var η x)
+  ren-nen η (app n m)      = app (ren-nen η n) (ren-nf η m)
+  ren-nen η (fst n)        = fst (ren-nen η n)
+  ren-nen η (snd n)        = snd (ren-nen η n)
 
   ren-nev : ∀ {Δ Δ′} → Δ′ ⊇ Δ → Ren (Ne Val) Δ Δ′
-  ren-nev η (boom v)  = boom (ren-nev η v)
-  ren-nev η (var x)   = var (ren-var η x)
-  ren-nev η (app v w) = app (ren-nev η v) (ren-val η w)
-  ren-nev η (fst v)   = fst (ren-nev η v)
-  ren-nev η (snd v)   = snd (ren-nev η v)
+  ren-nev η (boom v)       = boom (ren-nev η v)
+  ren-nev η (var x)        = var (ren-var η x)
+  ren-nev η (app v w)      = app (ren-nev η v) (ren-val η w)
+  ren-nev η (fst v)        = fst (ren-nev η v)
+  ren-nev η (snd v)        = snd (ren-nev η v)
 
   ren-nf : ∀ {Δ Δ′} → Δ′ ⊇ Δ → Ren Nf Δ Δ′
   ren-nf η (ne n)     = ne (ren-nen η n)

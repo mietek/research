@@ -27,21 +27,21 @@ lookup (pop x) (ρ , v) = lookup x ρ
 
 mutual
   eval : ∀ {i Γ Δ b} → Tm Γ b → Env Δ Γ → Delay i (Val Δ b)
-  eval (boom t)   ρ = v ← eval t ρ ⁏
-                      ω-reduce v
-  eval (var x)    ρ = now (lookup x ρ)
-  eval (lam t)    ρ = now (lam t ρ)
-  eval (app t u)  ρ = v ← eval t ρ ⁏
-                      w ← eval u ρ ⁏
-                      β-reduce v w
-  eval (pair t u) ρ = v ← eval t ρ ⁏
-                      w ← eval u ρ ⁏
-                      now (pair v w)
-  eval (fst t)    ρ = v ← eval t ρ ⁏
-                      π₁-reduce v
-  eval (snd t)    ρ = v ← eval t ρ ⁏
-                      π₂-reduce v
-  eval unit       ρ = now unit
+  eval (boom t)       ρ = v ← eval t ρ ⁏
+                          ω-reduce v
+  eval (var x)        ρ = now (lookup x ρ)
+  eval (lam t)        ρ = now (lam t ρ)
+  eval (app t u)      ρ = v ← eval t ρ ⁏
+                          w ← eval u ρ ⁏
+                          β-reduce v w
+  eval (pair t u)     ρ = v ← eval t ρ ⁏
+                          w ← eval u ρ ⁏
+                          now (pair v w)
+  eval (fst t)        ρ = v ← eval t ρ ⁏
+                          π₁-reduce v
+  eval (snd t)        ρ = v ← eval t ρ ⁏
+                          π₂-reduce v
+  eval unit           ρ = now unit
 
   ∞eval : ∀ {i Γ Δ a} → Tm Γ a → Env Δ Γ → ∞Delay i (Val Δ a)
   force (∞eval t ρ) = eval t ρ
@@ -53,22 +53,22 @@ mutual
 
 mutual
   readback : ∀ {i Δ a} → Val Δ a → Delay i (Nf Δ a)
-  readback {a = ⊥}     (ne v) = ne <$> readback-ne v
-  readback {a = a ⇒ b} v      = later (∞η-expand v)
-  readback {a = a ∧ b}  v      = later (∞ψ-expand v)
-  readback {a = ⊤}     v      = now unit
+  readback {a = ⊥}     (ne v)  = ne  <$> readback-ne v
+  readback {a = a ⇒ b} v       = later (∞η-expand v)
+  readback {a = a ∧ b}  v       = later (∞ψ-expand v)
+  readback {a = ⊤}     v       = now unit
 
   readback-ne : ∀ {i Δ a} → Ne Val Δ a → Delay i (Ne Nf Δ a)
-  readback-ne (boom v)  = n ← readback-ne v ⁏
-                          now (boom n)
-  readback-ne (var x)   = now (var x)
-  readback-ne (app v w) = n ← readback-ne v ⁏
-                          m ← readback w ⁏
-                          now (app n m)
-  readback-ne (fst v)   = n ← readback-ne v ⁏
-                          now (fst n)
-  readback-ne (snd v)   = n ← readback-ne v ⁏
-                          now (snd n)
+  readback-ne (boom v)       = n ← readback-ne v ⁏
+                               now (boom n)
+  readback-ne (var x)        = now (var x)
+  readback-ne (app v w)      = n ← readback-ne v ⁏
+                               m ← readback w ⁏
+                               now (app n m)
+  readback-ne (fst v)        = n ← readback-ne v ⁏
+                               now (fst n)
+  readback-ne (snd v)        = n ← readback-ne v ⁏
+                               now (snd n)
 
   ∞η-expand : ∀ {i Δ a b} → Val Δ (a ⇒ b) → ∞Delay i (Nf Δ (a ⇒ b))
   force (∞η-expand v) = v′ ← β-reduce (wk-val v) nev₀ ⁏

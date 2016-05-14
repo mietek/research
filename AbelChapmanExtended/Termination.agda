@@ -11,7 +11,6 @@ open import AbelChapmanExtended.Normalization
 open import AbelChapmanExtended.OPE
 open import AbelChapmanExtended.Reflection
 open import AbelChapmanExtended.Renaming
-open import AbelChapmanExtended.RenamingLemmas.Convergence
 open import AbelChapmanExtended.RenamingLemmas.OPE
 open import AbelChapmanExtended.RenamingLemmas.Semantics
 open import AbelChapmanExtended.Semantics
@@ -21,8 +20,9 @@ open import AbelChapmanExtended.Syntax
 
 
 β-reduce-sound : ∀ {Γ Δ a b} (t : Tm (Γ , a) b) (ρ : Env Δ Γ) {w : Val Δ a} →
-                 C⟦ b ⟧ (eval t (ρ , w)) → C⟦ b ⟧ (β-reduce (lam t ρ) w)
-β-reduce-sound t ρ (v , ⇓v , ⟦v⟧) = (v , ⇓later ⇓v , ⟦v⟧)
+                 C⟦ b ⟧ (eval t (ρ , w)) →
+                 C⟦ b ⟧ (β-reduce (lam t ρ) w)
+β-reduce-sound t ρ (vw , ⇓vw , ⟦vw⟧) = (vw , ⇓later ⇓vw , ⟦vw⟧)
 
 
 ⟦boom⟧ : ∀ {Δ c} {v? : Delay ∞ (Val Δ ⊥)} →
@@ -42,8 +42,8 @@ open import AbelChapmanExtended.Syntax
 
 
 ⟦lam⟧ : ∀ {Γ Δ a b} (t : Tm (Γ , a) b) (ρ : Env Δ Γ) (⟦ρ⟧ : E⟦ Γ ⟧ ρ) →
-        (∀ {Δ′} (η : Δ′ ⊇ Δ) (w : Val Δ′ a)
-            (⟦w⟧ : V⟦ a ⟧ w) → C⟦ b ⟧ (eval t (ren-env η ρ , w))) →
+        (∀ {Δ′} (η : Δ′ ⊇ Δ) (w : Val Δ′ a) (⟦w⟧ : V⟦ a ⟧ w) →
+            C⟦ b ⟧ (eval t (ren-env η ρ , w))) →
         C⟦ a ⇒ b ⟧ (now (lam t ρ))
 ⟦lam⟧ t ρ ⟦ρ⟧ h =
       (lam t ρ , ⇓now , λ η w ⟦w⟧ → β-reduce-sound t (ren-env η ρ) (h η w ⟦w⟧))
@@ -100,8 +100,9 @@ open import AbelChapmanExtended.Syntax
 term : ∀ {Γ Δ a} (t : Tm Γ a) (ρ : Env Δ Γ) (⟦ρ⟧ : E⟦ Γ ⟧ ρ) → C⟦ a ⟧ (eval t ρ)
 term (boom t)   ρ ⟦ρ⟧ = ⟦boom⟧ (term t ρ ⟦ρ⟧)
 term (var x)    ρ ⟦ρ⟧ = ⟦var⟧ x ρ ⟦ρ⟧
-term (lam t)    ρ ⟦ρ⟧ = ⟦lam⟧ t ρ ⟦ρ⟧ (λ η w ⟦w⟧ → term t (ren-env η ρ , w)
-                                                           (ren-E⟦⟧ η ρ ⟦ρ⟧ , ⟦w⟧))
+term (lam t)    ρ ⟦ρ⟧ = ⟦lam⟧ t ρ ⟦ρ⟧
+                            (λ η w ⟦w⟧ → term t (ren-env η ρ , w)
+                                                 (ren-E⟦⟧ η ρ ⟦ρ⟧ , ⟦w⟧))
 term (app t u)  ρ ⟦ρ⟧ = ⟦app⟧ (term t ρ ⟦ρ⟧) (term u ρ ⟦ρ⟧)
 term (pair t u) ρ ⟦ρ⟧ = ⟦pair⟧ t u ρ ⟦ρ⟧ (term t ρ ⟦ρ⟧) (term u ρ ⟦ρ⟧)
 term (fst t)    ρ ⟦ρ⟧ = ⟦fst⟧ (term t ρ ⟦ρ⟧)

@@ -15,11 +15,11 @@ mutual
   ren-var-id x = refl
 
   ren-nev-id : ∀ {Δ a} (v : Ne Val Δ a) → ren-nev id v ≡ v
-  ren-nev-id (boom v)  = cong boom (ren-nev-id v)
-  ren-nev-id (var x)   = refl
-  ren-nev-id (app v w) = cong₂ app (ren-nev-id v) (ren-val-id w)
-  ren-nev-id (fst v)   = cong fst (ren-nev-id v)
-  ren-nev-id (snd v)   = cong snd (ren-nev-id v)
+  ren-nev-id (boom v)       = cong boom (ren-nev-id v)
+  ren-nev-id (var x)        = refl
+  ren-nev-id (app v w)      = cong₂ app (ren-nev-id v) (ren-val-id w)
+  ren-nev-id (fst v)        = cong fst (ren-nev-id v)
+  ren-nev-id (snd v)        = cong snd (ren-nev-id v)
 
   ren-val-id : ∀ {Δ a} (v : Val Δ a) → ren-val id v ≡ v
   ren-val-id (ne v)     = cong ne (ren-nev-id v)
@@ -44,11 +44,11 @@ mutual
 
   ren-nev-• : ∀ {Δ Δ′ Δ″ a} (η′ : Δ″ ⊇ Δ′) (η : Δ′ ⊇ Δ) (v : Ne Val Δ a) →
               (ren-nev η′ ∘ ren-nev η) v ≡ ren-nev (η′ • η) v
-  ren-nev-• η′ η (boom v)  = cong boom (ren-nev-• η′ η v)
-  ren-nev-• η′ η (var x)   = cong var (ren-var-• η′ η x)
-  ren-nev-• η′ η (app v w) = cong₂ app (ren-nev-• η′ η v) (ren-val-• η′ η w)
-  ren-nev-• η′ η (fst v)   = cong fst (ren-nev-• η′ η v)
-  ren-nev-• η′ η (snd v)   = cong snd (ren-nev-• η′ η v)
+  ren-nev-• η′ η (boom v)       = cong boom (ren-nev-• η′ η v)
+  ren-nev-• η′ η (var x)        = cong var (ren-var-• η′ η x)
+  ren-nev-• η′ η (app v w)      = cong₂ app (ren-nev-• η′ η v) (ren-val-• η′ η w)
+  ren-nev-• η′ η (fst v)        = cong fst (ren-nev-• η′ η v)
+  ren-nev-• η′ η (snd v)        = cong snd (ren-nev-• η′ η v)
 
   ren-val-• : ∀ {Δ Δ′ Δ″ a} (η′ : Δ″ ⊇ Δ′) (η : Δ′ ⊇ Δ) (v : Val Δ a) →
               (ren-val η′ ∘ ren-val η) v ≡ ren-val (η′ • η) v
