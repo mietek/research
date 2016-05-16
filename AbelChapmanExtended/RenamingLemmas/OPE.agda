@@ -8,6 +8,10 @@ open import AbelChapmanExtended.Renaming
 open import AbelChapmanExtended.Syntax
 
 
+cong₃ : ∀ {ℓ ℓ′ ℓ″ ℓ‴} {A : Set ℓ} {B : Set ℓ′} {C : Set ℓ″} {D : Set ℓ‴}
+        {a a′ b b′ c c′} (f : A → B → C → D) → a ≡ a′ → b ≡ b′ → c ≡ c′ →
+        f a b c ≡ f a′ b′ c′
+cong₃ f refl refl refl = refl
 
 
 mutual
@@ -17,6 +21,9 @@ mutual
 
   ren-nev-id : ∀ {Δ a} (v : Ne Val Δ a) → ren-nev id v ≡ v
   ren-nev-id (boom v)       = cong boom (ren-nev-id v)
+  ren-nev-id (case v wl wr) = cong₃ case (ren-nev-id v)
+                                         (ren-val-id wl)
+                                         (ren-val-id wr)
   ren-nev-id (var x)        = cong var (ren-var-id x)
   ren-nev-id (app v w)      = cong₂ app (ren-nev-id v) (ren-val-id w)
   ren-nev-id (fst v)        = cong fst (ren-nev-id v)
@@ -24,6 +31,8 @@ mutual
 
   ren-val-id : ∀ {Δ a} (v : Val Δ a) → ren-val id v ≡ v
   ren-val-id (ne v)     = cong ne (ren-nev-id v)
+  ren-val-id (inl v)    = cong inl (ren-val-id v)
+  ren-val-id (inr v)    = cong inr (ren-val-id v)
   ren-val-id (lam t ρ)  = cong (lam t) (ren-env-id ρ)
   ren-val-id (pair v w) = cong₂ pair (ren-val-id v) (ren-val-id w)
   ren-val-id unit       = refl
@@ -45,6 +54,9 @@ mutual
   ren-nev-• : ∀ {Δ Δ′ Δ″ a} (η′ : Δ″ ⊇ Δ′) (η : Δ′ ⊇ Δ) (v : Ne Val Δ a) →
               (ren-nev η′ ∘ ren-nev η) v ≡ ren-nev (η′ • η) v
   ren-nev-• η′ η (boom v)       = cong boom (ren-nev-• η′ η v)
+  ren-nev-• η′ η (case v wl wr) = cong₃ case (ren-nev-• η′ η v)
+                                             (ren-val-• (lift η′) (lift η) wl)
+                                             (ren-val-• (lift η′) (lift η) wr)
   ren-nev-• η′ η (var x)        = cong var (ren-var-• η′ η x)
   ren-nev-• η′ η (app v w)      = cong₂ app (ren-nev-• η′ η v) (ren-val-• η′ η w)
   ren-nev-• η′ η (fst v)        = cong fst (ren-nev-• η′ η v)
@@ -53,6 +65,8 @@ mutual
   ren-val-• : ∀ {Δ Δ′ Δ″ a} (η′ : Δ″ ⊇ Δ′) (η : Δ′ ⊇ Δ) (v : Val Δ a) →
               (ren-val η′ ∘ ren-val η) v ≡ ren-val (η′ • η) v
   ren-val-• η′ η (ne w)     = cong ne (ren-nev-• η′ η w)
+  ren-val-• η′ η (inl v)    = cong inl (ren-val-• η′ η v)
+  ren-val-• η′ η (inr v)    = cong inr (ren-val-• η′ η v)
   ren-val-• η′ η (lam t ρ)  = cong (lam t) (ren-env-• η′ η ρ)
   ren-val-• η′ η (pair v w) = cong₂ pair (ren-val-• η′ η v) (ren-val-• η′ η w)
   ren-val-• η′ η unit       = refl

@@ -16,6 +16,13 @@ open import AbelChapmanExtended.Syntax
 mutual
   reify : ∀ {Γ} (a : Ty) (v : Val Γ a) → V⟦ a ⟧ v → readback v ⇓
   reify ⊥       (ne v)  (n , ⇓n)          = (ne n , ⇓map ne ⇓n)
+  reify (a ∨ b)  (ne v)  (n , ⇓n)          = (ne n , ⇓map ne ⇓n)
+  reify (a ∨ b)  (inl v) (.v , ⇓now , ⟦v⟧) =
+        let (n , ⇓n) = reify a v ⟦v⟧
+        in  (inl n , ⇓map inl ⇓n)
+  reify (a ∨ b)  (inr v) (.v , ⇓now , ⟦v⟧) =
+        let (n , ⇓n) = reify b v ⟦v⟧
+        in  (inr n , ⇓map inr ⇓n)
   reify (a ⇒ b) v       ⟦v⟧               =
         let w                 = nev₀
             ⟦w⟧               = reflect-var {a = a} top
@@ -35,6 +42,7 @@ mutual
 
   reflect : ∀ {Γ} (a : Ty) (v : Ne Val Γ a) → readback-ne v ⇓ → V⟦ a ⟧ (ne v)
   reflect ⊥       v ⟦v⟧      = ⟦v⟧
+  reflect (a ∨ b)  v ⟦v⟧      = ⟦v⟧
   reflect (a ⇒ b) v (n , ⇓n) = λ η w ⟦w⟧ →
         let (m , ⇓m) = reify a w ⟦w⟧
             n′       = ren-nen η n

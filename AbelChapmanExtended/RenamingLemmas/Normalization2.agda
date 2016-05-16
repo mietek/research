@@ -31,6 +31,45 @@ mutual
           ne <$> readback-ne (ren-nev η v)
     ∎
     where open ≈-Reasoning
+  ren-readback {a = a ∨ b} η (ne v) =
+    proof
+          ren-nf η <$> (ne <$> readback-ne v)
+    ≈⟨ ⋘ readback-ne v ⟩
+          (ren-nf η ∘ ne) <$> readback-ne v
+    ≡⟨⟩
+          (ne ∘ ren-nen η) <$> readback-ne v
+    ≈⟨ ⋙ readback-ne v ⟩
+          ne <$> (ren-nen η <$> readback-ne v)
+    ≈⟨ ∵ ren-readback-ne η v ⟩
+          ne <$> readback-ne (ren-nev η v)
+    ∎
+    where open ≈-Reasoning
+  ren-readback {a = a ∨ b} η (inl v) =
+    proof
+          ren-nf η <$> (inl <$> readback v)
+    ≈⟨ ⋘ readback v ⟩
+          (ren-nf η ∘ inl) <$> readback v
+    ≡⟨⟩
+          (inl ∘ ren-nf η) <$> readback v
+    ≈⟨ ⋙ readback v ⟩
+          inl <$> (ren-nf η <$> readback v)
+    ≈⟨ ∵ ren-readback η v ⟩
+          inl <$> readback (ren-val η v)
+    ∎
+    where open ≈-Reasoning
+  ren-readback {a = a ∨ b} η (inr v) =
+    proof
+          ren-nf η <$> (inr <$> readback v)
+    ≈⟨ ⋘ readback v ⟩
+          (ren-nf η ∘ inr) <$> readback v
+    ≡⟨⟩
+          (inr ∘ ren-nf η) <$> readback v
+    ≈⟨ ⋙ readback v ⟩
+          inr <$> (ren-nf η <$> readback v)
+    ≈⟨ ∵ ren-readback η v ⟩
+          inr <$> readback (ren-val η v)
+    ∎
+    where open ≈-Reasoning
   ren-readback {a = a ⇒ b} η v      = ≈later (ren-∞η-expand η v)
   ren-readback {a = a ∧ b}  η v      = ≈later (ren-∞ψ-expand η v)
   ren-readback {a = ⊤}     η v      = ≈now unit
@@ -54,6 +93,76 @@ mutual
     ≈⟨ ∵ ren-readback-ne η v ⟩
           n′ ← readback-ne (ren-nev η v) ⁏
           now (boom n′)
+    ∎
+    where open ≈-Reasoning
+  ren-readback-ne η (case v wl wr) =
+    proof
+          ren-nen η <$> (n  ← readback-ne v ⁏
+                         ml ← readback wl ⁏
+                         mr ← readback wr ⁏
+                         now (case n ml mr))
+    ≈⟨ ⋘ readback-ne v ⟩
+          n ← readback-ne v ⁏
+          ren-nen η <$> (ml ← readback wl ⁏
+                         mr ← readback wr ⁏
+                         now (case n ml mr))
+    ≈⟨ n ⇚ readback-ne v ⁏
+       ⋘ readback wl ⟩
+          n  ← readback-ne v ⁏
+          ml ← readback wl ⁏
+          ren-nen η <$> (mr ← readback wr ⁏
+                         now (case n ml mr))
+    ≈⟨ n  ⇚ readback-ne v ⁏
+       ml ⇚ readback wl ⁏
+       ⋘ readback wr ⟩
+          n  ← readback-ne v ⁏
+          ml ← readback wl ⁏
+          mr ← readback wr ⁏
+          ren-nen η <$> now (case n ml mr)
+    ≈⟨ n  ⇚ readback-ne v ⁏
+       ml ⇚ readback wl ⁏
+       mr ⇚ readback wr ⁏
+       ≈now (case (ren-nen η n) (ren-nf (lift η) ml) (ren-nf (lift η) mr)) ⟩
+          n  ← readback-ne v ⁏
+          ml ← readback wl ⁏
+          mr ← readback wr ⁏
+          now (case (ren-nen η n) (ren-nf (lift η) ml) (ren-nf (lift η) mr))
+    ≈⟨ n  ⇚ readback-ne v ⁏
+       ml ⇚ readback wl ⁏
+       ⋙ readback wr ⟩
+          n   ← readback-ne v ⁏
+          ml  ← readback wl ⁏
+          mr′ ← ren-nf (lift η) <$> readback wr ⁏
+          now (case (ren-nen η n) (ren-nf (lift η) ml) mr′)
+    ≈⟨ n  ⇚ readback-ne v ⁏
+       ml ⇚ readback wl ⁏
+       ∵ ren-readback (lift η) wr ⟩
+          n   ← readback-ne v ⁏
+          ml  ← readback wl ⁏
+          mr′ ← readback (ren-val (lift η) wr) ⁏
+          now (case (ren-nen η n) (ren-nf (lift η) ml) mr′)
+    ≈⟨ n ⇚ readback-ne v ⁏
+       ⋙ readback wl ⟩
+          n   ← readback-ne v ⁏
+          ml′ ← ren-nf (lift η) <$> readback wl ⁏
+          mr′ ← readback (ren-val (lift η) wr) ⁏
+          now (case (ren-nen η n) ml′ mr′)
+    ≈⟨ n ⇚ readback-ne v ⁏
+       ∵ ren-readback (lift η) wl ⟩
+          n   ← readback-ne v ⁏
+          ml′ ← readback (ren-val (lift η) wl) ⁏
+          mr′ ← readback (ren-val (lift η) wr) ⁏
+          now (case (ren-nen η n) ml′ mr′)
+    ≈⟨ ⋙ readback-ne v ⟩
+          n′  ← ren-nen η <$> readback-ne v ⁏
+          ml′ ← readback (ren-val (lift η) wl) ⁏
+          mr′ ← readback (ren-val (lift η) wr) ⁏
+          now (case n′ ml′ mr′)
+    ≈⟨ ∵ ren-readback-ne η v ⟩
+          n′  ← readback-ne (ren-nev η v) ⁏
+          ml′ ← readback (ren-val (lift η) wl) ⁏
+          mr′ ← readback (ren-val (lift η) wr) ⁏
+          now (case n′ ml′ mr′)
     ∎
     where open ≈-Reasoning
   ren-readback-ne η (var x)   = ≈now (var (ren-var η x))

@@ -17,6 +17,9 @@ open import AbelChapmanExtended.Syntax
 mutual
   V⟦_⟧_ : ∀ {Γ} (a : Ty) → Val Γ a → Set
   V⟦ ⊥ ⟧     ne v  = readback-ne v ⇓
+  V⟦ a ∨ b ⟧  ne v  = readback-ne v ⇓
+  V⟦ a ∨ b ⟧  inl v = C⟦ a ⟧ (now v)
+  V⟦ a ∨ b ⟧  inr v = C⟦ b ⟧ (now v)
   V⟦ a ⇒ b ⟧ v     = ∀ {Δ} (η : Δ ⊇ _) (w : Val Δ a) →
                       V⟦ a ⟧ w → C⟦ b ⟧ (β-reduce (ren-val η v) w)
   V⟦ a ∧ b ⟧  v     = C⟦ a ⟧ (π₁-reduce v) × C⟦ b ⟧ (π₂-reduce v)

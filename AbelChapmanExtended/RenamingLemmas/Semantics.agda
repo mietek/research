@@ -19,6 +19,20 @@ open import AbelChapmanExtended.Syntax
 ren-V⟦⟧ : ∀ {Δ Δ′} (a : Ty) (η : Δ′ ⊇ Δ) (v : Val Δ a) →
           V⟦ a ⟧ v → V⟦ a ⟧ (ren-val η v)
 ren-V⟦⟧ ⊥       η (ne v)  (v′ , ⇓v′)     = (ren-nen η v′ , ⇓ren-readback-ne η v ⇓v′)
+ren-V⟦⟧ (a ∨ b)  η (ne v)  (w , ⇓w)       =
+      let w′  = ren-nen η w
+          ⇓w′ = ⇓ren-readback-ne η v ⇓w
+      in  (w′ , ⇓w′)
+ren-V⟦⟧ (a ∨ b)  η (inl v) (w , ⇓w , ⟦w⟧) =
+      let w′             = ren-val η w
+          ⇓w′            = ⇓map (ren-val η) ⇓w
+          ⟦w⟧′           = ren-V⟦⟧ a η w ⟦w⟧
+      in  (w′ , ⇓w′ , ⟦w⟧′)
+ren-V⟦⟧ (a ∨ b)  η (inr v) (w , ⇓w , ⟦w⟧) =
+      let w′             = ren-val η w
+          ⇓w′            = ⇓map (ren-val η) ⇓w
+          ⟦w⟧′           = ren-V⟦⟧ b η w ⟦w⟧
+      in  (w′ , ⇓w′ , ⟦w⟧′)
 ren-V⟦⟧ (a ⇒ b) η v       ⟦v⟧            = λ η′ w ⟦w⟧ →
       let (vw , ⇓vw , ⟦vw⟧) = ⟦v⟧ (η′ • η) w ⟦w⟧
           ⇓vw′              = subst (λ v′ → β-reduce v′ w ⇓ vw)
