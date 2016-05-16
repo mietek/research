@@ -9,36 +9,37 @@ open import AbelChapmanExtended.Syntax
 
 
 data _⊇_ : (Γ Γ′ : Cx) → Set where
-  id   : ∀ {Γ}                → Γ        ⊇ Γ
+  base :                          ∅        ⊇ ∅
   weak : ∀ {Γ Γ′ a} → Γ′ ⊇ Γ → (Γ′ , a) ⊇ Γ
   lift : ∀ {Γ Γ′ a} → Γ′ ⊇ Γ → (Γ′ , a) ⊇ (Γ , a)
 
 
+id : ∀ {Γ} → Γ ⊇ Γ
+id {∅}     = base
+id {Γ , a} = lift (id {Γ})
+
 _•_ : ∀ {Γ Γ′ Γ″} → Γ″ ⊇ Γ′ → Γ′ ⊇ Γ → Γ″ ⊇ Γ
-id      • η      = η
+base    • η      = η
 weak η′ • η      = weak (η′ • η)
-lift η′ • id     = lift η′
 lift η′ • weak η = weak (η′ • η)
 lift η′ • lift η = lift (η′ • η)
 
 
 η•id : ∀ {Γ Γ′} (η : Γ′ ⊇ Γ) → η • id ≡ η
-η•id id       = refl
+η•id base     = refl
 η•id (weak η) = cong weak (η•id η)
-η•id (lift η) = refl
+η•id (lift η) = cong lift (η•id η)
 
 id•η : ∀ {Γ Γ′} (η : Γ′ ⊇ Γ) → id • η ≡ η
-id•η id       = refl
-id•η (weak η) = refl
+id•η base     = refl
+id•η (weak η) = cong weak (id•η η)
 id•η (lift η) = cong lift (id•η η)
 
 •assoc : ∀ {Γ‴ Γ″ Γ′ Γ} (η″ : Γ‴ ⊇ Γ″) (η′ : Γ″ ⊇ Γ′) (η : Γ′ ⊇ Γ) →
          (η″ • η′) • η ≡ η″ • (η′ • η)
-•assoc id        η′        η        = refl
+•assoc base      η′        η        = refl
 •assoc (weak η″) η′        η        = cong weak (•assoc η″ η′ η)
-•assoc (lift η″) id        η        = refl
 •assoc (lift η″) (weak η′) η        = cong weak (•assoc η″ η′ η)
-•assoc (lift η″) (lift η′) id       = refl
 •assoc (lift η″) (lift η′) (weak η) = cong weak (•assoc η″ η′ η)
 •assoc (lift η″) (lift η′) (lift η) = cong lift (•assoc η″ η′ η)
 

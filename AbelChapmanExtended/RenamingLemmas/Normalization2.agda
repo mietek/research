@@ -188,6 +188,13 @@ mutual
           v″ ← β-reduce (ren-val (weak η) v) nev₀ ⁏
           n″ ← readback v″ ⁏
           now (lam n″)
+    ≡⟨ cong (λ η′ → (v′ ← β-reduce (ren-val (weak η′) v) nev₀ ⁏
+                      n′ ← readback v′ ⁏
+                      now (lam n′)))
+            (sym (id•η η)) ⟩
+          v″ ← β-reduce (ren-val (weak (id • η)) v) nev₀ ⁏
+          n″ ← readback v″ ⁏
+          now (lam n″)
     ≡⟨ cong (λ v → (v′ ← β-reduce v nev₀ ⁏
                      n′ ← readback v′ ⁏
                      now (lam n′)))

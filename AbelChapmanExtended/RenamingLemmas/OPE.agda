@@ -12,11 +12,12 @@ open import AbelChapmanExtended.Syntax
 
 mutual
   ren-var-id : ∀ {Δ a} (x : Var Δ a) → ren-var id x ≡ x
-  ren-var-id x = refl
+  ren-var-id top     = refl
+  ren-var-id (pop x) = cong pop (ren-var-id x)
 
   ren-nev-id : ∀ {Δ a} (v : Ne Val Δ a) → ren-nev id v ≡ v
   ren-nev-id (boom v)       = cong boom (ren-nev-id v)
-  ren-nev-id (var x)        = refl
+  ren-nev-id (var x)        = cong var (ren-var-id x)
   ren-nev-id (app v w)      = cong₂ app (ren-nev-id v) (ren-val-id w)
   ren-nev-id (fst v)        = cong fst (ren-nev-id v)
   ren-nev-id (snd v)        = cong snd (ren-nev-id v)
@@ -35,9 +36,8 @@ mutual
 mutual
   ren-var-• : ∀ {Δ Δ′ Δ″ a} (η′ : Δ″ ⊇ Δ′) (η : Δ′ ⊇ Δ) (x : Var Δ a) →
               (ren-var η′ ∘ ren-var η) x ≡ ren-var (η′ • η) x
-  ren-var-• id        η        x       = refl
+  ren-var-• base      η        x       = refl
   ren-var-• (weak η′) η        x       = cong pop (ren-var-• η′ η x)
-  ren-var-• (lift η′) id       x       = refl
   ren-var-• (lift η′) (weak η) x       = cong pop (ren-var-• η′ η x)
   ren-var-• (lift η′) (lift η) top     = refl
   ren-var-• (lift η′) (lift η) (pop x) = cong pop (ren-var-• η′ η x)

@@ -11,7 +11,7 @@ Ren Ξ Γ Γ′ = ∀ {x} → Ξ Γ x → Ξ Γ′ x
 
 
 ren-var : ∀ {Γ Γ′} → Γ′ ⊇ Γ → Ren Var Γ Γ′
-ren-var id       x       = x
+ren-var base     x       = x
 ren-var (weak η) x       = pop (ren-var η x)
 ren-var (lift η) top     = top
 ren-var (lift η) (pop x) = pop (ren-var η x)
