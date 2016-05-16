@@ -54,3 +54,6 @@ wk = weak id
 
 wk-val : ∀ {Δ a c} → Val Δ c → Val (Δ , a) c
 wk-val = ren-val wk
+
+wk-env : ∀ {Γ Δ a} → Env Δ Γ → Env (Δ , a) Γ
+wk-env = ren-env wk

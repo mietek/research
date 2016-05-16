@@ -18,7 +18,7 @@ mutual
   reify ⊥       (ne v)  (n , ⇓n)          = (ne n , ⇓map ne ⇓n)
   reify (a ⇒ b) v       ⟦v⟧               =
         let w                 = nev₀
-            ⟦w⟧               = reflect a (var top) (var top , ⇓now)
+            ⟦w⟧               = reflect-var {a = a} top
             (vw , ⇓vw , ⟦vw⟧) = ⟦v⟧ wk w ⟦w⟧
             (n , ⇓n)          = reify b vw ⟦vw⟧
             ⇓λn               = ⇓bind ⇓vw (⇓bind ⇓n ⇓now)
@@ -51,5 +51,5 @@ mutual
   reflect ⊤       v ⟦v⟧      = unit
 
 
-reflect-var : ∀ {Γ a} (x : Var Γ a) → V⟦ a ⟧ ne (var x)
-reflect-var {a = a} x = reflect a (var x) (var x , ⇓now)
+  reflect-var : ∀ {Γ a} (x : Var Γ a) → V⟦ a ⟧ ne (var x)
+  reflect-var {a = a} x = reflect a (var x) (var x , ⇓now)

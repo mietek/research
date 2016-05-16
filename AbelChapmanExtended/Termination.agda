@@ -56,10 +56,10 @@ open import AbelChapmanExtended.Syntax
                 β-reduce v w)
 ⟦app⟧ (v , ⇓v , ⟦v⟧) (w , ⇓w , ⟦w⟧) =
       let (vw , ⇓vw , ⟦vw⟧) = ⟦v⟧ id w ⟦w⟧
-          ⇓vw′              = ⇓bind ⇓v (⇓bind ⇓w (subst (λ v → β-reduce v w ⇓ vw)
-                                                        (ren-val-id v)
-                                                        ⇓vw))
-      in  (vw , ⇓vw′ , ⟦vw⟧)
+          ⇓vw′              = subst (λ v → β-reduce v w ⇓ vw)
+                                            (ren-val-id v)
+                                            ⇓vw
+      in  (vw , ⇓bind ⇓v (⇓bind ⇓w ⇓vw′) , ⟦vw⟧)
 
 
 ⟦pair⟧ : ∀ {Γ Δ a b} (t : Tm Γ a) (u : Tm Γ b) (ρ : Env Δ Γ) (⟦ρ⟧ : E⟦ Γ ⟧ ρ) →
@@ -68,8 +68,8 @@ open import AbelChapmanExtended.Syntax
                      w ← eval u ρ ⁏
                      now (pair v w))
 ⟦pair⟧ t u ρ ⟦ρ⟧ (v , ⇓v , ⟦v⟧) (w , ⇓w , ⟦w⟧) =
-      let c    = (v , ⇓now , ⟦v⟧)
-          d    = (w , ⇓now , ⟦w⟧)
+      let c = (v , ⇓now , ⟦v⟧)
+          d = (w , ⇓now , ⟦w⟧)
       in  (pair v w , ⇓bind ⇓v (⇓bind ⇓w ⇓now) , c , d)
 
 
@@ -98,16 +98,16 @@ open import AbelChapmanExtended.Syntax
 
 
 term : ∀ {Γ Δ a} (t : Tm Γ a) (ρ : Env Δ Γ) (⟦ρ⟧ : E⟦ Γ ⟧ ρ) → C⟦ a ⟧ (eval t ρ)
-term (boom t)   ρ ⟦ρ⟧ = ⟦boom⟧ (term t ρ ⟦ρ⟧)
-term (var x)    ρ ⟦ρ⟧ = ⟦var⟧ x ρ ⟦ρ⟧
-term (lam t)    ρ ⟦ρ⟧ = ⟦lam⟧ t ρ ⟦ρ⟧
-                            (λ η w ⟦w⟧ → term t (ren-env η ρ , w)
-                                                 (ren-E⟦⟧ η ρ ⟦ρ⟧ , ⟦w⟧))
-term (app t u)  ρ ⟦ρ⟧ = ⟦app⟧ (term t ρ ⟦ρ⟧) (term u ρ ⟦ρ⟧)
-term (pair t u) ρ ⟦ρ⟧ = ⟦pair⟧ t u ρ ⟦ρ⟧ (term t ρ ⟦ρ⟧) (term u ρ ⟦ρ⟧)
-term (fst t)    ρ ⟦ρ⟧ = ⟦fst⟧ (term t ρ ⟦ρ⟧)
-term (snd t)    ρ ⟦ρ⟧ = ⟦snd⟧ (term t ρ ⟦ρ⟧)
-term unit       ρ ⟦ρ⟧ = ⟦unit⟧
+term (boom t)       ρ ⟦ρ⟧ = ⟦boom⟧ (term t ρ ⟦ρ⟧)
+term (var x)        ρ ⟦ρ⟧ = ⟦var⟧ x ρ ⟦ρ⟧
+term (lam t)        ρ ⟦ρ⟧ = ⟦lam⟧ t ρ ⟦ρ⟧
+                              (λ η w ⟦w⟧ → term t (ren-env η ρ , w)
+                                                   (ren-E⟦⟧ η ρ ⟦ρ⟧ , ⟦w⟧))
+term (app t u)      ρ ⟦ρ⟧ = ⟦app⟧ (term t ρ ⟦ρ⟧) (term u ρ ⟦ρ⟧)
+term (pair t u)     ρ ⟦ρ⟧ = ⟦pair⟧ t u ρ ⟦ρ⟧ (term t ρ ⟦ρ⟧) (term u ρ ⟦ρ⟧)
+term (fst t)        ρ ⟦ρ⟧ = ⟦fst⟧ (term t ρ ⟦ρ⟧)
+term (snd t)        ρ ⟦ρ⟧ = ⟦snd⟧ (term t ρ ⟦ρ⟧)
+term unit           ρ ⟦ρ⟧ = ⟦unit⟧
 
 
 ⟦id-env⟧ : (Γ : Cx) → E⟦ Γ ⟧ (id-env Γ)

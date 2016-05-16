@@ -85,7 +85,7 @@ mutual
 
 id-env : (Γ : Cx) → Env Γ Γ
 id-env ∅       = ∅
-id-env (Γ , a) = (ren-env wk (id-env Γ) , nev₀)
+id-env (Γ , a) = (wk-env (id-env Γ) , nev₀)
 
 nf? : ∀ {Γ a} → Tm Γ a → Delay ∞ (Nf Γ a)
 nf? {Γ} t = t′ ← eval t (id-env Γ) ⁏

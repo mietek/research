@@ -35,7 +35,7 @@ ren-V⟦⟧ (a ∧ b)  η v       (c₁ , c₂)      =
           ⟦v₁⟧′             = ren-V⟦⟧ a η v₁ ⟦v₁⟧
           ⟦v₂⟧′             = ren-V⟦⟧ b η v₂ ⟦v₂⟧
       in  (v₁′ , ⇓v₁′ , ⟦v₁⟧′) , (v₂′ , ⇓v₂′ , ⟦v₂⟧′)
-ren-V⟦⟧ ⊤       η v       unit          = unit
+ren-V⟦⟧ ⊤       η v       unit           = unit
 
 
 ren-E⟦⟧ : ∀ {Γ Δ Δ′} (η : Δ′ ⊇ Δ) (ρ : Env Δ Γ) →
