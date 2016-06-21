@@ -194,7 +194,7 @@ mutual
   quot {A ⊃ B} t        = later (∞expand⊃ t)
   quot {A ∧ B} t        = later (∞expand∧ t)
   quot {□ A}   (boxᵥ t) = boxₙ <$> quot t
-  quot {□ A}   (neᵥ t)  = neₙ <$> quotₙ t
+  quot {□ A}   (neᵥ t)  = later (∞expand□ t)
   quot {⊤}    t        = now unitₙ
 
   quotₙ : ∀ {A Γ Δ i} → Ne Val Γ Δ A → Delay i (Ne No Γ Δ A)
@@ -214,6 +214,10 @@ mutual
   force (∞expand∧ t) = t₁′ ← reduce∧₁ t ⁏ t₂′ ← reduce∧₂ t ⁏
                        t₁″ ← quot t₁′   ⁏ t₂″ ← quot t₂′ ⁏
                        now (pairₙ t₁″ t₂″)
+
+  ∞expand□ : ∀ {A Γ Δ i} → Ne Val Γ Δ (□ A) → ∞Delay i (No Γ Δ (□ A))
+  force (∞expand□ t) = t′ ← quotₙ t ⁏
+                       now (neₙ (unboxₙ t′ (boxₙ (neₙ (⋆varₙ top)))))
 
 
 -- Normalisation.
