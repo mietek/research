@@ -218,13 +218,13 @@ mutual
 
 -- Normalisation.
 
-env-refl : ∀ {Γ Δ} → Env Γ Δ Γ
-env-refl {∅}     = ∅
-env-refl {γ , t} = wk-env env-refl , neᵥ (varₙ top)
+refl-env : ∀ {Γ Δ} → Env Γ Δ Γ
+refl-env {∅}     = ∅
+refl-env {γ , t} = wk-env refl-env , neᵥ (varₙ top)
 
-⋆env-refl : ∀ {Δ} → Env ∅ Δ Δ
-⋆env-refl {∅}     = ∅
-⋆env-refl {δ , t} = ⋆wk-env ⋆env-refl , neᵥ (⋆varₙ top)
+⋆refl-env : ∀ {Δ} → Env ∅ Δ Δ
+⋆refl-env {∅}     = ∅
+⋆refl-env {δ , t} = ⋆wk-env ⋆refl-env , neᵥ (⋆varₙ top)
 
 norm? : ∀ {A Γ Δ} → Tm Γ Δ A → Delay ∞ (No Γ Δ A)
-norm? t = t′ ← eval env-refl ⋆env-refl t ⁏ quot t′
+norm? t = t′ ← eval refl-env ⋆refl-env t ⁏ quot t′

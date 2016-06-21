@@ -130,9 +130,9 @@ mutual
 
 -- Normalisation.
 
-env-refl : ∀ {Γ} → Env Γ Γ
-env-refl {∅}     = ∅
-env-refl {γ , t} = wk-env env-refl , neᵥ (varₙ top)
+refl-env : ∀ {Γ} → Env Γ Γ
+refl-env {∅}     = ∅
+refl-env {γ , t} = wk-env refl-env , neᵥ (varₙ top)
 
 norm? : ∀ {A Γ} → Tm Γ A → Delay ∞ (No Γ A)
-norm? t = t′ ← eval env-refl t ⁏ quot t′
+norm? t = t′ ← eval refl-env t ⁏ quot t′
