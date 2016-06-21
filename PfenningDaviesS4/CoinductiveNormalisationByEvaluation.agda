@@ -4,8 +4,6 @@ open import Common.Delay public
 open import Common.OrderPreservingEmbedding public
 open import PfenningDaviesS4.Syntax public
 
-open import Function using (flip)
-
 
 -- Normal terms, neutral terms, values, and environments.
 

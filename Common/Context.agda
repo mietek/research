@@ -1,6 +1,6 @@
 module Common.Context where
 
-open import Function using (flip)
+open import Function using (flip) public
 
 
 -- Contexts.

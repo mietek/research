@@ -3,7 +3,7 @@ module PfenningDaviesS4.HereditarySubstitution3 where
 open import PfenningDaviesS4.Syntax public
 
 open import Data.Product using (_×_) renaming (_,_ to _∙_)
-open import Function using (_∘_ ; flip)
+open import Function using (_∘_)
 
 
 -- Normal terms, neutral terms, and spines.

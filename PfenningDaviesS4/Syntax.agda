@@ -2,8 +2,6 @@ module PfenningDaviesS4.Syntax where
 
 open import Common.Context public
 
-open import Function using (flip)
-
 
 -- Types.
 
