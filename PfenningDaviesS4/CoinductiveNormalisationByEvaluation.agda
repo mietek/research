@@ -132,35 +132,18 @@ lookup ∅       ()
 lookup (γ , t) top     = t
 lookup (γ , u) (pop i) = lookup γ i
 
-lookup∅ : ∀ {A Δ Ξᶜ} → Env ∅ Δ Ξᶜ → A ∈ Ξᶜ → Val ∅ Δ A
-lookup∅ ∅       ()
-lookup∅ (δ , t) top     = t
-lookup∅ (δ , u) (pop i) = lookup∅ δ i
-
 mutual
   eval : ∀ {A Γ Δ Γᶜ Δᶜ i} → Env Γ Δ Γᶜ → Env ∅ Δ Δᶜ → Tm Γᶜ Δᶜ A → Delay i (Val Γ Δ A)
   eval γ δ (var i)     = now (lookup γ i)
-  eval γ δ (⋆var i)    = now (wk-val∅ (lookup∅ δ i))
+  eval γ δ (⋆var i)    = now (wk-val∅ (lookup δ i))
   eval γ δ (lam t)     = now (lamᵥ γ δ t)
   eval γ δ (app t u)   = t′ ← eval γ δ t ⁏ u′ ← eval γ δ u ⁏ reduce⊃ t′ u′
   eval γ δ (pair t u)  = t′ ← eval γ δ t ⁏ u′ ← eval γ δ u ⁏ now (pairᵥ t′ u′)
   eval γ δ (fst t)     = t′ ← eval γ δ t ⁏ reduce∧₁ t′
   eval γ δ (snd t)     = t′ ← eval γ δ t ⁏ reduce∧₂ t′
   eval γ δ unit        = now unitᵥ
-  eval γ δ (box t)     = t′ ← eval∅ δ t  ⁏ now (boxᵥ t′)
+  eval γ δ (box t)     = t′ ← eval ∅ δ t ⁏ now (boxᵥ t′)
   eval γ δ (unbox t u) = t′ ← eval γ δ t ⁏ reduce□ γ δ t′ u
-
-  eval∅ : ∀ {A Δ Δᶜ i} → Env ∅ Δ Δᶜ → Tm ∅ Δᶜ A → Delay i (Val ∅ Δ A)
-  eval∅ δ (var ())
-  eval∅ δ (⋆var i)    = now (lookup∅ δ i)
-  eval∅ δ (lam t)     = now (lamᵥ ∅ δ t)
-  eval∅ δ (app t u)   = t′ ← eval∅ δ t ⁏ u′ ← eval∅ δ u ⁏ reduce⊃ t′ u′
-  eval∅ δ (pair t u)  = t′ ← eval∅ δ t ⁏ u′ ← eval∅ δ u ⁏ now (pairᵥ t′ u′)
-  eval∅ δ (fst t)     = t′ ← eval∅ δ t ⁏ reduce∧₁ t′
-  eval∅ δ (snd t)     = t′ ← eval∅ δ t ⁏ reduce∧₂ t′
-  eval∅ δ unit        = now unitᵥ
-  eval∅ δ (box t)     = t′ ← eval∅ δ t ⁏ now (boxᵥ t′)
-  eval∅ δ (unbox t u) = t′ ← eval∅ δ t ⁏ reduce□ ∅ δ t′ u
 
   reduce⊃ : ∀ {A B Γ Δ i} → Val Γ Δ (A ⊃ B) → Val Γ Δ A → Delay i (Val Γ Δ B)
   reduce⊃ (lamᵥ γ δ t) u = later (∞eval (γ , u) δ t)
@@ -181,9 +164,6 @@ mutual
 
   ∞eval : ∀ {A Γ Δ Γᶜ Δᶜ i} → Env Γ Δ Γᶜ → Env ∅ Δ Δᶜ → Tm Γᶜ Δᶜ A → ∞Delay i (Val Γ Δ A)
   force (∞eval γ δ t) = eval γ δ t
-
-  ∞eval∅ : ∀ {A Δ Δᶜ i} → Env ∅ Δ Δᶜ → Tm ∅ Δᶜ A → ∞Delay i (Val ∅ Δ A)
-  force (∞eval∅ δ t) = eval∅ δ t
 
 
 -- Completeness.
