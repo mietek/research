@@ -88,10 +88,16 @@ mutual
   eval : ∀ {A Γ Γᶜ i} → Env Γ Γᶜ → Tm Γᶜ A → Delay i (Val Γ A)
   eval γ (var i)    = now (lookup γ i)
   eval γ (lam t)    = now (lamᵥ γ t)
-  eval γ (app t u)  = t′ ← eval γ t ⁏ u′ ← eval γ u ⁏ reduce⊃ t′ u′
-  eval γ (pair t u) = t′ ← eval γ t ⁏ u′ ← eval γ u ⁏ now (pairᵥ t′ u′)
-  eval γ (fst t)    = t′ ← eval γ t ⁏ reduce∧₁ t′
-  eval γ (snd t)    = t′ ← eval γ t ⁏ reduce∧₂ t′
+  eval γ (app t u)  = t′ ← eval γ t ⁏
+                      u′ ← eval γ u ⁏
+                      reduce⊃ t′ u′
+  eval γ (pair t u) = t′ ← eval γ t ⁏
+                      u′ ← eval γ u ⁏
+                      now (pairᵥ t′ u′)
+  eval γ (fst t)    = t′ ← eval γ t ⁏
+                      reduce∧₁ t′
+  eval γ (snd t)    = t′ ← eval γ t ⁏
+                      reduce∧₂ t′
   eval γ unit       = now unitᵥ
 
   ∞eval : ∀ {A Γ Γᶜ i} → Env Γ Γᶜ → Tm Γᶜ A → ∞Delay i (Val Γ A)
@@ -113,9 +119,13 @@ mutual
 
   quotₙ : ∀ {A Γ i} → Ne Val Γ A → Delay i (Ne No Γ A)
   quotₙ (varₙ i)   = now (varₙ i)
-  quotₙ (appₙ t u) = t′ ← quotₙ t ⁏ u′ ← quot u ⁏ now (appₙ t′ u′)
-  quotₙ (fstₙ t)   = t′ ← quotₙ t ⁏ now (fstₙ t′)
-  quotₙ (sndₙ t)   = t′ ← quotₙ t ⁏ now (sndₙ t′)
+  quotₙ (appₙ t u) = t′ ← quotₙ t ⁏
+                     u′ ← quot u ⁏
+                     now (appₙ t′ u′)
+  quotₙ (fstₙ t)   = t′ ← quotₙ t ⁏
+                     now (fstₙ t′)
+  quotₙ (sndₙ t)   = t′ ← quotₙ t ⁏
+                     now (sndₙ t′)
 
   ∞expand⊃ : ∀ {A B Γ i} → Val Γ (A ⊃ B) → ∞Delay i (No Γ (A ⊃ B))
   force (∞expand⊃ t) = t′ ← reduce⊃ (wk-val t) (neᵥ (varₙ top)) ⁏
@@ -123,8 +133,10 @@ mutual
                        now (lamₙ t″)
 
   ∞expand∧ : ∀ {A B Γ i} → Val Γ (A ∧ B) → ∞Delay i (No Γ (A ∧ B))
-  force (∞expand∧ t) = t₁′ ← reduce∧₁ t ⁏ t₂′ ← reduce∧₂ t ⁏
-                       t₁″ ← quot t₁′   ⁏ t₂″ ← quot t₂′ ⁏
+  force (∞expand∧ t) = t₁′ ← reduce∧₁ t ⁏
+                       t₂′ ← reduce∧₂ t ⁏
+                       t₁″ ← quot t₁′ ⁏
+                       t₂″ ← quot t₂′ ⁏
                        now (pairₙ t₁″ t₂″)
 
 
@@ -135,4 +147,5 @@ refl-env {∅}     = ∅
 refl-env {γ , t} = wk-env refl-env , neᵥ (varₙ top)
 
 norm? : ∀ {A Γ} → Tm Γ A → Delay ∞ (No Γ A)
-norm? t = t′ ← eval refl-env t ⁏ quot t′
+norm? t = t′ ← eval refl-env t ⁏
+          quot t′

@@ -135,13 +135,21 @@ mutual
   eval γ δ (var i)     = now (lookup γ i)
   eval γ δ (⋆var i)    = now (wk-val∅ (lookup δ i))
   eval γ δ (lam t)     = now (lamᵥ γ δ t)
-  eval γ δ (app t u)   = t′ ← eval γ δ t ⁏ u′ ← eval γ δ u ⁏ reduce⊃ t′ u′
-  eval γ δ (pair t u)  = t′ ← eval γ δ t ⁏ u′ ← eval γ δ u ⁏ now (pairᵥ t′ u′)
-  eval γ δ (fst t)     = t′ ← eval γ δ t ⁏ reduce∧₁ t′
-  eval γ δ (snd t)     = t′ ← eval γ δ t ⁏ reduce∧₂ t′
+  eval γ δ (app t u)   = t′ ← eval γ δ t ⁏
+                         u′ ← eval γ δ u ⁏
+                         reduce⊃ t′ u′
+  eval γ δ (pair t u)  = t′ ← eval γ δ t ⁏
+                         u′ ← eval γ δ u ⁏
+                         now (pairᵥ t′ u′)
+  eval γ δ (fst t)     = t′ ← eval γ δ t ⁏
+                         reduce∧₁ t′
+  eval γ δ (snd t)     = t′ ← eval γ δ t ⁏
+                         reduce∧₂ t′
   eval γ δ unit        = now unitᵥ
-  eval γ δ (box t)     = t′ ← eval ∅ δ t ⁏ now (boxᵥ t′)
-  eval γ δ (unbox t u) = t′ ← eval γ δ t ⁏ reduce□ γ δ t′ u
+  eval γ δ (box t)     = t′ ← eval ∅ δ t ⁏
+                         now (boxᵥ t′)
+  eval γ δ (unbox t u) = t′ ← eval γ δ t ⁏
+                         reduce□ γ δ t′ u
 
   reduce⊃ : ∀ {A B Γ Δ i} → Val Γ Δ (A ⊃ B) → Val Γ Δ A → Delay i (Val Γ Δ B)
   reduce⊃ (lamᵥ γ δ t) u = later (∞eval (γ , u) δ t)
@@ -178,10 +186,16 @@ mutual
   quotₙ : ∀ {A Γ Δ i} → Ne Val Γ Δ A → Delay i (Ne No Γ Δ A)
   quotₙ (varₙ i)     = now (varₙ i)
   quotₙ (⋆varₙ i)    = now (⋆varₙ i)
-  quotₙ (appₙ t u)   = t′ ← quotₙ t ⁏ u′ ← quot u ⁏ now (appₙ t′ u′)
-  quotₙ (fstₙ t)     = t′ ← quotₙ t ⁏ now (fstₙ t′)
-  quotₙ (sndₙ t)     = t′ ← quotₙ t ⁏ now (sndₙ t′)
-  quotₙ (unboxₙ t u) = t′ ← quotₙ t ⁏ u′ ← quot u ⁏ now (unboxₙ t′ u′)
+  quotₙ (appₙ t u)   = t′ ← quotₙ t ⁏
+                       u′ ← quot u ⁏
+                       now (appₙ t′ u′)
+  quotₙ (fstₙ t)     = t′ ← quotₙ t ⁏
+                       now (fstₙ t′)
+  quotₙ (sndₙ t)     = t′ ← quotₙ t ⁏
+                       now (sndₙ t′)
+  quotₙ (unboxₙ t u) = t′ ← quotₙ t ⁏
+                       u′ ← quot u ⁏
+                       now (unboxₙ t′ u′)
 
   ∞expand⊃ : ∀ {A B Γ Δ i} → Val Γ Δ (A ⊃ B) → ∞Delay i (No Γ Δ (A ⊃ B))
   force (∞expand⊃ t) = t′ ← reduce⊃ (wk-val t) (neᵥ (varₙ top)) ⁏
@@ -189,8 +203,10 @@ mutual
                        now (lamₙ t″)
 
   ∞expand∧ : ∀ {A B Γ Δ i} → Val Γ Δ (A ∧ B) → ∞Delay i (No Γ Δ (A ∧ B))
-  force (∞expand∧ t) = t₁′ ← reduce∧₁ t ⁏ t₂′ ← reduce∧₂ t ⁏
-                       t₁″ ← quot t₁′   ⁏ t₂″ ← quot t₂′ ⁏
+  force (∞expand∧ t) = t₁′ ← reduce∧₁ t ⁏
+                       t₂′ ← reduce∧₂ t ⁏
+                       t₁″ ← quot t₁′ ⁏
+                       t₂″ ← quot t₂′ ⁏
                        now (pairₙ t₁″ t₂″)
 
   ∞expand□ : ∀ {A Γ Δ i} → Ne Val Γ Δ (□ A) → ∞Delay i (No Γ Δ (□ A))
@@ -209,4 +225,5 @@ refl-env {γ , t} = wk-env refl-env , neᵥ (varₙ top)
 ⋆refl-env {δ , t} = ⋆wk-env ⋆refl-env , neᵥ (⋆varₙ top)
 
 norm? : ∀ {A Γ Δ} → Tm Γ Δ A → Delay ∞ (No Γ Δ A)
-norm? t = t′ ← eval refl-env ⋆refl-env t ⁏ quot t′
+norm? t = t′ ← eval refl-env ⋆refl-env t ⁏
+          quot t′
