@@ -159,7 +159,7 @@ mutual
   eval∅ δ (fst t)     = t′ ← eval∅ δ t ⁏ reduce∧₁ t′
   eval∅ δ (snd t)     = t′ ← eval∅ δ t ⁏ reduce∧₂ t′
   eval∅ δ unit        = now unitᵥ
-  eval∅ δ (box t)     = t′ ← eval∅ δ t  ⁏ now (boxᵥ t′)
+  eval∅ δ (box t)     = t′ ← eval∅ δ t ⁏ now (boxᵥ t′)
   eval∅ δ (unbox t u) = t′ ← eval∅ δ t ⁏ reduce□ ∅ δ t′ u
 
   reduce⊃ : ∀ {A B Γ Δ i} → Val Γ Δ (A ⊃ B) → Val Γ Δ A → Delay i (Val Γ Δ B)
@@ -211,10 +211,8 @@ mutual
                        now (lamₙ t″)
 
   ∞expand∧ : ∀ {A B Γ Δ i} → Val Γ Δ (A ∧ B) → ∞Delay i (No Γ Δ (A ∧ B))
-  force (∞expand∧ t) = t₁′ ← reduce∧₁ t ⁏
-                       t₂′ ← reduce∧₂ t ⁏
-                       t₁″ ← quot t₁′ ⁏
-                       t₂″ ← quot t₂′ ⁏
+  force (∞expand∧ t) = t₁′ ← reduce∧₁ t ⁏ t₂′ ← reduce∧₂ t ⁏
+                       t₁″ ← quot t₁′   ⁏ t₂″ ← quot t₂′ ⁏
                        now (pairₙ t₁″ t₂″)
 
 
@@ -229,5 +227,4 @@ env-refl {γ , t} = wk-env env-refl , neᵥ (varₙ top)
 ⋆env-refl {δ , t} = ⋆wk-env ⋆env-refl , neᵥ (⋆varₙ top)
 
 norm? : ∀ {A Γ Δ} → Tm Γ Δ A → Delay ∞ (No Γ Δ A)
-norm? t = t′ ← eval env-refl ⋆env-refl t ⁏
-          quot t′
+norm? t = t′ ← eval env-refl ⋆env-refl t ⁏ quot t′

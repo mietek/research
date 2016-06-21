@@ -135,5 +135,4 @@ env-refl {∅}     = ∅
 env-refl {γ , t} = wk-env env-refl , neᵥ (varₙ top)
 
 norm? : ∀ {A Γ} → Tm Γ A → Delay ∞ (No Γ A)
-norm? t = t′ ← eval env-refl t ⁏
-          quot t′
+norm? t = t′ ← eval env-refl t ⁏ quot t′
