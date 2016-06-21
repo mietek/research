@@ -23,7 +23,7 @@ mutual
     appₙ   : ∀ {A B} → Ne Ξ Γ Δ (A ⊃ B) → Ξ Γ Δ A → Ne Ξ Γ Δ B
     fstₙ   : ∀ {A B} → Ne Ξ Γ Δ (A ∧ B) → Ne Ξ Γ Δ A
     sndₙ   : ∀ {A B} → Ne Ξ Γ Δ (A ∧ B) → Ne Ξ Γ Δ B
-    unboxₙ : ∀ {A C Γᶜ Δᶜ} → Ne Ξ Γ Δ (□ A) → Tm Γᶜ (Δᶜ , A) C → Ne Ξ Γ Δ C
+    unboxₙ : ∀ {A C} → Ne Ξ Γ Δ (□ A) → Ξ Γ (Δ , A) C → Ne Ξ Γ Δ C
 
   data Val (Γ Δ : Cx Ty) : Ty → Set where
     lamᵥ  : ∀ {A B Γᶜ Δᶜ} → Env Γ Δ Γᶜ → Env ∅ Δ Δᶜ → Tm (Γᶜ , A) Δᶜ B → Val Γ Δ (A ⊃ B)
@@ -53,7 +53,7 @@ mutual
   ren-nen ρ (appₙ t u)   = appₙ (ren-nen ρ t) (ren-no ρ u)
   ren-nen ρ (fstₙ t)     = fstₙ (ren-nen ρ t)
   ren-nen ρ (sndₙ t)     = sndₙ (ren-nen ρ t)
-  ren-nen ρ (unboxₙ t u) = unboxₙ (ren-nen ρ t) u
+  ren-nen ρ (unboxₙ t u) = unboxₙ (ren-nen ρ t) (ren-no ρ u)
 
   ren-nev : ∀ {Γ Γ′ Δ} → Γ ⊆ Γ′ → Ren (flip (Ne Val) Δ) Γ Γ′
   ren-nev ρ (varₙ i)     = varₙ (ren-var ρ i)
@@ -61,7 +61,7 @@ mutual
   ren-nev ρ (appₙ t u)   = appₙ (ren-nev ρ t) (ren-val ρ u)
   ren-nev ρ (fstₙ t)     = fstₙ (ren-nev ρ t)
   ren-nev ρ (sndₙ t)     = sndₙ (ren-nev ρ t)
-  ren-nev ρ (unboxₙ t u) = unboxₙ (ren-nev ρ t) u
+  ren-nev ρ (unboxₙ t u) = unboxₙ (ren-nev ρ t) (ren-val ρ u)
 
   ren-val : ∀ {Γ Γ′ Δ} → Γ ⊆ Γ′ → Ren (flip Val Δ) Γ Γ′
   ren-val ρ (lamᵥ γ δ t) = lamᵥ (ren-env ρ γ) δ t
@@ -100,7 +100,7 @@ mutual
   ⋆ren-nen ρ (appₙ t u)   = appₙ (⋆ren-nen ρ t) (⋆ren-no ρ u)
   ⋆ren-nen ρ (fstₙ t)     = fstₙ (⋆ren-nen ρ t)
   ⋆ren-nen ρ (sndₙ t)     = sndₙ (⋆ren-nen ρ t)
-  ⋆ren-nen ρ (unboxₙ t u) = unboxₙ (⋆ren-nen ρ t) u
+  ⋆ren-nen ρ (unboxₙ t u) = unboxₙ (⋆ren-nen ρ t) (⋆ren-no (keep ρ) u)
 
   ⋆ren-nev : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → Ren (Ne Val Γ) Δ Δ′
   ⋆ren-nev ρ (varₙ i)     = varₙ i
@@ -108,7 +108,7 @@ mutual
   ⋆ren-nev ρ (appₙ t u)   = appₙ (⋆ren-nev ρ t) (⋆ren-val ρ u)
   ⋆ren-nev ρ (fstₙ t)     = fstₙ (⋆ren-nev ρ t)
   ⋆ren-nev ρ (sndₙ t)     = sndₙ (⋆ren-nev ρ t)
-  ⋆ren-nev ρ (unboxₙ t u) = unboxₙ (⋆ren-nev ρ t) u
+  ⋆ren-nev ρ (unboxₙ t u) = unboxₙ (⋆ren-nev ρ t) (⋆ren-val (keep ρ) u)
 
   ⋆ren-val : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → Ren (Val Γ) Δ Δ′
   ⋆ren-val ρ (lamᵥ γ δ t) = lamᵥ (⋆ren-env ρ γ) (⋆ren-env ρ δ) t
@@ -176,7 +176,8 @@ mutual
 
   reduce□ : ∀ {A C Γ Δ Γᶜ Δᶜ i} → Env Γ Δ Γᶜ → Env ∅ Δ Δᶜ → Val Γ Δ (□ A) → Tm Γᶜ (Δᶜ , A) C → Delay i (Val Γ Δ C)
   reduce□ γ δ (boxᵥ t) u = later (∞eval γ (δ , wk-val∅ t) u)
-  reduce□ γ δ (neᵥ t)  u = now (neᵥ (unboxₙ t u))
+  reduce□ γ δ (neᵥ t)  u = u′ ← eval (⋆wk-env γ) (⋆wk-env δ , neᵥ (⋆varₙ top)) u ⁏
+                           now (neᵥ (unboxₙ t u′))
 
   ∞eval : ∀ {A Γ Δ Γᶜ Δᶜ i} → Env Γ Δ Γᶜ → Env ∅ Δ Δᶜ → Tm Γᶜ Δᶜ A → ∞Delay i (Val Γ Δ A)
   force (∞eval γ δ t) = eval γ δ t
@@ -202,8 +203,7 @@ mutual
   quotₙ (appₙ t u)   = t′ ← quotₙ t ⁏ u′ ← quot u ⁏ now (appₙ t′ u′)
   quotₙ (fstₙ t)     = t′ ← quotₙ t ⁏ now (fstₙ t′)
   quotₙ (sndₙ t)     = t′ ← quotₙ t ⁏ now (sndₙ t′)
-  -- TODO: Is this correct? No expansion?
-  quotₙ (unboxₙ t u) = t′ ← quotₙ t ⁏ now (unboxₙ t′ u)
+  quotₙ (unboxₙ t u) = t′ ← quotₙ t ⁏ u′ ← quot u ⁏ now (unboxₙ t′ u′)
 
   ∞expand⊃ : ∀ {A B Γ Δ i} → Val Γ Δ (A ⊃ B) → ∞Delay i (No Γ Δ (A ⊃ B))
   force (∞expand⊃ t) = t′ ← reduce⊃ (wk-val t) (neᵥ (varₙ top)) ⁏
