@@ -1,5 +1,7 @@
 module Common.Context where
 
+open import Data.Fin using (Fin ; zero ; suc) public
+open import Data.Nat using (ℕ ; zero ; suc) public
 open import Function using (flip) public
 
 
@@ -10,6 +12,11 @@ data Cx (U : Set) : Set where
   ∅   : Cx U
   _,_ : Cx U → U → Cx U
 
+module _ {U : Set} where
+  length : Cx U → ℕ
+  length ∅       = zero
+  length (Γ , A) = suc (length Γ)
+
 
 -- Variables, or typed de Bruijn indices.
 
@@ -18,6 +25,10 @@ module _ {U : Set} where
   data _∈_ (A : U) : Cx U → Set where
     top : ∀ {Γ} → A ∈ Γ , A
     pop : ∀ {B Γ} → A ∈ Γ → A ∈ Γ , B
+
+  index : ∀ {A Γ} → A ∈ Γ → Fin (length Γ)
+  index top     = zero
+  index (pop i) = suc (index i)
 
   i₀ : ∀ {A Γ} → A ∈ Γ , A
   i₀ = top
