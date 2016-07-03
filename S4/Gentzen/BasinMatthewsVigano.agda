@@ -96,6 +96,21 @@ v₂ : ∀ {x y z A B C Γ Ξ} → Γ , x ∙ A , y ∙ B , z ∙ C ⨾ Ξ ⊢ x
 v₂ = var (pop (pop top))
 
 
+-- Useful theorems in functional form.
+
+dist : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ (A ⇒ B) → Γ ⨾ Ξ ⊢ x ⦂ □ A → Γ ⨾ Ξ ⊢ x ⦂ □ B
+dist t u = nec (app (unnec (rmono⊢ weak⊆ t) rv₀) (unnec (rmono⊢ weak⊆ u) rv₀))
+
+up : ∀ {x A Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ A → Γ ⨾ Ξ ⊢ x ⦂ □ □ A
+up t = nec (nec (unnec (rmono⊢ (trans⊆ weak⊆ weak⊆) t) (rtrans rv₁ rv₀)))
+
+down : ∀ {x A Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ A → Γ ⨾ Ξ ⊢ x ⦂ A
+down t = unnec t rrefl
+
+distup : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ (□ A ⇒ B) → Γ ⨾ Ξ ⊢ x ⦂ □ A → Γ ⨾ Ξ ⊢ x ⦂ □ B
+distup t u = dist t (up u)
+
+
 -- Deduction theorem.
 
 ded : ∀ {x A B Γ Ξ} → Γ , x ∙ A ⨾ Ξ ⊢ x ⦂ B → Γ ⨾ Ξ ⊢ x ⦂ A ⇒ B

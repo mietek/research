@@ -79,6 +79,21 @@ v₂ : ∀ {A B C Γ Δ} → Γ , A , B , C ⨾ Δ ⊢ A
 v₂ = var (pop (pop top))
 
 
+-- Useful theorems in functional form.
+
+dist : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ □ (A ⇒ B) → Γ ⨾ Δ ⊢ □ A → Γ ⨾ Δ ⊢ □ B
+dist t u = unbox t (unbox (mmono⊢ weak⊆ u) (box (app mv₁ mv₀)))
+
+up : ∀ {A Γ Δ} → Γ ⨾ Δ ⊢ □ A → Γ ⨾ Δ ⊢ □ □ A
+up t = unbox t (box (box mv₀))
+
+down : ∀ {A Γ Δ} → Γ ⨾ Δ ⊢ □ A → Γ ⨾ Δ ⊢ A
+down t = unbox t mv₀
+
+distup : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ □ (□ A ⇒ B) → Γ ⨾ Δ ⊢ □ A → Γ ⨾ Δ ⊢ □ B
+distup t u = dist t (up u)
+
+
 -- Deduction theorems.
 
 ded : ∀ {A B Γ Δ} → Γ , A ⨾ Δ ⊢ B → Γ ⨾ Δ ⊢ A ⇒ B
