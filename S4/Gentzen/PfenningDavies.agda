@@ -22,7 +22,7 @@ data _⨾_⊢_ (Γ Δ : Cx Ty) : Ty → Set where
   boom  : ∀ {C}     → Γ ⨾ Δ ⊢ ⊥ → Γ ⨾ Δ ⊢ C
 
 
--- Monotonicity of syntactic consequence with respect to truth context extension.
+-- Monotonicity of syntactic consequence with respect to intuitionistic context extension.
 
 mono⊢ : ∀ {A Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⨾ Δ ⊢ A → Γ′ ⨾ Δ ⊢ A
 mono⊢ η (var i)      = var (mono∈ η i)
@@ -40,7 +40,7 @@ mono⊢ η (case t u v) = case (mono⊢ η t) (mono⊢ (keep η) u) (mono⊢ (ke
 mono⊢ η (boom t)     = boom (mono⊢ η t)
 
 
--- Monotonicity of syntactic consequence with respect to validity context extension.
+-- Monotonicity of syntactic consequence with respect to modal context extension.
 
 mmono⊢ : ∀ {A Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⨾ Δ ⊢ A → Γ ⨾ Δ′ ⊢ A
 mmono⊢ η (var i)      = var i
