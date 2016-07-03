@@ -55,24 +55,24 @@ mono⊢ η (boom t)     = boom (mono⊢ η t)
 
 -- Monotonicity of syntactic consequence with respect to relational context extension.
 
-mmono⊢≤ : ∀ {x y Ξ Ξ′} → Ξ ⊆ Ξ′ → Ξ ⊢ x ≤ y → Ξ′ ⊢ x ≤ y
-mmono⊢≤ η (rvar i)     = rvar (mono∈ η i)
-mmono⊢≤ η rrefl        = rrefl
-mmono⊢≤ η (rtrans t u) = rtrans (mmono⊢≤ η t) (mmono⊢≤ η u)
+rmono⊢≤ : ∀ {x y Ξ Ξ′} → Ξ ⊆ Ξ′ → Ξ ⊢ x ≤ y → Ξ′ ⊢ x ≤ y
+rmono⊢≤ η (rvar i)     = rvar (mono∈ η i)
+rmono⊢≤ η rrefl        = rrefl
+rmono⊢≤ η (rtrans t u) = rtrans (rmono⊢≤ η t) (rmono⊢≤ η u)
 
-mmono⊢ : ∀ {x A Γ Ξ Ξ′} → Ξ ⊆ Ξ′ → Γ ⨾ Ξ ⊢ x ⦂ A → Γ ⨾ Ξ′ ⊢ x ⦂ A
-mmono⊢ η (var i)      = var i
-mmono⊢ η (lam t)      = lam (mmono⊢ η t)
-mmono⊢ η (app t u)    = app (mmono⊢ η t) (mmono⊢ η u)
-mmono⊢ η (nec t)      = nec (mmono⊢ (keep η) t)
-mmono⊢ η (down t u)   = down (mmono⊢ η t) (mmono⊢≤ η u)
-mmono⊢ η (pair t u)   = pair (mmono⊢ η t) (mmono⊢ η u)
-mmono⊢ η (fst t)      = fst (mmono⊢ η t)
-mmono⊢ η (snd t)      = snd (mmono⊢ η t)
-mmono⊢ η (inl t)      = inl (mmono⊢ η t)
-mmono⊢ η (inr t)      = inr (mmono⊢ η t)
-mmono⊢ η (case t u v) = case (mmono⊢ η t) (mmono⊢ η u) (mmono⊢ η v)
-mmono⊢ η (boom t)     = boom (mmono⊢ η t)
+rmono⊢ : ∀ {x A Γ Ξ Ξ′} → Ξ ⊆ Ξ′ → Γ ⨾ Ξ ⊢ x ⦂ A → Γ ⨾ Ξ′ ⊢ x ⦂ A
+rmono⊢ η (var i)      = var i
+rmono⊢ η (lam t)      = lam (rmono⊢ η t)
+rmono⊢ η (app t u)    = app (rmono⊢ η t) (rmono⊢ η u)
+rmono⊢ η (nec t)      = nec (rmono⊢ (keep η) t)
+rmono⊢ η (down t u)   = down (rmono⊢ η t) (rmono⊢≤ η u)
+rmono⊢ η (pair t u)   = pair (rmono⊢ η t) (rmono⊢ η u)
+rmono⊢ η (fst t)      = fst (rmono⊢ η t)
+rmono⊢ η (snd t)      = snd (rmono⊢ η t)
+rmono⊢ η (inl t)      = inl (rmono⊢ η t)
+rmono⊢ η (inr t)      = inr (rmono⊢ η t)
+rmono⊢ η (case t u v) = case (rmono⊢ η t) (rmono⊢ η u) (rmono⊢ η v)
+rmono⊢ η (boom t)     = boom (rmono⊢ η t)
 
 
 -- Shorthand for variables.
