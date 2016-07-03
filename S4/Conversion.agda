@@ -6,7 +6,7 @@ import S4.Hilbert.Linear as HL
 import S4.Hilbert.Nested as HN
 import S4.Gentzen.PfenningDavies as GPD
 
-open HL using (_++⁺_) renaming (_⨾_⊢⁺_ to HL_⨾_⊢⁺_ ; _⨾_⊢_ to HL_⨾_⊢_) public
+open HL using () renaming (_⨾_⊢⁺_ to HL_⨾_⊢⁺_ ; _⨾_⊢_ to HL_⨾_⊢_) public
 open HN using () renaming (_⨾_⊢_ to HN_⨾_⊢_) public
 open GPD using () renaming (_⨾_⊢_ to GPD_⨾_⊢_) public
 

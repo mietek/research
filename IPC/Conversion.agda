@@ -6,7 +6,7 @@ import IPC.Hilbert.Linear as HL
 import IPC.Hilbert.Nested as HN
 import IPC.Gentzen as G
 
-open HL using (_++⁺_) renaming (_⊢⁺_ to HL_⊢⁺_ ; _⊢_ to HL_⊢_) public
+open HL using () renaming (_⊢⁺_ to HL_⊢⁺_ ; _⊢_ to HL_⊢_) public
 open HN using () renaming (_⊢_ to HN_⊢_) public
 open G using () renaming (_⊢_ to G_⊢_) public
 
