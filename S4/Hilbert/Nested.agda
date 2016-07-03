@@ -130,6 +130,9 @@ mded boom           = app ck boom
 
 -- Useful theorems in functional form.
 
+funbox : ∀ {A C Γ Δ} → Γ ⨾ Δ ⊢ □ A → Γ ⨾ Δ , A ⊢ C → Γ ⨾ Δ ⊢ C
+funbox t u = app (mded u) t
+
 fpair : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢ B → Γ ⨾ Δ ⊢ A ∧ B
 fpair t u = app (app pair t) u
 
