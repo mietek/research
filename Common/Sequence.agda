@@ -17,11 +17,14 @@ data _∋_ : Seq U → U → Set where
   pop : ∀ {A B Π} → Π ∋ A → B ∷ Π ∋ A
 
 
--- Concatenation of sequences.
+-- Sequence concatenation.
 
 _++_ : Seq U → Seq U → Seq U
 []      ++ Π′ = Π′
 (A ∷ Π) ++ Π′ = A ∷ (Π ++ Π′)
+
+
+-- Monotonicity of sequence membership with respect to concatenation.
 
 mono∋⁺⁺ : ∀ {A Π Π′} → Π ∋ A → Π ++ Π′ ∋ A
 mono∋⁺⁺ top     = top

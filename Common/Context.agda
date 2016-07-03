@@ -51,7 +51,7 @@ zero⊆ {∅}     = done
 zero⊆ {Γ , A} = skip zero⊆
 
 
--- Monotonicity of context membership.
+-- Monotonicity of context membership with respect to extension.
 
 mono∈ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → A ∈ Γ → A ∈ Γ′
 mono∈ done     ()

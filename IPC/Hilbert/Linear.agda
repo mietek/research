@@ -26,7 +26,7 @@ _⊢_ : Cx Ty → Ty → Set
 Γ ⊢ A = Σ (Seq Ty) (λ Π → Γ ⊢⁺ A ∷ Π)
 
 
--- Monotonicity of syntactic consequence.
+-- Monotonicity of syntactic consequence with respect to context extension.
 
 mono⊢⁺ : ∀ {Π Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⁺ Π → Γ′ ⊢⁺ Π
 mono⊢⁺ η nil         = nil

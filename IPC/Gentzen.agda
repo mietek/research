@@ -19,7 +19,7 @@ data _⊢_ (Γ : Cx Ty) : Ty → Set where
   boom : ∀ {C}     → Γ ⊢ ⊥ → Γ ⊢ C
 
 
--- Monotonicity of syntactic consequence.
+-- Monotonicity of syntactic consequence with respect to context extension.
 
 mono⊢ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
 mono⊢ η (var i)      = var (mono∈ η i)
