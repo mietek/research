@@ -50,6 +50,9 @@ zero⊆ : ∀ {Γ} → ∅ ⊆ Γ
 zero⊆ {∅}     = done
 zero⊆ {Γ , A} = skip zero⊆
 
+
+-- Monotonicity of context membership.
+
 mono∈ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → A ∈ Γ → A ∈ Γ′
 mono∈ done     ()
 mono∈ (skip η) i       = pop (mono∈ η i)
