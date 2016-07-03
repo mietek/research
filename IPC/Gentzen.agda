@@ -46,6 +46,12 @@ v₂ : ∀ {A B C Γ} → Γ , A , B , C ⊢ A
 v₂ = var (pop (pop top))
 
 
+-- Deduction theorem.
+
+ded : ∀ {A B Γ} → Γ , A ⊢ B → Γ ⊢ A ⇒ B
+ded t = lam t
+
+
 -- Useful theorems in combinatory form.
 
 ci : ∀ {A Γ} → Γ ⊢ A ⇒ A
