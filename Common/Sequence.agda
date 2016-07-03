@@ -1,4 +1,4 @@
-module Common.Sequence (U : Set) where
+module Common.Sequence where
 
 
 -- Sequences.
@@ -11,25 +11,26 @@ data Seq (U : Set) : Set where
 
 -- Sequence membership, as nameless typed de Bruijn indices.
 
-infix 1 _∋_
-data _∋_ : Seq U → U → Set where
-  top : ∀ {A Π} → A ∷ Π ∋ A
-  pop : ∀ {A B Π} → Π ∋ A → B ∷ Π ∋ A
+module _ {U : Set} where
+  infix 1 _∋_
+  data _∋_ : Seq U → U → Set where
+    top : ∀ {A Π} → A ∷ Π ∋ A
+    pop : ∀ {A B Π} → Π ∋ A → B ∷ Π ∋ A
 
 
--- Sequence concatenation.
+  -- Sequence concatenation.
 
-_++_ : Seq U → Seq U → Seq U
-[]      ++ Π′ = Π′
-(A ∷ Π) ++ Π′ = A ∷ (Π ++ Π′)
+  _++_ : Seq U → Seq U → Seq U
+  []      ++ Π′ = Π′
+  (A ∷ Π) ++ Π′ = A ∷ (Π ++ Π′)
 
 
--- Monotonicity of sequence membership with respect to concatenation.
+  -- Monotonicity of sequence membership with respect to concatenation.
 
-mono∋⁺⁺ : ∀ {A Π Π′} → Π ∋ A → Π ++ Π′ ∋ A
-mono∋⁺⁺ top     = top
-mono∋⁺⁺ (pop i) = pop (mono∋⁺⁺ i)
+  mono∋⁺⁺ : ∀ {A Π Π′} → Π ∋ A → Π ++ Π′ ∋ A
+  mono∋⁺⁺ top     = top
+  mono∋⁺⁺ (pop i) = pop (mono∋⁺⁺ i)
 
-mono⁺⁺∋ : ∀ {A} Π {Π′} → Π′ ∋ A → Π ++ Π′ ∋ A
-mono⁺⁺∋ []      i = i
-mono⁺⁺∋ (A ∷ Π) i = pop (mono⁺⁺∋ Π i)
+  mono⁺⁺∋ : ∀ {A} Π {Π′} → Π′ ∋ A → Π ++ Π′ ∋ A
+  mono⁺⁺∋ []      i = i
+  mono⁺⁺∋ (A ∷ Π) i = pop (mono⁺⁺∋ Π i)

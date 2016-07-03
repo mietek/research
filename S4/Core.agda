@@ -1,6 +1,8 @@
 module S4.Core where
 
 open import Common.Core public
+open import Common.Context public
+open import Common.Sequence public
 
 
 -- Types of intuitionistic modal logic S4, with necessity, but without possibility.
@@ -22,7 +24,3 @@ data Ty : Set where
 infix 3 _⇔_
 _⇔_ : Ty → Ty → Ty
 A ⇔ B = (A ⇒ B) ∧ (B ⇒ A)
-
-
-open import Common.Context (Ty) public
-open import Common.Sequence (Ty) public

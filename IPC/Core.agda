@@ -1,6 +1,8 @@
 module IPC.Core where
 
 open import Common.Core public
+open import Common.Context public
+open import Common.Sequence public
 
 
 -- Propositions of intuitionistic propositional calculus (IPC).
@@ -21,7 +23,3 @@ data Ty : Set where
 infix 3 _⇔_
 _⇔_ : Ty → Ty → Ty
 A ⇔ B = (A ⇒ B) ∧ (B ⇒ A)
-
-
-open import Common.Context (Ty) public
-open import Common.Sequence (Ty) public
