@@ -22,18 +22,18 @@ data _⊢_≤_ (Ξ : Cx (La × La)) : La → La → Set where
 
 infix 1 _⨾_⊢_⦂_
 data _⨾_⊢_⦂_ (Γ : Cx (La × Ty)) (Ξ : Cx (La × La)) : La → Ty → Set where
-  var  : ∀ {x A}     → x ∙ A ∈ Γ → Γ ⨾ Ξ ⊢ x ⦂ A
-  lam  : ∀ {x A B}   → Γ , x ∙ A ⨾ Ξ ⊢ x ⦂ B → Γ ⨾ Ξ ⊢ x ⦂ A ⇒ B
-  app  : ∀ {x A B}   → Γ ⨾ Ξ ⊢ x ⦂ A ⇒ B → Γ ⨾ Ξ ⊢ x ⦂ A → Γ ⨾ Ξ ⊢ x ⦂ B
-  nec  : ∀ {x A}     → (∀ {y} → Γ ⨾ Ξ , x ∙ y ⊢ y ⦂ A) → Γ ⨾ Ξ ⊢ x ⦂ □ A
-  down : ∀ {x y A}   → Γ ⨾ Ξ ⊢ x ⦂ □ A → Ξ ⊢ x ≤ y → Γ ⨾ Ξ ⊢ y ⦂ A
-  pair : ∀ {x A B}   → Γ ⨾ Ξ ⊢ x ⦂ A → Γ ⨾ Ξ ⊢ x ⦂ B → Γ ⨾ Ξ ⊢ x ⦂ A ∧ B
-  fst  : ∀ {x A B}   → Γ ⨾ Ξ ⊢ x ⦂ A ∧ B → Γ ⨾ Ξ ⊢ x ⦂ A
-  snd  : ∀ {x A B}   → Γ ⨾ Ξ ⊢ x ⦂ A ∧ B → Γ ⨾ Ξ ⊢ x ⦂ B
-  inl  : ∀ {x A B}   → Γ ⨾ Ξ ⊢ x ⦂ A → Γ ⨾ Ξ ⊢ x ⦂ A ∨ B
-  inr  : ∀ {x A B}   → Γ ⨾ Ξ ⊢ x ⦂ B → Γ ⨾ Ξ ⊢ x ⦂ A ∨ B
-  case : ∀ {x A B C} → Γ ⨾ Ξ ⊢ x ⦂ A ∨ B → Γ , x ∙ A ⨾ Ξ ⊢ x ⦂ C → Γ , x ∙ B ⨾ Ξ ⊢ x ⦂ C → Γ ⨾ Ξ ⊢ x ⦂ C
-  boom : ∀ {x C}     → Γ ⨾ Ξ ⊢ x ⦂ ⊥ → Γ ⨾ Ξ ⊢ x ⦂ C
+  var   : ∀ {x A}     → x ∙ A ∈ Γ → Γ ⨾ Ξ ⊢ x ⦂ A
+  lam   : ∀ {x A B}   → Γ , x ∙ A ⨾ Ξ ⊢ x ⦂ B → Γ ⨾ Ξ ⊢ x ⦂ A ⇒ B
+  app   : ∀ {x A B}   → Γ ⨾ Ξ ⊢ x ⦂ A ⇒ B → Γ ⨾ Ξ ⊢ x ⦂ A → Γ ⨾ Ξ ⊢ x ⦂ B
+  nec   : ∀ {x A}     → (∀ {y} → Γ ⨾ Ξ , x ∙ y ⊢ y ⦂ A) → Γ ⨾ Ξ ⊢ x ⦂ □ A
+  unnec : ∀ {x y A}   → Γ ⨾ Ξ ⊢ x ⦂ □ A → Ξ ⊢ x ≤ y → Γ ⨾ Ξ ⊢ y ⦂ A
+  pair  : ∀ {x A B}   → Γ ⨾ Ξ ⊢ x ⦂ A → Γ ⨾ Ξ ⊢ x ⦂ B → Γ ⨾ Ξ ⊢ x ⦂ A ∧ B
+  fst   : ∀ {x A B}   → Γ ⨾ Ξ ⊢ x ⦂ A ∧ B → Γ ⨾ Ξ ⊢ x ⦂ A
+  snd   : ∀ {x A B}   → Γ ⨾ Ξ ⊢ x ⦂ A ∧ B → Γ ⨾ Ξ ⊢ x ⦂ B
+  inl   : ∀ {x A B}   → Γ ⨾ Ξ ⊢ x ⦂ A → Γ ⨾ Ξ ⊢ x ⦂ A ∨ B
+  inr   : ∀ {x A B}   → Γ ⨾ Ξ ⊢ x ⦂ B → Γ ⨾ Ξ ⊢ x ⦂ A ∨ B
+  case  : ∀ {x A B C} → Γ ⨾ Ξ ⊢ x ⦂ A ∨ B → Γ , x ∙ A ⨾ Ξ ⊢ x ⦂ C → Γ , x ∙ B ⨾ Ξ ⊢ x ⦂ C → Γ ⨾ Ξ ⊢ x ⦂ C
+  boom  : ∀ {x C}     → Γ ⨾ Ξ ⊢ x ⦂ ⊥ → Γ ⨾ Ξ ⊢ x ⦂ C
 
 
 -- Monotonicity of syntactic consequence with respect to intuitionistic context extension.
@@ -43,7 +43,7 @@ mono⊢ η (var i)      = var (mono∈ η i)
 mono⊢ η (lam t)      = lam (mono⊢ (keep η) t)
 mono⊢ η (app t u)    = app (mono⊢ η t) (mono⊢ η u)
 mono⊢ η (nec t)      = nec (mono⊢ η t)
-mono⊢ η (down t u)   = down (mono⊢ η t) u
+mono⊢ η (unnec t u)  = unnec (mono⊢ η t) u
 mono⊢ η (pair t u)   = pair (mono⊢ η t) (mono⊢ η u)
 mono⊢ η (fst t)      = fst (mono⊢ η t)
 mono⊢ η (snd t)      = snd (mono⊢ η t)
@@ -65,7 +65,7 @@ rmono⊢ η (var i)      = var i
 rmono⊢ η (lam t)      = lam (rmono⊢ η t)
 rmono⊢ η (app t u)    = app (rmono⊢ η t) (rmono⊢ η u)
 rmono⊢ η (nec t)      = nec (rmono⊢ (keep η) t)
-rmono⊢ η (down t u)   = down (rmono⊢ η t) (rmono⊢≤ η u)
+rmono⊢ η (unnec t u)  = unnec (rmono⊢ η t) (rmono⊢≤ η u)
 rmono⊢ η (pair t u)   = pair (rmono⊢ η t) (rmono⊢ η u)
 rmono⊢ η (fst t)      = fst (rmono⊢ η t)
 rmono⊢ η (snd t)      = snd (rmono⊢ η t)
@@ -117,13 +117,13 @@ cs : ∀ {x A B C Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ (A ⇒ B ⇒ C) ⇒ (A ⇒ B) �
 cs = lam (lam (lam (app (app v₂ v₀) (app v₁ v₀))))
 
 cdist : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ (A ⇒ B) ⇒ □ A ⇒ □ B
-cdist = lam (lam (nec (app (down v₁ rv₀) (down v₀ rv₀))))
+cdist = lam (lam (nec (app (unnec v₁ rv₀) (unnec v₀ rv₀))))
 
 cup : ∀ {x A Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ A ⇒ □ □ A
-cup = lam (nec (nec (down v₀ (rtrans rv₁ rv₀))))
+cup = lam (nec (nec (unnec v₀ (rtrans rv₁ rv₀))))
 
 cdown : ∀ {x A Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ A ⇒ A
-cdown = lam (down v₀ rrefl)
+cdown = lam (unnec v₀ rrefl)
 
 cdistup : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ (□ A ⇒ B) ⇒ □ A ⇒ □ B
 cdistup = lam (lam (app (app cdist v₁) (app cup v₀)))
