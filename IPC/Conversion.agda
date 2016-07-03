@@ -60,7 +60,7 @@ hn→hl HN.case      = [] ∙ HL.case HL.nil
 hn→hl HN.boom      = [] ∙ HL.boom HL.nil
 
 
--- The deduction theorem for linear Hilbert-style proofs.
+-- Deduction theorem for linear Hilbert-style proofs.
 
 hl-ded : ∀ {A B Γ} → HL Γ , A ⊢ B → HL Γ ⊢ A ⇒ B
 hl-ded = hn→hl ∘ HN.ded ∘ hl→hn
