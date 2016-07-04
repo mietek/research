@@ -59,3 +59,21 @@ module _ {U : Set} where
   mono∈ (skip η) i       = pop (mono∈ η i)
   mono∈ (keep η) top     = top
   mono∈ (keep η) (pop i) = pop (mono∈ η i)
+
+
+  -- Context concatenation.
+
+  _±±_ : Cx U → Cx U → Cx U
+  Γ ±± ∅        = Γ
+  Γ ±± (Γ′ , A) = (Γ ±± Γ′) , A
+
+
+  -- Monotonicity of context membership with respect to concatenation.
+
+  mono∈ᴸ : ∀ {A Γ} Γ′ → A ∈ Γ → A ∈ Γ ±± Γ′
+  mono∈ᴸ ∅        i = i
+  mono∈ᴸ (Γ′ , A) i = pop (mono∈ᴸ Γ′ i)
+
+  mono∈ᴿ : ∀ {A Γ Γ′} → A ∈ Γ′ → A ∈ Γ ±± Γ′
+  mono∈ᴿ top     = top
+  mono∈ᴿ (pop i) = pop (mono∈ᴿ i)
