@@ -1,5 +1,7 @@
 module Common.Sequence where
 
+open import Common.Core public
+
 
 -- Sequences.
 

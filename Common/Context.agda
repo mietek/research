@@ -1,5 +1,7 @@
 module Common.Context where
 
+open import Common.Core public
+
 
 -- Contexts.
 

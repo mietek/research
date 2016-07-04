@@ -1,6 +1,5 @@
 module S4.Core where
 
-open import Common.Core public
 open import Common.Context public
 open import Common.Sequence public
 
