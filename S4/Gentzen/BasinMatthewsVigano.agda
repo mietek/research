@@ -9,16 +9,13 @@ postulate
   La : Set
 
 
--- Accessibility relation of S4, following Basin, Matthews, and Viganò.
+-- Proofs of S4, as labelled Gentzen-style natural deduction trees, following Basin, Matthews, and Viganò.
 
 infix 1 _⊢_≤_
 data _⊢_≤_ (Ξ : Cx (La × La)) : La → La → Set where
   rvar   : ∀ {x y} → x ∙ y ∈ Ξ → Ξ ⊢ x ≤ y
   rrefl  : ∀ {x} → Ξ ⊢ x ≤ x
   rtrans : ∀ {x y z} → Ξ ⊢ x ≤ y → Ξ ⊢ y ≤ z → Ξ ⊢ x ≤ z
-
-
--- Proofs of S4, as labelled Gentzen-style natural deduction trees, following Basin, Matthews, and Viganò.
 
 infix 1 _⨾_⊢_⦂_
 data _⨾_⊢_⦂_ (Γ : Cx (La × Ty)) (Ξ : Cx (La × La)) : La → Ty → Set where
