@@ -19,18 +19,18 @@ data _⊢_≤_ (Ξ : Cx (La × La)) : La → La → Set where
 
 infix 1 _⨾_⊢_⦂_
 data _⨾_⊢_⦂_ (Γ : Cx (La × Ty)) (Ξ : Cx (La × La)) : La → Ty → Set where
-  var   : ∀ {x A}     → x ∙ A ∈ Γ → Γ ⨾ Ξ ⊢ x ⦂ A
-  lam   : ∀ {x A B}   → Γ , x ∙ A ⨾ Ξ ⊢ x ⦂ B → Γ ⨾ Ξ ⊢ x ⦂ A ⇒ B
-  app   : ∀ {x A B}   → Γ ⨾ Ξ ⊢ x ⦂ A ⇒ B → Γ ⨾ Ξ ⊢ x ⦂ A → Γ ⨾ Ξ ⊢ x ⦂ B
-  nec   : ∀ {x A}     → (∀ {y} → Γ ⨾ Ξ , x ∙ y ⊢ y ⦂ A) → Γ ⨾ Ξ ⊢ x ⦂ □ A
-  unnec : ∀ {x y A}   → Γ ⨾ Ξ ⊢ x ⦂ □ A → Ξ ⊢ x ≤ y → Γ ⨾ Ξ ⊢ y ⦂ A
-  pair  : ∀ {x A B}   → Γ ⨾ Ξ ⊢ x ⦂ A → Γ ⨾ Ξ ⊢ x ⦂ B → Γ ⨾ Ξ ⊢ x ⦂ A ∧ B
-  fst   : ∀ {x A B}   → Γ ⨾ Ξ ⊢ x ⦂ A ∧ B → Γ ⨾ Ξ ⊢ x ⦂ A
-  snd   : ∀ {x A B}   → Γ ⨾ Ξ ⊢ x ⦂ A ∧ B → Γ ⨾ Ξ ⊢ x ⦂ B
-  inl   : ∀ {x A B}   → Γ ⨾ Ξ ⊢ x ⦂ A → Γ ⨾ Ξ ⊢ x ⦂ A ∨ B
-  inr   : ∀ {x A B}   → Γ ⨾ Ξ ⊢ x ⦂ B → Γ ⨾ Ξ ⊢ x ⦂ A ∨ B
-  case  : ∀ {x A B C} → Γ ⨾ Ξ ⊢ x ⦂ A ∨ B → Γ , x ∙ A ⨾ Ξ ⊢ x ⦂ C → Γ , x ∙ B ⨾ Ξ ⊢ x ⦂ C → Γ ⨾ Ξ ⊢ x ⦂ C
-  boom  : ∀ {x C}     → Γ ⨾ Ξ ⊢ x ⦂ ⊥ → Γ ⨾ Ξ ⊢ x ⦂ C
+  var  : ∀ {x A}     → x ∙ A ∈ Γ → Γ ⨾ Ξ ⊢ x ⦂ A
+  lam  : ∀ {x A B}   → Γ , x ∙ A ⨾ Ξ ⊢ x ⦂ B → Γ ⨾ Ξ ⊢ x ⦂ A ⇒ B
+  app  : ∀ {x A B}   → Γ ⨾ Ξ ⊢ x ⦂ A ⇒ B → Γ ⨾ Ξ ⊢ x ⦂ A → Γ ⨾ Ξ ⊢ x ⦂ B
+  scan : ∀ {x A}     → (∀ {y} → Γ ⨾ Ξ , x ∙ y ⊢ y ⦂ A) → Γ ⨾ Ξ ⊢ x ⦂ □ A
+  move : ∀ {x y A}   → Γ ⨾ Ξ ⊢ x ⦂ □ A → Ξ ⊢ x ≤ y → Γ ⨾ Ξ ⊢ y ⦂ A
+  pair : ∀ {x A B}   → Γ ⨾ Ξ ⊢ x ⦂ A → Γ ⨾ Ξ ⊢ x ⦂ B → Γ ⨾ Ξ ⊢ x ⦂ A ∧ B
+  fst  : ∀ {x A B}   → Γ ⨾ Ξ ⊢ x ⦂ A ∧ B → Γ ⨾ Ξ ⊢ x ⦂ A
+  snd  : ∀ {x A B}   → Γ ⨾ Ξ ⊢ x ⦂ A ∧ B → Γ ⨾ Ξ ⊢ x ⦂ B
+  inl  : ∀ {x A B}   → Γ ⨾ Ξ ⊢ x ⦂ A → Γ ⨾ Ξ ⊢ x ⦂ A ∨ B
+  inr  : ∀ {x A B}   → Γ ⨾ Ξ ⊢ x ⦂ B → Γ ⨾ Ξ ⊢ x ⦂ A ∨ B
+  case : ∀ {x A B C} → Γ ⨾ Ξ ⊢ x ⦂ A ∨ B → Γ , x ∙ A ⨾ Ξ ⊢ x ⦂ C → Γ , x ∙ B ⨾ Ξ ⊢ x ⦂ C → Γ ⨾ Ξ ⊢ x ⦂ C
+  boom : ∀ {x C}     → Γ ⨾ Ξ ⊢ x ⦂ ⊥ → Γ ⨾ Ξ ⊢ x ⦂ C
 
 
 -- Monotonicity of syntactic consequence with respect to intuitionistic context extension.
@@ -39,8 +39,8 @@ mono⊢ : ∀ {x A Γ Γ′ Ξ} → Γ ⊆ Γ′ → Γ ⨾ Ξ ⊢ x ⦂ A → �
 mono⊢ η (var i)      = var (mono∈ η i)
 mono⊢ η (lam t)      = lam (mono⊢ (keep η) t)
 mono⊢ η (app t u)    = app (mono⊢ η t) (mono⊢ η u)
-mono⊢ η (nec t)      = nec (mono⊢ η t)
-mono⊢ η (unnec t u)  = unnec (mono⊢ η t) u
+mono⊢ η (scan t)     = scan (mono⊢ η t)
+mono⊢ η (move t u)   = move (mono⊢ η t) u
 mono⊢ η (pair t u)   = pair (mono⊢ η t) (mono⊢ η u)
 mono⊢ η (fst t)      = fst (mono⊢ η t)
 mono⊢ η (snd t)      = snd (mono⊢ η t)
@@ -61,8 +61,8 @@ rmono⊢ : ∀ {x A Γ Ξ Ξ′} → Ξ ⊆ Ξ′ → Γ ⨾ Ξ ⊢ x ⦂ A → 
 rmono⊢ η (var i)      = var i
 rmono⊢ η (lam t)      = lam (rmono⊢ η t)
 rmono⊢ η (app t u)    = app (rmono⊢ η t) (rmono⊢ η u)
-rmono⊢ η (nec t)      = nec (rmono⊢ (keep η) t)
-rmono⊢ η (unnec t u)  = unnec (rmono⊢ η t) (rmono⊢≤ η u)
+rmono⊢ η (scan t)     = scan (rmono⊢ (keep η) t)
+rmono⊢ η (move t u)   = move (rmono⊢ η t) (rmono⊢≤ η u)
 rmono⊢ η (pair t u)   = pair (rmono⊢ η t) (rmono⊢ η u)
 rmono⊢ η (fst t)      = fst (rmono⊢ η t)
 rmono⊢ η (snd t)      = snd (rmono⊢ η t)
@@ -96,13 +96,13 @@ v₂ = var (pop (pop top))
 -- Useful theorems in functional form.
 
 dist : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ (A ⇒ B) → Γ ⨾ Ξ ⊢ x ⦂ □ A → Γ ⨾ Ξ ⊢ x ⦂ □ B
-dist t u = nec (app (unnec (rmono⊢ weak⊆ t) rv₀) (unnec (rmono⊢ weak⊆ u) rv₀))
+dist t u = scan (app (move (rmono⊢ weak⊆ t) rv₀) (move (rmono⊢ weak⊆ u) rv₀))
 
 up : ∀ {x A Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ A → Γ ⨾ Ξ ⊢ x ⦂ □ □ A
-up t = nec (nec (unnec (rmono⊢ (trans⊆ weak⊆ weak⊆) t) (rtrans rv₁ rv₀)))
+up t = scan (scan (move (rmono⊢ (trans⊆ weak⊆ weak⊆) t) (rtrans rv₁ rv₀)))
 
 down : ∀ {x A Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ A → Γ ⨾ Ξ ⊢ x ⦂ A
-down t = unnec t rrefl
+down t = move t rrefl
 
 distup : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ (□ A ⇒ B) → Γ ⨾ Ξ ⊢ x ⦂ □ A → Γ ⨾ Ξ ⊢ x ⦂ □ B
 distup t u = dist t (up u)
@@ -129,13 +129,13 @@ cs : ∀ {x A B C Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ (A ⇒ B ⇒ C) ⇒ (A ⇒ B) �
 cs = lam (lam (lam (app (app v₂ v₀) (app v₁ v₀))))
 
 cdist : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ (A ⇒ B) ⇒ □ A ⇒ □ B
-cdist = lam (lam (nec (app (unnec v₁ rv₀) (unnec v₀ rv₀))))
+cdist = lam (lam (scan (app (move v₁ rv₀) (move v₀ rv₀))))
 
 cup : ∀ {x A Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ A ⇒ □ □ A
-cup = lam (nec (nec (unnec v₀ (rtrans rv₁ rv₀))))
+cup = lam (scan (scan (move v₀ (rtrans rv₁ rv₀))))
 
 cdown : ∀ {x A Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ A ⇒ A
-cdown = lam (unnec v₀ rrefl)
+cdown = lam (move v₀ rrefl)
 
 cdistup : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ (□ A ⇒ B) ⇒ □ A ⇒ □ B
 cdistup = lam (lam (app (app cdist v₁) (app cup v₀)))
