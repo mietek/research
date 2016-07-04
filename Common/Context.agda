@@ -69,6 +69,21 @@ module _ {U : Set} where
   Γ ±± ∅        = Γ
   Γ ±± (Γ′ , A) = (Γ ±± Γ′) , A
 
+  id±±ᴸ : ∀ {Γ} → Γ ±± ∅ ≡ Γ
+  id±±ᴸ = refl
+
+  id±±ᴿ : ∀ {Γ} → ∅ ±± Γ ≡ Γ
+  id±±ᴿ {∅}     = refl
+  id±±ᴿ {Γ , A} = cong₂ _,_ id±±ᴿ refl
+
+  weak⊆±±ᴸ : ∀ {Γ} Γ′ → Γ ⊆ Γ ±± Γ′
+  weak⊆±±ᴸ ∅        = refl⊆
+  weak⊆±±ᴸ (Γ′ , A) = skip (weak⊆±±ᴸ Γ′)
+
+  weak⊆±±ᴿ : ∀ {Γ Γ′} → Γ′ ⊆ Γ ±± Γ′
+  weak⊆±±ᴿ {Γ} {∅}      = zero⊆
+  weak⊆±±ᴿ {Γ} {Γ′ , A} = keep weak⊆±±ᴿ
+
 
   -- Monotonicity of context membership with respect to concatenation.
 
