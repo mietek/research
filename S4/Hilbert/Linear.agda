@@ -87,10 +87,10 @@ mutual
 
 -- Proof concatenation.
 
-_++⁺_ : ∀ {Γ Δ Π Π′} → Γ ⨾ Δ ⊢⁺ Π → Γ ⨾ Δ ⊢⁺ Π′ → Γ ⨾ Δ ⊢⁺ Π ++ Π′
+_++⁺_ : ∀ {Γ Δ Π Π′} → Γ ⨾ Δ ⊢⁺ Π → Γ ⨾ Δ ⊢⁺ Π′ → Γ ⨾ Δ ⊢⁺ Π ∓∓ Π′
 nil         ++⁺ us = us
 (var i ts)  ++⁺ us = var i (ts ++⁺ us)
-(mp i j ts) ++⁺ us = mp (mono∋⁺⁺ i) (mono∋⁺⁺ j) (ts ++⁺ us)
+(mp i j ts) ++⁺ us = mp (mono∋ᴸ i) (mono∋ᴸ j) (ts ++⁺ us)
 (ci ts)     ++⁺ us = ci (ts ++⁺ us)
 (ck ts)     ++⁺ us = ck (ts ++⁺ us)
 (cs ts)     ++⁺ us = cs (ts ++⁺ us)
@@ -112,4 +112,4 @@ nil         ++⁺ us = us
 
 app : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ A ⇒ B → Γ ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢ B
 app {A} {B} (Π ∙ ts) (Π′ ∙ us) =
-    (A ⇒ B ∷ Π) ++ (A ∷ Π′) ∙ mp top (mono⁺⁺∋ (A ⇒ B ∷ Π) top) (ts ++⁺ us)
+    (A ⇒ B ∷ Π) ∓∓ (A ∷ Π′) ∙ mp top (mono∋ᴿ (A ⇒ B ∷ Π) top) (ts ++⁺ us)
