@@ -29,10 +29,10 @@ module _ {U : Set} where
 
   -- Monotonicity of sequence membership with respect to concatenation.
 
-  mono∋ᴸ : ∀ {A Π Π′} → Π ∋ A → Π ∓∓ Π′ ∋ A
-  mono∋ᴸ top     = top
-  mono∋ᴸ (pop i) = pop (mono∋ᴸ i)
+  mono∋∓∓ᴸ : ∀ {A Π Π′} → Π ∋ A → Π ∓∓ Π′ ∋ A
+  mono∋∓∓ᴸ top     = top
+  mono∋∓∓ᴸ (pop i) = pop (mono∋∓∓ᴸ i)
 
-  mono∋ᴿ : ∀ {A} Π {Π′} → Π′ ∋ A → Π ∓∓ Π′ ∋ A
-  mono∋ᴿ []      i = i
-  mono∋ᴿ (A ∷ Π) i = pop (mono∋ᴿ Π i)
+  mono∋∓∓ᴿ : ∀ {A} Π {Π′} → Π′ ∋ A → Π ∓∓ Π′ ∋ A
+  mono∋∓∓ᴿ []      i = i
+  mono∋∓∓ᴿ (A ∷ Π) i = pop (mono∋∓∓ᴿ Π i)

@@ -72,10 +72,10 @@ module _ {U : Set} where
 
   -- Monotonicity of context membership with respect to concatenation.
 
-  mono∈ᴸ : ∀ {A Γ} Γ′ → A ∈ Γ → A ∈ Γ ±± Γ′
-  mono∈ᴸ ∅        i = i
-  mono∈ᴸ (Γ′ , A) i = pop (mono∈ᴸ Γ′ i)
+  mono∈±±ᴸ : ∀ {A Γ} Γ′ → A ∈ Γ → A ∈ Γ ±± Γ′
+  mono∈±±ᴸ ∅        i = i
+  mono∈±±ᴸ (Γ′ , A) i = pop (mono∈±±ᴸ Γ′ i)
 
-  mono∈ᴿ : ∀ {A Γ Γ′} → A ∈ Γ′ → A ∈ Γ ±± Γ′
-  mono∈ᴿ top     = top
-  mono∈ᴿ (pop i) = pop (mono∈ᴿ i)
+  mono∈±±ᴿ : ∀ {A Γ Γ′} → A ∈ Γ′ → A ∈ Γ ±± Γ′
+  mono∈±±ᴿ top     = top
+  mono∈±±ᴿ (pop i) = pop (mono∈±±ᴿ i)

@@ -52,7 +52,7 @@ mono⊢ η (Π ∙ ts) = Π ∙ mono⊢⁺ η ts
 _++⁺_ : ∀ {Γ Π Π′} → Γ ⊢⁺ Π → Γ ⊢⁺ Π′ → Γ ⊢⁺ Π ∓∓ Π′
 nil         ++⁺ us = us
 (var i ts)  ++⁺ us = var i (ts ++⁺ us)
-(mp i j ts) ++⁺ us = mp (mono∋ᴸ i) (mono∋ᴸ j) (ts ++⁺ us)
+(mp i j ts) ++⁺ us = mp (mono∋∓∓ᴸ i) (mono∋∓∓ᴸ j) (ts ++⁺ us)
 (ci ts)     ++⁺ us = ci (ts ++⁺ us)
 (ck ts)     ++⁺ us = ck (ts ++⁺ us)
 (cs ts)     ++⁺ us = cs (ts ++⁺ us)
@@ -69,4 +69,4 @@ nil         ++⁺ us = us
 
 app : ∀ {A B Γ} → Γ ⊢ A ⇒ B → Γ ⊢ A → Γ ⊢ B
 app {A} {B} (Π ∙ ts) (Π′ ∙ us) =
-    (A ⇒ B ∷ Π) ∓∓ (A ∷ Π′) ∙ mp top (mono∋ᴿ (A ⇒ B ∷ Π) top) (ts ++⁺ us)
+    (A ⇒ B ∷ Π) ∓∓ (A ∷ Π′) ∙ mp top (mono∋∓∓ᴿ (A ⇒ B ∷ Π) top) (ts ++⁺ us)
