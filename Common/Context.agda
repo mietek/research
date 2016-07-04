@@ -18,7 +18,7 @@ module _ {U : Set} where
     pop : ∀ {B Γ} → A ∈ Γ → A ∈ Γ , B
 
 
-  -- Context extensions, or order-preserving embeddings.
+  -- Context extension, or order-preserving embedding.
 
   infix 1 _⊆_
   data _⊆_ : Cx U → Cx U → Set where
