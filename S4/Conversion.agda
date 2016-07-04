@@ -4,11 +4,11 @@ open import S4.Core public
 
 import S4.Hilbert.Linear as HL
 import S4.Hilbert.Nested as HN
-import S4.Gentzen.PfenningDavies as GPD
+import S4.Gentzen.PfenningDavies as G
 
 open HL using () renaming (_⨾_⊢⁺_ to HL_⨾_⊢⁺_ ; _⨾_⊢_ to HL_⨾_⊢_) public
 open HN using () renaming (_⨾_⊢_ to HN_⨾_⊢_) public
-open GPD using () renaming (_⨾_⊢_ to GPD_⨾_⊢_) public
+open G using () renaming (_⨾_⊢_ to G_⨾_⊢_) public
 
 
 -- Conversion from linear Hilbert-style proofs to nested.
@@ -86,45 +86,45 @@ hl-mded = hn→hl ∘ HN.mded ∘ hl→hn
 
 -- Conversion from Hilbert-style proofs to Gentzen-style.
 
-hn→gpd : ∀ {A Γ Δ} → HN Γ ⨾ Δ ⊢ A → GPD Γ ⨾ Δ ⊢ A
-hn→gpd (HN.var i)   = GPD.var i
-hn→gpd (HN.app t u) = GPD.app (hn→gpd t) (hn→gpd u)
-hn→gpd HN.ci        = GPD.ci
-hn→gpd HN.ck        = GPD.ck
-hn→gpd HN.cs        = GPD.cs
-hn→gpd (HN.mvar i)  = GPD.mvar i
-hn→gpd (HN.nec t)   = GPD.box (hn→gpd t)
-hn→gpd HN.dist      = GPD.cdist
-hn→gpd HN.up        = GPD.cup
-hn→gpd HN.down      = GPD.cdown
-hn→gpd HN.pair      = GPD.cpair
-hn→gpd HN.fst       = GPD.cfst
-hn→gpd HN.snd       = GPD.csnd
-hn→gpd HN.inl       = GPD.cinl
-hn→gpd HN.inr       = GPD.cinr
-hn→gpd HN.case      = GPD.ccase
-hn→gpd HN.boom      = GPD.cboom
+hn→g : ∀ {A Γ Δ} → HN Γ ⨾ Δ ⊢ A → G Γ ⨾ Δ ⊢ A
+hn→g (HN.var i)   = G.var i
+hn→g (HN.app t u) = G.app (hn→g t) (hn→g u)
+hn→g HN.ci        = G.ci
+hn→g HN.ck        = G.ck
+hn→g HN.cs        = G.cs
+hn→g (HN.mvar i)  = G.mvar i
+hn→g (HN.nec t)   = G.box (hn→g t)
+hn→g HN.dist      = G.cdist
+hn→g HN.up        = G.cup
+hn→g HN.down      = G.cdown
+hn→g HN.pair      = G.cpair
+hn→g HN.fst       = G.cfst
+hn→g HN.snd       = G.csnd
+hn→g HN.inl       = G.cinl
+hn→g HN.inr       = G.cinr
+hn→g HN.case      = G.ccase
+hn→g HN.boom      = G.cboom
 
-hl→gpd : ∀ {A Γ Δ} → HL Γ ⨾ Δ ⊢ A → GPD Γ ⨾ Δ ⊢ A
-hl→gpd = hn→gpd ∘ hl→hn
+hl→g : ∀ {A Γ Δ} → HL Γ ⨾ Δ ⊢ A → G Γ ⨾ Δ ⊢ A
+hl→g = hn→g ∘ hl→hn
 
 
 -- Conversion from Gentzen-style proofs to Hilbert-style.
 
-gpd→hn : ∀ {A Γ Δ} → GPD Γ ⨾ Δ ⊢ A → HN Γ ⨾ Δ ⊢ A
-gpd→hn (GPD.var i)      = HN.var i
-gpd→hn (GPD.lam t)      = HN.ded (gpd→hn t)
-gpd→hn (GPD.app t u)    = HN.app (gpd→hn t) (gpd→hn u)
-gpd→hn (GPD.mvar i)     = HN.mvar i
-gpd→hn (GPD.box t)      = HN.nec (gpd→hn t)
-gpd→hn (GPD.unbox t u)  = HN.funbox (gpd→hn t) (gpd→hn u)
-gpd→hn (GPD.pair t u)   = HN.fpair (gpd→hn t) (gpd→hn u)
-gpd→hn (GPD.fst t)      = HN.ffst (gpd→hn t)
-gpd→hn (GPD.snd t)      = HN.fsnd (gpd→hn t)
-gpd→hn (GPD.inl t)      = HN.finl (gpd→hn t)
-gpd→hn (GPD.inr t)      = HN.finr (gpd→hn t)
-gpd→hn (GPD.case t u v) = HN.fcase (gpd→hn t) (gpd→hn u) (gpd→hn v)
-gpd→hn (GPD.boom t)     = HN.fboom (gpd→hn t)
+g→hn : ∀ {A Γ Δ} → G Γ ⨾ Δ ⊢ A → HN Γ ⨾ Δ ⊢ A
+g→hn (G.var i)      = HN.var i
+g→hn (G.lam t)      = HN.ded (g→hn t)
+g→hn (G.app t u)    = HN.app (g→hn t) (g→hn u)
+g→hn (G.mvar i)     = HN.mvar i
+g→hn (G.box t)      = HN.nec (g→hn t)
+g→hn (G.unbox t u)  = HN.funbox (g→hn t) (g→hn u)
+g→hn (G.pair t u)   = HN.fpair (g→hn t) (g→hn u)
+g→hn (G.fst t)      = HN.ffst (g→hn t)
+g→hn (G.snd t)      = HN.fsnd (g→hn t)
+g→hn (G.inl t)      = HN.finl (g→hn t)
+g→hn (G.inr t)      = HN.finr (g→hn t)
+g→hn (G.case t u v) = HN.fcase (g→hn t) (g→hn u) (g→hn v)
+g→hn (G.boom t)     = HN.fboom (g→hn t)
 
-gpd→hl : ∀ {A Γ Δ} → GPD Γ ⨾ Δ ⊢ A → HL Γ ⨾ Δ ⊢ A
-gpd→hl = hn→hl ∘ gpd→hn
+g→hl : ∀ {A Γ Δ} → G Γ ⨾ Δ ⊢ A → HL Γ ⨾ Δ ⊢ A
+g→hl = hn→hl ∘ g→hn
