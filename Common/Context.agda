@@ -62,6 +62,18 @@ module _ {U : Set} where
   mono∈ (keep η) top     = top
   mono∈ (keep η) (pop i) = pop (mono∈ η i)
 
+  reflmono∈ : ∀ {A Γ} → (i : A ∈ Γ) → i ≡ mono∈ refl⊆ i
+  reflmono∈ top     = refl
+  reflmono∈ (pop i) = cong pop (reflmono∈ i)
+
+  transmono∈ : ∀ {A Γ Γ′ Γ″} → (η : Γ ⊆ Γ′) (η′ : Γ′ ⊆ Γ″) (i : A ∈ Γ)
+               → mono∈ η′ (mono∈ η i) ≡ mono∈ (trans⊆ η η′) i
+  transmono∈ done     η′        ()
+  transmono∈ η        (skip η′) i       = cong pop (transmono∈ η η′ i)
+  transmono∈ (skip η) (keep η′) i       = cong pop (transmono∈ η η′ i)
+  transmono∈ (keep η) (keep η′) top     = refl
+  transmono∈ (keep η) (keep η′) (pop i) = cong pop (transmono∈ η η′ i)
+
 
   -- Context concatenation.
 
