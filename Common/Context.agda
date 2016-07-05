@@ -95,3 +95,30 @@ module _ {U : Set} where
   weak⊆±±ᴿ : ∀ {Γ Γ′} → Γ′ ⊆ Γ ±± Γ′
   weak⊆±±ᴿ {Γ} {∅}      = zero⊆
   weak⊆±±ᴿ {Γ} {Γ′ , A} = keep weak⊆±±ᴿ
+
+
+  -- Thinning, or context removal.
+
+  _-_ : ∀ {A} → (Γ : Cx U) → A ∈ Γ → Cx U
+  ∅       - ()
+  (Γ , A) - top   = Γ
+  (Γ , B) - pop i = (Γ - i) , B
+
+  thin⊆ : ∀ {A Γ} → (i : A ∈ Γ) → Γ - i ⊆ Γ
+  thin⊆ top     = weak⊆
+  thin⊆ (pop i) = keep (thin⊆ i)
+
+
+  -- Decidable equality of context membership.
+
+  data _=∈_ {A Γ} (i : A ∈ Γ) : ∀ {C} → C ∈ Γ → Set where
+    same : i =∈ i
+    diff : ∀ {C} → (k : C ∈ Γ - i) → i =∈ mono∈ (thin⊆ i) k
+
+  _≟∈_ : ∀ {A C Γ} → (i : A ∈ Γ) (k : C ∈ Γ) → i =∈ k
+  top ≟∈ top      = same
+  top ≟∈ pop k    rewrite reflmono∈ k = diff k
+  pop i ≟∈ top    = diff top
+  pop i ≟∈ pop k  with i ≟∈ k
+  pop i ≟∈ pop .i | same = same
+  pop i ≟∈ pop ._ | diff k = diff (pop k)
