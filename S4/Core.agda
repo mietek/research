@@ -10,7 +10,7 @@ infixl 5 _∧_
 infixl 4 _∨_
 infixr 3 _⇒_
 data Ty : Set where
-  ι    : Atom → Ty
+  α_   : Atom → Ty
   _⇒_ : Ty → Ty → Ty
   □_   : Ty → Ty
   ⊤   : Ty
