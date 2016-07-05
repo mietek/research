@@ -70,6 +70,27 @@ mmono⊢ η ccase     = ccase
 mmono⊢ η cboom     = cboom
 
 
+-- Shorthand for variables.
+
+mv₀ : ∀ {A Γ Δ} → Γ ⨾ Δ , A ⊢ A
+mv₀ = mvar top
+
+mv₁ : ∀ {A B Γ Δ} → Γ ⨾ Δ , A , B ⊢ A
+mv₁ = mvar (pop top)
+
+mv₂ : ∀ {A B C Γ Δ} → Γ ⨾ Δ , A , B , C ⊢ A
+mv₂ = mvar (pop (pop top))
+
+v₀ : ∀ {A Γ Δ} → Γ , A ⨾ Δ ⊢ A
+v₀ = var top
+
+v₁ : ∀ {A B Γ Δ} → Γ , A , B ⨾ Δ ⊢ A
+v₁ = var (pop top)
+
+v₂ : ∀ {A B C Γ Δ} → Γ , A , B , C ⨾ Δ ⊢ A
+v₂ = var (pop (pop top))
+
+
 -- Deduction theorem.
 
 lam : ∀ {A B Γ Δ} → Γ , A ⨾ Δ ⊢ B → Γ ⨾ Δ ⊢ A ⇒ B
@@ -128,6 +149,51 @@ mlam ccase          = app ck ccase
 mlam cboom          = app ck cboom
 
 
+-- Detachment theorems.
+
+det : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ A ⇒ B → Γ , A ⨾ Δ ⊢ B
+det t = app (mono⊢ weak⊆ t) v₀
+
+mdet : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ □ A ⇒ B → Γ ⨾ Δ , A ⊢ B
+mdet t = app (mmono⊢ weak⊆ t) (box mv₀)
+
+
+-- Contraction.
+
+ccont : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ (A ⇒ A ⇒ B) ⇒ A ⇒ B
+ccont = lam (lam (app (app v₁ v₀) v₀))
+
+cont : ∀ {A B Γ Δ} → Γ , A , A ⨾ Δ ⊢ B → Γ , A ⨾ Δ ⊢ B
+cont t = det (app ccont (lam (lam t)))
+
+mcont : ∀ {A B Γ Δ} → Γ ⨾ Δ , A , A ⊢ B → Γ ⨾ Δ , A ⊢ B
+mcont t = mdet (app ccont (mlam (mlam t)))
+
+
+-- Exchange.
+
+cflip : ∀ {A B C Γ Δ} → Γ ⨾ Δ ⊢ (A ⇒ B ⇒ C) ⇒ B ⇒ A ⇒ C
+cflip = lam (lam (lam (app (app v₂ v₀) v₁)))
+
+flip : ∀ {A B C Γ Δ} → Γ , A , B ⨾ Δ ⊢ C → Γ , B , A ⨾ Δ ⊢ C
+flip t = det (det (app cflip (lam (lam t))))
+
+mflip : ∀ {A B C Γ Δ} → Γ ⨾ Δ , A , B ⊢ C → Γ ⨾ Δ , B , A ⊢ C
+mflip t = mdet (mdet (app cflip (mlam (mlam t))))
+
+
+-- Composition.
+
+ccomp : ∀ {A B C Γ Δ} → Γ ⨾ Δ ⊢ (B ⇒ C) ⇒ (A ⇒ B) ⇒ A ⇒ C
+ccomp = lam (lam (lam (app v₂ (app v₁ v₀))))
+
+comp : ∀ {A B C Γ Δ} → Γ , B ⨾ Δ ⊢ C → Γ , A ⨾ Δ ⊢ B → Γ , A ⨾ Δ ⊢ C
+comp t u = det (app (app ccomp (lam t)) (lam u))
+
+mcomp : ∀ {A B C Γ Δ} → Γ ⨾ Δ , B ⊢ □ C → Γ ⨾ Δ , A ⊢ □ B → Γ ⨾ Δ , A ⊢ □ C
+mcomp t u = mdet (app (app ccomp (mlam t)) (mlam u))
+
+
 -- Useful theorems in functional form.
 
 dist : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ □ (A ⇒ B) → Γ ⨾ Δ ⊢ □ A → Γ ⨾ Δ ⊢ □ B
@@ -165,3 +231,12 @@ case t u v = app (app (app ccase t) (lam u)) (lam v)
 
 boom : ∀ {C Γ Δ} → Γ ⨾ Δ ⊢ ⊥ → Γ ⨾ Δ ⊢ C
 boom t = app cboom t
+
+
+-- Closure under context concatenation.
+
+concat : ∀ {A B Γ} Γ′ {Δ} → Γ , A ⨾ Δ ⊢ B → Γ′ ⨾ Δ ⊢ A → Γ ±± Γ′ ⨾ Δ ⊢ B
+concat Γ′ t u = app (mono⊢ (weak⊆±±ᴸ Γ′) (lam t)) (mono⊢ weak⊆±±ᴿ u)
+
+mconcat : ∀ {A B Γ Δ} Δ′ → Γ ⨾ Δ , A ⊢ B → Γ ⨾ Δ′ ⊢ □ A → Γ ⨾ Δ ±± Δ′ ⊢ B
+mconcat Δ′ t u = app (mmono⊢ (weak⊆±±ᴸ Δ′) (mlam t)) (mmono⊢ weak⊆±±ᴿ u)
