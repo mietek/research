@@ -7,18 +7,18 @@ open import IPC.Core public
 
 infix 1 _⊢_
 data _⊢_ (Γ : Cx Ty) : Ty → Set where
-  var  : ∀ {A}     → A ∈ Γ → Γ ⊢ A
-  app  : ∀ {A B}   → Γ ⊢ A ⇒ B → Γ ⊢ A → Γ ⊢ B
-  ci   : ∀ {A}     → Γ ⊢ A ⇒ A
-  ck   : ∀ {A B}   → Γ ⊢ A ⇒ B ⇒ A
-  cs   : ∀ {A B C} → Γ ⊢ (A ⇒ B ⇒ C) ⇒ (A ⇒ B) ⇒ A ⇒ C
-  pair : ∀ {A B}   → Γ ⊢ A ⇒ B ⇒ A ∧ B
-  fst  : ∀ {A B}   → Γ ⊢ A ∧ B ⇒ A
-  snd  : ∀ {A B}   → Γ ⊢ A ∧ B ⇒ B
-  inl  : ∀ {A B}   → Γ ⊢ A ⇒ A ∨ B
-  inr  : ∀ {A B}   → Γ ⊢ B ⇒ A ∨ B
-  case : ∀ {A B C} → Γ ⊢ A ∨ B ⇒ (A ⇒ C) ⇒ (B ⇒ C) ⇒ C
-  boom : ∀ {C}     → Γ ⊢ ⊥ ⇒ C
+  var   : ∀ {A}     → A ∈ Γ → Γ ⊢ A
+  app   : ∀ {A B}   → Γ ⊢ A ⇒ B → Γ ⊢ A → Γ ⊢ B
+  ci    : ∀ {A}     → Γ ⊢ A ⇒ A
+  ck    : ∀ {A B}   → Γ ⊢ A ⇒ B ⇒ A
+  cs    : ∀ {A B C} → Γ ⊢ (A ⇒ B ⇒ C) ⇒ (A ⇒ B) ⇒ A ⇒ C
+  cpair : ∀ {A B}   → Γ ⊢ A ⇒ B ⇒ A ∧ B
+  cfst  : ∀ {A B}   → Γ ⊢ A ∧ B ⇒ A
+  csnd  : ∀ {A B}   → Γ ⊢ A ∧ B ⇒ B
+  cinl  : ∀ {A B}   → Γ ⊢ A ⇒ A ∨ B
+  cinr  : ∀ {A B}   → Γ ⊢ B ⇒ A ∨ B
+  ccase : ∀ {A B C} → Γ ⊢ A ∨ B ⇒ (A ⇒ C) ⇒ (B ⇒ C) ⇒ C
+  cboom : ∀ {C}     → Γ ⊢ ⊥ ⇒ C
 
 
 -- Monotonicity of syntactic consequence with respect to intuitionistic context extensions.
@@ -29,52 +29,52 @@ mono⊢ η (app t u) = app (mono⊢ η t) (mono⊢ η u)
 mono⊢ η ci        = ci
 mono⊢ η ck        = ck
 mono⊢ η cs        = cs
-mono⊢ η pair      = pair
-mono⊢ η fst       = fst
-mono⊢ η snd       = snd
-mono⊢ η inl       = inl
-mono⊢ η inr       = inr
-mono⊢ η case      = case
-mono⊢ η boom      = boom
+mono⊢ η cpair     = cpair
+mono⊢ η cfst      = cfst
+mono⊢ η csnd      = csnd
+mono⊢ η cinl      = cinl
+mono⊢ η cinr      = cinr
+mono⊢ η ccase     = ccase
+mono⊢ η cboom     = cboom
 
 
 -- Deduction theorem.
 
-ded : ∀ {A B Γ} → Γ , A ⊢ B → Γ ⊢ A ⇒ B
-ded (var top)     = ci
-ded (var (pop i)) = app ck (var i)
-ded (app t u)     = app (app cs (ded t)) (ded u)
-ded ci            = app ck ci
-ded ck            = app ck ck
-ded cs            = app ck cs
-ded pair          = app ck pair
-ded fst           = app ck fst
-ded snd           = app ck snd
-ded inl           = app ck inl
-ded inr           = app ck inr
-ded case          = app ck case
-ded boom          = app ck boom
+lam : ∀ {A B Γ} → Γ , A ⊢ B → Γ ⊢ A ⇒ B
+lam (var top)     = ci
+lam (var (pop i)) = app ck (var i)
+lam (app t u)     = app (app cs (lam t)) (lam u)
+lam ci            = app ck ci
+lam ck            = app ck ck
+lam cs            = app ck cs
+lam cpair         = app ck cpair
+lam cfst          = app ck cfst
+lam csnd          = app ck csnd
+lam cinl          = app ck cinl
+lam cinr          = app ck cinr
+lam ccase         = app ck ccase
+lam cboom         = app ck cboom
 
 
 -- Useful theorems in functional form.
 
-fpair : ∀ {A B Γ} → Γ ⊢ A → Γ ⊢ B → Γ ⊢ A ∧ B
-fpair t u = app (app pair t) u
+pair : ∀ {A B Γ} → Γ ⊢ A → Γ ⊢ B → Γ ⊢ A ∧ B
+pair t u = app (app cpair t) u
 
-ffst : ∀ {A B Γ} → Γ ⊢ A ∧ B → Γ ⊢ A
-ffst t = app fst t
+fst : ∀ {A B Γ} → Γ ⊢ A ∧ B → Γ ⊢ A
+fst t = app cfst t
 
-fsnd : ∀ {A B Γ} → Γ ⊢ A ∧ B → Γ ⊢ B
-fsnd t = app snd t
+snd : ∀ {A B Γ} → Γ ⊢ A ∧ B → Γ ⊢ B
+snd t = app csnd t
 
-finl : ∀ {A B Γ} → Γ ⊢ A → Γ ⊢ A ∨ B
-finl t = app inl t
+inl : ∀ {A B Γ} → Γ ⊢ A → Γ ⊢ A ∨ B
+inl t = app cinl t
 
-finr : ∀ {A B Γ} → Γ ⊢ B → Γ ⊢ A ∨ B
-finr t = app inr t
+inr : ∀ {A B Γ} → Γ ⊢ B → Γ ⊢ A ∨ B
+inr t = app cinr t
 
-fcase : ∀ {A B C Γ} → Γ ⊢ A ∨ B → Γ , A ⊢ C → Γ , B ⊢ C → Γ ⊢ C
-fcase t u v = app (app (app case t) (ded u)) (ded v)
+case : ∀ {A B C Γ} → Γ ⊢ A ∨ B → Γ , A ⊢ C → Γ , B ⊢ C → Γ ⊢ C
+case t u v = app (app (app ccase t) (lam u)) (lam v)
 
-fboom : ∀ {C Γ} → Γ ⊢ ⊥ → Γ ⊢ C
-fboom t = app boom t
+boom : ∀ {C Γ} → Γ ⊢ ⊥ → Γ ⊢ C
+boom t = app cboom t
