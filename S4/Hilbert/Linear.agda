@@ -108,8 +108,11 @@ nil         ++⁺ us = us
 (cboom ts)  ++⁺ us = cboom (ts ++⁺ us)
 
 
--- Modus ponens in expanded form.
+-- Modus ponens and necessitation in expanded form.
 
 app : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ A ⇒ B → Γ ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢ B
 app {A} {B} (Π ∙ ts) (Π′ ∙ us) =
     (A ⇒ B ∷ Π) ∓∓ (A ∷ Π′) ∙ mp top (mono∋∓∓ᴿ (A ⇒ B ∷ Π) top) (ts ++⁺ us)
+
+box : ∀ {A Γ Δ} → ∅ ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢ □ A
+box ts = [] ∙ nec ts nil
