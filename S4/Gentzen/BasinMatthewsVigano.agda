@@ -213,3 +213,25 @@ concat : ∀ {x A B Γ} Γ′ {Ξ} → Γ , x ∙ A ⨾ Ξ ⊢ x ⦂ B → Γ′
 concat Γ′ t u = app (mono⊢ (weak⊆±±ᴸ Γ′) (lam t)) (mono⊢ weak⊆±±ᴿ u)
 
 -- TODO: mconcat
+
+
+-- Substitution.
+
+[_≔_]_ : ∀ {x y A C Γ Ξ} → (i : x ∙ A ∈ Γ) → Γ - i ⨾ Ξ ⊢ x ⦂ A → Γ ⨾ Ξ ⊢ y ⦂ C → Γ - i ⨾ Ξ ⊢ y ⦂ C
+[ i ≔ s ] var k      with i ≟∈ k
+[ i ≔ s ] var .i     | same   = s
+[ i ≔ s ] var ._     | diff k = var k
+[ i ≔ s ] lam t      = lam ([ pop i ≔ mono⊢ weak⊆ s ] t)
+[ i ≔ s ] app t u    = app ([ i ≔ s ] t) ([ i ≔ s ] u)
+[ i ≔ s ] scan t     = scan ([ i ≔ rmono⊢ weak⊆ s ] t)
+[ i ≔ s ] move t u   = move ([ i ≔ s ] t) u
+[ i ≔ s ] unit       = unit
+[ i ≔ s ] pair t u   = pair ([ i ≔ s ] t) ([ i ≔ s ] u)
+[ i ≔ s ] fst t      = fst ([ i ≔ s ] t)
+[ i ≔ s ] snd t      = snd ([ i ≔ s ] t)
+[ i ≔ s ] inl t      = inl ([ i ≔ s ] t)
+[ i ≔ s ] inr t      = inr ([ i ≔ s ] t)
+[ i ≔ s ] case t u v = case ([ i ≔ s ] t) ([ pop i ≔ mono⊢ weak⊆ s ] u) ([ pop i ≔ mono⊢ weak⊆ s ] v)
+[ i ≔ s ] boom t     = boom ([ i ≔ s ] t)
+
+-- TODO: msubst

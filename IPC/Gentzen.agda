@@ -120,3 +120,21 @@ cboom = lam (boom v₀)
 
 concat : ∀ {A B Γ} Γ′ → Γ , A ⊢ B → Γ′ ⊢ A → Γ ±± Γ′ ⊢ B
 concat Γ′ t u = app (mono⊢ (weak⊆±±ᴸ Γ′) (lam t)) (mono⊢ weak⊆±±ᴿ u)
+
+
+-- Substitution.
+
+[_≔_]_ : ∀ {A C Γ} → (i : A ∈ Γ) → Γ - i ⊢ A → Γ ⊢ C → Γ - i ⊢ C
+[ i ≔ s ] var k      with i ≟∈ k
+[ i ≔ s ] var .i     | same   = s
+[ i ≔ s ] var ._     | diff k = var k
+[ i ≔ s ] lam t      = lam ([ pop i ≔ mono⊢ weak⊆ s ] t)
+[ i ≔ s ] app t u    = app ([ i ≔ s ] t) ([ i ≔ s ] u)
+[ i ≔ s ] unit       = unit
+[ i ≔ s ] pair t u   = pair ([ i ≔ s ] t) ([ i ≔ s ] u)
+[ i ≔ s ] fst t      = fst ([ i ≔ s ] t)
+[ i ≔ s ] snd t      = snd ([ i ≔ s ] t)
+[ i ≔ s ] inl t      = inl ([ i ≔ s ] t)
+[ i ≔ s ] inr t      = inr ([ i ≔ s ] t)
+[ i ≔ s ] case t u v = case ([ i ≔ s ] t) ([ pop i ≔ mono⊢ weak⊆ s ] u) ([ pop i ≔ mono⊢ weak⊆ s ] v)
+[ i ≔ s ] boom t     = boom ([ i ≔ s ] t)

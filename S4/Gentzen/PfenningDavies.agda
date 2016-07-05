@@ -205,3 +205,45 @@ concat Γ′ t u = app (mono⊢ (weak⊆±±ᴸ Γ′) (lam t)) (mono⊢ weak⊆
 
 mconcat : ∀ {A B Γ Δ} Δ′ → Γ ⨾ Δ , A ⊢ B → Γ ⨾ Δ′ ⊢ □ A → Γ ⨾ Δ ±± Δ′ ⊢ B
 mconcat Δ′ t u = app (mmono⊢ (weak⊆±±ᴸ Δ′) (mlam t)) (mmono⊢ weak⊆±±ᴿ u)
+
+
+-- Substitution.
+
+[_≔_]_ : ∀ {A C Γ Δ} → (i : A ∈ Γ) → Γ - i ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢ C → Γ - i ⨾ Δ ⊢ C
+[ i ≔ s ] var k      with i ≟∈ k
+[ i ≔ s ] var .i     | same   = s
+[ i ≔ s ] var ._     | diff k = var k
+[ i ≔ s ] lam t      = lam ([ pop i ≔ mono⊢ weak⊆ s ] t)
+[ i ≔ s ] app t u    = app ([ i ≔ s ] t) ([ i ≔ s ] u)
+[ i ≔ s ] mvar k     = mvar k
+[ i ≔ s ] box t      = box t
+[ i ≔ s ] unbox t u  = unbox ([ i ≔ s ] t) ([ i ≔ mmono⊢ weak⊆ s ] u)
+[ i ≔ s ] unit       = unit
+[ i ≔ s ] pair t u   = pair ([ i ≔ s ] t) ([ i ≔ s ] u)
+[ i ≔ s ] fst t      = fst ([ i ≔ s ] t)
+[ i ≔ s ] snd t      = snd ([ i ≔ s ] t)
+[ i ≔ s ] inl t      = inl ([ i ≔ s ] t)
+[ i ≔ s ] inr t      = inr ([ i ≔ s ] t)
+[ i ≔ s ] case t u v = case ([ i ≔ s ] t) ([ pop i ≔ mono⊢ weak⊆ s ] u) ([ pop i ≔ mono⊢ weak⊆ s ] v)
+[ i ≔ s ] boom t     = boom ([ i ≔ s ] t)
+
+
+-- Modal substitution.
+
+m[_≔_]_ : ∀ {A C Γ Δ} → (i : A ∈ Δ) → ∅ ⨾ Δ - i ⊢ A → Γ ⨾ Δ ⊢ C → Γ ⨾ Δ - i ⊢ C
+m[ i ≔ s ] var k      = var k
+m[ i ≔ s ] lam t      = lam (m[ i ≔ s ] t)
+m[ i ≔ s ] app t u    = app (m[ i ≔ s ] t) (m[ i ≔ s ] u)
+m[ i ≔ s ] mvar k     with i ≟∈ k
+m[ i ≔ s ] mvar .i    | same   = mono⊢ zero⊆ s
+m[ i ≔ s ] mvar ._    | diff k = mvar k
+m[ i ≔ s ] box t      = box (m[ i ≔ s ] t)
+m[ i ≔ s ] unbox t u  = unbox (m[ i ≔ s ] t) (m[ pop i ≔ mmono⊢ weak⊆ s ] u)
+m[ i ≔ s ] unit       = unit
+m[ i ≔ s ] pair t u   = pair (m[ i ≔ s ] t) (m[ i ≔ s ] u)
+m[ i ≔ s ] fst t      = fst (m[ i ≔ s ] t)
+m[ i ≔ s ] snd t      = snd (m[ i ≔ s ] t)
+m[ i ≔ s ] inl t      = inl (m[ i ≔ s ] t)
+m[ i ≔ s ] inr t      = inr (m[ i ≔ s ] t)
+m[ i ≔ s ] case t u v = case (m[ i ≔ s ] t) (m[ i ≔ s ] u) (m[ i ≔ s ] v)
+m[ i ≔ s ] boom t     = boom (m[ i ≔ s ] t)
