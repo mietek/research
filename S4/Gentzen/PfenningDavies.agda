@@ -79,28 +79,57 @@ v₂ : ∀ {A B C Γ Δ} → Γ , A , B , C ⨾ Δ ⊢ A
 v₂ = var (pop (pop top))
 
 
--- Useful theorems in functional form.
+-- Deduction theorem is built-in.
 
-dist : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ □ (A ⇒ B) → Γ ⨾ Δ ⊢ □ A → Γ ⨾ Δ ⊢ □ B
-dist t u = unbox t (unbox (mmono⊢ weak⊆ u) (box (app mv₁ mv₀)))
+-- Modal deduction theorem.
 
-up : ∀ {A Γ Δ} → Γ ⨾ Δ ⊢ □ A → Γ ⨾ Δ ⊢ □ □ A
-up t = unbox t (box (box mv₀))
-
-down : ∀ {A Γ Δ} → Γ ⨾ Δ ⊢ □ A → Γ ⨾ Δ ⊢ A
-down t = unbox t mv₀
-
-distup : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ □ (□ A ⇒ B) → Γ ⨾ Δ ⊢ □ A → Γ ⨾ Δ ⊢ □ B
-distup t u = dist t (up u)
+mlam : ∀ {A B Γ Δ} → Γ ⨾ Δ , A ⊢ B → Γ ⨾ Δ ⊢ □ A ⇒ B
+mlam t = lam (unbox v₀ (mono⊢ weak⊆ t))
 
 
--- Deduction theorems.
+-- Detachment theorems.
 
-ded : ∀ {A B Γ Δ} → Γ , A ⨾ Δ ⊢ B → Γ ⨾ Δ ⊢ A ⇒ B
-ded t = lam t
+det : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ A ⇒ B → Γ , A ⨾ Δ ⊢ B
+det t = app (mono⊢ weak⊆ t) v₀
 
-mded : ∀ {A B Γ Δ} → Γ ⨾ Δ , A ⊢ B → Γ ⨾ Δ ⊢ □ A ⇒ B
-mded t = lam (unbox v₀ (mono⊢ weak⊆ t))
+mdet : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ □ A ⇒ B → Γ ⨾ Δ , A ⊢ B
+mdet t = app (mmono⊢ weak⊆ t) (box mv₀)
+
+
+-- Contraction.
+
+ccont : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ (A ⇒ A ⇒ B) ⇒ A ⇒ B
+ccont = lam (lam (app (app v₁ v₀) v₀))
+
+cont : ∀ {A B Γ Δ} → Γ , A , A ⨾ Δ ⊢ B → Γ , A ⨾ Δ ⊢ B
+cont t = det (app ccont (lam (lam t)))
+
+mcont : ∀ {A B Γ Δ} → Γ ⨾ Δ , A , A ⊢ B → Γ ⨾ Δ , A ⊢ B
+mcont t = mdet (app ccont (mlam (mlam t)))
+
+
+-- Exchange.
+
+cflip : ∀ {A B C Γ Δ} → Γ ⨾ Δ ⊢ (A ⇒ B ⇒ C) ⇒ B ⇒ A ⇒ C
+cflip = lam (lam (lam (app (app v₂ v₀) v₁)))
+
+flip : ∀ {A B C Γ Δ} → Γ , A , B ⨾ Δ ⊢ C → Γ , B , A ⨾ Δ ⊢ C
+flip t = det (det (app cflip (lam (lam t))))
+
+mflip : ∀ {A B C Γ Δ} → Γ ⨾ Δ , A , B ⊢ C → Γ ⨾ Δ , B , A ⊢ C
+mflip t = mdet (mdet (app cflip (mlam (mlam t))))
+
+
+-- Composition.
+
+ccomp : ∀ {A B C Γ Δ} → Γ ⨾ Δ ⊢ (B ⇒ C) ⇒ (A ⇒ B) ⇒ A ⇒ C
+ccomp = lam (lam (lam (app v₂ (app v₁ v₀))))
+
+comp : ∀ {A B C Γ Δ} → Γ , B ⨾ Δ ⊢ C → Γ , A ⨾ Δ ⊢ B → Γ , A ⨾ Δ ⊢ C
+comp t u = det (app (app ccomp (lam t)) (lam u))
+
+mcomp : ∀ {A B C Γ Δ} → Γ ⨾ Δ , B ⊢ □ C → Γ ⨾ Δ , A ⊢ □ B → Γ ⨾ Δ , A ⊢ □ C
+mcomp t u = mdet (app (app ccomp (mlam t)) (mlam u))
 
 
 -- Useful theorems in combinatory form.
@@ -126,6 +155,9 @@ cdown = lam (unbox v₀ mv₀)
 cdistup : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ □ (□ A ⇒ B) ⇒ □ A ⇒ □ B
 cdistup = lam (lam (app (app cdist v₁) (app cup v₀)))
 
+cunbox : ∀ {A C Γ Δ} → Γ ⨾ Δ ⊢ □ A ⇒ (□ A ⇒ C) ⇒ C
+cunbox = lam (lam (app v₀ v₁))
+
 cpair : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ A ⇒ B ⇒ A ∧ B
 cpair = lam (lam (pair v₁ v₀))
 
@@ -146,3 +178,27 @@ ccase = lam (lam (lam (case v₂ (app v₂ v₀) (app v₁ v₀))))
 
 cboom : ∀ {C Γ Δ} → Γ ⨾ Δ ⊢ ⊥ ⇒ C
 cboom = lam (boom v₀)
+
+
+-- Useful theorems in functional form.
+
+dist : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ □ (A ⇒ B) → Γ ⨾ Δ ⊢ □ A → Γ ⨾ Δ ⊢ □ B
+dist t u = unbox t (unbox (mmono⊢ weak⊆ u) (box (app mv₁ mv₀)))
+
+up : ∀ {A Γ Δ} → Γ ⨾ Δ ⊢ □ A → Γ ⨾ Δ ⊢ □ □ A
+up t = unbox t (box (box mv₀))
+
+down : ∀ {A Γ Δ} → Γ ⨾ Δ ⊢ □ A → Γ ⨾ Δ ⊢ A
+down t = unbox t mv₀
+
+distup : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ □ (□ A ⇒ B) → Γ ⨾ Δ ⊢ □ A → Γ ⨾ Δ ⊢ □ B
+distup t u = dist t (up u)
+
+
+-- Closure under context concatenation.
+
+concat : ∀ {A B Γ} Γ′ {Δ} → Γ , A ⨾ Δ ⊢ B → Γ′ ⨾ Δ ⊢ A → Γ ±± Γ′ ⨾ Δ ⊢ B
+concat Γ′ t u = app (mono⊢ (weak⊆±±ᴸ Γ′) (lam t)) (mono⊢ weak⊆±±ᴿ u)
+
+mconcat : ∀ {A B Γ Δ} Δ′ → Γ ⨾ Δ , A ⊢ B → Γ ⨾ Δ′ ⊢ □ A → Γ ⨾ Δ ±± Δ′ ⊢ B
+mconcat Δ′ t u = app (mmono⊢ (weak⊆±±ᴸ Δ′) (mlam t)) (mmono⊢ weak⊆±±ᴿ u)

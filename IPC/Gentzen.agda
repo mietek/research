@@ -46,10 +46,39 @@ v₂ : ∀ {A B C Γ} → Γ , A , B , C ⊢ A
 v₂ = var (pop (pop top))
 
 
--- Deduction theorem.
+-- Deduction theorem is built-in.
 
-ded : ∀ {A B Γ} → Γ , A ⊢ B → Γ ⊢ A ⇒ B
-ded t = lam t
+-- Detachment theorem.
+
+det : ∀ {A B Γ} → Γ ⊢ A ⇒ B → Γ , A ⊢ B
+det t = app (mono⊢ weak⊆ t) v₀
+
+
+-- Contraction.
+
+ccont : ∀ {A B Γ} → Γ ⊢ (A ⇒ A ⇒ B) ⇒ A ⇒ B
+ccont = lam (lam (app (app v₁ v₀) v₀))
+
+cont : ∀ {A B Γ} → Γ , A , A ⊢ B → Γ , A ⊢ B
+cont t = det (app ccont (lam (lam t)))
+
+
+-- Exchange.
+
+cflip : ∀ {A B C Γ} → Γ ⊢ (A ⇒ B ⇒ C) ⇒ B ⇒ A ⇒ C
+cflip = lam (lam (lam (app (app v₂ v₀) v₁)))
+
+flip : ∀ {A B C Γ} → Γ , A , B ⊢ C → Γ , B , A ⊢ C
+flip t = det (det (app cflip (lam (lam t))))
+
+
+-- Composition.
+
+ccomp : ∀ {A B C Γ} → Γ ⊢ (B ⇒ C) ⇒ (A ⇒ B) ⇒ A ⇒ C
+ccomp = lam (lam (lam (app v₂ (app v₁ v₀))))
+
+comp : ∀ {A B C Γ} → Γ , B ⊢ C → Γ , A ⊢ B → Γ , A ⊢ C
+comp t u = det (app (app ccomp (lam t)) (lam u))
 
 
 -- Useful theorems in combinatory form.
@@ -83,3 +112,9 @@ ccase = lam (lam (lam (case v₂ (app v₂ v₀) (app v₁ v₀))))
 
 cboom : ∀ {C Γ} → Γ ⊢ ⊥ ⇒ C
 cboom = lam (boom v₀)
+
+
+-- Closure under context concatenation.
+
+concat : ∀ {A B Γ} Γ′ → Γ , A ⊢ B → Γ′ ⊢ A → Γ ±± Γ′ ⊢ B
+concat Γ′ t u = app (mono⊢ (weak⊆±±ᴸ Γ′) (lam t)) (mono⊢ weak⊆±±ᴿ u)
