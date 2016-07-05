@@ -1,4 +1,4 @@
-module S4.Conversion where
+module S4.Translation where
 
 open import S4.Core public
 
@@ -11,7 +11,7 @@ open HN using () renaming (_⨾_⊢_ to HN⟨_⨾_⊢_⟩) public
 open G using () renaming (_⨾_⊢_ to G⟨_⨾_⊢_⟩) public
 
 
--- Conversion from linear Hilbert-style proofs to nested.
+-- Translation from linear Hilbert-style to nested.
 
 hl→hn : ∀ {A Γ Δ} → HL⟨ Γ ⨾ Δ ⊢ A ⟩ → HN⟨ Γ ⨾ Δ ⊢ A ⟩
 hl→hn (Π ∙ ts) = aux ts top
@@ -55,7 +55,7 @@ hl→hn (Π ∙ ts) = aux ts top
     aux (HL.cboom ts)        (pop k) = aux ts k
 
 
--- Conversion from nested Hilbert-style proofs to linear.
+-- Translation from nested Hilbert-style to linear.
 
 hn→hl : ∀ {A Γ Δ} → HN⟨ Γ ⨾ Δ ⊢ A ⟩ → HL⟨ Γ ⨾ Δ ⊢ A ⟩
 hn→hl (HN.var i)   = [] ∙ HL.var i HL.nil
@@ -78,7 +78,7 @@ hn→hl HN.ccase     = [] ∙ HL.ccase HL.nil
 hn→hl HN.cboom     = [] ∙ HL.cboom HL.nil
 
 
--- Deduction theorems for linear Hilbert-style proofs.
+-- Deduction theorems for linear Hilbert-style.
 
 hl-lam : ∀ {A B Γ Δ} → HL⟨ Γ , A ⨾ Δ ⊢ B ⟩ → HL⟨ Γ ⨾ Δ ⊢ A ⇒ B ⟩
 hl-lam = hn→hl ∘ HN.lam ∘ hl→hn
@@ -87,7 +87,7 @@ hl-mlam : ∀ {A B Γ Δ} → HL⟨ Γ ⨾ Δ , A ⊢ B ⟩ → HL⟨ Γ ⨾ Δ 
 hl-mlam = hn→hl ∘ HN.mlam ∘ hl→hn
 
 
--- Conversion from Hilbert-style proofs to Gentzen-style.
+-- Translation from Hilbert-style to Gentzen-style.
 
 hn→g : ∀ {A Γ Δ} → HN⟨ Γ ⨾ Δ ⊢ A ⟩ → G⟨ Γ ⨾ Δ ⊢ A ⟩
 hn→g (HN.var i)   = G.var i
@@ -113,7 +113,7 @@ hl→g : ∀ {A Γ Δ} → HL⟨ Γ ⨾ Δ ⊢ A ⟩ → G⟨ Γ ⨾ Δ ⊢ A �
 hl→g = hn→g ∘ hl→hn
 
 
--- Conversion from Gentzen-style proofs to Hilbert-style.
+-- Translation from Gentzen-style to Hilbert-style.
 
 g→hn : ∀ {A Γ Δ} → G⟨ Γ ⨾ Δ ⊢ A ⟩ → HN⟨ Γ ⨾ Δ ⊢ A ⟩
 g→hn (G.var i)      = HN.var i
