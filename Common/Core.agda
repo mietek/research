@@ -1,11 +1,26 @@
 module Common.Core where
 
-open import Data.Empty using () renaming (⊥ to Empty) public
-open import Data.Product using (Σ ; _×_) renaming (_,_ to _∙_ ; proj₁ to π₁_ ; proj₂ to π₂_) public
-open import Data.Sum using () renaming (_⊎_ to _+_ ; inj₁ to ι₁_ ; inj₂ to ι₂_) public
-open import Data.Unit using () renaming (⊤ to Unit ; tt to τ) public
-open import Function using (_∘_ ; _$_) public
-open import Relation.Binary.PropositionalEquality using (_≡_ ; refl ; sym ; cong ; cong₂) public
+open import Data.Empty public
+  using ()
+  renaming (⊥ to Empty)
+
+open import Data.Product public
+  using (Σ ; _×_)
+  renaming (_,_ to _∙_ ; proj₁ to π₁_ ; proj₂ to π₂_)
+
+open import Data.Sum public
+  using ()
+  renaming (_⊎_ to _+_ ; inj₁ to ι₁_ ; inj₂ to ι₂_)
+
+open import Data.Unit public
+  using ()
+  renaming (⊤ to Unit ; tt to τ)
+
+open import Function public
+  using (_∘_ ; _$_)
+
+open import Relation.Binary.PropositionalEquality public
+  using (_≡_ ; refl ; sym ; cong ; cong₂)
 
 
 -- Atoms, for propositional variables.
