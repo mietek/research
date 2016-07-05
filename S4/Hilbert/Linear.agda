@@ -19,6 +19,7 @@ mutual
     cdist : ∀ {Π A B}   → Γ ⨾ Δ ⊢⁺ Π → Γ ⨾ Δ ⊢⁺ □ (A ⇒ B) ⇒ □ A ⇒ □ B ∷ Π
     cup   : ∀ {Π A}     → Γ ⨾ Δ ⊢⁺ Π → Γ ⨾ Δ ⊢⁺ □ A ⇒ □ □ A ∷ Π
     cdown : ∀ {Π A}     → Γ ⨾ Δ ⊢⁺ Π → Γ ⨾ Δ ⊢⁺ □ A ⇒ A ∷ Π
+    unit  : ∀ {Π}       → Γ ⨾ Δ ⊢⁺ Π → Γ ⨾ Δ ⊢⁺ ⊤ ∷ Π
     cpair : ∀ {Π A B}   → Γ ⨾ Δ ⊢⁺ Π → Γ ⨾ Δ ⊢⁺ A ⇒ B ⇒ A ∧ B ∷ Π
     cfst  : ∀ {Π A B}   → Γ ⨾ Δ ⊢⁺ Π → Γ ⨾ Δ ⊢⁺ A ∧ B ⇒ A ∷ Π
     csnd  : ∀ {Π A B}   → Γ ⨾ Δ ⊢⁺ Π → Γ ⨾ Δ ⊢⁺ A ∧ B ⇒ B ∷ Π
@@ -46,6 +47,7 @@ mono⊢⁺ η (nec ss ts) = nec ss (mono⊢⁺ η ts)
 mono⊢⁺ η (cdist ts)  = cdist (mono⊢⁺ η ts)
 mono⊢⁺ η (cup ts)    = cup (mono⊢⁺ η ts)
 mono⊢⁺ η (cdown ts)  = cdown (mono⊢⁺ η ts)
+mono⊢⁺ η (unit ts)   = unit (mono⊢⁺ η ts)
 mono⊢⁺ η (cpair ts)  = cpair (mono⊢⁺ η ts)
 mono⊢⁺ η (cfst ts)   = cfst (mono⊢⁺ η ts)
 mono⊢⁺ η (csnd ts)   = csnd (mono⊢⁺ η ts)
@@ -73,6 +75,7 @@ mutual
   mmono⊢⁺ η (cdist ts)  = cdist (mmono⊢⁺ η ts)
   mmono⊢⁺ η (cup ts)    = cup (mmono⊢⁺ η ts)
   mmono⊢⁺ η (cdown ts)  = cdown (mmono⊢⁺ η ts)
+  mmono⊢⁺ η (unit ts)   = unit (mmono⊢⁺ η ts)
   mmono⊢⁺ η (cpair ts)  = cpair (mmono⊢⁺ η ts)
   mmono⊢⁺ η (cfst ts)   = cfst (mmono⊢⁺ η ts)
   mmono⊢⁺ η (csnd ts)   = csnd (mmono⊢⁺ η ts)
@@ -99,6 +102,7 @@ nil         ++⁺ us = us
 (cdist ts)  ++⁺ us = cdist (ts ++⁺ us)
 (cup ts)    ++⁺ us = cup (ts ++⁺ us)
 (cdown ts)  ++⁺ us = cdown (ts ++⁺ us)
+(unit ts)   ++⁺ us = unit (ts ++⁺ us)
 (cpair ts)  ++⁺ us = cpair (ts ++⁺ us)
 (cfst ts)   ++⁺ us = cfst (ts ++⁺ us)
 (csnd ts)   ++⁺ us = csnd (ts ++⁺ us)

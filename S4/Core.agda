@@ -13,6 +13,7 @@ data Ty : Set where
   ι    : Atom → Ty
   _⇒_ : Ty → Ty → Ty
   □_   : Ty → Ty
+  ⊤   : Ty
   _∧_  : Ty → Ty → Ty
   _∨_  : Ty → Ty → Ty
   ⊥   : Ty

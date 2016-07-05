@@ -13,6 +13,7 @@ data _⊢⁺_ (Γ : Cx Ty) : Seq Ty → Set where
   ci    : ∀ {Π A}     → Γ ⊢⁺ Π → Γ ⊢⁺ A ⇒ A ∷ Π
   ck    : ∀ {Π A B}   → Γ ⊢⁺ Π → Γ ⊢⁺ A ⇒ B ⇒ A ∷ Π
   cs    : ∀ {Π A B C} → Γ ⊢⁺ Π → Γ ⊢⁺ (A ⇒ B ⇒ C) ⇒ (A ⇒ B) ⇒ A ⇒ C ∷ Π
+  unit  : ∀ {Π}       → Γ ⊢⁺ Π → Γ ⊢⁺ ⊤ ∷ Π
   cpair : ∀ {Π A B}   → Γ ⊢⁺ Π → Γ ⊢⁺ A ⇒ B ⇒ A ∧ B ∷ Π
   cfst  : ∀ {Π A B}   → Γ ⊢⁺ Π → Γ ⊢⁺ A ∧ B ⇒ A ∷ Π
   csnd  : ∀ {Π A B}   → Γ ⊢⁺ Π → Γ ⊢⁺ A ∧ B ⇒ B ∷ Π
@@ -35,6 +36,7 @@ mono⊢⁺ η (mp i j ts) = mp i j (mono⊢⁺ η ts)
 mono⊢⁺ η (ci ts)     = ci (mono⊢⁺ η ts)
 mono⊢⁺ η (ck ts)     = ck (mono⊢⁺ η ts)
 mono⊢⁺ η (cs ts)     = cs (mono⊢⁺ η ts)
+mono⊢⁺ η (unit ts)   = unit (mono⊢⁺ η ts)
 mono⊢⁺ η (cpair ts)  = cpair (mono⊢⁺ η ts)
 mono⊢⁺ η (cfst ts)   = cfst (mono⊢⁺ η ts)
 mono⊢⁺ η (csnd ts)   = csnd (mono⊢⁺ η ts)
@@ -56,6 +58,7 @@ nil         ++⁺ us = us
 (ci ts)     ++⁺ us = ci (ts ++⁺ us)
 (ck ts)     ++⁺ us = ck (ts ++⁺ us)
 (cs ts)     ++⁺ us = cs (ts ++⁺ us)
+(unit ts)   ++⁺ us = unit (ts ++⁺ us)
 (cpair ts)  ++⁺ us = cpair (ts ++⁺ us)
 (cfst ts)   ++⁺ us = cfst (ts ++⁺ us)
 (csnd ts)   ++⁺ us = csnd (ts ++⁺ us)

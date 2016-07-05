@@ -12,6 +12,7 @@ infixr 3 _⇒_
 data Ty : Set where
   ι    : Atom → Ty
   _⇒_ : Ty → Ty → Ty
+  ⊤   : Ty
   _∧_  : Ty → Ty → Ty
   _∨_  : Ty → Ty → Ty
   ⊥   : Ty

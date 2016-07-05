@@ -10,6 +10,7 @@ data _⊢_ (Γ : Cx Ty) : Ty → Set where
   var  : ∀ {A}     → A ∈ Γ → Γ ⊢ A
   lam  : ∀ {A B}   → Γ , A ⊢ B → Γ ⊢ A ⇒ B
   app  : ∀ {A B}   → Γ ⊢ A ⇒ B → Γ ⊢ A → Γ ⊢ B
+  unit : Γ ⊢ ⊤
   pair : ∀ {A B}   → Γ ⊢ A → Γ ⊢ B → Γ ⊢ A ∧ B
   fst  : ∀ {A B}   → Γ ⊢ A ∧ B → Γ ⊢ A
   snd  : ∀ {A B}   → Γ ⊢ A ∧ B → Γ ⊢ B
@@ -25,6 +26,7 @@ mono⊢ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
 mono⊢ η (var i)      = var (mono∈ η i)
 mono⊢ η (lam t)      = lam (mono⊢ (keep η) t)
 mono⊢ η (app t u)    = app (mono⊢ η t) (mono⊢ η u)
+mono⊢ η unit         = unit
 mono⊢ η (pair t u)   = pair (mono⊢ η t) (mono⊢ η u)
 mono⊢ η (fst t)      = fst (mono⊢ η t)
 mono⊢ η (snd t)      = snd (mono⊢ η t)

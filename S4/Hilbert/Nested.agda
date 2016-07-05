@@ -17,6 +17,7 @@ data _⨾_⊢_ (Γ Δ : Cx Ty) : Ty → Set where
   cdist : ∀ {A B}   → Γ ⨾ Δ ⊢ □ (A ⇒ B) ⇒ □ A ⇒ □ B
   cup   : ∀ {A}     → Γ ⨾ Δ ⊢ □ A ⇒ □ □ A
   cdown : ∀ {A}     → Γ ⨾ Δ ⊢ □ A ⇒ A
+  unit  : Γ ⨾ Δ ⊢ ⊤
   cpair : ∀ {A B}   → Γ ⨾ Δ ⊢ A ⇒ B ⇒ A ∧ B
   cfst  : ∀ {A B}   → Γ ⨾ Δ ⊢ A ∧ B ⇒ A
   csnd  : ∀ {A B}   → Γ ⨾ Δ ⊢ A ∧ B ⇒ B
@@ -39,6 +40,7 @@ mono⊢ η (box i)   = box i
 mono⊢ η cdist     = cdist
 mono⊢ η cup       = cup
 mono⊢ η cdown     = cdown
+mono⊢ η unit      = unit
 mono⊢ η cpair     = cpair
 mono⊢ η cfst      = cfst
 mono⊢ η csnd      = csnd
@@ -61,6 +63,7 @@ mmono⊢ η (box i)   = box (mmono⊢ η i)
 mmono⊢ η cdist     = cdist
 mmono⊢ η cup       = cup
 mmono⊢ η cdown     = cdown
+mmono⊢ η unit      = unit
 mmono⊢ η cpair     = cpair
 mmono⊢ η cfst      = cfst
 mmono⊢ η csnd      = csnd
@@ -105,6 +108,7 @@ lam (box t)       = app ck (box t)
 lam cdist         = app ck cdist
 lam cup           = app ck cup
 lam cdown         = app ck cdown
+lam unit          = app ck unit
 lam cpair         = app ck cpair
 lam cfst          = app ck cfst
 lam csnd          = app ck csnd
@@ -140,6 +144,7 @@ mlam (box t)        = app cdistup (box (mlam t))
 mlam cdist          = app ck cdist
 mlam cup            = app ck cup
 mlam cdown          = app ck cdown
+mlam unit           = app ck unit
 mlam cpair          = app ck cpair
 mlam cfst           = app ck cfst
 mlam csnd           = app ck csnd
