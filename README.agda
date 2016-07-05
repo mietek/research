@@ -35,6 +35,7 @@ import IPC.Hilbert.Linear
 import IPC.Hilbert.Nested
 import IPC.Gentzen
 import IPC.Conversion
+import IPC.Semantics.Tarski
 
 import S4.Core
 import S4.Hilbert.Linear
