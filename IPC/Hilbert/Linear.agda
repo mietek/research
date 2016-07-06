@@ -17,10 +17,6 @@ data _⊢⁺_ (Γ : Cx Ty) : Seq Ty → Set where
   cpair : ∀ {Π A B}   → Γ ⊢⁺ Π → Γ ⊢⁺ A ⇒ B ⇒ A ∧ B ∷ Π
   cfst  : ∀ {Π A B}   → Γ ⊢⁺ Π → Γ ⊢⁺ A ∧ B ⇒ A ∷ Π
   csnd  : ∀ {Π A B}   → Γ ⊢⁺ Π → Γ ⊢⁺ A ∧ B ⇒ B ∷ Π
-  cinl  : ∀ {Π A B}   → Γ ⊢⁺ Π → Γ ⊢⁺ A ⇒ A ∨ B ∷ Π
-  cinr  : ∀ {Π A B}   → Γ ⊢⁺ Π → Γ ⊢⁺ B ⇒ A ∨ B ∷ Π
-  ccase : ∀ {Π A B C} → Γ ⊢⁺ Π → Γ ⊢⁺ A ∨ B ⇒ (A ⇒ C) ⇒ (B ⇒ C) ⇒ C ∷ Π
-  cboom : ∀ {Π C}     → Γ ⊢⁺ Π → Γ ⊢⁺ ⊥ ⇒ C ∷ Π
 
 infix 1 _⊢_
 _⊢_ : Cx Ty → Ty → Set
@@ -40,10 +36,6 @@ mono⊢⁺ η (unit ts)   = unit (mono⊢⁺ η ts)
 mono⊢⁺ η (cpair ts)  = cpair (mono⊢⁺ η ts)
 mono⊢⁺ η (cfst ts)   = cfst (mono⊢⁺ η ts)
 mono⊢⁺ η (csnd ts)   = csnd (mono⊢⁺ η ts)
-mono⊢⁺ η (cinl ts)   = cinl (mono⊢⁺ η ts)
-mono⊢⁺ η (cinr ts)   = cinr (mono⊢⁺ η ts)
-mono⊢⁺ η (ccase ts)  = ccase (mono⊢⁺ η ts)
-mono⊢⁺ η (cboom ts)  = cboom (mono⊢⁺ η ts)
 
 mono⊢ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
 mono⊢ η (Π ∙ ts) = Π ∙ mono⊢⁺ η ts
@@ -62,10 +54,6 @@ nil         ++⁺ us = us
 (cpair ts)  ++⁺ us = cpair (ts ++⁺ us)
 (cfst ts)   ++⁺ us = cfst (ts ++⁺ us)
 (csnd ts)   ++⁺ us = csnd (ts ++⁺ us)
-(cinl ts)   ++⁺ us = cinl (ts ++⁺ us)
-(cinr ts)   ++⁺ us = cinr (ts ++⁺ us)
-(ccase ts)  ++⁺ us = ccase (ts ++⁺ us)
-(cboom ts)  ++⁺ us = cboom (ts ++⁺ us)
 
 
 -- Modus ponens in expanded form.

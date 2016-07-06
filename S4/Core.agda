@@ -7,7 +7,6 @@ open import Common.Sequence public
 -- Types of intuitionistic modal logic S4, with necessity, but without possibility.
 
 infixl 5 _∧_
-infixl 4 _∨_
 infixr 3 _⇒_
 data Ty : Set where
   α_   : Atom → Ty
@@ -15,11 +14,6 @@ data Ty : Set where
   □_   : Ty → Ty
   ⊤   : Ty
   _∧_  : Ty → Ty → Ty
-  _∨_  : Ty → Ty → Ty
-  ⊥   : Ty
-
-¬_ : Ty → Ty
-¬ A = A ⇒ ⊥
 
 infix 3 _⇔_
 _⇔_ : Ty → Ty → Ty

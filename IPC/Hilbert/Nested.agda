@@ -16,10 +16,6 @@ data _⊢_ (Γ : Cx Ty) : Ty → Set where
   cpair : ∀ {A B}   → Γ ⊢ A ⇒ B ⇒ A ∧ B
   cfst  : ∀ {A B}   → Γ ⊢ A ∧ B ⇒ A
   csnd  : ∀ {A B}   → Γ ⊢ A ∧ B ⇒ B
-  cinl  : ∀ {A B}   → Γ ⊢ A ⇒ A ∨ B
-  cinr  : ∀ {A B}   → Γ ⊢ B ⇒ A ∨ B
-  ccase : ∀ {A B C} → Γ ⊢ A ∨ B ⇒ (A ⇒ C) ⇒ (B ⇒ C) ⇒ C
-  cboom : ∀ {C}     → Γ ⊢ ⊥ ⇒ C
 
 
 -- Monotonicity of syntactic consequence with respect to intuitionistic context extensions.
@@ -34,10 +30,6 @@ mono⊢ η unit      = unit
 mono⊢ η cpair     = cpair
 mono⊢ η cfst      = cfst
 mono⊢ η csnd      = csnd
-mono⊢ η cinl      = cinl
-mono⊢ η cinr      = cinr
-mono⊢ η ccase     = ccase
-mono⊢ η cboom     = cboom
 
 
 -- Shorthand for variables.
@@ -65,10 +57,6 @@ lam unit          = app ck unit
 lam cpair         = app ck cpair
 lam cfst          = app ck cfst
 lam csnd          = app ck csnd
-lam cinl          = app ck cinl
-lam cinr          = app ck cinr
-lam ccase         = app ck ccase
-lam cboom         = app ck cboom
 
 
 -- Detachment theorem.
@@ -114,18 +102,6 @@ fst t = app cfst t
 
 snd : ∀ {A B Γ} → Γ ⊢ A ∧ B → Γ ⊢ B
 snd t = app csnd t
-
-inl : ∀ {A B Γ} → Γ ⊢ A → Γ ⊢ A ∨ B
-inl t = app cinl t
-
-inr : ∀ {A B Γ} → Γ ⊢ B → Γ ⊢ A ∨ B
-inr t = app cinr t
-
-case : ∀ {A B C Γ} → Γ ⊢ A ∨ B → Γ , A ⊢ C → Γ , B ⊢ C → Γ ⊢ C
-case t u v = app (app (app ccase t) (lam u)) (lam v)
-
-boom : ∀ {C Γ} → Γ ⊢ ⊥ → Γ ⊢ C
-boom t = app cboom t
 
 
 -- Closure under context concatenation.

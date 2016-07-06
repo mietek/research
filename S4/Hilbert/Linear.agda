@@ -23,10 +23,6 @@ mutual
     cpair : ∀ {Π A B}   → Γ ⨾ Δ ⊢⁺ Π → Γ ⨾ Δ ⊢⁺ A ⇒ B ⇒ A ∧ B ∷ Π
     cfst  : ∀ {Π A B}   → Γ ⨾ Δ ⊢⁺ Π → Γ ⨾ Δ ⊢⁺ A ∧ B ⇒ A ∷ Π
     csnd  : ∀ {Π A B}   → Γ ⨾ Δ ⊢⁺ Π → Γ ⨾ Δ ⊢⁺ A ∧ B ⇒ B ∷ Π
-    cinl  : ∀ {Π A B}   → Γ ⨾ Δ ⊢⁺ Π → Γ ⨾ Δ ⊢⁺ A ⇒ A ∨ B ∷ Π
-    cinr  : ∀ {Π A B}   → Γ ⨾ Δ ⊢⁺ Π → Γ ⨾ Δ ⊢⁺ B ⇒ A ∨ B ∷ Π
-    ccase : ∀ {Π A B C} → Γ ⨾ Δ ⊢⁺ Π → Γ ⨾ Δ ⊢⁺ A ∨ B ⇒ (A ⇒ C) ⇒ (B ⇒ C) ⇒ C ∷ Π
-    cboom : ∀ {Π C}     → Γ ⨾ Δ ⊢⁺ Π → Γ ⨾ Δ ⊢⁺ ⊥ ⇒ C ∷ Π
 
   infix 1 _⨾_⊢_
   _⨾_⊢_ : Cx Ty → Cx Ty → Ty → Set
@@ -51,10 +47,6 @@ mono⊢⁺ η (unit ts)   = unit (mono⊢⁺ η ts)
 mono⊢⁺ η (cpair ts)  = cpair (mono⊢⁺ η ts)
 mono⊢⁺ η (cfst ts)   = cfst (mono⊢⁺ η ts)
 mono⊢⁺ η (csnd ts)   = csnd (mono⊢⁺ η ts)
-mono⊢⁺ η (cinl ts)   = cinl (mono⊢⁺ η ts)
-mono⊢⁺ η (cinr ts)   = cinr (mono⊢⁺ η ts)
-mono⊢⁺ η (ccase ts)  = ccase (mono⊢⁺ η ts)
-mono⊢⁺ η (cboom ts)  = cboom (mono⊢⁺ η ts)
 
 mono⊢ : ∀ {A Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⨾ Δ ⊢ A → Γ′ ⨾ Δ ⊢ A
 mono⊢ η (Π ∙ ts) = Π ∙ mono⊢⁺ η ts
@@ -79,10 +71,6 @@ mutual
   mmono⊢⁺ η (cpair ts)  = cpair (mmono⊢⁺ η ts)
   mmono⊢⁺ η (cfst ts)   = cfst (mmono⊢⁺ η ts)
   mmono⊢⁺ η (csnd ts)   = csnd (mmono⊢⁺ η ts)
-  mmono⊢⁺ η (cinl ts)   = cinl (mmono⊢⁺ η ts)
-  mmono⊢⁺ η (cinr ts)   = cinr (mmono⊢⁺ η ts)
-  mmono⊢⁺ η (ccase ts)  = ccase (mmono⊢⁺ η ts)
-  mmono⊢⁺ η (cboom ts)  = cboom (mmono⊢⁺ η ts)
 
   mmono⊢ : ∀ {A Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⨾ Δ ⊢ A → Γ ⨾ Δ′ ⊢ A
   mmono⊢ η (Π ∙ ts) = Π ∙ mmono⊢⁺ η ts
@@ -106,10 +94,6 @@ nil         ++⁺ us = us
 (cpair ts)  ++⁺ us = cpair (ts ++⁺ us)
 (cfst ts)   ++⁺ us = cfst (ts ++⁺ us)
 (csnd ts)   ++⁺ us = csnd (ts ++⁺ us)
-(cinl ts)   ++⁺ us = cinl (ts ++⁺ us)
-(cinr ts)   ++⁺ us = cinr (ts ++⁺ us)
-(ccase ts)  ++⁺ us = ccase (ts ++⁺ us)
-(cboom ts)  ++⁺ us = cboom (ts ++⁺ us)
 
 
 -- Modus ponens and necessitation in expanded form.

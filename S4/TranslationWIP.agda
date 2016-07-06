@@ -105,10 +105,6 @@ g→lg₁ G.unit         = LG.unit
 g→lg₁ (G.pair t u)   = LG.pair (g→lg₁ t) (g→lg₁ u)
 g→lg₁ (G.fst t)      = LG.fst (g→lg₁ t)
 g→lg₁ (G.snd t)      = LG.snd (g→lg₁ t)
-g→lg₁ (G.inl t)      = LG.inl (g→lg₁ t)
-g→lg₁ (G.inr t)      = LG.inr (g→lg₁ t)
-g→lg₁ (G.case t u v) = LG.case (g→lg₁ t) (g→lg₁ u) (g→lg₁ v)
-g→lg₁ (G.boom t)     = LG.boom (g→lg₁ t)
 
 
 g→lg₂ : ∀ {y Γ x A Δ Ξ} → G⟨ Γ ⨾ Δ ⊢ A ⟩ → LG⟨ la x (sq Δ) ±± la y Γ ⨾ Ξ , x ∙ y ⊢ y ⦂ A ⟩
@@ -122,10 +118,6 @@ g→lg₂ G.unit         = LG.unit
 g→lg₂ (G.pair t u)   = LG.pair (g→lg₂ t) (g→lg₂ u)
 g→lg₂ (G.fst t)      = LG.fst (g→lg₂ t)
 g→lg₂ (G.snd t)      = LG.snd (g→lg₂ t)
-g→lg₂ (G.inl t)      = LG.inl (g→lg₂ t)
-g→lg₂ (G.inr t)      = LG.inr (g→lg₂ t)
-g→lg₂ (G.case t u v) = LG.case (g→lg₂ t) (g→lg₂ u) (g→lg₂ v)
-g→lg₂ (G.boom t)     = LG.boom (g→lg₂ t)
 
 
 -- lgr→g : ∀ {x y Ξ} → LG⟨ Ξ ⊢ x ≤ y ⟩ → G⟨ {!!} ⨾ {!!} ⊢ {!!} ⟩
@@ -146,7 +138,3 @@ g→lg₂ (G.boom t)     = LG.boom (g→lg₂ t)
 -- lg→g (LG.pair t u)   = G.pair (lg→g t) (lg→g u)
 -- lg→g (LG.fst t)      = G.fst (lg→g t)
 -- lg→g (LG.snd t)      = G.snd (lg→g t)
--- lg→g (LG.inl t)      = G.inl (lg→g t)
--- lg→g (LG.inr t)      = G.inr (lg→g t)
--- lg→g (LG.case t u v) = G.case (lg→g t) {!!} {!!}
--- lg→g (LG.boom t)     = G.boom (lg→g t)

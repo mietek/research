@@ -1,4 +1,4 @@
-module IPC.Semantics.KripkeWIP where
+module IPC.Semantics.Kripke where
 
 open import IPC.Gentzen public
 
@@ -25,8 +25,6 @@ module _ {{_ : Model}} where
   w ⊩ₜ (A ⇒ B) = ∀ {w′} → w ≤ w′ → w′ ⊩ₜ A → w′ ⊩ₜ B
   w ⊩ₜ ⊤       = Unit
   w ⊩ₜ (A ∧ B)  = w ⊩ₜ A × w ⊩ₜ B
-  w ⊩ₜ (A ∨ B)  = w ⊩ₜ A + w ⊩ₜ B
-  w ⊩ₜ ⊥       = Empty
 
   _⊩ᵢ_ : World → Cx Ty → Set
   w ⊩ᵢ ∅       = Unit
@@ -40,9 +38,6 @@ module _ {{_ : Model}} where
   mono⊩ₜ {A ⇒ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
   mono⊩ₜ {⊤}     ξ τ       = τ
   mono⊩ₜ {A ∧ B}  ξ (a ∙ b) = mono⊩ₜ {A} ξ a ∙ mono⊩ₜ {B} ξ b
-  mono⊩ₜ {A ∨ B}  ξ (ι₁ a)  = ι₁ (mono⊩ₜ {A} ξ a)
-  mono⊩ₜ {A ∨ B}  ξ (ι₂ b)  = ι₂ (mono⊩ₜ {B} ξ b)
-  mono⊩ₜ {⊥}     ξ ()
 
   mono⊩ᵢ : ∀ {Γ w w′} → w ≤ w′ → w ⊩ᵢ Γ → w′ ⊩ᵢ Γ
   mono⊩ᵢ {∅}     ξ τ       = τ
@@ -71,13 +66,6 @@ eval (fst t)      γ with eval t γ
 …                | a ∙ b = a
 eval (snd t)      γ with eval t γ
 …                | a ∙ b = b
-eval (inl t)      γ = ι₁ (eval t γ)
-eval (inr t)      γ = ι₂ (eval t γ)
-eval (case t u v) γ with eval t γ
-…                | ι₁ a = eval u (γ ∙ a)
-…                | ι₂ b = eval v (γ ∙ b)
-eval (boom t)     γ with eval t γ
-…                | ()
 
 
 -- Canonical model.
@@ -102,17 +90,12 @@ mutual
   reflect {A ⇒ B} t = λ ξ a → reflect {B} (app (mono⊢ ξ t) (reify {A} a))
   reflect {⊤}     t = τ
   reflect {A ∧ B}  t = reflect {A} (fst t) ∙ reflect {B} (snd t)
-  reflect {A ∨ B}  t = {!!}
-  reflect {⊥}     t = {!!}
 
   reify : ∀ {A Γ} → Γ ⊩ₜ A → Γ ⊢ A
   reify {α p}    s       = s
   reify {A ⇒ B} f       = lam (reify {B} (f weak⊆ (reflect {A} v₀)))
   reify {⊤}     τ       = unit
   reify {A ∧ B}  (a ∙ b) = pair (reify {A} a) (reify {B} b)
-  reify {A ∨ B}  (ι₁ a)  = inl (reify {A} a)
-  reify {A ∨ B}  (ι₂ b)  = inr (reify {B} b)
-  reify {⊥}     ()
 
 refl⊩ᵢ : ∀ {Γ} → Γ ⊩ᵢ Γ
 refl⊩ᵢ {∅}     = τ

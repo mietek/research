@@ -40,7 +40,7 @@ import IPC.Hilbert.Nested
 import IPC.Gentzen
 import IPC.Translation
 import IPC.Semantics.Tarski
--- import IPC.Semantics.KripkeWIP
+import IPC.Semantics.Kripke
 
 import S4.Core
 import S4.Hilbert.Linear

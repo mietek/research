@@ -14,10 +14,6 @@ data _⊢_ (Γ : Cx Ty) : Ty → Set where
   pair : ∀ {A B}   → Γ ⊢ A → Γ ⊢ B → Γ ⊢ A ∧ B
   fst  : ∀ {A B}   → Γ ⊢ A ∧ B → Γ ⊢ A
   snd  : ∀ {A B}   → Γ ⊢ A ∧ B → Γ ⊢ B
-  inl  : ∀ {A B}   → Γ ⊢ A → Γ ⊢ A ∨ B
-  inr  : ∀ {A B}   → Γ ⊢ B → Γ ⊢ A ∨ B
-  case : ∀ {A B C} → Γ ⊢ A ∨ B → Γ , A ⊢ C → Γ , B ⊢ C → Γ ⊢ C
-  boom : ∀ {C}     → Γ ⊢ ⊥ → Γ ⊢ C
 
 
 -- Monotonicity of syntactic consequence with respect to intuitionistic context extension.
@@ -30,10 +26,6 @@ mono⊢ η unit         = unit
 mono⊢ η (pair t u)   = pair (mono⊢ η t) (mono⊢ η u)
 mono⊢ η (fst t)      = fst (mono⊢ η t)
 mono⊢ η (snd t)      = snd (mono⊢ η t)
-mono⊢ η (inl t)      = inl (mono⊢ η t)
-mono⊢ η (inr t)      = inr (mono⊢ η t)
-mono⊢ η (case t u v) = case (mono⊢ η t) (mono⊢ (keep η) u) (mono⊢ (keep η) v)
-mono⊢ η (boom t)     = boom (mono⊢ η t)
 
 
 -- Shorthand for variables.
@@ -103,18 +95,6 @@ cfst = lam (fst v₀)
 csnd : ∀ {A B Γ} → Γ ⊢ A ∧ B ⇒ B
 csnd = lam (snd v₀)
 
-cinl : ∀ {A B Γ} → Γ ⊢ A ⇒ A ∨ B
-cinl = lam (inl v₀)
-
-cinr : ∀ {A B Γ} → Γ ⊢ B ⇒ A ∨ B
-cinr = lam (inr v₀)
-
-ccase : ∀ {A B C Γ} → Γ ⊢ A ∨ B ⇒ (A ⇒ C) ⇒ (B ⇒ C) ⇒ C
-ccase = lam (lam (lam (case v₂ (app v₂ v₀) (app v₁ v₀))))
-
-cboom : ∀ {C Γ} → Γ ⊢ ⊥ ⇒ C
-cboom = lam (boom v₀)
-
 
 -- Closure under context concatenation.
 
@@ -134,7 +114,3 @@ concat Γ′ t u = app (mono⊢ (weak⊆±±ᴸ Γ′) (lam t)) (mono⊢ weak⊆
 [ i ≔ s ] pair t u   = pair ([ i ≔ s ] t) ([ i ≔ s ] u)
 [ i ≔ s ] fst t      = fst ([ i ≔ s ] t)
 [ i ≔ s ] snd t      = snd ([ i ≔ s ] t)
-[ i ≔ s ] inl t      = inl ([ i ≔ s ] t)
-[ i ≔ s ] inr t      = inr ([ i ≔ s ] t)
-[ i ≔ s ] case t u v = case ([ i ≔ s ] t) ([ pop i ≔ mono⊢ weak⊆ s ] u) ([ pop i ≔ mono⊢ weak⊆ s ] v)
-[ i ≔ s ] boom t     = boom ([ i ≔ s ] t)

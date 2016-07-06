@@ -20,8 +20,6 @@ module _ {{_ : Model}} where
   ⊨ₜ (A ⇒ B) = ⊨ₜ A → ⊨ₜ B
   ⊨ₜ ⊤       = Unit
   ⊨ₜ (A ∧ B)  = ⊨ₜ A × ⊨ₜ B
-  ⊨ₜ (A ∨ B)  = ⊨ₜ A + ⊨ₜ B
-  ⊨ₜ ⊥       = Empty
 
   ⊨ᵢ_ : Cx Ty → Set
   ⊨ᵢ ∅       = Unit
@@ -50,10 +48,3 @@ eval (fst t)      γ with eval t γ
 …                | a ∙ b = a
 eval (snd t)      γ with eval t γ
 …                | a ∙ b = b
-eval (inl t)      γ = ι₁ (eval t γ)
-eval (inr t)      γ = ι₂ (eval t γ)
-eval (case t u v) γ with eval t γ
-…                | ι₁ a = eval u (γ ∙ a)
-…                | ι₂ b = eval v (γ ∙ b)
-eval (boom t)     γ with eval t γ
-…                | ()

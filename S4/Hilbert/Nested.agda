@@ -21,10 +21,6 @@ data _⨾_⊢_ (Γ Δ : Cx Ty) : Ty → Set where
   cpair : ∀ {A B}   → Γ ⨾ Δ ⊢ A ⇒ B ⇒ A ∧ B
   cfst  : ∀ {A B}   → Γ ⨾ Δ ⊢ A ∧ B ⇒ A
   csnd  : ∀ {A B}   → Γ ⨾ Δ ⊢ A ∧ B ⇒ B
-  cinl  : ∀ {A B}   → Γ ⨾ Δ ⊢ A ⇒ A ∨ B
-  cinr  : ∀ {A B}   → Γ ⨾ Δ ⊢ B ⇒ A ∨ B
-  ccase : ∀ {A B C} → Γ ⨾ Δ ⊢ A ∨ B ⇒ (A ⇒ C) ⇒ (B ⇒ C) ⇒ C
-  cboom : ∀ {C}     → Γ ⨾ Δ ⊢ ⊥ ⇒ C
 
 
 -- Monotonicity of syntactic consequence with respect to intuitionistic context extension.
@@ -44,10 +40,6 @@ mono⊢ η unit      = unit
 mono⊢ η cpair     = cpair
 mono⊢ η cfst      = cfst
 mono⊢ η csnd      = csnd
-mono⊢ η cinl      = cinl
-mono⊢ η cinr      = cinr
-mono⊢ η ccase     = ccase
-mono⊢ η cboom     = cboom
 
 
 -- Monotonicity of syntactic consequence with respect to modal context extension.
@@ -67,10 +59,6 @@ mmono⊢ η unit      = unit
 mmono⊢ η cpair     = cpair
 mmono⊢ η cfst      = cfst
 mmono⊢ η csnd      = csnd
-mmono⊢ η cinl      = cinl
-mmono⊢ η cinr      = cinr
-mmono⊢ η ccase     = ccase
-mmono⊢ η cboom     = cboom
 
 
 -- Shorthand for variables.
@@ -112,10 +100,6 @@ lam unit          = app ck unit
 lam cpair         = app ck cpair
 lam cfst          = app ck cfst
 lam csnd          = app ck csnd
-lam cinl          = app ck cinl
-lam cinr          = app ck cinr
-lam ccase         = app ck ccase
-lam cboom         = app ck cboom
 
 
 -- Combined axioms of distribution and transitivity.
@@ -148,10 +132,6 @@ mlam unit           = app ck unit
 mlam cpair          = app ck cpair
 mlam cfst           = app ck cfst
 mlam csnd           = app ck csnd
-mlam cinl           = app ck cinl
-mlam cinr           = app ck cinr
-mlam ccase          = app ck ccase
-mlam cboom          = app ck cboom
 
 
 -- Detachment theorems.
@@ -224,18 +204,6 @@ fst t = app cfst t
 
 snd : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ A ∧ B → Γ ⨾ Δ ⊢ B
 snd t = app csnd t
-
-inl : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢ A ∨ B
-inl t = app cinl t
-
-inr : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ B → Γ ⨾ Δ ⊢ A ∨ B
-inr t = app cinr t
-
-case : ∀ {A B C Γ Δ} → Γ ⨾ Δ ⊢ A ∨ B → Γ , A ⨾ Δ ⊢ C → Γ , B ⨾ Δ ⊢ C → Γ ⨾ Δ ⊢ C
-case t u v = app (app (app ccase t) (lam u)) (lam v)
-
-boom : ∀ {C Γ Δ} → Γ ⨾ Δ ⊢ ⊥ → Γ ⨾ Δ ⊢ C
-boom t = app cboom t
 
 
 -- Closure under context concatenation.
