@@ -6,6 +6,10 @@ References
   “Labelled propositional modal logics: theory and practice”
   http://dx.doi.org/10.1093/logcom/7.6.685
 
+• R. Davies, F. Pfenning (2001)
+  “A modal analysis of staged computation”
+  http://dx.doi.org/10.1145/382780.382785
+
 • R. Hakli, S. Negri (2010)
   “Does the deduction theorem fail for modal logic?”
   http://dx.doi.org/10.1007/s11229-011-9905-9
