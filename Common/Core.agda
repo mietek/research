@@ -1,20 +1,17 @@
 module Common.Core where
 
 open import Data.Empty public
-  using ()
-  renaming (⊥ to Empty)
+  using (⊥)
 
 open import Data.Product public
-  using (Σ ; _×_)
-  renaming (_,_ to _∙_ ; proj₁ to π₁_ ; proj₂ to π₂_)
+  using (Σ ; _×_ ; proj₁ ; proj₂)
+  renaming (_,_ to _∙_)
 
 open import Data.Sum public
-  using ()
-  renaming (_⊎_ to _+_ ; inj₁ to ι₁_ ; inj₂ to ι₂_)
+  using (_⊎_ ; inj₁ ; inj₂)
 
 open import Data.Unit public
-  using ()
-  renaming (⊤ to Unit ; tt to τ)
+  using (⊤ ; tt)
 
 open import Function public
   using (_∘_ ; _$_)

@@ -6,7 +6,7 @@ import S4.Hilbert.Linear as HL
 import S4.Hilbert.Nested as HN
 import S4.Gentzen.PfenningDavies as G
 
-open HL using () renaming (_⨾_⊢⁺_ to HL⟨_⨾_⊢⁺_⟩ ; _⨾_⊢_ to HL⟨_⨾_⊢_⟩) public
+open HL using () renaming (_⨾_⊢⋆_ to HL⟨_⨾_⊢⋆_⟩ ; _⨾_⊢_ to HL⟨_⨾_⊢_⟩) public
 open HN using () renaming (_⨾_⊢_ to HN⟨_⨾_⊢_⟩) public
 open G using () renaming (_⨾_⊢_ to G⟨_⨾_⊢_⟩) public
 
@@ -16,7 +16,7 @@ open G using () renaming (_⨾_⊢_ to G⟨_⨾_⊢_⟩) public
 hl→hn : ∀ {A Γ Δ} → HL⟨ Γ ⨾ Δ ⊢ A ⟩ → HN⟨ Γ ⨾ Δ ⊢ A ⟩
 hl→hn (Π ∙ ts) = aux ts top
   where
-    aux : ∀ {A Γ Δ Π} → HL⟨ Γ ⨾ Δ ⊢⁺ Π ⟩ → Π ∋ A → HN⟨ Γ ⨾ Δ ⊢ A ⟩
+    aux : ∀ {A Γ Δ Π} → HL⟨ Γ ⨾ Δ ⊢⋆ Π ⟩ → Π ∋ A → HN⟨ Γ ⨾ Δ ⊢ A ⟩
     aux (HL.var i ts)        top     = HN.var i
     aux (HL.mp i j ts)       top     = HN.app (aux ts i) (aux ts j)
     aux (HL.ci ts)           top     = HN.ci
@@ -68,10 +68,10 @@ hn→hl HN.csnd      = [] ∙ HL.csnd HL.nil
 
 -- Deduction theorems for linear Hilbert-style.
 
-hl-lam : ∀ {A B Γ Δ} → HL⟨ Γ , A ⨾ Δ ⊢ B ⟩ → HL⟨ Γ ⨾ Δ ⊢ A ⇒ B ⟩
+hl-lam : ∀ {A B Γ Δ} → HL⟨ Γ , A ⨾ Δ ⊢ B ⟩ → HL⟨ Γ ⨾ Δ ⊢ A ⊃ B ⟩
 hl-lam = hn→hl ∘ HN.lam ∘ hl→hn
 
-hl-mlam : ∀ {A B Γ Δ} → HL⟨ Γ ⨾ Δ , A ⊢ B ⟩ → HL⟨ Γ ⨾ Δ ⊢ □ A ⇒ B ⟩
+hl-mlam : ∀ {A B Γ Δ} → HL⟨ Γ ⨾ Δ , A ⊢ B ⟩ → HL⟨ Γ ⨾ Δ ⊢ □ A ⊃ B ⟩
 hl-mlam = hn→hl ∘ HN.mlam ∘ hl→hn
 
 
@@ -100,16 +100,16 @@ hl→g = hn→g ∘ hl→hn
 -- Translation from Gentzen-style to Hilbert-style.
 
 g→hn : ∀ {A Γ Δ} → G⟨ Γ ⨾ Δ ⊢ A ⟩ → HN⟨ Γ ⨾ Δ ⊢ A ⟩
-g→hn (G.var i)      = HN.var i
-g→hn (G.lam t)      = HN.lam (g→hn t)
-g→hn (G.app t u)    = HN.app (g→hn t) (g→hn u)
-g→hn (G.mvar i)     = HN.mvar i
-g→hn (G.box t)      = HN.box (g→hn t)
-g→hn (G.unbox t u)  = HN.unbox (g→hn t) (g→hn u)
-g→hn G.unit         = HN.unit
-g→hn (G.pair t u)   = HN.pair (g→hn t) (g→hn u)
-g→hn (G.fst t)      = HN.fst (g→hn t)
-g→hn (G.snd t)      = HN.snd (g→hn t)
+g→hn (G.var i)     = HN.var i
+g→hn (G.lam t)     = HN.lam (g→hn t)
+g→hn (G.app t u)   = HN.app (g→hn t) (g→hn u)
+g→hn (G.mvar i)    = HN.mvar i
+g→hn (G.box t)     = HN.box (g→hn t)
+g→hn (G.unbox t u) = HN.unbox (g→hn t) (g→hn u)
+g→hn G.unit        = HN.unit
+g→hn (G.pair t u)  = HN.pair (g→hn t) (g→hn u)
+g→hn (G.fst t)     = HN.fst (g→hn t)
+g→hn (G.snd t)     = HN.snd (g→hn t)
 
 g→hl : ∀ {A Γ Δ} → G⟨ Γ ⨾ Δ ⊢ A ⟩ → HL⟨ Γ ⨾ Δ ⊢ A ⟩
 g→hl = hn→hl ∘ g→hn

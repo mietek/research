@@ -22,17 +22,17 @@ module _ {U : Set} where
 
   -- Sequence concatenation.
 
-  _∓∓_ : Seq U → Seq U → Seq U
-  []      ∓∓ Π′ = Π′
-  (A ∷ Π) ∓∓ Π′ = A ∷ (Π ∓∓ Π′)
+  _⧺ₛ_ : Seq U → Seq U → Seq U
+  []      ⧺ₛ Π′ = Π′
+  (A ∷ Π) ⧺ₛ Π′ = A ∷ (Π ⧺ₛ Π′)
 
 
   -- Monotonicity of sequence membership with respect to concatenation.
 
-  mono∋∓∓ᴸ : ∀ {A Π Π′} → Π ∋ A → Π ∓∓ Π′ ∋ A
-  mono∋∓∓ᴸ top     = top
-  mono∋∓∓ᴸ (pop i) = pop (mono∋∓∓ᴸ i)
+  mono∋ : ∀ {A Π Π′} → Π ∋ A → Π ⧺ₛ Π′ ∋ A
+  mono∋ top     = top
+  mono∋ (pop i) = pop (mono∋ i)
 
-  mono∋∓∓ᴿ : ∀ {A} Π {Π′} → Π′ ∋ A → Π ∓∓ Π′ ∋ A
-  mono∋∓∓ᴿ []      i = i
-  mono∋∓∓ᴿ (A ∷ Π) i = pop (mono∋∓∓ᴿ Π i)
+  mono∋′ : ∀ {A} Π {Π′} → Π′ ∋ A → Π ⧺ₛ Π′ ∋ A
+  mono∋′ []      i = i
+  mono∋′ (A ∷ Π) i = pop (mono∋′ Π i)

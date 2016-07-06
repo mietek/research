@@ -6,7 +6,7 @@ import IPC.Hilbert.Linear as HL
 import IPC.Hilbert.Nested as HN
 import IPC.Gentzen as G
 
-open HL using () renaming (_⊢⁺_ to HL⟨_⊢⁺_⟩ ; _⊢_ to HL⟨_⊢_⟩) public
+open HL using () renaming (_⊢⋆_ to HL⟨_⊢⋆_⟩ ; _⊢_ to HL⟨_⊢_⟩) public
 open HN using () renaming (_⊢_ to HN⟨_⊢_⟩) public
 open G using () renaming (_⊢_ to G⟨_⊢_⟩) public
 
@@ -16,7 +16,7 @@ open G using () renaming (_⊢_ to G⟨_⊢_⟩) public
 hl→hn : ∀ {A Γ} → HL⟨ Γ ⊢ A ⟩ → HN⟨ Γ ⊢ A ⟩
 hl→hn (Π ∙ ts) = aux ts top
   where
-    aux : ∀ {A Γ Π} → HL⟨ Γ ⊢⁺ Π ⟩ → Π ∋ A → HN⟨ Γ ⊢ A ⟩
+    aux : ∀ {A Γ Π} → HL⟨ Γ ⊢⋆ Π ⟩ → Π ∋ A → HN⟨ Γ ⊢ A ⟩
     aux (HL.var i ts)  top     = HN.var i
     aux (HL.mp i j ts) top     = HN.app (aux ts i) (aux ts j)
     aux (HL.ci ts)     top     = HN.ci
@@ -53,7 +53,7 @@ hn→hl HN.csnd      = [] ∙ HL.csnd HL.nil
 
 -- Deduction theorem for linear Hilbert-style.
 
-hl-lam : ∀ {A B Γ} → HL⟨ Γ , A ⊢ B ⟩ → HL⟨ Γ ⊢ A ⇒ B ⟩
+hl-lam : ∀ {A B Γ} → HL⟨ Γ , A ⊢ B ⟩ → HL⟨ Γ ⊢ A ⊃ B ⟩
 hl-lam = hn→hl ∘ HN.lam ∘ hl→hn
 
 
@@ -77,13 +77,13 @@ hl→g = hn→g ∘ hl→hn
 -- Translation from Gentzen-style to Hilbert-style.
 
 g→hn : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → HN⟨ Γ ⊢ A ⟩
-g→hn (G.var i)      = HN.var i
-g→hn (G.lam t)      = HN.lam (g→hn t)
-g→hn (G.app t u)    = HN.app (g→hn t) (g→hn u)
-g→hn G.unit         = HN.unit
-g→hn (G.pair t u)   = HN.pair (g→hn t) (g→hn u)
-g→hn (G.fst t)      = HN.fst (g→hn t)
-g→hn (G.snd t)      = HN.snd (g→hn t)
+g→hn (G.var i)    = HN.var i
+g→hn (G.lam t)    = HN.lam (g→hn t)
+g→hn (G.app t u)  = HN.app (g→hn t) (g→hn u)
+g→hn G.unit       = HN.unit
+g→hn (G.pair t u) = HN.pair (g→hn t) (g→hn u)
+g→hn (G.fst t)    = HN.fst (g→hn t)
+g→hn (G.snd t)    = HN.snd (g→hn t)
 
 g→hl : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → HL⟨ Γ ⊢ A ⟩
 g→hl = hn→hl ∘ g→hn

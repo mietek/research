@@ -7,7 +7,7 @@ open import Common.Core public
 
 infixl 2 _,_
 data Cx (U : Set) : Set where
-  ∅   : Cx U
+  ⌀   : Cx U
   _,_ : Cx U → U → Cx U
 
 
@@ -17,19 +17,19 @@ module _ {U : Set} where
   infix 1 _∈_
   data _∈_ (A : U) : Cx U → Set where
     top : ∀ {Γ} → A ∈ Γ , A
-    pop : ∀ {B Γ} → A ∈ Γ → A ∈ Γ , B
+    pop : ∀ {C Γ} → A ∈ Γ → A ∈ Γ , C
 
 
   -- Context extension, or order-preserving embedding.
 
   infix 1 _⊆_
   data _⊆_ : Cx U → Cx U → Set where
-    done : ∅ ⊆ ∅
+    done : ⌀ ⊆ ⌀
     skip : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊆ Γ′ , A
     keep : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ , A ⊆ Γ′ , A
 
   refl⊆ : ∀ {Γ} → Γ ⊆ Γ
-  refl⊆ {∅}     = done
+  refl⊆ {⌀}     = done
   refl⊆ {Γ , A} = keep refl⊆
 
   trans⊆ : ∀ {Γ Γ′ Γ″} → Γ ⊆ Γ′ → Γ′ ⊆ Γ″ → Γ ⊆ Γ″
@@ -49,8 +49,8 @@ module _ {U : Set} where
   weak⊆ : ∀ {A Γ} → Γ ⊆ Γ , A
   weak⊆ = skip refl⊆
 
-  zero⊆ : ∀ {Γ} → ∅ ⊆ Γ
-  zero⊆ {∅}     = done
+  zero⊆ : ∀ {Γ} → ⌀ ⊆ Γ
+  zero⊆ {⌀}     = done
   zero⊆ {Γ , A} = skip zero⊆
 
 
@@ -77,30 +77,27 @@ module _ {U : Set} where
 
   -- Context concatenation.
 
-  _±±_ : Cx U → Cx U → Cx U
-  Γ ±± ∅        = Γ
-  Γ ±± (Γ′ , A) = (Γ ±± Γ′) , A
+  _⧺_ : Cx U → Cx U → Cx U
+  Γ ⧺ ⌀        = Γ
+  Γ ⧺ (Γ′ , A) = (Γ ⧺ Γ′) , A
 
-  id±±ᴸ : ∀ {Γ} → Γ ±± ∅ ≡ Γ
-  id±±ᴸ = refl
+  id⧺ : ∀ {Γ} → ⌀ ⧺ Γ ≡ Γ
+  id⧺ {⌀}     = refl
+  id⧺ {Γ , A} = cong₂ _,_ id⧺ refl
 
-  id±±ᴿ : ∀ {Γ} → ∅ ±± Γ ≡ Γ
-  id±±ᴿ {∅}     = refl
-  id±±ᴿ {Γ , A} = cong₂ _,_ id±±ᴿ refl
+  weak⊆⧺ : ∀ {Γ} Γ′ → Γ ⊆ Γ ⧺ Γ′
+  weak⊆⧺ ⌀        = refl⊆
+  weak⊆⧺ (Γ′ , A) = skip (weak⊆⧺ Γ′)
 
-  weak⊆±±ᴸ : ∀ {Γ} Γ′ → Γ ⊆ Γ ±± Γ′
-  weak⊆±±ᴸ ∅        = refl⊆
-  weak⊆±±ᴸ (Γ′ , A) = skip (weak⊆±±ᴸ Γ′)
-
-  weak⊆±±ᴿ : ∀ {Γ Γ′} → Γ′ ⊆ Γ ±± Γ′
-  weak⊆±±ᴿ {Γ} {∅}      = zero⊆
-  weak⊆±±ᴿ {Γ} {Γ′ , A} = keep weak⊆±±ᴿ
+  weak⊆⧺′ : ∀ {Γ Γ′} → Γ′ ⊆ Γ ⧺ Γ′
+  weak⊆⧺′ {Γ} {⌀}      = zero⊆
+  weak⊆⧺′ {Γ} {Γ′ , A} = keep weak⊆⧺′
 
 
   -- Thinning, or context removal.
 
   _-_ : ∀ {A} → (Γ : Cx U) → A ∈ Γ → Cx U
-  ∅       - ()
+  ⌀       - ()
   (Γ , A) - top   = Γ
   (Γ , B) - pop i = (Γ - i) , B
 
