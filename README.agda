@@ -18,6 +18,10 @@ References
   “Reinventing formal logic”
   http://oxij.org/note/ReinventingFormalLogic
 
+• M. Marti, T. Studer (submitted 2016)
+  “Intuitionistic modal logic made explicit”
+  http://www.iam.unibe.ch/ltgpub/2016/mast16.pdf
+
 • F. Pfenning, R. Davies (2001)
   “A judgmental reconstruction of modal logic”
   http://dx.doi.org/10.1017/S0960129501003322
