@@ -7,10 +7,14 @@ open import IPC.Gentzen public
 
 record Model : Set₁ where
   field
-    World   : Set
+    World : Set
+
+    -- Intuitionistic accessibility; preorder.
     _≤_     : World → World → Set
     refl≤   : ∀ {w} → w ≤ w
     trans≤  : ∀ {w w′ w″} → w ≤ w′ → w′ ≤ w″ → w ≤ w″
+
+    -- Forcing for atomic propositions; monotonic.
     _⊩ᵃ_   : World → Atom → Set
     mono⊩ᵃ : ∀ {p w w′} → w ≤ w′ → w ⊩ᵃ p → w′ ⊩ᵃ p
 
@@ -31,7 +35,7 @@ module _ {{_ : Model}} where
   w ⊩ᶜ (Γ , A) = w ⊩ᶜ Γ × w ⊩ᵗ A
 
 
-  -- Monotonicity of semantic consequence with respect to accessibility.
+  -- Monotonicity of semantic consequence with respect to intuitionistic accessibility.
 
   mono⊩ᵗ : ∀ {A w w′} → w ≤ w′ → w ⊩ᵗ A → w′ ⊩ᵗ A
   mono⊩ᵗ {α p}   ξ s       = mono⊩ᵃ ξ s
