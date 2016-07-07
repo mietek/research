@@ -106,7 +106,7 @@ module _ {U : Set} where
   thin⊆ (pop i) = keep (thin⊆ i)
 
 
-  -- Decidable equality of context membership.
+  -- Decidable context membership equality.
 
   data _=∈_ {A Γ} (i : A ∈ Γ) : ∀ {C} → C ∈ Γ → Set where
     same : i =∈ i
