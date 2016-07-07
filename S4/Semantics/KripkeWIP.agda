@@ -19,8 +19,8 @@ record Model : Set₁ where
     reflR  : ∀ {w} → w R w
     transR : ∀ {w w′ w″} → w R w′ → w′ R w″ → w R w″
 
-    -- Forcing for atomic propositions; monotonic with respect to  intuitionistic accessibility.
-    _⊩ᵃ_ : World → Atom → Set
+    -- Forcing for atomic propositions; monotonic with respect to intuitionistic accessibility.
+    _⊩ᵃ_   : World → Atom → Set
     mono⊩ᵃ : ∀ {w w′ p} → w ≤ w′ → w ⊩ᵃ p → w′ ⊩ᵃ p
 
     -- Modal accessibility is ??? with respect to intuitionistic accessibility;
