@@ -7,18 +7,41 @@ open import S4.Gentzen.PfenningDavies public
 
 record Model : Set₁ where
   field
-    World    : Set
-    _≤_      : World → World → Set
-    _R_      : World → World → Set
-    _⊩ᵃ_    : World → Atom → Set
-    refl≤    : ∀ {w} → w ≤ w
-    trans≤   : ∀ {w w′ w″} → w ≤ w′ → w′ ≤ w″ → w ≤ w″
-    mmono≤   : ∀ {x w w′} → w R w′ → w′ ≤ x → w ≤ x
-    reflR    : ∀ {w} → w R w
-    transR   : ∀ {w w′ w″} → w R w′ → w′ R w″ → w R w″
-    monoR    : ∀ {x w w′} → w ≤ w′ → w′ R x → w R x
-    mono⊩ᵃ  : ∀ {p w w′} → w ≤ w′ → w ⊩ᵃ p → w′ ⊩ᵃ p
-    mmono⊩ᵃ : ∀ {p w w′} → w R w′ → w ⊩ᵃ p → w′ ⊩ᵃ p
+    World : Set
+
+    -- Intuitionistic accessibility; preorder.
+    _≤_    : World → World → Set
+    refl≤  : ∀ {w} → w ≤ w
+    trans≤ : ∀ {w w′ w″} → w ≤ w′ → w′ ≤ w″ → w ≤ w″
+
+    -- Modal accessibility; preorder.
+    _R_    : World → World → Set
+    reflR  : ∀ {w} → w R w
+    transR : ∀ {w w′ w″} → w R w′ → w′ R w″ → w R w″
+
+    -- Forcing for atomic propositions; monotonic with respect to  intuitionistic accessibility.
+    _⊩ᵃ_ : World → Atom → Set
+    mono⊩ᵃ : ∀ {w w′ p} → w ≤ w′ → w ⊩ᵃ p → w′ ⊩ᵃ p
+
+    -- Modal accessibility is reverse-monotonic with respect to intuitionistic accessibility;
+    -- seems odd, but appears in Ono; repeated by Marti and Studer.
+    revmonoR : ∀ {w w′ w″} → w ≤ w′ → w′ R w″ → w R w″
+
+    -- NEW: Forcing is monotonic with respect to modal accessibility; needed for soundness proof;
+    -- seems OK.
+    mmono⊩ᵃ : ∀ {w w′ p} → w R w′ → w ⊩ᵃ p → w′ ⊩ᵃ p
+
+    -- NEW: Intuitionistic accessibility is reverse-monotonic with respect to modal accessibility;
+    -- needed for soundness proof; seems odd.
+    mrevmono≤ : ∀ {w w′ w″} → w R w′ → w′ ≤ w″ → w ≤ w″
+
+  -- Intuitionistic accessibility implies modal accessibility; appears in Ono as frame condition.
+  ≤→R : ∀ {w w′} → w ≤ w′ → w R w′
+  ≤→R ξ = revmonoR ξ reflR
+
+  -- Modal accessibility implies intuitionistic accessibility; seems odd.
+  R→≤ : ∀ {w w′} → w R w′ → w ≤ w′
+  R→≤ ζ = mrevmono≤ ζ refl≤
 
 open Model {{…}} public
 
@@ -43,7 +66,7 @@ module _ {{_ : Model}} where
   mono⊩ᵗ : ∀ {A w w′} → w ≤ w′ → w ⊩ᵗ A → w′ ⊩ᵗ A
   mono⊩ᵗ {α p}   ξ s       = mono⊩ᵃ ξ s
   mono⊩ᵗ {A ⊃ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
-  mono⊩ᵗ {□ A}   ξ f       = λ ζ → f (monoR ξ ζ)
+  mono⊩ᵗ {□ A}   ξ f       = λ ζ → f (revmonoR ξ ζ)
   mono⊩ᵗ {ι}     ξ tt      = tt
   mono⊩ᵗ {A ∧ B} ξ (a ∙ b) = mono⊩ᵗ {A} ξ a ∙ mono⊩ᵗ {B} ξ b
 
@@ -56,7 +79,7 @@ module _ {{_ : Model}} where
 
   mmono⊩ᵗ : ∀ {A w w′} → w R w′ → w ⊩ᵗ A → w′ ⊩ᵗ A
   mmono⊩ᵗ {α p}   ζ s       = mmono⊩ᵃ ζ s
-  mmono⊩ᵗ {A ⊃ B} ζ f       = λ ξ a → f (mmono≤ ζ ξ) a
+  mmono⊩ᵗ {A ⊃ B} ζ f       = λ ξ a → f (mrevmono≤ ζ ξ) a
   mmono⊩ᵗ {□ A}   ζ f       = λ ζ′ → f (transR ζ ζ′)
   mmono⊩ᵗ {ι}     ζ tt      = tt
   mmono⊩ᵗ {A ∧ B} ζ (a ∙ b) = mmono⊩ᵗ {A} ζ a ∙ mmono⊩ᵗ {B} ζ b
@@ -118,6 +141,13 @@ module _ {U : Set} where
     step : ∀ {Γ Γ′ Δ Δ′} → Γ ⊆ Γ′ → Δ ⊆ Δ′ → (Γ ∙ Δ) R₂ (Γ′ ∙ Δ′)
     jump : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → (⌀ ∙ Δ) R₂ (Γ ∙ Δ′)
 
+  ⊆₂→R₂ : ∀ {Ξ Ξ′} → Ξ ⊆₂ Ξ′ → Ξ R₂ Ξ′
+  ⊆₂→R₂ (η ∙ θ) = step η θ
+
+  R₂→⊆₂ : ∀ {Ξ Ξ′} → Ξ R₂ Ξ′ → Ξ ⊆₂ Ξ′
+  R₂→⊆₂ (step η θ) = η ∙ θ
+  R₂→⊆₂ (jump θ)   = zero⊆ ∙ θ
+
   reflR₂ : ∀ {Ξ} → Ξ R₂ Ξ
   reflR₂ = step refl⊆ refl⊆
 
@@ -127,13 +157,13 @@ module _ {U : Set} where
   transR₂ (jump θ)   (step η′ θ′) = jump (trans⊆ θ θ′)
   transR₂ (jump θ)   (jump θ′)    = jump (trans⊆ θ θ′)
 
-  mmono⊆₂ : ∀ {X Ξ Ξ′} → Ξ R₂ Ξ′ → Ξ′ ⊆₂ X → Ξ ⊆₂ X
-  mmono⊆₂ (step η θ) (η′ ∙ θ′) = trans⊆ η η′ ∙ trans⊆ θ θ′
-  mmono⊆₂ (jump θ)   (η′ ∙ θ′) = zero⊆ ∙ trans⊆ θ θ′
+  revmonoR₂ : ∀ {X Ξ Ξ′} → Ξ ⊆₂ Ξ′ → Ξ′ R₂ X → Ξ R₂ X
+  revmonoR₂ (η ∙ θ) (step η′ θ′) = step (trans⊆ η η′) (trans⊆ θ θ′)
+  revmonoR₂ (η ∙ θ) (jump θ′)    = step (trans⊆ η zero⊆) (trans⊆ θ θ′)
 
-  monoR₂ : ∀ {X Ξ Ξ′} → Ξ ⊆₂ Ξ′ → Ξ′ R₂ X → Ξ R₂ X
-  monoR₂ (η ∙ θ) (step η′ θ′) = step (trans⊆ η η′) (trans⊆ θ θ′)
-  monoR₂ (η ∙ θ) (jump θ′)    = step (trans⊆ η zero⊆) (trans⊆ θ θ′)
+  mrevmono⊆₂ : ∀ {X Ξ Ξ′} → Ξ R₂ Ξ′ → Ξ′ ⊆₂ X → Ξ ⊆₂ X
+  mrevmono⊆₂ (step η θ) (η′ ∙ θ′) = trans⊆ η η′ ∙ trans⊆ θ θ′
+  mrevmono⊆₂ (jump θ)   (η′ ∙ θ′) = zero⊆ ∙ trans⊆ θ θ′
 
 infix 0 _⊢₂_
 _⊢₂_ : Cx₂ Ty → Ty → Set
@@ -149,18 +179,18 @@ mmono⊢₂ (jump θ)   = mono⊢ zero⊆ ∘ mmono⊢ θ
 instance
   canon : Model
   canon = record
-    { World    = Cx₂ Ty
-    ; _≤_      = _⊆₂_
-    ; _R_      = _R₂_
-    ; _⊩ᵃ_    = λ { Ξ p → Ξ ⊢₂ α p }
-    ; refl≤    = refl⊆₂
-    ; trans≤   = trans⊆₂
-    ; mmono≤   = mmono⊆₂
-    ; reflR    = reflR₂
-    ; transR   = transR₂
-    ; monoR    = monoR₂
-    ; mono⊩ᵃ  = mono⊢₂
-    ; mmono⊩ᵃ = mmono⊢₂
+    { World     = Cx₂ Ty
+    ; _≤_       = _⊆₂_
+    ; refl≤     = refl⊆₂
+    ; trans≤    = trans⊆₂
+    ; _R_       = _R₂_
+    ; reflR     = reflR₂
+    ; transR    = transR₂
+    ; _⊩ᵃ_     = λ { Ξ p → Ξ ⊢₂ α p }
+    ; mono⊩ᵃ   = mono⊢₂
+    ; revmonoR  = revmonoR₂
+    ; mmono⊩ᵃ  = mmono⊢₂
+    ; mrevmono≤ = mrevmono⊆₂
     }
 
 
