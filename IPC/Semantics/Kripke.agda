@@ -52,11 +52,11 @@ _⊩_ : Cx Ty → Ty → Set₁
 
 -- Soundness with respect to all models.
 
-lookup : ∀ {Γ A} → A ∈ Γ → Γ ⊩ A
+lookup : ∀ {A Γ} → A ∈ Γ → Γ ⊩ A
 lookup top     (γ ∙ a) = a
 lookup (pop i) (γ ∙ b) = lookup i γ
 
-eval : ∀ {Γ A} → Γ ⊢ A → Γ ⊩ A
+eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
 eval (var i)    γ = lookup i γ
 eval (lam t)    γ = λ ξ a → eval t (mono⊩ᶜ ξ γ ∙ a)
 eval (app t u)  γ = (eval t γ) refl≤ (eval u γ)
