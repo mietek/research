@@ -23,25 +23,25 @@ record Model : Set₁ where
     _⊩ᵃ_ : World → Atom → Set
     mono⊩ᵃ : ∀ {w w′ p} → w ≤ w′ → w ⊩ᵃ p → w′ ⊩ᵃ p
 
-    -- Modal accessibility is reverse-monotonic with respect to intuitionistic accessibility;
+    -- Modal accessibility is ??? with respect to intuitionistic accessibility;
     -- seems odd, but appears in Ono; repeated by Marti and Studer.
-    revmonoR : ∀ {w w′ w″} → w ≤ w′ → w′ R w″ → w R w″
+    fnordR : ∀ {w w′ w″} → w ≤ w′ → w′ R w″ → w R w″
 
     -- NEW: Forcing is monotonic with respect to modal accessibility; needed for soundness proof;
     -- seems OK.
     mmono⊩ᵃ : ∀ {w w′ p} → w R w′ → w ⊩ᵃ p → w′ ⊩ᵃ p
 
-    -- NEW: Intuitionistic accessibility is reverse-monotonic with respect to modal accessibility;
+    -- NEW: Intuitionistic accessibility is ??? with respect to modal accessibility;
     -- needed for soundness proof; seems odd.
-    mrevmono≤ : ∀ {w w′ w″} → w R w′ → w′ ≤ w″ → w ≤ w″
+    mfnord≤ : ∀ {w w′ w″} → w R w′ → w′ ≤ w″ → w ≤ w″
 
   -- Intuitionistic accessibility implies modal accessibility; appears in Ono as frame condition.
   ≤→R : ∀ {w w′} → w ≤ w′ → w R w′
-  ≤→R ξ = revmonoR ξ reflR
+  ≤→R ξ = fnordR ξ reflR
 
   -- Modal accessibility implies intuitionistic accessibility; seems odd.
   R→≤ : ∀ {w w′} → w R w′ → w ≤ w′
-  R→≤ ζ = mrevmono≤ ζ refl≤
+  R→≤ ζ = mfnord≤ ζ refl≤
 
 open Model {{…}} public
 
@@ -66,7 +66,7 @@ module _ {{_ : Model}} where
   mono⊩ᵗ : ∀ {A w w′} → w ≤ w′ → w ⊩ᵗ A → w′ ⊩ᵗ A
   mono⊩ᵗ {α p}   ξ s       = mono⊩ᵃ ξ s
   mono⊩ᵗ {A ⊃ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
-  mono⊩ᵗ {□ A}   ξ f       = λ ζ → f (revmonoR ξ ζ)
+  mono⊩ᵗ {□ A}   ξ f       = λ ζ → f (fnordR ξ ζ)
   mono⊩ᵗ {ι}     ξ tt      = tt
   mono⊩ᵗ {A ∧ B} ξ (a ∙ b) = mono⊩ᵗ {A} ξ a ∙ mono⊩ᵗ {B} ξ b
 
@@ -79,7 +79,7 @@ module _ {{_ : Model}} where
 
   mmono⊩ᵗ : ∀ {A w w′} → w R w′ → w ⊩ᵗ A → w′ ⊩ᵗ A
   mmono⊩ᵗ {α p}   ζ s       = mmono⊩ᵃ ζ s
-  mmono⊩ᵗ {A ⊃ B} ζ f       = λ ξ a → f (mrevmono≤ ζ ξ) a
+  mmono⊩ᵗ {A ⊃ B} ζ f       = λ ξ a → f (mfnord≤ ζ ξ) a
   mmono⊩ᵗ {□ A}   ζ f       = λ ζ′ → f (transR ζ ζ′)
   mmono⊩ᵗ {ι}     ζ tt      = tt
   mmono⊩ᵗ {A ∧ B} ζ (a ∙ b) = mmono⊩ᵗ {A} ζ a ∙ mmono⊩ᵗ {B} ζ b
@@ -157,13 +157,13 @@ module _ {U : Set} where
   transR₂ (jump θ)   (step η′ θ′) = jump (trans⊆ θ θ′)
   transR₂ (jump θ)   (jump θ′)    = jump (trans⊆ θ θ′)
 
-  revmonoR₂ : ∀ {X Ξ Ξ′} → Ξ ⊆₂ Ξ′ → Ξ′ R₂ X → Ξ R₂ X
-  revmonoR₂ (η ∙ θ) (step η′ θ′) = step (trans⊆ η η′) (trans⊆ θ θ′)
-  revmonoR₂ (η ∙ θ) (jump θ′)    = step (trans⊆ η zero⊆) (trans⊆ θ θ′)
+  fnordR₂ : ∀ {X Ξ Ξ′} → Ξ ⊆₂ Ξ′ → Ξ′ R₂ X → Ξ R₂ X
+  fnordR₂ (η ∙ θ) (step η′ θ′) = step (trans⊆ η η′) (trans⊆ θ θ′)
+  fnordR₂ (η ∙ θ) (jump θ′)    = step (trans⊆ η zero⊆) (trans⊆ θ θ′)
 
-  mrevmono⊆₂ : ∀ {X Ξ Ξ′} → Ξ R₂ Ξ′ → Ξ′ ⊆₂ X → Ξ ⊆₂ X
-  mrevmono⊆₂ (step η θ) (η′ ∙ θ′) = trans⊆ η η′ ∙ trans⊆ θ θ′
-  mrevmono⊆₂ (jump θ)   (η′ ∙ θ′) = zero⊆ ∙ trans⊆ θ θ′
+  mfnord⊆₂ : ∀ {X Ξ Ξ′} → Ξ R₂ Ξ′ → Ξ′ ⊆₂ X → Ξ ⊆₂ X
+  mfnord⊆₂ (step η θ) (η′ ∙ θ′) = trans⊆ η η′ ∙ trans⊆ θ θ′
+  mfnord⊆₂ (jump θ)   (η′ ∙ θ′) = zero⊆ ∙ trans⊆ θ θ′
 
 infix 0 _⊢₂_
 _⊢₂_ : Cx₂ Ty → Ty → Set
@@ -188,9 +188,9 @@ instance
     ; transR    = transR₂
     ; _⊩ᵃ_     = λ { Ξ p → Ξ ⊢₂ α p }
     ; mono⊩ᵃ   = mono⊢₂
-    ; revmonoR  = revmonoR₂
+    ; fnordR    = fnordR₂
     ; mmono⊩ᵃ  = mmono⊢₂
-    ; mrevmono≤ = mrevmono⊆₂
+    ; mfnord≤   = mfnord⊆₂
     }
 
 
