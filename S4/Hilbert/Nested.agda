@@ -157,14 +157,14 @@ mcont t = mdet (app ccont (mlam (mlam t)))
 
 -- Exchange.
 
-cflip : ∀ {A B C Γ Δ} → Γ ⨾ Δ ⊢ (A ⊃ B ⊃ C) ⊃ B ⊃ A ⊃ C
-cflip = lam (lam (lam (app (app v₂ v₀) v₁)))
+cexch : ∀ {A B C Γ Δ} → Γ ⨾ Δ ⊢ (A ⊃ B ⊃ C) ⊃ B ⊃ A ⊃ C
+cexch = lam (lam (lam (app (app v₂ v₀) v₁)))
 
-flip : ∀ {A B C Γ Δ} → Γ , A , B ⨾ Δ ⊢ C → Γ , B , A ⨾ Δ ⊢ C
-flip t = det (det (app cflip (lam (lam t))))
+exch : ∀ {A B C Γ Δ} → Γ , A , B ⨾ Δ ⊢ C → Γ , B , A ⨾ Δ ⊢ C
+exch t = det (det (app cexch (lam (lam t))))
 
-mflip : ∀ {A B C Γ Δ} → Γ ⨾ Δ , A , B ⊢ C → Γ ⨾ Δ , B , A ⊢ C
-mflip t = mdet (mdet (app cflip (mlam (mlam t))))
+mexch : ∀ {A B C Γ Δ} → Γ ⨾ Δ , A , B ⊢ C → Γ ⨾ Δ , B , A ⊢ C
+mexch t = mdet (mdet (app cexch (mlam (mlam t))))
 
 
 -- Composition.

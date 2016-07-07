@@ -76,11 +76,11 @@ cont t = det (app ccont (lam (lam t)))
 
 -- Exchange.
 
-cflip : ∀ {A B C Γ} → Γ ⊢ (A ⊃ B ⊃ C) ⊃ B ⊃ A ⊃ C
-cflip = lam (lam (lam (app (app v₂ v₀) v₁)))
+cexch : ∀ {A B C Γ} → Γ ⊢ (A ⊃ B ⊃ C) ⊃ B ⊃ A ⊃ C
+cexch = lam (lam (lam (app (app v₂ v₀) v₁)))
 
-flip : ∀ {A B C Γ} → Γ , A , B ⊢ C → Γ , B , A ⊢ C
-flip t = det (det (app cflip (lam (lam t))))
+exch : ∀ {A B C Γ} → Γ , A , B ⊢ C → Γ , B , A ⊢ C
+exch t = det (det (app cexch (lam (lam t))))
 
 
 -- Composition.

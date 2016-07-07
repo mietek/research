@@ -124,13 +124,13 @@ cont t = det (app ccont (lam (lam t)))
 
 -- Exchange.
 
-cflip : ∀ {x A B C Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ (A ⊃ B ⊃ C) ⊃ B ⊃ A ⊃ C
-cflip = lam (lam (lam (app (app v₂ v₀) v₁)))
+cexch : ∀ {x A B C Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ (A ⊃ B ⊃ C) ⊃ B ⊃ A ⊃ C
+cexch = lam (lam (lam (app (app v₂ v₀) v₁)))
 
-flip : ∀ {x A B C Γ Ξ} → Γ , x ⦂ A , x ⦂ B ⨾ Ξ ⊢ x ⦂ C → Γ , x ⦂ B , x ⦂ A ⨾ Ξ ⊢ x ⦂ C
-flip t = det (det (app cflip (lam (lam t))))
+exch : ∀ {x A B C Γ Ξ} → Γ , x ⦂ A , x ⦂ B ⨾ Ξ ⊢ x ⦂ C → Γ , x ⦂ B , x ⦂ A ⨾ Ξ ⊢ x ⦂ C
+exch t = det (det (app cexch (lam (lam t))))
 
--- TODO: mflip
+-- TODO: mexch
 
 
 -- Composition.
