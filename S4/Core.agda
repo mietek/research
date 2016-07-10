@@ -4,7 +4,7 @@ open import Common.Context public
 open import Common.Sequence public
 
 
--- Types of intuitionistic modal logic S4, with necessity, but without possibility.
+-- Propositions of intuitionistic modal logic S4, restricted to necessity.
 
 infixl 5 _∧_
 infixr 3 _⊃_
