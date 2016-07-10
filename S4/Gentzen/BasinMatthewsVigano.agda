@@ -200,7 +200,7 @@ distup t u = dist t (up u)
 -- Closure under context concatenation.
 
 concat : ∀ {x A B Γ} Γ′ {Ξ} → Γ , x ⦂ A ⨾ Ξ ⊢ x ⦂ B → Γ′ ⨾ Ξ ⊢ x ⦂ A → Γ ⧺ Γ′ ⨾ Ξ ⊢ x ⦂ B
-concat Γ′ t u = app (mono⊢ (weak⊆⧺ Γ′) (lam t)) (mono⊢ weak⊆⧺′ u)
+concat Γ′ t u = app (mono⊢ (weak⊆⧺ₗ Γ′) (lam t)) (mono⊢ weak⊆⧺ᵣ u)
 
 -- TODO: mconcat
 

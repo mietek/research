@@ -49,9 +49,9 @@ module _ {U : Set} where
   weak⊆ : ∀ {A Γ} → Γ ⊆ Γ , A
   weak⊆ = skip refl⊆
 
-  zero⊆ : ∀ {Γ} → ⌀ ⊆ Γ
-  zero⊆ {⌀}     = done
-  zero⊆ {Γ , A} = skip zero⊆
+  bot⊆ : ∀ {Γ} → ⌀ ⊆ Γ
+  bot⊆ {⌀}     = done
+  bot⊆ {Γ , A} = skip bot⊆
 
 
   -- Monotonicity of context membership with respect to context inclusion.
@@ -81,18 +81,20 @@ module _ {U : Set} where
   Γ ⧺ ⌀        = Γ
   Γ ⧺ (Γ′ , A) = (Γ ⧺ Γ′) , A
 
-  id⧺ : ∀ {Γ} → ⌀ ⧺ Γ ≡ Γ
-  id⧺ {⌀}     = refl
-  id⧺ {Γ , A} = cong₂ _,_ id⧺ refl
+  id⧺ₗ : ∀ {Γ} → Γ ⧺ ⌀ ≡ Γ
+  id⧺ₗ = refl
 
-  weak⊆⧺ : ∀ {Γ} Γ′ → Γ ⊆ Γ ⧺ Γ′
-  weak⊆⧺ ⌀        = refl⊆
-  weak⊆⧺ (Γ′ , A) = skip (weak⊆⧺ Γ′)
+  id⧺ᵣ : ∀ {Γ} → ⌀ ⧺ Γ ≡ Γ
+  id⧺ᵣ {⌀}     = refl
+  id⧺ᵣ {Γ , A} = cong₂ _,_ id⧺ᵣ refl
 
-  weak⊆⧺′ : ∀ {Γ Γ′} → Γ′ ⊆ Γ ⧺ Γ′
-  weak⊆⧺′ {Γ} {⌀}      = zero⊆
-  weak⊆⧺′ {Γ} {Γ′ , A} = keep weak⊆⧺′
+  weak⊆⧺ₗ : ∀ {Γ} Γ′ → Γ ⊆ Γ ⧺ Γ′
+  weak⊆⧺ₗ ⌀        = refl⊆
+  weak⊆⧺ₗ (Γ′ , A) = skip (weak⊆⧺ₗ Γ′)
 
+  weak⊆⧺ᵣ : ∀ {Γ Γ′} → Γ′ ⊆ Γ ⧺ Γ′
+  weak⊆⧺ᵣ {Γ} {⌀}      = bot⊆
+  weak⊆⧺ᵣ {Γ} {Γ′ , A} = keep weak⊆⧺ᵣ
 
 
   -- Context thinning.

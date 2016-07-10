@@ -146,24 +146,24 @@ module _ {U : Set} where
 
   R₂→⊆₂ : ∀ {Ξ Ξ′} → Ξ R₂ Ξ′ → Ξ ⊆₂ Ξ′
   R₂→⊆₂ (step η θ) = η ∙ θ
-  R₂→⊆₂ (jump θ)   = zero⊆ ∙ θ
+  R₂→⊆₂ (jump θ)   = bot⊆ ∙ θ
 
   reflR₂ : ∀ {Ξ} → Ξ R₂ Ξ
   reflR₂ = step refl⊆ refl⊆
 
   transR₂ : ∀ {Ξ Ξ′ Ξ″} → Ξ R₂ Ξ′ → Ξ′ R₂ Ξ″ → Ξ R₂ Ξ″
   transR₂ (step η θ) (step η′ θ′) = step (trans⊆ η η′) (trans⊆ θ θ′)
-  transR₂ (step η θ) (jump θ′)    = step (trans⊆ η zero⊆) (trans⊆ θ θ′)
+  transR₂ (step η θ) (jump θ′)    = step (trans⊆ η bot⊆) (trans⊆ θ θ′)
   transR₂ (jump θ)   (step η′ θ′) = jump (trans⊆ θ θ′)
   transR₂ (jump θ)   (jump θ′)    = jump (trans⊆ θ θ′)
 
   fnordR₂ : ∀ {X Ξ Ξ′} → Ξ ⊆₂ Ξ′ → Ξ′ R₂ X → Ξ R₂ X
   fnordR₂ (η ∙ θ) (step η′ θ′) = step (trans⊆ η η′) (trans⊆ θ θ′)
-  fnordR₂ (η ∙ θ) (jump θ′)    = step (trans⊆ η zero⊆) (trans⊆ θ θ′)
+  fnordR₂ (η ∙ θ) (jump θ′)    = step (trans⊆ η bot⊆) (trans⊆ θ θ′)
 
   mfnord⊆₂ : ∀ {X Ξ Ξ′} → Ξ R₂ Ξ′ → Ξ′ ⊆₂ X → Ξ ⊆₂ X
   mfnord⊆₂ (step η θ) (η′ ∙ θ′) = trans⊆ η η′ ∙ trans⊆ θ θ′
-  mfnord⊆₂ (jump θ)   (η′ ∙ θ′) = zero⊆ ∙ trans⊆ θ θ′
+  mfnord⊆₂ (jump θ)   (η′ ∙ θ′) = bot⊆ ∙ trans⊆ θ θ′
 
 infix 0 _⊢₂_
 _⊢₂_ : Cx₂ Ty → Ty → Set
@@ -174,7 +174,7 @@ mono⊢₂ (η ∙ θ) = mono⊢ η ∘ mmono⊢ θ
 
 mmono⊢₂ : ∀ {A Ξ Ξ′} → Ξ R₂ Ξ′ → Ξ ⊢₂ A → Ξ′ ⊢₂ A
 mmono⊢₂ (step η θ) = mono⊢ η ∘ mmono⊢ θ
-mmono⊢₂ (jump θ)   = mono⊢ zero⊆ ∘ mmono⊢ θ
+mmono⊢₂ (jump θ)   = mono⊢ bot⊆ ∘ mmono⊢ θ
 
 instance
   canon : Model
@@ -203,7 +203,7 @@ mutual
   reflect {□ A}   t = aux t
     where aux : ∀ {Γ Γ′ Δ Δ′} → Γ ⨾ Δ ⊢ □ A → (Γ ∙ Δ) R₂ (Γ′ ∙ Δ′) → (Γ′ ∙ Δ′) ⊩ᵗ A
           aux t (step η θ) = reflect {A} (unbox (mono⊢ η (mmono⊢ θ t)) mv₀)
-          aux t (jump θ)   = reflect {A} (unbox (mono⊢ zero⊆ (mmono⊢ θ t)) mv₀)
+          aux t (jump θ)   = reflect {A} (unbox (mono⊢ bot⊆ (mmono⊢ θ t)) mv₀)
   reflect {ι}     t = tt
   reflect {A ∧ B} t = reflect {A} (fst t) ∙ reflect {B} (snd t)
 

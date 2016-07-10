@@ -49,7 +49,7 @@ module Local where
   box⧺ : ∀ {x A Γ} Γ′ {Ξ}
          → Γ ⨾ Ξ ⊢ x ⦂ A
          → Γ ⧺ Γ′ ⨾ Ξ ⊢ x ⦂ □ A
-  box⧺ {x} Γ′ t = scan λ {y} → mono⊢ (weak⊆⧺ Γ′) (box-lem t)
+  box⧺ {x} Γ′ t = scan λ {y} → mono⊢ (weak⊆⧺ₗ Γ′) (box-lem t)
 
   unbox : ∀ {x A C Γ Ξ}
           → Γ ⨾ Ξ ⊢ x ⦂ □ A
@@ -85,7 +85,7 @@ module Nonlocal where
   box⧺ : ∀ {x y A Γ} Γ′ {Ξ}
          → Γ ⨾ Ξ , x ≤ y ⊢ y ⦂ A
          → Γ ⧺ Γ′ ⨾ Ξ , x ≤ y ⊢ y ⦂ □ A
-  box⧺ {x} {y} Γ′ t = scan λ {z} → mono⊢ (weak⊆⧺ Γ′) (box-lem t)
+  box⧺ {x} {y} Γ′ t = scan λ {z} → mono⊢ (weak⊆⧺ₗ Γ′) (box-lem t)
 
   unbox⧺ : ∀ {x y A C Γ} Γ′ {Ξ}
            → Γ ⧺ Γ′ ⨾ Ξ , x ≤ y ⊢ y ⦂ □ A
@@ -95,10 +95,10 @@ module Nonlocal where
 
 
 g→lg₁ : ∀ {x Γ A Δ Ξ} → G⟨ Γ ⨾ Δ ⊢ A ⟩ → LG⟨ (la x (sq Δ) ⧺ la x Γ) ⨾ Ξ ⊢ x ⦂ A ⟩
-g→lg₁ (G.var i)      = LG.var (mono∈ weak⊆⧺′ (→var i))
+g→lg₁ (G.var i)      = LG.var (mono∈ weak⊆⧺ᵣ (→var i))
 g→lg₁ (G.lam t)      = LG.lam (g→lg₁ t)
 g→lg₁ (G.app t u)    = LG.app (g→lg₁ t) (g→lg₁ u)
-g→lg₁ {x} {Γ} (G.mvar i)    = Local.mvar (mono∈ (weak⊆⧺ (la x Γ)) (→mvar i))
+g→lg₁ {x} {Γ} (G.mvar i)    = Local.mvar (mono∈ (weak⊆⧺ₗ (la x Γ)) (→mvar i))
 g→lg₁ {x} {Γ} (G.box t)     = Local.box⧺ (la x Γ) (g→lg₁ t)
 g→lg₁ {x} {Γ} (G.unbox t u) = Local.unbox⧺ (la x Γ) (g→lg₁ t) (g→lg₁ u)
 g→lg₁ G.unit         = LG.unit
@@ -108,10 +108,10 @@ g→lg₁ (G.snd t)      = LG.snd (g→lg₁ t)
 
 
 g→lg₂ : ∀ {y Γ x A Δ Ξ} → G⟨ Γ ⨾ Δ ⊢ A ⟩ → LG⟨ la x (sq Δ) ⧺ la y Γ ⨾ Ξ , x ≤ y ⊢ y ⦂ A ⟩
-g→lg₂ (G.var i)      = LG.var (mono∈ weak⊆⧺′ (→var i))
+g→lg₂ (G.var i)      = LG.var (mono∈ weak⊆⧺ᵣ (→var i))
 g→lg₂ (G.lam t)      = LG.lam (g→lg₂ t)
 g→lg₂ (G.app t u)    = LG.app (g→lg₂ t) (g→lg₂ u)
-g→lg₂ {y} {Γ} (G.mvar i)    = Nonlocal.mvar (mono∈ (weak⊆⧺ (la y Γ)) (→mvar i))
+g→lg₂ {y} {Γ} (G.mvar i)    = Nonlocal.mvar (mono∈ (weak⊆⧺ₗ (la y Γ)) (→mvar i))
 g→lg₂ {y} {Γ} (G.box t)     = Nonlocal.box⧺ (la y Γ) (g→lg₂ t)
 g→lg₂ {y} {Γ} (G.unbox t u) = Nonlocal.unbox⧺ (la y Γ) (g→lg₂ t) (g→lg₂ u)
 g→lg₂ G.unit         = LG.unit

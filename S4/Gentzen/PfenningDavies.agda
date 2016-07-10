@@ -177,10 +177,10 @@ distup t u = dist t (up u)
 -- Closure under context concatenation.
 
 concat : ∀ {A B Γ} Γ′ {Δ} → Γ , A ⨾ Δ ⊢ B → Γ′ ⨾ Δ ⊢ A → Γ ⧺ Γ′ ⨾ Δ ⊢ B
-concat Γ′ t u = app (mono⊢ (weak⊆⧺ Γ′) (lam t)) (mono⊢ weak⊆⧺′ u)
+concat Γ′ t u = app (mono⊢ (weak⊆⧺ₗ Γ′) (lam t)) (mono⊢ weak⊆⧺ᵣ u)
 
 mconcat : ∀ {A B Γ Δ} Δ′ → Γ ⨾ Δ , A ⊢ B → Γ ⨾ Δ′ ⊢ □ A → Γ ⨾ Δ ⧺ Δ′ ⊢ B
-mconcat Δ′ t u = app (mmono⊢ (weak⊆⧺ Δ′) (mlam t)) (mmono⊢ weak⊆⧺′ u)
+mconcat Δ′ t u = app (mmono⊢ (weak⊆⧺ₗ Δ′) (mlam t)) (mmono⊢ weak⊆⧺ᵣ u)
 
 
 -- Substitution.
@@ -207,7 +207,7 @@ m[ i ≔ s ] var k     = var k
 m[ i ≔ s ] lam t     = lam (m[ i ≔ s ] t)
 m[ i ≔ s ] app t u   = app (m[ i ≔ s ] t) (m[ i ≔ s ] u)
 m[ i ≔ s ] mvar k    with i ≟∈ k
-m[ i ≔ s ] mvar .i   | same   = mono⊢ zero⊆ s
+m[ i ≔ s ] mvar .i   | same   = mono⊢ bot⊆ s
 m[ i ≔ s ] mvar ._   | diff k = mvar k
 m[ i ≔ s ] box t     = box (m[ i ≔ s ] t)
 m[ i ≔ s ] unbox t u = unbox (m[ i ≔ s ] t) (m[ pop i ≔ mmono⊢ weak⊆ s ] u)
