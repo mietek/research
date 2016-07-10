@@ -6,7 +6,7 @@ import S4.Hilbert.Linear as HL
 import S4.Hilbert.Nested as HN
 import S4.Gentzen.PfenningDavies as G
 
-open HL using () renaming (_⨾_⊢⋆_ to HL⟨_⨾_⊢⋆_⟩ ; _⨾_⊢_ to HL⟨_⨾_⊢_⟩) public
+open HL using () renaming (_⨾_⊢ₛ_ to HL⟨_⨾_⊢ₛ_⟩ ; _⨾_⊢_ to HL⟨_⨾_⊢_⟩) public
 open HN using () renaming (_⨾_⊢_ to HN⟨_⨾_⊢_⟩) public
 open G using () renaming (_⨾_⊢_ to G⟨_⨾_⊢_⟩) public
 
@@ -16,7 +16,7 @@ open G using () renaming (_⨾_⊢_ to G⟨_⨾_⊢_⟩) public
 hl→hn : ∀ {A Γ Δ} → HL⟨ Γ ⨾ Δ ⊢ A ⟩ → HN⟨ Γ ⨾ Δ ⊢ A ⟩
 hl→hn (Π ∙ ts) = aux ts top
   where
-    aux : ∀ {A Γ Δ Π} → HL⟨ Γ ⨾ Δ ⊢⋆ Π ⟩ → Π ∋ A → HN⟨ Γ ⨾ Δ ⊢ A ⟩
+    aux : ∀ {A Γ Δ Π} → HL⟨ Γ ⨾ Δ ⊢ₛ Π ⟩ → A ∈ Π → HN⟨ Γ ⨾ Δ ⊢ A ⟩
     aux (HL.var i ts)        top     = HN.var i
     aux (HL.mp i j ts)       top     = HN.app (aux ts i) (aux ts j)
     aux (HL.ci ts)           top     = HN.ci
@@ -50,20 +50,20 @@ hl→hn (Π ∙ ts) = aux ts top
 -- Translation from nested Hilbert-style to linear.
 
 hn→hl : ∀ {A Γ Δ} → HN⟨ Γ ⨾ Δ ⊢ A ⟩ → HL⟨ Γ ⨾ Δ ⊢ A ⟩
-hn→hl (HN.var i)   = [] ∙ HL.var i HL.nil
+hn→hl (HN.var i)   = ⌀ ∙ HL.var i HL.nil
 hn→hl (HN.app t u) = HL.app (hn→hl t) (hn→hl u)
-hn→hl HN.ci        = [] ∙ HL.ci HL.nil
-hn→hl HN.ck        = [] ∙ HL.ck HL.nil
-hn→hl HN.cs        = [] ∙ HL.cs HL.nil
-hn→hl (HN.mvar i)  = [] ∙ HL.mvar i HL.nil
+hn→hl HN.ci        = ⌀ ∙ HL.ci HL.nil
+hn→hl HN.ck        = ⌀ ∙ HL.ck HL.nil
+hn→hl HN.cs        = ⌀ ∙ HL.cs HL.nil
+hn→hl (HN.mvar i)  = ⌀ ∙ HL.mvar i HL.nil
 hn→hl (HN.box t)   = HL.box (hn→hl t)
-hn→hl HN.cdist     = [] ∙ HL.cdist HL.nil
-hn→hl HN.cup       = [] ∙ HL.cup HL.nil
-hn→hl HN.cdown     = [] ∙ HL.cdown HL.nil
-hn→hl HN.unit      = [] ∙ HL.unit HL.nil
-hn→hl HN.cpair     = [] ∙ HL.cpair HL.nil
-hn→hl HN.cfst      = [] ∙ HL.cfst HL.nil
-hn→hl HN.csnd      = [] ∙ HL.csnd HL.nil
+hn→hl HN.cdist     = ⌀ ∙ HL.cdist HL.nil
+hn→hl HN.cup       = ⌀ ∙ HL.cup HL.nil
+hn→hl HN.cdown     = ⌀ ∙ HL.cdown HL.nil
+hn→hl HN.unit      = ⌀ ∙ HL.unit HL.nil
+hn→hl HN.cpair     = ⌀ ∙ HL.cpair HL.nil
+hn→hl HN.cfst      = ⌀ ∙ HL.cfst HL.nil
+hn→hl HN.csnd      = ⌀ ∙ HL.csnd HL.nil
 
 
 -- Deduction theorems for linear Hilbert-style.

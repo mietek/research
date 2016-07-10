@@ -6,7 +6,7 @@ import IPC.Hilbert.Linear as HL
 import IPC.Hilbert.Nested as HN
 import IPC.Gentzen as G
 
-open HL using () renaming (_⊢⋆_ to HL⟨_⊢⋆_⟩ ; _⊢_ to HL⟨_⊢_⟩) public
+open HL using () renaming (_⊢ₛ_ to HL⟨_⊢ₛ_⟩ ; _⊢_ to HL⟨_⊢_⟩) public
 open HN using () renaming (_⊢_ to HN⟨_⊢_⟩) public
 open G using () renaming (_⊢_ to G⟨_⊢_⟩) public
 
@@ -16,7 +16,7 @@ open G using () renaming (_⊢_ to G⟨_⊢_⟩) public
 hl→hn : ∀ {A Γ} → HL⟨ Γ ⊢ A ⟩ → HN⟨ Γ ⊢ A ⟩
 hl→hn (Π ∙ ts) = aux ts top
   where
-    aux : ∀ {A Γ Π} → HL⟨ Γ ⊢⋆ Π ⟩ → Π ∋ A → HN⟨ Γ ⊢ A ⟩
+    aux : ∀ {A Γ Π} → HL⟨ Γ ⊢ₛ Π ⟩ → A ∈ Π → HN⟨ Γ ⊢ A ⟩
     aux (HL.var i ts)  top     = HN.var i
     aux (HL.mp i j ts) top     = HN.app (aux ts i) (aux ts j)
     aux (HL.ci ts)     top     = HN.ci
@@ -40,15 +40,15 @@ hl→hn (Π ∙ ts) = aux ts top
 -- Translation from nested Hilbert-style to linear.
 
 hn→hl : ∀ {A Γ} → HN⟨ Γ ⊢ A ⟩ → HL⟨ Γ ⊢ A ⟩
-hn→hl (HN.var i)   = [] ∙ HL.var i HL.nil
+hn→hl (HN.var i)   = ⌀ ∙ HL.var i HL.nil
 hn→hl (HN.app t u) = HL.app (hn→hl t) (hn→hl u)
-hn→hl HN.ci        = [] ∙ HL.ci HL.nil
-hn→hl HN.ck        = [] ∙ HL.ck HL.nil
-hn→hl HN.cs        = [] ∙ HL.cs HL.nil
-hn→hl HN.unit      = [] ∙ HL.unit HL.nil
-hn→hl HN.cpair     = [] ∙ HL.cpair HL.nil
-hn→hl HN.cfst      = [] ∙ HL.cfst HL.nil
-hn→hl HN.csnd      = [] ∙ HL.csnd HL.nil
+hn→hl HN.ci        = ⌀ ∙ HL.ci HL.nil
+hn→hl HN.ck        = ⌀ ∙ HL.ck HL.nil
+hn→hl HN.cs        = ⌀ ∙ HL.cs HL.nil
+hn→hl HN.unit      = ⌀ ∙ HL.unit HL.nil
+hn→hl HN.cpair     = ⌀ ∙ HL.cpair HL.nil
+hn→hl HN.cfst      = ⌀ ∙ HL.cfst HL.nil
+hn→hl HN.csnd      = ⌀ ∙ HL.csnd HL.nil
 
 
 -- Deduction theorem for linear Hilbert-style.

@@ -1,7 +1,6 @@
 module IPC.Core where
 
 open import Common.Context public
-open import Common.Sequence public
 
 
 -- Propositions of intuitionistic propositional calculus (IPC).

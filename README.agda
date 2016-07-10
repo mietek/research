@@ -64,7 +64,6 @@ module README where
 
 import Common.Core
 import Common.Context
-import Common.Sequence
 
 import IPC.Core
 import IPC.Hilbert.Linear

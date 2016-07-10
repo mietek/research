@@ -1,7 +1,6 @@
 module S4.Core where
 
 open import Common.Context public
-open import Common.Sequence public
 
 
 -- Propositions of intuitionistic modal logic S4, restricted to necessity.
