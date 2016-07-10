@@ -19,7 +19,7 @@ data _⨾_⊢_ (Γ Δ : Cx Ty) : Ty → Set where
   snd   : ∀ {A B} → Γ ⨾ Δ ⊢ A ∧ B → Γ ⨾ Δ ⊢ B
 
 
--- Monotonicity of syntactic consequence with respect to intuitionistic context extension.
+-- Monotonicity of syntactic consequence with respect to context inclusion.
 
 mono⊢ : ∀ {A Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⨾ Δ ⊢ A → Γ′ ⨾ Δ ⊢ A
 mono⊢ η (var i)     = var (mono∈ η i)
@@ -34,7 +34,7 @@ mono⊢ η (fst t)     = fst (mono⊢ η t)
 mono⊢ η (snd t)     = snd (mono⊢ η t)
 
 
--- Monotonicity of syntactic consequence with respect to modal context extension.
+-- Monotonicity with respect to inclusion of modal context.
 
 mmono⊢ : ∀ {A Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⨾ Δ ⊢ A → Γ ⨾ Δ′ ⊢ A
 mmono⊢ η (var i)     = var i

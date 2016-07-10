@@ -29,7 +29,7 @@ mutual
   Γ ⨾ Δ ⊢ A = Σ (Seq Ty) (λ Π → Γ ⨾ Δ ⊢⋆ A ∷ Π)
 
 
--- Monotonicity of syntactic consequence with respect to intuitionistic context extension.
+-- Monotonicity of syntactic consequence with respect to context inclusion.
 
 mono⊢⋆ : ∀ {Π Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⨾ Δ ⊢⋆ Π → Γ′ ⨾ Δ ⊢⋆ Π
 mono⊢⋆ η nil         = nil
@@ -52,7 +52,7 @@ mono⊢ : ∀ {A Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⨾ Δ ⊢ A → Γ′ ⨾
 mono⊢ η (Π ∙ ts) = Π ∙ mono⊢⋆ η ts
 
 
--- Monotonicity of syntactic consequence with respect to modal context extension.
+-- Monotonicity with respect to inclusion of modal context.
 
 mutual
   mmono⊢⋆ : ∀ {Π Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ′ ⊢⋆ Π

@@ -20,7 +20,7 @@ module _ {U : Set} where
     pop : ∀ {C Γ} → A ∈ Γ → A ∈ Γ , C
 
 
-  -- Context extension, or order-preserving embedding.
+  -- Context inclusion, or order-preserving embedding.
 
   infix 1 _⊆_
   data _⊆_ : Cx U → Cx U → Set where
@@ -54,7 +54,7 @@ module _ {U : Set} where
   zero⊆ {Γ , A} = skip zero⊆
 
 
-  -- Monotonicity of context membership with respect to extension.
+  -- Monotonicity of context membership with respect to context inclusion.
 
   mono∈ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → A ∈ Γ → A ∈ Γ′
   mono∈ done     ()
@@ -94,7 +94,8 @@ module _ {U : Set} where
   weak⊆⧺′ {Γ} {Γ′ , A} = keep weak⊆⧺′
 
 
-  -- Thinning, or context removal.
+
+  -- Context thinning.
 
   _-_ : ∀ {A} → (Γ : Cx U) → A ∈ Γ → Cx U
   ⌀       - ()
