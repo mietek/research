@@ -1,9 +1,9 @@
-module S4.Hilbert.Sequential where
+module IS4.Hilbert.Sequential where
 
-open import S4.Core public
+open import IS4.Core public
 
 
--- Proofs of S4, as Hilbert-style combinator sequences.
+-- Proofs of IS4, as Hilbert-style combinator sequences.
 
 mutual
   infix 1 _⨾_⊢ₛ_

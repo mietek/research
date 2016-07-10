@@ -1,9 +1,9 @@
-module S4.Hilbert.Nested where
+module IS4.Hilbert.Nested where
 
-open import S4.Core public
+open import IS4.Core public
 
 
--- Proofs of S4, as Hilbert-style combinator trees.
+-- Proofs of IS4, as Hilbert-style combinator trees.
 
 infix 1 _⨾_⊢_
 data _⨾_⊢_ (Γ Δ : Cx Ty) : Ty → Set where

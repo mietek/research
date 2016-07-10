@@ -73,11 +73,11 @@ import IPC.Translation
 import IPC.Semantics.Tarski
 import IPC.Semantics.Kripke
 
-import S4.Core
-import S4.Hilbert.Sequential
-import S4.Hilbert.Nested
-import S4.Gentzen.PfenningDavies
-import S4.Gentzen.BasinMatthewsVigano
-import S4.Translation
--- import S4.TranslationWIP
--- import S4.Semantics.KripkeWIP
+import IS4.Core
+import IS4.Hilbert.Sequential
+import IS4.Hilbert.Nested
+import IS4.Gentzen.PfenningDavies
+import IS4.Gentzen.BasinMatthewsVigano
+import IS4.Translation
+-- import IS4.TranslationWIP
+-- import IS4.Semantics.KripkeWIP

@@ -1,9 +1,9 @@
-module S4.TranslationWIP where
+module IS4.TranslationWIP where
 
-open import S4.Core public
+open import IS4.Core public
 
-import S4.Gentzen.PfenningDavies as G
-import S4.Gentzen.BasinMatthewsVigano as LG
+import IS4.Gentzen.PfenningDavies as G
+import IS4.Gentzen.BasinMatthewsVigano as LG
 
 open G using () renaming (_⨾_⊢_ to G⟨_⨾_⊢_⟩) public
 open LG using (_≤_ ; _⦂_) renaming (_⨾_⊢_⦂_ to LG⟨_⨾_⊢_⦂_⟩ ; _⊢_≤_ to LG⟨_⊢_≤_⟩) public

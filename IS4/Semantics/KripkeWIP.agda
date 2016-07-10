@@ -1,6 +1,6 @@
-module S4.Semantics.KripkeWIP where
+module IS4.Semantics.KripkeWIP where
 
-open import S4.Gentzen.PfenningDavies public
+open import IS4.Gentzen.PfenningDavies public
 
 
 -- Non-standard intuitionistic modal Kripke models, based on Marti and Studer.

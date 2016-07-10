@@ -1,6 +1,6 @@
-module S4.Gentzen.BasinMatthewsVigano where
+module IS4.Gentzen.BasinMatthewsVigano where
 
-open import S4.Core public
+open import IS4.Core public
 
 
 -- Labels, as in Gabbay’s labelled deductive systems (LDS).

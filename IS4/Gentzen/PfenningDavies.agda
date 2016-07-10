@@ -1,9 +1,9 @@
-module S4.Gentzen.PfenningDavies where
+module IS4.Gentzen.PfenningDavies where
 
-open import S4.Core public
+open import IS4.Core public
 
 
--- Proofs of S4, as Gentzen-style natural deduction trees, following Pfenning and Davies.
+-- Proofs of IS4, as Gentzen-style natural deduction trees, following Pfenning and Davies.
 
 infix 0 _⨾_⊢_
 data _⨾_⊢_ (Γ Δ : Cx Ty) : Ty → Set where
