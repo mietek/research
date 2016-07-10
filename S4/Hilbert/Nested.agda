@@ -27,12 +27,12 @@ data _⨾_⊢_ (Γ Δ : Cx Ty) : Ty → Set where
 
 mono⊢ : ∀ {A Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⨾ Δ ⊢ A → Γ′ ⨾ Δ ⊢ A
 mono⊢ η (var i)   = var (mono∈ η i)
-mono⊢ η (app i j) = app (mono⊢ η i) (mono⊢ η j)
+mono⊢ η (app t u) = app (mono⊢ η t) (mono⊢ η u)
 mono⊢ η ci        = ci
 mono⊢ η ck        = ck
 mono⊢ η cs        = cs
 mono⊢ η (mvar i)  = mvar i
-mono⊢ η (box i)   = box i
+mono⊢ η (box t)   = box t
 mono⊢ η cdist     = cdist
 mono⊢ η cup       = cup
 mono⊢ η cdown     = cdown
@@ -46,12 +46,12 @@ mono⊢ η csnd      = csnd
 
 mmono⊢ : ∀ {A Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⨾ Δ ⊢ A → Γ ⨾ Δ′ ⊢ A
 mmono⊢ η (var i)   = var i
-mmono⊢ η (app i j) = app (mmono⊢ η i) (mmono⊢ η j)
+mmono⊢ η (app t u) = app (mmono⊢ η t) (mmono⊢ η u)
 mmono⊢ η ci        = ci
 mmono⊢ η ck        = ck
 mmono⊢ η cs        = cs
 mmono⊢ η (mvar i)  = mvar (mono∈ η i)
-mmono⊢ η (box i)   = box (mmono⊢ η i)
+mmono⊢ η (box t)   = box (mmono⊢ η t)
 mmono⊢ η cdist     = cdist
 mmono⊢ η cup       = cup
 mmono⊢ η cdown     = cdown
