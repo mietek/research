@@ -66,7 +66,7 @@ import Common.Core
 import Common.Context
 
 import IPC.Core
-import IPC.Hilbert.Linear
+import IPC.Hilbert.Sequential
 import IPC.Hilbert.Nested
 import IPC.Gentzen
 import IPC.Translation
@@ -74,7 +74,7 @@ import IPC.Semantics.Tarski
 import IPC.Semantics.Kripke
 
 import S4.Core
-import S4.Hilbert.Linear
+import S4.Hilbert.Sequential
 import S4.Hilbert.Nested
 import S4.Gentzen.PfenningDavies
 import S4.Gentzen.BasinMatthewsVigano

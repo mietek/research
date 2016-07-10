@@ -1,4 +1,4 @@
-module IPC.Hilbert.Linear where
+module IPC.Hilbert.Sequential where
 
 open import IPC.Core public
 

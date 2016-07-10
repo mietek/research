@@ -2,76 +2,76 @@ module S4.Translation where
 
 open import S4.Core public
 
-import S4.Hilbert.Linear as HL
+import S4.Hilbert.Sequential as HS
 import S4.Hilbert.Nested as HN
 import S4.Gentzen.PfenningDavies as G
 
-open HL using () renaming (_⨾_⊢ₛ_ to HL⟨_⨾_⊢ₛ_⟩ ; _⨾_⊢_ to HL⟨_⨾_⊢_⟩) public
+open HS using () renaming (_⨾_⊢ₛ_ to HS⟨_⨾_⊢ₛ_⟩ ; _⨾_⊢_ to HS⟨_⨾_⊢_⟩) public
 open HN using () renaming (_⨾_⊢_ to HN⟨_⨾_⊢_⟩) public
 open G using () renaming (_⨾_⊢_ to G⟨_⨾_⊢_⟩) public
 
 
--- Translation from linear Hilbert-style to nested.
+-- Translation from sequential Hilbert-style to nested.
 
-hl→hn : ∀ {A Γ Δ} → HL⟨ Γ ⨾ Δ ⊢ A ⟩ → HN⟨ Γ ⨾ Δ ⊢ A ⟩
+hl→hn : ∀ {A Γ Δ} → HS⟨ Γ ⨾ Δ ⊢ A ⟩ → HN⟨ Γ ⨾ Δ ⊢ A ⟩
 hl→hn (Π ∙ ts) = aux ts top
   where
-    aux : ∀ {A Γ Δ Π} → HL⟨ Γ ⨾ Δ ⊢ₛ Π ⟩ → A ∈ Π → HN⟨ Γ ⨾ Δ ⊢ A ⟩
-    aux (HL.var i ts)        top     = HN.var i
-    aux (HL.mp i j ts)       top     = HN.app (aux ts i) (aux ts j)
-    aux (HL.ci ts)           top     = HN.ci
-    aux (HL.ck ts)           top     = HN.ck
-    aux (HL.cs ts)           top     = HN.cs
-    aux (HL.mvar i ts)       top     = HN.mvar i
-    aux (HL.nec (Π ∙ ss) ts) top     = HN.box (aux ss top)
-    aux (HL.cdist ts)        top     = HN.cdist
-    aux (HL.cup ts)          top     = HN.cup
-    aux (HL.cdown ts)        top     = HN.cdown
-    aux (HL.unit ts)         top     = HN.unit
-    aux (HL.cpair ts)        top     = HN.cpair
-    aux (HL.cfst ts)         top     = HN.cfst
-    aux (HL.csnd ts)         top     = HN.csnd
-    aux (HL.var i ts)        (pop k) = aux ts k
-    aux (HL.mp i j ts)       (pop k) = aux ts k
-    aux (HL.ci ts)           (pop k) = aux ts k
-    aux (HL.ck ts)           (pop k) = aux ts k
-    aux (HL.cs ts)           (pop k) = aux ts k
-    aux (HL.mvar i ts)       (pop k) = aux ts k
-    aux (HL.nec ss ts)       (pop k) = aux ts k
-    aux (HL.cdist ts)        (pop k) = aux ts k
-    aux (HL.cup ts)          (pop k) = aux ts k
-    aux (HL.cdown ts)        (pop k) = aux ts k
-    aux (HL.unit ts)         (pop k) = aux ts k
-    aux (HL.cpair ts)        (pop k) = aux ts k
-    aux (HL.cfst ts)         (pop k) = aux ts k
-    aux (HL.csnd ts)         (pop k) = aux ts k
+    aux : ∀ {A Γ Δ Π} → HS⟨ Γ ⨾ Δ ⊢ₛ Π ⟩ → A ∈ Π → HN⟨ Γ ⨾ Δ ⊢ A ⟩
+    aux (HS.var i ts)        top     = HN.var i
+    aux (HS.mp i j ts)       top     = HN.app (aux ts i) (aux ts j)
+    aux (HS.ci ts)           top     = HN.ci
+    aux (HS.ck ts)           top     = HN.ck
+    aux (HS.cs ts)           top     = HN.cs
+    aux (HS.mvar i ts)       top     = HN.mvar i
+    aux (HS.nec (Π ∙ ss) ts) top     = HN.box (aux ss top)
+    aux (HS.cdist ts)        top     = HN.cdist
+    aux (HS.cup ts)          top     = HN.cup
+    aux (HS.cdown ts)        top     = HN.cdown
+    aux (HS.unit ts)         top     = HN.unit
+    aux (HS.cpair ts)        top     = HN.cpair
+    aux (HS.cfst ts)         top     = HN.cfst
+    aux (HS.csnd ts)         top     = HN.csnd
+    aux (HS.var i ts)        (pop k) = aux ts k
+    aux (HS.mp i j ts)       (pop k) = aux ts k
+    aux (HS.ci ts)           (pop k) = aux ts k
+    aux (HS.ck ts)           (pop k) = aux ts k
+    aux (HS.cs ts)           (pop k) = aux ts k
+    aux (HS.mvar i ts)       (pop k) = aux ts k
+    aux (HS.nec ss ts)       (pop k) = aux ts k
+    aux (HS.cdist ts)        (pop k) = aux ts k
+    aux (HS.cup ts)          (pop k) = aux ts k
+    aux (HS.cdown ts)        (pop k) = aux ts k
+    aux (HS.unit ts)         (pop k) = aux ts k
+    aux (HS.cpair ts)        (pop k) = aux ts k
+    aux (HS.cfst ts)         (pop k) = aux ts k
+    aux (HS.csnd ts)         (pop k) = aux ts k
 
 
--- Translation from nested Hilbert-style to linear.
+-- Translation from nested Hilbert-style to sequential.
 
-hn→hl : ∀ {A Γ Δ} → HN⟨ Γ ⨾ Δ ⊢ A ⟩ → HL⟨ Γ ⨾ Δ ⊢ A ⟩
-hn→hl (HN.var i)   = ⌀ ∙ HL.var i HL.nil
-hn→hl (HN.app t u) = HL.app (hn→hl t) (hn→hl u)
-hn→hl HN.ci        = ⌀ ∙ HL.ci HL.nil
-hn→hl HN.ck        = ⌀ ∙ HL.ck HL.nil
-hn→hl HN.cs        = ⌀ ∙ HL.cs HL.nil
-hn→hl (HN.mvar i)  = ⌀ ∙ HL.mvar i HL.nil
-hn→hl (HN.box t)   = HL.box (hn→hl t)
-hn→hl HN.cdist     = ⌀ ∙ HL.cdist HL.nil
-hn→hl HN.cup       = ⌀ ∙ HL.cup HL.nil
-hn→hl HN.cdown     = ⌀ ∙ HL.cdown HL.nil
-hn→hl HN.unit      = ⌀ ∙ HL.unit HL.nil
-hn→hl HN.cpair     = ⌀ ∙ HL.cpair HL.nil
-hn→hl HN.cfst      = ⌀ ∙ HL.cfst HL.nil
-hn→hl HN.csnd      = ⌀ ∙ HL.csnd HL.nil
+hn→hl : ∀ {A Γ Δ} → HN⟨ Γ ⨾ Δ ⊢ A ⟩ → HS⟨ Γ ⨾ Δ ⊢ A ⟩
+hn→hl (HN.var i)   = ⌀ ∙ HS.var i HS.nil
+hn→hl (HN.app t u) = HS.app (hn→hl t) (hn→hl u)
+hn→hl HN.ci        = ⌀ ∙ HS.ci HS.nil
+hn→hl HN.ck        = ⌀ ∙ HS.ck HS.nil
+hn→hl HN.cs        = ⌀ ∙ HS.cs HS.nil
+hn→hl (HN.mvar i)  = ⌀ ∙ HS.mvar i HS.nil
+hn→hl (HN.box t)   = HS.box (hn→hl t)
+hn→hl HN.cdist     = ⌀ ∙ HS.cdist HS.nil
+hn→hl HN.cup       = ⌀ ∙ HS.cup HS.nil
+hn→hl HN.cdown     = ⌀ ∙ HS.cdown HS.nil
+hn→hl HN.unit      = ⌀ ∙ HS.unit HS.nil
+hn→hl HN.cpair     = ⌀ ∙ HS.cpair HS.nil
+hn→hl HN.cfst      = ⌀ ∙ HS.cfst HS.nil
+hn→hl HN.csnd      = ⌀ ∙ HS.csnd HS.nil
 
 
--- Deduction theorems for linear Hilbert-style.
+-- Deduction theorems for sequential Hilbert-style.
 
-hl-lam : ∀ {A B Γ Δ} → HL⟨ Γ , A ⨾ Δ ⊢ B ⟩ → HL⟨ Γ ⨾ Δ ⊢ A ⊃ B ⟩
+hl-lam : ∀ {A B Γ Δ} → HS⟨ Γ , A ⨾ Δ ⊢ B ⟩ → HS⟨ Γ ⨾ Δ ⊢ A ⊃ B ⟩
 hl-lam = hn→hl ∘ HN.lam ∘ hl→hn
 
-hl-mlam : ∀ {A B Γ Δ} → HL⟨ Γ ⨾ Δ , A ⊢ B ⟩ → HL⟨ Γ ⨾ Δ ⊢ □ A ⊃ B ⟩
+hl-mlam : ∀ {A B Γ Δ} → HS⟨ Γ ⨾ Δ , A ⊢ B ⟩ → HS⟨ Γ ⨾ Δ ⊢ □ A ⊃ B ⟩
 hl-mlam = hn→hl ∘ HN.mlam ∘ hl→hn
 
 
@@ -93,7 +93,7 @@ hn→g HN.cpair     = G.cpair
 hn→g HN.cfst      = G.cfst
 hn→g HN.csnd      = G.csnd
 
-hl→g : ∀ {A Γ Δ} → HL⟨ Γ ⨾ Δ ⊢ A ⟩ → G⟨ Γ ⨾ Δ ⊢ A ⟩
+hl→g : ∀ {A Γ Δ} → HS⟨ Γ ⨾ Δ ⊢ A ⟩ → G⟨ Γ ⨾ Δ ⊢ A ⟩
 hl→g = hn→g ∘ hl→hn
 
 
@@ -111,5 +111,5 @@ g→hn (G.pair t u)  = HN.pair (g→hn t) (g→hn u)
 g→hn (G.fst t)     = HN.fst (g→hn t)
 g→hn (G.snd t)     = HN.snd (g→hn t)
 
-g→hl : ∀ {A Γ Δ} → G⟨ Γ ⨾ Δ ⊢ A ⟩ → HL⟨ Γ ⨾ Δ ⊢ A ⟩
+g→hl : ∀ {A Γ Δ} → G⟨ Γ ⨾ Δ ⊢ A ⟩ → HS⟨ Γ ⨾ Δ ⊢ A ⟩
 g→hl = hn→hl ∘ g→hn

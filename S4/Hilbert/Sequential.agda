@@ -1,4 +1,4 @@
-module S4.Hilbert.Linear where
+module S4.Hilbert.Sequential where
 
 open import S4.Core public
 
