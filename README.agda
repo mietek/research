@@ -74,10 +74,10 @@ import IPC.Semantics.Tarski
 import IPC.Semantics.Kripke
 
 import IS4.Core
-import IS4.Hilbert.Sequential
-import IS4.Hilbert.Nested
-import IS4.Gentzen.PfenningDavies
-import IS4.Gentzen.BasinMatthewsVigano
-import IS4.Translation
+import IS4.Dual.Hilbert.Sequential
+import IS4.Dual.Hilbert.Nested
+import IS4.Dual.Gentzen
+import IS4.Dual.Translation
+-- import IS4.Dual.Semantics.KripkeWIP
+import IS4.Labelled.Gentzen
 -- import IS4.TranslationWIP
--- import IS4.Semantics.KripkeWIP

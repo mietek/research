@@ -1,10 +1,10 @@
-module IS4.Translation where
+module IS4.Dual.Translation where
 
 open import IS4.Core public
 
-import IS4.Hilbert.Sequential as HS
-import IS4.Hilbert.Nested as HN
-import IS4.Gentzen.PfenningDavies as G
+import IS4.Dual.Hilbert.Sequential as HS
+import IS4.Dual.Hilbert.Nested as HN
+import IS4.Dual.Gentzen as G
 
 open HS using () renaming (_⨾_⊢ₛ_ to HS⟨_⨾_⊢ₛ_⟩ ; _⨾_⊢_ to HS⟨_⨾_⊢_⟩) public
 open HN using () renaming (_⨾_⊢_ to HN⟨_⨾_⊢_⟩) public

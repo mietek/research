@@ -1,4 +1,4 @@
-module IS4.Gentzen.PfenningDavies where
+module IS4.Dual.Gentzen where
 
 open import IS4.Core public
 

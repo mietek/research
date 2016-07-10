@@ -1,4 +1,4 @@
-module IS4.Gentzen.BasinMatthewsVigano where
+module IS4.Labelled.Gentzen where
 
 open import IS4.Core public
 

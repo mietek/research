@@ -1,4 +1,4 @@
-module IS4.Hilbert.Nested where
+module IS4.Dual.Hilbert.Nested where
 
 open import IS4.Core public
 

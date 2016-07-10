@@ -2,10 +2,10 @@ module IS4.TranslationWIP where
 
 open import IS4.Core public
 
-import IS4.Gentzen.PfenningDavies as G
-import IS4.Gentzen.BasinMatthewsVigano as LG
+import IS4.Dual.Gentzen as DG
+import IS4.Labelled.Gentzen as LG
 
-open G using () renaming (_⨾_⊢_ to G⟨_⨾_⊢_⟩) public
+open DG using () renaming (_⨾_⊢_ to DG⟨_⨾_⊢_⟩) public
 open LG using (_≤_ ; _⦂_) renaming (_⨾_⊢_⦂_ to LG⟨_⨾_⊢_⦂_⟩ ; _⊢_≤_ to LG⟨_⊢_≤_⟩) public
 
 
@@ -94,47 +94,47 @@ module Nonlocal where
   unbox⧺ Γ′ t u = {!!}
 
 
-g→lg₁ : ∀ {x Γ A Δ Ξ} → G⟨ Γ ⨾ Δ ⊢ A ⟩ → LG⟨ (la x (sq Δ) ⧺ la x Γ) ⨾ Ξ ⊢ x ⦂ A ⟩
-g→lg₁ (G.var i)      = LG.var (mono∈ weak⊆⧺ᵣ (→var i))
-g→lg₁ (G.lam t)      = LG.lam (g→lg₁ t)
-g→lg₁ (G.app t u)    = LG.app (g→lg₁ t) (g→lg₁ u)
-g→lg₁ {x} {Γ} (G.mvar i)    = Local.mvar (mono∈ (weak⊆⧺ₗ (la x Γ)) (→mvar i))
-g→lg₁ {x} {Γ} (G.box t)     = Local.box⧺ (la x Γ) (g→lg₁ t)
-g→lg₁ {x} {Γ} (G.unbox t u) = Local.unbox⧺ (la x Γ) (g→lg₁ t) (g→lg₁ u)
-g→lg₁ G.unit         = LG.unit
-g→lg₁ (G.pair t u)   = LG.pair (g→lg₁ t) (g→lg₁ u)
-g→lg₁ (G.fst t)      = LG.fst (g→lg₁ t)
-g→lg₁ (G.snd t)      = LG.snd (g→lg₁ t)
+dg→lg₁ : ∀ {x Γ A Δ Ξ} → DG⟨ Γ ⨾ Δ ⊢ A ⟩ → LG⟨ (la x (sq Δ) ⧺ la x Γ) ⨾ Ξ ⊢ x ⦂ A ⟩
+dg→lg₁ (DG.var i)      = LG.var (mono∈ weak⊆⧺ᵣ (→var i))
+dg→lg₁ (DG.lam t)      = LG.lam (dg→lg₁ t)
+dg→lg₁ (DG.app t u)    = LG.app (dg→lg₁ t) (dg→lg₁ u)
+dg→lg₁ {x} {Γ} (DG.mvar i)    = Local.mvar (mono∈ (weak⊆⧺ₗ (la x Γ)) (→mvar i))
+dg→lg₁ {x} {Γ} (DG.box t)     = Local.box⧺ (la x Γ) (dg→lg₁ t)
+dg→lg₁ {x} {Γ} (DG.unbox t u) = Local.unbox⧺ (la x Γ) (dg→lg₁ t) (dg→lg₁ u)
+dg→lg₁ DG.unit         = LG.unit
+dg→lg₁ (DG.pair t u)   = LG.pair (dg→lg₁ t) (dg→lg₁ u)
+dg→lg₁ (DG.fst t)      = LG.fst (dg→lg₁ t)
+dg→lg₁ (DG.snd t)      = LG.snd (dg→lg₁ t)
 
 
-g→lg₂ : ∀ {y Γ x A Δ Ξ} → G⟨ Γ ⨾ Δ ⊢ A ⟩ → LG⟨ la x (sq Δ) ⧺ la y Γ ⨾ Ξ , x ≤ y ⊢ y ⦂ A ⟩
-g→lg₂ (G.var i)      = LG.var (mono∈ weak⊆⧺ᵣ (→var i))
-g→lg₂ (G.lam t)      = LG.lam (g→lg₂ t)
-g→lg₂ (G.app t u)    = LG.app (g→lg₂ t) (g→lg₂ u)
-g→lg₂ {y} {Γ} (G.mvar i)    = Nonlocal.mvar (mono∈ (weak⊆⧺ₗ (la y Γ)) (→mvar i))
-g→lg₂ {y} {Γ} (G.box t)     = Nonlocal.box⧺ (la y Γ) (g→lg₂ t)
-g→lg₂ {y} {Γ} (G.unbox t u) = Nonlocal.unbox⧺ (la y Γ) (g→lg₂ t) (g→lg₂ u)
-g→lg₂ G.unit         = LG.unit
-g→lg₂ (G.pair t u)   = LG.pair (g→lg₂ t) (g→lg₂ u)
-g→lg₂ (G.fst t)      = LG.fst (g→lg₂ t)
-g→lg₂ (G.snd t)      = LG.snd (g→lg₂ t)
+dg→lg₂ : ∀ {y Γ x A Δ Ξ} → DG⟨ Γ ⨾ Δ ⊢ A ⟩ → LG⟨ la x (sq Δ) ⧺ la y Γ ⨾ Ξ , x ≤ y ⊢ y ⦂ A ⟩
+dg→lg₂ (DG.var i)      = LG.var (mono∈ weak⊆⧺ᵣ (→var i))
+dg→lg₂ (DG.lam t)      = LG.lam (dg→lg₂ t)
+dg→lg₂ (DG.app t u)    = LG.app (dg→lg₂ t) (dg→lg₂ u)
+dg→lg₂ {y} {Γ} (DG.mvar i)    = Nonlocal.mvar (mono∈ (weak⊆⧺ₗ (la y Γ)) (→mvar i))
+dg→lg₂ {y} {Γ} (DG.box t)     = Nonlocal.box⧺ (la y Γ) (dg→lg₂ t)
+dg→lg₂ {y} {Γ} (DG.unbox t u) = Nonlocal.unbox⧺ (la y Γ) (dg→lg₂ t) (dg→lg₂ u)
+dg→lg₂ DG.unit         = LG.unit
+dg→lg₂ (DG.pair t u)   = LG.pair (dg→lg₂ t) (dg→lg₂ u)
+dg→lg₂ (DG.fst t)      = LG.fst (dg→lg₂ t)
+dg→lg₂ (DG.snd t)      = LG.snd (dg→lg₂ t)
 
 
--- lgr→g : ∀ {x y Ξ} → LG⟨ Ξ ⊢ x ≤ y ⟩ → G⟨ {!!} ⨾ {!!} ⊢ {!!} ⟩
--- lgr→g t = {!!}
+-- lgr→dg : ∀ {x y Ξ} → LG⟨ Ξ ⊢ x ≤ y ⟩ → DG⟨ {!!} ⨾ {!!} ⊢ {!!} ⟩
+-- lgr→dg t = {!!}
 
--- lg→g : ∀ {x A Γ Ξ} → LG⟨ Γ ⨾ Ξ ⊢ x ⦂ A ⟩ → G⟨ {!!} ⨾ {!!} ⊢ A ⟩
--- lg→g (LG.var i)      = {!!}
--- lg→g (LG.lam t)      = G.lam {!!}
--- lg→g (LG.app t u)    = G.app (lg→g t) (lg→g u)
--- lg→g (LG.scan t) =
---       let t′ = lg→g t
---       in  G.box {!!}
--- lg→g (LG.move t u) =
---       let t′ = lg→g t
---           u′ = lgr→g u
---       in  G.unbox {!!} {!!}
--- lg→g LG.unit         = G.unit
--- lg→g (LG.pair t u)   = G.pair (lg→g t) (lg→g u)
--- lg→g (LG.fst t)      = G.fst (lg→g t)
--- lg→g (LG.snd t)      = G.snd (lg→g t)
+-- lg→dg : ∀ {x A Γ Ξ} → LG⟨ Γ ⨾ Ξ ⊢ x ⦂ A ⟩ → DG⟨ {!!} ⨾ {!!} ⊢ A ⟩
+-- lg→dg (LG.var i)      = {!!}
+-- lg→dg (LG.lam t)      = DG.lam {!!}
+-- lg→dg (LG.app t u)    = DG.app (lg→dg t) (lg→dg u)
+-- lg→dg (LG.scan t) =
+--       let t′ = lg→dg t
+--       in  DG.box {!!}
+-- lg→dg (LG.move t u) =
+--       let t′ = lg→dg t
+--           u′ = lgr→dg u
+--       in  DG.unbox {!!} {!!}
+-- lg→dg LG.unit         = DG.unit
+-- lg→dg (LG.pair t u)   = DG.pair (lg→dg t) (lg→dg u)
+-- lg→dg (LG.fst t)      = DG.fst (lg→dg t)
+-- lg→dg (LG.snd t)      = DG.snd (lg→dg t)
