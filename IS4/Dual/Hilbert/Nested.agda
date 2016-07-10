@@ -64,22 +64,22 @@ mmono⊢ η csnd      = csnd
 -- Shorthand for variables.
 
 mv₀ : ∀ {A Γ Δ} → Γ ⨾ Δ , A ⊢ A
-mv₀ = mvar top
+mv₀ = mvar i₀
 
 mv₁ : ∀ {A B Γ Δ} → Γ ⨾ Δ , A , B ⊢ A
-mv₁ = mvar (pop top)
+mv₁ = mvar i₁
 
 mv₂ : ∀ {A B C Γ Δ} → Γ ⨾ Δ , A , B , C ⊢ A
-mv₂ = mvar (pop (pop top))
+mv₂ = mvar i₂
 
 v₀ : ∀ {A Γ Δ} → Γ , A ⨾ Δ ⊢ A
-v₀ = var top
+v₀ = var i₀
 
 v₁ : ∀ {A B Γ Δ} → Γ , A , B ⨾ Δ ⊢ A
-v₁ = var (pop top)
+v₁ = var i₁
 
 v₂ : ∀ {A B C Γ Δ} → Γ , A , B , C ⨾ Δ ⊢ A
-v₂ = var (pop (pop top))
+v₂ = var i₂
 
 
 -- Deduction theorem.

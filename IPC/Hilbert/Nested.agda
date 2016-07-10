@@ -35,13 +35,13 @@ mono⊢ η csnd      = csnd
 -- Shorthand for variables.
 
 v₀ : ∀ {A Γ} → Γ , A ⊢ A
-v₀ = var top
+v₀ = var i₀
 
 v₁ : ∀ {A B Γ} → Γ , A , B ⊢ A
-v₁ = var (pop top)
+v₁ = var i₁
 
 v₂ : ∀ {A B C Γ} → Γ , A , B , C ⊢ A
-v₂ = var (pop (pop top))
+v₂ = var i₂
 
 
 -- Deduction theorem.

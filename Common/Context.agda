@@ -19,6 +19,15 @@ module _ {U : Set} where
     top : ∀ {Γ} → A ∈ Γ , A
     pop : ∀ {C Γ} → A ∈ Γ → A ∈ Γ , C
 
+  i₀ : ∀ {A Γ} → A ∈ Γ , A
+  i₀ = top
+
+  i₁ : ∀ {A B Γ} → A ∈ Γ , A , B
+  i₁ = pop i₀
+
+  i₂ : ∀ {A B C Γ} → A ∈ Γ , A , B , C
+  i₂ = pop i₁
+
 
   -- Context inclusion, or order-preserving embedding.
 

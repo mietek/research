@@ -80,22 +80,22 @@ rmono⊢ η (snd t)    = snd (rmono⊢ η t)
 -- Shorthand for variables.
 
 rv₀ : ∀ {x y Ξ} → Ξ , x ≤ y ⊢ x ≤ y
-rv₀ = rvar top
+rv₀ = rvar i₀
 
 rv₁ : ∀ {x y x′ y′ Ξ} → Ξ , x ≤ y , x′ ≤ y′ ⊢ x ≤ y
-rv₁ = rvar (pop top)
+rv₁ = rvar i₁
 
 rv₂ : ∀ {x y x′ y′ x″ y″ Ξ} → Ξ , x ≤ y , x′ ≤ y′ , x″ ≤ y″ ⊢ x ≤ y
-rv₂ = rvar (pop (pop top))
+rv₂ = rvar i₂
 
 v₀ : ∀ {x A Γ Ξ} → Γ , x ⦂ A ⨾ Ξ ⊢ x ⦂ A
-v₀ = var top
+v₀ = var i₀
 
 v₁ : ∀ {x y A B Γ Ξ} → Γ , x ⦂ A , y ⦂ B ⨾ Ξ ⊢ x ⦂ A
-v₁ = var (pop top)
+v₁ = var i₁
 
 v₂ : ∀ {x y z A B C Γ Ξ} → Γ , x ⦂ A , y ⦂ B , z ⦂ C ⨾ Ξ ⊢ x ⦂ A
-v₂ = var (pop (pop top))
+v₂ = var i₂
 
 
 -- Deduction theorem is built-in.
