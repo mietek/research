@@ -179,18 +179,18 @@ mmono⊢₂ (jump θ)   = mono⊢ bot⊆ ∘ mmono⊢ θ
 instance
   canon : Model
   canon = record
-    { World     = Cx₂ Ty
-    ; _≤_       = _⊆₂_
-    ; refl≤     = refl⊆₂
-    ; trans≤    = trans⊆₂
-    ; _R_       = _R₂_
-    ; reflR     = reflR₂
-    ; transR    = transR₂
-    ; _⊩ᵃ_     = λ { Ξ p → Ξ ⊢₂ α p }
-    ; mono⊩ᵃ   = mono⊢₂
-    ; fnordR    = fnordR₂
-    ; mmono⊩ᵃ  = mmono⊢₂
-    ; mfnord≤   = mfnord⊆₂
+    { World    = Cx₂ Ty
+    ; _≤_      = _⊆₂_
+    ; refl≤    = refl⊆₂
+    ; trans≤   = trans⊆₂
+    ; _R_      = _R₂_
+    ; reflR    = reflR₂
+    ; transR   = transR₂
+    ; _⊩ᵃ_    = λ { Ξ p → Ξ ⊢₂ α p }
+    ; mono⊩ᵃ  = mono⊢₂
+    ; fnordR   = fnordR₂
+    ; mmono⊩ᵃ = mmono⊢₂
+    ; mfnord≤  = mfnord⊆₂
     }
 
 

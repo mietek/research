@@ -10,9 +10,9 @@ record Model : Set₁ where
     World : Set
 
     -- Intuitionistic accessibility; preorder.
-    _≤_     : World → World → Set
-    refl≤   : ∀ {w} → w ≤ w
-    trans≤  : ∀ {w w′ w″} → w ≤ w′ → w′ ≤ w″ → w ≤ w″
+    _≤_    : World → World → Set
+    refl≤  : ∀ {w} → w ≤ w
+    trans≤ : ∀ {w w′ w″} → w ≤ w′ → w′ ≤ w″ → w ≤ w″
 
     -- Forcing for atomic propositions; monotonic.
     _⊩ᵃ_   : World → Atom → Set
