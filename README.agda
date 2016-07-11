@@ -72,6 +72,7 @@ import IPC.Gentzen
 import IPC.Translation
 import IPC.Semantics.Tarski
 import IPC.Semantics.Kripke
+import IPC.Semantics.HereditarySubstitution
 
 import IS4.Core
 import IS4.Dual.Hilbert.Sequential
