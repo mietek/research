@@ -207,7 +207,7 @@ concat Γ′ t u = app (mono⊢ (weak⊆⧺ₗ Γ′) (lam t)) (mono⊢ weak⊆�
 
 -- Substitution.
 
-[_≔_]_ : ∀ {x y A C Γ Ξ} → (i : x ⦂ A ∈ Γ) → Γ - i ⨾ Ξ ⊢ x ⦂ A → Γ ⨾ Ξ ⊢ y ⦂ C → Γ - i ⨾ Ξ ⊢ y ⦂ C
+[_≔_]_ : ∀ {x y A B Γ Ξ} → (i : x ⦂ A ∈ Γ) → Γ - i ⨾ Ξ ⊢ x ⦂ A → Γ ⨾ Ξ ⊢ y ⦂ B → Γ - i ⨾ Ξ ⊢ y ⦂ B
 [ i ≔ s ] var k    with i ≟∈ k
 [ i ≔ s ] var .i   | same   = s
 [ i ≔ s ] var ._   | diff k = var k

@@ -185,7 +185,7 @@ mconcat Δ′ t u = app (mmono⊢ (weak⊆⧺ₗ Δ′) (mlam t)) (mmono⊢ weak
 
 -- Substitution.
 
-[_≔_]_ : ∀ {A C Γ Δ} → (i : A ∈ Γ) → Γ - i ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢ C → Γ - i ⨾ Δ ⊢ C
+[_≔_]_ : ∀ {A B Γ Δ} → (i : A ∈ Γ) → Γ - i ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢ B → Γ - i ⨾ Δ ⊢ B
 [ i ≔ s ] var k     with i ≟∈ k
 [ i ≔ s ] var .i    | same   = s
 [ i ≔ s ] var ._    | diff k = var k
@@ -202,7 +202,7 @@ mconcat Δ′ t u = app (mmono⊢ (weak⊆⧺ₗ Δ′) (mlam t)) (mmono⊢ weak
 
 -- Modal substitution.
 
-m[_≔_]_ : ∀ {A C Γ Δ} → (i : A ∈ Δ) → ⌀ ⨾ Δ - i ⊢ A → Γ ⨾ Δ ⊢ C → Γ ⨾ Δ - i ⊢ C
+m[_≔_]_ : ∀ {A B Γ Δ} → (i : A ∈ Δ) → ⌀ ⨾ Δ - i ⊢ A → Γ ⨾ Δ ⊢ B → Γ ⨾ Δ - i ⊢ B
 m[ i ≔ s ] var k     = var k
 m[ i ≔ s ] lam t     = lam (m[ i ≔ s ] t)
 m[ i ≔ s ] app t u   = app (m[ i ≔ s ] t) (m[ i ≔ s ] u)
