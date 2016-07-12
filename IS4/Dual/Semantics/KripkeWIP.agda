@@ -20,8 +20,8 @@ record Model : Set₁ where
     transR : ∀ {w w′ w″} → w R w′ → w′ R w″ → w R w″
 
     -- Forcing for atomic propositions; monotonic with respect to intuitionistic accessibility.
-    _⊩ᵃ_   : World → Atom → Set
-    mono⊩ᵃ : ∀ {w w′ p} → w ≤ w′ → w ⊩ᵃ p → w′ ⊩ᵃ p
+    _⊩ᴬ_   : World → Atom → Set
+    mono⊩ᴬ : ∀ {w w′ p} → w ≤ w′ → w ⊩ᴬ p → w′ ⊩ᴬ p
 
     -- Modal accessibility is ??? with respect to intuitionistic accessibility;
     -- seems odd, but appears in Ono; repeated by Marti and Studer.
@@ -29,7 +29,7 @@ record Model : Set₁ where
 
     -- NEW: Forcing is monotonic with respect to modal accessibility; needed for soundness proof;
     -- seems OK.
-    mmono⊩ᵃ : ∀ {w w′ p} → w R w′ → w ⊩ᵃ p → w′ ⊩ᵃ p
+    mmono⊩ᴬ : ∀ {w w′ p} → w R w′ → w ⊩ᴬ p → w′ ⊩ᴬ p
 
     -- NEW: Intuitionistic accessibility is ??? with respect to modal accessibility;
     -- needed for soundness proof; seems odd.
@@ -49,50 +49,50 @@ open Model {{…}} public
 -- Truth in a model.
 
 module _ {{_ : Model}} where
-  _⊩ᵗ_ : World → Ty → Set
-  w ⊩ᵗ (α p)   = w ⊩ᵃ p
-  w ⊩ᵗ (A ⊃ B) = ∀ {w′} → w ≤ w′ → w′ ⊩ᵗ A → w′ ⊩ᵗ B
-  w ⊩ᵗ (□ A)   = ∀ {w′} → w R w′ → w′ ⊩ᵗ A
-  w ⊩ᵗ ι       = ⊤
-  w ⊩ᵗ (A ∧ B) = w ⊩ᵗ A × w ⊩ᵗ B
+  _⊩ᵀ_ : World → Ty → Set
+  w ⊩ᵀ (α p)   = w ⊩ᴬ p
+  w ⊩ᵀ (A ⊃ B) = ∀ {w′} → w ≤ w′ → w′ ⊩ᵀ A → w′ ⊩ᵀ B
+  w ⊩ᵀ (□ A)   = ∀ {w′} → w R w′ → w′ ⊩ᵀ A
+  w ⊩ᵀ ι       = ⊤
+  w ⊩ᵀ (A ∧ B) = w ⊩ᵀ A × w ⊩ᵀ B
 
-  _⊩ᶜ_ : World → Cx Ty → Set
-  w ⊩ᶜ ⌀       = ⊤
-  w ⊩ᶜ (Γ , A) = w ⊩ᶜ Γ × w ⊩ᵗ A
+  _⊩ᵀ*_ : World → Cx Ty → Set
+  w ⊩ᵀ* ⌀       = ⊤
+  w ⊩ᵀ* (Γ , A) = w ⊩ᵀ* Γ × w ⊩ᵀ A
 
 
   -- Monotonicity of semantic consequence with respect to intuitionistic accessibility.
 
-  mono⊩ᵗ : ∀ {A w w′} → w ≤ w′ → w ⊩ᵗ A → w′ ⊩ᵗ A
-  mono⊩ᵗ {α p}   ξ s       = mono⊩ᵃ ξ s
-  mono⊩ᵗ {A ⊃ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
-  mono⊩ᵗ {□ A}   ξ f       = λ ζ → f (fnordR ξ ζ)
-  mono⊩ᵗ {ι}     ξ tt      = tt
-  mono⊩ᵗ {A ∧ B} ξ (a ∙ b) = mono⊩ᵗ {A} ξ a ∙ mono⊩ᵗ {B} ξ b
+  mono⊩ᵀ : ∀ {A w w′} → w ≤ w′ → w ⊩ᵀ A → w′ ⊩ᵀ A
+  mono⊩ᵀ {α p}   ξ s       = mono⊩ᴬ ξ s
+  mono⊩ᵀ {A ⊃ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
+  mono⊩ᵀ {□ A}   ξ f       = λ ζ → f (fnordR ξ ζ)
+  mono⊩ᵀ {ι}     ξ tt      = tt
+  mono⊩ᵀ {A ∧ B} ξ (a ∙ b) = mono⊩ᵀ {A} ξ a ∙ mono⊩ᵀ {B} ξ b
 
-  mono⊩ᶜ : ∀ {Γ w w′} → w ≤ w′ → w ⊩ᶜ Γ → w′ ⊩ᶜ Γ
-  mono⊩ᶜ {⌀}     ξ tt      = tt
-  mono⊩ᶜ {Γ , A} ξ (γ ∙ a) = mono⊩ᶜ {Γ} ξ γ ∙ mono⊩ᵗ {A} ξ a
+  mono⊩ᵀ* : ∀ {Γ w w′} → w ≤ w′ → w ⊩ᵀ* Γ → w′ ⊩ᵀ* Γ
+  mono⊩ᵀ* {⌀}     ξ tt      = tt
+  mono⊩ᵀ* {Γ , A} ξ (γ ∙ a) = mono⊩ᵀ* {Γ} ξ γ ∙ mono⊩ᵀ {A} ξ a
 
 
   -- Monotonicity of semantic consequence with respect to modal accessibility.
 
-  mmono⊩ᵗ : ∀ {A w w′} → w R w′ → w ⊩ᵗ A → w′ ⊩ᵗ A
-  mmono⊩ᵗ {α p}   ζ s       = mmono⊩ᵃ ζ s
-  mmono⊩ᵗ {A ⊃ B} ζ f       = λ ξ a → f (mfnord≤ ζ ξ) a
-  mmono⊩ᵗ {□ A}   ζ f       = λ ζ′ → f (transR ζ ζ′)
-  mmono⊩ᵗ {ι}     ζ tt      = tt
-  mmono⊩ᵗ {A ∧ B} ζ (a ∙ b) = mmono⊩ᵗ {A} ζ a ∙ mmono⊩ᵗ {B} ζ b
+  mmono⊩ᵀ : ∀ {A w w′} → w R w′ → w ⊩ᵀ A → w′ ⊩ᵀ A
+  mmono⊩ᵀ {α p}   ζ s       = mmono⊩ᴬ ζ s
+  mmono⊩ᵀ {A ⊃ B} ζ f       = λ ξ a → f (mfnord≤ ζ ξ) a
+  mmono⊩ᵀ {□ A}   ζ f       = λ ζ′ → f (transR ζ ζ′)
+  mmono⊩ᵀ {ι}     ζ tt      = tt
+  mmono⊩ᵀ {A ∧ B} ζ (a ∙ b) = mmono⊩ᵀ {A} ζ a ∙ mmono⊩ᵀ {B} ζ b
 
-  mmono⊩ᶜ : ∀ {Δ w w′} → w R w′ → w ⊩ᶜ Δ → w′ ⊩ᶜ Δ
-  mmono⊩ᶜ {⌀}     ζ tt      = tt
-  mmono⊩ᶜ {Δ , A} ζ (δ ∙ a) = mmono⊩ᶜ {Δ} ζ δ ∙ mmono⊩ᵗ {A} ζ a
+  mmono⊩ᵀ* : ∀ {Δ w w′} → w R w′ → w ⊩ᵀ* Δ → w′ ⊩ᵀ* Δ
+  mmono⊩ᵀ* {⌀}     ζ tt      = tt
+  mmono⊩ᵀ* {Δ , A} ζ (δ ∙ a) = mmono⊩ᵀ* {Δ} ζ δ ∙ mmono⊩ᵀ {A} ζ a
 
 
 -- Truth in all models.
 
 _⨾_⊩_ : Cx Ty → Cx Ty → Ty → Set₁
-Γ ⨾ Δ ⊩ A = ∀ {{_ : Model}} {w : World} → w ⊩ᶜ Γ → w ⊩ᶜ Δ → w ⊩ᵗ A
+Γ ⨾ Δ ⊩ A = ∀ {{_ : Model}} {w : World} → w ⊩ᵀ* Γ → w ⊩ᵀ* Δ → w ⊩ᵀ A
 
 
 -- Soundness with respect to all models.
@@ -107,10 +107,10 @@ mlookup (pop i) γ (δ ∙ b) = mlookup i γ δ
 
 eval : ∀ {A Γ Δ} → Γ ⨾ Δ ⊢ A → Γ ⨾ Δ ⊩ A
 eval (var i)     γ δ = lookup i γ δ
-eval (lam t)     γ δ = λ ξ a → eval t (mono⊩ᶜ ξ γ ∙ a) (mono⊩ᶜ ξ δ)
+eval (lam t)     γ δ = λ ξ a → eval t (mono⊩ᵀ* ξ γ ∙ a) (mono⊩ᵀ* ξ δ)
 eval (app t u)   γ δ = (eval t γ δ) refl≤ (eval u γ δ)
 eval (mvar i)    γ δ = mlookup i γ δ
-eval (box t)     γ δ = λ ζ → eval t tt (mmono⊩ᶜ ζ δ)
+eval (box t)     γ δ = λ ζ → eval t tt (mmono⊩ᵀ* ζ δ)
 eval (unbox t u) γ δ = eval u γ (δ ∙ (eval t γ δ) reflR)
 eval unit        γ δ = tt
 eval (pair t u)  γ δ = eval t γ δ ∙ eval u γ δ
@@ -122,119 +122,119 @@ eval (snd t)     γ δ with eval t γ δ
 
 -- Canonical model.
 
-Cx₂ : Set → Set
-Cx₂ U = Cx U × Cx U
+Cx² : Set → Set
+Cx² U = Cx U × Cx U
 
 module _ {U : Set} where
-  infix 1 _⊆₂_
-  _⊆₂_ : Cx₂ U → Cx₂ U → Set
-  (Γ ∙ Δ) ⊆₂ (Γ′ ∙ Δ′) = (Γ ⊆ Γ′) × (Δ ⊆ Δ′)
+  infix 1 _⊆²_
+  _⊆²_ : Cx² U → Cx² U → Set
+  (Γ ∙ Δ) ⊆² (Γ′ ∙ Δ′) = (Γ ⊆ Γ′) × (Δ ⊆ Δ′)
 
-  refl⊆₂ : ∀ {Ξ} → Ξ ⊆₂ Ξ
-  refl⊆₂ = refl⊆ ∙ refl⊆
+  refl⊆² : ∀ {Ξ} → Ξ ⊆² Ξ
+  refl⊆² = refl⊆ ∙ refl⊆
 
-  trans⊆₂ : ∀ {Ξ Ξ′ Ξ″} → Ξ ⊆₂ Ξ′ → Ξ′ ⊆₂ Ξ″ → Ξ ⊆₂ Ξ″
-  trans⊆₂ (η ∙ θ) (η′ ∙ θ′) = trans⊆ η η′ ∙ trans⊆ θ θ′
+  trans⊆² : ∀ {Ξ Ξ′ Ξ″} → Ξ ⊆² Ξ′ → Ξ′ ⊆² Ξ″ → Ξ ⊆² Ξ″
+  trans⊆² (η ∙ θ) (η′ ∙ θ′) = trans⊆ η η′ ∙ trans⊆ θ θ′
 
-  infix 1 _R₂_
-  data _R₂_ : Cx₂ U → Cx₂ U → Set where
-    step : ∀ {Γ Γ′ Δ Δ′} → Γ ⊆ Γ′ → Δ ⊆ Δ′ → (Γ ∙ Δ) R₂ (Γ′ ∙ Δ′)
-    jump : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → (⌀ ∙ Δ) R₂ (Γ ∙ Δ′)
+  infix 1 _R²_
+  data _R²_ : Cx² U → Cx² U → Set where
+    step : ∀ {Γ Γ′ Δ Δ′} → Γ ⊆ Γ′ → Δ ⊆ Δ′ → (Γ ∙ Δ) R² (Γ′ ∙ Δ′)
+    jump : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → (⌀ ∙ Δ) R² (Γ ∙ Δ′)
 
-  ⊆₂→R₂ : ∀ {Ξ Ξ′} → Ξ ⊆₂ Ξ′ → Ξ R₂ Ξ′
-  ⊆₂→R₂ (η ∙ θ) = step η θ
+  ⊆²→R² : ∀ {Ξ Ξ′} → Ξ ⊆² Ξ′ → Ξ R² Ξ′
+  ⊆²→R² (η ∙ θ) = step η θ
 
-  R₂→⊆₂ : ∀ {Ξ Ξ′} → Ξ R₂ Ξ′ → Ξ ⊆₂ Ξ′
-  R₂→⊆₂ (step η θ) = η ∙ θ
-  R₂→⊆₂ (jump θ)   = bot⊆ ∙ θ
+  R²→⊆² : ∀ {Ξ Ξ′} → Ξ R² Ξ′ → Ξ ⊆² Ξ′
+  R²→⊆² (step η θ) = η ∙ θ
+  R²→⊆² (jump θ)   = bot⊆ ∙ θ
 
-  reflR₂ : ∀ {Ξ} → Ξ R₂ Ξ
-  reflR₂ = step refl⊆ refl⊆
+  reflR² : ∀ {Ξ} → Ξ R² Ξ
+  reflR² = step refl⊆ refl⊆
 
-  transR₂ : ∀ {Ξ Ξ′ Ξ″} → Ξ R₂ Ξ′ → Ξ′ R₂ Ξ″ → Ξ R₂ Ξ″
-  transR₂ (step η θ) (step η′ θ′) = step (trans⊆ η η′) (trans⊆ θ θ′)
-  transR₂ (step η θ) (jump θ′)    = step (trans⊆ η bot⊆) (trans⊆ θ θ′)
-  transR₂ (jump θ)   (step η′ θ′) = jump (trans⊆ θ θ′)
-  transR₂ (jump θ)   (jump θ′)    = jump (trans⊆ θ θ′)
+  transR² : ∀ {Ξ Ξ′ Ξ″} → Ξ R² Ξ′ → Ξ′ R² Ξ″ → Ξ R² Ξ″
+  transR² (step η θ) (step η′ θ′) = step (trans⊆ η η′) (trans⊆ θ θ′)
+  transR² (step η θ) (jump θ′)    = step (trans⊆ η bot⊆) (trans⊆ θ θ′)
+  transR² (jump θ)   (step η′ θ′) = jump (trans⊆ θ θ′)
+  transR² (jump θ)   (jump θ′)    = jump (trans⊆ θ θ′)
 
-  fnordR₂ : ∀ {X Ξ Ξ′} → Ξ ⊆₂ Ξ′ → Ξ′ R₂ X → Ξ R₂ X
-  fnordR₂ (η ∙ θ) (step η′ θ′) = step (trans⊆ η η′) (trans⊆ θ θ′)
-  fnordR₂ (η ∙ θ) (jump θ′)    = step (trans⊆ η bot⊆) (trans⊆ θ θ′)
+  fnordR² : ∀ {X Ξ Ξ′} → Ξ ⊆² Ξ′ → Ξ′ R² X → Ξ R² X
+  fnordR² (η ∙ θ) (step η′ θ′) = step (trans⊆ η η′) (trans⊆ θ θ′)
+  fnordR² (η ∙ θ) (jump θ′)    = step (trans⊆ η bot⊆) (trans⊆ θ θ′)
 
-  mfnord⊆₂ : ∀ {X Ξ Ξ′} → Ξ R₂ Ξ′ → Ξ′ ⊆₂ X → Ξ ⊆₂ X
-  mfnord⊆₂ (step η θ) (η′ ∙ θ′) = trans⊆ η η′ ∙ trans⊆ θ θ′
-  mfnord⊆₂ (jump θ)   (η′ ∙ θ′) = bot⊆ ∙ trans⊆ θ θ′
+  mfnord⊆² : ∀ {X Ξ Ξ′} → Ξ R² Ξ′ → Ξ′ ⊆² X → Ξ ⊆² X
+  mfnord⊆² (step η θ) (η′ ∙ θ′) = trans⊆ η η′ ∙ trans⊆ θ θ′
+  mfnord⊆² (jump θ)   (η′ ∙ θ′) = bot⊆ ∙ trans⊆ θ θ′
 
-infix 0 _⊢₂_
-_⊢₂_ : Cx₂ Ty → Ty → Set
-(Γ ∙ Δ) ⊢₂ A = Γ ⨾ Δ ⊢ A
+infix 0 _⊢²_
+_⊢²_ : Cx² Ty → Ty → Set
+(Γ ∙ Δ) ⊢² A = Γ ⨾ Δ ⊢ A
 
-mono⊢₂ : ∀ {A Ξ Ξ′} → Ξ ⊆₂ Ξ′ → Ξ ⊢₂ A → Ξ′ ⊢₂ A
-mono⊢₂ (η ∙ θ) = mono⊢ η ∘ mmono⊢ θ
+mono⊢² : ∀ {A Ξ Ξ′} → Ξ ⊆² Ξ′ → Ξ ⊢² A → Ξ′ ⊢² A
+mono⊢² (η ∙ θ) = mono⊢ η ∘ mmono⊢ θ
 
-mmono⊢₂ : ∀ {A Ξ Ξ′} → Ξ R₂ Ξ′ → Ξ ⊢₂ A → Ξ′ ⊢₂ A
-mmono⊢₂ (step η θ) = mono⊢ η ∘ mmono⊢ θ
-mmono⊢₂ (jump θ)   = mono⊢ bot⊆ ∘ mmono⊢ θ
+mmono⊢² : ∀ {A Ξ Ξ′} → Ξ R² Ξ′ → Ξ ⊢² A → Ξ′ ⊢² A
+mmono⊢² (step η θ) = mono⊢ η ∘ mmono⊢ θ
+mmono⊢² (jump θ)   = mono⊢ bot⊆ ∘ mmono⊢ θ
 
 instance
   canon : Model
   canon = record
-    { World    = Cx₂ Ty
-    ; _≤_      = _⊆₂_
-    ; refl≤    = refl⊆₂
-    ; trans≤   = trans⊆₂
-    ; _R_      = _R₂_
-    ; reflR    = reflR₂
-    ; transR   = transR₂
-    ; _⊩ᵃ_    = λ { Ξ p → Ξ ⊢₂ α p }
-    ; mono⊩ᵃ  = mono⊢₂
-    ; fnordR   = fnordR₂
-    ; mmono⊩ᵃ = mmono⊢₂
-    ; mfnord≤  = mfnord⊆₂
+    { World    = Cx² Ty
+    ; _≤_      = _⊆²_
+    ; refl≤    = refl⊆²
+    ; trans≤   = trans⊆²
+    ; _R_      = _R²_
+    ; reflR    = reflR²
+    ; transR   = transR²
+    ; _⊩ᴬ_    = λ { Ξ p → Ξ ⊢² α p }
+    ; mono⊩ᴬ  = mono⊢²
+    ; fnordR   = fnordR²
+    ; mmono⊩ᴬ = mmono⊢²
+    ; mfnord≤  = mfnord⊆²
     }
 
 
 -- Soundness and completeness with respect to canonical model.
 
 mutual
-  reflect : ∀ {A Γ Δ} → Γ ⨾ Δ ⊢ A → (Γ ∙ Δ) ⊩ᵗ A
+  reflect : ∀ {A Γ Δ} → Γ ⨾ Δ ⊢ A → (Γ ∙ Δ) ⊩ᵀ A
   reflect {α p}   t = t
   reflect {A ⊃ B} t = λ { {Γ′ ∙ Δ′} (η ∙ θ) a → reflect {B} (app (mono⊢ η (mmono⊢ θ t)) (reify {A} a)) }
   reflect {□ A}   t = aux t
-    where aux : ∀ {Γ Γ′ Δ Δ′} → Γ ⨾ Δ ⊢ □ A → (Γ ∙ Δ) R₂ (Γ′ ∙ Δ′) → (Γ′ ∙ Δ′) ⊩ᵗ A
+    where aux : ∀ {Γ Γ′ Δ Δ′} → Γ ⨾ Δ ⊢ □ A → (Γ ∙ Δ) R² (Γ′ ∙ Δ′) → (Γ′ ∙ Δ′) ⊩ᵀ A
           aux t (step η θ) = reflect {A} (unbox (mono⊢ η (mmono⊢ θ t)) mv₀)
           aux t (jump θ)   = reflect {A} (unbox (mono⊢ bot⊆ (mmono⊢ θ t)) mv₀)
   reflect {ι}     t = tt
   reflect {A ∧ B} t = reflect {A} (fst t) ∙ reflect {B} (snd t)
 
-  reify : ∀ {A Γ Δ} → (Γ ∙ Δ) ⊩ᵗ A → Γ ⨾ Δ ⊢ A
+  reify : ∀ {A Γ Δ} → (Γ ∙ Δ) ⊩ᵀ A → Γ ⨾ Δ ⊢ A
   reify {α p}   s       = s
   reify {A ⊃ B} f       = lam (reify {B} (f (weak⊆ ∙ refl⊆) (reflect {A} v₀)))
   reify {□ A}   f       = box (reify {A} (f {!jump ?!}))
   reify {ι}     tt      = unit
   reify {A ∧ B} (a ∙ b) = pair (reify {A} a) (reify {B} b)
 
-refl⊩ᶜ : ∀ {Γ Δ} → (Γ ∙ Δ) ⊩ᶜ Γ
-refl⊩ᶜ {⌀}     = tt
-refl⊩ᶜ {Γ , A} = mono⊩ᶜ {Γ} (weak⊆ ∙ refl⊆) refl⊩ᶜ ∙ reflect {A} v₀
+refl⊩ᵀ* : ∀ {Γ Δ} → (Γ ∙ Δ) ⊩ᵀ* Γ
+refl⊩ᵀ* {⌀}     = tt
+refl⊩ᵀ* {Γ , A} = mono⊩ᵀ* {Γ} (weak⊆ ∙ refl⊆) refl⊩ᵀ* ∙ reflect {A} v₀
 
-mrefl⊩ᶜ : ∀ {Δ Γ} → (Γ ∙ Δ) ⊩ᶜ Δ
-mrefl⊩ᶜ {⌀}     = tt
-mrefl⊩ᶜ {Δ , A} = mmono⊩ᶜ {Δ} (step refl⊆ weak⊆) mrefl⊩ᶜ ∙ reflect {A} mv₀
+mrefl⊩ᵀ* : ∀ {Δ Γ} → (Γ ∙ Δ) ⊩ᵀ* Δ
+mrefl⊩ᵀ* {⌀}     = tt
+mrefl⊩ᵀ* {Δ , A} = mmono⊩ᵀ* {Δ} (step refl⊆ weak⊆) mrefl⊩ᵀ* ∙ reflect {A} mv₀
 
 
 -- Completeness with respect to all models.
 
 quot : ∀ {A Γ Δ} → Γ ⨾ Δ ⊩ A → Γ ⨾ Δ ⊢ A
-quot t = reify (t refl⊩ᶜ mrefl⊩ᶜ)
+quot t = reify (t refl⊩ᵀ* mrefl⊩ᵀ*)
 
 
 -- Canonicity.
 
-canon₁ : ∀ {A Γ Δ} → (Γ ∙ Δ) ⊩ᵗ A → Γ ⨾ Δ ⊩ A
+canon₁ : ∀ {A Γ Δ} → (Γ ∙ Δ) ⊩ᵀ A → Γ ⨾ Δ ⊩ A
 canon₁ {A} = eval ∘ reify {A}
 
-canon₂ : ∀ {A Γ Δ} → Γ ⨾ Δ ⊩ A → (Γ ∙ Δ) ⊩ᵗ A
+canon₂ : ∀ {A Γ Δ} → Γ ⨾ Δ ⊩ A → (Γ ∙ Δ) ⊩ᵀ A
 canon₂ {A} = reflect {A} ∘ quot
 
 
