@@ -6,6 +6,7 @@ open import IPC.Gentzen public
 -- Intuitionistic Kripke models.
 
 record Model : Set₁ where
+  infix 3 _⊩ᴬ_
   field
     World : Set
 
@@ -21,18 +22,20 @@ record Model : Set₁ where
 open Model {{…}} public
 
 
--- Truth in a model.
+-- Truth in one model.
 
 module _ {{_ : Model}} where
+  infix 3 _⊩ᵀ_
   _⊩ᵀ_ : World → Ty → Set
-  w ⊩ᵀ (α p)   = w ⊩ᴬ p
-  w ⊩ᵀ (A ⊃ B) = ∀ {w′} → w ≤ w′ → w′ ⊩ᵀ A → w′ ⊩ᵀ B
+  w ⊩ᵀ α p   = w ⊩ᴬ p
+  w ⊩ᵀ A ⊃ B = ∀ {w′} → w ≤ w′ → w′ ⊩ᵀ A → w′ ⊩ᵀ B
   w ⊩ᵀ ι       = ⊤
-  w ⊩ᵀ (A ∧ B) = w ⊩ᵀ A × w ⊩ᵀ B
+  w ⊩ᵀ A ∧ B = w ⊩ᵀ A × w ⊩ᵀ B
 
-  _⊩ᵀ*_ : World → Cx Ty → Set
-  w ⊩ᵀ* ⌀       = ⊤
-  w ⊩ᵀ* (Γ , A) = w ⊩ᵀ* Γ × w ⊩ᵀ A
+  infix 3 _⊩ᴳ_
+  _⊩ᴳ_ : World → Cx Ty → Set
+  w ⊩ᴳ ⌀     = ⊤
+  w ⊩ᴳ Γ , A = w ⊩ᴳ Γ × w ⊩ᵀ A
 
 
   -- Monotonicity of semantic consequence with respect to intuitionistic accessibility.
@@ -43,18 +46,19 @@ module _ {{_ : Model}} where
   mono⊩ᵀ {ι}     ξ tt      = tt
   mono⊩ᵀ {A ∧ B} ξ (a ∙ b) = mono⊩ᵀ {A} ξ a ∙ mono⊩ᵀ {B} ξ b
 
-  mono⊩ᵀ* : ∀ {Γ w w′} → w ≤ w′ → w ⊩ᵀ* Γ → w′ ⊩ᵀ* Γ
-  mono⊩ᵀ* {⌀}     ξ tt      = tt
-  mono⊩ᵀ* {Γ , A} ξ (γ ∙ a) = mono⊩ᵀ* {Γ} ξ γ ∙ mono⊩ᵀ {A} ξ a
+  mono⊩ᴳ : ∀ {Γ w w′} → w ≤ w′ → w ⊩ᴳ Γ → w′ ⊩ᴳ Γ
+  mono⊩ᴳ {⌀}     ξ tt      = tt
+  mono⊩ᴳ {Γ , A} ξ (γ ∙ a) = mono⊩ᴳ {Γ} ξ γ ∙ mono⊩ᵀ {A} ξ a
 
 
 -- Truth in all models.
 
+infix 3 _⊩_
 _⊩_ : Cx Ty → Ty → Set₁
-Γ ⊩ A = ∀ {{_ : Model}} {w : World} → w ⊩ᵀ* Γ → w ⊩ᵀ A
+Γ ⊩ A = ∀ {{_ : Model}} {w : World} → w ⊩ᴳ Γ → w ⊩ᵀ A
 
 
--- Soundness with respect to all models.
+-- Soundness with respect to all models, or evaluation.
 
 lookup : ∀ {A Γ} → A ∈ Γ → Γ ⊩ A
 lookup top     (γ ∙ a) = a
@@ -62,7 +66,7 @@ lookup (pop i) (γ ∙ b) = lookup i γ
 
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
 eval (var i)    γ = lookup i γ
-eval (lam t)    γ = λ ξ a → eval t (mono⊩ᵀ* ξ γ ∙ a)
+eval (lam t)    γ = λ ξ a → eval t (mono⊩ᴳ ξ γ ∙ a)
 eval (app t u)  γ = (eval t γ) refl≤ (eval u γ)
 eval unit       γ = tt
 eval (pair t u) γ = eval t γ ∙ eval u γ
@@ -97,28 +101,19 @@ mutual
 
   reify : ∀ {A Γ} → Γ ⊩ᵀ A → Γ ⊢ A
   reify {α p}   s       = s
-  reify {A ⊃ B} f       = lam (reify {B} (f weak⊆ (reflect {A} v₀)))
+  reify {A ⊃ B} f       = lam (reify {B} (f weak⊆ (reflect {A} (var top))))
   reify {ι}     tt      = unit
   reify {A ∧ B} (a ∙ b) = pair (reify {A} a) (reify {B} b)
 
-refl⊩ᵀ* : ∀ {Γ} → Γ ⊩ᵀ* Γ
-refl⊩ᵀ* {⌀}     = tt
-refl⊩ᵀ* {Γ , A} = mono⊩ᵀ* {Γ} weak⊆ refl⊩ᵀ* ∙ reflect {A} v₀
+refl⊩ᴳ : ∀ {Γ} → Γ ⊩ᴳ Γ
+refl⊩ᴳ {⌀}     = tt
+refl⊩ᴳ {Γ , A} = mono⊩ᴳ {Γ} weak⊆ refl⊩ᴳ ∙ reflect {A} (var top)
 
 
--- Completeness with respect to all models.
+-- Completeness with respect to all models, or quotation.
 
 quot : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
-quot t = reify (t refl⊩ᵀ*)
-
-
--- Canonicity.
-
-canon₁ : ∀ {A Γ} → Γ ⊩ᵀ A → Γ ⊩ A
-canon₁ {A} = eval ∘ reify {A}
-
-canon₂ : ∀ {A Γ} → Γ ⊩ A → Γ ⊩ᵀ A
-canon₂ {A} = reflect {A} ∘ quot
+quot t = reify (t refl⊩ᴳ)
 
 
 -- Normalisation by evaluation.

@@ -81,12 +81,12 @@ mutual
 
 mutual
   [_≔_]ⁿᶠ_ : ∀ {A B Γ} → (i : A ∈ Γ) → Γ - i ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B → Γ - i ⊢ⁿᶠ B
-  [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ ss k ) with i ≟∈ k
+  [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ ss j ) with i ≟∈ j
   [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ ss .i) | same   = reduce ([ i ≔ s ]ˢᵖ ss) s
-  [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ ss ._) | diff k = neⁿᶠ (spⁿᵉ ([ i ≔ s ]ˢᵖ ss) k)
-  [ i ≔ s ]ⁿᶠ lamⁿᶠ t          = lamⁿᶠ ([ pop i ≔ mono⊢ⁿᶠ weak⊆ s ]ⁿᶠ t)
-  [ i ≔ s ]ⁿᶠ unitⁿᶠ           = unitⁿᶠ
-  [ i ≔ s ]ⁿᶠ pairⁿᶠ t u       = pairⁿᶠ ([ i ≔ s ]ⁿᶠ t) ([ i ≔ s ]ⁿᶠ u)
+  [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ ss ._) | diff j = neⁿᶠ (spⁿᵉ ([ i ≔ s ]ˢᵖ ss) j)
+  [ i ≔ s ]ⁿᶠ lamⁿᶠ t           = lamⁿᶠ ([ pop i ≔ mono⊢ⁿᶠ weak⊆ s ]ⁿᶠ t)
+  [ i ≔ s ]ⁿᶠ unitⁿᶠ            = unitⁿᶠ
+  [ i ≔ s ]ⁿᶠ pairⁿᶠ t u        = pairⁿᶠ ([ i ≔ s ]ⁿᶠ t) ([ i ≔ s ]ⁿᶠ u)
 
   [_≔_]ˢᵖ_ : ∀ {A B C Γ} → (i : A ∈ Γ) → Γ - i ⊢ⁿᶠ A → Γ ⊢ˢᵖ B & C → Γ - i ⊢ˢᵖ B & C
   [ i ≔ s ]ˢᵖ ⌀ˢᵖ        = ⌀ˢᵖ
@@ -95,7 +95,7 @@ mutual
   [ i ≔ s ]ˢᵖ sndˢᵖ ss   = sndˢᵖ ([ i ≔ s ]ˢᵖ ss)
 
   reduce : ∀ {A C Γ} → Γ ⊢ˢᵖ A & C → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ C
-  reduce ⌀ˢᵖ          t           = t
+  reduce ⌀ˢᵖ          t            = t
   reduce (appˢᵖ ss u) (lamⁿᶠ t)    = reduce ss ([ top ≔ u ]ⁿᶠ t)
   reduce (fstˢᵖ ss)   (pairⁿᶠ t u) = reduce ss t
   reduce (sndˢᵖ ss)   (pairⁿᶠ t u) = reduce ss u

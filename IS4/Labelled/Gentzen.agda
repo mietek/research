@@ -208,9 +208,9 @@ concat Γ′ t u = app (mono⊢ (weak⊆⧺ₗ Γ′) (lam t)) (mono⊢ weak⊆�
 -- Substitution.
 
 [_≔_]_ : ∀ {x y A B Γ Ξ} → (i : x ⦂ A ∈ Γ) → Γ - i ⨾ Ξ ⊢ x ⦂ A → Γ ⨾ Ξ ⊢ y ⦂ B → Γ - i ⨾ Ξ ⊢ y ⦂ B
-[ i ≔ s ] var k    with i ≟∈ k
+[ i ≔ s ] var j    with i ≟∈ j
 [ i ≔ s ] var .i   | same   = s
-[ i ≔ s ] var ._   | diff k = var k
+[ i ≔ s ] var ._   | diff j = var j
 [ i ≔ s ] lam t    = lam ([ pop i ≔ mono⊢ weak⊆ s ] t)
 [ i ≔ s ] app t u  = app ([ i ≔ s ] t) ([ i ≔ s ] u)
 [ i ≔ s ] scan t   = scan ([ i ≔ rmono⊢ weak⊆ s ] t)

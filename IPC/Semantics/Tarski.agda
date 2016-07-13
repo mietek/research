@@ -6,33 +6,37 @@ open import IPC.Gentzen public
 -- Tarski models.
 
 record Model : Set₁ where
+  infix 3 ⊨ᴬ_
   field
     ⊨ᴬ_ : Atom → Set
 
 open Model {{…}} public
 
 
--- Truth in a model.
+-- Truth in one model.
 
 module _ {{_ : Model}} where
+  infix 3 ⊨ᵀ_
   ⊨ᵀ_ : Ty → Set
-  ⊨ᵀ (α p)   = ⊨ᴬ p
-  ⊨ᵀ (A ⊃ B) = ⊨ᵀ A → ⊨ᵀ B
-  ⊨ᵀ ι       = ⊤
-  ⊨ᵀ (A ∧ B) = ⊨ᵀ A × ⊨ᵀ B
+  ⊨ᵀ α p   = ⊨ᴬ p
+  ⊨ᵀ A ⊃ B = ⊨ᵀ A → ⊨ᵀ B
+  ⊨ᵀ ι     = ⊤
+  ⊨ᵀ A ∧ B = ⊨ᵀ A × ⊨ᵀ B
 
-  ⊨ᵀ*_ : Cx Ty → Set
-  ⊨ᵀ* ⌀       = ⊤
-  ⊨ᵀ* (Γ , A) = ⊨ᵀ* Γ × ⊨ᵀ A
+  infix 3 ⊨ᴳ_
+  ⊨ᴳ_ : Cx Ty → Set
+  ⊨ᴳ ⌀     = ⊤
+  ⊨ᴳ Γ , A = ⊨ᴳ Γ × ⊨ᵀ A
 
 
 -- Truth in all models.
 
+infix 3 _⊨_
 _⊨_ : Cx Ty → Ty → Set₁
-Γ ⊨ A = ∀ {{_ : Model}} → ⊨ᵀ* Γ → ⊨ᵀ A
+Γ ⊨ A = ∀ {{_ : Model}} → ⊨ᴳ Γ → ⊨ᵀ A
 
 
--- Soundness with respect to all models.
+-- Soundness with respect to all models, or evaluation.
 
 lookup : ∀ {Γ A} → A ∈ Γ → Γ ⊨ A
 lookup top     (γ ∙ a) = a

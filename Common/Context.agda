@@ -17,7 +17,7 @@ module _ {U : Set} where
   infix 3 _∈_
   data _∈_ (A : U) : Cx U → Set where
     top : ∀ {Γ} → A ∈ Γ , A
-    pop : ∀ {C Γ} → A ∈ Γ → A ∈ Γ , C
+    pop : ∀ {B Γ} → A ∈ Γ → A ∈ Γ , B
 
   i₀ : ∀ {A Γ} → A ∈ Γ , A
   i₀ = top
@@ -120,14 +120,14 @@ module _ {U : Set} where
 
   -- Decidable context membership equality.
 
-  data _=∈_ {A Γ} (i : A ∈ Γ) : ∀ {C} → C ∈ Γ → Set where
+  data _=∈_ {A Γ} (i : A ∈ Γ) : ∀ {B} → B ∈ Γ → Set where
     same : i =∈ i
-    diff : ∀ {C} → (k : C ∈ Γ - i) → i =∈ mono∈ (thin⊆ i) k
+    diff : ∀ {B} → (j : B ∈ Γ - i) → i =∈ mono∈ (thin⊆ i) j
 
-  _≟∈_ : ∀ {A C Γ} → (i : A ∈ Γ) (k : C ∈ Γ) → i =∈ k
+  _≟∈_ : ∀ {A B Γ} → (i : A ∈ Γ) (j : B ∈ Γ) → i =∈ j
   top ≟∈ top      = same
-  top ≟∈ pop k    rewrite reflmono∈ k = diff k
+  top ≟∈ pop j    rewrite reflmono∈ j = diff j
   pop i ≟∈ top    = diff top
-  pop i ≟∈ pop k  with i ≟∈ k
+  pop i ≟∈ pop j  with i ≟∈ j
   pop i ≟∈ pop .i | same = same
-  pop i ≟∈ pop ._ | diff k = diff (pop k)
+  pop i ≟∈ pop ._ | diff j = diff (pop j)

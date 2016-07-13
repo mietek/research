@@ -186,12 +186,12 @@ mconcat Δ′ t u = app (mmono⊢ (weak⊆⧺ₗ Δ′) (mlam t)) (mmono⊢ weak
 -- Substitution.
 
 [_≔_]_ : ∀ {A B Γ Δ} → (i : A ∈ Γ) → Γ - i ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢ B → Γ - i ⨾ Δ ⊢ B
-[ i ≔ s ] var k     with i ≟∈ k
+[ i ≔ s ] var j     with i ≟∈ j
 [ i ≔ s ] var .i    | same   = s
-[ i ≔ s ] var ._    | diff k = var k
+[ i ≔ s ] var ._    | diff j = var j
 [ i ≔ s ] lam t     = lam ([ pop i ≔ mono⊢ weak⊆ s ] t)
 [ i ≔ s ] app t u   = app ([ i ≔ s ] t) ([ i ≔ s ] u)
-[ i ≔ s ] mvar k    = mvar k
+[ i ≔ s ] mvar j    = mvar j
 [ i ≔ s ] box t     = box t
 [ i ≔ s ] unbox t u = unbox ([ i ≔ s ] t) ([ i ≔ mmono⊢ weak⊆ s ] u)
 [ i ≔ s ] unit      = unit
@@ -203,12 +203,12 @@ mconcat Δ′ t u = app (mmono⊢ (weak⊆⧺ₗ Δ′) (mlam t)) (mmono⊢ weak
 -- Modal substitution.
 
 m[_≔_]_ : ∀ {A B Γ Δ} → (i : A ∈ Δ) → ⌀ ⨾ Δ - i ⊢ A → Γ ⨾ Δ ⊢ B → Γ ⨾ Δ - i ⊢ B
-m[ i ≔ s ] var k     = var k
+m[ i ≔ s ] var j     = var j
 m[ i ≔ s ] lam t     = lam (m[ i ≔ s ] t)
 m[ i ≔ s ] app t u   = app (m[ i ≔ s ] t) (m[ i ≔ s ] u)
-m[ i ≔ s ] mvar k    with i ≟∈ k
+m[ i ≔ s ] mvar j    with i ≟∈ j
 m[ i ≔ s ] mvar .i   | same   = mono⊢ bot⊆ s
-m[ i ≔ s ] mvar ._   | diff k = mvar k
+m[ i ≔ s ] mvar ._   | diff j = mvar j
 m[ i ≔ s ] box t     = box (m[ i ≔ s ] t)
 m[ i ≔ s ] unbox t u = unbox (m[ i ≔ s ] t) (m[ pop i ≔ mmono⊢ weak⊆ s ] u)
 m[ i ≔ s ] unit      = unit
