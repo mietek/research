@@ -5,7 +5,7 @@ open import IPC.Core public
 
 -- Proofs of IPC, as Gentzen-style natural deduction trees.
 
-infix 1 _⊢_
+infix 3 _⊢_
 data _⊢_ (Γ : Cx Ty) : Ty → Set where
   var  : ∀ {A}   → A ∈ Γ → Γ ⊢ A
   lam  : ∀ {A B} → Γ , A ⊢ B → Γ ⊢ A ⊃ B

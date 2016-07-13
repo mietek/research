@@ -5,7 +5,7 @@ open import IS4.Core public
 
 -- Proofs of IS4, as Hilbert-style combinator trees.
 
-infix 1 _⨾_⊢_
+infix 3 _⨾_⊢_
 data _⨾_⊢_ (Γ Δ : Cx Ty) : Ty → Set where
   var   : ∀ {A}     → A ∈ Γ → Γ ⨾ Δ ⊢ A
   app   : ∀ {A B}   → Γ ⨾ Δ ⊢ A ⊃ B → Γ ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢ B

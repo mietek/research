@@ -126,7 +126,7 @@ Cx² : Set → Set
 Cx² U = Cx U × Cx U
 
 module _ {U : Set} where
-  infix 1 _⊆²_
+  infix 3 _⊆²_
   _⊆²_ : Cx² U → Cx² U → Set
   (Γ ∙ Δ) ⊆² (Γ′ ∙ Δ′) = (Γ ⊆ Γ′) × (Δ ⊆ Δ′)
 
@@ -136,7 +136,7 @@ module _ {U : Set} where
   trans⊆² : ∀ {Ξ Ξ′ Ξ″} → Ξ ⊆² Ξ′ → Ξ′ ⊆² Ξ″ → Ξ ⊆² Ξ″
   trans⊆² (η ∙ θ) (η′ ∙ θ′) = trans⊆ η η′ ∙ trans⊆ θ θ′
 
-  infix 1 _R²_
+  infix 3 _R²_
   data _R²_ : Cx² U → Cx² U → Set where
     step : ∀ {Γ Γ′ Δ Δ′} → Γ ⊆ Γ′ → Δ ⊆ Δ′ → (Γ ∙ Δ) R² (Γ′ ∙ Δ′)
     jump : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → (⌀ ∙ Δ) R² (Γ ∙ Δ′)
@@ -165,7 +165,7 @@ module _ {U : Set} where
   mfnord⊆² (step η θ) (η′ ∙ θ′) = trans⊆ η η′ ∙ trans⊆ θ θ′
   mfnord⊆² (jump θ)   (η′ ∙ θ′) = bot⊆ ∙ trans⊆ θ θ′
 
-infix 0 _⊢²_
+infix 3 _⊢²_
 _⊢²_ : Cx² Ty → Ty → Set
 (Γ ∙ Δ) ⊢² A = Γ ⨾ Δ ⊢ A
 

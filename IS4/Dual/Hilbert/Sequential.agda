@@ -6,7 +6,7 @@ open import IS4.Core public
 -- Proofs of IS4, as Hilbert-style combinator sequences.
 
 mutual
-  infix 1 _⨾_⊢*_
+  infix 3 _⨾_⊢*_
   data _⨾_⊢*_ (Γ Δ : Cx Ty) : Cx Ty → Set where
     nil   : Γ ⨾ Δ ⊢* ⌀
     var   : ∀ {Π A}     → A ∈ Γ → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , A
@@ -24,7 +24,7 @@ mutual
     cfst  : ∀ {Π A B}   → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , A ∧ B ⊃ A
     csnd  : ∀ {Π A B}   → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , A ∧ B ⊃ B
 
-  infix 1 _⨾_⊢_
+  infix 3 _⨾_⊢_
   _⨾_⊢_ : Cx Ty → Cx Ty → Ty → Set
   Γ ⨾ Δ ⊢ A = Σ (Cx Ty) (λ Π → Γ ⨾ Δ ⊢* Π , A)
 

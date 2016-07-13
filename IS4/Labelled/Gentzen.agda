@@ -8,14 +8,14 @@ open import IS4.Core public
 postulate
   La : Set
 
-infix 3 _≤_
+infix 5 _≤_
 record LaLa : Set where
   constructor _≤_
   field
     x : La
     y : La
 
-infix 3 _⦂_
+infix 5 _⦂_
 record LaTy : Set where
   constructor _⦂_
   field
@@ -25,13 +25,13 @@ record LaTy : Set where
 
 -- Proofs of S4, as labelled Gentzen-style natural deduction trees, following Basin, Matthews, and Viganò.
 
-infix 1 _⊢_≤_
+infix 3 _⊢_≤_
 data _⊢_≤_ (Ξ : Cx LaLa) : La → La → Set where
   rvar   : ∀ {x y} → x ≤ y ∈ Ξ → Ξ ⊢ x ≤ y
   rrefl  : ∀ {x} → Ξ ⊢ x ≤ x
   rtrans : ∀ {x y z} → Ξ ⊢ x ≤ y → Ξ ⊢ y ≤ z → Ξ ⊢ x ≤ z
 
-infix 1 _⨾_⊢_⦂_
+infix 3 _⨾_⊢_⦂_
 data _⨾_⊢_⦂_ (Γ : Cx LaTy) (Ξ : Cx LaLa) : La → Ty → Set where
   var  : ∀ {x A}   → x ⦂ A ∈ Γ → Γ ⨾ Ξ ⊢ x ⦂ A
   lam  : ∀ {x A B} → Γ , x ⦂ A ⨾ Ξ ⊢ x ⦂ B → Γ ⨾ Ξ ⊢ x ⦂ A ⊃ B

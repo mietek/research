@@ -5,7 +5,7 @@ open import Common.Core public
 
 -- Contexts.
 
-infixl 2 _,_
+infixl 4 _,_
 data Cx (U : Set) : Set where
   ⌀   : Cx U
   _,_ : Cx U → U → Cx U
@@ -14,7 +14,7 @@ data Cx (U : Set) : Set where
 -- Context membership, as nameless typed de Bruijn indices.
 
 module _ {U : Set} where
-  infix 1 _∈_
+  infix 3 _∈_
   data _∈_ (A : U) : Cx U → Set where
     top : ∀ {Γ} → A ∈ Γ , A
     pop : ∀ {C Γ} → A ∈ Γ → A ∈ Γ , C
@@ -31,7 +31,7 @@ module _ {U : Set} where
 
   -- Context inclusion, or order-preserving embedding.
 
-  infix 1 _⊆_
+  infix 3 _⊆_
   data _⊆_ : Cx U → Cx U → Set where
     done : ⌀ ⊆ ⌀
     skip : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊆ Γ′ , A

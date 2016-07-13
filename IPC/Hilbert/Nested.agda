@@ -5,7 +5,7 @@ open import IPC.Core public
 
 -- Proofs of IPC, as Hilbert-style combinator trees.
 
-infix 1 _⊢_
+infix 3 _⊢_
 data _⊢_ (Γ : Cx Ty) : Ty → Set where
   var   : ∀ {A}     → A ∈ Γ → Γ ⊢ A
   app   : ∀ {A B}   → Γ ⊢ A ⊃ B → Γ ⊢ A → Γ ⊢ B

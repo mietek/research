@@ -5,7 +5,7 @@ open import IS4.Core public
 
 -- Proofs of IS4, as Gentzen-style natural deduction trees, following Pfenning and Davies.
 
-infix 0 _⨾_⊢_
+infix 3 _⨾_⊢_
 data _⨾_⊢_ (Γ Δ : Cx Ty) : Ty → Set where
   var   : ∀ {A}   → A ∈ Γ → Γ ⨾ Δ ⊢ A
   lam   : ∀ {A B} → Γ , A ⨾ Δ ⊢ B → Γ ⨾ Δ ⊢ A ⊃ B

@@ -5,7 +5,7 @@ open import IPC.Core public
 
 -- Proofs of IPC, as Hilbert-style combinator sequences.
 
-infix 1 _⊢*_
+infix 3 _⊢*_
 data _⊢*_ (Γ : Cx Ty) : Cx Ty → Set where
   nil   : Γ ⊢* ⌀
   var   : ∀ {Π A}     → A ∈ Γ → Γ ⊢* Π → Γ ⊢* Π , A
@@ -18,7 +18,7 @@ data _⊢*_ (Γ : Cx Ty) : Cx Ty → Set where
   cfst  : ∀ {Π A B}   → Γ ⊢* Π → Γ ⊢* Π , A ∧ B ⊃ A
   csnd  : ∀ {Π A B}   → Γ ⊢* Π → Γ ⊢* Π , A ∧ B ⊃ B
 
-infix 1 _⊢_
+infix 3 _⊢_
 _⊢_ : Cx Ty → Ty → Set
 Γ ⊢ A = Σ (Cx Ty) (λ Π → Γ ⊢* Π , A)
 
