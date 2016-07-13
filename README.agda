@@ -72,11 +72,12 @@ import Common.Context
 import IPC.Core
 import IPC.Hilbert.Sequential
 import IPC.Hilbert.Nested
-import IPC.Gentzen
+import IPC.Gentzen.Core
+import IPC.Gentzen.TarskiSemantics
+import IPC.Gentzen.KripkeSemantics.Core
+import IPC.Gentzen.KripkeSemantics.Completeness
+import IPC.Gentzen.HereditarySubstitution
 import IPC.Translation
-import IPC.Semantics.Tarski
-import IPC.Semantics.Kripke
-import IPC.Semantics.HereditarySubstitution
 
 import IS4.Core
 import IS4.Dual.Hilbert.Sequential

@@ -1,6 +1,6 @@
-module IPC.Semantics.Tarski where
+module IPC.Gentzen.TarskiSemantics where
 
-open import IPC.Gentzen public
+open import IPC.Gentzen.Core public
 
 
 -- Tarski models.

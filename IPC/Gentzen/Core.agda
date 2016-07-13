@@ -1,4 +1,4 @@
-module IPC.Gentzen where
+module IPC.Gentzen.Core where
 
 open import IPC.Core public
 
