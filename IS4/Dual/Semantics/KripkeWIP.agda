@@ -52,7 +52,7 @@ open Model {{…}} public
 module _ {{_ : Model}} where
   infix 3 _⊩ᵀ_
   _⊩ᵀ_ : World → Ty → Set
-  w ⊩ᵀ α p   = w ⊩ᴬ p
+  w ⊩ᵀ α P   = w ⊩ᴬ P
   w ⊩ᵀ A ⊃ B = ∀ {w′} → w ≤ w′ → w′ ⊩ᵀ A → w′ ⊩ᵀ B
   w ⊩ᵀ □ A   = ∀ {w′} → w R w′ → w′ ⊩ᵀ A
   w ⊩ᵀ ι     = ⊤
@@ -67,7 +67,7 @@ module _ {{_ : Model}} where
   -- Monotonicity with respect to intuitionistic accessibility.
 
   mono⊩ᵀ : ∀ {A w w′} → w ≤ w′ → w ⊩ᵀ A → w′ ⊩ᵀ A
-  mono⊩ᵀ {α p}   ξ s       = mono⊩ᴬ ξ s
+  mono⊩ᵀ {α P}   ξ s       = mono⊩ᴬ ξ s
   mono⊩ᵀ {A ⊃ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
   mono⊩ᵀ {□ A}   ξ f       = λ ζ → f (fnordR ξ ζ)
   mono⊩ᵀ {ι}     ξ tt      = tt
@@ -81,7 +81,7 @@ module _ {{_ : Model}} where
   -- Monotonicity with respect to modal accessibility.
 
   mmono⊩ᵀ : ∀ {A w w′} → w R w′ → w ⊩ᵀ A → w′ ⊩ᵀ A
-  mmono⊩ᵀ {α p}   ζ s       = mmono⊩ᴬ ζ s
+  mmono⊩ᵀ {α P}   ζ s       = mmono⊩ᴬ ζ s
   mmono⊩ᵀ {A ⊃ B} ζ f       = λ ξ a → f (mfnord≤ ζ ξ) a
   mmono⊩ᵀ {□ A}   ζ f       = λ ζ′ → f (transR ζ ζ′)
   mmono⊩ᵀ {ι}     ζ tt      = tt
@@ -190,7 +190,7 @@ instance
     ; _R_      = _R²_
     ; reflR    = reflR²
     ; transR   = transR²
-    ; _⊩ᴬ_    = λ { Ξ p → Ξ ⊢² α p }
+    ; _⊩ᴬ_    = λ { Ξ P → Ξ ⊢² α P }
     ; mono⊩ᴬ  = mono⊢²
     ; fnordR   = fnordR²
     ; mmono⊩ᴬ = mmono⊢²
@@ -202,7 +202,7 @@ instance
 
 mutual
   reflect : ∀ {A Γ Δ} → Γ ⨾ Δ ⊢ A → (Γ ∙ Δ) ⊩ᵀ A
-  reflect {α p}   t = t
+  reflect {α P}   t = t
   reflect {A ⊃ B} t = λ { {Γ′ ∙ Δ′} (η ∙ θ) a → reflect {B} (app (mono⊢ η (mmono⊢ θ t)) (reify {A} a)) }
   reflect {□ A}   t = aux t
     where aux : ∀ {Γ Γ′ Δ Δ′} → Γ ⨾ Δ ⊢ □ A → (Γ ∙ Δ) R² (Γ′ ∙ Δ′) → (Γ′ ∙ Δ′) ⊩ᵀ A
@@ -212,7 +212,7 @@ mutual
   reflect {A ∧ B} t = reflect {A} (fst t) ∙ reflect {B} (snd t)
 
   reify : ∀ {A Γ Δ} → (Γ ∙ Δ) ⊩ᵀ A → Γ ⨾ Δ ⊢ A
-  reify {α p}   s       = s
+  reify {α P}   s       = s
   reify {A ⊃ B} f       = lam (reify {B} (f (weak⊆ ∙ refl⊆) (reflect {A} v₀)))
   reify {□ A}   f       = box (reify {A} (f {!jump ?!}))
   reify {ι}     tt      = unit

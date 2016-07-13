@@ -8,7 +8,7 @@ open import IPC.Gentzen.Core public
 mutual
   infix 1 _⊢ⁿᶠ_
   data _⊢ⁿᶠ_ (Γ : Cx Ty) : Ty → Set where
-    neⁿᶠ   : ∀ {p}   → Γ ⊢ⁿᵉ α p → Γ ⊢ⁿᶠ α p
+    neⁿᶠ   : ∀ {P}   → Γ ⊢ⁿᵉ α P → Γ ⊢ⁿᶠ α P
     lamⁿᶠ  : ∀ {A B} → Γ , A ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ⊃ B
     unitⁿᶠ : Γ ⊢ⁿᶠ ι
     pairⁿᶠ : ∀ {A B} → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ∧ B
@@ -123,7 +123,7 @@ sndⁿᵉ (spⁿᵉ ss t) = spⁿᵉ (≪snd ss) t
 -- Iterated expansion.
 
 expand : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊢ⁿᶠ A
-expand {α p}   t = neⁿᶠ t
+expand {α P}   t = neⁿᶠ t
 expand {A ⊃ B} t = lamⁿᶠ (expand (appⁿᵉ (mono⊢ⁿᵉ weak⊆ t) (expand (varⁿᵉ top))))
 expand {ι}     t = unitⁿᶠ
 expand {A ∧ B} t = pairⁿᶠ (expand (fstⁿᵉ t)) (expand (sndⁿᵉ t))

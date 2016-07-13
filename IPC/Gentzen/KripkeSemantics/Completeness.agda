@@ -8,7 +8,7 @@ open import IPC.Gentzen.KripkeSemantics.Core public
 mutual
   infix 3 _⊢ⁿᶠ_
   data _⊢ⁿᶠ_ (Γ : Cx Ty) : Ty → Set where
-    neⁿᶠ   : ∀ {p}   → Γ ⊢ⁿᵉ α p → Γ ⊢ⁿᶠ α p
+    neⁿᶠ   : ∀ {P}   → Γ ⊢ⁿᵉ α P → Γ ⊢ⁿᶠ α P
     lamⁿᶠ  : ∀ {A B} → Γ , A ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ⊃ B
     unitⁿᶠ : Γ ⊢ⁿᶠ ι
     pairⁿᶠ : ∀ {A B} → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ∧ B
@@ -62,7 +62,7 @@ instance
     ; _≤_     = _⊆_
     ; refl≤   = refl⊆
     ; trans≤  = trans⊆
-    ; _⊩ᴬ_   = λ Γ p → Γ ⊢ⁿᵉ α p
+    ; _⊩ᴬ_   = λ Γ P → Γ ⊢ⁿᵉ α P
     ; mono⊩ᴬ = mono⊢ⁿᵉ
     }
 
@@ -71,13 +71,13 @@ instance
 
 mutual
   reflect : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊩ᵀ A
-  reflect {α p}   t = t
+  reflect {α P}   t = t
   reflect {A ⊃ B} t = λ ξ a → reflect {B} (appⁿᵉ (mono⊢ⁿᵉ ξ t) (reify {A} a))
   reflect {ι}     t = tt
   reflect {A ∧ B} t = reflect {A} (fstⁿᵉ t) ∙ reflect {B} (sndⁿᵉ t)
 
   reify : ∀ {A Γ} → Γ ⊩ᵀ A → Γ ⊢ⁿᶠ A
-  reify {α p}   s       = neⁿᶠ s
+  reify {α P}   s       = neⁿᶠ s
   reify {A ⊃ B} f       = lamⁿᶠ (reify {B} (f weak⊆ (reflect {A} (varⁿᵉ top))))
   reify {ι}     tt      = unitⁿᶠ
   reify {A ∧ B} (a ∙ b) = pairⁿᶠ (reify {A} a) (reify {B} b)

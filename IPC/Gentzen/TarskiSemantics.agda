@@ -18,7 +18,7 @@ open Model {{…}} public
 module _ {{_ : Model}} where
   infix 3 ⊨ᵀ_
   ⊨ᵀ_ : Ty → Set
-  ⊨ᵀ α p   = ⊨ᴬ p
+  ⊨ᵀ α P   = ⊨ᴬ P
   ⊨ᵀ A ⊃ B = ⊨ᵀ A → ⊨ᵀ B
   ⊨ᵀ ι     = ⊤
   ⊨ᵀ A ∧ B = ⊨ᵀ A × ⊨ᵀ B

@@ -28,7 +28,7 @@ module _ {{_ : Model}} where
   -- Forcing for propositions.
   infix 3 _⊩ᵀ_
   _⊩ᵀ_ : World → Ty → Set
-  w ⊩ᵀ α p   = w ⊩ᴬ p
+  w ⊩ᵀ α P   = w ⊩ᴬ P
   w ⊩ᵀ A ⊃ B = ∀ {w′} → w ≤ w′ → w′ ⊩ᵀ A → w′ ⊩ᵀ B
   w ⊩ᵀ ι       = ⊤
   w ⊩ᵀ A ∧ B = w ⊩ᵀ A × w ⊩ᵀ B
@@ -43,7 +43,7 @@ module _ {{_ : Model}} where
   -- Monotonicity with respect to intuitionistic accessibility.
 
   mono⊩ᵀ : ∀ {A w w′} → w ≤ w′ → w ⊩ᵀ A → w′ ⊩ᵀ A
-  mono⊩ᵀ {α p}   ξ s       = mono⊩ᴬ ξ s
+  mono⊩ᵀ {α P}   ξ s       = mono⊩ᴬ ξ s
   mono⊩ᵀ {A ⊃ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
   mono⊩ᵀ {ι}     ξ tt      = tt
   mono⊩ᵀ {A ∧ B} ξ (a ∙ b) = mono⊩ᵀ {A} ξ a ∙ mono⊩ᵀ {B} ξ b

@@ -12,7 +12,7 @@ instance
     ; _≤_     = _⊆_
     ; refl≤   = refl⊆
     ; trans≤  = trans⊆
-    ; _⊩ᴬ_   = λ Γ p → Γ ⊢ α p
+    ; _⊩ᴬ_   = λ Γ P → Γ ⊢ α P
     ; mono⊩ᴬ = mono⊢
     }
 
@@ -21,13 +21,13 @@ instance
 
 mutual
   reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ᵀ A
-  reflect {α p}   t = t
+  reflect {α P}   t = t
   reflect {A ⊃ B} t = λ ξ a → reflect {B} (app (mono⊢ ξ t) (reify {A} a))
   reflect {ι}     t = tt
   reflect {A ∧ B} t = reflect {A} (fst t) ∙ reflect {B} (snd t)
 
   reify : ∀ {A Γ} → Γ ⊩ᵀ A → Γ ⊢ A
-  reify {α p}   s       = s
+  reify {α P}   s       = s
   reify {A ⊃ B} f       = lam (reify {B} (f weak⊆ (reflect {A} (var top))))
   reify {ι}     tt      = unit
   reify {A ∧ B} (a ∙ b) = pair (reify {A} a) (reify {B} b)
