@@ -6,6 +6,7 @@ open import IS4.Dual.Gentzen public
 -- Non-standard intuitionistic modal Kripke models, based on Marti and Studer.
 
 record Model : Set₁ where
+  infix 3 _≤_ _R_ _⊩ᴬ_
   field
     World : Set
 
@@ -46,19 +47,21 @@ record Model : Set₁ where
 open Model {{…}} public
 
 
--- Truth in a model.
+-- Truth in one model.
 
 module _ {{_ : Model}} where
+  infix 3 _⊩ᵀ_
   _⊩ᵀ_ : World → Ty → Set
-  w ⊩ᵀ (α p)   = w ⊩ᴬ p
-  w ⊩ᵀ (A ⊃ B) = ∀ {w′} → w ≤ w′ → w′ ⊩ᵀ A → w′ ⊩ᵀ B
-  w ⊩ᵀ (□ A)   = ∀ {w′} → w R w′ → w′ ⊩ᵀ A
-  w ⊩ᵀ ι       = ⊤
-  w ⊩ᵀ (A ∧ B) = w ⊩ᵀ A × w ⊩ᵀ B
+  w ⊩ᵀ α p   = w ⊩ᴬ p
+  w ⊩ᵀ A ⊃ B = ∀ {w′} → w ≤ w′ → w′ ⊩ᵀ A → w′ ⊩ᵀ B
+  w ⊩ᵀ □ A   = ∀ {w′} → w R w′ → w′ ⊩ᵀ A
+  w ⊩ᵀ ι     = ⊤
+  w ⊩ᵀ A ∧ B = w ⊩ᵀ A × w ⊩ᵀ B
 
-  _⊩ᵀ*_ : World → Cx Ty → Set
-  w ⊩ᵀ* ⌀       = ⊤
-  w ⊩ᵀ* (Γ , A) = w ⊩ᵀ* Γ × w ⊩ᵀ A
+  infix 3 _⊩ᴳ_
+  _⊩ᴳ_ : World → Cx Ty → Set
+  w ⊩ᴳ ⌀     = ⊤
+  w ⊩ᴳ Γ , A = w ⊩ᴳ Γ × w ⊩ᵀ A
 
 
   -- Monotonicity of semantic consequence with respect to intuitionistic accessibility.
@@ -70,9 +73,9 @@ module _ {{_ : Model}} where
   mono⊩ᵀ {ι}     ξ tt      = tt
   mono⊩ᵀ {A ∧ B} ξ (a ∙ b) = mono⊩ᵀ {A} ξ a ∙ mono⊩ᵀ {B} ξ b
 
-  mono⊩ᵀ* : ∀ {Γ w w′} → w ≤ w′ → w ⊩ᵀ* Γ → w′ ⊩ᵀ* Γ
-  mono⊩ᵀ* {⌀}     ξ tt      = tt
-  mono⊩ᵀ* {Γ , A} ξ (γ ∙ a) = mono⊩ᵀ* {Γ} ξ γ ∙ mono⊩ᵀ {A} ξ a
+  mono⊩ᴳ : ∀ {Γ w w′} → w ≤ w′ → w ⊩ᴳ Γ → w′ ⊩ᴳ Γ
+  mono⊩ᴳ {⌀}     ξ tt      = tt
+  mono⊩ᴳ {Γ , A} ξ (γ ∙ a) = mono⊩ᴳ {Γ} ξ γ ∙ mono⊩ᵀ {A} ξ a
 
 
   -- Monotonicity of semantic consequence with respect to modal accessibility.
@@ -84,18 +87,19 @@ module _ {{_ : Model}} where
   mmono⊩ᵀ {ι}     ζ tt      = tt
   mmono⊩ᵀ {A ∧ B} ζ (a ∙ b) = mmono⊩ᵀ {A} ζ a ∙ mmono⊩ᵀ {B} ζ b
 
-  mmono⊩ᵀ* : ∀ {Δ w w′} → w R w′ → w ⊩ᵀ* Δ → w′ ⊩ᵀ* Δ
-  mmono⊩ᵀ* {⌀}     ζ tt      = tt
-  mmono⊩ᵀ* {Δ , A} ζ (δ ∙ a) = mmono⊩ᵀ* {Δ} ζ δ ∙ mmono⊩ᵀ {A} ζ a
+  mmono⊩ᴳ : ∀ {Δ w w′} → w R w′ → w ⊩ᴳ Δ → w′ ⊩ᴳ Δ
+  mmono⊩ᴳ {⌀}     ζ tt      = tt
+  mmono⊩ᴳ {Δ , A} ζ (δ ∙ a) = mmono⊩ᴳ {Δ} ζ δ ∙ mmono⊩ᵀ {A} ζ a
 
 
 -- Truth in all models.
 
+infix 3 _⨾_⊩_
 _⨾_⊩_ : Cx Ty → Cx Ty → Ty → Set₁
-Γ ⨾ Δ ⊩ A = ∀ {{_ : Model}} {w : World} → w ⊩ᵀ* Γ → w ⊩ᵀ* Δ → w ⊩ᵀ A
+Γ ⨾ Δ ⊩ A = ∀ {{_ : Model}} {w : World} → w ⊩ᴳ Γ → w ⊩ᴳ Δ → w ⊩ᵀ A
 
 
--- Soundness with respect to all models.
+-- Soundness with respect to all models, or evaluation.
 
 lookup : ∀ {A Γ Δ} → A ∈ Γ → Γ ⨾ Δ ⊩ A
 lookup top     (γ ∙ a) δ = a
@@ -107,10 +111,10 @@ mlookup (pop i) γ (δ ∙ b) = mlookup i γ δ
 
 eval : ∀ {A Γ Δ} → Γ ⨾ Δ ⊢ A → Γ ⨾ Δ ⊩ A
 eval (var i)     γ δ = lookup i γ δ
-eval (lam t)     γ δ = λ ξ a → eval t (mono⊩ᵀ* ξ γ ∙ a) (mono⊩ᵀ* ξ δ)
+eval (lam t)     γ δ = λ ξ a → eval t (mono⊩ᴳ ξ γ ∙ a) (mono⊩ᴳ ξ δ)
 eval (app t u)   γ δ = (eval t γ δ) refl≤ (eval u γ δ)
 eval (mvar i)    γ δ = mlookup i γ δ
-eval (box t)     γ δ = λ ζ → eval t tt (mmono⊩ᵀ* ζ δ)
+eval (box t)     γ δ = λ ζ → eval t tt (mmono⊩ᴳ ζ δ)
 eval (unbox t u) γ δ = eval u γ (δ ∙ (eval t γ δ) reflR)
 eval unit        γ δ = tt
 eval (pair t u)  γ δ = eval t γ δ ∙ eval u γ δ
@@ -214,28 +218,19 @@ mutual
   reify {ι}     tt      = unit
   reify {A ∧ B} (a ∙ b) = pair (reify {A} a) (reify {B} b)
 
-refl⊩ᵀ* : ∀ {Γ Δ} → (Γ ∙ Δ) ⊩ᵀ* Γ
-refl⊩ᵀ* {⌀}     = tt
-refl⊩ᵀ* {Γ , A} = mono⊩ᵀ* {Γ} (weak⊆ ∙ refl⊆) refl⊩ᵀ* ∙ reflect {A} v₀
+refl⊩ᴳ : ∀ {Γ Δ} → (Γ ∙ Δ) ⊩ᴳ Γ
+refl⊩ᴳ {⌀}     = tt
+refl⊩ᴳ {Γ , A} = mono⊩ᴳ {Γ} (weak⊆ ∙ refl⊆) refl⊩ᴳ ∙ reflect {A} v₀
 
-mrefl⊩ᵀ* : ∀ {Δ Γ} → (Γ ∙ Δ) ⊩ᵀ* Δ
-mrefl⊩ᵀ* {⌀}     = tt
-mrefl⊩ᵀ* {Δ , A} = mmono⊩ᵀ* {Δ} (step refl⊆ weak⊆) mrefl⊩ᵀ* ∙ reflect {A} mv₀
+mrefl⊩ᴳ : ∀ {Δ Γ} → (Γ ∙ Δ) ⊩ᴳ Δ
+mrefl⊩ᴳ {⌀}     = tt
+mrefl⊩ᴳ {Δ , A} = mmono⊩ᴳ {Δ} (step refl⊆ weak⊆) mrefl⊩ᴳ ∙ reflect {A} mv₀
 
 
--- Completeness with respect to all models.
+-- Completeness with respect to all models, or quotation.
 
 quot : ∀ {A Γ Δ} → Γ ⨾ Δ ⊩ A → Γ ⨾ Δ ⊢ A
-quot t = reify (t refl⊩ᵀ* mrefl⊩ᵀ*)
-
-
--- Canonicity.
-
-canon₁ : ∀ {A Γ Δ} → (Γ ∙ Δ) ⊩ᵀ A → Γ ⨾ Δ ⊩ A
-canon₁ {A} = eval ∘ reify {A}
-
-canon₂ : ∀ {A Γ Δ} → Γ ⨾ Δ ⊩ A → (Γ ∙ Δ) ⊩ᵀ A
-canon₂ {A} = reflect {A} ∘ quot
+quot t = reify (t refl⊩ᴳ mrefl⊩ᴳ)
 
 
 -- Normalisation by evaluation.
