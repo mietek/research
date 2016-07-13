@@ -16,7 +16,7 @@ data _⊢_ (Γ : Cx Ty) : Ty → Set where
   snd  : ∀ {A B} → Γ ⊢ A ∧ B → Γ ⊢ B
 
 
--- Monotonicity of syntactic consequence with respect to context inclusion.
+-- Monotonicity with respect to context inclusion.
 
 mono⊢ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
 mono⊢ η (var i)    = var (mono∈ η i)

@@ -23,7 +23,7 @@ _⊢_ : Cx Ty → Ty → Set
 Γ ⊢ A = Σ (Cx Ty) (λ Π → Γ ⊢* Π , A)
 
 
--- Monotonicity of syntactic consequence with respect to context inclusion.
+-- Monotonicity with respect to context inclusion.
 
 mono⊢* : ∀ {Π Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢* Π → Γ′ ⊢* Π
 mono⊢* η nil         = nil

@@ -29,7 +29,7 @@ mutual
   Γ ⨾ Δ ⊢ A = Σ (Cx Ty) (λ Π → Γ ⨾ Δ ⊢* Π , A)
 
 
--- Monotonicity of syntactic consequence with respect to context inclusion.
+-- Monotonicity with respect to context inclusion.
 
 mono⊢* : ∀ {Π Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⨾ Δ ⊢* Π → Γ′ ⨾ Δ ⊢* Π
 mono⊢* η nil         = nil
@@ -52,7 +52,7 @@ mono⊢ : ∀ {A Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⨾ Δ ⊢ A → Γ′ ⨾
 mono⊢ η (Π ∙ ts) = Π ∙ mono⊢* η ts
 
 
--- Monotonicity with respect to inclusion of modal context.
+-- Monotonicity with respect to modal context inclusion.
 
 mutual
   mmono⊢* : ∀ {Π Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ′ ⊢* Π

@@ -63,7 +63,7 @@ module _ {U : Set} where
   bot⊆ {Γ , A} = skip bot⊆
 
 
-  -- Monotonicity of context membership with respect to context inclusion.
+  -- Monotonicity with respect to context inclusion.
 
   mono∈ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → A ∈ Γ → A ∈ Γ′
   mono∈ done     ()

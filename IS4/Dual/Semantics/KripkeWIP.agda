@@ -64,7 +64,7 @@ module _ {{_ : Model}} where
   w ⊩ᴳ Γ , A = w ⊩ᴳ Γ × w ⊩ᵀ A
 
 
-  -- Monotonicity of semantic consequence with respect to intuitionistic accessibility.
+  -- Monotonicity with respect to intuitionistic accessibility.
 
   mono⊩ᵀ : ∀ {A w w′} → w ≤ w′ → w ⊩ᵀ A → w′ ⊩ᵀ A
   mono⊩ᵀ {α p}   ξ s       = mono⊩ᴬ ξ s
@@ -78,7 +78,7 @@ module _ {{_ : Model}} where
   mono⊩ᴳ {Γ , A} ξ (γ ∙ a) = mono⊩ᴳ {Γ} ξ γ ∙ mono⊩ᵀ {A} ξ a
 
 
-  -- Monotonicity of semantic consequence with respect to modal accessibility.
+  -- Monotonicity with respect to modal accessibility.
 
   mmono⊩ᵀ : ∀ {A w w′} → w R w′ → w ⊩ᵀ A → w′ ⊩ᵀ A
   mmono⊩ᵀ {α p}   ζ s       = mmono⊩ᴬ ζ s

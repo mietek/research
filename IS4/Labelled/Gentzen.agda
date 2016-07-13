@@ -44,7 +44,7 @@ data _⨾_⊢_⦂_ (Γ : Cx LaTy) (Ξ : Cx LaLa) : La → Ty → Set where
   snd  : ∀ {x A B} → Γ ⨾ Ξ ⊢ x ⦂ A ∧ B → Γ ⨾ Ξ ⊢ x ⦂ B
 
 
--- Monotonicity of syntactic consequence with respect to context inclusion.
+-- Monotonicity with respect to context inclusion.
 
 mono⊢ : ∀ {x A Γ Γ′ Ξ} → Γ ⊆ Γ′ → Γ ⨾ Ξ ⊢ x ⦂ A → Γ′ ⨾ Ξ ⊢ x ⦂ A
 mono⊢ η (var i)    = var (mono∈ η i)
@@ -58,7 +58,7 @@ mono⊢ η (fst t)    = fst (mono⊢ η t)
 mono⊢ η (snd t)    = snd (mono⊢ η t)
 
 
--- Monotonicity with respect to inclusion of relational context.
+-- Monotonicity with respect to relational context inclusion.
 
 rmono⊢≤ : ∀ {x y Ξ Ξ′} → Ξ ⊆ Ξ′ → Ξ ⊢ x ≤ y → Ξ′ ⊢ x ≤ y
 rmono⊢≤ η (rvar i)     = rvar (mono∈ η i)

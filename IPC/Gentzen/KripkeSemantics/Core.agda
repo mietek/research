@@ -25,6 +25,7 @@ open Model {{…}} public
 -- Truth in one model.
 
 module _ {{_ : Model}} where
+  -- Forcing for propositions.
   infix 3 _⊩ᵀ_
   _⊩ᵀ_ : World → Ty → Set
   w ⊩ᵀ α p   = w ⊩ᴬ p
@@ -32,13 +33,14 @@ module _ {{_ : Model}} where
   w ⊩ᵀ ι       = ⊤
   w ⊩ᵀ A ∧ B = w ⊩ᵀ A × w ⊩ᵀ B
 
+  -- Forcing for contexts.
   infix 3 _⊩ᴳ_
   _⊩ᴳ_ : World → Cx Ty → Set
   w ⊩ᴳ ⌀     = ⊤
   w ⊩ᴳ Γ , A = w ⊩ᴳ Γ × w ⊩ᵀ A
 
 
-  -- Monotonicity of semantic consequence with respect to intuitionistic accessibility.
+  -- Monotonicity with respect to intuitionistic accessibility.
 
   mono⊩ᵀ : ∀ {A w w′} → w ≤ w′ → w ⊩ᵀ A → w′ ⊩ᵀ A
   mono⊩ᵀ {α p}   ξ s       = mono⊩ᴬ ξ s
