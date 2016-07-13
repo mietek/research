@@ -10,7 +10,7 @@ mutual
   data _⊢ⁿᶠ_ (Γ : Cx Ty) : Ty → Set where
     neⁿᶠ   : ∀ {p}   → Γ ⊢ⁿᵉ α p → Γ ⊢ⁿᶠ α p
     lamⁿᶠ  : ∀ {A B} → Γ , A ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ⊃ B
-    unitⁿᶠ :            Γ ⊢ⁿᶠ ι
+    unitⁿᶠ : Γ ⊢ⁿᶠ ι
     pairⁿᶠ : ∀ {A B} → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ∧ B
 
   infix 3 _⊢ⁿᵉ_
