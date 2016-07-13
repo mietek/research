@@ -76,6 +76,7 @@ import IPC.Gentzen.Core
 import IPC.Gentzen.TarskiSemantics
 import IPC.Gentzen.KripkeSemantics.Core
 import IPC.Gentzen.KripkeSemantics.Completeness
+import IPC.Gentzen.KripkeSemantics.ImprovedCompleteness
 import IPC.Gentzen.HereditarySubstitution
 import IPC.Translation
 
