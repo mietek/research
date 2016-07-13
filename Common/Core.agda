@@ -1,5 +1,9 @@
 module Common.Core where
 
+open import Agda.Builtin.Size public
+  using (Size ; Size<_ ; ↑_ ; _⊔ˢ_)
+  renaming (ω to ∞)
+
 open import Data.Empty public
   using (⊥)
 
@@ -14,10 +18,19 @@ open import Data.Unit public
   using (⊤ ; tt)
 
 open import Function public
-  using (_∘_ ; _$_)
+  using (_∘_ ; _$_ ; id ; const)
+  renaming (_ˢ_ to ap)
 
 open import Relation.Binary.PropositionalEquality public
-  using (_≡_ ; refl ; sym ; cong ; cong₂)
+  using (_≡_ ; _≢_ ; refl ; trans ; sym ; cong ; cong₂)
+
+open import Relation.Nullary public
+  using ()
+  renaming (¬_ to !_)
+
+open import Relation.Nullary.Negation public
+  using ()
+  renaming (contradiction to _↯_)
 
 
 -- Atoms, for propositional variables.
