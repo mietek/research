@@ -114,3 +114,36 @@ concat Γ′ t u = app (mono⊢ (weak⊆⧺ₗ Γ′) (lam t)) (mono⊢ weak⊆�
 [ i ≔ s ] pair t u = pair ([ i ≔ s ] t) ([ i ≔ s ] u)
 [ i ≔ s ] fst t    = fst ([ i ≔ s ] t)
 [ i ≔ s ] snd t    = snd ([ i ≔ s ] t)
+
+
+-- Conversion.
+
+data _⇒_ : ∀ {A Γ} → Γ ⊢ A → Γ ⊢ A → Set where
+  refl⇒     : ∀ {A Γ} {t : Γ ⊢ A}
+               → t ⇒ t
+  trans⇒    : ∀ {A Γ} {t t′ t″ : Γ ⊢ A}
+               → t ⇒ t′ → t′ ⇒ t″ → t ⇒ t″
+  sym⇒      : ∀ {A Γ} {t t′ : Γ ⊢ A}
+               → t ⇒ t′ → t′ ⇒ t
+  cong⇒lam  : ∀ {A B Γ} {t t′ : Γ , A ⊢ B}
+               → t ⇒ t′ → lam t ⇒ lam t′
+  cong⇒app  : ∀ {A B Γ} {t t′ : Γ ⊢ A ⊃ B} {u u′ : Γ ⊢ A}
+               → t ⇒ t′ → u ⇒ u′ → app t u ⇒ app t′ u′
+  cong⇒pair : ∀ {A B Γ} {t t′ : Γ ⊢ A} {u u′ : Γ ⊢ B}
+               → t ⇒ t′ → u ⇒ u′ → pair t u ⇒ pair t′ u′
+  cong⇒fst  : ∀ {A B Γ} {t t′ : Γ ⊢ A ∧ B}
+               → t ⇒ t′ → fst t ⇒ fst t′
+  cong⇒snd  : ∀ {A B Γ} {t t′ : Γ ⊢ A ∧ B}
+               → t ⇒ t′ → snd t ⇒ snd t′
+  conv⇒lam  : ∀ {A B Γ} {t : Γ ⊢ A ⊃ B}
+               → t ⇒ lam (app (mono⊢ weak⊆ t) (var top))
+  conv⇒app  : ∀ {A B Γ} {t : Γ , A ⊢ B} {u : Γ ⊢ A}
+               → app (lam t) u ⇒ ([ top ≔ u ] t)
+  conv⇒unit : ∀ {Γ} {t : Γ ⊢ ι}
+               → t ⇒ unit
+  conv⇒pair : ∀ {A B Γ} {t : Γ ⊢ A ∧ B}
+               → t ⇒ pair (fst t) (snd t)
+  conv⇒fst  : ∀ {A B Γ} {t : Γ ⊢ A} {u : Γ ⊢ B}
+               → fst (pair t u) ⇒ t
+  conv⇒snd  : ∀ {A B Γ} {t : Γ ⊢ A} {u : Γ ⊢ B}
+               → snd (pair t u) ⇒ u

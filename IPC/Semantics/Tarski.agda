@@ -52,3 +52,23 @@ eval (fst t)    γ with eval t γ
 …                | a ∙ b = a
 eval (snd t)    γ with eval t γ
 …                | a ∙ b = b
+
+
+-- TODO: Correctness with respect to conversion.
+
+-- module _ {{_ : Model}} where
+--   coco : ∀ {A Γ} {t t′ : Γ ⊢ A} → t ⇒ t′ → eval t ≡ eval t′
+--   coco refl⇒           = refl
+--   coco (trans⇒ p q)    = trans (coco p) (coco q)
+--   coco (sym⇒ p)        = sym (coco p)
+--   coco (cong⇒lam p)    = cong (λ f γ a → f (γ ∙ a)) (coco p)
+--   coco (cong⇒app p q)  = cong₂ (λ f g γ → (f γ) (g γ)) (coco p) (coco q)
+--   coco (cong⇒pair p q) = cong₂ (λ f g γ → f γ ∙ g γ) (coco p) (coco q)
+--   coco (cong⇒fst p)    = cong (λ f γ → proj₁ (f γ)) (coco p)
+--   coco (cong⇒snd p)    = cong (λ f γ → proj₂ (f γ)) (coco p)
+--   coco conv⇒lam        = {!refl!}
+--   coco conv⇒app        = {!refl!}
+--   coco conv⇒unit       = refl
+--   coco conv⇒pair       = refl
+--   coco conv⇒fst        = refl
+--   coco conv⇒snd        = refl
