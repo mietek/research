@@ -26,6 +26,10 @@ References
   “Does the deduction theorem fail for modal logic?”
   http://dx.doi.org/10.1007/s11229-011-9905-9
 
+• D. Ilik (2010)
+  “Continuation-passing style models complete for intuitionistic logic”
+  http://dx.doi.org/10.1016/j.apal.2012.05.003
+
 • C. Keller, T. Altenkirch (2010)
   “Hereditary substitutions for simple types, formalized”
   http://dx.doi.org/10.1145/1863597.1863601
