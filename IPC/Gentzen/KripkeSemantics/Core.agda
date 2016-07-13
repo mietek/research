@@ -28,9 +28,9 @@ module _ {{_ : Model}} where
   -- Forcing for propositions.
   infix 3 _⊩ᵀ_
   _⊩ᵀ_ : World → Ty → Set
-  w ⊩ᵀ α P   = w ⊩ᴬ P
-  w ⊩ᵀ A ⊃ B = ∀ {w′} → w ≤ w′ → w′ ⊩ᵀ A → w′ ⊩ᵀ B
-  w ⊩ᵀ ι       = ⊤
+  w ⊩ᵀ ᴬ P   = w ⊩ᴬ P
+  w ⊩ᵀ A ▷ B = ∀ {w′} → w ≤ w′ → w′ ⊩ᵀ A → w′ ⊩ᵀ B
+  w ⊩ᵀ ⫪    = ⊤
   w ⊩ᵀ A ∧ B = w ⊩ᵀ A × w ⊩ᵀ B
 
   -- Forcing for contexts.
@@ -43,9 +43,9 @@ module _ {{_ : Model}} where
   -- Monotonicity with respect to intuitionistic accessibility.
 
   mono⊩ᵀ : ∀ {A w w′} → w ≤ w′ → w ⊩ᵀ A → w′ ⊩ᵀ A
-  mono⊩ᵀ {α P}   ξ s       = mono⊩ᴬ ξ s
-  mono⊩ᵀ {A ⊃ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
-  mono⊩ᵀ {ι}     ξ tt      = tt
+  mono⊩ᵀ {ᴬ P}   ξ s       = mono⊩ᴬ ξ s
+  mono⊩ᵀ {A ▷ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
+  mono⊩ᵀ {⫪}    ξ tt      = tt
   mono⊩ᵀ {A ∧ B} ξ (a ∙ b) = mono⊩ᵀ {A} ξ a ∙ mono⊩ᵀ {B} ξ b
 
   mono⊩ᴳ : ∀ {Γ w w′} → w ≤ w′ → w ⊩ᴳ Γ → w′ ⊩ᴳ Γ
@@ -72,10 +72,8 @@ eval (lam t)    γ = λ ξ a → eval t (mono⊩ᴳ ξ γ ∙ a)
 eval (app t u)  γ = (eval t γ) refl≤ (eval u γ)
 eval unit       γ = tt
 eval (pair t u) γ = eval t γ ∙ eval u γ
-eval (fst t)    γ with eval t γ
-…                | a ∙ b = a
-eval (snd t)    γ with eval t γ
-…                | a ∙ b = b
+eval (fst t)    γ = proj₁ (eval t γ)
+eval (snd t)    γ = proj₂ (eval t γ)
 
 
 -- TODO: Correctness with respect to conversion.

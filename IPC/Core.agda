@@ -6,13 +6,13 @@ open import Common.Context public
 -- Propositions of intuitionistic propositional calculus (IPC).
 
 infixl 7 _∧_
-infixr 5 _⊃_
+infixr 5 _▷_
 data Ty : Set where
-  α_  : Atom → Ty
-  _⊃_ : Ty → Ty → Ty
-  ι   : Ty
+  ᴬ_  : Atom → Ty
+  _▷_ : Ty → Ty → Ty
+  ⫪  : Ty
   _∧_ : Ty → Ty → Ty
 
-infix 5 _⊃⊂_
-_⊃⊂_ : Ty → Ty → Ty
-A ⊃⊂ B = (A ⊃ B) ∧ (B ⊃ A)
+infix 5 _⨝_
+_⨝_ : Ty → Ty → Ty
+A ⨝ B = (A ▷ B) ∧ (B ▷ A)

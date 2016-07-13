@@ -8,15 +8,15 @@ open import IPC.Gentzen.KripkeSemantics.Core public
 mutual
   infix 3 _⊢ⁿᶠ_
   data _⊢ⁿᶠ_ (Γ : Cx Ty) : Ty → Set where
-    neⁿᶠ   : ∀ {P}   → Γ ⊢ⁿᵉ α P → Γ ⊢ⁿᶠ α P
-    lamⁿᶠ  : ∀ {A B} → Γ , A ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ⊃ B
-    unitⁿᶠ : Γ ⊢ⁿᶠ ι
+    neⁿᶠ   : ∀ {A}   → Γ ⊢ⁿᵉ A → Γ ⊢ⁿᶠ A
+    lamⁿᶠ  : ∀ {A B} → Γ , A ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ▷ B
+    unitⁿᶠ : Γ ⊢ⁿᶠ ⫪
     pairⁿᶠ : ∀ {A B} → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ∧ B
 
   infix 3 _⊢ⁿᵉ_
   data _⊢ⁿᵉ_ (Γ : Cx Ty) : Ty → Set where
     varⁿᵉ : ∀ {A}   → A ∈ Γ → Γ ⊢ⁿᵉ A
-    appⁿᵉ : ∀ {A B} → Γ ⊢ⁿᵉ A ⊃ B → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᵉ B
+    appⁿᵉ : ∀ {A B} → Γ ⊢ⁿᵉ A ▷ B → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᵉ B
     fstⁿᵉ : ∀ {A B} → Γ ⊢ⁿᵉ A ∧ B → Γ ⊢ⁿᵉ A
     sndⁿᵉ : ∀ {A B} → Γ ⊢ⁿᵉ A ∧ B → Γ ⊢ⁿᵉ B
 
@@ -62,7 +62,7 @@ instance
     ; _≤_     = _⊆_
     ; refl≤   = refl⊆
     ; trans≤  = trans⊆
-    ; _⊩ᴬ_   = λ Γ P → Γ ⊢ⁿᵉ α P
+    ; _⊩ᴬ_   = λ Γ P → Γ ⊢ⁿᵉ ᴬ P
     ; mono⊩ᴬ = mono⊢ⁿᵉ
     }
 
@@ -71,15 +71,15 @@ instance
 
 mutual
   reflect : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊩ᵀ A
-  reflect {α P}   t = t
-  reflect {A ⊃ B} t = λ ξ a → reflect {B} (appⁿᵉ (mono⊢ⁿᵉ ξ t) (reify {A} a))
-  reflect {ι}     t = tt
+  reflect {ᴬ P}   t = t
+  reflect {A ▷ B} t = λ ξ a → reflect {B} (appⁿᵉ (mono⊢ⁿᵉ ξ t) (reify {A} a))
+  reflect {⫪}    t = tt
   reflect {A ∧ B} t = reflect {A} (fstⁿᵉ t) ∙ reflect {B} (sndⁿᵉ t)
 
   reify : ∀ {A Γ} → Γ ⊩ᵀ A → Γ ⊢ⁿᶠ A
-  reify {α P}   s       = neⁿᶠ s
-  reify {A ⊃ B} f       = lamⁿᶠ (reify {B} (f weak⊆ (reflect {A} (varⁿᵉ top))))
-  reify {ι}     tt      = unitⁿᶠ
+  reify {ᴬ P}   s       = neⁿᶠ s
+  reify {A ▷ B} f       = lamⁿᶠ (reify {B} (f weak⊆ (reflect {A} (varⁿᵉ top))))
+  reify {⫪}    tt      = unitⁿᶠ
   reify {A ∧ B} (a ∙ b) = pairⁿᶠ (reify {A} a) (reify {B} b)
 
 refl⊩ᴳ : ∀ {Γ} → Γ ⊩ᴳ Γ

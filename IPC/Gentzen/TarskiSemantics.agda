@@ -18,9 +18,9 @@ open Model {{…}} public
 module _ {{_ : Model}} where
   infix 3 ⊨ᵀ_
   ⊨ᵀ_ : Ty → Set
-  ⊨ᵀ α P   = ⊨ᴬ P
-  ⊨ᵀ A ⊃ B = ⊨ᵀ A → ⊨ᵀ B
-  ⊨ᵀ ι     = ⊤
+  ⊨ᵀ ᴬ P   = ⊨ᴬ P
+  ⊨ᵀ A ▷ B = ⊨ᵀ A → ⊨ᵀ B
+  ⊨ᵀ ⫪    = ⊤
   ⊨ᵀ A ∧ B = ⊨ᵀ A × ⊨ᵀ B
 
   infix 3 ⊨ᴳ_
@@ -38,20 +38,18 @@ _⊨_ : Cx Ty → Ty → Set₁
 
 -- Soundness with respect to all models, or evaluation.
 
-lookup : ∀ {Γ A} → A ∈ Γ → Γ ⊨ A
+lookup : ∀ {A Γ} → A ∈ Γ → Γ ⊨ A
 lookup top     (γ ∙ a) = a
 lookup (pop i) (γ ∙ b) = lookup i γ
 
-eval : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
+eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)    γ = lookup i γ
 eval (lam t)    γ = λ a → eval t (γ ∙ a)
 eval (app t u)  γ = (eval t γ) (eval u γ)
 eval unit       γ = tt
 eval (pair t u) γ = eval t γ ∙ eval u γ
-eval (fst t)    γ with eval t γ
-…                | a ∙ b = a
-eval (snd t)    γ with eval t γ
-…                | a ∙ b = b
+eval (fst t)    γ = proj₁ (eval t γ)
+eval (snd t)    γ = proj₂ (eval t γ)
 
 
 -- TODO: Correctness with respect to conversion.

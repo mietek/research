@@ -52,10 +52,10 @@ open Model {{…}} public
 module _ {{_ : Model}} where
   infix 3 _⊩ᵀ_
   _⊩ᵀ_ : World → Ty → Set
-  w ⊩ᵀ α P   = w ⊩ᴬ P
-  w ⊩ᵀ A ⊃ B = ∀ {w′} → w ≤ w′ → w′ ⊩ᵀ A → w′ ⊩ᵀ B
+  w ⊩ᵀ ᴬ P   = w ⊩ᴬ P
+  w ⊩ᵀ A ▷ B = ∀ {w′} → w ≤ w′ → w′ ⊩ᵀ A → w′ ⊩ᵀ B
   w ⊩ᵀ □ A   = ∀ {w′} → w R w′ → w′ ⊩ᵀ A
-  w ⊩ᵀ ι     = ⊤
+  w ⊩ᵀ ⫪    = ⊤
   w ⊩ᵀ A ∧ B = w ⊩ᵀ A × w ⊩ᵀ B
 
   infix 3 _⊩ᴳ_
@@ -67,10 +67,10 @@ module _ {{_ : Model}} where
   -- Monotonicity with respect to intuitionistic accessibility.
 
   mono⊩ᵀ : ∀ {A w w′} → w ≤ w′ → w ⊩ᵀ A → w′ ⊩ᵀ A
-  mono⊩ᵀ {α P}   ξ s       = mono⊩ᴬ ξ s
-  mono⊩ᵀ {A ⊃ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
+  mono⊩ᵀ {ᴬ P}   ξ s       = mono⊩ᴬ ξ s
+  mono⊩ᵀ {A ▷ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
   mono⊩ᵀ {□ A}   ξ f       = λ ζ → f (fnordR ξ ζ)
-  mono⊩ᵀ {ι}     ξ tt      = tt
+  mono⊩ᵀ {⫪}    ξ tt      = tt
   mono⊩ᵀ {A ∧ B} ξ (a ∙ b) = mono⊩ᵀ {A} ξ a ∙ mono⊩ᵀ {B} ξ b
 
   mono⊩ᴳ : ∀ {Γ w w′} → w ≤ w′ → w ⊩ᴳ Γ → w′ ⊩ᴳ Γ
@@ -81,10 +81,10 @@ module _ {{_ : Model}} where
   -- Monotonicity with respect to modal accessibility.
 
   mmono⊩ᵀ : ∀ {A w w′} → w R w′ → w ⊩ᵀ A → w′ ⊩ᵀ A
-  mmono⊩ᵀ {α P}   ζ s       = mmono⊩ᴬ ζ s
-  mmono⊩ᵀ {A ⊃ B} ζ f       = λ ξ a → f (mfnord≤ ζ ξ) a
+  mmono⊩ᵀ {ᴬ P}   ζ s       = mmono⊩ᴬ ζ s
+  mmono⊩ᵀ {A ▷ B} ζ f       = λ ξ a → f (mfnord≤ ζ ξ) a
   mmono⊩ᵀ {□ A}   ζ f       = λ ζ′ → f (transR ζ ζ′)
-  mmono⊩ᵀ {ι}     ζ tt      = tt
+  mmono⊩ᵀ {⫪}    ζ tt      = tt
   mmono⊩ᵀ {A ∧ B} ζ (a ∙ b) = mmono⊩ᵀ {A} ζ a ∙ mmono⊩ᵀ {B} ζ b
 
   mmono⊩ᴳ : ∀ {Δ w w′} → w R w′ → w ⊩ᴳ Δ → w′ ⊩ᴳ Δ
@@ -190,7 +190,7 @@ instance
     ; _R_      = _R²_
     ; reflR    = reflR²
     ; transR   = transR²
-    ; _⊩ᴬ_    = λ { Ξ P → Ξ ⊢² α P }
+    ; _⊩ᴬ_    = λ { Ξ P → Ξ ⊢² ᴬ P }
     ; mono⊩ᴬ  = mono⊢²
     ; fnordR   = fnordR²
     ; mmono⊩ᴬ = mmono⊢²
@@ -202,20 +202,20 @@ instance
 
 mutual
   reflect : ∀ {A Γ Δ} → Γ ⨾ Δ ⊢ A → (Γ ∙ Δ) ⊩ᵀ A
-  reflect {α P}   t = t
-  reflect {A ⊃ B} t = λ { {Γ′ ∙ Δ′} (η ∙ θ) a → reflect {B} (app (mono⊢ η (mmono⊢ θ t)) (reify {A} a)) }
+  reflect {ᴬ P}   t = t
+  reflect {A ▷ B} t = λ { {Γ′ ∙ Δ′} (η ∙ θ) a → reflect {B} (app (mono⊢ η (mmono⊢ θ t)) (reify {A} a)) }
   reflect {□ A}   t = aux t
     where aux : ∀ {Γ Γ′ Δ Δ′} → Γ ⨾ Δ ⊢ □ A → (Γ ∙ Δ) R² (Γ′ ∙ Δ′) → (Γ′ ∙ Δ′) ⊩ᵀ A
           aux t (step η θ) = reflect {A} (unbox (mono⊢ η (mmono⊢ θ t)) mv₀)
           aux t (jump θ)   = reflect {A} (unbox (mono⊢ bot⊆ (mmono⊢ θ t)) mv₀)
-  reflect {ι}     t = tt
+  reflect {⫪}    t = tt
   reflect {A ∧ B} t = reflect {A} (fst t) ∙ reflect {B} (snd t)
 
   reify : ∀ {A Γ Δ} → (Γ ∙ Δ) ⊩ᵀ A → Γ ⨾ Δ ⊢ A
-  reify {α P}   s       = s
-  reify {A ⊃ B} f       = lam (reify {B} (f (weak⊆ ∙ refl⊆) (reflect {A} v₀)))
+  reify {ᴬ P}   s       = s
+  reify {A ▷ B} f       = lam (reify {B} (f (weak⊆ ∙ refl⊆) (reflect {A} v₀)))
   reify {□ A}   f       = box (reify {A} (f {!jump ?!}))
-  reify {ι}     tt      = unit
+  reify {⫪}    tt      = unit
   reify {A ∧ B} (a ∙ b) = pair (reify {A} a) (reify {B} b)
 
 refl⊩ᴳ : ∀ {Γ Δ} → (Γ ∙ Δ) ⊩ᴳ Γ

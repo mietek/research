@@ -10,19 +10,19 @@ mutual
   data _⨾_⊢*_ (Γ Δ : Cx Ty) : Cx Ty → Set where
     nil   : Γ ⨾ Δ ⊢* ⌀
     var   : ∀ {Π A}     → A ∈ Γ → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , A
-    mp    : ∀ {Π A B}   → A ⊃ B ∈ Π → A ∈ Π → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , B
-    ci    : ∀ {Π A}     → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , A ⊃ A
-    ck    : ∀ {Π A B}   → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , A ⊃ B ⊃ A
-    cs    : ∀ {Π A B C} → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , (A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C
+    mp    : ∀ {Π A B}   → A ▷ B ∈ Π → A ∈ Π → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , B
+    ci    : ∀ {Π A}     → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , A ▷ A
+    ck    : ∀ {Π A B}   → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , A ▷ B ▷ A
+    cs    : ∀ {Π A B C} → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
     mvar  : ∀ {Π A}     → A ∈ Δ → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , A
     nec   : ∀ {Π A}     → ⌀ ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , □ A
-    cdist : ∀ {Π A B}   → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , □ (A ⊃ B) ⊃ □ A ⊃ □ B
-    cup   : ∀ {Π A}     → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , □ A ⊃ □ □ A
-    cdown : ∀ {Π A}     → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , □ A ⊃ A
-    unit  : ∀ {Π}       → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , ι
-    cpair : ∀ {Π A B}   → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , A ⊃ B ⊃ A ∧ B
-    cfst  : ∀ {Π A B}   → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , A ∧ B ⊃ A
-    csnd  : ∀ {Π A B}   → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , A ∧ B ⊃ B
+    cdist : ∀ {Π A B}   → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , □ (A ▷ B) ▷ □ A ▷ □ B
+    cup   : ∀ {Π A}     → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , □ A ▷ □ □ A
+    cdown : ∀ {Π A}     → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , □ A ▷ A
+    unit  : ∀ {Π}       → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , ⫪
+    cpair : ∀ {Π A B}   → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , A ▷ B ▷ A ∧ B
+    cfst  : ∀ {Π A B}   → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , A ∧ B ▷ A
+    csnd  : ∀ {Π A B}   → Γ ⨾ Δ ⊢* Π → Γ ⨾ Δ ⊢* Π , A ∧ B ▷ B
 
   infix 3 _⨾_⊢_
   _⨾_⊢_ : Cx Ty → Cx Ty → Ty → Set
@@ -98,9 +98,9 @@ us ⧺′ csnd ts   = csnd (us ⧺′ ts)
 
 -- Modus ponens and necessitation in expanded form.
 
-app : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ A ⊃ B → Γ ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢ B
+app : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ A ▷ B → Γ ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢ B
 app {A} {B} (Π ∙ ts) (Π′ ∙ us) =
-    (Π′ , A) ⧺ (Π , A ⊃ B) ∙ mp top (mono∈ (weak⊆⧺ₗ (Π , A ⊃ B)) top) (us ⧺′ ts)
+    (Π′ , A) ⧺ (Π , A ▷ B) ∙ mp top (mono∈ (weak⊆⧺ₗ (Π , A ▷ B)) top) (us ⧺′ ts)
 
 box : ∀ {A Γ Δ} → ⌀ ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢ □ A
 box ts = ⌀ ∙ nec ts nil

@@ -53,7 +53,7 @@ hn→hl HN.csnd      = ⌀ ∙ HS.csnd HS.nil
 
 -- Deduction theorem for sequential Hilbert-style.
 
-hl-lam : ∀ {A B Γ} → HS⟨ Γ , A ⊢ B ⟩ → HS⟨ Γ ⊢ A ⊃ B ⟩
+hl-lam : ∀ {A B Γ} → HS⟨ Γ , A ⊢ B ⟩ → HS⟨ Γ ⊢ A ▷ B ⟩
 hl-lam = hn→hl ∘ HN.lam ∘ hl→hn
 
 

@@ -8,9 +8,9 @@ open import IPC.Gentzen.Core public
 mutual
   infix 1 _⊢ⁿᶠ_
   data _⊢ⁿᶠ_ (Γ : Cx Ty) : Ty → Set where
-    neⁿᶠ   : ∀ {P}   → Γ ⊢ⁿᵉ α P → Γ ⊢ⁿᶠ α P
-    lamⁿᶠ  : ∀ {A B} → Γ , A ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ⊃ B
-    unitⁿᶠ : Γ ⊢ⁿᶠ ι
+    neⁿᶠ   : ∀ {P}   → Γ ⊢ⁿᵉ ᴬ P → Γ ⊢ⁿᶠ ᴬ P
+    lamⁿᶠ  : ∀ {A B} → Γ , A ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ▷ B
+    unitⁿᶠ : Γ ⊢ⁿᶠ ⫪
     pairⁿᶠ : ∀ {A B} → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ∧ B
 
   infix 1 _⊢ⁿᵉ_
@@ -19,8 +19,8 @@ mutual
 
   infix 1 _⊢ˢᵖ_∣_
   data _⊢ˢᵖ_∣_ (Γ : Cx Ty) : Ty → Ty → Set where
-    endˢᵖ : ∀ {C}     → Γ ⊢ˢᵖ C ∣ C
-    appˢᵖ : ∀ {A B C} → Γ ⊢ˢᵖ B ∣ C → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ A ⊃ B ∣ C
+    nilˢᵖ : ∀ {C}     → Γ ⊢ˢᵖ C ∣ C
+    appˢᵖ : ∀ {A B C} → Γ ⊢ˢᵖ B ∣ C → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ A ▷ B ∣ C
     fstˢᵖ : ∀ {A B C} → Γ ⊢ˢᵖ A ∣ C → Γ ⊢ˢᵖ A ∧ B ∣ C
     sndˢᵖ : ∀ {A B C} → Γ ⊢ˢᵖ B ∣ C → Γ ⊢ˢᵖ A ∧ B ∣ C
 
@@ -38,7 +38,7 @@ mutual
   ne→tm (spⁿᵉ ss i) = sp→tm ss (var i)
 
   sp→tm : ∀ {A C Γ} → Γ ⊢ˢᵖ A ∣ C → Γ ⊢ A → Γ ⊢ C
-  sp→tm endˢᵖ        t = t
+  sp→tm nilˢᵖ        t = t
   sp→tm (appˢᵖ ss u) t = sp→tm ss (app t (nf→tm u))
   sp→tm (fstˢᵖ ss)   t = sp→tm ss (fst t)
   sp→tm (sndˢᵖ ss)   t = sp→tm ss (snd t)
@@ -57,7 +57,7 @@ mutual
   mono⊢ⁿᵉ η (spⁿᵉ ss i) = spⁿᵉ (mono⊢ˢᵖ η ss) (mono∈ η i)
 
   mono⊢ˢᵖ : ∀ {A C Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ˢᵖ A ∣ C → Γ′ ⊢ˢᵖ A ∣ C
-  mono⊢ˢᵖ η endˢᵖ        = endˢᵖ
+  mono⊢ˢᵖ η nilˢᵖ        = nilˢᵖ
   mono⊢ˢᵖ η (appˢᵖ ss u) = appˢᵖ (mono⊢ˢᵖ η ss) (mono⊢ⁿᶠ η u)
   mono⊢ˢᵖ η (fstˢᵖ ss)   = fstˢᵖ (mono⊢ˢᵖ η ss)
   mono⊢ˢᵖ η (sndˢᵖ ss)   = sndˢᵖ (mono⊢ˢᵖ η ss)
@@ -75,13 +75,13 @@ mutual
   [ i ≔ s ]ⁿᶠ pairⁿᶠ t u        = pairⁿᶠ ([ i ≔ s ]ⁿᶠ t) ([ i ≔ s ]ⁿᶠ u)
 
   [_≔_]ˢᵖ_ : ∀ {A B C Γ} → (i : A ∈ Γ) → Γ - i ⊢ⁿᶠ A → Γ ⊢ˢᵖ B ∣ C → Γ - i ⊢ˢᵖ B ∣ C
-  [ i ≔ s ]ˢᵖ endˢᵖ      = endˢᵖ
+  [ i ≔ s ]ˢᵖ nilˢᵖ      = nilˢᵖ
   [ i ≔ s ]ˢᵖ appˢᵖ ss u = appˢᵖ ([ i ≔ s ]ˢᵖ ss) ([ i ≔ s ]ⁿᶠ u)
   [ i ≔ s ]ˢᵖ fstˢᵖ ss   = fstˢᵖ ([ i ≔ s ]ˢᵖ ss)
   [ i ≔ s ]ˢᵖ sndˢᵖ ss   = sndˢᵖ ([ i ≔ s ]ˢᵖ ss)
 
   reduce : ∀ {A C Γ} → Γ ⊢ˢᵖ A ∣ C → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ C
-  reduce endˢᵖ        t            = t
+  reduce nilˢᵖ        t            = t
   reduce (appˢᵖ ss u) (lamⁿᶠ t)    = reduce ss ([ top ≔ u ]ⁿᶠ t)
   reduce (fstˢᵖ ss)   (pairⁿᶠ t u) = reduce ss t
   reduce (sndˢᵖ ss)   (pairⁿᶠ t u) = reduce ss u
@@ -90,13 +90,13 @@ mutual
 -- Derived neutrals.
 
 varⁿᵉ : ∀ {A Γ} → A ∈ Γ → Γ ⊢ⁿᵉ A
-varⁿᵉ i = spⁿᵉ endˢᵖ i
+varⁿᵉ i = spⁿᵉ nilˢᵖ i
 
-appⁿᵉ : ∀ {A B Γ} → Γ ⊢ⁿᵉ A ⊃ B → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᵉ B
+appⁿᵉ : ∀ {A B Γ} → Γ ⊢ⁿᵉ A ▷ B → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᵉ B
 appⁿᵉ (spⁿᵉ ss u) t = spⁿᵉ (≪app ss t) u
   where
-    ≪app : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ∣ A ⊃ B → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ C ∣ B
-    ≪app endˢᵖ        t = appˢᵖ endˢᵖ t
+    ≪app : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ∣ A ▷ B → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ C ∣ B
+    ≪app nilˢᵖ        t = appˢᵖ nilˢᵖ t
     ≪app (appˢᵖ ss u) t = appˢᵖ (≪app ss t) u
     ≪app (fstˢᵖ ss)   t = fstˢᵖ (≪app ss t)
     ≪app (sndˢᵖ ss)   t = sndˢᵖ (≪app ss t)
@@ -105,7 +105,7 @@ fstⁿᵉ : ∀ {A B Γ} → Γ ⊢ⁿᵉ A ∧ B → Γ ⊢ⁿᵉ A
 fstⁿᵉ (spⁿᵉ ss t) = spⁿᵉ (≪fst ss) t
   where
     ≪fst : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ∣ A ∧ B → Γ ⊢ˢᵖ C ∣ A
-    ≪fst endˢᵖ        = fstˢᵖ endˢᵖ
+    ≪fst nilˢᵖ        = fstˢᵖ nilˢᵖ
     ≪fst (appˢᵖ ss u) = appˢᵖ (≪fst ss) u
     ≪fst (fstˢᵖ ss)   = fstˢᵖ (≪fst ss)
     ≪fst (sndˢᵖ ss)   = sndˢᵖ (≪fst ss)
@@ -114,7 +114,7 @@ sndⁿᵉ : ∀ {A B Γ} → Γ ⊢ⁿᵉ A ∧ B → Γ ⊢ⁿᵉ B
 sndⁿᵉ (spⁿᵉ ss t) = spⁿᵉ (≪snd ss) t
   where
     ≪snd : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ∣ A ∧ B → Γ ⊢ˢᵖ C ∣ B
-    ≪snd endˢᵖ        = sndˢᵖ endˢᵖ
+    ≪snd nilˢᵖ        = sndˢᵖ nilˢᵖ
     ≪snd (appˢᵖ ss u) = appˢᵖ (≪snd ss) u
     ≪snd (fstˢᵖ ss)   = fstˢᵖ (≪snd ss)
     ≪snd (sndˢᵖ ss)   = sndˢᵖ (≪snd ss)
@@ -123,9 +123,9 @@ sndⁿᵉ (spⁿᵉ ss t) = spⁿᵉ (≪snd ss) t
 -- Iterated expansion.
 
 expand : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊢ⁿᶠ A
-expand {α P}   t = neⁿᶠ t
-expand {A ⊃ B} t = lamⁿᶠ (expand (appⁿᵉ (mono⊢ⁿᵉ weak⊆ t) (expand (varⁿᵉ top))))
-expand {ι}     t = unitⁿᶠ
+expand {ᴬ P}   t = neⁿᶠ t
+expand {A ▷ B} t = lamⁿᶠ (expand (appⁿᵉ (mono⊢ⁿᵉ weak⊆ t) (expand (varⁿᵉ top))))
+expand {⫪}    t = unitⁿᶠ
 expand {A ∧ B} t = pairⁿᶠ (expand (fstⁿᵉ t)) (expand (sndⁿᵉ t))
 
 
@@ -134,7 +134,7 @@ expand {A ∧ B} t = pairⁿᶠ (expand (fstⁿᵉ t)) (expand (sndⁿᵉ t))
 varⁿᶠ : ∀ {A Γ} → A ∈ Γ → Γ ⊢ⁿᶠ A
 varⁿᶠ i = expand (varⁿᵉ i)
 
-appⁿᶠ : ∀ {A B Γ} → Γ ⊢ⁿᶠ A ⊃ B → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B
+appⁿᶠ : ∀ {A B Γ} → Γ ⊢ⁿᶠ A ▷ B → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B
 appⁿᶠ (lamⁿᶠ t) u = [ top ≔ u ]ⁿᶠ t
 
 fstⁿᶠ : ∀ {A B Γ} → Γ ⊢ⁿᶠ A ∧ B → Γ ⊢ⁿᶠ A
@@ -174,7 +174,7 @@ norm = nf→tm ∘ tm→nf
 -- coco (cong⇒fst p)    = cong {!!} (coco p)
 -- coco (cong⇒snd p)    = cong {!!} (coco p)
 -- coco conv⇒lam        = {!!}
--- coco conv⇒app        = refl
+-- coco conv⇒app        = {!!}
 -- coco conv⇒unit       = {!!}
 -- coco conv⇒pair       = {!!}
 -- coco conv⇒fst        = refl

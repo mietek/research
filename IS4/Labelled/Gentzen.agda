@@ -34,11 +34,11 @@ data _⊢_≤_ (Ξ : Cx LaLa) : La → La → Set where
 infix 3 _⨾_⊢_⦂_
 data _⨾_⊢_⦂_ (Γ : Cx LaTy) (Ξ : Cx LaLa) : La → Ty → Set where
   var  : ∀ {x A}   → x ⦂ A ∈ Γ → Γ ⨾ Ξ ⊢ x ⦂ A
-  lam  : ∀ {x A B} → Γ , x ⦂ A ⨾ Ξ ⊢ x ⦂ B → Γ ⨾ Ξ ⊢ x ⦂ A ⊃ B
-  app  : ∀ {x A B} → Γ ⨾ Ξ ⊢ x ⦂ A ⊃ B → Γ ⨾ Ξ ⊢ x ⦂ A → Γ ⨾ Ξ ⊢ x ⦂ B
+  lam  : ∀ {x A B} → Γ , x ⦂ A ⨾ Ξ ⊢ x ⦂ B → Γ ⨾ Ξ ⊢ x ⦂ A ▷ B
+  app  : ∀ {x A B} → Γ ⨾ Ξ ⊢ x ⦂ A ▷ B → Γ ⨾ Ξ ⊢ x ⦂ A → Γ ⨾ Ξ ⊢ x ⦂ B
   scan : ∀ {x A}   → (∀ {y} → Γ ⨾ Ξ , x ≤ y ⊢ y ⦂ A) → Γ ⨾ Ξ ⊢ x ⦂ □ A
   move : ∀ {x y A} → Γ ⨾ Ξ ⊢ x ⦂ □ A → Ξ ⊢ x ≤ y → Γ ⨾ Ξ ⊢ y ⦂ A
-  unit : ∀ {x}     → Γ ⨾ Ξ ⊢ x ⦂ ι
+  unit : ∀ {x}     → Γ ⨾ Ξ ⊢ x ⦂ ⫪
   pair : ∀ {x A B} → Γ ⨾ Ξ ⊢ x ⦂ A → Γ ⨾ Ξ ⊢ x ⦂ B → Γ ⨾ Ξ ⊢ x ⦂ A ∧ B
   fst  : ∀ {x A B} → Γ ⨾ Ξ ⊢ x ⦂ A ∧ B → Γ ⨾ Ξ ⊢ x ⦂ A
   snd  : ∀ {x A B} → Γ ⨾ Ξ ⊢ x ⦂ A ∧ B → Γ ⨾ Ξ ⊢ x ⦂ B
@@ -105,7 +105,7 @@ v₂ = var i₂
 
 -- Detachment theorem.
 
-det : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ A ⊃ B → Γ , x ⦂ A ⨾ Ξ ⊢ x ⦂ B
+det : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ A ▷ B → Γ , x ⦂ A ⨾ Ξ ⊢ x ⦂ B
 det t = app (mono⊢ weak⊆ t) v₀
 
 -- TODO: mdet
@@ -113,7 +113,7 @@ det t = app (mono⊢ weak⊆ t) v₀
 
 -- Contraction.
 
-ccont : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ (A ⊃ A ⊃ B) ⊃ A ⊃ B
+ccont : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ (A ▷ A ▷ B) ▷ A ▷ B
 ccont = lam (lam (app (app v₁ v₀) v₀))
 
 cont : ∀ {x A B Γ Ξ} → Γ , x ⦂ A , x ⦂ A ⨾ Ξ ⊢ x ⦂ B → Γ , x ⦂ A ⨾ Ξ ⊢ x ⦂ B
@@ -124,7 +124,7 @@ cont t = det (app ccont (lam (lam t)))
 
 -- Exchange.
 
-cexch : ∀ {x A B C Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ (A ⊃ B ⊃ C) ⊃ B ⊃ A ⊃ C
+cexch : ∀ {x A B C Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ (A ▷ B ▷ C) ▷ B ▷ A ▷ C
 cexch = lam (lam (lam (app (app v₂ v₀) v₁)))
 
 exch : ∀ {x A B C Γ Ξ} → Γ , x ⦂ A , x ⦂ B ⨾ Ξ ⊢ x ⦂ C → Γ , x ⦂ B , x ⦂ A ⨾ Ξ ⊢ x ⦂ C
@@ -135,7 +135,7 @@ exch t = det (det (app cexch (lam (lam t))))
 
 -- Composition.
 
-ccomp : ∀ {x A B C Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ (B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C
+ccomp : ∀ {x A B C Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ (B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
 ccomp = lam (lam (lam (app v₂ (app v₁ v₀))))
 
 comp : ∀ {x A B C Γ Ξ} → Γ , x ⦂ B ⨾ Ξ ⊢ x ⦂ C → Γ , x ⦂ A ⨾ Ξ ⊢ x ⦂ B → Γ , x ⦂ A ⨾ Ξ ⊢ x ⦂ C
@@ -146,43 +146,43 @@ comp t u = det (app (app ccomp (lam t)) (lam u))
 
 -- Useful theorems in combinatory form.
 
-ci : ∀ {x A Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ A ⊃ A
+ci : ∀ {x A Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ A ▷ A
 ci = lam v₀
 
-ck : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ A ⊃ B ⊃ A
+ck : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ A ▷ B ▷ A
 ck = lam (lam v₁)
 
-cs : ∀ {x A B C Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ (A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C
+cs : ∀ {x A B C Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
 cs = lam (lam (lam (app (app v₂ v₀) (app v₁ v₀))))
 
-cdist : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ (A ⊃ B) ⊃ □ A ⊃ □ B
+cdist : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ (A ▷ B) ▷ □ A ▷ □ B
 cdist = lam (lam (scan (app (move v₁ rv₀) (move v₀ rv₀))))
 
-cup : ∀ {x A Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ A ⊃ □ □ A
+cup : ∀ {x A Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ A ▷ □ □ A
 cup = lam (scan (scan (move v₀ (rtrans rv₁ rv₀))))
 
-cdown : ∀ {x A Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ A ⊃ A
+cdown : ∀ {x A Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ A ▷ A
 cdown = lam (move v₀ rrefl)
 
-cdistup : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ (□ A ⊃ B) ⊃ □ A ⊃ □ B
+cdistup : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ (□ A ▷ B) ▷ □ A ▷ □ B
 cdistup = lam (lam (app (app cdist v₁) (app cup v₀)))
 
-cunbox : ∀ {x A C Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ A ⊃ (□ A ⊃ C) ⊃ C
+cunbox : ∀ {x A C Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ A ▷ (□ A ▷ C) ▷ C
 cunbox = lam (lam (app v₀ v₁))
 
-cpair : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ A ⊃ B ⊃ A ∧ B
+cpair : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ A ▷ B ▷ A ∧ B
 cpair = lam (lam (pair v₁ v₀))
 
-cfst : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ A ∧ B ⊃ A
+cfst : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ A ∧ B ▷ A
 cfst = lam (fst v₀)
 
-csnd : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ A ∧ B ⊃ B
+csnd : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ A ∧ B ▷ B
 csnd = lam (snd v₀)
 
 
 -- Useful theorems in functional form.
 
-dist : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ (A ⊃ B) → Γ ⨾ Ξ ⊢ x ⦂ □ A → Γ ⨾ Ξ ⊢ x ⦂ □ B
+dist : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ (A ▷ B) → Γ ⨾ Ξ ⊢ x ⦂ □ A → Γ ⨾ Ξ ⊢ x ⦂ □ B
 dist t u = scan (app (move (rmono⊢ weak⊆ t) rv₀) (move (rmono⊢ weak⊆ u) rv₀))
 
 up : ∀ {x A Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ A → Γ ⨾ Ξ ⊢ x ⦂ □ □ A
@@ -191,7 +191,7 @@ up t = scan (scan (move (rmono⊢ (trans⊆ weak⊆ weak⊆) t) (rtrans rv₁ rv
 down : ∀ {x A Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ A → Γ ⨾ Ξ ⊢ x ⦂ A
 down t = move t rrefl
 
-distup : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ (□ A ⊃ B) → Γ ⨾ Ξ ⊢ x ⦂ □ A → Γ ⨾ Ξ ⊢ x ⦂ □ B
+distup : ∀ {x A B Γ Ξ} → Γ ⨾ Ξ ⊢ x ⦂ □ (□ A ▷ B) → Γ ⨾ Ξ ⊢ x ⦂ □ A → Γ ⨾ Ξ ⊢ x ⦂ □ B
 distup t u = dist t (up u)
 
 -- TODO: box, unbox
