@@ -37,3 +37,11 @@ open import Relation.Nullary.Negation public
 
 postulate
   Atom : Set
+
+
+-- Miscellaneous.
+
+cong₃ : ∀ {a b c d} {A : Set a} {B : Set b} {C : Set c} {D : Set d}
+        (f : A → B → C → D) {x x′ y y′ z z′} → x ≡ x′ → y ≡ y′ → z ≡ z′
+        → f x y z ≡ f x′ y′ z′
+cong₃ f refl refl refl = refl

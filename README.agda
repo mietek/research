@@ -80,6 +80,13 @@ import IPC.Gentzen.KripkeSemantics.Completeness
 import IPC.Gentzen.HereditarySubstitution
 import IPC.Translation
 
+import IPCWithDisjunction.Core
+import IPCWithDisjunction.Gentzen.Core
+import IPCWithDisjunction.Gentzen.TarskiSemantics
+import IPCWithDisjunction.Gentzen.KripkeSemantics.Core
+import IPCWithDisjunction.Gentzen.KripkeSemantics.BasicCompleteness
+-- import IPCWithDisjunction.Gentzen.KripkeSemantics.CompletenessWIP
+
 import IS4.Core
 import IS4.Dual.Hilbert.Sequential
 import IS4.Dual.Hilbert.Nested
