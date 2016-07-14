@@ -114,32 +114,35 @@ mutual
   [ i ≔ s ]ˢᵖ′ caseˢᵖ′ u v = caseˢᵖ′ ([ pop i ≔ mono⊢ⁿᶠ weak⊆ s ]ⁿᶠ u)
                                      ([ pop i ≔ mono⊢ⁿᶠ weak⊆ s ]ⁿᶠ v)
 
-  reduce : ∀ {A B C Γ} → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ A ⦙ B → Γ ⊢ˢᵖ′ B ⦙ C → Γ ⊢ⁿᶠ C
+  reduce : ∀ {A B C Γ} {{_ : Tyⁿᵉ C}} → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ A ⦙ B → Γ ⊢ˢᵖ′ B ⦙ C → Γ ⊢ⁿᶠ C
   reduce t                                nilˢᵖ        nilˢᵖ′        = t
+  reduce (neⁿᶠ (spⁿᵉ i xs nilˢᵖ′))        nilˢᵖ        ys            = neⁿᶠ (spⁿᵉ i xs ys)
+  reduce (neⁿᶠ (spⁿᵉ i xs (caseˢᵖ′ u v))) nilˢᵖ        ys            = neⁿᶠ (spⁿᵉ i xs (caseˢᵖ′ u′ v′))
+    where u′ = reduce u nilˢᵖ (mono⊢ˢᵖ′ weak⊆ ys)
+          v′ = reduce v nilˢᵖ (mono⊢ˢᵖ′ weak⊆ ys)
+  reduce (neⁿᶠ t {{()}})                  (appˢᵖ xs u) ys
+  reduce (neⁿᶠ t {{()}})                  (fstˢᵖ xs)   ys
+  reduce (neⁿᶠ t {{()}})                  (sndˢᵖ xs)   ys
   reduce (lamⁿᶠ t)                        (appˢᵖ xs u) ys            = reduce ([ top ≔ u ]ⁿᶠ t) xs ys
   reduce (pairⁿᶠ t u)                     (fstˢᵖ xs)   ys            = reduce t xs ys
   reduce (pairⁿᶠ t u)                     (sndˢᵖ xs)   ys            = reduce u xs ys
   reduce (inlⁿᶠ t)                        nilˢᵖ        (caseˢᵖ′ u v) = [ top ≔ t ]ⁿᶠ u
   reduce (inrⁿᶠ t)                        nilˢᵖ        (caseˢᵖ′ u v) = [ top ≔ t ]ⁿᶠ v
-  reduce (neⁿᶠ (spⁿᵉ i xs nilˢᵖ′))        nilˢᵖ        ys            = neⁿᶠ (spⁿᵉ i xs ys) {{{!!}}}
-  reduce (neⁿᶠ (spⁿᵉ i xs (caseˢᵖ′ u v))) nilˢᵖ        ys            =
-            neⁿᶠ (spⁿᵉ i xs (caseˢᵖ′ (reduce u nilˢᵖ (mono⊢ˢᵖ′ weak⊆ ys))
-                                     (reduce v nilˢᵖ (mono⊢ˢᵖ′ weak⊆ ys)))) {{{!!}}}
-  reduce (neⁿᶠ t {{()}})                  (appˢᵖ xs u) ys
-  reduce (neⁿᶠ t {{()}})                  (fstˢᵖ xs)   ys
-  reduce (neⁿᶠ t {{()}})                  (sndˢᵖ xs)   ys
 
 
 -- Reduction-based normal forms.
 
 appⁿᶠ : ∀ {A B Γ} → Γ ⊢ⁿᶠ A ▷ B → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B
-appⁿᶠ t u = reduce t (appˢᵖ nilˢᵖ u) nilˢᵖ′
+appⁿᶠ (neⁿᶠ t {{()}})
+appⁿᶠ (lamⁿᶠ t) u = [ top ≔ u ]ⁿᶠ t
 
 fstⁿᶠ : ∀ {A B Γ} → Γ ⊢ⁿᶠ A ∧ B → Γ ⊢ⁿᶠ A
-fstⁿᶠ t = reduce t (fstˢᵖ nilˢᵖ) nilˢᵖ′
+fstⁿᶠ (neⁿᶠ t {{()}})
+fstⁿᶠ (pairⁿᶠ t u) = t
 
 sndⁿᶠ : ∀ {A B Γ} → Γ ⊢ⁿᶠ A ∧ B → Γ ⊢ⁿᶠ B
-sndⁿᶠ t = reduce t (sndˢᵖ nilˢᵖ) nilˢᵖ′
+sndⁿᶠ (neⁿᶠ t {{()}})
+sndⁿᶠ (pairⁿᶠ t u) = u
 
 
 -- Useful equipment for deriving neutrals.
@@ -200,8 +203,9 @@ varⁿᶠ i = expand (varⁿᵉ i)
 
 mutual
   caseⁿᶠ : ∀ {A B C Γ} → Γ ⊢ⁿᶠ A ∨ B → Γ , A ⊢ⁿᶠ C → Γ , B ⊢ⁿᶠ C → Γ ⊢ⁿᶠ C
-  caseⁿᶠ (neⁿᶠ t) u v = expand (caseⁿᵉ t u v)
-  caseⁿᶠ t        u v = reduce t nilˢᵖ (caseˢᵖ′ u v)
+  caseⁿᶠ (neⁿᶠ t)  u v = expand (caseⁿᵉ t u v)
+  caseⁿᶠ (inlⁿᶠ t) u v = [ top ≔ t ]ⁿᶠ u
+  caseⁿᶠ (inrⁿᶠ t) u v = [ top ≔ t ]ⁿᶠ v
 
   caseⁿᵉ : ∀ {A B C Γ} → Γ ⊢ⁿᵉ A ∨ B → Γ , A ⊢ⁿᶠ C → Γ , B ⊢ⁿᶠ C → Γ ⊢ⁿᵉ C
   caseⁿᵉ (spⁿᵉ i xs nilˢᵖ′)          u v = spⁿᵉ i xs (caseˢᵖ′ u v)
