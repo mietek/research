@@ -6,18 +6,18 @@ open import BasicIPC.Gentzen.Core public
 -- Normal forms, neutrals, and spines.
 
 mutual
-  infix 1 _⊢ⁿᶠ_
+  infix 3 _⊢ⁿᶠ_
   data _⊢ⁿᶠ_ (Γ : Cx Ty) : Ty → Set where
     neⁿᶠ   : ∀ {P}   → Γ ⊢ⁿᵉ ᴬ P → Γ ⊢ⁿᶠ ᴬ P
     lamⁿᶠ  : ∀ {A B} → Γ , A ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ▷ B
     unitⁿᶠ : Γ ⊢ⁿᶠ ⫪
     pairⁿᶠ : ∀ {A B} → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ∧ B
 
-  infix 1 _⊢ⁿᵉ_
+  infix 3 _⊢ⁿᵉ_
   data _⊢ⁿᵉ_ (Γ : Cx Ty) : Ty → Set where
     spⁿᵉ : ∀ {A C} → A ∈ Γ → Γ ⊢ˢᵖ A ⦙ C → Γ ⊢ⁿᵉ C
 
-  infix 1 _⊢ˢᵖ_⦙_
+  infix 3 _⊢ˢᵖ_⦙_
   data _⊢ˢᵖ_⦙_ (Γ : Cx Ty) : Ty → Ty → Set where
     nilˢᵖ : ∀ {C}     → Γ ⊢ˢᵖ C ⦙ C
     appˢᵖ : ∀ {A B C} → Γ ⊢ˢᵖ B ⦙ C → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ A ▷ B ⦙ C

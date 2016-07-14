@@ -14,7 +14,7 @@ data Tyⁿᵉ : Ty → Set where
 -- Normal forms, neutrals, and spines.
 
 mutual
-  infix 1 _⊢ⁿᶠ_
+  infix 3 _⊢ⁿᶠ_
   data _⊢ⁿᶠ_ (Γ : Cx Ty) : Ty → Set where
     neⁿᶠ   : ∀ {A}   → Γ ⊢ⁿᵉ A → {{_ : Tyⁿᵉ A}} → Γ ⊢ⁿᶠ A
     lamⁿᶠ  : ∀ {A B} → Γ , A ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ▷ B
@@ -23,18 +23,18 @@ mutual
     inlⁿᶠ  : ∀ {A B} → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ A ∨ B
     inrⁿᶠ  : ∀ {A B} → Γ ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ∨ B
 
-  infix 1 _⊢ⁿᵉ_
+  infix 3 _⊢ⁿᵉ_
   data _⊢ⁿᵉ_ (Γ : Cx Ty) : Ty → Set where
     spⁿᵉ : ∀ {A B C} → A ∈ Γ → Γ ⊢ˢᵖ A ⦙ B → Γ ⊢ˢᵖ′ B ⦙ C → Γ ⊢ⁿᵉ C
 
-  infix 1 _⊢ˢᵖ_⦙_
+  infix 3 _⊢ˢᵖ_⦙_
   data _⊢ˢᵖ_⦙_ (Γ : Cx Ty) : Ty → Ty → Set where
     nilˢᵖ : ∀ {C}     → Γ ⊢ˢᵖ C ⦙ C
     appˢᵖ : ∀ {A B C} → Γ ⊢ˢᵖ B ⦙ C → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ A ▷ B ⦙ C
     fstˢᵖ : ∀ {A B C} → Γ ⊢ˢᵖ A ⦙ C → Γ ⊢ˢᵖ A ∧ B ⦙ C
     sndˢᵖ : ∀ {A B C} → Γ ⊢ˢᵖ B ⦙ C → Γ ⊢ˢᵖ A ∧ B ⦙ C
 
-  infix 1 _⊢ˢᵖ′_⦙_
+  infix 3 _⊢ˢᵖ′_⦙_
   data _⊢ˢᵖ′_⦙_ (Γ : Cx Ty) : Ty → Ty → Set where
     nilˢᵖ′  : ∀ {C}     → Γ ⊢ˢᵖ′ C ⦙ C
     caseˢᵖ′ : ∀ {A B C} → Γ , A ⊢ⁿᶠ C → Γ , B ⊢ⁿᶠ C → Γ ⊢ˢᵖ′ A ∨ B ⦙ C
