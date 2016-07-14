@@ -37,7 +37,7 @@ mutual
   reify {⫪}    k = k refl≤ (λ ξ u   → unit)
   reify {A ∧ B} k = k refl≤ (λ ξ a&b → pair (reify {A} (proj₁ a&b)) (reify {B} (proj₂ a&b)))
   reify {A ∨ B} k = k refl≤ (λ ξ a∣b → [ (λ a → inl (reify {A} (λ ξ′ k → a ξ′ k)))
-                                        ∙ (λ b → inr (reify {B} (λ ξ′ k → b ξ′ k)))
+                                        ∣ (λ b → inr (reify {B} (λ ξ′ k → b ξ′ k)))
                                         ] a∣b)
   reify {⫫}    k = k refl≤ (λ ξ ())
 

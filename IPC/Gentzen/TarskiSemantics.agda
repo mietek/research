@@ -56,7 +56,7 @@ eval (snd t)      γ = proj₂ (eval t γ)
 eval (inl t)      γ = inj₁ (eval t γ)
 eval (inr t)      γ = inj₂ (eval t γ)
 eval (case t u v) γ = [ (λ a → eval u (γ ∙ a))
-                      ∙ (λ b → eval v (γ ∙ b))
+                      ∣ (λ b → eval v (γ ∙ b))
                       ] (eval t γ)
 eval (boom t)     γ = elim⊥ (eval t γ)
 

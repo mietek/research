@@ -103,7 +103,7 @@ eval {A ∨ B} (inl t)          γ = return {A ∨ B} (inj₁ (eval t γ))
 eval {A ∨ B} (inr t)          γ = return {A ∨ B} (inj₂ (eval t γ))
 eval (case {A} {B} {C} t u v) γ = bind {A ∨ B} {C} (eval t γ) (λ ξ a∣b →
                                     [ (λ a → eval u (mono⊩⋆ ξ γ ∙ λ ξ′ k → a ξ′ k))
-                                    ∙ (λ b → eval v (mono⊩⋆ ξ γ ∙ λ ξ′ k → b ξ′ k))
+                                    ∣ (λ b → eval v (mono⊩⋆ ξ γ ∙ λ ξ′ k → b ξ′ k))
                                     ] a∣b)
 eval (boom {C} t)             γ = bind {⫫} {C} (eval t γ) (λ ξ ())
 

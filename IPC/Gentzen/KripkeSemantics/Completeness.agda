@@ -99,7 +99,7 @@ mutual
   reify {⫪}    k = k refl≤ (λ ξ u   → unitⁿᶠ)
   reify {A ∧ B} k = k refl≤ (λ ξ a&b → pairⁿᶠ (reify {A} (proj₁ a&b)) (reify {B} (proj₂ a&b)))
   reify {A ∨ B} k = k refl≤ (λ ξ a∣b → [ (λ a → inlⁿᶠ (reify {A} (λ ξ′ k′ → a ξ′ k′)))
-                                        ∙ (λ b → inrⁿᶠ (reify {B} (λ ξ′ k′ → b ξ′ k′)))
+                                        ∣ (λ b → inrⁿᶠ (reify {B} (λ ξ′ k′ → b ξ′ k′)))
                                         ] a∣b)
   reify {⫫}    k = k refl≤ (λ ξ ())
 

@@ -14,7 +14,7 @@ open import Data.Product public
 
 open import Data.Sum public
   using (_⊎_ ; inj₁ ; inj₂)
-  renaming ([_,_] to [_∙_]_)
+  renaming ([_,_] to [_∣_]_)
 
 open import Data.Unit public
   using (⊤ ; tt)
