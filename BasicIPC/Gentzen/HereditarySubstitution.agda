@@ -15,7 +15,7 @@ mutual
 
   infix 1 _⊢ⁿᵉ_
   data _⊢ⁿᵉ_ (Γ : Cx Ty) : Ty → Set where
-    spⁿᵉ : ∀ {A C} → Γ ⊢ˢᵖ A ⦙ C → A ∈ Γ → Γ ⊢ⁿᵉ C
+    spⁿᵉ : ∀ {A C} → A ∈ Γ → Γ ⊢ˢᵖ A ⦙ C → Γ ⊢ⁿᵉ C
 
   infix 1 _⊢ˢᵖ_⦙_
   data _⊢ˢᵖ_⦙_ (Γ : Cx Ty) : Ty → Ty → Set where
@@ -35,13 +35,13 @@ mutual
   nf→tm (pairⁿᶠ t u) = pair (nf→tm t) (nf→tm u)
 
   ne→tm : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊢ A
-  ne→tm (spⁿᵉ ss i) = sp→tm ss (var i)
+  ne→tm (spⁿᵉ i xs) = sp→tm (var i) xs
 
-  sp→tm : ∀ {A C Γ} → Γ ⊢ˢᵖ A ⦙ C → Γ ⊢ A → Γ ⊢ C
-  sp→tm nilˢᵖ        t = t
-  sp→tm (appˢᵖ ss u) t = sp→tm ss (app t (nf→tm u))
-  sp→tm (fstˢᵖ ss)   t = sp→tm ss (fst t)
-  sp→tm (sndˢᵖ ss)   t = sp→tm ss (snd t)
+  sp→tm : ∀ {A C Γ} → Γ ⊢ A → Γ ⊢ˢᵖ A ⦙ C → Γ ⊢ C
+  sp→tm t nilˢᵖ        = t
+  sp→tm t (appˢᵖ xs u) = sp→tm (app t (nf→tm u)) xs
+  sp→tm t (fstˢᵖ xs)   = sp→tm (fst t) xs
+  sp→tm t (sndˢᵖ xs)   = sp→tm (snd t) xs
 
 
 -- Monotonicity with respect to context inclusion.
@@ -54,70 +54,85 @@ mutual
   mono⊢ⁿᶠ η (pairⁿᶠ t u) = pairⁿᶠ (mono⊢ⁿᶠ η t) (mono⊢ⁿᶠ η u)
 
   mono⊢ⁿᵉ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ⁿᵉ A → Γ′ ⊢ⁿᵉ A
-  mono⊢ⁿᵉ η (spⁿᵉ ss i) = spⁿᵉ (mono⊢ˢᵖ η ss) (mono∈ η i)
+  mono⊢ⁿᵉ η (spⁿᵉ i xs) = spⁿᵉ (mono∈ η i) (mono⊢ˢᵖ η xs)
 
   mono⊢ˢᵖ : ∀ {A C Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ˢᵖ A ⦙ C → Γ′ ⊢ˢᵖ A ⦙ C
   mono⊢ˢᵖ η nilˢᵖ        = nilˢᵖ
-  mono⊢ˢᵖ η (appˢᵖ ss u) = appˢᵖ (mono⊢ˢᵖ η ss) (mono⊢ⁿᶠ η u)
-  mono⊢ˢᵖ η (fstˢᵖ ss)   = fstˢᵖ (mono⊢ˢᵖ η ss)
-  mono⊢ˢᵖ η (sndˢᵖ ss)   = sndˢᵖ (mono⊢ˢᵖ η ss)
+  mono⊢ˢᵖ η (appˢᵖ xs u) = appˢᵖ (mono⊢ˢᵖ η xs) (mono⊢ⁿᶠ η u)
+  mono⊢ˢᵖ η (fstˢᵖ xs)   = fstˢᵖ (mono⊢ˢᵖ η xs)
+  mono⊢ˢᵖ η (sndˢᵖ xs)   = sndˢᵖ (mono⊢ˢᵖ η xs)
 
 
 -- Hereditary substitution and reduction.
 
 mutual
   [_≔_]ⁿᶠ_ : ∀ {A B Γ} → (i : A ∈ Γ) → Γ - i ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B → Γ - i ⊢ⁿᶠ B
-  [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ ss j ) with i ≟∈ j
-  [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ ss .i) | same   = reduce ([ i ≔ s ]ˢᵖ ss) s
-  [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ ss ._) | diff j = neⁿᶠ (spⁿᵉ ([ i ≔ s ]ˢᵖ ss) j)
+  [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ j  xs) with i ≟∈ j
+  [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ .i xs) | same   = reduce s ([ i ≔ s ]ˢᵖ xs)
+  [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ ._ xs) | diff j = neⁿᶠ (spⁿᵉ j ([ i ≔ s ]ˢᵖ xs))
   [ i ≔ s ]ⁿᶠ lamⁿᶠ t           = lamⁿᶠ ([ pop i ≔ mono⊢ⁿᶠ weak⊆ s ]ⁿᶠ t)
   [ i ≔ s ]ⁿᶠ unitⁿᶠ            = unitⁿᶠ
   [ i ≔ s ]ⁿᶠ pairⁿᶠ t u        = pairⁿᶠ ([ i ≔ s ]ⁿᶠ t) ([ i ≔ s ]ⁿᶠ u)
 
   [_≔_]ˢᵖ_ : ∀ {A B C Γ} → (i : A ∈ Γ) → Γ - i ⊢ⁿᶠ A → Γ ⊢ˢᵖ B ⦙ C → Γ - i ⊢ˢᵖ B ⦙ C
   [ i ≔ s ]ˢᵖ nilˢᵖ      = nilˢᵖ
-  [ i ≔ s ]ˢᵖ appˢᵖ ss u = appˢᵖ ([ i ≔ s ]ˢᵖ ss) ([ i ≔ s ]ⁿᶠ u)
-  [ i ≔ s ]ˢᵖ fstˢᵖ ss   = fstˢᵖ ([ i ≔ s ]ˢᵖ ss)
-  [ i ≔ s ]ˢᵖ sndˢᵖ ss   = sndˢᵖ ([ i ≔ s ]ˢᵖ ss)
+  [ i ≔ s ]ˢᵖ appˢᵖ xs u = appˢᵖ ([ i ≔ s ]ˢᵖ xs) ([ i ≔ s ]ⁿᶠ u)
+  [ i ≔ s ]ˢᵖ fstˢᵖ xs   = fstˢᵖ ([ i ≔ s ]ˢᵖ xs)
+  [ i ≔ s ]ˢᵖ sndˢᵖ xs   = sndˢᵖ ([ i ≔ s ]ˢᵖ xs)
 
-  reduce : ∀ {A C Γ} → Γ ⊢ˢᵖ A ⦙ C → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ C
-  reduce nilˢᵖ        t            = t
-  reduce (appˢᵖ ss u) (lamⁿᶠ t)    = reduce ss ([ top ≔ u ]ⁿᶠ t)
-  reduce (fstˢᵖ ss)   (pairⁿᶠ t u) = reduce ss t
-  reduce (sndˢᵖ ss)   (pairⁿᶠ t u) = reduce ss u
+  reduce : ∀ {A C Γ} → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ A ⦙ C → Γ ⊢ⁿᶠ C
+  reduce t            nilˢᵖ        = t
+  reduce (lamⁿᶠ t)    (appˢᵖ xs u) = reduce ([ top ≔ u ]ⁿᶠ t) xs
+  reduce (pairⁿᶠ t u) (fstˢᵖ xs)   = reduce t xs
+  reduce (pairⁿᶠ t u) (sndˢᵖ xs)   = reduce u xs
+
+
+-- Reduction-based normal forms.
+
+appⁿᶠ : ∀ {A B Γ} → Γ ⊢ⁿᶠ A ▷ B → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B
+appⁿᶠ t u = reduce t (appˢᵖ nilˢᵖ u)
+
+fstⁿᶠ : ∀ {A B Γ} → Γ ⊢ⁿᶠ A ∧ B → Γ ⊢ⁿᶠ A
+fstⁿᶠ t = reduce t (fstˢᵖ nilˢᵖ)
+
+sndⁿᶠ : ∀ {A B Γ} → Γ ⊢ⁿᶠ A ∧ B → Γ ⊢ⁿᶠ B
+sndⁿᶠ t = reduce t (sndˢᵖ nilˢᵖ)
+
+
+-- Useful equipment for deriving neutrals.
+
+≪app : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ⦙ A ▷ B → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ C ⦙ B
+≪app nilˢᵖ        t = appˢᵖ nilˢᵖ t
+≪app (appˢᵖ xs u) t = appˢᵖ (≪app xs t) u
+≪app (fstˢᵖ xs)   t = fstˢᵖ (≪app xs t)
+≪app (sndˢᵖ xs)   t = sndˢᵖ (≪app xs t)
+
+≪fst : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ⦙ A ∧ B → Γ ⊢ˢᵖ C ⦙ A
+≪fst nilˢᵖ        = fstˢᵖ nilˢᵖ
+≪fst (appˢᵖ xs u) = appˢᵖ (≪fst xs) u
+≪fst (fstˢᵖ xs)   = fstˢᵖ (≪fst xs)
+≪fst (sndˢᵖ xs)   = sndˢᵖ (≪fst xs)
+
+≪snd : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ⦙ A ∧ B → Γ ⊢ˢᵖ C ⦙ B
+≪snd nilˢᵖ        = sndˢᵖ nilˢᵖ
+≪snd (appˢᵖ xs u) = appˢᵖ (≪snd xs) u
+≪snd (fstˢᵖ xs)   = fstˢᵖ (≪snd xs)
+≪snd (sndˢᵖ xs)   = sndˢᵖ (≪snd xs)
 
 
 -- Derived neutrals.
 
 varⁿᵉ : ∀ {A Γ} → A ∈ Γ → Γ ⊢ⁿᵉ A
-varⁿᵉ i = spⁿᵉ nilˢᵖ i
+varⁿᵉ i = spⁿᵉ i nilˢᵖ
 
 appⁿᵉ : ∀ {A B Γ} → Γ ⊢ⁿᵉ A ▷ B → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᵉ B
-appⁿᵉ (spⁿᵉ ss u) t = spⁿᵉ (≪app ss t) u
-  where
-    ≪app : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ⦙ A ▷ B → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ C ⦙ B
-    ≪app nilˢᵖ        t = appˢᵖ nilˢᵖ t
-    ≪app (appˢᵖ ss u) t = appˢᵖ (≪app ss t) u
-    ≪app (fstˢᵖ ss)   t = fstˢᵖ (≪app ss t)
-    ≪app (sndˢᵖ ss)   t = sndˢᵖ (≪app ss t)
+appⁿᵉ (spⁿᵉ i xs) t = spⁿᵉ i (≪app xs t)
 
 fstⁿᵉ : ∀ {A B Γ} → Γ ⊢ⁿᵉ A ∧ B → Γ ⊢ⁿᵉ A
-fstⁿᵉ (spⁿᵉ ss t) = spⁿᵉ (≪fst ss) t
-  where
-    ≪fst : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ⦙ A ∧ B → Γ ⊢ˢᵖ C ⦙ A
-    ≪fst nilˢᵖ        = fstˢᵖ nilˢᵖ
-    ≪fst (appˢᵖ ss u) = appˢᵖ (≪fst ss) u
-    ≪fst (fstˢᵖ ss)   = fstˢᵖ (≪fst ss)
-    ≪fst (sndˢᵖ ss)   = sndˢᵖ (≪fst ss)
+fstⁿᵉ (spⁿᵉ i xs) = spⁿᵉ i (≪fst xs)
 
 sndⁿᵉ : ∀ {A B Γ} → Γ ⊢ⁿᵉ A ∧ B → Γ ⊢ⁿᵉ B
-sndⁿᵉ (spⁿᵉ ss t) = spⁿᵉ (≪snd ss) t
-  where
-    ≪snd : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ⦙ A ∧ B → Γ ⊢ˢᵖ C ⦙ B
-    ≪snd nilˢᵖ        = sndˢᵖ nilˢᵖ
-    ≪snd (appˢᵖ ss u) = appˢᵖ (≪snd ss) u
-    ≪snd (fstˢᵖ ss)   = fstˢᵖ (≪snd ss)
-    ≪snd (sndˢᵖ ss)   = sndˢᵖ (≪snd ss)
+sndⁿᵉ (spⁿᵉ i xs) = spⁿᵉ i (≪snd xs)
 
 
 -- Iterated expansion.
@@ -129,19 +144,10 @@ expand {⫪}    t = unitⁿᶠ
 expand {A ∧ B} t = pairⁿᶠ (expand (fstⁿᵉ t)) (expand (sndⁿᵉ t))
 
 
--- Derived normal forms.
+-- Expansion-based normal forms.
 
 varⁿᶠ : ∀ {A Γ} → A ∈ Γ → Γ ⊢ⁿᶠ A
 varⁿᶠ i = expand (varⁿᵉ i)
-
-appⁿᶠ : ∀ {A B Γ} → Γ ⊢ⁿᶠ A ▷ B → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B
-appⁿᶠ (lamⁿᶠ t) u = [ top ≔ u ]ⁿᶠ t
-
-fstⁿᶠ : ∀ {A B Γ} → Γ ⊢ⁿᶠ A ∧ B → Γ ⊢ⁿᶠ A
-fstⁿᶠ (pairⁿᶠ t u) = t
-
-sndⁿᶠ : ∀ {A B Γ} → Γ ⊢ⁿᶠ A ∧ B → Γ ⊢ⁿᶠ B
-sndⁿᶠ (pairⁿᶠ t u) = u
 
 
 -- Translation from terms to normal forms.
