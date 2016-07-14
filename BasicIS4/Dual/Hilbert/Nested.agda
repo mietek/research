@@ -3,7 +3,7 @@ module BasicIS4.Dual.Hilbert.Nested where
 open import BasicIS4.Core public
 
 
--- Proofs of IS4, as Hilbert-style combinator trees.
+-- Derivations, as Hilbert-style combinator trees.
 
 infix 3 _⨾_⊢_
 data _⨾_⊢_ (Γ Δ : Cx Ty) : Ty → Set where

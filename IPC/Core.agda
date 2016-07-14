@@ -3,7 +3,7 @@ module IPC.Core where
 open import Common.Context public
 
 
--- Propositions of intuitionistic propositional calculus (IPC).
+-- Connectives of intuitionistic propositional calculus (IPC).
 
 infixl 7 _∧_
 infixl 6 _∨_

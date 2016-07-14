@@ -23,7 +23,7 @@ record LaTy : Set where
     A : Ty
 
 
--- Proofs of S4, as labelled Gentzen-style natural deduction trees, following Basin, Matthews, and Viganò.
+-- Derivations, as labelled Gentzen-style natural deduction trees, following Basin, Matthews, and Viganò.
 
 infix 3 _⊢_≤_
 data _⊢_≤_ (Ξ : Cx LaLa) : La → La → Set where

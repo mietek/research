@@ -3,7 +3,7 @@ module BasicIPC.Hilbert.Nested where
 open import BasicIPC.Core public
 
 
--- Proofs of IPC, as Hilbert-style combinator trees.
+-- Derivations, as Hilbert-style combinator trees.
 
 infix 3 _⊢_
 data _⊢_ (Γ : Cx Ty) : Ty → Set where

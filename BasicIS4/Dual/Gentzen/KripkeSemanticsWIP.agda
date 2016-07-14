@@ -28,12 +28,12 @@ record Model : Set₁ where
     -- seems odd, but appears in Ono; repeated by Marti and Studer.
     fnordR : ∀ {w w′ w″} → w ≤ w′ → w′ R w″ → w R w″
 
-    -- NEW: Forcing is monotonic with respect to modal accessibility; needed for soundness proof;
+    -- NEW: Forcing is monotonic with respect to modal accessibility; needed for soundness;
     -- seems OK.
     mmono⊩ᴬ : ∀ {w w′ p} → w R w′ → w ⊩ᴬ p → w′ ⊩ᴬ p
 
     -- NEW: Intuitionistic accessibility is ??? with respect to modal accessibility;
-    -- needed for soundness proof; seems odd.
+    -- needed for soundness; seems odd.
     mfnord≤ : ∀ {w w′ w″} → w R w′ → w′ ≤ w″ → w ≤ w″
 
   -- Intuitionistic accessibility implies modal accessibility; appears in Ono as frame condition.

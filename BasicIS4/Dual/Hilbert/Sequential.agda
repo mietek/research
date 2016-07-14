@@ -3,7 +3,7 @@ module BasicIS4.Dual.Hilbert.Sequential where
 open import BasicIS4.Core public
 
 
--- Proofs of IS4, as Hilbert-style combinator sequences.
+-- Derivations, as Hilbert-style combinator sequences.
 
 mutual
   infix 3 _⨾_⊢⋆_
@@ -76,7 +76,7 @@ mutual
   mmono⊢ η (Π ∙ ts) = Π ∙ mmono⊢⋆ η ts
 
 
--- Proof concatenation.
+-- Derivation concatenation.
 
 _⧻_ : ∀ {Γ Δ Π Π′} → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π′ → Γ ⨾ Δ ⊢⋆ Π ⧺ Π′
 us ⧻ nil       = us

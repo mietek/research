@@ -3,7 +3,7 @@ module BasicIS4.Dual.Gentzen.Core where
 open import BasicIS4.Core public
 
 
--- Proofs of IS4, as Gentzen-style natural deduction trees, following Pfenning and Davies.
+-- Derivations, as Gentzen-style natural deduction trees, following Pfenning and Davies.
 
 infix 3 _⨾_⊢_
 data _⨾_⊢_ (Γ Δ : Cx Ty) : Ty → Set where

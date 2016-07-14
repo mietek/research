@@ -3,7 +3,7 @@ module IPC.Hilbert.Sequential where
 open import IPC.Core public
 
 
--- Proofs of IPC, as Hilbert-style combinator sequences.
+-- Derivations, as Hilbert-style combinator sequences.
 
 infix 3 _⊢⋆_
 data _⊢⋆_ (Γ : Cx Ty) : Cx Ty → Set where
@@ -49,7 +49,7 @@ mono⊢ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
 mono⊢ η (Π ∙ ts) = Π ∙ mono⊢⋆ η ts
 
 
--- Proof concatenation.
+-- Derivation concatenation.
 
 _⧻_ : ∀ {Γ Π Π′} → Γ ⊢⋆ Π → Γ ⊢⋆ Π′ → Γ ⊢⋆ Π ⧺ Π′
 us ⧻ nil       = us

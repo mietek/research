@@ -3,7 +3,7 @@ module IPC.Gentzen.Core where
 open import IPC.Core public
 
 
--- Proofs of IPC, as Gentzen-style natural deduction trees.
+-- Derivations, as Gentzen-style natural deduction trees.
 
 infix 3 _⊢_
 data _⊢_ (Γ : Cx Ty) : Ty → Set where
