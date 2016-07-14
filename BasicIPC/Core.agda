@@ -3,7 +3,7 @@ module BasicIPC.Core where
 open import Common.Context public
 
 
--- Connectives of intuitionistic propositional calculus (IPC), without disjunction and falsehood.
+-- Propositions of intuitionistic propositional calculus (IPC), without disjunction or falsehood.
 
 infixl 7 _∧_
 infixr 5 _▷_

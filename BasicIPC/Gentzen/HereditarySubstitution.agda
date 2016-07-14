@@ -3,9 +3,10 @@ module BasicIPC.Gentzen.HereditarySubstitution where
 open import BasicIPC.Gentzen.Core public
 
 
--- Normal forms, neutrals, and spines.
+-- Derivations, as Gentzen-style natural deduction trees.
 
 mutual
+  -- Normal forms.
   infix 3 _⊢ⁿᶠ_
   data _⊢ⁿᶠ_ (Γ : Cx Ty) : Ty → Set where
     neⁿᶠ   : ∀ {P}   → Γ ⊢ⁿᵉ ᴬ P → Γ ⊢ⁿᶠ ᴬ P
@@ -13,10 +14,12 @@ mutual
     unitⁿᶠ : Γ ⊢ⁿᶠ ⫪
     pairⁿᶠ : ∀ {A B} → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ∧ B
 
+  -- Neutrals.
   infix 3 _⊢ⁿᵉ_
   data _⊢ⁿᵉ_ (Γ : Cx Ty) : Ty → Set where
     spⁿᵉ : ∀ {A C} → A ∈ Γ → Γ ⊢ˢᵖ A ⦙ C → Γ ⊢ⁿᵉ C
 
+  -- Spines.
   infix 3 _⊢ˢᵖ_⦙_
   data _⊢ˢᵖ_⦙_ (Γ : Cx Ty) : Ty → Ty → Set where
     nilˢᵖ : ∀ {C}     → Γ ⊢ˢᵖ C ⦙ C
@@ -25,7 +28,7 @@ mutual
     sndˢᵖ : ∀ {A B C} → Γ ⊢ˢᵖ B ⦙ C → Γ ⊢ˢᵖ A ∧ B ⦙ C
 
 
--- Translation to terms.
+-- Translation to simple terms.
 
 mutual
   nf→tm : ∀ {A Γ} → Γ ⊢ⁿᶠ A → Γ ⊢ A

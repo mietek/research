@@ -3,9 +3,10 @@ module BasicIPC.Gentzen.KripkeSemantics.Completeness where
 open import BasicIPC.Gentzen.KripkeSemantics.Core public
 
 
--- Normal forms and neutrals.
+-- Derivations, as Gentzen-style natural deduction trees.
 
 mutual
+  -- Normal forms.
   infix 3 _⊢ⁿᶠ_
   data _⊢ⁿᶠ_ (Γ : Cx Ty) : Ty → Set where
     neⁿᶠ   : ∀ {A}   → Γ ⊢ⁿᵉ A → Γ ⊢ⁿᶠ A
@@ -13,6 +14,7 @@ mutual
     unitⁿᶠ : Γ ⊢ⁿᶠ ⫪
     pairⁿᶠ : ∀ {A B} → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ∧ B
 
+  -- Neutrals.
   infix 3 _⊢ⁿᵉ_
   data _⊢ⁿᵉ_ (Γ : Cx Ty) : Ty → Set where
     varⁿᵉ : ∀ {A}   → A ∈ Γ → Γ ⊢ⁿᵉ A
@@ -21,7 +23,7 @@ mutual
     sndⁿᵉ : ∀ {A B} → Γ ⊢ⁿᵉ A ∧ B → Γ ⊢ⁿᵉ B
 
 
--- Translation to terms.
+-- Translation to simple terms.
 
 mutual
   nf→tm : ∀ {A Γ} → Γ ⊢ⁿᶠ A → Γ ⊢ A

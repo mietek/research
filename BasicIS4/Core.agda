@@ -3,7 +3,7 @@ module BasicIS4.Core where
 open import Common.Context public
 
 
--- Connectives of intuitionistic modal logic S4, without disjunction, falsehood, and possibility.
+-- Propositions of intuitionistic modal logic S4, without disjunction, falsehood, or possibility.
 
 infixl 7 _∧_
 infixr 5 _▷_
