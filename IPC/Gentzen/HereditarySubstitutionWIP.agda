@@ -114,8 +114,10 @@ mutual
   [ i ≔ s ]ˢᵖ′ caseˢᵖ′ u v = caseˢᵖ′ ([ pop i ≔ mono⊢ⁿᶠ weak⊆ s ]ⁿᶠ u)
                                      ([ pop i ≔ mono⊢ⁿᶠ weak⊆ s ]ⁿᶠ v)
 
-  reduce : ∀ {A B C Γ} {{_ : Tyⁿᵉ C}} → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ A ⦙ B → Γ ⊢ˢᵖ′ B ⦙ C → Γ ⊢ⁿᶠ C
+  reduce : ∀ {A B C Γ} → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ A ⦙ B → Γ ⊢ˢᵖ′ B ⦙ C → {{_ : Tyⁿᵉ C}} → Γ ⊢ⁿᶠ C
   reduce t                                nilˢᵖ        nilˢᵖ′        = t
+  reduce (inlⁿᶠ t)                        nilˢᵖ        (caseˢᵖ′ u v) = [ top ≔ t ]ⁿᶠ u
+  reduce (inrⁿᶠ t)                        nilˢᵖ        (caseˢᵖ′ u v) = [ top ≔ t ]ⁿᶠ v
   reduce (neⁿᶠ (spⁿᵉ i xs nilˢᵖ′))        nilˢᵖ        ys            = neⁿᶠ (spⁿᵉ i xs ys)
   reduce (neⁿᶠ (spⁿᵉ i xs (caseˢᵖ′ u v))) nilˢᵖ        ys            = neⁿᶠ (spⁿᵉ i xs (caseˢᵖ′ u′ v′))
     where u′ = reduce u nilˢᵖ (mono⊢ˢᵖ′ weak⊆ ys)
@@ -126,8 +128,6 @@ mutual
   reduce (lamⁿᶠ t)                        (appˢᵖ xs u) ys            = reduce ([ top ≔ u ]ⁿᶠ t) xs ys
   reduce (pairⁿᶠ t u)                     (fstˢᵖ xs)   ys            = reduce t xs ys
   reduce (pairⁿᶠ t u)                     (sndˢᵖ xs)   ys            = reduce u xs ys
-  reduce (inlⁿᶠ t)                        nilˢᵖ        (caseˢᵖ′ u v) = [ top ≔ t ]ⁿᶠ u
-  reduce (inrⁿᶠ t)                        nilˢᵖ        (caseˢᵖ′ u v) = [ top ≔ t ]ⁿᶠ v
 
 
 -- Reduction-based normal forms.
