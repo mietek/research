@@ -87,7 +87,7 @@ import IPCWithDisjunction.Gentzen.Core
 import IPCWithDisjunction.Gentzen.TarskiSemantics
 import IPCWithDisjunction.Gentzen.KripkeSemantics.Core
 import IPCWithDisjunction.Gentzen.KripkeSemantics.BasicCompleteness
--- import IPCWithDisjunction.Gentzen.KripkeSemantics.CompletenessWIP
+import IPCWithDisjunction.Gentzen.KripkeSemantics.Completeness
 import IPCWithDisjunction.Translation
 
 import IS4.Core

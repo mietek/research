@@ -1,4 +1,4 @@
-module IPCWithDisjunction.Gentzen.KripkeSemantics.CompletenessWIP where
+module IPCWithDisjunction.Gentzen.KripkeSemantics.Completeness where
 
 open import IPCWithDisjunction.Gentzen.KripkeSemantics.Core public
 
@@ -73,7 +73,7 @@ instance
     ; trans≤  = trans⊆
     ; _⊪ᴬ_   = λ Γ P → Γ ⊢ⁿᵉ ᴬ P
     ; mono⊪ᴬ = mono⊢ⁿᵉ
-    ; _⁂_    = λ Γ A → Γ ⊢ⁿᵉ A
+    ; _⁂_    = λ Γ A → Γ ⊢ⁿᶠ A
     }
 
 
@@ -85,16 +85,18 @@ mutual
   reflect {A ▷ B} t = return {A ▷ B} (λ ξ a → reflect {B} (appⁿᵉ (mono⊢ⁿᵉ ξ t) (reify {A} a)))
   reflect {⫪}    t = return {⫪} tt
   reflect {A ∧ B} t = return {A ∧ B} (reflect {A} (fstⁿᵉ t) ∙ reflect {B} (sndⁿᵉ t))
-  reflect {A ∨ B} t = λ ξ k → caseⁿᵉ (mono⊢ⁿᵉ ξ t)
-                                 (neⁿᶠ (k weak⊆ (inj₁ (reflect {A} (varⁿᵉ top)))))
-                                 (neⁿᶠ (k weak⊆ (inj₂ (reflect {B} (varⁿᵉ top)))))
+  reflect {A ∨ B} t = λ ξ k → neⁿᶠ (caseⁿᵉ (mono⊢ⁿᵉ ξ t)
+                                       (k weak⊆ (inj₁ (reflect {A} (varⁿᵉ top))))
+                                       (k weak⊆ (inj₂ (reflect {B} (varⁿᵉ top)))))
 
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ⁿᶠ A
-  reify {ᴬ P}   k = neⁿᶠ (k refl≤ (λ ξ s → s))
-  reify {A ▷ B} k = {!!}
-  reify {⫪}    k = {!!}
-  reify {A ∧ B} k = {!!}
-  reify {A ∨ B} k = {!!}
+  reify {ᴬ P}   k = k refl≤ (λ ξ s   → neⁿᶠ s)
+  reify {A ▷ B} k = k refl≤ (λ ξ f   → lamⁿᶠ (reify {B} (f weak⊆ (reflect {A} (varⁿᵉ top)))))
+  reify {⫪}    k = k refl≤ (λ ξ u   → unitⁿᶠ)
+  reify {A ∧ B} k = k refl≤ (λ ξ a&b → pairⁿᶠ (reify {A} (proj₁ a&b)) (reify {B} (proj₂ a&b)))
+  reify {A ∨ B} k = k refl≤ (λ ξ a∣b → [ (λ a → inlⁿᶠ (reify {A} (λ ξ′ k′ → a ξ′ k′)))
+                                        ∙ (λ b → inrⁿᶠ (reify {B} (λ ξ′ k′ → b ξ′ k′)))
+                                        ] a∣b)
 
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
 refl⊩⋆ {⌀}     = tt

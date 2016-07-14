@@ -33,10 +33,10 @@ mutual
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
   reify {ᴬ P}   k = k refl≤ (λ ξ s   → s)
   reify {A ▷ B} k = k refl≤ (λ ξ f   → lam (reify {B} (f weak⊆ (reflect {A} (var top)))))
-  reify {⫪}    k = unit
+  reify {⫪}    k = k refl≤ (λ ξ u   → unit)
   reify {A ∧ B} k = k refl≤ (λ ξ a&b → pair (reify {A} (proj₁ a&b)) (reify {B} (proj₂ a&b)))
-  reify {A ∨ B} k = k refl≤ (λ ξ a∣b → [ (λ a → inl (reify {A} (λ ξ′ k → a ξ′ k)))
-                                        ∙ (λ b → inr (reify {B} (λ ξ′ k → b ξ′ k)))
+  reify {A ∨ B} k = k refl≤ (λ ξ a∣b → [ (λ a → inl (reify {A} (λ ξ′ k′ → a ξ′ k′)))
+                                        ∙ (λ b → inr (reify {B} (λ ξ′ k′ → b ξ′ k′)))
                                         ] a∣b)
 
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
