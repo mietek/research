@@ -1,6 +1,6 @@
-module IPCWithDisjunction.Gentzen.TarskiSemantics where
+module IPC.Gentzen.TarskiSemantics where
 
-open import IPCWithDisjunction.Gentzen.Core public
+open import IPC.Gentzen.Core public
 
 
 -- Intuitionistic Tarski models.
@@ -24,6 +24,7 @@ module _ {{_ : Model}} where
   ⊨ ⫪    = ⊤
   ⊨ A ∧ B = ⊨ A × ⊨ B
   ⊨ A ∨ B = ⊨ A ⊎ ⊨ B
+  ⊨ ⫫    = ⊥
 
   infix 3 ⊨⋆_
   ⊨⋆_ : Cx Ty → Set
@@ -57,6 +58,7 @@ eval (inr t)      γ = inj₂ (eval t γ)
 eval (case t u v) γ = [ (λ a → eval u (γ ∙ a))
                       ∙ (λ b → eval v (γ ∙ b))
                       ] (eval t γ)
+eval (boom t)     γ = elim⊥ (eval t γ)
 
 
 -- TODO: Correctness with respect to conversion.

@@ -1,6 +1,6 @@
-module IPCWithDisjunctionAndFalsehood.Gentzen.KripkeSemantics.BasicCompleteness where
+module IPC.Gentzen.KripkeSemantics.BasicCompleteness where
 
-open import IPCWithDisjunctionAndFalsehood.Gentzen.KripkeSemantics.Core public
+open import IPC.Gentzen.KripkeSemantics.Core public
 
 
 -- The canonical model.

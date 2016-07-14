@@ -1,6 +1,6 @@
-module IPCWithDisjunction.Hilbert.Sequential where
+module IPC.Hilbert.Sequential where
 
-open import IPCWithDisjunction.Core public
+open import IPC.Core public
 
 
 -- Proofs of IPC, as Hilbert-style combinator sequences.
@@ -20,6 +20,7 @@ data _⊢⋆_ (Γ : Cx Ty) : Cx Ty → Set where
   cinl  : ∀ {Π A B}   → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A ▷ A ∨ B
   cinr  : ∀ {Π A B}   → Γ ⊢⋆ Π → Γ ⊢⋆ Π , B ▷ A ∨ B
   ccase : ∀ {Π A B C} → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A ∨ B ▷ (A ▷ C) ▷ (B ▷ C) ▷ C
+  cboom : ∀ {Π C}     → Γ ⊢⋆ Π → Γ ⊢⋆ Π , ⫫ ▷ C
 
 infix 3 _⊢_
 _⊢_ : Cx Ty → Ty → Set
@@ -42,6 +43,7 @@ mono⊢⋆ η (csnd ts)   = csnd (mono⊢⋆ η ts)
 mono⊢⋆ η (cinl ts)   = cinl (mono⊢⋆ η ts)
 mono⊢⋆ η (cinr ts)   = cinr (mono⊢⋆ η ts)
 mono⊢⋆ η (ccase ts)  = ccase (mono⊢⋆ η ts)
+mono⊢⋆ η (cboom ts)  = cboom (mono⊢⋆ η ts)
 
 mono⊢ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
 mono⊢ η (Π ∙ ts) = Π ∙ mono⊢⋆ η ts
@@ -63,6 +65,7 @@ us ⧻ csnd ts   = csnd (us ⧻ ts)
 us ⧻ cinl ts   = cinl (us ⧻ ts)
 us ⧻ cinr ts   = cinr (us ⧻ ts)
 us ⧻ ccase ts  = ccase (us ⧻ ts)
+us ⧻ cboom ts  = cboom (us ⧻ ts)
 
 
 -- Modus ponens in expanded form.

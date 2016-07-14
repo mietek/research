@@ -1,4 +1,4 @@
-module IPCWithDisjunctionAndFalsehood.Core where
+module IPC.Core where
 
 open import Common.Context public
 

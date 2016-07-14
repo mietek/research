@@ -80,25 +80,15 @@ import BasicIPC.Gentzen.KripkeSemantics.Completeness
 import BasicIPC.Gentzen.HereditarySubstitution
 import BasicIPC.Translation
 
-import IPCWithDisjunction.Core
-import IPCWithDisjunction.Hilbert.Sequential
-import IPCWithDisjunction.Hilbert.Nested
-import IPCWithDisjunction.Gentzen.Core
-import IPCWithDisjunction.Gentzen.TarskiSemantics
-import IPCWithDisjunction.Gentzen.KripkeSemantics.Core
-import IPCWithDisjunction.Gentzen.KripkeSemantics.BasicCompleteness
-import IPCWithDisjunction.Gentzen.KripkeSemantics.Completeness
-import IPCWithDisjunction.Translation
-
-import IPCWithDisjunctionAndFalsehood.Core
-import IPCWithDisjunctionAndFalsehood.Hilbert.Sequential
-import IPCWithDisjunctionAndFalsehood.Hilbert.Nested
-import IPCWithDisjunctionAndFalsehood.Gentzen.Core
-import IPCWithDisjunctionAndFalsehood.Gentzen.TarskiSemantics
-import IPCWithDisjunctionAndFalsehood.Gentzen.KripkeSemantics.Core
-import IPCWithDisjunctionAndFalsehood.Gentzen.KripkeSemantics.BasicCompleteness
-import IPCWithDisjunctionAndFalsehood.Gentzen.KripkeSemantics.Completeness
-import IPCWithDisjunctionAndFalsehood.Translation
+import IPC.Core
+import IPC.Hilbert.Sequential
+import IPC.Hilbert.Nested
+import IPC.Gentzen.Core
+import IPC.Gentzen.TarskiSemantics
+import IPC.Gentzen.KripkeSemantics.Core
+import IPC.Gentzen.KripkeSemantics.BasicCompleteness
+import IPC.Gentzen.KripkeSemantics.Completeness
+import IPC.Translation
 
 import IS4.Core
 import IS4.Dual.Hilbert.Sequential

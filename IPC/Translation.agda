@@ -1,10 +1,10 @@
-module IPCWithDisjunctionAndFalsehood.Translation where
+module IPC.Translation where
 
-open import IPCWithDisjunctionAndFalsehood.Core public
+open import IPC.Core public
 
-import IPCWithDisjunctionAndFalsehood.Hilbert.Sequential as HS
-import IPCWithDisjunctionAndFalsehood.Hilbert.Nested as HN
-import IPCWithDisjunctionAndFalsehood.Gentzen.Core as G
+import IPC.Hilbert.Sequential as HS
+import IPC.Hilbert.Nested as HN
+import IPC.Gentzen.Core as G
 
 open HS using () renaming (_⊢⋆_ to HS⟨_⊢⋆_⟩ ; _⊢_ to HS⟨_⊢_⟩) public
 open HN using () renaming (_⊢_ to HN⟨_⊢_⟩) public

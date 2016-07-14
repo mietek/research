@@ -1,6 +1,6 @@
-module IPCWithDisjunction.Gentzen.KripkeSemantics.Completeness where
+module IPC.Gentzen.KripkeSemantics.Completeness where
 
-open import IPCWithDisjunction.Gentzen.KripkeSemantics.Core public
+open import IPC.Gentzen.KripkeSemantics.Core public
 
 
 -- Normal forms and neutrals.
@@ -22,6 +22,7 @@ mutual
     fstⁿᵉ  : ∀ {A B}   → Γ ⊢ⁿᵉ A ∧ B → Γ ⊢ⁿᵉ A
     sndⁿᵉ  : ∀ {A B}   → Γ ⊢ⁿᵉ A ∧ B → Γ ⊢ⁿᵉ B
     caseⁿᵉ : ∀ {A B C} → Γ ⊢ⁿᵉ A ∨ B → Γ , A ⊢ⁿᶠ C → Γ , B ⊢ⁿᶠ C → Γ ⊢ⁿᵉ C
+    boomⁿᵉ : ∀ {C}     → Γ ⊢ⁿᵉ ⫫ → Γ ⊢ⁿᵉ C
 
 
 -- Translation to terms.
@@ -41,6 +42,7 @@ mutual
   ne→tm (fstⁿᵉ t)      = fst (ne→tm t)
   ne→tm (sndⁿᵉ t)      = snd (ne→tm t)
   ne→tm (caseⁿᵉ t u v) = case (ne→tm t) (nf→tm u) (nf→tm v)
+  ne→tm (boomⁿᵉ t)     = boom (ne→tm t)
 
 
 -- Monotonicity with respect to context inclusion.
@@ -60,6 +62,7 @@ mutual
   mono⊢ⁿᵉ η (fstⁿᵉ t)      = fstⁿᵉ (mono⊢ⁿᵉ η t)
   mono⊢ⁿᵉ η (sndⁿᵉ t)      = sndⁿᵉ (mono⊢ⁿᵉ η t)
   mono⊢ⁿᵉ η (caseⁿᵉ t u v) = caseⁿᵉ (mono⊢ⁿᵉ η t) (mono⊢ⁿᶠ (keep η) u) (mono⊢ⁿᶠ (keep η) v)
+  mono⊢ⁿᵉ η (boomⁿᵉ t)     = boomⁿᵉ (mono⊢ⁿᵉ η t)
 
 
 -- The canonical model.
@@ -88,6 +91,7 @@ mutual
   reflect {A ∨ B} t = λ ξ k → neⁿᶠ (caseⁿᵉ (mono⊢ⁿᵉ ξ t)
                                        (k weak⊆ (inj₁ (reflect {A} (varⁿᵉ top))))
                                        (k weak⊆ (inj₂ (reflect {B} (varⁿᵉ top)))))
+  reflect {⫫}    t = λ ξ k → neⁿᶠ (boomⁿᵉ (mono⊢ⁿᵉ ξ t))
 
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ⁿᶠ A
   reify {ᴬ P}   k = k refl≤ (λ ξ s   → neⁿᶠ s)
@@ -97,6 +101,7 @@ mutual
   reify {A ∨ B} k = k refl≤ (λ ξ a∣b → [ (λ a → inlⁿᶠ (reify {A} (λ ξ′ k′ → a ξ′ k′)))
                                         ∙ (λ b → inrⁿᶠ (reify {B} (λ ξ′ k′ → b ξ′ k′)))
                                         ] a∣b)
+  reify {⫫}    k = k refl≤ (λ ξ ())
 
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
 refl⊩⋆ {⌀}     = tt

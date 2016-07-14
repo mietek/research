@@ -1,6 +1,6 @@
-module IPCWithDisjunctionAndFalsehood.Gentzen.KripkeSemantics.Core where
+module IPC.Gentzen.KripkeSemantics.Core where
 
-open import IPCWithDisjunctionAndFalsehood.Gentzen.Core public
+open import IPC.Gentzen.Core public
 
 
 -- Intuitionistic Kripke-CPS models, following Ilik.

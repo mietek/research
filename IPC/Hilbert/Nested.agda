@@ -1,6 +1,6 @@
-module IPCWithDisjunction.Hilbert.Nested where
+module IPC.Hilbert.Nested where
 
-open import IPCWithDisjunction.Core public
+open import IPC.Core public
 
 
 -- Proofs of IPC, as Hilbert-style combinator trees.
@@ -19,6 +19,7 @@ data _⊢_ (Γ : Cx Ty) : Ty → Set where
   cinl  : ∀ {A B}   → Γ ⊢ A ▷ A ∨ B
   cinr  : ∀ {A B}   → Γ ⊢ B ▷ A ∨ B
   ccase : ∀ {A B C} → Γ ⊢ A ∨ B ▷ (A ▷ C) ▷ (B ▷ C) ▷ C
+  cboom : ∀ {C}     → Γ ⊢ ⫫ ▷ C
 
 
 -- Monotonicity with respect to context inclusion.
@@ -36,6 +37,7 @@ mono⊢ η csnd      = csnd
 mono⊢ η cinl      = cinl
 mono⊢ η cinr      = cinr
 mono⊢ η ccase     = ccase
+mono⊢ η cboom     = cboom
 
 
 -- Shorthand for variables.
@@ -66,6 +68,7 @@ lam csnd          = app ck csnd
 lam cinl          = app ck cinl
 lam cinr          = app ck cinr
 lam ccase         = app ck ccase
+lam cboom         = app ck cboom
 
 
 -- Detachment theorem.
@@ -120,6 +123,9 @@ inr t = app cinr t
 
 case : ∀ {A B C Γ} → Γ ⊢ A ∨ B → Γ , A ⊢ C → Γ , B ⊢ C → Γ ⊢ C
 case t u v = app (app (app ccase t) (lam u)) (lam v)
+
+boom : ∀ {C Γ} → Γ ⊢ ⫫ → Γ ⊢ C
+boom t = app cboom t
 
 
 -- Closure under context concatenation.

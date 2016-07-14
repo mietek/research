@@ -1,6 +1,6 @@
-module IPCWithDisjunction.Gentzen.Core where
+module IPC.Gentzen.Core where
 
-open import IPCWithDisjunction.Core public
+open import IPC.Core public
 
 
 -- Proofs of IPC, as Gentzen-style natural deduction trees.
@@ -17,6 +17,7 @@ data _⊢_ (Γ : Cx Ty) : Ty → Set where
   inl  : ∀ {A B}   → Γ ⊢ A → Γ ⊢ A ∨ B
   inr  : ∀ {A B}   → Γ ⊢ B → Γ ⊢ A ∨ B
   case : ∀ {A B C} → Γ ⊢ A ∨ B → Γ , A ⊢ C → Γ , B ⊢ C → Γ ⊢ C
+  boom : ∀ {C}     → Γ ⊢ ⫫ → Γ ⊢ C
 
 
 -- Monotonicity with respect to context inclusion.
@@ -32,6 +33,7 @@ mono⊢ η (snd t)      = snd (mono⊢ η t)
 mono⊢ η (inl t)      = inl (mono⊢ η t)
 mono⊢ η (inr t)      = inr (mono⊢ η t)
 mono⊢ η (case t u v) = case (mono⊢ η t) (mono⊢ (keep η) u) (mono⊢ (keep η) v)
+mono⊢ η (boom t)     = boom (mono⊢ η t)
 
 
 -- Shorthand for variables.
@@ -110,6 +112,9 @@ cinr = lam (inr v₀)
 ccase : ∀ {A B C Γ} → Γ ⊢ A ∨ B ▷ (A ▷ C) ▷ (B ▷ C) ▷ C
 ccase = lam (lam (lam (case v₂ (det v₁) (det v₀))))
 
+cboom : ∀ {C Γ} → Γ ⊢ ⫫ ▷ C
+cboom = lam (boom v₀)
+
 
 -- Closure under context concatenation.
 
@@ -132,6 +137,7 @@ concat Γ′ t u = app (mono⊢ (weak⊆⧺ₗ Γ′) (lam t)) (mono⊢ weak⊆�
 [ i ≔ s ] inl t      = inl ([ i ≔ s ] t)
 [ i ≔ s ] inr t      = inr ([ i ≔ s ] t)
 [ i ≔ s ] case t u v = case ([ i ≔ s ] t) ([ pop i ≔ mono⊢ weak⊆ s ] u) ([ pop i ≔ mono⊢ weak⊆ s ] v)
+[ i ≔ s ] boom t     = boom ([ i ≔ s ] t)
 
 
 -- TODO: Conversion.
