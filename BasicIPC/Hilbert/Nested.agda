@@ -1,6 +1,6 @@
-module IPC.Hilbert.Nested where
+module BasicIPC.Hilbert.Nested where
 
-open import IPC.Core public
+open import BasicIPC.Core public
 
 
 -- Proofs of IPC, as Hilbert-style combinator trees.

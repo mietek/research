@@ -1,6 +1,6 @@
-module IPC.Hilbert.Sequential where
+module BasicIPC.Hilbert.Sequential where
 
-open import IPC.Core public
+open import BasicIPC.Core public
 
 
 -- Proofs of IPC, as Hilbert-style combinator sequences.

@@ -1,6 +1,6 @@
-module IPC.Gentzen.HereditarySubstitution where
+module BasicIPC.Gentzen.HereditarySubstitution where
 
-open import IPC.Gentzen.Core public
+open import BasicIPC.Gentzen.Core public
 
 
 -- Normal forms, neutrals, and spines.

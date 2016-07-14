@@ -1,6 +1,6 @@
-module IPC.Gentzen.KripkeSemantics.Completeness where
+module BasicIPC.Gentzen.KripkeSemantics.Completeness where
 
-open import IPC.Gentzen.KripkeSemantics.Core public
+open import BasicIPC.Gentzen.KripkeSemantics.Core public
 
 
 -- Normal forms and neutrals.

@@ -1,6 +1,6 @@
-module IPC.Gentzen.Core where
+module BasicIPC.Gentzen.Core where
 
-open import IPC.Core public
+open import BasicIPC.Core public
 
 
 -- Proofs of IPC, as Gentzen-style natural deduction trees.

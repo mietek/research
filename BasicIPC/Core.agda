@@ -1,9 +1,9 @@
-module IPC.Core where
+module BasicIPC.Core where
 
 open import Common.Context public
 
 
--- Propositions of intuitionistic propositional calculus (IPC).
+-- Propositions of intuitionistic propositional calculus (IPC), without disjunction and falsehood.
 
 infixl 7 _∧_
 infixr 5 _▷_

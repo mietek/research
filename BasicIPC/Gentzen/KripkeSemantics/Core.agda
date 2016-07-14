@@ -1,6 +1,6 @@
-module IPC.Gentzen.KripkeSemantics.Core where
+module BasicIPC.Gentzen.KripkeSemantics.Core where
 
-open import IPC.Gentzen.Core public
+open import BasicIPC.Gentzen.Core public
 
 
 -- Intuitionistic Kripke models.

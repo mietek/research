@@ -1,6 +1,6 @@
-module IPC.Gentzen.KripkeSemantics.BasicCompleteness where
+module BasicIPC.Gentzen.KripkeSemantics.BasicCompleteness where
 
-open import IPC.Gentzen.KripkeSemantics.Core public
+open import BasicIPC.Gentzen.KripkeSemantics.Core public
 
 
 -- The canonical model.

@@ -69,16 +69,16 @@ module README where
 import Common.Core
 import Common.Context
 
-import IPC.Core
-import IPC.Hilbert.Sequential
-import IPC.Hilbert.Nested
-import IPC.Gentzen.Core
-import IPC.Gentzen.TarskiSemantics
-import IPC.Gentzen.KripkeSemantics.Core
-import IPC.Gentzen.KripkeSemantics.BasicCompleteness
-import IPC.Gentzen.KripkeSemantics.Completeness
-import IPC.Gentzen.HereditarySubstitution
-import IPC.Translation
+import BasicIPC.Core
+import BasicIPC.Hilbert.Sequential
+import BasicIPC.Hilbert.Nested
+import BasicIPC.Gentzen.Core
+import BasicIPC.Gentzen.TarskiSemantics
+import BasicIPC.Gentzen.KripkeSemantics.Core
+import BasicIPC.Gentzen.KripkeSemantics.BasicCompleteness
+import BasicIPC.Gentzen.KripkeSemantics.Completeness
+import BasicIPC.Gentzen.HereditarySubstitution
+import BasicIPC.Translation
 
 import IPCWithDisjunction.Core
 import IPCWithDisjunction.Hilbert.Sequential
