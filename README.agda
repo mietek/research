@@ -90,6 +90,16 @@ import IPCWithDisjunction.Gentzen.KripkeSemantics.BasicCompleteness
 import IPCWithDisjunction.Gentzen.KripkeSemantics.Completeness
 import IPCWithDisjunction.Translation
 
+import IPCWithDisjunctionAndFalsehood.Core
+import IPCWithDisjunctionAndFalsehood.Hilbert.Sequential
+import IPCWithDisjunctionAndFalsehood.Hilbert.Nested
+import IPCWithDisjunctionAndFalsehood.Gentzen.Core
+import IPCWithDisjunctionAndFalsehood.Gentzen.TarskiSemantics
+import IPCWithDisjunctionAndFalsehood.Gentzen.KripkeSemantics.Core
+import IPCWithDisjunctionAndFalsehood.Gentzen.KripkeSemantics.BasicCompleteness
+import IPCWithDisjunctionAndFalsehood.Gentzen.KripkeSemantics.Completeness
+import IPCWithDisjunctionAndFalsehood.Translation
+
 import IS4.Core
 import IS4.Dual.Hilbert.Sequential
 import IS4.Dual.Hilbert.Nested

@@ -6,6 +6,7 @@ open import Agda.Builtin.Size public
 
 open import Data.Empty public
   using (⊥)
+  renaming (⊥-elim to elim⊥)
 
 open import Data.Product public
   using (Σ ; _×_ ; proj₁ ; proj₂)
