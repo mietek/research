@@ -165,6 +165,8 @@ data _⇒_ : ∀ {A Γ} → Γ ⊢ A → Γ ⊢ A → Set where
                → t ⇒ t′ → inr {A = A} t ⇒ inr t′
   cong⇒case : ∀ {A B C Γ} {t t′ : Γ ⊢ A ∨ B} {u u′ : Γ , A ⊢ C} {v v′ : Γ , B ⊢ C}
                → t ⇒ t′ → u ⇒ u′ → v ⇒ v′ → case t u v ⇒ case t′ u′ v′
+  cong⇒boom : ∀ {C Γ} {t t′ : Γ ⊢ ⫫}
+               → t ⇒ t′ → boom {C = C} t ⇒ boom t′
   conv⇒lam  : ∀ {A B Γ} {t : Γ ⊢ A ▷ B}
                → t ⇒ lam (app (mono⊢ weak⊆ t) (var top))
   conv⇒app  : ∀ {A B Γ} {t : Γ , A ⊢ B} {u : Γ ⊢ A}

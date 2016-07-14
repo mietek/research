@@ -123,6 +123,7 @@ eval (boom {C} t)             γ = bind {⫫} {C} (eval t γ) (λ ξ ())
 --   coco (cong⇒inl p)      = cong {!!} (coco p)
 --   coco (cong⇒inr p)      = cong {!!} (coco p)
 --   coco (cong⇒case p q r) = cong₃ {!!} (coco p) (coco q) (coco r)
+--   coco (cong⇒boom p)     = cong {!!} (coco p)
 --   coco conv⇒lam          = {!!}
 --   coco conv⇒app          = {!!}
 --   coco conv⇒unit         = {!!}

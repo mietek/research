@@ -75,7 +75,10 @@ eval (boom t)     γ = elim⊥ (eval t γ)
 --   coco (cong⇒snd p)      = cong (λ f γ → proj₂ (f γ)) (coco p)
 --   coco (cong⇒inl p)      = cong (λ f γ → inj₁ (f γ)) (coco p)
 --   coco (cong⇒inr p)      = cong (λ f γ → inj₂ (f γ)) (coco p)
---   coco (cong⇒case p q r) = cong₃ (λ f g h γ → {!!}) (coco p) (coco q) (coco r)
+--   coco (cong⇒case p q r) = cong₃ (λ f g h γ → [ (λ a → g (γ ∙ a))
+--                                                 ∙ (λ b → h (γ ∙ b))
+--                                                 ] (f γ)) (coco p) (coco q) (coco r)
+--   coco (cong⇒boom p)     = cong (λ f γ → elim⊥ (f γ)) (coco p)
 --   coco conv⇒lam          = {!refl!}
 --   coco conv⇒app          = {!refl!}
 --   coco conv⇒unit         = refl
