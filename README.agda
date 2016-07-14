@@ -93,6 +93,7 @@ import IPC.Gentzen.TarskiSemantics
 import IPC.Gentzen.KripkeSemantics.Core
 import IPC.Gentzen.KripkeSemantics.BasicCompleteness
 import IPC.Gentzen.KripkeSemantics.Completeness
+-- import IPC.Gentzen.HereditarySubstitutionWIP
 import IPC.Translation
 
 import BasicIS4.Core
