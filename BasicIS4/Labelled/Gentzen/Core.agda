@@ -1,6 +1,6 @@
-module IS4.Labelled.Gentzen where
+module BasicIS4.Labelled.Gentzen.Core where
 
-open import IS4.Core public
+open import BasicIS4.Core public
 
 
 -- Labels, as in Gabbay’s labelled deductive systems (LDS).

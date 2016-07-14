@@ -1,9 +1,9 @@
-module IS4.TranslationWIP where
+module BasicIS4.TranslationWIP where
 
-open import IS4.Core public
+open import BasicIS4.Core public
 
-import IS4.Dual.Gentzen as DG
-import IS4.Labelled.Gentzen as LG
+import BasicIS4.Dual.Gentzen.Core as DG
+import BasicIS4.Labelled.Gentzen.Core as LG
 
 open DG using () renaming (_⨾_⊢_ to DG⟨_⨾_⊢_⟩) public
 open LG using (_≤_ ; _⦂_) renaming (_⨾_⊢_⦂_ to LG⟨_⨾_⊢_⦂_⟩ ; _⊢_≤_ to LG⟨_⊢_≤_⟩) public

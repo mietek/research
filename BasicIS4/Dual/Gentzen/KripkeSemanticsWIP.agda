@@ -1,6 +1,6 @@
-module IS4.Dual.Semantics.KripkeWIP where
+module BasicIS4.Dual.Gentzen.KripkeSemanticsWIP where
 
-open import IS4.Dual.Gentzen public
+open import BasicIS4.Dual.Gentzen.Core public
 
 
 -- Non-standard intuitionistic modal Kripke models, based on Marti and Studer.

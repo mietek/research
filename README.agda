@@ -90,11 +90,11 @@ import IPC.Gentzen.KripkeSemantics.BasicCompleteness
 import IPC.Gentzen.KripkeSemantics.Completeness
 import IPC.Translation
 
-import IS4.Core
-import IS4.Dual.Hilbert.Sequential
-import IS4.Dual.Hilbert.Nested
-import IS4.Dual.Gentzen
-import IS4.Dual.Translation
--- import IS4.Dual.Semantics.KripkeWIP
-import IS4.Labelled.Gentzen
--- import IS4.TranslationWIP
+import BasicIS4.Core
+import BasicIS4.Dual.Hilbert.Sequential
+import BasicIS4.Dual.Hilbert.Nested
+import BasicIS4.Dual.Gentzen.Core
+-- import BasicIS4.Dual.Gentzen.KripkeSemanticsWIP
+import BasicIS4.Dual.Translation
+import BasicIS4.Labelled.Gentzen.Core
+-- import BasicIS4.TranslationWIP

@@ -1,6 +1,6 @@
-module IS4.Dual.Gentzen where
+module BasicIS4.Dual.Gentzen.Core where
 
-open import IS4.Core public
+open import BasicIS4.Core public
 
 
 -- Proofs of IS4, as Gentzen-style natural deduction trees, following Pfenning and Davies.

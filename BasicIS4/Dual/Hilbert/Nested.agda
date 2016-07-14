@@ -1,6 +1,6 @@
-module IS4.Dual.Hilbert.Nested where
+module BasicIS4.Dual.Hilbert.Nested where
 
-open import IS4.Core public
+open import BasicIS4.Core public
 
 
 -- Proofs of IS4, as Hilbert-style combinator trees.
