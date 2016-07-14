@@ -36,8 +36,8 @@ mutual
 
   infix 3 _⊢ˢᵖ′_⦙_
   data _⊢ˢᵖ′_⦙_ (Γ : Cx Ty) : Ty → Ty → Set where
-    nilˢᵖ′  : ∀ {C}     → Γ ⊢ˢᵖ′ C ⦙ C
-    caseˢᵖ′ : ∀ {A B C} → Γ , A ⊢ⁿᶠ C → Γ , B ⊢ⁿᶠ C → Γ ⊢ˢᵖ′ A ∨ B ⦙ C
+    nothingˢᵖ′ : ∀ {C}     → Γ ⊢ˢᵖ′ C ⦙ C
+    caseˢᵖ′    : ∀ {A B C} → Γ , A ⊢ⁿᶠ C → Γ , B ⊢ⁿᶠ C → Γ ⊢ˢᵖ′ A ∨ B ⦙ C
 
 
 -- Translation to terms.
@@ -61,7 +61,7 @@ mutual
   sp→tm t (sndˢᵖ xs)   = sp→tm (snd t) xs
 
   sp→tm′ : ∀ {A B C Γ} → Γ ⊢ A → Γ ⊢ˢᵖ A ⦙ B → Γ ⊢ˢᵖ′ B ⦙ C → Γ ⊢ C
-  sp→tm′ t xs nilˢᵖ′        = sp→tm t xs
+  sp→tm′ t xs nothingˢᵖ′    = sp→tm t xs
   sp→tm′ t xs (caseˢᵖ′ u v) = case (sp→tm t xs) (nf→tm u) (nf→tm v)
 
 
@@ -86,7 +86,7 @@ mutual
   mono⊢ˢᵖ η (sndˢᵖ xs)   = sndˢᵖ (mono⊢ˢᵖ η xs)
 
   mono⊢ˢᵖ′ : ∀ {A C Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ˢᵖ′ A ⦙ C → Γ′ ⊢ˢᵖ′ A ⦙ C
-  mono⊢ˢᵖ′ η nilˢᵖ′        = nilˢᵖ′
+  mono⊢ˢᵖ′ η nothingˢᵖ′    = nothingˢᵖ′
   mono⊢ˢᵖ′ η (caseˢᵖ′ u v) = caseˢᵖ′ (mono⊢ⁿᶠ (keep η) u) (mono⊢ⁿᶠ (keep η) v)
 
 
@@ -110,15 +110,15 @@ mutual
   [ i ≔ s ]ˢᵖ sndˢᵖ xs   = sndˢᵖ ([ i ≔ s ]ˢᵖ xs)
 
   [_≔_]ˢᵖ′_ : ∀ {A B C Γ} → (i : A ∈ Γ) → Γ - i ⊢ⁿᶠ A → Γ ⊢ˢᵖ′ B ⦙ C → Γ - i ⊢ˢᵖ′ B ⦙ C
-  [ i ≔ s ]ˢᵖ′ nilˢᵖ′      = nilˢᵖ′
+  [ i ≔ s ]ˢᵖ′ nothingˢᵖ′  = nothingˢᵖ′
   [ i ≔ s ]ˢᵖ′ caseˢᵖ′ u v = caseˢᵖ′ ([ pop i ≔ mono⊢ⁿᶠ weak⊆ s ]ⁿᶠ u)
                                      ([ pop i ≔ mono⊢ⁿᶠ weak⊆ s ]ⁿᶠ v)
 
   reduce : ∀ {A B C Γ} → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ A ⦙ B → Γ ⊢ˢᵖ′ B ⦙ C → {{_ : Tyⁿᵉ C}} → Γ ⊢ⁿᶠ C
-  reduce t                                nilˢᵖ        nilˢᵖ′        = t
+  reduce t                                nilˢᵖ        nothingˢᵖ′    = t
   reduce (inlⁿᶠ t)                        nilˢᵖ        (caseˢᵖ′ u v) = [ top ≔ t ]ⁿᶠ u
   reduce (inrⁿᶠ t)                        nilˢᵖ        (caseˢᵖ′ u v) = [ top ≔ t ]ⁿᶠ v
-  reduce (neⁿᶠ (spⁿᵉ i xs nilˢᵖ′))        nilˢᵖ        ys            = neⁿᶠ (spⁿᵉ i xs ys)
+  reduce (neⁿᶠ (spⁿᵉ i xs nothingˢᵖ′))    nilˢᵖ        ys            = neⁿᶠ (spⁿᵉ i xs ys)
   reduce (neⁿᶠ (spⁿᵉ i xs (caseˢᵖ′ u v))) nilˢᵖ        ys            = neⁿᶠ (spⁿᵉ i xs (caseˢᵖ′ u′ v′))
     where u′ = reduce u nilˢᵖ (mono⊢ˢᵖ′ weak⊆ ys)
           v′ = reduce v nilˢᵖ (mono⊢ˢᵖ′ weak⊆ ys)
@@ -169,19 +169,19 @@ sndⁿᶠ (pairⁿᶠ t u) = u
 -- Derived neutrals.
 
 varⁿᵉ : ∀ {A Γ} → A ∈ Γ → Γ ⊢ⁿᵉ A
-varⁿᵉ i = spⁿᵉ i nilˢᵖ nilˢᵖ′
+varⁿᵉ i = spⁿᵉ i nilˢᵖ nothingˢᵖ′
 
 appⁿᵉ : ∀ {A B Γ} → Γ ⊢ⁿᵉ A ▷ B → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᵉ B
-appⁿᵉ (spⁿᵉ i xs nilˢᵖ′)        t = spⁿᵉ i (≪app xs t) nilˢᵖ′
+appⁿᵉ (spⁿᵉ i xs nothingˢᵖ′)    t = spⁿᵉ i (≪app xs t) nothingˢᵖ′
 appⁿᵉ (spⁿᵉ i xs (caseˢᵖ′ u v)) t = spⁿᵉ i xs (caseˢᵖ′ (appⁿᶠ u (mono⊢ⁿᶠ weak⊆ t))
                                                        (appⁿᶠ v (mono⊢ⁿᶠ weak⊆ t)))
 
 fstⁿᵉ : ∀ {A B Γ} → Γ ⊢ⁿᵉ A ∧ B → Γ ⊢ⁿᵉ A
-fstⁿᵉ (spⁿᵉ i xs nilˢᵖ′)        = spⁿᵉ i (≪fst xs) nilˢᵖ′
+fstⁿᵉ (spⁿᵉ i xs nothingˢᵖ′)    = spⁿᵉ i (≪fst xs) nothingˢᵖ′
 fstⁿᵉ (spⁿᵉ i xs (caseˢᵖ′ u v)) = spⁿᵉ i xs (caseˢᵖ′ (fstⁿᶠ u) (fstⁿᶠ v))
 
 sndⁿᵉ : ∀ {A B Γ} → Γ ⊢ⁿᵉ A ∧ B → Γ ⊢ⁿᵉ B
-sndⁿᵉ (spⁿᵉ i xs nilˢᵖ′)        = spⁿᵉ i (≪snd xs) nilˢᵖ′
+sndⁿᵉ (spⁿᵉ i xs nothingˢᵖ′)    = spⁿᵉ i (≪snd xs) nothingˢᵖ′
 sndⁿᵉ (spⁿᵉ i xs (caseˢᵖ′ u v)) = spⁿᵉ i xs (caseˢᵖ′ (sndⁿᶠ u) (sndⁿᶠ v))
 
 
@@ -208,7 +208,7 @@ mutual
   caseⁿᶠ (inrⁿᶠ t) u v = [ top ≔ t ]ⁿᶠ v
 
   caseⁿᵉ : ∀ {A B C Γ} → Γ ⊢ⁿᵉ A ∨ B → Γ , A ⊢ⁿᶠ C → Γ , B ⊢ⁿᶠ C → Γ ⊢ⁿᵉ C
-  caseⁿᵉ (spⁿᵉ i xs nilˢᵖ′)          u v = spⁿᵉ i xs (caseˢᵖ′ u v)
+  caseⁿᵉ (spⁿᵉ i xs nothingˢᵖ′)      u v = spⁿᵉ i xs (caseˢᵖ′ u v)
   caseⁿᵉ (spⁿᵉ i xs (caseˢᵖ′ t₁ t₂)) u v = spⁿᵉ i xs (caseˢᵖ′ u′ v′)
     where u′ = caseⁿᶠ t₁ (mono⊢ⁿᶠ (keep weak⊆) u) (mono⊢ⁿᶠ (keep weak⊆) v)
           v′ = caseⁿᶠ t₂ (mono⊢ⁿᶠ (keep weak⊆) u) (mono⊢ⁿᶠ (keep weak⊆) v)
