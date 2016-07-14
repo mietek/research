@@ -17,33 +17,33 @@ open Model {{…}} public
 -- Truth for propositions and contexts.
 
 module _ {{_ : Model}} where
-  infix 3 ⊨ᵀ_
-  ⊨ᵀ_ : Ty → Set
-  ⊨ᵀ ᴬ P   = ⊨ᴬ P
-  ⊨ᵀ A ▷ B = ⊨ᵀ A → ⊨ᵀ B
-  ⊨ᵀ ⫪    = ⊤
-  ⊨ᵀ A ∧ B = ⊨ᵀ A × ⊨ᵀ B
+  infix 3 ⊨_
+  ⊨_ : Ty → Set
+  ⊨ ᴬ P   = ⊨ᴬ P
+  ⊨ A ▷ B = ⊨ A → ⊨ B
+  ⊨ ⫪    = ⊤
+  ⊨ A ∧ B = ⊨ A × ⊨ B
 
-  infix 3 ⊨ᴳ_
-  ⊨ᴳ_ : Cx Ty → Set
-  ⊨ᴳ ⌀     = ⊤
-  ⊨ᴳ Γ , A = ⊨ᴳ Γ × ⊨ᵀ A
+  infix 3 ⊨⋆_
+  ⊨⋆_ : Cx Ty → Set
+  ⊨⋆ ⌀     = ⊤
+  ⊨⋆ Γ , A = ⊨⋆ Γ × ⊨ A
 
 
 -- Truth in all models.
 
-infix 3 _⊨_
-_⊨_ : Cx Ty → Ty → Set₁
-Γ ⊨ A = ∀ {{_ : Model}} → ⊨ᴳ Γ → ⊨ᵀ A
+infix 3 _ᴹ⊨_
+_ᴹ⊨_ : Cx Ty → Ty → Set₁
+Γ ᴹ⊨ A = ∀ {{_ : Model}} → ⊨⋆ Γ → ⊨ A
 
 
 -- Soundness, or evaluation.
 
-lookup : ∀ {A Γ} → A ∈ Γ → Γ ⊨ A
+lookup : ∀ {A Γ} → A ∈ Γ → Γ ᴹ⊨ A
 lookup top     (γ ∙ a) = a
 lookup (pop i) (γ ∙ b) = lookup i γ
 
-eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
+eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊨ A
 eval (var i)    γ = lookup i γ
 eval (lam t)    γ = λ a → eval t (γ ∙ a)
 eval (app t u)  γ = (eval t γ) (eval u γ)

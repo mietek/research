@@ -6,7 +6,7 @@ import IS4.Dual.Hilbert.Sequential as HS
 import IS4.Dual.Hilbert.Nested as HN
 import IS4.Dual.Gentzen as G
 
-open HS using () renaming (_⨾_⊢*_ to HS⟨_⨾_⊢*_⟩ ; _⨾_⊢_ to HS⟨_⨾_⊢_⟩) public
+open HS using () renaming (_⨾_⊢⋆_ to HS⟨_⨾_⊢⋆_⟩ ; _⨾_⊢_ to HS⟨_⨾_⊢_⟩) public
 open HN using () renaming (_⨾_⊢_ to HN⟨_⨾_⊢_⟩) public
 open G using () renaming (_⨾_⊢_ to G⟨_⨾_⊢_⟩) public
 
@@ -16,7 +16,7 @@ open G using () renaming (_⨾_⊢_ to G⟨_⨾_⊢_⟩) public
 hl→hn : ∀ {A Γ Δ} → HS⟨ Γ ⨾ Δ ⊢ A ⟩ → HN⟨ Γ ⨾ Δ ⊢ A ⟩
 hl→hn (Π ∙ ts) = aux ts top
   where
-    aux : ∀ {A Γ Δ Π} → HS⟨ Γ ⨾ Δ ⊢* Π ⟩ → A ∈ Π → HN⟨ Γ ⨾ Δ ⊢ A ⟩
+    aux : ∀ {A Γ Δ Π} → HS⟨ Γ ⨾ Δ ⊢⋆ Π ⟩ → A ∈ Π → HN⟨ Γ ⨾ Δ ⊢ A ⟩
     aux (HS.var i ts)        top     = HN.var i
     aux (HS.mp i j ts)       top     = HN.app (aux ts i) (aux ts j)
     aux (HS.ci ts)           top     = HN.ci

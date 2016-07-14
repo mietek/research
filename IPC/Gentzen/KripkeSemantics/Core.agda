@@ -25,48 +25,48 @@ open Model {{…}} public
 -- Forcing for propositions and contexts.
 
 module _ {{_ : Model}} where
-  infix 3 _⊩ᵀ_
-  _⊩ᵀ_ : World → Ty → Set
-  w ⊩ᵀ ᴬ P   = w ⊩ᴬ P
-  w ⊩ᵀ A ▷ B = ∀ {w′} → w ≤ w′ → w′ ⊩ᵀ A → w′ ⊩ᵀ B
-  w ⊩ᵀ ⫪    = ⊤
-  w ⊩ᵀ A ∧ B = w ⊩ᵀ A × w ⊩ᵀ B
+  infix 3 _⊩_
+  _⊩_ : World → Ty → Set
+  w ⊩ ᴬ P   = w ⊩ᴬ P
+  w ⊩ A ▷ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
+  w ⊩ ⫪    = ⊤
+  w ⊩ A ∧ B = w ⊩ A × w ⊩ B
 
-  infix 3 _⊩ᴳ_
-  _⊩ᴳ_ : World → Cx Ty → Set
-  w ⊩ᴳ ⌀     = ⊤
-  w ⊩ᴳ Γ , A = w ⊩ᴳ Γ × w ⊩ᵀ A
+  infix 3 _⊩⋆_
+  _⊩⋆_ : World → Cx Ty → Set
+  w ⊩⋆ ⌀     = ⊤
+  w ⊩⋆ Γ , A = w ⊩⋆ Γ × w ⊩ A
 
 
   -- Monotonicity with respect to intuitionistic accessibility.
 
-  mono⊩ᵀ : ∀ {A w w′} → w ≤ w′ → w ⊩ᵀ A → w′ ⊩ᵀ A
-  mono⊩ᵀ {ᴬ P}   ξ s       = mono⊩ᴬ ξ s
-  mono⊩ᵀ {A ▷ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
-  mono⊩ᵀ {⫪}    ξ tt      = tt
-  mono⊩ᵀ {A ∧ B} ξ (a ∙ b) = mono⊩ᵀ {A} ξ a ∙ mono⊩ᵀ {B} ξ b
+  mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
+  mono⊩ {ᴬ P}   ξ s       = mono⊩ᴬ ξ s
+  mono⊩ {A ▷ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
+  mono⊩ {⫪}    ξ tt      = tt
+  mono⊩ {A ∧ B} ξ (a ∙ b) = mono⊩ {A} ξ a ∙ mono⊩ {B} ξ b
 
-  mono⊩ᴳ : ∀ {Γ w w′} → w ≤ w′ → w ⊩ᴳ Γ → w′ ⊩ᴳ Γ
-  mono⊩ᴳ {⌀}     ξ tt      = tt
-  mono⊩ᴳ {Γ , A} ξ (γ ∙ a) = mono⊩ᴳ {Γ} ξ γ ∙ mono⊩ᵀ {A} ξ a
+  mono⊩⋆ : ∀ {Γ w w′} → w ≤ w′ → w ⊩⋆ Γ → w′ ⊩⋆ Γ
+  mono⊩⋆ {⌀}     ξ tt      = tt
+  mono⊩⋆ {Γ , A} ξ (γ ∙ a) = mono⊩⋆ {Γ} ξ γ ∙ mono⊩ {A} ξ a
 
 
 -- Forcing in all models.
 
-infix 3 _⊩_
-_⊩_ : Cx Ty → Ty → Set₁
-Γ ⊩ A = ∀ {{_ : Model}} {w : World} → w ⊩ᴳ Γ → w ⊩ᵀ A
+infix 3 _ᴹ⊩_
+_ᴹ⊩_ : Cx Ty → Ty → Set₁
+Γ ᴹ⊩ A = ∀ {{_ : Model}} {w : World} → w ⊩⋆ Γ → w ⊩ A
 
 
 -- Soundness, or evaluation.
 
-lookup : ∀ {A Γ} → A ∈ Γ → Γ ⊩ A
+lookup : ∀ {A Γ} → A ∈ Γ → Γ ᴹ⊩ A
 lookup top     (γ ∙ a) = a
 lookup (pop i) (γ ∙ b) = lookup i γ
 
-eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
+eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
 eval (var i)    γ = lookup i γ
-eval (lam t)    γ = λ ξ a → eval t (mono⊩ᴳ ξ γ ∙ a)
+eval (lam t)    γ = λ ξ a → eval t (mono⊩⋆ ξ γ ∙ a)
 eval (app t u)  γ = (eval t γ) refl≤ (eval u γ)
 eval unit       γ = tt
 eval (pair t u) γ = eval t γ ∙ eval u γ

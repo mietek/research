@@ -15,14 +15,14 @@ mutual
 
   infix 1 _⊢ⁿᵉ_
   data _⊢ⁿᵉ_ (Γ : Cx Ty) : Ty → Set where
-    spⁿᵉ : ∀ {A C} → Γ ⊢ˢᵖ A ∣ C → A ∈ Γ → Γ ⊢ⁿᵉ C
+    spⁿᵉ : ∀ {A C} → Γ ⊢ˢᵖ A ⦙ C → A ∈ Γ → Γ ⊢ⁿᵉ C
 
-  infix 1 _⊢ˢᵖ_∣_
-  data _⊢ˢᵖ_∣_ (Γ : Cx Ty) : Ty → Ty → Set where
-    nilˢᵖ : ∀ {C}     → Γ ⊢ˢᵖ C ∣ C
-    appˢᵖ : ∀ {A B C} → Γ ⊢ˢᵖ B ∣ C → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ A ▷ B ∣ C
-    fstˢᵖ : ∀ {A B C} → Γ ⊢ˢᵖ A ∣ C → Γ ⊢ˢᵖ A ∧ B ∣ C
-    sndˢᵖ : ∀ {A B C} → Γ ⊢ˢᵖ B ∣ C → Γ ⊢ˢᵖ A ∧ B ∣ C
+  infix 1 _⊢ˢᵖ_⦙_
+  data _⊢ˢᵖ_⦙_ (Γ : Cx Ty) : Ty → Ty → Set where
+    nilˢᵖ : ∀ {C}     → Γ ⊢ˢᵖ C ⦙ C
+    appˢᵖ : ∀ {A B C} → Γ ⊢ˢᵖ B ⦙ C → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ A ▷ B ⦙ C
+    fstˢᵖ : ∀ {A B C} → Γ ⊢ˢᵖ A ⦙ C → Γ ⊢ˢᵖ A ∧ B ⦙ C
+    sndˢᵖ : ∀ {A B C} → Γ ⊢ˢᵖ B ⦙ C → Γ ⊢ˢᵖ A ∧ B ⦙ C
 
 
 -- Translation to terms.
@@ -37,7 +37,7 @@ mutual
   ne→tm : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊢ A
   ne→tm (spⁿᵉ ss i) = sp→tm ss (var i)
 
-  sp→tm : ∀ {A C Γ} → Γ ⊢ˢᵖ A ∣ C → Γ ⊢ A → Γ ⊢ C
+  sp→tm : ∀ {A C Γ} → Γ ⊢ˢᵖ A ⦙ C → Γ ⊢ A → Γ ⊢ C
   sp→tm nilˢᵖ        t = t
   sp→tm (appˢᵖ ss u) t = sp→tm ss (app t (nf→tm u))
   sp→tm (fstˢᵖ ss)   t = sp→tm ss (fst t)
@@ -56,7 +56,7 @@ mutual
   mono⊢ⁿᵉ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ⁿᵉ A → Γ′ ⊢ⁿᵉ A
   mono⊢ⁿᵉ η (spⁿᵉ ss i) = spⁿᵉ (mono⊢ˢᵖ η ss) (mono∈ η i)
 
-  mono⊢ˢᵖ : ∀ {A C Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ˢᵖ A ∣ C → Γ′ ⊢ˢᵖ A ∣ C
+  mono⊢ˢᵖ : ∀ {A C Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ˢᵖ A ⦙ C → Γ′ ⊢ˢᵖ A ⦙ C
   mono⊢ˢᵖ η nilˢᵖ        = nilˢᵖ
   mono⊢ˢᵖ η (appˢᵖ ss u) = appˢᵖ (mono⊢ˢᵖ η ss) (mono⊢ⁿᶠ η u)
   mono⊢ˢᵖ η (fstˢᵖ ss)   = fstˢᵖ (mono⊢ˢᵖ η ss)
@@ -74,13 +74,13 @@ mutual
   [ i ≔ s ]ⁿᶠ unitⁿᶠ            = unitⁿᶠ
   [ i ≔ s ]ⁿᶠ pairⁿᶠ t u        = pairⁿᶠ ([ i ≔ s ]ⁿᶠ t) ([ i ≔ s ]ⁿᶠ u)
 
-  [_≔_]ˢᵖ_ : ∀ {A B C Γ} → (i : A ∈ Γ) → Γ - i ⊢ⁿᶠ A → Γ ⊢ˢᵖ B ∣ C → Γ - i ⊢ˢᵖ B ∣ C
+  [_≔_]ˢᵖ_ : ∀ {A B C Γ} → (i : A ∈ Γ) → Γ - i ⊢ⁿᶠ A → Γ ⊢ˢᵖ B ⦙ C → Γ - i ⊢ˢᵖ B ⦙ C
   [ i ≔ s ]ˢᵖ nilˢᵖ      = nilˢᵖ
   [ i ≔ s ]ˢᵖ appˢᵖ ss u = appˢᵖ ([ i ≔ s ]ˢᵖ ss) ([ i ≔ s ]ⁿᶠ u)
   [ i ≔ s ]ˢᵖ fstˢᵖ ss   = fstˢᵖ ([ i ≔ s ]ˢᵖ ss)
   [ i ≔ s ]ˢᵖ sndˢᵖ ss   = sndˢᵖ ([ i ≔ s ]ˢᵖ ss)
 
-  reduce : ∀ {A C Γ} → Γ ⊢ˢᵖ A ∣ C → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ C
+  reduce : ∀ {A C Γ} → Γ ⊢ˢᵖ A ⦙ C → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ C
   reduce nilˢᵖ        t            = t
   reduce (appˢᵖ ss u) (lamⁿᶠ t)    = reduce ss ([ top ≔ u ]ⁿᶠ t)
   reduce (fstˢᵖ ss)   (pairⁿᶠ t u) = reduce ss t
@@ -95,7 +95,7 @@ varⁿᵉ i = spⁿᵉ nilˢᵖ i
 appⁿᵉ : ∀ {A B Γ} → Γ ⊢ⁿᵉ A ▷ B → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᵉ B
 appⁿᵉ (spⁿᵉ ss u) t = spⁿᵉ (≪app ss t) u
   where
-    ≪app : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ∣ A ▷ B → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ C ∣ B
+    ≪app : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ⦙ A ▷ B → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ C ⦙ B
     ≪app nilˢᵖ        t = appˢᵖ nilˢᵖ t
     ≪app (appˢᵖ ss u) t = appˢᵖ (≪app ss t) u
     ≪app (fstˢᵖ ss)   t = fstˢᵖ (≪app ss t)
@@ -104,7 +104,7 @@ appⁿᵉ (spⁿᵉ ss u) t = spⁿᵉ (≪app ss t) u
 fstⁿᵉ : ∀ {A B Γ} → Γ ⊢ⁿᵉ A ∧ B → Γ ⊢ⁿᵉ A
 fstⁿᵉ (spⁿᵉ ss t) = spⁿᵉ (≪fst ss) t
   where
-    ≪fst : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ∣ A ∧ B → Γ ⊢ˢᵖ C ∣ A
+    ≪fst : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ⦙ A ∧ B → Γ ⊢ˢᵖ C ⦙ A
     ≪fst nilˢᵖ        = fstˢᵖ nilˢᵖ
     ≪fst (appˢᵖ ss u) = appˢᵖ (≪fst ss) u
     ≪fst (fstˢᵖ ss)   = fstˢᵖ (≪fst ss)
@@ -113,7 +113,7 @@ fstⁿᵉ (spⁿᵉ ss t) = spⁿᵉ (≪fst ss) t
 sndⁿᵉ : ∀ {A B Γ} → Γ ⊢ⁿᵉ A ∧ B → Γ ⊢ⁿᵉ B
 sndⁿᵉ (spⁿᵉ ss t) = spⁿᵉ (≪snd ss) t
   where
-    ≪snd : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ∣ A ∧ B → Γ ⊢ˢᵖ C ∣ B
+    ≪snd : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ⦙ A ∧ B → Γ ⊢ˢᵖ C ⦙ B
     ≪snd nilˢᵖ        = sndˢᵖ nilˢᵖ
     ≪snd (appˢᵖ ss u) = appˢᵖ (≪snd ss) u
     ≪snd (fstˢᵖ ss)   = fstˢᵖ (≪snd ss)

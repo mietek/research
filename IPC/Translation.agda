@@ -6,7 +6,7 @@ import IPC.Hilbert.Sequential as HS
 import IPC.Hilbert.Nested as HN
 import IPC.Gentzen.Core as G
 
-open HS using () renaming (_⊢*_ to HS⟨_⊢*_⟩ ; _⊢_ to HS⟨_⊢_⟩) public
+open HS using () renaming (_⊢⋆_ to HS⟨_⊢⋆_⟩ ; _⊢_ to HS⟨_⊢_⟩) public
 open HN using () renaming (_⊢_ to HN⟨_⊢_⟩) public
 open G using () renaming (_⊢_ to G⟨_⊢_⟩) public
 
@@ -16,7 +16,7 @@ open G using () renaming (_⊢_ to G⟨_⊢_⟩) public
 hl→hn : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → HN⟨ Γ ⊢ A ⟩
 hl→hn (Π ∙ ts) = aux ts top
   where
-    aux : ∀ {A Γ Π} → HS⟨ Γ ⊢* Π ⟩ → A ∈ Π → HN⟨ Γ ⊢ A ⟩
+    aux : ∀ {A Γ Π} → HS⟨ Γ ⊢⋆ Π ⟩ → A ∈ Π → HN⟨ Γ ⊢ A ⟩
     aux (HS.var i ts)  top     = HN.var i
     aux (HS.mp i j ts) top     = HN.app (aux ts i) (aux ts j)
     aux (HS.ci ts)     top     = HN.ci

@@ -70,27 +70,27 @@ instance
 -- Soundness and completeness with respect to the canonical model.
 
 mutual
-  reflect : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊩ᵀ A
+  reflect : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊩ A
   reflect {ᴬ P}   t = t
   reflect {A ▷ B} t = λ ξ a → reflect {B} (appⁿᵉ (mono⊢ⁿᵉ ξ t) (reify {A} a))
   reflect {⫪}    t = tt
   reflect {A ∧ B} t = reflect {A} (fstⁿᵉ t) ∙ reflect {B} (sndⁿᵉ t)
 
-  reify : ∀ {A Γ} → Γ ⊩ᵀ A → Γ ⊢ⁿᶠ A
+  reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ⁿᶠ A
   reify {ᴬ P}   s       = neⁿᶠ s
   reify {A ▷ B} f       = lamⁿᶠ (reify {B} (f weak⊆ (reflect {A} (varⁿᵉ top))))
   reify {⫪}    tt      = unitⁿᶠ
   reify {A ∧ B} (a ∙ b) = pairⁿᶠ (reify {A} a) (reify {B} b)
 
-refl⊩ᴳ : ∀ {Γ} → Γ ⊩ᴳ Γ
-refl⊩ᴳ {⌀}     = tt
-refl⊩ᴳ {Γ , A} = mono⊩ᴳ {Γ} weak⊆ refl⊩ᴳ ∙ reflect {A} (varⁿᵉ top)
+refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
+refl⊩⋆ {⌀}     = tt
+refl⊩⋆ {Γ , A} = mono⊩⋆ {Γ} weak⊆ refl⊩⋆ ∙ reflect {A} (varⁿᵉ top)
 
 
 -- Completeness, or quotation.
 
-quot : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
-quot t = nf→tm (reify (t refl⊩ᴳ))
+quot : ∀ {A Γ} → Γ ᴹ⊩ A → Γ ⊢ A
+quot t = nf→tm (reify (t refl⊩⋆))
 
 
 -- Normalisation by evaluation.
