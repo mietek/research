@@ -22,10 +22,9 @@ record Model : Set₁ where
 open Model {{…}} public
 
 
--- Truth in one model.
+-- Forcing for propositions and contexts.
 
 module _ {{_ : Model}} where
-  -- Forcing for propositions.
   infix 3 _⊩ᵀ_
   _⊩ᵀ_ : World → Ty → Set
   w ⊩ᵀ ᴬ P   = w ⊩ᴬ P
@@ -33,7 +32,6 @@ module _ {{_ : Model}} where
   w ⊩ᵀ ⫪    = ⊤
   w ⊩ᵀ A ∧ B = w ⊩ᵀ A × w ⊩ᵀ B
 
-  -- Forcing for contexts.
   infix 3 _⊩ᴳ_
   _⊩ᴳ_ : World → Cx Ty → Set
   w ⊩ᴳ ⌀     = ⊤
@@ -53,14 +51,14 @@ module _ {{_ : Model}} where
   mono⊩ᴳ {Γ , A} ξ (γ ∙ a) = mono⊩ᴳ {Γ} ξ γ ∙ mono⊩ᵀ {A} ξ a
 
 
--- Truth in all models.
+-- Forcing in all models.
 
 infix 3 _⊩_
 _⊩_ : Cx Ty → Ty → Set₁
 Γ ⊩ A = ∀ {{_ : Model}} {w : World} → w ⊩ᴳ Γ → w ⊩ᵀ A
 
 
--- Soundness with respect to all models, or evaluation.
+-- Soundness, or evaluation.
 
 lookup : ∀ {A Γ} → A ∈ Γ → Γ ⊩ A
 lookup top     (γ ∙ a) = a

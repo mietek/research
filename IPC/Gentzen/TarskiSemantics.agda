@@ -3,17 +3,18 @@ module IPC.Gentzen.TarskiSemantics where
 open import IPC.Gentzen.Core public
 
 
--- Tarski models.
+-- Intuitionistic Tarski models.
 
 record Model : Set₁ where
   infix 3 ⊨ᴬ_
   field
+    -- Truth for atomic propositions.
     ⊨ᴬ_ : Atom → Set
 
 open Model {{…}} public
 
 
--- Truth in one model.
+-- Truth for propositions and contexts.
 
 module _ {{_ : Model}} where
   infix 3 ⊨ᵀ_
@@ -36,7 +37,7 @@ _⊨_ : Cx Ty → Ty → Set₁
 Γ ⊨ A = ∀ {{_ : Model}} → ⊨ᴳ Γ → ⊨ᵀ A
 
 
--- Soundness with respect to all models, or evaluation.
+-- Soundness, or evaluation.
 
 lookup : ∀ {A Γ} → A ∈ Γ → Γ ⊨ A
 lookup top     (γ ∙ a) = a

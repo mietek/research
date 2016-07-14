@@ -47,7 +47,7 @@ record Model : Set₁ where
 open Model {{…}} public
 
 
--- Truth in one model.
+-- Forcing for propositions and contexts.
 
 module _ {{_ : Model}} where
   infix 3 _⊩ᵀ_
@@ -92,14 +92,14 @@ module _ {{_ : Model}} where
   mmono⊩ᴳ {Δ , A} ζ (δ ∙ a) = mmono⊩ᴳ {Δ} ζ δ ∙ mmono⊩ᵀ {A} ζ a
 
 
--- Truth in all models.
+-- Forcing in all models.
 
 infix 3 _⨾_⊩_
 _⨾_⊩_ : Cx Ty → Cx Ty → Ty → Set₁
 Γ ⨾ Δ ⊩ A = ∀ {{_ : Model}} {w : World} → w ⊩ᴳ Γ → w ⊩ᴳ Δ → w ⊩ᵀ A
 
 
--- Soundness with respect to all models, or evaluation.
+-- Soundness, or evaluation.
 
 lookup : ∀ {A Γ Δ} → A ∈ Γ → Γ ⨾ Δ ⊩ A
 lookup top     (γ ∙ a) δ = a
@@ -124,7 +124,7 @@ eval (snd t)     γ δ with eval t γ δ
 …                   | a ∙ b = b
 
 
--- Canonical model.
+-- Equipment for the canonical model.
 
 Cx² : Set → Set
 Cx² U = Cx U × Cx U
@@ -180,6 +180,10 @@ mmono⊢² : ∀ {A Ξ Ξ′} → Ξ R² Ξ′ → Ξ ⊢² A → Ξ′ ⊢² A
 mmono⊢² (step η θ) = mono⊢ η ∘ mmono⊢ θ
 mmono⊢² (jump θ)   = mono⊢ bot⊆ ∘ mmono⊢ θ
 
+
+-- The canonical model.
+-- NOTE: This is almost certainly wrong.
+
 instance
   canon : Model
   canon = record
@@ -198,7 +202,7 @@ instance
     }
 
 
--- Soundness and completeness with respect to canonical model.
+-- Soundness and completeness with respect to the canonical model.
 
 mutual
   reflect : ∀ {A Γ Δ} → Γ ⨾ Δ ⊢ A → (Γ ∙ Δ) ⊩ᵀ A
@@ -227,7 +231,7 @@ mrefl⊩ᴳ {⌀}     = tt
 mrefl⊩ᴳ {Δ , A} = mmono⊩ᴳ {Δ} (step refl⊆ weak⊆) mrefl⊩ᴳ ∙ reflect {A} mv₀
 
 
--- Completeness with respect to all models, or quotation.
+-- Completeness, or quotation.
 
 quot : ∀ {A Γ Δ} → Γ ⨾ Δ ⊩ A → Γ ⨾ Δ ⊢ A
 quot t = reify (t refl⊩ᴳ mrefl⊩ᴳ)

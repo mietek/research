@@ -3,7 +3,7 @@ module IPC.Gentzen.KripkeSemantics.BasicCompleteness where
 open import IPC.Gentzen.KripkeSemantics.Core public
 
 
--- Canonical model.
+-- The canonical model.
 
 instance
   canon : Model
@@ -17,7 +17,7 @@ instance
     }
 
 
--- Soundness and completeness with respect to canonical model.
+-- Soundness and completeness with respect to the canonical model.
 
 mutual
   reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ᵀ A
@@ -37,7 +37,7 @@ refl⊩ᴳ {⌀}     = tt
 refl⊩ᴳ {Γ , A} = mono⊩ᴳ {Γ} weak⊆ refl⊩ᴳ ∙ reflect {A} (var top)
 
 
--- Completeness with respect to all models, or quotation.
+-- Completeness, or quotation.
 
 quot : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
 quot t = reify (t refl⊩ᴳ)

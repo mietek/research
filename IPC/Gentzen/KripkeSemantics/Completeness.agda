@@ -53,7 +53,7 @@ mutual
   mono⊢ⁿᵉ η (sndⁿᵉ t)   = sndⁿᵉ (mono⊢ⁿᵉ η t)
 
 
--- Canonical model.
+-- The canonical model.
 
 instance
   canon : Model
@@ -67,7 +67,7 @@ instance
     }
 
 
--- Soundness and completeness with respect to canonical model.
+-- Soundness and completeness with respect to the canonical model.
 
 mutual
   reflect : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊩ᵀ A
@@ -87,7 +87,7 @@ refl⊩ᴳ {⌀}     = tt
 refl⊩ᴳ {Γ , A} = mono⊩ᴳ {Γ} weak⊆ refl⊩ᴳ ∙ reflect {A} (varⁿᵉ top)
 
 
--- Completeness with respect to all models, or quotation.
+-- Completeness, or quotation.
 
 quot : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
 quot t = nf→tm (reify (t refl⊩ᴳ))
