@@ -101,6 +101,15 @@ cfst = lam (fst v₀)
 csnd : ∀ {A B Γ} → Γ ⊢ A ∧ B ▷ B
 csnd = lam (snd v₀)
 
+cinl : ∀ {A B Γ} → Γ ⊢ A ▷ A ∨ B
+cinl = lam (inl v₀)
+
+cinr : ∀ {A B Γ} → Γ ⊢ B ▷ A ∨ B
+cinr = lam (inr v₀)
+
+ccase : ∀ {A B C Γ} → Γ ⊢ A ∨ B ▷ (A ▷ C) ▷ (B ▷ C) ▷ C
+ccase = lam (lam (lam (case v₂ (det v₁) (det v₀))))
+
 
 -- Closure under context concatenation.
 
