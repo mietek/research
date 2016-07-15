@@ -6,7 +6,7 @@ open import IPC.Gentzen.Core public
 -- Intuitionistic Kripke-CPS models, following Ilik.
 
 record Model : Set₁ where
-  infix 3 _⊪ᴬ_
+  infix 3 _⊪ᵅ_
   field
     World : Set
 
@@ -16,11 +16,11 @@ record Model : Set₁ where
     trans≤ : ∀ {w w′ w″} → w ≤ w′ → w′ ≤ w″ → w ≤ w″
 
     -- Strong forcing for atomic propositions; monotonic.
-    _⊪ᴬ_   : World → Atom → Set
-    mono⊪ᴬ : ∀ {p w w′} → w ≤ w′ → w ⊪ᴬ p → w′ ⊪ᴬ p
+    _⊪ᵅ_   : World → Atom → Set
+    mono⊪ᵅ : ∀ {p w w′} → w ≤ w′ → w ⊪ᵅ p → w′ ⊪ᵅ p
 
     -- Exploding for propositions.
-    _⁂_ : World → Ty → Set
+    _‼_ : World → Ty → Set
 
 open Model {{…}} public
 
@@ -31,21 +31,21 @@ module _ {{_ : Model}} where
   mutual
     infix 3 _⊪_
     _⊪_ : World → Ty → Set
-    w ⊪ ᴬ P   = w ⊪ᴬ P
+    w ⊪ α P   = w ⊪ᵅ P
     w ⊪ A ▷ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
-    w ⊪ ⫪    = ⊤
-    w ⊪ A ∧ B = w ⊩ A × w ⊩ B
-    w ⊪ A ∨ B = w ⊩ A ⊎ w ⊩ B
-    w ⊪ ⫫    = ⊥
+    w ⊪ ⊤    = ᴬ⊤
+    w ⊪ A ∧ B = w ⊩ A ᴬ∧ w ⊩ B
+    w ⊪ A ∨ B = w ⊩ A ᴬ∨ w ⊩ B
+    w ⊪ ⊥    = ᴬ⊥
 
     infix 3 _⊩_
     _⊩_ : World → Ty → Set
-    w ⊩ A = ∀ {w′ C} → w ≤ w′ → (∀ {w″} → w′ ≤ w″ → w″ ⊪ A → w″ ⁂ C) → w′ ⁂ C
+    w ⊩ A = ∀ {w′ C} → w ≤ w′ → (∀ {w″} → w′ ≤ w″ → w″ ⊪ A → w″ ‼ C) → w′ ‼ C
 
   infix 3 _⊩⋆_
   _⊩⋆_ : World → Cx Ty → Set
-  w ⊩⋆ ⌀     = ⊤
-  w ⊩⋆ Γ , A = w ⊩⋆ Γ × w ⊩ A
+  w ⊩⋆ ⌀     = ᴬ⊤
+  w ⊩⋆ Γ , A = w ⊩⋆ Γ ᴬ∧ w ⊩ A
 
 
   -- Monotonicity with respect to intuitionistic accessibility.
@@ -55,17 +55,17 @@ module _ {{_ : Model}} where
     mono⊩ ξ a = λ ξ′ k′ → a (trans≤ ξ ξ′) k′
 
     mono⊪ : ∀ {A w w′} → w ≤ w′ → w ⊪ A → w′ ⊪ A
-    mono⊪ {ᴬ P}   ξ s        = mono⊪ᴬ ξ s
-    mono⊪ {A ▷ B} ξ f        = λ ξ′ a → f (trans≤ ξ ξ′) a
-    mono⊪ {⫪}    ξ tt       = tt
-    mono⊪ {A ∧ B} ξ (a ∙ b)  = mono⊩ {A} ξ a ∙ mono⊩ {B} ξ b
-    mono⊪ {A ∨ B} ξ (inj₁ a) = inj₁ (mono⊩ {A} ξ a)
-    mono⊪ {A ∨ B} ξ (inj₂ b) = inj₂ (mono⊩ {B} ξ b)
-    mono⊪ {⫫}    ξ ()
+    mono⊪ {α P}   ξ s = mono⊪ᵅ ξ s
+    mono⊪ {A ▷ B} ξ s = λ ξ′ a → s (trans≤ ξ ξ′) a
+    mono⊪ {⊤}    ξ s = ᴬtt
+    mono⊪ {A ∧ B} ξ s = ᴬpair (mono⊩ {A} ξ (ᴬfst s)) (mono⊩ {B} ξ (ᴬsnd s))
+    mono⊪ {A ∨ B} ξ (ᴬinl a) = ᴬinl (mono⊩ {A} ξ a)
+    mono⊪ {A ∨ B} ξ (ᴬinr b) = ᴬinr (mono⊩ {B} ξ b)
+    mono⊪ {⊥}    ξ ()
 
   mono⊩⋆ : ∀ {Γ w w′} → w ≤ w′ → w ⊩⋆ Γ → w′ ⊩⋆ Γ
-  mono⊩⋆ {⌀}     ξ tt      = tt
-  mono⊩⋆ {Γ , A} ξ (γ ∙ a) = mono⊩⋆ {Γ} ξ γ ∙ mono⊩ {A} ξ a
+  mono⊩⋆ {⌀}     ξ γ = ᴬtt
+  mono⊩⋆ {Γ , A} ξ γ = ᴬpair (mono⊩⋆ {Γ} ξ (ᴬfst γ)) (mono⊩ {A} ξ (ᴬsnd γ))
 
 
   -- The CPS monad.
@@ -87,25 +87,24 @@ _ᴹ⊩_ : Cx Ty → Ty → Set₁
 -- Soundness, or evaluation.
 
 lookup : ∀ {A Γ} → A ∈ Γ → Γ ᴹ⊩ A
-lookup top     (γ ∙ a) = a
-lookup (pop i) (γ ∙ b) = lookup i γ
+lookup top     γ = ᴬsnd γ
+lookup (pop i) γ = lookup i (ᴬfst γ)
 
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
 eval (var i)                  γ = lookup i γ
-eval {A ▷ B} (lam t)          γ = return {A ▷ B} (λ ξ a → eval t (mono⊩⋆ ξ γ ∙ a))
+eval {A ▷ B} (lam t)          γ = return {A ▷ B} (λ ξ a → eval t (ᴬpair (mono⊩⋆ ξ γ) a))
 eval (app {A} {B} t u)        γ = bind {A ▷ B} {B} (eval t γ)
                                     (λ ξ a → a refl≤ (eval u (mono⊩⋆ ξ γ)))
-eval unit                     γ = return {⫪} tt
-eval {A ∧ B} (pair t u)       γ = return {A ∧ B} (eval t γ ∙ eval u γ)
-eval (fst {A} {B} t)          γ = bind {A ∧ B} {A} (eval t γ) (λ ξ a&b → proj₁ a&b)
-eval (snd {A} {B} t)          γ = bind {A ∧ B} {B} (eval t γ) (λ ξ a&b → proj₂ a&b)
-eval {A ∨ B} (inl t)          γ = return {A ∨ B} (inj₁ (eval t γ))
-eval {A ∨ B} (inr t)          γ = return {A ∨ B} (inj₂ (eval t γ))
-eval (case {A} {B} {C} t u v) γ = bind {A ∨ B} {C} (eval t γ) (λ ξ a∣b →
-                                    [ (λ a → eval u (mono⊩⋆ ξ γ ∙ λ ξ′ k → a ξ′ k))
-                                    ∣ (λ b → eval v (mono⊩⋆ ξ γ ∙ λ ξ′ k → b ξ′ k))
-                                    ] a∣b)
-eval (boom {C} t)             γ = bind {⫫} {C} (eval t γ) (λ ξ ())
+eval tt                       γ = return {⊤} ᴬtt
+eval {A ∧ B} (pair t u)       γ = return {A ∧ B} (ᴬpair (eval t γ) (eval u γ))
+eval (fst {A} {B} t)          γ = bind {A ∧ B} {A} (eval t γ) (λ ξ s → ᴬfst s)
+eval (snd {A} {B} t)          γ = bind {A ∧ B} {B} (eval t γ) (λ ξ s → ᴬsnd s)
+eval {A ∨ B} (inl t)          γ = return {A ∨ B} (ᴬinl (eval t γ))
+eval {A ∨ B} (inr t)          γ = return {A ∨ B} (ᴬinr (eval t γ))
+eval (case {A} {B} {C} t u v) γ = bind {A ∨ B} {C} (eval t γ) (λ ξ s → ᴬcase s
+                                    (λ a → eval u (ᴬpair (mono⊩⋆ ξ γ) (λ ξ′ k → a ξ′ k)))
+                                    (λ b → eval v (ᴬpair (mono⊩⋆ ξ γ) (λ ξ′ k → b ξ′ k))))
+eval (boom {C} t)             γ = bind {⊥} {C} (eval t γ) (λ ξ ())
 
 
 -- TODO: Correctness with respect to conversion.
@@ -126,7 +125,7 @@ eval (boom {C} t)             γ = bind {⫫} {C} (eval t γ) (λ ξ ())
 --   coco (cong⇒boom p)     = cong {!!} (coco p)
 --   coco conv⇒lam          = {!!}
 --   coco conv⇒app          = {!!}
---   coco conv⇒unit         = {!!}
+--   coco conv⇒tt           = {!!}
 --   coco conv⇒pair         = {!!}
 --   coco conv⇒fst          = {!!}
 --   coco conv⇒snd          = {!!}

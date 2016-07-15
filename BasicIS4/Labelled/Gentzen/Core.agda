@@ -38,7 +38,7 @@ data _⨾_⊢_⦂_ (Γ : Cx LaTy) (Ξ : Cx LaLa) : La → Ty → Set where
   app  : ∀ {x A B} → Γ ⨾ Ξ ⊢ x ⦂ A ▷ B → Γ ⨾ Ξ ⊢ x ⦂ A → Γ ⨾ Ξ ⊢ x ⦂ B
   scan : ∀ {x A}   → (∀ {y} → Γ ⨾ Ξ , x ≤ y ⊢ y ⦂ A) → Γ ⨾ Ξ ⊢ x ⦂ □ A
   move : ∀ {x y A} → Γ ⨾ Ξ ⊢ x ⦂ □ A → Ξ ⊢ x ≤ y → Γ ⨾ Ξ ⊢ y ⦂ A
-  unit : ∀ {x}     → Γ ⨾ Ξ ⊢ x ⦂ ⫪
+  tt   : ∀ {x}     → Γ ⨾ Ξ ⊢ x ⦂ ⊤
   pair : ∀ {x A B} → Γ ⨾ Ξ ⊢ x ⦂ A → Γ ⨾ Ξ ⊢ x ⦂ B → Γ ⨾ Ξ ⊢ x ⦂ A ∧ B
   fst  : ∀ {x A B} → Γ ⨾ Ξ ⊢ x ⦂ A ∧ B → Γ ⨾ Ξ ⊢ x ⦂ A
   snd  : ∀ {x A B} → Γ ⨾ Ξ ⊢ x ⦂ A ∧ B → Γ ⨾ Ξ ⊢ x ⦂ B
@@ -52,7 +52,7 @@ mono⊢ η (lam t)    = lam (mono⊢ (keep η) t)
 mono⊢ η (app t u)  = app (mono⊢ η t) (mono⊢ η u)
 mono⊢ η (scan t)   = scan (mono⊢ η t)
 mono⊢ η (move t u) = move (mono⊢ η t) u
-mono⊢ η unit       = unit
+mono⊢ η tt         = tt
 mono⊢ η (pair t u) = pair (mono⊢ η t) (mono⊢ η u)
 mono⊢ η (fst t)    = fst (mono⊢ η t)
 mono⊢ η (snd t)    = snd (mono⊢ η t)
@@ -71,7 +71,7 @@ rmono⊢ η (lam t)    = lam (rmono⊢ η t)
 rmono⊢ η (app t u)  = app (rmono⊢ η t) (rmono⊢ η u)
 rmono⊢ η (scan t)   = scan (rmono⊢ (keep η) t)
 rmono⊢ η (move t u) = move (rmono⊢ η t) (rmono⊢≤ η u)
-rmono⊢ η unit       = unit
+rmono⊢ η tt         = tt
 rmono⊢ η (pair t u) = pair (rmono⊢ η t) (rmono⊢ η u)
 rmono⊢ η (fst t)    = fst (rmono⊢ η t)
 rmono⊢ η (snd t)    = snd (rmono⊢ η t)
@@ -215,7 +215,7 @@ concat Γ′ t u = app (mono⊢ (weak⊆⧺ₗ Γ′) (lam t)) (mono⊢ weak⊆�
 [ i ≔ s ] app t u  = app ([ i ≔ s ] t) ([ i ≔ s ] u)
 [ i ≔ s ] scan t   = scan ([ i ≔ rmono⊢ weak⊆ s ] t)
 [ i ≔ s ] move t u = move ([ i ≔ s ] t) u
-[ i ≔ s ] unit     = unit
+[ i ≔ s ] tt       = tt
 [ i ≔ s ] pair t u = pair ([ i ≔ s ] t) ([ i ≔ s ] u)
 [ i ≔ s ] fst t    = fst ([ i ≔ s ] t)
 [ i ≔ s ] snd t    = snd ([ i ≔ s ] t)

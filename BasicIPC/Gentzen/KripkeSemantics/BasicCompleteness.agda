@@ -12,8 +12,8 @@ instance
     ; _≤_     = _⊆_
     ; refl≤   = refl⊆
     ; trans≤  = trans⊆
-    ; _⊩ᴬ_   = λ Γ P → Γ ⊢ ᴬ P
-    ; mono⊩ᴬ = mono⊢
+    ; _⊩ᵅ_   = λ Γ P → Γ ⊢ α P
+    ; mono⊩ᵅ = mono⊢
     }
 
 
@@ -21,20 +21,20 @@ instance
 
 mutual
   reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
-  reflect {ᴬ P}   t = t
+  reflect {α P}   t = t
   reflect {A ▷ B} t = λ ξ a → reflect {B} (app (mono⊢ ξ t) (reify {A} a))
-  reflect {⫪}    t = tt
-  reflect {A ∧ B} t = reflect {A} (fst t) ∙ reflect {B} (snd t)
+  reflect {⊤}    t = ᴬtt
+  reflect {A ∧ B} t = ᴬpair (reflect {A} (fst t)) (reflect {B} (snd t))
 
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
-  reify {ᴬ P}   s       = s
-  reify {A ▷ B} f       = lam (reify {B} (f weak⊆ (reflect {A} (var top))))
-  reify {⫪}    tt      = unit
-  reify {A ∧ B} (a ∙ b) = pair (reify {A} a) (reify {B} b)
+  reify {α P}   s = s
+  reify {A ▷ B} s = lam (reify {B} (s weak⊆ (reflect {A} (var top))))
+  reify {⊤}    s = tt
+  reify {A ∧ B} s = pair (reify {A} (ᴬfst s)) (reify {B} (ᴬsnd s))
 
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
-refl⊩⋆ {⌀}     = tt
-refl⊩⋆ {Γ , A} = mono⊩⋆ {Γ} weak⊆ refl⊩⋆ ∙ reflect {A} (var top)
+refl⊩⋆ {⌀}     = ᴬtt
+refl⊩⋆ {Γ , A} = ᴬpair (mono⊩⋆ {Γ} weak⊆ refl⊩⋆) (reflect {A} (var top))
 
 
 -- Completeness, or quotation.

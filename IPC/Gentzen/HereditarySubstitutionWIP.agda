@@ -6,9 +6,9 @@ open import IPC.Gentzen.Core public
 -- Outermost propositions for neutrals.
 
 data Tyⁿᵉ : Ty → Set where
-  ᴬ_  : (P : Atom) → Tyⁿᵉ (ᴬ P)
+  α_  : (P : Atom) → Tyⁿᵉ (α P)
   _∨_ : (A B : Ty) → Tyⁿᵉ (A ∨ B)
-  ⫫  : Tyⁿᵉ ⫫
+  ⊥  : Tyⁿᵉ ⊥
 
 
 -- Derivations, as Gentzen-style natural deduction trees.
@@ -19,7 +19,7 @@ mutual
   data _⊢ⁿᶠ_ (Γ : Cx Ty) : Ty → Set where
     neⁿᶠ   : ∀ {A}   → Γ ⊢ⁿᵉ A → {{_ : Tyⁿᵉ A}} → Γ ⊢ⁿᶠ A
     lamⁿᶠ  : ∀ {A B} → Γ , A ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ▷ B
-    unitⁿᶠ : Γ ⊢ⁿᶠ ⫪
+    ttⁿᶠ   : Γ ⊢ⁿᶠ ⊤
     pairⁿᶠ : ∀ {A B} → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ∧ B
     inlⁿᶠ  : ∀ {A B} → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ A ∨ B
     inrⁿᶠ  : ∀ {A B} → Γ ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ∨ B
@@ -41,7 +41,7 @@ mutual
   infix 3 _⊢ˢᵖ′_⦙_
   data _⊢ˢᵖ′_⦙_ (Γ : Cx Ty) : Ty → Ty → Set where
     passˢᵖ′ : ∀ {C} → Γ ⊢ˢᵖ′ C ⦙ C
-    boomˢᵖ′ : ∀ {C} → Γ ⊢ˢᵖ′ ⫫ ⦙ C
+    boomˢᵖ′ : ∀ {C} → Γ ⊢ˢᵖ′ ⊥ ⦙ C
 
   -- Disjunction elimination, optional.
   infix 3 _⊢ˢᵖ″_⦙_
@@ -56,7 +56,7 @@ mutual
   nf→tm : ∀ {A Γ} → Γ ⊢ⁿᶠ A → Γ ⊢ A
   nf→tm (neⁿᶠ t)     = ne→tm t
   nf→tm (lamⁿᶠ t)    = lam (nf→tm t)
-  nf→tm unitⁿᶠ       = unit
+  nf→tm ttⁿᶠ         = tt
   nf→tm (pairⁿᶠ t u) = pair (nf→tm t) (nf→tm u)
   nf→tm (inlⁿᶠ t)    = inl (nf→tm t)
   nf→tm (inrⁿᶠ t)    = inr (nf→tm t)
@@ -85,7 +85,7 @@ mutual
   mono⊢ⁿᶠ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ⁿᶠ A → Γ′ ⊢ⁿᶠ A
   mono⊢ⁿᶠ η (neⁿᶠ t)     = neⁿᶠ (mono⊢ⁿᵉ η t)
   mono⊢ⁿᶠ η (lamⁿᶠ t)    = lamⁿᶠ (mono⊢ⁿᶠ (keep η) t)
-  mono⊢ⁿᶠ η unitⁿᶠ       = unitⁿᶠ
+  mono⊢ⁿᶠ η ttⁿᶠ         = ttⁿᶠ
   mono⊢ⁿᶠ η (pairⁿᶠ t u) = pairⁿᶠ (mono⊢ⁿᶠ η t) (mono⊢ⁿᶠ η u)
   mono⊢ⁿᶠ η (inlⁿᶠ t)    = inlⁿᶠ (mono⊢ⁿᶠ η t)
   mono⊢ⁿᶠ η (inrⁿᶠ t)    = inrⁿᶠ (mono⊢ⁿᶠ η t)
@@ -116,7 +116,7 @@ mutual
   [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ .i xs y z) | same   = reduce s ([ i ≔ s ]ˢᵖ xs) ([ i ≔ s ]ˢᵖ′ y) ([ i ≔ s ]ˢᵖ″ z)
   [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ ._ xs y z) | diff j = neⁿᶠ (spⁿᵉ j ([ i ≔ s ]ˢᵖ xs) ([ i ≔ s ]ˢᵖ′ y) ([ i ≔ s ]ˢᵖ″ z))
   [ i ≔ s ]ⁿᶠ lamⁿᶠ t               = lamⁿᶠ ([ pop i ≔ mono⊢ⁿᶠ weak⊆ s ]ⁿᶠ t)
-  [ i ≔ s ]ⁿᶠ unitⁿᶠ                = unitⁿᶠ
+  [ i ≔ s ]ⁿᶠ ttⁿᶠ                  = ttⁿᶠ
   [ i ≔ s ]ⁿᶠ pairⁿᶠ t u            = pairⁿᶠ ([ i ≔ s ]ⁿᶠ t) ([ i ≔ s ]ⁿᶠ u)
   [ i ≔ s ]ⁿᶠ inlⁿᶠ t               = inlⁿᶠ ([ i ≔ s ]ⁿᶠ t)
   [ i ≔ s ]ⁿᶠ inrⁿᶠ t               = inrⁿᶠ ([ i ≔ s ]ⁿᶠ t)
@@ -218,12 +218,12 @@ sndⁿᵉ (spⁿᵉ i xs y (caseˢᵖ″ u v)) = spⁿᵉ i xs y (caseˢᵖ″ (
 -- Iterated expansion.
 
 expand : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊢ⁿᶠ A
-expand {ᴬ P}   t = neⁿᶠ t {{ᴬ P}}
+expand {α P}   t = neⁿᶠ t {{α P}}
 expand {A ▷ B} t = lamⁿᶠ (expand (appⁿᵉ (mono⊢ⁿᵉ weak⊆ t) (expand (varⁿᵉ top))))
-expand {⫪}    t = unitⁿᶠ
+expand {⊤}    t = ttⁿᶠ
 expand {A ∧ B} t = pairⁿᶠ (expand (fstⁿᵉ t)) (expand (sndⁿᵉ t))
 expand {A ∨ B} t = neⁿᶠ t {{A ∨ B}}
-expand {⫫}    t = neⁿᶠ t {{⫫}}
+expand {⊥}    t = neⁿᶠ t {{⊥}}
 
 
 -- Expansion-based normal forms.
@@ -244,10 +244,10 @@ mutual
           v′ = caseⁿᶠ tᵥ (mono⊢ⁿᶠ (keep weak⊆) u) (mono⊢ⁿᶠ (keep weak⊆) v)
 
 mutual
-  boomⁿᶠ : ∀ {C Γ} → Γ ⊢ⁿᶠ ⫫ → Γ ⊢ⁿᶠ C
+  boomⁿᶠ : ∀ {C Γ} → Γ ⊢ⁿᶠ ⊥ → Γ ⊢ⁿᶠ C
   boomⁿᶠ (neⁿᶠ t) = expand (boomⁿᵉ t)
 
-  boomⁿᵉ : ∀ {C Γ} → Γ ⊢ⁿᵉ ⫫ → Γ ⊢ⁿᵉ C
+  boomⁿᵉ : ∀ {C Γ} → Γ ⊢ⁿᵉ ⊥ → Γ ⊢ⁿᵉ C
   boomⁿᵉ (spⁿᵉ i xs passˢᵖ′ passˢᵖ″) = spⁿᵉ i xs boomˢᵖ′ passˢᵖ″
   boomⁿᵉ (spⁿᵉ i xs boomˢᵖ′ passˢᵖ″) = spⁿᵉ i xs boomˢᵖ′ passˢᵖ″
   boomⁿᵉ (spⁿᵉ i xs y (caseˢᵖ″ u v)) = spⁿᵉ i xs y (caseˢᵖ″ (boomⁿᶠ u) (boomⁿᶠ v))
@@ -259,7 +259,7 @@ tm→nf : ∀ {A Γ} → Γ ⊢ A → Γ ⊢ⁿᶠ A
 tm→nf (var i)      = varⁿᶠ i
 tm→nf (lam t)      = lamⁿᶠ (tm→nf t)
 tm→nf (app t u)    = appⁿᶠ (tm→nf t) (tm→nf u)
-tm→nf unit         = unitⁿᶠ
+tm→nf tt           = ttⁿᶠ
 tm→nf (pair t u)   = pairⁿᶠ (tm→nf t) (tm→nf u)
 tm→nf (fst t)      = fstⁿᶠ (tm→nf t)
 tm→nf (snd t)      = sndⁿᶠ (tm→nf t)
@@ -292,7 +292,7 @@ norm = nf→tm ∘ tm→nf
 -- coco (cong⇒boom p)     = cong {!!} (coco p)
 -- coco conv⇒lam          = {!!}
 -- coco conv⇒app          = {!!}
--- coco conv⇒unit         = {!!}
+-- coco conv⇒tt           = {!!}
 -- coco conv⇒pair         = {!!}
 -- coco conv⇒fst          = refl
 -- coco conv⇒snd          = refl

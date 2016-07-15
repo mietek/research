@@ -10,14 +10,14 @@ data _⊢_ (Γ : Cx Ty) : Ty → Set where
   var  : ∀ {A}     → A ∈ Γ → Γ ⊢ A
   lam  : ∀ {A B}   → Γ , A ⊢ B → Γ ⊢ A ▷ B
   app  : ∀ {A B}   → Γ ⊢ A ▷ B → Γ ⊢ A → Γ ⊢ B
-  unit : Γ ⊢ ⫪
+  tt   : Γ ⊢ ⊤
   pair : ∀ {A B}   → Γ ⊢ A → Γ ⊢ B → Γ ⊢ A ∧ B
   fst  : ∀ {A B}   → Γ ⊢ A ∧ B → Γ ⊢ A
   snd  : ∀ {A B}   → Γ ⊢ A ∧ B → Γ ⊢ B
   inl  : ∀ {A B}   → Γ ⊢ A → Γ ⊢ A ∨ B
   inr  : ∀ {A B}   → Γ ⊢ B → Γ ⊢ A ∨ B
   case : ∀ {A B C} → Γ ⊢ A ∨ B → Γ , A ⊢ C → Γ , B ⊢ C → Γ ⊢ C
-  boom : ∀ {C}     → Γ ⊢ ⫫ → Γ ⊢ C
+  boom : ∀ {C}     → Γ ⊢ ⊥ → Γ ⊢ C
 
 
 -- Monotonicity with respect to context inclusion.
@@ -26,7 +26,7 @@ mono⊢ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
 mono⊢ η (var i)      = var (mono∈ η i)
 mono⊢ η (lam t)      = lam (mono⊢ (keep η) t)
 mono⊢ η (app t u)    = app (mono⊢ η t) (mono⊢ η u)
-mono⊢ η unit         = unit
+mono⊢ η tt           = tt
 mono⊢ η (pair t u)   = pair (mono⊢ η t) (mono⊢ η u)
 mono⊢ η (fst t)      = fst (mono⊢ η t)
 mono⊢ η (snd t)      = snd (mono⊢ η t)
@@ -112,7 +112,7 @@ cinr = lam (inr v₀)
 ccase : ∀ {A B C Γ} → Γ ⊢ A ∨ B ▷ (A ▷ C) ▷ (B ▷ C) ▷ C
 ccase = lam (lam (lam (case v₂ (det v₁) (det v₀))))
 
-cboom : ∀ {C Γ} → Γ ⊢ ⫫ ▷ C
+cboom : ∀ {C Γ} → Γ ⊢ ⊥ ▷ C
 cboom = lam (boom v₀)
 
 
@@ -130,7 +130,7 @@ concat Γ′ t u = app (mono⊢ (weak⊆⧺ₗ Γ′) (lam t)) (mono⊢ weak⊆�
 [ i ≔ s ] var ._     | diff j = var j
 [ i ≔ s ] lam t      = lam ([ pop i ≔ mono⊢ weak⊆ s ] t)
 [ i ≔ s ] app t u    = app ([ i ≔ s ] t) ([ i ≔ s ] u)
-[ i ≔ s ] unit       = unit
+[ i ≔ s ] tt         = tt
 [ i ≔ s ] pair t u   = pair ([ i ≔ s ] t) ([ i ≔ s ] u)
 [ i ≔ s ] fst t      = fst ([ i ≔ s ] t)
 [ i ≔ s ] snd t      = snd ([ i ≔ s ] t)
@@ -165,14 +165,14 @@ data _⇒_ : ∀ {A Γ} → Γ ⊢ A → Γ ⊢ A → Set where
                → t ⇒ t′ → inr {A = A} t ⇒ inr t′
   cong⇒case : ∀ {A B C Γ} {t t′ : Γ ⊢ A ∨ B} {u u′ : Γ , A ⊢ C} {v v′ : Γ , B ⊢ C}
                → t ⇒ t′ → u ⇒ u′ → v ⇒ v′ → case t u v ⇒ case t′ u′ v′
-  cong⇒boom : ∀ {C Γ} {t t′ : Γ ⊢ ⫫}
+  cong⇒boom : ∀ {C Γ} {t t′ : Γ ⊢ ⊥}
                → t ⇒ t′ → boom {C = C} t ⇒ boom t′
   conv⇒lam  : ∀ {A B Γ} {t : Γ ⊢ A ▷ B}
                → t ⇒ lam (app (mono⊢ weak⊆ t) (var top))
   conv⇒app  : ∀ {A B Γ} {t : Γ , A ⊢ B} {u : Γ ⊢ A}
                → app (lam t) u ⇒ ([ top ≔ u ] t)
-  conv⇒unit : ∀ {Γ} {t : Γ ⊢ ⫪}
-               → t ⇒ unit
+  conv⇒tt : ∀ {Γ} {t : Γ ⊢ ⊤}
+               → t ⇒ tt
   conv⇒pair : ∀ {A B Γ} {t : Γ ⊢ A ∧ B}
                → t ⇒ pair (fst t) (snd t)
   conv⇒fst  : ∀ {A B Γ} {t : Γ ⊢ A} {u : Γ ⊢ B}

@@ -13,7 +13,7 @@ data _⨾_⊢_ (Γ Δ : Cx Ty) : Ty → Set where
   mvar  : ∀ {A}   → A ∈ Δ → Γ ⨾ Δ ⊢ A
   box   : ∀ {A}   → ⌀ ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢ □ A
   unbox : ∀ {A C} → Γ ⨾ Δ ⊢ □ A → Γ ⨾ Δ , A ⊢ C → Γ ⨾ Δ ⊢ C
-  unit  : Γ ⨾ Δ ⊢ ⫪
+  tt    : Γ ⨾ Δ ⊢ ⊤
   pair  : ∀ {A B} → Γ ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢ B → Γ ⨾ Δ ⊢ A ∧ B
   fst   : ∀ {A B} → Γ ⨾ Δ ⊢ A ∧ B → Γ ⨾ Δ ⊢ A
   snd   : ∀ {A B} → Γ ⨾ Δ ⊢ A ∧ B → Γ ⨾ Δ ⊢ B
@@ -28,7 +28,7 @@ mono⊢ η (app t u)   = app (mono⊢ η t) (mono⊢ η u)
 mono⊢ η (mvar i)    = mvar i
 mono⊢ η (box t)     = box t
 mono⊢ η (unbox t u) = unbox (mono⊢ η t) (mono⊢ η u)
-mono⊢ η unit        = unit
+mono⊢ η tt          = tt
 mono⊢ η (pair t u)  = pair (mono⊢ η t) (mono⊢ η u)
 mono⊢ η (fst t)     = fst (mono⊢ η t)
 mono⊢ η (snd t)     = snd (mono⊢ η t)
@@ -43,7 +43,7 @@ mmono⊢ η (app t u)   = app (mmono⊢ η t) (mmono⊢ η u)
 mmono⊢ η (mvar i)    = mvar (mono∈ η i)
 mmono⊢ η (box t)     = box (mmono⊢ η t)
 mmono⊢ η (unbox t u) = unbox (mmono⊢ η t) (mmono⊢ (keep η) u)
-mmono⊢ η unit        = unit
+mmono⊢ η tt          = tt
 mmono⊢ η (pair t u)  = pair (mmono⊢ η t) (mmono⊢ η u)
 mmono⊢ η (fst t)     = fst (mmono⊢ η t)
 mmono⊢ η (snd t)     = snd (mmono⊢ η t)
@@ -194,7 +194,7 @@ mconcat Δ′ t u = app (mmono⊢ (weak⊆⧺ₗ Δ′) (mlam t)) (mmono⊢ weak
 [ i ≔ s ] mvar j    = mvar j
 [ i ≔ s ] box t     = box t
 [ i ≔ s ] unbox t u = unbox ([ i ≔ s ] t) ([ i ≔ mmono⊢ weak⊆ s ] u)
-[ i ≔ s ] unit      = unit
+[ i ≔ s ] tt        = tt
 [ i ≔ s ] pair t u  = pair ([ i ≔ s ] t) ([ i ≔ s ] u)
 [ i ≔ s ] fst t     = fst ([ i ≔ s ] t)
 [ i ≔ s ] snd t     = snd ([ i ≔ s ] t)
@@ -211,7 +211,7 @@ m[ i ≔ s ] mvar .i   | same   = mono⊢ bot⊆ s
 m[ i ≔ s ] mvar ._   | diff j = mvar j
 m[ i ≔ s ] box t     = box (m[ i ≔ s ] t)
 m[ i ≔ s ] unbox t u = unbox (m[ i ≔ s ] t) (m[ pop i ≔ mmono⊢ weak⊆ s ] u)
-m[ i ≔ s ] unit      = unit
+m[ i ≔ s ] tt        = tt
 m[ i ≔ s ] pair t u  = pair (m[ i ≔ s ] t) (m[ i ≔ s ] u)
 m[ i ≔ s ] fst t     = fst (m[ i ≔ s ] t)
 m[ i ≔ s ] snd t     = snd (m[ i ≔ s ] t)

@@ -13,14 +13,14 @@ data _⊢⋆_ (Γ : Cx Ty) : Cx Ty → Set where
   ci    : ∀ {Π A}     → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A ▷ A
   ck    : ∀ {Π A B}   → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A ▷ B ▷ A
   cs    : ∀ {Π A B C} → Γ ⊢⋆ Π → Γ ⊢⋆ Π , (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
-  unit  : ∀ {Π}       → Γ ⊢⋆ Π → Γ ⊢⋆ Π , ⫪
+  tt    : ∀ {Π}       → Γ ⊢⋆ Π → Γ ⊢⋆ Π , ⊤
   cpair : ∀ {Π A B}   → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A ▷ B ▷ A ∧ B
   cfst  : ∀ {Π A B}   → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A ∧ B ▷ A
   csnd  : ∀ {Π A B}   → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A ∧ B ▷ B
   cinl  : ∀ {Π A B}   → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A ▷ A ∨ B
   cinr  : ∀ {Π A B}   → Γ ⊢⋆ Π → Γ ⊢⋆ Π , B ▷ A ∨ B
   ccase : ∀ {Π A B C} → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A ∨ B ▷ (A ▷ C) ▷ (B ▷ C) ▷ C
-  cboom : ∀ {Π C}     → Γ ⊢⋆ Π → Γ ⊢⋆ Π , ⫫ ▷ C
+  cboom : ∀ {Π C}     → Γ ⊢⋆ Π → Γ ⊢⋆ Π , ⊥ ▷ C
 
 infix 3 _⊢_
 _⊢_ : Cx Ty → Ty → Set
@@ -36,7 +36,7 @@ mono⊢⋆ η (mp i j ts) = mp i j (mono⊢⋆ η ts)
 mono⊢⋆ η (ci ts)     = ci (mono⊢⋆ η ts)
 mono⊢⋆ η (ck ts)     = ck (mono⊢⋆ η ts)
 mono⊢⋆ η (cs ts)     = cs (mono⊢⋆ η ts)
-mono⊢⋆ η (unit ts)   = unit (mono⊢⋆ η ts)
+mono⊢⋆ η (tt ts)     = tt (mono⊢⋆ η ts)
 mono⊢⋆ η (cpair ts)  = cpair (mono⊢⋆ η ts)
 mono⊢⋆ η (cfst ts)   = cfst (mono⊢⋆ η ts)
 mono⊢⋆ η (csnd ts)   = csnd (mono⊢⋆ η ts)
@@ -46,7 +46,7 @@ mono⊢⋆ η (ccase ts)  = ccase (mono⊢⋆ η ts)
 mono⊢⋆ η (cboom ts)  = cboom (mono⊢⋆ η ts)
 
 mono⊢ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
-mono⊢ η (Π ∙ ts) = Π ∙ mono⊢⋆ η ts
+mono⊢ η (ᴬpair Π ts) = ᴬpair Π (mono⊢⋆ η ts)
 
 
 -- Derivation concatenation.
@@ -58,7 +58,7 @@ us ⧻ mp i j ts = mp (mono∈ weak⊆⧺ᵣ i) (mono∈ weak⊆⧺ᵣ j) (us �
 us ⧻ ci ts     = ci (us ⧻ ts)
 us ⧻ ck ts     = ck (us ⧻ ts)
 us ⧻ cs ts     = cs (us ⧻ ts)
-us ⧻ unit ts   = unit (us ⧻ ts)
+us ⧻ tt ts     = tt (us ⧻ ts)
 us ⧻ cpair ts  = cpair (us ⧻ ts)
 us ⧻ cfst ts   = cfst (us ⧻ ts)
 us ⧻ csnd ts   = csnd (us ⧻ ts)
@@ -71,5 +71,6 @@ us ⧻ cboom ts  = cboom (us ⧻ ts)
 -- Modus ponens in expanded form.
 
 app : ∀ {A B Γ} → Γ ⊢ A ▷ B → Γ ⊢ A → Γ ⊢ B
-app {A} {B} (Π ∙ ts) (Π′ ∙ us) =
-    (Π′ , A) ⧺ (Π , A ▷ B) ∙ mp top (mono∈ (weak⊆⧺ₗ (Π , A ▷ B)) top) (us ⧻ ts)
+app {A} {B} (ᴬpair Π ts) (ᴬpair Π′ us) = ᴬpair Π″ vs
+  where Π″ = (Π′ , A) ⧺ (Π , A ▷ B)
+        vs = mp top (mono∈ (weak⊆⧺ₗ (Π , A ▷ B)) top) (us ⧻ ts)

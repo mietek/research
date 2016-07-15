@@ -11,7 +11,7 @@ mutual
   data _⊢ⁿᶠ_ (Γ : Cx Ty) : Ty → Set where
     neⁿᶠ   : ∀ {A}   → Γ ⊢ⁿᵉ A → Γ ⊢ⁿᶠ A
     lamⁿᶠ  : ∀ {A B} → Γ , A ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ▷ B
-    unitⁿᶠ : Γ ⊢ⁿᶠ ⫪
+    ttⁿᶠ   : Γ ⊢ⁿᶠ ⊤
     pairⁿᶠ : ∀ {A B} → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ∧ B
 
   -- Neutrals, or eliminations.
@@ -29,7 +29,7 @@ mutual
   nf→tm : ∀ {A Γ} → Γ ⊢ⁿᶠ A → Γ ⊢ A
   nf→tm (neⁿᶠ t)     = ne→tm t
   nf→tm (lamⁿᶠ t)    = lam (nf→tm t)
-  nf→tm unitⁿᶠ       = unit
+  nf→tm ttⁿᶠ         = tt
   nf→tm (pairⁿᶠ t u) = pair (nf→tm t) (nf→tm u)
 
   ne→tm : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊢ A
@@ -45,7 +45,7 @@ mutual
   mono⊢ⁿᶠ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ⁿᶠ A → Γ′ ⊢ⁿᶠ A
   mono⊢ⁿᶠ η (neⁿᶠ t)     = neⁿᶠ (mono⊢ⁿᵉ η t)
   mono⊢ⁿᶠ η (lamⁿᶠ t)    = lamⁿᶠ (mono⊢ⁿᶠ (keep η) t)
-  mono⊢ⁿᶠ η unitⁿᶠ       = unitⁿᶠ
+  mono⊢ⁿᶠ η ttⁿᶠ         = ttⁿᶠ
   mono⊢ⁿᶠ η (pairⁿᶠ t u) = pairⁿᶠ (mono⊢ⁿᶠ η t) (mono⊢ⁿᶠ η u)
 
   mono⊢ⁿᵉ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ⁿᵉ A → Γ′ ⊢ⁿᵉ A
@@ -64,8 +64,8 @@ instance
     ; _≤_     = _⊆_
     ; refl≤   = refl⊆
     ; trans≤  = trans⊆
-    ; _⊩ᴬ_   = λ Γ P → Γ ⊢ⁿᵉ ᴬ P
-    ; mono⊩ᴬ = mono⊢ⁿᵉ
+    ; _⊩ᵅ_   = λ Γ P → Γ ⊢ⁿᵉ α P
+    ; mono⊩ᵅ = mono⊢ⁿᵉ
     }
 
 
@@ -73,20 +73,20 @@ instance
 
 mutual
   reflect : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊩ A
-  reflect {ᴬ P}   t = t
+  reflect {α P}   t = t
   reflect {A ▷ B} t = λ ξ a → reflect {B} (appⁿᵉ (mono⊢ⁿᵉ ξ t) (reify {A} a))
-  reflect {⫪}    t = tt
-  reflect {A ∧ B} t = reflect {A} (fstⁿᵉ t) ∙ reflect {B} (sndⁿᵉ t)
+  reflect {⊤}    t = ᴬtt
+  reflect {A ∧ B} t = ᴬpair (reflect {A} (fstⁿᵉ t)) (reflect {B} (sndⁿᵉ t))
 
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ⁿᶠ A
-  reify {ᴬ P}   s       = neⁿᶠ s
-  reify {A ▷ B} f       = lamⁿᶠ (reify {B} (f weak⊆ (reflect {A} (varⁿᵉ top))))
-  reify {⫪}    tt      = unitⁿᶠ
-  reify {A ∧ B} (a ∙ b) = pairⁿᶠ (reify {A} a) (reify {B} b)
+  reify {α P}   s = neⁿᶠ s
+  reify {A ▷ B} s = lamⁿᶠ (reify {B} (s weak⊆ (reflect {A} (varⁿᵉ top))))
+  reify {⊤}    s = ttⁿᶠ
+  reify {A ∧ B} s = pairⁿᶠ (reify {A} (ᴬfst s)) (reify {B} (ᴬsnd s))
 
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
-refl⊩⋆ {⌀}     = tt
-refl⊩⋆ {Γ , A} = mono⊩⋆ {Γ} weak⊆ refl⊩⋆ ∙ reflect {A} (varⁿᵉ top)
+refl⊩⋆ {⌀}     = ᴬtt
+refl⊩⋆ {Γ , A} = ᴬpair (mono⊩⋆ {Γ} weak⊆ refl⊩⋆) (reflect {A} (varⁿᵉ top))
 
 
 -- Completeness, or quotation.

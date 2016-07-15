@@ -12,7 +12,7 @@ data _⊢_ (Γ : Cx Ty) : Ty → Set where
   ci    : ∀ {A}     → Γ ⊢ A ▷ A
   ck    : ∀ {A B}   → Γ ⊢ A ▷ B ▷ A
   cs    : ∀ {A B C} → Γ ⊢ (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
-  unit  : Γ ⊢ ⫪
+  tt    : Γ ⊢ ⊤
   cpair : ∀ {A B}   → Γ ⊢ A ▷ B ▷ A ∧ B
   cfst  : ∀ {A B}   → Γ ⊢ A ∧ B ▷ A
   csnd  : ∀ {A B}   → Γ ⊢ A ∧ B ▷ B
@@ -26,7 +26,7 @@ mono⊢ η (app t u) = app (mono⊢ η t) (mono⊢ η u)
 mono⊢ η ci        = ci
 mono⊢ η ck        = ck
 mono⊢ η cs        = cs
-mono⊢ η unit      = unit
+mono⊢ η tt        = tt
 mono⊢ η cpair     = cpair
 mono⊢ η cfst      = cfst
 mono⊢ η csnd      = csnd
@@ -53,7 +53,7 @@ lam (app t u)     = app (app cs (lam t)) (lam u)
 lam ci            = app ck ci
 lam ck            = app ck ck
 lam cs            = app ck cs
-lam unit          = app ck unit
+lam tt            = app ck tt
 lam cpair         = app ck cpair
 lam cfst          = app ck cfst
 lam csnd          = app ck csnd

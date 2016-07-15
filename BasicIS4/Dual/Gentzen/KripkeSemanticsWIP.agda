@@ -6,7 +6,7 @@ open import BasicIS4.Dual.Gentzen.Core public
 -- Non-standard intuitionistic modal Kripke models, based on Marti and Studer.
 
 record Model : Set₁ where
-  infix 3 _≤_ _R_ _⊩ᴬ_
+  infix 3 _≤_ _R_ _⊩ᵅ_
   field
     World : Set
 
@@ -21,8 +21,8 @@ record Model : Set₁ where
     transR : ∀ {w w′ w″} → w R w′ → w′ R w″ → w R w″
 
     -- Forcing for atomic propositions; monotonic with respect to intuitionistic accessibility.
-    _⊩ᴬ_   : World → Atom → Set
-    mono⊩ᴬ : ∀ {w w′ p} → w ≤ w′ → w ⊩ᴬ p → w′ ⊩ᴬ p
+    _⊩ᵅ_   : World → Atom → Set
+    mono⊩ᵅ : ∀ {w w′ p} → w ≤ w′ → w ⊩ᵅ p → w′ ⊩ᵅ p
 
     -- Modal accessibility is ??? with respect to intuitionistic accessibility;
     -- seems odd, but appears in Ono; repeated by Marti and Studer.
@@ -30,7 +30,7 @@ record Model : Set₁ where
 
     -- NEW: Forcing is monotonic with respect to modal accessibility; needed for soundness;
     -- seems OK.
-    mmono⊩ᴬ : ∀ {w w′ p} → w R w′ → w ⊩ᴬ p → w′ ⊩ᴬ p
+    mmono⊩ᵅ : ∀ {w w′ p} → w R w′ → w ⊩ᵅ p → w′ ⊩ᵅ p
 
     -- NEW: Intuitionistic accessibility is ??? with respect to modal accessibility;
     -- needed for soundness; seems odd.
@@ -52,44 +52,44 @@ open Model {{…}} public
 module _ {{_ : Model}} where
   infix 3 _⊩_
   _⊩_ : World → Ty → Set
-  w ⊩ ᴬ P   = w ⊩ᴬ P
+  w ⊩ α P   = w ⊩ᵅ P
   w ⊩ A ▷ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
   w ⊩ □ A   = ∀ {w′} → w R w′ → w′ ⊩ A
-  w ⊩ ⫪    = ⊤
-  w ⊩ A ∧ B = w ⊩ A × w ⊩ B
+  w ⊩ ⊤    = ᴬ⊤
+  w ⊩ A ∧ B = w ⊩ A ᴬ∧ w ⊩ B
 
   infix 3 _⊩⋆_
   _⊩⋆_ : World → Cx Ty → Set
-  w ⊩⋆ ⌀     = ⊤
-  w ⊩⋆ Γ , A = w ⊩⋆ Γ × w ⊩ A
+  w ⊩⋆ ⌀     = ᴬ⊤
+  w ⊩⋆ Γ , A = w ⊩⋆ Γ ᴬ∧ w ⊩ A
 
 
   -- Monotonicity with respect to intuitionistic accessibility.
 
   mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
-  mono⊩ {ᴬ P}   ξ s       = mono⊩ᴬ ξ s
-  mono⊩ {A ▷ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
-  mono⊩ {□ A}   ξ f       = λ ζ → f (fnordR ξ ζ)
-  mono⊩ {⫪}    ξ tt      = tt
-  mono⊩ {A ∧ B} ξ (a ∙ b) = mono⊩ {A} ξ a ∙ mono⊩ {B} ξ b
+  mono⊩ {α P}   ξ s = mono⊩ᵅ ξ s
+  mono⊩ {A ▷ B} ξ s = λ ξ′ a → s (trans≤ ξ ξ′) a
+  mono⊩ {□ A}   ξ s = λ ζ → s (fnordR ξ ζ)
+  mono⊩ {⊤}    ξ s = ᴬtt
+  mono⊩ {A ∧ B} ξ s = ᴬpair (mono⊩ {A} ξ (ᴬfst s)) (mono⊩ {B} ξ (ᴬsnd s))
 
   mono⊩⋆ : ∀ {Γ w w′} → w ≤ w′ → w ⊩⋆ Γ → w′ ⊩⋆ Γ
-  mono⊩⋆ {⌀}     ξ tt      = tt
-  mono⊩⋆ {Γ , A} ξ (γ ∙ a) = mono⊩⋆ {Γ} ξ γ ∙ mono⊩ {A} ξ a
+  mono⊩⋆ {⌀}     ξ γ = ᴬtt
+  mono⊩⋆ {Γ , A} ξ γ = ᴬpair (mono⊩⋆ {Γ} ξ (ᴬfst γ)) (mono⊩ {A} ξ (ᴬsnd γ))
 
 
   -- Monotonicity with respect to modal accessibility.
 
   mmono⊩ : ∀ {A w w′} → w R w′ → w ⊩ A → w′ ⊩ A
-  mmono⊩ {ᴬ P}   ζ s       = mmono⊩ᴬ ζ s
-  mmono⊩ {A ▷ B} ζ f       = λ ξ a → f (mfnord≤ ζ ξ) a
-  mmono⊩ {□ A}   ζ f       = λ ζ′ → f (transR ζ ζ′)
-  mmono⊩ {⫪}    ζ tt      = tt
-  mmono⊩ {A ∧ B} ζ (a ∙ b) = mmono⊩ {A} ζ a ∙ mmono⊩ {B} ζ b
+  mmono⊩ {α P}   ζ s = mmono⊩ᵅ ζ s
+  mmono⊩ {A ▷ B} ζ s = λ ξ a → s (mfnord≤ ζ ξ) a
+  mmono⊩ {□ A}   ζ s = λ ζ′ → s (transR ζ ζ′)
+  mmono⊩ {⊤}    ζ s = ᴬtt
+  mmono⊩ {A ∧ B} ζ s = ᴬpair (mmono⊩ {A} ζ (ᴬfst s)) (mmono⊩ {B} ζ (ᴬsnd s))
 
   mmono⊩⋆ : ∀ {Δ w w′} → w R w′ → w ⊩⋆ Δ → w′ ⊩⋆ Δ
-  mmono⊩⋆ {⌀}     ζ tt      = tt
-  mmono⊩⋆ {Δ , A} ζ (δ ∙ a) = mmono⊩⋆ {Δ} ζ δ ∙ mmono⊩ {A} ζ a
+  mmono⊩⋆ {⌀}     ζ δ = ᴬtt
+  mmono⊩⋆ {Δ , A} ζ δ = ᴬpair (mmono⊩⋆ {Δ} ζ (ᴬfst δ)) (mmono⊩ {A} ζ (ᴬsnd δ))
 
 
 -- Forcing in all models.
@@ -102,53 +102,53 @@ _⨾_ᴹ⊩_ : Cx Ty → Cx Ty → Ty → Set₁
 -- Soundness, or evaluation.
 
 lookup : ∀ {A Γ Δ} → A ∈ Γ → Γ ⨾ Δ ᴹ⊩ A
-lookup top     (γ ∙ a) δ = a
-lookup (pop i) (γ ∙ b) δ = lookup i γ δ
+lookup top     γ δ = ᴬsnd γ
+lookup (pop i) γ δ = lookup i (ᴬfst γ) δ
 
 mlookup : ∀ {A Γ Δ} → A ∈ Δ → Γ ⨾ Δ ᴹ⊩ A
-mlookup top     γ (δ ∙ a) = a
-mlookup (pop i) γ (δ ∙ b) = mlookup i γ δ
+mlookup top     γ δ = ᴬsnd δ
+mlookup (pop i) γ δ = mlookup i γ (ᴬfst δ)
 
 eval : ∀ {A Γ Δ} → Γ ⨾ Δ ⊢ A → Γ ⨾ Δ ᴹ⊩ A
 eval (var i)     γ δ = lookup i γ δ
-eval (lam t)     γ δ = λ ξ a → eval t (mono⊩⋆ ξ γ ∙ a) (mono⊩⋆ ξ δ)
+eval (lam t)     γ δ = λ ξ a → eval t (ᴬpair (mono⊩⋆ ξ γ) a) (mono⊩⋆ ξ δ)
 eval (app t u)   γ δ = (eval t γ δ) refl≤ (eval u γ δ)
 eval (mvar i)    γ δ = mlookup i γ δ
-eval (box t)     γ δ = λ ζ → eval t tt (mmono⊩⋆ ζ δ)
-eval (unbox t u) γ δ = eval u γ (δ ∙ (eval t γ δ) reflR)
-eval unit        γ δ = tt
-eval (pair t u)  γ δ = eval t γ δ ∙ eval u γ δ
-eval (fst t)     γ δ = proj₁ (eval t γ δ)
-eval (snd t)     γ δ = proj₂ (eval t γ δ)
+eval (box t)     γ δ = λ ζ → eval t ᴬtt (mmono⊩⋆ ζ δ)
+eval (unbox t u) γ δ = (eval u γ) (ᴬpair δ ((eval t γ δ) reflR))
+eval tt          γ δ = ᴬtt
+eval (pair t u)  γ δ = ᴬpair (eval t γ δ) (eval u γ δ)
+eval (fst t)     γ δ = ᴬfst (eval t γ δ)
+eval (snd t)     γ δ = ᴬsnd (eval t γ δ)
 
 
 -- Equipment for the canonical model.
 
 Cx² : Set → Set
-Cx² U = Cx U × Cx U
+Cx² U = Cx U ᴬ∧ Cx U
 
 module _ {U : Set} where
   infix 3 _⊆²_
   _⊆²_ : Cx² U → Cx² U → Set
-  (Γ ∙ Δ) ⊆² (Γ′ ∙ Δ′) = (Γ ⊆ Γ′) × (Δ ⊆ Δ′)
+  (ᴬpair Γ Δ) ⊆² (ᴬpair Γ′ Δ′) = (Γ ⊆ Γ′) ᴬ∧ (Δ ⊆ Δ′)
 
   refl⊆² : ∀ {Ξ} → Ξ ⊆² Ξ
-  refl⊆² = refl⊆ ∙ refl⊆
+  refl⊆² = ᴬpair refl⊆ refl⊆
 
   trans⊆² : ∀ {Ξ Ξ′ Ξ″} → Ξ ⊆² Ξ′ → Ξ′ ⊆² Ξ″ → Ξ ⊆² Ξ″
-  trans⊆² (η ∙ θ) (η′ ∙ θ′) = trans⊆ η η′ ∙ trans⊆ θ θ′
+  trans⊆² (ᴬpair η θ) (ᴬpair η′ θ′) = ᴬpair (trans⊆ η η′) (trans⊆ θ θ′)
 
   infix 3 _R²_
   data _R²_ : Cx² U → Cx² U → Set where
-    step : ∀ {Γ Γ′ Δ Δ′} → Γ ⊆ Γ′ → Δ ⊆ Δ′ → (Γ ∙ Δ) R² (Γ′ ∙ Δ′)
-    jump : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → (⌀ ∙ Δ) R² (Γ ∙ Δ′)
+    step : ∀ {Γ Γ′ Δ Δ′} → Γ ⊆ Γ′ → Δ ⊆ Δ′ → (ᴬpair Γ Δ) R² (ᴬpair Γ′ Δ′)
+    jump : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → (ᴬpair ⌀ Δ) R² (ᴬpair Γ Δ′)
 
   ⊆²→R² : ∀ {Ξ Ξ′} → Ξ ⊆² Ξ′ → Ξ R² Ξ′
-  ⊆²→R² (η ∙ θ) = step η θ
+  ⊆²→R² (ᴬpair η θ) = step η θ
 
   R²→⊆² : ∀ {Ξ Ξ′} → Ξ R² Ξ′ → Ξ ⊆² Ξ′
-  R²→⊆² (step η θ) = η ∙ θ
-  R²→⊆² (jump θ)   = bot⊆ ∙ θ
+  R²→⊆² (step η θ) = ᴬpair η θ
+  R²→⊆² (jump θ)   = ᴬpair bot⊆ θ
 
   reflR² : ∀ {Ξ} → Ξ R² Ξ
   reflR² = step refl⊆ refl⊆
@@ -160,19 +160,19 @@ module _ {U : Set} where
   transR² (jump θ)   (jump θ′)    = jump (trans⊆ θ θ′)
 
   fnordR² : ∀ {X Ξ Ξ′} → Ξ ⊆² Ξ′ → Ξ′ R² X → Ξ R² X
-  fnordR² (η ∙ θ) (step η′ θ′) = step (trans⊆ η η′) (trans⊆ θ θ′)
-  fnordR² (η ∙ θ) (jump θ′)    = step (trans⊆ η bot⊆) (trans⊆ θ θ′)
+  fnordR² (ᴬpair η θ) (step η′ θ′) = step (trans⊆ η η′) (trans⊆ θ θ′)
+  fnordR² (ᴬpair η θ) (jump θ′)    = step (trans⊆ η bot⊆) (trans⊆ θ θ′)
 
   mfnord⊆² : ∀ {X Ξ Ξ′} → Ξ R² Ξ′ → Ξ′ ⊆² X → Ξ ⊆² X
-  mfnord⊆² (step η θ) (η′ ∙ θ′) = trans⊆ η η′ ∙ trans⊆ θ θ′
-  mfnord⊆² (jump θ)   (η′ ∙ θ′) = bot⊆ ∙ trans⊆ θ θ′
+  mfnord⊆² (step η θ) (ᴬpair η′ θ′) = ᴬpair (trans⊆ η η′) (trans⊆ θ θ′)
+  mfnord⊆² (jump θ)   (ᴬpair η′ θ′) = ᴬpair bot⊆ (trans⊆ θ θ′)
 
 infix 3 _⊢²_
 _⊢²_ : Cx² Ty → Ty → Set
-(Γ ∙ Δ) ⊢² A = Γ ⨾ Δ ⊢ A
+(ᴬpair Γ Δ) ⊢² A = Γ ⨾ Δ ⊢ A
 
 mono⊢² : ∀ {A Ξ Ξ′} → Ξ ⊆² Ξ′ → Ξ ⊢² A → Ξ′ ⊢² A
-mono⊢² (η ∙ θ) = mono⊢ η ∘ mmono⊢ θ
+mono⊢² (ᴬpair η θ) = mono⊢ η ∘ mmono⊢ θ
 
 mmono⊢² : ∀ {A Ξ Ξ′} → Ξ R² Ξ′ → Ξ ⊢² A → Ξ′ ⊢² A
 mmono⊢² (step η θ) = mono⊢ η ∘ mmono⊢ θ
@@ -192,10 +192,10 @@ instance
     ; _R_      = _R²_
     ; reflR    = reflR²
     ; transR   = transR²
-    ; _⊩ᴬ_    = λ { Ξ P → Ξ ⊢² ᴬ P }
-    ; mono⊩ᴬ  = mono⊢²
+    ; _⊩ᵅ_    = λ { Ξ P → Ξ ⊢² α P }
+    ; mono⊩ᵅ  = mono⊢²
     ; fnordR   = fnordR²
-    ; mmono⊩ᴬ = mmono⊢²
+    ; mmono⊩ᵅ = mmono⊢²
     ; mfnord≤  = mfnord⊆²
     }
 
@@ -203,30 +203,30 @@ instance
 -- Soundness and completeness with respect to the canonical model.
 
 mutual
-  reflect : ∀ {A Γ Δ} → Γ ⨾ Δ ⊢ A → (Γ ∙ Δ) ⊩ A
-  reflect {ᴬ P}   t = t
-  reflect {A ▷ B} t = λ { {Γ′ ∙ Δ′} (η ∙ θ) a → reflect {B} (app (mono⊢ η (mmono⊢ θ t)) (reify {A} a)) }
+  reflect : ∀ {A Γ Δ} → Γ ⨾ Δ ⊢ A → (ᴬpair Γ Δ) ⊩ A
+  reflect {α P}   t = t
+  reflect {A ▷ B} t = λ { {ᴬpair Γ′ Δ′} (ᴬpair η θ) a → reflect {B} (app (mono⊢ η (mmono⊢ θ t)) (reify {A} a)) }
   reflect {□ A}   t = aux t
-    where aux : ∀ {Γ Γ′ Δ Δ′} → Γ ⨾ Δ ⊢ □ A → (Γ ∙ Δ) R² (Γ′ ∙ Δ′) → (Γ′ ∙ Δ′) ⊩ A
+    where aux : ∀ {Γ Γ′ Δ Δ′} → Γ ⨾ Δ ⊢ □ A → (ᴬpair Γ Δ) R² (ᴬpair Γ′ Δ′) → (ᴬpair Γ′ Δ′) ⊩ A
           aux t (step η θ) = reflect {A} (unbox (mono⊢ η (mmono⊢ θ t)) mv₀)
           aux t (jump θ)   = reflect {A} (unbox (mono⊢ bot⊆ (mmono⊢ θ t)) mv₀)
-  reflect {⫪}    t = tt
-  reflect {A ∧ B} t = reflect {A} (fst t) ∙ reflect {B} (snd t)
+  reflect {⊤}    t = ᴬtt
+  reflect {A ∧ B} t = ᴬpair (reflect {A} (fst t)) (reflect {B} (snd t))
 
-  reify : ∀ {A Γ Δ} → (Γ ∙ Δ) ⊩ A → Γ ⨾ Δ ⊢ A
-  reify {ᴬ P}   s       = s
-  reify {A ▷ B} f       = lam (reify {B} (f (weak⊆ ∙ refl⊆) (reflect {A} v₀)))
-  reify {□ A}   f       = box (reify {A} (f {!jump ?!}))
-  reify {⫪}    tt      = unit
-  reify {A ∧ B} (a ∙ b) = pair (reify {A} a) (reify {B} b)
+  reify : ∀ {A Γ Δ} → (ᴬpair Γ Δ) ⊩ A → Γ ⨾ Δ ⊢ A
+  reify {α P}   s = s
+  reify {A ▷ B} s = lam (reify {B} (s (ᴬpair weak⊆ refl⊆) (reflect {A} v₀)))
+  reify {□ A}   s = box (reify {A} (s {!jump ?!}))
+  reify {⊤}    s = tt
+  reify {A ∧ B} s = pair (reify {A} (ᴬfst s)) (reify {B} (ᴬsnd s))
 
-refl⊩⋆ : ∀ {Γ Δ} → (Γ ∙ Δ) ⊩⋆ Γ
-refl⊩⋆ {⌀}     = tt
-refl⊩⋆ {Γ , A} = mono⊩⋆ {Γ} (weak⊆ ∙ refl⊆) refl⊩⋆ ∙ reflect {A} v₀
+refl⊩⋆ : ∀ {Γ Δ} → (ᴬpair Γ Δ) ⊩⋆ Γ
+refl⊩⋆ {⌀}     = ᴬtt
+refl⊩⋆ {Γ , A} = ᴬpair (mono⊩⋆ {Γ} (ᴬpair weak⊆ refl⊆) refl⊩⋆) (reflect {A} v₀)
 
-mrefl⊩⋆ : ∀ {Δ Γ} → (Γ ∙ Δ) ⊩⋆ Δ
-mrefl⊩⋆ {⌀}     = tt
-mrefl⊩⋆ {Δ , A} = mmono⊩⋆ {Δ} (step refl⊆ weak⊆) mrefl⊩⋆ ∙ reflect {A} mv₀
+mrefl⊩⋆ : ∀ {Δ Γ} → (ᴬpair Γ Δ) ⊩⋆ Δ
+mrefl⊩⋆ {⌀}     = ᴬtt
+mrefl⊩⋆ {Δ , A} = ᴬpair (mmono⊩⋆ {Δ} (step refl⊆ weak⊆) mrefl⊩⋆) (reflect {A} mv₀)
 
 
 -- Completeness, or quotation.

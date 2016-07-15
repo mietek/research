@@ -14,7 +14,7 @@ open G using () renaming (_⊢_ to G⟨_⊢_⟩) public
 -- Translation from sequential Hilbert-style to nested.
 
 hl→hn : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → HN⟨ Γ ⊢ A ⟩
-hl→hn (Π ∙ ts) = aux ts top
+hl→hn (ᴬpair Π ts) = aux ts top
   where
     aux : ∀ {A Γ Π} → HS⟨ Γ ⊢⋆ Π ⟩ → A ∈ Π → HN⟨ Γ ⊢ A ⟩
     aux (HS.var i ts)  top     = HN.var i
@@ -22,7 +22,7 @@ hl→hn (Π ∙ ts) = aux ts top
     aux (HS.ci ts)     top     = HN.ci
     aux (HS.ck ts)     top     = HN.ck
     aux (HS.cs ts)     top     = HN.cs
-    aux (HS.unit ts)   top     = HN.unit
+    aux (HS.tt ts)     top     = HN.tt
     aux (HS.cpair ts)  top     = HN.cpair
     aux (HS.cfst ts)   top     = HN.cfst
     aux (HS.csnd ts)   top     = HN.csnd
@@ -31,7 +31,7 @@ hl→hn (Π ∙ ts) = aux ts top
     aux (HS.ci ts)     (pop k) = aux ts k
     aux (HS.ck ts)     (pop k) = aux ts k
     aux (HS.cs ts)     (pop k) = aux ts k
-    aux (HS.unit ts)   (pop k) = aux ts k
+    aux (HS.tt ts)     (pop k) = aux ts k
     aux (HS.cpair ts)  (pop k) = aux ts k
     aux (HS.cfst ts)   (pop k) = aux ts k
     aux (HS.csnd ts)   (pop k) = aux ts k
@@ -40,15 +40,15 @@ hl→hn (Π ∙ ts) = aux ts top
 -- Translation from nested Hilbert-style to sequential.
 
 hn→hl : ∀ {A Γ} → HN⟨ Γ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
-hn→hl (HN.var i)   = ⌀ ∙ HS.var i HS.nil
+hn→hl (HN.var i)   = ᴬpair ⌀ (HS.var i HS.nil)
 hn→hl (HN.app t u) = HS.app (hn→hl t) (hn→hl u)
-hn→hl HN.ci        = ⌀ ∙ HS.ci HS.nil
-hn→hl HN.ck        = ⌀ ∙ HS.ck HS.nil
-hn→hl HN.cs        = ⌀ ∙ HS.cs HS.nil
-hn→hl HN.unit      = ⌀ ∙ HS.unit HS.nil
-hn→hl HN.cpair     = ⌀ ∙ HS.cpair HS.nil
-hn→hl HN.cfst      = ⌀ ∙ HS.cfst HS.nil
-hn→hl HN.csnd      = ⌀ ∙ HS.csnd HS.nil
+hn→hl HN.ci        = ᴬpair ⌀ (HS.ci HS.nil)
+hn→hl HN.ck        = ᴬpair ⌀ (HS.ck HS.nil)
+hn→hl HN.cs        = ᴬpair ⌀ (HS.cs HS.nil)
+hn→hl HN.tt        = ᴬpair ⌀ (HS.tt HS.nil)
+hn→hl HN.cpair     = ᴬpair ⌀ (HS.cpair HS.nil)
+hn→hl HN.cfst      = ᴬpair ⌀ (HS.cfst HS.nil)
+hn→hl HN.csnd      = ᴬpair ⌀ (HS.csnd HS.nil)
 
 
 -- Deduction theorem for sequential Hilbert-style.
@@ -65,7 +65,7 @@ hn→g (HN.app t u) = G.app (hn→g t) (hn→g u)
 hn→g HN.ci        = G.ci
 hn→g HN.ck        = G.ck
 hn→g HN.cs        = G.cs
-hn→g HN.unit      = G.unit
+hn→g HN.tt        = G.tt
 hn→g HN.cpair     = G.cpair
 hn→g HN.cfst      = G.cfst
 hn→g HN.csnd      = G.csnd
@@ -80,7 +80,7 @@ g→hn : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → HN⟨ Γ ⊢ A ⟩
 g→hn (G.var i)    = HN.var i
 g→hn (G.lam t)    = HN.lam (g→hn t)
 g→hn (G.app t u)  = HN.app (g→hn t) (g→hn u)
-g→hn G.unit       = HN.unit
+g→hn G.tt         = HN.tt
 g→hn (G.pair t u) = HN.pair (g→hn t) (g→hn u)
 g→hn (G.fst t)    = HN.fst (g→hn t)
 g→hn (G.snd t)    = HN.snd (g→hn t)

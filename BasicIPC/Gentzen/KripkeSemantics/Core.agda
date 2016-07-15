@@ -6,7 +6,7 @@ open import BasicIPC.Gentzen.Core public
 -- Intuitionistic Kripke models.
 
 record Model : Set₁ where
-  infix 3 _⊩ᴬ_
+  infix 3 _⊩ᵅ_
   field
     World : Set
 
@@ -16,8 +16,8 @@ record Model : Set₁ where
     trans≤ : ∀ {w w′ w″} → w ≤ w′ → w′ ≤ w″ → w ≤ w″
 
     -- Forcing for atomic propositions; monotonic.
-    _⊩ᴬ_   : World → Atom → Set
-    mono⊩ᴬ : ∀ {p w w′} → w ≤ w′ → w ⊩ᴬ p → w′ ⊩ᴬ p
+    _⊩ᵅ_   : World → Atom → Set
+    mono⊩ᵅ : ∀ {p w w′} → w ≤ w′ → w ⊩ᵅ p → w′ ⊩ᵅ p
 
 open Model {{…}} public
 
@@ -27,28 +27,28 @@ open Model {{…}} public
 module _ {{_ : Model}} where
   infix 3 _⊩_
   _⊩_ : World → Ty → Set
-  w ⊩ ᴬ P   = w ⊩ᴬ P
+  w ⊩ α P   = w ⊩ᵅ P
   w ⊩ A ▷ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
-  w ⊩ ⫪    = ⊤
-  w ⊩ A ∧ B = w ⊩ A × w ⊩ B
+  w ⊩ ⊤    = ᴬ⊤
+  w ⊩ A ∧ B = w ⊩ A ᴬ∧ w ⊩ B
 
   infix 3 _⊩⋆_
   _⊩⋆_ : World → Cx Ty → Set
-  w ⊩⋆ ⌀     = ⊤
-  w ⊩⋆ Γ , A = w ⊩⋆ Γ × w ⊩ A
+  w ⊩⋆ ⌀     = ᴬ⊤
+  w ⊩⋆ Γ , A = w ⊩⋆ Γ ᴬ∧ w ⊩ A
 
 
   -- Monotonicity with respect to intuitionistic accessibility.
 
   mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
-  mono⊩ {ᴬ P}   ξ s       = mono⊩ᴬ ξ s
-  mono⊩ {A ▷ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
-  mono⊩ {⫪}    ξ tt      = tt
-  mono⊩ {A ∧ B} ξ (a ∙ b) = mono⊩ {A} ξ a ∙ mono⊩ {B} ξ b
+  mono⊩ {α P}   ξ s = mono⊩ᵅ ξ s
+  mono⊩ {A ▷ B} ξ s = λ ξ′ a → s (trans≤ ξ ξ′) a
+  mono⊩ {⊤}    ξ s = ᴬtt
+  mono⊩ {A ∧ B} ξ s = ᴬpair (mono⊩ {A} ξ (ᴬfst s)) (mono⊩ {B} ξ (ᴬsnd s))
 
   mono⊩⋆ : ∀ {Γ w w′} → w ≤ w′ → w ⊩⋆ Γ → w′ ⊩⋆ Γ
-  mono⊩⋆ {⌀}     ξ tt      = tt
-  mono⊩⋆ {Γ , A} ξ (γ ∙ a) = mono⊩⋆ {Γ} ξ γ ∙ mono⊩ {A} ξ a
+  mono⊩⋆ {⌀}     ξ γ = ᴬtt
+  mono⊩⋆ {Γ , A} ξ γ = ᴬpair (mono⊩⋆ {Γ} ξ (ᴬfst γ)) (mono⊩ {A} ξ (ᴬsnd γ))
 
 
 -- Forcing in all models.
@@ -61,17 +61,17 @@ _ᴹ⊩_ : Cx Ty → Ty → Set₁
 -- Soundness, or evaluation.
 
 lookup : ∀ {A Γ} → A ∈ Γ → Γ ᴹ⊩ A
-lookup top     (γ ∙ a) = a
-lookup (pop i) (γ ∙ b) = lookup i γ
+lookup top     γ = ᴬsnd γ
+lookup (pop i) γ = lookup i (ᴬfst γ)
 
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
 eval (var i)    γ = lookup i γ
-eval (lam t)    γ = λ ξ a → eval t (mono⊩⋆ ξ γ ∙ a)
+eval (lam t)    γ = λ ξ a → eval t (ᴬpair (mono⊩⋆ ξ γ) a)
 eval (app t u)  γ = (eval t γ) refl≤ (eval u γ)
-eval unit       γ = tt
-eval (pair t u) γ = eval t γ ∙ eval u γ
-eval (fst t)    γ = proj₁ (eval t γ)
-eval (snd t)    γ = proj₂ (eval t γ)
+eval tt         γ = ᴬtt
+eval (pair t u) γ = ᴬpair (eval t γ) (eval u γ)
+eval (fst t)    γ = ᴬfst (eval t γ)
+eval (snd t)    γ = ᴬsnd (eval t γ)
 
 
 -- TODO: Correctness with respect to conversion.
@@ -84,11 +84,11 @@ eval (snd t)    γ = proj₂ (eval t γ)
 --   coco (cong⇒lam p)    = cong {!!} (coco p)
 --   coco (cong⇒app p q)  = cong₂ (λ f g γ → (f γ) refl≤ (g γ)) (coco p) (coco q)
 --   coco (cong⇒pair p q) = cong₂ (λ f g γ → f γ ∙ g γ) (coco p) (coco q)
---   coco (cong⇒fst p)    = cong (λ f γ → proj₁ (f γ)) (coco p)
---   coco (cong⇒snd p)    = cong (λ f γ → proj₂ (f γ)) (coco p)
+--   coco (cong⇒fst p)    = cong (λ f γ → ᴬfst (f γ)) (coco p)
+--   coco (cong⇒snd p)    = cong (λ f γ → ᴬsnd (f γ)) (coco p)
 --   coco conv⇒lam        = {!refl!}
 --   coco conv⇒app        = {!refl!}
---   coco conv⇒unit       = refl
+--   coco conv⇒tt         = refl
 --   coco conv⇒pair       = refl
 --   coco conv⇒fst        = refl
 --   coco conv⇒snd        = refl
