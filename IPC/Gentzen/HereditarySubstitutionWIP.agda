@@ -27,7 +27,7 @@ mutual
   -- Neutrals, or eliminations.
   infix 3 _⊢ⁿᵉ_
   data _⊢ⁿᵉ_ (Γ : Cx Ty) : Ty → Set where
-    spⁿᵉ : ∀ {A B C} → A ∈ Γ → Γ ⊢ˢᵖ A ⦙ B → Γ ⊢ˢᵖ′ B ⦙ C → Γ ⊢ⁿᵉ C
+    spⁿᵉ : ∀ {A B C D} → A ∈ Γ → Γ ⊢ˢᵖ A ⦙ B → Γ ⊢ˢᵖ′ B ⦙ C → Γ ⊢ˢᵖ″ C ⦙ D → Γ ⊢ⁿᵉ D
 
   -- Spines.
   infix 3 _⊢ˢᵖ_⦙_
@@ -40,8 +40,14 @@ mutual
   -- Falsehood elimination, optional.
   infix 3 _⊢ˢᵖ′_⦙_
   data _⊢ˢᵖ′_⦙_ (Γ : Cx Ty) : Ty → Ty → Set where
-    nothingˢᵖ′ : ∀ {C}     → Γ ⊢ˢᵖ′ C ⦙ C
-    caseˢᵖ′    : ∀ {A B C} → Γ , A ⊢ⁿᶠ C → Γ , B ⊢ⁿᶠ C → Γ ⊢ˢᵖ′ A ∨ B ⦙ C
+    passˢᵖ′ : ∀ {C} → Γ ⊢ˢᵖ′ C ⦙ C
+    boomˢᵖ′ : ∀ {C} → Γ ⊢ˢᵖ′ ⫫ ⦙ C
+
+  -- Disjunction elimination, optional.
+  infix 3 _⊢ˢᵖ″_⦙_
+  data _⊢ˢᵖ″_⦙_ (Γ : Cx Ty) : Ty → Ty → Set where
+    passˢᵖ″ : ∀ {C}     → Γ ⊢ˢᵖ″ C ⦙ C
+    caseˢᵖ″ : ∀ {A B C} → Γ , A ⊢ⁿᶠ C → Γ , B ⊢ⁿᶠ C → Γ ⊢ˢᵖ″ A ∨ B ⦙ C
 
 
 -- Translation to simple terms.
@@ -56,7 +62,7 @@ mutual
   nf→tm (inrⁿᶠ t)    = inr (nf→tm t)
 
   ne→tm : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊢ A
-  ne→tm (spⁿᵉ i xs ys) = sp→tm′ (var i) xs ys
+  ne→tm (spⁿᵉ i xs y z) = sp→tm″ (var i) xs y z
 
   sp→tm : ∀ {A C Γ} → Γ ⊢ A → Γ ⊢ˢᵖ A ⦙ C → Γ ⊢ C
   sp→tm t nilˢᵖ        = t
@@ -65,8 +71,12 @@ mutual
   sp→tm t (sndˢᵖ xs)   = sp→tm (snd t) xs
 
   sp→tm′ : ∀ {A B C Γ} → Γ ⊢ A → Γ ⊢ˢᵖ A ⦙ B → Γ ⊢ˢᵖ′ B ⦙ C → Γ ⊢ C
-  sp→tm′ t xs nothingˢᵖ′    = sp→tm t xs
-  sp→tm′ t xs (caseˢᵖ′ u v) = case (sp→tm t xs) (nf→tm u) (nf→tm v)
+  sp→tm′ t xs passˢᵖ′ = sp→tm t xs
+  sp→tm′ t xs boomˢᵖ′ = boom (sp→tm t xs)
+
+  sp→tm″ : ∀ {A B C D Γ} → Γ ⊢ A → Γ ⊢ˢᵖ A ⦙ B → Γ ⊢ˢᵖ′ B ⦙ C → Γ ⊢ˢᵖ″ C ⦙ D → Γ ⊢ D
+  sp→tm″ t xs y passˢᵖ″       = sp→tm′ t xs y
+  sp→tm″ t xs y (caseˢᵖ″ u v) = case (sp→tm′ t xs y) (nf→tm u) (nf→tm v)
 
 
 -- Monotonicity with respect to context inclusion.
@@ -81,7 +91,7 @@ mutual
   mono⊢ⁿᶠ η (inrⁿᶠ t)    = inrⁿᶠ (mono⊢ⁿᶠ η t)
 
   mono⊢ⁿᵉ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ⁿᵉ A → Γ′ ⊢ⁿᵉ A
-  mono⊢ⁿᵉ η (spⁿᵉ i xs ys) = spⁿᵉ (mono∈ η i) (mono⊢ˢᵖ η xs) (mono⊢ˢᵖ′ η ys)
+  mono⊢ⁿᵉ η (spⁿᵉ i xs y z) = spⁿᵉ (mono∈ η i) (mono⊢ˢᵖ η xs) (mono⊢ˢᵖ′ η y) (mono⊢ˢᵖ″ η z)
 
   mono⊢ˢᵖ : ∀ {A C Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ˢᵖ A ⦙ C → Γ′ ⊢ˢᵖ A ⦙ C
   mono⊢ˢᵖ η nilˢᵖ        = nilˢᵖ
@@ -90,22 +100,26 @@ mutual
   mono⊢ˢᵖ η (sndˢᵖ xs)   = sndˢᵖ (mono⊢ˢᵖ η xs)
 
   mono⊢ˢᵖ′ : ∀ {A C Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ˢᵖ′ A ⦙ C → Γ′ ⊢ˢᵖ′ A ⦙ C
-  mono⊢ˢᵖ′ η nothingˢᵖ′    = nothingˢᵖ′
-  mono⊢ˢᵖ′ η (caseˢᵖ′ u v) = caseˢᵖ′ (mono⊢ⁿᶠ (keep η) u) (mono⊢ⁿᶠ (keep η) v)
+  mono⊢ˢᵖ′ η passˢᵖ′ = passˢᵖ′
+  mono⊢ˢᵖ′ η boomˢᵖ′ = boomˢᵖ′
+
+  mono⊢ˢᵖ″ : ∀ {A C Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ˢᵖ″ A ⦙ C → Γ′ ⊢ˢᵖ″ A ⦙ C
+  mono⊢ˢᵖ″ η passˢᵖ″       = passˢᵖ″
+  mono⊢ˢᵖ″ η (caseˢᵖ″ u v) = caseˢᵖ″ (mono⊢ⁿᶠ (keep η) u) (mono⊢ⁿᶠ (keep η) v)
 
 
 -- Hereditary substitution and reduction.
 
 mutual
   [_≔_]ⁿᶠ_ : ∀ {A B Γ} → (i : A ∈ Γ) → Γ - i ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B → Γ - i ⊢ⁿᶠ B
-  [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ j  xs ys) with i ≟∈ j
-  [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ .i xs ys) | same   = reduce s ([ i ≔ s ]ˢᵖ xs) ([ i ≔ s ]ˢᵖ′ ys)
-  [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ ._ xs ys) | diff j = neⁿᶠ (spⁿᵉ j ([ i ≔ s ]ˢᵖ xs) ([ i ≔ s ]ˢᵖ′ ys))
-  [ i ≔ s ]ⁿᶠ lamⁿᶠ t              = lamⁿᶠ ([ pop i ≔ mono⊢ⁿᶠ weak⊆ s ]ⁿᶠ t)
-  [ i ≔ s ]ⁿᶠ unitⁿᶠ               = unitⁿᶠ
-  [ i ≔ s ]ⁿᶠ pairⁿᶠ t u           = pairⁿᶠ ([ i ≔ s ]ⁿᶠ t) ([ i ≔ s ]ⁿᶠ u)
-  [ i ≔ s ]ⁿᶠ inlⁿᶠ t              = inlⁿᶠ ([ i ≔ s ]ⁿᶠ t)
-  [ i ≔ s ]ⁿᶠ inrⁿᶠ t              = inrⁿᶠ ([ i ≔ s ]ⁿᶠ t)
+  [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ j  xs y z) with i ≟∈ j
+  [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ .i xs y z) | same   = reduce s ([ i ≔ s ]ˢᵖ xs) ([ i ≔ s ]ˢᵖ′ y) ([ i ≔ s ]ˢᵖ″ z)
+  [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ ._ xs y z) | diff j = neⁿᶠ (spⁿᵉ j ([ i ≔ s ]ˢᵖ xs) ([ i ≔ s ]ˢᵖ′ y) ([ i ≔ s ]ˢᵖ″ z))
+  [ i ≔ s ]ⁿᶠ lamⁿᶠ t               = lamⁿᶠ ([ pop i ≔ mono⊢ⁿᶠ weak⊆ s ]ⁿᶠ t)
+  [ i ≔ s ]ⁿᶠ unitⁿᶠ                = unitⁿᶠ
+  [ i ≔ s ]ⁿᶠ pairⁿᶠ t u            = pairⁿᶠ ([ i ≔ s ]ⁿᶠ t) ([ i ≔ s ]ⁿᶠ u)
+  [ i ≔ s ]ⁿᶠ inlⁿᶠ t               = inlⁿᶠ ([ i ≔ s ]ⁿᶠ t)
+  [ i ≔ s ]ⁿᶠ inrⁿᶠ t               = inrⁿᶠ ([ i ≔ s ]ⁿᶠ t)
 
   [_≔_]ˢᵖ_ : ∀ {A B C Γ} → (i : A ∈ Γ) → Γ - i ⊢ⁿᶠ A → Γ ⊢ˢᵖ B ⦙ C → Γ - i ⊢ˢᵖ B ⦙ C
   [ i ≔ s ]ˢᵖ nilˢᵖ      = nilˢᵖ
@@ -114,24 +128,32 @@ mutual
   [ i ≔ s ]ˢᵖ sndˢᵖ xs   = sndˢᵖ ([ i ≔ s ]ˢᵖ xs)
 
   [_≔_]ˢᵖ′_ : ∀ {A B C Γ} → (i : A ∈ Γ) → Γ - i ⊢ⁿᶠ A → Γ ⊢ˢᵖ′ B ⦙ C → Γ - i ⊢ˢᵖ′ B ⦙ C
-  [ i ≔ s ]ˢᵖ′ nothingˢᵖ′  = nothingˢᵖ′
-  [ i ≔ s ]ˢᵖ′ caseˢᵖ′ u v = caseˢᵖ′ ([ pop i ≔ mono⊢ⁿᶠ weak⊆ s ]ⁿᶠ u)
-                                     ([ pop i ≔ mono⊢ⁿᶠ weak⊆ s ]ⁿᶠ v)
+  [ i ≔ s ]ˢᵖ′ passˢᵖ′ = passˢᵖ′
+  [ i ≔ s ]ˢᵖ′ boomˢᵖ′ = boomˢᵖ′
 
-  reduce : ∀ {A B C Γ} → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ A ⦙ B → Γ ⊢ˢᵖ′ B ⦙ C → {{_ : Tyⁿᵉ C}} → Γ ⊢ⁿᶠ C
-  reduce t                                nilˢᵖ        nothingˢᵖ′    = t
-  reduce (inlⁿᶠ t)                        nilˢᵖ        (caseˢᵖ′ u v) = [ top ≔ t ]ⁿᶠ u
-  reduce (inrⁿᶠ t)                        nilˢᵖ        (caseˢᵖ′ u v) = [ top ≔ t ]ⁿᶠ v
-  reduce (neⁿᶠ (spⁿᵉ i xs nothingˢᵖ′))    nilˢᵖ        ys            = neⁿᶠ (spⁿᵉ i xs ys)
-  reduce (neⁿᶠ (spⁿᵉ i xs (caseˢᵖ′ u v))) nilˢᵖ        ys            = neⁿᶠ (spⁿᵉ i xs (caseˢᵖ′ u′ v′))
-    where u′ = reduce u nilˢᵖ (mono⊢ˢᵖ′ weak⊆ ys)
-          v′ = reduce v nilˢᵖ (mono⊢ˢᵖ′ weak⊆ ys)
-  reduce (neⁿᶠ t {{()}})                  (appˢᵖ xs u) ys
-  reduce (neⁿᶠ t {{()}})                  (fstˢᵖ xs)   ys
-  reduce (neⁿᶠ t {{()}})                  (sndˢᵖ xs)   ys
-  reduce (lamⁿᶠ t)                        (appˢᵖ xs u) ys            = reduce ([ top ≔ u ]ⁿᶠ t) xs ys
-  reduce (pairⁿᶠ t u)                     (fstˢᵖ xs)   ys            = reduce t xs ys
-  reduce (pairⁿᶠ t u)                     (sndˢᵖ xs)   ys            = reduce u xs ys
+  [_≔_]ˢᵖ″_ : ∀ {A B C Γ} → (i : A ∈ Γ) → Γ - i ⊢ⁿᶠ A → Γ ⊢ˢᵖ″ B ⦙ C → Γ - i ⊢ˢᵖ″ B ⦙ C
+  [ i ≔ s ]ˢᵖ″ passˢᵖ″     = passˢᵖ″
+  [ i ≔ s ]ˢᵖ″ caseˢᵖ″ u v = caseˢᵖ″ u′ v′
+    where u′ = [ pop i ≔ mono⊢ⁿᶠ weak⊆ s ]ⁿᶠ u
+          v′ = [ pop i ≔ mono⊢ⁿᶠ weak⊆ s ]ⁿᶠ v
+
+  reduce : ∀ {A B C D Γ} → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ A ⦙ B → Γ ⊢ˢᵖ′ B ⦙ C → Γ ⊢ˢᵖ″ C ⦙ D → {{_ : Tyⁿᵉ D}} → Γ ⊢ⁿᶠ D
+  reduce t                                  nilˢᵖ        passˢᵖ′ passˢᵖ″       = t
+  reduce (inlⁿᶠ t)                          nilˢᵖ        passˢᵖ′ (caseˢᵖ″ u v) = [ top ≔ t ]ⁿᶠ u
+  reduce (inrⁿᶠ t)                          nilˢᵖ        passˢᵖ′ (caseˢᵖ″ u v) = [ top ≔ t ]ⁿᶠ v
+  reduce (neⁿᶠ (spⁿᵉ i xs passˢᵖ′ passˢᵖ″)) nilˢᵖ        passˢᵖ′ z             = neⁿᶠ (spⁿᵉ i xs passˢᵖ′ z)
+  reduce (neⁿᶠ (spⁿᵉ i xs passˢᵖ′ passˢᵖ″)) nilˢᵖ        boomˢᵖ′ z             = neⁿᶠ (spⁿᵉ i xs boomˢᵖ′ z)
+  reduce (neⁿᶠ (spⁿᵉ i xs boomˢᵖ′ passˢᵖ″)) nilˢᵖ        y       z             = neⁿᶠ (spⁿᵉ i xs boomˢᵖ′ z)
+  reduce (neⁿᶠ (spⁿᵉ i xs y (caseˢᵖ″ u v))) nilˢᵖ        passˢᵖ′ z             = neⁿᶠ (spⁿᵉ i xs y (caseˢᵖ″ u′ v′))
+    where u′ = reduce u nilˢᵖ passˢᵖ′ (mono⊢ˢᵖ″ weak⊆ z)
+          v′ = reduce v nilˢᵖ passˢᵖ′ (mono⊢ˢᵖ″ weak⊆ z)
+  reduce (neⁿᶠ (spⁿᵉ i xs y (caseˢᵖ″ u v))) nilˢᵖ        boomˢᵖ′ z             = {!!}
+  reduce (neⁿᶠ t {{()}})                    (appˢᵖ xs u) y       z
+  reduce (neⁿᶠ t {{()}})                    (fstˢᵖ xs)   y       z
+  reduce (neⁿᶠ t {{()}})                    (sndˢᵖ xs)   y       z
+  reduce (lamⁿᶠ t)                          (appˢᵖ xs u) y       z             = reduce ([ top ≔ u ]ⁿᶠ t) xs y z
+  reduce (pairⁿᶠ t u)                       (fstˢᵖ xs)   y       z             = reduce t xs y z
+  reduce (pairⁿᶠ t u)                       (sndˢᵖ xs)   y       z             = reduce u xs y z
 
 
 -- Reduction-based normal forms.
@@ -216,13 +238,19 @@ mutual
   caseⁿᶠ (inrⁿᶠ t) u v = [ top ≔ t ]ⁿᶠ v
 
   caseⁿᵉ : ∀ {A B C Γ} → Γ ⊢ⁿᵉ A ∨ B → Γ , A ⊢ⁿᶠ C → Γ , B ⊢ⁿᶠ C → Γ ⊢ⁿᵉ C
-  caseⁿᵉ (spⁿᵉ i xs nothingˢᵖ′)      u v = spⁿᵉ i xs (caseˢᵖ′ u v)
-  caseⁿᵉ (spⁿᵉ i xs (caseˢᵖ′ t₁ t₂)) u v = spⁿᵉ i xs (caseˢᵖ′ u′ v′)
-    where u′ = caseⁿᶠ t₁ (mono⊢ⁿᶠ (keep weak⊆) u) (mono⊢ⁿᶠ (keep weak⊆) v)
-          v′ = caseⁿᶠ t₂ (mono⊢ⁿᶠ (keep weak⊆) u) (mono⊢ⁿᶠ (keep weak⊆) v)
+  caseⁿᵉ (spⁿᵉ i xs y passˢᵖ″)         u v = spⁿᵉ i xs y (caseˢᵖ″ u v)
+  caseⁿᵉ (spⁿᵉ i xs y (caseˢᵖ″ tᵤ tᵥ)) u v = spⁿᵉ i xs y (caseˢᵖ″ u′ v′)
+    where u′ = caseⁿᶠ tᵤ (mono⊢ⁿᶠ (keep weak⊆) u) (mono⊢ⁿᶠ (keep weak⊆) v)
+          v′ = caseⁿᶠ tᵥ (mono⊢ⁿᶠ (keep weak⊆) u) (mono⊢ⁿᶠ (keep weak⊆) v)
 
-boomⁿᶠ : ∀ {C Γ} → Γ ⊢ⁿᶠ ⫫ → Γ ⊢ⁿᶠ C
-boomⁿᶠ t = reduce t nilˢᵖ {!!}
+mutual
+  boomⁿᶠ : ∀ {C Γ} → Γ ⊢ⁿᶠ ⫫ → Γ ⊢ⁿᶠ C
+  boomⁿᶠ (neⁿᶠ t) = expand (boomⁿᵉ t)
+
+  boomⁿᵉ : ∀ {C Γ} → Γ ⊢ⁿᵉ ⫫ → Γ ⊢ⁿᵉ C
+  boomⁿᵉ (spⁿᵉ i xs passˢᵖ′ passˢᵖ″) = spⁿᵉ i xs boomˢᵖ′ passˢᵖ″
+  boomⁿᵉ (spⁿᵉ i xs boomˢᵖ′ passˢᵖ″) = spⁿᵉ i xs boomˢᵖ′ passˢᵖ″
+  boomⁿᵉ (spⁿᵉ i xs y (caseˢᵖ″ u v)) = spⁿᵉ i xs y (caseˢᵖ″ (boomⁿᶠ u) (boomⁿᶠ v))
 
 
 -- Translation from terms to normal forms.
