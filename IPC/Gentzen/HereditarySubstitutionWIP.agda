@@ -138,22 +138,24 @@ mutual
           v′ = [ pop i ≔ mono⊢ⁿᶠ weak⊆ s ]ⁿᶠ v
 
   reduce : ∀ {A B C D Γ} → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ A ⦙ B → Γ ⊢ˢᵖ′ B ⦙ C → Γ ⊢ˢᵖ″ C ⦙ D → {{_ : Tyⁿᵉ D}} → Γ ⊢ⁿᶠ D
-  reduce t                                  nilˢᵖ        passˢᵖ′ passˢᵖ″       = t
-  reduce (inlⁿᶠ t)                          nilˢᵖ        passˢᵖ′ (caseˢᵖ″ u v) = [ top ≔ t ]ⁿᶠ u
-  reduce (inrⁿᶠ t)                          nilˢᵖ        passˢᵖ′ (caseˢᵖ″ u v) = [ top ≔ t ]ⁿᶠ v
-  reduce (neⁿᶠ (spⁿᵉ i xs passˢᵖ′ passˢᵖ″)) nilˢᵖ        passˢᵖ′ z             = neⁿᶠ (spⁿᵉ i xs passˢᵖ′ z)
-  reduce (neⁿᶠ (spⁿᵉ i xs passˢᵖ′ passˢᵖ″)) nilˢᵖ        boomˢᵖ′ z             = neⁿᶠ (spⁿᵉ i xs boomˢᵖ′ z)
-  reduce (neⁿᶠ (spⁿᵉ i xs boomˢᵖ′ passˢᵖ″)) nilˢᵖ        y       z             = neⁿᶠ (spⁿᵉ i xs boomˢᵖ′ z)
-  reduce (neⁿᶠ (spⁿᵉ i xs y (caseˢᵖ″ u v))) nilˢᵖ        passˢᵖ′ z             = neⁿᶠ (spⁿᵉ i xs y (caseˢᵖ″ u′ v′))
+  reduce t                                        nilˢᵖ        passˢᵖ′ passˢᵖ″       = t
+  reduce (inlⁿᶠ t)                                nilˢᵖ        passˢᵖ′ (caseˢᵖ″ u v) = [ top ≔ t ]ⁿᶠ u
+  reduce (inrⁿᶠ t)                                nilˢᵖ        passˢᵖ′ (caseˢᵖ″ u v) = [ top ≔ t ]ⁿᶠ v
+  reduce (neⁿᶠ (spⁿᵉ i xs passˢᵖ′ passˢᵖ″))       nilˢᵖ        passˢᵖ′ z             = neⁿᶠ (spⁿᵉ i xs passˢᵖ′ z)
+  reduce (neⁿᶠ (spⁿᵉ i xs passˢᵖ′ passˢᵖ″))       nilˢᵖ        boomˢᵖ′ z             = neⁿᶠ (spⁿᵉ i xs boomˢᵖ′ passˢᵖ″)
+  reduce (neⁿᶠ (spⁿᵉ i xs passˢᵖ′ (caseˢᵖ″ u v))) nilˢᵖ        passˢᵖ′ z             = neⁿᶠ (spⁿᵉ i xs passˢᵖ′ (caseˢᵖ″ u′ v′))
     where u′ = reduce u nilˢᵖ passˢᵖ′ (mono⊢ˢᵖ″ weak⊆ z)
           v′ = reduce v nilˢᵖ passˢᵖ′ (mono⊢ˢᵖ″ weak⊆ z)
-  reduce (neⁿᶠ (spⁿᵉ i xs y (caseˢᵖ″ u v))) nilˢᵖ        boomˢᵖ′ z             = {!!}
-  reduce (neⁿᶠ t {{()}})                    (appˢᵖ xs u) y       z
-  reduce (neⁿᶠ t {{()}})                    (fstˢᵖ xs)   y       z
-  reduce (neⁿᶠ t {{()}})                    (sndˢᵖ xs)   y       z
-  reduce (lamⁿᶠ t)                          (appˢᵖ xs u) y       z             = reduce ([ top ≔ u ]ⁿᶠ t) xs y z
-  reduce (pairⁿᶠ t u)                       (fstˢᵖ xs)   y       z             = reduce t xs y z
-  reduce (pairⁿᶠ t u)                       (sndˢᵖ xs)   y       z             = reduce u xs y z
+  reduce (neⁿᶠ (spⁿᵉ i xs passˢᵖ′ (caseˢᵖ″ u v))) nilˢᵖ        boomˢᵖ′ z             = neⁿᶠ (spⁿᵉ i xs passˢᵖ′ (caseˢᵖ″ u′ v′))
+    where u′ = {!reduce u nilˢᵖ boomˢᵖ′ passˢᵖ″!}
+          v′ = {!reduce v nilˢᵖ boomˢᵖ′ passˢᵖ″!}
+  reduce (neⁿᶠ (spⁿᵉ i xs boomˢᵖ′ _))             nilˢᵖ        _       _             = neⁿᶠ (spⁿᵉ i xs boomˢᵖ′ passˢᵖ″)
+  reduce (neⁿᶠ t {{()}})                          (appˢᵖ xs u) y       z
+  reduce (neⁿᶠ t {{()}})                          (fstˢᵖ xs)   y       z
+  reduce (neⁿᶠ t {{()}})                          (sndˢᵖ xs)   y       z
+  reduce (lamⁿᶠ t)                                (appˢᵖ xs u) y       z             = reduce ([ top ≔ u ]ⁿᶠ t) xs y z
+  reduce (pairⁿᶠ t u)                             (fstˢᵖ xs)   y       z             = reduce t xs y z
+  reduce (pairⁿᶠ t u)                             (sndˢᵖ xs)   y       z             = reduce u xs y z
 
 
 -- Reduction-based normal forms.
