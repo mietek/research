@@ -21,8 +21,8 @@ module _ {{_ : Model}} where
   ⊨_ : Ty → Set
   ⊨ α P   = ⊨ᵅ P
   ⊨ A ▷ B = ⊨ A → ⊨ B
-  ⊨ ⊤    = ᴬ⊤
   ⊨ A ∧ B = ⊨ A ᴬ∧ ⊨ B
+  ⊨ ⊤    = ᴬ⊤
 
   infix 3 ⊨⋆_
   ⊨⋆_ : Cx Ty → Set
@@ -47,10 +47,10 @@ eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊨ A
 eval (var i)    γ = lookup i γ
 eval (lam t)    γ = λ a → eval t (ᴬpair γ a)
 eval (app t u)  γ = (eval t γ) (eval u γ)
-eval tt         γ = ᴬtt
 eval (pair t u) γ = ᴬpair (eval t γ) (eval u γ)
 eval (fst t)    γ = ᴬfst (eval t γ)
 eval (snd t)    γ = ᴬsnd (eval t γ)
+eval tt         γ = ᴬtt
 
 
 -- TODO: Correctness with respect to conversion.
@@ -67,7 +67,7 @@ eval (snd t)    γ = ᴬsnd (eval t γ)
 --   coco (cong⇒snd p)    = cong (λ f γ → ᴬsnd (f γ)) (coco p)
 --   coco conv⇒lam        = {!refl!}
 --   coco conv⇒app        = {!refl!}
---   coco conv⇒tt         = refl
 --   coco conv⇒pair       = refl
 --   coco conv⇒fst        = refl
 --   coco conv⇒snd        = refl
+--   coco conv⇒tt         = refl

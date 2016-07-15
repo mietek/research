@@ -23,14 +23,14 @@ mutual
   reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
   reflect {α P}   t = t
   reflect {A ▷ B} t = λ ξ a → reflect {B} (app (mono⊢ ξ t) (reify {A} a))
-  reflect {⊤}    t = ᴬtt
   reflect {A ∧ B} t = ᴬpair (reflect {A} (fst t)) (reflect {B} (snd t))
+  reflect {⊤}    t = ᴬtt
 
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
   reify {α P}   s = s
   reify {A ▷ B} s = lam (reify {B} (s weak⊆ (reflect {A} (var top))))
-  reify {⊤}    s = tt
   reify {A ∧ B} s = pair (reify {A} (ᴬfst s)) (reify {B} (ᴬsnd s))
+  reify {⊤}    s = tt
 
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
 refl⊩⋆ {⌀}     = ᴬtt

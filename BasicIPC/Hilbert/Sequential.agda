@@ -13,10 +13,10 @@ data _⊢⋆_ (Γ : Cx Ty) : Cx Ty → Set where
   ci    : ∀ {Π A}     → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A ▷ A
   ck    : ∀ {Π A B}   → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A ▷ B ▷ A
   cs    : ∀ {Π A B C} → Γ ⊢⋆ Π → Γ ⊢⋆ Π , (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
-  tt    : ∀ {Π}       → Γ ⊢⋆ Π → Γ ⊢⋆ Π , ⊤
   cpair : ∀ {Π A B}   → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A ▷ B ▷ A ∧ B
   cfst  : ∀ {Π A B}   → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A ∧ B ▷ A
   csnd  : ∀ {Π A B}   → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A ∧ B ▷ B
+  tt    : ∀ {Π}       → Γ ⊢⋆ Π → Γ ⊢⋆ Π , ⊤
 
 infix 3 _⊢_
 _⊢_ : Cx Ty → Ty → Set
@@ -32,10 +32,10 @@ mono⊢⋆ η (mp i j ts) = mp i j (mono⊢⋆ η ts)
 mono⊢⋆ η (ci ts)     = ci (mono⊢⋆ η ts)
 mono⊢⋆ η (ck ts)     = ck (mono⊢⋆ η ts)
 mono⊢⋆ η (cs ts)     = cs (mono⊢⋆ η ts)
-mono⊢⋆ η (tt ts)     = tt (mono⊢⋆ η ts)
 mono⊢⋆ η (cpair ts)  = cpair (mono⊢⋆ η ts)
 mono⊢⋆ η (cfst ts)   = cfst (mono⊢⋆ η ts)
 mono⊢⋆ η (csnd ts)   = csnd (mono⊢⋆ η ts)
+mono⊢⋆ η (tt ts)     = tt (mono⊢⋆ η ts)
 
 mono⊢ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
 mono⊢ η (ᴬpair Π ts) = ᴬpair Π (mono⊢⋆ η ts)
@@ -50,10 +50,10 @@ us ⧻ mp i j ts = mp (mono∈ weak⊆⧺ᵣ i) (mono∈ weak⊆⧺ᵣ j) (us �
 us ⧻ ci ts     = ci (us ⧻ ts)
 us ⧻ ck ts     = ck (us ⧻ ts)
 us ⧻ cs ts     = cs (us ⧻ ts)
-us ⧻ tt ts     = tt (us ⧻ ts)
 us ⧻ cpair ts  = cpair (us ⧻ ts)
 us ⧻ cfst ts   = cfst (us ⧻ ts)
 us ⧻ csnd ts   = csnd (us ⧻ ts)
+us ⧻ tt ts     = tt (us ⧻ ts)
 
 
 -- Modus ponens in expanded form.

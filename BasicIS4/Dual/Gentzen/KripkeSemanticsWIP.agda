@@ -55,8 +55,8 @@ module _ {{_ : Model}} where
   w ⊩ α P   = w ⊩ᵅ P
   w ⊩ A ▷ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
   w ⊩ □ A   = ∀ {w′} → w R w′ → w′ ⊩ A
-  w ⊩ ⊤    = ᴬ⊤
   w ⊩ A ∧ B = w ⊩ A ᴬ∧ w ⊩ B
+  w ⊩ ⊤    = ᴬ⊤
 
   infix 3 _⊩⋆_
   _⊩⋆_ : World → Cx Ty → Set
@@ -70,8 +70,8 @@ module _ {{_ : Model}} where
   mono⊩ {α P}   ξ s = mono⊩ᵅ ξ s
   mono⊩ {A ▷ B} ξ s = λ ξ′ a → s (trans≤ ξ ξ′) a
   mono⊩ {□ A}   ξ s = λ ζ → s (fnordR ξ ζ)
-  mono⊩ {⊤}    ξ s = ᴬtt
   mono⊩ {A ∧ B} ξ s = ᴬpair (mono⊩ {A} ξ (ᴬfst s)) (mono⊩ {B} ξ (ᴬsnd s))
+  mono⊩ {⊤}    ξ s = ᴬtt
 
   mono⊩⋆ : ∀ {Γ w w′} → w ≤ w′ → w ⊩⋆ Γ → w′ ⊩⋆ Γ
   mono⊩⋆ {⌀}     ξ γ = ᴬtt
@@ -84,8 +84,8 @@ module _ {{_ : Model}} where
   mmono⊩ {α P}   ζ s = mmono⊩ᵅ ζ s
   mmono⊩ {A ▷ B} ζ s = λ ξ a → s (mfnord≤ ζ ξ) a
   mmono⊩ {□ A}   ζ s = λ ζ′ → s (transR ζ ζ′)
-  mmono⊩ {⊤}    ζ s = ᴬtt
   mmono⊩ {A ∧ B} ζ s = ᴬpair (mmono⊩ {A} ζ (ᴬfst s)) (mmono⊩ {B} ζ (ᴬsnd s))
+  mmono⊩ {⊤}    ζ s = ᴬtt
 
   mmono⊩⋆ : ∀ {Δ w w′} → w R w′ → w ⊩⋆ Δ → w′ ⊩⋆ Δ
   mmono⊩⋆ {⌀}     ζ δ = ᴬtt
@@ -116,10 +116,10 @@ eval (app t u)   γ δ = (eval t γ δ) refl≤ (eval u γ δ)
 eval (mvar i)    γ δ = mlookup i γ δ
 eval (box t)     γ δ = λ ζ → eval t ᴬtt (mmono⊩⋆ ζ δ)
 eval (unbox t u) γ δ = (eval u γ) (ᴬpair δ ((eval t γ δ) reflR))
-eval tt          γ δ = ᴬtt
 eval (pair t u)  γ δ = ᴬpair (eval t γ δ) (eval u γ δ)
 eval (fst t)     γ δ = ᴬfst (eval t γ δ)
 eval (snd t)     γ δ = ᴬsnd (eval t γ δ)
+eval tt          γ δ = ᴬtt
 
 
 -- Equipment for the canonical model.
@@ -210,15 +210,15 @@ mutual
     where aux : ∀ {Γ Γ′ Δ Δ′} → Γ ⨾ Δ ⊢ □ A → (ᴬpair Γ Δ) R² (ᴬpair Γ′ Δ′) → (ᴬpair Γ′ Δ′) ⊩ A
           aux t (step η θ) = reflect {A} (unbox (mono⊢ η (mmono⊢ θ t)) mv₀)
           aux t (jump θ)   = reflect {A} (unbox (mono⊢ bot⊆ (mmono⊢ θ t)) mv₀)
-  reflect {⊤}    t = ᴬtt
   reflect {A ∧ B} t = ᴬpair (reflect {A} (fst t)) (reflect {B} (snd t))
+  reflect {⊤}    t = ᴬtt
 
   reify : ∀ {A Γ Δ} → (ᴬpair Γ Δ) ⊩ A → Γ ⨾ Δ ⊢ A
   reify {α P}   s = s
   reify {A ▷ B} s = lam (reify {B} (s (ᴬpair weak⊆ refl⊆) (reflect {A} v₀)))
   reify {□ A}   s = box (reify {A} (s {!jump ?!}))
-  reify {⊤}    s = tt
   reify {A ∧ B} s = pair (reify {A} (ᴬfst s)) (reify {B} (ᴬsnd s))
+  reify {⊤}    s = tt
 
 refl⊩⋆ : ∀ {Γ Δ} → (ᴬpair Γ Δ) ⊩⋆ Γ
 refl⊩⋆ {⌀}     = ᴬtt

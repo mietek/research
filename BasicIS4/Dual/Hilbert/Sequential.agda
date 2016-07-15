@@ -19,10 +19,10 @@ mutual
     cdist : ∀ {Π A B}   → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π , □ (A ▷ B) ▷ □ A ▷ □ B
     cup   : ∀ {Π A}     → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π , □ A ▷ □ □ A
     cdown : ∀ {Π A}     → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π , □ A ▷ A
-    tt    : ∀ {Π}       → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π , ⊤
     cpair : ∀ {Π A B}   → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π , A ▷ B ▷ A ∧ B
     cfst  : ∀ {Π A B}   → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π , A ∧ B ▷ A
     csnd  : ∀ {Π A B}   → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π , A ∧ B ▷ B
+    tt    : ∀ {Π}       → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π , ⊤
 
   infix 3 _⨾_⊢_
   _⨾_⊢_ : Cx Ty → Cx Ty → Ty → Set
@@ -43,10 +43,10 @@ mono⊢⋆ η (nec ss ts) = nec ss (mono⊢⋆ η ts)
 mono⊢⋆ η (cdist ts)  = cdist (mono⊢⋆ η ts)
 mono⊢⋆ η (cup ts)    = cup (mono⊢⋆ η ts)
 mono⊢⋆ η (cdown ts)  = cdown (mono⊢⋆ η ts)
-mono⊢⋆ η (tt ts)     = tt (mono⊢⋆ η ts)
 mono⊢⋆ η (cpair ts)  = cpair (mono⊢⋆ η ts)
 mono⊢⋆ η (cfst ts)   = cfst (mono⊢⋆ η ts)
 mono⊢⋆ η (csnd ts)   = csnd (mono⊢⋆ η ts)
+mono⊢⋆ η (tt ts)     = tt (mono⊢⋆ η ts)
 
 mono⊢ : ∀ {A Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⨾ Δ ⊢ A → Γ′ ⨾ Δ ⊢ A
 mono⊢ η (ᴬpair Π ts) = ᴬpair Π (mono⊢⋆ η ts)
@@ -67,10 +67,10 @@ mutual
   mmono⊢⋆ η (cdist ts)  = cdist (mmono⊢⋆ η ts)
   mmono⊢⋆ η (cup ts)    = cup (mmono⊢⋆ η ts)
   mmono⊢⋆ η (cdown ts)  = cdown (mmono⊢⋆ η ts)
-  mmono⊢⋆ η (tt ts)     = tt (mmono⊢⋆ η ts)
   mmono⊢⋆ η (cpair ts)  = cpair (mmono⊢⋆ η ts)
   mmono⊢⋆ η (cfst ts)   = cfst (mmono⊢⋆ η ts)
   mmono⊢⋆ η (csnd ts)   = csnd (mmono⊢⋆ η ts)
+  mmono⊢⋆ η (tt ts)     = tt (mmono⊢⋆ η ts)
 
   mmono⊢ : ∀ {A Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⨾ Δ ⊢ A → Γ ⨾ Δ′ ⊢ A
   mmono⊢ η (ᴬpair Π ts) = ᴬpair Π (mmono⊢⋆ η ts)
@@ -90,10 +90,10 @@ us ⧻ nec ss ts = nec ss (us ⧻ ts)
 us ⧻ cdist ts  = cdist (us ⧻ ts)
 us ⧻ cup ts    = cup (us ⧻ ts)
 us ⧻ cdown ts  = cdown (us ⧻ ts)
-us ⧻ tt ts     = tt (us ⧻ ts)
 us ⧻ cpair ts  = cpair (us ⧻ ts)
 us ⧻ cfst ts   = cfst (us ⧻ ts)
 us ⧻ csnd ts   = csnd (us ⧻ ts)
+us ⧻ tt ts     = tt (us ⧻ ts)
 
 
 -- Modus ponens and necessitation in expanded form.

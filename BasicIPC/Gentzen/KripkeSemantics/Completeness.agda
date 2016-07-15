@@ -11,8 +11,8 @@ mutual
   data _⊢ⁿᶠ_ (Γ : Cx Ty) : Ty → Set where
     neⁿᶠ   : ∀ {A}   → Γ ⊢ⁿᵉ A → Γ ⊢ⁿᶠ A
     lamⁿᶠ  : ∀ {A B} → Γ , A ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ▷ B
-    ttⁿᶠ   : Γ ⊢ⁿᶠ ⊤
     pairⁿᶠ : ∀ {A B} → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ∧ B
+    ttⁿᶠ   : Γ ⊢ⁿᶠ ⊤
 
   -- Neutrals, or eliminations.
   infix 3 _⊢ⁿᵉ_
@@ -29,8 +29,8 @@ mutual
   nf→tm : ∀ {A Γ} → Γ ⊢ⁿᶠ A → Γ ⊢ A
   nf→tm (neⁿᶠ t)     = ne→tm t
   nf→tm (lamⁿᶠ t)    = lam (nf→tm t)
-  nf→tm ttⁿᶠ         = tt
   nf→tm (pairⁿᶠ t u) = pair (nf→tm t) (nf→tm u)
+  nf→tm ttⁿᶠ         = tt
 
   ne→tm : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊢ A
   ne→tm (varⁿᵉ i)   = var i
@@ -45,8 +45,8 @@ mutual
   mono⊢ⁿᶠ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ⁿᶠ A → Γ′ ⊢ⁿᶠ A
   mono⊢ⁿᶠ η (neⁿᶠ t)     = neⁿᶠ (mono⊢ⁿᵉ η t)
   mono⊢ⁿᶠ η (lamⁿᶠ t)    = lamⁿᶠ (mono⊢ⁿᶠ (keep η) t)
-  mono⊢ⁿᶠ η ttⁿᶠ         = ttⁿᶠ
   mono⊢ⁿᶠ η (pairⁿᶠ t u) = pairⁿᶠ (mono⊢ⁿᶠ η t) (mono⊢ⁿᶠ η u)
+  mono⊢ⁿᶠ η ttⁿᶠ         = ttⁿᶠ
 
   mono⊢ⁿᵉ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ⁿᵉ A → Γ′ ⊢ⁿᵉ A
   mono⊢ⁿᵉ η (varⁿᵉ i)   = varⁿᵉ (mono∈ η i)
@@ -75,14 +75,14 @@ mutual
   reflect : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊩ A
   reflect {α P}   t = t
   reflect {A ▷ B} t = λ ξ a → reflect {B} (appⁿᵉ (mono⊢ⁿᵉ ξ t) (reify {A} a))
-  reflect {⊤}    t = ᴬtt
   reflect {A ∧ B} t = ᴬpair (reflect {A} (fstⁿᵉ t)) (reflect {B} (sndⁿᵉ t))
+  reflect {⊤}    t = ᴬtt
 
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ⁿᶠ A
   reify {α P}   s = neⁿᶠ s
   reify {A ▷ B} s = lamⁿᶠ (reify {B} (s weak⊆ (reflect {A} (varⁿᵉ top))))
-  reify {⊤}    s = ttⁿᶠ
   reify {A ∧ B} s = pairⁿᶠ (reify {A} (ᴬfst s)) (reify {B} (ᴬsnd s))
+  reify {⊤}    s = ttⁿᶠ
 
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
 refl⊩⋆ {⌀}     = ᴬtt

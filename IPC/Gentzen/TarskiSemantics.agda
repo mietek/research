@@ -21,10 +21,10 @@ module _ {{_ : Model}} where
   ⊨_ : Ty → Set
   ⊨ α P   = ⊨ᵅ P
   ⊨ A ▷ B = ⊨ A → ⊨ B
-  ⊨ ⊤    = ᴬ⊤
   ⊨ A ∧ B = ⊨ A ᴬ∧ ⊨ B
-  ⊨ A ∨ B = ⊨ A ᴬ∨ ⊨ B
+  ⊨ ⊤    = ᴬ⊤
   ⊨ ⊥    = ᴬ⊥
+  ⊨ A ∨ B = ⊨ A ᴬ∨ ⊨ B
 
   infix 3 ⊨⋆_
   ⊨⋆_ : Cx Ty → Set
@@ -49,16 +49,16 @@ eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊨ A
 eval (var i)      γ = lookup i γ
 eval (lam t)      γ = λ a → eval t (ᴬpair γ a)
 eval (app t u)    γ = (eval t γ) (eval u γ)
-eval tt           γ = ᴬtt
 eval (pair t u)   γ = ᴬpair (eval t γ) (eval u γ)
 eval (fst t)      γ = ᴬfst (eval t γ)
 eval (snd t)      γ = ᴬsnd (eval t γ)
+eval tt           γ = ᴬtt
+eval (boom t)     γ = ᴬboom (eval t γ)
 eval (inl t)      γ = ᴬinl (eval t γ)
 eval (inr t)      γ = ᴬinr (eval t γ)
 eval (case t u v) γ = ᴬcase (eval t γ)
                         (λ a → eval u (ᴬpair γ a))
                         (λ b → eval v (ᴬpair γ b))
-eval (boom t)     γ = ᴬboom (eval t γ)
 
 
 -- TODO: Correctness with respect to conversion.
@@ -75,13 +75,13 @@ eval (boom t)     γ = ᴬboom (eval t γ)
 --   coco (cong⇒snd p)      = cong (λ f γ → ᴬsnd (f γ)) (coco p)
 --   coco (cong⇒inl p)      = cong (λ f γ → ᴬinl (f γ)) (coco p)
 --   coco (cong⇒inr p)      = cong (λ f γ → ᴬinr (f γ)) (coco p)
+--   coco (cong⇒boom p)     = cong (λ f γ → elim⊥ (f γ)) (coco p)
 --   coco (cong⇒case p q r) = cong₃ (λ f g h γ → [ (λ a → g (γ ∙ a))
 --                                                 ∙ (λ b → h (γ ∙ b))
 --                                                 ] (f γ)) (coco p) (coco q) (coco r)
---   coco (cong⇒boom p)     = cong (λ f γ → elim⊥ (f γ)) (coco p)
 --   coco conv⇒lam          = {!refl!}
 --   coco conv⇒app          = {!refl!}
---   coco conv⇒tt           = refl
 --   coco conv⇒pair         = refl
 --   coco conv⇒fst          = refl
 --   coco conv⇒snd          = refl
+--   coco conv⇒tt           = refl

@@ -11,10 +11,10 @@ infixr 5 _▷_
 data Ty : Set where
   α_  : Atom → Ty
   _▷_ : Ty → Ty → Ty
-  ⊤  : Ty
   _∧_ : Ty → Ty → Ty
-  _∨_ : Ty → Ty → Ty
+  ⊤  : Ty
   ⊥  : Ty
+  _∨_ : Ty → Ty → Ty
 
 ¬_ : Ty → Ty
 ¬ A = A ▷ ⊥

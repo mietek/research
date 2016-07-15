@@ -17,10 +17,10 @@ data _⨾_⊢_ (Γ Δ : Cx Ty) : Ty → Set where
   cdist : ∀ {A B}   → Γ ⨾ Δ ⊢ □ (A ▷ B) ▷ □ A ▷ □ B
   cup   : ∀ {A}     → Γ ⨾ Δ ⊢ □ A ▷ □ □ A
   cdown : ∀ {A}     → Γ ⨾ Δ ⊢ □ A ▷ A
-  tt    : Γ ⨾ Δ ⊢ ⊤
   cpair : ∀ {A B}   → Γ ⨾ Δ ⊢ A ▷ B ▷ A ∧ B
   cfst  : ∀ {A B}   → Γ ⨾ Δ ⊢ A ∧ B ▷ A
   csnd  : ∀ {A B}   → Γ ⨾ Δ ⊢ A ∧ B ▷ B
+  tt    : Γ ⨾ Δ ⊢ ⊤
 
 
 -- Monotonicity with respect to context inclusion.
@@ -36,10 +36,10 @@ mono⊢ η (box t)   = box t
 mono⊢ η cdist     = cdist
 mono⊢ η cup       = cup
 mono⊢ η cdown     = cdown
-mono⊢ η tt        = tt
 mono⊢ η cpair     = cpair
 mono⊢ η cfst      = cfst
 mono⊢ η csnd      = csnd
+mono⊢ η tt        = tt
 
 
 -- Monotonicity with respect to modal context inclusion.
@@ -55,10 +55,10 @@ mmono⊢ η (box t)   = box (mmono⊢ η t)
 mmono⊢ η cdist     = cdist
 mmono⊢ η cup       = cup
 mmono⊢ η cdown     = cdown
-mmono⊢ η tt        = tt
 mmono⊢ η cpair     = cpair
 mmono⊢ η cfst      = cfst
 mmono⊢ η csnd      = csnd
+mmono⊢ η tt        = tt
 
 
 -- Shorthand for variables.
@@ -96,10 +96,10 @@ lam (box t)       = app ck (box t)
 lam cdist         = app ck cdist
 lam cup           = app ck cup
 lam cdown         = app ck cdown
-lam tt            = app ck tt
 lam cpair         = app ck cpair
 lam cfst          = app ck cfst
 lam csnd          = app ck csnd
+lam tt            = app ck tt
 
 
 -- Combined axioms of distribution and transitivity.
@@ -128,10 +128,10 @@ mlam (box t)        = app cdistup (box (mlam t))
 mlam cdist          = app ck cdist
 mlam cup            = app ck cup
 mlam cdown          = app ck cdown
-mlam tt             = app ck tt
 mlam cpair          = app ck cpair
 mlam cfst           = app ck cfst
 mlam csnd           = app ck csnd
+mlam tt             = app ck tt
 
 
 -- Detachment theorems.

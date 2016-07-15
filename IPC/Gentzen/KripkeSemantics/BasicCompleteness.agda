@@ -24,22 +24,22 @@ mutual
   reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
   reflect {α P}   t = return {α P} t
   reflect {A ▷ B} t = return {A ▷ B} (λ ξ a → reflect {B} (app (mono⊢ ξ t) (reify {A} a)))
-  reflect {⊤}    t = return {⊤} ᴬtt
   reflect {A ∧ B} t = return {A ∧ B} (ᴬpair (reflect {A} (fst t)) (reflect {B} (snd t)))
+  reflect {⊤}    t = return {⊤} ᴬtt
+  reflect {⊥}    t = λ ξ k → boom (mono⊢ ξ t)
   reflect {A ∨ B} t = λ ξ k → case (mono⊢ ξ t)
                                  (k weak⊆ (ᴬinl (reflect {A} (var top))))
                                  (k weak⊆ (ᴬinr (reflect {B} (var top))))
-  reflect {⊥}    t = λ ξ k → boom (mono⊢ ξ t)
 
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
   reify {α P}   k = k refl≤ (λ ξ s → s)
   reify {A ▷ B} k = k refl≤ (λ ξ s → lam (reify {B} (s weak⊆ (reflect {A} (var top)))))
-  reify {⊤}    k = k refl≤ (λ ξ s → tt)
   reify {A ∧ B} k = k refl≤ (λ ξ s → pair (reify {A} (ᴬfst s)) (reify {B} (ᴬsnd s)))
+  reify {⊤}    k = k refl≤ (λ ξ s → tt)
+  reify {⊥}    k = k refl≤ (λ ξ ())
   reify {A ∨ B} k = k refl≤ (λ ξ s → ᴬcase s
                                         (λ a → inl (reify {A} (λ ξ′ k → a ξ′ k)))
                                         (λ b → inr (reify {B} (λ ξ′ k → b ξ′ k))))
-  reify {⊥}    k = k refl≤ (λ ξ ())
 
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
 refl⊩⋆ {⌀}     = ᴬtt

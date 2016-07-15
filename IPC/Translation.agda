@@ -22,27 +22,27 @@ hl→hn (ᴬpair Π ts) = aux ts top
     aux (HS.ci ts)     top     = HN.ci
     aux (HS.ck ts)     top     = HN.ck
     aux (HS.cs ts)     top     = HN.cs
-    aux (HS.tt ts)     top     = HN.tt
     aux (HS.cpair ts)  top     = HN.cpair
     aux (HS.cfst ts)   top     = HN.cfst
     aux (HS.csnd ts)   top     = HN.csnd
+    aux (HS.tt ts)     top     = HN.tt
+    aux (HS.cboom ts)  top     = HN.cboom
     aux (HS.cinl ts)   top     = HN.cinl
     aux (HS.cinr ts)   top     = HN.cinr
     aux (HS.ccase ts)  top     = HN.ccase
-    aux (HS.cboom ts)  top     = HN.cboom
     aux (HS.var i ts)  (pop k) = aux ts k
     aux (HS.mp i j ts) (pop k) = aux ts k
     aux (HS.ci ts)     (pop k) = aux ts k
     aux (HS.ck ts)     (pop k) = aux ts k
     aux (HS.cs ts)     (pop k) = aux ts k
-    aux (HS.tt ts)     (pop k) = aux ts k
     aux (HS.cpair ts)  (pop k) = aux ts k
     aux (HS.cfst ts)   (pop k) = aux ts k
     aux (HS.csnd ts)   (pop k) = aux ts k
+    aux (HS.tt ts)     (pop k) = aux ts k
+    aux (HS.cboom ts)  (pop k) = aux ts k
     aux (HS.cinl ts)   (pop k) = aux ts k
     aux (HS.cinr ts)   (pop k) = aux ts k
     aux (HS.ccase ts)  (pop k) = aux ts k
-    aux (HS.cboom ts)  (pop k) = aux ts k
 
 
 -- Translation from nested Hilbert-style to sequential.
@@ -53,14 +53,14 @@ hn→hl (HN.app t u) = HS.app (hn→hl t) (hn→hl u)
 hn→hl HN.ci        = ᴬpair ⌀ (HS.ci HS.nil)
 hn→hl HN.ck        = ᴬpair ⌀ (HS.ck HS.nil)
 hn→hl HN.cs        = ᴬpair ⌀ (HS.cs HS.nil)
-hn→hl HN.tt        = ᴬpair ⌀ (HS.tt HS.nil)
 hn→hl HN.cpair     = ᴬpair ⌀ (HS.cpair HS.nil)
 hn→hl HN.cfst      = ᴬpair ⌀ (HS.cfst HS.nil)
 hn→hl HN.csnd      = ᴬpair ⌀ (HS.csnd HS.nil)
+hn→hl HN.tt        = ᴬpair ⌀ (HS.tt HS.nil)
+hn→hl HN.cboom     = ᴬpair ⌀ (HS.cboom HS.nil)
 hn→hl HN.cinl      = ᴬpair ⌀ (HS.cinl HS.nil)
 hn→hl HN.cinr      = ᴬpair ⌀ (HS.cinr HS.nil)
 hn→hl HN.ccase     = ᴬpair ⌀ (HS.ccase HS.nil)
-hn→hl HN.cboom     = ᴬpair ⌀ (HS.cboom HS.nil)
 
 
 -- Deduction theorem for sequential Hilbert-style.
@@ -77,14 +77,14 @@ hn→g (HN.app t u) = G.app (hn→g t) (hn→g u)
 hn→g HN.ci        = G.ci
 hn→g HN.ck        = G.ck
 hn→g HN.cs        = G.cs
-hn→g HN.tt        = G.tt
 hn→g HN.cpair     = G.cpair
 hn→g HN.cfst      = G.cfst
 hn→g HN.csnd      = G.csnd
+hn→g HN.tt        = G.tt
+hn→g HN.cboom     = G.cboom
 hn→g HN.cinl      = G.cinl
 hn→g HN.cinr      = G.cinr
 hn→g HN.ccase     = G.ccase
-hn→g HN.cboom     = G.cboom
 
 hl→g : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → G⟨ Γ ⊢ A ⟩
 hl→g = hn→g ∘ hl→hn
@@ -96,14 +96,14 @@ g→hn : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → HN⟨ Γ ⊢ A ⟩
 g→hn (G.var i)      = HN.var i
 g→hn (G.lam t)      = HN.lam (g→hn t)
 g→hn (G.app t u)    = HN.app (g→hn t) (g→hn u)
-g→hn G.tt           = HN.tt
 g→hn (G.pair t u)   = HN.pair (g→hn t) (g→hn u)
 g→hn (G.fst t)      = HN.fst (g→hn t)
 g→hn (G.snd t)      = HN.snd (g→hn t)
+g→hn G.tt           = HN.tt
+g→hn (G.boom t)     = HN.boom (g→hn t)
 g→hn (G.inl t)      = HN.inl (g→hn t)
 g→hn (G.inr t)      = HN.inr (g→hn t)
 g→hn (G.case t u v) = HN.case (g→hn t) (g→hn u) (g→hn v)
-g→hn (G.boom t)     = HN.boom (g→hn t)
 
 g→hl : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
 g→hl = hn→hl ∘ g→hn

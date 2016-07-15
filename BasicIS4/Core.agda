@@ -11,8 +11,8 @@ data Ty : Set where
   α_  : Atom → Ty
   _▷_ : Ty → Ty → Ty
   □_  : Ty → Ty
-  ⊤  : Ty
   _∧_ : Ty → Ty → Ty
+  ⊤  : Ty
 
 infix 5 _⨝_
 _⨝_ : Ty → Ty → Ty

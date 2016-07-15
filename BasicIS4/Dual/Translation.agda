@@ -27,10 +27,10 @@ hl→hn (ᴬpair Π ts) = aux ts top
     aux (HS.cdist ts)  top     = HN.cdist
     aux (HS.cup ts)    top     = HN.cup
     aux (HS.cdown ts)  top     = HN.cdown
-    aux (HS.tt ts)     top     = HN.tt
     aux (HS.cpair ts)  top     = HN.cpair
     aux (HS.cfst ts)   top     = HN.cfst
     aux (HS.csnd ts)   top     = HN.csnd
+    aux (HS.tt ts)     top     = HN.tt
     aux (HS.var i ts)  (pop k) = aux ts k
     aux (HS.mp i j ts) (pop k) = aux ts k
     aux (HS.ci ts)     (pop k) = aux ts k
@@ -41,10 +41,10 @@ hl→hn (ᴬpair Π ts) = aux ts top
     aux (HS.cdist ts)  (pop k) = aux ts k
     aux (HS.cup ts)    (pop k) = aux ts k
     aux (HS.cdown ts)  (pop k) = aux ts k
-    aux (HS.tt ts)     (pop k) = aux ts k
     aux (HS.cpair ts)  (pop k) = aux ts k
     aux (HS.cfst ts)   (pop k) = aux ts k
     aux (HS.csnd ts)   (pop k) = aux ts k
+    aux (HS.tt ts)     (pop k) = aux ts k
 
 
 -- Translation from nested Hilbert-style to sequential.
@@ -60,10 +60,10 @@ hn→hl (HN.box t)   = HS.box (hn→hl t)
 hn→hl HN.cdist     = ᴬpair ⌀ (HS.cdist HS.nil)
 hn→hl HN.cup       = ᴬpair ⌀ (HS.cup HS.nil)
 hn→hl HN.cdown     = ᴬpair ⌀ (HS.cdown HS.nil)
-hn→hl HN.tt        = ᴬpair ⌀ (HS.tt HS.nil)
 hn→hl HN.cpair     = ᴬpair ⌀ (HS.cpair HS.nil)
 hn→hl HN.cfst      = ᴬpair ⌀ (HS.cfst HS.nil)
 hn→hl HN.csnd      = ᴬpair ⌀ (HS.csnd HS.nil)
+hn→hl HN.tt        = ᴬpair ⌀ (HS.tt HS.nil)
 
 
 -- Deduction theorems for sequential Hilbert-style.
@@ -88,10 +88,10 @@ hn→g (HN.box t)   = G.box (hn→g t)
 hn→g HN.cdist     = G.cdist
 hn→g HN.cup       = G.cup
 hn→g HN.cdown     = G.cdown
-hn→g HN.tt        = G.tt
 hn→g HN.cpair     = G.cpair
 hn→g HN.cfst      = G.cfst
 hn→g HN.csnd      = G.csnd
+hn→g HN.tt        = G.tt
 
 hl→g : ∀ {A Γ Δ} → HS⟨ Γ ⨾ Δ ⊢ A ⟩ → G⟨ Γ ⨾ Δ ⊢ A ⟩
 hl→g = hn→g ∘ hl→hn
@@ -106,10 +106,10 @@ g→hn (G.app t u)   = HN.app (g→hn t) (g→hn u)
 g→hn (G.mvar i)    = HN.mvar i
 g→hn (G.box t)     = HN.box (g→hn t)
 g→hn (G.unbox t u) = HN.unbox (g→hn t) (g→hn u)
-g→hn G.tt          = HN.tt
 g→hn (G.pair t u)  = HN.pair (g→hn t) (g→hn u)
 g→hn (G.fst t)     = HN.fst (g→hn t)
 g→hn (G.snd t)     = HN.snd (g→hn t)
+g→hn G.tt          = HN.tt
 
 g→hl : ∀ {A Γ Δ} → G⟨ Γ ⨾ Δ ⊢ A ⟩ → HS⟨ Γ ⨾ Δ ⊢ A ⟩
 g→hl = hn→hl ∘ g→hn

@@ -33,10 +33,10 @@ module _ {{_ : Model}} where
     _⊪_ : World → Ty → Set
     w ⊪ α P   = w ⊪ᵅ P
     w ⊪ A ▷ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
-    w ⊪ ⊤    = ᴬ⊤
     w ⊪ A ∧ B = w ⊩ A ᴬ∧ w ⊩ B
-    w ⊪ A ∨ B = w ⊩ A ᴬ∨ w ⊩ B
+    w ⊪ ⊤    = ᴬ⊤
     w ⊪ ⊥    = ᴬ⊥
+    w ⊪ A ∨ B = w ⊩ A ᴬ∨ w ⊩ B
 
     infix 3 _⊩_
     _⊩_ : World → Ty → Set
@@ -57,11 +57,11 @@ module _ {{_ : Model}} where
     mono⊪ : ∀ {A w w′} → w ≤ w′ → w ⊪ A → w′ ⊪ A
     mono⊪ {α P}   ξ s = mono⊪ᵅ ξ s
     mono⊪ {A ▷ B} ξ s = λ ξ′ a → s (trans≤ ξ ξ′) a
-    mono⊪ {⊤}    ξ s = ᴬtt
     mono⊪ {A ∧ B} ξ s = ᴬpair (mono⊩ {A} ξ (ᴬfst s)) (mono⊩ {B} ξ (ᴬsnd s))
+    mono⊪ {⊤}    ξ s = ᴬtt
+    mono⊪ {⊥}    ξ ()
     mono⊪ {A ∨ B} ξ (ᴬinl a) = ᴬinl (mono⊩ {A} ξ a)
     mono⊪ {A ∨ B} ξ (ᴬinr b) = ᴬinr (mono⊩ {B} ξ b)
-    mono⊪ {⊥}    ξ ()
 
   mono⊩⋆ : ∀ {Γ w w′} → w ≤ w′ → w ⊩⋆ Γ → w′ ⊩⋆ Γ
   mono⊩⋆ {⌀}     ξ γ = ᴬtt
@@ -95,16 +95,16 @@ eval (var i)                  γ = lookup i γ
 eval {A ▷ B} (lam t)          γ = return {A ▷ B} (λ ξ a → eval t (ᴬpair (mono⊩⋆ ξ γ) a))
 eval (app {A} {B} t u)        γ = bind {A ▷ B} {B} (eval t γ)
                                     (λ ξ a → a refl≤ (eval u (mono⊩⋆ ξ γ)))
-eval tt                       γ = return {⊤} ᴬtt
 eval {A ∧ B} (pair t u)       γ = return {A ∧ B} (ᴬpair (eval t γ) (eval u γ))
 eval (fst {A} {B} t)          γ = bind {A ∧ B} {A} (eval t γ) (λ ξ s → ᴬfst s)
 eval (snd {A} {B} t)          γ = bind {A ∧ B} {B} (eval t γ) (λ ξ s → ᴬsnd s)
+eval tt                       γ = return {⊤} ᴬtt
+eval (boom {C} t)             γ = bind {⊥} {C} (eval t γ) (λ ξ ())
 eval {A ∨ B} (inl t)          γ = return {A ∨ B} (ᴬinl (eval t γ))
 eval {A ∨ B} (inr t)          γ = return {A ∨ B} (ᴬinr (eval t γ))
 eval (case {A} {B} {C} t u v) γ = bind {A ∨ B} {C} (eval t γ) (λ ξ s → ᴬcase s
                                     (λ a → eval u (ᴬpair (mono⊩⋆ ξ γ) (λ ξ′ k → a ξ′ k)))
                                     (λ b → eval v (ᴬpair (mono⊩⋆ ξ γ) (λ ξ′ k → b ξ′ k))))
-eval (boom {C} t)             γ = bind {⊥} {C} (eval t γ) (λ ξ ())
 
 
 -- TODO: Correctness with respect to conversion.
@@ -121,8 +121,8 @@ eval (boom {C} t)             γ = bind {⊥} {C} (eval t γ) (λ ξ ())
 --   coco (cong⇒snd p)      = cong {!!} (coco p)
 --   coco (cong⇒inl p)      = cong {!!} (coco p)
 --   coco (cong⇒inr p)      = cong {!!} (coco p)
---   coco (cong⇒case p q r) = cong₃ {!!} (coco p) (coco q) (coco r)
 --   coco (cong⇒boom p)     = cong {!!} (coco p)
+--   coco (cong⇒case p q r) = cong₃ {!!} (coco p) (coco q) (coco r)
 --   coco conv⇒lam          = {!!}
 --   coco conv⇒app          = {!!}
 --   coco conv⇒tt           = {!!}

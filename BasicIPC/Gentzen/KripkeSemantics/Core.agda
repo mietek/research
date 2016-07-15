@@ -29,8 +29,8 @@ module _ {{_ : Model}} where
   _⊩_ : World → Ty → Set
   w ⊩ α P   = w ⊩ᵅ P
   w ⊩ A ▷ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
-  w ⊩ ⊤    = ᴬ⊤
   w ⊩ A ∧ B = w ⊩ A ᴬ∧ w ⊩ B
+  w ⊩ ⊤    = ᴬ⊤
 
   infix 3 _⊩⋆_
   _⊩⋆_ : World → Cx Ty → Set
@@ -43,8 +43,8 @@ module _ {{_ : Model}} where
   mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
   mono⊩ {α P}   ξ s = mono⊩ᵅ ξ s
   mono⊩ {A ▷ B} ξ s = λ ξ′ a → s (trans≤ ξ ξ′) a
-  mono⊩ {⊤}    ξ s = ᴬtt
   mono⊩ {A ∧ B} ξ s = ᴬpair (mono⊩ {A} ξ (ᴬfst s)) (mono⊩ {B} ξ (ᴬsnd s))
+  mono⊩ {⊤}    ξ s = ᴬtt
 
   mono⊩⋆ : ∀ {Γ w w′} → w ≤ w′ → w ⊩⋆ Γ → w′ ⊩⋆ Γ
   mono⊩⋆ {⌀}     ξ γ = ᴬtt
@@ -68,10 +68,10 @@ eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
 eval (var i)    γ = lookup i γ
 eval (lam t)    γ = λ ξ a → eval t (ᴬpair (mono⊩⋆ ξ γ) a)
 eval (app t u)  γ = (eval t γ) refl≤ (eval u γ)
-eval tt         γ = ᴬtt
 eval (pair t u) γ = ᴬpair (eval t γ) (eval u γ)
 eval (fst t)    γ = ᴬfst (eval t γ)
 eval (snd t)    γ = ᴬsnd (eval t γ)
+eval tt         γ = ᴬtt
 
 
 -- TODO: Correctness with respect to conversion.
@@ -88,7 +88,7 @@ eval (snd t)    γ = ᴬsnd (eval t γ)
 --   coco (cong⇒snd p)    = cong (λ f γ → ᴬsnd (f γ)) (coco p)
 --   coco conv⇒lam        = {!refl!}
 --   coco conv⇒app        = {!refl!}
---   coco conv⇒tt         = refl
 --   coco conv⇒pair       = refl
 --   coco conv⇒fst        = refl
 --   coco conv⇒snd        = refl
+--   coco conv⇒tt         = refl

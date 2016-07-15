@@ -11,8 +11,8 @@ mutual
   data _⊢ⁿᶠ_ (Γ : Cx Ty) : Ty → Set where
     neⁿᶠ   : ∀ {P}   → Γ ⊢ⁿᵉ α P → Γ ⊢ⁿᶠ α P
     lamⁿᶠ  : ∀ {A B} → Γ , A ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ▷ B
-    ttⁿᶠ   : Γ ⊢ⁿᶠ ⊤
     pairⁿᶠ : ∀ {A B} → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ∧ B
+    ttⁿᶠ   : Γ ⊢ⁿᶠ ⊤
 
   -- Neutrals, or eliminations.
   infix 3 _⊢ⁿᵉ_
@@ -34,8 +34,8 @@ mutual
   nf→tm : ∀ {A Γ} → Γ ⊢ⁿᶠ A → Γ ⊢ A
   nf→tm (neⁿᶠ t)     = ne→tm t
   nf→tm (lamⁿᶠ t)    = lam (nf→tm t)
-  nf→tm ttⁿᶠ         = tt
   nf→tm (pairⁿᶠ t u) = pair (nf→tm t) (nf→tm u)
+  nf→tm ttⁿᶠ         = tt
 
   ne→tm : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊢ A
   ne→tm (spⁿᵉ i xs) = sp→tm (var i) xs
@@ -53,8 +53,8 @@ mutual
   mono⊢ⁿᶠ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ⁿᶠ A → Γ′ ⊢ⁿᶠ A
   mono⊢ⁿᶠ η (neⁿᶠ t)     = neⁿᶠ (mono⊢ⁿᵉ η t)
   mono⊢ⁿᶠ η (lamⁿᶠ t)    = lamⁿᶠ (mono⊢ⁿᶠ (keep η) t)
-  mono⊢ⁿᶠ η ttⁿᶠ         = ttⁿᶠ
   mono⊢ⁿᶠ η (pairⁿᶠ t u) = pairⁿᶠ (mono⊢ⁿᶠ η t) (mono⊢ⁿᶠ η u)
+  mono⊢ⁿᶠ η ttⁿᶠ         = ttⁿᶠ
 
   mono⊢ⁿᵉ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ⁿᵉ A → Γ′ ⊢ⁿᵉ A
   mono⊢ⁿᵉ η (spⁿᵉ i xs) = spⁿᵉ (mono∈ η i) (mono⊢ˢᵖ η xs)
@@ -74,8 +74,8 @@ mutual
   [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ .i xs) | same   = reduce s ([ i ≔ s ]ˢᵖ xs)
   [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ ._ xs) | diff j = neⁿᶠ (spⁿᵉ j ([ i ≔ s ]ˢᵖ xs))
   [ i ≔ s ]ⁿᶠ lamⁿᶠ t           = lamⁿᶠ ([ pop i ≔ mono⊢ⁿᶠ weak⊆ s ]ⁿᶠ t)
-  [ i ≔ s ]ⁿᶠ ttⁿᶠ              = ttⁿᶠ
   [ i ≔ s ]ⁿᶠ pairⁿᶠ t u        = pairⁿᶠ ([ i ≔ s ]ⁿᶠ t) ([ i ≔ s ]ⁿᶠ u)
+  [ i ≔ s ]ⁿᶠ ttⁿᶠ              = ttⁿᶠ
 
   [_≔_]ˢᵖ_ : ∀ {A B C Γ} → (i : A ∈ Γ) → Γ - i ⊢ⁿᶠ A → Γ ⊢ˢᵖ B ⦙ C → Γ - i ⊢ˢᵖ B ⦙ C
   [ i ≔ s ]ˢᵖ nilˢᵖ      = nilˢᵖ
@@ -143,8 +143,8 @@ sndⁿᵉ (spⁿᵉ i xs) = spⁿᵉ i (≪sndˢᵖ xs)
 expand : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊢ⁿᶠ A
 expand {α P}   t = neⁿᶠ t
 expand {A ▷ B} t = lamⁿᶠ (expand (appⁿᵉ (mono⊢ⁿᵉ weak⊆ t) (expand (varⁿᵉ top))))
-expand {⊤}    t = ttⁿᶠ
 expand {A ∧ B} t = pairⁿᶠ (expand (fstⁿᵉ t)) (expand (sndⁿᵉ t))
+expand {⊤}    t = ttⁿᶠ
 
 
 -- Expansion-based normal forms.
@@ -159,10 +159,10 @@ tm→nf : ∀ {A Γ} → Γ ⊢ A → Γ ⊢ⁿᶠ A
 tm→nf (var i)    = varⁿᶠ i
 tm→nf (lam t)    = lamⁿᶠ (tm→nf t)
 tm→nf (app t u)  = appⁿᶠ (tm→nf t) (tm→nf u)
-tm→nf tt         = ttⁿᶠ
 tm→nf (pair t u) = pairⁿᶠ (tm→nf t) (tm→nf u)
 tm→nf (fst t)    = fstⁿᶠ (tm→nf t)
 tm→nf (snd t)    = sndⁿᶠ (tm→nf t)
+tm→nf tt         = ttⁿᶠ
 
 
 -- Normalisation.
@@ -184,7 +184,7 @@ norm = nf→tm ∘ tm→nf
 -- coco (cong⇒snd p)    = cong {!!} (coco p)
 -- coco conv⇒lam        = {!!}
 -- coco conv⇒app        = {!!}
--- coco conv⇒tt         = {!!}
 -- coco conv⇒pair       = {!!}
 -- coco conv⇒fst        = refl
 -- coco conv⇒snd        = refl
+-- coco conv⇒tt         = {!!}
