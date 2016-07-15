@@ -6,7 +6,7 @@ open import BasicIPC.Gentzen.Core public
 -- Derivations, as Gentzen-style natural deduction trees.
 
 mutual
-  -- Normal forms.
+  -- Normal forms, or introductions.
   infix 3 _⊢ⁿᶠ_
   data _⊢ⁿᶠ_ (Γ : Cx Ty) : Ty → Set where
     neⁿᶠ   : ∀ {P}   → Γ ⊢ⁿᵉ ᴬ P → Γ ⊢ⁿᶠ ᴬ P
@@ -14,7 +14,7 @@ mutual
     unitⁿᶠ : Γ ⊢ⁿᶠ ⫪
     pairⁿᶠ : ∀ {A B} → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ∧ B
 
-  -- Neutrals.
+  -- Neutrals, or eliminations.
   infix 3 _⊢ⁿᵉ_
   data _⊢ⁿᵉ_ (Γ : Cx Ty) : Ty → Set where
     spⁿᵉ : ∀ {A C} → A ∈ Γ → Γ ⊢ˢᵖ A ⦙ C → Γ ⊢ⁿᵉ C

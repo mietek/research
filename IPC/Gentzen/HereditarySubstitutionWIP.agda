@@ -14,7 +14,7 @@ data Tyⁿᵉ : Ty → Set where
 -- Derivations, as Gentzen-style natural deduction trees.
 
 mutual
-  -- Normal forms.
+  -- Normal forms, or introductions.
   infix 3 _⊢ⁿᶠ_
   data _⊢ⁿᶠ_ (Γ : Cx Ty) : Ty → Set where
     neⁿᶠ   : ∀ {A}   → Γ ⊢ⁿᵉ A → {{_ : Tyⁿᵉ A}} → Γ ⊢ⁿᶠ A
@@ -24,7 +24,7 @@ mutual
     inlⁿᶠ  : ∀ {A B} → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ A ∨ B
     inrⁿᶠ  : ∀ {A B} → Γ ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ∨ B
 
-  -- Neutrals.
+  -- Neutrals, or eliminations.
   infix 3 _⊢ⁿᵉ_
   data _⊢ⁿᵉ_ (Γ : Cx Ty) : Ty → Set where
     spⁿᵉ : ∀ {A B C} → A ∈ Γ → Γ ⊢ˢᵖ A ⦙ B → Γ ⊢ˢᵖ′ B ⦙ C → Γ ⊢ⁿᵉ C
@@ -37,7 +37,7 @@ mutual
     fstˢᵖ : ∀ {A B C} → Γ ⊢ˢᵖ A ⦙ C → Γ ⊢ˢᵖ A ∧ B ⦙ C
     sndˢᵖ : ∀ {A B C} → Γ ⊢ˢᵖ B ⦙ C → Γ ⊢ˢᵖ A ∧ B ⦙ C
 
-  -- Spine endings.
+  -- Falsehood elimination, optional.
   infix 3 _⊢ˢᵖ′_⦙_
   data _⊢ˢᵖ′_⦙_ (Γ : Cx Ty) : Ty → Ty → Set where
     nothingˢᵖ′ : ∀ {C}     → Γ ⊢ˢᵖ′ C ⦙ C
