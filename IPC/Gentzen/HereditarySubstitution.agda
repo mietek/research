@@ -11,7 +11,7 @@ data Tyⁿᵉ : Ty → Set where
   _∨_ : (A B : Ty) → Tyⁿᵉ (A ∨ B)
 
 
--- Derivations, as Gentzen-style natural deduction trees.
+-- Derivations, as Gentzen-style natural deduction trees, following Keller and Altenkirch.
 
 mutual
   -- Normal forms, or introductions.

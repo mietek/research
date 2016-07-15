@@ -3,7 +3,7 @@ module BasicIPC.Gentzen.HereditarySubstitution where
 open import BasicIPC.Gentzen.Core public
 
 
--- Derivations, as Gentzen-style natural deduction trees.
+-- Derivations, as Gentzen-style natural deduction trees, following Keller and Altenkirch.
 
 mutual
   -- Normal forms, or introductions.
