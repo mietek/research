@@ -151,42 +151,46 @@ sndⁿᶠ (pairⁿᶠ t u) = u
 
 -- Useful equipment for deriving neutrals.
 
-≪app : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ⦙ A ▷ B → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ C ⦙ B
-≪app nilˢᵖ        t = appˢᵖ nilˢᵖ t
-≪app (appˢᵖ xs u) t = appˢᵖ (≪app xs t) u
-≪app (fstˢᵖ xs)   t = fstˢᵖ (≪app xs t)
-≪app (sndˢᵖ xs)   t = sndˢᵖ (≪app xs t)
+≪appˢᵖ : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ⦙ A ▷ B → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ C ⦙ B
+≪appˢᵖ nilˢᵖ        t = appˢᵖ nilˢᵖ t
+≪appˢᵖ (appˢᵖ xs u) t = appˢᵖ (≪appˢᵖ xs t) u
+≪appˢᵖ (fstˢᵖ xs)   t = fstˢᵖ (≪appˢᵖ xs t)
+≪appˢᵖ (sndˢᵖ xs)   t = sndˢᵖ (≪appˢᵖ xs t)
 
-≪fst : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ⦙ A ∧ B → Γ ⊢ˢᵖ C ⦙ A
-≪fst nilˢᵖ        = fstˢᵖ nilˢᵖ
-≪fst (appˢᵖ xs u) = appˢᵖ (≪fst xs) u
-≪fst (fstˢᵖ xs)   = fstˢᵖ (≪fst xs)
-≪fst (sndˢᵖ xs)   = sndˢᵖ (≪fst xs)
+≪fstˢᵖ : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ⦙ A ∧ B → Γ ⊢ˢᵖ C ⦙ A
+≪fstˢᵖ nilˢᵖ        = fstˢᵖ nilˢᵖ
+≪fstˢᵖ (appˢᵖ xs u) = appˢᵖ (≪fstˢᵖ xs) u
+≪fstˢᵖ (fstˢᵖ xs)   = fstˢᵖ (≪fstˢᵖ xs)
+≪fstˢᵖ (sndˢᵖ xs)   = sndˢᵖ (≪fstˢᵖ xs)
 
-≪snd : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ⦙ A ∧ B → Γ ⊢ˢᵖ C ⦙ B
-≪snd nilˢᵖ        = sndˢᵖ nilˢᵖ
-≪snd (appˢᵖ xs u) = appˢᵖ (≪snd xs) u
-≪snd (fstˢᵖ xs)   = fstˢᵖ (≪snd xs)
-≪snd (sndˢᵖ xs)   = sndˢᵖ (≪snd xs)
+≪sndˢᵖ : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ⦙ A ∧ B → Γ ⊢ˢᵖ C ⦙ B
+≪sndˢᵖ nilˢᵖ        = sndˢᵖ nilˢᵖ
+≪sndˢᵖ (appˢᵖ xs u) = appˢᵖ (≪sndˢᵖ xs) u
+≪sndˢᵖ (fstˢᵖ xs)   = fstˢᵖ (≪sndˢᵖ xs)
+≪sndˢᵖ (sndˢᵖ xs)   = sndˢᵖ (≪sndˢᵖ xs)
 
 
 -- Derived neutrals.
 
 varⁿᵉ : ∀ {A Γ} → A ∈ Γ → Γ ⊢ⁿᵉ A
-varⁿᵉ i = spⁿᵉ i nilˢᵖ nothingˢᵖ′
+varⁿᵉ i = spⁿᵉ i nilˢᵖ passˢᵖ′ passˢᵖ″
 
 appⁿᵉ : ∀ {A B Γ} → Γ ⊢ⁿᵉ A ▷ B → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᵉ B
-appⁿᵉ (spⁿᵉ i xs nothingˢᵖ′)    t = spⁿᵉ i (≪app xs t) nothingˢᵖ′
-appⁿᵉ (spⁿᵉ i xs (caseˢᵖ′ u v)) t = spⁿᵉ i xs (caseˢᵖ′ (appⁿᶠ u (mono⊢ⁿᶠ weak⊆ t))
-                                                       (appⁿᶠ v (mono⊢ⁿᶠ weak⊆ t)))
+appⁿᵉ (spⁿᵉ i xs passˢᵖ′ passˢᵖ″) t = spⁿᵉ i (≪appˢᵖ xs t) passˢᵖ′ passˢᵖ″
+appⁿᵉ (spⁿᵉ i xs boomˢᵖ′ passˢᵖ″) t = spⁿᵉ i xs boomˢᵖ′ passˢᵖ″
+appⁿᵉ (spⁿᵉ i xs y (caseˢᵖ″ u v)) t = spⁿᵉ i xs y (caseˢᵖ″ u′ v′)
+  where u′ = appⁿᶠ u (mono⊢ⁿᶠ weak⊆ t)
+        v′ = appⁿᶠ v (mono⊢ⁿᶠ weak⊆ t)
 
 fstⁿᵉ : ∀ {A B Γ} → Γ ⊢ⁿᵉ A ∧ B → Γ ⊢ⁿᵉ A
-fstⁿᵉ (spⁿᵉ i xs nothingˢᵖ′)    = spⁿᵉ i (≪fst xs) nothingˢᵖ′
-fstⁿᵉ (spⁿᵉ i xs (caseˢᵖ′ u v)) = spⁿᵉ i xs (caseˢᵖ′ (fstⁿᶠ u) (fstⁿᶠ v))
+fstⁿᵉ (spⁿᵉ i xs passˢᵖ′ passˢᵖ″) = spⁿᵉ i (≪fstˢᵖ xs) passˢᵖ′ passˢᵖ″
+fstⁿᵉ (spⁿᵉ i xs boomˢᵖ′ passˢᵖ″) = spⁿᵉ i xs boomˢᵖ′ passˢᵖ″
+fstⁿᵉ (spⁿᵉ i xs y (caseˢᵖ″ u v)) = spⁿᵉ i xs y (caseˢᵖ″ (fstⁿᶠ u) (fstⁿᶠ v))
 
 sndⁿᵉ : ∀ {A B Γ} → Γ ⊢ⁿᵉ A ∧ B → Γ ⊢ⁿᵉ B
-sndⁿᵉ (spⁿᵉ i xs nothingˢᵖ′)    = spⁿᵉ i (≪snd xs) nothingˢᵖ′
-sndⁿᵉ (spⁿᵉ i xs (caseˢᵖ′ u v)) = spⁿᵉ i xs (caseˢᵖ′ (sndⁿᶠ u) (sndⁿᶠ v))
+sndⁿᵉ (spⁿᵉ i xs passˢᵖ′ passˢᵖ″) = spⁿᵉ i (≪sndˢᵖ xs) passˢᵖ′ passˢᵖ″
+sndⁿᵉ (spⁿᵉ i xs boomˢᵖ′ passˢᵖ″) = spⁿᵉ i xs boomˢᵖ′ passˢᵖ″
+sndⁿᵉ (spⁿᵉ i xs y (caseˢᵖ″ u v)) = spⁿᵉ i xs y (caseˢᵖ″ (sndⁿᶠ u) (sndⁿᶠ v))
 
 
 -- Iterated expansion.

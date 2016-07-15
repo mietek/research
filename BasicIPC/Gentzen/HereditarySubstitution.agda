@@ -104,23 +104,23 @@ sndⁿᶠ t = reduce t (sndˢᵖ nilˢᵖ)
 
 -- Useful equipment for deriving neutrals.
 
-≪app : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ⦙ A ▷ B → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ C ⦙ B
-≪app nilˢᵖ        t = appˢᵖ nilˢᵖ t
-≪app (appˢᵖ xs u) t = appˢᵖ (≪app xs t) u
-≪app (fstˢᵖ xs)   t = fstˢᵖ (≪app xs t)
-≪app (sndˢᵖ xs)   t = sndˢᵖ (≪app xs t)
+≪appˢᵖ : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ⦙ A ▷ B → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ C ⦙ B
+≪appˢᵖ nilˢᵖ        t = appˢᵖ nilˢᵖ t
+≪appˢᵖ (appˢᵖ xs u) t = appˢᵖ (≪appˢᵖ xs t) u
+≪appˢᵖ (fstˢᵖ xs)   t = fstˢᵖ (≪appˢᵖ xs t)
+≪appˢᵖ (sndˢᵖ xs)   t = sndˢᵖ (≪appˢᵖ xs t)
 
-≪fst : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ⦙ A ∧ B → Γ ⊢ˢᵖ C ⦙ A
-≪fst nilˢᵖ        = fstˢᵖ nilˢᵖ
-≪fst (appˢᵖ xs u) = appˢᵖ (≪fst xs) u
-≪fst (fstˢᵖ xs)   = fstˢᵖ (≪fst xs)
-≪fst (sndˢᵖ xs)   = sndˢᵖ (≪fst xs)
+≪fstˢᵖ : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ⦙ A ∧ B → Γ ⊢ˢᵖ C ⦙ A
+≪fstˢᵖ nilˢᵖ        = fstˢᵖ nilˢᵖ
+≪fstˢᵖ (appˢᵖ xs u) = appˢᵖ (≪fstˢᵖ xs) u
+≪fstˢᵖ (fstˢᵖ xs)   = fstˢᵖ (≪fstˢᵖ xs)
+≪fstˢᵖ (sndˢᵖ xs)   = sndˢᵖ (≪fstˢᵖ xs)
 
-≪snd : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ⦙ A ∧ B → Γ ⊢ˢᵖ C ⦙ B
-≪snd nilˢᵖ        = sndˢᵖ nilˢᵖ
-≪snd (appˢᵖ xs u) = appˢᵖ (≪snd xs) u
-≪snd (fstˢᵖ xs)   = fstˢᵖ (≪snd xs)
-≪snd (sndˢᵖ xs)   = sndˢᵖ (≪snd xs)
+≪sndˢᵖ : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ⦙ A ∧ B → Γ ⊢ˢᵖ C ⦙ B
+≪sndˢᵖ nilˢᵖ        = sndˢᵖ nilˢᵖ
+≪sndˢᵖ (appˢᵖ xs u) = appˢᵖ (≪sndˢᵖ xs) u
+≪sndˢᵖ (fstˢᵖ xs)   = fstˢᵖ (≪sndˢᵖ xs)
+≪sndˢᵖ (sndˢᵖ xs)   = sndˢᵖ (≪sndˢᵖ xs)
 
 
 -- Derived neutrals.
@@ -129,13 +129,13 @@ varⁿᵉ : ∀ {A Γ} → A ∈ Γ → Γ ⊢ⁿᵉ A
 varⁿᵉ i = spⁿᵉ i nilˢᵖ
 
 appⁿᵉ : ∀ {A B Γ} → Γ ⊢ⁿᵉ A ▷ B → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᵉ B
-appⁿᵉ (spⁿᵉ i xs) t = spⁿᵉ i (≪app xs t)
+appⁿᵉ (spⁿᵉ i xs) t = spⁿᵉ i (≪appˢᵖ xs t)
 
 fstⁿᵉ : ∀ {A B Γ} → Γ ⊢ⁿᵉ A ∧ B → Γ ⊢ⁿᵉ A
-fstⁿᵉ (spⁿᵉ i xs) = spⁿᵉ i (≪fst xs)
+fstⁿᵉ (spⁿᵉ i xs) = spⁿᵉ i (≪fstˢᵖ xs)
 
 sndⁿᵉ : ∀ {A B Γ} → Γ ⊢ⁿᵉ A ∧ B → Γ ⊢ⁿᵉ B
-sndⁿᵉ (spⁿᵉ i xs) = spⁿᵉ i (≪snd xs)
+sndⁿᵉ (spⁿᵉ i xs) = spⁿᵉ i (≪sndˢᵖ xs)
 
 
 -- Iterated expansion.
