@@ -40,8 +40,8 @@ mutual
   -- Spine tips.
   infix 3 _⊢ᵗᵖ_⦙_
   data _⊢ᵗᵖ_⦙_ (Γ : Cx Ty) : Ty → Ty → Set where
-    nilᵗᵖ  : ∀ {C} → Γ ⊢ᵗᵖ C ⦙ C
-    boomᵗᵖ : ∀ {C} → Γ ⊢ᵗᵖ ⊥ ⦙ C
+    nilᵗᵖ  : ∀ {C}     → Γ ⊢ᵗᵖ C ⦙ C
+    boomᵗᵖ : ∀ {C}     → Γ ⊢ᵗᵖ ⊥ ⦙ C
     caseᵗᵖ : ∀ {A B C} → Γ , A ⊢ⁿᶠ C → Γ , B ⊢ⁿᶠ C → Γ ⊢ᵗᵖ A ∨ B ⦙ C
 
 
@@ -125,8 +125,7 @@ mutual
 
   reduce : ∀ {A B C Γ} → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ A ⦙ B → Γ ⊢ᵗᵖ B ⦙ C → {{_ : Tyⁿᵉ C}} → Γ ⊢ⁿᶠ C
   reduce t                               nilˢᵖ        nilᵗᵖ        = t
-  reduce (neⁿᶠ (spⁿᵉ i xs nilᵗᵖ))        nilˢᵖ        boomᵗᵖ       = neⁿᶠ (spⁿᵉ i xs boomᵗᵖ)
-  reduce (neⁿᶠ (spⁿᵉ i xs nilᵗᵖ))        nilˢᵖ        (caseᵗᵖ u v) = neⁿᶠ (spⁿᵉ i xs (caseᵗᵖ u v))
+  reduce (neⁿᶠ (spⁿᵉ i xs nilᵗᵖ))        nilˢᵖ        y            = neⁿᶠ (spⁿᵉ i xs y)
   reduce (neⁿᶠ (spⁿᵉ i xs boomᵗᵖ))       nilˢᵖ        y            = neⁿᶠ (spⁿᵉ i xs boomᵗᵖ)
   reduce (neⁿᶠ (spⁿᵉ i xs (caseᵗᵖ u v))) nilˢᵖ        y            = neⁿᶠ (spⁿᵉ i xs (caseᵗᵖ u′ v′))
     where u′ = reduce u nilˢᵖ (mono⊢ᵗᵖ weak⊆ y)
