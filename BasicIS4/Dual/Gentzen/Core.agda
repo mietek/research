@@ -220,39 +220,39 @@ m[ i ≔ s ] tt        = tt
 -- TODO: Conversion.
 
 infix 0 _⇒_
-data _⇒_ : ∀ {A Γ Δ} → Γ ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢ A → Set where
-  refl⇒      : ∀ {A Γ Δ} {t : Γ ⨾ Δ ⊢ A}
+data _⇒_ {Γ Δ : Cx Ty} : ∀ {A} → Γ ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢ A → Set where
+  refl⇒      : ∀ {A} {t : Γ ⨾ Δ ⊢ A}
                 → t ⇒ t
-  trans⇒     : ∀ {A Γ Δ} {t t′ t″ : Γ ⨾ Δ ⊢ A}
+  trans⇒     : ∀ {A} {t t′ t″ : Γ ⨾ Δ ⊢ A}
                 → t ⇒ t′ → t′ ⇒ t″ → t ⇒ t″
-  sym⇒       : ∀ {A Γ Δ} {t t′ : Γ ⨾ Δ ⊢ A}
+  sym⇒       : ∀ {A} {t t′ : Γ ⨾ Δ ⊢ A}
                 → t ⇒ t′ → t′ ⇒ t
-  cong⇒lam   : ∀ {A B Γ Δ} {t t′ : Γ , A ⨾ Δ ⊢ B}
+  cong⇒lam   : ∀ {A B} {t t′ : Γ , A ⨾ Δ ⊢ B}
                 → t ⇒ t′ → lam t ⇒ lam t′
-  cong⇒app   : ∀ {A B Γ Δ} {t t′ : Γ ⨾ Δ ⊢ A ▷ B} {u u′ : Γ ⨾ Δ ⊢ A}
+  cong⇒app   : ∀ {A B} {t t′ : Γ ⨾ Δ ⊢ A ▷ B} {u u′ : Γ ⨾ Δ ⊢ A}
                 → t ⇒ t′ → u ⇒ u′ → app t u ⇒ app t′ u′
-  cong⇒pair  : ∀ {A B Γ Δ} {t t′ : Γ ⨾ Δ ⊢ A} {u u′ : Γ ⨾ Δ ⊢ B}
+  cong⇒pair  : ∀ {A B} {t t′ : Γ ⨾ Δ ⊢ A} {u u′ : Γ ⨾ Δ ⊢ B}
                 → t ⇒ t′ → u ⇒ u′ → pair t u ⇒ pair t′ u′
-  cong⇒fst   : ∀ {A B Γ Δ} {t t′ : Γ ⨾ Δ ⊢ A ∧ B}
+  cong⇒fst   : ∀ {A B} {t t′ : Γ ⨾ Δ ⊢ A ∧ B}
                 → t ⇒ t′ → fst t ⇒ fst t′
-  cong⇒snd   : ∀ {A B Γ Δ} {t t′ : Γ ⨾ Δ ⊢ A ∧ B}
+  cong⇒snd   : ∀ {A B} {t t′ : Γ ⨾ Δ ⊢ A ∧ B}
                 → t ⇒ t′ → snd t ⇒ snd t′
   -- NOTE: Rejected by Pfenning and Davies.
-  -- cong⇒box   : ∀ {A Γ Δ} {t t′ : ⌀ ⨾ Δ ⊢ A}
+  -- cong⇒box   : ∀ {A} {t t′ : ⌀ ⨾ Δ ⊢ A}
   --               → t ⇒ t′ → box {Γ} t ⇒ box {Γ} t′
-  cong⇒unbox : ∀ {A C Γ Δ} {t t′ : Γ ⨾ Δ ⊢ □ A} {u u′ : Γ ⨾ Δ , A ⊢ C}
+  cong⇒unbox : ∀ {A C} {t t′ : Γ ⨾ Δ ⊢ □ A} {u u′ : Γ ⨾ Δ , A ⊢ C}
                 → t ⇒ t′ → u ⇒ u′ → unbox t u ⇒ unbox t′ u′
-  conv⇒lam   : ∀ {A B Γ Δ} {t : Γ ⨾ Δ ⊢ A ▷ B}
+  conv⇒lam   : ∀ {A B} {t : Γ ⨾ Δ ⊢ A ▷ B}
                 → t ⇒ lam (app (mono⊢ weak⊆ t) (var top))
-  conv⇒app   : ∀ {A B Γ Δ} {t : Γ , A ⨾ Δ ⊢ B} {u : Γ ⨾ Δ ⊢ A}
+  conv⇒app   : ∀ {A B} {t : Γ , A ⨾ Δ ⊢ B} {u : Γ ⨾ Δ ⊢ A}
                 → app (lam t) u ⇒ [ top ≔ u ] t
-  conv⇒pair  : ∀ {A B Γ Δ} {t : Γ ⨾ Δ ⊢ A ∧ B}
+  conv⇒pair  : ∀ {A B} {t : Γ ⨾ Δ ⊢ A ∧ B}
                 → t ⇒ pair (fst t) (snd t)
-  conv⇒fst   : ∀ {A B Γ Δ} {t : Γ ⨾ Δ ⊢ A} {u : Γ ⨾ Δ ⊢ B}
+  conv⇒fst   : ∀ {A B} {t : Γ ⨾ Δ ⊢ A} {u : Γ ⨾ Δ ⊢ B}
                 → fst (pair t u) ⇒ t
-  conv⇒snd   : ∀ {A B Γ Δ} {t : Γ ⨾ Δ ⊢ A} {u : Γ ⨾ Δ ⊢ B}
+  conv⇒snd   : ∀ {A B} {t : Γ ⨾ Δ ⊢ A} {u : Γ ⨾ Δ ⊢ B}
                 → snd (pair t u) ⇒ u
-  conv⇒box   : ∀ {A Γ Δ} {t : Γ ⨾ Δ ⊢ □ A}
+  conv⇒box   : ∀ {A} {t : Γ ⨾ Δ ⊢ □ A}
                 → t ⇒ unbox t (box (mvar top))
-  conv⇒unbox : ∀ {A C Γ Δ} {t : ⌀ ⨾ Δ ⊢ A} {u : Γ ⨾ Δ , A ⊢ C}
+  conv⇒unbox : ∀ {A C} {t : ⌀ ⨾ Δ ⊢ A} {u : Γ ⨾ Δ , A ⊢ C}
                 → unbox (box t) u ⇒ m[ top ≔ t ] u
