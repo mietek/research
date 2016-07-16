@@ -14,6 +14,10 @@ References
   “Labelled propositional modal logics: theory and practice”
   http://dx.doi.org/10.1093/logcom/7.6.685
 
+• G. Bierman, V. de Paiva (2000)
+  “On an intuitionistic modal logic”
+  http://dx.doi.org/10.1023/A:1005291931660
+
 • J. Chapman (2008)
   “Type checking and normalisation”
   http://jmchapman.github.io/papers/thesis.pdf
