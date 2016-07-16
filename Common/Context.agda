@@ -6,14 +6,14 @@ open import Common.Core public
 -- Contexts.
 
 infixl 4 _,_
-data Cx (U : Set) : Set where
+data Cx {ℓ} (U : Set ℓ) : Set ℓ where
   ⌀   : Cx U
   _,_ : Cx U → U → Cx U
 
 
 -- Context membership, as nameless typed de Bruijn indices.
 
-module _ {U : Set} where
+module _ {ℓ} {U : Set ℓ} where
   infix 3 _∈_
   data _∈_ (A : U) : Cx U → Set where
     top : ∀ {Γ} → A ∈ Γ , A
