@@ -49,7 +49,7 @@ mono⊢⋆ η (csnd ts)   = csnd (mono⊢⋆ η ts)
 mono⊢⋆ η (tt ts)     = tt (mono⊢⋆ η ts)
 
 mono⊢ : ∀ {A Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⨾ Δ ⊢ A → Γ′ ⨾ Δ ⊢ A
-mono⊢ η (ᴬpair Π ts) = ᴬpair Π (mono⊢⋆ η ts)
+mono⊢ η (ᴬᵍpair Π ts) = ᴬᵍpair Π (mono⊢⋆ η ts)
 
 
 -- Monotonicity with respect to modal context inclusion.
@@ -73,7 +73,7 @@ mutual
   mmono⊢⋆ η (tt ts)     = tt (mmono⊢⋆ η ts)
 
   mmono⊢ : ∀ {A Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⨾ Δ ⊢ A → Γ ⨾ Δ′ ⊢ A
-  mmono⊢ η (ᴬpair Π ts) = ᴬpair Π (mmono⊢⋆ η ts)
+  mmono⊢ η (ᴬᵍpair Π ts) = ᴬᵍpair Π (mmono⊢⋆ η ts)
 
 
 -- Derivation concatenation.
@@ -99,9 +99,9 @@ us ⧻ tt ts     = tt (us ⧻ ts)
 -- Modus ponens and necessitation in expanded form.
 
 app : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ A ▷ B → Γ ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢ B
-app {A} {B} (ᴬpair Π ts) (ᴬpair Π′ us) = ᴬpair Π″ vs
+app {A} {B} (ᴬᵍpair Π ts) (ᴬᵍpair Π′ us) = ᴬᵍpair Π″ vs
   where Π″ = (Π′ , A) ⧺ (Π , A ▷ B)
         vs = mp top (mono∈ (weak⊆⧺ₗ (Π , A ▷ B)) top) (us ⧻ ts)
 
 box : ∀ {A Γ Δ} → ⌀ ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢ □ A
-box ts = ᴬpair ⌀ (nec ts nil)
+box ts = ᴬᵍpair ⌀ (nec ts nil)

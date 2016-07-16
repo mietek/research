@@ -88,26 +88,26 @@ mutual
   reflect : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊩ A
   reflect {α P}   t = return {α P} t
   reflect {A ▷ B} t = return {A ▷ B} (λ ξ a → reflect {B} (appⁿᵉ (mono⊢ⁿᵉ ξ t) (reify {A} a)))
-  reflect {A ∧ B} t = return {A ∧ B} (ᴬpair (reflect {A} (fstⁿᵉ t)) (reflect {B} (sndⁿᵉ t)))
-  reflect {⊤}    t = return {⊤} ᴬtt
+  reflect {A ∧ B} t = return {A ∧ B} (ᴬᵍpair (reflect {A} (fstⁿᵉ t)) (reflect {B} (sndⁿᵉ t)))
+  reflect {⊤}    t = return {⊤} ᴬᵍtt
   reflect {⊥}    t = λ ξ k → neⁿᶠ (boomⁿᵉ (mono⊢ⁿᵉ ξ t))
   reflect {A ∨ B} t = λ ξ k → neⁿᶠ (caseⁿᵉ (mono⊢ⁿᵉ ξ t)
-                                       (k weak⊆ (ᴬinl (reflect {A} (varⁿᵉ top))))
-                                       (k weak⊆ (ᴬinr (reflect {B} (varⁿᵉ top)))))
+                                       (k weak⊆ (ᴬᵍinl (reflect {A} (varⁿᵉ top))))
+                                       (k weak⊆ (ᴬᵍinr (reflect {B} (varⁿᵉ top)))))
 
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ⁿᶠ A
   reify {α P}   k = k refl≤ (λ ξ s → neⁿᶠ s)
   reify {A ▷ B} k = k refl≤ (λ ξ s → lamⁿᶠ (reify {B} (s weak⊆ (reflect {A} (varⁿᵉ top)))))
-  reify {A ∧ B} k = k refl≤ (λ ξ s → pairⁿᶠ (reify {A} (ᴬfst s)) (reify {B} (ᴬsnd s)))
+  reify {A ∧ B} k = k refl≤ (λ ξ s → pairⁿᶠ (reify {A} (ᴬᵍfst s)) (reify {B} (ᴬᵍsnd s)))
   reify {⊤}    k = k refl≤ (λ ξ s → ttⁿᶠ)
   reify {⊥}    k = k refl≤ (λ ξ ())
-  reify {A ∨ B} k = k refl≤ (λ ξ s → ᴬcase s
+  reify {A ∨ B} k = k refl≤ (λ ξ s → ᴬᵍcase s
                                         (λ a → inlⁿᶠ (reify {A} (λ ξ′ k′ → a ξ′ k′)))
                                         (λ b → inrⁿᶠ (reify {B} (λ ξ′ k′ → b ξ′ k′))))
 
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
-refl⊩⋆ {⌀}     = ᴬtt
-refl⊩⋆ {Γ , A} = ᴬpair (mono⊩⋆ {Γ} weak⊆ refl⊩⋆) (reflect {A} (varⁿᵉ top))
+refl⊩⋆ {⌀}     = ᴬᵍtt
+refl⊩⋆ {Γ , A} = ᴬᵍpair (mono⊩⋆ {Γ} weak⊆ refl⊩⋆) (reflect {A} (varⁿᵉ top))
 
 
 -- Completeness, or quotation.

@@ -14,7 +14,7 @@ open G using () renaming (_⨾_⊢_ to G⟨_⨾_⊢_⟩) public
 -- Translation from sequential Hilbert-style to nested.
 
 hl→hn : ∀ {A Γ Δ} → HS⟨ Γ ⨾ Δ ⊢ A ⟩ → HN⟨ Γ ⨾ Δ ⊢ A ⟩
-hl→hn (ᴬpair Π ts) = aux ts top
+hl→hn (ᴬᵍpair Π ts) = aux ts top
   where
     aux : ∀ {A Γ Δ Π} → HS⟨ Γ ⨾ Δ ⊢⋆ Π ⟩ → A ∈ Π → HN⟨ Γ ⨾ Δ ⊢ A ⟩
     aux (HS.var i ts)  top     = HN.var i
@@ -23,7 +23,7 @@ hl→hn (ᴬpair Π ts) = aux ts top
     aux (HS.ck ts)     top     = HN.ck
     aux (HS.cs ts)     top     = HN.cs
     aux (HS.mvar i ts) top     = HN.mvar i
-    aux (HS.nec ss ts) top     = HN.box (aux (ᴬsnd ss) top)
+    aux (HS.nec ss ts) top     = HN.box (aux (ᴬᵍsnd ss) top)
     aux (HS.cdist ts)  top     = HN.cdist
     aux (HS.cup ts)    top     = HN.cup
     aux (HS.cdown ts)  top     = HN.cdown
@@ -50,20 +50,20 @@ hl→hn (ᴬpair Π ts) = aux ts top
 -- Translation from nested Hilbert-style to sequential.
 
 hn→hl : ∀ {A Γ Δ} → HN⟨ Γ ⨾ Δ ⊢ A ⟩ → HS⟨ Γ ⨾ Δ ⊢ A ⟩
-hn→hl (HN.var i)   = ᴬpair ⌀ (HS.var i HS.nil)
+hn→hl (HN.var i)   = ᴬᵍpair ⌀ (HS.var i HS.nil)
 hn→hl (HN.app t u) = HS.app (hn→hl t) (hn→hl u)
-hn→hl HN.ci        = ᴬpair ⌀ (HS.ci HS.nil)
-hn→hl HN.ck        = ᴬpair ⌀ (HS.ck HS.nil)
-hn→hl HN.cs        = ᴬpair ⌀ (HS.cs HS.nil)
-hn→hl (HN.mvar i)  = ᴬpair ⌀ (HS.mvar i HS.nil)
+hn→hl HN.ci        = ᴬᵍpair ⌀ (HS.ci HS.nil)
+hn→hl HN.ck        = ᴬᵍpair ⌀ (HS.ck HS.nil)
+hn→hl HN.cs        = ᴬᵍpair ⌀ (HS.cs HS.nil)
+hn→hl (HN.mvar i)  = ᴬᵍpair ⌀ (HS.mvar i HS.nil)
 hn→hl (HN.box t)   = HS.box (hn→hl t)
-hn→hl HN.cdist     = ᴬpair ⌀ (HS.cdist HS.nil)
-hn→hl HN.cup       = ᴬpair ⌀ (HS.cup HS.nil)
-hn→hl HN.cdown     = ᴬpair ⌀ (HS.cdown HS.nil)
-hn→hl HN.cpair     = ᴬpair ⌀ (HS.cpair HS.nil)
-hn→hl HN.cfst      = ᴬpair ⌀ (HS.cfst HS.nil)
-hn→hl HN.csnd      = ᴬpair ⌀ (HS.csnd HS.nil)
-hn→hl HN.tt        = ᴬpair ⌀ (HS.tt HS.nil)
+hn→hl HN.cdist     = ᴬᵍpair ⌀ (HS.cdist HS.nil)
+hn→hl HN.cup       = ᴬᵍpair ⌀ (HS.cup HS.nil)
+hn→hl HN.cdown     = ᴬᵍpair ⌀ (HS.cdown HS.nil)
+hn→hl HN.cpair     = ᴬᵍpair ⌀ (HS.cpair HS.nil)
+hn→hl HN.cfst      = ᴬᵍpair ⌀ (HS.cfst HS.nil)
+hn→hl HN.csnd      = ᴬᵍpair ⌀ (HS.csnd HS.nil)
+hn→hl HN.tt        = ᴬᵍpair ⌀ (HS.tt HS.nil)
 
 
 -- Deduction theorems for sequential Hilbert-style.

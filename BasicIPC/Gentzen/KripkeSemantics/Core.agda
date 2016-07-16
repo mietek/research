@@ -29,13 +29,13 @@ module _ {{_ : Model}} where
   _⊩_ : World → Ty → Set
   w ⊩ α P   = w ⊩ᵅ P
   w ⊩ A ▷ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
-  w ⊩ A ∧ B = w ⊩ A ᴬ∧ w ⊩ B
-  w ⊩ ⊤    = ᴬ⊤
+  w ⊩ A ∧ B = w ⊩ A ᴬᵍ∧ w ⊩ B
+  w ⊩ ⊤    = ᴬᵍ⊤
 
   infix 3 _⊩⋆_
   _⊩⋆_ : World → Cx Ty → Set
-  w ⊩⋆ ⌀     = ᴬ⊤
-  w ⊩⋆ Γ , A = w ⊩⋆ Γ ᴬ∧ w ⊩ A
+  w ⊩⋆ ⌀     = ᴬᵍ⊤
+  w ⊩⋆ Γ , A = w ⊩⋆ Γ ᴬᵍ∧ w ⊩ A
 
 
   -- Monotonicity with respect to intuitionistic accessibility.
@@ -43,12 +43,12 @@ module _ {{_ : Model}} where
   mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
   mono⊩ {α P}   ξ s = mono⊩ᵅ ξ s
   mono⊩ {A ▷ B} ξ s = λ ξ′ a → s (trans≤ ξ ξ′) a
-  mono⊩ {A ∧ B} ξ s = ᴬpair (mono⊩ {A} ξ (ᴬfst s)) (mono⊩ {B} ξ (ᴬsnd s))
-  mono⊩ {⊤}    ξ s = ᴬtt
+  mono⊩ {A ∧ B} ξ s = ᴬᵍpair (mono⊩ {A} ξ (ᴬᵍfst s)) (mono⊩ {B} ξ (ᴬᵍsnd s))
+  mono⊩ {⊤}    ξ s = ᴬᵍtt
 
   mono⊩⋆ : ∀ {Γ w w′} → w ≤ w′ → w ⊩⋆ Γ → w′ ⊩⋆ Γ
-  mono⊩⋆ {⌀}     ξ γ = ᴬtt
-  mono⊩⋆ {Γ , A} ξ γ = ᴬpair (mono⊩⋆ {Γ} ξ (ᴬfst γ)) (mono⊩ {A} ξ (ᴬsnd γ))
+  mono⊩⋆ {⌀}     ξ γ = ᴬᵍtt
+  mono⊩⋆ {Γ , A} ξ γ = ᴬᵍpair (mono⊩⋆ {Γ} ξ (ᴬᵍfst γ)) (mono⊩ {A} ξ (ᴬᵍsnd γ))
 
 
 -- Forcing in all models.
@@ -61,17 +61,17 @@ _ᴹ⊩_ : Cx Ty → Ty → Set₁
 -- Soundness, or evaluation.
 
 lookup : ∀ {A Γ} → A ∈ Γ → Γ ᴹ⊩ A
-lookup top     γ = ᴬsnd γ
-lookup (pop i) γ = lookup i (ᴬfst γ)
+lookup top     γ = ᴬᵍsnd γ
+lookup (pop i) γ = lookup i (ᴬᵍfst γ)
 
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
 eval (var i)    γ = lookup i γ
-eval (lam t)    γ = λ ξ a → eval t (ᴬpair (mono⊩⋆ ξ γ) a)
+eval (lam t)    γ = λ ξ a → eval t (ᴬᵍpair (mono⊩⋆ ξ γ) a)
 eval (app t u)  γ = (eval t γ) refl≤ (eval u γ)
-eval (pair t u) γ = ᴬpair (eval t γ) (eval u γ)
-eval (fst t)    γ = ᴬfst (eval t γ)
-eval (snd t)    γ = ᴬsnd (eval t γ)
-eval tt         γ = ᴬtt
+eval (pair t u) γ = ᴬᵍpair (eval t γ) (eval u γ)
+eval (fst t)    γ = ᴬᵍfst (eval t γ)
+eval (snd t)    γ = ᴬᵍsnd (eval t γ)
+eval tt         γ = ᴬᵍtt
 
 
 -- TODO: Correctness with respect to conversion.
@@ -83,9 +83,9 @@ eval tt         γ = ᴬtt
 --   coco (sym⇒ p)        = sym (coco p)
 --   coco (cong⇒lam p)    = cong {!!} (coco p)
 --   coco (cong⇒app p q)  = cong₂ (λ f g γ → (f γ) refl≤ (g γ)) (coco p) (coco q)
---   coco (cong⇒pair p q) = cong₂ (λ f g γ → ᴬpair (f γ) (g γ)) (coco p) (coco q)
---   coco (cong⇒fst p)    = cong (λ f γ → ᴬfst (f γ)) (coco p)
---   coco (cong⇒snd p)    = cong (λ f γ → ᴬsnd (f γ)) (coco p)
+--   coco (cong⇒pair p q) = cong₂ (λ f g γ → ᴬᵍpair (f γ) (g γ)) (coco p) (coco q)
+--   coco (cong⇒fst p)    = cong (λ f γ → ᴬᵍfst (f γ)) (coco p)
+--   coco (cong⇒snd p)    = cong (λ f γ → ᴬᵍsnd (f γ)) (coco p)
 --   coco conv⇒lam        = {!refl!}
 --   coco conv⇒app        = {!refl!}
 --   coco conv⇒pair       = refl

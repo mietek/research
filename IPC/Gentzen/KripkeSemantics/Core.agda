@@ -33,10 +33,10 @@ module _ {{_ : Model}} where
     _⊪_ : World → Ty → Set
     w ⊪ α P   = w ⊪ᵅ P
     w ⊪ A ▷ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
-    w ⊪ A ∧ B = w ⊩ A ᴬ∧ w ⊩ B
-    w ⊪ ⊤    = ᴬ⊤
-    w ⊪ ⊥    = ᴬ⊥
-    w ⊪ A ∨ B = w ⊩ A ᴬ∨ w ⊩ B
+    w ⊪ A ∧ B = w ⊩ A ᴬᵍ∧ w ⊩ B
+    w ⊪ ⊤    = ᴬᵍ⊤
+    w ⊪ ⊥    = ᴬᵍ⊥
+    w ⊪ A ∨ B = w ⊩ A ᴬᵍ∨ w ⊩ B
 
     infix 3 _⊩_
     _⊩_ : World → Ty → Set
@@ -44,8 +44,8 @@ module _ {{_ : Model}} where
 
   infix 3 _⊩⋆_
   _⊩⋆_ : World → Cx Ty → Set
-  w ⊩⋆ ⌀     = ᴬ⊤
-  w ⊩⋆ Γ , A = w ⊩⋆ Γ ᴬ∧ w ⊩ A
+  w ⊩⋆ ⌀     = ᴬᵍ⊤
+  w ⊩⋆ Γ , A = w ⊩⋆ Γ ᴬᵍ∧ w ⊩ A
 
 
   -- Monotonicity with respect to intuitionistic accessibility.
@@ -57,15 +57,15 @@ module _ {{_ : Model}} where
     mono⊪ : ∀ {A w w′} → w ≤ w′ → w ⊪ A → w′ ⊪ A
     mono⊪ {α P}   ξ s = mono⊪ᵅ ξ s
     mono⊪ {A ▷ B} ξ s = λ ξ′ a → s (trans≤ ξ ξ′) a
-    mono⊪ {A ∧ B} ξ s = ᴬpair (mono⊩ {A} ξ (ᴬfst s)) (mono⊩ {B} ξ (ᴬsnd s))
-    mono⊪ {⊤}    ξ s = ᴬtt
+    mono⊪ {A ∧ B} ξ s = ᴬᵍpair (mono⊩ {A} ξ (ᴬᵍfst s)) (mono⊩ {B} ξ (ᴬᵍsnd s))
+    mono⊪ {⊤}    ξ s = ᴬᵍtt
     mono⊪ {⊥}    ξ ()
-    mono⊪ {A ∨ B} ξ (ᴬinl a) = ᴬinl (mono⊩ {A} ξ a)
-    mono⊪ {A ∨ B} ξ (ᴬinr b) = ᴬinr (mono⊩ {B} ξ b)
+    mono⊪ {A ∨ B} ξ (ᴬᵍinl a) = ᴬᵍinl (mono⊩ {A} ξ a)
+    mono⊪ {A ∨ B} ξ (ᴬᵍinr b) = ᴬᵍinr (mono⊩ {B} ξ b)
 
   mono⊩⋆ : ∀ {Γ w w′} → w ≤ w′ → w ⊩⋆ Γ → w′ ⊩⋆ Γ
-  mono⊩⋆ {⌀}     ξ γ = ᴬtt
-  mono⊩⋆ {Γ , A} ξ γ = ᴬpair (mono⊩⋆ {Γ} ξ (ᴬfst γ)) (mono⊩ {A} ξ (ᴬsnd γ))
+  mono⊩⋆ {⌀}     ξ γ = ᴬᵍtt
+  mono⊩⋆ {Γ , A} ξ γ = ᴬᵍpair (mono⊩⋆ {Γ} ξ (ᴬᵍfst γ)) (mono⊩ {A} ξ (ᴬᵍsnd γ))
 
 
   -- The CPS monad.
@@ -87,24 +87,24 @@ _ᴹ⊩_ : Cx Ty → Ty → Set₁
 -- Soundness, or evaluation.
 
 lookup : ∀ {A Γ} → A ∈ Γ → Γ ᴹ⊩ A
-lookup top     γ = ᴬsnd γ
-lookup (pop i) γ = lookup i (ᴬfst γ)
+lookup top     γ = ᴬᵍsnd γ
+lookup (pop i) γ = lookup i (ᴬᵍfst γ)
 
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
 eval (var i)                  γ = lookup i γ
-eval {A ▷ B} (lam t)          γ = return {A ▷ B} (λ ξ a → eval t (ᴬpair (mono⊩⋆ ξ γ) a))
+eval {A ▷ B} (lam t)          γ = return {A ▷ B} (λ ξ a → eval t (ᴬᵍpair (mono⊩⋆ ξ γ) a))
 eval (app {A} {B} t u)        γ = bind {A ▷ B} {B} (eval t γ)
                                     (λ ξ a → a refl≤ (eval u (mono⊩⋆ ξ γ)))
-eval {A ∧ B} (pair t u)       γ = return {A ∧ B} (ᴬpair (eval t γ) (eval u γ))
-eval (fst {A} {B} t)          γ = bind {A ∧ B} {A} (eval t γ) (λ ξ s → ᴬfst s)
-eval (snd {A} {B} t)          γ = bind {A ∧ B} {B} (eval t γ) (λ ξ s → ᴬsnd s)
-eval tt                       γ = return {⊤} ᴬtt
+eval {A ∧ B} (pair t u)       γ = return {A ∧ B} (ᴬᵍpair (eval t γ) (eval u γ))
+eval (fst {A} {B} t)          γ = bind {A ∧ B} {A} (eval t γ) (λ ξ s → ᴬᵍfst s)
+eval (snd {A} {B} t)          γ = bind {A ∧ B} {B} (eval t γ) (λ ξ s → ᴬᵍsnd s)
+eval tt                       γ = return {⊤} ᴬᵍtt
 eval (boom {C} t)             γ = bind {⊥} {C} (eval t γ) (λ ξ ())
-eval {A ∨ B} (inl t)          γ = return {A ∨ B} (ᴬinl (eval t γ))
-eval {A ∨ B} (inr t)          γ = return {A ∨ B} (ᴬinr (eval t γ))
-eval (case {A} {B} {C} t u v) γ = bind {A ∨ B} {C} (eval t γ) (λ ξ s → ᴬcase s
-                                    (λ a → eval u (ᴬpair (mono⊩⋆ ξ γ) (λ ξ′ k → a ξ′ k)))
-                                    (λ b → eval v (ᴬpair (mono⊩⋆ ξ γ) (λ ξ′ k → b ξ′ k))))
+eval {A ∨ B} (inl t)          γ = return {A ∨ B} (ᴬᵍinl (eval t γ))
+eval {A ∨ B} (inr t)          γ = return {A ∨ B} (ᴬᵍinr (eval t γ))
+eval (case {A} {B} {C} t u v) γ = bind {A ∨ B} {C} (eval t γ) (λ ξ s → ᴬᵍcase s
+                                    (λ a → eval u (ᴬᵍpair (mono⊩⋆ ξ γ) (λ ξ′ k → a ξ′ k)))
+                                    (λ b → eval v (ᴬᵍpair (mono⊩⋆ ξ γ) (λ ξ′ k → b ξ′ k))))
 
 
 -- TODO: Correctness with respect to conversion.
