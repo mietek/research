@@ -123,42 +123,6 @@ mcomp : ∀ {A B C Γ Δ} → Γ ⨾ Δ , B ⊢ □ C → Γ ⨾ Δ , A ⊢ □ 
 mcomp t u = mdet (app (app ccomp (mlam t)) (mlam u))
 
 
--- Useful theorems in combinatory form.
-
-ci : ∀ {A Γ Δ} → Γ ⨾ Δ ⊢ A ▷ A
-ci = lam v₀
-
-ck : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ A ▷ B ▷ A
-ck = lam (lam v₁)
-
-cs : ∀ {A B C Γ Δ} → Γ ⨾ Δ ⊢ (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
-cs = lam (lam (lam (app (app v₂ v₀) (app v₁ v₀))))
-
-cdist : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ □ (A ▷ B) ▷ □ A ▷ □ B
-cdist = lam (lam (unbox v₁ (unbox v₀ (box (app mv₁ mv₀)))))
-
-cup : ∀ {A Γ Δ} → Γ ⨾ Δ ⊢ □ A ▷ □ □ A
-cup = lam (unbox v₀ (box (box mv₀)))
-
-cdown : ∀ {A Γ Δ} → Γ ⨾ Δ ⊢ □ A ▷ A
-cdown = lam (unbox v₀ mv₀)
-
-cdistup : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ □ (□ A ▷ B) ▷ □ A ▷ □ B
-cdistup = lam (lam (app (app cdist v₁) (app cup v₀)))
-
-cunbox : ∀ {A C Γ Δ} → Γ ⨾ Δ ⊢ □ A ▷ (□ A ▷ C) ▷ C
-cunbox = lam (lam (app v₀ v₁))
-
-cpair : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ A ▷ B ▷ A ∧ B
-cpair = lam (lam (pair v₁ v₀))
-
-cfst : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ A ∧ B ▷ A
-cfst = lam (fst v₀)
-
-csnd : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ A ∧ B ▷ B
-csnd = lam (snd v₀)
-
-
 -- Useful theorems in functional form.
 
 dist : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ □ (A ▷ B) → Γ ⨾ Δ ⊢ □ A → Γ ⨾ Δ ⊢ □ B
@@ -172,6 +136,42 @@ down t = unbox t mv₀
 
 distup : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ □ (□ A ▷ B) → Γ ⨾ Δ ⊢ □ A → Γ ⨾ Δ ⊢ □ B
 distup t u = dist t (up u)
+
+
+-- Useful theorems in combinatory form.
+
+ci : ∀ {A Γ Δ} → Γ ⨾ Δ ⊢ A ▷ A
+ci = lam v₀
+
+ck : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ A ▷ B ▷ A
+ck = lam (lam v₁)
+
+cs : ∀ {A B C Γ Δ} → Γ ⨾ Δ ⊢ (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
+cs = lam (lam (lam (app (app v₂ v₀) (app v₁ v₀))))
+
+cdist : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ □ (A ▷ B) ▷ □ A ▷ □ B
+cdist = lam (lam (dist v₁ v₀))
+
+cup : ∀ {A Γ Δ} → Γ ⨾ Δ ⊢ □ A ▷ □ □ A
+cup = lam (up v₀)
+
+cdown : ∀ {A Γ Δ} → Γ ⨾ Δ ⊢ □ A ▷ A
+cdown = lam (down v₀)
+
+cdistup : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ □ (□ A ▷ B) ▷ □ A ▷ □ B
+cdistup = lam (lam (dist v₁ (up v₀)))
+
+cunbox : ∀ {A C Γ Δ} → Γ ⨾ Δ ⊢ □ A ▷ (□ A ▷ C) ▷ C
+cunbox = lam (lam (app v₀ v₁))
+
+cpair : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ A ▷ B ▷ A ∧ B
+cpair = lam (lam (pair v₁ v₀))
+
+cfst : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ A ∧ B ▷ A
+cfst = lam (fst v₀)
+
+csnd : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ A ∧ B ▷ B
+csnd = lam (snd v₀)
 
 
 -- Closure under context concatenation.
