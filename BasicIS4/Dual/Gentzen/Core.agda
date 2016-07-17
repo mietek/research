@@ -243,7 +243,7 @@ data _⇒_ {Γ Δ : Cx Ty} : ∀ {A} → Γ ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢ A →
   cong⇒unbox : ∀ {A C} {t t′ : Γ ⨾ Δ ⊢ □ A} {u u′ : Γ ⨾ Δ , A ⊢ C}
                 → t ⇒ t′ → u ⇒ u′ → unbox t u ⇒ unbox t′ u′
   conv⇒lam   : ∀ {A B} {t : Γ ⨾ Δ ⊢ A ▷ B}
-                → t ⇒ lam (app (mono⊢ weak⊆ t) (var top))
+                → t ⇒ lam (app (mono⊢ weak⊆ t) v₀)
   conv⇒app   : ∀ {A B} {t : Γ , A ⨾ Δ ⊢ B} {u : Γ ⨾ Δ ⊢ A}
                 → app (lam t) u ⇒ [ top ≔ u ] t
   conv⇒pair  : ∀ {A B} {t : Γ ⨾ Δ ⊢ A ∧ B}
@@ -253,6 +253,6 @@ data _⇒_ {Γ Δ : Cx Ty} : ∀ {A} → Γ ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢ A →
   conv⇒snd   : ∀ {A B} {t : Γ ⨾ Δ ⊢ A} {u : Γ ⨾ Δ ⊢ B}
                 → snd (pair t u) ⇒ u
   conv⇒box   : ∀ {A} {t : Γ ⨾ Δ ⊢ □ A}
-                → t ⇒ unbox t (box (mvar top))
+                → t ⇒ unbox t (box mv₀)
   conv⇒unbox : ∀ {A C} {t : ⌀ ⨾ Δ ⊢ A} {u : Γ ⨾ Δ , A ⊢ C}
                 → unbox (box t) u ⇒ m[ top ≔ t ] u
