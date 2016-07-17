@@ -163,6 +163,10 @@ concat Γ′ t u = app (mono⊢ (weak⊆⧺ₗ Γ′) (lam t)) (mono⊢ weak⊆�
 [ i ≔ s ] inr t      = inr ([ i ≔ s ] t)
 [ i ≔ s ] case t u v = case ([ i ≔ s ] t) ([ pop i ≔ mono⊢ weak⊆ s ] u) ([ pop i ≔ mono⊢ weak⊆ s ] v)
 
+[_≔_]⋆_ : ∀ {Π A Γ} → (i : A ∈ Γ) → Γ - i ⊢ A → Γ ⊢⋆ Π → Γ - i ⊢⋆ Π
+[_≔_]⋆_ {⌀}     i s ᴬᵍtt          = ᴬᵍtt
+[_≔_]⋆_ {Π , B} i s (ᴬᵍpair ts t) = ᴬᵍpair ([ i ≔ s ]⋆ ts) ([ i ≔ s ] t)
+
 
 -- TODO: Conversion.
 

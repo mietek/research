@@ -22,6 +22,11 @@ data _⨾_⊢_ (Γ Δ : Cx Ty) : Ty → Set where
   csnd  : ∀ {A B}   → Γ ⨾ Δ ⊢ A ∧ B ▷ B
   tt    : Γ ⨾ Δ ⊢ ⊤
 
+infix 3 _⨾_⊢⋆_
+_⨾_⊢⋆_ : Cx Ty → Cx Ty → Cx Ty → Set
+Γ ⨾ Δ ⊢⋆ ⌀     = ᴬᵍ⊤
+Γ ⨾ Δ ⊢⋆ Π , A = Γ ⨾ Δ ⊢⋆ Π ᴬᵍ∧ Γ ⨾ Δ ⊢ A
+
 
 -- Monotonicity with respect to context inclusion.
 
@@ -41,6 +46,10 @@ mono⊢ η cfst      = cfst
 mono⊢ η csnd      = csnd
 mono⊢ η tt        = tt
 
+mono⊢⋆ : ∀ {Π Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⨾ Δ ⊢⋆ Π → Γ′ ⨾ Δ ⊢⋆ Π
+mono⊢⋆ {⌀}     η ᴬᵍtt          = ᴬᵍtt
+mono⊢⋆ {Π , A} η (ᴬᵍpair ts t) = ᴬᵍpair (mono⊢⋆ η ts) (mono⊢ η t)
+
 
 -- Monotonicity with respect to modal context inclusion.
 
@@ -59,6 +68,10 @@ mmono⊢ η cpair     = cpair
 mmono⊢ η cfst      = cfst
 mmono⊢ η csnd      = csnd
 mmono⊢ η tt        = tt
+
+mmono⊢⋆ : ∀ {Π Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ′ ⊢⋆ Π
+mmono⊢⋆ {⌀}     η ᴬᵍtt          = ᴬᵍtt
+mmono⊢⋆ {Π , A} η (ᴬᵍpair ts t) = ᴬᵍpair (mmono⊢⋆ η ts) (mmono⊢ η t)
 
 
 -- Shorthand for variables.
@@ -132,6 +145,43 @@ mlam cpair          = app ck cpair
 mlam cfst           = app ck cfst
 mlam csnd           = app ck csnd
 mlam tt             = app ck tt
+
+
+-- Additional useful properties.
+
+multicut⊢₀ : ∀ {Π A Γ} → Γ ⨾ ⌀ ⊢⋆ Π → Π ⨾ ⌀ ⊢ A → Γ ⨾ ⌀ ⊢ A
+multicut⊢₀ {⌀}     ᴬᵍtt          u = mono⊢ bot⊆ u
+multicut⊢₀ {Π , B} (ᴬᵍpair ts t) u = app (multicut⊢₀ ts (lam u)) t
+
+mmulticut⊢₀ : ∀ {Π A Δ} → ⌀ ⨾ Δ ⊢⋆ Π → ⌀ ⨾ Π ⊢ A → ⌀ ⨾ Δ ⊢ A
+mmulticut⊢₀ {⌀}     ᴬᵍtt          u = mmono⊢ bot⊆ u
+mmulticut⊢₀ {Π , B} (ᴬᵍpair ts t) u = app (mmulticut⊢₀ ts (mlam u)) (box t)
+
+-- TODO:
+-- multicut⊢ : ∀ {Π Π′ A Γ Δ} → Γ ⨾ Δ ⊢⋆ Π ⧺ (□⋆ Π′) → Π ⨾ Π′ ⊢ A → Γ ⨾ Δ ⊢ A
+
+refl⊢⋆₀ : ∀ {Γ} → Γ ⨾ ⌀ ⊢⋆ Γ
+refl⊢⋆₀ {⌀}     = ᴬᵍtt
+refl⊢⋆₀ {Γ , A} = ᴬᵍpair (mono⊢⋆ weak⊆ refl⊢⋆₀) v₀
+
+mrefl⊢⋆₀ : ∀ {Δ} → ⌀ ⨾ Δ ⊢⋆ □⋆ Δ
+mrefl⊢⋆₀ {⌀}     = ᴬᵍtt
+mrefl⊢⋆₀ {Δ , A} = ᴬᵍpair (mmono⊢⋆ weak⊆ mrefl⊢⋆₀) (box mv₀)
+
+refl⊢⋆ : ∀ {Δ Γ} → Γ ⨾ Δ ⊢⋆ Γ ⧺ (□⋆ Δ)
+refl⊢⋆ {⌀}     = refl⊢⋆₀
+refl⊢⋆ {Δ , A} = ᴬᵍpair (mmono⊢⋆ weak⊆ refl⊢⋆) (box mv₀)
+
+trans⊢⋆₀ : ∀ {Π Γ Γ′} → Γ ⨾ ⌀ ⊢⋆ Γ′ → Γ′ ⨾ ⌀ ⊢⋆ Π → Γ ⨾ ⌀ ⊢⋆ Π
+trans⊢⋆₀ {⌀}     ts ᴬᵍtt          = ᴬᵍtt
+trans⊢⋆₀ {Π , A} ts (ᴬᵍpair us u) = ᴬᵍpair (trans⊢⋆₀ ts us) (multicut⊢₀ ts u)
+
+mtrans⊢⋆₀ : ∀ {Π Δ Δ′} → ⌀ ⨾ Δ ⊢⋆ Δ′ → ⌀ ⨾ Δ′ ⊢⋆ Π → ⌀ ⨾ Δ ⊢⋆ Π
+mtrans⊢⋆₀ {⌀}     ts ᴬᵍtt          = ᴬᵍtt
+mtrans⊢⋆₀ {Π , A} ts (ᴬᵍpair us u) = ᴬᵍpair (mtrans⊢⋆₀ ts us) (mmulticut⊢₀ ts u)
+
+-- TODO:
+-- trans⊢⋆ : ∀ {Π Γ Γ′ Δ Δ′} → Γ ⨾ Δ ⊢⋆ Γ′ ⧺ (□⋆ Δ′) → Γ′ ⨾ Δ′ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π
 
 
 -- Detachment theorems.

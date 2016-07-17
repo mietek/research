@@ -18,6 +18,11 @@ data _⨾_⊢_ (Γ Δ : Cx Ty) : Ty → Set where
   snd   : ∀ {A B} → Γ ⨾ Δ ⊢ A ∧ B → Γ ⨾ Δ ⊢ B
   tt    : Γ ⨾ Δ ⊢ ⊤
 
+infix 3 _⨾_⊢⋆_
+_⨾_⊢⋆_ : Cx Ty → Cx Ty → Cx Ty → Set
+Γ ⨾ Δ ⊢⋆ ⌀     = ᴬᵍ⊤
+Γ ⨾ Δ ⊢⋆ Π , A = Γ ⨾ Δ ⊢⋆ Π ᴬᵍ∧ Γ ⨾ Δ ⊢ A
+
 
 -- Monotonicity with respect to context inclusion.
 
@@ -33,6 +38,10 @@ mono⊢ η (fst t)     = fst (mono⊢ η t)
 mono⊢ η (snd t)     = snd (mono⊢ η t)
 mono⊢ η tt          = tt
 
+mono⊢⋆ : ∀ {Π Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⨾ Δ ⊢⋆ Π → Γ′ ⨾ Δ ⊢⋆ Π
+mono⊢⋆ {⌀}     η ᴬᵍtt          = ᴬᵍtt
+mono⊢⋆ {Π , A} η (ᴬᵍpair ts t) = ᴬᵍpair (mono⊢⋆ η ts) (mono⊢ η t)
+
 
 -- Monotonicity with respect to modal context inclusion.
 
@@ -47,6 +56,10 @@ mmono⊢ η (pair t u)  = pair (mmono⊢ η t) (mmono⊢ η u)
 mmono⊢ η (fst t)     = fst (mmono⊢ η t)
 mmono⊢ η (snd t)     = snd (mmono⊢ η t)
 mmono⊢ η tt          = tt
+
+mmono⊢⋆ : ∀ {Π Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ′ ⊢⋆ Π
+mmono⊢⋆ {⌀}     η ᴬᵍtt          = ᴬᵍtt
+mmono⊢⋆ {Π , A} η (ᴬᵍpair ts t) = ᴬᵍpair (mmono⊢⋆ η ts) (mmono⊢ η t)
 
 
 -- Shorthand for variables.
@@ -76,6 +89,43 @@ v₂ = var i₂
 
 mlam : ∀ {A B Γ Δ} → Γ ⨾ Δ , A ⊢ B → Γ ⨾ Δ ⊢ □ A ▷ B
 mlam t = lam (unbox v₀ (mono⊢ weak⊆ t))
+
+
+-- Additional useful properties.
+
+multicut⊢₀ : ∀ {Π A Γ} → Γ ⨾ ⌀ ⊢⋆ Π → Π ⨾ ⌀ ⊢ A → Γ ⨾ ⌀ ⊢ A
+multicut⊢₀ {⌀}     ᴬᵍtt          u = mono⊢ bot⊆ u
+multicut⊢₀ {Π , B} (ᴬᵍpair ts t) u = app (multicut⊢₀ ts (lam u)) t
+
+mmulticut⊢₀ : ∀ {Π A Δ} → ⌀ ⨾ Δ ⊢⋆ Π → ⌀ ⨾ Π ⊢ A → ⌀ ⨾ Δ ⊢ A
+mmulticut⊢₀ {⌀}     ᴬᵍtt          u = mmono⊢ bot⊆ u
+mmulticut⊢₀ {Π , B} (ᴬᵍpair ts t) u = app (mmulticut⊢₀ ts (mlam u)) (box t)
+
+-- TODO:
+-- multicut⊢ : ∀ {Π Π′ A Γ Δ} → Γ ⨾ Δ ⊢⋆ Π ⧺ (□⋆ Π′) → Π ⨾ Π′ ⊢ A → Γ ⨾ Δ ⊢ A
+
+refl⊢⋆₀ : ∀ {Γ} → Γ ⨾ ⌀ ⊢⋆ Γ
+refl⊢⋆₀ {⌀}     = ᴬᵍtt
+refl⊢⋆₀ {Γ , A} = ᴬᵍpair (mono⊢⋆ weak⊆ refl⊢⋆₀) v₀
+
+mrefl⊢⋆₀ : ∀ {Δ} → ⌀ ⨾ Δ ⊢⋆ □⋆ Δ
+mrefl⊢⋆₀ {⌀}     = ᴬᵍtt
+mrefl⊢⋆₀ {Δ , A} = ᴬᵍpair (mmono⊢⋆ weak⊆ mrefl⊢⋆₀) (box mv₀)
+
+refl⊢⋆ : ∀ {Δ Γ} → Γ ⨾ Δ ⊢⋆ Γ ⧺ (□⋆ Δ)
+refl⊢⋆ {⌀}     = refl⊢⋆₀
+refl⊢⋆ {Δ , A} = ᴬᵍpair (mmono⊢⋆ weak⊆ refl⊢⋆) (box mv₀)
+
+trans⊢⋆₀ : ∀ {Π Γ Γ′} → Γ ⨾ ⌀ ⊢⋆ Γ′ → Γ′ ⨾ ⌀ ⊢⋆ Π → Γ ⨾ ⌀ ⊢⋆ Π
+trans⊢⋆₀ {⌀}     ts ᴬᵍtt          = ᴬᵍtt
+trans⊢⋆₀ {Π , A} ts (ᴬᵍpair us u) = ᴬᵍpair (trans⊢⋆₀ ts us) (multicut⊢₀ ts u)
+
+mtrans⊢⋆₀ : ∀ {Π Δ Δ′} → ⌀ ⨾ Δ ⊢⋆ Δ′ → ⌀ ⨾ Δ′ ⊢⋆ Π → ⌀ ⨾ Δ ⊢⋆ Π
+mtrans⊢⋆₀ {⌀}     ts ᴬᵍtt          = ᴬᵍtt
+mtrans⊢⋆₀ {Π , A} ts (ᴬᵍpair us u) = ᴬᵍpair (mtrans⊢⋆₀ ts us) (mmulticut⊢₀ ts u)
+
+-- TODO:
+-- trans⊢⋆ : ∀ {Π Γ Γ′ Δ Δ′} → Γ ⨾ Δ ⊢⋆ Γ′ ⧺ (□⋆ Δ′) → Γ′ ⨾ Δ′ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π
 
 
 -- Detachment theorems.
@@ -199,6 +249,10 @@ mconcat Δ′ t u = app (mmono⊢ (weak⊆⧺ₗ Δ′) (mlam t)) (mmono⊢ weak
 [ i ≔ s ] snd t     = snd ([ i ≔ s ] t)
 [ i ≔ s ] tt        = tt
 
+[_≔_]⋆_ : ∀ {Π A Γ Δ} → (i : A ∈ Γ) → Γ - i ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢⋆ Π → Γ - i ⨾ Δ ⊢⋆ Π
+[_≔_]⋆_ {⌀}     i s ᴬᵍtt          = ᴬᵍtt
+[_≔_]⋆_ {Π , B} i s (ᴬᵍpair ts t) = ᴬᵍpair ([ i ≔ s ]⋆ ts) ([ i ≔ s ] t)
+
 
 -- Modal substitution.
 
@@ -215,6 +269,10 @@ m[ i ≔ s ] pair t u  = pair (m[ i ≔ s ] t) (m[ i ≔ s ] u)
 m[ i ≔ s ] fst t     = fst (m[ i ≔ s ] t)
 m[ i ≔ s ] snd t     = snd (m[ i ≔ s ] t)
 m[ i ≔ s ] tt        = tt
+
+m[_≔_]⋆_ : ∀ {Π A Γ Δ} → (i : A ∈ Δ) → ⌀ ⨾ Δ - i ⊢ A → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ - i ⊢⋆ Π
+m[_≔_]⋆_ {⌀}     i s ᴬᵍtt          = ᴬᵍtt
+m[_≔_]⋆_ {Π , B} i s (ᴬᵍpair ts t) = ᴬᵍpair (m[ i ≔ s ]⋆ ts) (m[ i ≔ s ] t)
 
 
 -- TODO: Conversion.

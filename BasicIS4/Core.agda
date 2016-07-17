@@ -17,3 +17,10 @@ data Ty : Set where
 infix 5 _⨝_
 _⨝_ : Ty → Ty → Ty
 A ⨝ B = (A ▷ B) ∧ (B ▷ A)
+
+
+-- Additional useful propositions.
+
+□⋆_ : Cx Ty → Cx Ty
+□⋆ ⌀       = ⌀
+□⋆ (Γ , A) = □⋆ Γ , □ A
