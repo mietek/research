@@ -105,11 +105,11 @@ import BasicIS4.Regular.Hilbert.Sequential
 import BasicIS4.Regular.Hilbert.Nested
 import BasicIS4.Regular.Gentzen.Core
 import BasicIS4.Regular.Translation
-import BasicIS4.Dual.Hilbert.Sequential
-import BasicIS4.Dual.Hilbert.Nested
-import BasicIS4.Dual.Gentzen.Core
--- import BasicIS4.Dual.Gentzen.KripkeSemanticsWIP
-import BasicIS4.Dual.Translation
+import BasicIS4.DualContext.Hilbert.Sequential
+import BasicIS4.DualContext.Hilbert.Nested
+import BasicIS4.DualContext.Gentzen.Core
+-- import BasicIS4.DualContext.Gentzen.KripkeSemanticsWIP
+import BasicIS4.DualContext.Translation
 import BasicIS4.Translation
 import BasicIS4.Labelled.Gentzen.Core
 -- import BasicIS4.TranslationWIP

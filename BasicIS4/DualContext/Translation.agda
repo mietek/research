@@ -1,10 +1,10 @@
-module BasicIS4.Dual.Translation where
+module BasicIS4.DualContext.Translation where
 
 open import BasicIS4.Core public
 
-import BasicIS4.Dual.Hilbert.Sequential as HS
-import BasicIS4.Dual.Hilbert.Nested as HN
-import BasicIS4.Dual.Gentzen.Core as G
+import BasicIS4.DualContext.Hilbert.Sequential as HS
+import BasicIS4.DualContext.Hilbert.Nested as HN
+import BasicIS4.DualContext.Gentzen.Core as G
 
 open HS using () renaming (_⨾_⊢⋆_ to HS⟨_⨾_⊢⋆_⟩ ; _⨾_⊢_ to HS⟨_⨾_⊢_⟩) public
 open HN using () renaming (_⨾_⊢_ to HN⟨_⨾_⊢_⟩) public

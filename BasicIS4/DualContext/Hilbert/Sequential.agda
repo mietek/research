@@ -1,4 +1,4 @@
-module BasicIS4.Dual.Hilbert.Sequential where
+module BasicIS4.DualContext.Hilbert.Sequential where
 
 open import BasicIS4.Core public
 
