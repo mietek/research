@@ -29,7 +29,7 @@ open import Function public
   renaming (id to ᴬᵍid ; const to ᴬᵍconst ; _ˢ_ to ᴬᵍap)
 
 open import Relation.Binary.PropositionalEquality public
-  using (_≡_ ; _≢_ ; refl ; trans ; sym ; cong ; cong₂)
+  using (_≡_ ; _≢_ ; refl ; trans ; sym ; cong ; cong₂ ; subst)
 
 open import Relation.Nullary public
   using ()

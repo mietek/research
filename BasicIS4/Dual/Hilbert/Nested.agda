@@ -114,6 +114,10 @@ lam cfst          = app ck cfst
 lam csnd          = app ck csnd
 lam tt            = app ck tt
 
+lam⋆ : ∀ {Π A Γ Δ} → Γ ⧺ Π ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢ Π ▷⋯▷ A
+lam⋆ {⌀}     t = t
+lam⋆ {Π , B} t = lam⋆ {Π} (lam t)
+
 
 -- Combined axioms of distribution and transitivity.
 
@@ -146,42 +150,9 @@ mlam cfst           = app ck cfst
 mlam csnd           = app ck csnd
 mlam tt             = app ck tt
 
-
--- Additional useful properties.
-
-multicut⊢₀ : ∀ {Π A Γ} → Γ ⨾ ⌀ ⊢⋆ Π → Π ⨾ ⌀ ⊢ A → Γ ⨾ ⌀ ⊢ A
-multicut⊢₀ {⌀}     ᴬᵍtt          u = mono⊢ bot⊆ u
-multicut⊢₀ {Π , B} (ᴬᵍpair ts t) u = app (multicut⊢₀ ts (lam u)) t
-
-mmulticut⊢₀ : ∀ {Π A Δ} → ⌀ ⨾ Δ ⊢⋆ Π → ⌀ ⨾ Π ⊢ A → ⌀ ⨾ Δ ⊢ A
-mmulticut⊢₀ {⌀}     ᴬᵍtt          u = mmono⊢ bot⊆ u
-mmulticut⊢₀ {Π , B} (ᴬᵍpair ts t) u = app (mmulticut⊢₀ ts (mlam u)) (box t)
-
--- TODO:
--- multicut⊢ : ∀ {Π Π′ A Γ Δ} → Γ ⨾ Δ ⊢⋆ Π ⧺ (□⋆ Π′) → Π ⨾ Π′ ⊢ A → Γ ⨾ Δ ⊢ A
-
-refl⊢⋆₀ : ∀ {Γ} → Γ ⨾ ⌀ ⊢⋆ Γ
-refl⊢⋆₀ {⌀}     = ᴬᵍtt
-refl⊢⋆₀ {Γ , A} = ᴬᵍpair (mono⊢⋆ weak⊆ refl⊢⋆₀) v₀
-
-mrefl⊢⋆₀ : ∀ {Δ} → ⌀ ⨾ Δ ⊢⋆ □⋆ Δ
-mrefl⊢⋆₀ {⌀}     = ᴬᵍtt
-mrefl⊢⋆₀ {Δ , A} = ᴬᵍpair (mmono⊢⋆ weak⊆ mrefl⊢⋆₀) (box mv₀)
-
-refl⊢⋆ : ∀ {Δ Γ} → Γ ⨾ Δ ⊢⋆ Γ ⧺ (□⋆ Δ)
-refl⊢⋆ {⌀}     = refl⊢⋆₀
-refl⊢⋆ {Δ , A} = ᴬᵍpair (mmono⊢⋆ weak⊆ refl⊢⋆) (box mv₀)
-
-trans⊢⋆₀ : ∀ {Π Γ Γ′} → Γ ⨾ ⌀ ⊢⋆ Γ′ → Γ′ ⨾ ⌀ ⊢⋆ Π → Γ ⨾ ⌀ ⊢⋆ Π
-trans⊢⋆₀ {⌀}     ts ᴬᵍtt          = ᴬᵍtt
-trans⊢⋆₀ {Π , A} ts (ᴬᵍpair us u) = ᴬᵍpair (trans⊢⋆₀ ts us) (multicut⊢₀ ts u)
-
-mtrans⊢⋆₀ : ∀ {Π Δ Δ′} → ⌀ ⨾ Δ ⊢⋆ Δ′ → ⌀ ⨾ Δ′ ⊢⋆ Π → ⌀ ⨾ Δ ⊢⋆ Π
-mtrans⊢⋆₀ {⌀}     ts ᴬᵍtt          = ᴬᵍtt
-mtrans⊢⋆₀ {Π , A} ts (ᴬᵍpair us u) = ᴬᵍpair (mtrans⊢⋆₀ ts us) (mmulticut⊢₀ ts u)
-
--- TODO:
--- trans⊢⋆ : ∀ {Π Γ Γ′ Δ Δ′} → Γ ⨾ Δ ⊢⋆ Γ′ ⧺ (□⋆ Δ′) → Γ′ ⨾ Δ′ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π
+mlam⋆₀ : ∀ {Δ A Γ} → Γ ⨾ Δ ⊢ A → Γ ⨾ ⌀ ⊢ □⋆ Δ ▷⋯▷ A
+mlam⋆₀ {⌀}     t = t
+mlam⋆₀ {Δ , B} t = mlam⋆₀ (mlam t)
 
 
 -- Detachment theorems.
@@ -189,8 +160,57 @@ mtrans⊢⋆₀ {Π , A} ts (ᴬᵍpair us u) = ᴬᵍpair (mtrans⊢⋆₀ ts u
 det : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ A ▷ B → Γ , A ⨾ Δ ⊢ B
 det t = app (mono⊢ weak⊆ t) v₀
 
+det⋆ : ∀ {Π A Γ Δ} → Γ ⨾ Δ ⊢ Π ▷⋯▷ A → Γ ⧺ Π ⨾ Δ ⊢ A
+det⋆ {⌀}     t = t
+det⋆ {Π , A} t = det (det⋆ {Π} t)
+
 mdet : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ □ A ▷ B → Γ ⨾ Δ , A ⊢ B
 mdet t = app (mmono⊢ weak⊆ t) (box mv₀)
+
+mdet⋆₀ : ∀ {Δ A Γ} → Γ ⨾ ⌀ ⊢ □⋆ Δ ▷⋯▷ A → Γ ⨾ Δ ⊢ A
+mdet⋆₀ {⌀}     t = t
+mdet⋆₀ {Δ , A} t = mdet (mdet⋆₀ t)
+
+
+-- Dual context manipulation.
+
+merge : ∀ {Δ A Γ} → Γ ⨾ Δ ⊢ A → Γ ⧺ (□⋆ Δ) ⨾ ⌀ ⊢ A
+merge {Δ} t = det⋆ {□⋆ Δ} (mlam⋆₀ t)
+
+split : ∀ {Δ A Γ} → Γ ⧺ (□⋆ Δ) ⨾ ⌀ ⊢ A → Γ ⨾ Δ ⊢ A
+split {Δ} t = mdet⋆₀ (lam⋆ {□⋆ Δ} t)
+
+merge⋆ : ∀ {Π Δ Γ} → Γ ⨾ Δ ⊢⋆ Π → Γ ⧺ (□⋆ Δ) ⨾ ⌀ ⊢⋆ Π
+merge⋆ {⌀}     ᴬᵍtt          = ᴬᵍtt
+merge⋆ {Π , A} (ᴬᵍpair ts t) = ᴬᵍpair (merge⋆ ts) (merge t)
+
+split⋆ : ∀ {Π Δ Γ} → Γ ⧺ (□⋆ Δ) ⨾ ⌀ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π
+split⋆ {⌀}     ᴬᵍtt          = ᴬᵍtt
+split⋆ {Π , A} (ᴬᵍpair ts t) = ᴬᵍpair (split⋆ ts) (split t)
+
+
+-- Additional useful properties.
+
+multicut⊢₀ : ∀ {Π A Γ} → Γ ⨾ ⌀ ⊢⋆ Π → Π ⨾ ⌀ ⊢ A → Γ ⨾ ⌀ ⊢ A
+multicut⊢₀ {⌀}     ᴬᵍtt          u = mono⊢ bot⊆ u
+multicut⊢₀ {Π , B} (ᴬᵍpair ts t) u = app (multicut⊢₀ ts (lam u)) t
+
+multicut⊢ : ∀ {Π Π′ A Γ Δ} → Γ ⨾ Δ ⊢⋆ Π ⧺ (□⋆ Π′) → Π ⨾ Π′ ⊢ A → Γ ⨾ Δ ⊢ A
+multicut⊢ ts u = split (multicut⊢₀ (merge⋆ ts) (merge u))
+
+refl⊢⋆₀ : ∀ {Γ} → Γ ⨾ ⌀ ⊢⋆ Γ
+refl⊢⋆₀ {⌀}     = ᴬᵍtt
+refl⊢⋆₀ {Γ , A} = ᴬᵍpair (mono⊢⋆ weak⊆ refl⊢⋆₀) v₀
+
+refl⊢⋆ : ∀ {Δ Γ} → Γ ⨾ Δ ⊢⋆ Γ ⧺ (□⋆ Δ)
+refl⊢⋆ = split⋆ (merge⋆ refl⊢⋆₀)
+
+trans⊢⋆₀ : ∀ {Π Γ Γ′} → Γ ⨾ ⌀ ⊢⋆ Γ′ → Γ′ ⨾ ⌀ ⊢⋆ Π → Γ ⨾ ⌀ ⊢⋆ Π
+trans⊢⋆₀ {⌀}     ts ᴬᵍtt          = ᴬᵍtt
+trans⊢⋆₀ {Π , A} ts (ᴬᵍpair us u) = ᴬᵍpair (trans⊢⋆₀ ts us) (multicut⊢₀ ts u)
+
+trans⊢⋆ : ∀ {Π Γ Γ′ Δ Δ′} → Γ ⨾ Δ ⊢⋆ Γ′ ⧺ (□⋆ Δ′) → Γ′ ⨾ Δ′ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π
+trans⊢⋆ ts us = split⋆ (trans⊢⋆₀ (merge⋆ ts) (merge⋆ us))
 
 
 -- Contraction.
@@ -245,6 +265,15 @@ distup t u = dist t (up u)
 
 unbox : ∀ {A C Γ Δ} → Γ ⨾ Δ ⊢ □ A → Γ ⨾ Δ , A ⊢ C → Γ ⨾ Δ ⊢ C
 unbox t u = app (mlam u) t
+
+multibox₀ : ∀ {Π A Γ} → Γ ⨾ ⌀ ⊢⋆ □⋆ Π → □⋆ Π ⨾ ⌀ ⊢ A → Γ ⨾ ⌀ ⊢ □ A
+multibox₀ {⌀}     ᴬᵍtt          u = mono⊢ bot⊆ (box u)
+multibox₀ {Π , B} (ᴬᵍpair ts t) u = distup (multibox₀ ts (lam u)) t
+
+multibox : ∀ {Π Π′ A Γ Δ} → Γ ⨾ Δ ⊢⋆ (□⋆ Π) ⧺ (□⋆ Π′) → □⋆ Π ⨾ Π′ ⊢ A → Γ ⨾ Δ ⊢ □ A
+multibox {Π} {Π′} {A} {Γ} {Δ} ts u = split (multibox₀ ts′ u′)
+  where ts′ = subst (λ Π″ → Γ ⧺ (□⋆ Δ) ⨾ ⌀ ⊢⋆ Π″) (sym (dist□⋆ₗ Π Π′)) (merge⋆ ts)
+        u′  = subst (λ Π″ → Π″ ⨾ ⌀ ⊢ A) (sym (dist□⋆ₗ Π Π′)) (merge u)
 
 pair : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢ B → Γ ⨾ Δ ⊢ A ∧ B
 pair t u = app (app cpair t) u

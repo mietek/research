@@ -21,6 +21,15 @@ A ⨝ B = (A ▷ B) ∧ (B ▷ A)
 
 -- Additional useful propositions.
 
+infixr 5 _▷⋯▷_
+_▷⋯▷_ : Cx Ty → Ty → Ty
+⌀       ▷⋯▷ B = B
+(Π , A) ▷⋯▷ B = Π ▷⋯▷ (A ▷ B)
+
 □⋆_ : Cx Ty → Cx Ty
 □⋆ ⌀       = ⌀
-□⋆ (Γ , A) = □⋆ Γ , □ A
+□⋆ (Π , A) = □⋆ Π , □ A
+
+dist□⋆ₗ : ∀ Π Π′ → □⋆ (Π ⧺ Π′) ≡ (□⋆ Π) ⧺ (□⋆ Π′)
+dist□⋆ₗ Π ⌀        = refl
+dist□⋆ₗ Π (Π′ , A) = cong₂ _,_ (dist□⋆ₗ Π Π′) refl
