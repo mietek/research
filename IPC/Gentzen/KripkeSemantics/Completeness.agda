@@ -126,12 +126,29 @@ reify⋆ {Π , A} (ᴬᵍpair ts t) = ᴬᵍpair (reify⋆ ts) (reify t)
 
 -- Additional useful properties.
 
+-- TODO:
+-- mutual
+--   multicut⊢ⁿᶠ : ∀ {Π A Γ} → Γ ⊢⋆ⁿᶠ Π → Π ⊢ⁿᶠ A → Γ ⊢ⁿᶠ A
+--   multicut⊢ⁿᶠ {⌀}     ᴬᵍtt          u = mono⊢ⁿᶠ bot⊆ u
+--   multicut⊢ⁿᶠ {Π , B} (ᴬᵍpair ts t) u = neⁿᶠ (appⁿᵉ (multicut⊢ⁿᵉ ts (lamⁿᶠ u)) t)
+--
+--   multicut⊢ⁿᵉ : ∀ {A Π Γ} → Γ ⊢⋆ⁿᶠ Π → Π ⊢ⁿᶠ A → Γ ⊢ⁿᵉ A
+-- NOTE: No idea how to fill this hole.
+--   multicut⊢ⁿᵉ {A} {⌀}     ᴬᵍtt          u = {!!}
+--   multicut⊢ⁿᵉ {A} {Π , B} (ᴬᵍpair ts t) u = appⁿᵉ (multicut⊢ⁿᵉ ts (lamⁿᶠ u)) t
+--
+-- multicut⊩ : ∀ {A Π Γ} → Γ ⊩⋆ Π → Π ⊩ A → Γ ⊩ A
+-- multicut⊩ {A} {⌀}     ᴬᵍtt          u = mono⊩ {A} bot⊆ u
+-- multicut⊩ {A} {Π , B} (ᴬᵍpair ts t) u = reflect {A} (appⁿᵉ ts′ (reify {B} t))
+--   where ts′ = multicut⊢ⁿᵉ (reify⋆ ts) (lamⁿᶠ (reify {A} u))
+
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
 refl⊩⋆ {⌀}     = ᴬᵍtt
 refl⊩⋆ {Γ , A} = ᴬᵍpair (mono⊩⋆ {Γ} weak⊆ refl⊩⋆) (reflect {A} (varⁿᵉ top))
 
--- TODO:
 -- trans⊩⋆ : ∀ {Π Γ Γ′} → Γ ⊩⋆ Γ′ → Γ′ ⊩⋆ Π → Γ ⊩⋆ Π
+-- trans⊩⋆ {⌀}     ts ᴬᵍtt          = ᴬᵍtt
+-- trans⊩⋆ {Π , A} ts (ᴬᵍpair us u) = ᴬᵍpair (trans⊩⋆ ts us) (multicut⊩ {A} ts u)
 
 
 -- Completeness, or quotation.
