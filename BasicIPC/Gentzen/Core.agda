@@ -51,6 +51,12 @@ v₂ = var i₂
 
 -- Deduction theorem is built-in.
 
+-- Detachment theorem.
+
+det : ∀ {A B Γ} → Γ ⊢ A ▷ B → Γ , A ⊢ B
+det t = app (mono⊢ weak⊆ t) v₀
+
+
 -- Additional useful properties.
 
 multicut⊢ : ∀ {Π A Γ} → Γ ⊢⋆ Π → Π ⊢ A → Γ ⊢ A
@@ -64,12 +70,6 @@ refl⊢⋆ {Γ , A} = ᴬᵍpair (mono⊢⋆ weak⊆ refl⊢⋆) v₀
 trans⊢⋆ : ∀ {Π Γ Γ′} → Γ ⊢⋆ Γ′ → Γ′ ⊢⋆ Π → Γ ⊢⋆ Π
 trans⊢⋆ {⌀}     ts ᴬᵍtt          = ᴬᵍtt
 trans⊢⋆ {Π , A} ts (ᴬᵍpair us u) = ᴬᵍpair (trans⊢⋆ ts us) (multicut⊢ ts u)
-
-
--- Detachment theorem.
-
-det : ∀ {A B Γ} → Γ ⊢ A ▷ B → Γ , A ⊢ B
-det t = app (mono⊢ weak⊆ t) v₀
 
 
 -- Contraction.
