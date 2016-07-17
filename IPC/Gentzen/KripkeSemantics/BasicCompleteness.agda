@@ -28,12 +28,12 @@ mutual
   reflect {⊤}    t = return {⊤} ᴬᵍtt
   reflect {⊥}    t = λ ξ k → boom (mono⊢ ξ t)
   reflect {A ∨ B} t = λ ξ k → case (mono⊢ ξ t)
-                                 (k weak⊆ (ᴬᵍinl (reflect {A} (var top))))
-                                 (k weak⊆ (ᴬᵍinr (reflect {B} (var top))))
+                                 (k weak⊆ (ᴬᵍinl (reflect {A} v₀)))
+                                 (k weak⊆ (ᴬᵍinr (reflect {B} (v₀))))
 
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
   reify {α P}   k = k refl≤ (λ ξ s → s)
-  reify {A ▷ B} k = k refl≤ (λ ξ s → lam (reify {B} (s weak⊆ (reflect {A} (var top)))))
+  reify {A ▷ B} k = k refl≤ (λ ξ s → lam (reify {B} (s weak⊆ (reflect {A} (v₀)))))
   reify {A ∧ B} k = k refl≤ (λ ξ s → pair (reify {A} (ᴬᵍfst s)) (reify {B} (ᴬᵍsnd s)))
   reify {⊤}    k = k refl≤ (λ ξ s → tt)
   reify {⊥}    k = k refl≤ (λ ξ ())
@@ -43,7 +43,7 @@ mutual
 
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
 refl⊩⋆ {⌀}     = ᴬᵍtt
-refl⊩⋆ {Γ , A} = ᴬᵍpair (mono⊩⋆ {Γ} weak⊆ refl⊩⋆) (reflect {A} (var top))
+refl⊩⋆ {Γ , A} = ᴬᵍpair (mono⊩⋆ {Γ} weak⊆ refl⊩⋆) (reflect {A} v₀)
 
 
 -- Completeness, or quotation.

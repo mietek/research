@@ -136,7 +136,7 @@ data _⇒_ {Γ : Cx Ty} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
   cong⇒snd  : ∀ {A B} {t t′ : Γ ⊢ A ∧ B}
                → t ⇒ t′ → snd t ⇒ snd t′
   conv⇒lam  : ∀ {A B} {t : Γ ⊢ A ▷ B}
-               → t ⇒ lam (app (mono⊢ weak⊆ t) (var top))
+               → t ⇒ lam (app (mono⊢ weak⊆ t) v₀)
   conv⇒app  : ∀ {A B} {t : Γ , A ⊢ B} {u : Γ ⊢ A}
                → app (lam t) u ⇒ ([ top ≔ u ] t)
   conv⇒pair : ∀ {A B} {t : Γ ⊢ A ∧ B}

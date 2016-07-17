@@ -28,13 +28,13 @@ mutual
 
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
   reify {α P}   s = s
-  reify {A ▷ B} s = lam (reify {B} (s weak⊆ (reflect {A} (var top))))
+  reify {A ▷ B} s = lam (reify {B} (s weak⊆ (reflect {A} v₀)))
   reify {A ∧ B} s = pair (reify {A} (ᴬᵍfst s)) (reify {B} (ᴬᵍsnd s))
   reify {⊤}    s = tt
 
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
 refl⊩⋆ {⌀}     = ᴬᵍtt
-refl⊩⋆ {Γ , A} = ᴬᵍpair (mono⊩⋆ {Γ} weak⊆ refl⊩⋆) (reflect {A} (var top))
+refl⊩⋆ {Γ , A} = ᴬᵍpair (mono⊩⋆ {Γ} weak⊆ refl⊩⋆) (reflect {A} v₀)
 
 
 -- Completeness, or quotation.
