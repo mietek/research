@@ -32,9 +32,29 @@ mutual
   reify {A ∧ B} s = pair (reify {A} (ᴬᵍfst s)) (reify {B} (ᴬᵍsnd s))
   reify {⊤}    s = tt
 
+reflect⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊩⋆ Π
+reflect⋆ {⌀}     ᴬᵍtt          = ᴬᵍtt
+reflect⋆ {Π , A} (ᴬᵍpair ts t) = ᴬᵍpair (reflect⋆ ts) (reflect t)
+
+reify⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → Γ ⊢⋆ Π
+reify⋆ {⌀}     ᴬᵍtt          = ᴬᵍtt
+reify⋆ {Π , A} (ᴬᵍpair ts t) = ᴬᵍpair (reify⋆ ts) (reify t)
+
+
+-- Additional useful properties.
+
+multicut⊩ : ∀ {Π A Γ} → Γ ⊩⋆ Π → Π ⊩ A → Γ ⊩ A
+multicut⊩ {⌀}     {A} ᴬᵍtt          u = mono⊩ {A} bot⊆ u
+multicut⊩ {Π , B} {A} (ᴬᵍpair ts t) u = reflect {A} (app ts′ (reify {B} t))
+  where ts′ = multicut⊢ (reify⋆ ts) (lam (reify {A} u))
+
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
 refl⊩⋆ {⌀}     = ᴬᵍtt
 refl⊩⋆ {Γ , A} = ᴬᵍpair (mono⊩⋆ {Γ} weak⊆ refl⊩⋆) (reflect {A} v₀)
+
+trans⊩⋆ : ∀ {Π Γ Γ′} → Γ ⊩⋆ Γ′ → Γ′ ⊩⋆ Π → Γ ⊩⋆ Π
+trans⊩⋆ {⌀}     ts ᴬᵍtt          = ᴬᵍtt
+trans⊩⋆ {Π , A} ts (ᴬᵍpair us u) = ᴬᵍpair (trans⊩⋆ ts us) (multicut⊩ {A = A} ts u)
 
 
 -- Completeness, or quotation.

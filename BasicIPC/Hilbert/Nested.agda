@@ -17,6 +17,11 @@ data _⊢_ (Γ : Cx Ty) : Ty → Set where
   csnd  : ∀ {A B}   → Γ ⊢ A ∧ B ▷ B
   tt    : Γ ⊢ ⊤
 
+infix 3 _⊢⋆_
+_⊢⋆_ : Cx Ty → Cx Ty → Set
+Γ ⊢⋆ ⌀     = ᴬᵍ⊤
+Γ ⊢⋆ Π , A = Γ ⊢⋆ Π ᴬᵍ∧ Γ ⊢ A
+
 
 -- Monotonicity with respect to context inclusion.
 
@@ -30,6 +35,10 @@ mono⊢ η cpair     = cpair
 mono⊢ η cfst      = cfst
 mono⊢ η csnd      = csnd
 mono⊢ η tt        = tt
+
+mono⊢⋆ : ∀ {Π Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ Π → Γ′ ⊢⋆ Π
+mono⊢⋆ {⌀}     η ᴬᵍtt          = ᴬᵍtt
+mono⊢⋆ {Π , A} η (ᴬᵍpair ts t) = ᴬᵍpair (mono⊢⋆ η ts) (mono⊢ η t)
 
 
 -- Shorthand for variables.
@@ -57,6 +66,21 @@ lam cpair         = app ck cpair
 lam cfst          = app ck cfst
 lam csnd          = app ck csnd
 lam tt            = app ck tt
+
+
+-- Additional useful properties.
+
+multicut⊢ : ∀ {Π A Γ} → Γ ⊢⋆ Π → Π ⊢ A → Γ ⊢ A
+multicut⊢ {⌀}     ᴬᵍtt          u = mono⊢ bot⊆ u
+multicut⊢ {Π , B} (ᴬᵍpair ts t) u = app (multicut⊢ ts (lam u)) t
+
+refl⊢⋆ : ∀ {Γ} → Γ ⊢⋆ Γ
+refl⊢⋆ {⌀}     = ᴬᵍtt
+refl⊢⋆ {Γ , A} = ᴬᵍpair (mono⊢⋆ weak⊆ refl⊢⋆) v₀
+
+trans⊢⋆ : ∀ {Π Γ Γ′} → Γ ⊢⋆ Γ′ → Γ′ ⊢⋆ Π → Γ ⊢⋆ Π
+trans⊢⋆ {⌀}     ts ᴬᵍtt          = ᴬᵍtt
+trans⊢⋆ {Π , A} ts (ᴬᵍpair us u) = ᴬᵍpair (trans⊢⋆ ts us) (multicut⊢ ts u)
 
 
 -- Detachment theorem.

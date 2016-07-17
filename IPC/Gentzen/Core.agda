@@ -19,6 +19,11 @@ data _⊢_ (Γ : Cx Ty) : Ty → Set where
   inr  : ∀ {A B}   → Γ ⊢ B → Γ ⊢ A ∨ B
   case : ∀ {A B C} → Γ ⊢ A ∨ B → Γ , A ⊢ C → Γ , B ⊢ C → Γ ⊢ C
 
+infix 3 _⊢⋆_
+_⊢⋆_ : Cx Ty → Cx Ty → Set
+Γ ⊢⋆ ⌀     = ᴬᵍ⊤
+Γ ⊢⋆ Π , A = Γ ⊢⋆ Π ᴬᵍ∧ Γ ⊢ A
+
 
 -- Monotonicity with respect to context inclusion.
 
@@ -35,6 +40,10 @@ mono⊢ η (inl t)      = inl (mono⊢ η t)
 mono⊢ η (inr t)      = inr (mono⊢ η t)
 mono⊢ η (case t u v) = case (mono⊢ η t) (mono⊢ (keep η) u) (mono⊢ (keep η) v)
 
+mono⊢⋆ : ∀ {Γ″ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ Γ″ → Γ′ ⊢⋆ Γ″
+mono⊢⋆ {⌀}      η ᴬᵍtt          = ᴬᵍtt
+mono⊢⋆ {Γ″ , A} η (ᴬᵍpair ts t) = ᴬᵍpair (mono⊢⋆ η ts) (mono⊢ η t)
+
 
 -- Shorthand for variables.
 
@@ -49,6 +58,21 @@ v₂ = var i₂
 
 
 -- Deduction theorem is built-in.
+
+-- Additional useful properties.
+
+multicut⊢ : ∀ {Π A Γ} → Γ ⊢⋆ Π → Π ⊢ A → Γ ⊢ A
+multicut⊢ {⌀}     ᴬᵍtt          u = mono⊢ bot⊆ u
+multicut⊢ {Π , B} (ᴬᵍpair ts t) u = app (multicut⊢ ts (lam u)) t
+
+refl⊢⋆ : ∀ {Γ} → Γ ⊢⋆ Γ
+refl⊢⋆ {⌀}     = ᴬᵍtt
+refl⊢⋆ {Γ , A} = ᴬᵍpair (mono⊢⋆ weak⊆ refl⊢⋆) v₀
+
+trans⊢⋆ : ∀ {Π Γ Γ′} → Γ ⊢⋆ Γ′ → Γ′ ⊢⋆ Π → Γ ⊢⋆ Π
+trans⊢⋆ {⌀}     ts ᴬᵍtt          = ᴬᵍtt
+trans⊢⋆ {Π , A} ts (ᴬᵍpair us u) = ᴬᵍpair (trans⊢⋆ ts us) (multicut⊢ ts u)
+
 
 -- Detachment theorem.
 

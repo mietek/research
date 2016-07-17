@@ -26,6 +26,16 @@ mutual
     boomⁿᵉ : ∀ {C}     → Γ ⊢ⁿᵉ ⊥ → Γ ⊢ⁿᵉ C
     caseⁿᵉ : ∀ {A B C} → Γ ⊢ⁿᵉ A ∨ B → Γ , A ⊢ⁿᶠ C → Γ , B ⊢ⁿᶠ C → Γ ⊢ⁿᵉ C
 
+infix 3 _⊢⋆ⁿᶠ_
+_⊢⋆ⁿᶠ_ : Cx Ty → Cx Ty → Set
+Γ ⊢⋆ⁿᶠ ⌀     = ᴬᵍ⊤
+Γ ⊢⋆ⁿᶠ Π , A = Γ ⊢⋆ⁿᶠ Π ᴬᵍ∧ Γ ⊢ⁿᶠ A
+
+infix 3 _⊢⋆ⁿᵉ_
+_⊢⋆ⁿᵉ_ : Cx Ty → Cx Ty → Set
+Γ ⊢⋆ⁿᵉ ⌀     = ᴬᵍ⊤
+Γ ⊢⋆ⁿᵉ Π , A = Γ ⊢⋆ⁿᵉ Π ᴬᵍ∧ Γ ⊢ⁿᵉ A
+
 
 -- Translation to simple terms.
 
@@ -104,6 +114,17 @@ mutual
   reify {A ∨ B} k = k refl≤ (λ ξ s → ᴬᵍcase s
                                         (λ a → inlⁿᶠ (reify {A} (λ ξ′ k′ → a ξ′ k′)))
                                         (λ b → inrⁿᶠ (reify {B} (λ ξ′ k′ → b ξ′ k′))))
+
+reflect⋆ : ∀ {Π Γ} → Γ ⊢⋆ⁿᵉ Π → Γ ⊩⋆ Π
+reflect⋆ {⌀}     ᴬᵍtt          = ᴬᵍtt
+reflect⋆ {Π , A} (ᴬᵍpair ts t) = ᴬᵍpair (reflect⋆ ts) (reflect t)
+
+reify⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → Γ ⊢⋆ⁿᶠ Π
+reify⋆ {⌀}     ᴬᵍtt          = ᴬᵍtt
+reify⋆ {Π , A} (ᴬᵍpair ts t) = ᴬᵍpair (reify⋆ ts) (reify t)
+
+
+-- Additional useful properties.
 
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
 refl⊩⋆ {⌀}     = ᴬᵍtt

@@ -22,6 +22,16 @@ mutual
     fstⁿᵉ : ∀ {A B} → Γ ⊢ⁿᵉ A ∧ B → Γ ⊢ⁿᵉ A
     sndⁿᵉ : ∀ {A B} → Γ ⊢ⁿᵉ A ∧ B → Γ ⊢ⁿᵉ B
 
+infix 3 _⊢⋆ⁿᶠ_
+_⊢⋆ⁿᶠ_ : Cx Ty → Cx Ty → Set
+Γ ⊢⋆ⁿᶠ ⌀     = ᴬᵍ⊤
+Γ ⊢⋆ⁿᶠ Π , A = Γ ⊢⋆ⁿᶠ Π ᴬᵍ∧ Γ ⊢ⁿᶠ A
+
+infix 3 _⊢⋆ⁿᵉ_
+_⊢⋆ⁿᵉ_ : Cx Ty → Cx Ty → Set
+Γ ⊢⋆ⁿᵉ ⌀     = ᴬᵍ⊤
+Γ ⊢⋆ⁿᵉ Π , A = Γ ⊢⋆ⁿᵉ Π ᴬᵍ∧ Γ ⊢ⁿᵉ A
+
 
 -- Translation to simple terms.
 
@@ -83,6 +93,17 @@ mutual
   reify {A ▷ B} s = lamⁿᶠ (reify {B} (s weak⊆ (reflect {A} (varⁿᵉ top))))
   reify {A ∧ B} s = pairⁿᶠ (reify {A} (ᴬᵍfst s)) (reify {B} (ᴬᵍsnd s))
   reify {⊤}    s = ttⁿᶠ
+
+reflect⋆ : ∀ {Π Γ} → Γ ⊢⋆ⁿᵉ Π → Γ ⊩⋆ Π
+reflect⋆ {⌀}     ᴬᵍtt          = ᴬᵍtt
+reflect⋆ {Π , A} (ᴬᵍpair ts t) = ᴬᵍpair (reflect⋆ ts) (reflect t)
+
+reify⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → Γ ⊢⋆ⁿᶠ Π
+reify⋆ {⌀}     ᴬᵍtt          = ᴬᵍtt
+reify⋆ {Π , A} (ᴬᵍpair ts t) = ᴬᵍpair (reify⋆ ts) (reify t)
+
+
+-- Additional useful properties.
 
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
 refl⊩⋆ {⌀}     = ᴬᵍtt
