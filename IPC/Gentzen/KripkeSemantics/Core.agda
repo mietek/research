@@ -17,7 +17,7 @@ record Model : Set₁ where
 
     -- Strong forcing for atomic propositions; monotonic.
     _⊪ᵅ_   : World → Atom → Set
-    mono⊪ᵅ : ∀ {p w w′} → w ≤ w′ → w ⊪ᵅ p → w′ ⊪ᵅ p
+    mono⊪ᵅ : ∀ {P w w′} → w ≤ w′ → w ⊪ᵅ P → w′ ⊪ᵅ P
 
     -- Exploding for propositions.
     _‼_ : World → Ty → Set

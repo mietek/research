@@ -30,7 +30,7 @@ record Model : Set₁ where
 
     -- NEW: Forcing is monotonic with respect to modal accessibility; needed for soundness;
     -- seems OK.
-    mmono⊩ᵅ : ∀ {w w′ p} → w R w′ → w ⊩ᵅ p → w′ ⊩ᵅ p
+    mmono⊩ᵅ : ∀ {w w′ P} → w R w′ → w ⊩ᵅ P → w′ ⊩ᵅ P
 
     -- NEW: Intuitionistic accessibility is ??? with respect to modal accessibility;
     -- needed for soundness; seems odd.
