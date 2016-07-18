@@ -104,6 +104,8 @@ import BasicIS4.Core
 import BasicIS4.Regular.Hilbert.Sequential
 import BasicIS4.Regular.Hilbert.Nested
 import BasicIS4.Regular.Gentzen.Core
+import BasicIS4.Regular.Gentzen.KripkeSemantics.AlechinaWIP
+import BasicIS4.Regular.Gentzen.KripkeSemantics.MartiStuderWIP
 import BasicIS4.Regular.Translation
 import BasicIS4.DualContext.Hilbert.Sequential
 import BasicIS4.DualContext.Hilbert.Nested
