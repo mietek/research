@@ -5,27 +5,26 @@ open import BasicIS4 public
 
 -- Derivations, as Hilbert-style combinator sequences.
 
-mutual
-  infix 3 _⊢⋆_
-  data _⊢⋆_ (Γ : Cx Ty) : Cx Ty → Set where
-    nil   : Γ ⊢⋆ ⌀
-    var   : ∀ {Π A}     → A ∈ Γ → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A
-    mp    : ∀ {Π A B}   → A ▷ B ∈ Π → A ∈ Π → Γ ⊢⋆ Π → Γ ⊢⋆ Π , B
-    ci    : ∀ {Π A}     → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A ▷ A
-    ck    : ∀ {Π A B}   → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A ▷ B ▷ A
-    cs    : ∀ {Π A B C} → Γ ⊢⋆ Π → Γ ⊢⋆ Π , (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
-    nec   : ∀ {Π A}     → ⌀ ⊢ A → Γ ⊢⋆ Π → Γ ⊢⋆ Π , □ A
-    cdist : ∀ {Π A B}   → Γ ⊢⋆ Π → Γ ⊢⋆ Π , □ (A ▷ B) ▷ □ A ▷ □ B
-    cup   : ∀ {Π A}     → Γ ⊢⋆ Π → Γ ⊢⋆ Π , □ A ▷ □ □ A
-    cdown : ∀ {Π A}     → Γ ⊢⋆ Π → Γ ⊢⋆ Π , □ A ▷ A
-    cpair : ∀ {Π A B}   → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A ▷ B ▷ A ∧ B
-    cfst  : ∀ {Π A B}   → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A ∧ B ▷ A
-    csnd  : ∀ {Π A B}   → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A ∧ B ▷ B
-    tt    : ∀ {Π}       → Γ ⊢⋆ Π → Γ ⊢⋆ Π , ⊤
+infix 3 _⊢⋆_
+data _⊢⋆_ (Γ : Cx Ty) : Cx Ty → Set where
+  nil   : Γ ⊢⋆ ⌀
+  var   : ∀ {Π A}     → A ∈ Γ → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A
+  mp    : ∀ {Π A B}   → A ▷ B ∈ Π → A ∈ Π → Γ ⊢⋆ Π → Γ ⊢⋆ Π , B
+  ci    : ∀ {Π A}     → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A ▷ A
+  ck    : ∀ {Π A B}   → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A ▷ B ▷ A
+  cs    : ∀ {Π A B C} → Γ ⊢⋆ Π → Γ ⊢⋆ Π , (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
+  nec   : ∀ {Π Ξ A}   → ⌀ ⊢⋆ Ξ , A → Γ ⊢⋆ Π → Γ ⊢⋆ Π , □ A
+  cdist : ∀ {Π A B}   → Γ ⊢⋆ Π → Γ ⊢⋆ Π , □ (A ▷ B) ▷ □ A ▷ □ B
+  cup   : ∀ {Π A}     → Γ ⊢⋆ Π → Γ ⊢⋆ Π , □ A ▷ □ □ A
+  cdown : ∀ {Π A}     → Γ ⊢⋆ Π → Γ ⊢⋆ Π , □ A ▷ A
+  cpair : ∀ {Π A B}   → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A ▷ B ▷ A ∧ B
+  cfst  : ∀ {Π A B}   → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A ∧ B ▷ A
+  csnd  : ∀ {Π A B}   → Γ ⊢⋆ Π → Γ ⊢⋆ Π , A ∧ B ▷ B
+  tt    : ∀ {Π}       → Γ ⊢⋆ Π → Γ ⊢⋆ Π , ⊤
 
-  infix 3 _⊢_
-  _⊢_ : Cx Ty → Ty → Set
-  Γ ⊢ A = Σ (Cx Ty) (λ Π → Γ ⊢⋆ Π , A)
+infix 3 _⊢_
+_⊢_ : Cx Ty → Ty → Set
+Γ ⊢ A = Σ (Cx Ty) (λ Π → Γ ⊢⋆ Π , A)
 
 
 -- Monotonicity with respect to context inclusion.
@@ -77,4 +76,4 @@ app {A} {B} (ᴬᵍpair Π ts) (ᴬᵍpair Π′ us) = ᴬᵍpair Π″ vs
         vs = mp top (mono∈ (weak⊆⧺ₗ (Π , A ▷ B)) top) (us ⧻ ts)
 
 box : ∀ {A Γ} → ⌀ ⊢ A → Γ ⊢ □ A
-box ts = ᴬᵍpair ⌀ (nec ts nil)
+box (ᴬᵍpair Π ts) = ᴬᵍpair ⌀ (nec ts nil)
