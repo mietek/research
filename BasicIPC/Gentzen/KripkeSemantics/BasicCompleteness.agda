@@ -43,9 +43,9 @@ reify⋆ {Π , A} (ᴬᵍpair ts t) = ᴬᵍpair (reify⋆ ts) (reify t)
 
 -- Additional useful properties.
 
-multicut⊩ : ∀ {A Π Γ} → Γ ⊩⋆ Π → Π ⊩ A → Γ ⊩ A
-multicut⊩ {A} {⌀}     ᴬᵍtt          u = mono⊩ {A} bot⊆ u
-multicut⊩ {A} {Π , B} (ᴬᵍpair ts t) u = reflect {A} (app ts′ (reify {B} t))
+multicut⊩ : ∀ {A Γ Γ′} → Γ ⊩⋆ Γ′ → Γ′ ⊩ A → Γ ⊩ A
+multicut⊩ {A} {Γ′ = ⌀}      ᴬᵍtt          u = mono⊩ {A} bot⊆ u
+multicut⊩ {A} {Γ′ = Γ′ , B} (ᴬᵍpair ts t) u = reflect {A} (app ts′ (reify {B} t))
   where ts′ = multicut⊢ (reify⋆ ts) (lam (reify {A} u))
 
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ

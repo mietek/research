@@ -128,18 +128,18 @@ reify⋆ {Π , A} (ᴬᵍpair ts t) = ᴬᵍpair (reify⋆ ts) (reify t)
 
 -- TODO:
 -- mutual
---   multicut⊢ⁿᶠ : ∀ {Π A Γ} → Γ ⊢⋆ⁿᶠ Π → Π ⊢ⁿᶠ A → Γ ⊢ⁿᶠ A
---   multicut⊢ⁿᶠ {⌀}     ᴬᵍtt          u = mono⊢ⁿᶠ bot⊆ u
---   multicut⊢ⁿᶠ {Π , B} (ᴬᵍpair ts t) u = neⁿᶠ (appⁿᵉ (multicut⊢ⁿᵉ ts (lamⁿᶠ u)) t)
+--   multicut⊢ⁿᶠ : ∀ {A Γ Γ′} → Γ ⊢⋆ⁿᶠ Γ′ → Γ′ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ A
+--   multicut⊢ⁿᶠ {Γ′ = ⌀}      ᴬᵍtt          u = mono⊢ⁿᶠ bot⊆ u
+--   multicut⊢ⁿᶠ {Γ′ = Γ′ , B} (ᴬᵍpair ts t) u = neⁿᶠ (appⁿᵉ (multicut⊢ⁿᵉ ts (lamⁿᶠ u)) t)
 --
---   multicut⊢ⁿᵉ : ∀ {A Π Γ} → Γ ⊢⋆ⁿᶠ Π → Π ⊢ⁿᶠ A → Γ ⊢ⁿᵉ A
--- NOTE: No idea how to fill this hole.
---   multicut⊢ⁿᵉ {A} {⌀}     ᴬᵍtt          u = {!!}
---   multicut⊢ⁿᵉ {A} {Π , B} (ᴬᵍpair ts t) u = appⁿᵉ (multicut⊢ⁿᵉ ts (lamⁿᶠ u)) t
+--   multicut⊢ⁿᵉ : ∀ {A Γ Γ′} → Γ ⊢⋆ⁿᶠ Γ′ → Γ′ ⊢ⁿᶠ A → Γ ⊢ⁿᵉ A
+--   -- NOTE: No idea how to fill this hole.
+--   multicut⊢ⁿᵉ {A} {Γ′ = ⌀}      ᴬᵍtt          u = {!!}
+--   multicut⊢ⁿᵉ {A} {Γ′ = Γ′ , B} (ᴬᵍpair ts t) u = appⁿᵉ (multicut⊢ⁿᵉ ts (lamⁿᶠ u)) t
 --
--- multicut⊩ : ∀ {A Π Γ} → Γ ⊩⋆ Π → Π ⊩ A → Γ ⊩ A
--- multicut⊩ {A} {⌀}     ᴬᵍtt          u = mono⊩ {A} bot⊆ u
--- multicut⊩ {A} {Π , B} (ᴬᵍpair ts t) u = reflect {A} (appⁿᵉ ts′ (reify {B} t))
+-- multicut⊩ : ∀ {A Γ Γ′} → Γ ⊩⋆ Γ′ → Γ′ ⊩ A → Γ ⊩ A
+-- multicut⊩ {A} {Γ′ = ⌀}      ᴬᵍtt          u = mono⊩ {A} bot⊆ u
+-- multicut⊩ {A} {Γ′ = Γ′ , B} (ᴬᵍpair ts t) u = reflect {A} (appⁿᵉ ts′ (reify {B} t))
 --   where ts′ = multicut⊢ⁿᵉ (reify⋆ ts) (lamⁿᶠ (reify {A} u))
 
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ

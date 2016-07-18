@@ -191,11 +191,11 @@ split⋆ {Π , A} (ᴬᵍpair ts t) = ᴬᵍpair (split⋆ ts) (split t)
 
 -- Additional useful properties.
 
-multicut⊢₀ : ∀ {Π A Γ} → Γ ⨾ ⌀ ⊢⋆ Π → Π ⨾ ⌀ ⊢ A → Γ ⨾ ⌀ ⊢ A
-multicut⊢₀ {⌀}     ᴬᵍtt          u = mono⊢ bot⊆ u
-multicut⊢₀ {Π , B} (ᴬᵍpair ts t) u = app (multicut⊢₀ ts (lam u)) t
+multicut⊢₀ : ∀ {A Γ Γ′} → Γ ⨾ ⌀ ⊢⋆ Γ′ → Γ′ ⨾ ⌀ ⊢ A → Γ ⨾ ⌀ ⊢ A
+multicut⊢₀ {Γ′ = ⌀}      ᴬᵍtt          u = mono⊢ bot⊆ u
+multicut⊢₀ {Γ′ = Γ′ , B} (ᴬᵍpair ts t) u = app (multicut⊢₀ ts (lam u)) t
 
-multicut⊢ : ∀ {Π Π′ A Γ Δ} → Γ ⨾ Δ ⊢⋆ Π ⧺ (□⋆ Π′) → Π ⨾ Π′ ⊢ A → Γ ⨾ Δ ⊢ A
+multicut⊢ : ∀ {A Γ Γ′ Δ Δ′} → Γ ⨾ Δ ⊢⋆ Γ′ ⧺ (□⋆ Δ′) → Γ′ ⨾ Δ′ ⊢ A → Γ ⨾ Δ ⊢ A
 multicut⊢ ts u = split (multicut⊢₀ (merge⋆ ts) (merge u))
 
 refl⊢⋆₀ : ∀ {Γ} → Γ ⨾ ⌀ ⊢⋆ Γ

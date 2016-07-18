@@ -65,9 +65,9 @@ det t = app (mono⊢ weak⊆ t) v₀
 
 -- Additional useful properties.
 
-multicut⊢ : ∀ {Π A Γ} → Γ ⊢⋆ Π → Π ⊢ A → Γ ⊢ A
-multicut⊢ {⌀}     ᴬᵍtt          u = mono⊢ bot⊆ u
-multicut⊢ {Π , B} (ᴬᵍpair ts t) u = app (multicut⊢ ts (lam u)) t
+multicut⊢ : ∀ {A Γ Γ′} → Γ ⊢⋆ Γ′ → Γ′ ⊢ A → Γ ⊢ A
+multicut⊢ {Γ′ = ⌀}      ᴬᵍtt          u = mono⊢ bot⊆ u
+multicut⊢ {Γ′ = Γ′ , B} (ᴬᵍpair ts t) u = app (multicut⊢ ts (lam u)) t
 
 refl⊢⋆ : ∀ {Γ} → Γ ⊢⋆ Γ
 refl⊢⋆ {⌀}     = ᴬᵍtt

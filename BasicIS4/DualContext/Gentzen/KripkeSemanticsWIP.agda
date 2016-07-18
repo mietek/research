@@ -22,19 +22,19 @@ record Model : Set₁ where
 
     -- Forcing for atomic propositions; monotonic with respect to intuitionistic accessibility.
     _⊩ᵅ_   : World → Atom → Set
-    mono⊩ᵅ : ∀ {w w′ p} → w ≤ w′ → w ⊩ᵅ p → w′ ⊩ᵅ p
+    mono⊩ᵅ : ∀ {P w w′} → w ≤ w′ → w ⊩ᵅ P → w′ ⊩ᵅ P
 
     -- Modal accessibility is ??? with respect to intuitionistic accessibility;
     -- seems odd, but appears in Ono; repeated by Marti and Studer.
-    fnordR : ∀ {w w′ w″} → w ≤ w′ → w′ R w″ → w R w″
+    fnordR : ∀ {x w w′} → w ≤ w′ → w′ R x → w R x
 
     -- NEW: Forcing is monotonic with respect to modal accessibility; needed for soundness;
     -- seems OK.
-    mmono⊩ᵅ : ∀ {w w′ P} → w R w′ → w ⊩ᵅ P → w′ ⊩ᵅ P
+    mmono⊩ᵅ : ∀ {P w w′} → w R w′ → w ⊩ᵅ P → w′ ⊩ᵅ P
 
     -- NEW: Intuitionistic accessibility is ??? with respect to modal accessibility;
     -- needed for soundness; seems odd.
-    mfnord≤ : ∀ {w w′ w″} → w R w′ → w′ ≤ w″ → w ≤ w″
+    mfnord≤ : ∀ {x w w′} → w R w′ → w′ ≤ x → w ≤ x
 
   -- Intuitionistic accessibility implies modal accessibility; appears in Ono as frame condition.
   ≤→R : ∀ {w w′} → w ≤ w′ → w R w′
