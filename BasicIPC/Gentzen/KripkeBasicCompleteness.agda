@@ -1,6 +1,6 @@
-module IPC.Gentzen.KripkeSemantics.BasicCompleteness where
+module BasicIPC.Gentzen.KripkeBasicCompleteness where
 
-open import IPC.Gentzen.KripkeSemantics.Core public
+open import BasicIPC.Gentzen.KripkeSoundness public
 
 
 -- The canonical model.
@@ -12,9 +12,8 @@ instance
     ; _≤_     = _⊆_
     ; refl≤   = refl⊆
     ; trans≤  = trans⊆
-    ; _⊪ᵅ_   = λ Γ P → Γ ⊢ α P
-    ; mono⊪ᵅ = mono⊢
-    ; _‼_     = λ Γ A → Γ ⊢ A
+    ; _⊩ᵅ_   = λ Γ P → Γ ⊢ α P
+    ; mono⊩ᵅ = mono⊢
     }
 
 
@@ -22,24 +21,16 @@ instance
 
 mutual
   reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
-  reflect {α P}   t = return {α P} t
-  reflect {A ▷ B} t = return {A ▷ B} (λ ξ a → reflect {B} (app (mono⊢ ξ t) (reify {A} a)))
-  reflect {A ∧ B} t = return {A ∧ B} (ᴬᵍpair (reflect {A} (fst t)) (reflect {B} (snd t)))
-  reflect {⊤}    t = return {⊤} ᴬᵍtt
-  reflect {⊥}    t = λ ξ k → boom (mono⊢ ξ t)
-  reflect {A ∨ B} t = λ ξ k → case (mono⊢ ξ t)
-                                 (k weak⊆ (ᴬᵍinl (reflect {A} v₀)))
-                                 (k weak⊆ (ᴬᵍinr (reflect {B} (v₀))))
+  reflect {α P}   t = t
+  reflect {A ▷ B} t = λ ξ a → reflect {B} (app (mono⊢ ξ t) (reify {A} a))
+  reflect {A ∧ B} t = ᴬᵍpair (reflect {A} (fst t)) (reflect {B} (snd t))
+  reflect {⊤}    t = ᴬᵍtt
 
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
-  reify {α P}   k = k refl≤ (λ ξ s → s)
-  reify {A ▷ B} k = k refl≤ (λ ξ s → lam (reify {B} (s weak⊆ (reflect {A} (v₀)))))
-  reify {A ∧ B} k = k refl≤ (λ ξ s → pair (reify {A} (ᴬᵍfst s)) (reify {B} (ᴬᵍsnd s)))
-  reify {⊤}    k = k refl≤ (λ ξ s → tt)
-  reify {⊥}    k = k refl≤ (λ ξ ())
-  reify {A ∨ B} k = k refl≤ (λ ξ s → ᴬᵍcase s
-                                        (λ a → inl (reify {A} (λ ξ′ k → a ξ′ k)))
-                                        (λ b → inr (reify {B} (λ ξ′ k → b ξ′ k))))
+  reify {α P}   s = s
+  reify {A ▷ B} s = lam (reify {B} (s weak⊆ (reflect {A} v₀)))
+  reify {A ∧ B} s = pair (reify {A} (ᴬᵍfst s)) (reify {B} (ᴬᵍsnd s))
+  reify {⊤}    s = tt
 
 reflect⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊩⋆ Π
 reflect⋆ {⌀}     ᴬᵍtt          = ᴬᵍtt

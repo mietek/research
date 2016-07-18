@@ -1,6 +1,6 @@
-module IPC.Gentzen.KripkeSemantics.Completeness where
+module IPC.Gentzen.KripkeCompleteness where
 
-open import IPC.Gentzen.KripkeSemantics.Core public
+open import IPC.Gentzen.KripkeSoundness public
 
 
 -- Derivations, as Gentzen-style natural deduction trees.

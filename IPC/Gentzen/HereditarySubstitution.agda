@@ -1,6 +1,6 @@
 module IPC.Gentzen.HereditarySubstitution where
 
-open import IPC.Gentzen.Core public
+open import IPC.Gentzen public
 
 
 -- Outermost propositions for neutrals.

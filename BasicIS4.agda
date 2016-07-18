@@ -1,4 +1,4 @@
-module BasicIS4.Core where
+module BasicIS4 where
 
 open import Common.Context public
 

@@ -1,10 +1,10 @@
 module BasicIPC.Translation where
 
-open import BasicIPC.Core public
+open import BasicIPC public
 
 import BasicIPC.Hilbert.Sequential as HS
 import BasicIPC.Hilbert.Nested as HN
-import BasicIPC.Gentzen.Core as G
+import BasicIPC.Gentzen as G
 
 open HS using () renaming (_⊢⋆_ to HS⟨_⊢⋆_⟩ ; _⊢_ to HS⟨_⊢_⟩) public
 open HN using () renaming (_⊢_ to HN⟨_⊢_⟩) public

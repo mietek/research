@@ -1,6 +1,6 @@
 module IPC.Hilbert.Sequential where
 
-open import IPC.Core public
+open import IPC public
 
 
 -- Derivations, as Hilbert-style combinator sequences.

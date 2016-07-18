@@ -1,6 +1,6 @@
 module BasicIS4.DualContext.Hilbert.Nested where
 
-open import BasicIS4.Core public
+open import BasicIS4 public
 
 
 -- Derivations, as Hilbert-style combinator trees.

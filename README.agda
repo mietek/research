@@ -75,41 +75,47 @@ References
 
 module README where
 
-import Common.Core
+import Common
 import Common.Context
 
-import BasicIPC.Core
+import BasicIPC
+import BasicIPC.TarskiSemantics
+import BasicIPC.KripkeSemantics
 import BasicIPC.Hilbert.Sequential
 import BasicIPC.Hilbert.Nested
-import BasicIPC.Gentzen.Core
-import BasicIPC.Gentzen.TarskiSemantics
-import BasicIPC.Gentzen.KripkeSemantics.Core
-import BasicIPC.Gentzen.KripkeSemantics.BasicCompleteness
-import BasicIPC.Gentzen.KripkeSemantics.Completeness
+import BasicIPC.Gentzen
+import BasicIPC.Gentzen.TarskiSoundness
+import BasicIPC.Gentzen.KripkeSoundness
+import BasicIPC.Gentzen.KripkeBasicCompleteness
+import BasicIPC.Gentzen.KripkeCompleteness
 import BasicIPC.Gentzen.HereditarySubstitution
 import BasicIPC.Translation
 
-import IPC.Core
+import IPC
+import IPC.TarskiSemantics
+import IPC.KripkeSemantics
 import IPC.Hilbert.Sequential
 import IPC.Hilbert.Nested
-import IPC.Gentzen.Core
-import IPC.Gentzen.TarskiSemantics
-import IPC.Gentzen.KripkeSemantics.Core
-import IPC.Gentzen.KripkeSemantics.BasicCompleteness
-import IPC.Gentzen.KripkeSemantics.Completeness
+import IPC.Gentzen
+import IPC.Gentzen.TarskiSoundness
+import IPC.Gentzen.KripkeSoundness
+import IPC.Gentzen.KripkeBasicCompleteness
+import IPC.Gentzen.KripkeCompleteness
 import IPC.Gentzen.HereditarySubstitution
 import IPC.Translation
 
-import BasicIS4.Core
+import BasicIS4
+import BasicIS4.KripkeSemantics.Standard
+import BasicIS4.KripkeSemantics.Alternative
 import BasicIS4.Regular.Hilbert.Sequential
 import BasicIS4.Regular.Hilbert.Nested
-import BasicIS4.Regular.Gentzen.Core
-import BasicIS4.Regular.Gentzen.KripkeSemantics.AlechinaWIP
-import BasicIS4.Regular.Gentzen.KripkeSemantics.MartiStuderWIP
+-- import BasicIS4.Regular.Hilbert.KripkeSoundness
+import BasicIS4.Regular.Gentzen
+-- import BasicIS4.Regular.Gentzen.KripkeSoundness
 import BasicIS4.Regular.Translation
 import BasicIS4.DualContext.Hilbert.Sequential
 import BasicIS4.DualContext.Hilbert.Nested
-import BasicIS4.DualContext.Gentzen.Core
+import BasicIS4.DualContext.Gentzen
 import BasicIS4.DualContext.Translation
 import BasicIS4.Translation
-import BasicIS4.Labelled.Gentzen.Core
+import BasicIS4.Labelled.Gentzen

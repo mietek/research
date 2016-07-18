@@ -1,10 +1,10 @@
 module IPC.Translation where
 
-open import IPC.Core public
+open import IPC public
 
 import IPC.Hilbert.Sequential as HS
 import IPC.Hilbert.Nested as HN
-import IPC.Gentzen.Core as G
+import IPC.Gentzen as G
 
 open HS using () renaming (_⊢⋆_ to HS⟨_⊢⋆_⟩ ; _⊢_ to HS⟨_⊢_⟩) public
 open HN using () renaming (_⊢_ to HN⟨_⊢_⟩) public

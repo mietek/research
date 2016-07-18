@@ -1,6 +1,6 @@
-module BasicIS4.Regular.Gentzen.KripkeSemantics.AlechinaWIP where
+module BasicIS4.KripkeSemantics.Alternative where
 
-open import BasicIS4.Regular.Gentzen.Core public
+open import BasicIS4 public
 
 
 -- Extended intuitionistic Kripke models, following Alechina, et al.
@@ -24,7 +24,7 @@ record Model : Set₁ where
     _⊩ᵅ_   : World → Atom → Set
     mono⊩ᵅ : ∀ {P w w′} → w ≤ w′ → w ⊩ᵅ P → w′ ⊩ᵅ P
 
-    -- NEW:
+    -- NOTE: Additional frame condition.
     chop : ∀ {x w w′} → w R w′ → w′ ≤ x → Σ World (λ y → w ≤ y ᴬᵍ∧ y R x)
 
   chop1 : ∀ {x w} → w ≤ x → Σ World (λ y → w ≤ y ᴬᵍ∧ y R x)
@@ -73,6 +73,7 @@ module _ {{_ : Model}} where
   -- NOTE: This is almost certainly false.
   postulate
     mmono⊩ : ∀ {A w w′} → w R w′ → w ⊩ A → w′ ⊩ A
+    mmono⊩⋆ : ∀ {Π w w′} → w R w′ → w ⊩⋆ Π → w′ ⊩⋆ Π
 
 
 -- Forcing in all models.
@@ -86,59 +87,8 @@ _ᴹ⊩⋆_ : Cx Ty → Cx Ty → Set₁
 Γ ᴹ⊩⋆ Π = ∀ {{_ : Model}} {w : World} → w ⊩⋆ Γ → w ⊩⋆ Π
 
 
--- Soundness, or evaluation.
+-- Additional useful equipment.
 
 lookup : ∀ {A Γ} → A ∈ Γ → Γ ᴹ⊩ A
 lookup top     γ = ᴬᵍsnd γ
 lookup (pop i) γ = lookup i (ᴬᵍfst γ)
-
--- NOTE: We seem to require mmono⊩ which is almost certainly false.
-mutual
-  eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
-  eval (var i)         γ = lookup i γ
-  eval (lam t)         γ = λ ξ a → eval t (ᴬᵍpair (mono⊩⋆ ξ γ) a)
-  eval (app t u)       γ = (eval t γ) refl≤ (eval u γ)
-  eval {□ A} (multibox ts u) γ = λ ξ ζ →
---    -- NOTE: Cutting this fails the termination check.
---    let v  = multicut⊢ ts u
---        v′ = eval v γ
---        v″ = mono⊩ {A} ξ v′
---    in mmono⊩ {A} ζ v″
-    let δ  = eval⋆ ts γ
-        v′ = eval u δ
-        v″ = mono⊩ {A} ξ v′
-    in mmono⊩ {A} ζ v″
-  eval (down t)        γ = (eval t γ) refl≤ reflR
-  eval (pair t u)      γ = ᴬᵍpair (eval t γ) (eval u γ)
-  eval (fst t)         γ = ᴬᵍfst (eval t γ)
-  eval (snd t)         γ = ᴬᵍsnd (eval t γ)
-  eval tt              γ = ᴬᵍtt
-
-  eval⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ᴹ⊩⋆ Π
-  eval⋆ {⌀}     ᴬᵍtt          γ = ᴬᵍtt
-  eval⋆ {Π , A} (ᴬᵍpair ts t) γ = ᴬᵍpair (eval⋆ ts γ) (eval t γ)
-
-{-
-Goal: w″ ⊩ A
-—————————————
-v″ : w′ ⊩ A
-v′ : w ⊩ A
-δ  : w ⊩⋆ (□⋆ Π)
-—————————————
--- v″ : w′ ⊩ A
--- v′ : w ⊩ A
--- v  : Γ ⊢ A
-—————————————
-ζ  : w′ R w″
-ξ  : w ≤ w′
-γ  : w ⊩⋆ Γ
-u  : (□⋆ Π) ⊢ A
-ts : Γ ⊢⋆ (□⋆ Π)
-—————————————
-w″ : World
-w′ : World
-w  : World
-Π  : Cx Ty
-Γ  : Cx Ty
-A  : Ty
--}

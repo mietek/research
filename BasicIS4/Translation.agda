@@ -1,14 +1,14 @@
 module BasicIS4.Translation where
 
-open import BasicIS4.Core public
+open import BasicIS4 public
 
 import BasicIS4.Regular.Hilbert.Sequential as RHS
 import BasicIS4.Regular.Hilbert.Nested as RHN
-import BasicIS4.Regular.Gentzen.Core as RG
+import BasicIS4.Regular.Gentzen as RG
 import BasicIS4.Regular.Translation as RT
 import BasicIS4.DualContext.Hilbert.Sequential as DHS
 import BasicIS4.DualContext.Hilbert.Nested as DHN
-import BasicIS4.DualContext.Gentzen.Core as DG
+import BasicIS4.DualContext.Gentzen as DG
 import BasicIS4.DualContext.Translation as DT
 
 open RHS using () renaming (_⊢_ to RHS⟨_⊢_⟩) public

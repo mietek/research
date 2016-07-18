@@ -1,6 +1,6 @@
-module BasicIS4.DualContext.Gentzen.Core where
+module BasicIS4.DualContext.Gentzen where
 
-open import BasicIS4.Core public
+open import BasicIS4 public
 
 
 -- Derivations, as Gentzen-style natural deduction trees, following Pfenning and Davies.

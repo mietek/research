@@ -1,4 +1,4 @@
-module Common.Core where
+module Common where
 
 open import Agda.Builtin.Size public
   using (Size ; Size<_)

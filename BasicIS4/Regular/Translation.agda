@@ -1,10 +1,10 @@
 module BasicIS4.Regular.Translation where
 
-open import BasicIS4.Core public
+open import BasicIS4 public
 
 import BasicIS4.Regular.Hilbert.Sequential as HS
 import BasicIS4.Regular.Hilbert.Nested as HN
-import BasicIS4.Regular.Gentzen.Core as G
+import BasicIS4.Regular.Gentzen as G
 
 open HS using () renaming (_⊢⋆_ to HS⟨_⊢⋆_⟩ ; _⊢_ to HS⟨_⊢_⟩) public
 open HN using () renaming (_⊢_ to HN⟨_⊢_⟩ ; _⊢⋆_ to HN⟨_⊢⋆_⟩) public

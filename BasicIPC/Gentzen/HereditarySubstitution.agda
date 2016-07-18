@@ -1,6 +1,6 @@
 module BasicIPC.Gentzen.HereditarySubstitution where
 
-open import BasicIPC.Gentzen.Core public
+open import BasicIPC.Gentzen public
 
 
 -- Derivations, as Gentzen-style natural deduction trees, following Keller and Altenkirch.

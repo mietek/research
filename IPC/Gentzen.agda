@@ -1,6 +1,6 @@
-module IPC.Gentzen.Core where
+module IPC.Gentzen where
 
-open import IPC.Core public
+open import IPC public
 
 
 -- Derivations, as Gentzen-style natural deduction trees.

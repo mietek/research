@@ -1,6 +1,6 @@
 module BasicIPC.Hilbert.Nested where
 
-open import BasicIPC.Core public
+open import BasicIPC public
 
 
 -- Derivations, as Hilbert-style combinator trees.
