@@ -67,6 +67,10 @@ References
   “Lecture notes on modal logic”
   http://www.cs.cmu.edu/~fp/courses/15816-s10
 
+• A. Simpson (1994)
+  “The proof theory and semantics of intuitionistic modal logic”
+  http://homepages.inf.ed.ac.uk/als/Research/thesis.pdf
+
 • A. Stump (2016)
   “Verified functional programming in Agda”
   http://dx.doi.org/10.1145/2841316
