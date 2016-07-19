@@ -118,8 +118,7 @@ import BasicIS4.Regular.Hilbert.Sequential
 import BasicIS4.Regular.Hilbert.Nested
 import BasicIS4.Regular.Hilbert.KripkeSoundness
 import BasicIS4.Regular.Gentzen
--- import BasicIS4.Regular.Gentzen.KripkeSoundness
-import BasicIS4.Regular.Gentzen.KripkeSoundnessViaHilbert
+import BasicIS4.Regular.Gentzen.KripkeSoundness
 import BasicIS4.Regular.Translation
 import BasicIS4.DualContext.Hilbert.Sequential
 import BasicIS4.DualContext.Hilbert.Nested
