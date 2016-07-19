@@ -7,10 +7,10 @@ module Ono where
   open import BasicIS4.KripkeSemantics.Ono
 
   --   w′  R  v′
-  --   ●------●
-  --   |    .:
-  -- ≤ |  .:
-  --   |.:  R
+  --   ●──────●
+  --   │     ⋰
+  -- ≤ │   R
+  --   │ ⋰
   --   ●
   --   w
   --
@@ -37,11 +37,11 @@ module BozicDosen where
   open import BasicIS4.KripkeSemantics.BozicDosen
 
   --   w′  R  v′
-  --   ●------●
-  --   |      :
-  -- ≤ |      : ≤
-  --   |      :
-  --   ●······○
+  --   ●──────●
+  --   │      ┊
+  -- ≤ │      ┊ ≤
+  --   │      ┊
+  --   ●╌╌╌╌╌╌◌
   --   w   R  v
   --
   -- cutR⨾≤ : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → ∃ (λ v → w R v × v ≤ v′)
@@ -87,11 +87,11 @@ module EwaldEtAl where
   open import BasicIS4.KripkeSemantics.EwaldEtAl
 
   --   w′  R  v′      w′  R  v′
-  --   ●······○       ○······●
-  --   |      :       :      |
-  -- ≤ |   1  : ≤   ≤ :   2  | ≤
-  --   |      :       :      |
-  --   ●------●       ●------●
+  --   ●╌╌╌╌╌╌◌       ◌╌╌╌╌╌╌●
+  --   │      ┊       ┊      │
+  -- ≤ │   ₁  ┊ ≤   ≤ ┊   ₂  │ ≤
+  --   │      ┊       ┊      │
+  --   ●──────●       ●──────●
   --   w   R  v       w   R  v
   --
   -- slice  : ∀ {v w w′} → w R v → w ≤ w′ → ∃ (λ v′ → w′ R v′ × v ≤ v′)
@@ -118,11 +118,11 @@ module AlechinaEtAl where
   open import BasicIS4.KripkeSemantics.AlechinaEtAl
 
   --   w′  R  v′
-  --   ○······●
-  --   :      |
-  -- ≤ :   2  | ≤
-  --   :      |
-  --   ●------●
+  --   ◌╌╌╌╌╌╌●
+  --   ┊      │
+  -- ≤ ┊   ₂  │ ≤
+  --   ┊      │
+  --   ●──────●
   --   w   R  v
   --
   -- cut≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)

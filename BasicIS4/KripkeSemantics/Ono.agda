@@ -27,10 +27,10 @@ record Model : Set₁ where
     -- NOTE: Additional frame condition.
     --
     --   w′  R  v′
-    --   ●------●
-    --   |    .:
-    -- ≤ |  .:
-    --   |.:  R
+    --   ●──────●
+    --   │     ⋰
+    -- ≤ │   R
+    --   │ ⋰
     --   ●
     --   w
     --
