@@ -4,7 +4,7 @@ open import BasicIS4.Regular.Gentzen public
 
 
 module Ono where
-  open import BasicIS4.KripkeSemantics.Ono
+  open import BasicIS4.KripkeSemantics.Ono public
 
   --   w′  R  v′
   --   ●──────●
@@ -34,7 +34,7 @@ module Ono where
 
 
 module BozicDosen where
-  open import BasicIS4.KripkeSemantics.BozicDosen
+  open import BasicIS4.KripkeSemantics.BozicDosen public
 
   --   w′  R  v′
   --   ●──────●
@@ -64,7 +64,7 @@ module BozicDosen where
 
 
 module Wijesekera where
-  open import BasicIS4.KripkeSemantics.Wijesekera
+  open import BasicIS4.KripkeSemantics.Wijesekera public
 
   mutual
     eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
@@ -84,7 +84,7 @@ module Wijesekera where
 
 
 module EwaldEtAl where
-  open import BasicIS4.KripkeSemantics.EwaldEtAl
+  open import BasicIS4.KripkeSemantics.EwaldEtAl public
 
   --   w′  R  v′      w′  R  v′
   --   ●╌╌╌╌╌╌◌       ◌╌╌╌╌╌╌●
@@ -115,7 +115,7 @@ module EwaldEtAl where
 
 
 module AlechinaEtAl where
-  open import BasicIS4.KripkeSemantics.AlechinaEtAl
+  open import BasicIS4.KripkeSemantics.AlechinaEtAl public
 
   --   w′  R  v′
   --   ◌╌╌╌╌╌╌●
