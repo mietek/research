@@ -47,7 +47,7 @@ module _ {{_ : Model}} where
   _⊩_ : World → Ty → Set
   w ⊩ α P   = w ⊩ᵅ P
   w ⊩ A ▷ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
-  w ⊩ □ A   = ∀ {w′} → w ≤ w′ → (∀ {w″} → w′ R w″ → w″ ⊩ A)
+  w ⊩ □ A   = ∀ {w′ v′} → w ≤ w′ → w′ R v′ → v′ ⊩ A
   w ⊩ A ∧ B = w ⊩ A × w ⊩ B
   w ⊩ ⊤    = Top
 

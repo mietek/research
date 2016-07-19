@@ -25,10 +25,10 @@ record Model : Set₁ where
     mono⊩ᵅ : ∀ {P w w′} → w ≤ w′ → w ⊩ᵅ P → w′ ⊩ᵅ P
 
     -- NOTE: Additional frame condition.
-    cutR : ∀ {x w w′} → w ≤ w′ → w′ R x → w R x
+    cutR : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → w R v′
 
   ≤→R : ∀ {w w′} → w ≤ w′ → w R w′
-  ≤→R ξ = cutR ξ reflR
+  ≤→R ξ = cutR reflR ξ
 
 open Model {{…}} public
 
@@ -40,7 +40,7 @@ module _ {{_ : Model}} where
   _⊩_ : World → Ty → Set
   w ⊩ α P   = w ⊩ᵅ P
   w ⊩ A ▷ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
-  w ⊩ □ A   = ∀ {w′} → w R w′ → w′ ⊩ A
+  w ⊩ □ A   = ∀ {v′} → w R v′ → v′ ⊩ A
   w ⊩ A ∧ B = w ⊩ A × w ⊩ B
   w ⊩ ⊤    = Top
 
