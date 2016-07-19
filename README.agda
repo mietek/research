@@ -5,6 +5,8 @@ References
 • N. Alechina, M. Mendler, V. de Paiva, E. Ritter (2001)
   “Categorical and Kripke semantics for constructive S4 modal logic”
   http://dx.doi.org/10.1007/3-540-44802-0_21
+  Extended version with proofs:
+  http://www.cs.nott.ac.uk/~psznza/papers/Alechina++:01a.pdf
 
 • A. Abel, J. Chapman (2014)
   “Normalization by evaluation in the delay monad”
