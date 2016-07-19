@@ -113,7 +113,7 @@ module EwaldEtAl where
         b = (mono⊩ {A ▷ B} ξ′ g) refl≤ a
     in  h b
   eval (box t)          γ = λ _ ζ → eval t ∙
-  eval (cdist {A} {B})  γ = λ _ □f ξ □a ξ″ ζ → {!!}
+  eval (cdist {A} {B})  γ = λ _ □f ξ □a ξ′ ζ → {!!}
   eval cup              γ = λ _ □a ξ ζ ξ′ ζ′ →
     let _ , (ξ″ , ζ″) = trans≤⨾R (_ , (ξ , ζ)) (_ , (ξ′ , ζ′))
     in  □a ξ″ ζ″
@@ -147,7 +147,7 @@ module AlechinaEtAl where
         b = (mono⊩ {A ▷ B} ξ′ g) refl≤ a
     in  h b
   eval (box t)          γ = λ _ ζ → eval t ∙
-  eval (cdist {A} {B})  γ = λ _ □f ξ □a ξ″ ζ → {!!}
+  eval (cdist {A} {B})  γ = λ _ □f ξ □a ξ′ ζ → {!!}
   eval cup              γ = λ _ □a ξ ζ ξ′ ζ′ →
     let _ , (ξ″ , ζ″) = trans≤⨾R (_ , (ξ , ζ)) (_ , (ξ′ , ζ′))
     in  □a ξ″ ζ″
