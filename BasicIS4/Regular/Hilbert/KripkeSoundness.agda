@@ -6,6 +6,16 @@ open import BasicIS4.Regular.Hilbert.Nested public
 module Ono where
   open import BasicIS4.KripkeSemantics.Ono
 
+  --   w′  R  v′
+  --   ●------●
+  --   |    .:
+  -- ≤ |  .:
+  --   |.:  R
+  --   ●
+  --   w
+  --
+  -- cutR : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → w R v′
+
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
   eval (var i)          γ = lookup i γ
   eval (app t u)        γ = (eval t γ) refl≤ (eval u γ)
@@ -27,6 +37,16 @@ module Ono where
 
 module BozicDosen where
   open import BasicIS4.KripkeSemantics.BozicDosen
+
+  --   w′  R  v′
+  --   ●------●
+  --   |      :
+  -- ≤ |      : ≤
+  --   |      :
+  --   ●······○
+  --   w   R  v
+  --
+  -- cutR⨾≤ : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → ∃ (λ v → w R v × v ≤ v′)
 
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
   eval (var i)          γ = lookup i γ
@@ -72,6 +92,17 @@ module Wijesekera where
 module EwaldEtAl where
   open import BasicIS4.KripkeSemantics.EwaldEtAl
 
+  --   w′  R  v′      w′  R  v′
+  --   ●······○       ○······●
+  --   |      :       :      |
+  -- ≤ |   1  : ≤   ≤ :   2  | ≤
+  --   |      :       :      |
+  --   ●------●       ●------●
+  --   w   R  v       w   R  v
+  --
+  -- slice  : ∀ {v w w′} → w R v → w ≤ w′ → Σ World (λ v′ → w′ R v′ × v ≤ v′)
+  -- cut≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → Σ World (λ w′ → w ≤ w′ × w′ R v′)
+
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
   eval (var i)          γ = lookup i γ
   eval (app t u)        γ = (eval t γ) refl≤ (eval u γ)
@@ -95,6 +126,16 @@ module EwaldEtAl where
 
 module AlechinaEtAl where
   open import BasicIS4.KripkeSemantics.AlechinaEtAl
+
+  --   w′  R  v′
+  --   ○······●
+  --   :      |
+  -- ≤ :   2  | ≤
+  --   :      |
+  --   ●------●
+  --   w   R  v
+  --
+  -- cut≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
 
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
   eval (var i)          γ = lookup i γ

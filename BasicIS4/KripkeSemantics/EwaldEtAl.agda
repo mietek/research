@@ -25,6 +25,15 @@ record Model : Set₁ where
     mono⊩ᵅ : ∀ {P w w′} → w ≤ w′ → w ⊩ᵅ P → w′ ⊩ᵅ P
 
     -- NOTE: Additional frame conditions.
+    --
+    --   w′  R  v′      w′  R  v′
+    --   ●······○       ○······●
+    --   |      :       :      |
+    -- ≤ |   1  : ≤   ≤ :   2  | ≤
+    --   |      :       :      |
+    --   ●------●       ●------●
+    --   w   R  v       w   R  v
+    --
     slice  : ∀ {v w w′} → w R v → w ≤ w′ → Σ World (λ v′ → w′ R v′ × v ≤ v′)
     cut≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → Σ World (λ w′ → w ≤ w′ × w′ R v′)
 

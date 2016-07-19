@@ -6,6 +6,16 @@ open import BasicIS4.Regular.Gentzen public
 module Ono where
   open import BasicIS4.KripkeSemantics.Ono
 
+  --   w′  R  v′
+  --   ●------●
+  --   |    .:
+  -- ≤ |  .:
+  --   |.:  R
+  --   ●
+  --   w
+  --
+  -- cutR : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → w R v′
+
   mutual
     eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
     eval (var i)         γ = lookup i γ
@@ -25,6 +35,16 @@ module Ono where
 
 module BozicDosen where
   open import BasicIS4.KripkeSemantics.BozicDosen
+
+  --   w′  R  v′
+  --   ●------●
+  --   |      :
+  -- ≤ |      : ≤
+  --   |      :
+  --   ●······○
+  --   w   R  v
+  --
+  -- cutR⨾≤ : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → ∃ (λ v → w R v × v ≤ v′)
 
   mutual
     eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
@@ -66,6 +86,17 @@ module Wijesekera where
 module EwaldEtAl where
   open import BasicIS4.KripkeSemantics.EwaldEtAl
 
+  --   w′  R  v′      w′  R  v′
+  --   ●······○       ○······●
+  --   |      :       :      |
+  -- ≤ |   1  : ≤   ≤ :   2  | ≤
+  --   |      :       :      |
+  --   ●------●       ●------●
+  --   w   R  v       w   R  v
+  --
+  -- slice  : ∀ {v w w′} → w R v → w ≤ w′ → Σ World (λ v′ → w′ R v′ × v ≤ v′)
+  -- cut≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → Σ World (λ w′ → w ≤ w′ × w′ R v′)
+
   mutual
     eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
     eval (var i)         γ = lookup i γ
@@ -85,6 +116,16 @@ module EwaldEtAl where
 
 module AlechinaEtAl where
   open import BasicIS4.KripkeSemantics.AlechinaEtAl
+
+  --   w′  R  v′
+  --   ○······●
+  --   :      |
+  -- ≤ :   2  | ≤
+  --   :      |
+  --   ●------●
+  --   w   R  v
+  --
+  -- cut≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
 
   mutual
     eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A

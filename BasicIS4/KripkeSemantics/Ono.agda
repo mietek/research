@@ -25,6 +25,15 @@ record Model : Set₁ where
     mono⊩ᵅ : ∀ {P w w′} → w ≤ w′ → w ⊩ᵅ P → w′ ⊩ᵅ P
 
     -- NOTE: Additional frame condition.
+    --
+    --   w′  R  v′
+    --   ●------●
+    --   |    .:
+    -- ≤ |  .:
+    --   |.:  R
+    --   ●
+    --   w
+    --
     cutR : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → w R v′
 
   ≤→R : ∀ {w w′} → w ≤ w′ → w R w′
