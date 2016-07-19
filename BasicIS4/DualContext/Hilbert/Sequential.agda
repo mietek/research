@@ -5,32 +5,32 @@ open import BasicIS4 public
 
 -- Derivations, as Hilbert-style combinator sequences.
 
-infix 3 _⨾_⊢⋆_
-data _⨾_⊢⋆_ (Γ Δ : Cx Ty) : Cx Ty → Set where
-  nil   : Γ ⨾ Δ ⊢⋆ ⌀
-  var   : ∀ {Π A}     → A ∈ Γ → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π , A
-  mp    : ∀ {Π A B}   → A ▷ B ∈ Π → A ∈ Π → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π , B
-  ci    : ∀ {Π A}     → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π , A ▷ A
-  ck    : ∀ {Π A B}   → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π , A ▷ B ▷ A
-  cs    : ∀ {Π A B C} → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π , (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
-  mvar  : ∀ {Π A}     → A ∈ Δ → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π , A
-  nec   : ∀ {Π Ξ A}   → ⌀ ⨾ Δ ⊢⋆ Ξ , A → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π , □ A
-  cdist : ∀ {Π A B}   → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π , □ (A ▷ B) ▷ □ A ▷ □ B
-  cup   : ∀ {Π A}     → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π , □ A ▷ □ □ A
-  cdown : ∀ {Π A}     → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π , □ A ▷ A
-  cpair : ∀ {Π A B}   → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π , A ▷ B ▷ A ∧ B
-  cfst  : ∀ {Π A B}   → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π , A ∧ B ▷ A
-  csnd  : ∀ {Π A B}   → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π , A ∧ B ▷ B
-  tt    : ∀ {Π}       → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π , ⊤
+infix 3 _⁏_⊢⋆_
+data _⁏_⊢⋆_ (Γ Δ : Cx Ty) : Cx Ty → Set where
+  nil   : Γ ⁏ Δ ⊢⋆ ⌀
+  var   : ∀ {Π A}     → A ∈ Γ → Γ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ ⊢⋆ Π , A
+  mp    : ∀ {Π A B}   → A ▷ B ∈ Π → A ∈ Π → Γ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ ⊢⋆ Π , B
+  ci    : ∀ {Π A}     → Γ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ ⊢⋆ Π , A ▷ A
+  ck    : ∀ {Π A B}   → Γ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ ⊢⋆ Π , A ▷ B ▷ A
+  cs    : ∀ {Π A B C} → Γ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ ⊢⋆ Π , (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
+  mvar  : ∀ {Π A}     → A ∈ Δ → Γ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ ⊢⋆ Π , A
+  nec   : ∀ {Π Ξ A}   → ⌀ ⁏ Δ ⊢⋆ Ξ , A → Γ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ ⊢⋆ Π , □ A
+  cdist : ∀ {Π A B}   → Γ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ ⊢⋆ Π , □ (A ▷ B) ▷ □ A ▷ □ B
+  cup   : ∀ {Π A}     → Γ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ ⊢⋆ Π , □ A ▷ □ □ A
+  cdown : ∀ {Π A}     → Γ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ ⊢⋆ Π , □ A ▷ A
+  cpair : ∀ {Π A B}   → Γ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ ⊢⋆ Π , A ▷ B ▷ A ∧ B
+  cfst  : ∀ {Π A B}   → Γ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ ⊢⋆ Π , A ∧ B ▷ A
+  csnd  : ∀ {Π A B}   → Γ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ ⊢⋆ Π , A ∧ B ▷ B
+  tt    : ∀ {Π}       → Γ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ ⊢⋆ Π , ⊤
 
-infix 3 _⨾_⊢_
-_⨾_⊢_ : Cx Ty → Cx Ty → Ty → Set
-Γ ⨾ Δ ⊢ A = Σ (Cx Ty) (λ Π → Γ ⨾ Δ ⊢⋆ Π , A)
+infix 3 _⁏_⊢_
+_⁏_⊢_ : Cx Ty → Cx Ty → Ty → Set
+Γ ⁏ Δ ⊢ A = Σ (Cx Ty) (λ Π → Γ ⁏ Δ ⊢⋆ Π , A)
 
 
 -- Monotonicity with respect to context inclusion.
 
-mono⊢⋆ : ∀ {Π Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⨾ Δ ⊢⋆ Π → Γ′ ⨾ Δ ⊢⋆ Π
+mono⊢⋆ : ∀ {Π Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊢⋆ Π → Γ′ ⁏ Δ ⊢⋆ Π
 mono⊢⋆ η nil         = nil
 mono⊢⋆ η (var i ts)  = var (mono∈ η i) (mono⊢⋆ η ts)
 mono⊢⋆ η (mp i j ts) = mp i j (mono⊢⋆ η ts)
@@ -47,13 +47,13 @@ mono⊢⋆ η (cfst ts)   = cfst (mono⊢⋆ η ts)
 mono⊢⋆ η (csnd ts)   = csnd (mono⊢⋆ η ts)
 mono⊢⋆ η (tt ts)     = tt (mono⊢⋆ η ts)
 
-mono⊢ : ∀ {A Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⨾ Δ ⊢ A → Γ′ ⨾ Δ ⊢ A
-mono⊢ η (ᴬᵍpair Π ts) = ᴬᵍpair Π (mono⊢⋆ η ts)
+mono⊢ : ∀ {A Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊢ A → Γ′ ⁏ Δ ⊢ A
+mono⊢ η (Π , ts) = Π , mono⊢⋆ η ts
 
 
 -- Monotonicity with respect to modal context inclusion.
 
-mmono⊢⋆ : ∀ {Π Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ′ ⊢⋆ Π
+mmono⊢⋆ : ∀ {Π Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ′ ⊢⋆ Π
 mmono⊢⋆ η nil         = nil
 mmono⊢⋆ η (var i ts)  = var i (mmono⊢⋆ η ts)
 mmono⊢⋆ η (mp i j ts) = mp i j (mmono⊢⋆ η ts)
@@ -70,13 +70,13 @@ mmono⊢⋆ η (cfst ts)   = cfst (mmono⊢⋆ η ts)
 mmono⊢⋆ η (csnd ts)   = csnd (mmono⊢⋆ η ts)
 mmono⊢⋆ η (tt ts)     = tt (mmono⊢⋆ η ts)
 
-mmono⊢ : ∀ {A Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⨾ Δ ⊢ A → Γ ⨾ Δ′ ⊢ A
-mmono⊢ η (ᴬᵍpair Π ts) = ᴬᵍpair Π (mmono⊢⋆ η ts)
+mmono⊢ : ∀ {A Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ′ ⊢ A
+mmono⊢ η (Π , ts) = Π , mmono⊢⋆ η ts
 
 
 -- Derivation concatenation.
 
-_⧻_ : ∀ {Γ Δ Π Π′} → Γ ⨾ Δ ⊢⋆ Π → Γ ⨾ Δ ⊢⋆ Π′ → Γ ⨾ Δ ⊢⋆ Π ⧺ Π′
+_⧻_ : ∀ {Γ Δ Π Π′} → Γ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ ⊢⋆ Π′ → Γ ⁏ Δ ⊢⋆ Π ⧺ Π′
 us ⧻ nil       = us
 us ⧻ var i ts  = var i (us ⧻ ts)
 us ⧻ mp i j ts = mp (mono∈ weak⊆⧺ᵣ i) (mono∈ weak⊆⧺ᵣ j) (us ⧻ ts)
@@ -96,10 +96,10 @@ us ⧻ tt ts     = tt (us ⧻ ts)
 
 -- Modus ponens and necessitation in expanded form.
 
-app : ∀ {A B Γ Δ} → Γ ⨾ Δ ⊢ A ▷ B → Γ ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢ B
-app {A} {B} (ᴬᵍpair Π ts) (ᴬᵍpair Π′ us) = ᴬᵍpair Π″ vs
+app : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ▷ B → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ B
+app {A} {B} (Π , ts) (Π′ , us) = Π″ , vs
   where Π″ = (Π′ , A) ⧺ (Π , A ▷ B)
         vs = mp top (mono∈ (weak⊆⧺ₗ (Π , A ▷ B)) top) (us ⧻ ts)
 
-box : ∀ {A Γ Δ} → ⌀ ⨾ Δ ⊢ A → Γ ⨾ Δ ⊢ □ A
-box (ᴬᵍpair Π ts) = ᴬᵍpair ⌀ (nec ts nil)
+box : ∀ {A Γ Δ} → ⌀ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ □ A
+box (Π , ts) = ⌀ , nec ts nil

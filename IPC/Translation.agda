@@ -14,7 +14,7 @@ open G using () renaming (_⊢_ to G⟨_⊢_⟩) public
 -- Translation from sequential Hilbert-style to nested.
 
 hl→hn : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → HN⟨ Γ ⊢ A ⟩
-hl→hn (ᴬᵍpair Π ts) = aux ts top
+hl→hn (Π , ts) = aux ts top
   where
     aux : ∀ {A Γ Π} → HS⟨ Γ ⊢⋆ Π ⟩ → A ∈ Π → HN⟨ Γ ⊢ A ⟩
     aux (HS.var i ts)  top     = HN.var i
@@ -48,19 +48,19 @@ hl→hn (ᴬᵍpair Π ts) = aux ts top
 -- Translation from nested Hilbert-style to sequential.
 
 hn→hl : ∀ {A Γ} → HN⟨ Γ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
-hn→hl (HN.var i)   = ᴬᵍpair ⌀ (HS.var i HS.nil)
+hn→hl (HN.var i)   = ⌀ , HS.var i HS.nil
 hn→hl (HN.app t u) = HS.app (hn→hl t) (hn→hl u)
-hn→hl HN.ci        = ᴬᵍpair ⌀ (HS.ci HS.nil)
-hn→hl HN.ck        = ᴬᵍpair ⌀ (HS.ck HS.nil)
-hn→hl HN.cs        = ᴬᵍpair ⌀ (HS.cs HS.nil)
-hn→hl HN.cpair     = ᴬᵍpair ⌀ (HS.cpair HS.nil)
-hn→hl HN.cfst      = ᴬᵍpair ⌀ (HS.cfst HS.nil)
-hn→hl HN.csnd      = ᴬᵍpair ⌀ (HS.csnd HS.nil)
-hn→hl HN.tt        = ᴬᵍpair ⌀ (HS.tt HS.nil)
-hn→hl HN.cboom     = ᴬᵍpair ⌀ (HS.cboom HS.nil)
-hn→hl HN.cinl      = ᴬᵍpair ⌀ (HS.cinl HS.nil)
-hn→hl HN.cinr      = ᴬᵍpair ⌀ (HS.cinr HS.nil)
-hn→hl HN.ccase     = ᴬᵍpair ⌀ (HS.ccase HS.nil)
+hn→hl HN.ci        = ⌀ , HS.ci HS.nil
+hn→hl HN.ck        = ⌀ , HS.ck HS.nil
+hn→hl HN.cs        = ⌀ , HS.cs HS.nil
+hn→hl HN.cpair     = ⌀ , HS.cpair HS.nil
+hn→hl HN.cfst      = ⌀ , HS.cfst HS.nil
+hn→hl HN.csnd      = ⌀ , HS.csnd HS.nil
+hn→hl HN.tt        = ⌀ , HS.tt HS.nil
+hn→hl HN.cboom     = ⌀ , HS.cboom HS.nil
+hn→hl HN.cinl      = ⌀ , HS.cinl HS.nil
+hn→hl HN.cinr      = ⌀ , HS.cinr HS.nil
+hn→hl HN.ccase     = ⌀ , HS.ccase HS.nil
 
 
 -- Deduction theorem for sequential Hilbert-style.

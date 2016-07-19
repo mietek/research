@@ -24,46 +24,46 @@ mutual
   reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
   reflect {α P}   t = return {α P} t
   reflect {A ▷ B} t = return {A ▷ B} (λ ξ a → reflect {B} (app (mono⊢ ξ t) (reify {A} a)))
-  reflect {A ∧ B} t = return {A ∧ B} (ᴬᵍpair (reflect {A} (fst t)) (reflect {B} (snd t)))
-  reflect {⊤}    t = return {⊤} ᴬᵍtt
+  reflect {A ∧ B} t = return {A ∧ B} (reflect {A} (fst t) , reflect {B} (snd t))
+  reflect {⊤}    t = return {⊤} ∙
   reflect {⊥}    t = λ ξ k → boom (mono⊢ ξ t)
   reflect {A ∨ B} t = λ ξ k → case (mono⊢ ξ t)
-                                 (k weak⊆ (ᴬᵍinl (reflect {A} v₀)))
-                                 (k weak⊆ (ᴬᵍinr (reflect {B} (v₀))))
+                                 (k weak⊆ (ι₁ (reflect {A} v₀)))
+                                 (k weak⊆ (ι₂ (reflect {B} (v₀))))
 
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
   reify {α P}   k = k refl≤ (λ ξ s → s)
   reify {A ▷ B} k = k refl≤ (λ ξ s → lam (reify {B} (s weak⊆ (reflect {A} (v₀)))))
-  reify {A ∧ B} k = k refl≤ (λ ξ s → pair (reify {A} (ᴬᵍfst s)) (reify {B} (ᴬᵍsnd s)))
+  reify {A ∧ B} k = k refl≤ (λ ξ s → pair (reify {A} (π₁ s)) (reify {B} (π₂ s)))
   reify {⊤}    k = k refl≤ (λ ξ s → tt)
   reify {⊥}    k = k refl≤ (λ ξ ())
-  reify {A ∨ B} k = k refl≤ (λ ξ s → ᴬᵍcase s
+  reify {A ∨ B} k = k refl≤ (λ ξ s → κ s
                                         (λ a → inl (reify {A} (λ ξ′ k → a ξ′ k)))
                                         (λ b → inr (reify {B} (λ ξ′ k → b ξ′ k))))
 
 reflect⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊩⋆ Π
-reflect⋆ {⌀}     ᴬᵍtt          = ᴬᵍtt
-reflect⋆ {Π , A} (ᴬᵍpair ts t) = ᴬᵍpair (reflect⋆ ts) (reflect t)
+reflect⋆ {⌀}     ∙        = ∙
+reflect⋆ {Π , A} (ts , t) = reflect⋆ ts , reflect t
 
 reify⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → Γ ⊢⋆ Π
-reify⋆ {⌀}     ᴬᵍtt          = ᴬᵍtt
-reify⋆ {Π , A} (ᴬᵍpair ts t) = ᴬᵍpair (reify⋆ ts) (reify t)
+reify⋆ {⌀}     ∙        = ∙
+reify⋆ {Π , A} (ts , t) = reify⋆ ts , reify t
 
 
 -- Additional useful properties.
 
 multicut⊩ : ∀ {A Γ Γ′} → Γ ⊩⋆ Γ′ → Γ′ ⊩ A → Γ ⊩ A
-multicut⊩ {A} {Γ′ = ⌀}      ᴬᵍtt          u = mono⊩ {A} bot⊆ u
-multicut⊩ {A} {Γ′ = Γ′ , B} (ᴬᵍpair ts t) u = reflect {A} (app ts′ (reify {B} t))
+multicut⊩ {A} {Γ′ = ⌀}      ∙        u = mono⊩ {A} bot⊆ u
+multicut⊩ {A} {Γ′ = Γ′ , B} (ts , t) u = reflect {A} (app ts′ (reify {B} t))
   where ts′ = multicut⊢ (reify⋆ ts) (lam (reify {A} u))
 
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
-refl⊩⋆ {⌀}     = ᴬᵍtt
-refl⊩⋆ {Γ , A} = ᴬᵍpair (mono⊩⋆ {Γ} weak⊆ refl⊩⋆) (reflect {A} v₀)
+refl⊩⋆ {⌀}     = ∙
+refl⊩⋆ {Γ , A} = mono⊩⋆ {Γ} weak⊆ refl⊩⋆ , reflect {A} v₀
 
 trans⊩⋆ : ∀ {Π Γ Γ′} → Γ ⊩⋆ Γ′ → Γ′ ⊩⋆ Π → Γ ⊩⋆ Π
-trans⊩⋆ {⌀}     ts ᴬᵍtt          = ᴬᵍtt
-trans⊩⋆ {Π , A} ts (ᴬᵍpair us u) = ᴬᵍpair (trans⊩⋆ ts us) (multicut⊩ {A} ts u)
+trans⊩⋆ {⌀}     ts ∙        = ∙
+trans⊩⋆ {Π , A} ts (us , u) = trans⊩⋆ ts us , multicut⊩ {A} ts u
 
 
 -- Completeness, or quotation.

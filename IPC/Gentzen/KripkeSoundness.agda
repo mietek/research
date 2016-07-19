@@ -8,19 +8,19 @@ open import IPC.Gentzen public
 
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
 eval (var i)                  γ = lookup i γ
-eval {A ▷ B} (lam t)          γ = return {A ▷ B} (λ ξ a → eval t (ᴬᵍpair (mono⊩⋆ ξ γ) a))
+eval {A ▷ B} (lam t)          γ = return {A ▷ B} (λ ξ a → eval t (mono⊩⋆ ξ γ , a))
 eval (app {A} {B} t u)        γ = bind {A ▷ B} {B} (eval t γ)
                                     (λ ξ a → a refl≤ (eval u (mono⊩⋆ ξ γ)))
-eval {A ∧ B} (pair t u)       γ = return {A ∧ B} (ᴬᵍpair (eval t γ) (eval u γ))
-eval (fst {A} {B} t)          γ = bind {A ∧ B} {A} (eval t γ) (λ ξ s → ᴬᵍfst s)
-eval (snd {A} {B} t)          γ = bind {A ∧ B} {B} (eval t γ) (λ ξ s → ᴬᵍsnd s)
-eval tt                       γ = return {⊤} ᴬᵍtt
+eval {A ∧ B} (pair t u)       γ = return {A ∧ B} (eval t γ , eval u γ)
+eval (fst {A} {B} t)          γ = bind {A ∧ B} {A} (eval t γ) (λ ξ s → π₁ s)
+eval (snd {A} {B} t)          γ = bind {A ∧ B} {B} (eval t γ) (λ ξ s → π₂ s)
+eval tt                       γ = return {⊤} ∙
 eval (boom {C} t)             γ = bind {⊥} {C} (eval t γ) (λ ξ ())
-eval {A ∨ B} (inl t)          γ = return {A ∨ B} (ᴬᵍinl (eval t γ))
-eval {A ∨ B} (inr t)          γ = return {A ∨ B} (ᴬᵍinr (eval t γ))
-eval (case {A} {B} {C} t u v) γ = bind {A ∨ B} {C} (eval t γ) (λ ξ s → ᴬᵍcase s
-                                    (λ a → eval u (ᴬᵍpair (mono⊩⋆ ξ γ) (λ ξ′ k → a ξ′ k)))
-                                    (λ b → eval v (ᴬᵍpair (mono⊩⋆ ξ γ) (λ ξ′ k → b ξ′ k))))
+eval {A ∨ B} (inl t)          γ = return {A ∨ B} (ι₁ (eval t γ))
+eval {A ∨ B} (inr t)          γ = return {A ∨ B} (ι₂ (eval t γ))
+eval (case {A} {B} {C} t u v) γ = bind {A ∨ B} {C} (eval t γ) (λ ξ s → κ s
+                                    (λ a → eval u (mono⊩⋆ ξ γ , λ ξ′ k → a ξ′ k))
+                                    (λ b → eval v (mono⊩⋆ ξ γ , λ ξ′ k → b ξ′ k)))
 
 
 -- TODO: Correctness with respect to conversion.

@@ -105,8 +105,8 @@ import IPC.Gentzen.HereditarySubstitution
 import IPC.Translation
 
 import BasicIS4
-import BasicIS4.KripkeSemantics.Standard
-import BasicIS4.KripkeSemantics.Alternative
+import BasicIS4.KripkeSemantics.Ono
+import BasicIS4.KripkeSemantics.AlechinaEtAl
 import BasicIS4.Regular.Hilbert.Sequential
 import BasicIS4.Regular.Hilbert.Nested
 -- import BasicIS4.Regular.Hilbert.KripkeSoundness
@@ -117,5 +117,5 @@ import BasicIS4.DualContext.Hilbert.Sequential
 import BasicIS4.DualContext.Hilbert.Nested
 import BasicIS4.DualContext.Gentzen
 import BasicIS4.DualContext.Translation
-import BasicIS4.Translation
 import BasicIS4.Labelled.Gentzen
+import BasicIS4.Translation

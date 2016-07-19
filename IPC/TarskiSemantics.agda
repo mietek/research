@@ -21,15 +21,15 @@ module _ {{_ : Model}} where
   ⊨_ : Ty → Set
   ⊨ α P   = ⊨ᵅ P
   ⊨ A ▷ B = ⊨ A → ⊨ B
-  ⊨ A ∧ B = ⊨ A ᴬᵍ∧ ⊨ B
-  ⊨ ⊤    = ᴬᵍ⊤
-  ⊨ ⊥    = ᴬᵍ⊥
-  ⊨ A ∨ B = ⊨ A ᴬᵍ∨ ⊨ B
+  ⊨ A ∧ B = ⊨ A × ⊨ B
+  ⊨ ⊤    = Top
+  ⊨ ⊥    = Bot
+  ⊨ A ∨ B = ⊨ A + ⊨ B
 
   infix 3 ⊨⋆_
   ⊨⋆_ : Cx Ty → Set
-  ⊨⋆ ⌀     = ᴬᵍ⊤
-  ⊨⋆ Γ , A = ⊨⋆ Γ ᴬᵍ∧ ⊨ A
+  ⊨⋆ ⌀     = Top
+  ⊨⋆ Γ , A = ⊨⋆ Γ × ⊨ A
 
 
 -- Truth in all models.
@@ -42,5 +42,5 @@ _ᴹ⊨_ : Cx Ty → Ty → Set₁
 -- Additional useful equipment.
 
 lookup : ∀ {A Γ} → A ∈ Γ → Γ ᴹ⊨ A
-lookup top     γ = ᴬᵍsnd γ
-lookup (pop i) γ = lookup i (ᴬᵍfst γ)
+lookup top     (γ , a) = a
+lookup (pop i) (γ , b) = lookup i γ

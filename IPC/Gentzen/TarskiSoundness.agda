@@ -8,18 +8,18 @@ open import IPC.Gentzen public
 
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊨ A
 eval (var i)      γ = lookup i γ
-eval (lam t)      γ = λ a → eval t (ᴬᵍpair γ a)
+eval (lam t)      γ = λ a → eval t (γ , a)
 eval (app t u)    γ = (eval t γ) (eval u γ)
-eval (pair t u)   γ = ᴬᵍpair (eval t γ) (eval u γ)
-eval (fst t)      γ = ᴬᵍfst (eval t γ)
-eval (snd t)      γ = ᴬᵍsnd (eval t γ)
-eval tt           γ = ᴬᵍtt
-eval (boom t)     γ = ᴬᵍboom (eval t γ)
-eval (inl t)      γ = ᴬᵍinl (eval t γ)
-eval (inr t)      γ = ᴬᵍinr (eval t γ)
-eval (case t u v) γ = ᴬᵍcase (eval t γ)
-                        (λ a → eval u (ᴬᵍpair γ a))
-                        (λ b → eval v (ᴬᵍpair γ b))
+eval (pair t u)   γ = eval t γ , eval u γ
+eval (fst t)      γ = π₁ (eval t γ)
+eval (snd t)      γ = π₂ (eval t γ)
+eval tt           γ = ∙
+eval (boom t)     γ = ◎ (eval t γ)
+eval (inl t)      γ = ι₁ (eval t γ)
+eval (inr t)      γ = ι₂ (eval t γ)
+eval (case t u v) γ = κ (eval t γ)
+                        (λ a → eval u (γ , a))
+                        (λ b → eval v (γ , b))
 
 
 -- TODO: Correctness with respect to conversion.
@@ -29,17 +29,17 @@ eval (case t u v) γ = ᴬᵍcase (eval t γ)
 --   coco refl⇒             = refl
 --   coco (trans⇒ p q)      = trans (coco p) (coco q)
 --   coco (sym⇒ p)          = sym (coco p)
---   coco (cong⇒lam p)      = cong (λ f γ a → f (ᴬᵍpair γ a)) (coco p)
+--   coco (cong⇒lam p)      = cong (λ f γ a → f (γ , a)) (coco p)
 --   coco (cong⇒app p q)    = cong₂ (λ f g γ → (f γ) (g γ)) (coco p) (coco q)
---   coco (cong⇒pair p q)   = cong₂ (λ f g γ → ᴬᵍpair (f γ) (g γ)) (coco p) (coco q)
---   coco (cong⇒fst p)      = cong (λ f γ → ᴬᵍfst (f γ)) (coco p)
---   coco (cong⇒snd p)      = cong (λ f γ → ᴬᵍsnd (f γ)) (coco p)
---   coco (cong⇒inl p)      = cong (λ f γ → ᴬᵍinl (f γ)) (coco p)
---   coco (cong⇒inr p)      = cong (λ f γ → ᴬᵍinr (f γ)) (coco p)
---   coco (cong⇒boom p)     = cong (λ f γ → ᴬᵍboom (f γ)) (coco p)
---   coco (cong⇒case p q r) = cong₃ (λ f g h γ → ᴬᵍcase (f γ)
---                                                   (λ a → g (ᴬᵍpair γ a))
---                                                   (λ b → h (ᴬᵍpair γ b)))
+--   coco (cong⇒pair p q)   = cong₂ (λ f g γ → f γ , g γ) (coco p) (coco q)
+--   coco (cong⇒fst p)      = cong (λ f γ → π₁ (f γ)) (coco p)
+--   coco (cong⇒snd p)      = cong (λ f γ → π₂ (f γ)) (coco p)
+--   coco (cong⇒inl p)      = cong (λ f γ → ι₁ (f γ)) (coco p)
+--   coco (cong⇒inr p)      = cong (λ f γ → ι₂ (f γ)) (coco p)
+--   coco (cong⇒boom p)     = cong (λ f γ → ◎ (f γ)) (coco p)
+--   coco (cong⇒case p q r) = cong₃ (λ f g h γ → κ (f γ)
+--                                                   (λ a → g (γ , a))
+--                                                   (λ b → h (γ , b)))
 --                                   (coco p) (coco q) (coco r)
 --   coco conv⇒lam          = {!refl!}
 --   coco conv⇒app          = {!refl!}

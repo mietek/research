@@ -14,7 +14,7 @@ open G using  () renaming (_⊢_ to G⟨_⊢_⟩ ; _⊢⋆_ to G⟨_⊢⋆_⟩) 
 -- Translation from sequential Hilbert-style to nested.
 
 hs→hn : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → HN⟨ Γ ⊢ A ⟩
-hs→hn (ᴬᵍpair Π ts) = aux ts top
+hs→hn (Π , ts) = aux ts top
   where
     aux : ∀ {A Γ Π} → HS⟨ Γ ⊢⋆ Π ⟩ → A ∈ Π → HN⟨ Γ ⊢ A ⟩
     aux (HS.var i ts)  top     = HN.var i
@@ -48,19 +48,19 @@ hs→hn (ᴬᵍpair Π ts) = aux ts top
 -- Translation from nested Hilbert-style to sequential.
 
 hn→hs : ∀ {A Γ} → HN⟨ Γ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
-hn→hs (HN.var i)   = ᴬᵍpair ⌀ (HS.var i HS.nil)
+hn→hs (HN.var i)   = ⌀ , HS.var i HS.nil
 hn→hs (HN.app t u) = HS.app (hn→hs t) (hn→hs u)
-hn→hs HN.ci        = ᴬᵍpair ⌀ (HS.ci HS.nil)
-hn→hs HN.ck        = ᴬᵍpair ⌀ (HS.ck HS.nil)
-hn→hs HN.cs        = ᴬᵍpair ⌀ (HS.cs HS.nil)
+hn→hs HN.ci        = ⌀ , HS.ci HS.nil
+hn→hs HN.ck        = ⌀ , HS.ck HS.nil
+hn→hs HN.cs        = ⌀ , HS.cs HS.nil
 hn→hs (HN.box t)   = HS.box (hn→hs t)
-hn→hs HN.cdist     = ᴬᵍpair ⌀ (HS.cdist HS.nil)
-hn→hs HN.cup       = ᴬᵍpair ⌀ (HS.cup HS.nil)
-hn→hs HN.cdown     = ᴬᵍpair ⌀ (HS.cdown HS.nil)
-hn→hs HN.cpair     = ᴬᵍpair ⌀ (HS.cpair HS.nil)
-hn→hs HN.cfst      = ᴬᵍpair ⌀ (HS.cfst HS.nil)
-hn→hs HN.csnd      = ᴬᵍpair ⌀ (HS.csnd HS.nil)
-hn→hs HN.tt        = ᴬᵍpair ⌀ (HS.tt HS.nil)
+hn→hs HN.cdist     = ⌀ , HS.cdist HS.nil
+hn→hs HN.cup       = ⌀ , HS.cup HS.nil
+hn→hs HN.cdown     = ⌀ , HS.cdown HS.nil
+hn→hs HN.cpair     = ⌀ , HS.cpair HS.nil
+hn→hs HN.cfst      = ⌀ , HS.cfst HS.nil
+hn→hs HN.csnd      = ⌀ , HS.csnd HS.nil
+hn→hs HN.tt        = ⌀ , HS.tt HS.nil
 
 
 -- Deduction theorem for sequential Hilbert-style.
@@ -105,8 +105,8 @@ mutual
   g→hn G.tt              = HN.tt
 
   g→hn⋆ : ∀ {Π Γ} → G⟨ Γ ⊢⋆ Π ⟩ → HN⟨ Γ ⊢⋆ Π ⟩
-  g→hn⋆ {⌀}     ᴬᵍtt          = ᴬᵍtt
-  g→hn⋆ {Π , A} (ᴬᵍpair ts t) = ᴬᵍpair (g→hn⋆ ts) (g→hn t)
+  g→hn⋆ {⌀}     ∙        = ∙
+  g→hn⋆ {Π , A} (ts , t) = g→hn⋆ ts , g→hn t
 
 g→hs : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
 g→hs = hn→hs ∘ g→hn

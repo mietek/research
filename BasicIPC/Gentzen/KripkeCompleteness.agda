@@ -24,13 +24,13 @@ mutual
 
 infix 3 _⊢⋆ⁿᶠ_
 _⊢⋆ⁿᶠ_ : Cx Ty → Cx Ty → Set
-Γ ⊢⋆ⁿᶠ ⌀     = ᴬᵍ⊤
-Γ ⊢⋆ⁿᶠ Π , A = Γ ⊢⋆ⁿᶠ Π ᴬᵍ∧ Γ ⊢ⁿᶠ A
+Γ ⊢⋆ⁿᶠ ⌀     = Top
+Γ ⊢⋆ⁿᶠ Π , A = Γ ⊢⋆ⁿᶠ Π × Γ ⊢ⁿᶠ A
 
 infix 3 _⊢⋆ⁿᵉ_
 _⊢⋆ⁿᵉ_ : Cx Ty → Cx Ty → Set
-Γ ⊢⋆ⁿᵉ ⌀     = ᴬᵍ⊤
-Γ ⊢⋆ⁿᵉ Π , A = Γ ⊢⋆ⁿᵉ Π ᴬᵍ∧ Γ ⊢ⁿᵉ A
+Γ ⊢⋆ⁿᵉ ⌀     = Top
+Γ ⊢⋆ⁿᵉ Π , A = Γ ⊢⋆ⁿᵉ Π × Γ ⊢ⁿᵉ A
 
 
 -- Translation to simple terms.
@@ -85,49 +85,49 @@ mutual
   reflect : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊩ A
   reflect {α P}   t = t
   reflect {A ▷ B} t = λ ξ a → reflect {B} (appⁿᵉ (mono⊢ⁿᵉ ξ t) (reify {A} a))
-  reflect {A ∧ B} t = ᴬᵍpair (reflect {A} (fstⁿᵉ t)) (reflect {B} (sndⁿᵉ t))
-  reflect {⊤}    t = ᴬᵍtt
+  reflect {A ∧ B} t = reflect {A} (fstⁿᵉ t) , reflect {B} (sndⁿᵉ t)
+  reflect {⊤}    t = ∙
 
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ⁿᶠ A
   reify {α P}   s = neⁿᶠ s
   reify {A ▷ B} s = lamⁿᶠ (reify {B} (s weak⊆ (reflect {A} (varⁿᵉ top))))
-  reify {A ∧ B} s = pairⁿᶠ (reify {A} (ᴬᵍfst s)) (reify {B} (ᴬᵍsnd s))
+  reify {A ∧ B} s = pairⁿᶠ (reify {A} (π₁ s)) (reify {B} (π₂ s))
   reify {⊤}    s = ttⁿᶠ
 
 reflect⋆ : ∀ {Π Γ} → Γ ⊢⋆ⁿᵉ Π → Γ ⊩⋆ Π
-reflect⋆ {⌀}     ᴬᵍtt          = ᴬᵍtt
-reflect⋆ {Π , A} (ᴬᵍpair ts t) = ᴬᵍpair (reflect⋆ ts) (reflect t)
+reflect⋆ {⌀}     ∙        = ∙
+reflect⋆ {Π , A} (ts , t) = reflect⋆ ts , reflect t
 
 reify⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → Γ ⊢⋆ⁿᶠ Π
-reify⋆ {⌀}     ᴬᵍtt          = ᴬᵍtt
-reify⋆ {Π , A} (ᴬᵍpair ts t) = ᴬᵍpair (reify⋆ ts) (reify t)
+reify⋆ {⌀}     ∙        = ∙
+reify⋆ {Π , A} (ts , t) = reify⋆ ts , reify t
 
 
 -- Additional useful properties.
 
--- TODO:
+-- -- TODO:
 -- mutual
 --   multicut⊢ⁿᶠ : ∀ {A Γ Γ′} → Γ ⊢⋆ⁿᶠ Γ′ → Γ′ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ A
---   multicut⊢ⁿᶠ {Γ′ = ⌀}      ᴬᵍtt          u = mono⊢ⁿᶠ bot⊆ u
---   multicut⊢ⁿᶠ {Γ′ = Γ′ , B} (ᴬᵍpair ts t) u = neⁿᶠ (appⁿᵉ (multicut⊢ⁿᵉ ts (lamⁿᶠ u)) t)
+--   multicut⊢ⁿᶠ {Γ′ = ⌀}      ∙        u = mono⊢ⁿᶠ bot⊆ u
+--   multicut⊢ⁿᶠ {Γ′ = Γ′ , B} (ts , t) u = neⁿᶠ (appⁿᵉ (multicut⊢ⁿᵉ ts (lamⁿᶠ u)) t)
 --
 --   multicut⊢ⁿᵉ : ∀ {A Γ Γ′} → Γ ⊢⋆ⁿᶠ Γ′ → Γ′ ⊢ⁿᶠ A → Γ ⊢ⁿᵉ A
 --   -- NOTE: No idea how to fill this hole.
---   multicut⊢ⁿᵉ {A} {Γ′ = ⌀}      ᴬᵍtt          u = {!!}
---   multicut⊢ⁿᵉ {A} {Γ′ = Γ′ , B} (ᴬᵍpair ts t) u = appⁿᵉ (multicut⊢ⁿᵉ ts (lamⁿᶠ u)) t
+--   multicut⊢ⁿᵉ {A} {Γ′ = ⌀}      ∙        u = {!!}
+--   multicut⊢ⁿᵉ {A} {Γ′ = Γ′ , B} (ts , t) u = appⁿᵉ (multicut⊢ⁿᵉ ts (lamⁿᶠ u)) t
 --
 -- multicut⊩ : ∀ {A Γ Γ′} → Γ ⊩⋆ Γ′ → Γ′ ⊩ A → Γ ⊩ A
--- multicut⊩ {A} {Γ′ = ⌀}      ᴬᵍtt          u = mono⊩ {A} bot⊆ u
--- multicut⊩ {A} {Γ′ = Γ′ , B} (ᴬᵍpair ts t) u = reflect {A} (appⁿᵉ ts′ (reify {B} t))
+-- multicut⊩ {A} {Γ′ = ⌀}      ∙        u = mono⊩ {A} bot⊆ u
+-- multicut⊩ {A} {Γ′ = Γ′ , B} (ts , t) u = reflect {A} (appⁿᵉ ts′ (reify {B} t))
 --   where ts′ = multicut⊢ⁿᵉ (reify⋆ ts) (lamⁿᶠ (reify {A} u))
 
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
-refl⊩⋆ {⌀}     = ᴬᵍtt
-refl⊩⋆ {Γ , A} = ᴬᵍpair (mono⊩⋆ {Γ} weak⊆ refl⊩⋆) (reflect {A} (varⁿᵉ top))
+refl⊩⋆ {⌀}     = ∙
+refl⊩⋆ {Γ , A} = mono⊩⋆ {Γ} weak⊆ refl⊩⋆ , reflect {A} (varⁿᵉ top)
 
 -- trans⊩⋆ : ∀ {Π Γ Γ′} → Γ ⊩⋆ Γ′ → Γ′ ⊩⋆ Π → Γ ⊩⋆ Π
--- trans⊩⋆ {⌀}     ts ᴬᵍtt          = ᴬᵍtt
--- trans⊩⋆ {Π , A} ts (ᴬᵍpair us u) = ᴬᵍpair (trans⊩⋆ ts us) (multicut⊩ {A} ts u)
+-- trans⊩⋆ {⌀}     ts ∙        = ∙
+-- trans⊩⋆ {Π , A} ts (us , u) = trans⊩⋆ ts us , multicut⊩ {A} ts u
 
 
 -- Completeness, or quotation.

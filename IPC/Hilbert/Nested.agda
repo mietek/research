@@ -23,8 +23,8 @@ data _⊢_ (Γ : Cx Ty) : Ty → Set where
 
 infix 3 _⊢⋆_
 _⊢⋆_ : Cx Ty → Cx Ty → Set
-Γ ⊢⋆ ⌀     = ᴬᵍ⊤
-Γ ⊢⋆ Π , A = Γ ⊢⋆ Π ᴬᵍ∧ Γ ⊢ A
+Γ ⊢⋆ ⌀     = Top
+Γ ⊢⋆ Π , A = Γ ⊢⋆ Π × Γ ⊢ A
 
 
 -- Monotonicity with respect to context inclusion.
@@ -45,8 +45,8 @@ mono⊢ η cinr      = cinr
 mono⊢ η ccase     = ccase
 
 mono⊢⋆ : ∀ {Γ″ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ Γ″ → Γ′ ⊢⋆ Γ″
-mono⊢⋆ {⌀}      η ᴬᵍtt          = ᴬᵍtt
-mono⊢⋆ {Γ″ , A} η (ᴬᵍpair ts t) = ᴬᵍpair (mono⊢⋆ η ts) (mono⊢ η t)
+mono⊢⋆ {⌀}      η ∙        = ∙
+mono⊢⋆ {Γ″ , A} η (ts , t) = mono⊢⋆ η ts , mono⊢ η t
 
 
 -- Shorthand for variables.
@@ -54,10 +54,10 @@ mono⊢⋆ {Γ″ , A} η (ᴬᵍpair ts t) = ᴬᵍpair (mono⊢⋆ η ts) (mon
 v₀ : ∀ {A Γ} → Γ , A ⊢ A
 v₀ = var i₀
 
-v₁ : ∀ {A B Γ} → Γ , A , B ⊢ A
+v₁ : ∀ {A B Γ} → (Γ , A) , B ⊢ A
 v₁ = var i₁
 
-v₂ : ∀ {A B C Γ} → Γ , A , B , C ⊢ A
+v₂ : ∀ {A B C Γ} → ((Γ , A) , B) , C ⊢ A
 v₂ = var i₂
 
 
@@ -89,16 +89,16 @@ det t = app (mono⊢ weak⊆ t) v₀
 -- Additional useful properties.
 
 multicut⊢ : ∀ {A Γ Γ′} → Γ ⊢⋆ Γ′ → Γ′ ⊢ A → Γ ⊢ A
-multicut⊢ {Γ′ = ⌀}      ᴬᵍtt          u = mono⊢ bot⊆ u
-multicut⊢ {Γ′ = Γ′ , B} (ᴬᵍpair ts t) u = app (multicut⊢ ts (lam u)) t
+multicut⊢ {Γ′ = ⌀}      ∙        u = mono⊢ bot⊆ u
+multicut⊢ {Γ′ = Γ′ , B} (ts , t) u = app (multicut⊢ ts (lam u)) t
 
 refl⊢⋆ : ∀ {Γ} → Γ ⊢⋆ Γ
-refl⊢⋆ {⌀}     = ᴬᵍtt
-refl⊢⋆ {Γ , A} = ᴬᵍpair (mono⊢⋆ weak⊆ refl⊢⋆) v₀
+refl⊢⋆ {⌀}     = ∙
+refl⊢⋆ {Γ , A} = mono⊢⋆ weak⊆ refl⊢⋆ , v₀
 
 trans⊢⋆ : ∀ {Π Γ Γ′} → Γ ⊢⋆ Γ′ → Γ′ ⊢⋆ Π → Γ ⊢⋆ Π
-trans⊢⋆ {⌀}     ts ᴬᵍtt          = ᴬᵍtt
-trans⊢⋆ {Π , A} ts (ᴬᵍpair us u) = ᴬᵍpair (trans⊢⋆ ts us) (multicut⊢ ts u)
+trans⊢⋆ {⌀}     ts ∙        = ∙
+trans⊢⋆ {Π , A} ts (us , u) = trans⊢⋆ ts us , multicut⊢ ts u
 
 
 -- Contraction.
@@ -106,7 +106,7 @@ trans⊢⋆ {Π , A} ts (ᴬᵍpair us u) = ᴬᵍpair (trans⊢⋆ ts us) (mult
 ccont : ∀ {A B Γ} → Γ ⊢ (A ▷ A ▷ B) ▷ A ▷ B
 ccont = lam (lam (app (app v₁ v₀) v₀))
 
-cont : ∀ {A B Γ} → Γ , A , A ⊢ B → Γ , A ⊢ B
+cont : ∀ {A B Γ} → (Γ , A) , A ⊢ B → Γ , A ⊢ B
 cont t = det (app ccont (lam (lam t)))
 
 
@@ -115,7 +115,7 @@ cont t = det (app ccont (lam (lam t)))
 cexch : ∀ {A B C Γ} → Γ ⊢ (A ▷ B ▷ C) ▷ B ▷ A ▷ C
 cexch = lam (lam (lam (app (app v₂ v₀) v₁)))
 
-exch : ∀ {A B C Γ} → Γ , A , B ⊢ C → Γ , B , A ⊢ C
+exch : ∀ {A B C Γ} → (Γ , A) , B ⊢ C → (Γ , B) , A ⊢ C
 exch t = det (det (app cexch (lam (lam t))))
 
 

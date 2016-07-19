@@ -20,8 +20,8 @@ mutual
 
   infix 3 _⊢⋆_
   _⊢⋆_ : Cx Ty → Cx Ty → Set
-  Γ ⊢⋆ ⌀     = ᴬᵍ⊤
-  Γ ⊢⋆ Π , A = Γ ⊢⋆ Π ᴬᵍ∧ Γ ⊢ A
+  Γ ⊢⋆ ⌀     = Top
+  Γ ⊢⋆ Π , A = Γ ⊢⋆ Π × Γ ⊢ A
 
 
 -- Monotonicity with respect to context inclusion.
@@ -39,8 +39,8 @@ mutual
   mono⊢ η tt              = tt
 
   mono⊢⋆ : ∀ {Π Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ Π → Γ′ ⊢⋆ Π
-  mono⊢⋆ {⌀}     η ᴬᵍtt          = ᴬᵍtt
-  mono⊢⋆ {Π , A} η (ᴬᵍpair ts t) = ᴬᵍpair (mono⊢⋆ η ts) (mono⊢ η t)
+  mono⊢⋆ {⌀}     η ∙        = ∙
+  mono⊢⋆ {Π , A} η (ts , t) = mono⊢⋆ η ts , mono⊢ η t
 
 
 -- Shorthand for variables.
@@ -48,10 +48,10 @@ mutual
 v₀ : ∀ {A Γ} → Γ , A ⊢ A
 v₀ = var i₀
 
-v₁ : ∀ {A B Γ} → Γ , A , B ⊢ A
+v₁ : ∀ {A B Γ} → (Γ , A) , B ⊢ A
 v₁ = var i₁
 
-v₂ : ∀ {A B C Γ} → Γ , A , B , C ⊢ A
+v₂ : ∀ {A B C Γ} → ((Γ , A) , B) , C ⊢ A
 v₂ = var i₂
 
 
@@ -66,16 +66,16 @@ det t = app (mono⊢ weak⊆ t) v₀
 -- Additional useful properties.
 
 multicut⊢ : ∀ {A Γ Γ′} → Γ ⊢⋆ Γ′ → Γ′ ⊢ A → Γ ⊢ A
-multicut⊢ {Γ′ = ⌀}      ᴬᵍtt          u = mono⊢ bot⊆ u
-multicut⊢ {Γ′ = Γ′ , B} (ᴬᵍpair ts t) u = app (multicut⊢ ts (lam u)) t
+multicut⊢ {Γ′ = ⌀}      ∙        u = mono⊢ bot⊆ u
+multicut⊢ {Γ′ = Γ′ , B} (ts , t) u = app (multicut⊢ ts (lam u)) t
 
 refl⊢⋆ : ∀ {Γ} → Γ ⊢⋆ Γ
-refl⊢⋆ {⌀}     = ᴬᵍtt
-refl⊢⋆ {Γ , A} = ᴬᵍpair (mono⊢⋆ weak⊆ refl⊢⋆) v₀
+refl⊢⋆ {⌀}     = ∙
+refl⊢⋆ {Γ , A} = mono⊢⋆ weak⊆ refl⊢⋆ , v₀
 
 trans⊢⋆ : ∀ {Π Γ Γ′} → Γ ⊢⋆ Γ′ → Γ′ ⊢⋆ Π → Γ ⊢⋆ Π
-trans⊢⋆ {⌀}     ts ᴬᵍtt          = ᴬᵍtt
-trans⊢⋆ {Π , A} ts (ᴬᵍpair us u) = ᴬᵍpair (trans⊢⋆ ts us) (multicut⊢ ts u)
+trans⊢⋆ {⌀}     ts ∙        = ∙
+trans⊢⋆ {Π , A} ts (us , u) = trans⊢⋆ ts us , multicut⊢ ts u
 
 
 -- Contraction.
@@ -83,7 +83,7 @@ trans⊢⋆ {Π , A} ts (ᴬᵍpair us u) = ᴬᵍpair (trans⊢⋆ ts us) (mult
 ccont : ∀ {A B Γ} → Γ ⊢ (A ▷ A ▷ B) ▷ A ▷ B
 ccont = lam (lam (app (app v₁ v₀) v₀))
 
-cont : ∀ {A B Γ} → Γ , A , A ⊢ B → Γ , A ⊢ B
+cont : ∀ {A B Γ} → (Γ , A) , A ⊢ B → Γ , A ⊢ B
 cont t = det (app ccont (lam (lam t)))
 
 
@@ -92,7 +92,7 @@ cont t = det (app ccont (lam (lam t)))
 cexch : ∀ {A B C Γ} → Γ ⊢ (A ▷ B ▷ C) ▷ B ▷ A ▷ C
 cexch = lam (lam (lam (app (app v₂ v₀) v₁)))
 
-exch : ∀ {A B C Γ} → Γ , A , B ⊢ C → Γ , B , A ⊢ C
+exch : ∀ {A B C Γ} → (Γ , A) , B ⊢ C → (Γ , B) , A ⊢ C
 exch t = det (det (app cexch (lam (lam t))))
 
 
@@ -108,19 +108,19 @@ comp t u = det (app (app ccomp (lam t)) (lam u))
 -- Useful theorems in functional form.
 
 add : ∀ {Π A Γ} → Γ ⊢⋆ Π → Γ ⊢ A → Γ ⊢⋆ Π , A
-add ts u = ᴬᵍpair ts u
+add ts u = ts , u
 
 dist : ∀ {A B Γ} → Γ ⊢ □ (A ▷ B) → Γ ⊢ □ A → Γ ⊢ □ B
-dist t u = multibox (ᴬᵍpair (ᴬᵍpair ᴬᵍtt t) u) (app (down v₁) (down v₀))
+dist t u = multibox ((∙ , t) , u) (app (down v₁) (down v₀))
 
 up : ∀ {A Γ} → Γ ⊢ □ A → Γ ⊢ □ □ A
-up t = multibox (ᴬᵍpair ᴬᵍtt t) v₀
+up t = multibox (∙ , t) v₀
 
 distup : ∀ {A B Γ} → Γ ⊢ □ (□ A ▷ B) → Γ ⊢ □ A → Γ ⊢ □ B
 distup t u = dist t (up u)
 
 box : ∀ {A Γ} → ⌀ ⊢ A → Γ ⊢ □ A
-box t = multibox ᴬᵍtt t
+box t = multibox ∙ t
 
 unbox : ∀ {A C Γ} → Γ ⊢ □ A → Γ , □ A ⊢ C → Γ ⊢ C
 unbox t u = app (lam u) t
@@ -185,5 +185,5 @@ mutual
   [ i ≔ s ] tt            = tt
 
   [_≔_]⋆_ : ∀ {Π A Γ} → (i : A ∈ Γ) → Γ - i ⊢ A → Γ ⊢⋆ Π → Γ - i ⊢⋆ Π
-  [_≔_]⋆_ {⌀}     i s ᴬᵍtt          = ᴬᵍtt
-  [_≔_]⋆_ {Π , B} i s (ᴬᵍpair ts t) = ᴬᵍpair ([ i ≔ s ]⋆ ts) ([ i ≔ s ] t)
+  [_≔_]⋆_ {⌀}     i s ∙        = ∙
+  [_≔_]⋆_ {Π , B} i s (ts , t) = [ i ≔ s ]⋆ ts , [ i ≔ s ] t

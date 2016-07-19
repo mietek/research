@@ -6,17 +6,17 @@ import BasicIS4.DualContext.Hilbert.Sequential as HS
 import BasicIS4.DualContext.Hilbert.Nested as HN
 import BasicIS4.DualContext.Gentzen as G
 
-open HS using () renaming (_⨾_⊢⋆_ to HS⟨_⨾_⊢⋆_⟩ ; _⨾_⊢_ to HS⟨_⨾_⊢_⟩) public
-open HN using () renaming (_⨾_⊢_ to HN⟨_⨾_⊢_⟩) public
-open G  using () renaming (_⨾_⊢_ to G⟨_⨾_⊢_⟩) public
+open HS using () renaming (_⁏_⊢⋆_ to HS⟨_⁏_⊢⋆_⟩ ; _⁏_⊢_ to HS⟨_⁏_⊢_⟩) public
+open HN using () renaming (_⁏_⊢_ to HN⟨_⁏_⊢_⟩) public
+open G  using () renaming (_⁏_⊢_ to G⟨_⁏_⊢_⟩) public
 
 
 -- Translation from sequential Hilbert-style to nested.
 
-hs→hn : ∀ {A Γ Δ} → HS⟨ Γ ⨾ Δ ⊢ A ⟩ → HN⟨ Γ ⨾ Δ ⊢ A ⟩
-hs→hn (ᴬᵍpair Π ts) = aux ts top
+hs→hn : ∀ {A Γ Δ} → HS⟨ Γ ⁏ Δ ⊢ A ⟩ → HN⟨ Γ ⁏ Δ ⊢ A ⟩
+hs→hn (Π , ts) = aux ts top
   where
-    aux : ∀ {A Γ Δ Π} → HS⟨ Γ ⨾ Δ ⊢⋆ Π ⟩ → A ∈ Π → HN⟨ Γ ⨾ Δ ⊢ A ⟩
+    aux : ∀ {A Γ Δ Π} → HS⟨ Γ ⁏ Δ ⊢⋆ Π ⟩ → A ∈ Π → HN⟨ Γ ⁏ Δ ⊢ A ⟩
     aux (HS.var i ts)  top     = HN.var i
     aux (HS.mp i j ts) top     = HN.app (aux ts i) (aux ts j)
     aux (HS.ci ts)     top     = HN.ci
@@ -49,35 +49,35 @@ hs→hn (ᴬᵍpair Π ts) = aux ts top
 
 -- Translation from nested Hilbert-style to sequential.
 
-hn→hs : ∀ {A Γ Δ} → HN⟨ Γ ⨾ Δ ⊢ A ⟩ → HS⟨ Γ ⨾ Δ ⊢ A ⟩
-hn→hs (HN.var i)   = ᴬᵍpair ⌀ (HS.var i HS.nil)
+hn→hs : ∀ {A Γ Δ} → HN⟨ Γ ⁏ Δ ⊢ A ⟩ → HS⟨ Γ ⁏ Δ ⊢ A ⟩
+hn→hs (HN.var i)   = ⌀ , HS.var i HS.nil
 hn→hs (HN.app t u) = HS.app (hn→hs t) (hn→hs u)
-hn→hs HN.ci        = ᴬᵍpair ⌀ (HS.ci HS.nil)
-hn→hs HN.ck        = ᴬᵍpair ⌀ (HS.ck HS.nil)
-hn→hs HN.cs        = ᴬᵍpair ⌀ (HS.cs HS.nil)
-hn→hs (HN.mvar i)  = ᴬᵍpair ⌀ (HS.mvar i HS.nil)
+hn→hs HN.ci        = ⌀ , HS.ci HS.nil
+hn→hs HN.ck        = ⌀ , HS.ck HS.nil
+hn→hs HN.cs        = ⌀ , HS.cs HS.nil
+hn→hs (HN.mvar i)  = ⌀ , HS.mvar i HS.nil
 hn→hs (HN.box t)   = HS.box (hn→hs t)
-hn→hs HN.cdist     = ᴬᵍpair ⌀ (HS.cdist HS.nil)
-hn→hs HN.cup       = ᴬᵍpair ⌀ (HS.cup HS.nil)
-hn→hs HN.cdown     = ᴬᵍpair ⌀ (HS.cdown HS.nil)
-hn→hs HN.cpair     = ᴬᵍpair ⌀ (HS.cpair HS.nil)
-hn→hs HN.cfst      = ᴬᵍpair ⌀ (HS.cfst HS.nil)
-hn→hs HN.csnd      = ᴬᵍpair ⌀ (HS.csnd HS.nil)
-hn→hs HN.tt        = ᴬᵍpair ⌀ (HS.tt HS.nil)
+hn→hs HN.cdist     = ⌀ , HS.cdist HS.nil
+hn→hs HN.cup       = ⌀ , HS.cup HS.nil
+hn→hs HN.cdown     = ⌀ , HS.cdown HS.nil
+hn→hs HN.cpair     = ⌀ , HS.cpair HS.nil
+hn→hs HN.cfst      = ⌀ , HS.cfst HS.nil
+hn→hs HN.csnd      = ⌀ , HS.csnd HS.nil
+hn→hs HN.tt        = ⌀ , HS.tt HS.nil
 
 
 -- Deduction theorems for sequential Hilbert-style.
 
-hs-lam : ∀ {A B Γ Δ} → HS⟨ Γ , A ⨾ Δ ⊢ B ⟩ → HS⟨ Γ ⨾ Δ ⊢ A ▷ B ⟩
+hs-lam : ∀ {A B Γ Δ} → HS⟨ Γ , A ⁏ Δ ⊢ B ⟩ → HS⟨ Γ ⁏ Δ ⊢ A ▷ B ⟩
 hs-lam = hn→hs ∘ HN.lam ∘ hs→hn
 
-hs-mlam : ∀ {A B Γ Δ} → HS⟨ Γ ⨾ Δ , A ⊢ B ⟩ → HS⟨ Γ ⨾ Δ ⊢ □ A ▷ B ⟩
+hs-mlam : ∀ {A B Γ Δ} → HS⟨ Γ ⁏ Δ , A ⊢ B ⟩ → HS⟨ Γ ⁏ Δ ⊢ □ A ▷ B ⟩
 hs-mlam = hn→hs ∘ HN.mlam ∘ hs→hn
 
 
 -- Translation from Hilbert-style to Gentzen-style.
 
-hn→g : ∀ {A Γ Δ} → HN⟨ Γ ⨾ Δ ⊢ A ⟩ → G⟨ Γ ⨾ Δ ⊢ A ⟩
+hn→g : ∀ {A Γ Δ} → HN⟨ Γ ⁏ Δ ⊢ A ⟩ → G⟨ Γ ⁏ Δ ⊢ A ⟩
 hn→g (HN.var i)   = G.var i
 hn→g (HN.app t u) = G.app (hn→g t) (hn→g u)
 hn→g HN.ci        = G.ci
@@ -93,13 +93,13 @@ hn→g HN.cfst      = G.cfst
 hn→g HN.csnd      = G.csnd
 hn→g HN.tt        = G.tt
 
-hs→g : ∀ {A Γ Δ} → HS⟨ Γ ⨾ Δ ⊢ A ⟩ → G⟨ Γ ⨾ Δ ⊢ A ⟩
+hs→g : ∀ {A Γ Δ} → HS⟨ Γ ⁏ Δ ⊢ A ⟩ → G⟨ Γ ⁏ Δ ⊢ A ⟩
 hs→g = hn→g ∘ hs→hn
 
 
 -- Translation from Gentzen-style to Hilbert-style.
 
-g→hn : ∀ {A Γ Δ} → G⟨ Γ ⨾ Δ ⊢ A ⟩ → HN⟨ Γ ⨾ Δ ⊢ A ⟩
+g→hn : ∀ {A Γ Δ} → G⟨ Γ ⁏ Δ ⊢ A ⟩ → HN⟨ Γ ⁏ Δ ⊢ A ⟩
 g→hn (G.var i)     = HN.var i
 g→hn (G.lam t)     = HN.lam (g→hn t)
 g→hn (G.app t u)   = HN.app (g→hn t) (g→hn u)
@@ -111,5 +111,5 @@ g→hn (G.fst t)     = HN.fst (g→hn t)
 g→hn (G.snd t)     = HN.snd (g→hn t)
 g→hn G.tt          = HN.tt
 
-g→hs : ∀ {A Γ Δ} → G⟨ Γ ⨾ Δ ⊢ A ⟩ → HS⟨ Γ ⨾ Δ ⊢ A ⟩
+g→hs : ∀ {A Γ Δ} → G⟨ Γ ⁏ Δ ⊢ A ⟩ → HS⟨ Γ ⁏ Δ ⊢ A ⟩
 g→hs = hn→hs ∘ g→hn

@@ -29,26 +29,26 @@ module _ {{_ : Model}} where
   _⊩_ : World → Ty → Set
   w ⊩ α P   = w ⊩ᵅ P
   w ⊩ A ▷ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
-  w ⊩ A ∧ B = w ⊩ A ᴬᵍ∧ w ⊩ B
-  w ⊩ ⊤    = ᴬᵍ⊤
+  w ⊩ A ∧ B = w ⊩ A × w ⊩ B
+  w ⊩ ⊤    = Top
 
   infix 3 _⊩⋆_
   _⊩⋆_ : World → Cx Ty → Set
-  w ⊩⋆ ⌀     = ᴬᵍ⊤
-  w ⊩⋆ Γ , A = w ⊩⋆ Γ ᴬᵍ∧ w ⊩ A
+  w ⊩⋆ ⌀     = Top
+  w ⊩⋆ Γ , A = w ⊩⋆ Γ × w ⊩ A
 
 
   -- Monotonicity with respect to intuitionistic accessibility.
 
   mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
-  mono⊩ {α P}   ξ s = mono⊩ᵅ ξ s
-  mono⊩ {A ▷ B} ξ s = λ ξ′ a → s (trans≤ ξ ξ′) a
-  mono⊩ {A ∧ B} ξ s = ᴬᵍpair (mono⊩ {A} ξ (ᴬᵍfst s)) (mono⊩ {B} ξ (ᴬᵍsnd s))
-  mono⊩ {⊤}    ξ s = ᴬᵍtt
+  mono⊩ {α P}   ξ s       = mono⊩ᵅ ξ s
+  mono⊩ {A ▷ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
+  mono⊩ {A ∧ B} ξ (a , b) = mono⊩ {A} ξ a , mono⊩ {B} ξ b
+  mono⊩ {⊤}    ξ ∙       = ∙
 
   mono⊩⋆ : ∀ {Γ w w′} → w ≤ w′ → w ⊩⋆ Γ → w′ ⊩⋆ Γ
-  mono⊩⋆ {⌀}     ξ γ = ᴬᵍtt
-  mono⊩⋆ {Γ , A} ξ γ = ᴬᵍpair (mono⊩⋆ {Γ} ξ (ᴬᵍfst γ)) (mono⊩ {A} ξ (ᴬᵍsnd γ))
+  mono⊩⋆ {⌀}     ξ ∙       = ∙
+  mono⊩⋆ {Γ , A} ξ (γ , a) = mono⊩⋆ {Γ} ξ γ , mono⊩ {A} ξ a
 
 
 -- Forcing in all models.
@@ -61,5 +61,5 @@ _ᴹ⊩_ : Cx Ty → Ty → Set₁
 -- Additional useful equipment.
 
 lookup : ∀ {A Γ} → A ∈ Γ → Γ ᴹ⊩ A
-lookup top     γ = ᴬᵍsnd γ
-lookup (pop i) γ = lookup i (ᴬᵍfst γ)
+lookup top     (γ , a) = a
+lookup (pop i) (γ , b) = lookup i γ

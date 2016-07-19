@@ -38,7 +38,7 @@ mono⊢⋆ η (csnd ts)   = csnd (mono⊢⋆ η ts)
 mono⊢⋆ η (tt ts)     = tt (mono⊢⋆ η ts)
 
 mono⊢ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
-mono⊢ η (ᴬᵍpair Π ts) = ᴬᵍpair Π (mono⊢⋆ η ts)
+mono⊢ η (Π , ts) = Π , mono⊢⋆ η ts
 
 
 -- Derivation concatenation.
@@ -59,6 +59,6 @@ us ⧻ tt ts     = tt (us ⧻ ts)
 -- Modus ponens in expanded form.
 
 app : ∀ {A B Γ} → Γ ⊢ A ▷ B → Γ ⊢ A → Γ ⊢ B
-app {A} {B} (ᴬᵍpair Π ts) (ᴬᵍpair Π′ us) = ᴬᵍpair Π″ vs
+app {A} {B} (Π , ts) (Π′ , us) = Π″ , vs
   where Π″ = (Π′ , A) ⧺ (Π , A ▷ B)
         vs = mp top (mono∈ (weak⊆⧺ₗ (Π , A ▷ B)) top) (us ⧻ ts)
