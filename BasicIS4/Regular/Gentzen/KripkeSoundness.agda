@@ -94,8 +94,8 @@ module EwaldEtAl where
   --   ●------●       ●------●
   --   w   R  v       w   R  v
   --
-  -- slice  : ∀ {v w w′} → w R v → w ≤ w′ → Σ World (λ v′ → w′ R v′ × v ≤ v′)
-  -- cut≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → Σ World (λ w′ → w ≤ w′ × w′ R v′)
+  -- slice  : ∀ {v w w′} → w R v → w ≤ w′ → ∃ (λ v′ → w′ R v′ × v ≤ v′)
+  -- cut≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
 
   mutual
     eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A

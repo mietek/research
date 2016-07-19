@@ -25,7 +25,7 @@ data _⁏_⊢⋆_ (Γ Δ : Cx Ty) : Cx Ty → Set where
 
 infix 3 _⁏_⊢_
 _⁏_⊢_ : Cx Ty → Cx Ty → Ty → Set
-Γ ⁏ Δ ⊢ A = Σ (Cx Ty) (λ Π → Γ ⁏ Δ ⊢⋆ Π , A)
+Γ ⁏ Δ ⊢ A = ∃ (λ Π → Γ ⁏ Δ ⊢⋆ Π , A)
 
 
 -- Monotonicity with respect to context inclusion.
