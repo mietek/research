@@ -106,6 +106,9 @@ import IPC.Translation
 
 import BasicIS4
 import BasicIS4.KripkeSemantics.Ono
+import BasicIS4.KripkeSemantics.BozicDosen
+import BasicIS4.KripkeSemantics.Wijesekera
+import BasicIS4.KripkeSemantics.EwaldEtAl
 import BasicIS4.KripkeSemantics.AlechinaEtAl
 import BasicIS4.Regular.Hilbert.Sequential
 import BasicIS4.Regular.Hilbert.Nested
