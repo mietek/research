@@ -12,6 +12,14 @@ References
   “Normalization by evaluation in the delay monad”
   http://dx.doi.org/10.4204/EPTCS.153.4
 
+• J. Alt, S. Artemov (2001)
+  “Reflective λ-calculus”
+  http://10.1007/3-540-45504-3_2
+
+• S. Artemov (2001)
+  “Explicit provability and constructive semantics”
+  http://dx.doi.org/10.2307/2687821
+
 • D. Basin, S. Matthews, L. Viganò (1997)
   “Labelled propositional modal logics: theory and practice”
   http://dx.doi.org/10.1093/logcom/7.6.685
@@ -72,6 +80,10 @@ References
 • A. Simpson (1994)
   “The proof theory and semantics of intuitionistic modal logic”
   http://homepages.inf.ed.ac.uk/als/Research/thesis.pdf
+
+• G. Steren, E. Bonelli (2014)
+  “Intuitionistic hypothetical logic of proofs”
+  http://dx.doi.org/10.1016/j.entcs.2013.12.013
 
 • A. Stump (2016)
   “Verified functional programming in Agda”
