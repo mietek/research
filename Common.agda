@@ -12,6 +12,9 @@ open import Data.Empty public
   using ()
   renaming (⊥ to Bot ; ⊥-elim to ◎)
 
+open import Data.Nat public
+  using (ℕ ; zero ; suc)
+
 open import Data.Product public
   using (Σ ; ∃ ; _×_ ; _,_)
   renaming (proj₁ to π₁ ; proj₂ to π₂)

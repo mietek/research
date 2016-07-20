@@ -11,6 +11,13 @@ data Cx {ℓ} (U : Set ℓ) : Set ℓ where
   _,_ : Cx U → U → Cx U
 
 
+-- Vector contexts.
+
+data VCx {ℓ} (U : Set ℓ) : ℕ → Set ℓ where
+  ⌀   : VCx U zero
+  _,_ : ∀ {n} → VCx U n → U → VCx U (suc n)
+
+
 -- Context membership, as nameless typed de Bruijn indices.
 
 module _ {ℓ} {U : Set ℓ} where
@@ -18,6 +25,10 @@ module _ {ℓ} {U : Set ℓ} where
   data _∈_ (A : U) : Cx U → Set where
     top : ∀ {Γ} → A ∈ Γ , A
     pop : ∀ {B Γ} → A ∈ Γ → A ∈ Γ , B
+
+  ix : ∀ {A Γ} → A ∈ Γ → ℕ
+  ix top     = zero
+  ix (pop i) = suc (ix i)
 
   i₀ : ∀ {A Γ} → A ∈ Γ , A
   i₀ = top

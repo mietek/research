@@ -138,3 +138,17 @@ import BasicIS4.DualContext.Gentzen
 import BasicIS4.DualContext.Translation
 import BasicIS4.Labelled.Gentzen
 import BasicIS4.Translation
+
+
+-- Intuitionistic logic of proofs, without ∨, ⊥, or +.
+
+import BasicILP.Indirect
+-- import BasicILP.Indirect.Hilbert.Sequential
+import BasicILP.Indirect.Hilbert.Nested
+import BasicILP.Indirect.Gentzen
+-- import BasicILP.Indirect.Translation
+-- import BasicILP.Direct.Hilbert.Sequential
+import BasicILP.Direct.Hilbert.Nested
+import BasicILP.Direct.Gentzen
+-- import BasicILP.Direct.Translation
+-- import BasicILP.Translation
