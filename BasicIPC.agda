@@ -3,7 +3,7 @@ module BasicIPC where
 open import Common.Context public
 
 
--- Propositions of intuitionistic propositional calculus (IPC), without disjunction or falsehood.
+-- Propositions of intuitionistic propositional calculus, without ∨ or ⊥.
 
 infixl 7 _∧_
 infixr 5 _▷_

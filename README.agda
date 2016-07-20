@@ -84,6 +84,9 @@ module README where
 import Common
 import Common.Context
 
+
+-- Intuitionistic propositional calculus, without ∨ or ⊥.
+
 import BasicIPC
 import BasicIPC.TarskiSemantics
 import BasicIPC.KripkeSemantics
@@ -96,6 +99,9 @@ import BasicIPC.Gentzen.KripkeBasicCompleteness
 import BasicIPC.Gentzen.KripkeCompleteness
 import BasicIPC.Gentzen.HereditarySubstitution
 import BasicIPC.Translation
+
+
+-- Intuitionistic propositional calculus.
 
 import IPC
 import IPC.TarskiSemantics
@@ -110,6 +116,9 @@ import IPC.Gentzen.KripkeCompleteness
 import IPC.Gentzen.HereditarySubstitution
 import IPC.Translation
 
+
+-- Intuitionistic modal logic S4, without ∨, ⊥, or ◇.
+
 import BasicIS4
 import BasicIS4.KripkeSemantics.Ono
 import BasicIS4.KripkeSemantics.BozicDosen
@@ -121,7 +130,7 @@ import BasicIS4.Regular.Hilbert.Nested
 import BasicIS4.Regular.Hilbert.KripkeSoundness
 import BasicIS4.Regular.Gentzen
 import BasicIS4.Regular.Gentzen.KripkeSoundness
-import BasicIS4.Regular.Gentzen.KripkeBasicCompleteness -- FIXME ← FIXME ← FIXME
+import BasicIS4.Regular.Gentzen.KripkeBasicCompleteness -- FIXME
 import BasicIS4.Regular.Translation
 import BasicIS4.DualContext.Hilbert.Sequential
 import BasicIS4.DualContext.Hilbert.Nested
