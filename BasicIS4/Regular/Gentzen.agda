@@ -107,9 +107,6 @@ comp t u = det (app (app ccomp (lam t)) (lam u))
 
 -- Useful theorems in functional form.
 
-add : ∀ {Π A Γ} → Γ ⊢⋆ Π → Γ ⊢ A → Γ ⊢⋆ Π , A
-add ts u = ts , u
-
 dist : ∀ {A B Γ} → Γ ⊢ □ (A ▷ B) → Γ ⊢ □ A → Γ ⊢ □ B
 dist t u = multibox ((∙ , t) , u) (app (down v₁) (down v₀))
 
