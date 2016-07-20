@@ -36,7 +36,7 @@ module _ {{_ : Model}} where
     w ⊪ A ∧ B = w ⊩ A × w ⊩ B
     w ⊪ ⊤    = Top
     w ⊪ ⊥    = Bot
-    w ⊪ A ∨ B = w ⊩ A + w ⊩ B
+    w ⊪ A ∨ B = w ⊩ A ⊎ w ⊩ B
 
     infix 3 _⊩_
     _⊩_ : World → Ty → Set

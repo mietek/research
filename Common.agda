@@ -17,8 +17,8 @@ open import Data.Product public
   renaming (proj₁ to π₁ ; proj₂ to π₂)
 
 open import Data.Sum public
-  using ()
-  renaming (_⊎_ to _+_ ; inj₁ to ι₁ ; inj₂ to ι₂)
+  using (_⊎_)
+  renaming (inj₁ to ι₁ ; inj₂ to ι₂)
 
 open import Data.Unit public
   using ()
@@ -49,7 +49,7 @@ postulate
 -- Miscellaneous.
 
 κ : ∀ {a b c} {A : Set a} {B : Set b} {C : Set c}
-    → A + B → (A → C) → (B → C) → C
+    → A ⊎ B → (A → C) → (B → C) → C
 κ (ι₁ x) f g = f x
 κ (ι₂ y) f g = g y
 

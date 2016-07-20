@@ -24,7 +24,7 @@ module _ {{_ : Model}} where
   ⊨ A ∧ B = ⊨ A × ⊨ B
   ⊨ ⊤    = Top
   ⊨ ⊥    = Bot
-  ⊨ A ∨ B = ⊨ A + ⊨ B
+  ⊨ A ∨ B = ⊨ A ⊎ ⊨ B
 
   infix 3 ⊨⋆_
   ⊨⋆_ : Cx Ty → Set
