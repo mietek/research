@@ -13,8 +13,8 @@ open G using () renaming (_⊢_ to G⟨_⊢_⟩) public
 
 -- Translation from sequential Hilbert-style to nested.
 
-hl→hn : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → HN⟨ Γ ⊢ A ⟩
-hl→hn (Π , ts) = aux ts top
+hs→hn : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → HN⟨ Γ ⊢ A ⟩
+hs→hn (Π , ts) = aux ts top
   where
     aux : ∀ {A Γ Π} → HS⟨ Γ ⊢× Π ⟩ → A ∈ Π → HN⟨ Γ ⊢ A ⟩
     aux (HS.var i ts)  top     = HN.var i
@@ -39,22 +39,22 @@ hl→hn (Π , ts) = aux ts top
 
 -- Translation from nested Hilbert-style to sequential.
 
-hn→hl : ∀ {A Γ} → HN⟨ Γ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
-hn→hl (HN.var i)   = ⌀ , HS.var i HS.nil
-hn→hl (HN.app t u) = HS.app (hn→hl t) (hn→hl u)
-hn→hl HN.ci        = ⌀ , HS.ci HS.nil
-hn→hl HN.ck        = ⌀ , HS.ck HS.nil
-hn→hl HN.cs        = ⌀ , HS.cs HS.nil
-hn→hl HN.cpair     = ⌀ , HS.cpair HS.nil
-hn→hl HN.cfst      = ⌀ , HS.cfst HS.nil
-hn→hl HN.csnd      = ⌀ , HS.csnd HS.nil
-hn→hl HN.tt        = ⌀ , HS.tt HS.nil
+hn→hs : ∀ {A Γ} → HN⟨ Γ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
+hn→hs (HN.var i)   = ⌀ , HS.var i HS.nil
+hn→hs (HN.app t u) = HS.app (hn→hs t) (hn→hs u)
+hn→hs HN.ci        = ⌀ , HS.ci HS.nil
+hn→hs HN.ck        = ⌀ , HS.ck HS.nil
+hn→hs HN.cs        = ⌀ , HS.cs HS.nil
+hn→hs HN.cpair     = ⌀ , HS.cpair HS.nil
+hn→hs HN.cfst      = ⌀ , HS.cfst HS.nil
+hn→hs HN.csnd      = ⌀ , HS.csnd HS.nil
+hn→hs HN.tt        = ⌀ , HS.tt HS.nil
 
 
 -- Deduction theorem for sequential Hilbert-style.
 
 hl-lam : ∀ {A B Γ} → HS⟨ Γ , A ⊢ B ⟩ → HS⟨ Γ ⊢ A ▷ B ⟩
-hl-lam = hn→hl ∘ HN.lam ∘ hl→hn
+hl-lam = hn→hs ∘ HN.lam ∘ hs→hn
 
 
 -- Translation from Hilbert-style to Gentzen-style.
@@ -70,8 +70,8 @@ hn→g HN.cfst      = G.cfst
 hn→g HN.csnd      = G.csnd
 hn→g HN.tt        = G.tt
 
-hl→g : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → G⟨ Γ ⊢ A ⟩
-hl→g = hn→g ∘ hl→hn
+hs→g : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → G⟨ Γ ⊢ A ⟩
+hs→g = hn→g ∘ hs→hn
 
 
 -- Translation from Gentzen-style to Hilbert-style.
@@ -85,5 +85,5 @@ g→hn (G.fst t)    = HN.fst (g→hn t)
 g→hn (G.snd t)    = HN.snd (g→hn t)
 g→hn G.tt         = HN.tt
 
-g→hl : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
-g→hl = hn→hl ∘ g→hn
+g→hs : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
+g→hs = hn→hs ∘ g→hn
