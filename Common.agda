@@ -10,7 +10,7 @@ open import Data.Bool public
 
 open import Data.Empty public
   using ()
-  renaming (⊥ to Bot ; ⊥-elim to ◎)
+  renaming (⊥ to Bot ; ⊥-elim to elimBot)
 
 open import Data.Nat public
   using (ℕ ; zero ; suc)
