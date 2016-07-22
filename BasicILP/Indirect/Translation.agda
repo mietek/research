@@ -46,14 +46,14 @@ hn→gᵀᵐ HN.CFST      = G.CFST
 hn→gᵀᵐ HN.CSND      = G.CSND
 hn→gᵀᵐ HN.TT        = G.TT
 
-hn→gᵀʸ : Ty (HN.Tm) → Ty (G.Tm)
+hn→gᵀʸ : Ty HN.Tm → Ty G.Tm
 hn→gᵀʸ (α P)   = α P
 hn→gᵀʸ (A ▷ B) = hn→gᵀʸ A ▷ hn→gᵀʸ B
 hn→gᵀʸ (T ⦂ A) = hn→gᵀᵐ T ⦂ hn→gᵀʸ A
 hn→gᵀʸ (A ∧ B) = hn→gᵀʸ A ∧ hn→gᵀʸ B
 hn→gᵀʸ ⊤      = ⊤
 
-hn→gᵀʸ⋆ : Cx (Ty (HN.Tm)) → Cx (Ty (G.Tm))
+hn→gᵀʸ⋆ : Cx (Ty HN.Tm) → Cx (Ty G.Tm)
 hn→gᵀʸ⋆ ⌀       = ⌀
 hn→gᵀʸ⋆ (Γ , A) = hn→gᵀʸ⋆ Γ , hn→gᵀʸ A
 
@@ -98,14 +98,14 @@ mutual
   g→hnᵀᵐ⋆ ⌀        = ⌀
   g→hnᵀᵐ⋆ (TS , T) = g→hnᵀᵐ⋆ TS , g→hnᵀᵐ T
 
-g→hnᵀʸ : Ty (G.Tm) → Ty (HN.Tm)
+g→hnᵀʸ : Ty G.Tm → Ty HN.Tm
 g→hnᵀʸ (α P)   = α P
 g→hnᵀʸ (A ▷ B) = g→hnᵀʸ A ▷ g→hnᵀʸ B
 g→hnᵀʸ (T ⦂ A) = g→hnᵀᵐ T ⦂ g→hnᵀʸ A
 g→hnᵀʸ (A ∧ B) = g→hnᵀʸ A ∧ g→hnᵀʸ B
 g→hnᵀʸ ⊤      = ⊤
 
-g→hnᵀʸ⋆ : Cx (Ty (G.Tm)) → Cx (Ty (HN.Tm))
+g→hnᵀʸ⋆ : Cx (Ty G.Tm) → Cx (Ty HN.Tm)
 g→hnᵀʸ⋆ ⌀       = ⌀
 g→hnᵀʸ⋆ (Γ , A) = g→hnᵀʸ⋆ Γ , g→hnᵀʸ A
 

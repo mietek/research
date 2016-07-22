@@ -26,9 +26,9 @@ module _ {ℓ} {U : Set ℓ} where
     top : ∀ {Γ} → A ∈ Γ , A
     pop : ∀ {B Γ} → A ∈ Γ → A ∈ Γ , B
 
-  ix : ∀ {A Γ} → A ∈ Γ → ℕ
-  ix top     = zero
-  ix (pop i) = suc (ix i)
+  [_]ᴵˣ : ∀ {A Γ} → A ∈ Γ → ℕ
+  [ top ]ᴵˣ   = zero
+  [ pop i ]ᴵˣ = suc [ i ]ᴵˣ
 
   i₀ : ∀ {A Γ} → A ∈ Γ , A
   i₀ = top

@@ -25,4 +25,4 @@ module _ {X : Set} where
 
   _⦂⋆_ : ∀ {n} → VCx X n → VCx (Ty X) n → Cx (Ty X)
   ⌀        ⦂⋆ ⌀       = ⌀
-  (𝓉𝓈 , 𝓉) ⦂⋆ (Π , A) = (𝓉𝓈 ⦂⋆ Π) , (𝓉 ⦂ A)
+  (TS , T) ⦂⋆ (Π , A) = (TS ⦂⋆ Π) , (T ⦂ A)

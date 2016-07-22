@@ -23,22 +23,22 @@ mutual
 
   infix 3 _⊢_
   data _⊢_ (Γ : Cx (Ty Tm)) : Ty Tm → Set where
-    var   : ∀ {A}           → A ∈ Γ → Γ ⊢ A
-    app   : ∀ {A B}         → Γ ⊢ A ▷ B → Γ ⊢ A → Γ ⊢ B
-    ci    : ∀ {A}           → Γ ⊢ A ▷ A
-    ck    : ∀ {A B}         → Γ ⊢ A ▷ B ▷ A
-    cs    : ∀ {A B C}       → Γ ⊢ (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
-    box   : ∀ {A}           → (t : ⌀ ⊢ A) → Γ ⊢ [ t ] ⦂ A
-    cdist : ∀ {A B [t] [u]} → Γ ⊢ [t] ⦂ (A ▷ B) ▷ [u] ⦂ A ▷ APP [t] [u] ⦂ B
-    cup   : ∀ {A [t]}       → Γ ⊢ [t] ⦂ A ▷ BOX [t] ⦂ [t] ⦂ A
-    cdown : ∀ {A [t]}       → Γ ⊢ [t] ⦂ A ▷ A
-    cpair : ∀ {A B}         → Γ ⊢ A ▷ B ▷ A ∧ B
-    cfst  : ∀ {A B}         → Γ ⊢ A ∧ B ▷ A
-    csnd  : ∀ {A B}         → Γ ⊢ A ∧ B ▷ B
+    var   : ∀ {A}       → A ∈ Γ → Γ ⊢ A
+    app   : ∀ {A B}     → Γ ⊢ A ▷ B → Γ ⊢ A → Γ ⊢ B
+    ci    : ∀ {A}       → Γ ⊢ A ▷ A
+    ck    : ∀ {A B}     → Γ ⊢ A ▷ B ▷ A
+    cs    : ∀ {A B C}   → Γ ⊢ (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
+    box   : ∀ {A}       → (t : ⌀ ⊢ A) → Γ ⊢ [ t ] ⦂ A
+    cdist : ∀ {A B T U} → Γ ⊢ T ⦂ (A ▷ B) ▷ U ⦂ A ▷ APP T U ⦂ B
+    cup   : ∀ {A T}     → Γ ⊢ T ⦂ A ▷ BOX T ⦂ T ⦂ A
+    cdown : ∀ {A T}     → Γ ⊢ T ⦂ A ▷ A
+    cpair : ∀ {A B}     → Γ ⊢ A ▷ B ▷ A ∧ B
+    cfst  : ∀ {A B}     → Γ ⊢ A ∧ B ▷ A
+    csnd  : ∀ {A B}     → Γ ⊢ A ∧ B ▷ B
     tt    : Γ ⊢ ⊤
 
   [_] : ∀ {A Γ} → Γ ⊢ A → Tm
-  [ var i ]   = VAR (ix i)
+  [ var i ]   = VAR [ i ]ᴵˣ
   [ app t u ] = APP [ t ] [ u ]
   [ ci ]      = CI
   [ ck ]      = CK
@@ -106,11 +106,11 @@ v₂ = var i₂
 LAM : Tm → Tm
 LAM (VAR zero)    = CI
 LAM (VAR (suc i)) = APP CK (VAR i)
-LAM (APP [t] [u]) = APP (APP CS (LAM [t])) (LAM [u])
+LAM (APP T U)     = APP (APP CS (LAM T)) (LAM U)
 LAM CI            = APP CK CI
 LAM CK            = APP CK CK
 LAM CS            = APP CK CS
-LAM (BOX [t])     = APP CK (BOX [t])
+LAM (BOX T)       = APP CK (BOX T)
 LAM CDIST         = APP CK CDIST
 LAM CUP           = APP CK CUP
 LAM CDOWN         = APP CK CDOWN
@@ -139,7 +139,7 @@ lam tt            = app ck tt
 -- Detachment theorem.
 
 DET : Tm → Tm
-DET [t] = APP [t] V₀
+DET T = APP T V₀
 
 det : ∀ {A B Γ} → Γ ⊢ A ▷ B → Γ , A ⊢ B
 det t = app (mono⊢ weak⊆ t) v₀
@@ -148,8 +148,8 @@ det t = app (mono⊢ weak⊆ t) v₀
 -- Additional useful properties.
 
 MULTICUT : Cx Tm → Tm → Tm
-MULTICUT ⌀            [u] = [u]
-MULTICUT ([ts] , [t]) [u] = APP (MULTICUT [ts] (LAM [u])) [t]
+MULTICUT ⌀        U = U
+MULTICUT (TS , T) U = APP (MULTICUT TS (LAM U)) T
 
 multicut⊢ : ∀ {A Γ Γ′} → Γ ⊢⋆ Γ′ → Γ′ ⊢ A → Γ ⊢ A
 multicut⊢ {Γ′ = ⌀}      ∙        u = mono⊢ bot⊆ u
@@ -170,7 +170,7 @@ CCONT : Tm
 CCONT = LAM (LAM (APP (APP V₁ V₀) V₀))
 
 CONT : Tm → Tm
-CONT [t] = DET (APP CCONT (LAM (LAM [t])))
+CONT T = DET (APP CCONT (LAM (LAM T)))
 
 ccont : ∀ {A B Γ} → Γ ⊢ (A ▷ A ▷ B) ▷ A ▷ B
 ccont = lam (lam (app (app v₁ v₀) v₀))
@@ -185,7 +185,7 @@ CEXCH : Tm
 CEXCH = LAM (LAM (LAM (APP (APP V₂ V₀) V₁)))
 
 EXCH : Tm → Tm
-EXCH [t] = DET (DET (APP CEXCH (LAM (LAM [t]))))
+EXCH T = DET (DET (APP CEXCH (LAM (LAM T))))
 
 cexch : ∀ {A B C Γ} → Γ ⊢ (A ▷ B ▷ C) ▷ B ▷ A ▷ C
 cexch = lam (lam (lam (app (app v₂ v₀) v₁)))
@@ -200,7 +200,7 @@ CCOMP : Tm
 CCOMP = LAM (LAM (LAM (APP V₂ (APP V₁ V₀))))
 
 COMP : Tm → Tm → Tm
-COMP [t] [u] = DET (APP (APP CCOMP (LAM [t])) (LAM [u]))
+COMP T U = DET (APP (APP CCOMP (LAM T)) (LAM U))
 
 ccomp : ∀ {A B C Γ} → Γ ⊢ (B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
 ccomp = lam (lam (lam (app v₂ (app v₁ v₀))))
@@ -212,47 +212,38 @@ comp t u = det (app (app ccomp (lam t)) (lam u))
 -- Useful theorems in functional form.
 
 DIST : Tm → Tm → Tm
-DIST [t] [u] = APP (APP CDIST [t]) [u]
+DIST T U = APP (APP CDIST T) U
 
 UP : Tm → Tm
-UP [t] = APP CUP [t]
+UP T = APP CUP T
 
 DOWN : Tm → Tm
-DOWN [t] = APP CDOWN [t]
+DOWN T = APP CDOWN T
 
 DISTUP : Tm → Tm → Tm
-DISTUP [t] [u] = DIST [t] (UP [u])
+DISTUP T U = DIST T (UP U)
 
 UNBOX : Tm → Tm → Tm
-UNBOX [t] [u] = APP (LAM [u]) [t]
+UNBOX T U = APP (LAM U) T
 
 MULTIBOX : Cx Tm → Tm → Tm
-MULTIBOX ⌀            [u] = BOX [u]
-MULTIBOX ([ts] , [t]) [u] = DISTUP (MULTIBOX [ts] (LAM [u])) [t]
+MULTIBOX ⌀        U = BOX U
+MULTIBOX (TS , T) U = DISTUP (MULTIBOX TS (LAM U)) T
 
-dist : ∀ {A B [t] [u] Γ}
-       → Γ ⊢ [t] ⦂ (A ▷ B) → Γ ⊢ [u] ⦂ A
-       → Γ ⊢ (APP [t] [u]) ⦂ B
+dist : ∀ {A B T U Γ} → Γ ⊢ T ⦂ (A ▷ B) → Γ ⊢ U ⦂ A → Γ ⊢ (APP T U) ⦂ B
 dist t u = app (app cdist t) u
 
-up : ∀ {A [t] Γ}
-     → Γ ⊢ [t] ⦂ A
-     → Γ ⊢ BOX [t] ⦂ [t] ⦂ A
+up : ∀ {A T Γ} → Γ ⊢ T ⦂ A → Γ ⊢ BOX T ⦂ T ⦂ A
 up t = app cup t
 
-down : ∀ {A [t] Γ}
-       → Γ ⊢ [t] ⦂ A
-       → Γ ⊢ A
+down : ∀ {A T Γ} → Γ ⊢ T ⦂ A → Γ ⊢ A
 down t = app cdown t
 
-distup : ∀ {A B [t] [u] Γ}
-         → Γ ⊢ [t] ⦂ ([u] ⦂ A ▷ B) → Γ ⊢ [u] ⦂ A
-         → Γ ⊢ APP [t] (BOX [u]) ⦂ B
+distup : ∀ {A B T U Γ} → Γ ⊢ T ⦂ (U ⦂ A ▷ B)
+         → Γ ⊢ U ⦂ A → Γ ⊢ APP T (BOX U) ⦂ B
 distup t u = dist t (up u)
 
-unbox : ∀ {A C [t] [u] Γ}
-        → Γ ⊢ [t] ⦂ A → Γ , [t] ⦂ A ⊢ [u] ⦂ C
-        → Γ ⊢ [u] ⦂ C
+unbox : ∀ {A C T U Γ} → Γ ⊢ T ⦂ A → Γ , T ⦂ A ⊢ U ⦂ C → Γ ⊢ U ⦂ C
 unbox t u = app (lam u) t
 
 
@@ -261,29 +252,29 @@ unbox t u = app (lam u) t
 -- Do we need reduction on term representations?
 --
 -- Goal: Γ ⊢ [ u ] ⦂ A
--- Have: Γ ⊢ APP [ lam u ] (BOX [s]) ⦂ A
+-- Have: Γ ⊢ APP [ lam u ] (BOX S) ⦂ A
 
-distup′ : ∀ {A B [t] [u] Γ} → Γ ⊢ LAM [t] ⦂ ([u] ⦂ A ▷ B) → Γ ⊢ [u] ⦂ A
-          → Γ ⊢ APP (LAM [t]) (BOX [u]) ⦂ B
+distup′ : ∀ {A B T U Γ} → Γ ⊢ LAM T ⦂ (U ⦂ A ▷ B) → Γ ⊢ U ⦂ A
+          → Γ ⊢ APP (LAM T) (BOX U) ⦂ B
 distup′ t u = dist t (up u)
 
--- multibox : ∀ {n A Γ} {[ss] : VCx Tm n} {Π : VCx (Ty Tm) n}
---            → Γ ⊢⋆ [ss] ⦂⋆ Π → (u : [ss] ⦂⋆ Π ⊢ A)
+-- multibox : ∀ {n A Γ} {SS : VCx Tm n} {Π : VCx (Ty Tm) n}
+--            → Γ ⊢⋆ SS ⦂⋆ Π → (u : SS ⦂⋆ Π ⊢ A)
 --            → Γ ⊢ [ u ] ⦂ A
--- multibox {[ss] = ⌀}          {⌀}     ∙        u = box u
--- multibox {[ss] = [ss] , [s]} {Π , B} (ts , t) u = {!distup (multibox ts (lam u)) t!}
+-- multibox {SS = ⌀}      {⌀}     ∙        u = box u
+-- multibox {SS = SS , S} {Π , B} (ts , t) u = {!distup (multibox ts (lam u)) t!}
 
 -- FIXME ↑ FIXME ↑ FIXME -----------------------------------------------------
 
 
 PAIR : Tm → Tm → Tm
-PAIR [t] [u] = APP (APP CPAIR [t]) [u]
+PAIR T U = APP (APP CPAIR T) U
 
 FST : Tm → Tm
-FST [t] = APP CFST [t]
+FST T = APP CFST T
 
 SND : Tm → Tm
-SND [t] = APP CSND [t]
+SND T = APP CSND T
 
 pair : ∀ {A B Γ} → Γ ⊢ A → Γ ⊢ B → Γ ⊢ A ∧ B
 pair t u = app (app cpair t) u

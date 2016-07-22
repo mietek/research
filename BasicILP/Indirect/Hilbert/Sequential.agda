@@ -6,65 +6,65 @@ open import BasicILP.Indirect public
 -- Derivations, as Hilbert-style combinator sequences.
 
 mutual
-  data Tm× : Set where
-    NIL   : Tm×
-    VAR   : ℕ → Tm× → Tm×
-    MP    : ℕ → ℕ → Tm× → Tm×
-    CI    : Tm× → Tm×
-    CK    : Tm× → Tm×
-    CS    : Tm× → Tm×
-    NEC   : Tm× → Tm× → Tm×
-    CDIST : Tm× → Tm×
-    CUP   : Tm× → Tm×
-    CDOWN : Tm× → Tm×
-    CPAIR : Tm× → Tm×
-    CFST  : Tm× → Tm×
-    CSND  : Tm× → Tm×
-    TT    : Tm× → Tm×
+  data Tm : Set where
+    NIL   : Tm
+    VAR   : ℕ → Tm → Tm
+    MP    : ℕ → ℕ → Tm → Tm
+    CI    : Tm → Tm
+    CK    : Tm → Tm
+    CS    : Tm → Tm
+    NEC   : Tm → Tm → Tm
+    CDIST : Tm → Tm
+    CUP   : Tm → Tm
+    CDOWN : Tm → Tm
+    CPAIR : Tm → Tm
+    CFST  : Tm → Tm
+    CSND  : Tm → Tm
+    TT    : Tm → Tm
 
-  _[⧻]_ : Tm× → Tm× → Tm×
-  [us] [⧻] NIL             = [us]
-  [us] [⧻] VAR [i] [ts]    = VAR [i] ([us] [⧻] [ts])
-  [us] [⧻] MP [i] [j] [ts] = MP [i] [j] ([us] [⧻] [ts])
-  [us] [⧻] CI [ts]         = CI ([us] [⧻] [ts])
-  [us] [⧻] CK [ts]         = CK ([us] [⧻] [ts])
-  [us] [⧻] CS [ts]         = CS ([us] [⧻] [ts])
-  [us] [⧻] NEC [ss] [ts]   = NEC [ss] ([us] [⧻] [ts])
-  [us] [⧻] CDIST [ts]      = CDIST ([us] [⧻] [ts])
-  [us] [⧻] CUP [ts]        = CUP ([us] [⧻] [ts])
-  [us] [⧻] CDOWN [ts]      = CDOWN ([us] [⧻] [ts])
-  [us] [⧻] CPAIR [ts]      = CPAIR ([us] [⧻] [ts])
-  [us] [⧻] CFST [ts]       = CFST ([us] [⧻] [ts])
-  [us] [⧻] CSND [ts]       = CSND ([us] [⧻] [ts])
-  [us] [⧻] TT [ts]         = TT ([us] [⧻] [ts])
+  _⧻ᵀᵐ_ : Tm → Tm → Tm
+  US ⧻ᵀᵐ NIL       = US
+  US ⧻ᵀᵐ VAR I TS  = VAR I (US ⧻ᵀᵐ TS)
+  US ⧻ᵀᵐ MP I J TS = MP I J (US ⧻ᵀᵐ TS)
+  US ⧻ᵀᵐ CI TS     = CI (US ⧻ᵀᵐ TS)
+  US ⧻ᵀᵐ CK TS     = CK (US ⧻ᵀᵐ TS)
+  US ⧻ᵀᵐ CS TS     = CS (US ⧻ᵀᵐ TS)
+  US ⧻ᵀᵐ NEC SS TS = NEC SS (US ⧻ᵀᵐ TS)
+  US ⧻ᵀᵐ CDIST TS  = CDIST (US ⧻ᵀᵐ TS)
+  US ⧻ᵀᵐ CUP TS    = CUP (US ⧻ᵀᵐ TS)
+  US ⧻ᵀᵐ CDOWN TS  = CDOWN (US ⧻ᵀᵐ TS)
+  US ⧻ᵀᵐ CPAIR TS  = CPAIR (US ⧻ᵀᵐ TS)
+  US ⧻ᵀᵐ CFST TS   = CFST (US ⧻ᵀᵐ TS)
+  US ⧻ᵀᵐ CSND TS   = CSND (US ⧻ᵀᵐ TS)
+  US ⧻ᵀᵐ TT TS     = TT (US ⧻ᵀᵐ TS)
+
+  APP : Tm → Tm → Tm
+  APP TS US = MP 0 0 (US ⧻ᵀᵐ TS)
+
+  BOX : Tm → Tm
+  BOX TS = NEC TS NIL
 
   infix 3 _⊢×_
-  data _⊢×_ (Γ : Cx (Ty Tm×)) : Cx (Ty Tm×) → Set where
+  data _⊢×_ (Γ : Cx (Ty Tm)) : Cx (Ty Tm) → Set where
     nil   : Γ ⊢× ⌀
-    var   : ∀ {Π A}             → A ∈ Γ → Γ ⊢× Π → Γ ⊢× Π , A
-    mp    : ∀ {Π A B}           → A ▷ B ∈ Π → A ∈ Π → Γ ⊢× Π → Γ ⊢× Π , B
-    ci    : ∀ {Π A}             → Γ ⊢× Π → Γ ⊢× Π , A ▷ A
-    ck    : ∀ {Π A B}           → Γ ⊢× Π → Γ ⊢× Π , A ▷ B ▷ A
-    cs    : ∀ {Π A B C}         → Γ ⊢× Π → Γ ⊢× Π , (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
+    var   : ∀ {Π A}         → A ∈ Γ → Γ ⊢× Π → Γ ⊢× Π , A
+    mp    : ∀ {Π A B}       → A ▷ B ∈ Π → A ∈ Π → Γ ⊢× Π → Γ ⊢× Π , B
+    ci    : ∀ {Π A}         → Γ ⊢× Π → Γ ⊢× Π , A ▷ A
+    ck    : ∀ {Π A B}       → Γ ⊢× Π → Γ ⊢× Π , A ▷ B ▷ A
+    cs    : ∀ {Π A B C}     → Γ ⊢× Π → Γ ⊢× Π , (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
+    nec   : ∀ {Π Ξ A}       → (ss : ⌀ ⊢× Ξ , A) → Γ ⊢× Π → Γ ⊢× Π , [ ss ]× ⦂ A
+    cdist : ∀ {Π A B TS US} → Γ ⊢× Π → Γ ⊢× Π , TS ⦂ (A ▷ B) ▷ US ⦂ A ▷ APP TS US ⦂ B
+    cup   : ∀ {Π A TS}      → Γ ⊢× Π → Γ ⊢× Π , TS ⦂ A ▷ BOX TS ⦂ TS ⦂ A
+    cdown : ∀ {Π A TS}      → Γ ⊢× Π → Γ ⊢× Π , TS ⦂ A ▷ A
+    cpair : ∀ {Π A B}       → Γ ⊢× Π → Γ ⊢× Π , A ▷ B ▷ A ∧ B
+    cfst  : ∀ {Π A B}       → Γ ⊢× Π → Γ ⊢× Π , A ∧ B ▷ A
+    csnd  : ∀ {Π A B}       → Γ ⊢× Π → Γ ⊢× Π , A ∧ B ▷ B
+    tt    : ∀ {Π}           → Γ ⊢× Π → Γ ⊢× Π , ⊤
 
-    nec   : ∀ {Π Ξ A}           → (ss : ⌀ ⊢× Ξ , A)
-                                → Γ ⊢× Π → Γ ⊢× Π , [ ss ]× ⦂ A
-    cdist : ∀ {Π A B [ts] [us]} → Γ ⊢× Π
-                                → Γ ⊢× Π , [ts] ⦂ (A ▷ B) ▷ [us] ⦂ A ▷ MP 0 0 {!!} ⦂ B
-    cup   : ∀ {Π A [ss]}        → (ts : Γ ⊢× Π)
-                                → Γ ⊢× Π , [ss] ⦂ A ▷ NEC [ss] {!!} ⦂ [ss] ⦂ A
-    cdown : ∀ {Π A [ss]}        → Γ ⊢× Π
-                                → Γ ⊢× Π , [ss] ⦂ A ▷ A
-
-    cpair : ∀ {Π A B}           → Γ ⊢× Π → Γ ⊢× Π , A ▷ B ▷ A ∧ B
-    cfst  : ∀ {Π A B}           → Γ ⊢× Π → Γ ⊢× Π , A ∧ B ▷ A
-    csnd  : ∀ {Π A B}           → Γ ⊢× Π → Γ ⊢× Π , A ∧ B ▷ B
-    tt    : ∀ {Π}               → Γ ⊢× Π → Γ ⊢× Π , ⊤
-
-  [_]× : ∀ {Π Γ} → Γ ⊢× Π → Tm×
+  [_]× : ∀ {Π Γ} → Γ ⊢× Π → Tm
   [ nil ]×       = NIL
-  [ var i ts ]×  = VAR (ix i) [ ts ]×
-  [ mp i j ts ]× = MP (ix i) (ix j) [ ts ]×
+  [ var i ts ]×  = VAR [ i ]ᴵˣ [ ts ]×
+  [ mp i j ts ]× = MP [ i ]ᴵˣ [ j ]ᴵˣ [ ts ]×
   [ ci ts ]×     = CI [ ts ]×
   [ ck ts ]×     = CK [ ts ]×
   [ cs ts ]×     = CS [ ts ]×
@@ -78,10 +78,10 @@ mutual
   [ tt ts ]×     = TT [ ts ]×
 
 infix 3 _⊢_
-_⊢_ : Cx (Ty Tm×) → Ty Tm× → Set
+_⊢_ : Cx (Ty Tm) → Ty Tm → Set
 Γ ⊢ A = ∃ (λ Π → Γ ⊢× Π , A)
 
-[_] : ∀ {A Γ} → Γ ⊢ A → Tm×
+[_] : ∀ {A Γ} → Γ ⊢ A → Tm
 [ Π , ts ] = [ ts ]×
 
 
@@ -96,7 +96,7 @@ mono⊢× η (ck ts)     = ck (mono⊢× η ts)
 mono⊢× η (cs ts)     = cs (mono⊢× η ts)
 mono⊢× η (nec ss ts) = nec ss (mono⊢× η ts)
 mono⊢× η (cdist ts)  = cdist (mono⊢× η ts)
-mono⊢× η (cup ts)    = {!cup (mono⊢× η ts)!}
+mono⊢× η (cup ts)    = cup (mono⊢× η ts)
 mono⊢× η (cdown ts)  = cdown (mono⊢× η ts)
 mono⊢× η (cpair ts)  = cpair (mono⊢× η ts)
 mono⊢× η (cfst ts)   = cfst (mono⊢× η ts)
@@ -118,7 +118,7 @@ us ⧻ ck ts     = ck (us ⧻ ts)
 us ⧻ cs ts     = cs (us ⧻ ts)
 us ⧻ nec ss ts = nec ss (us ⧻ ts)
 us ⧻ cdist ts  = cdist (us ⧻ ts)
-us ⧻ cup ts    = {!cup (us ⧻ ts)!}
+us ⧻ cup ts    = cup (us ⧻ ts)
 us ⧻ cdown ts  = cdown (us ⧻ ts)
 us ⧻ cpair ts  = cpair (us ⧻ ts)
 us ⧻ cfst ts   = cfst (us ⧻ ts)

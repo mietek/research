@@ -22,10 +22,10 @@ mutual
     var      : ∀ {A}   → A ∈ Γ → Γ ⊢ A
     lam      : ∀ {A B} → Γ , A ⊢ B → Γ ⊢ A ▷ B
     app      : ∀ {A B} → Γ ⊢ A ▷ B → Γ ⊢ A → Γ ⊢ B
-    multibox : ∀ {n A} {[ss] : VCx Tm n} {Π : VCx (Ty Tm) n}
-               → Γ ⊢⋆ [ss] ⦂⋆ Π → (u : [ss] ⦂⋆ Π ⊢ A)
+    multibox : ∀ {n A} {SS : VCx Tm n} {Π : VCx (Ty Tm) n}
+               → Γ ⊢⋆ SS ⦂⋆ Π → (u : SS ⦂⋆ Π ⊢ A)
                → Γ ⊢ [ u ] ⦂ A
-    down     : ∀ {A [t]} → Γ ⊢ [t] ⦂ A → Γ ⊢ A
+    down     : ∀ {A T} → Γ ⊢ T ⦂ A → Γ ⊢ A
     pair     : ∀ {A B} → Γ ⊢ A → Γ ⊢ B → Γ ⊢ A ∧ B
     fst      : ∀ {A B} → Γ ⊢ A ∧ B → Γ ⊢ A
     snd      : ∀ {A B} → Γ ⊢ A ∧ B → Γ ⊢ B
@@ -37,7 +37,7 @@ mutual
   Γ ⊢⋆ Π , A = Γ ⊢⋆ Π × Γ ⊢ A
 
   [_] : ∀ {A Γ} → Γ ⊢ A → Tm
-  [ var i ]         = VAR (ix i)
+  [ var i ]         = VAR [ i ]ᴵˣ
   [ lam t ]         = LAM [ t ]
   [ app t u ]       = APP [ t ] [ u ]
   [ multibox ts u ] = MULTIBOX [ ts ]⋆ [ u ]
@@ -97,7 +97,7 @@ v₂ = var i₂
 -- Detachment theorem.
 
 DET : Tm → Tm
-DET [t] = APP [t] V₀
+DET T = APP T V₀
 
 det : ∀ {A B Γ} → Γ ⊢ A ▷ B → Γ , A ⊢ B
 det t = app (mono⊢ weak⊆ t) v₀
@@ -106,8 +106,8 @@ det t = app (mono⊢ weak⊆ t) v₀
 -- Additional useful properties.
 
 MULTICUT : Cx Tm → Tm → Tm
-MULTICUT ⌀            [u] = [u]
-MULTICUT ([ts] , [t]) [u] = APP (MULTICUT [ts] (LAM [u])) [t]
+MULTICUT ⌀        U = U
+MULTICUT (TS , T) U = APP (MULTICUT TS (LAM U)) T
 
 multicut⊢ : ∀ {A Γ Γ′} → Γ ⊢⋆ Γ′ → Γ′ ⊢ A → Γ ⊢ A
 multicut⊢ {Γ′ = ⌀}      ∙        u = mono⊢ bot⊆ u
@@ -128,7 +128,7 @@ CCONT : Tm
 CCONT = LAM (LAM (APP (APP V₁ V₀) V₀))
 
 CONT : Tm → Tm
-CONT [t] = DET (APP CCONT (LAM (LAM [t])))
+CONT T = DET (APP CCONT (LAM (LAM T)))
 
 ccont : ∀ {A B Γ} → Γ ⊢ (A ▷ A ▷ B) ▷ A ▷ B
 ccont = lam (lam (app (app v₁ v₀) v₀))
@@ -143,7 +143,7 @@ CEXCH : Tm
 CEXCH = LAM (LAM (LAM (APP (APP V₂ V₀) V₁)))
 
 EXCH : Tm → Tm
-EXCH [t] = DET (DET (APP CEXCH (LAM (LAM [t]))))
+EXCH T = DET (DET (APP CEXCH (LAM (LAM T))))
 
 cexch : ∀ {A B C Γ} → Γ ⊢ (A ▷ B ▷ C) ▷ B ▷ A ▷ C
 cexch = lam (lam (lam (app (app v₂ v₀) v₁)))
@@ -158,7 +158,7 @@ CCOMP : Tm
 CCOMP = LAM (LAM (LAM (APP V₂ (APP V₁ V₀))))
 
 COMP : Tm → Tm → Tm
-COMP [t] [u] = DET (APP (APP CCOMP (LAM [t])) (LAM [u]))
+COMP T U = DET (APP (APP CCOMP (LAM T)) (LAM U))
 
 ccomp : ∀ {A B C Γ} → Γ ⊢ (B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
 ccomp = lam (lam (lam (app v₂ (app v₁ v₀))))
@@ -170,32 +170,32 @@ comp t u = det (app (app ccomp (lam t)) (lam u))
 -- Useful theorems in functional form.
 
 DIST : Tm → Tm → Tm
-DIST [t] [u] = MULTIBOX ((⌀ , [t]) , [u]) (APP (DOWN V₁) (DOWN V₀))
+DIST T U = MULTIBOX ((⌀ , T) , U) (APP (DOWN V₁) (DOWN V₀))
 
 UP : Tm → Tm
-UP [t] = MULTIBOX (⌀ , [t]) V₀
+UP T = MULTIBOX (⌀ , T) V₀
 
 DISTUP : Tm → Tm → Tm
-DISTUP [t] [u] = DIST [t] (UP [u])
+DISTUP T U = DIST T (UP U)
 
 BOX : Tm → Tm
-BOX [t] = MULTIBOX ⌀ [t]
+BOX T = MULTIBOX ⌀ T
 
 UNBOX : Tm → Tm → Tm
-UNBOX [t] [u] = APP (LAM [u]) [t]
+UNBOX T U = APP (LAM U) T
 
-dist : ∀ {A B [t] [u] Γ}
-       → (t : Γ ⊢ [t] ⦂ (A ▷ B)) → (u : Γ ⊢ [u] ⦂ A)
+dist : ∀ {A B T U Γ}
+       → (t : Γ ⊢ T ⦂ (A ▷ B)) → (u : Γ ⊢ U ⦂ A)
        → Γ ⊢ APP (DOWN V₁) (DOWN V₀) ⦂ B
 dist t u = multibox ((∙ , t) , u) (app (down v₁) (down v₀))
 
-up : ∀ {A [t] Γ}
-     → Γ ⊢ [t] ⦂ A
-     → Γ ⊢ V₀ ⦂ [t] ⦂ A
+up : ∀ {A T Γ}
+     → Γ ⊢ T ⦂ A
+     → Γ ⊢ V₀ ⦂ T ⦂ A
 up t = multibox (∙ , t) v₀
 
-distup : ∀ {A B [t] [u] Γ}
-         → (t : Γ ⊢ [t] ⦂ ([u] ⦂ A ▷ B)) → (u : Γ ⊢ [u] ⦂ A)
+distup : ∀ {A B T U Γ}
+         → (t : Γ ⊢ T ⦂ (U ⦂ A ▷ B)) → (u : Γ ⊢ U ⦂ A)
          → Γ ⊢ APP (DOWN V₁) (DOWN V₀) ⦂ B
 distup t u = dist t (up u)
 
@@ -204,9 +204,9 @@ box : ∀ {A Γ}
       → Γ ⊢ [ t ] ⦂ A
 box t = multibox ∙ t
 
-unbox : ∀ {A C [t] [u] Γ}
-        → Γ ⊢ [t] ⦂ A → Γ , [t] ⦂ A ⊢ [u] ⦂ C
-        → Γ ⊢ [u] ⦂ C
+unbox : ∀ {A C T U Γ}
+        → Γ ⊢ T ⦂ A → Γ , T ⦂ A ⊢ U ⦂ C
+        → Γ ⊢ U ⦂ C
 unbox t u = app (lam u) t
 
 
@@ -254,21 +254,21 @@ ck = lam (lam v₁)
 cs : ∀ {A B C Γ} → Γ ⊢ (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
 cs = lam (lam (lam (app (app v₂ v₀) (app v₁ v₀))))
 
-cdist : ∀ {A B [t] [u] Γ}
-        → Γ ⊢ [t] ⦂ (A ▷ B) ▷ [u] ⦂ A ▷ APP (DOWN V₁) (DOWN V₀) ⦂ B
+cdist : ∀ {A B T U Γ}
+        → Γ ⊢ T ⦂ (A ▷ B) ▷ U ⦂ A ▷ APP (DOWN V₁) (DOWN V₀) ⦂ B
 cdist = lam (lam (dist v₁ v₀))
 
-cup : ∀ {A [t] Γ} → Γ ⊢ [t] ⦂ A ▷ V₀ ⦂ [t] ⦂ A
+cup : ∀ {A T Γ} → Γ ⊢ T ⦂ A ▷ V₀ ⦂ T ⦂ A
 cup = lam (up v₀)
 
-cdown : ∀ {A [t] Γ} → Γ ⊢ [t] ⦂ A ▷ A
+cdown : ∀ {A T Γ} → Γ ⊢ T ⦂ A ▷ A
 cdown = lam (down v₀)
 
-cdistup : ∀ {A B [t] [u] Γ}
-          → Γ ⊢ [t] ⦂ ([u] ⦂ A ▷ B) ▷ [u] ⦂ A ▷ APP (DOWN V₁) (DOWN V₀) ⦂ B
+cdistup : ∀ {A B T U Γ}
+          → Γ ⊢ T ⦂ (U ⦂ A ▷ B) ▷ U ⦂ A ▷ APP (DOWN V₁) (DOWN V₀) ⦂ B
 cdistup = lam (lam (dist v₁ (up v₀)))
 
-cunbox : ∀ {A C [t] Γ} → Γ ⊢ [t] ⦂ A ▷ ([t] ⦂ A ▷ C) ▷ C
+cunbox : ∀ {A C T Γ} → Γ ⊢ T ⦂ A ▷ (T ⦂ A ▷ C) ▷ C
 cunbox = lam (lam (app v₀ v₁))
 
 cpair : ∀ {A B Γ} → Γ ⊢ A ▷ B ▷ A ∧ B
