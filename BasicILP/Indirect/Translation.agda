@@ -2,34 +2,176 @@ module BasicILP.Indirect.Translation where
 
 open import BasicILP.Indirect public
 
--- import BasicILP.Indirect.Hilbert.Sequential as HS
+import BasicILP.Indirect.Hilbert.Sequential as HS
 import BasicILP.Indirect.Hilbert.Nested as HN
 import BasicILP.Indirect.Gentzen as G
 
--- open HS using () renaming (_⊢×_ to HS⟨_⊢×_⟩ ; _⊢_ to HS⟨_⊢_⟩) public
+open HS using () renaming (_⊢×_ to HS⟨_⊢×_⟩ ; _⊢_ to HS⟨_⊢_⟩) public
 open HN using () renaming (_⊢_ to HN⟨_⊢_⟩ ; _⊢⋆_ to HN⟨_⊢⋆_⟩) public
 open G using  () renaming (_⊢_ to G⟨_⊢_⟩ ; _⊢⋆_ to G⟨_⊢⋆_⟩) public
 
 
 -- Translation from sequential Hilbert-style to nested.
 
--- hs→hn : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → HN⟨ Γ ⊢ A ⟩
--- hs→hn = ?
+hs→hnᵀᵐ : HS.Tm → HN.Tm
+hs→hnᵀᵐ TS = aux TS 0
+  where
+    aux : HS.Tm → ℕ → HN.Tm
+    aux HS.NIL         zero    = {!!}
+    aux (HS.VAR I TS)  zero    = HN.VAR I
+    aux (HS.MP I J TS) zero    = HN.APP (aux TS I) (aux TS J)
+    aux (HS.CI TS)     zero    = HN.CI
+    aux (HS.CK TS)     zero    = HN.CK
+    aux (HS.CS TS)     zero    = HN.CS
+    aux (HS.NEC SS TS) zero    = HN.BOX (aux SS 0)
+    aux (HS.CDIST TS)  zero    = HN.CDIST
+    aux (HS.CUP TS)    zero    = HN.CUP
+    aux (HS.CDOWN TS)  zero    = HN.CDOWN
+    aux (HS.CPAIR TS)  zero    = HN.CPAIR
+    aux (HS.CFST TS)   zero    = HN.CFST
+    aux (HS.CSND TS)   zero    = HN.CSND
+    aux (HS.TT TS)     zero    = HN.TT
+    aux HS.NIL         (suc K) = {!!}
+    aux (HS.VAR I TS)  (suc K) = aux TS K
+    aux (HS.MP I J TS) (suc K) = aux TS K
+    aux (HS.CI TS)     (suc K) = aux TS K
+    aux (HS.CK TS)     (suc K) = aux TS K
+    aux (HS.CS TS)     (suc K) = aux TS K
+    aux (HS.NEC SS TS) (suc K) = aux TS K
+    aux (HS.CDIST TS)  (suc K) = aux TS K
+    aux (HS.CUP TS)    (suc K) = aux TS K
+    aux (HS.CDOWN TS)  (suc K) = aux TS K
+    aux (HS.CPAIR TS)  (suc K) = aux TS K
+    aux (HS.CFST TS)   (suc K) = aux TS K
+    aux (HS.CSND TS)   (suc K) = aux TS K
+    aux (HS.TT TS)     (suc K) = aux TS K
+
+hs→hnᵀʸ : Ty HS.Tm → Ty HN.Tm
+hs→hnᵀʸ (α P)   = α P
+hs→hnᵀʸ (A ▷ B) = hs→hnᵀʸ A ▷ hs→hnᵀʸ B
+hs→hnᵀʸ (T ⦂ A) = hs→hnᵀᵐ T ⦂ hs→hnᵀʸ A
+hs→hnᵀʸ (A ∧ B) = hs→hnᵀʸ A ∧ hs→hnᵀʸ B
+hs→hnᵀʸ ⊤      = ⊤
+
+hs→hnᵀʸ⋆ : Cx (Ty HS.Tm) → Cx (Ty HN.Tm)
+hs→hnᵀʸ⋆ ⌀       = ⌀
+hs→hnᵀʸ⋆ (Γ , A) = hs→hnᵀʸ⋆ Γ , hs→hnᵀʸ A
+
+hs→hnᴵˣ : ∀ {A Γ} → A ∈ Γ → hs→hnᵀʸ A ∈ hs→hnᵀʸ⋆ Γ
+hs→hnᴵˣ top     = top
+hs→hnᴵˣ (pop i) = pop (hs→hnᴵˣ i)
+
+hs→hn : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → HN⟨ hs→hnᵀʸ⋆ Γ ⊢ hs→hnᵀʸ A ⟩
+hs→hn (Π , ts) = aux ts top
+  where
+    aux : ∀ {A Γ Π} → HS⟨ Γ ⊢× Π ⟩ → A ∈ Π → HN⟨ hs→hnᵀʸ⋆ Γ ⊢ hs→hnᵀʸ A ⟩
+    aux (HS.var i ts)  top     = HN.var (hs→hnᴵˣ i)
+    aux (HS.mp i j ts) top     = HN.app (aux ts i) (aux ts j)
+    aux (HS.ci ts)     top     = HN.ci
+    aux (HS.ck ts)     top     = HN.ck
+    aux (HS.cs ts)     top     = HN.cs
+    aux (HS.nec ss ts) top     = {!HN.box (aux ss top)!}
+    aux (HS.cdist ts)  top     = {!HN.cdist!}
+    aux (HS.cup ts)    top     = {!HN.cup!}
+    aux (HS.cdown ts)  top     = HN.cdown
+    aux (HS.cpair ts)  top     = HN.cpair
+    aux (HS.cfst ts)   top     = HN.cfst
+    aux (HS.csnd ts)   top     = HN.csnd
+    aux (HS.tt ts)     top     = HN.tt
+    aux (HS.var i ts)  (pop k) = aux ts k
+    aux (HS.mp i j ts) (pop k) = aux ts k
+    aux (HS.ci ts)     (pop k) = aux ts k
+    aux (HS.ck ts)     (pop k) = aux ts k
+    aux (HS.cs ts)     (pop k) = aux ts k
+    aux (HS.nec ss ts) (pop k) = aux ts k
+    aux (HS.cdist ts)  (pop k) = aux ts k
+    aux (HS.cup ts)    (pop k) = aux ts k
+    aux (HS.cdown ts)  (pop k) = aux ts k
+    aux (HS.cpair ts)  (pop k) = aux ts k
+    aux (HS.cfst ts)   (pop k) = aux ts k
+    aux (HS.csnd ts)   (pop k) = aux ts k
+    aux (HS.tt ts)     (pop k) = aux ts k
 
 
 -- Translation from nested Hilbert-style to sequential.
 
--- hn→hs : ∀ {A Γ} → HN⟨ Γ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
--- hn→hs = ?
+hn→hsᵀᵐ : HN.Tm → HS.Tm
+hn→hsᵀᵐ (HN.VAR I)   = HS.VAR I HS.NIL
+hn→hsᵀᵐ (HN.APP T U) = HS.APP (hn→hsᵀᵐ T) (hn→hsᵀᵐ U)
+hn→hsᵀᵐ HN.CI        = HS.CI HS.NIL
+hn→hsᵀᵐ HN.CK        = HS.CK HS.NIL
+hn→hsᵀᵐ HN.CS        = HS.CS HS.NIL
+hn→hsᵀᵐ (HN.BOX T)   = HS.BOX (hn→hsᵀᵐ T)
+hn→hsᵀᵐ HN.CDIST     = HS.CDIST HS.NIL
+hn→hsᵀᵐ HN.CUP       = HS.CUP HS.NIL
+hn→hsᵀᵐ HN.CDOWN     = HS.CDOWN HS.NIL
+hn→hsᵀᵐ HN.CPAIR     = HS.CPAIR HS.NIL
+hn→hsᵀᵐ HN.CFST      = HS.CFST HS.NIL
+hn→hsᵀᵐ HN.CSND      = HS.CSND HS.NIL
+hn→hsᵀᵐ HN.TT        = HS.TT HS.NIL
+
+hn→hsᵀʸ : Ty HN.Tm → Ty HS.Tm
+hn→hsᵀʸ (α P)   = α P
+hn→hsᵀʸ (A ▷ B) = hn→hsᵀʸ A ▷ hn→hsᵀʸ B
+hn→hsᵀʸ (T ⦂ A) = hn→hsᵀᵐ T ⦂ hn→hsᵀʸ A
+hn→hsᵀʸ (A ∧ B) = hn→hsᵀʸ A ∧ hn→hsᵀʸ B
+hn→hsᵀʸ ⊤      = ⊤
+
+hn→hsᵀʸ⋆ : Cx (Ty HN.Tm) → Cx (Ty HS.Tm)
+hn→hsᵀʸ⋆ ⌀       = ⌀
+hn→hsᵀʸ⋆ (Γ , A) = hn→hsᵀʸ⋆ Γ , hn→hsᵀʸ A
+
+hn→hsᴵˣ : ∀ {A Γ} → A ∈ Γ → hn→hsᵀʸ A ∈ hn→hsᵀʸ⋆ Γ
+hn→hsᴵˣ top     = top
+hn→hsᴵˣ (pop i) = pop (hn→hsᴵˣ i)
+
+hn→hs : ∀ {A Γ} → HN⟨ Γ ⊢ A ⟩ → HS⟨ hn→hsᵀʸ⋆ Γ ⊢ hn→hsᵀʸ A ⟩
+hn→hs (HN.var i)   = ⌀ , HS.var (hn→hsᴵˣ i) HS.nil
+hn→hs (HN.app t u) = HS.app (hn→hs t) (hn→hs u)
+hn→hs HN.ci        = ⌀ , HS.ci HS.nil
+hn→hs HN.ck        = ⌀ , HS.ck HS.nil
+hn→hs HN.cs        = ⌀ , HS.cs HS.nil
+hn→hs (HN.box t)   = {!HS.box (hn→hs t)!}
+hn→hs HN.cdist     = ⌀ , HS.cdist HS.nil
+hn→hs HN.cup       = ⌀ , HS.cup HS.nil
+hn→hs HN.cdown     = ⌀ , HS.cdown HS.nil
+hn→hs HN.cpair     = ⌀ , HS.cpair HS.nil
+hn→hs HN.cfst      = ⌀ , HS.cfst HS.nil
+hn→hs HN.csnd      = ⌀ , HS.csnd HS.nil
+hn→hs HN.tt        = ⌀ , HS.tt HS.nil
 
 
 -- Deduction theorem for sequential Hilbert-style.
 
+hs→hn→hsᵀᵐ : ∀ {TS} → hn→hsᵀᵐ (hs→hnᵀᵐ TS) ≡ TS
+hs→hn→hsᵀᵐ {HS.NIL}       = {!refl!}
+hs→hn→hsᵀᵐ {HS.VAR I TS}  = cong₂ HS.VAR refl {!!}
+hs→hn→hsᵀᵐ {HS.MP I J TS} = {!!}
+hs→hn→hsᵀᵐ {HS.CI TS}     = {!!}
+hs→hn→hsᵀᵐ {HS.CK TS}     = {!!}
+hs→hn→hsᵀᵐ {HS.CS TS}     = {!!}
+hs→hn→hsᵀᵐ {HS.NEC SS TS} = {!!}
+hs→hn→hsᵀᵐ {HS.CDIST TS}  = {!!}
+hs→hn→hsᵀᵐ {HS.CUP TS}    = {!!}
+hs→hn→hsᵀᵐ {HS.CDOWN TS}  = {!!}
+hs→hn→hsᵀᵐ {HS.CPAIR TS}  = {!!}
+hs→hn→hsᵀᵐ {HS.CFST TS}   = {!!}
+hs→hn→hsᵀᵐ {HS.CSND TS}   = {!!}
+hs→hn→hsᵀᵐ {HS.TT TS}     = {!!}
+
+hs→hn→hsᵀʸ : ∀ {A} → hn→hsᵀʸ (hs→hnᵀʸ A) ≡ A
+hs→hn→hsᵀʸ {α P}   = refl
+hs→hn→hsᵀʸ {A ▷ B} = cong₂ _▷_ hs→hn→hsᵀʸ hs→hn→hsᵀʸ
+hs→hn→hsᵀʸ {T ⦂ A} = cong₂ _⦂_ hs→hn→hsᵀᵐ hs→hn→hsᵀʸ
+hs→hn→hsᵀʸ {A ∧ B} = cong₂ _∧_ hs→hn→hsᵀʸ hs→hn→hsᵀʸ
+hs→hn→hsᵀʸ {⊤}    = refl
+
 -- hs-lam : ∀ {A B Γ} → HS⟨ Γ , A ⊢ B ⟩ → HS⟨ Γ ⊢ A ▷ B ⟩
--- hs-lam = hn→hs ∘ HN.lam ∘ hs→hn
+-- hs-lam t = {!hn→hs (HN.lam (hs→hn t))!}
+-- hn→hs ∘ HN.lam ∘ hs→hn
 
 
--- Translation from Hilbert-style to Gentzen-style.
+-- Translation from nested Hilbert-style to Gentzen-style.
 
 hn→gᵀᵐ : HN.Tm → G.Tm
 hn→gᵀᵐ (HN.VAR I)   = G.VAR I
@@ -76,8 +218,17 @@ hn→g HN.cfst      = G.cfst
 hn→g HN.csnd      = G.csnd
 hn→g HN.tt        = G.tt
 
--- hs→g : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → G⟨ Γ ⊢ A ⟩
--- hs→g = hn→g ∘ hs→hn
+
+-- Translation from sequential Hilbert-style to Gentzen-style.
+
+hs→gᵀʸ : Ty HS.Tm → Ty G.Tm
+hs→gᵀʸ = hn→gᵀʸ ∘ hs→hnᵀʸ
+
+hs→gᵀʸ⋆ : Cx (Ty HS.Tm) → Cx (Ty G.Tm)
+hs→gᵀʸ⋆ = hn→gᵀʸ⋆ ∘ hs→hnᵀʸ⋆
+
+hs→g : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → G⟨ hs→gᵀʸ⋆ Γ ⊢ hs→gᵀʸ A ⟩
+hs→g = hn→g ∘ hs→hn
 
 
 -- Translation from Gentzen-style to Hilbert-style.
@@ -129,5 +280,14 @@ mutual
   g→hn⋆ {⌀}     ∙        = ∙
   g→hn⋆ {Π , A} (ts , t) = g→hn⋆ ts , g→hn t
 
--- g→hs : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
--- g→hs = hn→hs ∘ g→hn
+
+-- Translation from Gentzen-style to sequential Hilbert-style.
+
+g→hsᵀʸ : Ty G.Tm → Ty HS.Tm
+g→hsᵀʸ = hn→hsᵀʸ ∘ g→hnᵀʸ
+
+g→hsᵀʸ⋆ : Cx (Ty G.Tm) → Cx (Ty HS.Tm)
+g→hsᵀʸ⋆ = hn→hsᵀʸ⋆ ∘ g→hnᵀʸ⋆
+
+g→hs : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → HS⟨ g→hsᵀʸ⋆ Γ ⊢ g→hsᵀʸ A ⟩
+g→hs = hn→hs ∘ g→hn
