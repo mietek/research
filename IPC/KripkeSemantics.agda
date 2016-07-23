@@ -40,7 +40,7 @@ module _ {{_ : Model}} where
 
     infix 3 _⊩_
     _⊩_ : World → Ty → Set
-    w ⊩ A = ∀ {w′ C} → w ≤ w′ → (∀ {w″} → w′ ≤ w″ → w″ ⊪ A → w″ ‼ C) → w′ ‼ C
+    w ⊩ A = ∀ {C w′} → w ≤ w′ → (∀ {w″} → w′ ≤ w″ → w″ ⊪ A → w″ ‼ C) → w′ ‼ C
 
   infix 3 _⊩⋆_
   _⊩⋆_ : World → Cx Ty → Set
@@ -51,9 +51,6 @@ module _ {{_ : Model}} where
   -- Monotonicity with respect to intuitionistic accessibility.
 
   mutual
-    mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
-    mono⊩ ξ a = λ ξ′ k′ → a (trans≤ ξ ξ′) k′
-
     mono⊪ : ∀ {A w w′} → w ≤ w′ → w ⊪ A → w′ ⊪ A
     mono⊪ {α P}   ξ s       = mono⊪ᵅ ξ s
     mono⊪ {A ▷ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
@@ -62,6 +59,9 @@ module _ {{_ : Model}} where
     mono⊪ {⊥}    ξ ()
     mono⊪ {A ∨ B} ξ (ι₁ a)  = ι₁ (mono⊩ {A} ξ a)
     mono⊪ {A ∨ B} ξ (ι₂ b)  = ι₂ (mono⊩ {B} ξ b)
+
+    mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
+    mono⊩ ξ a = λ ξ′ k′ → a (trans≤ ξ ξ′) k′
 
   mono⊩⋆ : ∀ {Γ w w′} → w ≤ w′ → w ⊩⋆ Γ → w′ ⊩⋆ Γ
   mono⊩⋆ {⌀}     ξ ∙       = ∙
