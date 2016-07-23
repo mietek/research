@@ -2,6 +2,8 @@ module Everything where
 
 import Common
 import Common.Context
+import Common.Predicate
+import Common.PredicateBasedContext
 
 
 -- Intuitionistic propositional calculus, without ∨ or ⊥.
