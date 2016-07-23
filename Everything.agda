@@ -11,6 +11,8 @@ import BasicIPC.TarskiSemantics
 import BasicIPC.KripkeSemantics
 import BasicIPC.Hilbert.Sequential
 import BasicIPC.Hilbert.Nested
+import BasicIPC.Hilbert.Nested.TarskiSoundness
+import BasicIPC.Hilbert.Nested.KripkeSoundness
 import BasicIPC.Gentzen
 import BasicIPC.Gentzen.TarskiSoundness
 import BasicIPC.Gentzen.KripkeSoundness
@@ -27,6 +29,8 @@ import IPC.TarskiSemantics
 import IPC.KripkeSemantics
 import IPC.Hilbert.Sequential
 import IPC.Hilbert.Nested
+import IPC.Hilbert.Nested.TarskiSoundness
+-- import IPC.Hilbert.Nested.KripkeSoundness
 import IPC.Gentzen
 import IPC.Gentzen.TarskiSoundness
 import IPC.Gentzen.KripkeSoundness
