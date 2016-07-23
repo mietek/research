@@ -4,6 +4,9 @@ open import Agda.Builtin.Size public
   using (Size ; Size<_)
   renaming (ω to ∞)
 
+open import Agda.Primitive public
+  using (lsuc)
+
 open import Data.Bool public
   using ()
   renaming (_∧_ to _∧ᴮ_ ; _∨_ to _∨ᴮ_ ; not to ¬ᴮ_)
@@ -35,8 +38,12 @@ open import Relation.Binary.PropositionalEquality public
   using (_≡_ ; _≢_ ; refl ; trans ; sym ; cong ; cong₂ ; subst)
 
 open import Relation.Nullary public
-  using ()
+  using (Dec ; yes ; no)
   renaming (¬_ to Not)
+
+open import Relation.Nullary.Decidable public
+  using ()
+  renaming (map′ to mapDec)
 
 open import Relation.Nullary.Negation public
   using ()
