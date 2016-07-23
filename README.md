@@ -39,6 +39,8 @@ References
 
 • McBride, C. (2013) [“Dependently typed metaprogramming (in Agda)”](https://github.com/pigworker/MetaprogAgda)
 
+• Morris, P. (2007) [“Constructing universes for generic programming”](http://web.archive.org/web/20090902033015/http://www.cs.nott.ac.uk/~pwm/thesis.pdf)
+
 • Ono, H. (1977) [“On some intuitionistic modal logics”](http://dx.doi.org/10.2977/prims/1195189604)
 
 • Pfenning, F., Davies, R. (2001) [“A judgmental reconstruction of modal logic”](http://dx.doi.org/10.1017/S0960129501003322)
@@ -50,7 +52,7 @@ References
 • Steren, G., Bonelli, E. (2014) [“Intuitionistic hypothetical logic of proofs”](http://dx.doi.org/10.1016/j.entcs.2013.12.013)
 
 • Stump, A. (2016) [“Verified functional programming in Agda”](http://dx.doi.org/10.1145/2841316)
-  
+
 
 About
 -----
