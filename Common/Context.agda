@@ -6,21 +6,21 @@ open import Common public
 -- Contexts.
 
 infixl 4 _,_
-data Cx {ℓ} (U : Set ℓ) : Set ℓ where
+data Cx (U : Set) : Set where
   ⌀   : Cx U
   _,_ : Cx U → U → Cx U
 
 
 -- Vector contexts.
 
-data VCx {ℓ} (U : Set ℓ) : ℕ → Set ℓ where
+data VCx (U : Set) : ℕ → Set where
   ⌀   : VCx U zero
   _,_ : ∀ {n} → VCx U n → U → VCx U (suc n)
 
 
 -- Context membership, as nameless typed de Bruijn indices.
 
-module _ {ℓ} {U : Set ℓ} where
+module _ {U : Set} where
   infix 3 _∈_
   data _∈_ (A : U) : Cx U → Set where
     top : ∀ {Γ} → A ∈ Γ , A
@@ -40,8 +40,9 @@ module _ {ℓ} {U : Set ℓ} where
   i₂ = pop i₁
 
 
-  -- Context inclusion, or order-preserving embedding.
+-- Context inclusion, or order-preserving embedding.
 
+module _ {U : Set} where
   infix 3 _⊆_
   data _⊆_ : Cx U → Cx U → Set where
     done : ⌀ ⊆ ⌀
@@ -74,9 +75,10 @@ module _ {ℓ} {U : Set ℓ} where
   bot⊆ {Γ , A} = skip bot⊆
 
 
-  -- Monotonicity with respect to context inclusion.
+-- Monotonicity with respect to context inclusion.
 
-  mono∈ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → A ∈ Γ → A ∈ Γ′
+module _ {U : Set} where
+  mono∈ : ∀ {A : U} {Γ Γ′} → Γ ⊆ Γ′ → A ∈ Γ → A ∈ Γ′
   mono∈ done     ()
   mono∈ (skip η) i       = pop (mono∈ η i)
   mono∈ (keep η) top     = top
@@ -95,8 +97,9 @@ module _ {ℓ} {U : Set ℓ} where
   transmono∈ (keep η) (keep η′) (pop i) = cong pop (transmono∈ η η′ i)
 
 
-  -- Context concatenation.
+-- Context concatenation.
 
+module _ {U : Set} where
   _⧺_ : Cx U → Cx U → Cx U
   Γ ⧺ ⌀        = Γ
   Γ ⧺ (Γ′ , A) = (Γ ⧺ Γ′) , A
@@ -117,8 +120,9 @@ module _ {ℓ} {U : Set ℓ} where
   weak⊆⧺ᵣ {Γ} {Γ′ , A} = keep weak⊆⧺ᵣ
 
 
-  -- Context thinning.
+-- Context thinning.
 
+module _ {U : Set} where
   _-_ : ∀ {A} → (Γ : Cx U) → A ∈ Γ → Cx U
   ⌀       - ()
   (Γ , A) - top   = Γ
@@ -129,13 +133,14 @@ module _ {ℓ} {U : Set ℓ} where
   thin⊆ (pop i) = keep (thin⊆ i)
 
 
-  -- Decidable context membership equality.
+-- Decidable context membership equality.
 
-  data _=∈_ {A Γ} (i : A ∈ Γ) : ∀ {B} → B ∈ Γ → Set where
+module _ {U : Set} where
+  data _=∈_ {A : U} {Γ} (i : A ∈ Γ) : ∀ {B} → B ∈ Γ → Set where
     same : i =∈ i
     diff : ∀ {B} → (j : B ∈ Γ - i) → i =∈ mono∈ (thin⊆ i) j
 
-  _≟∈_ : ∀ {A B Γ} → (i : A ∈ Γ) (j : B ∈ Γ) → i =∈ j
+  _≟∈_ : ∀ {A B : U} {Γ} → (i : A ∈ Γ) (j : B ∈ Γ) → i =∈ j
   top ≟∈ top      = same
   top ≟∈ pop j    rewrite reflmono∈ j = diff j
   pop i ≟∈ top    = diff top

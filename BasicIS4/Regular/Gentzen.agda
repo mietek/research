@@ -11,7 +11,7 @@ mutual
     var      : ∀ {A}   → A ∈ Γ → Γ ⊢ A
     lam      : ∀ {A B} → Γ , A ⊢ B → Γ ⊢ A ▷ B
     app      : ∀ {A B} → Γ ⊢ A ▷ B → Γ ⊢ A → Γ ⊢ B
-    multibox : ∀ {Π A} → Γ ⊢⋆ □⋆ Π → □⋆ Π ⊢ A → Γ ⊢ □ A
+    multibox : ∀ {Δ A} → Γ ⊢⋆ □⋆ Δ → □⋆ Δ ⊢ A → Γ ⊢ □ A
     down     : ∀ {A}   → Γ ⊢ □ A → Γ ⊢ A
     pair     : ∀ {A B} → Γ ⊢ A → Γ ⊢ B → Γ ⊢ A ∧ B
     fst      : ∀ {A B} → Γ ⊢ A ∧ B → Γ ⊢ A
