@@ -50,20 +50,13 @@ reify⋆ {⌀}     ∙        = ∙
 reify⋆ {Π , A} (ts , t) = reify⋆ ts , reify t
 
 
--- Additional useful properties.
-
-multicut⊩ : ∀ {A Γ Γ′} → Γ ⊩⋆ Γ′ → Γ′ ⊩ A → Γ ⊩ A
-multicut⊩ {A} {Γ′ = ⌀}      ∙        u = mono⊩ {A} bot⊆ u
-multicut⊩ {A} {Γ′ = Γ′ , B} (ts , t) u = reflect {A} (app ts′ (reify {B} t))
-  where ts′ = multicut⊢ (reify⋆ ts) (lam (reify {A} u))
+-- Reflexivity and transitivity.
 
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
-refl⊩⋆ {⌀}     = ∙
-refl⊩⋆ {Γ , A} = mono⊩⋆ {Γ} weak⊆ refl⊩⋆ , reflect {A} v₀
+refl⊩⋆ = reflect⋆ refl⊢⋆
 
-trans⊩⋆ : ∀ {Π Γ Γ′} → Γ ⊩⋆ Γ′ → Γ′ ⊩⋆ Π → Γ ⊩⋆ Π
-trans⊩⋆ {⌀}     ts ∙        = ∙
-trans⊩⋆ {Π , A} ts (us , u) = trans⊩⋆ ts us , multicut⊩ {A} ts u
+trans⊩⋆ : ∀ {Γ Γ′ Γ″} → Γ ⊩⋆ Γ′ → Γ′ ⊩⋆ Γ″ → Γ ⊩⋆ Γ″
+trans⊩⋆ ts us = reflect⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
 
 
 -- Completeness, or quotation.

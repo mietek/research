@@ -83,6 +83,10 @@ infix 3 _ᴹ⊩_
 _ᴹ⊩_ : Cx Ty → Ty → Set₁
 Γ ᴹ⊩ A = ∀ {{_ : Model}} {w : World} → w ⊩⋆ Γ → w ⊩ A
 
+infix 3 _ᴹ⊩⋆_
+_ᴹ⊩⋆_ : Cx Ty → Cx Ty → Set₁
+Γ ᴹ⊩⋆ Π = ∀ {{_ : Model}} {w : World} → w ⊩⋆ Γ → w ⊩⋆ Π
+
 
 -- Additional useful equipment.
 

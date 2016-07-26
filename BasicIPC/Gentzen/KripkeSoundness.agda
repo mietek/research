@@ -15,6 +15,10 @@ eval (fst t)    γ = π₁ (eval t γ)
 eval (snd t)    γ = π₂ (eval t γ)
 eval tt         γ = ∙
 
+eval⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ᴹ⊩⋆ Π
+eval⋆ {⌀}     ∙        γ = ∙
+eval⋆ {Π , A} (ts , t) γ = eval⋆ ts γ , eval t γ
+
 
 -- TODO: Correctness with respect to conversion.
 

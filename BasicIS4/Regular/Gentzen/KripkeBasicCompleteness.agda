@@ -143,22 +143,14 @@ reify⋆ {⌀}     ∙        = ∙
 reify⋆ {Π , A} (ts , t) = reify⋆ ts , reify t
 
 
--- Additional useful properties.
-
-multicut⊩ : ∀ {A Γ Θ Γ′ Θ′} {{_ : Thing Γ Θ}} {{_ : Thing Γ′ Θ′}}
-           → Γ ⁏ Θ ⊩⋆ Γ′ → Γ′ ⁏ Θ′ ⊩ A → Γ ⁏ Θ ⊩ A
-multicut⊩ {A} {Γ′ = ⌀}      ∙        u = mono⊩ {A} bot⊆ u
-multicut⊩ {A} {Γ′ = Γ′ , B} (ts , t) u = reflect {A} (app ts′ (reify {B} t))
-  where ts′ = multicut⊢ (reify⋆ ts) (lam (reify {A} u))
+-- Reflexivity and transitivity.
 
 refl⊩⋆ : ∀ {Γ Θ} {{_ : Thing Γ Θ}} → Γ ⁏ Θ ⊩⋆ Γ
-refl⊩⋆ {⌀}         = ∙
-refl⊩⋆ {Γ , A} {Θ} = mono⊩⋆ {Γ} weak⊆ (refl⊩⋆ {Θ = Θ}) , reflect {A} v₀
+refl⊩⋆ = reflect⋆ refl⊢⋆
 
-trans⊩⋆ : ∀ {Π Γ Θ Γ′ Θ′} {{_ : Thing Γ Θ}} {{_ : Thing Γ′ Θ′}}
-         → Γ ⁏ Θ ⊩⋆ Γ′ → Γ′ ⁏ Θ′ ⊩⋆ Π → Γ ⁏ Θ ⊩⋆ Π
-trans⊩⋆ {⌀}     ts ∙        = ∙
-trans⊩⋆ {Π , A} ts (us , u) = trans⊩⋆ ts us , multicut⊩ {A} ts u
+trans⊩⋆ : ∀ {Γ Θ Γ′ Θ′ Γ″} {{_ : Thing Γ Θ}} {{_ : Thing Γ′ Θ′}}
+           → Γ ⁏ Θ ⊩⋆ Γ′ → Γ′ ⁏ Θ′ ⊩⋆ Γ″ → Γ ⁏ Θ ⊩⋆ Γ″
+trans⊩⋆ ts us = reflect⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
 
 
 -- Completeness, or quotation.

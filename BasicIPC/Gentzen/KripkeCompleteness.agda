@@ -48,6 +48,14 @@ mutual
   ne→tm (fstⁿᵉ t)   = fst (ne→tm t)
   ne→tm (sndⁿᵉ t)   = snd (ne→tm t)
 
+nf→tm⋆ : ∀ {Π Γ} → Γ ⊢⋆ⁿᶠ Π → Γ ⊢⋆ Π
+nf→tm⋆ {⌀}     ∙        = ∙
+nf→tm⋆ {Π , A} (ts , t) = nf→tm⋆ ts , nf→tm t
+
+ne→tm⋆ : ∀ {Π Γ} → Γ ⊢⋆ⁿᵉ Π → Γ ⊢⋆ Π
+ne→tm⋆ {⌀}     ∙        = ∙
+ne→tm⋆ {Π , A} (ts , t) = ne→tm⋆ ts , ne→tm t
+
 
 -- Monotonicity with respect to context inclusion.
 
@@ -63,6 +71,14 @@ mutual
   mono⊢ⁿᵉ η (appⁿᵉ t u) = appⁿᵉ (mono⊢ⁿᵉ η t) (mono⊢ⁿᶠ η u)
   mono⊢ⁿᵉ η (fstⁿᵉ t)   = fstⁿᵉ (mono⊢ⁿᵉ η t)
   mono⊢ⁿᵉ η (sndⁿᵉ t)   = sndⁿᵉ (mono⊢ⁿᵉ η t)
+
+mono⊢⋆ⁿᶠ : ∀ {Π Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ⁿᶠ Π → Γ′ ⊢⋆ⁿᶠ Π
+mono⊢⋆ⁿᶠ {⌀}     η ∙        = ∙
+mono⊢⋆ⁿᶠ {Π , A} η (ts , t) = mono⊢⋆ⁿᶠ η ts , mono⊢ⁿᶠ η t
+
+mono⊢⋆ⁿᵉ : ∀ {Π Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ⁿᵉ Π → Γ′ ⊢⋆ⁿᵉ Π
+mono⊢⋆ⁿᵉ {⌀}     η ∙        = ∙
+mono⊢⋆ⁿᵉ {Π , A} η (ts , t) = mono⊢⋆ⁿᵉ η ts , mono⊢ⁿᵉ η t
 
 
 -- The canonical model.
@@ -103,31 +119,17 @@ reify⋆ {⌀}     ∙        = ∙
 reify⋆ {Π , A} (ts , t) = reify⋆ ts , reify t
 
 
--- Additional useful properties.
+-- Reflexivity and transitivity.
 
--- -- TODO:
--- mutual
---   multicut⊢ⁿᶠ : ∀ {A Γ Γ′} → Γ ⊢⋆ⁿᶠ Γ′ → Γ′ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ A
---   multicut⊢ⁿᶠ {Γ′ = ⌀}      ∙        u = mono⊢ⁿᶠ bot⊆ u
---   multicut⊢ⁿᶠ {Γ′ = Γ′ , B} (ts , t) u = neⁿᶠ (appⁿᵉ (multicut⊢ⁿᵉ ts (lamⁿᶠ u)) t)
---
---   multicut⊢ⁿᵉ : ∀ {A Γ Γ′} → Γ ⊢⋆ⁿᶠ Γ′ → Γ′ ⊢ⁿᶠ A → Γ ⊢ⁿᵉ A
---   -- NOTE: No idea how to fill this hole.
---   multicut⊢ⁿᵉ {A} {Γ′ = ⌀}      ∙        u = {!!}
---   multicut⊢ⁿᵉ {A} {Γ′ = Γ′ , B} (ts , t) u = appⁿᵉ (multicut⊢ⁿᵉ ts (lamⁿᶠ u)) t
---
--- multicut⊩ : ∀ {A Γ Γ′} → Γ ⊩⋆ Γ′ → Γ′ ⊩ A → Γ ⊩ A
--- multicut⊩ {A} {Γ′ = ⌀}      ∙        u = mono⊩ {A} bot⊆ u
--- multicut⊩ {A} {Γ′ = Γ′ , B} (ts , t) u = reflect {A} (appⁿᵉ ts′ (reify {B} t))
---   where ts′ = multicut⊢ⁿᵉ (reify⋆ ts) (lamⁿᶠ (reify {A} u))
+refl⊢⋆ⁿᵉ : ∀ {Γ} → Γ ⊢⋆ⁿᵉ Γ
+refl⊢⋆ⁿᵉ {⌀}     = ∙
+refl⊢⋆ⁿᵉ {Γ , A} = mono⊢⋆ⁿᵉ weak⊆ refl⊢⋆ⁿᵉ , varⁿᵉ top
 
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
-refl⊩⋆ {⌀}     = ∙
-refl⊩⋆ {Γ , A} = mono⊩⋆ {Γ} weak⊆ refl⊩⋆ , reflect {A} (varⁿᵉ top)
+refl⊩⋆ = reflect⋆ refl⊢⋆ⁿᵉ
 
--- trans⊩⋆ : ∀ {Π Γ Γ′} → Γ ⊩⋆ Γ′ → Γ′ ⊩⋆ Π → Γ ⊩⋆ Π
--- trans⊩⋆ {⌀}     ts ∙        = ∙
--- trans⊩⋆ {Π , A} ts (us , u) = trans⊩⋆ ts us , multicut⊩ {A} ts u
+trans⊩⋆ : ∀ {Γ Γ′ Γ″} → Γ ⊩⋆ Γ′ → Γ′ ⊩⋆ Γ″ → Γ ⊩⋆ Γ″
+trans⊩⋆ ts us = eval⋆ (trans⊢⋆ (nf→tm⋆ (reify⋆ ts)) (nf→tm⋆ (reify⋆ us))) refl⊩⋆
 
 
 -- Completeness, or quotation.

@@ -22,6 +22,10 @@ eval (case {A} {B} {C} t u v) γ = bind {A ∨ B} {C} (eval t γ) (λ ξ s → �
                                     (λ a → eval u (mono⊩⋆ ξ γ , λ ξ′ k → a ξ′ k))
                                     (λ b → eval v (mono⊩⋆ ξ γ , λ ξ′ k → b ξ′ k)))
 
+eval⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ᴹ⊩⋆ Π
+eval⋆ {⌀}     ∙        γ = ∙
+eval⋆ {Π , A} (ts , t) γ = eval⋆ ts γ , eval t γ
+
 
 -- TODO: Correctness with respect to conversion.
 
