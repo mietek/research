@@ -197,12 +197,12 @@ cut t u = app (mono⊢ bot⊆ (lam u)) t
 mcut : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ □ A → Γ ⁏ ⌀ , A ⊢ B → Γ ⁏ Δ ⊢ B
 mcut t u = app (mmono⊢ bot⊆ (mlam u)) t
 
-multicut⊢₀ : ∀ {Π A Γ} → Γ ⁏ ⌀ ⊢⋆ Π → Π ⁏ ⌀ ⊢ A → Γ ⁏ ⌀ ⊢ A
-multicut⊢₀ {⌀}     ∙        u = mono⊢ bot⊆ u
-multicut⊢₀ {Π , B} (ts , t) u = app (multicut⊢₀ ts (lam u)) t
+multicut₀ : ∀ {Π A Γ} → Γ ⁏ ⌀ ⊢⋆ Π → Π ⁏ ⌀ ⊢ A → Γ ⁏ ⌀ ⊢ A
+multicut₀ {⌀}     ∙        u = mono⊢ bot⊆ u
+multicut₀ {Π , B} (ts , t) u = app (multicut₀ ts (lam u)) t
 
-multicut⊢ : ∀ {Π Π′ A Γ Δ} → Γ ⁏ Δ ⊢⋆ Π ⧺ (□⋆ Π′) → Π ⁏ Π′ ⊢ A → Γ ⁏ Δ ⊢ A
-multicut⊢ ts u = split (multicut⊢₀ (merge⋆ ts) (merge u))
+multicut : ∀ {Π Π′ A Γ Δ} → Γ ⁏ Δ ⊢⋆ Π ⧺ (□⋆ Π′) → Π ⁏ Π′ ⊢ A → Γ ⁏ Δ ⊢ A
+multicut ts u = split (multicut₀ (merge⋆ ts) (merge u))
 
 
 -- Reflexivity and transitivity.
@@ -216,7 +216,7 @@ refl⊢⋆ = split⋆ (merge⋆ refl⊢⋆₀)
 
 trans⊢⋆₀ : ∀ {Π Γ Γ′} → Γ ⁏ ⌀ ⊢⋆ Γ′ → Γ′ ⁏ ⌀ ⊢⋆ Π → Γ ⁏ ⌀ ⊢⋆ Π
 trans⊢⋆₀ {⌀}     ts ∙        = ∙
-trans⊢⋆₀ {Π , A} ts (us , u) = trans⊢⋆₀ ts us , multicut⊢₀ ts u
+trans⊢⋆₀ {Π , A} ts (us , u) = trans⊢⋆₀ ts us , multicut₀ ts u
 
 trans⊢⋆ : ∀ {Π Γ Γ′ Δ Δ′} → Γ ⁏ Δ ⊢⋆ Γ′ ⧺ (□⋆ Δ′) → Γ′ ⁏ Δ′ ⊢⋆ Π → Γ ⁏ Δ ⊢⋆ Π
 trans⊢⋆ ts us = split⋆ (trans⊢⋆₀ (merge⋆ ts) (merge⋆ us))

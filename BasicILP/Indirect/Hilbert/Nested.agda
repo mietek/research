@@ -157,9 +157,9 @@ MULTICUT (TS , T) U = APP (MULTICUT TS (LAM U)) T
 cut : ∀ {A B Γ} → Γ ⊢ A → ⌀ , A ⊢ B → Γ ⊢ B
 cut t u = app (mono⊢ bot⊆ (lam u)) t
 
-multicut⊢ : ∀ {Π A Γ} → Γ ⊢⋆ Π → Π ⊢ A → Γ ⊢ A
-multicut⊢ {⌀}     ∙        u = mono⊢ bot⊆ u
-multicut⊢ {Π , B} (ts , t) u = app (multicut⊢ ts (lam u)) t
+multicut : ∀ {Π A Γ} → Γ ⊢⋆ Π → Π ⊢ A → Γ ⊢ A
+multicut {⌀}     ∙        u = mono⊢ bot⊆ u
+multicut {Π , B} (ts , t) u = app (multicut ts (lam u)) t
 
 
 -- Reflexivity and transitivity.
@@ -170,7 +170,7 @@ refl⊢⋆ {Γ , A} = mono⊢⋆ weak⊆ refl⊢⋆ , v₀
 
 trans⊢⋆ : ∀ {Π Γ Γ′} → Γ ⊢⋆ Γ′ → Γ′ ⊢⋆ Π → Γ ⊢⋆ Π
 trans⊢⋆ {⌀}     ts ∙        = ∙
-trans⊢⋆ {Π , A} ts (us , u) = trans⊢⋆ ts us , multicut⊢ ts u
+trans⊢⋆ {Π , A} ts (us , u) = trans⊢⋆ ts us , multicut ts u
 
 
 -- Contraction.
