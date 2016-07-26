@@ -214,9 +214,9 @@ refl⊢⋆₀ {Γ , A} = mono⊢⋆ weak⊆ refl⊢⋆₀ , v₀
 refl⊢⋆ : ∀ {Δ Γ} → Γ ⁏ Δ ⊢⋆ Γ ⧺ (□⋆ Δ)
 refl⊢⋆ = split⋆ (merge⋆ refl⊢⋆₀)
 
-trans⊢⋆₀ : ∀ {Π Γ Γ′} → Γ ⁏ ⌀ ⊢⋆ Γ′ → Γ′ ⁏ ⌀ ⊢⋆ Π → Γ ⁏ ⌀ ⊢⋆ Π
-trans⊢⋆₀ {⌀}     ts ∙        = ∙
-trans⊢⋆₀ {Π , A} ts (us , u) = trans⊢⋆₀ ts us , multicut₀ ts u
+trans⊢⋆₀ : ∀ {Γ″ Γ′ Γ} → Γ ⁏ ⌀ ⊢⋆ Γ′ → Γ′ ⁏ ⌀ ⊢⋆ Γ″ → Γ ⁏ ⌀ ⊢⋆ Γ″
+trans⊢⋆₀ {⌀}      ts ∙        = ∙
+trans⊢⋆₀ {Γ″ , A} ts (us , u) = trans⊢⋆₀ ts us , multicut ts u
 
 trans⊢⋆ : ∀ {Π Γ Γ′ Δ Δ′} → Γ ⁏ Δ ⊢⋆ Γ′ ⧺ (□⋆ Δ′) → Γ′ ⁏ Δ′ ⊢⋆ Π → Γ ⁏ Δ ⊢⋆ Π
 trans⊢⋆ ts us = split⋆ (trans⊢⋆₀ (merge⋆ ts) (merge⋆ us))

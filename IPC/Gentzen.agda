@@ -81,9 +81,9 @@ refl⊢⋆ : ∀ {Γ} → Γ ⊢⋆ Γ
 refl⊢⋆ {⌀}     = ∙
 refl⊢⋆ {Γ , A} = mono⊢⋆ weak⊆ refl⊢⋆ , v₀
 
-trans⊢⋆ : ∀ {Π Γ Γ′} → Γ ⊢⋆ Γ′ → Γ′ ⊢⋆ Π → Γ ⊢⋆ Π
-trans⊢⋆ {⌀}     ts ∙        = ∙
-trans⊢⋆ {Π , A} ts (us , u) = trans⊢⋆ ts us , multicut ts u
+trans⊢⋆ : ∀ {Γ″ Γ′ Γ} → Γ ⊢⋆ Γ′ → Γ′ ⊢⋆ Γ″ → Γ ⊢⋆ Γ″
+trans⊢⋆ {⌀}      ts ∙        = ∙
+trans⊢⋆ {Γ″ , A} ts (us , u) = trans⊢⋆ ts us , multicut ts u
 
 
 -- Contraction.

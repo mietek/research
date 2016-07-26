@@ -34,7 +34,7 @@ record Model : Set₁ where
     --   ●──────●
     --   w   R  v
     --
-    cut≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
+    switch≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
 
   _≤⨾R_ : World → World → Set
   _≤⨾R_ = _≤_ ⨾ _R_
@@ -43,7 +43,7 @@ record Model : Set₁ where
   refl≤⨾R {w} = w , (refl≤ , reflR)
 
   trans≤⨾R : ∀ {w w′ w″} → w ≤⨾R w′ → w′ ≤⨾R w″ → w ≤⨾R w″
-  trans≤⨾R (a , (ξ , ζ)) (b , (ξ′ , ζ′)) = let c , (ξ″ , ζ″) = cut≤⨾R ξ′ ζ
+  trans≤⨾R (a , (ξ , ζ)) (b , (ξ′ , ζ′)) = let c , (ξ″ , ζ″) = switch≤⨾R ξ′ ζ
                                            in  c , (trans≤ ξ ξ″ , transR ζ″ ζ′)
 
 open Model {{…}} public

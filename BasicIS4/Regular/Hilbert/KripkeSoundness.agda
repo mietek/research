@@ -14,7 +14,7 @@ module Ono where
   --   ●
   --   w
   --
-  -- cutR : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → w R v′
+  -- switchR : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → w R v′
 
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
   eval (var i)          γ = lookup i γ
@@ -27,7 +27,7 @@ module Ono where
     in  h b
   eval (box t)          γ = λ ζ → eval t ∙
   eval cdist            γ = λ _ □f ξ □a ζ →
-    let ζ′ = cutR ζ ξ
+    let ζ′ = switchR ζ ξ
         □f′ = □f ζ′ refl≤
         □a′ = □a ζ
     in  □f′ □a′
@@ -50,7 +50,7 @@ module BozicDosen where
   --   ●╌╌╌╌╌╌◌
   --   w   R  v
   --
-  -- cutR⨾≤ : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → ∃ (λ v → w R v × v ≤ v′)
+  -- switchR⨾≤ : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → ∃ (λ v → w R v × v ≤ v′)
 
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
   eval (var i)          γ = lookup i γ
@@ -63,7 +63,7 @@ module BozicDosen where
     in  h b
   eval (box t)          γ = λ ζ → eval t ∙
   eval cdist            γ = λ _ □f ξ □a ζ →
-    let _ , (ξ′ , ζ′) = cutR⨾≤ ζ ξ
+    let _ , (ξ′ , ζ′) = switchR⨾≤ ζ ξ
         □f′ = □f ξ′ ζ′
         □a′ = □a ζ
     in  □f′ □a′
@@ -113,8 +113,8 @@ module EwaldEtAl where
   --   ●──────●       ●──────●
   --   w   R  v       w   R  v
   --
-  -- slice  : ∀ {v w w′} → w R v → w ≤ w′ → ∃ (λ v′ → w′ R v′ × v ≤ v′)
-  -- cut≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
+  -- slice     : ∀ {v w w′} → w R v → w ≤ w′ → ∃ (λ v′ → w′ R v′ × v ≤ v′)
+  -- switch≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
 
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
   eval (var i)          γ = lookup i γ
@@ -151,7 +151,7 @@ module AlechinaEtAl where
   --   ●──────●
   --   w   R  v
   --
-  -- cut≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
+  -- switch≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
 
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
   eval (var i)          γ = lookup i γ

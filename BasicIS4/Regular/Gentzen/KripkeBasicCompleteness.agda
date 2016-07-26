@@ -94,8 +94,8 @@ transRᶜ {w′ = w′} ψ ψ′ = λ i →
       i″ , ζ′ = ψ′ (lem₂ {{w′ /primeFilter}} i′)
   in  i″ , trans⊆ ζ ζ′
 
-cutRᶜ : ∀ {v′ w w′} → w′ Rᶜ v′ → w ≤ᶜ w′ → w Rᶜ v′
-cutRᶜ {v′} {w} {w′} ψ ξ = λ i →
+switchRᶜ : ∀ {v′ w w′} → w′ Rᶜ v′ → w ≤ᶜ w′ → w Rᶜ v′
+switchRᶜ {v′} {w} {w′} ψ ξ = λ i →
   let i′ , ζ = ψ (mono⊢ ξ i)
   in  i′ , lem₃ {{v′ /thing}} {{w /thing}} {{w′ /thing}} ξ ζ
 
@@ -111,7 +111,7 @@ instance
     ; transR  = transRᶜ
     ; _⊩ᵅ_   = λ w P → w /Γ ⊢ α P
     ; mono⊩ᵅ = mono⊢
-    ; cutR    = cutRᶜ
+    ; switchR = switchRᶜ
     }
 
 

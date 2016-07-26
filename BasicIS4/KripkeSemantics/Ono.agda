@@ -34,10 +34,10 @@ record Model : Set₁ where
     --   ●
     --   w
     --
-    cutR : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → w R v′
+    switchR : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → w R v′
 
   ≤→R : ∀ {w w′} → w ≤ w′ → w R w′
-  ≤→R ξ = cutR reflR ξ
+  ≤→R ξ = switchR reflR ξ
 
 open Model {{…}} public
 

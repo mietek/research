@@ -65,7 +65,7 @@ module AlechinaEtAl where
 --   --   ●
 --   --   w
 --   --
---   -- cutR : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → w R v′
+--   -- switchR : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → w R v′
 
 --   mutual
 --     eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
@@ -95,7 +95,7 @@ module AlechinaEtAl where
 --   --   ●╌╌╌╌╌╌◌
 --   --   w   R  v
 --   --
---   -- cutR⨾≤ : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → ∃ (λ v → w R v × v ≤ v′)
+--   -- switchR⨾≤ : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → ∃ (λ v → w R v × v ≤ v′)
 
 --   mutual
 --     eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
@@ -145,8 +145,8 @@ module AlechinaEtAl where
 --   --   ●──────●       ●──────●
 --   --   w   R  v       w   R  v
 --   --
---   -- slice  : ∀ {v w w′} → w R v → w ≤ w′ → ∃ (λ v′ → w′ R v′ × v ≤ v′)
---   -- cut≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
+--   -- slice     : ∀ {v w w′} → w R v → w ≤ w′ → ∃ (λ v′ → w′ R v′ × v ≤ v′)
+--   -- switch≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
 
 --   mutual
 --     eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
@@ -176,7 +176,7 @@ module AlechinaEtAl where
 --   --   ●──────●
 --   --   w   R  v
 --   --
---   -- cut≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
+--   -- switch≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
 
 --   mutual
 --     eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
