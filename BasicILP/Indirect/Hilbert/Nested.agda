@@ -145,15 +145,24 @@ det : ∀ {A B Γ} → Γ ⊢ A ▷ B → Γ , A ⊢ B
 det t = app (mono⊢ weak⊆ t) v₀
 
 
--- Additional useful properties.
+-- Cut and multicut.
+
+CUT : Tm → Tm → Tm
+CUT T U = APP (LAM U) T
 
 MULTICUT : Cx Tm → Tm → Tm
 MULTICUT ⌀        U = U
 MULTICUT (TS , T) U = APP (MULTICUT TS (LAM U)) T
 
-multicut⊢ : ∀ {A Γ Γ′} → Γ ⊢⋆ Γ′ → Γ′ ⊢ A → Γ ⊢ A
-multicut⊢ {Γ′ = ⌀}      ∙        u = mono⊢ bot⊆ u
-multicut⊢ {Γ′ = Γ′ , B} (ts , t) u = app (multicut⊢ ts (lam u)) t
+cut : ∀ {A B Γ} → Γ ⊢ A → ⌀ , A ⊢ B → Γ ⊢ B
+cut t u = app (mono⊢ bot⊆ (lam u)) t
+
+multicut⊢ : ∀ {Π A Γ} → Γ ⊢⋆ Π → Π ⊢ A → Γ ⊢ A
+multicut⊢ {⌀}     ∙        u = mono⊢ bot⊆ u
+multicut⊢ {Π , B} (ts , t) u = app (multicut⊢ ts (lam u)) t
+
+
+-- Reflexivity and transitivity.
 
 refl⊢⋆ : ∀ {Γ} → Γ ⊢⋆ Γ
 refl⊢⋆ {⌀}     = ∙

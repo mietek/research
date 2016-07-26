@@ -134,7 +134,13 @@ split⋆ {⌀}     ∙        = ∙
 split⋆ {Π , A} (ts , t) = split⋆ ts , split t
 
 
--- Additional useful properties.
+-- Cut and multicut.
+
+cut : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A → ⌀ , A ⁏ Δ ⊢ B → Γ ⁏ Δ ⊢ B
+cut t u = app (mono⊢ bot⊆ (lam u)) t
+
+mcut : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ □ A → Γ ⁏ ⌀ , A ⊢ B → Γ ⁏ Δ ⊢ B
+mcut t u = app (mmono⊢ bot⊆ (mlam u)) t
 
 multicut⊢₀ : ∀ {Π A Γ} → Γ ⁏ ⌀ ⊢⋆ Π → Π ⁏ ⌀ ⊢ A → Γ ⁏ ⌀ ⊢ A
 multicut⊢₀ {⌀}     ∙        u = mono⊢ bot⊆ u
@@ -142,6 +148,9 @@ multicut⊢₀ {Π , B} (ts , t) u = app (multicut⊢₀ ts (lam u)) t
 
 multicut⊢ : ∀ {Π Π′ A Γ Δ} → Γ ⁏ Δ ⊢⋆ Π ⧺ (□⋆ Π′) → Π ⁏ Π′ ⊢ A → Γ ⁏ Δ ⊢ A
 multicut⊢ ts u = split (multicut⊢₀ (merge⋆ ts) (merge u))
+
+
+-- Reflexivity and transitivity.
 
 refl⊢⋆₀ : ∀ {Γ} → Γ ⁏ ⌀ ⊢⋆ Γ
 refl⊢⋆₀ {⌀}     = ∙
