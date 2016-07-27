@@ -22,6 +22,11 @@ record TyLa : Set where
     A : Ty
     x : La
 
+infix 5 _◎⋆_
+_◎⋆_ : Cx Ty → La → Cx TyLa
+⌀       ◎⋆ x = ⌀
+(Π , A) ◎⋆ x = (Π ◎⋆ x) , A ◎ x
+
 
 -- Derivations, as labelled Gentzen-style natural deduction trees, following Basin, Matthews, and Viganò.
 
@@ -43,6 +48,11 @@ data _⁏_⊢_◎_ (Γ : Cx TyLa) (Λ : Cx LaLa) : Ty → La → Set where
   snd  : ∀ {x A B} → Γ ⁏ Λ ⊢ A ∧ B ◎ x → Γ ⁏ Λ ⊢ B ◎ x
   tt   : ∀ {x}     → Γ ⁏ Λ ⊢ ⊤ ◎ x
 
+infix 3 _⁏_⊢⋆_◎⋆_
+_⁏_⊢⋆_◎⋆_ : Cx TyLa → Cx LaLa → Cx Ty → La → Set
+Γ ⁏ Λ ⊢⋆ ⌀     ◎⋆ x = Top
+Γ ⁏ Λ ⊢⋆ Π , A ◎⋆ x = Γ ⁏ Λ ⊢⋆ Π ◎⋆ x × Γ ⁏ Λ ⊢ A ◎ x
+
 
 -- Monotonicity with respect to context inclusion.
 
@@ -57,24 +67,32 @@ mono⊢ η (fst t)    = fst (mono⊢ η t)
 mono⊢ η (snd t)    = snd (mono⊢ η t)
 mono⊢ η tt         = tt
 
+mono⊢⋆ : ∀ {Π x Γ Γ′ Λ} → Γ ⊆ Γ′ → Γ ⁏ Λ ⊢⋆ Π ◎⋆ x → Γ′ ⁏ Λ ⊢⋆ Π ◎⋆ x
+mono⊢⋆ {⌀}     η ∙        = ∙
+mono⊢⋆ {Π , A} η (ts , t) = mono⊢⋆ η ts , mono⊢ η t
+
 
 -- Monotonicity with respect to relational context inclusion.
 
-rmono⊢↝ : ∀ {x y Λ Λ′} → Λ ⊆ Λ′ → Λ ⊢ x ↝ y → Λ′ ⊢ x ↝ y
-rmono⊢↝ η (rvar i)     = rvar (mono∈ η i)
-rmono⊢↝ η rrefl        = rrefl
-rmono⊢↝ η (rtrans t u) = rtrans (rmono⊢↝ η t) (rmono⊢↝ η u)
+rmonor⊢ : ∀ {x y Λ Λ′} → Λ ⊆ Λ′ → Λ ⊢ x ↝ y → Λ′ ⊢ x ↝ y
+rmonor⊢ η (rvar i)     = rvar (mono∈ η i)
+rmonor⊢ η rrefl        = rrefl
+rmonor⊢ η (rtrans t u) = rtrans (rmonor⊢ η t) (rmonor⊢ η u)
 
 rmono⊢ : ∀ {x A Γ Λ Λ′} → Λ ⊆ Λ′ → Γ ⁏ Λ ⊢ x ◎ A → Γ ⁏ Λ′ ⊢ x ◎ A
 rmono⊢ η (var i)    = var i
 rmono⊢ η (lam t)    = lam (rmono⊢ η t)
 rmono⊢ η (app t u)  = app (rmono⊢ η t) (rmono⊢ η u)
 rmono⊢ η (scan t)   = scan (rmono⊢ (keep η) t)
-rmono⊢ η (move t u) = move (rmono⊢ η t) (rmono⊢↝ η u)
+rmono⊢ η (move t u) = move (rmono⊢ η t) (rmonor⊢ η u)
 rmono⊢ η (pair t u) = pair (rmono⊢ η t) (rmono⊢ η u)
 rmono⊢ η (fst t)    = fst (rmono⊢ η t)
 rmono⊢ η (snd t)    = snd (rmono⊢ η t)
 rmono⊢ η tt         = tt
+
+rmono⊢⋆ : ∀ {Π x Γ Λ Λ′} → Λ ⊆ Λ′ → Γ ⁏ Λ ⊢⋆ Π ◎⋆ x → Γ ⁏ Λ′ ⊢⋆ Π ◎⋆ x
+rmono⊢⋆ {⌀}     η ∙        = ∙
+rmono⊢⋆ {Π , A} η (ts , t) = rmono⊢⋆ η ts , rmono⊢ η t
 
 
 -- Shorthand for variables.
@@ -106,6 +124,27 @@ det : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ▷ B ◎ x → Γ , A ◎ x ⁏ Λ 
 det t = app (mono⊢ weak⊆ t) v₀
 
 
+-- Cut and multicut.
+
+cut : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ◎ x → ⌀ , A ◎ x ⁏ Λ ⊢ B ◎ x → Γ ⁏ Λ ⊢ B ◎ x
+cut t u = app (mono⊢ bot⊆ (lam u)) t
+
+multicut : ∀ {Π x A Γ Λ} → Γ ⁏ Λ ⊢⋆ Π ◎⋆ x → Π ◎⋆ x ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ A ◎ x
+multicut {⌀}     ∙        u = mono⊢ bot⊆ u
+multicut {Π , B} (ts , t) u = app (multicut ts (lam u)) t
+
+
+-- Reflexivity and transitivity.
+
+refl⊢⋆ : ∀ {Γ x Λ} → Γ ◎⋆ x ⁏ Λ ⊢⋆ Γ ◎⋆ x
+refl⊢⋆ {⌀}     = ∙
+refl⊢⋆ {Γ , A} = mono⊢⋆ weak⊆ refl⊢⋆ , v₀
+
+trans⊢⋆ : ∀ {Γ″ x Γ′ Γ Λ} → Γ ◎⋆ x ⁏ Λ ⊢⋆ Γ′ ◎⋆ x → Γ′ ◎⋆ x ⁏ Λ ⊢⋆ Γ″ ◎⋆ x → Γ ◎⋆ x ⁏ Λ ⊢⋆ Γ″ ◎⋆ x
+trans⊢⋆ {⌀}      ts ∙        = ∙
+trans⊢⋆ {Γ″ , A} ts (us , u) = trans⊢⋆ ts us , multicut ts u
+
+
 -- Contraction.
 
 ccont : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ (A ▷ A ▷ B) ▷ A ▷ B ◎ x
@@ -131,6 +170,28 @@ ccomp = lam (lam (lam (app v₂ (app v₁ v₀))))
 
 comp : ∀ {x A B C Γ Λ} → Γ , B ◎ x ⁏ Λ ⊢ C ◎ x → Γ , A ◎ x ⁏ Λ ⊢ B ◎ x → Γ , A ◎ x ⁏ Λ ⊢ C ◎ x
 comp t u = det (app (app ccomp (lam t)) (lam u))
+
+
+-- Useful theorems in functional form.
+
+dist : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ □ (A ▷ B) ◎ x → Γ ⁏ Λ ⊢ □ A ◎ x → Γ ⁏ Λ ⊢ □ B ◎ x
+dist t u = scan (app (move (rmono⊢ weak⊆ t) rv₀) (move (rmono⊢ weak⊆ u) rv₀))
+
+up : ∀ {x A Γ Λ} → Γ ⁏ Λ ⊢ □ A ◎ x → Γ ⁏ Λ ⊢ □ □ A ◎ x
+up t = scan (scan (move (rmono⊢ (trans⊆ weak⊆ weak⊆) t) (rtrans rv₁ rv₀)))
+
+down : ∀ {x A Γ Λ} → Γ ⁏ Λ ⊢ □ A ◎ x → Γ ⁏ Λ ⊢ A ◎ x
+down t = move t rrefl
+
+distup : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ □ (□ A ▷ B) ◎ x → Γ ⁏ Λ ⊢ □ A ◎ x → Γ ⁏ Λ ⊢ □ B ◎ x
+distup t u = dist t (up u)
+
+-- FIXME: Find the missing piece.
+postulate
+  box : ∀ {x A Γ Λ} → ⌀ ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ □ A ◎ x
+
+unbox : ∀ {x A C Γ Λ} → Γ ⁏ Λ ⊢ □ A ◎ x → Γ , □ A ◎ x ⁏ Λ ⊢ C ◎ x → Γ ⁏ Λ ⊢ C ◎ x
+unbox t u = app (lam u) t
 
 
 -- Useful theorems in combinatory form.
@@ -167,23 +228,6 @@ cfst = lam (fst v₀)
 
 csnd : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ∧ B ▷ B ◎ x
 csnd = lam (snd v₀)
-
-
--- Useful theorems in functional form.
-
-dist : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ □ (A ▷ B) ◎ x → Γ ⁏ Λ ⊢ □ A ◎ x → Γ ⁏ Λ ⊢ □ B ◎ x
-dist t u = scan (app (move (rmono⊢ weak⊆ t) rv₀) (move (rmono⊢ weak⊆ u) rv₀))
-
-up : ∀ {x A Γ Λ} → Γ ⁏ Λ ⊢ □ A ◎ x → Γ ⁏ Λ ⊢ □ □ A ◎ x
-up t = scan (scan (move (rmono⊢ (trans⊆ weak⊆ weak⊆) t) (rtrans rv₁ rv₀)))
-
-down : ∀ {x A Γ Λ} → Γ ⁏ Λ ⊢ □ A ◎ x → Γ ⁏ Λ ⊢ A ◎ x
-down t = move t rrefl
-
-distup : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ □ (□ A ▷ B) ◎ x → Γ ⁏ Λ ⊢ □ A ◎ x → Γ ⁏ Λ ⊢ □ B ◎ x
-distup t u = dist t (up u)
-
--- TODO: box, unbox
 
 
 -- Closure under context concatenation.
