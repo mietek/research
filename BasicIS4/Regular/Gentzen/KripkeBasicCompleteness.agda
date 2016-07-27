@@ -1,7 +1,7 @@
 module BasicIS4.Regular.Gentzen.KripkeBasicCompleteness where
 
 open import BasicIS4.Regular.Gentzen.KripkeSoundness public
-open import BasicIS4.Regular.Gentzen.KripkeCanonicalAccessibility public
+open import BasicIS4.Regular.Gentzen.KripkeEquipment public
 open import BasicIS4.KripkeSemantics.Ono public
 
 

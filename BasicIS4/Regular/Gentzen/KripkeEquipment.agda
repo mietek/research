@@ -1,4 +1,4 @@
-module BasicIS4.Regular.Gentzen.KripkeCanonicalAccessibility where
+module BasicIS4.Regular.Gentzen.KripkeEquipment where
 
 open import BasicIS4.Regular.Gentzen
 
