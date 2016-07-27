@@ -14,7 +14,7 @@ module Ono where
   --   ●
   --   w
   --
-  -- switchR : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → w R v′
+  -- zigR : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → w R v′
 
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
   eval (var i)          γ = lookup i γ
@@ -27,7 +27,7 @@ module Ono where
     in  h b
   eval (box t)          γ = λ ζ → eval t ∙
   eval cdist            γ = λ _ □f ξ □a ζ →
-    let ζ′ = switchR ζ ξ
+    let ζ′ = zigR ζ ξ
         □f′ = □f ζ′ refl≤
         □a′ = □a ζ
     in  □f′ □a′
@@ -50,7 +50,7 @@ module BozicDosen where
   --   ●╌╌╌╌╌╌◌
   --   w   R  v
   --
-  -- switchR⨾≤ : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → ∃ (λ v → w R v × v ≤ v′)
+  -- zigzagR⨾≤ : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → ∃ (λ v → w R v × v ≤ v′)
 
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
   eval (var i)          γ = lookup i γ
@@ -63,7 +63,7 @@ module BozicDosen where
     in  h b
   eval (box t)          γ = λ ζ → eval t ∙
   eval cdist            γ = λ _ □f ξ □a ζ →
-    let _ , (ξ′ , ζ′) = switchR⨾≤ ζ ξ
+    let _ , (ξ′ , ζ′) = zigzagR⨾≤ ζ ξ
         □f′ = □f ξ′ ζ′
         □a′ = □a ζ
     in  □f′ □a′
@@ -79,18 +79,18 @@ module Wijesekera where
   open import BasicIS4.KripkeSemantics.Wijesekera public
 
   module _ {{_ : Model}} where
+    -- FIXME: Read the Wijesekera paper; find the missing piece.
+    postulate
+      zigzag≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
+
     _≤⨾R_ : World → World → Set
     _≤⨾R_ = _≤_ ⨾ _R_
 
     refl≤⨾R : ∀ {w} → w ≤⨾R w
     refl≤⨾R {w} = w , (refl≤ , reflR)
 
-    -- FIXME: Read the Wijesekera paper; find the missing piece.
-    postulate
-      switch≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
-
     trans≤⨾R : ∀ {w w′ w″} → w ≤⨾R w′ → w′ ≤⨾R w″ → w ≤⨾R w″
-    trans≤⨾R (a , (ξ , ζ)) (b , (ξ′ , ζ′)) = let c , (ξ″ , ζ″) = switch≤⨾R ξ′ ζ
+    trans≤⨾R (a , (ξ , ζ)) (b , (ξ′ , ζ′)) = let c , (ξ″ , ζ″) = zigzag≤⨾R ξ′ ζ
                                              in  c , (trans≤ ξ ξ″ , transR ζ″ ζ′)
 
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
@@ -120,16 +120,17 @@ module Wijesekera where
 module EwaldEtAl where
   open import BasicIS4.KripkeSemantics.EwaldEtAl public
 
+  -- zap            zagzig
   --   w′  R  v′      w′  R  v′
   --   ●╌╌╌╌╌╌◌       ◌╌╌╌╌╌╌●
   --   │      ┊       ┊      │
-  -- ≤ │   ₁  ┊ ≤   ≤ ┊   ₂  │ ≤
+  -- ≤ │      ┊ ≤   ≤ ┊      │ ≤
   --   │      ┊       ┊      │
   --   ●──────●       ●──────●
   --   w   R  v       w   R  v
   --
-  -- slice     : ∀ {v w w′} → w R v → w ≤ w′ → ∃ (λ v′ → w′ R v′ × v ≤ v′)
-  -- switch≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
+  -- zap       : ∀ {v w w′} → w R v → w ≤ w′ → ∃ (λ v′ → w′ R v′ × v ≤ v′)
+  -- zagzig≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
 
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
   eval (var i)          γ = lookup i γ
@@ -166,7 +167,7 @@ module AlechinaEtAl where
   --   ●──────●
   --   w   R  v
   --
-  -- switch≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
+  -- zagzig≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
 
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
   eval (var i)          γ = lookup i γ

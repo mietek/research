@@ -24,7 +24,7 @@ record Model : Set₁ where
     _⊩ᵅ_   : World → Atom → Set
     mono⊩ᵅ : ∀ {P w w′} → w ≤ w′ → w ⊩ᵅ P → w′ ⊩ᵅ P
 
-    -- NOTE: Additional frame condition.
+    -- Frame condition given by Božić and Došen.
     --
     --   w′  R  v′
     --   ●──────●
@@ -34,7 +34,7 @@ record Model : Set₁ where
     --   ●╌╌╌╌╌╌◌
     --   w   R  v
     --
-    switchR⨾≤ : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → ∃ (λ v → w R v × v ≤ v′)
+    zigzagR⨾≤ : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → ∃ (λ v → w R v × v ≤ v′)
 
   _R⨾≤_ : World → World → Set
   _R⨾≤_ = _R_ ⨾ _≤_
@@ -43,7 +43,7 @@ record Model : Set₁ where
   reflR⨾≤ {w} = w , (reflR , refl≤)
 
   transR⨾≤ : ∀ {w w′ w″} → w R⨾≤ w′ → w′ R⨾≤ w″ → w R⨾≤ w″
-  transR⨾≤ (a , (ζ , ξ)) (b , (ζ′ , ξ′)) = let c , (ζ″ , ξ″) = switchR⨾≤ ζ′ ξ
+  transR⨾≤ (a , (ζ , ξ)) (b , (ζ′ , ξ′)) = let c , (ζ″ , ξ″) = zigzagR⨾≤ ζ′ ξ
                                            in  c , (transR ζ ζ″ , trans≤ ξ″ ξ′)
 
 open Model {{…}} public
@@ -71,7 +71,7 @@ module _ {{_ : Model}} where
   mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
   mono⊩ {α P}   ξ s       = mono⊩ᵅ ξ s
   mono⊩ {A ▷ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
-  mono⊩ {□ A}   ξ □f      = λ ζ → let v , (ζ′ , ξ′) = switchR⨾≤ ζ ξ
+  mono⊩ {□ A}   ξ □f      = λ ζ → let v , (ζ′ , ξ′) = zigzagR⨾≤ ζ ξ
                                     in  mono⊩ {A} ξ′ (□f ζ′)
   mono⊩ {A ∧ B} ξ (a , b) = mono⊩ {A} ξ a , mono⊩ {B} ξ b
   mono⊩ {⊤}    ξ ∙       = ∙

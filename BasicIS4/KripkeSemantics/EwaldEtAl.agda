@@ -24,18 +24,19 @@ record Model : Set₁ where
     _⊩ᵅ_   : World → Atom → Set
     mono⊩ᵅ : ∀ {P w w′} → w ≤ w′ → w ⊩ᵅ P → w′ ⊩ᵅ P
 
-    -- NOTE: Additional frame conditions.
+    -- Frame conditions given by Ewald, et al.
     --
+    -- zap            zagzig
     --   w′  R  v′      w′  R  v′
     --   ●╌╌╌╌╌╌◌       ◌╌╌╌╌╌╌●
     --   │      ┊       ┊      │
-    -- ≤ │   ₁  ┊ ≤   ≤ ┊   ₂  │ ≤
+    -- ≤ │      ┊ ≤   ≤ ┊      │ ≤
     --   │      ┊       ┊      │
     --   ●──────●       ●──────●
     --   w   R  v       w   R  v
     --
-    slice      : ∀ {v w w′} → w R v → w ≤ w′ → ∃ (λ v′ → w′ R v′ × v ≤ v′)
-    switch≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
+    zap       : ∀ {v w w′} → w R v → w ≤ w′ → ∃ (λ v′ → w′ R v′ × v ≤ v′)
+    zagzig≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
 
   _≤⨾R_ : World → World → Set
   _≤⨾R_ = _≤_ ⨾ _R_
@@ -44,9 +45,8 @@ record Model : Set₁ where
   refl≤⨾R {w} = w , (refl≤ , reflR)
 
   trans≤⨾R : ∀ {w w′ w″} → w ≤⨾R w′ → w′ ≤⨾R w″ → w ≤⨾R w″
-  trans≤⨾R (a , (ξ , ζ)) (b , (ξ′ , ζ′)) =
-    let c , (ξ″ , ζ″) = switch≤⨾R ξ′ ζ
-    in  c , (trans≤ ξ ξ″ , transR ζ″ ζ′)
+  trans≤⨾R (a , (ξ , ζ)) (b , (ξ′ , ζ′)) = let c , (ξ″ , ζ″) = zagzig≤⨾R ξ′ ζ
+                                           in  c , (trans≤ ξ ξ″ , transR ζ″ ζ′)
 
 open Model {{…}} public
 

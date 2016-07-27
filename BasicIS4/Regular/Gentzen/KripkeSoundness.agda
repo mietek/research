@@ -65,7 +65,7 @@ module AlechinaEtAl where
 --   --   ●
 --   --   w
 --   --
---   -- switchR : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → w R v′
+--   -- zigR : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → w R v′
 
 --   mutual
 --     eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
@@ -95,7 +95,7 @@ module AlechinaEtAl where
 --   --   ●╌╌╌╌╌╌◌
 --   --   w   R  v
 --   --
---   -- switchR⨾≤ : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → ∃ (λ v → w R v × v ≤ v′)
+--   -- zigzagR⨾≤ : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → ∃ (λ v → w R v × v ≤ v′)
 
 --   mutual
 --     eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
@@ -137,16 +137,17 @@ module AlechinaEtAl where
 -- module EwaldEtAl where
 --   open import BasicIS4.KripkeSemantics.EwaldEtAl public
 
+--   -- zap            zagzig
 --   --   w′  R  v′      w′  R  v′
 --   --   ●╌╌╌╌╌╌◌       ◌╌╌╌╌╌╌●
 --   --   │      ┊       ┊      │
---   -- ≤ │   ₁  ┊ ≤   ≤ ┊   ₂  │ ≤
+--   -- ≤ │      ┊ ≤   ≤ ┊      │ ≤
 --   --   │      ┊       ┊      │
 --   --   ●──────●       ●──────●
 --   --   w   R  v       w   R  v
 --   --
---   -- slice     : ∀ {v w w′} → w R v → w ≤ w′ → ∃ (λ v′ → w′ R v′ × v ≤ v′)
---   -- switch≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
+--   -- zap       : ∀ {v w w′} → w R v → w ≤ w′ → ∃ (λ v′ → w′ R v′ × v ≤ v′)
+--   -- zagzig≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
 
 --   mutual
 --     eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
@@ -176,7 +177,7 @@ module AlechinaEtAl where
 --   --   ●──────●
 --   --   w   R  v
 --   --
---   -- switch≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
+--   -- zagzig≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
 
 --   mutual
 --     eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A

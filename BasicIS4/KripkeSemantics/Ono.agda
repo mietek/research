@@ -24,7 +24,7 @@ record Model : Set₁ where
     _⊩ᵅ_   : World → Atom → Set
     mono⊩ᵅ : ∀ {P w w′} → w ≤ w′ → w ⊩ᵅ P → w′ ⊩ᵅ P
 
-    -- NOTE: Additional frame condition.
+    -- Frame condition given by Ono.
     --
     --   w′  R  v′
     --   ●──────●
@@ -34,10 +34,10 @@ record Model : Set₁ where
     --   ●
     --   w
     --
-    switchR : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → w R v′
+    zigR : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → w R v′
 
   ≤→R : ∀ {w w′} → w ≤ w′ → w R w′
-  ≤→R ξ = switchR reflR ξ
+  ≤→R ξ = zigR reflR ξ
 
 open Model {{…}} public
 
