@@ -1,3 +1,14 @@
+{-
+
+https://github.com/mietek/hilbert-gentzen
+
+An Agda formalisation of intuitionistic propositional calculus, modal logic S4,
+and logic of proofs.  Work in progress.
+
+Made by Miëtek Bak.  Published under the MIT X11 license.
+
+-}
+
 module Everything where
 
 import Common
