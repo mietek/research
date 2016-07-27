@@ -92,8 +92,10 @@ trans⊆⨾Rᶜ (a , (η , ζ)) (b , (η′ , ζ′)) = let c , (η″ , ζ″) 
 --   ●──────●       ◌╌╌╌╌╌╌●
 --   Γ  Rᶜ  Π       Γ  Rᶜ  Π
 
+-- NOTE: This could be a more precise supremum.
 zapRᶜ : ∀ {Π Γ′ Γ} → Γ Rᶜ Π → Γ ⊆ Γ′ → ∃ (λ Π′ → Γ′ Rᶜ Π′ × Π ⊆ Π′)
 zapRᶜ {Π} {Γ′} ζ η = (Γ′ ⧺ Π) , ((λ t → mono⊢ (weak⊆⧺ₗ Π) (down t)) , weak⊆⧺ᵣ)
 
+-- NOTE: This could be a more precise infimum.
 zupRᶜ : ∀ {Γ′ Π Π′} → Π ⊆ Π′ → Γ′ Rᶜ Π′ → ∃ (λ Γ → Γ ⊆ Γ′ × Γ Rᶜ Π)
 zupRᶜ η ζ = ⌀ , (bot⊆ , botRᶜ)
