@@ -32,7 +32,7 @@ import IPC.KripkeSemantics
 import IPC.Hilbert.Sequential
 import IPC.Hilbert.Nested
 import IPC.Hilbert.Nested.TarskiSoundness
--- import IPC.Hilbert.Nested.KripkeSoundness
+import IPC.Hilbert.Nested.KripkeSoundness -- FIXME
 import IPC.Gentzen
 import IPC.Gentzen.TarskiSoundness
 import IPC.Gentzen.KripkeSoundness
@@ -52,7 +52,7 @@ import BasicIS4.KripkeSemantics.EwaldEtAl
 import BasicIS4.KripkeSemantics.AlechinaEtAl
 import BasicIS4.Regular.Hilbert.Sequential
 import BasicIS4.Regular.Hilbert.Nested
-import BasicIS4.Regular.Hilbert.KripkeSoundness
+import BasicIS4.Regular.Hilbert.KripkeSoundness -- FIXME
 import BasicIS4.Regular.Gentzen
 import BasicIS4.Regular.Gentzen.KripkeSoundness
 import BasicIS4.Regular.Gentzen.KripkeBasicCompleteness -- FIXME
@@ -68,15 +68,12 @@ import BasicIS4.Translation
 -- Intuitionistic logic of proofs, without ∨, ⊥, or +.
 
 import BasicILP.Indirect
--- import BasicILP.Indirect.Hilbert.Sequential
 import BasicILP.Indirect.Hilbert.Sequential
 import BasicILP.Indirect.Hilbert.Nested
 import BasicILP.Indirect.Gentzen
 -- import BasicILP.Indirect.Translation
--- import BasicILP.Direct.Hilbert.Sequential
 import BasicILP.Direct.Hilbert.Sequential
 import BasicILP.Direct.Hilbert.Nested
 import BasicILP.Direct.Gentzen
 -- import BasicILP.Direct.Translation
--- import BasicILP.Translation
 import BasicILP.Translation

@@ -4,6 +4,11 @@ open import IPC.KripkeSemantics public
 open import IPC.Hilbert.Nested public
 
 
+-- FIXME: Add more CPS combinators.
+postulate
+  oops : ∀ {A : Set} → A
+
+
 -- Soundness, or evaluation.
 
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
@@ -19,7 +24,7 @@ eval (cs {A} {B} {C})    γ = return {(A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C}
                              let f′ = mono⊩ {A ▷ B ▷ C} (trans≤ ξ ξ′) f
                                  g′ = mono⊩ {A ▷ B} ξ′ g
                              in  bind {A} {C} t (λ ξ″ a →
-                                 {!!}))))
+                                 oops))))
 eval (cpair {A} {B})     γ = return {A ▷ B ▷ A ∧ B} (λ _ a →
                              return {B ▷ A ∧ B} (λ ξ b →
                              return {A ∧ B} (mono⊩ {A} ξ a , b)))
@@ -42,5 +47,5 @@ eval (ccase {A} {B} {C}) γ = return {A ∨ B ▷ (A ▷ C) ▷ (B ▷ C) ▷ C}
                              in  bind {A ∨ B} {C} t′ (λ ξ″ s →
                                  let u″ = mono⊩ {A ▷ C} ξ″ u′
                                      v″ = mono⊩ {B ▷ C} ξ″ v
-                                 in κ s (λ a → {!!})
-                                        (λ b → {!!})))))
+                                 in κ s (λ a → oops)
+                                        (λ b → oops)))))
