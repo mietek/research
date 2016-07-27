@@ -165,6 +165,23 @@ csnd : ∀ {A B Γ} → Γ ⊢ A ∧ B ▷ B
 csnd = lam (snd v₀)
 
 
+-- Internalisation, or lifting, and additional theorems.
+
+lift : ∀ {Γ A} → Γ ⊢ A → □⋆ Γ ⊢ □ A
+lift {⌀}     t = box t
+lift {Γ , B} t = det (app cdist (lift (lam t)))
+
+negup : ∀ {A B Γ} → Γ ⊢ □ □ A ▷ B → Γ ⊢ □ A ▷ B
+negup t = lam (app (mono⊢ weak⊆ t) (up v₀))
+
+negdown : ∀ {A B Γ} → Γ ⊢ A ▷ B → Γ ⊢ □ A ▷ B
+negdown t = lam (app (mono⊢ weak⊆ t) (down v₀))
+
+lower : ∀ {Γ A} → □⋆ □⋆ Γ ⊢ A → □⋆ Γ ⊢ A
+lower {⌀}     t = t
+lower {Γ , B} t = det (negup (lower (lam t)))
+
+
 -- Closure under context concatenation.
 
 concat : ∀ {A B Γ} Γ′ → Γ , A ⊢ B → Γ′ ⊢ A → Γ ⧺ Γ′ ⊢ B

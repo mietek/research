@@ -151,10 +151,6 @@ distup t u = dist t (up u)
 unbox : ∀ {A C Γ} → Γ ⊢ □ A → Γ , □ A ⊢ C → Γ ⊢ C
 unbox t u = app (lam u) t
 
-multibox : ∀ {Π A Γ} → Γ ⊢⋆ □⋆ Π → □⋆ Π ⊢ A → Γ ⊢ □ A
-multibox {⌀}     ∙        u = box u
-multibox {Π , B} (ts , t) u = distup (multibox ts (lam u)) t
-
 pair : ∀ {A B Γ} → Γ ⊢ A → Γ ⊢ B → Γ ⊢ A ∧ B
 pair t u = app (app cpair t) u
 
@@ -163,6 +159,30 @@ fst t = app cfst t
 
 snd : ∀ {A B Γ} → Γ ⊢ A ∧ B → Γ ⊢ B
 snd t = app csnd t
+
+
+-- Internalisation, or lifting, and additional theorems.
+
+lift : ∀ {Γ A} → Γ ⊢ A → □⋆ Γ ⊢ □ A
+lift {⌀}     t = box t
+lift {Γ , B} t = det (app cdist (lift (lam t)))
+
+negup : ∀ {A B Γ} → Γ ⊢ □ □ A ▷ B → Γ ⊢ □ A ▷ B
+negup t = lam (app (mono⊢ weak⊆ t) (up v₀))
+
+negdown : ∀ {A B Γ} → Γ ⊢ A ▷ B → Γ ⊢ □ A ▷ B
+negdown t = lam (app (mono⊢ weak⊆ t) (down v₀))
+
+lower : ∀ {Γ A} → □⋆ □⋆ Γ ⊢ A → □⋆ Γ ⊢ A
+lower {⌀}     t = t
+lower {Γ , B} t = det (negup (lower (lam t)))
+
+up⋆ : ∀ {Π Γ} → Γ ⊢⋆ □⋆ Π → Γ ⊢⋆ □⋆ □⋆ Π
+up⋆ {⌀}     ∙        = ∙
+up⋆ {Π , A} (ts , t) = up⋆ ts , up t
+
+multibox : ∀ {Π A Γ} → Γ ⊢⋆ □⋆ Π → □⋆ Π ⊢ A → Γ ⊢ □ A
+multibox ts u = multicut (up⋆ ts) (lift u)
 
 
 -- Closure under context concatenation.

@@ -142,12 +142,13 @@ cut t u = app (mono⊢ bot⊆ (lam u)) t
 mcut : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ □ A → Γ ⁏ ⌀ , A ⊢ B → Γ ⁏ Δ ⊢ B
 mcut t u = app (mmono⊢ bot⊆ (mlam u)) t
 
-multicut₀ : ∀ {Π A Γ} → Γ ⁏ ⌀ ⊢⋆ Π → Π ⁏ ⌀ ⊢ A → Γ ⁏ ⌀ ⊢ A
-multicut₀ {⌀}     ∙        u = mono⊢ bot⊆ u
-multicut₀ {Π , B} (ts , t) u = app (multicut₀ ts (lam u)) t
+multicut : ∀ {Π A Γ Δ} → Γ ⁏ Δ ⊢⋆ Π → Π ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ A
+multicut {⌀}     ∙        u = mono⊢ bot⊆ u
+multicut {Π , B} (ts , t) u = app (multicut ts (lam u)) t
 
-multicut : ∀ {Π Π′ A Γ Δ} → Γ ⁏ Δ ⊢⋆ Π ⧺ (□⋆ Π′) → Π ⁏ Π′ ⊢ A → Γ ⁏ Δ ⊢ A
-multicut ts u = split (multicut₀ (merge⋆ ts) (merge u))
+mmulticut : ∀ {Π A Γ Δ} → Γ ⁏ Δ ⊢⋆ □⋆ Π → Γ ⁏ Π ⊢ A → Γ ⁏ Δ ⊢ A
+mmulticut {⌀}     ∙        u = mmono⊢ bot⊆ u
+mmulticut {Π , B} (ts , t) u = app (mmulticut ts (mlam u)) t
 
 
 -- Reflexivity and transitivity.
@@ -217,15 +218,6 @@ down t = unbox t mv₀
 distup : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ □ (□ A ▷ B) → Γ ⁏ Δ ⊢ □ A → Γ ⁏ Δ ⊢ □ B
 distup t u = dist t (up u)
 
-multibox₀ : ∀ {Π A Γ} → Γ ⁏ ⌀ ⊢⋆ □⋆ Π → □⋆ Π ⁏ ⌀ ⊢ A → Γ ⁏ ⌀ ⊢ □ A
-multibox₀ {⌀}     ∙        u = mono⊢ bot⊆ (box u)
-multibox₀ {Π , B} (ts , t) u = distup (multibox₀ ts (lam u)) t
-
-multibox : ∀ {Π Π′ A Γ Δ} → Γ ⁏ Δ ⊢⋆ (□⋆ Π) ⧺ (□⋆ Π′) → □⋆ Π ⁏ Π′ ⊢ A → Γ ⁏ Δ ⊢ □ A
-multibox {Π} {Π′} {A} {Γ} {Δ} ts u = split (multibox₀ ts′ u′)
-  where ts′ = subst (λ Π″ → Γ ⧺ (□⋆ Δ) ⁏ ⌀ ⊢⋆ Π″) (sym (dist□⋆ₗ Π Π′)) (merge⋆ ts)
-        u′  = subst (λ Π″ → Π″ ⁏ ⌀ ⊢ A) (sym (dist□⋆ₗ Π Π′)) (merge u)
-
 
 -- Useful theorems in combinatory form.
 
@@ -261,6 +253,26 @@ cfst = lam (fst v₀)
 
 csnd : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ∧ B ▷ B
 csnd = lam (snd v₀)
+
+
+-- Internalisation, or lifting, and additional theorems.
+
+lift : ∀ {Γ A Δ} → Γ ⁏ Δ ⊢ A → □⋆ Γ ⁏ Δ ⊢ □ A
+lift {⌀}     t = box t
+lift {Γ , B} t = det (app cdist (lift (lam t)))
+
+negup : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ □ □ A ▷ B → Γ ⁏ Δ ⊢ □ A ▷ B
+negup t = lam (app (mono⊢ weak⊆ t) (up v₀))
+
+negdown : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ▷ B → Γ ⁏ Δ ⊢ □ A ▷ B
+negdown t = lam (app (mono⊢ weak⊆ t) (down v₀))
+
+lower : ∀ {Γ A Δ} → □⋆ □⋆ Γ ⁏ Δ ⊢ A → □⋆ Γ ⁏ Δ ⊢ A
+lower {⌀}     t = t
+lower {Γ , B} t = det (negup (lower (lam t)))
+
+multibox : ∀ {Π A Γ Δ} → Γ ⁏ Δ ⊢⋆ □⋆ Π → □⋆ Π ⁏ ⌀ ⊢ A → Γ ⁏ Δ ⊢ □ A
+multibox ts u = multicut ts (mmono⊢ bot⊆ (lower (lift u)))
 
 
 -- Closure under context concatenation.
