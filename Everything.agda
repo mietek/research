@@ -73,7 +73,7 @@ import BasicIS4.DualContext.Hilbert.Sequential
 import BasicIS4.DualContext.Hilbert.Nested
 import BasicIS4.DualContext.Hilbert.Nested.KripkeSoundness
 import BasicIS4.DualContext.Gentzen
--- import BasicIS4.DualContext.Gentzen.KripkeSoundness
+import BasicIS4.DualContext.Gentzen.KripkeSoundness
 import BasicIS4.DualContext.Translation
 import BasicIS4.Labelled.Gentzen -- FIXME
 import BasicIS4.Translation
