@@ -25,27 +25,3 @@ eval (case {A} {B} {C} t u v) γ = bind {A ∨ B} {C} (eval t γ) (λ ξ s → �
 eval⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ᴹ⊩⋆ Π
 eval⋆ {⌀}     ∙        γ = ∙
 eval⋆ {Π , A} (ts , t) γ = eval⋆ ts γ , eval t γ
-
-
--- TODO: Correctness with respect to conversion.
-
--- module _ {{_ : Model}} where
---   coco : ∀ {A Γ} {t t′ : Γ ⊢ A} → t ⇒ t′ → eval t ≡ eval t′
---   coco refl⇒             = refl
---   coco (trans⇒ p q)      = trans (coco p) (coco q)
---   coco (sym⇒ p)          = sym (coco p)
---   coco (cong⇒lam p)      = cong {!!} (coco p)
---   coco (cong⇒app p q)    = cong₂ {!!} (coco p) (coco q)
---   coco (cong⇒pair p q)   = cong₂ {!!} (coco p) (coco q)
---   coco (cong⇒fst p)      = cong {!!} (coco p)
---   coco (cong⇒snd p)      = cong {!!} (coco p)
---   coco (cong⇒inl p)      = cong {!!} (coco p)
---   coco (cong⇒inr p)      = cong {!!} (coco p)
---   coco (cong⇒boom p)     = cong {!!} (coco p)
---   coco (cong⇒case p q r) = cong₃ {!!} (coco p) (coco q) (coco r)
---   coco conv⇒lam          = {!!}
---   coco conv⇒app          = {!!}
---   coco conv⇒tt           = {!!}
---   coco conv⇒pair         = {!!}
---   coco conv⇒fst          = {!!}
---   coco conv⇒snd          = {!!}

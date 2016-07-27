@@ -258,26 +258,3 @@ tm→nf (case t u v) = caseⁿᶠ (tm→nf t) (tm→nf u) (tm→nf v)
 
 norm : ∀ {A Γ} → Γ ⊢ A → Γ ⊢ A
 norm = nf→tm ∘ tm→nf
-
-
--- TODO: Correctness with respect to conversion.
-
--- coco : ∀ {A Γ} {t t′ : Γ ⊢ A} → t ⇒ t′ → norm t ≡ norm t′
--- coco refl⇒             = refl
--- coco (trans⇒ p q)      = trans (coco p) (coco q)
--- coco (sym⇒ p)          = sym (coco p)
--- coco (cong⇒lam p)      = cong lam (coco p)
--- coco (cong⇒app p q)    = cong₂ {!!} (coco p) (coco q)
--- coco (cong⇒pair p q)   = cong₂ pair (coco p) (coco q)
--- coco (cong⇒fst p)      = cong {!!} (coco p)
--- coco (cong⇒snd p)      = cong {!!} (coco p)
--- coco (cong⇒inl p)      = cong inl (coco p)
--- coco (cong⇒inr p)      = cong inr (coco p)
--- coco (cong⇒boom p)     = cong {!!} (coco p)
--- coco (cong⇒case p q r) = cong₃ {!!} (coco p) (coco q) (coco r)
--- coco conv⇒lam          = {!!}
--- coco conv⇒app          = {!!}
--- coco conv⇒pair         = {!!}
--- coco conv⇒fst          = refl
--- coco conv⇒snd          = refl
--- coco conv⇒tt           = {!!}
