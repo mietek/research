@@ -177,10 +177,6 @@ negup t = lam (app (mono⊢ weak⊆ t) (up v₀))
 negdown : ∀ {A B Γ} → Γ ⊢ A ▷ B → Γ ⊢ □ A ▷ B
 negdown t = lam (app (mono⊢ weak⊆ t) (down v₀))
 
-lower : ∀ {Γ A} → □⋆ □⋆ Γ ⊢ A → □⋆ Γ ⊢ A
-lower {⌀}     t = t
-lower {Γ , B} t = det (negup (lower (lam t)))
-
 
 -- Closure under context concatenation.
 

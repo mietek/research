@@ -298,12 +298,12 @@ negup t = lam (app (mono⊢ weak⊆ t) (up v₀))
 negdown : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ▷ B → Γ ⁏ Δ ⊢ □ A ▷ B
 negdown t = lam (app (mono⊢ weak⊆ t) (down v₀))
 
-lower : ∀ {Γ A Δ} → □⋆ □⋆ Γ ⁏ Δ ⊢ A → □⋆ Γ ⁏ Δ ⊢ A
-lower {⌀}     t = t
-lower {Γ , B} t = det (negup (lower (lam t)))
+up⋆ : ∀ {Π Γ Δ} → Γ ⁏ Δ ⊢⋆ □⋆ Π → Γ ⁏ Δ ⊢⋆ □⋆ □⋆ Π
+up⋆ {⌀}     ∙        = ∙
+up⋆ {Π , A} (ts , t) = up⋆ ts , up t
 
 multibox : ∀ {Π A Γ Δ} → Γ ⁏ Δ ⊢⋆ □⋆ Π → □⋆ Π ⁏ ⌀ ⊢ A → Γ ⁏ Δ ⊢ □ A
-multibox ts u = multicut ts (mmono⊢ bot⊆ (lower (lift u)))
+multibox ts u = multicut (up⋆ ts) (mmono⊢ bot⊆ (lift u))
 
 
 -- Closure under context concatenation.
