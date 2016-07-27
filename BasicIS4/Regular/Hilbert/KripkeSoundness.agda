@@ -162,7 +162,7 @@ module AlechinaEtAl where
   --   w′  R  v′
   --   ◌╌╌╌╌╌╌●
   --   ┊      │
-  -- ≤ ┊   ₂  │ ≤
+  -- ≤ ┊      │ ≤
   --   ┊      │
   --   ●──────●
   --   w   R  v
