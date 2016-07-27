@@ -67,6 +67,7 @@ import BasicIS4.Regular.Hilbert.KripkeSoundness
 import BasicIS4.Regular.Gentzen
 import BasicIS4.Regular.Gentzen.KripkeSoundness
 import BasicIS4.Regular.Gentzen.KripkeEquipment
+import BasicIS4.Regular.Gentzen.KripkeEquipmentToo
 import BasicIS4.Regular.Gentzen.KripkeBasicCompleteness -- FIXME
 import BasicIS4.Regular.Translation
 import BasicIS4.DualContext.Hilbert.Sequential
