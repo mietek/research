@@ -80,21 +80,6 @@ module BozicDosen where
 module Wijesekera where
   open import BasicIS4.KripkeSemantics.Wijesekera public
 
-  module _ {{_ : Model}} where
-    -- FIXME: Read the Wijesekera paper; find the missing piece.
-    postulate
-      zigzag≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
-
-    _≤⨾R_ : World → World → Set
-    _≤⨾R_ = _≤_ ⨾ _R_
-
-    refl≤⨾R : ∀ {w} → w ≤⨾R w
-    refl≤⨾R {w} = w , (refl≤ , reflR)
-
-    trans≤⨾R : ∀ {w w′ w″} → w ≤⨾R w′ → w′ ≤⨾R w″ → w ≤⨾R w″
-    trans≤⨾R (a , (ξ , ζ)) (b , (ξ′ , ζ′)) = let c , (ξ″ , ζ″) = zigzag≤⨾R ξ′ ζ
-                                             in  c , (trans≤ ξ ξ″ , transR ζ″ ζ′)
-
   eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊩ A
   eval (var i)          γ δ = lookup i γ
   eval (app t u)        γ δ = (eval t γ δ) refl≤ (eval u γ δ)
