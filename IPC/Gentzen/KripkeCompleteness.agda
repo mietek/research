@@ -113,23 +113,23 @@ instance
 mutual
   reflect : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊩ A
   reflect {α P}   t = return {α P} t
-  reflect {A ▷ B} t = return {A ▷ B} (λ ξ a → reflect {B} (appⁿᵉ (mono⊢ⁿᵉ ξ t) (reify {A} a)))
+  reflect {A ▷ B} t = return {A ▷ B} (λ η a → reflect {B} (appⁿᵉ (mono⊢ⁿᵉ η t) (reify {A} a)))
   reflect {A ∧ B} t = return {A ∧ B} (reflect {A} (fstⁿᵉ t) , reflect {B} (sndⁿᵉ t))
   reflect {⊤}    t = return {⊤} ∙
-  reflect {⊥}    t = λ ξ k → neⁿᶠ (boomⁿᵉ (mono⊢ⁿᵉ ξ t))
-  reflect {A ∨ B} t = λ ξ k → neⁿᶠ (caseⁿᵉ (mono⊢ⁿᵉ ξ t)
+  reflect {⊥}    t = λ η k → neⁿᶠ (boomⁿᵉ (mono⊢ⁿᵉ η t))
+  reflect {A ∨ B} t = λ η k → neⁿᶠ (caseⁿᵉ (mono⊢ⁿᵉ η t)
                                        (k weak⊆ (ι₁ (reflect {A} (varⁿᵉ top))))
                                        (k weak⊆ (ι₂ (reflect {B} (varⁿᵉ top)))))
 
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ⁿᶠ A
-  reify {α P}   k = k refl≤ (λ ξ s → neⁿᶠ s)
-  reify {A ▷ B} k = k refl≤ (λ ξ s → lamⁿᶠ (reify {B} (s weak⊆ (reflect {A} (varⁿᵉ top)))))
-  reify {A ∧ B} k = k refl≤ (λ ξ s → pairⁿᶠ (reify {A} (π₁ s)) (reify {B} (π₂ s)))
-  reify {⊤}    k = k refl≤ (λ ξ s → ttⁿᶠ)
-  reify {⊥}    k = k refl≤ (λ ξ ())
-  reify {A ∨ B} k = k refl≤ (λ ξ s → κ s
-                                        (λ a → inlⁿᶠ (reify {A} (λ ξ′ k′ → a ξ′ k′)))
-                                        (λ b → inrⁿᶠ (reify {B} (λ ξ′ k′ → b ξ′ k′))))
+  reify {α P}   k = k refl≤ (λ η s → neⁿᶠ s)
+  reify {A ▷ B} k = k refl≤ (λ η s → lamⁿᶠ (reify {B} (s weak⊆ (reflect {A} (varⁿᵉ top)))))
+  reify {A ∧ B} k = k refl≤ (λ η s → pairⁿᶠ (reify {A} (π₁ s)) (reify {B} (π₂ s)))
+  reify {⊤}    k = k refl≤ (λ η s → ttⁿᶠ)
+  reify {⊥}    k = k refl≤ (λ η ())
+  reify {A ∨ B} k = k refl≤ (λ η s → κ s
+                                        (λ a → inlⁿᶠ (reify {A} (λ η′ k′ → a η′ k′)))
+                                        (λ b → inrⁿᶠ (reify {B} (λ η′ k′ → b η′ k′))))
 
 reflect⋆ : ∀ {Π Γ} → Γ ⊢⋆ⁿᵉ Π → Γ ⊩⋆ Π
 reflect⋆ {⌀}     ∙        = ∙

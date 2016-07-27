@@ -22,7 +22,7 @@ instance
 mutual
   reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
   reflect {α P}   t = t
-  reflect {A ▷ B} t = λ ξ a → reflect {B} (app (mono⊢ ξ t) (reify {A} a))
+  reflect {A ▷ B} t = λ η a → reflect {B} (app (mono⊢ η t) (reify {A} a))
   reflect {A ∧ B} t = reflect {A} (fst t) , reflect {B} (snd t)
   reflect {⊤}    t = ∙
 

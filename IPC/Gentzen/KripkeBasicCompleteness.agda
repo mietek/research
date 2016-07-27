@@ -23,23 +23,23 @@ instance
 mutual
   reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
   reflect {α P}   t = return {α P} t
-  reflect {A ▷ B} t = return {A ▷ B} (λ ξ a → reflect {B} (app (mono⊢ ξ t) (reify {A} a)))
+  reflect {A ▷ B} t = return {A ▷ B} (λ η a → reflect {B} (app (mono⊢ η t) (reify {A} a)))
   reflect {A ∧ B} t = return {A ∧ B} (reflect {A} (fst t) , reflect {B} (snd t))
   reflect {⊤}    t = return {⊤} ∙
-  reflect {⊥}    t = λ ξ k → boom (mono⊢ ξ t)
-  reflect {A ∨ B} t = λ ξ k → case (mono⊢ ξ t)
+  reflect {⊥}    t = λ η k → boom (mono⊢ η t)
+  reflect {A ∨ B} t = λ η k → case (mono⊢ η t)
                                  (k weak⊆ (ι₁ (reflect {A} v₀)))
                                  (k weak⊆ (ι₂ (reflect {B} (v₀))))
 
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
-  reify {α P}   k = k refl≤ (λ ξ s → s)
-  reify {A ▷ B} k = k refl≤ (λ ξ s → lam (reify {B} (s weak⊆ (reflect {A} (v₀)))))
-  reify {A ∧ B} k = k refl≤ (λ ξ s → pair (reify {A} (π₁ s)) (reify {B} (π₂ s)))
-  reify {⊤}    k = k refl≤ (λ ξ s → tt)
-  reify {⊥}    k = k refl≤ (λ ξ ())
-  reify {A ∨ B} k = k refl≤ (λ ξ s → κ s
-                                        (λ a → inl (reify {A} (λ ξ′ k → a ξ′ k)))
-                                        (λ b → inr (reify {B} (λ ξ′ k → b ξ′ k))))
+  reify {α P}   k = k refl≤ (λ η s → s)
+  reify {A ▷ B} k = k refl≤ (λ η s → lam (reify {B} (s weak⊆ (reflect {A} (v₀)))))
+  reify {A ∧ B} k = k refl≤ (λ η s → pair (reify {A} (π₁ s)) (reify {B} (π₂ s)))
+  reify {⊤}    k = k refl≤ (λ η s → tt)
+  reify {⊥}    k = k refl≤ (λ η ())
+  reify {A ∨ B} k = k refl≤ (λ η s → κ s
+                                        (λ a → inl (reify {A} (λ η′ k → a η′ k)))
+                                        (λ b → inr (reify {B} (λ η′ k → b η′ k))))
 
 reflect⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊩⋆ Π
 reflect⋆ {⌀}     ∙        = ∙
