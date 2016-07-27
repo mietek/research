@@ -25,6 +25,8 @@ References
 
 • Davies, R., Pfenning, F. (2001) [“A modal analysis of staged computation”](http://dx.doi.org/10.1145/382780.382785)
 
+• Gabbay, M.J., Nanevski, A. (2012) [“Denotation of contextual modal type theory: Syntax and meta-programming”](http://dx.doi.org/10.1016/j.jal.2012.07.002)
+
 • Hakli, R., Negri, S. (2010) [“Does the deduction theorem fail for modal logic?”](http://dx.doi.org/10.1007/s11229-011-9905-9)
 
 • Ilik, D. (2010) [“Continuation-passing style models complete for intuitionistic logic”](http://dx.doi.org/10.1016/j.apal.2012.05.003)
@@ -40,6 +42,8 @@ References
 • McBride, C. (2013) [“Dependently typed metaprogramming (in Agda)”](https://github.com/pigworker/MetaprogAgda)
 
 • Morris, P. (2007) [“Constructing universes for generic programming”](http://web.archive.org/web/20090902033015/http://www.cs.nott.ac.uk/~pwm/thesis.pdf)
+
+• Nanevski, A., Pfenning, F., Pientka, B. (2008) [“Contextual modal type theory”](http://dx.doi.org/10.1145/1352582.1352591)
 
 • Ono, H. (1977) [“On some intuitionistic modal logics”](http://dx.doi.org/10.2977/prims/1195189604)
 
