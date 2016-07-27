@@ -52,7 +52,7 @@ transRᶜ⨾⊆ (a , (ζ , η)) (b , (ζ′ , η′)) = let c , (ζ″ , η″) 
                                           in  c , (transRᶜ ζ ζ″ , trans⊆ η″ η′)
 
 
--- Frame condition given by Ewald et al. and Alechina et al, and a simplified condition.
+-- Frame condition given by Ewald et al. and Alechina et al., and a simplified condition.
 --
 -- zagzig         zag
 --   Γ′ Rᶜ  Π′             Π′
