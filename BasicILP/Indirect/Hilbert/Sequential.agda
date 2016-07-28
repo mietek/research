@@ -63,8 +63,8 @@ mutual
 
   [_]× : ∀ {Π Γ} → Γ ⊢× Π → Tm
   [ nil ]×       = NIL
-  [ var i ts ]×  = VAR [ i ]ᴵˣ [ ts ]×
-  [ mp i j ts ]× = MP [ i ]ᴵˣ [ j ]ᴵˣ [ ts ]×
+  [ var i ts ]×  = VAR [ i ]ⁱˣ [ ts ]×
+  [ mp i j ts ]× = MP [ i ]ⁱˣ [ j ]ⁱˣ [ ts ]×
   [ ci ts ]×     = CI [ ts ]×
   [ ck ts ]×     = CK [ ts ]×
   [ cs ts ]×     = CS [ ts ]×

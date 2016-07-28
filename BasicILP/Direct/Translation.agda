@@ -32,26 +32,26 @@ open G using  () renaming (_⊢_ to G⟨_⊢_⟩ ; _⊢⋆_ to G⟨_⊢⋆_⟩) 
 -- Translation from Hilbert-style to Gentzen-style.
 
 mutual
-  hn→gᴮᵒˣ : HN.Box → G.Box
-  hn→gᴮᵒˣ HN.[ t ] = {!G.[ hn→g t ]!}
+  hn→gᵇᵒˣ : HN.Box → G.Box
+  hn→gᵇᵒˣ HN.[ t ] = {!G.[ hn→g t ]!}
 
-  hn→gᵀʸ : HN.Ty → G.Ty
-  hn→gᵀʸ (HN.α P)   = G.α P
-  hn→gᵀʸ (A HN.▷ B) = hn→gᵀʸ A G.▷ hn→gᵀʸ B
-  hn→gᵀʸ (T HN.⦂ A) = hn→gᴮᵒˣ T G.⦂ hn→gᵀʸ A
-  hn→gᵀʸ (A HN.∧ B) = hn→gᵀʸ A G.∧ hn→gᵀʸ B
-  hn→gᵀʸ HN.⊤      = G.⊤
+  hn→gᵗʸ : HN.Ty → G.Ty
+  hn→gᵗʸ (HN.α P)   = G.α P
+  hn→gᵗʸ (A HN.▷ B) = hn→gᵗʸ A G.▷ hn→gᵗʸ B
+  hn→gᵗʸ (T HN.⦂ A) = hn→gᵇᵒˣ T G.⦂ hn→gᵗʸ A
+  hn→gᵗʸ (A HN.∧ B) = hn→gᵗʸ A G.∧ hn→gᵗʸ B
+  hn→gᵗʸ HN.⊤      = G.⊤
 
-  hn→gᵀʸ⋆ : Cx HN.Ty → Cx G.Ty
-  hn→gᵀʸ⋆ ⌀       = ⌀
-  hn→gᵀʸ⋆ (Γ , A) = hn→gᵀʸ⋆ Γ , hn→gᵀʸ A
+  hn→gᵗʸ⋆ : Cx HN.Ty → Cx G.Ty
+  hn→gᵗʸ⋆ ⌀       = ⌀
+  hn→gᵗʸ⋆ (Γ , A) = hn→gᵗʸ⋆ Γ , hn→gᵗʸ A
 
-  hn→gᴵˣ : ∀ {A Γ} → A ∈ Γ → hn→gᵀʸ A ∈ hn→gᵀʸ⋆ Γ
-  hn→gᴵˣ top     = top
-  hn→gᴵˣ (pop i) = pop (hn→gᴵˣ i)
+  hn→gⁱˣ : ∀ {A Γ} → A ∈ Γ → hn→gᵗʸ A ∈ hn→gᵗʸ⋆ Γ
+  hn→gⁱˣ top     = top
+  hn→gⁱˣ (pop i) = pop (hn→gⁱˣ i)
 
-  hn→g : ∀ {A Γ} → HN⟨ Γ ⊢ A ⟩ → G⟨ hn→gᵀʸ⋆ Γ ⊢ hn→gᵀʸ A ⟩
-  hn→g (HN.var i)   = G.var (hn→gᴵˣ i)
+  hn→g : ∀ {A Γ} → HN⟨ Γ ⊢ A ⟩ → G⟨ hn→gᵗʸ⋆ Γ ⊢ hn→gᵗʸ A ⟩
+  hn→g (HN.var i)   = G.var (hn→gⁱˣ i)
   hn→g (HN.app t u) = G.app (hn→g t) (hn→g u)
   hn→g HN.ci        = G.ci
   hn→g HN.ck        = G.ck
@@ -72,26 +72,26 @@ mutual
 -- Translation from Gentzen-style to Hilbert-style.
 
 mutual
-  g→hnᴮᵒˣ : G.Box → HN.Box
-  g→hnᴮᵒˣ G.[ t ] = {!HN.[ g→hn t ]!}
+  g→hnᵇᵒˣ : G.Box → HN.Box
+  g→hnᵇᵒˣ G.[ t ] = {!HN.[ g→hn t ]!}
 
-  g→hnᵀʸ : G.Ty → HN.Ty
-  g→hnᵀʸ (G.α P)   = HN.α P
-  g→hnᵀʸ (A G.▷ B) = g→hnᵀʸ A HN.▷ g→hnᵀʸ B
-  g→hnᵀʸ (T G.⦂ A) = g→hnᴮᵒˣ T HN.⦂ g→hnᵀʸ A
-  g→hnᵀʸ (A G.∧ B) = g→hnᵀʸ A HN.∧ g→hnᵀʸ B
-  g→hnᵀʸ G.⊤      = HN.⊤
+  g→hnᵗʸ : G.Ty → HN.Ty
+  g→hnᵗʸ (G.α P)   = HN.α P
+  g→hnᵗʸ (A G.▷ B) = g→hnᵗʸ A HN.▷ g→hnᵗʸ B
+  g→hnᵗʸ (T G.⦂ A) = g→hnᵇᵒˣ T HN.⦂ g→hnᵗʸ A
+  g→hnᵗʸ (A G.∧ B) = g→hnᵗʸ A HN.∧ g→hnᵗʸ B
+  g→hnᵗʸ G.⊤      = HN.⊤
 
-  g→hnᵀʸ⋆ : Cx G.Ty → Cx HN.Ty
-  g→hnᵀʸ⋆ ⌀       = ⌀
-  g→hnᵀʸ⋆ (Γ , A) = g→hnᵀʸ⋆ Γ , g→hnᵀʸ A
+  g→hnᵗʸ⋆ : Cx G.Ty → Cx HN.Ty
+  g→hnᵗʸ⋆ ⌀       = ⌀
+  g→hnᵗʸ⋆ (Γ , A) = g→hnᵗʸ⋆ Γ , g→hnᵗʸ A
 
-  g→hnᴵˣ : ∀ {A Γ} → A ∈ Γ → g→hnᵀʸ A ∈ g→hnᵀʸ⋆ Γ
-  g→hnᴵˣ top     = top
-  g→hnᴵˣ (pop i) = pop (g→hnᴵˣ i)
+  g→hnⁱˣ : ∀ {A Γ} → A ∈ Γ → g→hnᵗʸ A ∈ g→hnᵗʸ⋆ Γ
+  g→hnⁱˣ top     = top
+  g→hnⁱˣ (pop i) = pop (g→hnⁱˣ i)
 
-  g→hn : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → HN⟨ g→hnᵀʸ⋆ Γ ⊢ g→hnᵀʸ A ⟩
-  g→hn (G.var i)         = HN.var (g→hnᴵˣ i)
+  g→hn : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → HN⟨ g→hnᵗʸ⋆ Γ ⊢ g→hnᵗʸ A ⟩
+  g→hn (G.var i)         = HN.var (g→hnⁱˣ i)
   g→hn (G.lam t)         = HN.lam (g→hn t)
   g→hn (G.app t u)       = HN.app (g→hn t) (g→hn u)
 --  g→hn (G.multibox ts u) = {!HN.multibox (g→hn⋆ ts) (g→hn u)!}
@@ -101,7 +101,7 @@ mutual
   g→hn (G.snd t)         = HN.snd (g→hn t)
   g→hn G.tt              = HN.tt
 
-  g→hn⋆ : ∀ {Π Γ} → G⟨ Γ ⊢⋆ Π ⟩ → HN⟨ g→hnᵀʸ⋆ Γ ⊢⋆ g→hnᵀʸ⋆ Π ⟩
+  g→hn⋆ : ∀ {Π Γ} → G⟨ Γ ⊢⋆ Π ⟩ → HN⟨ g→hnᵗʸ⋆ Γ ⊢⋆ g→hnᵗʸ⋆ Π ⟩
   g→hn⋆ {⌀}     ∙        = ∙
   g→hn⋆ {Π , A} (ts , t) = g→hn⋆ ts , g→hn t
 

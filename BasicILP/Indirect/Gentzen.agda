@@ -37,7 +37,7 @@ mutual
   Γ ⊢⋆ Π , A = Γ ⊢⋆ Π × Γ ⊢ A
 
   [_] : ∀ {A Γ} → Γ ⊢ A → Tm
-  [ var i ]         = VAR [ i ]ᴵˣ
+  [ var i ]         = VAR [ i ]ⁱˣ
   [ lam t ]         = LAM [ t ]
   [ app t u ]       = APP [ t ] [ u ]
   [ multibox ts u ] = MULTIBOX [ ts ]⋆ [ u ]
