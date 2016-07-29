@@ -96,11 +96,19 @@ lam⋆ : ∀ {Π A Γ Δ} → Γ ⧺ Π ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ Π ▷⋯
 lam⋆ {⌀}     t = t
 lam⋆ {Π , B} t = lam⋆ {Π} (lam t)
 
+lam⋆₀ : ∀ {Γ A Δ} → Γ ⁏ Δ ⊢ A → ⌀ ⁏ Δ ⊢ Γ ▷⋯▷ A
+lam⋆₀ {⌀}     t = t
+lam⋆₀ {Γ , A} t = lam⋆₀ (lam t)
+
 
 -- Modal deduction theorem.
 
 mlam : ∀ {A B Γ Δ} → Γ ⁏ Δ , A ⊢ B → Γ ⁏ Δ ⊢ □ A ▷ B
 mlam t = lam (unbox v₀ (mono⊢ weak⊆ t))
+
+mlam⋆ : ∀ {Π A Γ Δ} → Γ ⁏ Δ ⧺ Π ⊢ A → Γ ⁏ Δ ⊢ □⋆ Π ▷⋯▷ A
+mlam⋆ {⌀}     t = t
+mlam⋆ {Π , B} t = mlam⋆ {Π} (mlam t)
 
 mlam⋆₀ : ∀ {Δ A Γ} → Γ ⁏ Δ ⊢ A → Γ ⁏ ⌀ ⊢ □⋆ Δ ▷⋯▷ A
 mlam⋆₀ {⌀}     t = t
@@ -116,8 +124,16 @@ det⋆ : ∀ {Π A Γ Δ} → Γ ⁏ Δ ⊢ Π ▷⋯▷ A → Γ ⧺ Π ⁏ Δ 
 det⋆ {⌀}     t = t
 det⋆ {Π , A} t = det (det⋆ {Π} t)
 
+det⋆₀ : ∀ {Γ A Δ} → ⌀ ⁏ Δ ⊢ Γ ▷⋯▷ A → Γ ⁏ Δ ⊢ A
+det⋆₀ {⌀}     t = t
+det⋆₀ {Γ , A} t = det (det⋆₀ t)
+
 mdet : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ □ A ▷ B → Γ ⁏ Δ , A ⊢ B
 mdet t = app (mmono⊢ weak⊆ t) (box mv₀)
+
+mdet⋆ : ∀ {Π A Γ Δ} → Γ ⁏ Δ ⊢ □⋆ Π ▷⋯▷ A → Γ ⁏ Δ ⧺ Π ⊢ A
+mdet⋆ {⌀}      t = t
+mdet⋆ {Π , A} t = mdet (mdet⋆ {Π} t)
 
 mdet⋆₀ : ∀ {Δ A Γ} → Γ ⁏ ⌀ ⊢ □⋆ Δ ▷⋯▷ A → Γ ⁏ Δ ⊢ A
 mdet⋆₀ {⌀}     t = t
@@ -129,8 +145,14 @@ mdet⋆₀ {Δ , A} t = mdet (mdet⋆₀ t)
 merge : ∀ {Δ A Γ} → Γ ⁏ Δ ⊢ A → Γ ⧺ (□⋆ Δ) ⁏ ⌀ ⊢ A
 merge {Δ} t = det⋆ {□⋆ Δ} (mlam⋆₀ t)
 
+mmerge : ∀ {Γ A Δ} → □⋆ Γ ⁏ Δ ⊢ A → ⌀ ⁏ Δ ⧺ Γ ⊢ A
+mmerge {Γ} t = mdet⋆ {Γ} (lam⋆₀ t)
+
 split : ∀ {Δ A Γ} → Γ ⧺ (□⋆ Δ) ⁏ ⌀ ⊢ A → Γ ⁏ Δ ⊢ A
 split {Δ} t = mdet⋆₀ (lam⋆ {□⋆ Δ} t)
+
+msplit : ∀ {Γ A Δ} → ⌀ ⁏ Δ ⧺ Γ ⊢ A → □⋆ Γ ⁏ Δ ⊢ A
+msplit {Γ} t = det⋆₀ (mlam⋆ {Γ} t)
 
 merge⋆ : ∀ {Π Δ Γ} → Γ ⁏ Δ ⊢⋆ Π → Γ ⧺ (□⋆ Δ) ⁏ ⌀ ⊢⋆ Π
 merge⋆ {⌀}     ∙        = ∙
