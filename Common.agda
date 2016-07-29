@@ -17,6 +17,7 @@ open import Data.Empty public
 
 open import Data.Nat public
   using (ℕ ; zero ; suc)
+  renaming (_≟_ to _≟ᴺ_)
 
 open import Data.Product public
   using (Σ ; ∃ ; _×_ ; _,_)
@@ -52,8 +53,12 @@ open import Relation.Nullary.Negation public
 
 -- Atoms, for propositional variables.
 
-postulate
+abstract
   Atom : Set
+  Atom = ℕ
+
+  _≟ᵅ_ : (P P′ : Atom) → Dec (P ≡ P′)
+  _≟ᵅ_ = _≟ᴺ_
 
 
 -- Miscellaneous.

@@ -18,6 +18,29 @@ data VCx (U : Set) : ℕ → Set where
   _,_ : ∀ {n} → VCx U n → U → VCx U (suc n)
 
 
+-- Inversion principles.
+
+module _ {U : Set} where
+  inv,ₗ : ∀ {Γ Γ′ : Cx U} {A A′ : U} → (Γ Cx., A) ≡ (Γ′ , A′) → Γ ≡ Γ′
+  inv,ₗ refl = refl
+
+  inv,ᵣ : ∀ {Γ Γ′ : Cx U} {A A′ : U} → (Γ Cx., A) ≡ (Γ′ , A′) → A ≡ A′
+  inv,ᵣ refl = refl
+
+
+-- Decidable equality.
+
+module ContextEquality {U : Set} (_≟ᵁ_ : (A A′ : U) → Dec (A ≡ A′)) where
+  _≟ᶜˣ_ : (Γ Γ′ : Cx U) → Dec (Γ ≡ Γ′)
+  ⌀       ≟ᶜˣ ⌀         = yes refl
+  ⌀       ≟ᶜˣ (Γ′ , A′) = no λ ()
+  (Γ , A) ≟ᶜˣ ⌀         = no λ ()
+  (Γ , A) ≟ᶜˣ (Γ′ , A′) with Γ ≟ᶜˣ Γ′ | A ≟ᵁ A′
+  (Γ , A) ≟ᶜˣ (.Γ , .A) | yes refl | yes refl = yes refl
+  (Γ , A) ≟ᶜˣ (Γ′ , A′) | no  Γ≢Γ′ | _        = no (Γ≢Γ′ ∘ inv,ₗ)
+  (Γ , A) ≟ᶜˣ (Γ′ , A′) | _        | no  A≢A′ = no (A≢A′ ∘ inv,ᵣ)
+
+
 -- Context membership, as nameless typed de Bruijn indices.
 
 module _ {U : Set} where
