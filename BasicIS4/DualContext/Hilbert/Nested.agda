@@ -1,5 +1,6 @@
 module BasicIS4.DualContext.Hilbert.Nested where
 
+open import Common.ContextPair public
 open import BasicIS4 public
 
 
@@ -54,24 +55,30 @@ mono⊢⋆ {Π , A} η (ts , t) = mono⊢⋆ η ts , mono⊢ η t
 -- Monotonicity with respect to modal context inclusion.
 
 mmono⊢ : ∀ {A Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ′ ⊢ A
-mmono⊢ η (var i)   = var i
-mmono⊢ η (app t u) = app (mmono⊢ η t) (mmono⊢ η u)
-mmono⊢ η ci        = ci
-mmono⊢ η ck        = ck
-mmono⊢ η cs        = cs
-mmono⊢ η (mvar i)  = mvar (mono∈ η i)
-mmono⊢ η (box t)   = box (mmono⊢ η t)
-mmono⊢ η cdist     = cdist
-mmono⊢ η cup       = cup
-mmono⊢ η cdown     = cdown
-mmono⊢ η cpair     = cpair
-mmono⊢ η cfst      = cfst
-mmono⊢ η csnd      = csnd
-mmono⊢ η tt        = tt
+mmono⊢ θ (var i)   = var i
+mmono⊢ θ (app t u) = app (mmono⊢ θ t) (mmono⊢ θ u)
+mmono⊢ θ ci        = ci
+mmono⊢ θ ck        = ck
+mmono⊢ θ cs        = cs
+mmono⊢ θ (mvar i)  = mvar (mono∈ θ i)
+mmono⊢ θ (box t)   = box (mmono⊢ θ t)
+mmono⊢ θ cdist     = cdist
+mmono⊢ θ cup       = cup
+mmono⊢ θ cdown     = cdown
+mmono⊢ θ cpair     = cpair
+mmono⊢ θ cfst      = cfst
+mmono⊢ θ csnd      = csnd
+mmono⊢ θ tt        = tt
 
 mmono⊢⋆ : ∀ {Π Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ′ ⊢⋆ Π
-mmono⊢⋆ {⌀}     η ∙        = ∙
-mmono⊢⋆ {Π , A} η (ts , t) = mmono⊢⋆ η ts , mmono⊢ η t
+mmono⊢⋆ {⌀}     θ ∙        = ∙
+mmono⊢⋆ {Π , A} θ (ts , t) = mmono⊢⋆ θ ts , mmono⊢ θ t
+
+
+-- Monotonicity using context pairs.
+
+mono²⊢ : ∀ {A Γ Γ′ Δ Δ′} → (Γ , Δ) ⊆² (Γ′ , Δ′) → Γ ⁏ Δ ⊢ A → Γ′ ⁏ Δ′ ⊢ A
+mono²⊢ (η , θ) = mono⊢ η ∘ mmono⊢ θ
 
 
 -- Shorthand for variables.

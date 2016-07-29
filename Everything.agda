@@ -13,6 +13,7 @@ module Everything where
 
 import Common
 import Common.Context
+import Common.ContextPair
 import Common.Predicate
 import Common.PredicateBasedContext
 

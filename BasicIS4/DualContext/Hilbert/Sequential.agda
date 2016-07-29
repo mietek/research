@@ -54,24 +54,24 @@ mono⊢ η (Π , ts) = Π , mono⊢× η ts
 -- Monotonicity with respect to modal context inclusion.
 
 mmono⊢× : ∀ {Π Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ′ ⊢× Π
-mmono⊢× η nil         = nil
-mmono⊢× η (var i ts)  = var i (mmono⊢× η ts)
-mmono⊢× η (mp i j ts) = mp i j (mmono⊢× η ts)
-mmono⊢× η (ci ts)     = ci (mmono⊢× η ts)
-mmono⊢× η (ck ts)     = ck (mmono⊢× η ts)
-mmono⊢× η (cs ts)     = cs (mmono⊢× η ts)
-mmono⊢× η (mvar i ts) = mvar (mono∈ η i) (mmono⊢× η ts)
-mmono⊢× η (nec ss ts) = nec (mmono⊢× η ss) (mmono⊢× η ts)
-mmono⊢× η (cdist ts)  = cdist (mmono⊢× η ts)
-mmono⊢× η (cup ts)    = cup (mmono⊢× η ts)
-mmono⊢× η (cdown ts)  = cdown (mmono⊢× η ts)
-mmono⊢× η (cpair ts)  = cpair (mmono⊢× η ts)
-mmono⊢× η (cfst ts)   = cfst (mmono⊢× η ts)
-mmono⊢× η (csnd ts)   = csnd (mmono⊢× η ts)
-mmono⊢× η (tt ts)     = tt (mmono⊢× η ts)
+mmono⊢× θ nil         = nil
+mmono⊢× θ (var i ts)  = var i (mmono⊢× θ ts)
+mmono⊢× θ (mp i j ts) = mp i j (mmono⊢× θ ts)
+mmono⊢× θ (ci ts)     = ci (mmono⊢× θ ts)
+mmono⊢× θ (ck ts)     = ck (mmono⊢× θ ts)
+mmono⊢× θ (cs ts)     = cs (mmono⊢× θ ts)
+mmono⊢× θ (mvar i ts) = mvar (mono∈ θ i) (mmono⊢× θ ts)
+mmono⊢× θ (nec ss ts) = nec (mmono⊢× θ ss) (mmono⊢× θ ts)
+mmono⊢× θ (cdist ts)  = cdist (mmono⊢× θ ts)
+mmono⊢× θ (cup ts)    = cup (mmono⊢× θ ts)
+mmono⊢× θ (cdown ts)  = cdown (mmono⊢× θ ts)
+mmono⊢× θ (cpair ts)  = cpair (mmono⊢× θ ts)
+mmono⊢× θ (cfst ts)   = cfst (mmono⊢× θ ts)
+mmono⊢× θ (csnd ts)   = csnd (mmono⊢× θ ts)
+mmono⊢× θ (tt ts)     = tt (mmono⊢× θ ts)
 
 mmono⊢ : ∀ {A Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ′ ⊢ A
-mmono⊢ η (Π , ts) = Π , mmono⊢× η ts
+mmono⊢ θ (Π , ts) = Π , mmono⊢× θ ts
 
 
 -- Derivation concatenation.

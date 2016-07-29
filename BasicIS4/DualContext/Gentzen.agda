@@ -1,5 +1,6 @@
 module BasicIS4.DualContext.Gentzen where
 
+open import Common.ContextPair public
 open import BasicIS4 public
 
 
@@ -46,20 +47,26 @@ mono⊢⋆ {Π , A} η (ts , t) = mono⊢⋆ η ts , mono⊢ η t
 -- Monotonicity with respect to modal context inclusion.
 
 mmono⊢ : ∀ {A Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ′ ⊢ A
-mmono⊢ η (var i)     = var i
-mmono⊢ η (lam t)     = lam (mmono⊢ η t)
-mmono⊢ η (app t u)   = app (mmono⊢ η t) (mmono⊢ η u)
-mmono⊢ η (mvar i)    = mvar (mono∈ η i)
-mmono⊢ η (box t)     = box (mmono⊢ η t)
-mmono⊢ η (unbox t u) = unbox (mmono⊢ η t) (mmono⊢ (keep η) u)
-mmono⊢ η (pair t u)  = pair (mmono⊢ η t) (mmono⊢ η u)
-mmono⊢ η (fst t)     = fst (mmono⊢ η t)
-mmono⊢ η (snd t)     = snd (mmono⊢ η t)
-mmono⊢ η tt          = tt
+mmono⊢ θ (var i)     = var i
+mmono⊢ θ (lam t)     = lam (mmono⊢ θ t)
+mmono⊢ θ (app t u)   = app (mmono⊢ θ t) (mmono⊢ θ u)
+mmono⊢ θ (mvar i)    = mvar (mono∈ θ i)
+mmono⊢ θ (box t)     = box (mmono⊢ θ t)
+mmono⊢ θ (unbox t u) = unbox (mmono⊢ θ t) (mmono⊢ (keep θ) u)
+mmono⊢ θ (pair t u)  = pair (mmono⊢ θ t) (mmono⊢ θ u)
+mmono⊢ θ (fst t)     = fst (mmono⊢ θ t)
+mmono⊢ θ (snd t)     = snd (mmono⊢ θ t)
+mmono⊢ θ tt          = tt
 
 mmono⊢⋆ : ∀ {Π Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ′ ⊢⋆ Π
-mmono⊢⋆ {⌀}     η ∙        = ∙
-mmono⊢⋆ {Π , A} η (ts , t) = mmono⊢⋆ η ts , mmono⊢ η t
+mmono⊢⋆ {⌀}     θ ∙        = ∙
+mmono⊢⋆ {Π , A} θ (ts , t) = mmono⊢⋆ θ ts , mmono⊢ θ t
+
+
+-- Monotonicity using context pairs.
+
+mono²⊢ : ∀ {A Γ Γ′ Δ Δ′} → (Γ , Δ) ⊆² (Γ′ , Δ′) → Γ ⁏ Δ ⊢ A → Γ′ ⁏ Δ′ ⊢ A
+mono²⊢ (η , θ) = mono⊢ η ∘ mmono⊢ θ
 
 
 -- Shorthand for variables.
