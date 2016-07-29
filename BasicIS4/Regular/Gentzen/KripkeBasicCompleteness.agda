@@ -10,7 +10,7 @@ open import BasicIS4.KripkeSemantics.Ono public
 instance
   canon : Model
   canon = record
-    { World   = Cx Ty
+    { World   = Worldᶜ
     ; _≤_     = _⊆_
     ; refl≤   = refl⊆
     ; trans≤  = trans⊆
@@ -25,7 +25,7 @@ instance
 
 -- Soundness and completeness with respect to the canonical model.
 
---- NOTE: This is almost certainly false.
+--- FIXME: This is almost certainly false.
 postulate
   oops : ∀ {Γ} → Γ ⊢⋆ □⋆ Γ
 
