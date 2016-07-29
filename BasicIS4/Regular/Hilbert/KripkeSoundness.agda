@@ -5,6 +5,7 @@ open import BasicIS4.Regular.Hilbert.Nested public
 
 module Ono where
   open import BasicIS4.KripkeSemantics.Ono public
+  open StandardForcing public
 
   --   w′  R   v′
   --   ●───────●
@@ -41,6 +42,7 @@ module Ono where
 
 module BozicDosen where
   open import BasicIS4.KripkeSemantics.BozicDosen public
+  open StandardForcing public
 
   --   w′  R   v′
   --   ●───────●
@@ -77,6 +79,7 @@ module BozicDosen where
 
 module Wijesekera where
   open import BasicIS4.KripkeSemantics.Wijesekera public
+  open StandardForcing public
 
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
   eval (var i)          γ = lookup i γ
@@ -104,6 +107,7 @@ module Wijesekera where
 
 module EwaldEtAl where
   open import BasicIS4.KripkeSemantics.EwaldEtAl public
+  open StandardForcing public
 
   --   zap:            zagzig:
   --
@@ -144,6 +148,7 @@ module EwaldEtAl where
 
 module AlechinaEtAl where
   open import BasicIS4.KripkeSemantics.AlechinaEtAl public
+  open StandardForcing public
 
   --   w′  R   v′
   --   ◌╌╌╌╌╌╌╌●

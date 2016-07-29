@@ -52,55 +52,57 @@ record Model : Set₁ where
 open Model {{…}} public
 
 
--- Forcing for propositions and contexts.
+module StandardForcing where
 
-module _ {{_ : Model}} where
-  infix 3 _⊩_
-  _⊩_ : World → Ty → Set
-  w ⊩ α P   = w ⊩ᵅ P
-  w ⊩ A ▷ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
-  w ⊩ □ A   = ∀ {w′} → w ≤ w′ → ∀ {v′} → w′ R v′ → v′ ⊩ A
-  w ⊩ A ∧ B = w ⊩ A × w ⊩ B
-  w ⊩ ⊤    = Top
+  -- Forcing for propositions and contexts.
 
-  infix 3 _⊩⋆_
-  _⊩⋆_ : World → Cx Ty → Set
-  w ⊩⋆ ⌀     = Top
-  w ⊩⋆ Γ , A = w ⊩⋆ Γ × w ⊩ A
+  module _ {{_ : Model}} where
+    infix 3 _⊩_
+    _⊩_ : World → Ty → Set
+    w ⊩ α P   = w ⊩ᵅ P
+    w ⊩ A ▷ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
+    w ⊩ □ A   = ∀ {w′} → w ≤ w′ → ∀ {v′} → w′ R v′ → v′ ⊩ A
+    w ⊩ A ∧ B = w ⊩ A × w ⊩ B
+    w ⊩ ⊤    = Top
 
-
-  -- Monotonicity with respect to intuitionistic accessibility.
-
-  mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
-  mono⊩ {α P}   ξ s       = mono⊩ᵅ ξ s
-  mono⊩ {A ▷ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
-  mono⊩ {□ A}   ξ □f      = λ ξ′ ζ → □f (trans≤ ξ ξ′) ζ
-  mono⊩ {A ∧ B} ξ (a , b) = mono⊩ {A} ξ a , mono⊩ {B} ξ b
-  mono⊩ {⊤}    ξ ∙       = ∙
-
-  mono⊩⋆ : ∀ {Γ w w′} → w ≤ w′ → w ⊩⋆ Γ → w′ ⊩⋆ Γ
-  mono⊩⋆ {⌀}     ξ ∙       = ∙
-  mono⊩⋆ {Γ , A} ξ (γ , a) = mono⊩⋆ {Γ} ξ γ , mono⊩ {A} ξ a
+    infix 3 _⊩⋆_
+    _⊩⋆_ : World → Cx Ty → Set
+    w ⊩⋆ ⌀     = Top
+    w ⊩⋆ Γ , A = w ⊩⋆ Γ × w ⊩ A
 
 
--- Forcing in all models.
+    -- Monotonicity with respect to intuitionistic accessibility.
 
-infix 3 _ᴹ⊩_
-_ᴹ⊩_ : Cx Ty → Ty → Set₁
-Γ ᴹ⊩ A = ∀ {{_ : Model}} {w : World} → w ⊩⋆ Γ → w ⊩ A
+    mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
+    mono⊩ {α P}   ξ s       = mono⊩ᵅ ξ s
+    mono⊩ {A ▷ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
+    mono⊩ {□ A}   ξ □f      = λ ξ′ ζ → □f (trans≤ ξ ξ′) ζ
+    mono⊩ {A ∧ B} ξ (a , b) = mono⊩ {A} ξ a , mono⊩ {B} ξ b
+    mono⊩ {⊤}    ξ ∙       = ∙
 
-infix 3 _ᴹ⊩⋆_
-_ᴹ⊩⋆_ : Cx Ty → Cx Ty → Set₁
-Γ ᴹ⊩⋆ Π = ∀ {{_ : Model}} {w : World} → w ⊩⋆ Γ → w ⊩⋆ Π
-
-infix 3 _⁏_ᴹ⊩_
-_⁏_ᴹ⊩_ : Cx Ty → Cx Ty → Ty → Set₁
-Γ ⁏ Δ ᴹ⊩ A = ∀ {{_ : Model}} {w : World}
-              → w ⊩⋆ Γ → (∀ {w′} → w ≤ w′ → ∀ {v′} → w′ R v′ → v′ ⊩⋆ Δ) → w ⊩ A
+    mono⊩⋆ : ∀ {Γ w w′} → w ≤ w′ → w ⊩⋆ Γ → w′ ⊩⋆ Γ
+    mono⊩⋆ {⌀}     ξ ∙       = ∙
+    mono⊩⋆ {Γ , A} ξ (γ , a) = mono⊩⋆ {Γ} ξ γ , mono⊩ {A} ξ a
 
 
--- Additional useful equipment.
+  -- Forcing in all models.
 
-lookup : ∀ {A Γ} → A ∈ Γ → Γ ᴹ⊩ A
-lookup top     (γ , a) = a
-lookup (pop i) (γ , a) = lookup i γ
+  infix 3 _ᴹ⊩_
+  _ᴹ⊩_ : Cx Ty → Ty → Set₁
+  Γ ᴹ⊩ A = ∀ {{_ : Model}} {w : World} → w ⊩⋆ Γ → w ⊩ A
+
+  infix 3 _ᴹ⊩⋆_
+  _ᴹ⊩⋆_ : Cx Ty → Cx Ty → Set₁
+  Γ ᴹ⊩⋆ Π = ∀ {{_ : Model}} {w : World} → w ⊩⋆ Γ → w ⊩⋆ Π
+
+  infix 3 _⁏_ᴹ⊩_
+  _⁏_ᴹ⊩_ : Cx Ty → Cx Ty → Ty → Set₁
+  Γ ⁏ Δ ᴹ⊩ A = ∀ {{_ : Model}} {w : World}
+                → w ⊩⋆ Γ → (∀ {w′} → w ≤ w′ → ∀ {v′} → w′ R v′ → v′ ⊩⋆ Δ) → w ⊩ A
+
+
+  -- Additional useful equipment.
+
+  lookup : ∀ {A Γ} → A ∈ Γ → Γ ᴹ⊩ A
+  lookup top     (γ , a) = a
+  lookup (pop i) (γ , a) = lookup i γ
