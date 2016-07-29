@@ -3,24 +3,29 @@ module BasicIS4.Regular.Gentzen.KripkeEquipment where
 open import BasicIS4.Regular.Gentzen
 
 
+-- Worlds for the canonical model.
+
+Worldᶜ : Set
+Worldᶜ = Cx Ty
+
+
 -- The canonical modal accessibility, based on the T axiom.
 
 infix 3 _Rᶜ_
-_Rᶜ_ : Cx Ty → Cx Ty → Set
-Γ Rᶜ Γ′ = ∀ {A} → Γ ⊢ □ A → Γ′ ⊢ A
+_Rᶜ_ : Worldᶜ → Worldᶜ → Set
+w Rᶜ w′ = ∀ {A} → w ⊢ □ A → w′ ⊢ A
 
-reflRᶜ : ∀ {Γ} → Γ Rᶜ Γ
+reflRᶜ : ∀ {w} → w Rᶜ w
 reflRᶜ = down
 
-transRᶜ : ∀ {Γ Γ′ Γ″} → Γ Rᶜ Γ′ → Γ′ Rᶜ Γ″ → Γ Rᶜ Γ″
+transRᶜ : ∀ {w w′ w″} → w Rᶜ w′ → w′ Rᶜ w″ → w Rᶜ w″
 transRᶜ ζ ζ′ = ζ′ ∘ ζ ∘ up
 
-botRᶜ : ∀ {Γ} → ⌀ Rᶜ Γ
-botRᶜ t = mono⊢ bot⊆ (down t)
+botRᶜ : ∀ {w} → ⌀ Rᶜ w
+botRᶜ = mono⊢ bot⊆ ∘ down
 
-liftRᶜ : ∀ {Γ} → Γ Rᶜ □⋆ Γ
-liftRᶜ {⌀}     t = down t
-liftRᶜ {Γ , B} t = down (lift (down t))
+liftRᶜ : ∀ {w} → w Rᶜ □⋆ w
+liftRᶜ = down ∘ lift ∘ down
 
 
 -- Frame conditions given by Božić and Došen, and by Ono.
@@ -35,22 +40,23 @@ liftRᶜ {Γ , B} t = down (lift (down t))
 --   ●╌╌╌╌╌╌╌◌       ●
 --   w   R   v       w
 
-zigRᶜ : ∀ {Π′ Γ Γ′} → Γ′ Rᶜ Π′ → Γ ⊆ Γ′ → Γ Rᶜ Π′
-zigRᶜ ζ η = ζ ∘ mono⊢ η
+zigRᶜ : ∀ {v′ w w′} → w′ Rᶜ v′ → w ⊆ w′ → w Rᶜ v′
+zigRᶜ ζ ξ = ζ ∘ mono⊢ ξ
 
-zigzagRᶜ⨾⊆ : ∀ {Π′ Γ Γ′} → Γ′ Rᶜ Π′ → Γ ⊆ Γ′ → ∃ (λ Π → Γ Rᶜ Π × Π ⊆ Π′)
-zigzagRᶜ⨾⊆ {Π′} ζ η = Π′ , (zigRᶜ ζ η , refl⊆)
+zigzagR⨾⊆ : ∀ {v′ w w′} → w′ Rᶜ v′ → w ⊆ w′ → ∃ (λ v → w Rᶜ v × v ⊆ v′)
+zigzagR⨾⊆ {v′} ζ ξ = v′ , (zigRᶜ ζ ξ , refl⊆)
 
-infix 3 _Rᶜ⨾⊆_
-_Rᶜ⨾⊆_ : Cx Ty → Cx Ty → Set
-_Rᶜ⨾⊆_ = _Rᶜ_ ⨾ _⊆_
+infix 3 _R⨾⊆_
+_R⨾⊆_ : Worldᶜ → Worldᶜ → Set
+_R⨾⊆_ = _Rᶜ_ ⨾ _⊆_
 
-reflRᶜ⨾⊆ : ∀ {Γ} → Γ Rᶜ⨾⊆ Γ
-reflRᶜ⨾⊆ {Γ} = Γ , (reflRᶜ , refl⊆)
+reflR⨾⊆ : ∀ {w} → w R⨾⊆ w
+reflR⨾⊆ {w} = w , (reflRᶜ , refl⊆)
 
-transRᶜ⨾⊆ : ∀ {Γ Γ′ Γ″} → Γ Rᶜ⨾⊆ Γ′ → Γ′ Rᶜ⨾⊆ Γ″ → Γ Rᶜ⨾⊆ Γ″
-transRᶜ⨾⊆ (a , (ζ , η)) (b , (ζ′ , η′)) = let c , (ζ″ , η″) = zigzagRᶜ⨾⊆ ζ′ η
-                                          in  c , (transRᶜ ζ ζ″ , trans⊆ η″ η′)
+transR⨾⊆ : ∀ {w w′ w″} → w R⨾⊆ w′ → w′ R⨾⊆ w″ → w R⨾⊆ w″
+transR⨾⊆ (v , (ζ , ξ)) (v′ , (ζ′ , ξ′)) =
+  let v″ , (ζ″ , ξ″) = zigzagR⨾⊆ ζ′ ξ
+  in  v″ , (transRᶜ ζ ζ″ , trans⊆ ξ″ ξ′)
 
 
 -- Frame condition given by Ewald et al. and Alechina et al., and a simplified condition.
@@ -65,22 +71,23 @@ transRᶜ⨾⊆ (a , (ζ , η)) (b , (ζ′ , η′)) = let c , (ζ″ , η″) 
 --   ●───────●       ●───────●
 --   w   R   v       w   R   v
 
-zagRᶜ : ∀ {Γ Π Π′} → Π ⊆ Π′ → Γ Rᶜ Π → Γ Rᶜ Π′
-zagRᶜ {Γ} η ζ = mono⊢ η ∘ ζ
+zagRᶜ : ∀ {w v v′} → v ⊆ v′ → w Rᶜ v → w Rᶜ v′
+zagRᶜ {w} ξ ζ = mono⊢ ξ ∘ ζ
 
-zagzig⊆⨾Rᶜ : ∀ {Γ Π Π′} → Π ⊆ Π′ → Γ Rᶜ Π → ∃ (λ Γ′ → Γ ⊆ Γ′ × Γ′ Rᶜ Π′)
-zagzig⊆⨾Rᶜ {Γ} η ζ = Γ , (refl⊆ , zagRᶜ η ζ)
+zagzig≤⨾Rᶜ : ∀ {w v v′} → v ⊆ v′ → w Rᶜ v → ∃ (λ w′ → w ⊆ w′ × w′ Rᶜ v′)
+zagzig≤⨾Rᶜ {w} ξ ζ = w , (refl⊆ , zagRᶜ ξ ζ)
 
-infix 3 _⊆⨾Rᶜ_
-_⊆⨾Rᶜ_ : Cx Ty → Cx Ty → Set
-_⊆⨾Rᶜ_ = _⊆_ ⨾ _Rᶜ_
+infix 3 _≤⨾Rᶜ_
+_≤⨾Rᶜ_ : Worldᶜ → Worldᶜ → Set
+_≤⨾Rᶜ_ = _⊆_ ⨾ _Rᶜ_
 
-refl⊆⨾Rᶜ : ∀ {Γ} → Γ ⊆⨾Rᶜ Γ
-refl⊆⨾Rᶜ {Γ} = Γ , (refl⊆ , reflRᶜ)
+refl≤⨾Rᶜ : ∀ {w} → w ≤⨾Rᶜ w
+refl≤⨾Rᶜ {w} = w , (refl⊆ , reflRᶜ)
 
-trans⊆⨾Rᶜ : ∀ {Γ Γ′ Γ″} → Γ ⊆⨾Rᶜ Γ′ → Γ′ ⊆⨾Rᶜ Γ″ → Γ ⊆⨾Rᶜ Γ″
-trans⊆⨾Rᶜ (a , (η , ζ)) (b , (η′ , ζ′)) = let c , (η″ , ζ″) = zagzig⊆⨾Rᶜ η′ ζ
-                                          in  c , (trans⊆ η η″ , transRᶜ ζ″ ζ′)
+trans≤⨾Rᶜ : ∀ {w w′ w″} → w ≤⨾Rᶜ w′ → w′ ≤⨾Rᶜ w″ → w ≤⨾Rᶜ w″
+trans≤⨾Rᶜ (v , (ξ , ζ)) (v′ , (ξ′ , ζ′)) =
+  let v″ , (ξ″ , ζ″) = zagzig≤⨾Rᶜ ξ′ ζ
+  in  v″ , (trans⊆ ξ ξ″ , transRᶜ ζ″ ζ′)
 
 
 -- Frame condition given by Ewald et al., and a dual condition.
@@ -96,9 +103,9 @@ trans⊆⨾Rᶜ (a , (η , ζ)) (b , (η′ , ζ′)) = let c , (η″ , ζ″) 
 --   w   R   v       w   R   v
 
 -- NOTE: This could be a more precise supremum.
-zapRᶜ : ∀ {Π Γ′ Γ} → Γ Rᶜ Π → Γ ⊆ Γ′ → ∃ (λ Π′ → Γ′ Rᶜ Π′ × Π ⊆ Π′)
-zapRᶜ {Π} {Γ′} ζ η = (Γ′ ⧺ Π) , ((λ t → mono⊢ (weak⊆⧺ₗ Π) (down t)) , weak⊆⧺ᵣ)
+zapRᶜ : ∀ {v w′ w} → w Rᶜ v → w ⊆ w′ → ∃ (λ v′ → w′ Rᶜ v′ × v ⊆ v′)
+zapRᶜ {v} {w′} ζ ξ = (w′ ⧺ v) , (mono⊢ (weak⊆⧺ₗ v) ∘ down , weak⊆⧺ᵣ)
 
 -- NOTE: This could be a more precise infimum.
-zupRᶜ : ∀ {Γ′ Π Π′} → Π ⊆ Π′ → Γ′ Rᶜ Π′ → ∃ (λ Γ → Γ ⊆ Γ′ × Γ Rᶜ Π)
-zupRᶜ η ζ = ⌀ , (bot⊆ , botRᶜ)
+zupRᶜ : ∀ {w′ v v′} → v ⊆ v′ → w′ Rᶜ v′ → ∃ (λ w → w ⊆ w′ × w Rᶜ v)
+zupRᶜ ξ ζ = ⌀ , (bot⊆ , botRᶜ)
