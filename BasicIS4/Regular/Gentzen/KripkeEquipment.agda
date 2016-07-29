@@ -1,6 +1,6 @@
 module BasicIS4.Regular.Gentzen.KripkeEquipment where
 
-open import BasicIS4.Regular.Gentzen
+open import BasicIS4.Regular.Gentzen public
 
 
 -- Worlds for the canonical model.
