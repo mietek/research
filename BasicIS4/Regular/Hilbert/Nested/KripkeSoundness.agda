@@ -1,4 +1,4 @@
-module BasicIS4.Regular.Hilbert.KripkeSoundness where
+module BasicIS4.Regular.Hilbert.Nested.KripkeSoundness where
 
 open import BasicIS4.Regular.Hilbert.Nested public
 

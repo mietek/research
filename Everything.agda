@@ -64,7 +64,7 @@ import BasicIS4.KripkeSemantics.EwaldEtAl
 import BasicIS4.KripkeSemantics.AlechinaEtAl
 import BasicIS4.Regular.Hilbert.Sequential
 import BasicIS4.Regular.Hilbert.Nested
-import BasicIS4.Regular.Hilbert.KripkeSoundness
+import BasicIS4.Regular.Hilbert.Nested.KripkeSoundness
 import BasicIS4.Regular.Gentzen
 import BasicIS4.Regular.Gentzen.KripkeSoundness
 import BasicIS4.Regular.Gentzen.KripkeEquipment
