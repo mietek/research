@@ -26,13 +26,13 @@ record Model : Set₁ where
 
     -- Frame condition given by Božić and Došen.
     --
-    --   w′  R  v′
-    --   ●──────●
-    --   │      ┊
-    -- ≤ │      ┊ ≤
-    --   │      ┊
-    --   ●╌╌╌╌╌╌◌
-    --   w   R  v
+    --   w′  R   v′
+    --   ●───────●
+    --   │       ┊
+    -- ≤ │       ┊ ≤
+    --   │       ┊
+    --   ●╌╌╌╌╌╌╌◌
+    --   w   R   v
     --
     zigzagR⨾≤ : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → ∃ (λ v → w R v × v ≤ v′)
 

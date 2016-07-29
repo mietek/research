@@ -26,13 +26,13 @@ record Model : Set₁ where
 
     -- Frame condition given by Ewald et al. and Alechina et al.
     --
-    --   w′  R  v′
-    --   ◌╌╌╌╌╌╌●
-    --   ┊      │
-    -- ≤ ┊      │ ≤
-    --   ┊      │
-    --   ●──────●
-    --   w   R  v
+    --   w′  R   v′
+    --   ◌╌╌╌╌╌╌╌●
+    --   ┊       │
+    -- ≤ ┊       │ ≤
+    --   ┊       │
+    --   ●───────●
+    --   w   R   v
     --
     zagzig≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
 

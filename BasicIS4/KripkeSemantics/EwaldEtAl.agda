@@ -26,14 +26,15 @@ record Model : Set₁ where
 
     -- Frame conditions given by Ewald, et al.
     --
-    -- zap            zagzig
-    --   w′  R  v′      w′  R  v′
-    --   ●╌╌╌╌╌╌◌       ◌╌╌╌╌╌╌●
-    --   │      ┊       ┊      │
-    -- ≤ │      ┊ ≤   ≤ ┊      │ ≤
-    --   │      ┊       ┊      │
-    --   ●──────●       ●──────●
-    --   w   R  v       w   R  v
+    --   zap:            zagzig:
+    --
+    --   w′  R   v′      w′  R   v′
+    --   ●╌╌╌╌╌╌╌◌       ◌╌╌╌╌╌╌╌●
+    --   │       ┊       ┊       │
+    -- ≤ │       ┊ ≤   ≤ ┊       │ ≤
+    --   │       ┊       ┊       │
+    --   ●───────●       ●───────●
+    --   w   R   v       w   R   v
     --
     zap       : ∀ {v w w′} → w R v → w ≤ w′ → ∃ (λ v′ → w′ R v′ × v ≤ v′)
     zagzig≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)

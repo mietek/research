@@ -6,8 +6,8 @@ open import BasicIS4.Regular.Hilbert.Nested public
 module Ono where
   open import BasicIS4.KripkeSemantics.Ono public
 
-  --   w′  R  v′
-  --   ●──────●
+  --   w′  R   v′
+  --   ●───────●
   --   │     ⋰
   -- ≤ │   R
   --   │ ⋰
@@ -42,13 +42,13 @@ module Ono where
 module BozicDosen where
   open import BasicIS4.KripkeSemantics.BozicDosen public
 
-  --   w′  R  v′
-  --   ●──────●
-  --   │      ┊
-  -- ≤ │      ┊ ≤
-  --   │      ┊
-  --   ●╌╌╌╌╌╌◌
-  --   w   R  v
+  --   w′  R   v′
+  --   ●───────●
+  --   │       ┊
+  -- ≤ │       ┊ ≤
+  --   │       ┊
+  --   ●╌╌╌╌╌╌╌◌
+  --   w   R   v
   --
   -- zigzagR⨾≤ : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → ∃ (λ v → w R v × v ≤ v′)
 
@@ -105,14 +105,15 @@ module Wijesekera where
 module EwaldEtAl where
   open import BasicIS4.KripkeSemantics.EwaldEtAl public
 
-  -- zap            zagzig
-  --   w′  R  v′      w′  R  v′
-  --   ●╌╌╌╌╌╌◌       ◌╌╌╌╌╌╌●
-  --   │      ┊       ┊      │
-  -- ≤ │      ┊ ≤   ≤ ┊      │ ≤
-  --   │      ┊       ┊      │
-  --   ●──────●       ●──────●
-  --   w   R  v       w   R  v
+  --   zap:            zagzig:
+  --
+  --   w′  R  v′       w′  R  v′
+  --   ●╌╌╌╌╌╌╌◌       ◌╌╌╌╌╌╌╌●
+  --   │       ┊       ┊       │
+  -- ≤ │       ┊ ≤   ≤ ┊       │ ≤
+  --   │       ┊       ┊       │
+  --   ●───────●       ●───────●
+  --   w   R   v       w   R   v
   --
   -- zap       : ∀ {v w w′} → w R v → w ≤ w′ → ∃ (λ v′ → w′ R v′ × v ≤ v′)
   -- zagzig≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
@@ -144,13 +145,13 @@ module EwaldEtAl where
 module AlechinaEtAl where
   open import BasicIS4.KripkeSemantics.AlechinaEtAl public
 
-  --   w′  R  v′
-  --   ◌╌╌╌╌╌╌●
-  --   ┊      │
-  -- ≤ ┊      │ ≤
-  --   ┊      │
-  --   ●──────●
-  --   w   R  v
+  --   w′  R   v′
+  --   ◌╌╌╌╌╌╌╌●
+  --   ┊       │
+  -- ≤ ┊       │ ≤
+  --   ┊       │
+  --   ●───────●
+  --   w   R   v
   --
   -- zagzig≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
 

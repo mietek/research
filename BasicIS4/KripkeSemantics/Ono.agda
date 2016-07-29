@@ -26,8 +26,8 @@ record Model : Set₁ where
 
     -- Frame condition given by Ono.
     --
-    --   w′  R  v′
-    --   ●──────●
+    --   w′  R   v′
+    --   ●───────●
     --   │     ⋰
     -- ≤ │   R
     --   │ ⋰

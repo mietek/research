@@ -25,14 +25,15 @@ liftRᶜ {Γ , B} t = down (lift (down t))
 
 -- Frame conditions given by Božić and Došen, and by Ono.
 --
--- zigzag         zig
---   Γ′ Rᶜ  Π′      Γ′ Rᶜ  Π′
---   ●──────●       ●──────●
---   │      ┊       │    ⋰
--- ⊆ │      ┊ ⊆   ⊆ │  Rᶜ
---   │      ┊       │ ⋰
---   ●╌╌╌╌╌╌◌       ●
---   Γ  Rᶜ  Π       Γ
+--   zigzag:         zig:
+--
+--   w′  R   v′      w′  R   v′
+--   ●───────●       ●───────●
+--   │       ┊       │     ⋰
+-- ≤ │       ┊ ≤   ≤ │   R
+--   │       ┊       │ ⋰
+--   ●╌╌╌╌╌╌╌◌       ●
+--   w   R   v       w
 
 zigRᶜ : ∀ {Π′ Γ Γ′} → Γ′ Rᶜ Π′ → Γ ⊆ Γ′ → Γ Rᶜ Π′
 zigRᶜ ζ η = ζ ∘ mono⊢ η
@@ -54,14 +55,15 @@ transRᶜ⨾⊆ (a , (ζ , η)) (b , (ζ′ , η′)) = let c , (ζ″ , η″) 
 
 -- Frame condition given by Ewald et al. and Alechina et al., and a simplified condition.
 --
--- zagzig         zag
---   Γ′ Rᶜ  Π′             Π′
---   ◌╌╌╌╌╌╌●              ●
---   ┊      │            ⋰ ┊
--- ⊆ ┊      │ ⊆        Rᶜ  ┊ ⊆
---   ┊      │         ⋰    ┊
---   ●──────●       ●──────●
---   Γ  Rᶜ  Π       Γ  Rᶜ  Π
+--   zagzig:         zag:
+--
+--   w′  R   v′              v′
+--   ◌╌╌╌╌╌╌╌●               ●
+--   ┊       │             ⋰ ┊
+-- ≤ ┊       │ ≤         R   ┊ ≤
+--   ┊       │         ⋰     ┊
+--   ●───────●       ●───────●
+--   w   R   v       w   R   v
 
 zagRᶜ : ∀ {Γ Π Π′} → Π ⊆ Π′ → Γ Rᶜ Π → Γ Rᶜ Π′
 zagRᶜ {Γ} η ζ = mono⊢ η ∘ ζ
@@ -83,14 +85,15 @@ trans⊆⨾Rᶜ (a , (η , ζ)) (b , (η′ , ζ′)) = let c , (η″ , ζ″) 
 
 -- Frame condition given by Ewald et al., and a dual condition.
 --
--- zap            zup
---   Γ′ Rᶜ  Π′      Γ′ Rᶜ  Π′
---   ●╌╌╌╌╌╌◌       ●──────●
---   │      ┊       ┊      │
--- ⊆ │      ┊ ⊆   ⊆ ┊      │ ⊆
---   │      ┊       ┊      │
---   ●──────●       ◌╌╌╌╌╌╌●
---   Γ  Rᶜ  Π       Γ  Rᶜ  Π
+--   zap:            zup:
+--
+--   w′  R   v′      w′  R   v′
+--   ●╌╌╌╌╌╌╌◌       ●───────●
+--   │       ┊       ┊       │
+-- ≤ │       ┊ ≤   ≤ ┊       │ ≤
+--   │       ┊       ┊       │
+--   ●───────●       ◌╌╌╌╌╌╌╌●
+--   w   R   v       w   R   v
 
 -- NOTE: This could be a more precise supremum.
 zapRᶜ : ∀ {Π Γ′ Γ} → Γ Rᶜ Π → Γ ⊆ Γ′ → ∃ (λ Π′ → Γ′ Rᶜ Π′ × Π ⊆ Π′)
