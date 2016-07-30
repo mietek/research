@@ -290,11 +290,11 @@ lift : ∀ {Γ A Δ} → Γ ⁏ Δ ⊢ A → □⋆ Γ ⁏ Δ ⊢ □ A
 lift {⌀}     t = box t
 lift {Γ , B} t = det (app cdist (lift (lam t)))
 
-negup : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ □ □ A ▷ B → Γ ⁏ Δ ⊢ □ A ▷ B
-negup t = lam (app (mono⊢ weak⊆ t) (up v₀))
+hypdown : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ □ □ A ▷ B → Γ ⁏ Δ ⊢ □ A ▷ B
+hypdown t = lam (app (mono⊢ weak⊆ t) (up v₀))
 
-negdown : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ▷ B → Γ ⁏ Δ ⊢ □ A ▷ B
-negdown t = lam (app (mono⊢ weak⊆ t) (down v₀))
+hypup : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ▷ B → Γ ⁏ Δ ⊢ □ A ▷ B
+hypup t = lam (app (mono⊢ weak⊆ t) (down v₀))
 
 up⋆ : ∀ {Π Γ Δ} → Γ ⁏ Δ ⊢⋆ □⋆ Π → Γ ⁏ Δ ⊢⋆ □⋆ □⋆ Π
 up⋆ {⌀}     ∙        = ∙

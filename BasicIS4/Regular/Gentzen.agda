@@ -171,11 +171,19 @@ lift : ∀ {Γ A} → Γ ⊢ A → □⋆ Γ ⊢ □ A
 lift {⌀}     t = box t
 lift {Γ , B} t = det (app cdist (lift (lam t)))
 
-negup : ∀ {A B Γ} → Γ ⊢ □ □ A ▷ B → Γ ⊢ □ A ▷ B
-negup t = lam (app (mono⊢ weak⊆ t) (up v₀))
+hypdown : ∀ {A B Γ} → Γ ⊢ □ □ A ▷ B → Γ ⊢ □ A ▷ B
+hypdown t = lam (app (mono⊢ weak⊆ t) (up v₀))
 
-negdown : ∀ {A B Γ} → Γ ⊢ A ▷ B → Γ ⊢ □ A ▷ B
-negdown t = lam (app (mono⊢ weak⊆ t) (down v₀))
+hypup : ∀ {A B Γ} → Γ ⊢ A ▷ B → Γ ⊢ □ A ▷ B
+hypup t = lam (app (mono⊢ weak⊆ t) (down v₀))
+
+cxdown : ∀ {Γ A} → □⋆ □⋆ Γ ⊢ A → □⋆ Γ ⊢ A
+cxdown {⌀}     t = t
+cxdown {Γ , B} t = det (hypdown (cxdown (lam t)))
+
+cxup : ∀ {Γ A} → Γ ⊢ A → □⋆ Γ ⊢ A
+cxup {⌀}     t = t
+cxup {Γ , B} t = det (hypup (cxup (lam t)))
 
 
 -- Closure under context concatenation.
