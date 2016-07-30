@@ -11,7 +11,7 @@ mutual
     var      : ∀ {A}   → A ∈ Γ → Γ ⊢ A
     lam      : ∀ {A B} → Γ , A ⊢ B → Γ ⊢ A ▷ B
     app      : ∀ {A B} → Γ ⊢ A ▷ B → Γ ⊢ A → Γ ⊢ B
-    multibox : ∀ {Δ A} → Γ ⊢⋆ □⋆ Δ → □⋆ Δ ⊢ A → Γ ⊢ □ A
+    multibox : ∀ {A Δ} → Γ ⊢⋆ □⋆ Δ → □⋆ Δ ⊢ A → Γ ⊢ □ A
     down     : ∀ {A}   → Γ ⊢ □ A → Γ ⊢ A
     pair     : ∀ {A B} → Γ ⊢ A → Γ ⊢ B → Γ ⊢ A ∧ B
     fst      : ∀ {A B} → Γ ⊢ A ∧ B → Γ ⊢ A
@@ -22,6 +22,25 @@ mutual
   _⊢⋆_ : Cx Ty → Cx Ty → Set
   Γ ⊢⋆ ⌀     = Top
   Γ ⊢⋆ Π , A = Γ ⊢⋆ Π × Γ ⊢ A
+
+
+-- Closed and open syntax.
+
+record ClosedBox (A : Ty) : Set where
+  constructor [_]
+  field
+    t : ⌀ ⊢ □ A
+
+record StrangeBox (A : Ty) : Set where
+  constructor [_]
+  field
+    {Δ} : Cx Ty
+    t   : □⋆ Δ ⊢ □ A
+
+record OpenBox (Δ : Cx Ty) (A : Ty) : Set where
+  constructor [_]
+  field
+    t : □⋆ Δ ⊢ □ A
 
 
 -- Monotonicity with respect to context inclusion.

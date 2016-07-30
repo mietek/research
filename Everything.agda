@@ -76,7 +76,7 @@ import BasicIS4.Regular.Gentzen.KripkeBasicCompleteness -- FIXME
 import BasicIS4.Regular.Translation
 import BasicIS4.DualContext.Hilbert.Sequential
 import BasicIS4.DualContext.Hilbert.Nested
--- import BasicIS4.DualContext.Hilbert.Nested.TarskiSoundnessWithBox -- FIXME
+import BasicIS4.DualContext.Hilbert.Nested.TarskiSoundnessWithBox -- FIXME
 import BasicIS4.DualContext.Hilbert.Nested.KripkeSoundness
 import BasicIS4.DualContext.Gentzen
 import BasicIS4.DualContext.Gentzen.TarskiSoundnessWithBox -- FIXME

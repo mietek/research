@@ -96,3 +96,8 @@ _▷⋯▷_ : Cx Ty → Ty → Ty
 dist□⋆ₗ : ∀ Π Π′ → □⋆ (Π ⧺ Π′) ≡ (□⋆ Π) ⧺ (□⋆ Π′)
 dist□⋆ₗ Π ⌀        = refl
 dist□⋆ₗ Π (Π′ , A) = cong₂ _,_ (dist□⋆ₗ Π Π′) refl
+
+lift⊆ : ∀ {Δ Δ′} → Δ ⊆ Δ′ → □⋆ Δ ⊆ □⋆ Δ′
+lift⊆ done     = done
+lift⊆ (skip θ) = skip (lift⊆ θ)
+lift⊆ (keep θ) = keep (lift⊆ θ)

@@ -1,42 +1,85 @@
 module BasicIS4.DualContext.Hilbert.Nested.TarskiSoundnessWithBox where
 
-open import BasicIS4.TarskiSemantics public
 open import BasicIS4.DualContext.Hilbert.Nested public
+open import BasicIS4.TarskiSemantics public
 
 
--- Truth for propositions and contexts, inspired by Gabbay and Nanevski.
+module Closed where
+  open TruthWithClosedBox (ClosedBox) public
 
-record Box (A : Ty) : Set where
-  constructor [_]
-  field
-    -- FIXME: Should we not have ⌀ ⁏ ⌀ ⊢ □ A here?
-    {Δ} : Cx Ty
-    t   : ⌀ ⁏ Δ ⊢ □ A
+  -- FIXME: This formalisation seems to prohibit closed syntax.
+  postulate
+    oops : ∀ {A Δ} → ⌀ ⁏ Δ ⊢ A → ⌀ ⁏ ⌀ ⊢ □ A
 
-open ForcingWithBox (Box) public
+  eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊨ A
+  eval (var i)   γ δ = lookup i γ
+  eval (app t u) γ δ = (eval t γ δ) (eval u γ δ)
+  eval ci        γ δ = id
+  eval ck        γ δ = const
+  eval cs        γ δ = ap
+  eval (mvar i)  γ δ = lookup i δ
+  eval (box t)   γ δ = [ oops t ] , eval t ∙ δ
+  eval cdist     γ δ = λ { ([ t ] , f) ([ u ] , a) → [ dist t u ] , f a }
+  eval cup       γ δ = λ { ([ t ] , a) → [ up t ] , ([ t ] , a) }
+  eval cdown     γ δ = λ { ([ t ] , a) → a }
+  eval cpair     γ δ = _,_
+  eval cfst      γ δ = π₁
+  eval csnd      γ δ = π₂
+  eval tt        γ δ = ∙
 
 
--- FIXME: This formalisation exposes the problem that the modal contexts
--- of open syntax fragments are not connected to each other.
-postulate
-  oops : ∀ {A Δ ∇} → ⌀ ⁏ Δ ⊢ A → ⌀ ⁏ ∇ ⊢ A
+module Strange where
+  open TruthWithClosedBox (StrangeBox) public
+
+  -- FIXME: Modal contexts of strange syntax are not connected to each other.
+  postulate
+    oops : ∀ {A Δ Δ′} → ⌀ ⁏ Δ ⊢ A → ⌀ ⁏ Δ′ ⊢ A
+
+  eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊨ A
+  eval (var i)   γ δ = lookup i γ
+  eval (app t u) γ δ = (eval t γ δ) (eval u γ δ)
+  eval ci        γ δ = id
+  eval ck        γ δ = const
+  eval cs        γ δ = ap
+  eval (mvar i)  γ δ = lookup i δ
+  eval (box t)   γ δ = [ box t ] , eval t ∙ δ
+  eval cdist     γ δ = λ { ([ t ] , f) ([ u ] , a) → [ dist t (oops u) ] , f a }
+  eval cup       γ δ = λ { ([ t ] , a) → [ up t ] , ([ t ] , a) }
+  eval cdown     γ δ = λ { ([ t ] , a) → a }
+  eval cpair     γ δ = _,_
+  eval cfst      γ δ = π₁
+  eval csnd      γ δ = π₂
+  eval tt        γ δ = ∙
 
 
--- Soundness, or evaluation.
+module Open where
+  open TruthWithOpenBox (OpenBox) public
 
-eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊨ A
-eval (var i)   γ δ = lookup i γ
-eval (app t u) γ δ = (eval t γ δ) (eval u γ δ)
-eval ci        γ δ = id
-eval ck        γ δ = const
-eval cs        γ δ = ap
-eval (mvar i)  γ δ = lookup i δ
--- FIXME: Should evaluation happen here, and not in cdown?
-eval (box t)   γ δ = [ lift t ] , eval t ∙ δ
-eval cdist     γ δ = λ { ([ t ] , □f) ([ u ] , □a) → [ dist t (oops u) ] , □f □a }
-eval cup       γ δ = λ { ([ t ] , □a) → [ up t ] , ([ t ] , □a) }
-eval cdown     γ δ = λ { ([ t ] , □a) → □a }
-eval cpair     γ δ = _,_
-eval cfst      γ δ = π₁
-eval csnd      γ δ = π₂
-eval tt        γ δ = ∙
+  eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊨ A
+  eval (var {A} i)      γ δ = mono⊨ {A} bot⊆ (lookup i γ)
+  eval (app t u)        γ δ = (eval t γ δ) refl⊆ (eval u γ δ)
+  eval ci               γ δ = λ _ → id
+  eval (ck {A})         γ δ = λ _ a θ b → mono⊨ {A} θ a
+  eval (cs {A} {B} {C}) γ δ = λ _ f θ g θ′ a →
+                              let h = ((mono⊨ {A ▷ B ▷ C} (trans⊆ θ θ′) f) refl⊆ a) refl⊆
+                                  b = (mono⊨ {A ▷ B} θ′ g) refl⊆ a
+                              in  h b
+  eval (mvar {A} i)     γ δ = mono⊨ {A} bot⊆ (lookup i δ)
+  eval (box {A} t)      γ δ = λ θ → [ mmono⊢ θ (lift t) ]
+                                     , mono⊨ {A} θ (eval t ∙ δ)
+  eval cdist            γ δ = λ _ □f θ □a θ′ →
+                              let [ t ] , f = □f (trans⊆ θ θ′)
+                                  [ u ] , a = □a θ′
+                              in  [ dist t u ] , f refl⊆ a
+  eval (cup {A})        γ δ = λ _ □a θ →
+                              let [ t ] , a = □a refl⊆
+                              in  [ mmono⊢ θ (up t) ]
+                                  , (λ θ′ → [ mmono⊢ (trans⊆ θ θ′) t ]
+                                             , mono⊨ {A} (trans⊆ θ θ′) a)
+  eval cdown            γ δ = λ _ □a →
+                              let [ t ] , a = □a refl⊆
+                              in  a
+  eval (cpair {A})      γ δ = λ _ a θ b → mono⊨ {A} θ a , b
+  eval cfst             γ δ = λ _ → π₁
+  eval csnd             γ δ = λ _ → π₂
+  eval tt               γ δ = ∙

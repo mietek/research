@@ -1,6 +1,6 @@
 module BasicIS4.DualContext.Translation where
 
-open import BasicIS4 public
+open import BasicIS4.TarskiSemantics public
 
 import BasicIS4.DualContext.Hilbert.Sequential as HS
 import BasicIS4.DualContext.Hilbert.Nested as HN
@@ -113,3 +113,75 @@ g→hn G.tt          = HN.tt
 
 g→hs : ∀ {A Γ Δ} → G⟨ Γ ⁏ Δ ⊢ A ⟩ → HS⟨ Γ ⁏ Δ ⊢ A ⟩
 g→hs = hn→hs ∘ g→hn
+
+
+-- Translation of closed syntax between Hilbert-style and Gentzen-style.
+
+module Closed where
+  open TruthWithClosedBox (HN.ClosedBox) public
+    using ()
+    renaming (⊨_ to HN⟨⊨_⟩ ; ⊨⋆_ to HN⟨⊨⋆_⟩ ; _ᴹ⊨_ to HN⟨ᴹ⊨_⟩)
+
+  open TruthWithClosedBox (G.ClosedBox) public
+    using ()
+    renaming (⊨_ to G⟨⊨_⟩ ; ⊨⋆_ to G⟨⊨⋆_⟩ ; _ᴹ⊨_ to G⟨ᴹ⊨_⟩)
+
+  module _ {{_ : Model}} where
+    mutual
+      g⇒hn : ∀ {A} → G⟨⊨ A ⟩ → HN⟨⊨ A ⟩
+      g⇒hn {α P}   s             = s
+      g⇒hn {A ▷ B} f             = λ a → g⇒hn {B} (f (hn⇒g {A} a))
+      g⇒hn {□ A}   (G.[ t ] , a) = HN.[ g→hn t ] , g⇒hn {A} a
+      g⇒hn {A ∧ B} (a , b)       = g⇒hn {A} a , g⇒hn {B} b
+      g⇒hn {⊤}    ∙             = ∙
+
+      hn⇒g : ∀ {A} → HN⟨⊨ A ⟩ → G⟨⊨ A ⟩
+      hn⇒g {α P}   s              = s
+      hn⇒g {A ▷ B} f              = λ a → hn⇒g {B} (f (g⇒hn {A} a))
+      hn⇒g {□ A}   (HN.[ t ] , a) = G.[ hn→g t ] , hn⇒g {A} a
+      hn⇒g {A ∧ B} (a , b)        = hn⇒g {A} a , hn⇒g {B} b
+      hn⇒g {⊤}    ∙              = ∙
+
+    g⇒hn⋆ : ∀ {Π} → G⟨⊨⋆ Π ⟩ → HN⟨⊨⋆ Π ⟩
+    g⇒hn⋆ {⌀}     ∙        = ∙
+    g⇒hn⋆ {Π , A} (ts , t) = g⇒hn⋆ {Π} ts , g⇒hn {A} t
+
+    hn⇒g⋆ : ∀ {Π} → HN⟨⊨⋆ Π ⟩ → G⟨⊨⋆ Π ⟩
+    hn⇒g⋆ {⌀}     ∙        = ∙
+    hn⇒g⋆ {Π , A} (ts , t) = hn⇒g⋆ {Π} ts , hn⇒g {A} t
+
+
+-- Translation of open syntax between Hilbert-style and Gentzen-style.
+
+module Open where
+  open TruthWithOpenBox (G.OpenBox) public
+    using ()
+    renaming (_⊨_ to G⟨_⊨_⟩ ; _⊨⋆_ to G⟨_⊨⋆_⟩ ; _⁏_ᴹ⊨_ to G⟨_⁏_ᴹ⊨_⟩)
+
+  open TruthWithOpenBox (HN.OpenBox)
+    using ()
+    renaming (_⊨_ to HN⟨_⊨_⟩ ; _⊨⋆_ to HN⟨_⊨⋆_⟩ ; _⁏_ᴹ⊨_ to HN⟨_⁏_ᴹ⊨_⟩)
+
+  module _ {{_ : Model}} where
+    mutual
+      g⇒hn : ∀ {A Δ} → G⟨ Δ ⊨ A ⟩ → HN⟨ Δ ⊨ A ⟩
+      g⇒hn {α P}   s       = s
+      g⇒hn {A ▷ B} f       = λ θ a → g⇒hn {B} (f θ (hn⇒g {A} a))
+      g⇒hn {□ A}   □f      = λ θ → let G.[ t ] , a = □f θ in HN.[ g→hn t ] , g⇒hn {A} a
+      g⇒hn {A ∧ B} (a , b) = g⇒hn {A} a , g⇒hn {B} b
+      g⇒hn {⊤}    ∙       = ∙
+
+      hn⇒g : ∀ {A Δ} → HN⟨ Δ ⊨ A ⟩ → G⟨ Δ ⊨ A ⟩
+      hn⇒g {α P}   s       = s
+      hn⇒g {A ▷ B} f       = λ θ a → hn⇒g {B} (f θ (g⇒hn {A} a))
+      hn⇒g {□ A}   □f      = λ θ → let HN.[ t ] , a = □f θ in G.[ hn→g t ] , hn⇒g {A} a
+      hn⇒g {A ∧ B} (a , b) = hn⇒g {A} a , hn⇒g {B} b
+      hn⇒g {⊤}    ∙       = ∙
+
+    g⇒hn⋆ : ∀ {Π Δ} → G⟨ Δ ⊨⋆ Π ⟩ → HN⟨ Δ ⊨⋆ Π ⟩
+    g⇒hn⋆ {⌀}     ∙        = ∙
+    g⇒hn⋆ {Π , A} (ts , t) = g⇒hn⋆ {Π} ts , g⇒hn {A} t
+
+    hn⇒g⋆ : ∀ {Π Δ} → HN⟨ Δ ⊨⋆ Π ⟩ → G⟨ Δ ⊨⋆ Π ⟩
+    hn⇒g⋆ {⌀}     ∙        = ∙
+    hn⇒g⋆ {Π , A} (ts , t) = hn⇒g⋆ {Π} ts , hn⇒g {A} t
