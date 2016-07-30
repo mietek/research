@@ -23,15 +23,15 @@ module Ono where
   eval ci               γ = λ _ a → a
   eval (ck {A})         γ = λ _ a ξ b → mono⊩ {A} ξ a
   eval (cs {A} {B} {C}) γ = λ _ f ξ g ξ′ a →
-    let h = ((mono⊩ {A ▷ B ▷ C} (trans≤ ξ ξ′) f) refl≤ a) refl≤
-        b = (mono⊩ {A ▷ B} ξ′ g) refl≤ a
-    in  h b
+                            let h = ((mono⊩ {A ▷ B ▷ C} (trans≤ ξ ξ′) f) refl≤ a) refl≤
+                                b = (mono⊩ {A ▷ B} ξ′ g) refl≤ a
+                            in  h b
   eval (box t)          γ = λ ζ → eval t ∙
   eval cdist            γ = λ _ □f ξ □a ζ →
-    let ζ′  = zigR ζ ξ
-        □f′ = □f ζ′ refl≤
-        □a′ = □a ζ
-    in  □f′ □a′
+                            let ζ′ = zigR ζ ξ
+                                f  = □f ζ′ refl≤
+                                a  = □a ζ
+                            in  f a
   eval cup              γ = λ _ □a ζ ζ′ → □a (transR ζ ζ′)
   eval cdown            γ = λ _ □a → □a reflR
   eval (cpair {A})      γ = λ _ a ξ b → mono⊩ {A} ξ a , b
@@ -60,15 +60,15 @@ module BozicDosen where
   eval ci               γ = λ _ a → a
   eval (ck {A})         γ = λ _ a ξ b → mono⊩ {A} ξ a
   eval (cs {A} {B} {C}) γ = λ _ f ξ g ξ′ a →
-    let h = ((mono⊩ {A ▷ B ▷ C} (trans≤ ξ ξ′) f) refl≤ a) refl≤
-        b = (mono⊩ {A ▷ B} ξ′ g) refl≤ a
-    in  h b
+                            let h = ((mono⊩ {A ▷ B ▷ C} (trans≤ ξ ξ′) f) refl≤ a) refl≤
+                                b = (mono⊩ {A ▷ B} ξ′ g) refl≤ a
+                            in  h b
   eval (box t)          γ = λ ζ → eval t ∙
   eval cdist            γ = λ _ □f ξ □a ζ →
-    let _ , (ξ′ , ζ′) = zigzagR⨾≤ ζ ξ
-        □f′           = □f ξ′ ζ′
-        □a′           = □a ζ
-    in  □f′ □a′
+                            let _ , (ξ′ , ζ′) = zigzagR⨾≤ ζ ξ
+                                f = □f ξ′ ζ′
+                                a = □a ζ
+                            in  f a
   eval cup              γ = λ _ □a ζ ζ′ → □a (transR ζ ζ′)
   eval cdown            γ = λ _ □a → □a reflR
   eval (cpair {A})      γ = λ _ a ξ b → mono⊩ {A} ξ a , b
@@ -87,17 +87,17 @@ module Wijesekera where
   eval ci               γ = λ _ a → a
   eval (ck {A})         γ = λ _ a ξ b → mono⊩ {A} ξ a
   eval (cs {A} {B} {C}) γ = λ _ f ξ g ξ′ a →
-    let h = ((mono⊩ {A ▷ B ▷ C} (trans≤ ξ ξ′) f) refl≤ a) refl≤
-        b = (mono⊩ {A ▷ B} ξ′ g) refl≤ a
-    in  h b
+                            let h = ((mono⊩ {A ▷ B ▷ C} (trans≤ ξ ξ′) f) refl≤ a) refl≤
+                                b = (mono⊩ {A ▷ B} ξ′ g) refl≤ a
+                            in  h b
   eval (box t)          γ = λ ξ ζ → eval t ∙
   eval cdist            γ = λ _ □f ξ □a ξ′ ζ →
-    let □f′ = □f (trans≤ ξ ξ′) ζ refl≤
-        □a′ = □a ξ′ ζ
-    in  □f′ □a′
+                            let f = □f (trans≤ ξ ξ′) ζ refl≤
+                                a = □a ξ′ ζ
+                            in  f a
   eval cup              γ = λ _ □a ξ ζ ξ′ ζ′ →
-    let _ , (ξ″ , ζ″) = trans≤⨾R (_ , (ξ , ζ)) (_ , (ξ′ , ζ′))
-    in  □a ξ″ ζ″
+                            let _ , (ξ″ , ζ″) = trans≤⨾R (_ , (ξ , ζ)) (_ , (ξ′ , ζ′))
+                            in  □a ξ″ ζ″
   eval cdown            γ = λ _ □a → □a refl≤ reflR
   eval (cpair {A})      γ = λ _ a ξ b → mono⊩ {A} ξ a , b
   eval cfst             γ = λ _ s → π₁ s
@@ -128,17 +128,17 @@ module EwaldEtAl where
   eval ci               γ = λ _ a → a
   eval (ck {A})         γ = λ _ a ξ b → mono⊩ {A} ξ a
   eval (cs {A} {B} {C}) γ = λ _ f ξ g ξ′ a →
-    let h = ((mono⊩ {A ▷ B ▷ C} (trans≤ ξ ξ′) f) refl≤ a) refl≤
-        b = (mono⊩ {A ▷ B} ξ′ g) refl≤ a
-    in  h b
+                            let h = ((mono⊩ {A ▷ B ▷ C} (trans≤ ξ ξ′) f) refl≤ a) refl≤
+                                b = (mono⊩ {A ▷ B} ξ′ g) refl≤ a
+                            in  h b
   eval (box t)          γ = λ ξ ζ → eval t ∙
   eval cdist            γ = λ _ □f ξ □a ξ′ ζ →
-    let □f′ = □f (trans≤ ξ ξ′) ζ refl≤
-        □a′ = □a ξ′ ζ
-    in  □f′ □a′
+                            let f = □f (trans≤ ξ ξ′) ζ refl≤
+                                a = □a ξ′ ζ
+                            in  f a
   eval cup              γ = λ _ □a ξ ζ ξ′ ζ′ →
-    let _ , (ξ″ , ζ″) = trans≤⨾R (_ , (ξ , ζ)) (_ , (ξ′ , ζ′))
-    in  □a ξ″ ζ″
+                            let _ , (ξ″ , ζ″) = trans≤⨾R (_ , (ξ , ζ)) (_ , (ξ′ , ζ′))
+                            in  □a ξ″ ζ″
   eval cdown            γ = λ _ □a → □a refl≤ reflR
   eval (cpair {A})      γ = λ _ a ξ b → mono⊩ {A} ξ a , b
   eval cfst             γ = λ _ s → π₁ s
@@ -166,17 +166,17 @@ module AlechinaEtAl where
   eval ci               γ = λ _ a → a
   eval (ck {A})         γ = λ _ a ξ b → mono⊩ {A} ξ a
   eval (cs {A} {B} {C}) γ = λ _ f ξ g ξ′ a →
-    let h = ((mono⊩ {A ▷ B ▷ C} (trans≤ ξ ξ′) f) refl≤ a) refl≤
-        b = (mono⊩ {A ▷ B} ξ′ g) refl≤ a
-    in  h b
+                            let h = ((mono⊩ {A ▷ B ▷ C} (trans≤ ξ ξ′) f) refl≤ a) refl≤
+                                b = (mono⊩ {A ▷ B} ξ′ g) refl≤ a
+                            in  h b
   eval (box t)          γ = λ ξ ζ → eval t ∙
   eval cdist            γ = λ _ □f ξ □a ξ′ ζ →
-    let □f′ = □f (trans≤ ξ ξ′) ζ refl≤
-        □a′ = □a ξ′ ζ
-    in  □f′ □a′
+                            let f = □f (trans≤ ξ ξ′) ζ refl≤
+                                a = □a ξ′ ζ
+                            in  f a
   eval cup              γ = λ _ □a ξ ζ ξ′ ζ′ →
-    let _ , (ξ″ , ζ″) = trans≤⨾R (_ , (ξ , ζ)) (_ , (ξ′ , ζ′))
-    in  □a ξ″ ζ″
+                            let _ , (ξ″ , ζ″) = trans≤⨾R (_ , (ξ , ζ)) (_ , (ξ′ , ζ′))
+                            in  □a ξ″ ζ″
   eval cdown            γ = λ _ □a → □a refl≤ reflR
   eval (cpair {A})      γ = λ _ a ξ b → mono⊩ {A} ξ a , b
   eval cfst             γ = λ _ s → π₁ s

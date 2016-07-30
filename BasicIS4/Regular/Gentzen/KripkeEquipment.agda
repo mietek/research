@@ -85,9 +85,8 @@ refl≤⨾Rᶜ : ∀ {w} → w ≤⨾Rᶜ w
 refl≤⨾Rᶜ {w} = w , (refl⊆ , reflRᶜ)
 
 trans≤⨾Rᶜ : ∀ {w w′ w″} → w ≤⨾Rᶜ w′ → w′ ≤⨾Rᶜ w″ → w ≤⨾Rᶜ w″
-trans≤⨾Rᶜ (v , (ξ , ζ)) (v′ , (ξ′ , ζ′)) =
-  let v″ , (ξ″ , ζ″) = zagzig≤⨾Rᶜ ξ′ ζ
-  in  v″ , (trans⊆ ξ ξ″ , transRᶜ ζ″ ζ′)
+trans≤⨾Rᶜ (v , (ξ , ζ)) (v′ , (ξ′ , ζ′)) = let v″ , (ξ″ , ζ″) = zagzig≤⨾Rᶜ ξ′ ζ
+                                           in  v″ , (trans⊆ ξ ξ″ , transRᶜ ζ″ ζ′)
 
 
 -- Frame condition given by Ewald et al., and a dual condition.

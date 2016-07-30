@@ -54,9 +54,8 @@ reflЯ⨾⊆² : ∀ {w} → w Я⨾⊆² w
 reflЯ⨾⊆² {w} = w , (reflЯᶜ , refl⊆²)
 
 transЯ⨾⊆² : ∀ {w w′ w″} → w Я⨾⊆² w′ → w′ Я⨾⊆² w″ → w Я⨾⊆² w″
-transЯ⨾⊆² (v , (ζ , ξ)) (v′ , (ζ′ , ξ′)) =
-  let v″ , (ζ″ , ξ″) = zigzagЯ⨾⊆² ζ′ ξ
-  in  v″ , (transЯᶜ ζ ζ″ , trans⊆² ξ″ ξ′)
+transЯ⨾⊆² (v , (ζ , ξ)) (v′ , (ζ′ , ξ′)) = let v″ , (ζ″ , ξ″) = zigzagЯ⨾⊆² ζ′ ξ
+                                           in  v″ , (transЯᶜ ζ ζ″ , trans⊆² ξ″ ξ′)
 
 
 -- Frame condition given by Ewald et al. and Alechina et al., and a simplified condition.

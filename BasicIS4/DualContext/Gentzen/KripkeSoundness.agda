@@ -47,8 +47,8 @@ module BozicDosen where
   eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊩ A
   eval (var i)     γ δ = lookup i γ
   eval (lam t)     γ δ = λ ξ a → eval t (mono⊩⋆ ξ γ , a) (λ ζ →
-    let _ , (ζ′ , ξ′) = zigzagR⨾≤ ζ ξ
-    in  mono⊩⋆ ξ′ (δ ζ′))
+                         let _ , (ζ′ , ξ′) = zigzagR⨾≤ ζ ξ
+                         in  mono⊩⋆ ξ′ (δ ζ′))
   eval (app t u)   γ δ = (eval t γ δ) refl≤ (eval u γ δ)
   eval (mvar i)    γ δ = lookup i (δ reflR)
   eval (box t)     γ δ = λ ζ → eval t ∙ (λ ζ′ → δ (transR ζ ζ′))
@@ -69,8 +69,8 @@ module Wijesekera where
   eval (app t u)   γ δ = (eval t γ δ) refl≤ (eval u γ δ)
   eval (mvar i)    γ δ = lookup i (δ refl≤ reflR)
   eval (box t)     γ δ = λ ξ ζ → eval t ∙ (λ ξ′ ζ′ →
-    let _ , (ξ″ , ζ″) = zigzag≤⨾R ξ′ ζ
-    in  δ (trans≤ ξ ξ″) (transR ζ″ ζ′))
+                         let _ , (ξ″ , ζ″) = zigzag≤⨾R ξ′ ζ
+                         in  δ (trans≤ ξ ξ″) (transR ζ″ ζ′))
   eval (unbox t u) γ δ = eval u γ (λ ξ ζ → δ ξ ζ , (eval t γ δ) ξ ζ)
   eval (pair t u)  γ δ = eval t γ δ , eval u γ δ
   eval (fst t)     γ δ = π₁ (eval t γ δ)
@@ -101,8 +101,8 @@ module EwaldEtAl where
   eval (app t u)   γ δ = (eval t γ δ) refl≤ (eval u γ δ)
   eval (mvar i)    γ δ = lookup i (δ refl≤ reflR)
   eval (box t)     γ δ = λ ξ ζ → eval t ∙ (λ ξ′ ζ′ →
-    let _ , (ξ″ , ζ″) = zagzig≤⨾R ξ′ ζ
-    in  δ (trans≤ ξ ξ″) (transR ζ″ ζ′))
+                         let _ , (ξ″ , ζ″) = zagzig≤⨾R ξ′ ζ
+                         in  δ (trans≤ ξ ξ″) (transR ζ″ ζ′))
   eval (unbox t u) γ δ = eval u γ (λ ξ ζ → δ ξ ζ , (eval t γ δ) ξ ζ)
   eval (pair t u)  γ δ = eval t γ δ , eval u γ δ
   eval (fst t)     γ δ = π₁ (eval t γ δ)
@@ -130,8 +130,8 @@ module AlechinaEtAl where
   eval (app t u)   γ δ = (eval t γ δ) refl≤ (eval u γ δ)
   eval (mvar i)    γ δ = lookup i (δ refl≤ reflR)
   eval (box t)     γ δ = λ ξ ζ → eval t ∙ (λ ξ′ ζ′ →
-    let _ , (ξ″ , ζ″) = zagzig≤⨾R ξ′ ζ
-    in  δ (trans≤ ξ ξ″) (transR ζ″ ζ′))
+                         let _ , (ξ″ , ζ″) = zagzig≤⨾R ξ′ ζ
+                         in  δ (trans≤ ξ ξ″) (transR ζ″ ζ′))
   eval (unbox t u) γ δ = eval u γ (λ ξ ζ → δ ξ ζ , (eval t γ δ) ξ ζ)
   eval (pair t u)  γ δ = eval t γ δ , eval u γ δ
   eval (fst t)     γ δ = π₁ (eval t γ δ)

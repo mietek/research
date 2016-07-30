@@ -54,9 +54,8 @@ reflЯ⨾⊆ : ∀ {w} → w Я⨾⊆ w
 reflЯ⨾⊆ {w} = w , (reflЯᶜ , refl⊆)
 
 transЯ⨾⊆ : ∀ {w w′ w″} → w Я⨾⊆ w′ → w′ Я⨾⊆ w″ → w Я⨾⊆ w″
-transЯ⨾⊆ (v , (ζ , ξ)) (v′ , (ζ′ , ξ′)) =
-  let v″ , (ζ″ , ξ″) = zigzagЯ⨾⊆ ζ′ ξ
-  in  v″ , (transЯᶜ ζ ζ″ , trans⊆ ξ″ ξ′)
+transЯ⨾⊆ (v , (ζ , ξ)) (v′ , (ζ′ , ξ′)) = let v″ , (ζ″ , ξ″) = zigzagЯ⨾⊆ ζ′ ξ
+                                          in  v″ , (transЯᶜ ζ ζ″ , trans⊆ ξ″ ξ′)
 
 
 -- Frame condition given by Ewald et al. and Alechina et al., and a simplified condition.
@@ -85,9 +84,8 @@ refl≤⨾Яᶜ : ∀ {w} → w ≤⨾Яᶜ w
 refl≤⨾Яᶜ {w} = w , (refl⊆ , reflЯᶜ)
 
 trans≤⨾Яᶜ : ∀ {w w′ w″} → w ≤⨾Яᶜ w′ → w′ ≤⨾Яᶜ w″ → w ≤⨾Яᶜ w″
-trans≤⨾Яᶜ (v , (ξ , ζ)) (v′ , (ξ′ , ζ′)) =
-  let v″ , (ξ″ , ζ″) = zagzig≤⨾Яᶜ ξ′ ζ
-  in  v″ , (trans⊆ ξ ξ″ , transЯᶜ ζ″ ζ′)
+trans≤⨾Яᶜ (v , (ξ , ζ)) (v′ , (ξ′ , ζ′)) = let v″ , (ξ″ , ζ″) = zagzig≤⨾Яᶜ ξ′ ζ
+                                           in  v″ , (trans⊆ ξ ξ″ , transЯᶜ ζ″ ζ′)
 
 
 -- Frame condition given by Ewald et al., and a dual condition.

@@ -87,8 +87,8 @@ module Wijesekera where
             → Γ ⊢⋆ □⋆ Δ → w ⊩⋆ Γ → ∀ {w′} → w ≤ w′ → ∀ {v′} → w′ R v′ → v′ ⊩⋆ □⋆ Δ
     eval⋆ {⌀}     ∙        γ ξ ζ = ∙
     eval⋆ {Δ , B} (ts , t) γ ξ ζ = eval⋆ ts γ ξ ζ , λ ξ′ ζ′ →
-      let _ , (ξ″ , ζ″) = zigzag≤⨾R ξ′ ζ
-      in  eval t γ (trans≤ ξ ξ″) (transR ζ″ ζ′)
+                                   let _ , (ξ″ , ζ″) = zigzag≤⨾R ξ′ ζ
+                                   in  eval t γ (trans≤ ξ ξ″) (transR ζ″ ζ′)
 
 
 module EwaldEtAl where
@@ -124,8 +124,8 @@ module EwaldEtAl where
             → Γ ⊢⋆ □⋆ Δ → w ⊩⋆ Γ → ∀ {w′} → w ≤ w′ → ∀ {v′} → w′ R v′ → v′ ⊩⋆ □⋆ Δ
     eval⋆ {⌀}     ∙        γ ξ ζ = ∙
     eval⋆ {Δ , B} (ts , t) γ ξ ζ = eval⋆ ts γ ξ ζ , λ ξ′ ζ′ →
-      let _ , (ξ″ , ζ″) = zagzig≤⨾R ξ′ ζ
-      in  eval t γ (trans≤ ξ ξ″) (transR ζ″ ζ′)
+                                   let _ , (ξ″ , ζ″) = zagzig≤⨾R ξ′ ζ
+                                   in  eval t γ (trans≤ ξ ξ″) (transR ζ″ ζ′)
 
 
 module AlechinaEtAl where
@@ -158,5 +158,5 @@ module AlechinaEtAl where
             → Γ ⊢⋆ □⋆ Δ → w ⊩⋆ Γ → ∀ {w′} → w ≤ w′ → ∀ {v′} → w′ R v′ → v′ ⊩⋆ □⋆ Δ
     eval⋆ {⌀}     ∙        γ ξ ζ = ∙
     eval⋆ {Δ , B} (ts , t) γ ξ ζ = eval⋆ ts γ ξ ζ , λ ξ′ ζ′ →
-      let _ , (ξ″ , ζ″) = zagzig≤⨾R ξ′ ζ
-      in  eval t γ (trans≤ ξ ξ″) (transR ζ″ ζ′)
+                                   let _ , (ξ″ , ζ″) = zagzig≤⨾R ξ′ ζ
+                                   in  eval t γ (trans≤ ξ ξ″) (transR ζ″ ζ′)
