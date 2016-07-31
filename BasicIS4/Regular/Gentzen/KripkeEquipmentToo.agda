@@ -43,19 +43,19 @@ liftЯᶜ = down ∘ lift ∘ up
 zigЯᶜ : ∀ {v′ w w′} → w′ Яᶜ v′ → w ⊆ w′ → w Яᶜ v′
 zigЯᶜ ζ ξ = ζ ∘ mono⊢ ξ
 
-zigzagЯ⨾⊆ : ∀ {v′ w w′} → w′ Яᶜ v′ → w ⊆ w′ → ∃ (λ v → w Яᶜ v × v ⊆ v′)
-zigzagЯ⨾⊆ {v′} ζ ξ = v′ , (zigЯᶜ ζ ξ , refl⊆)
+zigzagЯ⨾≤ᶜ : ∀ {v′ w w′} → w′ Яᶜ v′ → w ⊆ w′ → ∃ (λ v → w Яᶜ v × v ⊆ v′)
+zigzagЯ⨾≤ᶜ {v′} ζ ξ = v′ , (zigЯᶜ ζ ξ , refl⊆)
 
-infix 3 _Я⨾⊆_
-_Я⨾⊆_ : Worldᶜ → Worldᶜ → Set
-_Я⨾⊆_ = _Яᶜ_ ⨾ _⊆_
+infix 3 _Я⨾≤ᶜ_
+_Я⨾≤ᶜ_ : Worldᶜ → Worldᶜ → Set
+_Я⨾≤ᶜ_ = _Яᶜ_ ⨾ _⊆_
 
-reflЯ⨾⊆ : ∀ {w} → w Я⨾⊆ w
-reflЯ⨾⊆ {w} = w , (reflЯᶜ , refl⊆)
+reflЯ⨾≤ᶜ : ∀ {w} → w Я⨾≤ᶜ w
+reflЯ⨾≤ᶜ {w} = w , (reflЯᶜ , refl⊆)
 
-transЯ⨾⊆ : ∀ {w w′ w″} → w Я⨾⊆ w′ → w′ Я⨾⊆ w″ → w Я⨾⊆ w″
-transЯ⨾⊆ (v , (ζ , ξ)) (v′ , (ζ′ , ξ′)) = let v″ , (ζ″ , ξ″) = zigzagЯ⨾⊆ ζ′ ξ
-                                          in  v″ , (transЯᶜ ζ ζ″ , trans⊆ ξ″ ξ′)
+transЯ⨾≤ᶜ : ∀ {w w′ w″} → w Я⨾≤ᶜ w′ → w′ Я⨾≤ᶜ w″ → w Я⨾≤ᶜ w″
+transЯ⨾≤ᶜ (v , (ζ , ξ)) (v′ , (ζ′ , ξ′)) = let v″ , (ζ″ , ξ″) = zigzagЯ⨾≤ᶜ ζ′ ξ
+                                           in  v″ , (transЯᶜ ζ ζ″ , trans⊆ ξ″ ξ′)
 
 
 -- Frame condition given by Ewald et al. and Alechina et al., and a simplified condition.

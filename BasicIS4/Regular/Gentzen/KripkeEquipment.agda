@@ -43,20 +43,19 @@ liftRᶜ = down ∘ lift ∘ down
 zigRᶜ : ∀ {v′ w w′} → w′ Rᶜ v′ → w ⊆ w′ → w Rᶜ v′
 zigRᶜ ζ ξ = ζ ∘ mono⊢ ξ
 
-zigzagR⨾⊆ : ∀ {v′ w w′} → w′ Rᶜ v′ → w ⊆ w′ → ∃ (λ v → w Rᶜ v × v ⊆ v′)
-zigzagR⨾⊆ {v′} ζ ξ = v′ , (zigRᶜ ζ ξ , refl⊆)
+zigzagR⨾≤ᶜ : ∀ {v′ w w′} → w′ Rᶜ v′ → w ⊆ w′ → ∃ (λ v → w Rᶜ v × v ⊆ v′)
+zigzagR⨾≤ᶜ {v′} ζ ξ = v′ , (zigRᶜ ζ ξ , refl⊆)
 
-infix 3 _R⨾⊆_
-_R⨾⊆_ : Worldᶜ → Worldᶜ → Set
-_R⨾⊆_ = _Rᶜ_ ⨾ _⊆_
+infix 3 _R⨾≤ᶜ_
+_R⨾≤ᶜ_ : Worldᶜ → Worldᶜ → Set
+_R⨾≤ᶜ_ = _Rᶜ_ ⨾ _⊆_
 
-reflR⨾⊆ : ∀ {w} → w R⨾⊆ w
-reflR⨾⊆ {w} = w , (reflRᶜ , refl⊆)
+reflR⨾≤ᶜ : ∀ {w} → w R⨾≤ᶜ w
+reflR⨾≤ᶜ {w} = w , (reflRᶜ , refl⊆)
 
-transR⨾⊆ : ∀ {w w′ w″} → w R⨾⊆ w′ → w′ R⨾⊆ w″ → w R⨾⊆ w″
-transR⨾⊆ (v , (ζ , ξ)) (v′ , (ζ′ , ξ′)) =
-  let v″ , (ζ″ , ξ″) = zigzagR⨾⊆ ζ′ ξ
-  in  v″ , (transRᶜ ζ ζ″ , trans⊆ ξ″ ξ′)
+transR⨾≤ᶜ : ∀ {w w′ w″} → w R⨾≤ᶜ w′ → w′ R⨾≤ᶜ w″ → w R⨾≤ᶜ w″
+transR⨾≤ᶜ (v , (ζ , ξ)) (v′ , (ζ′ , ξ′)) = let v″ , (ζ″ , ξ″) = zigzagR⨾≤ᶜ ζ′ ξ
+                                           in  v″ , (transRᶜ ζ ζ″ , trans⊆ ξ″ ξ′)
 
 
 -- Frame condition given by Ewald et al. and Alechina et al., and a simplified condition.
