@@ -29,6 +29,8 @@ References
 
 • Hakli, R., Negri, S. (2010) [“Does the deduction theorem fail for modal logic?”](http://dx.doi.org/10.1007/s11229-011-9905-9)
 
+• Iemhoff, R. (2001) [“Provability logic and admissible rules”](http://www.phil.uu.nl/~iemhoff/Mijn/Papers/proeve.pdf)
+
 • Ilik, D. (2010) [“Continuation-passing style models complete for intuitionistic logic”](http://dx.doi.org/10.1016/j.apal.2012.05.003)
 
 • Joachimski, F., Matthes, R. (2003) [“Short proofs of normalization for the simply-typed λ-calculus, permutative conversions and Gödel’s T”](http://dx.doi.org/10.1007/s00153-002-0156-9)
