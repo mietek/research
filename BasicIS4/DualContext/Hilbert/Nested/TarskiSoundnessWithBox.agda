@@ -9,7 +9,7 @@ module Closed where
 
   -- FIXME: This formalisation seems to prohibit closed syntax.
   postulate
-    oops : ∀ {A Δ} → ⌀ ⁏ Δ ⊢ A → ⌀ ⁏ ⌀ ⊢ □ A
+    oops : ∀ {A Δ} → ⌀ ⁏ Δ ⊢ A → ⌀ ⁏ ⌀ ⊢ A
 
   eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊨ A
   eval (var i)   γ δ = lookup i γ
@@ -19,8 +19,8 @@ module Closed where
   eval cs        γ δ = ap
   eval (mvar i)  γ δ = lookup i δ
   eval (box t)   γ δ = [ oops t ] , eval t ∙ δ
-  eval cdist     γ δ = λ { ([ t ] , f) ([ u ] , a) → [ dist t u ] , f a }
-  eval cup       γ δ = λ { ([ t ] , a) → [ up t ] , ([ t ] , a) }
+  eval cdist     γ δ = λ { ([ t ] , f) ([ u ] , a) → [ app t u ] , f a }
+  eval cup       γ δ = λ { ([ t ] , a) → [ box t ] , ([ t ] , a) }
   eval cdown     γ δ = λ { ([ t ] , a) → a }
   eval cpair     γ δ = _,_
   eval cfst      γ δ = π₁
@@ -42,9 +42,9 @@ module Strange where
   eval ck        γ δ = const
   eval cs        γ δ = ap
   eval (mvar i)  γ δ = lookup i δ
-  eval (box t)   γ δ = [ box t ] , eval t ∙ δ
-  eval cdist     γ δ = λ { ([ t ] , f) ([ u ] , a) → [ dist t (oops u) ] , f a }
-  eval cup       γ δ = λ { ([ t ] , a) → [ up t ] , ([ t ] , a) }
+  eval (box t)   γ δ = [ t ] , eval t ∙ δ
+  eval cdist     γ δ = λ { ([ t ] , f) ([ u ] , a) → [ app t (oops u) ] , f a }
+  eval cup       γ δ = λ { ([ t ] , a) → [ box t ] , ([ t ] , a) }
   eval cdown     γ δ = λ { ([ t ] , a) → a }
   eval cpair     γ δ = _,_
   eval cfst      γ δ = π₁
@@ -65,15 +65,15 @@ module Open where
                                   b = (mono⊨ {A ▷ B} θ′ g) refl⊆ a
                               in  h b
   eval (mvar {A} i)     γ δ = mono⊨ {A} bot⊆ (lookup i δ)
-  eval (box {A} t)      γ δ = λ θ → [ mmono⊢ θ (lift t) ]
+  eval (box {A} t)      γ δ = λ θ → [ mmono⊢ θ t ]
                                      , mono⊨ {A} θ (eval t ∙ δ)
   eval cdist            γ δ = λ _ □f θ □a θ′ →
                               let [ t ] , f = □f (trans⊆ θ θ′)
                                   [ u ] , a = □a θ′
-                              in  [ dist t u ] , f refl⊆ a
+                              in  [ app t u ] , f refl⊆ a
   eval (cup {A})        γ δ = λ _ □a θ →
                               let [ t ] , a = □a refl⊆
-                              in  [ mmono⊢ θ (up t) ]
+                              in  [ mmono⊢ θ (box t) ]
                                   , (λ θ′ → [ mmono⊢ (trans⊆ θ θ′) t ]
                                              , mono⊨ {A} (trans⊆ θ θ′) a)
   eval cdown            γ δ = λ _ □a →

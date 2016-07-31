@@ -13,9 +13,9 @@ module Closed where
   eval ci        γ = id
   eval ck        γ = const
   eval cs        γ = ap
-  eval (box t)   γ = [ box t ] , eval t ∙
-  eval cdist     γ = λ { ([ t ] , f) ([ u ] , a) → [ dist t u ] , f a }
-  eval cup       γ = λ { ([ t ] , a) → [ up t ] , ([ t ] , a) }
+  eval (box t)   γ = [ t ] , eval t ∙
+  eval cdist     γ = λ { ([ t ] , f) ([ u ] , a) → [ app t u ] , f a }
+  eval cup       γ = λ { ([ t ] , a) → [ box t ] , ([ t ] , a) }
   eval cdown     γ = λ { ([ t ] , a) → a }
   eval cpair     γ = _,_
   eval cfst      γ = π₁
@@ -26,9 +26,9 @@ module Closed where
 module Strange where
   open TruthWithClosedBox (StrangeBox) public
 
-  -- FIXME: Modal contexts of strange syntax are not connected to each other.
+  -- FIXME: Contexts of strange syntax are not connected to each other.
   postulate
-    oops : ∀ {A Δ Δ′} → □⋆ Δ ⊢ A → □⋆ Δ′ ⊢ A
+    oops : ∀ {A Δ Δ′} → Δ ⊢ A → Δ′ ⊢ A
 
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊨ A
   eval (var i)   γ = lookup i γ
@@ -36,9 +36,9 @@ module Strange where
   eval ci        γ = id
   eval ck        γ = const
   eval cs        γ = ap
-  eval (box t)   γ = [ lift t ] , eval t ∙
-  eval cdist     γ = λ { ([ t ] , □f) ([ u ] , □a) → [ dist t (oops u) ] , □f □a }
-  eval cup       γ = λ { ([ t ] , □a) → [ up t ] , ([ t ] , □a) }
+  eval (box t)   γ = [ t ] , eval t ∙
+  eval cdist     γ = λ { ([ t ] , □f) ([ u ] , □a) → [ app t (oops u) ] , □f □a }
+  eval cup       γ = λ { ([ t ] , □a) → [ lift t ] , ([ t ] , □a) }
   eval cdown     γ = λ { ([ t ] , □a) → □a }
   eval cpair     γ = _,_
   eval cfst      γ = π₁
@@ -58,15 +58,15 @@ module Open where
                             let h = ((mono⊨ {A ▷ B ▷ C} (trans⊆ θ θ′) f) refl⊆ a) refl⊆
                                 b = (mono⊨ {A ▷ B} θ′ g) refl⊆ a
                             in  h b
-  eval (box {A} t)      γ = λ _ → [ mono⊢ bot⊆ (lift t) ]
+  eval (box {A} t)      γ = λ _ → [ mono⊢ bot⊆ t ]
                                    , mono⊨ {A} bot⊆ (eval t ∙)
   eval cdist            γ = λ _ □f θ □a θ′ →
                             let [ t ] , f = □f (trans⊆ θ θ′)
                                 [ u ] , a = □a θ′
-                            in  [ dist t u ] , f refl⊆ a
+                            in  [ app t u ] , f refl⊆ a
   eval (cup {A})        γ = λ _ □a θ →
                             let [ t ] , a = □a θ
-                            in  [ up t ]
+                            in  [ cxdown (lift t) ]
                                 , (λ θ′ → [ mono⊢ (lift⊆ θ′) t ]
                                            , mono⊨ {A} θ′ a)
   eval cdown            γ = λ _ □a →

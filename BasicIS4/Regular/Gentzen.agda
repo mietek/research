@@ -29,18 +29,18 @@ mutual
 record ClosedBox (A : Ty) : Set where
   constructor [_]
   field
-    t : ⌀ ⊢ □ A
+    t : ⌀ ⊢ A
 
 record StrangeBox (A : Ty) : Set where
   constructor [_]
   field
     {Δ} : Cx Ty
-    t   : □⋆ Δ ⊢ □ A
+    t   : □⋆ Δ ⊢ A
 
 record OpenBox (Δ : Cx Ty) (A : Ty) : Set where
   constructor [_]
   field
-    t : □⋆ Δ ⊢ □ A
+    t : □⋆ Δ ⊢ A
 
 
 -- Monotonicity with respect to context inclusion.

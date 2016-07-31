@@ -24,8 +24,9 @@ module Strange where
     eval (var i)         γ = lookup i γ
     eval (lam t)         γ = λ a → eval t (γ , a)
     eval (app t u)       γ = (eval t γ) (eval u γ)
-    eval (multibox ts u) γ = [ lift u ] , eval u (eval⋆ ts γ)
-    eval (down t)        γ = π₂ (eval t γ)
+    eval (multibox ts u) γ = [ u ] , eval u (eval⋆ ts γ)
+    eval (down t)        γ = let [ s ] , a = eval t γ
+                             in  a
     eval (pair t u)      γ = eval t γ , eval u γ
     eval (fst t)         γ = π₁ (eval t γ)
     eval (snd t)         γ = π₂ (eval t γ)
