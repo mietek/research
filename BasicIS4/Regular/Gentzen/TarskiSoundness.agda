@@ -1,9 +1,9 @@
-module BasicIS4.Regular.Gentzen.TarskiSoundnessWithBox where
+module BasicIS4.Regular.Gentzen.TarskiSoundness where
 
 open import BasicIS4.Regular.Gentzen public
 open import BasicIS4.TarskiSemantics public
 
-import BasicIS4.Regular.Hilbert.Nested.TarskiSoundnessWithBox as HN
+import BasicIS4.Regular.Hilbert.Nested.TarskiSoundness as HN
 import BasicIS4.Regular.Translation as T
 
 

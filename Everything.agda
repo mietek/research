@@ -65,10 +65,10 @@ import BasicIS4.KripkeSemantics.EwaldEtAl
 import BasicIS4.KripkeSemantics.AlechinaEtAl
 import BasicIS4.Regular.Hilbert.Sequential
 import BasicIS4.Regular.Hilbert.Nested
-import BasicIS4.Regular.Hilbert.Nested.TarskiSoundnessWithBox -- FIXME
+import BasicIS4.Regular.Hilbert.Nested.TarskiSoundness -- FIXME
 import BasicIS4.Regular.Hilbert.Nested.KripkeSoundness
 import BasicIS4.Regular.Gentzen
-import BasicIS4.Regular.Gentzen.TarskiSoundnessWithBox -- FIXME
+import BasicIS4.Regular.Gentzen.TarskiSoundness -- FIXME
 import BasicIS4.Regular.Gentzen.KripkeSoundness
 import BasicIS4.Regular.Gentzen.KripkeEquipment
 import BasicIS4.Regular.Gentzen.KripkeEquipmentToo
@@ -76,10 +76,10 @@ import BasicIS4.Regular.Gentzen.KripkeBasicCompleteness -- FIXME
 import BasicIS4.Regular.Translation
 import BasicIS4.DualContext.Hilbert.Sequential
 import BasicIS4.DualContext.Hilbert.Nested
-import BasicIS4.DualContext.Hilbert.Nested.TarskiSoundnessWithBox -- FIXME
+import BasicIS4.DualContext.Hilbert.Nested.TarskiSoundness -- FIXME
 import BasicIS4.DualContext.Hilbert.Nested.KripkeSoundness
 import BasicIS4.DualContext.Gentzen
-import BasicIS4.DualContext.Gentzen.TarskiSoundnessWithBox -- FIXME
+import BasicIS4.DualContext.Gentzen.TarskiSoundness -- FIXME
 import BasicIS4.DualContext.Gentzen.KripkeSoundness
 import BasicIS4.DualContext.Gentzen.KripkeEquipment
 import BasicIS4.DualContext.Gentzen.KripkeEquipmentToo

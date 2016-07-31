@@ -1,4 +1,4 @@
-module BasicIS4.DualContext.Hilbert.Nested.TarskiSoundnessWithBox where
+module BasicIS4.DualContext.Hilbert.Nested.TarskiSoundness where
 
 open import BasicIS4.DualContext.Hilbert.Nested public
 open import BasicIS4.TarskiSemantics public
