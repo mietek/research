@@ -43,8 +43,8 @@ record Model : Set₁ where
   reflR⨾≤ {w} = w , (reflR , refl≤)
 
   transR⨾≤ : ∀ {w w′ w″} → w R⨾≤ w′ → w′ R⨾≤ w″ → w R⨾≤ w″
-  transR⨾≤ (a , (ζ , ξ)) (b , (ζ′ , ξ′)) = let c , (ζ″ , ξ″) = zigzagR⨾≤ ζ′ ξ
-                                           in  c , (transR ζ ζ″ , trans≤ ξ″ ξ′)
+  transR⨾≤ (v , (ζ , ξ)) (v′ , (ζ′ , ξ′)) = let v″ , (ζ″ , ξ″) = zigzagR⨾≤ ζ′ ξ
+                                            in  v″ , (transR ζ ζ″ , trans≤ ξ″ ξ′)
 
 open Model {{…}} public
 

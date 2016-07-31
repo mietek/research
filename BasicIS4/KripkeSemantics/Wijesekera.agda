@@ -39,8 +39,8 @@ module _ {{_ : Model}} where
   refl≤⨾R {w} = w , (refl≤ , reflR)
 
   trans≤⨾R : ∀ {w w′ w″} → w ≤⨾R w′ → w′ ≤⨾R w″ → w ≤⨾R w″
-  trans≤⨾R (a , (ξ , ζ)) (b , (ξ′ , ζ′)) = let c , (ξ″ , ζ″) = zigzag≤⨾R ξ′ ζ
-                                           in  c , (trans≤ ξ ξ″ , transR ζ″ ζ′)
+  trans≤⨾R (v , (ξ , ζ)) (v′ , (ξ′ , ζ′)) = let v″ , (ξ″ , ζ″) = zigzag≤⨾R ξ′ ζ
+                                            in  v″ , (trans≤ ξ ξ″ , transR ζ″ ζ′)
 
 
 module StandardForcing where
