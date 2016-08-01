@@ -58,6 +58,7 @@ import IPC.Translation
 
 import BasicIS4
 import BasicIS4.TarskiSemantics
+import BasicIS4.KripkeSemantics
 import BasicIS4.KripkeSemantics.Ono
 import BasicIS4.KripkeSemantics.BozicDosen
 import BasicIS4.KripkeSemantics.Wijesekera -- FIXME

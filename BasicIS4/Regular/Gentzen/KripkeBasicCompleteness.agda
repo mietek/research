@@ -2,8 +2,8 @@ module BasicIS4.Regular.Gentzen.KripkeBasicCompleteness where
 
 open import BasicIS4.Regular.Gentzen.KripkeSoundness public
 open import BasicIS4.Regular.Gentzen.KripkeEquipment public
-open import BasicIS4.KripkeSemantics.Ono public
-open StandardForcing public
+open import BasicIS4.KripkeSemantics public
+open RegularForcing public
 
 
 -- The canonical model.
@@ -11,16 +11,19 @@ open StandardForcing public
 instance
   canon : Model
   canon = record
-    { World   = Worldᶜ
-    ; _≤_     = _⊆_
-    ; refl≤   = refl⊆
-    ; trans≤  = trans⊆
-    ; _R_     = _Rᶜ_
-    ; reflR   = reflRᶜ
-    ; transR  = transRᶜ
-    ; _⊩ᵅ_   = λ w P → w ⊢ α P
-    ; mono⊩ᵅ = mono⊢
-    ; zigR    = zigRᶜ
+    { World    = Worldᶜ
+    ; _≤_      = _≤ᶜ_
+    ; refl≤    = refl≤ᶜ
+    ; trans≤   = trans≤ᶜ
+    ; _R_      = _Rᶜ_
+    ; reflR    = reflRᶜ
+    ; transR   = transRᶜ
+    ; _⊩ᵅ_    = λ Γ P → Γ ⊢ α P
+    ; mono⊩ᵅ  = mono⊢
+    ; ≤⨾R→R   = ≤⨾R→Rᶜ
+    ; R⨾≤→R   = R⨾≤→Rᶜ
+    ; ≤⊓R→≤⊔R = ≤⊓R→≤⊔Rᶜ
+    ; ≤⊔R→≤⊓R = ≤⊔R→≤⊓Rᶜ
     }
 
 
@@ -72,4 +75,4 @@ quot t = reify (t refl⊩⋆)
 -- Normalisation by evaluation.
 
 norm : ∀ {A Γ} → Γ ⊢ A → Γ ⊢ A
-norm = quot ∘ Ono.eval
+norm = quot ∘ WithRegularForcing.eval
