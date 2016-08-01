@@ -5,7 +5,7 @@ open import BasicIS4.DualContext.Hilbert.Nested public
 
 module Ono where
   open import BasicIS4.KripkeSemantics.Ono public
-  open StandardForcing public
+  open RegularForcing public
 
   eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊩ A
   eval (var i)          γ δ = lookup i γ
@@ -32,7 +32,7 @@ module Ono where
 
 module BozicDosen where
   open import BasicIS4.KripkeSemantics.BozicDosen public
-  open StandardForcing public
+  open RegularForcing public
 
   eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊩ A
   eval (var i)          γ δ = lookup i γ
@@ -59,7 +59,7 @@ module BozicDosen where
 
 module Wijesekera where
   open import BasicIS4.KripkeSemantics.Wijesekera public
-  open StandardForcing public
+  open DualRelationForcing public
 
   eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊩ A
   eval (var i)          γ δ = lookup i γ
@@ -89,7 +89,7 @@ module Wijesekera where
 
 module EwaldEtAl where
   open import BasicIS4.KripkeSemantics.EwaldEtAl public
-  open StandardForcing public
+  open DualRelationForcing public
 
   eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊩ A
   eval (var i)          γ δ = lookup i γ
@@ -119,7 +119,7 @@ module EwaldEtAl where
 
 module AlechinaEtAl where
   open import BasicIS4.KripkeSemantics.AlechinaEtAl public
-  open StandardForcing public
+  open DualRelationForcing public
 
   eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊩ A
   eval (var i)          γ δ = lookup i γ

@@ -76,15 +76,15 @@ record Model : Set₁ where
 open Model {{…}} public
 
 
-module StandardForcing where
+-- Forcing with both intuitionistic and modal accessibility.
 
-  -- Forcing for propositions and contexts.
-
+module DualRelationForcing where
   module _ {{_ : Model}} where
     infix 3 _⊩_
     _⊩_ : World → Ty → Set
     w ⊩ α P   = w ⊩ᵅ P
     w ⊩ A ▷ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
+    -- NOTE: Both intuitionistic and modal accessibility here.
     w ⊩ □ A   = ∀ {w′} → w ≤ w′ → ∀ {v′} → w′ R v′ → v′ ⊩ A
     w ⊩ A ∧ B = w ⊩ A × w ⊩ B
     w ⊩ ⊤    = Top
