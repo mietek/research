@@ -24,17 +24,30 @@ record Model : Set₁ where
     _⊩ᵅ_   : World → Atom → Set
     mono⊩ᵅ : ∀ {P w w′} → w ≤ w′ → w ⊩ᵅ P → w′ ⊩ᵅ P
 
-    -- Frame condition given by Božić and Došen.
+
+    -- Minor persistence condition, included by Božić and Došen.
     --
-    --   w′  R   v′
-    --   ●───────●
-    --   │       ┊
-    -- ≤ │       ┊ ≤
-    --   │       ┊
-    --   ●╌╌╌╌╌╌╌◌
-    --   w   R   v
+    --   w′      v′  →           v′
+    --   ◌───R───●   →           ●
+    --   │           →           │
+    --   ≤  ξ,ζ      →           ≤
+    --   │           →           │
+    --   ●           →   ●───R───◌
+    --   w           →   w       v
     --
-    zigzagR⨾≤ : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → ∃ (λ v → w R v × v ≤ v′)
+    --                   w″  →                   w″
+    --                   ●   →                   ●
+    --                   │   →                   │
+    --             ξ′,ζ′ ≤   →                   │
+    --                   │   →                   │
+    --           ●───R───◌   →                   ≤
+    --           │       v′  →                   │
+    --      ξ,ζ  ≤           →                   │
+    --           │           →                   │
+    --   ●───R───◌           →   ●───────R───────◌
+    --   w       v           →   w               v″
+
+    ≤⨾R→R⨾≤ : ∀ {v′ w} → (_≤_ ⨾ _R_) w v′ → (_R_ ⨾ _≤_) w v′
 
   _R⨾≤_ : World → World → Set
   _R⨾≤_ = _R_ ⨾ _≤_
@@ -42,9 +55,10 @@ record Model : Set₁ where
   reflR⨾≤ : ∀ {w} → w R⨾≤ w
   reflR⨾≤ {w} = w , (reflR , refl≤)
 
-  transR⨾≤ : ∀ {w w′ w″} → w R⨾≤ w′ → w′ R⨾≤ w″ → w R⨾≤ w″
-  transR⨾≤ (v , (ζ , ξ)) (v′ , (ζ′ , ξ′)) = let v″ , (ζ″ , ξ″) = zigzagR⨾≤ ζ′ ξ
-                                            in  v″ , (transR ζ ζ″ , trans≤ ξ″ ξ′)
+  transR⨾≤ : ∀ {w′ w w″} → w R⨾≤ w′ → w′ R⨾≤ w″ → w R⨾≤ w″
+  transR⨾≤ {w′} (v , (ζ , ξ)) (v′ , (ζ′ , ξ′)) =
+    let v″ , (ζ″ , ξ″) = ≤⨾R→R⨾≤ (w′ , (ξ , ζ′))
+    in  v″ , (transR ζ ζ″ , trans≤ ξ″ ξ′)
 
 open Model {{…}} public
 
@@ -73,7 +87,7 @@ module StandardForcing where
     mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
     mono⊩ {α P}   ξ s       = mono⊩ᵅ ξ s
     mono⊩ {A ▷ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
-    mono⊩ {□ A}   ξ □f      = λ ζ → let v , (ζ′ , ξ′) = zigzagR⨾≤ ζ ξ
+    mono⊩ {□ A}   ξ □f      = λ ζ → let v , (ζ′ , ξ′) = ≤⨾R→R⨾≤ (_ , (ξ , ζ))
                                       in  mono⊩ {A} ξ′ (□f ζ′)
     mono⊩ {A ∧ B} ξ (a , b) = mono⊩ {A} ξ a , mono⊩ {B} ξ b
     mono⊩ {⊤}    ξ ∙       = ∙

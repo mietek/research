@@ -24,20 +24,21 @@ record Model : Set₁ where
     _⊩ᵅ_   : World → Atom → Set
     mono⊩ᵅ : ∀ {P w w′} → w ≤ w′ → w ⊩ᵅ P → w′ ⊩ᵅ P
 
-    -- Frame condition given by Ono.
-    --
-    --   w′  R   v′
-    --   ●───────●
-    --   │     ⋰
-    -- ≤ │   R
-    --   │ ⋰
-    --   ●
-    --   w
-    --
-    zigR : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → w R v′
 
-  ≤→R : ∀ {w w′} → w ≤ w′ → w R w′
-  ≤→R ξ = zigR reflR ξ
+    -- Persistence condition, after Iemhoff; included by Ono.
+    --
+    --   w′      v′  →           v′
+    --   ◌───R───●   →           ●
+    --   │           →         ╱
+    --   ≤  ξ,ζ      →       R
+    --   │           →     ╱
+    --   ●           →   ●
+    --   w           →   w
+    --
+    ≤⨾R→R : ∀ {v′ w} → (_≤_ ⨾ _R_) w v′ → w R v′
+
+  ≤→R : ∀ {v′ w} → w ≤ v′ → w R v′
+  ≤→R {v′} ξ = ≤⨾R→R (v′ , (ξ , reflR))
 
 open Model {{…}} public
 

@@ -24,17 +24,30 @@ record Model : Set₁ where
     _⊩ᵅ_   : World → Atom → Set
     mono⊩ᵅ : ∀ {P w w′} → w ≤ w′ → w ⊩ᵅ P → w′ ⊩ᵅ P
 
-    -- Frame condition given by Ewald et al. and Alechina et al.
+
+    -- Minor brilliance condition, included by Ewald et al. and Alechina et al.
     --
-    --   w′  R   v′
-    --   ◌╌╌╌╌╌╌╌●
-    --   ┊       │
-    -- ≤ ┊       │ ≤
-    --   ┊       │
-    --   ●───────●
-    --   w   R   v
+    --           v′  →   w′      v′
+    --           ●   →   ◌───R───●
+    --           │   →   │
+    --      ζ,ξ  ≤   →   ≤
+    --           │   →   │
+    --   ●───R───◌   →   ●
+    --   w       v   →   w
     --
-    zagzig≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
+    --           v′      w″  →   v″              w″
+    --           ◌───R───●   →   ◌───────R───────●
+    --           │           →   │
+    --           ≤  ξ′,ζ′    →   │
+    --   v       │           →   │
+    --   ◌───R───●           →   ≤
+    --   │       w′          →   │
+    --   ≤  ξ,ζ              →   │
+    --   │                   →   │
+    --   ●                   →   ●
+    --   w                   →   w
+
+    R⨾≤→≤⨾R : ∀ {w v′} → (_R_ ⨾ _≤_) w v′ → (_≤_ ⨾ _R_) w v′
 
   _≤⨾R_ : World → World → Set
   _≤⨾R_ = _≤_ ⨾ _R_
@@ -42,9 +55,10 @@ record Model : Set₁ where
   refl≤⨾R : ∀ {w} → w ≤⨾R w
   refl≤⨾R {w} = w , (refl≤ , reflR)
 
-  trans≤⨾R : ∀ {w w′ w″} → w ≤⨾R w′ → w′ ≤⨾R w″ → w ≤⨾R w″
-  trans≤⨾R (v , (ξ , ζ)) (v′ , (ξ′ , ζ′)) = let v″ , (ξ″ , ζ″) = zagzig≤⨾R ξ′ ζ
-                                            in  v″ , (trans≤ ξ ξ″ , transR ζ″ ζ′)
+  trans≤⨾R : ∀ {w′ w w″} → w ≤⨾R w′ → w′ ≤⨾R w″ → w ≤⨾R w″
+  trans≤⨾R {w′} (v , (ξ , ζ)) (v′ , (ξ′ , ζ′)) =
+    let v″ , (ξ″ , ζ″) = R⨾≤→≤⨾R (w′ , (ζ , ξ′))
+    in  v″ , (trans≤ ξ ξ″ , transR ζ″ ζ′)
 
 open Model {{…}} public
 

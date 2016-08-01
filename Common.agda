@@ -76,3 +76,9 @@ cong₃ f refl refl refl = refl
 module _ {W : Set} where
   _⨾_ : (W → W → Set) → (W → W → Set) → (W → W → Set)
   _P_ ⨾ _R_ = λ a b → ∃ (λ z → a P z × z R b)
+
+  _⊔_ : (W → W → Set) → (W → W → Set) → (W → W → Set)
+  _P_ ⊔ _R_ = λ a b → ∃ (λ z → a P z × b R z)
+
+  _⊓_ : (W → W → Set) → (W → W → Set) → (W → W → Set)
+  _P_ ⊓ _R_ = λ a b → ∃ (λ z → z P a × z R b)

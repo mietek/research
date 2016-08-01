@@ -28,19 +28,23 @@ open Model {{…}} public
 
 
 module _ {{_ : Model}} where
-  -- FIXME: Read the Wijesekera paper; find the missing piece.
-  postulate
-    zigzag≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
-
   _≤⨾R_ : World → World → Set
   _≤⨾R_ = _≤_ ⨾ _R_
+
+  _R⨾≤_ : World → World → Set
+  _R⨾≤_ = _R_ ⨾ _≤_
+
+  -- FIXME: Read the Wijesekera paper; find the missing piece.
+  postulate
+    R⨾≤→≤⨾R : ∀ {w v′} → w R⨾≤ v′ → w ≤⨾R v′
 
   refl≤⨾R : ∀ {w} → w ≤⨾R w
   refl≤⨾R {w} = w , (refl≤ , reflR)
 
-  trans≤⨾R : ∀ {w w′ w″} → w ≤⨾R w′ → w′ ≤⨾R w″ → w ≤⨾R w″
-  trans≤⨾R (v , (ξ , ζ)) (v′ , (ξ′ , ζ′)) = let v″ , (ξ″ , ζ″) = zigzag≤⨾R ξ′ ζ
-                                            in  v″ , (trans≤ ξ ξ″ , transR ζ″ ζ′)
+  trans≤⨾R : ∀ {w′ w w″} → w ≤⨾R w′ → w′ ≤⨾R w″ → w ≤⨾R w″
+  trans≤⨾R {w′} (v , (ξ , ζ)) (v′ , (ξ′ , ζ′)) =
+    let v″ , (ξ″ , ζ″) = R⨾≤→≤⨾R (w′ , (ζ , ξ′))
+    in  v″ , (trans≤ ξ ξ″ , transR ζ″ ζ′)
 
 
 module StandardForcing where

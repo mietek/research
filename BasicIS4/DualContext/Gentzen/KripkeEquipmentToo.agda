@@ -9,6 +9,22 @@ Worldᶜ : Set
 Worldᶜ = Cx² Ty
 
 
+-- The canonical intuitionistic accessibility.
+
+infix 3 _≤ᶜ_
+_≤ᶜ_ : Worldᶜ → Worldᶜ → Set
+_≤ᶜ_ = _⊆²_
+
+refl≤ᶜ : ∀ {w} → w ≤ᶜ w
+refl≤ᶜ = refl⊆²
+
+trans≤ᶜ : ∀ {w w′ w″} → w ≤ᶜ w′ → w′ ≤ᶜ w″ → w ≤ᶜ w″
+trans≤ᶜ = trans⊆²
+
+bot≤ᶜ : ∀ {w} → ⌀² ≤ᶜ w
+bot≤ᶜ = bot⊆²
+
+
 -- Not the canonical modal accessibility, based on the 4 axiom.
 
 infix 3 _Яᶜ_
@@ -22,89 +38,201 @@ transЯᶜ : ∀ {w w′ w″} → w Яᶜ w′ → w′ Яᶜ w″ → w Яᶜ 
 transЯᶜ ζ ζ′ = down ∘ ζ′ ∘ ζ
 
 botЯᶜ : ∀ {w} → ⌀² Яᶜ w
-botЯᶜ = mono²⊢ bot⊆² ∘ up
+botЯᶜ = mono²⊢ bot≤ᶜ ∘ up
 
 liftЯᶜ : ∀ {Γ Δ} → (Γ , Δ) Яᶜ (□⋆ Γ , Δ)
 liftЯᶜ = down ∘ lift ∘ up
 
 
--- Frame conditions given by Božić and Došen, and by Ono.
---
---   zigzag:         zig:
---
---   w′  Я   v′      w′  Я   v′
---   ●───────●       ●───────●
---   │       ┊       │     ⋰
--- ≤ │       ┊ ≤   ≤ │   Я
---   │       ┊       │ ⋰
---   ●╌╌╌╌╌╌╌◌       ●
---   w   Я   v       w
-
-zigЯᶜ : ∀ {v′ w w′} → w′ Яᶜ v′ → w ⊆² w′ → w Яᶜ v′
-zigЯᶜ ζ ξ = ζ ∘ mono²⊢ ξ
-
-zigzagЯ⨾≤ᶜ : ∀ {v′ w w′} → w′ Яᶜ v′ → w ⊆² w′ → ∃ (λ v → w Яᶜ v × v ⊆² v′)
-zigzagЯ⨾≤ᶜ {v′} ζ ξ = v′ , (zigЯᶜ ζ ξ , refl⊆²)
-
-infix 3 _Я⨾≤ᶜ_
-_Я⨾≤ᶜ_ : Worldᶜ → Worldᶜ → Set
-_Я⨾≤ᶜ_ = _Яᶜ_ ⨾ _⊆²_
-
-reflЯ⨾≤ᶜ : ∀ {w} → w Я⨾≤ᶜ w
-reflЯ⨾≤ᶜ {w} = w , (reflЯᶜ , refl⊆²)
-
-transЯ⨾≤ᶜ : ∀ {w w′ w″} → w Я⨾≤ᶜ w′ → w′ Я⨾≤ᶜ w″ → w Я⨾≤ᶜ w″
-transЯ⨾≤ᶜ (v , (ζ , ξ)) (v′ , (ζ′ , ξ′)) = let v″ , (ζ″ , ξ″) = zigzagЯ⨾≤ᶜ ζ′ ξ
-                                           in  v″ , (transЯᶜ ζ ζ″ , trans⊆² ξ″ ξ′)
-
-
--- Frame condition given by Ewald et al. and Alechina et al., and a simplified condition.
---
---   zagzig:         zag:
---
---   w′  Я   v′              v′
---   ◌╌╌╌╌╌╌╌●               ●
---   ┊       │             ⋰ ┊
--- ≤ ┊       │ ≤         Я   ┊ ≤
---   ┊       │         ⋰     ┊
---   ●───────●       ●───────●
---   w   Я   v       w   Я   v
-
-zagЯᶜ : ∀ {w v v′} → v ⊆² v′ → w Яᶜ v → w Яᶜ v′
-zagЯᶜ {w} ξ ζ = mono²⊢ ξ ∘ ζ
-
-zagzig≤⨾Яᶜ : ∀ {w v v′} → v ⊆² v′ → w Яᶜ v → ∃ (λ w′ → w ⊆² w′ × w′ Яᶜ v′)
-zagzig≤⨾Яᶜ {w} ξ ζ = w , (refl⊆² , zagЯᶜ ξ ζ)
+-- Composition of accessibility.
 
 infix 3 _≤⨾Яᶜ_
 _≤⨾Яᶜ_ : Worldᶜ → Worldᶜ → Set
-_≤⨾Яᶜ_ = _⊆²_ ⨾ _Яᶜ_
+_≤⨾Яᶜ_ = _≤ᶜ_ ⨾ _Яᶜ_
+
+infix 3 _Я⨾≤ᶜ_
+_Я⨾≤ᶜ_ : Worldᶜ → Worldᶜ → Set
+_Я⨾≤ᶜ_ = _Яᶜ_ ⨾ _≤ᶜ_
 
 refl≤⨾Яᶜ : ∀ {w} → w ≤⨾Яᶜ w
-refl≤⨾Яᶜ {w} = w , (refl⊆² , reflЯᶜ)
+refl≤⨾Яᶜ {w} = w , (refl≤ᶜ , reflЯᶜ)
 
-trans≤⨾Яᶜ : ∀ {w w′ w″} → w ≤⨾Яᶜ w′ → w′ ≤⨾Яᶜ w″ → w ≤⨾Яᶜ w″
-trans≤⨾Яᶜ (v , (ξ , ζ)) (v′ , (ξ′ , ζ′)) = let v″ , (ξ″ , ζ″) = zagzig≤⨾Яᶜ ξ′ ζ
-                                           in  v″ , (trans⊆² ξ ξ″ , transЯᶜ ζ″ ζ′)
+reflЯ⨾≤ᶜ : ∀ {w} → w Я⨾≤ᶜ w
+reflЯ⨾≤ᶜ {w} = w , (reflЯᶜ , refl≤ᶜ)
 
 
--- Frame condition given by Ewald et al., and a dual condition.
+-- Persistence condition, after Iemhoff; included by Ono.
 --
---   zap:            zup:
+--   w′      v′  →           v′
+--   ◌───Я───●   →           ●
+--   │           →         ╱
+--   ≤  ξ,ζ      →       Я
+--   │           →     ╱
+--   ●           →   ●
+--   w           →   w
+
+≤⨾Я→Яᶜ : ∀ {v′ w} → w ≤⨾Яᶜ v′ → w Яᶜ v′
+≤⨾Я→Яᶜ (w′ , (ξ , ζ)) = ζ ∘ mono²⊢ ξ
+
+
+-- Brilliance condition, after Iemhoff.
 --
---   w′  Я   v′      w′  Я   v′
---   ●╌╌╌╌╌╌╌◌       ●───────●
---   │       ┊       ┊       │
--- ≤ │       ┊ ≤   ≤ ┊       │ ≤
---   │       ┊       ┊       │
---   ●───────●       ◌╌╌╌╌╌╌╌●
---   w   Я   v       w   Я   v
+--           v′  →           v′
+--           ●   →           ●
+--           │   →         ╱
+--      ζ,ξ  ≤   →       Я
+--           │   →     ╱
+--   ●───Я───◌   →   ●
+--   w       v   →   w
 
--- NOTE: This could be a more precise supremum.
-zapЯᶜ : ∀ {v w′ w} → w Яᶜ v → w ⊆² w′ → ∃ (λ v′ → w′ Яᶜ v′ × v ⊆² v′)
-zapЯᶜ {Γ′ , Δ′} {Γ , Δ} ζ ξ =
-  (Γ ⧺ Γ′ , Δ ⧺ Δ′) , (mono²⊢ (weak⊆²⧺ₗ (Γ′ , Δ′)) ∘ up , weak⊆²⧺ᵣ)
+Я⨾≤→Яᶜ : ∀ {w v′} → w Я⨾≤ᶜ v′ → w Яᶜ v′
+Я⨾≤→Яᶜ (v , (ζ , ξ)) = mono²⊢ ξ ∘ ζ
 
--- NOTE: This could be a more precise infimum.
-zupЯᶜ : ∀ {w′ v v′} → v ⊆² v′ → w′ Яᶜ v′ → ∃ (λ w → w ⊆² w′ × w Яᶜ v)
-zupЯᶜ ξ ζ = ⌀² , (bot⊆² , botЯᶜ)
+
+-- Minor persistence condition, included by Božić and Došen.
+--
+--   w′      v′  →           v′
+--   ◌───Я───●   →           ●
+--   │           →           │
+--   ≤  ξ,ζ      →           ≤
+--   │           →           │
+--   ●           →   ●───Я───◌
+--   w           →   w       v
+--
+--                   w″  →                   w″
+--                   ●   →                   ●
+--                   │   →                   │
+--             ξ′,ζ′ ≤   →                   │
+--                   │   →                   │
+--           ●───R───◌   →                   ≤
+--           │       v′  →                   │
+--      ξ,ζ  ≤           →                   │
+--           │           →                   │
+--   ●───R───◌           →   ●───────R───────◌
+--   w       v           →   w               v″
+
+≤⨾Я→Я⨾≤ᶜ : ∀ {v′ w} → w ≤⨾Яᶜ v′ → w Я⨾≤ᶜ v′
+≤⨾Я→Я⨾≤ᶜ {v′} ξ,ζ = v′ , (≤⨾Я→Яᶜ ξ,ζ , refl≤ᶜ)
+
+transЯ⨾≤ᶜ : ∀ {w′ w w″} → w Я⨾≤ᶜ w′ → w′ Я⨾≤ᶜ w″ → w Я⨾≤ᶜ w″
+transЯ⨾≤ᶜ {w′} (v , (ζ , ξ)) (v′ , (ζ′ , ξ′)) =
+  let v″ , (ζ″ , ξ″) = ≤⨾Я→Я⨾≤ᶜ (w′ , (ξ , ζ′))
+  in  v″ , (transЯᶜ ζ ζ″ , trans≤ᶜ ξ″ ξ′)
+
+≤→Яᶜ : ∀ {v′ w} → w ≤ᶜ v′ → w Яᶜ v′
+≤→Яᶜ {v′} ξ = ≤⨾Я→Яᶜ (v′ , (ξ , reflЯᶜ))
+
+
+-- Minor brilliance condition, included by Ewald et al. and Alechina et al.
+--
+--           v′  →   w′      v′
+--           ●   →   ◌───Я───●
+--           │   →   │
+--      ζ,ξ  ≤   →   ≤
+--           │   →   │
+--   ●───Я───◌   →   ●
+--   w       v   →   w
+--
+--           v′      w″  →   v″              w″
+--           ◌───R───●   →   ◌───────R───────●
+--           │           →   │
+--           ≤  ξ′,ζ′    →   │
+--   v       │           →   │
+--   ◌───R───●           →   ≤
+--   │       w′          →   │
+--   ≤  ξ,ζ              →   │
+--   │                   →   │
+--   ●                   →   ●
+--   w                   →   w
+
+Я⨾≤→≤⨾Яᶜ : ∀ {w v′} → w Я⨾≤ᶜ v′ → w ≤⨾Яᶜ v′
+Я⨾≤→≤⨾Яᶜ {w} ζ,ξ = w , (refl≤ᶜ , Я⨾≤→Яᶜ ζ,ξ)
+
+trans≤⨾Яᶜ : ∀ {w′ w w″} → w ≤⨾Яᶜ w′ → w′ ≤⨾Яᶜ w″ → w ≤⨾Яᶜ w″
+trans≤⨾Яᶜ {w′} (v , (ξ , ζ)) (v′ , (ξ′ , ζ′)) =
+  let v″ , (ξ″ , ζ″) = Я⨾≤→≤⨾Яᶜ (w′ , (ζ , ξ′))
+  in  v″ , (trans≤ᶜ ξ ξ″ , transЯᶜ ζ″ ζ′)
+
+≤→Яᶜ′ : ∀ {w v′} → w ≤ᶜ v′ → w Яᶜ v′
+≤→Яᶜ′ {w} ξ = Я⨾≤→Яᶜ (w , (reflЯᶜ , ξ))
+
+
+-- Infimum (greatest lower bound) of accessibility.
+--
+--   w′
+--   ●
+--   │
+--   ≤  ξ,ζ
+--   │
+--   ◌───R───●
+--   w       v
+
+infix 3 _≤⊓Яᶜ_
+_≤⊓Яᶜ_ : Worldᶜ → Worldᶜ → Set
+_≤⊓Яᶜ_ = _≤ᶜ_ ⊓ _Яᶜ_
+
+infix 3 _Я⊓≤ᶜ_
+_Я⊓≤ᶜ_ : Worldᶜ → Worldᶜ → Set
+_Я⊓≤ᶜ_ = _Яᶜ_ ⊓ _≤ᶜ_
+
+≤⊓Я→Я⊓≤ᶜ : ∀ {w′ v} → w′ ≤⊓Яᶜ v → v Я⊓≤ᶜ w′
+≤⊓Я→Я⊓≤ᶜ (w , (ξ , ζ)) = w , (ζ , ξ)
+
+Я⊓≤→≤⊓Яᶜ : ∀ {w′ v} → v Я⊓≤ᶜ w′ → w′ ≤⊓Яᶜ v
+Я⊓≤→≤⊓Яᶜ (w , (ζ , ξ)) = w , (ξ , ζ)
+
+
+-- Supremum (least upper bound) of accessibility.
+--
+--   w′      v′
+--   ●───R───◌
+--           │
+--      ξ,ζ  ≤
+--           │
+--           ●
+--           v
+
+infix 3 _≤⊔Яᶜ_
+_≤⊔Яᶜ_ : Worldᶜ → Worldᶜ → Set
+_≤⊔Яᶜ_ = _≤ᶜ_ ⊔ _Яᶜ_
+
+infix 3 _Я⊔≤ᶜ_
+_Я⊔≤ᶜ_ : Worldᶜ → Worldᶜ → Set
+_Я⊔≤ᶜ_ = _Яᶜ_ ⊔ _≤ᶜ_
+
+≤⊔Я→Я⊔≤ᶜ : ∀ {w′ v} → w′ ≤⊔Яᶜ v → v Я⊔≤ᶜ w′
+≤⊔Я→Я⊔≤ᶜ (v′ , (ξ , ζ)) = v′ , (ζ , ξ)
+
+Я⊔≤→≤⊔Яᶜ : ∀ {w′ v} → v Я⊔≤ᶜ w′ → w′ ≤⊔Яᶜ v
+Я⊔≤→≤⊔Яᶜ (v′ , (ζ , ξ)) = v′ , (ξ , ζ)
+
+
+-- Infimum-to-supremum condition, included by Ewald et al.
+--
+--   w′          →   w′      v′
+--   ●           →   ●───Я───◌
+--   │           →           │
+--   ≤  ξ,ζ      →           ≤
+--   │           →           │
+--   ◌───Я───●   →           ●
+--   w       v   →           v
+
+-- NOTE: This could be more precise.
+≤⊓Я→≤⊔Яᶜ : ∀ {v w′} → w′ ≤⊓Яᶜ v → v ≤⊔Яᶜ w′
+≤⊓Я→≤⊔Яᶜ {v} {w′} (w , (ξ , ζ)) =
+  (w′ ⧺² v) , (weak⊆²⧺ᵣ , mono²⊢ (weak⊆²⧺ₗ v) ∘ up)
+
+
+-- Supremum-to-infimum condition.
+--
+--   w′      v′  →   w′
+--   ●───Я───◌   →   ●
+--           │   →   │
+--      ξ,ζ  ≤   →   ≤
+--           │   →   │
+--           ●   →   ◌───Я───●
+--           v   →   w       v
+
+-- NOTE: This could be more precise.
+≤⊔Я→≤⊓Яᶜ : ∀ {w′ v} → v ≤⊔Яᶜ w′ → w′ ≤⊓Яᶜ v
+≤⊔Я→≤⊓Яᶜ (v′ , (ξ , ζ)) = ⌀² , (bot≤ᶜ , botЯᶜ)

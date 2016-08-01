@@ -7,16 +7,6 @@ module Ono where
   open import BasicIS4.KripkeSemantics.Ono public
   open StandardForcing public
 
-  --   w′  R   v′
-  --   ●───────●
-  --   │     ⋰
-  -- ≤ │   R
-  --   │ ⋰
-  --   ●
-  --   w
-  --
-  -- zigR : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → w R v′
-
   mutual
     eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
     eval (var i)         γ = lookup i γ
@@ -33,22 +23,11 @@ module Ono where
             → Γ ⊢⋆ □⋆ Δ → w ⊩⋆ Γ → ∀ {v′} → w R v′ → v′ ⊩⋆ □⋆ Δ
     eval⋆ {⌀}     ∙        γ ζ = ∙
     eval⋆ {Δ , B} (ts , t) γ ζ = eval⋆ ts γ ζ , λ ζ′ → eval t γ (transR ζ ζ′)
-
 
 module BozicDosen where
   open import BasicIS4.KripkeSemantics.BozicDosen public
   open StandardForcing public
 
-  --   w′  R   v′
-  --   ●───────●
-  --   │       ┊
-  -- ≤ │       ┊ ≤
-  --   │       ┊
-  --   ●╌╌╌╌╌╌╌◌
-  --   w   R   v
-  --
-  -- zigzagR⨾≤ : ∀ {v′ w w′} → w′ R v′ → w ≤ w′ → ∃ (λ v → w R v × v ≤ v′)
-
   mutual
     eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
     eval (var i)         γ = lookup i γ
@@ -65,7 +44,6 @@ module BozicDosen where
             → Γ ⊢⋆ □⋆ Δ → w ⊩⋆ Γ → ∀ {v′} → w R v′ → v′ ⊩⋆ □⋆ Δ
     eval⋆ {⌀}     ∙        γ ζ = ∙
     eval⋆ {Δ , B} (ts , t) γ ζ = eval⋆ ts γ ζ , λ ζ′ → eval t γ (transR ζ ζ′)
-
 
 module Wijesekera where
   open import BasicIS4.KripkeSemantics.Wijesekera public
@@ -87,27 +65,13 @@ module Wijesekera where
             → Γ ⊢⋆ □⋆ Δ → w ⊩⋆ Γ → ∀ {w′} → w ≤ w′ → ∀ {v′} → w′ R v′ → v′ ⊩⋆ □⋆ Δ
     eval⋆ {⌀}     ∙        γ ξ ζ = ∙
     eval⋆ {Δ , B} (ts , t) γ ξ ζ = eval⋆ ts γ ξ ζ , λ ξ′ ζ′ →
-                                   let _ , (ξ″ , ζ″) = zigzag≤⨾R ξ′ ζ
+                                   let _ , (ξ″ , ζ″) = R⨾≤→≤⨾R (_ , (ζ , ξ′))
                                    in  eval t γ (trans≤ ξ ξ″) (transR ζ″ ζ′)
-
 
 module EwaldEtAl where
   open import BasicIS4.KripkeSemantics.EwaldEtAl public
   open StandardForcing public
 
-  --   zap:            zagzig:
-  --
-  --   w′  R   v′      w′  R   v′
-  --   ●╌╌╌╌╌╌╌◌       ◌╌╌╌╌╌╌╌●
-  --   │       ┊       ┊       │
-  -- ≤ │       ┊ ≤   ≤ ┊       │ ≤
-  --   │       ┊       ┊       │
-  --   ●───────●       ●───────●
-  --   w   R   v       w   R   v
-  --
-  -- zap       : ∀ {v w w′} → w R v → w ≤ w′ → ∃ (λ v′ → w′ R v′ × v ≤ v′)
-  -- zagzig≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
-
   mutual
     eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
     eval (var i)         γ = lookup i γ
@@ -124,24 +88,13 @@ module EwaldEtAl where
             → Γ ⊢⋆ □⋆ Δ → w ⊩⋆ Γ → ∀ {w′} → w ≤ w′ → ∀ {v′} → w′ R v′ → v′ ⊩⋆ □⋆ Δ
     eval⋆ {⌀}     ∙        γ ξ ζ = ∙
     eval⋆ {Δ , B} (ts , t) γ ξ ζ = eval⋆ ts γ ξ ζ , λ ξ′ ζ′ →
-                                   let _ , (ξ″ , ζ″) = zagzig≤⨾R ξ′ ζ
+                                   let _ , (ξ″ , ζ″) = R⨾≤→≤⨾R (_ , (ζ , ξ′))
                                    in  eval t γ (trans≤ ξ ξ″) (transR ζ″ ζ′)
-
 
 module AlechinaEtAl where
   open import BasicIS4.KripkeSemantics.AlechinaEtAl public
   open StandardForcing public
 
-  --   w′  R   v′
-  --   ◌╌╌╌╌╌╌╌●
-  --   ┊       │
-  -- ≤ ┊       │ ≤
-  --   ┊       │
-  --   ●───────●
-  --   w   R   v
-  --
-  -- zagzig≤⨾R : ∀ {w v v′} → v ≤ v′ → w R v → ∃ (λ w′ → w ≤ w′ × w′ R v′)
-
   mutual
     eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
     eval (var i)         γ = lookup i γ
@@ -158,5 +111,5 @@ module AlechinaEtAl where
             → Γ ⊢⋆ □⋆ Δ → w ⊩⋆ Γ → ∀ {w′} → w ≤ w′ → ∀ {v′} → w′ R v′ → v′ ⊩⋆ □⋆ Δ
     eval⋆ {⌀}     ∙        γ ξ ζ = ∙
     eval⋆ {Δ , B} (ts , t) γ ξ ζ = eval⋆ ts γ ξ ζ , λ ξ′ ζ′ →
-                                   let _ , (ξ″ , ζ″) = zagzig≤⨾R ξ′ ζ
+                                   let _ , (ξ″ , ζ″) = R⨾≤→≤⨾R (_ , (ζ , ξ′))
                                    in  eval t γ (trans≤ ξ ξ″) (transR ζ″ ζ′)
