@@ -205,8 +205,22 @@ refl⊢⋆₀ : ∀ {Γ} → Γ ⁏ ⌀ ⊢⋆ Γ
 refl⊢⋆₀ {⌀}     = ∙
 refl⊢⋆₀ {Γ , A} = mono⊢⋆ weak⊆ refl⊢⋆₀ , v₀
 
+mrefl⊢⋆₀ : ∀ {Δ} → ⌀ ⁏ Δ ⊢⋆ □⋆ Δ
+mrefl⊢⋆₀ {⌀}     = ∙
+mrefl⊢⋆₀ {Δ , A} = mmono⊢⋆ weak⊆ mrefl⊢⋆₀ , box mv₀
+
 refl⊢⋆ : ∀ {Δ Γ} → Γ ⁏ Δ ⊢⋆ Γ ⧺ (□⋆ Δ)
 refl⊢⋆ = split⋆ (merge⋆ refl⊢⋆₀)
+
+refl⊢⋆′ : ∀ {Γ Δ} → Γ ⁏ Δ ⊢⋆ Γ
+refl⊢⋆′ = mmono⊢⋆ bot⊆ refl⊢⋆₀
+
+mrefl⊢⋆′ : ∀ {Γ Δ} → Γ ⁏ Δ ⊢⋆ □⋆ Δ
+mrefl⊢⋆′ = mono⊢⋆ bot⊆ mrefl⊢⋆₀
+
+refl⊢⋆″ : ∀ {Δ Δ′ Γ Γ′} → (∀ {A} → Γ ⁏ Δ ⊢ □ A → Γ′ ⁏ Δ′ ⊢ A) → Γ′ ⁏ Δ′ ⊢⋆ Δ
+refl⊢⋆″ {⌀}     f = ∙
+refl⊢⋆″ {Δ , B} f = refl⊢⋆″ (f ∘ mmono⊢ weak⊆) , f (box mv₀)
 
 trans⊢⋆₀ : ∀ {Γ″ Γ′ Γ} → Γ ⁏ ⌀ ⊢⋆ Γ′ → Γ′ ⁏ ⌀ ⊢⋆ Γ″ → Γ ⁏ ⌀ ⊢⋆ Γ″
 trans⊢⋆₀ {⌀}      ts ∙        = ∙
