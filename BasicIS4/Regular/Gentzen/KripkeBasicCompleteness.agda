@@ -29,9 +29,9 @@ instance
 
 -- Soundness and completeness with respect to the canonical model.
 
---- FIXME: This is almost certainly false.
+--- FIXME: Can we make this true?
 postulate
-  oops : ∀ {Γ} → Γ ⊢⋆ □⋆ Γ
+  oops : ∀ {Γ} → ∃ (λ Δ → Γ ⊢⋆ □⋆ Δ × Γ Rᶜ □⋆ Δ)
 
 mutual
   reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
@@ -44,7 +44,8 @@ mutual
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
   reify {α P}   s = s
   reify {A ▷ B} s = lam (reify {B} (s weak⊆ (reflect {A} v₀)))
-  reify {□ A}   s = multibox oops (reify {A} (s liftRᶜ))
+  reify {□ A}   s = let Δ , (ts , ζ) = oops
+                    in  multibox ts (reify {A} (s ζ))
   reify {A ∧ B} s = pair (reify {A} (π₁ s)) (reify {B} (π₂ s))
   reify {⊤}    s = tt
 
