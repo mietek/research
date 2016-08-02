@@ -92,7 +92,83 @@ record Model : Set₁ where
   reflR⨾≤ {w} = w , (reflR , refl≤)
 
 
+  -- Minor persistence condition, included by Božić and Došen.
+  --
+  --   w′      v′  →           v′
+  --   ◌───R───●   →           ●
+  --   │           →           │
+  --   ≤  ξ,ζ      →           ≤
+  --   │           →           │
+  --   ●           →   ●───R───◌
+  --   w           →   w       v
+  --
+  --                   w″  →                   w″
+  --                   ●   →                   ●
+  --                   │   →                   │
+  --             ξ′,ζ′ ≤   →                   │
+  --                   │   →                   │
+  --           ●───R───◌   →                   ≤
+  --           │       v′  →                   │
+  --      ξ,ζ  ≤           →                   │
+  --           │           →                   │
+  --   ●───R───◌           →   ●───────R───────◌
+  --   w       v           →   w               v″
+
+  ≤⨾R→R⨾≤ : ∀ {v′ w} → w ≤⨾R v′ → w R⨾≤ v′
+  ≤⨾R→R⨾≤ {v′} ξ,ζ = v′ , (≤⨾R→R ξ,ζ , refl≤)
+
+  transR⨾≤ : ∀ {w′ w w″} → w R⨾≤ w′ → w′ R⨾≤ w″ → w R⨾≤ w″
+  transR⨾≤ {w′} (v , (ζ , ξ)) (v′ , (ζ′ , ξ′)) =
+    let v″ , (ζ″ , ξ″) = ≤⨾R→R⨾≤ (w′ , (ξ , ζ′))
+    in  v″ , (transR ζ ζ″ , trans≤ ξ″ ξ′)
+
+  ≤→R : ∀ {v′ w} → w ≤ v′ → w R v′
+  ≤→R {v′} ξ = ≤⨾R→R (v′ , (ξ , reflR))
+
+
+  -- Minor brilliance condition, included by Ewald et al. and Alechina et al.
+  --
+  --           v′  →   w′      v′
+  --           ●   →   ◌───R───●
+  --           │   →   │
+  --      ζ,ξ  ≤   →   ≤
+  --           │   →   │
+  --   ●───R───◌   →   ●
+  --   w       v   →   w
+  --
+  --           v′      w″  →   v″              w″
+  --           ◌───R───●   →   ◌───────R───────●
+  --           │           →   │
+  --           ≤  ξ′,ζ′    →   │
+  --   v       │           →   │
+  --   ◌───R───●           →   ≤
+  --   │       w′          →   │
+  --   ≤  ξ,ζ              →   │
+  --   │                   →   │
+  --   ●                   →   ●
+  --   w                   →   w
+
+  R⨾≤→≤⨾R : ∀ {w v′} → w R⨾≤ v′ → w ≤⨾R v′
+  R⨾≤→≤⨾R {w} ζ,ξ = w , (refl≤ , R⨾≤→R ζ,ξ)
+
+  trans≤⨾R : ∀ {w′ w w″} → w ≤⨾R w′ → w′ ≤⨾R w″ → w ≤⨾R w″
+  trans≤⨾R {w′} (v , (ξ , ζ)) (v′ , (ξ′ , ζ′)) =
+    let v″ , (ξ″ , ζ″) = R⨾≤→≤⨾R (w′ , (ζ , ξ′))
+    in  v″ , (trans≤ ξ ξ″ , transR ζ″ ζ′)
+
+  ≤→R′ : ∀ {w v′} → w ≤ v′ → w R v′
+  ≤→R′ {w} ξ = R⨾≤→R (w , (reflR , ξ))
+
+
   -- Infimum (greatest lower bound) of accessibility.
+  --
+  --   w′
+  --   ●
+  --   │
+  --   ≤  ξ,ζ
+  --   │
+  --   ◌───R───●
+  --   w       v
 
   _≤⊓R_ : World → World → Set
   _≤⊓R_ = _≤_ ⊓ _R_
@@ -108,6 +184,14 @@ record Model : Set₁ where
 
 
   -- Supremum (least upper bound) of accessibility.
+  --
+  --   w′      v′
+  --   ●───R───◌
+  --           │
+  --      ξ,ζ  ≤
+  --           │
+  --           ●
+  --           v
 
   _≤⊔R_ : World → World → Set
   _≤⊔R_ = _≤_ ⊔ _R_
@@ -120,53 +204,6 @@ record Model : Set₁ where
 
   R⊔≤→≤⊔R : ∀ {w′ v} → v R⊔≤ w′ → w′ ≤⊔R v
   R⊔≤→≤⊔R (v′ , (ζ , ξ)) = v′ , (ξ , ζ)
-
-
-  -- Intuitionistic-to-modal corollaries.
-
-  ≤→R : ∀ {v′ w} → w ≤ v′ → w R v′
-  ≤→R {v′} ξ = ≤⨾R→R (v′ , (ξ , reflR))
-
-  ≤→R′ : ∀ {w v′} → w ≤ v′ → w R v′
-  ≤→R′ {w} ξ = R⨾≤→R (w , (reflR , ξ))
-
-
-  -- Minor persistence condition, included by Božić and Došen.
-  --
-  --   w′      v′  →           v′
-  --   ◌───R───●   →           ●
-  --   │           →           │
-  --   ≤  ξ,ζ      →           ≤
-  --   │           →           │
-  --   ●           →   ●───R───◌
-  --   w           →   w       v
-
-  ≤⨾R→R⨾≤ : ∀ {v′ w} → w ≤⨾R v′ → w R⨾≤ v′
-  ≤⨾R→R⨾≤ {v′} ξ,ζ = v′ , (≤⨾R→R ξ,ζ , refl≤)
-
-  transR⨾≤ : ∀ {w′ w w″} → w R⨾≤ w′ → w′ R⨾≤ w″ → w R⨾≤ w″
-  transR⨾≤ {w′} (v , (ζ , ξ)) (v′ , (ζ′ , ξ′)) =
-    let v″ , (ζ″ , ξ″) = ≤⨾R→R⨾≤ (w′ , (ξ , ζ′))
-    in  v″ , (transR ζ ζ″ , trans≤ ξ″ ξ′)
-
-
-  -- Minor brilliance condition, included by Ewald et al. and Alechina et al.
-  --
-  --           v′  →   w′      v′
-  --           ●   →   ◌───R───●
-  --           │   →   │
-  --      ζ,ξ  ≤   →   ≤
-  --           │   →   │
-  --   ●───R───◌   →   ●
-  --   w       v   →   w
-
-  R⨾≤→≤⨾R : ∀ {w v′} → w R⨾≤ v′ → w ≤⨾R v′
-  R⨾≤→≤⨾R {w} ζ,ξ = w , (refl≤ , R⨾≤→R ζ,ξ)
-
-  trans≤⨾R : ∀ {w′ w w″} → w ≤⨾R w′ → w′ ≤⨾R w″ → w ≤⨾R w″
-  trans≤⨾R {w′} (v , (ξ , ζ)) (v′ , (ξ′ , ζ′)) =
-    let v″ , (ξ″ , ζ″) = R⨾≤→≤⨾R (w′ , (ζ , ξ′))
-    in  v″ , (trans≤ ξ ξ″ , transR ζ″ ζ′)
 
 open Model {{…}} public
 
