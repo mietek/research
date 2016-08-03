@@ -65,7 +65,6 @@ import BasicIS4.TarskiSemantics
 import BasicIS4.KripkeSemantics
 import BasicIS4.KripkeSemantics.Ono
 import BasicIS4.KripkeSemantics.BozicDosen
-import BasicIS4.KripkeSemantics.Wijesekera -- FIXME
 import BasicIS4.KripkeSemantics.EwaldEtAl
 import BasicIS4.KripkeSemantics.AlechinaEtAl
 import BasicIS4.Regular.Hilbert.Sequential
