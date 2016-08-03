@@ -1,9 +1,9 @@
-module BasicIPC.KripkeSemantics where
+module BasicIPC.KripkeSemantics.Godel where
 
 open import BasicIPC public
 
 
--- Intuitionistic Kripke models, corresponding to the McKinsey-Tarski translation of IPC to S4.
+-- Kripke models, corresponding to the Gödel translation of IPC to S4.
 
 record Model : Set₁ where
   infix 3 _⊩ᵅ_
@@ -15,22 +15,25 @@ record Model : Set₁ where
     refl≤  : ∀ {w} → w ≤ w
     trans≤ : ∀ {w w′ w″} → w ≤ w′ → w′ ≤ w″ → w ≤ w″
 
-    -- Forcing for atomic propositions; monotonic.
-    _⊩ᵅ_   : World → Atom → Set
-    mono⊩ᵅ : ∀ {P w w′} → w ≤ w′ → w ⊩ᵅ P → w′ ⊩ᵅ P
+    -- Forcing for atomic propositions.
+    _⊩ᵅ_ : World → Atom → Set
 
 open Model {{…}} public
 
 
--- Forcing for propositions and contexts.
+-- Forcing for propositions and contexts, with unnecessary accessibility requirements.
 
 module _ {{_ : Model}} where
   infix 3 _⊩_
   _⊩_ : World → Ty → Set
-  w ⊩ α P   = w ⊩ᵅ P
+  -- NOTE: This requirement can be replaced by a monotonicity condition.
+  w ⊩ α P   = ∀ {w′} → w ≤ w′ → w′ ⊩ᵅ P
+  -- NOTE: This requirement remains in the McKinsey-Tarski variant.
   w ⊩ A ▷ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
-  w ⊩ A ∧ B = w ⊩ A × w ⊩ B
-  w ⊩ ⊤    = Top
+  -- NOTE: This requirement can be dropped.
+  w ⊩ A ∧ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A × w′ ⊩ B
+  -- NOTE: This requirement can be dropped.
+  w ⊩ ⊤    = ∀ {w′} → w ≤ w′ → Top
 
   infix 3 _⊩⋆_
   _⊩⋆_ : World → Cx Ty → Set
@@ -41,10 +44,10 @@ module _ {{_ : Model}} where
   -- Monotonicity with respect to intuitionistic accessibility.
 
   mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
-  mono⊩ {α P}   ξ s       = mono⊩ᵅ ξ s
-  mono⊩ {A ▷ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
-  mono⊩ {A ∧ B} ξ (a , b) = mono⊩ {A} ξ a , mono⊩ {B} ξ b
-  mono⊩ {⊤}    ξ ∙       = ∙
+  mono⊩ {α P}   ξ s = λ ξ′ → s (trans≤ ξ ξ′)
+  mono⊩ {A ▷ B} ξ s = λ ξ′ → s (trans≤ ξ ξ′)
+  mono⊩ {A ∧ B} ξ s = λ ξ′ → s (trans≤ ξ ξ′)
+  mono⊩ {⊤}    ξ s = λ ξ′ → ∙
 
   mono⊩⋆ : ∀ {Γ w w′} → w ≤ w′ → w ⊩⋆ Γ → w′ ⊩⋆ Γ
   mono⊩⋆ {⌀}     ξ ∙       = ∙

@@ -4,7 +4,7 @@ open import BasicIPC.KripkeSemantics public
 open import BasicIPC.Gentzen public
 
 
--- Soundness, or evaluation.
+-- Soundness, or evaluation, based on the McKinsey-Tarski translation of IPC to S4.
 
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
 eval (var i)    γ = lookup i γ
