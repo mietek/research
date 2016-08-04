@@ -9,18 +9,18 @@ infix 3 _⁏_⊢×_
 data _⁏_⊢×_ (Γ Δ : Cx Ty) : Cx Ty → Set where
   nil   : Γ ⁏ Δ ⊢× ⌀
   var   : ∀ {Π A}     → A ∈ Γ → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , A
-  mp    : ∀ {Π A B}   → A ▷ B ∈ Π → A ∈ Π → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , B
-  ci    : ∀ {Π A}     → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , A ▷ A
-  ck    : ∀ {Π A B}   → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , A ▷ B ▷ A
-  cs    : ∀ {Π A B C} → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
+  mp    : ∀ {Π A B}   → A ▻ B ∈ Π → A ∈ Π → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , B
+  ci    : ∀ {Π A}     → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , A ▻ A
+  ck    : ∀ {Π A B}   → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , A ▻ B ▻ A
+  cs    : ∀ {Π A B C} → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
   mvar  : ∀ {Π A}     → A ∈ Δ → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , A
   nec   : ∀ {Π Ξ A}   → ⌀ ⁏ Δ ⊢× Ξ , A → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , □ A
-  cdist : ∀ {Π A B}   → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , □ (A ▷ B) ▷ □ A ▷ □ B
-  cup   : ∀ {Π A}     → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , □ A ▷ □ □ A
-  cdown : ∀ {Π A}     → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , □ A ▷ A
-  cpair : ∀ {Π A B}   → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , A ▷ B ▷ A ∧ B
-  cfst  : ∀ {Π A B}   → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , A ∧ B ▷ A
-  csnd  : ∀ {Π A B}   → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , A ∧ B ▷ B
+  cdist : ∀ {Π A B}   → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , □ (A ▻ B) ▻ □ A ▻ □ B
+  cup   : ∀ {Π A}     → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , □ A ▻ □ □ A
+  cdown : ∀ {Π A}     → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , □ A ▻ A
+  cpair : ∀ {Π A B}   → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , A ▻ B ▻ A ∧ B
+  cfst  : ∀ {Π A B}   → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , A ∧ B ▻ A
+  csnd  : ∀ {Π A B}   → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , A ∧ B ▻ B
   tt    : ∀ {Π}       → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , ⊤
 
 infix 3 _⁏_⊢_
@@ -96,10 +96,10 @@ us ⧻ tt ts     = tt (us ⧻ ts)
 
 -- Modus ponens and necessitation in expanded form.
 
-app : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ▷ B → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ B
+app : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ▻ B → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ B
 app {A} {B} (Π , ts) (Π′ , us) = Π″ , vs
-  where Π″ = (Π′ , A) ⧺ (Π , A ▷ B)
-        vs = mp top (mono∈ (weak⊆⧺ₗ (Π , A ▷ B)) top) (us ⧻ ts)
+  where Π″ = (Π′ , A) ⧺ (Π , A ▻ B)
+        vs = mp top (mono∈ (weak⊆⧺ₗ (Π , A ▻ B)) top) (us ⧻ ts)
 
 box : ∀ {A Γ Δ} → ⌀ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ □ A
 box (Π , ts) = ⌀ , nec ts nil

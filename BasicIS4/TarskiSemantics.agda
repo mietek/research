@@ -24,7 +24,7 @@ module TruthWithClosedBox (Box : Ty → Set) where
     infix 3 ⊨_
     ⊨_ : Ty → Set
     ⊨ α P   = ⊨ᵅ P
-    ⊨ A ▷ B = ⊨ A → ⊨ B
+    ⊨ A ▻ B = ⊨ A → ⊨ B
     ⊨ □ A   = Box A × ⊨ A
     ⊨ A ∧ B = ⊨ A × ⊨ B
     ⊨ ⊤    = 𝟙
@@ -67,7 +67,7 @@ module TruthWithOpenBox (Box : Cx Ty → Ty → Set) where
     infix 3 _⊨_
     _⊨_ : Cx Ty → Ty → Set
     Δ ⊨ α P   = ⊨ᵅ P
-    Δ ⊨ A ▷ B = ∀ {Δ′} → Δ ⊆ Δ′ → Δ′ ⊨ A → Δ′ ⊨ B
+    Δ ⊨ A ▻ B = ∀ {Δ′} → Δ ⊆ Δ′ → Δ′ ⊨ A → Δ′ ⊨ B
     Δ ⊨ □ A   = ∀ {Δ′} → Δ ⊆ Δ′ → Box Δ′ A × Δ′ ⊨ A
     Δ ⊨ A ∧ B = Δ ⊨ A × Δ ⊨ B
     Δ ⊨ ⊤    = 𝟙
@@ -82,7 +82,7 @@ module TruthWithOpenBox (Box : Cx Ty → Ty → Set) where
 
     mono⊨ : ∀ {A Δ Δ′} → Δ ⊆ Δ′ → Δ ⊨ A → Δ′ ⊨ A
     mono⊨ {α P}   θ s       = s
-    mono⊨ {A ▷ B} θ f       = λ θ′ a → f (trans⊆ θ θ′) a
+    mono⊨ {A ▻ B} θ f       = λ θ′ a → f (trans⊆ θ θ′) a
     mono⊨ {□ A}   θ □f      = λ θ′ → □f (trans⊆ θ θ′)
     mono⊨ {A ∧ B} θ (a , b) = mono⊨ {A} θ a , mono⊨ {B} θ b
     mono⊨ {⊤}    θ ∙       = ∙

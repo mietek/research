@@ -9,8 +9,8 @@ mutual
   infix 3 _⊢_
   data _⊢_ (Γ : Cx Ty) : Ty → Set where
     var      : ∀ {A}   → A ∈ Γ → Γ ⊢ A
-    lam      : ∀ {A B} → Γ , A ⊢ B → Γ ⊢ A ▷ B
-    app      : ∀ {A B} → Γ ⊢ A ▷ B → Γ ⊢ A → Γ ⊢ B
+    lam      : ∀ {A B} → Γ , A ⊢ B → Γ ⊢ A ▻ B
+    app      : ∀ {A B} → Γ ⊢ A ▻ B → Γ ⊢ A → Γ ⊢ B
     multibox : ∀ {A Δ} → Γ ⊢⋆ □⋆ Δ → □⋆ Δ ⊢ A → Γ ⊢ □ A
     down     : ∀ {A}   → Γ ⊢ □ A → Γ ⊢ A
     pair     : ∀ {A B} → Γ ⊢ A → Γ ⊢ B → Γ ⊢ A ∧ B
@@ -78,7 +78,7 @@ v₂ = var i₂
 
 -- Detachment theorem.
 
-det : ∀ {A B Γ} → Γ ⊢ A ▷ B → Γ , A ⊢ B
+det : ∀ {A B Γ} → Γ ⊢ A ▻ B → Γ , A ⊢ B
 det t = app (mono⊢ weak⊆ t) v₀
 
 
@@ -105,7 +105,7 @@ trans⊢⋆ {Γ″ , A} ts (us , u) = trans⊢⋆ ts us , multicut ts u
 
 -- Contraction.
 
-ccont : ∀ {A B Γ} → Γ ⊢ (A ▷ A ▷ B) ▷ A ▷ B
+ccont : ∀ {A B Γ} → Γ ⊢ (A ▻ A ▻ B) ▻ A ▻ B
 ccont = lam (lam (app (app v₁ v₀) v₀))
 
 cont : ∀ {A B Γ} → (Γ , A) , A ⊢ B → Γ , A ⊢ B
@@ -114,7 +114,7 @@ cont t = det (app ccont (lam (lam t)))
 
 -- Exchange.
 
-cexch : ∀ {A B C Γ} → Γ ⊢ (A ▷ B ▷ C) ▷ B ▷ A ▷ C
+cexch : ∀ {A B C Γ} → Γ ⊢ (A ▻ B ▻ C) ▻ B ▻ A ▻ C
 cexch = lam (lam (lam (app (app v₂ v₀) v₁)))
 
 exch : ∀ {A B C Γ} → (Γ , A) , B ⊢ C → (Γ , B) , A ⊢ C
@@ -123,7 +123,7 @@ exch t = det (det (app cexch (lam (lam t))))
 
 -- Composition.
 
-ccomp : ∀ {A B C Γ} → Γ ⊢ (B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
+ccomp : ∀ {A B C Γ} → Γ ⊢ (B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
 ccomp = lam (lam (lam (app v₂ (app v₁ v₀))))
 
 comp : ∀ {A B C Γ} → Γ , B ⊢ C → Γ , A ⊢ B → Γ , A ⊢ C
@@ -132,13 +132,13 @@ comp t u = det (app (app ccomp (lam t)) (lam u))
 
 -- Useful theorems in functional form.
 
-dist : ∀ {A B Γ} → Γ ⊢ □ (A ▷ B) → Γ ⊢ □ A → Γ ⊢ □ B
+dist : ∀ {A B Γ} → Γ ⊢ □ (A ▻ B) → Γ ⊢ □ A → Γ ⊢ □ B
 dist t u = multibox ((∙ , t) , u) (app (down v₁) (down v₀))
 
 up : ∀ {A Γ} → Γ ⊢ □ A → Γ ⊢ □ □ A
 up t = multibox (∙ , t) v₀
 
-distup : ∀ {A B Γ} → Γ ⊢ □ (□ A ▷ B) → Γ ⊢ □ A → Γ ⊢ □ B
+distup : ∀ {A B Γ} → Γ ⊢ □ (□ A ▻ B) → Γ ⊢ □ A → Γ ⊢ □ B
 distup t u = dist t (up u)
 
 box : ∀ {A Γ} → ⌀ ⊢ A → Γ ⊢ □ A
@@ -150,37 +150,37 @@ unbox t u = app (lam u) t
 
 -- Useful theorems in combinatory form.
 
-ci : ∀ {A Γ} → Γ ⊢ A ▷ A
+ci : ∀ {A Γ} → Γ ⊢ A ▻ A
 ci = lam v₀
 
-ck : ∀ {A B Γ} → Γ ⊢ A ▷ B ▷ A
+ck : ∀ {A B Γ} → Γ ⊢ A ▻ B ▻ A
 ck = lam (lam v₁)
 
-cs : ∀ {A B C Γ} → Γ ⊢ (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
+cs : ∀ {A B C Γ} → Γ ⊢ (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
 cs = lam (lam (lam (app (app v₂ v₀) (app v₁ v₀))))
 
-cdist : ∀ {A B Γ} → Γ ⊢ □ (A ▷ B) ▷ □ A ▷ □ B
+cdist : ∀ {A B Γ} → Γ ⊢ □ (A ▻ B) ▻ □ A ▻ □ B
 cdist = lam (lam (dist v₁ v₀))
 
-cup : ∀ {A Γ} → Γ ⊢ □ A ▷ □ □ A
+cup : ∀ {A Γ} → Γ ⊢ □ A ▻ □ □ A
 cup = lam (up v₀)
 
-cdown : ∀ {A Γ} → Γ ⊢ □ A ▷ A
+cdown : ∀ {A Γ} → Γ ⊢ □ A ▻ A
 cdown = lam (down v₀)
 
-cdistup : ∀ {A B Γ} → Γ ⊢ □ (□ A ▷ B) ▷ □ A ▷ □ B
+cdistup : ∀ {A B Γ} → Γ ⊢ □ (□ A ▻ B) ▻ □ A ▻ □ B
 cdistup = lam (lam (dist v₁ (up v₀)))
 
-cunbox : ∀ {A C Γ} → Γ ⊢ □ A ▷ (□ A ▷ C) ▷ C
+cunbox : ∀ {A C Γ} → Γ ⊢ □ A ▻ (□ A ▻ C) ▻ C
 cunbox = lam (lam (app v₀ v₁))
 
-cpair : ∀ {A B Γ} → Γ ⊢ A ▷ B ▷ A ∧ B
+cpair : ∀ {A B Γ} → Γ ⊢ A ▻ B ▻ A ∧ B
 cpair = lam (lam (pair v₁ v₀))
 
-cfst : ∀ {A B Γ} → Γ ⊢ A ∧ B ▷ A
+cfst : ∀ {A B Γ} → Γ ⊢ A ∧ B ▻ A
 cfst = lam (fst v₀)
 
-csnd : ∀ {A B Γ} → Γ ⊢ A ∧ B ▷ B
+csnd : ∀ {A B Γ} → Γ ⊢ A ∧ B ▻ B
 csnd = lam (snd v₀)
 
 
@@ -190,10 +190,10 @@ lift : ∀ {Γ A} → Γ ⊢ A → □⋆ Γ ⊢ □ A
 lift {⌀}     t = box t
 lift {Γ , B} t = det (app cdist (lift (lam t)))
 
-hypdown : ∀ {A B Γ} → Γ ⊢ □ □ A ▷ B → Γ ⊢ □ A ▷ B
+hypdown : ∀ {A B Γ} → Γ ⊢ □ □ A ▻ B → Γ ⊢ □ A ▻ B
 hypdown t = lam (app (mono⊢ weak⊆ t) (up v₀))
 
-hypup : ∀ {A B Γ} → Γ ⊢ A ▷ B → Γ ⊢ □ A ▷ B
+hypup : ∀ {A B Γ} → Γ ⊢ A ▻ B → Γ ⊢ □ A ▻ B
 hypup t = lam (app (mono⊢ weak⊆ t) (down v₀))
 
 cxdown : ∀ {Γ A} → □⋆ □⋆ Γ ⊢ A → □⋆ Γ ⊢ A

@@ -29,7 +29,7 @@ module _ {{_ : Model}} where
   -- NOTE: This requirement can be replaced by a monotonicity condition.
   w ⊩ α P   = ∀ {w′} → w ≤ w′ → w′ ⊩ᵅ P
   -- NOTE: This requirement remains in the McKinsey-Tarski variant.
-  w ⊩ A ▷ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
+  w ⊩ A ▻ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
   -- NOTE: This requirement can be dropped.
   w ⊩ A ∧ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A × w′ ⊩ B
   -- NOTE: This requirement can be dropped.
@@ -45,7 +45,7 @@ module _ {{_ : Model}} where
 
   mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
   mono⊩ {α P}   ξ s = λ ξ′ → s (trans≤ ξ ξ′)
-  mono⊩ {A ▷ B} ξ s = λ ξ′ → s (trans≤ ξ ξ′)
+  mono⊩ {A ▻ B} ξ s = λ ξ′ → s (trans≤ ξ ξ′)
   mono⊩ {A ∧ B} ξ s = λ ξ′ → s (trans≤ ξ ξ′)
   mono⊩ {⊤}    ξ s = λ ξ′ → ∙
 

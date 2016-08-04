@@ -23,7 +23,7 @@ instance
 mutual
   reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
   reflect {α P}   t = return {α P} t
-  reflect {A ▷ B} t = return {A ▷ B} (λ η a → reflect {B} (app (mono⊢ η t) (reify {A} a)))
+  reflect {A ▻ B} t = return {A ▻ B} (λ η a → reflect {B} (app (mono⊢ η t) (reify {A} a)))
   reflect {A ∧ B} t = return {A ∧ B} (reflect {A} (fst t) , reflect {B} (snd t))
   reflect {⊤}    t = return {⊤} ∙
   reflect {⊥}    t = λ η k → boom (mono⊢ η t)
@@ -33,7 +33,7 @@ mutual
 
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
   reify {α P}   k = k refl≤ (λ η s → s)
-  reify {A ▷ B} k = k refl≤ (λ η s → lam (reify {B} (s weak⊆ (reflect {A} (v₀)))))
+  reify {A ▻ B} k = k refl≤ (λ η s → lam (reify {B} (s weak⊆ (reflect {A} (v₀)))))
   reify {A ∧ B} k = k refl≤ (λ η s → pair (reify {A} (π₁ s)) (reify {B} (π₂ s)))
   reify {⊤}    k = k refl≤ (λ η s → tt)
   reify {⊥}    k = k refl≤ (λ η ())

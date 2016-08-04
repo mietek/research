@@ -70,7 +70,7 @@ module DualRelationForcing where
     infix 3 _⊩_
     _⊩_ : World → Ty → Set
     w ⊩ α P   = w ⊩ᵅ P
-    w ⊩ A ▷ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
+    w ⊩ A ▻ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
     -- NOTE: Both intuitionistic and modal accessibility here.
     w ⊩ □ A   = ∀ {w′} → w ≤ w′ → ∀ {v′} → w′ R v′ → v′ ⊩ A
     w ⊩ A ∧ B = w ⊩ A × w ⊩ B
@@ -86,7 +86,7 @@ module DualRelationForcing where
 
     mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
     mono⊩ {α P}   ξ s       = mono⊩ᵅ ξ s
-    mono⊩ {A ▷ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
+    mono⊩ {A ▻ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
     mono⊩ {□ A}   ξ □f      = λ ξ′ ζ → □f (trans≤ ξ ξ′) ζ
     mono⊩ {A ∧ B} ξ (a , b) = mono⊩ {A} ξ a , mono⊩ {B} ξ b
     mono⊩ {⊤}    ξ ∙       = ∙

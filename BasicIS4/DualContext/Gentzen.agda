@@ -9,8 +9,8 @@ open import BasicIS4 public
 infix 3 _⁏_⊢_
 data _⁏_⊢_ (Γ Δ : Cx Ty) : Ty → Set where
   var   : ∀ {A}   → A ∈ Γ → Γ ⁏ Δ ⊢ A
-  lam   : ∀ {A B} → Γ , A ⁏ Δ ⊢ B → Γ ⁏ Δ ⊢ A ▷ B
-  app   : ∀ {A B} → Γ ⁏ Δ ⊢ A ▷ B → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ B
+  lam   : ∀ {A B} → Γ , A ⁏ Δ ⊢ B → Γ ⁏ Δ ⊢ A ▻ B
+  app   : ∀ {A B} → Γ ⁏ Δ ⊢ A ▻ B → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ B
   mvar  : ∀ {A}   → A ∈ Δ → Γ ⁏ Δ ⊢ A
   box   : ∀ {A}   → ⌀ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ □ A
   unbox : ∀ {A C} → Γ ⁏ Δ ⊢ □ A → Γ ⁏ Δ , A ⊢ C → Γ ⁏ Δ ⊢ C
@@ -111,50 +111,50 @@ v₂ = var i₂
 
 -- Deduction theorem is built-in.
 
-lam⋆ : ∀ {Π A Γ Δ} → Γ ⧺ Π ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ Π ▷⋯▷ A
+lam⋆ : ∀ {Π A Γ Δ} → Γ ⧺ Π ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ Π ▻⋯▻ A
 lam⋆ {⌀}     t = t
 lam⋆ {Π , B} t = lam⋆ {Π} (lam t)
 
-lam⋆₀ : ∀ {Γ A Δ} → Γ ⁏ Δ ⊢ A → ⌀ ⁏ Δ ⊢ Γ ▷⋯▷ A
+lam⋆₀ : ∀ {Γ A Δ} → Γ ⁏ Δ ⊢ A → ⌀ ⁏ Δ ⊢ Γ ▻⋯▻ A
 lam⋆₀ {⌀}     t = t
 lam⋆₀ {Γ , A} t = lam⋆₀ (lam t)
 
 
 -- Modal deduction theorem.
 
-mlam : ∀ {A B Γ Δ} → Γ ⁏ Δ , A ⊢ B → Γ ⁏ Δ ⊢ □ A ▷ B
+mlam : ∀ {A B Γ Δ} → Γ ⁏ Δ , A ⊢ B → Γ ⁏ Δ ⊢ □ A ▻ B
 mlam t = lam (unbox v₀ (mono⊢ weak⊆ t))
 
-mlam⋆ : ∀ {Π A Γ Δ} → Γ ⁏ Δ ⧺ Π ⊢ A → Γ ⁏ Δ ⊢ □⋆ Π ▷⋯▷ A
+mlam⋆ : ∀ {Π A Γ Δ} → Γ ⁏ Δ ⧺ Π ⊢ A → Γ ⁏ Δ ⊢ □⋆ Π ▻⋯▻ A
 mlam⋆ {⌀}     t = t
 mlam⋆ {Π , B} t = mlam⋆ {Π} (mlam t)
 
-mlam⋆₀ : ∀ {Δ A Γ} → Γ ⁏ Δ ⊢ A → Γ ⁏ ⌀ ⊢ □⋆ Δ ▷⋯▷ A
+mlam⋆₀ : ∀ {Δ A Γ} → Γ ⁏ Δ ⊢ A → Γ ⁏ ⌀ ⊢ □⋆ Δ ▻⋯▻ A
 mlam⋆₀ {⌀}     t = t
 mlam⋆₀ {Δ , B} t = mlam⋆₀ (mlam t)
 
 
 -- Detachment theorems.
 
-det : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ▷ B → Γ , A ⁏ Δ ⊢ B
+det : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ▻ B → Γ , A ⁏ Δ ⊢ B
 det t = app (mono⊢ weak⊆ t) v₀
 
-det⋆ : ∀ {Π A Γ Δ} → Γ ⁏ Δ ⊢ Π ▷⋯▷ A → Γ ⧺ Π ⁏ Δ ⊢ A
+det⋆ : ∀ {Π A Γ Δ} → Γ ⁏ Δ ⊢ Π ▻⋯▻ A → Γ ⧺ Π ⁏ Δ ⊢ A
 det⋆ {⌀}     t = t
 det⋆ {Π , A} t = det (det⋆ {Π} t)
 
-det⋆₀ : ∀ {Γ A Δ} → ⌀ ⁏ Δ ⊢ Γ ▷⋯▷ A → Γ ⁏ Δ ⊢ A
+det⋆₀ : ∀ {Γ A Δ} → ⌀ ⁏ Δ ⊢ Γ ▻⋯▻ A → Γ ⁏ Δ ⊢ A
 det⋆₀ {⌀}     t = t
 det⋆₀ {Γ , A} t = det (det⋆₀ t)
 
-mdet : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ □ A ▷ B → Γ ⁏ Δ , A ⊢ B
+mdet : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ □ A ▻ B → Γ ⁏ Δ , A ⊢ B
 mdet t = app (mmono⊢ weak⊆ t) (box mv₀)
 
-mdet⋆ : ∀ {Π A Γ Δ} → Γ ⁏ Δ ⊢ □⋆ Π ▷⋯▷ A → Γ ⁏ Δ ⧺ Π ⊢ A
+mdet⋆ : ∀ {Π A Γ Δ} → Γ ⁏ Δ ⊢ □⋆ Π ▻⋯▻ A → Γ ⁏ Δ ⧺ Π ⊢ A
 mdet⋆ {⌀}      t = t
 mdet⋆ {Π , A} t = mdet (mdet⋆ {Π} t)
 
-mdet⋆₀ : ∀ {Δ A Γ} → Γ ⁏ ⌀ ⊢ □⋆ Δ ▷⋯▷ A → Γ ⁏ Δ ⊢ A
+mdet⋆₀ : ∀ {Δ A Γ} → Γ ⁏ ⌀ ⊢ □⋆ Δ ▻⋯▻ A → Γ ⁏ Δ ⊢ A
 mdet⋆₀ {⌀}     t = t
 mdet⋆₀ {Δ , A} t = mdet (mdet⋆₀ t)
 
@@ -232,7 +232,7 @@ trans⊢⋆ ts us = split⋆ (trans⊢⋆₀ (merge⋆ ts) (merge⋆ us))
 
 -- Contraction.
 
-ccont : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ (A ▷ A ▷ B) ▷ A ▷ B
+ccont : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ (A ▻ A ▻ B) ▻ A ▻ B
 ccont = lam (lam (app (app v₁ v₀) v₀))
 
 cont : ∀ {A B Γ Δ} → (Γ , A) , A ⁏ Δ ⊢ B → Γ , A ⁏ Δ ⊢ B
@@ -244,7 +244,7 @@ mcont t = mdet (app ccont (mlam (mlam t)))
 
 -- Exchange.
 
-cexch : ∀ {A B C Γ Δ} → Γ ⁏ Δ ⊢ (A ▷ B ▷ C) ▷ B ▷ A ▷ C
+cexch : ∀ {A B C Γ Δ} → Γ ⁏ Δ ⊢ (A ▻ B ▻ C) ▻ B ▻ A ▻ C
 cexch = lam (lam (lam (app (app v₂ v₀) v₁)))
 
 exch : ∀ {A B C Γ Δ} → (Γ , A) , B ⁏ Δ ⊢ C → (Γ , B) , A ⁏ Δ ⊢ C
@@ -256,7 +256,7 @@ mexch t = mdet (mdet (app cexch (mlam (mlam t))))
 
 -- Composition.
 
-ccomp : ∀ {A B C Γ Δ} → Γ ⁏ Δ ⊢ (B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
+ccomp : ∀ {A B C Γ Δ} → Γ ⁏ Δ ⊢ (B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
 ccomp = lam (lam (lam (app v₂ (app v₁ v₀))))
 
 comp : ∀ {A B C Γ Δ} → Γ , B ⁏ Δ ⊢ C → Γ , A ⁏ Δ ⊢ B → Γ , A ⁏ Δ ⊢ C
@@ -268,7 +268,7 @@ mcomp t u = mdet (app (app ccomp (mlam t)) (mlam u))
 
 -- Useful theorems in functional form.
 
-dist : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ □ (A ▷ B) → Γ ⁏ Δ ⊢ □ A → Γ ⁏ Δ ⊢ □ B
+dist : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ □ (A ▻ B) → Γ ⁏ Δ ⊢ □ A → Γ ⁏ Δ ⊢ □ B
 dist t u = unbox t (unbox (mmono⊢ weak⊆ u) (box (app mv₁ mv₀)))
 
 up : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ □ A → Γ ⁏ Δ ⊢ □ □ A
@@ -277,43 +277,43 @@ up t = unbox t (box (box mv₀))
 down : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ □ A → Γ ⁏ Δ ⊢ A
 down t = unbox t mv₀
 
-distup : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ □ (□ A ▷ B) → Γ ⁏ Δ ⊢ □ A → Γ ⁏ Δ ⊢ □ B
+distup : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ □ (□ A ▻ B) → Γ ⁏ Δ ⊢ □ A → Γ ⁏ Δ ⊢ □ B
 distup t u = dist t (up u)
 
 
 -- Useful theorems in combinatory form.
 
-ci : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A ▷ A
+ci : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A ▻ A
 ci = lam v₀
 
-ck : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ▷ B ▷ A
+ck : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ▻ B ▻ A
 ck = lam (lam v₁)
 
-cs : ∀ {A B C Γ Δ} → Γ ⁏ Δ ⊢ (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
+cs : ∀ {A B C Γ Δ} → Γ ⁏ Δ ⊢ (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
 cs = lam (lam (lam (app (app v₂ v₀) (app v₁ v₀))))
 
-cdist : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ □ (A ▷ B) ▷ □ A ▷ □ B
+cdist : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ □ (A ▻ B) ▻ □ A ▻ □ B
 cdist = lam (lam (dist v₁ v₀))
 
-cup : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ □ A ▷ □ □ A
+cup : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ □ A ▻ □ □ A
 cup = lam (up v₀)
 
-cdown : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ □ A ▷ A
+cdown : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ □ A ▻ A
 cdown = lam (down v₀)
 
-cdistup : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ □ (□ A ▷ B) ▷ □ A ▷ □ B
+cdistup : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ □ (□ A ▻ B) ▻ □ A ▻ □ B
 cdistup = lam (lam (dist v₁ (up v₀)))
 
-cunbox : ∀ {A C Γ Δ} → Γ ⁏ Δ ⊢ □ A ▷ (□ A ▷ C) ▷ C
+cunbox : ∀ {A C Γ Δ} → Γ ⁏ Δ ⊢ □ A ▻ (□ A ▻ C) ▻ C
 cunbox = lam (lam (app v₀ v₁))
 
-cpair : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ▷ B ▷ A ∧ B
+cpair : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ▻ B ▻ A ∧ B
 cpair = lam (lam (pair v₁ v₀))
 
-cfst : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ∧ B ▷ A
+cfst : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ∧ B ▻ A
 cfst = lam (fst v₀)
 
-csnd : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ∧ B ▷ B
+csnd : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ∧ B ▻ B
 csnd = lam (snd v₀)
 
 
@@ -323,10 +323,10 @@ lift : ∀ {Γ A Δ} → Γ ⁏ Δ ⊢ A → □⋆ Γ ⁏ Δ ⊢ □ A
 lift {⌀}     t = box t
 lift {Γ , B} t = det (app cdist (lift (lam t)))
 
-hypdown : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ □ □ A ▷ B → Γ ⁏ Δ ⊢ □ A ▷ B
+hypdown : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ □ □ A ▻ B → Γ ⁏ Δ ⊢ □ A ▻ B
 hypdown t = lam (app (mono⊢ weak⊆ t) (up v₀))
 
-hypup : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ▷ B → Γ ⁏ Δ ⊢ □ A ▷ B
+hypup : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ▻ B → Γ ⁏ Δ ⊢ □ A ▻ B
 hypup t = lam (app (mono⊢ weak⊆ t) (down v₀))
 
 up⋆ : ∀ {Π Γ Δ} → Γ ⁏ Δ ⊢⋆ □⋆ Π → Γ ⁏ Δ ⊢⋆ □⋆ □⋆ Π
@@ -400,7 +400,7 @@ data _⇒_ {Γ Δ : Cx Ty} : ∀ {A} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ A →
                 → t ⇒ t′ → t′ ⇒ t
   cong⇒lam   : ∀ {A B} {t t′ : Γ , A ⁏ Δ ⊢ B}
                 → t ⇒ t′ → lam t ⇒ lam t′
-  cong⇒app   : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A ▷ B} {u u′ : Γ ⁏ Δ ⊢ A}
+  cong⇒app   : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A ▻ B} {u u′ : Γ ⁏ Δ ⊢ A}
                 → t ⇒ t′ → u ⇒ u′ → app t u ⇒ app t′ u′
   cong⇒pair  : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A} {u u′ : Γ ⁏ Δ ⊢ B}
                 → t ⇒ t′ → u ⇒ u′ → pair t u ⇒ pair t′ u′
@@ -413,7 +413,7 @@ data _⇒_ {Γ Δ : Cx Ty} : ∀ {A} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ A →
   --               → t ⇒ t′ → box {Γ} t ⇒ box {Γ} t′
   cong⇒unbox : ∀ {A C} {t t′ : Γ ⁏ Δ ⊢ □ A} {u u′ : Γ ⁏ Δ , A ⊢ C}
                 → t ⇒ t′ → u ⇒ u′ → unbox t u ⇒ unbox t′ u′
-  conv⇒lam   : ∀ {A B} {t : Γ ⁏ Δ ⊢ A ▷ B}
+  conv⇒lam   : ∀ {A B} {t : Γ ⁏ Δ ⊢ A ▻ B}
                 → t ⇒ lam (app (mono⊢ weak⊆ t) v₀)
   conv⇒app   : ∀ {A B} {t : Γ , A ⁏ Δ ⊢ B} {u : Γ ⁏ Δ ⊢ A}
                 → app (lam t) u ⇒ [ top ≔ u ] t

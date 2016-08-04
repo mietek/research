@@ -25,7 +25,7 @@ open G using  () renaming (_⊢_ to G⟨_⊢_⟩ ; _⊢⋆_ to G⟨_⊢⋆_⟩) 
 
 -- Deduction theorem for sequential Hilbert-style.
 
--- hs-lam : ∀ {A B Γ} → HS⟨ Γ , A ⊢ B ⟩ → HS⟨ Γ ⊢ A ▷ B ⟩
+-- hs-lam : ∀ {A B Γ} → HS⟨ Γ , A ⊢ B ⟩ → HS⟨ Γ ⊢ A ▻ B ⟩
 -- hs-lam = hn→hs ∘ HN.lam ∘ hs→hn
 
 
@@ -37,7 +37,7 @@ mutual
 
   hn→gᵗʸ : HN.Ty → G.Ty
   hn→gᵗʸ (HN.α P)   = G.α P
-  hn→gᵗʸ (A HN.▷ B) = hn→gᵗʸ A G.▷ hn→gᵗʸ B
+  hn→gᵗʸ (A HN.▻ B) = hn→gᵗʸ A G.▻ hn→gᵗʸ B
   hn→gᵗʸ (T HN.⦂ A) = hn→gᵇᵒˣ T G.⦂ hn→gᵗʸ A
   hn→gᵗʸ (A HN.∧ B) = hn→gᵗʸ A G.∧ hn→gᵗʸ B
   hn→gᵗʸ HN.⊤      = G.⊤
@@ -77,7 +77,7 @@ mutual
 
   g→hnᵗʸ : G.Ty → HN.Ty
   g→hnᵗʸ (G.α P)   = HN.α P
-  g→hnᵗʸ (A G.▷ B) = g→hnᵗʸ A HN.▷ g→hnᵗʸ B
+  g→hnᵗʸ (A G.▻ B) = g→hnᵗʸ A HN.▻ g→hnᵗʸ B
   g→hnᵗʸ (T G.⦂ A) = g→hnᵇᵒˣ T HN.⦂ g→hnᵗʸ A
   g→hnᵗʸ (A G.∧ B) = g→hnᵗʸ A HN.∧ g→hnᵗʸ B
   g→hnᵗʸ G.⊤      = HN.⊤

@@ -48,17 +48,17 @@ mutual
   data _⊢×_ (Γ : Cx (Ty Tm)) : Cx (Ty Tm) → Set where
     nil   : Γ ⊢× ⌀
     var   : ∀ {Π A}         → A ∈ Γ → Γ ⊢× Π → Γ ⊢× Π , A
-    mp    : ∀ {Π A B}       → A ▷ B ∈ Π → A ∈ Π → Γ ⊢× Π → Γ ⊢× Π , B
-    ci    : ∀ {Π A}         → Γ ⊢× Π → Γ ⊢× Π , A ▷ A
-    ck    : ∀ {Π A B}       → Γ ⊢× Π → Γ ⊢× Π , A ▷ B ▷ A
-    cs    : ∀ {Π A B C}     → Γ ⊢× Π → Γ ⊢× Π , (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
+    mp    : ∀ {Π A B}       → A ▻ B ∈ Π → A ∈ Π → Γ ⊢× Π → Γ ⊢× Π , B
+    ci    : ∀ {Π A}         → Γ ⊢× Π → Γ ⊢× Π , A ▻ A
+    ck    : ∀ {Π A B}       → Γ ⊢× Π → Γ ⊢× Π , A ▻ B ▻ A
+    cs    : ∀ {Π A B C}     → Γ ⊢× Π → Γ ⊢× Π , (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
     nec   : ∀ {Π Ξ A}       → (ss : ⌀ ⊢× Ξ , A) → Γ ⊢× Π → Γ ⊢× Π , [ ss ]× ⦂ A
-    cdist : ∀ {Π A B TS US} → Γ ⊢× Π → Γ ⊢× Π , TS ⦂ (A ▷ B) ▷ US ⦂ A ▷ APP TS US ⦂ B
-    cup   : ∀ {Π A TS}      → Γ ⊢× Π → Γ ⊢× Π , TS ⦂ A ▷ BOX TS ⦂ TS ⦂ A
-    cdown : ∀ {Π A TS}      → Γ ⊢× Π → Γ ⊢× Π , TS ⦂ A ▷ A
-    cpair : ∀ {Π A B}       → Γ ⊢× Π → Γ ⊢× Π , A ▷ B ▷ A ∧ B
-    cfst  : ∀ {Π A B}       → Γ ⊢× Π → Γ ⊢× Π , A ∧ B ▷ A
-    csnd  : ∀ {Π A B}       → Γ ⊢× Π → Γ ⊢× Π , A ∧ B ▷ B
+    cdist : ∀ {Π A B TS US} → Γ ⊢× Π → Γ ⊢× Π , TS ⦂ (A ▻ B) ▻ US ⦂ A ▻ APP TS US ⦂ B
+    cup   : ∀ {Π A TS}      → Γ ⊢× Π → Γ ⊢× Π , TS ⦂ A ▻ BOX TS ⦂ TS ⦂ A
+    cdown : ∀ {Π A TS}      → Γ ⊢× Π → Γ ⊢× Π , TS ⦂ A ▻ A
+    cpair : ∀ {Π A B}       → Γ ⊢× Π → Γ ⊢× Π , A ▻ B ▻ A ∧ B
+    cfst  : ∀ {Π A B}       → Γ ⊢× Π → Γ ⊢× Π , A ∧ B ▻ A
+    csnd  : ∀ {Π A B}       → Γ ⊢× Π → Γ ⊢× Π , A ∧ B ▻ B
     tt    : ∀ {Π}           → Γ ⊢× Π → Γ ⊢× Π , ⊤
 
   [_]× : ∀ {Π Γ} → Γ ⊢× Π → Tm
@@ -128,10 +128,10 @@ us ⧻ tt ts     = tt (us ⧻ ts)
 
 -- Modus ponens and necessitation in expanded form.
 
-app : ∀ {A B Γ} → Γ ⊢ A ▷ B → Γ ⊢ A → Γ ⊢ B
+app : ∀ {A B Γ} → Γ ⊢ A ▻ B → Γ ⊢ A → Γ ⊢ B
 app {A} {B} (Π , ts) (Π′ , us) = Π″ , vs
-  where Π″ = (Π′ , A) ⧺ (Π , A ▷ B)
-        vs = mp top (mono∈ (weak⊆⧺ₗ (Π , A ▷ B)) top) (us ⧻ ts)
+  where Π″ = (Π′ , A) ⧺ (Π , A ▻ B)
+        vs = mp top (mono∈ (weak⊆⧺ₗ (Π , A ▻ B)) top) (us ⧻ ts)
 
 box : ∀ {A Γ} → (t : ⌀ ⊢ A) → Γ ⊢ [ t ] ⦂ A
 box (Π , ts) = ⌀ , nec ts nil

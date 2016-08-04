@@ -8,11 +8,11 @@ open import BasicIPC.Gentzen.KripkeSoundness.Godel public
 instance
   canon : Model
   canon = record
-    { World   = Cx Ty
-    ; _≤_     = _⊆_
-    ; refl≤   = refl⊆
-    ; trans≤  = trans⊆
-    ; _⊩ᵅ_   = λ Γ P → Γ ⊢ α P
+    { World  = Cx Ty
+    ; _≤_    = _⊆_
+    ; refl≤  = refl⊆
+    ; trans≤ = trans⊆
+    ; _⊩ᵅ_  = λ Γ P → Γ ⊢ α P
     }
 
 
@@ -21,13 +21,13 @@ instance
 mutual
   reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
   reflect {α P}   t = λ η → mono⊢ η t
-  reflect {A ▷ B} t = λ η a → reflect {B} (app (mono⊢ η t) (reify {A} a))
+  reflect {A ▻ B} t = λ η a → reflect {B} (app (mono⊢ η t) (reify {A} a))
   reflect {A ∧ B} t = λ η → reflect {A} (fst (mono⊢ η t)) , reflect {B} (snd (mono⊢ η t))
   reflect {⊤}    t = λ η → ∙
 
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
   reify {α P}   s = s refl⊆
-  reify {A ▷ B} s = lam (reify {B} (s weak⊆ (reflect {A} v₀)))
+  reify {A ▻ B} s = lam (reify {B} (s weak⊆ (reflect {A} v₀)))
   reify {A ∧ B} s = pair (reify {A} (π₁ (s refl⊆))) (reify {B} (π₂ (s refl⊆)))
   reify {⊤}    s = tt
 

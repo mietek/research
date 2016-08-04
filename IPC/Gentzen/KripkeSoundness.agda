@@ -8,8 +8,8 @@ open import IPC.Gentzen public
 
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
 eval (var i)                  γ = lookup i γ
-eval (lam {A} {B} t)          γ = return {A ▷ B} (λ ξ a → eval t (mono⊩⋆ ξ γ , a))
-eval (app {A} {B} t u)        γ = bind {A ▷ B} {B} (eval t γ)
+eval (lam {A} {B} t)          γ = return {A ▻ B} (λ ξ a → eval t (mono⊩⋆ ξ γ , a))
+eval (app {A} {B} t u)        γ = bind {A ▻ B} {B} (eval t γ)
                                     (λ ξ f → f refl≤ (eval u (mono⊩⋆ ξ γ)))
 eval (pair {A} {B} t u)       γ = return {A ∧ B} (eval t γ , eval u γ)
 eval (fst {A} {B} t)          γ = bind {A ∧ B} {A} (eval t γ) (λ ξ s → π₁ s)

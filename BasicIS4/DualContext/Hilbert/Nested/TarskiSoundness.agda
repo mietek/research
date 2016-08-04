@@ -61,8 +61,8 @@ module Open where
   eval ci               γ δ = λ _ → id
   eval (ck {A})         γ δ = λ _ a θ b → mono⊨ {A} θ a
   eval (cs {A} {B} {C}) γ δ = λ _ f θ g θ′ a →
-                              let h = ((mono⊨ {A ▷ B ▷ C} (trans⊆ θ θ′) f) refl⊆ a) refl⊆
-                                  b = (mono⊨ {A ▷ B} θ′ g) refl⊆ a
+                              let h = ((mono⊨ {A ▻ B ▻ C} (trans⊆ θ θ′) f) refl⊆ a) refl⊆
+                                  b = (mono⊨ {A ▻ B} θ′ g) refl⊆ a
                               in  h b
   eval (mvar {A} i)     γ δ = mono⊨ {A} bot⊆ (lookup i δ)
   eval (box {A} t)      γ δ = λ θ → [ mmono⊢ θ t ]

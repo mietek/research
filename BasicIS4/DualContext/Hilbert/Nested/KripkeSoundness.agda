@@ -15,8 +15,8 @@ module WithRegularForcing where
   eval ci               γ δ = λ _ a → a
   eval (ck {A})         γ δ = λ _ a ξ b → mono⊩ {A} ξ a
   eval (cs {A} {B} {C}) γ δ = λ _ f ξ g ξ′ a →
-                              let h = ((mono⊩ {A ▷ B ▷ C} (trans≤ ξ ξ′) f) refl≤ a) refl≤
-                                  b = (mono⊩ {A ▷ B} ξ′ g) refl≤ a
+                              let h = ((mono⊩ {A ▻ B ▻ C} (trans≤ ξ ξ′) f) refl≤ a) refl≤
+                                  b = (mono⊩ {A ▻ B} ξ′ g) refl≤ a
                               in  h b
   eval (mvar i)         γ δ = lookup i (δ reflR)
   eval (box t)          γ δ = λ ζ → eval t ∙ (λ ζ′ → δ (transR ζ ζ′))
@@ -45,8 +45,8 @@ module WithBidirectionalForcing where
   eval ci               γ δ = λ _ a → a
   eval (ck {A})         γ δ = λ _ a ξ b → mono⊩ {A} ξ a
   eval (cs {A} {B} {C}) γ δ = λ _ f ξ g ξ′ a →
-                              let h = ((mono⊩ {A ▷ B ▷ C} (trans≤ ξ ξ′) f) refl≤ a) refl≤
-                                  b = (mono⊩ {A ▷ B} ξ′ g) refl≤ a
+                              let h = ((mono⊩ {A ▻ B ▻ C} (trans≤ ξ ξ′) f) refl≤ a) refl≤
+                                  b = (mono⊩ {A ▻ B} ξ′ g) refl≤ a
                               in  h b
   eval (mvar i)         γ δ = lookup i (δ refl≤ reflR)
   eval (box t)          γ δ = λ ξ ζ → eval t ∙ (λ ξ′ ζ′ →
@@ -78,8 +78,8 @@ module Ono where
   eval ci               γ δ = λ _ a → a
   eval (ck {A})         γ δ = λ _ a ξ b → mono⊩ {A} ξ a
   eval (cs {A} {B} {C}) γ δ = λ _ f ξ g ξ′ a →
-                              let h = ((mono⊩ {A ▷ B ▷ C} (trans≤ ξ ξ′) f) refl≤ a) refl≤
-                                  b = (mono⊩ {A ▷ B} ξ′ g) refl≤ a
+                              let h = ((mono⊩ {A ▻ B ▻ C} (trans≤ ξ ξ′) f) refl≤ a) refl≤
+                                  b = (mono⊩ {A ▻ B} ξ′ g) refl≤ a
                               in  h b
   eval (mvar i)         γ δ = lookup i (δ reflR)
   eval (box t)          γ δ = λ ζ → eval t ∙ (λ ζ′ → δ (transR ζ ζ′))
@@ -105,8 +105,8 @@ module BozicDosen where
   eval ci               γ δ = λ _ a → a
   eval (ck {A})         γ δ = λ _ a ξ b → mono⊩ {A} ξ a
   eval (cs {A} {B} {C}) γ δ = λ _ f ξ g ξ′ a →
-                              let h = ((mono⊩ {A ▷ B ▷ C} (trans≤ ξ ξ′) f) refl≤ a) refl≤
-                                  b = (mono⊩ {A ▷ B} ξ′ g) refl≤ a
+                              let h = ((mono⊩ {A ▻ B ▻ C} (trans≤ ξ ξ′) f) refl≤ a) refl≤
+                                  b = (mono⊩ {A ▻ B} ξ′ g) refl≤ a
                               in  h b
   eval (mvar i)         γ δ = lookup i (δ reflR)
   eval (box t)          γ δ = λ ζ → eval t ∙ (λ ζ′ → δ (transR ζ ζ′))
@@ -132,8 +132,8 @@ module EwaldEtAl where
   eval ci               γ δ = λ _ a → a
   eval (ck {A})         γ δ = λ _ a ξ b → mono⊩ {A} ξ a
   eval (cs {A} {B} {C}) γ δ = λ _ f ξ g ξ′ a →
-                              let h = ((mono⊩ {A ▷ B ▷ C} (trans≤ ξ ξ′) f) refl≤ a) refl≤
-                                  b = (mono⊩ {A ▷ B} ξ′ g) refl≤ a
+                              let h = ((mono⊩ {A ▻ B ▻ C} (trans≤ ξ ξ′) f) refl≤ a) refl≤
+                                  b = (mono⊩ {A ▻ B} ξ′ g) refl≤ a
                               in  h b
   eval (mvar i)         γ δ = lookup i (δ refl≤ reflR)
   eval (box {A} t)      γ δ = λ ξ ζ → eval t ∙ (λ ξ′ ζ′ →
@@ -162,8 +162,8 @@ module AlechinaEtAl where
   eval ci               γ δ = λ _ a → a
   eval (ck {A})         γ δ = λ _ a ξ b → mono⊩ {A} ξ a
   eval (cs {A} {B} {C}) γ δ = λ _ f ξ g ξ′ a →
-                              let h = ((mono⊩ {A ▷ B ▷ C} (trans≤ ξ ξ′) f) refl≤ a) refl≤
-                                  b = (mono⊩ {A ▷ B} ξ′ g) refl≤ a
+                              let h = ((mono⊩ {A ▻ B ▻ C} (trans≤ ξ ξ′) f) refl≤ a) refl≤
+                                  b = (mono⊩ {A ▻ B} ξ′ g) refl≤ a
                               in  h b
   eval (mvar i)         γ δ = lookup i (δ refl≤ reflR)
   eval (box t)          γ δ = λ ξ ζ → eval t ∙ (λ ξ′ ζ′ →

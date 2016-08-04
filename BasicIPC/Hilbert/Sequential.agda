@@ -9,13 +9,13 @@ infix 3 _⊢×_
 data _⊢×_ (Γ : Cx Ty) : Cx Ty → Set where
   nil   : Γ ⊢× ⌀
   var   : ∀ {Π A}     → A ∈ Γ → Γ ⊢× Π → Γ ⊢× Π , A
-  mp    : ∀ {Π A B}   → A ▷ B ∈ Π → A ∈ Π → Γ ⊢× Π → Γ ⊢× Π , B
-  ci    : ∀ {Π A}     → Γ ⊢× Π → Γ ⊢× Π , A ▷ A
-  ck    : ∀ {Π A B}   → Γ ⊢× Π → Γ ⊢× Π , A ▷ B ▷ A
-  cs    : ∀ {Π A B C} → Γ ⊢× Π → Γ ⊢× Π , (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
-  cpair : ∀ {Π A B}   → Γ ⊢× Π → Γ ⊢× Π , A ▷ B ▷ A ∧ B
-  cfst  : ∀ {Π A B}   → Γ ⊢× Π → Γ ⊢× Π , A ∧ B ▷ A
-  csnd  : ∀ {Π A B}   → Γ ⊢× Π → Γ ⊢× Π , A ∧ B ▷ B
+  mp    : ∀ {Π A B}   → A ▻ B ∈ Π → A ∈ Π → Γ ⊢× Π → Γ ⊢× Π , B
+  ci    : ∀ {Π A}     → Γ ⊢× Π → Γ ⊢× Π , A ▻ A
+  ck    : ∀ {Π A B}   → Γ ⊢× Π → Γ ⊢× Π , A ▻ B ▻ A
+  cs    : ∀ {Π A B C} → Γ ⊢× Π → Γ ⊢× Π , (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
+  cpair : ∀ {Π A B}   → Γ ⊢× Π → Γ ⊢× Π , A ▻ B ▻ A ∧ B
+  cfst  : ∀ {Π A B}   → Γ ⊢× Π → Γ ⊢× Π , A ∧ B ▻ A
+  csnd  : ∀ {Π A B}   → Γ ⊢× Π → Γ ⊢× Π , A ∧ B ▻ B
   tt    : ∀ {Π}       → Γ ⊢× Π → Γ ⊢× Π , ⊤
 
 infix 3 _⊢_
@@ -58,7 +58,7 @@ us ⧻ tt ts     = tt (us ⧻ ts)
 
 -- Modus ponens in expanded form.
 
-app : ∀ {A B Γ} → Γ ⊢ A ▷ B → Γ ⊢ A → Γ ⊢ B
+app : ∀ {A B Γ} → Γ ⊢ A ▻ B → Γ ⊢ A → Γ ⊢ B
 app {A} {B} (Π , ts) (Π′ , us) = Π″ , vs
-  where Π″ = (Π′ , A) ⧺ (Π , A ▷ B)
-        vs = mp top (mono∈ (weak⊆⧺ₗ (Π , A ▷ B)) top) (us ⧻ ts)
+  where Π″ = (Π′ , A) ⧺ (Π , A ▻ B)
+        vs = mp top (mono∈ (weak⊆⧺ₗ (Π , A ▻ B)) top) (us ⧻ ts)

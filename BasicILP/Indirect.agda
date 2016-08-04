@@ -7,18 +7,18 @@ open import Common.Context public
 
 infixl 7 _∧_
 infixr 6 _⦂_
-infixr 5 _▷_
+infixr 5 _▻_
 data Ty (X : Set) : Set where
   α_  : Atom → Ty X
-  _▷_ : Ty X → Ty X → Ty X
+  _▻_ : Ty X → Ty X → Ty X
   _⦂_ : X → Ty X → Ty X
   _∧_ : Ty X → Ty X → Ty X
   ⊤  : Ty X
 
 module _ {X : Set} where
-  infix 5 _⨝_
-  _⨝_ : Ty X → Ty X → Ty X
-  A ⨝ B = (A ▷ B) ∧ (B ▷ A)
+  infix 5 _▻◅_
+  _▻◅_ : Ty X → Ty X → Ty X
+  A ▻◅ B = (A ▻ B) ∧ (B ▻ A)
 
 
   -- Additional useful propositions.

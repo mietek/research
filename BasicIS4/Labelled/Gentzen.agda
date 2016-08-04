@@ -39,8 +39,8 @@ data _⊢_↝_ (Λ : Cx LaLa) : La → La → Set where
 infix 3 _⁏_⊢_◎_
 data _⁏_⊢_◎_ (Γ : Cx TyLa) (Λ : Cx LaLa) : Ty → La → Set where
   var  : ∀ {x A}   → A ◎ x ∈ Γ → Γ ⁏ Λ ⊢ A ◎ x
-  lam  : ∀ {x A B} → Γ , A ◎ x ⁏ Λ ⊢ B ◎ x → Γ ⁏ Λ ⊢ A ▷ B ◎ x
-  app  : ∀ {x A B} → Γ ⁏ Λ ⊢ A ▷ B ◎ x → Γ ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ B ◎ x
+  lam  : ∀ {x A B} → Γ , A ◎ x ⁏ Λ ⊢ B ◎ x → Γ ⁏ Λ ⊢ A ▻ B ◎ x
+  app  : ∀ {x A B} → Γ ⁏ Λ ⊢ A ▻ B ◎ x → Γ ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ B ◎ x
   scan : ∀ {x A}   → (∀ {y} → Γ ⁏ Λ , x ↝ y ⊢ A ◎ y) → Γ ⁏ Λ ⊢ □ A ◎ x
   move : ∀ {x y A} → Γ ⁏ Λ ⊢ □ A ◎ x → Λ ⊢ x ↝ y → Γ ⁏ Λ ⊢ A ◎ y
   pair : ∀ {x A B} → Γ ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ B ◎ x → Γ ⁏ Λ ⊢ A ∧ B ◎ x
@@ -120,7 +120,7 @@ v₂ = var i₂
 
 -- Detachment theorem.
 
-det : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ▷ B ◎ x → Γ , A ◎ x ⁏ Λ ⊢ B ◎ x
+det : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ▻ B ◎ x → Γ , A ◎ x ⁏ Λ ⊢ B ◎ x
 det t = app (mono⊢ weak⊆ t) v₀
 
 
@@ -147,7 +147,7 @@ trans⊢⋆ {Γ″ , A} ts (us , u) = trans⊢⋆ ts us , multicut ts u
 
 -- Contraction.
 
-ccont : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ (A ▷ A ▷ B) ▷ A ▷ B ◎ x
+ccont : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ (A ▻ A ▻ B) ▻ A ▻ B ◎ x
 ccont = lam (lam (app (app v₁ v₀) v₀))
 
 cont : ∀ {x A B Γ Λ} → (Γ , A ◎ x) , A ◎ x ⁏ Λ ⊢ B ◎ x → Γ , A ◎ x ⁏ Λ ⊢ B ◎ x
@@ -156,7 +156,7 @@ cont t = det (app ccont (lam (lam t)))
 
 -- Exchange.
 
-cexch : ∀ {x A B C Γ Λ} → Γ ⁏ Λ ⊢ (A ▷ B ▷ C) ▷ B ▷ A ▷ C ◎ x
+cexch : ∀ {x A B C Γ Λ} → Γ ⁏ Λ ⊢ (A ▻ B ▻ C) ▻ B ▻ A ▻ C ◎ x
 cexch = lam (lam (lam (app (app v₂ v₀) v₁)))
 
 exch : ∀ {x A B C Γ Λ} → (Γ , A ◎ x) , B ◎ x ⁏ Λ ⊢ C ◎ x → (Γ , B ◎ x) , A ◎ x ⁏ Λ ⊢ C ◎ x
@@ -165,7 +165,7 @@ exch t = det (det (app cexch (lam (lam t))))
 
 -- Composition.
 
-ccomp : ∀ {x A B C Γ Λ} → Γ ⁏ Λ ⊢ (B ▷ C) ▷ (A ▷ B) ▷ A ▷ C ◎ x
+ccomp : ∀ {x A B C Γ Λ} → Γ ⁏ Λ ⊢ (B ▻ C) ▻ (A ▻ B) ▻ A ▻ C ◎ x
 ccomp = lam (lam (lam (app v₂ (app v₁ v₀))))
 
 comp : ∀ {x A B C Γ Λ} → Γ , B ◎ x ⁏ Λ ⊢ C ◎ x → Γ , A ◎ x ⁏ Λ ⊢ B ◎ x → Γ , A ◎ x ⁏ Λ ⊢ C ◎ x
@@ -174,7 +174,7 @@ comp t u = det (app (app ccomp (lam t)) (lam u))
 
 -- Useful theorems in functional form.
 
-dist : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ □ (A ▷ B) ◎ x → Γ ⁏ Λ ⊢ □ A ◎ x → Γ ⁏ Λ ⊢ □ B ◎ x
+dist : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ □ (A ▻ B) ◎ x → Γ ⁏ Λ ⊢ □ A ◎ x → Γ ⁏ Λ ⊢ □ B ◎ x
 dist t u = scan (app (move (rmono⊢ weak⊆ t) rv₀) (move (rmono⊢ weak⊆ u) rv₀))
 
 up : ∀ {x A Γ Λ} → Γ ⁏ Λ ⊢ □ A ◎ x → Γ ⁏ Λ ⊢ □ □ A ◎ x
@@ -183,7 +183,7 @@ up t = scan (scan (move (rmono⊢ (trans⊆ weak⊆ weak⊆) t) (rtrans rv₁ rv
 down : ∀ {x A Γ Λ} → Γ ⁏ Λ ⊢ □ A ◎ x → Γ ⁏ Λ ⊢ A ◎ x
 down t = move t rrefl
 
-distup : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ □ (□ A ▷ B) ◎ x → Γ ⁏ Λ ⊢ □ A ◎ x → Γ ⁏ Λ ⊢ □ B ◎ x
+distup : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ □ (□ A ▻ B) ◎ x → Γ ⁏ Λ ⊢ □ A ◎ x → Γ ⁏ Λ ⊢ □ B ◎ x
 distup t u = dist t (up u)
 
 -- FIXME: Find the missing piece.
@@ -196,37 +196,37 @@ unbox t u = app (lam u) t
 
 -- Useful theorems in combinatory form.
 
-ci : ∀ {x A Γ Λ} → Γ ⁏ Λ ⊢ A ▷ A ◎ x
+ci : ∀ {x A Γ Λ} → Γ ⁏ Λ ⊢ A ▻ A ◎ x
 ci = lam v₀
 
-ck : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ▷ B ▷ A ◎ x
+ck : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ▻ B ▻ A ◎ x
 ck = lam (lam v₁)
 
-cs : ∀ {x A B C Γ Λ} → Γ ⁏ Λ ⊢ (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C ◎ x
+cs : ∀ {x A B C Γ Λ} → Γ ⁏ Λ ⊢ (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C ◎ x
 cs = lam (lam (lam (app (app v₂ v₀) (app v₁ v₀))))
 
-cdist : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ □ (A ▷ B) ▷ □ A ▷ □ B ◎ x
+cdist : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ □ (A ▻ B) ▻ □ A ▻ □ B ◎ x
 cdist = lam (lam (scan (app (move v₁ rv₀) (move v₀ rv₀))))
 
-cup : ∀ {x A Γ Λ} → Γ ⁏ Λ ⊢ □ A ▷ □ □ A ◎ x
+cup : ∀ {x A Γ Λ} → Γ ⁏ Λ ⊢ □ A ▻ □ □ A ◎ x
 cup = lam (scan (scan (move v₀ (rtrans rv₁ rv₀))))
 
-cdown : ∀ {x A Γ Λ} → Γ ⁏ Λ ⊢ □ A ▷ A ◎ x
+cdown : ∀ {x A Γ Λ} → Γ ⁏ Λ ⊢ □ A ▻ A ◎ x
 cdown = lam (move v₀ rrefl)
 
-cdistup : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ □ (□ A ▷ B) ▷ □ A ▷ □ B ◎ x
+cdistup : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ □ (□ A ▻ B) ▻ □ A ▻ □ B ◎ x
 cdistup = lam (lam (app (app cdist v₁) (app cup v₀)))
 
-cunbox : ∀ {x A C Γ Λ} → Γ ⁏ Λ ⊢ □ A ▷ (□ A ▷ C) ▷ C ◎ x
+cunbox : ∀ {x A C Γ Λ} → Γ ⁏ Λ ⊢ □ A ▻ (□ A ▻ C) ▻ C ◎ x
 cunbox = lam (lam (app v₀ v₁))
 
-cpair : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ▷ B ▷ A ∧ B ◎ x
+cpair : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ▻ B ▻ A ∧ B ◎ x
 cpair = lam (lam (pair v₁ v₀))
 
-cfst : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ∧ B ▷ A ◎ x
+cfst : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ∧ B ▻ A ◎ x
 cfst = lam (fst v₀)
 
-csnd : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ∧ B ▷ B ◎ x
+csnd : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ∧ B ▻ B ◎ x
 csnd = lam (snd v₀)
 
 

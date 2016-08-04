@@ -28,7 +28,7 @@ module _ {{_ : Model}} where
   infix 3 _⊩_
   _⊩_ : World → Ty → Set
   w ⊩ α P   = w ⊩ᵅ P
-  w ⊩ A ▷ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
+  w ⊩ A ▻ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
   w ⊩ A ∧ B = w ⊩ A × w ⊩ B
   w ⊩ ⊤    = 𝟙
 
@@ -42,7 +42,7 @@ module _ {{_ : Model}} where
 
   mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
   mono⊩ {α P}   ξ s       = mono⊩ᵅ ξ s
-  mono⊩ {A ▷ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
+  mono⊩ {A ▻ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
   mono⊩ {A ∧ B} ξ (a , b) = mono⊩ {A} ξ a , mono⊩ {B} ξ b
   mono⊩ {⊤}    ξ ∙       = ∙
 

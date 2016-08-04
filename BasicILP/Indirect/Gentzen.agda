@@ -20,8 +20,8 @@ mutual
   infix 3 _⊢_
   data _⊢_ (Γ : Cx (Ty Tm)) : Ty Tm → Set where
     var      : ∀ {A}   → A ∈ Γ → Γ ⊢ A
-    lam      : ∀ {A B} → Γ , A ⊢ B → Γ ⊢ A ▷ B
-    app      : ∀ {A B} → Γ ⊢ A ▷ B → Γ ⊢ A → Γ ⊢ B
+    lam      : ∀ {A B} → Γ , A ⊢ B → Γ ⊢ A ▻ B
+    app      : ∀ {A B} → Γ ⊢ A ▻ B → Γ ⊢ A → Γ ⊢ B
     multibox : ∀ {n A} {SS : VCx Tm n} {Π : VCx (Ty Tm) n}
                → Γ ⊢⋆ SS ⦂⋆ Π → (u : SS ⦂⋆ Π ⊢ A)
                → Γ ⊢ [ u ] ⦂ A
@@ -99,7 +99,7 @@ v₂ = var i₂
 DET : Tm → Tm
 DET T = APP T V₀
 
-det : ∀ {A B Γ} → Γ ⊢ A ▷ B → Γ , A ⊢ B
+det : ∀ {A B Γ} → Γ ⊢ A ▻ B → Γ , A ⊢ B
 det t = app (mono⊢ weak⊆ t) v₀
 
 
@@ -139,7 +139,7 @@ CCONT = LAM (LAM (APP (APP V₁ V₀) V₀))
 CONT : Tm → Tm
 CONT T = DET (APP CCONT (LAM (LAM T)))
 
-ccont : ∀ {A B Γ} → Γ ⊢ (A ▷ A ▷ B) ▷ A ▷ B
+ccont : ∀ {A B Γ} → Γ ⊢ (A ▻ A ▻ B) ▻ A ▻ B
 ccont = lam (lam (app (app v₁ v₀) v₀))
 
 cont : ∀ {A B Γ} → (Γ , A) , A ⊢ B → Γ , A ⊢ B
@@ -154,7 +154,7 @@ CEXCH = LAM (LAM (LAM (APP (APP V₂ V₀) V₁)))
 EXCH : Tm → Tm
 EXCH T = DET (DET (APP CEXCH (LAM (LAM T))))
 
-cexch : ∀ {A B C Γ} → Γ ⊢ (A ▷ B ▷ C) ▷ B ▷ A ▷ C
+cexch : ∀ {A B C Γ} → Γ ⊢ (A ▻ B ▻ C) ▻ B ▻ A ▻ C
 cexch = lam (lam (lam (app (app v₂ v₀) v₁)))
 
 exch : ∀ {A B C Γ} → (Γ , A) , B ⊢ C → (Γ , B) , A ⊢ C
@@ -169,7 +169,7 @@ CCOMP = LAM (LAM (LAM (APP V₂ (APP V₁ V₀))))
 COMP : Tm → Tm → Tm
 COMP T U = DET (APP (APP CCOMP (LAM T)) (LAM U))
 
-ccomp : ∀ {A B C Γ} → Γ ⊢ (B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
+ccomp : ∀ {A B C Γ} → Γ ⊢ (B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
 ccomp = lam (lam (lam (app v₂ (app v₁ v₀))))
 
 comp : ∀ {A B C Γ} → Γ , B ⊢ C → Γ , A ⊢ B → Γ , A ⊢ C
@@ -194,7 +194,7 @@ UNBOX : Tm → Tm → Tm
 UNBOX T U = APP (LAM U) T
 
 dist : ∀ {A B T U Γ}
-       → (t : Γ ⊢ T ⦂ (A ▷ B)) → (u : Γ ⊢ U ⦂ A)
+       → (t : Γ ⊢ T ⦂ (A ▻ B)) → (u : Γ ⊢ U ⦂ A)
        → Γ ⊢ APP (DOWN V₁) (DOWN V₀) ⦂ B
 dist t u = multibox ((∙ , t) , u) (app (down v₁) (down v₀))
 
@@ -204,7 +204,7 @@ up : ∀ {A T Γ}
 up t = multibox (∙ , t) v₀
 
 distup : ∀ {A B T U Γ}
-         → (t : Γ ⊢ T ⦂ (U ⦂ A ▷ B)) → (u : Γ ⊢ U ⦂ A)
+         → (t : Γ ⊢ T ⦂ (U ⦂ A ▻ B)) → (u : Γ ⊢ U ⦂ A)
          → Γ ⊢ APP (DOWN V₁) (DOWN V₀) ⦂ B
 distup t u = dist t (up u)
 
@@ -254,39 +254,39 @@ CFST = LAM (FST V₀)
 CSND : Tm
 CSND = LAM (SND V₀)
 
-ci : ∀ {A Γ} → Γ ⊢ A ▷ A
+ci : ∀ {A Γ} → Γ ⊢ A ▻ A
 ci = lam v₀
 
-ck : ∀ {A B Γ} → Γ ⊢ A ▷ B ▷ A
+ck : ∀ {A B Γ} → Γ ⊢ A ▻ B ▻ A
 ck = lam (lam v₁)
 
-cs : ∀ {A B C Γ} → Γ ⊢ (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
+cs : ∀ {A B C Γ} → Γ ⊢ (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
 cs = lam (lam (lam (app (app v₂ v₀) (app v₁ v₀))))
 
 cdist : ∀ {A B T U Γ}
-        → Γ ⊢ T ⦂ (A ▷ B) ▷ U ⦂ A ▷ APP (DOWN V₁) (DOWN V₀) ⦂ B
+        → Γ ⊢ T ⦂ (A ▻ B) ▻ U ⦂ A ▻ APP (DOWN V₁) (DOWN V₀) ⦂ B
 cdist = lam (lam (dist v₁ v₀))
 
-cup : ∀ {A T Γ} → Γ ⊢ T ⦂ A ▷ V₀ ⦂ T ⦂ A
+cup : ∀ {A T Γ} → Γ ⊢ T ⦂ A ▻ V₀ ⦂ T ⦂ A
 cup = lam (up v₀)
 
-cdown : ∀ {A T Γ} → Γ ⊢ T ⦂ A ▷ A
+cdown : ∀ {A T Γ} → Γ ⊢ T ⦂ A ▻ A
 cdown = lam (down v₀)
 
 cdistup : ∀ {A B T U Γ}
-          → Γ ⊢ T ⦂ (U ⦂ A ▷ B) ▷ U ⦂ A ▷ APP (DOWN V₁) (DOWN V₀) ⦂ B
+          → Γ ⊢ T ⦂ (U ⦂ A ▻ B) ▻ U ⦂ A ▻ APP (DOWN V₁) (DOWN V₀) ⦂ B
 cdistup = lam (lam (dist v₁ (up v₀)))
 
-cunbox : ∀ {A C T Γ} → Γ ⊢ T ⦂ A ▷ (T ⦂ A ▷ C) ▷ C
+cunbox : ∀ {A C T Γ} → Γ ⊢ T ⦂ A ▻ (T ⦂ A ▻ C) ▻ C
 cunbox = lam (lam (app v₀ v₁))
 
-cpair : ∀ {A B Γ} → Γ ⊢ A ▷ B ▷ A ∧ B
+cpair : ∀ {A B Γ} → Γ ⊢ A ▻ B ▻ A ∧ B
 cpair = lam (lam (pair v₁ v₀))
 
-cfst : ∀ {A B Γ} → Γ ⊢ A ∧ B ▷ A
+cfst : ∀ {A B Γ} → Γ ⊢ A ∧ B ▻ A
 cfst = lam (fst v₀)
 
-csnd : ∀ {A B Γ} → Γ ⊢ A ∧ B ▷ B
+csnd : ∀ {A B Γ} → Γ ⊢ A ∧ B ▻ B
 csnd = lam (snd v₀)
 
 

@@ -8,10 +8,10 @@ open import Common.Context public
 mutual
   infixl 7 _∧_
   infixr 6 _⦂_
-  infixr 5 _▷_
+  infixr 5 _▻_
   data Ty : Set where
     α_  : Atom → Ty
-    _▷_ : Ty → Ty → Ty
+    _▻_ : Ty → Ty → Ty
     _⦂_ : Box → Ty → Ty
     _∧_ : Ty → Ty → Ty
     ⊤  : Ty
@@ -29,18 +29,18 @@ mutual
   infix 3 _⊢_
   data _⊢_ (Γ : Cx Ty) : Ty → Set where
     var   : ∀ {A}              → A ∈ Γ → Γ ⊢ A
-    app   : ∀ {A B}            → Γ ⊢ A ▷ B → Γ ⊢ A → Γ ⊢ B
-    ci    : ∀ {A}              → Γ ⊢ A ▷ A
-    ck    : ∀ {A B}            → Γ ⊢ A ▷ B ▷ A
-    cs    : ∀ {A B C}          → Γ ⊢ (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
+    app   : ∀ {A B}            → Γ ⊢ A ▻ B → Γ ⊢ A → Γ ⊢ B
+    ci    : ∀ {A}              → Γ ⊢ A ▻ A
+    ck    : ∀ {A B}            → Γ ⊢ A ▻ B ▻ A
+    cs    : ∀ {A B C}          → Γ ⊢ (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
     box   : ∀ {A}              → (t : ⌀ ⊢ A) → Γ ⊢ [ t ] ⦂ A
-    cdist : ∀ {A B} {t : ⌀ ⊢ A ▷ B} {u : ⌀ ⊢ A}
-                               → Γ ⊢ [ t ] ⦂ (A ▷ B) ▷ [ u ] ⦂ A ▷ [ app t u ] ⦂ B
-    cup   : ∀ {A} {t : ⌀ ⊢ A} → Γ ⊢ [ t ] ⦂ A ▷ [ box t ] ⦂ [ t ] ⦂ A
-    cdown : ∀ {A} {t : ⌀ ⊢ A} → Γ ⊢ [ t ] ⦂ A ▷ A
-    cpair : ∀ {A B}            → Γ ⊢ A ▷ B ▷ A ∧ B
-    cfst  : ∀ {A B}            → Γ ⊢ A ∧ B ▷ A
-    csnd  : ∀ {A B}            → Γ ⊢ A ∧ B ▷ B
+    cdist : ∀ {A B} {t : ⌀ ⊢ A ▻ B} {u : ⌀ ⊢ A}
+                               → Γ ⊢ [ t ] ⦂ (A ▻ B) ▻ [ u ] ⦂ A ▻ [ app t u ] ⦂ B
+    cup   : ∀ {A} {t : ⌀ ⊢ A} → Γ ⊢ [ t ] ⦂ A ▻ [ box t ] ⦂ [ t ] ⦂ A
+    cdown : ∀ {A} {t : ⌀ ⊢ A} → Γ ⊢ [ t ] ⦂ A ▻ A
+    cpair : ∀ {A B}            → Γ ⊢ A ▻ B ▻ A ∧ B
+    cfst  : ∀ {A B}            → Γ ⊢ A ∧ B ▻ A
+    csnd  : ∀ {A B}            → Γ ⊢ A ∧ B ▻ B
     tt    : Γ ⊢ ⊤
 
 infix 3 _⊢⋆_
@@ -48,9 +48,9 @@ _⊢⋆_ : Cx Ty → Cx Ty → Set
 Γ ⊢⋆ ⌀     = 𝟙
 Γ ⊢⋆ Π , A = Γ ⊢⋆ Π × Γ ⊢ A
 
-infix 5 _⨝_
-_⨝_ : Ty → Ty → Ty
-A ⨝ B = (A ▷ B) ∧ (B ▷ A)
+infix 5 _▻◅_
+_▻◅_ : Ty → Ty → Ty
+A ▻◅ B = (A ▻ B) ∧ (B ▻ A)
 
 
 -- Additional useful propositions.
@@ -96,7 +96,7 @@ v₂ = var i₂
 
 -- Deduction theorem.
 
-lam : ∀ {A B Γ} → Γ , A ⊢ B → Γ ⊢ A ▷ B
+lam : ∀ {A B Γ} → Γ , A ⊢ B → Γ ⊢ A ▻ B
 lam (var top)     = ci
 lam (var (pop i)) = app ck (var i)
 lam (app t u)     = app (app cs (lam t)) (lam u)
@@ -115,7 +115,7 @@ lam tt            = app ck tt
 
 -- Detachment theorem.
 
-det : ∀ {A B Γ} → Γ ⊢ A ▷ B → Γ , A ⊢ B
+det : ∀ {A B Γ} → Γ ⊢ A ▻ B → Γ , A ⊢ B
 det t = app (mono⊢ weak⊆ t) v₀
 
 
@@ -142,7 +142,7 @@ trans⊢⋆ {Γ″ , A} ts (us , u) = trans⊢⋆ ts us , multicut ts u
 
 -- Contraction.
 
-ccont : ∀ {A B Γ} → Γ ⊢ (A ▷ A ▷ B) ▷ A ▷ B
+ccont : ∀ {A B Γ} → Γ ⊢ (A ▻ A ▻ B) ▻ A ▻ B
 ccont = lam (lam (app (app v₁ v₀) v₀))
 
 cont : ∀ {A B Γ} → (Γ , A) , A ⊢ B → Γ , A ⊢ B
@@ -151,7 +151,7 @@ cont t = det (app ccont (lam (lam t)))
 
 -- Exchange.
 
-cexch : ∀ {A B C Γ} → Γ ⊢ (A ▷ B ▷ C) ▷ B ▷ A ▷ C
+cexch : ∀ {A B C Γ} → Γ ⊢ (A ▻ B ▻ C) ▻ B ▻ A ▻ C
 cexch = lam (lam (lam (app (app v₂ v₀) v₁)))
 
 exch : ∀ {A B C Γ} → (Γ , A) , B ⊢ C → (Γ , B) , A ⊢ C
@@ -160,7 +160,7 @@ exch t = det (det (app cexch (lam (lam t))))
 
 -- Composition.
 
-ccomp : ∀ {A B C Γ} → Γ ⊢ (B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
+ccomp : ∀ {A B C Γ} → Γ ⊢ (B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
 ccomp = lam (lam (lam (app v₂ (app v₁ v₀))))
 
 comp : ∀ {A B C Γ} → Γ , B ⊢ C → Γ , A ⊢ B → Γ , A ⊢ C
@@ -169,8 +169,8 @@ comp t u = det (app (app ccomp (lam t)) (lam u))
 
 -- Useful theorems in functional form.
 
-dist : ∀ {A B Γ} {t : ⌀ ⊢ A ▷ B} {u : ⌀ ⊢ A}
-       → Γ ⊢ [ t ] ⦂ (A ▷ B) → Γ ⊢ [ u ] ⦂ A
+dist : ∀ {A B Γ} {t : ⌀ ⊢ A ▻ B} {u : ⌀ ⊢ A}
+       → Γ ⊢ [ t ] ⦂ (A ▻ B) → Γ ⊢ [ u ] ⦂ A
        → Γ ⊢ [ app t u ] ⦂ B
 dist t u = app (app cdist t) u
 
@@ -184,8 +184,8 @@ down : ∀ {A Γ} {t : ⌀ ⊢ A}
        → Γ ⊢ A
 down t = app cdown t
 
-distup : ∀ {A B Γ} {u : ⌀ ⊢ A} {t : ⌀ ⊢ [ u ] ⦂ A ▷ B}
-         → Γ ⊢ [ t ] ⦂ ([ u ] ⦂ A ▷ B) → Γ ⊢ [ u ] ⦂ A
+distup : ∀ {A B Γ} {u : ⌀ ⊢ A} {t : ⌀ ⊢ [ u ] ⦂ A ▻ B}
+         → Γ ⊢ [ t ] ⦂ ([ u ] ⦂ A ▻ B) → Γ ⊢ [ u ] ⦂ A
          → Γ ⊢ [ app t (box u) ] ⦂ B
 distup t u = dist t (up u)
 
@@ -200,7 +200,7 @@ unbox t u = app (lam u) t
 -- ???
 
 distup′ : ∀ {A B Γ} {u : ⌀ ⊢ A} {t : ⌀ , [ u ] ⦂ A ⊢ B}
-          → Γ ⊢ [ lam t ] ⦂ ([ u ] ⦂ A ▷ B) → Γ ⊢ [ u ] ⦂ A
+          → Γ ⊢ [ lam t ] ⦂ ([ u ] ⦂ A ▻ B) → Γ ⊢ [ u ] ⦂ A
           → Γ ⊢ [ app (lam t) (box u) ] ⦂ B
 distup′ t u = dist t (up u)
 

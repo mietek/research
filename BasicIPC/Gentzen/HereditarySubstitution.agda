@@ -10,7 +10,7 @@ mutual
   infix 3 _⊢ⁿᶠ_
   data _⊢ⁿᶠ_ (Γ : Cx Ty) : Ty → Set where
     neⁿᶠ   : ∀ {P}   → Γ ⊢ⁿᵉ α P → Γ ⊢ⁿᶠ α P
-    lamⁿᶠ  : ∀ {A B} → Γ , A ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ▷ B
+    lamⁿᶠ  : ∀ {A B} → Γ , A ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ▻ B
     pairⁿᶠ : ∀ {A B} → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ∧ B
     ttⁿᶠ   : Γ ⊢ⁿᶠ ⊤
 
@@ -23,7 +23,7 @@ mutual
   infix 3 _⊢ˢᵖ_⦙_
   data _⊢ˢᵖ_⦙_ (Γ : Cx Ty) : Ty → Ty → Set where
     nilˢᵖ : ∀ {C}     → Γ ⊢ˢᵖ C ⦙ C
-    appˢᵖ : ∀ {A B C} → Γ ⊢ˢᵖ B ⦙ C → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ A ▷ B ⦙ C
+    appˢᵖ : ∀ {A B C} → Γ ⊢ˢᵖ B ⦙ C → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ A ▻ B ⦙ C
     fstˢᵖ : ∀ {A B C} → Γ ⊢ˢᵖ A ⦙ C → Γ ⊢ˢᵖ A ∧ B ⦙ C
     sndˢᵖ : ∀ {A B C} → Γ ⊢ˢᵖ B ⦙ C → Γ ⊢ˢᵖ A ∧ B ⦙ C
 
@@ -92,7 +92,7 @@ mutual
 
 -- Reduction-based normal forms.
 
-appⁿᶠ : ∀ {A B Γ} → Γ ⊢ⁿᶠ A ▷ B → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B
+appⁿᶠ : ∀ {A B Γ} → Γ ⊢ⁿᶠ A ▻ B → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B
 appⁿᶠ t u = reduce t (appˢᵖ nilˢᵖ u)
 
 fstⁿᶠ : ∀ {A B Γ} → Γ ⊢ⁿᶠ A ∧ B → Γ ⊢ⁿᶠ A
@@ -104,7 +104,7 @@ sndⁿᶠ t = reduce t (sndˢᵖ nilˢᵖ)
 
 -- Useful equipment for deriving neutrals.
 
-≪appˢᵖ : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ⦙ A ▷ B → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ C ⦙ B
+≪appˢᵖ : ∀ {A B C Γ} → Γ ⊢ˢᵖ C ⦙ A ▻ B → Γ ⊢ⁿᶠ A → Γ ⊢ˢᵖ C ⦙ B
 ≪appˢᵖ nilˢᵖ        t = appˢᵖ nilˢᵖ t
 ≪appˢᵖ (appˢᵖ xs u) t = appˢᵖ (≪appˢᵖ xs t) u
 ≪appˢᵖ (fstˢᵖ xs)   t = fstˢᵖ (≪appˢᵖ xs t)
@@ -128,7 +128,7 @@ sndⁿᶠ t = reduce t (sndˢᵖ nilˢᵖ)
 varⁿᵉ : ∀ {A Γ} → A ∈ Γ → Γ ⊢ⁿᵉ A
 varⁿᵉ i = spⁿᵉ i nilˢᵖ
 
-appⁿᵉ : ∀ {A B Γ} → Γ ⊢ⁿᵉ A ▷ B → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᵉ B
+appⁿᵉ : ∀ {A B Γ} → Γ ⊢ⁿᵉ A ▻ B → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᵉ B
 appⁿᵉ (spⁿᵉ i xs) t = spⁿᵉ i (≪appˢᵖ xs t)
 
 fstⁿᵉ : ∀ {A B Γ} → Γ ⊢ⁿᵉ A ∧ B → Γ ⊢ⁿᵉ A
@@ -142,7 +142,7 @@ sndⁿᵉ (spⁿᵉ i xs) = spⁿᵉ i (≪sndˢᵖ xs)
 
 expand : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊢ⁿᶠ A
 expand {α P}   t = neⁿᶠ t
-expand {A ▷ B} t = lamⁿᶠ (expand (appⁿᵉ (mono⊢ⁿᵉ weak⊆ t) (expand (varⁿᵉ top))))
+expand {A ▻ B} t = lamⁿᶠ (expand (appⁿᵉ (mono⊢ⁿᵉ weak⊆ t) (expand (varⁿᵉ top))))
 expand {A ∧ B} t = pairⁿᶠ (expand (fstⁿᵉ t)) (expand (sndⁿᵉ t))
 expand {⊤}    t = ttⁿᶠ
 

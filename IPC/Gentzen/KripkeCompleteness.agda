@@ -10,7 +10,7 @@ mutual
   infix 3 _⊢ⁿᶠ_
   data _⊢ⁿᶠ_ (Γ : Cx Ty) : Ty → Set where
     neⁿᶠ   : ∀ {A}   → Γ ⊢ⁿᵉ A → Γ ⊢ⁿᶠ A
-    lamⁿᶠ  : ∀ {A B} → Γ , A ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ▷ B
+    lamⁿᶠ  : ∀ {A B} → Γ , A ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ▻ B
     pairⁿᶠ : ∀ {A B} → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ∧ B
     ttⁿᶠ   : Γ ⊢ⁿᶠ ⊤
     inlⁿᶠ  : ∀ {A B} → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ A ∨ B
@@ -20,7 +20,7 @@ mutual
   infix 3 _⊢ⁿᵉ_
   data _⊢ⁿᵉ_ (Γ : Cx Ty) : Ty → Set where
     varⁿᵉ  : ∀ {A}     → A ∈ Γ → Γ ⊢ⁿᵉ A
-    appⁿᵉ  : ∀ {A B}   → Γ ⊢ⁿᵉ A ▷ B → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᵉ B
+    appⁿᵉ  : ∀ {A B}   → Γ ⊢ⁿᵉ A ▻ B → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᵉ B
     fstⁿᵉ  : ∀ {A B}   → Γ ⊢ⁿᵉ A ∧ B → Γ ⊢ⁿᵉ A
     sndⁿᵉ  : ∀ {A B}   → Γ ⊢ⁿᵉ A ∧ B → Γ ⊢ⁿᵉ B
     boomⁿᵉ : ∀ {C}     → Γ ⊢ⁿᵉ ⊥ → Γ ⊢ⁿᵉ C
@@ -113,7 +113,7 @@ instance
 mutual
   reflect : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊩ A
   reflect {α P}   t = return {α P} t
-  reflect {A ▷ B} t = return {A ▷ B} (λ η a → reflect {B} (appⁿᵉ (mono⊢ⁿᵉ η t) (reify {A} a)))
+  reflect {A ▻ B} t = return {A ▻ B} (λ η a → reflect {B} (appⁿᵉ (mono⊢ⁿᵉ η t) (reify {A} a)))
   reflect {A ∧ B} t = return {A ∧ B} (reflect {A} (fstⁿᵉ t) , reflect {B} (sndⁿᵉ t))
   reflect {⊤}    t = return {⊤} ∙
   reflect {⊥}    t = λ η k → neⁿᶠ (boomⁿᵉ (mono⊢ⁿᵉ η t))
@@ -123,7 +123,7 @@ mutual
 
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ⁿᶠ A
   reify {α P}   k = k refl≤ (λ η s → neⁿᶠ s)
-  reify {A ▷ B} k = k refl≤ (λ η s → lamⁿᶠ (reify {B} (s weak⊆ (reflect {A} (varⁿᵉ top)))))
+  reify {A ▻ B} k = k refl≤ (λ η s → lamⁿᶠ (reify {B} (s weak⊆ (reflect {A} (varⁿᵉ top)))))
   reify {A ∧ B} k = k refl≤ (λ η s → pairⁿᶠ (reify {A} (π₁ s)) (reify {B} (π₂ s)))
   reify {⊤}    k = k refl≤ (λ η s → ttⁿᶠ)
   reify {⊥}    k = k refl≤ (λ η ())

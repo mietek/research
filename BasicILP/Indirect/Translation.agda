@@ -48,7 +48,7 @@ hs→hnᵀᵐ TS = aux TS 0
 
 hs→hnᵀʸ : Ty HS.Tm → Ty HN.Tm
 hs→hnᵀʸ (α P)   = α P
-hs→hnᵀʸ (A ▷ B) = hs→hnᵀʸ A ▷ hs→hnᵀʸ B
+hs→hnᵀʸ (A ▻ B) = hs→hnᵀʸ A ▻ hs→hnᵀʸ B
 hs→hnᵀʸ (T ⦂ A) = hs→hnᵀᵐ T ⦂ hs→hnᵀʸ A
 hs→hnᵀʸ (A ∧ B) = hs→hnᵀʸ A ∧ hs→hnᵀʸ B
 hs→hnᵀʸ ⊤      = ⊤
@@ -112,7 +112,7 @@ hn→hsᵀᵐ HN.TT        = HS.TT HS.NIL
 
 hn→hsᵀʸ : Ty HN.Tm → Ty HS.Tm
 hn→hsᵀʸ (α P)   = α P
-hn→hsᵀʸ (A ▷ B) = hn→hsᵀʸ A ▷ hn→hsᵀʸ B
+hn→hsᵀʸ (A ▻ B) = hn→hsᵀʸ A ▻ hn→hsᵀʸ B
 hn→hsᵀʸ (T ⦂ A) = hn→hsᵀᵐ T ⦂ hn→hsᵀʸ A
 hn→hsᵀʸ (A ∧ B) = hn→hsᵀʸ A ∧ hn→hsᵀʸ B
 hn→hsᵀʸ ⊤      = ⊤
@@ -161,12 +161,12 @@ hs→hn→hsᵀᵐ {HS.TT TS}     = {!!}
 
 hs→hn→hsᵀʸ : ∀ {A} → hn→hsᵀʸ (hs→hnᵀʸ A) ≡ A
 hs→hn→hsᵀʸ {α P}   = refl
-hs→hn→hsᵀʸ {A ▷ B} = cong₂ _▷_ hs→hn→hsᵀʸ hs→hn→hsᵀʸ
+hs→hn→hsᵀʸ {A ▻ B} = cong₂ _▻_ hs→hn→hsᵀʸ hs→hn→hsᵀʸ
 hs→hn→hsᵀʸ {T ⦂ A} = cong₂ _⦂_ hs→hn→hsᵀᵐ hs→hn→hsᵀʸ
 hs→hn→hsᵀʸ {A ∧ B} = cong₂ _∧_ hs→hn→hsᵀʸ hs→hn→hsᵀʸ
 hs→hn→hsᵀʸ {⊤}    = refl
 
--- hs-lam : ∀ {A B Γ} → HS⟨ Γ , A ⊢ B ⟩ → HS⟨ Γ ⊢ A ▷ B ⟩
+-- hs-lam : ∀ {A B Γ} → HS⟨ Γ , A ⊢ B ⟩ → HS⟨ Γ ⊢ A ▻ B ⟩
 -- hs-lam t = {!hn→hs (HN.lam (hs→hn t))!}
 -- hn→hs ∘ HN.lam ∘ hs→hn
 
@@ -190,7 +190,7 @@ hn→gᵀᵐ HN.TT        = G.TT
 
 hn→gᵀʸ : Ty HN.Tm → Ty G.Tm
 hn→gᵀʸ (α P)   = α P
-hn→gᵀʸ (A ▷ B) = hn→gᵀʸ A ▷ hn→gᵀʸ B
+hn→gᵀʸ (A ▻ B) = hn→gᵀʸ A ▻ hn→gᵀʸ B
 hn→gᵀʸ (T ⦂ A) = hn→gᵀᵐ T ⦂ hn→gᵀʸ A
 hn→gᵀʸ (A ∧ B) = hn→gᵀʸ A ∧ hn→gᵀʸ B
 hn→gᵀʸ ⊤      = ⊤
@@ -251,7 +251,7 @@ mutual
 
 g→hnᵀʸ : Ty G.Tm → Ty HN.Tm
 g→hnᵀʸ (α P)   = α P
-g→hnᵀʸ (A ▷ B) = g→hnᵀʸ A ▷ g→hnᵀʸ B
+g→hnᵀʸ (A ▻ B) = g→hnᵀʸ A ▻ g→hnᵀʸ B
 g→hnᵀʸ (T ⦂ A) = g→hnᵀᵐ T ⦂ g→hnᵀʸ A
 g→hnᵀʸ (A ∧ B) = g→hnᵀʸ A ∧ g→hnᵀʸ B
 g→hnᵀʸ ⊤      = ⊤

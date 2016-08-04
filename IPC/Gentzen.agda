@@ -8,8 +8,8 @@ open import IPC public
 infix 3 _⊢_
 data _⊢_ (Γ : Cx Ty) : Ty → Set where
   var  : ∀ {A}     → A ∈ Γ → Γ ⊢ A
-  lam  : ∀ {A B}   → Γ , A ⊢ B → Γ ⊢ A ▷ B
-  app  : ∀ {A B}   → Γ ⊢ A ▷ B → Γ ⊢ A → Γ ⊢ B
+  lam  : ∀ {A B}   → Γ , A ⊢ B → Γ ⊢ A ▻ B
+  app  : ∀ {A B}   → Γ ⊢ A ▻ B → Γ ⊢ A → Γ ⊢ B
   pair : ∀ {A B}   → Γ ⊢ A → Γ ⊢ B → Γ ⊢ A ∧ B
   fst  : ∀ {A B}   → Γ ⊢ A ∧ B → Γ ⊢ A
   snd  : ∀ {A B}   → Γ ⊢ A ∧ B → Γ ⊢ B
@@ -61,7 +61,7 @@ v₂ = var i₂
 
 -- Detachment theorem.
 
-det : ∀ {A B Γ} → Γ ⊢ A ▷ B → Γ , A ⊢ B
+det : ∀ {A B Γ} → Γ ⊢ A ▻ B → Γ , A ⊢ B
 det t = app (mono⊢ weak⊆ t) v₀
 
 
@@ -88,7 +88,7 @@ trans⊢⋆ {Γ″ , A} ts (us , u) = trans⊢⋆ ts us , multicut ts u
 
 -- Contraction.
 
-ccont : ∀ {A B Γ} → Γ ⊢ (A ▷ A ▷ B) ▷ A ▷ B
+ccont : ∀ {A B Γ} → Γ ⊢ (A ▻ A ▻ B) ▻ A ▻ B
 ccont = lam (lam (app (app v₁ v₀) v₀))
 
 cont : ∀ {A B Γ} → (Γ , A) , A ⊢ B → Γ , A ⊢ B
@@ -97,7 +97,7 @@ cont t = det (app ccont (lam (lam t)))
 
 -- Exchange.
 
-cexch : ∀ {A B C Γ} → Γ ⊢ (A ▷ B ▷ C) ▷ B ▷ A ▷ C
+cexch : ∀ {A B C Γ} → Γ ⊢ (A ▻ B ▻ C) ▻ B ▻ A ▻ C
 cexch = lam (lam (lam (app (app v₂ v₀) v₁)))
 
 exch : ∀ {A B C Γ} → (Γ , A) , B ⊢ C → (Γ , B) , A ⊢ C
@@ -106,7 +106,7 @@ exch t = det (det (app cexch (lam (lam t))))
 
 -- Composition.
 
-ccomp : ∀ {A B C Γ} → Γ ⊢ (B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
+ccomp : ∀ {A B C Γ} → Γ ⊢ (B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
 ccomp = lam (lam (lam (app v₂ (app v₁ v₀))))
 
 comp : ∀ {A B C Γ} → Γ , B ⊢ C → Γ , A ⊢ B → Γ , A ⊢ C
@@ -115,34 +115,34 @@ comp t u = det (app (app ccomp (lam t)) (lam u))
 
 -- Useful theorems in combinatory form.
 
-ci : ∀ {A Γ} → Γ ⊢ A ▷ A
+ci : ∀ {A Γ} → Γ ⊢ A ▻ A
 ci = lam v₀
 
-ck : ∀ {A B Γ} → Γ ⊢ A ▷ B ▷ A
+ck : ∀ {A B Γ} → Γ ⊢ A ▻ B ▻ A
 ck = lam (lam v₁)
 
-cs : ∀ {A B C Γ} → Γ ⊢ (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
+cs : ∀ {A B C Γ} → Γ ⊢ (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
 cs = lam (lam (lam (app (app v₂ v₀) (app v₁ v₀))))
 
-cpair : ∀ {A B Γ} → Γ ⊢ A ▷ B ▷ A ∧ B
+cpair : ∀ {A B Γ} → Γ ⊢ A ▻ B ▻ A ∧ B
 cpair = lam (lam (pair v₁ v₀))
 
-cfst : ∀ {A B Γ} → Γ ⊢ A ∧ B ▷ A
+cfst : ∀ {A B Γ} → Γ ⊢ A ∧ B ▻ A
 cfst = lam (fst v₀)
 
-csnd : ∀ {A B Γ} → Γ ⊢ A ∧ B ▷ B
+csnd : ∀ {A B Γ} → Γ ⊢ A ∧ B ▻ B
 csnd = lam (snd v₀)
 
-cboom : ∀ {C Γ} → Γ ⊢ ⊥ ▷ C
+cboom : ∀ {C Γ} → Γ ⊢ ⊥ ▻ C
 cboom = lam (boom v₀)
 
-cinl : ∀ {A B Γ} → Γ ⊢ A ▷ A ∨ B
+cinl : ∀ {A B Γ} → Γ ⊢ A ▻ A ∨ B
 cinl = lam (inl v₀)
 
-cinr : ∀ {A B Γ} → Γ ⊢ B ▷ A ∨ B
+cinr : ∀ {A B Γ} → Γ ⊢ B ▻ A ∨ B
 cinr = lam (inr v₀)
 
-ccase : ∀ {A B C Γ} → Γ ⊢ A ∨ B ▷ (A ▷ C) ▷ (B ▷ C) ▷ C
+ccase : ∀ {A B C Γ} → Γ ⊢ A ∨ B ▻ (A ▻ C) ▻ (B ▻ C) ▻ C
 ccase = lam (lam (lam (case v₂ (det v₁) (det v₀))))
 
 
@@ -185,7 +185,7 @@ data _⇒_ : ∀ {A Γ} → Γ ⊢ A → Γ ⊢ A → Set where
                → t ⇒ t′ → t′ ⇒ t
   cong⇒lam  : ∀ {A B Γ} {t t′ : Γ , A ⊢ B}
                → t ⇒ t′ → lam t ⇒ lam t′
-  cong⇒app  : ∀ {A B Γ} {t t′ : Γ ⊢ A ▷ B} {u u′ : Γ ⊢ A}
+  cong⇒app  : ∀ {A B Γ} {t t′ : Γ ⊢ A ▻ B} {u u′ : Γ ⊢ A}
                → t ⇒ t′ → u ⇒ u′ → app t u ⇒ app t′ u′
   cong⇒pair : ∀ {A B Γ} {t t′ : Γ ⊢ A} {u u′ : Γ ⊢ B}
                → t ⇒ t′ → u ⇒ u′ → pair t u ⇒ pair t′ u′
@@ -201,7 +201,7 @@ data _⇒_ : ∀ {A Γ} → Γ ⊢ A → Γ ⊢ A → Set where
                → t ⇒ t′ → boom {C = C} t ⇒ boom t′
   cong⇒case : ∀ {A B C Γ} {t t′ : Γ ⊢ A ∨ B} {u u′ : Γ , A ⊢ C} {v v′ : Γ , B ⊢ C}
                → t ⇒ t′ → u ⇒ u′ → v ⇒ v′ → case t u v ⇒ case t′ u′ v′
-  conv⇒lam  : ∀ {A B Γ} {t : Γ ⊢ A ▷ B}
+  conv⇒lam  : ∀ {A B Γ} {t : Γ ⊢ A ▻ B}
                → t ⇒ lam (app (mono⊢ weak⊆ t) (var top))
   conv⇒app  : ∀ {A B Γ} {t : Γ , A ⊢ B} {u : Γ ⊢ A}
                → app (lam t) u ⇒ ([ top ≔ u ] t)

@@ -68,10 +68,10 @@ hn→hs HN.tt        = ⌀ , HS.tt HS.nil
 
 -- Deduction theorems for sequential Hilbert-style.
 
-hs-lam : ∀ {A B Γ Δ} → HS⟨ Γ , A ⁏ Δ ⊢ B ⟩ → HS⟨ Γ ⁏ Δ ⊢ A ▷ B ⟩
+hs-lam : ∀ {A B Γ Δ} → HS⟨ Γ , A ⁏ Δ ⊢ B ⟩ → HS⟨ Γ ⁏ Δ ⊢ A ▻ B ⟩
 hs-lam = hn→hs ∘ HN.lam ∘ hs→hn
 
-hs-mlam : ∀ {A B Γ Δ} → HS⟨ Γ ⁏ Δ , A ⊢ B ⟩ → HS⟨ Γ ⁏ Δ ⊢ □ A ▷ B ⟩
+hs-mlam : ∀ {A B Γ Δ} → HS⟨ Γ ⁏ Δ , A ⊢ B ⟩ → HS⟨ Γ ⁏ Δ ⊢ □ A ▻ B ⟩
 hs-mlam = hn→hs ∘ HN.mlam ∘ hs→hn
 
 
@@ -130,14 +130,14 @@ module Closed where
     mutual
       g⇒hn : ∀ {A} → G⟨⊨ A ⟩ → HN⟨⊨ A ⟩
       g⇒hn {α P}   s             = s
-      g⇒hn {A ▷ B} f             = λ a → g⇒hn {B} (f (hn⇒g {A} a))
+      g⇒hn {A ▻ B} f             = λ a → g⇒hn {B} (f (hn⇒g {A} a))
       g⇒hn {□ A}   (G.[ t ] , a) = HN.[ g→hn t ] , g⇒hn {A} a
       g⇒hn {A ∧ B} (a , b)       = g⇒hn {A} a , g⇒hn {B} b
       g⇒hn {⊤}    ∙             = ∙
 
       hn⇒g : ∀ {A} → HN⟨⊨ A ⟩ → G⟨⊨ A ⟩
       hn⇒g {α P}   s              = s
-      hn⇒g {A ▷ B} f              = λ a → hn⇒g {B} (f (g⇒hn {A} a))
+      hn⇒g {A ▻ B} f              = λ a → hn⇒g {B} (f (g⇒hn {A} a))
       hn⇒g {□ A}   (HN.[ t ] , a) = G.[ hn→g t ] , hn⇒g {A} a
       hn⇒g {A ∧ B} (a , b)        = hn⇒g {A} a , hn⇒g {B} b
       hn⇒g {⊤}    ∙              = ∙
@@ -166,14 +166,14 @@ module Open where
     mutual
       g⇒hn : ∀ {A Δ} → G⟨ Δ ⊨ A ⟩ → HN⟨ Δ ⊨ A ⟩
       g⇒hn {α P}   s       = s
-      g⇒hn {A ▷ B} f       = λ θ a → g⇒hn {B} (f θ (hn⇒g {A} a))
+      g⇒hn {A ▻ B} f       = λ θ a → g⇒hn {B} (f θ (hn⇒g {A} a))
       g⇒hn {□ A}   □f      = λ θ → let G.[ t ] , a = □f θ in HN.[ g→hn t ] , g⇒hn {A} a
       g⇒hn {A ∧ B} (a , b) = g⇒hn {A} a , g⇒hn {B} b
       g⇒hn {⊤}    ∙       = ∙
 
       hn⇒g : ∀ {A Δ} → HN⟨ Δ ⊨ A ⟩ → G⟨ Δ ⊨ A ⟩
       hn⇒g {α P}   s       = s
-      hn⇒g {A ▷ B} f       = λ θ a → hn⇒g {B} (f θ (g⇒hn {A} a))
+      hn⇒g {A ▻ B} f       = λ θ a → hn⇒g {B} (f θ (g⇒hn {A} a))
       hn⇒g {□ A}   □f      = λ θ → let HN.[ t ] , a = □f θ in G.[ hn→g t ] , hn⇒g {A} a
       hn⇒g {A ∧ B} (a , b) = hn⇒g {A} a , hn⇒g {B} b
       hn⇒g {⊤}    ∙       = ∙

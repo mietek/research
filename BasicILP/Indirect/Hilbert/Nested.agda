@@ -24,17 +24,17 @@ mutual
   infix 3 _⊢_
   data _⊢_ (Γ : Cx (Ty Tm)) : Ty Tm → Set where
     var   : ∀ {A}       → A ∈ Γ → Γ ⊢ A
-    app   : ∀ {A B}     → Γ ⊢ A ▷ B → Γ ⊢ A → Γ ⊢ B
-    ci    : ∀ {A}       → Γ ⊢ A ▷ A
-    ck    : ∀ {A B}     → Γ ⊢ A ▷ B ▷ A
-    cs    : ∀ {A B C}   → Γ ⊢ (A ▷ B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
+    app   : ∀ {A B}     → Γ ⊢ A ▻ B → Γ ⊢ A → Γ ⊢ B
+    ci    : ∀ {A}       → Γ ⊢ A ▻ A
+    ck    : ∀ {A B}     → Γ ⊢ A ▻ B ▻ A
+    cs    : ∀ {A B C}   → Γ ⊢ (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
     box   : ∀ {A}       → (t : ⌀ ⊢ A) → Γ ⊢ [ t ] ⦂ A
-    cdist : ∀ {A B T U} → Γ ⊢ T ⦂ (A ▷ B) ▷ U ⦂ A ▷ APP T U ⦂ B
-    cup   : ∀ {A T}     → Γ ⊢ T ⦂ A ▷ BOX T ⦂ T ⦂ A
-    cdown : ∀ {A T}     → Γ ⊢ T ⦂ A ▷ A
-    cpair : ∀ {A B}     → Γ ⊢ A ▷ B ▷ A ∧ B
-    cfst  : ∀ {A B}     → Γ ⊢ A ∧ B ▷ A
-    csnd  : ∀ {A B}     → Γ ⊢ A ∧ B ▷ B
+    cdist : ∀ {A B T U} → Γ ⊢ T ⦂ (A ▻ B) ▻ U ⦂ A ▻ APP T U ⦂ B
+    cup   : ∀ {A T}     → Γ ⊢ T ⦂ A ▻ BOX T ⦂ T ⦂ A
+    cdown : ∀ {A T}     → Γ ⊢ T ⦂ A ▻ A
+    cpair : ∀ {A B}     → Γ ⊢ A ▻ B ▻ A ∧ B
+    cfst  : ∀ {A B}     → Γ ⊢ A ∧ B ▻ A
+    csnd  : ∀ {A B}     → Γ ⊢ A ∧ B ▻ B
     tt    : Γ ⊢ ⊤
 
   [_] : ∀ {A Γ} → Γ ⊢ A → Tm
@@ -119,7 +119,7 @@ LAM CFST          = APP CK CFST
 LAM CSND          = APP CK CSND
 LAM TT            = APP CK TT
 
-lam : ∀ {A B Γ} → Γ , A ⊢ B → Γ ⊢ A ▷ B
+lam : ∀ {A B Γ} → Γ , A ⊢ B → Γ ⊢ A ▻ B
 lam (var top)     = ci
 lam (var (pop i)) = app ck (var i)
 lam (app t u)     = app (app cs (lam t)) (lam u)
@@ -141,7 +141,7 @@ lam tt            = app ck tt
 DET : Tm → Tm
 DET T = APP T V₀
 
-det : ∀ {A B Γ} → Γ ⊢ A ▷ B → Γ , A ⊢ B
+det : ∀ {A B Γ} → Γ ⊢ A ▻ B → Γ , A ⊢ B
 det t = app (mono⊢ weak⊆ t) v₀
 
 
@@ -181,7 +181,7 @@ CCONT = LAM (LAM (APP (APP V₁ V₀) V₀))
 CONT : Tm → Tm
 CONT T = DET (APP CCONT (LAM (LAM T)))
 
-ccont : ∀ {A B Γ} → Γ ⊢ (A ▷ A ▷ B) ▷ A ▷ B
+ccont : ∀ {A B Γ} → Γ ⊢ (A ▻ A ▻ B) ▻ A ▻ B
 ccont = lam (lam (app (app v₁ v₀) v₀))
 
 cont : ∀ {A B Γ} → (Γ , A) , A ⊢ B → Γ , A ⊢ B
@@ -196,7 +196,7 @@ CEXCH = LAM (LAM (LAM (APP (APP V₂ V₀) V₁)))
 EXCH : Tm → Tm
 EXCH T = DET (DET (APP CEXCH (LAM (LAM T))))
 
-cexch : ∀ {A B C Γ} → Γ ⊢ (A ▷ B ▷ C) ▷ B ▷ A ▷ C
+cexch : ∀ {A B C Γ} → Γ ⊢ (A ▻ B ▻ C) ▻ B ▻ A ▻ C
 cexch = lam (lam (lam (app (app v₂ v₀) v₁)))
 
 exch : ∀ {A B C Γ} → (Γ , A) , B ⊢ C → (Γ , B) , A ⊢ C
@@ -211,7 +211,7 @@ CCOMP = LAM (LAM (LAM (APP V₂ (APP V₁ V₀))))
 COMP : Tm → Tm → Tm
 COMP T U = DET (APP (APP CCOMP (LAM T)) (LAM U))
 
-ccomp : ∀ {A B C Γ} → Γ ⊢ (B ▷ C) ▷ (A ▷ B) ▷ A ▷ C
+ccomp : ∀ {A B C Γ} → Γ ⊢ (B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
 ccomp = lam (lam (lam (app v₂ (app v₁ v₀))))
 
 comp : ∀ {A B C Γ} → Γ , B ⊢ C → Γ , A ⊢ B → Γ , A ⊢ C
@@ -239,7 +239,7 @@ MULTIBOX : Cx Tm → Tm → Tm
 MULTIBOX ⌀        U = BOX U
 MULTIBOX (TS , T) U = DISTUP (MULTIBOX TS (LAM U)) T
 
-dist : ∀ {A B T U Γ} → Γ ⊢ T ⦂ (A ▷ B) → Γ ⊢ U ⦂ A → Γ ⊢ (APP T U) ⦂ B
+dist : ∀ {A B T U Γ} → Γ ⊢ T ⦂ (A ▻ B) → Γ ⊢ U ⦂ A → Γ ⊢ (APP T U) ⦂ B
 dist t u = app (app cdist t) u
 
 up : ∀ {A T Γ} → Γ ⊢ T ⦂ A → Γ ⊢ BOX T ⦂ T ⦂ A
@@ -248,7 +248,7 @@ up t = app cup t
 down : ∀ {A T Γ} → Γ ⊢ T ⦂ A → Γ ⊢ A
 down t = app cdown t
 
-distup : ∀ {A B T U Γ} → Γ ⊢ T ⦂ (U ⦂ A ▷ B)
+distup : ∀ {A B T U Γ} → Γ ⊢ T ⦂ (U ⦂ A ▻ B)
          → Γ ⊢ U ⦂ A → Γ ⊢ APP T (BOX U) ⦂ B
 distup t u = dist t (up u)
 
@@ -263,7 +263,7 @@ unbox t u = app (lam u) t
 -- Goal: Γ ⊢ [ u ] ⦂ A
 -- Have: Γ ⊢ APP [ lam u ] (BOX S) ⦂ A
 
-distup′ : ∀ {A B T U Γ} → Γ ⊢ LAM T ⦂ (U ⦂ A ▷ B) → Γ ⊢ U ⦂ A
+distup′ : ∀ {A B T U Γ} → Γ ⊢ LAM T ⦂ (U ⦂ A ▻ B) → Γ ⊢ U ⦂ A
           → Γ ⊢ APP (LAM T) (BOX U) ⦂ B
 distup′ t u = dist t (up u)
 

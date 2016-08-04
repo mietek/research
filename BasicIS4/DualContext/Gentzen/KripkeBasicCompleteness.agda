@@ -36,14 +36,14 @@ postulate
 mutual
   reflect : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ , Δ ⊩ A
   reflect {α P}   t = t
-  reflect {A ▷ B} t = λ ξ a → reflect {B} (app (mono²⊢ ξ t) (reify {A} a))
+  reflect {A ▻ B} t = λ ξ a → reflect {B} (app (mono²⊢ ξ t) (reify {A} a))
   reflect {□ A}   t = λ ζ → reflect {A} (ζ t)
   reflect {A ∧ B} t = reflect {A} (fst t) , reflect {B} (snd t)
   reflect {⊤}    t = ∙
 
   reify : ∀ {A Γ Δ} → Γ , Δ ⊩ A → Γ ⁏ Δ ⊢ A
   reify {α P}   s = s
-  reify {A ▷ B} s = lam (reify {B} (s weak⊆²ₗ (reflect {A} v₀)))
+  reify {A ▻ B} s = lam (reify {B} (s weak⊆²ₗ (reflect {A} v₀)))
   reify {□ A}   s = box (reify {A} (s oops))
   reify {A ∧ B} s = pair (reify {A} (π₁ s)) (reify {B} (π₂ s))
   reify {⊤}    s = tt

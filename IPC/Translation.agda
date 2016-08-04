@@ -65,7 +65,7 @@ hn→hs HN.ccase     = ⌀ , HS.ccase HS.nil
 
 -- Deduction theorem for sequential Hilbert-style.
 
-hl-lam : ∀ {A B Γ} → HS⟨ Γ , A ⊢ B ⟩ → HS⟨ Γ ⊢ A ▷ B ⟩
+hl-lam : ∀ {A B Γ} → HS⟨ Γ , A ⊢ B ⟩ → HS⟨ Γ ⊢ A ▻ B ⟩
 hl-lam = hn→hs ∘ HN.lam ∘ hs→hn
 
 
