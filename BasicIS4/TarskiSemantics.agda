@@ -27,11 +27,11 @@ module TruthWithClosedBox (Box : Ty → Set) where
     ⊨ A ▷ B = ⊨ A → ⊨ B
     ⊨ □ A   = Box A × ⊨ A
     ⊨ A ∧ B = ⊨ A × ⊨ B
-    ⊨ ⊤    = Top
+    ⊨ ⊤    = 𝟙
 
     infix 3 ⊨⋆_
     ⊨⋆_ : Cx Ty → Set
-    ⊨⋆ ⌀     = Top
+    ⊨⋆ ⌀     = 𝟙
     ⊨⋆ Γ , A = ⊨⋆ Γ × ⊨ A
 
 
@@ -70,11 +70,11 @@ module TruthWithOpenBox (Box : Cx Ty → Ty → Set) where
     Δ ⊨ A ▷ B = ∀ {Δ′} → Δ ⊆ Δ′ → Δ′ ⊨ A → Δ′ ⊨ B
     Δ ⊨ □ A   = ∀ {Δ′} → Δ ⊆ Δ′ → Box Δ′ A × Δ′ ⊨ A
     Δ ⊨ A ∧ B = Δ ⊨ A × Δ ⊨ B
-    Δ ⊨ ⊤    = Top
+    Δ ⊨ ⊤    = 𝟙
 
     infix 3 _⊨⋆_
     _⊨⋆_ : Cx Ty → Cx Ty → Set
-    Δ ⊨⋆ ⌀     = Top
+    Δ ⊨⋆ ⌀     = 𝟙
     Δ ⊨⋆ Γ , A = Δ ⊨⋆ Γ × Δ ⊨ A
 
 

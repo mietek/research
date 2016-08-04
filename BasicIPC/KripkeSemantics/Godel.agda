@@ -33,11 +33,11 @@ module _ {{_ : Model}} where
   -- NOTE: This requirement can be dropped.
   w ⊩ A ∧ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A × w′ ⊩ B
   -- NOTE: This requirement can be dropped.
-  w ⊩ ⊤    = ∀ {w′} → w ≤ w′ → Top
+  w ⊩ ⊤    = ∀ {w′} → w ≤ w′ → 𝟙
 
   infix 3 _⊩⋆_
   _⊩⋆_ : World → Cx Ty → Set
-  w ⊩⋆ ⌀     = Top
+  w ⊩⋆ ⌀     = 𝟙
   w ⊩⋆ Γ , A = w ⊩⋆ Γ × w ⊩ A
 
 

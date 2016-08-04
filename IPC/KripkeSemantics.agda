@@ -34,8 +34,8 @@ module _ {{_ : Model}} where
     w ⊪ α P   = w ⊪ᵅ P
     w ⊪ A ▷ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
     w ⊪ A ∧ B = w ⊩ A × w ⊩ B
-    w ⊪ ⊤    = Top
-    w ⊪ ⊥    = Bot
+    w ⊪ ⊤    = 𝟙
+    w ⊪ ⊥    = 𝟘
     w ⊪ A ∨ B = w ⊩ A ⊎ w ⊩ B
 
     infix 3 _⊩_
@@ -44,7 +44,7 @@ module _ {{_ : Model}} where
 
   infix 3 _⊩⋆_
   _⊩⋆_ : World → Cx Ty → Set
-  w ⊩⋆ ⌀     = Top
+  w ⊩⋆ ⌀     = 𝟙
   w ⊩⋆ Γ , A = w ⊩⋆ Γ × w ⊩ A
 
 

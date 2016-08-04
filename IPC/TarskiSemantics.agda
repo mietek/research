@@ -22,13 +22,13 @@ module _ {{_ : Model}} where
   ⊨ α P   = ⊨ᵅ P
   ⊨ A ▷ B = ⊨ A → ⊨ B
   ⊨ A ∧ B = ⊨ A × ⊨ B
-  ⊨ ⊤    = Top
-  ⊨ ⊥    = Bot
+  ⊨ ⊤    = 𝟙
+  ⊨ ⊥    = 𝟘
   ⊨ A ∨ B = ⊨ A ⊎ ⊨ B
 
   infix 3 ⊨⋆_
   ⊨⋆_ : Cx Ty → Set
-  ⊨⋆ ⌀     = Top
+  ⊨⋆ ⌀     = 𝟙
   ⊨⋆ Γ , A = ⊨⋆ Γ × ⊨ A
 
 

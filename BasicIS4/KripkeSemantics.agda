@@ -219,11 +219,11 @@ module RegularForcing where
     -- NOTE: Only modal accessibility here.
     w ⊩ □ A   = ∀ {v′} → w R v′ → v′ ⊩ A
     w ⊩ A ∧ B = w ⊩ A × w ⊩ B
-    w ⊩ ⊤    = Top
+    w ⊩ ⊤    = 𝟙
 
     infix 3 _⊩⋆_
     _⊩⋆_ : World → Cx Ty → Set
-    w ⊩⋆ ⌀     = Top
+    w ⊩⋆ ⌀     = 𝟙
     w ⊩⋆ Γ , A = w ⊩⋆ Γ × w ⊩ A
 
 
@@ -275,11 +275,11 @@ module DualRelationForcing where
     -- NOTE: Both intuitionistic and modal accessibility here.
     w ⊩ □ A   = ∀ {w′} → w ≤ w′ → ∀ {v′} → w′ R v′ → v′ ⊩ A
     w ⊩ A ∧ B = w ⊩ A × w ⊩ B
-    w ⊩ ⊤    = Top
+    w ⊩ ⊤    = 𝟙
 
     infix 3 _⊩⋆_
     _⊩⋆_ : World → Cx Ty → Set
-    w ⊩⋆ ⌀     = Top
+    w ⊩⋆ ⌀     = 𝟙
     w ⊩⋆ Γ , A = w ⊩⋆ Γ × w ⊩ A
 
 

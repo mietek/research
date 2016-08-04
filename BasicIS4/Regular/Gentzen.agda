@@ -20,7 +20,7 @@ mutual
 
   infix 3 _⊢⋆_
   _⊢⋆_ : Cx Ty → Cx Ty → Set
-  Γ ⊢⋆ ⌀     = Top
+  Γ ⊢⋆ ⌀     = 𝟙
   Γ ⊢⋆ Π , A = Γ ⊢⋆ Π × Γ ⊢ A
 
 

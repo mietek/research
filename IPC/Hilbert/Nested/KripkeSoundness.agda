@@ -34,7 +34,7 @@ eval (csnd {A} {B})      γ = return {A ∧ B ▷ B} (λ _ t →
                              bind {A ∧ B} {B} t (λ _ s → π₂ s))
 eval tt                  γ = return {⊤} ∙
 eval (cboom {C})         γ = return {⊥ ▷ C} (λ _ t →
-                             bind {⊥} {C} t (λ ξ s → elimBot s))
+                             bind {⊥} {C} t (λ ξ s → elim𝟘 s))
 eval (cinl {A} {B})      γ = return {A ▷ A ∨ B} (λ _ a →
                              return {A ∨ B} (ι₁ a))
 eval (cinr {A} {B})      γ = return {B ▷ A ∨ B} (λ _ b →

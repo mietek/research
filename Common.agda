@@ -13,7 +13,7 @@ open import Data.Bool public
 
 open import Data.Empty public
   using ()
-  renaming (⊥ to Bot ; ⊥-elim to elimBot)
+  renaming (⊥ to 𝟘 ; ⊥-elim to elim𝟘)
 
 open import Data.Nat public
   using (ℕ ; zero ; suc)
@@ -29,7 +29,7 @@ open import Data.Sum public
 
 open import Data.Unit public
   using ()
-  renaming (⊤ to Top ; tt to ∙)
+  renaming (⊤ to 𝟙 ; tt to ∙)
 
 open import Function public
   using (_∘_ ; _$_ ; id ; const)

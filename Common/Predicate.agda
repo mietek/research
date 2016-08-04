@@ -28,17 +28,17 @@ module _ {U : Set} where
 
 module _ {U : Set} where
   ⌀ᴾ : Pred U
-  ⌀ᴾ = const Bot
+  ⌀ᴾ = const 𝟘
 
   bot∈ᴾ : ∀ {A} → A ∉ᴾ ⌀ᴾ
-  bot∈ᴾ = elimBot
+  bot∈ᴾ = elim𝟘
 
 
 -- Universal set.
 
 module _ {U : Set} where
   Uᴾ : Pred U
-  Uᴾ = const Top
+  Uᴾ = const 𝟙
 
   top∈ᴾ : ∀ {A} → A ∈ᴾ Uᴾ
   top∈ᴾ = ∙
@@ -62,7 +62,7 @@ module _ {U : Set} where
   trans⊆ᴾ η η′ = η′ ∘ η
 
   bot⊆ᴾ : ∀ {P} → ⌀ᴾ ⊆ᴾ P
-  bot⊆ᴾ = elimBot
+  bot⊆ᴾ = elim𝟘
 
   top⊆ᴾ : ∀ {P} → P ⊆ᴾ Uᴾ
   top⊆ᴾ = const ∙

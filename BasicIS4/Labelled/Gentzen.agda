@@ -50,7 +50,7 @@ data _⁏_⊢_◎_ (Γ : Cx TyLa) (Λ : Cx LaLa) : Ty → La → Set where
 
 infix 3 _⁏_⊢⋆_◎⋆_
 _⁏_⊢⋆_◎⋆_ : Cx TyLa → Cx LaLa → Cx Ty → La → Set
-Γ ⁏ Λ ⊢⋆ ⌀     ◎⋆ x = Top
+Γ ⁏ Λ ⊢⋆ ⌀     ◎⋆ x = 𝟙
 Γ ⁏ Λ ⊢⋆ Π , A ◎⋆ x = Γ ⁏ Λ ⊢⋆ Π ◎⋆ x × Γ ⁏ Λ ⊢ A ◎ x
 
 
