@@ -10,7 +10,7 @@ module Glueing (Syn : Ty → Set) where
   module _ {{_ : Model}} where
     infix 3 ⊨_
     ⊨_ : Ty → Set
-    ⊨ α P   = Syn (α P) × (⊨ᵅ P)
+    ⊨ α P   = Syn (α P) × ⊨ᵅ P
     ⊨ A ▻ B = Syn (A ▻ B) × (⊨ A → ⊨ B)
     ⊨ A ∧ B = ⊨ A × ⊨ B
     ⊨ ⊤    = 𝟙

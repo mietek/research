@@ -7,7 +7,7 @@ open Glueing (⊢_) public
 
 -- Completeness with respect to a particular model.
 
-module _ {{M : Model}} where
+module _ {{_ : Model}} where
   reify : ∀ {A} → ⊨ A → ⊢ A
   reify {α P}   s = π₁ s
   reify {A ▻ B} s = π₁ s
@@ -24,9 +24,10 @@ eval : ∀ {A} → ⊢ A → ᴹ⊨ A
 eval (app t u) = (eval t) $ˢ (eval u)
 eval ci        = ci , id
 eval ck        = ck , (λ a → app ck (reify a) , const a)
-eval cs        = cs , (λ f → app cs (reify f) , (λ g →
-                                app (app cs (reify f)) (reify g) , (λ a →
-                                  (f $ˢ a) $ˢ (g $ˢ a))))
+eval cs        = cs , (λ f →
+                   app cs (reify f) , (λ g →
+                     app (app cs (reify f)) (reify g) , (λ a →
+                       (f $ˢ a) $ˢ (g $ˢ a))))
 eval cpair     = cpair , (λ a → app cpair (reify a) , (λ b → a , b))
 eval cfst      = cfst , π₁
 eval csnd      = csnd , π₂
