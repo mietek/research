@@ -22,6 +22,7 @@ import Common.PredicateBasedContext
 
 import BasicIPC
 import BasicIPC.TarskiSemantics
+import BasicIPC.TarskiSemantics.CoquandDybjer
 import BasicIPC.KripkeSemantics
 import BasicIPC.KripkeSemantics.Godel
 import BasicIPC.Hilbert.Sequential
@@ -29,6 +30,10 @@ import BasicIPC.Hilbert.Nested
 import BasicIPC.Hilbert.Nested.TarskiSoundness
 import BasicIPC.Hilbert.Nested.KripkeSoundness
 import BasicIPC.Hilbert.Nested.KripkeSoundness.Godel
+import BasicIPC.Hilbert.ContextFree.Nested
+import BasicIPC.Hilbert.ContextFree.Nested.TarskiSoundness
+import BasicIPC.Hilbert.ContextFree.Nested.TarskiSoundness.CoquandDybjer
+import BasicIPC.Hilbert.ContextFree.Nested.TarskiBasicCompleteness
 import BasicIPC.Gentzen
 import BasicIPC.Gentzen.TarskiSoundness
 import BasicIPC.Gentzen.KripkeSoundness

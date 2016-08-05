@@ -32,6 +32,10 @@ module _ {{_ : Model}} where
 
 -- Truth in all models.
 
+infix 3 ᴹ⊨_
+ᴹ⊨_ : Ty → Set₁
+ᴹ⊨ A = ∀ {{_ : Model}} → ⊨ A
+
 infix 3 _ᴹ⊨_
 _ᴹ⊨_ : Cx Ty → Ty → Set₁
 Γ ᴹ⊨ A = ∀ {{_ : Model}} → ⊨⋆ Γ → ⊨ A
