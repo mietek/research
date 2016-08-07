@@ -5,7 +5,7 @@ open import BasicIPC.Gentzen.KripkeSoundness public
 
 
 
--- Using truth based on the Gödel translation of IPC to S4.
+-- Using forcing based on the Gödel translation of IPC to S4.
 
 module GodelBasicCompleteness where
   open GodelSoundness public

@@ -1,14 +1,15 @@
 module BasicIPC.Hilbert.TreeWithContext.KripkeSoundness where
 
 open import BasicIPC.Hilbert.TreeWithContext public
+open import BasicIPC.KripkeSemantics public
 
 
 
 
--- Using truth based on the Gödel translation of IPC to S4.
+-- Using forcing based on the Gödel translation of IPC to S4.
 
 module GodelSoundness where
-  open import BasicIPC.KripkeSemantics.Godel public
+  open GodelSemantics public
 
 
   -- Soundness with respect to all models, or evaluation.
@@ -30,10 +31,10 @@ module GodelSoundness where
 
 
 
--- Using truth based on the McKinsey-Tarski translation of IPC to S4.
+-- Using forcing based on the McKinsey-Tarski translation of IPC to S4.
 
 module McKinseyTarskiSoundness where
-  open import BasicIPC.KripkeSemantics.McKinseyTarski public
+  open McKinseyTarskiSemantics public
 
 
   -- Soundness with respect to all models, or evaluation.
