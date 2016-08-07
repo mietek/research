@@ -73,32 +73,33 @@ import BasicIS4.KripkeSemantics.Ono
 import BasicIS4.KripkeSemantics.BozicDosen
 import BasicIS4.KripkeSemantics.EwaldEtAl
 import BasicIS4.KripkeSemantics.AlechinaEtAl
-import BasicIS4.Hilbert.Combinatory.Nested
-import BasicIS4.Hilbert.Combinatory.Nested.TarskiSoundness
-import BasicIS4.Hilbert.Combinatory.Nested.TarskiBasicCompleteness
-import BasicIS4.Regular.Hilbert.Sequential
-import BasicIS4.Regular.Hilbert.Nested
-import BasicIS4.Regular.Hilbert.Nested.TarskiSoundness -- FIXME
-import BasicIS4.Regular.Hilbert.Nested.KripkeSoundness
-import BasicIS4.Regular.Gentzen
-import BasicIS4.Regular.Gentzen.TarskiSoundness -- FIXME
-import BasicIS4.Regular.Gentzen.KripkeSoundness
-import BasicIS4.Regular.Gentzen.KripkeEquipment
-import BasicIS4.Regular.Gentzen.KripkeEquipmentToo
-import BasicIS4.Regular.Gentzen.KripkeBasicCompleteness -- FIXME
-import BasicIS4.Regular.Translation
-import BasicIS4.DualContext.Hilbert.Sequential
-import BasicIS4.DualContext.Hilbert.Nested
-import BasicIS4.DualContext.Hilbert.Nested.TarskiSoundness -- FIXME
-import BasicIS4.DualContext.Hilbert.Nested.KripkeSoundness
-import BasicIS4.DualContext.Gentzen
-import BasicIS4.DualContext.Gentzen.TarskiSoundness -- FIXME
-import BasicIS4.DualContext.Gentzen.KripkeSoundness
-import BasicIS4.DualContext.Gentzen.KripkeEquipment
-import BasicIS4.DualContext.Gentzen.KripkeEquipmentToo
-import BasicIS4.DualContext.Gentzen.KripkeBasicCompleteness -- FIXME
-import BasicIS4.DualContext.Translation
-import BasicIS4.Labelled.Gentzen -- FIXME
+import BasicIS4.Hilbert.List
+import BasicIS4.Hilbert.ListWithContext
+import BasicIS4.Hilbert.ListWithContextPair
+import BasicIS4.Hilbert.Tree
+import BasicIS4.Hilbert.Tree.TarskiSoundness
+import BasicIS4.Hilbert.Tree.TarskiBasicCompleteness
+import BasicIS4.Hilbert.TreeWithContext
+import BasicIS4.Hilbert.TreeWithContext.TarskiSoundness -- FIXME
+import BasicIS4.Hilbert.TreeWithContext.KripkeSoundness
+import BasicIS4.Hilbert.TreeWithContextPair
+import BasicIS4.Hilbert.TreeWithContextPair.TarskiSoundness -- FIXME
+import BasicIS4.Hilbert.TreeWithContextPair.KripkeSoundness
+import BasicIS4.Hilbert.Translation
+import BasicIS4.Gentzen.TreeWithContext
+import BasicIS4.Gentzen.TreeWithContext.TarskiSoundness -- FIXME
+import BasicIS4.Gentzen.TreeWithContext.KripkeSoundness
+import BasicIS4.Gentzen.TreeWithContext.KripkeEquipment
+import BasicIS4.Gentzen.TreeWithContext.KripkeEquipmentToo
+import BasicIS4.Gentzen.TreeWithContext.KripkeBasicCompleteness -- FIXME
+import BasicIS4.Gentzen.TreeWithContextPair
+import BasicIS4.Gentzen.TreeWithContextPair.TarskiSoundness -- FIXME
+import BasicIS4.Gentzen.TreeWithContextPair.KripkeSoundness
+import BasicIS4.Gentzen.TreeWithContextPair.KripkeEquipment
+import BasicIS4.Gentzen.TreeWithContextPair.KripkeEquipmentToo
+import BasicIS4.Gentzen.TreeWithContextPair.KripkeBasicCompleteness -- FIXME
+import BasicIS4.Gentzen.LabelledTreeWithContextPair -- FIXME
+import BasicIS4.Gentzen.Translation
 import BasicIS4.Translation
 
 

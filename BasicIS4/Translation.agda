@@ -1,111 +1,150 @@
 module BasicIS4.Translation where
 
-open import BasicIS4 public
+open import BasicIS4.Hilbert.Translation public
 
-import BasicIS4.Regular.Hilbert.Sequential as RHS
-import BasicIS4.Regular.Hilbert.Nested as RHN
-import BasicIS4.Regular.Gentzen as RG
-import BasicIS4.Regular.Translation as RT
-import BasicIS4.DualContext.Hilbert.Sequential as DHS
-import BasicIS4.DualContext.Hilbert.Nested as DHN
-import BasicIS4.DualContext.Gentzen as DG
-import BasicIS4.DualContext.Translation as DT
+import BasicIS4.Hilbert.List as L
+import BasicIS4.Hilbert.ListWithContext as LC
+import BasicIS4.Hilbert.ListWithContextPair as LCP
+import BasicIS4.Hilbert.Tree as T
+import BasicIS4.Hilbert.TreeWithContext as TC
+import BasicIS4.Hilbert.TreeWithContextPair as TCP
+import BasicIS4.Gentzen.TreeWithContext as GTC
+import BasicIS4.Gentzen.TreeWithContextPair as GTCP
 
-open RHS using () renaming (_⊢_ to RHS⟨_⊢_⟩) public
-open RHN using () renaming (_⊢_ to RHN⟨_⊢_⟩) public
-open RG  using () renaming (_⊢_ to RG⟨_⊢_⟩ ; _⊢⋆_ to RG⟨_⊢⋆_⟩) public
-open DHS using () renaming (_⁏_⊢_ to DHS⟨_⁏_⊢_⟩) public
-open DHN using () renaming (_⁏_⊢_ to DHN⟨_⁏_⊢_⟩) public
-open DG  using () renaming (_⁏_⊢_ to DG⟨_⁏_⊢_⟩ ; _⁏_⊢⋆_ to DG⟨_⁏_⊢⋆_⟩) public
-
-
--- Translation from regular Hilbert-style to dual-context.
-
-rhn→dhn : ∀ {A Γ Δ} → RHN⟨ Γ ⊢ A ⟩ → DHN⟨ Γ ⁏ Δ ⊢ A ⟩
-rhn→dhn = DHN.mmono⊢ bot⊆ ∘ aux
-  where
-    aux : ∀ {A Γ} → RHN⟨ Γ ⊢ A ⟩ → DHN⟨ Γ ⁏ ⌀ ⊢ A ⟩
-    aux (RHN.var i)   = DHN.var i
-    aux (RHN.app t u) = DHN.app (aux t) (aux u)
-    aux RHN.ci        = DHN.ci
-    aux RHN.ck        = DHN.ck
-    aux RHN.cs        = DHN.cs
-    aux (RHN.box t)   = DHN.box (aux t)
-    aux RHN.cdist     = DHN.cdist
-    aux RHN.cup       = DHN.cup
-    aux RHN.cdown     = DHN.cdown
-    aux RHN.cpair     = DHN.cpair
-    aux RHN.cfst      = DHN.cfst
-    aux RHN.csnd      = DHN.csnd
-    aux RHN.tt        = DHN.tt
-
-rhs→dhs : ∀ {A Γ Δ} → RHS⟨ Γ ⊢ A ⟩ → DHS⟨ Γ ⁏ Δ ⊢ A ⟩
-rhs→dhs = DT.hn→hs ∘ rhn→dhn ∘ RT.hs→hn
+open LC using () renaming (_⊢×_ to LC⟨_⊢×_⟩ ; _⊢_ to LC⟨_⊢_⟩) public
+open LCP using () renaming (_⁏_⊢×_ to LCP⟨_⁏_⊢×_⟩ ; _⁏_⊢_ to LCP⟨_⁏_⊢_⟩) public
+open TC using () renaming (_⊢_ to TC⟨_⊢_⟩ ; _⊢⋆_ to TC⟨_⊢⋆_⟩) public
+open TCP using () renaming (_⁏_⊢_ to TCP⟨_⁏_⊢_⟩) public
+open GTC using () renaming (_⊢_ to GTC⟨_⊢_⟩ ; _⊢⋆_ to GTC⟨_⊢⋆_⟩) public
+open GTCP using () renaming (_⁏_⊢_ to GTCP⟨_⁏_⊢_⟩ ; _⁏_⊢⋆_ to GTCP⟨_⁏_⊢⋆_⟩) public
 
 
--- Translation from regular Gentzen-style to dual-context.
+-- Translation from Hilbert-style to Gentzen-style, with context.
 
-rg→dg : ∀ {A Γ Δ} → RG⟨ Γ ⊢ A ⟩ → DG⟨ Γ ⁏ Δ ⊢ A ⟩
-rg→dg = DG.mmono⊢ bot⊆ ∘ aux
-  where
-    mutual
-      aux : ∀ {A Γ} → RG⟨ Γ ⊢ A ⟩ → DG⟨ Γ ⁏ ⌀ ⊢ A ⟩
-      aux (RG.var i)         = DG.var i
-      aux (RG.lam t)         = DG.lam (aux t)
-      aux (RG.app t u)       = DG.app (aux t) (aux u)
-      aux (RG.multibox ts u) = DG.multibox (aux⋆ ts) (aux u)
-      aux (RG.down t)        = DG.down (aux t)
-      aux (RG.pair t u)      = DG.pair (aux t) (aux u)
-      aux (RG.fst t)         = DG.fst (aux t)
-      aux (RG.snd t)         = DG.snd (aux t)
-      aux RG.tt              = DG.tt
+tc→gtc : ∀ {A Γ} → TC⟨ Γ ⊢ A ⟩ → GTC⟨ Γ ⊢ A ⟩
+tc→gtc (TC.var i)   = GTC.var i
+tc→gtc (TC.app t u) = GTC.app (tc→gtc t) (tc→gtc u)
+tc→gtc TC.ci        = GTC.ci
+tc→gtc TC.ck        = GTC.ck
+tc→gtc TC.cs        = GTC.cs
+tc→gtc (TC.box t)   = GTC.box (tc→gtc t)
+tc→gtc TC.cdist     = GTC.cdist
+tc→gtc TC.cup       = GTC.cup
+tc→gtc TC.cdown     = GTC.cdown
+tc→gtc TC.cpair     = GTC.cpair
+tc→gtc TC.cfst      = GTC.cfst
+tc→gtc TC.csnd      = GTC.csnd
+tc→gtc TC.tt        = GTC.tt
 
-      aux⋆ : ∀ {Π Γ} → RG⟨ Γ ⊢⋆ Π ⟩ → DG⟨ Γ ⁏ ⌀ ⊢⋆ Π ⟩
-      aux⋆ {⌀}     ∙        = ∙
-      aux⋆ {Π , A} (ts , t) = aux⋆ ts , aux t
+lc→gtc : ∀ {A Γ} → LC⟨ Γ ⊢ A ⟩ → GTC⟨ Γ ⊢ A ⟩
+lc→gtc = tc→gtc ∘ lc→tc
 
+t→gtc₀ : ∀ {A} → T.⊢ A → GTC⟨ ⌀ ⊢ A ⟩
+t→gtc₀ = tc→gtc ∘ t→tc₀
 
--- Translation from dual-context Hilbert-style to regular.
+t→gtc : ∀ {A Γ} → T.⊢ Γ ▻⋯▻ A → GTC⟨ Γ ⊢ A ⟩
+t→gtc = tc→gtc ∘ t→tc
 
-dhn→rhn : ∀ {A Γ Δ} → DHN⟨ Γ ⁏ Δ ⊢ A ⟩ → RHN⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩
-dhn→rhn = aux ∘ DHN.merge
-  where
-    aux : ∀ {A Γ} → DHN⟨ Γ ⁏ ⌀ ⊢ A ⟩ → RHN⟨ Γ ⊢ A ⟩
-    aux (DHN.var i)   = RHN.var i
-    aux (DHN.app t u) = RHN.app (aux t) (aux u)
-    aux DHN.ci        = RHN.ci
-    aux DHN.ck        = RHN.ck
-    aux DHN.cs        = RHN.cs
-    aux (DHN.mvar ())
-    aux (DHN.box t)   = RHN.box (aux t)
-    aux DHN.cdist     = RHN.cdist
-    aux DHN.cup       = RHN.cup
-    aux DHN.cdown     = RHN.cdown
-    aux DHN.cpair     = RHN.cpair
-    aux DHN.cfst      = RHN.cfst
-    aux DHN.csnd      = RHN.csnd
-    aux DHN.tt        = RHN.tt
+l→gtc₀ : ∀ {A} → L.⊢ A → GTC⟨ ⌀ ⊢ A ⟩
+l→gtc₀ = tc→gtc ∘ l→tc₀
 
-dhs→rhs : ∀ {A Γ Δ} → DHS⟨ Γ ⁏ Δ ⊢ A ⟩ → RHS⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩
-dhs→rhs = RT.hn→hs ∘ dhn→rhn ∘ DT.hs→hn
+l→gtc : ∀ {A Γ} → L.⊢ Γ ▻⋯▻ A → GTC⟨ Γ ⊢ A ⟩
+l→gtc = tc→gtc ∘ l→tc
 
 
--- Translation from dual-context Gentzen-style to regular.
+-- Translation from Gentzen-style to Hilbert-style, with context.
 
-dg→rg : ∀ {A Γ Δ} → DG⟨ Γ ⁏ Δ ⊢ A ⟩ → RG⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩
-dg→rg = RT.hn→g ∘ dhn→rhn ∘ DT.g→hn
+mutual
+  gtc→tc : ∀ {A Γ} → GTC⟨ Γ ⊢ A ⟩ → TC⟨ Γ ⊢ A ⟩
+  gtc→tc (GTC.var i)         = TC.var i
+  gtc→tc (GTC.lam t)         = TC.lam (gtc→tc t)
+  gtc→tc (GTC.app t u)       = TC.app (gtc→tc t) (gtc→tc u)
+  gtc→tc (GTC.multibox ts u) = TC.multibox (gtc→tc⋆ ts) (gtc→tc u)
+  gtc→tc (GTC.down t)        = TC.down (gtc→tc t)
+  gtc→tc (GTC.pair t u)      = TC.pair (gtc→tc t) (gtc→tc u)
+  gtc→tc (GTC.fst t)         = TC.fst (gtc→tc t)
+  gtc→tc (GTC.snd t)         = TC.snd (gtc→tc t)
+  gtc→tc GTC.tt              = TC.tt
 
--- dg→rg = aux ∘ DG.merge
---   where
---     aux : ∀ {A Γ} → DG⟨ Γ ⁏ ⌀ ⊢ A ⟩ → RG⟨ Γ ⊢ A ⟩
---     aux (DG.var i)     = RG.var i
---     aux (DG.lam t)     = RG.lam (aux t)
---     aux (DG.app t u)   = RG.app (aux t) (aux u)
---     aux (DG.mvar ())
---     aux (DG.box t)     = RG.box (aux t)
---     -- NOTE: Growing this argument fails the termination check.
---     aux (DG.unbox t u) = RG.unbox (aux t) (aux (DG.det (DG.mlam u)))
---     aux (DG.pair t u)  = RG.pair (aux t) (aux u)
---     aux (DG.fst t)     = RG.fst (aux t)
---     aux (DG.snd t)     = RG.snd (aux t)
---     aux DG.tt          = RG.tt
+  gtc→tc⋆ : ∀ {Π Γ} → GTC⟨ Γ ⊢⋆ Π ⟩ → TC⟨ Γ ⊢⋆ Π ⟩
+  gtc→tc⋆ {⌀}     ∙        = ∙
+  gtc→tc⋆ {Π , A} (ts , t) = gtc→tc⋆ ts , gtc→tc t
+
+gtc→lc : ∀ {A Γ} → GTC⟨ Γ ⊢ A ⟩ → LC⟨ Γ ⊢ A ⟩
+gtc→lc = tc→lc ∘ gtc→tc
+
+gtc₀→t : ∀ {A} → GTC⟨ ⌀ ⊢ A ⟩ → T.⊢ A
+gtc₀→t = tc₀→t ∘ gtc→tc
+
+gtc→t : ∀ {A Γ} → GTC⟨ Γ ⊢ A ⟩ → T.⊢ Γ ▻⋯▻ A
+gtc→t = tc→t ∘ gtc→tc
+
+gtc₀→l : ∀ {A} → GTC⟨ ⌀ ⊢ A ⟩ → L.⊢ A
+gtc₀→l = tc₀→l ∘ gtc→tc
+
+gtc→l : ∀ {A Γ} → GTC⟨ Γ ⊢ A ⟩ → L.⊢ Γ ▻⋯▻ A
+gtc→l = tc→l ∘ gtc→tc
+
+
+-- Translation from Hilbert-style to Gentzen-style, with context pair.
+
+tcp→gtcp : ∀ {A Γ Δ} → TCP⟨ Γ ⁏ Δ ⊢ A ⟩ → GTCP⟨ Γ ⁏ Δ ⊢ A ⟩
+tcp→gtcp (TCP.var i)   = GTCP.var i
+tcp→gtcp (TCP.app t u) = GTCP.app (tcp→gtcp t) (tcp→gtcp u)
+tcp→gtcp TCP.ci        = GTCP.ci
+tcp→gtcp TCP.ck        = GTCP.ck
+tcp→gtcp TCP.cs        = GTCP.cs
+tcp→gtcp (TCP.mvar i)  = GTCP.mvar i
+tcp→gtcp (TCP.box t)   = GTCP.box (tcp→gtcp t)
+tcp→gtcp TCP.cdist     = GTCP.cdist
+tcp→gtcp TCP.cup       = GTCP.cup
+tcp→gtcp TCP.cdown     = GTCP.cdown
+tcp→gtcp TCP.cpair     = GTCP.cpair
+tcp→gtcp TCP.cfst      = GTCP.cfst
+tcp→gtcp TCP.csnd      = GTCP.csnd
+tcp→gtcp TCP.tt        = GTCP.tt
+
+lcp→gtcp : ∀ {A Γ Δ} → LCP⟨ Γ ⁏ Δ ⊢ A ⟩ → GTCP⟨ Γ ⁏ Δ ⊢ A ⟩
+lcp→gtcp = tcp→gtcp ∘ lcp→tcp
+
+tc→mgtcp₀ : ∀ {A Γ} → TC⟨ Γ ⊢ A ⟩ → GTCP⟨ Γ ⁏ ⌀ ⊢ A ⟩
+tc→mgtcp₀ = tcp→gtcp ∘ tc→mtcp₀
+
+tc→gtcp : ∀ {A Γ Δ} → TC⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩ → GTCP⟨ Γ ⁏ Δ ⊢ A ⟩
+tc→gtcp = tcp→gtcp ∘ tc→tcp
+
+lc→mgtcp₀ : ∀ {A Γ} → LC⟨ Γ ⊢ A ⟩ → GTCP⟨ Γ ⁏ ⌀ ⊢ A ⟩
+lc→mgtcp₀ = tcp→gtcp ∘ lc→mtcp₀
+
+lc→gtcp : ∀ {A Γ Δ} → LC⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩ → GTCP⟨ Γ ⁏ Δ ⊢ A ⟩
+lc→gtcp = tcp→gtcp ∘ lc→tcp
+
+
+-- Translation from Gentzen-style to Hilbert-style, with context pair.
+
+gtcp→tcp : ∀ {A Γ Δ} → GTCP⟨ Γ ⁏ Δ ⊢ A ⟩ → TCP⟨ Γ ⁏ Δ ⊢ A ⟩
+gtcp→tcp (GTCP.var i)     = TCP.var i
+gtcp→tcp (GTCP.lam t)     = TCP.lam (gtcp→tcp t)
+gtcp→tcp (GTCP.app t u)   = TCP.app (gtcp→tcp t) (gtcp→tcp u)
+gtcp→tcp (GTCP.mvar i)    = TCP.mvar i
+gtcp→tcp (GTCP.box t)     = TCP.box (gtcp→tcp t)
+gtcp→tcp (GTCP.unbox t u) = TCP.unbox (gtcp→tcp t) (gtcp→tcp u)
+gtcp→tcp (GTCP.pair t u)  = TCP.pair (gtcp→tcp t) (gtcp→tcp u)
+gtcp→tcp (GTCP.fst t)     = TCP.fst (gtcp→tcp t)
+gtcp→tcp (GTCP.snd t)     = TCP.snd (gtcp→tcp t)
+gtcp→tcp GTCP.tt          = TCP.tt
+
+gtcp→lcp : ∀ {A Γ Δ} → GTCP⟨ Γ ⁏ Δ ⊢ A ⟩ → LCP⟨ Γ ⁏ Δ ⊢ A ⟩
+gtcp→lcp = tcp→lcp ∘ gtcp→tcp
+
+mgtcp₀→tc : ∀ {A Γ} → GTCP⟨ Γ ⁏ ⌀ ⊢ A ⟩ → TC⟨ Γ ⊢ A ⟩
+mgtcp₀→tc = mtcp₀→tc ∘ gtcp→tcp
+
+gtcp→tc : ∀ {A Γ Δ} → GTCP⟨ Γ ⁏ Δ ⊢ A ⟩ → TC⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩
+gtcp→tc = tcp→tc ∘ gtcp→tcp
+
+mgtcp₀→lc : ∀ {A Γ} → GTCP⟨ Γ ⁏ ⌀ ⊢ A ⟩ → LC⟨ Γ ⊢ A ⟩
+mgtcp₀→lc = mtcp₀→lc ∘ gtcp→tcp
+
+gtcp→lc : ∀ {A Γ Δ} → GTCP⟨ Γ ⁏ Δ ⊢ A ⟩ → LC⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩
+gtcp→lc = tcp→lc ∘ gtcp→tcp
