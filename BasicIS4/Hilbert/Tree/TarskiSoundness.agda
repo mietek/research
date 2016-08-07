@@ -18,9 +18,9 @@ module NaturalSoundness where
   eval ck        = const
   eval cs        = ap
   eval (box t)   = t , eval t
-  eval cdist     = λ {(t , f) (u , a) → app t u , f a}
-  eval cup       = λ {(t , a) → box t , (t , a)}
-  eval cdown     = λ {(t , a) → a}
+  eval cdist     = λ { (t , f) (u , a) → app t u , f a }
+  eval cup       = λ { (t , a) → box t , (t , a) }
+  eval cdown     = λ { (t , a) → a }
   eval cpair     = _,_
   eval cfst      = π₁
   eval csnd      = π₂
@@ -34,10 +34,10 @@ module NaturalSoundness where
   check (trans⇒ p q)    = trans (check p) (check q)
   check (sym⇒ p)        = sym (check p)
   check (cong⇒app p q)  = cong₂ _$_ (check p) (check q)
-  check (cong⇒dist p q) = cong₂ (λ {(t , f) (u , a) →
-                             app t u , f a}) (check p) (check q)
-  check (cong⇒up p)     = cong (λ {(t , a) → box t , (t , a)}) (check p)
-  check (cong⇒down p)   = cong (λ {(t , a) → a}) (check p)
+  check (cong⇒dist p q) = cong₂ (λ { (t , f) (u , a) →
+                             app t u , f a }) (check p) (check q)
+  check (cong⇒up p)     = cong (λ { (t , a) → box t , (t , a) }) (check p)
+  check (cong⇒down p)   = cong (λ { (t , a) → a }) (check p)
   check (cong⇒pair p q) = cong₂ _,_ (check p) (check q)
   check (cong⇒fst p)    = cong π₁ (check p)
   check (cong⇒snd p)    = cong π₂ (check p)
@@ -80,11 +80,11 @@ module CoquandDybjerSoundness where
                        app (app cs (reify f)) (reify g) , (λ a →
                          (f $ˢ a) $ˢ (g $ˢ a))))
   eval (box t)   = t , eval t
-  eval cdist     = cdist , (λ {(t , (t′ , f)) →
+  eval cdist     = cdist , (λ { (t , (t′ , f)) →
                      app cdist (box t) , (λ {(u , a) →
-                       app t u , f a})})
-  eval cup       = cup , (λ {(t , a) → box t , (t , a)})
-  eval cdown     = cdown , (λ {(t , a) → a})
+                       app t u , f a }) })
+  eval cup       = cup , (λ { (t , a) → box t , (t , a) })
+  eval cdown     = cdown , (λ { (t , a) → a })
   eval cpair     = cpair , (λ a → app cpair (reify a) , (λ b → a , b))
   eval cfst      = cfst , π₁
   eval csnd      = csnd , π₂
@@ -98,10 +98,10 @@ module CoquandDybjerSoundness where
   check (trans⇒ p q)    = trans (check p) (check q)
   check (sym⇒ p)        = sym (check p)
   check (cong⇒app p q)  = cong₂ _$ˢ_ (check p) (check q)
-  check (cong⇒dist p q) = cong₂ (λ {(t , (t′ , f)) (u , a) →
-                             app t u , f a}) (check p) (check q)
-  check (cong⇒up p)     = cong (λ {(t , a) → box t , (t , a)}) (check p)
-  check (cong⇒down p)   = cong (λ {(t , a) → a}) (check p)
+  check (cong⇒dist p q) = cong₂ (λ { (t , (t′ , f)) (u , a) →
+                             app t u , f a }) (check p) (check q)
+  check (cong⇒up p)     = cong (λ { (t , a) → box t , (t , a) }) (check p)
+  check (cong⇒down p)   = cong (λ { (t , a) → a }) (check p)
   check (cong⇒pair p q) = cong₂ _,_ (check p) (check q)
   check (cong⇒fst p)    = cong π₁ (check p)
   check (cong⇒snd p)    = cong π₂ (check p)
