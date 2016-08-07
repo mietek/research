@@ -3,7 +3,7 @@ module IPC.TarskiSemantics where
 open import IPC public
 
 
--- Intuitionistic Tarski models.
+-- Tarski models.
 
 record Model : Set₁ where
   infix 3 ⊨ᵅ_
@@ -14,11 +14,15 @@ record Model : Set₁ where
 open Model {{…}} public
 
 
--- Truth for propositions and contexts.
 
-module _ {{_ : Model}} where
+
+module NaturalSemantics where
+
+
+  -- Truth in a particular model.
+
   infix 3 ⊨_
-  ⊨_ : Ty → Set
+  ⊨_ : ∀ {{_ : Model}} → Ty → Set
   ⊨ α P   = ⊨ᵅ P
   ⊨ A ▻ B = ⊨ A → ⊨ B
   ⊨ A ∧ B = ⊨ A × ⊨ B
@@ -27,20 +31,20 @@ module _ {{_ : Model}} where
   ⊨ A ∨ B = ⊨ A ⊎ ⊨ B
 
   infix 3 ⊨⋆_
-  ⊨⋆_ : Cx Ty → Set
+  ⊨⋆_ : ∀ {{_ : Model}} → Cx Ty → Set
   ⊨⋆ ⌀     = 𝟙
   ⊨⋆ Γ , A = ⊨⋆ Γ × ⊨ A
 
 
--- Truth in all models.
+  -- Truth in all models.
 
-infix 3 _ᴹ⊨_
-_ᴹ⊨_ : Cx Ty → Ty → Set₁
-Γ ᴹ⊨ A = ∀ {{_ : Model}} → ⊨⋆ Γ → ⊨ A
+  infix 3 _ᴹ⊨_
+  _ᴹ⊨_ : Cx Ty → Ty → Set₁
+  Γ ᴹ⊨ A = ∀ {{_ : Model}} → ⊨⋆ Γ → ⊨ A
 
 
--- Additional useful equipment.
+  -- Additional useful equipment.
 
-lookup : ∀ {A Γ} → A ∈ Γ → Γ ᴹ⊨ A
-lookup top     (γ , a) = a
-lookup (pop i) (γ , b) = lookup i γ
+  lookup : ∀ {A Γ} → A ∈ Γ → Γ ᴹ⊨ A
+  lookup top     (γ , a) = a
+  lookup (pop i) (γ , b) = lookup i γ

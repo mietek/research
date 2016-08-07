@@ -1,31 +1,36 @@
 module BasicIPC.Hilbert.ContextFree.Nested.TarskiBasicCompleteness where
 
-open import BasicIPC.Hilbert.ContextFree.Nested.TarskiSoundness.CoquandDybjer public
+open import BasicIPC.Hilbert.ContextFree.Nested.TarskiSoundness public
 
 
--- The canonical model.
-
-instance
-  canon : Model
-  canon = record
-    { ⊨ᵅ_ = λ P → ⊢ α P
-    }
 
 
--- Completeness, or quotation.
-
-quot : ∀ {A} → ᴹ⊨ A → ⊢ A
-quot t = reify t
+module CoquandDybjerBasicCompleteness where
+  open CoquandDybjerSoundness public
 
 
--- Normalisation by evaluation.
+  -- The canonical model.
 
-norm : ∀ {A} → ⊢ A → ⊢ A
-norm = quot ∘ eval
+  instance
+    canon : Model
+    canon = record
+      { ⊨ᵅ_ = λ P → ⊢ α P
+      }
 
 
--- Correctness of normalisation with respect to conversion.
+  -- Completeness with respect to all models, or quotation.
 
-module _ {{_ : Model}} where
-  check′ : ∀ {A} {t t′ : ⊢ A} → t ⇒ t′ → norm t ≡ norm t′
+  quot : ∀ {A} → ᴹ⊨ A → ⊢ A
+  quot t = reify t
+
+
+  -- Normalisation by evaluation.
+
+  norm : ∀ {A} → ⊢ A → ⊢ A
+  norm = quot ∘ eval
+
+
+  -- Correctness of normalisation with respect to conversion.
+
+  check′ : ∀ {A} {t t′ : ⊢ A} {{_ : Model}} → t ⇒ t′ → norm t ≡ norm t′
   check′ p = cong reify (check p)

@@ -22,7 +22,6 @@ import Common.PredicateBasedContext
 
 import BasicIPC
 import BasicIPC.TarskiSemantics
-import BasicIPC.TarskiSemantics.CoquandDybjer
 import BasicIPC.KripkeSemantics
 import BasicIPC.KripkeSemantics.Godel
 import BasicIPC.Hilbert.Sequential
@@ -32,7 +31,6 @@ import BasicIPC.Hilbert.Nested.KripkeSoundness
 import BasicIPC.Hilbert.Nested.KripkeSoundness.Godel
 import BasicIPC.Hilbert.ContextFree.Nested
 import BasicIPC.Hilbert.ContextFree.Nested.TarskiSoundness
-import BasicIPC.Hilbert.ContextFree.Nested.TarskiSoundness.CoquandDybjer
 import BasicIPC.Hilbert.ContextFree.Nested.TarskiBasicCompleteness
 import BasicIPC.Gentzen
 import BasicIPC.Gentzen.TarskiSoundness
@@ -67,7 +65,6 @@ import IPC.Translation
 
 import BasicIS4
 import BasicIS4.TarskiSemantics
-import BasicIS4.TarskiSemantics.CoquandDybjer
 import BasicIS4.KripkeSemantics
 import BasicIS4.KripkeSemantics.Ono
 import BasicIS4.KripkeSemantics.BozicDosen
@@ -75,7 +72,6 @@ import BasicIS4.KripkeSemantics.EwaldEtAl
 import BasicIS4.KripkeSemantics.AlechinaEtAl
 import BasicIS4.ContextFree.Hilbert.Nested
 import BasicIS4.ContextFree.Hilbert.Nested.TarskiSoundness
-import BasicIS4.ContextFree.Hilbert.Nested.TarskiSoundness.CoquandDybjer
 import BasicIS4.ContextFree.Hilbert.Nested.TarskiBasicCompleteness
 import BasicIS4.Regular.Hilbert.Sequential
 import BasicIS4.Regular.Hilbert.Nested
