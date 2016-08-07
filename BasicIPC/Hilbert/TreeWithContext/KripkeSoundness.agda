@@ -48,6 +48,6 @@ module McKinseyTarskiSoundness where
                                 g′ = mono⊩ {A ▻ B} ξ′ g
                             in  (f′ refl≤ a) refl≤ (g′ refl≤ a)
   eval (cpair {A})      γ = λ _ a ξ b → mono⊩ {A} ξ a , b
-  eval cfst             γ = λ _ s → π₁ s
-  eval csnd             γ = λ _ s → π₂ s
+  eval cfst             γ = λ _ → π₁
+  eval csnd             γ = λ _ → π₂
   eval tt               γ = ∙

@@ -36,9 +36,7 @@ import BasicIPC.Hilbert.Translation
 import BasicIPC.Gentzen
 import BasicIPC.Gentzen.TarskiSoundness
 import BasicIPC.Gentzen.KripkeSoundness
-import BasicIPC.Gentzen.KripkeSoundness.Godel
 import BasicIPC.Gentzen.KripkeBasicCompleteness
-import BasicIPC.Gentzen.KripkeBasicCompleteness.Godel
 import BasicIPC.Gentzen.KripkeCompleteness
 import BasicIPC.Gentzen.HereditarySubstitution
 import BasicIPC.Translation
