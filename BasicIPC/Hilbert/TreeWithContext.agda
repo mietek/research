@@ -1,9 +1,9 @@
-module BasicIPC.Hilbert.Nested where
+module BasicIPC.Hilbert.TreeWithContext where
 
 open import BasicIPC public
 
 
--- Derivations, as Hilbert-style combinator trees.
+-- Derivations, as Hilbert-style trees of combinators, with context.
 
 infix 3 _⊢_
 data _⊢_ (Γ : Cx Ty) : Ty → Set where

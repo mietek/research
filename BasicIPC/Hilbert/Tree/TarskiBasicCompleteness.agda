@@ -1,14 +1,12 @@
-module BasicIS4.ContextFree.Hilbert.Nested.TarskiBasicCompleteness where
+module BasicIPC.Hilbert.Tree.TarskiBasicCompleteness where
 
-open import BasicIS4.ContextFree.Hilbert.Nested.TarskiSoundness public
-
-
+open import BasicIPC.Hilbert.Tree.TarskiSoundness public
 
 
--- Based on truth with a syntactic component, inspired by Coquand and Dybjer.
+
 
 module CoquandDybjerBasicCompleteness where
-  open CoquandDybjerSoundness
+  open CoquandDybjerSoundness public
 
 
   -- The canonical model.
@@ -34,5 +32,5 @@ module CoquandDybjerBasicCompleteness where
 
   -- Correctness of normalisation with respect to conversion.
 
-  check′ : ∀ {A} {t t′ : ⊢ A} {{_ : Model}} → t ⇒ t′ → norm t ≡ norm t′
+  check′ : ∀ {{_ : Model}} {A} {t t′ : ⊢ A} → t ⇒ t′ → norm t ≡ norm t′
   check′ p = cong reify (check p)

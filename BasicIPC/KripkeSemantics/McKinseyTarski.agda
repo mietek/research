@@ -1,4 +1,4 @@
-module BasicIPC.KripkeSemantics where
+module BasicIPC.KripkeSemantics.McKinseyTarski where
 
 open import BasicIPC public
 
@@ -22,33 +22,32 @@ record Model : Set₁ where
 open Model {{…}} public
 
 
--- Forcing for propositions and contexts.
+-- Forcing in all models.
 
-module _ {{_ : Model}} where
-  infix 3 _⊩_
-  _⊩_ : World → Ty → Set
-  w ⊩ α P   = w ⊩ᵅ P
-  w ⊩ A ▻ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
-  w ⊩ A ∧ B = w ⊩ A × w ⊩ B
-  w ⊩ ⊤    = 𝟙
+infix 3 _⊩_
+_⊩_ : ∀ {{_ : Model}} → World → Ty → Set
+w ⊩ α P   = w ⊩ᵅ P
+w ⊩ A ▻ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
+w ⊩ A ∧ B = w ⊩ A × w ⊩ B
+w ⊩ ⊤    = 𝟙
 
-  infix 3 _⊩⋆_
-  _⊩⋆_ : World → Cx Ty → Set
-  w ⊩⋆ ⌀     = 𝟙
-  w ⊩⋆ Γ , A = w ⊩⋆ Γ × w ⊩ A
+infix 3 _⊩⋆_
+_⊩⋆_ : ∀ {{_ : Model}} → World → Cx Ty → Set
+w ⊩⋆ ⌀     = 𝟙
+w ⊩⋆ Γ , A = w ⊩⋆ Γ × w ⊩ A
 
 
-  -- Monotonicity with respect to intuitionistic accessibility.
+-- Monotonicity with respect to intuitionistic accessibility.
 
-  mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
-  mono⊩ {α P}   ξ s       = mono⊩ᵅ ξ s
-  mono⊩ {A ▻ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
-  mono⊩ {A ∧ B} ξ (a , b) = mono⊩ {A} ξ a , mono⊩ {B} ξ b
-  mono⊩ {⊤}    ξ ∙       = ∙
+mono⊩ : ∀ {{_ : Model}} {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
+mono⊩ {α P}   ξ s       = mono⊩ᵅ ξ s
+mono⊩ {A ▻ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
+mono⊩ {A ∧ B} ξ (a , b) = mono⊩ {A} ξ a , mono⊩ {B} ξ b
+mono⊩ {⊤}    ξ ∙       = ∙
 
-  mono⊩⋆ : ∀ {Γ w w′} → w ≤ w′ → w ⊩⋆ Γ → w′ ⊩⋆ Γ
-  mono⊩⋆ {⌀}     ξ ∙       = ∙
-  mono⊩⋆ {Γ , A} ξ (γ , a) = mono⊩⋆ {Γ} ξ γ , mono⊩ {A} ξ a
+mono⊩⋆ : ∀ {{_ : Model}} {Γ w w′} → w ≤ w′ → w ⊩⋆ Γ → w′ ⊩⋆ Γ
+mono⊩⋆ {⌀}     ξ ∙       = ∙
+mono⊩⋆ {Γ , A} ξ (γ , a) = mono⊩⋆ {Γ} ξ γ , mono⊩ {A} ξ a
 
 
 -- Forcing in all models.

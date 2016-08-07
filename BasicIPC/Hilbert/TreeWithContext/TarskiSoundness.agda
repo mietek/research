@@ -1,6 +1,6 @@
-module BasicIPC.Hilbert.Nested.TarskiSoundness where
+module BasicIPC.Hilbert.TreeWithContext.TarskiSoundness where
 
-open import BasicIPC.Hilbert.Nested public
+open import BasicIPC.Hilbert.TreeWithContext public
 open import BasicIPC.TarskiSemantics public
 
 

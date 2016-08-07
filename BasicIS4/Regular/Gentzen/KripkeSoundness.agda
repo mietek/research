@@ -21,7 +21,7 @@ module WithRegularForcing where
     eval (snd t)         γ = π₂ (eval t γ)
     eval tt              γ = ∙
 
-    eval⋆ : ∀ {Δ Γ} {{_ : Model}} {w : World}
+    eval⋆ : ∀ {{_ : Model}} {Δ Γ} {w : World}
             → Γ ⊢⋆ □⋆ Δ → w ⊩⋆ Γ → ∀ {v′} → w R v′ → v′ ⊩⋆ □⋆ Δ
     eval⋆ {⌀}     ∙        γ ζ = ∙
     eval⋆ {Δ , B} (ts , t) γ ζ = eval⋆ ts γ ζ , λ ζ′ → eval t γ (transR ζ ζ′)
@@ -45,7 +45,7 @@ module WithBidirectionalForcing where
     eval (snd t)         γ = π₂ (eval t γ)
     eval tt              γ = ∙
 
-    eval⋆ : ∀ {Δ Γ} {{_ : Model}} {w : World}
+    eval⋆ : ∀ {{_ : Model}} {Δ Γ} {w : World}
             → Γ ⊢⋆ □⋆ Δ → w ⊩⋆ Γ → ∀ {w′} → w ≤ w′ → ∀ {v′} → w′ R v′ → v′ ⊩⋆ □⋆ Δ
     eval⋆ {⌀}     ∙        γ ξ ζ = ∙
     eval⋆ {Δ , B} (ts , t) γ ξ ζ = eval⋆ ts γ ξ ζ , λ ξ′ ζ′ →
@@ -71,7 +71,7 @@ module Ono where
     eval (snd t)         γ = π₂ (eval t γ)
     eval tt              γ = ∙
 
-    eval⋆ : ∀ {Δ Γ} {{_ : Model}} {w : World}
+    eval⋆ : ∀ {{_ : Model}} {Δ Γ} {w : World}
             → Γ ⊢⋆ □⋆ Δ → w ⊩⋆ Γ → ∀ {v′} → w R v′ → v′ ⊩⋆ □⋆ Δ
     eval⋆ {⌀}     ∙        γ ζ = ∙
     eval⋆ {Δ , B} (ts , t) γ ζ = eval⋆ ts γ ζ , λ ζ′ → eval t γ (transR ζ ζ′)
@@ -92,7 +92,7 @@ module BozicDosen where
     eval (snd t)         γ = π₂ (eval t γ)
     eval tt              γ = ∙
 
-    eval⋆ : ∀ {Δ Γ} {{_ : Model}} {w : World}
+    eval⋆ : ∀ {{_ : Model}} {Δ Γ} {w : World}
             → Γ ⊢⋆ □⋆ Δ → w ⊩⋆ Γ → ∀ {v′} → w R v′ → v′ ⊩⋆ □⋆ Δ
     eval⋆ {⌀}     ∙        γ ζ = ∙
     eval⋆ {Δ , B} (ts , t) γ ζ = eval⋆ ts γ ζ , λ ζ′ → eval t γ (transR ζ ζ′)
@@ -113,7 +113,7 @@ module EwaldEtAl where
     eval (snd t)         γ = π₂ (eval t γ)
     eval tt              γ = ∙
 
-    eval⋆ : ∀ {Δ Γ} {{_ : Model}} {w : World}
+    eval⋆ : ∀ {{_ : Model}} {Δ Γ} {w : World}
             → Γ ⊢⋆ □⋆ Δ → w ⊩⋆ Γ → ∀ {w′} → w ≤ w′ → ∀ {v′} → w′ R v′ → v′ ⊩⋆ □⋆ Δ
     eval⋆ {⌀}     ∙        γ ξ ζ = ∙
     eval⋆ {Δ , B} (ts , t) γ ξ ζ = eval⋆ ts γ ξ ζ , λ ξ′ ζ′ →
@@ -136,7 +136,7 @@ module AlechinaEtAl where
     eval (snd t)         γ = π₂ (eval t γ)
     eval tt              γ = ∙
 
-    eval⋆ : ∀ {Δ Γ} {{_ : Model}} {w : World}
+    eval⋆ : ∀ {{_ : Model}} {Δ Γ} {w : World}
             → Γ ⊢⋆ □⋆ Δ → w ⊩⋆ Γ → ∀ {w′} → w ≤ w′ → ∀ {v′} → w′ R v′ → v′ ⊩⋆ □⋆ Δ
     eval⋆ {⌀}     ∙        γ ξ ζ = ∙
     eval⋆ {Δ , B} (ts , t) γ ξ ζ = eval⋆ ts γ ξ ζ , λ ξ′ ζ′ →

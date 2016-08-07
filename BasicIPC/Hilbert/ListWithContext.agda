@@ -1,9 +1,9 @@
-module BasicIPC.Hilbert.Sequential where
+module BasicIPC.Hilbert.ListWithContext where
 
 open import BasicIPC public
 
 
--- Derivations, as Hilbert-style combinator sequences.
+-- Derivations, as Hilbert-style lists of combinators, with context.
 
 infix 3 _⊢×_
 data _⊢×_ (Γ : Cx Ty) : Cx Ty → Set where

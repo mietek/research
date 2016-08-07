@@ -21,37 +21,32 @@ record Model : Set₁ where
 open Model {{…}} public
 
 
--- Forcing for propositions and contexts, with unnecessary accessibility requirements.
+-- Forcing in a particular model.
 
-module _ {{_ : Model}} where
-  infix 3 _⊩_
-  _⊩_ : World → Ty → Set
-  -- NOTE: This requirement can be replaced by a monotonicity condition.
-  w ⊩ α P   = ∀ {w′} → w ≤ w′ → w′ ⊩ᵅ P
-  -- NOTE: This requirement remains in the McKinsey-Tarski variant.
-  w ⊩ A ▻ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
-  -- NOTE: This requirement can be dropped.
-  w ⊩ A ∧ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A × w′ ⊩ B
-  -- NOTE: This requirement can be dropped.
-  w ⊩ ⊤    = ∀ {w′} → w ≤ w′ → 𝟙
+infix 3 _⊩_
+_⊩_ : ∀ {{_ : Model}} → World → Ty → Set
+w ⊩ α P   = ∀ {w′} → w ≤ w′ → w′ ⊩ᵅ P
+w ⊩ A ▻ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
+w ⊩ A ∧ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A × w′ ⊩ B
+w ⊩ ⊤    = ∀ {w′} → w ≤ w′ → 𝟙
 
-  infix 3 _⊩⋆_
-  _⊩⋆_ : World → Cx Ty → Set
-  w ⊩⋆ ⌀     = 𝟙
-  w ⊩⋆ Γ , A = w ⊩⋆ Γ × w ⊩ A
+infix 3 _⊩⋆_
+_⊩⋆_ : ∀ {{_ : Model}} → World → Cx Ty → Set
+w ⊩⋆ ⌀     = 𝟙
+w ⊩⋆ Γ , A = w ⊩⋆ Γ × w ⊩ A
 
 
-  -- Monotonicity with respect to intuitionistic accessibility.
+-- Monotonicity with respect to intuitionistic accessibility.
 
-  mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
-  mono⊩ {α P}   ξ s = λ ξ′ → s (trans≤ ξ ξ′)
-  mono⊩ {A ▻ B} ξ s = λ ξ′ → s (trans≤ ξ ξ′)
-  mono⊩ {A ∧ B} ξ s = λ ξ′ → s (trans≤ ξ ξ′)
-  mono⊩ {⊤}    ξ s = λ ξ′ → ∙
+mono⊩ : ∀ {{_ : Model}} {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
+mono⊩ {α P}   ξ s = λ ξ′ → s (trans≤ ξ ξ′)
+mono⊩ {A ▻ B} ξ s = λ ξ′ → s (trans≤ ξ ξ′)
+mono⊩ {A ∧ B} ξ s = λ ξ′ → s (trans≤ ξ ξ′)
+mono⊩ {⊤}    ξ s = λ ξ′ → ∙
 
-  mono⊩⋆ : ∀ {Γ w w′} → w ≤ w′ → w ⊩⋆ Γ → w′ ⊩⋆ Γ
-  mono⊩⋆ {⌀}     ξ ∙       = ∙
-  mono⊩⋆ {Γ , A} ξ (γ , a) = mono⊩⋆ {Γ} ξ γ , mono⊩ {A} ξ a
+mono⊩⋆ : ∀ {{_ : Model}} {Γ w w′} → w ≤ w′ → w ⊩⋆ Γ → w′ ⊩⋆ Γ
+mono⊩⋆ {⌀}     ξ ∙       = ∙
+mono⊩⋆ {Γ , A} ξ (γ , a) = mono⊩⋆ {Γ} ξ γ , mono⊩ {A} ξ a
 
 
 -- Forcing in all models.

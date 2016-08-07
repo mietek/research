@@ -69,7 +69,7 @@ module Open where
 
   -- FIXME: How to write this without translation?
   postulate
-    oops₁ : ∀ {A Δ} {{_ : Model}} → Δ ⊨ A → ⌀ ⊨ A
+    oops₁ : ∀ {{_ : Model}} {A Δ} → Δ ⊨ A → ⌀ ⊨ A
     oops₂ : ∀ {A Δ Δ′} → □⋆ Δ ⊢ A → □⋆ Δ′ ⊢ A
 
   mutual

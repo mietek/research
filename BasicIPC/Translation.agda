@@ -2,8 +2,8 @@ module BasicIPC.Translation where
 
 open import BasicIPC public
 
-import BasicIPC.Hilbert.Sequential as HS
-import BasicIPC.Hilbert.Nested as HN
+import BasicIPC.Hilbert.ListWithContext as HS
+import BasicIPC.Hilbert.TreeWithContext as HN
 import BasicIPC.Gentzen as G
 
 open HS using () renaming (_⊢×_ to HS⟨_⊢×_⟩ ; _⊢_ to HS⟨_⊢_⟩) public

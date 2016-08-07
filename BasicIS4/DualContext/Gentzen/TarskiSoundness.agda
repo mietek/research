@@ -60,8 +60,8 @@ module Open where
 
   -- FIXME: How to write this without translation?
   postulate
-    oops₁ : ∀ {A Δ} {{_ : Model}} → Δ ⊨ A → ⌀ ⊨ A
-    oops₂ : ∀ {C A Δ} {{_ : Model}} → Δ , A ⊨ C → Δ ⊨ C
+    oops₁ : ∀ {{_ : Model}} {A Δ} → Δ ⊨ A → ⌀ ⊨ A
+    oops₂ : ∀ {{_ : Model}} {C A Δ} → Δ , A ⊨ C → Δ ⊨ C
 
   eval′ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊨ A
   eval′ (var {A} i)         γ δ = mono⊨ {A} bot⊆ (lookup i γ)

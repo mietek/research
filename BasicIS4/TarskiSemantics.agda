@@ -88,14 +88,14 @@ module TruthWithOpenBox (Box : Cx Ty → Ty → Set) where
 
   -- Monotonicity with respect to context inclusion.
 
-  mono⊨ : ∀ {A Δ Δ′} {{_ : Model}} → Δ ⊆ Δ′ → Δ ⊨ A → Δ′ ⊨ A
+  mono⊨ : ∀ {{_ : Model}} {A Δ Δ′} → Δ ⊆ Δ′ → Δ ⊨ A → Δ′ ⊨ A
   mono⊨ {α P}   θ s       = s
   mono⊨ {A ▻ B} θ f       = λ θ′ a → f (trans⊆ θ θ′) a
   mono⊨ {□ A}   θ □f      = λ θ′ → □f (trans⊆ θ θ′)
   mono⊨ {A ∧ B} θ (a , b) = mono⊨ {A} θ a , mono⊨ {B} θ b
   mono⊨ {⊤}    θ ∙       = ∙
 
-  mono⊨⋆ : ∀ {Π Δ Δ′} {{_ : Model}} → Δ ⊆ Δ′ → Δ ⊨⋆ Π → Δ′ ⊨⋆ Π
+  mono⊨⋆ : ∀ {{_ : Model}} {Π Δ Δ′} → Δ ⊆ Δ′ → Δ ⊨⋆ Π → Δ′ ⊨⋆ Π
   mono⊨⋆ {⌀}     θ ∙        = ∙
   mono⊨⋆ {Π , A} θ (ts , t) = mono⊨⋆ {Π} θ ts , mono⊨ {A} θ t
 
@@ -157,6 +157,9 @@ module CoquandDybjerSemantics (Syntax : Ty → Set) where
 
 
   -- Additional useful equipment.
+
+  _$ˢ_ : ∀ {{_ : Model}} {A B} → Syntax (A ▻ B) × (⊨ A → ⊨ B) → ⊨ A → ⊨ B
+  (t , f) $ˢ a = f a
 
   lookup : ∀ {A Γ} → A ∈ Γ → Γ ᴹ⊨ A
   lookup top     (γ , a) = a
