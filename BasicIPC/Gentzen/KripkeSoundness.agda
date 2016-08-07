@@ -24,6 +24,9 @@ module GodelSoundness where
   eval (snd t)    γ = π₂ (eval t γ refl≤)
   eval tt         γ = λ ξ → ∙
 
+  eval⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ᴹ⊩⋆ Π
+  eval⋆ {⌀}     ∙        γ = ∙
+  eval⋆ {Π , A} (ts , t) γ = eval⋆ ts γ , eval t γ
 
 
 
