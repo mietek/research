@@ -3,8 +3,8 @@ module BasicIPC.Hilbert.Translation where
 open import BasicIPC public
 
 import BasicIPC.Hilbert.List as L
-import BasicIPC.Hilbert.Tree as T
 import BasicIPC.Hilbert.ListWithContext as LC
+import BasicIPC.Hilbert.Tree as T
 import BasicIPC.Hilbert.TreeWithContext as TC
 
 open LC using () renaming (_⊢×_ to LC⟨_⊢×_⟩ ; _⊢_ to LC⟨_⊢_⟩) public
@@ -53,7 +53,7 @@ t→l T.tt        = ⌀ , L.tt L.nil
 lc→tc : ∀ {A Γ} → LC⟨ Γ ⊢ A ⟩ → TC⟨ Γ ⊢ A ⟩
 lc→tc (Π , ts) = lc×→tc ts top
   where
-    lc×→tc : ∀ {A Γ Π} → LC⟨ Γ ⊢× Π ⟩ → A ∈ Π → TC⟨ Γ ⊢ A ⟩
+    lc×→tc : ∀ {A Π Γ} → LC⟨ Γ ⊢× Π ⟩ → A ∈ Π → TC⟨ Γ ⊢ A ⟩
     lc×→tc (LC.var i ts)  top     = TC.var i
     lc×→tc (LC.mp i j ts) top     = TC.app (lc×→tc ts i) (lc×→tc ts j)
     lc×→tc (LC.ci ts)     top     = TC.ci
@@ -88,7 +88,7 @@ tc→lc TC.csnd      = ⌀ , LC.csnd LC.nil
 tc→lc TC.tt        = ⌀ , LC.tt LC.nil
 
 
--- Deduction and detachment theorem for list-shaped variant, with context.
+-- Deduction and detachment theorems for list-shaped variant, with context.
 
 lc-lam : ∀ {A B Γ} → LC⟨ Γ , A ⊢ B ⟩ → LC⟨ Γ ⊢ A ▻ B ⟩
 lc-lam = tc→lc ∘ TC.lam ∘ lc→tc
@@ -106,7 +106,7 @@ lc-det⋆₀ = tc→lc ∘ TC.det⋆₀ ∘ lc→tc
 -- Translation between list-shaped variants, with and without context.
 
 l→lc₀ : ∀ {A} → L.⊢ A → LC⟨ ⌀ ⊢ A ⟩
-l→lc₀ (Π , ts) = (Π , l×→lc₀× ts)
+l→lc₀ (Π , ts) = Π , l×→lc₀× ts
   where
     l×→lc₀× : ∀ {Π} → L.⊢× Π → LC⟨ ⌀ ⊢× Π ⟩
     l×→lc₀× L.nil         = LC.nil
@@ -123,7 +123,7 @@ l→lc : ∀ {A Γ} → L.⊢ Γ ▻⋯▻ A → LC⟨ Γ ⊢ A ⟩
 l→lc t = lc-det⋆₀ (l→lc₀ t)
 
 lc₀→l : ∀ {A} → LC⟨ ⌀ ⊢ A ⟩ → L.⊢ A
-lc₀→l (Π , ts) = (Π , lc₀×→lc× ts)
+lc₀→l (Π , ts) = Π , lc₀×→lc× ts
   where
     lc₀×→lc× : ∀ {Π} → LC⟨ ⌀ ⊢× Π ⟩ → L.⊢× Π
     lc₀×→lc× LC.nil         = L.nil
@@ -171,7 +171,7 @@ tc→t : ∀ {A Γ} → TC⟨ Γ ⊢ A ⟩ → T.⊢ Γ ▻⋯▻ A
 tc→t t = tc₀→t (TC.lam⋆₀ t)
 
 
--- Additional useful translations.
+-- Additional useful translations, with and without context.
 
 tc₀→l : ∀ {A} → TC⟨ ⌀ ⊢ A ⟩ → L.⊢ A
 tc₀→l = t→l ∘ tc₀→t

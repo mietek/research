@@ -24,10 +24,10 @@ import BasicIPC
 import BasicIPC.TarskiSemantics
 import BasicIPC.KripkeSemantics
 import BasicIPC.Hilbert.List
+import BasicIPC.Hilbert.ListWithContext
 import BasicIPC.Hilbert.Tree
 import BasicIPC.Hilbert.Tree.TarskiSoundness
 import BasicIPC.Hilbert.Tree.TarskiBasicCompleteness
-import BasicIPC.Hilbert.ListWithContext
 import BasicIPC.Hilbert.TreeWithContext
 import BasicIPC.Hilbert.TreeWithContext.TarskiSoundness
 import BasicIPC.Hilbert.TreeWithContext.KripkeSoundness
@@ -47,10 +47,10 @@ import IPC
 import IPC.TarskiSemantics
 import IPC.KripkeSemantics
 import IPC.Hilbert.List
+import IPC.Hilbert.ListWithContext
 import IPC.Hilbert.Tree
 import IPC.Hilbert.Tree.TarskiSoundness
 import IPC.Hilbert.Tree.TarskiBasicCompleteness
-import IPC.Hilbert.ListWithContext
 import IPC.Hilbert.TreeWithContext
 import IPC.Hilbert.TreeWithContext.TarskiSoundness
 import IPC.Hilbert.TreeWithContext.KripkeSoundness -- FIXME
