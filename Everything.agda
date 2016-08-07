@@ -24,6 +24,7 @@ import BasicIPC
 import BasicIPC.TarskiSemantics
 import BasicIPC.KripkeSemantics.Godel
 import BasicIPC.KripkeSemantics.McKinseyTarski
+import BasicIPC.Hilbert.List
 import BasicIPC.Hilbert.Tree
 import BasicIPC.Hilbert.Tree.TarskiSoundness
 import BasicIPC.Hilbert.Tree.TarskiBasicCompleteness
