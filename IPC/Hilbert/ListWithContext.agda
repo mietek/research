@@ -1,4 +1,4 @@
-module IPC.Hilbert.Sequential where
+module IPC.Hilbert.ListWithContext where
 
 open import IPC public
 

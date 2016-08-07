@@ -51,27 +51,27 @@ t→l T.tt        = ⌀ , L.tt L.nil
 -- Translation from list-shaped to tree-shaped variant, with context.
 
 lc→tc : ∀ {A Γ} → LC⟨ Γ ⊢ A ⟩ → TC⟨ Γ ⊢ A ⟩
-lc→tc (Π , ts) = lc×→t ts top
+lc→tc (Π , ts) = lc×→tc ts top
   where
-    lc×→t : ∀ {A Γ Π} → LC⟨ Γ ⊢× Π ⟩ → A ∈ Π → TC⟨ Γ ⊢ A ⟩
-    lc×→t (LC.var i ts)  top     = TC.var i
-    lc×→t (LC.mp i j ts) top     = TC.app (lc×→t ts i) (lc×→t ts j)
-    lc×→t (LC.ci ts)     top     = TC.ci
-    lc×→t (LC.ck ts)     top     = TC.ck
-    lc×→t (LC.cs ts)     top     = TC.cs
-    lc×→t (LC.cpair ts)  top     = TC.cpair
-    lc×→t (LC.cfst ts)   top     = TC.cfst
-    lc×→t (LC.csnd ts)   top     = TC.csnd
-    lc×→t (LC.tt ts)     top     = TC.tt
-    lc×→t (LC.var i ts)  (pop k) = lc×→t ts k
-    lc×→t (LC.mp i j ts) (pop k) = lc×→t ts k
-    lc×→t (LC.ci ts)     (pop k) = lc×→t ts k
-    lc×→t (LC.ck ts)     (pop k) = lc×→t ts k
-    lc×→t (LC.cs ts)     (pop k) = lc×→t ts k
-    lc×→t (LC.cpair ts)  (pop k) = lc×→t ts k
-    lc×→t (LC.cfst ts)   (pop k) = lc×→t ts k
-    lc×→t (LC.csnd ts)   (pop k) = lc×→t ts k
-    lc×→t (LC.tt ts)     (pop k) = lc×→t ts k
+    lc×→tc : ∀ {A Γ Π} → LC⟨ Γ ⊢× Π ⟩ → A ∈ Π → TC⟨ Γ ⊢ A ⟩
+    lc×→tc (LC.var i ts)  top     = TC.var i
+    lc×→tc (LC.mp i j ts) top     = TC.app (lc×→tc ts i) (lc×→tc ts j)
+    lc×→tc (LC.ci ts)     top     = TC.ci
+    lc×→tc (LC.ck ts)     top     = TC.ck
+    lc×→tc (LC.cs ts)     top     = TC.cs
+    lc×→tc (LC.cpair ts)  top     = TC.cpair
+    lc×→tc (LC.cfst ts)   top     = TC.cfst
+    lc×→tc (LC.csnd ts)   top     = TC.csnd
+    lc×→tc (LC.tt ts)     top     = TC.tt
+    lc×→tc (LC.var i ts)  (pop k) = lc×→tc ts k
+    lc×→tc (LC.mp i j ts) (pop k) = lc×→tc ts k
+    lc×→tc (LC.ci ts)     (pop k) = lc×→tc ts k
+    lc×→tc (LC.ck ts)     (pop k) = lc×→tc ts k
+    lc×→tc (LC.cs ts)     (pop k) = lc×→tc ts k
+    lc×→tc (LC.cpair ts)  (pop k) = lc×→tc ts k
+    lc×→tc (LC.cfst ts)   (pop k) = lc×→tc ts k
+    lc×→tc (LC.csnd ts)   (pop k) = lc×→tc ts k
+    lc×→tc (LC.tt ts)     (pop k) = lc×→tc ts k
 
 
 -- Translation from tree-shaped to list-shaped variant, with context.

@@ -46,10 +46,11 @@ import BasicIPC.Translation
 import IPC
 import IPC.TarskiSemantics
 import IPC.KripkeSemantics
-import IPC.Hilbert.Sequential
-import IPC.Hilbert.Nested
-import IPC.Hilbert.Nested.TarskiSoundness
-import IPC.Hilbert.Nested.KripkeSoundness -- FIXME
+import IPC.Hilbert.ListWithContext
+import IPC.Hilbert.TreeWithContext
+import IPC.Hilbert.TreeWithContext.TarskiSoundness
+import IPC.Hilbert.TreeWithContext.KripkeSoundness -- FIXME
+import IPC.Hilbert.Translation
 import IPC.Gentzen
 import IPC.Gentzen.TarskiSoundness
 import IPC.Gentzen.KripkeSoundness

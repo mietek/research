@@ -1,109 +1,51 @@
 module IPC.Translation where
 
-open import IPC public
+open import IPC.Hilbert.Translation public
 
-import IPC.Hilbert.Sequential as HS
-import IPC.Hilbert.Nested as HN
+import IPC.Hilbert.ListWithContext as LC
+import IPC.Hilbert.TreeWithContext as TC
 import IPC.Gentzen as G
 
-open HS using () renaming (_⊢×_ to HS⟨_⊢×_⟩ ; _⊢_ to HS⟨_⊢_⟩) public
-open HN using () renaming (_⊢_ to HN⟨_⊢_⟩) public
+open LC using () renaming (_⊢×_ to LC⟨_⊢×_⟩ ; _⊢_ to LC⟨_⊢_⟩) public
+open TC using () renaming (_⊢_ to TC⟨_⊢_⟩) public
 open G using () renaming (_⊢_ to G⟨_⊢_⟩) public
-
-
--- Translation from sequential Hilbert-style to nested.
-
-hs→hn : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → HN⟨ Γ ⊢ A ⟩
-hs→hn (Π , ts) = aux ts top
-  where
-    aux : ∀ {A Γ Π} → HS⟨ Γ ⊢× Π ⟩ → A ∈ Π → HN⟨ Γ ⊢ A ⟩
-    aux (HS.var i ts)  top     = HN.var i
-    aux (HS.mp i j ts) top     = HN.app (aux ts i) (aux ts j)
-    aux (HS.ci ts)     top     = HN.ci
-    aux (HS.ck ts)     top     = HN.ck
-    aux (HS.cs ts)     top     = HN.cs
-    aux (HS.cpair ts)  top     = HN.cpair
-    aux (HS.cfst ts)   top     = HN.cfst
-    aux (HS.csnd ts)   top     = HN.csnd
-    aux (HS.tt ts)     top     = HN.tt
-    aux (HS.cboom ts)  top     = HN.cboom
-    aux (HS.cinl ts)   top     = HN.cinl
-    aux (HS.cinr ts)   top     = HN.cinr
-    aux (HS.ccase ts)  top     = HN.ccase
-    aux (HS.var i ts)  (pop k) = aux ts k
-    aux (HS.mp i j ts) (pop k) = aux ts k
-    aux (HS.ci ts)     (pop k) = aux ts k
-    aux (HS.ck ts)     (pop k) = aux ts k
-    aux (HS.cs ts)     (pop k) = aux ts k
-    aux (HS.cpair ts)  (pop k) = aux ts k
-    aux (HS.cfst ts)   (pop k) = aux ts k
-    aux (HS.csnd ts)   (pop k) = aux ts k
-    aux (HS.tt ts)     (pop k) = aux ts k
-    aux (HS.cboom ts)  (pop k) = aux ts k
-    aux (HS.cinl ts)   (pop k) = aux ts k
-    aux (HS.cinr ts)   (pop k) = aux ts k
-    aux (HS.ccase ts)  (pop k) = aux ts k
-
-
--- Translation from nested Hilbert-style to sequential.
-
-hn→hs : ∀ {A Γ} → HN⟨ Γ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
-hn→hs (HN.var i)   = ⌀ , HS.var i HS.nil
-hn→hs (HN.app t u) = HS.app (hn→hs t) (hn→hs u)
-hn→hs HN.ci        = ⌀ , HS.ci HS.nil
-hn→hs HN.ck        = ⌀ , HS.ck HS.nil
-hn→hs HN.cs        = ⌀ , HS.cs HS.nil
-hn→hs HN.cpair     = ⌀ , HS.cpair HS.nil
-hn→hs HN.cfst      = ⌀ , HS.cfst HS.nil
-hn→hs HN.csnd      = ⌀ , HS.csnd HS.nil
-hn→hs HN.tt        = ⌀ , HS.tt HS.nil
-hn→hs HN.cboom     = ⌀ , HS.cboom HS.nil
-hn→hs HN.cinl      = ⌀ , HS.cinl HS.nil
-hn→hs HN.cinr      = ⌀ , HS.cinr HS.nil
-hn→hs HN.ccase     = ⌀ , HS.ccase HS.nil
-
-
--- Deduction theorem for sequential Hilbert-style.
-
-hl-lam : ∀ {A B Γ} → HS⟨ Γ , A ⊢ B ⟩ → HS⟨ Γ ⊢ A ▻ B ⟩
-hl-lam = hn→hs ∘ HN.lam ∘ hs→hn
 
 
 -- Translation from Hilbert-style to Gentzen-style.
 
-hn→g : ∀ {A Γ} → HN⟨ Γ ⊢ A ⟩ → G⟨ Γ ⊢ A ⟩
-hn→g (HN.var i)   = G.var i
-hn→g (HN.app t u) = G.app (hn→g t) (hn→g u)
-hn→g HN.ci        = G.ci
-hn→g HN.ck        = G.ck
-hn→g HN.cs        = G.cs
-hn→g HN.cpair     = G.cpair
-hn→g HN.cfst      = G.cfst
-hn→g HN.csnd      = G.csnd
-hn→g HN.tt        = G.tt
-hn→g HN.cboom     = G.cboom
-hn→g HN.cinl      = G.cinl
-hn→g HN.cinr      = G.cinr
-hn→g HN.ccase     = G.ccase
+tc→g : ∀ {A Γ} → TC⟨ Γ ⊢ A ⟩ → G⟨ Γ ⊢ A ⟩
+tc→g (TC.var i)   = G.var i
+tc→g (TC.app t u) = G.app (tc→g t) (tc→g u)
+tc→g TC.ci        = G.ci
+tc→g TC.ck        = G.ck
+tc→g TC.cs        = G.cs
+tc→g TC.cpair     = G.cpair
+tc→g TC.cfst      = G.cfst
+tc→g TC.csnd      = G.csnd
+tc→g TC.tt        = G.tt
+tc→g TC.cboom     = G.cboom
+tc→g TC.cinl      = G.cinl
+tc→g TC.cinr      = G.cinr
+tc→g TC.ccase     = G.ccase
 
-hs→g : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → G⟨ Γ ⊢ A ⟩
-hs→g = hn→g ∘ hs→hn
+lc→g : ∀ {A Γ} → LC⟨ Γ ⊢ A ⟩ → G⟨ Γ ⊢ A ⟩
+lc→g = tc→g ∘ lc→tc
 
 
 -- Translation from Gentzen-style to Hilbert-style.
 
-g→hn : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → HN⟨ Γ ⊢ A ⟩
-g→hn (G.var i)      = HN.var i
-g→hn (G.lam t)      = HN.lam (g→hn t)
-g→hn (G.app t u)    = HN.app (g→hn t) (g→hn u)
-g→hn (G.pair t u)   = HN.pair (g→hn t) (g→hn u)
-g→hn (G.fst t)      = HN.fst (g→hn t)
-g→hn (G.snd t)      = HN.snd (g→hn t)
-g→hn G.tt           = HN.tt
-g→hn (G.boom t)     = HN.boom (g→hn t)
-g→hn (G.inl t)      = HN.inl (g→hn t)
-g→hn (G.inr t)      = HN.inr (g→hn t)
-g→hn (G.case t u v) = HN.case (g→hn t) (g→hn u) (g→hn v)
+g→tc : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → TC⟨ Γ ⊢ A ⟩
+g→tc (G.var i)      = TC.var i
+g→tc (G.lam t)      = TC.lam (g→tc t)
+g→tc (G.app t u)    = TC.app (g→tc t) (g→tc u)
+g→tc (G.pair t u)   = TC.pair (g→tc t) (g→tc u)
+g→tc (G.fst t)      = TC.fst (g→tc t)
+g→tc (G.snd t)      = TC.snd (g→tc t)
+g→tc G.tt           = TC.tt
+g→tc (G.boom t)     = TC.boom (g→tc t)
+g→tc (G.inl t)      = TC.inl (g→tc t)
+g→tc (G.inr t)      = TC.inr (g→tc t)
+g→tc (G.case t u v) = TC.case (g→tc t) (g→tc u) (g→tc v)
 
-g→hs : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
-g→hs = hn→hs ∘ g→hn
+g→lc : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → LC⟨ Γ ⊢ A ⟩
+g→lc = tc→lc ∘ g→tc

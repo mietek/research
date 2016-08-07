@@ -1,6 +1,6 @@
-module IPC.Hilbert.Nested.KripkeSoundness where
+module IPC.Hilbert.TreeWithContext.KripkeSoundness where
 
-open import IPC.Hilbert.Nested public
+open import IPC.Hilbert.TreeWithContext public
 open import IPC.KripkeSemantics public
 
 
