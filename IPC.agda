@@ -100,3 +100,16 @@ _≟ᵗʸ_ : (A A′ : Ty) → Dec (A ≡ A′)
 (A ∨ B) ≟ᵗʸ (A′ ∨ B′) | _        | no  B≢B′ = no (B≢B′ ∘ inv∨ᵣ)
 
 open ContextEquality (_≟ᵗʸ_) public
+
+
+-- Additional useful propositions.
+
+infixr 5 _▻⋯▻_
+_▻⋯▻_ : Cx Ty → Ty → Ty
+⌀       ▻⋯▻ B = B
+(Π , A) ▻⋯▻ B = Π ▻⋯▻ (A ▻ B)
+
+infixr 5 _▻⋯▻⋆_
+_▻⋯▻⋆_ : Cx Ty → Cx Ty → Ty
+Γ ▻⋯▻⋆ ⌀       = ⊤
+Γ ▻⋯▻⋆ (Π , A) = (Γ ▻⋯▻⋆ Π) ∧ (Γ ▻⋯▻ A)
