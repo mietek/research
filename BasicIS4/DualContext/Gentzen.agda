@@ -112,12 +112,12 @@ v₂ = var i₂
 -- Deduction theorem is built-in.
 
 lam⋆ : ∀ {Π A Γ Δ} → Γ ⧺ Π ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ Π ▻⋯▻ A
-lam⋆ {⌀}     t = t
-lam⋆ {Π , B} t = lam⋆ {Π} (lam t)
+lam⋆ {⌀}     = id
+lam⋆ {Π , B} = lam⋆ {Π} ∘ lam
 
 lam⋆₀ : ∀ {Γ A Δ} → Γ ⁏ Δ ⊢ A → ⌀ ⁏ Δ ⊢ Γ ▻⋯▻ A
-lam⋆₀ {⌀}     t = t
-lam⋆₀ {Γ , A} t = lam⋆₀ (lam t)
+lam⋆₀ {⌀}     = id
+lam⋆₀ {Γ , B} = lam⋆₀ ∘ lam
 
 
 -- Modal deduction theorem.
@@ -126,12 +126,12 @@ mlam : ∀ {A B Γ Δ} → Γ ⁏ Δ , A ⊢ B → Γ ⁏ Δ ⊢ □ A ▻ B
 mlam t = lam (unbox v₀ (mono⊢ weak⊆ t))
 
 mlam⋆ : ∀ {Π A Γ Δ} → Γ ⁏ Δ ⧺ Π ⊢ A → Γ ⁏ Δ ⊢ □⋆ Π ▻⋯▻ A
-mlam⋆ {⌀}     t = t
-mlam⋆ {Π , B} t = mlam⋆ {Π} (mlam t)
+mlam⋆ {⌀}     = id
+mlam⋆ {Π , B} = mlam⋆ {Π} ∘ mlam
 
 mlam⋆₀ : ∀ {Δ A Γ} → Γ ⁏ Δ ⊢ A → Γ ⁏ ⌀ ⊢ □⋆ Δ ▻⋯▻ A
-mlam⋆₀ {⌀}     t = t
-mlam⋆₀ {Δ , B} t = mlam⋆₀ (mlam t)
+mlam⋆₀ {⌀}     = id
+mlam⋆₀ {Δ , B} = mlam⋆₀ ∘ mlam
 
 
 -- Detachment theorems.
@@ -140,38 +140,38 @@ det : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ▻ B → Γ , A ⁏ Δ ⊢ B
 det t = app (mono⊢ weak⊆ t) v₀
 
 det⋆ : ∀ {Π A Γ Δ} → Γ ⁏ Δ ⊢ Π ▻⋯▻ A → Γ ⧺ Π ⁏ Δ ⊢ A
-det⋆ {⌀}     t = t
-det⋆ {Π , A} t = det (det⋆ {Π} t)
+det⋆ {⌀}     = id
+det⋆ {Π , B} = det ∘ det⋆ {Π}
 
 det⋆₀ : ∀ {Γ A Δ} → ⌀ ⁏ Δ ⊢ Γ ▻⋯▻ A → Γ ⁏ Δ ⊢ A
-det⋆₀ {⌀}     t = t
-det⋆₀ {Γ , A} t = det (det⋆₀ t)
+det⋆₀ {⌀}     = id
+det⋆₀ {Γ , B} = det ∘ det⋆₀
 
 mdet : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ □ A ▻ B → Γ ⁏ Δ , A ⊢ B
 mdet t = app (mmono⊢ weak⊆ t) (box mv₀)
 
 mdet⋆ : ∀ {Π A Γ Δ} → Γ ⁏ Δ ⊢ □⋆ Π ▻⋯▻ A → Γ ⁏ Δ ⧺ Π ⊢ A
-mdet⋆ {⌀}      t = t
-mdet⋆ {Π , A} t = mdet (mdet⋆ {Π} t)
+mdet⋆ {⌀}     = id
+mdet⋆ {Π , B} = mdet ∘ mdet⋆ {Π}
 
 mdet⋆₀ : ∀ {Δ A Γ} → Γ ⁏ ⌀ ⊢ □⋆ Δ ▻⋯▻ A → Γ ⁏ Δ ⊢ A
-mdet⋆₀ {⌀}     t = t
-mdet⋆₀ {Δ , A} t = mdet (mdet⋆₀ t)
+mdet⋆₀ {⌀}     = id
+mdet⋆₀ {Δ , B} = mdet ∘ mdet⋆₀
 
 
 -- Dual context manipulation.
 
 merge : ∀ {Δ A Γ} → Γ ⁏ Δ ⊢ A → Γ ⧺ (□⋆ Δ) ⁏ ⌀ ⊢ A
-merge {Δ} t = det⋆ {□⋆ Δ} (mlam⋆₀ t)
+merge {Δ} = det⋆ {□⋆ Δ} ∘ mlam⋆₀
 
 mmerge : ∀ {Γ A Δ} → □⋆ Γ ⁏ Δ ⊢ A → ⌀ ⁏ Δ ⧺ Γ ⊢ A
-mmerge {Γ} t = mdet⋆ {Γ} (lam⋆₀ t)
+mmerge {Γ} = mdet⋆ {Γ} ∘ lam⋆₀
 
 split : ∀ {Δ A Γ} → Γ ⧺ (□⋆ Δ) ⁏ ⌀ ⊢ A → Γ ⁏ Δ ⊢ A
-split {Δ} t = mdet⋆₀ (lam⋆ {□⋆ Δ} t)
+split {Δ} = mdet⋆₀ ∘ lam⋆ {□⋆ Δ}
 
 msplit : ∀ {Γ A Δ} → ⌀ ⁏ Δ ⧺ Γ ⊢ A → □⋆ Γ ⁏ Δ ⊢ A
-msplit {Γ} t = det⋆₀ (mlam⋆ {Γ} t)
+msplit {Γ} = det⋆₀ ∘ mlam⋆ {Γ}
 
 merge⋆ : ∀ {Π Δ Γ} → Γ ⁏ Δ ⊢⋆ Π → Γ ⧺ (□⋆ Δ) ⁏ ⌀ ⊢⋆ Π
 merge⋆ {⌀}     ∙        = ∙
