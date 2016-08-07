@@ -37,7 +37,7 @@ mutual
   reify {A ∧ B} k = k refl≤ (λ η s → pair (reify {A} (π₁ s)) (reify {B} (π₂ s)))
   reify {⊤}    k = k refl≤ (λ η s → tt)
   reify {⊥}    k = k refl≤ (λ η ())
-  reify {A ∨ B} k = k refl≤ (λ η s → κ s
+  reify {A ∨ B} k = k refl≤ (λ η s → elim⊎ s
                                         (λ a → inl (reify {A} (λ η′ k → a η′ k)))
                                         (λ b → inr (reify {B} (λ η′ k → b η′ k))))
 

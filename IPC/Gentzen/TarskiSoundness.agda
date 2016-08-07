@@ -17,6 +17,6 @@ eval tt           γ = ∙
 eval (boom t)     γ = elim𝟘 (eval t γ)
 eval (inl t)      γ = ι₁ (eval t γ)
 eval (inr t)      γ = ι₂ (eval t γ)
-eval (case t u v) γ = κ (eval t γ)
+eval (case t u v) γ = elim⊎ (eval t γ)
                         (λ a → eval u (γ , a))
                         (λ b → eval v (γ , b))

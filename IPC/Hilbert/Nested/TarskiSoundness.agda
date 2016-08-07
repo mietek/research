@@ -19,4 +19,4 @@ eval tt        γ = ∙
 eval cboom     γ = elim𝟘
 eval cinl      γ = ι₁
 eval cinr      γ = ι₂
-eval ccase     γ = κ
+eval ccase     γ = elim⊎

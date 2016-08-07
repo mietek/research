@@ -118,8 +118,8 @@ mutual
   reflect {⊤}    t = return {⊤} ∙
   reflect {⊥}    t = λ η k → neⁿᶠ (boomⁿᵉ (mono⊢ⁿᵉ η t))
   reflect {A ∨ B} t = λ η k → neⁿᶠ (caseⁿᵉ (mono⊢ⁿᵉ η t)
-                                       (k weak⊆ (ι₁ (reflect {A} (varⁿᵉ top))))
-                                       (k weak⊆ (ι₂ (reflect {B} (varⁿᵉ top)))))
+                                      (k weak⊆ (ι₁ (reflect {A} (varⁿᵉ top))))
+                                      (k weak⊆ (ι₂ (reflect {B} (varⁿᵉ top)))))
 
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ⁿᶠ A
   reify {α P}   k = k refl≤ (λ η s → neⁿᶠ s)
@@ -127,7 +127,7 @@ mutual
   reify {A ∧ B} k = k refl≤ (λ η s → pairⁿᶠ (reify {A} (π₁ s)) (reify {B} (π₂ s)))
   reify {⊤}    k = k refl≤ (λ η s → ttⁿᶠ)
   reify {⊥}    k = k refl≤ (λ η ())
-  reify {A ∨ B} k = k refl≤ (λ η s → κ s
+  reify {A ∨ B} k = k refl≤ (λ η s → elim⊎ s
                                         (λ a → inlⁿᶠ (reify {A} (λ η′ k′ → a η′ k′)))
                                         (λ b → inrⁿᶠ (reify {B} (λ η′ k′ → b η′ k′))))
 

@@ -51,7 +51,8 @@ open import Relation.Nullary.Negation public
   renaming (contradiction to _↯_)
 
 
--- Atoms, for propositional variables.
+
+-- Abstract symbols, or atoms.
 
 abstract
   Atom : Set
@@ -61,24 +62,30 @@ abstract
   _≟ᵅ_ = _≟ᴺ_
 
 
--- Miscellaneous.
+-- Elimination for disjoint unions.
 
-κ : ∀ {a b c} {A : Set a} {B : Set b} {C : Set c}
-    → A ⊎ B → (A → C) → (B → C) → C
-κ (ι₁ x) f g = f x
-κ (ι₂ y) f g = g y
+elim⊎ : ∀ {a b c} {A : Set a} {B : Set b} {C : Set c}
+        → A ⊎ B → (A → C) → (B → C) → C
+elim⊎ (ι₁ x) f g = f x
+elim⊎ (ι₂ y) f g = g y
+
+
+-- Triple-argument congruence.
 
 cong₃ : ∀ {a b c d} {A : Set a} {B : Set b} {C : Set c} {D : Set d}
         (f : A → B → C → D) {x x′ y y′ z z′}
         → x ≡ x′ → y ≡ y′ → z ≡ z′ → f x y z ≡ f x′ y′ z′
 cong₃ f refl refl refl = refl
 
+
+-- Composition, supremum, and infimum for relations.
+
 module _ {W : Set} where
   _⨾_ : (W → W → Set) → (W → W → Set) → (W → W → Set)
-  _P_ ⨾ _R_ = λ a b → ∃ (λ z → a P z × z R b)
+  _R_ ⨾ _Q_ = λ w w′ → ∃ (λ v → w R v × v Q w′)
 
   _⊔_ : (W → W → Set) → (W → W → Set) → (W → W → Set)
-  _P_ ⊔ _R_ = λ a b → ∃ (λ z → a P z × b R z)
+  _R_ ⊔ _Q_ = λ w w′ → ∃ (λ v → w R v × w′ Q v)
 
   _⊓_ : (W → W → Set) → (W → W → Set) → (W → W → Set)
-  _P_ ⊓ _R_ = λ a b → ∃ (λ z → z P a × z R b)
+  _R_ ⊓ _Q_ = λ w w′ → ∃ (λ v → v R w × v Q w′)

@@ -47,5 +47,6 @@ eval (ccase {A} {B} {C}) γ = return {A ∨ B ▻ (A ▻ C) ▻ (B ▻ C) ▻ C}
                              in  bind {A ∨ B} {C} t′ (λ ξ″ s →
                                  let u″ = mono⊩ {A ▻ C} ξ″ u′
                                      v″ = mono⊩ {B ▻ C} ξ″ v
-                                 in κ s (λ a → oops)
-                                        (λ b → oops)))))
+                                 in elim⊎ s
+                                      (λ a → oops)
+                                      (λ b → oops)))))
