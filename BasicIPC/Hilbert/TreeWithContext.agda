@@ -67,11 +67,27 @@ lam cfst          = app ck cfst
 lam csnd          = app ck csnd
 lam tt            = app ck tt
 
+lam⋆ : ∀ {Π Γ A} → Γ ⧺ Π ⊢ A → Γ ⊢ Π ▻⋯▻ A
+lam⋆ {⌀}     = id
+lam⋆ {Π , B} = lam⋆ {Π} ∘ lam
+
+lam⋆₀ : ∀ {Γ A} → Γ ⊢ A → ⌀ ⊢ Γ ▻⋯▻ A
+lam⋆₀ {⌀}     = id
+lam⋆₀ {Γ , B} = lam⋆₀ ∘ lam
+
 
 -- Detachment theorem.
 
 det : ∀ {A B Γ} → Γ ⊢ A ▻ B → Γ , A ⊢ B
 det t = app (mono⊢ weak⊆ t) v₀
+
+det⋆ : ∀ {Π Γ A} → Γ ⊢ Π ▻⋯▻ A → Γ ⧺ Π ⊢ A
+det⋆ {⌀}     = id
+det⋆ {Π , B} = det ∘ det⋆ {Π}
+
+det⋆₀ : ∀ {Γ A} → ⌀ ⊢ Γ ▻⋯▻ A → Γ ⊢ A
+det⋆₀ {⌀}     = id
+det⋆₀ {Γ , B} = det ∘ det⋆₀
 
 
 -- Cut and multicut.

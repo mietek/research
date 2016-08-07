@@ -32,6 +32,7 @@ import BasicIPC.Hilbert.ListWithContext
 import BasicIPC.Hilbert.TreeWithContext
 import BasicIPC.Hilbert.TreeWithContext.TarskiSoundness
 import BasicIPC.Hilbert.TreeWithContext.KripkeSoundness
+import BasicIPC.Hilbert.Translation
 import BasicIPC.Gentzen
 import BasicIPC.Gentzen.TarskiSoundness
 import BasicIPC.Gentzen.KripkeSoundness
