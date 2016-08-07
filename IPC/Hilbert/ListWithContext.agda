@@ -3,7 +3,7 @@ module IPC.Hilbert.ListWithContext where
 open import IPC public
 
 
--- Derivations, as Hilbert-style combinator sequences.
+-- Derivations, as Hilbert-style lists of combinators, with context.
 
 infix 3 _⊢×_
 data _⊢×_ (Γ : Cx Ty) : Cx Ty → Set where

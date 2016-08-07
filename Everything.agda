@@ -46,6 +46,10 @@ import BasicIPC.Translation
 import IPC
 import IPC.TarskiSemantics
 import IPC.KripkeSemantics
+import IPC.Hilbert.List
+import IPC.Hilbert.Tree
+import IPC.Hilbert.Tree.TarskiSoundness
+import IPC.Hilbert.Tree.TarskiBasicCompleteness
 import IPC.Hilbert.ListWithContext
 import IPC.Hilbert.TreeWithContext
 import IPC.Hilbert.TreeWithContext.TarskiSoundness

@@ -91,6 +91,17 @@ module CoquandDybjerSemantics (Syntax : Ty → Set) where
 
   -- Additional useful equipment.
 
+  _$ˢ_ : ∀ {{_ : Model}} {A B} → Syntax (A ▻ B) × (⊨ A → ⊨ B) → ⊨ A → ⊨ B
+  (t , f) $ˢ a = f a
+
+  elim⊎ˢ : ∀ {{_ : Model}} {A B C}
+           → ⊨ A ⊎ ⊨ B
+           → Syntax (A ▻ C) × (⊨ A → ⊨ C)
+           → Syntax (B ▻ C) × (⊨ B → ⊨ C)
+           → ⊨ C
+  elim⊎ˢ (ι₁ a) (u , f) (v , g) = f a
+  elim⊎ˢ (ι₂ b) (u , f) (v , g) = g b
+
   lookup : ∀ {A Γ} → A ∈ Γ → Γ ᴹ⊨ A
   lookup top     (γ , a) = a
   lookup (pop i) (γ , b) = lookup i γ

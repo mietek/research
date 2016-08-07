@@ -2,6 +2,8 @@ module IPC.Translation where
 
 open import IPC.Hilbert.Translation public
 
+import IPC.Hilbert.List as L
+import IPC.Hilbert.Tree as T
 import IPC.Hilbert.ListWithContext as LC
 import IPC.Hilbert.TreeWithContext as TC
 import IPC.Gentzen as G
@@ -31,6 +33,18 @@ tc→g TC.ccase     = G.ccase
 lc→g : ∀ {A Γ} → LC⟨ Γ ⊢ A ⟩ → G⟨ Γ ⊢ A ⟩
 lc→g = tc→g ∘ lc→tc
 
+t→g₀ : ∀ {A} → T.⊢ A → G⟨ ⌀ ⊢ A ⟩
+t→g₀ = tc→g ∘ t→tc₀
+
+t→g : ∀ {A Γ} → T.⊢ Γ ▻⋯▻ A → G⟨ Γ ⊢ A ⟩
+t→g = tc→g ∘ t→tc
+
+l→g₀ : ∀ {A} → L.⊢ A → G⟨ ⌀ ⊢ A ⟩
+l→g₀ = tc→g ∘ l→tc₀
+
+l→g : ∀ {A Γ} → L.⊢ Γ ▻⋯▻ A → G⟨ Γ ⊢ A ⟩
+l→g = tc→g ∘ l→tc
+
 
 -- Translation from Gentzen-style to Hilbert-style.
 
@@ -49,3 +63,15 @@ g→tc (G.case t u v) = TC.case (g→tc t) (g→tc u) (g→tc v)
 
 g→lc : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → LC⟨ Γ ⊢ A ⟩
 g→lc = tc→lc ∘ g→tc
+
+g₀→t : ∀ {A} → G⟨ ⌀ ⊢ A ⟩ → T.⊢ A
+g₀→t = tc₀→t ∘ g→tc
+
+g→t : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → T.⊢ Γ ▻⋯▻ A
+g→t = tc→t ∘ g→tc
+
+g₀→l : ∀ {A} → G⟨ ⌀ ⊢ A ⟩ → L.⊢ A
+g₀→l = tc₀→l ∘ g→tc
+
+g→l : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → L.⊢ Γ ▻⋯▻ A
+g→l = tc→l ∘ g→tc
