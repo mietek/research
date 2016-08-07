@@ -66,7 +66,7 @@ module CoquandDybjerSemantics (Syntax : Ty → Set) where
   infix 3 ⊨_
   ⊨_ : ∀ {{_ : Model}} → Ty → Set
   ⊨ α P   = Syntax (α P) × ⊨ᵅ P
-  ⊨ A ▻ B = Syntax (A ▻ B) × ⊨ A → ⊨ B
+  ⊨ A ▻ B = Syntax (A ▻ B) × (⊨ A → ⊨ B)
   ⊨ A ∧ B = ⊨ A × ⊨ B
   ⊨ ⊤    = 𝟙
   ⊨ ⊥    = 𝟘
