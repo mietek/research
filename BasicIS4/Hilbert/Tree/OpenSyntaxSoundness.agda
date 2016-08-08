@@ -12,8 +12,26 @@ import BasicIS4.Hilbert.TreeWithContext as TC
 ᵀmono⊢ : ∀ {Π Π′ A} → Π ⊆ Π′ → ⊢ Π ▻⋯▻ A → ⊢ Π′ ▻⋯▻ A
 ᵀmono⊢ θ t = tc→t (TC.mono⊢ θ (t→tc t))
 
+ᵀml : ∀ {Π Π′ A} → Π ⊆ Π′ → ⊢ □⋆ Π ▻⋯▻ A → ⊢ □⋆ Π′ ▻⋯▻ A
+ᵀml = ᵀmono⊢ ∘ lift⊆
+
 ᵀapp : ∀ {Π A B} → ⊢ Π ▻⋯▻ A ▻ B → ⊢ Π ▻⋯▻ A → ⊢ Π ▻⋯▻ B
 ᵀapp {Π} t u = tc→t (TC.app {Π} (t→tc t) (t→tc u))
+
+ᵀk₁ : ∀ {Π A B} → ⊢ Π ▻⋯▻ A → ⊢ Π ▻⋯▻ B ▻ A
+ᵀk₁ {Π} t = tc→t (TC.app {Π} TC.ck (t→tc t))
+
+ᵀs₁ : ∀ {Π A B C} → ⊢ Π ▻⋯▻ A ▻ B ▻ C → ⊢ Π ▻⋯▻ (A ▻ B) ▻ A ▻ C
+ᵀs₁ {Π} t = tc→t (TC.app {Π} TC.cs (t→tc t))
+
+ᵀs₂ : ∀ {Π A B C} → ⊢ Π ▻⋯▻ A ▻ B ▻ C → ⊢ Π ▻⋯▻ A ▻ B → ⊢ Π ▻⋯▻ A ▻ C
+ᵀs₂ {Π} t u = tc→t (TC.app {Π} (TC.app TC.cs (t→tc t)) (t→tc u))
+
+ᵀdist₁ : ∀ {Π A B} → ⊢ Π ▻⋯▻ □ (A ▻ B) → ⊢ Π ▻⋯▻ □ A ▻ □ B
+ᵀdist₁ {Π} t = tc→t (TC.app {Π} TC.cdist (t→tc t))
+
+ᵀpair₁ : ∀ {Π A B} → ⊢ Π ▻⋯▻ A → ⊢ Π ▻⋯▻ B ▻ A ∧ B
+ᵀpair₁ {Π} t = tc→t (TC.app {Π} TC.cpair (t→tc t))
 
 ᵀpair : ∀ {Π A B} → ⊢ Π ▻⋯▻ A → ⊢ Π ▻⋯▻ B → ⊢ Π ▻⋯▻ A ∧ B
 ᵀpair {Π} t u = tc→t (TC.pair {_} {_} {Π} (t→tc t) (t→tc u))
@@ -43,7 +61,7 @@ module GabbayNanevskiSoundness where
                           let h = ((mono⊨ {A ▻ B ▻ C} (trans⊆ θ θ′) f) refl⊆ a) refl⊆
                               b = (mono⊨ {A ▻ B} θ′ g) refl⊆ a
                           in  h b
-  eval (box {A} t)      = λ θ₀ → ᵀmono⊢ (lift⊆ θ₀) t , mono⊨ {A} bot⊆ (eval t)
+  eval (box {A} t)      = λ θ₀ → ᵀml θ₀ t , mono⊨ {A} bot⊆ (eval t)
   eval cdist            = λ _ □f θ □a {Δ′} θ′ →
                           let t , f = □f (trans⊆ θ θ′)
                               u , a = □a θ′
@@ -51,7 +69,7 @@ module GabbayNanevskiSoundness where
   eval (cup {A})        = λ _ □a {Δ′} θ →
                           let t , a = □a θ
                           in  ᵀcxdown {Δ′} (ᵀlift {□⋆ Δ′} t) , (λ θ′ →
-                                ᵀmono⊢ (lift⊆ θ′) t , mono⊨ {A} θ′ a)
+                                ᵀml θ′ t , mono⊨ {A} θ′ a)
   eval cdown            = λ _ □a →
                           let t , a = □a refl⊆
                           in  a
@@ -84,41 +102,40 @@ module CoquandDybjerSoundness where
 
   -- Soundness with respect to all models, or evaluation.
 
-  -- TODO: Finish this.
-  postulate
-    eval : ∀ {A} → ⊢ A → ᴹ⊨ A
-  -- eval (app t u)   = let _ , f = (eval t) refl⊆
-  --                    in  f (eval u)
-  -- eval ci          = λ θ₀ → ᵀmono⊢ (lift⊆ θ₀) ci , id
-  -- eval (ck {A})    = λ θ₀ → ᵀmono⊢ (lift⊆ θ₀) ck , (λ a θ →
-  --                      {!!} , (λ b →
-  --                        mono⊨ {A} θ a))
-  -- eval cs          = λ θ₀ → ᵀmono⊢ (lift⊆ θ₀) cs , (λ f θ →
-  --                    let t , f′ = f θ
-  --                    in  {!!} , (λ g θ′ →
-  --                        let _ , f″ = f (trans⊆ θ θ′)
-  --                            u , g′ = g θ′
-  --                        in  {!!} , (λ a →
-  --                            let _ , h = (f″ a) refl⊆
-  --                                b     = g′ a
-  --                            in  h b)))
-  -- eval (box {A} t) = λ θ₀ → ᵀmono⊢ (lift⊆ θ₀) t , mono⊨ {A} bot⊆ (eval t)
-  -- eval cdist       = λ θ₀ → ᵀmono⊢ (lift⊆ θ₀) cdist , (λ □f θ →
-  --                    let t , f = □f θ
-  --                    in  {!!} , (λ □a θ′ →
-  --                        let u  , a  = □a θ′
-  --                            t′ , f′ = f θ′
-  --                        in  {!!} , f′ a))
-  -- eval (cup {A})   = λ θ₀ → ᵀmono⊢ (lift⊆ θ₀) cup , (λ □a θ →
-  --                    let t , a = □a θ
-  --                    in  {!!} , (λ θ′ →
-  --                          {!!} , mono⊨ {A} θ′ a))
-  -- eval cdown       = λ θ₀ → ᵀmono⊢ (lift⊆ θ₀) cdown , (λ □a →
-  --                    let t , a = □a refl⊆
-  --                    in  a)
-  -- eval (cpair {A}) = λ θ₀ → ᵀmono⊢ (lift⊆ θ₀) cpair , (λ a θ →
-  --                              {!!} , (λ b →
-  --                                mono⊨ {A} θ a , b))
-  -- eval cfst        = λ θ₀ → ᵀmono⊢ (lift⊆ θ₀) cfst , π₁
-  -- eval csnd        = λ θ₀ → ᵀmono⊢ (lift⊆ θ₀) csnd , π₂
-  -- eval tt          = ∙
+  eval : ∀ {A} → ⊢ A → ᴹ⊨ A
+  eval (app t u)        = let _ , f = (eval t) refl⊆
+                          in  f (eval u)
+  eval ci               = λ θ₀ → ᵀml θ₀ ci , id
+  eval (ck {A})         = λ θ₀ → ᵀml θ₀ ck , (λ a {Δ″} θ →
+                            ᵀk₁ {□⋆ Δ″} (ᵀml θ (reify {A} a)) , (λ b →
+                              mono⊨ {A} θ a))
+  eval (cs {A} {B} {C}) = λ θ₀ → ᵀml θ₀ cs , (λ f {Δ″} θ →
+                          let t , f′ = f θ
+                          in  ᵀs₁ {□⋆ Δ″} (ᵀml θ (reify {A ▻ B ▻ C} f)) , (λ g {Δ‴} θ′ →
+                              let _ , f″ = f (trans⊆ θ θ′)
+                                  u , g′ = g θ′
+                              in  ᵀs₂ {□⋆ Δ‴} (ᵀml (trans⊆ θ θ′) (reify {A ▻ B ▻ C} f))
+                                              (ᵀml θ′ (reify {A ▻ B} g)) , (λ a →
+                                  let _ , h = (f″ a) refl⊆
+                                      b     = g′ a
+                                  in  h b)))
+  eval (box {A} t)      = λ θ₀ → ᵀml θ₀ t , mono⊨ {A} bot⊆ (eval t)
+  eval (cdist {A} {B})  = λ θ₀ → ᵀml θ₀ cdist , (λ □f {Δ″} θ →
+                          let t , f = □f θ
+                          in  ᵀdist₁ {□⋆ Δ″} (ᵀml θ (reify {□ (A ▻ B)} □f)) , (λ □a {Δ‴} θ′ →
+                              let u  , a  = □a θ′
+                                  t′ , f′ = f θ′
+                              in  ᵀapp {□⋆ Δ‴} (ᵀml θ′ t) u , f′ a))
+  eval (cup {A})        = λ θ₀ → ᵀml θ₀ cup , (λ □a {Δ″} θ →
+                          let t , a = □a θ
+                          in  ᵀcxdown {Δ″} (ᵀlift {□⋆ Δ″} t) , (λ θ′ →
+                                ᵀml θ′ t , mono⊨ {A} θ′ a))
+  eval cdown            = λ θ₀ → ᵀml θ₀ cdown , (λ □a →
+                          let t , a = □a refl⊆
+                          in  a)
+  eval (cpair {A})      = λ θ₀ → ᵀml θ₀ cpair , (λ a {Δ″} θ →
+                                    ᵀpair₁ {□⋆ Δ″} (ᵀml θ (reify {A} a)) , (λ b →
+                                      mono⊨ {A} θ a , b))
+  eval cfst             = λ θ₀ → ᵀml θ₀ cfst , π₁
+  eval csnd             = λ θ₀ → ᵀml θ₀ csnd , π₂
+  eval tt               = ∙

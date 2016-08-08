@@ -80,7 +80,7 @@ import BasicIS4.Hilbert.ListWithContextPair
 import BasicIS4.Hilbert.Tree
 import BasicIS4.Hilbert.Tree.TarskiSoundness
 import BasicIS4.Hilbert.Tree.TarskiBasicCompleteness
-import BasicIS4.Hilbert.Tree.OpenSyntaxSoundness -- TODO
+import BasicIS4.Hilbert.Tree.OpenSyntaxSoundness
 import BasicIS4.Hilbert.Tree.OpenSyntaxBasicCompleteness
 import BasicIS4.Hilbert.TreeWithContext
 import BasicIS4.Hilbert.TreeWithContext.TarskiSoundness
