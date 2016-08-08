@@ -12,7 +12,7 @@ module IlikSoundness where
   open IlikSemantics public
 
 
-  -- Soundness, or evaluation.
+  -- Soundness with respect to all models, or evaluation.
 
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
   eval (var i)                  γ = lookup i γ

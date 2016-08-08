@@ -12,20 +12,20 @@ module IlikSoundness where
   open IlikSemantics public
 
 
+  -- Soundness with respect to all models, or evaluation.
+
   -- FIXME: Add more CPS combinators.
   postulate
     oops : ∀ {A : Set} → A
 
-
-  -- Soundness, or evaluation.
-
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
   eval (var i)             γ = lookup i γ
-  eval (app {A} {B} t u)   γ = bind {A ▻ B} {B} (eval t γ)
-                                 (λ ξ f → f refl≤ (mono⊩ {A} ξ (eval u γ)))
+  eval (app {A} {B} t u)   γ = bind {A ▻ B} {B} (eval t γ) (λ ξ f →
+                                 f refl≤ (mono⊩ {A} ξ (eval u γ)))
   eval (ci {A})            γ = return {A ▻ A} (λ _ a → a)
   eval (ck {A} {B})        γ = return {A ▻ B ▻ A} (λ _ a →
-                               return {B ▻ A} (λ ξ b → mono⊩ {A} ξ a))
+                               return {B ▻ A} (λ ξ b →
+                                 mono⊩ {A} ξ a))
   eval (cs {A} {B} {C})    γ = return {(A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C} (λ _ f →
                                return {(A ▻ B) ▻ A ▻ C} (λ ξ g →
                                return {A ▻ C} (λ ξ′ t →
