@@ -25,7 +25,7 @@ References
 
 • Coquand, C. (1994) [“From semantics to rules: A machine assisted analysis”](http://dx.doi.org/10.1007/BFb0049326)
 
-• Coquand, T., Dybjer, P. (1997) [“Intuitionistic model constructions and normalization proofs”]( http://dx.doi.org/10.1017/S0960129596002150)
+• Coquand, T., Dybjer, P. (1997) [“Intuitionistic model constructions and normalization proofs”](http://dx.doi.org/10.1017/S0960129596002150)
 
 • Davies, R., Pfenning, F. (2001) [“A modal analysis of staged computation”](http://dx.doi.org/10.1145/382780.382785)
 
