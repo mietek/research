@@ -145,7 +145,9 @@ data _⇒_ : ∀ {A} → ⊢ A → ⊢ A → Set where
                → snd (pair t u) ⇒ u
   conv⇒tt   : ∀ {t : ⊢ ⊤}
                → t ⇒ tt
+  -- TODO: Verify this.
   conv⇒inl  : ∀ {A B C} {t : ⊢ A} {u : ⊢ A ▻ C} {v : ⊢ B ▻ C}
                → case (inl t) u v ⇒ app u t
+  -- TODO: Verify this.
   conv⇒inr  : ∀ {A B C} {t : ⊢ B} {u : ⊢ A ▻ C} {v : ⊢ B ▻ C}
                → case (inr t) u v ⇒ app v t
