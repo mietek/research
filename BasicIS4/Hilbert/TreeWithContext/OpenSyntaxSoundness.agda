@@ -23,7 +23,7 @@ module GabbayNanevskiSoundness where
                             let h = ((mono⊨ {A ▻ B ▻ C} (trans⊆ θ θ′) f) refl⊆ a) refl⊆
                                 b = (mono⊨ {A ▻ B} θ′ g) refl⊆ a
                             in  h b
-  eval (box {A} t)      γ = λ _ → mono⊢ bot⊆ t , mono⊨ {A} bot⊆ (eval t ∙)
+  eval (box {A} t)      γ = λ θ₀ → mono⊢ (lift⊆ θ₀) t , mono⊨ {A} bot⊆ (eval t ∙)
   eval cdist            γ = λ _ □f θ □a θ′ →
                             let t , f = □f (trans⊆ θ θ′)
                                 u , a = □a θ′
@@ -81,7 +81,7 @@ module CoquandDybjerSoundness where
                                let _ , h = (f″ a) refl⊆
                                    b     = g′ a
                                in  h b)))
-  eval (box {A} t) γ = λ _ → mono⊢ bot⊆ t , mono⊨ {A} bot⊆ (eval t ∙)
+  eval (box {A} t) γ = λ θ₀ → mono⊢ (lift⊆ θ₀) t , mono⊨ {A} bot⊆ (eval t ∙)
   eval cdist       γ = λ _ → cdist , (λ □f θ →
                        let t , f = □f θ
                        in  app cdist (cxdown (lift t)) , (λ □a θ′ →

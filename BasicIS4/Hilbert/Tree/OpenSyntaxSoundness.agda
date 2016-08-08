@@ -43,7 +43,7 @@ module GabbayNanevskiSoundness where
                           let h = ((mono⊨ {A ▻ B ▻ C} (trans⊆ θ θ′) f) refl⊆ a) refl⊆
                               b = (mono⊨ {A ▻ B} θ′ g) refl⊆ a
                           in  h b
-  eval (box {A} t)      = λ {Δ′} _ → ᵀmono⊢ {⌀} {□⋆ Δ′} bot⊆ t , mono⊨ {A} bot⊆ (eval t)
+  eval (box {A} t)      = λ θ₀ → ᵀmono⊢ (lift⊆ θ₀) t , mono⊨ {A} bot⊆ (eval t)
   eval cdist            = λ _ □f θ □a {Δ′} θ′ →
                           let t , f = □f (trans⊆ θ θ′)
                               u , a = □a θ′
@@ -84,25 +84,41 @@ module CoquandDybjerSoundness where
 
   -- Soundness with respect to all models, or evaluation.
 
-  -- eval : ∀ {A} → ⊢ A → ᴹ⊨ A
-  -- eval (app t u) =
-  --   let t′ = eval t
-  --       u′ = eval u
-  --   in  {!!} -- (eval t) $ˢ (eval u)
-  -- eval ci        = {!!} -- ci , id
-  -- eval ck        = {!!} -- ck , (λ a → app ck (reify a) , const a)
-  -- eval cs        =
-  --                  {!!} -- cs , (λ f →
-  --                    --   app cs (reify f) , (λ g →
-  --                    --     app (app cs (reify f)) (reify g) , (λ a →
-  --                    --       ?))) -- (f $ˢ a) $ˢ (g $ˢ a))))
-  -- eval (box t)   = {!!} -- t , eval t
-  -- eval cdist     = {!!} -- cdist , (λ { (t , f) →
-  --                    --   app cdist (box t) , (λ { (u , a) →
-  --                    --     app t u , ? }) }) -- f $ˢ a }) })
-  -- eval cup       = {!!} -- cup , (λ { (t , a) → box t , (t , a) })
-  -- eval cdown     = {!!} -- cdown , (λ { (t , a) → a })
-  -- eval cpair     = {!!} -- cpair , (λ a → app cpair (reify a) , (λ b → a , b))
-  -- eval cfst      = {!!} -- cfst , π₁
-  -- eval csnd      = {!!} -- csnd , π₂
-  -- eval tt        = ∙
+  -- TODO: Finish this.
+  postulate
+    eval : ∀ {A} → ⊢ A → ᴹ⊨ A
+  -- eval (app t u)   = let _ , f = (eval t) refl⊆
+  --                    in  f (eval u)
+  -- eval ci          = λ θ₀ → ᵀmono⊢ (lift⊆ θ₀) ci , id
+  -- eval (ck {A})    = λ θ₀ → ᵀmono⊢ (lift⊆ θ₀) ck , (λ a θ →
+  --                      {!!} , (λ b →
+  --                        mono⊨ {A} θ a))
+  -- eval cs          = λ θ₀ → ᵀmono⊢ (lift⊆ θ₀) cs , (λ f θ →
+  --                    let t , f′ = f θ
+  --                    in  {!!} , (λ g θ′ →
+  --                        let _ , f″ = f (trans⊆ θ θ′)
+  --                            u , g′ = g θ′
+  --                        in  {!!} , (λ a →
+  --                            let _ , h = (f″ a) refl⊆
+  --                                b     = g′ a
+  --                            in  h b)))
+  -- eval (box {A} t) = λ θ₀ → ᵀmono⊢ (lift⊆ θ₀) t , mono⊨ {A} bot⊆ (eval t)
+  -- eval cdist       = λ θ₀ → ᵀmono⊢ (lift⊆ θ₀) cdist , (λ □f θ →
+  --                    let t , f = □f θ
+  --                    in  {!!} , (λ □a θ′ →
+  --                        let u  , a  = □a θ′
+  --                            t′ , f′ = f θ′
+  --                        in  {!!} , f′ a))
+  -- eval (cup {A})   = λ θ₀ → ᵀmono⊢ (lift⊆ θ₀) cup , (λ □a θ →
+  --                    let t , a = □a θ
+  --                    in  {!!} , (λ θ′ →
+  --                          {!!} , mono⊨ {A} θ′ a))
+  -- eval cdown       = λ θ₀ → ᵀmono⊢ (lift⊆ θ₀) cdown , (λ □a →
+  --                    let t , a = □a refl⊆
+  --                    in  a)
+  -- eval (cpair {A}) = λ θ₀ → ᵀmono⊢ (lift⊆ θ₀) cpair , (λ a θ →
+  --                              {!!} , (λ b →
+  --                                mono⊨ {A} θ a , b))
+  -- eval cfst        = λ θ₀ → ᵀmono⊢ (lift⊆ θ₀) cfst , π₁
+  -- eval csnd        = λ θ₀ → ᵀmono⊢ (lift⊆ θ₀) csnd , π₂
+  -- eval tt          = ∙
