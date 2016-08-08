@@ -5,7 +5,7 @@ open import BasicIS4.Hilbert.Tree.TarskiSoundness public
 
 
 
--- Using truth with a syntactic component, inspired by Coquand and Dybjer.
+-- Using satisfaction with a syntactic component, inspired by Coquand and Dybjer.
 
 module CoquandDybjerBasicCompleteness where
   open CoquandDybjerSoundness

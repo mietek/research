@@ -6,7 +6,7 @@ open import BasicIS4.TarskiSemantics public
 
 
 
--- Using truth with a syntactic component, inspired by Gabbay and Nanevski.
+-- Using satisfaction with a syntactic component, inspired by Gabbay and Nanevski.
 
 module GabbayNanevskiSoundness where
   open GabbayNanevskiSemantics (⌀ ⁏ ⌀ ⊢_) public

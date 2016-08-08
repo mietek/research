@@ -71,7 +71,7 @@ module GodelBasicCompleteness where
 
 
 
--- Using truth based on the McKinsey-Tarski translation of IPC to S4.
+-- Using satisfaction based on the McKinsey-Tarski translation of IPC to S4.
 
 module McKinseyTarskiBasicCompleteness where
   open McKinseyTarskiSoundness public

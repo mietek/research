@@ -53,7 +53,7 @@ module NaturalSoundness where
 
 
 
--- Using truth with a syntactic component, inspired by Coquand and Dybjer.
+-- Using satisfaction with a syntactic component, inspired by Coquand and Dybjer.
 
 module CoquandDybjerSoundness where
   open CoquandDybjerSemantics (⊢_) public

@@ -6,7 +6,7 @@ open import BasicIS4.TarskiSemantics public
 
 
 
--- Using truth with a syntactic component, inspired by Gabbay and Nanevski.
+-- Using satisfaction with a syntactic component, inspired by Gabbay and Nanevski.
 
 module GabbayNanevskiSoundness where
   open GabbayNanevskiSemantics (⊢_) public
@@ -55,7 +55,7 @@ module GabbayNanevskiSoundness where
 
 
 
--- Using truth with a syntactic component, inspired by Coquand and Dybjer.
+-- Using satisfaction with a syntactic component, inspired by Coquand and Dybjer.
 
 module CoquandDybjerSoundness where
   open CoquandDybjerSemantics (⊢_) public

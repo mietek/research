@@ -8,7 +8,7 @@ open import BasicIS4 public
 record Model : Set₁ where
   infix 3 ⊨ᵅ_
   field
-    -- Truth for atomic propositions.
+    -- Satisfaction for atomic propositions.
     ⊨ᵅ_ : Atom → Set
 
 open Model {{…}} public
@@ -16,12 +16,12 @@ open Model {{…}} public
 
 
 
--- Truth with a syntactic component, inspired by Gabbay and Nanevski.
+-- Satisfaction with a syntactic component, inspired by Gabbay and Nanevski.
 
 module GabbayNanevskiSemantics (Syntax : Ty → Set) where
 
 
-  -- Truth in a particular model.
+  -- Satisfaction in a particular model.
 
   infix 3 ⊨_
   ⊨_ : ∀ {{_ : Model}} → Ty → Set
@@ -37,7 +37,7 @@ module GabbayNanevskiSemantics (Syntax : Ty → Set) where
   ⊨⋆ Γ , A = ⊨⋆ Γ × ⊨ A
 
 
-  -- Truth in all models.
+  -- Satisfaction in all models.
 
   infix 3 ᴹ⊨_
   ᴹ⊨_ : Ty → Set₁
@@ -65,12 +65,12 @@ module GabbayNanevskiSemantics (Syntax : Ty → Set) where
 
 
 
--- Truth with a syntactic component, inspired by Coquand and Dybjer.
+-- Satisfaction with a syntactic component, inspired by Coquand and Dybjer.
 
 module CoquandDybjerSemantics (Syntax : Ty → Set) where
 
 
-  -- Truth in a particular model.
+  -- Satisfaction in a particular model.
 
   infix 3 ⊨_
   ⊨_ : ∀ {{_ : Model}} → Ty → Set
@@ -86,7 +86,7 @@ module CoquandDybjerSemantics (Syntax : Ty → Set) where
   ⊨⋆ Γ , A = ⊨⋆ Γ × ⊨ A
 
 
-  -- Truth in all models.
+  -- Satisfaction in all models.
 
   infix 3 ᴹ⊨_
   ᴹ⊨_ : Ty → Set₁

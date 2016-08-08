@@ -8,7 +8,7 @@ open import BasicIS4 public
 record Model : Set₁ where
   infix 3 ⊨ᵅ_
   field
-    -- Truth for atomic propositions.
+    -- Satisfaction for atomic propositions.
     ⊨ᵅ_ : Atom → Set
 
 open Model {{…}} public
@@ -16,13 +16,13 @@ open Model {{…}} public
 
 
 
--- Truth with a syntactic component, inspired by Gabbay and Nanevski
+-- Satisfaction with a syntactic component, inspired by Gabbay and Nanevski
 
 -- TODO: This is looking suspiciously like a Kripke semantics.
 module GabbayNanevskiSemantics (Syntax : Cx Ty → Ty → Set) where
 
 
-  -- Truth in a particular model.
+  -- Satisfaction in a particular model.
 
   infix 3 _⊨_
   _⊨_ : ∀ {{_ : Model}} → Cx Ty → Ty → Set
@@ -52,7 +52,7 @@ module GabbayNanevskiSemantics (Syntax : Cx Ty → Ty → Set) where
   mono⊨⋆ {Π , A} θ (ts , t) = mono⊨⋆ {Π} θ ts , mono⊨ {A} θ t
 
 
-  -- Truth in all models.
+  -- Satisfaction in all models.
 
   infix 3 ᴹ⊨_
   ᴹ⊨_ : Ty → Set₁
@@ -80,14 +80,14 @@ module GabbayNanevskiSemantics (Syntax : Cx Ty → Ty → Set) where
 
 
 
--- Truth with a syntactic component, inspired by Coquand and Dybjer.
+-- Satisfaction with a syntactic component, inspired by Coquand and Dybjer.
 
 -- TODO: This is looking suspiciously like an intuitionistic Kripke semantics.
 module CoquandDybjerSemantics (Syntax : Cx Ty → Ty → Set)
                               (monoSyntaxᵅ : ∀ {Δ Δ′ P} → Δ ⊆ Δ′ → Syntax Δ (α P) → Syntax Δ′ (α P)) where
 
 
-  -- Truth in a particular model.
+  -- Satisfaction in a particular model.
 
   infix 3 _⊨_
   _⊨_ : ∀ {{_ : Model}} → Cx Ty → Ty → Set
@@ -117,7 +117,7 @@ module CoquandDybjerSemantics (Syntax : Cx Ty → Ty → Set)
   mono⊨⋆ {Π , A} θ (ts , t) = mono⊨⋆ {Π} θ ts , mono⊨ {A} θ t
 
 
-  -- Truth in all models.
+  -- Satisfaction in all models.
 
   infix 3 ᴹ⊨_
   ᴹ⊨_ : Ty → Set₁

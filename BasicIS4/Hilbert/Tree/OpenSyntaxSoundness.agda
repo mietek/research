@@ -27,7 +27,7 @@ import BasicIS4.Hilbert.TreeWithContext as TC
 
 
 
--- Using truth with a syntactic component, inspired by Gabbay and Nanevski.
+-- Using satisfaction with a syntactic component, inspired by Gabbay and Nanevski.
 
 module GabbayNanevskiSoundness where
   open GabbayNanevskiSemantics (λ Δ A → ⊢ □⋆ Δ ▻⋯▻ A) public
@@ -63,7 +63,7 @@ module GabbayNanevskiSoundness where
 
 
 
--- Using truth with a syntactic component, inspired by Coquand and Dybjer.
+-- Using satisfaction with a syntactic component, inspired by Coquand and Dybjer.
 
 module CoquandDybjerSoundness where
   open CoquandDybjerSemantics (λ Δ A → ⊢ □⋆ Δ ▻⋯▻ A)
