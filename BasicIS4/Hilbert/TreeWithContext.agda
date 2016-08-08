@@ -27,25 +27,6 @@ _⊢⋆_ : Cx Ty → Cx Ty → Set
 Γ ⊢⋆ Π , A = Γ ⊢⋆ Π × Γ ⊢ A
 
 
--- Closed and open syntax.
-
-record ClosedBox (A : Ty) : Set where
-  constructor [_]
-  field
-    t : ⌀ ⊢ A
-
-record StrangeBox (A : Ty) : Set where
-  constructor [_]
-  field
-    {Δ} : Cx Ty
-    t   : □⋆ Δ ⊢ A
-
-record OpenBox (Δ : Cx Ty) (A : Ty) : Set where
-  constructor [_]
-  field
-    t : □⋆ Δ ⊢ A
-
-
 -- Monotonicity with respect to context inclusion.
 
 mono⊢ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A

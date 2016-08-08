@@ -6,8 +6,10 @@ open import BasicIS4.TarskiSemantics public
 
 
 
-module NaturalSoundness where
-  open TruthWithClosedBox (⊢_)
+-- Using truth with a syntactic component, inspired by Gabbay and Nanevski.
+
+module GabbayNanevskiSoundness where
+  open GabbayNanevskiSemantics (⊢_) public
 
 
   -- Soundness with respect to all models, or evaluation.
@@ -80,9 +82,9 @@ module CoquandDybjerSoundness where
                        app (app cs (reify f)) (reify g) , (λ a →
                          (f $ˢ a) $ˢ (g $ˢ a))))
   eval (box t)   = t , eval t
-  eval cdist     = cdist , (λ { (t , (t′ , f)) →
-                     app cdist (box t) , (λ {(u , a) →
-                       app t u , f a }) })
+  eval cdist     = cdist , (λ { (t , f) →
+                     app cdist (box t) , (λ { (u , a) →
+                       app t u , f $ˢ a }) })
   eval cup       = cup , (λ { (t , a) → box t , (t , a) })
   eval cdown     = cdown , (λ { (t , a) → a })
   eval cpair     = cpair , (λ a → app cpair (reify a) , (λ b → a , b))

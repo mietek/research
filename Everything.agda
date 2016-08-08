@@ -73,27 +73,35 @@ import BasicIS4.KripkeSemantics.Ono
 import BasicIS4.KripkeSemantics.BozicDosen
 import BasicIS4.KripkeSemantics.EwaldEtAl
 import BasicIS4.KripkeSemantics.AlechinaEtAl
+import BasicIS4.OpenSyntaxSemantics
 import BasicIS4.Hilbert.List
 import BasicIS4.Hilbert.ListWithContext
 import BasicIS4.Hilbert.ListWithContextPair
 import BasicIS4.Hilbert.Tree
 import BasicIS4.Hilbert.Tree.TarskiSoundness
 import BasicIS4.Hilbert.Tree.TarskiBasicCompleteness
+import BasicIS4.Hilbert.Tree.OpenSyntaxSoundness -- TODO
 import BasicIS4.Hilbert.TreeWithContext
-import BasicIS4.Hilbert.TreeWithContext.TarskiSoundness -- FIXME
+import BasicIS4.Hilbert.TreeWithContext.TarskiSoundness
 import BasicIS4.Hilbert.TreeWithContext.KripkeSoundness
+import BasicIS4.Hilbert.TreeWithContext.OpenSyntaxSoundness
+import BasicIS4.Hilbert.TreeWithContext.OpenSyntaxBasicCompleteness -- FIXME
 import BasicIS4.Hilbert.TreeWithContextPair
 import BasicIS4.Hilbert.TreeWithContextPair.TarskiSoundness -- FIXME
 import BasicIS4.Hilbert.TreeWithContextPair.KripkeSoundness
+import BasicIS4.Hilbert.TreeWithContextPair.OpenSyntaxSoundness
+import BasicIS4.Hilbert.TreeWithContextPair.OpenSyntaxBasicCompleteness -- FIXME
 import BasicIS4.Hilbert.Translation
 import BasicIS4.Gentzen.TreeWithContext
 import BasicIS4.Gentzen.TreeWithContext.TarskiSoundness -- FIXME
+import BasicIS4.Gentzen.TreeWithContext.OpenSyntaxSoundness -- FIXME
 import BasicIS4.Gentzen.TreeWithContext.KripkeSoundness
 import BasicIS4.Gentzen.TreeWithContext.KripkeEquipment
 import BasicIS4.Gentzen.TreeWithContext.KripkeEquipmentToo
 import BasicIS4.Gentzen.TreeWithContext.KripkeBasicCompleteness -- FIXME
 import BasicIS4.Gentzen.TreeWithContextPair
 import BasicIS4.Gentzen.TreeWithContextPair.TarskiSoundness -- FIXME
+import BasicIS4.Gentzen.TreeWithContextPair.OpenSyntaxSoundness -- FIXME
 import BasicIS4.Gentzen.TreeWithContextPair.KripkeSoundness
 import BasicIS4.Gentzen.TreeWithContextPair.KripkeEquipment
 import BasicIS4.Gentzen.TreeWithContextPair.KripkeEquipmentToo

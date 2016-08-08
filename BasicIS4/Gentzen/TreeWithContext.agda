@@ -24,25 +24,6 @@ mutual
   Γ ⊢⋆ Π , A = Γ ⊢⋆ Π × Γ ⊢ A
 
 
--- Closed and open syntax.
-
-record ClosedBox (A : Ty) : Set where
-  constructor [_]
-  field
-    t : ⌀ ⊢ A
-
-record StrangeBox (A : Ty) : Set where
-  constructor [_]
-  field
-    {Δ} : Cx Ty
-    t   : □⋆ Δ ⊢ A
-
-record OpenBox (Δ : Cx Ty) (A : Ty) : Set where
-  constructor [_]
-  field
-    t : □⋆ Δ ⊢ A
-
-
 -- Monotonicity with respect to context inclusion.
 
 mutual
@@ -76,10 +57,27 @@ v₂ = var i₂
 
 -- Deduction theorem is built-in.
 
+lam⋆ : ∀ {Π Γ A} → Γ ⧺ Π ⊢ A → Γ ⊢ Π ▻⋯▻ A
+lam⋆ {⌀}     = id
+lam⋆ {Π , B} = lam⋆ {Π} ∘ lam
+
+lam⋆₀ : ∀ {Γ A} → Γ ⊢ A → ⌀ ⊢ Γ ▻⋯▻ A
+lam⋆₀ {⌀}     = id
+lam⋆₀ {Γ , B} = lam⋆₀ ∘ lam
+
+
 -- Detachment theorem.
 
 det : ∀ {A B Γ} → Γ ⊢ A ▻ B → Γ , A ⊢ B
 det t = app (mono⊢ weak⊆ t) v₀
+
+det⋆ : ∀ {Π Γ A} → Γ ⊢ Π ▻⋯▻ A → Γ ⧺ Π ⊢ A
+det⋆ {⌀}     = id
+det⋆ {Π , B} = det ∘ det⋆ {Π}
+
+det⋆₀ : ∀ {Γ A} → ⌀ ⊢ Γ ▻⋯▻ A → Γ ⊢ A
+det⋆₀ {⌀}     = id
+det⋆₀ {Γ , B} = det ∘ det⋆₀
 
 
 -- Cut and multicut.

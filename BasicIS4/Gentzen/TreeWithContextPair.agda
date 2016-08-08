@@ -25,25 +25,6 @@ _⁏_⊢⋆_ : Cx Ty → Cx Ty → Cx Ty → Set
 Γ ⁏ Δ ⊢⋆ Π , A = Γ ⁏ Δ ⊢⋆ Π × Γ ⁏ Δ ⊢ A
 
 
--- Closed and open syntax.
-
-record ClosedBox (A : Ty) : Set where
-  constructor [_]
-  field
-    t : ⌀ ⁏ ⌀ ⊢ A
-
-record StrangeBox (A : Ty) : Set where
-  constructor [_]
-  field
-    {Δ} : Cx Ty
-    t   : ⌀ ⁏ Δ ⊢ A
-
-record OpenBox (Δ : Cx Ty) (A : Ty) : Set where
-  constructor [_]
-  field
-    t : ⌀ ⁏ Δ ⊢ A
-
-
 -- Monotonicity with respect to context inclusion.
 
 mono⊢ : ∀ {A Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊢ A → Γ′ ⁏ Δ ⊢ A
@@ -388,9 +369,8 @@ m[_≔_]⋆_ {⌀}     i s ∙        = ∙
 m[_≔_]⋆_ {Π , B} i s (ts , t) = m[ i ≔ s ]⋆ ts , m[ i ≔ s ] t
 
 
--- TODO: Conversion.
+-- Conversion.
 
-infix 0 _⇒_
 data _⇒_ {Γ Δ : Cx Ty} : ∀ {A} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ A → Set where
   refl⇒      : ∀ {A} {t : Γ ⁏ Δ ⊢ A}
                 → t ⇒ t
@@ -402,28 +382,32 @@ data _⇒_ {Γ Δ : Cx Ty} : ∀ {A} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ A →
                 → t ⇒ t′ → lam t ⇒ lam t′
   cong⇒app   : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A ▻ B} {u u′ : Γ ⁏ Δ ⊢ A}
                 → t ⇒ t′ → u ⇒ u′ → app t u ⇒ app t′ u′
+  -- NOTE: Rejected by Pfenning and Davies.
+  -- cong⇒box   : ∀ {A} {t t′ : ⌀ ⁏ Δ ⊢ A}
+  --               → t ⇒ t′ → box {Γ} t ⇒ box {Γ} t′
+  cong⇒unbox : ∀ {A C} {t t′ : Γ ⁏ Δ ⊢ □ A} {u u′ : Γ ⁏ Δ , A ⊢ C}
+                → t ⇒ t′ → u ⇒ u′ → unbox t u ⇒ unbox t′ u′
   cong⇒pair  : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A} {u u′ : Γ ⁏ Δ ⊢ B}
                 → t ⇒ t′ → u ⇒ u′ → pair t u ⇒ pair t′ u′
   cong⇒fst   : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A ∧ B}
                 → t ⇒ t′ → fst t ⇒ fst t′
   cong⇒snd   : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A ∧ B}
                 → t ⇒ t′ → snd t ⇒ snd t′
-  -- NOTE: Rejected by Pfenning and Davies.
-  -- cong⇒box   : ∀ {A} {t t′ : ⌀ ⁏ Δ ⊢ A}
-  --               → t ⇒ t′ → box {Γ} t ⇒ box {Γ} t′
-  cong⇒unbox : ∀ {A C} {t t′ : Γ ⁏ Δ ⊢ □ A} {u u′ : Γ ⁏ Δ , A ⊢ C}
-                → t ⇒ t′ → u ⇒ u′ → unbox t u ⇒ unbox t′ u′
   conv⇒lam   : ∀ {A B} {t : Γ ⁏ Δ ⊢ A ▻ B}
                 → t ⇒ lam (app (mono⊢ weak⊆ t) v₀)
   conv⇒app   : ∀ {A B} {t : Γ , A ⁏ Δ ⊢ B} {u : Γ ⁏ Δ ⊢ A}
-                → app (lam t) u ⇒ [ top ≔ u ] t
+                → app (lam t) u ⇒ ([ top ≔ u ] t)
+  -- TODO: Verify this.
+  conv⇒box   : ∀ {A} {t : Γ ⁏ Δ ⊢ □ A}
+                → t ⇒ unbox t (box mv₀)
+  -- TODO: Verify this.
+  conv⇒unbox : ∀ {A C} {t : ⌀ ⁏ Δ ⊢ A} {u : Γ ⁏ Δ , A ⊢ C}
+                → unbox (box t) u ⇒ (m[ top ≔ t ] u)
   conv⇒pair  : ∀ {A B} {t : Γ ⁏ Δ ⊢ A ∧ B}
                 → t ⇒ pair (fst t) (snd t)
   conv⇒fst   : ∀ {A B} {t : Γ ⁏ Δ ⊢ A} {u : Γ ⁏ Δ ⊢ B}
                 → fst (pair t u) ⇒ t
   conv⇒snd   : ∀ {A B} {t : Γ ⁏ Δ ⊢ A} {u : Γ ⁏ Δ ⊢ B}
                 → snd (pair t u) ⇒ u
-  conv⇒box   : ∀ {A} {t : Γ ⁏ Δ ⊢ □ A}
-                → t ⇒ unbox t (box mv₀)
-  conv⇒unbox : ∀ {A C} {t : ⌀ ⁏ Δ ⊢ A} {u : Γ ⁏ Δ , A ⊢ C}
-                → unbox (box t) u ⇒ m[ top ≔ t ] u
+  conv⇒tt    : ∀ {t : Γ ⁏ Δ ⊢ ⊤}
+                → t ⇒ tt
