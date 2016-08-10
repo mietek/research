@@ -117,37 +117,42 @@ data _⇒_ : ∀ {A} → ⊢ A → ⊢ A → Set where
                → t ⇒ t′ → t′ ⇒ t″ → t ⇒ t″
   sym⇒      : ∀ {A} {t t′ : ⊢ A}
                → t ⇒ t′ → t′ ⇒ t
-  cong⇒app  : ∀ {A B} {t t′ : ⊢ A ▻ B} {u u′ : ⊢ A}
+  congapp⇒  : ∀ {A B} {t t′ : ⊢ A ▻ B} {u u′ : ⊢ A}
                → t ⇒ t′ → u ⇒ u′ → app t u ⇒ app t′ u′
-  cong⇒pair : ∀ {A B} {t t′ : ⊢ A} {u u′ : ⊢ B}
+  congpair⇒ : ∀ {A B} {t t′ : ⊢ A} {u u′ : ⊢ B}
                → t ⇒ t′ → u ⇒ u′ → pair t u ⇒ pair t′ u′
-  cong⇒fst  : ∀ {A B} {t t′ : ⊢ A ∧ B}
+  congfst⇒  : ∀ {A B} {t t′ : ⊢ A ∧ B}
                → t ⇒ t′ → fst t ⇒ fst t′
-  cong⇒snd  : ∀ {A B} {t t′ : ⊢ A ∧ B}
+  congsnd⇒  : ∀ {A B} {t t′ : ⊢ A ∧ B}
                → t ⇒ t′ → snd t ⇒ snd t′
-  cong⇒boom : ∀ {C} {t t′ : ⊢ ⊥}
+  congboom⇒ : ∀ {C} {t t′ : ⊢ ⊥}
                → t ⇒ t′ → boom {C} t ⇒ boom t′
-  cong⇒inl  : ∀ {A B} {t t′ : ⊢ A}
+  conginl⇒  : ∀ {A B} {t t′ : ⊢ A}
                → t ⇒ t′ → inl {A} {B} t ⇒ inl t′
-  cong⇒inr  : ∀ {A B} {t t′ : ⊢ B}
+  conginr⇒  : ∀ {A B} {t t′ : ⊢ B}
                → t ⇒ t′ → inr {A} {B} t ⇒ inr t′
-  cong⇒case : ∀ {A B C} {t t′ : ⊢ A ∨ B} {u u′ : ⊢ A ▻ C} {v v′ : ⊢ B ▻ C}
+  congcase⇒ : ∀ {A B C} {t t′ : ⊢ A ∨ B} {u u′ : ⊢ A ▻ C} {v v′ : ⊢ B ▻ C}
                → t ⇒ t′ → u ⇒ u′ → v ⇒ v′ → case t u v ⇒ case t′ u′ v′
-  conv⇒k    : ∀ {A B} {t : ⊢ A} {u : ⊢ B}
+  -- TODO: Verify this.
+  beta▻ₖ⇒   : ∀ {A B} {t : ⊢ A} {u : ⊢ B}
                → app (app ck t) u ⇒ t
-  conv⇒s    : ∀ {A B C} {t : ⊢ A ▻ B ▻ C} {u : ⊢ A ▻ B} {v : ⊢ A}
+  -- TODO: Verify this.
+  beta▻ₛ⇒   : ∀ {A B C} {t : ⊢ A ▻ B ▻ C} {u : ⊢ A ▻ B} {v : ⊢ A}
                → app (app (app cs t) u) v ⇒ app (app t v) (app u v)
-  conv⇒pair : ∀ {A B} {t : ⊢ A ∧ B}
-               → t ⇒ pair (fst t) (snd t)
-  conv⇒fst  : ∀ {A B} {t : ⊢ A} {u : ⊢ B}
+  -- TODO: What about eta for ▻?
+  beta∧₁⇒   : ∀ {A B} {t : ⊢ A} {u : ⊢ B}
                → fst (pair t u) ⇒ t
-  conv⇒snd  : ∀ {A B} {t : ⊢ A} {u : ⊢ B}
+  beta∧₂⇒   : ∀ {A B} {t : ⊢ A} {u : ⊢ B}
                → snd (pair t u) ⇒ u
-  conv⇒tt   : ∀ {t : ⊢ ⊤}
+  eta∧⇒     : ∀ {A B} {t : ⊢ A ∧ B}
+               → t ⇒ pair (fst t) (snd t)
+  eta⊤⇒    : ∀ {t : ⊢ ⊤}
                → t ⇒ tt
   -- TODO: Verify this.
-  conv⇒inl  : ∀ {A B C} {t : ⊢ A} {u : ⊢ A ▻ C} {v : ⊢ B ▻ C}
+  beta∨₁⇒   : ∀ {A B C} {t : ⊢ A} {u : ⊢ A ▻ C} {v : ⊢ B ▻ C}
                → case (inl t) u v ⇒ app u t
   -- TODO: Verify this.
-  conv⇒inr  : ∀ {A B C} {t : ⊢ B} {u : ⊢ A ▻ C} {v : ⊢ B ▻ C}
+  beta∨₂⇒   : ∀ {A B C} {t : ⊢ B} {u : ⊢ A ▻ C} {v : ⊢ B ▻ C}
                → case (inr t) u v ⇒ app v t
+  -- TODO: Verify this.
+  -- TODO: What about eta and commuting conversions for ∨? What about ⊥?

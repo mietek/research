@@ -378,36 +378,36 @@ data _⇒_ {Γ Δ : Cx Ty} : ∀ {A} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ A →
                 → t ⇒ t′ → t′ ⇒ t″ → t ⇒ t″
   sym⇒       : ∀ {A} {t t′ : Γ ⁏ Δ ⊢ A}
                 → t ⇒ t′ → t′ ⇒ t
-  cong⇒lam   : ∀ {A B} {t t′ : Γ , A ⁏ Δ ⊢ B}
+  conglam⇒   : ∀ {A B} {t t′ : Γ , A ⁏ Δ ⊢ B}
                 → t ⇒ t′ → lam t ⇒ lam t′
-  cong⇒app   : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A ▻ B} {u u′ : Γ ⁏ Δ ⊢ A}
+  congapp⇒   : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A ▻ B} {u u′ : Γ ⁏ Δ ⊢ A}
                 → t ⇒ t′ → u ⇒ u′ → app t u ⇒ app t′ u′
   -- NOTE: Rejected by Pfenning and Davies.
-  -- cong⇒box   : ∀ {A} {t t′ : ⌀ ⁏ Δ ⊢ A}
+  -- congbox⇒   : ∀ {A} {t t′ : ⌀ ⁏ Δ ⊢ A}
   --               → t ⇒ t′ → box {Γ} t ⇒ box {Γ} t′
-  cong⇒unbox : ∀ {A C} {t t′ : Γ ⁏ Δ ⊢ □ A} {u u′ : Γ ⁏ Δ , A ⊢ C}
+  congunbox⇒ : ∀ {A C} {t t′ : Γ ⁏ Δ ⊢ □ A} {u u′ : Γ ⁏ Δ , A ⊢ C}
                 → t ⇒ t′ → u ⇒ u′ → unbox t u ⇒ unbox t′ u′
-  cong⇒pair  : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A} {u u′ : Γ ⁏ Δ ⊢ B}
+  congpair⇒  : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A} {u u′ : Γ ⁏ Δ ⊢ B}
                 → t ⇒ t′ → u ⇒ u′ → pair t u ⇒ pair t′ u′
-  cong⇒fst   : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A ∧ B}
+  congfst⇒   : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A ∧ B}
                 → t ⇒ t′ → fst t ⇒ fst t′
-  cong⇒snd   : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A ∧ B}
+  congsnd⇒   : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A ∧ B}
                 → t ⇒ t′ → snd t ⇒ snd t′
-  conv⇒lam   : ∀ {A B} {t : Γ ⁏ Δ ⊢ A ▻ B}
-                → t ⇒ lam (app (mono⊢ weak⊆ t) v₀)
-  conv⇒app   : ∀ {A B} {t : Γ , A ⁏ Δ ⊢ B} {u : Γ ⁏ Δ ⊢ A}
+  beta▻⇒     : ∀ {A B} {t : Γ , A ⁏ Δ ⊢ B} {u : Γ ⁏ Δ ⊢ A}
                 → app (lam t) u ⇒ ([ top ≔ u ] t)
+  eta▻⇒      : ∀ {A B} {t : Γ ⁏ Δ ⊢ A ▻ B}
+                → t ⇒ lam (app (mono⊢ weak⊆ t) v₀)
   -- TODO: Verify this.
-  conv⇒box   : ∀ {A} {t : Γ ⁏ Δ ⊢ □ A}
-                → t ⇒ unbox t (box mv₀)
-  -- TODO: Verify this.
-  conv⇒unbox : ∀ {A C} {t : ⌀ ⁏ Δ ⊢ A} {u : Γ ⁏ Δ , A ⊢ C}
+  beta□⇒     : ∀ {A C} {t : ⌀ ⁏ Δ ⊢ A} {u : Γ ⁏ Δ , A ⊢ C}
                 → unbox (box t) u ⇒ (m[ top ≔ t ] u)
-  conv⇒pair  : ∀ {A B} {t : Γ ⁏ Δ ⊢ A ∧ B}
-                → t ⇒ pair (fst t) (snd t)
-  conv⇒fst   : ∀ {A B} {t : Γ ⁏ Δ ⊢ A} {u : Γ ⁏ Δ ⊢ B}
+  -- TODO: Verify this.
+  eta□⇒      : ∀ {A} {t : Γ ⁏ Δ ⊢ □ A}
+                → t ⇒ unbox t (box mv₀)
+  beta∧₁⇒    : ∀ {A B} {t : Γ ⁏ Δ ⊢ A} {u : Γ ⁏ Δ ⊢ B}
                 → fst (pair t u) ⇒ t
-  conv⇒snd   : ∀ {A B} {t : Γ ⁏ Δ ⊢ A} {u : Γ ⁏ Δ ⊢ B}
+  beta∧₂⇒    : ∀ {A B} {t : Γ ⁏ Δ ⊢ A} {u : Γ ⁏ Δ ⊢ B}
                 → snd (pair t u) ⇒ u
-  conv⇒tt    : ∀ {t : Γ ⁏ Δ ⊢ ⊤}
+  eta∧⇒      : ∀ {A B} {t : Γ ⁏ Δ ⊢ A ∧ B}
+                → t ⇒ pair (fst t) (snd t)
+  eta⊤⇒     : ∀ {t : Γ ⁏ Δ ⊢ ⊤}
                 → t ⇒ tt

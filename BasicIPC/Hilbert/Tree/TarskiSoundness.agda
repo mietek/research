@@ -29,16 +29,16 @@ module NaturalSoundness where
   check refl⇒           = refl
   check (trans⇒ p q)    = trans (check p) (check q)
   check (sym⇒ p)        = sym (check p)
-  check (cong⇒app p q)  = cong₂ _$_ (check p) (check q)
-  check (cong⇒pair p q) = cong₂ _,_ (check p) (check q)
-  check (cong⇒fst p)    = cong π₁ (check p)
-  check (cong⇒snd p)    = cong π₂ (check p)
-  check conv⇒k          = refl
-  check conv⇒s          = refl
-  check conv⇒pair       = refl
-  check conv⇒fst        = refl
-  check conv⇒snd        = refl
-  check conv⇒tt         = refl
+  check (congapp⇒ p q)  = cong₂ _$_ (check p) (check q)
+  check (congpair⇒ p q) = cong₂ _,_ (check p) (check q)
+  check (congfst⇒ p)    = cong π₁ (check p)
+  check (congsnd⇒ p)    = cong π₂ (check p)
+  check beta▻ₖ⇒         = refl
+  check beta▻ₛ⇒         = refl
+  check beta∧₁⇒         = refl
+  check beta∧₂⇒         = refl
+  check eta∧⇒           = refl
+  check eta⊤⇒          = refl
 
 
 
@@ -80,13 +80,13 @@ module CoquandDybjerSoundness where
   check refl⇒           = refl
   check (trans⇒ p q)    = trans (check p) (check q)
   check (sym⇒ p)        = sym (check p)
-  check (cong⇒app p q)  = cong₂ _$ˢ_ (check p) (check q)
-  check (cong⇒pair p q) = cong₂ _,_ (check p) (check q)
-  check (cong⇒fst p)    = cong π₁ (check p)
-  check (cong⇒snd p)    = cong π₂ (check p)
-  check conv⇒k          = refl
-  check conv⇒s          = refl
-  check conv⇒pair       = refl
-  check conv⇒fst        = refl
-  check conv⇒snd        = refl
-  check conv⇒tt         = refl
+  check (congapp⇒ p q)  = cong₂ _$ˢ_ (check p) (check q)
+  check (congpair⇒ p q) = cong₂ _,_ (check p) (check q)
+  check (congfst⇒ p)    = cong π₁ (check p)
+  check (congsnd⇒ p)    = cong π₂ (check p)
+  check beta▻ₖ⇒         = refl
+  check beta▻ₛ⇒         = refl
+  check beta∧₁⇒         = refl
+  check beta∧₂⇒         = refl
+  check eta∧⇒           = refl
+  check eta⊤⇒          = refl

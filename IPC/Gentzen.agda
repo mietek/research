@@ -183,39 +183,40 @@ data _⇒_ {Γ : Cx Ty} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
                → t ⇒ t′ → t′ ⇒ t″ → t ⇒ t″
   sym⇒      : ∀ {A} {t t′ : Γ ⊢ A}
                → t ⇒ t′ → t′ ⇒ t
-  cong⇒lam  : ∀ {A B} {t t′ : Γ , A ⊢ B}
+  conglam⇒  : ∀ {A B} {t t′ : Γ , A ⊢ B}
                → t ⇒ t′ → lam t ⇒ lam t′
-  cong⇒app  : ∀ {A B} {t t′ : Γ ⊢ A ▻ B} {u u′ : Γ ⊢ A}
+  congapp⇒  : ∀ {A B} {t t′ : Γ ⊢ A ▻ B} {u u′ : Γ ⊢ A}
                → t ⇒ t′ → u ⇒ u′ → app t u ⇒ app t′ u′
-  cong⇒pair : ∀ {A B} {t t′ : Γ ⊢ A} {u u′ : Γ ⊢ B}
+  congpair⇒ : ∀ {A B} {t t′ : Γ ⊢ A} {u u′ : Γ ⊢ B}
                → t ⇒ t′ → u ⇒ u′ → pair t u ⇒ pair t′ u′
-  cong⇒fst  : ∀ {A B} {t t′ : Γ ⊢ A ∧ B}
+  congfst⇒  : ∀ {A B} {t t′ : Γ ⊢ A ∧ B}
                → t ⇒ t′ → fst t ⇒ fst t′
-  cong⇒snd  : ∀ {A B} {t t′ : Γ ⊢ A ∧ B}
+  congsnd⇒  : ∀ {A B} {t t′ : Γ ⊢ A ∧ B}
                → t ⇒ t′ → snd t ⇒ snd t′
-  cong⇒boom : ∀ {C} {t t′ : Γ ⊢ ⊥}
+  congboom⇒ : ∀ {C} {t t′ : Γ ⊢ ⊥}
                → t ⇒ t′ → boom {C = C} t ⇒ boom t′
-  cong⇒inl  : ∀ {A B} {t t′ : Γ ⊢ A}
+  conginl⇒  : ∀ {A B} {t t′ : Γ ⊢ A}
                → t ⇒ t′ → inl {B = B} t ⇒ inl t′
-  cong⇒inr  : ∀ {A B} {t t′ : Γ ⊢ B}
+  conginr⇒  : ∀ {A B} {t t′ : Γ ⊢ B}
                → t ⇒ t′ → inr {A = A} t ⇒ inr t′
-  cong⇒case : ∀ {A B C} {t t′ : Γ ⊢ A ∨ B} {u u′ : Γ , A ⊢ C} {v v′ : Γ , B ⊢ C}
+  congcase⇒ : ∀ {A B C} {t t′ : Γ ⊢ A ∨ B} {u u′ : Γ , A ⊢ C} {v v′ : Γ , B ⊢ C}
                → t ⇒ t′ → u ⇒ u′ → v ⇒ v′ → case t u v ⇒ case t′ u′ v′
-  conv⇒lam  : ∀ {A B} {t : Γ ⊢ A ▻ B}
-               → t ⇒ lam (app (mono⊢ weak⊆ t) (var top))
-  conv⇒app  : ∀ {A B} {t : Γ , A ⊢ B} {u : Γ ⊢ A}
+  beta▻⇒    : ∀ {A B} {t : Γ , A ⊢ B} {u : Γ ⊢ A}
                → app (lam t) u ⇒ ([ top ≔ u ] t)
-  conv⇒pair : ∀ {A B} {t : Γ ⊢ A ∧ B}
-               → t ⇒ pair (fst t) (snd t)
-  conv⇒fst  : ∀ {A B} {t : Γ ⊢ A} {u : Γ ⊢ B}
+  eta▻⇒     : ∀ {A B} {t : Γ ⊢ A ▻ B}
+               → t ⇒ lam (app (mono⊢ weak⊆ t) v₀)
+  beta∧₁⇒   : ∀ {A B} {t : Γ ⊢ A} {u : Γ ⊢ B}
                → fst (pair t u) ⇒ t
-  conv⇒snd  : ∀ {A B} {t : Γ ⊢ A} {u : Γ ⊢ B}
+  beta∧₂⇒   : ∀ {A B} {t : Γ ⊢ A} {u : Γ ⊢ B}
                → snd (pair t u) ⇒ u
-  conv⇒tt   : ∀ {t : Γ ⊢ ⊤}
+  eta∧⇒     : ∀ {A B} {t : Γ ⊢ A ∧ B}
+               → t ⇒ pair (fst t) (snd t)
+  eta⊤⇒    : ∀ {t : Γ ⊢ ⊤}
                → t ⇒ tt
-  -- TODO: Verify this.
-  conv⇒inl  : ∀ {A B C} {t : Γ ⊢ A} {u : Γ , A ⊢ C} {v : Γ , B ⊢ C}
+  beta∨₁⇒   : ∀ {A B C} {t : Γ ⊢ A} {u : Γ , A ⊢ C} {v : Γ , B ⊢ C}
                → case (inl t) u v ⇒ ([ top ≔ t ] u)
-  -- TODO: Verify this.
-  conv⇒inr  : ∀ {A B C} {t : Γ ⊢ B} {u : Γ , A ⊢ C} {v : Γ , B ⊢ C}
+  beta∨₂⇒   : ∀ {A B C} {t : Γ ⊢ B} {u : Γ , A ⊢ C} {v : Γ , B ⊢ C}
                → case (inr t) u v ⇒ ([ top ≔ t ] v)
+  eta∨⇒     : ∀ {A B} {t : Γ ⊢ A ∨ B}
+               → t ⇒ case t (inl v₀) (inr v₀)
+  -- TODO: What about commuting conversions for ∨? What about ⊥?

@@ -35,22 +35,22 @@ module GabbayNanevskiSoundness where
   check refl⇒           = refl
   check (trans⇒ p q)    = trans (check p) (check q)
   check (sym⇒ p)        = sym (check p)
-  check (cong⇒app p q)  = cong₂ _$_ (check p) (check q)
-  check (cong⇒dist p q) = cong₂ (λ { (t , f) (u , a) →
+  check (congapp⇒ p q)  = cong₂ _$_ (check p) (check q)
+  check (congdist⇒ p q) = cong₂ (λ { (t , f) (u , a) →
                              app t u , f a }) (check p) (check q)
-  check (cong⇒up p)     = cong (λ { (t , a) → box t , (t , a) }) (check p)
-  check (cong⇒down p)   = cong (λ { (t , a) → a }) (check p)
-  check (cong⇒pair p q) = cong₂ _,_ (check p) (check q)
-  check (cong⇒fst p)    = cong π₁ (check p)
-  check (cong⇒snd p)    = cong π₂ (check p)
-  check conv⇒k          = refl
-  check conv⇒s          = refl
-  check conv⇒up         = refl
-  check conv⇒down       = refl
-  check conv⇒pair       = refl
-  check conv⇒fst        = refl
-  check conv⇒snd        = refl
-  check conv⇒tt         = refl
+  check (congup⇒ p)     = cong (λ { (t , a) → box t , (t , a) }) (check p)
+  check (congdown⇒ p)   = cong (λ { (t , a) → a }) (check p)
+  check (congpair⇒ p q) = cong₂ _,_ (check p) (check q)
+  check (congfst⇒ p)    = cong π₁ (check p)
+  check (congsnd⇒ p)    = cong π₂ (check p)
+  check beta▻ₖ⇒         = refl
+  check beta▻ₛ⇒         = refl
+  check beta□⇒          = refl
+  check eta□⇒           = refl
+  check beta∧₁⇒         = refl
+  check beta∧₂⇒         = refl
+  check eta∧⇒           = refl
+  check eta⊤⇒          = refl
 
 
 
@@ -99,19 +99,19 @@ module CoquandDybjerSoundness where
   check refl⇒           = refl
   check (trans⇒ p q)    = trans (check p) (check q)
   check (sym⇒ p)        = sym (check p)
-  check (cong⇒app p q)  = cong₂ _$ˢ_ (check p) (check q)
-  check (cong⇒dist p q) = cong₂ (λ { (t , (t′ , f)) (u , a) →
+  check (congapp⇒ p q)  = cong₂ _$ˢ_ (check p) (check q)
+  check (congdist⇒ p q) = cong₂ (λ { (t , (t′ , f)) (u , a) →
                              app t u , f a }) (check p) (check q)
-  check (cong⇒up p)     = cong (λ { (t , a) → box t , (t , a) }) (check p)
-  check (cong⇒down p)   = cong (λ { (t , a) → a }) (check p)
-  check (cong⇒pair p q) = cong₂ _,_ (check p) (check q)
-  check (cong⇒fst p)    = cong π₁ (check p)
-  check (cong⇒snd p)    = cong π₂ (check p)
-  check conv⇒k          = refl
-  check conv⇒s          = refl
-  check conv⇒up         = refl
-  check conv⇒down       = refl
-  check conv⇒pair       = refl
-  check conv⇒fst        = refl
-  check conv⇒snd        = refl
-  check conv⇒tt         = refl
+  check (congup⇒ p)     = cong (λ { (t , a) → box t , (t , a) }) (check p)
+  check (congdown⇒ p)   = cong (λ { (t , a) → a }) (check p)
+  check (congpair⇒ p q) = cong₂ _,_ (check p) (check q)
+  check (congfst⇒ p)    = cong π₁ (check p)
+  check (congsnd⇒ p)    = cong π₂ (check p)
+  check beta▻ₖ⇒         = refl
+  check beta▻ₛ⇒         = refl
+  check beta□⇒          = refl
+  check eta□⇒           = refl
+  check beta∧₁⇒         = refl
+  check beta∧₂⇒         = refl
+  check eta∧⇒           = refl
+  check eta⊤⇒          = refl

@@ -117,38 +117,40 @@ data _⇒_ : ∀ {A} → ⊢ A → ⊢ A → Set where
                → t ⇒ t′ → t′ ⇒ t″ → t ⇒ t″
   sym⇒      : ∀ {A} {t t′ : ⊢ A}
                → t ⇒ t′ → t′ ⇒ t
-  cong⇒app  : ∀ {A B} {t t′ : ⊢ A ▻ B} {u u′ : ⊢ A}
+  congapp⇒  : ∀ {A B} {t t′ : ⊢ A ▻ B} {u u′ : ⊢ A}
                → t ⇒ t′ → u ⇒ u′ → app t u ⇒ app t′ u′
   -- NOTE: Rejected by Pfenning and Davies.
-  -- cong⇒box  : ∀ {A} {t t′ : ⊢ A}
+  -- congbox⇒  : ∀ {A} {t t′ : ⊢ A}
   --              → t ⇒ t′ → box t ⇒ box t′
-  cong⇒dist : ∀ {A B} {t t′ : ⊢ □ (A ▻ B)} {u u′ : ⊢ □ A}
+  congdist⇒ : ∀ {A B} {t t′ : ⊢ □ (A ▻ B)} {u u′ : ⊢ □ A}
                → t ⇒ t′ → u ⇒ u′ → dist t u ⇒ dist t′ u′
-  cong⇒up   : ∀ {A} {t t′ : ⊢ □ A}
+  congup⇒   : ∀ {A} {t t′ : ⊢ □ A}
                → t ⇒ t′ → up t ⇒ up t′
-  cong⇒down : ∀ {A} {t t′ : ⊢ □ A}
+  congdown⇒ : ∀ {A} {t t′ : ⊢ □ A}
                → t ⇒ t′ → down t ⇒ down t′
-  cong⇒pair : ∀ {A B} {t t′ : ⊢ A} {u u′ : ⊢ B}
+  congpair⇒ : ∀ {A B} {t t′ : ⊢ A} {u u′ : ⊢ B}
                → t ⇒ t′ → u ⇒ u′ → pair t u ⇒ pair t′ u′
-  cong⇒fst  : ∀ {A B} {t t′ : ⊢ A ∧ B}
+  congfst⇒  : ∀ {A B} {t t′ : ⊢ A ∧ B}
                → t ⇒ t′ → fst t ⇒ fst t′
-  cong⇒snd  : ∀ {A B} {t t′ : ⊢ A ∧ B}
+  congsnd⇒  : ∀ {A B} {t t′ : ⊢ A ∧ B}
                → t ⇒ t′ → snd t ⇒ snd t′
-  conv⇒k    : ∀ {A B} {t : ⊢ A} {u : ⊢ B}
+  -- TODO: Verify this.
+  beta▻ₖ⇒   : ∀ {A B} {t : ⊢ A} {u : ⊢ B}
                → app (app ck t) u ⇒ t
-  conv⇒s    : ∀ {A B C} {t : ⊢ A ▻ B ▻ C} {u : ⊢ A ▻ B} {v : ⊢ A}
+  -- TODO: Verify this.
+  beta▻ₛ⇒   : ∀ {A B C} {t : ⊢ A ▻ B ▻ C} {u : ⊢ A ▻ B} {v : ⊢ A}
                → app (app (app cs t) u) v ⇒ app (app t v) (app u v)
   -- TODO: Verify this.
-  conv⇒up   : ∀ {A} {t : ⊢ □ A}
+  beta□⇒    : ∀ {A} {t : ⊢ □ A}
                → down (up t) ⇒ t
   -- TODO: Verify this.
-  conv⇒down : ∀ {A} {t : ⊢ A}
+  eta□⇒     : ∀ {A} {t : ⊢ A}
                → t ⇒ down (box t)
-  conv⇒pair : ∀ {A B} {t : ⊢ A ∧ B}
-               → t ⇒ pair (fst t) (snd t)
-  conv⇒fst  : ∀ {A B} {t : ⊢ A} {u : ⊢ B}
+  beta∧₁⇒   : ∀ {A B} {t : ⊢ A} {u : ⊢ B}
                → fst (pair t u) ⇒ t
-  conv⇒snd  : ∀ {A B} {t : ⊢ A} {u : ⊢ B}
+  beta∧₂⇒   : ∀ {A B} {t : ⊢ A} {u : ⊢ B}
                → snd (pair t u) ⇒ u
-  conv⇒tt   : ∀ {t : ⊢ ⊤}
+  eta∧⇒     : ∀ {A B} {t : ⊢ A ∧ B}
+               → t ⇒ pair (fst t) (snd t)
+  eta⊤⇒    : ∀ {t : ⊢ ⊤}
                → t ⇒ tt
