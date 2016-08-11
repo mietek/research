@@ -33,7 +33,7 @@ import BasicIPC.Hilbert.TreeWithContext.TarskiSoundness
 import BasicIPC.Hilbert.TreeWithContext.KripkeSoundness
 import BasicIPC.Hilbert.Translation
 import BasicIPC.Gentzen
-import BasicIPC.Gentzen.TarskiSoundness
+import BasicIPC.Gentzen.TarskiSoundness -- FIXME
 import BasicIPC.Gentzen.KripkeSoundness
 import BasicIPC.Gentzen.KripkeBasicCompleteness
 import BasicIPC.Gentzen.KripkeCompleteness
@@ -56,7 +56,7 @@ import IPC.Hilbert.TreeWithContext.TarskiSoundness
 import IPC.Hilbert.TreeWithContext.KripkeSoundness -- FIXME
 import IPC.Hilbert.Translation
 import IPC.Gentzen
-import IPC.Gentzen.TarskiSoundness
+import IPC.Gentzen.TarskiSoundness -- FIXME
 import IPC.Gentzen.KripkeSoundness
 import IPC.Gentzen.KripkeBasicCompleteness
 import IPC.Gentzen.KripkeCompleteness
