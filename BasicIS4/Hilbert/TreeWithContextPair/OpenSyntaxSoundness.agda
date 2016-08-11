@@ -59,7 +59,7 @@ module CoquandDybjerSoundness where
   reify {□ A}   □a      = let t , a = □a refl⊆
                           in  lift t
   reify {A ∧ B} (a , b) = pair (reify {A} a) (reify {B} b)
-  reify {⊤}    ∙       = mono⊢ bot⊆ tt
+  reify {⊤}    ∙       = tt
 
 
   -- Soundness with respect to all models, or evaluation.
