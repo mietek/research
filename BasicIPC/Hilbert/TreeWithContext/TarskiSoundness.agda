@@ -68,13 +68,16 @@ module CoquandDybjerSoundness where
   eval (var i)   γ = lookup i γ
   eval (app t u) γ = (eval t γ) $ˢ (eval u γ)
   eval ci        γ = ci , id
-  eval ck        γ = ck , (λ a → app ck (reify a) , const a)
+  eval ck        γ = ck , (λ a →
+                       app ck (reify a) ,
+                         const a)
   eval cs        γ = cs , (λ f →
                        app cs (reify f) , (λ g →
                          app (app cs (reify f)) (reify g) , (λ a →
                            apˢ f g a)))
-  eval cpair     γ = cpair , (λ a → app cpair (reify a) , (λ b →
-                                       a , b))
+  eval cpair     γ = cpair , (λ a →
+                       app cpair (reify a) , (λ b →
+                         a , b))
   eval cfst      γ = cfst , π₁
   eval csnd      γ = csnd , π₂
   eval tt        γ = ∙

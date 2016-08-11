@@ -66,13 +66,16 @@ module CoquandDybjerSoundness where
   eval : ∀ {A} → ⊢ A → ᴹ⊨ A
   eval (app t u) = (eval t) $ˢ (eval u)
   eval ci        = ci , id
-  eval ck        = ck , (λ a → app ck (reify a) , const a)
+  eval ck        = ck , (λ a →
+                     app ck (reify a) ,
+                       const a)
   eval cs        = cs , (λ f →
                      app cs (reify f) , (λ g →
                        app (app cs (reify f)) (reify g) , (λ a →
                          apˢ f g a)))
-  eval cpair     = cpair , (λ a → app cpair (reify a) , (λ b →
-                                     a , b))
+  eval cpair     = cpair , (λ a →
+                     app cpair (reify a) , (λ b →
+                       a , b))
   eval cfst      = cfst , π₁
   eval csnd      = csnd , π₂
   eval tt        = ∙
