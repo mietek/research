@@ -11,7 +11,7 @@ module WithRegularForcing where
 
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
   eval (var i)          γ = lookup i γ
-  eval (app t u)        γ = (eval t γ) refl≤ (eval u γ)
+  eval (app t u)        γ = (eval t γ refl≤) (eval u γ)
   eval ci               γ = λ _ a → a
   eval (ck {A})         γ = λ _ a ξ b → mono⊩ {A} ξ a
   eval (cs {A} {B} {C}) γ = λ _ f ξ g ξ′ a →
@@ -40,7 +40,7 @@ module WithDualRelationForcing where
 
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
   eval (var i)          γ = lookup i γ
-  eval (app t u)        γ = (eval t γ) refl≤ (eval u γ)
+  eval (app t u)        γ = (eval t γ refl≤) (eval u γ)
   eval ci               γ = λ _ a → a
   eval (ck {A})         γ = λ _ a ξ b → mono⊩ {A} ξ a
   eval (cs {A} {B} {C}) γ = λ _ f ξ g ξ′ a →
@@ -70,7 +70,7 @@ module Ono where
 
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
   eval (var i)          γ = lookup i γ
-  eval (app t u)        γ = (eval t γ) refl≤ (eval u γ)
+  eval (app t u)        γ = (eval t γ refl≤) (eval u γ)
   eval ci               γ = λ _ a → a
   eval (ck {A})         γ = λ _ a ξ b → mono⊩ {A} ξ a
   eval (cs {A} {B} {C}) γ = λ _ f ξ g ξ′ a →
@@ -96,7 +96,7 @@ module BozicDosen where
 
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
   eval (var i)          γ = lookup i γ
-  eval (app t u)        γ = (eval t γ) refl≤ (eval u γ)
+  eval (app t u)        γ = (eval t γ refl≤) (eval u γ)
   eval ci               γ = λ _ a → a
   eval (ck {A})         γ = λ _ a ξ b → mono⊩ {A} ξ a
   eval (cs {A} {B} {C}) γ = λ _ f ξ g ξ′ a →
@@ -122,7 +122,7 @@ module EwaldEtAl where
 
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
   eval (var i)          γ = lookup i γ
-  eval (app t u)        γ = (eval t γ) refl≤ (eval u γ)
+  eval (app t u)        γ = (eval t γ refl≤) (eval u γ)
   eval ci               γ = λ _ a → a
   eval (ck {A})         γ = λ _ a ξ b → mono⊩ {A} ξ a
   eval (cs {A} {B} {C}) γ = λ _ f ξ g ξ′ a →
@@ -149,7 +149,7 @@ module AlechinaEtAl where
 
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
   eval (var i)          γ = lookup i γ
-  eval (app t u)        γ = (eval t γ) refl≤ (eval u γ)
+  eval (app t u)        γ = (eval t γ refl≤) (eval u γ)
   eval ci               γ = λ _ a → a
   eval (ck {A})         γ = λ _ a ξ b → mono⊩ {A} ξ a
   eval (cs {A} {B} {C}) γ = λ _ f ξ g ξ′ a →

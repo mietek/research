@@ -11,7 +11,7 @@ module WithRegularForcing where
 
   eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊩ A
   eval (var i)          γ δ = lookup i γ
-  eval (app t u)        γ δ = (eval t γ δ) refl≤ (eval u γ δ)
+  eval (app t u)        γ δ = (eval t γ δ refl≤) (eval u γ δ)
   eval ci               γ δ = λ _ a → a
   eval (ck {A})         γ δ = λ _ a ξ b → mono⊩ {A} ξ a
   eval (cs {A} {B} {C}) γ δ = λ _ f ξ g ξ′ a →
@@ -41,7 +41,7 @@ module WithBidirectionalForcing where
 
   eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊩ A
   eval (var i)          γ δ = lookup i γ
-  eval (app t u)        γ δ = (eval t γ δ) refl≤ (eval u γ δ)
+  eval (app t u)        γ δ = (eval t γ δ refl≤) (eval u γ δ)
   eval ci               γ δ = λ _ a → a
   eval (ck {A})         γ δ = λ _ a ξ b → mono⊩ {A} ξ a
   eval (cs {A} {B} {C}) γ δ = λ _ f ξ g ξ′ a →
@@ -74,7 +74,7 @@ module Ono where
 
   eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊩ A
   eval (var i)          γ δ = lookup i γ
-  eval (app t u)        γ δ = (eval t γ δ) refl≤ (eval u γ δ)
+  eval (app t u)        γ δ = (eval t γ δ refl≤) (eval u γ δ)
   eval ci               γ δ = λ _ a → a
   eval (ck {A})         γ δ = λ _ a ξ b → mono⊩ {A} ξ a
   eval (cs {A} {B} {C}) γ δ = λ _ f ξ g ξ′ a →
@@ -101,7 +101,7 @@ module BozicDosen where
 
   eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊩ A
   eval (var i)          γ δ = lookup i γ
-  eval (app t u)        γ δ = (eval t γ δ) refl≤ (eval u γ δ)
+  eval (app t u)        γ δ = (eval t γ δ refl≤) (eval u γ δ)
   eval ci               γ δ = λ _ a → a
   eval (ck {A})         γ δ = λ _ a ξ b → mono⊩ {A} ξ a
   eval (cs {A} {B} {C}) γ δ = λ _ f ξ g ξ′ a →
@@ -128,7 +128,7 @@ module EwaldEtAl where
 
   eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊩ A
   eval (var i)          γ δ = lookup i γ
-  eval (app t u)        γ δ = (eval t γ δ) refl≤ (eval u γ δ)
+  eval (app t u)        γ δ = (eval t γ δ refl≤) (eval u γ δ)
   eval ci               γ δ = λ _ a → a
   eval (ck {A})         γ δ = λ _ a ξ b → mono⊩ {A} ξ a
   eval (cs {A} {B} {C}) γ δ = λ _ f ξ g ξ′ a →
@@ -158,7 +158,7 @@ module AlechinaEtAl where
 
   eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊩ A
   eval (var i)          γ δ = lookup i γ
-  eval (app t u)        γ δ = (eval t γ δ) refl≤ (eval u γ δ)
+  eval (app t u)        γ δ = (eval t γ δ refl≤) (eval u γ δ)
   eval ci               γ δ = λ _ a → a
   eval (ck {A})         γ δ = λ _ a ξ b → mono⊩ {A} ξ a
   eval (cs {A} {B} {C}) γ δ = λ _ f ξ g ξ′ a →

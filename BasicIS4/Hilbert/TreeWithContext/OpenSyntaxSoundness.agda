@@ -16,7 +16,7 @@ module GabbayNanevskiSoundness where
 
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊨ A
   eval (var i)          γ = lookup i γ
-  eval (app t u)        γ = (eval t γ) refl⊆ (eval u γ)
+  eval (app t u)        γ = (eval t γ refl⊆) (eval u γ)
   eval ci               γ = λ _ → id
   eval (ck {A})         γ = λ _ a θ b → mono⊨ {A} θ a
   eval (cs {A} {B} {C}) γ = λ _ f θ g θ′ a →

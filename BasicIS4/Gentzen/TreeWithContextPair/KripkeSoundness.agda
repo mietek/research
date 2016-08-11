@@ -12,7 +12,7 @@ module WithRegularForcing where
   eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊩ A
   eval (var i)     γ δ = lookup i γ
   eval (lam t)     γ δ = λ ξ a → eval t (mono⊩⋆ ξ γ , a) (λ ζ → δ (transR (≤→R ξ) ζ))
-  eval (app t u)   γ δ = (eval t γ δ) refl≤ (eval u γ δ)
+  eval (app t u)   γ δ = (eval t γ δ refl≤) (eval u γ δ)
   eval (mvar i)    γ δ = lookup i (δ reflR)
   eval (box t)     γ δ = λ ζ → eval t ∙ (λ ζ′ → δ (transR ζ ζ′))
   eval (unbox t u) γ δ = eval u γ (λ ζ → δ ζ , (eval t γ δ) ζ)
@@ -31,7 +31,7 @@ module WithBidirectionalForcing where
   eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊩ A
   eval (var i)     γ δ = lookup i γ
   eval (lam t)     γ δ = λ ξ a → eval t (mono⊩⋆ ξ γ , a) (λ ξ′ ζ → δ (trans≤ ξ ξ′) ζ)
-  eval (app t u)   γ δ = (eval t γ δ) refl≤ (eval u γ δ)
+  eval (app t u)   γ δ = (eval t γ δ refl≤) (eval u γ δ)
   eval (mvar i)    γ δ = lookup i (δ refl≤ reflR)
   eval (box t)     γ δ = λ ξ ζ → eval t ∙ (λ ξ′ ζ′ →
                          let _ , (ξ″ , ζ″) = R⨾≤→≤⨾R (_ , (ζ , ξ′))
@@ -53,7 +53,7 @@ module Ono where
   eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊩ A
   eval (var i)     γ δ = lookup i γ
   eval (lam t)     γ δ = λ ξ a → eval t (mono⊩⋆ ξ γ , a) (λ ζ → δ (transR (≤→R ξ) ζ))
-  eval (app t u)   γ δ = (eval t γ δ) refl≤ (eval u γ δ)
+  eval (app t u)   γ δ = (eval t γ δ refl≤) (eval u γ δ)
   eval (mvar i)    γ δ = lookup i (δ reflR)
   eval (box t)     γ δ = λ ζ → eval t ∙ (λ ζ′ → δ (transR ζ ζ′))
   eval (unbox t u) γ δ = eval u γ (λ ζ → δ ζ , (eval t γ δ) ζ)
@@ -71,7 +71,7 @@ module BozicDosen where
   eval (lam t)     γ δ = λ ξ a → eval t (mono⊩⋆ ξ γ , a) (λ ζ →
                          let _ , (ζ′ , ξ′) = ≤⨾R→R⨾≤ (_ , (ξ , ζ))
                          in  mono⊩⋆ ξ′ (δ ζ′))
-  eval (app t u)   γ δ = (eval t γ δ) refl≤ (eval u γ δ)
+  eval (app t u)   γ δ = (eval t γ δ refl≤) (eval u γ δ)
   eval (mvar i)    γ δ = lookup i (δ reflR)
   eval (box t)     γ δ = λ ζ → eval t ∙ (λ ζ′ → δ (transR ζ ζ′))
   eval (unbox t u) γ δ = eval u γ (λ ζ → δ ζ , (eval t γ δ) ζ)
@@ -87,7 +87,7 @@ module EwaldEtAl where
   eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊩ A
   eval (var i)     γ δ = lookup i γ
   eval (lam t)     γ δ = λ ξ a → eval t (mono⊩⋆ ξ γ , a) (λ ξ′ ζ → δ (trans≤ ξ ξ′) ζ)
-  eval (app t u)   γ δ = (eval t γ δ) refl≤ (eval u γ δ)
+  eval (app t u)   γ δ = (eval t γ δ refl≤) (eval u γ δ)
   eval (mvar i)    γ δ = lookup i (δ refl≤ reflR)
   eval (box t)     γ δ = λ ξ ζ → eval t ∙ (λ ξ′ ζ′ →
                          let _ , (ξ″ , ζ″) = R⨾≤→≤⨾R (_ , (ζ , ξ′))
@@ -105,7 +105,7 @@ module AlechinaEtAl where
   eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊩ A
   eval (var i)     γ δ = lookup i γ
   eval (lam t)     γ δ = λ ξ a → eval t (mono⊩⋆ ξ γ , a) (λ ξ′ ζ → δ (trans≤ ξ ξ′) ζ)
-  eval (app t u)   γ δ = (eval t γ δ) refl≤ (eval u γ δ)
+  eval (app t u)   γ δ = (eval t γ δ refl≤) (eval u γ δ)
   eval (mvar i)    γ δ = lookup i (δ refl≤ reflR)
   eval (box t)     γ δ = λ ξ ζ → eval t ∙ (λ ξ′ ζ′ →
                          let _ , (ξ″ , ζ″) = R⨾≤→≤⨾R (_ , (ζ , ξ′))

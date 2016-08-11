@@ -13,9 +13,9 @@ module WithRegularForcing where
     eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
     eval (var i)         γ = lookup i γ
     eval (lam t)         γ = λ ξ a → eval t (mono⊩⋆ ξ γ , a)
-    eval (app t u)       γ = (eval t γ) refl≤ (eval u γ)
+    eval (app t u)       γ = (eval t γ refl≤) (eval u γ)
     eval (multibox ts u) γ = λ ζ → eval u (eval⋆ ts γ ζ)
-    eval (down t)        γ = (eval t γ) reflR
+    eval (down t)        γ = eval t γ reflR
     eval (pair t u)      γ = eval t γ , eval u γ
     eval (fst t)         γ = π₁ (eval t γ)
     eval (snd t)         γ = π₂ (eval t γ)
@@ -37,9 +37,9 @@ module WithBidirectionalForcing where
     eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
     eval (var i)         γ = lookup i γ
     eval (lam t)         γ = λ ξ a → eval t (mono⊩⋆ ξ γ , a)
-    eval (app t u)       γ = (eval t γ) refl≤ (eval u γ)
+    eval (app t u)       γ = (eval t γ refl≤) (eval u γ)
     eval (multibox ts u) γ = λ ξ ζ → eval u (eval⋆ ts γ ξ ζ)
-    eval (down t)        γ = (eval t γ) refl≤ reflR
+    eval (down t)        γ = eval t γ refl≤ reflR
     eval (pair t u)      γ = eval t γ , eval u γ
     eval (fst t)         γ = π₁ (eval t γ)
     eval (snd t)         γ = π₂ (eval t γ)
@@ -63,9 +63,9 @@ module Ono where
     eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
     eval (var i)         γ = lookup i γ
     eval (lam t)         γ = λ ξ a → eval t (mono⊩⋆ ξ γ , a)
-    eval (app t u)       γ = (eval t γ) refl≤ (eval u γ)
+    eval (app t u)       γ = (eval t γ refl≤) (eval u γ)
     eval (multibox ts u) γ = λ ζ → eval u (eval⋆ ts γ ζ)
-    eval (down t)        γ = (eval t γ) reflR
+    eval (down t)        γ = eval t γ reflR
     eval (pair t u)      γ = eval t γ , eval u γ
     eval (fst t)         γ = π₁ (eval t γ)
     eval (snd t)         γ = π₂ (eval t γ)
@@ -84,9 +84,9 @@ module BozicDosen where
     eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
     eval (var i)         γ = lookup i γ
     eval (lam t)         γ = λ ξ a → eval t (mono⊩⋆ ξ γ , a)
-    eval (app t u)       γ = (eval t γ) refl≤ (eval u γ)
+    eval (app t u)       γ = (eval t γ refl≤) (eval u γ)
     eval (multibox ts u) γ = λ ζ → eval u (eval⋆ ts γ ζ)
-    eval (down t)        γ = (eval t γ) reflR
+    eval (down t)        γ = eval t γ reflR
     eval (pair t u)      γ = eval t γ , eval u γ
     eval (fst t)         γ = π₁ (eval t γ)
     eval (snd t)         γ = π₂ (eval t γ)
@@ -105,9 +105,9 @@ module EwaldEtAl where
     eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
     eval (var i)         γ = lookup i γ
     eval (lam t)         γ = λ ξ a → eval t (mono⊩⋆ ξ γ , a)
-    eval (app t u)       γ = (eval t γ) refl≤ (eval u γ)
+    eval (app t u)       γ = (eval t γ refl≤) (eval u γ)
     eval (multibox ts u) γ = λ ξ ζ → eval u (eval⋆ ts γ ξ ζ)
-    eval (down t)        γ = (eval t γ) refl≤ reflR
+    eval (down t)        γ = eval t γ refl≤ reflR
     eval (pair t u)      γ = eval t γ , eval u γ
     eval (fst t)         γ = π₁ (eval t γ)
     eval (snd t)         γ = π₂ (eval t γ)
@@ -128,9 +128,9 @@ module AlechinaEtAl where
     eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
     eval (var i)         γ = lookup i γ
     eval (lam t)         γ = λ ξ a → eval t (mono⊩⋆ ξ γ , a)
-    eval (app t u)       γ = (eval t γ) refl≤ (eval u γ)
+    eval (app t u)       γ = (eval t γ refl≤) (eval u γ)
     eval (multibox ts u) γ = λ ξ ζ → eval u (eval⋆ ts γ ξ ζ)
-    eval (down t)        γ = (eval t γ) refl≤ reflR
+    eval (down t)        γ = eval t γ refl≤ reflR
     eval (pair t u)      γ = eval t γ , eval u γ
     eval (fst t)         γ = π₁ (eval t γ)
     eval (snd t)         γ = π₂ (eval t γ)
