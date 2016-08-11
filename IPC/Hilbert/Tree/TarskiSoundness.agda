@@ -65,13 +65,13 @@ module CoquandDybjerSoundness where
   -- Completeness with respect to a particular model.
 
   reify : ∀ {{_ : Model}} {A} → ⊨ A → ⊢ A
-  reify {A = α P}   (t , s) = t
-  reify {A = A ▻ B} (t , f) = t
-  reify {A = A ∧ B} (a , b) = pair (reify {A} a) (reify {B} b)
-  reify {A = ⊤}    ∙       = tt
-  reify {A = ⊥}    ()
-  reify {A = A ∨ B} (ι₁ a)  = inl (reify {A} a)
-  reify {A = A ∨ B} (ι₂ b)  = inr (reify {B} b)
+  reify {α P}   (t , s) = t
+  reify {A ▻ B} (t , f) = t
+  reify {A ∧ B} (a , b) = pair (reify {A} a) (reify {B} b)
+  reify {⊤}    ∙       = tt
+  reify {⊥}    ()
+  reify {A ∨ B} (ι₁ a)  = inl (reify {A} a)
+  reify {A ∨ B} (ι₂ b)  = inr (reify {B} b)
 
 
   -- Soundness with respect to all models, or evaluation.
