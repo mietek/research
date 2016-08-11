@@ -47,6 +47,40 @@ module NaturalSemantics where
 
   -- Additional useful equipment.
 
+  λˢ : ∀ {{_ : Model}} {A B Γ}
+       → (⊨⋆ Γ × ⊨ A → ⊨ B)
+       → ⊨⋆ Γ → ⊨ A → ⊨ B
+  λˢ f γ = λ a → f (γ , a)
+
+  _$ˢᶜ_ : ∀ {{_ : Model}} {A B Γ}
+          → (⊨⋆ Γ → ⊨ A → ⊨ B)
+          → (⊨⋆ Γ → ⊨ A)
+          → ⊨⋆ Γ → ⊨ B
+  (f $ˢᶜ g) γ = (f γ) (g γ)
+
+  apˢᶜ : ∀ {{_ : Model}} {A B C Γ}
+         → (⊨⋆ Γ → ⊨ A → ⊨ B → ⊨ C)
+         → (⊨⋆ Γ → ⊨ A → ⊨ B)
+         → (⊨⋆ Γ → ⊨ A)
+         → ⊨⋆ Γ → ⊨ C
+  apˢᶜ f g a γ = ((f γ) (a γ)) ((g γ) (a γ))
+
+  _,ˢᶜ_ : ∀ {{_ : Model}} {A B Γ}
+          → (⊨⋆ Γ → ⊨ A)
+          → (⊨⋆ Γ → ⊨ B)
+          → ⊨⋆ Γ → ⊨ A × ⊨ B
+  (a ,ˢᶜ b) γ = a γ , b γ
+
+  π₁ˢᶜ : ∀ {{_ : Model}} {A B Γ}
+         → (⊨⋆ Γ → ⊨ A × ⊨ B)
+         → ⊨⋆ Γ → ⊨ A
+  π₁ˢᶜ s γ = π₁ (s γ)
+
+  π₂ˢᶜ : ∀ {{_ : Model}} {A B Γ}
+         → (⊨⋆ Γ → ⊨ A × ⊨ B)
+         → ⊨⋆ Γ → ⊨ B
+  π₂ˢᶜ s γ = π₂ (s γ)
+
   lookup : ∀ {A Γ} → A ∈ Γ → Γ ᴹ⊨ A
   lookup top     (γ , a) = a
   lookup (pop i) (γ , b) = lookup i γ
@@ -87,8 +121,48 @@ module CoquandDybjerSemantics (Syntax : Ty → Set) where
 
   -- Additional useful equipment.
 
-  _$ˢ_ : ∀ {{_ : Model}} {A B} → Syntax (A ▻ B) × (⊨ A → ⊨ B) → ⊨ A → ⊨ B
+  _$ˢ_ : ∀ {{_ : Model}} {A B}
+         → Syntax (A ▻ B) × (⊨ A → ⊨ B)
+         → ⊨ A
+         → ⊨ B
   (t , f) $ˢ a = f a
+
+  apˢ : ∀ {{_ : Model}} {A B C}
+        → Syntax (A ▻ B ▻ C) × (⊨ A → Syntax (B ▻ C) × (⊨ B → ⊨ C))
+        → Syntax (A ▻ B) × (⊨ A → ⊨ B)
+        → ⊨ A
+        → ⊨ C
+  apˢ (t , f) (u , g) a = let (_ , h) = f a
+                          in  h (g a)
+
+  _$ˢᶜ_ : ∀ {{_ : Model}} {A B Γ}
+          → (⊨⋆ Γ → Syntax (A ▻ B) × (⊨ A → ⊨ B))
+          → (⊨⋆ Γ → ⊨ A)
+          → ⊨⋆ Γ → ⊨ B
+  (f $ˢᶜ g) γ = (f γ) $ˢ (g γ)
+
+  apˢᶜ : ∀ {{_ : Model}} {A B C Γ}
+         → (⊨⋆ Γ → Syntax (A ▻ B ▻ C) × (⊨ A → Syntax (B ▻ C) × (⊨ B → ⊨ C)))
+         → (⊨⋆ Γ → Syntax (A ▻ B) × (⊨ A → ⊨ B))
+         → (⊨⋆ Γ → ⊨ A)
+         → ⊨⋆ Γ → ⊨ C
+  apˢᶜ f g a γ = apˢ (f γ) (g γ) (a γ)
+
+  _,ˢᶜ_ : ∀ {{_ : Model}} {A B Γ}
+          → (⊨⋆ Γ → ⊨ A)
+          → (⊨⋆ Γ → ⊨ B)
+          → ⊨⋆ Γ → ⊨ A × ⊨ B
+  (a ,ˢᶜ b) γ = a γ , b γ
+
+  π₁ˢᶜ : ∀ {{_ : Model}} {A B Γ}
+         → (⊨⋆ Γ → ⊨ A × ⊨ B)
+         → ⊨⋆ Γ → ⊨ A
+  π₁ˢᶜ s γ = π₁ (s γ)
+
+  π₂ˢᶜ : ∀ {{_ : Model}} {A B Γ}
+         → (⊨⋆ Γ → ⊨ A × ⊨ B)
+         → ⊨⋆ Γ → ⊨ B
+  π₂ˢᶜ s γ = π₂ (s γ)
 
   lookup : ∀ {A Γ} → A ∈ Γ → Γ ᴹ⊨ A
   lookup top     (γ , a) = a

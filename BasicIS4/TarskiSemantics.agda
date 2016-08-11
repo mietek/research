@@ -18,7 +18,9 @@ open Model {{…}} public
 
 -- Satisfaction with a syntactic component, inspired by Gabbay and Nanevski.
 
-module GabbayNanevskiSemantics (Syntax : Ty → Set) where
+module GabbayNanevskiSemantics (Syntax : Ty → Set)
+                               (_•_    : ∀ {A B} → Syntax (A ▻ B) → Syntax A → Syntax B)
+                               (!_     : ∀ {A} → Syntax A → Syntax (□ A)) where
 
 
   -- Satisfaction in a particular model.
@@ -58,6 +60,22 @@ module GabbayNanevskiSemantics (Syntax : Ty → Set) where
 
   -- Additional useful equipment.
 
+  distˢ : ∀ {{_ : Model}} {A B}
+          → Syntax (A ▻ B) × (⊨ A → ⊨ B)
+          → Syntax A × ⊨ A
+          → Syntax B × ⊨ B
+  distˢ (t , f) (u , a) = t • u , f a
+
+  upˢ : ∀ {{_ : Model}} {A}
+        → Syntax A × ⊨ A
+        → Syntax (□ A) × (Syntax A × ⊨ A)
+  upˢ (t , a) = ! t , (t , a)
+
+  downˢ : ∀ {{_ : Model}} {A}
+          → Syntax A × ⊨ A
+          → ⊨ A
+  downˢ (t , a) = a
+
   lookup : ∀ {A Γ} → A ∈ Γ → Γ ᴹ⊨ A
   lookup top     (γ , a) = a
   lookup (pop i) (γ , b) = lookup i γ
@@ -67,7 +85,9 @@ module GabbayNanevskiSemantics (Syntax : Ty → Set) where
 
 -- Satisfaction with a syntactic component, inspired by Coquand and Dybjer.
 
-module CoquandDybjerSemantics (Syntax : Ty → Set) where
+module CoquandDybjerSemantics (Syntax : Ty → Set)
+                              (_•_    : ∀ {A B} → Syntax (A ▻ B) → Syntax A → Syntax B)
+                              (!_     : ∀ {A} → Syntax A → Syntax (□ A)) where
 
 
   -- Satisfaction in a particular model.
@@ -99,8 +119,41 @@ module CoquandDybjerSemantics (Syntax : Ty → Set) where
 
   -- Additional useful equipment.
 
-  _$ˢ_ : ∀ {{_ : Model}} {A B} → Syntax (A ▻ B) × (⊨ A → ⊨ B) → ⊨ A → ⊨ B
+  _$ˢ_ : ∀ {{_ : Model}} {A B}
+         → Syntax (A ▻ B) × (⊨ A → ⊨ B)
+         → ⊨ A
+         → ⊨ B
   (t , f) $ˢ a = f a
+
+  apˢ : ∀ {{_ : Model}} {A B C}
+        → Syntax (A ▻ B ▻ C) × (⊨ A → Syntax (B ▻ C) × (⊨ B → ⊨ C))
+        → Syntax (A ▻ B) × (⊨ A → ⊨ B)
+        → ⊨ A
+        → ⊨ C
+  apˢ (t , f) (u , g) a = let (_ , h) = f a
+                          in  h (g a)
+
+  distˢ : ∀ {{_ : Model}} {A B}
+          → Syntax (A ▻ B) × (⊨ A → ⊨ B)
+          → Syntax A × ⊨ A
+          → Syntax B × ⊨ B
+  distˢ (t , f) (u , a) = t • u , f a
+
+  distˢ′ : ∀ {{_ : Model}} {A B}
+          → Syntax (A ▻ B) × (Syntax (A ▻ B) × (⊨ A → ⊨ B))
+          → Syntax A × ⊨ A
+          → Syntax B × ⊨ B
+  distˢ′ (t , (_ , f)) (u , a) = t • u , f a
+
+  upˢ : ∀ {{_ : Model}} {A}
+        → Syntax A × ⊨ A
+        → Syntax (□ A) × (Syntax A × ⊨ A)
+  upˢ (t , a) = ! t , (t , a)
+
+  downˢ : ∀ {{_ : Model}} {A}
+          → Syntax A × ⊨ A
+          → ⊨ A
+  downˢ (t , a) = a
 
   lookup : ∀ {A Γ} → A ∈ Γ → Γ ᴹ⊨ A
   lookup top     (γ , a) = a
