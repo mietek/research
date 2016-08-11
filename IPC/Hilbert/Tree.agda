@@ -118,21 +118,38 @@ data _⇒_ : ∀ {A} → ⊢ A → ⊢ A → Set where
   sym⇒      : ∀ {A} {t t′ : ⊢ A}
                → t ⇒ t′ → t′ ⇒ t
   congapp⇒  : ∀ {A B} {t t′ : ⊢ A ▻ B} {u u′ : ⊢ A}
-               → t ⇒ t′ → u ⇒ u′ → app t u ⇒ app t′ u′
+               → t ⇒ t′ → u ⇒ u′
+               → app t u ⇒ app t′ u′
   congpair⇒ : ∀ {A B} {t t′ : ⊢ A} {u u′ : ⊢ B}
-               → t ⇒ t′ → u ⇒ u′ → pair t u ⇒ pair t′ u′
+               → t ⇒ t′ → u ⇒ u′
+               → app (app cpair t) u ⇒ app (app cpair t′) u′
+  congi⇒    : ∀ {A} {t t′ : ⊢ A}
+               → t ⇒ t′
+               → app ci t ⇒ app ci t′
+  congk⇒    : ∀ {A B} {t t′ : ⊢ A} {u u′ : ⊢ B}
+               → t ⇒ t′ → u ⇒ u′
+               → app (app ck t) u ⇒ app (app ck t′) u′
+  congs⇒    : ∀ {A B C} {t t′ : ⊢ A ▻ B ▻ C} {u u′ : ⊢ A ▻ B} {v v′ : ⊢ A}
+               → t ⇒ t′ → u ⇒ u′ → v ⇒ v′
+               → app (app (app cs t) u) v ⇒ app (app (app cs t′) u′) v′
   congfst⇒  : ∀ {A B} {t t′ : ⊢ A ∧ B}
-               → t ⇒ t′ → fst t ⇒ fst t′
+               → t ⇒ t′
+               → app cfst t ⇒ app cfst t′
   congsnd⇒  : ∀ {A B} {t t′ : ⊢ A ∧ B}
-               → t ⇒ t′ → snd t ⇒ snd t′
+               → t ⇒ t′
+               → app csnd t ⇒ app csnd t′
   congboom⇒ : ∀ {C} {t t′ : ⊢ ⊥}
-               → t ⇒ t′ → boom {C} t ⇒ boom t′
+               → t ⇒ t′
+               → app (cboom {C = C}) t ⇒ app cboom t′
   conginl⇒  : ∀ {A B} {t t′ : ⊢ A}
-               → t ⇒ t′ → inl {A} {B} t ⇒ inl t′
+               → t ⇒ t′
+               → app (cinl {A = A} {B}) t ⇒ app cinl t′
   conginr⇒  : ∀ {A B} {t t′ : ⊢ B}
-               → t ⇒ t′ → inr {A} {B} t ⇒ inr t′
+               → t ⇒ t′
+               → app (cinr {A = A} {B}) t ⇒ app cinr t′
   congcase⇒ : ∀ {A B C} {t t′ : ⊢ A ∨ B} {u u′ : ⊢ A ▻ C} {v v′ : ⊢ B ▻ C}
-               → t ⇒ t′ → u ⇒ u′ → v ⇒ v′ → case t u v ⇒ case t′ u′ v′
+               → t ⇒ t′ → u ⇒ u′ → v ⇒ v′
+               → app (app (app ccase t) u) v ⇒ app (app (app ccase t′) u′) v′
   -- TODO: Verify this.
   beta▻ₖ⇒   : ∀ {A B} {t : ⊢ A} {u : ⊢ B}
                → app (app ck t) u ⇒ t
@@ -141,18 +158,18 @@ data _⇒_ : ∀ {A} → ⊢ A → ⊢ A → Set where
                → app (app (app cs t) u) v ⇒ app (app t v) (app u v)
   -- TODO: What about eta for ▻?
   beta∧₁⇒   : ∀ {A B} {t : ⊢ A} {u : ⊢ B}
-               → fst (pair t u) ⇒ t
+               → app cfst (app (app cpair t) u) ⇒ t
   beta∧₂⇒   : ∀ {A B} {t : ⊢ A} {u : ⊢ B}
-               → snd (pair t u) ⇒ u
+               → app csnd (app (app cpair t) u) ⇒ u
   eta∧⇒     : ∀ {A B} {t : ⊢ A ∧ B}
-               → t ⇒ pair (fst t) (snd t)
+               → t ⇒ app (app cpair (app cfst t)) (app csnd t)
   eta⊤⇒    : ∀ {t : ⊢ ⊤}
                → t ⇒ tt
   -- TODO: Verify this.
   beta∨₁⇒   : ∀ {A B C} {t : ⊢ A} {u : ⊢ A ▻ C} {v : ⊢ B ▻ C}
-               → case (inl t) u v ⇒ app u t
+               → app (app (app ccase (app cinl t)) u) v ⇒ app u t
   -- TODO: Verify this.
   beta∨₂⇒   : ∀ {A B C} {t : ⊢ B} {u : ⊢ A ▻ C} {v : ⊢ B ▻ C}
-               → case (inr t) u v ⇒ app v t
+               → app (app (app ccase (app cinr t)) u) v ⇒ app v t
   -- TODO: Verify this.
   -- TODO: What about eta and commuting conversions for ∨? What about ⊥?

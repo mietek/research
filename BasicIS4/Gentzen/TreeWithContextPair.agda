@@ -379,20 +379,27 @@ data _⇒_ {Γ Δ : Cx Ty} : ∀ {A} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ A →
   sym⇒       : ∀ {A} {t t′ : Γ ⁏ Δ ⊢ A}
                 → t ⇒ t′ → t′ ⇒ t
   conglam⇒   : ∀ {A B} {t t′ : Γ , A ⁏ Δ ⊢ B}
-                → t ⇒ t′ → lam t ⇒ lam t′
+                → t ⇒ t′
+                → lam t ⇒ lam t′
   congapp⇒   : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A ▻ B} {u u′ : Γ ⁏ Δ ⊢ A}
-                → t ⇒ t′ → u ⇒ u′ → app t u ⇒ app t′ u′
+                → t ⇒ t′ → u ⇒ u′
+                → app t u ⇒ app t′ u′
   -- NOTE: Rejected by Pfenning and Davies.
   -- congbox⇒   : ∀ {A} {t t′ : ⌀ ⁏ Δ ⊢ A}
-  --               → t ⇒ t′ → box {Γ} t ⇒ box {Γ} t′
+  --               → t ⇒ t′
+  --               → box {Γ} t ⇒ box {Γ} t′
   congunbox⇒ : ∀ {A C} {t t′ : Γ ⁏ Δ ⊢ □ A} {u u′ : Γ ⁏ Δ , A ⊢ C}
-                → t ⇒ t′ → u ⇒ u′ → unbox t u ⇒ unbox t′ u′
+                → t ⇒ t′ → u ⇒ u′
+                → unbox t u ⇒ unbox t′ u′
   congpair⇒  : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A} {u u′ : Γ ⁏ Δ ⊢ B}
-                → t ⇒ t′ → u ⇒ u′ → pair t u ⇒ pair t′ u′
+                → t ⇒ t′ → u ⇒ u′
+                → pair t u ⇒ pair t′ u′
   congfst⇒   : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A ∧ B}
-                → t ⇒ t′ → fst t ⇒ fst t′
+                → t ⇒ t′
+                → fst t ⇒ fst t′
   congsnd⇒   : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A ∧ B}
-                → t ⇒ t′ → snd t ⇒ snd t′
+                → t ⇒ t′
+                → snd t ⇒ snd t′
   beta▻⇒     : ∀ {A B} {t : Γ , A ⁏ Δ ⊢ B} {u : Γ ⁏ Δ ⊢ A}
                 → app (lam t) u ⇒ ([ top ≔ u ] t)
   eta▻⇒      : ∀ {A B} {t : Γ ⁏ Δ ⊢ A ▻ B}
@@ -403,6 +410,7 @@ data _⇒_ {Γ Δ : Cx Ty} : ∀ {A} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ A →
   -- TODO: Verify this.
   eta□⇒      : ∀ {A} {t : Γ ⁏ Δ ⊢ □ A}
                 → t ⇒ unbox t (box mv₀)
+  -- TODO: What about commuting conversions for □?
   beta∧₁⇒    : ∀ {A B} {t : Γ ⁏ Δ ⊢ A} {u : Γ ⁏ Δ ⊢ B}
                 → fst (pair t u) ⇒ t
   beta∧₂⇒    : ∀ {A B} {t : Γ ⁏ Δ ⊢ A} {u : Γ ⁏ Δ ⊢ B}

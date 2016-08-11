@@ -118,22 +118,39 @@ data _⇒_ : ∀ {A} → ⊢ A → ⊢ A → Set where
   sym⇒      : ∀ {A} {t t′ : ⊢ A}
                → t ⇒ t′ → t′ ⇒ t
   congapp⇒  : ∀ {A B} {t t′ : ⊢ A ▻ B} {u u′ : ⊢ A}
-               → t ⇒ t′ → u ⇒ u′ → app t u ⇒ app t′ u′
+               → t ⇒ t′ → u ⇒ u′
+               → app t u ⇒ app t′ u′
+  congi⇒    : ∀ {A} {t t′ : ⊢ A}
+               → t ⇒ t′
+               → app ci t ⇒ app ci t′
+  congk⇒    : ∀ {A B} {t t′ : ⊢ A} {u u′ : ⊢ B}
+               → t ⇒ t′ → u ⇒ u′
+               → app (app ck t) u ⇒ app (app ck t′) u′
+  congs⇒    : ∀ {A B C} {t t′ : ⊢ A ▻ B ▻ C} {u u′ : ⊢ A ▻ B} {v v′ : ⊢ A}
+               → t ⇒ t′ → u ⇒ u′ → v ⇒ v′
+               → app (app (app cs t) u) v ⇒ app (app (app cs t′) u′) v′
   -- NOTE: Rejected by Pfenning and Davies.
   -- congbox⇒  : ∀ {A} {t t′ : ⊢ A}
-  --              → t ⇒ t′ → box t ⇒ box t′
+  --              → t ⇒ t′
+  --              → box t ⇒ box t′
   congdist⇒ : ∀ {A B} {t t′ : ⊢ □ (A ▻ B)} {u u′ : ⊢ □ A}
-               → t ⇒ t′ → u ⇒ u′ → dist t u ⇒ dist t′ u′
+               → t ⇒ t′ → u ⇒ u′
+               → app (app cdist t) u ⇒ app (app cdist t′) u′
   congup⇒   : ∀ {A} {t t′ : ⊢ □ A}
-               → t ⇒ t′ → up t ⇒ up t′
+               → t ⇒ t′
+               → app cup t ⇒ app cup t′
   congdown⇒ : ∀ {A} {t t′ : ⊢ □ A}
-               → t ⇒ t′ → down t ⇒ down t′
+               → t ⇒ t′
+               → app cdown t ⇒ app cdown t′
   congpair⇒ : ∀ {A B} {t t′ : ⊢ A} {u u′ : ⊢ B}
-               → t ⇒ t′ → u ⇒ u′ → pair t u ⇒ pair t′ u′
+               → t ⇒ t′ → u ⇒ u′
+               → app (app cpair t) u ⇒ app (app cpair t′) u′
   congfst⇒  : ∀ {A B} {t t′ : ⊢ A ∧ B}
-               → t ⇒ t′ → fst t ⇒ fst t′
+               → t ⇒ t′
+               → app cfst t ⇒ app cfst t′
   congsnd⇒  : ∀ {A B} {t t′ : ⊢ A ∧ B}
-               → t ⇒ t′ → snd t ⇒ snd t′
+               → t ⇒ t′
+               → app csnd t ⇒ app csnd t′
   -- TODO: Verify this.
   beta▻ₖ⇒   : ∀ {A B} {t : ⊢ A} {u : ⊢ B}
                → app (app ck t) u ⇒ t
@@ -147,10 +164,10 @@ data _⇒_ : ∀ {A} → ⊢ A → ⊢ A → Set where
   eta□⇒     : ∀ {A} {t : ⊢ A}
                → t ⇒ down (box t)
   beta∧₁⇒   : ∀ {A B} {t : ⊢ A} {u : ⊢ B}
-               → fst (pair t u) ⇒ t
+               → app cfst (app (app cpair t) u) ⇒ t
   beta∧₂⇒   : ∀ {A B} {t : ⊢ A} {u : ⊢ B}
-               → snd (pair t u) ⇒ u
+               → app csnd (app (app cpair t) u) ⇒ u
   eta∧⇒     : ∀ {A B} {t : ⊢ A ∧ B}
-               → t ⇒ pair (fst t) (snd t)
+               → t ⇒ app (app cpair (app cfst t)) (app csnd t)
   eta⊤⇒    : ∀ {t : ⊢ ⊤}
                → t ⇒ tt

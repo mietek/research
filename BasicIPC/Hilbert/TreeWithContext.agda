@@ -154,3 +154,50 @@ snd t = app csnd t
 
 concat : ∀ {A B Γ} Γ′ → Γ , A ⊢ B → Γ′ ⊢ A → Γ ⧺ Γ′ ⊢ B
 concat Γ′ t u = app (mono⊢ (weak⊆⧺ₗ Γ′) (lam t)) (mono⊢ weak⊆⧺ᵣ u)
+
+
+-- Conversion.
+
+data _⇒_ {Γ : Cx Ty} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
+  refl⇒     : ∀ {A} {t : Γ ⊢ A}
+               → t ⇒ t
+  trans⇒    : ∀ {A} {t t′ t″ : Γ ⊢ A}
+               → t ⇒ t′ → t′ ⇒ t″ → t ⇒ t″
+  sym⇒      : ∀ {A} {t t′ : Γ ⊢ A}
+               → t ⇒ t′ → t′ ⇒ t
+  congapp⇒  : ∀ {A B} {t t′ : Γ ⊢ A ▻ B} {u u′ : Γ ⊢ A}
+               → t ⇒ t′ → u ⇒ u′
+               → app t u ⇒ app t′ u′
+  congi⇒    : ∀ {A} {t t′ : Γ ⊢ A}
+               → t ⇒ t′
+               → app ci t ⇒ app ci t′
+  congk⇒    : ∀ {A B} {t t′ : Γ ⊢ A} {u u′ : Γ ⊢ B}
+               → t ⇒ t′ → u ⇒ u′
+               → app (app ck t) u ⇒ app (app ck t′) u′
+  congs⇒    : ∀ {A B C} {t t′ : Γ ⊢ A ▻ B ▻ C} {u u′ : Γ ⊢ A ▻ B} {v v′ : Γ ⊢ A}
+               → t ⇒ t′ → u ⇒ u′ → v ⇒ v′
+               → app (app (app cs t) u) v ⇒ app (app (app cs t′) u′) v′
+  congpair⇒ : ∀ {A B} {t t′ : Γ ⊢ A} {u u′ : Γ ⊢ B}
+               → t ⇒ t′ → u ⇒ u′
+               → app (app cpair t) u ⇒ app (app cpair t′) u′
+  congfst⇒  : ∀ {A B} {t t′ : Γ ⊢ A ∧ B}
+               → t ⇒ t′
+               → app cfst t ⇒ app cfst t′
+  congsnd⇒  : ∀ {A B} {t t′ : Γ ⊢ A ∧ B}
+               → t ⇒ t′
+               → app csnd t ⇒ app csnd t′
+  -- TODO: Verify this.
+  beta▻ₖ⇒   : ∀ {A B} {t : Γ ⊢ A} {u : Γ ⊢ B}
+               → app (app ck t) u ⇒ t
+  -- TODO: Verify this.
+  beta▻ₛ⇒   : ∀ {A B C} {t : Γ ⊢ A ▻ B ▻ C} {u : Γ ⊢ A ▻ B} {v : Γ ⊢ A}
+               → app (app (app cs t) u) v ⇒ app (app t v) (app u v)
+  -- TODO: What about eta for ▻?
+  beta∧₁⇒   : ∀ {A B} {t : Γ ⊢ A} {u : Γ ⊢ B}
+               → app cfst (app (app cpair t) u) ⇒ t
+  beta∧₂⇒   : ∀ {A B} {t : Γ ⊢ A} {u : Γ ⊢ B}
+               → app csnd (app (app cpair t) u) ⇒ u
+  eta∧⇒     : ∀ {A B} {t : Γ ⊢ A ∧ B}
+               → t ⇒ app (app cpair (app cfst t)) (app csnd t)
+  eta⊤⇒    : ∀ {t : Γ ⊢ ⊤}
+               → t ⇒ tt
