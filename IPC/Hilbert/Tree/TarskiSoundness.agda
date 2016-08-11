@@ -34,6 +34,9 @@ module NaturalSoundness where
   check (trans⇒ p q)      = trans (check p) (check q)
   check (sym⇒ p)          = sym (check p)
   check (congapp⇒ p q)    = cong₂ _$_ (check p) (check q)
+  check (congi⇒ p)        = cong id (check p)
+  check (congk⇒ p q)      = cong₂ const (check p) (check q)
+  check (congs⇒ p q r)    = cong₃ ap (check p) (check q) (check r)
   check (congpair⇒ p q)   = cong₂ _,_ (check p) (check q)
   check (congfst⇒ p)      = cong π₁ (check p)
   check (congsnd⇒ p)      = cong π₂ (check p)
@@ -80,7 +83,7 @@ module CoquandDybjerSoundness where
   eval cs        = cs , (λ f →
                      app cs (reify f) , (λ g →
                        app (app cs (reify f)) (reify g) , (λ a →
-                         (f $ˢ a) $ˢ (g $ˢ a))))
+                         apˢ f g a)))
   eval cpair     = cpair , (λ a → app cpair (reify a) , (λ b → a , b))
   eval cfst      = cfst , π₁
   eval csnd      = csnd , π₂
@@ -101,6 +104,9 @@ module CoquandDybjerSoundness where
   check (trans⇒ p q)      = trans (check p) (check q)
   check (sym⇒ p)          = sym (check p)
   check (congapp⇒ p q)    = cong₂ _$ˢ_ (check p) (check q)
+  check (congi⇒ p)        = cong id (check p)
+  check (congk⇒ p q)      = cong₂ const (check p) (check q)
+  check (congs⇒ p q r)    = cong₃ apˢ (check p) (check q) (check r)
   check (congpair⇒ p q)   = cong₂ _,_ (check p) (check q)
   check (congfst⇒ p)      = cong π₁ (check p)
   check (congsnd⇒ p)      = cong π₂ (check p)

@@ -9,7 +9,7 @@ open import BasicIS4.TarskiSemantics public
 -- Using satisfaction with a syntactic component, inspired by Gabbay and Nanevski.
 
 module GabbayNanevskiSoundness where
-  open GabbayNanevskiSemantics (⌀ ⁏ ⌀ ⊢_) public
+  open GabbayNanevskiSemantics (⌀ ⁏ ⌀ ⊢_) (app) (box) public
 
 
   -- Soundness with respect to all models, or evaluation.
@@ -26,9 +26,9 @@ module GabbayNanevskiSoundness where
   eval cs        γ δ = ap
   eval (mvar i)  γ δ = lookup i δ
   eval (box t)   γ δ = oops t , eval t ∙ δ
-  eval cdist     γ δ = λ { (t , f) (u , a) → app t u , f a }
-  eval cup       γ δ = λ { (t , a) → box t , (t , a) }
-  eval cdown     γ δ = λ { (t , a) → a }
+  eval cdist     γ δ = distˢ
+  eval cup       γ δ = upˢ
+  eval cdown     γ δ = downˢ
   eval cpair     γ δ = _,_
   eval cfst      γ δ = π₁
   eval csnd      γ δ = π₂

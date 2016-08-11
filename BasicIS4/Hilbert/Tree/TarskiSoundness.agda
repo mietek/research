@@ -9,7 +9,7 @@ open import BasicIS4.TarskiSemantics public
 -- Using satisfaction with a syntactic component, inspired by Gabbay and Nanevski.
 
 module GabbayNanevskiSoundness where
-  open GabbayNanevskiSemantics (⊢_) public
+  open GabbayNanevskiSemantics (⊢_) (app) (box) public
 
 
   -- Soundness with respect to all models, or evaluation.
@@ -20,9 +20,9 @@ module GabbayNanevskiSoundness where
   eval ck        = const
   eval cs        = ap
   eval (box t)   = t , eval t
-  eval cdist     = λ { (t , f) (u , a) → app t u , f a }
-  eval cup       = λ { (t , a) → box t , (t , a) }
-  eval cdown     = λ { (t , a) → a }
+  eval cdist     = distˢ
+  eval cup       = upˢ
+  eval cdown     = downˢ
   eval cpair     = _,_
   eval cfst      = π₁
   eval csnd      = π₂
@@ -36,10 +36,12 @@ module GabbayNanevskiSoundness where
   check (trans⇒ p q)    = trans (check p) (check q)
   check (sym⇒ p)        = sym (check p)
   check (congapp⇒ p q)  = cong₂ _$_ (check p) (check q)
-  check (congdist⇒ p q) = cong₂ (λ { (t , f) (u , a) →
-                             app t u , f a }) (check p) (check q)
-  check (congup⇒ p)     = cong (λ { (t , a) → box t , (t , a) }) (check p)
-  check (congdown⇒ p)   = cong (λ { (t , a) → a }) (check p)
+  check (congi⇒ p)      = cong id (check p)
+  check (congk⇒ p q)    = cong₂ const (check p) (check q)
+  check (congs⇒ p q r)  = cong₃ ap (check p) (check q) (check r)
+  check (congdist⇒ p q) = cong₂ distˢ (check p) (check q)
+  check (congup⇒ p)     = cong upˢ (check p)
+  check (congdown⇒ p)   = cong downˢ (check p)
   check (congpair⇒ p q) = cong₂ _,_ (check p) (check q)
   check (congfst⇒ p)    = cong π₁ (check p)
   check (congsnd⇒ p)    = cong π₂ (check p)
@@ -58,7 +60,7 @@ module GabbayNanevskiSoundness where
 -- Using satisfaction with a syntactic component, inspired by Coquand and Dybjer.
 
 module CoquandDybjerSoundness where
-  open CoquandDybjerSemantics (⊢_) public
+  open CoquandDybjerSemantics (⊢_) (app) (box) public
 
 
   -- Completeness with respect to a particular model.
@@ -80,13 +82,13 @@ module CoquandDybjerSoundness where
   eval cs        = cs , (λ f →
                      app cs (reify f) , (λ g →
                        app (app cs (reify f)) (reify g) , (λ a →
-                         (f $ˢ a) $ˢ (g $ˢ a))))
+                         apˢ f g a)))
   eval (box t)   = t , eval t
-  eval cdist     = cdist , (λ { (t , f) →
-                     app cdist (box t) , (λ { (u , a) →
-                       app t u , f $ˢ a }) })
-  eval cup       = cup , (λ { (t , a) → box t , (t , a) })
-  eval cdown     = cdown , (λ { (t , a) → a })
+  eval cdist     = cdist , (λ □f →
+                     app cdist (reify □f) , (λ □a →
+                       distˢ′ □f □a))
+  eval cup       = cup , (λ □a → upˢ □a)
+  eval cdown     = cdown , (λ □a → downˢ □a)
   eval cpair     = cpair , (λ a → app cpair (reify a) , (λ b → a , b))
   eval cfst      = cfst , π₁
   eval csnd      = csnd , π₂
@@ -100,10 +102,12 @@ module CoquandDybjerSoundness where
   check (trans⇒ p q)    = trans (check p) (check q)
   check (sym⇒ p)        = sym (check p)
   check (congapp⇒ p q)  = cong₂ _$ˢ_ (check p) (check q)
-  check (congdist⇒ p q) = cong₂ (λ { (t , (t′ , f)) (u , a) →
-                             app t u , f a }) (check p) (check q)
-  check (congup⇒ p)     = cong (λ { (t , a) → box t , (t , a) }) (check p)
-  check (congdown⇒ p)   = cong (λ { (t , a) → a }) (check p)
+  check (congi⇒ p)      = cong id (check p)
+  check (congk⇒ p q)    = cong₂ const (check p) (check q)
+  check (congs⇒ p q r)  = cong₃ apˢ (check p) (check q) (check r)
+  check (congdist⇒ p q) = cong₂ distˢ′ (check p) (check q)
+  check (congup⇒ p)     = cong upˢ (check p)
+  check (congdown⇒ p)   = cong downˢ (check p)
   check (congpair⇒ p q) = cong₂ _,_ (check p) (check q)
   check (congfst⇒ p)    = cong π₁ (check p)
   check (congsnd⇒ p)    = cong π₂ (check p)
