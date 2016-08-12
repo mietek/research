@@ -154,8 +154,8 @@ MULTICUT : Cx Tm → Tm → Tm
 MULTICUT ⌀        U = U
 MULTICUT (TS , T) U = APP (MULTICUT TS (LAM U)) T
 
-cut : ∀ {A B Γ} → Γ ⊢ A → ⌀ , A ⊢ B → Γ ⊢ B
-cut t u = app (mono⊢ bot⊆ (lam u)) t
+cut : ∀ {A B Γ} → Γ ⊢ A → Γ , A ⊢ B → Γ ⊢ B
+cut t u = app (lam u) t
 
 multicut : ∀ {Π A Γ} → Γ ⊢⋆ Π → Π ⊢ A → Γ ⊢ A
 multicut {⌀}     ∙        u = mono⊢ bot⊆ u

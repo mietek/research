@@ -126,8 +126,8 @@ det t = app (mono⊢ weak⊆ t) v₀
 
 -- Cut and multicut.
 
-cut : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ◎ x → ⌀ , A ◎ x ⁏ Λ ⊢ B ◎ x → Γ ⁏ Λ ⊢ B ◎ x
-cut t u = app (mono⊢ bot⊆ (lam u)) t
+cut : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ◎ x → Γ , A ◎ x ⁏ Λ ⊢ B ◎ x → Γ ⁏ Λ ⊢ B ◎ x
+cut t u = app (lam u) t
 
 multicut : ∀ {Π x A Γ Λ} → Γ ⁏ Λ ⊢⋆ Π ◎⋆ x → Π ◎⋆ x ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ A ◎ x
 multicut {⌀}     ∙        u = mono⊢ bot⊆ u

@@ -220,11 +220,11 @@ split⋆ {Π , A} (ts , t) = split⋆ ts , split t
 
 -- Cut and multicut.
 
-cut : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A → ⌀ , A ⁏ Δ ⊢ B → Γ ⁏ Δ ⊢ B
-cut t u = app (mono⊢ bot⊆ (lam u)) t
+cut : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A → Γ , A ⁏ Δ ⊢ B → Γ ⁏ Δ ⊢ B
+cut t u = app (lam u) t
 
-mcut : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ □ A → Γ ⁏ ⌀ , A ⊢ B → Γ ⁏ Δ ⊢ B
-mcut t u = app (mmono⊢ bot⊆ (mlam u)) t
+mcut : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ □ A → Γ ⁏ Δ , A ⊢ B → Γ ⁏ Δ ⊢ B
+mcut t u = app (mlam u) t
 
 multicut : ∀ {Π A Γ Δ} → Γ ⁏ Δ ⊢⋆ Π → Π ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ A
 multicut {⌀}     ∙        u = mono⊢ bot⊆ u

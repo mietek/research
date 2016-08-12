@@ -92,8 +92,8 @@ det⋆₀ {Γ , B} = det ∘ det⋆₀
 
 -- Cut and multicut.
 
-cut : ∀ {A B Γ} → Γ ⊢ A → ⌀ , A ⊢ B → Γ ⊢ B
-cut t u = app (mono⊢ bot⊆ (lam u)) t
+cut : ∀ {A B Γ} → Γ ⊢ A → Γ , A ⊢ B → Γ ⊢ B
+cut t u = app (lam u) t
 
 multicut : ∀ {Π A Γ} → Γ ⊢⋆ Π → Π ⊢ A → Γ ⊢ A
 multicut {⌀}     ∙        u = mono⊢ bot⊆ u
