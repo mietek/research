@@ -229,9 +229,9 @@ data _⇒_ {Γ : Cx Ty} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
   congk⇒    : ∀ {A B} {t t′ : Γ ⊢ A} {u u′ : Γ ⊢ B}
                → t ⇒ t′ → u ⇒ u′
                → app (app ck t) u ⇒ app (app ck t′) u′
-  congs⇒    : ∀ {A B C} {t t′ : Γ ⊢ A ▻ B ▻ C}
-                 {u u′ : Γ ⊢ A ▻ B} {v v′ : Γ ⊢ A}
+  congs⇒    : ∀ {A B C} {t t′ : Γ ⊢ A ▻ B ▻ C} {u u′ : Γ ⊢ A ▻ B} {v v′ : Γ ⊢ A}
                → t ⇒ t′ → u ⇒ u′ → v ⇒ v′
+               → app (app (app cs t) u) v ⇒ app (app (app cs t′) u′) v′
   -- NOTE: Rejected by Pfenning and Davies.
   -- congbox⇒  : ∀ {A} {t t′ : ⌀ ⊢ A}
   --              → t ⇒ t′

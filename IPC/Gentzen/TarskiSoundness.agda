@@ -70,5 +70,42 @@ module NaturalSoundness where
 
 
 
--- NOTE: The Coquand-Dybjer variant of Tarski semantics does not work for Gentzen-style,
--- because we need to store information about open syntax in the model.
+-- Using satisfaction with a syntactic component, inspired by Coquand and Dybjer.
+
+module CoquandDybjerSoundness where
+  open CoquandDybjerSemantics (⌀ ⊢_) public
+
+
+  -- Completeness with respect to a particular model.
+
+  reify : ∀ {{_ : Model}} {A} → ⊨ A → ⌀ ⊢ A
+  reify {α P}   (t , s) = t
+  reify {A ▻ B} (t , f) = t
+  reify {A ∧ B} (a , b) = pair (reify {A} a) (reify {B} b)
+  reify {⊤}    ∙       = tt
+  reify {⊥}    ()
+  reify {A ∨ B} (ι₁ a)  = inl (reify {A} a)
+  reify {A ∨ B} (ι₂ b)  = inr (reify {B} b)
+
+  reify⋆ : ∀ {{_ : Model}} {Π} → ⊨⋆ Π → ⌀ ⊢⋆ Π
+  reify⋆ {⌀}     ∙        = ∙
+  reify⋆ {Π , A} (ts , t) = reify⋆ ts , reify t
+
+
+  -- Soundness with respect to all models, or evaluation.
+
+  eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊨ A
+  eval (var i)      γ = lookup i γ
+  eval (lam t)      γ = multicut (reify⋆ γ) (lam t) , (λ a → eval t (γ , a))
+  eval (app t u)    γ = (eval t γ) $ˢ (eval u γ)
+  eval (pair t u)   γ = eval t γ , eval u γ
+  eval (fst t)      γ = π₁ (eval t γ)
+  eval (snd t)      γ = π₂ (eval t γ)
+  eval tt           γ = ∙
+  eval (boom t)     γ = elim𝟘 (eval t γ)
+  eval (inl t)      γ = ι₁ (eval t γ)
+  eval (inr t)      γ = ι₂ (eval t γ)
+  eval (case t u v) γ = elim⊎ (eval t γ) (λ a → eval u (γ , a)) (λ b → eval v (γ , b))
+
+
+  -- TODO: Correctness of evaluation with respect to conversion.

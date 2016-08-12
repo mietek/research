@@ -327,6 +327,10 @@ hypdown t = lam (app (mono⊢ weak⊆ t) (up v₀))
 hypup : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ▻ B → Γ ⁏ Δ ⊢ □ A ▻ B
 hypup t = lam (app (mono⊢ weak⊆ t) (down v₀))
 
+box⋆ : ∀ {Π Γ Δ} → ⌀ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ ⊢⋆ □⋆ Π
+box⋆ {⌀}     ∙        = ∙
+box⋆ {Π , A} (ts , t) = box⋆ ts , box t
+
 up⋆ : ∀ {Π Γ Δ} → Γ ⁏ Δ ⊢⋆ □⋆ Π → Γ ⁏ Δ ⊢⋆ □⋆ □⋆ Π
 up⋆ {⌀}     ∙        = ∙
 up⋆ {Π , A} (ts , t) = up⋆ ts , up t

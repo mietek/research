@@ -76,6 +76,51 @@ module GabbayNanevskiSemantics (Syntax : Ty → Set)
           → ⊨ A
   downˢ (t , a) = a
 
+  _$ˢᶜ_ : ∀ {{_ : Model}} {A B Γ}
+          → (⊨⋆ Γ → ⊨ A → ⊨ B)
+          → (⊨⋆ Γ → ⊨ A)
+          → ⊨⋆ Γ → ⊨ B
+  (f $ˢᶜ g) γ = (f γ) (g γ)
+
+  apˢᶜ : ∀ {{_ : Model}} {A B C Γ}
+         → (⊨⋆ Γ → ⊨ A → ⊨ B → ⊨ C)
+         → (⊨⋆ Γ → ⊨ A → ⊨ B)
+         → (⊨⋆ Γ → ⊨ A)
+         → ⊨⋆ Γ → ⊨ C
+  apˢᶜ f g a γ = ((f γ) (a γ)) ((g γ) (a γ))
+
+  distˢᶜ : ∀ {{_ : Model}} {A B Γ}
+           → (⊨⋆ Γ → Syntax (A ▻ B) × (⊨ A → ⊨ B))
+           → (⊨⋆ Γ → Syntax A × ⊨ A)
+           → ⊨⋆ Γ → Syntax B × ⊨ B
+  distˢᶜ □f □a γ = distˢ (□f γ) (□a γ)
+
+  upˢᶜ : ∀ {{_ : Model}} {A Γ}
+         → (⊨⋆ Γ → Syntax A × ⊨ A)
+         → ⊨⋆ Γ → Syntax (□ A) × Syntax A × ⊨ A
+  upˢᶜ □a γ = upˢ (□a γ)
+
+  downˢᶜ : ∀ {{_ : Model}} {A Γ}
+           → (⊨⋆ Γ → Syntax A × ⊨ A)
+           → ⊨⋆ Γ → ⊨ A
+  downˢᶜ □a γ = downˢ (□a γ)
+
+  _,ˢᶜ_ : ∀ {{_ : Model}} {A B Γ}
+          → (⊨⋆ Γ → ⊨ A)
+          → (⊨⋆ Γ → ⊨ B)
+          → ⊨⋆ Γ → ⊨ A × ⊨ B
+  (a ,ˢᶜ b) γ = a γ , b γ
+
+  π₁ˢᶜ : ∀ {{_ : Model}} {A B Γ}
+         → (⊨⋆ Γ → ⊨ A × ⊨ B)
+         → ⊨⋆ Γ → ⊨ A
+  π₁ˢᶜ s γ = π₁ (s γ)
+
+  π₂ˢᶜ : ∀ {{_ : Model}} {A B Γ}
+         → (⊨⋆ Γ → ⊨ A × ⊨ B)
+         → ⊨⋆ Γ → ⊨ B
+  π₂ˢᶜ s γ = π₂ (s γ)
+
   lookup : ∀ {A Γ} → A ∈ Γ → Γ ᴹ⊨ A
   lookup top     (γ , a) = a
   lookup (pop i) (γ , b) = lookup i γ
@@ -116,6 +161,14 @@ module CoquandDybjerSemantics (Syntax : Ty → Set)
   _ᴹ⊨_ : Cx Ty → Ty → Set₁
   Γ ᴹ⊨ A = ∀ {{_ : Model}} → ⊨⋆ Γ → ⊨ A
 
+  infix 3 _ᴹ⊨⋆_
+  _ᴹ⊨⋆_ : Cx Ty → Cx Ty → Set₁
+  Γ ᴹ⊨⋆ Π = ∀ {{_ : Model}} → ⊨⋆ Γ → ⊨⋆ Π
+
+  infix 3 _⁏_ᴹ⊨_
+  _⁏_ᴹ⊨_ : Cx Ty → Cx Ty → Ty → Set₁
+  Γ ⁏ Δ ᴹ⊨ A = ∀ {{_ : Model}} → ⊨⋆ Γ → ⊨⋆ Δ → ⊨ A
+
 
   -- Additional useful equipment.
 
@@ -154,6 +207,51 @@ module CoquandDybjerSemantics (Syntax : Ty → Set)
           → Syntax A × ⊨ A
           → ⊨ A
   downˢ (t , a) = a
+
+  _$ˢᶜ_ : ∀ {{_ : Model}} {A B Γ}
+          → (⊨⋆ Γ → Syntax (A ▻ B) × (⊨ A → ⊨ B))
+          → (⊨⋆ Γ → ⊨ A)
+          → ⊨⋆ Γ → ⊨ B
+  (f $ˢᶜ g) γ = (f γ) $ˢ (g γ)
+
+  apˢᶜ : ∀ {{_ : Model}} {A B C Γ}
+         → (⊨⋆ Γ → Syntax (A ▻ B ▻ C) × (⊨ A → Syntax (B ▻ C) × (⊨ B → ⊨ C)))
+         → (⊨⋆ Γ → Syntax (A ▻ B) × (⊨ A → ⊨ B))
+         → (⊨⋆ Γ → ⊨ A)
+         → ⊨⋆ Γ → ⊨ C
+  apˢᶜ f g a γ = apˢ (f γ) (g γ) (a γ)
+
+  distˢᶜ′ : ∀ {{_ : Model}} {A B Γ}
+            → (⊨⋆ Γ → Syntax (A ▻ B) × Syntax (A ▻ B) × (⊨ A → ⊨ B))
+            → (⊨⋆ Γ → Syntax A × ⊨ A)
+            → ⊨⋆ Γ → Syntax B × ⊨ B
+  distˢᶜ′ □f □a γ = distˢ′ (□f γ) (□a γ)
+
+  upˢᶜ : ∀ {{_ : Model}} {A Γ}
+         → (⊨⋆ Γ → Syntax A × ⊨ A)
+         → ⊨⋆ Γ → Syntax (□ A) × Syntax A × ⊨ A
+  upˢᶜ □a γ = upˢ (□a γ)
+
+  downˢᶜ : ∀ {{_ : Model}} {A Γ}
+           → (⊨⋆ Γ → Syntax A × ⊨ A)
+           → ⊨⋆ Γ → ⊨ A
+  downˢᶜ □a γ = downˢ (□a γ)
+
+  _,ˢᶜ_ : ∀ {{_ : Model}} {A B Γ}
+          → (⊨⋆ Γ → ⊨ A)
+          → (⊨⋆ Γ → ⊨ B)
+          → ⊨⋆ Γ → ⊨ A × ⊨ B
+  (a ,ˢᶜ b) γ = a γ , b γ
+
+  π₁ˢᶜ : ∀ {{_ : Model}} {A B Γ}
+         → (⊨⋆ Γ → ⊨ A × ⊨ B)
+         → ⊨⋆ Γ → ⊨ A
+  π₁ˢᶜ s γ = π₁ (s γ)
+
+  π₂ˢᶜ : ∀ {{_ : Model}} {A B Γ}
+         → (⊨⋆ Γ → ⊨ A × ⊨ B)
+         → ⊨⋆ Γ → ⊨ B
+  π₂ˢᶜ s γ = π₂ (s γ)
 
   lookup : ∀ {A Γ} → A ∈ Γ → Γ ᴹ⊨ A
   lookup top     (γ , a) = a
