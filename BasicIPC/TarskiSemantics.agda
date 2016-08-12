@@ -44,6 +44,10 @@ module NaturalSemantics where
   _ᴹ⊨_ : Cx Ty → Ty → Set₁
   Γ ᴹ⊨ A = ∀ {{_ : Model}} → ⊨⋆ Γ → ⊨ A
 
+  infix 3 _ᴹ⊨⋆_
+  _ᴹ⊨⋆_ : Cx Ty → Cx Ty → Set₁
+  Γ ᴹ⊨⋆ Π = ∀ {{_ : Model}} → ⊨⋆ Γ → ⊨⋆ Π
+
 
   -- Additional useful equipment.
 
@@ -117,6 +121,10 @@ module CoquandDybjerSemantics (Syntax : Ty → Set) where
   infix 3 _ᴹ⊨_
   _ᴹ⊨_ : Cx Ty → Ty → Set₁
   Γ ᴹ⊨ A = ∀ {{_ : Model}} → ⊨⋆ Γ → ⊨ A
+
+  infix 3 _ᴹ⊨⋆_
+  _ᴹ⊨⋆_ : Cx Ty → Cx Ty → Set₁
+  Γ ᴹ⊨⋆ Π = ∀ {{_ : Model}} → ⊨⋆ Γ → ⊨⋆ Π
 
 
   -- Additional useful equipment.

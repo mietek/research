@@ -30,10 +30,12 @@ import BasicIPC.Hilbert.Tree.TarskiSoundness
 import BasicIPC.Hilbert.Tree.TarskiBasicCompleteness
 import BasicIPC.Hilbert.TreeWithContext
 import BasicIPC.Hilbert.TreeWithContext.TarskiSoundness
+import BasicIPC.Hilbert.TreeWithContext.TarskiBasicCompleteness
 import BasicIPC.Hilbert.TreeWithContext.KripkeSoundness
 import BasicIPC.Hilbert.Translation
 import BasicIPC.Gentzen
 import BasicIPC.Gentzen.TarskiSoundness -- FIXME
+import BasicIPC.Gentzen.TarskiBasicCompleteness
 import BasicIPC.Gentzen.KripkeSoundness
 import BasicIPC.Gentzen.KripkeBasicCompleteness
 import BasicIPC.Gentzen.KripkeCompleteness
@@ -53,10 +55,12 @@ import IPC.Hilbert.Tree.TarskiSoundness
 import IPC.Hilbert.Tree.TarskiBasicCompleteness
 import IPC.Hilbert.TreeWithContext
 import IPC.Hilbert.TreeWithContext.TarskiSoundness
+import IPC.Hilbert.TreeWithContext.TarskiBasicCompleteness
 import IPC.Hilbert.TreeWithContext.KripkeSoundness -- FIXME
 import IPC.Hilbert.Translation
 import IPC.Gentzen
 import IPC.Gentzen.TarskiSoundness -- FIXME
+import IPC.Gentzen.TarskiBasicCompleteness -- FIXME
 import IPC.Gentzen.KripkeSoundness
 import IPC.Gentzen.KripkeBasicCompleteness
 import IPC.Gentzen.KripkeCompleteness
@@ -84,17 +88,20 @@ import BasicIS4.Hilbert.Tree.OpenSyntaxSoundness
 import BasicIS4.Hilbert.Tree.OpenSyntaxBasicCompleteness
 import BasicIS4.Hilbert.TreeWithContext
 import BasicIS4.Hilbert.TreeWithContext.TarskiSoundness
+import BasicIS4.Hilbert.TreeWithContext.TarskiBasicCompleteness
 import BasicIS4.Hilbert.TreeWithContext.OpenSyntaxSoundness
 import BasicIS4.Hilbert.TreeWithContext.OpenSyntaxBasicCompleteness -- FIXME
 import BasicIS4.Hilbert.TreeWithContext.KripkeSoundness
 import BasicIS4.Hilbert.TreeWithContextPair
 import BasicIS4.Hilbert.TreeWithContextPair.TarskiSoundness -- FIXME
+import BasicIS4.Hilbert.TreeWithContextPair.TarskiBasicCompleteness
 import BasicIS4.Hilbert.TreeWithContextPair.OpenSyntaxSoundness
 import BasicIS4.Hilbert.TreeWithContextPair.OpenSyntaxBasicCompleteness -- FIXME
 import BasicIS4.Hilbert.TreeWithContextPair.KripkeSoundness
 import BasicIS4.Hilbert.Translation
 import BasicIS4.Gentzen.TreeWithContext
 import BasicIS4.Gentzen.TreeWithContext.TarskiSoundness -- FIXME
+import BasicIS4.Gentzen.TreeWithContext.TarskiBasicCompleteness
 import BasicIS4.Gentzen.TreeWithContext.OpenSyntaxSoundness -- FIXME
 import BasicIS4.Gentzen.TreeWithContext.KripkeSoundness
 import BasicIS4.Gentzen.TreeWithContext.KripkeEquipment
@@ -102,6 +109,7 @@ import BasicIS4.Gentzen.TreeWithContext.KripkeEquipmentToo
 import BasicIS4.Gentzen.TreeWithContext.KripkeBasicCompleteness -- FIXME
 import BasicIS4.Gentzen.TreeWithContextPair
 import BasicIS4.Gentzen.TreeWithContextPair.TarskiSoundness -- FIXME
+import BasicIS4.Gentzen.TreeWithContextPair.TarskiBasicCompleteness
 import BasicIS4.Gentzen.TreeWithContextPair.OpenSyntaxSoundness -- FIXME
 import BasicIS4.Gentzen.TreeWithContextPair.KripkeSoundness
 import BasicIS4.Gentzen.TreeWithContextPair.KripkeEquipment
