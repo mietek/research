@@ -18,29 +18,65 @@ import Common.Predicate
 import Common.PredicateBasedContext
 
 
--- Intuitionistic propositional calculus, without ∨ or ⊥.
 
-import BasicIPC
-import BasicIPC.TarskiSemantics
-import BasicIPC.KripkeSemantics
-import BasicIPC.Hilbert.List
-import BasicIPC.Hilbert.ListWithContext
-import BasicIPC.Hilbert.Tree
-import BasicIPC.Hilbert.Tree.TarskiSoundness
-import BasicIPC.Hilbert.Tree.TarskiBasicCompleteness
-import BasicIPC.Hilbert.TreeWithContext
-import BasicIPC.Hilbert.TreeWithContext.TarskiSoundness
-import BasicIPC.Hilbert.TreeWithContext.TarskiBasicCompleteness
-import BasicIPC.Hilbert.TreeWithContext.KripkeSoundness
-import BasicIPC.Hilbert.Translation
-import BasicIPC.Gentzen
-import BasicIPC.Gentzen.TarskiSoundness -- FIXME
-import BasicIPC.Gentzen.TarskiBasicCompleteness
-import BasicIPC.Gentzen.KripkeSoundness
-import BasicIPC.Gentzen.KripkeBasicCompleteness
-import BasicIPC.Gentzen.KripkeCompleteness
-import BasicIPC.Gentzen.HereditarySubstitution
-import BasicIPC.Translation
+
+-- Basic intuitionistic propositional calculus, without ∨ or ⊥.
+
+
+-- Common syntax.
+import New.BasicIPC.Syntax.Common
+
+-- List-shaped Hilbert-style axiomatic formalisation of closed syntax.
+import New.BasicIPC.Syntax.Closed.HilbertList
+
+-- Tree-shaped Hilbert-style axiomatic formalisation of closed syntax.
+import New.BasicIPC.Syntax.Closed.HilbertTree
+
+-- List-shaped Hilbert-style axiomatic formalisation of open syntax.
+import New.BasicIPC.Syntax.Open.HilbertList
+
+-- Tree-shaped Hilbert-style axiomatic formalisation of open syntax.
+import New.BasicIPC.Syntax.Open.HilbertTree
+
+-- Tree-shaped Gentzen-style natural deduction formalisation of open syntax.
+import New.BasicIPC.Syntax.Open.GentzenTree
+import New.BasicIPC.Syntax.Open.GentzenTreeNormalForm
+import New.BasicIPC.Syntax.Open.GentzenTreeSpinalNormalForm
+
+-- Translation between different formalisations of syntax.
+import New.BasicIPC.Syntax.Translation
+
+
+-- Basic Tarski-style denotational semantics.
+import New.BasicIPC.Semantics.Tarski.Basic
+
+-- Tarski-style denotational semantics with a syntactic component, after Coquand-Dybjer.
+import New.BasicIPC.Semantics.Tarski.CoquandDybjer
+
+-- Kripke-style possible worlds semantics, based on the Gödel translation.
+import New.BasicIPC.Semantics.Kripke.Godel
+
+-- Standard Kripke-style possible worlds semantics, based on the McKinsey-Tarski translation.
+import New.BasicIPC.Semantics.Kripke.McKinseyTarski
+
+
+import New.BasicIPC.Metatheory.Closed.HilbertTree.Tarski.Basic
+import New.BasicIPC.Metatheory.Closed.HilbertTree.Tarski.CoquandDybjer
+
+import New.BasicIPC.Metatheory.Open.HilbertTree.Tarski.Basic
+import New.BasicIPC.Metatheory.Open.HilbertTree.Tarski.CoquandDybjer
+import New.BasicIPC.Metatheory.Open.HilbertTree.Kripke.Godel
+import New.BasicIPC.Metatheory.Open.HilbertTree.Kripke.McKinseyTarski
+import New.BasicIPC.Metatheory.Open.GentzenTree.Tarski.Basic
+import New.BasicIPC.Metatheory.Open.GentzenTree.Tarski.CoquandDybjer
+import New.BasicIPC.Metatheory.Open.GentzenTree.Kripke.Godel
+import New.BasicIPC.Metatheory.Open.GentzenTree.Kripke.GodelNormalForm
+import New.BasicIPC.Metatheory.Open.GentzenTree.Kripke.McKinseyTarski
+import New.BasicIPC.Metatheory.Open.GentzenTree.Kripke.McKinseyTarskiNormalForm
+
+import New.BasicIPC.Metatheory.OpenSyntax.Gentzen.HereditarySubstitution
+
+
 
 
 -- Intuitionistic propositional calculus.
