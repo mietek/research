@@ -67,6 +67,7 @@ import New.BasicIPC.Metatheory.Open.HilbertTree.Tarski.Basic
 import New.BasicIPC.Metatheory.Open.HilbertTree.Tarski.CoquandDybjer
 import New.BasicIPC.Metatheory.Open.HilbertTree.Kripke.Godel
 import New.BasicIPC.Metatheory.Open.HilbertTree.Kripke.McKinseyTarski
+
 import New.BasicIPC.Metatheory.Open.GentzenTree.Tarski.Basic
 import New.BasicIPC.Metatheory.Open.GentzenTree.Tarski.CoquandDybjer
 import New.BasicIPC.Metatheory.Open.GentzenTree.Kripke.Godel

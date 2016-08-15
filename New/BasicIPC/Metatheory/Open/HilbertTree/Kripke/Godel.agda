@@ -6,7 +6,7 @@ open import New.BasicIPC.Semantics.Kripke.Godel public
 
 -- Soundness with respect to all models, or evaluation.
 
-eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
+eval : ∀ {A Γ} → Γ ⊢ A → ∀ᴹʷ⊩ Γ ⇒ A
 eval (var i)          γ = lookup i γ
 eval (app t u)        γ = (eval t γ refl≤) (eval u γ)
 eval ci               γ = λ _ → id
@@ -19,6 +19,21 @@ eval (cpair {A} {B})  γ = λ _ a ξ b ξ′ → mono⊩ {A} (trans≤ ξ ξ′)
 eval cfst             γ = λ _ s → π₁ (s refl≤)
 eval csnd             γ = λ _ s → π₂ (s refl≤)
 eval tt               γ = λ _ → ∙
+
+-- Alternative version.
+eval′ : ∀ {A Γ} → Γ ⊢ A → ∀ᴹʷ⊩ Γ ⇒ A
+eval′ (var i)           γ = lookup i γ
+eval′ (app {A} {B} t u) γ = _⟪$⟫_ {A} {B} (eval′ t γ) (eval′ u γ)
+eval′ ci                γ = const id
+eval′ (ck {A} {B})      γ = const (⟪const⟫ {A} {B})
+eval′ (cs {A} {B} {C})  γ = const (⟪ap⟫ {A} {B} {C})
+eval′ (cpair {A} {B})   γ = const (_⟪,⟫_ {A} {B})
+eval′ (cfst {A} {B})    γ = const (⟪π₁⟫ {A} {B})
+eval′ (csnd {A} {B})    γ = const (⟪π₂⟫ {A} {B})
+eval′ tt                γ = const ∙
+
+
+-- TODO: Correctness of evaluation with respect to conversion.
 
 
 -- The canonical model.
@@ -69,7 +84,7 @@ trans⊩⋆ ts us = reflect⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
 
 -- Completeness with respect to all models, or quotation.
 
-quot : ∀ {A Γ} → Γ ᴹ⊩ A → Γ ⊢ A
+quot : ∀ {A Γ} → ∀ᴹʷ⊩ Γ ⇒ A → Γ ⊢ A
 quot t = reify (t refl⊩⋆)
 
 
@@ -77,3 +92,6 @@ quot t = reify (t refl⊩⋆)
 
 norm : ∀ {A Γ} → Γ ⊢ A → Γ ⊢ A
 norm = quot ∘ eval
+
+
+-- TODO: Correctness of normalisation with respect to conversion.

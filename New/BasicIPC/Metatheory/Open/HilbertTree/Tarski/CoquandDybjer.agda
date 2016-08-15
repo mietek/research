@@ -17,20 +17,17 @@ reify {⊤}    ∙       = tt
 
 -- Soundness with respect to all models, or evaluation.
 
-eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊨ A
+eval : ∀ {A Γ} → Γ ⊢ A → ∀ᴹ⊨ Γ ⇒ A
 eval (var i)   γ = lookup i γ
-eval (app t u) γ = (eval t γ) $ˢ (eval u γ)
+eval (app t u) γ = eval t γ ⟪$⟫ eval u γ
 eval ci        γ = ci , id
-eval ck        γ = ck , (λ a →
-                     app ck (reify a) ,
-                       const a)
-eval cs        γ = cs , (λ f →
-                     app cs (reify f) , (λ g →
-                       app (app cs (reify f)) (reify g) , (λ a →
-                         apˢ f g a)))
-eval cpair     γ = cpair , (λ a →
-                     app cpair (reify a) , (λ b →
-                       a , b))
+eval ck        γ = ck , λ a →
+                     app ck (reify a) , const a
+eval cs        γ = cs , λ f →
+                     app cs (reify f) , λ g →
+                       app (app cs (reify f)) (reify g) , ⟪ap⟫ f g
+eval cpair     γ = cpair , λ a →
+                     app cpair (reify a) , _,_ a
 eval cfst      γ = cfst , π₁
 eval csnd      γ = csnd , π₂
 eval tt        γ = ∙
@@ -42,13 +39,13 @@ check : ∀ {{_ : Model}} {A Γ} {t t′ : Γ ⊢ A} → t ⇒ t′ → eval t �
 check refl⇒                   = refl
 check (trans⇒ p q)            = trans (check p) (check q)
 check (sym⇒ p)                = sym (check p)
-check (congapp⇒ p q)          = cong₂ _$ˢᶜ_ (check p) (check q)
+check (congapp⇒ p q)          = cong₂ _⟦$⟧_ (check p) (check q)
 check (congi⇒ p)              = cong id (check p)
 check (congk⇒ p q)            = cong₂ const (check p) (check q)
-check (congs⇒ p q r)          = cong₃ apˢᶜ (check p) (check q) (check r)
-check (congpair⇒ {A} {B} p q) = cong₂ (_,ˢᶜ_ {A} {B}) (check p) (check q)
-check (congfst⇒ {A} {B} p)    = cong (π₁ˢᶜ {A} {B}) (check p)
-check (congsnd⇒ {A} {B} p)    = cong (π₂ˢᶜ {A} {B}) (check p)
+check (congs⇒ p q r)          = cong₃ ⟦ap⟧ (check p) (check q) (check r)
+check (congpair⇒ {A} {B} p q) = cong₂ (_⟦,⟧_ {A} {B}) (check p) (check q)
+check (congfst⇒ {A} {B} p)    = cong (⟦π₁⟧ {A} {B}) (check p)
+check (congsnd⇒ {A} {B} p)    = cong (⟦π₂⟧ {A} {B}) (check p)
 check beta▻ₖ⇒                 = refl
 check beta▻ₛ⇒                 = refl
 check beta∧₁⇒                 = refl
@@ -69,7 +66,7 @@ instance
 -- Completeness with respect to all models, or quotation.
 
 -- TODO: Can we do better here?
-quot₀ : ∀ {A} → ⌀ ᴹ⊨ A → ⌀ ⊢ A
+quot₀ : ∀ {A} → ∀ᴹ⊨ ⌀ ⇒ A → ⌀ ⊢ A
 quot₀ t = reify (t ∙)
 
 

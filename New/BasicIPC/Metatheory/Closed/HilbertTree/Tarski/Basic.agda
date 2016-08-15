@@ -6,8 +6,8 @@ open import New.BasicIPC.Semantics.Tarski.Basic public
 
 -- Soundness with respect to all models, or evaluation.
 
-eval : ∀ {A} → ⊢ A → ᴹ⊨ A
-eval (app t u) = (eval t) (eval u)
+eval : ∀ {A} → ⊢ A → ∀ᴹ⊨ A
+eval (app t u) = eval t $ eval u
 eval ci        = id
 eval ck        = const
 eval cs        = ap
