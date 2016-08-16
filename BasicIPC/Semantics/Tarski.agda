@@ -38,7 +38,7 @@ module _ {{_ : Model}} where
 ∀ᴹ⊨ A = ∀ {{_ : Model}} → ⊨ A
 
 
--- Satisfaction in a particular model, for open syntax.
+-- Satisfaction in a particular model, for sequents.
 
 module _ {{_ : Model}} where
   infix 3 ⊨_⇒_
@@ -50,7 +50,7 @@ module _ {{_ : Model}} where
   ⊨ Γ ⇒⋆ Π = ⊨⋆ Γ → ⊨⋆ Π
 
 
--- Satisfaction in all models, for open syntax.
+-- Satisfaction in all models, for sequents.
 
 ∀ᴹ⊨_⇒_ : Cx Ty → Ty → Set₁
 ∀ᴹ⊨ Γ ⇒ A = ∀ {{_ : Model}} → ⊨ Γ ⇒ A
@@ -59,7 +59,7 @@ module _ {{_ : Model}} where
 ∀ᴹ⊨ Γ ⇒⋆ Π = ∀ {{_ : Model}} → ⊨ Γ ⇒⋆ Π
 
 
--- Additional useful equipment, for open syntax.
+-- Additional useful equipment, for sequents.
 
 module _ {{_ : Model}} where
   lookup : ∀ {A Γ} → A ∈ Γ → ⊨ Γ ⇒ A

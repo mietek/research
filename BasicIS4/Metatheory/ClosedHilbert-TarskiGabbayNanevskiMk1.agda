@@ -1,7 +1,7 @@
 module BasicIS4.Metatheory.ClosedHilbert-TarskiGabbayNanevskiMk1 where
 
 open import BasicIS4.Syntax.ClosedHilbert public
-open import BasicIS4.Syntax.TranslatedClosedHilbertEquipment public
+open import BasicIS4.Syntax.ClosedHilbertTranslatedEquipment public
 open import BasicIS4.Semantics.TarskiGabbayNanevskiMk1 public
 
 open SyntacticComponent (λ Δ A → ⊢ □⋆ Δ ▻⋯▻ A) public

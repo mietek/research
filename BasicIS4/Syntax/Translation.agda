@@ -6,12 +6,12 @@ open import BasicIS4.Syntax.Common public
 
 import BasicIS4.Syntax.ClosedHilbertLinear as L
 import BasicIS4.Syntax.ClosedHilbert as T
-import BasicIS4.Syntax.OpenHilbertLinear as LC
-import BasicIS4.Syntax.OpenHilbert as TC
-import BasicIS4.Syntax.OpenGentzen as GTC
-import BasicIS4.Syntax.OpenDyadicHilbertLinear as LCP
-import BasicIS4.Syntax.OpenDyadicHilbert as TCP
-import BasicIS4.Syntax.OpenDyadicGentzen as GTCP
+import BasicIS4.Syntax.HilbertLinear as LC
+import BasicIS4.Syntax.Hilbert as TC
+import BasicIS4.Syntax.Gentzen as GTC
+import BasicIS4.Syntax.DyadicHilbertLinear as LCP
+import BasicIS4.Syntax.DyadicHilbert as TCP
+import BasicIS4.Syntax.DyadicGentzen as GTCP
 
 open LC using () renaming (_⊢×_ to LC⟨_⊢×_⟩ ; _⊢_ to LC⟨_⊢_⟩) public
 open TC using () renaming (_⊢_ to TC⟨_⊢_⟩ ; _⊢⋆_ to TC⟨_⊢⋆_⟩) public

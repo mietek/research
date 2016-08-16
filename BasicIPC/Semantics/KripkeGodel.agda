@@ -91,7 +91,7 @@ module _ {{_ : Model}} where
   ⟪π₂⟫ s = π₂ (s refl≤)
 
 
--- Forcing in a particular world of a particular model, for open syntax.
+-- Forcing in a particular world of a particular model, for sequents.
 
 module _ {{_ : Model}} where
   infix 3 _⊩_⇒_
@@ -103,7 +103,7 @@ module _ {{_ : Model}} where
   w ⊩ Γ ⇒⋆ Π = w ⊩⋆ Γ → w ⊩⋆ Π
 
 
--- Forcing in all worlds of all models, for open syntax.
+-- Forcing in all worlds of all models, for sequents.
 
 infix 3 ∀ᴹʷ⊩_⇒_
 ∀ᴹʷ⊩_⇒_ : Cx Ty → Ty → Set₁
@@ -114,7 +114,7 @@ infix 3 ∀ᴹʷ⊩_⇒⋆_
 ∀ᴹʷ⊩ Γ ⇒⋆ Π = ∀ {{_ : Model}} {w : World} → w ⊩ Γ ⇒⋆ Π
 
 
--- Additional useful equipment, for open syntax.
+-- Additional useful equipment, for sequents.
 
 module _ {{_ : Model}} where
   lookup : ∀ {A Γ w} → A ∈ Γ → w ⊩ Γ ⇒ A

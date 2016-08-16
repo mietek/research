@@ -6,9 +6,9 @@ open import BasicIPC.Syntax.Common public
 
 import BasicIPC.Syntax.ClosedHilbertLinear as L
 import BasicIPC.Syntax.ClosedHilbert as T
-import BasicIPC.Syntax.OpenHilbertLinear as LC
-import BasicIPC.Syntax.OpenHilbert as TC
-import BasicIPC.Syntax.OpenGentzen as GTC
+import BasicIPC.Syntax.HilbertLinear as LC
+import BasicIPC.Syntax.Hilbert as TC
+import BasicIPC.Syntax.Gentzen as GTC
 
 open LC using () renaming (_⊢×_ to LC⟨_⊢×_⟩ ; _⊢_ to LC⟨_⊢_⟩) public
 open TC using () renaming (_⊢_ to TC⟨_⊢_⟩) public
