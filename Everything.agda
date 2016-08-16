@@ -27,58 +27,58 @@ import Common.PredicateBasedContext
 import New.BasicIPC.Syntax.Common
 
 -- List-shaped Hilbert-style axiomatic formalisation of closed syntax.
-import New.BasicIPC.Syntax.Closed.HilbertList
+import New.BasicIPC.Syntax.ClosedHilbertLinear
 
 -- Tree-shaped Hilbert-style axiomatic formalisation of closed syntax.
-import New.BasicIPC.Syntax.Closed.HilbertTree
+import New.BasicIPC.Syntax.ClosedHilbert
 
 -- List-shaped Hilbert-style axiomatic formalisation of open syntax.
-import New.BasicIPC.Syntax.Open.HilbertList
+import New.BasicIPC.Syntax.OpenHilbertLinear
 
 -- Tree-shaped Hilbert-style axiomatic formalisation of open syntax.
-import New.BasicIPC.Syntax.Open.HilbertTree
+import New.BasicIPC.Syntax.OpenHilbert
 
 -- Tree-shaped Gentzen-style natural deduction formalisation of open syntax.
-import New.BasicIPC.Syntax.Open.GentzenTree
-import New.BasicIPC.Syntax.Open.GentzenTreeNormalForm
-import New.BasicIPC.Syntax.Open.GentzenTreeSpinalNormalForm
+import New.BasicIPC.Syntax.OpenGentzen
+import New.BasicIPC.Syntax.OpenGentzenNormalForm
+import New.BasicIPC.Syntax.OpenGentzenSpinalNormalForm
 
 -- Translation between different formalisations of syntax.
 import New.BasicIPC.Syntax.Translation
 
 
 -- Basic Tarski-style denotational semantics.
-import New.BasicIPC.Semantics.Tarski.Basic
+import New.BasicIPC.Semantics.Tarski
 
 -- Tarski-style denotational semantics with a syntactic component, after Coquand-Dybjer.
-import New.BasicIPC.Semantics.Tarski.CoquandDybjer
-import New.BasicIPC.Semantics.Tarski.CoquandDybjerHilbert
+import New.BasicIPC.Semantics.TarskiCoquandDybjer
+import New.BasicIPC.Semantics.TarskiCoquandDybjerMk1
 
 -- Kripke-style possible worlds semantics, based on the Gödel translation.
-import New.BasicIPC.Semantics.Kripke.Godel
+import New.BasicIPC.Semantics.KripkeGodel
 
 -- Standard Kripke-style possible worlds semantics, based on the McKinsey-Tarski translation.
-import New.BasicIPC.Semantics.Kripke.McKinseyTarski
+import New.BasicIPC.Semantics.KripkeMcKinseyTarski
 
 
-import New.BasicIPC.Metatheory.Closed.HilbertTree.Tarski.Basic
-import New.BasicIPC.Metatheory.Closed.HilbertTree.Tarski.CoquandDybjer
-import New.BasicIPC.Metatheory.Closed.HilbertTree.Tarski.CoquandDybjerHilbert
+import New.BasicIPC.Metatheory.ClosedHilbert-Tarski
+import New.BasicIPC.Metatheory.ClosedHilbert-TarskiCoquandDybjer
+import New.BasicIPC.Metatheory.ClosedHilbert-TarskiCoquandDybjerMk1
 
-import New.BasicIPC.Metatheory.Open.HilbertTree.Tarski.Basic
-import New.BasicIPC.Metatheory.Open.HilbertTree.Tarski.CoquandDybjer
-import New.BasicIPC.Metatheory.Open.HilbertTree.Tarski.CoquandDybjerHilbert
-import New.BasicIPC.Metatheory.Open.HilbertTree.Kripke.Godel
-import New.BasicIPC.Metatheory.Open.HilbertTree.Kripke.McKinseyTarski
+import New.BasicIPC.Metatheory.OpenHilbert-Tarski
+import New.BasicIPC.Metatheory.OpenHilbert-TarskiCoquandDybjer
+import New.BasicIPC.Metatheory.OpenHilbert-TarskiCoquandDybjerMk1
+import New.BasicIPC.Metatheory.OpenHilbert-KripkeGodel
+import New.BasicIPC.Metatheory.OpenHilbert-KripkeMcKinseyTarski
 
-import New.BasicIPC.Metatheory.Open.GentzenTree.Tarski.Basic
-import New.BasicIPC.Metatheory.Open.GentzenTree.Tarski.CoquandDybjer
-import New.BasicIPC.Metatheory.Open.GentzenTree.Kripke.Godel
-import New.BasicIPC.Metatheory.Open.GentzenTree.Kripke.GodelNormalForm
-import New.BasicIPC.Metatheory.Open.GentzenTree.Kripke.McKinseyTarski
-import New.BasicIPC.Metatheory.Open.GentzenTree.Kripke.McKinseyTarskiNormalForm
+import New.BasicIPC.Metatheory.OpenGentzen-Tarski
+import New.BasicIPC.Metatheory.OpenGentzen-TarskiCoquandDybjer
+import New.BasicIPC.Metatheory.OpenGentzen-KripkeGodel
+import New.BasicIPC.Metatheory.OpenGentzen-KripkeMcKinseyTarski
+import New.BasicIPC.Metatheory.OpenGentzenNormalForm-KripkeGodel
+import New.BasicIPC.Metatheory.OpenGentzenNormalForm-KripkeMcKinseyTarski
 
-import New.BasicIPC.Metatheory.OpenSyntax.Gentzen.HereditarySubstitution
+import New.BasicIPC.Metatheory.OpenGentzen-HereditarySubstitution
 
 
 

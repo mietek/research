@@ -4,11 +4,11 @@ module New.BasicIPC.Syntax.Translation where
 
 open import New.BasicIPC.Syntax.Common public
 
-import New.BasicIPC.Syntax.Closed.HilbertList as L
-import New.BasicIPC.Syntax.Closed.HilbertTree as T
-import New.BasicIPC.Syntax.Open.HilbertList as LC
-import New.BasicIPC.Syntax.Open.HilbertTree as TC
-import New.BasicIPC.Syntax.Open.GentzenTree as GTC
+import New.BasicIPC.Syntax.ClosedHilbertLinear as L
+import New.BasicIPC.Syntax.ClosedHilbert as T
+import New.BasicIPC.Syntax.OpenHilbertLinear as LC
+import New.BasicIPC.Syntax.OpenHilbert as TC
+import New.BasicIPC.Syntax.OpenGentzen as GTC
 
 open LC using () renaming (_⊢×_ to LC⟨_⊢×_⟩ ; _⊢_ to LC⟨_⊢_⟩) public
 open TC using () renaming (_⊢_ to TC⟨_⊢_⟩) public
