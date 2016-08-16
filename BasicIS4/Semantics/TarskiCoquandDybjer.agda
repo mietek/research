@@ -36,7 +36,7 @@ module SyntacticComponent (Syntax : Ty → Set)
   infix 3 ⊨⋆_
   ⊨⋆_ : ∀ {{_ : Model}} → Cx Ty → Set
   ⊨⋆ ⌀     = 𝟙
-  ⊨⋆ Γ , A = ⊨⋆ Γ × ⊨ A
+  ⊨⋆ Π , A = ⊨⋆ Π × ⊨ A
 
 
   -- Satisfaction in all models.

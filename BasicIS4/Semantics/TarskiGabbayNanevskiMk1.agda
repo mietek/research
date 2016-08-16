@@ -34,7 +34,7 @@ module SyntacticComponent (Syntax : Cx Ty → Ty → Set) where
   infix 3 _⊨⋆_
   _⊨⋆_ : ∀ {{_ : Model}} → Cx Ty → Cx Ty → Set
   Δ ⊨⋆ ⌀     = 𝟙
-  Δ ⊨⋆ Γ , A = Δ ⊨⋆ Γ × Δ ⊨ A
+  Δ ⊨⋆ Π , A = Δ ⊨⋆ Π × Δ ⊨ A
 
 
   -- Monotonicity with respect to context inclusion.

@@ -58,7 +58,7 @@ module _ {{_ : Model}} where
   infix 3 _⊩⋆_
   _⊩⋆_ : World → Cx Ty → Set
   w ⊩⋆ ⌀     = 𝟙
-  w ⊩⋆ Γ , A = w ⊩⋆ Γ × w ⊩ A
+  w ⊩⋆ Π , A = w ⊩⋆ Π × w ⊩ A
 
 
   -- Monotonicity with respect to intuitionistic accessibility.
