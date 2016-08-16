@@ -50,11 +50,20 @@ import BasicIPC.Syntax.Translation
 -- Basic Tarski-style denotational semantics.
 import BasicIPC.Semantics.Tarski
 
--- Tarski-style denotational semantics with a syntactic component, after Coquand-Dybjer.
+-- Tarski-style semantics with a closed syntactic component, after Coquand-Dybjer.
+import BasicIPC.Semantics.TarskiClosedCoquandDybjer
+
+-- Tarski-style semantics with a Hilbert-style closed syntax representation.
+import BasicIPC.Semantics.TarskiClosedHilbert
+
+-- Tarski-style semantics with a syntactic component, after Coquand-Dybjer.
 import BasicIPC.Semantics.TarskiCoquandDybjer
-import BasicIPC.Semantics.TarskiCoquandDybjerMk1
-import BasicIPC.Semantics.TarskiCoquandDybjerMk2
-import BasicIPC.Semantics.TarskiCoquandDybjerMk3
+
+-- Tarski-style semantics with a Hilbert-style syntax representation.
+import BasicIPC.Semantics.TarskiHilbert
+
+-- Tarski-style semantics with a Gentzen-style syntax representation.
+import BasicIPC.Semantics.TarskiGentzen
 
 -- Kripke-style possible worlds semantics, based on the Gödel translation.
 import BasicIPC.Semantics.KripkeGodel
@@ -64,21 +73,24 @@ import BasicIPC.Semantics.KripkeMcKinseyTarski
 
 
 import BasicIPC.Metatheory.ClosedHilbert-Tarski
-import BasicIPC.Metatheory.ClosedHilbert-TarskiCoquandDybjer
-import BasicIPC.Metatheory.ClosedHilbert-TarskiCoquandDybjerMk1
+import BasicIPC.Metatheory.ClosedHilbert-TarskiClosedCoquandDybjer
+import BasicIPC.Metatheory.ClosedHilbert-TarskiClosedHilbert
 
 import BasicIPC.Metatheory.Hilbert-Tarski
+import BasicIPC.Metatheory.Hilbert-TarskiClosedCoquandDybjer
+import BasicIPC.Metatheory.Hilbert-TarskiClosedHilbert
 import BasicIPC.Metatheory.Hilbert-TarskiCoquandDybjer
-import BasicIPC.Metatheory.Hilbert-TarskiCoquandDybjerMk1
-import BasicIPC.Metatheory.Hilbert-TarskiCoquandDybjerMk2
-import BasicIPC.Metatheory.Hilbert-TarskiCoquandDybjerMk3
+import BasicIPC.Metatheory.Hilbert-TarskiHilbert
 import BasicIPC.Metatheory.Hilbert-KripkeGodel
 import BasicIPC.Metatheory.Hilbert-KripkeMcKinseyTarski
 
 import BasicIPC.Metatheory.Gentzen-Tarski
+import BasicIPC.Metatheory.Gentzen-TarskiClosedCoquandDybjer
 import BasicIPC.Metatheory.Gentzen-TarskiCoquandDybjer
+import BasicIPC.Metatheory.Gentzen-TarskiGentzen
 import BasicIPC.Metatheory.Gentzen-KripkeGodel
 import BasicIPC.Metatheory.Gentzen-KripkeMcKinseyTarski
+
 import BasicIPC.Metatheory.GentzenNormalForm-KripkeGodel
 import BasicIPC.Metatheory.GentzenNormalForm-KripkeMcKinseyTarski
 
@@ -154,11 +166,11 @@ import BasicIS4.Syntax.Translation
 import BasicIS4.Syntax.ClosedHilbertTranslatedEquipment
 
 
--- Tarski-style denotational semantics with a syntactic component, after Gabbay-Nanevski.
+-- Tarski-style semantics with a syntactic component, after Gabbay-Nanevski.
 import BasicIS4.Semantics.TarskiGabbayNanevski
 import BasicIS4.Semantics.TarskiGabbayNanevskiMk1
 
--- Tarski-style denotational semantics with a syntactic component, after Coquand-Dybjer.
+-- Tarski-style semantics with a syntactic component, after Coquand-Dybjer.
 import BasicIS4.Semantics.TarskiCoquandDybjer
 import BasicIS4.Semantics.TarskiCoquandDybjerMk1
 

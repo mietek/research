@@ -15,30 +15,6 @@ eval (fst t)    γ = π₁ (eval t γ refl≤)
 eval (snd t)    γ = π₂ (eval t γ refl≤)
 eval tt         γ = λ ξ → ∙
 
-eval⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → ∀ᴹʷ⊩ Γ ⇒⋆ Π
-eval⋆ {⌀}     ∙        γ = ∙
-eval⋆ {Π , A} (ts , t) γ = eval⋆ ts γ , eval t γ
-
--- Alternative version.
-eval′ : ∀ {A Γ} → Γ ⊢ A → ∀ᴹʷ⊩ Γ ⇒ A
-eval′ (var i)            γ = lookup i γ
-eval′ (lam {A} {B} t)    γ = λ ξ a → eval t (mono⊩⋆ ξ γ , a)
-eval′ (app {A} {B} t u)  γ = _⟪$⟫_ {A} {B} (eval′ t γ) (eval′ u γ)
-eval′ (pair {A} {B} t u) γ = _⟪,⟫_ {A} {B} (eval′ t γ) refl≤ (eval′ u γ)
-eval′ (fst {A} {B} t)    γ = ⟪π₁⟫ {A} {B} (eval′ t γ)
-eval′ (snd {A} {B} t)    γ = ⟪π₂⟫ {A} {B} (eval′ t γ)
-eval′ tt                 γ = const ∙
-
--- Alternative version.
-eval″ : ∀ {A Γ} → Γ ⊢ A → ∀ᴹʷ⊩ Γ ⇒ A
-eval″ (var i)            γ = lookup i γ
-eval″ (lam {A} {B} t)    γ = ⟦λ⟧ {A} {B} (eval″ t) γ
-eval″ (app {A} {B} t u)  γ = _⟦$⟧_ {A} {B} (eval″ t) (eval″ u) γ
-eval″ (pair {A} {B} t u) γ = _⟦,⟧_ {A} {B} (eval″ t) (eval″ u) γ
-eval″ (fst {A} {B} t)    γ = ⟦π₁⟧ {A} {B} (eval″ t) γ
-eval″ (snd {A} {B} t)    γ = ⟦π₂⟧ {A} {B} (eval″ t) γ
-eval″ tt                 γ = const ∙
-
 
 -- TODO: Correctness of evaluation with respect to conversion.
 

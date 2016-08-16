@@ -3,16 +3,43 @@ module BasicIPC.Metatheory.Hilbert-TarskiCoquandDybjer where
 open import BasicIPC.Syntax.Hilbert public
 open import BasicIPC.Semantics.TarskiCoquandDybjer public
 
-open SyntacticComponent (⌀ ⊢_) public
+open SyntacticComponent (_⊢_) (mono⊢) public
 
 
 -- Completeness with respect to a particular model.
 
-reify : ∀ {{_ : Model}} {A} → ⊨ A → ⌀ ⊢ A
-reify {α P}   (t , s) = t
-reify {A ▻ B} (t , f) = t
-reify {A ∧ B} (a , b) = pair (reify {A} a) (reify {B} b)
-reify {⊤}    ∙       = tt
+module _ {{_ : Model}} where
+  reify : ∀ {A Γ} → Γ ⊨ A → Γ ⊢ A
+  reify {α P}   (t , s) = t
+  reify {A ▻ B} s       = let t , f = s refl⊆ in t
+  reify {A ∧ B} (a , b) = pair (reify {A} a) (reify {B} b)
+  reify {⊤}    ∙       = tt
+
+  reify⋆ : ∀ {Π Γ} → Γ ⊨⋆ Π → Γ ⊢⋆ Π
+  reify⋆ {⌀}     ∙        = ∙
+  reify⋆ {Π , A} (ts , t) = reify⋆ ts , reify t
+
+
+-- Additional useful equipment.
+
+module _ {{_ : Model}} where
+  ⟪const⟫ : ∀ {A B Γ} → Γ ⊨ A → Γ ⊨ B ▻ A
+  ⟪const⟫ {A} a η = let a′ = mono⊨ {A} η a
+                    in  app ck (reify a′) , const a′
+
+  ⟪ap⟫′ : ∀ {A B C Γ} → Γ ⊨ A ▻ B ▻ C → Γ ⊨ (A ▻ B) ▻ A ▻ C
+  ⟪ap⟫′ {A} {B} {C} s₁ η = let s₁′   = mono⊨ {A ▻ B ▻ C} η s₁
+                               t , _ = s₁′ refl⊆
+                           in  app cs t , λ s₂ η′ →
+                                 let s₁″    = mono⊨ {A ▻ B ▻ C} (trans⊆ η η′) s₁
+                                     t′ , _ = s₁″ refl⊆
+                                     s₂′    = mono⊨ {A ▻ B} η′ s₂
+                                     u  , g = s₂′ refl⊆
+                                 in  app (app cs t′) u , ⟪ap⟫ s₁″ s₂′
+
+  _⟪,⟫′_ : ∀ {A B Γ} → Γ ⊨ A → Γ ⊨ B ▻ A ∧ B
+  _⟪,⟫′_ {A} a η = let a′ = mono⊨ {A} η a
+                   in  app cpair (reify a′) , _,_ a′
 
 
 -- Soundness with respect to all models, or evaluation.
@@ -20,38 +47,16 @@ reify {⊤}    ∙       = tt
 eval : ∀ {A Γ} → Γ ⊢ A → ∀ᴹ⊨ Γ ⇒ A
 eval (var i)   γ = lookup i γ
 eval (app t u) γ = eval t γ ⟪$⟫ eval u γ
-eval ci        γ = ci , id
-eval ck        γ = ck , λ a →
-                     app ck (reify a) , const a
-eval cs        γ = cs , λ f →
-                     app cs (reify f) , λ g →
-                       app (app cs (reify f)) (reify g) , ⟪ap⟫ f g
-eval cpair     γ = cpair , λ a →
-                     app cpair (reify a) , _,_ a
-eval cfst      γ = cfst , π₁
-eval csnd      γ = csnd , π₂
+eval ci        γ = const (ci , id)
+eval ck        γ = const (ck , ⟪const⟫)
+eval cs        γ = const (cs , ⟪ap⟫′)
+eval cpair     γ = const (cpair , _⟪,⟫′_)
+eval cfst      γ = const (cfst , π₁)
+eval csnd      γ = const (csnd , π₂)
 eval tt        γ = ∙
 
 
--- Correctness of evaluation with respect to conversion.
-
-check : ∀ {{_ : Model}} {A Γ} {t t′ : Γ ⊢ A} → t ⋙ t′ → eval t ≡ eval t′
-check refl⋙                   = refl
-check (trans⋙ p q)            = trans (check p) (check q)
-check (sym⋙ p)                = sym (check p)
-check (congapp⋙ p q)          = cong₂ _⟦$⟧_ (check p) (check q)
-check (congi⋙ p)              = cong id (check p)
-check (congk⋙ p q)            = cong₂ const (check p) (check q)
-check (congs⋙ p q r)          = cong₃ ⟦ap⟧ (check p) (check q) (check r)
-check (congpair⋙ {A} {B} p q) = cong₂ (_⟦,⟧_ {A} {B}) (check p) (check q)
-check (congfst⋙ {A} {B} p)    = cong (⟦π₁⟧ {A} {B}) (check p)
-check (congsnd⋙ {A} {B} p)    = cong (⟦π₂⟧ {A} {B}) (check p)
-check beta▻ₖ⋙                 = refl
-check beta▻ₛ⋙                 = refl
-check beta∧₁⋙                 = refl
-check beta∧₂⋙                 = refl
-check eta∧⋙                   = refl
-check eta⊤⋙                  = refl
+-- TODO: Correctness of evaluation with respect to conversion.
 
 
 -- The canonical model.
@@ -59,22 +64,43 @@ check eta⊤⋙                  = refl
 instance
   canon : Model
   canon = record
-    { ⊨ᵅ_ = λ P → ⌀ ⊢ α P
+    { _⊨ᵅ_   = λ Γ P → Γ ⊢ α P
+    ; mono⊨ᵅ = mono⊢
     }
+
+
+-- Soundness with respect to the canonical model.
+
+reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
+reflect {α P}   t = t , t
+reflect {A ▻ B} t = λ η → mono⊢ η t , λ a → reflect {B} (app (mono⊢ η t) (reify {A} a))
+reflect {A ∧ B} t = reflect {A} (fst t) , reflect {B} (snd t)
+reflect {⊤}    t = ∙
+
+reflect⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊨⋆ Π
+reflect⋆ {⌀}     ∙        = ∙
+reflect⋆ {Π , A} (ts , t) = reflect⋆ ts , reflect t
+
+
+-- Reflexivity and transitivity.
+
+refl⊨⋆ : ∀ {Γ} → Γ ⊨⋆ Γ
+refl⊨⋆ = reflect⋆ refl⊢⋆
+
+trans⊨⋆ : ∀ {Γ Γ′ Γ″} → Γ ⊨⋆ Γ′ → Γ′ ⊨⋆ Γ″ → Γ ⊨⋆ Γ″
+trans⊨⋆ ts us = reflect⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
 
 
 -- Completeness with respect to all models, or quotation.
 
--- TODO: Can we do better here?
-quot₀ : ∀ {A} → ∀ᴹ⊨ ⌀ ⇒ A → ⌀ ⊢ A
-quot₀ t = reify (t ∙)
+quot : ∀ {A Γ} → ∀ᴹ⊨ Γ ⇒ A → Γ ⊢ A
+quot t = reify (t refl⊨⋆)
 
 
 -- Normalisation by evaluation.
 
--- TODO: Can we do better here?
-norm₀ : ∀ {A} → ⌀ ⊢ A → ⌀ ⊢ A
-norm₀ = quot₀ ∘ eval
+norm : ∀ {A Γ} → Γ ⊢ A → Γ ⊢ A
+norm = quot ∘ eval
 
 
 -- TODO: Correctness of normalisation with respect to conversion.

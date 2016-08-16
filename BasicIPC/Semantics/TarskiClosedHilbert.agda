@@ -1,6 +1,6 @@
--- Tarski-style denotational semantics with embedded Hilbert-style closed syntax, after Coquand-Dybjer.
+-- Tarski-style semantics with a Hilbert-style closed syntax representation.
 
-module BasicIPC.Semantics.TarskiCoquandDybjerMk1 where
+module BasicIPC.Semantics.TarskiClosedHilbert where
 
 open import BasicIPC.Syntax.Common public
 
@@ -13,7 +13,7 @@ record Model : Set₁ where
     -- Satisfaction for atomic propositions.
     ⊨ᵅ_ : Atom → Set
 
-    -- Embedded Hilbert-style closed syntax.
+    -- Hilbert-style closed syntax representation.
     [_]     : Ty → Set
     [app]   : ∀ {A B}   → [ A ▻ B ] → [ A ] → [ B ]
     [ci]    : ∀ {A}     → [ A ▻ A ]
@@ -49,14 +49,33 @@ module _ {{_ : Model}} where
 ∀ᴹ⊨ A = ∀ {{_ : Model}} → ⊨ A
 
 
+-- Completeness with respect to the syntax representation in a particular model.
+
+reify[] : ∀ {{_ : Model}} {A} → ⊨ A → [ A ]
+reify[] {α P}   (t , s) = t
+reify[] {A ▻ B} (t , f) = t
+reify[] {A ∧ B} (a , b) = [app] ([app] [cpair] (reify[] {A} a)) (reify[] {B} b)
+reify[] {⊤}    ∙       = [tt]
+
+
 -- Additional useful equipment.
 
 module _ {{_ : Model}} where
   _⟪$⟫_ : ∀ {A B} → ⊨ A ▻ B → ⊨ A → ⊨ B
   (t , f) ⟪$⟫ a = f a
 
+  ⟪const⟫ : ∀ {A B} → ⊨ A → ⊨ B ▻ A
+  ⟪const⟫ a = [app] [ck] (reify[] a) , const a
+
   ⟪ap⟫ : ∀ {A B C} → ⊨ A ▻ B ▻ C → ⊨ A ▻ B → ⊨ A → ⊨ C
   ⟪ap⟫ (t , f) (u , g) a = let (_ , h) = f a in h (g a)
+
+  ⟪ap⟫′ : ∀ {A B C} → ⊨ A ▻ B ▻ C → ⊨ (A ▻ B) ▻ A ▻ C
+  ⟪ap⟫′ f = [app] [cs] (reify[] f) , λ g →
+              [app] ([app] [cs] (reify[] f)) (reify[] g) , ⟪ap⟫ f g
+
+  _⟪,⟫′_ : ∀ {A B} → ⊨ A → ⊨ B ▻ A ∧ B
+  _⟪,⟫′_ a = [app] [cpair] (reify[] a) , _,_ a
 
 
 -- Satisfaction in a particular model, for sequents.

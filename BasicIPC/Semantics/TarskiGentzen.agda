@@ -1,6 +1,6 @@
--- Tarski-style denotational semantics with embedded Hilbert-style syntax, after Coquand-Dybjer.
+-- Tarski-style semantics with a Gentzen-style syntax representation.
 
-module BasicIPC.Semantics.TarskiCoquandDybjerMk3 where
+module BasicIPC.Semantics.TarskiGentzen where
 
 open import BasicIPC.Syntax.Common public
 
@@ -14,21 +14,20 @@ record Model : Set₁ where
     _⊨ᵅ_   : Cx Ty → Atom → Set
     mono⊨ᵅ : ∀ {P Γ Γ′} → Γ ⊆ Γ′ → Γ ⊨ᵅ P → Γ′ ⊨ᵅ P
 
-    -- Embedded Hilbert-style syntax; monotonic.
+    -- Gentzen-style syntax representation; monotonic.
     [_⊢_]   : Cx Ty → Ty → Set
-    [mono⊢] : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → [ Γ ⊢ A ] → [ Γ′ ⊢ A ]
-    [app]    : ∀ {A B Γ}   → [ Γ ⊢ A ▻ B ] → [ Γ ⊢ A ] → [ Γ ⊢ B ]
-    [ci]     : ∀ {A Γ}     → [ Γ ⊢ A ▻ A ]
-    [ck]     : ∀ {A B Γ}   → [ Γ ⊢ A ▻ B ▻ A ]
-    [cs]     : ∀ {A B C Γ} → [ Γ ⊢ (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C ]
-    [cpair]  : ∀ {A B Γ}   → [ Γ ⊢ A ▻ B ▻ A ∧ B ]
-    [cfst]   : ∀ {A B Γ}   → [ Γ ⊢ A ∧ B ▻ A ]
-    [csnd]   : ∀ {A B Γ}   → [ Γ ⊢ A ∧ B ▻ B ]
-    [tt]     : ∀ {Γ}       → [ Γ ⊢ ⊤ ]
+    mono[⊢] : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → [ Γ ⊢ A ] → [ Γ′ ⊢ A ]
+    [var]    : ∀ {A Γ}    → A ∈ Γ → [ Γ ⊢ A ]
+    [lam]    : ∀ {A B Γ}  → [ Γ , A ⊢ B ] → [ Γ ⊢ A ▻ B ]
+    [app]    : ∀ {A B Γ}  → [ Γ ⊢ A ▻ B ] → [ Γ ⊢ A ] → [ Γ ⊢ B ]
+    [pair]   : ∀ {A B Γ}  → [ Γ ⊢ A ] → [ Γ ⊢ B ] → [ Γ ⊢ A ∧ B ]
+    [fst]    : ∀ {A B Γ}  → [ Γ ⊢ A ∧ B ] → [ Γ ⊢ A ]
+    [snd]    : ∀ {A B Γ}  → [ Γ ⊢ A ∧ B ] → [ Γ ⊢ B ]
+    [tt]     : ∀ {Γ}      → [ Γ ⊢ ⊤ ]
 
-  [_⊢⋆_] : Cx Ty → Cx Ty → Set
-  [ Γ ⊢⋆ ⌀ ]     = 𝟙
-  [ Γ ⊢⋆ Π , A ] = [ Γ ⊢⋆ Π ] × [ Γ ⊢ A ]
+  [_⊢_]⋆ : Cx Ty → Cx Ty → Set
+  [ Γ ⊢ ⌀ ]⋆     = 𝟙
+  [ Γ ⊢ Π , A ]⋆ = [ Γ ⊢ Π ]⋆ × [ Γ ⊢ A ]
 
 open Model {{…}} public
 
@@ -53,7 +52,7 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   mono⊨ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊨ A → Γ′ ⊨ A
-  mono⊨ {α P}   η (t , s) = [mono⊢] η t , mono⊨ᵅ η s
+  mono⊨ {α P}   η (t , s) = mono[⊢] η t , mono⊨ᵅ η s
   mono⊨ {A ▻ B} η s       = λ η′ → s (trans⊆ η η′)
   mono⊨ {A ∧ B} η (a , b) = mono⊨ {A} η a , mono⊨ {B} η b
   mono⊨ {⊤}    η ∙       = ∙
@@ -63,6 +62,20 @@ module _ {{_ : Model}} where
   mono⊨⋆ {Π , A} η (ts , t) = mono⊨⋆ {Π} η ts , mono⊨ {A} η t
 
 
+-- Completeness with respect to the syntax representation in a particular model.
+
+module _ {{_ : Model}} where
+  reify[] : ∀ {A Γ} → Γ ⊨ A → [ Γ ⊢ A ]
+  reify[] {α P}   (t , s) = t
+  reify[] {A ▻ B} s       = let t , f = s refl⊆ in t
+  reify[] {A ∧ B} (a , b) = [pair] (reify[] {A} a) (reify[] {B} b)
+  reify[] {⊤}    ∙       = [tt]
+
+  reify[]⋆ : ∀ {Π Γ} → Γ ⊨⋆ Π → [ Γ ⊢ Π ]⋆
+  reify[]⋆ {⌀}     ∙        = ∙
+  reify[]⋆ {Π , A} (ts , t) = reify[]⋆ ts , reify[] t
+
+
 -- Additional useful equipment.
 
 module _ {{_ : Model}} where
@@ -70,10 +83,10 @@ module _ {{_ : Model}} where
   s ⟪$⟫ a = let t , f = s refl⊆ in f a
 
   ⟪ap⟫ : ∀ {A B C Γ} → Γ ⊨ A ▻ B ▻ C → Γ ⊨ A ▻ B → Γ ⊨ A → Γ ⊨ C
-  ⟪ap⟫ s s′ a = let t , f = s refl⊆
-                    u , g = s′ refl⊆
-                    _ , h = (f a) refl⊆
-                in  h (g a)
+  ⟪ap⟫ s₁ s₂ a = let t , f = s₁ refl⊆
+                     u , g = s₂ refl⊆
+                     _ , h = (f a) refl⊆
+                 in  h (g a)
 
 
 -- Satisfaction in a particular model, for sequents.
@@ -104,8 +117,7 @@ module _ {{_ : Model}} where
   lookup top     (γ , a) = a
   lookup (pop i) (γ , b) = lookup i γ
 
--- ⟦λ⟧ : ∀ {A B Γ} → [ A ▻ B ] → ⊨ Γ , A ⇒ B → ⊨ Γ ⇒ A ▻ B
--- ⟦λ⟧ t f γ = t , λ a → f (γ , a)
+  -- TODO: ⟦λ⟧
 
   _⟦$⟧_ : ∀ {A B Γ Γ₀} → Γ₀ ⊨ Γ ⇒ A ▻ B → Γ₀ ⊨ Γ ⇒ A → Γ₀ ⊨ Γ ⇒ B
   (f ⟦$⟧ g) γ = f γ ⟪$⟫ g γ

@@ -1,18 +1,33 @@
-module BasicIPC.Metatheory.ClosedHilbert-TarskiCoquandDybjer where
+module BasicIPC.Metatheory.ClosedHilbert-TarskiClosedCoquandDybjer where
 
 open import BasicIPC.Syntax.ClosedHilbert public
-open import BasicIPC.Semantics.TarskiCoquandDybjer public
+open import BasicIPC.Semantics.TarskiClosedCoquandDybjer public
 
 open SyntacticComponent (⊢_) public
 
 
 -- Completeness with respect to a particular model.
 
-reify : ∀ {{_ : Model}} {A} → ⊨ A → ⊢ A
-reify {α P}   (t , s) = t
-reify {A ▻ B} (t , f) = t
-reify {A ∧ B} (a , b) = pair (reify a) (reify b)
-reify {⊤}    ∙       = tt
+module _ {{_ : Model}} where
+  reify : ∀ {A} → ⊨ A → ⊢ A
+  reify {α P}   (t , s) = t
+  reify {A ▻ B} (t , f) = t
+  reify {A ∧ B} (a , b) = pair (reify a) (reify b)
+  reify {⊤}    ∙       = tt
+
+
+-- Additional useful equipment.
+
+module _ {{_ : Model}} where
+  ⟪const⟫ : ∀ {A B} → ⊨ A → ⊨ B ▻ A
+  ⟪const⟫ a = app ck (reify a) , const a
+
+  ⟪ap⟫′ : ∀ {A B C} → ⊨ A ▻ B ▻ C → ⊨ (A ▻ B) ▻ A ▻ C
+  ⟪ap⟫′ f = app cs (reify f) , λ g →
+              app (app cs (reify f)) (reify g) , ⟪ap⟫ f g
+
+  _⟪,⟫′_ : ∀ {A B} → ⊨ A → ⊨ B ▻ A ∧ B
+  _⟪,⟫′_ a = app cpair (reify a) , _,_ a
 
 
 -- Soundness with respect to all models, or evaluation.
@@ -20,13 +35,9 @@ reify {⊤}    ∙       = tt
 eval : ∀ {A} → ⊢ A → ∀ᴹ⊨ A
 eval (app t u) = eval t ⟪$⟫ eval u
 eval ci        = ci , id
-eval ck        = ck , λ a →
-                   app ck (reify a) , const a
-eval cs        = cs , λ f →
-                   app cs (reify f) , λ g →
-                     app (app cs (reify f)) (reify g) , ⟪ap⟫ f g
-eval cpair     = cpair , λ a →
-                   app cpair (reify a) , _,_ a
+eval ck        = ck , ⟪const⟫
+eval cs        = cs , ⟪ap⟫′
+eval cpair     = cpair , _⟪,⟫′_
 eval cfst      = cfst , π₁
 eval csnd      = csnd , π₂
 eval tt        = ∙

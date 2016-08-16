@@ -62,26 +62,21 @@ module _ {{_ : Model}} where
   ⟪const⟫ : ∀ {A B w} → w ⊩ A → w ⊩ B ▻ A
   ⟪const⟫ {A} a ξ = const (mono⊩ {A} ξ a)
 
-  ⟪ap⟫ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C
-         → ∀ {w′} → w ≤ w′ → w′ ⊩ A ▻ B
-         → ∀ {w″} → w′ ≤ w″ → w″ ⊩ A
-         → w″ ⊩ C
-  ⟪ap⟫ {A} {B} {C} f ξ g ξ′ a = let f′ = mono⊩ {A ▻ B ▻ C} (trans≤ ξ ξ′) f
-                                    g′ = mono⊩ {A ▻ B} ξ′ g
-                                in  (f′ refl≤ a) refl≤ (g′ refl≤ a)
+  ⟪ap⟫′ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C → w ⊩ (A ▻ B) ▻ A ▻ C
+  ⟪ap⟫′ {A} {B} {C} f ξ g ξ′ a = let f′ = mono⊩ {A ▻ B ▻ C} (trans≤ ξ ξ′) f
+                                     g′ = mono⊩ {A ▻ B} ξ′ g
+                                 in  (f′ refl≤ a) refl≤ (g′ refl≤ a)
 
-  ⟪ap⟫′ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C → w ⊩ A ▻ B → w ⊩ A → w ⊩ C
-  ⟪ap⟫′ {A} {B} {C} f g a = ⟪ap⟫ {A} {B} {C} f refl≤ g refl≤ a
+  ⟪ap⟫ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C → w ⊩ A ▻ B → w ⊩ A → w ⊩ C
+  ⟪ap⟫ {A} {B} {C} f g a = ⟪ap⟫′ {A} {B} {C} f refl≤ g refl≤ a
 
-  _⟪,⟫_ : ∀ {A B w} → w ⊩ A
-          → ∀ {w′} → w ≤ w′ → w′ ⊩ B
-          → w′ ⊩ A ∧ B
-  _⟪,⟫_ {A} {B} a ξ b ξ′ = let a′ = mono⊩ {A} (trans≤ ξ ξ′) a
-                               b′ = mono⊩ {B} ξ′ b
-                           in  a′ , b′
+  _⟪,⟫′_ : ∀ {A B w} → w ⊩ A → w ⊩ B ▻ A ∧ B
+  _⟪,⟫′_ {A} {B} a ξ b ξ′ = let a′ = mono⊩ {A} (trans≤ ξ ξ′) a
+                                b′ = mono⊩ {B} ξ′ b
+                            in  a′ , b′
 
-  _⟪,⟫′_ : ∀ {A B w} → w ⊩ A → w ⊩ B → w ⊩ A ∧ B
-  _⟪,⟫′_ {A} {B} a b = _⟪,⟫_ {A} {B} a refl≤ b
+  _⟪,⟫_ : ∀ {A B w} → w ⊩ A → w ⊩ B → w ⊩ A ∧ B
+  _⟪,⟫_ {A} {B} a b = _⟪,⟫′_ {A} {B} a refl≤ b
 
   ⟪π₁⟫ : ∀ {A B w} → w ⊩ A ∧ B → w ⊩ A
   ⟪π₁⟫ s = π₁ (s refl≤)
@@ -130,10 +125,10 @@ module _ {{_ : Model}} where
   ⟦const⟧ {A} {B} a γ = ⟪const⟫ {A} {B} (a γ)
 
   ⟦ap⟧ : ∀ {A B C Γ w} → w ⊩ Γ ⇒ A ▻ B ▻ C → w ⊩ Γ ⇒ A ▻ B → w ⊩ Γ ⇒ A → w ⊩ Γ ⇒ C
-  ⟦ap⟧ {A} {B} {C} f g a γ = ⟪ap⟫′ {A} {B} {C} (f γ) (g γ) (a γ)
+  ⟦ap⟧ {A} {B} {C} f g a γ = ⟪ap⟫ {A} {B} {C} (f γ) (g γ) (a γ)
 
   _⟦,⟧_ : ∀ {A B Γ w} → w ⊩ Γ ⇒ A → w ⊩ Γ ⇒ B → w ⊩ Γ ⇒ A ∧ B
-  _⟦,⟧_ {A} {B} a b γ = _⟪,⟫′_ {A} {B} (a γ) (b γ)
+  _⟦,⟧_ {A} {B} a b γ = _⟪,⟫_ {A} {B} (a γ) (b γ)
 
   ⟦π₁⟧ : ∀ {A B Γ w} → w ⊩ Γ ⇒ A ∧ B → w ⊩ Γ ⇒ A
   ⟦π₁⟧ {A} {B} s γ = ⟪π₁⟫ {A} {B} (s γ)

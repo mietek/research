@@ -1,16 +1,7 @@
-module BasicIPC.Metatheory.ClosedHilbert-TarskiCoquandDybjerMk1 where
+module BasicIPC.Metatheory.ClosedHilbert-TarskiClosedHilbert where
 
 open import BasicIPC.Syntax.ClosedHilbert public
-open import BasicIPC.Semantics.TarskiCoquandDybjerMk1 public
-
-
--- Completeness with respect to a particular model.
-
-reify : ∀ {{_ : Model}} {A} → ⊨ A → [ A ]
-reify {α P}   (t , s) = t
-reify {A ▻ B} (t , f) = t
-reify {A ∧ B} (a , b) = [app] ([app] [cpair] (reify a)) (reify b)
-reify {⊤}    ∙       = [tt]
+open import BasicIPC.Semantics.TarskiClosedHilbert public
 
 
 -- Soundness with respect to all models, or evaluation.
@@ -18,13 +9,9 @@ reify {⊤}    ∙       = [tt]
 eval : ∀ {A} → ⊢ A → ∀ᴹ⊨ A
 eval (app t u) = eval t ⟪$⟫ eval u
 eval ci        = [ci] , id
-eval ck        = [ck] , λ a →
-                   [app] [ck] (reify a) , const a
-eval cs        = [cs] , λ f →
-                   [app] [cs] (reify f) , λ g →
-                     [app] ([app] [cs] (reify f)) (reify g) , ⟪ap⟫ f g
-eval cpair     = [cpair] , λ a →
-                   [app] [cpair] (reify a) , _,_ a
+eval ck        = [ck] , ⟪const⟫
+eval cs        = [cs] , ⟪ap⟫′
+eval cpair     = [cpair] , _⟪,⟫′_
 eval cfst      = [cfst] , π₁
 eval csnd      = [csnd] , π₂
 eval tt        = ∙
@@ -72,7 +59,7 @@ instance
 -- Completeness with respect to all models, or quotation.
 
 quot : ∀ {A} → ∀ᴹ⊨ A → ⊢ A
-quot t = reify t
+quot t = reify[] t
 
 
 -- Normalisation by evaluation.
@@ -84,4 +71,4 @@ norm = quot ∘ eval
 -- Correctness of normalisation with respect to conversion.
 
 check′ : ∀ {{_ : Model}} {A} {t t′ : ⊢ A} → t ⋙ t′ → norm t ≡ norm t′
-check′ p = cong reify (check p)
+check′ p = cong reify[] (check p)

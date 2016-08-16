@@ -1,30 +1,31 @@
-module BasicIPC.Metatheory.Gentzen-TarskiCoquandDybjer where
+module BasicIPC.Metatheory.Gentzen-TarskiGentzen where
 
 open import BasicIPC.Syntax.Gentzen public
-open import BasicIPC.Semantics.TarskiCoquandDybjer public
-
-open SyntacticComponent (_⊢_) (mono⊢) public
+open import BasicIPC.Semantics.TarskiGentzen public
 
 
--- Completeness with respect to a particular model.
+-- Soundness with respect to the syntax representation in a particular model.
 
 module _ {{_ : Model}} where
-  reify : ∀ {A Γ} → Γ ⊨ A → Γ ⊢ A
-  reify {α P}   (t , s) = t
-  reify {A ▻ B} s       = let t , f = s refl⊆ in t
-  reify {A ∧ B} (a , b) = pair (reify {A} a) (reify {B} b)
-  reify {⊤}    ∙       = tt
+  reflect[] : ∀ {A Γ} → Γ ⊢ A → [ Γ ⊢ A ]
+  reflect[] (var i)    = [var] i
+  reflect[] (lam t)    = [lam] (reflect[] t)
+  reflect[] (app t u)  = [app] (reflect[] t) (reflect[] u)
+  reflect[] (pair t u) = [pair] (reflect[] t) (reflect[] u)
+  reflect[] (fst t)    = [fst] (reflect[] t)
+  reflect[] (snd t)    = [snd] (reflect[] t)
+  reflect[] tt         = [tt]
 
-  reify⋆ : ∀ {Π Γ} → Γ ⊨⋆ Π → Γ ⊢⋆ Π
-  reify⋆ {⌀}     ∙        = ∙
-  reify⋆ {Π , A} (ts , t) = reify⋆ ts , reify t
+  [multicut] : ∀ {Π A Γ} → [ Γ ⊢ Π ]⋆ → [ Π ⊢ A ] → [ Γ ⊢ A ]
+  [multicut] {⌀}     ∙        u = mono[⊢] bot⊆ u
+  [multicut] {Π , B} (ts , t) u = [app] ([multicut] ts ([lam] u)) t
 
 
 -- Soundness with respect to all models, or evaluation.
 
 eval : ∀ {A Γ} → Γ ⊢ A → ∀ᴹ⊨ Γ ⇒ A
 eval (var i)    γ = lookup i γ
-eval (lam t)    γ = λ η → multicut (reify⋆ (mono⊨⋆ η γ)) (lam t) , λ a →
+eval (lam t)    γ = λ η → mono[⊢] η ([multicut] (reify[]⋆ γ) (reflect[] (lam t))) , λ a →
                       eval t (mono⊨⋆ η γ , a)
 eval (app t u)  γ = eval t γ ⟪$⟫ eval u γ
 eval (pair t u) γ = eval t γ , eval u γ
@@ -43,6 +44,15 @@ instance
   canon = record
     { _⊨ᵅ_   = λ Γ P → Γ ⊢ α P
     ; mono⊨ᵅ = mono⊢
+    ; [_⊢_]   = _⊢_
+    ; mono[⊢] = mono⊢
+    ; [var]    = var
+    ; [lam]    = lam
+    ; [app]    = app
+    ; [pair]   = pair
+    ; [fst]    = fst
+    ; [snd]    = snd
+    ; [tt]     = tt
     }
 
 
@@ -50,7 +60,8 @@ instance
 
 reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 reflect {α P}   t = t , t
-reflect {A ▻ B} t = λ η → mono⊢ η t , λ a → reflect {B} (app (mono⊢ η t) (reify {A} a))
+reflect {A ▻ B} t = λ η → mono⊢ η t , λ a →
+                      reflect {B} (app (mono⊢ η t) (reify[] {A} a))
 reflect {A ∧ B} t = reflect {A} (fst t) , reflect {B} (snd t)
 reflect {⊤}    t = ∙
 
@@ -64,14 +75,13 @@ reflect⋆ {Π , A} (ts , t) = reflect⋆ ts , reflect t
 refl⊨⋆ : ∀ {Γ} → Γ ⊨⋆ Γ
 refl⊨⋆ = reflect⋆ refl⊢⋆
 
-trans⊨⋆ : ∀ {Γ Γ′ Γ″} → Γ ⊨⋆ Γ′ → Γ′ ⊨⋆ Γ″ → Γ ⊨⋆ Γ″
-trans⊨⋆ ts us = reflect⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
+-- TODO: Transitivity.
 
 
 -- Completeness with respect to all models, or quotation.
 
 quot : ∀ {A Γ} → ∀ᴹ⊨ Γ ⇒ A → Γ ⊢ A
-quot t = reify (t refl⊨⋆)
+quot t = reify[] (t refl⊨⋆)
 
 
 -- Normalisation by evaluation.

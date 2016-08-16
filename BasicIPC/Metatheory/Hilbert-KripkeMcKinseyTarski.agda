@@ -7,30 +7,15 @@ open import BasicIPC.Semantics.KripkeMcKinseyTarski public
 -- Soundness with respect to all models, or evaluation.
 
 eval : ∀ {A Γ} → Γ ⊢ A → ∀ᴹʷ⊩ Γ ⇒ A
-eval (var i)          γ = lookup i γ
-eval (app t u)        γ = (eval t γ refl≤) (eval u γ)
-eval ci               γ = λ _ → id
-eval (ck {A})         γ = λ _ a ξ b → mono⊩ {A} ξ a
-eval (cs {A} {B} {C}) γ = λ _ f ξ g ξ′ a →
-                          let f′ = mono⊩ {A ▻ B ▻ C} (trans≤ ξ ξ′) f
-                              g′ = mono⊩ {A ▻ B} ξ′ g
-                          in  (f′ refl≤ a refl≤) (g′ refl≤ a)
-eval (cpair {A})      γ = λ _ a ξ b → mono⊩ {A} ξ a , b
-eval cfst             γ = λ _ → π₁
-eval csnd             γ = λ _ → π₂
-eval tt               γ = ∙
-
--- Alternative version.
-eval′ : ∀ {A Γ} → Γ ⊢ A → ∀ᴹʷ⊩ Γ ⇒ A
-eval′ (var i)           γ = lookup i γ
-eval′ (app {A} {B} t u) γ = _⟪$⟫_ {A} {B} (eval′ t γ) (eval′ u γ)
-eval′ ci                γ = const id
-eval′ (ck {A} {B})      γ = const (⟪const⟫ {A} {B})
-eval′ (cs {A} {B} {C})  γ = const (⟪ap⟫ {A} {B} {C})
-eval′ (cpair {A} {B})   γ = const (_⟪,⟫_ {A} {B})
-eval′ cfst              γ = const π₁
-eval′ csnd              γ = const π₂
-eval′ tt                γ = ∙
+eval (var i)           γ = lookup i γ
+eval (app {A} {B} t u) γ = _⟪$⟫_ {A} {B} (eval t γ) (eval u γ)
+eval ci                γ = const id
+eval (ck {A} {B})      γ = const (⟪const⟫ {A} {B})
+eval (cs {A} {B} {C})  γ = const (⟪ap⟫′ {A} {B} {C})
+eval (cpair {A} {B})   γ = const (_⟪,⟫′_ {A} {B})
+eval cfst              γ = const π₁
+eval csnd              γ = const π₂
+eval tt                γ = ∙
 
 
 -- TODO: Correctness of evaluation with respect to conversion.

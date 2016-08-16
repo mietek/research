@@ -1,16 +1,33 @@
-module BasicIPC.Metatheory.Hilbert-TarskiCoquandDybjerMk1 where
+module BasicIPC.Metatheory.Hilbert-TarskiClosedCoquandDybjer where
 
 open import BasicIPC.Syntax.Hilbert public
-open import BasicIPC.Semantics.TarskiCoquandDybjerMk1 public
+open import BasicIPC.Semantics.TarskiClosedCoquandDybjer public
+
+open SyntacticComponent (⌀ ⊢_) public
 
 
 -- Completeness with respect to a particular model.
 
-reify : ∀ {{_ : Model}} {A} → ⊨ A → [ A ]
-reify {α P}   (t , s) = t
-reify {A ▻ B} (t , f) = t
-reify {A ∧ B} (a , b) = [app] ([app] [cpair] (reify {A} a)) (reify {B} b)
-reify {⊤}    ∙       = [tt]
+module _ {{_ : Model}} where
+  reify : ∀ {A} → ⊨ A → ⌀ ⊢ A
+  reify {α P}   (t , s) = t
+  reify {A ▻ B} (t , f) = t
+  reify {A ∧ B} (a , b) = pair (reify {A} a) (reify {B} b)
+  reify {⊤}    ∙       = tt
+
+
+-- Additional useful equipment.
+
+module _ {{_ : Model}} where
+  ⟪const⟫ : ∀ {A B} → ⊨ A → ⊨ B ▻ A
+  ⟪const⟫ a = app ck (reify a) , const a
+
+  ⟪ap⟫′ : ∀ {A B C} → ⊨ A ▻ B ▻ C → ⊨ (A ▻ B) ▻ A ▻ C
+  ⟪ap⟫′ f = app cs (reify f) , λ g →
+              app (app cs (reify f)) (reify g) , ⟪ap⟫ f g
+
+  _⟪,⟫′_ : ∀ {A B} → ⊨ A → ⊨ B ▻ A ∧ B
+  _⟪,⟫′_ a = app cpair (reify a) , _,_ a
 
 
 -- Soundness with respect to all models, or evaluation.
@@ -18,16 +35,12 @@ reify {⊤}    ∙       = [tt]
 eval : ∀ {A Γ} → Γ ⊢ A → ∀ᴹ⊨ Γ ⇒ A
 eval (var i)   γ = lookup i γ
 eval (app t u) γ = eval t γ ⟪$⟫ eval u γ
-eval ci        γ = [ci] , id
-eval ck        γ = [ck] , λ a →
-                     [app] [ck] (reify a) , const a
-eval cs        γ = [cs] , λ f →
-                     [app] [cs] (reify f) , λ g →
-                       [app] ([app] [cs] (reify f)) (reify g) , ⟪ap⟫ f g
-eval cpair     γ = [cpair] , λ a →
-                     [app] [cpair] (reify a) , _,_ a
-eval cfst      γ = [cfst] , π₁
-eval csnd      γ = [csnd] , π₂
+eval ci        γ = ci , id
+eval ck        γ = ck , ⟪const⟫
+eval cs        γ = cs , ⟪ap⟫′
+eval cpair     γ = cpair , _⟪,⟫′_
+eval cfst      γ = cfst , π₁
+eval csnd      γ = csnd , π₂
 eval tt        γ = ∙
 
 
@@ -57,29 +70,18 @@ check eta⊤⋙                  = refl
 instance
   canon : Model
   canon = record
-    { ⊨ᵅ_    = λ P → ⌀ ⊢ α P
-    ; [_]     = ⌀ ⊢_
-    ; [app]   = app
-    ; [ci]    = ci
-    ; [ck]    = ck
-    ; [cs]    = cs
-    ; [cpair] = cpair
-    ; [cfst]  = cfst
-    ; [csnd]  = csnd
-    ; [tt]    = tt
+    { ⊨ᵅ_ = λ P → ⌀ ⊢ α P
     }
 
 
--- Completeness with respect to all models, or quotation.
+-- Completeness with respect to all models, or quotation, for closed terms only.
 
--- TODO: Can we do better here?
 quot₀ : ∀ {A} → ∀ᴹ⊨ ⌀ ⇒ A → ⌀ ⊢ A
 quot₀ t = reify (t ∙)
 
 
--- Normalisation by evaluation.
+-- Normalisation by evaluation, for closed terms only.
 
--- TODO: Can we do better here?
 norm₀ : ∀ {A} → ⌀ ⊢ A → ⌀ ⊢ A
 norm₀ = quot₀ ∘ eval
 

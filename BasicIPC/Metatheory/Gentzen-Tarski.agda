@@ -15,16 +15,6 @@ eval (fst t)    γ = π₁ (eval t γ)
 eval (snd t)    γ = π₂ (eval t γ)
 eval tt         γ = ∙
 
--- Alternative version.
-eval′ : ∀ {A Γ} → Γ ⊢ A → ∀ᴹ⊨ Γ ⇒ A
-eval′ (var i)            γ = lookup i γ
-eval′ (lam {A} {B} t)    γ = ⟦λ⟧ {A} {B} (eval′ t) γ
-eval′ (app {A} {B} t u)  γ = _⟦$⟧_ {A} {B} (eval′ t) (eval′ u) γ
-eval′ (pair {A} {B} t u) γ = _⟦,⟧_ {A} {B} (eval′ t) (eval′ u) γ
-eval′ (fst {A} {B} t)    γ = ⟦π₁⟧ {A} {B} (eval′ t) γ
-eval′ (snd {A} {B} t)    γ = ⟦π₂⟧ {A} {B} (eval′ t) γ
-eval′ tt                 γ = ∙
-
 
 -- Correctness of evaluation with respect to conversion.
 
