@@ -52,6 +52,7 @@ import New.BasicIPC.Semantics.Tarski.Basic
 
 -- Tarski-style denotational semantics with a syntactic component, after Coquand-Dybjer.
 import New.BasicIPC.Semantics.Tarski.CoquandDybjer
+import New.BasicIPC.Semantics.Tarski.CoquandDybjerHilbert
 
 -- Kripke-style possible worlds semantics, based on the Gödel translation.
 import New.BasicIPC.Semantics.Kripke.Godel
@@ -62,9 +63,11 @@ import New.BasicIPC.Semantics.Kripke.McKinseyTarski
 
 import New.BasicIPC.Metatheory.Closed.HilbertTree.Tarski.Basic
 import New.BasicIPC.Metatheory.Closed.HilbertTree.Tarski.CoquandDybjer
+import New.BasicIPC.Metatheory.Closed.HilbertTree.Tarski.CoquandDybjerHilbert
 
 import New.BasicIPC.Metatheory.Open.HilbertTree.Tarski.Basic
 import New.BasicIPC.Metatheory.Open.HilbertTree.Tarski.CoquandDybjer
+import New.BasicIPC.Metatheory.Open.HilbertTree.Tarski.CoquandDybjerHilbert
 import New.BasicIPC.Metatheory.Open.HilbertTree.Kripke.Godel
 import New.BasicIPC.Metatheory.Open.HilbertTree.Kripke.McKinseyTarski
 
