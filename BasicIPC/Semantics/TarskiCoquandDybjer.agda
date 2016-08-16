@@ -1,4 +1,4 @@
--- Tarski-style denotational semantics with a syntactic component, after Coquand-Dybjer.
+-- Tarski-style denotational semantics with a closed syntactic component, after Coquand-Dybjer.
 
 module BasicIPC.Semantics.TarskiCoquandDybjer where
 
@@ -21,7 +21,7 @@ open Model {{…}} public
 module SyntacticComponent ([_] : Ty → Set) where
 
 
-  -- Satisfaction in a particular model, for closed syntax.
+  -- Satisfaction in a particular model.
 
   module _ {{_ : Model}} where
     infix 3 ⊨_
@@ -37,13 +37,13 @@ module SyntacticComponent ([_] : Ty → Set) where
     ⊨⋆ Γ , A = ⊨⋆ Γ × ⊨ A
 
 
-  -- Satisfaction in all models, for closed syntax.
+  -- Satisfaction in all models.
 
   ∀ᴹ⊨_ : Ty → Set₁
   ∀ᴹ⊨ A = ∀ {{_ : Model}} → ⊨ A
 
 
-  -- Additional useful equipment, for closed syntax.
+  -- Additional useful equipment.
 
   module _ {{_ : Model}} where
     _⟪$⟫_ : ∀ {A B} → ⊨ A ▻ B → ⊨ A → ⊨ B

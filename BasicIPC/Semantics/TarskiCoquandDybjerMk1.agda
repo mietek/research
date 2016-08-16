@@ -1,4 +1,4 @@
--- Tarski-style denotational semantics with embedded Hilbert-style syntax, after Coquand-Dybjer.
+-- Tarski-style denotational semantics with embedded Hilbert-style closed syntax, after Coquand-Dybjer.
 
 module BasicIPC.Semantics.TarskiCoquandDybjerMk1 where
 
@@ -13,7 +13,7 @@ record Model : Set₁ where
     -- Satisfaction for atomic propositions.
     ⊨ᵅ_ : Atom → Set
 
-    -- Hilbert-style syntax.
+    -- Embedded Hilbert-style closed syntax.
     [_]     : Ty → Set
     [app]   : ∀ {A B}   → [ A ▻ B ] → [ A ] → [ B ]
     [ci]    : ∀ {A}     → [ A ▻ A ]
@@ -27,7 +27,7 @@ record Model : Set₁ where
 open Model {{…}} public
 
 
--- Satisfaction in a particular model, for closed syntax.
+-- Satisfaction in a particular model.
 
 module _ {{_ : Model}} where
   infix 3 ⊨_
@@ -43,13 +43,13 @@ module _ {{_ : Model}} where
   ⊨⋆ Γ , A = ⊨⋆ Γ × ⊨ A
 
 
--- Satisfaction in all models, for closed syntax.
+-- Satisfaction in all models.
 
 ∀ᴹ⊨_ : Ty → Set₁
 ∀ᴹ⊨ A = ∀ {{_ : Model}} → ⊨ A
 
 
--- Additional useful equipment, for closed syntax.
+-- Additional useful equipment.
 
 module _ {{_ : Model}} where
   _⟪$⟫_ : ∀ {A B} → ⊨ A ▻ B → ⊨ A → ⊨ B
