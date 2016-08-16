@@ -1,10 +1,12 @@
+-- Hilbert-style axiomatic formalisation of open syntax, with separate modal context.
+
 module New.BasicIS4.Syntax.OpenDyadicHilbert where
 
 open import Common.ContextPair public
 open import New.BasicIS4.Syntax.Common public
 
 
--- Derivations, as Hilbert-style combinator trees.
+-- Derivations.
 
 infix 3 _⁏_⊢_
 data _⁏_⊢_ (Γ Δ : Cx Ty) : Ty → Set where

@@ -1,9 +1,11 @@
+-- Kripke-style possible worlds semantics, after Ono.
+
 module New.BasicIS4.Semantics.KripkeOno where
 
 open import New.BasicIS4.Syntax.Common public
 
 
--- Intuitionistic modal Kripke models, following Ono, after Marti and Studer.
+-- Intuitionistic modal Kripke models, with Ono frame conditions.
 
 record Model : Set₁ where
   infix 3 _⊩ᵅ_
@@ -25,7 +27,7 @@ record Model : Set₁ where
     mono⊩ᵅ : ∀ {P w w′} → w ≤ w′ → w ⊩ᵅ P → w′ ⊩ᵅ P
 
 
-    -- Persistence condition, after Iemhoff; included by Ono.
+    -- Persistence condition.
     --
     --   w′      v′  →           v′
     --   ◌───R───●   →           ●

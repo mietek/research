@@ -1,3 +1,5 @@
+-- Non-canonical model equipment for Kripke-style semantics.
+
 module New.BasicIS4.Semantics.KripkeNonCanonicalModelEquipment where
 
 open import New.BasicIS4.Syntax.Common public
@@ -12,13 +14,13 @@ module SyntacticComponent (_⊢_ : Cx Ty → Ty → Set)
                           (lift : ∀ {A Γ} → Γ ⊢ A → (□⋆ Γ) ⊢ (□ A)) where
 
 
-  -- Worlds for the canonical model.
+  -- Worlds.
 
   Worldᶜ : Set
   Worldᶜ = Cx Ty
 
 
-  -- The canonical intuitionistic accessibility.
+  -- Intuitionistic accessibility.
 
   infix 3 _≤ᶜ_
   _≤ᶜ_ : Worldᶜ → Worldᶜ → Set

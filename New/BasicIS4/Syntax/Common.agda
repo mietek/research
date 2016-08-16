@@ -1,9 +1,11 @@
+-- Common syntax.
+
 module New.BasicIS4.Syntax.Common where
 
 open import Common.Context public
 
 
--- Propositions of intuitionistic modal logic S4, without ∨, ⊥, or ◇.
+-- Types, or propositions.
 
 infixl 7 _∧_
 infixr 6 □_
@@ -41,7 +43,7 @@ inv∧ᵣ : ∀ {A A′ B B′} → A ∧ B ≡ A′ ∧ B′ → B ≡ B′
 inv∧ᵣ refl = refl
 
 
--- Decidable equality.
+-- Decidable equality on types.
 
 _≟ᵗʸ_ : (A A′ : Ty) → Dec (A ≡ A′)
 (α P)   ≟ᵗʸ (α P′)    with P ≟ᵅ P′
@@ -83,7 +85,7 @@ _≟ᵗʸ_ : (A A′ : Ty) → Dec (A ≡ A′)
 open ContextEquality (_≟ᵗʸ_) public
 
 
--- Additional useful propositions.
+-- Additional useful types.
 
 infixr 5 _▻⋯▻_
 _▻⋯▻_ : Cx Ty → Ty → Ty

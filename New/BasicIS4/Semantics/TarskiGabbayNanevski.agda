@@ -1,3 +1,5 @@
+-- Tarski-style denotational semantics with a syntactic component, after Gabbay-Nanevski.
+
 module New.BasicIS4.Semantics.TarskiGabbayNanevski where
 
 open import New.BasicIS4.Syntax.Common public

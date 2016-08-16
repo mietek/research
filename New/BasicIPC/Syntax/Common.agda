@@ -1,4 +1,4 @@
--- Syntax of intuitionistic propositional calculus, without ∨ or ⊥.
+-- Common syntax.
 
 module New.BasicIPC.Syntax.Common where
 

@@ -1,4 +1,4 @@
--- Tree-shaped Gentzen-style natural deduction formalisation of open syntax.
+-- Gentzen-style natural deduction formalisation of open syntax.
 
 module New.BasicIPC.Syntax.OpenGentzen where
 

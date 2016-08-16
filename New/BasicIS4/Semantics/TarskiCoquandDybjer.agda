@@ -1,3 +1,5 @@
+-- Tarski-style denotational semantics with a syntactic component, after Coquand-Dybjer.
+
 module New.BasicIS4.Semantics.TarskiCoquandDybjer where
 
 open import New.BasicIS4.Syntax.Common public

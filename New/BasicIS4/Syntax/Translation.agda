@@ -1,3 +1,5 @@
+-- Translation between different formalisations of syntax.
+
 module New.BasicIS4.Syntax.Translation where
 
 open import New.BasicIS4.Syntax.Common public

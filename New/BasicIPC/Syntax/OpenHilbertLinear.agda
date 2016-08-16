@@ -1,4 +1,4 @@
--- List-shaped Hilbert-style axiomatic formalisation of open syntax.
+-- Linear Hilbert-style axiomatic formalisation of open syntax.
 
 module New.BasicIPC.Syntax.OpenHilbertLinear where
 

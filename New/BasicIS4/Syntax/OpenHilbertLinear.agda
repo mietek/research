@@ -1,9 +1,11 @@
+-- Linear Hilbert-style axiomatic formalisation of open syntax.
+
 module New.BasicIS4.Syntax.OpenHilbertLinear where
 
 open import New.BasicIS4.Syntax.Common public
 
 
--- Derivations, as Hilbert-style lists of combinators, with context.
+-- Derivations.
 
 infix 3 _⊢×_
 data _⊢×_ (Γ : Cx Ty) : Cx Ty → Set where

@@ -1,4 +1,4 @@
--- Spinal normal forms of tree-shaped Gentzen-style derivations.
+-- Spinal normal forms of Gentzen-style derivations.
 
 module New.BasicIPC.Syntax.OpenGentzenSpinalNormalForm where
 

@@ -1,9 +1,11 @@
+-- Hilbert-style axiomatic formalisation of closed syntax.
+
 module New.BasicIS4.Syntax.ClosedHilbert where
 
 open import New.BasicIS4.Syntax.Common public
 
 
--- Derivations, as Hilbert-style trees of combinators.
+-- Derivations.
 
 infix 3 ⊢_
 data ⊢_ : Ty → Set where

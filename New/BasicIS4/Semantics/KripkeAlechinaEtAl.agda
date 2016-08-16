@@ -1,9 +1,11 @@
+-- Kripke-style possible worlds semantics, after Alechina-Mendler-de Paiva-Ritter.
+
 module New.BasicIS4.Semantics.KripkeAlechinaEtAl where
 
 open import New.BasicIS4.Syntax.Common public
 
 
--- Intuitionistic modal Kripke models, following Alechina, Mendler, de Paiva, and Ritter.
+-- Intuitionistic modal Kripke models, with Alechina et al. frame conditions.
 
 record Model : Set₁ where
   infix 3 _⊩ᵅ_
@@ -25,7 +27,7 @@ record Model : Set₁ where
     mono⊩ᵅ : ∀ {P w w′} → w ≤ w′ → w ⊩ᵅ P → w′ ⊩ᵅ P
 
 
-    -- Minor brilliance condition, included by Ewald et al. and Alechina et al.
+    -- Minor brilliance condition.
     --
     --           v′  →   w′      v′
     --           ●   →   ◌───R───●

@@ -1,9 +1,11 @@
+-- Kripke-style possible worlds semantics, after Božić-Došen.
+
 module New.BasicIS4.Semantics.KripkeBozicDosen where
 
 open import New.BasicIS4.Syntax.Common public
 
 
--- Intuitionistic modal Kripke models, following Božić and Došen, after Simpson.
+-- Intuitionistic modal Kripke models, with Božić-Došen frame conditions.
 
 record Model : Set₁ where
   infix 3 _⊩ᵅ_
@@ -25,7 +27,7 @@ record Model : Set₁ where
     mono⊩ᵅ : ∀ {P w w′} → w ≤ w′ → w ⊩ᵅ P → w′ ⊩ᵅ P
 
 
-    -- Minor persistence condition, included by Božić and Došen.
+    -- Minor persistence condition.
     --
     --   w′      v′  →           v′
     --   ◌───R───●   →           ●

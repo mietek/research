@@ -1,7 +1,7 @@
-module New.BasicIS4.Metatheory.OpenHilbert-KripkeEwaldEtAl where
+module New.BasicIS4.Metatheory.OpenHilbert-KripkeEwald where
 
 open import New.BasicIS4.Syntax.OpenHilbert public
-open import New.BasicIS4.Semantics.KripkeEwaldEtAl public
+open import New.BasicIS4.Semantics.KripkeEwald public
 
 
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A

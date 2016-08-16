@@ -1,4 +1,4 @@
--- Normal forms of tree-shaped Gentzen-style derivations.
+-- Normal forms of Gentzen-style derivations.
 
 module New.BasicIPC.Syntax.OpenGentzenNormalForm where
 

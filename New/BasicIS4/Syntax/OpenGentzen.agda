@@ -1,9 +1,11 @@
+-- Gentzen-style natural deduction formalisation of open syntax.
+
 module New.BasicIS4.Syntax.OpenGentzen where
 
 open import New.BasicIS4.Syntax.Common public
 
 
--- Derivations, as Gentzen-style natural deduction trees, following Bierman and de Paiva.
+-- Derivations, following Bierman-de Paiva.
 
 mutual
   infix 3 _⊢_

@@ -1,10 +1,12 @@
+-- Linear Hilbert-style axiomatic formalisation of open syntax with separate modal context.
+
 module New.BasicIS4.Syntax.OpenDyadicHilbertLinear where
 
 open import Common.ContextPair public
 open import New.BasicIS4.Syntax.Common public
 
 
--- Derivations, as Hilbert-style lists of combinators, with dual context.
+-- Derivations.
 
 infix 3 _⁏_⊢×_
 data _⁏_⊢×_ (Γ Δ : Cx Ty) : Cx Ty → Set where

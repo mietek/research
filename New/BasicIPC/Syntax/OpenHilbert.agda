@@ -1,4 +1,4 @@
--- Tree-shaped Hilbert-style axiomatic formalisation of open syntax.
+-- Hilbert-style axiomatic formalisation of open syntax.
 
 module New.BasicIPC.Syntax.OpenHilbert where
 

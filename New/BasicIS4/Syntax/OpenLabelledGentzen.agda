@@ -1,3 +1,5 @@
+-- Gentzen-style axiomatic formalisation of open syntax, with separate relational context.
+
 module New.BasicIS4.Syntax.OpenLabelledGentzen where
 
 open import New.BasicIS4.Syntax.Common public
@@ -28,7 +30,7 @@ _◎⋆_ : Cx Ty → La → Cx TyLa
 (Π , A) ◎⋆ x = (Π ◎⋆ x) , (A ◎ x)
 
 
--- Derivations, as labelled Gentzen-style natural deduction trees, following Basin, Matthews, and Viganò.
+-- Derivations, following Basin-Matthews-Viganò.
 
 infix 3 _⊢_↝_
 data _⊢_↝_ (Λ : Cx LaLa) : La → La → Set where

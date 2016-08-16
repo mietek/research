@@ -1,7 +1,7 @@
-module New.BasicIS4.Metatheory.OpenGentzen-KripkeEwaldEtAl where
+module New.BasicIS4.Metatheory.OpenGentzen-KripkeEwald where
 
 open import New.BasicIS4.Syntax.OpenGentzen public
-open import New.BasicIS4.Semantics.KripkeEwaldEtAl public
+open import New.BasicIS4.Semantics.KripkeEwald public
 
 
 mutual

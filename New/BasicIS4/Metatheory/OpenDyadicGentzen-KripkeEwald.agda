@@ -1,7 +1,7 @@
-module New.BasicIS4.Metatheory.OpenDyadicGentzen-KripkeEwaldEtAl where
+module New.BasicIS4.Metatheory.OpenDyadicGentzen-KripkeEwald where
 
 open import New.BasicIS4.Syntax.OpenDyadicGentzen public
-open import New.BasicIS4.Semantics.KripkeEwaldEtAl public
+open import New.BasicIS4.Semantics.KripkeEwald public
 
 
 eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊩ A

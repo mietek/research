@@ -1,3 +1,5 @@
+-- Translated equipment for Hilbert-style closed syntax.
+
 module New.BasicIS4.Syntax.TranslatedClosedHilbertEquipment where
 
 open import New.BasicIS4.Syntax.ClosedHilbert public

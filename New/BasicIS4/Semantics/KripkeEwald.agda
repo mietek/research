@@ -1,9 +1,11 @@
-module New.BasicIS4.Semantics.KripkeEwaldEtAl where
+-- Kripke-style possible worlds semantics, after Ewald, Servi, Plotkin-Stirling.
+
+module New.BasicIS4.Semantics.KripkeEwald where
 
 open import New.BasicIS4.Syntax.Common public
 
 
--- Intuitionistic modal Kripke models, following Ewald, Servi, Plotkin, and Stirling, after Simpson.
+-- Intuitionistic modal Kripke models, with Ewald frame conditions.
 
 record Model : Set₁ where
   infix 3 _⊩ᵅ_
@@ -25,7 +27,7 @@ record Model : Set₁ where
     mono⊩ᵅ : ∀ {P w w′} → w ≤ w′ → w ⊩ᵅ P → w′ ⊩ᵅ P
 
 
-    -- Infimum-to-supremum condition, included by Ewald et al.
+    -- Infimum-to-supremum condition.
     --
     --   w′          →   w′      v′
     --   ●           →   ●───R───◌
@@ -38,7 +40,7 @@ record Model : Set₁ where
     ≤⊓R→≤⊔R : ∀ {v w′} → (_≤_ ⊓ _R_) w′ v → (_≤_ ⊔ _R_) v w′
 
 
-    -- Minor brilliance condition, included by Ewald et al. and Alechina et al.
+    -- Minor brilliance condition.
     --
     --           v′  →   w′      v′
     --           ●   →   ◌───R───●
