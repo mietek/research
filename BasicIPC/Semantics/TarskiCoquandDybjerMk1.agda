@@ -56,7 +56,7 @@ module _ {{_ : Model}} where
   (t , f) ⟪$⟫ a = f a
 
   ⟪ap⟫ : ∀ {A B C} → ⊨ A ▻ B ▻ C → ⊨ A ▻ B → ⊨ A → ⊨ C
-  ⟪ap⟫ (t , f) (u , g) a = let (_ , h) = f a in  h (g a)
+  ⟪ap⟫ (t , f) (u , g) a = let (_ , h) = f a in h (g a)
 
 
 -- Satisfaction in a particular model, for sequents.
