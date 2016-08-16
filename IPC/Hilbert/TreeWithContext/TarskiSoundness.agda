@@ -30,29 +30,29 @@ module NaturalSoundness where
 
   -- Correctness of evaluation with respect to conversion.
 
-  check : ∀ {{_ : Model}} {A Γ} {t t′ : Γ ⊢ A} → t ⇒ t′ → eval t ≡ eval t′
-  check refl⇒                         = refl
-  check (trans⇒ p q)                  = trans (check p) (check q)
-  check (sym⇒ p)                      = sym (check p)
-  check (congapp⇒ {A} {B} p q)        = cong₂ (_$ˢᶜ_ {A} {B}) (check p) (check q)
-  check (congi⇒ p)                    = cong id (check p)
-  check (congk⇒ p q)                  = cong₂ const (check p) (check q)
-  check (congs⇒ {A} {B} {C} p q r)    = cong₃ (apˢᶜ {A} {B} {C}) (check p) (check q) (check r)
-  check (congpair⇒ {A} {B} p q)       = cong₂ (_,ˢᶜ_ {A} {B}) (check p) (check q)
-  check (congfst⇒ {A} {B} p)          = cong (π₁ˢᶜ {A} {B}) (check p)
-  check (congsnd⇒ {A} {B} p)          = cong (π₂ˢᶜ {A} {B}) (check p)
-  check (congboom⇒ {C} p)             = cong (elim𝟘ˢᶜ {C}) (check p)
-  check (conginl⇒ {A} {B} p)          = cong (ι₁ˢᶜ {A} {B}) (check p)
-  check (conginr⇒ {A} {B} p)          = cong (ι₂ˢᶜ {A} {B}) (check p)
-  check (congcase⇒ {A} {B} {C} p q r) = cong₃ (elim⊎ˢᶜ {A} {B} {C}) (check p) (check q) (check r)
-  check beta▻ₖ⇒                       = refl
-  check beta▻ₛ⇒                       = refl
-  check beta∧₁⇒                       = refl
-  check beta∧₂⇒                       = refl
-  check eta∧⇒                         = refl
-  check eta⊤⇒                        = refl
-  check beta∨₁⇒                       = refl
-  check beta∨₂⇒                       = refl
+  check : ∀ {{_ : Model}} {A Γ} {t t′ : Γ ⊢ A} → t ⋙ t′ → eval t ≡ eval t′
+  check refl⋙                         = refl
+  check (trans⋙ p q)                  = trans (check p) (check q)
+  check (sym⋙ p)                      = sym (check p)
+  check (congapp⋙ {A} {B} p q)        = cong₂ (_$ˢᶜ_ {A} {B}) (check p) (check q)
+  check (congi⋙ p)                    = cong id (check p)
+  check (congk⋙ p q)                  = cong₂ const (check p) (check q)
+  check (congs⋙ {A} {B} {C} p q r)    = cong₃ (apˢᶜ {A} {B} {C}) (check p) (check q) (check r)
+  check (congpair⋙ {A} {B} p q)       = cong₂ (_,ˢᶜ_ {A} {B}) (check p) (check q)
+  check (congfst⋙ {A} {B} p)          = cong (π₁ˢᶜ {A} {B}) (check p)
+  check (congsnd⋙ {A} {B} p)          = cong (π₂ˢᶜ {A} {B}) (check p)
+  check (congboom⋙ {C} p)             = cong (elim𝟘ˢᶜ {C}) (check p)
+  check (conginl⋙ {A} {B} p)          = cong (ι₁ˢᶜ {A} {B}) (check p)
+  check (conginr⋙ {A} {B} p)          = cong (ι₂ˢᶜ {A} {B}) (check p)
+  check (congcase⋙ {A} {B} {C} p q r) = cong₃ (elim⊎ˢᶜ {A} {B} {C}) (check p) (check q) (check r)
+  check beta▻ₖ⋙                       = refl
+  check beta▻ₛ⋙                       = refl
+  check beta∧₁⋙                       = refl
+  check beta∧₂⋙                       = refl
+  check eta∧⋙                         = refl
+  check eta⊤⋙                        = refl
+  check beta∨₁⋙                       = refl
+  check beta∨₂⋙                       = refl
 
 
 
@@ -105,26 +105,26 @@ module CoquandDybjerSoundness where
 
   -- Correctness of evaluation with respect to conversion.
 
-  check : ∀ {{_ : Model}} {A Γ} {t t′ : Γ ⊢ A} → t ⇒ t′ → eval t ≡ eval t′
-  check refl⇒                         = refl
-  check (trans⇒ p q)                  = trans (check p) (check q)
-  check (sym⇒ p)                      = sym (check p)
-  check (congapp⇒ p q)                = cong₂ _$ˢᶜ_ (check p) (check q)
-  check (congi⇒ p)                    = cong id (check p)
-  check (congk⇒ p q)                  = cong₂ const (check p) (check q)
-  check (congs⇒ p q r)                = cong₃ apˢᶜ (check p) (check q) (check r)
-  check (congpair⇒ {A} {B} p q)       = cong₂ (_,ˢᶜ_ {A} {B}) (check p) (check q)
-  check (congfst⇒ {A} {B} p)          = cong (π₁ˢᶜ {A} {B}) (check p)
-  check (congsnd⇒ {A} {B} p)          = cong (π₂ˢᶜ {A} {B}) (check p)
-  check (congboom⇒ {C} p)             = cong (elim𝟘ˢᶜ {C}) (check p)
-  check (conginl⇒ {A} {B} p)          = cong (ι₁ˢᶜ {A} {B}) (check p)
-  check (conginr⇒ {A} {B} p)          = cong (ι₂ˢᶜ {A} {B}) (check p)
-  check (congcase⇒ {A} {B} {C} p q r) = cong₃ (elim⊎ˢᶜ {A} {B} {C}) (check p) (check q) (check r)
-  check beta▻ₖ⇒                       = refl
-  check beta▻ₛ⇒                       = refl
-  check beta∧₁⇒                       = refl
-  check beta∧₂⇒                       = refl
-  check eta∧⇒                         = refl
-  check eta⊤⇒                        = refl
-  check beta∨₁⇒                       = refl
-  check beta∨₂⇒                       = refl
+  check : ∀ {{_ : Model}} {A Γ} {t t′ : Γ ⊢ A} → t ⋙ t′ → eval t ≡ eval t′
+  check refl⋙                         = refl
+  check (trans⋙ p q)                  = trans (check p) (check q)
+  check (sym⋙ p)                      = sym (check p)
+  check (congapp⋙ p q)                = cong₂ _$ˢᶜ_ (check p) (check q)
+  check (congi⋙ p)                    = cong id (check p)
+  check (congk⋙ p q)                  = cong₂ const (check p) (check q)
+  check (congs⋙ p q r)                = cong₃ apˢᶜ (check p) (check q) (check r)
+  check (congpair⋙ {A} {B} p q)       = cong₂ (_,ˢᶜ_ {A} {B}) (check p) (check q)
+  check (congfst⋙ {A} {B} p)          = cong (π₁ˢᶜ {A} {B}) (check p)
+  check (congsnd⋙ {A} {B} p)          = cong (π₂ˢᶜ {A} {B}) (check p)
+  check (congboom⋙ {C} p)             = cong (elim𝟘ˢᶜ {C}) (check p)
+  check (conginl⋙ {A} {B} p)          = cong (ι₁ˢᶜ {A} {B}) (check p)
+  check (conginr⋙ {A} {B} p)          = cong (ι₂ˢᶜ {A} {B}) (check p)
+  check (congcase⋙ {A} {B} {C} p q r) = cong₃ (elim⊎ˢᶜ {A} {B} {C}) (check p) (check q) (check r)
+  check beta▻ₖ⋙                       = refl
+  check beta▻ₛ⋙                       = refl
+  check beta∧₁⋙                       = refl
+  check beta∧₂⋙                       = refl
+  check eta∧⋙                         = refl
+  check eta⊤⋙                        = refl
+  check beta∨₁⋙                       = refl
+  check beta∨₂⋙                       = refl

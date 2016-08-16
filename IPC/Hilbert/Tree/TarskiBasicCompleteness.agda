@@ -32,5 +32,5 @@ module CoquandDybjerBasicCompleteness where
 
   -- Correctness of normalisation with respect to conversion.
 
-  check′ : ∀ {{_ : Model}} {A} {t t′ : ⊢ A} → t ⇒ t′ → norm t ≡ norm t′
+  check′ : ∀ {{_ : Model}} {A} {t t′ : ⊢ A} → t ⋙ t′ → norm t ≡ norm t′
   check′ p = cong reify (check p)

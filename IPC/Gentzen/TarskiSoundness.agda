@@ -43,29 +43,29 @@ module NaturalSoundness where
     oops₅ : ∀ {{_ : Model}} {A B Γ} {t : Γ ⊢ A ∨ B}
             → eval t ≡ (λ γ → elim⊎ (eval t γ) (λ a → ι₁ a) (λ b → ι₂ b))
 
-  check : ∀ {{_ : Model}} {A Γ} {t t′ : Γ ⊢ A} → t ⇒ t′ → eval t ≡ eval t′
-  check refl⇒                             = refl
-  check (trans⇒ p q)                      = trans (check p) (check q)
-  check (sym⇒ p)                          = sym (check p)
-  check (conglam⇒ {A} {B} p)              = cong (λˢ {A} {B}) (check p)
-  check (congapp⇒ {A} {B} p q)            = cong₂ (_$ˢᶜ_ {A} {B}) (check p) (check q)
-  check (congpair⇒ {A} {B} p q)           = cong₂ (_,ˢᶜ_ {A} {B}) (check p) (check q)
-  check (congfst⇒ {A} {B} p)              = cong (π₁ˢᶜ {A} {B}) (check p)
-  check (congsnd⇒ {A} {B} p)              = cong (π₂ˢᶜ {A} {B}) (check p)
-  check (congboom⇒ {C} p)                 = cong (elim𝟘ˢᶜ {C}) (check p)
-  check (conginl⇒ {A} {B} p)              = cong (ι₁ˢᶜ {A} {B}) (check p)
-  check (conginr⇒ {A} {B} p)              = cong (ι₂ˢᶜ {A} {B}) (check p)
-  check (congcase⇒ {A} {B} {C} p q r)     = cong₃ (elim⊎ˢᶜ′ {A} {B} {C})
+  check : ∀ {{_ : Model}} {A Γ} {t t′ : Γ ⊢ A} → t ⋙ t′ → eval t ≡ eval t′
+  check refl⋙                             = refl
+  check (trans⋙ p q)                      = trans (check p) (check q)
+  check (sym⋙ p)                          = sym (check p)
+  check (conglam⋙ {A} {B} p)              = cong (λˢ {A} {B}) (check p)
+  check (congapp⋙ {A} {B} p q)            = cong₂ (_$ˢᶜ_ {A} {B}) (check p) (check q)
+  check (congpair⋙ {A} {B} p q)           = cong₂ (_,ˢᶜ_ {A} {B}) (check p) (check q)
+  check (congfst⋙ {A} {B} p)              = cong (π₁ˢᶜ {A} {B}) (check p)
+  check (congsnd⋙ {A} {B} p)              = cong (π₂ˢᶜ {A} {B}) (check p)
+  check (congboom⋙ {C} p)                 = cong (elim𝟘ˢᶜ {C}) (check p)
+  check (conginl⋙ {A} {B} p)              = cong (ι₁ˢᶜ {A} {B}) (check p)
+  check (conginr⋙ {A} {B} p)              = cong (ι₂ˢᶜ {A} {B}) (check p)
+  check (congcase⋙ {A} {B} {C} p q r)     = cong₃ (elim⊎ˢᶜ′ {A} {B} {C})
                                                    (check p) (check q) (check r)
-  check (beta▻⇒ {A} {B} {t} {u})          = sym (oops₁ {A} {B} {_} {t} {u})
-  check (eta▻⇒ {A} {B} {t})               = oops₂ {A} {B} {_} {t}
-  check beta∧₁⇒                           = refl
-  check beta∧₂⇒                           = refl
-  check eta∧⇒                             = refl
-  check eta⊤⇒                            = refl
-  check (beta∨₁⇒ {A} {B} {C} {t} {u} {v}) = sym (oops₃ {A} {B} {C} {_} {t} {u} {v})
-  check (beta∨₂⇒ {A} {B} {C} {t} {u} {v}) = sym (oops₄ {A} {B} {C} {_} {t} {u} {v})
-  check (eta∨⇒ {A} {B} {t})               = oops₅ {A} {B} {_} {t}
+  check (beta▻⋙ {A} {B} {t} {u})          = sym (oops₁ {A} {B} {_} {t} {u})
+  check (eta▻⋙ {A} {B} {t})               = oops₂ {A} {B} {_} {t}
+  check beta∧₁⋙                           = refl
+  check beta∧₂⋙                           = refl
+  check eta∧⋙                             = refl
+  check eta⊤⋙                            = refl
+  check (beta∨₁⋙ {A} {B} {C} {t} {u} {v}) = sym (oops₃ {A} {B} {C} {_} {t} {u} {v})
+  check (beta∨₂⋙ {A} {B} {C} {t} {u} {v}) = sym (oops₄ {A} {B} {C} {_} {t} {u} {v})
+  check (eta∨⋙ {A} {B} {t})               = oops₅ {A} {B} {_} {t}
 
 
 

@@ -234,42 +234,42 @@ mutual
 
 -- Conversion.
 
-data _⇒_ {Γ : Cx Ty} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
-  refl⇒      : ∀ {A} {t : Γ ⊢ A}
-                → t ⇒ t
-  trans⇒     : ∀ {A} {t t′ t″ : Γ ⊢ A}
-                → t ⇒ t′ → t′ ⇒ t″ → t ⇒ t″
-  sym⇒       : ∀ {A} {t t′ : Γ ⊢ A}
-                → t ⇒ t′ → t′ ⇒ t
-  conglam⇒   : ∀ {A B} {t t′ : Γ , A ⊢ B}
-                → t ⇒ t′
-                → lam t ⇒ lam t′
-  congapp⇒   : ∀ {A B} {t t′ : Γ ⊢ A ▻ B} {u u′ : Γ ⊢ A}
-                → t ⇒ t′ → u ⇒ u′
-                → app t u ⇒ app t′ u′
+data _⋙_ {Γ : Cx Ty} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
+  refl⋙      : ∀ {A} {t : Γ ⊢ A}
+                → t ⋙ t
+  trans⋙     : ∀ {A} {t t′ t″ : Γ ⊢ A}
+                → t ⋙ t′ → t′ ⋙ t″ → t ⋙ t″
+  sym⋙       : ∀ {A} {t t′ : Γ ⊢ A}
+                → t ⋙ t′ → t′ ⋙ t
+  conglam⋙   : ∀ {A B} {t t′ : Γ , A ⊢ B}
+                → t ⋙ t′
+                → lam t ⋙ lam t′
+  congapp⋙   : ∀ {A B} {t t′ : Γ ⊢ A ▻ B} {u u′ : Γ ⊢ A}
+                → t ⋙ t′ → u ⋙ u′
+                → app t u ⋙ app t′ u′
   -- TODO: What about multibox?
-  congdown⇒  : ∀ {A} {t t′ : Γ ⊢ □ A}
-                → t ⇒ t′
-                → down t ⇒ down t′
-  congpair⇒  : ∀ {A B} {t t′ : Γ ⊢ A} {u u′ : Γ ⊢ B}
-                → t ⇒ t′ → u ⇒ u′
-                → pair t u ⇒ pair t′ u′
-  congfst⇒   : ∀ {A B} {t t′ : Γ ⊢ A ∧ B}
-                → t ⇒ t′
-                → fst t ⇒ fst t′
-  congsnd⇒   : ∀ {A B} {t t′ : Γ ⊢ A ∧ B}
-                → t ⇒ t′
-                → snd t ⇒ snd t′
-  beta▻⇒     : ∀ {A B} {t : Γ , A ⊢ B} {u : Γ ⊢ A}
-                → app (lam t) u ⇒ ([ top ≔ u ] t)
-  eta▻⇒      : ∀ {A B} {t : Γ ⊢ A ▻ B}
-                → t ⇒ lam (app (mono⊢ weak⊆ t) v₀)
+  congdown⋙  : ∀ {A} {t t′ : Γ ⊢ □ A}
+                → t ⋙ t′
+                → down t ⋙ down t′
+  congpair⋙  : ∀ {A B} {t t′ : Γ ⊢ A} {u u′ : Γ ⊢ B}
+                → t ⋙ t′ → u ⋙ u′
+                → pair t u ⋙ pair t′ u′
+  congfst⋙   : ∀ {A B} {t t′ : Γ ⊢ A ∧ B}
+                → t ⋙ t′
+                → fst t ⋙ fst t′
+  congsnd⋙   : ∀ {A B} {t t′ : Γ ⊢ A ∧ B}
+                → t ⋙ t′
+                → snd t ⋙ snd t′
+  beta▻⋙     : ∀ {A B} {t : Γ , A ⊢ B} {u : Γ ⊢ A}
+                → app (lam t) u ⋙ ([ top ≔ u ] t)
+  eta▻⋙      : ∀ {A B} {t : Γ ⊢ A ▻ B}
+                → t ⋙ lam (app (mono⊢ weak⊆ t) v₀)
   -- TODO: What about beta and eta for □?
-  beta∧₁⇒    : ∀ {A B} {t : Γ ⊢ A} {u : Γ ⊢ B}
-                → fst (pair t u) ⇒ t
-  beta∧₂⇒    : ∀ {A B} {t : Γ ⊢ A} {u : Γ ⊢ B}
-                → snd (pair t u) ⇒ u
-  eta∧⇒      : ∀ {A B} {t : Γ ⊢ A ∧ B}
-                → t ⇒ pair (fst t) (snd t)
-  eta⊤⇒     : ∀ {t : Γ ⊢ ⊤}
-                → t ⇒ tt
+  beta∧₁⋙    : ∀ {A B} {t : Γ ⊢ A} {u : Γ ⊢ B}
+                → fst (pair t u) ⋙ t
+  beta∧₂⋙    : ∀ {A B} {t : Γ ⊢ A} {u : Γ ⊢ B}
+                → snd (pair t u) ⋙ u
+  eta∧⋙      : ∀ {A B} {t : Γ ⊢ A ∧ B}
+                → t ⋙ pair (fst t) (snd t)
+  eta⊤⋙     : ∀ {t : Γ ⊢ ⊤}
+                → t ⋙ tt

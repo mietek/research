@@ -352,59 +352,59 @@ mconcat Δ′ t u = app (mmono⊢ (weak⊆⧺ₗ Δ′) (mlam t)) (mmono⊢ weak
 
 -- Conversion.
 
-data _⇒_ {Γ Δ : Cx Ty} : ∀ {A} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ A → Set where
-  refl⇒     : ∀ {A} {t : Γ ⁏ Δ ⊢ A}
-               → t ⇒ t
-  trans⇒    : ∀ {A} {t t′ t″ : Γ ⁏ Δ ⊢ A}
-               → t ⇒ t′ → t′ ⇒ t″ → t ⇒ t″
-  sym⇒      : ∀ {A} {t t′ : Γ ⁏ Δ ⊢ A}
-               → t ⇒ t′ → t′ ⇒ t
-  congapp⇒  : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A ▻ B} {u u′ : Γ ⁏ Δ ⊢ A}
-               → t ⇒ t′ → u ⇒ u′
-               → app t u ⇒ app t′ u′
-  congi⇒    : ∀ {A} {t t′ : Γ ⁏ Δ ⊢ A}
-               → t ⇒ t′
-               → app ci t ⇒ app ci t′
-  congk⇒    : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A} {u u′ : Γ ⁏ Δ ⊢ B}
-               → t ⇒ t′ → u ⇒ u′
-               → app (app ck t) u ⇒ app (app ck t′) u′
-  congs⇒    : ∀ {A B C} {t t′ : Γ ⁏ Δ ⊢ A ▻ B ▻ C}
+data _⋙_ {Γ Δ : Cx Ty} : ∀ {A} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ A → Set where
+  refl⋙     : ∀ {A} {t : Γ ⁏ Δ ⊢ A}
+               → t ⋙ t
+  trans⋙    : ∀ {A} {t t′ t″ : Γ ⁏ Δ ⊢ A}
+               → t ⋙ t′ → t′ ⋙ t″ → t ⋙ t″
+  sym⋙      : ∀ {A} {t t′ : Γ ⁏ Δ ⊢ A}
+               → t ⋙ t′ → t′ ⋙ t
+  congapp⋙  : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A ▻ B} {u u′ : Γ ⁏ Δ ⊢ A}
+               → t ⋙ t′ → u ⋙ u′
+               → app t u ⋙ app t′ u′
+  congi⋙    : ∀ {A} {t t′ : Γ ⁏ Δ ⊢ A}
+               → t ⋙ t′
+               → app ci t ⋙ app ci t′
+  congk⋙    : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A} {u u′ : Γ ⁏ Δ ⊢ B}
+               → t ⋙ t′ → u ⋙ u′
+               → app (app ck t) u ⋙ app (app ck t′) u′
+  congs⋙    : ∀ {A B C} {t t′ : Γ ⁏ Δ ⊢ A ▻ B ▻ C}
                  {u u′ : Γ ⁏ Δ ⊢ A ▻ B} {v v′ : Γ ⁏ Δ ⊢ A}
-               → t ⇒ t′ → u ⇒ u′ → v ⇒ v′
+               → t ⋙ t′ → u ⋙ u′ → v ⋙ v′
   -- NOTE: Rejected by Pfenning and Davies.
-  -- congbox⇒  : ∀ {A} {t t′ : ⌀ ⁏ Δ ⊢ A}
-  --              → t ⇒ t′
-  --              → box {Γ} t ⇒ box {Γ} t′
-  congdist⇒ : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ □ (A ▻ B)} {u u′ : Γ ⁏ Δ ⊢ □ A}
-               → t ⇒ t′ → u ⇒ u′
-               → app (app cdist t) u ⇒ app (app cdist t′) u′
-  congup⇒   : ∀ {A} {t t′ : Γ ⁏ Δ ⊢ □ A}
-               → t ⇒ t′
-               → app cup t ⇒ app cup t′
-  congdown⇒ : ∀ {A} {t t′ : Γ ⁏ Δ ⊢ □ A}
-               → t ⇒ t′
-               → app cdown t ⇒ app cdown t′
-  congpair⇒ : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A} {u u′ : Γ ⁏ Δ ⊢ B}
-               → t ⇒ t′ → u ⇒ u′
-               → app (app cpair t) u ⇒ app (app cpair t′) u′
-  congfst⇒  : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A ∧ B}
-               → t ⇒ t′
-               → app cfst t ⇒ app cfst t′
-  congsnd⇒  : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A ∧ B}
-               → t ⇒ t′
-               → app csnd t ⇒ app csnd t′
+  -- congbox⋙  : ∀ {A} {t t′ : ⌀ ⁏ Δ ⊢ A}
+  --              → t ⋙ t′
+  --              → box {Γ} t ⋙ box {Γ} t′
+  congdist⋙ : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ □ (A ▻ B)} {u u′ : Γ ⁏ Δ ⊢ □ A}
+               → t ⋙ t′ → u ⋙ u′
+               → app (app cdist t) u ⋙ app (app cdist t′) u′
+  congup⋙   : ∀ {A} {t t′ : Γ ⁏ Δ ⊢ □ A}
+               → t ⋙ t′
+               → app cup t ⋙ app cup t′
+  congdown⋙ : ∀ {A} {t t′ : Γ ⁏ Δ ⊢ □ A}
+               → t ⋙ t′
+               → app cdown t ⋙ app cdown t′
+  congpair⋙ : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A} {u u′ : Γ ⁏ Δ ⊢ B}
+               → t ⋙ t′ → u ⋙ u′
+               → app (app cpair t) u ⋙ app (app cpair t′) u′
+  congfst⋙  : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A ∧ B}
+               → t ⋙ t′
+               → app cfst t ⋙ app cfst t′
+  congsnd⋙  : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A ∧ B}
+               → t ⋙ t′
+               → app csnd t ⋙ app csnd t′
   -- TODO: Verify this.
-  beta▻ₖ⇒   : ∀ {A B} {t : Γ ⁏ Δ ⊢ A} {u : Γ ⁏ Δ ⊢ B}
-               → app (app ck t) u ⇒ t
+  beta▻ₖ⋙   : ∀ {A B} {t : Γ ⁏ Δ ⊢ A} {u : Γ ⁏ Δ ⊢ B}
+               → app (app ck t) u ⋙ t
   -- TODO: Verify this.
-  beta▻ₛ⇒   : ∀ {A B C} {t : Γ ⁏ Δ ⊢ A ▻ B ▻ C} {u : Γ ⁏ Δ ⊢ A ▻ B} {v : Γ ⁏ Δ ⊢ A}
-               → app (app (app cs t) u) v ⇒ app (app t v) (app u v)
+  beta▻ₛ⋙   : ∀ {A B C} {t : Γ ⁏ Δ ⊢ A ▻ B ▻ C} {u : Γ ⁏ Δ ⊢ A ▻ B} {v : Γ ⁏ Δ ⊢ A}
+               → app (app (app cs t) u) v ⋙ app (app t v) (app u v)
   -- TODO: What about eta for ▻? What about beta, eta, and commuting conversions for □?
-  beta∧₁⇒   : ∀ {A B} {t : Γ ⁏ Δ ⊢ A} {u : Γ ⁏ Δ ⊢ B}
-               → app cfst (app (app cpair t) u) ⇒ t
-  beta∧₂⇒   : ∀ {A B} {t : Γ ⁏ Δ ⊢ A} {u : Γ ⁏ Δ ⊢ B}
-               → app csnd (app (app cpair t) u) ⇒ u
-  eta∧⇒     : ∀ {A B} {t : Γ ⁏ Δ ⊢ A ∧ B}
-               → t ⇒ app (app cpair (app cfst t)) (app csnd t)
-  eta⊤⇒    : ∀ {t : Γ ⁏ Δ ⊢ ⊤}
-               → t ⇒ tt
+  beta∧₁⋙   : ∀ {A B} {t : Γ ⁏ Δ ⊢ A} {u : Γ ⁏ Δ ⊢ B}
+               → app cfst (app (app cpair t) u) ⋙ t
+  beta∧₂⋙   : ∀ {A B} {t : Γ ⁏ Δ ⊢ A} {u : Γ ⁏ Δ ⊢ B}
+               → app csnd (app (app cpair t) u) ⋙ u
+  eta∧⋙     : ∀ {A B} {t : Γ ⁏ Δ ⊢ A ∧ B}
+               → t ⋙ app (app cpair (app cfst t)) (app csnd t)
+  eta⊤⋙    : ∀ {t : Γ ⁏ Δ ⊢ ⊤}
+               → t ⋙ tt

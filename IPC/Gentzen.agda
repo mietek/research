@@ -176,47 +176,47 @@ concat Γ′ t u = app (mono⊢ (weak⊆⧺ₗ Γ′) (lam t)) (mono⊢ weak⊆�
 
 -- Conversion.
 
-data _⇒_ {Γ : Cx Ty} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
-  refl⇒     : ∀ {A} {t : Γ ⊢ A}
-               → t ⇒ t
-  trans⇒    : ∀ {A} {t t′ t″ : Γ ⊢ A}
-               → t ⇒ t′ → t′ ⇒ t″ → t ⇒ t″
-  sym⇒      : ∀ {A} {t t′ : Γ ⊢ A}
-               → t ⇒ t′ → t′ ⇒ t
-  conglam⇒  : ∀ {A B} {t t′ : Γ , A ⊢ B}
-               → t ⇒ t′ → lam t ⇒ lam t′
-  congapp⇒  : ∀ {A B} {t t′ : Γ ⊢ A ▻ B} {u u′ : Γ ⊢ A}
-               → t ⇒ t′ → u ⇒ u′ → app t u ⇒ app t′ u′
-  congpair⇒ : ∀ {A B} {t t′ : Γ ⊢ A} {u u′ : Γ ⊢ B}
-               → t ⇒ t′ → u ⇒ u′ → pair t u ⇒ pair t′ u′
-  congfst⇒  : ∀ {A B} {t t′ : Γ ⊢ A ∧ B}
-               → t ⇒ t′ → fst t ⇒ fst t′
-  congsnd⇒  : ∀ {A B} {t t′ : Γ ⊢ A ∧ B}
-               → t ⇒ t′ → snd t ⇒ snd t′
-  congboom⇒ : ∀ {C} {t t′ : Γ ⊢ ⊥}
-               → t ⇒ t′ → boom {C = C} t ⇒ boom t′
-  conginl⇒  : ∀ {A B} {t t′ : Γ ⊢ A}
-               → t ⇒ t′ → inl {B = B} t ⇒ inl t′
-  conginr⇒  : ∀ {A B} {t t′ : Γ ⊢ B}
-               → t ⇒ t′ → inr {A = A} t ⇒ inr t′
-  congcase⇒ : ∀ {A B C} {t t′ : Γ ⊢ A ∨ B} {u u′ : Γ , A ⊢ C} {v v′ : Γ , B ⊢ C}
-               → t ⇒ t′ → u ⇒ u′ → v ⇒ v′ → case t u v ⇒ case t′ u′ v′
-  beta▻⇒    : ∀ {A B} {t : Γ , A ⊢ B} {u : Γ ⊢ A}
-               → app (lam t) u ⇒ ([ top ≔ u ] t)
-  eta▻⇒     : ∀ {A B} {t : Γ ⊢ A ▻ B}
-               → t ⇒ lam (app (mono⊢ weak⊆ t) v₀)
-  beta∧₁⇒   : ∀ {A B} {t : Γ ⊢ A} {u : Γ ⊢ B}
-               → fst (pair t u) ⇒ t
-  beta∧₂⇒   : ∀ {A B} {t : Γ ⊢ A} {u : Γ ⊢ B}
-               → snd (pair t u) ⇒ u
-  eta∧⇒     : ∀ {A B} {t : Γ ⊢ A ∧ B}
-               → t ⇒ pair (fst t) (snd t)
-  eta⊤⇒    : ∀ {t : Γ ⊢ ⊤}
-               → t ⇒ tt
-  beta∨₁⇒   : ∀ {A B C} {t : Γ ⊢ A} {u : Γ , A ⊢ C} {v : Γ , B ⊢ C}
-               → case (inl t) u v ⇒ ([ top ≔ t ] u)
-  beta∨₂⇒   : ∀ {A B C} {t : Γ ⊢ B} {u : Γ , A ⊢ C} {v : Γ , B ⊢ C}
-               → case (inr t) u v ⇒ ([ top ≔ t ] v)
-  eta∨⇒     : ∀ {A B} {t : Γ ⊢ A ∨ B}
-               → t ⇒ case t (inl v₀) (inr v₀)
+data _⋙_ {Γ : Cx Ty} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
+  refl⋙     : ∀ {A} {t : Γ ⊢ A}
+               → t ⋙ t
+  trans⋙    : ∀ {A} {t t′ t″ : Γ ⊢ A}
+               → t ⋙ t′ → t′ ⋙ t″ → t ⋙ t″
+  sym⋙      : ∀ {A} {t t′ : Γ ⊢ A}
+               → t ⋙ t′ → t′ ⋙ t
+  conglam⋙  : ∀ {A B} {t t′ : Γ , A ⊢ B}
+               → t ⋙ t′ → lam t ⋙ lam t′
+  congapp⋙  : ∀ {A B} {t t′ : Γ ⊢ A ▻ B} {u u′ : Γ ⊢ A}
+               → t ⋙ t′ → u ⋙ u′ → app t u ⋙ app t′ u′
+  congpair⋙ : ∀ {A B} {t t′ : Γ ⊢ A} {u u′ : Γ ⊢ B}
+               → t ⋙ t′ → u ⋙ u′ → pair t u ⋙ pair t′ u′
+  congfst⋙  : ∀ {A B} {t t′ : Γ ⊢ A ∧ B}
+               → t ⋙ t′ → fst t ⋙ fst t′
+  congsnd⋙  : ∀ {A B} {t t′ : Γ ⊢ A ∧ B}
+               → t ⋙ t′ → snd t ⋙ snd t′
+  congboom⋙ : ∀ {C} {t t′ : Γ ⊢ ⊥}
+               → t ⋙ t′ → boom {C = C} t ⋙ boom t′
+  conginl⋙  : ∀ {A B} {t t′ : Γ ⊢ A}
+               → t ⋙ t′ → inl {B = B} t ⋙ inl t′
+  conginr⋙  : ∀ {A B} {t t′ : Γ ⊢ B}
+               → t ⋙ t′ → inr {A = A} t ⋙ inr t′
+  congcase⋙ : ∀ {A B C} {t t′ : Γ ⊢ A ∨ B} {u u′ : Γ , A ⊢ C} {v v′ : Γ , B ⊢ C}
+               → t ⋙ t′ → u ⋙ u′ → v ⋙ v′ → case t u v ⋙ case t′ u′ v′
+  beta▻⋙    : ∀ {A B} {t : Γ , A ⊢ B} {u : Γ ⊢ A}
+               → app (lam t) u ⋙ ([ top ≔ u ] t)
+  eta▻⋙     : ∀ {A B} {t : Γ ⊢ A ▻ B}
+               → t ⋙ lam (app (mono⊢ weak⊆ t) v₀)
+  beta∧₁⋙   : ∀ {A B} {t : Γ ⊢ A} {u : Γ ⊢ B}
+               → fst (pair t u) ⋙ t
+  beta∧₂⋙   : ∀ {A B} {t : Γ ⊢ A} {u : Γ ⊢ B}
+               → snd (pair t u) ⋙ u
+  eta∧⋙     : ∀ {A B} {t : Γ ⊢ A ∧ B}
+               → t ⋙ pair (fst t) (snd t)
+  eta⊤⋙    : ∀ {t : Γ ⊢ ⊤}
+               → t ⋙ tt
+  beta∨₁⋙   : ∀ {A B C} {t : Γ ⊢ A} {u : Γ , A ⊢ C} {v : Γ , B ⊢ C}
+               → case (inl t) u v ⋙ ([ top ≔ t ] u)
+  beta∨₂⋙   : ∀ {A B C} {t : Γ ⊢ B} {u : Γ , A ⊢ C} {v : Γ , B ⊢ C}
+               → case (inr t) u v ⋙ ([ top ≔ t ] v)
+  eta∨⋙     : ∀ {A B} {t : Γ ⊢ A ∨ B}
+               → t ⋙ case t (inl v₀) (inr v₀)
   -- TODO: What about commuting conversions for ∨? What about ⊥?
