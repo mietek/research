@@ -108,56 +108,75 @@ import IPC.Gentzen.HereditarySubstitution
 import IPC.Translation
 
 
--- Intuitionistic modal logic S4, without ∨, ⊥, or ◇.
 
-import BasicIS4
-import BasicIS4.TarskiSemantics
-import BasicIS4.OpenSyntaxSemantics
-import BasicIS4.KripkeSemantics
-import BasicIS4.KripkeSemantics.Ono
-import BasicIS4.KripkeSemantics.BozicDosen
-import BasicIS4.KripkeSemantics.EwaldEtAl
-import BasicIS4.KripkeSemantics.AlechinaEtAl
-import BasicIS4.Hilbert.List
-import BasicIS4.Hilbert.ListWithContext
-import BasicIS4.Hilbert.ListWithContextPair
-import BasicIS4.Hilbert.Tree
-import BasicIS4.Hilbert.Tree.TarskiSoundness
-import BasicIS4.Hilbert.Tree.TarskiBasicCompleteness
-import BasicIS4.Hilbert.Tree.OpenSyntaxSoundness
-import BasicIS4.Hilbert.Tree.OpenSyntaxBasicCompleteness
-import BasicIS4.Hilbert.TreeWithContext
-import BasicIS4.Hilbert.TreeWithContext.TarskiSoundness
-import BasicIS4.Hilbert.TreeWithContext.TarskiBasicCompleteness
-import BasicIS4.Hilbert.TreeWithContext.OpenSyntaxSoundness
-import BasicIS4.Hilbert.TreeWithContext.OpenSyntaxBasicCompleteness -- FIXME
-import BasicIS4.Hilbert.TreeWithContext.KripkeSoundness
-import BasicIS4.Hilbert.TreeWithContextPair
-import BasicIS4.Hilbert.TreeWithContextPair.TarskiSoundness -- FIXME
-import BasicIS4.Hilbert.TreeWithContextPair.TarskiBasicCompleteness
-import BasicIS4.Hilbert.TreeWithContextPair.OpenSyntaxSoundness
-import BasicIS4.Hilbert.TreeWithContextPair.OpenSyntaxBasicCompleteness -- FIXME
-import BasicIS4.Hilbert.TreeWithContextPair.KripkeSoundness
-import BasicIS4.Hilbert.Translation
-import BasicIS4.Gentzen.TreeWithContext
-import BasicIS4.Gentzen.TreeWithContext.TarskiSoundness -- FIXME
-import BasicIS4.Gentzen.TreeWithContext.TarskiBasicCompleteness
-import BasicIS4.Gentzen.TreeWithContext.OpenSyntaxSoundness -- FIXME
-import BasicIS4.Gentzen.TreeWithContext.KripkeSoundness
-import BasicIS4.Gentzen.TreeWithContext.KripkeEquipment
-import BasicIS4.Gentzen.TreeWithContext.KripkeEquipmentToo
-import BasicIS4.Gentzen.TreeWithContext.KripkeBasicCompleteness -- FIXME
-import BasicIS4.Gentzen.TreeWithContextPair
-import BasicIS4.Gentzen.TreeWithContextPair.TarskiSoundness -- FIXME
-import BasicIS4.Gentzen.TreeWithContextPair.TarskiBasicCompleteness
-import BasicIS4.Gentzen.TreeWithContextPair.OpenSyntaxSoundness -- FIXME
-import BasicIS4.Gentzen.TreeWithContextPair.KripkeSoundness
-import BasicIS4.Gentzen.TreeWithContextPair.KripkeEquipment
-import BasicIS4.Gentzen.TreeWithContextPair.KripkeEquipmentToo
-import BasicIS4.Gentzen.TreeWithContextPair.KripkeBasicCompleteness -- FIXME
-import BasicIS4.Gentzen.LabelledTreeWithContextPair -- FIXME
-import BasicIS4.Gentzen.Translation
-import BasicIS4.Translation
+
+-- Basic intuitionistic modal logic S4, without ∨, ⊥, or ◇.
+
+import New.BasicIS4.Syntax.Common
+import New.BasicIS4.Syntax.ClosedHilbertLinear
+import New.BasicIS4.Syntax.ClosedHilbert
+import New.BasicIS4.Syntax.OpenHilbertLinear
+import New.BasicIS4.Syntax.OpenHilbert
+import New.BasicIS4.Syntax.OpenGentzen
+import New.BasicIS4.Syntax.OpenDyadicHilbertLinear
+import New.BasicIS4.Syntax.OpenDyadicHilbert
+import New.BasicIS4.Syntax.OpenDyadicGentzen
+import New.BasicIS4.Syntax.OpenLabelledGentzen
+import New.BasicIS4.Syntax.Translation
+import New.BasicIS4.Syntax.TranslatedClosedHilbertEquipment
+
+import New.BasicIS4.Semantics.TarskiGabbayNanevski
+import New.BasicIS4.Semantics.TarskiCoquandDybjer
+import New.BasicIS4.Semantics.TarskiGabbayNanevskiMk1
+import New.BasicIS4.Semantics.TarskiCoquandDybjerMk1
+import New.BasicIS4.Semantics.KripkeOno
+import New.BasicIS4.Semantics.KripkeBozicDosen
+import New.BasicIS4.Semantics.KripkeEwaldEtAl
+import New.BasicIS4.Semantics.KripkeAlechinaEtAl
+import New.BasicIS4.Semantics.KripkeCanonicalModelEquipment
+import New.BasicIS4.Semantics.KripkeNonCanonicalModelEquipment
+import New.BasicIS4.Semantics.KripkeDyadicCanonicalModelEquipment
+import New.BasicIS4.Semantics.KripkeDyadicNonCanonicalModelEquipment
+
+import New.BasicIS4.Metatheory.ClosedHilbert-TarskiGabbayNanevski
+import New.BasicIS4.Metatheory.ClosedHilbert-TarskiCoquandDybjer
+import New.BasicIS4.Metatheory.ClosedHilbert-TarskiGabbayNanevskiMk1
+import New.BasicIS4.Metatheory.ClosedHilbert-TarskiCoquandDybjerMk1
+
+import New.BasicIS4.Metatheory.OpenHilbert-TarskiGabbayNanevski
+import New.BasicIS4.Metatheory.OpenHilbert-TarskiCoquandDybjer
+import New.BasicIS4.Metatheory.OpenHilbert-TarskiGabbayNanevskiMk1
+import New.BasicIS4.Metatheory.OpenHilbert-TarskiCoquandDybjerMk1
+import New.BasicIS4.Metatheory.OpenHilbert-KripkeOno
+import New.BasicIS4.Metatheory.OpenHilbert-KripkeBozicDosen
+import New.BasicIS4.Metatheory.OpenHilbert-KripkeEwaldEtAl
+import New.BasicIS4.Metatheory.OpenHilbert-KripkeAlechinaEtAl
+
+import New.BasicIS4.Metatheory.OpenGentzen-TarskiGabbayNanevski
+import New.BasicIS4.Metatheory.OpenGentzen-TarskiCoquandDybjer
+import New.BasicIS4.Metatheory.OpenGentzen-TarskiGabbayNanevskiMk1
+import New.BasicIS4.Metatheory.OpenGentzen-TarskiCoquandDybjerMk1
+import New.BasicIS4.Metatheory.OpenGentzen-KripkeOno
+import New.BasicIS4.Metatheory.OpenGentzen-KripkeBozicDosen
+import New.BasicIS4.Metatheory.OpenGentzen-KripkeEwaldEtAl
+import New.BasicIS4.Metatheory.OpenGentzen-KripkeAlechinaEtAl
+
+import New.BasicIS4.Metatheory.OpenDyadicHilbert-TarskiGabbayNanevski
+import New.BasicIS4.Metatheory.OpenDyadicHilbert-TarskiCoquandDybjer
+import New.BasicIS4.Metatheory.OpenDyadicHilbert-TarskiGabbayNanevskiMk1
+import New.BasicIS4.Metatheory.OpenDyadicHilbert-TarskiCoquandDybjerMk1
+import New.BasicIS4.Metatheory.OpenDyadicHilbert-KripkeOno
+import New.BasicIS4.Metatheory.OpenDyadicHilbert-KripkeBozicDosen
+import New.BasicIS4.Metatheory.OpenDyadicHilbert-KripkeEwaldEtAl
+import New.BasicIS4.Metatheory.OpenDyadicHilbert-KripkeAlechinaEtAl
+
+import New.BasicIS4.Metatheory.OpenDyadicGentzen-TarskiGabbayNanevski
+import New.BasicIS4.Metatheory.OpenDyadicGentzen-TarskiCoquandDybjer
+import New.BasicIS4.Metatheory.OpenDyadicGentzen-TarskiGabbayNanevskiMk1
+import New.BasicIS4.Metatheory.OpenDyadicGentzen-KripkeOno
+import New.BasicIS4.Metatheory.OpenDyadicGentzen-KripkeBozicDosen
+import New.BasicIS4.Metatheory.OpenDyadicGentzen-KripkeEwaldEtAl
+import New.BasicIS4.Metatheory.OpenDyadicGentzen-KripkeAlechinaEtAl
 
 
 -- Intuitionistic logic of proofs, without ∨, ⊥, or +.
