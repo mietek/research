@@ -5,7 +5,7 @@ open import BasicIS4.Semantics.KripkeAlechinaEtAl public
 
 
 mutual
-  eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
+  eval : ∀ {A Γ} → Γ ⊢ A → ∀ᴹʷ⊩ Γ ⇒ A
   eval (var i)         γ = lookup i γ
   eval (lam t)         γ = λ ξ a → eval t (mono⊩⋆ ξ γ , a)
   eval (app t u)       γ = (eval t γ refl≤) (eval u γ)

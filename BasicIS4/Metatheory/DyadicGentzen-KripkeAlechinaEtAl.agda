@@ -4,7 +4,7 @@ open import BasicIS4.Syntax.DyadicGentzen public
 open import BasicIS4.Semantics.KripkeAlechinaEtAl public
 
 
-eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊩ A
+eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → ∀ᴹʷ⊩ Γ ⁏ Δ ⇒ A
 eval (var i)     γ δ = lookup i γ
 eval (lam t)     γ δ = λ ξ a → eval t (mono⊩⋆ ξ γ , a) (λ ξ′ ζ → δ (trans≤ ξ ξ′) ζ)
 eval (app t u)   γ δ = (eval t γ δ refl≤) (eval u γ δ)

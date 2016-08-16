@@ -135,7 +135,7 @@ module SyntacticComponent (_⁏_⊢_  : Cx Ty → Cx Ty → Ty → Set)
   ≤→Яᶜ {v′} ξ = ≤⨾Я→Яᶜ (v′ , (ξ , reflЯᶜ))
 
 
-  -- Minor brilliance condition, included by Ewald et al. and Alechina et al.
+  -- Minor brilliance condition, included by Ewald and Alechina et al.
   --
   --           v′  →   w′      v′
   --           ●   →   ◌───Я───●
@@ -219,7 +219,7 @@ module SyntacticComponent (_⁏_⊢_  : Cx Ty → Cx Ty → Ty → Set)
   Я⊔≤→≤⊔Яᶜ (v′ , (ζ , ξ)) = v′ , (ξ , ζ)
 
 
-  -- Infimum-to-supremum condition, included by Ewald et al.
+  -- Infimum-to-supremum condition, included by Ewald.
   --
   --   w′          →   w′      v′
   --   ●           →   ●───Я───◌

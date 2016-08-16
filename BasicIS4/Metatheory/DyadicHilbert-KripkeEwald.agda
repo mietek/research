@@ -4,7 +4,7 @@ open import BasicIS4.Syntax.DyadicHilbert public
 open import BasicIS4.Semantics.KripkeEwald public
 
 
-eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ᴹ⊩ A
+eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → ∀ᴹʷ⊩ Γ ⁏ Δ ⇒ A
 eval (var i)          γ δ = lookup i γ
 eval (app t u)        γ δ = (eval t γ δ refl≤) (eval u γ δ)
 eval ci               γ δ = λ _ a → a

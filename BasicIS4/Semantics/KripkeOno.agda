@@ -27,17 +27,61 @@ record Model : Set₁ where
     mono⊩ᵅ : ∀ {P w w′} → w ≤ w′ → w ⊩ᵅ P → w′ ⊩ᵅ P
 
 
-    -- Persistence condition.
-    --
-    --   w′      v′  →           v′
-    --   ◌───R───●   →           ●
-    --   │           →         ╱
-    --   ≤  ξ,ζ      →       R
-    --   │           →     ╱
-    --   ●           →   ●
-    --   w           →   w
-    --
-    ≤⨾R→R : ∀ {v′ w} → (_≤_ ⨾ _R_) w v′ → w R v′
+  -- Composition of accessibility.
+
+  _≤⨾R_ : World → World → Set
+  _≤⨾R_ = _≤_ ⨾ _R_
+
+  _R⨾≤_ : World → World → Set
+  _R⨾≤_ = _R_ ⨾ _≤_
+
+
+  -- Persistence condition.
+  --
+  --   w′      v′  →           v′
+  --   ◌───R───●   →           ●
+  --   │           →         ╱
+  --   ≤  ξ,ζ      →       R
+  --   │           →     ╱
+  --   ●           →   ●
+  --   w           →   w
+
+  field
+    ≤⨾R→R : ∀ {v′ w} → w ≤⨾R v′ → w R v′
+
+
+  -- Minor persistence condition.
+  --
+  --   w′      v′  →           v′
+  --   ◌───R───●   →           ●
+  --   │           →           │
+  --   ≤  ξ,ζ      →           ≤
+  --   │           →           │
+  --   ●           →   ●───R───◌
+  --   w           →   w       v
+  --
+  --                   w″  →                   w″
+  --                   ●   →                   ●
+  --                   │   →                   │
+  --             ξ′,ζ′ ≤   →                   │
+  --                   │   →                   │
+  --           ●───R───◌   →                   ≤
+  --           │       v′  →                   │
+  --      ξ,ζ  ≤           →                   │
+  --           │           →                   │
+  --   ●───R───◌           →   ●───────R───────◌
+  --   w       v           →   w               v″
+
+  ≤⨾R→R⨾≤ : ∀ {v′ w} → w ≤⨾R v′ → w R⨾≤ v′
+  ≤⨾R→R⨾≤ {v′} ξ,ζ = v′ , (≤⨾R→R ξ,ζ , refl≤)
+
+  reflR⨾≤ : ∀ {w} → w R⨾≤ w
+  reflR⨾≤ {w} = w , (reflR , refl≤)
+
+  transR⨾≤ : ∀ {w′ w w″} → w R⨾≤ w′ → w′ R⨾≤ w″ → w R⨾≤ w″
+  transR⨾≤ {w′} (v , (ζ , ξ)) (v′ , (ζ′ , ξ′)) =
+    let v″ , (ζ″ , ξ″) = ≤⨾R→R⨾≤ (w′ , (ξ , ζ′))
+    in  v″ , (transR ζ ζ″ , trans≤ ξ″ ξ′)
 
   ≤→R : ∀ {v′ w} → w ≤ v′ → w R v′
   ≤→R {v′} ξ = ≤⨾R→R (v′ , (ξ , reflR))
@@ -45,12 +89,13 @@ record Model : Set₁ where
 open Model {{…}} public
 
 
+-- Forcing in a particular world of a particular model.
+
 module _ {{_ : Model}} where
   infix 3 _⊩_
   _⊩_ : World → Ty → Set
   w ⊩ α P   = w ⊩ᵅ P
   w ⊩ A ▻ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
-  -- NOTE: Only modal accessibility here.
   w ⊩ □ A   = ∀ {v′} → w R v′ → v′ ⊩ A
   w ⊩ A ∧ B = w ⊩ A × w ⊩ B
   w ⊩ ⊤    = 𝟙
@@ -61,8 +106,9 @@ module _ {{_ : Model}} where
   w ⊩⋆ Π , A = w ⊩⋆ Π × w ⊩ A
 
 
-  -- Monotonicity with respect to intuitionistic accessibility.
+-- Monotonicity with respect to intuitionistic accessibility.
 
+module _ {{_ : Model}} where
   mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
   mono⊩ {α P}   ξ s       = mono⊩ᵅ ξ s
   mono⊩ {A ▻ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
@@ -75,24 +121,62 @@ module _ {{_ : Model}} where
   mono⊩⋆ {Γ , A} ξ (γ , a) = mono⊩⋆ {Γ} ξ γ , mono⊩ {A} ξ a
 
 
--- Forcing in all models.
-
-infix 3 _ᴹ⊩_
-_ᴹ⊩_ : Cx Ty → Ty → Set₁
-Γ ᴹ⊩ A = ∀ {{_ : Model}} {w : World} → w ⊩⋆ Γ → w ⊩ A
-
-infix 3 _ᴹ⊩⋆_
-_ᴹ⊩⋆_ : Cx Ty → Cx Ty → Set₁
-Γ ᴹ⊩⋆ Π = ∀ {{_ : Model}} {w : World} → w ⊩⋆ Γ → w ⊩⋆ Π
-
-infix 3 _⁏_ᴹ⊩_
-_⁏_ᴹ⊩_ : Cx Ty → Cx Ty → Ty → Set₁
-Γ ⁏ Δ ᴹ⊩ A = ∀ {{_ : Model}} {w : World}
-              → w ⊩⋆ Γ → (∀ {v′} → w R v′ → v′ ⊩⋆ Δ) → w ⊩ A
-
-
 -- Additional useful equipment.
 
-lookup : ∀ {A Γ} → A ∈ Γ → Γ ᴹ⊩ A
-lookup top     (γ , a) = a
-lookup (pop i) (γ , b) = lookup i γ
+module _ {{_ : Model}} where
+  _⟪$⟫_ : ∀ {A B w} → w ⊩ A ▻ B → w ⊩ A → w ⊩ B
+  f ⟪$⟫ a = f refl≤ a
+
+  ⟪const⟫ : ∀ {A B w} → w ⊩ A → w ⊩ B ▻ A
+  ⟪const⟫ {A} a ξ = const (mono⊩ {A} ξ a)
+
+  ⟪ap⟫′ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C → w ⊩ (A ▻ B) ▻ A ▻ C
+  ⟪ap⟫′ {A} {B} {C} f ξ g ξ′ a = let f′ = mono⊩ {A ▻ B ▻ C} (trans≤ ξ ξ′) f
+                                     g′ = mono⊩ {A ▻ B} ξ′ g
+                                 in  (f′ refl≤ a) refl≤ (g′ refl≤ a)
+
+  ⟪ap⟫ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C → w ⊩ A ▻ B → w ⊩ A → w ⊩ C
+  ⟪ap⟫ {A} {B} {C} f g a = ⟪ap⟫′ {A} {B} {C} f refl≤ g refl≤ a
+
+  _⟪,⟫′_ : ∀ {A B w} → w ⊩ A → w ⊩ B ▻ A ∧ B
+  _⟪,⟫′_ {A} {B} a ξ b = let a′ = mono⊩ {A} ξ a
+                         in  a′ , b
+
+  _⟪,⟫_ : ∀ {A B w} → w ⊩ A → w ⊩ B → w ⊩ A ∧ B
+  _⟪,⟫_ {A} {B} a b = _⟪,⟫′_ {A} {B} a refl≤ b
+
+
+-- Forcing in a particular world of a particular model, for sequents.
+
+module _ {{_ : Model}} where
+  infix 3 _⊩_⇒_
+  _⊩_⇒_ : World → Cx Ty → Ty → Set
+  w ⊩ Γ ⇒ A = w ⊩⋆ Γ → w ⊩ A
+
+  infix 3 _⊩_⇒⋆_
+  _⊩_⇒⋆_ : World → Cx Ty → Cx Ty → Set
+  w ⊩ Γ ⇒⋆ Π = w ⊩⋆ Γ → w ⊩⋆ Π
+
+
+-- Forcing in all world of all models, for sequents.
+
+infix 3 ∀ᴹʷ⊩_⇒_
+∀ᴹʷ⊩_⇒_ : Cx Ty → Ty → Set₁
+∀ᴹʷ⊩ Γ ⇒ A = ∀ {{_ : Model}} {w : World} → w ⊩ Γ ⇒ A
+
+infix 3 ∀ᴹʷ⊩_⇒⋆_
+∀ᴹʷ⊩_⇒⋆_ : Cx Ty → Cx Ty → Set₁
+∀ᴹʷ⊩ Γ ⇒⋆ Π = ∀ {{_ : Model}} {w : World} → w ⊩ Γ ⇒⋆ Π
+
+infix 3 ∀ᴹʷ⊩_⁏_⇒_
+∀ᴹʷ⊩_⁏_⇒_ : Cx Ty → Cx Ty → Ty → Set₁
+∀ᴹʷ⊩ Γ ⁏ Δ ⇒ A = ∀ {{_ : Model}} {w : World}
+                   → w ⊩⋆ Γ → (∀ {v′} → w R v′ → v′ ⊩⋆ Δ) → w ⊩ A
+
+
+-- Additional useful equipment, for sequents.
+
+module _ {{_ : Model}} where
+  lookup : ∀ {A Γ w} → A ∈ Γ → w ⊩ Γ ⇒ A
+  lookup top     (γ , a) = a
+  lookup (pop i) (γ , b) = lookup i γ

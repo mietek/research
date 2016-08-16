@@ -135,7 +135,7 @@ module SyntacticComponent (_⁏_⊢_  : Cx Ty → Cx Ty → Ty → Set)
   ≤→Rᶜ {v′} ξ = ≤⨾R→Rᶜ (v′ , (ξ , reflRᶜ))
 
 
-  -- Minor brilliance condition, included by Ewald et al. and Alechina et al.
+  -- Minor brilliance condition, included by Ewald and Alechina et al.
   --
   --           v′  →   w′      v′
   --           ●   →   ◌───R───●
@@ -219,7 +219,7 @@ module SyntacticComponent (_⁏_⊢_  : Cx Ty → Cx Ty → Ty → Set)
   R⊔≤→≤⊔Rᶜ (v′ , (ζ , ξ)) = v′ , (ξ , ζ)
 
 
-  -- Infimum-to-supremum condition, included by Ewald et al.
+  -- Infimum-to-supremum condition, included by Ewald.
   --
   --   w′          →   w′      v′
   --   ●           →   ●───R───◌
