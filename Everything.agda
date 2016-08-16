@@ -24,61 +24,61 @@ import Common.PredicateBasedContext
 
 
 -- Common syntax.
-import New.BasicIPC.Syntax.Common
+import BasicIPC.Syntax.Common
 
 -- Linear Hilbert-style axiomatic formalisation of closed syntax.
-import New.BasicIPC.Syntax.ClosedHilbertLinear
+import BasicIPC.Syntax.ClosedHilbertLinear
 
 -- Hilbert-style axiomatic formalisation of closed syntax.
-import New.BasicIPC.Syntax.ClosedHilbert
+import BasicIPC.Syntax.ClosedHilbert
 
 -- Linear Hilbert-style axiomatic formalisation of open syntax.
-import New.BasicIPC.Syntax.OpenHilbertLinear
+import BasicIPC.Syntax.OpenHilbertLinear
 
 -- Hilbert-style axiomatic formalisation of open syntax.
-import New.BasicIPC.Syntax.OpenHilbert
+import BasicIPC.Syntax.OpenHilbert
 
 -- Gentzen-style natural deduction formalisation of open syntax.
-import New.BasicIPC.Syntax.OpenGentzen
-import New.BasicIPC.Syntax.OpenGentzenNormalForm
-import New.BasicIPC.Syntax.OpenGentzenSpinalNormalForm
+import BasicIPC.Syntax.OpenGentzen
+import BasicIPC.Syntax.OpenGentzenNormalForm
+import BasicIPC.Syntax.OpenGentzenSpinalNormalForm
 
 -- Translation between different formalisations of syntax.
-import New.BasicIPC.Syntax.Translation
+import BasicIPC.Syntax.Translation
 
 
 -- Basic Tarski-style denotational semantics.
-import New.BasicIPC.Semantics.Tarski
+import BasicIPC.Semantics.Tarski
 
 -- Tarski-style denotational semantics with a syntactic component, after Coquand-Dybjer.
-import New.BasicIPC.Semantics.TarskiCoquandDybjer
-import New.BasicIPC.Semantics.TarskiCoquandDybjerMk1
+import BasicIPC.Semantics.TarskiCoquandDybjer
+import BasicIPC.Semantics.TarskiCoquandDybjerMk1
 
 -- Kripke-style possible worlds semantics, based on the Gödel translation.
-import New.BasicIPC.Semantics.KripkeGodel
+import BasicIPC.Semantics.KripkeGodel
 
 -- Standard Kripke-style possible worlds semantics, based on the McKinsey-Tarski translation.
-import New.BasicIPC.Semantics.KripkeMcKinseyTarski
+import BasicIPC.Semantics.KripkeMcKinseyTarski
 
 
-import New.BasicIPC.Metatheory.ClosedHilbert-Tarski
-import New.BasicIPC.Metatheory.ClosedHilbert-TarskiCoquandDybjer
-import New.BasicIPC.Metatheory.ClosedHilbert-TarskiCoquandDybjerMk1
+import BasicIPC.Metatheory.ClosedHilbert-Tarski
+import BasicIPC.Metatheory.ClosedHilbert-TarskiCoquandDybjer
+import BasicIPC.Metatheory.ClosedHilbert-TarskiCoquandDybjerMk1
 
-import New.BasicIPC.Metatheory.OpenHilbert-Tarski
-import New.BasicIPC.Metatheory.OpenHilbert-TarskiCoquandDybjer
-import New.BasicIPC.Metatheory.OpenHilbert-TarskiCoquandDybjerMk1
-import New.BasicIPC.Metatheory.OpenHilbert-KripkeGodel
-import New.BasicIPC.Metatheory.OpenHilbert-KripkeMcKinseyTarski
+import BasicIPC.Metatheory.OpenHilbert-Tarski
+import BasicIPC.Metatheory.OpenHilbert-TarskiCoquandDybjer
+import BasicIPC.Metatheory.OpenHilbert-TarskiCoquandDybjerMk1
+import BasicIPC.Metatheory.OpenHilbert-KripkeGodel
+import BasicIPC.Metatheory.OpenHilbert-KripkeMcKinseyTarski
 
-import New.BasicIPC.Metatheory.OpenGentzen-Tarski
-import New.BasicIPC.Metatheory.OpenGentzen-TarskiCoquandDybjer
-import New.BasicIPC.Metatheory.OpenGentzen-KripkeGodel
-import New.BasicIPC.Metatheory.OpenGentzen-KripkeMcKinseyTarski
-import New.BasicIPC.Metatheory.OpenGentzenNormalForm-KripkeGodel
-import New.BasicIPC.Metatheory.OpenGentzenNormalForm-KripkeMcKinseyTarski
+import BasicIPC.Metatheory.OpenGentzen-Tarski
+import BasicIPC.Metatheory.OpenGentzen-TarskiCoquandDybjer
+import BasicIPC.Metatheory.OpenGentzen-KripkeGodel
+import BasicIPC.Metatheory.OpenGentzen-KripkeMcKinseyTarski
+import BasicIPC.Metatheory.OpenGentzenNormalForm-KripkeGodel
+import BasicIPC.Metatheory.OpenGentzenNormalForm-KripkeMcKinseyTarski
 
-import New.BasicIPC.Metatheory.OpenGentzen-HereditarySubstitution
+import BasicIPC.Metatheory.OpenGentzen-HereditarySubstitution
 
 
 
@@ -114,108 +114,108 @@ import IPC.Translation
 
 
 -- Common syntax.
-import New.BasicIS4.Syntax.Common
+import BasicIS4.Syntax.Common
 
 -- Linear Hilbert-style axiomatic formalisation of closed syntax.
-import New.BasicIS4.Syntax.ClosedHilbertLinear
+import BasicIS4.Syntax.ClosedHilbertLinear
 
 -- Hilbert-style axiomatic formalisation of closed syntax.
-import New.BasicIS4.Syntax.ClosedHilbert
+import BasicIS4.Syntax.ClosedHilbert
 
 -- Linear Hilbert-style axiomatic formalisation of open syntax.
-import New.BasicIS4.Syntax.OpenHilbertLinear
+import BasicIS4.Syntax.OpenHilbertLinear
 
 -- Hilbert-style axiomatic formalisation of open syntax.
-import New.BasicIS4.Syntax.OpenHilbert
+import BasicIS4.Syntax.OpenHilbert
 
--- Gentzen-style natural deduction formalisation of open syntax.
-import New.BasicIS4.Syntax.OpenGentzen
+-- Gentzen-style natural deduction formalisation of open syntax, after Bierman-de Paiva.
+import BasicIS4.Syntax.OpenGentzen
 
 -- Linear Hilbert-style axiomatic formalisation of open syntax with separate modal context.
-import New.BasicIS4.Syntax.OpenDyadicHilbertLinear
+import BasicIS4.Syntax.OpenDyadicHilbertLinear
 
--- Hilbert-style axiomatic formalisation of open syntax, with separate modal context.
-import New.BasicIS4.Syntax.OpenDyadicHilbert
+-- Hilbert-style axiomatic formalisation of open syntax with separate modal context.
+import BasicIS4.Syntax.OpenDyadicHilbert
 
--- Gentzen-style axiomatic formalisation of open syntax, with separate modal context.
-import New.BasicIS4.Syntax.OpenDyadicGentzen
+-- Gentzen-style axiomatic formalisation of open syntax with separate modal context, after Pfenning-Davies.
+import BasicIS4.Syntax.OpenDyadicGentzen
 
--- Gentzen-style axiomatic formalisation of open syntax, with separate relational context.
-import New.BasicIS4.Syntax.OpenLabelledGentzen
+-- Gentzen-style axiomatic formalisation of open syntax with separate relational context, after Basin-Matthews-Viganò.
+import BasicIS4.Syntax.OpenLabelledGentzen
 
 -- Translation between different formalisations of syntax.
-import New.BasicIS4.Syntax.Translation
+import BasicIS4.Syntax.Translation
 
 -- Translated equipment for Hilbert-style closed syntax.
-import New.BasicIS4.Syntax.TranslatedClosedHilbertEquipment
+import BasicIS4.Syntax.TranslatedClosedHilbertEquipment
 
 
 -- Tarski-style denotational semantics with a syntactic component, after Gabbay-Nanevski.
-import New.BasicIS4.Semantics.TarskiGabbayNanevski
-import New.BasicIS4.Semantics.TarskiGabbayNanevskiMk1
+import BasicIS4.Semantics.TarskiGabbayNanevski
+import BasicIS4.Semantics.TarskiGabbayNanevskiMk1
 
 -- Tarski-style denotational semantics with a syntactic component, after Coquand-Dybjer.
-import New.BasicIS4.Semantics.TarskiCoquandDybjer
-import New.BasicIS4.Semantics.TarskiCoquandDybjerMk1
+import BasicIS4.Semantics.TarskiCoquandDybjer
+import BasicIS4.Semantics.TarskiCoquandDybjerMk1
 
 -- Kripke-style possible worlds semantics, after Ono.
-import New.BasicIS4.Semantics.KripkeOno
+import BasicIS4.Semantics.KripkeOno
 
 -- Kripke-style possible worlds semantics, after Božić-Došen.
-import New.BasicIS4.Semantics.KripkeBozicDosen
+import BasicIS4.Semantics.KripkeBozicDosen
 
--- Kripke-style possible worlds semantics, after Ewald, Servi, Plotkin-Stirling.
-import New.BasicIS4.Semantics.KripkeEwald
+-- Kripke-style possible worlds semantics, after Ewald, Servi, and Plotkin-Stirling.
+import BasicIS4.Semantics.KripkeEwald
 
 -- Kripke-style possible worlds semantics, after Alechina-Mendler-de Paiva-Ritter.
-import New.BasicIS4.Semantics.KripkeAlechinaEtAl
+import BasicIS4.Semantics.KripkeAlechinaEtAl
 
 -- Canonical and non-canonical model equipment for Kripke-style semantics.
-import New.BasicIS4.Semantics.KripkeCanonicalModelEquipment
-import New.BasicIS4.Semantics.KripkeNonCanonicalModelEquipment
-import New.BasicIS4.Semantics.KripkeDyadicCanonicalModelEquipment
-import New.BasicIS4.Semantics.KripkeDyadicNonCanonicalModelEquipment
+import BasicIS4.Semantics.KripkeCanonicalModelEquipment
+import BasicIS4.Semantics.KripkeNonCanonicalModelEquipment
+import BasicIS4.Semantics.KripkeDyadicCanonicalModelEquipment
+import BasicIS4.Semantics.KripkeDyadicNonCanonicalModelEquipment
 
 
-import New.BasicIS4.Metatheory.ClosedHilbert-TarskiGabbayNanevski
-import New.BasicIS4.Metatheory.ClosedHilbert-TarskiGabbayNanevskiMk1
-import New.BasicIS4.Metatheory.ClosedHilbert-TarskiCoquandDybjer
-import New.BasicIS4.Metatheory.ClosedHilbert-TarskiCoquandDybjerMk1
+import BasicIS4.Metatheory.ClosedHilbert-TarskiGabbayNanevski
+import BasicIS4.Metatheory.ClosedHilbert-TarskiGabbayNanevskiMk1
+import BasicIS4.Metatheory.ClosedHilbert-TarskiCoquandDybjer
+import BasicIS4.Metatheory.ClosedHilbert-TarskiCoquandDybjerMk1
 
-import New.BasicIS4.Metatheory.OpenHilbert-TarskiGabbayNanevski
-import New.BasicIS4.Metatheory.OpenHilbert-TarskiGabbayNanevskiMk1
-import New.BasicIS4.Metatheory.OpenHilbert-TarskiCoquandDybjer
-import New.BasicIS4.Metatheory.OpenHilbert-TarskiCoquandDybjerMk1
-import New.BasicIS4.Metatheory.OpenHilbert-KripkeOno
-import New.BasicIS4.Metatheory.OpenHilbert-KripkeBozicDosen
-import New.BasicIS4.Metatheory.OpenHilbert-KripkeEwald
-import New.BasicIS4.Metatheory.OpenHilbert-KripkeAlechinaEtAl
+import BasicIS4.Metatheory.OpenHilbert-TarskiGabbayNanevski
+import BasicIS4.Metatheory.OpenHilbert-TarskiGabbayNanevskiMk1
+import BasicIS4.Metatheory.OpenHilbert-TarskiCoquandDybjer
+import BasicIS4.Metatheory.OpenHilbert-TarskiCoquandDybjerMk1
+import BasicIS4.Metatheory.OpenHilbert-KripkeOno
+import BasicIS4.Metatheory.OpenHilbert-KripkeBozicDosen
+import BasicIS4.Metatheory.OpenHilbert-KripkeEwald
+import BasicIS4.Metatheory.OpenHilbert-KripkeAlechinaEtAl
 
-import New.BasicIS4.Metatheory.OpenGentzen-TarskiGabbayNanevski
-import New.BasicIS4.Metatheory.OpenGentzen-TarskiGabbayNanevskiMk1
-import New.BasicIS4.Metatheory.OpenGentzen-TarskiCoquandDybjer
-import New.BasicIS4.Metatheory.OpenGentzen-TarskiCoquandDybjerMk1
-import New.BasicIS4.Metatheory.OpenGentzen-KripkeOno
-import New.BasicIS4.Metatheory.OpenGentzen-KripkeBozicDosen
-import New.BasicIS4.Metatheory.OpenGentzen-KripkeEwald
-import New.BasicIS4.Metatheory.OpenGentzen-KripkeAlechinaEtAl
+import BasicIS4.Metatheory.OpenGentzen-TarskiGabbayNanevski
+import BasicIS4.Metatheory.OpenGentzen-TarskiGabbayNanevskiMk1
+import BasicIS4.Metatheory.OpenGentzen-TarskiCoquandDybjer
+import BasicIS4.Metatheory.OpenGentzen-TarskiCoquandDybjerMk1
+import BasicIS4.Metatheory.OpenGentzen-KripkeOno
+import BasicIS4.Metatheory.OpenGentzen-KripkeBozicDosen
+import BasicIS4.Metatheory.OpenGentzen-KripkeEwald
+import BasicIS4.Metatheory.OpenGentzen-KripkeAlechinaEtAl
 
-import New.BasicIS4.Metatheory.OpenDyadicHilbert-TarskiGabbayNanevski
-import New.BasicIS4.Metatheory.OpenDyadicHilbert-TarskiGabbayNanevskiMk1
-import New.BasicIS4.Metatheory.OpenDyadicHilbert-TarskiCoquandDybjer
-import New.BasicIS4.Metatheory.OpenDyadicHilbert-TarskiCoquandDybjerMk1
-import New.BasicIS4.Metatheory.OpenDyadicHilbert-KripkeOno
-import New.BasicIS4.Metatheory.OpenDyadicHilbert-KripkeBozicDosen
-import New.BasicIS4.Metatheory.OpenDyadicHilbert-KripkeEwald
-import New.BasicIS4.Metatheory.OpenDyadicHilbert-KripkeAlechinaEtAl
+import BasicIS4.Metatheory.OpenDyadicHilbert-TarskiGabbayNanevski
+import BasicIS4.Metatheory.OpenDyadicHilbert-TarskiGabbayNanevskiMk1
+import BasicIS4.Metatheory.OpenDyadicHilbert-TarskiCoquandDybjer
+import BasicIS4.Metatheory.OpenDyadicHilbert-TarskiCoquandDybjerMk1
+import BasicIS4.Metatheory.OpenDyadicHilbert-KripkeOno
+import BasicIS4.Metatheory.OpenDyadicHilbert-KripkeBozicDosen
+import BasicIS4.Metatheory.OpenDyadicHilbert-KripkeEwald
+import BasicIS4.Metatheory.OpenDyadicHilbert-KripkeAlechinaEtAl
 
-import New.BasicIS4.Metatheory.OpenDyadicGentzen-TarskiGabbayNanevski
-import New.BasicIS4.Metatheory.OpenDyadicGentzen-TarskiGabbayNanevskiMk1
-import New.BasicIS4.Metatheory.OpenDyadicGentzen-TarskiCoquandDybjer
-import New.BasicIS4.Metatheory.OpenDyadicGentzen-KripkeOno
-import New.BasicIS4.Metatheory.OpenDyadicGentzen-KripkeBozicDosen
-import New.BasicIS4.Metatheory.OpenDyadicGentzen-KripkeEwald
-import New.BasicIS4.Metatheory.OpenDyadicGentzen-KripkeAlechinaEtAl
+import BasicIS4.Metatheory.OpenDyadicGentzen-TarskiGabbayNanevski
+import BasicIS4.Metatheory.OpenDyadicGentzen-TarskiGabbayNanevskiMk1
+import BasicIS4.Metatheory.OpenDyadicGentzen-TarskiCoquandDybjer
+import BasicIS4.Metatheory.OpenDyadicGentzen-KripkeOno
+import BasicIS4.Metatheory.OpenDyadicGentzen-KripkeBozicDosen
+import BasicIS4.Metatheory.OpenDyadicGentzen-KripkeEwald
+import BasicIS4.Metatheory.OpenDyadicGentzen-KripkeAlechinaEtAl
 
 
 -- Intuitionistic logic of proofs, without ∨, ⊥, or +.
