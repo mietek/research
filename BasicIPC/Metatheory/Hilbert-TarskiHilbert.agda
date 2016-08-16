@@ -54,7 +54,7 @@ reflect⋆ {⌀}     ∙        = ∙
 reflect⋆ {Π , A} (ts , t) = reflect⋆ ts , reflect t
 
 
--- Reflexivity.
+-- Reflexivity and transitivity.
 
 refl⊨⋆ : ∀ {Γ} → Γ ⊨⋆ Γ
 refl⊨⋆ = reflect⋆ refl⊢⋆

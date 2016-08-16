@@ -42,8 +42,8 @@ eval tt         γ = ∙
 instance
   canon : Model
   canon = record
-    { _⊨ᵅ_   = λ Γ P → Γ ⊢ α P
-    ; mono⊨ᵅ = mono⊢
+    { _⊨ᵅ_    = λ Γ P → Γ ⊢ α P
+    ; mono⊨ᵅ  = mono⊢
     ; [_⊢_]   = _⊢_
     ; mono[⊢] = mono⊢
     ; [var]    = var

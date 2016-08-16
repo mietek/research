@@ -234,6 +234,8 @@ import BasicIS4.Metatheory.DyadicGentzen-KripkeEwald
 import BasicIS4.Metatheory.DyadicGentzen-KripkeAlechinaEtAl
 
 
+
+
 -- Intuitionistic logic of proofs, without ∨, ⊥, or +.
 
 import BasicILP.Indirect
