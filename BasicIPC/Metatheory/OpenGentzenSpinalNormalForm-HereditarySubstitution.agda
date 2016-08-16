@@ -1,4 +1,4 @@
-module BasicIPC.Metatheory.OpenGentzen-HereditarySubstitution where
+module BasicIPC.Metatheory.OpenGentzenSpinalNormalForm-HereditarySubstitution where
 
 open import BasicIPC.Syntax.OpenGentzenSpinalNormalForm public
 

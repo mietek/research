@@ -78,7 +78,7 @@ import BasicIPC.Metatheory.OpenGentzen-KripkeMcKinseyTarski
 import BasicIPC.Metatheory.OpenGentzenNormalForm-KripkeGodel
 import BasicIPC.Metatheory.OpenGentzenNormalForm-KripkeMcKinseyTarski
 
-import BasicIPC.Metatheory.OpenGentzen-HereditarySubstitution
+import BasicIPC.Metatheory.OpenGentzenSpinalNormalForm-HereditarySubstitution
 
 
 
