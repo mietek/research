@@ -17,6 +17,7 @@ record Model : Set₁ where
     -- Hilbert-style syntax representation; monotonic.
     [_⊢_]   : Cx Ty → Ty → Set
     mono[⊢] : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → [ Γ ⊢ A ] → [ Γ′ ⊢ A ]
+    [var]    : ∀ {A Γ}     → A ∈ Γ → [ Γ ⊢ A ]
     [app]    : ∀ {A B Γ}   → [ Γ ⊢ A ▻ B ] → [ Γ ⊢ A ] → [ Γ ⊢ B ]
     [ci]     : ∀ {A Γ}     → [ Γ ⊢ A ▻ A ]
     [ck]     : ∀ {A B Γ}   → [ Γ ⊢ A ▻ B ▻ A ]

@@ -30,6 +30,7 @@ instance
     ; mono⊨ᵅ  = mono⊢
     ; [_⊢_]   = _⊢_
     ; mono[⊢] = mono⊢
+    ; [var]    = var
     ; [app]    = app
     ; [ci]     = ci
     ; [ck]     = ck
