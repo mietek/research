@@ -18,7 +18,9 @@ open Model {{…}} public
 
 
 
-module SyntacticComponent ([_] : Ty → Set) where
+module SyntacticComponent
+    ([_] : Ty → Set)
+  where
 
 
   -- Satisfaction in a particular model.

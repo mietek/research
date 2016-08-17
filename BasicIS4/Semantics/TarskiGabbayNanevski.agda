@@ -19,8 +19,11 @@ open Model {{…}} public
 
 
 
-module SyntacticComponent ([_⊢_]   : Cx Ty → Ty → Set)
-                          (mono[⊢] : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → [ Γ ⊢ A ] → [ Γ′ ⊢ A ]) where
+module SyntacticComponent
+    ([_⊢_]   : Cx Ty → Ty → Set)
+    ([_⊢⋆_]  : Cx Ty → Cx Ty → Set)
+    (mono[⊢] : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → [ Γ ⊢ A ] → [ Γ′ ⊢ A ])
+  where
 
 
   -- Satisfaction in a particular model.

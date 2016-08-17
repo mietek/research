@@ -7,11 +7,13 @@ open import BasicIS4.Syntax.Common public
 
 
 
-module SyntacticComponent (_⊢_   : Cx Ty → Ty → Set)
-                          (mono⊢ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A)
-                          (up     : ∀ {A Γ} → Γ ⊢ (□ A) → Γ ⊢ (□ □ A))
-                          (down   : ∀ {A Γ} → Γ ⊢ (□ A) → Γ ⊢ A)
-                          (lift   : ∀ {A Γ} → Γ ⊢ A → (□⋆ Γ) ⊢ (□ A)) where
+module SyntacticComponent
+    (_⊢_   : Cx Ty → Ty → Set)
+    (mono⊢ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A)
+    (up     : ∀ {A Γ} → Γ ⊢ (□ A) → Γ ⊢ (□ □ A))
+    (down   : ∀ {A Γ} → Γ ⊢ (□ A) → Γ ⊢ A)
+    (lift   : ∀ {A Γ} → Γ ⊢ A → (□⋆ Γ) ⊢ (□ A))
+  where
 
 
   -- Worlds.
