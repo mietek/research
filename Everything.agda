@@ -162,17 +162,6 @@ import BasicIS4.Syntax.LabelledGentzen
 -- Translation between different formalisations of syntax.
 import BasicIS4.Syntax.Translation
 
--- Translated equipment for Hilbert-style closed syntax.
-import BasicIS4.Syntax.ClosedHilbertTranslatedEquipment
-
-
--- Tarski-style semantics with a syntactic component, after Gabbay-Nanevski.
-import BasicIS4.Semantics.TarskiGabbayNanevski
-import BasicIS4.Semantics.TarskiGabbayNanevskiMk1
-
--- Tarski-style semantics with a syntactic component, after Coquand-Dybjer.
-import BasicIS4.Semantics.TarskiCoquandDybjer
-import BasicIS4.Semantics.TarskiCoquandDybjerMk1
 
 -- Kripke-style possible worlds semantics, after Ono.
 import BasicIS4.Semantics.KripkeOno
@@ -193,41 +182,21 @@ import BasicIS4.Semantics.KripkeDyadicCanonicalModelEquipment
 import BasicIS4.Semantics.KripkeDyadicNonCanonicalModelEquipment
 
 
-import BasicIS4.Metatheory.ClosedHilbert-TarskiGabbayNanevski
-import BasicIS4.Metatheory.ClosedHilbert-TarskiGabbayNanevskiMk1
-import BasicIS4.Metatheory.ClosedHilbert-TarskiCoquandDybjer
-import BasicIS4.Metatheory.ClosedHilbert-TarskiCoquandDybjerMk1
-
-import BasicIS4.Metatheory.Hilbert-TarskiGabbayNanevski
-import BasicIS4.Metatheory.Hilbert-TarskiGabbayNanevskiMk1
-import BasicIS4.Metatheory.Hilbert-TarskiCoquandDybjer
-import BasicIS4.Metatheory.Hilbert-TarskiCoquandDybjerMk1
 import BasicIS4.Metatheory.Hilbert-KripkeOno
 import BasicIS4.Metatheory.Hilbert-KripkeBozicDosen
 import BasicIS4.Metatheory.Hilbert-KripkeEwald
 import BasicIS4.Metatheory.Hilbert-KripkeAlechinaEtAl
 
-import BasicIS4.Metatheory.Gentzen-TarskiGabbayNanevski
-import BasicIS4.Metatheory.Gentzen-TarskiGabbayNanevskiMk1
-import BasicIS4.Metatheory.Gentzen-TarskiCoquandDybjer
-import BasicIS4.Metatheory.Gentzen-TarskiCoquandDybjerMk1
 import BasicIS4.Metatheory.Gentzen-KripkeOno
 import BasicIS4.Metatheory.Gentzen-KripkeBozicDosen
 import BasicIS4.Metatheory.Gentzen-KripkeEwald
 import BasicIS4.Metatheory.Gentzen-KripkeAlechinaEtAl
 
-import BasicIS4.Metatheory.DyadicHilbert-TarskiGabbayNanevski
-import BasicIS4.Metatheory.DyadicHilbert-TarskiGabbayNanevskiMk1
-import BasicIS4.Metatheory.DyadicHilbert-TarskiCoquandDybjer
-import BasicIS4.Metatheory.DyadicHilbert-TarskiCoquandDybjerMk1
 import BasicIS4.Metatheory.DyadicHilbert-KripkeOno
 import BasicIS4.Metatheory.DyadicHilbert-KripkeBozicDosen
 import BasicIS4.Metatheory.DyadicHilbert-KripkeEwald
 import BasicIS4.Metatheory.DyadicHilbert-KripkeAlechinaEtAl
 
-import BasicIS4.Metatheory.DyadicGentzen-TarskiGabbayNanevski
-import BasicIS4.Metatheory.DyadicGentzen-TarskiGabbayNanevskiMk1
-import BasicIS4.Metatheory.DyadicGentzen-TarskiCoquandDybjer
 import BasicIS4.Metatheory.DyadicGentzen-KripkeOno
 import BasicIS4.Metatheory.DyadicGentzen-KripkeBozicDosen
 import BasicIS4.Metatheory.DyadicGentzen-KripkeEwald
