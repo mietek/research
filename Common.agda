@@ -70,6 +70,13 @@ elim⊎ (ι₁ x) f g = f x
 elim⊎ (ι₂ y) f g = g y
 
 
+-- Double-argument K combinator.
+
+const₂ : ∀ {a b c} {A : Set a} {B : Set b} {C : Set c}
+         → A → B → C → A
+const₂ x _ _ = x
+
+
 -- Triple-argument congruence.
 
 cong₃ : ∀ {a b c d} {A : Set a} {B : Set b} {C : Set c} {D : Set d}
