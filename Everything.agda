@@ -163,6 +163,27 @@ import BasicIS4.Syntax.LabelledGentzen
 import BasicIS4.Syntax.Translation
 
 
+-- Tarski-style semantics with a closed syntactic component, after Gabbay-Nanevski.
+import BasicIS4.Semantics.TarskiClosedGabbayNanevski
+
+-- Tarski-style semantics with a Hilbert-style closed syntax representation.
+import BasicIS4.Semantics.TarskiClosedHilbert
+
+-- Tarski-style semantics with a syntactic component, after Gabbay-Nanevski.
+import BasicIS4.Semantics.TarskiGabbayNanevski
+
+-- Tarski-style semantics with a Hilbert-style syntax representation.
+import BasicIS4.Semantics.TarskiHilbert
+
+-- Tarski-style semantics with a Gentzen-style syntax representation.
+import BasicIS4.Semantics.TarskiGentzen
+
+-- Tarski-style semantics with a Hilbert-style syntax representation with separate modal context.
+-- import BasicIS4.Semantics.TarskiDyadicHilbert
+
+-- Tarski-style semantics with a Gentzen-style syntax representation with separate modal context.
+-- import BasicIS4.Semantics.TarskiDyadicGentzen
+
 -- Kripke-style possible worlds semantics, after Ono.
 import BasicIS4.Semantics.KripkeOno
 
@@ -182,11 +203,21 @@ import BasicIS4.Semantics.KripkeDyadicCanonicalModelEquipment
 import BasicIS4.Semantics.KripkeDyadicNonCanonicalModelEquipment
 
 
+import BasicIS4.Metatheory.ClosedHilbert-TarskiClosedGabbayNanevski
+import BasicIS4.Metatheory.ClosedHilbert-TarskiClosedHilbert
+
+import BasicIS4.Metatheory.Hilbert-TarskiClosedGabbayNanevski
+import BasicIS4.Metatheory.Hilbert-TarskiClosedHilbert
+-- import BasicIS4.Metatheory.Hilbert-TarskiGabbayNanevski
+-- import BasicIS4.Metatheory.Hilbert-TarskiHilbert
 import BasicIS4.Metatheory.Hilbert-KripkeOno
 import BasicIS4.Metatheory.Hilbert-KripkeBozicDosen
 import BasicIS4.Metatheory.Hilbert-KripkeEwald
 import BasicIS4.Metatheory.Hilbert-KripkeAlechinaEtAl
 
+import BasicIS4.Metatheory.Hilbert-TarskiClosedGabbayNanevski
+-- import BasicIS4.Metatheory.Hilbert-TarskiGabbayNanevski
+-- import BasicIS4.Metatheory.Hilbert-TarskiGentzen
 import BasicIS4.Metatheory.Gentzen-KripkeOno
 import BasicIS4.Metatheory.Gentzen-KripkeBozicDosen
 import BasicIS4.Metatheory.Gentzen-KripkeEwald
