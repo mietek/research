@@ -60,9 +60,8 @@ instance
 
 reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 reflect {α P}   t = t , t
-reflect {A ▻ B} t = λ η → mono⊢ η t , λ a →
-                      reflect {B} (app (mono⊢ η t) (reify[] {A} a))
-reflect {A ∧ B} t = reflect {A} (fst t) , reflect {B} (snd t)
+reflect {A ▻ B} t = λ η → mono⊢ η t , λ a → reflect (app (mono⊢ η t) (reify[] a))
+reflect {A ∧ B} t = reflect (fst t) , reflect (snd t)
 reflect {⊤}    t = ∙
 
 reflect⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊨⋆ Π

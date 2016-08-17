@@ -12,7 +12,7 @@ module _ {{_ : Model}} where
   reify : ∀ {A Γ} → Γ ⊨ A → Γ ⊢ A
   reify {α P}   (t , s) = t
   reify {A ▻ B} s       = let t , f = s refl⊆ in t
-  reify {A ∧ B} (a , b) = pair (reify {A} a) (reify {B} b)
+  reify {A ∧ B} (a , b) = pair (reify a) (reify b)
   reify {⊤}    ∙       = tt
 
   reify⋆ : ∀ {Π Γ} → Γ ⊨⋆ Π → Γ ⊢⋆ Π
@@ -73,8 +73,8 @@ instance
 
 reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 reflect {α P}   t = t , t
-reflect {A ▻ B} t = λ η → mono⊢ η t , λ a → reflect {B} (app (mono⊢ η t) (reify {A} a))
-reflect {A ∧ B} t = reflect {A} (fst t) , reflect {B} (snd t)
+reflect {A ▻ B} t = λ η → mono⊢ η t , λ a → reflect (app (mono⊢ η t) (reify a))
+reflect {A ∧ B} t = reflect (fst t) , reflect (snd t)
 reflect {⊤}    t = ∙
 
 reflect⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊨⋆ Π

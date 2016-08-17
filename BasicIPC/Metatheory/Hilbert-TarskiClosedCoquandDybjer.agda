@@ -12,7 +12,7 @@ module _ {{_ : Model}} where
   reify : ∀ {A} → ⊨ A → ⌀ ⊢ A
   reify {α P}   (t , s) = t
   reify {A ▻ B} (t , f) = t
-  reify {A ∧ B} (a , b) = pair (reify {A} a) (reify {B} b)
+  reify {A ∧ B} (a , b) = pair (reify a) (reify b)
   reify {⊤}    ∙       = tt
 
 

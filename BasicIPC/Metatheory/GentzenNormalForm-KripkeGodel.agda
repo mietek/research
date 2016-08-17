@@ -41,15 +41,14 @@ instance
 mutual
   reflect : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊩ A
   reflect {α P}   t = λ η → mono⊢ⁿᵉ η t
-  reflect {A ▻ B} t = λ η a → reflect {B} (appⁿᵉ (mono⊢ⁿᵉ η t) (reify {A} a))
-  reflect {A ∧ B} t = λ η → reflect {A} (fstⁿᵉ (mono⊢ⁿᵉ η t)) ,
-                             reflect {B} (sndⁿᵉ (mono⊢ⁿᵉ η t))
+  reflect {A ▻ B} t = λ η a → reflect (appⁿᵉ (mono⊢ⁿᵉ η t) (reify a))
+  reflect {A ∧ B} t = λ η → reflect (fstⁿᵉ (mono⊢ⁿᵉ η t)) , reflect (sndⁿᵉ (mono⊢ⁿᵉ η t))
   reflect {⊤}    t = λ η → ∙
 
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ⁿᶠ A
   reify {α P}   s = neⁿᶠ (s refl⊆)
-  reify {A ▻ B} s = lamⁿᶠ (reify {B} (s weak⊆ (reflect {A} (varⁿᵉ top))))
-  reify {A ∧ B} s = pairⁿᶠ (reify {A} (π₁ (s refl⊆))) (reify {B} (π₂ (s refl⊆)))
+  reify {A ▻ B} s = lamⁿᶠ (reify (s weak⊆ (reflect {A} (varⁿᵉ top))))
+  reify {A ∧ B} s = pairⁿᶠ (reify (π₁ (s refl⊆))) (reify (π₂ (s refl⊆)))
   reify {⊤}    s = ttⁿᶠ
 
 reflect⋆ : ∀ {Π Γ} → Γ ⊢⋆ⁿᵉ Π → Γ ⊩⋆ Π

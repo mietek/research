@@ -39,14 +39,14 @@ instance
 mutual
   reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
   reflect {α P}   t = λ η → mono⊢ η t
-  reflect {A ▻ B} t = λ η a → reflect {B} (app (mono⊢ η t) (reify {A} a))
-  reflect {A ∧ B} t = λ η → reflect {A} (fst (mono⊢ η t)) , reflect {B} (snd (mono⊢ η t))
+  reflect {A ▻ B} t = λ η a → reflect (app (mono⊢ η t) (reify a))
+  reflect {A ∧ B} t = λ η → reflect (fst (mono⊢ η t)) , reflect (snd (mono⊢ η t))
   reflect {⊤}    t = λ η → ∙
 
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
   reify {α P}   s = s refl⊆
-  reify {A ▻ B} s = lam (reify {B} (s weak⊆ (reflect {A} v₀)))
-  reify {A ∧ B} s = pair (reify {A} (π₁ (s refl⊆))) (reify {B} (π₂ (s refl⊆)))
+  reify {A ▻ B} s = lam (reify (s weak⊆ (reflect {A} v₀)))
+  reify {A ∧ B} s = pair (reify (π₁ (s refl⊆))) (reify (π₂ (s refl⊆)))
   reify {⊤}    s = tt
 
 reflect⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊩⋆ Π
