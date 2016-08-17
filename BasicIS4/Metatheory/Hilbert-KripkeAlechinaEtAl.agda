@@ -4,6 +4,8 @@ open import BasicIS4.Syntax.Hilbert public
 open import BasicIS4.Semantics.KripkeAlechinaEtAl public
 
 
+-- Soundness with respect to all models, or evaluation.
+
 eval : ∀ {A Γ} → Γ ⊢ A → ∀ᴹʷ⊩ Γ ⇒ A
 eval (var i)          γ = lookup i γ
 eval (app t u)        γ = (eval t γ refl≤) (eval u γ)
@@ -26,3 +28,6 @@ eval (cpair {A})      γ = λ _ a ξ b → mono⊩ {A} ξ a , b
 eval cfst             γ = λ _ s → π₁ s
 eval csnd             γ = λ _ s → π₂ s
 eval tt               γ = ∙
+
+
+-- TODO: Correctness of evaluation with respect to conversion.
