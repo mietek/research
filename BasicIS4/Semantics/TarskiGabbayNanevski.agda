@@ -33,7 +33,7 @@ module SyntacticComponent
     _⊨_ : Cx Ty → Ty → Set
     Γ ⊨ α P   = [ Γ ⊢ α P ] × Γ ⊨ᵅ P
     Γ ⊨ A ▻ B = ∀ {Γ′} → Γ ⊆ Γ′ → [ Γ′ ⊢ A ▻ B ] × (Γ′ ⊨ A → Γ′ ⊨ B)
-    Γ ⊨ □ A   = [ ⌀ ⊢ A ] × Γ ⊨ A
+    Γ ⊨ □ A   = ∀ {Γ′} → Γ ⊆ Γ′ → [ ⌀ ⊢ A ] × Γ′ ⊨ A
     Γ ⊨ A ∧ B = Γ ⊨ A × Γ ⊨ B
     Γ ⊨ ⊤    = 𝟙
 
@@ -49,7 +49,7 @@ module SyntacticComponent
     mono⊨ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊨ A → Γ′ ⊨ A
     mono⊨ {α P}   η (t , s) = mono[⊢] η t , mono⊨ᵅ η s
     mono⊨ {A ▻ B} η s       = λ η′ → s (trans⊆ η η′)
-    mono⊨ {□ A}   η (t , a) = t , mono⊨ {A} η a
+    mono⊨ {□ A}   η s       = λ η′ → s (trans⊆ η η′)
     mono⊨ {A ∧ B} η (a , b) = mono⊨ {A} η a , mono⊨ {B} η b
     mono⊨ {⊤}    η ∙       = ∙
 
@@ -71,7 +71,7 @@ module SyntacticComponent
                   in  h (g a)
 
     ⟪⇓⟫ : ∀ {A Γ} → Γ ⊨ □ A → Γ ⊨ A
-    ⟪⇓⟫ (t , a) = a
+    ⟪⇓⟫ s = let p , a = s refl⊆ in a
 
 
   -- Satisfaction in a particular model, for sequents.

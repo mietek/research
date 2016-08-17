@@ -171,17 +171,14 @@ import BasicIS4.Semantics.TarskiClosedHilbert
 
 -- Tarski-style semantics with a syntactic component, after Gabbay-Nanevski.
 import BasicIS4.Semantics.TarskiGabbayNanevski
+import BasicIS4.Semantics.TarskiDyadicGabbayNanevski
 
 -- Tarski-style semantics with a Hilbert-style syntax representation.
 import BasicIS4.Semantics.TarskiHilbert
+import BasicIS4.Semantics.TarskiDyadicHilbert
 
 -- Tarski-style semantics with a Gentzen-style syntax representation.
 import BasicIS4.Semantics.TarskiGentzen
-
--- Tarski-style semantics with a Hilbert-style syntax representation with separate modal context.
--- import BasicIS4.Semantics.TarskiDyadicHilbert
-
--- Tarski-style semantics with a Gentzen-style syntax representation with separate modal context.
 -- import BasicIS4.Semantics.TarskiDyadicGentzen
 
 -- Kripke-style possible worlds semantics, after Ono.
@@ -208,27 +205,31 @@ import BasicIS4.Metatheory.ClosedHilbert-TarskiClosedHilbert
 
 import BasicIS4.Metatheory.Hilbert-TarskiClosedGabbayNanevski
 import BasicIS4.Metatheory.Hilbert-TarskiClosedHilbert
--- import BasicIS4.Metatheory.Hilbert-TarskiGabbayNanevski
--- import BasicIS4.Metatheory.Hilbert-TarskiHilbert
+import BasicIS4.Metatheory.Hilbert-TarskiGabbayNanevski -- FIXME
+import BasicIS4.Metatheory.Hilbert-TarskiHilbert -- FIXME
 import BasicIS4.Metatheory.Hilbert-KripkeOno
 import BasicIS4.Metatheory.Hilbert-KripkeBozicDosen
 import BasicIS4.Metatheory.Hilbert-KripkeEwald
 import BasicIS4.Metatheory.Hilbert-KripkeAlechinaEtAl
 
-import BasicIS4.Metatheory.Hilbert-TarskiClosedGabbayNanevski
--- import BasicIS4.Metatheory.Hilbert-TarskiGabbayNanevski
--- import BasicIS4.Metatheory.Hilbert-TarskiGentzen
-import BasicIS4.Metatheory.Gentzen-KripkeOno
-import BasicIS4.Metatheory.Gentzen-KripkeBozicDosen
-import BasicIS4.Metatheory.Gentzen-KripkeEwald
-import BasicIS4.Metatheory.Gentzen-KripkeAlechinaEtAl
-
+import BasicIS4.Metatheory.DyadicHilbert-TarskiDyadicGabbayNanevski -- FIXME
+import BasicIS4.Metatheory.DyadicHilbert-TarskiDyadicHilbert -- FIXME
 import BasicIS4.Metatheory.DyadicHilbert-KripkeOno
 import BasicIS4.Metatheory.DyadicHilbert-KripkeBozicDosen
 import BasicIS4.Metatheory.DyadicHilbert-KripkeEwald
 import BasicIS4.Metatheory.DyadicHilbert-KripkeAlechinaEtAl
 
-import BasicIS4.Metatheory.DyadicGentzen-KripkeOno
+import BasicIS4.Metatheory.Gentzen-TarskiClosedGabbayNanevski
+import BasicIS4.Metatheory.Gentzen-TarskiGabbayNanevski -- FIXME
+import BasicIS4.Metatheory.Gentzen-TarskiGentzen -- FIXME
+import BasicIS4.Metatheory.Gentzen-KripkeOno -- FIXME
+import BasicIS4.Metatheory.Gentzen-KripkeBozicDosen
+import BasicIS4.Metatheory.Gentzen-KripkeEwald
+import BasicIS4.Metatheory.Gentzen-KripkeAlechinaEtAl
+
+-- import BasicIS4.Metatheory.DyadicGentzen-TarskiDyadicGabbayNanevski
+-- import BasicIS4.Metatheory.DyadicGentzen-TarskiDyadicGentzen
+import BasicIS4.Metatheory.DyadicGentzen-KripkeOno -- FIXME
 import BasicIS4.Metatheory.DyadicGentzen-KripkeBozicDosen
 import BasicIS4.Metatheory.DyadicGentzen-KripkeEwald
 import BasicIS4.Metatheory.DyadicGentzen-KripkeAlechinaEtAl

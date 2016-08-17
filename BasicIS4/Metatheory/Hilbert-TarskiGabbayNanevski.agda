@@ -3,7 +3,7 @@ module BasicIS4.Metatheory.Hilbert-TarskiGabbayNanevski where
 open import BasicIS4.Syntax.Hilbert public
 open import BasicIS4.Semantics.TarskiGabbayNanevski public
 
-open SyntacticComponent (_⊢_) (mono⊢) public
+open SyntacticComponent (_⊢_) (_⊢⋆_) (mono⊢) public
 
 
 -- Completeness with respect to a particular model.
@@ -12,7 +12,7 @@ module _ {{_ : Model}} where
   reify : ∀ {A Γ} → Γ ⊨ A → Γ ⊢ A
   reify {α P}   (t , s) = t
   reify {A ▻ B} s       = let t , f = s refl⊆ in t
-  reify {□ A}   (t , a) = box t
+  reify {□ A}   s       = let t , a = s refl⊆ in mono⊢ bot⊆ (box t)
   reify {A ∧ B} (a , b) = pair (reify a) (reify b)
   reify {⊤}    ∙       = tt
 
@@ -39,14 +39,18 @@ module _ {{_ : Model}} where
                                  in  app (app cs t′) u , ⟪ap⟫ s₁″ s₂′
 
   _⟪◎⟫_ : ∀ {A B Γ} → Γ ⊨ □ (A ▻ B) → Γ ⊨ □ A → Γ ⊨ □ B
-  (t , f) ⟪◎⟫ (u , a) = app t u , f ⟪$⟫ a
+  (s₁ ⟪◎⟫ s₂) η = let t , f = s₁ η
+                      u , a = s₂ η
+                  in  app t u , f ⟪$⟫ a
 
-  _⟪◎⟫′_ : ∀ {A B Γ} → Γ ⊨ □ (A ▻ B) → Γ ⊨ □ A ▻ □ B
+  -- TODO: Report bug.
+  _⟪◎⟫′_ : ∀ {A B Γ} → Γ ⊨ □ (A ▻ B) → Γ  ⊨ □ A ▻ □ B
   _⟪◎⟫′_ {A} {B} s η = let s′ = mono⊨ {□ (A ▻ B)} η s
-                       in  app cdist (reify s′) , _⟪◎⟫_ s′
+                       in  app cdist (reify (λ {Γ′} η′ → s′ η′ )) , _⟪◎⟫_ s′
 
   ⟪⇑⟫ : ∀ {A Γ} → Γ ⊨ □ A → Γ ⊨ □ □ A
-  ⟪⇑⟫ (t , a) = box t , (t , a)
+  ⟪⇑⟫ s η = let t , a = s η
+            in  box t , λ η′ → s (trans⊆ η η′)
 
   _⟪,⟫′_ : ∀ {A B Γ} → Γ ⊨ A → Γ ⊨ B ▻ A ∧ B
   _⟪,⟫′_ {A} a η = let a′ = mono⊨ {A} η a
@@ -61,7 +65,7 @@ eval (app t u) γ = eval t γ ⟪$⟫ eval u γ
 eval ci        γ = const (ci , id)
 eval ck        γ = const (ck , ⟪const⟫)
 eval cs        γ = const (cs , ⟪ap⟫′)
-eval (box t)   γ = t , eval t ∙
+eval (box t)   γ = λ η → t , eval t ∙
 eval cdist     γ = const (cdist , _⟪◎⟫′_)
 eval cup       γ = const (cup , ⟪⇑⟫)
 eval cdown     γ = const (cdown , ⟪⇓⟫)
@@ -86,10 +90,14 @@ instance
 
 -- Soundness with respect to the canonical model.
 
+-- FIXME: The semantics must be wrong...
+postulate
+  oops : ∀ {A Γ} → Γ ⊢ A → ⌀ ⊢ A
+
 reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 reflect {α P}   t = t , t
 reflect {A ▻ B} t = λ η → mono⊢ η t , λ a → reflect (app (mono⊢ η t) (reify a))
-reflect {□ A}   t = {!!} , reflect (down t)
+reflect {□ A}   t = λ η → oops (down t) , reflect (mono⊢ η (down t))
 reflect {A ∧ B} t = reflect (fst t) , reflect (snd t)
 reflect {⊤}    t = ∙
 

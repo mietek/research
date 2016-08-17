@@ -71,10 +71,14 @@ instance
 
 -- Soundness with respect to the canonical model.
 
+-- FIXME: The semantics must be wrong...
+postulate
+  oops : ∀ {A Γ} → Γ ⊢ A → ⌀ ⊢ A
+
 reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 reflect {α P}   t = t , t
 reflect {A ▻ B} t = λ η → mono⊢ η t , λ a → reflect (app (mono⊢ η t) (reify[] a))
-reflect {□ A}   t = {!!} , reflect (down t)
+reflect {□ A}   t = oops (down t) , reflect (down t)
 reflect {A ∧ B} t = reflect (fst t) , reflect (snd t)
 reflect {⊤}    t = ∙
 
