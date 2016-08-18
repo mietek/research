@@ -12,7 +12,7 @@ module NaturalSoundness where
 
   -- Soundness with respect to all models, or evaluation.
 
-  eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊨ A
+  eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
   eval (var i)   γ = lookup i γ
   eval (app t u) γ = (eval t γ) (eval u γ)
   eval ci        γ = id
@@ -65,7 +65,7 @@ module CoquandDybjerSoundness where
 
   -- Completeness with respect to a particular model.
 
-  reify : ∀ {{_ : Model}} {A} → ⊨ A → ⌀ ⊢ A
+  reify : ∀ {{_ : Model}} {A} → ⊩ A → ⌀ ⊢ A
   reify {α P}   (t , s) = t
   reify {A ▻ B} (t , f) = t
   reify {A ∧ B} (a , b) = pair (reify {A} a) (reify {B} b)
@@ -77,7 +77,7 @@ module CoquandDybjerSoundness where
 
   -- Soundness with respect to all models, or evaluation.
 
-  eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊨ A
+  eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
   eval (var i)   γ = lookup i γ
   eval (app t u) γ = (eval t γ) $ˢ (eval u γ)
   eval ci        γ = ci , id

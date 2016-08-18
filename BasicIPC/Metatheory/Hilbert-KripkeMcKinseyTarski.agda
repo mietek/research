@@ -6,7 +6,7 @@ open import BasicIPC.Semantics.KripkeMcKinseyTarski public
 
 -- Soundness with respect to all models, or evaluation.
 
-eval : ∀ {A Γ} → Γ ⊢ A → ∀ᴹʷ⊩ Γ ⇒ A
+eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)           γ = lookup i γ
 eval (app {A} {B} t u) γ = _⟪$⟫_ {A} {B} (eval t γ) (eval u γ)
 eval ci                γ = const id
@@ -70,7 +70,7 @@ trans⊩⋆ ts us = reflect⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
 
 -- Completeness with respect to all models, or quotation.
 
-quot : ∀ {A Γ} → ∀ᴹʷ⊩ Γ ⇒ A → Γ ⊢ A
+quot : ∀ {A Γ} → Γ ⊨ A → Γ ⊢ A
 quot t = reify (t refl⊩⋆)
 
 

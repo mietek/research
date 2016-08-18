@@ -9,7 +9,7 @@ open SyntacticComponent (⌀ ⊢_) public
 -- Completeness with respect to a particular model.
 
 module _ {{_ : Model}} where
-  reify : ∀ {A} → ⊨ A → ⌀ ⊢ A
+  reify : ∀ {A} → ⊩ A → ⌀ ⊢ A
   reify {α P}   (t , s) = t
   reify {A ▻ B} (t , f) = t
   reify {□ A}   (t , a) = t
@@ -20,39 +20,39 @@ module _ {{_ : Model}} where
 -- Additional useful equipment.
 
 module _ {{_ : Model}} where
-  ⟪const⟫ : ∀ {A B} → ⊨ A → ⊨ B ▻ A
+  ⟪const⟫ : ∀ {A B} → ⊩ A → ⊩ B ▻ A
   ⟪const⟫ a = app ck (reify a) , const a
 
-  ⟪ap⟫′ : ∀ {A B C} → ⊨ A ▻ B ▻ C → ⊨ (A ▻ B) ▻ A ▻ C
+  ⟪ap⟫′ : ∀ {A B C} → ⊩ A ▻ B ▻ C → ⊩ (A ▻ B) ▻ A ▻ C
   ⟪ap⟫′ f = app cs (reify f) , λ g →
               app (app cs (reify f)) (reify g) , ⟪ap⟫ f g
 
-  _⟪◎⟫_ : ∀ {A B} → ⊨ □ (A ▻ B) → ⊨ □ A → ⊨ □ B
+  _⟪◎⟫_ : ∀ {A B} → ⊩ □ (A ▻ B) → ⊩ □ A → ⊩ □ B
   (t , f) ⟪◎⟫ (u , a) = app (app cdist t) u , f ⟪$⟫ a
 
-  _⟪◎⟫′_ : ∀ {A B} → ⊨ □ (A ▻ B) → ⊨ □ A ▻ □ B
+  _⟪◎⟫′_ : ∀ {A B} → ⊩ □ (A ▻ B) → ⊩ □ A ▻ □ B
   _⟪◎⟫′_ s = app cdist (reify s) , _⟪◎⟫_ s
 
-  ⟪⇑⟫ : ∀ {A} → ⊨ □ A → ⊨ □ □ A
+  ⟪⇑⟫ : ∀ {A} → ⊩ □ A → ⊩ □ □ A
   ⟪⇑⟫ (t , a) = box t , (t , a)
 
-  _⟪,⟫′_ : ∀ {A B} → ⊨ A → ⊨ B ▻ A ∧ B
+  _⟪,⟫′_ : ∀ {A B} → ⊩ A → ⊩ B ▻ A ∧ B
   _⟪,⟫′_ a = app cpair (reify a) , _,_ a
 
 
 -- Additional useful equipment, for sequents.
 
 module _ {{_ : Model}} where
-  _⟦◎⟧_ : ∀ {A B Γ} → ⊨ Γ ⇒ □ (A ▻ B) → ⊨ Γ ⇒ □ A → ⊨ Γ ⇒ □ B
+  _⟦◎⟧_ : ∀ {A B Γ} → ⊩ Γ ⇒ □ (A ▻ B) → ⊩ Γ ⇒ □ A → ⊩ Γ ⇒ □ B
   (s₁ ⟦◎⟧ s₂) γ = (s₁ γ) ⟪◎⟫ (s₂ γ)
 
-  ⟦⇑⟧ : ∀ {A Γ} → ⊨ Γ ⇒ □ A → ⊨ Γ ⇒ □ □ A
+  ⟦⇑⟧ : ∀ {A Γ} → ⊩ Γ ⇒ □ A → ⊩ Γ ⇒ □ □ A
   ⟦⇑⟧ s γ = ⟪⇑⟫ (s γ)
 
 
 -- Soundness with respect to all models, or evaluation.
 
-eval : ∀ {A Γ} → Γ ⊢ A → ∀ᴹ⊨ Γ ⇒ A
+eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)   γ = lookup i γ
 eval (app t u) γ = eval t γ ⟪$⟫ eval u γ
 eval ci        γ = ci , id
@@ -97,13 +97,13 @@ check eta⊤⋙                  = refl
 instance
   canon : Model
   canon = record
-    { ⊨ᵅ_ = λ P → ⌀ ⊢ α P
+    { ⊩ᵅ_ = λ P → ⌀ ⊢ α P
     }
 
 
 -- Completeness with respect to all models, or quotation.
 
-quot₀ : ∀ {A} → ∀ᴹ⊨ ⌀ ⇒ A → ⌀ ⊢ A
+quot₀ : ∀ {A} → ⌀ ⊨ A → ⌀ ⊢ A
 quot₀ t = reify (t ∙)
 
 

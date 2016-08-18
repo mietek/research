@@ -24,7 +24,7 @@ module _ {{_ : Model}} where
 
 -- Soundness with respect to all models, or evaluation.
 
-eval : ∀ {A} → ⊢ A → ∀ᴹ⊨ A
+eval : ∀ {A} → ⊢ A → ⊨ A
 eval (app t u) = eval t ⟪$⟫ eval u
 eval ci        = [ci] , id
 eval ck        = [ck] , ⟪const⟫
@@ -70,7 +70,7 @@ check eta⊤⋙          = refl
 instance
   canon : Model
   canon = record
-    { ⊨ᵅ_    = λ P → ⊢ α P
+    { ⊩ᵅ_    = λ P → ⊢ α P
     ; [_]     = ⊢_
     ; [app]   = app
     ; [ci]    = ci
@@ -89,7 +89,7 @@ instance
 
 -- Completeness with respect to all models, or quotation.
 
-quot : ∀ {A} → ∀ᴹ⊨ A → ⊢ A
+quot : ∀ {A} → ⊨ A → ⊢ A
 quot t = reify[] t
 
 

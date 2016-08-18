@@ -10,7 +10,7 @@ open SyntacticComponent (_⊢_) (mono⊢) (up) (down) (lift) public
 -- Soundness with respect to all models, or evaluation.
 
 mutual
-  eval : ∀ {A Γ} → Γ ⊢ A → ∀ᴹʷ⊩ Γ ⇒ A
+  eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
   eval (var i)         γ = lookup i γ
   eval (lam t)         γ = λ ξ a → eval t (mono⊩⋆ ξ γ , a)
   eval (app t u)       γ = (eval t γ refl≤) (eval u γ)
@@ -27,7 +27,7 @@ mutual
   thing {⌀}     ∙        γ ζ = ∙
   thing {Δ , B} (ts , t) γ ζ = thing ts γ ζ , λ ζ′ → eval t γ (transR ζ ζ′)
 
-eval⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → ∀ᴹʷ⊩ Γ ⇒⋆ Π
+eval⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊨⋆ Π
 eval⋆ {⌀}     ∙        γ = ∙
 eval⋆ {Π , A} (ts , t) γ = eval⋆ ts γ , eval t γ
 
@@ -95,7 +95,7 @@ trans⊩⋆ ts us = reflect⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
 
 -- Completeness, or quotation.
 
-quot : ∀ {A Γ} → ∀ᴹʷ⊩ Γ ⇒ A → Γ ⊢ A
+quot : ∀ {A Γ} → Γ ⊨ A → Γ ⊢ A
 quot t = reify (t refl⊩⋆)
 
 

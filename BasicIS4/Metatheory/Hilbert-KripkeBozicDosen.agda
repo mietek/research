@@ -6,7 +6,7 @@ open import BasicIS4.Semantics.KripkeBozicDosen public
 
 -- Soundness with respect to all models, or evaluation.
 
-eval : ∀ {A Γ} → Γ ⊢ A → ∀ᴹʷ⊩ Γ ⇒ A
+eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)          γ = lookup i γ
 eval (app t u)        γ = (eval t γ refl≤) (eval u γ)
 eval ci               γ = λ _ a → a

@@ -9,7 +9,7 @@ open SyntacticComponent (_⁏_⊢_) (mono²⊢) (up) (down) (lift) public
 
 -- Soundness with respect to all models, or evaluation.
 
-eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → ∀ᴹʷ⊩ Γ ⁏ Δ ⇒ A
+eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊨ A
 eval (var i)     γ δ = lookup i γ
 eval (lam t)     γ δ = λ ξ a → eval t (mono⊩⋆ ξ γ , a) (λ ζ → δ (transR (≤→R ξ) ζ))
 eval (app t u)   γ δ = (eval t γ δ refl≤) (eval u γ δ)
@@ -90,7 +90,7 @@ trans⊩⋆ ts us = reflect⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
 
 -- Completeness, or quotation.
 
-quot : ∀ {A Γ Δ} → ∀ᴹʷ⊩ Γ ⁏ Δ ⇒ A → Γ ⁏ Δ ⊢ A
+quot : ∀ {A Γ Δ} → Γ ⁏ Δ ⊨ A → Γ ⁏ Δ ⊢ A
 quot t = reify (t refl⊩⋆ mrefl⊩⋆′)
 
 

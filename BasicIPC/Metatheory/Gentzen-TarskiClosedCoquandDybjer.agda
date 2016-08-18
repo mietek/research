@@ -9,20 +9,20 @@ open SyntacticComponent (⌀ ⊢_) public
 -- Completeness with respect to a particular model.
 
 module _ {{_ : Model}} where
-  reify : ∀ {A} → ⊨ A → ⌀ ⊢ A
+  reify : ∀ {A} → ⊩ A → ⌀ ⊢ A
   reify {α P}   (t , s) = t
   reify {A ▻ B} (t , f) = t
   reify {A ∧ B} (a , b) = pair (reify a) (reify b)
   reify {⊤}    ∙       = tt
 
-  reify⋆ : ∀ {Π} → ⊨⋆ Π → ⌀ ⊢⋆ Π
+  reify⋆ : ∀ {Π} → ⊩⋆ Π → ⌀ ⊢⋆ Π
   reify⋆ {⌀}     ∙        = ∙
   reify⋆ {Π , A} (ts , t) = reify⋆ ts , reify t
 
 
 -- Soundness with respect to all models, or evaluation.
 
-eval : ∀ {A Γ} → Γ ⊢ A → ∀ᴹ⊨ Γ ⇒ A
+eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)    γ = lookup i γ
 eval (lam t)    γ = multicut (reify⋆ γ) (lam t) , λ a →
                       eval t (γ , a)
@@ -41,13 +41,13 @@ eval tt         γ = ∙
 instance
   canon : Model
   canon = record
-    { ⊨ᵅ_ = λ P → ⌀ ⊢ α P
+    { ⊩ᵅ_ = λ P → ⌀ ⊢ α P
     }
 
 
 -- Completeness with respect to all models, or quotation, for closed terms only.
 
-quot₀ : ∀ {A} → ∀ᴹ⊨ ⌀ ⇒ A → ⌀ ⊢ A
+quot₀ : ∀ {A} → ⌀ ⊨ A → ⌀ ⊢ A
 quot₀ t = reify (t ∙)
 
 

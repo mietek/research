@@ -6,7 +6,7 @@ open import BasicIPC.Semantics.TarskiClosedHilbert public
 
 -- Soundness with respect to all models, or evaluation.
 
-eval : ∀ {A Γ} → Γ ⊢ A → ∀ᴹ⊨ Γ ⇒ A
+eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)   γ = lookup i γ
 eval (app t u) γ = eval t γ ⟪$⟫ eval u γ
 eval ci        γ = [ci] , id
@@ -44,7 +44,7 @@ check eta⊤⋙                  = refl
 instance
   canon : Model
   canon = record
-    { ⊨ᵅ_    = λ P → ⌀ ⊢ α P
+    { ⊩ᵅ_    = λ P → ⌀ ⊢ α P
     ; [_]     = ⌀ ⊢_
     ; [app]   = app
     ; [ci]    = ci
@@ -59,7 +59,7 @@ instance
 
 -- Completeness with respect to all models, or quotation, for closed terms only.
 
-quot₀ : ∀ {A} → ∀ᴹ⊨ ⌀ ⇒ A → ⌀ ⊢ A
+quot₀ : ∀ {A} → ⌀ ⊨ A → ⌀ ⊢ A
 quot₀ t = reify[] (t ∙)
 
 

@@ -93,13 +93,13 @@ module _ {{_ : Model}} where
 
 -- Forcing in all worlds of all models, for sequents.
 
-infix 3 ∀ᴹʷ⊩_⇒_
-∀ᴹʷ⊩_⇒_ : Cx Ty → Ty → Set₁
-∀ᴹʷ⊩ Γ ⇒ A = ∀ {{_ : Model}} {w : World} → w ⊩ Γ ⇒ A
+infix 3 _⊨_
+_⊨_ : Cx Ty → Ty → Set₁
+Γ ⊨ A = ∀ {{_ : Model}} {w : World} → w ⊩ Γ ⇒ A
 
-infix 3 ∀ᴹʷ⊩_⇒⋆_
-∀ᴹʷ⊩_⇒⋆_ : Cx Ty → Cx Ty → Set₁
-∀ᴹʷ⊩ Γ ⇒⋆ Π = ∀ {{_ : Model}} {w : World} → w ⊩ Γ ⇒⋆ Π
+infix 3 _⊨⋆_
+_⊨⋆_ : Cx Ty → Cx Ty → Set₁
+Γ ⊨⋆ Π = ∀ {{_ : Model}} {w : World} → w ⊩ Γ ⇒⋆ Π
 
 
 -- Additional useful equipment, for sequents.

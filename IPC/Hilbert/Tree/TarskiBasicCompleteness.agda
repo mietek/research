@@ -14,13 +14,13 @@ module CoquandDybjerBasicCompleteness where
   instance
     canon : Model
     canon = record
-      { ⊨ᵅ_ = λ P → ⊢ α P
+      { ⊩ᵅ_ = λ P → ⊢ α P
       }
 
 
   -- Completeness with respect to all models, or quotation.
 
-  quot : ∀ {A} → ᴹ⊨ A → ⊢ A
+  quot : ∀ {A} → ᴹ⊩ A → ⊢ A
   quot t = reify t
 
 

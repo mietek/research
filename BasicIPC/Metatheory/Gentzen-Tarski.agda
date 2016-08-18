@@ -6,7 +6,7 @@ open import BasicIPC.Semantics.Tarski public
 
 -- Soundness with respect to all models, or evaluation.
 
-eval : ∀ {A Γ} → Γ ⊢ A → ∀ᴹ⊨ Γ ⇒ A
+eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)    γ = lookup i γ
 eval (lam t)    γ = λ a → eval t (γ , a)
 eval (app t u)  γ = eval t γ $ eval u γ

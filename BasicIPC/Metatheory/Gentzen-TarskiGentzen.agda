@@ -27,10 +27,10 @@ module _ {{_ : Model}} where
 
 -- Soundness with respect to all models, or evaluation.
 
-eval : ∀ {A Γ} → Γ ⊢ A → ∀ᴹ⊨ Γ ⇒ A
+eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)    γ = lookup i γ
 eval (lam t)    γ = λ η →
-                      let γ′ = mono⊨⋆ η γ
+                      let γ′ = mono⊩⋆ η γ
                       in  [multicut] (reify[]⋆ γ′) (reflect[] (lam t)) , λ a →
                             eval t (γ′ , a)
 eval (app t u)  γ = eval t γ ⟪$⟫ eval u γ
@@ -48,8 +48,8 @@ eval tt         γ = ∙
 instance
   canon : Model
   canon = record
-    { _⊨ᵅ_    = λ Γ P → Γ ⊢ α P
-    ; mono⊨ᵅ  = mono⊢
+    { _⊩ᵅ_    = λ Γ P → Γ ⊢ α P
+    ; mono⊩ᵅ  = mono⊢
     ; [_⊢_]   = _⊢_
     ; mono[⊢] = mono⊢
     ; [var]    = var
@@ -64,7 +64,7 @@ instance
 
 -- Soundness with respect to the canonical model.
 
-reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
+reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
 reflect {α P}   t = t , t
 reflect {A ▻ B} t = λ η →
                       let t′ = mono⊢ η t
@@ -72,37 +72,37 @@ reflect {A ▻ B} t = λ η →
 reflect {A ∧ B} t = reflect (fst t) , reflect (snd t)
 reflect {⊤}    t = ∙
 
-reflect⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊨⋆ Π
+reflect⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊩⋆ Π
 reflect⋆ {⌀}     ∙        = ∙
 reflect⋆ {Π , A} (ts , t) = reflect⋆ ts , reflect t
 
 
 -- Completeness with respect to the canonical model.
 
-reify : ∀ {A Γ} → Γ ⊨ A → Γ ⊢ A
+reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
 reify {α P}   (t , s) = t
 reify {A ▻ B} s       = let t , f = s refl⊆ in t
 reify {A ∧ B} (a , b) = pair (reify a) (reify b)
 reify {⊤}    ∙       = tt
 
-reify⋆ : ∀ {Π Γ} → Γ ⊨⋆ Π → Γ ⊢⋆ Π
+reify⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → Γ ⊢⋆ Π
 reify⋆ {⌀}     ∙        = ∙
 reify⋆ {Π , A} (ts , t) = reify⋆ ts , reify t
 
 
 -- Reflexivity and transitivity.
 
-refl⊨⋆ : ∀ {Γ} → Γ ⊨⋆ Γ
-refl⊨⋆ = reflect⋆ refl⊢⋆
+refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
+refl⊩⋆ = reflect⋆ refl⊢⋆
 
-trans⊨⋆ : ∀ {Γ Γ′ Γ″} → Γ ⊨⋆ Γ′ → Γ′ ⊨⋆ Γ″ → Γ ⊨⋆ Γ″
-trans⊨⋆ ts us = reflect⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
+trans⊩⋆ : ∀ {Γ Γ′ Γ″} → Γ ⊩⋆ Γ′ → Γ′ ⊩⋆ Γ″ → Γ ⊩⋆ Γ″
+trans⊩⋆ ts us = reflect⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
 
 
 -- Completeness with respect to all models, or quotation.
 
-quot : ∀ {A Γ} → ∀ᴹ⊨ Γ ⇒ A → Γ ⊢ A
-quot t = reify[] (t refl⊨⋆)
+quot : ∀ {A Γ} → Γ ⊨ A → Γ ⊢ A
+quot t = reify[] (t refl⊩⋆)
 
 
 -- Normalisation by evaluation.

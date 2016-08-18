@@ -42,18 +42,18 @@ module _ {{_ : Model}} where
 
 -- Soundness with respect to all models, or evaluation.
 
-eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → ∀ᴹ⊨ Γ ⁏ Δ ⇒ A
+eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊨ A
 eval (var i)     γ δ = lookup i γ
 eval (lam t)     γ δ = λ η θ →
-                         let γ′ = mono²⊨⋆ (η , θ) γ
-                             δ′ = mono²⊨⋆ (η , θ) δ
+                         let γ′ = mono²⊩⋆ (η , θ) γ
+                             δ′ = mono²⊩⋆ (η , θ) δ
                          in  [multicut²] (reify[]⋆ γ′) (reify[]⋆ δ′) (reflect[] (lam t)) , λ a →
                                eval t (γ′ , a) δ′
 eval (app t u)   γ δ = eval t γ δ ⟪$⟫ eval u γ δ
 eval (mvar i)    γ δ = mlookup i δ
 eval (box t)     γ δ = λ η θ →
-                         let γ′ = mono²⊨⋆ (η , θ) γ
-                             δ′ = mono²⊨⋆ (η , θ) δ
+                         let γ′ = mono²⊩⋆ (η , θ) γ
+                             δ′ = mono²⊩⋆ (η , θ) δ
                          in  [multicut²] (reify[]⋆ γ′) (reify[]⋆ δ′) (reflect[] (box t)) ,
                                eval t ∙ δ′
 eval (unbox t u) γ δ = eval u γ (δ , eval t γ δ)
@@ -71,9 +71,9 @@ eval tt          γ δ = ∙
 instance
   canon : Model
   canon = record
-    { _⁏_⊨ᵅ_   = λ Γ Δ P → Γ ⁏ Δ ⊢ α P
-    ; mono⊨ᵅ   = mono⊢
-    ; mmono⊨ᵅ  = mmono⊢
+    { _⁏_⊩ᵅ_   = λ Γ Δ P → Γ ⁏ Δ ⊢ α P
+    ; mono⊩ᵅ   = mono⊢
+    ; mmono⊩ᵅ  = mmono⊢
     ; [_⁏_⊢_]  = _⁏_⊢_
     ; mono[⊢]  = mono⊢
     ; mmono[⊢] = mmono⊢
@@ -92,7 +92,7 @@ instance
 
 -- Soundness with respect to the canonical model.
 
-reflect : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊨ A
+reflect : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊩ A
 reflect {α P}   t = t , t
 reflect {A ▻ B} t = λ η θ →
                       let t′ = mono²⊢ (η , θ) t
@@ -103,41 +103,41 @@ reflect {□ A}   t = λ η θ →
 reflect {A ∧ B} t = reflect (fst t) , reflect (snd t)
 reflect {⊤}    t = ∙
 
-reflect⋆ : ∀ {Π Γ Δ} → Γ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ ⊨⋆ Π
+reflect⋆ : ∀ {Π Γ Δ} → Γ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ ⊩⋆ Π
 reflect⋆ {⌀}     ∙        = ∙
 reflect⋆ {Π , A} (ts , t) = reflect⋆ ts , reflect t
 
 
 -- Completeness with respect to the canonical model.
 
-reify : ∀ {A Γ Δ} → Γ ⁏ Δ ⊨ A → Γ ⁏ Δ ⊢ A
+reify : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊢ A
 reify {α P}   (t , s) = t
 reify {A ▻ B} s       = let t , f = s refl⊆ refl⊆ in t
 reify {□ A}   s       = let t , a = s refl⊆ refl⊆ in t
 reify {A ∧ B} (a , b) = pair (reify a) (reify b)
 reify {⊤}    ∙       = tt
 
-reify⋆ : ∀ {Π Γ Δ} → Γ ⁏ Δ ⊨⋆ Π → Γ ⁏ Δ ⊢⋆ Π
+reify⋆ : ∀ {Π Γ Δ} → Γ ⁏ Δ ⊩⋆ Π → Γ ⁏ Δ ⊢⋆ Π
 reify⋆ {⌀}     ∙        = ∙
 reify⋆ {Π , A} (ts , t) = reify⋆ ts , reify t
 
 
 -- Reflexivity and transitivity.
 
-refl⊨⋆ : ∀ {Γ Δ} → Γ ⁏ Δ ⊨⋆ Γ
-refl⊨⋆ = reflect⋆ refl⊢⋆
+refl⊩⋆ : ∀ {Γ Δ} → Γ ⁏ Δ ⊩⋆ Γ
+refl⊩⋆ = reflect⋆ refl⊢⋆
 
-mrefl⊨⋆ : ∀ {Γ Δ} → Γ ⁏ Δ ⊨⋆ □⋆ Δ
-mrefl⊨⋆ = reflect⋆ mrefl⊢⋆
+mrefl⊩⋆ : ∀ {Γ Δ} → Γ ⁏ Δ ⊩⋆ □⋆ Δ
+mrefl⊩⋆ = reflect⋆ mrefl⊢⋆
 
-trans⊨⋆ : ∀ {Γ Γ′ Δ Δ′ Π} → Γ ⁏ Δ ⊨⋆ Γ′ ⧺ (□⋆ Δ′) → Γ′ ⁏ Δ′ ⊨⋆ Π → Γ ⁏ Δ ⊨⋆ Π
-trans⊨⋆ ts us = reflect⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
+trans⊩⋆ : ∀ {Γ Γ′ Δ Δ′ Π} → Γ ⁏ Δ ⊩⋆ Γ′ ⧺ (□⋆ Δ′) → Γ′ ⁏ Δ′ ⊩⋆ Π → Γ ⁏ Δ ⊩⋆ Π
+trans⊩⋆ ts us = reflect⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
 
 
 -- Completeness with respect to all models, or quotation.
 
-quot : ∀ {A Γ Δ} → ∀ᴹ⊨ Γ ⁏ Δ ⇒ A → Γ ⁏ Δ ⊢ A
-quot t = reify (t refl⊨⋆ mrefl⊨⋆)
+quot : ∀ {A Γ Δ} → Γ ⁏ Δ ⊨ A → Γ ⁏ Δ ⊢ A
+quot t = reify (t refl⊩⋆ mrefl⊩⋆)
 
 
 -- Normalisation by evaluation.

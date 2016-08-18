@@ -6,7 +6,7 @@ open import BasicIPC.Semantics.KripkeGodel public
 
 -- Soundness with respect to all models, or evaluation.
 
-eval : ∀ {A Γ} → Γ ⊢ A → ∀ᴹʷ⊩ Γ ⇒ A
+eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)    γ = lookup i γ
 eval (lam t)    γ = λ ξ a → eval t (mono⊩⋆ ξ γ , a)
 eval (app t u)  γ = (eval t γ refl≤) (eval u γ)
@@ -17,7 +17,7 @@ eval (fst t)    γ = π₁ (eval t γ refl≤)
 eval (snd t)    γ = π₂ (eval t γ refl≤)
 eval tt         γ = λ ξ → ∙
 
-eval⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → ∀ᴹʷ⊩ Γ ⇒⋆ Π
+eval⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊨⋆ Π
 eval⋆ {⌀}     ∙        γ = ∙
 eval⋆ {Π , A} (ts , t) γ = eval⋆ ts γ , eval t γ
 
@@ -79,7 +79,7 @@ trans⊩⋆ ts us = eval⋆ (trans⊢⋆ (nf→tm⋆ (reify⋆ ts)) (nf→tm⋆ 
 
 -- Completeness, or quotation.
 
-quot : ∀ {A Γ} → ∀ᴹʷ⊩ Γ ⇒ A → Γ ⊢ A
+quot : ∀ {A Γ} → Γ ⊨ A → Γ ⊢ A
 quot t = nf→tm (reify (t refl⊩⋆))
 
 
