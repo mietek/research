@@ -55,12 +55,26 @@ reflect⋆ {⌀}     ∙        = ∙
 reflect⋆ {Π , A} (ts , t) = reflect⋆ ts , reflect t
 
 
+-- Completeness with respect to the canonical model.
+
+reify : ∀ {A Γ} → Γ ⊨ A → Γ ⊢ A
+reify {α P}   (t , s) = t
+reify {A ▻ B} s       = let t , f = s refl⊆ in t
+reify {A ∧ B} (a , b) = pair (reify a) (reify b)
+reify {⊤}    ∙       = tt
+
+reify⋆ : ∀ {Π Γ} → Γ ⊨⋆ Π → Γ ⊢⋆ Π
+reify⋆ {⌀}     ∙        = ∙
+reify⋆ {Π , A} (ts , t) = reify⋆ ts , reify t
+
+
 -- Reflexivity and transitivity.
 
 refl⊨⋆ : ∀ {Γ} → Γ ⊨⋆ Γ
 refl⊨⋆ = reflect⋆ refl⊢⋆
 
--- TODO: Transitivity.
+trans⊨⋆ : ∀ {Γ Γ′ Γ″} → Γ ⊨⋆ Γ′ → Γ′ ⊨⋆ Γ″ → Γ ⊨⋆ Γ″
+trans⊨⋆ ts us = reflect⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
 
 
 -- Completeness with respect to all models, or quotation.

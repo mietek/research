@@ -16,6 +16,10 @@ module _ {{_ : Model}} where
   reflect[] (snd t)    = [snd] (reflect[] t)
   reflect[] tt         = [tt]
 
+
+-- Additional useful equipment.
+
+module _ {{_ : Model}} where
   [multicut] : ∀ {Π A Γ} → [ Γ ⊢ Π ]⋆ → [ Π ⊢ A ] → [ Γ ⊢ A ]
   [multicut] {⌀}     ∙        u = mono[⊢] bot⊆ u
   [multicut] {Π , B} (ts , t) u = [app] ([multicut] ts ([lam] u)) t
@@ -25,7 +29,7 @@ module _ {{_ : Model}} where
 
 eval : ∀ {A Γ} → Γ ⊢ A → ∀ᴹ⊨ Γ ⇒ A
 eval (var i)    γ = lookup i γ
-eval (lam t)    γ = λ η → mono[⊢] η ([multicut] (reify[]⋆ γ) (reflect[] (lam t))) , λ a →
+eval (lam t)    γ = λ η → [multicut] (reify[]⋆ (mono⊨⋆ η γ)) (reflect[] (lam t)) , λ a →
                       eval t (mono⊨⋆ η γ , a)
 eval (app t u)  γ = eval t γ ⟪$⟫ eval u γ
 eval (pair t u) γ = eval t γ , eval u γ
@@ -69,12 +73,26 @@ reflect⋆ {⌀}     ∙        = ∙
 reflect⋆ {Π , A} (ts , t) = reflect⋆ ts , reflect t
 
 
+-- Completeness with respect to the canonical model.
+
+reify : ∀ {A Γ} → Γ ⊨ A → Γ ⊢ A
+reify {α P}   (t , s) = t
+reify {A ▻ B} s       = let t , f = s refl⊆ in t
+reify {A ∧ B} (a , b) = pair (reify a) (reify b)
+reify {⊤}    ∙       = tt
+
+reify⋆ : ∀ {Π Γ} → Γ ⊨⋆ Π → Γ ⊢⋆ Π
+reify⋆ {⌀}     ∙        = ∙
+reify⋆ {Π , A} (ts , t) = reify⋆ ts , reify t
+
+
 -- Reflexivity and transitivity.
 
 refl⊨⋆ : ∀ {Γ} → Γ ⊨⋆ Γ
 refl⊨⋆ = reflect⋆ refl⊢⋆
 
--- TODO: Transitivity.
+trans⊨⋆ : ∀ {Γ Γ′ Γ″} → Γ ⊨⋆ Γ′ → Γ′ ⊨⋆ Γ″ → Γ ⊨⋆ Γ″
+trans⊨⋆ ts us = reflect⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
 
 
 -- Completeness with respect to all models, or quotation.
