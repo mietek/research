@@ -10,7 +10,9 @@ eval : ∀ {A Γ} → Γ ⊢ A → ∀ᴹʷ⊩ Γ ⇒ A
 eval (var i)    γ = lookup i γ
 eval (lam t)    γ = λ ξ a → eval t (mono⊩⋆ ξ γ , a)
 eval (app t u)  γ = (eval t γ refl≤) (eval u γ)
-eval (pair t u) γ = λ ξ → let γ′ = mono⊩⋆ ξ γ in eval t γ′ , eval u γ′
+eval (pair t u) γ = λ ξ →
+                      let γ′ = mono⊩⋆ ξ γ
+                      in  eval t γ′ , eval u γ′
 eval (fst t)    γ = π₁ (eval t γ refl≤)
 eval (snd t)    γ = π₂ (eval t γ refl≤)
 eval tt         γ = λ ξ → ∙
@@ -42,7 +44,9 @@ mutual
   reflect : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊩ A
   reflect {α P}   t = λ η → mono⊢ⁿᵉ η t
   reflect {A ▻ B} t = λ η a → reflect (appⁿᵉ (mono⊢ⁿᵉ η t) (reify a))
-  reflect {A ∧ B} t = λ η → reflect (fstⁿᵉ (mono⊢ⁿᵉ η t)) , reflect (sndⁿᵉ (mono⊢ⁿᵉ η t))
+  reflect {A ∧ B} t = λ η →
+                        let t′ = mono⊢ⁿᵉ η t
+                        in  reflect (fstⁿᵉ t′) , reflect (sndⁿᵉ t′)
   reflect {⊤}    t = λ η → ∙
 
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ⁿᶠ A

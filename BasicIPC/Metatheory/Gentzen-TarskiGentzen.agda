@@ -29,8 +29,10 @@ module _ {{_ : Model}} where
 
 eval : ∀ {A Γ} → Γ ⊢ A → ∀ᴹ⊨ Γ ⇒ A
 eval (var i)    γ = lookup i γ
-eval (lam t)    γ = λ η → [multicut] (reify[]⋆ (mono⊨⋆ η γ)) (reflect[] (lam t)) , λ a →
-                      eval t (mono⊨⋆ η γ , a)
+eval (lam t)    γ = λ η →
+                      let γ′ = mono⊨⋆ η γ
+                      in  [multicut] (reify[]⋆ γ′) (reflect[] (lam t)) , λ a →
+                            eval t (γ′ , a)
 eval (app t u)  γ = eval t γ ⟪$⟫ eval u γ
 eval (pair t u) γ = eval t γ , eval u γ
 eval (fst t)    γ = π₁ (eval t γ)
@@ -64,7 +66,9 @@ instance
 
 reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 reflect {α P}   t = t , t
-reflect {A ▻ B} t = λ η → mono⊢ η t , λ a → reflect (app (mono⊢ η t) (reify[] a))
+reflect {A ▻ B} t = λ η →
+                      let t′ = mono⊢ η t
+                      in  t′ , λ a → reflect (app t′ (reify[] a))
 reflect {A ∧ B} t = reflect (fst t) , reflect (snd t)
 reflect {⊤}    t = ∙
 

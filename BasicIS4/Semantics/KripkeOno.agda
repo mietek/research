@@ -79,9 +79,8 @@ record Model : Set₁ where
   reflR⨾≤ {w} = w , (reflR , refl≤)
 
   transR⨾≤ : ∀ {w′ w w″} → w R⨾≤ w′ → w′ R⨾≤ w″ → w R⨾≤ w″
-  transR⨾≤ {w′} (v , (ζ , ξ)) (v′ , (ζ′ , ξ′)) =
-    let v″ , (ζ″ , ξ″) = ≤⨾R→R⨾≤ (w′ , (ξ , ζ′))
-    in  v″ , (transR ζ ζ″ , trans≤ ξ″ ξ′)
+  transR⨾≤ {w′} (v , (ζ , ξ)) (v′ , (ζ′ , ξ′)) = let v″ , (ζ″ , ξ″) = ≤⨾R→R⨾≤ (w′ , (ξ , ζ′))
+                                                 in  v″ , (transR ζ ζ″ , trans≤ ξ″ ξ′)
 
   ≤→R : ∀ {v′ w} → w ≤ v′ → w R v′
   ≤→R {v′} ξ = ≤⨾R→R (v′ , (ξ , reflR))

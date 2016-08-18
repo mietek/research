@@ -40,7 +40,9 @@ mutual
   reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
   reflect {α P}   t = λ η → mono⊢ η t
   reflect {A ▻ B} t = λ η a → reflect (app (mono⊢ η t) (reify a))
-  reflect {A ∧ B} t = λ η → reflect (fst (mono⊢ η t)) , reflect (snd (mono⊢ η t))
+  reflect {A ∧ B} t = λ η →
+                        let t′ = mono⊢ η t
+                        in  reflect (fst t′) , reflect (snd t′)
   reflect {⊤}    t = λ η → ∙
 
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A

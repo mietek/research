@@ -65,9 +65,8 @@ record Model : Set₁ where
   refl≤⨾R {w} = w , (refl≤ , reflR)
 
   trans≤⨾R : ∀ {w′ w w″} → w ≤⨾R w′ → w′ ≤⨾R w″ → w ≤⨾R w″
-  trans≤⨾R {w′} (v , (ξ , ζ)) (v′ , (ξ′ , ζ′)) =
-    let v″ , (ξ″ , ζ″) = R⨾≤→≤⨾R (w′ , (ζ , ξ′))
-    in  v″ , (trans≤ ξ ξ″ , transR ζ″ ζ′)
+  trans≤⨾R {w′} (v , (ξ , ζ)) (v′ , (ξ′ , ζ′)) = let v″ , (ξ″ , ζ″) = R⨾≤→≤⨾R (w′ , (ζ , ξ′))
+                                                 in  v″ , (trans≤ ξ ξ″ , transR ζ″ ζ′)
 
 open Model {{…}} public
 

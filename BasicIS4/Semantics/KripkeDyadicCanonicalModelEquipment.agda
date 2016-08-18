@@ -128,9 +128,8 @@ module SyntacticComponent
   ≤⨾R→R⨾≤ᶜ {v′} ξ,ζ = v′ , (≤⨾R→Rᶜ ξ,ζ , refl≤ᶜ)
 
   transR⨾≤ᶜ : ∀ {w′ w w″} → w R⨾≤ᶜ w′ → w′ R⨾≤ᶜ w″ → w R⨾≤ᶜ w″
-  transR⨾≤ᶜ {w′} (v , (ζ , ξ)) (v′ , (ζ′ , ξ′)) =
-    let v″ , (ζ″ , ξ″) = ≤⨾R→R⨾≤ᶜ (w′ , (ξ , ζ′))
-    in  v″ , (transRᶜ ζ ζ″ , trans≤ᶜ ξ″ ξ′)
+  transR⨾≤ᶜ {w′} (v , (ζ , ξ)) (v′ , (ζ′ , ξ′)) = let v″ , (ζ″ , ξ″) = ≤⨾R→R⨾≤ᶜ (w′ , (ξ , ζ′))
+                                                  in  v″ , (transRᶜ ζ ζ″ , trans≤ᶜ ξ″ ξ′)
 
   ≤→Rᶜ : ∀ {v′ w} → w ≤ᶜ v′ → w Rᶜ v′
   ≤→Rᶜ {v′} ξ = ≤⨾R→Rᶜ (v′ , (ξ , reflRᶜ))
@@ -162,9 +161,8 @@ module SyntacticComponent
   R⨾≤→≤⨾Rᶜ {w} ζ,ξ = w , (refl≤ᶜ , R⨾≤→Rᶜ ζ,ξ)
 
   trans≤⨾Rᶜ : ∀ {w′ w w″} → w ≤⨾Rᶜ w′ → w′ ≤⨾Rᶜ w″ → w ≤⨾Rᶜ w″
-  trans≤⨾Rᶜ {w′} (v , (ξ , ζ)) (v′ , (ξ′ , ζ′)) =
-    let v″ , (ξ″ , ζ″) = R⨾≤→≤⨾Rᶜ (w′ , (ζ , ξ′))
-    in  v″ , (trans≤ᶜ ξ ξ″ , transRᶜ ζ″ ζ′)
+  trans≤⨾Rᶜ {w′} (v , (ξ , ζ)) (v′ , (ξ′ , ζ′)) = let v″ , (ξ″ , ζ″) = R⨾≤→≤⨾Rᶜ (w′ , (ζ , ξ′))
+                                                  in  v″ , (trans≤ᶜ ξ ξ″ , transRᶜ ζ″ ζ′)
 
   ≤→Rᶜ′ : ∀ {w v′} → w ≤ᶜ v′ → w Rᶜ v′
   ≤→Rᶜ′ {w} ξ = R⨾≤→Rᶜ (w , (reflRᶜ , ξ))

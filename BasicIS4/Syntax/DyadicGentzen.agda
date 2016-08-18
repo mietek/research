@@ -73,15 +73,6 @@ mono²⊢ (η , θ) = mono⊢ η ∘ mmono⊢ θ
 
 -- Shorthand for variables.
 
-mv₀ : ∀ {A Γ Δ} → Γ ⁏ Δ , A ⊢ A
-mv₀ = mvar i₀
-
-mv₁ : ∀ {A B Γ Δ} → Γ ⁏ (Δ , A) , B ⊢ A
-mv₁ = mvar i₁
-
-mv₂ : ∀ {A B C Γ Δ} → Γ ⁏ ((Δ , A) , B) , C ⊢ A
-mv₂ = mvar i₂
-
 v₀ : ∀ {A Γ Δ} → Γ , A ⁏ Δ ⊢ A
 v₀ = var i₀
 
@@ -90,6 +81,15 @@ v₁ = var i₁
 
 v₂ : ∀ {A B C Γ Δ} → ((Γ , A) , B) , C ⁏ Δ ⊢ A
 v₂ = var i₂
+
+mv₀ : ∀ {A Γ Δ} → Γ ⁏ Δ , A ⊢ A
+mv₀ = mvar i₀
+
+mv₁ : ∀ {A B Γ Δ} → Γ ⁏ (Δ , A) , B ⊢ A
+mv₁ = mvar i₁
+
+mv₂ : ∀ {A B C Γ Δ} → Γ ⁏ ((Δ , A) , B) , C ⊢ A
+mv₂ = mvar i₂
 
 
 -- Deduction theorem is built-in.
