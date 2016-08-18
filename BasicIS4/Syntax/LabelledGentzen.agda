@@ -1,4 +1,4 @@
--- Gentzen-style axiomatic formalisation of syntax with separate relational context, after Basin-Matthews-Viganò.
+-- Gentzen-style axiomatic formalisation of syntax with a separate relational context, after Basin-Matthews-Viganò.
 
 module BasicIS4.Syntax.LabelledGentzen where
 

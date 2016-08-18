@@ -1,4 +1,4 @@
--- Hilbert-style axiomatic formalisation of syntax with separate modal context.
+-- Hilbert-style axiomatic formalisation of syntax with a separate modal context.
 
 module BasicIS4.Syntax.DyadicHilbert where
 

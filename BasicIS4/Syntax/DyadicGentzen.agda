@@ -1,4 +1,4 @@
--- Gentzen-style axiomatic formalisation of syntax with separate modal context, after Pfenning-Davies.
+-- Gentzen-style axiomatic formalisation of syntax with a separate modal context, after Pfenning-Davies.
 
 module BasicIS4.Syntax.DyadicGentzen where
 

@@ -147,16 +147,16 @@ import BasicIS4.Syntax.Hilbert
 -- Gentzen-style natural deduction formalisation of syntax, after Bierman-de Paiva.
 import BasicIS4.Syntax.Gentzen
 
--- Linear Hilbert-style axiomatic formalisation of syntax with separate modal context.
+-- Linear Hilbert-style axiomatic formalisation of syntax with a separate modal context.
 import BasicIS4.Syntax.DyadicHilbertLinear
 
--- Hilbert-style axiomatic formalisation of syntax with separate modal context.
+-- Hilbert-style axiomatic formalisation of syntax with a separate modal context.
 import BasicIS4.Syntax.DyadicHilbert
 
--- Gentzen-style axiomatic formalisation of syntax with separate modal context, after Pfenning-Davies.
+-- Gentzen-style axiomatic formalisation of syntax with a separate modal context, after Pfenning-Davies.
 import BasicIS4.Syntax.DyadicGentzen
 
--- Gentzen-style axiomatic formalisation of syntax with separate relational context, after Basin-Matthews-Viganò.
+-- Gentzen-style axiomatic formalisation of syntax with a separate relational context, after Basin-Matthews-Viganò.
 import BasicIS4.Syntax.LabelledGentzen
 
 -- Translation between different formalisations of syntax.
@@ -178,13 +178,13 @@ import BasicIS4.Semantics.TarskiHilbert
 -- Tarski-style semantics with a Gentzen-style syntax representation.
 import BasicIS4.Semantics.TarskiGentzen
 
--- Tarski-style semantics with a syntactic component and separate modal context, after Gabbay-Nanevski.
+-- Tarski-style semantics with a syntactic component and a separate modal context, after Gabbay-Nanevski.
 import BasicIS4.Semantics.TarskiDyadicGabbayNanevski
 
--- Tarski-style semantics with a Hilbert-style syntax representation and separate modal context.
+-- Tarski-style semantics with a Hilbert-style syntax representation and a separate modal context.
 import BasicIS4.Semantics.TarskiDyadicHilbert
 
--- Tarski-style semantics with a Gentzen-style syntax representation and separate modal context.
+-- Tarski-style semantics with a Gentzen-style syntax representation and a separate modal context.
 import BasicIS4.Semantics.TarskiDyadicGentzen
 
 -- Kripke-style possible worlds semantics, after Ono.
