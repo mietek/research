@@ -1,6 +1,6 @@
--- Tarski-style semantics with a Hilbert-style syntax representation and separate modal context.
+-- Tarski-style semantics with a Gentzen-style syntax representation and separate modal context.
 
-module BasicIS4.Semantics.TarskiDyadicHilbert where
+module BasicIS4.Semantics.TarskiDyadicGentzen where
 
 open import Common.ContextPair public
 open import BasicIS4.Syntax.Common public
@@ -16,27 +16,20 @@ record Model : Set₁ where
     mono⊨ᵅ  : ∀ {P Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊨ᵅ P → Γ′ ⁏ Δ ⊨ᵅ P
     mmono⊨ᵅ : ∀ {P Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊨ᵅ P → Γ ⁏ Δ′ ⊨ᵅ P
 
-    -- Hilbert-style syntax representation; monotonic.
+    -- Gentzen-style syntax representation; monotonic.
     [_⁏_⊢_]  : Cx Ty → Cx Ty → Ty → Set
-    mono[⊢]  : ∀ {A Γ Γ′ Δ}  → Γ ⊆ Γ′ → [ Γ ⁏ Δ ⊢ A ] → [ Γ′ ⁏ Δ ⊢ A ]
-    mmono[⊢] : ∀ {A Γ Δ Δ′}  → Δ ⊆ Δ′ → [ Γ ⁏ Δ ⊢ A ] → [ Γ ⁏ Δ′ ⊢ A ]
-    [var]     : ∀ {A Γ Δ}     → A ∈ Γ → [ Γ ⁏ Δ ⊢ A ]
-    [app]     : ∀ {A B Γ Δ}   → [ Γ ⁏ Δ ⊢ A ▻ B ] → [ Γ ⁏ Δ ⊢ A ] → [ Γ ⁏ Δ ⊢ B ]
-    [ci]      : ∀ {A Γ Δ}     → [ Γ ⁏ Δ ⊢ A ▻ A ]
-    [ck]      : ∀ {A B Γ Δ}   → [ Γ ⁏ Δ ⊢ A ▻ B ▻ A ]
-    [cs]      : ∀ {A B C Γ Δ} → [ Γ ⁏ Δ ⊢ (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C ]
-    [mvar]    : ∀ {A Γ Δ}     → A ∈ Δ → [ Γ ⁏ Δ ⊢ A ]
-    [box]     : ∀ {A Γ Δ}     → [ ⌀ ⁏ Δ ⊢ A ] → [ Γ ⁏ Δ ⊢ □ A ]
-    [cdist]   : ∀ {A B Γ Δ}   → [ Γ ⁏ Δ ⊢ □ (A ▻ B) ▻ □ A ▻ □ B ]
-    [cup]     : ∀ {A Γ Δ}     → [ Γ ⁏ Δ ⊢ □ A ▻ □ □ A ]
-    [cdown]   : ∀ {A Γ Δ}     → [ Γ ⁏ Δ ⊢ □ A ▻ A ]
-    [cpair]   : ∀ {A B Γ Δ}   → [ Γ ⁏ Δ ⊢ A ▻ B ▻ A ∧ B ]
-    [cfst]    : ∀ {A B Γ Δ}   → [ Γ ⁏ Δ ⊢ A ∧ B ▻ A ]
-    [csnd]    : ∀ {A B Γ Δ}   → [ Γ ⁏ Δ ⊢ A ∧ B ▻ B ]
-    [tt]      : ∀ {Γ Δ}       → [ Γ ⁏ Δ ⊢ ⊤ ]
-
-    -- NOTE: [mlam] is necessary for [mmulticut], which is necessary for eval.
-    [mlam] : ∀ {A B Γ Δ} → [ Γ ⁏ Δ , A ⊢ B ] → [ Γ ⁏ Δ ⊢ □ A ▻ B ]
+    mono[⊢]  : ∀ {A Γ Γ′ Δ} → Γ ⊆ Γ′ → [ Γ ⁏ Δ ⊢ A ] → [ Γ′ ⁏ Δ ⊢ A ]
+    mmono[⊢] : ∀ {A Γ Δ Δ′} → Δ ⊆ Δ′ → [ Γ ⁏ Δ ⊢ A ] → [ Γ ⁏ Δ′ ⊢ A ]
+    [var]     : ∀ {A Γ Δ}    → A ∈ Γ → [ Γ ⁏ Δ ⊢ A ]
+    [lam]     : ∀ {A B Γ Δ}  → [ Γ , A ⁏ Δ ⊢ B ] → [ Γ ⁏ Δ ⊢ A ▻ B ]
+    [app]     : ∀ {A B Γ Δ}  → [ Γ ⁏ Δ ⊢ A ▻ B ] → [ Γ ⁏ Δ ⊢ A ] → [ Γ ⁏ Δ ⊢ B ]
+    [mvar]    : ∀ {A Γ Δ}    → A ∈ Δ → [ Γ ⁏ Δ ⊢ A ]
+    [box]     : ∀ {A Γ Δ}    → [ ⌀ ⁏ Δ ⊢ A ] → [ Γ ⁏ Δ ⊢ □ A ]
+    [unbox]   : ∀ {A C Γ Δ}  → [ Γ ⁏ Δ ⊢ □ A ] → [ Γ ⁏ Δ , A ⊢ C ] → [ Γ ⁏ Δ ⊢ C ]
+    [pair]    : ∀ {A B Γ Δ}  → [ Γ ⁏ Δ ⊢ A ] → [ Γ ⁏ Δ ⊢ B ] → [ Γ ⁏ Δ ⊢ A ∧ B ]
+    [fst]     : ∀ {A B Γ Δ}  → [ Γ ⁏ Δ ⊢ A ∧ B ] → [ Γ ⁏ Δ ⊢ A ]
+    [snd]     : ∀ {A B Γ Δ}  → [ Γ ⁏ Δ ⊢ A ∧ B ] → [ Γ ⁏ Δ ⊢ B ]
+    [tt]      : ∀ {Γ Δ}      → [ Γ ⁏ Δ ⊢ ⊤ ]
 
   [_⁏_⊢_]⋆ : Cx Ty → Cx Ty → Cx Ty → Set
   [ Γ ⁏ Δ ⊢ ⌀ ]⋆     = 𝟙
@@ -108,8 +101,8 @@ module _ {{_ : Model}} where
   reify[] : ∀ {A Γ Δ} → Γ ⁏ Δ ⊨ A → [ Γ ⁏ Δ ⊢ A ]
   reify[] {α P}   (t , s) = t
   reify[] {A ▻ B} s       = let t , f = s refl⊆ refl⊆ in t
-  reify[] {□ A}   s       = let t , a = s refl⊆ refl⊆ in t
-  reify[] {A ∧ B} (a , b) = [app] ([app] [cpair] (reify[] {A} a)) (reify[] {B} b)
+  reify[] {□ A}   s       = let t , f = s refl⊆ refl⊆ in t
+  reify[] {A ∧ B} (a , b) = [pair] (reify[] {A} a) (reify[] {B} b)
   reify[] {⊤}    ∙       = [tt]
 
   reify[]⋆ : ∀ {Π Γ Δ} → Γ ⁏ Δ ⊨⋆ Π → [ Γ ⁏ Δ ⊢ Π ]⋆
@@ -123,47 +116,8 @@ module _ {{_ : Model}} where
   _⟪$⟫_ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊨ A ▻ B → Γ ⁏ Δ ⊨ A → Γ ⁏ Δ ⊨ B
   s ⟪$⟫ a = let t , f = s refl⊆ refl⊆ in f a
 
-  ⟪const⟫ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊨ A → Γ ⁏ Δ ⊨ B ▻ A
-  ⟪const⟫ {A} a η θ = let a′ = mono²⊨ {A} (η , θ) a
-                      in  [app] [ck] (reify[] a′) , const a′
-
-  ⟪ap⟫ : ∀ {A B C Γ Δ} → Γ ⁏ Δ ⊨ A ▻ B ▻ C → Γ ⁏ Δ ⊨ A ▻ B → Γ ⁏ Δ ⊨ A → Γ ⁏ Δ ⊨ C
-  ⟪ap⟫ s₁ s₂ a = let t , f = s₁ refl⊆ refl⊆
-                     u , g = s₂ refl⊆ refl⊆
-                     _ , h = (f a) refl⊆ refl⊆
-                 in  h (g a)
-
-  ⟪ap⟫′ : ∀ {A B C Γ Δ} → Γ ⁏ Δ ⊨ A ▻ B ▻ C → Γ ⁏ Δ ⊨ (A ▻ B) ▻ A ▻ C
-  ⟪ap⟫′ {A} {B} {C} s₁ η θ = let s₁′   = mono²⊨ {A ▻ B ▻ C} (η , θ) s₁
-                                 t , _ = s₁′ refl⊆ refl⊆
-                             in  [app] [cs] t , λ s₂ η′ θ′ →
-                                   let s₁″    = mono²⊨ {A ▻ B ▻ C} (trans⊆ η η′ , trans⊆ θ θ′) s₁
-                                       t′ , _ = s₁″ refl⊆ refl⊆
-                                       s₂′    = mono²⊨ {A ▻ B} (η′ , θ′) s₂
-                                       u  , g = s₂′ refl⊆ refl⊆
-                                   in  [app] ([app] [cs] t′) u , ⟪ap⟫ s₁″ s₂′
-
-  _⟪◎⟫_ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊨ □ (A ▻ B) → Γ ⁏ Δ ⊨ □ A → Γ ⁏ Δ ⊨ □ B
-  (s₁ ⟪◎⟫ s₂) η θ = let t , f = s₁ η θ
-                        u , a = s₂ η θ
-                    in  [app] ([app] [cdist] t) u , f ⟪$⟫ a
-
-  -- TODO: Report bug.
-  _⟪◎⟫′_ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊨ □ (A ▻ B) → Γ ⁏ Δ ⊨ □ A ▻ □ B
-  _⟪◎⟫′_ {A} {B} s η θ = let s′ = mono²⊨ {□ (A ▻ B)} (η , θ) s
-                         in  [app] [cdist] (reify[] (λ {Γ″} {Δ″} η′ θ′ → s′ η′ θ′)) , _⟪◎⟫_ s′
-
-  ⟪⇑⟫ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊨ □ A → Γ ⁏ Δ ⊨ □ □ A
-  ⟪⇑⟫ {A} s η θ = let t , a = s η θ
-                  in  [app] [cup] t , λ η′ θ′ → s (trans⊆ η η′) (trans⊆ θ θ′)
-
   ⟪⇓⟫ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊨ □ A → Γ ⁏ Δ ⊨ A
-  ⟪⇓⟫ s = let t , a = s refl⊆ refl⊆
-          in  a
-
-  _⟪,⟫′_ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊨ A → Γ ⁏ Δ ⊨ B ▻ A ∧ B
-  _⟪,⟫′_ {A} a η θ = let a′ = mono²⊨ {A} (η , θ) a
-                     in  [app] [cpair] (reify[] a′) , _,_ a′
+  ⟪⇓⟫ s = let p , a = s refl⊆ refl⊆ in a
 
 
 -- Satisfaction in a particular model, for sequents.

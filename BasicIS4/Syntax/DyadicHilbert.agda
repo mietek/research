@@ -243,8 +243,15 @@ refl⊢⋆₀ : ∀ {Γ} → Γ ⁏ ⌀ ⊢⋆ Γ
 refl⊢⋆₀ {⌀}     = ∙
 refl⊢⋆₀ {Γ , A} = mono⊢⋆ weak⊆ refl⊢⋆₀ , v₀
 
-refl⊢⋆ : ∀ {Δ Γ} → Γ ⁏ Δ ⊢⋆ Γ ⧺ (□⋆ Δ)
-refl⊢⋆ = split⋆ (merge⋆ refl⊢⋆₀)
+refl⊢⋆ : ∀ {Γ Δ} → Γ ⁏ Δ ⊢⋆ Γ
+refl⊢⋆ = mmono⊢⋆ bot⊆ refl⊢⋆₀
+
+mrefl⊢⋆₀ : ∀ {Δ} → ⌀ ⁏ Δ ⊢⋆ □⋆ Δ
+mrefl⊢⋆₀ {⌀}     = ∙
+mrefl⊢⋆₀ {Δ , A} = mmono⊢⋆ weak⊆ mrefl⊢⋆₀ , box mv₀
+
+mrefl⊢⋆ : ∀ {Γ Δ} → Γ ⁏ Δ ⊢⋆ □⋆ Δ
+mrefl⊢⋆ = mono⊢⋆ bot⊆ mrefl⊢⋆₀
 
 trans⊢⋆₀ : ∀ {Γ″ Γ′ Γ} → Γ ⁏ ⌀ ⊢⋆ Γ′ → Γ′ ⁏ ⌀ ⊢⋆ Γ″ → Γ ⁏ ⌀ ⊢⋆ Γ″
 trans⊢⋆₀ {⌀}      ts ∙        = ∙

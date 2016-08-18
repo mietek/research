@@ -1,57 +1,66 @@
-module BasicIS4.Metatheory.DyadicHilbert-TarskiDyadicHilbert where
+module BasicIS4.Metatheory.DyadicGentzen-TarskiDyadicGentzen where
 
-open import BasicIS4.Syntax.DyadicHilbert public
-open import BasicIS4.Semantics.TarskiDyadicHilbert public
+open import BasicIS4.Syntax.DyadicGentzen public
+open import BasicIS4.Semantics.TarskiDyadicGentzen public
+
 
 
 -- Soundness with respect to the syntax representation in a particular model.
 
 module _ {{_ : Model}} where
   reflect[] : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → [ Γ ⁏ Δ ⊢ A ]
-  reflect[] (var i)   = [var] i
-  reflect[] (app t u) = [app] (reflect[] t) (reflect[] u)
-  reflect[] ci        = [ci]
-  reflect[] ck        = [ck]
-  reflect[] cs        = [cs]
-  reflect[] (mvar i)  = [mvar] i
-  reflect[] (box t)   = [box] (reflect[] t)
-  reflect[] cdist     = [cdist]
-  reflect[] cup       = [cup]
-  reflect[] cdown     = [cdown]
-  reflect[] cpair     = [cpair]
-  reflect[] cfst      = [cfst]
-  reflect[] csnd      = [csnd]
-  reflect[] tt        = [tt]
+  reflect[] (var i)     = [var] i
+  reflect[] (lam t)     = [lam] (reflect[] t)
+  reflect[] (app t u)   = [app] (reflect[] t) (reflect[] u)
+  reflect[] (mvar i)    = [mvar] i
+  reflect[] (box t)     = [box] (reflect[] t)
+  reflect[] (unbox t u) = [unbox] (reflect[] t) (reflect[] u)
+  reflect[] (pair t u)  = [pair] (reflect[] t) (reflect[] u)
+  reflect[] (fst t)     = [fst] (reflect[] t)
+  reflect[] (snd t)     = [snd] (reflect[] t)
+  reflect[] tt          = [tt]
 
 
 -- Additional useful equipment.
 
 module _ {{_ : Model}} where
+  [mlam] : ∀ {A B Γ Δ} → [ Γ ⁏ Δ , A ⊢ B ] → [ Γ ⁏ Δ ⊢ □ A ▻ B ]
+  [mlam] t = [lam] ([unbox] ([var] top) (mono[⊢] weak⊆ t))
+
+  [multicut] : ∀ {Π A Γ Δ} → [ Γ ⁏ Δ ⊢ Π ]⋆ → [ Π ⁏ Δ ⊢ A ] → [ Γ ⁏ Δ ⊢ A ]
+  [multicut] {⌀}     ∙        u = mono[⊢] bot⊆ u
+  [multicut] {Π , B} (ts , t) u = [app] ([multicut] ts ([lam] u)) t
+
   [mmulticut] : ∀ {Π A Γ Δ} → [ Γ ⁏ Δ ⊢ □⋆ Π ]⋆ → [ Γ ⁏ Π ⊢ A ] → [ Γ ⁏ Δ ⊢ A ]
   [mmulticut] {⌀}     ∙        u = mmono[⊢] bot⊆ u
   [mmulticut] {Π , B} (ts , t) u = [app] ([mmulticut] ts ([mlam] u)) t
 
+  [multicut²] : ∀ {Π Π′ A Γ Δ} → [ Γ ⁏ Δ ⊢ Π ]⋆ → [ Γ ⁏ Δ ⊢ □⋆ Π′ ]⋆ → [ Π ⁏ Π′ ⊢ A ] → [ Γ ⁏ Δ ⊢ A ]
+  [multicut²] {⌀}     ∙        us v = [mmulticut] us (mono[⊢] bot⊆ v)
+  [multicut²] {Π , B} (ts , t) us v = [app] ([multicut²] ts us ([lam] v)) t
+
 
 -- Soundness with respect to all models, or evaluation.
 
-eval : ∀ {Δ A Γ} → Γ ⁏ Δ ⊢ A → ∀ᴹ⊨ Γ ⁏ Δ ⇒ A
-eval (var i)   γ δ = lookup i γ
-eval (app t u) γ δ = eval t γ δ ⟪$⟫ eval u γ δ
-eval ci        γ δ = const₂ ([ci] , id)
-eval ck        γ δ = const₂ ([ck] , ⟪const⟫)
-eval cs        γ δ = const₂ ([cs] , ⟪ap⟫′)
-eval (mvar i)  γ δ = mlookup i δ
-eval (box t)   γ δ = λ η θ →
-                       let δ′ = mono²⊨⋆ (η , θ) δ
-                       in  [mmulticut] (reify[]⋆ δ′) (reflect[] (box t)) ,
-                             eval t ∙ δ′
-eval cdist     γ δ = const₂ ([cdist] , _⟪◎⟫′_)
-eval cup       γ δ = const₂ ([cup] , ⟪⇑⟫)
-eval cdown     γ δ = const₂ ([cdown] , ⟪⇓⟫)
-eval cpair     γ δ = const₂ ([cpair] , _⟪,⟫′_)
-eval cfst      γ δ = const₂ ([cfst] , π₁)
-eval csnd      γ δ = const₂ ([csnd] , π₂)
-eval tt        γ δ = ∙
+eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → ∀ᴹ⊨ Γ ⁏ Δ ⇒ A
+eval (var i)     γ δ = lookup i γ
+eval (lam t)     γ δ = λ η θ →
+                         let γ′ = mono²⊨⋆ (η , θ) γ
+                             δ′ = mono²⊨⋆ (η , θ) δ
+                         in  [multicut²] (reify[]⋆ γ′) (reify[]⋆ δ′) (reflect[] (lam t)) , λ a →
+                               eval t (γ′ , a) δ′
+eval (app t u)   γ δ = eval t γ δ ⟪$⟫ eval u γ δ
+eval (mvar i)    γ δ = mlookup i δ
+eval (box t)     γ δ = λ η θ →
+                         let γ′ = mono²⊨⋆ (η , θ) γ
+                             δ′ = mono²⊨⋆ (η , θ) δ
+                         in  [multicut²] (reify[]⋆ γ′) (reify[]⋆ δ′) (reflect[] (box t)) ,
+                               eval t ∙ δ′
+eval (unbox t u) γ δ = eval u γ (δ , eval t γ δ)
+eval (pair t u)  γ δ = eval t γ δ , eval u γ δ
+eval (fst t)     γ δ = π₁ (eval t γ δ)
+eval (snd t)     γ δ = π₂ (eval t γ δ)
+eval tt          γ δ = ∙
 
 
 -- TODO: Correctness of evaluation with respect to conversion.
@@ -69,20 +78,15 @@ instance
     ; mono[⊢]  = mono⊢
     ; mmono[⊢] = mmono⊢
     ; [var]     = var
+    ; [lam]     = lam
     ; [app]     = app
-    ; [ci]      = ci
-    ; [ck]      = ck
-    ; [cs]      = cs
     ; [mvar]    = mvar
     ; [box]     = box
-    ; [cdist]   = cdist
-    ; [cup]     = cup
-    ; [cdown]   = cdown
-    ; [cpair]   = cpair
-    ; [cfst]    = cfst
-    ; [csnd]    = csnd
+    ; [unbox]   = unbox
+    ; [pair]    = pair
+    ; [fst]     = fst
+    ; [snd]     = snd
     ; [tt]      = tt
-    ; [mlam]    = mlam
     }
 
 
@@ -133,7 +137,7 @@ trans⊨⋆ ts us = reflect⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
 -- Completeness with respect to all models, or quotation.
 
 quot : ∀ {A Γ Δ} → ∀ᴹ⊨ Γ ⁏ Δ ⇒ A → Γ ⁏ Δ ⊢ A
-quot t = reify[] (t refl⊨⋆ mrefl⊨⋆)
+quot t = reify (t refl⊨⋆ mrefl⊨⋆)
 
 
 -- Normalisation by evaluation.

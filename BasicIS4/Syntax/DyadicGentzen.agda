@@ -181,6 +181,10 @@ mmulticut : ∀ {Π A Γ Δ} → Γ ⁏ Δ ⊢⋆ □⋆ Π → Γ ⁏ Π ⊢ A 
 mmulticut {⌀}     ∙        u = mmono⊢ bot⊆ u
 mmulticut {Π , B} (ts , t) u = app (mmulticut ts (mlam u)) t
 
+multicut² : ∀ {Π Π′ A Γ Δ} → Γ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ ⊢⋆ □⋆ Π′ → Π ⁏ Π′ ⊢ A → Γ ⁏ Δ ⊢ A
+multicut² {⌀}     ∙        us v = mmulticut us (mono⊢ bot⊆ v)
+multicut² {Π , B} (ts , t) us v = app (multicut² ts us (lam v)) t
+
 
 -- Reflexivity and transitivity.
 
@@ -188,22 +192,19 @@ refl⊢⋆₀ : ∀ {Γ} → Γ ⁏ ⌀ ⊢⋆ Γ
 refl⊢⋆₀ {⌀}     = ∙
 refl⊢⋆₀ {Γ , A} = mono⊢⋆ weak⊆ refl⊢⋆₀ , v₀
 
+refl⊢⋆ : ∀ {Γ Δ} → Γ ⁏ Δ ⊢⋆ Γ
+refl⊢⋆ = mmono⊢⋆ bot⊆ refl⊢⋆₀
+
 mrefl⊢⋆₀ : ∀ {Δ} → ⌀ ⁏ Δ ⊢⋆ □⋆ Δ
 mrefl⊢⋆₀ {⌀}     = ∙
 mrefl⊢⋆₀ {Δ , A} = mmono⊢⋆ weak⊆ mrefl⊢⋆₀ , box mv₀
 
-refl⊢⋆ : ∀ {Δ Γ} → Γ ⁏ Δ ⊢⋆ Γ ⧺ (□⋆ Δ)
-refl⊢⋆ = split⋆ (merge⋆ refl⊢⋆₀)
+mrefl⊢⋆ : ∀ {Γ Δ} → Γ ⁏ Δ ⊢⋆ □⋆ Δ
+mrefl⊢⋆ = mono⊢⋆ bot⊆ mrefl⊢⋆₀
 
-refl⊢⋆′ : ∀ {Γ Δ} → Γ ⁏ Δ ⊢⋆ Γ
-refl⊢⋆′ = mmono⊢⋆ bot⊆ refl⊢⋆₀
-
-mrefl⊢⋆′ : ∀ {Γ Δ} → Γ ⁏ Δ ⊢⋆ □⋆ Δ
-mrefl⊢⋆′ = mono⊢⋆ bot⊆ mrefl⊢⋆₀
-
-refl⊢⋆″ : ∀ {Δ Δ′ Γ Γ′} → (∀ {A} → Γ ⁏ Δ ⊢ □ A → Γ′ ⁏ Δ′ ⊢ A) → Γ′ ⁏ Δ′ ⊢⋆ Δ
-refl⊢⋆″ {⌀}     f = ∙
-refl⊢⋆″ {Δ , B} f = refl⊢⋆″ (f ∘ mmono⊢ weak⊆) , f (box mv₀)
+mrefl⊢⋆′ : ∀ {Δ Δ′ Γ Γ′} → (∀ {A} → Γ ⁏ Δ ⊢ □ A → Γ′ ⁏ Δ′ ⊢ A) → Γ′ ⁏ Δ′ ⊢⋆ Δ
+mrefl⊢⋆′ {⌀}     f = ∙
+mrefl⊢⋆′ {Δ , B} f = mrefl⊢⋆′ (f ∘ mmono⊢ weak⊆) , f (box mv₀)
 
 trans⊢⋆₀ : ∀ {Γ″ Γ′ Γ} → Γ ⁏ ⌀ ⊢⋆ Γ′ → Γ′ ⁏ ⌀ ⊢⋆ Γ″ → Γ ⁏ ⌀ ⊢⋆ Γ″
 trans⊢⋆₀ {⌀}      ts ∙        = ∙

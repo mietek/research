@@ -3,8 +3,7 @@ module BasicIS4.Metatheory.Gentzen-TarskiGabbayNanevski where
 open import BasicIS4.Syntax.Gentzen public
 open import BasicIS4.Semantics.TarskiGabbayNanevski public
 
-
-open SyntacticComponent (_⊢_) (_⊢⋆_) (mono⊢) public
+open SyntacticComponent (_⊢_) (mono⊢) public
 
 
 -- Completeness with respect to a particular model.
@@ -13,7 +12,7 @@ module _ {{_ : Model}} where
   reify : ∀ {A Γ} → Γ ⊨ A → Γ ⊢ A
   reify {α P}   (t , s) = t
   reify {A ▻ B} s       = let t , f = s refl⊆ in t
-  reify {□ A}   s       = let t , f = s refl⊆ in box t
+  reify {□ A}   s       = let t , f = s refl⊆ in t
   reify {A ∧ B} (a , b) = pair (reify a) (reify b)
   reify {⊤}    ∙       = tt
 
@@ -24,17 +23,18 @@ module _ {{_ : Model}} where
 
 -- Soundness with respect to all models, or evaluation.
 
--- FIXME: Ugh?
-postulate
-  multioops : ∀ {A Γ Δ} → Γ ⊢⋆ □⋆ Δ → □⋆ Δ ⊢ A → ⌀ ⊢ A
-
 mutual
   eval : ∀ {A Γ} → Γ ⊢ A → ∀ᴹ⊨ Γ ⇒ A
   eval (var i)         γ = lookup i γ
-  eval (lam t)         γ = λ η → multicut (reify⋆ (mono⊨⋆ η γ)) (lam t) , λ a →
-                             eval t (mono⊨⋆ η γ , a)
+  eval (lam t)         γ = λ η →
+                             let γ′ = mono⊨⋆ η γ
+                             in  multicut (reify⋆ γ′) (lam t) , λ a →
+                                   eval t (γ′ , a)
   eval (app t u)       γ = eval t γ ⟪$⟫ eval u γ
-  eval (multibox ts u) γ = λ η → multioops ts u , eval u (eval⋆ ts (mono⊨⋆ η γ))
+  eval (multibox ts u) γ = λ η →
+                             let γ′ = mono⊨⋆ η γ
+                             in  multicut (reify⋆ γ′) (multibox ts u) ,
+                                   eval u (eval⋆ ts γ′)
   eval (down t)        γ = ⟪⇓⟫ (eval t γ)
   eval (pair t u)      γ = eval t γ , eval u γ
   eval (fst t)         γ = π₁ (eval t γ)
@@ -61,14 +61,14 @@ instance
 
 -- Soundness with respect to the canonical model.
 
--- FIXME: The semantics must be wrong...
-postulate
-  oops : ∀ {A Γ} → Γ ⊢ A → ⌀ ⊢ A
-
 reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 reflect {α P}   t = t , t
-reflect {A ▻ B} t = λ η → mono⊢ η t , λ a → reflect (app (mono⊢ η t) (reify a))
-reflect {□ A}   t = λ η → oops (down (mono⊢ η t)) , reflect (down (mono⊢ η t))
+reflect {A ▻ B} t = λ η →
+                      let t′ = mono⊢ η t
+                      in  t′ , λ a → reflect (app t′ (reify a))
+reflect {□ A}   t = λ η →
+                      let t′ = mono⊢ η t
+                      in  t′ , reflect (down t′)
 reflect {A ∧ B} t = reflect (fst t) , reflect (snd t)
 reflect {⊤}    t = ∙
 

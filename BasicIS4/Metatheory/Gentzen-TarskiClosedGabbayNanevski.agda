@@ -13,7 +13,7 @@ module _ {{_ : Model}} where
   reify : ∀ {A} → ⊨ A → ⌀ ⊢ A
   reify {α P}   (t , s) = t
   reify {A ▻ B} (t , f) = t
-  reify {□ A}   (t , a) = box t
+  reify {□ A}   (t , a) = t
   reify {A ∧ B} (a , b) = pair (reify a) (reify b)
   reify {⊤}    ∙       = tt
 
@@ -30,7 +30,7 @@ mutual
   eval (lam t)         γ = multicut (reify⋆ γ) (lam t) , λ a →
                              eval t (γ , a)
   eval (app t u)       γ = eval t γ ⟪$⟫ eval u γ
-  eval (multibox ts u) γ = multicut (reify⋆ γ) (down (multibox ts u)) ,
+  eval (multibox ts u) γ = multicut (reify⋆ γ) (multibox ts u) ,
                              eval u (eval⋆ ts γ)
   eval (down t)        γ = ⟪⇓⟫ (eval t γ)
   eval (pair t u)      γ = eval t γ , eval u γ

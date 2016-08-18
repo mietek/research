@@ -1,4 +1,4 @@
--- Tarski-style semantics with a syntactic component, after Gabbay-Nanevski, with separate modal context.
+-- Tarski-style semantics with a syntactic component and separate modal context, after Gabbay-Nanevski.
 
 module BasicIS4.Semantics.TarskiDyadicGabbayNanevski where
 
@@ -22,10 +22,14 @@ open Model {{…}} public
 
 module SyntacticComponent
     ([_⁏_⊢_]  : Cx Ty → Cx Ty → Ty → Set)
-    ([_⁏_⊢⋆_] : Cx Ty → Cx Ty → Cx Ty → Set)
     (mono[⊢]  : ∀ {A Γ Γ′ Δ}  → Γ ⊆ Γ′ → [ Γ ⁏ Δ ⊢ A ] → [ Γ′ ⁏ Δ ⊢ A ])
     (mmono[⊢] : ∀ {A Γ Δ Δ′}  → Δ ⊆ Δ′ → [ Γ ⁏ Δ ⊢ A ] → [ Γ ⁏ Δ′ ⊢ A ])
   where
+
+  infix 3 [_⁏_⊢_]⋆
+  [_⁏_⊢_]⋆ : Cx Ty → Cx Ty → Cx Ty → Set
+  [ Γ ⁏ Δ ⊢ ⌀     ]⋆ = 𝟙
+  [ Γ ⁏ Δ ⊢ Π , A ]⋆ = [ Γ ⁏ Δ ⊢ Π ]⋆ × [ Γ ⁏ Δ ⊢ A ]
 
 
   -- Satisfaction in a particular model.
@@ -35,7 +39,7 @@ module SyntacticComponent
     _⁏_⊨_ : Cx Ty → Cx Ty → Ty → Set
     Γ ⁏ Δ ⊨ α P   = [ Γ ⁏ Δ ⊢ α P ] × Γ ⁏ Δ ⊨ᵅ P
     Γ ⁏ Δ ⊨ A ▻ B = ∀ {Γ′ Δ′} → Γ ⊆ Γ′ → Δ ⊆ Δ′ → [ Γ′ ⁏ Δ′ ⊢ A ▻ B ] × (Γ′ ⁏ Δ′ ⊨ A → Γ′ ⁏ Δ′ ⊨ B)
-    Γ ⁏ Δ ⊨ □ A   = ∀ {Γ′ Δ′} → Γ ⊆ Γ′ → Δ ⊆ Δ′ → [ ⌀ ⁏ Δ′ ⊢ A ] × Γ′ ⁏ Δ′ ⊨ A
+    Γ ⁏ Δ ⊨ □ A   = ∀ {Γ′ Δ′} → Γ ⊆ Γ′ → Δ ⊆ Δ′ → [ Γ′ ⁏ Δ′ ⊢ □ A ] × Γ′ ⁏ Δ′ ⊨ A
     Γ ⁏ Δ ⊨ A ∧ B = Γ ⁏ Δ ⊨ A × Γ ⁏ Δ ⊨ B
     Γ ⁏ Δ ⊨ ⊤    = 𝟙
 
@@ -81,6 +85,9 @@ module SyntacticComponent
     mono²⊨ : ∀ {A Γ Γ′ Δ Δ′} → Γ ⊆ Γ′ × Δ ⊆ Δ′ → Γ ⁏ Δ ⊨ A → Γ′ ⁏ Δ′ ⊨ A
     mono²⊨ {A} (η , θ) = mono⊨ {A} η ∘ mmono⊨ {A} θ
 
+    mono²⊨⋆ : ∀ {Π Γ Γ′ Δ Δ′} → Γ ⊆ Γ′ × Δ ⊆ Δ′ → Γ ⁏ Δ ⊨⋆ Π → Γ′ ⁏ Δ′ ⊨⋆ Π
+    mono²⊨⋆ {Π} (η , θ) = mono⊨⋆ {Π} η ∘ mmono⊨⋆ {Π} θ
+
 
   -- Additional useful equipment.
 
@@ -103,11 +110,11 @@ module SyntacticComponent
   module _ {{_ : Model}} where
     infix 3 _⁏_⊨_⁏_⇒_
     _⁏_⊨_⁏_⇒_ : Cx Ty → Cx Ty → Cx Ty → Cx Ty → Ty → Set
-    Γ₀ ⁏ Δ₀ ⊨ Γ ⁏ Δ ⇒ A = Γ₀ ⁏ Δ₀ ⊨⋆ Γ → ⌀ ⁏ Δ₀ ⊨⋆ □⋆ Δ → Γ₀ ⁏ Δ₀ ⊨ A
+    Γ₀ ⁏ Δ₀ ⊨ Γ ⁏ Δ ⇒ A = Γ₀ ⁏ Δ₀ ⊨⋆ Γ → Γ₀ ⁏ Δ₀ ⊨⋆ □⋆ Δ → Γ₀ ⁏ Δ₀ ⊨ A
 
     infix 3 _⁏_⊨_⁏_⇒⋆_
     _⁏_⊨_⁏_⇒⋆_ : Cx Ty → Cx Ty → Cx Ty → Cx Ty → Cx Ty → Set
-    Γ₀ ⁏ Δ₀ ⊨ Γ ⁏ Δ ⇒⋆ Π = Γ₀ ⁏ Δ₀ ⊨⋆ Γ → ⌀ ⁏ Δ₀ ⊨⋆ □⋆ Δ → Γ₀ ⁏ Δ₀ ⊨⋆ Π
+    Γ₀ ⁏ Δ₀ ⊨ Γ ⁏ Δ ⇒⋆ Π = Γ₀ ⁏ Δ₀ ⊨⋆ Γ → Γ₀ ⁏ Δ₀ ⊨⋆ □⋆ Δ → Γ₀ ⁏ Δ₀ ⊨⋆ Π
 
 
   -- Satisfaction in all models, for sequents.
@@ -129,3 +136,5 @@ module SyntacticComponent
     mlookup : ∀ {A Δ Γ₀ Δ₀} → A ∈ Δ → Γ₀ ⁏ Δ₀ ⊨⋆ □⋆ Δ → Γ₀ ⁏ Δ₀ ⊨ A
     mlookup top     (γ , s) = let t , a = s refl⊆ refl⊆ in a
     mlookup (pop i) (γ , s) = mlookup i γ
+
+    -- TODO: More equipment.

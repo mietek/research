@@ -31,7 +31,7 @@ eval (app t u) γ = eval t γ ⟪$⟫ eval u γ
 eval ci        γ = const ([ci] , id)
 eval ck        γ = const ([ck] , ⟪const⟫)
 eval cs        γ = const ([cs] , ⟪ap⟫′)
-eval (box t)   γ = reflect[] t , eval t ∙
+eval (box t)   γ = const (reflect[] (box t) , eval t ∙)
 eval cdist     γ = const ([cdist] , _⟪◎⟫′_)
 eval cup       γ = const ([cup] , ⟪⇑⟫)
 eval cdown     γ = const ([cdown] , ⟪⇓⟫)
@@ -71,14 +71,14 @@ instance
 
 -- Soundness with respect to the canonical model.
 
--- FIXME: The semantics must be wrong...
-postulate
-  oops : ∀ {A Γ} → Γ ⊢ A → ⌀ ⊢ A
-
 reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 reflect {α P}   t = t , t
-reflect {A ▻ B} t = λ η → mono⊢ η t , λ a → reflect (app (mono⊢ η t) (reify[] a))
-reflect {□ A}   t = oops (down t) , reflect (down t)
+reflect {A ▻ B} t = λ η →
+                      let t′ = mono⊢ η t
+                      in  t′ , λ a → reflect (app t′ (reify[] a))
+reflect {□ A}   t = λ η →
+                      let t′ = mono⊢ η t
+                      in  t′ , reflect (down t′)
 reflect {A ∧ B} t = reflect (fst t) , reflect (snd t)
 reflect {⊤}    t = ∙
 
@@ -87,12 +87,27 @@ reflect⋆ {⌀}     ∙        = ∙
 reflect⋆ {Π , A} (ts , t) = reflect⋆ ts , reflect t
 
 
+-- Completeness with respect to the canonical model.
+
+reify : ∀ {A Γ} → Γ ⊨ A → Γ ⊢ A
+reify {α P}   (t , s) = t
+reify {A ▻ B} s       = let t , f = s refl⊆ in t
+reify {□ A}   s       = let t , a = s refl⊆ in t
+reify {A ∧ B} (a , b) = pair (reify a) (reify b)
+reify {⊤}    ∙       = tt
+
+reify⋆ : ∀ {Π Γ} → Γ ⊨⋆ Π → Γ ⊢⋆ Π
+reify⋆ {⌀}     ∙        = ∙
+reify⋆ {Π , A} (ts , t) = reify⋆ ts , reify t
+
+
 -- Reflexivity and transitivity.
 
 refl⊨⋆ : ∀ {Γ} → Γ ⊨⋆ Γ
 refl⊨⋆ = reflect⋆ refl⊢⋆
 
--- TODO: Transitivity.
+trans⊨⋆ : ∀ {Γ Γ′ Γ″} → Γ ⊨⋆ Γ′ → Γ′ ⊨⋆ Γ″ → Γ ⊨⋆ Γ″
+trans⊨⋆ ts us = reflect⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
 
 
 -- Completeness with respect to all models, or quotation.

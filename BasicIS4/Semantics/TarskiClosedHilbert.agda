@@ -38,7 +38,7 @@ module _ {{_ : Model}} where
   ⊨_ : Ty → Set
   ⊨ α P   = [ α P ] × ⊨ᵅ P
   ⊨ A ▻ B = [ A ▻ B ] × (⊨ A → ⊨ B)
-  ⊨ □ A   = [ A ] × ⊨ A
+  ⊨ □ A   = [ □ A ] × ⊨ A
   ⊨ A ∧ B = ⊨ A × ⊨ B
   ⊨ ⊤    = 𝟙
 
@@ -59,7 +59,7 @@ module _ {{_ : Model}} where
 reify[] : ∀ {{_ : Model}} {A} → ⊨ A → [ A ]
 reify[] {α P}   (t , s) = t
 reify[] {A ▻ B} (t , f) = t
-reify[] {□ A}   (t , a) = [box] t
+reify[] {□ A}   (t , a) = t
 reify[] {A ∧ B} (a , b) = [app] ([app] [cpair] (reify[] {A} a)) (reify[] {B} b)
 reify[] {⊤}    ∙       = [tt]
 
@@ -81,7 +81,7 @@ module _ {{_ : Model}} where
               [app] ([app] [cs] (reify[] f)) (reify[] g) , ⟪ap⟫ f g
 
   _⟪◎⟫_ : ∀ {A B} → ⊨ □ (A ▻ B) → ⊨ □ A → ⊨ □ B
-  (t , f) ⟪◎⟫ (u , a) = [app] t u , f ⟪$⟫ a
+  (t , f) ⟪◎⟫ (u , a) = [app] ([app] [cdist] t) u , f ⟪$⟫ a
 
   _⟪◎⟫′_ : ∀ {A B} → ⊨ □ (A ▻ B) → ⊨ □ A ▻ □ B
   _⟪◎⟫′_ s = [app] [cdist] (reify[] s) , _⟪◎⟫_ s

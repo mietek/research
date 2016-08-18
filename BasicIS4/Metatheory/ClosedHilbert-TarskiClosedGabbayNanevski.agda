@@ -12,7 +12,7 @@ module _ {{_ : Model}} where
   reify : ∀ {A} → ⊨ A → ⊢ A
   reify {α P}   (t , s) = t
   reify {A ▻ B} (t , f) = t
-  reify {□ A}   (t , a) = box t
+  reify {□ A}   (t , a) = t
   reify {A ∧ B} (a , b) = pair (reify a) (reify b)
   reify {⊤}    ∙       = tt
 
@@ -28,7 +28,7 @@ module _ {{_ : Model}} where
               app (app cs (reify f)) (reify g) , ⟪ap⟫ f g
 
   _⟪◎⟫_ : ∀ {A B} → ⊨ □ (A ▻ B) → ⊨ □ A → ⊨ □ B
-  (t , f) ⟪◎⟫ (u , a) = app t u , f ⟪$⟫ a
+  (t , f) ⟪◎⟫ (u , a) = app (app cdist t) u , f ⟪$⟫ a
 
   _⟪◎⟫′_ : ∀ {A B} → ⊨ □ (A ▻ B) → ⊨ □ A ▻ □ B
   _⟪◎⟫′_ s = app cdist (reify s) , _⟪◎⟫_ s
@@ -47,7 +47,7 @@ eval (app t u) = eval t ⟪$⟫ eval u
 eval ci        = ci , id
 eval ck        = ck , ⟪const⟫
 eval cs        = cs , ⟪ap⟫′
-eval (box t)   = t , eval t
+eval (box t)   = box t , eval t
 eval cdist     = cdist , _⟪◎⟫′_
 eval cup       = cup , ⟪⇑⟫
 eval cdown     = cdown , ⟪⇓⟫

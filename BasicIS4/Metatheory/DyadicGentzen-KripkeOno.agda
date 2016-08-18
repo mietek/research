@@ -45,7 +45,7 @@ instance
 
 -- Soundness and completeness with respect to the canonical model.
 
---- FIXME: Can we make this true?
+-- FIXME: Can we make this true?
 postulate
   oops : ∀ {Γ Δ} → (Γ , Δ) Rᶜ (⌀ , Δ)
 
@@ -75,26 +75,23 @@ reify⋆ {Π , A} (ts , t) = reify⋆ ts , reify t
 
 -- Reflexivity and transitivity.
 
-refl⊩⋆ : ∀ {Γ Δ} → Γ , Δ ⊩⋆ Γ ⧺ (□⋆ Δ)
+refl⊩⋆ : ∀ {Γ Δ} → Γ , Δ ⊩⋆ Γ
 refl⊩⋆ = reflect⋆ refl⊢⋆
 
-refl⊩⋆′ : ∀ {Γ Δ} → Γ , Δ ⊩⋆ Γ
-refl⊩⋆′ = reflect⋆ refl⊢⋆′
+mrefl⊩⋆ : ∀ {Γ Δ} → Γ , Δ ⊩⋆ □⋆ Δ
+mrefl⊩⋆ = reflect⋆ mrefl⊢⋆
 
-mrefl⊩⋆′ : ∀ {Γ Δ} → Γ , Δ ⊩⋆ □⋆ Δ
-mrefl⊩⋆′ = reflect⋆ mrefl⊢⋆′
+mrefl⊩⋆′ : ∀ {Δ Δ′ Γ Γ′} → (Γ , Δ) Rᶜ (Γ′ , Δ′) → Γ′ , Δ′ ⊩⋆ Δ
+mrefl⊩⋆′ = reflect⋆ ∘ mrefl⊢⋆′
 
 trans⊩⋆ : ∀ {Γ Γ′ Δ Δ′ Π} → Γ , Δ ⊩⋆ Γ′ ⧺ (□⋆ Δ′) → Γ′ , Δ′ ⊩⋆ Π → Γ , Δ ⊩⋆ Π
 trans⊩⋆ ts us = reflect⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
-
-refl⊩⋆″ : ∀ {Δ Δ′ Γ Γ′} → (Γ , Δ) Rᶜ (Γ′ , Δ′) → Γ′ , Δ′ ⊩⋆ Δ
-refl⊩⋆″ = reflect⋆ ∘ refl⊢⋆″
 
 
 -- Completeness, or quotation.
 
 quot : ∀ {A Γ Δ} → ∀ᴹʷ⊩ Γ ⁏ Δ ⇒ A → Γ ⁏ Δ ⊢ A
-quot t = reify (t refl⊩⋆′ refl⊩⋆″)
+quot t = reify (t refl⊩⋆ mrefl⊩⋆′)
 
 
 -- Normalisation by evaluation.
