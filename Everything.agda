@@ -65,11 +65,11 @@ import BasicIPC.Semantics.TarskiHilbert
 -- Tarski-style semantics with a Gentzen-style syntax representation.
 import BasicIPC.Semantics.TarskiGentzen
 
--- Kripke-style possible worlds semantics, based on the Gödel translation.
-import BasicIPC.Semantics.KripkeGodel
-
 -- Standard Kripke-style possible worlds semantics, based on the McKinsey-Tarski translation.
 import BasicIPC.Semantics.KripkeMcKinseyTarski
+
+-- Kripke-style possible worlds semantics, based on the Gödel translation.
+import BasicIPC.Semantics.KripkeGodel
 
 
 import BasicIPC.Metatheory.ClosedHilbert-Tarski
@@ -81,18 +81,18 @@ import BasicIPC.Metatheory.Hilbert-TarskiClosedCoquandDybjer
 import BasicIPC.Metatheory.Hilbert-TarskiClosedHilbert
 import BasicIPC.Metatheory.Hilbert-TarskiCoquandDybjer
 import BasicIPC.Metatheory.Hilbert-TarskiHilbert
-import BasicIPC.Metatheory.Hilbert-KripkeGodel
 import BasicIPC.Metatheory.Hilbert-KripkeMcKinseyTarski
+import BasicIPC.Metatheory.Hilbert-KripkeGodel
 
 import BasicIPC.Metatheory.Gentzen-Tarski
 import BasicIPC.Metatheory.Gentzen-TarskiClosedCoquandDybjer
 import BasicIPC.Metatheory.Gentzen-TarskiCoquandDybjer
 import BasicIPC.Metatheory.Gentzen-TarskiGentzen
-import BasicIPC.Metatheory.Gentzen-KripkeGodel
 import BasicIPC.Metatheory.Gentzen-KripkeMcKinseyTarski
+import BasicIPC.Metatheory.Gentzen-KripkeGodel
 
-import BasicIPC.Metatheory.GentzenNormalForm-KripkeGodel
 import BasicIPC.Metatheory.GentzenNormalForm-KripkeMcKinseyTarski
+import BasicIPC.Metatheory.GentzenNormalForm-KripkeGodel
 
 import BasicIPC.Metatheory.GentzenSpinalNormalForm-HereditarySubstitution
 

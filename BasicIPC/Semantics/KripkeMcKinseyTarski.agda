@@ -49,9 +49,9 @@ module _ {{_ : Model}} where
   mono⊩ {A ∧ B} ξ (a , b) = mono⊩ {A} ξ a , mono⊩ {B} ξ b
   mono⊩ {⊤}    ξ ∙       = ∙
 
-  mono⊩⋆ : ∀ {Γ w w′} → w ≤ w′ → w ⊩⋆ Γ → w′ ⊩⋆ Γ
+  mono⊩⋆ : ∀ {Π w w′} → w ≤ w′ → w ⊩⋆ Π → w′ ⊩⋆ Π
   mono⊩⋆ {⌀}     ξ ∙       = ∙
-  mono⊩⋆ {Γ , A} ξ (γ , a) = mono⊩⋆ {Γ} ξ γ , mono⊩ {A} ξ a
+  mono⊩⋆ {Π , A} ξ (γ , a) = mono⊩⋆ {Π} ξ γ , mono⊩ {A} ξ a
 
 
 -- Additional useful equipment.

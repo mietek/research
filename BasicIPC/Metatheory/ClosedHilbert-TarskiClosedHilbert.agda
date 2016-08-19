@@ -59,7 +59,7 @@ instance
 -- Completeness with respect to all models, or quotation.
 
 quot : ∀ {A} → ⊨ A → ⊢ A
-quot t = reify[] t
+quot s = reify[] s
 
 
 -- Normalisation by evaluation.

@@ -67,10 +67,10 @@ module IlikBasicCompleteness where
   trans⊩⋆ ts us = reflect⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
 
 
-  -- Completeness, or quotation.
+  -- Completeness with respect to all models, or quotation.
 
   quot : ∀ {A Γ} → Γ ᴹ⊩ A → Γ ⊢ A
-  quot t = reify (t refl⊩⋆)
+  quot s = reify (s refl⊩⋆)
 
 
   -- Normalisation by evaluation.

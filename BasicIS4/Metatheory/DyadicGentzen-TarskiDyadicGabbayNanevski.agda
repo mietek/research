@@ -91,7 +91,7 @@ trans⊩⋆ ts us = reflect⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
 -- Completeness with respect to all models, or quotation.
 
 quot : ∀ {A Γ Δ} → Γ ⁏ Δ ⊨ A → Γ ⁏ Δ ⊢ A
-quot t = reify (t refl⊩⋆ mrefl⊩⋆)
+quot s = reify (s refl⊩⋆ mrefl⊩⋆)
 
 
 -- Normalisation by evaluation.

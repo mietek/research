@@ -21,7 +21,7 @@ module CoquandDybjerBasicCompleteness where
   -- Completeness with respect to all models, or quotation.
 
   quot : ∀ {A} → ᴹ⊩ A → ⊢ A
-  quot t = reify t
+  quot s = reify s
 
 
   -- Normalisation by evaluation.

@@ -93,10 +93,10 @@ trans⊩⋆ : ∀ {Γ Γ′ Γ″} → Γ ⊩⋆ Γ′ → Γ′ ⊩⋆ Γ″ �
 trans⊩⋆ ts us = reflect⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
 
 
--- Completeness, or quotation.
+-- Completeness with respect to all models, or quotation.
 
 quot : ∀ {A Γ} → Γ ⊨ A → Γ ⊢ A
-quot t = reify (t refl⊩⋆)
+quot s = reify (s refl⊩⋆)
 
 
 -- Normalisation by evaluation.
