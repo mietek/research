@@ -42,28 +42,26 @@ instance
     }
 
 
--- Soundness with respect to the canonical model.
+-- Soundness and completeness with respect to the canonical model.
 
-reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
-reflect {α P}   t = t , t
-reflect {A ▻ B} t = λ η →
-                      let t′ = mono⊢ η t
-                      in  t′ , λ a → reflect (app t′ (reify[] a))
-reflect {A ∧ B} t = reflect (fst t) , reflect (snd t)
-reflect {⊤}    t = ∙
+mutual
+  reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
+  reflect {α P}   t = t , t
+  reflect {A ▻ B} t = λ η →
+                        let t′ = mono⊢ η t
+                        in  t′ , λ a → reflect (app t′ (reify a))
+  reflect {A ∧ B} t = reflect (fst t) , reflect (snd t)
+  reflect {⊤}    t = ∙
+
+  reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
+  reify {α P}   (t , s) = t
+  reify {A ▻ B} s       = let t , f = s refl⊆ in t
+  reify {A ∧ B} (a , b) = pair (reify a) (reify b)
+  reify {⊤}    ∙       = tt
 
 reflect⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊩⋆ Π
 reflect⋆ {⌀}     ∙        = ∙
 reflect⋆ {Π , A} (ts , t) = reflect⋆ ts , reflect t
-
-
--- Completeness with respect to the canonical model.
-
-reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
-reify {α P}   (t , s) = t
-reify {A ▻ B} s       = let t , f = s refl⊆ in t
-reify {A ∧ B} (a , b) = pair (reify a) (reify b)
-reify {⊤}    ∙       = tt
 
 reify⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → Γ ⊢⋆ Π
 reify⋆ {⌀}     ∙        = ∙
