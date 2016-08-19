@@ -4,255 +4,261 @@ module BasicIPC.Syntax.Translation where
 
 open import BasicIPC.Syntax.Common public
 
-import BasicIPC.Syntax.ClosedHilbertLinear as L
-import BasicIPC.Syntax.ClosedHilbert as T
-import BasicIPC.Syntax.HilbertLinear as LC
-import BasicIPC.Syntax.Hilbert as TC
-import BasicIPC.Syntax.Gentzen as GTC
+import BasicIPC.Syntax.ClosedHilbertLinear as CHL
+import BasicIPC.Syntax.ClosedHilbert as CH
+import BasicIPC.Syntax.HilbertLinear as HL
+import BasicIPC.Syntax.Hilbert as H
+import BasicIPC.Syntax.Gentzen as G
 
-open LC using () renaming (_⊢×_ to LC⟨_⊢×_⟩ ; _⊢_ to LC⟨_⊢_⟩) public
-open TC using () renaming (_⊢_ to TC⟨_⊢_⟩) public
-open GTC using () renaming (_⊢_ to GTC⟨_⊢_⟩) public
+open HL using () renaming (_⊢×_ to HL⟨_⊢×_⟩ ; _⊢_ to HL⟨_⊢_⟩) public
+open H using () renaming (_⊢_ to H⟨_⊢_⟩) public
+open G using () renaming (_⊢_ to G⟨_⊢_⟩) public
 
 
--- Translation from list-shaped to tree-shaped variant.
+-- Translation from closed Hilbert-style linear to closed Hilbert-style.
 
-l→t : ∀ {A} → L.⊢ A → T.⊢ A
-l→t (Π , ts) = l×→t ts top
+chl→ch : ∀ {A} → CHL.⊢ A → CH.⊢ A
+chl→ch (Π , ts) = chl×→ch ts top
   where
-    l×→t : ∀ {A Π} → L.⊢× Π → A ∈ Π → T.⊢ A
-    l×→t (L.mp i j ts) top     = T.app (l×→t ts i) (l×→t ts j)
-    l×→t (L.ci ts)     top     = T.ci
-    l×→t (L.ck ts)     top     = T.ck
-    l×→t (L.cs ts)     top     = T.cs
-    l×→t (L.cpair ts)  top     = T.cpair
-    l×→t (L.cfst ts)   top     = T.cfst
-    l×→t (L.csnd ts)   top     = T.csnd
-    l×→t (L.tt ts)     top     = T.tt
-    l×→t (L.mp i j ts) (pop k) = l×→t ts k
-    l×→t (L.ci ts)     (pop k) = l×→t ts k
-    l×→t (L.ck ts)     (pop k) = l×→t ts k
-    l×→t (L.cs ts)     (pop k) = l×→t ts k
-    l×→t (L.cpair ts)  (pop k) = l×→t ts k
-    l×→t (L.cfst ts)   (pop k) = l×→t ts k
-    l×→t (L.csnd ts)   (pop k) = l×→t ts k
-    l×→t (L.tt ts)     (pop k) = l×→t ts k
+    chl×→ch : ∀ {A Π} → CHL.⊢× Π → A ∈ Π → CH.⊢ A
+    chl×→ch (CHL.mp i j ts) top     = CH.app (chl×→ch ts i) (chl×→ch ts j)
+    chl×→ch (CHL.ci ts)     top     = CH.ci
+    chl×→ch (CHL.ck ts)     top     = CH.ck
+    chl×→ch (CHL.cs ts)     top     = CH.cs
+    chl×→ch (CHL.cpair ts)  top     = CH.cpair
+    chl×→ch (CHL.cfst ts)   top     = CH.cfst
+    chl×→ch (CHL.csnd ts)   top     = CH.csnd
+    chl×→ch (CHL.tt ts)     top     = CH.tt
+    chl×→ch (CHL.mp i j ts) (pop k) = chl×→ch ts k
+    chl×→ch (CHL.ci ts)     (pop k) = chl×→ch ts k
+    chl×→ch (CHL.ck ts)     (pop k) = chl×→ch ts k
+    chl×→ch (CHL.cs ts)     (pop k) = chl×→ch ts k
+    chl×→ch (CHL.cpair ts)  (pop k) = chl×→ch ts k
+    chl×→ch (CHL.cfst ts)   (pop k) = chl×→ch ts k
+    chl×→ch (CHL.csnd ts)   (pop k) = chl×→ch ts k
+    chl×→ch (CHL.tt ts)     (pop k) = chl×→ch ts k
 
 
--- Translation from tree-shaped to list-shaped variant.
+-- Translation from closed Hilbert-style to closed Hilbert-style linear.
 
-t→l : ∀ {A} → T.⊢ A → L.⊢ A
-t→l (T.app t u) = L.app (t→l t) (t→l u)
-t→l T.ci        = ⌀ , L.ci L.nil
-t→l T.ck        = ⌀ , L.ck L.nil
-t→l T.cs        = ⌀ , L.cs L.nil
-t→l T.cpair     = ⌀ , L.cpair L.nil
-t→l T.cfst      = ⌀ , L.cfst L.nil
-t→l T.csnd      = ⌀ , L.csnd L.nil
-t→l T.tt        = ⌀ , L.tt L.nil
+ch→chl : ∀ {A} → CH.⊢ A → CHL.⊢ A
+ch→chl (CH.app t u) = CHL.app (ch→chl t) (ch→chl u)
+ch→chl CH.ci        = ⌀ , CHL.ci CHL.nil
+ch→chl CH.ck        = ⌀ , CHL.ck CHL.nil
+ch→chl CH.cs        = ⌀ , CHL.cs CHL.nil
+ch→chl CH.cpair     = ⌀ , CHL.cpair CHL.nil
+ch→chl CH.cfst      = ⌀ , CHL.cfst CHL.nil
+ch→chl CH.csnd      = ⌀ , CHL.csnd CHL.nil
+ch→chl CH.tt        = ⌀ , CHL.tt CHL.nil
 
 
--- Translation from list-shaped to tree-shaped variant, with context.
+-- Translation from Hilbert-style linear to Hilbert-style.
 
-lc→tc : ∀ {A Γ} → LC⟨ Γ ⊢ A ⟩ → TC⟨ Γ ⊢ A ⟩
-lc→tc (Π , ts) = lc×→tc ts top
+hl→h : ∀ {A Γ} → HL⟨ Γ ⊢ A ⟩ → H⟨ Γ ⊢ A ⟩
+hl→h (Π , ts) = hl×→h ts top
   where
-    lc×→tc : ∀ {A Π Γ} → LC⟨ Γ ⊢× Π ⟩ → A ∈ Π → TC⟨ Γ ⊢ A ⟩
-    lc×→tc (LC.var i ts)  top     = TC.var i
-    lc×→tc (LC.mp i j ts) top     = TC.app (lc×→tc ts i) (lc×→tc ts j)
-    lc×→tc (LC.ci ts)     top     = TC.ci
-    lc×→tc (LC.ck ts)     top     = TC.ck
-    lc×→tc (LC.cs ts)     top     = TC.cs
-    lc×→tc (LC.cpair ts)  top     = TC.cpair
-    lc×→tc (LC.cfst ts)   top     = TC.cfst
-    lc×→tc (LC.csnd ts)   top     = TC.csnd
-    lc×→tc (LC.tt ts)     top     = TC.tt
-    lc×→tc (LC.var i ts)  (pop k) = lc×→tc ts k
-    lc×→tc (LC.mp i j ts) (pop k) = lc×→tc ts k
-    lc×→tc (LC.ci ts)     (pop k) = lc×→tc ts k
-    lc×→tc (LC.ck ts)     (pop k) = lc×→tc ts k
-    lc×→tc (LC.cs ts)     (pop k) = lc×→tc ts k
-    lc×→tc (LC.cpair ts)  (pop k) = lc×→tc ts k
-    lc×→tc (LC.cfst ts)   (pop k) = lc×→tc ts k
-    lc×→tc (LC.csnd ts)   (pop k) = lc×→tc ts k
-    lc×→tc (LC.tt ts)     (pop k) = lc×→tc ts k
+    hl×→h : ∀ {A Π Γ} → HL⟨ Γ ⊢× Π ⟩ → A ∈ Π → H⟨ Γ ⊢ A ⟩
+    hl×→h (HL.var i ts)  top     = H.var i
+    hl×→h (HL.mp i j ts) top     = H.app (hl×→h ts i) (hl×→h ts j)
+    hl×→h (HL.ci ts)     top     = H.ci
+    hl×→h (HL.ck ts)     top     = H.ck
+    hl×→h (HL.cs ts)     top     = H.cs
+    hl×→h (HL.cpair ts)  top     = H.cpair
+    hl×→h (HL.cfst ts)   top     = H.cfst
+    hl×→h (HL.csnd ts)   top     = H.csnd
+    hl×→h (HL.tt ts)     top     = H.tt
+    hl×→h (HL.var i ts)  (pop k) = hl×→h ts k
+    hl×→h (HL.mp i j ts) (pop k) = hl×→h ts k
+    hl×→h (HL.ci ts)     (pop k) = hl×→h ts k
+    hl×→h (HL.ck ts)     (pop k) = hl×→h ts k
+    hl×→h (HL.cs ts)     (pop k) = hl×→h ts k
+    hl×→h (HL.cpair ts)  (pop k) = hl×→h ts k
+    hl×→h (HL.cfst ts)   (pop k) = hl×→h ts k
+    hl×→h (HL.csnd ts)   (pop k) = hl×→h ts k
+    hl×→h (HL.tt ts)     (pop k) = hl×→h ts k
 
 
--- Translation from tree-shaped to list-shaped variant, with context.
+-- Translation from Hilbert-style to Hilbert-style linear.
 
-tc→lc : ∀ {A Γ} → TC⟨ Γ ⊢ A ⟩ → LC⟨ Γ ⊢ A ⟩
-tc→lc (TC.var i)   = ⌀ , LC.var i LC.nil
-tc→lc (TC.app t u) = LC.app (tc→lc t) (tc→lc u)
-tc→lc TC.ci        = ⌀ , LC.ci LC.nil
-tc→lc TC.ck        = ⌀ , LC.ck LC.nil
-tc→lc TC.cs        = ⌀ , LC.cs LC.nil
-tc→lc TC.cpair     = ⌀ , LC.cpair LC.nil
-tc→lc TC.cfst      = ⌀ , LC.cfst LC.nil
-tc→lc TC.csnd      = ⌀ , LC.csnd LC.nil
-tc→lc TC.tt        = ⌀ , LC.tt LC.nil
-
-
--- Deduction and detachment theorems for list-shaped variant, with context.
-
-lc-lam : ∀ {A B Γ} → LC⟨ Γ , A ⊢ B ⟩ → LC⟨ Γ ⊢ A ▻ B ⟩
-lc-lam = tc→lc ∘ TC.lam ∘ lc→tc
-
-lc-lam⋆₀ : ∀ {A Γ} → LC⟨ Γ ⊢ A ⟩ → LC⟨ ⌀ ⊢ Γ ▻⋯▻ A ⟩
-lc-lam⋆₀ = tc→lc ∘ TC.lam⋆₀ ∘ lc→tc
-
-lc-det : ∀ {A B Γ} → LC⟨ Γ ⊢ A ▻ B ⟩ → LC⟨ Γ , A ⊢ B ⟩
-lc-det = tc→lc ∘ TC.det ∘ lc→tc
-
-lc-det⋆₀ : ∀ {A Γ} → LC⟨ ⌀ ⊢ Γ ▻⋯▻ A ⟩ → LC⟨ Γ ⊢ A ⟩
-lc-det⋆₀ = tc→lc ∘ TC.det⋆₀ ∘ lc→tc
+h→hl : ∀ {A Γ} → H⟨ Γ ⊢ A ⟩ → HL⟨ Γ ⊢ A ⟩
+h→hl (H.var i)   = ⌀ , HL.var i HL.nil
+h→hl (H.app t u) = HL.app (h→hl t) (h→hl u)
+h→hl H.ci        = ⌀ , HL.ci HL.nil
+h→hl H.ck        = ⌀ , HL.ck HL.nil
+h→hl H.cs        = ⌀ , HL.cs HL.nil
+h→hl H.cpair     = ⌀ , HL.cpair HL.nil
+h→hl H.cfst      = ⌀ , HL.cfst HL.nil
+h→hl H.csnd      = ⌀ , HL.csnd HL.nil
+h→hl H.tt        = ⌀ , HL.tt HL.nil
 
 
--- Translation between list-shaped variants, with and without context.
+-- Deduction and detachment theorems for Hilbert-style linear.
 
-l→lc₀ : ∀ {A} → L.⊢ A → LC⟨ ⌀ ⊢ A ⟩
-l→lc₀ (Π , ts) = Π , l×→lc₀× ts
+hl-lam : ∀ {A B Γ} → HL⟨ Γ , A ⊢ B ⟩ → HL⟨ Γ ⊢ A ▻ B ⟩
+hl-lam = h→hl ∘ H.lam ∘ hl→h
+
+hl-lam⋆₀ : ∀ {A Γ} → HL⟨ Γ ⊢ A ⟩ → HL⟨ ⌀ ⊢ Γ ▻⋯▻ A ⟩
+hl-lam⋆₀ = h→hl ∘ H.lam⋆₀ ∘ hl→h
+
+hl-det : ∀ {A B Γ} → HL⟨ Γ ⊢ A ▻ B ⟩ → HL⟨ Γ , A ⊢ B ⟩
+hl-det = h→hl ∘ H.det ∘ hl→h
+
+hl-det⋆₀ : ∀ {A Γ} → HL⟨ ⌀ ⊢ Γ ▻⋯▻ A ⟩ → HL⟨ Γ ⊢ A ⟩
+hl-det⋆₀ = h→hl ∘ H.det⋆₀ ∘ hl→h
+
+
+-- Translation from closed Hilbert-style linear to Hilbert-style linear.
+
+chl→hl₀ : ∀ {A} → CHL.⊢ A → HL⟨ ⌀ ⊢ A ⟩
+chl→hl₀ (Π , ts) = Π , chl×→hl₀× ts
   where
-    l×→lc₀× : ∀ {Π} → L.⊢× Π → LC⟨ ⌀ ⊢× Π ⟩
-    l×→lc₀× L.nil         = LC.nil
-    l×→lc₀× (L.mp i j ts) = LC.mp i j (l×→lc₀× ts)
-    l×→lc₀× (L.ci ts)     = LC.ci (l×→lc₀× ts)
-    l×→lc₀× (L.ck ts)     = LC.ck (l×→lc₀× ts)
-    l×→lc₀× (L.cs ts)     = LC.cs (l×→lc₀× ts)
-    l×→lc₀× (L.cpair ts)  = LC.cpair (l×→lc₀× ts)
-    l×→lc₀× (L.cfst ts)   = LC.cfst (l×→lc₀× ts)
-    l×→lc₀× (L.csnd ts)   = LC.csnd (l×→lc₀× ts)
-    l×→lc₀× (L.tt ts)     = LC.tt (l×→lc₀× ts)
+    chl×→hl₀× : ∀ {Π} → CHL.⊢× Π → HL⟨ ⌀ ⊢× Π ⟩
+    chl×→hl₀× CHL.nil         = HL.nil
+    chl×→hl₀× (CHL.mp i j ts) = HL.mp i j (chl×→hl₀× ts)
+    chl×→hl₀× (CHL.ci ts)     = HL.ci (chl×→hl₀× ts)
+    chl×→hl₀× (CHL.ck ts)     = HL.ck (chl×→hl₀× ts)
+    chl×→hl₀× (CHL.cs ts)     = HL.cs (chl×→hl₀× ts)
+    chl×→hl₀× (CHL.cpair ts)  = HL.cpair (chl×→hl₀× ts)
+    chl×→hl₀× (CHL.cfst ts)   = HL.cfst (chl×→hl₀× ts)
+    chl×→hl₀× (CHL.csnd ts)   = HL.csnd (chl×→hl₀× ts)
+    chl×→hl₀× (CHL.tt ts)     = HL.tt (chl×→hl₀× ts)
 
-l→lc : ∀ {A Γ} → L.⊢ Γ ▻⋯▻ A → LC⟨ Γ ⊢ A ⟩
-l→lc t = lc-det⋆₀ (l→lc₀ t)
+chl→hl : ∀ {A Γ} → CHL.⊢ Γ ▻⋯▻ A → HL⟨ Γ ⊢ A ⟩
+chl→hl t = hl-det⋆₀ (chl→hl₀ t)
 
-lc₀→l : ∀ {A} → LC⟨ ⌀ ⊢ A ⟩ → L.⊢ A
-lc₀→l (Π , ts) = Π , lc₀×→lc× ts
+
+-- Translation from Hilbert-style linear to closed Hilbert-style linear.
+
+hl₀→chl : ∀ {A} → HL⟨ ⌀ ⊢ A ⟩ → CHL.⊢ A
+hl₀→chl (Π , ts) = Π , hl₀×→chl× ts
   where
-    lc₀×→lc× : ∀ {Π} → LC⟨ ⌀ ⊢× Π ⟩ → L.⊢× Π
-    lc₀×→lc× LC.nil         = L.nil
-    lc₀×→lc× (LC.var () ts)
-    lc₀×→lc× (LC.mp i j ts) = L.mp i j (lc₀×→lc× ts)
-    lc₀×→lc× (LC.ci ts)     = L.ci (lc₀×→lc× ts)
-    lc₀×→lc× (LC.ck ts)     = L.ck (lc₀×→lc× ts)
-    lc₀×→lc× (LC.cs ts)     = L.cs (lc₀×→lc× ts)
-    lc₀×→lc× (LC.cpair ts)  = L.cpair (lc₀×→lc× ts)
-    lc₀×→lc× (LC.cfst ts)   = L.cfst (lc₀×→lc× ts)
-    lc₀×→lc× (LC.csnd ts)   = L.csnd (lc₀×→lc× ts)
-    lc₀×→lc× (LC.tt ts)     = L.tt (lc₀×→lc× ts)
+    hl₀×→chl× : ∀ {Π} → HL⟨ ⌀ ⊢× Π ⟩ → CHL.⊢× Π
+    hl₀×→chl× HL.nil         = CHL.nil
+    hl₀×→chl× (HL.var () ts)
+    hl₀×→chl× (HL.mp i j ts) = CHL.mp i j (hl₀×→chl× ts)
+    hl₀×→chl× (HL.ci ts)     = CHL.ci (hl₀×→chl× ts)
+    hl₀×→chl× (HL.ck ts)     = CHL.ck (hl₀×→chl× ts)
+    hl₀×→chl× (HL.cs ts)     = CHL.cs (hl₀×→chl× ts)
+    hl₀×→chl× (HL.cpair ts)  = CHL.cpair (hl₀×→chl× ts)
+    hl₀×→chl× (HL.cfst ts)   = CHL.cfst (hl₀×→chl× ts)
+    hl₀×→chl× (HL.csnd ts)   = CHL.csnd (hl₀×→chl× ts)
+    hl₀×→chl× (HL.tt ts)     = CHL.tt (hl₀×→chl× ts)
 
-lc→l : ∀ {A Γ} → LC⟨ Γ ⊢ A ⟩ → L.⊢ Γ ▻⋯▻ A
-lc→l t = lc₀→l (lc-lam⋆₀ t)
-
-
--- Translation between tree-shaped variants, with and without context.
-
-t→tc₀ : ∀ {A} → T.⊢ A → TC⟨ ⌀ ⊢ A ⟩
-t→tc₀ (T.app t u) = TC.app (t→tc₀ t) (t→tc₀ u)
-t→tc₀ T.ci        = TC.ci
-t→tc₀ T.ck        = TC.ck
-t→tc₀ T.cs        = TC.cs
-t→tc₀ T.cpair     = TC.cpair
-t→tc₀ T.cfst      = TC.cfst
-t→tc₀ T.csnd      = TC.csnd
-t→tc₀ T.tt        = TC.tt
-
-t→tc : ∀ {A Γ} → T.⊢ Γ ▻⋯▻ A → TC⟨ Γ ⊢ A ⟩
-t→tc t = TC.det⋆₀ (t→tc₀ t)
-
-tc₀→t : ∀ {A} → TC⟨ ⌀ ⊢ A ⟩ → T.⊢ A
-tc₀→t (TC.var ())
-tc₀→t (TC.app t u) = T.app (tc₀→t t) (tc₀→t u)
-tc₀→t TC.ci        = T.ci
-tc₀→t TC.ck        = T.ck
-tc₀→t TC.cs        = T.cs
-tc₀→t TC.cpair     = T.cpair
-tc₀→t TC.cfst      = T.cfst
-tc₀→t TC.csnd      = T.csnd
-tc₀→t TC.tt        = T.tt
-
-tc→t : ∀ {A Γ} → TC⟨ Γ ⊢ A ⟩ → T.⊢ Γ ▻⋯▻ A
-tc→t t = tc₀→t (TC.lam⋆₀ t)
+hl→chl : ∀ {A Γ} → HL⟨ Γ ⊢ A ⟩ → CHL.⊢ Γ ▻⋯▻ A
+hl→chl t = hl₀→chl (hl-lam⋆₀ t)
 
 
--- Additional useful translations, with and without context.
+-- Translation from closed Hilbert-style to Hilbert-style.
 
-tc₀→l : ∀ {A} → TC⟨ ⌀ ⊢ A ⟩ → L.⊢ A
-tc₀→l = t→l ∘ tc₀→t
+ch→h₀ : ∀ {A} → CH.⊢ A → H⟨ ⌀ ⊢ A ⟩
+ch→h₀ (CH.app t u) = H.app (ch→h₀ t) (ch→h₀ u)
+ch→h₀ CH.ci        = H.ci
+ch→h₀ CH.ck        = H.ck
+ch→h₀ CH.cs        = H.cs
+ch→h₀ CH.cpair     = H.cpair
+ch→h₀ CH.cfst      = H.cfst
+ch→h₀ CH.csnd      = H.csnd
+ch→h₀ CH.tt        = H.tt
 
-tc→l : ∀ {A Γ} → TC⟨ Γ ⊢ A ⟩ → L.⊢ Γ ▻⋯▻ A
-tc→l = t→l ∘ tc→t
+ch→h : ∀ {A Γ} → CH.⊢ Γ ▻⋯▻ A → H⟨ Γ ⊢ A ⟩
+ch→h t = H.det⋆₀ (ch→h₀ t)
 
-lc₀→t : ∀ {A} → LC⟨ ⌀ ⊢ A ⟩ → T.⊢ A
-lc₀→t = l→t ∘ lc₀→l
 
-lc→t : ∀ {A Γ} → LC⟨ Γ ⊢ A ⟩ → T.⊢ Γ ▻⋯▻ A
-lc→t = l→t ∘ lc→l
+-- Translation from Hilbert-style to closed Hilbert-style.
 
-l→tc₀ : ∀ {A} → L.⊢ A → TC⟨ ⌀ ⊢ A ⟩
-l→tc₀ = t→tc₀ ∘ l→t
+h₀→ch : ∀ {A} → H⟨ ⌀ ⊢ A ⟩ → CH.⊢ A
+h₀→ch (H.var ())
+h₀→ch (H.app t u) = CH.app (h₀→ch t) (h₀→ch u)
+h₀→ch H.ci        = CH.ci
+h₀→ch H.ck        = CH.ck
+h₀→ch H.cs        = CH.cs
+h₀→ch H.cpair     = CH.cpair
+h₀→ch H.cfst      = CH.cfst
+h₀→ch H.csnd      = CH.csnd
+h₀→ch H.tt        = CH.tt
 
-l→tc : ∀ {A Γ} → L.⊢ Γ ▻⋯▻ A → TC⟨ Γ ⊢ A ⟩
-l→tc = t→tc ∘ l→t
+h→ch : ∀ {A Γ} → H⟨ Γ ⊢ A ⟩ → CH.⊢ Γ ▻⋯▻ A
+h→ch t = h₀→ch (H.lam⋆₀ t)
 
-t→lc₀ : ∀ {A} → T.⊢ A → LC⟨ ⌀ ⊢ A ⟩
-t→lc₀ = l→lc₀ ∘ t→l
 
-t→lc : ∀ {A Γ} → T.⊢ Γ ▻⋯▻ A → LC⟨ Γ ⊢ A ⟩
-t→lc = l→lc ∘ t→l
+-- Composition of Hilbert-style translations.
+
+h₀→chl : ∀ {A} → H⟨ ⌀ ⊢ A ⟩ → CHL.⊢ A
+h₀→chl = ch→chl ∘ h₀→ch
+
+h→chl : ∀ {A Γ} → H⟨ Γ ⊢ A ⟩ → CHL.⊢ Γ ▻⋯▻ A
+h→chl = ch→chl ∘ h→ch
+
+hl₀→ch : ∀ {A} → HL⟨ ⌀ ⊢ A ⟩ → CH.⊢ A
+hl₀→ch = chl→ch ∘ hl₀→chl
+
+hl→ch : ∀ {A Γ} → HL⟨ Γ ⊢ A ⟩ → CH.⊢ Γ ▻⋯▻ A
+hl→ch = chl→ch ∘ hl→chl
+
+chl→h₀ : ∀ {A} → CHL.⊢ A → H⟨ ⌀ ⊢ A ⟩
+chl→h₀ = ch→h₀ ∘ chl→ch
+
+chl→h : ∀ {A Γ} → CHL.⊢ Γ ▻⋯▻ A → H⟨ Γ ⊢ A ⟩
+chl→h = ch→h ∘ chl→ch
+
+ch→hl₀ : ∀ {A} → CH.⊢ A → HL⟨ ⌀ ⊢ A ⟩
+ch→hl₀ = chl→hl₀ ∘ ch→chl
+
+ch→hl : ∀ {A Γ} → CH.⊢ Γ ▻⋯▻ A → HL⟨ Γ ⊢ A ⟩
+ch→hl = chl→hl ∘ ch→chl
 
 
 -- Translation from Hilbert-style to Gentzen-style.
 
-tc→gtc : ∀ {A Γ} → TC⟨ Γ ⊢ A ⟩ → GTC⟨ Γ ⊢ A ⟩
-tc→gtc (TC.var i)   = GTC.var i
-tc→gtc (TC.app t u) = GTC.app (tc→gtc t) (tc→gtc u)
-tc→gtc TC.ci        = GTC.ci
-tc→gtc TC.ck        = GTC.ck
-tc→gtc TC.cs        = GTC.cs
-tc→gtc TC.cpair     = GTC.cpair
-tc→gtc TC.cfst      = GTC.cfst
-tc→gtc TC.csnd      = GTC.csnd
-tc→gtc TC.tt        = GTC.tt
+h→g : ∀ {A Γ} → H⟨ Γ ⊢ A ⟩ → G⟨ Γ ⊢ A ⟩
+h→g (H.var i)   = G.var i
+h→g (H.app t u) = G.app (h→g t) (h→g u)
+h→g H.ci        = G.ci
+h→g H.ck        = G.ck
+h→g H.cs        = G.cs
+h→g H.cpair     = G.cpair
+h→g H.cfst      = G.cfst
+h→g H.csnd      = G.csnd
+h→g H.tt        = G.tt
 
-lc→gtc : ∀ {A Γ} → LC⟨ Γ ⊢ A ⟩ → GTC⟨ Γ ⊢ A ⟩
-lc→gtc = tc→gtc ∘ lc→tc
+hl→g : ∀ {A Γ} → HL⟨ Γ ⊢ A ⟩ → G⟨ Γ ⊢ A ⟩
+hl→g = h→g ∘ hl→h
 
-t→gtc₀ : ∀ {A} → T.⊢ A → GTC⟨ ⌀ ⊢ A ⟩
-t→gtc₀ = tc→gtc ∘ t→tc₀
+ch→g₀ : ∀ {A} → CH.⊢ A → G⟨ ⌀ ⊢ A ⟩
+ch→g₀ = h→g ∘ ch→h₀
 
-t→gtc : ∀ {A Γ} → T.⊢ Γ ▻⋯▻ A → GTC⟨ Γ ⊢ A ⟩
-t→gtc = tc→gtc ∘ t→tc
+ch→g : ∀ {A Γ} → CH.⊢ Γ ▻⋯▻ A → G⟨ Γ ⊢ A ⟩
+ch→g = h→g ∘ ch→h
 
-l→gtc₀ : ∀ {A} → L.⊢ A → GTC⟨ ⌀ ⊢ A ⟩
-l→gtc₀ = tc→gtc ∘ l→tc₀
+chl→g₀ : ∀ {A} → CHL.⊢ A → G⟨ ⌀ ⊢ A ⟩
+chl→g₀ = h→g ∘ chl→h₀
 
-l→gtc : ∀ {A Γ} → L.⊢ Γ ▻⋯▻ A → GTC⟨ Γ ⊢ A ⟩
-l→gtc = tc→gtc ∘ l→tc
+chl→g : ∀ {A Γ} → CHL.⊢ Γ ▻⋯▻ A → G⟨ Γ ⊢ A ⟩
+chl→g = h→g ∘ chl→h
 
 
 -- Translation from Gentzen-style to Hilbert-style.
 
-gtc→tc : ∀ {A Γ} → GTC⟨ Γ ⊢ A ⟩ → TC⟨ Γ ⊢ A ⟩
-gtc→tc (GTC.var i)    = TC.var i
-gtc→tc (GTC.lam t)    = TC.lam (gtc→tc t)
-gtc→tc (GTC.app t u)  = TC.app (gtc→tc t) (gtc→tc u)
-gtc→tc (GTC.pair t u) = TC.pair (gtc→tc t) (gtc→tc u)
-gtc→tc (GTC.fst t)    = TC.fst (gtc→tc t)
-gtc→tc (GTC.snd t)    = TC.snd (gtc→tc t)
-gtc→tc GTC.tt         = TC.tt
+g→h : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → H⟨ Γ ⊢ A ⟩
+g→h (G.var i)    = H.var i
+g→h (G.lam t)    = H.lam (g→h t)
+g→h (G.app t u)  = H.app (g→h t) (g→h u)
+g→h (G.pair t u) = H.pair (g→h t) (g→h u)
+g→h (G.fst t)    = H.fst (g→h t)
+g→h (G.snd t)    = H.snd (g→h t)
+g→h G.tt         = H.tt
 
-gtc→lc : ∀ {A Γ} → GTC⟨ Γ ⊢ A ⟩ → LC⟨ Γ ⊢ A ⟩
-gtc→lc = tc→lc ∘ gtc→tc
+g→hl : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → HL⟨ Γ ⊢ A ⟩
+g→hl = h→hl ∘ g→h
 
-gtc₀→t : ∀ {A} → GTC⟨ ⌀ ⊢ A ⟩ → T.⊢ A
-gtc₀→t = tc₀→t ∘ gtc→tc
+g₀→ch : ∀ {A} → G⟨ ⌀ ⊢ A ⟩ → CH.⊢ A
+g₀→ch = h₀→ch ∘ g→h
 
-gtc→t : ∀ {A Γ} → GTC⟨ Γ ⊢ A ⟩ → T.⊢ Γ ▻⋯▻ A
-gtc→t = tc→t ∘ gtc→tc
+g→ch : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → CH.⊢ Γ ▻⋯▻ A
+g→ch = h→ch ∘ g→h
 
-gtc₀→l : ∀ {A} → GTC⟨ ⌀ ⊢ A ⟩ → L.⊢ A
-gtc₀→l = tc₀→l ∘ gtc→tc
+g₀→chl : ∀ {A} → G⟨ ⌀ ⊢ A ⟩ → CHL.⊢ A
+g₀→chl = h₀→chl ∘ g→h
 
-gtc→l : ∀ {A Γ} → GTC⟨ Γ ⊢ A ⟩ → L.⊢ Γ ▻⋯▻ A
-gtc→l = tc→l ∘ gtc→tc
+g→chl : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → CHL.⊢ Γ ▻⋯▻ A
+g→chl = h→chl ∘ g→h
