@@ -15,6 +15,23 @@ open H using () renaming (_⊢_ to H⟨_⊢_⟩) public
 open G using () renaming (_⊢_ to G⟨_⊢_⟩) public
 
 
+-- Available translations.
+--
+--         ┌─────┬─────┬─────┬─────┬─────┐
+--         │ CHL │ CH  │ HL  │ H   │ G   │
+--   ┌─────┼─────┼─────┼─────┼─────┼─────┤
+--   │ CHL │     │  ▶  │  ▶  │  ∘  │  ∘  │
+--   ├─────┼─────┼─────┼─────┼─────┼─────┤
+--   │ CH  │  ▶  │     │  ∘  │  ▶  │  ∘  │
+--   ├─────┼─────┼─────┼─────┼─────┼─────┤
+--   │ HL  │  ▶  │  ∘  │     │  ▶  │  ∘  │
+--   ├─────┼─────┼─────┼─────┼─────┼─────┤
+--   │ H   │  ∘  │  ▶  │  ▶  │     │  ▶  │
+--   ├─────┼─────┼─────┼─────┼─────┼─────┤
+--   │ G   │  ∘  │  ∘  │  ∘  │  ▶  │     │
+--   └─────┴─────┴─────┴─────┴─────┴─────┘
+
+
 -- Translation from closed Hilbert-style linear to closed Hilbert-style.
 
 chl→ch : ∀ {A} → CHL.⊢ A → CH.⊢ A
@@ -181,33 +198,6 @@ h→ch : ∀ {A Γ} → H⟨ Γ ⊢ A ⟩ → CH.⊢ Γ ▻⋯▻ A
 h→ch t = h₀→ch (H.lam⋆₀ t)
 
 
--- Composition of Hilbert-style translations.
-
-h₀→chl : ∀ {A} → H⟨ ⌀ ⊢ A ⟩ → CHL.⊢ A
-h₀→chl = ch→chl ∘ h₀→ch
-
-h→chl : ∀ {A Γ} → H⟨ Γ ⊢ A ⟩ → CHL.⊢ Γ ▻⋯▻ A
-h→chl = ch→chl ∘ h→ch
-
-hl₀→ch : ∀ {A} → HL⟨ ⌀ ⊢ A ⟩ → CH.⊢ A
-hl₀→ch = chl→ch ∘ hl₀→chl
-
-hl→ch : ∀ {A Γ} → HL⟨ Γ ⊢ A ⟩ → CH.⊢ Γ ▻⋯▻ A
-hl→ch = chl→ch ∘ hl→chl
-
-chl→h₀ : ∀ {A} → CHL.⊢ A → H⟨ ⌀ ⊢ A ⟩
-chl→h₀ = ch→h₀ ∘ chl→ch
-
-chl→h : ∀ {A Γ} → CHL.⊢ Γ ▻⋯▻ A → H⟨ Γ ⊢ A ⟩
-chl→h = ch→h ∘ chl→ch
-
-ch→hl₀ : ∀ {A} → CH.⊢ A → HL⟨ ⌀ ⊢ A ⟩
-ch→hl₀ = chl→hl₀ ∘ ch→chl
-
-ch→hl : ∀ {A Γ} → CH.⊢ Γ ▻⋯▻ A → HL⟨ Γ ⊢ A ⟩
-ch→hl = chl→hl ∘ ch→chl
-
-
 -- Translation from Hilbert-style to Gentzen-style.
 
 h→g : ∀ {A Γ} → H⟨ Γ ⊢ A ⟩ → G⟨ Γ ⊢ A ⟩
@@ -221,21 +211,6 @@ h→g H.cfst      = G.cfst
 h→g H.csnd      = G.csnd
 h→g H.tt        = G.tt
 
-hl→g : ∀ {A Γ} → HL⟨ Γ ⊢ A ⟩ → G⟨ Γ ⊢ A ⟩
-hl→g = h→g ∘ hl→h
-
-ch→g₀ : ∀ {A} → CH.⊢ A → G⟨ ⌀ ⊢ A ⟩
-ch→g₀ = h→g ∘ ch→h₀
-
-ch→g : ∀ {A Γ} → CH.⊢ Γ ▻⋯▻ A → G⟨ Γ ⊢ A ⟩
-ch→g = h→g ∘ ch→h
-
-chl→g₀ : ∀ {A} → CHL.⊢ A → G⟨ ⌀ ⊢ A ⟩
-chl→g₀ = h→g ∘ chl→h₀
-
-chl→g : ∀ {A Γ} → CHL.⊢ Γ ▻⋯▻ A → G⟨ Γ ⊢ A ⟩
-chl→g = h→g ∘ chl→h
-
 
 -- Translation from Gentzen-style to Hilbert-style.
 
@@ -248,8 +223,65 @@ g→h (G.fst t)    = H.fst (g→h t)
 g→h (G.snd t)    = H.snd (g→h t)
 g→h G.tt         = H.tt
 
-g→hl : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → HL⟨ Γ ⊢ A ⟩
-g→hl = h→hl ∘ g→h
+
+-- Additional translations from closed Hilbert-style linear.
+
+chl→h₀ : ∀ {A} → CHL.⊢ A → H⟨ ⌀ ⊢ A ⟩
+chl→h₀ = ch→h₀ ∘ chl→ch
+
+chl→h : ∀ {A Γ} → CHL.⊢ Γ ▻⋯▻ A → H⟨ Γ ⊢ A ⟩
+chl→h = ch→h ∘ chl→ch
+
+chl→g₀ : ∀ {A} → CHL.⊢ A → G⟨ ⌀ ⊢ A ⟩
+chl→g₀ = h→g ∘ chl→h₀
+
+chl→g : ∀ {A Γ} → CHL.⊢ Γ ▻⋯▻ A → G⟨ Γ ⊢ A ⟩
+chl→g = h→g ∘ chl→h
+
+
+-- Additional translations from closed Hilbert-style.
+
+ch→hl₀ : ∀ {A} → CH.⊢ A → HL⟨ ⌀ ⊢ A ⟩
+ch→hl₀ = chl→hl₀ ∘ ch→chl
+
+ch→hl : ∀ {A Γ} → CH.⊢ Γ ▻⋯▻ A → HL⟨ Γ ⊢ A ⟩
+ch→hl = chl→hl ∘ ch→chl
+
+ch→g₀ : ∀ {A} → CH.⊢ A → G⟨ ⌀ ⊢ A ⟩
+ch→g₀ = h→g ∘ ch→h₀
+
+ch→g : ∀ {A Γ} → CH.⊢ Γ ▻⋯▻ A → G⟨ Γ ⊢ A ⟩
+ch→g = h→g ∘ ch→h
+
+
+-- Additional translations from Hilbert-style linear.
+
+hl₀→ch : ∀ {A} → HL⟨ ⌀ ⊢ A ⟩ → CH.⊢ A
+hl₀→ch = chl→ch ∘ hl₀→chl
+
+hl→ch : ∀ {A Γ} → HL⟨ Γ ⊢ A ⟩ → CH.⊢ Γ ▻⋯▻ A
+hl→ch = chl→ch ∘ hl→chl
+
+hl→g : ∀ {A Γ} → HL⟨ Γ ⊢ A ⟩ → G⟨ Γ ⊢ A ⟩
+hl→g = h→g ∘ hl→h
+
+
+-- Additional translations from Hilbert-style.
+
+h₀→chl : ∀ {A} → H⟨ ⌀ ⊢ A ⟩ → CHL.⊢ A
+h₀→chl = ch→chl ∘ h₀→ch
+
+h→chl : ∀ {A Γ} → H⟨ Γ ⊢ A ⟩ → CHL.⊢ Γ ▻⋯▻ A
+h→chl = ch→chl ∘ h→ch
+
+
+-- Additional translations from Gentzen-style.
+
+g₀→chl : ∀ {A} → G⟨ ⌀ ⊢ A ⟩ → CHL.⊢ A
+g₀→chl = h₀→chl ∘ g→h
+
+g→chl : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → CHL.⊢ Γ ▻⋯▻ A
+g→chl = h→chl ∘ g→h
 
 g₀→ch : ∀ {A} → G⟨ ⌀ ⊢ A ⟩ → CH.⊢ A
 g₀→ch = h₀→ch ∘ g→h
@@ -257,8 +289,5 @@ g₀→ch = h₀→ch ∘ g→h
 g→ch : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → CH.⊢ Γ ▻⋯▻ A
 g→ch = h→ch ∘ g→h
 
-g₀→chl : ∀ {A} → G⟨ ⌀ ⊢ A ⟩ → CHL.⊢ A
-g₀→chl = h₀→chl ∘ g→h
-
-g→chl : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → CHL.⊢ Γ ▻⋯▻ A
-g→chl = h→chl ∘ g→h
+g→hl : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → HL⟨ Γ ⊢ A ⟩
+g→hl = h→hl ∘ g→h
