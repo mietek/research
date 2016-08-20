@@ -17,18 +17,6 @@ record LaLa : Set where
     x : La
     y : La
 
-infix 5 _◎_
-record TyLa : Set where
-  constructor _◎_
-  field
-    A : Ty
-    x : La
-
-infix 5 _◎⋆_
-_◎⋆_ : Cx Ty → La → Cx TyLa
-⌀       ◎⋆ x = ⌀
-(Π , A) ◎⋆ x = (Π ◎⋆ x) , (A ◎ x)
-
 
 -- Derivations.
 
@@ -39,9 +27,9 @@ data _⊢_↝_ (Λ : Cx LaLa) : La → La → Set where
   rtrans : ∀ {x y z} → Λ ⊢ x ↝ y → Λ ⊢ y ↝ z → Λ ⊢ x ↝ z
 
 infix 3 _⁏_⊢_◎_
-data _⁏_⊢_◎_ (Γ : Cx TyLa) (Λ : Cx LaLa) : Ty → La → Set where
-  var  : ∀ {x A}   → A ◎ x ∈ Γ → Γ ⁏ Λ ⊢ A ◎ x
-  lam  : ∀ {x A B} → Γ , A ◎ x ⁏ Λ ⊢ B ◎ x → Γ ⁏ Λ ⊢ A ▻ B ◎ x
+data _⁏_⊢_◎_ (Γ : Cx Ty) (Λ : Cx LaLa) : Ty → La → Set where
+  var  : ∀ {x A}   → A ∈ Γ → Γ ⁏ Λ ⊢ A ◎ x
+  lam  : ∀ {x A B} → Γ , A ⁏ Λ ⊢ B ◎ x → Γ ⁏ Λ ⊢ A ▻ B ◎ x
   app  : ∀ {x A B} → Γ ⁏ Λ ⊢ A ▻ B ◎ x → Γ ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ B ◎ x
   scan : ∀ {x A}   → (∀ {y} → Γ ⁏ Λ , x ↝ y ⊢ A ◎ y) → Γ ⁏ Λ ⊢ □ A ◎ x
   move : ∀ {x y A} → Γ ⁏ Λ ⊢ □ A ◎ x → Λ ⊢ x ↝ y → Γ ⁏ Λ ⊢ A ◎ y
@@ -50,10 +38,10 @@ data _⁏_⊢_◎_ (Γ : Cx TyLa) (Λ : Cx LaLa) : Ty → La → Set where
   snd  : ∀ {x A B} → Γ ⁏ Λ ⊢ A ∧ B ◎ x → Γ ⁏ Λ ⊢ B ◎ x
   tt   : ∀ {x}     → Γ ⁏ Λ ⊢ ⊤ ◎ x
 
-infix 3 _⁏_⊢⋆_◎⋆_
-_⁏_⊢⋆_◎⋆_ : Cx TyLa → Cx LaLa → Cx Ty → La → Set
-Γ ⁏ Λ ⊢⋆ ⌀     ◎⋆ x = 𝟙
-Γ ⁏ Λ ⊢⋆ Π , A ◎⋆ x = Γ ⁏ Λ ⊢⋆ Π ◎⋆ x × Γ ⁏ Λ ⊢ A ◎ x
+infix 3 _⁏_⊢⋆_◎_
+_⁏_⊢⋆_◎_ : Cx Ty → Cx LaLa → Cx Ty → La → Set
+Γ ⁏ Λ ⊢⋆ ⌀     ◎ x = 𝟙
+Γ ⁏ Λ ⊢⋆ Π , A ◎ x = Γ ⁏ Λ ⊢⋆ Π ◎ x × Γ ⁏ Λ ⊢ A ◎ x
 
 
 -- Monotonicity with respect to context inclusion.
@@ -69,35 +57,44 @@ mono⊢ η (fst t)    = fst (mono⊢ η t)
 mono⊢ η (snd t)    = snd (mono⊢ η t)
 mono⊢ η tt         = tt
 
-mono⊢⋆ : ∀ {Π x Γ Γ′ Λ} → Γ ⊆ Γ′ → Γ ⁏ Λ ⊢⋆ Π ◎⋆ x → Γ′ ⁏ Λ ⊢⋆ Π ◎⋆ x
+mono⊢⋆ : ∀ {Π x Γ Γ′ Λ} → Γ ⊆ Γ′ → Γ ⁏ Λ ⊢⋆ Π ◎ x → Γ′ ⁏ Λ ⊢⋆ Π ◎ x
 mono⊢⋆ {⌀}     η ∙        = ∙
 mono⊢⋆ {Π , A} η (ts , t) = mono⊢⋆ η ts , mono⊢ η t
 
 
 -- Monotonicity with respect to relational context inclusion.
 
-rmonor⊢ : ∀ {x y Λ Λ′} → Λ ⊆ Λ′ → Λ ⊢ x ↝ y → Λ′ ⊢ x ↝ y
-rmonor⊢ η (rvar i)     = rvar (mono∈ η i)
-rmonor⊢ η rrefl        = rrefl
-rmonor⊢ η (rtrans t u) = rtrans (rmonor⊢ η t) (rmonor⊢ η u)
+rmono⊢↝ : ∀ {x y Λ Λ′} → Λ ⊆ Λ′ → Λ ⊢ x ↝ y → Λ′ ⊢ x ↝ y
+rmono⊢↝ η (rvar i)     = rvar (mono∈ η i)
+rmono⊢↝ η rrefl        = rrefl
+rmono⊢↝ η (rtrans t u) = rtrans (rmono⊢↝ η t) (rmono⊢↝ η u)
 
 rmono⊢ : ∀ {x A Γ Λ Λ′} → Λ ⊆ Λ′ → Γ ⁏ Λ ⊢ x ◎ A → Γ ⁏ Λ′ ⊢ x ◎ A
 rmono⊢ η (var i)    = var i
 rmono⊢ η (lam t)    = lam (rmono⊢ η t)
 rmono⊢ η (app t u)  = app (rmono⊢ η t) (rmono⊢ η u)
 rmono⊢ η (scan t)   = scan (rmono⊢ (keep η) t)
-rmono⊢ η (move t u) = move (rmono⊢ η t) (rmonor⊢ η u)
+rmono⊢ η (move t u) = move (rmono⊢ η t) (rmono⊢↝ η u)
 rmono⊢ η (pair t u) = pair (rmono⊢ η t) (rmono⊢ η u)
 rmono⊢ η (fst t)    = fst (rmono⊢ η t)
 rmono⊢ η (snd t)    = snd (rmono⊢ η t)
 rmono⊢ η tt         = tt
 
-rmono⊢⋆ : ∀ {Π x Γ Λ Λ′} → Λ ⊆ Λ′ → Γ ⁏ Λ ⊢⋆ Π ◎⋆ x → Γ ⁏ Λ′ ⊢⋆ Π ◎⋆ x
+rmono⊢⋆ : ∀ {Π x Γ Λ Λ′} → Λ ⊆ Λ′ → Γ ⁏ Λ ⊢⋆ Π ◎ x → Γ ⁏ Λ′ ⊢⋆ Π ◎ x
 rmono⊢⋆ {⌀}     η ∙        = ∙
 rmono⊢⋆ {Π , A} η (ts , t) = rmono⊢⋆ η ts , rmono⊢ η t
 
 
 -- Shorthand for variables.
+
+v₀ : ∀ {x A Γ Λ} → Γ , A ⁏ Λ ⊢ A ◎ x
+v₀ = var i₀
+
+v₁ : ∀ {x A B Γ Λ} → (Γ , A) , B ⁏ Λ ⊢ A ◎ x
+v₁ = var i₁
+
+v₂ : ∀ {x A B C Γ Λ} → ((Γ , A) , B) , C ⁏ Λ ⊢ A ◎ x
+v₂ = var i₂
 
 rv₀ : ∀ {x y Λ} → Λ , x ↝ y ⊢ x ↝ y
 rv₀ = rvar i₀
@@ -108,41 +105,49 @@ rv₁ = rvar i₁
 rv₂ : ∀ {x y x′ y′ x″ y″ Λ} → ((Λ , x ↝ y) , x′ ↝ y′) , x″ ↝ y″ ⊢ x ↝ y
 rv₂ = rvar i₂
 
-v₀ : ∀ {x A Γ Λ} → Γ , x ◎ A ⁏ Λ ⊢ x ◎ A
-v₀ = var i₀
-
-v₁ : ∀ {x y A B Γ Λ} → (Γ , x ◎ A) , y ◎ B ⁏ Λ ⊢ x ◎ A
-v₁ = var i₁
-
-v₂ : ∀ {x y z A B C Γ Λ} → ((Γ , x ◎ A) , y ◎ B) , z ◎ C ⁏ Λ ⊢ x ◎ A
-v₂ = var i₂
-
 
 -- Deduction theorem is built-in.
 
+lam⋆ : ∀ {Π x A Γ Λ} → Γ ⧺ Π ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ Π ▻⋯▻ A ◎ x
+lam⋆ {⌀}     = id
+lam⋆ {Π , B} = lam⋆ {Π} ∘ lam
+
+lam⋆₀ : ∀ {Γ x A Λ} → Γ ⁏ Λ ⊢ A ◎ x → ⌀ ⁏ Λ ⊢ Γ ▻⋯▻ A ◎ x
+lam⋆₀ {⌀}     = id
+lam⋆₀ {Γ , B} = lam⋆₀ ∘ lam
+
+
 -- Detachment theorem.
 
-det : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ▻ B ◎ x → Γ , A ◎ x ⁏ Λ ⊢ B ◎ x
+det : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ▻ B ◎ x → Γ , A ⁏ Λ ⊢ B ◎ x
 det t = app (mono⊢ weak⊆ t) v₀
+
+det⋆ : ∀ {Π x A Γ Λ} → Γ ⁏ Λ ⊢ Π ▻⋯▻ A ◎ x → Γ ⧺ Π ⁏ Λ ⊢ A ◎ x
+det⋆ {⌀}     = id
+det⋆ {Π , B} = det ∘ det⋆ {Π}
+
+det⋆₀ : ∀ {Γ x A Λ} → ⌀ ⁏ Λ ⊢ Γ ▻⋯▻ A ◎ x → Γ ⁏ Λ ⊢ A ◎ x
+det⋆₀ {⌀}     = id
+det⋆₀ {Γ , B} = det ∘ det⋆₀
 
 
 -- Cut and multicut.
 
-cut : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ◎ x → Γ , A ◎ x ⁏ Λ ⊢ B ◎ x → Γ ⁏ Λ ⊢ B ◎ x
+cut : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ◎ x → Γ , A ⁏ Λ ⊢ B ◎ x → Γ ⁏ Λ ⊢ B ◎ x
 cut t u = app (lam u) t
 
-multicut : ∀ {Π x A Γ Λ} → Γ ⁏ Λ ⊢⋆ Π ◎⋆ x → Π ◎⋆ x ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ A ◎ x
+multicut : ∀ {Π x A Γ Λ} → Γ ⁏ Λ ⊢⋆ Π ◎ x → Π ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ A ◎ x
 multicut {⌀}     ∙        u = mono⊢ bot⊆ u
 multicut {Π , B} (ts , t) u = app (multicut ts (lam u)) t
 
 
 -- Reflexivity and transitivity.
 
-refl⊢⋆ : ∀ {Γ x Λ} → Γ ◎⋆ x ⁏ Λ ⊢⋆ Γ ◎⋆ x
+refl⊢⋆ : ∀ {Γ x Λ} → Γ ⁏ Λ ⊢⋆ Γ ◎ x
 refl⊢⋆ {⌀}     = ∙
 refl⊢⋆ {Γ , A} = mono⊢⋆ weak⊆ refl⊢⋆ , v₀
 
-trans⊢⋆ : ∀ {Γ″ x Γ′ Γ Λ} → Γ ◎⋆ x ⁏ Λ ⊢⋆ Γ′ ◎⋆ x → Γ′ ◎⋆ x ⁏ Λ ⊢⋆ Γ″ ◎⋆ x → Γ ◎⋆ x ⁏ Λ ⊢⋆ Γ″ ◎⋆ x
+trans⊢⋆ : ∀ {Γ″ x Γ′ Γ Λ} → Γ ⁏ Λ ⊢⋆ Γ′ ◎ x → Γ′ ⁏ Λ ⊢⋆ Γ″ ◎ x → Γ ⁏ Λ ⊢⋆ Γ″ ◎ x
 trans⊢⋆ {⌀}      ts ∙        = ∙
 trans⊢⋆ {Γ″ , A} ts (us , u) = trans⊢⋆ ts us , multicut ts u
 
@@ -152,7 +157,7 @@ trans⊢⋆ {Γ″ , A} ts (us , u) = trans⊢⋆ ts us , multicut ts u
 ccont : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ (A ▻ A ▻ B) ▻ A ▻ B ◎ x
 ccont = lam (lam (app (app v₁ v₀) v₀))
 
-cont : ∀ {x A B Γ Λ} → (Γ , A ◎ x) , A ◎ x ⁏ Λ ⊢ B ◎ x → Γ , A ◎ x ⁏ Λ ⊢ B ◎ x
+cont : ∀ {x A B Γ Λ} → (Γ , A) , A ⁏ Λ ⊢ B ◎ x → Γ , A ⁏ Λ ⊢ B ◎ x
 cont t = det (app ccont (lam (lam t)))
 
 
@@ -161,7 +166,7 @@ cont t = det (app ccont (lam (lam t)))
 cexch : ∀ {x A B C Γ Λ} → Γ ⁏ Λ ⊢ (A ▻ B ▻ C) ▻ B ▻ A ▻ C ◎ x
 cexch = lam (lam (lam (app (app v₂ v₀) v₁)))
 
-exch : ∀ {x A B C Γ Λ} → (Γ , A ◎ x) , B ◎ x ⁏ Λ ⊢ C ◎ x → (Γ , B ◎ x) , A ◎ x ⁏ Λ ⊢ C ◎ x
+exch : ∀ {x A B C Γ Λ} → (Γ , A) , B ⁏ Λ ⊢ C ◎ x → (Γ , B) , A  ⁏ Λ ⊢ C ◎ x
 exch t = det (det (app cexch (lam (lam t))))
 
 
@@ -170,7 +175,7 @@ exch t = det (det (app cexch (lam (lam t))))
 ccomp : ∀ {x A B C Γ Λ} → Γ ⁏ Λ ⊢ (B ▻ C) ▻ (A ▻ B) ▻ A ▻ C ◎ x
 ccomp = lam (lam (lam (app v₂ (app v₁ v₀))))
 
-comp : ∀ {x A B C Γ Λ} → Γ , B ◎ x ⁏ Λ ⊢ C ◎ x → Γ , A ◎ x ⁏ Λ ⊢ B ◎ x → Γ , A ◎ x ⁏ Λ ⊢ C ◎ x
+comp : ∀ {x A B C Γ Λ} → Γ , B ⁏ Λ ⊢ C ◎ x → Γ , A ⁏ Λ ⊢ B ◎ x → Γ , A ⁏ Λ ⊢ C ◎ x
 comp t u = det (app (app ccomp (lam t)) (lam u))
 
 
@@ -188,11 +193,10 @@ down t = move t rrefl
 distup : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ □ (□ A ▻ B) ◎ x → Γ ⁏ Λ ⊢ □ A ◎ x → Γ ⁏ Λ ⊢ □ B ◎ x
 distup t u = dist t (up u)
 
--- FIXME: Find the missing piece.
-postulate
-  box : ∀ {x A Γ Λ} → ⌀ ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ □ A ◎ x
+box : ∀ {x A Γ Λ} → (∀ {y} → ⌀ ⁏ Λ , x ↝ y ⊢ A ◎ y) → Γ ⁏ Λ ⊢ □ A ◎ x
+box t = scan (mono⊢ bot⊆ t)
 
-unbox : ∀ {x A C Γ Λ} → Γ ⁏ Λ ⊢ □ A ◎ x → Γ , □ A ◎ x ⁏ Λ ⊢ C ◎ x → Γ ⁏ Λ ⊢ C ◎ x
+unbox : ∀ {x A C Γ Λ} → Γ ⁏ Λ ⊢ □ A ◎ x → Γ , □ A ⁏ Λ ⊢ C ◎ x → Γ ⁏ Λ ⊢ C ◎ x
 unbox t u = app (lam u) t
 
 
@@ -232,23 +236,78 @@ csnd : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ∧ B ▻ B ◎ x
 csnd = lam (snd v₀)
 
 
+-- Internalisation, or lifting, and additional theorems.
+
+lift : ∀ {Γ x A Λ} → (∀ {y} → Γ ⁏ Λ , x ↝ y ⊢ A ◎ y) → □⋆ Γ ⁏ Λ ⊢ □ A ◎ x
+lift {⌀}     t = box t
+lift {Γ , B} t = det (app cdist (lift (lam t)))
+
+hypup : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ▻ B ◎ x → Γ ⁏ Λ ⊢ □ A ▻ B ◎ x
+hypup t = lam (app (mono⊢ weak⊆ t) (down v₀))
+
+hypdown : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ □ □ A ▻ B ◎ x → Γ ⁏ Λ ⊢ □ A ▻ B ◎ x
+hypdown t = lam (app (mono⊢ weak⊆ t) (up v₀))
+
+cxup : ∀ {Γ x A Λ} → Γ ⁏ Λ ⊢ A ◎ x → □⋆ Γ ⁏ Λ ⊢ A ◎ x
+cxup {⌀}     t = t
+cxup {Γ , B} t = det (hypup (cxup (lam t)))
+
+cxdown : ∀ {Γ x A Λ} → □⋆ □⋆ Γ ⁏ Λ ⊢ A ◎ x → □⋆ Γ ⁏ Λ ⊢ A ◎ x
+cxdown {⌀}     t = t
+cxdown {Γ , B} t = det (hypdown (cxdown (lam t)))
+
+box⋆ : ∀ {Π x Γ Λ} → (∀ {y} → ⌀ ⁏ Λ , x ↝ y ⊢⋆ Π ◎ y) → Γ ⁏ Λ ⊢⋆ □⋆ Π ◎ x
+box⋆ {⌀}     f = ∙
+box⋆ {Π , A} f = box⋆ (π₁ f) , box (π₂ f)
+
+lift⋆ : ∀ {Π x Γ Λ} → (∀ {y} → Γ ⁏ Λ , x ↝ y ⊢⋆ Π ◎ y) → □⋆ Γ ⁏ Λ ⊢⋆ □⋆ Π ◎ x
+lift⋆ {⌀}     f = ∙
+lift⋆ {Π , A} f = lift⋆ (π₁ f) , lift (π₂ f)
+
+up⋆ : ∀ {Π x Γ Λ} → Γ ⁏ Λ ⊢⋆ □⋆ Π ◎ x → Γ ⁏ Λ ⊢⋆ □⋆ □⋆ Π ◎ x
+up⋆ {⌀}     f = ∙
+up⋆ {Π , A} f = up⋆ (π₁ f) , up (π₂ f)
+
+down⋆ : ∀ {Π x Γ Λ} → Γ ⁏ Λ ⊢⋆ □⋆ Π ◎ x → Γ ⁏ Λ ⊢⋆ Π ◎ x
+down⋆ {⌀}     f = ∙
+down⋆ {Π , A} f = down⋆ (π₁ f) , down (π₂ f)
+
+multibox : ∀ {Π x A Γ Λ} → Γ ⁏ Λ ⊢⋆ □⋆ Π ◎ x → (∀ {y} → □⋆ Π ⁏ ⌀ , x ↝ y ⊢ A ◎ y) → Γ ⁏ Λ ⊢ □ A ◎ x
+multibox ts u = multicut (up⋆ ts) (rmono⊢ bot⊆ (lift u))
+
+dist′ : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ □ (A ▻ B) ◎ x → Γ ⁏ Λ ⊢ □ A ▻ □ B ◎ x
+dist′ t = lam (dist (mono⊢ weak⊆ t) v₀)
+
+mpair : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ □ A ◎ x → Γ ⁏ Λ ⊢ □ B ◎ x → Γ ⁏ Λ ⊢ □ (A ∧ B) ◎ x
+mpair t u = scan (pair (move (rmono⊢ weak⊆ t) rv₀) (move (rmono⊢ weak⊆ u) rv₀))
+
+mfst : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ □ (A ∧ B) ◎ x → Γ ⁏ Λ ⊢ □ A ◎ x
+mfst t = scan (fst (move (rmono⊢ weak⊆ t) rv₀))
+
+msnd : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ □ (A ∧ B) ◎ x → Γ ⁏ Λ ⊢ □ B ◎ x
+msnd t = scan (snd (move (rmono⊢ weak⊆ t) rv₀))
+
+
 -- Closure under context concatenation.
 
-concat : ∀ {x A B Γ} Γ′ {Λ} → Γ , A ◎ x ⁏ Λ ⊢ B ◎ x → Γ′ ⁏ Λ ⊢ A ◎ x → Γ ⧺ Γ′ ⁏ Λ ⊢ B ◎ x
+concat : ∀ {x A B Γ} Γ′ {Λ} → Γ , A ⁏ Λ ⊢ B ◎ x → Γ′ ⁏ Λ ⊢ A ◎ x → Γ ⧺ Γ′ ⁏ Λ ⊢ B ◎ x
 concat Γ′ t u = app (mono⊢ (weak⊆⧺ₗ Γ′) (lam t)) (mono⊢ weak⊆⧺ᵣ u)
 
 
--- Substitution.
+-- TODO: Substitution.
 
-[_≔_]_ : ∀ {x y A B Γ Λ} → (i : A ◎ x ∈ Γ) → Γ - i ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ B ◎ y → Γ - i ⁏ Λ ⊢ B ◎ y
-[ i ≔ s ] var j    with i ≟∈ j
-[ i ≔ s ] var .i   | same   = s
-[ i ≔ s ] var ._   | diff j = var j
-[ i ≔ s ] lam t    = lam ([ pop i ≔ mono⊢ weak⊆ s ] t)
-[ i ≔ s ] app t u  = app ([ i ≔ s ] t) ([ i ≔ s ] u)
-[ i ≔ s ] scan t   = scan ([ i ≔ rmono⊢ weak⊆ s ] t)
-[ i ≔ s ] move t u = move ([ i ≔ s ] t) u
-[ i ≔ s ] pair t u = pair ([ i ≔ s ] t) ([ i ≔ s ] u)
-[ i ≔ s ] fst t    = fst ([ i ≔ s ] t)
-[ i ≔ s ] snd t    = snd ([ i ≔ s ] t)
-[ i ≔ s ] tt       = tt
+-- [_≔_]_ : ∀ {x A B Γ Λ} → (i : A ∈ Γ) → Γ - i ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ B ◎ x → Γ - i ⁏ Λ ⊢ B ◎ x
+-- [ i ≔ s ] var j    with i ≟∈ j
+-- [ i ≔ s ] var .i   | same   = s
+-- [ i ≔ s ] var ._   | diff j = var j
+-- [ i ≔ s ] lam t    = lam ([ pop i ≔ mono⊢ weak⊆ s ] t)
+-- [ i ≔ s ] app t u  = app ([ i ≔ s ] t) ([ i ≔ s ] u)
+-- [ i ≔ s ] scan t   = scan {![ i ≔ rmono⊢ weak⊆ s ] t!}
+-- [ i ≔ s ] move t u = move {![ i ≔ s ] t!} u
+-- [ i ≔ s ] pair t u = pair ([ i ≔ s ] t) ([ i ≔ s ] u)
+-- [ i ≔ s ] fst t    = fst ([ i ≔ s ] t)
+-- [ i ≔ s ] snd t    = snd ([ i ≔ s ] t)
+-- [ i ≔ s ] tt       = tt
+
+
+-- TODO: Conversion.
