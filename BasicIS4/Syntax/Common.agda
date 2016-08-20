@@ -7,8 +7,8 @@ open import Common.Context public
 
 -- Types, or propositions.
 
+infixr 8 □_
 infixl 7 _∧_
-infixr 6 □_
 infixr 5 _▻_
 data Ty : Set where
   α_  : Atom → Ty
@@ -92,7 +92,7 @@ _▻⋯▻_ : Cx Ty → Ty → Ty
 ⌀       ▻⋯▻ B = B
 (Π , A) ▻⋯▻ B = Π ▻⋯▻ (A ▻ B)
 
-infixr 6 □⋆_
+infixr 8 □⋆_
 □⋆_ : Cx Ty → Cx Ty
 □⋆ ⌀       = ⌀
 □⋆ (Π , A) = □⋆ Π , □ A

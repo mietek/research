@@ -6,8 +6,8 @@ open import Common.Context public
 -- Propositions of intuitionistic logic of proofs, without ∨, ⊥, or +.
 
 mutual
+  infixr 8 _⦂_
   infixl 7 _∧_
-  infixr 6 _⦂_
   infixr 5 _▻_
   data Ty : Set where
     α_  : Atom → Ty
