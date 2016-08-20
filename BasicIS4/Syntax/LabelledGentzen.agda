@@ -64,17 +64,17 @@ mono⊢⋆ {Π , A} η (ts , t) = mono⊢⋆ η ts , mono⊢ η t
 
 -- Monotonicity with respect to relational context inclusion.
 
-rmono⊢↝ : ∀ {x y Λ Λ′} → Λ ⊆ Λ′ → Λ ⊢ x ↝ y → Λ′ ⊢ x ↝ y
-rmono⊢↝ η (rvar i)     = rvar (mono∈ η i)
-rmono⊢↝ η rrefl        = rrefl
-rmono⊢↝ η (rtrans t u) = rtrans (rmono⊢↝ η t) (rmono⊢↝ η u)
+rrmono⊢ : ∀ {x y Λ Λ′} → Λ ⊆ Λ′ → Λ ⊢ x ↝ y → Λ′ ⊢ x ↝ y
+rrmono⊢ η (rvar i)     = rvar (mono∈ η i)
+rrmono⊢ η rrefl        = rrefl
+rrmono⊢ η (rtrans t u) = rtrans (rrmono⊢ η t) (rrmono⊢ η u)
 
 rmono⊢ : ∀ {x A Γ Λ Λ′} → Λ ⊆ Λ′ → Γ ⁏ Λ ⊢ x ◎ A → Γ ⁏ Λ′ ⊢ x ◎ A
 rmono⊢ η (var i)    = var i
 rmono⊢ η (lam t)    = lam (rmono⊢ η t)
 rmono⊢ η (app t u)  = app (rmono⊢ η t) (rmono⊢ η u)
 rmono⊢ η (scan t)   = scan (rmono⊢ (keep η) t)
-rmono⊢ η (move t u) = move (rmono⊢ η t) (rmono⊢↝ η u)
+rmono⊢ η (move t u) = move (rmono⊢ η t) (rrmono⊢ η u)
 rmono⊢ η (pair t u) = pair (rmono⊢ η t) (rmono⊢ η u)
 rmono⊢ η (fst t)    = fst (rmono⊢ η t)
 rmono⊢ η (snd t)    = snd (rmono⊢ η t)
