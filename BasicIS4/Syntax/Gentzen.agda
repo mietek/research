@@ -190,19 +190,47 @@ lift : ∀ {Γ A} → Γ ⊢ A → □⋆ Γ ⊢ □ A
 lift {⌀}     t = box t
 lift {Γ , B} t = det (app cdist (lift (lam t)))
 
+hypup : ∀ {A B Γ} → Γ ⊢ A ▻ B → Γ ⊢ □ A ▻ B
+hypup t = lam (app (mono⊢ weak⊆ t) (down v₀))
+
 hypdown : ∀ {A B Γ} → Γ ⊢ □ □ A ▻ B → Γ ⊢ □ A ▻ B
 hypdown t = lam (app (mono⊢ weak⊆ t) (up v₀))
 
-hypup : ∀ {A B Γ} → Γ ⊢ A ▻ B → Γ ⊢ □ A ▻ B
-hypup t = lam (app (mono⊢ weak⊆ t) (down v₀))
+cxup : ∀ {Γ A} → Γ ⊢ A → □⋆ Γ ⊢ A
+cxup {⌀}     t = t
+cxup {Γ , B} t = det (hypup (cxup (lam t)))
 
 cxdown : ∀ {Γ A} → □⋆ □⋆ Γ ⊢ A → □⋆ Γ ⊢ A
 cxdown {⌀}     t = t
 cxdown {Γ , B} t = det (hypdown (cxdown (lam t)))
 
-cxup : ∀ {Γ A} → Γ ⊢ A → □⋆ Γ ⊢ A
-cxup {⌀}     t = t
-cxup {Γ , B} t = det (hypup (cxup (lam t)))
+box⋆ : ∀ {Π Γ} → ⌀ ⊢⋆ Π → Γ ⊢⋆ □⋆ Π
+box⋆ {⌀}     ∙        = ∙
+box⋆ {Π , A} (ts , t) = box⋆ ts , box t
+
+lift⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → □⋆ Γ ⊢⋆ □⋆ Π
+lift⋆ {⌀}     ∙        = ∙
+lift⋆ {Π , A} (ts , t) = lift⋆ ts , lift t
+
+up⋆ : ∀ {Π Γ} → Γ ⊢⋆ □⋆ Π → Γ ⊢⋆ □⋆ □⋆ Π
+up⋆ {⌀}     ∙        = ∙
+up⋆ {Π , A} (ts , t) = up⋆ ts , up t
+
+down⋆ : ∀ {Π Γ} → Γ ⊢⋆ □⋆ Π → Γ ⊢⋆ Π
+down⋆ {⌀}     ∙        = ∙
+down⋆ {Π , A} (ts , t) = down⋆ ts , down t
+
+dist′ : ∀ {A B Γ} → Γ ⊢ □ (A ▻ B) → Γ ⊢ □ A ▻ □ B
+dist′ t = lam (dist (mono⊢ weak⊆ t) v₀)
+
+mpair : ∀ {A B Γ} → Γ ⊢ □ A → Γ ⊢ □ B → Γ ⊢ □ (A ∧ B)
+mpair t u = multibox ((∙ , t) , u) (pair (down v₁) (down v₀))
+
+mfst : ∀ {A B Γ} → Γ ⊢ □ (A ∧ B) → Γ ⊢ □ A
+mfst t = multibox (∙ , t) (fst (down v₀))
+
+msnd : ∀ {A B Γ} → Γ ⊢ □ (A ∧ B) → Γ ⊢ □ B
+msnd t = multibox (∙ , t) (snd (down v₀))
 
 
 -- Closure under context concatenation.
