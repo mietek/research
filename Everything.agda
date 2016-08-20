@@ -160,7 +160,7 @@ import BasicIS4.Syntax.DyadicGentzen
 import BasicIS4.Syntax.LabelledGentzen
 
 -- Translation between different formalisations of syntax.
-import BasicIS4.Syntax.Translation
+import BasicIS4.Syntax.Translation -- FIXME
 
 
 -- Tarski-style semantics with a closed syntactic component, after Gabbay-Nanevski.

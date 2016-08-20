@@ -12,6 +12,7 @@ import BasicIS4.Syntax.Gentzen as G
 import BasicIS4.Syntax.DyadicHilbertLinear as DHL
 import BasicIS4.Syntax.DyadicHilbert as DH
 import BasicIS4.Syntax.DyadicGentzen as DG
+import BasicIS4.Syntax.LabelledGentzen as LG
 
 open HL using () renaming (_⊢×_ to HL⟨_⊢×_⟩ ; _⊢_ to HL⟨_⊢_⟩) public
 open H using () renaming (_⊢_ to H⟨_⊢_⟩ ; _⊢⋆_ to H⟨_⊢⋆_⟩) public
@@ -19,6 +20,7 @@ open G using () renaming (_⊢_ to G⟨_⊢_⟩ ; _⊢⋆_ to G⟨_⊢⋆_⟩) p
 open DHL using () renaming (_⁏_⊢×_ to DHL⟨_⁏_⊢×_⟩ ; _⁏_⊢_ to DHL⟨_⁏_⊢_⟩) public
 open DH using () renaming (_⁏_⊢_ to DH⟨_⁏_⊢_⟩) public
 open DG using () renaming (_⁏_⊢_ to DG⟨_⁏_⊢_⟩ ; _⁏_⊢⋆_ to DG⟨_⁏_⊢⋆_⟩) public
+open LG using (_↝_) renaming (_⁏_⊢_◎_ to LG⟨_⁏_⊢_◎_⟩ ; _⁏_⊢⋆_◎_ to LG⟨_⁏_⊢⋆_◎_⟩) public
 
 
 -- Translation from closed Hilbert-style linear to closed Hilbert-style.
@@ -627,3 +629,106 @@ dg→g₀ = h→g ∘ dg→h
 
 dg→g : ∀ {A Γ Δ} → DG⟨ Γ ⁏ Δ ⊢ A ⟩ → G⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩
 dg→g = dg→g₀ ∘ DG.merge
+
+
+-- Translation from Hilbert-style to labelled Gentzen-style.
+
+h→lg : ∀ {x A Γ Λ} → H⟨ Γ ⊢ A ⟩ → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩
+h→lg (H.var i)   = LG.var i
+h→lg (H.app t u) = LG.app (h→lg t) (h→lg u)
+h→lg H.ci        = LG.ci
+h→lg H.ck        = LG.ck
+h→lg H.cs        = LG.cs
+h→lg (H.box t)   = LG.box (h→lg t)
+h→lg H.cdist     = LG.cdist
+h→lg H.cup       = LG.cup
+h→lg H.cdown     = LG.cdown
+h→lg H.cpair     = LG.cpair
+h→lg H.cfst      = LG.cfst
+h→lg H.csnd      = LG.csnd
+h→lg H.tt        = LG.tt
+
+hl→lg : ∀ {x A Γ Λ} → HL⟨ Γ ⊢ A ⟩ → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩
+hl→lg = h→lg ∘ hl→h
+
+ch→lg₀ : ∀ {x A Λ} → CH.⊢ A → LG⟨ ⌀ ⁏ Λ ⊢ A ◎ x ⟩
+ch→lg₀ = h→lg ∘ ch→h₀
+
+ch→lg : ∀ {x A Γ Λ} → CH.⊢ Γ ▻⋯▻ A → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩
+ch→lg = h→lg ∘ ch→h
+
+chl→lg₀ : ∀ {x A Λ} → CHL.⊢ A → LG⟨ ⌀ ⁏ Λ ⊢ A ◎ x ⟩
+chl→lg₀ = h→lg ∘ chl→h₀
+
+chl→lg : ∀ {x A Γ Λ} → CHL.⊢ Γ ▻⋯▻ A → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩
+chl→lg = h→lg ∘ chl→h
+
+
+-- Translation from labelled Gentzen-style to Hilbert-style.
+
+-- FIXME: Stronger hypothesis?
+postulate
+  h-oops : ∀ {x A Γ Λ} → (∀ {y} → LG⟨ Γ ⁏ Λ , x ↝ y ⊢ A ◎ y ⟩) → H⟨ Γ ⊢ □ A ⟩
+
+lg→h : ∀ {x A Γ Λ} → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩ → H⟨ Γ ⊢ A ⟩
+lg→h (LG.var i)    = H.var i
+lg→h (LG.lam t)    = H.lam (lg→h t)
+lg→h (LG.app t u)  = H.app (lg→h t) (lg→h u)
+lg→h (LG.scan t)   = h-oops t
+lg→h (LG.move t u) = H.down (lg→h t)
+lg→h (LG.pair t u) = H.pair (lg→h t) (lg→h u)
+lg→h (LG.fst t)    = H.fst (lg→h t)
+lg→h (LG.snd t)    = H.snd (lg→h t)
+lg→h LG.tt         = H.tt
+
+lg→hl : ∀ {x A Γ Λ} → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩ → HL⟨ Γ ⊢ A ⟩
+lg→hl = h→hl ∘ lg→h
+
+lg₀→ch : ∀ {x A Λ} → LG⟨ ⌀ ⁏ Λ ⊢ A ◎ x ⟩ → CH.⊢ A
+lg₀→ch = h₀→ch ∘ lg→h
+
+lg→ch : ∀ {x A Γ Λ} → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩ → CH.⊢ Γ ▻⋯▻ A
+lg→ch = h→ch ∘ lg→h
+
+lg₀→chl : ∀ {x A Λ} → LG⟨ ⌀ ⁏ Λ ⊢ A ◎ x ⟩ → CHL.⊢ A
+lg₀→chl = h₀→chl ∘ lg→h
+
+lg→chl : ∀ {x A Γ Λ} → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩ → CHL.⊢ Γ ▻⋯▻ A
+lg→chl = h→chl ∘ lg→h
+
+
+-- Translation from Gentzen-style to labelled Gentzen-style.
+
+mutual
+  g→lg : ∀ {x A Γ Λ} → G⟨ Γ ⊢ A ⟩ → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩
+  g→lg (G.var i)         = LG.var i
+  g→lg (G.lam t)         = LG.lam (g→lg t)
+  g→lg (G.app t u)       = LG.app (g→lg t) (g→lg u)
+  g→lg (G.multibox ts u) = LG.multibox (g→lg⋆ ts) (g→lg u)
+  g→lg (G.down t)        = LG.move (g→lg t) LG.rrefl
+  g→lg (G.pair t u)      = LG.pair (g→lg t) (g→lg u)
+  g→lg (G.fst t)         = LG.fst (g→lg t)
+  g→lg (G.snd t)         = LG.snd (g→lg t)
+  g→lg G.tt              = LG.tt
+
+  g→lg⋆ : ∀ {x Π Γ Λ} → G⟨ Γ ⊢⋆ Π ⟩ → LG⟨ Γ ⁏ Λ ⊢⋆ Π ◎ x ⟩
+  g→lg⋆ {x} {⌀}     ∙        = ∙
+  g→lg⋆ {x} {Π , A} (ts , t) = g→lg⋆ ts , g→lg t
+
+
+-- Translation from labelled Gentzen-style to Gentzen-style.
+
+-- FIXME: Stronger hypothesis?
+postulate
+  g-oops : ∀ {x A Γ Λ} → (∀ {y} → LG⟨ Γ ⁏ Λ , x ↝ y ⊢ A ◎ y ⟩) → G⟨ Γ ⊢ □ A ⟩
+
+lg→g : ∀ {x A Γ Λ} → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩ → G⟨ Γ ⊢ A ⟩
+lg→g (LG.var i)    = G.var i
+lg→g (LG.lam t)    = G.lam (lg→g t)
+lg→g (LG.app t u)  = G.app (lg→g t) (lg→g u)
+lg→g (LG.scan t)   = g-oops t
+lg→g (LG.move t u) = G.down (lg→g t)
+lg→g (LG.pair t u) = G.pair (lg→g t) (lg→g u)
+lg→g (LG.fst t)    = G.fst (lg→g t)
+lg→g (LG.snd t)    = G.snd (lg→g t)
+lg→g LG.tt         = G.tt
