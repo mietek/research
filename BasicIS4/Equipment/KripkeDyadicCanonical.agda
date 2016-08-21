@@ -1,48 +1,49 @@
 -- Canonical model equipment for Kripke-style semantics.
 
-module BasicIS4.Semantics.KripkeCanonicalModelEquipment where
+module BasicIS4.Equipment.KripkeDyadicCanonical where
 
+open import Common.ContextPair public
 open import BasicIS4.Syntax.Common public
 
 
 
 
 module Syntax
-    (_⊢_   : Cx Ty → Ty → Set)
-    (mono⊢ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A)
-    (up     : ∀ {A Γ} → Γ ⊢ (□ A) → Γ ⊢ (□ □ A))
-    (down   : ∀ {A Γ} → Γ ⊢ (□ A) → Γ ⊢ A)
-    (lift   : ∀ {A Γ} → Γ ⊢ A → (□⋆ Γ) ⊢ (□ A))
+    (_⁏_⊢_  : Cx Ty → Cx Ty → Ty → Set)
+    (mono²⊢ : ∀ {A Γ Γ′ Δ Δ′} → (Γ , Δ) ⊆² (Γ′ , Δ′) → Γ ⁏ Δ ⊢ A → Γ′ ⁏ Δ′ ⊢ A)
+    (up      : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ (□ A) → Γ ⁏ Δ ⊢ (□ □ A))
+    (down    : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ (□ A) → Γ ⁏ Δ ⊢ A)
+    (lift    : ∀ {Γ A Δ} → Γ ⁏ Δ ⊢ A → (□⋆ Γ) ⁏ Δ ⊢ (□ A))
   where
 
 
   -- Worlds.
 
   Worldᶜ : Set
-  Worldᶜ = Cx Ty
+  Worldᶜ = Cx² Ty
 
 
   -- Intuitionistic accessibility.
 
   infix 3 _≤ᶜ_
   _≤ᶜ_ : Worldᶜ → Worldᶜ → Set
-  _≤ᶜ_ = _⊆_
+  _≤ᶜ_ = _⊆²_
 
   refl≤ᶜ : ∀ {w} → w ≤ᶜ w
-  refl≤ᶜ = refl⊆
+  refl≤ᶜ = refl⊆²
 
   trans≤ᶜ : ∀ {w w′ w″} → w ≤ᶜ w′ → w′ ≤ᶜ w″ → w ≤ᶜ w″
-  trans≤ᶜ = trans⊆
+  trans≤ᶜ = trans⊆²
 
-  bot≤ᶜ : ∀ {w} → ⌀ ≤ᶜ w
-  bot≤ᶜ = bot⊆
+  bot≤ᶜ : ∀ {w} → ⌀² ≤ᶜ w
+  bot≤ᶜ = bot⊆²
 
 
   -- The canonical modal accessibility, based on the T axiom.
 
   infix 3 _Rᶜ_
   _Rᶜ_ : Worldᶜ → Worldᶜ → Set
-  w Rᶜ w′ = ∀ {A} → w ⊢ (□ A) → w′ ⊢ A
+  (Γ , Δ) Rᶜ (Γ′ , Δ′) = ∀ {A} → Γ ⁏ Δ ⊢ (□ A) → Γ′ ⁏ Δ′ ⊢ A
 
   reflRᶜ : ∀ {w} → w Rᶜ w
   reflRᶜ = down
@@ -50,10 +51,10 @@ module Syntax
   transRᶜ : ∀ {w w′ w″} → w Rᶜ w′ → w′ Rᶜ w″ → w Rᶜ w″
   transRᶜ ζ ζ′ = ζ′ ∘ ζ ∘ up
 
-  botRᶜ : ∀ {w} → ⌀ Rᶜ w
-  botRᶜ = mono⊢ bot≤ᶜ ∘ down
+  botRᶜ : ∀ {w} → ⌀² Rᶜ w
+  botRᶜ = mono²⊢ bot≤ᶜ ∘ down
 
-  liftRᶜ : ∀ {w} → w Rᶜ □⋆ w
+  liftRᶜ : ∀ {Γ Δ} → (Γ , Δ) Rᶜ (□⋆ Γ , Δ)
   liftRᶜ = down ∘ lift ∘ down
 
 
@@ -85,7 +86,7 @@ module Syntax
   --   w           →   w
 
   ≤⨾R→Rᶜ : ∀ {v′ w} → w ≤⨾Rᶜ v′ → w Rᶜ v′
-  ≤⨾R→Rᶜ (w′ , (ξ , ζ)) = ζ ∘ mono⊢ ξ
+  ≤⨾R→Rᶜ (w′ , (ξ , ζ)) = ζ ∘ mono²⊢ ξ
 
 
   -- Brilliance condition, after Iemhoff.
@@ -99,7 +100,7 @@ module Syntax
   --   w       v   →   w
 
   R⨾≤→Rᶜ : ∀ {w v′} → w R⨾≤ᶜ v′ → w Rᶜ v′
-  R⨾≤→Rᶜ (v , (ζ , ξ)) = mono⊢ ξ ∘ ζ
+  R⨾≤→Rᶜ (v , (ζ , ξ)) = mono²⊢ ξ ∘ ζ
 
 
   -- Minor persistence condition, included by Božić and Došen.
@@ -231,7 +232,7 @@ module Syntax
   -- NOTE: This could be more precise.
   ≤⊓R→≤⊔Rᶜ : ∀ {v w′} → w′ ≤⊓Rᶜ v → v ≤⊔Rᶜ w′
   ≤⊓R→≤⊔Rᶜ {v} {w′} (w , (ξ , ζ)) =
-    (w′ ⧺ v) , (weak⊆⧺ᵣ , mono⊢ (weak⊆⧺ₗ v) ∘ down)
+    (w′ ⧺² v) , (weak⊆²⧺ᵣ , mono²⊢ (weak⊆²⧺ₗ v) ∘ down)
 
 
   -- Supremum-to-infimum condition.
@@ -246,4 +247,4 @@ module Syntax
 
   -- NOTE: This could be more precise.
   ≤⊔R→≤⊓Rᶜ : ∀ {w′ v} → v ≤⊔Rᶜ w′ → w′ ≤⊓Rᶜ v
-  ≤⊔R→≤⊓Rᶜ (v′ , (ξ , ζ)) = ⌀ , (bot≤ᶜ , botRᶜ)
+  ≤⊔R→≤⊓Rᶜ (v′ , (ξ , ζ)) = ⌀² , (bot≤ᶜ , botRᶜ)

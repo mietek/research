@@ -206,11 +206,12 @@ import BasicIS4.Semantics.BasicKripkeEwald
 -- Basic Kripke-style semantics, after Alechina-Mendler-de Paiva-Ritter, for soundness only.
 import BasicIS4.Semantics.BasicKripkeAlechinaEtAl
 
+
 -- Canonical and non-canonical model equipment for Kripke-style semantics.
-import BasicIS4.Semantics.KripkeCanonicalModelEquipment
-import BasicIS4.Semantics.KripkeNonCanonicalModelEquipment
-import BasicIS4.Semantics.KripkeDyadicCanonicalModelEquipment
-import BasicIS4.Semantics.KripkeDyadicNonCanonicalModelEquipment
+import BasicIS4.Equipment.KripkeCanonical
+import BasicIS4.Equipment.KripkeNonCanonical
+import BasicIS4.Equipment.KripkeDyadicCanonical
+import BasicIS4.Equipment.KripkeDyadicNonCanonical
 
 
 import BasicIS4.Metatheory.ClosedHilbert-TarskiClosedGabbayNanevski
