@@ -65,6 +65,9 @@ import BasicIPC.Semantics.TarskiHilbert
 -- Tarski-style semantics with explicit Gentzen-style syntax representation.
 import BasicIPC.Semantics.TarskiGentzen
 
+-- Tarski-style semantics with explicit contexts.
+import BasicIPC.Semantics.Tarski
+
 -- Kripke-style semantics, based on the McKinsey-Tarski translation.
 import BasicIPC.Semantics.KripkeMcKinseyTarski
 
@@ -82,6 +85,7 @@ import BasicIPC.Metatheory.Hilbert-TarskiClosedHilbert
 import BasicIPC.Metatheory.Hilbert-TarskiCoquandDybjer
 import BasicIPC.Metatheory.Hilbert-TarskiHilbert
 import BasicIPC.Metatheory.Hilbert-TarskiGentzen
+import BasicIPC.Metatheory.Hilbert-Tarski
 import BasicIPC.Metatheory.Hilbert-KripkeMcKinseyTarski
 import BasicIPC.Metatheory.Hilbert-KripkeGodel
 
@@ -89,9 +93,11 @@ import BasicIPC.Metatheory.Gentzen-BasicTarski
 import BasicIPC.Metatheory.Gentzen-TarskiClosedCoquandDybjer
 import BasicIPC.Metatheory.Gentzen-TarskiCoquandDybjer
 import BasicIPC.Metatheory.Gentzen-TarskiGentzen
+import BasicIPC.Metatheory.Gentzen-Tarski
 import BasicIPC.Metatheory.Gentzen-KripkeMcKinseyTarski
 import BasicIPC.Metatheory.Gentzen-KripkeGodel
 
+import BasicIPC.Metatheory.GentzenNormalForm-Tarski
 import BasicIPC.Metatheory.GentzenNormalForm-KripkeMcKinseyTarski
 import BasicIPC.Metatheory.GentzenNormalForm-KripkeGodel
 
