@@ -4,6 +4,21 @@ open import BasicIPC.Syntax.Hilbert public
 open import BasicIPC.Semantics.TarskiHilbert public
 
 
+-- Soundness with respect to the syntax representation in a particular model.
+
+module _ {{_ : Model}} where
+  reflectʳ : ∀ {A Γ} → Γ ⊢ A → [ Γ ⊢ A ]
+  reflectʳ (var i)   = [var] i
+  reflectʳ (app t u) = [app] (reflectʳ t) (reflectʳ u)
+  reflectʳ ci        = [ci]
+  reflectʳ ck        = [ck]
+  reflectʳ cs        = [cs]
+  reflectʳ cpair     = [cpair]
+  reflectʳ cfst      = [cfst]
+  reflectʳ csnd      = [csnd]
+  reflectʳ tt        = [tt]
+
+
 -- Soundness with respect to all models, or evaluation.
 
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
