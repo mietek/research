@@ -38,40 +38,40 @@ instance
 -- Soundness and completeness with respect to the canonical model.
 
 mutual
-  reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
-  reflect {α P}   t = t
-  reflect {A ▻ B} t = λ η a → reflect (app (mono⊢ η t) (reify a))
-  reflect {A ∧ B} t = reflect (fst t) , reflect (snd t)
-  reflect {⊤}    t = ∙
+  reflectᶜ : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
+  reflectᶜ {α P}   t = t
+  reflectᶜ {A ▻ B} t = λ η a → reflectᶜ (app (mono⊢ η t) (reifyᶜ a))
+  reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
+  reflectᶜ {⊤}    t = ∙
 
-  reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
-  reify {α P}   s = s
-  reify {A ▻ B} s = lam (reify (s weak⊆ (reflect {A} v₀)))
-  reify {A ∧ B} s = pair (reify (π₁ s)) (reify (π₂ s))
-  reify {⊤}    s = tt
+  reifyᶜ : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
+  reifyᶜ {α P}   s = s
+  reifyᶜ {A ▻ B} s = lam (reifyᶜ (s weak⊆ (reflectᶜ {A} v₀)))
+  reifyᶜ {A ∧ B} s = pair (reifyᶜ (π₁ s)) (reifyᶜ (π₂ s))
+  reifyᶜ {⊤}    s = tt
 
-reflect⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊩⋆ Π
-reflect⋆ {⌀}     ∙        = ∙
-reflect⋆ {Π , A} (ts , t) = reflect⋆ ts , reflect t
+reflectᶜ⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊩⋆ Π
+reflectᶜ⋆ {⌀}     ∙        = ∙
+reflectᶜ⋆ {Π , A} (ts , t) = reflectᶜ⋆ ts , reflectᶜ t
 
-reify⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → Γ ⊢⋆ Π
-reify⋆ {⌀}     ∙        = ∙
-reify⋆ {Π , A} (ts , t) = reify⋆ ts , reify t
+reifyᶜ⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → Γ ⊢⋆ Π
+reifyᶜ⋆ {⌀}     ∙        = ∙
+reifyᶜ⋆ {Π , A} (ts , t) = reifyᶜ⋆ ts , reifyᶜ t
 
 
 -- Reflexivity and transitivity.
 
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
-refl⊩⋆ = reflect⋆ refl⊢⋆
+refl⊩⋆ = reflectᶜ⋆ refl⊢⋆
 
 trans⊩⋆ : ∀ {Γ Γ′ Γ″} → Γ ⊩⋆ Γ′ → Γ′ ⊩⋆ Γ″ → Γ ⊩⋆ Γ″
-trans⊩⋆ ts us = reflect⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
+trans⊩⋆ ts us = reflectᶜ⋆ (trans⊢⋆ (reifyᶜ⋆ ts) (reifyᶜ⋆ us))
 
 
 -- Completeness with respect to all models, or quotation.
 
 quot : ∀ {A Γ} → Γ ⊨ A → Γ ⊢ A
-quot s = reify (s refl⊩⋆)
+quot s = reifyᶜ (s refl⊩⋆)
 
 
 -- Normalisation by evaluation.

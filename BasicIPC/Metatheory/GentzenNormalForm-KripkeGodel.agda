@@ -10,9 +10,8 @@ eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)    γ = lookup i γ
 eval (lam t)    γ = λ ξ a → eval t (mono⊩⋆ ξ γ , a)
 eval (app t u)  γ = (eval t γ refl≤) (eval u γ)
-eval (pair t u) γ = λ ξ →
-                      let γ′ = mono⊩⋆ ξ γ
-                      in  eval t γ′ , eval u γ′
+eval (pair t u) γ = λ ξ → let γ′ = mono⊩⋆ ξ γ
+                           in  eval t γ′ , eval u γ′
 eval (fst t)    γ = π₁ (eval t γ refl≤)
 eval (snd t)    γ = π₂ (eval t γ refl≤)
 eval tt         γ = λ ξ → ∙
@@ -41,27 +40,26 @@ instance
 -- Soundness and completeness with respect to the canonical model.
 
 mutual
-  reflect : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊩ A
-  reflect {α P}   t = λ η → mono⊢ⁿᵉ η t
-  reflect {A ▻ B} t = λ η a → reflect (appⁿᵉ (mono⊢ⁿᵉ η t) (reify a))
-  reflect {A ∧ B} t = λ η →
-                        let t′ = mono⊢ⁿᵉ η t
-                        in  reflect (fstⁿᵉ t′) , reflect (sndⁿᵉ t′)
-  reflect {⊤}    t = λ η → ∙
+  reflectᶜ : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊩ A
+  reflectᶜ {α P}   t = λ η → mono⊢ⁿᵉ η t
+  reflectᶜ {A ▻ B} t = λ η a → reflectᶜ (appⁿᵉ (mono⊢ⁿᵉ η t) (reifyᶜ a))
+  reflectᶜ {A ∧ B} t = λ η → let t′ = mono⊢ⁿᵉ η t
+                              in  reflectᶜ (fstⁿᵉ t′) , reflectᶜ (sndⁿᵉ t′)
+  reflectᶜ {⊤}    t = λ η → ∙
 
-  reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ⁿᶠ A
-  reify {α P}   s = neⁿᶠ (s refl⊆)
-  reify {A ▻ B} s = lamⁿᶠ (reify (s weak⊆ (reflect {A} (varⁿᵉ top))))
-  reify {A ∧ B} s = pairⁿᶠ (reify (π₁ (s refl⊆))) (reify (π₂ (s refl⊆)))
-  reify {⊤}    s = ttⁿᶠ
+  reifyᶜ : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ⁿᶠ A
+  reifyᶜ {α P}   s = neⁿᶠ (s refl⊆)
+  reifyᶜ {A ▻ B} s = lamⁿᶠ (reifyᶜ (s weak⊆ (reflectᶜ {A} (varⁿᵉ top))))
+  reifyᶜ {A ∧ B} s = pairⁿᶠ (reifyᶜ (π₁ (s refl⊆))) (reifyᶜ (π₂ (s refl⊆)))
+  reifyᶜ {⊤}    s = ttⁿᶠ
 
-reflect⋆ : ∀ {Π Γ} → Γ ⊢⋆ⁿᵉ Π → Γ ⊩⋆ Π
-reflect⋆ {⌀}     ∙        = ∙
-reflect⋆ {Π , A} (ts , t) = reflect⋆ ts , reflect t
+reflectᶜ⋆ : ∀ {Π Γ} → Γ ⊢⋆ⁿᵉ Π → Γ ⊩⋆ Π
+reflectᶜ⋆ {⌀}     ∙        = ∙
+reflectᶜ⋆ {Π , A} (ts , t) = reflectᶜ⋆ ts , reflectᶜ t
 
-reify⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → Γ ⊢⋆ⁿᶠ Π
-reify⋆ {⌀}     ∙        = ∙
-reify⋆ {Π , A} (ts , t) = reify⋆ ts , reify t
+reifyᶜ⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → Γ ⊢⋆ⁿᶠ Π
+reifyᶜ⋆ {⌀}     ∙        = ∙
+reifyᶜ⋆ {Π , A} (ts , t) = reifyᶜ⋆ ts , reifyᶜ t
 
 
 -- Reflexivity and transitivity.
@@ -71,16 +69,16 @@ refl⊢⋆ⁿᵉ {⌀}     = ∙
 refl⊢⋆ⁿᵉ {Γ , A} = mono⊢⋆ⁿᵉ weak⊆ refl⊢⋆ⁿᵉ , varⁿᵉ top
 
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
-refl⊩⋆ = reflect⋆ refl⊢⋆ⁿᵉ
+refl⊩⋆ = reflectᶜ⋆ refl⊢⋆ⁿᵉ
 
 trans⊩⋆ : ∀ {Γ Γ′ Γ″} → Γ ⊩⋆ Γ′ → Γ′ ⊩⋆ Γ″ → Γ ⊩⋆ Γ″
-trans⊩⋆ ts us = eval⋆ (trans⊢⋆ (nf→tm⋆ (reify⋆ ts)) (nf→tm⋆ (reify⋆ us))) refl⊩⋆
+trans⊩⋆ ts us = eval⋆ (trans⊢⋆ (nf→tm⋆ (reifyᶜ⋆ ts)) (nf→tm⋆ (reifyᶜ⋆ us))) refl⊩⋆
 
 
 -- Completeness with respect to all models, or quotation.
 
 quot : ∀ {A Γ} → Γ ⊨ A → Γ ⊢ A
-quot s = nf→tm (reify (s refl⊩⋆))
+quot s = nf→tm (reifyᶜ (s refl⊩⋆))
 
 
 -- Normalisation by evaluation.

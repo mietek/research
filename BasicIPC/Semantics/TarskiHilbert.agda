@@ -67,15 +67,15 @@ module _ {{_ : Model}} where
 -- Completeness with respect to the syntax representation in a particular model.
 
 module _ {{_ : Model}} where
-  reify[] : ∀ {A Γ} → Γ ⊩ A → [ Γ ⊢ A ]
-  reify[] {α P}   (t , s) = t
-  reify[] {A ▻ B} s       = let t , f = s refl⊆ in t
-  reify[] {A ∧ B} (a , b) = [app] ([app] [cpair] (reify[] {A} a)) (reify[] {B} b)
-  reify[] {⊤}    ∙       = [tt]
+  reifyʳ : ∀ {A Γ} → Γ ⊩ A → [ Γ ⊢ A ]
+  reifyʳ {α P}   (t , s) = t
+  reifyʳ {A ▻ B} s       = let t , f = s refl⊆ in t
+  reifyʳ {A ∧ B} (a , b) = [app] ([app] [cpair] (reifyʳ {A} a)) (reifyʳ {B} b)
+  reifyʳ {⊤}    ∙       = [tt]
 
-  reify[]⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → [ Γ ⊢ Π ]⋆
-  reify[]⋆ {⌀}     ∙        = ∙
-  reify[]⋆ {Π , A} (ts , t) = reify[]⋆ ts , reify[] t
+  reifyʳ⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → [ Γ ⊢ Π ]⋆
+  reifyʳ⋆ {⌀}     ∙        = ∙
+  reifyʳ⋆ {Π , A} (ts , t) = reifyʳ⋆ ts , reifyʳ t
 
 
 -- Additional useful equipment.
@@ -86,7 +86,7 @@ module _ {{_ : Model}} where
 
   ⟪const⟫ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B ▻ A
   ⟪const⟫ {A} a η = let a′ = mono⊩ {A} η a
-                    in  [app] [ck] (reify[] a′) , const a′
+                    in  [app] [ck] (reifyʳ a′) , const a′
 
   ⟪ap⟫ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ C
   ⟪ap⟫ s₁ s₂ a = let t , f = s₁ refl⊆
@@ -106,7 +106,7 @@ module _ {{_ : Model}} where
 
   _⟪,⟫′_ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B ▻ A ∧ B
   _⟪,⟫′_ {A} a η = let a′ = mono⊩ {A} η a
-                   in  [app] [cpair] (reify[] a′) , _,_ a′
+                   in  [app] [cpair] (reifyʳ a′) , _,_ a′
 
 
 -- Forcing in a particular model, for sequents.

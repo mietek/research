@@ -24,6 +24,10 @@ record Model : Set₁ where
     [csnd]  : ∀ {A B}   → [ A ∧ B ▻ B ]
     [tt]    : [ ⊤ ]
 
+  [_]⋆ : Cx Ty → Set
+  [ ⌀ ]⋆     = 𝟙
+  [ Π , A ]⋆ = [ Π ]⋆ × [ A ]
+
 open Model {{…}} public
 
 
@@ -51,11 +55,16 @@ module _ {{_ : Model}} where
 
 -- Completeness with respect to the syntax representation in a particular model.
 
-reify[] : ∀ {{_ : Model}} {A} → ⊩ A → [ A ]
-reify[] {α P}   (t , s) = t
-reify[] {A ▻ B} (t , f) = t
-reify[] {A ∧ B} (a , b) = [app] ([app] [cpair] (reify[] {A} a)) (reify[] {B} b)
-reify[] {⊤}    ∙       = [tt]
+module _ {{_ : Model}} where
+  reifyʳ : ∀ {A} → ⊩ A → [ A ]
+  reifyʳ {α P}   (t , s) = t
+  reifyʳ {A ▻ B} (t , f) = t
+  reifyʳ {A ∧ B} (a , b) = [app] ([app] [cpair] (reifyʳ {A} a)) (reifyʳ {B} b)
+  reifyʳ {⊤}    ∙       = [tt]
+
+  reifyʳ⋆ : ∀ {Π} → ⊩⋆ Π → [ Π ]⋆
+  reifyʳ⋆ {⌀}     ∙        = ∙
+  reifyʳ⋆ {Π , A} (ts , t) = reifyʳ⋆ ts , reifyʳ t
 
 
 -- Additional useful equipment.
@@ -65,17 +74,17 @@ module _ {{_ : Model}} where
   (t , f) ⟪$⟫ a = f a
 
   ⟪const⟫ : ∀ {A B} → ⊩ A → ⊩ B ▻ A
-  ⟪const⟫ a = [app] [ck] (reify[] a) , const a
+  ⟪const⟫ a = [app] [ck] (reifyʳ a) , const a
 
   ⟪ap⟫ : ∀ {A B C} → ⊩ A ▻ B ▻ C → ⊩ A ▻ B → ⊩ A → ⊩ C
   ⟪ap⟫ (t , f) (u , g) a = let (_ , h) = f a in h (g a)
 
   ⟪ap⟫′ : ∀ {A B C} → ⊩ A ▻ B ▻ C → ⊩ (A ▻ B) ▻ A ▻ C
-  ⟪ap⟫′ f = [app] [cs] (reify[] f) , λ g →
-              [app] ([app] [cs] (reify[] f)) (reify[] g) , ⟪ap⟫ f g
+  ⟪ap⟫′ f = [app] [cs] (reifyʳ f) , λ g →
+              [app] ([app] [cs] (reifyʳ f)) (reifyʳ g) , ⟪ap⟫ f g
 
   _⟪,⟫′_ : ∀ {A B} → ⊩ A → ⊩ B ▻ A ∧ B
-  _⟪,⟫′_ a = [app] [cpair] (reify[] a) , _,_ a
+  _⟪,⟫′_ a = [app] [cpair] (reifyʳ a) , _,_ a
 
 
 -- Forcing in a particular model, for sequents.

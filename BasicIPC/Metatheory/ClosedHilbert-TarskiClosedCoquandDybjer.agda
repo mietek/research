@@ -45,23 +45,23 @@ eval tt        = ∙
 
 -- Correctness of evaluation with respect to conversion.
 
-check : ∀ {{_ : Model}} {A} {t t′ : ⊢ A} → t ⋙ t′ → eval t ≡ eval t′
-check refl⋙           = refl
-check (trans⋙ p q)    = trans (check p) (check q)
-check (sym⋙ p)        = sym (check p)
-check (congapp⋙ p q)  = cong₂ _⟪$⟫_ (check p) (check q)
-check (congi⋙ p)      = cong id (check p)
-check (congk⋙ p q)    = cong₂ const (check p) (check q)
-check (congs⋙ p q r)  = cong₃ ⟪ap⟫ (check p) (check q) (check r)
-check (congpair⋙ p q) = cong₂ _,_ (check p) (check q)
-check (congfst⋙ p)    = cong π₁ (check p)
-check (congsnd⋙ p)    = cong π₂ (check p)
-check beta▻ₖ⋙         = refl
-check beta▻ₛ⋙         = refl
-check beta∧₁⋙         = refl
-check beta∧₂⋙         = refl
-check eta∧⋙           = refl
-check eta⊤⋙          = refl
+eval✓ : ∀ {{_ : Model}} {A} {t t′ : ⊢ A} → t ⋙ t′ → eval t ≡ eval t′
+eval✓ refl⋙           = refl
+eval✓ (trans⋙ p q)    = trans (eval✓ p) (eval✓ q)
+eval✓ (sym⋙ p)        = sym (eval✓ p)
+eval✓ (congapp⋙ p q)  = cong₂ _⟪$⟫_ (eval✓ p) (eval✓ q)
+eval✓ (congi⋙ p)      = cong id (eval✓ p)
+eval✓ (congk⋙ p q)    = cong₂ const (eval✓ p) (eval✓ q)
+eval✓ (congs⋙ p q r)  = cong₃ ⟪ap⟫ (eval✓ p) (eval✓ q) (eval✓ r)
+eval✓ (congpair⋙ p q) = cong₂ _,_ (eval✓ p) (eval✓ q)
+eval✓ (congfst⋙ p)    = cong π₁ (eval✓ p)
+eval✓ (congsnd⋙ p)    = cong π₂ (eval✓ p)
+eval✓ beta▻ₖ⋙         = refl
+eval✓ beta▻ₛ⋙         = refl
+eval✓ beta∧₁⋙         = refl
+eval✓ beta∧₂⋙         = refl
+eval✓ eta∧⋙           = refl
+eval✓ eta⊤⋙          = refl
 
 
 -- The canonical model.
@@ -87,5 +87,5 @@ norm = quot ∘ eval
 
 -- Correctness of normalisation with respect to conversion.
 
-check′ : ∀ {{_ : Model}} {A} {t t′ : ⊢ A} → t ⋙ t′ → norm t ≡ norm t′
-check′ p = cong reify (check p)
+norm✓ : ∀ {{_ : Model}} {A} {t t′ : ⊢ A} → t ⋙ t′ → norm t ≡ norm t′
+norm✓ p = cong reify (eval✓ p)

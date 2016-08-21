@@ -25,18 +25,18 @@ postulate
   oops₂ : ∀ {{_ : Model}} {A B Γ} {t : Γ ⊢ A ▻ B}
           → eval t ≡ (λ γ a → eval (mono⊢ (weak⊆ {A = A}) t) (γ , a) a)
 
-check : ∀ {{_ : Model}} {A Γ} {t t′ : Γ ⊢ A} → t ⋙ t′ → eval t ≡ eval t′
-check refl⋙                    = refl
-check (trans⋙ p q)             = trans (check p) (check q)
-check (sym⋙ p)                 = sym (check p)
-check (conglam⋙ {A} {B} p)     = cong (⟦λ⟧ {A} {B}) (check p)
-check (congapp⋙ {A} {B} p q)   = cong₂ (_⟦$⟧_ {A} {B}) (check p) (check q)
-check (congpair⋙ {A} {B} p q)  = cong₂ (_⟦,⟧_ {A} {B}) (check p) (check q)
-check (congfst⋙ {A} {B} p)     = cong (⟦π₁⟧ {A} {B}) (check p)
-check (congsnd⋙ {A} {B} p)     = cong (⟦π₂⟧ {A} {B}) (check p)
-check (beta▻⋙ {A} {B} {t} {u}) = sym (oops₁ {A} {B} {_} {t} {u})
-check (eta▻⋙ {A} {B} {t})      = oops₂ {A} {B} {_} {t}
-check beta∧₁⋙                  = refl
-check beta∧₂⋙                  = refl
-check eta∧⋙                    = refl
-check eta⊤⋙                   = refl
+eval✓ : ∀ {{_ : Model}} {A Γ} {t t′ : Γ ⊢ A} → t ⋙ t′ → eval t ≡ eval t′
+eval✓ refl⋙                    = refl
+eval✓ (trans⋙ p q)             = trans (eval✓ p) (eval✓ q)
+eval✓ (sym⋙ p)                 = sym (eval✓ p)
+eval✓ (conglam⋙ {A} {B} p)     = cong (⟦λ⟧ {A} {B}) (eval✓ p)
+eval✓ (congapp⋙ {A} {B} p q)   = cong₂ (_⟦$⟧_ {A} {B}) (eval✓ p) (eval✓ q)
+eval✓ (congpair⋙ {A} {B} p q)  = cong₂ (_⟦,⟧_ {A} {B}) (eval✓ p) (eval✓ q)
+eval✓ (congfst⋙ {A} {B} p)     = cong (⟦π₁⟧ {A} {B}) (eval✓ p)
+eval✓ (congsnd⋙ {A} {B} p)     = cong (⟦π₂⟧ {A} {B}) (eval✓ p)
+eval✓ (beta▻⋙ {A} {B} {t} {u}) = sym (oops₁ {A} {B} {_} {t} {u})
+eval✓ (eta▻⋙ {A} {B} {t})      = oops₂ {A} {B} {_} {t}
+eval✓ beta∧₁⋙                  = refl
+eval✓ beta∧₂⋙                  = refl
+eval✓ eta∧⋙                    = refl
+eval✓ eta⊤⋙                   = refl

@@ -65,15 +65,15 @@ module _ {{_ : Model}} where
 -- Completeness with respect to the syntax representation in a particular model.
 
 module _ {{_ : Model}} where
-  reify[] : ∀ {A Γ} → Γ ⊩ A → [ Γ ⊢ A ]
-  reify[] {α P}   (t , s) = t
-  reify[] {A ▻ B} s       = let t , f = s refl⊆ in t
-  reify[] {A ∧ B} (a , b) = [pair] (reify[] {A} a) (reify[] {B} b)
-  reify[] {⊤}    ∙       = [tt]
+  reifyʳ : ∀ {A Γ} → Γ ⊩ A → [ Γ ⊢ A ]
+  reifyʳ {α P}   (t , s) = t
+  reifyʳ {A ▻ B} s       = let t , f = s refl⊆ in t
+  reifyʳ {A ∧ B} (a , b) = [pair] (reifyʳ {A} a) (reifyʳ {B} b)
+  reifyʳ {⊤}    ∙       = [tt]
 
-  reify[]⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → [ Γ ⊢ Π ]⋆
-  reify[]⋆ {⌀}     ∙        = ∙
-  reify[]⋆ {Π , A} (ts , t) = reify[]⋆ ts , reify[] t
+  reifyʳ⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → [ Γ ⊢ Π ]⋆
+  reifyʳ⋆ {⌀}     ∙        = ∙
+  reifyʳ⋆ {Π , A} (ts , t) = reifyʳ⋆ ts , reifyʳ t
 
 
 -- Additional useful equipment.
