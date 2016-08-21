@@ -1,4 +1,4 @@
--- Tarski-style semantics with a syntactic component, after Coquand-Dybjer.
+-- Tarski-style semantics with implicit syntax representation, after Coquand-Dybjer.
 
 module BasicIPC.Semantics.TarskiCoquandDybjer where
 

@@ -1,4 +1,4 @@
--- Kripke-style possible worlds semantics, based on the Gödel translation.
+-- Kripke-style semantics, based on the Gödel translation.
 
 module BasicIPC.Semantics.KripkeGodel where
 

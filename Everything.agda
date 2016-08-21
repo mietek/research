@@ -47,28 +47,28 @@ import BasicIPC.Syntax.GentzenSpinalNormalForm
 import BasicIPC.Syntax.Translation
 
 
--- Basic Tarski-style denotational semantics.
+-- Basic Tarski-style denotational semantics, for soundness only.
 import BasicIPC.Semantics.BasicTarski
 
--- Tarski-style semantics with a closed syntactic component, after Coquand-Dybjer.
+-- Tarski-style semantics with implicit closed syntax representation, after Coquand-Dybjer.
 import BasicIPC.Semantics.TarskiClosedCoquandDybjer
 
--- Tarski-style semantics with a Hilbert-style closed syntax representation.
+-- Tarski-style semantics with explicit Hilbert-style closed syntax representation.
 import BasicIPC.Semantics.TarskiClosedHilbert
 
--- Tarski-style semantics with a syntactic component, after Coquand-Dybjer.
+-- Tarski-style semantics with implicit syntax representation, after Coquand-Dybjer.
 import BasicIPC.Semantics.TarskiCoquandDybjer
 
--- Tarski-style semantics with a Hilbert-style syntax representation.
+-- Tarski-style semantics with explicit Hilbert-style syntax representation.
 import BasicIPC.Semantics.TarskiHilbert
 
--- Tarski-style semantics with a Gentzen-style syntax representation.
+-- Tarski-style semantics with explicit Gentzen-style syntax representation.
 import BasicIPC.Semantics.TarskiGentzen
 
--- Standard Kripke-style possible worlds semantics, based on the McKinsey-Tarski translation.
+-- Kripke-style semantics, based on the McKinsey-Tarski translation.
 import BasicIPC.Semantics.KripkeMcKinseyTarski
 
--- Kripke-style possible worlds semantics, based on the Gödel translation.
+-- Kripke-style semantics, based on the Gödel translation.
 import BasicIPC.Semantics.KripkeGodel
 
 

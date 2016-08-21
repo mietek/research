@@ -1,4 +1,4 @@
--- Standard Kripke-style possible worlds semantics, based on the McKinsey-Tarski translation.
+-- Kripke-style semantics, based on the McKinsey-Tarski translation.
 
 module BasicIPC.Semantics.KripkeMcKinseyTarski where
 

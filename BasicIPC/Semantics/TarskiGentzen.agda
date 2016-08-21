@@ -1,4 +1,4 @@
--- Tarski-style semantics with a Gentzen-style syntax representation.
+-- Tarski-style semantics with explicit Gentzen-style syntax representation.
 
 module BasicIPC.Semantics.TarskiGentzen where
 

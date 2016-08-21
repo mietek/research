@@ -1,4 +1,4 @@
--- Tarski-style semantics with a closed syntactic component, after Coquand-Dybjer.
+-- Tarski-style semantics with implicit closed syntax representation, after Coquand-Dybjer.
 
 module BasicIPC.Semantics.TarskiClosedCoquandDybjer where
 
