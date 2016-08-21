@@ -90,6 +90,14 @@ module _ {{_ : Model}} where
   [v₂] = [var] i₂
 
 
+-- Useful theorems in functional form.
+
+module _ {{_ : Model}} where
+  [multicut] : ∀ {Π A Γ} → Γ [⊢]⋆ Π → Π [⊢] A → Γ [⊢] A
+  [multicut] {⌀}     ∙        u = mono[⊢] bot⊆ u
+  [multicut] {Π , B} (ts , t) u = [app] ([multicut] ts ([lam] u)) t
+
+
 -- Useful theorems in combinatory form.
 
 module _ {{_ : Model}} where

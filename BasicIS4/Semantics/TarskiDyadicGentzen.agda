@@ -136,6 +136,21 @@ module _ {{_ : Model}} where
 -- Useful theorems in functional form.
 
 module _ {{_ : Model}} where
+  [mlam] : ∀ {A B Γ Δ} → Γ ⁏ Δ , A [⊢] B → Γ ⁏ Δ [⊢] □ A ▻ B
+  [mlam] t = [lam] ([unbox] [v₀] (mono[⊢] weak⊆ t))
+
+  [multicut] : ∀ {Π A Γ Δ} → Γ ⁏ Δ [⊢]⋆ Π → Π ⁏ Δ [⊢] A → Γ ⁏ Δ [⊢] A
+  [multicut] {⌀}     ∙        u = mono[⊢] bot⊆ u
+  [multicut] {Π , B} (ts , t) u = [app] ([multicut] ts ([lam] u)) t
+
+  [mmulticut] : ∀ {Π A Γ Δ} → Γ ⁏ Δ [⊢]⋆ □⋆ Π → Γ ⁏ Π [⊢] A → Γ ⁏ Δ [⊢] A
+  [mmulticut] {⌀}     ∙        u = mmono[⊢] bot⊆ u
+  [mmulticut] {Π , B} (ts , t) u = [app] ([mmulticut] ts ([mlam] u)) t
+
+  [multicut²] : ∀ {Π Π′ A Γ Δ} → Γ ⁏ Δ [⊢]⋆ Π → Γ ⁏ Δ [⊢]⋆ □⋆ Π′ → Π ⁏ Π′ [⊢] A → Γ ⁏ Δ [⊢] A
+  [multicut²] {⌀}     ∙        us v = [mmulticut] us (mono[⊢] bot⊆ v)
+  [multicut²] {Π , B} (ts , t) us v = [app] ([multicut²] ts us ([lam] v)) t
+
   [dist] : ∀ {A B Γ Δ} → Γ ⁏ Δ [⊢] □ (A ▻ B) → Γ ⁏ Δ [⊢] □ A → Γ ⁏ Δ [⊢] □ B
   [dist] t u = [unbox] t ([unbox] (mmono[⊢] weak⊆ u) ([box] ([app] [mv₁] [mv₀])))
 

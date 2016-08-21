@@ -17,14 +17,6 @@ module _ {{_ : Model}} where
   [ tt ]       = [tt]
 
 
--- Additional useful equipment.
-
-module _ {{_ : Model}} where
-  [multicut] : ∀ {Π A Γ} → Γ [⊢]⋆ Π → Π [⊢] A → Γ [⊢] A
-  [multicut] {⌀}     ∙        u = mono[⊢] bot⊆ u
-  [multicut] {Π , B} (ts , t) u = [app] ([multicut] ts ([lam] u)) t
-
-
 -- Soundness with respect to all models, or evaluation.
 
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
