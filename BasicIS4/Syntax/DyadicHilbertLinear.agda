@@ -1,4 +1,4 @@
--- Linear Hilbert-style axiomatic formalisation of syntax with a separate modal context.
+-- Hilbert-style axiomatic formalisation of syntax with a separate modal context, as linear sequences.
 
 module BasicIS4.Syntax.DyadicHilbertLinear where
 

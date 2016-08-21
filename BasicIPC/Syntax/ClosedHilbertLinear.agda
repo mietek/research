@@ -1,4 +1,4 @@
--- Linear Hilbert-style axiomatic formalisation of closed syntax.
+-- Hilbert-style axiomatic formalisation of closed syntax, as linear sequences.
 
 module BasicIPC.Syntax.ClosedHilbertLinear where
 

@@ -26,13 +26,13 @@ import Common.PredicateBasedContext
 -- Common syntax.
 import BasicIPC.Syntax.Common
 
--- Linear Hilbert-style axiomatic formalisation of closed syntax.
+-- Hilbert-style axiomatic formalisation of closed syntax, as linear sequences.
 import BasicIPC.Syntax.ClosedHilbertLinear
 
 -- Hilbert-style axiomatic formalisation of closed syntax.
 import BasicIPC.Syntax.ClosedHilbert
 
--- Linear Hilbert-style axiomatic formalisation of syntax.
+-- Hilbert-style axiomatic formalisation of syntax, as linear sequences.
 import BasicIPC.Syntax.HilbertLinear
 
 -- Hilbert-style axiomatic formalisation of syntax.
@@ -139,13 +139,13 @@ import IPC.Translation
 -- Common syntax.
 import BasicIS4.Syntax.Common
 
--- Linear Hilbert-style axiomatic formalisation of closed syntax.
+-- Hilbert-style axiomatic formalisation of closed syntax, as linear sequences.
 import BasicIS4.Syntax.ClosedHilbertLinear
 
 -- Hilbert-style axiomatic formalisation of closed syntax.
 import BasicIS4.Syntax.ClosedHilbert
 
--- Linear Hilbert-style axiomatic formalisation of syntax.
+-- Hilbert-style axiomatic formalisation of syntax, as linear sequences.
 import BasicIS4.Syntax.HilbertLinear
 
 -- Hilbert-style axiomatic formalisation of syntax.
@@ -154,7 +154,7 @@ import BasicIS4.Syntax.Hilbert
 -- Gentzen-style natural deduction formalisation of syntax, after Bierman-de Paiva.
 import BasicIS4.Syntax.Gentzen
 
--- Linear Hilbert-style axiomatic formalisation of syntax with a separate modal context.
+-- Hilbert-style axiomatic formalisation of syntax with a separate modal context, as linear sequences.
 import BasicIS4.Syntax.DyadicHilbertLinear
 
 -- Hilbert-style axiomatic formalisation of syntax with a separate modal context.
