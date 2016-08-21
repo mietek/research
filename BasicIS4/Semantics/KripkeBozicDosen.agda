@@ -1,4 +1,4 @@
--- Kripke-style possible worlds semantics, after Božić-Došen.
+-- Kripke-style semantics, after Božić-Došen.
 
 module BasicIS4.Semantics.KripkeBozicDosen where
 

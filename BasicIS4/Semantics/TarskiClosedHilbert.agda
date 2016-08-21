@@ -1,4 +1,4 @@
--- Tarski-style semantics with a Hilbert-style closed syntax representation.
+-- Tarski-style semantics with explicit Hilbert-style closed syntax representation.
 
 module BasicIS4.Semantics.TarskiClosedHilbert where
 

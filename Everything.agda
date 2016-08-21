@@ -160,50 +160,50 @@ import BasicIS4.Syntax.DyadicHilbertLinear
 -- Hilbert-style axiomatic formalisation of syntax with a separate modal context.
 import BasicIS4.Syntax.DyadicHilbert
 
--- Gentzen-style axiomatic formalisation of syntax with a separate modal context, after Pfenning-Davies.
+-- Gentzen-style natural deduction formalisation of syntax with a separate modal context, after Pfenning-Davies.
 import BasicIS4.Syntax.DyadicGentzen
 
--- Gentzen-style axiomatic formalisation of syntax with a separate relational context, after Basin-Matthews-Viganò.
+-- Gentzen-style natural deduction formalisation of syntax with a separate relational context, after Basin-Matthews-Viganò.
 import BasicIS4.Syntax.LabelledGentzen
 
 -- Translation between different formalisations of syntax.
 import BasicIS4.Syntax.Translation -- FIXME
 
 
--- Tarski-style semantics with a closed syntactic component, after Gabbay-Nanevski.
+-- Tarski-style semantics with implicit closed syntax representation, after Gabbay-Nanevski.
 import BasicIS4.Semantics.TarskiClosedGabbayNanevski
 
--- Tarski-style semantics with a Hilbert-style closed syntax representation.
+-- Tarski-style semantics with explicit Hilbert-style closed syntax representation.
 import BasicIS4.Semantics.TarskiClosedHilbert
 
--- Tarski-style semantics with a syntactic component, after Gabbay-Nanevski.
+-- Tarski-style semantics with implicit syntax representation, after Gabbay-Nanevski.
 import BasicIS4.Semantics.TarskiGabbayNanevski
 
--- Tarski-style semantics with a Hilbert-style syntax representation.
+-- Tarski-style semantics with explicit Hilbert-style syntax representation.
 import BasicIS4.Semantics.TarskiHilbert
 
--- Tarski-style semantics with a Gentzen-style syntax representation.
+-- Tarski-style semantics with explicit Gentzen-style syntax representation.
 import BasicIS4.Semantics.TarskiGentzen
 
--- Tarski-style semantics with a syntactic component and a separate modal context, after Gabbay-Nanevski.
+-- Tarski-style semantics with implicit syntax representation and a separate modal context, after Gabbay-Nanevski.
 import BasicIS4.Semantics.TarskiDyadicGabbayNanevski
 
--- Tarski-style semantics with a Hilbert-style syntax representation and a separate modal context.
+-- Tarski-style semantics with explicit Hilbert-style syntax representation and a separate modal context.
 import BasicIS4.Semantics.TarskiDyadicHilbert
 
--- Tarski-style semantics with a Gentzen-style syntax representation and a separate modal context.
+-- Tarski-style semantics with explicit Gentzen-style syntax representation and a separate modal context.
 import BasicIS4.Semantics.TarskiDyadicGentzen
 
--- Kripke-style possible worlds semantics, after Ono.
+-- Kripke-style semantics, after Ono.
 import BasicIS4.Semantics.KripkeOno
 
--- Kripke-style possible worlds semantics, after Božić-Došen.
+-- Kripke-style semantics, after Božić-Došen.
 import BasicIS4.Semantics.KripkeBozicDosen
 
--- Kripke-style possible worlds semantics, after Ewald, Servi, and Plotkin-Stirling.
+-- Kripke-style semantics, after Ewald, Servi, and Plotkin-Stirling.
 import BasicIS4.Semantics.KripkeEwald
 
--- Kripke-style possible worlds semantics, after Alechina-Mendler-de Paiva-Ritter.
+-- Kripke-style semantics, after Alechina-Mendler-de Paiva-Ritter.
 import BasicIS4.Semantics.KripkeAlechinaEtAl
 
 -- Canonical and non-canonical model equipment for Kripke-style semantics.

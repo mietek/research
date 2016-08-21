@@ -1,4 +1,4 @@
--- Tarski-style semantics with a Hilbert-style syntax representation.
+-- Tarski-style semantics with explicit Hilbert-style syntax representation.
 
 module BasicIS4.Semantics.TarskiHilbert where
 

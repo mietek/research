@@ -1,4 +1,4 @@
--- Kripke-style possible worlds semantics, after Alechina-Mendler-de Paiva-Ritter.
+-- Kripke-style semantics, after Alechina-Mendler-de Paiva-Ritter.
 
 module BasicIS4.Semantics.KripkeAlechinaEtAl where
 

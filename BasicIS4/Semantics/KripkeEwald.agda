@@ -1,4 +1,4 @@
--- Kripke-style possible worlds semantics, after Ewald, Servi, and Plotkin-Stirling.
+-- Kripke-style semantics, after Ewald, Servi, and Plotkin-Stirling.
 
 module BasicIS4.Semantics.KripkeEwald where
 

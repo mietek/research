@@ -1,4 +1,4 @@
--- Tarski-style semantics with a syntactic component, after Gabbay-Nanevski.
+-- Tarski-style semantics with implicit syntax representation, after Gabbay-Nanevski.
 
 module BasicIS4.Semantics.TarskiGabbayNanevski where
 

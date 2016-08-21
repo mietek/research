@@ -1,4 +1,4 @@
--- Kripke-style possible worlds semantics, after Ono.
+-- Kripke-style semantics, after Ono.
 
 module BasicIS4.Semantics.KripkeOno where
 

@@ -1,4 +1,4 @@
--- Tarski-style semantics with a closed syntactic component, after Gabbay-Nanevski.
+-- Tarski-style semantics with implicit closed syntax representation, after Gabbay-Nanevski.
 
 module BasicIS4.Semantics.TarskiClosedGabbayNanevski where
 

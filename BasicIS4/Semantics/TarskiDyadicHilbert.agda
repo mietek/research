@@ -1,4 +1,4 @@
--- Tarski-style semantics with a Hilbert-style syntax representation and a separate modal context.
+-- Tarski-style semantics with explicit Hilbert-style syntax representation and a separate modal context.
 
 module BasicIS4.Semantics.TarskiDyadicHilbert where
 
