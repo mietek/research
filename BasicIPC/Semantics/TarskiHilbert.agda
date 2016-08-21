@@ -83,7 +83,8 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   _⟪$⟫_ : ∀ {A B Γ} → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ B
-  s ⟪$⟫ a = let t , f = s refl⊆ in f a
+  s ⟪$⟫ a = let t , f = s refl⊆
+            in  f a
 
   ⟪const⟫ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B ▻ A
   ⟪const⟫ {A} a η = let a′ = mono⊩ {A} η a

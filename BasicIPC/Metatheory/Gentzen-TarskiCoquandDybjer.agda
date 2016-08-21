@@ -3,7 +3,7 @@ module BasicIPC.Metatheory.Gentzen-TarskiCoquandDybjer where
 open import BasicIPC.Syntax.Gentzen public
 open import BasicIPC.Semantics.TarskiCoquandDybjer public
 
-open SyntacticComponent (_⊢_) (mono⊢) public
+open ImplicitSyntax (_⊢_) (mono⊢) public
 
 
 -- Completeness with respect to a particular model.

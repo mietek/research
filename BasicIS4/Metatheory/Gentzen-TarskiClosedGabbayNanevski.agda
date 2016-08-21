@@ -3,8 +3,7 @@ module BasicIS4.Metatheory.Gentzen-TarskiClosedGabbayNanevski where
 open import BasicIS4.Syntax.Gentzen public
 open import BasicIS4.Semantics.TarskiClosedGabbayNanevski public
 
-
-open SyntacticComponent (⌀ ⊢_) public
+open ImplicitSyntax (⌀ ⊢_) public
 
 
 -- Completeness with respect to a particular model.

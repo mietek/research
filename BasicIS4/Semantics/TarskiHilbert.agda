@@ -8,32 +8,33 @@ open import BasicIS4.Syntax.Common public
 -- Intuitionistic Tarski models.
 
 record Model : Set₁ where
-  infix 3 _⊩ᵅ_
+  infix 3 _⊩ᵅ_ _[⊢]_
   field
     -- Forcing for atomic propositions; monotonic.
     _⊩ᵅ_   : Cx Ty → Atom → Set
     mono⊩ᵅ : ∀ {P Γ Γ′} → Γ ⊆ Γ′ → Γ ⊩ᵅ P → Γ′ ⊩ᵅ P
 
     -- Hilbert-style syntax representation; monotonic.
-    [_⊢_]   : Cx Ty → Ty → Set
-    mono[⊢] : ∀ {A Γ Γ′}  → Γ ⊆ Γ′ → [ Γ ⊢ A ] → [ Γ′ ⊢ A ]
-    [var]    : ∀ {A Γ}     → A ∈ Γ → [ Γ ⊢ A ]
-    [app]    : ∀ {A B Γ}   → [ Γ ⊢ A ▻ B ] → [ Γ ⊢ A ] → [ Γ ⊢ B ]
-    [ci]     : ∀ {A Γ}     → [ Γ ⊢ A ▻ A ]
-    [ck]     : ∀ {A B Γ}   → [ Γ ⊢ A ▻ B ▻ A ]
-    [cs]     : ∀ {A B C Γ} → [ Γ ⊢ (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C ]
-    [box]    : ∀ {A Γ}     → [ ⌀ ⊢ A ] → [ Γ ⊢ □ A ]
-    [cdist]  : ∀ {A B Γ}   → [ Γ ⊢ □ (A ▻ B) ▻ □ A ▻ □ B ]
-    [cup]    : ∀ {A Γ}     → [ Γ ⊢ □ A ▻ □ □ A ]
-    [cdown]  : ∀ {A Γ}     → [ Γ ⊢ □ A ▻ A ]
-    [cpair]  : ∀ {A B Γ}   → [ Γ ⊢ A ▻ B ▻ A ∧ B ]
-    [cfst]   : ∀ {A B Γ}   → [ Γ ⊢ A ∧ B ▻ A ]
-    [csnd]   : ∀ {A B Γ}   → [ Γ ⊢ A ∧ B ▻ B ]
-    [tt]     : ∀ {Γ}       → [ Γ ⊢ ⊤ ]
+    _[⊢]_   : Cx Ty → Ty → Set
+    mono[⊢] : ∀ {A Γ Γ′}  → Γ ⊆ Γ′ → Γ [⊢] A → Γ′ [⊢] A
+    [var]    : ∀ {A Γ}     → A ∈ Γ → Γ [⊢] A
+    [app]    : ∀ {A B Γ}   → Γ [⊢] A ▻ B → Γ [⊢] A → Γ [⊢] B
+    [ci]     : ∀ {A Γ}     → Γ [⊢] A ▻ A
+    [ck]     : ∀ {A B Γ}   → Γ [⊢] A ▻ B ▻ A
+    [cs]     : ∀ {A B C Γ} → Γ [⊢] (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
+    [box]    : ∀ {A Γ}     → ⌀ [⊢] A → Γ [⊢] □ A
+    [cdist]  : ∀ {A B Γ}   → Γ [⊢] □ (A ▻ B) ▻ □ A ▻ □ B
+    [cup]    : ∀ {A Γ}     → Γ [⊢] □ A ▻ □ □ A
+    [cdown]  : ∀ {A Γ}     → Γ [⊢] □ A ▻ A
+    [cpair]  : ∀ {A B Γ}   → Γ [⊢] A ▻ B ▻ A ∧ B
+    [cfst]   : ∀ {A B Γ}   → Γ [⊢] A ∧ B ▻ A
+    [csnd]   : ∀ {A B Γ}   → Γ [⊢] A ∧ B ▻ B
+    [tt]     : ∀ {Γ}       → Γ [⊢] ⊤
 
-  [_⊢_]⋆ : Cx Ty → Cx Ty → Set
-  [ Γ ⊢ ⌀ ]⋆     = 𝟙
-  [ Γ ⊢ Π , A ]⋆ = [ Γ ⊢ Π ]⋆ × [ Γ ⊢ A ]
+  infix 3 _[⊢]⋆_
+  _[⊢]⋆_ : Cx Ty → Cx Ty → Set
+  Γ [⊢]⋆ ⌀     = 𝟙
+  Γ [⊢]⋆ Π , A = Γ [⊢]⋆ Π × Γ [⊢] A
 
 open Model {{…}} public
 
@@ -43,9 +44,9 @@ open Model {{…}} public
 module _ {{_ : Model}} where
   infix 3 _⊩_
   _⊩_ : Cx Ty → Ty → Set
-  Γ ⊩ α P   = [ Γ ⊢ α P ] × Γ ⊩ᵅ P
-  Γ ⊩ A ▻ B = ∀ {Γ′} → Γ ⊆ Γ′ → [ Γ′ ⊢ A ▻ B ] × (Γ′ ⊩ A → Γ′ ⊩ B)
-  Γ ⊩ □ A   = ∀ {Γ′} → Γ ⊆ Γ′ → [ Γ′ ⊢ □ A ] × Γ′ ⊩ A
+  Γ ⊩ α P   = Γ [⊢] α P × Γ ⊩ᵅ P
+  Γ ⊩ A ▻ B = ∀ {Γ′} → Γ ⊆ Γ′ → Γ′ [⊢] A ▻ B × (Γ′ ⊩ A → Γ′ ⊩ B)
+  Γ ⊩ □ A   = ∀ {Γ′} → Γ ⊆ Γ′ → Γ′ [⊢] □ A × Γ′ ⊩ A
   Γ ⊩ A ∧ B = Γ ⊩ A × Γ ⊩ B
   Γ ⊩ ⊤    = 𝟙
 
@@ -73,27 +74,28 @@ module _ {{_ : Model}} where
 -- Completeness with respect to the syntax representation in a particular model.
 
 module _ {{_ : Model}} where
-  reify[] : ∀ {A Γ} → Γ ⊩ A → [ Γ ⊢ A ]
-  reify[] {α P}   (t , s) = t
-  reify[] {A ▻ B} s       = let t , f = s refl⊆ in t
-  reify[] {□ A}   s       = let t , f = s refl⊆ in t
-  reify[] {A ∧ B} (a , b) = [app] ([app] [cpair] (reify[] {A} a)) (reify[] {B} b)
-  reify[] {⊤}    ∙       = [tt]
+  reifyʳ : ∀ {A Γ} → Γ ⊩ A → Γ [⊢] A
+  reifyʳ {α P}   (t , s) = t
+  reifyʳ {A ▻ B} s       = let t , f = s refl⊆ in t
+  reifyʳ {□ A}   s       = let t , f = s refl⊆ in t
+  reifyʳ {A ∧ B} (a , b) = [app] ([app] [cpair] (reifyʳ {A} a)) (reifyʳ {B} b)
+  reifyʳ {⊤}    ∙       = [tt]
 
-  reify[]⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → [ Γ ⊢ Π ]⋆
-  reify[]⋆ {⌀}     ∙        = ∙
-  reify[]⋆ {Π , A} (ts , t) = reify[]⋆ ts , reify[] t
+  reifyʳ⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → Γ [⊢]⋆ Π
+  reifyʳ⋆ {⌀}     ∙        = ∙
+  reifyʳ⋆ {Π , A} (ts , t) = reifyʳ⋆ ts , reifyʳ t
 
 
 -- Additional useful equipment.
 
 module _ {{_ : Model}} where
   _⟪$⟫_ : ∀ {A B Γ} → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ B
-  s ⟪$⟫ a = let t , f = s refl⊆ in f a
+  s ⟪$⟫ a = let t , f = s refl⊆
+            in  f a
 
   ⟪const⟫ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B ▻ A
   ⟪const⟫ {A} a η = let a′ = mono⊩ {A} η a
-                    in  [app] [ck] (reify[] a′) , const a′
+                    in  [app] [ck] (reifyʳ a′) , const a′
 
   ⟪ap⟫ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ C
   ⟪ap⟫ s₁ s₂ a = let t , f = s₁ refl⊆
@@ -119,18 +121,19 @@ module _ {{_ : Model}} where
   -- TODO: Report bug.
   _⟪◎⟫′_ : ∀ {A B Γ} → Γ ⊩ □ (A ▻ B) → Γ ⊩ □ A ▻ □ B
   _⟪◎⟫′_ {A} {B} s η = let s′ = mono⊩ {□ (A ▻ B)} η s
-                       in  [app] [cdist] (reify[] (λ {Γ′} η′ → s′ η′ )) , _⟪◎⟫_ s′
+                       in  [app] [cdist] (reifyʳ (λ {Γ′} η′ → s′ η′ )) , _⟪◎⟫_ s′
 
   ⟪⇑⟫ : ∀ {A Γ} → Γ ⊩ □ A → Γ ⊩ □ □ A
   ⟪⇑⟫ s η = let t , a = s η
             in  [app] [cup] t , λ η′ → s (trans⊆ η η′)
 
   ⟪⇓⟫ : ∀ {A Γ} → Γ ⊩ □ A → Γ ⊩ A
-  ⟪⇓⟫ s = let p , a = s refl⊆ in a
+  ⟪⇓⟫ s = let p , a = s refl⊆
+          in  a
 
   _⟪,⟫′_ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B ▻ A ∧ B
   _⟪,⟫′_ {A} a η = let a′ = mono⊩ {A} η a
-                   in  [app] [cpair] (reify[] a′) , _,_ a′
+                   in  [app] [cpair] (reifyʳ a′) , _,_ a′
 
 
 -- Forcing in a particular model, for sequents.

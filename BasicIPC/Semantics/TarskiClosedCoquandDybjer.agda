@@ -18,7 +18,7 @@ open Model {{…}} public
 
 
 
-module SyntacticComponent
+module ImplicitSyntax
     ([⊢]_ : Ty → Set)
   where
 

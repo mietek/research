@@ -7,7 +7,7 @@ open import BasicIS4.Syntax.Common public
 
 
 
-module SyntacticComponent
+module Syntax
     (_⊢_   : Cx Ty → Ty → Set)
     (mono⊢ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A)
     (up     : ∀ {A Γ} → Γ ⊢ (□ A) → Γ ⊢ (□ □ A))

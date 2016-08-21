@@ -1,11 +1,11 @@
--- Kripke-style semantics, after Alechina-Mendler-de Paiva-Ritter.
+-- Basic Kripke-style semantics, after Ewald, Servi, and Plotkin-Stirling, for soundness only.
 
-module BasicIS4.Semantics.KripkeAlechinaEtAl where
+module BasicIS4.Semantics.BasicKripkeEwald where
 
 open import BasicIS4.Syntax.Common public
 
 
--- Intuitionistic modal Kripke models, with Alechina et al. frame conditions.
+-- Intuitionistic modal Kripke models, with Ewald frame conditions.
 
 record Model : Set₁ where
   infix 3 _⊩ᵅ_
@@ -34,6 +34,26 @@ record Model : Set₁ where
 
   _R⨾≤_ : World → World → Set
   _R⨾≤_ = _R_ ⨾ _≤_
+
+  _≤⊓R_ : World → World → Set
+  _≤⊓R_ = _≤_ ⊓ _R_
+
+  _≤⊔R_ : World → World → Set
+  _≤⊔R_ = _≤_ ⊔ _R_
+
+
+  -- Infimum-to-supremum condition.
+  --
+  --   w′          →   w′      v′
+  --   ●           →   ●───R───◌
+  --   │           →           │
+  --   ≤  ξ,ζ      →           ≤
+  --   │           →           │
+  --   ◌───R───●   →           ●
+  --   w       v   →           v
+
+  field
+    ≤⊓R→≤⊔R : ∀ {v w′} → w′ ≤⊓R v → v ≤⊔R w′
 
 
   -- Minor brilliance condition.
@@ -119,6 +139,21 @@ module _ {{_ : Model}} where
 
   ⟪ap⟫ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C → w ⊩ A ▻ B → w ⊩ A → w ⊩ C
   ⟪ap⟫ {A} {B} {C} f g a = ⟪ap⟫′ {A} {B} {C} f refl≤ g refl≤ a
+
+  _⟪◎⟫′_ : ∀ {A B Γ} → Γ ⊩ □ (A ▻ B) → Γ ⊩ □ A ▻ □ B
+  _⟪◎⟫′_ s₁ ξ s₂ ξ′ ζ = let f = s₁ (trans≤ ξ ξ′) ζ refl≤
+                            a = s₂ ξ′ ζ
+                        in  f a
+
+  _⟪◎⟫_ : ∀ {A B Γ} → Γ ⊩ □ (A ▻ B) → Γ ⊩ □ A → Γ ⊩ □ B
+  _⟪◎⟫_ {A} {B} s₁ s₂ ζ = _⟪◎⟫′_ {A} {B} s₁ refl≤ s₂ ζ
+
+  ⟪⇑⟫ : ∀ {A Γ} → Γ ⊩ □ A → Γ ⊩ □ □ A
+  ⟪⇑⟫ s ξ ζ ξ′ ζ′ = let _ , (ξ″ , ζ″) = trans≤⨾R (_ , (ξ , ζ)) (_ , (ξ′ , ζ′))
+                    in  s ξ″ ζ″
+
+  ⟪⇓⟫ : ∀ {A Γ} → Γ ⊩ □ A → Γ ⊩ A
+  ⟪⇓⟫ s = s refl≤ reflR
 
   _⟪,⟫′_ : ∀ {A B w} → w ⊩ A → w ⊩ B ▻ A ∧ B
   _⟪,⟫′_ {A} {B} a ξ b = let a′ = mono⊩ {A} ξ a

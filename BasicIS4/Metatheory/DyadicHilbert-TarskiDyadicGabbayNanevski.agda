@@ -3,7 +3,7 @@ module BasicIS4.Metatheory.DyadicHilbert-TarskiDyadicGabbayNanevski where
 open import BasicIS4.Syntax.DyadicHilbert public
 open import BasicIS4.Semantics.TarskiDyadicGabbayNanevski public
 
-open SyntacticComponent (_⁏_⊢_) (mono⊢) (mmono⊢) public
+open ImplicitSyntax (_⁏_⊢_) (mono⊢) (mmono⊢) public
 
 
 -- Completeness with respect to a particular model.
@@ -66,10 +66,9 @@ eval ci        γ δ = const₂ (ci , id)
 eval ck        γ δ = const₂ (ck , ⟪const⟫)
 eval cs        γ δ = const₂ (cs , ⟪ap⟫′)
 eval (mvar i)  γ δ = mlookup i δ
-eval (box t)   γ δ = λ η θ →
-                       let δ′ = mono²⊩⋆ (η , θ) δ
-                       in  mmulticut (reify⋆ δ′) (box t) ,
-                             eval t ∙ δ′
+eval (box t)   γ δ = λ η θ → let δ′ = mono²⊩⋆ (η , θ) δ
+                              in  mmulticut (reify⋆ δ′) (box t) ,
+                                    eval t ∙ δ′
 eval cdist     γ δ = const₂ (cdist , _⟪◎⟫′_)
 eval cup       γ δ = const₂ (cup , ⟪⇑⟫)
 eval cdown     γ δ = const₂ (cdown , ⟪⇓⟫)
@@ -96,32 +95,30 @@ private
 
 -- Soundness with respect to the canonical model.
 
-reflect : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊩ A
-reflect {α P}   t = t , t
-reflect {A ▻ B} t = λ η θ →
-                      let t′ = mono²⊢ (η , θ) t
-                      in  t′ , λ a → reflect (app t′ (reify a))
-reflect {□ A}   t = λ η θ →
-                      let t′ = mono²⊢ (η , θ) t
-                      in  t′ , reflect (down t′)
-reflect {A ∧ B} t = reflect (fst t) , reflect (snd t)
-reflect {⊤}    t = ∙
+reflectᶜ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊩ A
+reflectᶜ {α P}   t = t , t
+reflectᶜ {A ▻ B} t = λ η θ → let t′ = mono²⊢ (η , θ) t
+                              in  t′ , λ a → reflectᶜ (app t′ (reify a))
+reflectᶜ {□ A}   t = λ η θ → let t′ = mono²⊢ (η , θ) t
+                              in  t′ , reflectᶜ (down t′)
+reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
+reflectᶜ {⊤}    t = ∙
 
-reflect⋆ : ∀ {Π Γ Δ} → Γ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ ⊩⋆ Π
-reflect⋆ {⌀}     ∙        = ∙
-reflect⋆ {Π , A} (ts , t) = reflect⋆ ts , reflect t
+reflectᶜ⋆ : ∀ {Π Γ Δ} → Γ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ ⊩⋆ Π
+reflectᶜ⋆ {⌀}     ∙        = ∙
+reflectᶜ⋆ {Π , A} (ts , t) = reflectᶜ⋆ ts , reflectᶜ t
 
 
 -- Reflexivity and transitivity.
 
 refl⊩⋆ : ∀ {Γ Δ} → Γ ⁏ Δ ⊩⋆ Γ
-refl⊩⋆ = reflect⋆ refl⊢⋆
+refl⊩⋆ = reflectᶜ⋆ refl⊢⋆
 
 mrefl⊩⋆ : ∀ {Γ Δ} → Γ ⁏ Δ ⊩⋆ □⋆ Δ
-mrefl⊩⋆ = reflect⋆ mrefl⊢⋆
+mrefl⊩⋆ = reflectᶜ⋆ mrefl⊢⋆
 
 trans⊩⋆ : ∀ {Γ Γ′ Δ Δ′ Π} → Γ ⁏ Δ ⊩⋆ Γ′ ⧺ (□⋆ Δ′) → Γ′ ⁏ Δ′ ⊩⋆ Π → Γ ⁏ Δ ⊩⋆ Π
-trans⊩⋆ ts us = reflect⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
+trans⊩⋆ ts us = reflectᶜ⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
 
 
 -- Completeness with respect to all models, or quotation.

@@ -3,10 +3,10 @@ module BasicIS4.Metatheory.Hilbert-TarskiClosedGabbayNanevski where
 open import BasicIS4.Syntax.Hilbert public
 open import BasicIS4.Semantics.TarskiClosedGabbayNanevski public
 
-open SyntacticComponent (⌀ ⊢_) public
+open ImplicitSyntax (⌀ ⊢_) public
 
 
--- Completeness with respect to a particular model.
+-- Completeness with respect to a particular model, for closed terms only.
 
 module _ {{_ : Model}} where
   reify : ∀ {A} → ⊩ A → ⌀ ⊢ A
@@ -70,26 +70,26 @@ eval tt        γ = ∙
 
 -- Correctness of evaluation with respect to conversion.
 
-check : ∀ {{_ : Model}} {A Γ} {t t′ : Γ ⊢ A} → t ⋙ t′ → eval t ≡ eval t′
-check refl⋙                   = refl
-check (trans⋙ p q)            = trans (check p) (check q)
-check (sym⋙ p)                = sym (check p)
-check (congapp⋙ p q)          = cong₂ _⟦$⟧_ (check p) (check q)
-check (congi⋙ p)              = cong id (check p)
-check (congk⋙ p q)            = cong₂ const (check p) (check q)
-check (congs⋙ p q r)          = cong₃ ⟦ap⟧ (check p) (check q) (check r)
-check (congdist⋙ p q)         = cong₂ _⟦◎⟧_ (check p) (check q)
-check (congup⋙ p)             = cong ⟦⇑⟧ (check p)
-check (congdown⋙ p)           = cong ⟦⇓⟧ (check p)
-check (congpair⋙ {A} {B} p q) = cong₂ (_⟦,⟧_ {A} {B}) (check p) (check q)
-check (congfst⋙ {A} {B} p)    = cong (⟦π₁⟧ {A} {B}) (check p)
-check (congsnd⋙ {A} {B} p)    = cong (⟦π₂⟧ {A} {B}) (check p)
-check beta▻ₖ⋙                 = refl
-check beta▻ₛ⋙                 = refl
-check beta∧₁⋙                 = refl
-check beta∧₂⋙                 = refl
-check eta∧⋙                   = refl
-check eta⊤⋙                  = refl
+eval✓ : ∀ {{_ : Model}} {A Γ} {t t′ : Γ ⊢ A} → t ⋙ t′ → eval t ≡ eval t′
+eval✓ refl⋙                   = refl
+eval✓ (trans⋙ p q)            = trans (eval✓ p) (eval✓ q)
+eval✓ (sym⋙ p)                = sym (eval✓ p)
+eval✓ (congapp⋙ p q)          = cong₂ _⟦$⟧_ (eval✓ p) (eval✓ q)
+eval✓ (congi⋙ p)              = cong id (eval✓ p)
+eval✓ (congk⋙ p q)            = cong₂ const (eval✓ p) (eval✓ q)
+eval✓ (congs⋙ p q r)          = cong₃ ⟦ap⟧ (eval✓ p) (eval✓ q) (eval✓ r)
+eval✓ (congdist⋙ p q)         = cong₂ _⟦◎⟧_ (eval✓ p) (eval✓ q)
+eval✓ (congup⋙ p)             = cong ⟦⇑⟧ (eval✓ p)
+eval✓ (congdown⋙ p)           = cong ⟦⇓⟧ (eval✓ p)
+eval✓ (congpair⋙ {A} {B} p q) = cong₂ (_⟦,⟧_ {A} {B}) (eval✓ p) (eval✓ q)
+eval✓ (congfst⋙ {A} {B} p)    = cong (⟦π₁⟧ {A} {B}) (eval✓ p)
+eval✓ (congsnd⋙ {A} {B} p)    = cong (⟦π₂⟧ {A} {B}) (eval✓ p)
+eval✓ beta▻ₖ⋙                 = refl
+eval✓ beta▻ₛ⋙                 = refl
+eval✓ beta∧₁⋙                 = refl
+eval✓ beta∧₂⋙                 = refl
+eval✓ eta∧⋙                   = refl
+eval✓ eta⊤⋙                  = refl
 
 
 -- The canonical model.
@@ -102,13 +102,13 @@ private
       }
 
 
--- Completeness with respect to all models, or quotation.
+-- Completeness with respect to all models, or quotation, for closed terms only.
 
 quot₀ : ∀ {A} → ⌀ ⊨ A → ⌀ ⊢ A
 quot₀ t = reify (t ∙)
 
 
--- Normalisation by evaluation.
+-- Normalisation by evaluation, for closed terms only.
 
 norm₀ : ∀ {A} → ⌀ ⊢ A → ⌀ ⊢ A
 norm₀ = quot₀ ∘ eval

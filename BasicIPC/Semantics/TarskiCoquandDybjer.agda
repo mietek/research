@@ -19,7 +19,7 @@ open Model {{…}} public
 
 
 
-module SyntacticComponent
+module ImplicitSyntax
     (_[⊢]_   : Cx Ty → Ty → Set)
     (mono[⊢] : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ [⊢] A → Γ′ [⊢] A)
   where
@@ -59,7 +59,8 @@ module SyntacticComponent
 
   module _ {{_ : Model}} where
     _⟪$⟫_ : ∀ {A B Γ} → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ B
-    s ⟪$⟫ a = let t , f = s refl⊆ in f a
+    s ⟪$⟫ a = let t , f = s refl⊆
+              in  f a
 
     ⟪ap⟫ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ C
     ⟪ap⟫ s s′ a = let t , f = s refl⊆

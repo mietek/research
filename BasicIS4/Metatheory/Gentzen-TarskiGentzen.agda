@@ -8,26 +8,26 @@ open import BasicIS4.Semantics.TarskiGentzen public
 
 module _ {{_ : Model}} where
   mutual
-    reflect[] : ∀ {A Γ} → Γ ⊢ A → [ Γ ⊢ A ]
-    reflect[] (var i)         = [var] i
-    reflect[] (lam t)         = [lam] (reflect[] t)
-    reflect[] (app t u)       = [app] (reflect[] t) (reflect[] u)
-    reflect[] (multibox ts u) = [multibox] ([⊢]⋆→[⊢⋆] (reflect[]⋆ ts)) (reflect[] u)
-    reflect[] (down t)        = [down] (reflect[] t)
-    reflect[] (pair t u)      = [pair] (reflect[] t) (reflect[] u)
-    reflect[] (fst t)         = [fst] (reflect[] t)
-    reflect[] (snd t)         = [snd] (reflect[] t)
-    reflect[] tt              = [tt]
+    [_] : ∀ {A Γ} → Γ ⊢ A → Γ [⊢] A
+    [ var i ]         = [var] i
+    [ lam t ]         = [lam] [ t ]
+    [ app t u ]       = [app] [ t ] [ u ]
+    [ multibox ts u ] = [multibox] ([⊢]⋆→[⊢⋆] [ ts ]⋆) [ u ]
+    [ down t ]        = [down] [ t ]
+    [ pair t u ]      = [pair] [ t ] [ u ]
+    [ fst t ]         = [fst] [ t ]
+    [ snd t ]         = [snd] [ t ]
+    [ tt ]            = [tt]
 
-    reflect[]⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → [ Γ ⊢ Π ]⋆
-    reflect[]⋆ {⌀}     ∙        = ∙
-    reflect[]⋆ {Π , A} (ts , t) = reflect[]⋆ ts , reflect[] t
+    [_]⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ [⊢]⋆ Π
+    [_]⋆ {⌀}     ∙        = ∙
+    [_]⋆ {Π , A} (ts , t) = [ ts ]⋆ , [ t ]
 
 
 -- Additional useful equipment.
 
 module _ {{_ : Model}} where
-  [multicut] : ∀ {Π A Γ} → [ Γ ⊢ Π ]⋆ → [ Π ⊢ A ] → [ Γ ⊢ A ]
+  [multicut] : ∀ {Π A Γ} → Γ [⊢]⋆ Π → Π [⊢] A → Γ [⊢] A
   [multicut] {⌀}     ∙        u = mono[⊢] bot⊆ u
   [multicut] {Π , B} (ts , t) u = [app] ([multicut] ts ([lam] u)) t
 
@@ -37,15 +37,13 @@ module _ {{_ : Model}} where
 mutual
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
   eval (var i)         γ = lookup i γ
-  eval (lam t)         γ = λ η →
-                             let γ′ = mono⊩⋆ η γ
-                             in  [multicut] (reify[]⋆ γ′) (reflect[] (lam t)) , λ a →
-                                   eval t (γ′ , a)
+  eval (lam t)         γ = λ η → let γ′ = mono⊩⋆ η γ
+                                  in  [multicut] (reifyʳ⋆ γ′) [ lam t ] , λ a →
+                                        eval t (γ′ , a)
   eval (app t u)       γ = eval t γ ⟪$⟫ eval u γ
-  eval (multibox ts u) γ = λ η →
-                             let γ′ = mono⊩⋆ η γ
-                             in  [multicut] (reify[]⋆ γ′) (reflect[] (multibox ts u)) ,
-                                   eval u (eval⋆ ts γ′)
+  eval (multibox ts u) γ = λ η → let γ′ = mono⊩⋆ η γ
+                                  in  [multicut] (reifyʳ⋆ γ′) [ multibox ts u ] ,
+                                        eval u (eval⋆ ts γ′)
   eval (down t)        γ = ⟪⇓⟫ (eval t γ)
   eval (pair t u)      γ = eval t γ , eval u γ
   eval (fst t)         γ = π₁ (eval t γ)
@@ -68,8 +66,8 @@ private
     canon = record
       { _⊩ᵅ_      = λ Γ P → Γ ⊢ α P
       ; mono⊩ᵅ    = mono⊢
-      ; [_⊢_]     = _⊢_
-      ; [_⊢⋆_]    = _⊢⋆_
+      ; _[⊢]_     = _⊢_
+      ; _[⊢⋆]_    = _⊢⋆_
       ; mono[⊢]   = mono⊢
       ; [var]      = var
       ; [lam]      = lam
@@ -88,46 +86,44 @@ private
 -- Soundness and completeness with respect to the canonical model.
 
 mutual
-  reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
-  reflect {α P}   t = t , t
-  reflect {A ▻ B} t = λ η →
-                        let t′ = mono⊢ η t
-                        in  t′ , λ a → reflect (app t′ (reify a))
-  reflect {□ A}   t = λ η →
-                        let t′ = mono⊢ η t
-                        in  t′ , reflect (down t′)
-  reflect {A ∧ B} t = reflect (fst t) , reflect (snd t)
-  reflect {⊤}    t = ∙
+  reflectᶜ : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
+  reflectᶜ {α P}   t = t , t
+  reflectᶜ {A ▻ B} t = λ η → let t′ = mono⊢ η t
+                              in  t′ , λ a → reflectᶜ (app t′ (reifyᶜ a))
+  reflectᶜ {□ A}   t = λ η → let t′ = mono⊢ η t
+                              in  t′ , reflectᶜ (down t′)
+  reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
+  reflectᶜ {⊤}    t = ∙
 
-  reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
-  reify {α P}   (t , s) = t
-  reify {A ▻ B} s       = let t , f = s refl⊆ in t
-  reify {□ A}   s       = let t , a = s refl⊆ in t
-  reify {A ∧ B} (a , b) = pair (reify a) (reify b)
-  reify {⊤}    ∙       = tt
+  reifyᶜ : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
+  reifyᶜ {α P}   (t , s) = t
+  reifyᶜ {A ▻ B} s       = let t , f = s refl⊆ in t
+  reifyᶜ {□ A}   s       = let t , a = s refl⊆ in t
+  reifyᶜ {A ∧ B} (a , b) = pair (reifyᶜ a) (reifyᶜ b)
+  reifyᶜ {⊤}    ∙       = tt
 
-reflect⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊩⋆ Π
-reflect⋆ {⌀}     ∙        = ∙
-reflect⋆ {Π , A} (ts , t) = reflect⋆ ts , reflect t
+reflectᶜ⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊩⋆ Π
+reflectᶜ⋆ {⌀}     ∙        = ∙
+reflectᶜ⋆ {Π , A} (ts , t) = reflectᶜ⋆ ts , reflectᶜ t
 
-reify⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → Γ ⊢⋆ Π
-reify⋆ {⌀}     ∙        = ∙
-reify⋆ {Π , A} (ts , t) = reify⋆ ts , reify t
+reifyᶜ⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → Γ ⊢⋆ Π
+reifyᶜ⋆ {⌀}     ∙        = ∙
+reifyᶜ⋆ {Π , A} (ts , t) = reifyᶜ⋆ ts , reifyᶜ t
 
 
 -- Reflexivity and transitivity.
 
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
-refl⊩⋆ = reflect⋆ refl⊢⋆
+refl⊩⋆ = reflectᶜ⋆ refl⊢⋆
 
 trans⊩⋆ : ∀ {Γ Γ′ Γ″} → Γ ⊩⋆ Γ′ → Γ′ ⊩⋆ Γ″ → Γ ⊩⋆ Γ″
-trans⊩⋆ ts us = reflect⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
+trans⊩⋆ ts us = reflectᶜ⋆ (trans⊢⋆ (reifyᶜ⋆ ts) (reifyᶜ⋆ us))
 
 
 -- Completeness with respect to all models, or quotation.
 
 quot : ∀ {A Γ} → Γ ⊨ A → Γ ⊢ A
-quot s = reify (s refl⊩⋆)
+quot s = reifyᶜ (s refl⊩⋆)
 
 
 -- Normalisation by evaluation.

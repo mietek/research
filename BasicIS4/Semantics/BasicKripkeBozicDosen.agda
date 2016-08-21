@@ -1,11 +1,11 @@
--- Kripke-style semantics, after Ono.
+-- Basic Kripke-style semantics, after Božić-Došen, for soundness only.
 
-module BasicIS4.Semantics.KripkeOno where
+module BasicIS4.Semantics.BasicKripkeBozicDosen where
 
 open import BasicIS4.Syntax.Common public
 
 
--- Intuitionistic modal Kripke models, with Ono frame conditions.
+-- Intuitionistic modal Kripke models, with Božić-Došen frame conditions.
 
 record Model : Set₁ where
   infix 3 _⊩ᵅ_
@@ -36,20 +36,6 @@ record Model : Set₁ where
   _R⨾≤_ = _R_ ⨾ _≤_
 
 
-  -- Persistence condition.
-  --
-  --   w′      v′  →           v′
-  --   ◌───R───●   →           ●
-  --   │           →         ╱
-  --   ≤  ξ,ζ      →       R
-  --   │           →     ╱
-  --   ●           →   ●
-  --   w           →   w
-
-  field
-    ≤⨾R→R : ∀ {v′ w} → w ≤⨾R v′ → w R v′
-
-
   -- Minor persistence condition.
   --
   --   w′      v′  →           v′
@@ -72,8 +58,8 @@ record Model : Set₁ where
   --   ●───R───◌           →   ●───────R───────◌
   --   w       v           →   w               v″
 
-  ≤⨾R→R⨾≤ : ∀ {v′ w} → w ≤⨾R v′ → w R⨾≤ v′
-  ≤⨾R→R⨾≤ {v′} ξ,ζ = v′ , (≤⨾R→R ξ,ζ , refl≤)
+  field
+    ≤⨾R→R⨾≤ : ∀ {v′ w} → w ≤⨾R v′ → w R⨾≤ v′
 
   reflR⨾≤ : ∀ {w} → w R⨾≤ w
   reflR⨾≤ {w} = w , (reflR , refl≤)
@@ -81,9 +67,6 @@ record Model : Set₁ where
   transR⨾≤ : ∀ {w′ w w″} → w R⨾≤ w′ → w′ R⨾≤ w″ → w R⨾≤ w″
   transR⨾≤ {w′} (v , (ζ , ξ)) (v′ , (ζ′ , ξ′)) = let v″ , (ζ″ , ξ″) = ≤⨾R→R⨾≤ (w′ , (ξ , ζ′))
                                                  in  v″ , (transR ζ ζ″ , trans≤ ξ″ ξ′)
-
-  ≤→R : ∀ {v′ w} → w ≤ v′ → w R v′
-  ≤→R {v′} ξ = ≤⨾R→R (v′ , (ξ , reflR))
 
 open Model {{…}} public
 
@@ -111,7 +94,8 @@ module _ {{_ : Model}} where
   mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
   mono⊩ {α P}   ξ s       = mono⊩ᵅ ξ s
   mono⊩ {A ▻ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
-  mono⊩ {□ A}   ξ □f      = λ ζ → □f (transR (≤→R ξ) ζ)
+  mono⊩ {□ A}   ξ □f      = λ ζ → let v , (ζ′ , ξ′) = ≤⨾R→R⨾≤ (_ , (ξ , ζ))
+                                    in  mono⊩ {A} ξ′ (□f ζ′)
   mono⊩ {A ∧ B} ξ (a , b) = mono⊩ {A} ξ a , mono⊩ {B} ξ b
   mono⊩ {⊤}    ξ ∙       = ∙
 
@@ -136,6 +120,21 @@ module _ {{_ : Model}} where
 
   ⟪ap⟫ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C → w ⊩ A ▻ B → w ⊩ A → w ⊩ C
   ⟪ap⟫ {A} {B} {C} f g a = ⟪ap⟫′ {A} {B} {C} f refl≤ g refl≤ a
+
+  _⟪◎⟫′_ : ∀ {A B Γ} → Γ ⊩ □ (A ▻ B) → Γ ⊩ □ A ▻ □ B
+  _⟪◎⟫′_ s₁ ξ s₂ ζ = let _ , (ζ′ , ξ′) = ≤⨾R→R⨾≤ (_ , (ξ , ζ))
+                         f             = s₁ ζ′ ξ′
+                         a             = s₂ ζ
+                     in  f a
+
+  _⟪◎⟫_ : ∀ {A B Γ} → Γ ⊩ □ (A ▻ B) → Γ ⊩ □ A → Γ ⊩ □ B
+  _⟪◎⟫_ {A} {B} s₁ s₂ ζ = _⟪◎⟫′_ {A} {B} s₁ refl≤ s₂ ζ
+
+  ⟪⇑⟫ : ∀ {A Γ} → Γ ⊩ □ A → Γ ⊩ □ □ A
+  ⟪⇑⟫ s ζ ζ′ = s (transR ζ ζ′)
+
+  ⟪⇓⟫ : ∀ {A Γ} → Γ ⊩ □ A → Γ ⊩ A
+  ⟪⇓⟫ s = s reflR
 
   _⟪,⟫′_ : ∀ {A B w} → w ⊩ A → w ⊩ B ▻ A ∧ B
   _⟪,⟫′_ {A} {B} a ξ b = let a′ = mono⊩ {A} ξ a

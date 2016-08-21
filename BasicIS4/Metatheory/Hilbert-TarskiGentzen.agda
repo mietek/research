@@ -1,26 +1,18 @@
-module BasicIS4.Metatheory.Hilbert-TarskiHilbert where
+module BasicIS4.Metatheory.Hilbert-TarskiGentzen where
 
 open import BasicIS4.Syntax.Hilbert public
-open import BasicIS4.Semantics.TarskiHilbert public
+open import BasicIS4.Semantics.TarskiGentzen public
+
+import BasicIS4.Metatheory.Gentzen-TarskiGentzen as G
+
+open import BasicIS4.Syntax.Translation using (h→g)
 
 
 -- Soundness with respect to the syntax representation in a particular model.
 
 module _ {{_ : Model}} where
   [_] : ∀ {A Γ} → Γ ⊢ A → Γ [⊢] A
-  [ var i ]   = [var] i
-  [ app t u ] = [app] [ t ] [ u ]
-  [ ci ]      = [ci]
-  [ ck ]      = [ck]
-  [ cs ]      = [cs]
-  [ box t ]   = [box] [ t ]
-  [ cdist ]   = [cdist]
-  [ cup ]     = [cup]
-  [ cdown ]   = [cdown]
-  [ cpair ]   = [cpair]
-  [ cfst ]    = [cfst]
-  [ csnd ]    = [csnd]
-  [ tt ]      = [tt]
+  [ t ] = G.[ h→g t ]
 
 
 -- Soundness with respect to all models, or evaluation.
@@ -28,16 +20,16 @@ module _ {{_ : Model}} where
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)   γ = lookup i γ
 eval (app t u) γ = eval t γ ⟪$⟫ eval u γ
-eval ci        γ = const ([ci] , id)
-eval ck        γ = const ([ck] , ⟪const⟫)
-eval cs        γ = const ([cs] , ⟪ap⟫′)
+eval ci        γ = const ([ ci ] , id)
+eval ck        γ = const ([ ck ] , ⟪const⟫)
+eval cs        γ = const ([ cs ] , ⟪ap⟫′)
 eval (box t)   γ = const ([ box t ] , eval t ∙)
-eval cdist     γ = const ([cdist] , _⟪◎⟫′_)
-eval cup       γ = const ([cup] , ⟪⇑⟫)
-eval cdown     γ = const ([cdown] , ⟪⇓⟫)
-eval cpair     γ = const ([cpair] , _⟪,⟫′_)
-eval cfst      γ = const ([cfst] , π₁)
-eval csnd      γ = const ([csnd] , π₂)
+eval cdist     γ = const ([ cdist ] , _⟪◎⟫′_)
+eval cup       γ = const ([ cup ] , ⟪⇑⟫)
+eval cdown     γ = const ([ cdown ] , ⟪⇓⟫)
+eval cpair     γ = const ([ cpair ] , _⟪,⟫′_)
+eval cfst      γ = const ([ cfst ] , π₁)
+eval csnd      γ = const ([ csnd ] , π₂)
 eval tt        γ = ∙
 
 
@@ -50,23 +42,22 @@ private
   instance
     canon : Model
     canon = record
-      { _⊩ᵅ_    = λ Γ P → Γ ⊢ α P
-      ; mono⊩ᵅ  = mono⊢
-      ; _[⊢]_   = _⊢_
-      ; mono[⊢] = mono⊢
-      ; [var]    = var
-      ; [app]    = app
-      ; [ci]     = ci
-      ; [ck]     = ck
-      ; [cs]     = cs
-      ; [box]    = box
-      ; [cdist]  = cdist
-      ; [cup]    = cup
-      ; [cdown]  = cdown
-      ; [cpair]  = cpair
-      ; [cfst]   = cfst
-      ; [csnd]   = csnd
-      ; [tt]     = tt
+      { _⊩ᵅ_      = λ Γ P → Γ ⊢ α P
+      ; mono⊩ᵅ    = mono⊢
+      ; _[⊢]_     = _⊢_
+      ; _[⊢⋆]_    = _⊢⋆_
+      ; mono[⊢]   = mono⊢
+      ; [var]      = var
+      ; [lam]      = lam
+      ; [app]      = app
+      ; [multibox] = multibox
+      ; [down]     = down
+      ; [pair]     = pair
+      ; [fst]      = fst
+      ; [snd]      = snd
+      ; [tt]       = tt
+      ; top[⊢⋆]   = refl
+      ; pop[⊢⋆]   = refl
       }
 
 

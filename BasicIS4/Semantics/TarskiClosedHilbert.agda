@@ -8,25 +8,30 @@ open import BasicIS4.Syntax.Common public
 -- Tarski models.
 
 record Model : Set₁ where
-  infix 3 ⊩ᵅ_
+  infix 3 ⊩ᵅ_ [⊢]_
   field
     -- Forcing for atomic propositions.
     ⊩ᵅ_ : Atom → Set
 
     -- Hilbert-style closed syntax representation.
-    [_]     : Ty → Set
-    [app]   : ∀ {A B}   → [ A ▻ B ] → [ A ] → [ B ]
-    [ci]    : ∀ {A}     → [ A ▻ A ]
-    [ck]    : ∀ {A B}   → [ A ▻ B ▻ A ]
-    [cs]    : ∀ {A B C} → [ (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C ]
-    [box]   : ∀ {A}     → [ A ] → [ □ A ]
-    [cdist] : ∀ {A B}   → [ □ (A ▻ B) ▻ □ A ▻ □ B ]
-    [cup]   : ∀ {A}     → [ □ A ▻ □ □ A ]
-    [cdown] : ∀ {A}     → [ □ A ▻ A ]
-    [cpair] : ∀ {A B}   → [ A ▻ B ▻ A ∧ B ]
-    [cfst]  : ∀ {A B}   → [ A ∧ B ▻ A ]
-    [csnd]  : ∀ {A B}   → [ A ∧ B ▻ B ]
-    [tt]    : [ ⊤ ]
+    [⊢]_   : Ty → Set
+    [app]   : ∀ {A B}   → [⊢] A ▻ B → [⊢] A → [⊢] B
+    [ci]    : ∀ {A}     → [⊢] A ▻ A
+    [ck]    : ∀ {A B}   → [⊢] A ▻ B ▻ A
+    [cs]    : ∀ {A B C} → [⊢] (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
+    [box]   : ∀ {A}     → [⊢] A  → [⊢] □ A
+    [cdist] : ∀ {A B}   → [⊢] □ (A ▻ B) ▻ □ A ▻ □ B
+    [cup]   : ∀ {A}     → [⊢] □ A ▻ □ □ A
+    [cdown] : ∀ {A}     → [⊢] □ A ▻ A
+    [cpair] : ∀ {A B}   → [⊢] A ▻ B ▻ A ∧ B
+    [cfst]  : ∀ {A B}   → [⊢] A ∧ B ▻ A
+    [csnd]  : ∀ {A B}   → [⊢] A ∧ B ▻ B
+    [tt]    : [⊢] ⊤
+
+  infix 3 [⊢]⋆_
+  [⊢]⋆_ : Cx Ty → Set
+  [⊢]⋆ ⌀     = 𝟙
+  [⊢]⋆ Π , A = [⊢]⋆ Π × [⊢] A
 
 open Model {{…}} public
 
@@ -36,9 +41,9 @@ open Model {{…}} public
 module _ {{_ : Model}} where
   infix 3 ⊩_
   ⊩_ : Ty → Set
-  ⊩ α P   = [ α P ] × ⊩ᵅ P
-  ⊩ A ▻ B = [ A ▻ B ] × (⊩ A → ⊩ B)
-  ⊩ □ A   = [ □ A ] × ⊩ A
+  ⊩ α P   = [⊢] α P × ⊩ᵅ P
+  ⊩ A ▻ B = [⊢] A ▻ B × (⊩ A → ⊩ B)
+  ⊩ □ A   = [⊢] □ A × ⊩ A
   ⊩ A ∧ B = ⊩ A × ⊩ B
   ⊩ ⊤    = 𝟙
 
@@ -57,12 +62,17 @@ infix 3 ⊨_
 
 -- Completeness with respect to the syntax representation in a particular model.
 
-reify[] : ∀ {{_ : Model}} {A} → ⊩ A → [ A ]
-reify[] {α P}   (t , s) = t
-reify[] {A ▻ B} (t , f) = t
-reify[] {□ A}   (t , a) = t
-reify[] {A ∧ B} (a , b) = [app] ([app] [cpair] (reify[] {A} a)) (reify[] {B} b)
-reify[] {⊤}    ∙       = [tt]
+module _ {{_ : Model}} where
+  reifyʳ : ∀ {A} → ⊩ A → [⊢] A
+  reifyʳ {α P}   (t , s) = t
+  reifyʳ {A ▻ B} (t , f) = t
+  reifyʳ {□ A}   (t , a) = t
+  reifyʳ {A ∧ B} (a , b) = [app] ([app] [cpair] (reifyʳ {A} a)) (reifyʳ {B} b)
+  reifyʳ {⊤}    ∙       = [tt]
+
+  reifyʳ⋆ : ∀ {Π} → ⊩⋆ Π → [⊢]⋆ Π
+  reifyʳ⋆ {⌀}     ∙        = ∙
+  reifyʳ⋆ {Π , A} (ts , t) = reifyʳ⋆ ts , reifyʳ t
 
 
 -- Additional useful equipment.
@@ -72,20 +82,20 @@ module _ {{_ : Model}} where
   (t , f) ⟪$⟫ a = f a
 
   ⟪const⟫ : ∀ {A B} → ⊩ A → ⊩ B ▻ A
-  ⟪const⟫ a = [app] [ck] (reify[] a) , const a
+  ⟪const⟫ a = [app] [ck] (reifyʳ a) , const a
 
   ⟪ap⟫ : ∀ {A B C} → ⊩ A ▻ B ▻ C → ⊩ A ▻ B → ⊩ A → ⊩ C
   ⟪ap⟫ (t , f) (u , g) a = let (_ , h) = f a in h (g a)
 
   ⟪ap⟫′ : ∀ {A B C} → ⊩ A ▻ B ▻ C → ⊩ (A ▻ B) ▻ A ▻ C
-  ⟪ap⟫′ f = [app] [cs] (reify[] f) , λ g →
-              [app] ([app] [cs] (reify[] f)) (reify[] g) , ⟪ap⟫ f g
+  ⟪ap⟫′ f = [app] [cs] (reifyʳ f) , λ g →
+              [app] ([app] [cs] (reifyʳ f)) (reifyʳ g) , ⟪ap⟫ f g
 
   _⟪◎⟫_ : ∀ {A B} → ⊩ □ (A ▻ B) → ⊩ □ A → ⊩ □ B
   (t , f) ⟪◎⟫ (u , a) = [app] ([app] [cdist] t) u , f ⟪$⟫ a
 
   _⟪◎⟫′_ : ∀ {A B} → ⊩ □ (A ▻ B) → ⊩ □ A ▻ □ B
-  _⟪◎⟫′_ s = [app] [cdist] (reify[] s) , _⟪◎⟫_ s
+  _⟪◎⟫′_ s = [app] [cdist] (reifyʳ s) , _⟪◎⟫_ s
 
   ⟪⇑⟫ : ∀ {A} → ⊩ □ A → ⊩ □ □ A
   ⟪⇑⟫ (t , a) = [box] t , (t , a)
@@ -94,7 +104,7 @@ module _ {{_ : Model}} where
   ⟪⇓⟫ (t , a) = a
 
   _⟪,⟫′_ : ∀ {A B} → ⊩ A → ⊩ B ▻ A ∧ B
-  _⟪,⟫′_ a = [app] [cpair] (reify[] a) , _,_ a
+  _⟪,⟫′_ a = [app] [cpair] (reifyʳ a) , _,_ a
 
 
 -- Forcing in a particular model, for sequents.
@@ -127,7 +137,7 @@ module _ {{_ : Model}} where
   lookup top     (γ , a) = a
   lookup (pop i) (γ , b) = lookup i γ
 
-  ⟦λ⟧ : ∀ {A B Γ} → [ A ▻ B ] → ⊩ Γ , A ⇒ B → ⊩ Γ ⇒ A ▻ B
+  ⟦λ⟧ : ∀ {A B Γ} → [⊢] A ▻ B → ⊩ Γ , A ⇒ B → ⊩ Γ ⇒ A ▻ B
   ⟦λ⟧ t f γ = t , λ a → f (γ , a)
 
   _⟦$⟧_ : ∀ {A B Γ} → ⊩ Γ ⇒ A ▻ B → ⊩ Γ ⇒ A → ⊩ Γ ⇒ B

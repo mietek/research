@@ -7,27 +7,27 @@ open import BasicIS4.Semantics.TarskiDyadicHilbert public
 -- Soundness with respect to the syntax representation in a particular model.
 
 module _ {{_ : Model}} where
-  reflect[] : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → [ Γ ⁏ Δ ⊢ A ]
-  reflect[] (var i)   = [var] i
-  reflect[] (app t u) = [app] (reflect[] t) (reflect[] u)
-  reflect[] ci        = [ci]
-  reflect[] ck        = [ck]
-  reflect[] cs        = [cs]
-  reflect[] (mvar i)  = [mvar] i
-  reflect[] (box t)   = [box] (reflect[] t)
-  reflect[] cdist     = [cdist]
-  reflect[] cup       = [cup]
-  reflect[] cdown     = [cdown]
-  reflect[] cpair     = [cpair]
-  reflect[] cfst      = [cfst]
-  reflect[] csnd      = [csnd]
-  reflect[] tt        = [tt]
+  [_] : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ [⊢] A
+  [ var i ]   = [var] i
+  [ app t u ] = [app] [ t ] [ u ]
+  [ ci ]      = [ci]
+  [ ck ]      = [ck]
+  [ cs ]      = [cs]
+  [ mvar i ]  = [mvar] i
+  [ box t ]   = [box] [ t ]
+  [ cdist ]   = [cdist]
+  [ cup ]     = [cup]
+  [ cdown ]   = [cdown]
+  [ cpair ]   = [cpair]
+  [ cfst ]    = [cfst]
+  [ csnd ]    = [csnd]
+  [ tt ]      = [tt]
 
 
 -- Additional useful equipment.
 
 module _ {{_ : Model}} where
-  [mmulticut] : ∀ {Π A Γ Δ} → [ Γ ⁏ Δ ⊢ □⋆ Π ]⋆ → [ Γ ⁏ Π ⊢ A ] → [ Γ ⁏ Δ ⊢ A ]
+  [mmulticut] : ∀ {Π A Γ Δ} → Γ ⁏ Δ [⊢]⋆ □⋆ Π → Γ ⁏ Π [⊢] A → Γ ⁏ Δ [⊢] A
   [mmulticut] {⌀}     ∙        u = mmono[⊢] bot⊆ u
   [mmulticut] {Π , B} (ts , t) u = [app] ([mmulticut] ts ([mlam] u)) t
 
@@ -41,10 +41,9 @@ eval ci        γ δ = const₂ ([ci] , id)
 eval ck        γ δ = const₂ ([ck] , ⟪const⟫)
 eval cs        γ δ = const₂ ([cs] , ⟪ap⟫′)
 eval (mvar i)  γ δ = mlookup i δ
-eval (box t)   γ δ = λ η θ →
-                       let δ′ = mono²⊩⋆ (η , θ) δ
-                       in  [mmulticut] (reify[]⋆ δ′) (reflect[] (box t)) ,
-                             eval t ∙ δ′
+eval (box t)   γ δ = λ η θ → let δ′ = mono²⊩⋆ (η , θ) δ
+                              in  [mmulticut] (reifyʳ⋆ δ′) [ box t ] ,
+                                    eval t ∙ δ′
 eval cdist     γ δ = const₂ ([cdist] , _⟪◎⟫′_)
 eval cup       γ δ = const₂ ([cup] , ⟪⇑⟫)
 eval cdown     γ δ = const₂ ([cdown] , ⟪⇓⟫)
@@ -66,7 +65,7 @@ private
       { _⁏_⊩ᵅ_   = λ Γ Δ P → Γ ⁏ Δ ⊢ α P
       ; mono⊩ᵅ   = mono⊢
       ; mmono⊩ᵅ  = mmono⊢
-      ; [_⁏_⊢_]  = _⁏_⊢_
+      ; _⁏_[⊢]_  = _⁏_⊢_
       ; mono[⊢]  = mono⊢
       ; mmono[⊢] = mmono⊢
       ; [var]     = var
@@ -90,49 +89,47 @@ private
 -- Soundness and completeness with respect to the canonical model.
 
 mutual
-  reflect : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊩ A
-  reflect {α P}   t = t , t
-  reflect {A ▻ B} t = λ η θ →
-                        let t′ = mono²⊢ (η , θ) t
-                        in  t′ , λ a → reflect (app t′ (reify a))
-  reflect {□ A}   t = λ η θ →
-                        let t′ = mono²⊢ (η , θ) t
-                        in  t′ , reflect (down t′)
-  reflect {A ∧ B} t = reflect (fst t) , reflect (snd t)
-  reflect {⊤}    t = ∙
+  reflectᶜ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊩ A
+  reflectᶜ {α P}   t = t , t
+  reflectᶜ {A ▻ B} t = λ η θ → let t′ = mono²⊢ (η , θ) t
+                                in  t′ , λ a → reflectᶜ (app t′ (reifyᶜ a))
+  reflectᶜ {□ A}   t = λ η θ → let t′ = mono²⊢ (η , θ) t
+                                in  t′ , reflectᶜ (down t′)
+  reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
+  reflectᶜ {⊤}    t = ∙
 
-  reify : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊢ A
-  reify {α P}   (t , s) = t
-  reify {A ▻ B} s       = let t , f = s refl⊆ refl⊆ in t
-  reify {□ A}   s       = let t , a = s refl⊆ refl⊆ in t
-  reify {A ∧ B} (a , b) = pair (reify a) (reify b)
-  reify {⊤}    ∙       = tt
+  reifyᶜ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊢ A
+  reifyᶜ {α P}   (t , s) = t
+  reifyᶜ {A ▻ B} s       = let t , f = s refl⊆ refl⊆ in t
+  reifyᶜ {□ A}   s       = let t , a = s refl⊆ refl⊆ in t
+  reifyᶜ {A ∧ B} (a , b) = pair (reifyᶜ a) (reifyᶜ b)
+  reifyᶜ {⊤}    ∙       = tt
 
-reflect⋆ : ∀ {Π Γ Δ} → Γ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ ⊩⋆ Π
-reflect⋆ {⌀}     ∙        = ∙
-reflect⋆ {Π , A} (ts , t) = reflect⋆ ts , reflect t
+reflectᶜ⋆ : ∀ {Π Γ Δ} → Γ ⁏ Δ ⊢⋆ Π → Γ ⁏ Δ ⊩⋆ Π
+reflectᶜ⋆ {⌀}     ∙        = ∙
+reflectᶜ⋆ {Π , A} (ts , t) = reflectᶜ⋆ ts , reflectᶜ t
 
-reify⋆ : ∀ {Π Γ Δ} → Γ ⁏ Δ ⊩⋆ Π → Γ ⁏ Δ ⊢⋆ Π
-reify⋆ {⌀}     ∙        = ∙
-reify⋆ {Π , A} (ts , t) = reify⋆ ts , reify t
+reifyᶜ⋆ : ∀ {Π Γ Δ} → Γ ⁏ Δ ⊩⋆ Π → Γ ⁏ Δ ⊢⋆ Π
+reifyᶜ⋆ {⌀}     ∙        = ∙
+reifyᶜ⋆ {Π , A} (ts , t) = reifyᶜ⋆ ts , reifyᶜ t
 
 
 -- Reflexivity and transitivity.
 
 refl⊩⋆ : ∀ {Γ Δ} → Γ ⁏ Δ ⊩⋆ Γ
-refl⊩⋆ = reflect⋆ refl⊢⋆
+refl⊩⋆ = reflectᶜ⋆ refl⊢⋆
 
 mrefl⊩⋆ : ∀ {Γ Δ} → Γ ⁏ Δ ⊩⋆ □⋆ Δ
-mrefl⊩⋆ = reflect⋆ mrefl⊢⋆
+mrefl⊩⋆ = reflectᶜ⋆ mrefl⊢⋆
 
 trans⊩⋆ : ∀ {Γ Γ′ Δ Δ′ Π} → Γ ⁏ Δ ⊩⋆ Γ′ ⧺ (□⋆ Δ′) → Γ′ ⁏ Δ′ ⊩⋆ Π → Γ ⁏ Δ ⊩⋆ Π
-trans⊩⋆ ts us = reflect⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
+trans⊩⋆ ts us = reflectᶜ⋆ (trans⊢⋆ (reifyᶜ⋆ ts) (reifyᶜ⋆ us))
 
 
 -- Completeness with respect to all models, or quotation.
 
 quot : ∀ {A Γ Δ} → Γ ⁏ Δ ⊨ A → Γ ⁏ Δ ⊢ A
-quot s = reify (s refl⊩⋆ mrefl⊩⋆)
+quot s = reifyᶜ (s refl⊩⋆ mrefl⊩⋆)
 
 
 -- Normalisation by evaluation.

@@ -19,9 +19,9 @@ open Model {{…}} public
 
 
 
-module SyntacticComponent
-    ([_⊢_]   : Cx Ty → Ty → Set)
-    (mono[⊢] : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → [ Γ ⊢ A ] → [ Γ′ ⊢ A ])
+module ImplicitSyntax
+    (_[⊢]_   : Cx Ty → Ty → Set)
+    (mono[⊢] : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ [⊢] A → Γ′ [⊢] A)
   where
 
 
@@ -30,9 +30,9 @@ module SyntacticComponent
   module _ {{_ : Model}} where
     infix 3 _⊩_
     _⊩_ : Cx Ty → Ty → Set
-    Γ ⊩ α P   = [ Γ ⊢ α P ] × Γ ⊩ᵅ P
-    Γ ⊩ A ▻ B = ∀ {Γ′} → Γ ⊆ Γ′ → [ Γ′ ⊢ A ▻ B ] × (Γ′ ⊩ A → Γ′ ⊩ B)
-    Γ ⊩ □ A   = ∀ {Γ′} → Γ ⊆ Γ′ → [ Γ′ ⊢ □ A ] × Γ′ ⊩ A
+    Γ ⊩ α P   = Γ [⊢] (α P) × Γ ⊩ᵅ P
+    Γ ⊩ A ▻ B = ∀ {Γ′} → Γ ⊆ Γ′ → Γ′ [⊢] (A ▻ B) × (Γ′ ⊩ A → Γ′ ⊩ B)
+    Γ ⊩ □ A   = ∀ {Γ′} → Γ ⊆ Γ′ → Γ′ [⊢] (□ A) × Γ′ ⊩ A
     Γ ⊩ A ∧ B = Γ ⊩ A × Γ ⊩ B
     Γ ⊩ ⊤    = 𝟙
 
@@ -61,7 +61,8 @@ module SyntacticComponent
 
   module _ {{_ : Model}} where
     _⟪$⟫_ : ∀ {A B Γ} → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ B
-    s ⟪$⟫ a = let t , f = s refl⊆ in f a
+    s ⟪$⟫ a = let t , f = s refl⊆
+              in  f a
 
     ⟪ap⟫ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ C
     ⟪ap⟫ s s′ a = let t , f = s refl⊆
@@ -70,7 +71,8 @@ module SyntacticComponent
                   in  h (g a)
 
     ⟪⇓⟫ : ∀ {A Γ} → Γ ⊩ □ A → Γ ⊩ A
-    ⟪⇓⟫ s = let p , a = s refl⊆ in a
+    ⟪⇓⟫ s = let p , a = s refl⊆
+            in  a
 
 
   -- Forcing in a particular model, for sequents.

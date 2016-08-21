@@ -3,7 +3,7 @@ module BasicIPC.Metatheory.ClosedHilbert-TarskiClosedCoquandDybjer where
 open import BasicIPC.Syntax.ClosedHilbert public
 open import BasicIPC.Semantics.TarskiClosedCoquandDybjer public
 
-open SyntacticComponent (⊢_) public
+open ImplicitSyntax (⊢_) public
 
 
 -- Completeness with respect to a particular model.

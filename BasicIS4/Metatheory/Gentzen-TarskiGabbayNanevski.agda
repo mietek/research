@@ -3,7 +3,7 @@ module BasicIS4.Metatheory.Gentzen-TarskiGabbayNanevski where
 open import BasicIS4.Syntax.Gentzen public
 open import BasicIS4.Semantics.TarskiGabbayNanevski public
 
-open SyntacticComponent (_⊢_) (mono⊢) public
+open ImplicitSyntax (_⊢_) (mono⊢) public
 
 
 -- Completeness with respect to a particular model.
@@ -26,15 +26,13 @@ module _ {{_ : Model}} where
 mutual
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
   eval (var i)         γ = lookup i γ
-  eval (lam t)         γ = λ η →
-                             let γ′ = mono⊩⋆ η γ
-                             in  multicut (reify⋆ γ′) (lam t) , λ a →
-                                   eval t (γ′ , a)
+  eval (lam t)         γ = λ η → let γ′ = mono⊩⋆ η γ
+                                  in  multicut (reify⋆ γ′) (lam t) , λ a →
+                                        eval t (γ′ , a)
   eval (app t u)       γ = eval t γ ⟪$⟫ eval u γ
-  eval (multibox ts u) γ = λ η →
-                             let γ′ = mono⊩⋆ η γ
-                             in  multicut (reify⋆ γ′) (multibox ts u) ,
-                                   eval u (eval⋆ ts γ′)
+  eval (multibox ts u) γ = λ η → let γ′ = mono⊩⋆ η γ
+                                  in  multicut (reify⋆ γ′) (multibox ts u) ,
+                                        eval u (eval⋆ ts γ′)
   eval (down t)        γ = ⟪⇓⟫ (eval t γ)
   eval (pair t u)      γ = eval t γ , eval u γ
   eval (fst t)         γ = π₁ (eval t γ)
@@ -62,29 +60,27 @@ private
 
 -- Soundness with respect to the canonical model.
 
-reflect : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
-reflect {α P}   t = t , t
-reflect {A ▻ B} t = λ η →
-                      let t′ = mono⊢ η t
-                      in  t′ , λ a → reflect (app t′ (reify a))
-reflect {□ A}   t = λ η →
-                      let t′ = mono⊢ η t
-                      in  t′ , reflect (down t′)
-reflect {A ∧ B} t = reflect (fst t) , reflect (snd t)
-reflect {⊤}    t = ∙
+reflectᶜ : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
+reflectᶜ {α P}   t = t , t
+reflectᶜ {A ▻ B} t = λ η → let t′ = mono⊢ η t
+                            in  t′ , λ a → reflectᶜ (app t′ (reify a))
+reflectᶜ {□ A}   t = λ η → let t′ = mono⊢ η t
+                            in  t′ , reflectᶜ (down t′)
+reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
+reflectᶜ {⊤}    t = ∙
 
-reflect⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊩⋆ Π
-reflect⋆ {⌀}     ∙        = ∙
-reflect⋆ {Π , A} (ts , t) = reflect⋆ ts , reflect t
+reflectᶜ⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊩⋆ Π
+reflectᶜ⋆ {⌀}     ∙        = ∙
+reflectᶜ⋆ {Π , A} (ts , t) = reflectᶜ⋆ ts , reflectᶜ t
 
 
 -- Reflexivity and transitivity.
 
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
-refl⊩⋆ = reflect⋆ refl⊢⋆
+refl⊩⋆ = reflectᶜ⋆ refl⊢⋆
 
 trans⊩⋆ : ∀ {Γ Γ′ Γ″} → Γ ⊩⋆ Γ′ → Γ′ ⊩⋆ Γ″ → Γ ⊩⋆ Γ″
-trans⊩⋆ ts us = reflect⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
+trans⊩⋆ ts us = reflectᶜ⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
 
 
 -- Completeness with respect to all models, or quotation.
