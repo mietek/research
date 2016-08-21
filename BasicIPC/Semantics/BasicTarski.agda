@@ -1,6 +1,6 @@
 -- Basic Tarski-style denotational semantics.
 
-module BasicIPC.Semantics.Tarski where
+module BasicIPC.Semantics.BasicTarski where
 
 open import BasicIPC.Syntax.Common public
 

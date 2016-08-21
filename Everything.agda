@@ -48,7 +48,7 @@ import BasicIPC.Syntax.Translation
 
 
 -- Basic Tarski-style denotational semantics.
-import BasicIPC.Semantics.Tarski
+import BasicIPC.Semantics.BasicTarski
 
 -- Tarski-style semantics with a closed syntactic component, after Coquand-Dybjer.
 import BasicIPC.Semantics.TarskiClosedCoquandDybjer
@@ -72,11 +72,11 @@ import BasicIPC.Semantics.KripkeMcKinseyTarski
 import BasicIPC.Semantics.KripkeGodel
 
 
-import BasicIPC.Metatheory.ClosedHilbert-Tarski
+import BasicIPC.Metatheory.ClosedHilbert-BasicTarski
 import BasicIPC.Metatheory.ClosedHilbert-TarskiClosedCoquandDybjer
 import BasicIPC.Metatheory.ClosedHilbert-TarskiClosedHilbert
 
-import BasicIPC.Metatheory.Hilbert-Tarski
+import BasicIPC.Metatheory.Hilbert-BasicTarski
 import BasicIPC.Metatheory.Hilbert-TarskiClosedCoquandDybjer
 import BasicIPC.Metatheory.Hilbert-TarskiClosedHilbert
 import BasicIPC.Metatheory.Hilbert-TarskiCoquandDybjer
@@ -85,7 +85,7 @@ import BasicIPC.Metatheory.Hilbert-TarskiGentzen
 import BasicIPC.Metatheory.Hilbert-KripkeMcKinseyTarski
 import BasicIPC.Metatheory.Hilbert-KripkeGodel
 
-import BasicIPC.Metatheory.Gentzen-Tarski
+import BasicIPC.Metatheory.Gentzen-BasicTarski
 import BasicIPC.Metatheory.Gentzen-TarskiClosedCoquandDybjer
 import BasicIPC.Metatheory.Gentzen-TarskiCoquandDybjer
 import BasicIPC.Metatheory.Gentzen-TarskiGentzen

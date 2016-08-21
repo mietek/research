@@ -1,7 +1,7 @@
-module BasicIPC.Metatheory.Gentzen-Tarski where
+module BasicIPC.Metatheory.Gentzen-BasicTarski where
 
 open import BasicIPC.Syntax.Gentzen public
-open import BasicIPC.Semantics.Tarski public
+open import BasicIPC.Semantics.BasicTarski public
 
 
 -- Soundness with respect to all models, or evaluation.

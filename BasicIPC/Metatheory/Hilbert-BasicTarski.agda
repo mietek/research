@@ -1,7 +1,7 @@
-module BasicIPC.Metatheory.Hilbert-Tarski where
+module BasicIPC.Metatheory.Hilbert-BasicTarski where
 
 open import BasicIPC.Syntax.Hilbert public
-open import BasicIPC.Semantics.Tarski public
+open import BasicIPC.Semantics.BasicTarski public
 
 
 -- Soundness with respect to all models, or evaluation.
