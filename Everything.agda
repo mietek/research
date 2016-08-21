@@ -170,6 +170,18 @@ import BasicIS4.Syntax.LabelledGentzen
 import BasicIS4.Syntax.Translation -- FIXME
 
 
+-- Basic Kripke-style semantics, after Ono, for soundness only.
+import BasicIS4.Semantics.BasicKripkeOno
+
+-- Basic Kripke-style semantics, after Božić-Došen, for soundness only.
+import BasicIS4.Semantics.BasicKripkeBozicDosen
+
+-- Basic Kripke-style semantics, after Ewald, Servi, and Plotkin-Stirling, for soundness only.
+import BasicIS4.Semantics.BasicKripkeEwald
+
+-- Basic Kripke-style semantics, after Alechina-Mendler-de Paiva-Ritter, for soundness only.
+import BasicIS4.Semantics.BasicKripkeAlechinaEtAl
+
 -- Tarski-style semantics with implicit closed syntax representation, after Gabbay-Nanevski.
 import BasicIS4.Semantics.TarskiClosedGabbayNanevski
 
@@ -194,18 +206,6 @@ import BasicIS4.Semantics.TarskiDyadicHilbert
 -- Tarski-style semantics with explicit Gentzen-style syntax representation and a separate modal context.
 import BasicIS4.Semantics.TarskiDyadicGentzen
 
--- Basic Kripke-style semantics, after Ono, for soundness only.
-import BasicIS4.Semantics.BasicKripkeOno
-
--- Basic Kripke-style semantics, after Božić-Došen, for soundness only.
-import BasicIS4.Semantics.BasicKripkeBozicDosen
-
--- Basic Kripke-style semantics, after Ewald, Servi, and Plotkin-Stirling, for soundness only.
-import BasicIS4.Semantics.BasicKripkeEwald
-
--- Basic Kripke-style semantics, after Alechina-Mendler-de Paiva-Ritter, for soundness only.
-import BasicIS4.Semantics.BasicKripkeAlechinaEtAl
-
 
 -- Canonical and non-canonical model equipment for Kripke-style semantics.
 import BasicIS4.Equipment.KripkeCanonical
@@ -217,37 +217,37 @@ import BasicIS4.Equipment.KripkeDyadicNonCanonical
 import BasicIS4.Metatheory.ClosedHilbert-TarskiClosedGabbayNanevski
 import BasicIS4.Metatheory.ClosedHilbert-TarskiClosedHilbert
 
+import BasicIS4.Metatheory.Hilbert-BasicKripkeOno
+import BasicIS4.Metatheory.Hilbert-BasicKripkeBozicDosen
+import BasicIS4.Metatheory.Hilbert-BasicKripkeEwald
+import BasicIS4.Metatheory.Hilbert-BasicKripkeAlechinaEtAl
 import BasicIS4.Metatheory.Hilbert-TarskiClosedGabbayNanevski
 import BasicIS4.Metatheory.Hilbert-TarskiClosedHilbert
 import BasicIS4.Metatheory.Hilbert-TarskiGabbayNanevski
 import BasicIS4.Metatheory.Hilbert-TarskiHilbert
 import BasicIS4.Metatheory.Hilbert-TarskiGentzen
-import BasicIS4.Metatheory.Hilbert-BasicKripkeOno
-import BasicIS4.Metatheory.Hilbert-BasicKripkeBozicDosen
-import BasicIS4.Metatheory.Hilbert-BasicKripkeEwald
-import BasicIS4.Metatheory.Hilbert-BasicKripkeAlechinaEtAl
 
-import BasicIS4.Metatheory.Gentzen-TarskiClosedGabbayNanevski
-import BasicIS4.Metatheory.Gentzen-TarskiGabbayNanevski
-import BasicIS4.Metatheory.Gentzen-TarskiGentzen
 import BasicIS4.Metatheory.Gentzen-BasicKripkeOno
 import BasicIS4.Metatheory.Gentzen-BasicKripkeBozicDosen
 import BasicIS4.Metatheory.Gentzen-BasicKripkeEwald
 import BasicIS4.Metatheory.Gentzen-BasicKripkeAlechinaEtAl
+import BasicIS4.Metatheory.Gentzen-TarskiClosedGabbayNanevski
+import BasicIS4.Metatheory.Gentzen-TarskiGabbayNanevski
+import BasicIS4.Metatheory.Gentzen-TarskiGentzen
 
-import BasicIS4.Metatheory.DyadicHilbert-TarskiDyadicGabbayNanevski
-import BasicIS4.Metatheory.DyadicHilbert-TarskiDyadicHilbert
 import BasicIS4.Metatheory.DyadicHilbert-BasicKripkeOno
 import BasicIS4.Metatheory.DyadicHilbert-BasicKripkeBozicDosen
 import BasicIS4.Metatheory.DyadicHilbert-BasicKripkeEwald
 import BasicIS4.Metatheory.DyadicHilbert-BasicKripkeAlechinaEtAl
+import BasicIS4.Metatheory.DyadicHilbert-TarskiDyadicGabbayNanevski
+import BasicIS4.Metatheory.DyadicHilbert-TarskiDyadicHilbert
 
-import BasicIS4.Metatheory.DyadicGentzen-TarskiDyadicGabbayNanevski
-import BasicIS4.Metatheory.DyadicGentzen-TarskiDyadicGentzen
 import BasicIS4.Metatheory.DyadicGentzen-BasicKripkeOno
 import BasicIS4.Metatheory.DyadicGentzen-BasicKripkeBozicDosen
 import BasicIS4.Metatheory.DyadicGentzen-BasicKripkeEwald
 import BasicIS4.Metatheory.DyadicGentzen-BasicKripkeAlechinaEtAl
+import BasicIS4.Metatheory.DyadicGentzen-TarskiDyadicGabbayNanevski
+import BasicIS4.Metatheory.DyadicGentzen-TarskiDyadicGentzen
 
 
 
