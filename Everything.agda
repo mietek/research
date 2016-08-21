@@ -247,7 +247,7 @@ import BasicIS4.Equipment.KripkeDyadicNonCanonical
 -- ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
 -- │ G   │  e  │  e  │  e  │  e  │ eq₀ │     │ eq  │     │ eq  │     │     │     │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
--- │ DH  │  e  │  e  │  e  │  e  │     │     │     │     │     │ eq  │ eq  │     │
+-- │ DH  │  e  │  e  │  e  │  e  │     │     │     │     │     │ eq  │ eq  │ eq~ │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
 -- │ DG  │  e  │  e  │  e  │  e  │     │     │     │     │     │ eq  │     │ eq  │
 -- └─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┘
@@ -287,6 +287,7 @@ import BasicIS4.Metatheory.DyadicHilbert-BasicKripkeEwald
 import BasicIS4.Metatheory.DyadicHilbert-BasicKripkeAlechinaEtAl
 import BasicIS4.Metatheory.DyadicHilbert-TarskiDyadicGabbayNanevski
 import BasicIS4.Metatheory.DyadicHilbert-TarskiDyadicHilbert
+import BasicIS4.Metatheory.DyadicHilbert-TarskiDyadicGentzen
 
 import BasicIS4.Metatheory.DyadicGentzen-BasicKripkeOno
 import BasicIS4.Metatheory.DyadicGentzen-BasicKripkeBozicDosen
