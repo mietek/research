@@ -19,7 +19,7 @@ open Model {{…}} public
 
 
 module SyntacticComponent
-    ([_] : Ty → Set)
+    ([⊢]_ : Ty → Set)
   where
 
 
@@ -28,8 +28,8 @@ module SyntacticComponent
   module _ {{_ : Model}} where
     infix 3 ⊩_
     ⊩_ : Ty → Set
-    ⊩ α P   = [ α P ] × ⊩ᵅ P
-    ⊩ A ▻ B = [ A ▻ B ] × (⊩ A → ⊩ B)
+    ⊩ α P   = [⊢] (α P) × ⊩ᵅ P
+    ⊩ A ▻ B = [⊢] (A ▻ B) × (⊩ A → ⊩ B)
     ⊩ A ∧ B = ⊩ A × ⊩ B
     ⊩ ⊤    = 𝟙
 
@@ -83,7 +83,7 @@ module SyntacticComponent
     lookup top     (γ , a) = a
     lookup (pop i) (γ , b) = lookup i γ
 
-    ⟦λ⟧ : ∀ {A B Γ} → [ A ▻ B ] → ⊩ Γ , A ⇒ B → ⊩ Γ ⇒ A ▻ B
+    ⟦λ⟧ : ∀ {A B Γ} → [⊢] (A ▻ B) → ⊩ Γ , A ⇒ B → ⊩ Γ ⇒ A ▻ B
     ⟦λ⟧ t f γ = t , λ a → f (γ , a)
 
     _⟦$⟧_ : ∀ {A B Γ} → ⊩ Γ ⇒ A ▻ B → ⊩ Γ ⇒ A → ⊩ Γ ⇒ B

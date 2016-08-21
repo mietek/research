@@ -7,16 +7,16 @@ open import BasicIPC.Semantics.TarskiHilbert public
 -- Soundness with respect to the syntax representation in a particular model.
 
 module _ {{_ : Model}} where
-  reflectʳ : ∀ {A Γ} → Γ ⊢ A → [ Γ ⊢ A ]
-  reflectʳ (var i)   = [var] i
-  reflectʳ (app t u) = [app] (reflectʳ t) (reflectʳ u)
-  reflectʳ ci        = [ci]
-  reflectʳ ck        = [ck]
-  reflectʳ cs        = [cs]
-  reflectʳ cpair     = [cpair]
-  reflectʳ cfst      = [cfst]
-  reflectʳ csnd      = [csnd]
-  reflectʳ tt        = [tt]
+  [_] : ∀ {A Γ} → Γ ⊢ A → Γ [⊢] A
+  [ var i ]   = [var] i
+  [ app t u ] = [app] [ t ] [ u ]
+  [ ci ]      = [ci]
+  [ ck ]      = [ck]
+  [ cs ]      = [cs]
+  [ cpair ]   = [cpair]
+  [ cfst ]    = [cfst]
+  [ csnd ]    = [csnd]
+  [ tt ]      = [tt]
 
 
 -- Soundness with respect to all models, or evaluation.
@@ -44,7 +44,7 @@ private
     canon = record
       { _⊩ᵅ_    = λ Γ P → Γ ⊢ α P
       ; mono⊩ᵅ  = mono⊢
-      ; [_⊢_]   = _⊢_
+      ; _[⊢]_   = _⊢_
       ; mono[⊢] = mono⊢
       ; [var]    = var
       ; [app]    = app
@@ -64,7 +64,7 @@ mutual
   reflectᶜ : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
   reflectᶜ {α P}   t = t , t
   reflectᶜ {A ▻ B} t = λ η → let t′ = mono⊢ η t
-                              in  t′ , λ a → reflectᶜ (app t′ (reifyʳ a))
+                              in  t′ , λ a → reflectᶜ (app t′ (reifyᶜ a))
   reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
   reflectᶜ {⊤}    t = ∙
 

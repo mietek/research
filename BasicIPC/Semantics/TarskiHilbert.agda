@@ -8,28 +8,29 @@ open import BasicIPC.Syntax.Common public
 -- Intuitionistic Tarski models.
 
 record Model : Set₁ where
-  infix 3 _⊩ᵅ_
+  infix 3 _⊩ᵅ_ _[⊢]_
   field
     -- Forcing for atomic propositions; monotonic.
     _⊩ᵅ_   : Cx Ty → Atom → Set
     mono⊩ᵅ : ∀ {P Γ Γ′} → Γ ⊆ Γ′ → Γ ⊩ᵅ P → Γ′ ⊩ᵅ P
 
     -- Hilbert-style syntax representation; monotonic.
-    [_⊢_]   : Cx Ty → Ty → Set
-    mono[⊢] : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → [ Γ ⊢ A ] → [ Γ′ ⊢ A ]
-    [var]    : ∀ {A Γ}     → A ∈ Γ → [ Γ ⊢ A ]
-    [app]    : ∀ {A B Γ}   → [ Γ ⊢ A ▻ B ] → [ Γ ⊢ A ] → [ Γ ⊢ B ]
-    [ci]     : ∀ {A Γ}     → [ Γ ⊢ A ▻ A ]
-    [ck]     : ∀ {A B Γ}   → [ Γ ⊢ A ▻ B ▻ A ]
-    [cs]     : ∀ {A B C Γ} → [ Γ ⊢ (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C ]
-    [cpair]  : ∀ {A B Γ}   → [ Γ ⊢ A ▻ B ▻ A ∧ B ]
-    [cfst]   : ∀ {A B Γ}   → [ Γ ⊢ A ∧ B ▻ A ]
-    [csnd]   : ∀ {A B Γ}   → [ Γ ⊢ A ∧ B ▻ B ]
-    [tt]     : ∀ {Γ}       → [ Γ ⊢ ⊤ ]
+    _[⊢]_   : Cx Ty → Ty → Set
+    mono[⊢] : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ [⊢] A → Γ′ [⊢] A
+    [var]    : ∀ {A Γ}     → A ∈ Γ → Γ [⊢] A
+    [app]    : ∀ {A B Γ}   → Γ [⊢] A ▻ B → Γ [⊢] A → Γ [⊢] B
+    [ci]     : ∀ {A Γ}     → Γ [⊢] A ▻ A
+    [ck]     : ∀ {A B Γ}   → Γ [⊢] A ▻ B ▻ A
+    [cs]     : ∀ {A B C Γ} → Γ [⊢] (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
+    [cpair]  : ∀ {A B Γ}   → Γ [⊢] A ▻ B ▻ A ∧ B
+    [cfst]   : ∀ {A B Γ}   → Γ [⊢] A ∧ B ▻ A
+    [csnd]   : ∀ {A B Γ}   → Γ [⊢] A ∧ B ▻ B
+    [tt]     : ∀ {Γ}       → Γ [⊢] ⊤
 
-  [_⊢_]⋆ : Cx Ty → Cx Ty → Set
-  [ Γ ⊢ ⌀ ]⋆     = 𝟙
-  [ Γ ⊢ Π , A ]⋆ = [ Γ ⊢ Π ]⋆ × [ Γ ⊢ A ]
+  infix 3 _[⊢]⋆_
+  _[⊢]⋆_ : Cx Ty → Cx Ty → Set
+  Γ [⊢]⋆ ⌀     = 𝟙
+  Γ [⊢]⋆ Π , A = Γ [⊢]⋆ Π × Γ [⊢] A
 
 open Model {{…}} public
 
@@ -39,8 +40,8 @@ open Model {{…}} public
 module _ {{_ : Model}} where
   infix 3 _⊩_
   _⊩_ : Cx Ty → Ty → Set
-  Γ ⊩ α P   = [ Γ ⊢ α P ] × Γ ⊩ᵅ P
-  Γ ⊩ A ▻ B = ∀ {Γ′} → Γ ⊆ Γ′ → [ Γ′ ⊢ A ▻ B ] × (Γ′ ⊩ A → Γ′ ⊩ B)
+  Γ ⊩ α P   = Γ [⊢] α P × Γ ⊩ᵅ P
+  Γ ⊩ A ▻ B = ∀ {Γ′} → Γ ⊆ Γ′ → Γ′ [⊢] A ▻ B × (Γ′ ⊩ A → Γ′ ⊩ B)
   Γ ⊩ A ∧ B = Γ ⊩ A × Γ ⊩ B
   Γ ⊩ ⊤    = 𝟙
 
@@ -67,13 +68,13 @@ module _ {{_ : Model}} where
 -- Completeness with respect to the syntax representation in a particular model.
 
 module _ {{_ : Model}} where
-  reifyʳ : ∀ {A Γ} → Γ ⊩ A → [ Γ ⊢ A ]
+  reifyʳ : ∀ {A Γ} → Γ ⊩ A → Γ [⊢] A
   reifyʳ {α P}   (t , s) = t
   reifyʳ {A ▻ B} s       = let t , f = s refl⊆ in t
   reifyʳ {A ∧ B} (a , b) = [app] ([app] [cpair] (reifyʳ {A} a)) (reifyʳ {B} b)
   reifyʳ {⊤}    ∙       = [tt]
 
-  reifyʳ⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → [ Γ ⊢ Π ]⋆
+  reifyʳ⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → Γ [⊢]⋆ Π
   reifyʳ⋆ {⌀}     ∙        = ∙
   reifyʳ⋆ {Π , A} (ts , t) = reifyʳ⋆ ts , reifyʳ t
 

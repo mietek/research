@@ -7,15 +7,15 @@ open import BasicIPC.Semantics.TarskiClosedHilbert public
 -- Soundness with respect to the syntax representation in a particular model.
 
 module _ {{_ : Model}} where
-  reflectʳ : ∀ {A} → ⊢ A → [ A ]
-  reflectʳ (app t u) = [app] (reflectʳ t) (reflectʳ u)
-  reflectʳ ci        = [ci]
-  reflectʳ ck        = [ck]
-  reflectʳ cs        = [cs]
-  reflectʳ cpair     = [cpair]
-  reflectʳ cfst      = [cfst]
-  reflectʳ csnd      = [csnd]
-  reflectʳ tt        = [tt]
+  [_] : ∀ {A} → ⊢ A → [⊢] A
+  [ app t u ] = [app] [ t ] [ u ]
+  [ ci ]      = [ci]
+  [ ck ]      = [ck]
+  [ cs ]      = [cs]
+  [ cpair ]   = [cpair]
+  [ cfst ]    = [cfst]
+  [ csnd ]    = [csnd]
+  [ tt ]      = [tt]
 
 
 -- Soundness with respect to all models, or evaluation.
@@ -59,7 +59,7 @@ private
     canon : Model
     canon = record
       { ⊩ᵅ_    = λ P → ⊢ α P
-      ; [_]     = ⊢_
+      ; [⊢]_   = ⊢_
       ; [app]   = app
       ; [ci]    = ci
       ; [ck]    = ck

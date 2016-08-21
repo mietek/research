@@ -6,7 +6,7 @@ open import BasicIPC.Semantics.TarskiClosedCoquandDybjer public
 open SyntacticComponent (⌀ ⊢_) public
 
 
--- Completeness with respect to a particular model.
+-- Completeness with respect to a particular model, for closed terms only.
 
 module _ {{_ : Model}} where
   reify : ∀ {A} → ⊩ A → ⌀ ⊢ A

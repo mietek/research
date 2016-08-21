@@ -8,25 +8,26 @@ open import BasicIPC.Syntax.Common public
 -- Tarski models.
 
 record Model : Set₁ where
-  infix 3 ⊩ᵅ_
+  infix 3 ⊩ᵅ_ [⊢]_
   field
     -- Forcing for atomic propositions.
     ⊩ᵅ_ : Atom → Set
 
     -- Hilbert-style closed syntax representation.
-    [_]     : Ty → Set
-    [app]   : ∀ {A B}   → [ A ▻ B ] → [ A ] → [ B ]
-    [ci]    : ∀ {A}     → [ A ▻ A ]
-    [ck]    : ∀ {A B}   → [ A ▻ B ▻ A ]
-    [cs]    : ∀ {A B C} → [ (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C ]
-    [cpair] : ∀ {A B}   → [ A ▻ B ▻ A ∧ B ]
-    [cfst]  : ∀ {A B}   → [ A ∧ B ▻ A ]
-    [csnd]  : ∀ {A B}   → [ A ∧ B ▻ B ]
-    [tt]    : [ ⊤ ]
+    [⊢]_   : Ty → Set
+    [app]   : ∀ {A B}   → [⊢] A ▻ B  → [⊢] A → [⊢] B
+    [ci]    : ∀ {A}     → [⊢] A ▻ A
+    [ck]    : ∀ {A B}   → [⊢] A ▻ B ▻ A
+    [cs]    : ∀ {A B C} → [⊢] (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
+    [cpair] : ∀ {A B}   → [⊢] A ▻ B ▻ A ∧ B
+    [cfst]  : ∀ {A B}   → [⊢] A ∧ B ▻ A
+    [csnd]  : ∀ {A B}   → [⊢] A ∧ B ▻ B
+    [tt]    : [⊢] ⊤
 
-  [_]⋆ : Cx Ty → Set
-  [ ⌀ ]⋆     = 𝟙
-  [ Π , A ]⋆ = [ Π ]⋆ × [ A ]
+  infix 3 [⊢]⋆_
+  [⊢]⋆_ : Cx Ty → Set
+  [⊢]⋆ ⌀     = 𝟙
+  [⊢]⋆ Π , A = [⊢]⋆ Π × [⊢] A
 
 open Model {{…}} public
 
@@ -36,8 +37,8 @@ open Model {{…}} public
 module _ {{_ : Model}} where
   infix 3 ⊩_
   ⊩_ : Ty → Set
-  ⊩ α P   = [ α P ] × ⊩ᵅ P
-  ⊩ A ▻ B = [ A ▻ B ] × (⊩ A → ⊩ B)
+  ⊩ α P   = [⊢] α P × ⊩ᵅ P
+  ⊩ A ▻ B = [⊢] A ▻ B × (⊩ A → ⊩ B)
   ⊩ A ∧ B = ⊩ A × ⊩ B
   ⊩ ⊤    = 𝟙
 
@@ -56,13 +57,13 @@ module _ {{_ : Model}} where
 -- Completeness with respect to the syntax representation in a particular model.
 
 module _ {{_ : Model}} where
-  reifyʳ : ∀ {A} → ⊩ A → [ A ]
+  reifyʳ : ∀ {A} → ⊩ A → [⊢] A
   reifyʳ {α P}   (t , s) = t
   reifyʳ {A ▻ B} (t , f) = t
-  reifyʳ {A ∧ B} (a , b) = [app] ([app] [cpair] (reifyʳ {A} a)) (reifyʳ {B} b)
+  reifyʳ {A ∧ B} (a , b) = [app] ([app] [cpair] (reifyʳ a)) (reifyʳ b)
   reifyʳ {⊤}    ∙       = [tt]
 
-  reifyʳ⋆ : ∀ {Π} → ⊩⋆ Π → [ Π ]⋆
+  reifyʳ⋆ : ∀ {Π} → ⊩⋆ Π → [⊢]⋆ Π
   reifyʳ⋆ {⌀}     ∙        = ∙
   reifyʳ⋆ {Π , A} (ts , t) = reifyʳ⋆ ts , reifyʳ t
 
@@ -115,7 +116,7 @@ module _ {{_ : Model}} where
   lookup top     (γ , a) = a
   lookup (pop i) (γ , b) = lookup i γ
 
-  ⟦λ⟧ : ∀ {A B Γ} → [ A ▻ B ] → ⊩ Γ , A ⇒ B → ⊩ Γ ⇒ A ▻ B
+  ⟦λ⟧ : ∀ {A B Γ} → [⊢] A ▻ B → ⊩ Γ , A ⇒ B → ⊩ Γ ⇒ A ▻ B
   ⟦λ⟧ t f γ = t , λ a → f (γ , a)
 
   _⟦$⟧_ : ∀ {A B Γ} → ⊩ Γ ⇒ A ▻ B → ⊩ Γ ⇒ A → ⊩ Γ ⇒ B

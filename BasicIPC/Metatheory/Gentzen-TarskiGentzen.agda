@@ -7,20 +7,20 @@ open import BasicIPC.Semantics.TarskiGentzen public
 -- Soundness with respect to the syntax representation in a particular model.
 
 module _ {{_ : Model}} where
-  reflectʳ : ∀ {A Γ} → Γ ⊢ A → [ Γ ⊢ A ]
-  reflectʳ (var i)    = [var] i
-  reflectʳ (lam t)    = [lam] (reflectʳ t)
-  reflectʳ (app t u)  = [app] (reflectʳ t) (reflectʳ u)
-  reflectʳ (pair t u) = [pair] (reflectʳ t) (reflectʳ u)
-  reflectʳ (fst t)    = [fst] (reflectʳ t)
-  reflectʳ (snd t)    = [snd] (reflectʳ t)
-  reflectʳ tt         = [tt]
+  [_] : ∀ {A Γ} → Γ ⊢ A → Γ [⊢] A
+  [ var i ]    = [var] i
+  [ lam t ]    = [lam] [ t ]
+  [ app t u ]  = [app] [ t ] [ u ]
+  [ pair t u ] = [pair] [ t ] [ u ]
+  [ fst t ]    = [fst] [ t ]
+  [ snd t ]    = [snd] [ t ]
+  [ tt ]       = [tt]
 
 
 -- Additional useful equipment.
 
 module _ {{_ : Model}} where
-  [multicut] : ∀ {Π A Γ} → [ Γ ⊢ Π ]⋆ → [ Π ⊢ A ] → [ Γ ⊢ A ]
+  [multicut] : ∀ {Π A Γ} → Γ [⊢]⋆ Π → Π [⊢] A → Γ [⊢] A
   [multicut] {⌀}     ∙        u = mono[⊢] bot⊆ u
   [multicut] {Π , B} (ts , t) u = [app] ([multicut] ts ([lam] u)) t
 
@@ -30,7 +30,7 @@ module _ {{_ : Model}} where
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)    γ = lookup i γ
 eval (lam t)    γ = λ η → let γ′ = mono⊩⋆ η γ
-                           in  [multicut] (reifyʳ⋆ γ′) (reflectʳ (lam t)) , λ a →
+                           in  [multicut] (reifyʳ⋆ γ′) [ lam t ] , λ a →
                                  eval t (γ′ , a)
 eval (app t u)  γ = eval t γ ⟪$⟫ eval u γ
 eval (pair t u) γ = eval t γ , eval u γ
@@ -50,7 +50,7 @@ private
     canon = record
       { _⊩ᵅ_    = λ Γ P → Γ ⊢ α P
       ; mono⊩ᵅ  = mono⊢
-      ; [_⊢_]   = _⊢_
+      ; _[⊢]_   = _⊢_
       ; mono[⊢] = mono⊢
       ; [var]    = var
       ; [lam]    = lam
