@@ -7,14 +7,13 @@ open import BasicIPC.Semantics.KripkeGodel public
 -- Soundness with respect to all models, or evaluation.
 
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
-eval (var i)    γ = lookup i γ
-eval (lam t)    γ = λ ξ a → eval t (mono⊩⋆ ξ γ , a)
-eval (app t u)  γ = (eval t γ refl≤) (eval u γ)
-eval (pair t u) γ = λ ξ → let γ′ = mono⊩⋆ ξ γ
-                           in  eval t γ′ , eval u γ′
-eval (fst t)    γ = π₁ (eval t γ refl≤)
-eval (snd t)    γ = π₂ (eval t γ refl≤)
-eval tt         γ = λ ξ → ∙
+eval (var i)            γ = lookup i γ
+eval (lam t)            γ = λ ξ a → eval t (mono⊩⋆ ξ γ , a)
+eval (app {A} {B} t u)  γ = _⟪$⟫_ {A} {B} (eval t γ) (eval u γ)
+eval (pair {A} {B} t u) γ = _⟪,⟫_ {A} {B} (eval t γ) (eval u γ)
+eval (fst {A} {B} t)    γ = ⟪π₁⟫ {A} {B} (eval t γ)
+eval (snd {A} {B} t)    γ = ⟪π₂⟫ {A} {B} (eval t γ)
+eval tt                 γ = const ∙
 
 
 -- TODO: Correctness of evaluation with respect to conversion.
@@ -40,9 +39,8 @@ mutual
   reflectᶜ : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
   reflectᶜ {α P}   t = λ η → mono⊢ η t
   reflectᶜ {A ▻ B} t = λ η a → reflectᶜ (app (mono⊢ η t) (reifyᶜ a))
-  reflectᶜ {A ∧ B} t = λ η →
-                        let t′ = mono⊢ η t
-                        in  reflectᶜ (fst t′) , reflectᶜ (snd t′)
+  reflectᶜ {A ∧ B} t = λ η → let t′ = mono⊢ η t
+                              in  reflectᶜ (fst t′) , reflectᶜ (snd t′)
   reflectᶜ {⊤}    t = λ η → ∙
 
   reifyᶜ : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A

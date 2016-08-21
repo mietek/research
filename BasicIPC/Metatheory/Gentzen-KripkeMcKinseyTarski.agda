@@ -7,13 +7,13 @@ open import BasicIPC.Semantics.KripkeMcKinseyTarski public
 -- Soundness with respect to all models, or evaluation.
 
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
-eval (var i)    γ = lookup i γ
-eval (lam t)    γ = λ ξ a → eval t (mono⊩⋆ ξ γ , a)
-eval (app t u)  γ = (eval t γ refl≤) (eval u γ)
-eval (pair t u) γ = eval t γ , eval u γ
-eval (fst t)    γ = π₁ (eval t γ)
-eval (snd t)    γ = π₂ (eval t γ)
-eval tt         γ = ∙
+eval (var i)           γ = lookup i γ
+eval (lam t)           γ = λ ξ a → eval t (mono⊩⋆ ξ γ , a)
+eval (app {A} {B} t u) γ = _⟪$⟫_ {A} {B} (eval t γ) (eval u γ)
+eval (pair t u)        γ = eval t γ , eval u γ
+eval (fst t)           γ = π₁ (eval t γ)
+eval (snd t)           γ = π₂ (eval t γ)
+eval tt                γ = ∙
 
 
 -- TODO: Correctness of evaluation with respect to conversion.
@@ -44,10 +44,10 @@ mutual
   reflectᶜ {⊤}    t = ∙
 
   reifyᶜ : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
-  reifyᶜ {α P}   s = s
-  reifyᶜ {A ▻ B} s = lam (reifyᶜ (s weak⊆ (reflectᶜ {A} v₀)))
-  reifyᶜ {A ∧ B} s = pair (reifyᶜ (π₁ s)) (reifyᶜ (π₂ s))
-  reifyᶜ {⊤}    s = tt
+  reifyᶜ {α P}   s       = s
+  reifyᶜ {A ▻ B} s       = lam (reifyᶜ (s weak⊆ (reflectᶜ {A} v₀)))
+  reifyᶜ {A ∧ B} (a , b) = pair (reifyᶜ a) (reifyᶜ b)
+  reifyᶜ {⊤}    ∙       = tt
 
 reflectᶜ⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊩⋆ Π
 reflectᶜ⋆ {⌀}     ∙        = ∙

@@ -48,10 +48,10 @@ mutual
   reflectᶜ {⊤}    t = ∙
 
   reifyᶜ : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ⁿᶠ A
-  reifyᶜ {α P}   s = neⁿᶠ s
-  reifyᶜ {A ▻ B} s = lamⁿᶠ (reifyᶜ (s weak⊆ (reflectᶜ {A} (varⁿᵉ top))))
-  reifyᶜ {A ∧ B} s = pairⁿᶠ (reifyᶜ (π₁ s)) (reifyᶜ (π₂ s))
-  reifyᶜ {⊤}    s = ttⁿᶠ
+  reifyᶜ {α P}   s       = neⁿᶠ s
+  reifyᶜ {A ▻ B} s       = lamⁿᶠ (reifyᶜ (s weak⊆ (reflectᶜ {A} (varⁿᵉ top))))
+  reifyᶜ {A ∧ B} (a , b) = pairⁿᶠ (reifyᶜ a) (reifyᶜ b)
+  reifyᶜ {⊤}    s       = ttⁿᶠ
 
 reflectᶜ⋆ : ∀ {Π Γ} → Γ ⊢⋆ⁿᵉ Π → Γ ⊩⋆ Π
 reflectᶜ⋆ {⌀}     ∙        = ∙

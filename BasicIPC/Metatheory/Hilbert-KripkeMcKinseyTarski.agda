@@ -46,10 +46,10 @@ mutual
   reflectᶜ {⊤}    t = ∙
 
   reifyᶜ : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
-  reifyᶜ {α P}   s = s
-  reifyᶜ {A ▻ B} s = lam (reifyᶜ (s weak⊆ (reflectᶜ {A} v₀)))
-  reifyᶜ {A ∧ B} s = pair (reifyᶜ (π₁ s)) (reifyᶜ (π₂ s))
-  reifyᶜ {⊤}    s = tt
+  reifyᶜ {α P}   s       = s
+  reifyᶜ {A ▻ B} s       = lam (reifyᶜ (s weak⊆ (reflectᶜ {A} v₀)))
+  reifyᶜ {A ∧ B} (a , b) = pair (reifyᶜ a) (reifyᶜ b)
+  reifyᶜ {⊤}    ∙       = tt
 
 reflectᶜ⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊩⋆ Π
 reflectᶜ⋆ {⌀}     ∙        = ∙
