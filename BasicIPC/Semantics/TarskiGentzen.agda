@@ -77,17 +77,61 @@ module _ {{_ : Model}} where
   reifyʳ⋆ {Π , A} (ts , t) = reifyʳ⋆ ts , reifyʳ t
 
 
+-- Shorthand for variables.
+
+module _ {{_ : Model}} where
+  [v₀] : ∀ {A Γ} → Γ , A [⊢] A
+  [v₀] = [var] i₀
+
+  [v₁] : ∀ {A B Γ} → (Γ , A) , B [⊢] A
+  [v₁] = [var] i₁
+
+  [v₂] : ∀ {A B C Γ} → ((Γ , A) , B) , C [⊢] A
+  [v₂] = [var] i₂
+
+
+-- Useful theorems in combinatory form.
+
+module _ {{_ : Model}} where
+  [ck] : ∀ {A B Γ} → Γ [⊢] A ▻ B ▻ A
+  [ck] = [lam] ([lam] [v₁])
+
+  [cs] : ∀ {A B C Γ} → Γ [⊢] (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
+  [cs] = [lam] ([lam] ([lam] ([app] ([app] [v₂] [v₀]) ([app] [v₁] [v₀]))))
+
+  [cpair] : ∀ {A B Γ} → Γ [⊢] A ▻ B ▻ A ∧ B
+  [cpair] = [lam] ([lam] ([pair] [v₁] [v₀]))
+
+
 -- Additional useful equipment.
 
 module _ {{_ : Model}} where
   _⟪$⟫_ : ∀ {A B Γ} → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ B
   s ⟪$⟫ a = let t , f = s refl⊆ in f a
 
+  ⟪const⟫ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B ▻ A
+  ⟪const⟫ {A} a η = let a′ = mono⊩ {A} η a
+                    in  [app] [ck] (reifyʳ a′) , const a′
+
   ⟪ap⟫ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ C
   ⟪ap⟫ s₁ s₂ a = let t , f = s₁ refl⊆
                      u , g = s₂ refl⊆
                      _ , h = (f a) refl⊆
                  in  h (g a)
+
+  ⟪ap⟫′ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ (A ▻ B) ▻ A ▻ C
+  ⟪ap⟫′ {A} {B} {C} s₁ η = let s₁′   = mono⊩ {A ▻ B ▻ C} η s₁
+                               t , _ = s₁′ refl⊆
+                           in  [app] [cs] t , λ s₂ η′ →
+                                 let s₁″    = mono⊩ {A ▻ B ▻ C} (trans⊆ η η′) s₁
+                                     t′ , _ = s₁″ refl⊆
+                                     s₂′    = mono⊩ {A ▻ B} η′ s₂
+                                     u  , g = s₂′ refl⊆
+                                 in  [app] ([app] [cs] t′) u , ⟪ap⟫ s₁″ s₂′
+
+  _⟪,⟫′_ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B ▻ A ∧ B
+  _⟪,⟫′_ {A} a η = let a′ = mono⊩ {A} η a
+                   in  [app] [cpair] (reifyʳ a′) , _,_ a′
 
 
 -- Forcing in a particular model, for sequents.
