@@ -53,16 +53,16 @@ module _ {{_ : Model}} where
   _⟪$⟫_ : ∀ {A B Γ} → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ B
   f ⟪$⟫ a = f refl⊆ a
 
-  ⟪const⟫ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B ▻ A
-  ⟪const⟫ {A} a η = const (mono⊩ {A} η a)
+  ⟪K⟫ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B ▻ A
+  ⟪K⟫ {A} a η = K (mono⊩ {A} η a)
 
-  ⟪ap⟫′ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ (A ▻ B) ▻ A ▻ C
-  ⟪ap⟫′ {A} {B} {C} f η g η′ a = let f′ = mono⊩ {A ▻ B ▻ C} (trans⊆ η η′) f
-                                     g′ = mono⊩ {A ▻ B} η′ g
-                                 in  (f′ refl⊆ a) refl⊆ (g′ refl⊆ a)
+  ⟪S⟫′ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ (A ▻ B) ▻ A ▻ C
+  ⟪S⟫′ {A} {B} {C} f η g η′ a = let f′ = mono⊩ {A ▻ B ▻ C} (trans⊆ η η′) f
+                                    g′ = mono⊩ {A ▻ B} η′ g
+                                in  (f′ refl⊆ a) refl⊆ (g′ refl⊆ a)
 
-  ⟪ap⟫ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ C
-  ⟪ap⟫ {A} {B} {C} f g a = ⟪ap⟫′ {A} {B} {C} f refl⊆ g refl⊆ a
+  ⟪S⟫ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ C
+  ⟪S⟫ {A} {B} {C} f g a = ⟪S⟫′ {A} {B} {C} f refl⊆ g refl⊆ a
 
   _⟪,⟫′_ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B ▻ A ∧ B
   _⟪,⟫′_ {A} {B} a η b = let a′ = mono⊩ {A} η a
@@ -108,11 +108,11 @@ module _ {{_ : Model}} where
   _⟦$⟧_ : ∀ {A B Γ Γ₀} → Γ₀ ⊩ Γ ⇒ A ▻ B → Γ₀ ⊩ Γ ⇒ A → Γ₀ ⊩ Γ ⇒ B
   _⟦$⟧_ {A} {B} f g γ = _⟪$⟫_ {A} {B} (f γ) (g γ)
 
-  ⟦const⟧ : ∀ {A B Γ Γ₀} → Γ₀ ⊩ Γ ⇒ A → Γ₀ ⊩ Γ ⇒ B ▻ A
-  ⟦const⟧ {A} {B} a γ = ⟪const⟫ {A} {B} (a γ)
+  ⟦K⟧ : ∀ {A B Γ Γ₀} → Γ₀ ⊩ Γ ⇒ A → Γ₀ ⊩ Γ ⇒ B ▻ A
+  ⟦K⟧ {A} {B} a γ = ⟪K⟫ {A} {B} (a γ)
 
-  ⟦ap⟧ : ∀ {A B C Γ Γ₀} → Γ₀ ⊩ Γ ⇒ A ▻ B ▻ C → Γ₀ ⊩ Γ ⇒ A ▻ B → Γ₀ ⊩ Γ ⇒ A → Γ₀ ⊩ Γ ⇒ C
-  ⟦ap⟧ {A} {B} {C} f g a γ = ⟪ap⟫ {A} {B} {C} (f γ) (g γ) (a γ)
+  ⟦S⟧ : ∀ {A B C Γ Γ₀} → Γ₀ ⊩ Γ ⇒ A ▻ B ▻ C → Γ₀ ⊩ Γ ⇒ A ▻ B → Γ₀ ⊩ Γ ⇒ A → Γ₀ ⊩ Γ ⇒ C
+  ⟦S⟧ {A} {B} {C} f g a γ = ⟪S⟫ {A} {B} {C} (f γ) (g γ) (a γ)
 
   _⟦,⟧_ : ∀ {A B Γ Γ₀} → Γ₀ ⊩ Γ ⇒ A → Γ₀ ⊩ Γ ⇒ B → Γ₀ ⊩ Γ ⇒ A ∧ B
   (a ⟦,⟧ b) γ = a γ , b γ

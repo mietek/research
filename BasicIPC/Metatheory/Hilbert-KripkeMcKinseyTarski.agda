@@ -9,12 +9,12 @@ open import BasicIPC.Semantics.KripkeMcKinseyTarski public
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)           γ = lookup i γ
 eval (app {A} {B} t u) γ = _⟪$⟫_ {A} {B} (eval t γ) (eval u γ)
-eval ci                γ = const id
-eval (ck {A} {B})      γ = const (⟪const⟫ {A} {B})
-eval (cs {A} {B} {C})  γ = const (⟪ap⟫′ {A} {B} {C})
-eval (cpair {A} {B})   γ = const (_⟪,⟫′_ {A} {B})
-eval cfst              γ = const π₁
-eval csnd              γ = const π₂
+eval ci                γ = K I
+eval (ck {A} {B})      γ = K (⟪K⟫ {A} {B})
+eval (cs {A} {B} {C})  γ = K (⟪S⟫′ {A} {B} {C})
+eval (cpair {A} {B})   γ = K (_⟪,⟫′_ {A} {B})
+eval cfst              γ = K π₁
+eval csnd              γ = K π₂
 eval tt                γ = ∙
 
 

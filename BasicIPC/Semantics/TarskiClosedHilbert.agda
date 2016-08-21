@@ -75,15 +75,15 @@ module _ {{_ : Model}} where
   _⟪$⟫_ : ∀ {A B} → ⊩ A ▻ B → ⊩ A → ⊩ B
   (t , f) ⟪$⟫ a = f a
 
-  ⟪const⟫ : ∀ {A B} → ⊩ A → ⊩ B ▻ A
-  ⟪const⟫ a = [app] [ck] (reifyʳ a) , const a
+  ⟪K⟫ : ∀ {A B} → ⊩ A → ⊩ B ▻ A
+  ⟪K⟫ a = [app] [ck] (reifyʳ a) , K a
 
-  ⟪ap⟫ : ∀ {A B C} → ⊩ A ▻ B ▻ C → ⊩ A ▻ B → ⊩ A → ⊩ C
-  ⟪ap⟫ (t , f) (u , g) a = let (_ , h) = f a in h (g a)
+  ⟪S⟫ : ∀ {A B C} → ⊩ A ▻ B ▻ C → ⊩ A ▻ B → ⊩ A → ⊩ C
+  ⟪S⟫ (t , f) (u , g) a = let (_ , h) = f a in h (g a)
 
-  ⟪ap⟫′ : ∀ {A B C} → ⊩ A ▻ B ▻ C → ⊩ (A ▻ B) ▻ A ▻ C
-  ⟪ap⟫′ f = [app] [cs] (reifyʳ f) , λ g →
-              [app] ([app] [cs] (reifyʳ f)) (reifyʳ g) , ⟪ap⟫ f g
+  ⟪S⟫′ : ∀ {A B C} → ⊩ A ▻ B ▻ C → ⊩ (A ▻ B) ▻ A ▻ C
+  ⟪S⟫′ f = [app] [cs] (reifyʳ f) , λ g →
+             [app] ([app] [cs] (reifyʳ f)) (reifyʳ g) , ⟪S⟫ f g
 
   _⟪,⟫′_ : ∀ {A B} → ⊩ A → ⊩ B ▻ A ∧ B
   _⟪,⟫′_ a = [app] [cpair] (reifyʳ a) , _,_ a
@@ -125,8 +125,8 @@ module _ {{_ : Model}} where
   _⟦$⟧_ : ∀ {A B Γ} → ⊩ Γ ⇒ A ▻ B → ⊩ Γ ⇒ A → ⊩ Γ ⇒ B
   (f ⟦$⟧ g) γ = f γ ⟪$⟫ g γ
 
-  ⟦ap⟧ : ∀ {A B C Γ} → ⊩ Γ ⇒ A ▻ B ▻ C → ⊩ Γ ⇒ A ▻ B → ⊩ Γ ⇒ A → ⊩ Γ ⇒ C
-  ⟦ap⟧ f g a γ = ⟪ap⟫ (f γ) (g γ) (a γ)
+  ⟦S⟧ : ∀ {A B C Γ} → ⊩ Γ ⇒ A ▻ B ▻ C → ⊩ Γ ⇒ A ▻ B → ⊩ Γ ⇒ A → ⊩ Γ ⇒ C
+  ⟦S⟧ f g a γ = ⟪S⟫ (f γ) (g γ) (a γ)
 
   _⟦,⟧_ : ∀ {A B Γ} → ⊩ Γ ⇒ A → ⊩ Γ ⇒ B → ⊩ Γ ⇒ A ∧ B
   (a ⟦,⟧ b) γ = a γ , b γ

@@ -135,7 +135,7 @@ module _ {U : Set} where
 
   id⧺ᵣ : ∀ {Γ} → ⌀  ⧺ Γ ≡ Γ
   id⧺ᵣ {⌀}     = refl
-  id⧺ᵣ {Γ , A} = cong₂ _,_ id⧺ᵣ refl
+  id⧺ᵣ {Γ , A} = cong² _,_ id⧺ᵣ refl
 
   weak⊆⧺ₗ : ∀ {Γ} Γ′ → Γ ⊆ Γ ⧺ Γ′
   weak⊆⧺ₗ ⌀        = refl⊆

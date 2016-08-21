@@ -124,11 +124,11 @@ lam csnd          = app ck csnd
 lam tt            = app ck tt
 
 lam⋆ : ∀ {Π A Γ Δ} → Γ ⧺ Π ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ Π ▻⋯▻ A
-lam⋆ {⌀}     = id
+lam⋆ {⌀}     = I
 lam⋆ {Π , B} = lam⋆ {Π} ∘ lam
 
 lam⋆₀ : ∀ {Γ A Δ} → Γ ⁏ Δ ⊢ A → ⌀ ⁏ Δ ⊢ Γ ▻⋯▻ A
-lam⋆₀ {⌀}     = id
+lam⋆₀ {⌀}     = I
 lam⋆₀ {Γ , B} = lam⋆₀ ∘ lam
 
 
@@ -164,11 +164,11 @@ mlam csnd           = app ck csnd
 mlam tt             = app ck tt
 
 mlam⋆ : ∀ {Π A Γ Δ} → Γ ⁏ Δ ⧺ Π ⊢ A → Γ ⁏ Δ ⊢ □⋆ Π ▻⋯▻ A
-mlam⋆ {⌀}     = id
+mlam⋆ {⌀}     = I
 mlam⋆ {Π , B} = mlam⋆ {Π} ∘ mlam
 
 mlam⋆₀ : ∀ {Δ A Γ} → Γ ⁏ Δ ⊢ A → Γ ⁏ ⌀ ⊢ □⋆ Δ ▻⋯▻ A
-mlam⋆₀ {⌀}     = id
+mlam⋆₀ {⌀}     = I
 mlam⋆₀ {Δ , B} = mlam⋆₀ ∘ mlam
 
 
@@ -178,22 +178,22 @@ det : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ▻ B → Γ , A ⁏ Δ ⊢ B
 det t = app (mono⊢ weak⊆ t) v₀
 
 det⋆ : ∀ {Π A Γ Δ} → Γ ⁏ Δ ⊢ Π ▻⋯▻ A → Γ ⧺ Π ⁏ Δ ⊢ A
-det⋆ {⌀}     = id
+det⋆ {⌀}     = I
 det⋆ {Π , B} = det ∘ det⋆ {Π}
 
 det⋆₀ : ∀ {Γ A Δ} → ⌀ ⁏ Δ ⊢ Γ ▻⋯▻ A → Γ ⁏ Δ ⊢ A
-det⋆₀ {⌀}     = id
+det⋆₀ {⌀}     = I
 det⋆₀ {Γ , B} = det ∘ det⋆₀
 
 mdet : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ □ A ▻ B → Γ ⁏ Δ , A ⊢ B
 mdet t = app (mmono⊢ weak⊆ t) (box mv₀)
 
 mdet⋆ : ∀ {Π A Γ Δ} → Γ ⁏ Δ ⊢ □⋆ Π ▻⋯▻ A → Γ ⁏ Δ ⧺ Π ⊢ A
-mdet⋆ {⌀}     = id
+mdet⋆ {⌀}     = I
 mdet⋆ {Π , B} = mdet ∘ mdet⋆ {Π}
 
 mdet⋆₀ : ∀ {Δ A Γ} → Γ ⁏ ⌀ ⊢ □⋆ Δ ▻⋯▻ A → Γ ⁏ Δ ⊢ A
-mdet⋆₀ {⌀}     = id
+mdet⋆₀ {⌀}     = I
 mdet⋆₀ {Δ , B} = mdet ∘ mdet⋆₀
 
 

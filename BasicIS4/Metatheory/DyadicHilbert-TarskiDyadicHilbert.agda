@@ -37,19 +37,19 @@ module _ {{_ : Model}} where
 eval : ∀ {Δ A Γ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊨ A
 eval (var i)   γ δ = lookup i γ
 eval (app t u) γ δ = eval t γ δ ⟪$⟫ eval u γ δ
-eval ci        γ δ = const₂ ([ci] , id)
-eval ck        γ δ = const₂ ([ck] , ⟪const⟫)
-eval cs        γ δ = const₂ ([cs] , ⟪ap⟫′)
+eval ci        γ δ = K² ([ci] , I)
+eval ck        γ δ = K² ([ck] , ⟪K⟫)
+eval cs        γ δ = K² ([cs] , ⟪S⟫′)
 eval (mvar i)  γ δ = mlookup i δ
 eval (box t)   γ δ = λ η θ → let δ′ = mono²⊩⋆ (η , θ) δ
                               in  [mmulticut] (reifyʳ⋆ δ′) [ box t ] ,
                                     eval t ∙ δ′
-eval cdist     γ δ = const₂ ([cdist] , _⟪◎⟫′_)
-eval cup       γ δ = const₂ ([cup] , ⟪⇑⟫)
-eval cdown     γ δ = const₂ ([cdown] , ⟪⇓⟫)
-eval cpair     γ δ = const₂ ([cpair] , _⟪,⟫′_)
-eval cfst      γ δ = const₂ ([cfst] , π₁)
-eval csnd      γ δ = const₂ ([csnd] , π₂)
+eval cdist     γ δ = K² ([cdist] , _⟪D⟫′_)
+eval cup       γ δ = K² ([cup] , ⟪↑⟫)
+eval cdown     γ δ = K² ([cdown] , ⟪↓⟫)
+eval cpair     γ δ = K² ([cpair] , _⟪,⟫′_)
+eval cfst      γ δ = K² ([cfst] , π₁)
+eval csnd      γ δ = K² ([csnd] , π₂)
 eval tt        γ δ = ∙
 
 

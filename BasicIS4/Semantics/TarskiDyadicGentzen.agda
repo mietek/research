@@ -169,42 +169,42 @@ module _ {{_ : Model}} where
   s ⟪$⟫ a = let t , f = s refl⊆ refl⊆
             in  f a
 
-  ⟪const⟫ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊩ B ▻ A
-  ⟪const⟫ {A} a η θ = let a′ = mono²⊩ {A} (η , θ) a
-                      in  [app] [ck] (reifyʳ a′) , const a′
+  ⟪K⟫ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊩ B ▻ A
+  ⟪K⟫ {A} a η θ = let a′ = mono²⊩ {A} (η , θ) a
+                  in  [app] [ck] (reifyʳ a′) , K a′
 
-  ⟪ap⟫ : ∀ {A B C Γ Δ} → Γ ⁏ Δ ⊩ A ▻ B ▻ C → Γ ⁏ Δ ⊩ A ▻ B → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊩ C
-  ⟪ap⟫ s₁ s₂ a = let t , f = s₁ refl⊆ refl⊆
-                     u , g = s₂ refl⊆ refl⊆
-                     _ , h = (f a) refl⊆ refl⊆
-                 in  h (g a)
+  ⟪S⟫ : ∀ {A B C Γ Δ} → Γ ⁏ Δ ⊩ A ▻ B ▻ C → Γ ⁏ Δ ⊩ A ▻ B → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊩ C
+  ⟪S⟫ s₁ s₂ a = let t , f = s₁ refl⊆ refl⊆
+                    u , g = s₂ refl⊆ refl⊆
+                    _ , h = (f a) refl⊆ refl⊆
+                in  h (g a)
 
-  ⟪ap⟫′ : ∀ {A B C Γ Δ} → Γ ⁏ Δ ⊩ A ▻ B ▻ C → Γ ⁏ Δ ⊩ (A ▻ B) ▻ A ▻ C
-  ⟪ap⟫′ {A} {B} {C} s₁ η θ = let s₁′   = mono²⊩ {A ▻ B ▻ C} (η , θ) s₁
-                                 t , _ = s₁′ refl⊆ refl⊆
-                             in  [app] [cs] t , λ s₂ η′ θ′ →
-                                   let s₁″    = mono²⊩ {A ▻ B ▻ C} (trans⊆ η η′ , trans⊆ θ θ′) s₁
-                                       t′ , _ = s₁″ refl⊆ refl⊆
-                                       s₂′    = mono²⊩ {A ▻ B} (η′ , θ′) s₂
-                                       u  , g = s₂′ refl⊆ refl⊆
-                                   in  [app] ([app] [cs] t′) u , ⟪ap⟫ s₁″ s₂′
+  ⟪S⟫′ : ∀ {A B C Γ Δ} → Γ ⁏ Δ ⊩ A ▻ B ▻ C → Γ ⁏ Δ ⊩ (A ▻ B) ▻ A ▻ C
+  ⟪S⟫′ {A} {B} {C} s₁ η θ = let s₁′   = mono²⊩ {A ▻ B ▻ C} (η , θ) s₁
+                                t , _ = s₁′ refl⊆ refl⊆
+                            in  [app] [cs] t , λ s₂ η′ θ′ →
+                                  let s₁″    = mono²⊩ {A ▻ B ▻ C} (trans⊆ η η′ , trans⊆ θ θ′) s₁
+                                      t′ , _ = s₁″ refl⊆ refl⊆
+                                      s₂′    = mono²⊩ {A ▻ B} (η′ , θ′) s₂
+                                      u  , g = s₂′ refl⊆ refl⊆
+                                  in  [app] ([app] [cs] t′) u , ⟪S⟫ s₁″ s₂′
 
-  _⟪◎⟫_ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊩ □ (A ▻ B) → Γ ⁏ Δ ⊩ □ A → Γ ⁏ Δ ⊩ □ B
-  (s₁ ⟪◎⟫ s₂) η θ = let t , f = s₁ η θ
+  _⟪D⟫_ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊩ □ (A ▻ B) → Γ ⁏ Δ ⊩ □ A → Γ ⁏ Δ ⊩ □ B
+  (s₁ ⟪D⟫ s₂) η θ = let t , f = s₁ η θ
                         u , a = s₂ η θ
                     in  [app] ([app] [cdist] t) u , f ⟪$⟫ a
 
   -- TODO: Report bug.
-  _⟪◎⟫′_ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊩ □ (A ▻ B) → Γ ⁏ Δ ⊩ □ A ▻ □ B
-  _⟪◎⟫′_ {A} {B} s η θ = let s′ = mono²⊩ {□ (A ▻ B)} (η , θ) s
-                         in  [app] [cdist] (reifyʳ (λ {Γ″} {Δ″} η′ θ′ → s′ η′ θ′)) , _⟪◎⟫_ s′
+  _⟪D⟫′_ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊩ □ (A ▻ B) → Γ ⁏ Δ ⊩ □ A ▻ □ B
+  _⟪D⟫′_ {A} {B} s η θ = let s′ = mono²⊩ {□ (A ▻ B)} (η , θ) s
+                         in  [app] [cdist] (reifyʳ (λ {Γ″} {Δ″} η′ θ′ → s′ η′ θ′)) , _⟪D⟫_ s′
 
-  ⟪⇑⟫ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ □ A → Γ ⁏ Δ ⊩ □ □ A
-  ⟪⇑⟫ {A} s η θ = let t , a = s η θ
+  ⟪↑⟫ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ □ A → Γ ⁏ Δ ⊩ □ □ A
+  ⟪↑⟫ {A} s η θ = let t , a = s η θ
                   in  [app] [cup] t , λ η′ θ′ → s (trans⊆ η η′) (trans⊆ θ θ′)
 
-  ⟪⇓⟫ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ □ A → Γ ⁏ Δ ⊩ A
-  ⟪⇓⟫ s = let p , a = s refl⊆ refl⊆
+  ⟪↓⟫ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ □ A → Γ ⁏ Δ ⊩ A
+  ⟪↓⟫ s = let p , a = s refl⊆ refl⊆
           in  a
 
   _⟪,⟫′_ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊩ B ▻ A ∧ B

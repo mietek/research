@@ -20,21 +20,21 @@ module _ {{_ : Model}} where
 -- Additional useful equipment.
 
 module _ {{_ : Model}} where
-  ⟪const⟫ : ∀ {A B} → ⊩ A → ⊩ B ▻ A
-  ⟪const⟫ a = app ck (reify a) , const a
+  ⟪K⟫ : ∀ {A B} → ⊩ A → ⊩ B ▻ A
+  ⟪K⟫ a = app ck (reify a) , K a
 
-  ⟪ap⟫′ : ∀ {A B C} → ⊩ A ▻ B ▻ C → ⊩ (A ▻ B) ▻ A ▻ C
-  ⟪ap⟫′ f = app cs (reify f) , λ g →
-              app (app cs (reify f)) (reify g) , ⟪ap⟫ f g
+  ⟪S⟫′ : ∀ {A B C} → ⊩ A ▻ B ▻ C → ⊩ (A ▻ B) ▻ A ▻ C
+  ⟪S⟫′ f = app cs (reify f) , λ g →
+              app (app cs (reify f)) (reify g) , ⟪S⟫ f g
 
-  _⟪◎⟫_ : ∀ {A B} → ⊩ □ (A ▻ B) → ⊩ □ A → ⊩ □ B
-  (t , f) ⟪◎⟫ (u , a) = app (app cdist t) u , f ⟪$⟫ a
+  _⟪D⟫_ : ∀ {A B} → ⊩ □ (A ▻ B) → ⊩ □ A → ⊩ □ B
+  (t , f) ⟪D⟫ (u , a) = app (app cdist t) u , f ⟪$⟫ a
 
-  _⟪◎⟫′_ : ∀ {A B} → ⊩ □ (A ▻ B) → ⊩ □ A ▻ □ B
-  _⟪◎⟫′_ s = app cdist (reify s) , _⟪◎⟫_ s
+  _⟪D⟫′_ : ∀ {A B} → ⊩ □ (A ▻ B) → ⊩ □ A ▻ □ B
+  _⟪D⟫′_ s = app cdist (reify s) , _⟪D⟫_ s
 
-  ⟪⇑⟫ : ∀ {A} → ⊩ □ A → ⊩ □ □ A
-  ⟪⇑⟫ (t , a) = box t , (t , a)
+  ⟪↑⟫ : ∀ {A} → ⊩ □ A → ⊩ □ □ A
+  ⟪↑⟫ (t , a) = box t , (t , a)
 
   _⟪,⟫′_ : ∀ {A B} → ⊩ A → ⊩ B ▻ A ∧ B
   _⟪,⟫′_ a = app cpair (reify a) , _,_ a
@@ -43,11 +43,11 @@ module _ {{_ : Model}} where
 -- Additional useful equipment, for sequents.
 
 module _ {{_ : Model}} where
-  _⟦◎⟧_ : ∀ {A B Γ} → ⊩ Γ ⇒ □ (A ▻ B) → ⊩ Γ ⇒ □ A → ⊩ Γ ⇒ □ B
-  (s₁ ⟦◎⟧ s₂) γ = (s₁ γ) ⟪◎⟫ (s₂ γ)
+  _⟦D⟧_ : ∀ {A B Γ} → ⊩ Γ ⇒ □ (A ▻ B) → ⊩ Γ ⇒ □ A → ⊩ Γ ⇒ □ B
+  (s₁ ⟦D⟧ s₂) γ = (s₁ γ) ⟪D⟫ (s₂ γ)
 
-  ⟦⇑⟧ : ∀ {A Γ} → ⊩ Γ ⇒ □ A → ⊩ Γ ⇒ □ □ A
-  ⟦⇑⟧ s γ = ⟪⇑⟫ (s γ)
+  ⟦↑⟧ : ∀ {A Γ} → ⊩ Γ ⇒ □ A → ⊩ Γ ⇒ □ □ A
+  ⟦↑⟧ s γ = ⟪↑⟫ (s γ)
 
 
 -- Soundness with respect to all models, or evaluation.
@@ -55,13 +55,13 @@ module _ {{_ : Model}} where
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)   γ = lookup i γ
 eval (app t u) γ = eval t γ ⟪$⟫ eval u γ
-eval ci        γ = ci , id
-eval ck        γ = ck , ⟪const⟫
-eval cs        γ = cs , ⟪ap⟫′
+eval ci        γ = ci , I
+eval ck        γ = ck , ⟪K⟫
+eval cs        γ = cs , ⟪S⟫′
 eval (box t)   γ = box t , eval t ∙
-eval cdist     γ = cdist , _⟪◎⟫′_
-eval cup       γ = cup , ⟪⇑⟫
-eval cdown     γ = cdown , ⟪⇓⟫
+eval cdist     γ = cdist , _⟪D⟫′_
+eval cup       γ = cup , ⟪↑⟫
+eval cdown     γ = cdown , ⟪↓⟫
 eval cpair     γ = cpair , _⟪,⟫′_
 eval cfst      γ = cfst , π₁
 eval csnd      γ = csnd , π₂
@@ -74,14 +74,14 @@ eval✓ : ∀ {{_ : Model}} {A Γ} {t t′ : Γ ⊢ A} → t ⋙ t′ → eval t
 eval✓ refl⋙                   = refl
 eval✓ (trans⋙ p q)            = trans (eval✓ p) (eval✓ q)
 eval✓ (sym⋙ p)                = sym (eval✓ p)
-eval✓ (congapp⋙ p q)          = cong₂ _⟦$⟧_ (eval✓ p) (eval✓ q)
-eval✓ (congi⋙ p)              = cong id (eval✓ p)
-eval✓ (congk⋙ p q)            = cong₂ const (eval✓ p) (eval✓ q)
-eval✓ (congs⋙ p q r)          = cong₃ ⟦ap⟧ (eval✓ p) (eval✓ q) (eval✓ r)
-eval✓ (congdist⋙ p q)         = cong₂ _⟦◎⟧_ (eval✓ p) (eval✓ q)
-eval✓ (congup⋙ p)             = cong ⟦⇑⟧ (eval✓ p)
-eval✓ (congdown⋙ p)           = cong ⟦⇓⟧ (eval✓ p)
-eval✓ (congpair⋙ {A} {B} p q) = cong₂ (_⟦,⟧_ {A} {B}) (eval✓ p) (eval✓ q)
+eval✓ (congapp⋙ p q)          = cong² _⟦$⟧_ (eval✓ p) (eval✓ q)
+eval✓ (congi⋙ p)              = cong I (eval✓ p)
+eval✓ (congk⋙ p q)            = cong² K (eval✓ p) (eval✓ q)
+eval✓ (congs⋙ p q r)          = cong³ ⟦S⟧ (eval✓ p) (eval✓ q) (eval✓ r)
+eval✓ (congdist⋙ p q)         = cong² _⟦D⟧_ (eval✓ p) (eval✓ q)
+eval✓ (congup⋙ p)             = cong ⟦↑⟧ (eval✓ p)
+eval✓ (congdown⋙ p)           = cong ⟦↓⟧ (eval✓ p)
+eval✓ (congpair⋙ {A} {B} p q) = cong² (_⟦,⟧_ {A} {B}) (eval✓ p) (eval✓ q)
 eval✓ (congfst⋙ {A} {B} p)    = cong (⟦π₁⟧ {A} {B}) (eval✓ p)
 eval✓ (congsnd⋙ {A} {B} p)    = cong (⟦π₂⟧ {A} {B}) (eval✓ p)
 eval✓ beta▻ₖ⋙                 = refl

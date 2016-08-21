@@ -129,31 +129,31 @@ module _ {{_ : Model}} where
   _⟪$⟫_ : ∀ {A B w} → w ⊩ A ▻ B → w ⊩ A → w ⊩ B
   f ⟪$⟫ a = f refl≤ a
 
-  ⟪const⟫ : ∀ {A B w} → w ⊩ A → w ⊩ B ▻ A
-  ⟪const⟫ {A} a ξ = const (mono⊩ {A} ξ a)
+  ⟪K⟫ : ∀ {A B w} → w ⊩ A → w ⊩ B ▻ A
+  ⟪K⟫ {A} a ξ = K (mono⊩ {A} ξ a)
 
-  ⟪ap⟫′ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C → w ⊩ (A ▻ B) ▻ A ▻ C
-  ⟪ap⟫′ {A} {B} {C} f ξ g ξ′ a = let f′ = mono⊩ {A ▻ B ▻ C} (trans≤ ξ ξ′) f
-                                     g′ = mono⊩ {A ▻ B} ξ′ g
-                                 in  (f′ refl≤ a) refl≤ (g′ refl≤ a)
+  ⟪S⟫′ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C → w ⊩ (A ▻ B) ▻ A ▻ C
+  ⟪S⟫′ {A} {B} {C} f ξ g ξ′ a = let f′ = mono⊩ {A ▻ B ▻ C} (trans≤ ξ ξ′) f
+                                    g′ = mono⊩ {A ▻ B} ξ′ g
+                                in  (f′ refl≤ a) refl≤ (g′ refl≤ a)
 
-  ⟪ap⟫ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C → w ⊩ A ▻ B → w ⊩ A → w ⊩ C
-  ⟪ap⟫ {A} {B} {C} f g a = ⟪ap⟫′ {A} {B} {C} f refl≤ g refl≤ a
+  ⟪S⟫ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C → w ⊩ A ▻ B → w ⊩ A → w ⊩ C
+  ⟪S⟫ {A} {B} {C} f g a = ⟪S⟫′ {A} {B} {C} f refl≤ g refl≤ a
 
-  _⟪◎⟫′_ : ∀ {A B Γ} → Γ ⊩ □ (A ▻ B) → Γ ⊩ □ A ▻ □ B
-  _⟪◎⟫′_ s₁ ξ s₂ ξ′ ζ = let f = s₁ (trans≤ ξ ξ′) ζ refl≤
+  _⟪D⟫′_ : ∀ {A B Γ} → Γ ⊩ □ (A ▻ B) → Γ ⊩ □ A ▻ □ B
+  _⟪D⟫′_ s₁ ξ s₂ ξ′ ζ = let f = s₁ (trans≤ ξ ξ′) ζ refl≤
                             a = s₂ ξ′ ζ
                         in  f a
 
-  _⟪◎⟫_ : ∀ {A B Γ} → Γ ⊩ □ (A ▻ B) → Γ ⊩ □ A → Γ ⊩ □ B
-  _⟪◎⟫_ {A} {B} s₁ s₂ ζ = _⟪◎⟫′_ {A} {B} s₁ refl≤ s₂ ζ
+  _⟪D⟫_ : ∀ {A B Γ} → Γ ⊩ □ (A ▻ B) → Γ ⊩ □ A → Γ ⊩ □ B
+  _⟪D⟫_ {A} {B} s₁ s₂ ζ = _⟪D⟫′_ {A} {B} s₁ refl≤ s₂ ζ
 
-  ⟪⇑⟫ : ∀ {A Γ} → Γ ⊩ □ A → Γ ⊩ □ □ A
-  ⟪⇑⟫ s ξ ζ ξ′ ζ′ = let _ , (ξ″ , ζ″) = trans≤⨾R (_ , (ξ , ζ)) (_ , (ξ′ , ζ′))
+  ⟪↑⟫ : ∀ {A Γ} → Γ ⊩ □ A → Γ ⊩ □ □ A
+  ⟪↑⟫ s ξ ζ ξ′ ζ′ = let _ , (ξ″ , ζ″) = trans≤⨾R (_ , (ξ , ζ)) (_ , (ξ′ , ζ′))
                     in  s ξ″ ζ″
 
-  ⟪⇓⟫ : ∀ {A Γ} → Γ ⊩ □ A → Γ ⊩ A
-  ⟪⇓⟫ s = s refl≤ reflR
+  ⟪↓⟫ : ∀ {A Γ} → Γ ⊩ □ A → Γ ⊩ A
+  ⟪↓⟫ s = s refl≤ reflR
 
   _⟪,⟫′_ : ∀ {A B w} → w ⊩ A → w ⊩ B ▻ A ∧ B
   _⟪,⟫′_ {A} {B} a ξ b = let a′ = mono⊩ {A} ξ a

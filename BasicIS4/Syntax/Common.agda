@@ -99,7 +99,7 @@ infixr 8 □⋆_
 
 dist□⋆ₗ : ∀ Π Π′ → □⋆ (Π ⧺ Π′) ≡ (□⋆ Π) ⧺ (□⋆ Π′)
 dist□⋆ₗ Π ⌀        = refl
-dist□⋆ₗ Π (Π′ , A) = cong₂ _,_ (dist□⋆ₗ Π Π′) refl
+dist□⋆ₗ Π (Π′ , A) = cong² _,_ (dist□⋆ₗ Π Π′) refl
 
 lift⊆ : ∀ {Δ Δ′} → Δ ⊆ Δ′ → □⋆ Δ ⊆ □⋆ Δ′
 lift⊆ done     = done

@@ -23,19 +23,19 @@ module _ {{_ : Model}} where
 -- Additional useful equipment.
 
 module _ {{_ : Model}} where
-  ⟪const⟫ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B ▻ A
-  ⟪const⟫ {A} a η = let a′ = mono⊩ {A} η a
-                    in  app ck (reify a′) , const a′
+  ⟪K⟫ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B ▻ A
+  ⟪K⟫ {A} a η = let a′ = mono⊩ {A} η a
+                in  app ck (reify a′) , K a′
 
-  ⟪ap⟫′ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ (A ▻ B) ▻ A ▻ C
-  ⟪ap⟫′ {A} {B} {C} s₁ η = let s₁′   = mono⊩ {A ▻ B ▻ C} η s₁
-                               t , _ = s₁′ refl⊆
-                           in  app cs t , λ s₂ η′ →
-                                 let s₁″    = mono⊩ {A ▻ B ▻ C} (trans⊆ η η′) s₁
-                                     t′ , _ = s₁″ refl⊆
-                                     s₂′    = mono⊩ {A ▻ B} η′ s₂
-                                     u  , g = s₂′ refl⊆
-                                 in  app (app cs t′) u , ⟪ap⟫ s₁″ s₂′
+  ⟪S⟫′ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ (A ▻ B) ▻ A ▻ C
+  ⟪S⟫′ {A} {B} {C} s₁ η = let s₁′   = mono⊩ {A ▻ B ▻ C} η s₁
+                              t , _ = s₁′ refl⊆
+                          in  app cs t , λ s₂ η′ →
+                                let s₁″    = mono⊩ {A ▻ B ▻ C} (trans⊆ η η′) s₁
+                                    t′ , _ = s₁″ refl⊆
+                                    s₂′    = mono⊩ {A ▻ B} η′ s₂
+                                    u  , g = s₂′ refl⊆
+                                in  app (app cs t′) u , ⟪S⟫ s₁″ s₂′
 
   _⟪,⟫′_ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B ▻ A ∧ B
   _⟪,⟫′_ {A} a η = let a′ = mono⊩ {A} η a
@@ -47,12 +47,12 @@ module _ {{_ : Model}} where
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)   γ = lookup i γ
 eval (app t u) γ = eval t γ ⟪$⟫ eval u γ
-eval ci        γ = const (ci , id)
-eval ck        γ = const (ck , ⟪const⟫)
-eval cs        γ = const (cs , ⟪ap⟫′)
-eval cpair     γ = const (cpair , _⟪,⟫′_)
-eval cfst      γ = const (cfst , π₁)
-eval csnd      γ = const (csnd , π₂)
+eval ci        γ = K (ci , I)
+eval ck        γ = K (ck , ⟪K⟫)
+eval cs        γ = K (cs , ⟪S⟫′)
+eval cpair     γ = K (cpair , _⟪,⟫′_)
+eval cfst      γ = K (cfst , π₁)
+eval csnd      γ = K (csnd , π₂)
 eval tt        γ = ∙
 
 

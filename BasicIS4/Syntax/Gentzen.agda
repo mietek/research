@@ -60,11 +60,11 @@ v₂ = var i₂
 -- Deduction theorem is built-in.
 
 lam⋆ : ∀ {Π Γ A} → Γ ⧺ Π ⊢ A → Γ ⊢ Π ▻⋯▻ A
-lam⋆ {⌀}     = id
+lam⋆ {⌀}     = I
 lam⋆ {Π , B} = lam⋆ {Π} ∘ lam
 
 lam⋆₀ : ∀ {Γ A} → Γ ⊢ A → ⌀ ⊢ Γ ▻⋯▻ A
-lam⋆₀ {⌀}     = id
+lam⋆₀ {⌀}     = I
 lam⋆₀ {Γ , B} = lam⋆₀ ∘ lam
 
 
@@ -74,11 +74,11 @@ det : ∀ {A B Γ} → Γ ⊢ A ▻ B → Γ , A ⊢ B
 det t = app (mono⊢ weak⊆ t) v₀
 
 det⋆ : ∀ {Π Γ A} → Γ ⊢ Π ▻⋯▻ A → Γ ⧺ Π ⊢ A
-det⋆ {⌀}     = id
+det⋆ {⌀}     = I
 det⋆ {Π , B} = det ∘ det⋆ {Π}
 
 det⋆₀ : ∀ {Γ A} → ⌀ ⊢ Γ ▻⋯▻ A → Γ ⊢ A
-det⋆₀ {⌀}     = id
+det⋆₀ {⌀}     = I
 det⋆₀ {Γ , B} = det ∘ det⋆₀
 
 

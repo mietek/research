@@ -14,9 +14,9 @@ module NaturalSoundness where
 
   eval : ∀ {A} → ⊢ A → ᴹ⊩ A
   eval (app t u) = (eval t) (eval u)
-  eval ci        = id
-  eval ck        = const
-  eval cs        = ap
+  eval ci        = I
+  eval ck        = K
+  eval cs        = S
   eval cpair     = _,_
   eval cfst      = π₁
   eval csnd      = π₂
@@ -33,17 +33,17 @@ module NaturalSoundness where
   check refl⋙             = refl
   check (trans⋙ p q)      = trans (check p) (check q)
   check (sym⋙ p)          = sym (check p)
-  check (congapp⋙ p q)    = cong₂ _$_ (check p) (check q)
-  check (congi⋙ p)        = cong id (check p)
-  check (congk⋙ p q)      = cong₂ const (check p) (check q)
-  check (congs⋙ p q r)    = cong₃ ap (check p) (check q) (check r)
-  check (congpair⋙ p q)   = cong₂ _,_ (check p) (check q)
+  check (congapp⋙ p q)    = cong² _$_ (check p) (check q)
+  check (congi⋙ p)        = cong I (check p)
+  check (congk⋙ p q)      = cong² K (check p) (check q)
+  check (congs⋙ p q r)    = cong³ S (check p) (check q) (check r)
+  check (congpair⋙ p q)   = cong² _,_ (check p) (check q)
   check (congfst⋙ p)      = cong π₁ (check p)
   check (congsnd⋙ p)      = cong π₂ (check p)
   check (congboom⋙ p)     = cong elim𝟘 (check p)
   check (conginl⋙ p)      = cong ι₁ (check p)
   check (conginr⋙ p)      = cong ι₂ (check p)
-  check (congcase⋙ p q r) = cong₃ elim⊎ (check p) (check q) (check r)
+  check (congcase⋙ p q r) = cong³ elim⊎ (check p) (check q) (check r)
   check beta▻ₖ⋙           = refl
   check beta▻ₛ⋙           = refl
   check beta∧₁⋙           = refl
@@ -78,10 +78,10 @@ module CoquandDybjerSoundness where
 
   eval : ∀ {A} → ⊢ A → ᴹ⊩ A
   eval (app t u) = (eval t) $ˢ (eval u)
-  eval ci        = ci , id
+  eval ci        = ci , I
   eval ck        = ck , (λ a →
                      app ck (reify a) ,
-                       const a)
+                       K a)
   eval cs        = cs , (λ f →
                      app cs (reify f) , (λ g →
                        app (app cs (reify f)) (reify g) , (λ a →
@@ -107,17 +107,17 @@ module CoquandDybjerSoundness where
   check refl⋙             = refl
   check (trans⋙ p q)      = trans (check p) (check q)
   check (sym⋙ p)          = sym (check p)
-  check (congapp⋙ p q)    = cong₂ _$ˢ_ (check p) (check q)
-  check (congi⋙ p)        = cong id (check p)
-  check (congk⋙ p q)      = cong₂ const (check p) (check q)
-  check (congs⋙ p q r)    = cong₃ apˢ (check p) (check q) (check r)
-  check (congpair⋙ p q)   = cong₂ _,_ (check p) (check q)
+  check (congapp⋙ p q)    = cong² _$ˢ_ (check p) (check q)
+  check (congi⋙ p)        = cong I (check p)
+  check (congk⋙ p q)      = cong² K (check p) (check q)
+  check (congs⋙ p q r)    = cong³ apˢ (check p) (check q) (check r)
+  check (congpair⋙ p q)   = cong² _,_ (check p) (check q)
   check (congfst⋙ p)      = cong π₁ (check p)
   check (congsnd⋙ p)      = cong π₂ (check p)
   check (congboom⋙ p)     = cong elim𝟘 (check p)
   check (conginl⋙ p)      = cong ι₁ (check p)
   check (conginr⋙ p)      = cong ι₂ (check p)
-  check (congcase⋙ p q r) = cong₃ elim⊎ˢ (check p) (check q) (check r)
+  check (congcase⋙ p q r) = cong³ elim⊎ˢ (check p) (check q) (check r)
   check beta▻ₖ⋙           = refl
   check beta▻ₛ⋙           = refl
   check beta∧₁⋙           = refl

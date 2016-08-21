@@ -15,9 +15,9 @@ module NaturalSoundness where
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
   eval (var i)   γ = lookup i γ
   eval (app t u) γ = (eval t γ) (eval u γ)
-  eval ci        γ = id
-  eval ck        γ = const
-  eval cs        γ = ap
+  eval ci        γ = I
+  eval ck        γ = K
+  eval cs        γ = S
   eval cpair     γ = _,_
   eval cfst      γ = π₁
   eval csnd      γ = π₂
@@ -34,17 +34,17 @@ module NaturalSoundness where
   check refl⋙                         = refl
   check (trans⋙ p q)                  = trans (check p) (check q)
   check (sym⋙ p)                      = sym (check p)
-  check (congapp⋙ {A} {B} p q)        = cong₂ (_$ˢᶜ_ {A} {B}) (check p) (check q)
-  check (congi⋙ p)                    = cong id (check p)
-  check (congk⋙ p q)                  = cong₂ const (check p) (check q)
-  check (congs⋙ {A} {B} {C} p q r)    = cong₃ (apˢᶜ {A} {B} {C}) (check p) (check q) (check r)
-  check (congpair⋙ {A} {B} p q)       = cong₂ (_,ˢᶜ_ {A} {B}) (check p) (check q)
+  check (congapp⋙ {A} {B} p q)        = cong² (_$ˢᶜ_ {A} {B}) (check p) (check q)
+  check (congi⋙ p)                    = cong I (check p)
+  check (congk⋙ p q)                  = cong² K (check p) (check q)
+  check (congs⋙ {A} {B} {C} p q r)    = cong³ (apˢᶜ {A} {B} {C}) (check p) (check q) (check r)
+  check (congpair⋙ {A} {B} p q)       = cong² (_,ˢᶜ_ {A} {B}) (check p) (check q)
   check (congfst⋙ {A} {B} p)          = cong (π₁ˢᶜ {A} {B}) (check p)
   check (congsnd⋙ {A} {B} p)          = cong (π₂ˢᶜ {A} {B}) (check p)
   check (congboom⋙ {C} p)             = cong (elim𝟘ˢᶜ {C}) (check p)
   check (conginl⋙ {A} {B} p)          = cong (ι₁ˢᶜ {A} {B}) (check p)
   check (conginr⋙ {A} {B} p)          = cong (ι₂ˢᶜ {A} {B}) (check p)
-  check (congcase⋙ {A} {B} {C} p q r) = cong₃ (elim⊎ˢᶜ {A} {B} {C}) (check p) (check q) (check r)
+  check (congcase⋙ {A} {B} {C} p q r) = cong³ (elim⊎ˢᶜ {A} {B} {C}) (check p) (check q) (check r)
   check beta▻ₖ⋙                       = refl
   check beta▻ₛ⋙                       = refl
   check beta∧₁⋙                       = refl
@@ -80,10 +80,10 @@ module CoquandDybjerSoundness where
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ᴹ⊩ A
   eval (var i)   γ = lookup i γ
   eval (app t u) γ = (eval t γ) $ˢ (eval u γ)
-  eval ci        γ = ci , id
+  eval ci        γ = ci , I
   eval ck        γ = ck , (λ a →
                        app ck (reify a) ,
-                         const a)
+                         K a)
   eval cs        γ = cs , (λ f →
                        app cs (reify f) , (λ g →
                          app (app cs (reify f)) (reify g) , (λ a →
@@ -109,17 +109,17 @@ module CoquandDybjerSoundness where
   check refl⋙                         = refl
   check (trans⋙ p q)                  = trans (check p) (check q)
   check (sym⋙ p)                      = sym (check p)
-  check (congapp⋙ p q)                = cong₂ _$ˢᶜ_ (check p) (check q)
-  check (congi⋙ p)                    = cong id (check p)
-  check (congk⋙ p q)                  = cong₂ const (check p) (check q)
-  check (congs⋙ p q r)                = cong₃ apˢᶜ (check p) (check q) (check r)
-  check (congpair⋙ {A} {B} p q)       = cong₂ (_,ˢᶜ_ {A} {B}) (check p) (check q)
+  check (congapp⋙ p q)                = cong² _$ˢᶜ_ (check p) (check q)
+  check (congi⋙ p)                    = cong I (check p)
+  check (congk⋙ p q)                  = cong² K (check p) (check q)
+  check (congs⋙ p q r)                = cong³ apˢᶜ (check p) (check q) (check r)
+  check (congpair⋙ {A} {B} p q)       = cong² (_,ˢᶜ_ {A} {B}) (check p) (check q)
   check (congfst⋙ {A} {B} p)          = cong (π₁ˢᶜ {A} {B}) (check p)
   check (congsnd⋙ {A} {B} p)          = cong (π₂ˢᶜ {A} {B}) (check p)
   check (congboom⋙ {C} p)             = cong (elim𝟘ˢᶜ {C}) (check p)
   check (conginl⋙ {A} {B} p)          = cong (ι₁ˢᶜ {A} {B}) (check p)
   check (conginr⋙ {A} {B} p)          = cong (ι₂ˢᶜ {A} {B}) (check p)
-  check (congcase⋙ {A} {B} {C} p q r) = cong₃ (elim⊎ˢᶜ {A} {B} {C}) (check p) (check q) (check r)
+  check (congcase⋙ {A} {B} {C} p q r) = cong³ (elim⊎ˢᶜ {A} {B} {C}) (check p) (check q) (check r)
   check beta▻ₖ⋙                       = refl
   check beta▻ₛ⋙                       = refl
   check beta∧₁⋙                       = refl

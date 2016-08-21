@@ -28,7 +28,7 @@ module _ {U : Set} where
 
 module _ {U : Set} where
   ⌀ᴾ : Pred U
-  ⌀ᴾ = const 𝟘
+  ⌀ᴾ = K 𝟘
 
   bot∈ᴾ : ∀ {A} → A ∉ᴾ ⌀ᴾ
   bot∈ᴾ = elim𝟘
@@ -38,7 +38,7 @@ module _ {U : Set} where
 
 module _ {U : Set} where
   Uᴾ : Pred U
-  Uᴾ = const 𝟙
+  Uᴾ = K 𝟙
 
   top∈ᴾ : ∀ {A} → A ∈ᴾ Uᴾ
   top∈ᴾ = ∙
@@ -56,7 +56,7 @@ module _ {U : Set} where
   P ⊈ᴾ Q = Not (P ⊆ᴾ Q)
 
   refl⊆ᴾ : ∀ {P} → P ⊆ᴾ P
-  refl⊆ᴾ = id
+  refl⊆ᴾ = I
 
   trans⊆ᴾ : ∀ {P Q R} → P ⊆ᴾ Q → Q ⊆ᴾ R → P ⊆ᴾ R
   trans⊆ᴾ η η′ = η′ ∘ η
@@ -65,7 +65,7 @@ module _ {U : Set} where
   bot⊆ᴾ = elim𝟘
 
   top⊆ᴾ : ∀ {P} → P ⊆ᴾ Uᴾ
-  top⊆ᴾ = const ∙
+  top⊆ᴾ = K ∙
 
 
 -- Set equality.

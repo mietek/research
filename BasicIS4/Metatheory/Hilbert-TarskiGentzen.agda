@@ -20,16 +20,16 @@ module _ {{_ : Model}} where
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)   γ = lookup i γ
 eval (app t u) γ = eval t γ ⟪$⟫ eval u γ
-eval ci        γ = const ([ ci ] , id)
-eval ck        γ = const ([ ck ] , ⟪const⟫)
-eval cs        γ = const ([ cs ] , ⟪ap⟫′)
-eval (box t)   γ = const ([ box t ] , eval t ∙)
-eval cdist     γ = const ([ cdist ] , _⟪◎⟫′_)
-eval cup       γ = const ([ cup ] , ⟪⇑⟫)
-eval cdown     γ = const ([ cdown ] , ⟪⇓⟫)
-eval cpair     γ = const ([ cpair ] , _⟪,⟫′_)
-eval cfst      γ = const ([ cfst ] , π₁)
-eval csnd      γ = const ([ csnd ] , π₂)
+eval ci        γ = K ([ ci ] , I)
+eval ck        γ = K ([ ck ] , ⟪K⟫)
+eval cs        γ = K ([ cs ] , ⟪S⟫′)
+eval (box t)   γ = K ([ box t ] , eval t ∙)
+eval cdist     γ = K ([ cdist ] , _⟪D⟫′_)
+eval cup       γ = K ([ cup ] , ⟪↑⟫)
+eval cdown     γ = K ([ cdown ] , ⟪↓⟫)
+eval cpair     γ = K ([ cpair ] , _⟪,⟫′_)
+eval cfst      γ = K ([ cfst ] , π₁)
+eval csnd      γ = K ([ csnd ] , π₂)
 eval tt        γ = ∙
 
 
@@ -66,12 +66,10 @@ private
 mutual
   reflectᶜ : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
   reflectᶜ {α P}   t = t , t
-  reflectᶜ {A ▻ B} t = λ η →
-                        let t′ = mono⊢ η t
-                        in  t′ , λ a → reflectᶜ (app t′ (reifyᶜ a))
-  reflectᶜ {□ A}   t = λ η →
-                        let t′ = mono⊢ η t
-                        in  t′ , reflectᶜ (down t′)
+  reflectᶜ {A ▻ B} t = λ η → let t′ = mono⊢ η t
+                              in  t′ , λ a → reflectᶜ (app t′ (reifyᶜ a))
+  reflectᶜ {□ A}   t = λ η → let t′ = mono⊢ η t
+                              in  t′ , reflectᶜ (down t′)
   reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
   reflectᶜ {⊤}    t = ∙
 

@@ -62,11 +62,11 @@ module ImplicitSyntax
     s ⟪$⟫ a = let t , f = s refl⊆
               in  f a
 
-    ⟪ap⟫ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ C
-    ⟪ap⟫ s s′ a = let t , f = s refl⊆
-                      u , g = s′ refl⊆
-                      _ , h = (f a) refl⊆
-                  in  h (g a)
+    ⟪S⟫ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ C
+    ⟪S⟫ s s′ a = let t , f = s refl⊆
+                     u , g = s′ refl⊆
+                     _ , h = (f a) refl⊆
+                 in  h (g a)
 
 
   -- Forcing in a particular model, for sequents.
@@ -104,8 +104,8 @@ module ImplicitSyntax
     _⟦$⟧_ : ∀ {A B Γ Γ₀} → Γ₀ ⊩ Γ ⇒ A ▻ B → Γ₀ ⊩ Γ ⇒ A → Γ₀ ⊩ Γ ⇒ B
     (f ⟦$⟧ g) γ = f γ ⟪$⟫ g γ
 
-    ⟦ap⟧ : ∀ {A B C Γ Γ₀} → Γ₀ ⊩ Γ ⇒ A ▻ B ▻ C → Γ₀ ⊩ Γ ⇒ A ▻ B → Γ₀ ⊩ Γ ⇒ A → Γ₀ ⊩ Γ ⇒ C
-    ⟦ap⟧ f g a γ = ⟪ap⟫ (f γ) (g γ) (a γ)
+    ⟦S⟧ : ∀ {A B C Γ Γ₀} → Γ₀ ⊩ Γ ⇒ A ▻ B ▻ C → Γ₀ ⊩ Γ ⇒ A ▻ B → Γ₀ ⊩ Γ ⇒ A → Γ₀ ⊩ Γ ⇒ C
+    ⟦S⟧ f g a γ = ⟪S⟫ (f γ) (g γ) (a γ)
 
     _⟦,⟧_ : ∀ {A B Γ Γ₀} → Γ₀ ⊩ Γ ⇒ A → Γ₀ ⊩ Γ ⇒ B → Γ₀ ⊩ Γ ⇒ A ∧ B
     (a ⟦,⟧ b) γ = a γ , b γ

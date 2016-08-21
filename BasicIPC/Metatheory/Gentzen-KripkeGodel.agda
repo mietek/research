@@ -13,7 +13,7 @@ eval (app {A} {B} t u)  γ = _⟪$⟫_ {A} {B} (eval t γ) (eval u γ)
 eval (pair {A} {B} t u) γ = _⟪,⟫_ {A} {B} (eval t γ) (eval u γ)
 eval (fst {A} {B} t)    γ = ⟪π₁⟫ {A} {B} (eval t γ)
 eval (snd {A} {B} t)    γ = ⟪π₂⟫ {A} {B} (eval t γ)
-eval tt                 γ = const ∙
+eval tt                 γ = K ∙
 
 
 -- TODO: Correctness of evaluation with respect to conversion.

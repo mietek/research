@@ -20,12 +20,12 @@ module _ {{_ : Model}} where
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)   γ = lookup i γ
 eval (app t u) γ = eval t γ ⟪$⟫ eval u γ
-eval ci        γ = const ([ ci ] , id)
-eval ck        γ = const ([ ck ] , ⟪const⟫)
-eval cs        γ = const ([ cs ] , ⟪ap⟫′)
-eval cpair     γ = const ([ cpair ] , _⟪,⟫′_)
-eval cfst      γ = const ([ cfst ] , π₁)
-eval csnd      γ = const ([ csnd ] , π₂)
+eval ci        γ = K ([ ci ] , I)
+eval ck        γ = K ([ ck ] , ⟪K⟫)
+eval cs        γ = K ([ cs ] , ⟪S⟫′)
+eval cpair     γ = K ([ cpair ] , _⟪,⟫′_)
+eval cfst      γ = K ([ cfst ] , π₁)
+eval csnd      γ = K ([ csnd ] , π₂)
 eval tt        γ = ∙
 
 

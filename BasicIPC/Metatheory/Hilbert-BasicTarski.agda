@@ -9,9 +9,9 @@ open import BasicIPC.Semantics.BasicTarski public
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)   γ = lookup i γ
 eval (app t u) γ = eval t γ $ eval u γ
-eval ci        γ = id
-eval ck        γ = const
-eval cs        γ = ap
+eval ci        γ = I
+eval ck        γ = K
+eval cs        γ = S
 eval cpair     γ = _,_
 eval cfst      γ = π₁
 eval csnd      γ = π₂
@@ -24,11 +24,11 @@ eval✓ : ∀ {{_ : Model}} {A Γ} {t t′ : Γ ⊢ A} → t ⋙ t′ → eval t
 eval✓ refl⋙                      = refl
 eval✓ (trans⋙ p q)               = trans (eval✓ p) (eval✓ q)
 eval✓ (sym⋙ p)                   = sym (eval✓ p)
-eval✓ (congapp⋙ {A} {B} p q)     = cong₂ (_⟦$⟧_ {A} {B}) (eval✓ p) (eval✓ q)
-eval✓ (congi⋙ p)                 = cong id (eval✓ p)
-eval✓ (congk⋙ p q)               = cong₂ const (eval✓ p) (eval✓ q)
-eval✓ (congs⋙ {A} {B} {C} p q r) = cong₃ (⟦ap⟧ {A} {B} {C}) (eval✓ p) (eval✓ q) (eval✓ r)
-eval✓ (congpair⋙ {A} {B} p q)    = cong₂ (_⟦,⟧_ {A} {B}) (eval✓ p) (eval✓ q)
+eval✓ (congapp⋙ {A} {B} p q)     = cong² (_⟦$⟧_ {A} {B}) (eval✓ p) (eval✓ q)
+eval✓ (congi⋙ p)                 = cong I (eval✓ p)
+eval✓ (congk⋙ p q)               = cong² K (eval✓ p) (eval✓ q)
+eval✓ (congs⋙ {A} {B} {C} p q r) = cong³ (⟦S⟧ {A} {B} {C}) (eval✓ p) (eval✓ q) (eval✓ r)
+eval✓ (congpair⋙ {A} {B} p q)    = cong² (_⟦,⟧_ {A} {B}) (eval✓ p) (eval✓ q)
 eval✓ (congfst⋙ {A} {B} p)       = cong (⟦π₁⟧ {A} {B}) (eval✓ p)
 eval✓ (congsnd⋙ {A} {B} p)       = cong (⟦π₂⟧ {A} {B}) (eval✓ p)
 eval✓ beta▻ₖ⋙                    = refl

@@ -141,45 +141,45 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   _⟪$⟫_ : ∀ {A B Γ} → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ B
-  s ⟪$⟫ a = let t , f = s refl⊆ 
+  s ⟪$⟫ a = let t , f = s refl⊆
             in  f a
 
-  ⟪const⟫ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B ▻ A
-  ⟪const⟫ {A} a η = let a′ = mono⊩ {A} η a
-                    in  [app] [ck] (reifyʳ a′) , const a′
+  ⟪K⟫ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B ▻ A
+  ⟪K⟫ {A} a η = let a′ = mono⊩ {A} η a
+                in  [app] [ck] (reifyʳ a′) , K a′
 
-  ⟪ap⟫ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ C
-  ⟪ap⟫ s₁ s₂ a = let t , f = s₁ refl⊆
-                     u , g = s₂ refl⊆
-                     _ , h = (f a) refl⊆
-                 in  h (g a)
+  ⟪S⟫ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ C
+  ⟪S⟫ s₁ s₂ a = let t , f = s₁ refl⊆
+                    u , g = s₂ refl⊆
+                    _ , h = (f a) refl⊆
+                in  h (g a)
 
-  ⟪ap⟫′ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ (A ▻ B) ▻ A ▻ C
-  ⟪ap⟫′ {A} {B} {C} s₁ η = let s₁′   = mono⊩ {A ▻ B ▻ C} η s₁
-                               t , _ = s₁′ refl⊆
-                           in  [app] [cs] t , λ s₂ η′ →
-                                 let s₁″    = mono⊩ {A ▻ B ▻ C} (trans⊆ η η′) s₁
-                                     t′ , _ = s₁″ refl⊆
-                                     s₂′    = mono⊩ {A ▻ B} η′ s₂
-                                     u  , g = s₂′ refl⊆
-                                 in  [app] ([app] [cs] t′) u , ⟪ap⟫ s₁″ s₂′
+  ⟪S⟫′ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ (A ▻ B) ▻ A ▻ C
+  ⟪S⟫′ {A} {B} {C} s₁ η = let s₁′   = mono⊩ {A ▻ B ▻ C} η s₁
+                              t , _ = s₁′ refl⊆
+                          in  [app] [cs] t , λ s₂ η′ →
+                                let s₁″    = mono⊩ {A ▻ B ▻ C} (trans⊆ η η′) s₁
+                                    t′ , _ = s₁″ refl⊆
+                                    s₂′    = mono⊩ {A ▻ B} η′ s₂
+                                    u  , g = s₂′ refl⊆
+                                in  [app] ([app] [cs] t′) u , ⟪S⟫ s₁″ s₂′
 
-  _⟪◎⟫_ : ∀ {A B Γ} → Γ ⊩ □ (A ▻ B) → Γ ⊩ □ A → Γ ⊩ □ B
-  (s₁ ⟪◎⟫ s₂) η = let t , f = s₁ η
+  _⟪D⟫_ : ∀ {A B Γ} → Γ ⊩ □ (A ▻ B) → Γ ⊩ □ A → Γ ⊩ □ B
+  (s₁ ⟪D⟫ s₂) η = let t , f = s₁ η
                       u , a = s₂ η
                   in  [app] ([app] [cdist] t) u , f ⟪$⟫ a
 
   -- TODO: Report bug.
-  _⟪◎⟫′_ : ∀ {A B Γ} → Γ ⊩ □ (A ▻ B) → Γ ⊩ □ A ▻ □ B
-  _⟪◎⟫′_ {A} {B} s η = let s′ = mono⊩ {□ (A ▻ B)} η s
-                       in  [app] [cdist] (reifyʳ (λ {Γ′} η′ → s′ η′ )) , _⟪◎⟫_ s′
+  _⟪D⟫′_ : ∀ {A B Γ} → Γ ⊩ □ (A ▻ B) → Γ ⊩ □ A ▻ □ B
+  _⟪D⟫′_ {A} {B} s η = let s′ = mono⊩ {□ (A ▻ B)} η s
+                       in  [app] [cdist] (reifyʳ (λ {Γ′} η′ → s′ η′ )) , _⟪D⟫_ s′
 
-  ⟪⇑⟫ : ∀ {A Γ} → Γ ⊩ □ A → Γ ⊩ □ □ A
-  ⟪⇑⟫ s η = let t , a = s η
+  ⟪↑⟫ : ∀ {A Γ} → Γ ⊩ □ A → Γ ⊩ □ □ A
+  ⟪↑⟫ s η = let t , a = s η
             in  [app] [cup] t , λ η′ → s (trans⊆ η η′)
 
-  ⟪⇓⟫ : ∀ {A Γ} → Γ ⊩ □ A → Γ ⊩ A
-  ⟪⇓⟫ s = let p , a = s refl⊆
+  ⟪↓⟫ : ∀ {A Γ} → Γ ⊩ □ A → Γ ⊩ A
+  ⟪↓⟫ s = let p , a = s refl⊆
           in  a
 
   _⟪,⟫′_ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B ▻ A ∧ B
@@ -222,17 +222,17 @@ module _ {{_ : Model}} where
   _⟦$⟧_ : ∀ {A B Γ Γ₀} → Γ₀ ⊩ Γ ⇒ A ▻ B → Γ₀ ⊩ Γ ⇒ A → Γ₀ ⊩ Γ ⇒ B
   (f ⟦$⟧ g) γ = f γ ⟪$⟫ g γ
 
-  ⟦ap⟧ : ∀ {A B C Γ Γ₀} → Γ₀ ⊩ Γ ⇒ A ▻ B ▻ C → Γ₀ ⊩ Γ ⇒ A ▻ B → Γ₀ ⊩ Γ ⇒ A → Γ₀ ⊩ Γ ⇒ C
-  ⟦ap⟧ f g a γ = ⟪ap⟫ (f γ) (g γ) (a γ)
+  ⟦S⟧ : ∀ {A B C Γ Γ₀} → Γ₀ ⊩ Γ ⇒ A ▻ B ▻ C → Γ₀ ⊩ Γ ⇒ A ▻ B → Γ₀ ⊩ Γ ⇒ A → Γ₀ ⊩ Γ ⇒ C
+  ⟦S⟧ f g a γ = ⟪S⟫ (f γ) (g γ) (a γ)
 
-  _⟦◎⟧_ : ∀ {A B Γ Γ₀} → Γ₀ ⊩ Γ ⇒ □ (A ▻ B) → Γ₀ ⊩ Γ ⇒ □ A → Γ₀ ⊩ Γ ⇒ □ B
-  (s₁ ⟦◎⟧ s₂) γ = (s₁ γ) ⟪◎⟫ (s₂ γ)
+  _⟦D⟧_ : ∀ {A B Γ Γ₀} → Γ₀ ⊩ Γ ⇒ □ (A ▻ B) → Γ₀ ⊩ Γ ⇒ □ A → Γ₀ ⊩ Γ ⇒ □ B
+  (s₁ ⟦D⟧ s₂) γ = (s₁ γ) ⟪D⟫ (s₂ γ)
 
-  ⟦⇑⟧ : ∀ {A Γ Γ₀} → Γ₀ ⊩ Γ ⇒ □ A → Γ₀ ⊩ Γ ⇒ □ □ A
-  ⟦⇑⟧ s γ = ⟪⇑⟫ (s γ)
+  ⟦↑⟧ : ∀ {A Γ Γ₀} → Γ₀ ⊩ Γ ⇒ □ A → Γ₀ ⊩ Γ ⇒ □ □ A
+  ⟦↑⟧ s γ = ⟪↑⟫ (s γ)
 
-  ⟦⇓⟧ : ∀ {A Γ Γ₀} → Γ₀ ⊩ Γ ⇒ □ A → Γ₀ ⊩ Γ ⇒ A
-  ⟦⇓⟧ s γ = ⟪⇓⟫ (s γ)
+  ⟦↓⟧ : ∀ {A Γ Γ₀} → Γ₀ ⊩ Γ ⇒ □ A → Γ₀ ⊩ Γ ⇒ A
+  ⟦↓⟧ s γ = ⟪↓⟫ (s γ)
 
   _⟦,⟧_ : ∀ {A B Γ Γ₀} → Γ₀ ⊩ Γ ⇒ A → Γ₀ ⊩ Γ ⇒ B → Γ₀ ⊩ Γ ⇒ A ∧ B
   (a ⟦,⟧ b) γ = a γ , b γ

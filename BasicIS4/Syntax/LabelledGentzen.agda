@@ -109,11 +109,11 @@ rv₂ = rvar i₂
 -- Deduction theorem is built-in.
 
 lam⋆ : ∀ {Π x A Γ Λ} → Γ ⧺ Π ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ Π ▻⋯▻ A ◎ x
-lam⋆ {⌀}     = id
+lam⋆ {⌀}     = I
 lam⋆ {Π , B} = lam⋆ {Π} ∘ lam
 
 lam⋆₀ : ∀ {Γ x A Λ} → Γ ⁏ Λ ⊢ A ◎ x → ⌀ ⁏ Λ ⊢ Γ ▻⋯▻ A ◎ x
-lam⋆₀ {⌀}     = id
+lam⋆₀ {⌀}     = I
 lam⋆₀ {Γ , B} = lam⋆₀ ∘ lam
 
 
@@ -123,11 +123,11 @@ det : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ▻ B ◎ x → Γ , A ⁏ Λ ⊢ B 
 det t = app (mono⊢ weak⊆ t) v₀
 
 det⋆ : ∀ {Π x A Γ Λ} → Γ ⁏ Λ ⊢ Π ▻⋯▻ A ◎ x → Γ ⧺ Π ⁏ Λ ⊢ A ◎ x
-det⋆ {⌀}     = id
+det⋆ {⌀}     = I
 det⋆ {Π , B} = det ∘ det⋆ {Π}
 
 det⋆₀ : ∀ {Γ x A Λ} → ⌀ ⁏ Λ ⊢ Γ ▻⋯▻ A ◎ x → Γ ⁏ Λ ⊢ A ◎ x
-det⋆₀ {⌀}     = id
+det⋆₀ {⌀}     = I
 det⋆₀ {Γ , B} = det ∘ det⋆₀
 
 

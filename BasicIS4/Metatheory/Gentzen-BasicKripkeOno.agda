@@ -12,7 +12,7 @@ mutual
   eval (lam t)           γ = λ ξ a → eval t (mono⊩⋆ ξ γ , a)
   eval (app {A} {B} t u) γ = _⟪$⟫_ {A} {B} (eval t γ) (eval u γ)
   eval (multibox ts u)   γ = λ ζ → eval u (thing ts γ ζ)
-  eval (down {A} t)      γ = ⟪⇓⟫ {A} (eval t γ)
+  eval (down {A} t)      γ = ⟪↓⟫ {A} (eval t γ)
   eval (pair t u)        γ = eval t γ , eval u γ
   eval (fst t)           γ = π₁ (eval t γ)
   eval (snd t)           γ = π₂ (eval t γ)

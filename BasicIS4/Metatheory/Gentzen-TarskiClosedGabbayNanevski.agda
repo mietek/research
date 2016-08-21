@@ -31,7 +31,7 @@ mutual
   eval (app t u)       γ = eval t γ ⟪$⟫ eval u γ
   eval (multibox ts u) γ = multicut (reify⋆ γ) (multibox ts u) ,
                              eval u (eval⋆ ts γ)
-  eval (down t)        γ = ⟪⇓⟫ (eval t γ)
+  eval (down t)        γ = ⟪↓⟫ (eval t γ)
   eval (pair t u)      γ = eval t γ , eval u γ
   eval (fst t)         γ = π₁ (eval t γ)
   eval (snd t)         γ = π₂ (eval t γ)

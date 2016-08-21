@@ -96,14 +96,14 @@ module ImplicitSyntax
     s ⟪$⟫ a = let t , f = s refl⊆ refl⊆
               in  f a
 
-    ⟪ap⟫ : ∀ {A B C Γ Δ} → Γ ⁏ Δ ⊩ A ▻ B ▻ C → Γ ⁏ Δ ⊩ A ▻ B → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊩ C
-    ⟪ap⟫ s₁ s₂ a = let t , f = s₁ refl⊆ refl⊆
-                       u , g = s₂ refl⊆ refl⊆
-                       _ , h = (f a) refl⊆ refl⊆
-                   in  h (g a)
+    ⟪S⟫ : ∀ {A B C Γ Δ} → Γ ⁏ Δ ⊩ A ▻ B ▻ C → Γ ⁏ Δ ⊩ A ▻ B → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊩ C
+    ⟪S⟫ s₁ s₂ a = let t , f = s₁ refl⊆ refl⊆
+                      u , g = s₂ refl⊆ refl⊆
+                      _ , h = (f a) refl⊆ refl⊆
+                  in  h (g a)
 
-    ⟪⇓⟫ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ □ A → Γ ⁏ Δ ⊩ A
-    ⟪⇓⟫ s = let t , a = s refl⊆ refl⊆
+    ⟪↓⟫ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ □ A → Γ ⁏ Δ ⊩ A
+    ⟪↓⟫ s = let t , a = s refl⊆ refl⊆
             in  a
 
 

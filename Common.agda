@@ -32,11 +32,12 @@ open import Data.Unit public
   renaming (⊤ to 𝟙 ; tt to ∙)
 
 open import Function public
-  using (_∘_ ; _$_ ; id ; const)
-  renaming (_ˢ_ to ap)
+  using (_∘_ ; _$_)
+  renaming (id to I ; const to K ; _ˢ_ to S)
 
 open import Relation.Binary.PropositionalEquality public
-  using (_≡_ ; _≢_ ; refl ; trans ; sym ; cong ; cong₂ ; subst)
+  using (_≡_ ; _≢_ ; refl ; trans ; sym ; cong ; subst)
+  renaming (cong₂ to cong²)
 
 open import Relation.Nullary public
   using (Dec ; yes ; no)
@@ -72,17 +73,17 @@ elim⊎ (ι₂ y) f g = g y
 
 -- Double-argument K combinator.
 
-const₂ : ∀ {a b c} {A : Set a} {B : Set b} {C : Set c}
-         → A → B → C → A
-const₂ x _ _ = x
+K² : ∀ {a b c} {A : Set a} {B : Set b} {C : Set c}
+     → A → B → C → A
+K² x _ _ = x
 
 
 -- Triple-argument congruence.
 
-cong₃ : ∀ {a b c d} {A : Set a} {B : Set b} {C : Set c} {D : Set d}
+cong³ : ∀ {a b c d} {A : Set a} {B : Set b} {C : Set c} {D : Set d}
         (f : A → B → C → D) {x x′ y y′ z z′}
         → x ≡ x′ → y ≡ y′ → z ≡ z′ → f x y z ≡ f x′ y′ z′
-cong₃ f refl refl refl = refl
+cong³ f refl refl refl = refl
 
 
 -- Composition, supremum, and infimum for relations.
