@@ -50,56 +50,56 @@ inv∨ᵣ refl = refl
 
 -- Decidable equality.
 
-_≟ᵗʸ_ : (A A′ : Ty) → Dec (A ≡ A′)
-(α P)   ≟ᵗʸ (α P′)    with P ≟ᵅ P′
-(α P)   ≟ᵗʸ (α .P)    | yes refl = yes refl
-(α P)   ≟ᵗʸ (α P′)    | no  P≢P′ = no (P≢P′ ∘ invα)
-(α P)   ≟ᵗʸ (A′ ▻ B′) = no λ ()
-(α P)   ≟ᵗʸ (A′ ∧ B′) = no λ ()
-(α P)   ≟ᵗʸ ⊤        = no λ ()
-(α P)   ≟ᵗʸ ⊥        = no λ ()
-(α P)   ≟ᵗʸ (A′ ∨ B′) = no λ ()
-(A ▻ B) ≟ᵗʸ (α P′)    = no λ ()
-(A ▻ B) ≟ᵗʸ (A′ ▻ B′) with A ≟ᵗʸ A′ | B ≟ᵗʸ B′
-(A ▻ B) ≟ᵗʸ (.A ▻ .B) | yes refl | yes refl = yes refl
-(A ▻ B) ≟ᵗʸ (A′ ▻ B′) | no  A≢A′ | _        = no (A≢A′ ∘ inv▻ₗ)
-(A ▻ B) ≟ᵗʸ (A′ ▻ B′) | _        | no  B≢B′ = no (B≢B′ ∘ inv▻ᵣ)
-(A ▻ B) ≟ᵗʸ (A′ ∧ B′) = no λ ()
-(A ▻ B) ≟ᵗʸ ⊤        = no λ ()
-(A ▻ B) ≟ᵗʸ ⊥        = no λ ()
-(A ▻ B) ≟ᵗʸ (A′ ∨ B′) = no λ ()
-(A ∧ B) ≟ᵗʸ (α P′)    = no λ ()
-(A ∧ B) ≟ᵗʸ (A′ ▻ B′) = no λ ()
-(A ∧ B) ≟ᵗʸ (A′ ∧ B′) with A ≟ᵗʸ A′ | B ≟ᵗʸ B′
-(A ∧ B) ≟ᵗʸ (.A ∧ .B) | yes refl | yes refl = yes refl
-(A ∧ B) ≟ᵗʸ (A′ ∧ B′) | no  A≢A′ | _        = no (A≢A′ ∘ inv∧ₗ)
-(A ∧ B) ≟ᵗʸ (A′ ∧ B′) | _        | no  B≢B′ = no (B≢B′ ∘ inv∧ᵣ)
-(A ∧ B) ≟ᵗʸ ⊤        = no λ ()
-(A ∧ B) ≟ᵗʸ ⊥        = no λ ()
-(A ∧ B) ≟ᵗʸ (A′ ∨ B′) = no λ ()
-⊤      ≟ᵗʸ (α P′)    = no λ ()
-⊤      ≟ᵗʸ (A′ ▻ B′) = no λ ()
-⊤      ≟ᵗʸ (A′ ∧ B′) = no λ ()
-⊤      ≟ᵗʸ ⊤        = yes refl
-⊤      ≟ᵗʸ ⊥        = no λ ()
-⊤      ≟ᵗʸ (A′ ∨ B′) = no λ ()
-⊥      ≟ᵗʸ (α P′)    = no λ ()
-⊥      ≟ᵗʸ (A′ ▻ B′) = no λ ()
-⊥      ≟ᵗʸ (A′ ∧ B′) = no λ ()
-⊥      ≟ᵗʸ ⊤        = no λ ()
-⊥      ≟ᵗʸ ⊥        = yes refl
-⊥      ≟ᵗʸ (A′ ∨ B′) = no λ ()
-(A ∨ B) ≟ᵗʸ (α P′)    = no λ ()
-(A ∨ B) ≟ᵗʸ (A′ ▻ B′) = no λ ()
-(A ∨ B) ≟ᵗʸ (A′ ∧ B′) = no λ ()
-(A ∨ B) ≟ᵗʸ ⊤        = no λ ()
-(A ∨ B) ≟ᵗʸ ⊥        = no λ ()
-(A ∨ B) ≟ᵗʸ (A′ ∨ B′) with A ≟ᵗʸ A′ | B ≟ᵗʸ B′
-(A ∨ B) ≟ᵗʸ (.A ∨ .B) | yes refl | yes refl = yes refl
-(A ∨ B) ≟ᵗʸ (A′ ∨ B′) | no  A≢A′ | _        = no (A≢A′ ∘ inv∨ₗ)
-(A ∨ B) ≟ᵗʸ (A′ ∨ B′) | _        | no  B≢B′ = no (B≢B′ ∘ inv∨ᵣ)
+_≟ᵀ_ : (A A′ : Ty) → Dec (A ≡ A′)
+(α P)   ≟ᵀ (α P′)    with P ≟ᵅ P′
+(α P)   ≟ᵀ (α .P)    | yes refl = yes refl
+(α P)   ≟ᵀ (α P′)    | no  P≢P′ = no (P≢P′ ∘ invα)
+(α P)   ≟ᵀ (A′ ▻ B′) = no λ ()
+(α P)   ≟ᵀ (A′ ∧ B′) = no λ ()
+(α P)   ≟ᵀ ⊤        = no λ ()
+(α P)   ≟ᵀ ⊥        = no λ ()
+(α P)   ≟ᵀ (A′ ∨ B′) = no λ ()
+(A ▻ B) ≟ᵀ (α P′)    = no λ ()
+(A ▻ B) ≟ᵀ (A′ ▻ B′) with A ≟ᵀ A′ | B ≟ᵀ B′
+(A ▻ B) ≟ᵀ (.A ▻ .B) | yes refl | yes refl = yes refl
+(A ▻ B) ≟ᵀ (A′ ▻ B′) | no  A≢A′ | _        = no (A≢A′ ∘ inv▻ₗ)
+(A ▻ B) ≟ᵀ (A′ ▻ B′) | _        | no  B≢B′ = no (B≢B′ ∘ inv▻ᵣ)
+(A ▻ B) ≟ᵀ (A′ ∧ B′) = no λ ()
+(A ▻ B) ≟ᵀ ⊤        = no λ ()
+(A ▻ B) ≟ᵀ ⊥        = no λ ()
+(A ▻ B) ≟ᵀ (A′ ∨ B′) = no λ ()
+(A ∧ B) ≟ᵀ (α P′)    = no λ ()
+(A ∧ B) ≟ᵀ (A′ ▻ B′) = no λ ()
+(A ∧ B) ≟ᵀ (A′ ∧ B′) with A ≟ᵀ A′ | B ≟ᵀ B′
+(A ∧ B) ≟ᵀ (.A ∧ .B) | yes refl | yes refl = yes refl
+(A ∧ B) ≟ᵀ (A′ ∧ B′) | no  A≢A′ | _        = no (A≢A′ ∘ inv∧ₗ)
+(A ∧ B) ≟ᵀ (A′ ∧ B′) | _        | no  B≢B′ = no (B≢B′ ∘ inv∧ᵣ)
+(A ∧ B) ≟ᵀ ⊤        = no λ ()
+(A ∧ B) ≟ᵀ ⊥        = no λ ()
+(A ∧ B) ≟ᵀ (A′ ∨ B′) = no λ ()
+⊤      ≟ᵀ (α P′)    = no λ ()
+⊤      ≟ᵀ (A′ ▻ B′) = no λ ()
+⊤      ≟ᵀ (A′ ∧ B′) = no λ ()
+⊤      ≟ᵀ ⊤        = yes refl
+⊤      ≟ᵀ ⊥        = no λ ()
+⊤      ≟ᵀ (A′ ∨ B′) = no λ ()
+⊥      ≟ᵀ (α P′)    = no λ ()
+⊥      ≟ᵀ (A′ ▻ B′) = no λ ()
+⊥      ≟ᵀ (A′ ∧ B′) = no λ ()
+⊥      ≟ᵀ ⊤        = no λ ()
+⊥      ≟ᵀ ⊥        = yes refl
+⊥      ≟ᵀ (A′ ∨ B′) = no λ ()
+(A ∨ B) ≟ᵀ (α P′)    = no λ ()
+(A ∨ B) ≟ᵀ (A′ ▻ B′) = no λ ()
+(A ∨ B) ≟ᵀ (A′ ∧ B′) = no λ ()
+(A ∨ B) ≟ᵀ ⊤        = no λ ()
+(A ∨ B) ≟ᵀ ⊥        = no λ ()
+(A ∨ B) ≟ᵀ (A′ ∨ B′) with A ≟ᵀ A′ | B ≟ᵀ B′
+(A ∨ B) ≟ᵀ (.A ∨ .B) | yes refl | yes refl = yes refl
+(A ∨ B) ≟ᵀ (A′ ∨ B′) | no  A≢A′ | _        = no (A≢A′ ∘ inv∨ₗ)
+(A ∨ B) ≟ᵀ (A′ ∨ B′) | _        | no  B≢B′ = no (B≢B′ ∘ inv∨ᵣ)
 
-open ContextEquality (_≟ᵗʸ_) public
+open ContextEquality (_≟ᵀ_) public
 
 
 -- Additional useful propositions.

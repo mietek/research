@@ -38,7 +38,7 @@ mutual
     tt    : Γ ⊢ ⊤
 
   [_] : ∀ {A Γ} → Γ ⊢ A → Tm
-  [ var i ]   = VAR [ i ]ⁱˣ
+  [ var i ]   = VAR [ i ]ⁱ
   [ app t u ] = APP [ t ] [ u ]
   [ ci ]      = CI
   [ ck ]      = CK

@@ -31,14 +31,14 @@ module _ {U : Set} where
 -- Decidable equality.
 
 module ContextEquality {U : Set} (_≟ᵁ_ : (A A′ : U) → Dec (A ≡ A′)) where
-  _≟ᶜˣ_ : (Γ Γ′ : Cx U) → Dec (Γ ≡ Γ′)
-  ⌀       ≟ᶜˣ ⌀         = yes refl
-  ⌀       ≟ᶜˣ (Γ′ , A′) = no λ ()
-  (Γ , A) ≟ᶜˣ ⌀         = no λ ()
-  (Γ , A) ≟ᶜˣ (Γ′ , A′) with Γ ≟ᶜˣ Γ′ | A ≟ᵁ A′
-  (Γ , A) ≟ᶜˣ (.Γ , .A) | yes refl | yes refl = yes refl
-  (Γ , A) ≟ᶜˣ (Γ′ , A′) | no  Γ≢Γ′ | _        = no (Γ≢Γ′ ∘ inv,ₗ)
-  (Γ , A) ≟ᶜˣ (Γ′ , A′) | _        | no  A≢A′ = no (A≢A′ ∘ inv,ᵣ)
+  _≟ᵀ⋆_ : (Γ Γ′ : Cx U) → Dec (Γ ≡ Γ′)
+  ⌀       ≟ᵀ⋆ ⌀         = yes refl
+  ⌀       ≟ᵀ⋆ (Γ′ , A′) = no λ ()
+  (Γ , A) ≟ᵀ⋆ ⌀         = no λ ()
+  (Γ , A) ≟ᵀ⋆ (Γ′ , A′) with Γ ≟ᵀ⋆ Γ′ | A ≟ᵁ A′
+  (Γ , A) ≟ᵀ⋆ (.Γ , .A) | yes refl | yes refl = yes refl
+  (Γ , A) ≟ᵀ⋆ (Γ′ , A′) | no  Γ≢Γ′ | _        = no (Γ≢Γ′ ∘ inv,ₗ)
+  (Γ , A) ≟ᵀ⋆ (Γ′ , A′) | _        | no  A≢A′ = no (A≢A′ ∘ inv,ᵣ)
 
 
 -- Context membership, as nameless typed de Bruijn indices.
@@ -49,9 +49,9 @@ module _ {U : Set} where
     top : ∀ {Γ} → A ∈ Γ , A
     pop : ∀ {B Γ} → A ∈ Γ → A ∈ Γ , B
 
-  [_]ⁱˣ : ∀ {A Γ} → A ∈ Γ → ℕ
-  [ top ]ⁱˣ   = zero
-  [ pop i ]ⁱˣ = suc [ i ]ⁱˣ
+  [_]ⁱ : ∀ {A Γ} → A ∈ Γ → ℕ
+  [ top ]ⁱ   = zero
+  [ pop i ]ⁱ = suc [ i ]ⁱ
 
   i₀ : ∀ {A Γ} → A ∈ Γ , A
   i₀ = top
