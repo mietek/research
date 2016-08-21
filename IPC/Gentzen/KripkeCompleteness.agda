@@ -103,17 +103,18 @@ module IlikCompleteness where
 
   -- The canonical model.
 
-  instance
-    canon : Model
-    canon = record
-      { World   = Cx Ty
-      ; _≤_     = _⊆_
-      ; refl≤   = refl⊆
-      ; trans≤  = trans⊆
-      ; _⊪ᵅ_   = λ Γ P → Γ ⊢ⁿᵉ α P
-      ; mono⊪ᵅ = mono⊢ⁿᵉ
-      ; _‼_     = λ Γ A → Γ ⊢ⁿᶠ A
-      }
+  private
+    instance
+      canon : Model
+      canon = record
+        { World   = Cx Ty
+        ; _≤_     = _⊆_
+        ; refl≤   = refl⊆
+        ; trans≤  = trans⊆
+        ; _⊪ᵅ_   = λ Γ P → Γ ⊢ⁿᵉ α P
+        ; mono⊪ᵅ = mono⊢ⁿᵉ
+        ; _‼_     = λ Γ A → Γ ⊢ⁿᶠ A
+        }
 
 
   -- Soundness and completeness with respect to the canonical model.

@@ -68,26 +68,27 @@ eval tt          γ δ = ∙
 
 -- The canonical model.
 
-instance
-  canon : Model
-  canon = record
-    { _⁏_⊩ᵅ_   = λ Γ Δ P → Γ ⁏ Δ ⊢ α P
-    ; mono⊩ᵅ   = mono⊢
-    ; mmono⊩ᵅ  = mmono⊢
-    ; [_⁏_⊢_]  = _⁏_⊢_
-    ; mono[⊢]  = mono⊢
-    ; mmono[⊢] = mmono⊢
-    ; [var]     = var
-    ; [lam]     = lam
-    ; [app]     = app
-    ; [mvar]    = mvar
-    ; [box]     = box
-    ; [unbox]   = unbox
-    ; [pair]    = pair
-    ; [fst]     = fst
-    ; [snd]     = snd
-    ; [tt]      = tt
-    }
+private
+  instance
+    canon : Model
+    canon = record
+      { _⁏_⊩ᵅ_   = λ Γ Δ P → Γ ⁏ Δ ⊢ α P
+      ; mono⊩ᵅ   = mono⊢
+      ; mmono⊩ᵅ  = mmono⊢
+      ; [_⁏_⊢_]  = _⁏_⊢_
+      ; mono[⊢]  = mono⊢
+      ; mmono[⊢] = mmono⊢
+      ; [var]     = var
+      ; [lam]     = lam
+      ; [app]     = app
+      ; [mvar]    = mvar
+      ; [box]     = box
+      ; [unbox]   = unbox
+      ; [pair]    = pair
+      ; [fst]     = fst
+      ; [snd]     = snd
+      ; [tt]      = tt
+      }
 
 
 -- Soundness and completeness with respect to the canonical model.

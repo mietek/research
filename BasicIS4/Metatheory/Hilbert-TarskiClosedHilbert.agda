@@ -67,24 +67,25 @@ check eta⊤⋙                  = refl
 
 -- The canonical model.
 
-instance
-  canon : Model
-  canon = record
-    { ⊩ᵅ_    = λ P → ⌀ ⊢ α P
-    ; [_]     = ⌀ ⊢_
-    ; [app]   = app
-    ; [ci]    = ci
-    ; [ck]    = ck
-    ; [cs]    = cs
-    ; [box]   = box
-    ; [cdist] = cdist
-    ; [cup]   = cup
-    ; [cdown] = cdown
-    ; [cpair] = cpair
-    ; [cfst]  = cfst
-    ; [csnd]  = csnd
-    ; [tt]    = tt
-    }
+private
+  instance
+    canon : Model
+    canon = record
+      { ⊩ᵅ_    = λ P → ⌀ ⊢ α P
+      ; [_]     = ⌀ ⊢_
+      ; [app]   = app
+      ; [ci]    = ci
+      ; [ck]    = ck
+      ; [cs]    = cs
+      ; [box]   = box
+      ; [cdist] = cdist
+      ; [cup]   = cup
+      ; [cdown] = cdown
+      ; [cpair] = cpair
+      ; [cfst]  = cfst
+      ; [csnd]  = csnd
+      ; [tt]    = tt
+      }
 
 
 -- Completeness with respect to all models, or quotation, for closed terms only.

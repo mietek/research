@@ -37,20 +37,21 @@ eval⋆ {Π , A} (ts , t) γ = eval⋆ ts γ , eval t γ
 
 -- The canonical model.
 
-instance
-  canon : Model
-  canon = record
-    { World    = Worldᶜ
-    ; _≤_      = _≤ᶜ_
-    ; refl≤    = refl≤ᶜ
-    ; trans≤   = trans≤ᶜ
-    ; _R_      = _Rᶜ_
-    ; reflR    = reflRᶜ
-    ; transR   = transRᶜ
-    ; _⊩ᵅ_    = λ Γ P → Γ ⊢ α P
-    ; mono⊩ᵅ  = mono⊢
-    ; ≤⨾R→R   = ≤⨾R→Rᶜ
-    }
+private
+  instance
+    canon : Model
+    canon = record
+      { World    = Worldᶜ
+      ; _≤_      = _≤ᶜ_
+      ; refl≤    = refl≤ᶜ
+      ; trans≤   = trans≤ᶜ
+      ; _R_      = _Rᶜ_
+      ; reflR    = reflRᶜ
+      ; transR   = transRᶜ
+      ; _⊩ᵅ_    = λ Γ P → Γ ⊢ α P
+      ; mono⊩ᵅ  = mono⊢
+      ; ≤⨾R→R   = ≤⨾R→Rᶜ
+      }
 
 
 -- Soundness and completeness with respect to the canonical model.

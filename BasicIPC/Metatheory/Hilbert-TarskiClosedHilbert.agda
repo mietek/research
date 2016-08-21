@@ -56,20 +56,21 @@ eval✓ eta⊤⋙                  = refl
 
 -- The canonical model.
 
-instance
-  canon : Model
-  canon = record
-    { ⊩ᵅ_    = λ P → ⌀ ⊢ α P
-    ; [_]     = ⌀ ⊢_
-    ; [app]   = app
-    ; [ci]    = ci
-    ; [ck]    = ck
-    ; [cs]    = cs
-    ; [cpair] = cpair
-    ; [cfst]  = cfst
-    ; [csnd]  = csnd
-    ; [tt]    = tt
-    }
+private
+  instance
+    canon : Model
+    canon = record
+      { ⊩ᵅ_    = λ P → ⌀ ⊢ α P
+      ; [_]     = ⌀ ⊢_
+      ; [app]   = app
+      ; [ci]    = ci
+      ; [ck]    = ck
+      ; [cs]    = cs
+      ; [cpair] = cpair
+      ; [cfst]  = cfst
+      ; [csnd]  = csnd
+      ; [tt]    = tt
+      }
 
 
 -- Completeness with respect to all models, or quotation, for closed terms only.

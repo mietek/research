@@ -27,20 +27,21 @@ eval tt          γ δ = ∙
 
 -- The canonical model.
 
-instance
-  canon : Model
-  canon = record
-    { World    = Worldᶜ
-    ; _≤_      = _≤ᶜ_
-    ; refl≤    = refl≤ᶜ
-    ; trans≤   = trans≤ᶜ
-    ; _R_      = _Rᶜ_
-    ; reflR    = reflRᶜ
-    ; transR   = transRᶜ
-    ; _⊩ᵅ_    = λ { (Γ , Δ) P → Γ ⁏ Δ ⊢ α P }
-    ; mono⊩ᵅ  = mono²⊢
-    ; ≤⨾R→R   = ≤⨾R→Rᶜ
-    }
+private
+  instance
+    canon : Model
+    canon = record
+      { World    = Worldᶜ
+      ; _≤_      = _≤ᶜ_
+      ; refl≤    = refl≤ᶜ
+      ; trans≤   = trans≤ᶜ
+      ; _R_      = _Rᶜ_
+      ; reflR    = reflRᶜ
+      ; transR   = transRᶜ
+      ; _⊩ᵅ_    = λ { (Γ , Δ) P → Γ ⁏ Δ ⊢ α P }
+      ; mono⊩ᵅ  = mono²⊢
+      ; ≤⨾R→R   = ≤⨾R→Rᶜ
+      }
 
 
 -- Soundness and completeness with respect to the canonical model.

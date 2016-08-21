@@ -38,11 +38,12 @@ eval tt         γ = ∙
 
 -- The canonical model.
 
-instance
-  canon : Model
-  canon = record
-    { ⊩ᵅ_ = λ P → ⌀ ⊢ α P
-    }
+private
+  instance
+    canon : Model
+    canon = record
+      { ⊩ᵅ_ = λ P → ⌀ ⊢ α P
+      }
 
 
 -- Completeness with respect to all models, or quotation, for closed terms only.

@@ -26,15 +26,16 @@ eval⋆ {Π , A} (ts , t) γ = eval⋆ ts γ , eval t γ
 
 -- The canonical model.
 
-instance
-  canon : Model
-  canon = record
-    { World   = Cx Ty
-    ; _≤_     = _⊆_
-    ; refl≤   = refl⊆
-    ; trans≤  = trans⊆
-    ; _⊩ᵅ_   = λ Γ P → Γ ⊢ⁿᵉ α P
-    }
+private
+  instance
+    canon : Model
+    canon = record
+      { World   = Cx Ty
+      ; _≤_     = _⊆_
+      ; refl≤   = refl⊆
+      ; trans≤  = trans⊆
+      ; _⊩ᵅ_   = λ Γ P → Γ ⊢ⁿᵉ α P
+      }
 
 
 -- Soundness and completeness with respect to the canonical model.

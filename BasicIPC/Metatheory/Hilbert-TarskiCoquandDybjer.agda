@@ -61,12 +61,13 @@ eval tt        γ = ∙
 
 -- The canonical model.
 
-instance
-  canon : Model
-  canon = record
-    { _⊩ᵅ_   = λ Γ P → Γ ⊢ α P
-    ; mono⊩ᵅ = mono⊢
-    }
+private
+  instance
+    canon : Model
+    canon = record
+      { _⊩ᵅ_   = λ Γ P → Γ ⊢ α P
+      ; mono⊩ᵅ = mono⊢
+      }
 
 
 -- Soundness with respect to the canonical model.
