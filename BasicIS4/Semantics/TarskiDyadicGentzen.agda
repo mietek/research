@@ -134,9 +134,11 @@ module _ {{_ : Model}} where
 
 -- Forcing in all models, for sequents.
 
+infix 3 _⁏_⊨_
 _⁏_⊨_ : Cx Ty → Cx Ty → Ty → Set₁
 Γ ⁏ Δ ⊨ A = ∀ {{_ : Model}} {Γ₀ Δ₀ : Cx Ty} → Γ₀ ⁏ Δ₀ ⊩ Γ ⁏ Δ ⇒ A
 
+infix 3 _⁏_⊨⋆_
 _⁏_⊨⋆_ : Cx Ty → Cx Ty → Cx Ty → Set₁
 Γ ⁏ Δ ⊨⋆ Π = ∀ {{_ : Model}} {Γ₀ Δ₀ : Cx Ty} → Γ₀ ⁏ Δ₀ ⊩ Γ ⁏ Δ ⇒⋆ Π
 
