@@ -1,4 +1,4 @@
--- Kripke-style semantics, based on the Gödel translation.
+-- Kripke-style semantics, based on Gödel.
 
 module BasicIPC.Semantics.KripkeGodel where
 

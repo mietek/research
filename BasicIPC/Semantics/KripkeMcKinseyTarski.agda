@@ -1,4 +1,4 @@
--- Kripke-style semantics, based on the McKinsey-Tarski translation.
+-- Kripke-style semantics, based on McKinsey-Tarski.
 
 module BasicIPC.Semantics.KripkeMcKinseyTarski where
 

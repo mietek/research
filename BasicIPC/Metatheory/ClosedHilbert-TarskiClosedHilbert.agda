@@ -18,38 +18,38 @@ module _ {{_ : Model}} where
   [ tt ]      = [tt]
 
 
--- Soundness with respect to all models, or evaluation.
+-- Soundness with respect to all models, or evaluation, for closed terms only.
 
-eval : ∀ {A} → ⊢ A → ⊨ A
-eval (app t u) = eval t ⟪$⟫ eval u
-eval ci        = [ci] , I
-eval ck        = [ck] , ⟪K⟫
-eval cs        = [cs] , ⟪S⟫′
-eval cpair     = [cpair] , _⟪,⟫′_
-eval cfst      = [cfst] , π₁
-eval csnd      = [csnd] , π₂
-eval tt        = ∙
+eval₀ : ∀ {A} → ⊢ A → ⊨ A
+eval₀ (app t u) = eval₀ t ⟪$⟫ eval₀ u
+eval₀ ci        = [ci] , I
+eval₀ ck        = [ck] , ⟪K⟫
+eval₀ cs        = [cs] , ⟪S⟫′
+eval₀ cpair     = [cpair] , _⟪,⟫′_
+eval₀ cfst      = [cfst] , π₁
+eval₀ csnd      = [csnd] , π₂
+eval₀ tt        = ∙
 
 
 -- Correctness of evaluation with respect to conversion.
 
-eval✓ : ∀ {{_ : Model}} {A} {t t′ : ⊢ A} → t ⋙ t′ → eval t ≡ eval t′
-eval✓ refl⋙           = refl
-eval✓ (trans⋙ p q)    = trans (eval✓ p) (eval✓ q)
-eval✓ (sym⋙ p)        = sym (eval✓ p)
-eval✓ (congapp⋙ p q)  = cong² _⟪$⟫_ (eval✓ p) (eval✓ q)
-eval✓ (congi⋙ p)      = cong I (eval✓ p)
-eval✓ (congk⋙ p q)    = cong² K (eval✓ p) (eval✓ q)
-eval✓ (congs⋙ p q r)  = cong³ ⟪S⟫ (eval✓ p) (eval✓ q) (eval✓ r)
-eval✓ (congpair⋙ p q) = cong² _,_ (eval✓ p) (eval✓ q)
-eval✓ (congfst⋙ p)    = cong π₁ (eval✓ p)
-eval✓ (congsnd⋙ p)    = cong π₂ (eval✓ p)
-eval✓ beta▻ₖ⋙         = refl
-eval✓ beta▻ₛ⋙         = refl
-eval✓ beta∧₁⋙         = refl
-eval✓ beta∧₂⋙         = refl
-eval✓ eta∧⋙           = refl
-eval✓ eta⊤⋙          = refl
+eval₀✓ : ∀ {{_ : Model}} {A} {t t′ : ⊢ A} → t ⋙ t′ → eval₀ t ≡ eval₀ t′
+eval₀✓ refl⋙           = refl
+eval₀✓ (trans⋙ p q)    = trans (eval₀✓ p) (eval₀✓ q)
+eval₀✓ (sym⋙ p)        = sym (eval₀✓ p)
+eval₀✓ (congapp⋙ p q)  = cong² _⟪$⟫_ (eval₀✓ p) (eval₀✓ q)
+eval₀✓ (congi⋙ p)      = cong I (eval₀✓ p)
+eval₀✓ (congk⋙ p q)    = cong² K (eval₀✓ p) (eval₀✓ q)
+eval₀✓ (congs⋙ p q r)  = cong³ ⟪S⟫ (eval₀✓ p) (eval₀✓ q) (eval₀✓ r)
+eval₀✓ (congpair⋙ p q) = cong² _,_ (eval₀✓ p) (eval₀✓ q)
+eval₀✓ (congfst⋙ p)    = cong π₁ (eval₀✓ p)
+eval₀✓ (congsnd⋙ p)    = cong π₂ (eval₀✓ p)
+eval₀✓ beta▻ₖ⋙         = refl
+eval₀✓ beta▻ₛ⋙         = refl
+eval₀✓ beta∧₁⋙         = refl
+eval₀✓ beta∧₂⋙         = refl
+eval₀✓ eta∧⋙           = refl
+eval₀✓ eta⊤⋙          = refl
 
 
 -- The canonical model.
@@ -71,19 +71,19 @@ private
       }
 
 
--- Completeness with respect to all models, or quotation.
+-- Completeness with respect to all models, or quotation, for closed terms only.
 
-quot : ∀ {A} → ⊨ A → ⊢ A
-quot s = reifyʳ s
+quot₀ : ∀ {A} → ⊨ A → ⊢ A
+quot₀ s = reifyʳ s
 
 
--- Normalisation by evaluation.
+-- Normalisation by evaluation, for closed terms only.
 
-norm : ∀ {A} → ⊢ A → ⊢ A
-norm = quot ∘ eval
+norm₀ : ∀ {A} → ⊢ A → ⊢ A
+norm₀ = quot₀ ∘ eval₀
 
 
 -- Correctness of normalisation with respect to conversion.
 
-norm✓ : ∀ {{_ : Model}} {A} {t t′ : ⊢ A} → t ⋙ t′ → norm t ≡ norm t′
-norm✓ p = cong reifyʳ (eval✓ p)
+norm₀✓ : ∀ {{_ : Model}} {A} {t t′ : ⊢ A} → t ⋙ t′ → norm₀ t ≡ norm₀ t′
+norm₀✓ p = cong reifyʳ (eval₀✓ p)

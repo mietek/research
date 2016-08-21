@@ -68,11 +68,33 @@ import BasicIPC.Semantics.TarskiGentzen
 -- Tarski-style semantics with explicit contexts.
 import BasicIPC.Semantics.Tarski
 
--- Kripke-style semantics, based on the McKinsey-Tarski translation.
+-- Kripke-style semantics, based on McKinsey-Tarski.
 import BasicIPC.Semantics.KripkeMcKinseyTarski
 
--- Kripke-style semantics, based on the Gödel translation.
+-- Kripke-style semantics, based on Gödel.
 import BasicIPC.Semantics.KripkeGodel
+
+
+-- Available metatheory for basic IPC.
+--
+--       ┌─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┐
+--       │ BT  │ TCCD│ TCH │ TCD │ TH  │ TG  │ T   │ KMT │ KG  │
+-- ┌─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ CH  │  e₀ │ e₀q₀│ e₀q₀│     │     │     │     │     │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ H   │  e  │ eq₀ │ eq₀ │ eq  │ eq  │ eq~ │ eq  │ eq  │ eq  │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ G   │  e  │ eq₀ │     │ eq  │     │ eq  │ eq  │ eq  │ eq  │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ Gⁿᶠ │     │     │     │     │     │     │ eq  │ eq  │ eq  │
+-- └─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┘
+--
+-- e₀   : Soundness only, for closed terms only.
+-- e₀q₀ : Soundness and completeness, for closed terms only.
+-- e    : Soundness only.
+-- eq₀  : Soundness, for all terms; completeness, for closed terms only.
+-- eq   : Soundness and completeness.
+-- eq~  : Soundness and completeness, using syntax translation.
 
 
 import BasicIPC.Metatheory.ClosedHilbert-BasicTarski
@@ -119,11 +141,11 @@ import IPC.Hilbert.Tree.TarskiBasicCompleteness
 import IPC.Hilbert.TreeWithContext
 import IPC.Hilbert.TreeWithContext.TarskiSoundness
 import IPC.Hilbert.TreeWithContext.TarskiBasicCompleteness
-import IPC.Hilbert.TreeWithContext.KripkeSoundness -- FIXME
+import IPC.Hilbert.TreeWithContext.KripkeSoundness
 import IPC.Hilbert.Translation
 import IPC.Gentzen
-import IPC.Gentzen.TarskiSoundness -- FIXME
-import IPC.Gentzen.TarskiBasicCompleteness -- FIXME
+import IPC.Gentzen.TarskiSoundness
+import IPC.Gentzen.TarskiBasicCompleteness
 import IPC.Gentzen.KripkeSoundness
 import IPC.Gentzen.KripkeBasicCompleteness
 import IPC.Gentzen.KripkeCompleteness
@@ -167,7 +189,7 @@ import BasicIS4.Syntax.DyadicGentzen
 import BasicIS4.Syntax.LabelledGentzen
 
 -- Translation between different formalisations of syntax.
-import BasicIS4.Syntax.Translation -- FIXME
+import BasicIS4.Syntax.Translation
 
 
 -- Basic Kripke-style semantics, after Ono, for soundness only.
@@ -212,6 +234,30 @@ import BasicIS4.Equipment.KripkeCanonical
 import BasicIS4.Equipment.KripkeNonCanonical
 import BasicIS4.Equipment.KripkeDyadicCanonical
 import BasicIS4.Equipment.KripkeDyadicNonCanonical
+
+
+-- Available metatheory for basic IS4.
+--
+--       ┌─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┐
+--       │ BKO │ BKBD│ BKE │ BKA&│ TCGN│ TCH │ TGN │ TH  │ TG  │ TDGN│ TDH │ TDG │
+-- ┌─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ CH  │     │     │     │     │ e₀q₀│ e₀q₀│     │     │     │     │     │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ H   │  e  │  e  │  e  │  e  │ eq₀ │ eq₀ │ eq  │ eq  │ eq~ │     │     │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ G   │  e  │  e  │  e  │  e  │ eq₀ │     │ eq  │     │ eq  │     │     │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ DH  │  e  │  e  │  e  │  e  │     │     │     │     │     │ eq  │ eq  │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ DG  │  e  │  e  │  e  │  e  │     │     │     │     │     │ eq  │     │ eq  │
+-- └─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┘
+--
+-- e₀   : Soundness only, for closed terms only.
+-- e₀q₀ : Soundness and completeness, for closed terms only.
+-- e    : Soundness only.
+-- eq₀  : Soundness, for all terms; completeness, for closed terms only.
+-- eq   : Soundness and completeness.
+-- eq~  : Soundness and completeness, using syntax translation.
 
 
 import BasicIS4.Metatheory.ClosedHilbert-TarskiClosedGabbayNanevski
