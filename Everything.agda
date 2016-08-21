@@ -81,6 +81,7 @@ import BasicIPC.Metatheory.Hilbert-TarskiClosedCoquandDybjer
 import BasicIPC.Metatheory.Hilbert-TarskiClosedHilbert
 import BasicIPC.Metatheory.Hilbert-TarskiCoquandDybjer
 import BasicIPC.Metatheory.Hilbert-TarskiHilbert
+import BasicIPC.Metatheory.Hilbert-TarskiGentzen
 import BasicIPC.Metatheory.Hilbert-KripkeMcKinseyTarski
 import BasicIPC.Metatheory.Hilbert-KripkeGodel
 
