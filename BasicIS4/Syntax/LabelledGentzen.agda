@@ -10,7 +10,7 @@ open import BasicIS4.Syntax.Common public
 postulate
   La : Set
 
-infix 5 _↝_
+infix 6 _↝_
 record LaLa : Set where
   constructor _↝_
   field

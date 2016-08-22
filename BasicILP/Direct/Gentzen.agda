@@ -6,9 +6,9 @@ open import Common.Context public
 -- Propositions of intuitionistic logic of proofs, without ∨, ⊥, or +.
 
 mutual
-  infixr 8 _⦂_
-  infixl 7 _∧_
-  infixr 5 _▻_
+  infixr 9 _⦂_
+  infixl 8 _∧_
+  infixr 6 _▻_
   data Ty : Set where
     α_  : Atom → Ty
     _▻_ : Ty → Ty → Ty
@@ -49,7 +49,7 @@ mutual
   Γ ⊢⋆ ⌀     = 𝟙
   Γ ⊢⋆ Ξ , A = Γ ⊢⋆ Ξ × Γ ⊢ A
 
-infix 5 _▻◅_
+infix 6 _▻◅_
 _▻◅_ : Ty → Ty → Ty
 A ▻◅ B = (A ▻ B) ∧ (B ▻ A)
 

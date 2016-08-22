@@ -5,9 +5,9 @@ open import Common.Context public
 
 -- Propositions of intuitionistic logic of proofs, without ∨, ⊥, or +.
 
-infixr 8 _⦂_
-infixl 7 _∧_
-infixr 5 _▻_
+infixr 9 _⦂_
+infixl 8 _∧_
+infixr 6 _▻_
 data Ty (X : Set) : Set where
   α_  : Atom → Ty X
   _▻_ : Ty X → Ty X → Ty X
@@ -16,7 +16,7 @@ data Ty (X : Set) : Set where
   ⊤  : Ty X
 
 module _ {X : Set} where
-  infix 5 _▻◅_
+  infix 6 _▻◅_
   _▻◅_ : Ty X → Ty X → Ty X
   A ▻◅ B = (A ▻ B) ∧ (B ▻ A)
 

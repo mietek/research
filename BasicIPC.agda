@@ -5,15 +5,15 @@ open import Common.Context public
 
 -- Propositions of intuitionistic propositional calculus, without ∨ or ⊥.
 
-infixl 7 _∧_
-infixr 5 _▻_
+infixl 8 _∧_
+infixr 6 _▻_
 data Ty : Set where
   α_  : Atom → Ty
   _▻_ : Ty → Ty → Ty
   _∧_ : Ty → Ty → Ty
   ⊤  : Ty
 
-infix 5 _▻◅_
+infix 6 _▻◅_
 _▻◅_ : Ty → Ty → Ty
 A ▻◅ B = (A ▻ B) ∧ (B ▻ A)
 
@@ -69,12 +69,12 @@ open ContextEquality (_≟ᵀ_) public
 
 -- Additional useful propositions.
 
-infixr 5 _▻⋯▻_
+infixr 6 _▻⋯▻_
 _▻⋯▻_ : Cx Ty → Ty → Ty
 ⌀       ▻⋯▻ B = B
 (Ξ , A) ▻⋯▻ B = Ξ ▻⋯▻ (A ▻ B)
 
-infixr 5 _▻⋯▻⋆_
+infixr 6 _▻⋯▻⋆_
 _▻⋯▻⋆_ : Cx Ty → Cx Ty → Ty
 Γ ▻⋯▻⋆ ⌀       = ⊤
 Γ ▻⋯▻⋆ (Ξ , A) = (Γ ▻⋯▻⋆ Ξ) ∧ (Γ ▻⋯▻ A)

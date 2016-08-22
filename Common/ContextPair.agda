@@ -5,7 +5,6 @@ open import Common.Context public
 
 -- Context pairs.
 
-infix 4 _,_
 record Cx² (U : Set) : Set where
   constructor _,_
   field

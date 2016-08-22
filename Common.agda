@@ -62,7 +62,7 @@ abstract
 
 -- Products, with custom fixities.
 
-infixl 4 _,_
+infixl 5 _,_
 record Σ {a b} (A : Set a) (B : A → Set b) : Set (a ⊔ᴸ b) where
   constructor _,_
   field
@@ -74,7 +74,7 @@ open Σ public
 ∃ : ∀ {a b} {A : Set a} → (A → Set b) → Set (a ⊔ᴸ b)
 ∃ = Σ _
 
-infix 0 _×_
+infix 2 _×_
 _×_ : ∀ {a b} (A : Set a) (B : Set b) → Set (a ⊔ᴸ b)
 A × B = Σ A (λ _ → B)
 

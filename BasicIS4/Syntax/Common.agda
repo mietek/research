@@ -7,9 +7,9 @@ open import Common.Context public
 
 -- Types, or propositions.
 
-infixr 8 □_
-infixl 7 _∧_
-infixr 5 _▻_
+infixr 9 □_
+infixl 8 _∧_
+infixr 6 _▻_
 data Ty : Set where
   α_  : Atom → Ty
   _▻_ : Ty → Ty → Ty
@@ -17,7 +17,7 @@ data Ty : Set where
   _∧_ : Ty → Ty → Ty
   ⊤  : Ty
 
-infix 5 _▻◅_
+infix 6 _▻◅_
 _▻◅_ : Ty → Ty → Ty
 A ▻◅ B = (A ▻ B) ∧ (B ▻ A)
 
@@ -87,12 +87,12 @@ open ContextEquality (_≟ᵀ_) public
 
 -- Additional useful types.
 
-infixr 5 _▻⋯▻_
+infixr 6 _▻⋯▻_
 _▻⋯▻_ : Cx Ty → Ty → Ty
 ⌀       ▻⋯▻ B = B
 (Ξ , A) ▻⋯▻ B = Ξ ▻⋯▻ (A ▻ B)
 
-infixr 8 □⋆_
+infixr 9 □⋆_
 □⋆_ : Cx Ty → Cx Ty
 □⋆ ⌀       = ⌀
 □⋆ (Ξ , A) = □⋆ Ξ , □ A
