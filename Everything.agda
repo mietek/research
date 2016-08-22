@@ -184,10 +184,10 @@ import BasicIS4.Syntax.Translation
 
 
 -- Basic Kripke-style semantics with abstract worlds, for soundness only.
-import BasicIS4.Semantics.BasicKripkeOno           -- Ono-style conditions.
-import BasicIS4.Semantics.BasicKripkeBozicDosen    -- Božić-Došen-style conditions.
-import BasicIS4.Semantics.BasicKripkeEwald         -- Ewald-style conditions.
-import BasicIS4.Semantics.BasicKripkeAlechinaEtAl  -- Alechina-style conditions.
+import BasicIS4.Semantics.BasicKripkeOno         -- Ono-style conditions.
+import BasicIS4.Semantics.BasicKripkeBozicDosen  -- Božić-Došen-style conditions.
+import BasicIS4.Semantics.BasicKripkeEwald       -- Ewald-style conditions.
+import BasicIS4.Semantics.BasicKripkeAlechina    -- Alechina-style conditions.
 
 -- Tarski-style semantics with glueing for α, ▻, and □, after Gabbay-Nanevski.
 import BasicIS4.Semantics.TarskiClosedGabbayNanevski  -- Implicit closed syntax.
@@ -280,7 +280,7 @@ import BasicIS4.Metatheory.ClosedHilbert-TarskiClosedHilbert
 import BasicIS4.Metatheory.Hilbert-BasicKripkeOno
 import BasicIS4.Metatheory.Hilbert-BasicKripkeBozicDosen
 import BasicIS4.Metatheory.Hilbert-BasicKripkeEwald
-import BasicIS4.Metatheory.Hilbert-BasicKripkeAlechinaEtAl
+import BasicIS4.Metatheory.Hilbert-BasicKripkeAlechina
 import BasicIS4.Metatheory.Hilbert-TarskiClosedGabbayNanevski
 import BasicIS4.Metatheory.Hilbert-TarskiClosedHilbert
 import BasicIS4.Metatheory.Hilbert-TarskiGabbayNanevski
@@ -292,7 +292,7 @@ import BasicIS4.Metatheory.Hilbert-Tarski1
 import BasicIS4.Metatheory.Gentzen-BasicKripkeOno
 import BasicIS4.Metatheory.Gentzen-BasicKripkeBozicDosen
 import BasicIS4.Metatheory.Gentzen-BasicKripkeEwald
-import BasicIS4.Metatheory.Gentzen-BasicKripkeAlechinaEtAl
+import BasicIS4.Metatheory.Gentzen-BasicKripkeAlechina
 import BasicIS4.Metatheory.Gentzen-TarskiClosedGabbayNanevski
 import BasicIS4.Metatheory.Gentzen-TarskiGabbayNanevski
 import BasicIS4.Metatheory.Gentzen-TarskiGentzen
@@ -302,7 +302,7 @@ import BasicIS4.Metatheory.Gentzen-TarskiGentzen
 import BasicIS4.Metatheory.DyadicHilbert-BasicKripkeOno
 import BasicIS4.Metatheory.DyadicHilbert-BasicKripkeBozicDosen
 import BasicIS4.Metatheory.DyadicHilbert-BasicKripkeEwald
-import BasicIS4.Metatheory.DyadicHilbert-BasicKripkeAlechinaEtAl
+import BasicIS4.Metatheory.DyadicHilbert-BasicKripkeAlechina
 import BasicIS4.Metatheory.DyadicHilbert-TarskiDyadicGabbayNanevski
 import BasicIS4.Metatheory.DyadicHilbert-TarskiDyadicHilbert
 import BasicIS4.Metatheory.DyadicHilbert-TarskiDyadicGentzen
@@ -312,7 +312,7 @@ import BasicIS4.Metatheory.DyadicHilbert-TarskiDyadic1
 import BasicIS4.Metatheory.DyadicGentzen-BasicKripkeOno
 import BasicIS4.Metatheory.DyadicGentzen-BasicKripkeBozicDosen
 import BasicIS4.Metatheory.DyadicGentzen-BasicKripkeEwald
-import BasicIS4.Metatheory.DyadicGentzen-BasicKripkeAlechinaEtAl
+import BasicIS4.Metatheory.DyadicGentzen-BasicKripkeAlechina
 import BasicIS4.Metatheory.DyadicGentzen-TarskiDyadicGabbayNanevski
 import BasicIS4.Metatheory.DyadicGentzen-TarskiDyadicGentzen
 --import BasicIS4.Metatheory.DyadicGentzen-TarskiDyadic  -- WIP

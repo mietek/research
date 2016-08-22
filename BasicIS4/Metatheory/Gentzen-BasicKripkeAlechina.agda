@@ -1,7 +1,7 @@
-module BasicIS4.Metatheory.Gentzen-BasicKripkeAlechinaEtAl where
+module BasicIS4.Metatheory.Gentzen-BasicKripkeAlechina where
 
 open import BasicIS4.Syntax.Gentzen public
-open import BasicIS4.Semantics.BasicKripkeAlechinaEtAl public
+open import BasicIS4.Semantics.BasicKripkeAlechina public
 
 
 -- Soundness with respect to all models, or evaluation.

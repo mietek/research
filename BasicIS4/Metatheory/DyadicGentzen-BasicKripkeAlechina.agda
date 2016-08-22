@@ -1,27 +1,24 @@
-module BasicIS4.Metatheory.DyadicHilbert-BasicKripkeAlechinaEtAl where
+module BasicIS4.Metatheory.DyadicGentzen-BasicKripkeAlechina where
 
-open import BasicIS4.Syntax.DyadicHilbert public
-open import BasicIS4.Semantics.BasicKripkeAlechinaEtAl public
+open import BasicIS4.Syntax.DyadicGentzen public
+open import BasicIS4.Semantics.BasicKripkeAlechina public
 
 
 -- Soundness with respect to all models, or evaluation.
 
 eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊨ A
 eval (var i)           γ δ = lookup i γ
+eval (lam t)           γ δ = λ ξ a → eval t (mono⊩⋆ ξ γ , a) (λ ξ′ ζ →
+                               δ (trans≤ ξ ξ′) ζ)
 eval (app {A} {B} t u) γ δ = _⟪$⟫_ {A} {B} (eval t γ δ) (eval u γ δ)
-eval ci                γ δ = K I
-eval (ck {A} {B})      γ δ = K (⟪K⟫ {A} {B})
-eval (cs {A} {B} {C})  γ δ = K (⟪S⟫′ {A} {B} {C})
 eval (mvar i)          γ δ = lookup i (δ refl≤ reflR)
 eval (box t)           γ δ = λ ξ ζ → eval t ∙ (λ ξ′ ζ′ →
                                let _ , (ξ″ , ζ″) = R⨾≤→≤⨾R (_ , (ζ , ξ′))
                                in  δ (trans≤ ξ ξ″) (transR ζ″ ζ′))
-eval (cdist {A} {B})   γ δ = K (_⟪D⟫′_ {A} {B})
-eval (cup {A})         γ δ = K (⟪↑⟫ {A})
-eval (cdown {A})       γ δ = K (⟪↓⟫ {A})
-eval (cpair {A} {B})   γ δ = K (_⟪,⟫′_ {A} {B})
-eval cfst              γ δ = K π₁
-eval csnd              γ δ = K π₂
+eval (unbox t u)       γ δ = eval u γ (λ ξ ζ → δ ξ ζ , (eval t γ δ) ξ ζ)
+eval (pair t u)        γ δ = eval t γ δ , eval u γ δ
+eval (fst t)           γ δ = π₁ (eval t γ δ)
+eval (snd t)           γ δ = π₂ (eval t γ δ)
 eval tt                γ δ = ∙
 
 

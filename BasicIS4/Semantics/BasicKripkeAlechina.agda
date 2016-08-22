@@ -1,7 +1,7 @@
 -- Basic Kripke-style semantics with abstract worlds, for soundness only.
 -- Alechina-style conditions.
 
-module BasicIS4.Semantics.BasicKripkeAlechinaEtAl where
+module BasicIS4.Semantics.BasicKripkeAlechina where
 
 open import BasicIS4.Syntax.Common public
 
