@@ -26,9 +26,9 @@ mutual
                                  let _ , (ξ″ , ζ″) = R⨾≤→≤⨾R (_ , (ζ , ξ′))
                                  in  eval t γ (trans≤ ξ ξ″) (transR ζ″ ζ′)
 
-eval⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊨⋆ Π
+eval⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊨⋆ Ξ
 eval⋆ {⌀}     ∙        γ = ∙
-eval⋆ {Π , A} (ts , t) γ = eval⋆ ts γ , eval t γ
+eval⋆ {Ξ , A} (ts , t) γ = eval⋆ ts γ , eval t γ
 
 
 -- TODO: Correctness of evaluation with respect to conversion.

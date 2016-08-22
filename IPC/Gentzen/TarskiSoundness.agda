@@ -87,9 +87,9 @@ module CoquandDybjerSoundness where
   reify {A ∨ B} (ι₁ a)  = inl (reify {A} a)
   reify {A ∨ B} (ι₂ b)  = inr (reify {B} b)
 
-  reify⋆ : ∀ {{_ : Model}} {Π} → ⊩⋆ Π → ⌀ ⊢⋆ Π
+  reify⋆ : ∀ {{_ : Model}} {Ξ} → ⊩⋆ Ξ → ⌀ ⊢⋆ Ξ
   reify⋆ {⌀}     ∙        = ∙
-  reify⋆ {Π , A} (ts , t) = reify⋆ ts , reify t
+  reify⋆ {Ξ , A} (ts , t) = reify⋆ ts , reify t
 
 
   -- Soundness with respect to all models, or evaluation.

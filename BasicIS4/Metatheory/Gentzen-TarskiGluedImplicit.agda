@@ -26,9 +26,9 @@ module _ {{_ : Model}} where
     reifyʳ {A ∧ B} (a , b) = pair (reifyʳ {A} a) (reifyʳ {B} b)
     reifyʳ {⊤}    ∙       = tt
 
-  reifyʳ⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → Γ ⊢⋆ Π
+  reifyʳ⋆ : ∀ {Ξ Γ} → Γ ⊩⋆ Ξ → Γ ⊢⋆ Ξ
   reifyʳ⋆ {⌀}     ∙        = ∙
-  reifyʳ⋆ {Π , A} (ts , t) = reifyʳ⋆ ts , reifyʳ t
+  reifyʳ⋆ {Ξ , A} (ts , t) = reifyʳ⋆ ts , reifyʳ t
 
 
 -- Soundness with respect to all models, or evaluation.
@@ -47,9 +47,9 @@ mutual
   eval (snd t)         γ = π₂ (eval t γ)
   eval tt              γ = ∙
 
-  eval⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊨⋆ Π
+  eval⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊨⋆ Ξ
   eval⋆ {⌀}     ∙        γ = ∙
-  eval⋆ {Π , A} (ts , t) γ = eval⋆ ts γ , eval t γ
+  eval⋆ {Ξ , A} (ts , t) γ = eval⋆ ts γ , eval t γ
 
 
 -- TODO: Correctness of evaluation with respect to conversion.
@@ -85,13 +85,13 @@ mutual
   reifyᶜ {A ∧ B} (a , b) = pair (reifyᶜ a) (reifyᶜ b)
   reifyᶜ {⊤}    ∙       = tt
 
-reflectᶜ⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊩⋆ Π
+reflectᶜ⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊩⋆ Ξ
 reflectᶜ⋆ {⌀}     ∙        = ∙
-reflectᶜ⋆ {Π , A} (ts , t) = reflectᶜ⋆ ts , reflectᶜ t
+reflectᶜ⋆ {Ξ , A} (ts , t) = reflectᶜ⋆ ts , reflectᶜ t
 
-reifyᶜ⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → Γ ⊢⋆ Π
+reifyᶜ⋆ : ∀ {Ξ Γ} → Γ ⊩⋆ Ξ → Γ ⊢⋆ Ξ
 reifyᶜ⋆ {⌀}     ∙        = ∙
-reifyᶜ⋆ {Π , A} (ts , t) = reifyᶜ⋆ ts , reifyᶜ t
+reifyᶜ⋆ {Ξ , A} (ts , t) = reifyᶜ⋆ ts , reifyᶜ t
 
 
 -- Reflexivity and transitivity.

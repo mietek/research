@@ -47,7 +47,7 @@ module _ {{_ : Model}} where
   infix 3 _⁏_⊩⋆_
   _⁏_⊩⋆_ : Cx Ty → Cx Ty → Cx Ty → Set
   Γ ⁏ Δ ⊩⋆ ⌀     = 𝟙
-  Γ ⁏ Δ ⊩⋆ Π , A = Γ ⁏ Δ ⊩⋆ Π × Γ ⁏ Δ ⊩ A
+  Γ ⁏ Δ ⊩⋆ Ξ , A = Γ ⁏ Δ ⊩⋆ Ξ × Γ ⁏ Δ ⊩ A
 
 
 -- Monotonicity with respect to context inclusion.
@@ -60,9 +60,9 @@ module _ {{_ : Model}} where
   mono⊩ {A ∧ B} η (a , b) = mono⊩ {A} η a , mono⊩ {B} η b
   mono⊩ {⊤}    η ∙       = ∙
 
-  mono⊩⋆ : ∀ {Π Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊩⋆ Π → Γ′ ⁏ Δ ⊩⋆ Π
+  mono⊩⋆ : ∀ {Ξ Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊩⋆ Ξ → Γ′ ⁏ Δ ⊩⋆ Ξ
   mono⊩⋆ {⌀}     η ∙        = ∙
-  mono⊩⋆ {Π , A} η (ts , t) = mono⊩⋆ {Π} η ts , mono⊩ {A} η t
+  mono⊩⋆ {Ξ , A} η (ts , t) = mono⊩⋆ {Ξ} η ts , mono⊩ {A} η t
 
 
 -- Additional useful equipment.
@@ -103,7 +103,7 @@ module _ {{_ : Model}} where
 
   infix 3 _⁏_⊩_⇒⋆_
   _⁏_⊩_⇒⋆_ : Cx Ty → Cx Ty → Cx Ty → Cx Ty → Set
-  Γ₀ ⁏ Δ ⊩ Γ ⇒⋆ Π = Γ₀ ⁏ Δ ⊩⋆ Γ → Γ₀ ⁏ Δ ⊩⋆ □⋆ Δ → Γ₀ ⁏ Δ ⊩⋆ Π
+  Γ₀ ⁏ Δ ⊩ Γ ⇒⋆ Ξ = Γ₀ ⁏ Δ ⊩⋆ Γ → Γ₀ ⁏ Δ ⊩⋆ □⋆ Δ → Γ₀ ⁏ Δ ⊩⋆ Ξ
 
 
 -- Entailment, or forcing in all worlds of all models, for sequents.
@@ -114,7 +114,7 @@ _⁏_⊨_ : Cx Ty → Cx Ty → Ty → Set₁
 
 infix 3 _⁏_⊨⋆_
 _⁏_⊨⋆_ : Cx Ty → Cx Ty → Cx Ty → Set₁
-Γ ⁏ Δ ⊨⋆ Π = ∀ {{_ : Model}} {Γ₀ : Cx Ty} → Γ₀ ⁏ Δ ⊩ Γ ⇒⋆ Π
+Γ ⁏ Δ ⊨⋆ Ξ = ∀ {{_ : Model}} {Γ₀ : Cx Ty} → Γ₀ ⁏ Δ ⊩ Γ ⇒⋆ Ξ
 
 
 -- Additional useful equipment, for sequents.

@@ -62,9 +62,9 @@ hs→hnᴵˣ top     = top
 hs→hnᴵˣ (pop i) = pop (hs→hnᴵˣ i)
 
 hs→hn : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → HN⟨ hs→hnᵀʸ⋆ Γ ⊢ hs→hnᵀʸ A ⟩
-hs→hn (Π , ts) = aux ts top
+hs→hn (Ξ , ts) = aux ts top
   where
-    aux : ∀ {A Γ Π} → HS⟨ Γ ⊢× Π ⟩ → A ∈ Π → HN⟨ hs→hnᵀʸ⋆ Γ ⊢ hs→hnᵀʸ A ⟩
+    aux : ∀ {A Γ Ξ} → HS⟨ Γ ⊢× Ξ ⟩ → A ∈ Ξ → HN⟨ hs→hnᵀʸ⋆ Γ ⊢ hs→hnᵀʸ A ⟩
     aux (HS.var i ts)  top     = HN.var (hs→hnᴵˣ i)
     aux (HS.mp i j ts) top     = HN.app (aux ts i) (aux ts j)
     aux (HS.ci ts)     top     = HN.ci
@@ -276,9 +276,9 @@ mutual
   g→hn (G.snd t)         = HN.snd (g→hn t)
   g→hn G.tt              = HN.tt
 
-  g→hn⋆ : ∀ {Π Γ} → G⟨ Γ ⊢⋆ Π ⟩ → HN⟨ g→hnᵀʸ⋆ Γ ⊢⋆ g→hnᵀʸ⋆ Π ⟩
+  g→hn⋆ : ∀ {Ξ Γ} → G⟨ Γ ⊢⋆ Ξ ⟩ → HN⟨ g→hnᵀʸ⋆ Γ ⊢⋆ g→hnᵀʸ⋆ Ξ ⟩
   g→hn⋆ {⌀}     ∙        = ∙
-  g→hn⋆ {Π , A} (ts , t) = g→hn⋆ ts , g→hn t
+  g→hn⋆ {Ξ , A} (ts , t) = g→hn⋆ ts , g→hn t
 
 
 -- Translation from Gentzen-style to sequential Hilbert-style.

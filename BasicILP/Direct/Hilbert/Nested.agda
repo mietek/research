@@ -46,7 +46,7 @@ mutual
 infix 3 _⊢⋆_
 _⊢⋆_ : Cx Ty → Cx Ty → Set
 Γ ⊢⋆ ⌀     = 𝟙
-Γ ⊢⋆ Π , A = Γ ⊢⋆ Π × Γ ⊢ A
+Γ ⊢⋆ Ξ , A = Γ ⊢⋆ Ξ × Γ ⊢ A
 
 infix 5 _▻◅_
 _▻◅_ : Ty → Ty → Ty
@@ -57,7 +57,7 @@ A ▻◅ B = (A ▻ B) ∧ (B ▻ A)
 
 _⦂⋆_ : ∀ {n} → VCx Box n → VCx Ty n → Cx Ty
 ⌀        ⦂⋆ ⌀       = ⌀
-(ts , t) ⦂⋆ (Π , A) = (ts ⦂⋆ Π) , (t ⦂ A)
+(ts , t) ⦂⋆ (Ξ , A) = (ts ⦂⋆ Ξ) , (t ⦂ A)
 
 
 -- Monotonicity with respect to context inclusion.
@@ -77,9 +77,9 @@ mono⊢ η cfst      = cfst
 mono⊢ η csnd      = csnd
 mono⊢ η tt        = tt
 
-mono⊢⋆ : ∀ {Π Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ Π → Γ′ ⊢⋆ Π
+mono⊢⋆ : ∀ {Ξ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ Ξ → Γ′ ⊢⋆ Ξ
 mono⊢⋆ {⌀}     η ∙        = ∙
-mono⊢⋆ {Π , A} η (ts , t) = mono⊢⋆ η ts , mono⊢ η t
+mono⊢⋆ {Ξ , A} η (ts , t) = mono⊢⋆ η ts , mono⊢ η t
 
 
 -- Shorthand for variables.
@@ -124,9 +124,9 @@ det t = app (mono⊢ weak⊆ t) v₀
 cut : ∀ {A B Γ} → Γ ⊢ A → Γ , A ⊢ B → Γ ⊢ B
 cut t u = app (lam u) t
 
-multicut : ∀ {Π A Γ} → Γ ⊢⋆ Π → Π ⊢ A → Γ ⊢ A
+multicut : ∀ {Ξ A Γ} → Γ ⊢⋆ Ξ → Ξ ⊢ A → Γ ⊢ A
 multicut {⌀}     ∙        u = mono⊢ bot⊆ u
-multicut {Π , B} (ts , t) u = app (multicut ts (lam u)) t
+multicut {Ξ , B} (ts , t) u = app (multicut ts (lam u)) t
 
 
 -- Reflexivity and transitivity.
@@ -204,11 +204,11 @@ distup′ : ∀ {A B Γ} {u : ⌀ ⊢ A} {t : ⌀ , [ u ] ⦂ A ⊢ B}
           → Γ ⊢ [ app (lam t) (box u) ] ⦂ B
 distup′ t u = dist t (up u)
 
--- multibox : ∀ {n A Γ} {[ss] : VCx Box n} {Π : VCx Ty n}
---            → Γ ⊢⋆ [ss] ⦂⋆ Π → (u : [ss] ⦂⋆ Π ⊢ A)
+-- multibox : ∀ {n A Γ} {[ss] : VCx Box n} {Ξ : VCx Ty n}
+--            → Γ ⊢⋆ [ss] ⦂⋆ Ξ → (u : [ss] ⦂⋆ Ξ ⊢ A)
 --            → Γ ⊢ {!!} ⦂ A
 -- multibox {[ss] = ⌀}            {⌀}     ∙        u = box u
--- multibox {[ss] = [ss] , [ s ]} {Π , B} (ts , t) u = {!!}
+-- multibox {[ss] = [ss] , [ s ]} {Ξ , B} (ts , t) u = {!!}
 
 -- FIXME ↑ FIXME ↑ FIXME -----------------------------------------------------
 

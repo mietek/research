@@ -38,9 +38,9 @@ open G using () renaming (_⊢_ to G⟨_⊢_⟩) public
 -- Translation from closed Hilbert-style linear to closed Hilbert-style.
 
 chs→ch : ∀ {A} → CHS.⊢ A → CH.⊢ A
-chs→ch (Π , ts) = chs×→ch ts top
+chs→ch (Ξ , ts) = chs×→ch ts top
   where
-    chs×→ch : ∀ {A Π} → CHS.⊢× Π → A ∈ Π → CH.⊢ A
+    chs×→ch : ∀ {A Ξ} → CHS.⊢× Ξ → A ∈ Ξ → CH.⊢ A
     chs×→ch (CHS.mp i j ts) top     = CH.app (chs×→ch ts i) (chs×→ch ts j)
     chs×→ch (CHS.ci ts)     top     = CH.ci
     chs×→ch (CHS.ck ts)     top     = CH.ck
@@ -75,9 +75,9 @@ ch→chs CH.tt        = ⌀ , CHS.tt CHS.nil
 -- Translation from Hilbert-style linear to Hilbert-style.
 
 hs→h : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → H⟨ Γ ⊢ A ⟩
-hs→h (Π , ts) = hs×→h ts top
+hs→h (Ξ , ts) = hs×→h ts top
   where
-    hs×→h : ∀ {A Π Γ} → HS⟨ Γ ⊢× Π ⟩ → A ∈ Π → H⟨ Γ ⊢ A ⟩
+    hs×→h : ∀ {A Ξ Γ} → HS⟨ Γ ⊢× Ξ ⟩ → A ∈ Ξ → H⟨ Γ ⊢ A ⟩
     hs×→h (HS.var i ts)  top     = H.var i
     hs×→h (HS.mp i j ts) top     = H.app (hs×→h ts i) (hs×→h ts j)
     hs×→h (HS.ci ts)     top     = H.ci
@@ -130,9 +130,9 @@ hs-det⋆₀ = h→hs ∘ H.det⋆₀ ∘ hs→h
 -- Translation from closed Hilbert-style linear to Hilbert-style linear.
 
 chs→hs₀ : ∀ {A} → CHS.⊢ A → HS⟨ ⌀ ⊢ A ⟩
-chs→hs₀ (Π , ts) = Π , chs×→hs₀× ts
+chs→hs₀ (Ξ , ts) = Ξ , chs×→hs₀× ts
   where
-    chs×→hs₀× : ∀ {Π} → CHS.⊢× Π → HS⟨ ⌀ ⊢× Π ⟩
+    chs×→hs₀× : ∀ {Ξ} → CHS.⊢× Ξ → HS⟨ ⌀ ⊢× Ξ ⟩
     chs×→hs₀× CHS.nil         = HS.nil
     chs×→hs₀× (CHS.mp i j ts) = HS.mp i j (chs×→hs₀× ts)
     chs×→hs₀× (CHS.ci ts)     = HS.ci (chs×→hs₀× ts)
@@ -150,9 +150,9 @@ chs→hs t = hs-det⋆₀ (chs→hs₀ t)
 -- Translation from Hilbert-style linear to closed Hilbert-style linear.
 
 hs₀→chs : ∀ {A} → HS⟨ ⌀ ⊢ A ⟩ → CHS.⊢ A
-hs₀→chs (Π , ts) = Π , hs₀×→chs× ts
+hs₀→chs (Ξ , ts) = Ξ , hs₀×→chs× ts
   where
-    hs₀×→chs× : ∀ {Π} → HS⟨ ⌀ ⊢× Π ⟩ → CHS.⊢× Π
+    hs₀×→chs× : ∀ {Ξ} → HS⟨ ⌀ ⊢× Ξ ⟩ → CHS.⊢× Ξ
     hs₀×→chs× HS.nil         = CHS.nil
     hs₀×→chs× (HS.var () ts)
     hs₀×→chs× (HS.mp i j ts) = CHS.mp i j (hs₀×→chs× ts)

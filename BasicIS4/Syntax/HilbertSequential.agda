@@ -11,28 +11,28 @@ open import BasicIS4.Syntax.Common public
 infix 3 _⊢×_
 data _⊢×_ (Γ : Cx Ty) : Cx Ty → Set where
   nil   : Γ ⊢× ⌀
-  var   : ∀ {Π A}     → A ∈ Γ → Γ ⊢× Π → Γ ⊢× Π , A
-  mp    : ∀ {Π A B}   → A ▻ B ∈ Π → A ∈ Π → Γ ⊢× Π → Γ ⊢× Π , B
-  ci    : ∀ {Π A}     → Γ ⊢× Π → Γ ⊢× Π , A ▻ A
-  ck    : ∀ {Π A B}   → Γ ⊢× Π → Γ ⊢× Π , A ▻ B ▻ A
-  cs    : ∀ {Π A B C} → Γ ⊢× Π → Γ ⊢× Π , (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
-  nec   : ∀ {Π Ξ A}   → ⌀ ⊢× Ξ , A → Γ ⊢× Π → Γ ⊢× Π , □ A
-  cdist : ∀ {Π A B}   → Γ ⊢× Π → Γ ⊢× Π , □ (A ▻ B) ▻ □ A ▻ □ B
-  cup   : ∀ {Π A}     → Γ ⊢× Π → Γ ⊢× Π , □ A ▻ □ □ A
-  cdown : ∀ {Π A}     → Γ ⊢× Π → Γ ⊢× Π , □ A ▻ A
-  cpair : ∀ {Π A B}   → Γ ⊢× Π → Γ ⊢× Π , A ▻ B ▻ A ∧ B
-  cfst  : ∀ {Π A B}   → Γ ⊢× Π → Γ ⊢× Π , A ∧ B ▻ A
-  csnd  : ∀ {Π A B}   → Γ ⊢× Π → Γ ⊢× Π , A ∧ B ▻ B
-  tt    : ∀ {Π}       → Γ ⊢× Π → Γ ⊢× Π , ⊤
+  var   : ∀ {Ξ A}     → A ∈ Γ → Γ ⊢× Ξ → Γ ⊢× Ξ , A
+  mp    : ∀ {Ξ A B}   → A ▻ B ∈ Ξ → A ∈ Ξ → Γ ⊢× Ξ → Γ ⊢× Ξ , B
+  ci    : ∀ {Ξ A}     → Γ ⊢× Ξ → Γ ⊢× Ξ , A ▻ A
+  ck    : ∀ {Ξ A B}   → Γ ⊢× Ξ → Γ ⊢× Ξ , A ▻ B ▻ A
+  cs    : ∀ {Ξ A B C} → Γ ⊢× Ξ → Γ ⊢× Ξ , (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
+  nec   : ∀ {Ξ Ψ A}   → ⌀ ⊢× Ψ , A → Γ ⊢× Ξ → Γ ⊢× Ξ , □ A
+  cdist : ∀ {Ξ A B}   → Γ ⊢× Ξ → Γ ⊢× Ξ , □ (A ▻ B) ▻ □ A ▻ □ B
+  cup   : ∀ {Ξ A}     → Γ ⊢× Ξ → Γ ⊢× Ξ , □ A ▻ □ □ A
+  cdown : ∀ {Ξ A}     → Γ ⊢× Ξ → Γ ⊢× Ξ , □ A ▻ A
+  cpair : ∀ {Ξ A B}   → Γ ⊢× Ξ → Γ ⊢× Ξ , A ▻ B ▻ A ∧ B
+  cfst  : ∀ {Ξ A B}   → Γ ⊢× Ξ → Γ ⊢× Ξ , A ∧ B ▻ A
+  csnd  : ∀ {Ξ A B}   → Γ ⊢× Ξ → Γ ⊢× Ξ , A ∧ B ▻ B
+  tt    : ∀ {Ξ}       → Γ ⊢× Ξ → Γ ⊢× Ξ , ⊤
 
 infix 3 _⊢_
 _⊢_ : Cx Ty → Ty → Set
-Γ ⊢ A = ∃ (λ Π → Γ ⊢× Π , A)
+Γ ⊢ A = ∃ (λ Ξ → Γ ⊢× Ξ , A)
 
 
 -- Monotonicity with respect to context inclusion.
 
-mono⊢× : ∀ {Π Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢× Π → Γ′ ⊢× Π
+mono⊢× : ∀ {Ξ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢× Ξ → Γ′ ⊢× Ξ
 mono⊢× η nil         = nil
 mono⊢× η (var i ts)  = var (mono∈ η i) (mono⊢× η ts)
 mono⊢× η (mp i j ts) = mp i j (mono⊢× η ts)
@@ -49,12 +49,12 @@ mono⊢× η (csnd ts)   = csnd (mono⊢× η ts)
 mono⊢× η (tt ts)     = tt (mono⊢× η ts)
 
 mono⊢ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
-mono⊢ η (Π , ts) = Π , mono⊢× η ts
+mono⊢ η (Ξ , ts) = Ξ , mono⊢× η ts
 
 
 -- Derivation concatenation.
 
-_⧻_ : ∀ {Γ Π Π′} → Γ ⊢× Π → Γ ⊢× Π′ → Γ ⊢× Π ⧺ Π′
+_⧻_ : ∀ {Γ Ξ Ξ′} → Γ ⊢× Ξ → Γ ⊢× Ξ′ → Γ ⊢× Ξ ⧺ Ξ′
 us ⧻ nil       = us
 us ⧻ var i ts  = var i (us ⧻ ts)
 us ⧻ mp i j ts = mp (mono∈ weak⊆⧺ᵣ i) (mono∈ weak⊆⧺ᵣ j) (us ⧻ ts)
@@ -74,9 +74,9 @@ us ⧻ tt ts     = tt (us ⧻ ts)
 -- Modus ponens and necessitation in expanded form.
 
 app : ∀ {A B Γ} → Γ ⊢ A ▻ B → Γ ⊢ A → Γ ⊢ B
-app {A} {B} (Π , ts) (Π′ , us) = Π″ , vs
-  where Π″ = (Π′ , A) ⧺ (Π , A ▻ B)
-        vs = mp top (mono∈ (weak⊆⧺ₗ (Π , A ▻ B)) top) (us ⧻ ts)
+app {A} {B} (Ξ , ts) (Ξ′ , us) = Ξ″ , vs
+  where Ξ″ = (Ξ′ , A) ⧺ (Ξ , A ▻ B)
+        vs = mp top (mono∈ (weak⊆⧺ₗ (Ξ , A ▻ B)) top) (us ⧻ ts)
 
 box : ∀ {A Γ} → ⌀ ⊢ A → Γ ⊢ □ A
-box (Π , ts) = ⌀ , nec ts nil
+box (Ξ , ts) = ⌀ , nec ts nil

@@ -16,9 +16,9 @@ module _ {{_ : Model}} where
   reify {A ∧ B} (a , b) = pair (reify a) (reify b)
   reify {⊤}    ∙       = tt
 
-  reify⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → Γ ⊢⋆ Π
+  reify⋆ : ∀ {Ξ Γ} → Γ ⊩⋆ Ξ → Γ ⊢⋆ Ξ
   reify⋆ {⌀}     ∙        = ∙
-  reify⋆ {Π , A} (ts , t) = reify⋆ ts , reify t
+  reify⋆ {Ξ , A} (ts , t) = reify⋆ ts , reify t
 
 
 -- Soundness with respect to all models, or evaluation.
@@ -39,9 +39,9 @@ mutual
   eval (snd t)         γ = π₂ (eval t γ)
   eval tt              γ = ∙
 
-  eval⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊨⋆ Π
+  eval⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊨⋆ Ξ
   eval⋆ {⌀}     ∙        γ = ∙
-  eval⋆ {Π , A} (ts , t) γ = eval⋆ ts γ , eval t γ
+  eval⋆ {Ξ , A} (ts , t) γ = eval⋆ ts γ , eval t γ
 
 
 -- TODO: Correctness of evaluation with respect to conversion.
@@ -69,9 +69,9 @@ reflectᶜ {□ A}   t = λ η → let t′ = mono⊢ η t
 reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
 reflectᶜ {⊤}    t = ∙
 
-reflectᶜ⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊩⋆ Π
+reflectᶜ⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊩⋆ Ξ
 reflectᶜ⋆ {⌀}     ∙        = ∙
-reflectᶜ⋆ {Π , A} (ts , t) = reflectᶜ⋆ ts , reflectᶜ t
+reflectᶜ⋆ {Ξ , A} (ts , t) = reflectᶜ⋆ ts , reflectᶜ t
 
 
 -- Reflexivity and transitivity.

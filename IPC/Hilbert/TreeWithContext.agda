@@ -24,7 +24,7 @@ data _⊢_ (Γ : Cx Ty) : Ty → Set where
 infix 3 _⊢⋆_
 _⊢⋆_ : Cx Ty → Cx Ty → Set
 Γ ⊢⋆ ⌀     = 𝟙
-Γ ⊢⋆ Π , A = Γ ⊢⋆ Π × Γ ⊢ A
+Γ ⊢⋆ Ξ , A = Γ ⊢⋆ Ξ × Γ ⊢ A
 
 
 -- Monotonicity with respect to context inclusion.
@@ -79,9 +79,9 @@ lam cinl          = app ck cinl
 lam cinr          = app ck cinr
 lam ccase         = app ck ccase
 
-lam⋆ : ∀ {Π Γ A} → Γ ⧺ Π ⊢ A → Γ ⊢ Π ▻⋯▻ A
+lam⋆ : ∀ {Ξ Γ A} → Γ ⧺ Ξ ⊢ A → Γ ⊢ Ξ ▻⋯▻ A
 lam⋆ {⌀}     = I
-lam⋆ {Π , B} = lam⋆ {Π} ∘ lam
+lam⋆ {Ξ , B} = lam⋆ {Ξ} ∘ lam
 
 lam⋆₀ : ∀ {Γ A} → Γ ⊢ A → ⌀ ⊢ Γ ▻⋯▻ A
 lam⋆₀ {⌀}     = I
@@ -93,9 +93,9 @@ lam⋆₀ {Γ , B} = lam⋆₀ ∘ lam
 det : ∀ {A B Γ} → Γ ⊢ A ▻ B → Γ , A ⊢ B
 det t = app (mono⊢ weak⊆ t) v₀
 
-det⋆ : ∀ {Π Γ A} → Γ ⊢ Π ▻⋯▻ A → Γ ⧺ Π ⊢ A
+det⋆ : ∀ {Ξ Γ A} → Γ ⊢ Ξ ▻⋯▻ A → Γ ⧺ Ξ ⊢ A
 det⋆ {⌀}     = I
-det⋆ {Π , B} = det ∘ det⋆ {Π}
+det⋆ {Ξ , B} = det ∘ det⋆ {Ξ}
 
 det⋆₀ : ∀ {Γ A} → ⌀ ⊢ Γ ▻⋯▻ A → Γ ⊢ A
 det⋆₀ {⌀}     = I
@@ -107,9 +107,9 @@ det⋆₀ {Γ , B} = det ∘ det⋆₀
 cut : ∀ {A B Γ} → Γ ⊢ A → Γ , A ⊢ B → Γ ⊢ B
 cut t u = app (lam u) t
 
-multicut : ∀ {Π A Γ} → Γ ⊢⋆ Π → Π ⊢ A → Γ ⊢ A
+multicut : ∀ {Ξ A Γ} → Γ ⊢⋆ Ξ → Ξ ⊢ A → Γ ⊢ A
 multicut {⌀}     ∙        u = mono⊢ bot⊆ u
-multicut {Π , B} (ts , t) u = app (multicut ts (lam u)) t
+multicut {Ξ , B} (ts , t) u = app (multicut ts (lam u)) t
 
 
 -- Reflexivity and transitivity.

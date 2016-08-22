@@ -26,7 +26,7 @@ data ⊢_ : Ty → Set where
 infix 3 ⊢⋆_
 ⊢⋆_ : Cx Ty → Set
 ⊢⋆ ⌀     = 𝟙
-⊢⋆ Π , A = ⊢⋆ Π × ⊢ A
+⊢⋆ Ξ , A = ⊢⋆ Ξ × ⊢ A
 
 
 -- Cut and multicut.
@@ -34,9 +34,9 @@ infix 3 ⊢⋆_
 cut : ∀ {A B} → ⊢ A → ⊢ A ▻ B → ⊢ B
 cut t u = app u t
 
-multicut : ∀ {Π A} → ⊢⋆ Π → ⊢ Π ▻⋯▻ A → ⊢ A
+multicut : ∀ {Ξ A} → ⊢⋆ Ξ → ⊢ Ξ ▻⋯▻ A → ⊢ A
 multicut {⌀}     ∙        u = u
-multicut {Π , B} (ts , t) u = app (multicut ts u) t
+multicut {Ξ , B} (ts , t) u = app (multicut ts u) t
 
 
 -- Contraction.

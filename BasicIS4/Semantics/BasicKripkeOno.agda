@@ -103,7 +103,7 @@ module _ {{_ : Model}} where
   infix 3 _⊩⋆_
   _⊩⋆_ : World → Cx Ty → Set
   w ⊩⋆ ⌀     = 𝟙
-  w ⊩⋆ Π , A = w ⊩⋆ Π × w ⊩ A
+  w ⊩⋆ Ξ , A = w ⊩⋆ Ξ × w ⊩ A
 
 
 -- Monotonicity with respect to intuitionistic accessibility.
@@ -170,7 +170,7 @@ module _ {{_ : Model}} where
 
   infix 3 _⊩_⇒⋆_
   _⊩_⇒⋆_ : World → Cx Ty → Cx Ty → Set
-  w ⊩ Γ ⇒⋆ Π = w ⊩⋆ Γ → w ⊩⋆ Π
+  w ⊩ Γ ⇒⋆ Ξ = w ⊩⋆ Γ → w ⊩⋆ Ξ
 
 
 -- Entailment, or forcing in all worlds of all models, for sequents.
@@ -181,7 +181,7 @@ _⊨_ : Cx Ty → Ty → Set₁
 
 infix 3 _⊨⋆_
 _⊨⋆_ : Cx Ty → Cx Ty → Set₁
-Γ ⊨⋆ Π = ∀ {{_ : Model}} {w : World} → w ⊩ Γ ⇒⋆ Π
+Γ ⊨⋆ Ξ = ∀ {{_ : Model}} {w : World} → w ⊩ Γ ⇒⋆ Ξ
 
 infix 3 _⁏_⊨_
 _⁏_⊨_ : Cx Ty → Cx Ty → Ty → Set₁

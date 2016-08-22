@@ -41,7 +41,7 @@ data _⁏_⊢_◎_ (Γ : Cx Ty) (Λ : Cx LaLa) : Ty → La → Set where
 infix 3 _⁏_⊢⋆_◎_
 _⁏_⊢⋆_◎_ : Cx Ty → Cx LaLa → Cx Ty → La → Set
 Γ ⁏ Λ ⊢⋆ ⌀     ◎ x = 𝟙
-Γ ⁏ Λ ⊢⋆ Π , A ◎ x = Γ ⁏ Λ ⊢⋆ Π ◎ x × Γ ⁏ Λ ⊢ A ◎ x
+Γ ⁏ Λ ⊢⋆ Ξ , A ◎ x = Γ ⁏ Λ ⊢⋆ Ξ ◎ x × Γ ⁏ Λ ⊢ A ◎ x
 
 
 -- Monotonicity with respect to context inclusion.
@@ -57,9 +57,9 @@ mono⊢ η (fst t)    = fst (mono⊢ η t)
 mono⊢ η (snd t)    = snd (mono⊢ η t)
 mono⊢ η tt         = tt
 
-mono⊢⋆ : ∀ {Π x Γ Γ′ Λ} → Γ ⊆ Γ′ → Γ ⁏ Λ ⊢⋆ Π ◎ x → Γ′ ⁏ Λ ⊢⋆ Π ◎ x
+mono⊢⋆ : ∀ {Ξ x Γ Γ′ Λ} → Γ ⊆ Γ′ → Γ ⁏ Λ ⊢⋆ Ξ ◎ x → Γ′ ⁏ Λ ⊢⋆ Ξ ◎ x
 mono⊢⋆ {⌀}     η ∙        = ∙
-mono⊢⋆ {Π , A} η (ts , t) = mono⊢⋆ η ts , mono⊢ η t
+mono⊢⋆ {Ξ , A} η (ts , t) = mono⊢⋆ η ts , mono⊢ η t
 
 
 -- Monotonicity with respect to relational context inclusion.
@@ -80,9 +80,9 @@ rmono⊢ η (fst t)    = fst (rmono⊢ η t)
 rmono⊢ η (snd t)    = snd (rmono⊢ η t)
 rmono⊢ η tt         = tt
 
-rmono⊢⋆ : ∀ {Π x Γ Λ Λ′} → Λ ⊆ Λ′ → Γ ⁏ Λ ⊢⋆ Π ◎ x → Γ ⁏ Λ′ ⊢⋆ Π ◎ x
+rmono⊢⋆ : ∀ {Ξ x Γ Λ Λ′} → Λ ⊆ Λ′ → Γ ⁏ Λ ⊢⋆ Ξ ◎ x → Γ ⁏ Λ′ ⊢⋆ Ξ ◎ x
 rmono⊢⋆ {⌀}     η ∙        = ∙
-rmono⊢⋆ {Π , A} η (ts , t) = rmono⊢⋆ η ts , rmono⊢ η t
+rmono⊢⋆ {Ξ , A} η (ts , t) = rmono⊢⋆ η ts , rmono⊢ η t
 
 
 -- Shorthand for variables.
@@ -108,9 +108,9 @@ rv₂ = rvar i₂
 
 -- Deduction theorem is built-in.
 
-lam⋆ : ∀ {Π x A Γ Λ} → Γ ⧺ Π ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ Π ▻⋯▻ A ◎ x
+lam⋆ : ∀ {Ξ x A Γ Λ} → Γ ⧺ Ξ ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ Ξ ▻⋯▻ A ◎ x
 lam⋆ {⌀}     = I
-lam⋆ {Π , B} = lam⋆ {Π} ∘ lam
+lam⋆ {Ξ , B} = lam⋆ {Ξ} ∘ lam
 
 lam⋆₀ : ∀ {Γ x A Λ} → Γ ⁏ Λ ⊢ A ◎ x → ⌀ ⁏ Λ ⊢ Γ ▻⋯▻ A ◎ x
 lam⋆₀ {⌀}     = I
@@ -122,9 +122,9 @@ lam⋆₀ {Γ , B} = lam⋆₀ ∘ lam
 det : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ▻ B ◎ x → Γ , A ⁏ Λ ⊢ B ◎ x
 det t = app (mono⊢ weak⊆ t) v₀
 
-det⋆ : ∀ {Π x A Γ Λ} → Γ ⁏ Λ ⊢ Π ▻⋯▻ A ◎ x → Γ ⧺ Π ⁏ Λ ⊢ A ◎ x
+det⋆ : ∀ {Ξ x A Γ Λ} → Γ ⁏ Λ ⊢ Ξ ▻⋯▻ A ◎ x → Γ ⧺ Ξ ⁏ Λ ⊢ A ◎ x
 det⋆ {⌀}     = I
-det⋆ {Π , B} = det ∘ det⋆ {Π}
+det⋆ {Ξ , B} = det ∘ det⋆ {Ξ}
 
 det⋆₀ : ∀ {Γ x A Λ} → ⌀ ⁏ Λ ⊢ Γ ▻⋯▻ A ◎ x → Γ ⁏ Λ ⊢ A ◎ x
 det⋆₀ {⌀}     = I
@@ -136,9 +136,9 @@ det⋆₀ {Γ , B} = det ∘ det⋆₀
 cut : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ◎ x → Γ , A ⁏ Λ ⊢ B ◎ x → Γ ⁏ Λ ⊢ B ◎ x
 cut t u = app (lam u) t
 
-multicut : ∀ {Π x A Γ Λ} → Γ ⁏ Λ ⊢⋆ Π ◎ x → Π ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ A ◎ x
+multicut : ∀ {Ξ x A Γ Λ} → Γ ⁏ Λ ⊢⋆ Ξ ◎ x → Ξ ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ A ◎ x
 multicut {⌀}     ∙        u = mono⊢ bot⊆ u
-multicut {Π , B} (ts , t) u = app (multicut ts (lam u)) t
+multicut {Ξ , B} (ts , t) u = app (multicut ts (lam u)) t
 
 
 -- Reflexivity and transitivity.
@@ -256,23 +256,23 @@ cxdown : ∀ {Γ x A Λ} → □⋆ □⋆ Γ ⁏ Λ ⊢ A ◎ x → □⋆ Γ �
 cxdown {⌀}     t = t
 cxdown {Γ , B} t = det (hypdown (cxdown (lam t)))
 
-box⋆ : ∀ {Π x Γ Λ} → (∀ {y} → ⌀ ⁏ Λ , x ↝ y ⊢⋆ Π ◎ y) → Γ ⁏ Λ ⊢⋆ □⋆ Π ◎ x
+box⋆ : ∀ {Ξ x Γ Λ} → (∀ {y} → ⌀ ⁏ Λ , x ↝ y ⊢⋆ Ξ ◎ y) → Γ ⁏ Λ ⊢⋆ □⋆ Ξ ◎ x
 box⋆ {⌀}     f = ∙
-box⋆ {Π , A} f = box⋆ (π₁ f) , box (π₂ f)
+box⋆ {Ξ , A} f = box⋆ (π₁ f) , box (π₂ f)
 
-lift⋆ : ∀ {Π x Γ Λ} → (∀ {y} → Γ ⁏ Λ , x ↝ y ⊢⋆ Π ◎ y) → □⋆ Γ ⁏ Λ ⊢⋆ □⋆ Π ◎ x
+lift⋆ : ∀ {Ξ x Γ Λ} → (∀ {y} → Γ ⁏ Λ , x ↝ y ⊢⋆ Ξ ◎ y) → □⋆ Γ ⁏ Λ ⊢⋆ □⋆ Ξ ◎ x
 lift⋆ {⌀}     f = ∙
-lift⋆ {Π , A} f = lift⋆ (π₁ f) , lift (π₂ f)
+lift⋆ {Ξ , A} f = lift⋆ (π₁ f) , lift (π₂ f)
 
-up⋆ : ∀ {Π x Γ Λ} → Γ ⁏ Λ ⊢⋆ □⋆ Π ◎ x → Γ ⁏ Λ ⊢⋆ □⋆ □⋆ Π ◎ x
+up⋆ : ∀ {Ξ x Γ Λ} → Γ ⁏ Λ ⊢⋆ □⋆ Ξ ◎ x → Γ ⁏ Λ ⊢⋆ □⋆ □⋆ Ξ ◎ x
 up⋆ {⌀}     f = ∙
-up⋆ {Π , A} f = up⋆ (π₁ f) , up (π₂ f)
+up⋆ {Ξ , A} f = up⋆ (π₁ f) , up (π₂ f)
 
-down⋆ : ∀ {Π x Γ Λ} → Γ ⁏ Λ ⊢⋆ □⋆ Π ◎ x → Γ ⁏ Λ ⊢⋆ Π ◎ x
+down⋆ : ∀ {Ξ x Γ Λ} → Γ ⁏ Λ ⊢⋆ □⋆ Ξ ◎ x → Γ ⁏ Λ ⊢⋆ Ξ ◎ x
 down⋆ {⌀}     f = ∙
-down⋆ {Π , A} f = down⋆ (π₁ f) , down (π₂ f)
+down⋆ {Ξ , A} f = down⋆ (π₁ f) , down (π₂ f)
 
-multibox : ∀ {Π x A Γ Λ} → Γ ⁏ Λ ⊢⋆ □⋆ Π ◎ x → (∀ {y} → □⋆ Π ⁏ ⌀ , x ↝ y ⊢ A ◎ y) → Γ ⁏ Λ ⊢ □ A ◎ x
+multibox : ∀ {Ξ x A Γ Λ} → Γ ⁏ Λ ⊢⋆ □⋆ Ξ ◎ x → (∀ {y} → □⋆ Ξ ⁏ ⌀ , x ↝ y ⊢ A ◎ y) → Γ ⁏ Λ ⊢ □ A ◎ x
 multibox ts u = multicut (up⋆ ts) (rmono⊢ bot⊆ (lift u))
 
 dist′ : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ □ (A ▻ B) ◎ x → Γ ⁏ Λ ⊢ □ A ▻ □ B ◎ x

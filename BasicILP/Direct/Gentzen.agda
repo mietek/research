@@ -25,7 +25,7 @@ mutual
 
   _⦂⋆_ : ∀ {n} → VCx Box n → VCx Ty n → Cx Ty
   ⌀        ⦂⋆ ⌀       = ⌀
-  (ts , t) ⦂⋆ (Π , A) = (ts ⦂⋆ Π) , (t ⦂ A)
+  (ts , t) ⦂⋆ (Ξ , A) = (ts ⦂⋆ Ξ) , (t ⦂ A)
 
 
   -- Derivations, as Gentzen-style natural deduction trees.
@@ -35,8 +35,8 @@ mutual
     var      : ∀ {A}              → A ∈ Γ → Γ ⊢ A
     lam      : ∀ {A B}            → Γ , A ⊢ B → Γ ⊢ A ▻ B
     app      : ∀ {A B}            → Γ ⊢ A ▻ B → Γ ⊢ A → Γ ⊢ B
---    multibox : ∀ {n A} {[ss] : VCx Box n} {Π : VCx Ty n}
---               → Γ ⊢⋆ [ss] ⦂⋆ Π → (u : [ss] ⦂⋆ Π ⊢ A)
+--    multibox : ∀ {n A} {[ss] : VCx Box n} {Ξ : VCx Ty n}
+--               → Γ ⊢⋆ [ss] ⦂⋆ Ξ → (u : [ss] ⦂⋆ Ξ ⊢ A)
 --               → Γ ⊢ [ u ] ⦂ A
     down     : ∀ {A} {t : ⌀ ⊢ A} → Γ ⊢ [ t ] ⦂ A → Γ ⊢ A
     pair     : ∀ {A B}            → Γ ⊢ A → Γ ⊢ B → Γ ⊢ A ∧ B
@@ -47,7 +47,7 @@ mutual
   infix 3 _⊢⋆_
   _⊢⋆_ : Cx Ty → Cx Ty → Set
   Γ ⊢⋆ ⌀     = 𝟙
-  Γ ⊢⋆ Π , A = Γ ⊢⋆ Π × Γ ⊢ A
+  Γ ⊢⋆ Ξ , A = Γ ⊢⋆ Ξ × Γ ⊢ A
 
 infix 5 _▻◅_
 _▻◅_ : Ty → Ty → Ty
@@ -68,9 +68,9 @@ mutual
   mono⊢ η (snd t)         = snd (mono⊢ η t)
   mono⊢ η tt              = tt
 
-  mono⊢⋆ : ∀ {Π Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ Π → Γ′ ⊢⋆ Π
+  mono⊢⋆ : ∀ {Ξ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ Ξ → Γ′ ⊢⋆ Ξ
   mono⊢⋆ {⌀}     η ∙        = ∙
-  mono⊢⋆ {Π , A} η (ts , t) = mono⊢⋆ η ts , mono⊢ η t
+  mono⊢⋆ {Ξ , A} η (ts , t) = mono⊢⋆ η ts , mono⊢ η t
 
 
 -- Shorthand for variables.
@@ -98,9 +98,9 @@ det t = app (mono⊢ weak⊆ t) v₀
 cut : ∀ {A B Γ} → Γ ⊢ A → Γ , A ⊢ B → Γ ⊢ B
 cut t u = app (lam u) t
 
-multicut : ∀ {Π A Γ} → Γ ⊢⋆ Π → Π ⊢ A → Γ ⊢ A
+multicut : ∀ {Ξ A Γ} → Γ ⊢⋆ Ξ → Ξ ⊢ A → Γ ⊢ A
 multicut {⌀}     ∙        u = mono⊢ bot⊆ u
-multicut {Π , B} (ts , t) u = app (multicut ts (lam u)) t
+multicut {Ξ , B} (ts , t) u = app (multicut ts (lam u)) t
 
 
 -- Reflexivity and transitivity.
@@ -143,17 +143,17 @@ comp t u = det (app (app ccomp (lam t)) (lam u))
 
 -- Useful theorems in functional form.
 
--- dist : ∀ {A B Ξ Γ} {t : Ξ ⊢ A ▻ B} {u : Ξ ⊢ A}
+-- dist : ∀ {A B Ψ Γ} {t : Ψ ⊢ A ▻ B} {u : Ψ ⊢ A}
 --        → Γ ⊢ [ t ] ⦂ (A ▻ B) → Γ ⊢ [ u ] ⦂ A
 --        → Γ ⊢ [ app (down v₁) (down v₀) ] ⦂ B
 -- dist t u = multibox ((∙ , t) , u) (app (down v₁) (down v₀))
 --
--- up : ∀ {A Ξ Γ} {t : Ξ ⊢ A}
+-- up : ∀ {A Ψ Γ} {t : Ψ ⊢ A}
 --      → Γ ⊢ [ t ] ⦂ A
 --      → Γ ⊢ [ v₀ ] ⦂ [ t ] ⦂ A
 -- up t = multibox (∙ , t) v₀
 --
--- distup : ∀ {A B Ξ Γ} {u : Ξ ⊢ A} {t : ⌀ , [ u ] ⦂ A ⊢ [ u ] ⦂ A ▻ B}
+-- distup : ∀ {A B Ψ Γ} {u : Ψ ⊢ A} {t : ⌀ , [ u ] ⦂ A ⊢ [ u ] ⦂ A ▻ B}
 --          → Γ ⊢ [ t ] ⦂ ([ u ] ⦂ A ▻ B) → Γ ⊢ [ u ] ⦂ A
 --          → Γ ⊢ [ app (down v₁) (down v₀) ] ⦂ B
 -- distup t u = dist t (up u)
@@ -180,17 +180,17 @@ ck = lam (lam v₁)
 cs : ∀ {A B C Γ} → Γ ⊢ (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
 cs = lam (lam (lam (app (app v₂ v₀) (app v₁ v₀))))
 
--- cdist : ∀ {A B Ξ Γ} {t : Ξ ⊢ A ▻ B} {u : Ξ ⊢ A}
+-- cdist : ∀ {A B Ψ Γ} {t : Ψ ⊢ A ▻ B} {u : Ψ ⊢ A}
 --         → Γ ⊢ [ t ] ⦂ (A ▻ B) ▻ [ u ] ⦂ A ▻ [ app (down v₁) (down v₀) ] ⦂ B
 -- cdist = lam (lam (dist v₁ v₀))
 --
--- cup : ∀ {A Ξ Γ} {t : Ξ ⊢ A} → Γ ⊢ [ t ] ⦂ A ▻ [ v₀ ] ⦂ [ t ] ⦂ A
+-- cup : ∀ {A Ψ Γ} {t : Ψ ⊢ A} → Γ ⊢ [ t ] ⦂ A ▻ [ v₀ ] ⦂ [ t ] ⦂ A
 -- cup = lam (up v₀)
 
 cdown : ∀ {A Γ} {t : ⌀ ⊢ A} → Γ ⊢ [ t ] ⦂ A ▻ A
 cdown = lam (down v₀)
 
--- cdistup : ∀ {A B Ξ Γ} {u : Ξ ⊢ A} {t : ⌀ , [ u ] ⦂ A ⊢ [ u ] ⦂ A ▻ B}
+-- cdistup : ∀ {A B Ψ Γ} {u : Ψ ⊢ A} {t : ⌀ , [ u ] ⦂ A ⊢ [ u ] ⦂ A ▻ B}
 --           → Γ ⊢ [ t ] ⦂ ([ u ] ⦂ A ▻ B) ▻ [ u ] ⦂ A ▻ [ app (down v₁) (down v₀) ] ⦂ B
 -- cdistup = lam (lam (dist v₁ (up v₀)))
 
@@ -230,6 +230,6 @@ mutual
   [ i ≔ s ] snd t         = snd ([ i ≔ s ] t)
   [ i ≔ s ] tt            = tt
 
-  [_≔_]⋆_ : ∀ {Π A Γ} → (i : A ∈ Γ) → Γ - i ⊢ A → Γ ⊢⋆ Π → Γ - i ⊢⋆ Π
+  [_≔_]⋆_ : ∀ {Ξ A Γ} → (i : A ∈ Γ) → Γ - i ⊢ A → Γ ⊢⋆ Ξ → Γ - i ⊢⋆ Ξ
   [_≔_]⋆_ {⌀}     i s ∙        = ∙
-  [_≔_]⋆_ {Π , B} i s (ts , t) = [ i ≔ s ]⋆ ts , [ i ≔ s ] t
+  [_≔_]⋆_ {Ξ , B} i s (ts , t) = [ i ≔ s ]⋆ ts , [ i ≔ s ] t

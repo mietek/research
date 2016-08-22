@@ -47,21 +47,21 @@ mutual
   infix 3 _⊢×_
   data _⊢×_ (Γ : Cx (Ty Tm)) : Cx (Ty Tm) → Set where
     nil   : Γ ⊢× ⌀
-    var   : ∀ {Π A}         → A ∈ Γ → Γ ⊢× Π → Γ ⊢× Π , A
-    mp    : ∀ {Π A B}       → A ▻ B ∈ Π → A ∈ Π → Γ ⊢× Π → Γ ⊢× Π , B
-    ci    : ∀ {Π A}         → Γ ⊢× Π → Γ ⊢× Π , A ▻ A
-    ck    : ∀ {Π A B}       → Γ ⊢× Π → Γ ⊢× Π , A ▻ B ▻ A
-    cs    : ∀ {Π A B C}     → Γ ⊢× Π → Γ ⊢× Π , (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
-    nec   : ∀ {Π Ξ A}       → (ss : ⌀ ⊢× Ξ , A) → Γ ⊢× Π → Γ ⊢× Π , [ ss ]× ⦂ A
-    cdist : ∀ {Π A B TS US} → Γ ⊢× Π → Γ ⊢× Π , TS ⦂ (A ▻ B) ▻ US ⦂ A ▻ APP TS US ⦂ B
-    cup   : ∀ {Π A TS}      → Γ ⊢× Π → Γ ⊢× Π , TS ⦂ A ▻ BOX TS ⦂ TS ⦂ A
-    cdown : ∀ {Π A TS}      → Γ ⊢× Π → Γ ⊢× Π , TS ⦂ A ▻ A
-    cpair : ∀ {Π A B}       → Γ ⊢× Π → Γ ⊢× Π , A ▻ B ▻ A ∧ B
-    cfst  : ∀ {Π A B}       → Γ ⊢× Π → Γ ⊢× Π , A ∧ B ▻ A
-    csnd  : ∀ {Π A B}       → Γ ⊢× Π → Γ ⊢× Π , A ∧ B ▻ B
-    tt    : ∀ {Π}           → Γ ⊢× Π → Γ ⊢× Π , ⊤
+    var   : ∀ {Ξ A}         → A ∈ Γ → Γ ⊢× Ξ → Γ ⊢× Ξ , A
+    mp    : ∀ {Ξ A B}       → A ▻ B ∈ Ξ → A ∈ Ξ → Γ ⊢× Ξ → Γ ⊢× Ξ , B
+    ci    : ∀ {Ξ A}         → Γ ⊢× Ξ → Γ ⊢× Ξ , A ▻ A
+    ck    : ∀ {Ξ A B}       → Γ ⊢× Ξ → Γ ⊢× Ξ , A ▻ B ▻ A
+    cs    : ∀ {Ξ A B C}     → Γ ⊢× Ξ → Γ ⊢× Ξ , (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
+    nec   : ∀ {Ξ Ψ A}       → (ss : ⌀ ⊢× Ψ , A) → Γ ⊢× Ξ → Γ ⊢× Ξ , [ ss ]× ⦂ A
+    cdist : ∀ {Ξ A B TS US} → Γ ⊢× Ξ → Γ ⊢× Ξ , TS ⦂ (A ▻ B) ▻ US ⦂ A ▻ APP TS US ⦂ B
+    cup   : ∀ {Ξ A TS}      → Γ ⊢× Ξ → Γ ⊢× Ξ , TS ⦂ A ▻ BOX TS ⦂ TS ⦂ A
+    cdown : ∀ {Ξ A TS}      → Γ ⊢× Ξ → Γ ⊢× Ξ , TS ⦂ A ▻ A
+    cpair : ∀ {Ξ A B}       → Γ ⊢× Ξ → Γ ⊢× Ξ , A ▻ B ▻ A ∧ B
+    cfst  : ∀ {Ξ A B}       → Γ ⊢× Ξ → Γ ⊢× Ξ , A ∧ B ▻ A
+    csnd  : ∀ {Ξ A B}       → Γ ⊢× Ξ → Γ ⊢× Ξ , A ∧ B ▻ B
+    tt    : ∀ {Ξ}           → Γ ⊢× Ξ → Γ ⊢× Ξ , ⊤
 
-  [_]× : ∀ {Π Γ} → Γ ⊢× Π → Tm
+  [_]× : ∀ {Ξ Γ} → Γ ⊢× Ξ → Tm
   [ nil ]×       = NIL
   [ var i ts ]×  = VAR [ i ]ⁱ [ ts ]×
   [ mp i j ts ]× = MP [ i ]ⁱ [ j ]ⁱ [ ts ]×
@@ -79,15 +79,15 @@ mutual
 
 infix 3 _⊢_
 _⊢_ : Cx (Ty Tm) → Ty Tm → Set
-Γ ⊢ A = ∃ (λ Π → Γ ⊢× Π , A)
+Γ ⊢ A = ∃ (λ Ξ → Γ ⊢× Ξ , A)
 
 [_] : ∀ {A Γ} → Γ ⊢ A → Tm
-[ Π , ts ] = [ ts ]×
+[ Ξ , ts ] = [ ts ]×
 
 
 -- Monotonicity with respect to context inclusion.
 
-mono⊢× : ∀ {Π Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢× Π → Γ′ ⊢× Π
+mono⊢× : ∀ {Ξ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢× Ξ → Γ′ ⊢× Ξ
 mono⊢× η nil         = nil
 mono⊢× η (var i ts)  = var (mono∈ η i) (mono⊢× η ts)
 mono⊢× η (mp i j ts) = mp i j (mono⊢× η ts)
@@ -104,12 +104,12 @@ mono⊢× η (csnd ts)   = csnd (mono⊢× η ts)
 mono⊢× η (tt ts)     = tt (mono⊢× η ts)
 
 mono⊢ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
-mono⊢ η (Π , ts) = Π , mono⊢× η ts
+mono⊢ η (Ξ , ts) = Ξ , mono⊢× η ts
 
 
 -- Derivation concatenation.
 
-_⧻_ : ∀ {Γ Π Π′} → Γ ⊢× Π → Γ ⊢× Π′ → Γ ⊢× Π ⧺ Π′
+_⧻_ : ∀ {Γ Ξ Ξ′} → Γ ⊢× Ξ → Γ ⊢× Ξ′ → Γ ⊢× Ξ ⧺ Ξ′
 us ⧻ nil       = us
 us ⧻ var i ts  = var i (us ⧻ ts)
 us ⧻ mp i j ts = mp (mono∈ weak⊆⧺ᵣ i) (mono∈ weak⊆⧺ᵣ j) (us ⧻ ts)
@@ -129,9 +129,9 @@ us ⧻ tt ts     = tt (us ⧻ ts)
 -- Modus ponens and necessitation in expanded form.
 
 app : ∀ {A B Γ} → Γ ⊢ A ▻ B → Γ ⊢ A → Γ ⊢ B
-app {A} {B} (Π , ts) (Π′ , us) = Π″ , vs
-  where Π″ = (Π′ , A) ⧺ (Π , A ▻ B)
-        vs = mp top (mono∈ (weak⊆⧺ₗ (Π , A ▻ B)) top) (us ⧻ ts)
+app {A} {B} (Ξ , ts) (Ξ′ , us) = Ξ″ , vs
+  where Ξ″ = (Ξ′ , A) ⧺ (Ξ , A ▻ B)
+        vs = mp top (mono∈ (weak⊆⧺ₗ (Ξ , A ▻ B)) top) (us ⧻ ts)
 
 box : ∀ {A Γ} → (t : ⌀ ⊢ A) → Γ ⊢ [ t ] ⦂ A
-box (Π , ts) = ⌀ , nec ts nil
+box (Ξ , ts) = ⌀ , nec ts nil

@@ -50,13 +50,13 @@ module IlikBasicCompleteness where
                                           (λ a → inl (reify {A} (λ η′ k → a η′ k)))
                                           (λ b → inr (reify {B} (λ η′ k → b η′ k))))
 
-  reflect⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊩⋆ Π
+  reflect⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊩⋆ Ξ
   reflect⋆ {⌀}     ∙        = ∙
-  reflect⋆ {Π , A} (ts , t) = reflect⋆ ts , reflect t
+  reflect⋆ {Ξ , A} (ts , t) = reflect⋆ ts , reflect t
 
-  reify⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → Γ ⊢⋆ Π
+  reify⋆ : ∀ {Ξ Γ} → Γ ⊩⋆ Ξ → Γ ⊢⋆ Ξ
   reify⋆ {⌀}     ∙        = ∙
-  reify⋆ {Π , A} (ts , t) = reify⋆ ts , reify t
+  reify⋆ {Ξ , A} (ts , t) = reify⋆ ts , reify t
 
 
   -- Reflexivity and transitivity.

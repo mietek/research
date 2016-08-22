@@ -15,9 +15,9 @@ module _ {{_ : Model}} where
   reify {A ∧ B} (a , b) = pair (reify a) (reify b)
   reify {⊤}    ∙       = tt
 
-  reify⋆ : ∀ {Π} → ⊩⋆ Π → ⌀ ⊢⋆ Π
+  reify⋆ : ∀ {Ξ} → ⊩⋆ Ξ → ⌀ ⊢⋆ Ξ
   reify⋆ {⌀}     ∙        = ∙
-  reify⋆ {Π , A} (ts , t) = reify⋆ ts , reify t
+  reify⋆ {Ξ , A} (ts , t) = reify⋆ ts , reify t
 
 
 -- Soundness with respect to all models, or evaluation.

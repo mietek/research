@@ -74,9 +74,9 @@ open ContextEquality (_≟ᵀ_) public
 infixr 5 _▻⋯▻_
 _▻⋯▻_ : Cx Ty → Ty → Ty
 ⌀       ▻⋯▻ B = B
-(Π , A) ▻⋯▻ B = Π ▻⋯▻ (A ▻ B)
+(Ξ , A) ▻⋯▻ B = Ξ ▻⋯▻ (A ▻ B)
 
 infixr 5 _▻⋯▻⋆_
 _▻⋯▻⋆_ : Cx Ty → Cx Ty → Ty
 Γ ▻⋯▻⋆ ⌀       = ⊤
-Γ ▻⋯▻⋆ (Π , A) = (Γ ▻⋯▻⋆ Π) ∧ (Γ ▻⋯▻ A)
+Γ ▻⋯▻⋆ (Ξ , A) = (Γ ▻⋯▻⋆ Ξ) ∧ (Γ ▻⋯▻ A)

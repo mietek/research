@@ -56,9 +56,9 @@ open LG using (_↝_) renaming (_⁏_⊢_◎_ to LG⟨_⁏_⊢_◎_⟩ ; _⁏_�
 -- Translation from closed Hilbert-style linear to closed Hilbert-style.
 
 chs→ch : ∀ {A} → CHS.⊢ A → CH.⊢ A
-chs→ch (Π , ts) = chs×→ch ts top
+chs→ch (Ξ , ts) = chs×→ch ts top
   where
-    chs×→ch : ∀ {A Π} → CHS.⊢× Π → A ∈ Π → CH.⊢ A
+    chs×→ch : ∀ {A Ξ} → CHS.⊢× Ξ → A ∈ Ξ → CH.⊢ A
     chs×→ch (CHS.mp i j ts) top     = CH.app (chs×→ch ts i) (chs×→ch ts j)
     chs×→ch (CHS.ci ts)     top     = CH.ci
     chs×→ch (CHS.ck ts)     top     = CH.ck
@@ -105,9 +105,9 @@ ch→chs CH.tt        = ⌀ , CHS.tt CHS.nil
 -- Translation from Hilbert-style linear to Hilbert-style.
 
 hs→h : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → H⟨ Γ ⊢ A ⟩
-hs→h (Π , ts) = hs×→h ts top
+hs→h (Ξ , ts) = hs×→h ts top
   where
-    hs×→h : ∀ {A Π Γ} → HS⟨ Γ ⊢× Π ⟩ → A ∈ Π → H⟨ Γ ⊢ A ⟩
+    hs×→h : ∀ {A Ξ Γ} → HS⟨ Γ ⊢× Ξ ⟩ → A ∈ Ξ → H⟨ Γ ⊢ A ⟩
     hs×→h (HS.var i ts)  top     = H.var i
     hs×→h (HS.mp i j ts) top     = H.app (hs×→h ts i) (hs×→h ts j)
     hs×→h (HS.ci ts)     top     = H.ci
@@ -157,9 +157,9 @@ h→hs H.tt        = ⌀ , HS.tt HS.nil
 -- Translation from dyadic Hilbert-style linear to dyadic Hilbert-style.
 
 dhs→dh : ∀ {A Γ Δ} → DHS⟨ Γ ⁏ Δ ⊢ A ⟩ → DH⟨ Γ ⁏ Δ ⊢ A ⟩
-dhs→dh (Π , ts) = dhs×→dh ts top
+dhs→dh (Ξ , ts) = dhs×→dh ts top
   where
-    dhs×→dh : ∀ {A Π Γ Δ} → DHS⟨ Γ ⁏ Δ ⊢× Π ⟩ → A ∈ Π → DH⟨ Γ ⁏ Δ ⊢ A ⟩
+    dhs×→dh : ∀ {A Ξ Γ Δ} → DHS⟨ Γ ⁏ Δ ⊢× Ξ ⟩ → A ∈ Ξ → DH⟨ Γ ⁏ Δ ⊢ A ⟩
     dhs×→dh (DHS.var i ts)  top     = DH.var i
     dhs×→dh (DHS.mp i j ts) top     = DH.app (dhs×→dh ts i) (dhs×→dh ts j)
     dhs×→dh (DHS.ci ts)     top     = DH.ci
@@ -263,9 +263,9 @@ dhs-split {Δ} = dh→dhs ∘ DH.split ∘ dhs→dh
 -- Translation from closed Hilbert-style linear to Hilbert-style linear.
 
 chs→hs₀ : ∀ {A} → CHS.⊢ A → HS⟨ ⌀ ⊢ A ⟩
-chs→hs₀ (Π , ts) = Π , chs×→hs× ts
+chs→hs₀ (Ξ , ts) = Ξ , chs×→hs× ts
   where
-    chs×→hs× : ∀ {Π} → CHS.⊢× Π → HS⟨ ⌀ ⊢× Π ⟩
+    chs×→hs× : ∀ {Ξ} → CHS.⊢× Ξ → HS⟨ ⌀ ⊢× Ξ ⟩
     chs×→hs× CHS.nil         = HS.nil
     chs×→hs× (CHS.mp i j ts) = HS.mp i j (chs×→hs× ts)
     chs×→hs× (CHS.ci ts)     = HS.ci (chs×→hs× ts)
@@ -287,9 +287,9 @@ chs→hs t = hs-det⋆₀ (chs→hs₀ t)
 -- Translation from Hilbert-style linear to closed Hilbert-style linear.
 
 hs₀→chs : ∀ {A} → HS⟨ ⌀ ⊢ A ⟩ → CHS.⊢ A
-hs₀→chs (Π , ts) = Π , hs₀×→chs× ts
+hs₀→chs (Ξ , ts) = Ξ , hs₀×→chs× ts
   where
-    hs₀×→chs× : ∀ {Π} → HS⟨ ⌀ ⊢× Π ⟩ → CHS.⊢× Π
+    hs₀×→chs× : ∀ {Ξ} → HS⟨ ⌀ ⊢× Ξ ⟩ → CHS.⊢× Ξ
     hs₀×→chs× HS.nil         = CHS.nil
     hs₀×→chs× (HS.var () ts)
     hs₀×→chs× (HS.mp i j ts) = CHS.mp i j (hs₀×→chs× ts)
@@ -312,9 +312,9 @@ hs→chs t = hs₀→chs (hs-lam⋆₀ t)
 -- Translation from dyadic Hilbert-style linear to Hilbert-style linear.
 
 dhs₀→hs : ∀ {A Γ} → DHS⟨ Γ ⁏ ⌀ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
-dhs₀→hs (Π , ts) = Π , dhs₀×→hs× ts
+dhs₀→hs (Ξ , ts) = Ξ , dhs₀×→hs× ts
   where
-    dhs₀×→hs× : ∀ {Π Γ} → DHS⟨ Γ ⁏ ⌀ ⊢× Π ⟩ → HS⟨ Γ ⊢× Π ⟩
+    dhs₀×→hs× : ∀ {Ξ Γ} → DHS⟨ Γ ⁏ ⌀ ⊢× Ξ ⟩ → HS⟨ Γ ⊢× Ξ ⟩
     dhs₀×→hs× DHS.nil          = HS.nil
     dhs₀×→hs× (DHS.var i ts)   = HS.var i (dhs₀×→hs× ts)
     dhs₀×→hs× (DHS.mp i j ts)  = HS.mp i j (dhs₀×→hs× ts)
@@ -338,9 +338,9 @@ dhs→hs = dhs₀→hs ∘ dhs-merge
 -- Translation from Hilbert-style linear to dyadic Hilbert-style linear.
 
 hs→dhs₀ : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → DHS⟨ Γ ⁏ ⌀ ⊢ A ⟩
-hs→dhs₀ (Π , ts) = Π , hs×→dhs₀× ts
+hs→dhs₀ (Ξ , ts) = Ξ , hs×→dhs₀× ts
   where
-    hs×→dhs₀× : ∀ {Π Γ} → HS⟨ Γ ⊢× Π ⟩ → DHS⟨ Γ ⁏ ⌀ ⊢× Π ⟩
+    hs×→dhs₀× : ∀ {Ξ Γ} → HS⟨ Γ ⊢× Ξ ⟩ → DHS⟨ Γ ⁏ ⌀ ⊢× Ξ ⟩
     hs×→dhs₀× HS.nil         = DHS.nil
     hs×→dhs₀× (HS.var i ts)  = DHS.var i (hs×→dhs₀× ts)
     hs×→dhs₀× (HS.mp i j ts) = DHS.mp i j (hs×→dhs₀× ts)
@@ -476,9 +476,9 @@ mutual
   g→h (G.snd t)         = H.snd (g→h t)
   g→h G.tt              = H.tt
 
-  g→h⋆ : ∀ {Π Γ} → G⟨ Γ ⊢⋆ Π ⟩ → H⟨ Γ ⊢⋆ Π ⟩
+  g→h⋆ : ∀ {Ξ Γ} → G⟨ Γ ⊢⋆ Ξ ⟩ → H⟨ Γ ⊢⋆ Ξ ⟩
   g→h⋆ {⌀}     ∙        = ∙
-  g→h⋆ {Π , A} (ts , t) = g→h⋆ ts , g→h t
+  g→h⋆ {Ξ , A} (ts , t) = g→h⋆ ts , g→h t
 
 
 -- Translation from dyadic Hilbert-style to dyadic Gentzen-style.
@@ -529,9 +529,9 @@ mutual
   g→dg₀ (G.snd t)         = DG.snd (g→dg₀ t)
   g→dg₀ G.tt              = DG.tt
 
-  g→dg₀⋆ : ∀ {Π Γ} → G⟨ Γ ⊢⋆ Π ⟩ → DG⟨ Γ ⁏ ⌀ ⊢⋆ Π ⟩
+  g→dg₀⋆ : ∀ {Ξ Γ} → G⟨ Γ ⊢⋆ Ξ ⟩ → DG⟨ Γ ⁏ ⌀ ⊢⋆ Ξ ⟩
   g→dg₀⋆ {⌀}     ∙        = ∙
-  g→dg₀⋆ {Π , A} (ts , t) = g→dg₀⋆ ts , g→dg₀ t
+  g→dg₀⋆ {Ξ , A} (ts , t) = g→dg₀⋆ ts , g→dg₀ t
 
 g→dg : ∀ {A Γ Δ} → G⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩ → DG⟨ Γ ⁏ Δ ⊢ A ⟩
 g→dg = DG.split ∘ g→dg₀
@@ -587,9 +587,9 @@ mutual
   g→lg (G.snd t)         = LG.snd (g→lg t)
   g→lg G.tt              = LG.tt
 
-  g→lg⋆ : ∀ {x Π Γ Λ} → G⟨ Γ ⊢⋆ Π ⟩ → LG⟨ Γ ⁏ Λ ⊢⋆ Π ◎ x ⟩
+  g→lg⋆ : ∀ {x Ξ Γ Λ} → G⟨ Γ ⊢⋆ Ξ ⟩ → LG⟨ Γ ⁏ Λ ⊢⋆ Ξ ◎ x ⟩
   g→lg⋆ {x} {⌀}     ∙        = ∙
-  g→lg⋆ {x} {Π , A} (ts , t) = g→lg⋆ ts , g→lg t
+  g→lg⋆ {x} {Ξ , A} (ts , t) = g→lg⋆ ts , g→lg t
 
 
 -- Translation from labelled Gentzen-style to Gentzen-style.

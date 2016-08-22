@@ -27,7 +27,7 @@ data _⊢_ (Γ : Cx Ty) : Ty → Set where
 infix 3 _⊢⋆_
 _⊢⋆_ : Cx Ty → Cx Ty → Set
 Γ ⊢⋆ ⌀     = 𝟙
-Γ ⊢⋆ Π , A = Γ ⊢⋆ Π × Γ ⊢ A
+Γ ⊢⋆ Ξ , A = Γ ⊢⋆ Ξ × Γ ⊢ A
 
 
 -- Monotonicity with respect to context inclusion.
@@ -47,9 +47,9 @@ mono⊢ η cfst      = cfst
 mono⊢ η csnd      = csnd
 mono⊢ η tt        = tt
 
-mono⊢⋆ : ∀ {Π Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ Π → Γ′ ⊢⋆ Π
+mono⊢⋆ : ∀ {Ξ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ Ξ → Γ′ ⊢⋆ Ξ
 mono⊢⋆ {⌀}     η ∙        = ∙
-mono⊢⋆ {Π , A} η (ts , t) = mono⊢⋆ η ts , mono⊢ η t
+mono⊢⋆ {Ξ , A} η (ts , t) = mono⊢⋆ η ts , mono⊢ η t
 
 
 -- Shorthand for variables.
@@ -82,9 +82,9 @@ lam cfst          = app ck cfst
 lam csnd          = app ck csnd
 lam tt            = app ck tt
 
-lam⋆ : ∀ {Π Γ A} → Γ ⧺ Π ⊢ A → Γ ⊢ Π ▻⋯▻ A
+lam⋆ : ∀ {Ξ Γ A} → Γ ⧺ Ξ ⊢ A → Γ ⊢ Ξ ▻⋯▻ A
 lam⋆ {⌀}     = I
-lam⋆ {Π , B} = lam⋆ {Π} ∘ lam
+lam⋆ {Ξ , B} = lam⋆ {Ξ} ∘ lam
 
 lam⋆₀ : ∀ {Γ A} → Γ ⊢ A → ⌀ ⊢ Γ ▻⋯▻ A
 lam⋆₀ {⌀}     = I
@@ -96,9 +96,9 @@ lam⋆₀ {Γ , B} = lam⋆₀ ∘ lam
 det : ∀ {A B Γ} → Γ ⊢ A ▻ B → Γ , A ⊢ B
 det t = app (mono⊢ weak⊆ t) v₀
 
-det⋆ : ∀ {Π Γ A} → Γ ⊢ Π ▻⋯▻ A → Γ ⧺ Π ⊢ A
+det⋆ : ∀ {Ξ Γ A} → Γ ⊢ Ξ ▻⋯▻ A → Γ ⧺ Ξ ⊢ A
 det⋆ {⌀}     = I
-det⋆ {Π , B} = det ∘ det⋆ {Π}
+det⋆ {Ξ , B} = det ∘ det⋆ {Ξ}
 
 det⋆₀ : ∀ {Γ A} → ⌀ ⊢ Γ ▻⋯▻ A → Γ ⊢ A
 det⋆₀ {⌀}     = I
@@ -110,9 +110,9 @@ det⋆₀ {Γ , B} = det ∘ det⋆₀
 cut : ∀ {A B Γ} → Γ ⊢ A → Γ , A ⊢ B → Γ ⊢ B
 cut t u = app (lam u) t
 
-multicut : ∀ {Π A Γ} → Γ ⊢⋆ Π → Π ⊢ A → Γ ⊢ A
+multicut : ∀ {Ξ A Γ} → Γ ⊢⋆ Ξ → Ξ ⊢ A → Γ ⊢ A
 multicut {⌀}     ∙        u = mono⊢ bot⊆ u
-multicut {Π , B} (ts , t) u = app (multicut ts (lam u)) t
+multicut {Ξ , B} (ts , t) u = app (multicut ts (lam u)) t
 
 
 -- Reflexivity and transitivity.
@@ -200,23 +200,23 @@ cxdown : ∀ {Γ A} → □⋆ □⋆ Γ ⊢ A → □⋆ Γ ⊢ A
 cxdown {⌀}     t = t
 cxdown {Γ , B} t = det (hypdown (cxdown (lam t)))
 
-box⋆ : ∀ {Π Γ} → ⌀ ⊢⋆ Π → Γ ⊢⋆ □⋆ Π
+box⋆ : ∀ {Ξ Γ} → ⌀ ⊢⋆ Ξ → Γ ⊢⋆ □⋆ Ξ
 box⋆ {⌀}     ∙        = ∙
-box⋆ {Π , A} (ts , t) = box⋆ ts , box t
+box⋆ {Ξ , A} (ts , t) = box⋆ ts , box t
 
-lift⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → □⋆ Γ ⊢⋆ □⋆ Π
+lift⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → □⋆ Γ ⊢⋆ □⋆ Ξ
 lift⋆ {⌀}     ∙        = ∙
-lift⋆ {Π , A} (ts , t) = lift⋆ ts , lift t
+lift⋆ {Ξ , A} (ts , t) = lift⋆ ts , lift t
 
-up⋆ : ∀ {Π Γ} → Γ ⊢⋆ □⋆ Π → Γ ⊢⋆ □⋆ □⋆ Π
+up⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ □⋆ Ξ → Γ ⊢⋆ □⋆ □⋆ Ξ
 up⋆ {⌀}     ∙        = ∙
-up⋆ {Π , A} (ts , t) = up⋆ ts , up t
+up⋆ {Ξ , A} (ts , t) = up⋆ ts , up t
 
-down⋆ : ∀ {Π Γ} → Γ ⊢⋆ □⋆ Π → Γ ⊢⋆ Π
+down⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ □⋆ Ξ → Γ ⊢⋆ Ξ
 down⋆ {⌀}     ∙        = ∙
-down⋆ {Π , A} (ts , t) = down⋆ ts , down t
+down⋆ {Ξ , A} (ts , t) = down⋆ ts , down t
 
-multibox : ∀ {Π A Γ} → Γ ⊢⋆ □⋆ Π → □⋆ Π ⊢ A → Γ ⊢ □ A
+multibox : ∀ {Ξ A Γ} → Γ ⊢⋆ □⋆ Ξ → □⋆ Ξ ⊢ A → Γ ⊢ □ A
 multibox ts u = multicut (up⋆ ts) (lift u)
 
 dist′ : ∀ {A B Γ} → Γ ⊢ □ (A ▻ B) → Γ ⊢ □ A ▻ □ B

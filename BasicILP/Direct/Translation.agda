@@ -101,9 +101,9 @@ mutual
   g→hn (G.snd t)         = HN.snd (g→hn t)
   g→hn G.tt              = HN.tt
 
-  g→hn⋆ : ∀ {Π Γ} → G⟨ Γ ⊢⋆ Π ⟩ → HN⟨ g→hnᵀ⋆ Γ ⊢⋆ g→hnᵀ⋆ Π ⟩
+  g→hn⋆ : ∀ {Ξ Γ} → G⟨ Γ ⊢⋆ Ξ ⟩ → HN⟨ g→hnᵀ⋆ Γ ⊢⋆ g→hnᵀ⋆ Ξ ⟩
   g→hn⋆ {⌀}     ∙        = ∙
-  g→hn⋆ {Π , A} (ts , t) = g→hn⋆ ts , g→hn t
+  g→hn⋆ {Ξ , A} (ts , t) = g→hn⋆ ts , g→hn t
 
 -- g→hs : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
 -- g→hs = hn→hs ∘ g→hn

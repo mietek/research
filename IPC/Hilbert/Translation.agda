@@ -14,9 +14,9 @@ open TC using () renaming (_⊢_ to TC⟨_⊢_⟩) public
 -- Translation from list-shaped to tree-shaped variant.
 
 l→t : ∀ {A} → L.⊢ A → T.⊢ A
-l→t (Π , ts) = l×→t ts top
+l→t (Ξ , ts) = l×→t ts top
   where
-    l×→t : ∀ {A Π} → L.⊢× Π → A ∈ Π → T.⊢ A
+    l×→t : ∀ {A Ξ} → L.⊢× Ξ → A ∈ Ξ → T.⊢ A
     l×→t (L.mp i j ts) top     = T.app (l×→t ts i) (l×→t ts j)
     l×→t (L.ci ts)     top     = T.ci
     l×→t (L.ck ts)     top     = T.ck
@@ -63,9 +63,9 @@ t→l T.ccase     = ⌀ , L.ccase L.nil
 -- Translation from list-shaped to tree-shaped variant, with context.
 
 lc→tc : ∀ {A Γ} → LC⟨ Γ ⊢ A ⟩ → TC⟨ Γ ⊢ A ⟩
-lc→tc (Π , ts) = lc×→tc ts top
+lc→tc (Ξ , ts) = lc×→tc ts top
   where
-    lc×→tc : ∀ {A Π Γ} → LC⟨ Γ ⊢× Π ⟩ → A ∈ Π → TC⟨ Γ ⊢ A ⟩
+    lc×→tc : ∀ {A Ξ Γ} → LC⟨ Γ ⊢× Ξ ⟩ → A ∈ Ξ → TC⟨ Γ ⊢ A ⟩
     lc×→tc (LC.var i ts)  top     = TC.var i
     lc×→tc (LC.mp i j ts) top     = TC.app (lc×→tc ts i) (lc×→tc ts j)
     lc×→tc (LC.ci ts)     top     = TC.ci
@@ -130,9 +130,9 @@ lc-det⋆₀ = tc→lc ∘ TC.det⋆₀ ∘ lc→tc
 -- Translation between list-shaped variants, with and without context.
 
 l→lc₀ : ∀ {A} → L.⊢ A → LC⟨ ⌀ ⊢ A ⟩
-l→lc₀ (Π , ts) = Π , l×→lc₀× ts
+l→lc₀ (Ξ , ts) = Ξ , l×→lc₀× ts
   where
-    l×→lc₀× : ∀ {Π} → L.⊢× Π → LC⟨ ⌀ ⊢× Π ⟩
+    l×→lc₀× : ∀ {Ξ} → L.⊢× Ξ → LC⟨ ⌀ ⊢× Ξ ⟩
     l×→lc₀× L.nil         = LC.nil
     l×→lc₀× (L.mp i j ts) = LC.mp i j (l×→lc₀× ts)
     l×→lc₀× (L.ci ts)     = LC.ci (l×→lc₀× ts)
@@ -151,9 +151,9 @@ l→lc : ∀ {A Γ} → L.⊢ Γ ▻⋯▻ A → LC⟨ Γ ⊢ A ⟩
 l→lc t = lc-det⋆₀ (l→lc₀ t)
 
 lc₀→l : ∀ {A} → LC⟨ ⌀ ⊢ A ⟩ → L.⊢ A
-lc₀→l (Π , ts) = Π , lc₀×→lc× ts
+lc₀→l (Ξ , ts) = Ξ , lc₀×→lc× ts
   where
-    lc₀×→lc× : ∀ {Π} → LC⟨ ⌀ ⊢× Π ⟩ → L.⊢× Π
+    lc₀×→lc× : ∀ {Ξ} → LC⟨ ⌀ ⊢× Ξ ⟩ → L.⊢× Ξ
     lc₀×→lc× LC.nil         = L.nil
     lc₀×→lc× (LC.var () ts)
     lc₀×→lc× (LC.mp i j ts) = L.mp i j (lc₀×→lc× ts)

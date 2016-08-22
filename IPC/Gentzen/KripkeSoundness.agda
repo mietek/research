@@ -31,6 +31,6 @@ module IlikSoundness where
                                         (λ a → eval u (mono⊩⋆ ξ γ , λ ξ′ k → a ξ′ k))
                                         (λ b → eval v (mono⊩⋆ ξ γ , λ ξ′ k → b ξ′ k)))
 
-  eval⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ᴹ⊩⋆ Π
+  eval⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ᴹ⊩⋆ Ξ
   eval⋆ {⌀}     ∙        γ = ∙
-  eval⋆ {Π , A} (ts , t) γ = eval⋆ ts γ , eval t γ
+  eval⋆ {Ξ , A} (ts , t) γ = eval⋆ ts γ , eval t γ

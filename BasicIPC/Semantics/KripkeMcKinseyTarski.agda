@@ -38,7 +38,7 @@ module _ {{_ : Model}} where
   infix 3 _⊩⋆_
   _⊩⋆_ : World → Cx Ty → Set
   w ⊩⋆ ⌀     = 𝟙
-  w ⊩⋆ Π , A = w ⊩⋆ Π × w ⊩ A
+  w ⊩⋆ Ξ , A = w ⊩⋆ Ξ × w ⊩ A
 
 
 -- Monotonicity with respect to intuitionistic accessibility.
@@ -50,9 +50,9 @@ module _ {{_ : Model}} where
   mono⊩ {A ∧ B} ξ (a , b) = mono⊩ {A} ξ a , mono⊩ {B} ξ b
   mono⊩ {⊤}    ξ ∙       = ∙
 
-  mono⊩⋆ : ∀ {Π w w′} → w ≤ w′ → w ⊩⋆ Π → w′ ⊩⋆ Π
+  mono⊩⋆ : ∀ {Ξ w w′} → w ≤ w′ → w ⊩⋆ Ξ → w′ ⊩⋆ Ξ
   mono⊩⋆ {⌀}     ξ ∙       = ∙
-  mono⊩⋆ {Π , A} ξ (γ , a) = mono⊩⋆ {Π} ξ γ , mono⊩ {A} ξ a
+  mono⊩⋆ {Ξ , A} ξ (γ , a) = mono⊩⋆ {Ξ} ξ γ , mono⊩ {A} ξ a
 
 
 -- Additional useful equipment.
@@ -89,7 +89,7 @@ module _ {{_ : Model}} where
 
   infix 3 _⊩_⇒⋆_
   _⊩_⇒⋆_ : World → Cx Ty → Cx Ty → Set
-  w ⊩ Γ ⇒⋆ Π = w ⊩⋆ Γ → w ⊩⋆ Π
+  w ⊩ Γ ⇒⋆ Ξ = w ⊩⋆ Γ → w ⊩⋆ Ξ
 
 
 -- Entailment, or forcing in all worlds of all models, for sequents.
@@ -100,7 +100,7 @@ _⊨_ : Cx Ty → Ty → Set₁
 
 infix 3 _⊨⋆_
 _⊨⋆_ : Cx Ty → Cx Ty → Set₁
-Γ ⊨⋆ Π = ∀ {{_ : Model}} {w : World} → w ⊩ Γ ⇒⋆ Π
+Γ ⊨⋆ Ξ = ∀ {{_ : Model}} {w : World} → w ⊩ Γ ⇒⋆ Ξ
 
 
 -- Additional useful equipment, for sequents.

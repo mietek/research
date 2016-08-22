@@ -21,7 +21,7 @@ data _⊢_ (Γ : Cx Ty) : Ty → Set where
 infix 3 _⊢⋆_
 _⊢⋆_ : Cx Ty → Cx Ty → Set
 Γ ⊢⋆ ⌀     = 𝟙
-Γ ⊢⋆ Π , A = Γ ⊢⋆ Π × Γ ⊢ A
+Γ ⊢⋆ Ξ , A = Γ ⊢⋆ Ξ × Γ ⊢ A
 
 
 -- Monotonicity with respect to context inclusion.
@@ -35,9 +35,9 @@ mono⊢ η (fst t)    = fst (mono⊢ η t)
 mono⊢ η (snd t)    = snd (mono⊢ η t)
 mono⊢ η tt         = tt
 
-mono⊢⋆ : ∀ {Π Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ Π → Γ′ ⊢⋆ Π
+mono⊢⋆ : ∀ {Ξ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ Ξ → Γ′ ⊢⋆ Ξ
 mono⊢⋆ {⌀}     η ∙        = ∙
-mono⊢⋆ {Π , A} η (ts , t) = mono⊢⋆ η ts , mono⊢ η t
+mono⊢⋆ {Ξ , A} η (ts , t) = mono⊢⋆ η ts , mono⊢ η t
 
 
 -- Shorthand for variables.
@@ -54,9 +54,9 @@ v₂ = var i₂
 
 -- Deduction theorem is built-in.
 
-lam⋆ : ∀ {Π Γ A} → Γ ⧺ Π ⊢ A → Γ ⊢ Π ▻⋯▻ A
+lam⋆ : ∀ {Ξ Γ A} → Γ ⧺ Ξ ⊢ A → Γ ⊢ Ξ ▻⋯▻ A
 lam⋆ {⌀}     = I
-lam⋆ {Π , B} = lam⋆ {Π} ∘ lam
+lam⋆ {Ξ , B} = lam⋆ {Ξ} ∘ lam
 
 lam⋆₀ : ∀ {Γ A} → Γ ⊢ A → ⌀ ⊢ Γ ▻⋯▻ A
 lam⋆₀ {⌀}     = I
@@ -68,9 +68,9 @@ lam⋆₀ {Γ , B} = lam⋆₀ ∘ lam
 det : ∀ {A B Γ} → Γ ⊢ A ▻ B → Γ , A ⊢ B
 det t = app (mono⊢ weak⊆ t) v₀
 
-det⋆ : ∀ {Π Γ A} → Γ ⊢ Π ▻⋯▻ A → Γ ⧺ Π ⊢ A
+det⋆ : ∀ {Ξ Γ A} → Γ ⊢ Ξ ▻⋯▻ A → Γ ⧺ Ξ ⊢ A
 det⋆ {⌀}     = I
-det⋆ {Π , B} = det ∘ det⋆ {Π}
+det⋆ {Ξ , B} = det ∘ det⋆ {Ξ}
 
 det⋆₀ : ∀ {Γ A} → ⌀ ⊢ Γ ▻⋯▻ A → Γ ⊢ A
 det⋆₀ {⌀}     = I
@@ -82,9 +82,9 @@ det⋆₀ {Γ , B} = det ∘ det⋆₀
 cut : ∀ {A B Γ} → Γ ⊢ A → Γ , A ⊢ B → Γ ⊢ B
 cut t u = app (lam u) t
 
-multicut : ∀ {Π A Γ} → Γ ⊢⋆ Π → Π ⊢ A → Γ ⊢ A
+multicut : ∀ {Ξ A Γ} → Γ ⊢⋆ Ξ → Ξ ⊢ A → Γ ⊢ A
 multicut {⌀}     ∙        u = mono⊢ bot⊆ u
-multicut {Π , B} (ts , t) u = app (multicut ts (lam u)) t
+multicut {Ξ , B} (ts , t) u = app (multicut ts (lam u)) t
 
 
 -- Reflexivity and transitivity.
@@ -165,9 +165,9 @@ concat Γ′ t u = app (mono⊢ (weak⊆⧺ₗ Γ′) (lam t)) (mono⊢ weak⊆�
 [ i ≔ s ] snd t    = snd ([ i ≔ s ] t)
 [ i ≔ s ] tt       = tt
 
-[_≔_]⋆_ : ∀ {Π A Γ} → (i : A ∈ Γ) → Γ - i ⊢ A → Γ ⊢⋆ Π → Γ - i ⊢⋆ Π
+[_≔_]⋆_ : ∀ {Ξ A Γ} → (i : A ∈ Γ) → Γ - i ⊢ A → Γ ⊢⋆ Ξ → Γ - i ⊢⋆ Ξ
 [_≔_]⋆_ {⌀}     i s ∙        = ∙
-[_≔_]⋆_ {Π , B} i s (ts , t) = [ i ≔ s ]⋆ ts , [ i ≔ s ] t
+[_≔_]⋆_ {Ξ , B} i s (ts , t) = [ i ≔ s ]⋆ ts , [ i ≔ s ] t
 
 
 -- Conversion.

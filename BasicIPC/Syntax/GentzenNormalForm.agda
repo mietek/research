@@ -28,12 +28,12 @@ mutual
 infix 3 _⊢⋆ⁿᶠ_
 _⊢⋆ⁿᶠ_ : Cx Ty → Cx Ty → Set
 Γ ⊢⋆ⁿᶠ ⌀     = 𝟙
-Γ ⊢⋆ⁿᶠ Π , A = Γ ⊢⋆ⁿᶠ Π × Γ ⊢ⁿᶠ A
+Γ ⊢⋆ⁿᶠ Ξ , A = Γ ⊢⋆ⁿᶠ Ξ × Γ ⊢ⁿᶠ A
 
 infix 3 _⊢⋆ⁿᵉ_
 _⊢⋆ⁿᵉ_ : Cx Ty → Cx Ty → Set
 Γ ⊢⋆ⁿᵉ ⌀     = 𝟙
-Γ ⊢⋆ⁿᵉ Π , A = Γ ⊢⋆ⁿᵉ Π × Γ ⊢ⁿᵉ A
+Γ ⊢⋆ⁿᵉ Ξ , A = Γ ⊢⋆ⁿᵉ Ξ × Γ ⊢ⁿᵉ A
 
 
 -- Translation to simple terms.
@@ -51,13 +51,13 @@ mutual
   ne→tm (fstⁿᵉ t)   = fst (ne→tm t)
   ne→tm (sndⁿᵉ t)   = snd (ne→tm t)
 
-nf→tm⋆ : ∀ {Π Γ} → Γ ⊢⋆ⁿᶠ Π → Γ ⊢⋆ Π
+nf→tm⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ⁿᶠ Ξ → Γ ⊢⋆ Ξ
 nf→tm⋆ {⌀}     ∙        = ∙
-nf→tm⋆ {Π , A} (ts , t) = nf→tm⋆ ts , nf→tm t
+nf→tm⋆ {Ξ , A} (ts , t) = nf→tm⋆ ts , nf→tm t
 
-ne→tm⋆ : ∀ {Π Γ} → Γ ⊢⋆ⁿᵉ Π → Γ ⊢⋆ Π
+ne→tm⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ⁿᵉ Ξ → Γ ⊢⋆ Ξ
 ne→tm⋆ {⌀}     ∙        = ∙
-ne→tm⋆ {Π , A} (ts , t) = ne→tm⋆ ts , ne→tm t
+ne→tm⋆ {Ξ , A} (ts , t) = ne→tm⋆ ts , ne→tm t
 
 
 -- Monotonicity with respect to context inclusion.
@@ -75,10 +75,10 @@ mutual
   mono⊢ⁿᵉ η (fstⁿᵉ t)   = fstⁿᵉ (mono⊢ⁿᵉ η t)
   mono⊢ⁿᵉ η (sndⁿᵉ t)   = sndⁿᵉ (mono⊢ⁿᵉ η t)
 
-mono⊢⋆ⁿᶠ : ∀ {Π Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ⁿᶠ Π → Γ′ ⊢⋆ⁿᶠ Π
+mono⊢⋆ⁿᶠ : ∀ {Ξ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ⁿᶠ Ξ → Γ′ ⊢⋆ⁿᶠ Ξ
 mono⊢⋆ⁿᶠ {⌀}     η ∙        = ∙
-mono⊢⋆ⁿᶠ {Π , A} η (ts , t) = mono⊢⋆ⁿᶠ η ts , mono⊢ⁿᶠ η t
+mono⊢⋆ⁿᶠ {Ξ , A} η (ts , t) = mono⊢⋆ⁿᶠ η ts , mono⊢ⁿᶠ η t
 
-mono⊢⋆ⁿᵉ : ∀ {Π Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ⁿᵉ Π → Γ′ ⊢⋆ⁿᵉ Π
+mono⊢⋆ⁿᵉ : ∀ {Ξ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ⁿᵉ Ξ → Γ′ ⊢⋆ⁿᵉ Ξ
 mono⊢⋆ⁿᵉ {⌀}     η ∙        = ∙
-mono⊢⋆ⁿᵉ {Π , A} η (ts , t) = mono⊢⋆ⁿᵉ η ts , mono⊢ⁿᵉ η t
+mono⊢⋆ⁿᵉ {Ξ , A} η (ts , t) = mono⊢⋆ⁿᵉ η ts , mono⊢ⁿᵉ η t

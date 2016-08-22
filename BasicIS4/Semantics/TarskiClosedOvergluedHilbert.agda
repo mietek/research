@@ -32,7 +32,7 @@ record Model : Set₁ where
   infix 3 [⊢]⋆_
   [⊢]⋆_ : Cx Ty → Set
   [⊢]⋆ ⌀     = 𝟙
-  [⊢]⋆ Π , A = [⊢]⋆ Π × [⊢] A
+  [⊢]⋆ Ξ , A = [⊢]⋆ Ξ × [⊢] A
 
 open Model {{…}} public
 
@@ -51,7 +51,7 @@ module _ {{_ : Model}} where
   infix 3 ⊩⋆_
   ⊩⋆_ : Cx Ty → Set
   ⊩⋆ ⌀     = 𝟙
-  ⊩⋆ Π , A = ⊩⋆ Π × ⊩ A
+  ⊩⋆ Ξ , A = ⊩⋆ Ξ × ⊩ A
 
 
 -- Entailment, or forcing in all models.
@@ -71,9 +71,9 @@ module _ {{_ : Model}} where
   reifyʳ {A ∧ B} (a , b) = [app] ([app] [cpair] (reifyʳ {A} a)) (reifyʳ {B} b)
   reifyʳ {⊤}    ∙       = [tt]
 
-  reifyʳ⋆ : ∀ {Π} → ⊩⋆ Π → [⊢]⋆ Π
+  reifyʳ⋆ : ∀ {Ξ} → ⊩⋆ Ξ → [⊢]⋆ Ξ
   reifyʳ⋆ {⌀}     ∙        = ∙
-  reifyʳ⋆ {Π , A} (ts , t) = reifyʳ⋆ ts , reifyʳ t
+  reifyʳ⋆ {Ξ , A} (ts , t) = reifyʳ⋆ ts , reifyʳ t
 
 
 -- Additional useful equipment.
@@ -117,7 +117,7 @@ module _ {{_ : Model}} where
 
   infix 3 ⊩_⇒⋆_
   ⊩_⇒⋆_ : Cx Ty → Cx Ty → Set
-  ⊩ Γ ⇒⋆ Π = ⊩⋆ Γ → ⊩⋆ Π
+  ⊩ Γ ⇒⋆ Ξ = ⊩⋆ Γ → ⊩⋆ Ξ
 
 
 -- Entailment, or forcing in all models, for sequents.
@@ -128,7 +128,7 @@ _⊨_ : Cx Ty → Ty → Set₁
 
 infix 3 _⊨⋆_
 _⊨⋆_ : Cx Ty → Cx Ty → Set₁
-Γ ⊨⋆ Π = ∀ {{_ : Model}} → ⊩ Γ ⇒⋆ Π
+Γ ⊨⋆ Ξ = ∀ {{_ : Model}} → ⊩ Γ ⇒⋆ Ξ
 
 
 -- Additional useful equipment, for sequents.

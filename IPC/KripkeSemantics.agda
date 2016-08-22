@@ -51,7 +51,7 @@ module IlikSemantics where
   infix 3 _⊩⋆_
   _⊩⋆_ : ∀ {{_ : Model}} → World → Cx Ty → Set
   w ⊩⋆ ⌀     = 𝟙
-  w ⊩⋆ Π , A = w ⊩⋆ Π × w ⊩ A
+  w ⊩⋆ Ξ , A = w ⊩⋆ Ξ × w ⊩ A
 
 
   -- Monotonicity with respect to intuitionistic accessibility.
@@ -91,7 +91,7 @@ module IlikSemantics where
 
   infix 3 _ᴹ⊩⋆_
   _ᴹ⊩⋆_ : Cx Ty → Cx Ty → Set₁
-  Γ ᴹ⊩⋆ Π = ∀ {{_ : Model}} {w : World} → w ⊩⋆ Γ → w ⊩⋆ Π
+  Γ ᴹ⊩⋆ Ξ = ∀ {{_ : Model}} {w : World} → w ⊩⋆ Γ → w ⊩⋆ Ξ
 
 
   -- Additional useful equipment.

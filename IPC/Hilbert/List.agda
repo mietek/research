@@ -8,27 +8,27 @@ open import IPC public
 infix 3 ⊢×_
 data ⊢×_ : Cx Ty → Set where
   nil   : ⊢× ⌀
-  mp    : ∀ {Π A B}   → A ▻ B ∈ Π → A ∈ Π → ⊢× Π → ⊢× Π , B
-  ci    : ∀ {Π A}     → ⊢× Π → ⊢× Π , A ▻ A
-  ck    : ∀ {Π A B}   → ⊢× Π → ⊢× Π , A ▻ B ▻ A
-  cs    : ∀ {Π A B C} → ⊢× Π → ⊢× Π , (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
-  cpair : ∀ {Π A B}   → ⊢× Π → ⊢× Π , A ▻ B ▻ A ∧ B
-  cfst  : ∀ {Π A B}   → ⊢× Π → ⊢× Π , A ∧ B ▻ A
-  csnd  : ∀ {Π A B}   → ⊢× Π → ⊢× Π , A ∧ B ▻ B
-  tt    : ∀ {Π}       → ⊢× Π → ⊢× Π , ⊤
-  cboom : ∀ {Π C}     → ⊢× Π → ⊢× Π , ⊥ ▻ C
-  cinl  : ∀ {Π A B}   → ⊢× Π → ⊢× Π , A ▻ A ∨ B
-  cinr  : ∀ {Π A B}   → ⊢× Π → ⊢× Π , B ▻ A ∨ B
-  ccase : ∀ {Π A B C} → ⊢× Π → ⊢× Π , A ∨ B ▻ (A ▻ C) ▻ (B ▻ C) ▻ C
+  mp    : ∀ {Ξ A B}   → A ▻ B ∈ Ξ → A ∈ Ξ → ⊢× Ξ → ⊢× Ξ , B
+  ci    : ∀ {Ξ A}     → ⊢× Ξ → ⊢× Ξ , A ▻ A
+  ck    : ∀ {Ξ A B}   → ⊢× Ξ → ⊢× Ξ , A ▻ B ▻ A
+  cs    : ∀ {Ξ A B C} → ⊢× Ξ → ⊢× Ξ , (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
+  cpair : ∀ {Ξ A B}   → ⊢× Ξ → ⊢× Ξ , A ▻ B ▻ A ∧ B
+  cfst  : ∀ {Ξ A B}   → ⊢× Ξ → ⊢× Ξ , A ∧ B ▻ A
+  csnd  : ∀ {Ξ A B}   → ⊢× Ξ → ⊢× Ξ , A ∧ B ▻ B
+  tt    : ∀ {Ξ}       → ⊢× Ξ → ⊢× Ξ , ⊤
+  cboom : ∀ {Ξ C}     → ⊢× Ξ → ⊢× Ξ , ⊥ ▻ C
+  cinl  : ∀ {Ξ A B}   → ⊢× Ξ → ⊢× Ξ , A ▻ A ∨ B
+  cinr  : ∀ {Ξ A B}   → ⊢× Ξ → ⊢× Ξ , B ▻ A ∨ B
+  ccase : ∀ {Ξ A B C} → ⊢× Ξ → ⊢× Ξ , A ∨ B ▻ (A ▻ C) ▻ (B ▻ C) ▻ C
 
 infix 3 ⊢_
 ⊢_ : Ty → Set
-⊢ A = ∃ (λ Π → ⊢× Π , A)
+⊢ A = ∃ (λ Ξ → ⊢× Ξ , A)
 
 
 -- Derivation concatenation.
 
-_⧻_ : ∀ {Π Π′} → ⊢× Π → ⊢× Π′ → ⊢× Π ⧺ Π′
+_⧻_ : ∀ {Ξ Ξ′} → ⊢× Ξ → ⊢× Ξ′ → ⊢× Ξ ⧺ Ξ′
 us ⧻ nil       = us
 us ⧻ mp i j ts = mp (mono∈ weak⊆⧺ᵣ i) (mono∈ weak⊆⧺ᵣ j) (us ⧻ ts)
 us ⧻ ci ts     = ci (us ⧻ ts)
@@ -47,6 +47,6 @@ us ⧻ ccase ts  = ccase (us ⧻ ts)
 -- Modus ponens in expanded form.
 
 app : ∀ {A B} → ⊢ A ▻ B → ⊢ A → ⊢ B
-app {A} {B} (Π , ts) (Π′ , us) = Π″ , vs
-  where Π″ = (Π′ , A) ⧺ (Π , A ▻ B)
-        vs = mp top (mono∈ (weak⊆⧺ₗ (Π , A ▻ B)) top) (us ⧻ ts)
+app {A} {B} (Ξ , ts) (Ξ′ , us) = Ξ″ , vs
+  where Ξ″ = (Ξ′ , A) ⧺ (Ξ , A ▻ B)
+        vs = mp top (mono∈ (weak⊆⧺ₗ (Ξ , A ▻ B)) top) (us ⧻ ts)

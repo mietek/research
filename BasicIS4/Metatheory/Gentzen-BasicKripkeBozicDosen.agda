@@ -24,9 +24,9 @@ mutual
   thing {⌀}     ∙        γ ζ = ∙
   thing {Δ , B} (ts , t) γ ζ = thing ts γ ζ , λ ζ′ → eval t γ (transR ζ ζ′)
 
-eval⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊨⋆ Π
+eval⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊨⋆ Ξ
 eval⋆ {⌀}     ∙        γ = ∙
-eval⋆ {Π , A} (ts , t) γ = eval⋆ ts γ , eval t γ
+eval⋆ {Ξ , A} (ts , t) γ = eval⋆ ts γ , eval t γ
 
 
 -- TODO: Correctness of evaluation with respect to conversion.

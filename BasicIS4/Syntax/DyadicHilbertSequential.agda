@@ -12,29 +12,29 @@ open import BasicIS4.Syntax.Common public
 infix 3 _⁏_⊢×_
 data _⁏_⊢×_ (Γ Δ : Cx Ty) : Cx Ty → Set where
   nil   : Γ ⁏ Δ ⊢× ⌀
-  var   : ∀ {Π A}     → A ∈ Γ → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , A
-  mp    : ∀ {Π A B}   → A ▻ B ∈ Π → A ∈ Π → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , B
-  ci    : ∀ {Π A}     → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , A ▻ A
-  ck    : ∀ {Π A B}   → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , A ▻ B ▻ A
-  cs    : ∀ {Π A B C} → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
-  mvar  : ∀ {Π A}     → A ∈ Δ → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , A
-  nec   : ∀ {Π Ξ A}   → ⌀ ⁏ Δ ⊢× Ξ , A → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , □ A
-  cdist : ∀ {Π A B}   → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , □ (A ▻ B) ▻ □ A ▻ □ B
-  cup   : ∀ {Π A}     → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , □ A ▻ □ □ A
-  cdown : ∀ {Π A}     → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , □ A ▻ A
-  cpair : ∀ {Π A B}   → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , A ▻ B ▻ A ∧ B
-  cfst  : ∀ {Π A B}   → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , A ∧ B ▻ A
-  csnd  : ∀ {Π A B}   → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , A ∧ B ▻ B
-  tt    : ∀ {Π}       → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π , ⊤
+  var   : ∀ {Ξ A}     → A ∈ Γ → Γ ⁏ Δ ⊢× Ξ → Γ ⁏ Δ ⊢× Ξ , A
+  mp    : ∀ {Ξ A B}   → A ▻ B ∈ Ξ → A ∈ Ξ → Γ ⁏ Δ ⊢× Ξ → Γ ⁏ Δ ⊢× Ξ , B
+  ci    : ∀ {Ξ A}     → Γ ⁏ Δ ⊢× Ξ → Γ ⁏ Δ ⊢× Ξ , A ▻ A
+  ck    : ∀ {Ξ A B}   → Γ ⁏ Δ ⊢× Ξ → Γ ⁏ Δ ⊢× Ξ , A ▻ B ▻ A
+  cs    : ∀ {Ξ A B C} → Γ ⁏ Δ ⊢× Ξ → Γ ⁏ Δ ⊢× Ξ , (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
+  mvar  : ∀ {Ξ A}     → A ∈ Δ → Γ ⁏ Δ ⊢× Ξ → Γ ⁏ Δ ⊢× Ξ , A
+  nec   : ∀ {Ξ Ψ A}   → ⌀ ⁏ Δ ⊢× Ψ , A → Γ ⁏ Δ ⊢× Ξ → Γ ⁏ Δ ⊢× Ξ , □ A
+  cdist : ∀ {Ξ A B}   → Γ ⁏ Δ ⊢× Ξ → Γ ⁏ Δ ⊢× Ξ , □ (A ▻ B) ▻ □ A ▻ □ B
+  cup   : ∀ {Ξ A}     → Γ ⁏ Δ ⊢× Ξ → Γ ⁏ Δ ⊢× Ξ , □ A ▻ □ □ A
+  cdown : ∀ {Ξ A}     → Γ ⁏ Δ ⊢× Ξ → Γ ⁏ Δ ⊢× Ξ , □ A ▻ A
+  cpair : ∀ {Ξ A B}   → Γ ⁏ Δ ⊢× Ξ → Γ ⁏ Δ ⊢× Ξ , A ▻ B ▻ A ∧ B
+  cfst  : ∀ {Ξ A B}   → Γ ⁏ Δ ⊢× Ξ → Γ ⁏ Δ ⊢× Ξ , A ∧ B ▻ A
+  csnd  : ∀ {Ξ A B}   → Γ ⁏ Δ ⊢× Ξ → Γ ⁏ Δ ⊢× Ξ , A ∧ B ▻ B
+  tt    : ∀ {Ξ}       → Γ ⁏ Δ ⊢× Ξ → Γ ⁏ Δ ⊢× Ξ , ⊤
 
 infix 3 _⁏_⊢_
 _⁏_⊢_ : Cx Ty → Cx Ty → Ty → Set
-Γ ⁏ Δ ⊢ A = ∃ (λ Π → Γ ⁏ Δ ⊢× Π , A)
+Γ ⁏ Δ ⊢ A = ∃ (λ Ξ → Γ ⁏ Δ ⊢× Ξ , A)
 
 
 -- Monotonicity with respect to context inclusion.
 
-mono⊢× : ∀ {Π Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊢× Π → Γ′ ⁏ Δ ⊢× Π
+mono⊢× : ∀ {Ξ Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊢× Ξ → Γ′ ⁏ Δ ⊢× Ξ
 mono⊢× η nil         = nil
 mono⊢× η (var i ts)  = var (mono∈ η i) (mono⊢× η ts)
 mono⊢× η (mp i j ts) = mp i j (mono⊢× η ts)
@@ -52,12 +52,12 @@ mono⊢× η (csnd ts)   = csnd (mono⊢× η ts)
 mono⊢× η (tt ts)     = tt (mono⊢× η ts)
 
 mono⊢ : ∀ {A Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊢ A → Γ′ ⁏ Δ ⊢ A
-mono⊢ η (Π , ts) = Π , mono⊢× η ts
+mono⊢ η (Ξ , ts) = Ξ , mono⊢× η ts
 
 
 -- Monotonicity with respect to modal context inclusion.
 
-mmono⊢× : ∀ {Π Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ′ ⊢× Π
+mmono⊢× : ∀ {Ξ Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊢× Ξ → Γ ⁏ Δ′ ⊢× Ξ
 mmono⊢× θ nil         = nil
 mmono⊢× θ (var i ts)  = var i (mmono⊢× θ ts)
 mmono⊢× θ (mp i j ts) = mp i j (mmono⊢× θ ts)
@@ -75,12 +75,12 @@ mmono⊢× θ (csnd ts)   = csnd (mmono⊢× θ ts)
 mmono⊢× θ (tt ts)     = tt (mmono⊢× θ ts)
 
 mmono⊢ : ∀ {A Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ′ ⊢ A
-mmono⊢ θ (Π , ts) = Π , mmono⊢× θ ts
+mmono⊢ θ (Ξ , ts) = Ξ , mmono⊢× θ ts
 
 
 -- Derivation concatenation.
 
-_⧻_ : ∀ {Γ Δ Π Π′} → Γ ⁏ Δ ⊢× Π → Γ ⁏ Δ ⊢× Π′ → Γ ⁏ Δ ⊢× Π ⧺ Π′
+_⧻_ : ∀ {Γ Δ Ξ Ξ′} → Γ ⁏ Δ ⊢× Ξ → Γ ⁏ Δ ⊢× Ξ′ → Γ ⁏ Δ ⊢× Ξ ⧺ Ξ′
 us ⧻ nil       = us
 us ⧻ var i ts  = var i (us ⧻ ts)
 us ⧻ mp i j ts = mp (mono∈ weak⊆⧺ᵣ i) (mono∈ weak⊆⧺ᵣ j) (us ⧻ ts)
@@ -101,9 +101,9 @@ us ⧻ tt ts     = tt (us ⧻ ts)
 -- Modus ponens and necessitation in expanded form.
 
 app : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ▻ B → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ B
-app {A} {B} (Π , ts) (Π′ , us) = Π″ , vs
-  where Π″ = (Π′ , A) ⧺ (Π , A ▻ B)
-        vs = mp top (mono∈ (weak⊆⧺ₗ (Π , A ▻ B)) top) (us ⧻ ts)
+app {A} {B} (Ξ , ts) (Ξ′ , us) = Ξ″ , vs
+  where Ξ″ = (Ξ′ , A) ⧺ (Ξ , A ▻ B)
+        vs = mp top (mono∈ (weak⊆⧺ₗ (Ξ , A ▻ B)) top) (us ⧻ ts)
 
 box : ∀ {A Γ Δ} → ⌀ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ □ A
-box (Π , ts) = ⌀ , nec ts nil
+box (Ξ , ts) = ⌀ , nec ts nil

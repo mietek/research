@@ -15,9 +15,9 @@ eval (fst t)    γ = π₁ (eval t γ)
 eval (snd t)    γ = π₂ (eval t γ)
 eval tt         γ = ∙
 
-eval⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊨⋆ Π
+eval⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊨⋆ Ξ
 eval⋆ {⌀}     ∙        γ = ∙
-eval⋆ {Π , A} (ts , t) γ = eval⋆ ts γ , eval t γ
+eval⋆ {Ξ , A} (ts , t) γ = eval⋆ ts γ , eval t γ
 
 
 -- TODO: Correctness of evaluation with respect to conversion.
@@ -53,13 +53,13 @@ mutual
   reifyᶜ {A ∧ B} (a , b) = pairⁿᶠ (reifyᶜ a) (reifyᶜ b)
   reifyᶜ {⊤}    s       = ttⁿᶠ
 
-reflectᶜ⋆ : ∀ {Π Γ} → Γ ⊢⋆ⁿᵉ Π → Γ ⊩⋆ Π
+reflectᶜ⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ⁿᵉ Ξ → Γ ⊩⋆ Ξ
 reflectᶜ⋆ {⌀}     ∙        = ∙
-reflectᶜ⋆ {Π , A} (ts , t) = reflectᶜ⋆ ts , reflectᶜ t
+reflectᶜ⋆ {Ξ , A} (ts , t) = reflectᶜ⋆ ts , reflectᶜ t
 
-reifyᶜ⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → Γ ⊢⋆ⁿᶠ Π
+reifyᶜ⋆ : ∀ {Ξ Γ} → Γ ⊩⋆ Ξ → Γ ⊢⋆ⁿᶠ Ξ
 reifyᶜ⋆ {⌀}     ∙        = ∙
-reifyᶜ⋆ {Π , A} (ts , t) = reifyᶜ⋆ ts , reifyᶜ t
+reifyᶜ⋆ {Ξ , A} (ts , t) = reifyᶜ⋆ ts , reifyᶜ t
 
 
 -- Reflexivity and transitivity.

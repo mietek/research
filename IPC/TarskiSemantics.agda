@@ -33,7 +33,7 @@ module NaturalSemantics where
   infix 3 ⊩⋆_
   ⊩⋆_ : ∀ {{_ : Model}} → Cx Ty → Set
   ⊩⋆ ⌀     = 𝟙
-  ⊩⋆ Π , A = ⊩⋆ Π × ⊩ A
+  ⊩⋆ Ξ , A = ⊩⋆ Ξ × ⊩ A
 
 
   -- Forcing in all models.
@@ -138,7 +138,7 @@ module CoquandDybjerSemantics (Syntax : Ty → Set) where
   infix 3 ⊩⋆_
   ⊩⋆_ : ∀ {{_ : Model}} → Cx Ty → Set
   ⊩⋆ ⌀     = 𝟙
-  ⊩⋆ Π , A = ⊩⋆ Π × ⊩ A
+  ⊩⋆ Ξ , A = ⊩⋆ Ξ × ⊩ A
 
 
   -- Forcing in all models.

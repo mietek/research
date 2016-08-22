@@ -16,9 +16,9 @@ module _ {{_ : Model}} where
   reify {A ∧ B} (a , b) = pair (reify a) (reify b)
   reify {⊤}    ∙       = tt
 
-  reify⋆ : ∀ {Π} → ⊩⋆ Π → ⌀ ⊢⋆ Π
+  reify⋆ : ∀ {Ξ} → ⊩⋆ Ξ → ⌀ ⊢⋆ Ξ
   reify⋆ {⌀}     ∙        = ∙
-  reify⋆ {Π , A} (ts , t) = reify⋆ ts , reify t
+  reify⋆ {Ξ , A} (ts , t) = reify⋆ ts , reify t
 
 
 -- Soundness with respect to all models, or evaluation.
@@ -37,9 +37,9 @@ mutual
   eval (snd t)         γ = π₂ (eval t γ)
   eval tt              γ = ∙
 
-  eval⋆ : ∀ {Π Γ} → Γ ⊢⋆ Π → Γ ⊨⋆ Π
+  eval⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊨⋆ Ξ
   eval⋆ {⌀}     ∙        γ = ∙
-  eval⋆ {Π , A} (ts , t) γ = eval⋆ ts γ , eval t γ
+  eval⋆ {Ξ , A} (ts , t) γ = eval⋆ ts γ , eval t γ
 
 
 -- TODO: Correctness of evaluation with respect to conversion.
