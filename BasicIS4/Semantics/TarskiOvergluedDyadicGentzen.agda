@@ -62,11 +62,11 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   mono⊩ : ∀ {A Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊩ A → Γ′ ⁏ Δ ⊩ A
-  mono⊩ {α P}   η s       = mono[⊢] η (syn s) ⅋ mono⊩ᵅ η (sem s)
-  mono⊩ {A ▻ B} η s       = λ η′ θ → s (trans⊆ η η′) θ
-  mono⊩ {□ A}   η s       = λ η′ θ → s (trans⊆ η η′) θ
-  mono⊩ {A ∧ B} η (a , b) = mono⊩ {A} η a , mono⊩ {B} η b
-  mono⊩ {⊤}    η ∙       = ∙
+  mono⊩ {α P}   η s = mono[⊢] η (syn s) ⅋ mono⊩ᵅ η (sem s)
+  mono⊩ {A ▻ B} η s = λ η′ θ → s (trans⊆ η η′) θ
+  mono⊩ {□ A}   η s = λ η′ θ → s (trans⊆ η η′) θ
+  mono⊩ {A ∧ B} η s = mono⊩ {A} η (π₁ s) , mono⊩ {B} η (π₂ s)
+  mono⊩ {⊤}    η s = ∙
 
   mono⊩⋆ : ∀ {Ξ Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊩⋆ Ξ → Γ′ ⁏ Δ ⊩⋆ Ξ
   mono⊩⋆ {⌀}     η ∙        = ∙
@@ -77,11 +77,11 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   mmono⊩ : ∀ {A Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ′ ⊩ A
-  mmono⊩ {α P}   θ s       = mmono[⊢] θ (syn s) ⅋ mmono⊩ᵅ θ (sem s)
-  mmono⊩ {A ▻ B} θ s       = λ η θ′ → s η (trans⊆ θ θ′)
-  mmono⊩ {□ A}   θ s       = λ η θ′ → s η (trans⊆ θ θ′)
-  mmono⊩ {A ∧ B} θ (a , b) = mmono⊩ {A} θ a , mmono⊩ {B} θ b
-  mmono⊩ {⊤}    θ ∙       = ∙
+  mmono⊩ {α P}   θ s = mmono[⊢] θ (syn s) ⅋ mmono⊩ᵅ θ (sem s)
+  mmono⊩ {A ▻ B} θ s = λ η θ′ → s η (trans⊆ θ θ′)
+  mmono⊩ {□ A}   θ s = λ η θ′ → s η (trans⊆ θ θ′)
+  mmono⊩ {A ∧ B} θ s = mmono⊩ {A} θ (π₁ s) , mmono⊩ {B} θ (π₂ s)
+  mmono⊩ {⊤}    θ s = ∙
 
   mmono⊩⋆ : ∀ {Ξ Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊩⋆ Ξ → Γ ⁏ Δ′ ⊩⋆ Ξ
   mmono⊩⋆ {⌀}     η ∙        = ∙
@@ -102,11 +102,11 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   reifyʳ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ [⊢] A
-  reifyʳ {α P}   s       = syn s
-  reifyʳ {A ▻ B} s       = syn (s refl⊆ refl⊆)
-  reifyʳ {□ A}   s       = syn (s refl⊆ refl⊆)
-  reifyʳ {A ∧ B} (a , b) = [pair] (reifyʳ {A} a) (reifyʳ {B} b)
-  reifyʳ {⊤}    ∙       = [tt]
+  reifyʳ {α P}   s = syn s
+  reifyʳ {A ▻ B} s = syn (s refl⊆ refl⊆)
+  reifyʳ {□ A}   s = syn (s refl⊆ refl⊆)
+  reifyʳ {A ∧ B} s = [pair] (reifyʳ {A} (π₁ s)) (reifyʳ {B} (π₂ s))
+  reifyʳ {⊤}    s = [tt]
 
   reifyʳ⋆ : ∀ {Ξ Γ Δ} → Γ ⁏ Δ ⊩⋆ Ξ → Γ ⁏ Δ [⊢]⋆ Ξ
   reifyʳ⋆ {⌀}     ∙        = ∙

@@ -10,10 +10,10 @@ open ImplicitSyntax (_⊢_) (mono⊢) public
 
 module _ {{_ : Model}} where
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
-  reify {α P}   s       = syn s
-  reify {A ▻ B} s       = syn (s refl⊆)
-  reify {A ∧ B} (a , b) = pair (reify a) (reify b)
-  reify {⊤}    ∙       = tt
+  reify {α P}   s = syn s
+  reify {A ▻ B} s = syn (s refl⊆)
+  reify {A ∧ B} s = pair (reify (π₁ s)) (reify (π₂ s))
+  reify {⊤}    s = tt
 
   reify⋆ : ∀ {Ξ Γ} → Γ ⊩⋆ Ξ → Γ ⊢⋆ Ξ
   reify⋆ {⌀}     ∙        = ∙

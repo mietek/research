@@ -57,11 +57,11 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   mono⊩ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊩ A → Γ′ ⊩ A
-  mono⊩ {α P}   η s       = mono⊩ᵅ η s
-  mono⊩ {A ▻ B} η s       = λ η′ → s (trans⊆ η η′)
-  mono⊩ {□ A}   η s       = λ η′ → s (trans⊆ η η′)
-  mono⊩ {A ∧ B} η (a , b) = mono⊩ {A} η a , mono⊩ {B} η b
-  mono⊩ {⊤}    η ∙       = ∙
+  mono⊩ {α P}   η s = mono⊩ᵅ η s
+  mono⊩ {A ▻ B} η s = λ η′ → s (trans⊆ η η′)
+  mono⊩ {□ A}   η s = λ η′ → s (trans⊆ η η′)
+  mono⊩ {A ∧ B} η s = mono⊩ {A} η (π₁ s) , mono⊩ {B} η (π₂ s)
+  mono⊩ {⊤}    η s = ∙
 
   mono⊩⋆ : ∀ {Ξ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊩⋆ Ξ → Γ′ ⊩⋆ Ξ
   mono⊩⋆ {⌀}     η ∙        = ∙
@@ -100,7 +100,7 @@ module _ {{_ : Model}} where
   ⟪↓⟫ s = sem (s refl⊆)
 
   _⟪,⟫′_ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B ▻ A ∧ B
-  _⟪,⟫′_ {A} {B} a η b = mono⊩ {A} η a , b
+  _⟪,⟫′_ {A} {B} a η = _,_ (mono⊩ {A} η a)
 
 
 -- Forcing in a particular world of a particular model, for sequents.

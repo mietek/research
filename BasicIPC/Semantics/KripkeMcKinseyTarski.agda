@@ -45,10 +45,10 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
-  mono⊩ {α P}   ξ s       = mono⊩ᵅ ξ s
-  mono⊩ {A ▻ B} ξ s       = λ ξ′ a → s (trans≤ ξ ξ′) a
-  mono⊩ {A ∧ B} ξ (a , b) = mono⊩ {A} ξ a , mono⊩ {B} ξ b
-  mono⊩ {⊤}    ξ ∙       = ∙
+  mono⊩ {α P}   ξ s = mono⊩ᵅ ξ s
+  mono⊩ {A ▻ B} ξ s = λ ξ′ a → s (trans≤ ξ ξ′) a
+  mono⊩ {A ∧ B} ξ s = mono⊩ {A} ξ (π₁ s) , mono⊩ {B} ξ (π₂ s)
+  mono⊩ {⊤}    ξ s = ∙
 
   mono⊩⋆ : ∀ {Ξ w w′} → w ≤ w′ → w ⊩⋆ Ξ → w′ ⊩⋆ Ξ
   mono⊩⋆ {⌀}     ξ ∙       = ∙

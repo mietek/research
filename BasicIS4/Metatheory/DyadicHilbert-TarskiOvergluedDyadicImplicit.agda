@@ -10,11 +10,11 @@ open ImplicitSyntax (_⁏_⊢_) (mono⊢) (mmono⊢) public
 
 module _ {{_ : Model}} where
   reify : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊢ A
-  reify {α P}   s       = syn s
-  reify {A ▻ B} s       = syn (s refl⊆ refl⊆)
-  reify {□ A}   s       = syn (s refl⊆ refl⊆)
-  reify {A ∧ B} (a , b) = pair (reify a) (reify b)
-  reify {⊤}    ∙       = tt
+  reify {α P}   s = syn s
+  reify {A ▻ B} s = syn (s refl⊆ refl⊆)
+  reify {□ A}   s = syn (s refl⊆ refl⊆)
+  reify {A ∧ B} s = pair (reify (π₁ s)) (reify (π₂ s))
+  reify {⊤}    s = tt
 
   reify⋆ : ∀ {Ξ Γ Δ} → Γ ⁏ Δ ⊩⋆ Ξ → Γ ⁏ Δ ⊢⋆ Ξ
   reify⋆ {⌀}     ∙        = ∙

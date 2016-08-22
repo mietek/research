@@ -15,16 +15,16 @@ module _ {{_ : Model}} where
     reflectʳ {A ▻ B} t = λ η → let t′ = mono⊢ η t
                                 in  λ a → reflectʳ (app t′ (reifyʳ a))
     reflectʳ {□ A}   t = λ η → let t′ = mono⊢ η t
-                                in  t′ , reflectʳ (down t′)
+                                in  t′ ⅋ reflectʳ (down t′)
     reflectʳ {A ∧ B} t = reflectʳ (fst t) , reflectʳ (snd t)
     reflectʳ {⊤}    t = ∙
 
     reifyʳ : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
-    reifyʳ {α P}   s       = {!!}
-    reifyʳ {A ▻ B} s       = lam (reifyʳ (s weak⊆ (reflectʳ {A} (var top))))
-    reifyʳ {□ A}   s       = let t , f = s refl⊆ in t
-    reifyʳ {A ∧ B} (a , b) = pair (reifyʳ {A} a) (reifyʳ {B} b)
-    reifyʳ {⊤}    ∙       = tt
+    reifyʳ {α P}   s = {!!}
+    reifyʳ {A ▻ B} s = lam (reifyʳ (s weak⊆ (reflectʳ {A} (var top))))
+    reifyʳ {□ A}   s = syn (s refl⊆)
+    reifyʳ {A ∧ B} s = pair (reifyʳ {A} (π₁ s)) (reifyʳ {B} (π₂ s))
+    reifyʳ {⊤}    s = tt
 
   reifyʳ⋆ : ∀ {Ξ Γ} → Γ ⊩⋆ Ξ → Γ ⊢⋆ Ξ
   reifyʳ⋆ {⌀}     ∙        = ∙
@@ -39,13 +39,13 @@ mutual
   eval (lam t)           γ = λ η a → eval t (mono⊩⋆ η γ , a)
   eval (app {A} {B} t u) γ = _⟪$⟫_ {A} {B} (eval t γ) (eval u γ)
   eval (multibox ts u)   γ = λ η → let γ′ = mono⊩⋆ η γ
-                                    in  multicut (reifyʳ⋆ γ′) (multibox ts u) ,
+                                    in  multicut (reifyʳ⋆ γ′) (multibox ts u) ⅋
                                           eval u (eval⋆ ts γ′)
-  eval (down t)        γ = ⟪↓⟫ (eval t γ)
-  eval (pair t u)      γ = eval t γ , eval u γ
-  eval (fst t)         γ = π₁ (eval t γ)
-  eval (snd t)         γ = π₂ (eval t γ)
-  eval tt              γ = ∙
+  eval (down t)          γ = ⟪↓⟫ (eval t γ)
+  eval (pair t u)        γ = eval t γ , eval u γ
+  eval (fst t)           γ = π₁ (eval t γ)
+  eval (snd t)           γ = π₂ (eval t γ)
+  eval tt                γ = ∙
 
   eval⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊨⋆ Ξ
   eval⋆ {⌀}     ∙        γ = ∙
@@ -74,16 +74,16 @@ mutual
   reflectᶜ {A ▻ B} t = λ η → let t′ = mono⊢ η t
                               in  λ a → reflectᶜ (app t′ (reifyᶜ a))
   reflectᶜ {□ A}   t = λ η → let t′ = mono⊢ η t
-                              in  t′ , reflectᶜ (down t′)
+                              in  t′ ⅋ reflectᶜ (down t′)
   reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
   reflectᶜ {⊤}    t = ∙
 
   reifyᶜ : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
-  reifyᶜ {α P}   s       = s
-  reifyᶜ {A ▻ B} s       = lam (reifyᶜ (s weak⊆ (reflectᶜ {A} v₀)))
-  reifyᶜ {□ A}   s       = let t , a = s refl⊆ in t
-  reifyᶜ {A ∧ B} (a , b) = pair (reifyᶜ a) (reifyᶜ b)
-  reifyᶜ {⊤}    ∙       = tt
+  reifyᶜ {α P}   s = s
+  reifyᶜ {A ▻ B} s = lam (reifyᶜ (s weak⊆ (reflectᶜ {A} v₀)))
+  reifyᶜ {□ A}   s = syn (s refl⊆)
+  reifyᶜ {A ∧ B} s = pair (reifyᶜ (π₁ s)) (reifyᶜ (π₂ s))
+  reifyᶜ {⊤}    s = tt
 
 reflectᶜ⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊩⋆ Ξ
 reflectᶜ⋆ {⌀}     ∙        = ∙

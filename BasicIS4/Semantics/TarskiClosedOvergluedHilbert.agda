@@ -66,11 +66,11 @@ infix 3 ⊨_
 
 module _ {{_ : Model}} where
   reifyʳ : ∀ {A} → ⊩ A → [⊢] A
-  reifyʳ {α P}   s       = syn s
-  reifyʳ {A ▻ B} s       = syn s
-  reifyʳ {□ A}   s       = syn s
-  reifyʳ {A ∧ B} (a , b) = [app] ([app] [cpair] (reifyʳ {A} a)) (reifyʳ {B} b)
-  reifyʳ {⊤}    ∙       = [tt]
+  reifyʳ {α P}   s = syn s
+  reifyʳ {A ▻ B} s = syn s
+  reifyʳ {□ A}   s = syn s
+  reifyʳ {A ∧ B} s = [app] ([app] [cpair] (reifyʳ {A} (π₁ s))) (reifyʳ {B} (π₂ s))
+  reifyʳ {⊤}    s = [tt]
 
   reifyʳ⋆ : ∀ {Ξ} → ⊩⋆ Ξ → [⊢]⋆ Ξ
   reifyʳ⋆ {⌀}     ∙        = ∙

@@ -62,11 +62,11 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   mono⊩ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊩ A → Γ′ ⊩ A
-  mono⊩ {α P}   η s       = mono[⊢] η (syn s) ⅋ mono⊩ᵅ η (sem s)
-  mono⊩ {A ▻ B} η s       = λ η′ → s (trans⊆ η η′)
-  mono⊩ {□ A}   η s       = λ η′ → s (trans⊆ η η′)
-  mono⊩ {A ∧ B} η (a , b) = mono⊩ {A} η a , mono⊩ {B} η b
-  mono⊩ {⊤}    η ∙       = ∙
+  mono⊩ {α P}   η s = mono[⊢] η (syn s) ⅋ mono⊩ᵅ η (sem s)
+  mono⊩ {A ▻ B} η s = λ η′ → s (trans⊆ η η′)
+  mono⊩ {□ A}   η s = λ η′ → s (trans⊆ η η′)
+  mono⊩ {A ∧ B} η s = mono⊩ {A} η (π₁ s) , mono⊩ {B} η (π₂ s)
+  mono⊩ {⊤}    η s = ∙
 
   mono⊩⋆ : ∀ {Ξ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊩⋆ Ξ → Γ′ ⊩⋆ Ξ
   mono⊩⋆ {⌀}     η ∙        = ∙
@@ -77,11 +77,11 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   reifyʳ : ∀ {A Γ} → Γ ⊩ A → Γ [⊢] A
-  reifyʳ {α P}   s       = syn s
-  reifyʳ {A ▻ B} s       = syn (s refl⊆)
-  reifyʳ {□ A}   s       = syn (s refl⊆)
-  reifyʳ {A ∧ B} (a , b) = [app] ([app] [cpair] (reifyʳ {A} a)) (reifyʳ {B} b)
-  reifyʳ {⊤}    ∙       = [tt]
+  reifyʳ {α P}   s = syn s
+  reifyʳ {A ▻ B} s = syn (s refl⊆)
+  reifyʳ {□ A}   s = syn (s refl⊆)
+  reifyʳ {A ∧ B} s = [app] ([app] [cpair] (reifyʳ {A} (π₁ s))) (reifyʳ {B} (π₂ s))
+  reifyʳ {⊤}    s = [tt]
 
   reifyʳ⋆ : ∀ {Ξ Γ} → Γ ⊩⋆ Ξ → Γ [⊢]⋆ Ξ
   reifyʳ⋆ {⌀}     ∙        = ∙

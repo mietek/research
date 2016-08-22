@@ -10,10 +10,10 @@ open ImplicitSyntax (⊢_) public
 
 module _ {{_ : Model}} where
   reify : ∀ {A} → ⊩ A → ⊢ A
-  reify {α P}   s       = syn s
-  reify {A ▻ B} s       = syn s
-  reify {A ∧ B} (a , b) = pair (reify a) (reify b)
-  reify {⊤}    ∙       = tt
+  reify {α P}   s = syn s
+  reify {A ▻ B} s = syn s
+  reify {A ∧ B} s = pair (reify (π₁ s)) (reify (π₂ s))
+  reify {⊤}    s = tt
 
 
 -- Additional useful equipment.

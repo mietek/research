@@ -83,11 +83,11 @@ mutual
   reflectᶜ {⊤}    t = ∙
 
   reifyᶜ : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
-  reifyᶜ {α P}   s       = syn s
-  reifyᶜ {A ▻ B} s       = syn (s refl⊆)
-  reifyᶜ {□ A}   s       = syn (s refl⊆)
-  reifyᶜ {A ∧ B} (a , b) = pair (reifyᶜ a) (reifyᶜ b)
-  reifyᶜ {⊤}    ∙       = tt
+  reifyᶜ {α P}   s = syn s
+  reifyᶜ {A ▻ B} s = syn (s refl⊆)
+  reifyᶜ {□ A}   s = syn (s refl⊆)
+  reifyᶜ {A ∧ B} s = pair (reifyᶜ (π₁ s)) (reifyᶜ (π₂ s))
+  reifyᶜ {⊤}    s = tt
 
 reifyᶜ⋆ : ∀ {Ξ Γ} → Γ ⊩⋆ Ξ → Γ ⊢⋆ Ξ
 reifyᶜ⋆ {⌀}     ∙        = ∙

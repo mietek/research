@@ -37,10 +37,10 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   mono⊩ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊩ A → Γ′ ⊩ A
-  mono⊩ {α P}   η s       = mono⊩ᵅ η s
-  mono⊩ {A ▻ B} η s       = λ η′ → s (trans⊆ η η′)
-  mono⊩ {A ∧ B} η (a , b) = mono⊩ {A} η a , mono⊩ {B} η b
-  mono⊩ {⊤}    η ∙       = ∙
+  mono⊩ {α P}   η s = mono⊩ᵅ η s
+  mono⊩ {A ▻ B} η s = λ η′ → s (trans⊆ η η′)
+  mono⊩ {A ∧ B} η s = mono⊩ {A} η (π₁ s) , mono⊩ {B} η (π₂ s)
+  mono⊩ {⊤}    η s = ∙
 
   mono⊩⋆ : ∀ {Ξ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊩⋆ Ξ → Γ′ ⊩⋆ Ξ
   mono⊩⋆ {⌀}     η ∙        = ∙

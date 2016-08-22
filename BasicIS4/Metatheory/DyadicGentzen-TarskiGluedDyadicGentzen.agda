@@ -27,7 +27,7 @@ eval (var i)             γ δ = lookup i γ
 eval (lam t)             γ δ = λ η a → eval t (mono⊩⋆ η γ , a) (mono⊩⋆ η δ)
 eval (app {A} {B} t u)   γ δ = _⟪$⟫_ {A} {B} (eval t γ δ) (eval u γ δ)
 eval (mvar i)            γ δ = mlookup i δ
-eval (box t)             γ δ = λ η → [ box t ] ,
+eval (box t)             γ δ = λ η → [ box t ] ⅋
                                  eval t ∙ (mono⊩⋆ η δ)
 eval (unbox {A} {C} t u) γ δ = let a = ⟪↓⟫ {A} (eval t γ δ)
                                in  {!δ , a !}
@@ -71,16 +71,16 @@ mutual
   reflectᶜ {A ▻ B} t = λ η → let t′ = mono⊢ η t
                               in  λ a → reflectᶜ (app t′ (reifyᶜ a))
   reflectᶜ {□ A}   t = λ η → let t′ = mono⊢ η t
-                              in  t′ , reflectᶜ (down t′)
+                              in  t′ ⅋ reflectᶜ (down t′)
   reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
   reflectᶜ {⊤}    t = ∙
 
   reifyᶜ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊢ A
-  reifyᶜ {α P}   s       = s
-  reifyᶜ {A ▻ B} s       = lam (reifyᶜ (s weak⊆ (reflectᶜ {A} v₀)))
-  reifyᶜ {□ A}   s       = let t , a = s refl⊆ in t
-  reifyᶜ {A ∧ B} (a , b) = pair (reifyᶜ a) (reifyᶜ b)
-  reifyᶜ {⊤}    ∙       = tt
+  reifyᶜ {α P}   s = s
+  reifyᶜ {A ▻ B} s = lam (reifyᶜ (s weak⊆ (reflectᶜ {A} v₀)))
+  reifyᶜ {□ A}   s = syn (s refl⊆)
+  reifyᶜ {A ∧ B} s = pair (reifyᶜ (π₁ s)) (reifyᶜ (π₂ s))
+  reifyᶜ {⊤}    s = tt
 
 reflectᶜ⋆ : ∀ {Ξ Γ Δ} → Γ ⁏ Δ ⊢⋆ Ξ → Γ ⁏ Δ ⊩⋆ Ξ
 reflectᶜ⋆ {⌀}     ∙        = ∙
