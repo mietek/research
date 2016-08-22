@@ -189,7 +189,7 @@ import BasicIS4.Semantics.BasicKripkeBozicDosen    -- Božić-Došen-style condi
 import BasicIS4.Semantics.BasicKripkeEwald         -- Ewald-style conditions.
 import BasicIS4.Semantics.BasicKripkeAlechinaEtAl  -- Alechina-style conditions.
 
--- Tarski-style semantics with glueing for α, ▻, and □, after Coquand-Dybjer and Gabbay-Nanevski.
+-- Tarski-style semantics with glueing for α, ▻, and □, after Gabbay-Nanevski.
 import BasicIS4.Semantics.TarskiClosedGabbayNanevski  -- Implicit closed syntax.
 import BasicIS4.Semantics.TarskiClosedHilbert         -- Hilbert-style closed syntax.
 

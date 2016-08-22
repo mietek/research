@@ -1,4 +1,4 @@
--- Tarski-style semantics with glueing for α, ▻, and □, after Coquand-Dybjer and Gabbay-Nanevski.
+-- Tarski-style semantics with glueing for α, ▻, and □, after Gabbay-Nanevski.
 -- Implicit closed syntax.
 
 module BasicIS4.Semantics.TarskiClosedGabbayNanevski where
