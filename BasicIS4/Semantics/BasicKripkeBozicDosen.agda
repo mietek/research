@@ -94,9 +94,9 @@ module _ {{_ : Model}} where
 module _ {{_ : Model}} where
   mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
   mono⊩ {α P}   ξ s       = mono⊩ᵅ ξ s
-  mono⊩ {A ▻ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
-  mono⊩ {□ A}   ξ □f      = λ ζ → let v , (ζ′ , ξ′) = ≤⨾R→R⨾≤ (_ , (ξ , ζ))
-                                    in  mono⊩ {A} ξ′ (□f ζ′)
+  mono⊩ {A ▻ B} ξ s       = λ ξ′ a → s (trans≤ ξ ξ′) a
+  mono⊩ {□ A}   ξ s       = λ ζ → let v , (ζ′ , ξ′) = ≤⨾R→R⨾≤ (_ , (ξ , ζ))
+                                    in  mono⊩ {A} ξ′ (s ζ′)
   mono⊩ {A ∧ B} ξ (a , b) = mono⊩ {A} ξ a , mono⊩ {B} ξ b
   mono⊩ {⊤}    ξ ∙       = ∙
 
@@ -109,40 +109,35 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   _⟪$⟫_ : ∀ {A B w} → w ⊩ A ▻ B → w ⊩ A → w ⊩ B
-  f ⟪$⟫ a = f refl≤ a
+  s ⟪$⟫ a = s refl≤ a
 
   ⟪K⟫ : ∀ {A B w} → w ⊩ A → w ⊩ B ▻ A
   ⟪K⟫ {A} a ξ = K (mono⊩ {A} ξ a)
 
-  ⟪S⟫′ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C → w ⊩ (A ▻ B) ▻ A ▻ C
-  ⟪S⟫′ {A} {B} {C} f ξ g ξ′ a = let f′ = mono⊩ {A ▻ B ▻ C} (trans≤ ξ ξ′) f
-                                    g′ = mono⊩ {A ▻ B} ξ′ g
-                                in  (f′ refl≤ a) refl≤ (g′ refl≤ a)
-
   ⟪S⟫ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C → w ⊩ A ▻ B → w ⊩ A → w ⊩ C
-  ⟪S⟫ {A} {B} {C} f g a = ⟪S⟫′ {A} {B} {C} f refl≤ g refl≤ a
+  ⟪S⟫ {A} {B} {C} s₁ s₂ a = _⟪$⟫_ {B} {C} (_⟪$⟫_ {A} {B ▻ C} s₁ a) (_⟪$⟫_ {A} {B} s₂ a)
 
-  _⟪D⟫′_ : ∀ {A B Γ} → Γ ⊩ □ (A ▻ B) → Γ ⊩ □ A ▻ □ B
-  _⟪D⟫′_ s₁ ξ s₂ ζ = let _ , (ζ′ , ξ′) = ≤⨾R→R⨾≤ (_ , (ξ , ζ))
-                         f             = s₁ ζ′ ξ′
-                         a             = s₂ ζ
-                     in  f a
+  ⟪S⟫′ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C → w ⊩ (A ▻ B) ▻ A ▻ C
+  ⟪S⟫′ {A} {B} {C} s₁ ξ s₂ ξ′ a = let s₁′ = mono⊩ {A ▻ B ▻ C} (trans≤ ξ ξ′) s₁
+                                      s₂′ = mono⊩ {A ▻ B} ξ′ s₂
+                                  in  ⟪S⟫ {A} {B} {C} s₁′ s₂′ a
 
-  _⟪D⟫_ : ∀ {A B Γ} → Γ ⊩ □ (A ▻ B) → Γ ⊩ □ A → Γ ⊩ □ B
-  _⟪D⟫_ {A} {B} s₁ s₂ ζ = _⟪D⟫′_ {A} {B} s₁ refl≤ s₂ ζ
+  _⟪D⟫_ : ∀ {A B w} → w ⊩ □ (A ▻ B) → w ⊩ □ A → w ⊩ □ B
+  _⟪D⟫_ {A} {B} s₁ s₂ ζ = let s₁′ = s₁ ζ
+                              s₂′ = s₂ ζ
+                          in  _⟪$⟫_ {A} {B} s₁′ s₂′
 
-  ⟪↑⟫ : ∀ {A Γ} → Γ ⊩ □ A → Γ ⊩ □ □ A
+  _⟪D⟫′_ : ∀ {A B w} → w ⊩ □ (A ▻ B) → w ⊩ □ A ▻ □ B
+  _⟪D⟫′_ {A} {B} s₁ ξ = _⟪D⟫_ {A} {B} (mono⊩ {□ (A ▻ B)} ξ s₁)
+
+  ⟪↑⟫ : ∀ {A w} → w ⊩ □ A → w ⊩ □ □ A
   ⟪↑⟫ s ζ ζ′ = s (transR ζ ζ′)
 
-  ⟪↓⟫ : ∀ {A Γ} → Γ ⊩ □ A → Γ ⊩ A
+  ⟪↓⟫ : ∀ {A w} → w ⊩ □ A → w ⊩ A
   ⟪↓⟫ s = s reflR
 
   _⟪,⟫′_ : ∀ {A B w} → w ⊩ A → w ⊩ B ▻ A ∧ B
-  _⟪,⟫′_ {A} {B} a ξ b = let a′ = mono⊩ {A} ξ a
-                         in  a′ , b
-
-  _⟪,⟫_ : ∀ {A B w} → w ⊩ A → w ⊩ B → w ⊩ A ∧ B
-  _⟪,⟫_ {A} {B} a b = _⟪,⟫′_ {A} {B} a refl≤ b
+  _⟪,⟫′_ {A} {B} a ξ = _,_ (mono⊩ {A} ξ a)
 
 
 -- Forcing in a particular world of a particular model, for sequents.
