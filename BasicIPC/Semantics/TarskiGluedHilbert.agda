@@ -28,7 +28,7 @@ record Model : Set₁ where
     [csnd]   : ∀ {A B Γ}   → Γ [⊢] A ∧ B ▻ B
     [tt]     : ∀ {Γ}       → Γ [⊢] ⊤
 
-    -- NOTE: [lam] is necessary for [multicut], which is necessary for Gentzen-style eval.
+    -- NOTE: [lam] is necessary to give meaning to Gentzen-style syntax.
     [lam] : ∀ {A B Γ} → Γ , A [⊢] B → Γ [⊢] A ▻ B
 
   infix 3 _[⊢]⋆_
@@ -89,6 +89,15 @@ module _ {{_ : Model}} where
   [multicut] : ∀ {Π A Γ} → Γ [⊢]⋆ Π → Π [⊢] A → Γ [⊢] A
   [multicut] {⌀}     ∙        u = mono[⊢] bot⊆ u
   [multicut] {Π , B} (ts , t) u = [app] ([multicut] ts ([lam] u)) t
+
+  [pair] : ∀ {A B Γ} → Γ [⊢] A → Γ [⊢] B → Γ [⊢] A ∧ B
+  [pair] t u = [app] ([app] [cpair] t) u
+
+  [fst] : ∀ {A B Γ} → Γ [⊢] A ∧ B → Γ [⊢] A
+  [fst] t = [app] [cfst] t
+
+  [snd] : ∀ {A B Γ} → Γ [⊢] A ∧ B → Γ [⊢] B
+  [snd] t = [app] [csnd] t
 
 
 -- Additional useful equipment.

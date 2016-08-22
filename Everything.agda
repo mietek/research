@@ -71,13 +71,13 @@ import BasicIPC.Semantics.KripkeGodel                -- Gödel embedding.
 -- ├─────┼─────┼─────┼─────┼─────┤
 -- │ TCGI│ e₀q₀│ eq₀ │ eq₀ │     │
 -- ├─────┼─────┼─────┼─────┼─────┤
--- │ TCGH│ e₀q₀│ eq₀ │ eq₀~│     │
+-- │ TCGH│ e₀q₀│ eq₀ │     │     │
 -- ├─────┼─────┼─────┼─────┼─────┤
 -- │ TGI │     │ eq  │ eq  │     │
 -- ├─────┼─────┼─────┼─────┼─────┤
--- │ TGH │     │ eq  │ eq~ │     │
+-- │ TGH │     │ eq  │ eq  │     │
 -- ├─────┼─────┼─────┼─────┼─────┤
--- │ TGG │     │ eq~ │ eq  │     │
+-- │ TGG │     │ eq  │ eq  │     │
 -- ├─────┼─────┼─────┼─────┼─────┤
 -- │ T   │     │ eq  │ eq  │ eq  │
 -- ├─────┼─────┼─────┼─────┼─────┤
@@ -91,7 +91,6 @@ import BasicIPC.Semantics.KripkeGodel                -- Gödel embedding.
 -- e    : Soundness only.
 -- eq₀  : Soundness, for all terms; completeness, for closed terms only.
 -- eq   : Soundness and completeness.
--- eq~  : Soundness and completeness, using syntax translation.
 
 
 import BasicIPC.Metatheory.ClosedHilbert-BasicTarski
@@ -110,7 +109,6 @@ import BasicIPC.Metatheory.Hilbert-KripkeGodel
 
 import BasicIPC.Metatheory.Gentzen-BasicTarski
 import BasicIPC.Metatheory.Gentzen-TarskiClosedGluedImplicit
-import BasicIPC.Metatheory.Gentzen-TarskiClosedGluedHilbert
 import BasicIPC.Metatheory.Gentzen-TarskiGluedImplicit
 import BasicIPC.Metatheory.Gentzen-TarskiGluedHilbert
 import BasicIPC.Metatheory.Gentzen-TarskiGluedGentzen

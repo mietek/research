@@ -3,16 +3,20 @@ module BasicIPC.Metatheory.Hilbert-TarskiGluedGentzen where
 open import BasicIPC.Syntax.Hilbert public
 open import BasicIPC.Semantics.TarskiGluedGentzen public
 
-import BasicIPC.Metatheory.Gentzen-TarskiGluedGentzen as G
-
-open import BasicIPC.Syntax.Translation using (h→g)
-
 
 -- Internalisation of syntax as syntax representation in a particular model.
 
 module _ {{_ : Model}} where
   [_] : ∀ {A Γ} → Γ ⊢ A → Γ [⊢] A
-  [ t ] = G.[ h→g t ]
+  [ var i ]   = [var] i
+  [ app t u ] = [app] [ t ] [ u ]
+  [ ci ]      = [ci]
+  [ ck ]      = [ck]
+  [ cs ]      = [cs]
+  [ cpair ]   = [cpair]
+  [ cfst ]    = [cfst]
+  [ csnd ]    = [csnd]
+  [ tt ]      = [tt]
 
 
 -- Soundness with respect to all models, or evaluation.
