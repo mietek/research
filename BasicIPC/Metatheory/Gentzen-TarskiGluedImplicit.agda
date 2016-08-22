@@ -10,8 +10,8 @@ open ImplicitSyntax (_⊢_) (mono⊢) public
 
 module _ {{_ : Model}} where
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
-  reify {α P}   (t , s) = t
-  reify {A ▻ B} s       = let t , f = s refl⊆ in t
+  reify {α P}   s       = syn s
+  reify {A ▻ B} s       = syn (s refl⊆)
   reify {A ∧ B} (a , b) = pair (reify a) (reify b)
   reify {⊤}    ∙       = tt
 
@@ -24,7 +24,7 @@ module _ {{_ : Model}} where
 
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)    γ = lookup i γ
-eval (lam t)    γ = λ η → multicut (reify⋆ (mono⊩⋆ η γ)) (lam t) , λ a →
+eval (lam t)    γ = λ η → multicut (reify⋆ (mono⊩⋆ η γ)) (lam t) ⅋ λ a →
                       eval t (mono⊩⋆ η γ , a)
 eval (app t u)  γ = eval t γ ⟪$⟫ eval u γ
 eval (pair t u) γ = eval t γ , eval u γ
@@ -50,9 +50,9 @@ private
 -- Soundness with respect to the canonical model.
 
 reflectᶜ : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
-reflectᶜ {α P}   t = t , t
+reflectᶜ {α P}   t = t ⅋ t
 reflectᶜ {A ▻ B} t = λ η → let t′ = mono⊢ η t
-                            in  t′ , λ a → reflectᶜ (app t′ (reify a))
+                            in  t′ ⅋ λ a → reflectᶜ (app t′ (reify a))
 reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
 reflectᶜ {⊤}    t = ∙
 

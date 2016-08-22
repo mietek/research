@@ -26,16 +26,16 @@ module _ {{_ : Model}} where
 
 eval₀ : ∀ {A} → ⊢ A → ⊨ A
 eval₀ (app t u) = eval₀ t ⟪$⟫ eval₀ u
-eval₀ ci        = [ci] , I
-eval₀ ck        = [ck] , ⟪K⟫
-eval₀ cs        = [cs] , ⟪S⟫′
-eval₀ (box t)   = [ box t ] , eval₀ t
-eval₀ cdist     = [cdist] , _⟪D⟫′_
-eval₀ cup       = [cup] , ⟪↑⟫
-eval₀ cdown     = [cdown] , ⟪↓⟫
-eval₀ cpair     = [cpair] , _⟪,⟫′_
-eval₀ cfst      = [cfst] , π₁
-eval₀ csnd      = [csnd] , π₂
+eval₀ ci        = [ci] ⅋ I
+eval₀ ck        = [ck] ⅋ ⟪K⟫
+eval₀ cs        = [cs] ⅋ ⟪S⟫′
+eval₀ (box t)   = [ box t ] ⅋ eval₀ t
+eval₀ cdist     = [cdist] ⅋ _⟪D⟫′_
+eval₀ cup       = [cup] ⅋ ⟪↑⟫
+eval₀ cdown     = [cdown] ⅋ ⟪↓⟫
+eval₀ cpair     = [cpair] ⅋ _⟪,⟫′_
+eval₀ cfst      = [cfst] ⅋ π₁
+eval₀ csnd      = [csnd] ⅋ π₂
 eval₀ tt        = ∙
 
 

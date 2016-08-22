@@ -4,6 +4,7 @@
 module BasicIS4.Semantics.TarskiOvergluedDyadicImplicit where
 
 open import BasicIS4.Syntax.Common public
+open import Common.Semantics public
 
 
 -- Intuitionistic Tarski models.
@@ -33,9 +34,9 @@ module ImplicitSyntax
   module _ {{_ : Model}} where
     infix 3 _⁏_⊩_
     _⁏_⊩_ : Cx Ty → Cx Ty → Ty → Set
-    Γ ⁏ Δ ⊩ α P   = Γ ⁏ Δ [⊢] (α P) × Γ ⁏ Δ ⊩ᵅ P
-    Γ ⁏ Δ ⊩ A ▻ B = ∀ {Γ′ Δ′} → Γ ⊆ Γ′ → Δ ⊆ Δ′ → Γ′ ⁏ Δ′ [⊢] (A ▻ B) × (Γ′ ⁏ Δ′ ⊩ A → Γ′ ⁏ Δ′ ⊩ B)
-    Γ ⁏ Δ ⊩ □ A   = ∀ {Γ′ Δ′} → Γ ⊆ Γ′ → Δ ⊆ Δ′ → Γ′ ⁏ Δ′ [⊢] (□ A) × Γ′ ⁏ Δ′ ⊩ A
+    Γ ⁏ Δ ⊩ α P   = Glue (Γ ⁏ Δ [⊢] (α P)) (Γ ⁏ Δ ⊩ᵅ P)
+    Γ ⁏ Δ ⊩ A ▻ B = ∀ {Γ′ Δ′} → Γ ⊆ Γ′ → Δ ⊆ Δ′ → Glue (Γ′ ⁏ Δ′ [⊢] (A ▻ B)) (Γ′ ⁏ Δ′ ⊩ A → Γ′ ⁏ Δ′ ⊩ B)
+    Γ ⁏ Δ ⊩ □ A   = ∀ {Γ′ Δ′} → Γ ⊆ Γ′ → Δ ⊆ Δ′ → Glue (Γ′ ⁏ Δ′ [⊢] (□ A)) (Γ′ ⁏ Δ′ ⊩ A)
     Γ ⁏ Δ ⊩ A ∧ B = Γ ⁏ Δ ⊩ A × Γ ⁏ Δ ⊩ B
     Γ ⁏ Δ ⊩ ⊤    = 𝟙
 
@@ -49,7 +50,7 @@ module ImplicitSyntax
 
   module _ {{_ : Model}} where
     mono⊩ : ∀ {A Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊩ A → Γ′ ⁏ Δ ⊩ A
-    mono⊩ {α P}   η (t , s) = mono[⊢] η t , mono⊩ᵅ η s
+    mono⊩ {α P}   η s       = mono[⊢] η (syn s) ⅋ mono⊩ᵅ η (sem s)
     mono⊩ {A ▻ B} η s       = λ η′ θ → s (trans⊆ η η′) θ
     mono⊩ {□ A}   η s       = λ η′ θ → s (trans⊆ η η′) θ
     mono⊩ {A ∧ B} η (a , b) = mono⊩ {A} η a , mono⊩ {B} η b
@@ -64,7 +65,7 @@ module ImplicitSyntax
 
   module _ {{_ : Model}} where
     mmono⊩ : ∀ {A Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ′ ⊩ A
-    mmono⊩ {α P}   θ (t , s) = mmono[⊢] θ t , mmono⊩ᵅ θ s
+    mmono⊩ {α P}   θ s       = mmono[⊢] θ (syn s) ⅋ mmono⊩ᵅ θ (sem s)
     mmono⊩ {A ▻ B} θ s       = λ η θ′ → s η (trans⊆ θ θ′)
     mmono⊩ {□ A}   θ s       = λ η θ′ → s η (trans⊆ θ θ′)
     mmono⊩ {A ∧ B} θ (a , b) = mmono⊩ {A} θ a , mmono⊩ {B} θ b
@@ -89,18 +90,13 @@ module ImplicitSyntax
 
   module _ {{_ : Model}} where
     _⟪$⟫_ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊩ A ▻ B → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊩ B
-    s ⟪$⟫ a = let t , f = s refl⊆ refl⊆
-              in  f a
+    s ⟪$⟫ a = sem (s refl⊆ refl⊆) a
 
     ⟪S⟫ : ∀ {A B C Γ Δ} → Γ ⁏ Δ ⊩ A ▻ B ▻ C → Γ ⁏ Δ ⊩ A ▻ B → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊩ C
-    ⟪S⟫ s₁ s₂ a = let t , f = s₁ refl⊆ refl⊆
-                      u , g = s₂ refl⊆ refl⊆
-                      _ , h = (f a) refl⊆ refl⊆
-                  in  h (g a)
+    ⟪S⟫ s₁ s₂ a = (s₁ ⟪$⟫ a) ⟪$⟫ (s₂ ⟪$⟫ a)
 
     ⟪↓⟫ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ □ A → Γ ⁏ Δ ⊩ A
-    ⟪↓⟫ s = let t , a = s refl⊆ refl⊆
-            in  a
+    ⟪↓⟫ s = sem (s refl⊆ refl⊆)
 
 
   -- Forcing in a particular world of a particular model, for sequents.
@@ -134,7 +130,7 @@ module ImplicitSyntax
     lookup (pop i) (γ , b) = lookup i γ
 
     mlookup : ∀ {A Δ Γ₀ Δ₀} → A ∈ Δ → Γ₀ ⁏ Δ₀ ⊩⋆ □⋆ Δ → Γ₀ ⁏ Δ₀ ⊩ A
-    mlookup top     (γ , s) = let t , a = s refl⊆ refl⊆ in a
+    mlookup top     (γ , s) = sem (s refl⊆ refl⊆)
     mlookup (pop i) (γ , s) = mlookup i γ
 
     -- TODO: More equipment.

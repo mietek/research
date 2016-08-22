@@ -3,8 +3,9 @@
 
 module BasicIS4.Semantics.TarskiGluedDyadicGentzen where
 
-open import Common.ContextPair public
 open import BasicIS4.Syntax.Common public
+open import Common.ContextPair public
+open import Common.Semantics public
 
 
 -- Intuitionistic Tarski models.
@@ -40,7 +41,7 @@ module _ {{_ : Model}} where
   _⁏_⊩_ : Cx Ty → Cx Ty → Ty → Set
   Γ ⁏ Δ ⊩ α P   = Γ ⁏ Δ ⊩ᵅ P
   Γ ⁏ Δ ⊩ A ▻ B = ∀ {Γ′} → Γ ⊆ Γ′ → Γ′ ⁏ Δ ⊩ A → Γ′ ⁏ Δ ⊩ B
-  Γ ⁏ Δ ⊩ □ A   = ∀ {Γ′} → Γ ⊆ Γ′ → Γ′ ⁏ Δ [⊢] □ A × Γ′ ⁏ Δ ⊩ A
+  Γ ⁏ Δ ⊩ □ A   = ∀ {Γ′} → Γ ⊆ Γ′ → Glue (Γ′ ⁏ Δ [⊢] □ A) (Γ′ ⁏ Δ ⊩ A)
   Γ ⁏ Δ ⊩ A ∧ B = Γ ⁏ Δ ⊩ A × Γ ⁏ Δ ⊩ B
   Γ ⁏ Δ ⊩ ⊤    = 𝟙
 
@@ -69,29 +70,24 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   _⟪$⟫_ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊩ A ▻ B → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊩ B
-  f ⟪$⟫ a = f refl⊆ a
+  s ⟪$⟫ a = s refl⊆ a
 
   ⟪K⟫ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊩ B ▻ A
   ⟪K⟫ {A} a η = K (mono⊩ {A} η a)
 
-  ⟪S⟫′ : ∀ {A B C Γ Δ} → Γ ⁏ Δ ⊩ A ▻ B ▻ C → Γ ⁏ Δ ⊩ (A ▻ B) ▻ A ▻ C
-  ⟪S⟫′ {A} {B} {C} f η g η′ a = let f′ = mono⊩ {A ▻ B ▻ C} (trans⊆ η η′) f
-                                    g′ = mono⊩ {A ▻ B} η′ g
-                                in  (f′ refl⊆ a) refl⊆ (g′ refl⊆ a)
-
   ⟪S⟫ : ∀ {A B C Γ Δ} → Γ ⁏ Δ ⊩ A ▻ B ▻ C → Γ ⁏ Δ ⊩ A ▻ B → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊩ C
-  ⟪S⟫ {A} {B} {C} f g a = ⟪S⟫′ {A} {B} {C} f refl⊆ g refl⊆ a
+  ⟪S⟫ {A} {B} {C} s₁ s₂ a = _⟪$⟫_ {B} {C} (_⟪$⟫_ {A} {B ▻ C} s₁ a) (_⟪$⟫_ {A} {B} s₂ a)
+
+  ⟪S⟫′ : ∀ {A B C Γ Δ} → Γ ⁏ Δ ⊩ A ▻ B ▻ C → Γ ⁏ Δ ⊩ (A ▻ B) ▻ A ▻ C
+  ⟪S⟫′ {A} {B} {C} s₁ η s₂ η′ a = let s₁′ = mono⊩ {A ▻ B ▻ C} (trans⊆ η η′) s₁
+                                      s₂′ = mono⊩ {A ▻ B} η′ s₂
+                                  in  ⟪S⟫ {A} {B} {C} s₁′ s₂′ a
 
   ⟪↓⟫ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ □ A → Γ ⁏ Δ ⊩ A
-  ⟪↓⟫ s = let p , a = s refl⊆
-          in  a
+  ⟪↓⟫ s = sem (s refl⊆)
 
   _⟪,⟫′_ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊩ B ▻ A ∧ B
-  _⟪,⟫′_ {A} {B} a η b = let a′ = mono⊩ {A} η a
-                         in  a′ , b
-
-  _⟪,⟫_ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊩ B → Γ ⁏ Δ ⊩ A ∧ B
-  _⟪,⟫_ {A} {B} a b = _⟪,⟫′_ {A} {B} a refl⊆ b
+  _⟪,⟫′_ {A} {B} a η b = mono⊩ {A} η a , b
 
 
 -- Forcing in a particular world of a particular model, for sequents.
@@ -125,7 +121,7 @@ module _ {{_ : Model}} where
   lookup (pop i) (γ , b) = lookup i γ
 
   mlookup : ∀ {A Δ Γ₀ Δ₀} → A ∈ Δ → Γ₀ ⁏ Δ₀ ⊩⋆ □⋆ Δ → Γ₀ ⁏ Δ₀ ⊩ A
-  mlookup top     (γ , s) = let t , a = s refl⊆ in a
+  mlookup top     (γ , s) = sem (s refl⊆)
   mlookup (pop i) (γ , s) = mlookup i γ
 
   -- TODO: More equipment.

@@ -10,9 +10,9 @@ open ImplicitSyntax (_⁏_⊢_) (mono⊢) (mmono⊢) public
 
 module _ {{_ : Model}} where
   reify : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊢ A
-  reify {α P}   (t , s) = t
-  reify {A ▻ B} s       = let t , f = s refl⊆ refl⊆ in t
-  reify {□ A}   s       = let t , a = s refl⊆ refl⊆ in t
+  reify {α P}   s       = syn s
+  reify {A ▻ B} s       = syn (s refl⊆ refl⊆)
+  reify {□ A}   s       = syn (s refl⊆ refl⊆)
   reify {A ∧ B} (a , b) = pair (reify a) (reify b)
   reify {⊤}    ∙       = tt
 
@@ -27,13 +27,13 @@ eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊨ A
 eval (var i)     γ δ = lookup i γ
 eval (lam t)     γ δ = λ η θ → let γ′ = mono²⊩⋆ (η , θ) γ in
                                 let δ′ = mono²⊩⋆ (η , θ) δ
-                                in  multicut² (reify⋆ γ′) (reify⋆ δ′) (lam t) , λ a →
+                                in  multicut² (reify⋆ γ′) (reify⋆ δ′) (lam t) ⅋ λ a →
                                       eval t (γ′ , a) δ′
 eval (app t u)   γ δ = eval t γ δ ⟪$⟫ eval u γ δ
 eval (mvar i)    γ δ = mlookup i δ
 eval (box t)     γ δ = λ η θ → let γ′ = mono²⊩⋆ (η , θ) γ in
                                 let δ′ = mono²⊩⋆ (η , θ) δ
-                                in  multicut² (reify⋆ γ′) (reify⋆ δ′) (box t) ,
+                                in  multicut² (reify⋆ γ′) (reify⋆ δ′) (box t) ⅋
                                       eval t ∙ δ′
 eval (unbox t u) γ δ = eval u γ (δ , eval t γ δ)
 eval (pair t u)  γ δ = eval t γ δ , eval u γ δ
@@ -60,11 +60,11 @@ private
 -- Soundness with respect to the canonical model.
 
 reflectᶜ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊩ A
-reflectᶜ {α P}   t = t , t
+reflectᶜ {α P}   t = t ⅋ t
 reflectᶜ {A ▻ B} t = λ η θ → let t′ = mono²⊢ (η , θ) t
-                              in  t′ , λ a → reflectᶜ (app t′ (reify a))
+                              in  t′ ⅋ λ a → reflectᶜ (app t′ (reify a))
 reflectᶜ {□ A}   t = λ η θ → let t′ = mono²⊢ (η , θ) t
-                              in  t′ , reflectᶜ (down t′)
+                              in  t′ ⅋ reflectᶜ (down t′)
 reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
 reflectᶜ {⊤}    t = ∙
 

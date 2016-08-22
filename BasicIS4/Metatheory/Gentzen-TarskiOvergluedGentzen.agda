@@ -30,11 +30,11 @@ mutual
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
   eval (var i)         γ = lookup i γ
   eval (lam t)         γ = λ η → let γ′ = mono⊩⋆ η γ
-                                  in  [multicut] (reifyʳ⋆ γ′) [ lam t ] , λ a →
+                                  in  [multicut] (reifyʳ⋆ γ′) [ lam t ] ⅋ λ a →
                                         eval t (γ′ , a)
   eval (app t u)       γ = eval t γ ⟪$⟫ eval u γ
   eval (multibox ts u) γ = λ η → let γ′ = mono⊩⋆ η γ
-                                  in  [multicut] (reifyʳ⋆ γ′) [ multibox ts u ] ,
+                                  in  [multicut] (reifyʳ⋆ γ′) [ multibox ts u ] ⅋
                                         eval u (eval⋆ ts γ′)
   eval (down t)        γ = ⟪↓⟫ (eval t γ)
   eval (pair t u)      γ = eval t γ , eval u γ
@@ -79,18 +79,18 @@ private
 
 mutual
   reflectᶜ : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
-  reflectᶜ {α P}   t = t , t
+  reflectᶜ {α P}   t = t ⅋ t
   reflectᶜ {A ▻ B} t = λ η → let t′ = mono⊢ η t
-                              in  t′ , λ a → reflectᶜ (app t′ (reifyᶜ a))
+                              in  t′ ⅋ λ a → reflectᶜ (app t′ (reifyᶜ a))
   reflectᶜ {□ A}   t = λ η → let t′ = mono⊢ η t
-                              in  t′ , reflectᶜ (down t′)
+                              in  t′ ⅋ reflectᶜ (down t′)
   reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
   reflectᶜ {⊤}    t = ∙
 
   reifyᶜ : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
-  reifyᶜ {α P}   (t , s) = t
-  reifyᶜ {A ▻ B} s       = let t , f = s refl⊆ in t
-  reifyᶜ {□ A}   s       = let t , a = s refl⊆ in t
+  reifyᶜ {α P}   s       = syn s
+  reifyᶜ {A ▻ B} s       = syn (s refl⊆)
+  reifyᶜ {□ A}   s       = syn (s refl⊆)
   reifyᶜ {A ∧ B} (a , b) = pair (reifyᶜ a) (reifyᶜ b)
   reifyᶜ {⊤}    ∙       = tt
 

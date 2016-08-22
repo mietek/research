@@ -33,7 +33,7 @@ eval ci                γ δ = K I
 eval (ck {A} {B})      γ δ = K (⟪K⟫ {A} {B})
 eval (cs {A} {B} {C})  γ δ = K (⟪S⟫′ {A} {B} {C})
 eval (mvar i)          γ δ = mlookup i δ
-eval (box t)           γ δ = λ η → [ box t ] ,
+eval (box t)           γ δ = λ η → [ box t ] ⅋
                                eval t ∙ (mono⊩⋆ η δ)
 eval cdist             γ δ = K _⟪D⟫′_
 eval cup               γ δ = K ⟪↑⟫
@@ -82,14 +82,14 @@ mutual
   reflectᶜ {A ▻ B} t = λ η → let t′ = mono⊢ η t
                               in  λ a → reflectᶜ (app t′ (reifyᶜ a))
   reflectᶜ {□ A}   t = λ η → let t′ = mono⊢ η t
-                              in  t′ , reflectᶜ (down t′)
+                              in  t′ ⅋ reflectᶜ (down t′)
   reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
   reflectᶜ {⊤}    t = ∙
 
   reifyᶜ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊢ A
   reifyᶜ {α P}   s       = s
   reifyᶜ {A ▻ B} s       = lam (reifyᶜ (s weak⊆ (reflectᶜ {A} v₀)))
-  reifyᶜ {□ A}   s       = let t , a = s refl⊆ in t
+  reifyᶜ {□ A}   s       = syn (s refl⊆)
   reifyᶜ {A ∧ B} (a , b) = pair (reifyᶜ a) (reifyᶜ b)
   reifyᶜ {⊤}    ∙       = tt
 

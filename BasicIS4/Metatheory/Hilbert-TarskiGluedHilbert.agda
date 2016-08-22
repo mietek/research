@@ -31,7 +31,7 @@ eval (app {A} {B} t u) γ = _⟪$⟫_ {A} {B} (eval t γ) (eval u γ)
 eval ci                γ = K I
 eval (ck {A} {B})      γ = K (⟪K⟫ {A} {B})
 eval (cs {A} {B} {C})  γ = K (⟪S⟫′ {A} {B} {C})
-eval (box t)           γ = K ([ box t ] , eval t ∙)
+eval (box t)           γ = K ([ box t ] ⅋ eval t ∙)
 eval cdist             γ = K _⟪D⟫′_
 eval cup               γ = K ⟪↑⟫
 eval cdown             γ = K ⟪↓⟫
@@ -78,14 +78,14 @@ mutual
   reflectᶜ {A ▻ B} t = λ η → let t′ = mono⊢ η t
                               in  λ a → reflectᶜ (app t′ (reifyᶜ a))
   reflectᶜ {□ A}   t = λ η → let t′ = mono⊢ η t
-                              in  t′ , reflectᶜ (down t′)
+                              in  t′ ⅋ reflectᶜ (down t′)
   reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
   reflectᶜ {⊤}    t = ∙
 
   reifyᶜ : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
   reifyᶜ {α P}   s       = s
   reifyᶜ {A ▻ B} s       = lam (reifyᶜ (s weak⊆ (reflectᶜ {A} v₀)))
-  reifyᶜ {□ A}   s       = let t , a = s refl⊆ in t
+  reifyᶜ {□ A}   s       = syn (s refl⊆)
   reifyᶜ {A ∧ B} (a , b) = pair (reifyᶜ a) (reifyᶜ b)
   reifyᶜ {⊤}    ∙       = tt
 

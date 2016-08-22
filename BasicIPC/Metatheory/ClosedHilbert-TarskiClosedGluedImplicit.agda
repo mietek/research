@@ -10,8 +10,8 @@ open ImplicitSyntax (⊢_) public
 
 module _ {{_ : Model}} where
   reify : ∀ {A} → ⊩ A → ⊢ A
-  reify {α P}   (t , s) = t
-  reify {A ▻ B} (t , f) = t
+  reify {α P}   s       = syn s
+  reify {A ▻ B} s       = syn s
   reify {A ∧ B} (a , b) = pair (reify a) (reify b)
   reify {⊤}    ∙       = tt
 
@@ -20,26 +20,26 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   ⟪K⟫ : ∀ {A B} → ⊩ A → ⊩ B ▻ A
-  ⟪K⟫ a = app ck (reify a) , K a
+  ⟪K⟫ a = app ck (reify a) ⅋ K a
 
   ⟪S⟫′ : ∀ {A B C} → ⊩ A ▻ B ▻ C → ⊩ (A ▻ B) ▻ A ▻ C
-  ⟪S⟫′ f = app cs (reify f) , λ g →
-             app (app cs (reify f)) (reify g) , ⟪S⟫ f g
+  ⟪S⟫′ s₁ = app cs (reify s₁) ⅋ λ s₂ →
+              app (app cs (reify s₁)) (reify s₂) ⅋ ⟪S⟫ s₁ s₂
 
   _⟪,⟫′_ : ∀ {A B} → ⊩ A → ⊩ B ▻ A ∧ B
-  _⟪,⟫′_ a = app cpair (reify a) , _,_ a
+  _⟪,⟫′_ a = app cpair (reify a) ⅋ _,_ a
 
 
 -- Soundness with respect to all models, or evaluation, for closed terms only.
 
 eval₀ : ∀ {A} → ⊢ A → ⊨ A
 eval₀ (app t u) = eval₀ t ⟪$⟫ eval₀ u
-eval₀ ci        = ci , I
-eval₀ ck        = ck , ⟪K⟫
-eval₀ cs        = cs , ⟪S⟫′
-eval₀ cpair     = cpair , _⟪,⟫′_
-eval₀ cfst      = cfst , π₁
-eval₀ csnd      = csnd , π₂
+eval₀ ci        = ci ⅋ I
+eval₀ ck        = ck ⅋ ⟪K⟫
+eval₀ cs        = cs ⅋ ⟪S⟫′
+eval₀ cpair     = cpair ⅋ _⟪,⟫′_
+eval₀ cfst      = cfst ⅋ π₁
+eval₀ csnd      = csnd ⅋ π₂
 eval₀ tt        = ∙
 
 

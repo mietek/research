@@ -10,9 +10,9 @@ open ImplicitSyntax (⌀ ⊢_) public
 
 module _ {{_ : Model}} where
   reify : ∀ {A} → ⊩ A → ⌀ ⊢ A
-  reify {α P}   (t , s) = t
-  reify {A ▻ B} (t , f) = t
-  reify {□ A}   (t , a) = t
+  reify {α P}   s       = syn s
+  reify {A ▻ B} s       = syn s
+  reify {□ A}   s       = syn s
   reify {A ∧ B} (a , b) = pair (reify a) (reify b)
   reify {⊤}    ∙       = tt
 
@@ -26,10 +26,10 @@ module _ {{_ : Model}} where
 mutual
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
   eval (var i)         γ = lookup i γ
-  eval (lam t)         γ = multicut (reify⋆ γ) (lam t) , λ a →
+  eval (lam t)         γ = multicut (reify⋆ γ) (lam t) ⅋ λ a →
                              eval t (γ , a)
   eval (app t u)       γ = eval t γ ⟪$⟫ eval u γ
-  eval (multibox ts u) γ = multicut (reify⋆ γ) (multibox ts u) ,
+  eval (multibox ts u) γ = multicut (reify⋆ γ) (multibox ts u) ⅋
                              eval u (eval⋆ ts γ)
   eval (down t)        γ = ⟪↓⟫ (eval t γ)
   eval (pair t u)      γ = eval t γ , eval u γ

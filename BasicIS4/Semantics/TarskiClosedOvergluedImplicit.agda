@@ -4,6 +4,7 @@
 module BasicIS4.Semantics.TarskiClosedOvergluedImplicit where
 
 open import BasicIS4.Syntax.Common public
+open import Common.Semantics public
 
 
 -- Tarski models.
@@ -29,9 +30,9 @@ module ImplicitSyntax
   module _ {{_ : Model}} where
     infix 3 ⊩_
     ⊩_ : Ty → Set
-    ⊩ α P   = [⊢] (α P) × ⊩ᵅ P
-    ⊩ A ▻ B = [⊢] (A ▻ B) × (⊩ A → ⊩ B)
-    ⊩ □ A   = [⊢] (□ A) × ⊩ A
+    ⊩ α P   = Glue ([⊢] (α P)) (⊩ᵅ P)
+    ⊩ A ▻ B = Glue ([⊢] (A ▻ B)) (⊩ A → ⊩ B)
+    ⊩ □ A   = Glue ([⊢] (□ A)) (⊩ A)
     ⊩ A ∧ B = ⊩ A × ⊩ B
     ⊩ ⊤    = 𝟙
 
@@ -52,13 +53,13 @@ module ImplicitSyntax
 
   module _ {{_ : Model}} where
     _⟪$⟫_ : ∀ {A B} → ⊩ A ▻ B → ⊩ A → ⊩ B
-    (t , f) ⟪$⟫ a = f a
+    s ⟪$⟫ a = sem s a
 
     ⟪S⟫ : ∀ {A B C} → ⊩ A ▻ B ▻ C → ⊩ A ▻ B → ⊩ A → ⊩ C
-    ⟪S⟫ (t , f) (u , g) a = let (_ , h) = f a in h (g a)
+    ⟪S⟫ s₁ s₂ a = (s₁ ⟪$⟫ a) ⟪$⟫ (s₂ ⟪$⟫ a)
 
     ⟪↓⟫ : ∀ {A} → ⊩ □ A → ⊩ A
-    ⟪↓⟫ (t , a) = a
+    ⟪↓⟫ s = sem s
 
 
   -- Forcing in a particular model, for sequents.
@@ -92,13 +93,13 @@ module ImplicitSyntax
     lookup (pop i) (γ , b) = lookup i γ
 
     ⟦λ⟧ : ∀ {A B Γ} → [⊢] (A ▻ B) → ⊩ Γ , A ⇒ B → ⊩ Γ ⇒ A ▻ B
-    ⟦λ⟧ t f γ = t , λ a → f (γ , a)
+    ⟦λ⟧ t s γ = t ⅋ λ a → s (γ , a)
 
     _⟦$⟧_ : ∀ {A B Γ} → ⊩ Γ ⇒ A ▻ B → ⊩ Γ ⇒ A → ⊩ Γ ⇒ B
-    (f ⟦$⟧ g) γ = f γ ⟪$⟫ g γ
+    (s₁ ⟦$⟧ s₂) γ = s₁ γ ⟪$⟫ s₂ γ
 
     ⟦S⟧ : ∀ {A B C Γ} → ⊩ Γ ⇒ A ▻ B ▻ C → ⊩ Γ ⇒ A ▻ B → ⊩ Γ ⇒ A → ⊩ Γ ⇒ C
-    ⟦S⟧ f g a γ = ⟪S⟫ (f γ) (g γ) (a γ)
+    ⟦S⟧ s₁ s₂ a γ = ⟪S⟫ (s₁ γ) (s₂ γ) (a γ)
 
     ⟦↓⟧ : ∀ {A Γ} → ⊩ Γ ⇒ □ A → ⊩ Γ ⇒ A
     ⟦↓⟧ s γ = ⟪↓⟫ (s γ)

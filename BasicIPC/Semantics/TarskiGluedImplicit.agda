@@ -4,6 +4,7 @@
 module BasicIPC.Semantics.TarskiGluedImplicit where
 
 open import BasicIPC.Syntax.Common public
+open import Common.Semantics public
 
 
 -- Intuitionistic Tarski models.
@@ -31,8 +32,8 @@ module ImplicitSyntax
   module _ {{_ : Model}} where
     infix 3 _⊩_
     _⊩_ : Cx Ty → Ty → Set
-    Γ ⊩ α P   = Γ [⊢] (α P) × Γ ⊩ᵅ P
-    Γ ⊩ A ▻ B = ∀ {Γ′} → Γ ⊆ Γ′ → Γ′ [⊢] (A ▻ B) × (Γ′ ⊩ A → Γ′ ⊩ B)
+    Γ ⊩ α P   = Glue (Γ [⊢] (α P)) (Γ ⊩ᵅ P)
+    Γ ⊩ A ▻ B = ∀ {Γ′} → Γ ⊆ Γ′ → Glue (Γ′ [⊢] (A ▻ B)) (Γ′ ⊩ A → Γ′ ⊩ B)
     Γ ⊩ A ∧ B = Γ ⊩ A × Γ ⊩ B
     Γ ⊩ ⊤    = 𝟙
 
@@ -46,7 +47,7 @@ module ImplicitSyntax
 
   module _ {{_ : Model}} where
     mono⊩ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊩ A → Γ′ ⊩ A
-    mono⊩ {α P}   η (t , s) = mono[⊢] η t , mono⊩ᵅ η s
+    mono⊩ {α P}   η s       = mono[⊢] η (syn s) ⅋ mono⊩ᵅ η (sem s)
     mono⊩ {A ▻ B} η s       = λ η′ → s (trans⊆ η η′)
     mono⊩ {A ∧ B} η (a , b) = mono⊩ {A} η a , mono⊩ {B} η b
     mono⊩ {⊤}    η ∙       = ∙
@@ -60,14 +61,10 @@ module ImplicitSyntax
 
   module _ {{_ : Model}} where
     _⟪$⟫_ : ∀ {A B Γ} → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ B
-    s ⟪$⟫ a = let t , f = s refl⊆
-              in  f a
+    s ⟪$⟫ a = sem (s refl⊆) a
 
     ⟪S⟫ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ C
-    ⟪S⟫ s s′ a = let t , f = s refl⊆
-                     u , g = s′ refl⊆
-                     _ , h = (f a) refl⊆
-                 in  h (g a)
+    ⟪S⟫ s₁ s₂ a = (s₁ ⟪$⟫ a) ⟪$⟫ (s₂ ⟪$⟫ a)
 
 
   -- Forcing in a particular world of a particular model, for sequents.
@@ -100,13 +97,11 @@ module ImplicitSyntax
     lookup top     (γ , a) = a
     lookup (pop i) (γ , b) = lookup i γ
 
-    -- TODO: ⟦λ⟧
-
     _⟦$⟧_ : ∀ {A B Γ w} → w ⊩ Γ ⇒ A ▻ B → w ⊩ Γ ⇒ A → w ⊩ Γ ⇒ B
-    (f ⟦$⟧ g) γ = f γ ⟪$⟫ g γ
+    (s₁ ⟦$⟧ s₂) γ = s₁ γ ⟪$⟫ s₂ γ
 
     ⟦S⟧ : ∀ {A B C Γ w} → w ⊩ Γ ⇒ A ▻ B ▻ C → w ⊩ Γ ⇒ A ▻ B → w ⊩ Γ ⇒ A → w ⊩ Γ ⇒ C
-    ⟦S⟧ f g a γ = ⟪S⟫ (f γ) (g γ) (a γ)
+    ⟦S⟧ s₁ s₂ a γ = ⟪S⟫ (s₁ γ) (s₂ γ) (a γ)
 
     _⟦,⟧_ : ∀ {A B Γ w} → w ⊩ Γ ⇒ A → w ⊩ Γ ⇒ B → w ⊩ Γ ⇒ A ∧ B
     (a ⟦,⟧ b) γ = a γ , b γ

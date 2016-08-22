@@ -4,6 +4,7 @@
 module BasicIPC.Semantics.TarskiClosedGluedHilbert where
 
 open import BasicIPC.Syntax.Common public
+open import Common.Semantics public
 
 
 -- Tarski models.
@@ -38,8 +39,8 @@ open Model {{…}} public
 module _ {{_ : Model}} where
   infix 3 ⊩_
   ⊩_ : Ty → Set
-  ⊩ α P   = [⊢] α P × ⊩ᵅ P
-  ⊩ A ▻ B = [⊢] A ▻ B × (⊩ A → ⊩ B)
+  ⊩ α P   = Glue ([⊢] α P) (⊩ᵅ P)
+  ⊩ A ▻ B = Glue ([⊢] A ▻ B) (⊩ A → ⊩ B)
   ⊩ A ∧ B = ⊩ A × ⊩ B
   ⊩ ⊤    = 𝟙
 
@@ -60,8 +61,8 @@ infix 3 ⊨_
 
 module _ {{_ : Model}} where
   reifyʳ : ∀ {A} → ⊩ A → [⊢] A
-  reifyʳ {α P}   (t , s) = t
-  reifyʳ {A ▻ B} (t , f) = t
+  reifyʳ {α P}   s       = syn s
+  reifyʳ {A ▻ B} s       = syn s
   reifyʳ {A ∧ B} (a , b) = [app] ([app] [cpair] (reifyʳ a)) (reifyʳ b)
   reifyʳ {⊤}    ∙       = [tt]
 
@@ -82,20 +83,20 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   _⟪$⟫_ : ∀ {A B} → ⊩ A ▻ B → ⊩ A → ⊩ B
-  (t , f) ⟪$⟫ a = f a
+  s ⟪$⟫ a = sem s a
 
   ⟪K⟫ : ∀ {A B} → ⊩ A → ⊩ B ▻ A
-  ⟪K⟫ a = [app] [ck] (reifyʳ a) , K a
+  ⟪K⟫ a = [app] [ck] (reifyʳ a) ⅋ K a
 
   ⟪S⟫ : ∀ {A B C} → ⊩ A ▻ B ▻ C → ⊩ A ▻ B → ⊩ A → ⊩ C
-  ⟪S⟫ (t , f) (u , g) a = let (_ , h) = f a in h (g a)
+  ⟪S⟫ s₁ s₂ a = (s₁ ⟪$⟫ a) ⟪$⟫ (s₂ ⟪$⟫ a)
 
   ⟪S⟫′ : ∀ {A B C} → ⊩ A ▻ B ▻ C → ⊩ (A ▻ B) ▻ A ▻ C
-  ⟪S⟫′ f = [app] [cs] (reifyʳ f) , λ g →
-             [app] ([app] [cs] (reifyʳ f)) (reifyʳ g) , ⟪S⟫ f g
+  ⟪S⟫′ s₁ = [app] [cs] (reifyʳ s₁) ⅋ λ s₂ →
+              [app] ([app] [cs] (reifyʳ s₁)) (reifyʳ s₂) ⅋ ⟪S⟫ s₁ s₂
 
   _⟪,⟫′_ : ∀ {A B} → ⊩ A → ⊩ B ▻ A ∧ B
-  _⟪,⟫′_ a = [app] [cpair] (reifyʳ a) , _,_ a
+  _⟪,⟫′_ a = [app] [cpair] (reifyʳ a) ⅋ _,_ a
 
 
 -- Forcing in a particular model, for sequents.
@@ -129,13 +130,16 @@ module _ {{_ : Model}} where
   lookup (pop i) (γ , b) = lookup i γ
 
   ⟦λ⟧ : ∀ {A B Γ} → [⊢] A ▻ B → ⊩ Γ , A ⇒ B → ⊩ Γ ⇒ A ▻ B
-  ⟦λ⟧ t f γ = t , λ a → f (γ , a)
+  ⟦λ⟧ t s γ = t ⅋ λ a → s (γ , a)
 
   _⟦$⟧_ : ∀ {A B Γ} → ⊩ Γ ⇒ A ▻ B → ⊩ Γ ⇒ A → ⊩ Γ ⇒ B
-  (f ⟦$⟧ g) γ = f γ ⟪$⟫ g γ
+  (s₁ ⟦$⟧ s₂) γ = s₁ γ ⟪$⟫ s₂ γ
+
+  ⟦K⟧ : ∀ {A B Γ} → ⊩ Γ ⇒ A → ⊩ Γ ⇒ B ▻ A
+  ⟦K⟧ {A} {B} a γ = ⟪K⟫ {A} {B} (a γ)
 
   ⟦S⟧ : ∀ {A B C Γ} → ⊩ Γ ⇒ A ▻ B ▻ C → ⊩ Γ ⇒ A ▻ B → ⊩ Γ ⇒ A → ⊩ Γ ⇒ C
-  ⟦S⟧ f g a γ = ⟪S⟫ (f γ) (g γ) (a γ)
+  ⟦S⟧ s₁ s₂ a γ = ⟪S⟫ (s₁ γ) (s₂ γ) (a γ)
 
   _⟦,⟧_ : ∀ {A B Γ} → ⊩ Γ ⇒ A → ⊩ Γ ⇒ B → ⊩ Γ ⇒ A ∧ B
   (a ⟦,⟧ b) γ = a γ , b γ

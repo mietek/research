@@ -28,16 +28,16 @@ module _ {{_ : Model}} where
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)   γ = lookup i γ
 eval (app t u) γ = eval t γ ⟪$⟫ eval u γ
-eval ci        γ = [ci] , I
-eval ck        γ = [ck] , ⟪K⟫
-eval cs        γ = [cs] , ⟪S⟫′
-eval (box t)   γ = [ box t ]₀ , eval t ∙
-eval cdist     γ = [cdist] , _⟪D⟫′_
-eval cup       γ = [cup] , ⟪↑⟫
-eval cdown     γ = [cdown] , ⟪↓⟫
-eval cpair     γ = [cpair] , _⟪,⟫′_
-eval cfst      γ = [cfst] , π₁
-eval csnd      γ = [csnd] , π₂
+eval ci        γ = [ci] ⅋ I
+eval ck        γ = [ck] ⅋ ⟪K⟫
+eval cs        γ = [cs] ⅋ ⟪S⟫′
+eval (box t)   γ = [ box t ]₀ ⅋ eval t ∙
+eval cdist     γ = [cdist] ⅋ _⟪D⟫′_
+eval cup       γ = [cup] ⅋ ⟪↑⟫
+eval cdown     γ = [cdown] ⅋ ⟪↓⟫
+eval cpair     γ = [cpair] ⅋ _⟪,⟫′_
+eval cfst      γ = [cfst] ⅋ π₁
+eval csnd      γ = [csnd] ⅋ π₂
 eval tt        γ = ∙
 
 

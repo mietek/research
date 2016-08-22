@@ -28,16 +28,16 @@ module _ {{_ : Model}} where
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)   γ = lookup i γ
 eval (app t u) γ = eval t γ ⟪$⟫ eval u γ
-eval ci        γ = K ([ ci ] , I)
-eval ck        γ = K ([ ck ] , ⟪K⟫)
-eval cs        γ = K ([ cs ] , ⟪S⟫′)
-eval (box t)   γ = K ([ box t ] , eval t ∙)
-eval cdist     γ = K ([ cdist ] , _⟪D⟫′_)
-eval cup       γ = K ([ cup ] , ⟪↑⟫)
-eval cdown     γ = K ([ cdown ] , ⟪↓⟫)
-eval cpair     γ = K ([ cpair ] , _⟪,⟫′_)
-eval cfst      γ = K ([ cfst ] , π₁)
-eval csnd      γ = K ([ csnd ] , π₂)
+eval ci        γ = K ([ ci ] ⅋ I)
+eval ck        γ = K ([ ck ] ⅋ ⟪K⟫)
+eval cs        γ = K ([ cs ] ⅋ ⟪S⟫′)
+eval (box t)   γ = K ([ box t ] ⅋ eval t ∙)
+eval cdist     γ = K ([ cdist ] ⅋ _⟪D⟫′_)
+eval cup       γ = K ([ cup ] ⅋ ⟪↑⟫)
+eval cdown     γ = K ([ cdown ] ⅋ ⟪↓⟫)
+eval cpair     γ = K ([ cpair ] ⅋ _⟪,⟫′_)
+eval cfst      γ = K ([ cfst ] ⅋ π₁)
+eval csnd      γ = K ([ csnd ] ⅋ π₂)
 eval tt        γ = ∙
 
 
@@ -73,18 +73,18 @@ private
 
 mutual
   reflectᶜ : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
-  reflectᶜ {α P}   t = t , t
+  reflectᶜ {α P}   t = t ⅋ t
   reflectᶜ {A ▻ B} t = λ η → let t′ = mono⊢ η t
-                              in  t′ , λ a → reflectᶜ (app t′ (reifyᶜ a))
+                              in  t′ ⅋ λ a → reflectᶜ (app t′ (reifyᶜ a))
   reflectᶜ {□ A}   t = λ η → let t′ = mono⊢ η t
-                              in  t′ , reflectᶜ (down t′)
+                              in  t′ ⅋ reflectᶜ (down t′)
   reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
   reflectᶜ {⊤}    t = ∙
 
   reifyᶜ : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
-  reifyᶜ {α P}   (t , s) = t
-  reifyᶜ {A ▻ B} s       = let t , f = s refl⊆ in t
-  reifyᶜ {□ A}   s       = let t , a = s refl⊆ in t
+  reifyᶜ {α P}   s       = syn s
+  reifyᶜ {A ▻ B} s       = syn (s refl⊆)
+  reifyᶜ {□ A}   s       = syn (s refl⊆)
   reifyᶜ {A ∧ B} (a , b) = pair (reifyᶜ a) (reifyᶜ b)
   reifyᶜ {⊤}    ∙       = tt
 

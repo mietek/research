@@ -10,9 +10,9 @@ open ImplicitSyntax (_⊢_) (mono⊢) public
 
 module _ {{_ : Model}} where
   reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
-  reify {α P}   (t , s) = t
-  reify {A ▻ B} s       = let t , f = s refl⊆ in t
-  reify {□ A}   s       = let t , f = s refl⊆ in t
+  reify {α P}   s       = syn s
+  reify {A ▻ B} s       = syn (s refl⊆)
+  reify {□ A}   s       = syn (s refl⊆)
   reify {A ∧ B} (a , b) = pair (reify a) (reify b)
   reify {⊤}    ∙       = tt
 
@@ -27,11 +27,11 @@ mutual
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
   eval (var i)         γ = lookup i γ
   eval (lam t)         γ = λ η → let γ′ = mono⊩⋆ η γ
-                                  in  multicut (reify⋆ γ′) (lam t) , λ a →
+                                  in  multicut (reify⋆ γ′) (lam t) ⅋ λ a →
                                         eval t (γ′ , a)
   eval (app t u)       γ = eval t γ ⟪$⟫ eval u γ
   eval (multibox ts u) γ = λ η → let γ′ = mono⊩⋆ η γ
-                                  in  multicut (reify⋆ γ′) (multibox ts u) ,
+                                  in  multicut (reify⋆ γ′) (multibox ts u) ⅋
                                         eval u (eval⋆ ts γ′)
   eval (down t)        γ = ⟪↓⟫ (eval t γ)
   eval (pair t u)      γ = eval t γ , eval u γ
@@ -61,11 +61,11 @@ private
 -- Soundness with respect to the canonical model.
 
 reflectᶜ : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
-reflectᶜ {α P}   t = t , t
+reflectᶜ {α P}   t = t ⅋ t
 reflectᶜ {A ▻ B} t = λ η → let t′ = mono⊢ η t
-                            in  t′ , λ a → reflectᶜ (app t′ (reify a))
+                            in  t′ ⅋ λ a → reflectᶜ (app t′ (reify a))
 reflectᶜ {□ A}   t = λ η → let t′ = mono⊢ η t
-                            in  t′ , reflectᶜ (down t′)
+                            in  t′ ⅋ reflectᶜ (down t′)
 reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
 reflectᶜ {⊤}    t = ∙
 

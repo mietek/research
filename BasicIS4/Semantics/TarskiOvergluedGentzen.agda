@@ -4,6 +4,7 @@
 module BasicIS4.Semantics.TarskiOvergluedGentzen where
 
 open import BasicIS4.Syntax.Common public
+open import Common.Semantics public
 
 
 -- Intuitionistic Tarski models.
@@ -54,9 +55,9 @@ open Model {{…}} public
 module _ {{_ : Model}} where
   infix 3 _⊩_
   _⊩_ : Cx Ty → Ty → Set
-  Γ ⊩ α P   = Γ [⊢] α P × Γ ⊩ᵅ P
-  Γ ⊩ A ▻ B = ∀ {Γ′} → Γ ⊆ Γ′ → Γ′ [⊢] A ▻ B × (Γ′ ⊩ A → Γ′ ⊩ B)
-  Γ ⊩ □ A   = ∀ {Γ′} → Γ ⊆ Γ′ → Γ′ [⊢] □ A × Γ′ ⊩ A
+  Γ ⊩ α P   = Glue (Γ [⊢] α P) (Γ ⊩ᵅ P)
+  Γ ⊩ A ▻ B = ∀ {Γ′} → Γ ⊆ Γ′ → Glue (Γ′ [⊢] A ▻ B) (Γ′ ⊩ A → Γ′ ⊩ B)
+  Γ ⊩ □ A   = ∀ {Γ′} → Γ ⊆ Γ′ → Glue (Γ′ [⊢] □ A) (Γ′ ⊩ A)
   Γ ⊩ A ∧ B = Γ ⊩ A × Γ ⊩ B
   Γ ⊩ ⊤    = 𝟙
 
@@ -70,7 +71,7 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   mono⊩ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊩ A → Γ′ ⊩ A
-  mono⊩ {α P}   η (t , s) = mono[⊢] η t , mono⊩ᵅ η s
+  mono⊩ {α P}   η s       = mono[⊢] η (syn s) ⅋ mono⊩ᵅ η (sem s)
   mono⊩ {A ▻ B} η s       = λ η′ → s (trans⊆ η η′)
   mono⊩ {□ A}   η s       = λ η′ → s (trans⊆ η η′)
   mono⊩ {A ∧ B} η (a , b) = mono⊩ {A} η a , mono⊩ {B} η b
@@ -85,9 +86,9 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   reifyʳ : ∀ {A Γ} → Γ ⊩ A → Γ [⊢] A
-  reifyʳ {α P}   (t , s) = t
-  reifyʳ {A ▻ B} s       = let t , f = s refl⊆ in t
-  reifyʳ {□ A}   s       = let t , f = s refl⊆ in t
+  reifyʳ {α P}   s       = syn s
+  reifyʳ {A ▻ B} s       = syn (s refl⊆)
+  reifyʳ {□ A}   s       = syn (s refl⊆)
   reifyʳ {A ∧ B} (a , b) = [pair] (reifyʳ {A} a) (reifyʳ {B} b)
   reifyʳ {⊤}    ∙       = [tt]
 
@@ -161,50 +162,44 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   _⟪$⟫_ : ∀ {A B Γ} → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ B
-  s ⟪$⟫ a = let t , f = s refl⊆
-            in  f a
+  s ⟪$⟫ a = sem (s refl⊆) a
 
   ⟪K⟫ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B ▻ A
   ⟪K⟫ {A} a η = let a′ = mono⊩ {A} η a
-                in  [app] [ck] (reifyʳ a′) , K a′
+                in  [app] [ck] (reifyʳ a′) ⅋ K a′
 
   ⟪S⟫ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ C
-  ⟪S⟫ s₁ s₂ a = let t , f = s₁ refl⊆
-                    u , g = s₂ refl⊆
-                    _ , h = (f a) refl⊆
-                in  h (g a)
+  ⟪S⟫ s₁ s₂ a = (s₁ ⟪$⟫ a) ⟪$⟫ (s₂ ⟪$⟫ a)
 
   ⟪S⟫′ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ (A ▻ B) ▻ A ▻ C
-  ⟪S⟫′ {A} {B} {C} s₁ η = let s₁′   = mono⊩ {A ▻ B ▻ C} η s₁
-                              t , _ = s₁′ refl⊆
-                          in  [app] [cs] t , λ s₂ η′ →
-                                let s₁″    = mono⊩ {A ▻ B ▻ C} (trans⊆ η η′) s₁
-                                    t′ , _ = s₁″ refl⊆
-                                    s₂′    = mono⊩ {A ▻ B} η′ s₂
-                                    u  , g = s₂′ refl⊆
-                                in  [app] ([app] [cs] t′) u , ⟪S⟫ s₁″ s₂′
+  ⟪S⟫′ {A} {B} {C} s₁ η = let s₁′ = mono⊩ {A ▻ B ▻ C} η s₁
+                              t   = syn (s₁′ refl⊆)
+                          in  [app] [cs] t ⅋ λ s₂ η′ →
+                                let s₁″ = mono⊩ {A ▻ B ▻ C} (trans⊆ η η′) s₁
+                                    s₂′ = mono⊩ {A ▻ B} η′ s₂
+                                    t′  = syn (s₁″ refl⊆)
+                                    u   = syn (s₂′ refl⊆)
+                                in  [app] ([app] [cs] t′) u ⅋ ⟪S⟫ s₁″ s₂′
 
   _⟪D⟫_ : ∀ {A B Γ} → Γ ⊩ □ (A ▻ B) → Γ ⊩ □ A → Γ ⊩ □ B
-  (s₁ ⟪D⟫ s₂) η = let t , f = s₁ η
-                      u , a = s₂ η
-                  in  [app] ([app] [cdist] t) u , f ⟪$⟫ a
+  (s₁ ⟪D⟫ s₂) η = let t ⅋ s₁′ = s₁ η
+                      u ⅋ a   = s₂ η
+                  in  [app] ([app] [cdist] t) u ⅋ s₁′ ⟪$⟫ a
 
   -- TODO: Report bug.
   _⟪D⟫′_ : ∀ {A B Γ} → Γ ⊩ □ (A ▻ B) → Γ ⊩ □ A ▻ □ B
-  _⟪D⟫′_ {A} {B} s η = let s′ = mono⊩ {□ (A ▻ B)} η s
-                       in  [app] [cdist] (reifyʳ (λ {Γ′} η′ → s′ η′ )) , _⟪D⟫_ s′
+  _⟪D⟫′_ {A} {B} s₁ η = let s₁′ = mono⊩ {□ (A ▻ B)} η s₁
+                        in  [app] [cdist] (reifyʳ (λ {Γ′} η′ → s₁′ η′ )) ⅋ _⟪D⟫_ s₁′
 
   ⟪↑⟫ : ∀ {A Γ} → Γ ⊩ □ A → Γ ⊩ □ □ A
-  ⟪↑⟫ s η = let t , a = s η
-            in  [app] [cup] t , λ η′ → s (trans⊆ η η′)
+  ⟪↑⟫ s η = [app] [cup] (syn (s η)) ⅋ λ η′ → s (trans⊆ η η′)
 
   ⟪↓⟫ : ∀ {A Γ} → Γ ⊩ □ A → Γ ⊩ A
-  ⟪↓⟫ s = let p , a = s refl⊆
-          in  a
+  ⟪↓⟫ s = sem (s refl⊆)
 
   _⟪,⟫′_ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B ▻ A ∧ B
   _⟪,⟫′_ {A} a η = let a′ = mono⊩ {A} η a
-                   in  [app] [cpair] (reifyʳ a′) , _,_ a′
+                   in  [app] [cpair] (reifyʳ a′) ⅋ _,_ a′
 
 
 -- Forcing in a particular world of a particular model, for sequents.
@@ -237,16 +232,14 @@ module _ {{_ : Model}} where
   lookup top     (γ , a) = a
   lookup (pop i) (γ , b) = lookup i γ
 
-  -- TODO: ⟦λ⟧
-
   _⟦$⟧_ : ∀ {A B Γ w} → w ⊩ Γ ⇒ A ▻ B → w ⊩ Γ ⇒ A → w ⊩ Γ ⇒ B
-  (f ⟦$⟧ g) γ = f γ ⟪$⟫ g γ
+  (s₁ ⟦$⟧ s₂) γ = s₁ γ ⟪$⟫ s₂ γ
 
   ⟦K⟧ : ∀ {A B Γ w} → w ⊩ Γ ⇒ A → w ⊩ Γ ⇒ B ▻ A
   ⟦K⟧ {A} {B} a γ = ⟪K⟫ {A} {B} (a γ)
 
   ⟦S⟧ : ∀ {A B C Γ w} → w ⊩ Γ ⇒ A ▻ B ▻ C → w ⊩ Γ ⇒ A ▻ B → w ⊩ Γ ⇒ A → w ⊩ Γ ⇒ C
-  ⟦S⟧ f g a γ = ⟪S⟫ (f γ) (g γ) (a γ)
+  ⟦S⟧ s₁ s₂ a γ = ⟪S⟫ (s₁ γ) (s₂ γ) (a γ)
 
   _⟦D⟧_ : ∀ {A B Γ w} → w ⊩ Γ ⇒ □ (A ▻ B) → w ⊩ Γ ⇒ □ A → w ⊩ Γ ⇒ □ B
   (s₁ ⟦D⟧ s₂) γ = (s₁ γ) ⟪D⟫ (s₂ γ)

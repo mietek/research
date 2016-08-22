@@ -4,6 +4,7 @@
 module BasicIS4.Semantics.TarskiClosedOvergluedHilbert where
 
 open import BasicIS4.Syntax.Common public
+open import Common.Semantics public
 
 
 -- Tarski models.
@@ -42,9 +43,9 @@ open Model {{…}} public
 module _ {{_ : Model}} where
   infix 3 ⊩_
   ⊩_ : Ty → Set
-  ⊩ α P   = [⊢] α P × ⊩ᵅ P
-  ⊩ A ▻ B = [⊢] A ▻ B × (⊩ A → ⊩ B)
-  ⊩ □ A   = [⊢] □ A × ⊩ A
+  ⊩ α P   = Glue ([⊢] α P) (⊩ᵅ P)
+  ⊩ A ▻ B = Glue ([⊢] A ▻ B) (⊩ A → ⊩ B)
+  ⊩ □ A   = Glue ([⊢] □ A) (⊩ A)
   ⊩ A ∧ B = ⊩ A × ⊩ B
   ⊩ ⊤    = 𝟙
 
@@ -65,9 +66,9 @@ infix 3 ⊨_
 
 module _ {{_ : Model}} where
   reifyʳ : ∀ {A} → ⊩ A → [⊢] A
-  reifyʳ {α P}   (t , s) = t
-  reifyʳ {A ▻ B} (t , f) = t
-  reifyʳ {□ A}   (t , a) = t
+  reifyʳ {α P}   s       = syn s
+  reifyʳ {A ▻ B} s       = syn s
+  reifyʳ {□ A}   s       = syn s
   reifyʳ {A ∧ B} (a , b) = [app] ([app] [cpair] (reifyʳ {A} a)) (reifyʳ {B} b)
   reifyʳ {⊤}    ∙       = [tt]
 
@@ -80,32 +81,34 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   _⟪$⟫_ : ∀ {A B} → ⊩ A ▻ B → ⊩ A → ⊩ B
-  (t , f) ⟪$⟫ a = f a
+  s ⟪$⟫ a = sem s a
 
   ⟪K⟫ : ∀ {A B} → ⊩ A → ⊩ B ▻ A
-  ⟪K⟫ a = [app] [ck] (reifyʳ a) , K a
+  ⟪K⟫ a = [app] [ck] (reifyʳ a) ⅋ K a
 
   ⟪S⟫ : ∀ {A B C} → ⊩ A ▻ B ▻ C → ⊩ A ▻ B → ⊩ A → ⊩ C
-  ⟪S⟫ (t , f) (u , g) a = let (_ , h) = f a in h (g a)
+  ⟪S⟫ s₁ s₂ a = (s₁ ⟪$⟫ a) ⟪$⟫ (s₂ ⟪$⟫ a)
 
   ⟪S⟫′ : ∀ {A B C} → ⊩ A ▻ B ▻ C → ⊩ (A ▻ B) ▻ A ▻ C
-  ⟪S⟫′ f = [app] [cs] (reifyʳ f) , λ g →
-             [app] ([app] [cs] (reifyʳ f)) (reifyʳ g) , ⟪S⟫ f g
+  ⟪S⟫′ s₁ = [app] [cs] (reifyʳ s₁) ⅋ λ s₂ →
+              [app] ([app] [cs] (reifyʳ s₁)) (reifyʳ s₂) ⅋ ⟪S⟫ s₁ s₂
 
   _⟪D⟫_ : ∀ {A B} → ⊩ □ (A ▻ B) → ⊩ □ A → ⊩ □ B
-  (t , f) ⟪D⟫ (u , a) = [app] ([app] [cdist] t) u , f ⟪$⟫ a
+  s₁ ⟪D⟫ s₂ = let t ⅋ s₁′ = s₁
+                  u ⅋ a   = s₂
+              in  [app] ([app] [cdist] t) u ⅋ s₁′ ⟪$⟫ a
 
   _⟪D⟫′_ : ∀ {A B} → ⊩ □ (A ▻ B) → ⊩ □ A ▻ □ B
-  _⟪D⟫′_ s = [app] [cdist] (reifyʳ s) , _⟪D⟫_ s
+  _⟪D⟫′_ s₁ = [app] [cdist] (reifyʳ s₁) ⅋ _⟪D⟫_ s₁
 
   ⟪↑⟫ : ∀ {A} → ⊩ □ A → ⊩ □ □ A
-  ⟪↑⟫ (t , a) = [box] t , (t , a)
+  ⟪↑⟫ s = [box] (syn s) ⅋ s
 
   ⟪↓⟫ : ∀ {A} → ⊩ □ A → ⊩ A
-  ⟪↓⟫ (t , a) = a
+  ⟪↓⟫ s = sem s
 
   _⟪,⟫′_ : ∀ {A B} → ⊩ A → ⊩ B ▻ A ∧ B
-  _⟪,⟫′_ a = [app] [cpair] (reifyʳ a) , _,_ a
+  _⟪,⟫′_ a = [app] [cpair] (reifyʳ a) ⅋ _,_ a
 
 
 -- Forcing in a particular model, for sequents.
@@ -139,13 +142,13 @@ module _ {{_ : Model}} where
   lookup (pop i) (γ , b) = lookup i γ
 
   ⟦λ⟧ : ∀ {A B Γ} → [⊢] A ▻ B → ⊩ Γ , A ⇒ B → ⊩ Γ ⇒ A ▻ B
-  ⟦λ⟧ t f γ = t , λ a → f (γ , a)
+  ⟦λ⟧ t s γ = t ⅋ λ a → s (γ , a)
 
   _⟦$⟧_ : ∀ {A B Γ} → ⊩ Γ ⇒ A ▻ B → ⊩ Γ ⇒ A → ⊩ Γ ⇒ B
-  (f ⟦$⟧ g) γ = f γ ⟪$⟫ g γ
+  (s₁ ⟦$⟧ s₂) γ = s₁ γ ⟪$⟫ s₂ γ
 
   ⟦S⟧ : ∀ {A B C Γ} → ⊩ Γ ⇒ A ▻ B ▻ C → ⊩ Γ ⇒ A ▻ B → ⊩ Γ ⇒ A → ⊩ Γ ⇒ C
-  ⟦S⟧ f g a γ = ⟪S⟫ (f γ) (g γ) (a γ)
+  ⟦S⟧ s₁ s₂ a γ = ⟪S⟫ (s₁ γ) (s₂ γ) (a γ)
 
   _⟦D⟧_ : ∀ {A B Γ} → ⊩ Γ ⇒ □ (A ▻ B) → ⊩ Γ ⇒ □ A → ⊩ Γ ⇒ □ B
   (s₁ ⟦D⟧ s₂) γ = (s₁ γ) ⟪D⟫ (s₂ γ)

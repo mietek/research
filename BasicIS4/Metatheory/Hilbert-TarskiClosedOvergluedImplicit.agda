@@ -10,9 +10,9 @@ open ImplicitSyntax (⌀ ⊢_) public
 
 module _ {{_ : Model}} where
   reify : ∀ {A} → ⊩ A → ⌀ ⊢ A
-  reify {α P}   (t , s) = t
-  reify {A ▻ B} (t , f) = t
-  reify {□ A}   (t , a) = t
+  reify {α P}   s       = syn s
+  reify {A ▻ B} s       = syn s
+  reify {□ A}   s       = syn s
   reify {A ∧ B} (a , b) = pair (reify a) (reify b)
   reify {⊤}    ∙       = tt
 
@@ -21,23 +21,23 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   ⟪K⟫ : ∀ {A B} → ⊩ A → ⊩ B ▻ A
-  ⟪K⟫ a = app ck (reify a) , K a
+  ⟪K⟫ a = app ck (reify a) ⅋ K a
 
   ⟪S⟫′ : ∀ {A B C} → ⊩ A ▻ B ▻ C → ⊩ (A ▻ B) ▻ A ▻ C
-  ⟪S⟫′ f = app cs (reify f) , λ g →
-              app (app cs (reify f)) (reify g) , ⟪S⟫ f g
+  ⟪S⟫′ s₁ = app cs (reify s₁) ⅋ λ s₂ →
+              app (app cs (reify s₁)) (reify s₂) ⅋ ⟪S⟫ s₁ s₂
 
   _⟪D⟫_ : ∀ {A B} → ⊩ □ (A ▻ B) → ⊩ □ A → ⊩ □ B
-  (t , f) ⟪D⟫ (u , a) = app (app cdist t) u , f ⟪$⟫ a
+  (t ⅋ s) ⟪D⟫ (u ⅋ a) = app (app cdist t) u ⅋ s ⟪$⟫ a
 
   _⟪D⟫′_ : ∀ {A B} → ⊩ □ (A ▻ B) → ⊩ □ A ▻ □ B
-  _⟪D⟫′_ s = app cdist (reify s) , _⟪D⟫_ s
+  _⟪D⟫′_ s = app cdist (reify s) ⅋ _⟪D⟫_ s
 
   ⟪↑⟫ : ∀ {A} → ⊩ □ A → ⊩ □ □ A
-  ⟪↑⟫ (t , a) = box t , (t , a)
+  ⟪↑⟫ s = box (syn s) ⅋ s
 
   _⟪,⟫′_ : ∀ {A B} → ⊩ A → ⊩ B ▻ A ∧ B
-  _⟪,⟫′_ a = app cpair (reify a) , _,_ a
+  _⟪,⟫′_ a = app cpair (reify a) ⅋ _,_ a
 
 
 -- Additional useful equipment, for sequents.
@@ -55,16 +55,16 @@ module _ {{_ : Model}} where
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)   γ = lookup i γ
 eval (app t u) γ = eval t γ ⟪$⟫ eval u γ
-eval ci        γ = ci , I
-eval ck        γ = ck , ⟪K⟫
-eval cs        γ = cs , ⟪S⟫′
-eval (box t)   γ = box t , eval t ∙
-eval cdist     γ = cdist , _⟪D⟫′_
-eval cup       γ = cup , ⟪↑⟫
-eval cdown     γ = cdown , ⟪↓⟫
-eval cpair     γ = cpair , _⟪,⟫′_
-eval cfst      γ = cfst , π₁
-eval csnd      γ = csnd , π₂
+eval ci        γ = ci ⅋ I
+eval ck        γ = ck ⅋ ⟪K⟫
+eval cs        γ = cs ⅋ ⟪S⟫′
+eval (box t)   γ = box t ⅋ eval t ∙
+eval cdist     γ = cdist ⅋ _⟪D⟫′_
+eval cup       γ = cup ⅋ ⟪↑⟫
+eval cdown     γ = cdown ⅋ ⟪↓⟫
+eval cpair     γ = cpair ⅋ _⟪,⟫′_
+eval cfst      γ = cfst ⅋ π₁
+eval csnd      γ = csnd ⅋ π₂
 eval tt        γ = ∙
 
 

@@ -10,9 +10,9 @@ open ImplicitSyntax (⊢_) public
 
 module _ {{_ : Model}} where
   reify : ∀ {A} → ⊩ A → ⊢ A
-  reify {α P}   (t , s) = t
-  reify {A ▻ B} (t , f) = t
-  reify {□ A}   (t , a) = t
+  reify {α P}   s       = syn s
+  reify {A ▻ B} s       = syn s
+  reify {□ A}   s       = syn s
   reify {A ∧ B} (a , b) = pair (reify a) (reify b)
   reify {⊤}    ∙       = tt
 
@@ -21,39 +21,39 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   ⟪K⟫ : ∀ {A B} → ⊩ A → ⊩ B ▻ A
-  ⟪K⟫ a = app ck (reify a) , K a
+  ⟪K⟫ a = app ck (reify a) ⅋ K a
 
   ⟪S⟫′ : ∀ {A B C} → ⊩ A ▻ B ▻ C → ⊩ (A ▻ B) ▻ A ▻ C
-  ⟪S⟫′ f = app cs (reify f) , λ g →
-             app (app cs (reify f)) (reify g) , ⟪S⟫ f g
+  ⟪S⟫′ s₁ = app cs (reify s₁) ⅋ λ s₂ →
+              app (app cs (reify s₁)) (reify s₂) ⅋ ⟪S⟫ s₁ s₂
 
   _⟪D⟫_ : ∀ {A B} → ⊩ □ (A ▻ B) → ⊩ □ A → ⊩ □ B
-  (t , f) ⟪D⟫ (u , a) = app (app cdist t) u , f ⟪$⟫ a
+  (t ⅋ s) ⟪D⟫ (u ⅋ a) = app (app cdist t) u ⅋ s ⟪$⟫ a
 
   _⟪D⟫′_ : ∀ {A B} → ⊩ □ (A ▻ B) → ⊩ □ A ▻ □ B
-  _⟪D⟫′_ s = app cdist (reify s) , _⟪D⟫_ s
+  _⟪D⟫′_ s = app cdist (reify s) ⅋ _⟪D⟫_ s
 
   ⟪↑⟫ : ∀ {A} → ⊩ □ A → ⊩ □ □ A
-  ⟪↑⟫ (t , a) = box t , (t , a)
+  ⟪↑⟫ s = box (syn s) ⅋ s
 
   _⟪,⟫′_ : ∀ {A B} → ⊩ A → ⊩ B ▻ A ∧ B
-  _⟪,⟫′_ a = app cpair (reify a) , _,_ a
+  _⟪,⟫′_ a = app cpair (reify a) ⅋ _,_ a
 
 
 -- Soundness with respect to all models, or evaluation, for closed terms only.
 
 eval₀ : ∀ {A} → ⊢ A → ⊨ A
 eval₀ (app t u) = eval₀ t ⟪$⟫ eval₀ u
-eval₀ ci        = ci , I
-eval₀ ck        = ck , ⟪K⟫
-eval₀ cs        = cs , ⟪S⟫′
-eval₀ (box t)   = box t , eval₀ t
-eval₀ cdist     = cdist , _⟪D⟫′_
-eval₀ cup       = cup , ⟪↑⟫
-eval₀ cdown     = cdown , ⟪↓⟫
-eval₀ cpair     = cpair , _⟪,⟫′_
-eval₀ cfst      = cfst , π₁
-eval₀ csnd      = csnd , π₂
+eval₀ ci        = ci ⅋ I
+eval₀ ck        = ck ⅋ ⟪K⟫
+eval₀ cs        = cs ⅋ ⟪S⟫′
+eval₀ (box t)   = box t ⅋ eval₀ t
+eval₀ cdist     = cdist ⅋ _⟪D⟫′_
+eval₀ cup       = cup ⅋ ⟪↑⟫
+eval₀ cdown     = cdown ⅋ ⟪↓⟫
+eval₀ cpair     = cpair ⅋ _⟪,⟫′_
+eval₀ cfst      = cfst ⅋ π₁
+eval₀ csnd      = csnd ⅋ π₂
 eval₀ tt        = ∙
 
 

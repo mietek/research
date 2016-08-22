@@ -10,8 +10,8 @@ open ImplicitSyntax (⌀ ⊢_) public
 
 module _ {{_ : Model}} where
   reify : ∀ {A} → ⊩ A → ⌀ ⊢ A
-  reify {α P}   (t , s) = t
-  reify {A ▻ B} (t , f) = t
+  reify {α P}   s       = syn s
+  reify {A ▻ B} s       = syn s
   reify {A ∧ B} (a , b) = pair (reify a) (reify b)
   reify {⊤}    ∙       = tt
 
@@ -20,14 +20,14 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   ⟪K⟫ : ∀ {A B} → ⊩ A → ⊩ B ▻ A
-  ⟪K⟫ a = app ck (reify a) , K a
+  ⟪K⟫ a = app ck (reify a) ⅋ K a
 
   ⟪S⟫′ : ∀ {A B C} → ⊩ A ▻ B ▻ C → ⊩ (A ▻ B) ▻ A ▻ C
-  ⟪S⟫′ f = app cs (reify f) , λ g →
-             app (app cs (reify f)) (reify g) , ⟪S⟫ f g
+  ⟪S⟫′ s₁ = app cs (reify s₁) ⅋ λ s₂ →
+              app (app cs (reify s₁)) (reify s₂) ⅋ ⟪S⟫ s₁ s₂
 
   _⟪,⟫′_ : ∀ {A B} → ⊩ A → ⊩ B ▻ A ∧ B
-  _⟪,⟫′_ a = app cpair (reify a) , _,_ a
+  _⟪,⟫′_ a = app cpair (reify a) ⅋ _,_ a
 
 
 -- Soundness with respect to all models, or evaluation.
@@ -35,12 +35,12 @@ module _ {{_ : Model}} where
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)   γ = lookup i γ
 eval (app t u) γ = eval t γ ⟪$⟫ eval u γ
-eval ci        γ = ci , I
-eval ck        γ = ck , ⟪K⟫
-eval cs        γ = cs , ⟪S⟫′
-eval cpair     γ = cpair , _⟪,⟫′_
-eval cfst      γ = cfst , π₁
-eval csnd      γ = csnd , π₂
+eval ci        γ = ci ⅋ I
+eval ck        γ = ck ⅋ ⟪K⟫
+eval cs        γ = cs ⅋ ⟪S⟫′
+eval cpair     γ = cpair ⅋ _⟪,⟫′_
+eval cfst      γ = cfst ⅋ π₁
+eval csnd      γ = csnd ⅋ π₂
 eval tt        γ = ∙
 
 

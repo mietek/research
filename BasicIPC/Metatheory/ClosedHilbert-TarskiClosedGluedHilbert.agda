@@ -22,12 +22,12 @@ module _ {{_ : Model}} where
 
 eval₀ : ∀ {A} → ⊢ A → ⊨ A
 eval₀ (app t u) = eval₀ t ⟪$⟫ eval₀ u
-eval₀ ci        = [ci] , I
-eval₀ ck        = [ck] , ⟪K⟫
-eval₀ cs        = [cs] , ⟪S⟫′
-eval₀ cpair     = [cpair] , _⟪,⟫′_
-eval₀ cfst      = [cfst] , π₁
-eval₀ csnd      = [csnd] , π₂
+eval₀ ci        = [ci] ⅋ I
+eval₀ ck        = [ck] ⅋ ⟪K⟫
+eval₀ cs        = [cs] ⅋ ⟪S⟫′
+eval₀ cpair     = [cpair] ⅋ _⟪,⟫′_
+eval₀ cfst      = [cfst] ⅋ π₁
+eval₀ csnd      = [csnd] ⅋ π₂
 eval₀ tt        = ∙
 
 

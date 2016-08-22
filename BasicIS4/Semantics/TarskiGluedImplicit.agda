@@ -4,6 +4,7 @@
 module BasicIS4.Semantics.TarskiGluedImplicit where
 
 open import BasicIS4.Syntax.Common public
+open import Common.Semantics public
 
 
 -- Intuitionistic Tarski models.
@@ -32,7 +33,7 @@ module ImplicitSyntax
     _⊩_ : Cx Ty → Ty → Set
     Γ ⊩ α P   = Γ ⊩ᵅ P
     Γ ⊩ A ▻ B = ∀ {Γ′} → Γ ⊆ Γ′ → Γ′ ⊩ A → Γ′ ⊩ B
-    Γ ⊩ □ A   = ∀ {Γ′} → Γ ⊆ Γ′ → Γ′ [⊢] (□ A) × Γ′ ⊩ A
+    Γ ⊩ □ A   = ∀ {Γ′} → Γ ⊆ Γ′ → Glue (Γ′ [⊢] (□ A)) (Γ′ ⊩ A)
     Γ ⊩ A ∧ B = Γ ⊩ A × Γ ⊩ B
     Γ ⊩ ⊤    = 𝟙
 
@@ -61,29 +62,24 @@ module ImplicitSyntax
 
   module _ {{_ : Model}} where
     _⟪$⟫_ : ∀ {A B Γ} → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ B
-    f ⟪$⟫ a = f refl⊆ a
+    s ⟪$⟫ a = s refl⊆ a
 
     ⟪K⟫ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B ▻ A
     ⟪K⟫ {A} a η = K (mono⊩ {A} η a)
 
-    ⟪S⟫′ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ (A ▻ B) ▻ A ▻ C
-    ⟪S⟫′ {A} {B} {C} f η g η′ a = let f′ = mono⊩ {A ▻ B ▻ C} (trans⊆ η η′) f
-                                      g′ = mono⊩ {A ▻ B} η′ g
-                                  in  (f′ refl⊆ a) refl⊆ (g′ refl⊆ a)
-
     ⟪S⟫ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ C
-    ⟪S⟫ {A} {B} {C} f g a = ⟪S⟫′ {A} {B} {C} f refl⊆ g refl⊆ a
+    ⟪S⟫ {A} {B} {C} s₁ s₂ a = _⟪$⟫_ {B} {C} (_⟪$⟫_ {A} {B ▻ C} s₁ a) (_⟪$⟫_ {A} {B} s₂ a)
+
+    ⟪S⟫′ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ (A ▻ B) ▻ A ▻ C
+    ⟪S⟫′ {A} {B} {C} s₁ η s₂ η′ a = let s₁′ = mono⊩ {A ▻ B ▻ C} (trans⊆ η η′) s₁
+                                        s₂′ = mono⊩ {A ▻ B} η′ s₂
+                                    in  ⟪S⟫ {A} {B} {C} s₁′ s₂′ a
 
     ⟪↓⟫ : ∀ {A Γ} → Γ ⊩ □ A → Γ ⊩ A
-    ⟪↓⟫ s = let p , a = s refl⊆
-            in  a
+    ⟪↓⟫ s = sem (s refl⊆)
 
     _⟪,⟫′_ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B ▻ A ∧ B
-    _⟪,⟫′_ {A} {B} a η b = let a′ = mono⊩ {A} η a
-                           in  a′ , b
-
-    _⟪,⟫_ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B → Γ ⊩ A ∧ B
-    _⟪,⟫_ {A} {B} a b = _⟪,⟫′_ {A} {B} a refl⊆ b
+    _⟪,⟫′_ {A} {B} a η b = mono⊩ {A} η a , b
 
 
   -- Forcing in a particular world of a particular model, for sequents.
@@ -116,16 +112,14 @@ module ImplicitSyntax
     lookup top     (γ , a) = a
     lookup (pop i) (γ , b) = lookup i γ
 
-    -- TODO: ⟦λ⟧
-
     _⟦$⟧_ : ∀ {A B Γ w} → w ⊩ Γ ⇒ A ▻ B → w ⊩ Γ ⇒ A → w ⊩ Γ ⇒ B
-    _⟦$⟧_ {A} {B} f g γ = _⟪$⟫_ {A} {B} (f γ) (g γ)
+    _⟦$⟧_ {A} {B} s₁ s₂ γ = _⟪$⟫_ {A} {B} (s₁ γ) (s₂ γ)
 
     ⟦K⟧ : ∀ {A B Γ w} → w ⊩ Γ ⇒ A → w ⊩ Γ ⇒ B ▻ A
     ⟦K⟧ {A} {B} a γ = ⟪K⟫ {A} {B} (a γ)
 
     ⟦S⟧ : ∀ {A B C Γ w} → w ⊩ Γ ⇒ A ▻ B ▻ C → w ⊩ Γ ⇒ A ▻ B → w ⊩ Γ ⇒ A → w ⊩ Γ ⇒ C
-    ⟦S⟧ {A} {B} {C} f g a γ = ⟪S⟫ {A} {B} {C} (f γ) (g γ) (a γ)
+    ⟦S⟧ {A} {B} {C} s₁ s₂ a γ = ⟪S⟫ {A} {B} {C} (s₁ γ) (s₂ γ) (a γ)
 
     ⟦↓⟧ : ∀ {A Γ w} → w ⊩ Γ ⇒ □ A → w ⊩ Γ ⇒ A
     ⟦↓⟧ s γ = ⟪↓⟫ (s γ)
