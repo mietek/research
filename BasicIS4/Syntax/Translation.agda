@@ -14,10 +14,10 @@ import BasicIS4.Syntax.DyadicHilbert as DH
 import BasicIS4.Syntax.DyadicGentzen as DG
 import BasicIS4.Syntax.LabelledGentzen as LG
 
-open HS using () renaming (_⊢×_ to HS⟨_⊢×_⟩ ; _⊢_ to HS⟨_⊢_⟩) public
+open HS using () renaming (_⊦⊢_ to HS⟨_⊦⊢_⟩ ; _⊢_ to HS⟨_⊢_⟩) public
 open H using () renaming (_⊢_ to H⟨_⊢_⟩ ; _⊢⋆_ to H⟨_⊢⋆_⟩) public
 open G using () renaming (_⊢_ to G⟨_⊢_⟩ ; _⊢⋆_ to G⟨_⊢⋆_⟩) public
-open DHS using () renaming (_⁏_⊢×_ to DHS⟨_⁏_⊢×_⟩ ; _⁏_⊢_ to DHS⟨_⁏_⊢_⟩) public
+open DHS using () renaming (_⁏_⊦⊢_ to DHS⟨_⁏_⊦⊢_⟩ ; _⁏_⊢_ to DHS⟨_⁏_⊢_⟩) public
 open DH using () renaming (_⁏_⊢_ to DH⟨_⁏_⊢_⟩) public
 open DG using () renaming (_⁏_⊢_ to DG⟨_⁏_⊢_⟩ ; _⁏_⊢⋆_ to DG⟨_⁏_⊢⋆_⟩) public
 open LG using (_↝_) renaming (_⁏_⊢_◎_ to LG⟨_⁏_⊢_◎_⟩ ; _⁏_⊢⋆_◎_ to LG⟨_⁏_⊢⋆_◎_⟩) public
@@ -56,33 +56,33 @@ open LG using (_↝_) renaming (_⁏_⊢_◎_ to LG⟨_⁏_⊢_◎_⟩ ; _⁏_�
 -- Translation from closed Hilbert-style linear to closed Hilbert-style.
 
 chs→ch : ∀ {A} → CHS.⊢ A → CH.⊢ A
-chs→ch (Ξ , ts) = chs×→ch ts top
+chs→ch (Ξ , ts) = chs⊦→ch ts top
   where
-    chs×→ch : ∀ {A Ξ} → CHS.⊢× Ξ → A ∈ Ξ → CH.⊢ A
-    chs×→ch (CHS.mp i j ts) top     = CH.app (chs×→ch ts i) (chs×→ch ts j)
-    chs×→ch (CHS.ci ts)     top     = CH.ci
-    chs×→ch (CHS.ck ts)     top     = CH.ck
-    chs×→ch (CHS.cs ts)     top     = CH.cs
-    chs×→ch (CHS.nec ss ts) top     = CH.box (chs×→ch ss top)
-    chs×→ch (CHS.cdist ts)  top     = CH.cdist
-    chs×→ch (CHS.cup ts)    top     = CH.cup
-    chs×→ch (CHS.cdown ts)  top     = CH.cdown
-    chs×→ch (CHS.cpair ts)  top     = CH.cpair
-    chs×→ch (CHS.cfst ts)   top     = CH.cfst
-    chs×→ch (CHS.csnd ts)   top     = CH.csnd
-    chs×→ch (CHS.tt ts)     top     = CH.tt
-    chs×→ch (CHS.mp i j ts) (pop k) = chs×→ch ts k
-    chs×→ch (CHS.ci ts)     (pop k) = chs×→ch ts k
-    chs×→ch (CHS.ck ts)     (pop k) = chs×→ch ts k
-    chs×→ch (CHS.cs ts)     (pop k) = chs×→ch ts k
-    chs×→ch (CHS.nec ss ts) (pop k) = chs×→ch ts k
-    chs×→ch (CHS.cdist ts)  (pop k) = chs×→ch ts k
-    chs×→ch (CHS.cup ts)    (pop k) = chs×→ch ts k
-    chs×→ch (CHS.cdown ts)  (pop k) = chs×→ch ts k
-    chs×→ch (CHS.cpair ts)  (pop k) = chs×→ch ts k
-    chs×→ch (CHS.cfst ts)   (pop k) = chs×→ch ts k
-    chs×→ch (CHS.csnd ts)   (pop k) = chs×→ch ts k
-    chs×→ch (CHS.tt ts)     (pop k) = chs×→ch ts k
+    chs⊦→ch : ∀ {A Ξ} → CHS.⊦⊢ Ξ → A ∈ Ξ → CH.⊢ A
+    chs⊦→ch (CHS.mp i j ts) top     = CH.app (chs⊦→ch ts i) (chs⊦→ch ts j)
+    chs⊦→ch (CHS.ci ts)     top     = CH.ci
+    chs⊦→ch (CHS.ck ts)     top     = CH.ck
+    chs⊦→ch (CHS.cs ts)     top     = CH.cs
+    chs⊦→ch (CHS.nec ss ts) top     = CH.box (chs⊦→ch ss top)
+    chs⊦→ch (CHS.cdist ts)  top     = CH.cdist
+    chs⊦→ch (CHS.cup ts)    top     = CH.cup
+    chs⊦→ch (CHS.cdown ts)  top     = CH.cdown
+    chs⊦→ch (CHS.cpair ts)  top     = CH.cpair
+    chs⊦→ch (CHS.cfst ts)   top     = CH.cfst
+    chs⊦→ch (CHS.csnd ts)   top     = CH.csnd
+    chs⊦→ch (CHS.tt ts)     top     = CH.tt
+    chs⊦→ch (CHS.mp i j ts) (pop k) = chs⊦→ch ts k
+    chs⊦→ch (CHS.ci ts)     (pop k) = chs⊦→ch ts k
+    chs⊦→ch (CHS.ck ts)     (pop k) = chs⊦→ch ts k
+    chs⊦→ch (CHS.cs ts)     (pop k) = chs⊦→ch ts k
+    chs⊦→ch (CHS.nec ss ts) (pop k) = chs⊦→ch ts k
+    chs⊦→ch (CHS.cdist ts)  (pop k) = chs⊦→ch ts k
+    chs⊦→ch (CHS.cup ts)    (pop k) = chs⊦→ch ts k
+    chs⊦→ch (CHS.cdown ts)  (pop k) = chs⊦→ch ts k
+    chs⊦→ch (CHS.cpair ts)  (pop k) = chs⊦→ch ts k
+    chs⊦→ch (CHS.cfst ts)   (pop k) = chs⊦→ch ts k
+    chs⊦→ch (CHS.csnd ts)   (pop k) = chs⊦→ch ts k
+    chs⊦→ch (CHS.tt ts)     (pop k) = chs⊦→ch ts k
 
 
 -- Translation from closed Hilbert-style to closed Hilbert-style linear.
@@ -105,35 +105,35 @@ ch→chs CH.tt        = ⌀ , CHS.tt CHS.nil
 -- Translation from Hilbert-style linear to Hilbert-style.
 
 hs→h : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → H⟨ Γ ⊢ A ⟩
-hs→h (Ξ , ts) = hs×→h ts top
+hs→h (Ξ , ts) = hs⊦→h ts top
   where
-    hs×→h : ∀ {A Ξ Γ} → HS⟨ Γ ⊢× Ξ ⟩ → A ∈ Ξ → H⟨ Γ ⊢ A ⟩
-    hs×→h (HS.var i ts)  top     = H.var i
-    hs×→h (HS.mp i j ts) top     = H.app (hs×→h ts i) (hs×→h ts j)
-    hs×→h (HS.ci ts)     top     = H.ci
-    hs×→h (HS.ck ts)     top     = H.ck
-    hs×→h (HS.cs ts)     top     = H.cs
-    hs×→h (HS.nec ss ts) top     = H.box (hs×→h ss top)
-    hs×→h (HS.cdist ts)  top     = H.cdist
-    hs×→h (HS.cup ts)    top     = H.cup
-    hs×→h (HS.cdown ts)  top     = H.cdown
-    hs×→h (HS.cpair ts)  top     = H.cpair
-    hs×→h (HS.cfst ts)   top     = H.cfst
-    hs×→h (HS.csnd ts)   top     = H.csnd
-    hs×→h (HS.tt ts)     top     = H.tt
-    hs×→h (HS.var i ts)  (pop k) = hs×→h ts k
-    hs×→h (HS.mp i j ts) (pop k) = hs×→h ts k
-    hs×→h (HS.ci ts)     (pop k) = hs×→h ts k
-    hs×→h (HS.ck ts)     (pop k) = hs×→h ts k
-    hs×→h (HS.cs ts)     (pop k) = hs×→h ts k
-    hs×→h (HS.nec ss ts) (pop k) = hs×→h ts k
-    hs×→h (HS.cdist ts)  (pop k) = hs×→h ts k
-    hs×→h (HS.cup ts)    (pop k) = hs×→h ts k
-    hs×→h (HS.cdown ts)  (pop k) = hs×→h ts k
-    hs×→h (HS.cpair ts)  (pop k) = hs×→h ts k
-    hs×→h (HS.cfst ts)   (pop k) = hs×→h ts k
-    hs×→h (HS.csnd ts)   (pop k) = hs×→h ts k
-    hs×→h (HS.tt ts)     (pop k) = hs×→h ts k
+    hs⊦→h : ∀ {A Ξ Γ} → HS⟨ Γ ⊦⊢ Ξ ⟩ → A ∈ Ξ → H⟨ Γ ⊢ A ⟩
+    hs⊦→h (HS.var i ts)  top     = H.var i
+    hs⊦→h (HS.mp i j ts) top     = H.app (hs⊦→h ts i) (hs⊦→h ts j)
+    hs⊦→h (HS.ci ts)     top     = H.ci
+    hs⊦→h (HS.ck ts)     top     = H.ck
+    hs⊦→h (HS.cs ts)     top     = H.cs
+    hs⊦→h (HS.nec ss ts) top     = H.box (hs⊦→h ss top)
+    hs⊦→h (HS.cdist ts)  top     = H.cdist
+    hs⊦→h (HS.cup ts)    top     = H.cup
+    hs⊦→h (HS.cdown ts)  top     = H.cdown
+    hs⊦→h (HS.cpair ts)  top     = H.cpair
+    hs⊦→h (HS.cfst ts)   top     = H.cfst
+    hs⊦→h (HS.csnd ts)   top     = H.csnd
+    hs⊦→h (HS.tt ts)     top     = H.tt
+    hs⊦→h (HS.var i ts)  (pop k) = hs⊦→h ts k
+    hs⊦→h (HS.mp i j ts) (pop k) = hs⊦→h ts k
+    hs⊦→h (HS.ci ts)     (pop k) = hs⊦→h ts k
+    hs⊦→h (HS.ck ts)     (pop k) = hs⊦→h ts k
+    hs⊦→h (HS.cs ts)     (pop k) = hs⊦→h ts k
+    hs⊦→h (HS.nec ss ts) (pop k) = hs⊦→h ts k
+    hs⊦→h (HS.cdist ts)  (pop k) = hs⊦→h ts k
+    hs⊦→h (HS.cup ts)    (pop k) = hs⊦→h ts k
+    hs⊦→h (HS.cdown ts)  (pop k) = hs⊦→h ts k
+    hs⊦→h (HS.cpair ts)  (pop k) = hs⊦→h ts k
+    hs⊦→h (HS.cfst ts)   (pop k) = hs⊦→h ts k
+    hs⊦→h (HS.csnd ts)   (pop k) = hs⊦→h ts k
+    hs⊦→h (HS.tt ts)     (pop k) = hs⊦→h ts k
 
 
 -- Translation from Hilbert-style to Hilbert-style linear.
@@ -157,37 +157,37 @@ h→hs H.tt        = ⌀ , HS.tt HS.nil
 -- Translation from dyadic Hilbert-style linear to dyadic Hilbert-style.
 
 dhs→dh : ∀ {A Γ Δ} → DHS⟨ Γ ⁏ Δ ⊢ A ⟩ → DH⟨ Γ ⁏ Δ ⊢ A ⟩
-dhs→dh (Ξ , ts) = dhs×→dh ts top
+dhs→dh (Ξ , ts) = dhs⊦→dh ts top
   where
-    dhs×→dh : ∀ {A Ξ Γ Δ} → DHS⟨ Γ ⁏ Δ ⊢× Ξ ⟩ → A ∈ Ξ → DH⟨ Γ ⁏ Δ ⊢ A ⟩
-    dhs×→dh (DHS.var i ts)  top     = DH.var i
-    dhs×→dh (DHS.mp i j ts) top     = DH.app (dhs×→dh ts i) (dhs×→dh ts j)
-    dhs×→dh (DHS.ci ts)     top     = DH.ci
-    dhs×→dh (DHS.ck ts)     top     = DH.ck
-    dhs×→dh (DHS.cs ts)     top     = DH.cs
-    dhs×→dh (DHS.mvar i ts) top     = DH.mvar i
-    dhs×→dh (DHS.nec ss ts) top     = DH.box (dhs×→dh ss top)
-    dhs×→dh (DHS.cdist ts)  top     = DH.cdist
-    dhs×→dh (DHS.cup ts)    top     = DH.cup
-    dhs×→dh (DHS.cdown ts)  top     = DH.cdown
-    dhs×→dh (DHS.cpair ts)  top     = DH.cpair
-    dhs×→dh (DHS.cfst ts)   top     = DH.cfst
-    dhs×→dh (DHS.csnd ts)   top     = DH.csnd
-    dhs×→dh (DHS.tt ts)     top     = DH.tt
-    dhs×→dh (DHS.var i ts)  (pop k) = dhs×→dh ts k
-    dhs×→dh (DHS.mp i j ts) (pop k) = dhs×→dh ts k
-    dhs×→dh (DHS.ci ts)     (pop k) = dhs×→dh ts k
-    dhs×→dh (DHS.ck ts)     (pop k) = dhs×→dh ts k
-    dhs×→dh (DHS.cs ts)     (pop k) = dhs×→dh ts k
-    dhs×→dh (DHS.mvar i ts) (pop k) = dhs×→dh ts k
-    dhs×→dh (DHS.nec ss ts) (pop k) = dhs×→dh ts k
-    dhs×→dh (DHS.cdist ts)  (pop k) = dhs×→dh ts k
-    dhs×→dh (DHS.cup ts)    (pop k) = dhs×→dh ts k
-    dhs×→dh (DHS.cdown ts)  (pop k) = dhs×→dh ts k
-    dhs×→dh (DHS.cpair ts)  (pop k) = dhs×→dh ts k
-    dhs×→dh (DHS.cfst ts)   (pop k) = dhs×→dh ts k
-    dhs×→dh (DHS.csnd ts)   (pop k) = dhs×→dh ts k
-    dhs×→dh (DHS.tt ts)     (pop k) = dhs×→dh ts k
+    dhs⊦→dh : ∀ {A Ξ Γ Δ} → DHS⟨ Γ ⁏ Δ ⊦⊢ Ξ ⟩ → A ∈ Ξ → DH⟨ Γ ⁏ Δ ⊢ A ⟩
+    dhs⊦→dh (DHS.var i ts)  top     = DH.var i
+    dhs⊦→dh (DHS.mp i j ts) top     = DH.app (dhs⊦→dh ts i) (dhs⊦→dh ts j)
+    dhs⊦→dh (DHS.ci ts)     top     = DH.ci
+    dhs⊦→dh (DHS.ck ts)     top     = DH.ck
+    dhs⊦→dh (DHS.cs ts)     top     = DH.cs
+    dhs⊦→dh (DHS.mvar i ts) top     = DH.mvar i
+    dhs⊦→dh (DHS.nec ss ts) top     = DH.box (dhs⊦→dh ss top)
+    dhs⊦→dh (DHS.cdist ts)  top     = DH.cdist
+    dhs⊦→dh (DHS.cup ts)    top     = DH.cup
+    dhs⊦→dh (DHS.cdown ts)  top     = DH.cdown
+    dhs⊦→dh (DHS.cpair ts)  top     = DH.cpair
+    dhs⊦→dh (DHS.cfst ts)   top     = DH.cfst
+    dhs⊦→dh (DHS.csnd ts)   top     = DH.csnd
+    dhs⊦→dh (DHS.tt ts)     top     = DH.tt
+    dhs⊦→dh (DHS.var i ts)  (pop k) = dhs⊦→dh ts k
+    dhs⊦→dh (DHS.mp i j ts) (pop k) = dhs⊦→dh ts k
+    dhs⊦→dh (DHS.ci ts)     (pop k) = dhs⊦→dh ts k
+    dhs⊦→dh (DHS.ck ts)     (pop k) = dhs⊦→dh ts k
+    dhs⊦→dh (DHS.cs ts)     (pop k) = dhs⊦→dh ts k
+    dhs⊦→dh (DHS.mvar i ts) (pop k) = dhs⊦→dh ts k
+    dhs⊦→dh (DHS.nec ss ts) (pop k) = dhs⊦→dh ts k
+    dhs⊦→dh (DHS.cdist ts)  (pop k) = dhs⊦→dh ts k
+    dhs⊦→dh (DHS.cup ts)    (pop k) = dhs⊦→dh ts k
+    dhs⊦→dh (DHS.cdown ts)  (pop k) = dhs⊦→dh ts k
+    dhs⊦→dh (DHS.cpair ts)  (pop k) = dhs⊦→dh ts k
+    dhs⊦→dh (DHS.cfst ts)   (pop k) = dhs⊦→dh ts k
+    dhs⊦→dh (DHS.csnd ts)   (pop k) = dhs⊦→dh ts k
+    dhs⊦→dh (DHS.tt ts)     (pop k) = dhs⊦→dh ts k
 
 
 -- Translation from dyadic Hilbert-style to dyadic Hilbert-style linear
@@ -263,22 +263,22 @@ dhs-split {Δ} = dh→dhs ∘ DH.split ∘ dhs→dh
 -- Translation from closed Hilbert-style linear to Hilbert-style linear.
 
 chs→hs₀ : ∀ {A} → CHS.⊢ A → HS⟨ ⌀ ⊢ A ⟩
-chs→hs₀ (Ξ , ts) = Ξ , chs×→hs× ts
+chs→hs₀ (Ξ , ts) = Ξ , chs⊦→hs⊦ ts
   where
-    chs×→hs× : ∀ {Ξ} → CHS.⊢× Ξ → HS⟨ ⌀ ⊢× Ξ ⟩
-    chs×→hs× CHS.nil         = HS.nil
-    chs×→hs× (CHS.mp i j ts) = HS.mp i j (chs×→hs× ts)
-    chs×→hs× (CHS.ci ts)     = HS.ci (chs×→hs× ts)
-    chs×→hs× (CHS.ck ts)     = HS.ck (chs×→hs× ts)
-    chs×→hs× (CHS.cs ts)     = HS.cs (chs×→hs× ts)
-    chs×→hs× (CHS.cpair ts)  = HS.cpair (chs×→hs× ts)
-    chs×→hs× (CHS.cfst ts)   = HS.cfst (chs×→hs× ts)
-    chs×→hs× (CHS.csnd ts)   = HS.csnd (chs×→hs× ts)
-    chs×→hs× (CHS.tt ts)     = HS.tt (chs×→hs× ts)
-    chs×→hs× (CHS.nec ss ts) = HS.nec (chs×→hs× ss) (chs×→hs× ts)
-    chs×→hs× (CHS.cdist ts)  = HS.cdist (chs×→hs× ts)
-    chs×→hs× (CHS.cup ts)    = HS.cup (chs×→hs× ts)
-    chs×→hs× (CHS.cdown ts)  = HS.cdown (chs×→hs× ts)
+    chs⊦→hs⊦ : ∀ {Ξ} → CHS.⊦⊢ Ξ → HS⟨ ⌀ ⊦⊢ Ξ ⟩
+    chs⊦→hs⊦ CHS.nil         = HS.nil
+    chs⊦→hs⊦ (CHS.mp i j ts) = HS.mp i j (chs⊦→hs⊦ ts)
+    chs⊦→hs⊦ (CHS.ci ts)     = HS.ci (chs⊦→hs⊦ ts)
+    chs⊦→hs⊦ (CHS.ck ts)     = HS.ck (chs⊦→hs⊦ ts)
+    chs⊦→hs⊦ (CHS.cs ts)     = HS.cs (chs⊦→hs⊦ ts)
+    chs⊦→hs⊦ (CHS.cpair ts)  = HS.cpair (chs⊦→hs⊦ ts)
+    chs⊦→hs⊦ (CHS.cfst ts)   = HS.cfst (chs⊦→hs⊦ ts)
+    chs⊦→hs⊦ (CHS.csnd ts)   = HS.csnd (chs⊦→hs⊦ ts)
+    chs⊦→hs⊦ (CHS.tt ts)     = HS.tt (chs⊦→hs⊦ ts)
+    chs⊦→hs⊦ (CHS.nec ss ts) = HS.nec (chs⊦→hs⊦ ss) (chs⊦→hs⊦ ts)
+    chs⊦→hs⊦ (CHS.cdist ts)  = HS.cdist (chs⊦→hs⊦ ts)
+    chs⊦→hs⊦ (CHS.cup ts)    = HS.cup (chs⊦→hs⊦ ts)
+    chs⊦→hs⊦ (CHS.cdown ts)  = HS.cdown (chs⊦→hs⊦ ts)
 
 chs→hs : ∀ {A Γ} → CHS.⊢ Γ ▻⋯▻ A → HS⟨ Γ ⊢ A ⟩
 chs→hs t = hs-det⋆₀ (chs→hs₀ t)
@@ -287,23 +287,23 @@ chs→hs t = hs-det⋆₀ (chs→hs₀ t)
 -- Translation from Hilbert-style linear to closed Hilbert-style linear.
 
 hs₀→chs : ∀ {A} → HS⟨ ⌀ ⊢ A ⟩ → CHS.⊢ A
-hs₀→chs (Ξ , ts) = Ξ , hs₀×→chs× ts
+hs₀→chs (Ξ , ts) = Ξ , hs₀⊦→chs⊦ ts
   where
-    hs₀×→chs× : ∀ {Ξ} → HS⟨ ⌀ ⊢× Ξ ⟩ → CHS.⊢× Ξ
-    hs₀×→chs× HS.nil         = CHS.nil
-    hs₀×→chs× (HS.var () ts)
-    hs₀×→chs× (HS.mp i j ts) = CHS.mp i j (hs₀×→chs× ts)
-    hs₀×→chs× (HS.ci ts)     = CHS.ci (hs₀×→chs× ts)
-    hs₀×→chs× (HS.ck ts)     = CHS.ck (hs₀×→chs× ts)
-    hs₀×→chs× (HS.cs ts)     = CHS.cs (hs₀×→chs× ts)
-    hs₀×→chs× (HS.cpair ts)  = CHS.cpair (hs₀×→chs× ts)
-    hs₀×→chs× (HS.cfst ts)   = CHS.cfst (hs₀×→chs× ts)
-    hs₀×→chs× (HS.csnd ts)   = CHS.csnd (hs₀×→chs× ts)
-    hs₀×→chs× (HS.tt ts)     = CHS.tt (hs₀×→chs× ts)
-    hs₀×→chs× (HS.nec ss ts) = CHS.nec (hs₀×→chs× ss) (hs₀×→chs× ts)
-    hs₀×→chs× (HS.cdist ts)  = CHS.cdist (hs₀×→chs× ts)
-    hs₀×→chs× (HS.cup ts)    = CHS.cup (hs₀×→chs× ts)
-    hs₀×→chs× (HS.cdown ts)  = CHS.cdown (hs₀×→chs× ts)
+    hs₀⊦→chs⊦ : ∀ {Ξ} → HS⟨ ⌀ ⊦⊢ Ξ ⟩ → CHS.⊦⊢ Ξ
+    hs₀⊦→chs⊦ HS.nil         = CHS.nil
+    hs₀⊦→chs⊦ (HS.var () ts)
+    hs₀⊦→chs⊦ (HS.mp i j ts) = CHS.mp i j (hs₀⊦→chs⊦ ts)
+    hs₀⊦→chs⊦ (HS.ci ts)     = CHS.ci (hs₀⊦→chs⊦ ts)
+    hs₀⊦→chs⊦ (HS.ck ts)     = CHS.ck (hs₀⊦→chs⊦ ts)
+    hs₀⊦→chs⊦ (HS.cs ts)     = CHS.cs (hs₀⊦→chs⊦ ts)
+    hs₀⊦→chs⊦ (HS.cpair ts)  = CHS.cpair (hs₀⊦→chs⊦ ts)
+    hs₀⊦→chs⊦ (HS.cfst ts)   = CHS.cfst (hs₀⊦→chs⊦ ts)
+    hs₀⊦→chs⊦ (HS.csnd ts)   = CHS.csnd (hs₀⊦→chs⊦ ts)
+    hs₀⊦→chs⊦ (HS.tt ts)     = CHS.tt (hs₀⊦→chs⊦ ts)
+    hs₀⊦→chs⊦ (HS.nec ss ts) = CHS.nec (hs₀⊦→chs⊦ ss) (hs₀⊦→chs⊦ ts)
+    hs₀⊦→chs⊦ (HS.cdist ts)  = CHS.cdist (hs₀⊦→chs⊦ ts)
+    hs₀⊦→chs⊦ (HS.cup ts)    = CHS.cup (hs₀⊦→chs⊦ ts)
+    hs₀⊦→chs⊦ (HS.cdown ts)  = CHS.cdown (hs₀⊦→chs⊦ ts)
 
 hs→chs : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → CHS.⊢ Γ ▻⋯▻ A
 hs→chs t = hs₀→chs (hs-lam⋆₀ t)
@@ -312,24 +312,24 @@ hs→chs t = hs₀→chs (hs-lam⋆₀ t)
 -- Translation from dyadic Hilbert-style linear to Hilbert-style linear.
 
 dhs₀→hs : ∀ {A Γ} → DHS⟨ Γ ⁏ ⌀ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
-dhs₀→hs (Ξ , ts) = Ξ , dhs₀×→hs× ts
+dhs₀→hs (Ξ , ts) = Ξ , dhs₀⊦→hs⊦ ts
   where
-    dhs₀×→hs× : ∀ {Ξ Γ} → DHS⟨ Γ ⁏ ⌀ ⊢× Ξ ⟩ → HS⟨ Γ ⊢× Ξ ⟩
-    dhs₀×→hs× DHS.nil          = HS.nil
-    dhs₀×→hs× (DHS.var i ts)   = HS.var i (dhs₀×→hs× ts)
-    dhs₀×→hs× (DHS.mp i j ts)  = HS.mp i j (dhs₀×→hs× ts)
-    dhs₀×→hs× (DHS.ci ts)      = HS.ci (dhs₀×→hs× ts)
-    dhs₀×→hs× (DHS.ck ts)      = HS.ck (dhs₀×→hs× ts)
-    dhs₀×→hs× (DHS.cs ts)      = HS.cs (dhs₀×→hs× ts)
-    dhs₀×→hs× (DHS.mvar () ts)
-    dhs₀×→hs× (DHS.nec ss ts)  = HS.nec (dhs₀×→hs× ss) (dhs₀×→hs× ts)
-    dhs₀×→hs× (DHS.cdist ts)   = HS.cdist (dhs₀×→hs× ts)
-    dhs₀×→hs× (DHS.cup ts)     = HS.cup (dhs₀×→hs× ts)
-    dhs₀×→hs× (DHS.cdown ts)   = HS.cdown (dhs₀×→hs× ts)
-    dhs₀×→hs× (DHS.cpair ts)   = HS.cpair (dhs₀×→hs× ts)
-    dhs₀×→hs× (DHS.cfst ts)    = HS.cfst (dhs₀×→hs× ts)
-    dhs₀×→hs× (DHS.csnd ts)    = HS.csnd (dhs₀×→hs× ts)
-    dhs₀×→hs× (DHS.tt ts)      = HS.tt (dhs₀×→hs× ts)
+    dhs₀⊦→hs⊦ : ∀ {Ξ Γ} → DHS⟨ Γ ⁏ ⌀ ⊦⊢ Ξ ⟩ → HS⟨ Γ ⊦⊢ Ξ ⟩
+    dhs₀⊦→hs⊦ DHS.nil          = HS.nil
+    dhs₀⊦→hs⊦ (DHS.var i ts)   = HS.var i (dhs₀⊦→hs⊦ ts)
+    dhs₀⊦→hs⊦ (DHS.mp i j ts)  = HS.mp i j (dhs₀⊦→hs⊦ ts)
+    dhs₀⊦→hs⊦ (DHS.ci ts)      = HS.ci (dhs₀⊦→hs⊦ ts)
+    dhs₀⊦→hs⊦ (DHS.ck ts)      = HS.ck (dhs₀⊦→hs⊦ ts)
+    dhs₀⊦→hs⊦ (DHS.cs ts)      = HS.cs (dhs₀⊦→hs⊦ ts)
+    dhs₀⊦→hs⊦ (DHS.mvar () ts)
+    dhs₀⊦→hs⊦ (DHS.nec ss ts)  = HS.nec (dhs₀⊦→hs⊦ ss) (dhs₀⊦→hs⊦ ts)
+    dhs₀⊦→hs⊦ (DHS.cdist ts)   = HS.cdist (dhs₀⊦→hs⊦ ts)
+    dhs₀⊦→hs⊦ (DHS.cup ts)     = HS.cup (dhs₀⊦→hs⊦ ts)
+    dhs₀⊦→hs⊦ (DHS.cdown ts)   = HS.cdown (dhs₀⊦→hs⊦ ts)
+    dhs₀⊦→hs⊦ (DHS.cpair ts)   = HS.cpair (dhs₀⊦→hs⊦ ts)
+    dhs₀⊦→hs⊦ (DHS.cfst ts)    = HS.cfst (dhs₀⊦→hs⊦ ts)
+    dhs₀⊦→hs⊦ (DHS.csnd ts)    = HS.csnd (dhs₀⊦→hs⊦ ts)
+    dhs₀⊦→hs⊦ (DHS.tt ts)      = HS.tt (dhs₀⊦→hs⊦ ts)
 
 dhs→hs : ∀ {A Γ Δ} → DHS⟨ Γ ⁏ Δ ⊢ A ⟩ → HS⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩
 dhs→hs = dhs₀→hs ∘ dhs-merge
@@ -338,23 +338,23 @@ dhs→hs = dhs₀→hs ∘ dhs-merge
 -- Translation from Hilbert-style linear to dyadic Hilbert-style linear.
 
 hs→dhs₀ : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → DHS⟨ Γ ⁏ ⌀ ⊢ A ⟩
-hs→dhs₀ (Ξ , ts) = Ξ , hs×→dhs₀× ts
+hs→dhs₀ (Ξ , ts) = Ξ , hs⊦→dhs₀⊦ ts
   where
-    hs×→dhs₀× : ∀ {Ξ Γ} → HS⟨ Γ ⊢× Ξ ⟩ → DHS⟨ Γ ⁏ ⌀ ⊢× Ξ ⟩
-    hs×→dhs₀× HS.nil         = DHS.nil
-    hs×→dhs₀× (HS.var i ts)  = DHS.var i (hs×→dhs₀× ts)
-    hs×→dhs₀× (HS.mp i j ts) = DHS.mp i j (hs×→dhs₀× ts)
-    hs×→dhs₀× (HS.ci ts)     = DHS.ci (hs×→dhs₀× ts)
-    hs×→dhs₀× (HS.ck ts)     = DHS.ck (hs×→dhs₀× ts)
-    hs×→dhs₀× (HS.cs ts)     = DHS.cs (hs×→dhs₀× ts)
-    hs×→dhs₀× (HS.nec ss ts) = DHS.nec (hs×→dhs₀× ss) (hs×→dhs₀× ts)
-    hs×→dhs₀× (HS.cdist ts)  = DHS.cdist (hs×→dhs₀× ts)
-    hs×→dhs₀× (HS.cup ts)    = DHS.cup (hs×→dhs₀× ts)
-    hs×→dhs₀× (HS.cdown ts)  = DHS.cdown (hs×→dhs₀× ts)
-    hs×→dhs₀× (HS.cpair ts)  = DHS.cpair (hs×→dhs₀× ts)
-    hs×→dhs₀× (HS.cfst ts)   = DHS.cfst (hs×→dhs₀× ts)
-    hs×→dhs₀× (HS.csnd ts)   = DHS.csnd (hs×→dhs₀× ts)
-    hs×→dhs₀× (HS.tt ts)     = DHS.tt (hs×→dhs₀× ts)
+    hs⊦→dhs₀⊦ : ∀ {Ξ Γ} → HS⟨ Γ ⊦⊢ Ξ ⟩ → DHS⟨ Γ ⁏ ⌀ ⊦⊢ Ξ ⟩
+    hs⊦→dhs₀⊦ HS.nil         = DHS.nil
+    hs⊦→dhs₀⊦ (HS.var i ts)  = DHS.var i (hs⊦→dhs₀⊦ ts)
+    hs⊦→dhs₀⊦ (HS.mp i j ts) = DHS.mp i j (hs⊦→dhs₀⊦ ts)
+    hs⊦→dhs₀⊦ (HS.ci ts)     = DHS.ci (hs⊦→dhs₀⊦ ts)
+    hs⊦→dhs₀⊦ (HS.ck ts)     = DHS.ck (hs⊦→dhs₀⊦ ts)
+    hs⊦→dhs₀⊦ (HS.cs ts)     = DHS.cs (hs⊦→dhs₀⊦ ts)
+    hs⊦→dhs₀⊦ (HS.nec ss ts) = DHS.nec (hs⊦→dhs₀⊦ ss) (hs⊦→dhs₀⊦ ts)
+    hs⊦→dhs₀⊦ (HS.cdist ts)  = DHS.cdist (hs⊦→dhs₀⊦ ts)
+    hs⊦→dhs₀⊦ (HS.cup ts)    = DHS.cup (hs⊦→dhs₀⊦ ts)
+    hs⊦→dhs₀⊦ (HS.cdown ts)  = DHS.cdown (hs⊦→dhs₀⊦ ts)
+    hs⊦→dhs₀⊦ (HS.cpair ts)  = DHS.cpair (hs⊦→dhs₀⊦ ts)
+    hs⊦→dhs₀⊦ (HS.cfst ts)   = DHS.cfst (hs⊦→dhs₀⊦ ts)
+    hs⊦→dhs₀⊦ (HS.csnd ts)   = DHS.csnd (hs⊦→dhs₀⊦ ts)
+    hs⊦→dhs₀⊦ (HS.tt ts)     = DHS.tt (hs⊦→dhs₀⊦ ts)
 
 hs→dhs : ∀ {A Γ Δ} → HS⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩ → DHS⟨ Γ ⁏ Δ ⊢ A ⟩
 hs→dhs = dhs-split ∘ hs→dhs₀
