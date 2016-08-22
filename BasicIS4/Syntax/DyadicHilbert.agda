@@ -1,5 +1,5 @@
 -- Hilbert-style formalisation of syntax with context pairs.
--- Linear sequences of terms.
+-- Nested terms.
 
 module BasicIS4.Syntax.DyadicHilbert where
 

@@ -171,7 +171,7 @@ import BasicIS4.Syntax.Gentzen
 
 -- Hilbert-style formalisation of syntax with context pairs.
 import BasicIS4.Syntax.DyadicHilbertLinear  -- Linear sequences of terms.
-import BasicIS4.Syntax.DyadicHilbert        -- Linear sequences of terms.
+import BasicIS4.Syntax.DyadicHilbert        -- Nested terms.
 
 -- Gentzen-style formalisation of syntax with context pairs, after Pfenning-Davies.
 import BasicIS4.Syntax.DyadicGentzen
