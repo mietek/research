@@ -64,17 +64,27 @@ import BasicIPC.Semantics.KripkeGodel           -- Gödel embedding.
 
 -- Available metatheory for basic IPC.
 --
---       ┌─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┐
---       │ BT  │ TCCD│ TCH │ TCD │ TH  │ TG  │ T   │ KMT │ KG  │
--- ┌─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
--- │ CH  │  e₀ │ e₀q₀│ e₀q₀│     │     │     │     │     │     │
--- ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
--- │ H   │  e  │ eq₀ │ eq₀ │ eq  │ eq  │ eq~ │ eq  │ eq  │ eq  │
--- ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
--- │ G   │  e  │ eq₀ │     │ eq  │     │ eq  │ eq  │ eq  │ eq  │
--- ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
--- │ Gⁿᶠ │     │     │     │     │     │     │ eq  │ eq  │ eq  │
--- └─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┘
+--       ┌─────┬─────┬─────┬─────┐
+--       │ CH  │ H   │ G   │ Gⁿᶠ │
+-- ┌─────┼─────┼─────┼─────┼─────┤
+-- │ BT  │ e₀  │ e   │ e   │     │
+-- ├─────┼─────┼─────┼─────┼─────┤
+-- │ TCCD│ e₀q₀│ eq₀ │ eq₀ │     │
+-- ├─────┼─────┼─────┼─────┼─────┤
+-- │ TCH │ e₀q₀│ eq₀ │     │     │
+-- ├─────┼─────┼─────┼─────┼─────┤
+-- │ TCD │     │ eq  │ eq  │     │
+-- ├─────┼─────┼─────┼─────┼─────┤
+-- │ TH  │     │ eq  │     │     │
+-- ├─────┼─────┼─────┼─────┼─────┤
+-- │ TG  │     │ eq~ │ eq  │     │
+-- ├─────┼─────┼─────┼─────┼─────┤
+-- │ T   │     │ eq  │ eq  │ eq  │
+-- ├─────┼─────┼─────┼─────┼─────┤
+-- │ KMT │     │ eq  │ eq  │ eq  │
+-- ├─────┼─────┼─────┼─────┼─────┤
+-- │ KG  │     │ eq  │ eq  │ eq  │
+-- └─────┴─────┴─────┴─────┴─────┘
 --
 -- e₀   : Soundness only, for closed terms only.
 -- e₀q₀ : Soundness and completeness, for closed terms only.
@@ -215,19 +225,45 @@ import BasicIS4.Equipment.KripkeDyadicNonCanonical
 
 -- Available metatheory for basic IS4.
 --
---       ┌─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┐
---       │ BKO │ BKBD│ BKE │ BKA&│ TCGN│ TCH │ TGN │ TH  │ TG  │ TDGN│ TDH │ TDG │
--- ┌─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
--- │ CH  │     │     │     │     │ e₀q₀│ e₀q₀│     │     │     │     │     │     │
--- ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
--- │ H   │  e  │  e  │  e  │  e  │ eq₀ │ eq₀ │ eq  │ eq  │ eq~ │     │     │     │
--- ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
--- │ G   │  e  │  e  │  e  │  e  │ eq₀ │     │ eq  │     │ eq  │     │     │     │
--- ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
--- │ DH  │  e  │  e  │  e  │  e  │     │     │     │     │     │ eq  │ eq  │ eq~ │
--- ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
--- │ DG  │  e  │  e  │  e  │  e  │     │     │     │     │     │ eq  │     │ eq  │
--- └─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┘
+--       ┌─────┬─────┬─────┬─────┬─────┐
+--       │ CH  │ H   │ G   │ DH  │ DG  │
+-- ┌─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ BKO │     │ e   │ e   │ e   │ e   │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ BKBD│     │ e   │ e   │ e   │ e   │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ BKE │     │ e   │ e   │ e   │ e   │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ BKA&│     │ e   │ e   │ e   │ e   │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ TCGN│ e₀q₀│ eq₀ │ eq₀ │     │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ TCH │ e₀q₀│ eq₀ │     │     │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ TGN │     │ eq  │ eq  │     │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ TH  │     │ eq  │     │     │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ TG  │     │ eq~ │ eq  │     │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ T   │     │ eq  │ WIP │     │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ T1  │     │ eq  │     │     │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ T2  │     │     │ WIP │     │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ TDGN│     │     │     │ eq  │ eq  │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ TDH │     │     │     │ eq  │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ TDG │     │     │     │ eq~ │ eq  │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ TD  │     │     │     │ eq  │ WIP │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ TD1 │     │     │     │ eq  │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ TD2 │     │     │     │     │ WIP │
+-- └─────┴─────┴─────┴─────┴─────┴─────┘
 --
 -- e₀   : Soundness only, for closed terms only.
 -- e₀q₀ : Soundness and completeness, for closed terms only.
@@ -235,6 +271,7 @@ import BasicIS4.Equipment.KripkeDyadicNonCanonical
 -- eq₀  : Soundness, for all terms; completeness, for closed terms only.
 -- eq   : Soundness and completeness.
 -- eq~  : Soundness and completeness, using syntax translation.
+-- WIP  : Work in progress.
 
 
 import BasicIS4.Metatheory.ClosedHilbert-TarskiClosedGabbayNanevski
@@ -249,6 +286,8 @@ import BasicIS4.Metatheory.Hilbert-TarskiClosedHilbert
 import BasicIS4.Metatheory.Hilbert-TarskiGabbayNanevski
 import BasicIS4.Metatheory.Hilbert-TarskiHilbert
 import BasicIS4.Metatheory.Hilbert-TarskiGentzen
+import BasicIS4.Metatheory.Hilbert-Tarski
+import BasicIS4.Metatheory.Hilbert-Tarski1
 
 import BasicIS4.Metatheory.Gentzen-BasicKripkeOno
 import BasicIS4.Metatheory.Gentzen-BasicKripkeBozicDosen
@@ -257,6 +296,8 @@ import BasicIS4.Metatheory.Gentzen-BasicKripkeAlechinaEtAl
 import BasicIS4.Metatheory.Gentzen-TarskiClosedGabbayNanevski
 import BasicIS4.Metatheory.Gentzen-TarskiGabbayNanevski
 import BasicIS4.Metatheory.Gentzen-TarskiGentzen
+--import BasicIS4.Metatheory.Gentzen-Tarski  -- WIP
+--import BasicIS4.Metatheory.Gentzen-Tarski2 -- WIP
 
 import BasicIS4.Metatheory.DyadicHilbert-BasicKripkeOno
 import BasicIS4.Metatheory.DyadicHilbert-BasicKripkeBozicDosen
@@ -265,6 +306,8 @@ import BasicIS4.Metatheory.DyadicHilbert-BasicKripkeAlechinaEtAl
 import BasicIS4.Metatheory.DyadicHilbert-TarskiDyadicGabbayNanevski
 import BasicIS4.Metatheory.DyadicHilbert-TarskiDyadicHilbert
 import BasicIS4.Metatheory.DyadicHilbert-TarskiDyadicGentzen
+import BasicIS4.Metatheory.DyadicHilbert-TarskiDyadic
+import BasicIS4.Metatheory.DyadicHilbert-TarskiDyadic1
 
 import BasicIS4.Metatheory.DyadicGentzen-BasicKripkeOno
 import BasicIS4.Metatheory.DyadicGentzen-BasicKripkeBozicDosen
@@ -272,6 +315,8 @@ import BasicIS4.Metatheory.DyadicGentzen-BasicKripkeEwald
 import BasicIS4.Metatheory.DyadicGentzen-BasicKripkeAlechinaEtAl
 import BasicIS4.Metatheory.DyadicGentzen-TarskiDyadicGabbayNanevski
 import BasicIS4.Metatheory.DyadicGentzen-TarskiDyadicGentzen
+--import BasicIS4.Metatheory.DyadicGentzen-TarskiDyadic  -- WIP
+--import BasicIS4.Metatheory.DyadicGentzen-TarskiDyadic2 -- WIP
 
 
 
