@@ -48,7 +48,7 @@ module _ {{_ : Model}} where
   ⊩⋆ Π , A = ⊩⋆ Π × ⊩ A
 
 
--- Forcing in all models.
+-- Entailment, or forcing in all models.
 
 infix 3 ⊨_
 ⊨_ : Ty → Set₁
@@ -101,7 +101,7 @@ module _ {{_ : Model}} where
   ⊩ Γ ⇒⋆ Π = ⊩⋆ Γ → ⊩⋆ Π
 
 
--- Forcing in all models, for sequents.
+-- Entailment, or forcing in all models, for sequents.
 
 infix 3 _⊨_
 _⊨_ : Cx Ty → Ty → Set₁

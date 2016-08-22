@@ -91,7 +91,7 @@ module _ {{_ : Model}} where
   w ⊩ Γ ⇒⋆ Π = w ⊩⋆ Γ → w ⊩⋆ Π
 
 
--- Forcing in all worlds of all models, for sequents.
+-- Entailment, or forcing in all worlds of all models, for sequents.
 
 infix 3 _⊨_
 _⊨_ : Cx Ty → Ty → Set₁

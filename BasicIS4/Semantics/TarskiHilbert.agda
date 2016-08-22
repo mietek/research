@@ -136,61 +136,61 @@ module _ {{_ : Model}} where
                    in  [app] [cpair] (reifyʳ a′) , _,_ a′
 
 
--- Forcing in a particular model, for sequents.
+-- Forcing in a particular world of a particular model, for sequents.
 
 module _ {{_ : Model}} where
   infix 3 _⊩_⇒_
   _⊩_⇒_ : Cx Ty → Cx Ty → Ty → Set
-  Γ₀ ⊩ Γ ⇒ A = Γ₀ ⊩⋆ Γ → Γ₀ ⊩ A
+  w ⊩ Γ ⇒ A = w ⊩⋆ Γ → w ⊩ A
 
   infix 3 _⊩_⇒⋆_
   _⊩_⇒⋆_ : Cx Ty → Cx Ty → Cx Ty → Set
-  Γ₀ ⊩ Γ ⇒⋆ Π = Γ₀ ⊩⋆ Γ → Γ₀ ⊩⋆ Π
+  w ⊩ Γ ⇒⋆ Π = w ⊩⋆ Γ → w ⊩⋆ Π
 
 
--- Forcing in all models, for sequents.
+-- Entailment, or forcing in all worlds of all models, for sequents.
 
 infix 3 _⊨_
 _⊨_ : Cx Ty → Ty → Set₁
-Γ ⊨ A = ∀ {{_ : Model}} {Γ₀ : Cx Ty} → Γ₀ ⊩ Γ ⇒ A
+Γ ⊨ A = ∀ {{_ : Model}} {w : Cx Ty} → w ⊩ Γ ⇒ A
 
 infix 3 _⊨⋆_
 _⊨⋆_ : Cx Ty → Cx Ty → Set₁
-Γ ⊨⋆ Π = ∀ {{_ : Model}} {Γ₀ : Cx Ty} → Γ₀ ⊩ Γ ⇒⋆ Π
+Γ ⊨⋆ Π = ∀ {{_ : Model}} {w : Cx Ty} → w ⊩ Γ ⇒⋆ Π
 
 
 -- Additional useful equipment, for sequents.
 
 module _ {{_ : Model}} where
-  lookup : ∀ {A Γ Γ₀} → A ∈ Γ → Γ₀ ⊩ Γ ⇒ A
+  lookup : ∀ {A Γ w} → A ∈ Γ → w ⊩ Γ ⇒ A
   lookup top     (γ , a) = a
   lookup (pop i) (γ , b) = lookup i γ
 
   -- TODO: ⟦λ⟧
 
-  _⟦$⟧_ : ∀ {A B Γ Γ₀} → Γ₀ ⊩ Γ ⇒ A ▻ B → Γ₀ ⊩ Γ ⇒ A → Γ₀ ⊩ Γ ⇒ B
+  _⟦$⟧_ : ∀ {A B Γ w} → w ⊩ Γ ⇒ A ▻ B → w ⊩ Γ ⇒ A → w ⊩ Γ ⇒ B
   (f ⟦$⟧ g) γ = f γ ⟪$⟫ g γ
 
-  ⟦K⟧ : ∀ {A B Γ Γ₀} → Γ₀ ⊩ Γ ⇒ A → Γ₀ ⊩ Γ ⇒ B ▻ A
+  ⟦K⟧ : ∀ {A B Γ w} → w ⊩ Γ ⇒ A → w ⊩ Γ ⇒ B ▻ A
   ⟦K⟧ {A} {B} a γ = ⟪K⟫ {A} {B} (a γ)
 
-  ⟦S⟧ : ∀ {A B C Γ Γ₀} → Γ₀ ⊩ Γ ⇒ A ▻ B ▻ C → Γ₀ ⊩ Γ ⇒ A ▻ B → Γ₀ ⊩ Γ ⇒ A → Γ₀ ⊩ Γ ⇒ C
+  ⟦S⟧ : ∀ {A B C Γ w} → w ⊩ Γ ⇒ A ▻ B ▻ C → w ⊩ Γ ⇒ A ▻ B → w ⊩ Γ ⇒ A → w ⊩ Γ ⇒ C
   ⟦S⟧ f g a γ = ⟪S⟫ (f γ) (g γ) (a γ)
 
-  _⟦D⟧_ : ∀ {A B Γ Γ₀} → Γ₀ ⊩ Γ ⇒ □ (A ▻ B) → Γ₀ ⊩ Γ ⇒ □ A → Γ₀ ⊩ Γ ⇒ □ B
+  _⟦D⟧_ : ∀ {A B Γ w} → w ⊩ Γ ⇒ □ (A ▻ B) → w ⊩ Γ ⇒ □ A → w ⊩ Γ ⇒ □ B
   (s₁ ⟦D⟧ s₂) γ = (s₁ γ) ⟪D⟫ (s₂ γ)
 
-  ⟦↑⟧ : ∀ {A Γ Γ₀} → Γ₀ ⊩ Γ ⇒ □ A → Γ₀ ⊩ Γ ⇒ □ □ A
+  ⟦↑⟧ : ∀ {A Γ w} → w ⊩ Γ ⇒ □ A → w ⊩ Γ ⇒ □ □ A
   ⟦↑⟧ s γ = ⟪↑⟫ (s γ)
 
-  ⟦↓⟧ : ∀ {A Γ Γ₀} → Γ₀ ⊩ Γ ⇒ □ A → Γ₀ ⊩ Γ ⇒ A
+  ⟦↓⟧ : ∀ {A Γ w} → w ⊩ Γ ⇒ □ A → w ⊩ Γ ⇒ A
   ⟦↓⟧ s γ = ⟪↓⟫ (s γ)
 
-  _⟦,⟧_ : ∀ {A B Γ Γ₀} → Γ₀ ⊩ Γ ⇒ A → Γ₀ ⊩ Γ ⇒ B → Γ₀ ⊩ Γ ⇒ A ∧ B
+  _⟦,⟧_ : ∀ {A B Γ w} → w ⊩ Γ ⇒ A → w ⊩ Γ ⇒ B → w ⊩ Γ ⇒ A ∧ B
   (a ⟦,⟧ b) γ = a γ , b γ
 
-  ⟦π₁⟧ : ∀ {A B Γ Γ₀} → Γ₀ ⊩ Γ ⇒ A ∧ B → Γ₀ ⊩ Γ ⇒ A
+  ⟦π₁⟧ : ∀ {A B Γ w} → w ⊩ Γ ⇒ A ∧ B → w ⊩ Γ ⇒ A
   ⟦π₁⟧ s γ = π₁ (s γ)
 
-  ⟦π₂⟧ : ∀ {A B Γ Γ₀} → Γ₀ ⊩ Γ ⇒ A ∧ B → Γ₀ ⊩ Γ ⇒ B
+  ⟦π₂⟧ : ∀ {A B Γ w} → w ⊩ Γ ⇒ A ∧ B → w ⊩ Γ ⇒ B
   ⟦π₂⟧ s γ = π₂ (s γ)

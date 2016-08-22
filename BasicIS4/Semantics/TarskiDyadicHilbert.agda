@@ -176,7 +176,7 @@ module _ {{_ : Model}} where
                      in  [app] [cpair] (reifyʳ a′) , _,_ a′
 
 
--- Forcing in a particular model, for sequents.
+-- Forcing in a particular world of a particular model, for sequents.
 
 module _ {{_ : Model}} where
   infix 3 _⁏_⊩_⁏_⇒_
@@ -188,7 +188,7 @@ module _ {{_ : Model}} where
   Γ₀ ⁏ Δ₀ ⊩ Γ ⁏ Δ ⇒⋆ Π = Γ₀ ⁏ Δ₀ ⊩⋆ Γ → Γ₀ ⁏ Δ₀ ⊩⋆ □⋆ Δ → Γ₀ ⁏ Δ₀ ⊩⋆ Π
 
 
--- Forcing in all models, for sequents.
+-- Entailment, or forcing in all worlds of all models, for sequents.
 
 infix 3 _⁏_⊨_
 _⁏_⊨_ : Cx Ty → Cx Ty → Ty → Set₁
