@@ -142,7 +142,7 @@ CONT T = DET (APP CCONT (LAM (LAM T)))
 ccont : ∀ {A B Γ} → Γ ⊢ (A ▻ A ▻ B) ▻ A ▻ B
 ccont = lam (lam (app (app v₁ v₀) v₀))
 
-cont : ∀ {A B Γ} → (Γ , A) , A ⊢ B → Γ , A ⊢ B
+cont : ∀ {A B Γ} → Γ , A , A ⊢ B → Γ , A ⊢ B
 cont t = det (app ccont (lam (lam t)))
 
 
@@ -157,7 +157,7 @@ EXCH T = DET (DET (APP CEXCH (LAM (LAM T))))
 cexch : ∀ {A B C Γ} → Γ ⊢ (A ▻ B ▻ C) ▻ B ▻ A ▻ C
 cexch = lam (lam (lam (app (app v₂ v₀) v₁)))
 
-exch : ∀ {A B C Γ} → (Γ , A) , B ⊢ C → (Γ , B) , A ⊢ C
+exch : ∀ {A B C Γ} → Γ , A , B ⊢ C → Γ , B , A ⊢ C
 exch t = det (det (app cexch (lam (lam t))))
 
 

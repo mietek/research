@@ -89,19 +89,19 @@ mono²⊢ (η , θ) = mono⊢ η ∘ mmono⊢ θ
 v₀ : ∀ {A Γ Δ} → Γ , A ⁏ Δ ⊢ A
 v₀ = var i₀
 
-v₁ : ∀ {A B Γ Δ} → (Γ , A) , B ⁏ Δ ⊢ A
+v₁ : ∀ {A B Γ Δ} → Γ , A , B ⁏ Δ ⊢ A
 v₁ = var i₁
 
-v₂ : ∀ {A B C Γ Δ} → ((Γ , A) , B) , C ⁏ Δ ⊢ A
+v₂ : ∀ {A B C Γ Δ} → Γ , A , B , C ⁏ Δ ⊢ A
 v₂ = var i₂
 
 mv₀ : ∀ {A Γ Δ} → Γ ⁏ Δ , A ⊢ A
 mv₀ = mvar i₀
 
-mv₁ : ∀ {A B Γ Δ} → Γ ⁏ (Δ , A) , B ⊢ A
+mv₁ : ∀ {A B Γ Δ} → Γ ⁏ Δ , A , B ⊢ A
 mv₁ = mvar i₁
 
-mv₂ : ∀ {A B C Γ Δ} → Γ ⁏ ((Δ , A) , B) , C ⊢ A
+mv₂ : ∀ {A B C Γ Δ} → Γ ⁏ Δ , A , B , C ⊢ A
 mv₂ = mvar i₂
 
 
@@ -267,10 +267,10 @@ trans⊢⋆ ts us = split⋆ (trans⊢⋆₀ (merge⋆ ts) (merge⋆ us))
 ccont : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ (A ▻ A ▻ B) ▻ A ▻ B
 ccont = lam (lam (app (app v₁ v₀) v₀))
 
-cont : ∀ {A B Γ Δ} → (Γ , A) , A ⁏ Δ ⊢ B → Γ , A ⁏ Δ ⊢ B
+cont : ∀ {A B Γ Δ} → Γ , A , A ⁏ Δ ⊢ B → Γ , A ⁏ Δ ⊢ B
 cont t = det (app ccont (lam (lam t)))
 
-mcont : ∀ {A B Γ Δ} → Γ ⁏ (Δ , A) , A ⊢ B → Γ ⁏ Δ , A ⊢ B
+mcont : ∀ {A B Γ Δ} → Γ ⁏ Δ , A , A ⊢ B → Γ ⁏ Δ , A ⊢ B
 mcont t = mdet (app ccont (mlam (mlam t)))
 
 
@@ -279,10 +279,10 @@ mcont t = mdet (app ccont (mlam (mlam t)))
 cexch : ∀ {A B C Γ Δ} → Γ ⁏ Δ ⊢ (A ▻ B ▻ C) ▻ B ▻ A ▻ C
 cexch = lam (lam (lam (app (app v₂ v₀) v₁)))
 
-exch : ∀ {A B C Γ Δ} → (Γ , A) , B ⁏ Δ ⊢ C → (Γ , B) , A ⁏ Δ ⊢ C
+exch : ∀ {A B C Γ Δ} → Γ , A , B ⁏ Δ ⊢ C → Γ , B , A ⁏ Δ ⊢ C
 exch t = det (det (app cexch (lam (lam t))))
 
-mexch : ∀ {A B C Γ Δ} → Γ ⁏ (Δ , A) , B ⊢ C → Γ ⁏ (Δ , B) , A ⊢ C
+mexch : ∀ {A B C Γ Δ} → Γ ⁏ Δ , A , B ⊢ C → Γ ⁏ Δ , B , A ⊢ C
 mexch t = mdet (mdet (app cexch (mlam (mlam t))))
 
 

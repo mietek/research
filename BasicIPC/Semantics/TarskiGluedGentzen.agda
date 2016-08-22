@@ -85,10 +85,10 @@ module _ {{_ : Model}} where
   [v₀] : ∀ {A Γ} → Γ , A [⊢] A
   [v₀] = [var] i₀
 
-  [v₁] : ∀ {A B Γ} → (Γ , A) , B [⊢] A
+  [v₁] : ∀ {A B Γ} → Γ , A , B [⊢] A
   [v₁] = [var] i₁
 
-  [v₂] : ∀ {A B C Γ} → ((Γ , A) , B) , C [⊢] A
+  [v₂] : ∀ {A B C Γ} → Γ , A , B , C [⊢] A
   [v₂] = [var] i₂
 
 

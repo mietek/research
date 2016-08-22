@@ -37,10 +37,10 @@ module _ {U : Set} where
   i₀ : ∀ {A Γ} → A ∈ Γ , A
   i₀ = top refl
 
-  i₁ : ∀ {A B Γ} → A ∈ (Γ , A) , B
+  i₁ : ∀ {A B Γ} → A ∈ Γ , A , B
   i₁ = pop i₀
 
-  i₂ : ∀ {A B C Γ} → A ∈ ((Γ , A) , B) , C
+  i₂ : ∀ {A B C Γ} → A ∈ Γ , A , B , C
   i₂ = pop i₁
 
 

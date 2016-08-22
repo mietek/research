@@ -90,19 +90,19 @@ rmono⊢⋆ {Ξ , A} η (ts , t) = rmono⊢⋆ η ts , rmono⊢ η t
 v₀ : ∀ {x A Γ Λ} → Γ , A ⁏ Λ ⊢ A ◎ x
 v₀ = var i₀
 
-v₁ : ∀ {x A B Γ Λ} → (Γ , A) , B ⁏ Λ ⊢ A ◎ x
+v₁ : ∀ {x A B Γ Λ} → Γ , A , B ⁏ Λ ⊢ A ◎ x
 v₁ = var i₁
 
-v₂ : ∀ {x A B C Γ Λ} → ((Γ , A) , B) , C ⁏ Λ ⊢ A ◎ x
+v₂ : ∀ {x A B C Γ Λ} → Γ , A , B , C ⁏ Λ ⊢ A ◎ x
 v₂ = var i₂
 
 rv₀ : ∀ {x y Λ} → Λ , x ↝ y ⊢ x ↝ y
 rv₀ = rvar i₀
 
-rv₁ : ∀ {x y x′ y′ Λ} → (Λ , x ↝ y) , x′ ↝ y′ ⊢ x ↝ y
+rv₁ : ∀ {x y x′ y′ Λ} → Λ , x ↝ y , x′ ↝ y′ ⊢ x ↝ y
 rv₁ = rvar i₁
 
-rv₂ : ∀ {x y x′ y′ x″ y″ Λ} → ((Λ , x ↝ y) , x′ ↝ y′) , x″ ↝ y″ ⊢ x ↝ y
+rv₂ : ∀ {x y x′ y′ x″ y″ Λ} → Λ , x ↝ y , x′ ↝ y′ , x″ ↝ y″ ⊢ x ↝ y
 rv₂ = rvar i₂
 
 
@@ -157,7 +157,7 @@ trans⊢⋆ {Γ″ , A} ts (us , u) = trans⊢⋆ ts us , multicut ts u
 ccont : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ (A ▻ A ▻ B) ▻ A ▻ B ◎ x
 ccont = lam (lam (app (app v₁ v₀) v₀))
 
-cont : ∀ {x A B Γ Λ} → (Γ , A) , A ⁏ Λ ⊢ B ◎ x → Γ , A ⁏ Λ ⊢ B ◎ x
+cont : ∀ {x A B Γ Λ} → Γ , A , A ⁏ Λ ⊢ B ◎ x → Γ , A ⁏ Λ ⊢ B ◎ x
 cont t = det (app ccont (lam (lam t)))
 
 
@@ -166,7 +166,7 @@ cont t = det (app ccont (lam (lam t)))
 cexch : ∀ {x A B C Γ Λ} → Γ ⁏ Λ ⊢ (A ▻ B ▻ C) ▻ B ▻ A ▻ C ◎ x
 cexch = lam (lam (lam (app (app v₂ v₀) v₁)))
 
-exch : ∀ {x A B C Γ Λ} → (Γ , A) , B ⁏ Λ ⊢ C ◎ x → (Γ , B) , A  ⁏ Λ ⊢ C ◎ x
+exch : ∀ {x A B C Γ Λ} → Γ , A , B ⁏ Λ ⊢ C ◎ x → Γ , B , A  ⁏ Λ ⊢ C ◎ x
 exch t = det (det (app cexch (lam (lam t))))
 
 
