@@ -44,7 +44,7 @@ module _ {{_ : Model}} where
                   in  app (app cdist t) u , f ⟪$⟫ a
 
   -- TODO: Report bug.
-  _⟪D⟫′_ : ∀ {A B Γ} → Γ ⊩ □ (A ▻ B) → Γ  ⊩ □ A ▻ □ B
+  _⟪D⟫′_ : ∀ {A B Γ} → Γ ⊩ □ (A ▻ B) → Γ ⊩ □ A ▻ □ B
   _⟪D⟫′_ {A} {B} s η = let s′ = mono⊩ {□ (A ▻ B)} η s
                        in  app cdist (reify (λ {Γ′} η′ → s′ η′ )) , _⟪D⟫_ s′
 
