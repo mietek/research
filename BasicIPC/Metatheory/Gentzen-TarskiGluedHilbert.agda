@@ -8,7 +8,7 @@ import BasicIPC.Metatheory.Hilbert-TarskiGluedHilbert as H
 open import BasicIPC.Syntax.Translation using (g→h)
 
 
--- Soundness with respect to the syntax representation in a particular model.
+-- Internalisation of syntax as syntax representation in a particular model.
 
 module _ {{_ : Model}} where
   [_] : ∀ {A Γ} → Γ ⊢ A → Γ [⊢] A

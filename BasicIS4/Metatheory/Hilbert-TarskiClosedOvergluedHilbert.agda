@@ -4,7 +4,7 @@ open import BasicIS4.Syntax.Hilbert public
 open import BasicIS4.Semantics.TarskiClosedOvergluedHilbert public
 
 
--- Soundness with respect to the syntax representation in a particular model, for closed terms only.
+-- Internalisation of syntax as syntax representation in a particular model, for closed terms only.
 
 module _ {{_ : Model}} where
   [_]₀ : ∀ {A} → ⌀ ⊢ A → [⊢] A

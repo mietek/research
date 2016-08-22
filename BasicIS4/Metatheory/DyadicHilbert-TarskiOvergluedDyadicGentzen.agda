@@ -8,7 +8,7 @@ import BasicIS4.Metatheory.DyadicGentzen-TarskiOvergluedDyadicGentzen as DG
 open import BasicIS4.Syntax.Translation using (dh→dg)
 
 
--- Soundness with respect to the syntax representation in a particular model.
+-- Internalisation of syntax as syntax representation in a particular model.
 
 module _ {{_ : Model}} where
   [_] : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ [⊢] A

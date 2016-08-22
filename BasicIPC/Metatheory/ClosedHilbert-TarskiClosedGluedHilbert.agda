@@ -4,7 +4,7 @@ open import BasicIPC.Syntax.ClosedHilbert public
 open import BasicIPC.Semantics.TarskiClosedGluedHilbert public
 
 
--- Soundness with respect to the syntax representation in a particular model.
+-- Internalisation of syntax as syntax representation in a particular model.
 
 module _ {{_ : Model}} where
   [_] : ∀ {A} → ⊢ A → [⊢] A

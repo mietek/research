@@ -69,7 +69,7 @@ module _ {{_ : Model}} where
   mono⊩⋆ {Π , A} η (ts , t) = mono⊩⋆ {Π} η ts , mono⊩ {A} η t
 
 
--- Completeness with respect to the syntax representation in a particular model.
+-- Extraction of syntax representation in a particular model.
 
 module _ {{_ : Model}} where
   reifyʳ : ∀ {A Γ} → Γ ⊩ A → Γ [⊢] A

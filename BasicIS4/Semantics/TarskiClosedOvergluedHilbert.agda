@@ -61,7 +61,7 @@ infix 3 ⊨_
 ⊨ A = ∀ {{_ : Model}} → ⊩ A
 
 
--- Completeness with respect to the syntax representation in a particular model.
+-- Extraction of syntax representation in a particular model.
 
 module _ {{_ : Model}} where
   reifyʳ : ∀ {A} → ⊩ A → [⊢] A

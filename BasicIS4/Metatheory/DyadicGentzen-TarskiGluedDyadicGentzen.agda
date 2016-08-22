@@ -4,7 +4,7 @@ open import BasicIS4.Syntax.DyadicGentzen public
 open import BasicIS4.Semantics.TarskiGluedDyadicGentzen public
 
 
--- Soundness with respect to the syntax representation in a particular model.
+-- Internalisation of syntax as syntax representation in a particular model.
 
 module _ {{_ : Model}} where
   [_] : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ [⊢] A
