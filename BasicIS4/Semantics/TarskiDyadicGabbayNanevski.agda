@@ -26,11 +26,6 @@ module ImplicitSyntax
     (mmono[⊢] : ∀ {A Γ Δ Δ′}  → Δ ⊆ Δ′ → Γ ⁏ Δ [⊢] A → Γ ⁏ Δ′ [⊢] A)
   where
 
-  infix 3 _⁏_[⊢]⋆_
-  _⁏_[⊢]⋆_ : Cx Ty → Cx Ty → Cx Ty → Set
-  Γ ⁏ Δ [⊢]⋆ ⌀     = 𝟙
-  Γ ⁏ Δ [⊢]⋆ Π , A = Γ ⁏ Δ [⊢]⋆ Π × Γ ⁏ Δ [⊢] A
-
 
   -- Forcing in a particular model.
 
