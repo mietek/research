@@ -46,13 +46,13 @@ import BasicIPC.Syntax.Translation
 import BasicIPC.Semantics.BasicTarski
 
 -- Tarski-style semantics with glueing for α and ▻, after Coquand-Dybjer.
-import BasicIPC.Semantics.TarskiClosedCoquandDybjer  -- Implicit closed syntax.
-import BasicIPC.Semantics.TarskiClosedHilbert        -- Hilbert-style closed syntax.
+import BasicIPC.Semantics.TarskiClosedGluedImplicit  -- Implicit closed syntax.
+import BasicIPC.Semantics.TarskiClosedGluedHilbert   -- Hilbert-style closed syntax.
 
 -- Tarski-style semantics with contexts as concrete worlds, and glueing for α and ▻.
-import BasicIPC.Semantics.TarskiCoquandDybjer  -- Implicit syntax.
-import BasicIPC.Semantics.TarskiHilbert        -- Hilbert-style syntax.
-import BasicIPC.Semantics.TarskiGentzen        -- Gentzen-style syntax.
+import BasicIPC.Semantics.TarskiGluedImplicit  -- Implicit syntax.
+import BasicIPC.Semantics.TarskiGluedHilbert   -- Hilbert-style syntax.
+import BasicIPC.Semantics.TarskiGluedGentzen   -- Gentzen-style syntax.
 
 -- Tarski-style semantics with contexts as concrete worlds.
 import BasicIPC.Semantics.Tarski
@@ -69,15 +69,15 @@ import BasicIPC.Semantics.KripkeGodel           -- Gödel embedding.
 -- ┌─────┼─────┼─────┼─────┼─────┤
 -- │ BT  │ e₀  │ e   │ e   │     │
 -- ├─────┼─────┼─────┼─────┼─────┤
--- │ TCCD│ e₀q₀│ eq₀ │ eq₀ │     │
+-- │ TCGI│ e₀q₀│ eq₀ │ eq₀ │     │
 -- ├─────┼─────┼─────┼─────┼─────┤
--- │ TCH │ e₀q₀│ eq₀ │     │     │
+-- │ TCGH│ e₀q₀│ eq₀ │     │     │
 -- ├─────┼─────┼─────┼─────┼─────┤
--- │ TCD │     │ eq  │ eq  │     │
+-- │ TGI │     │ eq  │ eq  │     │
 -- ├─────┼─────┼─────┼─────┼─────┤
--- │ TH  │     │ eq  │     │     │
+-- │ TGH │     │ eq  │     │     │
 -- ├─────┼─────┼─────┼─────┼─────┤
--- │ TG  │     │ eq~ │ eq  │     │
+-- │ TGG │     │ eq~ │ eq  │     │
 -- ├─────┼─────┼─────┼─────┼─────┤
 -- │ T   │     │ eq  │ eq  │ eq  │
 -- ├─────┼─────┼─────┼─────┼─────┤
@@ -95,23 +95,23 @@ import BasicIPC.Semantics.KripkeGodel           -- Gödel embedding.
 
 
 import BasicIPC.Metatheory.ClosedHilbert-BasicTarski
-import BasicIPC.Metatheory.ClosedHilbert-TarskiClosedCoquandDybjer
-import BasicIPC.Metatheory.ClosedHilbert-TarskiClosedHilbert
+import BasicIPC.Metatheory.ClosedHilbert-TarskiClosedGluedImplicit
+import BasicIPC.Metatheory.ClosedHilbert-TarskiClosedGluedHilbert
 
 import BasicIPC.Metatheory.Hilbert-BasicTarski
-import BasicIPC.Metatheory.Hilbert-TarskiClosedCoquandDybjer
-import BasicIPC.Metatheory.Hilbert-TarskiClosedHilbert
-import BasicIPC.Metatheory.Hilbert-TarskiCoquandDybjer
-import BasicIPC.Metatheory.Hilbert-TarskiHilbert
-import BasicIPC.Metatheory.Hilbert-TarskiGentzen
+import BasicIPC.Metatheory.Hilbert-TarskiClosedGluedImplicit
+import BasicIPC.Metatheory.Hilbert-TarskiClosedGluedHilbert
+import BasicIPC.Metatheory.Hilbert-TarskiGluedImplicit
+import BasicIPC.Metatheory.Hilbert-TarskiGluedHilbert
+import BasicIPC.Metatheory.Hilbert-TarskiGluedGentzen
 import BasicIPC.Metatheory.Hilbert-Tarski
 import BasicIPC.Metatheory.Hilbert-KripkeMcKinseyTarski
 import BasicIPC.Metatheory.Hilbert-KripkeGodel
 
 import BasicIPC.Metatheory.Gentzen-BasicTarski
-import BasicIPC.Metatheory.Gentzen-TarskiClosedCoquandDybjer
-import BasicIPC.Metatheory.Gentzen-TarskiCoquandDybjer
-import BasicIPC.Metatheory.Gentzen-TarskiGentzen
+import BasicIPC.Metatheory.Gentzen-TarskiClosedGluedImplicit
+import BasicIPC.Metatheory.Gentzen-TarskiGluedImplicit
+import BasicIPC.Metatheory.Gentzen-TarskiGluedGentzen
 import BasicIPC.Metatheory.Gentzen-Tarski
 import BasicIPC.Metatheory.Gentzen-KripkeMcKinseyTarski
 import BasicIPC.Metatheory.Gentzen-KripkeGodel
@@ -190,28 +190,28 @@ import BasicIS4.Semantics.BasicKripkeEwald       -- Ewald-style conditions.
 import BasicIS4.Semantics.BasicKripkeAlechina    -- Alechina-style conditions.
 
 -- Tarski-style semantics with glueing for α, ▻, and □, after Gabbay-Nanevski.
-import BasicIS4.Semantics.TarskiClosedGabbayNanevski  -- Implicit closed syntax.
-import BasicIS4.Semantics.TarskiClosedHilbert         -- Hilbert-style closed syntax.
+import BasicIS4.Semantics.TarskiClosedOvergluedImplicit  -- Implicit closed syntax.
+import BasicIS4.Semantics.TarskiClosedOvergluedHilbert   -- Hilbert-style closed syntax.
 
 -- Tarski-style semantics with contexts as concrete worlds, and glueing for α, ▻, and □.
-import BasicIS4.Semantics.TarskiGabbayNanevski  -- Implicit syntax.
-import BasicIS4.Semantics.TarskiHilbert         -- Hilbert-style syntax.
-import BasicIS4.Semantics.TarskiGentzen         -- Gentzen-style syntax.
+import BasicIS4.Semantics.TarskiOvergluedImplicit  -- Implicit syntax.
+import BasicIS4.Semantics.TarskiOvergluedHilbert   -- Hilbert-style syntax.
+import BasicIS4.Semantics.TarskiOvergluedGentzen   -- Gentzen-style syntax.
 
 -- Tarski-style semantics with contexts as concrete worlds, and glueing for □ only.
-import BasicIS4.Semantics.Tarski   -- Implicit syntax.
-import BasicIS4.Semantics.Tarski1  -- Hilbert-style syntax.
-import BasicIS4.Semantics.Tarski2  -- Gentzen-style syntax.
+import BasicIS4.Semantics.TarskiGluedImplicit  -- Implicit syntax.
+import BasicIS4.Semantics.TarskiGluedHilbert   -- Hilbert-style syntax.
+import BasicIS4.Semantics.TarskiGluedGentzen   -- Gentzen-style syntax.
 
 -- Tarski-style semantics with context pairs as concrete worlds, and glueing for α, ▻, and □.
-import BasicIS4.Semantics.TarskiDyadicGabbayNanevski  -- Implicit syntax.
-import BasicIS4.Semantics.TarskiDyadicHilbert         -- Hilbert-style syntax.
-import BasicIS4.Semantics.TarskiDyadicGentzen         -- Gentzen-style syntax.
+import BasicIS4.Semantics.TarskiOvergluedDyadicImplicit  -- Implicit syntax.
+import BasicIS4.Semantics.TarskiOvergluedDyadicHilbert   -- Hilbert-style syntax.
+import BasicIS4.Semantics.TarskiOvergluedDyadicGentzen   -- Gentzen-style syntax.
 
 -- Tarski-style semantics with context pairs as concrete worlds, and glueing for □ only.
-import BasicIS4.Semantics.TarskiDyadic   -- Implicit syntax.
-import BasicIS4.Semantics.TarskiDyadic1  -- Hilbert-style syntax.
-import BasicIS4.Semantics.TarskiDyadic2  -- Gentzen-style syntax.
+import BasicIS4.Semantics.TarskiGluedDyadicImplicit  -- Implicit syntax.
+import BasicIS4.Semantics.TarskiGluedDyadicHilbert   -- Hilbert-style syntax.
+import BasicIS4.Semantics.TarskiGluedDyadicGentzen   -- Gentzen-style syntax.
 
 
 -- Canonical model equipment for Kripke-style semantics with contexts as concrete worlds.
@@ -236,33 +236,33 @@ import BasicIS4.Equipment.KripkeDyadicNonCanonical
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
 -- │ BKA&│     │ e   │ e   │ e   │ e   │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
--- │ TCGN│ e₀q₀│ eq₀ │ eq₀ │     │     │
+-- │ TCOI│ e₀q₀│ eq₀ │ eq₀ │     │     │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
--- │ TCH │ e₀q₀│ eq₀ │     │     │     │
+-- │ TCOH│ e₀q₀│ eq₀ │     │     │     │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
--- │ TGN │     │ eq  │ eq  │     │     │
+-- │ TOI │     │ eq  │ eq  │     │     │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
--- │ TH  │     │ eq  │     │     │     │
+-- │ TOH │     │ eq  │     │     │     │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
--- │ TG  │     │ eq~ │ eq  │     │     │
+-- │ TOG │     │ eq~ │ eq  │     │     │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
--- │ T   │     │ eq  │ WIP │     │     │
+-- │ TGI │     │ eq  │ WIP │     │     │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
--- │ T1  │     │ eq  │     │     │     │
+-- │ TGH │     │ eq  │     │     │     │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
--- │ T2  │     │     │ WIP │     │     │
+-- │ TGG │     │     │ WIP │     │     │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
--- │ TDGN│     │     │     │ eq  │ eq  │
+-- │ TODI│     │     │     │ eq  │ eq  │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
--- │ TDH │     │     │     │ eq  │     │
+-- │ TODH│     │     │     │ eq  │     │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
--- │ TDG │     │     │     │ eq~ │ eq  │
+-- │ TODG│     │     │     │ eq~ │ eq  │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
--- │ TD  │     │     │     │ eq  │ WIP │
+-- │ TGDI│     │     │     │ eq  │ WIP │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
--- │ TD1 │     │     │     │ eq  │     │
+-- │ TGDH│     │     │     │ eq  │     │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
--- │ TD2 │     │     │     │     │ WIP │
+-- │ TGDG│     │     │     │     │ WIP │
 -- └─────┴─────┴─────┴─────┴─────┴─────┘
 --
 -- e₀   : Soundness only, for closed terms only.
@@ -274,49 +274,49 @@ import BasicIS4.Equipment.KripkeDyadicNonCanonical
 -- WIP  : Work in progress.
 
 
-import BasicIS4.Metatheory.ClosedHilbert-TarskiClosedGabbayNanevski
-import BasicIS4.Metatheory.ClosedHilbert-TarskiClosedHilbert
+import BasicIS4.Metatheory.ClosedHilbert-TarskiClosedOvergluedImplicit
+import BasicIS4.Metatheory.ClosedHilbert-TarskiClosedOvergluedHilbert
 
 import BasicIS4.Metatheory.Hilbert-BasicKripkeOno
 import BasicIS4.Metatheory.Hilbert-BasicKripkeBozicDosen
 import BasicIS4.Metatheory.Hilbert-BasicKripkeEwald
 import BasicIS4.Metatheory.Hilbert-BasicKripkeAlechina
-import BasicIS4.Metatheory.Hilbert-TarskiClosedGabbayNanevski
-import BasicIS4.Metatheory.Hilbert-TarskiClosedHilbert
-import BasicIS4.Metatheory.Hilbert-TarskiGabbayNanevski
-import BasicIS4.Metatheory.Hilbert-TarskiHilbert
-import BasicIS4.Metatheory.Hilbert-TarskiGentzen
-import BasicIS4.Metatheory.Hilbert-Tarski
-import BasicIS4.Metatheory.Hilbert-Tarski1
+import BasicIS4.Metatheory.Hilbert-TarskiClosedOvergluedImplicit
+import BasicIS4.Metatheory.Hilbert-TarskiClosedOvergluedHilbert
+import BasicIS4.Metatheory.Hilbert-TarskiOvergluedImplicit
+import BasicIS4.Metatheory.Hilbert-TarskiOvergluedHilbert
+import BasicIS4.Metatheory.Hilbert-TarskiOvergluedGentzen
+import BasicIS4.Metatheory.Hilbert-TarskiGluedImplicit
+import BasicIS4.Metatheory.Hilbert-TarskiGluedHilbert
 
 import BasicIS4.Metatheory.Gentzen-BasicKripkeOno
 import BasicIS4.Metatheory.Gentzen-BasicKripkeBozicDosen
 import BasicIS4.Metatheory.Gentzen-BasicKripkeEwald
 import BasicIS4.Metatheory.Gentzen-BasicKripkeAlechina
-import BasicIS4.Metatheory.Gentzen-TarskiClosedGabbayNanevski
-import BasicIS4.Metatheory.Gentzen-TarskiGabbayNanevski
-import BasicIS4.Metatheory.Gentzen-TarskiGentzen
---import BasicIS4.Metatheory.Gentzen-Tarski  -- WIP
---import BasicIS4.Metatheory.Gentzen-Tarski2 -- WIP
+import BasicIS4.Metatheory.Gentzen-TarskiClosedOvergluedImplicit
+import BasicIS4.Metatheory.Gentzen-TarskiOvergluedImplicit
+import BasicIS4.Metatheory.Gentzen-TarskiOvergluedGentzen
+--import BasicIS4.Metatheory.Gentzen-TarskiGluedImplicit  -- WIP
+--import BasicIS4.Metatheory.Gentzen-TarskiGluedGentzen   -- WIP
 
 import BasicIS4.Metatheory.DyadicHilbert-BasicKripkeOno
 import BasicIS4.Metatheory.DyadicHilbert-BasicKripkeBozicDosen
 import BasicIS4.Metatheory.DyadicHilbert-BasicKripkeEwald
 import BasicIS4.Metatheory.DyadicHilbert-BasicKripkeAlechina
-import BasicIS4.Metatheory.DyadicHilbert-TarskiDyadicGabbayNanevski
-import BasicIS4.Metatheory.DyadicHilbert-TarskiDyadicHilbert
-import BasicIS4.Metatheory.DyadicHilbert-TarskiDyadicGentzen
-import BasicIS4.Metatheory.DyadicHilbert-TarskiDyadic
-import BasicIS4.Metatheory.DyadicHilbert-TarskiDyadic1
+import BasicIS4.Metatheory.DyadicHilbert-TarskiOvergluedDyadicImplicit
+import BasicIS4.Metatheory.DyadicHilbert-TarskiOvergluedDyadicHilbert
+import BasicIS4.Metatheory.DyadicHilbert-TarskiOvergluedDyadicGentzen
+import BasicIS4.Metatheory.DyadicHilbert-TarskiGluedDyadicImplicit
+import BasicIS4.Metatheory.DyadicHilbert-TarskiGluedDyadicHilbert
 
 import BasicIS4.Metatheory.DyadicGentzen-BasicKripkeOno
 import BasicIS4.Metatheory.DyadicGentzen-BasicKripkeBozicDosen
 import BasicIS4.Metatheory.DyadicGentzen-BasicKripkeEwald
 import BasicIS4.Metatheory.DyadicGentzen-BasicKripkeAlechina
-import BasicIS4.Metatheory.DyadicGentzen-TarskiDyadicGabbayNanevski
-import BasicIS4.Metatheory.DyadicGentzen-TarskiDyadicGentzen
---import BasicIS4.Metatheory.DyadicGentzen-TarskiDyadic  -- WIP
---import BasicIS4.Metatheory.DyadicGentzen-TarskiDyadic2 -- WIP
+import BasicIS4.Metatheory.DyadicGentzen-TarskiOvergluedDyadicImplicit
+import BasicIS4.Metatheory.DyadicGentzen-TarskiOvergluedDyadicGentzen
+--import BasicIS4.Metatheory.DyadicGentzen-TarskiGluedDyadicImplicit  -- WIP
+--import BasicIS4.Metatheory.DyadicGentzen-TarskiGluedDyadicGentzen   -- WIP
 
 
 
