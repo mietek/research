@@ -5,7 +5,6 @@ open import Common public
 
 -- Contexts.
 
-infixl 4 _,_
 data Cx (U : Set) : Set where
   ⌀   : Cx U
   _,_ : Cx U → U → Cx U

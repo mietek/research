@@ -5,7 +5,8 @@ open import Agda.Builtin.Size public
   renaming (ω to ∞)
 
 open import Agda.Primitive public
-  using (lsuc)
+  using ()
+  renaming (_⊔_ to _⊔ᴸ_ ; lsuc to sucᴸ)
 
 open import Data.Bool public
   using ()
@@ -18,10 +19,6 @@ open import Data.Empty public
 open import Data.Nat public
   using (ℕ ; zero ; suc)
   renaming (_≟_ to _≟ᴺ_)
-
-open import Data.Product public
-  using (Σ ; ∃ ; _×_ ; _,_)
-  renaming (proj₁ to π₁ ; proj₂ to π₂)
 
 open import Data.Sum public
   using (_⊎_)
@@ -61,6 +58,25 @@ abstract
 
   _≟ᵅ_ : (P P′ : Atom) → Dec (P ≡ P′)
   _≟ᵅ_ = _≟ᴺ_
+
+
+-- Products, with custom fixities.
+
+infixl 4 _,_
+record Σ {a b} (A : Set a) (B : A → Set b) : Set (a ⊔ᴸ b) where
+  constructor _,_
+  field
+    π₁ : A
+    π₂ : B π₁
+
+open Σ public
+
+∃ : ∀ {a b} {A : Set a} → (A → Set b) → Set (a ⊔ᴸ b)
+∃ = Σ _
+
+infix 0 _×_
+_×_ : ∀ {a b} (A : Set a) (B : Set b) → Set (a ⊔ᴸ b)
+A × B = Σ A (λ _ → B)
 
 
 -- Elimination for disjoint unions.

@@ -8,7 +8,7 @@ open import Common.Context public
 
 -- Predicates.
 
-Pred : ∀ {ℓ} → Set ℓ → Set (lsuc ℓ)
+Pred : ∀ {ℓ} → Set ℓ → Set (sucᴸ ℓ)
 Pred {ℓ} U = U → Set ℓ
 
 
