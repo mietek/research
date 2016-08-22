@@ -2,8 +2,8 @@
 
 module BasicIS4.Syntax.DyadicGentzen where
 
-open import Common.ContextPair public
 open import BasicIS4.Syntax.Common public
+open import Common.ContextPair public
 
 
 -- Derivations.
@@ -67,7 +67,7 @@ mmono⊢⋆ {Ξ , A} θ (ts , t) = mmono⊢⋆ θ ts , mmono⊢ θ t
 
 -- Monotonicity using context pairs.
 
-mono²⊢ : ∀ {A Γ Γ′ Δ Δ′} → (Γ , Δ) ⊆² (Γ′ , Δ′) → Γ ⁏ Δ ⊢ A → Γ′ ⁏ Δ′ ⊢ A
+mono²⊢ : ∀ {A Γ Γ′ Δ Δ′} → Γ ⁏ Δ ⊆² Γ′ ⁏ Δ′ → Γ ⁏ Δ ⊢ A → Γ′ ⁏ Δ′ ⊢ A
 mono²⊢ (η , θ) = mono⊢ η ∘ mmono⊢ θ
 
 

@@ -1,7 +1,7 @@
 module BasicIS4.Metatheory.DyadicGentzen-BasicKripkeBozicDosen where
 
 open import BasicIS4.Syntax.DyadicGentzen public
-open import BasicIS4.Semantics.BasicKripkeBozicDosen public
+open import BasicIS4.Semantics.BasicKripkeBozicDosen public hiding (_⊨_) -- TODO
 
 
 -- Soundness with respect to all models, or evaluation.

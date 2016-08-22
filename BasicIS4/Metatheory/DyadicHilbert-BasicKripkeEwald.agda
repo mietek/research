@@ -1,7 +1,7 @@
 module BasicIS4.Metatheory.DyadicHilbert-BasicKripkeEwald where
 
 open import BasicIS4.Syntax.DyadicHilbert public
-open import BasicIS4.Semantics.BasicKripkeEwald public
+open import BasicIS4.Semantics.BasicKripkeEwald public hiding (_⊨_) -- TODO
 
 
 -- Soundness with respect to all models, or evaluation.

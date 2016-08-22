@@ -3,8 +3,8 @@
 
 module BasicIS4.Syntax.DyadicHilbertSequential where
 
-open import Common.ContextPair public
 open import BasicIS4.Syntax.Common public
+open import Common.ContextPair public
 
 
 -- Derivations.
