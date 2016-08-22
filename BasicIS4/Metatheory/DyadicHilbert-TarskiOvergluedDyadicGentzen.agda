@@ -3,16 +3,25 @@ module BasicIS4.Metatheory.DyadicHilbert-TarskiOvergluedDyadicGentzen where
 open import BasicIS4.Syntax.DyadicHilbert public
 open import BasicIS4.Semantics.TarskiOvergluedDyadicGentzen public
 
-import BasicIS4.Metatheory.DyadicGentzen-TarskiOvergluedDyadicGentzen as DG
-
-open import BasicIS4.Syntax.Translation using (dh→dg)
-
 
 -- Internalisation of syntax as syntax representation in a particular model.
 
 module _ {{_ : Model}} where
   [_] : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ [⊢] A
-  [ t ] = DG.[ dh→dg t ]
+  [ var i ]   = [var] i
+  [ app t u ] = [app] [ t ] [ u ]
+  [ ci ]      = [ci]
+  [ ck ]      = [ck]
+  [ cs ]      = [cs]
+  [ mvar i ]  = [mvar] i
+  [ box t ]   = [box] [ t ]
+  [ cdist ]   = [cdist]
+  [ cup ]     = [cup]
+  [ cdown ]   = [cdown]
+  [ cpair ]   = [cpair]
+  [ cfst ]    = [cfst]
+  [ csnd ]    = [csnd]
+  [ tt ]      = [tt]
 
 
 -- Soundness with respect to all models, or evaluation.

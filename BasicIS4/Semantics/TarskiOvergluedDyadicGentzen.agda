@@ -158,10 +158,16 @@ module _ {{_ : Model}} where
   [up] : ∀ {A Γ Δ} → Γ ⁏ Δ [⊢] □ A → Γ ⁏ Δ [⊢] □ □ A
   [up] t = [unbox] t ([box] ([box] [mv₀]))
 
+  [down] : ∀ {A Γ Δ} → Γ ⁏ Δ [⊢] □ A → Γ ⁏ Δ [⊢] A
+  [down] t = [unbox] t [mv₀]
+
 
 -- Useful theorems in combinatory form.
 
 module _ {{_ : Model}} where
+  [ci] : ∀ {A Γ Δ} → Γ ⁏ Δ [⊢] A ▻ A
+  [ci] = [lam] [v₀]
+
   [ck] : ∀ {A B Γ Δ} → Γ ⁏ Δ [⊢] A ▻ B ▻ A
   [ck] = [lam] ([lam] [v₁])
 
@@ -174,8 +180,17 @@ module _ {{_ : Model}} where
   [cup] : ∀ {A Γ Δ} → Γ ⁏ Δ [⊢] □ A ▻ □ □ A
   [cup] = [lam] ([up] [v₀])
 
+  [cdown] : ∀ {A Γ Δ} → Γ ⁏ Δ [⊢] □ A ▻ A
+  [cdown] = [lam] ([down] [v₀])
+
   [cpair] : ∀ {A B Γ Δ} → Γ ⁏ Δ [⊢] A ▻ B ▻ A ∧ B
   [cpair] = [lam] ([lam] ([pair] [v₁] [v₀]))
+
+  [cfst] : ∀ {A B Γ Δ} → Γ ⁏ Δ [⊢] A ∧ B ▻ A
+  [cfst] = [lam] ([fst] [v₀])
+
+  [csnd] : ∀ {A B Γ Δ} → Γ ⁏ Δ [⊢] A ∧ B ▻ B
+  [csnd] = [lam] ([snd] [v₀])
 
 
 -- Additional useful equipment.

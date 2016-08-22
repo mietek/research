@@ -126,6 +126,9 @@ module _ {{_ : Model}} where
 -- Useful theorems in combinatory form.
 
 module _ {{_ : Model}} where
+  [ci] : ∀ {A Γ} → Γ [⊢] A ▻ A
+  [ci] = [lam] [v₀]
+
   [ck] : ∀ {A B Γ} → Γ [⊢] A ▻ B ▻ A
   [ck] = [lam] ([lam] [v₁])
 
@@ -138,8 +141,20 @@ module _ {{_ : Model}} where
   [cup] : ∀ {A Γ} → Γ [⊢] □ A ▻ □ □ A
   [cup] = [lam] ([up] [v₀])
 
+  [cdown] : ∀ {A Γ} → Γ [⊢] □ A ▻ A
+  [cdown] = [lam] ([down] [v₀])
+
+  [box] : ∀ {A Γ} → ⌀ [⊢] A → Γ [⊢] □ A
+  [box] t = [multibox] ([⊢]⋆→[⊢⋆] ∙) t
+
   [cpair] : ∀ {A B Γ} → Γ [⊢] A ▻ B ▻ A ∧ B
   [cpair] = [lam] ([lam] ([pair] [v₁] [v₀]))
+
+  [cfst] : ∀ {A B Γ} → Γ [⊢] A ∧ B ▻ A
+  [cfst] = [lam] ([fst] [v₀])
+
+  [csnd] : ∀ {A B Γ} → Γ [⊢] A ∧ B ▻ B
+  [csnd] = [lam] ([snd] [v₀])
 
 
 -- Additional useful equipment.

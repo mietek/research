@@ -244,7 +244,7 @@ import BasicIS4.Equipment.KripkeDyadicNonCanonical
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
 -- │ TOH │     │ eq  │     │     │     │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
--- │ TOG │     │ eq~ │ eq  │     │     │
+-- │ TOG │     │ eq  │ eq  │     │     │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
 -- │ TGI │     │ eq  │ WIP │     │     │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
@@ -256,7 +256,7 @@ import BasicIS4.Equipment.KripkeDyadicNonCanonical
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
 -- │ TODH│     │     │     │ eq  │     │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
--- │ TODG│     │     │     │ eq~ │ eq  │
+-- │ TODG│     │     │     │ eq  │ eq  │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
 -- │ TGDI│     │     │     │ eq  │ WIP │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
@@ -270,7 +270,6 @@ import BasicIS4.Equipment.KripkeDyadicNonCanonical
 -- e    : Soundness only.
 -- eq₀  : Soundness, for all terms; completeness, for closed terms only.
 -- eq   : Soundness and completeness.
--- eq~  : Soundness and completeness, using syntax translation.
 -- WIP  : Work in progress.
 
 

@@ -3,16 +3,24 @@ module BasicIS4.Metatheory.Hilbert-TarskiOvergluedGentzen where
 open import BasicIS4.Syntax.Hilbert public
 open import BasicIS4.Semantics.TarskiOvergluedGentzen public
 
-import BasicIS4.Metatheory.Gentzen-TarskiOvergluedGentzen as G
-
-open import BasicIS4.Syntax.Translation using (h→g)
-
 
 -- Internalisation of syntax as syntax representation in a particular model.
 
 module _ {{_ : Model}} where
   [_] : ∀ {A Γ} → Γ ⊢ A → Γ [⊢] A
-  [ t ] = G.[ h→g t ]
+  [ var i ]   = [var] i
+  [ app t u ] = [app] [ t ] [ u ]
+  [ ci ]      = [ci]
+  [ ck ]      = [ck]
+  [ cs ]      = [cs]
+  [ box t ]   = [box] [ t ]
+  [ cdist ]   = [cdist]
+  [ cup ]     = [cup]
+  [ cdown ]   = [cdown]
+  [ cpair ]   = [cpair]
+  [ cfst ]    = [cfst]
+  [ csnd ]    = [csnd]
+  [ tt ]      = [tt]
 
 
 -- Soundness with respect to all models, or evaluation.
