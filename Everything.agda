@@ -30,8 +30,8 @@ import BasicIPC.Syntax.ClosedHilbertSequential  -- Sequences of terms.
 import BasicIPC.Syntax.ClosedHilbert            -- Nested terms.
 
 -- Hilbert-style formalisation of syntax.
-import BasicIPC.Syntax.HilbertSequential  -- Sequences of terms.
-import BasicIPC.Syntax.Hilbert            -- Nested terms.
+import BasicIPC.Syntax.HilbertSequential        -- Sequences of terms.
+import BasicIPC.Syntax.Hilbert                  -- Nested terms.
 
 -- Gentzen-style formalisation of syntax.
 import BasicIPC.Syntax.Gentzen                  -- Simple terms.
@@ -50,16 +50,16 @@ import BasicIPC.Semantics.TarskiClosedGluedImplicit  -- Implicit closed syntax.
 import BasicIPC.Semantics.TarskiClosedGluedHilbert   -- Hilbert-style closed syntax.
 
 -- Tarski-style semantics with contexts as concrete worlds, and glueing for α and ▻.
-import BasicIPC.Semantics.TarskiGluedImplicit  -- Implicit syntax.
-import BasicIPC.Semantics.TarskiGluedHilbert   -- Hilbert-style syntax.
-import BasicIPC.Semantics.TarskiGluedGentzen   -- Gentzen-style syntax.
+import BasicIPC.Semantics.TarskiGluedImplicit        -- Implicit syntax.
+import BasicIPC.Semantics.TarskiGluedHilbert         -- Hilbert-style syntax.
+import BasicIPC.Semantics.TarskiGluedGentzen         -- Gentzen-style syntax.
 
 -- Tarski-style semantics with contexts as concrete worlds.
 import BasicIPC.Semantics.Tarski
 
 -- Kripke-style semantics with abstract worlds.
-import BasicIPC.Semantics.KripkeMcKinseyTarski  -- McKinsey-Tarski embedding.
-import BasicIPC.Semantics.KripkeGodel           -- Gödel embedding.
+import BasicIPC.Semantics.KripkeMcKinseyTarski       -- McKinsey-Tarski embedding.
+import BasicIPC.Semantics.KripkeGodel                -- Gödel embedding.
 
 
 -- Available metatheory for basic IPC.
@@ -163,8 +163,8 @@ import BasicIS4.Syntax.ClosedHilbertSequential  -- Sequences of terms.
 import BasicIS4.Syntax.ClosedHilbert            -- Nested terms.
 
 -- Hilbert-style formalisation of syntax.
-import BasicIS4.Syntax.HilbertSequential  -- Sequences of terms.
-import BasicIS4.Syntax.Hilbert            -- Nested terms.
+import BasicIS4.Syntax.HilbertSequential        -- Sequences of terms.
+import BasicIS4.Syntax.Hilbert                  -- Nested terms.
 
 -- Gentzen-style formalisation of syntax, after Bierman-de Paiva.
 import BasicIS4.Syntax.Gentzen
@@ -184,24 +184,24 @@ import BasicIS4.Syntax.Translation
 
 
 -- Basic Kripke-style semantics with abstract worlds, for soundness only.
-import BasicIS4.Semantics.BasicKripkeOno         -- Ono-style conditions.
-import BasicIS4.Semantics.BasicKripkeBozicDosen  -- Božić-Došen-style conditions.
-import BasicIS4.Semantics.BasicKripkeEwald       -- Ewald-style conditions.
-import BasicIS4.Semantics.BasicKripkeAlechina    -- Alechina-style conditions.
+import BasicIS4.Semantics.BasicKripkeOno                 -- Ono-style conditions.
+import BasicIS4.Semantics.BasicKripkeBozicDosen          -- Božić-Došen-style conditions.
+import BasicIS4.Semantics.BasicKripkeEwald               -- Ewald-style conditions.
+import BasicIS4.Semantics.BasicKripkeAlechina            -- Alechina-style conditions.
 
 -- Tarski-style semantics with glueing for α, ▻, and □, after Gabbay-Nanevski.
 import BasicIS4.Semantics.TarskiClosedOvergluedImplicit  -- Implicit closed syntax.
 import BasicIS4.Semantics.TarskiClosedOvergluedHilbert   -- Hilbert-style closed syntax.
 
 -- Tarski-style semantics with contexts as concrete worlds, and glueing for α, ▻, and □.
-import BasicIS4.Semantics.TarskiOvergluedImplicit  -- Implicit syntax.
-import BasicIS4.Semantics.TarskiOvergluedHilbert   -- Hilbert-style syntax.
-import BasicIS4.Semantics.TarskiOvergluedGentzen   -- Gentzen-style syntax.
+import BasicIS4.Semantics.TarskiOvergluedImplicit        -- Implicit syntax.
+import BasicIS4.Semantics.TarskiOvergluedHilbert         -- Hilbert-style syntax.
+import BasicIS4.Semantics.TarskiOvergluedGentzen         -- Gentzen-style syntax.
 
 -- Tarski-style semantics with contexts as concrete worlds, and glueing for □ only.
-import BasicIS4.Semantics.TarskiGluedImplicit  -- Implicit syntax.
-import BasicIS4.Semantics.TarskiGluedHilbert   -- Hilbert-style syntax.
-import BasicIS4.Semantics.TarskiGluedGentzen   -- Gentzen-style syntax.
+import BasicIS4.Semantics.TarskiGluedImplicit            -- Implicit syntax.
+import BasicIS4.Semantics.TarskiGluedHilbert             -- Hilbert-style syntax.
+import BasicIS4.Semantics.TarskiGluedGentzen             -- Gentzen-style syntax.
 
 -- Tarski-style semantics with context pairs as concrete worlds, and glueing for α, ▻, and □.
 import BasicIS4.Semantics.TarskiOvergluedDyadicImplicit  -- Implicit syntax.
@@ -209,9 +209,9 @@ import BasicIS4.Semantics.TarskiOvergluedDyadicHilbert   -- Hilbert-style syntax
 import BasicIS4.Semantics.TarskiOvergluedDyadicGentzen   -- Gentzen-style syntax.
 
 -- Tarski-style semantics with context pairs as concrete worlds, and glueing for □ only.
-import BasicIS4.Semantics.TarskiGluedDyadicImplicit  -- Implicit syntax.
-import BasicIS4.Semantics.TarskiGluedDyadicHilbert   -- Hilbert-style syntax.
-import BasicIS4.Semantics.TarskiGluedDyadicGentzen   -- Gentzen-style syntax.
+import BasicIS4.Semantics.TarskiGluedDyadicImplicit      -- Implicit syntax.
+import BasicIS4.Semantics.TarskiGluedDyadicHilbert       -- Hilbert-style syntax.
+import BasicIS4.Semantics.TarskiGluedDyadicGentzen       -- Gentzen-style syntax.
 
 
 -- Canonical model equipment for Kripke-style semantics with contexts as concrete worlds.
