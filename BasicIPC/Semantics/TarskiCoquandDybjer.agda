@@ -1,4 +1,5 @@
--- Tarski-style semantics with implicit syntax representation, after Coquand-Dybjer.
+-- Tarski-style semantics with contexts as concrete worlds, and glueing for α and ▻.
+-- Implicit syntax.
 
 module BasicIPC.Semantics.TarskiCoquandDybjer where
 

@@ -1,4 +1,5 @@
--- Normal forms of Gentzen-style derivations.
+-- Gentzen-style formalisation of syntax.
+-- Normal forms and neutrals.
 
 module BasicIPC.Syntax.GentzenNormalForm where
 

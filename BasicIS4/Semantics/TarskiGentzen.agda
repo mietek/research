@@ -1,4 +1,5 @@
--- Tarski-style semantics with explicit Gentzen-style syntax representation.
+-- Tarski-style semantics with contexts as concrete worlds, and glueing for α, ▻, and □.
+-- Gentzen-style syntax.
 
 module BasicIS4.Semantics.TarskiGentzen where
 

@@ -1,4 +1,4 @@
--- Gentzen-style natural deduction formalisation of syntax with a separate modal context, after Pfenning-Davies.
+-- Gentzen-style formalisation of syntax with context pairs, after Pfenning-Davies.
 
 module BasicIS4.Syntax.DyadicGentzen where
 

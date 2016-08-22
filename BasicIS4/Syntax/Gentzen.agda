@@ -1,4 +1,4 @@
--- Gentzen-style natural deduction formalisation of syntax, after Bierman-de Paiva.
+-- Gentzen-style formalisation of syntax, after Bierman-de Paiva.
 
 module BasicIS4.Syntax.Gentzen where
 

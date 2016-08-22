@@ -1,11 +1,12 @@
--- Basic Kripke-style semantics, after Ono, for soundness only.
+-- Basic Kripke-style semantics with abstract worlds, for soundness only.
+-- Ono-style conditions.
 
 module BasicIS4.Semantics.BasicKripkeOno where
 
 open import BasicIS4.Syntax.Common public
 
 
--- Intuitionistic modal Kripke models, with Ono frame conditions.
+-- Intuitionistic modal Kripke models, with frame conditions given by Ono.
 
 record Model : Set₁ where
   infix 3 _⊩ᵅ_

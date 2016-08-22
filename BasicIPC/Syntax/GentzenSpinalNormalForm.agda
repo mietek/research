@@ -1,4 +1,5 @@
--- Spinal normal forms of Gentzen-style derivations.
+-- Gentzen-style formalisation of syntax.
+-- Normal forms, neutrals, and spines.
 
 module BasicIPC.Syntax.GentzenSpinalNormalForm where
 

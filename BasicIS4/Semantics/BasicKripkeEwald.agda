@@ -1,11 +1,12 @@
--- Basic Kripke-style semantics, after Ewald, Servi, and Plotkin-Stirling, for soundness only.
+-- Basic Kripke-style semantics with abstract worlds, for soundness only.
+-- Ewald-style conditions.
 
 module BasicIS4.Semantics.BasicKripkeEwald where
 
 open import BasicIS4.Syntax.Common public
 
 
--- Intuitionistic modal Kripke models, with Ewald frame conditions.
+-- Intuitionistic modal Kripke models, with frame conditions given by Ewald, Servi, and Plotkin-Stirling.
 
 record Model : Set₁ where
   infix 3 _⊩ᵅ_

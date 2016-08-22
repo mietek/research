@@ -1,4 +1,4 @@
--- Tarski-style semantics with explicit contexts.
+-- Tarski-style semantics with contexts as concrete worlds.
 
 module BasicIPC.Semantics.Tarski where
 

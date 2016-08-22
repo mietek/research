@@ -1,4 +1,5 @@
--- Gentzen-style natural deduction formalisation of syntax.
+-- Gentzen-style formalisation of syntax.
+-- Simple terms.
 
 module BasicIPC.Syntax.Gentzen where
 

@@ -1,4 +1,4 @@
--- Basic Tarski-style denotational semantics, for soundness only.
+-- Basic Tarski-style semantics, for soundness only.
 
 module BasicIPC.Semantics.BasicTarski where
 

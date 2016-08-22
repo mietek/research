@@ -1,11 +1,12 @@
--- Kripke-style semantics, based on Gödel.
+-- Kripke-style semantics with abstract worlds.
+-- Gödel embedding.
 
 module BasicIPC.Semantics.KripkeGodel where
 
 open import BasicIPC.Syntax.Common public
 
 
--- Kripke-Gödel models.
+-- Kripke models.
 
 record Model : Set₁ where
   infix 3 _⊩ᵅ_
@@ -23,7 +24,7 @@ record Model : Set₁ where
 open Model {{…}} public
 
 
--- Forcing in a particular world of a particular model.
+-- Forcing in a particular world of a particular model, based on the Gödel embedding of IPC in S4.
 
 module _ {{_ : Model}} where
   infix 3 _⊩_

@@ -1,4 +1,5 @@
--- Tarski-style semantics with explicit Hilbert-style syntax representation.
+-- Tarski-style semantics with contexts as concrete worlds, and glueing for α, ▻, and □.
+-- Hilbert-style syntax.
 
 module BasicIS4.Semantics.TarskiHilbert where
 

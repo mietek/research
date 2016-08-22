@@ -1,11 +1,12 @@
--- Kripke-style semantics, based on McKinsey-Tarski.
+-- Kripke-style semantics with abstract worlds.
+-- McKinsey-Tarski embedding.
 
 module BasicIPC.Semantics.KripkeMcKinseyTarski where
 
 open import BasicIPC.Syntax.Common public
 
 
--- Intuitionistic Kripke-McKinsey-Tarski models.
+-- Intuitionistic Kripke models.
 
 record Model : Set₁ where
   infix 3 _⊩ᵅ_
@@ -24,7 +25,7 @@ record Model : Set₁ where
 open Model {{…}} public
 
 
--- Forcing in a particular world of a particular model.
+-- Forcing in a particular world of a particular model, based on the McKinsey-Tarski embedding of IPC in S4.
 
 module _ {{_ : Model}} where
   infix 3 _⊩_

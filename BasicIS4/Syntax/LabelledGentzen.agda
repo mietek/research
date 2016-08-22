@@ -1,4 +1,4 @@
--- Gentzen-style natural deduction formalisation of syntax with a separate relational context, after Basin-Matthews-Viganò.
+-- Gentzen-style formalisation of labelled syntax, after Basin-Matthews-Viganò.
 
 module BasicIS4.Syntax.LabelledGentzen where
 

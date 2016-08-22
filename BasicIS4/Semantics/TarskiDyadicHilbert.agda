@@ -1,4 +1,5 @@
--- Tarski-style semantics with explicit Hilbert-style syntax representation and a separate modal context.
+-- Tarski-style semantics with context pairs as concrete worlds, and glueing for α, ▻, and □.
+-- Hilbert-style syntax.
 
 module BasicIS4.Semantics.TarskiDyadicHilbert where
 

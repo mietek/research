@@ -1,4 +1,5 @@
--- Hilbert-style axiomatic formalisation of closed syntax.
+-- Hilbert-style formalisation of closed syntax.
+-- Nested terms.
 
 module BasicIS4.Syntax.ClosedHilbert where
 

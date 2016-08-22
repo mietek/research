@@ -1,4 +1,5 @@
--- Tarski-style semantics with explicit Hilbert-style closed syntax representation.
+-- Tarski-style semantics with glueing for α, ▻, and □, after Coquand-Dybjer and Gabbay-Nanevski.
+-- Hilbert-style closed syntax.
 
 module BasicIS4.Semantics.TarskiClosedHilbert where
 

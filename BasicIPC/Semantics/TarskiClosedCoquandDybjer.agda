@@ -1,4 +1,5 @@
--- Tarski-style semantics with implicit closed syntax representation, after Coquand-Dybjer.
+-- Tarski-style semantics with glueing for α and ▻, after Coquand-Dybjer.
+-- Implicit closed syntax.
 
 module BasicIPC.Semantics.TarskiClosedCoquandDybjer where
 

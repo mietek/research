@@ -2,8 +2,7 @@
 
 https://github.com/mietek/hilbert-gentzen
 
-An Agda formalisation of intuitionistic propositional calculus, modal logic S4,
-and logic of proofs.  Work in progress.
+An Agda formalisation of IPC, S4, and LP.  Work in progress.
 
 Made by Miëtek Bak.  Published under the MIT X11 license.
 
@@ -26,53 +25,41 @@ import Common.PredicateBasedContext
 -- Common syntax.
 import BasicIPC.Syntax.Common
 
--- Hilbert-style axiomatic formalisation of closed syntax, as linear sequences.
-import BasicIPC.Syntax.ClosedHilbertLinear
+-- Hilbert-style formalisation of closed syntax.
+import BasicIPC.Syntax.ClosedHilbertLinear  -- Linear sequences of terms.
+import BasicIPC.Syntax.ClosedHilbert        -- Nested terms.
 
--- Hilbert-style axiomatic formalisation of closed syntax.
-import BasicIPC.Syntax.ClosedHilbert
+-- Hilbert-style formalisation of syntax.
+import BasicIPC.Syntax.HilbertLinear  -- Linear sequences of terms.
+import BasicIPC.Syntax.Hilbert        -- Nested terms.
 
--- Hilbert-style axiomatic formalisation of syntax, as linear sequences.
-import BasicIPC.Syntax.HilbertLinear
-
--- Hilbert-style axiomatic formalisation of syntax.
-import BasicIPC.Syntax.Hilbert
-
--- Gentzen-style natural deduction formalisation of syntax.
-import BasicIPC.Syntax.Gentzen
-import BasicIPC.Syntax.GentzenNormalForm
-import BasicIPC.Syntax.GentzenSpinalNormalForm
+-- Gentzen-style formalisation of syntax.
+import BasicIPC.Syntax.Gentzen                  -- Simple terms.
+import BasicIPC.Syntax.GentzenNormalForm        -- Normal forms and neutrals.
+import BasicIPC.Syntax.GentzenSpinalNormalForm  -- Normal forms, neutrals, and spines.
 
 -- Translation between different formalisations of syntax.
 import BasicIPC.Syntax.Translation
 
 
--- Basic Tarski-style denotational semantics, for soundness only.
+-- Basic Tarski-style semantics, for soundness only.
 import BasicIPC.Semantics.BasicTarski
 
--- Tarski-style semantics with implicit closed syntax representation, after Coquand-Dybjer.
-import BasicIPC.Semantics.TarskiClosedCoquandDybjer
+-- Tarski-style semantics with glueing for α and ▻, after Coquand-Dybjer.
+import BasicIPC.Semantics.TarskiClosedCoquandDybjer  -- Implicit closed syntax.
+import BasicIPC.Semantics.TarskiClosedHilbert        -- Hilbert-style closed syntax.
 
--- Tarski-style semantics with explicit Hilbert-style closed syntax representation.
-import BasicIPC.Semantics.TarskiClosedHilbert
+-- Tarski-style semantics with contexts as concrete worlds, and glueing for α and ▻.
+import BasicIPC.Semantics.TarskiCoquandDybjer  -- Implicit syntax.
+import BasicIPC.Semantics.TarskiHilbert        -- Hilbert-style syntax.
+import BasicIPC.Semantics.TarskiGentzen        -- Gentzen-style syntax.
 
--- Tarski-style semantics with implicit syntax representation, after Coquand-Dybjer.
-import BasicIPC.Semantics.TarskiCoquandDybjer
-
--- Tarski-style semantics with explicit Hilbert-style syntax representation.
-import BasicIPC.Semantics.TarskiHilbert
-
--- Tarski-style semantics with explicit Gentzen-style syntax representation.
-import BasicIPC.Semantics.TarskiGentzen
-
--- Tarski-style semantics with explicit contexts.
+-- Tarski-style semantics with contexts as concrete worlds.
 import BasicIPC.Semantics.Tarski
 
--- Kripke-style semantics, based on McKinsey-Tarski.
-import BasicIPC.Semantics.KripkeMcKinseyTarski
-
--- Kripke-style semantics, based on Gödel.
-import BasicIPC.Semantics.KripkeGodel
+-- Kripke-style semantics with abstract worlds.
+import BasicIPC.Semantics.KripkeMcKinseyTarski  -- McKinsey-Tarski embedding.
+import BasicIPC.Semantics.KripkeGodel           -- Gödel embedding.
 
 
 -- Available metatheory for basic IPC.
@@ -161,77 +148,67 @@ import IPC.Translation
 -- Common syntax.
 import BasicIS4.Syntax.Common
 
--- Hilbert-style axiomatic formalisation of closed syntax, as linear sequences.
-import BasicIS4.Syntax.ClosedHilbertLinear
+-- Hilbert-style formalisation of closed syntax.
+import BasicIS4.Syntax.ClosedHilbertLinear  -- Linear sequences of terms.
+import BasicIS4.Syntax.ClosedHilbert        -- Nested terms.
 
--- Hilbert-style axiomatic formalisation of closed syntax.
-import BasicIS4.Syntax.ClosedHilbert
+-- Hilbert-style formalisation of syntax.
+import BasicIS4.Syntax.HilbertLinear  -- Linear sequences of terms.
+import BasicIS4.Syntax.Hilbert        -- Nested terms.
 
--- Hilbert-style axiomatic formalisation of syntax, as linear sequences.
-import BasicIS4.Syntax.HilbertLinear
-
--- Hilbert-style axiomatic formalisation of syntax.
-import BasicIS4.Syntax.Hilbert
-
--- Gentzen-style natural deduction formalisation of syntax, after Bierman-de Paiva.
+-- Gentzen-style formalisation of syntax, after Bierman-de Paiva.
 import BasicIS4.Syntax.Gentzen
 
--- Hilbert-style axiomatic formalisation of syntax with a separate modal context, as linear sequences.
-import BasicIS4.Syntax.DyadicHilbertLinear
+-- Hilbert-style formalisation of syntax with context pairs.
+import BasicIS4.Syntax.DyadicHilbertLinear  -- Linear sequences of terms.
+import BasicIS4.Syntax.DyadicHilbert        -- Linear sequences of terms.
 
--- Hilbert-style axiomatic formalisation of syntax with a separate modal context.
-import BasicIS4.Syntax.DyadicHilbert
-
--- Gentzen-style natural deduction formalisation of syntax with a separate modal context, after Pfenning-Davies.
+-- Gentzen-style formalisation of syntax with context pairs, after Pfenning-Davies.
 import BasicIS4.Syntax.DyadicGentzen
 
--- Gentzen-style natural deduction formalisation of syntax with a separate relational context, after Basin-Matthews-Viganò.
+-- Gentzen-style formalisation of labelled syntax, after Basin-Matthews-Viganò.
 import BasicIS4.Syntax.LabelledGentzen
 
 -- Translation between different formalisations of syntax.
 import BasicIS4.Syntax.Translation
 
 
--- Basic Kripke-style semantics, after Ono, for soundness only.
-import BasicIS4.Semantics.BasicKripkeOno
+-- Basic Kripke-style semantics with abstract worlds, for soundness only.
+import BasicIS4.Semantics.BasicKripkeOno           -- Ono-style conditions.
+import BasicIS4.Semantics.BasicKripkeBozicDosen    -- Božić-Došen-style conditions.
+import BasicIS4.Semantics.BasicKripkeEwald         -- Ewald-style conditions.
+import BasicIS4.Semantics.BasicKripkeAlechinaEtAl  -- Alechina-style conditions.
 
--- Basic Kripke-style semantics, after Božić-Došen, for soundness only.
-import BasicIS4.Semantics.BasicKripkeBozicDosen
+-- Tarski-style semantics with glueing for α, ▻, and □, after Coquand-Dybjer and Gabbay-Nanevski.
+import BasicIS4.Semantics.TarskiClosedGabbayNanevski  -- Implicit closed syntax.
+import BasicIS4.Semantics.TarskiClosedHilbert         -- Hilbert-style closed syntax.
 
--- Basic Kripke-style semantics, after Ewald, Servi, and Plotkin-Stirling, for soundness only.
-import BasicIS4.Semantics.BasicKripkeEwald
+-- Tarski-style semantics with contexts as concrete worlds, and glueing for α, ▻, and □.
+import BasicIS4.Semantics.TarskiGabbayNanevski  -- Implicit syntax.
+import BasicIS4.Semantics.TarskiHilbert         -- Hilbert-style syntax.
+import BasicIS4.Semantics.TarskiGentzen         -- Gentzen-style syntax.
 
--- Basic Kripke-style semantics, after Alechina-Mendler-de Paiva-Ritter, for soundness only.
-import BasicIS4.Semantics.BasicKripkeAlechinaEtAl
+-- Tarski-style semantics with contexts as concrete worlds, and glueing for □ only.
+import BasicIS4.Semantics.Tarski   -- Implicit syntax.
+import BasicIS4.Semantics.Tarski1  -- Hilbert-style syntax.
+import BasicIS4.Semantics.Tarski2  -- Gentzen-style syntax.
 
--- Tarski-style semantics with implicit closed syntax representation, after Gabbay-Nanevski.
-import BasicIS4.Semantics.TarskiClosedGabbayNanevski
+-- Tarski-style semantics with context pairs as concrete worlds, and glueing for α, ▻, and □.
+import BasicIS4.Semantics.TarskiDyadicGabbayNanevski  -- Implicit syntax.
+import BasicIS4.Semantics.TarskiDyadicHilbert         -- Hilbert-style syntax.
+import BasicIS4.Semantics.TarskiDyadicGentzen         -- Gentzen-style syntax.
 
--- Tarski-style semantics with explicit Hilbert-style closed syntax representation.
-import BasicIS4.Semantics.TarskiClosedHilbert
-
--- Tarski-style semantics with implicit syntax representation, after Gabbay-Nanevski.
-import BasicIS4.Semantics.TarskiGabbayNanevski
-
--- Tarski-style semantics with explicit Hilbert-style syntax representation.
-import BasicIS4.Semantics.TarskiHilbert
-
--- Tarski-style semantics with explicit Gentzen-style syntax representation.
-import BasicIS4.Semantics.TarskiGentzen
-
--- Tarski-style semantics with implicit syntax representation and a separate modal context, after Gabbay-Nanevski.
-import BasicIS4.Semantics.TarskiDyadicGabbayNanevski
-
--- Tarski-style semantics with explicit Hilbert-style syntax representation and a separate modal context.
-import BasicIS4.Semantics.TarskiDyadicHilbert
-
--- Tarski-style semantics with explicit Gentzen-style syntax representation and a separate modal context.
-import BasicIS4.Semantics.TarskiDyadicGentzen
+-- Tarski-style semantics with context pairs as concrete worlds, and glueing for □ only.
+import BasicIS4.Semantics.TarskiDyadic   -- Implicit syntax.
+import BasicIS4.Semantics.TarskiDyadic1  -- Hilbert-style syntax.
+import BasicIS4.Semantics.TarskiDyadic2  -- Gentzen-style syntax.
 
 
--- Canonical and non-canonical model equipment for Kripke-style semantics.
+-- Canonical model equipment for Kripke-style semantics with contexts as concrete worlds.
 import BasicIS4.Equipment.KripkeCanonical
 import BasicIS4.Equipment.KripkeNonCanonical
+
+-- Canonical model equipment for Kripke-style semantics with context pairs as concrete worlds.
 import BasicIS4.Equipment.KripkeDyadicCanonical
 import BasicIS4.Equipment.KripkeDyadicNonCanonical
 

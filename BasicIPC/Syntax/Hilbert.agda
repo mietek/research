@@ -1,4 +1,5 @@
--- Hilbert-style axiomatic formalisation of syntax.
+-- Hilbert-style formalisation of syntax.
+-- Nested terms.
 
 module BasicIPC.Syntax.Hilbert where
 

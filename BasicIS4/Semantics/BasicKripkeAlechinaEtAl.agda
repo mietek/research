@@ -1,11 +1,12 @@
--- Basic Kripke-style semantics, after Alechina-Mendler-de Paiva-Ritter, for soundness only.
+-- Basic Kripke-style semantics with abstract worlds, for soundness only.
+-- Alechina-style conditions.
 
 module BasicIS4.Semantics.BasicKripkeAlechinaEtAl where
 
 open import BasicIS4.Syntax.Common public
 
 
--- Intuitionistic modal Kripke models, with Alechina et al. frame conditions.
+-- Intuitionistic modal Kripke models, with Alechina-Mendler-de Paiva-Ritter frame conditions.
 
 record Model : Set₁ where
   infix 3 _⊩ᵅ_

@@ -1,4 +1,5 @@
--- Tarski-style semantics with implicit syntax representation and a separate modal context, after Gabbay-Nanevski.
+-- Tarski-style semantics with context pairs as concrete worlds, and glueing for α, ▻, and □.
+-- Implicit syntax.
 
 module BasicIS4.Semantics.TarskiDyadicGabbayNanevski where
 

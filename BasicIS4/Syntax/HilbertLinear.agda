@@ -1,4 +1,5 @@
--- Hilbert-style axiomatic formalisation of syntax, as linear sequences.
+-- Hilbert-style formalisation of syntax.
+-- Linear sequences of terms.
 
 module BasicIS4.Syntax.HilbertLinear where
 

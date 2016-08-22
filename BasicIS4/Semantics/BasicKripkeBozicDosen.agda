@@ -1,11 +1,12 @@
--- Basic Kripke-style semantics, after Božić-Došen, for soundness only.
+-- Basic Kripke-style semantics with abstract worlds, for soundness only.
+-- Božić-Došen-style conditions.
 
 module BasicIS4.Semantics.BasicKripkeBozicDosen where
 
 open import BasicIS4.Syntax.Common public
 
 
--- Intuitionistic modal Kripke models, with Božić-Došen frame conditions.
+-- Intuitionistic modal Kripke models, with frame conditions given by Božić-Došen.
 
 record Model : Set₁ where
   infix 3 _⊩ᵅ_
