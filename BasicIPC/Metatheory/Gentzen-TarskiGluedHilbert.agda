@@ -1,36 +1,32 @@
-module BasicIPC.Metatheory.Hilbert-TarskiGluedHilbert where
+module BasicIPC.Metatheory.Gentzen-TarskiGluedHilbert where
 
-open import BasicIPC.Syntax.Hilbert public
+open import BasicIPC.Syntax.Gentzen public
 open import BasicIPC.Semantics.TarskiGluedHilbert public
+
+import BasicIPC.Metatheory.Hilbert-TarskiGluedHilbert as H
+
+open import BasicIPC.Syntax.Translation using (g→h)
 
 
 -- Soundness with respect to the syntax representation in a particular model.
 
 module _ {{_ : Model}} where
   [_] : ∀ {A Γ} → Γ ⊢ A → Γ [⊢] A
-  [ var i ]   = [var] i
-  [ app t u ] = [app] [ t ] [ u ]
-  [ ci ]      = [ci]
-  [ ck ]      = [ck]
-  [ cs ]      = [cs]
-  [ cpair ]   = [cpair]
-  [ cfst ]    = [cfst]
-  [ csnd ]    = [csnd]
-  [ tt ]      = [tt]
+  [ t ] = H.[ g→h t ]
 
 
 -- Soundness with respect to all models, or evaluation.
 
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
-eval (var i)   γ = lookup i γ
-eval (app t u) γ = eval t γ ⟪$⟫ eval u γ
-eval ci        γ = K ([ci] , I)
-eval ck        γ = K ([ck] , ⟪K⟫)
-eval cs        γ = K ([cs] , ⟪S⟫′)
-eval cpair     γ = K ([cpair] , _⟪,⟫′_)
-eval cfst      γ = K ([cfst] , π₁)
-eval csnd      γ = K ([csnd] , π₂)
-eval tt        γ = ∙
+eval (var i)    γ = lookup i γ
+eval (lam t)    γ = λ η → let γ′ = mono⊩⋆ η γ
+                           in  [multicut] (reifyʳ⋆ γ′) [ lam t ] , λ a →
+                                 eval t (γ′ , a)
+eval (app t u)  γ = eval t γ ⟪$⟫ eval u γ
+eval (pair t u) γ = eval t γ , eval u γ
+eval (fst t)    γ = π₁ (eval t γ)
+eval (snd t)    γ = π₂ (eval t γ)
+eval tt         γ = ∙
 
 
 -- TODO: Correctness of evaluation with respect to conversion.

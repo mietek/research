@@ -28,6 +28,9 @@ record Model : Set₁ where
     [csnd]   : ∀ {A B Γ}   → Γ [⊢] A ∧ B ▻ B
     [tt]     : ∀ {Γ}       → Γ [⊢] ⊤
 
+    -- NOTE: [lam] is necessary for [multicut], which is necessary for Gentzen-style eval.
+    [lam] : ∀ {A B Γ} → Γ , A [⊢] B → Γ [⊢] A ▻ B
+
   infix 3 _[⊢]⋆_
   _[⊢]⋆_ : Cx Ty → Cx Ty → Set
   Γ [⊢]⋆ ⌀     = 𝟙
@@ -78,6 +81,14 @@ module _ {{_ : Model}} where
   reifyʳ⋆ : ∀ {Π Γ} → Γ ⊩⋆ Π → Γ [⊢]⋆ Π
   reifyʳ⋆ {⌀}     ∙        = ∙
   reifyʳ⋆ {Π , A} (ts , t) = reifyʳ⋆ ts , reifyʳ t
+
+
+-- Useful theorems in functional form.
+
+module _ {{_ : Model}} where
+  [multicut] : ∀ {Π A Γ} → Γ [⊢]⋆ Π → Π [⊢] A → Γ [⊢] A
+  [multicut] {⌀}     ∙        u = mono[⊢] bot⊆ u
+  [multicut] {Π , B} (ts , t) u = [app] ([multicut] ts ([lam] u)) t
 
 
 -- Additional useful equipment.
