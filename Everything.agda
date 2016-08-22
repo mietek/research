@@ -71,7 +71,7 @@ import BasicIPC.Semantics.KripkeGodel                -- Gödel embedding.
 -- ├─────┼─────┼─────┼─────┼─────┤
 -- │ TCGI│ e₀q₀│ eq₀ │ eq₀ │     │
 -- ├─────┼─────┼─────┼─────┼─────┤
--- │ TCGH│ e₀q₀│ eq₀ │     │     │
+-- │ TCGH│ e₀q₀│ eq₀ │ eq₀~│     │
 -- ├─────┼─────┼─────┼─────┼─────┤
 -- │ TGI │     │ eq  │ eq  │     │
 -- ├─────┼─────┼─────┼─────┼─────┤
@@ -110,6 +110,7 @@ import BasicIPC.Metatheory.Hilbert-KripkeGodel
 
 import BasicIPC.Metatheory.Gentzen-BasicTarski
 import BasicIPC.Metatheory.Gentzen-TarskiClosedGluedImplicit
+import BasicIPC.Metatheory.Gentzen-TarskiClosedGluedHilbert
 import BasicIPC.Metatheory.Gentzen-TarskiGluedImplicit
 import BasicIPC.Metatheory.Gentzen-TarskiGluedHilbert
 import BasicIPC.Metatheory.Gentzen-TarskiGluedGentzen

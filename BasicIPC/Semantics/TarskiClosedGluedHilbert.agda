@@ -70,6 +70,14 @@ module _ {{_ : Model}} where
   reifyʳ⋆ {Π , A} (ts , t) = reifyʳ⋆ ts , reifyʳ t
 
 
+-- Useful theorems in functional form.
+
+module _ {{_ : Model}} where
+  [multicut] : ∀ {Π A} → [⊢]⋆ Π → [⊢] Π ▻⋯▻ A → [⊢] A
+  [multicut] {⌀}     ∙        u = u
+  [multicut] {Π , B} (ts , t) u = [app] ([multicut] ts u) t
+
+
 -- Additional useful equipment.
 
 module _ {{_ : Model}} where
