@@ -1,7 +1,7 @@
 -- Hilbert-style formalisation of syntax with context pairs.
--- Linear sequences of terms.
+-- Sequences of terms.
 
-module BasicIS4.Syntax.DyadicHilbertLinear where
+module BasicIS4.Syntax.DyadicHilbertSequential where
 
 open import Common.ContextPair public
 open import BasicIS4.Syntax.Common public

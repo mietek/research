@@ -26,12 +26,12 @@ import Common.PredicateBasedContext
 import BasicIPC.Syntax.Common
 
 -- Hilbert-style formalisation of closed syntax.
-import BasicIPC.Syntax.ClosedHilbertLinear  -- Linear sequences of terms.
-import BasicIPC.Syntax.ClosedHilbert        -- Nested terms.
+import BasicIPC.Syntax.ClosedHilbertSequential  -- Sequences of terms.
+import BasicIPC.Syntax.ClosedHilbert            -- Nested terms.
 
 -- Hilbert-style formalisation of syntax.
-import BasicIPC.Syntax.HilbertLinear  -- Linear sequences of terms.
-import BasicIPC.Syntax.Hilbert        -- Nested terms.
+import BasicIPC.Syntax.HilbertSequential  -- Sequences of terms.
+import BasicIPC.Syntax.Hilbert            -- Nested terms.
 
 -- Gentzen-style formalisation of syntax.
 import BasicIPC.Syntax.Gentzen                  -- Simple terms.
@@ -159,19 +159,19 @@ import IPC.Translation
 import BasicIS4.Syntax.Common
 
 -- Hilbert-style formalisation of closed syntax.
-import BasicIS4.Syntax.ClosedHilbertLinear  -- Linear sequences of terms.
-import BasicIS4.Syntax.ClosedHilbert        -- Nested terms.
+import BasicIS4.Syntax.ClosedHilbertSequential  -- Sequences of terms.
+import BasicIS4.Syntax.ClosedHilbert            -- Nested terms.
 
 -- Hilbert-style formalisation of syntax.
-import BasicIS4.Syntax.HilbertLinear  -- Linear sequences of terms.
-import BasicIS4.Syntax.Hilbert        -- Nested terms.
+import BasicIS4.Syntax.HilbertSequential  -- Sequences of terms.
+import BasicIS4.Syntax.Hilbert            -- Nested terms.
 
 -- Gentzen-style formalisation of syntax, after Bierman-de Paiva.
 import BasicIS4.Syntax.Gentzen
 
 -- Hilbert-style formalisation of syntax with context pairs.
-import BasicIS4.Syntax.DyadicHilbertLinear  -- Linear sequences of terms.
-import BasicIS4.Syntax.DyadicHilbert        -- Nested terms.
+import BasicIS4.Syntax.DyadicHilbertSequential  -- Sequences of terms.
+import BasicIS4.Syntax.DyadicHilbert            -- Nested terms.
 
 -- Gentzen-style formalisation of syntax with context pairs, after Pfenning-Davies.
 import BasicIS4.Syntax.DyadicGentzen
