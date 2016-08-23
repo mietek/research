@@ -15,7 +15,7 @@ data ⊦⊢_ : Cx Ty → Set where
   ci    : ∀ {Ξ A}     → ⊦⊢ Ξ → ⊦⊢ Ξ , A ▻ A
   ck    : ∀ {Ξ A B}   → ⊦⊢ Ξ → ⊦⊢ Ξ , A ▻ B ▻ A
   cs    : ∀ {Ξ A B C} → ⊦⊢ Ξ → ⊦⊢ Ξ , (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
-  nec   : ∀ {Ξ Ψ A}   → ⊦⊢ Ψ , A → ⊦⊢ Ξ → ⊦⊢ Ξ , □ A
+  nec   : ∀ {Ξ Ξ′ A}  → ⊦⊢ Ξ′ , A → ⊦⊢ Ξ → ⊦⊢ Ξ , □ A
   cdist : ∀ {Ξ A B}   → ⊦⊢ Ξ → ⊦⊢ Ξ , □ (A ▻ B) ▻ □ A ▻ □ B
   cup   : ∀ {Ξ A}     → ⊦⊢ Ξ → ⊦⊢ Ξ , □ A ▻ □ □ A
   cdown : ∀ {Ξ A}     → ⊦⊢ Ξ → ⊦⊢ Ξ , □ A ▻ A

@@ -52,7 +52,7 @@ mutual
     ci    : ∀ {Ξ A}         → Γ ⊢× Ξ → Γ ⊢× Ξ , A ▻ A
     ck    : ∀ {Ξ A B}       → Γ ⊢× Ξ → Γ ⊢× Ξ , A ▻ B ▻ A
     cs    : ∀ {Ξ A B C}     → Γ ⊢× Ξ → Γ ⊢× Ξ , (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
-    nec   : ∀ {Ξ Ψ A}       → (ss : ⌀ ⊢× Ψ , A) → Γ ⊢× Ξ → Γ ⊢× Ξ , [ ss ]× ⦂ A
+    nec   : ∀ {Ξ Ξ′ A}      → (ss : ⌀ ⊢× Ξ′ , A) → Γ ⊢× Ξ → Γ ⊢× Ξ , [ ss ]× ⦂ A
     cdist : ∀ {Ξ A B TS US} → Γ ⊢× Ξ → Γ ⊢× Ξ , TS ⦂ (A ▻ B) ▻ US ⦂ A ▻ APP TS US ⦂ B
     cup   : ∀ {Ξ A TS}      → Γ ⊢× Ξ → Γ ⊢× Ξ , TS ⦂ A ▻ BOX TS ⦂ TS ⦂ A
     cdown : ∀ {Ξ A TS}      → Γ ⊢× Ξ → Γ ⊢× Ξ , TS ⦂ A ▻ A
