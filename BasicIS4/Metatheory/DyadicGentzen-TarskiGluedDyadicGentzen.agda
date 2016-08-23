@@ -22,15 +22,23 @@ module _ {{_ : Model}} where
 
 -- Soundness with respect to all models, or evaluation.
 
+-- FIXME
+postulate
+  reifyʳ⋆ : ∀ {{_ : Model}} {Ξ Γ Δ} → Γ ⁏ Δ ⊩⋆ Ξ → Γ ⁏ Δ [⊢]⋆ Ξ
+
 eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊨ A
 eval (var i)             γ δ = lookup i γ
-eval (lam t)             γ δ = λ η a → eval t (mono⊩⋆ η γ , a) (mono⊩⋆ η δ)
+eval (lam t)             γ δ = λ ψ a → eval t (mono²⊩⋆ ψ γ , a) (mono²⊩⋆ ψ δ)
 eval (app {A} {B} t u)   γ δ = _⟪$⟫_ {A} {B} (eval t γ δ) (eval u γ δ)
 eval (mvar i)            γ δ = mlookup i δ
-eval (box t)             γ δ = λ η → [ box t ] ⅋
-                                 eval t ∙ (mono⊩⋆ η δ)
-eval (unbox {A} {C} t u) γ δ = let a = ⟪↓⟫ {A} (eval t γ δ)
-                               in  {!δ , a !}
+eval (box t)             γ δ = λ ψ → let δ′ = mono²⊩⋆ ψ δ
+                                      in  [mmulticut] (reifyʳ⋆ δ′) [ box t ] ⅋
+                                            eval t ∙ δ′
+eval (unbox {A} {C} t u) γ δ = eval u γ (δ , λ ψ →
+                                 let γ′ = mono²⊩⋆ ψ γ
+                                     δ′ = mono²⊩⋆ ψ δ
+                                 in  [multicut²] (reifyʳ⋆ γ′) (reifyʳ⋆ δ′) [ t ] ⅋
+                                       ⟪↓⟫ (eval t γ′ δ′))
 eval (pair t u)          γ δ = eval t γ δ , eval u γ δ
 eval (fst t)             γ δ = π₁ (eval t γ δ)
 eval (snd t)             γ δ = π₂ (eval t γ δ)
@@ -46,20 +54,20 @@ private
   instance
     canon : Model
     canon = record
-      { _⁏_⊩ᵅ_  = λ Γ Δ P → Γ ⁏ Δ ⊢ α P
-      ; mono⊩ᵅ  = mono⊢
-      ; _⁏_[⊢]_ = _⁏_⊢_
-      ; mono[⊢] = mono⊢
-      ; [var]    = var
-      ; [lam]    = lam
-      ; [app]    = app
-      ; [mvar]   = mvar
-      ; [box]    = box
-      ; [unbox]  = unbox
-      ; [pair]   = pair
-      ; [fst]    = fst
-      ; [snd]    = snd
-      ; [tt]     = tt
+      { _⊩ᵅ_     = λ Π P → Π ⊢ α P
+      ; mono²⊩ᵅ  = mono²⊢
+      ; _[⊢]_    = _⊢_
+      ; mono²[⊢] = mono²⊢
+      ; [var]     = var
+      ; [lam]     = lam
+      ; [app]     = app
+      ; [mvar]    = mvar
+      ; [box]     = box
+      ; [unbox]   = unbox
+      ; [pair]    = pair
+      ; [fst]     = fst
+      ; [snd]     = snd
+      ; [tt]      = tt
       }
 
 
@@ -68,17 +76,17 @@ private
 mutual
   reflectᶜ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊩ A
   reflectᶜ {α P}   t = t
-  reflectᶜ {A ▻ B} t = λ η → let t′ = mono⊢ η t
+  reflectᶜ {A ▻ B} t = λ ψ → let t′ = mono²⊢ ψ t
                               in  λ a → reflectᶜ (app t′ (reifyᶜ a))
-  reflectᶜ {□ A}   t = λ η → let t′ = mono⊢ η t
+  reflectᶜ {□ A}   t = λ ψ → let t′ = mono²⊢ ψ t
                               in  t′ ⅋ reflectᶜ (down t′)
   reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
   reflectᶜ {⊤}    t = ∙
 
   reifyᶜ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊢ A
   reifyᶜ {α P}   s = s
-  reifyᶜ {A ▻ B} s = lam (reifyᶜ (s weak⊆ (reflectᶜ {A} v₀)))
-  reifyᶜ {□ A}   s = syn (s refl⊆)
+  reifyᶜ {A ▻ B} s = lam (reifyᶜ (s weak⊆²ₗ (reflectᶜ {A} v₀)))
+  reifyᶜ {□ A}   s = syn (s refl⊆²)
   reifyᶜ {A ∧ B} s = pair (reifyᶜ (π₁ s)) (reifyᶜ (π₂ s))
   reifyᶜ {⊤}    s = tt
 

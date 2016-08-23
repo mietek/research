@@ -259,9 +259,9 @@ import BasicIS4.Equipment.KripkeDyadicNonCanonical
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
 -- │ TODG│     │     │     │ eq  │ eq  │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
--- │ TGDI│     │     │     │ eq  │ WIP │
+-- │ TGDI│     │     │     │ WIP │ WIP │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
--- │ TGDH│     │     │     │ eq  │     │
+-- │ TGDH│     │     │     │ WIP │     │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
 -- │ TGDG│     │     │     │     │ WIP │
 -- └─────┴─────┴─────┴─────┴─────┴─────┘
@@ -296,8 +296,8 @@ import BasicIS4.Metatheory.Gentzen-BasicKripkeAlechina
 import BasicIS4.Metatheory.Gentzen-TarskiClosedOvergluedImplicit
 import BasicIS4.Metatheory.Gentzen-TarskiOvergluedImplicit
 import BasicIS4.Metatheory.Gentzen-TarskiOvergluedGentzen
---import BasicIS4.Metatheory.Gentzen-TarskiGluedImplicit  -- WIP
---import BasicIS4.Metatheory.Gentzen-TarskiGluedGentzen   -- WIP
+import BasicIS4.Metatheory.Gentzen-TarskiGluedImplicit -- FIXME
+import BasicIS4.Metatheory.Gentzen-TarskiGluedGentzen -- FIXME
 
 import BasicIS4.Metatheory.DyadicHilbert-BasicKripkeOno
 import BasicIS4.Metatheory.DyadicHilbert-BasicKripkeBozicDosen
@@ -306,7 +306,7 @@ import BasicIS4.Metatheory.DyadicHilbert-BasicKripkeAlechina
 import BasicIS4.Metatheory.DyadicHilbert-TarskiOvergluedDyadicImplicit
 import BasicIS4.Metatheory.DyadicHilbert-TarskiOvergluedDyadicHilbert
 import BasicIS4.Metatheory.DyadicHilbert-TarskiOvergluedDyadicGentzen
-import BasicIS4.Metatheory.DyadicHilbert-TarskiGluedDyadicImplicit
+import BasicIS4.Metatheory.DyadicHilbert-TarskiGluedDyadicImplicit -- FIXME
 import BasicIS4.Metatheory.DyadicHilbert-TarskiGluedDyadicHilbert
 
 import BasicIS4.Metatheory.DyadicGentzen-BasicKripkeOno
@@ -315,8 +315,8 @@ import BasicIS4.Metatheory.DyadicGentzen-BasicKripkeEwald
 import BasicIS4.Metatheory.DyadicGentzen-BasicKripkeAlechina
 import BasicIS4.Metatheory.DyadicGentzen-TarskiOvergluedDyadicImplicit
 import BasicIS4.Metatheory.DyadicGentzen-TarskiOvergluedDyadicGentzen
---import BasicIS4.Metatheory.DyadicGentzen-TarskiGluedDyadicImplicit  -- WIP
---import BasicIS4.Metatheory.DyadicGentzen-TarskiGluedDyadicGentzen   -- WIP
+import BasicIS4.Metatheory.DyadicGentzen-TarskiGluedDyadicImplicit -- FIXME
+import BasicIS4.Metatheory.DyadicGentzen-TarskiGluedDyadicGentzen -- FIXME
 
 
 

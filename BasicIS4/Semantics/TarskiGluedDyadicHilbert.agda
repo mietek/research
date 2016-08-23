@@ -59,15 +59,15 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   mono⊩ : ∀ {A Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊩ A → Γ′ ⁏ Δ ⊩ A
-  mono⊩ {α P}   η s = mono⊩ᵅ η s
-  mono⊩ {A ▻ B} η s = λ η′ → s (trans⊆ η η′)
-  mono⊩ {□ A}   η s = λ η′ → s (trans⊆ η η′)
-  mono⊩ {A ∧ B} η s = mono⊩ {A} η (π₁ s) , mono⊩ {B} η (π₂ s)
-  mono⊩ {⊤}    η s = ∙
+  mono⊩ {α P}   ψ s = mono⊩ᵅ ψ s
+  mono⊩ {A ▻ B} ψ s = λ ψ′ → s (trans⊆ ψ ψ′)
+  mono⊩ {□ A}   ψ s = λ ψ′ → s (trans⊆ ψ ψ′)
+  mono⊩ {A ∧ B} ψ s = mono⊩ {A} ψ (π₁ s) , mono⊩ {B} ψ (π₂ s)
+  mono⊩ {⊤}    ψ s = ∙
 
   mono⊩⋆ : ∀ {Ξ Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊩⋆ Ξ → Γ′ ⁏ Δ ⊩⋆ Ξ
-  mono⊩⋆ {⌀}     η ∙        = ∙
-  mono⊩⋆ {Ξ , A} η (ts , t) = mono⊩⋆ {Ξ} η ts , mono⊩ {A} η t
+  mono⊩⋆ {⌀}     ψ ∙        = ∙
+  mono⊩⋆ {Ξ , A} ψ (ts , t) = mono⊩⋆ {Ξ} ψ ts , mono⊩ {A} ψ t
 
 
 -- Additional useful equipment.
@@ -77,32 +77,32 @@ module _ {{_ : Model}} where
   s ⟪$⟫ a = s refl⊆ a
 
   ⟪K⟫ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊩ B ▻ A
-  ⟪K⟫ {A} a η = K (mono⊩ {A} η a)
+  ⟪K⟫ {A} a ψ = K (mono⊩ {A} ψ a)
 
   ⟪S⟫ : ∀ {A B C Γ Δ} → Γ ⁏ Δ ⊩ A ▻ B ▻ C → Γ ⁏ Δ ⊩ A ▻ B → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊩ C
   ⟪S⟫ {A} {B} {C} s₁ s₂ a = _⟪$⟫_ {B} {C} (_⟪$⟫_ {A} {B ▻ C} s₁ a) (_⟪$⟫_ {A} {B} s₂ a)
 
   ⟪S⟫′ : ∀ {A B C Γ Δ} → Γ ⁏ Δ ⊩ A ▻ B ▻ C → Γ ⁏ Δ ⊩ (A ▻ B) ▻ A ▻ C
-  ⟪S⟫′ {A} {B} {C} s₁ η s₂ η′ a = let s₁′ = mono⊩ {A ▻ B ▻ C} (trans⊆ η η′) s₁
-                                      s₂′ = mono⊩ {A ▻ B} η′ s₂
+  ⟪S⟫′ {A} {B} {C} s₁ ψ s₂ ψ′ a = let s₁′ = mono⊩ {A ▻ B ▻ C} (trans⊆ ψ ψ′) s₁
+                                      s₂′ = mono⊩ {A ▻ B} ψ′ s₂
                                   in  ⟪S⟫ {A} {B} {C} s₁′ s₂′ a
 
   _⟪D⟫_ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊩ □ (A ▻ B) → Γ ⁏ Δ ⊩ □ A → Γ ⁏ Δ ⊩ □ B
-  _⟪D⟫_ {A} {B} s₁ s₂ η = let t ⅋ s₁′ = s₁ η
-                              u ⅋ a   = s₂ η
+  _⟪D⟫_ {A} {B} s₁ s₂ ψ = let t ⅋ s₁′ = s₁ ψ
+                              u ⅋ a   = s₂ ψ
                           in  [app] ([app] [cdist] t) u ⅋ (_⟪$⟫_ {A} {B} s₁′ a)
 
   _⟪D⟫′_ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊩ □ (A ▻ B) → Γ ⁏ Δ ⊩ □ A ▻ □ B
-  _⟪D⟫′_ {A} {B} s₁ η = _⟪D⟫_ (mono⊩ {□ (A ▻ B)} η s₁)
+  _⟪D⟫′_ {A} {B} s₁ ψ = _⟪D⟫_ (mono⊩ {□ (A ▻ B)} ψ s₁)
 
   ⟪↑⟫ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ □ A → Γ ⁏ Δ ⊩ □ □ A
-  ⟪↑⟫ s η = [app] [cup] (syn (s η)) ⅋ λ η′ → s (trans⊆ η η′)
+  ⟪↑⟫ s ψ = [app] [cup] (syn (s ψ)) ⅋ λ ψ′ → s (trans⊆ ψ ψ′)
 
   ⟪↓⟫ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ □ A → Γ ⁏ Δ ⊩ A
   ⟪↓⟫ s = sem (s refl⊆)
 
   _⟪,⟫′_ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊩ B ▻ A ∧ B
-  _⟪,⟫′_ {A} {B} a η = _,_ (mono⊩ {A} η a)
+  _⟪,⟫′_ {A} {B} a ψ = _,_ (mono⊩ {A} ψ a)
 
 
 -- Forcing in a particular world of a particular model, for sequents.

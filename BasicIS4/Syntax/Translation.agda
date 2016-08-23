@@ -3,6 +3,7 @@
 module BasicIS4.Syntax.Translation where
 
 open import BasicIS4.Syntax.Common public
+open import Common.ContextPair public
 
 import BasicIS4.Syntax.ClosedHilbertSequential as CHS
 import BasicIS4.Syntax.ClosedHilbert as CH
@@ -17,9 +18,9 @@ import BasicIS4.Syntax.LabelledGentzen as LG
 open HS using () renaming (_⊦⊢_ to HS⟨_⊦⊢_⟩ ; _⊢_ to HS⟨_⊢_⟩) public
 open H using () renaming (_⊢_ to H⟨_⊢_⟩ ; _⊢⋆_ to H⟨_⊢⋆_⟩) public
 open G using () renaming (_⊢_ to G⟨_⊢_⟩ ; _⊢⋆_ to G⟨_⊢⋆_⟩) public
-open DHS using () renaming (_⁏_⊦⊢_ to DHS⟨_⁏_⊦⊢_⟩ ; _⁏_⊢_ to DHS⟨_⁏_⊢_⟩) public
-open DH using () renaming (_⁏_⊢_ to DH⟨_⁏_⊢_⟩) public
-open DG using () renaming (_⁏_⊢_ to DG⟨_⁏_⊢_⟩ ; _⁏_⊢⋆_ to DG⟨_⁏_⊢⋆_⟩) public
+open DHS using () renaming (_⊦⊢_ to DHS⟨_⊦⊢_⟩ ; _⊢_ to DHS⟨_⊢_⟩) public
+open DH using () renaming (_⊢_ to DH⟨_⊢_⟩) public
+open DG using () renaming (_⊢_ to DG⟨_⊢_⟩ ; _⊢⋆_ to DG⟨_⊢⋆_⟩) public
 open LG using (_↝_) renaming (_⁏_⊢_◎_ to LG⟨_⁏_⊢_◎_⟩ ; _⁏_⊢⋆_◎_ to LG⟨_⁏_⊢⋆_◎_⟩) public
 
 

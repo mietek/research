@@ -55,7 +55,7 @@ private
     canon = record
       { _⁏_⊩ᵅ_  = λ Γ Δ P → Γ ⁏ Δ ⊢ α P
       ; mono⊩ᵅ  = mono⊢
-      ; _⁏_[⊢]_ = _⁏_⊢_
+      ; _⁏_[⊢]_ = λ Γ Δ A → Γ ⁏ Δ ⊢ A
       ; mono[⊢] = mono⊢
       ; [var]    = var
       ; [app]    = app

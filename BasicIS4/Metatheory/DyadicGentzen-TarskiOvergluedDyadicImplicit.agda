@@ -3,7 +3,7 @@ module BasicIS4.Metatheory.DyadicGentzen-TarskiOvergluedDyadicImplicit where
 open import BasicIS4.Syntax.DyadicGentzen public
 open import BasicIS4.Semantics.TarskiOvergluedDyadicImplicit public
 
-open ImplicitSyntax (_⁏_⊢_) (mono⊢) (mmono⊢) public
+open ImplicitSyntax (_⊢_) (mono²⊢) public
 
 
 -- Completeness with respect to a particular model.
@@ -11,8 +11,8 @@ open ImplicitSyntax (_⁏_⊢_) (mono⊢) (mmono⊢) public
 module _ {{_ : Model}} where
   reify : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊢ A
   reify {α P}   s = syn s
-  reify {A ▻ B} s = syn (s refl⊆ refl⊆)
-  reify {□ A}   s = syn (s refl⊆ refl⊆)
+  reify {A ▻ B} s = syn (s refl⊆²)
+  reify {□ A}   s = syn (s refl⊆²)
   reify {A ∧ B} s = pair (reify (π₁ s)) (reify (π₂ s))
   reify {⊤}    s = tt
 
@@ -25,16 +25,16 @@ module _ {{_ : Model}} where
 
 eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊨ A
 eval (var i)     γ δ = lookup i γ
-eval (lam t)     γ δ = λ η θ → let γ′ = mono²⊩⋆ (η , θ) γ in
-                                let δ′ = mono²⊩⋆ (η , θ) δ
-                                in  multicut² (reify⋆ γ′) (reify⋆ δ′) (lam t) ⅋ λ a →
-                                      eval t (γ′ , a) δ′
+eval (lam t)     γ δ = λ ψ → let γ′ = mono²⊩⋆ ψ γ in
+                              let δ′ = mono²⊩⋆ ψ δ
+                              in  multicut² (reify⋆ γ′) (reify⋆ δ′) (lam t) ⅋ λ a →
+                                    eval t (γ′ , a) δ′
 eval (app t u)   γ δ = eval t γ δ ⟪$⟫ eval u γ δ
 eval (mvar i)    γ δ = mlookup i δ
-eval (box t)     γ δ = λ η θ → let γ′ = mono²⊩⋆ (η , θ) γ in
-                                let δ′ = mono²⊩⋆ (η , θ) δ
-                                in  multicut² (reify⋆ γ′) (reify⋆ δ′) (box t) ⅋
-                                      eval t ∙ δ′
+eval (box t)     γ δ = λ ψ → let γ′ = mono²⊩⋆ ψ γ in
+                              let δ′ = mono²⊩⋆ ψ δ
+                              in  multicut² (reify⋆ γ′) (reify⋆ δ′) (box t) ⅋
+                                    eval t ∙ δ′
 eval (unbox t u) γ δ = eval u γ (δ , eval t γ δ)
 eval (pair t u)  γ δ = eval t γ δ , eval u γ δ
 eval (fst t)     γ δ = π₁ (eval t γ δ)
@@ -51,9 +51,8 @@ private
   instance
     canon : Model
     canon = record
-      { _⁏_⊩ᵅ_  = λ Γ Δ P → Γ ⁏ Δ ⊢ α P
-      ; mono⊩ᵅ  = mono⊢
-      ; mmono⊩ᵅ = mmono⊢
+      { _⊩ᵅ_    = λ Π P → Π ⊢ α P
+      ; mono²⊩ᵅ = mono²⊢
       }
 
 
@@ -61,10 +60,10 @@ private
 
 reflectᶜ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊩ A
 reflectᶜ {α P}   t = t ⅋ t
-reflectᶜ {A ▻ B} t = λ η θ → let t′ = mono²⊢ (η , θ) t
-                              in  t′ ⅋ λ a → reflectᶜ (app t′ (reify a))
-reflectᶜ {□ A}   t = λ η θ → let t′ = mono²⊢ (η , θ) t
-                              in  t′ ⅋ reflectᶜ (down t′)
+reflectᶜ {A ▻ B} t = λ ψ → let t′ = mono²⊢ ψ t
+                            in  t′ ⅋ λ a → reflectᶜ (app t′ (reify a))
+reflectᶜ {□ A}   t = λ ψ → let t′ = mono²⊢ ψ t
+                            in  t′ ⅋ reflectᶜ (down t′)
 reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
 reflectᶜ {⊤}    t = ∙
 

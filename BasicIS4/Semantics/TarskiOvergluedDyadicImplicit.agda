@@ -4,18 +4,18 @@
 module BasicIS4.Semantics.TarskiOvergluedDyadicImplicit where
 
 open import BasicIS4.Syntax.Common public
+open import Common.ContextPair public
 open import Common.Semantics public
 
 
 -- Intuitionistic Tarski models.
 
 record Model : Set₁ where
-  infix 3 _⁏_⊩ᵅ_
+  infix 3 _⊩ᵅ_
   field
     -- Forcing for atomic propositions; monotonic.
-    _⁏_⊩ᵅ_  : Cx Ty → Cx Ty → Atom → Set
-    mono⊩ᵅ  : ∀ {P Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊩ᵅ P → Γ′ ⁏ Δ ⊩ᵅ P
-    mmono⊩ᵅ : ∀ {P Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊩ᵅ P → Γ ⁏ Δ′ ⊩ᵅ P
+    _⊩ᵅ_    : Cx² Ty → Atom → Set
+    mono²⊩ᵅ : ∀ {P Π Π′} → Π ⊆² Π′ → Π ⊩ᵅ P → Π′ ⊩ᵅ P
 
 open Model {{…}} public
 
@@ -23,114 +23,88 @@ open Model {{…}} public
 
 
 module ImplicitSyntax
-    (_⁏_[⊢]_  : Cx Ty → Cx Ty → Ty → Set)
-    (mono[⊢]  : ∀ {A Γ Γ′ Δ}  → Γ ⊆ Γ′ → Γ ⁏ Δ [⊢] A → Γ′ ⁏ Δ [⊢] A)
-    (mmono[⊢] : ∀ {A Γ Δ Δ′}  → Δ ⊆ Δ′ → Γ ⁏ Δ [⊢] A → Γ ⁏ Δ′ [⊢] A)
+    (_[⊢]_    : Cx² Ty → Ty → Set)
+    (mono²[⊢] : ∀ {A Π Π′}  → Π ⊆² Π′ → Π [⊢] A → Π′ [⊢] A)
   where
 
 
   -- Forcing in a particular model.
 
   module _ {{_ : Model}} where
-    infix 3 _⁏_⊩_
-    _⁏_⊩_ : Cx Ty → Cx Ty → Ty → Set
-    Γ ⁏ Δ ⊩ α P   = Glue (Γ ⁏ Δ [⊢] (α P)) (Γ ⁏ Δ ⊩ᵅ P)
-    Γ ⁏ Δ ⊩ A ▻ B = ∀ {Γ′ Δ′} → Γ ⊆ Γ′ → Δ ⊆ Δ′ → Glue (Γ′ ⁏ Δ′ [⊢] (A ▻ B)) (Γ′ ⁏ Δ′ ⊩ A → Γ′ ⁏ Δ′ ⊩ B)
-    Γ ⁏ Δ ⊩ □ A   = ∀ {Γ′ Δ′} → Γ ⊆ Γ′ → Δ ⊆ Δ′ → Glue (Γ′ ⁏ Δ′ [⊢] (□ A)) (Γ′ ⁏ Δ′ ⊩ A)
-    Γ ⁏ Δ ⊩ A ∧ B = Γ ⁏ Δ ⊩ A × Γ ⁏ Δ ⊩ B
-    Γ ⁏ Δ ⊩ ⊤    = 𝟙
+    infix 3 _⊩_
+    _⊩_ : Cx² Ty → Ty → Set
+    Π ⊩ α P   = Glue (Π [⊢] (α P)) (Π ⊩ᵅ P)
+    Π ⊩ A ▻ B = ∀ {Π′} → Π ⊆² Π′ → Glue (Π′ [⊢] (A ▻ B)) (Π′ ⊩ A → Π′ ⊩ B)
+    Π ⊩ □ A   = ∀ {Π′} → Π ⊆² Π′ → Glue (Π′ [⊢] (□ A)) (Π′ ⊩ A)
+    Π ⊩ A ∧ B = Π ⊩ A × Π ⊩ B
+    Π ⊩ ⊤    = 𝟙
 
-    infix 3 _⁏_⊩⋆_
-    _⁏_⊩⋆_ : Cx Ty → Cx Ty → Cx Ty → Set
-    Γ ⁏ Δ ⊩⋆ ⌀     = 𝟙
-    Γ ⁏ Δ ⊩⋆ Ξ , A = Γ ⁏ Δ ⊩⋆ Ξ × Γ ⁏ Δ ⊩ A
+    infix 3 _⊩⋆_
+    _⊩⋆_ : Cx² Ty → Cx Ty → Set
+    Π ⊩⋆ ⌀     = 𝟙
+    Π ⊩⋆ Ξ , A = Π ⊩⋆ Ξ × Π ⊩ A
 
 
   -- Monotonicity with respect to context inclusion.
 
   module _ {{_ : Model}} where
-    mono⊩ : ∀ {A Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊩ A → Γ′ ⁏ Δ ⊩ A
-    mono⊩ {α P}   η s = mono[⊢] η (syn s) ⅋ mono⊩ᵅ η (sem s)
-    mono⊩ {A ▻ B} η s = λ η′ θ → s (trans⊆ η η′) θ
-    mono⊩ {□ A}   η s = λ η′ θ → s (trans⊆ η η′) θ
-    mono⊩ {A ∧ B} η s = mono⊩ {A} η (π₁ s) , mono⊩ {B} η (π₂ s)
-    mono⊩ {⊤}    η s = ∙
+    mono²⊩ : ∀ {A Π Π′} → Π ⊆² Π′ → Π ⊩ A → Π′ ⊩ A
+    mono²⊩ {α P}   ψ s = mono²[⊢] ψ (syn s) ⅋ mono²⊩ᵅ ψ (sem s)
+    mono²⊩ {A ▻ B} ψ s = λ ψ′ → s (trans⊆² ψ ψ′)
+    mono²⊩ {□ A}   ψ s = λ ψ′ → s (trans⊆² ψ ψ′)
+    mono²⊩ {A ∧ B} ψ s = mono²⊩ {A} ψ (π₁ s) , mono²⊩ {B} ψ (π₂ s)
+    mono²⊩ {⊤}    ψ s = ∙
 
-    mono⊩⋆ : ∀ {Ξ Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊩⋆ Ξ → Γ′ ⁏ Δ ⊩⋆ Ξ
-    mono⊩⋆ {⌀}     η ∙        = ∙
-    mono⊩⋆ {Ξ , A} η (ts , t) = mono⊩⋆ {Ξ} η ts , mono⊩ {A} η t
-
-
-  -- Monotonicity with respect to modal context inclusion.
-
-  module _ {{_ : Model}} where
-    mmono⊩ : ∀ {A Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ′ ⊩ A
-    mmono⊩ {α P}   θ s = mmono[⊢] θ (syn s) ⅋ mmono⊩ᵅ θ (sem s)
-    mmono⊩ {A ▻ B} θ s = λ η θ′ → s η (trans⊆ θ θ′)
-    mmono⊩ {□ A}   θ s = λ η θ′ → s η (trans⊆ θ θ′)
-    mmono⊩ {A ∧ B} θ s = mmono⊩ {A} θ (π₁ s) , mmono⊩ {B} θ (π₂ s)
-    mmono⊩ {⊤}    θ s = ∙
-
-    mmono⊩⋆ : ∀ {Ξ Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊩⋆ Ξ → Γ ⁏ Δ′ ⊩⋆ Ξ
-    mmono⊩⋆ {⌀}     η ∙        = ∙
-    mmono⊩⋆ {Ξ , A} η (ts , t) = mmono⊩⋆ {Ξ} η ts , mmono⊩ {A} η t
-
-
-  -- Combined monotonicity.
-
-  module _ {{_ : Model}} where
-    mono²⊩ : ∀ {A Γ Γ′ Δ Δ′} → Γ ⊆ Γ′ × Δ ⊆ Δ′ → Γ ⁏ Δ ⊩ A → Γ′ ⁏ Δ′ ⊩ A
-    mono²⊩ {A} (η , θ) = mono⊩ {A} η ∘ mmono⊩ {A} θ
-
-    mono²⊩⋆ : ∀ {Ξ Γ Γ′ Δ Δ′} → Γ ⊆ Γ′ × Δ ⊆ Δ′ → Γ ⁏ Δ ⊩⋆ Ξ → Γ′ ⁏ Δ′ ⊩⋆ Ξ
-    mono²⊩⋆ {Ξ} (η , θ) = mono⊩⋆ {Ξ} η ∘ mmono⊩⋆ {Ξ} θ
+    mono²⊩⋆ : ∀ {Ξ Π Π′} → Π ⊆² Π′ → Π ⊩⋆ Ξ → Π′ ⊩⋆ Ξ
+    mono²⊩⋆ {⌀}     ψ ∙        = ∙
+    mono²⊩⋆ {Ξ , A} ψ (ts , t) = mono²⊩⋆ ψ ts , mono²⊩ {A} ψ t
 
 
   -- Additional useful equipment.
 
   module _ {{_ : Model}} where
-    _⟪$⟫_ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊩ A ▻ B → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊩ B
-    s ⟪$⟫ a = sem (s refl⊆ refl⊆) a
+    _⟪$⟫_ : ∀ {A B Π} → Π ⊩ A ▻ B → Π ⊩ A → Π ⊩ B
+    s ⟪$⟫ a = sem (s refl⊆²) a
 
-    ⟪S⟫ : ∀ {A B C Γ Δ} → Γ ⁏ Δ ⊩ A ▻ B ▻ C → Γ ⁏ Δ ⊩ A ▻ B → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊩ C
+    ⟪S⟫ : ∀ {A B C Π} → Π ⊩ A ▻ B ▻ C → Π ⊩ A ▻ B → Π ⊩ A → Π ⊩ C
     ⟪S⟫ s₁ s₂ a = (s₁ ⟪$⟫ a) ⟪$⟫ (s₂ ⟪$⟫ a)
 
-    ⟪↓⟫ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ □ A → Γ ⁏ Δ ⊩ A
-    ⟪↓⟫ s = sem (s refl⊆ refl⊆)
+    ⟪↓⟫ : ∀ {A Π} → Π ⊩ □ A → Π ⊩ A
+    ⟪↓⟫ s = sem (s refl⊆²)
 
 
   -- Forcing in a particular world of a particular model, for sequents.
 
   module _ {{_ : Model}} where
-    infix 3 _⁏_⊩_⁏_⇒_
-    _⁏_⊩_⁏_⇒_ : Cx Ty → Cx Ty → Cx Ty → Cx Ty → Ty → Set
-    Γ₀ ⁏ Δ₀ ⊩ Γ ⁏ Δ ⇒ A = Γ₀ ⁏ Δ₀ ⊩⋆ Γ → Γ₀ ⁏ Δ₀ ⊩⋆ □⋆ Δ → Γ₀ ⁏ Δ₀ ⊩ A
+    infix 3 _⊩_⇒_
+    _⊩_⇒_ : Cx² Ty → Cx² Ty → Ty → Set
+    Π ⊩ Γ ⁏ Δ ⇒ A = Π ⊩⋆ Γ → Π ⊩⋆ □⋆ Δ → Π ⊩ A
 
-    infix 3 _⁏_⊩_⁏_⇒⋆_
-    _⁏_⊩_⁏_⇒⋆_ : Cx Ty → Cx Ty → Cx Ty → Cx Ty → Cx Ty → Set
-    Γ₀ ⁏ Δ₀ ⊩ Γ ⁏ Δ ⇒⋆ Ξ = Γ₀ ⁏ Δ₀ ⊩⋆ Γ → Γ₀ ⁏ Δ₀ ⊩⋆ □⋆ Δ → Γ₀ ⁏ Δ₀ ⊩⋆ Ξ
+    infix 3 _⊩_⇒⋆_
+    _⊩_⇒⋆_ : Cx² Ty → Cx² Ty → Cx Ty → Set
+    Π ⊩ Γ ⁏ Δ ⇒⋆ Ξ = Π ⊩⋆ Γ → Π ⊩⋆ □⋆ Δ → Π ⊩⋆ Ξ
 
 
   -- Entailment, or forcing in all worlds of all models, for sequents.
 
-  infix 3 _⁏_⊨_
-  _⁏_⊨_ : Cx Ty → Cx Ty → Ty → Set₁
-  Γ ⁏ Δ ⊨ A = ∀ {{_ : Model}} {Γ₀ Δ₀ : Cx Ty} → Γ₀ ⁏ Δ₀ ⊩ Γ ⁏ Δ ⇒ A
+  infix 3 _⊨_
+  _⊨_ : Cx² Ty → Ty → Set₁
+  Π ⊨ A = ∀ {{_ : Model}} {w : Cx² Ty} → w ⊩ Π ⇒ A
 
-  infix 3 _⁏_⊨⋆_
-  _⁏_⊨⋆_ : Cx Ty → Cx Ty → Cx Ty → Set₁
-  Γ ⁏ Δ ⊨⋆ Ξ = ∀ {{_ : Model}} {Γ₀ Δ₀ : Cx Ty} → Γ₀ ⁏ Δ₀ ⊩ Γ ⁏ Δ ⇒⋆ Ξ
+  infix 3 _⊨⋆_
+  _⊨⋆_ : Cx² Ty → Cx Ty → Set₁
+  Π ⊨⋆ Ξ = ∀ {{_ : Model}} {w : Cx² Ty} → w ⊩ Π ⇒⋆ Ξ
 
 
   -- Additional useful equipment, for sequents.
 
   module _ {{_ : Model}} where
-    lookup : ∀ {A Γ Γ₀ Δ₀} → A ∈ Γ → Γ₀ ⁏ Δ₀ ⊩⋆ Γ → Γ₀ ⁏ Δ₀ ⊩ A
+    lookup : ∀ {A Γ w} → A ∈ Γ → w ⊩⋆ Γ → w ⊩ A
     lookup top     (γ , a) = a
     lookup (pop i) (γ , b) = lookup i γ
 
-    mlookup : ∀ {A Δ Γ₀ Δ₀} → A ∈ Δ → Γ₀ ⁏ Δ₀ ⊩⋆ □⋆ Δ → Γ₀ ⁏ Δ₀ ⊩ A
-    mlookup top     (γ , s) = sem (s refl⊆ refl⊆)
+    mlookup : ∀ {A Δ w} → A ∈ Δ → w ⊩⋆ □⋆ Δ → w ⊩ A
+    mlookup top     (γ , s) = sem (s refl⊆²)
     mlookup (pop i) (γ , s) = mlookup i γ
 
     -- TODO: More equipment.

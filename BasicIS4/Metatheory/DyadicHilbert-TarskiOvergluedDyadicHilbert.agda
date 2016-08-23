@@ -29,19 +29,19 @@ module _ {{_ : Model}} where
 eval : ∀ {Δ A Γ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊨ A
 eval (var i)   γ δ = lookup i γ
 eval (app t u) γ δ = eval t γ δ ⟪$⟫ eval u γ δ
-eval ci        γ δ = K² ([ci] ⅋ I)
-eval ck        γ δ = K² ([ck] ⅋ ⟪K⟫)
-eval cs        γ δ = K² ([cs] ⅋ ⟪S⟫′)
+eval ci        γ δ = K ([ci] ⅋ I)
+eval ck        γ δ = K ([ck] ⅋ ⟪K⟫)
+eval cs        γ δ = K ([cs] ⅋ ⟪S⟫′)
 eval (mvar i)  γ δ = mlookup i δ
-eval (box t)   γ δ = λ η θ → let δ′ = mono²⊩⋆ (η , θ) δ
-                              in  [mmulticut] (reifyʳ⋆ δ′) [ box t ] ⅋
-                                    eval t ∙ δ′
-eval cdist     γ δ = K² ([cdist] ⅋ _⟪D⟫′_)
-eval cup       γ δ = K² ([cup] ⅋ ⟪↑⟫)
-eval cdown     γ δ = K² ([cdown] ⅋ ⟪↓⟫)
-eval cpair     γ δ = K² ([cpair] ⅋ _⟪,⟫′_)
-eval cfst      γ δ = K² ([cfst] ⅋ π₁)
-eval csnd      γ δ = K² ([csnd] ⅋ π₂)
+eval (box t)   γ δ = λ ψ → let δ′ = mono²⊩⋆ ψ δ
+                            in  [mmulticut] (reifyʳ⋆ δ′) [ box t ] ⅋
+                                  eval t ∙ δ′
+eval cdist     γ δ = K ([cdist] ⅋ _⟪D⟫′_)
+eval cup       γ δ = K ([cup] ⅋ ⟪↑⟫)
+eval cdown     γ δ = K ([cdown] ⅋ ⟪↓⟫)
+eval cpair     γ δ = K ([cpair] ⅋ _⟪,⟫′_)
+eval cfst      γ δ = K ([cfst] ⅋ π₁)
+eval csnd      γ δ = K ([csnd] ⅋ π₂)
 eval tt        γ δ = ∙
 
 
@@ -54,12 +54,10 @@ private
   instance
     canon : Model
     canon = record
-      { _⁏_⊩ᵅ_   = λ Γ Δ P → Γ ⁏ Δ ⊢ α P
-      ; mono⊩ᵅ   = mono⊢
-      ; mmono⊩ᵅ  = mmono⊢
-      ; _⁏_[⊢]_  = _⁏_⊢_
-      ; mono[⊢]  = mono⊢
-      ; mmono[⊢] = mmono⊢
+      { _⊩ᵅ_     = λ Π P → Π ⊢ α P
+      ; mono²⊩ᵅ  = mono²⊢
+      ; _[⊢]_    = _⊢_
+      ; mono²[⊢] = mono²⊢
       ; [var]     = var
       ; [app]     = app
       ; [ci]      = ci
@@ -83,17 +81,17 @@ private
 mutual
   reflectᶜ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊩ A
   reflectᶜ {α P}   t = t ⅋ t
-  reflectᶜ {A ▻ B} t = λ η θ → let t′ = mono²⊢ (η , θ) t
-                                in  t′ ⅋ λ a → reflectᶜ (app t′ (reifyᶜ a))
-  reflectᶜ {□ A}   t = λ η θ → let t′ = mono²⊢ (η , θ) t
-                                in  t′ ⅋ reflectᶜ (down t′)
+  reflectᶜ {A ▻ B} t = λ ψ → let t′ = mono²⊢ ψ t
+                              in  t′ ⅋ λ a → reflectᶜ (app t′ (reifyᶜ a))
+  reflectᶜ {□ A}   t = λ ψ → let t′ = mono²⊢ ψ t
+                              in  t′ ⅋ reflectᶜ (down t′)
   reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
   reflectᶜ {⊤}    t = ∙
 
   reifyᶜ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊢ A
   reifyᶜ {α P}   s = syn s
-  reifyᶜ {A ▻ B} s = syn (s refl⊆ refl⊆)
-  reifyᶜ {□ A}   s = syn (s refl⊆ refl⊆)
+  reifyᶜ {A ▻ B} s = syn (s refl⊆²)
+  reifyᶜ {□ A}   s = syn (s refl⊆²)
   reifyᶜ {A ∧ B} s = pair (reifyᶜ (π₁ s)) (reifyᶜ (π₂ s))
   reifyᶜ {⊤}    s = tt
 

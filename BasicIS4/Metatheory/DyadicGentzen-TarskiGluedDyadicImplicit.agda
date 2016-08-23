@@ -1,24 +1,9 @@
-module BasicIS4.Metatheory.DyadicHilbert-TarskiGluedDyadicImplicit where
+module BasicIS4.Metatheory.DyadicGentzen-TarskiGluedDyadicImplicit where
 
-open import BasicIS4.Syntax.DyadicHilbert public
+open import BasicIS4.Syntax.DyadicGentzen public
 open import BasicIS4.Semantics.TarskiGluedDyadicImplicit public
 
 open ImplicitSyntax (_⊢_) public
-
-
--- Additional useful equipment.
-
-module _ {{_ : Model}} where
-  _⟪D⟫_ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊩ □ (A ▻ B) → Γ ⁏ Δ ⊩ □ A → Γ ⁏ Δ ⊩ □ B
-  _⟪D⟫_ {A} {B} s₁ s₂ ψ = let t ⅋ s₁′ = s₁ ψ
-                              u ⅋ a   = s₂ ψ
-                          in  app (app cdist t) u ⅋ _⟪$⟫_ {A} {B} s₁′ a
-
-  _⟪D⟫′_ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊩ □ (A ▻ B) → Γ ⁏ Δ ⊩ □ A ▻ □ B
-  _⟪D⟫′_ {A} {B} s₁ ψ = _⟪D⟫_ (mono²⊩ {□ (A ▻ B)} ψ s₁)
-
-  ⟪↑⟫ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ □ A → Γ ⁏ Δ ⊩ □ □ A
-  ⟪↑⟫ s ψ = app cup (syn (s ψ)) ⅋ λ ψ′ → s (trans⊆² ψ ψ′)
 
 
 -- Soundness with respect to all models, or evaluation.
@@ -29,20 +14,20 @@ postulate
 
 eval : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊨ A
 eval (var i)           γ δ = lookup i γ
+eval (lam t)           γ δ = λ ψ a → eval t (mono²⊩⋆ ψ γ , a) (mono²⊩⋆ ψ δ)
 eval (app {A} {B} t u) γ δ = _⟪$⟫_ {A} {B} (eval t γ δ) (eval u γ δ)
-eval ci                γ δ = K I
-eval (ck {A} {B})      γ δ = K (⟪K⟫ {A} {B})
-eval (cs {A} {B} {C})  γ δ = K (⟪S⟫′ {A} {B} {C})
 eval (mvar i)          γ δ = mlookup i δ
 eval (box t)           γ δ = λ ψ → let δ′ = mono²⊩⋆ ψ δ
                                     in  mmulticut (reify⋆ δ′) (box t) ⅋
                                           eval t ∙ δ′
-eval cdist             γ δ = K _⟪D⟫′_
-eval cup               γ δ = K ⟪↑⟫
-eval cdown             γ δ = K ⟪↓⟫
-eval (cpair {A} {B})   γ δ = K (_⟪,⟫′_ {A} {B})
-eval cfst              γ δ = K π₁
-eval csnd              γ δ = K π₂
+eval (unbox t u)       γ δ = eval u γ (δ , λ ψ →
+                               let γ′ = mono²⊩⋆ ψ γ
+                                   δ′ = mono²⊩⋆ ψ δ
+                               in  multicut² (reify⋆ γ′) (reify⋆ δ′) t ⅋
+                                     ⟪↓⟫ (eval t γ′ δ′))
+eval (pair t u)        γ δ = eval t γ δ , eval u γ δ
+eval (fst t)           γ δ = π₁ (eval t γ δ)
+eval (snd t)           γ δ = π₂ (eval t γ δ)
 eval tt                γ δ = ∙
 
 
@@ -74,7 +59,7 @@ mutual
 
   reifyᶜ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊢ A
   reifyᶜ {α P}   s = s
-  reifyᶜ {A ▻ B} s = lam (reifyᶜ (s weak⊆²ₗ (reflectᶜ {A} v₀)))
+  reifyᶜ {A ▻ B} s = lam (reifyᶜ (s (weak⊆²ₗ) (reflectᶜ {A} v₀)))
   reifyᶜ {□ A}   s = syn (s refl⊆²)
   reifyᶜ {A ∧ B} s = pair (reifyᶜ (π₁ s)) (reifyᶜ (π₂ s))
   reifyᶜ {⊤}    s = tt

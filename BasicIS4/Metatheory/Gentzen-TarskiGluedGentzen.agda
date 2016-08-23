@@ -24,32 +24,11 @@ module _ {{_ : Model}} where
     [_]⋆ {Ξ , A} (ts , t) = [ ts ]⋆ , [ t ]
 
 
--- TODO
-
-module _ {{_ : Model}} where
-  mutual
-    reflectʳ : ∀ {A Γ} → Γ [⊢] A → Γ ⊩ A
-    reflectʳ {α P}   t = {!!}
-    reflectʳ {A ▻ B} t = λ η → let t′ = mono[⊢] η t
-                                in  λ a → reflectʳ ([app] t′ (reifyʳ a))
-    reflectʳ {□ A}   t = λ η → let t′ = mono[⊢] η t
-                                in  t′ ⅋ reflectʳ ([down] t′)
-    reflectʳ {A ∧ B} t = reflectʳ ([fst] t) , reflectʳ ([snd] t)
-    reflectʳ {⊤}    t = ∙
-
-    reifyʳ : ∀ {A Γ} → Γ ⊩ A → Γ [⊢] A
-    reifyʳ {α P}   s = {!!}
-    reifyʳ {A ▻ B} s = [lam] (reifyʳ (s weak⊆ (reflectʳ {A} ([var] top))))
-    reifyʳ {□ A}   s = syn (s refl⊆)
-    reifyʳ {A ∧ B} s = [pair] (reifyʳ {A} (π₁ s)) (reifyʳ {B} (π₂ s))
-    reifyʳ {⊤}    s = [tt]
-
-  reifyʳ⋆ : ∀ {Ξ Γ} → Γ ⊩⋆ Ξ → Γ [⊢]⋆ Ξ
-  reifyʳ⋆ {⌀}     ∙        = ∙
-  reifyʳ⋆ {Ξ , A} (ts , t) = reifyʳ⋆ ts , reifyʳ t
-
-
 -- Soundness with respect to all models, or evaluation.
+
+-- FIXME
+postulate
+  reifyʳ⋆ : ∀ {{_ : Model}} {Ξ Γ} → Γ ⊩⋆ Ξ → Γ [⊢]⋆ Ξ
 
 mutual
   eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
@@ -58,7 +37,7 @@ mutual
   eval (app {A} {B} t u) γ = _⟪$⟫_ {A} {B} (eval t γ) (eval u γ)
   eval (multibox ts u)   γ = λ η → let γ′ = mono⊩⋆ η γ
                                     in  [multicut] (reifyʳ⋆ γ′) [ multibox ts u ] ⅋
-                                          eval u (eval⋆ ts (mono⊩⋆ η γ))
+                                          eval u (eval⋆ ts γ′)
   eval (down t)          γ = ⟪↓⟫ (eval t γ)
   eval (pair t u)        γ = eval t γ , eval u γ
   eval (fst t)           γ = π₁ (eval t γ)
