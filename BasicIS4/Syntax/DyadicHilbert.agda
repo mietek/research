@@ -274,7 +274,7 @@ mcont : ∀ {A B Γ Δ} → Γ ⁏ Δ , A , A ⊢ B → Γ ⁏ Δ , A ⊢ B
 mcont t = mdet (app ccont (mlam (mlam t)))
 
 
--- Exchange.
+-- Exchange, or Schönfinkel’s C combinator.
 
 cexch : ∀ {A B C Γ Δ} → Γ ⁏ Δ ⊢ (A ▻ B ▻ C) ▻ B ▻ A ▻ C
 cexch = lam (lam (lam (app (app v₂ v₀) v₁)))
@@ -286,7 +286,7 @@ mexch : ∀ {A B C Γ Δ} → Γ ⁏ Δ , A , B ⊢ C → Γ ⁏ Δ , B , A ⊢ 
 mexch t = mdet (mdet (app cexch (mlam (mlam t))))
 
 
--- Composition.
+-- Composition, or Schönfinkel’s B combinator.
 
 ccomp : ∀ {A B C Γ Δ} → Γ ⁏ Δ ⊢ (B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
 ccomp = lam (lam (lam (app v₂ (app v₁ v₀))))

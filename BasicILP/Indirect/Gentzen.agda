@@ -146,7 +146,7 @@ cont : ∀ {A B Γ} → Γ , A , A ⊢ B → Γ , A ⊢ B
 cont t = det (app ccont (lam (lam t)))
 
 
--- Exchange.
+-- Exchange, or Schönfinkel’s C combinator.
 
 CEXCH : Tm
 CEXCH = LAM (LAM (LAM (APP (APP V₂ V₀) V₁)))
@@ -161,7 +161,7 @@ exch : ∀ {A B C Γ} → Γ , A , B ⊢ C → Γ , B , A ⊢ C
 exch t = det (det (app cexch (lam (lam t))))
 
 
--- Composition.
+-- Composition, or Schönfinkel’s B combinator.
 
 CCOMP : Tm
 CCOMP = LAM (LAM (LAM (APP V₂ (APP V₁ V₀))))

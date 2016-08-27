@@ -48,37 +48,18 @@ cont : ∀ {A B} → ⊢ A ▻ A ▻ B → ⊢ A ▻ B
 cont t = app ccont t
 
 
--- Exchange.
+-- Exchange, or Schönfinkel’s C combinator.
 
--- NOTE: This seems to be the normal form.
 cexch : ∀ {A B C} → ⊢ (A ▻ B ▻ C) ▻ B ▻ A ▻ C
-cexch = app
-         (app cs
-          (app (app cs (app ck cs))
-           (app
-            (app cs
-             (app (app cs (app ck cs)) (app (app cs (app ck ck)) (app ck cs))))
-            (app
-             (app cs
-              (app (app cs (app ck cs))
-               (app
-                (app cs
-                 (app (app cs (app ck cs)) (app (app cs (app ck ck)) (app ck cs))))
-                (app
-                 (app cs
-                  (app (app cs (app ck cs)) (app (app cs (app ck ck)) (app ck ck))))
-                 (app (app cs (app ck ck)) ci)))))
-             (app (app cs (app ck ck)) (app ck ci))))))
-         (app
-          (app cs
-           (app (app cs (app ck cs)) (app (app cs (app ck ck)) (app ck ck))))
-          (app ck ci))
+cexch = app (app cs (app (app cs (app ck cs))
+                         (app (app cs (app ck ck)) cs)))
+            (app ck ck)
 
 exch : ∀ {A B C} → ⊢ A ▻ B ▻ C → ⊢ B ▻ A ▻ C
 exch t = app cexch t
 
 
--- Composition.
+-- Composition, or Schönfinkel’s B combinator.
 
 ccomp : ∀ {A B C} → ⊢ (B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
 ccomp = app (app cs (app ck cs)) ck
