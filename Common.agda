@@ -16,6 +16,9 @@ open import Data.Empty public
   using ()
   renaming (⊥ to 𝟘 ; ⊥-elim to elim𝟘)
 
+open import Data.Fin public
+  using (Fin ; zero ; suc)
+
 open import Data.Nat public
   using (ℕ ; zero ; suc)
   renaming (_≟_ to _≟ᴺ_)
