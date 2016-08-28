@@ -78,7 +78,7 @@ mmono⊢ : ∀ {A Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊢ A → Γ ⁏ �
 mmono⊢ θ (Ξ , ts) = Ξ , mmono⊦⊢ θ ts
 
 
--- Derivation concatenation.
+-- Concatenation of derivations.
 
 _⧺⊦_ : ∀ {Γ Δ Ξ Ξ′} → Γ ⁏ Δ ⊦⊢ Ξ → Γ ⁏ Δ ⊦⊢ Ξ′ → Γ ⁏ Δ ⊦⊢ Ξ ⧺ Ξ′
 us ⧺⊦ nil       = us

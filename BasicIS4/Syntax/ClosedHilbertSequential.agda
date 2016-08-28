@@ -29,7 +29,7 @@ infix 3 ⊢_
 ⊢ A = ∃ (λ Ξ → ⊦⊢ Ξ , A)
 
 
--- Derivation concatenation.
+-- Concatenation of derivations.
 
 _⧺⊦_ : ∀ {Ξ Ξ′} → ⊦⊢ Ξ → ⊦⊢ Ξ′ → ⊦⊢ Ξ ⧺ Ξ′
 us ⧺⊦ nil       = us

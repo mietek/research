@@ -52,7 +52,7 @@ mono⊢ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
 mono⊢ η (Ξ , ts) = Ξ , mono⊦⊢ η ts
 
 
--- Derivation concatenation.
+-- Concatenation of derivations.
 
 _⧺⊦_ : ∀ {Γ Ξ Ξ′} → Γ ⊦⊢ Ξ → Γ ⊦⊢ Ξ′ → Γ ⊦⊢ Ξ ⧺ Ξ′
 us ⧺⊦ nil       = us
