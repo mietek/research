@@ -54,7 +54,7 @@ open LG using (_↝_) renaming (_⁏_⊢_◎_ to LG⟨_⁏_⊢_◎_⟩ ; _⁏_�
 -- WIP : Work in progress.
 
 
--- Translation from closed Hilbert-style linear to closed Hilbert-style.
+-- Translation from closed Hilbert-style sequential to closed Hilbert-style.
 
 chs→ch : ∀ {A} → CHS.⊢ A → CH.⊢ A
 chs→ch (Ξ , ts) = chs⊦→ch ts top
@@ -86,7 +86,7 @@ chs→ch (Ξ , ts) = chs⊦→ch ts top
     chs⊦→ch (CHS.tt ts)     (pop k) = chs⊦→ch ts k
 
 
--- Translation from closed Hilbert-style to closed Hilbert-style linear.
+-- Translation from closed Hilbert-style to closed Hilbert-style sequential.
 
 ch→chs : ∀ {A} → CH.⊢ A → CHS.⊢ A
 ch→chs (CH.app t u) = CHS.app (ch→chs t) (ch→chs u)
@@ -103,7 +103,7 @@ ch→chs CH.csnd      = ⌀ , CHS.csnd CHS.nil
 ch→chs CH.tt        = ⌀ , CHS.tt CHS.nil
 
 
--- Translation from Hilbert-style linear to Hilbert-style.
+-- Translation from Hilbert-style sequential to Hilbert-style.
 
 hs→h : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → H⟨ Γ ⊢ A ⟩
 hs→h (Ξ , ts) = hs⊦→h ts top
@@ -137,7 +137,7 @@ hs→h (Ξ , ts) = hs⊦→h ts top
     hs⊦→h (HS.tt ts)     (pop k) = hs⊦→h ts k
 
 
--- Translation from Hilbert-style to Hilbert-style linear.
+-- Translation from Hilbert-style to Hilbert-style sequential.
 
 h→hs : ∀ {A Γ} → H⟨ Γ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
 h→hs (H.var i)   = ⌀ , HS.var i HS.nil
@@ -155,7 +155,7 @@ h→hs H.csnd      = ⌀ , HS.csnd HS.nil
 h→hs H.tt        = ⌀ , HS.tt HS.nil
 
 
--- Translation from dyadic Hilbert-style linear to dyadic Hilbert-style.
+-- Translation from dyadic Hilbert-style sequential to dyadic Hilbert-style.
 
 dhs→dh : ∀ {A Γ Δ} → DHS⟨ Γ ⁏ Δ ⊢ A ⟩ → DH⟨ Γ ⁏ Δ ⊢ A ⟩
 dhs→dh (Ξ , ts) = dhs⊦→dh ts top
@@ -191,7 +191,7 @@ dhs→dh (Ξ , ts) = dhs⊦→dh ts top
     dhs⊦→dh (DHS.tt ts)     (pop k) = dhs⊦→dh ts k
 
 
--- Translation from dyadic Hilbert-style to dyadic Hilbert-style linear
+-- Translation from dyadic Hilbert-style to dyadic Hilbert-style sequential
 
 dh→dhs : ∀ {A Γ Δ} → DH⟨ Γ ⁏ Δ ⊢ A ⟩ → DHS⟨ Γ ⁏ Δ ⊢ A ⟩
 dh→dhs (DH.var i)   = ⌀ , DHS.var i DHS.nil
@@ -210,7 +210,7 @@ dh→dhs DH.csnd      = ⌀ , DHS.csnd DHS.nil
 dh→dhs DH.tt        = ⌀ , DHS.tt DHS.nil
 
 
--- Deduction and detachment theorems for Hilbert-style linear.
+-- Deduction and detachment theorems for Hilbert-style sequential.
 
 hs-lam : ∀ {A B Γ} → HS⟨ Γ , A ⊢ B ⟩ → HS⟨ Γ ⊢ A ▻ B ⟩
 hs-lam = h→hs ∘ H.lam ∘ hs→h
@@ -225,7 +225,7 @@ hs-det⋆₀ : ∀ {A Γ} → HS⟨ ⌀ ⊢ Γ ▻⋯▻ A ⟩ → HS⟨ Γ ⊢ 
 hs-det⋆₀ = h→hs ∘ H.det⋆₀ ∘ hs→h
 
 
--- Deduction and detachment theorems for dyadic Hilbert-style linear.
+-- Deduction and detachment theorems for dyadic Hilbert-style sequential.
 
 dhs-lam : ∀ {A B Γ Δ} → DHS⟨ Γ , A ⁏ Δ ⊢ B ⟩ → DHS⟨ Γ ⁏ Δ ⊢ A ▻ B ⟩
 dhs-lam = dh→dhs ∘ DH.lam ∘ dhs→dh
@@ -252,7 +252,7 @@ dhs-mdet⋆₀ : ∀ {Δ A Γ} → DHS⟨ Γ ⁏ ⌀ ⊢ □⋆ Δ ▻⋯▻ A �
 dhs-mdet⋆₀ = dh→dhs ∘ DH.mdet⋆₀ ∘ dhs→dh
 
 
--- Context manipulation for dyadic Hilbert-style linear.
+-- Context manipulation for dyadic Hilbert-style sequential.
 
 dhs-merge : ∀ {Δ A Γ} → DHS⟨ Γ ⁏ Δ ⊢ A ⟩ → DHS⟨ Γ ⧺ (□⋆ Δ) ⁏ ⌀ ⊢ A ⟩
 dhs-merge {Δ} = dh→dhs ∘ DH.merge ∘ dhs→dh
@@ -261,7 +261,7 @@ dhs-split : ∀ {Δ A Γ} → DHS⟨ Γ ⧺ (□⋆ Δ) ⁏ ⌀ ⊢ A ⟩ → DH
 dhs-split {Δ} = dh→dhs ∘ DH.split ∘ dhs→dh
 
 
--- Translation from closed Hilbert-style linear to Hilbert-style linear.
+-- Translation from closed Hilbert-style sequential to Hilbert-style sequential.
 
 chs→hs₀ : ∀ {A} → CHS.⊢ A → HS⟨ ⌀ ⊢ A ⟩
 chs→hs₀ (Ξ , ts) = Ξ , chs⊦→hs⊦ ts
@@ -285,7 +285,7 @@ chs→hs : ∀ {A Γ} → CHS.⊢ Γ ▻⋯▻ A → HS⟨ Γ ⊢ A ⟩
 chs→hs t = hs-det⋆₀ (chs→hs₀ t)
 
 
--- Translation from Hilbert-style linear to closed Hilbert-style linear.
+-- Translation from Hilbert-style sequential to closed Hilbert-style sequential.
 
 hs₀→chs : ∀ {A} → HS⟨ ⌀ ⊢ A ⟩ → CHS.⊢ A
 hs₀→chs (Ξ , ts) = Ξ , hs₀⊦→chs⊦ ts
@@ -310,7 +310,7 @@ hs→chs : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → CHS.⊢ Γ ▻⋯▻ A
 hs→chs t = hs₀→chs (hs-lam⋆₀ t)
 
 
--- Translation from dyadic Hilbert-style linear to Hilbert-style linear.
+-- Translation from dyadic Hilbert-style sequential to Hilbert-style sequential.
 
 dhs₀→hs : ∀ {A Γ} → DHS⟨ Γ ⁏ ⌀ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
 dhs₀→hs (Ξ , ts) = Ξ , dhs₀⊦→hs⊦ ts
@@ -336,7 +336,7 @@ dhs→hs : ∀ {A Γ Δ} → DHS⟨ Γ ⁏ Δ ⊢ A ⟩ → HS⟨ Γ ⧺ (□⋆
 dhs→hs = dhs₀→hs ∘ dhs-merge
 
 
--- Translation from Hilbert-style linear to dyadic Hilbert-style linear.
+-- Translation from Hilbert-style sequential to dyadic Hilbert-style sequential.
 
 hs→dhs₀ : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → DHS⟨ Γ ⁏ ⌀ ⊢ A ⟩
 hs→dhs₀ (Ξ , ts) = Ξ , hs⊦→dhs₀⊦ ts
@@ -611,7 +611,7 @@ lg→g (LG.snd t)    = G.snd (lg→g t)
 lg→g LG.tt         = G.tt
 
 
--- Additional translations from closed Hilbert-style linear.
+-- Additional translations from closed Hilbert-style sequential.
 
 chs→h₀ : ∀ {A} → CHS.⊢ A → H⟨ ⌀ ⊢ A ⟩
 chs→h₀ = ch→h₀ ∘ chs→ch
@@ -707,7 +707,7 @@ ch→lg : ∀ {x A Γ Λ} → CH.⊢ Γ ▻⋯▻ A → LG⟨ Γ ⁏ Λ ⊢ A �
 ch→lg = g→lg ∘ ch→g
 
 
--- Additional translations from Hilbert-style linear.
+-- Additional translations from Hilbert-style sequential.
 
 hs₀→ch : ∀ {A} → HS⟨ ⌀ ⊢ A ⟩ → CH.⊢ A
 hs₀→ch = chs→ch ∘ hs₀→chs
@@ -785,7 +785,7 @@ g→dh : ∀ {A Γ Δ} → G⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩ → DH⟨ Γ ⁏ Δ
 g→dh = h→dh ∘ g→h
 
 
--- Additional translations from dyadic Hilbert-style linear.
+-- Additional translations from dyadic Hilbert-style sequential.
 
 dhs₀₀→chs : ∀ {A} → DHS⟨ ⌀ ⁏ ⌀ ⊢ A ⟩ → CHS.⊢ A
 dhs₀₀→chs = hs₀→chs ∘ dhs₀→hs
