@@ -6,7 +6,7 @@ open import BasicIPC.Syntax.GentzenSpinalNormalForm public
 -- Hereditary substitution and reduction.
 
 mutual
-  [_≔_]ⁿᶠ_ : ∀ {A B Γ} → (i : A ∈ Γ) → Γ - i ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B → Γ - i ⊢ⁿᶠ B
+  [_≔_]ⁿᶠ_ : ∀ {A B Γ} → (i : A ∈ Γ) → Γ ∖ i ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B → Γ ∖ i ⊢ⁿᶠ B
   [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ j  xs) with i ≟∈ j
   [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ .i xs) | same   = reduce s ([ i ≔ s ]ˢᵖ xs)
   [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ ._ xs) | diff j = neⁿᶠ (spⁿᵉ j ([ i ≔ s ]ˢᵖ xs))
@@ -14,7 +14,7 @@ mutual
   [ i ≔ s ]ⁿᶠ pairⁿᶠ t u        = pairⁿᶠ ([ i ≔ s ]ⁿᶠ t) ([ i ≔ s ]ⁿᶠ u)
   [ i ≔ s ]ⁿᶠ ttⁿᶠ              = ttⁿᶠ
 
-  [_≔_]ˢᵖ_ : ∀ {A B C Γ} → (i : A ∈ Γ) → Γ - i ⊢ⁿᶠ A → Γ ⊢ˢᵖ B ⦙ C → Γ - i ⊢ˢᵖ B ⦙ C
+  [_≔_]ˢᵖ_ : ∀ {A B C Γ} → (i : A ∈ Γ) → Γ ∖ i ⊢ⁿᶠ A → Γ ⊢ˢᵖ B ⦙ C → Γ ∖ i ⊢ˢᵖ B ⦙ C
   [ i ≔ s ]ˢᵖ nilˢᵖ      = nilˢᵖ
   [ i ≔ s ]ˢᵖ appˢᵖ xs u = appˢᵖ ([ i ≔ s ]ˢᵖ xs) ([ i ≔ s ]ⁿᶠ u)
   [ i ≔ s ]ˢᵖ fstˢᵖ xs   = fstˢᵖ ([ i ≔ s ]ˢᵖ xs)

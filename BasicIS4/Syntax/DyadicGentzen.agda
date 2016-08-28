@@ -364,7 +364,7 @@ mconcat Δ′ t u = app (mmono⊢ (weak⊆⧺ₗ Δ′) (mlam t)) (mmono⊢ weak
 
 -- Substitution.
 
-[_≔_]_ : ∀ {A B Γ Δ} → (i : A ∈ Γ) → Γ - i ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ B → Γ - i ⁏ Δ ⊢ B
+[_≔_]_ : ∀ {A B Γ Δ} → (i : A ∈ Γ) → Γ ∖ i ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ B → Γ ∖ i ⁏ Δ ⊢ B
 [ i ≔ s ] var j     with i ≟∈ j
 [ i ≔ s ] var .i    | same   = s
 [ i ≔ s ] var ._    | diff j = var j
@@ -378,14 +378,14 @@ mconcat Δ′ t u = app (mmono⊢ (weak⊆⧺ₗ Δ′) (mlam t)) (mmono⊢ weak
 [ i ≔ s ] snd t     = snd ([ i ≔ s ] t)
 [ i ≔ s ] tt        = tt
 
-[_≔_]⋆_ : ∀ {Ξ A Γ Δ} → (i : A ∈ Γ) → Γ - i ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢⋆ Ξ → Γ - i ⁏ Δ ⊢⋆ Ξ
+[_≔_]⋆_ : ∀ {Ξ A Γ Δ} → (i : A ∈ Γ) → Γ ∖ i ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢⋆ Ξ → Γ ∖ i ⁏ Δ ⊢⋆ Ξ
 [_≔_]⋆_ {⌀}     i s ∙        = ∙
 [_≔_]⋆_ {Ξ , B} i s (ts , t) = [ i ≔ s ]⋆ ts , [ i ≔ s ] t
 
 
 -- Modal substitution.
 
-m[_≔_]_ : ∀ {A B Γ Δ} → (i : A ∈ Δ) → ⌀ ⁏ Δ - i ⊢ A → Γ ⁏ Δ ⊢ B → Γ ⁏ Δ - i ⊢ B
+m[_≔_]_ : ∀ {A B Γ Δ} → (i : A ∈ Δ) → ⌀ ⁏ Δ ∖ i ⊢ A → Γ ⁏ Δ ⊢ B → Γ ⁏ Δ ∖ i ⊢ B
 m[ i ≔ s ] var j     = var j
 m[ i ≔ s ] lam t     = lam (m[ i ≔ s ] t)
 m[ i ≔ s ] app t u   = app (m[ i ≔ s ] t) (m[ i ≔ s ] u)
@@ -399,7 +399,7 @@ m[ i ≔ s ] fst t     = fst (m[ i ≔ s ] t)
 m[ i ≔ s ] snd t     = snd (m[ i ≔ s ] t)
 m[ i ≔ s ] tt        = tt
 
-m[_≔_]⋆_ : ∀ {Ξ A Γ Δ} → (i : A ∈ Δ) → ⌀ ⁏ Δ - i ⊢ A → Γ ⁏ Δ ⊢⋆ Ξ → Γ ⁏ Δ - i ⊢⋆ Ξ
+m[_≔_]⋆_ : ∀ {Ξ A Γ Δ} → (i : A ∈ Δ) → ⌀ ⁏ Δ ∖ i ⊢ A → Γ ⁏ Δ ⊢⋆ Ξ → Γ ⁏ Δ ∖ i ⊢⋆ Ξ
 m[_≔_]⋆_ {⌀}     i s ∙        = ∙
 m[_≔_]⋆_ {Ξ , B} i s (ts , t) = m[ i ≔ s ]⋆ ts , m[ i ≔ s ] t
 

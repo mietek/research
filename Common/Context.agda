@@ -145,12 +145,12 @@ module _ {U : Set} where
 -- Context thinning.
 
 module _ {U : Set} where
-  _-_ : ∀ {A} → (Γ : Cx U) → A ∈ Γ → Cx U
-  ⌀       - ()
-  (Γ , A) - top   = Γ
-  (Γ , B) - pop i = (Γ - i) , B
+  _∖_ : ∀ {A} → (Γ : Cx U) → A ∈ Γ → Cx U
+  ⌀       ∖ ()
+  (Γ , A) ∖ top   = Γ
+  (Γ , B) ∖ pop i = (Γ ∖ i) , B
 
-  thin⊆ : ∀ {A Γ} → (i : A ∈ Γ) → Γ - i ⊆ Γ
+  thin⊆ : ∀ {A Γ} → (i : A ∈ Γ) → Γ ∖ i ⊆ Γ
   thin⊆ top     = weak⊆
   thin⊆ (pop i) = keep (thin⊆ i)
 
@@ -160,12 +160,12 @@ module _ {U : Set} where
 module _ {U : Set} where
   data _=∈_ {A : U} {Γ} (i : A ∈ Γ) : ∀ {B} → B ∈ Γ → Set where
     same : i =∈ i
-    diff : ∀ {B} → (j : B ∈ Γ - i) → i =∈ mono∈ (thin⊆ i) j
+    diff : ∀ {B} → (j : B ∈ Γ ∖ i) → i =∈ mono∈ (thin⊆ i) j
 
   _≟∈_ : ∀ {A B : U} {Γ} → (i : A ∈ Γ) (j : B ∈ Γ) → i =∈ j
-  top ≟∈ top      = same
-  top ≟∈ pop j    rewrite reflmono∈ j = diff j
+  top   ≟∈ top    = same
+  top   ≟∈ pop j  rewrite reflmono∈ j = diff j
   pop i ≟∈ top    = diff top
   pop i ≟∈ pop j  with i ≟∈ j
-  pop i ≟∈ pop .i | same = same
+  pop i ≟∈ pop .i | same   = same
   pop i ≟∈ pop ._ | diff j = diff (pop j)

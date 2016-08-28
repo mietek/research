@@ -100,7 +100,7 @@ mutual
 -- Hereditary substitution and reduction.
 
 mutual
-  [_≔_]ⁿᶠ_ : ∀ {A B Γ} → (i : A ∈ Γ) → Γ - i ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B → Γ - i ⊢ⁿᶠ B
+  [_≔_]ⁿᶠ_ : ∀ {A B Γ} → (i : A ∈ Γ) → Γ ∖ i ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B → Γ ∖ i ⊢ⁿᶠ B
   [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ j  xs y) with i ≟∈ j
   [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ .i xs y) | same   = reduce s ([ i ≔ s ]ˢᵖ xs) ([ i ≔ s ]ᵗᵖ y)
   [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ ._ xs y) | diff j = neⁿᶠ (spⁿᵉ j ([ i ≔ s ]ˢᵖ xs) ([ i ≔ s ]ᵗᵖ y))
@@ -110,13 +110,13 @@ mutual
   [ i ≔ s ]ⁿᶠ inlⁿᶠ t             = inlⁿᶠ ([ i ≔ s ]ⁿᶠ t)
   [ i ≔ s ]ⁿᶠ inrⁿᶠ t             = inrⁿᶠ ([ i ≔ s ]ⁿᶠ t)
 
-  [_≔_]ˢᵖ_ : ∀ {A B C Γ} → (i : A ∈ Γ) → Γ - i ⊢ⁿᶠ A → Γ ⊢ˢᵖ B ⦙ C → Γ - i ⊢ˢᵖ B ⦙ C
+  [_≔_]ˢᵖ_ : ∀ {A B C Γ} → (i : A ∈ Γ) → Γ ∖ i ⊢ⁿᶠ A → Γ ⊢ˢᵖ B ⦙ C → Γ ∖ i ⊢ˢᵖ B ⦙ C
   [ i ≔ s ]ˢᵖ nilˢᵖ      = nilˢᵖ
   [ i ≔ s ]ˢᵖ appˢᵖ xs u = appˢᵖ ([ i ≔ s ]ˢᵖ xs) ([ i ≔ s ]ⁿᶠ u)
   [ i ≔ s ]ˢᵖ fstˢᵖ xs   = fstˢᵖ ([ i ≔ s ]ˢᵖ xs)
   [ i ≔ s ]ˢᵖ sndˢᵖ xs   = sndˢᵖ ([ i ≔ s ]ˢᵖ xs)
 
-  [_≔_]ᵗᵖ_ : ∀ {A B C Γ} → (i : A ∈ Γ) → Γ - i ⊢ⁿᶠ A → Γ ⊢ᵗᵖ B ⦙ C → Γ - i ⊢ᵗᵖ B ⦙ C
+  [_≔_]ᵗᵖ_ : ∀ {A B C Γ} → (i : A ∈ Γ) → Γ ∖ i ⊢ⁿᶠ A → Γ ⊢ᵗᵖ B ⦙ C → Γ ∖ i ⊢ᵗᵖ B ⦙ C
   [ i ≔ s ]ᵗᵖ nilᵗᵖ      = nilᵗᵖ
   [ i ≔ s ]ᵗᵖ boomᵗᵖ     = boomᵗᵖ
   [ i ≔ s ]ᵗᵖ caseᵗᵖ u v = caseᵗᵖ u′ v′
