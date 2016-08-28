@@ -17,7 +17,7 @@ data VCx (U : Set) : ℕ → Set where
   _,_ : ∀ {n} → VCx U n → U → VCx U (suc n)
 
 
--- Inversion principles.
+-- Inversion principles for contexts.
 
 module _ {U : Set} where
   inv,ₗ : ∀ {Γ Γ′ : Cx U} {A A′ : U} → (Γ Cx., A) ≡ (Γ′ , A′) → Γ ≡ Γ′
@@ -27,7 +27,7 @@ module _ {U : Set} where
   inv,ᵣ refl = refl
 
 
--- Decidable equality.
+-- Decidable equality for contexts.
 
 module ContextEquality {U : Set} (_≟ᵁ_ : (A A′ : U) → Dec (A ≡ A′)) where
   _≟ᵀ⋆_ : (Γ Γ′ : Cx U) → Dec (Γ ≡ Γ′)
@@ -40,7 +40,7 @@ module ContextEquality {U : Set} (_≟ᵁ_ : (A A′ : U) → Dec (A ≡ A′)) 
   (Γ , A) ≟ᵀ⋆ (Γ′ , A′) | _        | no  A≢A′ = no (A≢A′ ∘ inv,ᵣ)
 
 
--- Context membership, as nameless typed de Bruijn indices.
+-- Context membership, or nameless typed de Bruijn indices.
 
 module _ {U : Set} where
   infix 3 _∈_
@@ -97,7 +97,7 @@ module _ {U : Set} where
   bot⊆ {Γ , A} = skip bot⊆
 
 
--- Monotonicity with respect to context inclusion.
+-- Monotonicity of context membership with respect to context inclusion.
 
 module _ {U : Set} where
   mono∈ : ∀ {A : U} {Γ Γ′} → Γ ⊆ Γ′ → A ∈ Γ → A ∈ Γ′
@@ -119,7 +119,7 @@ module _ {U : Set} where
   transmono∈ (keep η) (keep η′) (pop i) = cong pop (transmono∈ η η′ i)
 
 
--- Context concatenation.
+-- Concatenation of contexts.
 
 module _ {U : Set} where
   _⧺_ : Cx U → Cx U → Cx U
@@ -142,7 +142,7 @@ module _ {U : Set} where
   weak⊆⧺ᵣ {Γ} {Γ′ , A} = keep weak⊆⧺ᵣ
 
 
--- Context thinning.
+-- Thinning of contexts.
 
 module _ {U : Set} where
   _∖_ : ∀ {A} → (Γ : Cx U) → A ∈ Γ → Cx U
@@ -155,7 +155,7 @@ module _ {U : Set} where
   thin⊆ (pop i) = keep (thin⊆ i)
 
 
--- Decidable context membership equality.
+-- Decidable equality of context membership.
 
 module _ {U : Set} where
   data _=∈_ {A : U} {Γ} (i : A ∈ Γ) : ∀ {B} → B ∈ Γ → Set where
