@@ -10,40 +10,43 @@ import NewBasicILP.Syntax.ClosedHilbert as CH
 
 mutual
   chs→chᵀ : CHS.Ty → CH.Ty
-  chs→chᵀ (CHS.α P)     = CH.α P
-  chs→chᵀ (A CHS.▻ B)   = chs→chᵀ A CH.▻ chs→chᵀ B
-  chs→chᵀ (CHS.[ p ] A) = CH.[ chs→ch (_ , p) ] (chs→chᵀ A)
-  chs→chᵀ (A CHS.∧ B)   = chs→chᵀ A CH.∧ chs→chᵀ B
-  chs→chᵀ CHS.⊤        = CH.⊤
+  chs→chᵀ (CHS.α P)      = CH.α P
+  chs→chᵀ (A CHS.▻ B)    = chs→chᵀ A CH.▻ chs→chᵀ B
+  chs→chᵀ (CHS.[ ps ] A) = CH.[ chs⊦→ch′ ps ] (chs→chᵀ A)
+  chs→chᵀ (A CHS.∧ B)    = chs→chᵀ A CH.∧ chs→chᵀ B
+  chs→chᵀ CHS.⊤         = CH.⊤
+
+  chs⊦→ch : ∀ {A Ξ} → CHS.⊦⊢ Ξ → A ∈ Ξ → CH.⊢ (chs→chᵀ A)
+  chs⊦→ch (CHS.mp i j ts) top     = CH.app (chs⊦→ch ts i) (chs⊦→ch ts j)
+  chs⊦→ch (CHS.ci ts)     top     = CH.ci
+  chs⊦→ch (CHS.ck ts)     top     = CH.ck
+  chs⊦→ch (CHS.cs ts)     top     = CH.cs
+  chs⊦→ch (CHS.nec ps ts) top     = {!CH.box (chs⊦→ch ps top)!} -- NOTE: Fills then fails.
+  chs⊦→ch (CHS.cdist ts)  top     = {!CH.cdist!}                 -- NOTE: Does not fill.
+  chs⊦→ch (CHS.cup ts)    top     = {!CH.cup!}                   -- NOTE: Fills then fails.
+  chs⊦→ch (CHS.cdown ts)  top     = CH.cdown
+  chs⊦→ch (CHS.cpair ts)  top     = CH.cpair
+  chs⊦→ch (CHS.cfst ts)   top     = CH.cfst
+  chs⊦→ch (CHS.csnd ts)   top     = CH.csnd
+  chs⊦→ch (CHS.tt ts)     top     = CH.tt
+  chs⊦→ch (CHS.mp i j ts) (pop k) = chs⊦→ch ts k
+  chs⊦→ch (CHS.ci ts)     (pop k) = chs⊦→ch ts k
+  chs⊦→ch (CHS.ck ts)     (pop k) = chs⊦→ch ts k
+  chs⊦→ch (CHS.cs ts)     (pop k) = chs⊦→ch ts k
+  chs⊦→ch (CHS.nec ps ts) (pop k) = chs⊦→ch ts k
+  chs⊦→ch (CHS.cdist ts)  (pop k) = chs⊦→ch ts k
+  chs⊦→ch (CHS.cup ts)    (pop k) = chs⊦→ch ts k
+  chs⊦→ch (CHS.cdown ts)  (pop k) = chs⊦→ch ts k
+  chs⊦→ch (CHS.cpair ts)  (pop k) = chs⊦→ch ts k
+  chs⊦→ch (CHS.cfst ts)   (pop k) = chs⊦→ch ts k
+  chs⊦→ch (CHS.csnd ts)   (pop k) = chs⊦→ch ts k
+  chs⊦→ch (CHS.tt ts)     (pop k) = chs⊦→ch ts k
+
+  chs⊦→ch′ : ∀ {A Ξ} → CHS.⊦⊢ Ξ , A → CH.⊢ (chs→chᵀ A)
+  chs⊦→ch′ ts = chs⊦→ch ts top
 
   chs→ch : ∀ {A} → CHS.⊢ A → CH.⊢ (chs→chᵀ A)
-  chs→ch (Ξ , ts) = chs⊦→ch ts top
-    where
-     chs⊦→ch : ∀ {A Ξ} → CHS.⊦⊢ Ξ → A ∈ Ξ → CH.⊢ (chs→chᵀ A)
-     chs⊦→ch (CHS.mp i j ts) top     = CH.app (chs⊦→ch ts i) (chs⊦→ch ts j)
-     chs⊦→ch (CHS.ci ts)     top     = CH.ci
-     chs⊦→ch (CHS.ck ts)     top     = CH.ck
-     chs⊦→ch (CHS.cs ts)     top     = CH.cs
-     chs⊦→ch (CHS.nec ps ts) top     = {!CH.box (chs⊦→ch ps top)!}
-     chs⊦→ch (CHS.cdist ts)  top     = {!CH.cdist!}
-     chs⊦→ch (CHS.cup ts)    top     = {!CH.cup!}
-     chs⊦→ch (CHS.cdown ts)  top     = CH.cdown
-     chs⊦→ch (CHS.cpair ts)  top     = CH.cpair
-     chs⊦→ch (CHS.cfst ts)   top     = CH.cfst
-     chs⊦→ch (CHS.csnd ts)   top     = CH.csnd
-     chs⊦→ch (CHS.tt ts)     top     = CH.tt
-     chs⊦→ch (CHS.mp i j ts) (pop k) = chs⊦→ch ts k
-     chs⊦→ch (CHS.ci ts)     (pop k) = chs⊦→ch ts k
-     chs⊦→ch (CHS.ck ts)     (pop k) = chs⊦→ch ts k
-     chs⊦→ch (CHS.cs ts)     (pop k) = chs⊦→ch ts k
-     chs⊦→ch (CHS.nec ps ts) (pop k) = chs⊦→ch ts k
-     chs⊦→ch (CHS.cdist ts)  (pop k) = chs⊦→ch ts k
-     chs⊦→ch (CHS.cup ts)    (pop k) = chs⊦→ch ts k
-     chs⊦→ch (CHS.cdown ts)  (pop k) = chs⊦→ch ts k
-     chs⊦→ch (CHS.cpair ts)  (pop k) = chs⊦→ch ts k
-     chs⊦→ch (CHS.cfst ts)   (pop k) = chs⊦→ch ts k
-     chs⊦→ch (CHS.csnd ts)   (pop k) = chs⊦→ch ts k
-     chs⊦→ch (CHS.tt ts)     (pop k) = chs⊦→ch ts k
+  chs→ch (Ξ , ts) = chs⊦→ch′ ts
 
 
 -- Translation from closed Hilbert-style to closed Hilbert-style sequential.

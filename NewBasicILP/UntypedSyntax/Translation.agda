@@ -50,32 +50,31 @@ chs→chᴿ (n , ts) = chs⊦→chᴿ ts zero
 chs→chᵀ : CHS.Ty → CH.Ty
 chs→chᵀ A = chs→chᴿ ↦ᵀ A
 
-mutual
-  chs⊦→ch : ∀ {A Ξ} → CHS.⊦⊢ Ξ → A ∈ Ξ → CH.⊢ chs→chᵀ A
-  chs⊦→ch (CHS.mp i j ts) top     = CH.app (chs⊦→ch ts i) (chs⊦→ch ts j)
-  chs⊦→ch (CHS.ci ts)     top     = CH.ci
-  chs⊦→ch (CHS.ck ts)     top     = CH.ck
-  chs⊦→ch (CHS.cs ts)     top     = CH.cs
-  chs⊦→ch (CHS.nec ps ts) top     = {!CH.box (chs⊦→ch ps top)!}
-  chs⊦→ch (CHS.cdist ts)  top     = {!CH.cdist!}
-  chs⊦→ch (CHS.cup ts)    top     = CH.cup
-  chs⊦→ch (CHS.cdown ts)  top     = CH.cdown
-  chs⊦→ch (CHS.cpair ts)  top     = CH.cpair
-  chs⊦→ch (CHS.cfst ts)   top     = CH.cfst
-  chs⊦→ch (CHS.csnd ts)   top     = CH.csnd
-  chs⊦→ch (CHS.tt ts)     top     = CH.tt
-  chs⊦→ch (CHS.mp i j ts) (pop k) = chs⊦→ch ts k
-  chs⊦→ch (CHS.ci ts)     (pop k) = chs⊦→ch ts k
-  chs⊦→ch (CHS.ck ts)     (pop k) = chs⊦→ch ts k
-  chs⊦→ch (CHS.cs ts)     (pop k) = chs⊦→ch ts k
-  chs⊦→ch (CHS.nec ps ts) (pop k) = chs⊦→ch ts k
-  chs⊦→ch (CHS.cdist ts)  (pop k) = chs⊦→ch ts k
-  chs⊦→ch (CHS.cup ts)    (pop k) = chs⊦→ch ts k
-  chs⊦→ch (CHS.cdown ts)  (pop k) = chs⊦→ch ts k
-  chs⊦→ch (CHS.cpair ts)  (pop k) = chs⊦→ch ts k
-  chs⊦→ch (CHS.cfst ts)   (pop k) = chs⊦→ch ts k
-  chs⊦→ch (CHS.csnd ts)   (pop k) = chs⊦→ch ts k
-  chs⊦→ch (CHS.tt ts)     (pop k) = chs⊦→ch ts k
+chs⊦→ch : ∀ {A Ξ} → CHS.⊦⊢ Ξ → A ∈ Ξ → CH.⊢ chs→chᵀ A
+chs⊦→ch (CHS.mp i j ts) top     = CH.app (chs⊦→ch ts i) (chs⊦→ch ts j)
+chs⊦→ch (CHS.ci ts)     top     = CH.ci
+chs⊦→ch (CHS.ck ts)     top     = CH.ck
+chs⊦→ch (CHS.cs ts)     top     = CH.cs
+chs⊦→ch (CHS.nec ps ts) top     = {!CH.box (chs⊦→ch ps top)!} -- NOTE: Does not fill.
+chs⊦→ch (CHS.cdist ts)  top     = {!CH.cdist!}                 -- NOTE: Does not fill.
+chs⊦→ch (CHS.cup ts)    top     = CH.cup
+chs⊦→ch (CHS.cdown ts)  top     = CH.cdown
+chs⊦→ch (CHS.cpair ts)  top     = CH.cpair
+chs⊦→ch (CHS.cfst ts)   top     = CH.cfst
+chs⊦→ch (CHS.csnd ts)   top     = CH.csnd
+chs⊦→ch (CHS.tt ts)     top     = CH.tt
+chs⊦→ch (CHS.mp i j ts) (pop k) = chs⊦→ch ts k
+chs⊦→ch (CHS.ci ts)     (pop k) = chs⊦→ch ts k
+chs⊦→ch (CHS.ck ts)     (pop k) = chs⊦→ch ts k
+chs⊦→ch (CHS.cs ts)     (pop k) = chs⊦→ch ts k
+chs⊦→ch (CHS.nec ps ts) (pop k) = chs⊦→ch ts k
+chs⊦→ch (CHS.cdist ts)  (pop k) = chs⊦→ch ts k
+chs⊦→ch (CHS.cup ts)    (pop k) = chs⊦→ch ts k
+chs⊦→ch (CHS.cdown ts)  (pop k) = chs⊦→ch ts k
+chs⊦→ch (CHS.cpair ts)  (pop k) = chs⊦→ch ts k
+chs⊦→ch (CHS.cfst ts)   (pop k) = chs⊦→ch ts k
+chs⊦→ch (CHS.csnd ts)   (pop k) = chs⊦→ch ts k
+chs⊦→ch (CHS.tt ts)     (pop k) = chs⊦→ch ts k
 
 chs→ch : ∀ {A} → CHS.⊢ A → CH.⊢ chs→chᵀ A
 chs→ch (Ξ , ts) = chs⊦→ch ts top
@@ -105,7 +104,7 @@ ch→chs (CH.app t u) = CHS.app (ch→chs t) (ch→chs u)
 ch→chs CH.ci        = ⌀ , CHS.ci CHS.nil
 ch→chs CH.ck        = ⌀ , CHS.ck CHS.nil
 ch→chs CH.cs        = ⌀ , CHS.cs CHS.nil
-ch→chs (CH.box p)   = {!CHS.box ch→chs p!}
+ch→chs (CH.box p)   = {!CHS.box (ch→chs p)!} -- NOTE: Does not fill.
 ch→chs CH.cdist     = ⌀ , CHS.cdist CHS.nil
 ch→chs CH.cup       = ⌀ , CHS.cup CHS.nil
 ch→chs CH.cdown     = ⌀ , CHS.cdown CHS.nil
