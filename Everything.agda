@@ -321,7 +321,31 @@ import BasicIS4.Metatheory.DyadicGentzen-TarskiGluedDyadicGentzen -- FIXME
 
 
 
--- Basic intuitionistic logic of proofs, without ∨, ⊥, or +. (To be rewritten.)
+-- Basic intuitionistic logic of proofs, without ∨, ⊥, or +. (Work in progress.)
+
+-- Common syntax, with types parametrised by a closed, untyped representation of syntax.
+import NewBasicILP.UntypedSyntax.Common
+
+-- Hilbert-style formalisation of closed syntax.
+import NewBasicILP.UntypedSyntax.ClosedHilbertSequential  -- Sequences of terms.
+import NewBasicILP.UntypedSyntax.ClosedHilbert            -- Nested terms.
+
+-- Translation between different formalisations of syntax.
+-- import NewBasicILP.UntypedSyntax.Translation
+
+-- Common syntax, with types parametrised by closed syntax.
+import NewBasicILP.Syntax.Common
+
+-- Hilbert-style formalisation of closed syntax.
+import NewBasicILP.Syntax.ClosedHilbertSequential  -- Sequences of terms.
+import NewBasicILP.Syntax.ClosedHilbert            -- Nested terms.
+
+-- Translation between different formalisations of syntax.
+-- import NewBasicILP.Syntax.Translation
+-- import NewBasicILP.Syntax.Projection
+
+
+-- (To be rewritten.)
 
 import BasicILP.Indirect
 import BasicILP.Indirect.Hilbert.Sequential
