@@ -353,8 +353,6 @@ import BasicILP.Indirect.Hilbert.Sequential
 import BasicILP.Indirect.Hilbert.Nested
 import BasicILP.Indirect.Gentzen
 -- import BasicILP.Indirect.Translation
-import BasicILP.Direct.Hilbert.Sequential
 import BasicILP.Direct.Hilbert.Nested
 import BasicILP.Direct.Gentzen
 -- import BasicILP.Direct.Translation
-import BasicILP.Translation
