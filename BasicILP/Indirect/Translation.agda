@@ -145,7 +145,7 @@ hn→hs HN.tt        = ⌀ , HS.tt HS.nil
 
 hs→hn→hsᵀᵐ : ∀ {TS} → hn→hsᵀᵐ (hs→hnᵀᵐ TS) ≡ TS
 hs→hn→hsᵀᵐ {HS.NIL}       = {!refl!}
-hs→hn→hsᵀᵐ {HS.VAR I TS}  = cong₂ HS.VAR refl {!!}
+hs→hn→hsᵀᵐ {HS.VAR I TS}  = cong² HS.VAR refl {!!}
 hs→hn→hsᵀᵐ {HS.MP I J TS} = {!!}
 hs→hn→hsᵀᵐ {HS.CI TS}     = {!!}
 hs→hn→hsᵀᵐ {HS.CK TS}     = {!!}
@@ -161,9 +161,9 @@ hs→hn→hsᵀᵐ {HS.TT TS}     = {!!}
 
 hs→hn→hsᵀʸ : ∀ {A} → hn→hsᵀʸ (hs→hnᵀʸ A) ≡ A
 hs→hn→hsᵀʸ {α P}   = refl
-hs→hn→hsᵀʸ {A ▻ B} = cong₂ _▻_ hs→hn→hsᵀʸ hs→hn→hsᵀʸ
-hs→hn→hsᵀʸ {T ⦂ A} = cong₂ _⦂_ hs→hn→hsᵀᵐ hs→hn→hsᵀʸ
-hs→hn→hsᵀʸ {A ∧ B} = cong₂ _∧_ hs→hn→hsᵀʸ hs→hn→hsᵀʸ
+hs→hn→hsᵀʸ {A ▻ B} = cong² _▻_ hs→hn→hsᵀʸ hs→hn→hsᵀʸ
+hs→hn→hsᵀʸ {T ⦂ A} = cong² _⦂_ hs→hn→hsᵀᵐ hs→hn→hsᵀʸ
+hs→hn→hsᵀʸ {A ∧ B} = cong² _∧_ hs→hn→hsᵀʸ hs→hn→hsᵀʸ
 hs→hn→hsᵀʸ {⊤}    = refl
 
 -- hs-lam : ∀ {A B Γ} → HS⟨ Γ , A ⊢ B ⟩ → HS⟨ Γ ⊢ A ▻ B ⟩
