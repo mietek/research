@@ -332,7 +332,7 @@ import NewBasicILP.UntypedSyntax.ClosedHilbertSequential  -- Sequences of terms.
 import NewBasicILP.UntypedSyntax.ClosedHilbert            -- Nested terms.
 
 -- Translation between different formalisations of syntax.
--- import NewBasicILP.UntypedSyntax.Translation
+import NewBasicILP.UntypedSyntax.Translation -- FIXME
 
 -- Common syntax, with types parametrised by closed syntax.
 import NewBasicILP.Syntax.Common
@@ -342,8 +342,8 @@ import NewBasicILP.Syntax.ClosedHilbertSequential  -- Sequences of terms.
 import NewBasicILP.Syntax.ClosedHilbert            -- Nested terms.
 
 -- Translation between different formalisations of syntax.
--- import NewBasicILP.Syntax.Translation
--- import NewBasicILP.Syntax.Projection
+import NewBasicILP.Syntax.Translation -- FIXME
+-- import NewBasicILP.Syntax.Projection -- FIXME
 
 
 -- (To be rewritten.)
