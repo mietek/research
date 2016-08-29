@@ -13,11 +13,15 @@ module ClosedHilbertSequential where
 
   mutual
     ⌊_⌋ᵀ : Ty → CHS.Ty
-    ⌊ α P ⌋ᵀ      = CHS.α P
-    ⌊ A ▻ B ⌋ᵀ    = ⌊ A ⌋ᵀ CHS.▻ ⌊ B ⌋ᵀ
-    ⌊ [ ps ] A ⌋ᵀ = CHS.[ ⌊ ps ⌋⊦ᴿ ] ⌊ A ⌋ᵀ -- NOTE: Must use ⌊_⌋⊦ᴿ here.
-    ⌊ A ∧ B ⌋ᵀ    = ⌊ A ⌋ᵀ CHS.∧ ⌊ B ⌋ᵀ
-    ⌊ ⊤ ⌋ᵀ       = CHS.⊤
+    ⌊ α P ⌋ᵀ   = CHS.α P
+    ⌊ A ▻ B ⌋ᵀ = ⌊ A ⌋ᵀ CHS.▻ ⌊ B ⌋ᵀ
+    ⌊ p ⦂ A ⌋ᵀ = ⌊ p ⌋ᴾ CHS.⦂ ⌊ A ⌋ᵀ
+    ⌊ A ∧ B ⌋ᵀ = ⌊ A ⌋ᵀ CHS.∧ ⌊ B ⌋ᵀ
+    ⌊ ⊤ ⌋ᵀ    = CHS.⊤
+
+    -- FIXME: WHat is going on here?
+    postulate
+      ⌊_⌋ᴾ : ∀ {Ξ A} → Proof Ξ A → CHS.Proof
 
     ⌊_⌋ᵀ⋆ : Cx Ty → Cx CHS.Ty
     ⌊ ⌀ ⌋ᵀ⋆     = ⌀
@@ -27,26 +31,23 @@ module ClosedHilbertSequential where
     ⌊ top ⌋∈   = top
     ⌊ pop i ⌋∈ = pop ⌊ i ⌋∈
 
-    ⌊_⌋⊦ : ∀ {Ξ} → ⊦⊢ Ξ → CHS.⊦⊢ ⌊ Ξ ⌋ᵀ⋆
-    ⌊ nil ⌋⊦       = CHS.nil
-    ⌊ mp i j ts ⌋⊦ = CHS.mp ⌊ i ⌋∈ ⌊ j ⌋∈ ⌊ ts ⌋⊦
-    ⌊ ci ts ⌋⊦     = CHS.ci ⌊ ts ⌋⊦
-    ⌊ ck ts ⌋⊦     = CHS.ck ⌊ ts ⌋⊦
-    ⌊ cs ts ⌋⊦     = CHS.cs ⌊ ts ⌋⊦
-    ⌊ nec ps ts ⌋⊦ = {!CHS.nec ⌊ ps ⌋⊦ ⌊ ts ⌋⊦!} -- NOTE: Fills then fails.
-    ⌊ cdist ts ⌋⊦  = {!CHS.cdist ⌊ ts ⌋⊦!}       -- NOTE: Does not fill.
-    ⌊ cup ts ⌋⊦    = {!CHS.cup ⌊ ts ⌋⊦!}         -- NOTE: Fills then fails.
-    ⌊ cdown ts ⌋⊦  = CHS.cdown ⌊ ts ⌋⊦
-    ⌊ cpair ts ⌋⊦  = CHS.cpair ⌊ ts ⌋⊦
-    ⌊ cfst ts ⌋⊦   = CHS.cfst ⌊ ts ⌋⊦
-    ⌊ csnd ts ⌋⊦   = CHS.csnd ⌊ ts ⌋⊦
-    ⌊ tt ts ⌋⊦     = CHS.tt ⌊ ts ⌋⊦
-
-    ⌊_⌋⊦ᴿ : ∀ {Ξ A} → ⊦⊢ Ξ , A → CHS.Rep
-    ⌊ ts ⌋⊦ᴿ = CHS.REP ⌊ ts ⌋⊦
+    ⌊_⌋ᴰ : ∀ {Ξ} → ⊢ᴰ Ξ → CHS.⊢ᴰ ⌊ Ξ ⌋ᵀ⋆
+    ⌊ nil ⌋ᴰ      = CHS.nil
+    ⌊ mp i j d ⌋ᴰ = CHS.mp ⌊ i ⌋∈ ⌊ j ⌋∈ ⌊ d ⌋ᴰ
+    ⌊ ci d ⌋ᴰ     = CHS.ci ⌊ d ⌋ᴰ
+    ⌊ ck d ⌋ᴰ     = CHS.ck ⌊ d ⌋ᴰ
+    ⌊ cs d ⌋ᴰ     = CHS.cs ⌊ d ⌋ᴰ
+    ⌊ nec `d d ⌋ᴰ = {!CHS.nec ⌊ `d ⌋ᴰ ⌊ d ⌋ᴰ!}
+    ⌊ cdist d ⌋ᴰ  = {!CHS.cdist ⌊ d ⌋ᴰ!}
+    ⌊ cup d ⌋ᴰ    = {!CHS.cup ⌊ d ⌋ᴰ!}
+    ⌊ cdown d ⌋ᴰ  = CHS.cdown ⌊ d ⌋ᴰ
+    ⌊ cpair d ⌋ᴰ  = CHS.cpair ⌊ d ⌋ᴰ
+    ⌊ cfst d ⌋ᴰ   = CHS.cfst ⌊ d ⌋ᴰ
+    ⌊ csnd d ⌋ᴰ   = CHS.csnd ⌊ d ⌋ᴰ
+    ⌊ tt d ⌋ᴰ     = CHS.tt ⌊ d ⌋ᴰ
 
     ⌊_⌋ : ∀ {A} → ⊢ A → CHS.⊢ ⌊ A ⌋ᵀ
-    ⌊ Ξ , ts ⌋ = ⌊ Ξ ⌋ᵀ⋆ , ⌊ ts ⌋⊦
+    ⌊ Ξ , d ⌋ = ⌊ Ξ ⌋ᵀ⋆ , ⌊ d ⌋ᴰ
 
 
 -- Projection of types and derivations to a form parametrised by a closed, untyped representation of syntax.
@@ -56,25 +57,25 @@ module ClosedHilbert where
 
   mutual
     ⌊_⌋ᵀ : Ty → CH.Ty
-    ⌊ α P ⌋ᵀ     = CH.α P
-    ⌊ A ▻ B ⌋ᵀ   = ⌊ A ⌋ᵀ CH.▻ ⌊ B ⌋ᵀ
-    ⌊ [ p ] A ⌋ᵀ = CH.[ CH.REP ⌊ p ⌋ ] ⌊ A ⌋ᵀ -- NOTE: Must not use ⌊_⌋ᴿ here.
-    ⌊ A ∧ B ⌋ᵀ   = ⌊ A ⌋ᵀ CH.∧ ⌊ B ⌋ᵀ
-    ⌊ ⊤ ⌋ᵀ      = CH.⊤
+    ⌊ α P ⌋ᵀ   = CH.α P
+    ⌊ A ▻ B ⌋ᵀ = ⌊ A ⌋ᵀ CH.▻ ⌊ B ⌋ᵀ
+    ⌊ p ⦂ A ⌋ᵀ = ⌊ p ⌋ᴾ CH.⦂ ⌊ A ⌋ᵀ
+    ⌊ A ∧ B ⌋ᵀ = ⌊ A ⌋ᵀ CH.∧ ⌊ B ⌋ᵀ
+    ⌊ ⊤ ⌋ᵀ    = CH.⊤
+
+    ⌊_⌋ᴾ : ∀ {A} → Proof A → CH.Proof
+    ⌊ [ d ] ⌋ᴾ = CH.[ CH.ᴿ⌊ ⌊ d ⌋ ⌋ ]
 
     ⌊_⌋ : ∀ {A} → ⊢ A → CH.⊢ ⌊ A ⌋ᵀ
-    ⌊ app t u ⌋ = CH.app ⌊ t ⌋ ⌊ u ⌋
-    ⌊ ci ⌋      = CH.ci
-    ⌊ ck ⌋      = CH.ck
-    ⌊ cs ⌋      = CH.cs
-    ⌊ box p ⌋   = CH.box ⌊ p ⌋
-    ⌊ cdist ⌋   = CH.cdist
-    ⌊ cup ⌋     = CH.cup
-    ⌊ cdown ⌋   = CH.cdown
-    ⌊ cpair ⌋   = CH.cpair
-    ⌊ cfst ⌋    = CH.cfst
-    ⌊ csnd ⌋    = CH.csnd
-    ⌊ tt ⌋      = CH.tt
-
-    ⌊_⌋ᴿ : ∀ {A} → ⊢ A → CH.Rep
-    ⌊ t ⌋ᴿ = CH.REP ⌊ t ⌋
+    ⌊ app d₁ d₂ ⌋ = CH.app ⌊ d₁ ⌋ ⌊ d₂ ⌋
+    ⌊ ci ⌋        = CH.ci
+    ⌊ ck ⌋        = CH.ck
+    ⌊ cs ⌋        = CH.cs
+    ⌊ box d ⌋     = CH.box ⌊ d ⌋
+    ⌊ cdist ⌋     = CH.cdist
+    ⌊ cup ⌋       = CH.cup
+    ⌊ cdown ⌋     = CH.cdown
+    ⌊ cpair ⌋     = CH.cpair
+    ⌊ cfst ⌋      = CH.cfst
+    ⌊ csnd ⌋      = CH.csnd
+    ⌊ tt ⌋        = CH.tt

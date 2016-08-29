@@ -1,142 +1,145 @@
+-- Hilbert-style formalisation of closed syntax.
+-- Sequences of terms.
+
 module NewBasicILP.UntypedSyntax.ClosedHilbertSequential where
 
 open import NewBasicILP.UntypedSyntax.Common public
 
 
--- Untyped representation of derivations.
+-- Closed, untyped representations.
 
-data Reps : ℕ → Set where
-  NIL   : Reps zero
-  MP    : ∀ {n} → Fin n → Fin n → Reps n → Reps (suc n)
-  CI    : ∀ {n} → Reps n → Reps (suc n)
-  CK    : ∀ {n} → Reps n → Reps (suc n)
-  CS    : ∀ {n} → Reps n → Reps (suc n)
-  NEC   : ∀ {n} → ∀ {`n} → Reps (suc `n) → Reps n → Reps (suc n)
-  CDIST : ∀ {n} → Reps n → Reps (suc n)
-  CUP   : ∀ {n} → Reps n → Reps (suc n)
-  CDOWN : ∀ {n} → Reps n → Reps (suc n)
-  CPAIR : ∀ {n} → Reps n → Reps (suc n)
-  CFST  : ∀ {n} → Reps n → Reps (suc n)
-  CSND  : ∀ {n} → Reps n → Reps (suc n)
-  TT    : ∀ {n} → Reps n → Reps (suc n)
-
-Rep : Set
-Rep = ∃ (λ n → Reps (suc n))
-
-open ClosedSyntax (Rep) public
+data Rep : ℕ → Set where
+  NIL   : Rep zero
+  MP    : ∀ {n} → Fin n → Fin n → Rep n → Rep (suc n)
+  CI    : ∀ {n} → Rep n → Rep (suc n)
+  CK    : ∀ {n} → Rep n → Rep (suc n)
+  CS    : ∀ {n} → Rep n → Rep (suc n)
+  NEC   : ∀ {n} → ∀ {`n} → Rep (suc `n) → Rep n → Rep (suc n)
+  CDIST : ∀ {n} → Rep n → Rep (suc n)
+  CUP   : ∀ {n} → Rep n → Rep (suc n)
+  CDOWN : ∀ {n} → Rep n → Rep (suc n)
+  CPAIR : ∀ {n} → Rep n → Rep (suc n)
+  CFST  : ∀ {n} → Rep n → Rep (suc n)
+  CSND  : ∀ {n} → Rep n → Rep (suc n)
+  TT    : ∀ {n} → Rep n → Rep (suc n)
 
 
--- Concatenation of derivation representations.
+-- Anti-bug wrappers.
 
-_+⊦_ : ∀ {n n′} → Reps n → Reps n′ → Reps (n + n′)
-us +⊦ NIL       = us
-us +⊦ MP i j ts = MP (monoFin weak≤+ᵣ i) (monoFin weak≤+ᵣ j) (us +⊦ ts)
-us +⊦ CI ts     = CI (us +⊦ ts)
-us +⊦ CK ts     = CK (us +⊦ ts)
-us +⊦ CS ts     = CS (us +⊦ ts)
-us +⊦ NEC ps ts = NEC ps (us +⊦ ts)
-us +⊦ CDIST ts  = CDIST (us +⊦ ts)
-us +⊦ CUP ts    = CUP (us +⊦ ts)
-us +⊦ CDOWN ts  = CDOWN (us +⊦ ts)
-us +⊦ CPAIR ts  = CPAIR (us +⊦ ts)
-us +⊦ CFST ts   = CFST (us +⊦ ts)
-us +⊦ CSND ts   = CSND (us +⊦ ts)
-us +⊦ TT ts     = TT (us +⊦ ts)
+record Proof : Set where
+  constructor [_]
+  field
+    {len} : ℕ
+    rep   : Rep (suc len)
+
+open ClosedSyntax (Proof) public
 
 
--- TODO
+-- Concatenation of representations.
 
-APPS : ∀ {n n′} → Reps (suc n) → Reps (suc n′) → Reps (suc (suc n′ + suc n))
-APPS {n} ts us = MP zero (monoFin (weak≤+ₗ (suc n)) zero) (us +⊦ ts)
+_⧺ᴿ_ : ∀ {n₁ n₂} → Rep n₁ → Rep n₂ → Rep (n₁ + n₂)
+r₁ ⧺ᴿ NIL       = r₁
+r₁ ⧺ᴿ MP i j r₂ = MP (monoFin weak≤+ᵣ i) (monoFin weak≤+ᵣ j) (r₁ ⧺ᴿ r₂)
+r₁ ⧺ᴿ CI r₂     = CI (r₁ ⧺ᴿ r₂)
+r₁ ⧺ᴿ CK r₂     = CK (r₁ ⧺ᴿ r₂)
+r₁ ⧺ᴿ CS r₂     = CS (r₁ ⧺ᴿ r₂)
+r₁ ⧺ᴿ NEC `r r₂ = NEC `r (r₁ ⧺ᴿ r₂)
+r₁ ⧺ᴿ CDIST r₂  = CDIST (r₁ ⧺ᴿ r₂)
+r₁ ⧺ᴿ CUP r₂    = CUP (r₁ ⧺ᴿ r₂)
+r₁ ⧺ᴿ CDOWN r₂  = CDOWN (r₁ ⧺ᴿ r₂)
+r₁ ⧺ᴿ CPAIR r₂  = CPAIR (r₁ ⧺ᴿ r₂)
+r₁ ⧺ᴿ CFST r₂   = CFST (r₁ ⧺ᴿ r₂)
+r₁ ⧺ᴿ CSND r₂   = CSND (r₁ ⧺ᴿ r₂)
+r₁ ⧺ᴿ TT r₂     = TT (r₁ ⧺ᴿ r₂)
 
-BOXS : ∀ {n} → Reps (suc n) → Reps (suc zero)
-BOXS {n} ps = NEC ps NIL
 
-APP : Rep → Rep → Rep
-APP (n , ts) (n′ , us) = suc n′ + suc n , APPS ts us
+-- Modus ponens and necessitation in nested form.
 
-BOX : Rep → Rep
-BOX (n , ps) = zero , BOXS ps
+APP : ∀ {n₁ n₂} → Rep (suc n₁) → Rep (suc n₂) → Rep (suc (suc n₂ + suc n₁))
+APP {n₁} {n₂} r₁ r₂ = MP zero (monoFin (weak≤+ₗ (suc n₁)) zero) (r₂ ⧺ᴿ r₁)
+
+BOX : ∀ {n} → Rep (suc n) → Rep (suc zero)
+BOX {n} r = NEC r NIL
 
 
 -- Derivations.
 
 mutual
-  infix 3 ⊦⊢_
-  data ⊦⊢_ : Cx Ty → Set where
-    nil   : ⊦⊢ ⌀
-    mp    : ∀ {Ξ A B}   → A ▻ B ∈ Ξ → A ∈ Ξ → ⊦⊢ Ξ → ⊦⊢ Ξ , B
-    ci    : ∀ {Ξ A}     → ⊦⊢ Ξ → ⊦⊢ Ξ , A ▻ A
-    ck    : ∀ {Ξ A B}   → ⊦⊢ Ξ → ⊦⊢ Ξ , A ▻ B ▻ A
-    cs    : ∀ {Ξ A B C} → ⊦⊢ Ξ → ⊦⊢ Ξ , (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
+  infix 3 ⊢ᴰ_
+  data ⊢ᴰ_ : Cx Ty → Set where
+    nil   : ⊢ᴰ ⌀
+    mp    : ∀ {Ξ A B}   → A ▻ B ∈ Ξ → A ∈ Ξ → ⊢ᴰ Ξ → ⊢ᴰ Ξ , B
+    ci    : ∀ {Ξ A}     → ⊢ᴰ Ξ → ⊢ᴰ Ξ , A ▻ A
+    ck    : ∀ {Ξ A B}   → ⊢ᴰ Ξ → ⊢ᴰ Ξ , A ▻ B ▻ A
+    cs    : ∀ {Ξ A B C} → ⊢ᴰ Ξ → ⊢ᴰ Ξ , (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
 
-    nec   : ∀ {Ξ A}     → ∀ {`Ξ} → (ps : ⊦⊢ `Ξ , A)
-                        → ⊦⊢ Ξ → ⊦⊢ Ξ , [ REP ps ] A
+    nec   : ∀ {Ξ A}     → ∀ {`Ξ} → (d : ⊢ᴰ `Ξ , A)
+                        → ⊢ᴰ Ξ → ⊢ᴰ Ξ , [ ᴿ⌊ d ⌋ ] ⦂ A
 
-    cdist : ∀ {Ξ A B}   → ∀ {ps qs}
-                        → ⊦⊢ Ξ → ⊦⊢ Ξ , [ ps ] (A ▻ B) ▻ [ qs ] A ▻ [ APP ps qs ] B
+    cdist : ∀ {Ξ A B}   → ∀ {n₁ n₂} → {r₁ : Rep (suc n₁)} → {r₂ : Rep (suc n₂)}
+                        → ⊢ᴰ Ξ → ⊢ᴰ Ξ , [ r₁ ] ⦂ (A ▻ B) ▻ [ r₂ ] ⦂ A ▻ [ APP r₁ r₂ ] ⦂ B
 
-    cup   : ∀ {Ξ A}     → ∀ {ps}
-                        → ⊦⊢ Ξ → ⊦⊢ Ξ , [ ps ] A ▻ [ BOX ps ] [ ps ] A
+    cup   : ∀ {Ξ A}     → ∀ {n} → {r : Rep (suc n)}
+                        → ⊢ᴰ Ξ → ⊢ᴰ Ξ , [ r ] ⦂ A ▻ [ BOX r ] ⦂ [ r ] ⦂ A
 
-    cdown : ∀ {Ξ A}     → ∀ {ps}
-                        → ⊦⊢ Ξ → ⊦⊢ Ξ , [ ps ] A ▻ A
+    cdown : ∀ {Ξ A}     → ∀ {n} → {r : Rep (suc n)}
+                        → ⊢ᴰ Ξ → ⊢ᴰ Ξ , [ r ] ⦂ A ▻ A
 
-    cpair : ∀ {Ξ A B}   → ⊦⊢ Ξ → ⊦⊢ Ξ , A ▻ B ▻ A ∧ B
-    cfst  : ∀ {Ξ A B}   → ⊦⊢ Ξ → ⊦⊢ Ξ , A ∧ B ▻ A
-    csnd  : ∀ {Ξ A B}   → ⊦⊢ Ξ → ⊦⊢ Ξ , A ∧ B ▻ B
-    tt    : ∀ {Ξ}       → ⊦⊢ Ξ → ⊦⊢ Ξ , ⊤
+    cpair : ∀ {Ξ A B}   → ⊢ᴰ Ξ → ⊢ᴰ Ξ , A ▻ B ▻ A ∧ B
+    cfst  : ∀ {Ξ A B}   → ⊢ᴰ Ξ → ⊢ᴰ Ξ , A ∧ B ▻ A
+    csnd  : ∀ {Ξ A B}   → ⊢ᴰ Ξ → ⊢ᴰ Ξ , A ∧ B ▻ B
+    tt    : ∀ {Ξ}       → ⊢ᴰ Ξ → ⊢ᴰ Ξ , ⊤
 
-  ᴿ⌊_⌋ : ∀ {Ξ} → ⊦⊢ Ξ → Reps ᴺ⌊ Ξ ⌋
-  ᴿ⌊ nil ⌋       = NIL
-  ᴿ⌊ mp i j ts ⌋ = MP ⁱ⌊ i ⌋ ⁱ⌊ j ⌋ ᴿ⌊ ts ⌋
-  ᴿ⌊ ci ts ⌋     = CI ᴿ⌊ ts ⌋
-  ᴿ⌊ ck ts ⌋     = CK ᴿ⌊ ts ⌋
-  ᴿ⌊ cs ts ⌋     = CS ᴿ⌊ ts ⌋
-  ᴿ⌊ nec ps ts ⌋ = NEC ᴿ⌊ ps ⌋ ᴿ⌊ ts ⌋
-  ᴿ⌊ cdist ts ⌋  = CDIST ᴿ⌊ ts ⌋
-  ᴿ⌊ cup ts ⌋    = CUP ᴿ⌊ ts ⌋
-  ᴿ⌊ cdown ts ⌋  = CDOWN ᴿ⌊ ts ⌋
-  ᴿ⌊ cpair ts ⌋  = CPAIR ᴿ⌊ ts ⌋
-  ᴿ⌊ cfst ts ⌋   = CFST ᴿ⌊ ts ⌋
-  ᴿ⌊ csnd ts ⌋   = CSND ᴿ⌊ ts ⌋
-  ᴿ⌊ tt ts ⌋     = TT ᴿ⌊ ts ⌋
 
-  REP : ∀ {Ξ A} → ⊦⊢ Ξ , A → Rep
-  REP {Ξ} ts = ᴺ⌊ Ξ ⌋ , ᴿ⌊ ts ⌋
+  -- Projection from derivations to representations.
+
+  ᴿ⌊_⌋ : ∀ {Ξ} → ⊢ᴰ Ξ → Rep ᴺ⌊ Ξ ⌋
+  ᴿ⌊ nil ⌋      = NIL
+  ᴿ⌊ mp i j d ⌋ = MP ⁱ⌊ i ⌋ ⁱ⌊ j ⌋ ᴿ⌊ d ⌋
+  ᴿ⌊ ci d ⌋     = CI ᴿ⌊ d ⌋
+  ᴿ⌊ ck d ⌋     = CK ᴿ⌊ d ⌋
+  ᴿ⌊ cs d ⌋     = CS ᴿ⌊ d ⌋
+  ᴿ⌊ nec `d d ⌋ = NEC ᴿ⌊ `d ⌋ ᴿ⌊ d ⌋
+  ᴿ⌊ cdist d ⌋  = CDIST ᴿ⌊ d ⌋
+  ᴿ⌊ cup d ⌋    = CUP ᴿ⌊ d ⌋
+  ᴿ⌊ cdown d ⌋  = CDOWN ᴿ⌊ d ⌋
+  ᴿ⌊ cpair d ⌋  = CPAIR ᴿ⌊ d ⌋
+  ᴿ⌊ cfst d ⌋   = CFST ᴿ⌊ d ⌋
+  ᴿ⌊ csnd d ⌋   = CSND ᴿ⌊ d ⌋
+  ᴿ⌊ tt d ⌋     = TT ᴿ⌊ d ⌋
+
+
+-- Anti-bug wrappers.
 
 infix 3 ⊢_
 ⊢_ : Ty → Set
-⊢ A = ∃ (λ Ξ → ⊦⊢ Ξ , A)
-
-rep : ∀ {A} → ⊢ A → Rep
-rep (Ξ , ts) = REP ts
+⊢ A = ∃ (λ Ξ → ⊢ᴰ Ξ , A)
 
 
 -- Concatenation of derivations.
 
-_⧺⊦_ : ∀ {Ξ Ξ′} → ⊦⊢ Ξ → ⊦⊢ Ξ′ → ⊦⊢ Ξ ⧺ Ξ′
-us ⧺⊦ nil       = us
-us ⧺⊦ mp i j ts = mp (mono∈ weak⊆⧺ᵣ i) (mono∈ weak⊆⧺ᵣ j) (us ⧺⊦ ts)
-us ⧺⊦ ci ts     = ci (us ⧺⊦ ts)
-us ⧺⊦ ck ts     = ck (us ⧺⊦ ts)
-us ⧺⊦ cs ts     = cs (us ⧺⊦ ts)
-us ⧺⊦ nec ps ts = nec ps (us ⧺⊦ ts)
-us ⧺⊦ cdist ts  = cdist (us ⧺⊦ ts)
-us ⧺⊦ cup ts    = cup (us ⧺⊦ ts)
-us ⧺⊦ cdown ts  = cdown (us ⧺⊦ ts)
-us ⧺⊦ cpair ts  = cpair (us ⧺⊦ ts)
-us ⧺⊦ cfst ts   = cfst (us ⧺⊦ ts)
-us ⧺⊦ csnd ts   = csnd (us ⧺⊦ ts)
-us ⧺⊦ tt ts     = tt (us ⧺⊦ ts)
+_⧺ᴰ_ : ∀ {Ξ₁ Ξ₂} → ⊢ᴰ Ξ₁ → ⊢ᴰ Ξ₂ → ⊢ᴰ Ξ₁ ⧺ Ξ₂
+d₁ ⧺ᴰ nil       = d₁
+d₁ ⧺ᴰ mp i j d₂ = mp (mono∈ weak⊆⧺ᵣ i) (mono∈ weak⊆⧺ᵣ j) (d₁ ⧺ᴰ d₂)
+d₁ ⧺ᴰ ci d₂     = ci (d₁ ⧺ᴰ d₂)
+d₁ ⧺ᴰ ck d₂     = ck (d₁ ⧺ᴰ d₂)
+d₁ ⧺ᴰ cs d₂     = cs (d₁ ⧺ᴰ d₂)
+d₁ ⧺ᴰ nec `d d₂ = nec `d (d₁ ⧺ᴰ d₂)
+d₁ ⧺ᴰ cdist d₂  = cdist (d₁ ⧺ᴰ d₂)
+d₁ ⧺ᴰ cup d₂    = cup (d₁ ⧺ᴰ d₂)
+d₁ ⧺ᴰ cdown d₂  = cdown (d₁ ⧺ᴰ d₂)
+d₁ ⧺ᴰ cpair d₂  = cpair (d₁ ⧺ᴰ d₂)
+d₁ ⧺ᴰ cfst d₂   = cfst (d₁ ⧺ᴰ d₂)
+d₁ ⧺ᴰ csnd d₂   = csnd (d₁ ⧺ᴰ d₂)
+d₁ ⧺ᴰ tt d₂     = tt (d₁ ⧺ᴰ d₂)
 
 
--- Modus ponens and necessitation in expanded form.
+-- Modus ponens and necessitation in nested form.
 
 app : ∀ {A B} → ⊢ A ▻ B → ⊢ A → ⊢ B
-app {A} {B} (Ξ , ts) (Ξ′ , us) = Ξ″ , vs
-  where Ξ″ = (Ξ′ , A) ⧺ (Ξ , A ▻ B)
-        vs = mp top (mono∈ (weak⊆⧺ₗ (Ξ , A ▻ B)) top) (us ⧺⊦ ts)
+app {A} {B} (Ξ₁ , d₁) (Ξ₂ , d₂) = Ξ₃ , d₃
+  where Ξ₃ = (Ξ₂ , A) ⧺ (Ξ₁ , A ▻ B)
+        d₃ = mp top (mono∈ (weak⊆⧺ₗ (Ξ₁ , A ▻ B)) top) (d₂ ⧺ᴰ d₁)
 
-box : ∀ {A} → (p : ⊢ A) → ⊢ [ rep p ] A
-box (Ξ , ps) = ⌀ , nec ps nil
+box : ∀ {A} → (t : ⊢ A) → ⊢ [ ᴿ⌊ π₂ t ⌋ ] ⦂ A
+box (Ξ , d) = ⌀ , nec d nil
