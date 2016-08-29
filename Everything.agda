@@ -16,6 +16,7 @@ import Common.ContextPair
 import Common.Predicate
 import Common.PredicateBasedContext
 import Common.Semantics
+import Common.UntypedContext
 
 
 
