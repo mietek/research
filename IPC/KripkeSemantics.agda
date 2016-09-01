@@ -50,7 +50,7 @@ module IlikSemantics where
 
   infix 3 _⊩⋆_
   _⊩⋆_ : ∀ {{_ : Model}} → World → Cx Ty → Set
-  w ⊩⋆ ⌀     = 𝟙
+  w ⊩⋆ ∅     = 𝟙
   w ⊩⋆ Ξ , A = w ⊩⋆ Ξ × w ⊩ A
 
 
@@ -70,7 +70,7 @@ module IlikSemantics where
     mono⊩ ξ a = λ ξ′ k′ → a (trans≤ ξ ξ′) k′
 
   mono⊩⋆ : ∀ {{_ : Model}} {Γ w w′} → w ≤ w′ → w ⊩⋆ Γ → w′ ⊩⋆ Γ
-  mono⊩⋆ {⌀}     ξ ∙       = ∙
+  mono⊩⋆ {∅}     ξ ∙       = ∙
   mono⊩⋆ {Γ , A} ξ (γ , a) = mono⊩⋆ {Γ} ξ γ , mono⊩ {A} ξ a
 
 

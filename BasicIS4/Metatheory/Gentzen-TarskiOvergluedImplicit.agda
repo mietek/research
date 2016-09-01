@@ -17,7 +17,7 @@ module _ {{_ : Model}} where
   reify {⊤}    s = tt
 
   reify⋆ : ∀ {Ξ Γ} → Γ ⊩⋆ Ξ → Γ ⊢⋆ Ξ
-  reify⋆ {⌀}     ∙        = ∙
+  reify⋆ {∅}     ∙        = ∙
   reify⋆ {Ξ , A} (ts , t) = reify⋆ ts , reify t
 
 
@@ -40,7 +40,7 @@ mutual
   eval tt              γ = ∙
 
   eval⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊨⋆ Ξ
-  eval⋆ {⌀}     ∙        γ = ∙
+  eval⋆ {∅}     ∙        γ = ∙
   eval⋆ {Ξ , A} (ts , t) γ = eval⋆ ts γ , eval t γ
 
 
@@ -70,7 +70,7 @@ reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
 reflectᶜ {⊤}    t = ∙
 
 reflectᶜ⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊩⋆ Ξ
-reflectᶜ⋆ {⌀}     ∙        = ∙
+reflectᶜ⋆ {∅}     ∙        = ∙
 reflectᶜ⋆ {Ξ , A} (ts , t) = reflectᶜ⋆ ts , reflectᶜ t
 
 

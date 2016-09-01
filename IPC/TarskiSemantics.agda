@@ -32,7 +32,7 @@ module NaturalSemantics where
 
   infix 3 ⊩⋆_
   ⊩⋆_ : ∀ {{_ : Model}} → Cx Ty → Set
-  ⊩⋆ ⌀     = 𝟙
+  ⊩⋆ ∅     = 𝟙
   ⊩⋆ Ξ , A = ⊩⋆ Ξ × ⊩ A
 
 
@@ -137,7 +137,7 @@ module CoquandDybjerSemantics (Syntax : Ty → Set) where
 
   infix 3 ⊩⋆_
   ⊩⋆_ : ∀ {{_ : Model}} → Cx Ty → Set
-  ⊩⋆ ⌀     = 𝟙
+  ⊩⋆ ∅     = 𝟙
   ⊩⋆ Ξ , A = ⊩⋆ Ξ × ⊩ A
 
 

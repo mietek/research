@@ -33,13 +33,13 @@ tc→gtc TC.ccase     = GTC.ccase
 lc→gtc : ∀ {A Γ} → LC⟨ Γ ⊢ A ⟩ → GTC⟨ Γ ⊢ A ⟩
 lc→gtc = tc→gtc ∘ lc→tc
 
-t→gtc₀ : ∀ {A} → T.⊢ A → GTC⟨ ⌀ ⊢ A ⟩
+t→gtc₀ : ∀ {A} → T.⊢ A → GTC⟨ ∅ ⊢ A ⟩
 t→gtc₀ = tc→gtc ∘ t→tc₀
 
 t→gtc : ∀ {A Γ} → T.⊢ Γ ▻⋯▻ A → GTC⟨ Γ ⊢ A ⟩
 t→gtc = tc→gtc ∘ t→tc
 
-l→gtc₀ : ∀ {A} → L.⊢ A → GTC⟨ ⌀ ⊢ A ⟩
+l→gtc₀ : ∀ {A} → L.⊢ A → GTC⟨ ∅ ⊢ A ⟩
 l→gtc₀ = tc→gtc ∘ l→tc₀
 
 l→gtc : ∀ {A Γ} → L.⊢ Γ ▻⋯▻ A → GTC⟨ Γ ⊢ A ⟩
@@ -64,13 +64,13 @@ gtc→tc (GTC.case t u v) = TC.case (gtc→tc t) (gtc→tc u) (gtc→tc v)
 gtc→lc : ∀ {A Γ} → GTC⟨ Γ ⊢ A ⟩ → LC⟨ Γ ⊢ A ⟩
 gtc→lc = tc→lc ∘ gtc→tc
 
-gtc₀→t : ∀ {A} → GTC⟨ ⌀ ⊢ A ⟩ → T.⊢ A
+gtc₀→t : ∀ {A} → GTC⟨ ∅ ⊢ A ⟩ → T.⊢ A
 gtc₀→t = tc₀→t ∘ gtc→tc
 
 gtc→t : ∀ {A Γ} → GTC⟨ Γ ⊢ A ⟩ → T.⊢ Γ ▻⋯▻ A
 gtc→t = tc→t ∘ gtc→tc
 
-gtc₀→l : ∀ {A} → GTC⟨ ⌀ ⊢ A ⟩ → L.⊢ A
+gtc₀→l : ∀ {A} → GTC⟨ ∅ ⊢ A ⟩ → L.⊢ A
 gtc₀→l = tc₀→l ∘ gtc→tc
 
 gtc→l : ∀ {A Γ} → GTC⟨ Γ ⊢ A ⟩ → L.⊢ Γ ▻⋯▻ A

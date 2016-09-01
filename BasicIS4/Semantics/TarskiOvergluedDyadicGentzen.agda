@@ -24,7 +24,7 @@ record Model : Set₁ where
     [lam]     : ∀ {A B Π}  → int Π , A ⁏ mod Π [⊢] B → Π [⊢] A ▻ B
     [app]     : ∀ {A B Π}  → Π [⊢] A ▻ B → Π [⊢] A → Π [⊢] B
     [mvar]    : ∀ {A Π}    → A ∈ mod Π → Π [⊢] A
-    [box]     : ∀ {A Π}    → ⌀ ⁏ mod Π [⊢] A → Π [⊢] □ A
+    [box]     : ∀ {A Π}    → ∅ ⁏ mod Π [⊢] A → Π [⊢] □ A
     [unbox]   : ∀ {A C Π}  → Π [⊢] □ A → int Π ⁏ mod Π , A [⊢] C → Π [⊢] C
     [pair]    : ∀ {A B Π}  → Π [⊢] A → Π [⊢] B → Π [⊢] A ∧ B
     [fst]     : ∀ {A B Π}  → Π [⊢] A ∧ B → Π [⊢] A
@@ -33,7 +33,7 @@ record Model : Set₁ where
 
   infix 3 _[⊢]⋆_
   _[⊢]⋆_ : Cx² Ty → Cx Ty → Set
-  Π [⊢]⋆ ⌀     = 𝟙
+  Π [⊢]⋆ ∅     = 𝟙
   Π [⊢]⋆ Ξ , A = Π [⊢]⋆ Ξ × Π [⊢] A
 
 open Model {{…}} public
@@ -52,7 +52,7 @@ module _ {{_ : Model}} where
 
   infix 3 _⊩⋆_
   _⊩⋆_ : Cx² Ty → Cx Ty → Set
-  Π ⊩⋆ ⌀     = 𝟙
+  Π ⊩⋆ ∅     = 𝟙
   Π ⊩⋆ Ξ , A = Π ⊩⋆ Ξ × Π ⊩ A
 
 
@@ -67,7 +67,7 @@ module _ {{_ : Model}} where
   mono²⊩ {⊤}    ψ s = ∙
 
   mono²⊩⋆ : ∀ {Ξ Π Π′} → Π ⊆² Π′ → Π ⊩⋆ Ξ → Π′ ⊩⋆ Ξ
-  mono²⊩⋆ {⌀}     ψ ∙        = ∙
+  mono²⊩⋆ {∅}     ψ ∙        = ∙
   mono²⊩⋆ {Ξ , A} ψ (ts , t) = mono²⊩⋆ ψ ts , mono²⊩ {A} ψ t
 
 
@@ -82,7 +82,7 @@ module _ {{_ : Model}} where
   reifyʳ {⊤}    s = [tt]
 
   reifyʳ⋆ : ∀ {Ξ Π} → Π ⊩⋆ Ξ → Π [⊢]⋆ Ξ
-  reifyʳ⋆ {⌀}     ∙        = ∙
+  reifyʳ⋆ {∅}     ∙        = ∙
   reifyʳ⋆ {Ξ , A} (ts , t) = reifyʳ⋆ ts , reifyʳ t
 
 
@@ -115,15 +115,15 @@ module _ {{_ : Model}} where
   [mlam] t = [lam] ([unbox] [v₀] (mono²[⊢] (weak⊆ , refl⊆) t))
 
   [multicut] : ∀ {Ξ A Γ Δ} → Γ ⁏ Δ [⊢]⋆ Ξ → Ξ ⁏ Δ [⊢] A → Γ ⁏ Δ [⊢] A
-  [multicut] {⌀}     ∙        u = mono²[⊢] (bot⊆ , refl⊆) u
+  [multicut] {∅}     ∙        u = mono²[⊢] (bot⊆ , refl⊆) u
   [multicut] {Ξ , B} (ts , t) u = [app] ([multicut] ts ([lam] u)) t
 
   [mmulticut] : ∀ {Ξ A Γ Δ} → Γ ⁏ Δ [⊢]⋆ □⋆ Ξ → Γ ⁏ Ξ [⊢] A → Γ ⁏ Δ [⊢] A
-  [mmulticut] {⌀}     ∙        u = mono²[⊢] (refl⊆ , bot⊆) u
+  [mmulticut] {∅}     ∙        u = mono²[⊢] (refl⊆ , bot⊆) u
   [mmulticut] {Ξ , B} (ts , t) u = [app] ([mmulticut] ts ([mlam] u)) t
 
   [multicut²] : ∀ {Ξ Ξ′ A Γ Δ} → Γ ⁏ Δ [⊢]⋆ Ξ → Γ ⁏ Δ [⊢]⋆ □⋆ Ξ′ → Ξ ⁏ Ξ′ [⊢] A → Γ ⁏ Δ [⊢] A
-  [multicut²] {⌀}     ∙        us v = [mmulticut] us (mono²[⊢] (bot⊆ , refl⊆) v)
+  [multicut²] {∅}     ∙        us v = [mmulticut] us (mono²[⊢] (bot⊆ , refl⊆) v)
   [multicut²] {Ξ , B} (ts , t) us v = [app] ([multicut²] ts us ([lam] v)) t
 
   [dist] : ∀ {A B Γ Δ} → Γ ⁏ Δ [⊢] □ (A ▻ B) → Γ ⁏ Δ [⊢] □ A → Γ ⁏ Δ [⊢] □ B

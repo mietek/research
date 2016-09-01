@@ -90,11 +90,11 @@ mutual
   reifyᶜ {⊤}    s = tt
 
 reifyᶜ⋆ : ∀ {Ξ Γ} → Γ ⊩⋆ Ξ → Γ ⊢⋆ Ξ
-reifyᶜ⋆ {⌀}     ∙        = ∙
+reifyᶜ⋆ {∅}     ∙        = ∙
 reifyᶜ⋆ {Ξ , A} (ts , t) = reifyᶜ⋆ ts , reifyᶜ t
 
 reflectᶜ⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊩⋆ Ξ
-reflectᶜ⋆ {⌀}     ∙        = ∙
+reflectᶜ⋆ {∅}     ∙        = ∙
 reflectᶜ⋆ {Ξ , A} (ts , t) = reflectᶜ⋆ ts , reflectᶜ t
 
 

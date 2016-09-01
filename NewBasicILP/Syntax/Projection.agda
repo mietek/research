@@ -24,7 +24,7 @@ module ClosedHilbertSequential where
       ⌊_⌋ᴾ : ∀ {Ξ A} → Proof Ξ A → CHS.Proof
 
     ⌊_⌋ᵀ⋆ : Cx Ty → Cx CHS.Ty
-    ⌊ ⌀ ⌋ᵀ⋆     = ⌀
+    ⌊ ∅ ⌋ᵀ⋆     = ∅
     ⌊ Γ , A ⌋ᵀ⋆ = ⌊ Γ ⌋ᵀ⋆ , ⌊ A ⌋ᵀ
 
     ⌊_⌋∈ : ∀ {Ξ A} → A ∈ Ξ → ⌊ A ⌋ᵀ ∈ ⌊ Ξ ⌋ᵀ⋆

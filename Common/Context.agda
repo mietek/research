@@ -6,14 +6,14 @@ open import Common public
 -- Contexts.
 
 data Cx (U : Set) : Set where
-  ⌀   : Cx U
+  ∅   : Cx U
   _,_ : Cx U → U → Cx U
 
 
 -- Vector contexts.
 
 data VCx (U : Set) : ℕ → Set where
-  ⌀   : VCx U zero
+  ∅   : VCx U zero
   _,_ : ∀ {n} → VCx U n → U → VCx U (suc n)
 
 
@@ -31,9 +31,9 @@ module _ {U : Set} where
 
 module ContextEquality {U : Set} (_≟ᵁ_ : (A A′ : U) → Dec (A ≡ A′)) where
   _≟ᵀ⋆_ : (Γ Γ′ : Cx U) → Dec (Γ ≡ Γ′)
-  ⌀       ≟ᵀ⋆ ⌀         = yes refl
-  ⌀       ≟ᵀ⋆ (Γ′ , A′) = no λ ()
-  (Γ , A) ≟ᵀ⋆ ⌀         = no λ ()
+  ∅       ≟ᵀ⋆ ∅         = yes refl
+  ∅       ≟ᵀ⋆ (Γ′ , A′) = no λ ()
+  (Γ , A) ≟ᵀ⋆ ∅         = no λ ()
   (Γ , A) ≟ᵀ⋆ (Γ′ , A′) with Γ ≟ᵀ⋆ Γ′ | A ≟ᵁ A′
   (Γ , A) ≟ᵀ⋆ (.Γ , .A) | yes refl | yes refl = yes refl
   (Γ , A) ≟ᵀ⋆ (Γ′ , A′) | no  Γ≢Γ′ | _        = no (Γ≢Γ′ ∘ inv,ₗ)
@@ -67,12 +67,12 @@ module _ {U : Set} where
 module _ {U : Set} where
   infix 3 _⊆_
   data _⊆_ : Cx U → Cx U → Set where
-    done : ⌀ ⊆ ⌀
+    done : ∅ ⊆ ∅
     skip : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊆ Γ′ , A
     keep : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ , A ⊆ Γ′ , A
 
   refl⊆ : ∀ {Γ} → Γ ⊆ Γ
-  refl⊆ {⌀}     = done
+  refl⊆ {∅}     = done
   refl⊆ {Γ , A} = keep refl⊆
 
   trans⊆ : ∀ {Γ Γ′ Γ″} → Γ ⊆ Γ′ → Γ′ ⊆ Γ″ → Γ ⊆ Γ″
@@ -92,8 +92,8 @@ module _ {U : Set} where
   weak⊆ : ∀ {A Γ} → Γ ⊆ Γ , A
   weak⊆ = skip refl⊆
 
-  bot⊆ : ∀ {Γ} → ⌀ ⊆ Γ
-  bot⊆ {⌀}     = done
+  bot⊆ : ∀ {Γ} → ∅ ⊆ Γ
+  bot⊆ {∅}     = done
   bot⊆ {Γ , A} = skip bot⊆
 
 
@@ -123,22 +123,22 @@ module _ {U : Set} where
 
 module _ {U : Set} where
   _⧺_ : Cx U → Cx U → Cx U
-  Γ ⧺ ⌀        = Γ
+  Γ ⧺ ∅        = Γ
   Γ ⧺ (Γ′ , A) = (Γ ⧺ Γ′) , A
 
-  id⧺ₗ : ∀ {Γ} → Γ ⧺ ⌀ ≡ Γ
+  id⧺ₗ : ∀ {Γ} → Γ ⧺ ∅ ≡ Γ
   id⧺ₗ = refl
 
-  id⧺ᵣ : ∀ {Γ} → ⌀ ⧺ Γ ≡ Γ
-  id⧺ᵣ {⌀}     = refl
+  id⧺ᵣ : ∀ {Γ} → ∅ ⧺ Γ ≡ Γ
+  id⧺ᵣ {∅}     = refl
   id⧺ᵣ {Γ , A} = cong² _,_ id⧺ᵣ refl
 
   weak⊆⧺ₗ : ∀ {Γ} Γ′ → Γ ⊆ Γ ⧺ Γ′
-  weak⊆⧺ₗ ⌀        = refl⊆
+  weak⊆⧺ₗ ∅        = refl⊆
   weak⊆⧺ₗ (Γ′ , A) = skip (weak⊆⧺ₗ Γ′)
 
   weak⊆⧺ᵣ : ∀ {Γ Γ′} → Γ′ ⊆ Γ ⧺ Γ′
-  weak⊆⧺ᵣ {Γ} {⌀}      = bot⊆
+  weak⊆⧺ᵣ {Γ} {∅}      = bot⊆
   weak⊆⧺ᵣ {Γ} {Γ′ , A} = keep weak⊆⧺ᵣ
 
 
@@ -146,7 +146,7 @@ module _ {U : Set} where
 
 module _ {U : Set} where
   _∖_ : ∀ {A} → (Γ : Cx U) → A ∈ Γ → Cx U
-  ⌀       ∖ ()
+  ∅       ∖ ()
   (Γ , A) ∖ top   = Γ
   (Γ , B) ∖ pop i = (Γ ∖ i) , B
 

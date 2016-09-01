@@ -21,7 +21,7 @@ mutual
     constructor [_]
     field
       {/A} : Ty
-      t    : ⌀ ⊢ /A
+      t    : ∅ ⊢ /A
 
 
   -- Derivations, as Hilbert-style combinator trees.
@@ -33,11 +33,11 @@ mutual
     ci    : ∀ {A}              → Γ ⊢ A ▻ A
     ck    : ∀ {A B}            → Γ ⊢ A ▻ B ▻ A
     cs    : ∀ {A B C}          → Γ ⊢ (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
-    box   : ∀ {A}              → (t : ⌀ ⊢ A) → Γ ⊢ [ t ] ⦂ A
-    cdist : ∀ {A B} {t : ⌀ ⊢ A ▻ B} {u : ⌀ ⊢ A}
+    box   : ∀ {A}              → (t : ∅ ⊢ A) → Γ ⊢ [ t ] ⦂ A
+    cdist : ∀ {A B} {t : ∅ ⊢ A ▻ B} {u : ∅ ⊢ A}
                                → Γ ⊢ [ t ] ⦂ (A ▻ B) ▻ [ u ] ⦂ A ▻ [ app t u ] ⦂ B
-    cup   : ∀ {A} {t : ⌀ ⊢ A} → Γ ⊢ [ t ] ⦂ A ▻ [ box t ] ⦂ [ t ] ⦂ A
-    cdown : ∀ {A} {t : ⌀ ⊢ A} → Γ ⊢ [ t ] ⦂ A ▻ A
+    cup   : ∀ {A} {t : ∅ ⊢ A} → Γ ⊢ [ t ] ⦂ A ▻ [ box t ] ⦂ [ t ] ⦂ A
+    cdown : ∀ {A} {t : ∅ ⊢ A} → Γ ⊢ [ t ] ⦂ A ▻ A
     cpair : ∀ {A B}            → Γ ⊢ A ▻ B ▻ A ∧ B
     cfst  : ∀ {A B}            → Γ ⊢ A ∧ B ▻ A
     csnd  : ∀ {A B}            → Γ ⊢ A ∧ B ▻ B
@@ -45,7 +45,7 @@ mutual
 
 infix 3 _⊢⋆_
 _⊢⋆_ : Cx Ty → Cx Ty → Set
-Γ ⊢⋆ ⌀     = 𝟙
+Γ ⊢⋆ ∅     = 𝟙
 Γ ⊢⋆ Ξ , A = Γ ⊢⋆ Ξ × Γ ⊢ A
 
 infix 6 _▻◅_
@@ -56,7 +56,7 @@ A ▻◅ B = (A ▻ B) ∧ (B ▻ A)
 -- Additional useful propositions.
 
 _⦂⋆_ : ∀ {n} → VCx Box n → VCx Ty n → Cx Ty
-⌀        ⦂⋆ ⌀       = ⌀
+∅        ⦂⋆ ∅       = ∅
 (ts , t) ⦂⋆ (Ξ , A) = (ts ⦂⋆ Ξ) , (t ⦂ A)
 
 
@@ -78,7 +78,7 @@ mono⊢ η csnd      = csnd
 mono⊢ η tt        = tt
 
 mono⊢⋆ : ∀ {Ξ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ Ξ → Γ′ ⊢⋆ Ξ
-mono⊢⋆ {⌀}     η ∙        = ∙
+mono⊢⋆ {∅}     η ∙        = ∙
 mono⊢⋆ {Ξ , A} η (ts , t) = mono⊢⋆ η ts , mono⊢ η t
 
 
@@ -125,18 +125,18 @@ cut : ∀ {A B Γ} → Γ ⊢ A → Γ , A ⊢ B → Γ ⊢ B
 cut t u = app (lam u) t
 
 multicut : ∀ {Ξ A Γ} → Γ ⊢⋆ Ξ → Ξ ⊢ A → Γ ⊢ A
-multicut {⌀}     ∙        u = mono⊢ bot⊆ u
+multicut {∅}     ∙        u = mono⊢ bot⊆ u
 multicut {Ξ , B} (ts , t) u = app (multicut ts (lam u)) t
 
 
 -- Reflexivity and transitivity.
 
 refl⊢⋆ : ∀ {Γ} → Γ ⊢⋆ Γ
-refl⊢⋆ {⌀}     = ∙
+refl⊢⋆ {∅}     = ∙
 refl⊢⋆ {Γ , A} = mono⊢⋆ weak⊆ refl⊢⋆ , v₀
 
 trans⊢⋆ : ∀ {Γ″ Γ′ Γ} → Γ ⊢⋆ Γ′ → Γ′ ⊢⋆ Γ″ → Γ ⊢⋆ Γ″
-trans⊢⋆ {⌀}      ts ∙        = ∙
+trans⊢⋆ {∅}      ts ∙        = ∙
 trans⊢⋆ {Γ″ , A} ts (us , u) = trans⊢⋆ ts us , multicut ts u
 
 
@@ -169,27 +169,27 @@ comp t u = det (app (app ccomp (lam t)) (lam u))
 
 -- Useful theorems in functional form.
 
-dist : ∀ {A B Γ} {t : ⌀ ⊢ A ▻ B} {u : ⌀ ⊢ A}
+dist : ∀ {A B Γ} {t : ∅ ⊢ A ▻ B} {u : ∅ ⊢ A}
        → Γ ⊢ [ t ] ⦂ (A ▻ B) → Γ ⊢ [ u ] ⦂ A
        → Γ ⊢ [ app t u ] ⦂ B
 dist t u = app (app cdist t) u
 
-up : ∀ {A Γ} {t : ⌀ ⊢ A}
+up : ∀ {A Γ} {t : ∅ ⊢ A}
      → Γ ⊢ [ t ] ⦂ A
      → Γ ⊢ [ box t ] ⦂ [ t ] ⦂ A
 up t = app cup t
 
-down : ∀ {A Γ} {t : ⌀ ⊢ A}
+down : ∀ {A Γ} {t : ∅ ⊢ A}
        → Γ ⊢ [ t ] ⦂ A
        → Γ ⊢ A
 down t = app cdown t
 
-distup : ∀ {A B Γ} {u : ⌀ ⊢ A} {t : ⌀ ⊢ [ u ] ⦂ A ▻ B}
+distup : ∀ {A B Γ} {u : ∅ ⊢ A} {t : ∅ ⊢ [ u ] ⦂ A ▻ B}
          → Γ ⊢ [ t ] ⦂ ([ u ] ⦂ A ▻ B) → Γ ⊢ [ u ] ⦂ A
          → Γ ⊢ [ app t (box u) ] ⦂ B
 distup t u = dist t (up u)
 
-unbox : ∀ {A C Γ} {t : ⌀ ⊢ A} {u : ⌀ ⊢ C}
+unbox : ∀ {A C Γ} {t : ∅ ⊢ A} {u : ∅ ⊢ C}
         → Γ ⊢ [ t ] ⦂ A → Γ , [ t ] ⦂ A ⊢ [ u ] ⦂ C
         → Γ ⊢ [ u ] ⦂ C
 unbox t u = app (lam u) t
@@ -199,7 +199,7 @@ unbox t u = app (lam u) t
 --
 -- ???
 
-distup′ : ∀ {A B Γ} {u : ⌀ ⊢ A} {t : ⌀ , [ u ] ⦂ A ⊢ B}
+distup′ : ∀ {A B Γ} {u : ∅ ⊢ A} {t : ∅ , [ u ] ⦂ A ⊢ B}
           → Γ ⊢ [ lam t ] ⦂ ([ u ] ⦂ A ▻ B) → Γ ⊢ [ u ] ⦂ A
           → Γ ⊢ [ app (lam t) (box u) ] ⦂ B
 distup′ t u = dist t (up u)
@@ -207,7 +207,7 @@ distup′ t u = dist t (up u)
 -- multibox : ∀ {n A Γ} {[ss] : VCx Box n} {Ξ : VCx Ty n}
 --            → Γ ⊢⋆ [ss] ⦂⋆ Ξ → (u : [ss] ⦂⋆ Ξ ⊢ A)
 --            → Γ ⊢ {!!} ⦂ A
--- multibox {[ss] = ⌀}            {⌀}     ∙        u = box u
+-- multibox {[ss] = ∅}            {∅}     ∙        u = box u
 -- multibox {[ss] = [ss] , [ s ]} {Ξ , B} (ts , t) u = {!!}
 
 -- FIXME ↑ FIXME ↑ FIXME -----------------------------------------------------

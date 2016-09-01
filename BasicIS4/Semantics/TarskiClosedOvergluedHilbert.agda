@@ -32,7 +32,7 @@ record Model : Set₁ where
 
   infix 3 [⊢]⋆_
   [⊢]⋆_ : Cx Ty → Set
-  [⊢]⋆ ⌀     = 𝟙
+  [⊢]⋆ ∅     = 𝟙
   [⊢]⋆ Ξ , A = [⊢]⋆ Ξ × [⊢] A
 
 open Model {{…}} public
@@ -51,7 +51,7 @@ module _ {{_ : Model}} where
 
   infix 3 ⊩⋆_
   ⊩⋆_ : Cx Ty → Set
-  ⊩⋆ ⌀     = 𝟙
+  ⊩⋆ ∅     = 𝟙
   ⊩⋆ Ξ , A = ⊩⋆ Ξ × ⊩ A
 
 
@@ -73,7 +73,7 @@ module _ {{_ : Model}} where
   reifyʳ {⊤}    s = [tt]
 
   reifyʳ⋆ : ∀ {Ξ} → ⊩⋆ Ξ → [⊢]⋆ Ξ
-  reifyʳ⋆ {⌀}     ∙        = ∙
+  reifyʳ⋆ {∅}     ∙        = ∙
   reifyʳ⋆ {Ξ , A} (ts , t) = reifyʳ⋆ ts , reifyʳ t
 
 

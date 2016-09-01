@@ -10,7 +10,7 @@ open import BasicIS4.Syntax.Common public
 
 infix 3 ⊦⊢_
 data ⊦⊢_ : Cx Ty → Set where
-  nil   : ⊦⊢ ⌀
+  nil   : ⊦⊢ ∅
   mp    : ∀ {Ξ A B}   → A ▻ B ∈ Ξ → A ∈ Ξ → ⊦⊢ Ξ → ⊦⊢ Ξ , B
   ci    : ∀ {Ξ A}     → ⊦⊢ Ξ → ⊦⊢ Ξ , A ▻ A
   ck    : ∀ {Ξ A B}   → ⊦⊢ Ξ → ⊦⊢ Ξ , A ▻ B ▻ A
@@ -55,4 +55,4 @@ app {A} {B} (Ξ , ts) (Ξ′ , us) = Ξ″ , vs
         vs = mp top (mono∈ (weak⊆⧺ₗ (Ξ , A ▻ B)) top) (us ⧺⊦ ts)
 
 box : ∀ {A} → ⊢ A → ⊢ □ A
-box (Ξ , ts) = ⌀ , nec ts nil
+box (Ξ , ts) = ∅ , nec ts nil

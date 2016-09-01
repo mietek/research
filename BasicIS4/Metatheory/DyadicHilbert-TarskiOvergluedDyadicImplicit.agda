@@ -17,7 +17,7 @@ module _ {{_ : Model}} where
   reify {⊤}    s = tt
 
   reify⋆ : ∀ {Ξ Γ Δ} → Γ ⁏ Δ ⊩⋆ Ξ → Γ ⁏ Δ ⊢⋆ Ξ
-  reify⋆ {⌀}     ∙        = ∙
+  reify⋆ {∅}     ∙        = ∙
   reify⋆ {Ξ , A} (ts , t) = reify⋆ ts , reify t
 
 
@@ -103,7 +103,7 @@ reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
 reflectᶜ {⊤}    t = ∙
 
 reflectᶜ⋆ : ∀ {Ξ Γ Δ} → Γ ⁏ Δ ⊢⋆ Ξ → Γ ⁏ Δ ⊩⋆ Ξ
-reflectᶜ⋆ {⌀}     ∙        = ∙
+reflectᶜ⋆ {∅}     ∙        = ∙
 reflectᶜ⋆ {Ξ , A} (ts , t) = reflectᶜ⋆ ts , reflectᶜ t
 
 

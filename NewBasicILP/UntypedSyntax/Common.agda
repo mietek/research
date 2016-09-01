@@ -24,5 +24,5 @@ module ClosedSyntax
 
   infixr 6 _▻⋯▻_
   _▻⋯▻_ : Cx Ty → Ty → Ty
-  ⌀       ▻⋯▻ B = B
+  ∅       ▻⋯▻ B = B
   (Ξ , A) ▻⋯▻ B = Ξ ▻⋯▻ (A ▻ B)

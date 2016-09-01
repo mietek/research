@@ -14,8 +14,8 @@ record Cx² (U : Set) : Set where
 
 open Cx² public
 
-⌀² : ∀ {U} → Cx² U
-⌀² = ⌀ ⁏ ⌀
+∅² : ∀ {U} → Cx² U
+∅² = ∅ ⁏ ∅
 
 
 -- Context inclusion.
@@ -37,7 +37,7 @@ module _ {U : Set} where
   weak⊆²ᵣ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊆² Γ ⁏ Δ , A
   weak⊆²ᵣ = refl⊆ , weak⊆
 
-  bot⊆² : ∀ {Π} → ⌀² ⊆² Π
+  bot⊆² : ∀ {Π} → ∅² ⊆² Π
   bot⊆² = bot⊆ , bot⊆
 
 

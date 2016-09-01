@@ -15,7 +15,7 @@ data _⊢_ (Γ : Cx Ty) : Ty → Set where
   ci    : ∀ {A}     → Γ ⊢ A ▻ A
   ck    : ∀ {A B}   → Γ ⊢ A ▻ B ▻ A
   cs    : ∀ {A B C} → Γ ⊢ (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
-  box   : ∀ {A}     → ⌀ ⊢ A → Γ ⊢ □ A
+  box   : ∀ {A}     → ∅ ⊢ A → Γ ⊢ □ A
   cdist : ∀ {A B}   → Γ ⊢ □ (A ▻ B) ▻ □ A ▻ □ B
   cup   : ∀ {A}     → Γ ⊢ □ A ▻ □ □ A
   cdown : ∀ {A}     → Γ ⊢ □ A ▻ A
@@ -26,7 +26,7 @@ data _⊢_ (Γ : Cx Ty) : Ty → Set where
 
 infix 3 _⊢⋆_
 _⊢⋆_ : Cx Ty → Cx Ty → Set
-Γ ⊢⋆ ⌀     = 𝟙
+Γ ⊢⋆ ∅     = 𝟙
 Γ ⊢⋆ Ξ , A = Γ ⊢⋆ Ξ × Γ ⊢ A
 
 
@@ -48,7 +48,7 @@ mono⊢ η csnd      = csnd
 mono⊢ η tt        = tt
 
 mono⊢⋆ : ∀ {Ξ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ Ξ → Γ′ ⊢⋆ Ξ
-mono⊢⋆ {⌀}     η ∙        = ∙
+mono⊢⋆ {∅}     η ∙        = ∙
 mono⊢⋆ {Ξ , A} η (ts , t) = mono⊢⋆ η ts , mono⊢ η t
 
 
@@ -83,11 +83,11 @@ lam csnd          = app ck csnd
 lam tt            = app ck tt
 
 lam⋆ : ∀ {Ξ Γ A} → Γ ⧺ Ξ ⊢ A → Γ ⊢ Ξ ▻⋯▻ A
-lam⋆ {⌀}     = I
+lam⋆ {∅}     = I
 lam⋆ {Ξ , B} = lam⋆ {Ξ} ∘ lam
 
-lam⋆₀ : ∀ {Γ A} → Γ ⊢ A → ⌀ ⊢ Γ ▻⋯▻ A
-lam⋆₀ {⌀}     = I
+lam⋆₀ : ∀ {Γ A} → Γ ⊢ A → ∅ ⊢ Γ ▻⋯▻ A
+lam⋆₀ {∅}     = I
 lam⋆₀ {Γ , B} = lam⋆₀ ∘ lam
 
 
@@ -97,11 +97,11 @@ det : ∀ {A B Γ} → Γ ⊢ A ▻ B → Γ , A ⊢ B
 det t = app (mono⊢ weak⊆ t) v₀
 
 det⋆ : ∀ {Ξ Γ A} → Γ ⊢ Ξ ▻⋯▻ A → Γ ⧺ Ξ ⊢ A
-det⋆ {⌀}     = I
+det⋆ {∅}     = I
 det⋆ {Ξ , B} = det ∘ det⋆ {Ξ}
 
-det⋆₀ : ∀ {Γ A} → ⌀ ⊢ Γ ▻⋯▻ A → Γ ⊢ A
-det⋆₀ {⌀}     = I
+det⋆₀ : ∀ {Γ A} → ∅ ⊢ Γ ▻⋯▻ A → Γ ⊢ A
+det⋆₀ {∅}     = I
 det⋆₀ {Γ , B} = det ∘ det⋆₀
 
 
@@ -111,18 +111,18 @@ cut : ∀ {A B Γ} → Γ ⊢ A → Γ , A ⊢ B → Γ ⊢ B
 cut t u = app (lam u) t
 
 multicut : ∀ {Ξ A Γ} → Γ ⊢⋆ Ξ → Ξ ⊢ A → Γ ⊢ A
-multicut {⌀}     ∙        u = mono⊢ bot⊆ u
+multicut {∅}     ∙        u = mono⊢ bot⊆ u
 multicut {Ξ , B} (ts , t) u = app (multicut ts (lam u)) t
 
 
 -- Reflexivity and transitivity.
 
 refl⊢⋆ : ∀ {Γ} → Γ ⊢⋆ Γ
-refl⊢⋆ {⌀}     = ∙
+refl⊢⋆ {∅}     = ∙
 refl⊢⋆ {Γ , A} = mono⊢⋆ weak⊆ refl⊢⋆ , v₀
 
 trans⊢⋆ : ∀ {Γ″ Γ′ Γ} → Γ ⊢⋆ Γ′ → Γ′ ⊢⋆ Γ″ → Γ ⊢⋆ Γ″
-trans⊢⋆ {⌀}      ts ∙        = ∙
+trans⊢⋆ {∅}      ts ∙        = ∙
 trans⊢⋆ {Γ″ , A} ts (us , u) = trans⊢⋆ ts us , multicut ts u
 
 
@@ -183,7 +183,7 @@ snd t = app csnd t
 -- Internalisation, or lifting, and additional theorems.
 
 lift : ∀ {Γ A} → Γ ⊢ A → □⋆ Γ ⊢ □ A
-lift {⌀}     t = box t
+lift {∅}     t = box t
 lift {Γ , B} t = det (app cdist (lift (lam t)))
 
 hypup : ∀ {A B Γ} → Γ ⊢ A ▻ B → Γ ⊢ □ A ▻ B
@@ -193,27 +193,27 @@ hypdown : ∀ {A B Γ} → Γ ⊢ □ □ A ▻ B → Γ ⊢ □ A ▻ B
 hypdown t = lam (app (mono⊢ weak⊆ t) (up v₀))
 
 cxup : ∀ {Γ A} → Γ ⊢ A → □⋆ Γ ⊢ A
-cxup {⌀}     t = t
+cxup {∅}     t = t
 cxup {Γ , B} t = det (hypup (cxup (lam t)))
 
 cxdown : ∀ {Γ A} → □⋆ □⋆ Γ ⊢ A → □⋆ Γ ⊢ A
-cxdown {⌀}     t = t
+cxdown {∅}     t = t
 cxdown {Γ , B} t = det (hypdown (cxdown (lam t)))
 
-box⋆ : ∀ {Ξ Γ} → ⌀ ⊢⋆ Ξ → Γ ⊢⋆ □⋆ Ξ
-box⋆ {⌀}     ∙        = ∙
+box⋆ : ∀ {Ξ Γ} → ∅ ⊢⋆ Ξ → Γ ⊢⋆ □⋆ Ξ
+box⋆ {∅}     ∙        = ∙
 box⋆ {Ξ , A} (ts , t) = box⋆ ts , box t
 
 lift⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → □⋆ Γ ⊢⋆ □⋆ Ξ
-lift⋆ {⌀}     ∙        = ∙
+lift⋆ {∅}     ∙        = ∙
 lift⋆ {Ξ , A} (ts , t) = lift⋆ ts , lift t
 
 up⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ □⋆ Ξ → Γ ⊢⋆ □⋆ □⋆ Ξ
-up⋆ {⌀}     ∙        = ∙
+up⋆ {∅}     ∙        = ∙
 up⋆ {Ξ , A} (ts , t) = up⋆ ts , up t
 
 down⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ □⋆ Ξ → Γ ⊢⋆ Ξ
-down⋆ {⌀}     ∙        = ∙
+down⋆ {∅}     ∙        = ∙
 down⋆ {Ξ , A} (ts , t) = down⋆ ts , down t
 
 multibox : ∀ {Ξ A Γ} → Γ ⊢⋆ □⋆ Ξ → □⋆ Ξ ⊢ A → Γ ⊢ □ A
@@ -260,7 +260,7 @@ data _⋙_ {Γ : Cx Ty} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
                → t ⋙ t′ → u ⋙ u′ → v ⋙ v′
                → app (app (app cs t) u) v ⋙ app (app (app cs t′) u′) v′
   -- NOTE: Rejected by Pfenning and Davies.
-  -- congbox⋙  : ∀ {A} {t t′ : ⌀ ⊢ A}
+  -- congbox⋙  : ∀ {A} {t t′ : ∅ ⊢ A}
   --              → t ⋙ t′
   --              → box {Γ} t ⋙ box {Γ} t′
   congdist⋙ : ∀ {A B} {t t′ : Γ ⊢ □ (A ▻ B)} {u u′ : Γ ⊢ □ A}

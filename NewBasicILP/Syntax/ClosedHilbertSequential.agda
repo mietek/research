@@ -43,14 +43,14 @@ record Proof (Ξ : Cx Ty) (A : Ty) where
 
 appᴰ : ∀ {Ξ₁ Ξ₂ A B} → ⊢ᴰ Ξ₁ , A ▻ B → ⊢ᴰ Ξ₂ , A → ⊢ᴰ (Ξ₂ , A) ⧺ (Ξ₁ , A ▻ B) , B
 
-boxᴰ : ∀ {Ξ A} → (d : ⊢ᴰ Ξ , A) → ⊢ᴰ ⌀ , [ d ] ⦂ A
+boxᴰ : ∀ {Ξ A} → (d : ⊢ᴰ Ξ , A) → ⊢ᴰ ∅ , [ d ] ⦂ A
 
 
 -- Derivations.
 
 infix 3 ⊢ᴰ_
 data ⊢ᴰ_ where
-  nil   : ⊢ᴰ ⌀
+  nil   : ⊢ᴰ ∅
   mp    : ∀ {Ξ A B}   → A ▻ B ∈ Ξ → A ∈ Ξ → ⊢ᴰ Ξ → ⊢ᴰ Ξ , B
   ci    : ∀ {Ξ A}     → ⊢ᴰ Ξ → ⊢ᴰ Ξ , A ▻ A
   ck    : ∀ {Ξ A B}   → ⊢ᴰ Ξ → ⊢ᴰ Ξ , A ▻ B ▻ A
@@ -110,4 +110,4 @@ app {A} {B} (Ξ₁ , d₁) (Ξ₂ , d₂) = Ξ₃ , d₃
         d₃ = appᴰ d₁ d₂
 
 box : ∀ {A} → (t : ⊢ A) → ⊢ [ π₂ t ] ⦂ A
-box (Ξ , d) = ⌀ , boxᴰ d
+box (Ξ , d) = ∅ , boxᴰ d

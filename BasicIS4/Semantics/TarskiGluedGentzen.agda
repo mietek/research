@@ -31,20 +31,20 @@ record Model : Set₁ where
     [tt]       : ∀ {Γ}      → Γ [⊢] ⊤
 
     -- TODO: Workarounds for Agda bug #2143.
-    top[⊢⋆] : ∀ {Γ}     → (Γ [⊢⋆] ⌀) ≡ 𝟙
+    top[⊢⋆] : ∀ {Γ}     → (Γ [⊢⋆] ∅) ≡ 𝟙
     pop[⊢⋆] : ∀ {Ξ A Γ} → (Γ [⊢⋆] Ξ , A) ≡ (Γ [⊢⋆] Ξ × Γ [⊢] A)
 
   infix 3 _[⊢]⋆_
   _[⊢]⋆_ : Cx Ty → Cx Ty → Set
-  Γ [⊢]⋆ ⌀     = 𝟙
+  Γ [⊢]⋆ ∅     = 𝟙
   Γ [⊢]⋆ Ξ , A = Γ [⊢]⋆ Ξ × Γ [⊢] A
 
   [⊢⋆]→[⊢]⋆ : ∀ {Ξ Γ} → Γ [⊢⋆] Ξ → Γ [⊢]⋆ Ξ
-  [⊢⋆]→[⊢]⋆ {⌀}     {Γ} ts = ∙
+  [⊢⋆]→[⊢]⋆ {∅}     {Γ} ts = ∙
   [⊢⋆]→[⊢]⋆ {Ξ , A} {Γ} ts rewrite pop[⊢⋆] {Ξ} {A} {Γ} = [⊢⋆]→[⊢]⋆ (π₁ ts) , π₂ ts
 
   [⊢]⋆→[⊢⋆] : ∀ {Ξ Γ} → Γ [⊢]⋆ Ξ → Γ [⊢⋆] Ξ
-  [⊢]⋆→[⊢⋆] {⌀}     {Γ} ∙        rewrite top[⊢⋆] {Γ}         = ∙
+  [⊢]⋆→[⊢⋆] {∅}     {Γ} ∙        rewrite top[⊢⋆] {Γ}         = ∙
   [⊢]⋆→[⊢⋆] {Ξ , A} {Γ} (ts , t) rewrite pop[⊢⋆] {Ξ} {A} {Γ} = [⊢]⋆→[⊢⋆] ts , t
 
 open Model {{…}} public
@@ -63,7 +63,7 @@ module _ {{_ : Model}} where
 
   infix 3 _⊩⋆_
   _⊩⋆_ : Cx Ty → Cx Ty → Set
-  Γ ⊩⋆ ⌀     = 𝟙
+  Γ ⊩⋆ ∅     = 𝟙
   Γ ⊩⋆ Ξ , A = Γ ⊩⋆ Ξ × Γ ⊩ A
 
 
@@ -78,7 +78,7 @@ module _ {{_ : Model}} where
   mono⊩ {⊤}    η s = ∙
 
   mono⊩⋆ : ∀ {Ξ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊩⋆ Ξ → Γ′ ⊩⋆ Ξ
-  mono⊩⋆ {⌀}     η ∙        = ∙
+  mono⊩⋆ {∅}     η ∙        = ∙
   mono⊩⋆ {Ξ , A} η (ts , t) = mono⊩⋆ {Ξ} η ts , mono⊩ {A} η t
 
 
@@ -99,7 +99,7 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   [multicut] : ∀ {Ξ A Γ} → Γ [⊢]⋆ Ξ → Ξ [⊢] A → Γ [⊢] A
-  [multicut] {⌀}     ∙        u = mono[⊢] bot⊆ u
+  [multicut] {∅}     ∙        u = mono[⊢] bot⊆ u
   [multicut] {Ξ , B} (ts , t) u = [app] ([multicut] ts ([lam] u)) t
 
   [dist] : ∀ {A B Γ} → Γ [⊢] □ (A ▻ B) → Γ [⊢] □ A → Γ [⊢] □ B

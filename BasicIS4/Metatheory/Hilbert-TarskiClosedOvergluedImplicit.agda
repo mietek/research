@@ -3,13 +3,13 @@ module BasicIS4.Metatheory.Hilbert-TarskiClosedOvergluedImplicit where
 open import BasicIS4.Syntax.Hilbert public
 open import BasicIS4.Semantics.TarskiClosedOvergluedImplicit public
 
-open ImplicitSyntax (⌀ ⊢_) public
+open ImplicitSyntax (∅ ⊢_) public
 
 
 -- Completeness with respect to a particular model, for closed terms only.
 
 module _ {{_ : Model}} where
-  reify : ∀ {A} → ⊩ A → ⌀ ⊢ A
+  reify : ∀ {A} → ⊩ A → ∅ ⊢ A
   reify {α P}   s = syn s
   reify {A ▻ B} s = syn s
   reify {□ A}   s = syn s
@@ -98,19 +98,19 @@ private
   instance
     canon : Model
     canon = record
-      { ⊩ᵅ_ = λ P → ⌀ ⊢ α P
+      { ⊩ᵅ_ = λ P → ∅ ⊢ α P
       }
 
 
 -- Completeness with respect to all models, or quotation, for closed terms only.
 
-quot₀ : ∀ {A} → ⌀ ⊨ A → ⌀ ⊢ A
+quot₀ : ∀ {A} → ∅ ⊨ A → ∅ ⊢ A
 quot₀ t = reify (t ∙)
 
 
 -- Normalisation by evaluation, for closed terms only.
 
-norm₀ : ∀ {A} → ⌀ ⊢ A → ⌀ ⊢ A
+norm₀ : ∀ {A} → ∅ ⊢ A → ∅ ⊢ A
 norm₀ = quot₀ ∘ eval
 
 

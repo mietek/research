@@ -11,14 +11,14 @@ open import Common.ContextPair public
 
 infix 3 _⊦⊢_
 data _⊦⊢_ (Π : Cx² Ty) : Cx Ty → Set where
-  nil   : Π ⊦⊢ ⌀
+  nil   : Π ⊦⊢ ∅
   var   : ∀ {Ξ A}     → A ∈ int Π → Π ⊦⊢ Ξ → Π ⊦⊢ Ξ , A
   mp    : ∀ {Ξ A B}   → A ▻ B ∈ Ξ → A ∈ Ξ → Π ⊦⊢ Ξ → Π ⊦⊢ Ξ , B
   ci    : ∀ {Ξ A}     → Π ⊦⊢ Ξ → Π ⊦⊢ Ξ , A ▻ A
   ck    : ∀ {Ξ A B}   → Π ⊦⊢ Ξ → Π ⊦⊢ Ξ , A ▻ B ▻ A
   cs    : ∀ {Ξ A B C} → Π ⊦⊢ Ξ → Π ⊦⊢ Ξ , (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
   mvar  : ∀ {Ξ A}     → A ∈ mod Π → Π ⊦⊢ Ξ → Π ⊦⊢ Ξ , A
-  nec   : ∀ {Ξ Ξ′ A}  → ⌀ ⁏ mod Π ⊦⊢ Ξ′ , A → Π ⊦⊢ Ξ → Π ⊦⊢ Ξ , □ A
+  nec   : ∀ {Ξ Ξ′ A}  → ∅ ⁏ mod Π ⊦⊢ Ξ′ , A → Π ⊦⊢ Ξ → Π ⊦⊢ Ξ , □ A
   cdist : ∀ {Ξ A B}   → Π ⊦⊢ Ξ → Π ⊦⊢ Ξ , □ (A ▻ B) ▻ □ A ▻ □ B
   cup   : ∀ {Ξ A}     → Π ⊦⊢ Ξ → Π ⊦⊢ Ξ , □ A ▻ □ □ A
   cdown : ∀ {Ξ A}     → Π ⊦⊢ Ξ → Π ⊦⊢ Ξ , □ A ▻ A
@@ -105,5 +105,5 @@ app {A} {B} (Ξ , ts) (Ξ′ , us) = Ξ″ , vs
   where Ξ″ = (Ξ′ , A) ⧺ (Ξ , A ▻ B)
         vs = mp top (mono∈ (weak⊆⧺ₗ (Ξ , A ▻ B)) top) (us ⧺⊦ ts)
 
-box : ∀ {A Γ Δ} → ⌀ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ □ A
-box (Ξ , ts) = ⌀ , nec ts nil
+box : ∀ {A Γ Δ} → ∅ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ □ A
+box (Ξ , ts) = ∅ , nec ts nil

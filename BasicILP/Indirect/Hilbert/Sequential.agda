@@ -46,13 +46,13 @@ mutual
 
   infix 3 _⊢×_
   data _⊢×_ (Γ : Cx (Ty Tm)) : Cx (Ty Tm) → Set where
-    nil   : Γ ⊢× ⌀
+    nil   : Γ ⊢× ∅
     var   : ∀ {Ξ A}         → A ∈ Γ → Γ ⊢× Ξ → Γ ⊢× Ξ , A
     mp    : ∀ {Ξ A B}       → A ▻ B ∈ Ξ → A ∈ Ξ → Γ ⊢× Ξ → Γ ⊢× Ξ , B
     ci    : ∀ {Ξ A}         → Γ ⊢× Ξ → Γ ⊢× Ξ , A ▻ A
     ck    : ∀ {Ξ A B}       → Γ ⊢× Ξ → Γ ⊢× Ξ , A ▻ B ▻ A
     cs    : ∀ {Ξ A B C}     → Γ ⊢× Ξ → Γ ⊢× Ξ , (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
-    nec   : ∀ {Ξ Ξ′ A}      → (ss : ⌀ ⊢× Ξ′ , A) → Γ ⊢× Ξ → Γ ⊢× Ξ , [ ss ]× ⦂ A
+    nec   : ∀ {Ξ Ξ′ A}      → (ss : ∅ ⊢× Ξ′ , A) → Γ ⊢× Ξ → Γ ⊢× Ξ , [ ss ]× ⦂ A
     cdist : ∀ {Ξ A B TS US} → Γ ⊢× Ξ → Γ ⊢× Ξ , TS ⦂ (A ▻ B) ▻ US ⦂ A ▻ APP TS US ⦂ B
     cup   : ∀ {Ξ A TS}      → Γ ⊢× Ξ → Γ ⊢× Ξ , TS ⦂ A ▻ BOX TS ⦂ TS ⦂ A
     cdown : ∀ {Ξ A TS}      → Γ ⊢× Ξ → Γ ⊢× Ξ , TS ⦂ A ▻ A
@@ -133,5 +133,5 @@ app {A} {B} (Ξ , ts) (Ξ′ , us) = Ξ″ , vs
   where Ξ″ = (Ξ′ , A) ⧺ (Ξ , A ▻ B)
         vs = mp top (mono∈ (weak⊆⧺ₗ (Ξ , A ▻ B)) top) (us ⧻ ts)
 
-box : ∀ {A Γ} → (t : ⌀ ⊢ A) → Γ ⊢ [ t ] ⦂ A
-box (Ξ , ts) = ⌀ , nec ts nil
+box : ∀ {A Γ} → (t : ∅ ⊢ A) → Γ ⊢ [ t ] ⦂ A
+box (Ξ , ts) = ∅ , nec ts nil

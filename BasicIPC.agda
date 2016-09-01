@@ -71,10 +71,10 @@ open ContextEquality (_≟ᵀ_) public
 
 infixr 6 _▻⋯▻_
 _▻⋯▻_ : Cx Ty → Ty → Ty
-⌀       ▻⋯▻ B = B
+∅       ▻⋯▻ B = B
 (Ξ , A) ▻⋯▻ B = Ξ ▻⋯▻ (A ▻ B)
 
 infixr 6 _▻⋯▻⋆_
 _▻⋯▻⋆_ : Cx Ty → Cx Ty → Ty
-Γ ▻⋯▻⋆ ⌀       = ⊤
+Γ ▻⋯▻⋆ ∅       = ⊤
 Γ ▻⋯▻⋆ (Ξ , A) = (Γ ▻⋯▻⋆ Ξ) ∧ (Γ ▻⋯▻ A)

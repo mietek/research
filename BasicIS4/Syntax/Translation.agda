@@ -90,17 +90,17 @@ chs→ch (Ξ , ts) = chs⊦→ch ts top
 
 ch→chs : ∀ {A} → CH.⊢ A → CHS.⊢ A
 ch→chs (CH.app t u) = CHS.app (ch→chs t) (ch→chs u)
-ch→chs CH.ci        = ⌀ , CHS.ci CHS.nil
-ch→chs CH.ck        = ⌀ , CHS.ck CHS.nil
-ch→chs CH.cs        = ⌀ , CHS.cs CHS.nil
+ch→chs CH.ci        = ∅ , CHS.ci CHS.nil
+ch→chs CH.ck        = ∅ , CHS.ck CHS.nil
+ch→chs CH.cs        = ∅ , CHS.cs CHS.nil
 ch→chs (CH.box t)   = CHS.box (ch→chs t)
-ch→chs CH.cdist     = ⌀ , CHS.cdist CHS.nil
-ch→chs CH.cup       = ⌀ , CHS.cup CHS.nil
-ch→chs CH.cdown     = ⌀ , CHS.cdown CHS.nil
-ch→chs CH.cpair     = ⌀ , CHS.cpair CHS.nil
-ch→chs CH.cfst      = ⌀ , CHS.cfst CHS.nil
-ch→chs CH.csnd      = ⌀ , CHS.csnd CHS.nil
-ch→chs CH.tt        = ⌀ , CHS.tt CHS.nil
+ch→chs CH.cdist     = ∅ , CHS.cdist CHS.nil
+ch→chs CH.cup       = ∅ , CHS.cup CHS.nil
+ch→chs CH.cdown     = ∅ , CHS.cdown CHS.nil
+ch→chs CH.cpair     = ∅ , CHS.cpair CHS.nil
+ch→chs CH.cfst      = ∅ , CHS.cfst CHS.nil
+ch→chs CH.csnd      = ∅ , CHS.csnd CHS.nil
+ch→chs CH.tt        = ∅ , CHS.tt CHS.nil
 
 
 -- Translation from Hilbert-style sequential to Hilbert-style.
@@ -140,19 +140,19 @@ hs→h (Ξ , ts) = hs⊦→h ts top
 -- Translation from Hilbert-style to Hilbert-style sequential.
 
 h→hs : ∀ {A Γ} → H⟨ Γ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
-h→hs (H.var i)   = ⌀ , HS.var i HS.nil
+h→hs (H.var i)   = ∅ , HS.var i HS.nil
 h→hs (H.app t u) = HS.app (h→hs t) (h→hs u)
-h→hs H.ci        = ⌀ , HS.ci HS.nil
-h→hs H.ck        = ⌀ , HS.ck HS.nil
-h→hs H.cs        = ⌀ , HS.cs HS.nil
+h→hs H.ci        = ∅ , HS.ci HS.nil
+h→hs H.ck        = ∅ , HS.ck HS.nil
+h→hs H.cs        = ∅ , HS.cs HS.nil
 h→hs (H.box t)   = HS.box (h→hs t)
-h→hs H.cdist     = ⌀ , HS.cdist HS.nil
-h→hs H.cup       = ⌀ , HS.cup HS.nil
-h→hs H.cdown     = ⌀ , HS.cdown HS.nil
-h→hs H.cpair     = ⌀ , HS.cpair HS.nil
-h→hs H.cfst      = ⌀ , HS.cfst HS.nil
-h→hs H.csnd      = ⌀ , HS.csnd HS.nil
-h→hs H.tt        = ⌀ , HS.tt HS.nil
+h→hs H.cdist     = ∅ , HS.cdist HS.nil
+h→hs H.cup       = ∅ , HS.cup HS.nil
+h→hs H.cdown     = ∅ , HS.cdown HS.nil
+h→hs H.cpair     = ∅ , HS.cpair HS.nil
+h→hs H.cfst      = ∅ , HS.cfst HS.nil
+h→hs H.csnd      = ∅ , HS.csnd HS.nil
+h→hs H.tt        = ∅ , HS.tt HS.nil
 
 
 -- Translation from dyadic Hilbert-style sequential to dyadic Hilbert-style.
@@ -194,20 +194,20 @@ dhs→dh (Ξ , ts) = dhs⊦→dh ts top
 -- Translation from dyadic Hilbert-style to dyadic Hilbert-style sequential
 
 dh→dhs : ∀ {A Γ Δ} → DH⟨ Γ ⁏ Δ ⊢ A ⟩ → DHS⟨ Γ ⁏ Δ ⊢ A ⟩
-dh→dhs (DH.var i)   = ⌀ , DHS.var i DHS.nil
+dh→dhs (DH.var i)   = ∅ , DHS.var i DHS.nil
 dh→dhs (DH.app t u) = DHS.app (dh→dhs t) (dh→dhs u)
-dh→dhs DH.ci        = ⌀ , DHS.ci DHS.nil
-dh→dhs DH.ck        = ⌀ , DHS.ck DHS.nil
-dh→dhs DH.cs        = ⌀ , DHS.cs DHS.nil
-dh→dhs (DH.mvar i)  = ⌀ , DHS.mvar i DHS.nil
+dh→dhs DH.ci        = ∅ , DHS.ci DHS.nil
+dh→dhs DH.ck        = ∅ , DHS.ck DHS.nil
+dh→dhs DH.cs        = ∅ , DHS.cs DHS.nil
+dh→dhs (DH.mvar i)  = ∅ , DHS.mvar i DHS.nil
 dh→dhs (DH.box t)   = DHS.box (dh→dhs t)
-dh→dhs DH.cdist     = ⌀ , DHS.cdist DHS.nil
-dh→dhs DH.cup       = ⌀ , DHS.cup DHS.nil
-dh→dhs DH.cdown     = ⌀ , DHS.cdown DHS.nil
-dh→dhs DH.cpair     = ⌀ , DHS.cpair DHS.nil
-dh→dhs DH.cfst      = ⌀ , DHS.cfst DHS.nil
-dh→dhs DH.csnd      = ⌀ , DHS.csnd DHS.nil
-dh→dhs DH.tt        = ⌀ , DHS.tt DHS.nil
+dh→dhs DH.cdist     = ∅ , DHS.cdist DHS.nil
+dh→dhs DH.cup       = ∅ , DHS.cup DHS.nil
+dh→dhs DH.cdown     = ∅ , DHS.cdown DHS.nil
+dh→dhs DH.cpair     = ∅ , DHS.cpair DHS.nil
+dh→dhs DH.cfst      = ∅ , DHS.cfst DHS.nil
+dh→dhs DH.csnd      = ∅ , DHS.csnd DHS.nil
+dh→dhs DH.tt        = ∅ , DHS.tt DHS.nil
 
 
 -- Deduction and detachment theorems for Hilbert-style sequential.
@@ -215,13 +215,13 @@ dh→dhs DH.tt        = ⌀ , DHS.tt DHS.nil
 hs-lam : ∀ {A B Γ} → HS⟨ Γ , A ⊢ B ⟩ → HS⟨ Γ ⊢ A ▻ B ⟩
 hs-lam = h→hs ∘ H.lam ∘ hs→h
 
-hs-lam⋆₀ : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → HS⟨ ⌀ ⊢ Γ ▻⋯▻ A ⟩
+hs-lam⋆₀ : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → HS⟨ ∅ ⊢ Γ ▻⋯▻ A ⟩
 hs-lam⋆₀ = h→hs ∘ H.lam⋆₀ ∘ hs→h
 
 hs-det : ∀ {A B Γ} → HS⟨ Γ ⊢ A ▻ B ⟩ → HS⟨ Γ , A ⊢ B ⟩
 hs-det = h→hs ∘ H.det ∘ hs→h
 
-hs-det⋆₀ : ∀ {A Γ} → HS⟨ ⌀ ⊢ Γ ▻⋯▻ A ⟩ → HS⟨ Γ ⊢ A ⟩
+hs-det⋆₀ : ∀ {A Γ} → HS⟨ ∅ ⊢ Γ ▻⋯▻ A ⟩ → HS⟨ Γ ⊢ A ⟩
 hs-det⋆₀ = h→hs ∘ H.det⋆₀ ∘ hs→h
 
 
@@ -230,43 +230,43 @@ hs-det⋆₀ = h→hs ∘ H.det⋆₀ ∘ hs→h
 dhs-lam : ∀ {A B Γ Δ} → DHS⟨ Γ , A ⁏ Δ ⊢ B ⟩ → DHS⟨ Γ ⁏ Δ ⊢ A ▻ B ⟩
 dhs-lam = dh→dhs ∘ DH.lam ∘ dhs→dh
 
-dhs-lam⋆₀ : ∀ {A Γ Δ} → DHS⟨ Γ ⁏ Δ ⊢ A ⟩ → DHS⟨ ⌀ ⁏ Δ ⊢ Γ ▻⋯▻ A ⟩
+dhs-lam⋆₀ : ∀ {A Γ Δ} → DHS⟨ Γ ⁏ Δ ⊢ A ⟩ → DHS⟨ ∅ ⁏ Δ ⊢ Γ ▻⋯▻ A ⟩
 dhs-lam⋆₀ = dh→dhs ∘ DH.lam⋆₀ ∘ dhs→dh
 
 dhs-mlam : ∀ {A B Γ Δ} → DHS⟨ Γ ⁏ Δ , A ⊢ B ⟩ → DHS⟨ Γ ⁏ Δ ⊢ □ A ▻ B ⟩
 dhs-mlam = dh→dhs ∘ DH.mlam ∘ dhs→dh
 
-dhs-mlam⋆₀ : ∀ {Δ A Γ} → DHS⟨ Γ ⁏ Δ ⊢ A ⟩ → DHS⟨ Γ ⁏ ⌀ ⊢ □⋆ Δ ▻⋯▻ A ⟩
+dhs-mlam⋆₀ : ∀ {Δ A Γ} → DHS⟨ Γ ⁏ Δ ⊢ A ⟩ → DHS⟨ Γ ⁏ ∅ ⊢ □⋆ Δ ▻⋯▻ A ⟩
 dhs-mlam⋆₀ = dh→dhs ∘ DH.mlam⋆₀ ∘ dhs→dh
 
 dhs-det : ∀ {A B Γ Δ} → DHS⟨ Γ ⁏ Δ ⊢ A ▻ B ⟩ → DHS⟨ Γ , A ⁏ Δ ⊢ B ⟩
 dhs-det = dh→dhs ∘ DH.det ∘ dhs→dh
 
-dhs-det⋆₀ : ∀ {A Γ Δ} → DHS⟨ ⌀ ⁏ Δ ⊢ Γ ▻⋯▻ A ⟩ → DHS⟨ Γ ⁏ Δ ⊢ A ⟩
+dhs-det⋆₀ : ∀ {A Γ Δ} → DHS⟨ ∅ ⁏ Δ ⊢ Γ ▻⋯▻ A ⟩ → DHS⟨ Γ ⁏ Δ ⊢ A ⟩
 dhs-det⋆₀ = dh→dhs ∘ DH.det⋆₀ ∘ dhs→dh
 
 dhs-mdet : ∀ {A B Γ Δ} → DHS⟨ Γ ⁏ Δ ⊢ □ A ▻ B ⟩ → DHS⟨ Γ ⁏ Δ , A ⊢ B ⟩
 dhs-mdet = dh→dhs ∘ DH.mdet ∘ dhs→dh
 
-dhs-mdet⋆₀ : ∀ {Δ A Γ} → DHS⟨ Γ ⁏ ⌀ ⊢ □⋆ Δ ▻⋯▻ A ⟩ → DHS⟨ Γ ⁏ Δ ⊢ A ⟩
+dhs-mdet⋆₀ : ∀ {Δ A Γ} → DHS⟨ Γ ⁏ ∅ ⊢ □⋆ Δ ▻⋯▻ A ⟩ → DHS⟨ Γ ⁏ Δ ⊢ A ⟩
 dhs-mdet⋆₀ = dh→dhs ∘ DH.mdet⋆₀ ∘ dhs→dh
 
 
 -- Context manipulation for dyadic Hilbert-style sequential.
 
-dhs-merge : ∀ {Δ A Γ} → DHS⟨ Γ ⁏ Δ ⊢ A ⟩ → DHS⟨ Γ ⧺ (□⋆ Δ) ⁏ ⌀ ⊢ A ⟩
+dhs-merge : ∀ {Δ A Γ} → DHS⟨ Γ ⁏ Δ ⊢ A ⟩ → DHS⟨ Γ ⧺ (□⋆ Δ) ⁏ ∅ ⊢ A ⟩
 dhs-merge {Δ} = dh→dhs ∘ DH.merge ∘ dhs→dh
 
-dhs-split : ∀ {Δ A Γ} → DHS⟨ Γ ⧺ (□⋆ Δ) ⁏ ⌀ ⊢ A ⟩ → DHS⟨ Γ ⁏ Δ ⊢ A ⟩
+dhs-split : ∀ {Δ A Γ} → DHS⟨ Γ ⧺ (□⋆ Δ) ⁏ ∅ ⊢ A ⟩ → DHS⟨ Γ ⁏ Δ ⊢ A ⟩
 dhs-split {Δ} = dh→dhs ∘ DH.split ∘ dhs→dh
 
 
 -- Translation from closed Hilbert-style sequential to Hilbert-style sequential.
 
-chs→hs₀ : ∀ {A} → CHS.⊢ A → HS⟨ ⌀ ⊢ A ⟩
+chs→hs₀ : ∀ {A} → CHS.⊢ A → HS⟨ ∅ ⊢ A ⟩
 chs→hs₀ (Ξ , ts) = Ξ , chs⊦→hs⊦ ts
   where
-    chs⊦→hs⊦ : ∀ {Ξ} → CHS.⊦⊢ Ξ → HS⟨ ⌀ ⊦⊢ Ξ ⟩
+    chs⊦→hs⊦ : ∀ {Ξ} → CHS.⊦⊢ Ξ → HS⟨ ∅ ⊦⊢ Ξ ⟩
     chs⊦→hs⊦ CHS.nil         = HS.nil
     chs⊦→hs⊦ (CHS.mp i j ts) = HS.mp i j (chs⊦→hs⊦ ts)
     chs⊦→hs⊦ (CHS.ci ts)     = HS.ci (chs⊦→hs⊦ ts)
@@ -287,10 +287,10 @@ chs→hs t = hs-det⋆₀ (chs→hs₀ t)
 
 -- Translation from Hilbert-style sequential to closed Hilbert-style sequential.
 
-hs₀→chs : ∀ {A} → HS⟨ ⌀ ⊢ A ⟩ → CHS.⊢ A
+hs₀→chs : ∀ {A} → HS⟨ ∅ ⊢ A ⟩ → CHS.⊢ A
 hs₀→chs (Ξ , ts) = Ξ , hs₀⊦→chs⊦ ts
   where
-    hs₀⊦→chs⊦ : ∀ {Ξ} → HS⟨ ⌀ ⊦⊢ Ξ ⟩ → CHS.⊦⊢ Ξ
+    hs₀⊦→chs⊦ : ∀ {Ξ} → HS⟨ ∅ ⊦⊢ Ξ ⟩ → CHS.⊦⊢ Ξ
     hs₀⊦→chs⊦ HS.nil         = CHS.nil
     hs₀⊦→chs⊦ (HS.var () ts)
     hs₀⊦→chs⊦ (HS.mp i j ts) = CHS.mp i j (hs₀⊦→chs⊦ ts)
@@ -312,10 +312,10 @@ hs→chs t = hs₀→chs (hs-lam⋆₀ t)
 
 -- Translation from dyadic Hilbert-style sequential to Hilbert-style sequential.
 
-dhs₀→hs : ∀ {A Γ} → DHS⟨ Γ ⁏ ⌀ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
+dhs₀→hs : ∀ {A Γ} → DHS⟨ Γ ⁏ ∅ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
 dhs₀→hs (Ξ , ts) = Ξ , dhs₀⊦→hs⊦ ts
   where
-    dhs₀⊦→hs⊦ : ∀ {Ξ Γ} → DHS⟨ Γ ⁏ ⌀ ⊦⊢ Ξ ⟩ → HS⟨ Γ ⊦⊢ Ξ ⟩
+    dhs₀⊦→hs⊦ : ∀ {Ξ Γ} → DHS⟨ Γ ⁏ ∅ ⊦⊢ Ξ ⟩ → HS⟨ Γ ⊦⊢ Ξ ⟩
     dhs₀⊦→hs⊦ DHS.nil          = HS.nil
     dhs₀⊦→hs⊦ (DHS.var i ts)   = HS.var i (dhs₀⊦→hs⊦ ts)
     dhs₀⊦→hs⊦ (DHS.mp i j ts)  = HS.mp i j (dhs₀⊦→hs⊦ ts)
@@ -338,10 +338,10 @@ dhs→hs = dhs₀→hs ∘ dhs-merge
 
 -- Translation from Hilbert-style sequential to dyadic Hilbert-style sequential.
 
-hs→dhs₀ : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → DHS⟨ Γ ⁏ ⌀ ⊢ A ⟩
+hs→dhs₀ : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → DHS⟨ Γ ⁏ ∅ ⊢ A ⟩
 hs→dhs₀ (Ξ , ts) = Ξ , hs⊦→dhs₀⊦ ts
   where
-    hs⊦→dhs₀⊦ : ∀ {Ξ Γ} → HS⟨ Γ ⊦⊢ Ξ ⟩ → DHS⟨ Γ ⁏ ⌀ ⊦⊢ Ξ ⟩
+    hs⊦→dhs₀⊦ : ∀ {Ξ Γ} → HS⟨ Γ ⊦⊢ Ξ ⟩ → DHS⟨ Γ ⁏ ∅ ⊦⊢ Ξ ⟩
     hs⊦→dhs₀⊦ HS.nil         = DHS.nil
     hs⊦→dhs₀⊦ (HS.var i ts)  = DHS.var i (hs⊦→dhs₀⊦ ts)
     hs⊦→dhs₀⊦ (HS.mp i j ts) = DHS.mp i j (hs⊦→dhs₀⊦ ts)
@@ -363,7 +363,7 @@ hs→dhs = dhs-split ∘ hs→dhs₀
 
 -- Translation from closed Hilbert-style to Hilbert-style.
 
-ch→h₀ : ∀ {A} → CH.⊢ A → H⟨ ⌀ ⊢ A ⟩
+ch→h₀ : ∀ {A} → CH.⊢ A → H⟨ ∅ ⊢ A ⟩
 ch→h₀ (CH.app t u) = H.app (ch→h₀ t) (ch→h₀ u)
 ch→h₀ CH.ci        = H.ci
 ch→h₀ CH.ck        = H.ck
@@ -383,7 +383,7 @@ ch→h t = H.det⋆₀ (ch→h₀ t)
 
 -- Translation from Hilbert-style to closed Hilbert-style.
 
-h₀→ch : ∀ {A} → H⟨ ⌀ ⊢ A ⟩ → CH.⊢ A
+h₀→ch : ∀ {A} → H⟨ ∅ ⊢ A ⟩ → CH.⊢ A
 h₀→ch (H.var ())
 h₀→ch (H.app t u) = CH.app (h₀→ch t) (h₀→ch u)
 h₀→ch H.ci        = CH.ci
@@ -404,7 +404,7 @@ h→ch t = h₀→ch (H.lam⋆₀ t)
 
 -- Translation from dyadic Hilbert-style to Hilbert-style.
 
-dh₀→h : ∀ {A Γ} → DH⟨ Γ ⁏ ⌀ ⊢ A ⟩ → H⟨ Γ ⊢ A ⟩
+dh₀→h : ∀ {A Γ} → DH⟨ Γ ⁏ ∅ ⊢ A ⟩ → H⟨ Γ ⊢ A ⟩
 dh₀→h (DH.var i)   = H.var i
 dh₀→h (DH.app t u) = H.app (dh₀→h t) (dh₀→h u)
 dh₀→h DH.ci        = H.ci
@@ -426,7 +426,7 @@ dh→h = dh₀→h ∘ DH.merge
 
 -- Translation from Hilbert-style to dyadic Hilbert-style.
 
-h→dh₀ : ∀ {A Γ} → H⟨ Γ ⊢ A ⟩ → DH⟨ Γ ⁏ ⌀ ⊢ A ⟩
+h→dh₀ : ∀ {A Γ} → H⟨ Γ ⊢ A ⟩ → DH⟨ Γ ⁏ ∅ ⊢ A ⟩
 h→dh₀ (H.var i)   = DH.var i
 h→dh₀ (H.app t u) = DH.app (h→dh₀ t) (h→dh₀ u)
 h→dh₀ H.ci        = DH.ci
@@ -478,7 +478,7 @@ mutual
   g→h G.tt              = H.tt
 
   g→h⋆ : ∀ {Ξ Γ} → G⟨ Γ ⊢⋆ Ξ ⟩ → H⟨ Γ ⊢⋆ Ξ ⟩
-  g→h⋆ {⌀}     ∙        = ∙
+  g→h⋆ {∅}     ∙        = ∙
   g→h⋆ {Ξ , A} (ts , t) = g→h⋆ ts , g→h t
 
 
@@ -519,7 +519,7 @@ dg→dh DG.tt          = DH.tt
 -- Translation from Gentzen-style to dyadic Gentzen-style.
 
 mutual
-  g→dg₀ : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → DG⟨ Γ ⁏ ⌀ ⊢ A ⟩
+  g→dg₀ : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → DG⟨ Γ ⁏ ∅ ⊢ A ⟩
   g→dg₀ (G.var i)         = DG.var i
   g→dg₀ (G.lam t)         = DG.lam (g→dg₀ t)
   g→dg₀ (G.app t u)       = DG.app (g→dg₀ t) (g→dg₀ u)
@@ -530,8 +530,8 @@ mutual
   g→dg₀ (G.snd t)         = DG.snd (g→dg₀ t)
   g→dg₀ G.tt              = DG.tt
 
-  g→dg₀⋆ : ∀ {Ξ Γ} → G⟨ Γ ⊢⋆ Ξ ⟩ → DG⟨ Γ ⁏ ⌀ ⊢⋆ Ξ ⟩
-  g→dg₀⋆ {⌀}     ∙        = ∙
+  g→dg₀⋆ : ∀ {Ξ Γ} → G⟨ Γ ⊢⋆ Ξ ⟩ → DG⟨ Γ ⁏ ∅ ⊢⋆ Ξ ⟩
+  g→dg₀⋆ {∅}     ∙        = ∙
   g→dg₀⋆ {Ξ , A} (ts , t) = g→dg₀⋆ ts , g→dg₀ t
 
 g→dg : ∀ {A Γ Δ} → G⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩ → DG⟨ Γ ⁏ Δ ⊢ A ⟩
@@ -589,7 +589,7 @@ mutual
   g→lg G.tt              = LG.tt
 
   g→lg⋆ : ∀ {x Ξ Γ Λ} → G⟨ Γ ⊢⋆ Ξ ⟩ → LG⟨ Γ ⁏ Λ ⊢⋆ Ξ ◎ x ⟩
-  g→lg⋆ {x} {⌀}     ∙        = ∙
+  g→lg⋆ {x} {∅}     ∙        = ∙
   g→lg⋆ {x} {Ξ , A} (ts , t) = g→lg⋆ ts , g→lg t
 
 
@@ -613,46 +613,46 @@ lg→g LG.tt         = G.tt
 
 -- Additional translations from closed Hilbert-style sequential.
 
-chs→h₀ : ∀ {A} → CHS.⊢ A → H⟨ ⌀ ⊢ A ⟩
+chs→h₀ : ∀ {A} → CHS.⊢ A → H⟨ ∅ ⊢ A ⟩
 chs→h₀ = ch→h₀ ∘ chs→ch
 
 chs→h : ∀ {A Γ} → CHS.⊢ Γ ▻⋯▻ A → H⟨ Γ ⊢ A ⟩
 chs→h = ch→h ∘ chs→ch
 
-chs→g₀ : ∀ {A} → CHS.⊢ A → G⟨ ⌀ ⊢ A ⟩
+chs→g₀ : ∀ {A} → CHS.⊢ A → G⟨ ∅ ⊢ A ⟩
 chs→g₀ = h→g ∘ chs→h₀
 
 chs→g : ∀ {A Γ} → CHS.⊢ Γ ▻⋯▻ A → G⟨ Γ ⊢ A ⟩
 chs→g = h→g ∘ chs→h
 
-chs→dhs₀₀ : ∀ {A} → CHS.⊢ A → DHS⟨ ⌀ ⁏ ⌀ ⊢ A ⟩
+chs→dhs₀₀ : ∀ {A} → CHS.⊢ A → DHS⟨ ∅ ⁏ ∅ ⊢ A ⟩
 chs→dhs₀₀ = hs→dhs₀ ∘ chs→hs₀
 
-chs→dhs₀ : ∀ {A Γ} → CHS.⊢ Γ ▻⋯▻ A → DHS⟨ Γ ⁏ ⌀ ⊢ A ⟩
+chs→dhs₀ : ∀ {A Γ} → CHS.⊢ Γ ▻⋯▻ A → DHS⟨ Γ ⁏ ∅ ⊢ A ⟩
 chs→dhs₀ = hs→dhs₀ ∘ chs→hs
 
 chs→dhs : ∀ {A Γ Δ} → CHS.⊢ Γ ⧺ (□⋆ Δ) ▻⋯▻ A → DHS⟨ Γ ⁏ Δ ⊢ A ⟩
 chs→dhs = hs→dhs ∘ chs→hs
 
-chs→dh₀₀ : ∀ {A} → CHS.⊢ A → DH⟨ ⌀ ⁏ ⌀ ⊢ A ⟩
+chs→dh₀₀ : ∀ {A} → CHS.⊢ A → DH⟨ ∅ ⁏ ∅ ⊢ A ⟩
 chs→dh₀₀ = h→dh₀ ∘ chs→h₀
 
-chs→dh₀ : ∀ {A Γ} → CHS.⊢ Γ ▻⋯▻ A → DH⟨ Γ ⁏ ⌀ ⊢ A ⟩
+chs→dh₀ : ∀ {A Γ} → CHS.⊢ Γ ▻⋯▻ A → DH⟨ Γ ⁏ ∅ ⊢ A ⟩
 chs→dh₀ = h→dh₀ ∘ chs→h
 
 chs→dh : ∀ {A Γ Δ} → CHS.⊢ Γ ⧺ (□⋆ Δ) ▻⋯▻ A → DH⟨ Γ ⁏ Δ ⊢ A ⟩
 chs→dh = h→dh ∘ chs→h
 
-chs→dg₀₀ : ∀ {A} → CHS.⊢ A → DG⟨ ⌀ ⁏ ⌀ ⊢ A ⟩
+chs→dg₀₀ : ∀ {A} → CHS.⊢ A → DG⟨ ∅ ⁏ ∅ ⊢ A ⟩
 chs→dg₀₀ = g→dg₀ ∘ chs→g₀
 
-chs→dg₀ : ∀ {A Γ} → CHS.⊢ Γ ▻⋯▻ A → DG⟨ Γ ⁏ ⌀ ⊢ A ⟩
+chs→dg₀ : ∀ {A Γ} → CHS.⊢ Γ ▻⋯▻ A → DG⟨ Γ ⁏ ∅ ⊢ A ⟩
 chs→dg₀ = g→dg₀ ∘ chs→g
 
 chs→dg : ∀ {A Γ Δ} → CHS.⊢ Γ ⧺ (□⋆ Δ) ▻⋯▻ A → DG⟨ Γ ⁏ Δ ⊢ A ⟩
 chs→dg = g→dg ∘ chs→g
 
-chs→lg₀ : ∀ {x A Λ} → CHS.⊢ A → LG⟨ ⌀ ⁏ Λ ⊢ A ◎ x ⟩
+chs→lg₀ : ∀ {x A Λ} → CHS.⊢ A → LG⟨ ∅ ⁏ Λ ⊢ A ◎ x ⟩
 chs→lg₀ = g→lg ∘ chs→g₀
 
 chs→lg : ∀ {x A Γ Λ} → CHS.⊢ Γ ▻⋯▻ A → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩
@@ -661,46 +661,46 @@ chs→lg = g→lg ∘ chs→g
 
 -- Additional translations from closed Hilbert-style.
 
-ch→hs₀ : ∀ {A} → CH.⊢ A → HS⟨ ⌀ ⊢ A ⟩
+ch→hs₀ : ∀ {A} → CH.⊢ A → HS⟨ ∅ ⊢ A ⟩
 ch→hs₀ = chs→hs ∘ ch→chs
 
 ch→hs : ∀ {A Γ} → CH.⊢ Γ ▻⋯▻ A → HS⟨ Γ ⊢ A ⟩
 ch→hs = chs→hs ∘ ch→chs
 
-ch→g₀ : ∀ {A} → CH.⊢ A → G⟨ ⌀ ⊢ A ⟩
+ch→g₀ : ∀ {A} → CH.⊢ A → G⟨ ∅ ⊢ A ⟩
 ch→g₀ = h→g ∘ ch→h₀
 
 ch→g : ∀ {A Γ} → CH.⊢ Γ ▻⋯▻ A → G⟨ Γ ⊢ A ⟩
 ch→g = h→g ∘ ch→h
 
-ch→dhs₀₀ : ∀ {A} → CH.⊢ A → DHS⟨ ⌀ ⁏ ⌀ ⊢ A ⟩
+ch→dhs₀₀ : ∀ {A} → CH.⊢ A → DHS⟨ ∅ ⁏ ∅ ⊢ A ⟩
 ch→dhs₀₀ = hs→dhs₀ ∘ ch→hs₀
 
-ch→dhs₀ : ∀ {A Γ} → CH.⊢ Γ ▻⋯▻ A → DHS⟨ Γ ⁏ ⌀ ⊢ A ⟩
+ch→dhs₀ : ∀ {A Γ} → CH.⊢ Γ ▻⋯▻ A → DHS⟨ Γ ⁏ ∅ ⊢ A ⟩
 ch→dhs₀ = hs→dhs₀ ∘ ch→hs
 
 ch→dhs : ∀ {A Γ Δ} → CH.⊢ Γ ⧺ (□⋆ Δ) ▻⋯▻ A → DHS⟨ Γ ⁏ Δ ⊢ A ⟩
 ch→dhs = hs→dhs ∘ ch→hs
 
-ch→dh₀₀ : ∀ {A} → CH.⊢ A → DH⟨ ⌀ ⁏ ⌀ ⊢ A ⟩
+ch→dh₀₀ : ∀ {A} → CH.⊢ A → DH⟨ ∅ ⁏ ∅ ⊢ A ⟩
 ch→dh₀₀ = h→dh₀ ∘ ch→h₀
 
-ch→dh₀ : ∀ {A Γ} → CH.⊢ Γ ▻⋯▻ A → DH⟨ Γ ⁏ ⌀ ⊢ A ⟩
+ch→dh₀ : ∀ {A Γ} → CH.⊢ Γ ▻⋯▻ A → DH⟨ Γ ⁏ ∅ ⊢ A ⟩
 ch→dh₀ = h→dh₀ ∘ ch→h
 
 ch→dh : ∀ {A Γ Δ} → CH.⊢ Γ ⧺ (□⋆ Δ) ▻⋯▻ A → DH⟨ Γ ⁏ Δ ⊢ A ⟩
 ch→dh = h→dh ∘ ch→h
 
-ch→dg₀₀ : ∀ {A} → CH.⊢ A → DG⟨ ⌀ ⁏ ⌀ ⊢ A ⟩
+ch→dg₀₀ : ∀ {A} → CH.⊢ A → DG⟨ ∅ ⁏ ∅ ⊢ A ⟩
 ch→dg₀₀ = g→dg₀ ∘ ch→g₀
 
-ch→dg₀ : ∀ {A Γ} → CH.⊢ Γ ▻⋯▻ A → DG⟨ Γ ⁏ ⌀ ⊢ A ⟩
+ch→dg₀ : ∀ {A Γ} → CH.⊢ Γ ▻⋯▻ A → DG⟨ Γ ⁏ ∅ ⊢ A ⟩
 ch→dg₀ = g→dg₀ ∘ ch→g
 
 ch→dg : ∀ {A Γ Δ} → CH.⊢ Γ ⧺ (□⋆ Δ) ▻⋯▻ A → DG⟨ Γ ⁏ Δ ⊢ A ⟩
 ch→dg = g→dg ∘ ch→g
 
-ch→lg₀ : ∀ {x A Λ} → CH.⊢ A → LG⟨ ⌀ ⁏ Λ ⊢ A ◎ x ⟩
+ch→lg₀ : ∀ {x A Λ} → CH.⊢ A → LG⟨ ∅ ⁏ Λ ⊢ A ◎ x ⟩
 ch→lg₀ = g→lg ∘ ch→g₀
 
 ch→lg : ∀ {x A Γ Λ} → CH.⊢ Γ ▻⋯▻ A → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩
@@ -709,7 +709,7 @@ ch→lg = g→lg ∘ ch→g
 
 -- Additional translations from Hilbert-style sequential.
 
-hs₀→ch : ∀ {A} → HS⟨ ⌀ ⊢ A ⟩ → CH.⊢ A
+hs₀→ch : ∀ {A} → HS⟨ ∅ ⊢ A ⟩ → CH.⊢ A
 hs₀→ch = chs→ch ∘ hs₀→chs
 
 hs→ch : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → CH.⊢ Γ ▻⋯▻ A
@@ -718,13 +718,13 @@ hs→ch = chs→ch ∘ hs→chs
 hs→g : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → G⟨ Γ ⊢ A ⟩
 hs→g = h→g ∘ hs→h
 
-hs→dh₀ : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → DH⟨ Γ ⁏ ⌀ ⊢ A ⟩
+hs→dh₀ : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → DH⟨ Γ ⁏ ∅ ⊢ A ⟩
 hs→dh₀ = h→dh₀ ∘ hs→h
 
 hs→dh : ∀ {A Γ Δ} → HS⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩ → DH⟨ Γ ⁏ Δ ⊢ A ⟩
 hs→dh = h→dh ∘ hs→h
 
-hs→dg₀ : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → DG⟨ Γ ⁏ ⌀ ⊢ A ⟩
+hs→dg₀ : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → DG⟨ Γ ⁏ ∅ ⊢ A ⟩
 hs→dg₀ = dh→dg ∘ hs→dh₀
 
 hs→dg : ∀ {A Γ Δ} → HS⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩ → DG⟨ Γ ⁏ Δ ⊢ A ⟩
@@ -736,19 +736,19 @@ hs→lg = h→lg ∘ hs→h
 
 -- Additional translations from Hilbert-style.
 
-h₀→chs : ∀ {A} → H⟨ ⌀ ⊢ A ⟩ → CHS.⊢ A
+h₀→chs : ∀ {A} → H⟨ ∅ ⊢ A ⟩ → CHS.⊢ A
 h₀→chs = ch→chs ∘ h₀→ch
 
 h→chs : ∀ {A Γ} → H⟨ Γ ⊢ A ⟩ → CHS.⊢ Γ ▻⋯▻ A
 h→chs = ch→chs ∘ h→ch
 
-h→dhs₀ : ∀ {A Γ} → H⟨ Γ ⊢ A ⟩ → DHS⟨ Γ ⁏ ⌀ ⊢ A ⟩
+h→dhs₀ : ∀ {A Γ} → H⟨ Γ ⊢ A ⟩ → DHS⟨ Γ ⁏ ∅ ⊢ A ⟩
 h→dhs₀ = hs→dhs₀ ∘ h→hs
 
 h→dhs : ∀ {A Γ Δ} → H⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩ → DHS⟨ Γ ⁏ Δ ⊢ A ⟩
 h→dhs = hs→dhs ∘ h→hs
 
-h→dg₀ : ∀ {A Γ} → H⟨ Γ ⊢ A ⟩ → DG⟨ Γ ⁏ ⌀ ⊢ A ⟩
+h→dg₀ : ∀ {A Γ} → H⟨ Γ ⊢ A ⟩ → DG⟨ Γ ⁏ ∅ ⊢ A ⟩
 h→dg₀ = dh→dg ∘ h→dh₀
 
 h→dg : ∀ {A Γ Δ} → H⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩ → DG⟨ Γ ⁏ Δ ⊢ A ⟩
@@ -757,13 +757,13 @@ h→dg = dh→dg ∘ h→dh
 
 -- Additional translations from Gentzen-style.
 
-g₀→chs : ∀ {A} → G⟨ ⌀ ⊢ A ⟩ → CHS.⊢ A
+g₀→chs : ∀ {A} → G⟨ ∅ ⊢ A ⟩ → CHS.⊢ A
 g₀→chs = h₀→chs ∘ g→h
 
 g→chs : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → CHS.⊢ Γ ▻⋯▻ A
 g→chs = h→chs ∘ g→h
 
-g₀→ch : ∀ {A} → G⟨ ⌀ ⊢ A ⟩ → CH.⊢ A
+g₀→ch : ∀ {A} → G⟨ ∅ ⊢ A ⟩ → CH.⊢ A
 g₀→ch = h₀→ch ∘ g→h
 
 g→ch : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → CH.⊢ Γ ▻⋯▻ A
@@ -772,13 +772,13 @@ g→ch = h→ch ∘ g→h
 g→hs : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
 g→hs = h→hs ∘ g→h
 
-g→dhs₀ : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → DHS⟨ Γ ⁏ ⌀ ⊢ A ⟩
+g→dhs₀ : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → DHS⟨ Γ ⁏ ∅ ⊢ A ⟩
 g→dhs₀ = h→dhs₀ ∘ g→h
 
 g→dhs : ∀ {A Γ Δ} → G⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩ → DHS⟨ Γ ⁏ Δ ⊢ A ⟩
 g→dhs = h→dhs ∘ g→h
 
-g→dh₀ : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → DH⟨ Γ ⁏ ⌀ ⊢ A ⟩
+g→dh₀ : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → DH⟨ Γ ⁏ ∅ ⊢ A ⟩
 g→dh₀ = h→dh₀ ∘ g→h
 
 g→dh : ∀ {A Γ Δ} → G⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩ → DH⟨ Γ ⁏ Δ ⊢ A ⟩
@@ -787,31 +787,31 @@ g→dh = h→dh ∘ g→h
 
 -- Additional translations from dyadic Hilbert-style sequential.
 
-dhs₀₀→chs : ∀ {A} → DHS⟨ ⌀ ⁏ ⌀ ⊢ A ⟩ → CHS.⊢ A
+dhs₀₀→chs : ∀ {A} → DHS⟨ ∅ ⁏ ∅ ⊢ A ⟩ → CHS.⊢ A
 dhs₀₀→chs = hs₀→chs ∘ dhs₀→hs
 
-dhs₀→chs : ∀ {A Γ} → DHS⟨ Γ ⁏ ⌀ ⊢ A ⟩ → CHS.⊢ Γ ▻⋯▻ A
+dhs₀→chs : ∀ {A Γ} → DHS⟨ Γ ⁏ ∅ ⊢ A ⟩ → CHS.⊢ Γ ▻⋯▻ A
 dhs₀→chs = hs→chs ∘ dhs₀→hs
 
 dhs→chs : ∀ {A Γ Δ} → DHS⟨ Γ ⁏ Δ ⊢ A ⟩ → CHS.⊢ Γ ⧺ (□⋆ Δ) ▻⋯▻ A
 dhs→chs = hs→chs ∘ dhs→hs
 
-dhs₀₀→ch : ∀ {A} → DHS⟨ ⌀ ⁏ ⌀ ⊢ A ⟩ → CH.⊢ A
+dhs₀₀→ch : ∀ {A} → DHS⟨ ∅ ⁏ ∅ ⊢ A ⟩ → CH.⊢ A
 dhs₀₀→ch = hs₀→ch ∘ dhs₀→hs
 
-dhs₀→ch : ∀ {A Γ} → DHS⟨ Γ ⁏ ⌀ ⊢ A ⟩ → CH.⊢ Γ ▻⋯▻ A
+dhs₀→ch : ∀ {A Γ} → DHS⟨ Γ ⁏ ∅ ⊢ A ⟩ → CH.⊢ Γ ▻⋯▻ A
 dhs₀→ch = hs→ch ∘ dhs₀→hs
 
 dhs→ch : ∀ {A Γ Δ} → DHS⟨ Γ ⁏ Δ ⊢ A ⟩ → CH.⊢ Γ ⧺ (□⋆ Δ) ▻⋯▻ A
 dhs→ch = hs→ch ∘ dhs→hs
 
-dhs₀→h : ∀ {A Γ} → DHS⟨ Γ ⁏ ⌀ ⊢ A ⟩ → H⟨ Γ ⊢ A ⟩
+dhs₀→h : ∀ {A Γ} → DHS⟨ Γ ⁏ ∅ ⊢ A ⟩ → H⟨ Γ ⊢ A ⟩
 dhs₀→h = hs→h ∘ dhs₀→hs
 
 dhs→h : ∀ {A Γ Δ} → DHS⟨ Γ ⁏ Δ ⊢ A ⟩ → H⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩
 dhs→h = hs→h ∘ dhs→hs
 
-dhs₀→g : ∀ {A Γ} → DHS⟨ Γ ⁏ ⌀ ⊢ A ⟩ → G⟨ Γ ⊢ A ⟩
+dhs₀→g : ∀ {A Γ} → DHS⟨ Γ ⁏ ∅ ⊢ A ⟩ → G⟨ Γ ⊢ A ⟩
 dhs₀→g = hs→g ∘ dhs₀→hs
 
 dhs→g : ∀ {A Γ Δ} → DHS⟨ Γ ⁏ Δ ⊢ A ⟩ → G⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩
@@ -820,7 +820,7 @@ dhs→g = hs→g ∘ dhs→hs
 dhs→dg : ∀ {A Γ Δ} → DHS⟨ Γ ⁏ Δ ⊢ A ⟩ → DG⟨ Γ ⁏ Δ ⊢ A ⟩
 dhs→dg = dh→dg ∘ dhs→dh
 
-dhs₀→lg : ∀ {x A Γ Λ} → DHS⟨ Γ ⁏ ⌀ ⊢ A ⟩ → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩
+dhs₀→lg : ∀ {x A Γ Λ} → DHS⟨ Γ ⁏ ∅ ⊢ A ⟩ → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩
 dhs₀→lg = hs→lg ∘ dhs₀→hs
 
 dhs→lg : ∀ {x A Γ Δ Λ} → DHS⟨ Γ ⁏ Δ ⊢ A ⟩ → LG⟨ Γ ⧺ (□⋆ Δ) ⁏ Λ ⊢ A ◎ x ⟩
@@ -829,37 +829,37 @@ dhs→lg = hs→lg ∘ dhs→hs
 
 -- Additional translations from dyadic Hilbert-style.
 
-dh₀₀→chs : ∀ {A} → DH⟨ ⌀ ⁏ ⌀ ⊢ A ⟩ → CHS.⊢ A
+dh₀₀→chs : ∀ {A} → DH⟨ ∅ ⁏ ∅ ⊢ A ⟩ → CHS.⊢ A
 dh₀₀→chs = h₀→chs ∘ dh₀→h
 
-dh₀→chs : ∀ {A Γ} → DH⟨ Γ ⁏ ⌀ ⊢ A ⟩ → CHS.⊢ Γ ▻⋯▻ A
+dh₀→chs : ∀ {A Γ} → DH⟨ Γ ⁏ ∅ ⊢ A ⟩ → CHS.⊢ Γ ▻⋯▻ A
 dh₀→chs = h→chs ∘ dh₀→h
 
 dh→chs : ∀ {A Γ Δ} → DH⟨ Γ ⁏ Δ ⊢ A ⟩ → CHS.⊢ Γ ⧺ (□⋆ Δ) ▻⋯▻ A
 dh→chs = h→chs ∘ dh→h
 
-dh₀₀→ch : ∀ {A} → DH⟨ ⌀ ⁏ ⌀ ⊢ A ⟩ → CH.⊢ A
+dh₀₀→ch : ∀ {A} → DH⟨ ∅ ⁏ ∅ ⊢ A ⟩ → CH.⊢ A
 dh₀₀→ch = h₀→ch ∘ dh₀→h
 
-dh₀→ch : ∀ {A Γ} → DH⟨ Γ ⁏ ⌀ ⊢ A ⟩ → CH.⊢ Γ ▻⋯▻ A
+dh₀→ch : ∀ {A Γ} → DH⟨ Γ ⁏ ∅ ⊢ A ⟩ → CH.⊢ Γ ▻⋯▻ A
 dh₀→ch = h→ch ∘ dh₀→h
 
 dh→ch : ∀ {A Γ Δ} → DH⟨ Γ ⁏ Δ ⊢ A ⟩ → CH.⊢ Γ ⧺ (□⋆ Δ) ▻⋯▻ A
 dh→ch = h→ch ∘ dh→h
 
-dh₀→hs : ∀ {A Γ} → DH⟨ Γ ⁏ ⌀ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
+dh₀→hs : ∀ {A Γ} → DH⟨ Γ ⁏ ∅ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
 dh₀→hs = h→hs ∘ dh₀→h
 
 dh→hs : ∀ {A Γ Δ} → DH⟨ Γ ⁏ Δ ⊢ A ⟩ → HS⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩
 dh→hs = h→hs ∘ dh→h
 
-dh₀→g : ∀ {A Γ} → DH⟨ Γ ⁏ ⌀ ⊢ A ⟩ → G⟨ Γ ⊢ A ⟩
+dh₀→g : ∀ {A Γ} → DH⟨ Γ ⁏ ∅ ⊢ A ⟩ → G⟨ Γ ⊢ A ⟩
 dh₀→g = h→g ∘ dh₀→h
 
 dh→g : ∀ {A Γ Δ} → DH⟨ Γ ⁏ Δ ⊢ A ⟩ → G⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩
 dh→g = h→g ∘ dh→h
 
-dh₀→lg : ∀ {x A Γ Λ} → DH⟨ Γ ⁏ ⌀ ⊢ A ⟩ → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩
+dh₀→lg : ∀ {x A Γ Λ} → DH⟨ Γ ⁏ ∅ ⊢ A ⟩ → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩
 dh₀→lg = h→lg ∘ dh₀→h
 
 dh→lg : ∀ {x A Γ Δ Λ} → DH⟨ Γ ⁏ Δ ⊢ A ⟩ → LG⟨ Γ ⧺ (□⋆ Δ) ⁏ Λ ⊢ A ◎ x ⟩
@@ -868,38 +868,38 @@ dh→lg = h→lg ∘ dh→h
 
 -- Additional translations from dyadic Gentzen-style.
 
-dg₀₀→chs : ∀ {A} → DG⟨ ⌀ ⁏ ⌀ ⊢ A ⟩ → CHS.⊢ A
+dg₀₀→chs : ∀ {A} → DG⟨ ∅ ⁏ ∅ ⊢ A ⟩ → CHS.⊢ A
 dg₀₀→chs = dh₀→chs ∘ dg→dh
 
-dg₀→chs : ∀ {A Γ} → DG⟨ Γ ⁏ ⌀ ⊢ A ⟩ → CHS.⊢ Γ ▻⋯▻ A
+dg₀→chs : ∀ {A Γ} → DG⟨ Γ ⁏ ∅ ⊢ A ⟩ → CHS.⊢ Γ ▻⋯▻ A
 dg₀→chs = dh→chs ∘ dg→dh
 
 dg→chs : ∀ {A Γ Δ} → DG⟨ Γ ⁏ Δ ⊢ A ⟩ → CHS.⊢ Γ ⧺ (□⋆ Δ) ▻⋯▻ A
 dg→chs = dh→chs ∘ dg→dh
 
-dg₀₀→ch : ∀ {A} → DG⟨ ⌀ ⁏ ⌀ ⊢ A ⟩ → CH.⊢ A
+dg₀₀→ch : ∀ {A} → DG⟨ ∅ ⁏ ∅ ⊢ A ⟩ → CH.⊢ A
 dg₀₀→ch = dh₀→ch ∘ dg→dh
 
-dg₀→ch : ∀ {A Γ} → DG⟨ Γ ⁏ ⌀ ⊢ A ⟩ → CH.⊢ Γ ▻⋯▻ A
+dg₀→ch : ∀ {A Γ} → DG⟨ Γ ⁏ ∅ ⊢ A ⟩ → CH.⊢ Γ ▻⋯▻ A
 dg₀→ch = dh→ch ∘ dg→dh
 
 dg→ch : ∀ {A Γ Δ} → DG⟨ Γ ⁏ Δ ⊢ A ⟩ → CH.⊢ Γ ⧺ (□⋆ Δ) ▻⋯▻ A
 dg→ch = dh→ch ∘ dg→dh
 
-dg₀→hs : ∀ {A Γ} → DG⟨ Γ ⁏ ⌀ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
+dg₀→hs : ∀ {A Γ} → DG⟨ Γ ⁏ ∅ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩
 dg₀→hs = dh₀→hs ∘ dg→dh
 
 dg→hs : ∀ {A Γ Δ} → DG⟨ Γ ⁏ Δ ⊢ A ⟩ → HS⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩
 dg→hs = dh→hs ∘ dg→dh
 
-dg₀→h : ∀ {A Γ} → DG⟨ Γ ⁏ ⌀ ⊢ A ⟩ → H⟨ Γ ⊢ A ⟩
+dg₀→h : ∀ {A Γ} → DG⟨ Γ ⁏ ∅ ⊢ A ⟩ → H⟨ Γ ⊢ A ⟩
 dg₀→h = dh₀→h ∘ dg→dh
 
 dg→h : ∀ {A Γ Δ} → DG⟨ Γ ⁏ Δ ⊢ A ⟩ → H⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩
 dg→h = dh→h ∘ dg→dh
 
 -- NOTE: Direct translation fails the termination check.
-dg₀→g : ∀ {A Γ} → DG⟨ Γ ⁏ ⌀ ⊢ A ⟩ → G⟨ Γ ⊢ A ⟩
+dg₀→g : ∀ {A Γ} → DG⟨ Γ ⁏ ∅ ⊢ A ⟩ → G⟨ Γ ⊢ A ⟩
 dg₀→g = h→g ∘ dg₀→h
 
 dg→g : ∀ {A Γ Δ} → DG⟨ Γ ⁏ Δ ⊢ A ⟩ → G⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩
@@ -908,7 +908,7 @@ dg→g = h→g ∘ dg→h
 dg→dhs : ∀ {A Γ Δ} → DG⟨ Γ ⁏ Δ ⊢ A ⟩ → DHS⟨ Γ ⁏ Δ ⊢ A ⟩
 dg→dhs = dh→dhs ∘ dg→dh
 
-dg₀→lg : ∀ {x A Γ Λ} → DG⟨ Γ ⁏ ⌀ ⊢ A ⟩ → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩
+dg₀→lg : ∀ {x A Γ Λ} → DG⟨ Γ ⁏ ∅ ⊢ A ⟩ → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩
 dg₀→lg = g→lg ∘ dg₀→g
 
 dg→lg : ∀ {x A Γ Δ Λ} → DG⟨ Γ ⁏ Δ ⊢ A ⟩ → LG⟨ Γ ⧺ (□⋆ Δ) ⁏ Λ ⊢ A ◎ x ⟩
@@ -917,13 +917,13 @@ dg→lg = g→lg ∘ dg→g
 
 -- Additional translations from labelled Gentzen-style.
 
-lg₀→chs : ∀ {x A Λ} → LG⟨ ⌀ ⁏ Λ ⊢ A ◎ x ⟩ → CHS.⊢ A
+lg₀→chs : ∀ {x A Λ} → LG⟨ ∅ ⁏ Λ ⊢ A ◎ x ⟩ → CHS.⊢ A
 lg₀→chs = h₀→chs ∘ lg→h
 
 lg→chs : ∀ {x A Γ Λ} → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩ → CHS.⊢ Γ ▻⋯▻ A
 lg→chs = h→chs ∘ lg→h
 
-lg₀→ch : ∀ {x A Λ} → LG⟨ ⌀ ⁏ Λ ⊢ A ◎ x ⟩ → CH.⊢ A
+lg₀→ch : ∀ {x A Λ} → LG⟨ ∅ ⁏ Λ ⊢ A ◎ x ⟩ → CH.⊢ A
 lg₀→ch = h₀→ch ∘ lg→h
 
 lg→ch : ∀ {x A Γ Λ} → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩ → CH.⊢ Γ ▻⋯▻ A
@@ -932,19 +932,19 @@ lg→ch = h→ch ∘ lg→h
 lg→hs : ∀ {x A Γ Λ} → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩ → HS⟨ Γ ⊢ A ⟩
 lg→hs = h→hs ∘ lg→h
 
-lg→dhs₀ : ∀ {x A Γ Λ} → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩ → DHS⟨ Γ ⁏ ⌀ ⊢ A ⟩
+lg→dhs₀ : ∀ {x A Γ Λ} → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩ → DHS⟨ Γ ⁏ ∅ ⊢ A ⟩
 lg→dhs₀ = h→dhs₀ ∘ lg→h
 
 lg→dhs : ∀ {x A Γ Δ Λ} → LG⟨ Γ ⧺ (□⋆ Δ) ⁏ Λ ⊢ A ◎ x ⟩ → DHS⟨ Γ ⁏ Δ ⊢ A ⟩
 lg→dhs = h→dhs ∘ lg→h
 
-lg→dh₀ : ∀ {x A Γ Λ} → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩ → DH⟨ Γ ⁏ ⌀ ⊢ A ⟩
+lg→dh₀ : ∀ {x A Γ Λ} → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩ → DH⟨ Γ ⁏ ∅ ⊢ A ⟩
 lg→dh₀ = h→dh₀ ∘ lg→h
 
 lg→dh : ∀ {x A Γ Δ Λ} → LG⟨ Γ ⧺ (□⋆ Δ) ⁏ Λ ⊢ A ◎ x ⟩ → DH⟨ Γ ⁏ Δ ⊢ A ⟩
 lg→dh = h→dh ∘ lg→h
 
-lg→dg₀ : ∀ {x A Γ Λ} → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩ → DG⟨ Γ ⁏ ⌀ ⊢ A ⟩
+lg→dg₀ : ∀ {x A Γ Λ} → LG⟨ Γ ⁏ Λ ⊢ A ◎ x ⟩ → DG⟨ Γ ⁏ ∅ ⊢ A ⟩
 lg→dg₀ = h→dg₀ ∘ lg→h
 
 lg→dg : ∀ {x A Γ Δ Λ} → LG⟨ Γ ⧺ (□⋆ Δ) ⁏ Λ ⊢ A ◎ x ⟩ → DG⟨ Γ ⁏ Δ ⊢ A ⟩

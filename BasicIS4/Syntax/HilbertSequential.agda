@@ -10,13 +10,13 @@ open import BasicIS4.Syntax.Common public
 
 infix 3 _⊦⊢_
 data _⊦⊢_ (Γ : Cx Ty) : Cx Ty → Set where
-  nil   : Γ ⊦⊢ ⌀
+  nil   : Γ ⊦⊢ ∅
   var   : ∀ {Ξ A}     → A ∈ Γ → Γ ⊦⊢ Ξ → Γ ⊦⊢ Ξ , A
   mp    : ∀ {Ξ A B}   → A ▻ B ∈ Ξ → A ∈ Ξ → Γ ⊦⊢ Ξ → Γ ⊦⊢ Ξ , B
   ci    : ∀ {Ξ A}     → Γ ⊦⊢ Ξ → Γ ⊦⊢ Ξ , A ▻ A
   ck    : ∀ {Ξ A B}   → Γ ⊦⊢ Ξ → Γ ⊦⊢ Ξ , A ▻ B ▻ A
   cs    : ∀ {Ξ A B C} → Γ ⊦⊢ Ξ → Γ ⊦⊢ Ξ , (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
-  nec   : ∀ {Ξ Ξ′ A}  → ⌀ ⊦⊢ Ξ′ , A → Γ ⊦⊢ Ξ → Γ ⊦⊢ Ξ , □ A
+  nec   : ∀ {Ξ Ξ′ A}  → ∅ ⊦⊢ Ξ′ , A → Γ ⊦⊢ Ξ → Γ ⊦⊢ Ξ , □ A
   cdist : ∀ {Ξ A B}   → Γ ⊦⊢ Ξ → Γ ⊦⊢ Ξ , □ (A ▻ B) ▻ □ A ▻ □ B
   cup   : ∀ {Ξ A}     → Γ ⊦⊢ Ξ → Γ ⊦⊢ Ξ , □ A ▻ □ □ A
   cdown : ∀ {Ξ A}     → Γ ⊦⊢ Ξ → Γ ⊦⊢ Ξ , □ A ▻ A
@@ -78,5 +78,5 @@ app {A} {B} (Ξ , ts) (Ξ′ , us) = Ξ″ , vs
   where Ξ″ = (Ξ′ , A) ⧺ (Ξ , A ▻ B)
         vs = mp top (mono∈ (weak⊆⧺ₗ (Ξ , A ▻ B)) top) (us ⧺⊦ ts)
 
-box : ∀ {A Γ} → ⌀ ⊢ A → Γ ⊢ □ A
-box (Ξ , ts) = ⌀ , nec ts nil
+box : ∀ {A Γ} → ∅ ⊢ A → Γ ⊢ □ A
+box (Ξ , ts) = ∅ , nec ts nil

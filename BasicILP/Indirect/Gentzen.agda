@@ -33,7 +33,7 @@ mutual
 
   infix 3 _⊢⋆_
   _⊢⋆_ : Cx (Ty Tm) → Cx (Ty Tm) → Set
-  Γ ⊢⋆ ⌀     = 𝟙
+  Γ ⊢⋆ ∅     = 𝟙
   Γ ⊢⋆ Ξ , A = Γ ⊢⋆ Ξ × Γ ⊢ A
 
   [_] : ∀ {A Γ} → Γ ⊢ A → Tm
@@ -48,7 +48,7 @@ mutual
   [ tt ]            = TT
 
   [_]⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Cx Tm
-  [_]⋆ {⌀}     ∙        = ⌀
+  [_]⋆ {∅}     ∙        = ∅
   [_]⋆ {Ξ , A} (ts , t) = [ ts ]⋆ , [ t ]
 
 
@@ -67,7 +67,7 @@ mutual
   mono⊢ η tt              = tt
 
   mono⊢⋆ : ∀ {Ξ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ Ξ → Γ′ ⊢⋆ Ξ
-  mono⊢⋆ {⌀}     η ∙        = ∙
+  mono⊢⋆ {∅}     η ∙        = ∙
   mono⊢⋆ {Ξ , A} η (ts , t) = mono⊢⋆ η ts , mono⊢ η t
 
 
@@ -109,25 +109,25 @@ CUT : Tm → Tm → Tm
 CUT T U = APP (LAM U) T
 
 MULTICUT : Cx Tm → Tm → Tm
-MULTICUT ⌀        U = U
+MULTICUT ∅        U = U
 MULTICUT (TS , T) U = APP (MULTICUT TS (LAM U)) T
 
 cut : ∀ {A B Γ} → Γ ⊢ A → Γ , A ⊢ B → Γ ⊢ B
 cut t u = app (lam u) t
 
 multicut : ∀ {Ξ A Γ} → Γ ⊢⋆ Ξ → Ξ ⊢ A → Γ ⊢ A
-multicut {⌀}     ∙        u = mono⊢ bot⊆ u
+multicut {∅}     ∙        u = mono⊢ bot⊆ u
 multicut {Ξ , B} (ts , t) u = app (multicut ts (lam u)) t
 
 
 -- Reflexivity and transitivity.
 
 refl⊢⋆ : ∀ {Γ} → Γ ⊢⋆ Γ
-refl⊢⋆ {⌀}     = ∙
+refl⊢⋆ {∅}     = ∙
 refl⊢⋆ {Γ , A} = mono⊢⋆ weak⊆ refl⊢⋆ , v₀
 
 trans⊢⋆ : ∀ {Γ″ Γ′ Γ} → Γ ⊢⋆ Γ′ → Γ′ ⊢⋆ Γ″ → Γ ⊢⋆ Γ″
-trans⊢⋆ {⌀}      ts ∙        = ∙
+trans⊢⋆ {∅}      ts ∙        = ∙
 trans⊢⋆ {Γ″ , A} ts (us , u) = trans⊢⋆ ts us , multicut ts u
 
 
@@ -179,16 +179,16 @@ comp t u = det (app (app ccomp (lam t)) (lam u))
 -- Useful theorems in functional form.
 
 DIST : Tm → Tm → Tm
-DIST T U = MULTIBOX ((⌀ , T) , U) (APP (DOWN V₁) (DOWN V₀))
+DIST T U = MULTIBOX ((∅ , T) , U) (APP (DOWN V₁) (DOWN V₀))
 
 UP : Tm → Tm
-UP T = MULTIBOX (⌀ , T) V₀
+UP T = MULTIBOX (∅ , T) V₀
 
 DISTUP : Tm → Tm → Tm
 DISTUP T U = DIST T (UP U)
 
 BOX : Tm → Tm
-BOX T = MULTIBOX ⌀ T
+BOX T = MULTIBOX ∅ T
 
 UNBOX : Tm → Tm → Tm
 UNBOX T U = APP (LAM U) T
@@ -209,7 +209,7 @@ distup : ∀ {A B T U Γ}
 distup t u = dist t (up u)
 
 box : ∀ {A Γ}
-      → (t : ⌀ ⊢ A)
+      → (t : ∅ ⊢ A)
       → Γ ⊢ [ t ] ⦂ A
 box t = multibox ∙ t
 
@@ -313,5 +313,5 @@ mutual
   [ i ≔ s ] tt            = tt
 
   [_≔_]⋆_ : ∀ {Ξ A Γ} → (i : A ∈ Γ) → Γ ∖ i ⊢ A → Γ ⊢⋆ Ξ → Γ ∖ i ⊢⋆ Ξ
-  [_≔_]⋆_ {⌀}     i s ∙        = ∙
+  [_≔_]⋆_ {∅}     i s ∙        = ∙
   [_≔_]⋆_ {Ξ , B} i s (ts , t) = [ i ≔ s ]⋆ ts , [ i ≔ s ] t

@@ -40,7 +40,7 @@ module ImplicitSyntax
 
     infix 3 _⊩⋆_
     _⊩⋆_ : Cx Ty → Cx Ty → Set
-    Γ ⊩⋆ ⌀     = 𝟙
+    Γ ⊩⋆ ∅     = 𝟙
     Γ ⊩⋆ Ξ , A = Γ ⊩⋆ Ξ × Γ ⊩ A
 
 
@@ -55,7 +55,7 @@ module ImplicitSyntax
     mono⊩ {⊤}    η s = ∙
 
     mono⊩⋆ : ∀ {Ξ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊩⋆ Ξ → Γ′ ⊩⋆ Ξ
-    mono⊩⋆ {⌀}     η ∙        = ∙
+    mono⊩⋆ {∅}     η ∙        = ∙
     mono⊩⋆ {Ξ , A} η (ts , t) = mono⊩⋆ {Ξ} η ts , mono⊩ {A} η t
 
 

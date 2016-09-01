@@ -60,12 +60,12 @@ module NaturalSoundness where
 -- Using satisfaction with a syntactic component, inspired by Coquand and Dybjer.
 
 module CoquandDybjerSoundness where
-  open CoquandDybjerSemantics (⌀ ⊢_) public
+  open CoquandDybjerSemantics (∅ ⊢_) public
 
 
   -- Completeness with respect to a particular model.
 
-  reify : ∀ {{_ : Model}} {A} → ⊩ A → ⌀ ⊢ A
+  reify : ∀ {{_ : Model}} {A} → ⊩ A → ∅ ⊢ A
   reify {α P}   (t , s) = t
   reify {A ▻ B} (t , f) = t
   reify {A ∧ B} (a , b) = pair (reify {A} a) (reify {B} b)

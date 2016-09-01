@@ -28,7 +28,7 @@ record Model : Set₁ where
 
   infix 3 [⊢]⋆_
   [⊢]⋆_ : Cx Ty → Set
-  [⊢]⋆ ⌀     = 𝟙
+  [⊢]⋆ ∅     = 𝟙
   [⊢]⋆ Ξ , A = [⊢]⋆ Ξ × [⊢] A
 
 open Model {{…}} public
@@ -46,7 +46,7 @@ module _ {{_ : Model}} where
 
   infix 3 ⊩⋆_
   ⊩⋆_ : Cx Ty → Set
-  ⊩⋆ ⌀     = 𝟙
+  ⊩⋆ ∅     = 𝟙
   ⊩⋆ Ξ , A = ⊩⋆ Ξ × ⊩ A
 
 
@@ -67,7 +67,7 @@ module _ {{_ : Model}} where
   reifyʳ {⊤}    s = [tt]
 
   reifyʳ⋆ : ∀ {Ξ} → ⊩⋆ Ξ → [⊢]⋆ Ξ
-  reifyʳ⋆ {⌀}     ∙        = ∙
+  reifyʳ⋆ {∅}     ∙        = ∙
   reifyʳ⋆ {Ξ , A} (ts , t) = reifyʳ⋆ ts , reifyʳ t
 
 
@@ -75,7 +75,7 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   [multicut] : ∀ {Ξ A} → [⊢]⋆ Ξ → [⊢] Ξ ▻⋯▻ A → [⊢] A
-  [multicut] {⌀}     ∙        u = u
+  [multicut] {∅}     ∙        u = u
   [multicut] {Ξ , B} (ts , t) u = [app] ([multicut] ts u) t
 
 

@@ -43,7 +43,7 @@ mutual
   hn→gᵀ HN.⊤      = G.⊤
 
   hn→gᵀ⋆ : Cx HN.Ty → Cx G.Ty
-  hn→gᵀ⋆ ⌀       = ⌀
+  hn→gᵀ⋆ ∅       = ∅
   hn→gᵀ⋆ (Γ , A) = hn→gᵀ⋆ Γ , hn→gᵀ A
 
   hn→gⁱ : ∀ {A Γ} → A ∈ Γ → hn→gᵀ A ∈ hn→gᵀ⋆ Γ
@@ -83,7 +83,7 @@ mutual
   g→hnᵀ G.⊤      = HN.⊤
 
   g→hnᵀ⋆ : Cx G.Ty → Cx HN.Ty
-  g→hnᵀ⋆ ⌀       = ⌀
+  g→hnᵀ⋆ ∅       = ∅
   g→hnᵀ⋆ (Γ , A) = g→hnᵀ⋆ Γ , g→hnᵀ A
 
   g→hnⁱ : ∀ {A Γ} → A ∈ Γ → g→hnᵀ A ∈ g→hnᵀ⋆ Γ
@@ -102,7 +102,7 @@ mutual
   g→hn G.tt              = HN.tt
 
   g→hn⋆ : ∀ {Ξ Γ} → G⟨ Γ ⊢⋆ Ξ ⟩ → HN⟨ g→hnᵀ⋆ Γ ⊢⋆ g→hnᵀ⋆ Ξ ⟩
-  g→hn⋆ {⌀}     ∙        = ∙
+  g→hn⋆ {∅}     ∙        = ∙
   g→hn⋆ {Ξ , A} (ts , t) = g→hn⋆ ts , g→hn t
 
 -- g→hs : ∀ {A Γ} → G⟨ Γ ⊢ A ⟩ → HS⟨ Γ ⊢ A ⟩

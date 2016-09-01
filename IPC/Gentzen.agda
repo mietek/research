@@ -21,7 +21,7 @@ data _⊢_ (Γ : Cx Ty) : Ty → Set where
 
 infix 3 _⊢⋆_
 _⊢⋆_ : Cx Ty → Cx Ty → Set
-Γ ⊢⋆ ⌀     = 𝟙
+Γ ⊢⋆ ∅     = 𝟙
 Γ ⊢⋆ Ξ , A = Γ ⊢⋆ Ξ × Γ ⊢ A
 
 
@@ -41,7 +41,7 @@ mono⊢ η (inr t)      = inr (mono⊢ η t)
 mono⊢ η (case t u v) = case (mono⊢ η t) (mono⊢ (keep η) u) (mono⊢ (keep η) v)
 
 mono⊢⋆ : ∀ {Γ″ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ Γ″ → Γ′ ⊢⋆ Γ″
-mono⊢⋆ {⌀}      η ∙        = ∙
+mono⊢⋆ {∅}      η ∙        = ∙
 mono⊢⋆ {Γ″ , A} η (ts , t) = mono⊢⋆ η ts , mono⊢ η t
 
 
@@ -71,18 +71,18 @@ cut : ∀ {A B Γ} → Γ ⊢ A → Γ , A ⊢ B → Γ ⊢ B
 cut t u = app (lam u) t
 
 multicut : ∀ {Ξ A Γ} → Γ ⊢⋆ Ξ → Ξ ⊢ A → Γ ⊢ A
-multicut {⌀}     ∙        u = mono⊢ bot⊆ u
+multicut {∅}     ∙        u = mono⊢ bot⊆ u
 multicut {Ξ , B} (ts , t) u = app (multicut ts (lam u)) t
 
 
 -- Reflexivity and transitivity.
 
 refl⊢⋆ : ∀ {Γ} → Γ ⊢⋆ Γ
-refl⊢⋆ {⌀}     = ∙
+refl⊢⋆ {∅}     = ∙
 refl⊢⋆ {Γ , A} = mono⊢⋆ weak⊆ refl⊢⋆ , v₀
 
 trans⊢⋆ : ∀ {Γ″ Γ′ Γ} → Γ ⊢⋆ Γ′ → Γ′ ⊢⋆ Γ″ → Γ ⊢⋆ Γ″
-trans⊢⋆ {⌀}      ts ∙        = ∙
+trans⊢⋆ {∅}      ts ∙        = ∙
 trans⊢⋆ {Γ″ , A} ts (us , u) = trans⊢⋆ ts us , multicut ts u
 
 
@@ -170,7 +170,7 @@ concat Γ′ t u = app (mono⊢ (weak⊆⧺ₗ Γ′) (lam t)) (mono⊢ weak⊆�
 [ i ≔ s ] case t u v = case ([ i ≔ s ] t) ([ pop i ≔ mono⊢ weak⊆ s ] u) ([ pop i ≔ mono⊢ weak⊆ s ] v)
 
 [_≔_]⋆_ : ∀ {Ξ A Γ} → (i : A ∈ Γ) → Γ ∖ i ⊢ A → Γ ⊢⋆ Ξ → Γ ∖ i ⊢⋆ Ξ
-[_≔_]⋆_ {⌀}     i s ∙        = ∙
+[_≔_]⋆_ {∅}     i s ∙        = ∙
 [_≔_]⋆_ {Ξ , B} i s (ts , t) = [ i ≔ s ]⋆ ts , [ i ≔ s ] t
 
 

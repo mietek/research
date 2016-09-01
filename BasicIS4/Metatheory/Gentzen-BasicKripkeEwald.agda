@@ -21,13 +21,13 @@ mutual
   -- TODO: What is this?
   thing : ∀ {{_ : Model}} {Δ Γ} {w : World}
           → Γ ⊢⋆ □⋆ Δ → w ⊩⋆ Γ → ∀ {w′} → w ≤ w′ → ∀ {v′} → w′ R v′ → v′ ⊩⋆ □⋆ Δ
-  thing {⌀}     ∙        γ ξ ζ = ∙
+  thing {∅}     ∙        γ ξ ζ = ∙
   thing {Δ , B} (ts , t) γ ξ ζ = thing ts γ ξ ζ , λ ξ′ ζ′ →
                                  let _ , (ξ″ , ζ″) = R⨾≤→≤⨾R (_ , (ζ , ξ′))
                                  in  eval t γ (trans≤ ξ ξ″) (transR ζ″ ζ′)
 
 eval⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊨⋆ Ξ
-eval⋆ {⌀}     ∙        γ = ∙
+eval⋆ {∅}     ∙        γ = ∙
 eval⋆ {Ξ , A} (ts , t) γ = eval⋆ ts γ , eval t γ
 
 

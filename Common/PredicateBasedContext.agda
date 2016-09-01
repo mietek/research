@@ -17,17 +17,17 @@ module _ {U : Set} where
   lookup : ∀ {Γ P} → All P Γ → (∀ {A} → A ∈ Γ → P A)
   -- Alternatively:
   -- lookup : ∀ {Γ P} → All P Γ → (_∈ Γ) ⊆ᴾ P
-  lookup ⌀       ()
+  lookup ∅       ()
   lookup (γ , a) (top refl) = a
   lookup (γ , a) (pop i)    = lookup γ i
 
   tabulate : ∀ {Γ P} → (∀ {A} → A ∈ Γ → P A) → All P Γ
   -- Alternatively:
   -- tabulate : ∀ {Γ P} → (_∈ Γ) ⊆ᴾ P → All P Γ
-  tabulate {⌀}     f = ⌀
+  tabulate {∅}     f = ∅
   tabulate {Γ , A} f = tabulate (f ∘ pop) , f (top refl)
 
-  bot∈ : ∀ {A} → A ∉ ⌀
+  bot∈ : ∀ {A} → A ∉ ∅
   bot∈ ()
 
   [_]ᴵˣ : ∀ {A Γ} → A ∈ Γ → ℕ
@@ -81,7 +81,7 @@ module _ {U : Set} where
   weak⊆ : ∀ {A Γ} → Γ ⊆ Γ , A
   weak⊆ = pop
 
-  bot⊆ : ∀ {Γ} → ⌀  ⊆ Γ
+  bot⊆ : ∀ {Γ} → ∅  ⊆ Γ
   bot⊆ ()
 
 
@@ -127,22 +127,22 @@ module _ {U : Set} where
 
 module _ {U : Set} where
   _⧺_ : Cx U → Cx U → Cx U
-  Γ ⧺ ⌀        = Γ
+  Γ ⧺ ∅        = Γ
   Γ ⧺ (Γ′ , A) = (Γ ⧺ Γ′) , A
 
-  id⧺ₗ : ∀ {Γ} → Γ ⧺ ⌀ ≡ Γ
+  id⧺ₗ : ∀ {Γ} → Γ ⧺ ∅ ≡ Γ
   id⧺ₗ = refl
 
-  id⧺ᵣ : ∀ {Γ} → ⌀  ⧺ Γ ≡ Γ
-  id⧺ᵣ {⌀}     = refl
+  id⧺ᵣ : ∀ {Γ} → ∅  ⧺ Γ ≡ Γ
+  id⧺ᵣ {∅}     = refl
   id⧺ᵣ {Γ , A} = cong² _,_ id⧺ᵣ refl
 
   weak⊆⧺ₗ : ∀ {Γ} Γ′ → Γ ⊆ Γ ⧺ Γ′
-  weak⊆⧺ₗ ⌀        = refl⊆
+  weak⊆⧺ₗ ∅        = refl⊆
   weak⊆⧺ₗ (Γ′ , A) = skip⊆ (weak⊆⧺ₗ Γ′)
 
   weak⊆⧺ᵣ : ∀ {Γ Γ′} → Γ′ ⊆ Γ ⧺ Γ′
-  weak⊆⧺ᵣ {Γ} {⌀}      = bot⊆
+  weak⊆⧺ᵣ {Γ} {∅}      = bot⊆
   weak⊆⧺ᵣ {Γ} {Γ′ , A} = keep⊆ weak⊆⧺ᵣ
 
 
@@ -150,7 +150,7 @@ module _ {U : Set} where
 
 module _ {U : Set} where
   _-_ : ∀ {A} → (Γ : Cx U) → A ∈ Γ → Cx U
-  ⌀       - ()
+  ∅       - ()
   (Γ , A) - top refl = Γ
   (Γ , B) - pop i    = (Γ - i) , B
 

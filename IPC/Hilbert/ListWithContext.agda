@@ -7,7 +7,7 @@ open import IPC public
 
 infix 3 _⊢×_
 data _⊢×_ (Γ : Cx Ty) : Cx Ty → Set where
-  nil   : Γ ⊢× ⌀
+  nil   : Γ ⊢× ∅
   var   : ∀ {Ξ A}     → A ∈ Γ → Γ ⊢× Ξ → Γ ⊢× Ξ , A
   mp    : ∀ {Ξ A B}   → A ▻ B ∈ Ξ → A ∈ Ξ → Γ ⊢× Ξ → Γ ⊢× Ξ , B
   ci    : ∀ {Ξ A}     → Γ ⊢× Ξ → Γ ⊢× Ξ , A ▻ A

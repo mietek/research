@@ -28,7 +28,7 @@ mutual
     ci    : ∀ {A}       → Γ ⊢ A ▻ A
     ck    : ∀ {A B}     → Γ ⊢ A ▻ B ▻ A
     cs    : ∀ {A B C}   → Γ ⊢ (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
-    box   : ∀ {A}       → (t : ⌀ ⊢ A) → Γ ⊢ [ t ] ⦂ A
+    box   : ∀ {A}       → (t : ∅ ⊢ A) → Γ ⊢ [ t ] ⦂ A
     cdist : ∀ {A B T U} → Γ ⊢ T ⦂ (A ▻ B) ▻ U ⦂ A ▻ APP T U ⦂ B
     cup   : ∀ {A T}     → Γ ⊢ T ⦂ A ▻ BOX T ⦂ T ⦂ A
     cdown : ∀ {A T}     → Γ ⊢ T ⦂ A ▻ A
@@ -54,7 +54,7 @@ mutual
 
 infix 3 _⊢⋆_
 _⊢⋆_ : Cx (Ty Tm) → Cx (Ty Tm) → Set
-Γ ⊢⋆ ⌀     = 𝟙
+Γ ⊢⋆ ∅     = 𝟙
 Γ ⊢⋆ Ξ , A = Γ ⊢⋆ Ξ × Γ ⊢ A
 
 
@@ -76,7 +76,7 @@ mono⊢ η csnd      = csnd
 mono⊢ η tt        = tt
 
 mono⊢⋆ : ∀ {Ξ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ Ξ → Γ′ ⊢⋆ Ξ
-mono⊢⋆ {⌀}     η ∙        = ∙
+mono⊢⋆ {∅}     η ∙        = ∙
 mono⊢⋆ {Ξ , A} η (ts , t) = mono⊢⋆ η ts , mono⊢ η t
 
 
@@ -151,25 +151,25 @@ CUT : Tm → Tm → Tm
 CUT T U = APP (LAM U) T
 
 MULTICUT : Cx Tm → Tm → Tm
-MULTICUT ⌀        U = U
+MULTICUT ∅        U = U
 MULTICUT (TS , T) U = APP (MULTICUT TS (LAM U)) T
 
 cut : ∀ {A B Γ} → Γ ⊢ A → Γ , A ⊢ B → Γ ⊢ B
 cut t u = app (lam u) t
 
 multicut : ∀ {Ξ A Γ} → Γ ⊢⋆ Ξ → Ξ ⊢ A → Γ ⊢ A
-multicut {⌀}     ∙        u = mono⊢ bot⊆ u
+multicut {∅}     ∙        u = mono⊢ bot⊆ u
 multicut {Ξ , B} (ts , t) u = app (multicut ts (lam u)) t
 
 
 -- Reflexivity and transitivity.
 
 refl⊢⋆ : ∀ {Γ} → Γ ⊢⋆ Γ
-refl⊢⋆ {⌀}     = ∙
+refl⊢⋆ {∅}     = ∙
 refl⊢⋆ {Γ , A} = mono⊢⋆ weak⊆ refl⊢⋆ , v₀
 
 trans⊢⋆ : ∀ {Γ″ Γ′ Γ} → Γ ⊢⋆ Γ′ → Γ′ ⊢⋆ Γ″ → Γ ⊢⋆ Γ″
-trans⊢⋆ {⌀}      ts ∙        = ∙
+trans⊢⋆ {∅}      ts ∙        = ∙
 trans⊢⋆ {Γ″ , A} ts (us , u) = trans⊢⋆ ts us , multicut ts u
 
 
@@ -236,7 +236,7 @@ UNBOX : Tm → Tm → Tm
 UNBOX T U = APP (LAM U) T
 
 MULTIBOX : Cx Tm → Tm → Tm
-MULTIBOX ⌀        U = BOX U
+MULTIBOX ∅        U = BOX U
 MULTIBOX (TS , T) U = DISTUP (MULTIBOX TS (LAM U)) T
 
 dist : ∀ {A B T U Γ} → Γ ⊢ T ⦂ (A ▻ B) → Γ ⊢ U ⦂ A → Γ ⊢ (APP T U) ⦂ B
@@ -270,7 +270,7 @@ distup′ t u = dist t (up u)
 -- multibox : ∀ {n A Γ} {SS : VCx Tm n} {Ξ : VCx (Ty Tm) n}
 --            → Γ ⊢⋆ SS ⦂⋆ Ξ → (u : SS ⦂⋆ Ξ ⊢ A)
 --            → Γ ⊢ [ u ] ⦂ A
--- multibox {SS = ⌀}      {⌀}     ∙        u = box u
+-- multibox {SS = ∅}      {∅}     ∙        u = box u
 -- multibox {SS = SS , S} {Ξ , B} (ts , t) u = {!distup (multibox ts (lam u)) t!}
 
 -- FIXME ↑ FIXME ↑ FIXME -----------------------------------------------------

@@ -16,7 +16,7 @@ eval (snd t)           γ = π₂ (eval t γ)
 eval tt                γ = ∙
 
 eval⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊨⋆ Ξ
-eval⋆ {⌀}     ∙        γ = ∙
+eval⋆ {∅}     ∙        γ = ∙
 eval⋆ {Ξ , A} (ts , t) γ = eval⋆ ts γ , eval t γ
 
 
@@ -50,18 +50,18 @@ mutual
   reifyᶜ {⊤}    s = ttⁿᶠ
 
 reflectᶜ⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ⁿᵉ Ξ → Γ ⊩⋆ Ξ
-reflectᶜ⋆ {⌀}     ∙        = ∙
+reflectᶜ⋆ {∅}     ∙        = ∙
 reflectᶜ⋆ {Ξ , A} (ts , t) = reflectᶜ⋆ ts , reflectᶜ t
 
 reifyᶜ⋆ : ∀ {Ξ Γ} → Γ ⊩⋆ Ξ → Γ ⊢⋆ⁿᶠ Ξ
-reifyᶜ⋆ {⌀}     ∙        = ∙
+reifyᶜ⋆ {∅}     ∙        = ∙
 reifyᶜ⋆ {Ξ , A} (ts , t) = reifyᶜ⋆ ts , reifyᶜ t
 
 
 -- Reflexivity and transitivity.
 
 refl⊢⋆ⁿᵉ : ∀ {Γ} → Γ ⊢⋆ⁿᵉ Γ
-refl⊢⋆ⁿᵉ {⌀}     = ∙
+refl⊢⋆ⁿᵉ {∅}     = ∙
 refl⊢⋆ⁿᵉ {Γ , A} = mono⊢⋆ⁿᵉ weak⊆ refl⊢⋆ⁿᵉ , varⁿᵉ top
 
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ

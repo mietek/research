@@ -22,7 +22,7 @@ data ⊢_ : Ty → Set where
 
 infix 3 ⊢⋆_
 ⊢⋆_ : Cx Ty → Set
-⊢⋆ ⌀     = 𝟙
+⊢⋆ ∅     = 𝟙
 ⊢⋆ Ξ , A = ⊢⋆ Ξ × ⊢ A
 
 
@@ -32,7 +32,7 @@ cut : ∀ {A B} → ⊢ A → ⊢ A ▻ B → ⊢ B
 cut t u = app u t
 
 multicut : ∀ {Ξ A} → ⊢⋆ Ξ → ⊢ Ξ ▻⋯▻ A → ⊢ A
-multicut {⌀}     ∙        u = u
+multicut {∅}     ∙        u = u
 multicut {Ξ , B} (ts , t) u = app (multicut ts u) t
 
 

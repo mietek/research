@@ -51,11 +51,11 @@ module IlikBasicCompleteness where
                                           (λ b → inr (reify {B} (λ η′ k → b η′ k))))
 
   reflect⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊩⋆ Ξ
-  reflect⋆ {⌀}     ∙        = ∙
+  reflect⋆ {∅}     ∙        = ∙
   reflect⋆ {Ξ , A} (ts , t) = reflect⋆ ts , reflect t
 
   reify⋆ : ∀ {Ξ Γ} → Γ ⊩⋆ Ξ → Γ ⊢⋆ Ξ
-  reify⋆ {⌀}     ∙        = ∙
+  reify⋆ {∅}     ∙        = ∙
   reify⋆ {Ξ , A} (ts , t) = reify⋆ ts , reify t
 
 

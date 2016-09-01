@@ -41,7 +41,7 @@ module ImplicitSyntax
 
     infix 3 _⊩⋆_
     _⊩⋆_ : Cx² Ty → Cx Ty → Set
-    Π ⊩⋆ ⌀     = 𝟙
+    Π ⊩⋆ ∅     = 𝟙
     Π ⊩⋆ Ξ , A = Π ⊩⋆ Ξ × Π ⊩ A
 
 
@@ -56,7 +56,7 @@ module ImplicitSyntax
     mono²⊩ {⊤}    ψ s = ∙
 
     mono²⊩⋆ : ∀ {Ξ Π Π′} → Π ⊆² Π′ → Π ⊩⋆ Ξ → Π′ ⊩⋆ Ξ
-    mono²⊩⋆ {⌀}     ψ ∙        = ∙
+    mono²⊩⋆ {∅}     ψ ∙        = ∙
     mono²⊩⋆ {Ξ , A} ψ (ts , t) = mono²⊩⋆ ψ ts , mono²⊩ {A} ψ t
 
 

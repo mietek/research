@@ -54,7 +54,7 @@ hs→hnᵀʸ (A ∧ B) = hs→hnᵀʸ A ∧ hs→hnᵀʸ B
 hs→hnᵀʸ ⊤      = ⊤
 
 hs→hnᵀʸ⋆ : Cx (Ty HS.Tm) → Cx (Ty HN.Tm)
-hs→hnᵀʸ⋆ ⌀       = ⌀
+hs→hnᵀʸ⋆ ∅       = ∅
 hs→hnᵀʸ⋆ (Γ , A) = hs→hnᵀʸ⋆ Γ , hs→hnᵀʸ A
 
 hs→hnᴵˣ : ∀ {A Γ} → A ∈ Γ → hs→hnᵀʸ A ∈ hs→hnᵀʸ⋆ Γ
@@ -118,7 +118,7 @@ hn→hsᵀʸ (A ∧ B) = hn→hsᵀʸ A ∧ hn→hsᵀʸ B
 hn→hsᵀʸ ⊤      = ⊤
 
 hn→hsᵀʸ⋆ : Cx (Ty HN.Tm) → Cx (Ty HS.Tm)
-hn→hsᵀʸ⋆ ⌀       = ⌀
+hn→hsᵀʸ⋆ ∅       = ∅
 hn→hsᵀʸ⋆ (Γ , A) = hn→hsᵀʸ⋆ Γ , hn→hsᵀʸ A
 
 hn→hsᴵˣ : ∀ {A Γ} → A ∈ Γ → hn→hsᵀʸ A ∈ hn→hsᵀʸ⋆ Γ
@@ -126,19 +126,19 @@ hn→hsᴵˣ top     = top
 hn→hsᴵˣ (pop i) = pop (hn→hsᴵˣ i)
 
 hn→hs : ∀ {A Γ} → HN⟨ Γ ⊢ A ⟩ → HS⟨ hn→hsᵀʸ⋆ Γ ⊢ hn→hsᵀʸ A ⟩
-hn→hs (HN.var i)   = ⌀ , HS.var (hn→hsᴵˣ i) HS.nil
+hn→hs (HN.var i)   = ∅ , HS.var (hn→hsᴵˣ i) HS.nil
 hn→hs (HN.app t u) = HS.app (hn→hs t) (hn→hs u)
-hn→hs HN.ci        = ⌀ , HS.ci HS.nil
-hn→hs HN.ck        = ⌀ , HS.ck HS.nil
-hn→hs HN.cs        = ⌀ , HS.cs HS.nil
+hn→hs HN.ci        = ∅ , HS.ci HS.nil
+hn→hs HN.ck        = ∅ , HS.ck HS.nil
+hn→hs HN.cs        = ∅ , HS.cs HS.nil
 hn→hs (HN.box t)   = {!HS.box (hn→hs t)!}
-hn→hs HN.cdist     = ⌀ , HS.cdist HS.nil
-hn→hs HN.cup       = ⌀ , HS.cup HS.nil
-hn→hs HN.cdown     = ⌀ , HS.cdown HS.nil
-hn→hs HN.cpair     = ⌀ , HS.cpair HS.nil
-hn→hs HN.cfst      = ⌀ , HS.cfst HS.nil
-hn→hs HN.csnd      = ⌀ , HS.csnd HS.nil
-hn→hs HN.tt        = ⌀ , HS.tt HS.nil
+hn→hs HN.cdist     = ∅ , HS.cdist HS.nil
+hn→hs HN.cup       = ∅ , HS.cup HS.nil
+hn→hs HN.cdown     = ∅ , HS.cdown HS.nil
+hn→hs HN.cpair     = ∅ , HS.cpair HS.nil
+hn→hs HN.cfst      = ∅ , HS.cfst HS.nil
+hn→hs HN.csnd      = ∅ , HS.csnd HS.nil
+hn→hs HN.tt        = ∅ , HS.tt HS.nil
 
 
 -- Deduction theorem for sequential Hilbert-style.
@@ -196,7 +196,7 @@ hn→gᵀʸ (A ∧ B) = hn→gᵀʸ A ∧ hn→gᵀʸ B
 hn→gᵀʸ ⊤      = ⊤
 
 hn→gᵀʸ⋆ : Cx (Ty HN.Tm) → Cx (Ty G.Tm)
-hn→gᵀʸ⋆ ⌀       = ⌀
+hn→gᵀʸ⋆ ∅       = ∅
 hn→gᵀʸ⋆ (Γ , A) = hn→gᵀʸ⋆ Γ , hn→gᵀʸ A
 
 hn→gᴵˣ : ∀ {A Γ} → A ∈ Γ → hn→gᵀʸ A ∈ hn→gᵀʸ⋆ Γ
@@ -246,7 +246,7 @@ mutual
   g→hnᵀᵐ G.TT              = HN.TT
 
   g→hnᵀᵐ⋆ : Cx G.Tm → Cx HN.Tm
-  g→hnᵀᵐ⋆ ⌀        = ⌀
+  g→hnᵀᵐ⋆ ∅        = ∅
   g→hnᵀᵐ⋆ (TS , T) = g→hnᵀᵐ⋆ TS , g→hnᵀᵐ T
 
 g→hnᵀʸ : Ty G.Tm → Ty HN.Tm
@@ -257,7 +257,7 @@ g→hnᵀʸ (A ∧ B) = g→hnᵀʸ A ∧ g→hnᵀʸ B
 g→hnᵀʸ ⊤      = ⊤
 
 g→hnᵀʸ⋆ : Cx (Ty G.Tm) → Cx (Ty HN.Tm)
-g→hnᵀʸ⋆ ⌀       = ⌀
+g→hnᵀʸ⋆ ∅       = ∅
 g→hnᵀʸ⋆ (Γ , A) = g→hnᵀʸ⋆ Γ , g→hnᵀʸ A
 
 g→hnᴵˣ : ∀ {A Γ} → A ∈ Γ → g→hnᵀʸ A ∈ g→hnᵀʸ⋆ Γ
@@ -277,7 +277,7 @@ mutual
   g→hn G.tt              = HN.tt
 
   g→hn⋆ : ∀ {Ξ Γ} → G⟨ Γ ⊢⋆ Ξ ⟩ → HN⟨ g→hnᵀʸ⋆ Γ ⊢⋆ g→hnᵀʸ⋆ Ξ ⟩
-  g→hn⋆ {⌀}     ∙        = ∙
+  g→hn⋆ {∅}     ∙        = ∙
   g→hn⋆ {Ξ , A} (ts , t) = g→hn⋆ ts , g→hn t
 
 

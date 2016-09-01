@@ -7,7 +7,7 @@ open import BasicIS4.Semantics.TarskiClosedOvergluedHilbert public
 -- Internalisation of syntax as syntax representation in a particular model, for closed terms only.
 
 module _ {{_ : Model}} where
-  [_]₀ : ∀ {A} → ⌀ ⊢ A → [⊢] A
+  [_]₀ : ∀ {A} → ∅ ⊢ A → [⊢] A
   [ var () ]₀
   [ app t u ]₀ = [app] [ t ]₀ [ u ]₀
   [ ci ]₀      = [ci]
@@ -71,8 +71,8 @@ private
   instance
     canon : Model
     canon = record
-      { ⊩ᵅ_    = λ P → ⌀ ⊢ α P
-      ; [⊢]_   = ⌀ ⊢_
+      { ⊩ᵅ_    = λ P → ∅ ⊢ α P
+      ; [⊢]_   = ∅ ⊢_
       ; [app]   = app
       ; [ci]    = ci
       ; [ck]    = ck
@@ -90,13 +90,13 @@ private
 
 -- Completeness with respect to all models, or quotation, for closed terms only.
 
-quot₀ : ∀ {A} → ⌀ ⊨ A → ⌀ ⊢ A
+quot₀ : ∀ {A} → ∅ ⊨ A → ∅ ⊢ A
 quot₀ t = reifyʳ (t ∙)
 
 
 -- Normalisation by evaluation, for closed terms only.
 
-norm₀ : ∀ {A} → ⌀ ⊢ A → ⌀ ⊢ A
+norm₀ : ∀ {A} → ∅ ⊢ A → ∅ ⊢ A
 norm₀ = quot₀ ∘ eval
 
 

@@ -24,7 +24,7 @@ record Model : Set₁ where
     [ci]     : ∀ {A Γ}     → Γ [⊢] A ▻ A
     [ck]     : ∀ {A B Γ}   → Γ [⊢] A ▻ B ▻ A
     [cs]     : ∀ {A B C Γ} → Γ [⊢] (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
-    [box]    : ∀ {A Γ}     → ⌀ [⊢] A → Γ [⊢] □ A
+    [box]    : ∀ {A Γ}     → ∅ [⊢] A → Γ [⊢] □ A
     [cdist]  : ∀ {A B Γ}   → Γ [⊢] □ (A ▻ B) ▻ □ A ▻ □ B
     [cup]    : ∀ {A Γ}     → Γ [⊢] □ A ▻ □ □ A
     [cdown]  : ∀ {A Γ}     → Γ [⊢] □ A ▻ A
@@ -49,7 +49,7 @@ module _ {{_ : Model}} where
 
   infix 3 _⊩⋆_
   _⊩⋆_ : Cx Ty → Cx Ty → Set
-  Γ ⊩⋆ ⌀     = 𝟙
+  Γ ⊩⋆ ∅     = 𝟙
   Γ ⊩⋆ Ξ , A = Γ ⊩⋆ Ξ × Γ ⊩ A
 
 
@@ -64,7 +64,7 @@ module _ {{_ : Model}} where
   mono⊩ {⊤}    η s = ∙
 
   mono⊩⋆ : ∀ {Ξ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊩⋆ Ξ → Γ′ ⊩⋆ Ξ
-  mono⊩⋆ {⌀}     η ∙        = ∙
+  mono⊩⋆ {∅}     η ∙        = ∙
   mono⊩⋆ {Ξ , A} η (ts , t) = mono⊩⋆ {Ξ} η ts , mono⊩ {A} η t
 
 

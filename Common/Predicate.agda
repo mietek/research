@@ -3,7 +3,7 @@ module Common.Predicate where
 open import Common public
 
 open import Common.Context public
-  using (Cx ; VCx ; ⌀ ; _,_)
+  using (Cx ; VCx ; ∅ ; _,_)
 
 
 -- Predicates.
@@ -27,10 +27,10 @@ module _ {U : Set} where
 -- Empty set.
 
 module _ {U : Set} where
-  ⌀ᴾ : Pred U
-  ⌀ᴾ = K 𝟘
+  ∅ᴾ : Pred U
+  ∅ᴾ = K 𝟘
 
-  bot∈ᴾ : ∀ {A} → A ∉ᴾ ⌀ᴾ
+  bot∈ᴾ : ∀ {A} → A ∉ᴾ ∅ᴾ
   bot∈ᴾ = elim𝟘
 
 
@@ -61,7 +61,7 @@ module _ {U : Set} where
   trans⊆ᴾ : ∀ {P Q R} → P ⊆ᴾ Q → Q ⊆ᴾ R → P ⊆ᴾ R
   trans⊆ᴾ η η′ = η′ ∘ η
 
-  bot⊆ᴾ : ∀ {P} → ⌀ᴾ ⊆ᴾ P
+  bot⊆ᴾ : ∀ {P} → ∅ᴾ ⊆ᴾ P
   bot⊆ᴾ = elim𝟘
 
   top⊆ᴾ : ∀ {P} → P ⊆ᴾ Uᴾ
@@ -92,15 +92,15 @@ module _ {U : Set} where
 
 module _ {U : Set} where
   data All (P : Pred U) : Pred (Cx U) where
-    ⌀   : All P ⌀
+    ∅   : All P ∅
     _,_ : ∀ {A Γ} → All P Γ → P A → All P (Γ , A)
 
   fill : ∀ {Γ P} → (∀ A → P A) → All P Γ
-  fill {⌀}     f = ⌀
+  fill {∅}     f = ∅
   fill {Γ , A} f = fill f , f A
 
   mapAll : ∀ {P Q} → P ⊆ᴾ Q → All P ⊆ᴾ All Q
-  mapAll η ⌀       = ⌀
+  mapAll η ∅       = ∅
   mapAll η (γ , a) = mapAll η γ , η a
 
   lastAll : ∀ {A Γ P} → All P (Γ , A) → P A
@@ -110,7 +110,7 @@ module _ {U : Set} where
   initAll (γ , a) = γ
 
   all : ∀ {P} → (∀ A → Dec (P A)) → (∀ Γ → Dec (All P Γ))
-  all P? ⌀       = yes ⌀
+  all P? ∅       = yes ∅
   all P? (Γ , A) with P? A
   …             | yes a = mapDec (_, a) initAll (all P? Γ)
   …             | no ¬a = no (¬a ∘ lastAll)
@@ -136,7 +136,7 @@ module _ {U : Set} where
   initAny ¬a (pop γ) = γ
 
   any : ∀ {P} → (∀ A → Dec (P A)) → (∀ Γ → Dec (Any P Γ))
-  any P? ⌀       = no λ ()
+  any P? ∅       = no λ ()
   any P? (Γ , A) with P? A
   …             | yes a = yes (top a)
   …             | no ¬a = mapDec pop (initAny ¬a) (any P? Γ)

@@ -24,5 +24,5 @@ module _ {X : Set} where
   -- Additional useful propositions.
 
   _⦂⋆_ : ∀ {n} → VCx X n → VCx (Ty X) n → Cx (Ty X)
-  ⌀        ⦂⋆ ⌀       = ⌀
+  ∅        ⦂⋆ ∅       = ∅
   (TS , T) ⦂⋆ (Ξ , A) = (TS ⦂⋆ Ξ) , (T ⦂ A)

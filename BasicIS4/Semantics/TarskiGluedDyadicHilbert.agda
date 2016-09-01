@@ -26,7 +26,7 @@ record Model : Set₁ where
     [ck]     : ∀ {A B Γ Δ}   → Γ ⁏ Δ [⊢] A ▻ B ▻ A
     [cs]     : ∀ {A B C Γ Δ} → Γ ⁏ Δ [⊢] (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
     [mvar]   : ∀ {A Γ Δ}     → A ∈ Δ → Γ ⁏ Δ [⊢] A
-    [box]    : ∀ {A Γ Δ}     → ⌀ ⁏ Δ [⊢] A → Γ ⁏ Δ [⊢] □ A
+    [box]    : ∀ {A Γ Δ}     → ∅ ⁏ Δ [⊢] A → Γ ⁏ Δ [⊢] □ A
     [cdist]  : ∀ {A B Γ Δ}   → Γ ⁏ Δ [⊢] □ (A ▻ B) ▻ □ A ▻ □ B
     [cup]    : ∀ {A Γ Δ}     → Γ ⁏ Δ [⊢] □ A ▻ □ □ A
     [cdown]  : ∀ {A Γ Δ}     → Γ ⁏ Δ [⊢] □ A ▻ A
@@ -51,7 +51,7 @@ module _ {{_ : Model}} where
 
   infix 3 _⁏_⊩⋆_
   _⁏_⊩⋆_ : Cx Ty → Cx Ty → Cx Ty → Set
-  Γ ⁏ Δ ⊩⋆ ⌀     = 𝟙
+  Γ ⁏ Δ ⊩⋆ ∅     = 𝟙
   Γ ⁏ Δ ⊩⋆ Ξ , A = Γ ⁏ Δ ⊩⋆ Ξ × Γ ⁏ Δ ⊩ A
 
 
@@ -66,7 +66,7 @@ module _ {{_ : Model}} where
   mono⊩ {⊤}    ψ s = ∙
 
   mono⊩⋆ : ∀ {Ξ Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊩⋆ Ξ → Γ′ ⁏ Δ ⊩⋆ Ξ
-  mono⊩⋆ {⌀}     ψ ∙        = ∙
+  mono⊩⋆ {∅}     ψ ∙        = ∙
   mono⊩⋆ {Ξ , A} ψ (ts , t) = mono⊩⋆ {Ξ} ψ ts , mono⊩ {A} ψ t
 
 

@@ -34,7 +34,7 @@ module Syntax
   trans≤ᶜ : ∀ {w w′ w″} → w ≤ᶜ w′ → w′ ≤ᶜ w″ → w ≤ᶜ w″
   trans≤ᶜ = trans⊆
 
-  bot≤ᶜ : ∀ {w} → ⌀ ≤ᶜ w
+  bot≤ᶜ : ∀ {w} → ∅ ≤ᶜ w
   bot≤ᶜ = bot⊆
 
 
@@ -50,7 +50,7 @@ module Syntax
   transRᶜ : ∀ {w w′ w″} → w Rᶜ w′ → w′ Rᶜ w″ → w Rᶜ w″
   transRᶜ ζ ζ′ = ζ′ ∘ ζ ∘ up
 
-  botRᶜ : ∀ {w} → ⌀ Rᶜ w
+  botRᶜ : ∀ {w} → ∅ Rᶜ w
   botRᶜ = mono⊢ bot≤ᶜ ∘ down
 
   liftRᶜ : ∀ {w} → w Rᶜ □⋆ w
@@ -246,4 +246,4 @@ module Syntax
 
   -- NOTE: This could be more precise.
   ≤⊔R→≤⊓Rᶜ : ∀ {w′ v} → v ≤⊔Rᶜ w′ → w′ ≤⊓Rᶜ v
-  ≤⊔R→≤⊓Rᶜ (v′ , (ξ , ζ)) = ⌀ , (bot≤ᶜ , botRᶜ)
+  ≤⊔R→≤⊓Rᶜ (v′ , (ξ , ζ)) = ∅ , (bot≤ᶜ , botRᶜ)

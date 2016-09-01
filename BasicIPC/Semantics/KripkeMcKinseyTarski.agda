@@ -37,7 +37,7 @@ module _ {{_ : Model}} where
 
   infix 3 _⊩⋆_
   _⊩⋆_ : World → Cx Ty → Set
-  w ⊩⋆ ⌀     = 𝟙
+  w ⊩⋆ ∅     = 𝟙
   w ⊩⋆ Ξ , A = w ⊩⋆ Ξ × w ⊩ A
 
 
@@ -51,7 +51,7 @@ module _ {{_ : Model}} where
   mono⊩ {⊤}    ξ s = ∙
 
   mono⊩⋆ : ∀ {Ξ w w′} → w ≤ w′ → w ⊩⋆ Ξ → w′ ⊩⋆ Ξ
-  mono⊩⋆ {⌀}     ξ ∙       = ∙
+  mono⊩⋆ {∅}     ξ ∙       = ∙
   mono⊩⋆ {Ξ , A} ξ (γ , a) = mono⊩⋆ {Ξ} ξ γ , mono⊩ {A} ξ a
 
 

@@ -57,7 +57,7 @@ mutual
 
 infix 3 ⊢⋆_
 ⊢⋆_ : Cx Ty → Set
-⊢⋆ ⌀     = 𝟙
+⊢⋆ ∅     = 𝟙
 ⊢⋆ Ξ , A = ⊢⋆ Ξ × ⊢ A
 
 
@@ -65,7 +65,7 @@ infix 3 ⊢⋆_
 
 infixr 6 _▻⋯▻_
 _▻⋯▻_ : Cx Ty → Ty → Ty
-⌀       ▻⋯▻ B = B
+∅       ▻⋯▻ B = B
 (Ξ , A) ▻⋯▻ B = Ξ ▻⋯▻ (A ▻ B)
 
 
@@ -75,7 +75,7 @@ cut : ∀ {A B} → ⊢ A → ⊢ A ▻ B → ⊢ B
 cut d₁ d₂ = app d₂ d₁
 
 multicut : ∀ {Ξ A} → ⊢⋆ Ξ → ⊢ Ξ ▻⋯▻ A → ⊢ A
-multicut {⌀}     ∙         d₂ = d₂
+multicut {∅}     ∙         d₂ = d₂
 multicut {Ξ , B} (ds , d₁) d₂ = app (multicut ds d₂) d₁
 
 

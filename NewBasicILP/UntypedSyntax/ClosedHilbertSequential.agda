@@ -67,7 +67,7 @@ BOX {n} r = NEC r NIL
 mutual
   infix 3 ⊢ᴰ_
   data ⊢ᴰ_ : Cx Ty → Set where
-    nil   : ⊢ᴰ ⌀
+    nil   : ⊢ᴰ ∅
     mp    : ∀ {Ξ A B}   → A ▻ B ∈ Ξ → A ∈ Ξ → ⊢ᴰ Ξ → ⊢ᴰ Ξ , B
     ci    : ∀ {Ξ A}     → ⊢ᴰ Ξ → ⊢ᴰ Ξ , A ▻ A
     ck    : ∀ {Ξ A B}   → ⊢ᴰ Ξ → ⊢ᴰ Ξ , A ▻ B ▻ A
@@ -142,4 +142,4 @@ app {A} {B} (Ξ₁ , d₁) (Ξ₂ , d₂) = Ξ₃ , d₃
         d₃ = mp top (mono∈ (weak⊆⧺ₗ (Ξ₁ , A ▻ B)) top) (d₂ ⧺ᴰ d₁)
 
 box : ∀ {A} → (t : ⊢ A) → ⊢ [ ᴿ⌊ π₂ t ⌋ ] ⦂ A
-box (Ξ , d) = ⌀ , nec d nil
+box (Ξ , d) = ∅ , nec d nil

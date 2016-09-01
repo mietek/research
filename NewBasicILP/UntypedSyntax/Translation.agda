@@ -140,23 +140,23 @@ chᵀ→chsᵀ : CH.Ty → CHS.Ty
 chᵀ→chsᵀ = chᴾ→chsᴾ ↦ᵀ_
 
 distᴺ⌊⌋+ : ∀ {U} → (Γ Γ′ : Cx U) → ᴺ⌊ Γ ⧺ Γ′ ⌋ ≡ ᴺ⌊ Γ ⌋ + ᴺ⌊ Γ′ ⌋
-distᴺ⌊⌋+ Γ ⌀        = refl
+distᴺ⌊⌋+ Γ ∅        = refl
 distᴺ⌊⌋+ Γ (Γ′ , A) = cong suc (distᴺ⌊⌋+ Γ Γ′)
 
 mutual
   ch→chs : ∀ {A} → CH.⊢ A → CHS.⊢ chᵀ→chsᵀ A
   ch→chs (CH.app d₁ d₂) = CHS.app (ch→chs d₁) (ch→chs d₂)
-  ch→chs CH.ci          = ⌀ , CHS.ci CHS.nil
-  ch→chs CH.ck          = ⌀ , CHS.ck CHS.nil
-  ch→chs CH.cs          = ⌀ , CHS.cs CHS.nil
+  ch→chs CH.ci          = ∅ , CHS.ci CHS.nil
+  ch→chs CH.ck          = ∅ , CHS.ck CHS.nil
+  ch→chs CH.cs          = ∅ , CHS.cs CHS.nil
   ch→chs (CH.box d)     rewrite ᴮlem₁ d = CHS.box (ch→chs d)
-  ch→chs CH.cdist       = ⌀ , CHS.cdist CHS.nil
-  ch→chs CH.cup         = ⌀ , CHS.cup CHS.nil
-  ch→chs CH.cdown       = ⌀ , CHS.cdown CHS.nil
-  ch→chs CH.cpair       = ⌀ , CHS.cpair CHS.nil
-  ch→chs CH.cfst        = ⌀ , CHS.cfst CHS.nil
-  ch→chs CH.csnd        = ⌀ , CHS.csnd CHS.nil
-  ch→chs CH.tt          = ⌀ , CHS.tt CHS.nil
+  ch→chs CH.cdist       = ∅ , CHS.cdist CHS.nil
+  ch→chs CH.cup         = ∅ , CHS.cup CHS.nil
+  ch→chs CH.cdown       = ∅ , CHS.cdown CHS.nil
+  ch→chs CH.cpair       = ∅ , CHS.cpair CHS.nil
+  ch→chs CH.cfst        = ∅ , CHS.cfst CHS.nil
+  ch→chs CH.csnd        = ∅ , CHS.csnd CHS.nil
+  ch→chs CH.tt          = ∅ , CHS.tt CHS.nil
 
   -- FIXME: This should hold by ᴮlem₂.
   postulate

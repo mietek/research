@@ -20,7 +20,7 @@ module _ {{_ : Model}} where
     [ tt ]            = [tt]
 
     [_]⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ [⊢]⋆ Ξ
-    [_]⋆ {⌀}     ∙        = ∙
+    [_]⋆ {∅}     ∙        = ∙
     [_]⋆ {Ξ , A} (ts , t) = [ ts ]⋆ , [ t ]
 
 
@@ -45,7 +45,7 @@ mutual
   eval tt                γ = ∙
 
   eval⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊨⋆ Ξ
-  eval⋆ {⌀}     ∙        γ = ∙
+  eval⋆ {∅}     ∙        γ = ∙
   eval⋆ {Ξ , A} (ts , t) γ = eval⋆ ts γ , eval t γ
 
 
@@ -97,11 +97,11 @@ mutual
   reifyᶜ {⊤}    s = tt
 
 reflectᶜ⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊩⋆ Ξ
-reflectᶜ⋆ {⌀}     ∙        = ∙
+reflectᶜ⋆ {∅}     ∙        = ∙
 reflectᶜ⋆ {Ξ , A} (ts , t) = reflectᶜ⋆ ts , reflectᶜ t
 
 reifyᶜ⋆ : ∀ {Ξ Γ} → Γ ⊩⋆ Ξ → Γ ⊢⋆ Ξ
-reifyᶜ⋆ {⌀}     ∙        = ∙
+reifyᶜ⋆ {∅}     ∙        = ∙
 reifyᶜ⋆ {Ξ , A} (ts , t) = reifyᶜ⋆ ts , reifyᶜ t
 
 

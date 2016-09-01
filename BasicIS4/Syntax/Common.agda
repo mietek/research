@@ -89,16 +89,16 @@ open ContextEquality (_≟ᵀ_) public
 
 infixr 6 _▻⋯▻_
 _▻⋯▻_ : Cx Ty → Ty → Ty
-⌀       ▻⋯▻ B = B
+∅       ▻⋯▻ B = B
 (Ξ , A) ▻⋯▻ B = Ξ ▻⋯▻ (A ▻ B)
 
 infixr 9 □⋆_
 □⋆_ : Cx Ty → Cx Ty
-□⋆ ⌀       = ⌀
+□⋆ ∅       = ∅
 □⋆ (Ξ , A) = □⋆ Ξ , □ A
 
 dist□⋆ₗ : ∀ Ξ Ξ′ → □⋆ (Ξ ⧺ Ξ′) ≡ (□⋆ Ξ) ⧺ (□⋆ Ξ′)
-dist□⋆ₗ Ξ ⌀        = refl
+dist□⋆ₗ Ξ ∅        = refl
 dist□⋆ₗ Ξ (Ξ′ , A) = cong² _,_ (dist□⋆ₗ Ξ Ξ′) refl
 
 lift⊆ : ∀ {Δ Δ′} → Δ ⊆ Δ′ → □⋆ Δ ⊆ □⋆ Δ′

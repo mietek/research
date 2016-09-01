@@ -6,7 +6,7 @@ open import Common.Context public
 -- Naturals, as a projection of contexts.
 
 ᴺ⌊_⌋ : ∀ {U} → Cx U → ℕ
-ᴺ⌊ ⌀ ⌋     = zero
+ᴺ⌊ ∅ ⌋     = zero
 ᴺ⌊ Γ , A ⌋ = suc ᴺ⌊ Γ ⌋
 
 

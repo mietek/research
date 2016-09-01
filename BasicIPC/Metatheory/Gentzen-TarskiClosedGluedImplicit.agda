@@ -3,20 +3,20 @@ module BasicIPC.Metatheory.Gentzen-TarskiClosedGluedImplicit where
 open import BasicIPC.Syntax.Gentzen public
 open import BasicIPC.Semantics.TarskiClosedGluedImplicit public
 
-open ImplicitSyntax (⌀ ⊢_) public
+open ImplicitSyntax (∅ ⊢_) public
 
 
 -- Completeness with respect to a particular model.
 
 module _ {{_ : Model}} where
-  reify : ∀ {A} → ⊩ A → ⌀ ⊢ A
+  reify : ∀ {A} → ⊩ A → ∅ ⊢ A
   reify {α P}   s = syn s
   reify {A ▻ B} s = syn s
   reify {A ∧ B} s = pair (reify (π₁ s)) (reify (π₂ s))
   reify {⊤}    s = tt
 
-  reify⋆ : ∀ {Ξ} → ⊩⋆ Ξ → ⌀ ⊢⋆ Ξ
-  reify⋆ {⌀}     ∙        = ∙
+  reify⋆ : ∀ {Ξ} → ⊩⋆ Ξ → ∅ ⊢⋆ Ξ
+  reify⋆ {∅}     ∙        = ∙
   reify⋆ {Ξ , A} (ts , t) = reify⋆ ts , reify t
 
 
@@ -42,19 +42,19 @@ private
   instance
     canon : Model
     canon = record
-      { ⊩ᵅ_ = λ P → ⌀ ⊢ α P
+      { ⊩ᵅ_ = λ P → ∅ ⊢ α P
       }
 
 
 -- Completeness with respect to all models, or quotation, for closed terms only.
 
-quot₀ : ∀ {A} → ⌀ ⊨ A → ⌀ ⊢ A
+quot₀ : ∀ {A} → ∅ ⊨ A → ∅ ⊢ A
 quot₀ t = reify (t ∙)
 
 
 -- Normalisation by evaluation, for closed terms only.
 
-norm₀ : ∀ {A} → ⌀ ⊢ A → ⌀ ⊢ A
+norm₀ : ∀ {A} → ∅ ⊢ A → ∅ ⊢ A
 norm₀ = quot₀ ∘ eval
 
 

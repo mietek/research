@@ -27,12 +27,12 @@ mutual
 
 infix 3 _⊢⋆ⁿᶠ_
 _⊢⋆ⁿᶠ_ : Cx Ty → Cx Ty → Set
-Γ ⊢⋆ⁿᶠ ⌀     = 𝟙
+Γ ⊢⋆ⁿᶠ ∅     = 𝟙
 Γ ⊢⋆ⁿᶠ Ξ , A = Γ ⊢⋆ⁿᶠ Ξ × Γ ⊢ⁿᶠ A
 
 infix 3 _⊢⋆ⁿᵉ_
 _⊢⋆ⁿᵉ_ : Cx Ty → Cx Ty → Set
-Γ ⊢⋆ⁿᵉ ⌀     = 𝟙
+Γ ⊢⋆ⁿᵉ ∅     = 𝟙
 Γ ⊢⋆ⁿᵉ Ξ , A = Γ ⊢⋆ⁿᵉ Ξ × Γ ⊢ⁿᵉ A
 
 
@@ -52,11 +52,11 @@ mutual
   ne→tm (sndⁿᵉ t)   = snd (ne→tm t)
 
 nf→tm⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ⁿᶠ Ξ → Γ ⊢⋆ Ξ
-nf→tm⋆ {⌀}     ∙        = ∙
+nf→tm⋆ {∅}     ∙        = ∙
 nf→tm⋆ {Ξ , A} (ts , t) = nf→tm⋆ ts , nf→tm t
 
 ne→tm⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ⁿᵉ Ξ → Γ ⊢⋆ Ξ
-ne→tm⋆ {⌀}     ∙        = ∙
+ne→tm⋆ {∅}     ∙        = ∙
 ne→tm⋆ {Ξ , A} (ts , t) = ne→tm⋆ ts , ne→tm t
 
 
@@ -76,9 +76,9 @@ mutual
   mono⊢ⁿᵉ η (sndⁿᵉ t)   = sndⁿᵉ (mono⊢ⁿᵉ η t)
 
 mono⊢⋆ⁿᶠ : ∀ {Ξ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ⁿᶠ Ξ → Γ′ ⊢⋆ⁿᶠ Ξ
-mono⊢⋆ⁿᶠ {⌀}     η ∙        = ∙
+mono⊢⋆ⁿᶠ {∅}     η ∙        = ∙
 mono⊢⋆ⁿᶠ {Ξ , A} η (ts , t) = mono⊢⋆ⁿᶠ η ts , mono⊢ⁿᶠ η t
 
 mono⊢⋆ⁿᵉ : ∀ {Ξ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ⁿᵉ Ξ → Γ′ ⊢⋆ⁿᵉ Ξ
-mono⊢⋆ⁿᵉ {⌀}     η ∙        = ∙
+mono⊢⋆ⁿᵉ {∅}     η ∙        = ∙
 mono⊢⋆ⁿᵉ {Ξ , A} η (ts , t) = mono⊢⋆ⁿᵉ η ts , mono⊢ⁿᵉ η t
