@@ -10,22 +10,22 @@ open import Common.ContextPair public
 -- Derivations.
 
 infix 3 _⊦⊢_
-data _⊦⊢_ (Π : Cx² Ty) : Cx Ty → Set where
-  nil   : Π ⊦⊢ ∅
-  var   : ∀ {Ξ A}     → A ∈ int Π → Π ⊦⊢ Ξ → Π ⊦⊢ Ξ , A
-  mp    : ∀ {Ξ A B}   → A ▻ B ∈ Ξ → A ∈ Ξ → Π ⊦⊢ Ξ → Π ⊦⊢ Ξ , B
-  ci    : ∀ {Ξ A}     → Π ⊦⊢ Ξ → Π ⊦⊢ Ξ , A ▻ A
-  ck    : ∀ {Ξ A B}   → Π ⊦⊢ Ξ → Π ⊦⊢ Ξ , A ▻ B ▻ A
-  cs    : ∀ {Ξ A B C} → Π ⊦⊢ Ξ → Π ⊦⊢ Ξ , (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
-  mvar  : ∀ {Ξ A}     → A ∈ mod Π → Π ⊦⊢ Ξ → Π ⊦⊢ Ξ , A
-  nec   : ∀ {Ξ Ξ′ A}  → ∅ ⁏ mod Π ⊦⊢ Ξ′ , A → Π ⊦⊢ Ξ → Π ⊦⊢ Ξ , □ A
-  cdist : ∀ {Ξ A B}   → Π ⊦⊢ Ξ → Π ⊦⊢ Ξ , □ (A ▻ B) ▻ □ A ▻ □ B
-  cup   : ∀ {Ξ A}     → Π ⊦⊢ Ξ → Π ⊦⊢ Ξ , □ A ▻ □ □ A
-  cdown : ∀ {Ξ A}     → Π ⊦⊢ Ξ → Π ⊦⊢ Ξ , □ A ▻ A
-  cpair : ∀ {Ξ A B}   → Π ⊦⊢ Ξ → Π ⊦⊢ Ξ , A ▻ B ▻ A ∧ B
-  cfst  : ∀ {Ξ A B}   → Π ⊦⊢ Ξ → Π ⊦⊢ Ξ , A ∧ B ▻ A
-  csnd  : ∀ {Ξ A B}   → Π ⊦⊢ Ξ → Π ⊦⊢ Ξ , A ∧ B ▻ B
-  tt    : ∀ {Ξ}       → Π ⊦⊢ Ξ → Π ⊦⊢ Ξ , ⊤
+data _⊦⊢_ : Cx² Ty → Cx Ty → Set where
+  nil   : ∀ {Γ Δ}         → Γ ⁏ Δ ⊦⊢ ∅
+  var   : ∀ {Ξ A Γ Δ}     → A ∈ Γ → Γ ⁏ Δ ⊦⊢ Ξ → Γ ⁏ Δ ⊦⊢ Ξ , A
+  mp    : ∀ {Ξ A B Γ Δ}   → A ▻ B ∈ Ξ → A ∈ Ξ → Γ ⁏ Δ ⊦⊢ Ξ → Γ ⁏ Δ ⊦⊢ Ξ , B
+  ci    : ∀ {Ξ A Γ Δ}     → Γ ⁏ Δ ⊦⊢ Ξ → Γ ⁏ Δ ⊦⊢ Ξ , A ▻ A
+  ck    : ∀ {Ξ A B Γ Δ}   → Γ ⁏ Δ ⊦⊢ Ξ → Γ ⁏ Δ ⊦⊢ Ξ , A ▻ B ▻ A
+  cs    : ∀ {Ξ A B C Γ Δ} → Γ ⁏ Δ ⊦⊢ Ξ → Γ ⁏ Δ ⊦⊢ Ξ , (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
+  mvar  : ∀ {Ξ A Γ Δ}     → A ∈ Δ → Γ ⁏ Δ ⊦⊢ Ξ → Γ ⁏ Δ ⊦⊢ Ξ , A
+  nec   : ∀ {Ξ Ξ′ A Γ Δ}  → ∅ ⁏ Δ ⊦⊢ Ξ′ , A → Γ ⁏ Δ ⊦⊢ Ξ → Γ ⁏ Δ ⊦⊢ Ξ , □ A
+  cdist : ∀ {Ξ A B Γ Δ}   → Γ ⁏ Δ ⊦⊢ Ξ → Γ ⁏ Δ ⊦⊢ Ξ , □ (A ▻ B) ▻ □ A ▻ □ B
+  cup   : ∀ {Ξ A Γ Δ}     → Γ ⁏ Δ ⊦⊢ Ξ → Γ ⁏ Δ ⊦⊢ Ξ , □ A ▻ □ □ A
+  cdown : ∀ {Ξ A Γ Δ}     → Γ ⁏ Δ ⊦⊢ Ξ → Γ ⁏ Δ ⊦⊢ Ξ , □ A ▻ A
+  cpair : ∀ {Ξ A B Γ Δ}   → Γ ⁏ Δ ⊦⊢ Ξ → Γ ⁏ Δ ⊦⊢ Ξ , A ▻ B ▻ A ∧ B
+  cfst  : ∀ {Ξ A B Γ Δ}   → Γ ⁏ Δ ⊦⊢ Ξ → Γ ⁏ Δ ⊦⊢ Ξ , A ∧ B ▻ A
+  csnd  : ∀ {Ξ A B Γ Δ}   → Γ ⁏ Δ ⊦⊢ Ξ → Γ ⁏ Δ ⊦⊢ Ξ , A ∧ B ▻ B
+  tt    : ∀ {Ξ Γ Δ}       → Γ ⁏ Δ ⊦⊢ Ξ → Γ ⁏ Δ ⊦⊢ Ξ , ⊤
 
 infix 3 _⊢_
 _⊢_ : Cx² Ty → Ty → Set

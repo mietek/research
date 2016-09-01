@@ -19,24 +19,24 @@ record Model : Set₁ where
 
     -- Hilbert-style syntax representation; monotonic.
     _[⊢]_    : Cx² Ty → Ty → Set
-    mono²[⊢] : ∀ {A Π Π′}  → Π ⊆² Π′ → Π [⊢] A → Π′ [⊢] A
-    [var]     : ∀ {A Π}     → A ∈ int Π → Π [⊢] A
-    [app]     : ∀ {A B Π}   → Π [⊢] A ▻ B → Π [⊢] A → Π [⊢] B
-    [ci]      : ∀ {A Π}     → Π [⊢] A ▻ A
-    [ck]      : ∀ {A B Π}   → Π [⊢] A ▻ B ▻ A
-    [cs]      : ∀ {A B C Π} → Π [⊢] (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
-    [mvar]    : ∀ {A Π}     → A ∈ mod Π → Π [⊢] A
-    [box]     : ∀ {A Π}     → ∅ ⁏ mod Π [⊢] A → Π [⊢] □ A
-    [cdist]   : ∀ {A B Π}   → Π [⊢] □ (A ▻ B) ▻ □ A ▻ □ B
-    [cup]     : ∀ {A Π}     → Π [⊢] □ A ▻ □ □ A
-    [cdown]   : ∀ {A Π}     → Π [⊢] □ A ▻ A
-    [cpair]   : ∀ {A B Π}   → Π [⊢] A ▻ B ▻ A ∧ B
-    [cfst]    : ∀ {A B Π}   → Π [⊢] A ∧ B ▻ A
-    [csnd]    : ∀ {A B Π}   → Π [⊢] A ∧ B ▻ B
-    [tt]      : ∀ {Π}       → Π [⊢] ⊤
+    mono²[⊢] : ∀ {A Π Π′}    → Π ⊆² Π′ → Π [⊢] A → Π′ [⊢] A
+    [var]     : ∀ {A Γ Δ}     → A ∈ Γ → Γ ⁏ Δ [⊢] A
+    [app]     : ∀ {A B Γ Δ}   → Γ ⁏ Δ [⊢] A ▻ B → Γ ⁏ Δ [⊢] A → Γ ⁏ Δ [⊢] B
+    [ci]      : ∀ {A Γ Δ}     → Γ ⁏ Δ [⊢] A ▻ A
+    [ck]      : ∀ {A B Γ Δ}   → Γ ⁏ Δ [⊢] A ▻ B ▻ A
+    [cs]      : ∀ {A B C Γ Δ} → Γ ⁏ Δ [⊢] (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
+    [mvar]    : ∀ {A Γ Δ}     → A ∈ Δ → Γ ⁏ Δ [⊢] A
+    [box]     : ∀ {A Γ Δ}     → ∅ ⁏ Δ [⊢] A → Γ ⁏ Δ [⊢] □ A
+    [cdist]   : ∀ {A B Γ Δ}   → Γ ⁏ Δ [⊢] □ (A ▻ B) ▻ □ A ▻ □ B
+    [cup]     : ∀ {A Γ Δ}     → Γ ⁏ Δ [⊢] □ A ▻ □ □ A
+    [cdown]   : ∀ {A Γ Δ}     → Γ ⁏ Δ [⊢] □ A ▻ A
+    [cpair]   : ∀ {A B Γ Δ}   → Γ ⁏ Δ [⊢] A ▻ B ▻ A ∧ B
+    [cfst]    : ∀ {A B Γ Δ}   → Γ ⁏ Δ [⊢] A ∧ B ▻ A
+    [csnd]    : ∀ {A B Γ Δ}   → Γ ⁏ Δ [⊢] A ∧ B ▻ B
+    [tt]      : ∀ {Γ Δ}       → Γ ⁏ Δ [⊢] ⊤
 
     -- NOTE: [mlam] is necessary for [mmulticut], which is necessary for eval.
-    [mlam] : ∀ {A B Π} → int Π ⁏ mod Π , A [⊢] B → Π [⊢] □ A ▻ B
+    [mlam] : ∀ {A B Γ Δ} → Γ ⁏ Δ , A [⊢] B → Γ ⁏ Δ [⊢] □ A ▻ B
 
   infix 3 _[⊢]⋆_
   _[⊢]⋆_ : Cx² Ty → Cx Ty → Set

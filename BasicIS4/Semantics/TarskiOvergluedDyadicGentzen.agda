@@ -19,17 +19,17 @@ record Model : Set₁ where
 
     -- Gentzen-style syntax representation; monotonic.
     _[⊢]_    : Cx² Ty → Ty → Set
-    mono²[⊢] : ∀ {A Π Π′} → Π ⊆² Π′ → Π [⊢] A → Π′ [⊢] A
-    [var]     : ∀ {A Π}    → A ∈ int Π → Π [⊢] A
-    [lam]     : ∀ {A B Π}  → int Π , A ⁏ mod Π [⊢] B → Π [⊢] A ▻ B
-    [app]     : ∀ {A B Π}  → Π [⊢] A ▻ B → Π [⊢] A → Π [⊢] B
-    [mvar]    : ∀ {A Π}    → A ∈ mod Π → Π [⊢] A
-    [box]     : ∀ {A Π}    → ∅ ⁏ mod Π [⊢] A → Π [⊢] □ A
-    [unbox]   : ∀ {A C Π}  → Π [⊢] □ A → int Π ⁏ mod Π , A [⊢] C → Π [⊢] C
-    [pair]    : ∀ {A B Π}  → Π [⊢] A → Π [⊢] B → Π [⊢] A ∧ B
-    [fst]     : ∀ {A B Π}  → Π [⊢] A ∧ B → Π [⊢] A
-    [snd]     : ∀ {A B Π}  → Π [⊢] A ∧ B → Π [⊢] B
-    [tt]      : ∀ {Π}      → Π [⊢] ⊤
+    mono²[⊢] : ∀ {A Π Π′}  → Π ⊆² Π′ → Π [⊢] A → Π′ [⊢] A
+    [var]     : ∀ {A Γ Δ}   → A ∈ Γ → Γ ⁏ Δ [⊢] A
+    [lam]     : ∀ {A B Γ Δ} → Γ , A ⁏ Δ [⊢] B → Γ ⁏ Δ [⊢] A ▻ B
+    [app]     : ∀ {A B Γ Δ} → Γ ⁏ Δ [⊢] A ▻ B → Γ ⁏ Δ [⊢] A → Γ ⁏ Δ [⊢] B
+    [mvar]    : ∀ {A Γ Δ}   → A ∈ Δ → Γ ⁏ Δ [⊢] A
+    [box]     : ∀ {A Γ Δ}   → ∅ ⁏ Δ [⊢] A → Γ ⁏ Δ [⊢] □ A
+    [unbox]   : ∀ {A C Γ Δ} → Γ ⁏ Δ [⊢] □ A → Γ ⁏ Δ , A [⊢] C → Γ ⁏ Δ [⊢] C
+    [pair]    : ∀ {A B Γ Δ} → Γ ⁏ Δ [⊢] A → Γ ⁏ Δ [⊢] B → Γ ⁏ Δ [⊢] A ∧ B
+    [fst]     : ∀ {A B Γ Δ} → Γ ⁏ Δ [⊢] A ∧ B → Γ ⁏ Δ [⊢] A
+    [snd]     : ∀ {A B Γ Δ} → Γ ⁏ Δ [⊢] A ∧ B → Γ ⁏ Δ [⊢] B
+    [tt]      : ∀ {Γ Δ}     → Γ ⁏ Δ [⊢] ⊤
 
   infix 3 _[⊢]⋆_
   _[⊢]⋆_ : Cx² Ty → Cx Ty → Set

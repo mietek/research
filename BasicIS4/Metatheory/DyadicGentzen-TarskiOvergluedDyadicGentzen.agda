@@ -53,7 +53,7 @@ private
     canon = record
       { _⊩ᵅ_     = λ Π P → Π ⊢ α P
       ; mono²⊩ᵅ  = mono²⊢
-      ; _[⊢]_    = λ Π A → Π ⊢ A
+      ; _[⊢]_    = _⊢_
       ; mono²[⊢] = mono²⊢
       ; [var]     = var
       ; [lam]     = lam

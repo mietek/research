@@ -10,21 +10,21 @@ open import Common.ContextPair public
 -- Derivations.
 
 infix 3 _⊢_
-data _⊢_ (Π : Cx² Ty) : Ty → Set where
-  var   : ∀ {A}     → A ∈ int Π → Π ⊢ A
-  app   : ∀ {A B}   → Π ⊢ A ▻ B → Π ⊢ A → Π ⊢ B
-  ci    : ∀ {A}     → Π ⊢ A ▻ A
-  ck    : ∀ {A B}   → Π ⊢ A ▻ B ▻ A
-  cs    : ∀ {A B C} → Π ⊢ (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
-  mvar  : ∀ {A}     → A ∈ mod Π → Π ⊢ A
-  box   : ∀ {A}     → ∅ ⁏ mod Π ⊢ A → Π ⊢ □ A
-  cdist : ∀ {A B}   → Π ⊢ □ (A ▻ B) ▻ □ A ▻ □ B
-  cup   : ∀ {A}     → Π ⊢ □ A ▻ □ □ A
-  cdown : ∀ {A}     → Π ⊢ □ A ▻ A
-  cpair : ∀ {A B}   → Π ⊢ A ▻ B ▻ A ∧ B
-  cfst  : ∀ {A B}   → Π ⊢ A ∧ B ▻ A
-  csnd  : ∀ {A B}   → Π ⊢ A ∧ B ▻ B
-  tt    : Π ⊢ ⊤
+data _⊢_ : Cx² Ty → Ty → Set where
+  var   : ∀ {A Γ Δ}     → A ∈ Γ → Γ ⁏ Δ ⊢ A
+  app   : ∀ {A B Γ Δ}   → Γ ⁏ Δ ⊢ A ▻ B → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ B
+  ci    : ∀ {A Γ Δ}     → Γ ⁏ Δ ⊢ A ▻ A
+  ck    : ∀ {A B Γ Δ}   → Γ ⁏ Δ ⊢ A ▻ B ▻ A
+  cs    : ∀ {A B C Γ Δ} → Γ ⁏ Δ ⊢ (A ▻ B ▻ C) ▻ (A ▻ B) ▻ A ▻ C
+  mvar  : ∀ {A Γ Δ}     → A ∈ Δ → Γ ⁏ Δ ⊢ A
+  box   : ∀ {A Γ Δ}     → ∅ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ □ A
+  cdist : ∀ {A B Γ Δ}   → Γ ⁏ Δ ⊢ □ (A ▻ B) ▻ □ A ▻ □ B
+  cup   : ∀ {A Γ Δ}     → Γ ⁏ Δ ⊢ □ A ▻ □ □ A
+  cdown : ∀ {A Γ Δ}     → Γ ⁏ Δ ⊢ □ A ▻ A
+  cpair : ∀ {A B Γ Δ}   → Γ ⁏ Δ ⊢ A ▻ B ▻ A ∧ B
+  cfst  : ∀ {A B Γ Δ}   → Γ ⁏ Δ ⊢ A ∧ B ▻ A
+  csnd  : ∀ {A B Γ Δ}   → Γ ⁏ Δ ⊢ A ∧ B ▻ B
+  tt    : ∀ {Γ Δ}       → Γ ⁏ Δ ⊢ ⊤
 
 infix 3 _⊢⋆_
 _⊢⋆_ : Cx² Ty → Cx Ty → Set
@@ -80,7 +80,7 @@ mmono⊢⋆ {Ξ , A} θ (ts , t) = mmono⊢⋆ θ ts , mmono⊢ θ t
 
 -- Monotonicity using context pairs.
 
-mono²⊢ : ∀ {A Γ Γ′ Δ Δ′} → Γ ⁏ Δ ⊆² Γ′ ⁏ Δ′ → Γ ⁏ Δ ⊢ A → Γ′ ⁏ Δ′ ⊢ A
+mono²⊢ : ∀ {A Π Π′} → Π ⊆² Π′ → Π ⊢ A → Π′ ⊢ A
 mono²⊢ (η , θ) = mono⊢ η ∘ mmono⊢ θ
 
 

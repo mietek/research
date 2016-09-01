@@ -9,11 +9,11 @@ open import Common.ContextPair public
 
 
 module Syntax
-    (_⁏_⊢_  : Cx Ty → Cx Ty → Ty → Set)
-    (mono²⊢ : ∀ {A Γ Γ′ Δ Δ′} → Γ ⁏ Δ ⊆² Γ′ ⁏ Δ′ → Γ ⁏ Δ ⊢ A → Γ′ ⁏ Δ′ ⊢ A)
-    (up      : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ (□ A) → Γ ⁏ Δ ⊢ (□ □ A))
-    (down    : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ (□ A) → Γ ⁏ Δ ⊢ A)
-    (lift    : ∀ {Γ A Δ} → Γ ⁏ Δ ⊢ A → (□⋆ Γ) ⁏ Δ ⊢ (□ A))
+    (_⊢_    : Cx² Ty → Ty → Set)
+    (mono²⊢ : ∀ {A Π Π′} → Π ⊆² Π′ → Π ⊢ A → Π′ ⊢ A)
+    (up      : ∀ {A Π} → Π ⊢ (□ A) → Π ⊢ (□ □ A))
+    (down    : ∀ {A Π} → Π ⊢ (□ A) → Π ⊢ A)
+    (lift    : ∀ {A Γ Δ} → (Γ ⁏ Δ) ⊢ A → (□⋆ Γ ⁏ Δ) ⊢ (□ A))
   where
 
 
@@ -43,7 +43,7 @@ module Syntax
 
   infix 3 _Rᶜ_
   _Rᶜ_ : Worldᶜ → Worldᶜ → Set
-  Γ ⁏ Δ Rᶜ Γ′ ⁏ Δ′ = ∀ {A} → Γ ⁏ Δ ⊢ (□ A) → Γ′ ⁏ Δ′ ⊢ A
+  w Rᶜ w′ = ∀ {A} → w ⊢ (□ A) → w′ ⊢ A
 
   reflRᶜ : ∀ {w} → w Rᶜ w
   reflRᶜ = down

@@ -9,17 +9,17 @@ open import Common.ContextPair public
 -- Derivations.
 
 infix 3 _⊢_
-data _⊢_ (Π : Cx² Ty) : Ty → Set where
-  var   : ∀ {A}   → A ∈ int Π → Π ⊢ A
-  lam   : ∀ {A B} → int Π , A ⁏ mod Π ⊢ B → Π ⊢ A ▻ B
-  app   : ∀ {A B} → Π ⊢ A ▻ B → Π ⊢ A → Π ⊢ B
-  mvar  : ∀ {A}   → A ∈ mod Π → Π ⊢ A
-  box   : ∀ {A}   → ∅ ⁏ mod Π ⊢ A → Π ⊢ □ A
-  unbox : ∀ {A C} → Π ⊢ □ A → int Π ⁏ mod Π , A ⊢ C → Π ⊢ C
-  pair  : ∀ {A B} → Π ⊢ A → Π ⊢ B → Π ⊢ A ∧ B
-  fst   : ∀ {A B} → Π ⊢ A ∧ B → Π ⊢ A
-  snd   : ∀ {A B} → Π ⊢ A ∧ B → Π ⊢ B
-  tt    : Π ⊢ ⊤
+data _⊢_ : Cx² Ty → Ty → Set where
+  var   : ∀ {A Γ Δ}   → A ∈ Γ → Γ ⁏ Δ ⊢ A
+  lam   : ∀ {A B Γ Δ} → Γ , A ⁏ Δ ⊢ B → Γ ⁏ Δ ⊢ A ▻ B
+  app   : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ▻ B → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ B
+  mvar  : ∀ {A Γ Δ}   → A ∈ Δ → Γ ⁏ Δ ⊢ A
+  box   : ∀ {A Γ Δ}   → ∅ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ □ A
+  unbox : ∀ {A C Γ Δ} → Γ ⁏ Δ ⊢ □ A → Γ ⁏ Δ , A ⊢ C → Γ ⁏ Δ ⊢ C
+  pair  : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ B → Γ ⁏ Δ ⊢ A ∧ B
+  fst   : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ∧ B → Γ ⁏ Δ ⊢ A
+  snd   : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ∧ B → Γ ⁏ Δ ⊢ B
+  tt    : ∀ {Γ Δ}     → Γ ⁏ Δ ⊢ ⊤
 
 infix 3 _⊢⋆_
 _⊢⋆_ : Cx² Ty → Cx Ty → Set
@@ -67,7 +67,7 @@ mmono⊢⋆ {Ξ , A} θ (ts , t) = mmono⊢⋆ θ ts , mmono⊢ θ t
 
 -- Monotonicity using context pairs.
 
-mono²⊢ : ∀ {A Γ Γ′ Δ Δ′} → Γ ⁏ Δ ⊆² Γ′ ⁏ Δ′ → Γ ⁏ Δ ⊢ A → Γ′ ⁏ Δ′ ⊢ A
+mono²⊢ : ∀ {A Π Π′} → Π ⊆² Π′ → Π ⊢ A → Π′ ⊢ A
 mono²⊢ (η , θ) = mono⊢ η ∘ mmono⊢ θ
 
 
