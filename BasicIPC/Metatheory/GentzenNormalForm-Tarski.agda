@@ -60,10 +60,6 @@ reifyᶜ⋆ {Ξ , A} (ts , t) = reifyᶜ⋆ ts , reifyᶜ t
 
 -- Reflexivity and transitivity.
 
-refl⊢⋆ⁿᵉ : ∀ {Γ} → Γ ⊢⋆ⁿᵉ Γ
-refl⊢⋆ⁿᵉ {∅}     = ∙
-refl⊢⋆ⁿᵉ {Γ , A} = mono⊢⋆ⁿᵉ weak⊆ refl⊢⋆ⁿᵉ , varⁿᵉ top
-
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
 refl⊩⋆ = reflectᶜ⋆ refl⊢⋆ⁿᵉ
 
