@@ -94,6 +94,12 @@ module _ {U : Set} where
   weak⊆ : ∀ {A Γ} → Γ ⊆ Γ , A
   weak⊆ = skip refl⊆
 
+  weak²⊆ : ∀ {A B Γ} → Γ ⊆ Γ , A , B
+  weak²⊆ = skip weak⊆
+
+  weak³⊆ : ∀ {A B C Γ} → Γ ⊆ Γ , A , B , C
+  weak³⊆ = skip weak²⊆
+
   bot⊆ : ∀ {Γ} → ∅ ⊆ Γ
   bot⊆ {∅}     = done
   bot⊆ {Γ , A} = skip bot⊆
