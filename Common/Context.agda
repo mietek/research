@@ -67,13 +67,15 @@ module _ {U : Set} where
 module _ {U : Set} where
   infix 3 _⊆_
   data _⊆_ : Cx U → Cx U → Set where
-    done : ∅ ⊆ ∅
-    skip : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊆ Γ′ , A
-    keep : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ , A ⊆ Γ′ , A
+    instance
+      done : ∅ ⊆ ∅
+      skip : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊆ Γ′ , A
+      keep : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ , A ⊆ Γ′ , A
 
-  refl⊆ : ∀ {Γ} → Γ ⊆ Γ
-  refl⊆ {∅}     = done
-  refl⊆ {Γ , A} = keep refl⊆
+  instance
+    refl⊆ : ∀ {Γ} → Γ ⊆ Γ
+    refl⊆ {∅}     = done
+    refl⊆ {Γ , A} = keep refl⊆
 
   trans⊆ : ∀ {Γ Γ′ Γ″} → Γ ⊆ Γ′ → Γ′ ⊆ Γ″ → Γ ⊆ Γ″
   trans⊆ η        done      = η
