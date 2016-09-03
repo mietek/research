@@ -17,9 +17,31 @@ data Ty : Set where
   _∧_ : Ty → Ty → Ty
   ⊤  : Ty
 
+
+-- Additional useful types.
+
 infix 7 _▻◅_
 _▻◅_ : Ty → Ty → Ty
 A ▻◅ B = (A ▻ B) ∧ (B ▻ A)
+
+infixr 7 _▻⋯▻_
+_▻⋯▻_ : Cx Ty → Ty → Ty
+∅       ▻⋯▻ B = B
+(Ξ , A) ▻⋯▻ B = Ξ ▻⋯▻ (A ▻ B)
+
+infixr 10 □⋆_
+□⋆_ : Cx Ty → Cx Ty
+□⋆ ∅       = ∅
+□⋆ (Ξ , A) = □⋆ Ξ , □ A
+
+dist□⋆₁ : ∀ Ξ Ξ′ → □⋆ (Ξ ⧺ Ξ′) ≡ (□⋆ Ξ) ⧺ (□⋆ Ξ′)
+dist□⋆₁ Ξ ∅        = refl
+dist□⋆₁ Ξ (Ξ′ , A) = cong² _,_ (dist□⋆₁ Ξ Ξ′) refl
+
+lift⊆ : ∀ {Δ Δ′} → Δ ⊆ Δ′ → □⋆ Δ ⊆ □⋆ Δ′
+lift⊆ done     = done
+lift⊆ (skip θ) = skip (lift⊆ θ)
+lift⊆ (keep θ) = keep (lift⊆ θ)
 
 
 -- Inversion principles.
@@ -83,25 +105,3 @@ _≟ᵀ_ : (A A′ : Ty) → Dec (A ≡ A′)
 ⊤      ≟ᵀ ⊤        = yes refl
 
 open ContextEquality (_≟ᵀ_) public
-
-
--- Additional useful types.
-
-infixr 7 _▻⋯▻_
-_▻⋯▻_ : Cx Ty → Ty → Ty
-∅       ▻⋯▻ B = B
-(Ξ , A) ▻⋯▻ B = Ξ ▻⋯▻ (A ▻ B)
-
-infixr 10 □⋆_
-□⋆_ : Cx Ty → Cx Ty
-□⋆ ∅       = ∅
-□⋆ (Ξ , A) = □⋆ Ξ , □ A
-
-dist□⋆₁ : ∀ Ξ Ξ′ → □⋆ (Ξ ⧺ Ξ′) ≡ (□⋆ Ξ) ⧺ (□⋆ Ξ′)
-dist□⋆₁ Ξ ∅        = refl
-dist□⋆₁ Ξ (Ξ′ , A) = cong² _,_ (dist□⋆₁ Ξ Ξ′) refl
-
-lift⊆ : ∀ {Δ Δ′} → Δ ⊆ Δ′ → □⋆ Δ ⊆ □⋆ Δ′
-lift⊆ done     = done
-lift⊆ (skip θ) = skip (lift⊆ θ)
-lift⊆ (keep θ) = keep (lift⊆ θ)

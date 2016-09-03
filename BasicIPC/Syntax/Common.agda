@@ -15,9 +15,22 @@ data Ty : Set where
   _∧_ : Ty → Ty → Ty
   ⊤  : Ty
 
+
+-- Additional useful types.
+
 infix 7 _▻◅_
 _▻◅_ : Ty → Ty → Ty
 A ▻◅ B = (A ▻ B) ∧ (B ▻ A)
+
+infixr 7 _▻⋯▻_
+_▻⋯▻_ : Cx Ty → Ty → Ty
+∅       ▻⋯▻ B = B
+(Ξ , A) ▻⋯▻ B = Ξ ▻⋯▻ (A ▻ B)
+
+infixr 7 _▻⋯▻⋆_
+_▻⋯▻⋆_ : Cx Ty → Cx Ty → Ty
+Γ ▻⋯▻⋆ ∅       = ⊤
+Γ ▻⋯▻⋆ (Ξ , A) = (Γ ▻⋯▻⋆ Ξ) ∧ (Γ ▻⋯▻ A)
 
 
 -- Inversion principles.
@@ -67,16 +80,3 @@ _≟ᵀ_ : (A A′ : Ty) → Dec (A ≡ A′)
 ⊤      ≟ᵀ ⊤        = yes refl
 
 open ContextEquality (_≟ᵀ_) public
-
-
--- Additional useful types.
-
-infixr 7 _▻⋯▻_
-_▻⋯▻_ : Cx Ty → Ty → Ty
-∅       ▻⋯▻ B = B
-(Ξ , A) ▻⋯▻ B = Ξ ▻⋯▻ (A ▻ B)
-
-infixr 7 _▻⋯▻⋆_
-_▻⋯▻⋆_ : Cx Ty → Cx Ty → Ty
-Γ ▻⋯▻⋆ ∅       = ⊤
-Γ ▻⋯▻⋆ (Ξ , A) = (Γ ▻⋯▻⋆ Ξ) ∧ (Γ ▻⋯▻ A)
