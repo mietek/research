@@ -39,7 +39,7 @@ open ClosedSyntax (Proof) public
 
 _⧺ᴿ_ : ∀ {n₁ n₂} → Rep n₁ → Rep n₂ → Rep (n₁ + n₂)
 r₁ ⧺ᴿ NIL       = r₁
-r₁ ⧺ᴿ MP i j r₂ = MP (monoFin weak≤+ᵣ i) (monoFin weak≤+ᵣ j) (r₁ ⧺ᴿ r₂)
+r₁ ⧺ᴿ MP i j r₂ = MP (monoFin weak≤+₂ i) (monoFin weak≤+₂ j) (r₁ ⧺ᴿ r₂)
 r₁ ⧺ᴿ CI r₂     = CI (r₁ ⧺ᴿ r₂)
 r₁ ⧺ᴿ CK r₂     = CK (r₁ ⧺ᴿ r₂)
 r₁ ⧺ᴿ CS r₂     = CS (r₁ ⧺ᴿ r₂)
@@ -56,7 +56,7 @@ r₁ ⧺ᴿ TT r₂     = TT (r₁ ⧺ᴿ r₂)
 -- Modus ponens and necessitation in nested form.
 
 APP : ∀ {n₁ n₂} → Rep (suc n₁) → Rep (suc n₂) → Rep (suc (suc n₂ + suc n₁))
-APP {n₁} {n₂} r₁ r₂ = MP zero (monoFin (weak≤+ₗ (suc n₁)) zero) (r₂ ⧺ᴿ r₁)
+APP {n₁} {n₂} r₁ r₂ = MP zero (monoFin (weak≤+₁ (suc n₁)) zero) (r₂ ⧺ᴿ r₁)
 
 BOX : ∀ {n} → Rep (suc n) → Rep (suc zero)
 BOX {n} r = NEC r NIL
@@ -120,7 +120,7 @@ infix 3 ⊢_
 
 _⧺ᴰ_ : ∀ {Ξ₁ Ξ₂} → ⊢ᴰ Ξ₁ → ⊢ᴰ Ξ₂ → ⊢ᴰ Ξ₁ ⧺ Ξ₂
 d₁ ⧺ᴰ nil       = d₁
-d₁ ⧺ᴰ mp i j d₂ = mp (mono∈ weak⊆⧺ᵣ i) (mono∈ weak⊆⧺ᵣ j) (d₁ ⧺ᴰ d₂)
+d₁ ⧺ᴰ mp i j d₂ = mp (mono∈ weak⊆⧺₂ i) (mono∈ weak⊆⧺₂ j) (d₁ ⧺ᴰ d₂)
 d₁ ⧺ᴰ ci d₂     = ci (d₁ ⧺ᴰ d₂)
 d₁ ⧺ᴰ ck d₂     = ck (d₁ ⧺ᴰ d₂)
 d₁ ⧺ᴰ cs d₂     = cs (d₁ ⧺ᴰ d₂)
@@ -139,7 +139,7 @@ d₁ ⧺ᴰ tt d₂     = tt (d₁ ⧺ᴰ d₂)
 app : ∀ {A B} → ⊢ A ▻ B → ⊢ A → ⊢ B
 app {A} {B} (Ξ₁ , d₁) (Ξ₂ , d₂) = Ξ₃ , d₃
   where Ξ₃ = (Ξ₂ , A) ⧺ (Ξ₁ , A ▻ B)
-        d₃ = mp top (mono∈ (weak⊆⧺ₗ (Ξ₁ , A ▻ B)) top) (d₂ ⧺ᴰ d₁)
+        d₃ = mp top (mono∈ (weak⊆⧺₁ (Ξ₁ , A ▻ B)) top) (d₂ ⧺ᴰ d₁)
 
 box : ∀ {A} → (t : ⊢ A) → ⊢ [ ᴿ⌊ π₂ t ⌋ ] ⦂ A
 box (Ξ , d) = ∅ , nec d nil

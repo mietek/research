@@ -317,7 +317,7 @@ msnd t = scan (snd (move (rmono⊢ weak⊆ t) rv₀))
 -- Closure under context concatenation.
 
 concat : ∀ {x A B Γ} Γ′ {Λ} → Γ , A ⁏ Λ ⊢ B ◎ x → Γ′ ⁏ Λ ⊢ A ◎ x → Γ ⧺ Γ′ ⁏ Λ ⊢ B ◎ x
-concat Γ′ t u = app (mono⊢ (weak⊆⧺ₗ Γ′) (lam t)) (mono⊢ weak⊆⧺ᵣ u)
+concat Γ′ t u = app (mono⊢ (weak⊆⧺₁ Γ′) (lam t)) (mono⊢ weak⊆⧺₂ u)
 
 
 -- TODO: Substitution.

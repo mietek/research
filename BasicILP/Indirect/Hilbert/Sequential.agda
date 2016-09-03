@@ -112,7 +112,7 @@ mono⊢ η (Ξ , ts) = Ξ , mono⊢× η ts
 _⧻_ : ∀ {Γ Ξ Ξ′} → Γ ⊢× Ξ → Γ ⊢× Ξ′ → Γ ⊢× Ξ ⧺ Ξ′
 us ⧻ nil       = us
 us ⧻ var i ts  = var i (us ⧻ ts)
-us ⧻ mp i j ts = mp (mono∈ weak⊆⧺ᵣ i) (mono∈ weak⊆⧺ᵣ j) (us ⧻ ts)
+us ⧻ mp i j ts = mp (mono∈ weak⊆⧺₂ i) (mono∈ weak⊆⧺₂ j) (us ⧻ ts)
 us ⧻ ci ts     = ci (us ⧻ ts)
 us ⧻ ck ts     = ck (us ⧻ ts)
 us ⧻ cs ts     = cs (us ⧻ ts)
@@ -131,7 +131,7 @@ us ⧻ tt ts     = tt (us ⧻ ts)
 app : ∀ {A B Γ} → Γ ⊢ A ▻ B → Γ ⊢ A → Γ ⊢ B
 app {A} {B} (Ξ , ts) (Ξ′ , us) = Ξ″ , vs
   where Ξ″ = (Ξ′ , A) ⧺ (Ξ , A ▻ B)
-        vs = mp top (mono∈ (weak⊆⧺ₗ (Ξ , A ▻ B)) top) (us ⧻ ts)
+        vs = mp top (mono∈ (weak⊆⧺₁ (Ξ , A ▻ B)) top) (us ⧻ ts)
 
 box : ∀ {A Γ} → (t : ∅ ⊢ A) → Γ ⊢ [ t ] ⦂ A
 box (Ξ , ts) = ∅ , nec ts nil

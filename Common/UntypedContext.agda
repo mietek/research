@@ -89,20 +89,20 @@ _+_ : ℕ → ℕ → ℕ
 n + zero     = n
 n + (suc n′) = suc (n + n′)
 
-id+ₗ : ∀ {n} → n + zero ≡ n
-id+ₗ = refl
+id+₁ : ∀ {n} → n + zero ≡ n
+id+₁ = refl
 
-id+ᵣ : ∀ {n} → zero + n ≡ n
-id+ᵣ {zero}  = refl
-id+ᵣ {suc n} = cong suc id+ᵣ
+id+₂ : ∀ {n} → zero + n ≡ n
+id+₂ {zero}  = refl
+id+₂ {suc n} = cong suc id+₂
 
-weak≤+ₗ : ∀ {n} n′ → n ≤ n + n′
-weak≤+ₗ zero     = refl≤
-weak≤+ₗ (suc n′) = skip (weak≤+ₗ n′)
+weak≤+₁ : ∀ {n} n′ → n ≤ n + n′
+weak≤+₁ zero     = refl≤
+weak≤+₁ (suc n′) = skip (weak≤+₁ n′)
 
-weak≤+ᵣ : ∀ {n n′} → n′ ≤ n + n′
-weak≤+ᵣ {n} {zero}   = bot≤
-weak≤+ᵣ {n} {suc n′} = keep weak≤+ᵣ
+weak≤+₂ : ∀ {n n′} → n′ ≤ n + n′
+weak≤+₂ {n} {zero}   = bot≤
+weak≤+₂ {n} {suc n′} = keep weak≤+₂
 
 
 -- Subtraction of naturals, as a projection of context thinning.

@@ -231,7 +231,7 @@ module Syntax
   -- NOTE: This could be more precise.
   ≤⊓Я→≤⊔Яᶜ : ∀ {v w′} → w′ ≤⊓Яᶜ v → v ≤⊔Яᶜ w′
   ≤⊓Я→≤⊔Яᶜ {v} {w′} (w , (ξ , ζ)) =
-    (w′ ⧺² v) , (weak⊆²⧺ᵣ , mono²⊢ (weak⊆²⧺ₗ v) ∘ up)
+    (w′ ⧺² v) , (weak⊆²⧺₂ , mono²⊢ (weak⊆²⧺₁ v) ∘ up)
 
 
   -- Supremum-to-infimum condition.

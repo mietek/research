@@ -31,11 +31,11 @@ module _ {U V : Set} where
   trans⊆² : ∀ {Π Π′ Π″} → Π ⊆² Π′ → Π′ ⊆² Π″ → Π ⊆² Π″
   trans⊆² (η , θ) (η′ , θ′) = trans⊆ η η′ , trans⊆ θ θ′
 
-  weak⊆²ₗ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊆² Γ , A ⁏ Δ
-  weak⊆²ₗ = weak⊆ , refl⊆
+  weak⊆²₁ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊆² Γ , A ⁏ Δ
+  weak⊆²₁ = weak⊆ , refl⊆
 
-  weak⊆²ᵣ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊆² Γ ⁏ Δ , A
-  weak⊆²ᵣ = refl⊆ , weak⊆
+  weak⊆²₂ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊆² Γ ⁏ Δ , A
+  weak⊆²₂ = refl⊆ , weak⊆
 
   bot⊆² : ∀ {Π} → ∅² ⊆² Π
   bot⊆² = bot⊆ , bot⊆
@@ -47,8 +47,8 @@ module _ {U V : Set} where
   _⧺²_ : Cx² U V → Cx² U V → Cx² U V
   (Γ ⁏ Δ) ⧺² (Γ′ ⁏ Δ′) = Γ ⧺ Γ′ ⁏ Δ ⧺ Δ′
 
-  weak⊆²⧺ₗ : ∀ {Π} Π′ → Π ⊆² Π ⧺² Π′
-  weak⊆²⧺ₗ (Γ′ ⁏ Δ′) = weak⊆⧺ₗ Γ′ , weak⊆⧺ₗ Δ′
+  weak⊆²⧺₁ : ∀ {Π} Π′ → Π ⊆² Π ⧺² Π′
+  weak⊆²⧺₁ (Γ′ ⁏ Δ′) = weak⊆⧺₁ Γ′ , weak⊆⧺₁ Δ′
 
-  weak⊆²⧺ᵣ : ∀ {Π Π′} → Π′ ⊆² Π ⧺² Π′
-  weak⊆²⧺ᵣ = weak⊆⧺ᵣ , weak⊆⧺ᵣ
+  weak⊆²⧺₂ : ∀ {Π Π′} → Π′ ⊆² Π ⧺² Π′
+  weak⊆²⧺₂ = weak⊆⧺₂ , weak⊆⧺₂

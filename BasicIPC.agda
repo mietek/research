@@ -23,17 +23,17 @@ A ▻◅ B = (A ▻ B) ∧ (B ▻ A)
 invα : ∀ {P P′} → α P ≡ α P′ → P ≡ P′
 invα refl = refl
 
-inv▻ₗ : ∀ {A A′ B B′} → A ▻ B ≡ A′ ▻ B′ → A ≡ A′
-inv▻ₗ refl = refl
+inv▻₁ : ∀ {A A′ B B′} → A ▻ B ≡ A′ ▻ B′ → A ≡ A′
+inv▻₁ refl = refl
 
-inv▻ᵣ : ∀ {A A′ B B′} → A ▻ B ≡ A′ ▻ B′ → B ≡ B′
-inv▻ᵣ refl = refl
+inv▻₂ : ∀ {A A′ B B′} → A ▻ B ≡ A′ ▻ B′ → B ≡ B′
+inv▻₂ refl = refl
 
-inv∧ₗ : ∀ {A A′ B B′} → A ∧ B ≡ A′ ∧ B′ → A ≡ A′
-inv∧ₗ refl = refl
+inv∧₁ : ∀ {A A′ B B′} → A ∧ B ≡ A′ ∧ B′ → A ≡ A′
+inv∧₁ refl = refl
 
-inv∧ᵣ : ∀ {A A′ B B′} → A ∧ B ≡ A′ ∧ B′ → B ≡ B′
-inv∧ᵣ refl = refl
+inv∧₂ : ∀ {A A′ B B′} → A ∧ B ≡ A′ ∧ B′ → B ≡ B′
+inv∧₂ refl = refl
 
 
 -- Decidable equality.
@@ -48,16 +48,16 @@ _≟ᵀ_ : (A A′ : Ty) → Dec (A ≡ A′)
 (A ▻ B) ≟ᵀ (α P′)    = no λ ()
 (A ▻ B) ≟ᵀ (A′ ▻ B′) with A ≟ᵀ A′ | B ≟ᵀ B′
 (A ▻ B) ≟ᵀ (.A ▻ .B) | yes refl | yes refl = yes refl
-(A ▻ B) ≟ᵀ (A′ ▻ B′) | no  A≢A′ | _        = no (A≢A′ ∘ inv▻ₗ)
-(A ▻ B) ≟ᵀ (A′ ▻ B′) | _        | no  B≢B′ = no (B≢B′ ∘ inv▻ᵣ)
+(A ▻ B) ≟ᵀ (A′ ▻ B′) | no  A≢A′ | _        = no (A≢A′ ∘ inv▻₁)
+(A ▻ B) ≟ᵀ (A′ ▻ B′) | _        | no  B≢B′ = no (B≢B′ ∘ inv▻₂)
 (A ▻ B) ≟ᵀ (A′ ∧ B′) = no λ ()
 (A ▻ B) ≟ᵀ ⊤        = no λ ()
 (A ∧ B) ≟ᵀ (α P′)    = no λ ()
 (A ∧ B) ≟ᵀ (A′ ▻ B′) = no λ ()
 (A ∧ B) ≟ᵀ (A′ ∧ B′) with A ≟ᵀ A′ | B ≟ᵀ B′
 (A ∧ B) ≟ᵀ (.A ∧ .B) | yes refl | yes refl = yes refl
-(A ∧ B) ≟ᵀ (A′ ∧ B′) | no  A≢A′ | _        = no (A≢A′ ∘ inv∧ₗ)
-(A ∧ B) ≟ᵀ (A′ ∧ B′) | _        | no  B≢B′ = no (B≢B′ ∘ inv∧ᵣ)
+(A ∧ B) ≟ᵀ (A′ ∧ B′) | no  A≢A′ | _        = no (A≢A′ ∘ inv∧₁)
+(A ∧ B) ≟ᵀ (A′ ∧ B′) | _        | no  B≢B′ = no (B≢B′ ∘ inv∧₂)
 (A ∧ B) ≟ᵀ ⊤        = no λ ()
 ⊤      ≟ᵀ (α P′)    = no λ ()
 ⊤      ≟ᵀ (A′ ▻ B′) = no λ ()

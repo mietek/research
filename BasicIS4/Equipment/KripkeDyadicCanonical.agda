@@ -231,7 +231,7 @@ module Syntax
   -- NOTE: This could be more precise.
   ≤⊓R→≤⊔Rᶜ : ∀ {v w′} → w′ ≤⊓Rᶜ v → v ≤⊔Rᶜ w′
   ≤⊓R→≤⊔Rᶜ {v} {w′} (w , (ξ , ζ)) =
-    (w′ ⧺² v) , (weak⊆²⧺ᵣ , mono²⊢ (weak⊆²⧺ₗ v) ∘ down)
+    (w′ ⧺² v) , (weak⊆²⧺₂ , mono²⊢ (weak⊆²⧺₁ v) ∘ down)
 
 
   -- Supremum-to-infimum condition.

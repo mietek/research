@@ -59,7 +59,7 @@ mutual
 
   reifyᶜ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊢ A
   reifyᶜ {α P}   s = s
-  reifyᶜ {A ▻ B} s = lam (reifyᶜ (s (weak⊆²ₗ) (reflectᶜ {A} v₀)))
+  reifyᶜ {A ▻ B} s = lam (reifyᶜ (s (weak⊆²₁) (reflectᶜ {A} v₀)))
   reifyᶜ {□ A}   s = syn (s refl⊆²)
   reifyᶜ {A ∧ B} s = pair (reifyᶜ (π₁ s)) (reifyᶜ (π₂ s))
   reifyᶜ {⊤}    s = tt

@@ -33,7 +33,7 @@ infix 3 ⊢_
 
 _⧺⊦_ : ∀ {Ξ Ξ′} → ⊦⊢ Ξ → ⊦⊢ Ξ′ → ⊦⊢ Ξ ⧺ Ξ′
 us ⧺⊦ nil       = us
-us ⧺⊦ mp i j ts = mp (mono∈ weak⊆⧺ᵣ i) (mono∈ weak⊆⧺ᵣ j) (us ⧺⊦ ts)
+us ⧺⊦ mp i j ts = mp (mono∈ weak⊆⧺₂ i) (mono∈ weak⊆⧺₂ j) (us ⧺⊦ ts)
 us ⧺⊦ ci ts     = ci (us ⧺⊦ ts)
 us ⧺⊦ ck ts     = ck (us ⧺⊦ ts)
 us ⧺⊦ cs ts     = cs (us ⧺⊦ ts)
@@ -52,7 +52,7 @@ us ⧺⊦ tt ts     = tt (us ⧺⊦ ts)
 app : ∀ {A B} → ⊢ A ▻ B → ⊢ A → ⊢ B
 app {A} {B} (Ξ , ts) (Ξ′ , us) = Ξ″ , vs
   where Ξ″ = (Ξ′ , A) ⧺ (Ξ , A ▻ B)
-        vs = mp top (mono∈ (weak⊆⧺ₗ (Ξ , A ▻ B)) top) (us ⧺⊦ ts)
+        vs = mp top (mono∈ (weak⊆⧺₁ (Ξ , A ▻ B)) top) (us ⧺⊦ ts)
 
 box : ∀ {A} → ⊢ A → ⊢ □ A
 box (Ξ , ts) = ∅ , nec ts nil

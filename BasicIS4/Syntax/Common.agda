@@ -27,20 +27,20 @@ A ▻◅ B = (A ▻ B) ∧ (B ▻ A)
 invα : ∀ {P P′} → α P ≡ α P′ → P ≡ P′
 invα refl = refl
 
-inv▻ₗ : ∀ {A A′ B B′} → A ▻ B ≡ A′ ▻ B′ → A ≡ A′
-inv▻ₗ refl = refl
+inv▻₁ : ∀ {A A′ B B′} → A ▻ B ≡ A′ ▻ B′ → A ≡ A′
+inv▻₁ refl = refl
 
-inv▻ᵣ : ∀ {A A′ B B′} → A ▻ B ≡ A′ ▻ B′ → B ≡ B′
-inv▻ᵣ refl = refl
+inv▻₂ : ∀ {A A′ B B′} → A ▻ B ≡ A′ ▻ B′ → B ≡ B′
+inv▻₂ refl = refl
 
 inv□ : ∀ {A A′} → □ A ≡ □ A′ → A ≡ A′
 inv□ refl = refl
 
-inv∧ₗ : ∀ {A A′ B B′} → A ∧ B ≡ A′ ∧ B′ → A ≡ A′
-inv∧ₗ refl = refl
+inv∧₁ : ∀ {A A′ B B′} → A ∧ B ≡ A′ ∧ B′ → A ≡ A′
+inv∧₁ refl = refl
 
-inv∧ᵣ : ∀ {A A′ B B′} → A ∧ B ≡ A′ ∧ B′ → B ≡ B′
-inv∧ᵣ refl = refl
+inv∧₂ : ∀ {A A′ B B′} → A ∧ B ≡ A′ ∧ B′ → B ≡ B′
+inv∧₂ refl = refl
 
 
 -- Decidable equality on types.
@@ -56,8 +56,8 @@ _≟ᵀ_ : (A A′ : Ty) → Dec (A ≡ A′)
 (A ▻ B) ≟ᵀ (α P′)    = no λ ()
 (A ▻ B) ≟ᵀ (A′ ▻ B′) with A ≟ᵀ A′ | B ≟ᵀ B′
 (A ▻ B) ≟ᵀ (.A ▻ .B) | yes refl | yes refl = yes refl
-(A ▻ B) ≟ᵀ (A′ ▻ B′) | no  A≢A′ | _        = no (A≢A′ ∘ inv▻ₗ)
-(A ▻ B) ≟ᵀ (A′ ▻ B′) | _        | no  B≢B′ = no (B≢B′ ∘ inv▻ᵣ)
+(A ▻ B) ≟ᵀ (A′ ▻ B′) | no  A≢A′ | _        = no (A≢A′ ∘ inv▻₁)
+(A ▻ B) ≟ᵀ (A′ ▻ B′) | _        | no  B≢B′ = no (B≢B′ ∘ inv▻₂)
 (A ▻ B) ≟ᵀ (□ A′)    = no λ ()
 (A ▻ B) ≟ᵀ (A′ ∧ B′) = no λ ()
 (A ▻ B) ≟ᵀ ⊤        = no λ ()
@@ -73,8 +73,8 @@ _≟ᵀ_ : (A A′ : Ty) → Dec (A ≡ A′)
 (A ∧ B) ≟ᵀ (□ A′)    = no λ ()
 (A ∧ B) ≟ᵀ (A′ ∧ B′) with A ≟ᵀ A′ | B ≟ᵀ B′
 (A ∧ B) ≟ᵀ (.A ∧ .B) | yes refl | yes refl = yes refl
-(A ∧ B) ≟ᵀ (A′ ∧ B′) | no  A≢A′ | _        = no (A≢A′ ∘ inv∧ₗ)
-(A ∧ B) ≟ᵀ (A′ ∧ B′) | _        | no  B≢B′ = no (B≢B′ ∘ inv∧ᵣ)
+(A ∧ B) ≟ᵀ (A′ ∧ B′) | no  A≢A′ | _        = no (A≢A′ ∘ inv∧₁)
+(A ∧ B) ≟ᵀ (A′ ∧ B′) | _        | no  B≢B′ = no (B≢B′ ∘ inv∧₂)
 (A ∧ B) ≟ᵀ ⊤        = no λ ()
 ⊤      ≟ᵀ (α P′)    = no λ ()
 ⊤      ≟ᵀ (A′ ▻ B′) = no λ ()
@@ -97,9 +97,9 @@ infixr 10 □⋆_
 □⋆ ∅       = ∅
 □⋆ (Ξ , A) = □⋆ Ξ , □ A
 
-dist□⋆ₗ : ∀ Ξ Ξ′ → □⋆ (Ξ ⧺ Ξ′) ≡ (□⋆ Ξ) ⧺ (□⋆ Ξ′)
-dist□⋆ₗ Ξ ∅        = refl
-dist□⋆ₗ Ξ (Ξ′ , A) = cong² _,_ (dist□⋆ₗ Ξ Ξ′) refl
+dist□⋆₁ : ∀ Ξ Ξ′ → □⋆ (Ξ ⧺ Ξ′) ≡ (□⋆ Ξ) ⧺ (□⋆ Ξ′)
+dist□⋆₁ Ξ ∅        = refl
+dist□⋆₁ Ξ (Ξ′ , A) = cong² _,_ (dist□⋆₁ Ξ Ξ′) refl
 
 lift⊆ : ∀ {Δ Δ′} → Δ ⊆ Δ′ → □⋆ Δ ⊆ □⋆ Δ′
 lift⊆ done     = done

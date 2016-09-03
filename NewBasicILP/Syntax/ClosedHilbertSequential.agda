@@ -84,7 +84,7 @@ infix 3 ⊢_
 -- Concatenation of derivations.
 
 d₁ ⧺ᴰ nil       = d₁
-d₁ ⧺ᴰ mp i j d₂ = mp (mono∈ weak⊆⧺ᵣ i) (mono∈ weak⊆⧺ᵣ j) (d₁ ⧺ᴰ d₂)
+d₁ ⧺ᴰ mp i j d₂ = mp (mono∈ weak⊆⧺₂ i) (mono∈ weak⊆⧺₂ j) (d₁ ⧺ᴰ d₂)
 d₁ ⧺ᴰ ci d₂     = ci (d₁ ⧺ᴰ d₂)
 d₁ ⧺ᴰ ck d₂     = ck (d₁ ⧺ᴰ d₂)
 d₁ ⧺ᴰ cs d₂     = cs (d₁ ⧺ᴰ d₂)
@@ -100,7 +100,7 @@ d₁ ⧺ᴰ tt d₂     = tt (d₁ ⧺ᴰ d₂)
 
 -- Modus ponens and necessitation in nested form.
 
-appᴰ {Ξ₁} {Ξ₂} {A} {B} d₁ d₂ = mp top (mono∈ (weak⊆⧺ₗ (Ξ₁ , A ▻ B)) top) (d₂ ⧺ᴰ d₁)
+appᴰ {Ξ₁} {Ξ₂} {A} {B} d₁ d₂ = mp top (mono∈ (weak⊆⧺₁ (Ξ₁ , A ▻ B)) top) (d₂ ⧺ᴰ d₁)
 
 boxᴰ {Ξ} {A} d = nec d nil
 

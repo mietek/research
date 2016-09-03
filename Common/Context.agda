@@ -20,11 +20,11 @@ data VCx (U : Set) : ℕ → Set where
 -- Inversion principles for contexts.
 
 module _ {U : Set} where
-  inv,ₗ : ∀ {Γ Γ′ : Cx U} {A A′ : U} → (Γ Cx., A) ≡ (Γ′ , A′) → Γ ≡ Γ′
-  inv,ₗ refl = refl
+  inv,₁ : ∀ {Γ Γ′ : Cx U} {A A′ : U} → (Γ Cx., A) ≡ (Γ′ , A′) → Γ ≡ Γ′
+  inv,₁ refl = refl
 
-  inv,ᵣ : ∀ {Γ Γ′ : Cx U} {A A′ : U} → (Γ Cx., A) ≡ (Γ′ , A′) → A ≡ A′
-  inv,ᵣ refl = refl
+  inv,₂ : ∀ {Γ Γ′ : Cx U} {A A′ : U} → (Γ Cx., A) ≡ (Γ′ , A′) → A ≡ A′
+  inv,₂ refl = refl
 
 
 -- Decidable equality for contexts.
@@ -36,8 +36,8 @@ module ContextEquality {U : Set} (_≟ᵁ_ : (A A′ : U) → Dec (A ≡ A′)) 
   (Γ , A) ≟ᵀ⋆ ∅         = no λ ()
   (Γ , A) ≟ᵀ⋆ (Γ′ , A′) with Γ ≟ᵀ⋆ Γ′ | A ≟ᵁ A′
   (Γ , A) ≟ᵀ⋆ (.Γ , .A) | yes refl | yes refl = yes refl
-  (Γ , A) ≟ᵀ⋆ (Γ′ , A′) | no  Γ≢Γ′ | _        = no (Γ≢Γ′ ∘ inv,ₗ)
-  (Γ , A) ≟ᵀ⋆ (Γ′ , A′) | _        | no  A≢A′ = no (A≢A′ ∘ inv,ᵣ)
+  (Γ , A) ≟ᵀ⋆ (Γ′ , A′) | no  Γ≢Γ′ | _        = no (Γ≢Γ′ ∘ inv,₁)
+  (Γ , A) ≟ᵀ⋆ (Γ′ , A′) | _        | no  A≢A′ = no (A≢A′ ∘ inv,₂)
 
 
 -- Context membership, or nameless typed de Bruijn indices.
@@ -134,20 +134,20 @@ module _ {U : Set} where
   Γ ⧺ ∅        = Γ
   Γ ⧺ (Γ′ , A) = (Γ ⧺ Γ′) , A
 
-  id⧺ₗ : ∀ {Γ} → Γ ⧺ ∅ ≡ Γ
-  id⧺ₗ = refl
+  id⧺₁ : ∀ {Γ} → Γ ⧺ ∅ ≡ Γ
+  id⧺₁ = refl
 
-  id⧺ᵣ : ∀ {Γ} → ∅ ⧺ Γ ≡ Γ
-  id⧺ᵣ {∅}     = refl
-  id⧺ᵣ {Γ , A} = cong² _,_ id⧺ᵣ refl
+  id⧺₂ : ∀ {Γ} → ∅ ⧺ Γ ≡ Γ
+  id⧺₂ {∅}     = refl
+  id⧺₂ {Γ , A} = cong² _,_ id⧺₂ refl
 
-  weak⊆⧺ₗ : ∀ {Γ} Γ′ → Γ ⊆ Γ ⧺ Γ′
-  weak⊆⧺ₗ ∅        = refl⊆
-  weak⊆⧺ₗ (Γ′ , A) = skip (weak⊆⧺ₗ Γ′)
+  weak⊆⧺₁ : ∀ {Γ} Γ′ → Γ ⊆ Γ ⧺ Γ′
+  weak⊆⧺₁ ∅        = refl⊆
+  weak⊆⧺₁ (Γ′ , A) = skip (weak⊆⧺₁ Γ′)
 
-  weak⊆⧺ᵣ : ∀ {Γ Γ′} → Γ′ ⊆ Γ ⧺ Γ′
-  weak⊆⧺ᵣ {Γ} {∅}      = bot⊆
-  weak⊆⧺ᵣ {Γ} {Γ′ , A} = keep weak⊆⧺ᵣ
+  weak⊆⧺₂ : ∀ {Γ Γ′} → Γ′ ⊆ Γ ⧺ Γ′
+  weak⊆⧺₂ {Γ} {∅}      = bot⊆
+  weak⊆⧺₂ {Γ} {Γ′ , A} = keep weak⊆⧺₂
 
 
 -- Thinning of contexts.

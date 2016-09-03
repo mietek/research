@@ -130,20 +130,20 @@ module _ {U : Set} where
   Γ ⧺ ∅        = Γ
   Γ ⧺ (Γ′ , A) = (Γ ⧺ Γ′) , A
 
-  id⧺ₗ : ∀ {Γ} → Γ ⧺ ∅ ≡ Γ
-  id⧺ₗ = refl
+  id⧺₁ : ∀ {Γ} → Γ ⧺ ∅ ≡ Γ
+  id⧺₁ = refl
 
-  id⧺ᵣ : ∀ {Γ} → ∅  ⧺ Γ ≡ Γ
-  id⧺ᵣ {∅}     = refl
-  id⧺ᵣ {Γ , A} = cong² _,_ id⧺ᵣ refl
+  id⧺₂ : ∀ {Γ} → ∅  ⧺ Γ ≡ Γ
+  id⧺₂ {∅}     = refl
+  id⧺₂ {Γ , A} = cong² _,_ id⧺₂ refl
 
-  weak⊆⧺ₗ : ∀ {Γ} Γ′ → Γ ⊆ Γ ⧺ Γ′
-  weak⊆⧺ₗ ∅        = refl⊆
-  weak⊆⧺ₗ (Γ′ , A) = skip⊆ (weak⊆⧺ₗ Γ′)
+  weak⊆⧺₁ : ∀ {Γ} Γ′ → Γ ⊆ Γ ⧺ Γ′
+  weak⊆⧺₁ ∅        = refl⊆
+  weak⊆⧺₁ (Γ′ , A) = skip⊆ (weak⊆⧺₁ Γ′)
 
-  weak⊆⧺ᵣ : ∀ {Γ Γ′} → Γ′ ⊆ Γ ⧺ Γ′
-  weak⊆⧺ᵣ {Γ} {∅}      = bot⊆
-  weak⊆⧺ᵣ {Γ} {Γ′ , A} = keep⊆ weak⊆⧺ᵣ
+  weak⊆⧺₂ : ∀ {Γ Γ′} → Γ′ ⊆ Γ ⧺ Γ′
+  weak⊆⧺₂ {Γ} {∅}      = bot⊆
+  weak⊆⧺₂ {Γ} {Γ′ , A} = keep⊆ weak⊆⧺₂
 
 
 -- Predicate-based context thinning.
