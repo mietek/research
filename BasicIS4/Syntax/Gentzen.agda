@@ -57,6 +57,13 @@ v₂ : ∀ {A B C Γ} → Γ , A , B , C ⊢ A
 v₂ = var i₂
 
 
+-- Reflexivity.
+
+refl⊢⋆ : ∀ {Γ} → Γ ⊢⋆ Γ
+refl⊢⋆ {∅}     = ∙
+refl⊢⋆ {Γ , A} = mono⊢⋆ weak⊆ refl⊢⋆ , v₀
+
+
 -- Deduction theorem is built-in.
 
 lam⋆ : ∀ {Ξ Γ A} → Γ ⧺ Ξ ⊢ A → Γ ⊢ Ξ ▻⋯▻ A
@@ -92,11 +99,7 @@ multicut {∅}     ∙        u = mono⊢ bot⊆ u
 multicut {Ξ , B} (ts , t) u = app (multicut ts (lam u)) t
 
 
--- Reflexivity and transitivity.
-
-refl⊢⋆ : ∀ {Γ} → Γ ⊢⋆ Γ
-refl⊢⋆ {∅}     = ∙
-refl⊢⋆ {Γ , A} = mono⊢⋆ weak⊆ refl⊢⋆ , v₀
+-- Transitivity.
 
 trans⊢⋆ : ∀ {Γ″ Γ′ Γ} → Γ ⊢⋆ Γ′ → Γ′ ⊢⋆ Γ″ → Γ ⊢⋆ Γ″
 trans⊢⋆ {∅}      ts ∙        = ∙

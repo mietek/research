@@ -132,6 +132,13 @@ rv₂ : ∀ {x y x′ y′ x″ y″ Λ} → Λ , x ↝ y , x′ ↝ y′ , x″
 rv₂ = rvar i₂
 
 
+-- Reflexivity.
+
+refl⊢⋆ : ∀ {Γ x Λ} → Γ ⁏ Λ ⊢⋆ Γ ◎⋆ x
+refl⊢⋆ {∅}     = ∙
+refl⊢⋆ {Γ , A} = mono⊢⋆ weak⊆ refl⊢⋆ , v₀
+
+
 -- Deduction theorem is built-in.
 
 lam⋆ : ∀ {Ξ x A Γ Λ} → Γ ⧺ Ξ ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ Ξ ▻⋯▻ A ◎ x
@@ -167,11 +174,7 @@ multicut {∅}     ∙        u = mono⊢ bot⊆ u
 multicut {Ξ , B} (ts , t) u = app (multicut ts (lam u)) t
 
 
--- Reflexivity and transitivity.
-
-refl⊢⋆ : ∀ {Γ x Λ} → Γ ⁏ Λ ⊢⋆ Γ ◎⋆ x
-refl⊢⋆ {∅}     = ∙
-refl⊢⋆ {Γ , A} = mono⊢⋆ weak⊆ refl⊢⋆ , v₀
+-- Transitivity.
 
 trans⊢⋆ : ∀ {Γ″ x Γ′ Γ Λ} → Γ ⁏ Λ ⊢⋆ Γ′ ◎⋆ x → Γ′ ⁏ Λ ⊢⋆ Γ″ ◎⋆ x → Γ ⁏ Λ ⊢⋆ Γ″ ◎⋆ x
 trans⊢⋆ {∅}      ts ∙        = ∙

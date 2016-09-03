@@ -91,6 +91,27 @@ mv₂ : ∀ {A B C Γ Δ} → Γ ⁏ Δ , A , B , C ⊢ A
 mv₂ = mvar i₂
 
 
+-- Reflexivity.
+
+refl⊢⋆₀ : ∀ {Γ} → Γ ⁏ ∅ ⊢⋆ Γ
+refl⊢⋆₀ {∅}     = ∙
+refl⊢⋆₀ {Γ , A} = mono⊢⋆ weak⊆ refl⊢⋆₀ , v₀
+
+refl⊢⋆ : ∀ {Γ Δ} → Γ ⁏ Δ ⊢⋆ Γ
+refl⊢⋆ = mmono⊢⋆ bot⊆ refl⊢⋆₀
+
+mrefl⊢⋆₀ : ∀ {Δ} → ∅ ⁏ Δ ⊢⋆ □⋆ Δ
+mrefl⊢⋆₀ {∅}     = ∙
+mrefl⊢⋆₀ {Δ , A} = mmono⊢⋆ weak⊆ mrefl⊢⋆₀ , box mv₀
+
+mrefl⊢⋆ : ∀ {Γ Δ} → Γ ⁏ Δ ⊢⋆ □⋆ Δ
+mrefl⊢⋆ = mono⊢⋆ bot⊆ mrefl⊢⋆₀
+
+mrefl⊢⋆′ : ∀ {Δ Δ′ Γ Γ′} → (∀ {A} → Γ ⁏ Δ ⊢ □ A → Γ′ ⁏ Δ′ ⊢ A) → Γ′ ⁏ Δ′ ⊢⋆ Δ
+mrefl⊢⋆′ {∅}     f = ∙
+mrefl⊢⋆′ {Δ , B} f = mrefl⊢⋆′ (f ∘ mmono⊢ weak⊆) , f (box mv₀)
+
+
 -- Deduction theorem is built-in.
 
 lam⋆ : ∀ {Ξ A Γ Δ} → Γ ⧺ Ξ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ Ξ ▻⋯▻ A
@@ -185,25 +206,7 @@ multicut² {∅}     ∙        us v = mmulticut us (mono⊢ bot⊆ v)
 multicut² {Ξ , B} (ts , t) us v = app (multicut² ts us (lam v)) t
 
 
--- Reflexivity and transitivity.
-
-refl⊢⋆₀ : ∀ {Γ} → Γ ⁏ ∅ ⊢⋆ Γ
-refl⊢⋆₀ {∅}     = ∙
-refl⊢⋆₀ {Γ , A} = mono⊢⋆ weak⊆ refl⊢⋆₀ , v₀
-
-refl⊢⋆ : ∀ {Γ Δ} → Γ ⁏ Δ ⊢⋆ Γ
-refl⊢⋆ = mmono⊢⋆ bot⊆ refl⊢⋆₀
-
-mrefl⊢⋆₀ : ∀ {Δ} → ∅ ⁏ Δ ⊢⋆ □⋆ Δ
-mrefl⊢⋆₀ {∅}     = ∙
-mrefl⊢⋆₀ {Δ , A} = mmono⊢⋆ weak⊆ mrefl⊢⋆₀ , box mv₀
-
-mrefl⊢⋆ : ∀ {Γ Δ} → Γ ⁏ Δ ⊢⋆ □⋆ Δ
-mrefl⊢⋆ = mono⊢⋆ bot⊆ mrefl⊢⋆₀
-
-mrefl⊢⋆′ : ∀ {Δ Δ′ Γ Γ′} → (∀ {A} → Γ ⁏ Δ ⊢ □ A → Γ′ ⁏ Δ′ ⊢ A) → Γ′ ⁏ Δ′ ⊢⋆ Δ
-mrefl⊢⋆′ {∅}     f = ∙
-mrefl⊢⋆′ {Δ , B} f = mrefl⊢⋆′ (f ∘ mmono⊢ weak⊆) , f (box mv₀)
+-- Tansitivity.
 
 trans⊢⋆₀ : ∀ {Γ″ Γ′ Γ} → Γ ⁏ ∅ ⊢⋆ Γ′ → Γ′ ⁏ ∅ ⊢⋆ Γ″ → Γ ⁏ ∅ ⊢⋆ Γ″
 trans⊢⋆₀ {∅}      ts ∙        = ∙
