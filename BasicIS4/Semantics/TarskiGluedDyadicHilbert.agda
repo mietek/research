@@ -4,7 +4,6 @@
 module BasicIS4.Semantics.TarskiGluedDyadicHilbert where
 
 open import BasicIS4.Syntax.Common public
-open import Common.ContextPair public
 open import Common.Semantics public
 
 

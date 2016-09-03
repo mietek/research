@@ -4,13 +4,12 @@
 module BasicIS4.Syntax.DyadicHilbertSequential where
 
 open import BasicIS4.Syntax.Common public
-open import Common.ContextPair public
 
 
 -- Derivations.
 
 infix 3 _⊦⊢_
-data _⊦⊢_ : Cx² Ty → Cx Ty → Set where
+data _⊦⊢_ : Cx² Ty Ty → Cx Ty → Set where
   nil   : ∀ {Γ Δ}         → Γ ⁏ Δ ⊦⊢ ∅
   var   : ∀ {Ξ A Γ Δ}     → A ∈ Γ → Γ ⁏ Δ ⊦⊢ Ξ → Γ ⁏ Δ ⊦⊢ Ξ , A
   mp    : ∀ {Ξ A B Γ Δ}   → A ▻ B ∈ Ξ → A ∈ Ξ → Γ ⁏ Δ ⊦⊢ Ξ → Γ ⁏ Δ ⊦⊢ Ξ , B
@@ -28,7 +27,7 @@ data _⊦⊢_ : Cx² Ty → Cx Ty → Set where
   tt    : ∀ {Ξ Γ Δ}       → Γ ⁏ Δ ⊦⊢ Ξ → Γ ⁏ Δ ⊦⊢ Ξ , ⊤
 
 infix 3 _⊢_
-_⊢_ : Cx² Ty → Ty → Set
+_⊢_ : Cx² Ty Ty → Ty → Set
 Π ⊢ A = ∃ (λ Ξ → Π ⊦⊢ Ξ , A)
 
 

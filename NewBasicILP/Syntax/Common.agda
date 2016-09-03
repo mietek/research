@@ -1,3 +1,3 @@
 module NewBasicILP.Syntax.Common where
 
-open import Common.Context public
+open import Common.ContextPair public

@@ -3,7 +3,6 @@
 module BasicIS4.Syntax.Translation where
 
 open import BasicIS4.Syntax.Common public
-open import Common.ContextPair public
 
 import BasicIS4.Syntax.ClosedHilbertSequential as CHS
 import BasicIS4.Syntax.ClosedHilbert as CH

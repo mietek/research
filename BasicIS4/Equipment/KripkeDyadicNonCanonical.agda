@@ -3,13 +3,12 @@
 module BasicIS4.Equipment.KripkeDyadicNonCanonical where
 
 open import BasicIS4.Syntax.Common public
-open import Common.ContextPair public
 
 
 
 
 module Syntax
-    (_⊢_    : Cx² Ty → Ty → Set)
+    (_⊢_    : Cx² Ty Ty → Ty → Set)
     (mono²⊢ : ∀ {A Π Π′} → Π ⊆² Π′ → Π ⊢ A → Π′ ⊢ A)
     (up      : ∀ {A Π} → Π ⊢ (□ A) → Π ⊢ (□ □ A))
     (down    : ∀ {A Π} → Π ⊢ (□ A) → Π ⊢ A)
@@ -20,7 +19,7 @@ module Syntax
   -- Worlds.
 
   Worldᶜ : Set
-  Worldᶜ = Cx² Ty
+  Worldᶜ = Cx² Ty Ty
 
 
   -- Intuitionistic accessibility.

@@ -6,23 +6,23 @@ open import Common.Context public
 -- Context pairs.
 
 infix 4 _⁏_
-record Cx² (U : Set) : Set where
+record Cx² (U V : Set) : Set where
   constructor _⁏_
   field
     int : Cx U
-    mod : Cx U
+    mod : Cx V
 
 open Cx² public
 
-∅² : ∀ {U} → Cx² U
+∅² : ∀ {U V} → Cx² U V
 ∅² = ∅ ⁏ ∅
 
 
 -- Context inclusion.
 
-module _ {U : Set} where
+module _ {U V : Set} where
   infix 3 _⊆²_
-  _⊆²_ : Cx² U → Cx² U → Set
+  _⊆²_ : Cx² U V → Cx² U V → Set
   Γ ⁏ Δ ⊆² Γ′ ⁏ Δ′ = Γ ⊆ Γ′ × Δ ⊆ Δ′
 
   refl⊆² : ∀ {Π} → Π ⊆² Π
@@ -43,8 +43,8 @@ module _ {U : Set} where
 
 -- Context concatenation.
 
-module _ {U : Set} where
-  _⧺²_ : Cx² U → Cx² U → Cx² U
+module _ {U V : Set} where
+  _⧺²_ : Cx² U V → Cx² U V → Cx² U V
   (Γ ⁏ Δ) ⧺² (Γ′ ⁏ Δ′) = Γ ⧺ Γ′ ⁏ Δ ⧺ Δ′
 
   weak⊆²⧺ₗ : ∀ {Π} Π′ → Π ⊆² Π ⧺² Π′

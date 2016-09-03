@@ -4,7 +4,6 @@
 module BasicIS4.Semantics.TarskiGluedDyadicImplicit where
 
 open import BasicIS4.Syntax.Common public
-open import Common.ContextPair public
 open import Common.Semantics public
 
 
@@ -14,7 +13,7 @@ record Model : Set₁ where
   infix 3 _⊩ᵅ_
   field
     -- Forcing for atomic propositions; monotonic.
-    _⊩ᵅ_    : Cx² Ty → Atom → Set
+    _⊩ᵅ_    : Cx² Ty Ty → Atom → Set
     mono²⊩ᵅ : ∀ {P Π Π′} → Π ⊆² Π′ → Π ⊩ᵅ P → Π′ ⊩ᵅ P
 
 open Model {{…}} public
@@ -23,7 +22,7 @@ open Model {{…}} public
 
 
 module ImplicitSyntax
-    (_[⊢]_ : Cx² Ty → Ty → Set)
+    (_[⊢]_ : Cx² Ty Ty → Ty → Set)
   where
 
 
@@ -31,7 +30,7 @@ module ImplicitSyntax
 
   module _ {{_ : Model}} where
     infix 3 _⊩_
-    _⊩_ : Cx² Ty → Ty → Set
+    _⊩_ : Cx² Ty Ty → Ty → Set
     Π ⊩ α P   = Π ⊩ᵅ P
     Π ⊩ A ▻ B = ∀ {Π′} → Π ⊆² Π′ → Π′ ⊩ A → Π′ ⊩ B
     Π ⊩ □ A   = ∀ {Π′} → Π ⊆² Π′ → Glue (Π′ [⊢] (□ A)) (Π′ ⊩ A)
@@ -39,7 +38,7 @@ module ImplicitSyntax
     Π ⊩ ⊤    = 𝟙
 
     infix 3 _⊩⋆_
-    _⊩⋆_ : Cx² Ty → Cx Ty → Set
+    _⊩⋆_ : Cx² Ty Ty → Cx Ty → Set
     Π ⊩⋆ ∅     = 𝟙
     Π ⊩⋆ Ξ , A = Π ⊩⋆ Ξ × Π ⊩ A
 
@@ -87,23 +86,23 @@ module ImplicitSyntax
 
   module _ {{_ : Model}} where
     infix 3 _⊩_⇒_
-    _⊩_⇒_ : Cx² Ty → Cx² Ty → Ty → Set
+    _⊩_⇒_ : Cx² Ty Ty → Cx² Ty Ty → Ty → Set
     Π ⊩ Γ ⁏ Δ ⇒ A = Π ⊩⋆ Γ → Π ⊩⋆ □⋆ Δ → Π ⊩ A
 
     infix 3 _⊩_⇒⋆_
-    _⊩_⇒⋆_ : Cx² Ty → Cx² Ty → Cx Ty → Set
+    _⊩_⇒⋆_ : Cx² Ty Ty → Cx² Ty Ty → Cx Ty → Set
     Π ⊩ Γ ⁏ Δ ⇒⋆ Ξ = Π ⊩⋆ Γ → Π ⊩⋆ □⋆ Δ → Π ⊩⋆ Ξ
 
 
   -- Entailment, or forcing in all worlds of all models, for sequents.
 
   infix 3 _⊨_
-  _⊨_ : Cx² Ty → Ty → Set₁
-  Π ⊨ A = ∀ {{_ : Model}} {w : Cx² Ty} → w ⊩ Π ⇒ A
+  _⊨_ : Cx² Ty Ty → Ty → Set₁
+  Π ⊨ A = ∀ {{_ : Model}} {w : Cx² Ty Ty} → w ⊩ Π ⇒ A
 
   infix 3 _⊨⋆_
-  _⊨⋆_ : Cx² Ty → Cx Ty → Set₁
-  Π ⊨⋆ Ξ = ∀ {{_ : Model}} {w : Cx² Ty} → w ⊩ Π ⇒⋆ Ξ
+  _⊨⋆_ : Cx² Ty Ty → Cx Ty → Set₁
+  Π ⊨⋆ Ξ = ∀ {{_ : Model}} {w : Cx² Ty Ty} → w ⊩ Π ⇒⋆ Ξ
 
 
   -- Additional useful equipment, for sequents.
