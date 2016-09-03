@@ -27,8 +27,8 @@ data _⊢_ : Cx² Ty Ty → Ty → Set where
 
 infix 3 _⊢⋆_
 _⊢⋆_ : Cx² Ty Ty → Cx Ty → Set
-Π ⊢⋆ ∅     = 𝟙
-Π ⊢⋆ Ξ , A = Π ⊢⋆ Ξ × Π ⊢ A
+Γ ⁏ Δ ⊢⋆ ∅     = 𝟙
+Γ ⁏ Δ ⊢⋆ Ξ , A = Γ ⁏ Δ ⊢⋆ Ξ × Γ ⁏ Δ ⊢ A
 
 
 -- Monotonicity with respect to context inclusion.
