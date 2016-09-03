@@ -43,10 +43,9 @@ module _ {{_ : Model}} where
                       u ⅋ a   = s₂ ψ
                   in  app (app cdist t) u ⅋ s₁′ ⟪$⟫ a
 
-  -- TODO: Report bug.
   _⟪D⟫′_ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊩ □ (A ▻ B) → Γ ⁏ Δ ⊩ □ A ▻ □ B
   _⟪D⟫′_ {A} {B} s₁ ψ = let s₁′ = mono²⊩ {□ (A ▻ B)} ψ s₁
-                        in  app cdist (reify (λ {Π′} ψ′ → s₁′ ψ′)) ⅋ _⟪D⟫_ s₁′
+                        in  app cdist (reify (λ {_} ψ′ → s₁′ ψ′)) ⅋ _⟪D⟫_ s₁′
 
   ⟪↑⟫ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ □ A → Γ ⁏ Δ ⊩ □ □ A
   ⟪↑⟫ {A} s ψ = app cup (syn (s ψ)) ⅋ λ ψ′ → s (trans⊆² ψ ψ′)

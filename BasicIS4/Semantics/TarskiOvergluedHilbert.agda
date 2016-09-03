@@ -116,10 +116,9 @@ module _ {{_ : Model}} where
                       u ⅋ a   = s₂ η
                   in  [app] ([app] [cdist] t) u ⅋ s₁′ ⟪$⟫ a
 
-  -- TODO: Report bug.
   _⟪D⟫′_ : ∀ {A B Γ} → Γ ⊩ □ (A ▻ B) → Γ ⊩ □ A ▻ □ B
   _⟪D⟫′_ {A} {B} s₁ η = let s₁′ = mono⊩ {□ (A ▻ B)} η s₁
-                        in  [app] [cdist] (reifyʳ (λ {Γ′} η′ → s₁′ η′)) ⅋ _⟪D⟫_ s₁′
+                        in  [app] [cdist] (reifyʳ (λ {_} η′ → s₁′ η′)) ⅋ _⟪D⟫_ s₁′
 
   ⟪↑⟫ : ∀ {A Γ} → Γ ⊩ □ A → Γ ⊩ □ □ A
   ⟪↑⟫ s η = [app] [cup] (syn (s η)) ⅋ λ η′ → s (trans⊆ η η′)
