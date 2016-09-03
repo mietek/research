@@ -5,29 +5,47 @@ module BasicIS4.Syntax.LabelledGentzen where
 open import BasicIS4.Syntax.Common public
 
 
--- Labels, as in Gabbay’s labelled deductive systems.
+-- Labels for possible worlds, as in Gabbay’s labelled deductive systems.
 
 postulate
-  La : Set
+  Label : Set
+
+
+-- Relational access tokens.  x ↝ y means y is accessible from x.
 
 infix 6 _↝_
-record La² : Set where
+record Token : Set where
   constructor _↝_
   field
-    x : La
-    y : La
+    x : Label
+    y : Label
+
+
+-- Labelled types.  A ◎ x means A is inhabited at x.
+
+infix 6 _◎_
+record LabelledTy : Set where
+  constructor _◎_
+  field
+    A : Ty
+    x : Label
+
+infix 6 _◎⋆_
+_◎⋆_ : Cx Ty → Label → Cx LabelledTy
+∅       ◎⋆ x = ∅
+(Ξ , A) ◎⋆ x = Ξ ◎⋆ x , A ◎ x
 
 
 -- Derivations.
 
-infix 3 _⊢ᴿ_↝_
-data _⊢ᴿ_↝_ (Λ : Cx La²) : La → La → Set where
+infix 3 _⊢ᴿ_
+data _⊢ᴿ_ (Λ : Cx Token) : Token → Set where
   rvar   : ∀ {x y}   → x ↝ y ∈ Λ → Λ ⊢ᴿ x ↝ y
   rrefl  : ∀ {x}     → Λ ⊢ᴿ x ↝ x
   rtrans : ∀ {x y z} → Λ ⊢ᴿ x ↝ y → Λ ⊢ᴿ y ↝ z → Λ ⊢ᴿ x ↝ z
 
-infix 3 _⊢_◎_
-data _⊢_◎_ : Cx² Ty La² → Ty → La → Set where
+infix 3 _⊢_
+data _⊢_ : Cx² Ty Token → LabelledTy → Set where
   var  : ∀ {x A Γ Λ}   → A ∈ Γ → Γ ⁏ Λ ⊢ A ◎ x
   lam  : ∀ {x A B Γ Λ} → Γ , A ⁏ Λ ⊢ B ◎ x → Γ ⁏ Λ ⊢ A ▻ B ◎ x
   app  : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ▻ B ◎ x → Γ ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ B ◎ x
@@ -38,10 +56,10 @@ data _⊢_◎_ : Cx² Ty La² → Ty → La → Set where
   snd  : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ∧ B ◎ x → Γ ⁏ Λ ⊢ B ◎ x
   tt   : ∀ {x Γ Λ}     → Γ ⁏ Λ ⊢ ⊤ ◎ x
 
-infix 3 _⊢⋆_◎_
-_⊢⋆_◎_ : Cx² Ty La² → Cx Ty → La → Set
-Γ ⁏ Λ ⊢⋆ ∅     ◎ x = 𝟙
-Γ ⁏ Λ ⊢⋆ Ξ , A ◎ x = Γ ⁏ Λ ⊢⋆ Ξ ◎ x × Γ ⁏ Λ ⊢ A ◎ x
+infix 3 _⊢⋆_
+_⊢⋆_ : Cx² Ty Token → Cx LabelledTy → Set
+Γ ⁏ Λ ⊢⋆ ∅     = 𝟙
+Γ ⁏ Λ ⊢⋆ Ξ , A = Γ ⁏ Λ ⊢⋆ Ξ × Γ ⁏ Λ ⊢ A
 
 
 -- Monotonicity with respect to context inclusion.
@@ -57,7 +75,7 @@ mono⊢ η (fst t)    = fst (mono⊢ η t)
 mono⊢ η (snd t)    = snd (mono⊢ η t)
 mono⊢ η tt         = tt
 
-mono⊢⋆ : ∀ {Ξ x Γ Γ′ Λ} → Γ ⊆ Γ′ → Γ ⁏ Λ ⊢⋆ Ξ ◎ x → Γ′ ⁏ Λ ⊢⋆ Ξ ◎ x
+mono⊢⋆ : ∀ {Ξ x Γ Γ′ Λ} → Γ ⊆ Γ′ → Γ ⁏ Λ ⊢⋆ Ξ ◎⋆ x → Γ′ ⁏ Λ ⊢⋆ Ξ ◎⋆ x
 mono⊢⋆ {∅}     η ∙        = ∙
 mono⊢⋆ {Ξ , A} η (ts , t) = mono⊢⋆ η ts , mono⊢ η t
 
@@ -80,7 +98,7 @@ rmono⊢ ρ (fst t)    = fst (rmono⊢ ρ t)
 rmono⊢ ρ (snd t)    = snd (rmono⊢ ρ t)
 rmono⊢ ρ tt         = tt
 
-rmono⊢⋆ : ∀ {Ξ x Γ Λ Λ′} → Λ ⊆ Λ′ → Γ ⁏ Λ ⊢⋆ Ξ ◎ x → Γ ⁏ Λ′ ⊢⋆ Ξ ◎ x
+rmono⊢⋆ : ∀ {Ξ x Γ Λ Λ′} → Λ ⊆ Λ′ → Γ ⁏ Λ ⊢⋆ Ξ ◎⋆ x → Γ ⁏ Λ′ ⊢⋆ Ξ ◎⋆ x
 rmono⊢⋆ {∅}     ρ ∙        = ∙
 rmono⊢⋆ {Ξ , A} ρ (ts , t) = rmono⊢⋆ ρ ts , rmono⊢ ρ t
 
@@ -142,18 +160,18 @@ det⋆₀ {Γ , B} = det ∘ det⋆₀
 cut : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ◎ x → Γ , A ⁏ Λ ⊢ B ◎ x → Γ ⁏ Λ ⊢ B ◎ x
 cut t u = app (lam u) t
 
-multicut : ∀ {Ξ x A Γ Λ} → Γ ⁏ Λ ⊢⋆ Ξ ◎ x → Ξ ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ A ◎ x
+multicut : ∀ {Ξ x A Γ Λ} → Γ ⁏ Λ ⊢⋆ Ξ ◎⋆ x → Ξ ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ A ◎ x
 multicut {∅}     ∙        u = mono⊢ bot⊆ u
 multicut {Ξ , B} (ts , t) u = app (multicut ts (lam u)) t
 
 
 -- Reflexivity and transitivity.
 
-refl⊢⋆ : ∀ {Γ x Λ} → Γ ⁏ Λ ⊢⋆ Γ ◎ x
+refl⊢⋆ : ∀ {Γ x Λ} → Γ ⁏ Λ ⊢⋆ Γ ◎⋆ x
 refl⊢⋆ {∅}     = ∙
 refl⊢⋆ {Γ , A} = mono⊢⋆ weak⊆ refl⊢⋆ , v₀
 
-trans⊢⋆ : ∀ {Γ″ x Γ′ Γ Λ} → Γ ⁏ Λ ⊢⋆ Γ′ ◎ x → Γ′ ⁏ Λ ⊢⋆ Γ″ ◎ x → Γ ⁏ Λ ⊢⋆ Γ″ ◎ x
+trans⊢⋆ : ∀ {Γ″ x Γ′ Γ Λ} → Γ ⁏ Λ ⊢⋆ Γ′ ◎⋆ x → Γ′ ⁏ Λ ⊢⋆ Γ″ ◎⋆ x → Γ ⁏ Λ ⊢⋆ Γ″ ◎⋆ x
 trans⊢⋆ {∅}      ts ∙        = ∙
 trans⊢⋆ {Γ″ , A} ts (us , u) = trans⊢⋆ ts us , multicut ts u
 
@@ -262,23 +280,23 @@ cxdown : ∀ {Γ x A Λ} → □⋆ □⋆ Γ ⁏ Λ ⊢ A ◎ x → □⋆ Γ �
 cxdown {∅}     t = t
 cxdown {Γ , B} t = det (hypdown (cxdown (lam t)))
 
-box⋆ : ∀ {Ξ x Γ Λ} → (∀ {y} → ∅ ⁏ Λ , x ↝ y ⊢⋆ Ξ ◎ y) → Γ ⁏ Λ ⊢⋆ □⋆ Ξ ◎ x
+box⋆ : ∀ {Ξ x Γ Λ} → (∀ {y} → ∅ ⁏ Λ , x ↝ y ⊢⋆ Ξ ◎⋆ y) → Γ ⁏ Λ ⊢⋆ □⋆ Ξ ◎⋆ x
 box⋆ {∅}     f = ∙
 box⋆ {Ξ , A} f = box⋆ (π₁ f) , box (π₂ f)
 
-lift⋆ : ∀ {Ξ x Γ Λ} → (∀ {y} → Γ ⁏ Λ , x ↝ y ⊢⋆ Ξ ◎ y) → □⋆ Γ ⁏ Λ ⊢⋆ □⋆ Ξ ◎ x
+lift⋆ : ∀ {Ξ x Γ Λ} → (∀ {y} → Γ ⁏ Λ , x ↝ y ⊢⋆ Ξ ◎⋆ y) → □⋆ Γ ⁏ Λ ⊢⋆ □⋆ Ξ ◎⋆ x
 lift⋆ {∅}     f = ∙
 lift⋆ {Ξ , A} f = lift⋆ (π₁ f) , lift (π₂ f)
 
-up⋆ : ∀ {Ξ x Γ Λ} → Γ ⁏ Λ ⊢⋆ □⋆ Ξ ◎ x → Γ ⁏ Λ ⊢⋆ □⋆ □⋆ Ξ ◎ x
+up⋆ : ∀ {Ξ x Γ Λ} → Γ ⁏ Λ ⊢⋆ □⋆ Ξ ◎⋆ x → Γ ⁏ Λ ⊢⋆ □⋆ □⋆ Ξ ◎⋆ x
 up⋆ {∅}     f = ∙
 up⋆ {Ξ , A} f = up⋆ (π₁ f) , up (π₂ f)
 
-down⋆ : ∀ {Ξ x Γ Λ} → Γ ⁏ Λ ⊢⋆ □⋆ Ξ ◎ x → Γ ⁏ Λ ⊢⋆ Ξ ◎ x
+down⋆ : ∀ {Ξ x Γ Λ} → Γ ⁏ Λ ⊢⋆ □⋆ Ξ ◎⋆ x → Γ ⁏ Λ ⊢⋆ Ξ ◎⋆ x
 down⋆ {∅}     f = ∙
 down⋆ {Ξ , A} f = down⋆ (π₁ f) , down (π₂ f)
 
-multibox : ∀ {Ξ x A Γ Λ} → Γ ⁏ Λ ⊢⋆ □⋆ Ξ ◎ x → (∀ {y} → □⋆ Ξ ⁏ ∅ , x ↝ y ⊢ A ◎ y) → Γ ⁏ Λ ⊢ □ A ◎ x
+multibox : ∀ {Ξ x A Γ Λ} → Γ ⁏ Λ ⊢⋆ □⋆ Ξ ◎⋆ x → (∀ {y} → □⋆ Ξ ⁏ ∅ , x ↝ y ⊢ A ◎ y) → Γ ⁏ Λ ⊢ □ A ◎ x
 multibox ts u = multicut (up⋆ ts) (rmono⊢ bot⊆ (lift u))
 
 dist′ : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ □ (A ▻ B) ◎ x → Γ ⁏ Λ ⊢ □ A ▻ □ B ◎ x
