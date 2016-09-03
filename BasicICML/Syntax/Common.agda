@@ -19,7 +19,7 @@ data Ty : Set where
   ⊤   : Ty
 
 
--- Contex/type pairs.
+-- Context/type pairs.
 
 record Box : Set where
   inductive
