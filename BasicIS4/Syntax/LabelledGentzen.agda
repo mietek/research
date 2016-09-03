@@ -5,13 +5,14 @@ module BasicIS4.Syntax.LabelledGentzen where
 open import BasicIS4.Syntax.Common public
 
 
--- Labels for possible worlds, as in Gabbay’s labelled deductive systems.
+-- Labels, as in Gabbay’s labelled deductive systems.
 
 postulate
   Label : Set
 
 
--- Relational access tokens.  x ↝ y means y is accessible from x.
+-- Label pairs, or relational access tokens.
+-- x ↝ y means the world labelled y is accessible from the world labelled x.
 
 infix 6 _↝_
 record Token : Set where
@@ -21,7 +22,8 @@ record Token : Set where
     y : Label
 
 
--- Labelled types.  A ◎ x means A is inhabited at x.
+-- Labelled types.
+-- A ◎ x means the type A is inhabited at the world labelled x.
 
 infix 6 _◎_
 record LabelledTy : Set where
