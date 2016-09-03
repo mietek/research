@@ -339,4 +339,4 @@ concat Γ′ t u = app (mono⊢ (weak⊆⧺₁ Γ′) (lam t)) (mono⊢ weak⊆�
 -- [ i ≔ s ] tt       = tt
 
 
--- TODO: Conversion.
+-- TODO: Convertibility.

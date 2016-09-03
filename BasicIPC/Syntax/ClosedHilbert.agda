@@ -76,48 +76,65 @@ snd : ∀ {A B} → ⊢ A ∧ B → ⊢ B
 snd t = app csnd t
 
 
--- Conversion.
+-- Convertibility.
 
 data _⋙_ : ∀ {A} → ⊢ A → ⊢ A → Set where
-  refl⋙     : ∀ {A} {t : ⊢ A}
-               → t ⋙ t
-  trans⋙    : ∀ {A} {t t′ t″ : ⊢ A}
-               → t ⋙ t′ → t′ ⋙ t″ → t ⋙ t″
-  sym⋙      : ∀ {A} {t t′ : ⊢ A}
-               → t ⋙ t′ → t′ ⋙ t
-  congapp⋙  : ∀ {A B} {t t′ : ⊢ A ▻ B} {u u′ : ⊢ A}
-               → t ⋙ t′ → u ⋙ u′
-               → app t u ⋙ app t′ u′
-  congi⋙    : ∀ {A} {t t′ : ⊢ A}
-               → t ⋙ t′
-               → app ci t ⋙ app ci t′
-  congk⋙    : ∀ {A B} {t t′ : ⊢ A} {u u′ : ⊢ B}
-               → t ⋙ t′ → u ⋙ u′
-               → app (app ck t) u ⋙ app (app ck t′) u′
-  congs⋙    : ∀ {A B C} {t t′ : ⊢ A ▻ B ▻ C} {u u′ : ⊢ A ▻ B} {v v′ : ⊢ A}
-               → t ⋙ t′ → u ⋙ u′ → v ⋙ v′
-               → app (app (app cs t) u) v ⋙ app (app (app cs t′) u′) v′
-  congpair⋙ : ∀ {A B} {t t′ : ⊢ A} {u u′ : ⊢ B}
-               → t ⋙ t′ → u ⋙ u′
-               → app (app cpair t) u ⋙ app (app cpair t′) u′
-  congfst⋙  : ∀ {A B} {t t′ : ⊢ A ∧ B}
-               → t ⋙ t′
-               → app cfst t ⋙ app cfst t′
-  congsnd⋙  : ∀ {A B} {t t′ : ⊢ A ∧ B}
-               → t ⋙ t′
-               → app csnd t ⋙ app csnd t′
+  refl⋙     : ∀ {A} → {t : ⊢ A}
+                     → t ⋙ t
+
+  trans⋙    : ∀ {A} → {t t′ t″ : ⊢ A}
+                     → t ⋙ t′ → t′ ⋙ t″
+                     → t ⋙ t″
+
+  sym⋙      : ∀ {A} → {t t′ : ⊢ A}
+                     → t ⋙ t′
+                     → t′ ⋙ t
+
+  congapp⋙  : ∀ {A B} → {t t′ : ⊢ A ▻ B} → {u u′ : ⊢ A}
+                       → t ⋙ t′ → u ⋙ u′
+                       → app t u ⋙ app t′ u′
+
+  congi⋙    : ∀ {A} → {t t′ : ⊢ A}
+                     → t ⋙ t′
+                     → app ci t ⋙ app ci t′
+
+  congk⋙    : ∀ {A B} → {t t′ : ⊢ A} → {u u′ : ⊢ B}
+                       → t ⋙ t′ → u ⋙ u′
+                       → app (app ck t) u ⋙ app (app ck t′) u′
+
+  congs⋙    : ∀ {A B C} → {t t′ : ⊢ A ▻ B ▻ C} → {u u′ : ⊢ A ▻ B} → {v v′ : ⊢ A}
+                         → t ⋙ t′ → u ⋙ u′ → v ⋙ v′
+                         → app (app (app cs t) u) v ⋙ app (app (app cs t′) u′) v′
+
+  congpair⋙ : ∀ {A B} → {t t′ : ⊢ A} → {u u′ : ⊢ B}
+                       → t ⋙ t′ → u ⋙ u′
+                       → app (app cpair t) u ⋙ app (app cpair t′) u′
+
+  congfst⋙  : ∀ {A B} → {t t′ : ⊢ A ∧ B}
+                       → t ⋙ t′
+                       → app cfst t ⋙ app cfst t′
+
+  congsnd⋙  : ∀ {A B} → {t t′ : ⊢ A ∧ B}
+                       → t ⋙ t′
+                       → app csnd t ⋙ app csnd t′
+
   -- TODO: Verify this.
-  beta▻ₖ⋙   : ∀ {A B} {t : ⊢ A} {u : ⊢ B}
-               → app (app ck t) u ⋙ t
+  beta▻ₖ⋙   : ∀ {A B} → {t : ⊢ A} → {u : ⊢ B}
+                       → app (app ck t) u ⋙ t
+
   -- TODO: Verify this.
-  beta▻ₛ⋙   : ∀ {A B C} {t : ⊢ A ▻ B ▻ C} {u : ⊢ A ▻ B} {v : ⊢ A}
-               → app (app (app cs t) u) v ⋙ app (app t v) (app u v)
+  beta▻ₛ⋙   : ∀ {A B C} → {t : ⊢ A ▻ B ▻ C} → {u : ⊢ A ▻ B} → {v : ⊢ A}
+                         → app (app (app cs t) u) v ⋙ app (app t v) (app u v)
+
   -- TODO: What about eta for ▻?
-  beta∧₁⋙   : ∀ {A B} {t : ⊢ A} {u : ⊢ B}
-               → app cfst (app (app cpair t) u) ⋙ t
-  beta∧₂⋙   : ∀ {A B} {t : ⊢ A} {u : ⊢ B}
-               → app csnd (app (app cpair t) u) ⋙ u
-  eta∧⋙     : ∀ {A B} {t : ⊢ A ∧ B}
-               → t ⋙ app (app cpair (app cfst t)) (app csnd t)
-  eta⊤⋙    : ∀ {t : ⊢ ⊤}
-               → t ⋙ tt
+
+  beta∧₁⋙   : ∀ {A B} → {t : ⊢ A} → {u : ⊢ B}
+                       → app cfst (app (app cpair t) u) ⋙ t
+
+  beta∧₂⋙   : ∀ {A B} → {t : ⊢ A} → {u : ⊢ B}
+                       → app csnd (app (app cpair t) u) ⋙ u
+
+  eta∧⋙     : ∀ {A B} → {t : ⊢ A ∧ B}
+                       → t ⋙ app (app cpair (app cfst t)) (app csnd t)
+
+  eta⊤⋙    : ∀ {t : ⊢ ⊤} → t ⋙ tt

@@ -400,53 +400,70 @@ m[_≔_]⋆_ {∅}     i s ∙        = ∙
 m[_≔_]⋆_ {Ξ , B} i s (ts , t) = m[ i ≔ s ]⋆ ts , m[ i ≔ s ] t
 
 
--- Conversion.
+-- Convertibility.
 
 data _⋙_ {Γ Δ : Cx Ty} : ∀ {A} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ A → Set where
-  refl⋙      : ∀ {A} {t : Γ ⁏ Δ ⊢ A}
-                → t ⋙ t
-  trans⋙     : ∀ {A} {t t′ t″ : Γ ⁏ Δ ⊢ A}
-                → t ⋙ t′ → t′ ⋙ t″ → t ⋙ t″
-  sym⋙       : ∀ {A} {t t′ : Γ ⁏ Δ ⊢ A}
-                → t ⋙ t′ → t′ ⋙ t
-  conglam⋙   : ∀ {A B} {t t′ : Γ , A ⁏ Δ ⊢ B}
-                → t ⋙ t′
-                → lam t ⋙ lam t′
-  congapp⋙   : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A ▻ B} {u u′ : Γ ⁏ Δ ⊢ A}
-                → t ⋙ t′ → u ⋙ u′
-                → app t u ⋙ app t′ u′
+  refl⋙      : ∀ {A} → {t : Γ ⁏ Δ ⊢ A}
+                      → t ⋙ t
+
+  trans⋙     : ∀ {A} → {t t′ t″ : Γ ⁏ Δ ⊢ A}
+                      → t ⋙ t′ → t′ ⋙ t″
+                      → t ⋙ t″
+
+  sym⋙       : ∀ {A} → {t t′ : Γ ⁏ Δ ⊢ A}
+                      → t ⋙ t′
+                      → t′ ⋙ t
+
+  conglam⋙   : ∀ {A B} → {t t′ : Γ , A ⁏ Δ ⊢ B}
+                        → t ⋙ t′
+                        → lam t ⋙ lam t′
+
+  congapp⋙   : ∀ {A B} → {t t′ : Γ ⁏ Δ ⊢ A ▻ B} → {u u′ : Γ ⁏ Δ ⊢ A}
+                        → t ⋙ t′ → u ⋙ u′
+                        → app t u ⋙ app t′ u′
+
   -- NOTE: Rejected by Pfenning and Davies.
-  -- congbox⋙   : ∀ {A} {t t′ : ∅ ⁏ Δ ⊢ A}
-  --               → t ⋙ t′
-  --               → box {Γ} t ⋙ box {Γ} t′
-  congunbox⋙ : ∀ {A C} {t t′ : Γ ⁏ Δ ⊢ □ A} {u u′ : Γ ⁏ Δ , A ⊢ C}
-                → t ⋙ t′ → u ⋙ u′
-                → unbox t u ⋙ unbox t′ u′
-  congpair⋙  : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A} {u u′ : Γ ⁏ Δ ⊢ B}
-                → t ⋙ t′ → u ⋙ u′
-                → pair t u ⋙ pair t′ u′
-  congfst⋙   : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A ∧ B}
-                → t ⋙ t′
-                → fst t ⋙ fst t′
-  congsnd⋙   : ∀ {A B} {t t′ : Γ ⁏ Δ ⊢ A ∧ B}
-                → t ⋙ t′
-                → snd t ⋙ snd t′
-  beta▻⋙     : ∀ {A B} {t : Γ , A ⁏ Δ ⊢ B} {u : Γ ⁏ Δ ⊢ A}
-                → app (lam t) u ⋙ ([ top ≔ u ] t)
-  eta▻⋙      : ∀ {A B} {t : Γ ⁏ Δ ⊢ A ▻ B}
-                → t ⋙ lam (app (mono⊢ weak⊆ t) v₀)
-  -- TODO: Verify this.
-  beta□⋙     : ∀ {A C} {t : ∅ ⁏ Δ ⊢ A} {u : Γ ⁏ Δ , A ⊢ C}
-                → unbox (box t) u ⋙ (m[ top ≔ t ] u)
-  -- TODO: Verify this.
-  eta□⋙      : ∀ {A} {t : Γ ⁏ Δ ⊢ □ A}
-                → t ⋙ unbox t (box mv₀)
+  -- congbox⋙   : ∀ {A} → {t t′ : ∅ ⁏ Δ ⊢ A}
+  --                     → t ⋙ t′
+  --                     → box {Γ} t ⋙ box {Γ} t′
+
+  congunbox⋙ : ∀ {A C} → {t t′ : Γ ⁏ Δ ⊢ □ A} → {u u′ : Γ ⁏ Δ , A ⊢ C}
+                        → t ⋙ t′ → u ⋙ u′
+                        → unbox t u ⋙ unbox t′ u′
+
+  congpair⋙  : ∀ {A B} → {t t′ : Γ ⁏ Δ ⊢ A} → {u u′ : Γ ⁏ Δ ⊢ B}
+                        → t ⋙ t′ → u ⋙ u′
+                        → pair t u ⋙ pair t′ u′
+
+  congfst⋙   : ∀ {A B} → {t t′ : Γ ⁏ Δ ⊢ A ∧ B}
+                        → t ⋙ t′
+                        → fst t ⋙ fst t′
+
+  congsnd⋙   : ∀ {A B} → {t t′ : Γ ⁏ Δ ⊢ A ∧ B}
+                        → t ⋙ t′
+                        → snd t ⋙ snd t′
+
+  beta▻⋙     : ∀ {A B} → {t : Γ , A ⁏ Δ ⊢ B} → {u : Γ ⁏ Δ ⊢ A}
+                        → app (lam t) u ⋙ ([ top ≔ u ] t)
+
+  eta▻⋙      : ∀ {A B} → {t : Γ ⁏ Δ ⊢ A ▻ B}
+                        → t ⋙ lam (app (mono⊢ weak⊆ t) v₀)
+
+  beta□⋙     : ∀ {A C} → {t : ∅ ⁏ Δ ⊢ A} → {u : Γ ⁏ Δ , A ⊢ C}
+                        → unbox (box t) u ⋙ (m[ top ≔ t ] u)
+
+  eta□⋙      : ∀ {A} → {t : Γ ⁏ Δ ⊢ □ A}
+                      → t ⋙ unbox t (box mv₀)
+
   -- TODO: What about commuting conversions for □?
-  beta∧₁⋙    : ∀ {A B} {t : Γ ⁏ Δ ⊢ A} {u : Γ ⁏ Δ ⊢ B}
-                → fst (pair t u) ⋙ t
-  beta∧₂⋙    : ∀ {A B} {t : Γ ⁏ Δ ⊢ A} {u : Γ ⁏ Δ ⊢ B}
-                → snd (pair t u) ⋙ u
-  eta∧⋙      : ∀ {A B} {t : Γ ⁏ Δ ⊢ A ∧ B}
-                → t ⋙ pair (fst t) (snd t)
-  eta⊤⋙     : ∀ {t : Γ ⁏ Δ ⊢ ⊤}
-                → t ⋙ tt
+
+  beta∧₁⋙    : ∀ {A B} → {t : Γ ⁏ Δ ⊢ A} → {u : Γ ⁏ Δ ⊢ B}
+                        → fst (pair t u) ⋙ t
+
+  beta∧₂⋙    : ∀ {A B} → {t : Γ ⁏ Δ ⊢ A} → {u : Γ ⁏ Δ ⊢ B}
+                        → snd (pair t u) ⋙ u
+
+  eta∧⋙      : ∀ {A B} → {t : Γ ⁏ Δ ⊢ A ∧ B}
+                        → t ⋙ pair (fst t) (snd t)
+
+  eta⊤⋙     : ∀ {t : Γ ⁏ Δ ⊢ ⊤} → t ⋙ tt
