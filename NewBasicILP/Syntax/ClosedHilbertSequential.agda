@@ -19,9 +19,9 @@ _⧺ᴰ_ : ∀ {Ξ₁ Ξ₂} → ⊢ᴰ Ξ₁ → ⊢ᴰ Ξ₂ → ⊢ᴰ Ξ₁ 
 
 -- Types parametrised by closed derivations.
 
-infixr 9 _⦂_
-infixl 8 _∧_
-infixr 6 _▻_
+infixr 10 _⦂_
+infixl 9 _∧_
+infixr 7 _▻_
 data Ty where
   α_  : Atom → Ty
   _▻_ : Ty → Ty → Ty
