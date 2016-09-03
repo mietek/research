@@ -20,7 +20,7 @@ open G using () renaming (_⊢_ to G⟨_⊢_⟩ ; _⊢⋆_ to G⟨_⊢⋆_⟩) p
 open DHS using () renaming (_⊦⊢_ to DHS⟨_⊦⊢_⟩ ; _⊢_ to DHS⟨_⊢_⟩) public
 open DH using () renaming (_⊢_ to DH⟨_⊢_⟩) public
 open DG using () renaming (_⊢_ to DG⟨_⊢_⟩ ; _⊢⋆_ to DG⟨_⊢⋆_⟩) public
-open LG using (_↝_) renaming (_⁏_⊢_◎_ to LG⟨_⁏_⊢_◎_⟩ ; _⁏_⊢⋆_◎_ to LG⟨_⁏_⊢⋆_◎_⟩) public
+open LG using (_↝_ ; _◎_ ; _◎⋆_) renaming (_⊢_ to LG⟨_⊢_⟩ ; _⊢⋆_ to LG⟨_⊢⋆_⟩) public
 
 
 -- Available translations.
@@ -587,7 +587,7 @@ mutual
   g→lg (G.snd t)         = LG.snd (g→lg t)
   g→lg G.tt              = LG.tt
 
-  g→lg⋆ : ∀ {x Ξ Γ Λ} → G⟨ Γ ⊢⋆ Ξ ⟩ → LG⟨ Γ ⁏ Λ ⊢⋆ Ξ ◎ x ⟩
+  g→lg⋆ : ∀ {x Ξ Γ Λ} → G⟨ Γ ⊢⋆ Ξ ⟩ → LG⟨ Γ ⁏ Λ ⊢⋆ Ξ ◎⋆ x ⟩
   g→lg⋆ {x} {∅}     ∙        = ∙
   g→lg⋆ {x} {Ξ , A} (ts , t) = g→lg⋆ ts , g→lg t
 

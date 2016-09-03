@@ -11,7 +11,7 @@ postulate
   La : Set
 
 infix 6 _↝_
-record LaLa : Set where
+record La² : Set where
   constructor _↝_
   field
     x : La
@@ -20,33 +20,33 @@ record LaLa : Set where
 
 -- Derivations.
 
-infix 3 _⊢_↝_
-data _⊢_↝_ (Λ : Cx LaLa) : La → La → Set where
-  rvar   : ∀ {x y}   → x ↝ y ∈ Λ → Λ ⊢ x ↝ y
-  rrefl  : ∀ {x}     → Λ ⊢ x ↝ x
-  rtrans : ∀ {x y z} → Λ ⊢ x ↝ y → Λ ⊢ y ↝ z → Λ ⊢ x ↝ z
+infix 3 _⊢ᴿ_↝_
+data _⊢ᴿ_↝_ (Λ : Cx La²) : La → La → Set where
+  rvar   : ∀ {x y}   → x ↝ y ∈ Λ → Λ ⊢ᴿ x ↝ y
+  rrefl  : ∀ {x}     → Λ ⊢ᴿ x ↝ x
+  rtrans : ∀ {x y z} → Λ ⊢ᴿ x ↝ y → Λ ⊢ᴿ y ↝ z → Λ ⊢ᴿ x ↝ z
 
-infix 3 _⁏_⊢_◎_
-data _⁏_⊢_◎_ (Γ : Cx Ty) (Λ : Cx LaLa) : Ty → La → Set where
-  var  : ∀ {x A}   → A ∈ Γ → Γ ⁏ Λ ⊢ A ◎ x
-  lam  : ∀ {x A B} → Γ , A ⁏ Λ ⊢ B ◎ x → Γ ⁏ Λ ⊢ A ▻ B ◎ x
-  app  : ∀ {x A B} → Γ ⁏ Λ ⊢ A ▻ B ◎ x → Γ ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ B ◎ x
-  scan : ∀ {x A}   → (∀ {y} → Γ ⁏ Λ , x ↝ y ⊢ A ◎ y) → Γ ⁏ Λ ⊢ □ A ◎ x
-  move : ∀ {x y A} → Γ ⁏ Λ ⊢ □ A ◎ x → Λ ⊢ x ↝ y → Γ ⁏ Λ ⊢ A ◎ y
-  pair : ∀ {x A B} → Γ ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ B ◎ x → Γ ⁏ Λ ⊢ A ∧ B ◎ x
-  fst  : ∀ {x A B} → Γ ⁏ Λ ⊢ A ∧ B ◎ x → Γ ⁏ Λ ⊢ A ◎ x
-  snd  : ∀ {x A B} → Γ ⁏ Λ ⊢ A ∧ B ◎ x → Γ ⁏ Λ ⊢ B ◎ x
-  tt   : ∀ {x}     → Γ ⁏ Λ ⊢ ⊤ ◎ x
+infix 3 _⊢_◎_
+data _⊢_◎_ : Cx² Ty La² → Ty → La → Set where
+  var  : ∀ {x A Γ Λ}   → A ∈ Γ → Γ ⁏ Λ ⊢ A ◎ x
+  lam  : ∀ {x A B Γ Λ} → Γ , A ⁏ Λ ⊢ B ◎ x → Γ ⁏ Λ ⊢ A ▻ B ◎ x
+  app  : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ▻ B ◎ x → Γ ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ B ◎ x
+  scan : ∀ {x A Γ Λ}   → (∀ {y} → Γ ⁏ Λ , x ↝ y ⊢ A ◎ y) → Γ ⁏ Λ ⊢ □ A ◎ x
+  move : ∀ {x y A Γ Λ} → Γ ⁏ Λ ⊢ □ A ◎ x → Λ ⊢ᴿ x ↝ y → Γ ⁏ Λ ⊢ A ◎ y
+  pair : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ B ◎ x → Γ ⁏ Λ ⊢ A ∧ B ◎ x
+  fst  : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ∧ B ◎ x → Γ ⁏ Λ ⊢ A ◎ x
+  snd  : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ∧ B ◎ x → Γ ⁏ Λ ⊢ B ◎ x
+  tt   : ∀ {x Γ Λ}     → Γ ⁏ Λ ⊢ ⊤ ◎ x
 
-infix 3 _⁏_⊢⋆_◎_
-_⁏_⊢⋆_◎_ : Cx Ty → Cx LaLa → Cx Ty → La → Set
+infix 3 _⊢⋆_◎_
+_⊢⋆_◎_ : Cx² Ty La² → Cx Ty → La → Set
 Γ ⁏ Λ ⊢⋆ ∅     ◎ x = 𝟙
 Γ ⁏ Λ ⊢⋆ Ξ , A ◎ x = Γ ⁏ Λ ⊢⋆ Ξ ◎ x × Γ ⁏ Λ ⊢ A ◎ x
 
 
 -- Monotonicity with respect to context inclusion.
 
-mono⊢ : ∀ {x A Γ Γ′ Λ} → Γ ⊆ Γ′ → Γ ⁏ Λ ⊢ x ◎ A → Γ′ ⁏ Λ ⊢ x ◎ A
+mono⊢ : ∀ {x A Γ Γ′ Λ} → Γ ⊆ Γ′ → Γ ⁏ Λ ⊢ A ◎ x → Γ′ ⁏ Λ ⊢ A ◎ x
 mono⊢ η (var i)    = var (mono∈ η i)
 mono⊢ η (lam t)    = lam (mono⊢ (keep η) t)
 mono⊢ η (app t u)  = app (mono⊢ η t) (mono⊢ η u)
@@ -64,25 +64,31 @@ mono⊢⋆ {Ξ , A} η (ts , t) = mono⊢⋆ η ts , mono⊢ η t
 
 -- Monotonicity with respect to relational context inclusion.
 
-rrmono⊢ : ∀ {x y Λ Λ′} → Λ ⊆ Λ′ → Λ ⊢ x ↝ y → Λ′ ⊢ x ↝ y
-rrmono⊢ η (rvar i)     = rvar (mono∈ η i)
-rrmono⊢ η rrefl        = rrefl
-rrmono⊢ η (rtrans t u) = rtrans (rrmono⊢ η t) (rrmono⊢ η u)
+rmono⊢ᴿ : ∀ {x y Λ Λ′} → Λ ⊆ Λ′ → Λ ⊢ᴿ x ↝ y → Λ′ ⊢ᴿ x ↝ y
+rmono⊢ᴿ ρ (rvar i)     = rvar (mono∈ ρ i)
+rmono⊢ᴿ ρ rrefl        = rrefl
+rmono⊢ᴿ ρ (rtrans t u) = rtrans (rmono⊢ᴿ ρ t) (rmono⊢ᴿ ρ u)
 
-rmono⊢ : ∀ {x A Γ Λ Λ′} → Λ ⊆ Λ′ → Γ ⁏ Λ ⊢ x ◎ A → Γ ⁏ Λ′ ⊢ x ◎ A
-rmono⊢ η (var i)    = var i
-rmono⊢ η (lam t)    = lam (rmono⊢ η t)
-rmono⊢ η (app t u)  = app (rmono⊢ η t) (rmono⊢ η u)
-rmono⊢ η (scan t)   = scan (rmono⊢ (keep η) t)
-rmono⊢ η (move t u) = move (rmono⊢ η t) (rrmono⊢ η u)
-rmono⊢ η (pair t u) = pair (rmono⊢ η t) (rmono⊢ η u)
-rmono⊢ η (fst t)    = fst (rmono⊢ η t)
-rmono⊢ η (snd t)    = snd (rmono⊢ η t)
-rmono⊢ η tt         = tt
+rmono⊢ : ∀ {x A Γ Λ Λ′} → Λ ⊆ Λ′ → Γ ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ′ ⊢ A ◎ x
+rmono⊢ ρ (var i)    = var i
+rmono⊢ ρ (lam t)    = lam (rmono⊢ ρ t)
+rmono⊢ ρ (app t u)  = app (rmono⊢ ρ t) (rmono⊢ ρ u)
+rmono⊢ ρ (scan t)   = scan (rmono⊢ (keep ρ) t)
+rmono⊢ ρ (move t u) = move (rmono⊢ ρ t) (rmono⊢ᴿ ρ u)
+rmono⊢ ρ (pair t u) = pair (rmono⊢ ρ t) (rmono⊢ ρ u)
+rmono⊢ ρ (fst t)    = fst (rmono⊢ ρ t)
+rmono⊢ ρ (snd t)    = snd (rmono⊢ ρ t)
+rmono⊢ ρ tt         = tt
 
 rmono⊢⋆ : ∀ {Ξ x Γ Λ Λ′} → Λ ⊆ Λ′ → Γ ⁏ Λ ⊢⋆ Ξ ◎ x → Γ ⁏ Λ′ ⊢⋆ Ξ ◎ x
-rmono⊢⋆ {∅}     η ∙        = ∙
-rmono⊢⋆ {Ξ , A} η (ts , t) = rmono⊢⋆ η ts , rmono⊢ η t
+rmono⊢⋆ {∅}     ρ ∙        = ∙
+rmono⊢⋆ {Ξ , A} ρ (ts , t) = rmono⊢⋆ ρ ts , rmono⊢ ρ t
+
+
+-- Monotonicity using context pairs.
+
+mono²⊢ : ∀ {x A Π Π′} → Π ⊆² Π′ → Π ⊢ A ◎ x → Π′ ⊢ A ◎ x
+mono²⊢ (η , ρ) = mono⊢ η ∘ rmono⊢ ρ
 
 
 -- Shorthand for variables.
@@ -96,13 +102,13 @@ v₁ = var i₁
 v₂ : ∀ {x A B C Γ Λ} → Γ , A , B , C ⁏ Λ ⊢ A ◎ x
 v₂ = var i₂
 
-rv₀ : ∀ {x y Λ} → Λ , x ↝ y ⊢ x ↝ y
+rv₀ : ∀ {x y Λ} → Λ , x ↝ y ⊢ᴿ x ↝ y
 rv₀ = rvar i₀
 
-rv₁ : ∀ {x y x′ y′ Λ} → Λ , x ↝ y , x′ ↝ y′ ⊢ x ↝ y
+rv₁ : ∀ {x y x′ y′ Λ} → Λ , x ↝ y , x′ ↝ y′ ⊢ᴿ x ↝ y
 rv₁ = rvar i₁
 
-rv₂ : ∀ {x y x′ y′ x″ y″ Λ} → Λ , x ↝ y , x′ ↝ y′ , x″ ↝ y″ ⊢ x ↝ y
+rv₂ : ∀ {x y x′ y′ x″ y″ Λ} → Λ , x ↝ y , x′ ↝ y′ , x″ ↝ y″ ⊢ᴿ x ↝ y
 rv₂ = rvar i₂
 
 
@@ -296,7 +302,7 @@ concat Γ′ t u = app (mono⊢ (weak⊆⧺ₗ Γ′) (lam t)) (mono⊢ weak⊆�
 
 -- TODO: Substitution.
 
--- [_≔_]_ : ∀ {x A B Γ Λ} → (i : A ∈ Γ) → Γ - i ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ B ◎ x → Γ - i ⁏ Λ ⊢ B ◎ x
+-- [_≔_]_ : ∀ {x A B Γ Λ} → (i : A ∈ Γ) → Γ ∖ i ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ B ◎ x → Γ ∖ i ⁏ Λ ⊢ B ◎ x
 -- [ i ≔ s ] var j    with i ≟∈ j
 -- [ i ≔ s ] var .i   | same   = s
 -- [ i ≔ s ] var ._   | diff j = var j
