@@ -45,8 +45,9 @@ module ContextEquality {U : Set} (_≟ᵁ_ : (A A′ : U) → Dec (A ≡ A′)) 
 module _ {U : Set} where
   infix 3 _∈_
   data _∈_ (A : U) : Cx U → Set where
-    top : ∀ {Γ} → A ∈ Γ , A
-    pop : ∀ {B Γ} → A ∈ Γ → A ∈ Γ , B
+    instance
+      top : ∀ {Γ} → A ∈ Γ , A
+      pop : ∀ {B Γ} → A ∈ Γ → A ∈ Γ , B
 
   [_]ⁱ : ∀ {A Γ} → A ∈ Γ → ℕ
   [ top ]ⁱ   = zero
