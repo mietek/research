@@ -1,7 +1,7 @@
 _hilbert-gentzen_
 =================
 
-An Agda formalisation of intuitionistic propositional calculus, modal logic S4, and logic of proofs.  Work in progress.
+An Agda formalisation of intuitionistic propositional calculus, intuitionistic modal logic S4, intuitionistic contextual modal logic, and intuitionistic logic of proofs.  Work in progress.
 
 Read the [hyperlinked source](https://mietek.github.io/hilbert-gentzen/).
 

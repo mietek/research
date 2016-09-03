@@ -2,7 +2,7 @@
 
 https://github.com/mietek/hilbert-gentzen
 
-An Agda formalisation of IPC, S4, and LP.  Work in progress.
+An Agda formalisation of IPC, IS4, ICML, and ILP.  Work in progress.
 
 Made by Miëtek Bak.  Published under the MIT X11 license.
 
@@ -321,6 +321,17 @@ import BasicIS4.Metatheory.DyadicGentzen-TarskiOvergluedDyadicImplicit
 import BasicIS4.Metatheory.DyadicGentzen-TarskiOvergluedDyadicGentzen
 import BasicIS4.Metatheory.DyadicGentzen-TarskiGluedDyadicImplicit -- FIXME
 import BasicIS4.Metatheory.DyadicGentzen-TarskiGluedDyadicGentzen -- FIXME
+
+
+
+
+-- Basic intuitionistic contextual modal logic, without ∨ or ⊥.
+
+-- Common syntax.
+import BasicICML.Syntax.Common
+
+-- Gentzen-style formalisation of syntax with context pairs, after Nanevski-Pfenning-Pientka.
+import BasicICML.Syntax.DyadicGentzen
 
 
 
