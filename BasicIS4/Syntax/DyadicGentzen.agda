@@ -93,19 +93,13 @@ mv₂ = mvar i₂
 
 -- Reflexivity.
 
-refl⊢⋆₀ : ∀ {Γ} → Γ ⁏ ∅ ⊢⋆ Γ
-refl⊢⋆₀ {∅}     = ∙
-refl⊢⋆₀ {Γ , A} = mono⊢⋆ weak⊆ refl⊢⋆₀ , v₀
-
 refl⊢⋆ : ∀ {Γ Δ} → Γ ⁏ Δ ⊢⋆ Γ
-refl⊢⋆ = mmono⊢⋆ bot⊆ refl⊢⋆₀
+refl⊢⋆ {∅}     = ∙
+refl⊢⋆ {Γ , A} = mono⊢⋆ weak⊆ refl⊢⋆ , v₀
 
-mrefl⊢⋆₀ : ∀ {Δ} → ∅ ⁏ Δ ⊢⋆ □⋆ Δ
-mrefl⊢⋆₀ {∅}     = ∙
-mrefl⊢⋆₀ {Δ , A} = mmono⊢⋆ weak⊆ mrefl⊢⋆₀ , box mv₀
-
-mrefl⊢⋆ : ∀ {Γ Δ} → Γ ⁏ Δ ⊢⋆ □⋆ Δ
-mrefl⊢⋆ = mono⊢⋆ bot⊆ mrefl⊢⋆₀
+mrefl⊢⋆ : ∀ {Δ Γ} → Γ ⁏ Δ ⊢⋆ □⋆ Δ
+mrefl⊢⋆ {∅}     = ∙
+mrefl⊢⋆ {Δ , A} = mmono⊢⋆ weak⊆ mrefl⊢⋆ , box mv₀
 
 mrefl⊢⋆′ : ∀ {Δ Δ′ Γ Γ′} → (∀ {A} → Γ ⁏ Δ ⊢ □ A → Γ′ ⁏ Δ′ ⊢ A) → Γ′ ⁏ Δ′ ⊢⋆ Δ
 mrefl⊢⋆′ {∅}     f = ∙
