@@ -338,6 +338,15 @@ import BasicICML.Syntax.DyadicGentzen
 
 -- Basic intuitionistic logic of proofs, without ∨, ⊥, or +. (Work in progress.)
 
+-- Common syntax.
+import BasicILP.Syntax.Common
+
+-- Gentzen-style formalisation of syntax with context pairs.
+import BasicILP.Syntax.DyadicGentzen
+
+
+-- (To be rewritten.)
+
 -- Common syntax, with types parametrised by a closed, untyped representation of syntax.
 import OldBasicILP.UntypedSyntax.Common
 
