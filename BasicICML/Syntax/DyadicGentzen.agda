@@ -295,11 +295,7 @@ mutual
 -- Modal substitution.
 
 mutual
-  m[_≔_]_ : ∀ {Ψ A C Γ Δ}
-        → (i : [ Ψ ] A ∈ Δ)
-        → Ψ ⁏ Δ ∖ i ⊢ A
-        → Γ ⁏ Δ ⊢ C
-        → Γ ⁏ Δ ∖ i ⊢ C
+  m[_≔_]_ : ∀ {Ψ A C Γ Δ} → (i : [ Ψ ] A ∈ Δ) → Ψ ⁏ Δ ∖ i ⊢ A → Γ ⁏ Δ ⊢ C → Γ ⁏ Δ ∖ i ⊢ C
   m[ i ≔ s ] var j          = var j
   m[ i ≔ s ] lam t          = lam (m[ i ≔ s ] t)
   m[ i ≔ s ] app t u        = app (m[ i ≔ s ] t) (m[ i ≔ s ] u)
@@ -313,11 +309,7 @@ mutual
   m[ i ≔ s ] snd t          = snd (m[ i ≔ s ] t)
   m[ i ≔ s ] tt             = tt
 
-  m[_≔_]⋆_ : ∀ {Ξ Ψ A Γ Δ}
-        → (i : [ Ψ ] A ∈ Δ)
-        → Ψ ⁏ Δ ∖ i ⊢ A
-        → Γ ⁏ Δ ⊢⋆ Ξ
-        → Γ ⁏ Δ ∖ i ⊢⋆ Ξ
+  m[_≔_]⋆_ : ∀ {Ξ Ψ A Γ Δ} → (i : [ Ψ ] A ∈ Δ) → Ψ ⁏ Δ ∖ i ⊢ A → Γ ⁏ Δ ⊢⋆ Ξ → Γ ⁏ Δ ∖ i ⊢⋆ Ξ
   m[_≔_]⋆_ i s ∙        = ∙
   m[_≔_]⋆_ i s (ts , t) = m[ i ≔ s ]⋆ ts , m[ i ≔ s ] t
 
