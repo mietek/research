@@ -1,3 +1,4 @@
+-- Basic intuitionistic propositional calculus, without ∨ or ⊥.
 -- Tarski-style semantics with glueing for α and ▻, after Coquand-Dybjer.
 -- Hilbert-style closed syntax.
 

@@ -1,3 +1,4 @@
+-- Basic intuitionistic logic of proofs, without ∨, ⊥, or +.
 -- Common syntax.
 
 module BasicILP.Syntax.Common where

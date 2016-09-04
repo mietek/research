@@ -1,3 +1,4 @@
+-- Basic intuitionistic propositional calculus, without ∨ or ⊥.
 -- Translation between different formalisations of syntax.
 
 module BasicIPC.Syntax.Translation where

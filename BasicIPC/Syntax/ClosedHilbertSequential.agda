@@ -1,3 +1,4 @@
+-- Basic intuitionistic propositional calculus, without ∨ or ⊥.
 -- Hilbert-style formalisation of closed syntax.
 -- Sequences of terms.
 

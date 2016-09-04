@@ -1,3 +1,4 @@
+-- Basic intuitionistic modal logic S4, without ∨, ⊥, or ◇.
 -- Canonical model equipment for Kripke-style semantics.
 
 module BasicIS4.Equipment.KripkeCanonical where

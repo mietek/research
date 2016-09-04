@@ -1,3 +1,4 @@
+-- Basic intuitionistic modal logic S4, without ∨, ⊥, or ◇.
 -- Tarski-style semantics with context pairs as concrete worlds, and glueing for □ only.
 -- Gentzen-style syntax.
 

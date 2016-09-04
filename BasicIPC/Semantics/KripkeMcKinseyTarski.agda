@@ -1,3 +1,4 @@
+-- Basic intuitionistic propositional calculus, without ∨ or ⊥.
 -- Kripke-style semantics with abstract worlds.
 -- McKinsey-Tarski embedding.
 

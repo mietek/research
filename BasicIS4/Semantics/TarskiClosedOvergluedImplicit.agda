@@ -1,3 +1,4 @@
+-- Basic intuitionistic modal logic S4, without ∨, ⊥, or ◇.
 -- Tarski-style semantics with glueing for α, ▻, and □, after Gabbay-Nanevski.
 -- Implicit closed syntax.
 

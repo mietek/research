@@ -1,3 +1,4 @@
+-- Basic intuitionistic propositional calculus, without ∨ or ⊥.
 -- Tarski-style semantics with contexts as concrete worlds, and glueing for α and ▻.
 -- Hilbert-style syntax.
 

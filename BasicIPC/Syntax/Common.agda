@@ -1,3 +1,4 @@
+-- Basic intuitionistic propositional calculus, without ∨ or ⊥.
 -- Common syntax.
 
 module BasicIPC.Syntax.Common where

@@ -1,3 +1,4 @@
+-- Basic intuitionistic propositional calculus, without ∨ or ⊥.
 -- Tarski-style semantics with contexts as concrete worlds.
 
 module BasicIPC.Semantics.Tarski where

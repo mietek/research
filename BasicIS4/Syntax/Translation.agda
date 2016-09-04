@@ -1,3 +1,4 @@
+-- Basic intuitionistic modal logic S4, without ∨, ⊥, or ◇.
 -- Translation between different formalisations of syntax.
 
 module BasicIS4.Syntax.Translation where

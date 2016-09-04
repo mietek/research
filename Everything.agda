@@ -336,7 +336,7 @@ import BasicICML.Syntax.DyadicGentzen
 
 
 
--- Basic intuitionistic logic of proofs, without ∨, ⊥, or +. (Work in progress.)
+-- Basic intuitionistic logic of proofs, without ∨, ⊥, or +.
 
 -- Common syntax.
 import BasicILP.Syntax.Common

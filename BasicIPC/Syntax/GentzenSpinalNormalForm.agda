@@ -1,3 +1,4 @@
+-- Basic intuitionistic propositional calculus, without ∨ or ⊥.
 -- Gentzen-style formalisation of syntax.
 -- Normal forms, neutrals, and spines.
 

@@ -1,3 +1,4 @@
+-- Basic intuitionistic modal logic S4, without ∨, ⊥, or ◇.
 -- Hilbert-style formalisation of syntax.
 -- Nested terms.
 

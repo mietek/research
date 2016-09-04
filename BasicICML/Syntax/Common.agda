@@ -1,3 +1,4 @@
+-- Basic intuitionistic contextual modal logic, without ∨ or ⊥.
 -- Common syntax.
 
 module BasicICML.Syntax.Common where

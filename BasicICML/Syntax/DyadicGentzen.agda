@@ -1,3 +1,4 @@
+-- Basic intuitionistic contextual modal logic, without ∨ or ⊥.
 -- Gentzen-style formalisation of syntax with context pairs, after Nanevski-Pfenning-Pientka.
 
 module BasicICML.Syntax.DyadicGentzen where

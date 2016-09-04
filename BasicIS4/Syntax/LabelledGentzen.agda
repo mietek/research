@@ -1,3 +1,4 @@
+-- Basic intuitionistic modal logic S4, without ∨, ⊥, or ◇.
 -- Gentzen-style formalisation of labelled syntax, after Basin-Matthews-Viganò.
 
 module BasicIS4.Syntax.LabelledGentzen where
