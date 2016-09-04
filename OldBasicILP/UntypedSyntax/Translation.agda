@@ -1,9 +1,9 @@
-module NewBasicILP.UntypedSyntax.Translation where
+module OldBasicILP.UntypedSyntax.Translation where
 
-open import NewBasicILP.UntypedSyntax.Common public
+open import OldBasicILP.UntypedSyntax.Common public
 
-import NewBasicILP.UntypedSyntax.ClosedHilbertSequential as CHS
-import NewBasicILP.UntypedSyntax.ClosedHilbert as CH
+import OldBasicILP.UntypedSyntax.ClosedHilbertSequential as CHS
+import OldBasicILP.UntypedSyntax.ClosedHilbert as CH
 
 
 -- Translation of types parametrised by a closed, untyped representation of syntax.

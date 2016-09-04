@@ -1,6 +1,6 @@
-module BasicILP.Indirect.Gentzen where
+module OlderBasicILP.Indirect.Gentzen where
 
-open import BasicILP.Indirect public
+open import OlderBasicILP.Indirect public
 
 
 -- Derivations, as Gentzen-style natural deduction trees.

@@ -339,34 +339,34 @@ import BasicICML.Syntax.DyadicGentzen
 -- Basic intuitionistic logic of proofs, without ∨, ⊥, or +. (Work in progress.)
 
 -- Common syntax, with types parametrised by a closed, untyped representation of syntax.
-import NewBasicILP.UntypedSyntax.Common
+import OldBasicILP.UntypedSyntax.Common
 
 -- Hilbert-style formalisation of closed syntax.
-import NewBasicILP.UntypedSyntax.ClosedHilbertSequential  -- Sequences of terms.
-import NewBasicILP.UntypedSyntax.ClosedHilbert            -- Nested terms.
+import OldBasicILP.UntypedSyntax.ClosedHilbertSequential  -- Sequences of terms.
+import OldBasicILP.UntypedSyntax.ClosedHilbert            -- Nested terms.
 
 -- Translation between different formalisations of syntax.
-import NewBasicILP.UntypedSyntax.Translation -- FIXME
+import OldBasicILP.UntypedSyntax.Translation -- FIXME
 
 -- Common syntax, with types parametrised by closed syntax.
-import NewBasicILP.Syntax.Common
+import OldBasicILP.Syntax.Common
 
 -- Hilbert-style formalisation of closed syntax.
-import NewBasicILP.Syntax.ClosedHilbertSequential  -- Sequences of terms.
-import NewBasicILP.Syntax.ClosedHilbert            -- Nested terms.
+import OldBasicILP.Syntax.ClosedHilbertSequential  -- Sequences of terms.
+import OldBasicILP.Syntax.ClosedHilbert            -- Nested terms.
 
 -- Translation between different formalisations of syntax.
-import NewBasicILP.Syntax.Translation -- FIXME
--- import NewBasicILP.Syntax.Projection -- FIXME
+import OldBasicILP.Syntax.Translation -- FIXME
+-- import OldBasicILP.Syntax.Projection -- FIXME
 
 
 -- (To be rewritten.)
 
-import BasicILP.Indirect
-import BasicILP.Indirect.Hilbert.Sequential
-import BasicILP.Indirect.Hilbert.Nested
-import BasicILP.Indirect.Gentzen
--- import BasicILP.Indirect.Translation
-import BasicILP.Direct.Hilbert.Nested
-import BasicILP.Direct.Gentzen
--- import BasicILP.Direct.Translation
+import OlderBasicILP.Indirect
+import OlderBasicILP.Indirect.Hilbert.Sequential
+import OlderBasicILP.Indirect.Hilbert.Nested
+import OlderBasicILP.Indirect.Gentzen
+-- import OlderBasicILP.Indirect.Translation
+import OlderBasicILP.Direct.Hilbert.Nested
+import OlderBasicILP.Direct.Gentzen
+-- import OlderBasicILP.Direct.Translation

@@ -1,4 +1,4 @@
-module BasicILP.Direct.Gentzen where
+module OlderBasicILP.Direct.Gentzen where
 
 open import Common.Context public
 

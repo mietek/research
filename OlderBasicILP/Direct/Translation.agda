@@ -1,10 +1,10 @@
-module BasicILP.Direct.Translation where
+module OlderBasicILP.Direct.Translation where
 
 open import Common.Context public
 
--- import BasicILP.Direct.Hilbert.Sequential as HS
-import BasicILP.Direct.Hilbert.Nested as HN
-import BasicILP.Direct.Gentzen as G
+-- import OlderBasicILP.Direct.Hilbert.Sequential as HS
+import OlderBasicILP.Direct.Hilbert.Nested as HN
+import OlderBasicILP.Direct.Gentzen as G
 
 -- open HS using () renaming (_⊢×_ to HS⟨_⊢×_⟩ ; _⊢_ to HS⟨_⊢_⟩) public
 open HN using () renaming (_⊢_ to HN⟨_⊢_⟩ ; _⊢⋆_ to HN⟨_⊢⋆_⟩) public

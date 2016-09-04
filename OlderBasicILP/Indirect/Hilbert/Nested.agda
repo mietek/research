@@ -1,6 +1,6 @@
-module BasicILP.Indirect.Hilbert.Nested where
+module OlderBasicILP.Indirect.Hilbert.Nested where
 
-open import BasicILP.Indirect public
+open import OlderBasicILP.Indirect public
 
 
 -- Derivations, as Hilbert-style combinator trees.

@@ -1,9 +1,9 @@
 -- Hilbert-style formalisation of closed syntax.
 -- Sequences of terms.
 
-module NewBasicILP.Syntax.ClosedHilbertSequential where
+module OldBasicILP.Syntax.ClosedHilbertSequential where
 
-open import NewBasicILP.Syntax.Common public
+open import OldBasicILP.Syntax.Common public
 
 
 -- Mutually-recursive declarations.

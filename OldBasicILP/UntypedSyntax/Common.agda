@@ -1,4 +1,4 @@
-module NewBasicILP.UntypedSyntax.Common where
+module OldBasicILP.UntypedSyntax.Common where
 
 open import Common.UntypedContext public
 

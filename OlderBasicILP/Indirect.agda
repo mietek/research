@@ -1,4 +1,4 @@
-module BasicILP.Indirect where
+module OlderBasicILP.Indirect where
 
 open import Common.Context public
 

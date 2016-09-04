@@ -1,9 +1,9 @@
-module NewBasicILP.Syntax.Translation where
+module OldBasicILP.Syntax.Translation where
 
 open import Common.Context public
 
-import NewBasicILP.Syntax.ClosedHilbertSequential as CHS
-import NewBasicILP.Syntax.ClosedHilbert as CH
+import OldBasicILP.Syntax.ClosedHilbertSequential as CHS
+import OldBasicILP.Syntax.ClosedHilbert as CH
 
 
 -- Translation from closed Hilbert-style sequential to closed Hilbert-style.
