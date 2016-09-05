@@ -29,7 +29,7 @@ record Model : Set₁ where
     [pair]     : ∀ {A B Γ}  → Γ [⊢] A → Γ [⊢] B → Γ [⊢] A ∧ B
     [fst]      : ∀ {A B Γ}  → Γ [⊢] A ∧ B → Γ [⊢] A
     [snd]      : ∀ {A B Γ}  → Γ [⊢] A ∧ B → Γ [⊢] B
-    [tt]       : ∀ {Γ}      → Γ [⊢] ⊤
+    [unit]     : ∀ {Γ}      → Γ [⊢] ⊤
 
     -- TODO: Workarounds for Agda bug #2143.
     top[⊢⋆] : ∀ {Γ}     → (Γ [⊢⋆] ∅) ≡ 𝟙
@@ -91,7 +91,7 @@ module _ {{_ : Model}} where
   reifyʳ {A ▻ B} s = syn (s refl⊆)
   reifyʳ {□ A}   s = syn (s refl⊆)
   reifyʳ {A ∧ B} s = [pair] (reifyʳ {A} (π₁ s)) (reifyʳ {B} (π₂ s))
-  reifyʳ {⊤}    s = [tt]
+  reifyʳ {⊤}    s = [unit]
 
   reifyʳ⋆ : ∀ {Ξ Γ} → Γ ⊩⋆ Ξ → Γ [⊢]⋆ Ξ
   reifyʳ⋆ {∅}     ∙        = ∙

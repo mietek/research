@@ -13,7 +13,7 @@ eval (app t u)  γ = (eval t γ refl≤) (eval u γ)
 eval (pair t u) γ = eval t γ , eval u γ
 eval (fst t)    γ = π₁ (eval t γ)
 eval (snd t)    γ = π₂ (eval t γ)
-eval tt         γ = ∙
+eval unit       γ = ∙
 
 eval⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊨⋆ Ξ
 eval⋆ {∅}     ∙        γ = ∙
@@ -51,7 +51,7 @@ mutual
   reifyᶜ {α P}   s = neⁿᶠ s
   reifyᶜ {A ▻ B} s = lamⁿᶠ (reifyᶜ (s weak⊆ (reflectᶜ {A} (varⁿᵉ top))))
   reifyᶜ {A ∧ B} s = pairⁿᶠ (reifyᶜ (π₁ s)) (reifyᶜ (π₂ s))
-  reifyᶜ {⊤}    s = ttⁿᶠ
+  reifyᶜ {⊤}    s = unitⁿᶠ
 
 reflectᶜ⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ⁿᵉ Ξ → Γ ⊩⋆ Ξ
 reflectᶜ⋆ {∅}     ∙        = ∙

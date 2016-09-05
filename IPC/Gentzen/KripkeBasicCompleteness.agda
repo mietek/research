@@ -44,7 +44,7 @@ module IlikBasicCompleteness where
     reify {α P}   k = k refl≤ (λ η s → s)
     reify {A ▻ B} k = k refl≤ (λ η s → lam (reify {B} (s weak⊆ (reflect {A} (v₀)))))
     reify {A ∧ B} k = k refl≤ (λ η s → pair (reify {A} (π₁ s)) (reify {B} (π₂ s)))
-    reify {⊤}    k = k refl≤ (λ η s → tt)
+    reify {⊤}    k = k refl≤ (λ η s → unit)
     reify {⊥}    k = k refl≤ (λ η ())
     reify {A ∨ B} k = k refl≤ (λ η s → elim⊎ s
                                           (λ a → inl (reify {A} (λ η′ k → a η′ k)))

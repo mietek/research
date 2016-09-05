@@ -20,7 +20,7 @@ mutual
     neⁿᶠ   : ∀ {A}   → Γ ⊢ⁿᵉ A → {{_ : Tyⁿᵉ A}} → Γ ⊢ⁿᶠ A
     lamⁿᶠ  : ∀ {A B} → Γ , A ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ▻ B
     pairⁿᶠ : ∀ {A B} → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ∧ B
-    ttⁿᶠ   : Γ ⊢ⁿᶠ ⊤
+    unitⁿᶠ : Γ ⊢ⁿᶠ ⊤
     inlⁿᶠ  : ∀ {A B} → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ A ∨ B
     inrⁿᶠ  : ∀ {A B} → Γ ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ∨ B
 
@@ -52,7 +52,7 @@ mutual
   nf→tm (neⁿᶠ t)     = ne→tm t
   nf→tm (lamⁿᶠ t)    = lam (nf→tm t)
   nf→tm (pairⁿᶠ t u) = pair (nf→tm t) (nf→tm u)
-  nf→tm ttⁿᶠ         = tt
+  nf→tm unitⁿᶠ       = unit
   nf→tm (inlⁿᶠ t)    = inl (nf→tm t)
   nf→tm (inrⁿᶠ t)    = inr (nf→tm t)
 
@@ -78,7 +78,7 @@ mutual
   mono⊢ⁿᶠ η (neⁿᶠ t)     = neⁿᶠ (mono⊢ⁿᵉ η t)
   mono⊢ⁿᶠ η (lamⁿᶠ t)    = lamⁿᶠ (mono⊢ⁿᶠ (keep η) t)
   mono⊢ⁿᶠ η (pairⁿᶠ t u) = pairⁿᶠ (mono⊢ⁿᶠ η t) (mono⊢ⁿᶠ η u)
-  mono⊢ⁿᶠ η ttⁿᶠ         = ttⁿᶠ
+  mono⊢ⁿᶠ η unitⁿᶠ       = unitⁿᶠ
   mono⊢ⁿᶠ η (inlⁿᶠ t)    = inlⁿᶠ (mono⊢ⁿᶠ η t)
   mono⊢ⁿᶠ η (inrⁿᶠ t)    = inrⁿᶠ (mono⊢ⁿᶠ η t)
 
@@ -106,7 +106,7 @@ mutual
   [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ ._ xs y) | diff j = neⁿᶠ (spⁿᵉ j ([ i ≔ s ]ˢᵖ xs) ([ i ≔ s ]ᵗᵖ y))
   [ i ≔ s ]ⁿᶠ lamⁿᶠ t             = lamⁿᶠ ([ pop i ≔ mono⊢ⁿᶠ weak⊆ s ]ⁿᶠ t)
   [ i ≔ s ]ⁿᶠ pairⁿᶠ t u          = pairⁿᶠ ([ i ≔ s ]ⁿᶠ t) ([ i ≔ s ]ⁿᶠ u)
-  [ i ≔ s ]ⁿᶠ ttⁿᶠ                = ttⁿᶠ
+  [ i ≔ s ]ⁿᶠ unitⁿᶠ              = unitⁿᶠ
   [ i ≔ s ]ⁿᶠ inlⁿᶠ t             = inlⁿᶠ ([ i ≔ s ]ⁿᶠ t)
   [ i ≔ s ]ⁿᶠ inrⁿᶠ t             = inrⁿᶠ ([ i ≔ s ]ⁿᶠ t)
 
@@ -205,7 +205,7 @@ expand : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊢ⁿᶠ A
 expand {α P}   t = neⁿᶠ t {{α P}}
 expand {A ▻ B} t = lamⁿᶠ (expand (appⁿᵉ (mono⊢ⁿᵉ weak⊆ t) (expand (varⁿᵉ top))))
 expand {A ∧ B} t = pairⁿᶠ (expand (fstⁿᵉ t)) (expand (sndⁿᵉ t))
-expand {⊤}    t = ttⁿᶠ
+expand {⊤}    t = unitⁿᶠ
 expand {⊥}    t = neⁿᶠ t {{⊥}}
 expand {A ∨ B} t = neⁿᶠ t {{A ∨ B}}
 
@@ -247,7 +247,7 @@ tm→nf (app t u)    = appⁿᶠ (tm→nf t) (tm→nf u)
 tm→nf (pair t u)   = pairⁿᶠ (tm→nf t) (tm→nf u)
 tm→nf (fst t)      = fstⁿᶠ (tm→nf t)
 tm→nf (snd t)      = sndⁿᶠ (tm→nf t)
-tm→nf tt           = ttⁿᶠ
+tm→nf unit         = unitⁿᶠ
 tm→nf (boom t)     = boomⁿᶠ (tm→nf t)
 tm→nf (inl t)      = inlⁿᶠ (tm→nf t)
 tm→nf (inr t)      = inrⁿᶠ (tm→nf t)

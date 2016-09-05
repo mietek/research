@@ -14,7 +14,7 @@ module _ {{_ : Model}} where
   reify {A ▻ B} s = syn s
   reify {□ A}   s = syn s
   reify {A ∧ B} s = pair (reify (π₁ s)) (reify (π₂ s))
-  reify {⊤}    s = tt
+  reify {⊤}    s = unit
 
 
 -- Additional useful equipment.
@@ -65,7 +65,7 @@ eval cdown     γ = cdown ⅋ ⟪↓⟫
 eval cpair     γ = cpair ⅋ _⟪,⟫′_
 eval cfst      γ = cfst ⅋ π₁
 eval csnd      γ = csnd ⅋ π₂
-eval tt        γ = ∙
+eval unit      γ = ∙
 
 
 -- Correctness of evaluation with respect to conversion.

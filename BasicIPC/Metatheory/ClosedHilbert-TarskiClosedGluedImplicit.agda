@@ -13,7 +13,7 @@ module _ {{_ : Model}} where
   reify {α P}   s = syn s
   reify {A ▻ B} s = syn s
   reify {A ∧ B} s = pair (reify (π₁ s)) (reify (π₂ s))
-  reify {⊤}    s = tt
+  reify {⊤}    s = unit
 
 
 -- Additional useful equipment.
@@ -40,7 +40,7 @@ eval₀ cs        = cs ⅋ ⟪S⟫′
 eval₀ cpair     = cpair ⅋ _⟪,⟫′_
 eval₀ cfst      = cfst ⅋ π₁
 eval₀ csnd      = csnd ⅋ π₂
-eval₀ tt        = ∙
+eval₀ unit      = ∙
 
 
 -- Correctness of evaluation with respect to conversion.

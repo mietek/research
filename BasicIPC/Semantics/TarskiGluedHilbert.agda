@@ -28,7 +28,7 @@ record Model : Set₁ where
     [cpair]  : ∀ {A B Γ}   → Γ [⊢] A ▻ B ▻ A ∧ B
     [cfst]   : ∀ {A B Γ}   → Γ [⊢] A ∧ B ▻ A
     [csnd]   : ∀ {A B Γ}   → Γ [⊢] A ∧ B ▻ B
-    [tt]     : ∀ {Γ}       → Γ [⊢] ⊤
+    [unit]   : ∀ {Γ}       → Γ [⊢] ⊤
 
     -- NOTE: [lam] is necessary to give meaning to Gentzen-style syntax.
     [lam] : ∀ {A B Γ} → Γ , A [⊢] B → Γ [⊢] A ▻ B
@@ -78,7 +78,7 @@ module _ {{_ : Model}} where
   reifyʳ {α P}   s = syn s
   reifyʳ {A ▻ B} s = syn (s refl⊆)
   reifyʳ {A ∧ B} s = [app] ([app] [cpair] (reifyʳ {A} (π₁ s))) (reifyʳ {B} (π₂ s))
-  reifyʳ {⊤}    s = [tt]
+  reifyʳ {⊤}    s = [unit]
 
   reifyʳ⋆ : ∀ {Ξ Γ} → Γ ⊩⋆ Ξ → Γ [⊢]⋆ Ξ
   reifyʳ⋆ {∅}     ∙        = ∙

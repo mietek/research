@@ -23,7 +23,7 @@ data ⊦⊢_ : Cx Ty → Set where
   cpair : ∀ {Ξ A B}   → ⊦⊢ Ξ → ⊦⊢ Ξ , A ▻ B ▻ A ∧ B
   cfst  : ∀ {Ξ A B}   → ⊦⊢ Ξ → ⊦⊢ Ξ , A ∧ B ▻ A
   csnd  : ∀ {Ξ A B}   → ⊦⊢ Ξ → ⊦⊢ Ξ , A ∧ B ▻ B
-  tt    : ∀ {Ξ}       → ⊦⊢ Ξ → ⊦⊢ Ξ , ⊤
+  unit  : ∀ {Ξ}       → ⊦⊢ Ξ → ⊦⊢ Ξ , ⊤
 
 infix 3 ⊢_
 ⊢_ : Ty → Set
@@ -45,7 +45,7 @@ us ⧺⊦ cdown ts  = cdown (us ⧺⊦ ts)
 us ⧺⊦ cpair ts  = cpair (us ⧺⊦ ts)
 us ⧺⊦ cfst ts   = cfst (us ⧺⊦ ts)
 us ⧺⊦ csnd ts   = csnd (us ⧺⊦ ts)
-us ⧺⊦ tt ts     = tt (us ⧺⊦ ts)
+us ⧺⊦ unit ts   = unit (us ⧺⊦ ts)
 
 
 -- Modus ponens and necessitation in expanded form.

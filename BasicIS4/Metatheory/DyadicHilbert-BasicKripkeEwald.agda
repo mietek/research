@@ -22,7 +22,7 @@ eval (cdown {A})       γ δ = K (⟪↓⟫ {A})
 eval (cpair {A} {B})   γ δ = K (_⟪,⟫′_ {A} {B})
 eval cfst              γ δ = K π₁
 eval csnd              γ δ = K π₂
-eval tt                γ δ = ∙
+eval unit              γ δ = ∙
 
 
 -- TODO: Correctness of evaluation with respect to conversion.

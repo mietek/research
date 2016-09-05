@@ -20,7 +20,7 @@ module _ {{_ : Model}} where
   [ cpair ]₀   = [cpair]
   [ cfst ]₀    = [cfst]
   [ csnd ]₀    = [csnd]
-  [ tt ]₀      = [tt]
+  [ unit ]₀    = [unit]
 
 
 -- Soundness with respect to all models, or evaluation.
@@ -38,7 +38,7 @@ eval cdown     γ = [cdown] ⅋ ⟪↓⟫
 eval cpair     γ = [cpair] ⅋ _⟪,⟫′_
 eval cfst      γ = [cfst] ⅋ π₁
 eval csnd      γ = [csnd] ⅋ π₂
-eval tt        γ = ∙
+eval unit      γ = ∙
 
 
 -- Correctness of evaluation with respect to conversion.
@@ -84,7 +84,7 @@ private
       ; [cpair] = cpair
       ; [cfst]  = cfst
       ; [csnd]  = csnd
-      ; [tt]    = tt
+      ; [unit]  = unit
       }
 
 

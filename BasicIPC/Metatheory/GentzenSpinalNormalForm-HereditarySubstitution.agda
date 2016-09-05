@@ -12,7 +12,7 @@ mutual
   [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ ._ xs) | diff j = neⁿᶠ (spⁿᵉ j ([ i ≔ s ]ˢᵖ xs))
   [ i ≔ s ]ⁿᶠ lamⁿᶠ t           = lamⁿᶠ ([ pop i ≔ mono⊢ⁿᶠ weak⊆ s ]ⁿᶠ t)
   [ i ≔ s ]ⁿᶠ pairⁿᶠ t u        = pairⁿᶠ ([ i ≔ s ]ⁿᶠ t) ([ i ≔ s ]ⁿᶠ u)
-  [ i ≔ s ]ⁿᶠ ttⁿᶠ              = ttⁿᶠ
+  [ i ≔ s ]ⁿᶠ unitⁿᶠ            = unitⁿᶠ
 
   [_≔_]ˢᵖ_ : ∀ {A B C Γ} → (i : A ∈ Γ) → Γ ∖ i ⊢ⁿᶠ A → Γ ⊢ˢᵖ B ⦙ C → Γ ∖ i ⊢ˢᵖ B ⦙ C
   [ i ≔ s ]ˢᵖ nilˢᵖ      = nilˢᵖ
@@ -81,7 +81,7 @@ expand : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊢ⁿᶠ A
 expand {α P}   t = neⁿᶠ t
 expand {A ▻ B} t = lamⁿᶠ (expand (appⁿᵉ (mono⊢ⁿᵉ weak⊆ t) (expand (varⁿᵉ top))))
 expand {A ∧ B} t = pairⁿᶠ (expand (fstⁿᵉ t)) (expand (sndⁿᵉ t))
-expand {⊤}    t = ttⁿᶠ
+expand {⊤}    t = unitⁿᶠ
 
 
 -- Expansion-based normal forms.
@@ -99,7 +99,7 @@ tm→nf (app t u)  = appⁿᶠ (tm→nf t) (tm→nf u)
 tm→nf (pair t u) = pairⁿᶠ (tm→nf t) (tm→nf u)
 tm→nf (fst t)    = fstⁿᶠ (tm→nf t)
 tm→nf (snd t)    = sndⁿᶠ (tm→nf t)
-tm→nf tt         = ttⁿᶠ
+tm→nf unit       = unitⁿᶠ
 
 
 -- Normalisation.

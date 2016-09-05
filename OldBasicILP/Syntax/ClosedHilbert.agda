@@ -53,7 +53,7 @@ mutual
     cpair : ∀ {A B}   → ⊢ A ▻ B ▻ A ∧ B
     cfst  : ∀ {A B}   → ⊢ A ∧ B ▻ A
     csnd  : ∀ {A B}   → ⊢ A ∧ B ▻ B
-    tt    : ⊢ ⊤
+    unit  : ⊢ ⊤
 
 infix 3 ⊢⋆_
 ⊢⋆_ : Cx Ty → Set

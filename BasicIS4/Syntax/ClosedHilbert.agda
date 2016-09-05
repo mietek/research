@@ -22,7 +22,7 @@ data ⊢_ : Ty → Set where
   cpair : ∀ {A B}   → ⊢ A ▻ B ▻ A ∧ B
   cfst  : ∀ {A B}   → ⊢ A ∧ B ▻ A
   csnd  : ∀ {A B}   → ⊢ A ∧ B ▻ B
-  tt    : ⊢ ⊤
+  unit  : ⊢ ⊤
 
 infix 3 ⊢⋆_
 ⊢⋆_ : Cx Ty → Set
@@ -177,4 +177,4 @@ data _⋙_ : ∀ {A} → ⊢ A → ⊢ A → Set where
   eta∧⋙     : ∀ {A B} → {t : ⊢ A ∧ B}
                        → t ⋙ app (app cpair (app cfst t)) (app csnd t)
 
-  eta⊤⋙    : ∀ {t : ⊢ ⊤} → t ⋙ tt
+  eta⊤⋙    : ∀ {t : ⊢ ⊤} → t ⋙ unit

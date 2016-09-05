@@ -15,7 +15,7 @@ data ⊢×_ : Cx Ty → Set where
   cpair : ∀ {Ξ A B}   → ⊢× Ξ → ⊢× Ξ , A ▻ B ▻ A ∧ B
   cfst  : ∀ {Ξ A B}   → ⊢× Ξ → ⊢× Ξ , A ∧ B ▻ A
   csnd  : ∀ {Ξ A B}   → ⊢× Ξ → ⊢× Ξ , A ∧ B ▻ B
-  tt    : ∀ {Ξ}       → ⊢× Ξ → ⊢× Ξ , ⊤
+  unit  : ∀ {Ξ}       → ⊢× Ξ → ⊢× Ξ , ⊤
   cboom : ∀ {Ξ C}     → ⊢× Ξ → ⊢× Ξ , ⊥ ▻ C
   cinl  : ∀ {Ξ A B}   → ⊢× Ξ → ⊢× Ξ , A ▻ A ∨ B
   cinr  : ∀ {Ξ A B}   → ⊢× Ξ → ⊢× Ξ , B ▻ A ∨ B
@@ -37,7 +37,7 @@ us ⧻ cs ts     = cs (us ⧻ ts)
 us ⧻ cpair ts  = cpair (us ⧻ ts)
 us ⧻ cfst ts   = cfst (us ⧻ ts)
 us ⧻ csnd ts   = csnd (us ⧻ ts)
-us ⧻ tt ts     = tt (us ⧻ ts)
+us ⧻ unit ts   = unit (us ⧻ ts)
 us ⧻ cboom ts  = cboom (us ⧻ ts)
 us ⧻ cinl ts   = cinl (us ⧻ ts)
 us ⧻ cinr ts   = cinr (us ⧻ ts)

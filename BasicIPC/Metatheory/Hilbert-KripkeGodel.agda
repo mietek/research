@@ -15,7 +15,7 @@ eval (cs {A} {B} {C})  γ = K (⟪S⟫′ {A} {B} {C})
 eval (cpair {A} {B})   γ = K (_⟪,⟫′_ {A} {B})
 eval (cfst {A} {B})    γ = K (⟪π₁⟫ {A} {B})
 eval (csnd {A} {B})    γ = K (⟪π₂⟫ {A} {B})
-eval tt                γ = K ∙
+eval unit              γ = K ∙
 
 
 -- TODO: Correctness of evaluation with respect to conversion.
@@ -49,7 +49,7 @@ mutual
   reifyᶜ {α P}   s = s refl⊆
   reifyᶜ {A ▻ B} s = lam (reifyᶜ (s weak⊆ (reflectᶜ {A} v₀)))
   reifyᶜ {A ∧ B} s = pair (reifyᶜ (π₁ (s refl⊆))) (reifyᶜ (π₂ (s refl⊆)))
-  reifyᶜ {⊤}    s = tt
+  reifyᶜ {⊤}    s = unit
 
 reflectᶜ⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊩⋆ Ξ
 reflectᶜ⋆ {∅}     ∙        = ∙

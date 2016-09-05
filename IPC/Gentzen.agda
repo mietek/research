@@ -13,7 +13,7 @@ data _⊢_ (Γ : Cx Ty) : Ty → Set where
   pair : ∀ {A B}   → Γ ⊢ A → Γ ⊢ B → Γ ⊢ A ∧ B
   fst  : ∀ {A B}   → Γ ⊢ A ∧ B → Γ ⊢ A
   snd  : ∀ {A B}   → Γ ⊢ A ∧ B → Γ ⊢ B
-  tt   : Γ ⊢ ⊤
+  unit : Γ ⊢ ⊤
   boom : ∀ {C}     → Γ ⊢ ⊥ → Γ ⊢ C
   inl  : ∀ {A B}   → Γ ⊢ A → Γ ⊢ A ∨ B
   inr  : ∀ {A B}   → Γ ⊢ B → Γ ⊢ A ∨ B
@@ -34,7 +34,7 @@ mono⊢ η (app t u)    = app (mono⊢ η t) (mono⊢ η u)
 mono⊢ η (pair t u)   = pair (mono⊢ η t) (mono⊢ η u)
 mono⊢ η (fst t)      = fst (mono⊢ η t)
 mono⊢ η (snd t)      = snd (mono⊢ η t)
-mono⊢ η tt           = tt
+mono⊢ η unit         = unit
 mono⊢ η (boom t)     = boom (mono⊢ η t)
 mono⊢ η (inl t)      = inl (mono⊢ η t)
 mono⊢ η (inr t)      = inr (mono⊢ η t)
@@ -166,7 +166,7 @@ concat Γ′ t u = app (mono⊢ (weak⊆⧺₁ Γ′) (lam t)) (mono⊢ weak⊆�
 [ i ≔ s ] pair t u   = pair ([ i ≔ s ] t) ([ i ≔ s ] u)
 [ i ≔ s ] fst t      = fst ([ i ≔ s ] t)
 [ i ≔ s ] snd t      = snd ([ i ≔ s ] t)
-[ i ≔ s ] tt         = tt
+[ i ≔ s ] unit       = unit
 [ i ≔ s ] boom t     = boom ([ i ≔ s ] t)
 [ i ≔ s ] inl t      = inl ([ i ≔ s ] t)
 [ i ≔ s ] inr t      = inr ([ i ≔ s ] t)
@@ -241,7 +241,7 @@ data _⋙_ {Γ : Cx Ty} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
   eta∧⋙     : ∀ {A B} → {t : Γ ⊢ A ∧ B}
                        → t ⋙ pair (fst t) (snd t)
 
-  eta⊤⋙    : ∀ {t : Γ ⊢ ⊤} → t ⋙ tt
+  eta⊤⋙    : ∀ {t : Γ ⊢ ⊤} → t ⋙ unit
 
   beta∨₁⋙   : ∀ {A B C} → {t : Γ ⊢ A} → {u : Γ , A ⊢ C} → {v : Γ , B ⊢ C}
                          → case (inl t) u v ⋙ ([ top ≔ t ] u)

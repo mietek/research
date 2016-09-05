@@ -14,7 +14,7 @@ module _ {{_ : Model}} where
   [ pair t u ] = [pair] [ t ] [ u ]
   [ fst t ]    = [fst] [ t ]
   [ snd t ]    = [snd] [ t ]
-  [ tt ]       = [tt]
+  [ unit ]     = [unit]
 
 
 -- Soundness with respect to all models, or evaluation.
@@ -28,7 +28,7 @@ eval (app t u)  γ = eval t γ ⟪$⟫ eval u γ
 eval (pair t u) γ = eval t γ , eval u γ
 eval (fst t)    γ = π₁ (eval t γ)
 eval (snd t)    γ = π₂ (eval t γ)
-eval tt         γ = ∙
+eval unit       γ = ∙
 
 
 -- TODO: Correctness of evaluation with respect to conversion.
@@ -50,7 +50,7 @@ private
       ; [pair]   = pair
       ; [fst]    = fst
       ; [snd]    = snd
-      ; [tt]     = tt
+      ; [unit]   = unit
       }
 
 
@@ -68,7 +68,7 @@ mutual
   reifyᶜ {α P}   s = syn s
   reifyᶜ {A ▻ B} s = syn (s refl⊆)
   reifyᶜ {A ∧ B} s = pair (reifyᶜ (π₁ s)) (reifyᶜ (π₂ s))
-  reifyᶜ {⊤}    s = tt
+  reifyᶜ {⊤}    s = unit
 
 reflectᶜ⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊩⋆ Ξ
 reflectᶜ⋆ {∅}     ∙        = ∙

@@ -71,7 +71,7 @@ chs→ch (Ξ , ts) = chs⊦→ch ts top
     chs⊦→ch (CHS.cpair ts)  top     = CH.cpair
     chs⊦→ch (CHS.cfst ts)   top     = CH.cfst
     chs⊦→ch (CHS.csnd ts)   top     = CH.csnd
-    chs⊦→ch (CHS.tt ts)     top     = CH.tt
+    chs⊦→ch (CHS.unit ts)   top     = CH.unit
     chs⊦→ch (CHS.mp i j ts) (pop k) = chs⊦→ch ts k
     chs⊦→ch (CHS.ci ts)     (pop k) = chs⊦→ch ts k
     chs⊦→ch (CHS.ck ts)     (pop k) = chs⊦→ch ts k
@@ -83,7 +83,7 @@ chs→ch (Ξ , ts) = chs⊦→ch ts top
     chs⊦→ch (CHS.cpair ts)  (pop k) = chs⊦→ch ts k
     chs⊦→ch (CHS.cfst ts)   (pop k) = chs⊦→ch ts k
     chs⊦→ch (CHS.csnd ts)   (pop k) = chs⊦→ch ts k
-    chs⊦→ch (CHS.tt ts)     (pop k) = chs⊦→ch ts k
+    chs⊦→ch (CHS.unit ts)   (pop k) = chs⊦→ch ts k
 
 
 -- Translation from closed Hilbert-style to closed Hilbert-style sequential.
@@ -100,7 +100,7 @@ ch→chs CH.cdown     = ∅ , CHS.cdown CHS.nil
 ch→chs CH.cpair     = ∅ , CHS.cpair CHS.nil
 ch→chs CH.cfst      = ∅ , CHS.cfst CHS.nil
 ch→chs CH.csnd      = ∅ , CHS.csnd CHS.nil
-ch→chs CH.tt        = ∅ , CHS.tt CHS.nil
+ch→chs CH.unit      = ∅ , CHS.unit CHS.nil
 
 
 -- Translation from Hilbert-style sequential to Hilbert-style.
@@ -121,7 +121,7 @@ hs→h (Ξ , ts) = hs⊦→h ts top
     hs⊦→h (HS.cpair ts)  top     = H.cpair
     hs⊦→h (HS.cfst ts)   top     = H.cfst
     hs⊦→h (HS.csnd ts)   top     = H.csnd
-    hs⊦→h (HS.tt ts)     top     = H.tt
+    hs⊦→h (HS.unit ts)   top     = H.unit
     hs⊦→h (HS.var i ts)  (pop k) = hs⊦→h ts k
     hs⊦→h (HS.mp i j ts) (pop k) = hs⊦→h ts k
     hs⊦→h (HS.ci ts)     (pop k) = hs⊦→h ts k
@@ -134,7 +134,7 @@ hs→h (Ξ , ts) = hs⊦→h ts top
     hs⊦→h (HS.cpair ts)  (pop k) = hs⊦→h ts k
     hs⊦→h (HS.cfst ts)   (pop k) = hs⊦→h ts k
     hs⊦→h (HS.csnd ts)   (pop k) = hs⊦→h ts k
-    hs⊦→h (HS.tt ts)     (pop k) = hs⊦→h ts k
+    hs⊦→h (HS.unit ts)   (pop k) = hs⊦→h ts k
 
 
 -- Translation from Hilbert-style to Hilbert-style sequential.
@@ -152,7 +152,7 @@ h→hs H.cdown     = ∅ , HS.cdown HS.nil
 h→hs H.cpair     = ∅ , HS.cpair HS.nil
 h→hs H.cfst      = ∅ , HS.cfst HS.nil
 h→hs H.csnd      = ∅ , HS.csnd HS.nil
-h→hs H.tt        = ∅ , HS.tt HS.nil
+h→hs H.unit      = ∅ , HS.unit HS.nil
 
 
 -- Translation from dyadic Hilbert-style sequential to dyadic Hilbert-style.
@@ -174,7 +174,7 @@ dhs→dh (Ξ , ts) = dhs⊦→dh ts top
     dhs⊦→dh (DHS.cpair ts)  top     = DH.cpair
     dhs⊦→dh (DHS.cfst ts)   top     = DH.cfst
     dhs⊦→dh (DHS.csnd ts)   top     = DH.csnd
-    dhs⊦→dh (DHS.tt ts)     top     = DH.tt
+    dhs⊦→dh (DHS.unit ts)   top     = DH.unit
     dhs⊦→dh (DHS.var i ts)  (pop k) = dhs⊦→dh ts k
     dhs⊦→dh (DHS.mp i j ts) (pop k) = dhs⊦→dh ts k
     dhs⊦→dh (DHS.ci ts)     (pop k) = dhs⊦→dh ts k
@@ -188,7 +188,7 @@ dhs→dh (Ξ , ts) = dhs⊦→dh ts top
     dhs⊦→dh (DHS.cpair ts)  (pop k) = dhs⊦→dh ts k
     dhs⊦→dh (DHS.cfst ts)   (pop k) = dhs⊦→dh ts k
     dhs⊦→dh (DHS.csnd ts)   (pop k) = dhs⊦→dh ts k
-    dhs⊦→dh (DHS.tt ts)     (pop k) = dhs⊦→dh ts k
+    dhs⊦→dh (DHS.unit ts)   (pop k) = dhs⊦→dh ts k
 
 
 -- Translation from dyadic Hilbert-style to dyadic Hilbert-style sequential
@@ -207,7 +207,7 @@ dh→dhs DH.cdown     = ∅ , DHS.cdown DHS.nil
 dh→dhs DH.cpair     = ∅ , DHS.cpair DHS.nil
 dh→dhs DH.cfst      = ∅ , DHS.cfst DHS.nil
 dh→dhs DH.csnd      = ∅ , DHS.csnd DHS.nil
-dh→dhs DH.tt        = ∅ , DHS.tt DHS.nil
+dh→dhs DH.unit      = ∅ , DHS.unit DHS.nil
 
 
 -- Deduction and detachment theorems for Hilbert-style sequential.
@@ -275,7 +275,7 @@ chs→hs₀ (Ξ , ts) = Ξ , chs⊦→hs⊦ ts
     chs⊦→hs⊦ (CHS.cpair ts)  = HS.cpair (chs⊦→hs⊦ ts)
     chs⊦→hs⊦ (CHS.cfst ts)   = HS.cfst (chs⊦→hs⊦ ts)
     chs⊦→hs⊦ (CHS.csnd ts)   = HS.csnd (chs⊦→hs⊦ ts)
-    chs⊦→hs⊦ (CHS.tt ts)     = HS.tt (chs⊦→hs⊦ ts)
+    chs⊦→hs⊦ (CHS.unit ts)   = HS.unit (chs⊦→hs⊦ ts)
     chs⊦→hs⊦ (CHS.nec ss ts) = HS.nec (chs⊦→hs⊦ ss) (chs⊦→hs⊦ ts)
     chs⊦→hs⊦ (CHS.cdist ts)  = HS.cdist (chs⊦→hs⊦ ts)
     chs⊦→hs⊦ (CHS.cup ts)    = HS.cup (chs⊦→hs⊦ ts)
@@ -300,7 +300,7 @@ hs₀→chs (Ξ , ts) = Ξ , hs₀⊦→chs⊦ ts
     hs₀⊦→chs⊦ (HS.cpair ts)  = CHS.cpair (hs₀⊦→chs⊦ ts)
     hs₀⊦→chs⊦ (HS.cfst ts)   = CHS.cfst (hs₀⊦→chs⊦ ts)
     hs₀⊦→chs⊦ (HS.csnd ts)   = CHS.csnd (hs₀⊦→chs⊦ ts)
-    hs₀⊦→chs⊦ (HS.tt ts)     = CHS.tt (hs₀⊦→chs⊦ ts)
+    hs₀⊦→chs⊦ (HS.unit ts)   = CHS.unit (hs₀⊦→chs⊦ ts)
     hs₀⊦→chs⊦ (HS.nec ss ts) = CHS.nec (hs₀⊦→chs⊦ ss) (hs₀⊦→chs⊦ ts)
     hs₀⊦→chs⊦ (HS.cdist ts)  = CHS.cdist (hs₀⊦→chs⊦ ts)
     hs₀⊦→chs⊦ (HS.cup ts)    = CHS.cup (hs₀⊦→chs⊦ ts)
@@ -330,7 +330,7 @@ dhs₀→hs (Ξ , ts) = Ξ , dhs₀⊦→hs⊦ ts
     dhs₀⊦→hs⊦ (DHS.cpair ts)   = HS.cpair (dhs₀⊦→hs⊦ ts)
     dhs₀⊦→hs⊦ (DHS.cfst ts)    = HS.cfst (dhs₀⊦→hs⊦ ts)
     dhs₀⊦→hs⊦ (DHS.csnd ts)    = HS.csnd (dhs₀⊦→hs⊦ ts)
-    dhs₀⊦→hs⊦ (DHS.tt ts)      = HS.tt (dhs₀⊦→hs⊦ ts)
+    dhs₀⊦→hs⊦ (DHS.unit ts)    = HS.unit (dhs₀⊦→hs⊦ ts)
 
 dhs→hs : ∀ {A Γ Δ} → DHS⟨ Γ ⁏ Δ ⊢ A ⟩ → HS⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩
 dhs→hs = dhs₀→hs ∘ dhs-merge
@@ -355,7 +355,7 @@ hs→dhs₀ (Ξ , ts) = Ξ , hs⊦→dhs₀⊦ ts
     hs⊦→dhs₀⊦ (HS.cpair ts)  = DHS.cpair (hs⊦→dhs₀⊦ ts)
     hs⊦→dhs₀⊦ (HS.cfst ts)   = DHS.cfst (hs⊦→dhs₀⊦ ts)
     hs⊦→dhs₀⊦ (HS.csnd ts)   = DHS.csnd (hs⊦→dhs₀⊦ ts)
-    hs⊦→dhs₀⊦ (HS.tt ts)     = DHS.tt (hs⊦→dhs₀⊦ ts)
+    hs⊦→dhs₀⊦ (HS.unit ts)   = DHS.unit (hs⊦→dhs₀⊦ ts)
 
 hs→dhs : ∀ {A Γ Δ} → HS⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩ → DHS⟨ Γ ⁏ Δ ⊢ A ⟩
 hs→dhs = dhs-split ∘ hs→dhs₀
@@ -371,7 +371,7 @@ ch→h₀ CH.cs        = H.cs
 ch→h₀ CH.cpair     = H.cpair
 ch→h₀ CH.cfst      = H.cfst
 ch→h₀ CH.csnd      = H.csnd
-ch→h₀ CH.tt        = H.tt
+ch→h₀ CH.unit      = H.unit
 ch→h₀ (CH.box t)   = H.box (ch→h₀ t)
 ch→h₀ CH.cdist     = H.cdist
 ch→h₀ CH.cup       = H.cup
@@ -392,7 +392,7 @@ h₀→ch H.cs        = CH.cs
 h₀→ch H.cpair     = CH.cpair
 h₀→ch H.cfst      = CH.cfst
 h₀→ch H.csnd      = CH.csnd
-h₀→ch H.tt        = CH.tt
+h₀→ch H.unit      = CH.unit
 h₀→ch (H.box t)   = CH.box (h₀→ch t)
 h₀→ch H.cdist     = CH.cdist
 h₀→ch H.cup       = CH.cup
@@ -418,7 +418,7 @@ dh₀→h DH.cdown     = H.cdown
 dh₀→h DH.cpair     = H.cpair
 dh₀→h DH.cfst      = H.cfst
 dh₀→h DH.csnd      = H.csnd
-dh₀→h DH.tt        = H.tt
+dh₀→h DH.unit      = H.unit
 
 dh→h : ∀ {A Γ Δ} → DH⟨ Γ ⁏ Δ ⊢ A ⟩ → H⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩
 dh→h = dh₀→h ∘ DH.merge
@@ -439,7 +439,7 @@ h→dh₀ H.cdown     = DH.cdown
 h→dh₀ H.cpair     = DH.cpair
 h→dh₀ H.cfst      = DH.cfst
 h→dh₀ H.csnd      = DH.csnd
-h→dh₀ H.tt        = DH.tt
+h→dh₀ H.unit      = DH.unit
 
 h→dh : ∀ {A Γ Δ} → H⟨ Γ ⧺ (□⋆ Δ) ⊢ A ⟩ → DH⟨ Γ ⁏ Δ ⊢ A ⟩
 h→dh = DH.split ∘ h→dh₀
@@ -460,7 +460,7 @@ h→g H.cdown     = G.cdown
 h→g H.cpair     = G.cpair
 h→g H.cfst      = G.cfst
 h→g H.csnd      = G.csnd
-h→g H.tt        = G.tt
+h→g H.unit      = G.unit
 
 
 -- Translation from Gentzen-style to Hilbert-style.
@@ -475,7 +475,7 @@ mutual
   g→h (G.pair t u)      = H.pair (g→h t) (g→h u)
   g→h (G.fst t)         = H.fst (g→h t)
   g→h (G.snd t)         = H.snd (g→h t)
-  g→h G.tt              = H.tt
+  g→h G.unit            = H.unit
 
   g→h⋆ : ∀ {Ξ Γ} → G⟨ Γ ⊢⋆ Ξ ⟩ → H⟨ Γ ⊢⋆ Ξ ⟩
   g→h⋆ {∅}     ∙        = ∙
@@ -498,7 +498,7 @@ dh→dg DH.cdown     = DG.cdown
 dh→dg DH.cpair     = DG.cpair
 dh→dg DH.cfst      = DG.cfst
 dh→dg DH.csnd      = DG.csnd
-dh→dg DH.tt        = DG.tt
+dh→dg DH.unit      = DG.unit
 
 
 -- Translation from dyadic Gentzen-style to dyadic Hilbert-style.
@@ -513,7 +513,7 @@ dg→dh (DG.unbox t u) = DH.unbox (dg→dh t) (dg→dh u)
 dg→dh (DG.pair t u)  = DH.pair (dg→dh t) (dg→dh u)
 dg→dh (DG.fst t)     = DH.fst (dg→dh t)
 dg→dh (DG.snd t)     = DH.snd (dg→dh t)
-dg→dh DG.tt          = DH.tt
+dg→dh DG.unit        = DH.unit
 
 
 -- Translation from Gentzen-style to dyadic Gentzen-style.
@@ -528,7 +528,7 @@ mutual
   g→dg₀ (G.pair t u)      = DG.pair (g→dg₀ t) (g→dg₀ u)
   g→dg₀ (G.fst t)         = DG.fst (g→dg₀ t)
   g→dg₀ (G.snd t)         = DG.snd (g→dg₀ t)
-  g→dg₀ G.tt              = DG.tt
+  g→dg₀ G.unit            = DG.unit
 
   g→dg₀⋆ : ∀ {Ξ Γ} → G⟨ Γ ⊢⋆ Ξ ⟩ → DG⟨ Γ ⁏ ∅ ⊢⋆ Ξ ⟩
   g→dg₀⋆ {∅}     ∙        = ∙
@@ -553,7 +553,7 @@ h→lg H.cdown     = LG.cdown
 h→lg H.cpair     = LG.cpair
 h→lg H.cfst      = LG.cfst
 h→lg H.csnd      = LG.csnd
-h→lg H.tt        = LG.tt
+h→lg H.unit      = LG.unit
 
 
 -- Translation from labelled Gentzen-style to Hilbert-style.
@@ -571,7 +571,7 @@ lg→h (LG.move t u) = H.down (lg→h t)
 lg→h (LG.pair t u) = H.pair (lg→h t) (lg→h u)
 lg→h (LG.fst t)    = H.fst (lg→h t)
 lg→h (LG.snd t)    = H.snd (lg→h t)
-lg→h LG.tt         = H.tt
+lg→h LG.unit       = H.unit
 
 
 -- Translation from Gentzen-style to labelled Gentzen-style.
@@ -586,7 +586,7 @@ mutual
   g→lg (G.pair t u)      = LG.pair (g→lg t) (g→lg u)
   g→lg (G.fst t)         = LG.fst (g→lg t)
   g→lg (G.snd t)         = LG.snd (g→lg t)
-  g→lg G.tt              = LG.tt
+  g→lg G.unit            = LG.unit
 
   g→lg⋆ : ∀ {x Ξ Γ Λ} → G⟨ Γ ⊢⋆ Ξ ⟩ → LG⟨ Γ ⁏ Λ ⊢⋆ Ξ ◎⋆ x ⟩
   g→lg⋆ {x} {∅}     ∙        = ∙
@@ -608,7 +608,7 @@ lg→g (LG.move t u) = G.down (lg→g t)
 lg→g (LG.pair t u) = G.pair (lg→g t) (lg→g u)
 lg→g (LG.fst t)    = G.fst (lg→g t)
 lg→g (LG.snd t)    = G.snd (lg→g t)
-lg→g LG.tt         = G.tt
+lg→g LG.unit       = G.unit
 
 
 -- Additional translations from closed Hilbert-style sequential.

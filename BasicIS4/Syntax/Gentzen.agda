@@ -19,7 +19,7 @@ mutual
     pair     : ∀ {A B} → Γ ⊢ A → Γ ⊢ B → Γ ⊢ A ∧ B
     fst      : ∀ {A B} → Γ ⊢ A ∧ B → Γ ⊢ A
     snd      : ∀ {A B} → Γ ⊢ A ∧ B → Γ ⊢ B
-    tt       : Γ ⊢ ⊤
+    unit     : Γ ⊢ ⊤
 
   infix 3 _⊢⋆_
   _⊢⋆_ : Cx Ty → Cx Ty → Set
@@ -39,7 +39,7 @@ mutual
   mono⊢ η (pair t u)      = pair (mono⊢ η t) (mono⊢ η u)
   mono⊢ η (fst t)         = fst (mono⊢ η t)
   mono⊢ η (snd t)         = snd (mono⊢ η t)
-  mono⊢ η tt              = tt
+  mono⊢ η unit            = unit
 
   mono⊢⋆ : ∀ {Ξ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ Ξ → Γ′ ⊢⋆ Ξ
   mono⊢⋆ {∅}     η ∙        = ∙
@@ -257,7 +257,7 @@ mutual
   [ i ≔ s ] pair t u      = pair ([ i ≔ s ] t) ([ i ≔ s ] u)
   [ i ≔ s ] fst t         = fst ([ i ≔ s ] t)
   [ i ≔ s ] snd t         = snd ([ i ≔ s ] t)
-  [ i ≔ s ] tt            = tt
+  [ i ≔ s ] unit          = unit
 
   [_≔_]⋆_ : ∀ {Ξ A Γ} → (i : A ∈ Γ) → Γ ∖ i ⊢ A → Γ ⊢⋆ Ξ → Γ ∖ i ⊢⋆ Ξ
   [_≔_]⋆_ {∅}     i s ∙        = ∙
@@ -319,4 +319,4 @@ data _⋙_ {Γ : Cx Ty} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
   eta∧⋙      : ∀ {A B} → {t : Γ ⊢ A ∧ B}
                         → t ⋙ pair (fst t) (snd t)
 
-  eta⊤⋙     : ∀ {t : Γ ⊢ ⊤} → t ⋙ tt
+  eta⊤⋙     : ∀ {t : Γ ⊢ ⊤} → t ⋙ unit

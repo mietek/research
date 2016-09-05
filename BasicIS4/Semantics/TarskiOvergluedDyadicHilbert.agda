@@ -33,7 +33,7 @@ record Model : Set₁ where
     [cpair]   : ∀ {A B Γ Δ}   → Γ ⁏ Δ [⊢] A ▻ B ▻ A ∧ B
     [cfst]    : ∀ {A B Γ Δ}   → Γ ⁏ Δ [⊢] A ∧ B ▻ A
     [csnd]    : ∀ {A B Γ Δ}   → Γ ⁏ Δ [⊢] A ∧ B ▻ B
-    [tt]      : ∀ {Γ Δ}       → Γ ⁏ Δ [⊢] ⊤
+    [unit]    : ∀ {Γ Δ}       → Γ ⁏ Δ [⊢] ⊤
 
     -- NOTE: [mlam] is necessary for [mmulticut], which is necessary for eval.
     [mlam] : ∀ {A B Γ Δ} → Γ ⁏ Δ , A [⊢] B → Γ ⁏ Δ [⊢] □ A ▻ B
@@ -86,7 +86,7 @@ module _ {{_ : Model}} where
   reifyʳ {A ▻ B} s = syn (s refl⊆²)
   reifyʳ {□ A}   s = syn (s refl⊆²)
   reifyʳ {A ∧ B} s = [app] ([app] [cpair] (reifyʳ {A} (π₁ s))) (reifyʳ {B} (π₂ s))
-  reifyʳ {⊤}    s = [tt]
+  reifyʳ {⊤}    s = [unit]
 
   reifyʳ⋆ : ∀ {Ξ Π} → Π ⊩⋆ Ξ → Π [⊢]⋆ Ξ
   reifyʳ⋆ {∅}     ∙        = ∙

@@ -14,7 +14,7 @@ data ⊢_ : Ty → Set where
   cpair : ∀ {A B}   → ⊢ A ▻ B ▻ A ∧ B
   cfst  : ∀ {A B}   → ⊢ A ∧ B ▻ A
   csnd  : ∀ {A B}   → ⊢ A ∧ B ▻ B
-  tt    : ⊢ ⊤
+  unit  : ⊢ ⊤
   cboom : ∀ {C}     → ⊢ ⊥ ▻ C
   cinl  : ∀ {A B}   → ⊢ A ▻ A ∨ B
   cinr  : ∀ {A B}   → ⊢ B ▻ A ∨ B
@@ -165,7 +165,7 @@ data _⋙_ : ∀ {A} → ⊢ A → ⊢ A → Set where
   eta∧⋙     : ∀ {A B} → {t : ⊢ A ∧ B}
                        → t ⋙ app (app cpair (app cfst t)) (app csnd t)
 
-  eta⊤⋙    : ∀ {t : ⊢ ⊤} → t ⋙ tt
+  eta⊤⋙    : ∀ {t : ⊢ ⊤} → t ⋙ unit
 
   -- TODO: Verify this.
   beta∨₁⋙   : ∀ {A B C} → {t : ⊢ A} → {u : ⊢ A ▻ C} → {v : ⊢ B ▻ C}

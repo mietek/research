@@ -16,7 +16,7 @@ module _ {{_ : Model}} where
   [ cpair ]   = [cpair]
   [ cfst ]    = [cfst]
   [ csnd ]    = [csnd]
-  [ tt ]      = [tt]
+  [ unit ]    = [unit]
 
 
 -- Soundness with respect to all models, or evaluation.
@@ -30,7 +30,7 @@ eval cs        γ = K ([ cs ] ⅋ ⟪S⟫′)
 eval cpair     γ = K ([ cpair ] ⅋ _⟪,⟫′_)
 eval cfst      γ = K ([ cfst ] ⅋ π₁)
 eval csnd      γ = K ([ csnd ] ⅋ π₂)
-eval tt        γ = ∙
+eval unit      γ = ∙
 
 
 -- TODO: Correctness of evaluation with respect to conversion.
@@ -52,7 +52,7 @@ private
       ; [pair]   = pair
       ; [fst]    = fst
       ; [snd]    = snd
-      ; [tt]     = tt
+      ; [unit]   = unit
       }
 
 
@@ -70,7 +70,7 @@ mutual
   reifyᶜ {α P}   s = syn s
   reifyᶜ {A ▻ B} s = syn (s refl⊆)
   reifyᶜ {A ∧ B} s = pair (reifyᶜ (π₁ s)) (reifyᶜ (π₂ s))
-  reifyᶜ {⊤}    s = tt
+  reifyᶜ {⊤}    s = unit
 
 reflectᶜ⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊩⋆ Ξ
 reflectᶜ⋆ {∅}     ∙        = ∙

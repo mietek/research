@@ -15,7 +15,7 @@ eval cs        γ = S
 eval cpair     γ = _,_
 eval cfst      γ = π₁
 eval csnd      γ = π₂
-eval tt        γ = ∙
+eval unit      γ = ∙
 
 
 -- Correctness of evaluation with respect to conversion.

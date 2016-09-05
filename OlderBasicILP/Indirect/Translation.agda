@@ -30,7 +30,7 @@ hs→hnᵀᵐ TS = aux TS 0
     aux (HS.CPAIR TS)  zero    = HN.CPAIR
     aux (HS.CFST TS)   zero    = HN.CFST
     aux (HS.CSND TS)   zero    = HN.CSND
-    aux (HS.TT TS)     zero    = HN.TT
+    aux (HS.UNIT TS)   zero    = HN.UNIT
     aux HS.NIL         (suc K) = {!!}
     aux (HS.VAR I TS)  (suc K) = aux TS K
     aux (HS.MP I J TS) (suc K) = aux TS K
@@ -44,7 +44,7 @@ hs→hnᵀᵐ TS = aux TS 0
     aux (HS.CPAIR TS)  (suc K) = aux TS K
     aux (HS.CFST TS)   (suc K) = aux TS K
     aux (HS.CSND TS)   (suc K) = aux TS K
-    aux (HS.TT TS)     (suc K) = aux TS K
+    aux (HS.UNIT TS)   (suc K) = aux TS K
 
 hs→hnᵀʸ : Ty HS.Tm → Ty HN.Tm
 hs→hnᵀʸ (α P)   = α P
@@ -77,7 +77,7 @@ hs→hn (Ξ , ts) = aux ts top
     aux (HS.cpair ts)  top     = HN.cpair
     aux (HS.cfst ts)   top     = HN.cfst
     aux (HS.csnd ts)   top     = HN.csnd
-    aux (HS.tt ts)     top     = HN.tt
+    aux (HS.unit ts)   top     = HN.unit
     aux (HS.var i ts)  (pop k) = aux ts k
     aux (HS.mp i j ts) (pop k) = aux ts k
     aux (HS.ci ts)     (pop k) = aux ts k
@@ -90,7 +90,7 @@ hs→hn (Ξ , ts) = aux ts top
     aux (HS.cpair ts)  (pop k) = aux ts k
     aux (HS.cfst ts)   (pop k) = aux ts k
     aux (HS.csnd ts)   (pop k) = aux ts k
-    aux (HS.tt ts)     (pop k) = aux ts k
+    aux (HS.unit ts)   (pop k) = aux ts k
 
 
 -- Translation from nested Hilbert-style to sequential.
@@ -108,7 +108,7 @@ hn→hsᵀᵐ HN.CDOWN     = HS.CDOWN HS.NIL
 hn→hsᵀᵐ HN.CPAIR     = HS.CPAIR HS.NIL
 hn→hsᵀᵐ HN.CFST      = HS.CFST HS.NIL
 hn→hsᵀᵐ HN.CSND      = HS.CSND HS.NIL
-hn→hsᵀᵐ HN.TT        = HS.TT HS.NIL
+hn→hsᵀᵐ HN.UNIT      = HS.UNIT HS.NIL
 
 hn→hsᵀʸ : Ty HN.Tm → Ty HS.Tm
 hn→hsᵀʸ (α P)   = α P
@@ -138,7 +138,7 @@ hn→hs HN.cdown     = ∅ , HS.cdown HS.nil
 hn→hs HN.cpair     = ∅ , HS.cpair HS.nil
 hn→hs HN.cfst      = ∅ , HS.cfst HS.nil
 hn→hs HN.csnd      = ∅ , HS.csnd HS.nil
-hn→hs HN.tt        = ∅ , HS.tt HS.nil
+hn→hs HN.unit      = ∅ , HS.unit HS.nil
 
 
 -- Deduction theorem for sequential Hilbert-style.
@@ -157,7 +157,7 @@ hs→hn→hsᵀᵐ {HS.CDOWN TS}  = {!!}
 hs→hn→hsᵀᵐ {HS.CPAIR TS}  = {!!}
 hs→hn→hsᵀᵐ {HS.CFST TS}   = {!!}
 hs→hn→hsᵀᵐ {HS.CSND TS}   = {!!}
-hs→hn→hsᵀᵐ {HS.TT TS}     = {!!}
+hs→hn→hsᵀᵐ {HS.UNIT TS}   = {!!}
 
 hs→hn→hsᵀʸ : ∀ {A} → hn→hsᵀʸ (hs→hnᵀʸ A) ≡ A
 hs→hn→hsᵀʸ {α P}   = refl
@@ -186,7 +186,7 @@ hn→gᵀᵐ HN.CDOWN     = G.CDOWN
 hn→gᵀᵐ HN.CPAIR     = G.CPAIR
 hn→gᵀᵐ HN.CFST      = G.CFST
 hn→gᵀᵐ HN.CSND      = G.CSND
-hn→gᵀᵐ HN.TT        = G.TT
+hn→gᵀᵐ HN.UNIT      = G.UNIT
 
 hn→gᵀʸ : Ty HN.Tm → Ty G.Tm
 hn→gᵀʸ (α P)   = α P
@@ -216,7 +216,7 @@ hn→g HN.cdown     = G.cdown
 hn→g HN.cpair     = G.cpair
 hn→g HN.cfst      = G.cfst
 hn→g HN.csnd      = G.csnd
-hn→g HN.tt        = G.tt
+hn→g HN.unit      = G.unit
 
 
 -- Translation from sequential Hilbert-style to Gentzen-style.
@@ -243,7 +243,7 @@ mutual
   g→hnᵀᵐ (G.PAIR T U)      = HN.PAIR (g→hnᵀᵐ T) (g→hnᵀᵐ U)
   g→hnᵀᵐ (G.FST T)         = HN.FST (g→hnᵀᵐ T)
   g→hnᵀᵐ (G.SND T)         = HN.SND (g→hnᵀᵐ T)
-  g→hnᵀᵐ G.TT              = HN.TT
+  g→hnᵀᵐ G.UNIT            = HN.UNIT
 
   g→hnᵀᵐ⋆ : Cx G.Tm → Cx HN.Tm
   g→hnᵀᵐ⋆ ∅        = ∅
@@ -274,7 +274,7 @@ mutual
   g→hn (G.pair t u)      = HN.pair (g→hn t) (g→hn u)
   g→hn (G.fst t)         = HN.fst (g→hn t)
   g→hn (G.snd t)         = HN.snd (g→hn t)
-  g→hn G.tt              = HN.tt
+  g→hn G.unit            = HN.unit
 
   g→hn⋆ : ∀ {Ξ Γ} → G⟨ Γ ⊢⋆ Ξ ⟩ → HN⟨ g→hnᵀʸ⋆ Γ ⊢⋆ g→hnᵀʸ⋆ Ξ ⟩
   g→hn⋆ {∅}     ∙        = ∙

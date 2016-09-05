@@ -17,7 +17,7 @@ module _ {{_ : Model}} where
     [ pair t u ]      = [pair] [ t ] [ u ]
     [ fst t ]         = [fst] [ t ]
     [ snd t ]         = [snd] [ t ]
-    [ tt ]            = [tt]
+    [ unit ]          = [unit]
 
     [_]⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ [⊢]⋆ Ξ
     [_]⋆ {∅}     ∙        = ∙
@@ -42,7 +42,7 @@ mutual
   eval (pair t u)        γ = eval t γ , eval u γ
   eval (fst t)           γ = π₁ (eval t γ)
   eval (snd t)           γ = π₂ (eval t γ)
-  eval tt                γ = ∙
+  eval unit              γ = ∙
 
   eval⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊨⋆ Ξ
   eval⋆ {∅}     ∙        γ = ∙
@@ -71,7 +71,7 @@ private
       ; [pair]     = pair
       ; [fst]      = fst
       ; [snd]      = snd
-      ; [tt]       = tt
+      ; [unit]     = unit
       ; top[⊢⋆]   = refl
       ; pop[⊢⋆]   = refl
       }
@@ -94,7 +94,7 @@ mutual
   reifyᶜ {A ▻ B} s = lam (reifyᶜ (s weak⊆ (reflectᶜ {A} v₀)))
   reifyᶜ {□ A}   s = syn (s refl⊆)
   reifyᶜ {A ∧ B} s = pair (reifyᶜ (π₁ s)) (reifyᶜ (π₂ s))
-  reifyᶜ {⊤}    s = tt
+  reifyᶜ {⊤}    s = unit
 
 reflectᶜ⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊩⋆ Ξ
 reflectᶜ⋆ {∅}     ∙        = ∙

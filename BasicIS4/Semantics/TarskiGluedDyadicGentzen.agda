@@ -29,7 +29,7 @@ record Model : Set₁ where
     [pair]    : ∀ {A B Γ Δ} → Γ ⁏ Δ [⊢] A → Γ ⁏ Δ [⊢] B → Γ ⁏ Δ [⊢] A ∧ B
     [fst]     : ∀ {A B Γ Δ} → Γ ⁏ Δ [⊢] A ∧ B → Γ ⁏ Δ [⊢] A
     [snd]     : ∀ {A B Γ Δ} → Γ ⁏ Δ [⊢] A ∧ B → Γ ⁏ Δ [⊢] B
-    [tt]      : ∀ {Γ Δ}     → Γ ⁏ Δ [⊢] ⊤
+    [unit]    : ∀ {Γ Δ}     → Γ ⁏ Δ [⊢] ⊤
 
   infix 3 _[⊢]⋆_
   _[⊢]⋆_ : Cx² Ty Ty → Cx Ty → Set

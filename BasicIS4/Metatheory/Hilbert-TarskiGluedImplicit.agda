@@ -36,7 +36,7 @@ eval cdown             γ = K ⟪↓⟫
 eval (cpair {A} {B})   γ = K (_⟪,⟫′_ {A} {B})
 eval cfst              γ = K π₁
 eval csnd              γ = K π₂
-eval tt                γ = ∙
+eval unit              γ = ∙
 
 
 -- TODO: Correctness of evaluation with respect to conversion.
@@ -70,7 +70,7 @@ mutual
   reifyᶜ {A ▻ B} s = lam (reifyᶜ (s weak⊆ (reflectᶜ {A} v₀)))
   reifyᶜ {□ A}   s = syn (s refl⊆)
   reifyᶜ {A ∧ B} s = pair (reifyᶜ (π₁ s)) (reifyᶜ (π₂ s))
-  reifyᶜ {⊤}    s = tt
+  reifyᶜ {⊤}    s = unit
 
 reflectᶜ⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊩⋆ Ξ
 reflectᶜ⋆ {∅}     ∙        = ∙

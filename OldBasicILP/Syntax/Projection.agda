@@ -44,7 +44,7 @@ module ClosedHilbertSequential where
     ⌊ cpair d ⌋ᴰ  = CHS.cpair ⌊ d ⌋ᴰ
     ⌊ cfst d ⌋ᴰ   = CHS.cfst ⌊ d ⌋ᴰ
     ⌊ csnd d ⌋ᴰ   = CHS.csnd ⌊ d ⌋ᴰ
-    ⌊ tt d ⌋ᴰ     = CHS.tt ⌊ d ⌋ᴰ
+    ⌊ unit d ⌋ᴰ   = CHS.unit ⌊ d ⌋ᴰ
 
     ⌊_⌋ : ∀ {A} → ⊢ A → CHS.⊢ ⌊ A ⌋ᵀ
     ⌊ Ξ , d ⌋ = ⌊ Ξ ⌋ᵀ⋆ , ⌊ d ⌋ᴰ
@@ -78,4 +78,4 @@ module ClosedHilbert where
     ⌊ cpair ⌋     = CH.cpair
     ⌊ cfst ⌋      = CH.cfst
     ⌊ csnd ⌋      = CH.csnd
-    ⌊ tt ⌋        = CH.tt
+    ⌊ unit ⌋      = CH.unit

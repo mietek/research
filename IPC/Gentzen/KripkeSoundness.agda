@@ -22,7 +22,7 @@ module IlikSoundness where
   eval (pair {A} {B} t u)       γ = return {A ∧ B} (eval t γ , eval u γ)
   eval (fst {A} {B} t)          γ = bind {A ∧ B} {A} (eval t γ) (λ ξ s → π₁ s)
   eval (snd {A} {B} t)          γ = bind {A ∧ B} {B} (eval t γ) (λ ξ s → π₂ s)
-  eval tt                       γ = return {⊤} ∙
+  eval unit                     γ = return {⊤} ∙
   eval (boom {C} t)             γ = bind {⊥} {C} (eval t γ) (λ ξ s → elim𝟘 s)
   eval (inl {A} {B} t)          γ = return {A ∨ B} (ι₁ (eval t γ))
   eval (inr {A} {B} t)          γ = return {A ∨ B} (ι₂ (eval t γ))

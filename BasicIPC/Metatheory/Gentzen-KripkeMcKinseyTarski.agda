@@ -13,7 +13,7 @@ eval (app {A} {B} t u) γ = _⟪$⟫_ {A} {B} (eval t γ) (eval u γ)
 eval (pair t u)        γ = eval t γ , eval u γ
 eval (fst t)           γ = π₁ (eval t γ)
 eval (snd t)           γ = π₂ (eval t γ)
-eval tt                γ = ∙
+eval unit              γ = ∙
 
 
 -- TODO: Correctness of evaluation with respect to conversion.
@@ -47,7 +47,7 @@ mutual
   reifyᶜ {α P}   s = s
   reifyᶜ {A ▻ B} s = lam (reifyᶜ (s weak⊆ (reflectᶜ {A} v₀)))
   reifyᶜ {A ∧ B} s = pair (reifyᶜ (π₁ s)) (reifyᶜ (π₂ s))
-  reifyᶜ {⊤}    s = tt
+  reifyᶜ {⊤}    s = unit
 
 reflectᶜ⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊩⋆ Ξ
 reflectᶜ⋆ {∅}     ∙        = ∙

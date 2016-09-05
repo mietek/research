@@ -19,7 +19,7 @@ data _⊢_ : Cx² Ty Ty → Ty → Set where
   pair  : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ B → Γ ⁏ Δ ⊢ A ∧ B
   fst   : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ∧ B → Γ ⁏ Δ ⊢ A
   snd   : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ A ∧ B → Γ ⁏ Δ ⊢ B
-  tt    : ∀ {Γ Δ}     → Γ ⁏ Δ ⊢ ⊤
+  unit  : ∀ {Γ Δ}     → Γ ⁏ Δ ⊢ ⊤
 
 infix 3 _⊢⋆_
 _⊢⋆_ : Cx² Ty Ty → Cx Ty → Set
@@ -39,7 +39,7 @@ mono⊢ η (unbox t u) = unbox (mono⊢ η t) (mono⊢ η u)
 mono⊢ η (pair t u)  = pair (mono⊢ η t) (mono⊢ η u)
 mono⊢ η (fst t)     = fst (mono⊢ η t)
 mono⊢ η (snd t)     = snd (mono⊢ η t)
-mono⊢ η tt          = tt
+mono⊢ η unit        = unit
 
 mono⊢⋆ : ∀ {Ξ Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊢⋆ Ξ → Γ′ ⁏ Δ ⊢⋆ Ξ
 mono⊢⋆ {∅}     η ∙        = ∙
@@ -58,7 +58,7 @@ mmono⊢ θ (unbox t u) = unbox (mmono⊢ θ t) (mmono⊢ (keep θ) u)
 mmono⊢ θ (pair t u)  = pair (mmono⊢ θ t) (mmono⊢ θ u)
 mmono⊢ θ (fst t)     = fst (mmono⊢ θ t)
 mmono⊢ θ (snd t)     = snd (mmono⊢ θ t)
-mmono⊢ θ tt          = tt
+mmono⊢ θ unit        = unit
 
 mmono⊢⋆ : ∀ {Ξ Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊢⋆ Ξ → Γ ⁏ Δ′ ⊢⋆ Ξ
 mmono⊢⋆ {∅}     θ ∙        = ∙
@@ -373,7 +373,7 @@ mconcat Δ′ t u = app (mmono⊢ (weak⊆⧺₁ Δ′) (mlam t)) (mmono⊢ weak
 [ i ≔ s ] pair t u  = pair ([ i ≔ s ] t) ([ i ≔ s ] u)
 [ i ≔ s ] fst t     = fst ([ i ≔ s ] t)
 [ i ≔ s ] snd t     = snd ([ i ≔ s ] t)
-[ i ≔ s ] tt        = tt
+[ i ≔ s ] unit      = unit
 
 [_≔_]⋆_ : ∀ {Ξ A Γ Δ} → (i : A ∈ Γ) → Γ ∖ i ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢⋆ Ξ → Γ ∖ i ⁏ Δ ⊢⋆ Ξ
 [_≔_]⋆_ {∅}     i s ∙        = ∙
@@ -394,7 +394,7 @@ m[ i ≔ s ] unbox t u = unbox (m[ i ≔ s ] t) (m[ pop i ≔ mmono⊢ weak⊆ s
 m[ i ≔ s ] pair t u  = pair (m[ i ≔ s ] t) (m[ i ≔ s ] u)
 m[ i ≔ s ] fst t     = fst (m[ i ≔ s ] t)
 m[ i ≔ s ] snd t     = snd (m[ i ≔ s ] t)
-m[ i ≔ s ] tt        = tt
+m[ i ≔ s ] unit      = unit
 
 m[_≔_]⋆_ : ∀ {Ξ A Γ Δ} → (i : A ∈ Δ) → ∅ ⁏ Δ ∖ i ⊢ A → Γ ⁏ Δ ⊢⋆ Ξ → Γ ⁏ Δ ∖ i ⊢⋆ Ξ
 m[_≔_]⋆_ {∅}     i s ∙        = ∙
@@ -467,4 +467,4 @@ data _⋙_ {Γ Δ : Cx Ty} : ∀ {A} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ A →
   eta∧⋙      : ∀ {A B} → {t : Γ ⁏ Δ ⊢ A ∧ B}
                         → t ⋙ pair (fst t) (snd t)
 
-  eta⊤⋙     : ∀ {t : Γ ⁏ Δ ⊢ ⊤} → t ⋙ tt
+  eta⊤⋙     : ∀ {t : Γ ⁏ Δ ⊢ ⊤} → t ⋙ unit

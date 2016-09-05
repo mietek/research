@@ -14,7 +14,7 @@ eval₀ cs        = S
 eval₀ cpair     = _,_
 eval₀ cfst      = π₁
 eval₀ csnd      = π₂
-eval₀ tt        = ∙
+eval₀ unit      = ∙
 
 
 -- Correctness of evaluation with respect to conversion.

@@ -19,7 +19,7 @@ module NaturalSoundness where
   eval (pair t u)   γ = eval t γ , eval u γ
   eval (fst t)      γ = π₁ (eval t γ)
   eval (snd t)      γ = π₂ (eval t γ)
-  eval tt           γ = ∙
+  eval unit         γ = ∙
   eval (boom t)     γ = elim𝟘 (eval t γ)
   eval (inl t)      γ = ι₁ (eval t γ)
   eval (inr t)      γ = ι₂ (eval t γ)
@@ -82,7 +82,7 @@ module CoquandDybjerSoundness where
   reify {α P}   (t , s) = t
   reify {A ▻ B} (t , f) = t
   reify {A ∧ B} (a , b) = pair (reify {A} a) (reify {B} b)
-  reify {⊤}    ∙       = tt
+  reify {⊤}    ∙       = unit
   reify {⊥}    ()
   reify {A ∨ B} (ι₁ a)  = inl (reify {A} a)
   reify {A ∨ B} (ι₂ b)  = inr (reify {B} b)
@@ -101,7 +101,7 @@ module CoquandDybjerSoundness where
   eval (pair t u)   γ = eval t γ , eval u γ
   eval (fst t)      γ = π₁ (eval t γ)
   eval (snd t)      γ = π₂ (eval t γ)
-  eval tt           γ = ∙
+  eval unit         γ = ∙
   eval (boom t)     γ = elim𝟘 (eval t γ)
   eval (inl t)      γ = ι₁ (eval t γ)
   eval (inr t)      γ = ι₂ (eval t γ)

@@ -16,7 +16,7 @@ mutual
   eval (pair t u)        γ = eval t γ , eval u γ
   eval (fst t)           γ = π₁ (eval t γ)
   eval (snd t)           γ = π₂ (eval t γ)
-  eval tt                γ = ∙
+  eval unit              γ = ∙
 
   -- TODO: What is this?
   thing : ∀ {{_ : Model}} {Δ Γ} {w : World}

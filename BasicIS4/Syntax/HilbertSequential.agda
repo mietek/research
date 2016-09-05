@@ -24,7 +24,7 @@ data _⊦⊢_ (Γ : Cx Ty) : Cx Ty → Set where
   cpair : ∀ {Ξ A B}   → Γ ⊦⊢ Ξ → Γ ⊦⊢ Ξ , A ▻ B ▻ A ∧ B
   cfst  : ∀ {Ξ A B}   → Γ ⊦⊢ Ξ → Γ ⊦⊢ Ξ , A ∧ B ▻ A
   csnd  : ∀ {Ξ A B}   → Γ ⊦⊢ Ξ → Γ ⊦⊢ Ξ , A ∧ B ▻ B
-  tt    : ∀ {Ξ}       → Γ ⊦⊢ Ξ → Γ ⊦⊢ Ξ , ⊤
+  unit  : ∀ {Ξ}       → Γ ⊦⊢ Ξ → Γ ⊦⊢ Ξ , ⊤
 
 infix 3 _⊢_
 _⊢_ : Cx Ty → Ty → Set
@@ -47,7 +47,7 @@ mono⊦⊢ η (cdown ts)  = cdown (mono⊦⊢ η ts)
 mono⊦⊢ η (cpair ts)  = cpair (mono⊦⊢ η ts)
 mono⊦⊢ η (cfst ts)   = cfst (mono⊦⊢ η ts)
 mono⊦⊢ η (csnd ts)   = csnd (mono⊦⊢ η ts)
-mono⊦⊢ η (tt ts)     = tt (mono⊦⊢ η ts)
+mono⊦⊢ η (unit ts)   = unit (mono⊦⊢ η ts)
 
 mono⊢ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
 mono⊢ η (Ξ , ts) = Ξ , mono⊦⊢ η ts
@@ -69,7 +69,7 @@ us ⧺⊦ cdown ts  = cdown (us ⧺⊦ ts)
 us ⧺⊦ cpair ts  = cpair (us ⧺⊦ ts)
 us ⧺⊦ cfst ts   = cfst (us ⧺⊦ ts)
 us ⧺⊦ csnd ts   = csnd (us ⧺⊦ ts)
-us ⧺⊦ tt ts     = tt (us ⧺⊦ ts)
+us ⧺⊦ unit ts   = unit (us ⧺⊦ ts)
 
 
 -- Modus ponens and necessitation in expanded form.

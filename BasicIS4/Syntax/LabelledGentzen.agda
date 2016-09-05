@@ -57,7 +57,7 @@ data _⊢_ : Cx² Ty Token → LabelledTy → Set where
   pair : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ◎ x → Γ ⁏ Λ ⊢ B ◎ x → Γ ⁏ Λ ⊢ A ∧ B ◎ x
   fst  : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ∧ B ◎ x → Γ ⁏ Λ ⊢ A ◎ x
   snd  : ∀ {x A B Γ Λ} → Γ ⁏ Λ ⊢ A ∧ B ◎ x → Γ ⁏ Λ ⊢ B ◎ x
-  tt   : ∀ {x Γ Λ}     → Γ ⁏ Λ ⊢ ⊤ ◎ x
+  unit : ∀ {x Γ Λ}     → Γ ⁏ Λ ⊢ ⊤ ◎ x
 
 infix 3 _⊢⋆_
 _⊢⋆_ : Cx² Ty Token → Cx LabelledTy → Set
@@ -76,7 +76,7 @@ mono⊢ η (move t u) = move (mono⊢ η t) u
 mono⊢ η (pair t u) = pair (mono⊢ η t) (mono⊢ η u)
 mono⊢ η (fst t)    = fst (mono⊢ η t)
 mono⊢ η (snd t)    = snd (mono⊢ η t)
-mono⊢ η tt         = tt
+mono⊢ η unit       = unit
 
 mono⊢⋆ : ∀ {Ξ x Γ Γ′ Λ} → Γ ⊆ Γ′ → Γ ⁏ Λ ⊢⋆ Ξ ◎⋆ x → Γ′ ⁏ Λ ⊢⋆ Ξ ◎⋆ x
 mono⊢⋆ {∅}     η ∙        = ∙
@@ -99,7 +99,7 @@ rmono⊢ ρ (move t u) = move (rmono⊢ ρ t) (rmono⊢ᴿ ρ u)
 rmono⊢ ρ (pair t u) = pair (rmono⊢ ρ t) (rmono⊢ ρ u)
 rmono⊢ ρ (fst t)    = fst (rmono⊢ ρ t)
 rmono⊢ ρ (snd t)    = snd (rmono⊢ ρ t)
-rmono⊢ ρ tt         = tt
+rmono⊢ ρ unit       = unit
 
 rmono⊢⋆ : ∀ {Ξ x Γ Λ Λ′} → Λ ⊆ Λ′ → Γ ⁏ Λ ⊢⋆ Ξ ◎⋆ x → Γ ⁏ Λ′ ⊢⋆ Ξ ◎⋆ x
 rmono⊢⋆ {∅}     ρ ∙        = ∙
@@ -337,7 +337,7 @@ concat Γ′ t u = app (mono⊢ (weak⊆⧺₁ Γ′) (lam t)) (mono⊢ weak⊆�
 -- [ i ≔ s ] pair t u = pair ([ i ≔ s ] t) ([ i ≔ s ] u)
 -- [ i ≔ s ] fst t    = fst ([ i ≔ s ] t)
 -- [ i ≔ s ] snd t    = snd ([ i ≔ s ] t)
--- [ i ≔ s ] tt       = tt
+-- [ i ≔ s ] unit     = unit
 
 
 -- TODO: Convertibility.

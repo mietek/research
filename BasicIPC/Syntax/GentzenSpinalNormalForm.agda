@@ -16,7 +16,7 @@ mutual
     neⁿᶠ   : ∀ {P}   → Γ ⊢ⁿᵉ α P → Γ ⊢ⁿᶠ α P
     lamⁿᶠ  : ∀ {A B} → Γ , A ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ▻ B
     pairⁿᶠ : ∀ {A B} → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ∧ B
-    ttⁿᶠ   : Γ ⊢ⁿᶠ ⊤
+    unitⁿᶠ : Γ ⊢ⁿᶠ ⊤
 
   -- Neutrals, or eliminations.
   infix 3 _⊢ⁿᵉ_
@@ -39,7 +39,7 @@ mutual
   nf→tm (neⁿᶠ t)     = ne→tm t
   nf→tm (lamⁿᶠ t)    = lam (nf→tm t)
   nf→tm (pairⁿᶠ t u) = pair (nf→tm t) (nf→tm u)
-  nf→tm ttⁿᶠ         = tt
+  nf→tm unitⁿᶠ       = unit
 
   ne→tm : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊢ A
   ne→tm (spⁿᵉ i xs) = sp→tm (var i) xs
@@ -58,7 +58,7 @@ mutual
   mono⊢ⁿᶠ η (neⁿᶠ t)     = neⁿᶠ (mono⊢ⁿᵉ η t)
   mono⊢ⁿᶠ η (lamⁿᶠ t)    = lamⁿᶠ (mono⊢ⁿᶠ (keep η) t)
   mono⊢ⁿᶠ η (pairⁿᶠ t u) = pairⁿᶠ (mono⊢ⁿᶠ η t) (mono⊢ⁿᶠ η u)
-  mono⊢ⁿᶠ η ttⁿᶠ         = ttⁿᶠ
+  mono⊢ⁿᶠ η unitⁿᶠ       = unitⁿᶠ
 
   mono⊢ⁿᵉ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢ⁿᵉ A → Γ′ ⊢ⁿᵉ A
   mono⊢ⁿᵉ η (spⁿᵉ i xs) = spⁿᵉ (mono∈ η i) (mono⊢ˢᵖ η xs)

@@ -19,7 +19,7 @@ eval (unbox t u)       γ δ = eval u γ (λ ξ ζ → δ ξ ζ , (eval t γ δ)
 eval (pair t u)        γ δ = eval t γ δ , eval u γ δ
 eval (fst t)           γ δ = π₁ (eval t γ δ)
 eval (snd t)           γ δ = π₂ (eval t γ δ)
-eval tt                γ δ = ∙
+eval unit              γ δ = ∙
 
 
 -- TODO: Correctness of evaluation with respect to conversion.

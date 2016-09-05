@@ -63,7 +63,7 @@ mutual
   hn→g HN.cpair     = G.cpair
   hn→g HN.cfst      = G.cfst
   hn→g HN.csnd      = G.csnd
-  hn→g HN.tt        = G.tt
+  hn→g HN.unit      = G.unit
 
 -- hs→g : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → G⟨ Γ ⊢ A ⟩
 -- hs→g = hn→g ∘ hs→hn
@@ -99,7 +99,7 @@ mutual
   g→hn (G.pair t u)      = HN.pair (g→hn t) (g→hn u)
   g→hn (G.fst t)         = HN.fst (g→hn t)
   g→hn (G.snd t)         = HN.snd (g→hn t)
-  g→hn G.tt              = HN.tt
+  g→hn G.unit            = HN.unit
 
   g→hn⋆ : ∀ {Ξ Γ} → G⟨ Γ ⊢⋆ Ξ ⟩ → HN⟨ g→hnᵀ⋆ Γ ⊢⋆ g→hnᵀ⋆ Ξ ⟩
   g→hn⋆ {∅}     ∙        = ∙

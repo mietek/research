@@ -61,7 +61,7 @@ mutual
     pair  : ∀ {A B Γ Δ}       → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ B → Γ ⁏ Δ ⊢ A ∧ B
     fst   : ∀ {A B Γ Δ}       → Γ ⁏ Δ ⊢ A ∧ B → Γ ⁏ Δ ⊢ A
     snd   : ∀ {A B Γ Δ}       → Γ ⁏ Δ ⊢ A ∧ B → Γ ⁏ Δ ⊢ B
-    tt    : ∀ {Γ Δ}           → Γ ⁏ Δ ⊢ ⊤
+    unit  : ∀ {Γ Δ}           → Γ ⁏ Δ ⊢ ⊤
 
   infix 3 _⊢⋆_
   data _⊢⋆_ : Cx² Ty Box → Cx Ty → Set where
@@ -91,7 +91,7 @@ mutual
   mono⊢ η (pair t u)             = pair (mono⊢ η t) (mono⊢ η u)
   mono⊢ η (fst t)                = fst (mono⊢ η t)
   mono⊢ η (snd t)                = snd (mono⊢ η t)
-  mono⊢ η tt                     = tt
+  mono⊢ η unit                   = unit
 
   mono⊢⋆ : ∀ {Ξ Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊢⋆ Ξ → Γ′ ⁏ Δ ⊢⋆ Ξ
   mono⊢⋆ η ∙        = ∙
@@ -115,7 +115,7 @@ mutual
   mmono⊢ θ (pair t u)             = pair (mmono⊢ θ t) (mmono⊢ θ u)
   mmono⊢ θ (fst t)                = fst (mmono⊢ θ t)
   mmono⊢ θ (snd t)                = snd (mmono⊢ θ t)
-  mmono⊢ θ tt                     = tt
+  mmono⊢ θ unit                   = unit
 
   mmono⊢⋆ : ∀ {Ξ Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊢⋆ Ξ → Γ ⁏ Δ′ ⊢⋆ Ξ
   mmono⊢⋆ θ ∙        = ∙
@@ -338,7 +338,7 @@ mutual
   [ i ≔ s ] pair t u             = pair ([ i ≔ s ] t) ([ i ≔ s ] u)
   [ i ≔ s ] fst t                = fst ([ i ≔ s ] t)
   [ i ≔ s ] snd t                = snd ([ i ≔ s ] t)
-  [ i ≔ s ] tt                   = tt
+  [ i ≔ s ] unit                 = unit
 
   [_≔_]⋆_ : ∀ {Ξ A Γ Δ} → (i : A ∈ Γ) → Γ ∖ i ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢⋆ Ξ → Γ ∖ i ⁏ Δ ⊢⋆ Ξ
   [_≔_]⋆_ i s ∙        = ∙
@@ -364,7 +364,7 @@ mutual
   m[ i ≔ s ] pair t u              = pair (m[ i ≔ s ] t) (m[ i ≔ s ] u)
   m[ i ≔ s ] fst t                 = fst (m[ i ≔ s ] t)
   m[ i ≔ s ] snd t                 = snd (m[ i ≔ s ] t)
-  m[ i ≔ s ] tt                    = tt
+  m[ i ≔ s ] unit                  = unit
 
   m[_≔_]⋆_ : ∀ {Ξ Ψ Ω A t Γ Δ} → (i : [ Ψ ⁏ Ω ⊢ t ] A ∈ Δ) → Ψ ⁏ Δ ∖ i ⊢ A → Γ ⁏ Δ ⊢⋆ Ξ → Γ ⁏ Δ ∖ i ⊢⋆ Ξ
   m[_≔_]⋆_ i s ∙        = ∙

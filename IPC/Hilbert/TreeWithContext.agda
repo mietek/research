@@ -15,7 +15,7 @@ data _⊢_ (Γ : Cx Ty) : Ty → Set where
   cpair : ∀ {A B}   → Γ ⊢ A ▻ B ▻ A ∧ B
   cfst  : ∀ {A B}   → Γ ⊢ A ∧ B ▻ A
   csnd  : ∀ {A B}   → Γ ⊢ A ∧ B ▻ B
-  tt    : Γ ⊢ ⊤
+  unit  : Γ ⊢ ⊤
   cboom : ∀ {C}     → Γ ⊢ ⊥ ▻ C
   cinl  : ∀ {A B}   → Γ ⊢ A ▻ A ∨ B
   cinr  : ∀ {A B}   → Γ ⊢ B ▻ A ∨ B
@@ -38,7 +38,7 @@ mono⊢ η cs        = cs
 mono⊢ η cpair     = cpair
 mono⊢ η cfst      = cfst
 mono⊢ η csnd      = csnd
-mono⊢ η tt        = tt
+mono⊢ η unit      = unit
 mono⊢ η cboom     = cboom
 mono⊢ η cinl      = cinl
 mono⊢ η cinr      = cinr
@@ -80,7 +80,7 @@ lam cs            = app ck cs
 lam cpair         = app ck cpair
 lam cfst          = app ck cfst
 lam csnd          = app ck csnd
-lam tt            = app ck tt
+lam unit          = app ck unit
 lam cboom         = app ck cboom
 lam cinl          = app ck cinl
 lam cinr          = app ck cinr
@@ -259,7 +259,7 @@ data _⋙_ {Γ : Cx Ty} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
   eta∧⋙     : ∀ {A B} → {t : Γ ⊢ A ∧ B}
                        → t ⋙ app (app cpair (app cfst t)) (app csnd t)
 
-  eta⊤⋙    : ∀ {t : Γ ⊢ ⊤} → t ⋙ tt
+  eta⊤⋙    : ∀ {t : Γ ⊢ ⊤} → t ⋙ unit
 
   -- TODO: Verify this.
   beta∨₁⋙   : ∀ {A B C} → {t : Γ ⊢ A} → {u : Γ ⊢ A ▻ C} → {v : Γ ⊢ B ▻ C}

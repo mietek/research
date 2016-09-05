@@ -25,7 +25,7 @@ record Model : Set₁ where
     [cpair] : ∀ {A B}   → [⊢] A ▻ B ▻ A ∧ B
     [cfst]  : ∀ {A B}   → [⊢] A ∧ B ▻ A
     [csnd]  : ∀ {A B}   → [⊢] A ∧ B ▻ B
-    [tt]    : [⊢] ⊤
+    [unit]  : [⊢] ⊤
 
   infix 3 [⊢]⋆_
   [⊢]⋆_ : Cx Ty → Set
@@ -65,7 +65,7 @@ module _ {{_ : Model}} where
   reifyʳ {α P}   s = syn s
   reifyʳ {A ▻ B} s = syn s
   reifyʳ {A ∧ B} s = [app] ([app] [cpair] (reifyʳ (π₁ s))) (reifyʳ (π₂ s))
-  reifyʳ {⊤}    s = [tt]
+  reifyʳ {⊤}    s = [unit]
 
   reifyʳ⋆ : ∀ {Ξ} → ⊩⋆ Ξ → [⊢]⋆ Ξ
   reifyʳ⋆ {∅}     ∙        = ∙

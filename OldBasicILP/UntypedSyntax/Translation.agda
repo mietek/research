@@ -30,7 +30,7 @@ chsᴿ→chᴿ (CHS.CDOWN r)  zero    = CH.CDOWN
 chsᴿ→chᴿ (CHS.CPAIR r)  zero    = CH.CPAIR
 chsᴿ→chᴿ (CHS.CFST r)   zero    = CH.CFST
 chsᴿ→chᴿ (CHS.CSND r)   zero    = CH.CSND
-chsᴿ→chᴿ (CHS.TT r)     zero    = CH.TT
+chsᴿ→chᴿ (CHS.UNIT r)   zero    = CH.UNIT
 chsᴿ→chᴿ (CHS.MP i j r) (suc k) = chsᴿ→chᴿ r k
 chsᴿ→chᴿ (CHS.CI r)     (suc k) = chsᴿ→chᴿ r k
 chsᴿ→chᴿ (CHS.CK r)     (suc k) = chsᴿ→chᴿ r k
@@ -42,7 +42,7 @@ chsᴿ→chᴿ (CHS.CDOWN r)  (suc k) = chsᴿ→chᴿ r k
 chsᴿ→chᴿ (CHS.CPAIR r)  (suc k) = chsᴿ→chᴿ r k
 chsᴿ→chᴿ (CHS.CFST r)   (suc k) = chsᴿ→chᴿ r k
 chsᴿ→chᴿ (CHS.CSND r)   (suc k) = chsᴿ→chᴿ r k
-chsᴿ→chᴿ (CHS.TT r)     (suc k) = chsᴿ→chᴿ r k
+chsᴿ→chᴿ (CHS.UNIT r)   (suc k) = chsᴿ→chᴿ r k
 
 chsᴾ→chᴾ : CHS.Proof → CH.Proof
 chsᴾ→chᴾ CHS.[ r ] = CH.[ chsᴿ→chᴿ r zero ]
@@ -68,7 +68,7 @@ mutual
   chsᴰ→ch (CHS.cpair d)                top     = CH.cpair
   chsᴰ→ch (CHS.cfst d)                 top     = CH.cfst
   chsᴰ→ch (CHS.csnd d)                 top     = CH.csnd
-  chsᴰ→ch (CHS.tt d)                   top     = CH.tt
+  chsᴰ→ch (CHS.unit d)                 top     = CH.unit
   chsᴰ→ch (CHS.mp i j d)               (pop k) = chsᴰ→ch d k
   chsᴰ→ch (CHS.ci d)                   (pop k) = chsᴰ→ch d k
   chsᴰ→ch (CHS.ck d)                   (pop k) = chsᴰ→ch d k
@@ -80,7 +80,7 @@ mutual
   chsᴰ→ch (CHS.cpair d)                (pop k) = chsᴰ→ch d k
   chsᴰ→ch (CHS.cfst d)                 (pop k) = chsᴰ→ch d k
   chsᴰ→ch (CHS.csnd d)                 (pop k) = chsᴰ→ch d k
-  chsᴰ→ch (CHS.tt d)                   (pop k) = chsᴰ→ch d k
+  chsᴰ→ch (CHS.unit d)                 (pop k) = chsᴰ→ch d k
 
   ᴬlem₂ : ∀ {Ξ A} → (d : CHS.⊢ᴰ Ξ) → (k : A ∈ Ξ)
          → chsᴿ→chᴿ CHS.ᴿ⌊ d ⌋ ⁱ⌊ k ⌋ ≡ CH.ᴿ⌊ chsᴰ→ch d k ⌋
@@ -96,7 +96,7 @@ mutual
   ᴬlem₂ (CHS.cpair d)                top     = refl
   ᴬlem₂ (CHS.cfst d)                 top     = refl
   ᴬlem₂ (CHS.csnd d)                 top     = refl
-  ᴬlem₂ (CHS.tt d)                   top     = refl
+  ᴬlem₂ (CHS.unit d)                 top     = refl
   ᴬlem₂ (CHS.mp i j d)               (pop k) = ᴬlem₂ d k
   ᴬlem₂ (CHS.ci d)                   (pop k) = ᴬlem₂ d k
   ᴬlem₂ (CHS.ck d)                   (pop k) = ᴬlem₂ d k
@@ -108,7 +108,7 @@ mutual
   ᴬlem₂ (CHS.cpair d)                (pop k) = ᴬlem₂ d k
   ᴬlem₂ (CHS.cfst d)                 (pop k) = ᴬlem₂ d k
   ᴬlem₂ (CHS.csnd d)                 (pop k) = ᴬlem₂ d k
-  ᴬlem₂ (CHS.tt d)                   (pop k) = ᴬlem₂ d k
+  ᴬlem₂ (CHS.unit d)                 (pop k) = ᴬlem₂ d k
 
 chs→ch : ∀ {A} → CHS.⊢ A → CH.⊢ chsᵀ→chᵀ A
 chs→ch (Ξ , d) = chsᴰ→ch d top
@@ -130,7 +130,7 @@ chᴿ→chsᴿ CH.CDOWN       = zero , CHS.CDOWN CHS.NIL
 chᴿ→chsᴿ CH.CPAIR       = zero , CHS.CPAIR CHS.NIL
 chᴿ→chsᴿ CH.CFST        = zero , CHS.CFST CHS.NIL
 chᴿ→chsᴿ CH.CSND        = zero , CHS.CSND CHS.NIL
-chᴿ→chsᴿ CH.TT          = zero , CHS.TT CHS.NIL
+chᴿ→chsᴿ CH.UNIT        = zero , CHS.UNIT CHS.NIL
 
 chᴾ→chsᴾ : CH.Proof → CHS.Proof
 chᴾ→chsᴾ CH.[ r ] with chᴿ→chsᴿ r
@@ -156,7 +156,7 @@ mutual
   ch→chs CH.cpair       = ∅ , CHS.cpair CHS.nil
   ch→chs CH.cfst        = ∅ , CHS.cfst CHS.nil
   ch→chs CH.csnd        = ∅ , CHS.csnd CHS.nil
-  ch→chs CH.tt          = ∅ , CHS.tt CHS.nil
+  ch→chs CH.unit        = ∅ , CHS.unit CHS.nil
 
   -- FIXME: This should hold by ᴮlem₂.
   postulate
@@ -176,7 +176,7 @@ mutual
   ᴮlem₂ CH.cpair       = refl
   ᴮlem₂ CH.cfst        = refl
   ᴮlem₂ CH.csnd        = refl
-  ᴮlem₂ CH.tt          = refl
+  ᴮlem₂ CH.unit        = refl
 
   ᴮlem₃ : ∀ {A B} → (d₁ : CH.⊢ A CH.▻ B) → (d₂ : CH.⊢ A)
          → ᴺ⌊ (π₁ (ch→chs d₂) , chᵀ→chsᵀ A) ⧺ π₁ (ch→chs d₁) ⌋ ≡

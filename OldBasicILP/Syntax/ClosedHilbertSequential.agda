@@ -71,7 +71,7 @@ data ⊢ᴰ_ where
   cpair : ∀ {Ξ A B}   → ⊢ᴰ Ξ → ⊢ᴰ Ξ , A ▻ B ▻ A ∧ B
   cfst  : ∀ {Ξ A B}   → ⊢ᴰ Ξ → ⊢ᴰ Ξ , A ∧ B ▻ A
   csnd  : ∀ {Ξ A B}   → ⊢ᴰ Ξ → ⊢ᴰ Ξ , A ∧ B ▻ B
-  tt    : ∀ {Ξ}       → ⊢ᴰ Ξ → ⊢ᴰ Ξ , ⊤
+  unit  : ∀ {Ξ}       → ⊢ᴰ Ξ → ⊢ᴰ Ξ , ⊤
 
 
 -- Anti-bug wrappers.
@@ -95,7 +95,7 @@ d₁ ⧺ᴰ cdown d₂  = cdown (d₁ ⧺ᴰ d₂)
 d₁ ⧺ᴰ cpair d₂  = cpair (d₁ ⧺ᴰ d₂)
 d₁ ⧺ᴰ cfst d₂   = cfst (d₁ ⧺ᴰ d₂)
 d₁ ⧺ᴰ csnd d₂   = csnd (d₁ ⧺ᴰ d₂)
-d₁ ⧺ᴰ tt d₂     = tt (d₁ ⧺ᴰ d₂)
+d₁ ⧺ᴰ unit d₂   = unit (d₁ ⧺ᴰ d₂)
 
 
 -- Modus ponens and necessitation in nested form.

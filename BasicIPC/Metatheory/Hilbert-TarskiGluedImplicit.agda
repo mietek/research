@@ -13,7 +13,7 @@ module _ {{_ : Model}} where
   reify {α P}   s = syn s
   reify {A ▻ B} s = syn (s refl⊆)
   reify {A ∧ B} s = pair (reify (π₁ s)) (reify (π₂ s))
-  reify {⊤}    s = tt
+  reify {⊤}    s = unit
 
   reify⋆ : ∀ {Ξ Γ} → Γ ⊩⋆ Ξ → Γ ⊢⋆ Ξ
   reify⋆ {∅}     ∙        = ∙
@@ -53,7 +53,7 @@ eval cs        γ = K (cs ⅋ ⟪S⟫′)
 eval cpair     γ = K (cpair ⅋ _⟪,⟫′_)
 eval cfst      γ = K (cfst ⅋ π₁)
 eval csnd      γ = K (csnd ⅋ π₂)
-eval tt        γ = ∙
+eval unit      γ = ∙
 
 
 -- TODO: Correctness of evaluation with respect to conversion.

@@ -31,7 +31,7 @@ mutual
   chsᴰ→ch (CHS.cpair d)  top     = CH.cpair
   chsᴰ→ch (CHS.cfst d)   top     = CH.cfst
   chsᴰ→ch (CHS.csnd d)   top     = CH.csnd
-  chsᴰ→ch (CHS.tt d)     top     = CH.tt
+  chsᴰ→ch (CHS.unit d)   top     = CH.unit
   chsᴰ→ch (CHS.mp i j d) (pop k) = chsᴰ→ch d k
   chsᴰ→ch (CHS.ci d)     (pop k) = chsᴰ→ch d k
   chsᴰ→ch (CHS.ck d)     (pop k) = chsᴰ→ch d k
@@ -43,7 +43,7 @@ mutual
   chsᴰ→ch (CHS.cpair d)  (pop k) = chsᴰ→ch d k
   chsᴰ→ch (CHS.cfst d)   (pop k) = chsᴰ→ch d k
   chsᴰ→ch (CHS.csnd d)   (pop k) = chsᴰ→ch d k
-  chsᴰ→ch (CHS.tt d)     (pop k) = chsᴰ→ch d k
+  chsᴰ→ch (CHS.unit d)   (pop k) = chsᴰ→ch d k
 
   -- FIXME: I can’t even postulate this.
   -- postulate
@@ -87,4 +87,4 @@ mutual
   ch→chs CH.cpair       = ∅ , CHS.cpair CHS.nil
   ch→chs CH.cfst        = ∅ , CHS.cfst CHS.nil
   ch→chs CH.csnd        = ∅ , CHS.csnd CHS.nil
-  ch→chs CH.tt          = ∅ , CHS.tt CHS.nil
+  ch→chs CH.unit        = ∅ , CHS.unit CHS.nil

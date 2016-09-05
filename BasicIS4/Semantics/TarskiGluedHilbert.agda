@@ -32,7 +32,7 @@ record Model : Set₁ where
     [cpair]  : ∀ {A B Γ}   → Γ [⊢] A ▻ B ▻ A ∧ B
     [cfst]   : ∀ {A B Γ}   → Γ [⊢] A ∧ B ▻ A
     [csnd]   : ∀ {A B Γ}   → Γ [⊢] A ∧ B ▻ B
-    [tt]     : ∀ {Γ}       → Γ [⊢] ⊤
+    [unit]   : ∀ {Γ}       → Γ [⊢] ⊤
 
 open Model {{…}} public
 

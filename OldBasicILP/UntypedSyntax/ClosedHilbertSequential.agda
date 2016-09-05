@@ -21,7 +21,7 @@ data Rep : ℕ → Set where
   CPAIR : ∀ {n} → Rep n → Rep (suc n)
   CFST  : ∀ {n} → Rep n → Rep (suc n)
   CSND  : ∀ {n} → Rep n → Rep (suc n)
-  TT    : ∀ {n} → Rep n → Rep (suc n)
+  UNIT  : ∀ {n} → Rep n → Rep (suc n)
 
 
 -- Anti-bug wrappers.
@@ -50,7 +50,7 @@ r₁ ⧺ᴿ CDOWN r₂  = CDOWN (r₁ ⧺ᴿ r₂)
 r₁ ⧺ᴿ CPAIR r₂  = CPAIR (r₁ ⧺ᴿ r₂)
 r₁ ⧺ᴿ CFST r₂   = CFST (r₁ ⧺ᴿ r₂)
 r₁ ⧺ᴿ CSND r₂   = CSND (r₁ ⧺ᴿ r₂)
-r₁ ⧺ᴿ TT r₂     = TT (r₁ ⧺ᴿ r₂)
+r₁ ⧺ᴿ UNIT r₂   = UNIT (r₁ ⧺ᴿ r₂)
 
 
 -- Modus ponens and necessitation in nested form.
@@ -88,7 +88,7 @@ mutual
     cpair : ∀ {Ξ A B}   → ⊢ᴰ Ξ → ⊢ᴰ Ξ , A ▻ B ▻ A ∧ B
     cfst  : ∀ {Ξ A B}   → ⊢ᴰ Ξ → ⊢ᴰ Ξ , A ∧ B ▻ A
     csnd  : ∀ {Ξ A B}   → ⊢ᴰ Ξ → ⊢ᴰ Ξ , A ∧ B ▻ B
-    tt    : ∀ {Ξ}       → ⊢ᴰ Ξ → ⊢ᴰ Ξ , ⊤
+    unit  : ∀ {Ξ}       → ⊢ᴰ Ξ → ⊢ᴰ Ξ , ⊤
 
 
   -- Projection from derivations to representations.
@@ -106,7 +106,7 @@ mutual
   ᴿ⌊ cpair d ⌋  = CPAIR ᴿ⌊ d ⌋
   ᴿ⌊ cfst d ⌋   = CFST ᴿ⌊ d ⌋
   ᴿ⌊ csnd d ⌋   = CSND ᴿ⌊ d ⌋
-  ᴿ⌊ tt d ⌋     = TT ᴿ⌊ d ⌋
+  ᴿ⌊ unit d ⌋   = UNIT ᴿ⌊ d ⌋
 
 
 -- Anti-bug wrappers.
@@ -131,7 +131,7 @@ d₁ ⧺ᴰ cdown d₂  = cdown (d₁ ⧺ᴰ d₂)
 d₁ ⧺ᴰ cpair d₂  = cpair (d₁ ⧺ᴰ d₂)
 d₁ ⧺ᴰ cfst d₂   = cfst (d₁ ⧺ᴰ d₂)
 d₁ ⧺ᴰ csnd d₂   = csnd (d₁ ⧺ᴰ d₂)
-d₁ ⧺ᴰ tt d₂     = tt (d₁ ⧺ᴰ d₂)
+d₁ ⧺ᴰ unit d₂   = unit (d₁ ⧺ᴰ d₂)
 
 
 -- Modus ponens and necessitation in nested form.

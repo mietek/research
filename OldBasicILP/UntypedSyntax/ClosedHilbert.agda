@@ -20,7 +20,7 @@ data Rep : Set where
   CPAIR : Rep
   CFST  : Rep
   CSND  : Rep
-  TT    : Rep
+  UNIT  : Rep
 
 
 -- Anti-bug wrappers.
@@ -58,7 +58,7 @@ mutual
     cpair : ∀ {A B}   → ⊢ A ▻ B ▻ A ∧ B
     cfst  : ∀ {A B}   → ⊢ A ∧ B ▻ A
     csnd  : ∀ {A B}   → ⊢ A ∧ B ▻ B
-    tt    : ⊢ ⊤
+    unit  : ⊢ ⊤
 
 
   -- Projection from derivations to representations.
@@ -75,7 +75,7 @@ mutual
   ᴿ⌊ cpair ⌋     = CPAIR
   ᴿ⌊ cfst ⌋      = CFST
   ᴿ⌊ csnd ⌋      = CSND
-  ᴿ⌊ tt ⌋        = TT
+  ᴿ⌊ unit ⌋      = UNIT
 
 infix 3 ⊢⋆_
 ⊢⋆_ : Cx Ty → Set

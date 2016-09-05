@@ -25,7 +25,7 @@ data _⊦⊢_ : Cx² Ty Ty → Cx Ty → Set where
   cpair : ∀ {Ξ A B Γ Δ}   → Γ ⁏ Δ ⊦⊢ Ξ → Γ ⁏ Δ ⊦⊢ Ξ , A ▻ B ▻ A ∧ B
   cfst  : ∀ {Ξ A B Γ Δ}   → Γ ⁏ Δ ⊦⊢ Ξ → Γ ⁏ Δ ⊦⊢ Ξ , A ∧ B ▻ A
   csnd  : ∀ {Ξ A B Γ Δ}   → Γ ⁏ Δ ⊦⊢ Ξ → Γ ⁏ Δ ⊦⊢ Ξ , A ∧ B ▻ B
-  tt    : ∀ {Ξ Γ Δ}       → Γ ⁏ Δ ⊦⊢ Ξ → Γ ⁏ Δ ⊦⊢ Ξ , ⊤
+  unit  : ∀ {Ξ Γ Δ}       → Γ ⁏ Δ ⊦⊢ Ξ → Γ ⁏ Δ ⊦⊢ Ξ , ⊤
 
 infix 3 _⊢_
 _⊢_ : Cx² Ty Ty → Ty → Set
@@ -49,7 +49,7 @@ mono⊦⊢ η (cdown ts)  = cdown (mono⊦⊢ η ts)
 mono⊦⊢ η (cpair ts)  = cpair (mono⊦⊢ η ts)
 mono⊦⊢ η (cfst ts)   = cfst (mono⊦⊢ η ts)
 mono⊦⊢ η (csnd ts)   = csnd (mono⊦⊢ η ts)
-mono⊦⊢ η (tt ts)     = tt (mono⊦⊢ η ts)
+mono⊦⊢ η (unit ts)   = unit (mono⊦⊢ η ts)
 
 mono⊢ : ∀ {A Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊢ A → Γ′ ⁏ Δ ⊢ A
 mono⊢ η (Ξ , ts) = Ξ , mono⊦⊢ η ts
@@ -72,7 +72,7 @@ mmono⊦⊢ θ (cdown ts)  = cdown (mmono⊦⊢ θ ts)
 mmono⊦⊢ θ (cpair ts)  = cpair (mmono⊦⊢ θ ts)
 mmono⊦⊢ θ (cfst ts)   = cfst (mmono⊦⊢ θ ts)
 mmono⊦⊢ θ (csnd ts)   = csnd (mmono⊦⊢ θ ts)
-mmono⊦⊢ θ (tt ts)     = tt (mmono⊦⊢ θ ts)
+mmono⊦⊢ θ (unit ts)   = unit (mmono⊦⊢ θ ts)
 
 mmono⊢ : ∀ {A Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ′ ⊢ A
 mmono⊢ θ (Ξ , ts) = Ξ , mmono⊦⊢ θ ts
@@ -95,7 +95,7 @@ us ⧺⊦ cdown ts  = cdown (us ⧺⊦ ts)
 us ⧺⊦ cpair ts  = cpair (us ⧺⊦ ts)
 us ⧺⊦ cfst ts   = cfst (us ⧺⊦ ts)
 us ⧺⊦ csnd ts   = csnd (us ⧺⊦ ts)
-us ⧺⊦ tt ts     = tt (us ⧺⊦ ts)
+us ⧺⊦ unit ts   = unit (us ⧺⊦ ts)
 
 
 -- Modus ponens and necessitation in expanded form.

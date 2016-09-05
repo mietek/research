@@ -19,7 +19,7 @@ mutual
     CPAIR : Tm
     CFST  : Tm
     CSND  : Tm
-    TT    : Tm
+    UNIT  : Tm
 
   infix 3 _⊢_
   data _⊢_ (Γ : Cx (Ty Tm)) : Ty Tm → Set where
@@ -35,7 +35,7 @@ mutual
     cpair : ∀ {A B}     → Γ ⊢ A ▻ B ▻ A ∧ B
     cfst  : ∀ {A B}     → Γ ⊢ A ∧ B ▻ A
     csnd  : ∀ {A B}     → Γ ⊢ A ∧ B ▻ B
-    tt    : Γ ⊢ ⊤
+    unit  : Γ ⊢ ⊤
 
   [_] : ∀ {A Γ} → Γ ⊢ A → Tm
   [ var i ]   = VAR [ i ]ⁱ
@@ -50,7 +50,7 @@ mutual
   [ cpair ]   = CPAIR
   [ cfst ]    = CFST
   [ csnd ]    = CSND
-  [ tt ]      = TT
+  [ unit ]    = UNIT
 
 infix 3 _⊢⋆_
 _⊢⋆_ : Cx (Ty Tm) → Cx (Ty Tm) → Set
@@ -73,7 +73,7 @@ mono⊢ η cdown     = cdown
 mono⊢ η cpair     = cpair
 mono⊢ η cfst      = cfst
 mono⊢ η csnd      = csnd
-mono⊢ η tt        = tt
+mono⊢ η unit      = unit
 
 mono⊢⋆ : ∀ {Ξ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ Ξ → Γ′ ⊢⋆ Ξ
 mono⊢⋆ {∅}     η ∙        = ∙
@@ -124,7 +124,7 @@ LAM CDOWN         = APP CK CDOWN
 LAM CPAIR         = APP CK CPAIR
 LAM CFST          = APP CK CFST
 LAM CSND          = APP CK CSND
-LAM TT            = APP CK TT
+LAM UNIT          = APP CK UNIT
 
 lam : ∀ {A B Γ} → Γ , A ⊢ B → Γ ⊢ A ▻ B
 lam (var top)     = ci
@@ -140,7 +140,7 @@ lam cdown         = app ck cdown
 lam cpair         = app ck cpair
 lam cfst          = app ck cfst
 lam csnd          = app ck csnd
-lam tt            = app ck tt
+lam unit          = app ck unit
 
 
 -- Detachment theorem.

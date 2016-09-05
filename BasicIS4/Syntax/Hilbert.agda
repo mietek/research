@@ -23,7 +23,7 @@ data _⊢_ (Γ : Cx Ty) : Ty → Set where
   cpair : ∀ {A B}   → Γ ⊢ A ▻ B ▻ A ∧ B
   cfst  : ∀ {A B}   → Γ ⊢ A ∧ B ▻ A
   csnd  : ∀ {A B}   → Γ ⊢ A ∧ B ▻ B
-  tt    : Γ ⊢ ⊤
+  unit  : Γ ⊢ ⊤
 
 infix 3 _⊢⋆_
 _⊢⋆_ : Cx Ty → Cx Ty → Set
@@ -46,7 +46,7 @@ mono⊢ η cdown     = cdown
 mono⊢ η cpair     = cpair
 mono⊢ η cfst      = cfst
 mono⊢ η csnd      = csnd
-mono⊢ η tt        = tt
+mono⊢ η unit      = unit
 
 mono⊢⋆ : ∀ {Ξ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊢⋆ Ξ → Γ′ ⊢⋆ Ξ
 mono⊢⋆ {∅}     η ∙        = ∙
@@ -88,7 +88,7 @@ lam cdown         = app ck cdown
 lam cpair         = app ck cpair
 lam cfst          = app ck cfst
 lam csnd          = app ck csnd
-lam tt            = app ck tt
+lam unit          = app ck unit
 
 lam⋆ : ∀ {Ξ Γ A} → Γ ⧺ Ξ ⊢ A → Γ ⊢ Ξ ▻⋯▻ A
 lam⋆ {∅}     = I
@@ -319,4 +319,4 @@ data _⋙_ {Γ : Cx Ty} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
   eta∧⋙     : ∀ {A B} → {t : Γ ⊢ A ∧ B}
                        → t ⋙ app (app cpair (app cfst t)) (app csnd t)
 
-  eta⊤⋙    : ∀ {t : Γ ⊢ ⊤} → t ⋙ tt
+  eta⊤⋙    : ∀ {t : Γ ⊢ ⊤} → t ⋙ unit

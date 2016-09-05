@@ -14,7 +14,7 @@ module _ {{_ : Model}} where
   reify {A ▻ B} s = syn s
   reify {□ A}   s = syn s
   reify {A ∧ B} s = pair (reify (π₁ s)) (reify (π₂ s))
-  reify {⊤}    s = tt
+  reify {⊤}    s = unit
 
   reify⋆ : ∀ {Ξ} → ⊩⋆ Ξ → ∅ ⊢⋆ Ξ
   reify⋆ {∅}     ∙        = ∙
@@ -35,7 +35,7 @@ mutual
   eval (pair t u)      γ = eval t γ , eval u γ
   eval (fst t)         γ = π₁ (eval t γ)
   eval (snd t)         γ = π₂ (eval t γ)
-  eval tt              γ = ∙
+  eval unit            γ = ∙
 
   eval⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊨⋆ Ξ
   eval⋆ {∅}     ∙        γ = ∙

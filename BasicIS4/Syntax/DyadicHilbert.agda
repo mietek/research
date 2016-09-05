@@ -24,7 +24,7 @@ data _⊢_ : Cx² Ty Ty → Ty → Set where
   cpair : ∀ {A B Γ Δ}   → Γ ⁏ Δ ⊢ A ▻ B ▻ A ∧ B
   cfst  : ∀ {A B Γ Δ}   → Γ ⁏ Δ ⊢ A ∧ B ▻ A
   csnd  : ∀ {A B Γ Δ}   → Γ ⁏ Δ ⊢ A ∧ B ▻ B
-  tt    : ∀ {Γ Δ}       → Γ ⁏ Δ ⊢ ⊤
+  unit  : ∀ {Γ Δ}       → Γ ⁏ Δ ⊢ ⊤
 
 infix 3 _⊢⋆_
 _⊢⋆_ : Cx² Ty Ty → Cx Ty → Set
@@ -48,7 +48,7 @@ mono⊢ η cdown     = cdown
 mono⊢ η cpair     = cpair
 mono⊢ η cfst      = cfst
 mono⊢ η csnd      = csnd
-mono⊢ η tt        = tt
+mono⊢ η unit      = unit
 
 mono⊢⋆ : ∀ {Ξ Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊢⋆ Ξ → Γ′ ⁏ Δ ⊢⋆ Ξ
 mono⊢⋆ {∅}     η ∙        = ∙
@@ -71,7 +71,7 @@ mmono⊢ θ cdown     = cdown
 mmono⊢ θ cpair     = cpair
 mmono⊢ θ cfst      = cfst
 mmono⊢ θ csnd      = csnd
-mmono⊢ θ tt        = tt
+mmono⊢ θ unit      = unit
 
 mmono⊢⋆ : ∀ {Ξ Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊢⋆ Ξ → Γ ⁏ Δ′ ⊢⋆ Ξ
 mmono⊢⋆ {∅}     θ ∙        = ∙
@@ -133,7 +133,7 @@ lam cdown         = app ck cdown
 lam cpair         = app ck cpair
 lam cfst          = app ck cfst
 lam csnd          = app ck csnd
-lam tt            = app ck tt
+lam unit          = app ck unit
 
 lam⋆ : ∀ {Ξ A Γ Δ} → Γ ⧺ Ξ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ Ξ ▻⋯▻ A
 lam⋆ {∅}     = I
@@ -173,7 +173,7 @@ mlam cdown          = app ck cdown
 mlam cpair          = app ck cpair
 mlam cfst           = app ck cfst
 mlam csnd           = app ck csnd
-mlam tt             = app ck tt
+mlam unit           = app ck unit
 
 mlam⋆ : ∀ {Ξ A Γ Δ} → Γ ⁏ Δ ⧺ Ξ ⊢ A → Γ ⁏ Δ ⊢ □⋆ Ξ ▻⋯▻ A
 mlam⋆ {∅}     = I
@@ -460,4 +460,4 @@ data _⋙_ {Γ Δ : Cx Ty} : ∀ {A} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ A →
   eta∧⋙     : ∀ {A B} → {t : Γ ⁏ Δ ⊢ A ∧ B}
                        → t ⋙ app (app cpair (app cfst t)) (app csnd t)
 
-  eta⊤⋙    : ∀ {t : Γ ⁏ Δ ⊢ ⊤} → t ⋙ tt
+  eta⊤⋙    : ∀ {t : Γ ⁏ Δ ⊢ ⊤} → t ⋙ unit

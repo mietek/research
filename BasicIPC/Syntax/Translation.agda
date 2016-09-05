@@ -49,7 +49,7 @@ chs→ch (Ξ , ts) = chs⊦→ch ts top
     chs⊦→ch (CHS.cpair ts)  top     = CH.cpair
     chs⊦→ch (CHS.cfst ts)   top     = CH.cfst
     chs⊦→ch (CHS.csnd ts)   top     = CH.csnd
-    chs⊦→ch (CHS.tt ts)     top     = CH.tt
+    chs⊦→ch (CHS.unit ts)   top     = CH.unit
     chs⊦→ch (CHS.mp i j ts) (pop k) = chs⊦→ch ts k
     chs⊦→ch (CHS.ci ts)     (pop k) = chs⊦→ch ts k
     chs⊦→ch (CHS.ck ts)     (pop k) = chs⊦→ch ts k
@@ -57,7 +57,7 @@ chs→ch (Ξ , ts) = chs⊦→ch ts top
     chs⊦→ch (CHS.cpair ts)  (pop k) = chs⊦→ch ts k
     chs⊦→ch (CHS.cfst ts)   (pop k) = chs⊦→ch ts k
     chs⊦→ch (CHS.csnd ts)   (pop k) = chs⊦→ch ts k
-    chs⊦→ch (CHS.tt ts)     (pop k) = chs⊦→ch ts k
+    chs⊦→ch (CHS.unit ts)   (pop k) = chs⊦→ch ts k
 
 
 -- Translation from closed Hilbert-style to closed Hilbert-style sequential.
@@ -70,7 +70,7 @@ ch→chs CH.cs        = ∅ , CHS.cs CHS.nil
 ch→chs CH.cpair     = ∅ , CHS.cpair CHS.nil
 ch→chs CH.cfst      = ∅ , CHS.cfst CHS.nil
 ch→chs CH.csnd      = ∅ , CHS.csnd CHS.nil
-ch→chs CH.tt        = ∅ , CHS.tt CHS.nil
+ch→chs CH.unit      = ∅ , CHS.unit CHS.nil
 
 
 -- Translation from Hilbert-style sequential to Hilbert-style.
@@ -87,7 +87,7 @@ hs→h (Ξ , ts) = hs⊦→h ts top
     hs⊦→h (HS.cpair ts)  top     = H.cpair
     hs⊦→h (HS.cfst ts)   top     = H.cfst
     hs⊦→h (HS.csnd ts)   top     = H.csnd
-    hs⊦→h (HS.tt ts)     top     = H.tt
+    hs⊦→h (HS.unit ts)   top     = H.unit
     hs⊦→h (HS.var i ts)  (pop k) = hs⊦→h ts k
     hs⊦→h (HS.mp i j ts) (pop k) = hs⊦→h ts k
     hs⊦→h (HS.ci ts)     (pop k) = hs⊦→h ts k
@@ -96,7 +96,7 @@ hs→h (Ξ , ts) = hs⊦→h ts top
     hs⊦→h (HS.cpair ts)  (pop k) = hs⊦→h ts k
     hs⊦→h (HS.cfst ts)   (pop k) = hs⊦→h ts k
     hs⊦→h (HS.csnd ts)   (pop k) = hs⊦→h ts k
-    hs⊦→h (HS.tt ts)     (pop k) = hs⊦→h ts k
+    hs⊦→h (HS.unit ts)   (pop k) = hs⊦→h ts k
 
 
 -- Translation from Hilbert-style to Hilbert-style sequential.
@@ -110,7 +110,7 @@ h→hs H.cs        = ∅ , HS.cs HS.nil
 h→hs H.cpair     = ∅ , HS.cpair HS.nil
 h→hs H.cfst      = ∅ , HS.cfst HS.nil
 h→hs H.csnd      = ∅ , HS.csnd HS.nil
-h→hs H.tt        = ∅ , HS.tt HS.nil
+h→hs H.unit      = ∅ , HS.unit HS.nil
 
 
 -- Deduction and detachment theorems for Hilbert-style sequential.
@@ -142,7 +142,7 @@ chs→hs₀ (Ξ , ts) = Ξ , chs⊦→hs₀⊦ ts
     chs⊦→hs₀⊦ (CHS.cpair ts)  = HS.cpair (chs⊦→hs₀⊦ ts)
     chs⊦→hs₀⊦ (CHS.cfst ts)   = HS.cfst (chs⊦→hs₀⊦ ts)
     chs⊦→hs₀⊦ (CHS.csnd ts)   = HS.csnd (chs⊦→hs₀⊦ ts)
-    chs⊦→hs₀⊦ (CHS.tt ts)     = HS.tt (chs⊦→hs₀⊦ ts)
+    chs⊦→hs₀⊦ (CHS.unit ts)   = HS.unit (chs⊦→hs₀⊦ ts)
 
 chs→hs : ∀ {A Γ} → CHS.⊢ Γ ▻⋯▻ A → HS⟨ Γ ⊢ A ⟩
 chs→hs t = hs-det⋆₀ (chs→hs₀ t)
@@ -163,7 +163,7 @@ hs₀→chs (Ξ , ts) = Ξ , hs₀⊦→chs⊦ ts
     hs₀⊦→chs⊦ (HS.cpair ts)  = CHS.cpair (hs₀⊦→chs⊦ ts)
     hs₀⊦→chs⊦ (HS.cfst ts)   = CHS.cfst (hs₀⊦→chs⊦ ts)
     hs₀⊦→chs⊦ (HS.csnd ts)   = CHS.csnd (hs₀⊦→chs⊦ ts)
-    hs₀⊦→chs⊦ (HS.tt ts)     = CHS.tt (hs₀⊦→chs⊦ ts)
+    hs₀⊦→chs⊦ (HS.unit ts)   = CHS.unit (hs₀⊦→chs⊦ ts)
 
 hs→chs : ∀ {A Γ} → HS⟨ Γ ⊢ A ⟩ → CHS.⊢ Γ ▻⋯▻ A
 hs→chs t = hs₀→chs (hs-lam⋆₀ t)
@@ -179,7 +179,7 @@ ch→h₀ CH.cs        = H.cs
 ch→h₀ CH.cpair     = H.cpair
 ch→h₀ CH.cfst      = H.cfst
 ch→h₀ CH.csnd      = H.csnd
-ch→h₀ CH.tt        = H.tt
+ch→h₀ CH.unit      = H.unit
 
 ch→h : ∀ {A Γ} → CH.⊢ Γ ▻⋯▻ A → H⟨ Γ ⊢ A ⟩
 ch→h t = H.det⋆₀ (ch→h₀ t)
@@ -196,7 +196,7 @@ h₀→ch H.cs        = CH.cs
 h₀→ch H.cpair     = CH.cpair
 h₀→ch H.cfst      = CH.cfst
 h₀→ch H.csnd      = CH.csnd
-h₀→ch H.tt        = CH.tt
+h₀→ch H.unit      = CH.unit
 
 h→ch : ∀ {A Γ} → H⟨ Γ ⊢ A ⟩ → CH.⊢ Γ ▻⋯▻ A
 h→ch t = h₀→ch (H.lam⋆₀ t)
@@ -213,7 +213,7 @@ h→g H.cs        = G.cs
 h→g H.cpair     = G.cpair
 h→g H.cfst      = G.cfst
 h→g H.csnd      = G.csnd
-h→g H.tt        = G.tt
+h→g H.unit      = G.unit
 
 
 -- Translation from Gentzen-style to Hilbert-style.
@@ -225,7 +225,7 @@ g→h (G.app t u)  = H.app (g→h t) (g→h u)
 g→h (G.pair t u) = H.pair (g→h t) (g→h u)
 g→h (G.fst t)    = H.fst (g→h t)
 g→h (G.snd t)    = H.snd (g→h t)
-g→h G.tt         = H.tt
+g→h G.unit       = H.unit
 
 
 -- Additional translations from closed Hilbert-style sequential.

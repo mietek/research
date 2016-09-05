@@ -32,7 +32,7 @@ record Model : Set₁ where
     [cpair]  : ∀ {A B Γ}   → Γ [⊢] A ▻ B ▻ A ∧ B
     [cfst]   : ∀ {A B Γ}   → Γ [⊢] A ∧ B ▻ A
     [csnd]   : ∀ {A B Γ}   → Γ [⊢] A ∧ B ▻ B
-    [tt]     : ∀ {Γ}       → Γ [⊢] ⊤
+    [unit]   : ∀ {Γ}       → Γ [⊢] ⊤
 
   infix 3 _[⊢]⋆_
   _[⊢]⋆_ : Cx Ty → Cx Ty → Set
@@ -82,7 +82,7 @@ module _ {{_ : Model}} where
   reifyʳ {A ▻ B} s = syn (s refl⊆)
   reifyʳ {□ A}   s = syn (s refl⊆)
   reifyʳ {A ∧ B} s = [app] ([app] [cpair] (reifyʳ {A} (π₁ s))) (reifyʳ {B} (π₂ s))
-  reifyʳ {⊤}    s = [tt]
+  reifyʳ {⊤}    s = [unit]
 
   reifyʳ⋆ : ∀ {Ξ Γ} → Γ ⊩⋆ Ξ → Γ [⊢]⋆ Ξ
   reifyʳ⋆ {∅}     ∙        = ∙

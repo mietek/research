@@ -29,7 +29,7 @@ record Model : Set₁ where
     [pair]    : ∀ {A B Γ Δ} → Γ ⁏ Δ [⊢] A → Γ ⁏ Δ [⊢] B → Γ ⁏ Δ [⊢] A ∧ B
     [fst]     : ∀ {A B Γ Δ} → Γ ⁏ Δ [⊢] A ∧ B → Γ ⁏ Δ [⊢] A
     [snd]     : ∀ {A B Γ Δ} → Γ ⁏ Δ [⊢] A ∧ B → Γ ⁏ Δ [⊢] B
-    [tt]      : ∀ {Γ Δ}     → Γ ⁏ Δ [⊢] ⊤
+    [unit]    : ∀ {Γ Δ}     → Γ ⁏ Δ [⊢] ⊤
 
   infix 3 _[⊢]⋆_
   _[⊢]⋆_ : Cx² Ty Ty → Cx Ty → Set
@@ -79,7 +79,7 @@ module _ {{_ : Model}} where
   reifyʳ {A ▻ B} s = syn (s refl⊆²)
   reifyʳ {□ A}   s = syn (s refl⊆²)
   reifyʳ {A ∧ B} s = [pair] (reifyʳ {A} (π₁ s)) (reifyʳ {B} (π₂ s))
-  reifyʳ {⊤}    s = [tt]
+  reifyʳ {⊤}    s = [unit]
 
   reifyʳ⋆ : ∀ {Ξ Π} → Π ⊩⋆ Ξ → Π [⊢]⋆ Ξ
   reifyʳ⋆ {∅}     ∙        = ∙

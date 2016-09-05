@@ -12,7 +12,7 @@ mutual
     neⁿᶠ   : ∀ {A}   → Γ ⊢ⁿᵉ A → Γ ⊢ⁿᶠ A
     lamⁿᶠ  : ∀ {A B} → Γ , A ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ▻ B
     pairⁿᶠ : ∀ {A B} → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ∧ B
-    ttⁿᶠ   : Γ ⊢ⁿᶠ ⊤
+    unitⁿᶠ : Γ ⊢ⁿᶠ ⊤
     inlⁿᶠ  : ∀ {A B} → Γ ⊢ⁿᶠ A → Γ ⊢ⁿᶠ A ∨ B
     inrⁿᶠ  : ∀ {A B} → Γ ⊢ⁿᶠ B → Γ ⊢ⁿᶠ A ∨ B
 
@@ -44,7 +44,7 @@ mutual
   nf→tm (neⁿᶠ t)     = ne→tm t
   nf→tm (lamⁿᶠ t)    = lam (nf→tm t)
   nf→tm (pairⁿᶠ t u) = pair (nf→tm t) (nf→tm u)
-  nf→tm ttⁿᶠ         = tt
+  nf→tm unitⁿᶠ       = unit
   nf→tm (inlⁿᶠ t)    = inl (nf→tm t)
   nf→tm (inrⁿᶠ t)    = inr (nf→tm t)
 
@@ -72,7 +72,7 @@ mutual
   mono⊢ⁿᶠ η (neⁿᶠ t)     = neⁿᶠ (mono⊢ⁿᵉ η t)
   mono⊢ⁿᶠ η (lamⁿᶠ t)    = lamⁿᶠ (mono⊢ⁿᶠ (keep η) t)
   mono⊢ⁿᶠ η (pairⁿᶠ t u) = pairⁿᶠ (mono⊢ⁿᶠ η t) (mono⊢ⁿᶠ η u)
-  mono⊢ⁿᶠ η ttⁿᶠ         = ttⁿᶠ
+  mono⊢ⁿᶠ η unitⁿᶠ       = unitⁿᶠ
   mono⊢ⁿᶠ η (inlⁿᶠ t)    = inlⁿᶠ (mono⊢ⁿᶠ η t)
   mono⊢ⁿᶠ η (inrⁿᶠ t)    = inrⁿᶠ (mono⊢ⁿᶠ η t)
 
@@ -134,7 +134,7 @@ module IlikCompleteness where
     reify {α P}   k = k refl≤ (λ η s → neⁿᶠ s)
     reify {A ▻ B} k = k refl≤ (λ η s → lamⁿᶠ (reify {B} (s weak⊆ (reflect {A} (varⁿᵉ top)))))
     reify {A ∧ B} k = k refl≤ (λ η s → pairⁿᶠ (reify {A} (π₁ s)) (reify {B} (π₂ s)))
-    reify {⊤}    k = k refl≤ (λ η s → ttⁿᶠ)
+    reify {⊤}    k = k refl≤ (λ η s → unitⁿᶠ)
     reify {⊥}    k = k refl≤ (λ η ())
     reify {A ∨ B} k = k refl≤ (λ η s → elim⊎ s
                                           (λ a → inlⁿᶠ (reify {A} (λ η′ k′ → a η′ k′)))
