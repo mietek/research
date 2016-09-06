@@ -127,6 +127,28 @@ import BasicIPC.Metatheory.GentzenSpinalNormalForm-HereditarySubstitution
 
 
 
+-- TODO
+
+
+-- Common syntax.
+import BasicT.Syntax.Common
+
+-- Gentzen-style formalisation of syntax.
+import BasicT.Syntax.Gentzen
+import BasicT.Syntax.GentzenNormalForm
+
+
+-- Basic Tarski-style semantics, for soundness only.
+import BasicT.Semantics.BasicTarski
+
+
+import BasicT.Metatheory.Gentzen-BasicTarski
+
+import BasicT.Metatheory.GentzenNormalForm-Unknown
+
+
+
+
 -- Intuitionistic propositional calculus. (To be rewritten.)
 
 import IPC
