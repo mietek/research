@@ -41,11 +41,6 @@ _▻⋯▻_ : Cx Ty → Ty → Ty
 ∅       ▻⋯▻ B = B
 (Ξ , A) ▻⋯▻ B = Ξ ▻⋯▻ (A ▻ B)
 
-infixr 10 [_]⋆_
-[_]⋆_ : Cx Ty → Cx Ty → Cx Box
-[ Ψ ]⋆ ∅       = ∅
-[ Ψ ]⋆ (Ξ , A) = [ Ψ ]⋆ Ξ , [ Ψ ] A
-
 
 -- Inversion principles.
 
