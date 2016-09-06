@@ -6,7 +6,7 @@ open import Agda.Builtin.Size public
 
 open import Agda.Primitive public
   using ()
-  renaming (_⊔_ to _⊔ˡ_ ; lsuc to sucˡ)
+  renaming (_⊔_ to _⊔ᴸ_ ; lsuc to sucᴸ)
 
 open import Data.Bool public
   using ()
@@ -66,7 +66,7 @@ abstract
 -- Products, with custom fixities.
 
 infixl 5 _,_
-record Σ {a b} (A : Set a) (B : A → Set b) : Set (a ⊔ˡ b) where
+record Σ {a b} (A : Set a) (B : A → Set b) : Set (a ⊔ᴸ b) where
   constructor _,_
   field
     π₁ : A
@@ -74,11 +74,11 @@ record Σ {a b} (A : Set a) (B : A → Set b) : Set (a ⊔ˡ b) where
 
 open Σ public
 
-∃ : ∀ {a b} {A : Set a} → (A → Set b) → Set (a ⊔ˡ b)
+∃ : ∀ {a b} {A : Set a} → (A → Set b) → Set (a ⊔ᴸ b)
 ∃ = Σ _
 
 infix 2 _×_
-_×_ : ∀ {a b} (A : Set a) (B : Set b) → Set (a ⊔ˡ b)
+_×_ : ∀ {a b} (A : Set a) (B : Set b) → Set (a ⊔ᴸ b)
 A × B = Σ A (λ _ → B)
 
 
