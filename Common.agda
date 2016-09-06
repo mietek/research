@@ -9,8 +9,8 @@ open import Agda.Primitive public
   renaming (_⊔_ to _⊔ᴸ_ ; lsuc to sucᴸ)
 
 open import Data.Bool public
-  using ()
-  renaming (_∧_ to _∧ᴮ_ ; _∨_ to _∨ᴮ_ ; not to ¬ᴮ_)
+  using (true ; false)
+  renaming (Bool to 𝔹 ; _∧_ to _∧ᴮ_ ; _∨_ to _∨ᴮ_ ; not to ¬ᴮ_ ; if_then_else_ to ifᴮ)
 
 open import Data.Empty public
   using ()
@@ -103,6 +103,17 @@ cong³ : ∀ {a b c d} {A : Set a} {B : Set b} {C : Set c} {D : Set d}
         (f : A → B → C → D) {x x′ y y′ z z′}
         → x ≡ x′ → y ≡ y′ → z ≡ z′ → f x y z ≡ f x′ y′ z′
 cong³ f refl refl refl = refl
+
+
+-- Iteration and recursion for naturals.
+
+itᴺ : ∀ {a} {A : Set a} → ℕ → (A → A) → A → A
+itᴺ zero    f x = x
+itᴺ (suc n) f x = f (itᴺ n f x)
+
+recᴺ : ∀ {a} {A : Set a} → ℕ → (ℕ → A → A) → A → A
+recᴺ zero    f x = x
+recᴺ (suc n) f x = f n (recᴺ n f x)
 
 
 -- Composition, supremum, and infimum for relations.
