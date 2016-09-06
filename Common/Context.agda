@@ -49,18 +49,21 @@ module _ {U : Set} where
       top : ∀ {Γ} → A ∈ Γ , A
       pop : ∀ {B Γ} → A ∈ Γ → A ∈ Γ , B
 
-  [_]ⁱ : ∀ {A Γ} → A ∈ Γ → ℕ
-  [ top ]ⁱ   = zero
-  [ pop i ]ⁱ = suc [ i ]ⁱ
+  pop² : ∀ {A B C Γ} → A ∈ Γ → A ∈ Γ , B , C
+  pop² = pop ∘ pop
 
   i₀ : ∀ {A Γ} → A ∈ Γ , A
   i₀ = top
 
   i₁ : ∀ {A B Γ} → A ∈ Γ , A , B
-  i₁ = pop i₀
+  i₁ = pop top
 
   i₂ : ∀ {A B C Γ} → A ∈ Γ , A , B , C
-  i₂ = pop i₁
+  i₂ = pop² top
+
+  [_]ⁱ : ∀ {A Γ} → A ∈ Γ → ℕ
+  [ top ]ⁱ   = zero
+  [ pop i ]ⁱ = suc [ i ]ⁱ
 
 
 -- Context inclusion, or order-preserving embedding.
@@ -72,6 +75,12 @@ module _ {U : Set} where
       done : ∅ ⊆ ∅
       skip : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊆ Γ′ , A
       keep : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ , A ⊆ Γ′ , A
+
+  skip² : ∀ {A B Γ Γ′} → Γ ⊆ Γ′ → Γ ⊆ Γ′ , B , A
+  skip² = skip ∘ skip
+
+  keep² : ∀ {A B Γ Γ′} → Γ ⊆ Γ′ → Γ , B , A ⊆ Γ′ , B , A
+  keep² = keep ∘ keep
 
   instance
     refl⊆ : ∀ {Γ} → Γ ⊆ Γ
@@ -96,10 +105,7 @@ module _ {U : Set} where
   weak⊆ = skip refl⊆
 
   weak²⊆ : ∀ {A B Γ} → Γ ⊆ Γ , A , B
-  weak²⊆ = skip weak⊆
-
-  weak³⊆ : ∀ {A B C Γ} → Γ ⊆ Γ , A , B , C
-  weak³⊆ = skip weak²⊆
+  weak²⊆ = skip² refl⊆
 
   bot⊆ : ∀ {Γ} → ∅ ⊆ Γ
   bot⊆ {∅}     = done
