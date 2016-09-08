@@ -19,6 +19,9 @@ open import Data.Empty public
 open import Data.Fin public
   using (Fin ; zero ; suc)
 
+open import Data.List public
+  using (List ; [] ; _∷_)
+
 open import Data.Nat public
   using (ℕ ; zero ; suc)
   renaming (_≟_ to _≟ᴺ_)
@@ -114,6 +117,17 @@ itᴺ (suc n) f x = f (itᴺ n f x)
 recᴺ : ∀ {a} {A : Set a} → ℕ → (ℕ → A → A) → A → A
 recᴺ zero    f x = x
 recᴺ (suc n) f x = f n (recᴺ n f x)
+
+
+-- Iteration and recursion for lists.
+
+itᴸ : ∀ {a b} {A : Set a} {B : Set b} → List A → (A → B → B) → B → B
+itᴸ []       f x = x
+itᴸ (k ∷ ks) f x = f k (itᴸ ks f x)
+
+recᴸ : ∀ {a b} {A : Set a} {B : Set b} → List A → (A → List A → B → B) → B → B
+recᴸ []       f x = x
+recᴸ (k ∷ ks) f x = f k ks (recᴸ ks f x)
 
 
 -- Composition, supremum, and infimum for relations.
