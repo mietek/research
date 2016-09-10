@@ -24,8 +24,9 @@ module _ {{_ : Model}} where
 
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)    γ = lookup i γ
-eval (lam t)    γ = λ η → multicut (reify⋆ (mono⊩⋆ η γ)) (lam t) ⅋ λ a →
-                      eval t (mono⊩⋆ η γ , a)
+eval (lam t)    γ = λ η → let γ′ = mono⊩⋆ η γ
+                           in  multicut (reify⋆ γ′) (lam t) ⅋ λ a →
+                                 eval t (γ′ , a)
 eval (app t u)  γ = eval t γ ⟪$⟫ eval u γ
 eval (pair t u) γ = eval t γ , eval u γ
 eval (fst t)    γ = π₁ (eval t γ)
