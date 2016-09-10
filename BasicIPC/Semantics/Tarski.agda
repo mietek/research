@@ -4,6 +4,9 @@
 module BasicIPC.Semantics.Tarski where
 
 open import BasicIPC.Syntax.Common public
+open import Common.Semantics public
+
+open ConcreteWorlds (Ty) public
 
 
 -- Intuitionistic Tarski models.
@@ -12,8 +15,8 @@ record Model : Set₁ where
   infix 3 _⊩ᵅ_
   field
     -- Forcing for atomic propositions; monotonic.
-    _⊩ᵅ_   : Cx Ty → Atom → Set
-    mono⊩ᵅ : ∀ {P w w′} → w ⊆ w′ → w ⊩ᵅ P → w′ ⊩ᵅ P
+    _⊩ᵅ_   : World → Atom → Set
+    mono⊩ᵅ : ∀ {P w w′} → w ≤ w′ → w ⊩ᵅ P → w′ ⊩ᵅ P
 
 open Model {{…}} public
 
@@ -22,14 +25,14 @@ open Model {{…}} public
 
 module _ {{_ : Model}} where
   infix 3 _⊩_
-  _⊩_ : Cx Ty → Ty → Set
+  _⊩_ : World → Ty → Set
   w ⊩ α P   = w ⊩ᵅ P
-  w ⊩ A ▻ B = ∀ {w′} → w ⊆ w′ → w′ ⊩ A → w′ ⊩ B
+  w ⊩ A ▻ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
   w ⊩ A ∧ B = w ⊩ A × w ⊩ B
   w ⊩ ⊤    = 𝟙
 
   infix 3 _⊩⋆_
-  _⊩⋆_ : Cx Ty → Cx Ty → Set
+  _⊩⋆_ : World → Cx Ty → Set
   w ⊩⋆ ∅     = 𝟙
   w ⊩⋆ Ξ , A = w ⊩⋆ Ξ × w ⊩ A
 
@@ -37,47 +40,47 @@ module _ {{_ : Model}} where
 -- Monotonicity with respect to context inclusion.
 
 module _ {{_ : Model}} where
-  mono⊩ : ∀ {A w w′} → w ⊆ w′ → w ⊩ A → w′ ⊩ A
-  mono⊩ {α P}   η s = mono⊩ᵅ η s
-  mono⊩ {A ▻ B} η s = λ η′ → s (trans⊆ η η′)
-  mono⊩ {A ∧ B} η s = mono⊩ {A} η (π₁ s) , mono⊩ {B} η (π₂ s)
-  mono⊩ {⊤}    η s = ∙
+  mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
+  mono⊩ {α P}   ξ s = mono⊩ᵅ ξ s
+  mono⊩ {A ▻ B} ξ s = λ ξ′ → s (trans≤ ξ ξ′)
+  mono⊩ {A ∧ B} ξ s = mono⊩ {A} ξ (π₁ s) , mono⊩ {B} ξ (π₂ s)
+  mono⊩ {⊤}    ξ s = ∙
 
-  mono⊩⋆ : ∀ {Ξ w w′} → w ⊆ w′ → w ⊩⋆ Ξ → w′ ⊩⋆ Ξ
-  mono⊩⋆ {∅}     η ∙        = ∙
-  mono⊩⋆ {Ξ , A} η (ts , t) = mono⊩⋆ {Ξ} η ts , mono⊩ {A} η t
+  mono⊩⋆ : ∀ {Ξ w w′} → w ≤ w′ → w ⊩⋆ Ξ → w′ ⊩⋆ Ξ
+  mono⊩⋆ {∅}     ξ ∙        = ∙
+  mono⊩⋆ {Ξ , A} ξ (ts , t) = mono⊩⋆ {Ξ} ξ ts , mono⊩ {A} ξ t
 
 
 -- Additional useful equipment.
 
 module _ {{_ : Model}} where
   _⟪$⟫_ : ∀ {A B w} → w ⊩ A ▻ B → w ⊩ A → w ⊩ B
-  f ⟪$⟫ a = f refl⊆ a
+  f ⟪$⟫ a = f refl≤ a
 
   ⟪K⟫ : ∀ {A B w} → w ⊩ A → w ⊩ B ▻ A
-  ⟪K⟫ {A} a η = K (mono⊩ {A} η a)
+  ⟪K⟫ {A} a ξ = K (mono⊩ {A} ξ a)
 
   ⟪S⟫ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C → w ⊩ A ▻ B → w ⊩ A → w ⊩ C
   ⟪S⟫ {A} {B} {C} s₁ s₂ a = _⟪$⟫_ {B} {C} (_⟪$⟫_ {A} {B ▻ C} s₁ a) (_⟪$⟫_ {A} {B} s₂ a)
 
   ⟪S⟫′ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C → w ⊩ (A ▻ B) ▻ A ▻ C
-  ⟪S⟫′ {A} {B} {C} s₁ η s₂ η′ a = let s₁′ = mono⊩ {A ▻ B ▻ C} (trans⊆ η η′) s₁
-                                      s₂′ = mono⊩ {A ▻ B} η′ s₂
+  ⟪S⟫′ {A} {B} {C} s₁ ξ s₂ ξ′ a = let s₁′ = mono⊩ {A ▻ B ▻ C} (trans≤ ξ ξ′) s₁
+                                      s₂′ = mono⊩ {A ▻ B} ξ′ s₂
                                   in  ⟪S⟫ {A} {B} {C} s₁′ s₂′ a
 
   _⟪,⟫′_ : ∀ {A B w} → w ⊩ A → w ⊩ B ▻ A ∧ B
-  _⟪,⟫′_ {A} {B} a η = _,_ (mono⊩ {A} η a)
+  _⟪,⟫′_ {A} {B} a ξ = _,_ (mono⊩ {A} ξ a)
 
 
 -- Forcing in a particular world of a particular model, for sequents.
 
 module _ {{_ : Model}} where
   infix 3 _⊩_⇒_
-  _⊩_⇒_ : Cx Ty → Cx Ty → Ty → Set
+  _⊩_⇒_ : World → Cx Ty → Ty → Set
   w ⊩ Γ ⇒ A = w ⊩⋆ Γ → w ⊩ A
 
   infix 3 _⊩_⇒⋆_
-  _⊩_⇒⋆_ : Cx Ty → Cx Ty → Cx Ty → Set
+  _⊩_⇒⋆_ : World → Cx Ty → Cx Ty → Set
   w ⊩ Γ ⇒⋆ Ξ = w ⊩⋆ Γ → w ⊩⋆ Ξ
 
 
@@ -85,11 +88,11 @@ module _ {{_ : Model}} where
 
 infix 3 _⊨_
 _⊨_ : Cx Ty → Ty → Set₁
-Γ ⊨ A = ∀ {{_ : Model}} {w : Cx Ty} → w ⊩ Γ ⇒ A
+Γ ⊨ A = ∀ {{_ : Model}} {w : World} → w ⊩ Γ ⇒ A
 
 infix 3 _⊨⋆_
 _⊨⋆_ : Cx Ty → Cx Ty → Set₁
-Γ ⊨⋆ Ξ = ∀ {{_ : Model}} {w : Cx Ty} → w ⊩ Γ ⇒⋆ Ξ
+Γ ⊨⋆ Ξ = ∀ {{_ : Model}} {w : World} → w ⊩ Γ ⇒⋆ Ξ
 
 
 -- Additional useful equipment, for sequents.
@@ -100,7 +103,7 @@ module _ {{_ : Model}} where
   lookup (pop i) (γ , b) = lookup i γ
 
   ⟦λ⟧ : ∀ {A B Γ w} → (∀ {w′} → w′ ⊩ Γ , A ⇒ B) → w ⊩ Γ ⇒ A ▻ B
-  ⟦λ⟧ s γ = λ η a → s (mono⊩⋆ η γ , a)
+  ⟦λ⟧ s γ = λ ξ a → s (mono⊩⋆ ξ γ , a)
 
   _⟦$⟧_ : ∀ {A B Γ w} → w ⊩ Γ ⇒ A ▻ B → w ⊩ Γ ⇒ A → w ⊩ Γ ⇒ B
   _⟦$⟧_ {A} {B} s₁ s₂ γ = _⟪$⟫_ {A} {B} (s₁ γ) (s₂ γ)

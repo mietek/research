@@ -9,13 +9,13 @@ open ImplicitSyntax (_⊢_) (mono⊢) public
 -- Completeness with respect to a particular model.
 
 module _ {{_ : Model}} where
-  reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
+  reify : ∀ {A w} → w ⊩ A → unwrap w ⊢ A
   reify {α P}   s = syn s
-  reify {A ▻ B} s = syn (s refl⊆)
+  reify {A ▻ B} s = syn (s refl≤)
   reify {A ∧ B} s = pair (reify (π₁ s)) (reify (π₂ s))
   reify {⊤}    s = unit
 
-  reify⋆ : ∀ {Ξ Γ} → Γ ⊩⋆ Ξ → Γ ⊢⋆ Ξ
+  reify⋆ : ∀ {Ξ w} → w ⊩⋆ Ξ → unwrap w ⊢⋆ Ξ
   reify⋆ {∅}     ∙        = ∙
   reify⋆ {Ξ , A} (ts , t) = reify⋆ ts , reify t
 
@@ -24,7 +24,7 @@ module _ {{_ : Model}} where
 
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)    γ = lookup i γ
-eval (lam t)    γ = λ η → let γ′ = mono⊩⋆ η γ
+eval (lam t)    γ = λ ξ → let γ′ = mono⊩⋆ ξ γ
                            in  multicut (reify⋆ γ′) (lam t) ⅋ λ a →
                                  eval t (γ′ , a)
 eval (app t u)  γ = eval t γ ⟪$⟫ eval u γ
@@ -43,31 +43,31 @@ private
   instance
     canon : Model
     canon = record
-      { _⊩ᵅ_   = λ Γ P → Γ ⊢ α P
-      ; mono⊩ᵅ = mono⊢
+      { _⊩ᵅ_   = λ w P → unwrap w ⊢ α P
+      ; mono⊩ᵅ = λ ξ t → mono⊢ (unwrap≤ ξ) t
       }
 
 
 -- Soundness with respect to the canonical model.
 
-reflectᶜ : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
+reflectᶜ : ∀ {A w} → unwrap w ⊢ A → w ⊩ A
 reflectᶜ {α P}   t = t ⅋ t
-reflectᶜ {A ▻ B} t = λ η → let t′ = mono⊢ η t
+reflectᶜ {A ▻ B} t = λ ξ → let t′ = mono⊢ (unwrap≤ ξ) t
                             in  t′ ⅋ λ a → reflectᶜ (app t′ (reify a))
 reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
 reflectᶜ {⊤}    t = ∙
 
-reflectᶜ⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊩⋆ Ξ
+reflectᶜ⋆ : ∀ {Ξ w} → unwrap w ⊢⋆ Ξ → w ⊩⋆ Ξ
 reflectᶜ⋆ {∅}     ∙        = ∙
 reflectᶜ⋆ {Ξ , A} (ts , t) = reflectᶜ⋆ ts , reflectᶜ t
 
 
 -- Reflexivity and transitivity.
 
-refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
+refl⊩⋆ : ∀ {w} → w ⊩⋆ unwrap w
 refl⊩⋆ = reflectᶜ⋆ refl⊢⋆
 
-trans⊩⋆ : ∀ {Γ Γ′ Γ″} → Γ ⊩⋆ Γ′ → Γ′ ⊩⋆ Γ″ → Γ ⊩⋆ Γ″
+trans⊩⋆ : ∀ {w w′ w″} → w ⊩⋆ unwrap w′ → w′ ⊩⋆ unwrap w″ → w ⊩⋆ unwrap w″
 trans⊩⋆ ts us = reflectᶜ⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
 
 

@@ -8,7 +8,7 @@ open import BasicIPC.Semantics.Tarski public
 
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)           γ = lookup i γ
-eval (lam t)           γ = λ η a → eval t (mono⊩⋆ η γ , a)
+eval (lam t)           γ = λ ξ a → eval t (mono⊩⋆ ξ γ , a)
 eval (app {A} {B} t u) γ = _⟪$⟫_ {A} {B} (eval t γ) (eval u γ)
 eval (pair t u)        γ = eval t γ , eval u γ
 eval (fst t)           γ = π₁ (eval t γ)
@@ -25,41 +25,41 @@ private
   instance
     canon : Model
     canon = record
-      { _⊩ᵅ_    = λ Γ P → Γ ⊢ α P
-      ; mono⊩ᵅ  = mono⊢
+      { _⊩ᵅ_   = λ w P → unwrap w ⊢ α P
+      ; mono⊩ᵅ = λ ξ t → mono⊢ (unwrap≤ ξ) t
       }
 
 
 -- Soundness and completeness with respect to the canonical model.
 
 mutual
-  reflectᶜ : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
+  reflectᶜ : ∀ {A w} → unwrap w ⊢ A → w ⊩ A
   reflectᶜ {α P}   t = t
-  reflectᶜ {A ▻ B} t = λ η a → reflectᶜ (app (mono⊢ η t) (reifyᶜ a))
+  reflectᶜ {A ▻ B} t = λ ξ a → reflectᶜ (app (mono⊢ (unwrap≤ ξ) t) (reifyᶜ a))
   reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
   reflectᶜ {⊤}    t = ∙
 
-  reifyᶜ : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
+  reifyᶜ : ∀ {A w} → w ⊩ A → unwrap w ⊢ A
   reifyᶜ {α P}   s = s
-  reifyᶜ {A ▻ B} s = lam (reifyᶜ (s weak⊆ (reflectᶜ {A} v₀)))
+  reifyᶜ {A ▻ B} s = lam (reifyᶜ (s weak≤ (reflectᶜ {A} v₀)))
   reifyᶜ {A ∧ B} s = pair (reifyᶜ (π₁ s)) (reifyᶜ (π₂ s))
   reifyᶜ {⊤}    s = unit
 
-reflectᶜ⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊩⋆ Ξ
+reflectᶜ⋆ : ∀ {Ξ w} → unwrap w ⊢⋆ Ξ → w ⊩⋆ Ξ
 reflectᶜ⋆ {∅}     ∙        = ∙
 reflectᶜ⋆ {Ξ , A} (ts , t) = reflectᶜ⋆ ts , reflectᶜ t
 
-reifyᶜ⋆ : ∀ {Ξ Γ} → Γ ⊩⋆ Ξ → Γ ⊢⋆ Ξ
+reifyᶜ⋆ : ∀ {Ξ w} → w ⊩⋆ Ξ → unwrap w ⊢⋆ Ξ
 reifyᶜ⋆ {∅}     ∙        = ∙
 reifyᶜ⋆ {Ξ , A} (ts , t) = reifyᶜ⋆ ts , reifyᶜ t
 
 
 -- Reflexivity and transitivity.
 
-refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
+refl⊩⋆ : ∀ {w} → w ⊩⋆ unwrap w
 refl⊩⋆ = reflectᶜ⋆ refl⊢⋆
 
-trans⊩⋆ : ∀ {Γ Γ′ Γ″} → Γ ⊩⋆ Γ′ → Γ′ ⊩⋆ Γ″ → Γ ⊩⋆ Γ″
+trans⊩⋆ : ∀ {w w′ w″} → w ⊩⋆ unwrap w′ → w′ ⊩⋆ unwrap w″ → w ⊩⋆ unwrap w″
 trans⊩⋆ ts us = reflectᶜ⋆ (trans⊢⋆ (reifyᶜ⋆ ts) (reifyᶜ⋆ us))
 
 

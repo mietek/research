@@ -9,13 +9,13 @@ open ImplicitSyntax (_⊢_) (mono⊢) public
 -- Completeness with respect to a particular model.
 
 module _ {{_ : Model}} where
-  reify : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ A
+  reify : ∀ {A w} → w ⊩ A → unwrap w ⊢ A
   reify {α P}   s = syn s
-  reify {A ▻ B} s = syn (s refl⊆)
+  reify {A ▻ B} s = syn (s refl≤)
   reify {A ∧ B} s = pair (reify (π₁ s)) (reify (π₂ s))
   reify {⊤}    s = unit
 
-  reify⋆ : ∀ {Ξ Γ} → Γ ⊩⋆ Ξ → Γ ⊢⋆ Ξ
+  reify⋆ : ∀ {Ξ w} → w ⊩⋆ Ξ → unwrap w ⊢⋆ Ξ
   reify⋆ {∅}     ∙        = ∙
   reify⋆ {Ξ , A} (ts , t) = reify⋆ ts , reify t
 
@@ -23,22 +23,22 @@ module _ {{_ : Model}} where
 -- Additional useful equipment.
 
 module _ {{_ : Model}} where
-  ⟪K⟫ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B ▻ A
-  ⟪K⟫ {A} a η = let a′ = mono⊩ {A} η a
+  ⟪K⟫ : ∀ {A B w} → w ⊩ A → w ⊩ B ▻ A
+  ⟪K⟫ {A} a ξ = let a′ = mono⊩ {A} ξ a
                 in  app ck (reify a′) ⅋ K a′
 
-  ⟪S⟫′ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ (A ▻ B) ▻ A ▻ C
-  ⟪S⟫′ {A} {B} {C} s₁ η = let s₁′ = mono⊩ {A ▻ B ▻ C} η s₁
-                              t   = syn (s₁′ refl⊆)
-                          in  app cs t ⅋ λ s₂ η′ →
-                                let s₁″ = mono⊩ {A ▻ B ▻ C} (trans⊆ η η′) s₁
-                                    s₂′ = mono⊩ {A ▻ B} η′ s₂
-                                    t′  = syn (s₁″ refl⊆)
-                                    u   = syn (s₂′ refl⊆)
+  ⟪S⟫′ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C → w ⊩ (A ▻ B) ▻ A ▻ C
+  ⟪S⟫′ {A} {B} {C} s₁ ξ = let s₁′ = mono⊩ {A ▻ B ▻ C} ξ s₁
+                              t   = syn (s₁′ refl≤)
+                          in  app cs t ⅋ λ s₂ ξ′ →
+                                let s₁″ = mono⊩ {A ▻ B ▻ C} (trans≤ ξ ξ′) s₁
+                                    s₂′ = mono⊩ {A ▻ B} ξ′ s₂
+                                    t′  = syn (s₁″ refl≤)
+                                    u   = syn (s₂′ refl≤)
                                 in  app (app cs t′) u ⅋ ⟪S⟫ s₁″ s₂′
 
-  _⟪,⟫′_ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B ▻ A ∧ B
-  _⟪,⟫′_ {A} a η = let a′ = mono⊩ {A} η a
+  _⟪,⟫′_ : ∀ {A B w} → w ⊩ A → w ⊩ B ▻ A ∧ B
+  _⟪,⟫′_ {A} a ξ = let a′ = mono⊩ {A} ξ a
                    in  app cpair (reify a′) ⅋ _,_ a′
 
 
@@ -65,31 +65,31 @@ private
   instance
     canon : Model
     canon = record
-      { _⊩ᵅ_   = λ Γ P → Γ ⊢ α P
-      ; mono⊩ᵅ = mono⊢
+      { _⊩ᵅ_   = λ w P → unwrap w ⊢ α P
+      ; mono⊩ᵅ = λ ξ t → mono⊢ (unwrap≤ ξ) t
       }
 
 
 -- Soundness with respect to the canonical model.
 
-reflectᶜ : ∀ {A Γ} → Γ ⊢ A → Γ ⊩ A
+reflectᶜ : ∀ {A w} → unwrap w ⊢ A → w ⊩ A
 reflectᶜ {α P}   t = t ⅋ t
-reflectᶜ {A ▻ B} t = λ η → let t′ = mono⊢ η t
+reflectᶜ {A ▻ B} t = λ ξ → let t′ = mono⊢ (unwrap≤ ξ) t
                             in  t′ ⅋ λ a → reflectᶜ (app t′ (reify a))
 reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
 reflectᶜ {⊤}    t = ∙
 
-reflectᶜ⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊩⋆ Ξ
+reflectᶜ⋆ : ∀ {Ξ w} → unwrap w ⊢⋆ Ξ → w ⊩⋆ Ξ
 reflectᶜ⋆ {∅}     ∙        = ∙
 reflectᶜ⋆ {Ξ , A} (ts , t) = reflectᶜ⋆ ts , reflectᶜ t
 
 
 -- Reflexivity and transitivity.
 
-refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
+refl⊩⋆ : ∀ {w} → w ⊩⋆ unwrap w
 refl⊩⋆ = reflectᶜ⋆ refl⊢⋆
 
-trans⊩⋆ : ∀ {Γ Γ′ Γ″} → Γ ⊩⋆ Γ′ → Γ′ ⊩⋆ Γ″ → Γ ⊩⋆ Γ″
+trans⊩⋆ : ∀ {w w′ w″} → w ⊩⋆ unwrap w′ → w′ ⊩⋆ unwrap w″ → w ⊩⋆ unwrap w″
 trans⊩⋆ ts us = reflectᶜ⋆ (trans⊢⋆ (reify⋆ ts) (reify⋆ us))
 
 

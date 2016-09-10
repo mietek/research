@@ -29,41 +29,41 @@ private
   instance
     canon : Model
     canon = record
-      { _⊩ᵅ_   = λ Γ P → Γ ⊢ⁿᵉ α P
-      ; mono⊩ᵅ = mono⊢ⁿᵉ
+      { _⊩ᵅ_   = λ w P → unwrap w ⊢ⁿᵉ α P
+      ; mono⊩ᵅ = λ ξ t → mono⊢ⁿᵉ (unwrap≤ ξ) t
       }
 
 
 -- Soundness and completeness with respect to the canonical model.
 
 mutual
-  reflectᶜ : ∀ {A Γ} → Γ ⊢ⁿᵉ A → Γ ⊩ A
+  reflectᶜ : ∀ {A w} → unwrap w ⊢ⁿᵉ A → w ⊩ A
   reflectᶜ {α P}   t = t
-  reflectᶜ {A ▻ B} t = λ η a → reflectᶜ (appⁿᵉ (mono⊢ⁿᵉ η t) (reifyᶜ a))
+  reflectᶜ {A ▻ B} t = λ ξ a → reflectᶜ (appⁿᵉ (mono⊢ⁿᵉ (unwrap≤ ξ) t) (reifyᶜ a))
   reflectᶜ {A ∧ B} t = reflectᶜ (fstⁿᵉ t) , reflectᶜ (sndⁿᵉ t)
   reflectᶜ {⊤}    t = ∙
 
-  reifyᶜ : ∀ {A Γ} → Γ ⊩ A → Γ ⊢ⁿᶠ A
+  reifyᶜ : ∀ {A w} → w ⊩ A → unwrap w ⊢ⁿᶠ A
   reifyᶜ {α P}   s = neⁿᶠ s
-  reifyᶜ {A ▻ B} s = lamⁿᶠ (reifyᶜ (s weak⊆ (reflectᶜ {A} (varⁿᵉ top))))
+  reifyᶜ {A ▻ B} s = lamⁿᶠ (reifyᶜ (s weak≤ (reflectᶜ {A} (varⁿᵉ top))))
   reifyᶜ {A ∧ B} s = pairⁿᶠ (reifyᶜ (π₁ s)) (reifyᶜ (π₂ s))
   reifyᶜ {⊤}    s = unitⁿᶠ
 
-reflectᶜ⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ⁿᵉ Ξ → Γ ⊩⋆ Ξ
+reflectᶜ⋆ : ∀ {Ξ w} → unwrap w ⊢⋆ⁿᵉ Ξ → w ⊩⋆ Ξ
 reflectᶜ⋆ {∅}     ∙        = ∙
 reflectᶜ⋆ {Ξ , A} (ts , t) = reflectᶜ⋆ ts , reflectᶜ t
 
-reifyᶜ⋆ : ∀ {Ξ Γ} → Γ ⊩⋆ Ξ → Γ ⊢⋆ⁿᶠ Ξ
+reifyᶜ⋆ : ∀ {Ξ w} → w ⊩⋆ Ξ → unwrap w ⊢⋆ⁿᶠ Ξ
 reifyᶜ⋆ {∅}     ∙        = ∙
 reifyᶜ⋆ {Ξ , A} (ts , t) = reifyᶜ⋆ ts , reifyᶜ t
 
 
 -- Reflexivity and transitivity.
 
-refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
+refl⊩⋆ : ∀ {w} → w ⊩⋆ unwrap w
 refl⊩⋆ = reflectᶜ⋆ refl⊢⋆ⁿᵉ
 
-trans⊩⋆ : ∀ {Γ Γ′ Γ″} → Γ ⊩⋆ Γ′ → Γ′ ⊩⋆ Γ″ → Γ ⊩⋆ Γ″
+trans⊩⋆ : ∀ {w w′ w″} → w ⊩⋆ unwrap w′ → w′ ⊩⋆ unwrap w″ → w ⊩⋆ unwrap w″
 trans⊩⋆ ts us = eval⋆ (trans⊢⋆ (nf→tm⋆ (reifyᶜ⋆ ts)) (nf→tm⋆ (reifyᶜ⋆ us))) refl⊩⋆
 
 
