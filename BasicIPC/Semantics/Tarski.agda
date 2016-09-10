@@ -13,37 +13,37 @@ record Model : Set₁ where
   field
     -- Forcing for atomic propositions; monotonic.
     _⊩ᵅ_   : Cx Ty → Atom → Set
-    mono⊩ᵅ : ∀ {P Γ Γ′} → Γ ⊆ Γ′ → Γ ⊩ᵅ P → Γ′ ⊩ᵅ P
+    mono⊩ᵅ : ∀ {P w w′} → w ⊆ w′ → w ⊩ᵅ P → w′ ⊩ᵅ P
 
 open Model {{…}} public
 
 
--- Forcing in a particular model.
+-- Forcing in a particular world of a particular model.
 
 module _ {{_ : Model}} where
   infix 3 _⊩_
   _⊩_ : Cx Ty → Ty → Set
-  Γ ⊩ α P   = Γ ⊩ᵅ P
-  Γ ⊩ A ▻ B = ∀ {Γ′} → Γ ⊆ Γ′ → Γ′ ⊩ A → Γ′ ⊩ B
-  Γ ⊩ A ∧ B = Γ ⊩ A × Γ ⊩ B
-  Γ ⊩ ⊤    = 𝟙
+  w ⊩ α P   = w ⊩ᵅ P
+  w ⊩ A ▻ B = ∀ {w′} → w ⊆ w′ → w′ ⊩ A → w′ ⊩ B
+  w ⊩ A ∧ B = w ⊩ A × w ⊩ B
+  w ⊩ ⊤    = 𝟙
 
   infix 3 _⊩⋆_
   _⊩⋆_ : Cx Ty → Cx Ty → Set
-  Γ ⊩⋆ ∅     = 𝟙
-  Γ ⊩⋆ Ξ , A = Γ ⊩⋆ Ξ × Γ ⊩ A
+  w ⊩⋆ ∅     = 𝟙
+  w ⊩⋆ Ξ , A = w ⊩⋆ Ξ × w ⊩ A
 
 
 -- Monotonicity with respect to context inclusion.
 
 module _ {{_ : Model}} where
-  mono⊩ : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊩ A → Γ′ ⊩ A
+  mono⊩ : ∀ {A w w′} → w ⊆ w′ → w ⊩ A → w′ ⊩ A
   mono⊩ {α P}   η s = mono⊩ᵅ η s
   mono⊩ {A ▻ B} η s = λ η′ → s (trans⊆ η η′)
   mono⊩ {A ∧ B} η s = mono⊩ {A} η (π₁ s) , mono⊩ {B} η (π₂ s)
   mono⊩ {⊤}    η s = ∙
 
-  mono⊩⋆ : ∀ {Ξ Γ Γ′} → Γ ⊆ Γ′ → Γ ⊩⋆ Ξ → Γ′ ⊩⋆ Ξ
+  mono⊩⋆ : ∀ {Ξ w w′} → w ⊆ w′ → w ⊩⋆ Ξ → w′ ⊩⋆ Ξ
   mono⊩⋆ {∅}     η ∙        = ∙
   mono⊩⋆ {Ξ , A} η (ts , t) = mono⊩⋆ {Ξ} η ts , mono⊩ {A} η t
 
@@ -51,21 +51,21 @@ module _ {{_ : Model}} where
 -- Additional useful equipment.
 
 module _ {{_ : Model}} where
-  _⟪$⟫_ : ∀ {A B Γ} → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ B
+  _⟪$⟫_ : ∀ {A B w} → w ⊩ A ▻ B → w ⊩ A → w ⊩ B
   f ⟪$⟫ a = f refl⊆ a
 
-  ⟪K⟫ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B ▻ A
+  ⟪K⟫ : ∀ {A B w} → w ⊩ A → w ⊩ B ▻ A
   ⟪K⟫ {A} a η = K (mono⊩ {A} η a)
 
-  ⟪S⟫ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ A ▻ B → Γ ⊩ A → Γ ⊩ C
+  ⟪S⟫ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C → w ⊩ A ▻ B → w ⊩ A → w ⊩ C
   ⟪S⟫ {A} {B} {C} s₁ s₂ a = _⟪$⟫_ {B} {C} (_⟪$⟫_ {A} {B ▻ C} s₁ a) (_⟪$⟫_ {A} {B} s₂ a)
 
-  ⟪S⟫′ : ∀ {A B C Γ} → Γ ⊩ A ▻ B ▻ C → Γ ⊩ (A ▻ B) ▻ A ▻ C
+  ⟪S⟫′ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C → w ⊩ (A ▻ B) ▻ A ▻ C
   ⟪S⟫′ {A} {B} {C} s₁ η s₂ η′ a = let s₁′ = mono⊩ {A ▻ B ▻ C} (trans⊆ η η′) s₁
                                       s₂′ = mono⊩ {A ▻ B} η′ s₂
                                   in  ⟪S⟫ {A} {B} {C} s₁′ s₂′ a
 
-  _⟪,⟫′_ : ∀ {A B Γ} → Γ ⊩ A → Γ ⊩ B ▻ A ∧ B
+  _⟪,⟫′_ : ∀ {A B w} → w ⊩ A → w ⊩ B ▻ A ∧ B
   _⟪,⟫′_ {A} {B} a η = _,_ (mono⊩ {A} η a)
 
 
