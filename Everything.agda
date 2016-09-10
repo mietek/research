@@ -154,29 +154,65 @@ import BasicT.Metatheory.GentzenNormalForm-Unknown
 
 
 
--- Intuitionistic propositional calculus. (To be rewritten.)
+-- Intuitionistic propositional calculus.
 
-import IPC
-import IPC.TarskiSemantics
-import IPC.KripkeSemantics
-import IPC.Hilbert.List
-import IPC.Hilbert.ListWithContext
-import IPC.Hilbert.Tree
-import IPC.Hilbert.Tree.TarskiSoundness
-import IPC.Hilbert.Tree.TarskiBasicCompleteness
-import IPC.Hilbert.TreeWithContext
-import IPC.Hilbert.TreeWithContext.TarskiSoundness
-import IPC.Hilbert.TreeWithContext.TarskiBasicCompleteness
-import IPC.Hilbert.TreeWithContext.KripkeSoundness
-import IPC.Hilbert.Translation
-import IPC.Gentzen
-import IPC.Gentzen.TarskiSoundness
-import IPC.Gentzen.TarskiBasicCompleteness
-import IPC.Gentzen.KripkeSoundness
-import IPC.Gentzen.KripkeBasicCompleteness
-import IPC.Gentzen.KripkeCompleteness
-import IPC.Gentzen.HereditarySubstitution
-import IPC.Translation
+
+-- Common syntax.
+import IPC.Syntax.Common
+
+-- Hilbert-style formalisation of closed syntax.
+import IPC.Syntax.ClosedHilbertSequential  -- Sequences of terms.
+import IPC.Syntax.ClosedHilbert            -- Nested terms.
+
+-- Hilbert-style formalisation of syntax.
+import IPC.Syntax.HilbertSequential        -- Sequences of terms.
+import IPC.Syntax.Hilbert                  -- Nested terms.
+
+-- Gentzen-style formalisation of syntax.
+import IPC.Syntax.Gentzen                  -- Simple terms.
+import IPC.Syntax.GentzenNormalForm        -- Normal forms and neutrals.
+import IPC.Syntax.GentzenSpinalNormalForm  -- Normal forms, neutrals, and spines.
+
+-- Translation between different formalisations of syntax.
+import IPC.Syntax.Translation
+
+
+-- Basic Tarski-style semantics, for soundness only.
+import IPC.Semantics.BasicTarski
+
+-- Kripke-style semantics with exploding abstract worlds.
+import IPC.Semantics.KripkeExploding
+
+
+-- Available metatheory for IPC.
+--
+--       ┌─────┬─────┬─────┬─────┬─────┐
+--       │ CH  │ H   │ G   │ Gⁿᶠ │ Gˢⁿᶠ│
+-- ┌─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ BT  │ e₀  │ e   │ e   │     │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ KE  │     │     │ eq  │ eq  │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ HS  │     │     │     │     │ n   │
+-- └─────┴─────┴─────┴─────┴─────┴─────┘
+--
+-- e₀   : Soundness only, for closed terms only.
+-- e₀q₀ : Soundness and completeness, for closed terms only.
+-- e    : Soundness only.
+-- eq₀  : Soundness, for all terms; completeness, for closed terms only.
+-- eq   : Soundness and completeness, or normalisation by evaluation.
+-- n    : Normalisation by other means.
+
+import IPC.Metatheory.ClosedHilbert-BasicTarski
+
+import IPC.Metatheory.Hilbert-BasicTarski
+
+import IPC.Metatheory.Gentzen-BasicTarski
+import IPC.Metatheory.Gentzen-KripkeExploding
+
+import IPC.Metatheory.GentzenNormalForm-KripkeExploding
+
+import IPC.Metatheory.GentzenSpinalNormalForm-HereditarySubstitution
 
 
 

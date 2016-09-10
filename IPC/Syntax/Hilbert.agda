@@ -1,9 +1,13 @@
-module IPC.Hilbert.TreeWithContext where
+-- Intuitionistic propositional calculus.
+-- Hilbert-style formalisation of syntax.
+-- Nested terms.
 
-open import IPC public
+module IPC.Syntax.Hilbert where
+
+open import IPC.Syntax.Common public
 
 
--- Derivations, as Hilbert-style trees of combinators, with context.
+-- Derivations.
 
 infix 3 _⊢_
 data _⊢_ (Γ : Cx Ty) : Ty → Set where
@@ -250,6 +254,7 @@ data _⋙_ {Γ : Cx Ty} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
                          → app (app (app cs t) u) v ⋙ app (app t v) (app u v)
 
   -- TODO: What about eta for ▻?
+
   beta∧₁⋙   : ∀ {A B} → {t : Γ ⊢ A} → {u : Γ ⊢ B}
                        → app cfst (app (app cpair t) u) ⋙ t
 

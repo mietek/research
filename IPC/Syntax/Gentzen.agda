@@ -1,9 +1,13 @@
-module IPC.Gentzen where
+-- Intuitionistic propositional calculus.
+-- Gentzen-style formalisation of syntax.
+-- Simple terms.
 
-open import IPC public
+module IPC.Syntax.Gentzen where
+
+open import IPC.Syntax.Common public
 
 
--- Derivations, as Gentzen-style natural deduction trees.
+-- Derivations.
 
 infix 3 _⊢_
 data _⊢_ (Γ : Cx Ty) : Ty → Set where
@@ -66,10 +70,27 @@ refl⊢⋆ {Γ , A} = mono⊢⋆ weak⊆ refl⊢⋆ , v₀
 
 -- Deduction theorem is built-in.
 
+lam⋆ : ∀ {Ξ Γ A} → Γ ⧺ Ξ ⊢ A → Γ ⊢ Ξ ▻⋯▻ A
+lam⋆ {∅}     = I
+lam⋆ {Ξ , B} = lam⋆ {Ξ} ∘ lam
+
+lam⋆₀ : ∀ {Γ A} → Γ ⊢ A → ∅ ⊢ Γ ▻⋯▻ A
+lam⋆₀ {∅}     = I
+lam⋆₀ {Γ , B} = lam⋆₀ ∘ lam
+
+
 -- Detachment theorem.
 
 det : ∀ {A B Γ} → Γ ⊢ A ▻ B → Γ , A ⊢ B
 det t = app (mono⊢ weak⊆ t) v₀
+
+det⋆ : ∀ {Ξ Γ A} → Γ ⊢ Ξ ▻⋯▻ A → Γ ⧺ Ξ ⊢ A
+det⋆ {∅}     = I
+det⋆ {Ξ , B} = det ∘ det⋆ {Ξ}
+
+det⋆₀ : ∀ {Γ A} → ∅ ⊢ Γ ▻⋯▻ A → Γ ⊢ A
+det⋆₀ {∅}     = I
+det⋆₀ {Γ , B} = det ∘ det⋆₀
 
 
 -- Cut and multicut.

@@ -1,9 +1,13 @@
-module IPC.Hilbert.Tree where
+-- Intuitionistic propositional calculus.
+-- Hilbert-style formalisation of closed syntax.
+-- Nested terms.
 
-open import IPC public
+module IPC.Syntax.ClosedHilbert where
+
+open import IPC.Syntax.Common public
 
 
--- Derivations, as Hilbert-style trees of combinators, with context.
+-- Derivations.
 
 infix 3 ⊢_
 data ⊢_ : Ty → Set where
@@ -107,10 +111,6 @@ data _⋙_ : ∀ {A} → ⊢ A → ⊢ A → Set where
                        → t ⋙ t′ → u ⋙ u′
                        → app t u ⋙ app t′ u′
 
-  congpair⋙ : ∀ {A B} → {t t′ : ⊢ A} → {u u′ : ⊢ B}
-                       → t ⋙ t′ → u ⋙ u′
-                       → app (app cpair t) u ⋙ app (app cpair t′) u′
-
   congi⋙    : ∀ {A} → {t t′ : ⊢ A}
                      → t ⋙ t′
                      → app ci t ⋙ app ci t′
@@ -122,6 +122,10 @@ data _⋙_ : ∀ {A} → ⊢ A → ⊢ A → Set where
   congs⋙    : ∀ {A B C} → {t t′ : ⊢ A ▻ B ▻ C} → {u u′ : ⊢ A ▻ B} → {v v′ : ⊢ A}
                          → t ⋙ t′ → u ⋙ u′ → v ⋙ v′
                          → app (app (app cs t) u) v ⋙ app (app (app cs t′) u′) v′
+
+  congpair⋙ : ∀ {A B} → {t t′ : ⊢ A} → {u u′ : ⊢ B}
+                       → t ⋙ t′ → u ⋙ u′
+                       → app (app cpair t) u ⋙ app (app cpair t′) u′
 
   congfst⋙  : ∀ {A B} → {t t′ : ⊢ A ∧ B}
                        → t ⋙ t′
@@ -156,6 +160,7 @@ data _⋙_ : ∀ {A} → ⊢ A → ⊢ A → Set where
                          → app (app (app cs t) u) v ⋙ app (app t v) (app u v)
 
   -- TODO: What about eta for ▻?
+
   beta∧₁⋙   : ∀ {A B} → {t : ⊢ A} → {u : ⊢ B}
                        → app cfst (app (app cpair t) u) ⋙ t
 
