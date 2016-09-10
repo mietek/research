@@ -102,7 +102,7 @@ tm→nf (snd t)    = sndⁿᶠ (tm→nf t)
 tm→nf unit       = unitⁿᶠ
 
 
--- Normalisation.
+-- Normalisation by hereditary substitution.
 
 norm : ∀ {A Γ} → Γ ⊢ A → Γ ⊢ A
 norm = nf→tm ∘ tm→nf

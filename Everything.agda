@@ -66,33 +66,36 @@ import BasicIPC.Semantics.KripkeGodel                -- Gödel embedding.
 
 -- Available metatheory for basic IPC.
 --
---       ┌─────┬─────┬─────┬─────┐
---       │ CH  │ H   │ G   │ Gⁿᶠ │
--- ┌─────┼─────┼─────┼─────┼─────┤
--- │ BT  │ e₀  │ e   │ e   │     │
--- ├─────┼─────┼─────┼─────┼─────┤
--- │ TCGI│ e₀q₀│ eq₀ │ eq₀ │     │
--- ├─────┼─────┼─────┼─────┼─────┤
--- │ TCGH│ e₀q₀│ eq₀ │     │     │
--- ├─────┼─────┼─────┼─────┼─────┤
--- │ TGI │     │ eq  │ eq  │     │
--- ├─────┼─────┼─────┼─────┼─────┤
--- │ TGH │     │ eq  │ eq  │     │
--- ├─────┼─────┼─────┼─────┼─────┤
--- │ TGG │     │ eq  │ eq  │     │
--- ├─────┼─────┼─────┼─────┼─────┤
--- │ T   │     │ eq  │ eq  │ eq  │
--- ├─────┼─────┼─────┼─────┼─────┤
--- │ KMT │     │ eq  │ eq  │ eq  │
--- ├─────┼─────┼─────┼─────┼─────┤
--- │ KG  │     │ eq  │ eq  │ eq  │
--- └─────┴─────┴─────┴─────┴─────┘
+--       ┌─────┬─────┬─────┬─────┬─────┐
+--       │ CH  │ H   │ G   │ Gⁿᶠ │ Gˢⁿᶠ│
+-- ┌─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ BT  │ e₀  │ e   │ e   │     │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ TCGI│ e₀q₀│ eq₀ │ eq₀ │     │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ TCGH│ e₀q₀│ eq₀ │     │     │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ TGI │     │ eq  │ eq  │     │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ TGH │     │ eq  │ eq  │     │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ TGG │     │ eq  │ eq  │     │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ T   │     │ eq  │ eq  │ eq  │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ KMT │     │ eq  │ eq  │ eq  │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ KG  │     │ eq  │ eq  │ eq  │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ HS  │     │     │     │     │ n   │
+-- └─────┴─────┴─────┴─────┴─────┴─────┘
 --
 -- e₀   : Soundness only, for closed terms only.
 -- e₀q₀ : Soundness and completeness, for closed terms only.
 -- e    : Soundness only.
 -- eq₀  : Soundness, for all terms; completeness, for closed terms only.
--- eq   : Soundness and completeness.
+-- eq   : Soundness and completeness, or normalisation by evaluation.
+-- n    : Normalisation by other means.
 
 
 import BasicIPC.Metatheory.ClosedHilbert-BasicTarski
@@ -141,6 +144,8 @@ import BasicT.Syntax.GentzenNormalForm
 -- Basic Tarski-style semantics, for soundness only.
 import BasicT.Semantics.BasicTarski
 
+
+-- Available metatheory.
 
 import BasicT.Metatheory.Gentzen-BasicTarski
 
@@ -296,7 +301,7 @@ import BasicIS4.Equipment.KripkeDyadicNonCanonical
 -- e₀q₀ : Soundness and completeness, for closed terms only.
 -- e    : Soundness only.
 -- eq₀  : Soundness, for all terms; completeness, for closed terms only.
--- eq   : Soundness and completeness.
+-- eq   : Soundness and completeness, or normalisation by evaluation.
 -- WIP  : Work in progress.
 
 
