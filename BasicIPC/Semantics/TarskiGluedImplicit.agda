@@ -36,7 +36,7 @@ module ImplicitSyntax
     infix 3 _⊩_
     _⊩_ : World → Ty → Set
     w ⊩ α P   = Glue (unwrap w [⊢] (α P)) (w ⊩ᵅ P)
-    w ⊩ A ▻ B = ∀ {w′} → w ≤ w′ → Glue (unwrap w′ [⊢] (A ▻ B)) (w′ ⊩ A → w′ ⊩ B)
+    w ⊩ A ▻ B = Glue (unwrap w [⊢] (A ▻ B)) (∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B)
     w ⊩ A ∧ B = w ⊩ A × w ⊩ B
     w ⊩ ⊤    = 𝟙
 
@@ -51,7 +51,7 @@ module ImplicitSyntax
   module _ {{_ : Model}} where
     mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
     mono⊩ {α P}   ξ s = mono[⊢] (unwrap≤ ξ) (syn s) ⅋ mono⊩ᵅ ξ (sem s)
-    mono⊩ {A ▻ B} ξ s = λ ξ′ → s (trans≤ ξ ξ′)
+    mono⊩ {A ▻ B} ξ s = mono[⊢] (unwrap≤ ξ) (syn s) ⅋ λ ξ′ → sem s (trans≤ ξ ξ′)
     mono⊩ {A ∧ B} ξ s = mono⊩ {A} ξ (π₁ s) , mono⊩ {B} ξ (π₂ s)
     mono⊩ {⊤}    ξ s = ∙
 
@@ -64,7 +64,7 @@ module ImplicitSyntax
 
   module _ {{_ : Model}} where
     _⟪$⟫_ : ∀ {A B w} → w ⊩ A ▻ B → w ⊩ A → w ⊩ B
-    s ⟪$⟫ a = sem (s refl≤) a
+    s ⟪$⟫ a = sem s refl≤ a
 
     ⟪S⟫ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C → w ⊩ A ▻ B → w ⊩ A → w ⊩ C
     ⟪S⟫ s₁ s₂ a = (s₁ ⟪$⟫ a) ⟪$⟫ (s₂ ⟪$⟫ a)

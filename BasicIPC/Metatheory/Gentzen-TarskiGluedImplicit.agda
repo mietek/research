@@ -11,7 +11,7 @@ open ImplicitSyntax (_⊢_) (mono⊢) public
 module _ {{_ : Model}} where
   reify : ∀ {A w} → w ⊩ A → unwrap w ⊢ A
   reify {α P}   s = syn s
-  reify {A ▻ B} s = syn (s refl≤)
+  reify {A ▻ B} s = syn s
   reify {A ∧ B} s = pair (reify (π₁ s)) (reify (π₂ s))
   reify {⊤}    s = unit
 
@@ -24,9 +24,8 @@ module _ {{_ : Model}} where
 
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)    γ = lookup i γ
-eval (lam t)    γ = λ ξ → let γ′ = mono⊩⋆ ξ γ
-                           in  multicut (reify⋆ γ′) (lam t) ⅋ λ a →
-                                 eval t (γ′ , a)
+eval (lam t)    γ = multicut (reify⋆ γ) (lam t) ⅋ λ ξ a →
+                      eval t (mono⊩⋆ ξ γ , a)
 eval (app t u)  γ = eval t γ ⟪$⟫ eval u γ
 eval (pair t u) γ = eval t γ , eval u γ
 eval (fst t)    γ = π₁ (eval t γ)
@@ -52,8 +51,7 @@ private
 
 reflectᶜ : ∀ {A w} → unwrap w ⊢ A → w ⊩ A
 reflectᶜ {α P}   t = t ⅋ t
-reflectᶜ {A ▻ B} t = λ ξ → let t′ = mono⊢ (unwrap≤ ξ) t
-                            in  t′ ⅋ λ a → reflectᶜ (app t′ (reify a))
+reflectᶜ {A ▻ B} t = t ⅋ λ ξ a → reflectᶜ (app (mono⊢ (unwrap≤ ξ) t) (reify a))
 reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
 reflectᶜ {⊤}    t = ∙
 

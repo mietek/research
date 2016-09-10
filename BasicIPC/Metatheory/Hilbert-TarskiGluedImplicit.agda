@@ -11,7 +11,7 @@ open ImplicitSyntax (_⊢_) (mono⊢) public
 module _ {{_ : Model}} where
   reify : ∀ {A w} → w ⊩ A → unwrap w ⊢ A
   reify {α P}   s = syn s
-  reify {A ▻ B} s = syn (s refl≤)
+  reify {A ▻ B} s = syn s
   reify {A ∧ B} s = pair (reify (π₁ s)) (reify (π₂ s))
   reify {⊤}    s = unit
 
@@ -24,22 +24,17 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   ⟪K⟫ : ∀ {A B w} → w ⊩ A → w ⊩ B ▻ A
-  ⟪K⟫ {A} a ξ = let a′ = mono⊩ {A} ξ a
-                in  app ck (reify a′) ⅋ K a′
+  ⟪K⟫ {A} a = app ck (reify a) ⅋ λ ξ →
+                K (mono⊩ {A} ξ a)
 
   ⟪S⟫′ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C → w ⊩ (A ▻ B) ▻ A ▻ C
-  ⟪S⟫′ {A} {B} {C} s₁ ξ = let s₁′ = mono⊩ {A ▻ B ▻ C} ξ s₁
-                              t   = syn (s₁′ refl≤)
-                          in  app cs t ⅋ λ s₂ ξ′ →
-                                let s₁″ = mono⊩ {A ▻ B ▻ C} (trans≤ ξ ξ′) s₁
-                                    s₂′ = mono⊩ {A ▻ B} ξ′ s₂
-                                    t′  = syn (s₁″ refl≤)
-                                    u   = syn (s₂′ refl≤)
-                                in  app (app cs t′) u ⅋ ⟪S⟫ s₁″ s₂′
+  ⟪S⟫′ {A} {B} {C} s₁ = app cs (syn s₁) ⅋ λ ξ s₂ →
+                          app (app cs (mono⊢ (unwrap≤ ξ) (syn s₁))) (syn s₂) ⅋ λ ξ′ →
+                            ⟪S⟫ (mono⊩ {A ▻ B ▻ C} (trans≤ ξ ξ′) s₁) (mono⊩ {A ▻ B} ξ′ s₂)
 
   _⟪,⟫′_ : ∀ {A B w} → w ⊩ A → w ⊩ B ▻ A ∧ B
-  _⟪,⟫′_ {A} a ξ = let a′ = mono⊩ {A} ξ a
-                   in  app cpair (reify a′) ⅋ _,_ a′
+  _⟪,⟫′_ {A} a = app cpair (reify a) ⅋ λ ξ →
+                   _,_ (mono⊩ {A} ξ a)
 
 
 -- Soundness with respect to all models, or evaluation.
@@ -47,12 +42,12 @@ module _ {{_ : Model}} where
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)   γ = lookup i γ
 eval (app t u) γ = eval t γ ⟪$⟫ eval u γ
-eval ci        γ = K (ci ⅋ I)
-eval ck        γ = K (ck ⅋ ⟪K⟫)
-eval cs        γ = K (cs ⅋ ⟪S⟫′)
-eval cpair     γ = K (cpair ⅋ _⟪,⟫′_)
-eval cfst      γ = K (cfst ⅋ π₁)
-eval csnd      γ = K (csnd ⅋ π₂)
+eval ci        γ = ci ⅋ K I
+eval ck        γ = ck ⅋ K ⟪K⟫
+eval cs        γ = cs ⅋ K ⟪S⟫′
+eval cpair     γ = cpair ⅋ K _⟪,⟫′_
+eval cfst      γ = cfst ⅋ K π₁
+eval csnd      γ = csnd ⅋ K π₂
 eval unit      γ = ∙
 
 
@@ -74,8 +69,7 @@ private
 
 reflectᶜ : ∀ {A w} → unwrap w ⊢ A → w ⊩ A
 reflectᶜ {α P}   t = t ⅋ t
-reflectᶜ {A ▻ B} t = λ ξ → let t′ = mono⊢ (unwrap≤ ξ) t
-                            in  t′ ⅋ λ a → reflectᶜ (app t′ (reify a))
+reflectᶜ {A ▻ B} t = t ⅋ λ ξ a → reflectᶜ (app (mono⊢ (unwrap≤ ξ) t) (reify a))
 reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
 reflectᶜ {⊤}    t = ∙
 

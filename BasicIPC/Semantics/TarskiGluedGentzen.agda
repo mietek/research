@@ -44,7 +44,7 @@ module _ {{_ : Model}} where
   infix 3 _⊩_
   _⊩_ : World → Ty → Set
   w ⊩ α P   = Glue (unwrap w [⊢] α P) (w ⊩ᵅ P)
-  w ⊩ A ▻ B = ∀ {w′} → w ≤ w′ → Glue (unwrap w′ [⊢] A ▻ B) (w′ ⊩ A → w′ ⊩ B)
+  w ⊩ A ▻ B = Glue (unwrap w [⊢] (A ▻ B)) (∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B)
   w ⊩ A ∧ B = w ⊩ A × w ⊩ B
   w ⊩ ⊤    = 𝟙
 
@@ -59,7 +59,7 @@ module _ {{_ : Model}} where
 module _ {{_ : Model}} where
   mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
   mono⊩ {α P}   ξ s = mono[⊢] (unwrap≤ ξ) (syn s) ⅋ mono⊩ᵅ ξ (sem s)
-  mono⊩ {A ▻ B} ξ s = λ ξ′ → s (trans≤ ξ ξ′)
+  mono⊩ {A ▻ B} ξ s = mono[⊢] (unwrap≤ ξ) (syn s) ⅋ λ ξ′ → sem s (trans≤ ξ ξ′)
   mono⊩ {A ∧ B} ξ s = mono⊩ {A} ξ (π₁ s) , mono⊩ {B} ξ (π₂ s)
   mono⊩ {⊤}    ξ s = ∙
 
@@ -73,7 +73,7 @@ module _ {{_ : Model}} where
 module _ {{_ : Model}} where
   reifyʳ : ∀ {A w} → w ⊩ A → unwrap w [⊢] A
   reifyʳ {α P}   s = syn s
-  reifyʳ {A ▻ B} s = syn (s refl≤)
+  reifyʳ {A ▻ B} s = syn s
   reifyʳ {A ∧ B} s = [pair] (reifyʳ (π₁ s)) (reifyʳ (π₂ s))
   reifyʳ {⊤}    s = [unit]
 
@@ -129,28 +129,23 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   _⟪$⟫_ : ∀ {A B w} → w ⊩ A ▻ B → w ⊩ A → w ⊩ B
-  s ⟪$⟫ a = sem (s refl≤) a
+  s ⟪$⟫ a = sem s refl≤ a
 
   ⟪K⟫ : ∀ {A B w} → w ⊩ A → w ⊩ B ▻ A
-  ⟪K⟫ {A} a ξ = let a′ = mono⊩ {A} ξ a
-                in  [app] [ck] (reifyʳ a′) ⅋ K a′
+  ⟪K⟫ {A} a = [app] [ck] (reifyʳ a) ⅋ λ ξ →
+                K (mono⊩ {A} ξ a)
 
   ⟪S⟫ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C → w ⊩ A ▻ B → w ⊩ A → w ⊩ C
   ⟪S⟫ s₁ s₂ a = (s₁ ⟪$⟫ a) ⟪$⟫ (s₂ ⟪$⟫ a)
 
   ⟪S⟫′ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C → w ⊩ (A ▻ B) ▻ A ▻ C
-  ⟪S⟫′ {A} {B} {C} s₁ ξ = let s₁′ = mono⊩ {A ▻ B ▻ C} ξ s₁
-                              t   = syn (s₁′ refl≤)
-                          in  [app] [cs] t ⅋ λ s₂ ξ′ →
-                                let s₁″ = mono⊩ {A ▻ B ▻ C} (trans≤ ξ ξ′) s₁
-                                    s₂′ = mono⊩ {A ▻ B} ξ′ s₂
-                                    t′  = syn (s₁″ refl≤)
-                                    u   = syn (s₂′ refl≤)
-                                in  [app] ([app] [cs] t′) u ⅋ ⟪S⟫ s₁″ s₂′
+  ⟪S⟫′ {A} {B} {C} s₁ = [app] [cs] (syn s₁) ⅋ λ ξ s₂ →
+                          [app] ([app] [cs] (mono[⊢] (unwrap≤ ξ) (syn s₁))) (syn s₂) ⅋ λ ξ′ →
+                            ⟪S⟫ (mono⊩ {A ▻ B ▻ C} (trans≤ ξ ξ′) s₁) (mono⊩ {A ▻ B} ξ′ s₂)
 
   _⟪,⟫′_ : ∀ {A B w} → w ⊩ A → w ⊩ B ▻ A ∧ B
-  _⟪,⟫′_ {A} a ξ = let a′ = mono⊩ {A} ξ a
-                   in  [app] [cpair] (reifyʳ a′) ⅋ _,_ a′
+  _⟪,⟫′_ {A} a = [app] [cpair] (reifyʳ a) ⅋ λ ξ →
+                   _,_ (mono⊩ {A} ξ a)
 
 
 -- Forcing in a particular world of a particular model, for sequents.

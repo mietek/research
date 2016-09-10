@@ -24,12 +24,12 @@ module _ {{_ : Model}} where
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)   γ = lookup i γ
 eval (app t u) γ = eval t γ ⟪$⟫ eval u γ
-eval ci        γ = K ([ci] ⅋ I)
-eval ck        γ = K ([ck] ⅋ ⟪K⟫)
-eval cs        γ = K ([cs] ⅋ ⟪S⟫′)
-eval cpair     γ = K ([cpair] ⅋ _⟪,⟫′_)
-eval cfst      γ = K ([cfst] ⅋ π₁)
-eval csnd      γ = K ([csnd] ⅋ π₂)
+eval ci        γ = [ci] ⅋ K I
+eval ck        γ = [ck] ⅋ K ⟪K⟫
+eval cs        γ = [cs] ⅋ K ⟪S⟫′
+eval cpair     γ = [cpair] ⅋ K _⟪,⟫′_
+eval cfst      γ = [cfst] ⅋ K π₁
+eval csnd      γ = [csnd] ⅋ K π₂
 eval unit      γ = ∙
 
 
@@ -64,14 +64,13 @@ private
 mutual
   reflectᶜ : ∀ {A w} → unwrap w ⊢ A → w ⊩ A
   reflectᶜ {α P}   t = t ⅋ t
-  reflectᶜ {A ▻ B} t = λ ξ → let t′ = mono⊢ (unwrap≤ ξ) t
-                              in  t′ ⅋ λ a → reflectᶜ (app t′ (reifyᶜ a))
+  reflectᶜ {A ▻ B} t = t ⅋ λ ξ a → reflectᶜ (app (mono⊢ (unwrap≤ ξ) t) (reifyᶜ a))
   reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
   reflectᶜ {⊤}    t = ∙
 
   reifyᶜ : ∀ {A w} → w ⊩ A → unwrap w ⊢ A
   reifyᶜ {α P}   s = syn s
-  reifyᶜ {A ▻ B} s = syn (s refl≤)
+  reifyᶜ {A ▻ B} s = syn s
   reifyᶜ {A ∧ B} s = pair (reifyᶜ (π₁ s)) (reifyᶜ (π₂ s))
   reifyᶜ {⊤}    s = unit
 
