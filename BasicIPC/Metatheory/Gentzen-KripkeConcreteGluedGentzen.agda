@@ -1,7 +1,7 @@
-module BasicIPC.Metatheory.Gentzen-TarskiGluedGentzen where
+module BasicIPC.Metatheory.Gentzen-KripkeConcreteGluedGentzen where
 
 open import BasicIPC.Syntax.Gentzen public
-open import BasicIPC.Semantics.TarskiGluedGentzen public
+open import BasicIPC.Semantics.KripkeConcreteGluedGentzen public
 
 
 -- Internalisation of syntax as syntax representation in a particular model.

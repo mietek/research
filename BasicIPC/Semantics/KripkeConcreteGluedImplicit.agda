@@ -1,8 +1,8 @@
 -- Basic intuitionistic propositional calculus, without ∨ or ⊥.
--- Tarski-style semantics with contexts as concrete worlds, and glueing for α and ▻.
+-- Kripke-style semantics with contexts as concrete worlds, and glueing for α and ▻.
 -- Implicit syntax.
 
-module BasicIPC.Semantics.TarskiGluedImplicit where
+module BasicIPC.Semantics.KripkeConcreteGluedImplicit where
 
 open import BasicIPC.Syntax.Common public
 open import Common.Semantics public
@@ -10,7 +10,7 @@ open import Common.Semantics public
 open ConcreteWorlds (Ty) public
 
 
--- Intuitionistic Tarski models.
+-- Partial intuitionistic Kripke models.
 
 record Model : Set₁ where
   infix 3 _⊩ᵅ_

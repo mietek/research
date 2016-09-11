@@ -1,7 +1,7 @@
-module BasicIPC.Metatheory.GentzenNormalForm-Tarski where
+module BasicIPC.Metatheory.GentzenNormalForm-KripkeConcrete where
 
 open import BasicIPC.Syntax.GentzenNormalForm public
-open import BasicIPC.Semantics.Tarski public
+open import BasicIPC.Semantics.KripkeConcrete public
 
 
 -- Soundness with respect to all models, or evaluation.

@@ -1,33 +1,22 @@
-module BasicIPC.Metatheory.Hilbert-TarskiClosedGluedImplicit where
+module BasicIPC.Metatheory.Hilbert-TarskiGluedClosedHilbert where
 
 open import BasicIPC.Syntax.Hilbert public
-open import BasicIPC.Semantics.TarskiClosedGluedImplicit public
-
-open ImplicitSyntax (∅ ⊢_) public
+open import BasicIPC.Semantics.TarskiGluedClosedHilbert public
 
 
--- Completeness with respect to a particular model, for closed terms only.
+-- Internalisation of syntax as syntax representation in a particular model, for closed terms only.
 
 module _ {{_ : Model}} where
-  reify : ∀ {A} → ⊩ A → ∅ ⊢ A
-  reify {α P}   s = syn s
-  reify {A ▻ B} s = syn s
-  reify {A ∧ B} s = pair (reify (π₁ s)) (reify (π₂ s))
-  reify {⊤}    s = unit
-
-
--- Additional useful equipment.
-
-module _ {{_ : Model}} where
-  ⟪K⟫ : ∀ {A B} → ⊩ A → ⊩ B ▻ A
-  ⟪K⟫ a = app ck (reify a) ⅋ K a
-
-  ⟪S⟫′ : ∀ {A B C} → ⊩ A ▻ B ▻ C → ⊩ (A ▻ B) ▻ A ▻ C
-  ⟪S⟫′ s₁ = app cs (reify s₁) ⅋ λ s₂ →
-              app (app cs (reify s₁)) (reify s₂) ⅋ ⟪S⟫ s₁ s₂
-
-  _⟪,⟫′_ : ∀ {A B} → ⊩ A → ⊩ B ▻ A ∧ B
-  _⟪,⟫′_ a = app cpair (reify a) ⅋ _,_ a
+  [_]₀ : ∀ {A} → ∅ ⊢ A → [⊢] A
+  [ var () ]₀
+  [ app t u ]₀ = [app] [ t ]₀ [ u ]₀
+  [ ci ]₀      = [ci]
+  [ ck ]₀      = [ck]
+  [ cs ]₀      = [cs]
+  [ cpair ]₀   = [cpair]
+  [ cfst ]₀    = [cfst]
+  [ csnd ]₀    = [csnd]
+  [ unit ]₀    = [unit]
 
 
 -- Soundness with respect to all models, or evaluation.
@@ -35,12 +24,12 @@ module _ {{_ : Model}} where
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
 eval (var i)   γ = lookup i γ
 eval (app t u) γ = eval t γ ⟪$⟫ eval u γ
-eval ci        γ = ci ⅋ I
-eval ck        γ = ck ⅋ ⟪K⟫
-eval cs        γ = cs ⅋ ⟪S⟫′
-eval cpair     γ = cpair ⅋ _⟪,⟫′_
-eval cfst      γ = cfst ⅋ π₁
-eval csnd      γ = csnd ⅋ π₂
+eval ci        γ = [ci] ⅋ I
+eval ck        γ = [ck] ⅋ ⟪K⟫
+eval cs        γ = [cs] ⅋ ⟪S⟫′
+eval cpair     γ = [cpair] ⅋ _⟪,⟫′_
+eval cfst      γ = [cfst] ⅋ π₁
+eval csnd      γ = [csnd] ⅋ π₂
 eval unit      γ = ∙
 
 
@@ -71,14 +60,23 @@ private
   instance
     canon : Model
     canon = record
-      { ⊩ᵅ_ = λ P → ∅ ⊢ α P
+      { ⊩ᵅ_    = λ P → ∅ ⊢ α P
+      ; [⊢]_   = ∅ ⊢_
+      ; [app]   = app
+      ; [ci]    = ci
+      ; [ck]    = ck
+      ; [cs]    = cs
+      ; [cpair] = cpair
+      ; [cfst]  = cfst
+      ; [csnd]  = csnd
+      ; [unit]  = unit
       }
 
 
 -- Completeness with respect to all models, or quotation, for closed terms only.
 
 quot₀ : ∀ {A} → ∅ ⊨ A → ∅ ⊢ A
-quot₀ t = reify (t ∙)
+quot₀ t = reifyʳ (t ∙)
 
 
 -- Normalisation by evaluation, for closed terms only.

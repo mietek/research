@@ -1,7 +1,7 @@
 -- Basic intuitionistic propositional calculus, without ∨ or ⊥.
--- Tarski-style semantics with contexts as concrete worlds.
+-- Kripke-style semantics with contexts as concrete worlds.
 
-module BasicIPC.Semantics.Tarski where
+module BasicIPC.Semantics.KripkeConcrete where
 
 open import BasicIPC.Syntax.Common public
 open import Common.Semantics public
@@ -9,7 +9,7 @@ open import Common.Semantics public
 open ConcreteWorlds (Ty) public
 
 
--- Intuitionistic Tarski models.
+-- Partial intuitionistic Kripke models.
 
 record Model : Set₁ where
   infix 3 _⊩ᵅ_

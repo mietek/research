@@ -2,13 +2,13 @@
 -- Tarski-style semantics with glueing for α and ▻, after Coquand-Dybjer.
 -- Hilbert-style closed syntax.
 
-module BasicIPC.Semantics.TarskiClosedGluedHilbert where
+module BasicIPC.Semantics.TarskiGluedClosedHilbert where
 
 open import BasicIPC.Syntax.Common public
 open import Common.Semantics public
 
 
--- Tarski models.
+-- Tarski models with explicit syntax.
 
 record Model : Set₁ where
   infix 3 ⊩ᵅ_ [⊢]_

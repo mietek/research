@@ -1,21 +1,36 @@
-module BasicIPC.Metatheory.Hilbert-Tarski where
+module BasicIPC.Metatheory.Hilbert-KripkeConcreteGluedHilbert where
 
 open import BasicIPC.Syntax.Hilbert public
-open import BasicIPC.Semantics.Tarski public
+open import BasicIPC.Semantics.KripkeConcreteGluedHilbert public
+
+
+-- Internalisation of syntax as syntax representation in a particular model.
+
+module _ {{_ : Model}} where
+  [_] : ∀ {A Γ} → Γ ⊢ A → Γ [⊢] A
+  [ var i ]   = [var] i
+  [ app t u ] = [app] [ t ] [ u ]
+  [ ci ]      = [ci]
+  [ ck ]      = [ck]
+  [ cs ]      = [cs]
+  [ cpair ]   = [cpair]
+  [ cfst ]    = [cfst]
+  [ csnd ]    = [csnd]
+  [ unit ]    = [unit]
 
 
 -- Soundness with respect to all models, or evaluation.
 
 eval : ∀ {A Γ} → Γ ⊢ A → Γ ⊨ A
-eval (var i)           γ = lookup i γ
-eval (app {A} {B} t u) γ = _⟪$⟫_ {A} {B} (eval t γ) (eval u γ)
-eval ci                γ = K I
-eval (ck {A} {B})      γ = K (⟪K⟫ {A} {B})
-eval (cs {A} {B} {C})  γ = K (⟪S⟫′ {A} {B} {C})
-eval (cpair {A} {B})   γ = K (_⟪,⟫′_ {A} {B})
-eval cfst              γ = K π₁
-eval csnd              γ = K π₂
-eval unit              γ = ∙
+eval (var i)   γ = lookup i γ
+eval (app t u) γ = eval t γ ⟪$⟫ eval u γ
+eval ci        γ = [ci] ⅋ K I
+eval ck        γ = [ck] ⅋ K ⟪K⟫
+eval cs        γ = [cs] ⅋ K ⟪S⟫′
+eval cpair     γ = [cpair] ⅋ K _⟪,⟫′_
+eval cfst      γ = [cfst] ⅋ K π₁
+eval csnd      γ = [csnd] ⅋ K π₂
+eval unit      γ = ∙
 
 
 -- TODO: Correctness of evaluation with respect to conversion.
@@ -27,8 +42,20 @@ private
   instance
     canon : Model
     canon = record
-      { _⊩ᵅ_   = λ w P → unwrap w ⊢ α P
-      ; mono⊩ᵅ = λ ξ t → mono⊢ (unwrap≤ ξ) t
+      { _⊩ᵅ_    = λ w P → unwrap w ⊢ α P
+      ; mono⊩ᵅ  = λ ξ t → mono⊢ (unwrap≤ ξ) t
+      ; _[⊢]_   = _⊢_
+      ; mono[⊢] = mono⊢
+      ; [var]    = var
+      ; [app]    = app
+      ; [ci]     = ci
+      ; [ck]     = ck
+      ; [cs]     = cs
+      ; [cpair]  = cpair
+      ; [cfst]   = cfst
+      ; [csnd]   = csnd
+      ; [unit]   = unit
+      ; [lam]    = lam
       }
 
 
@@ -36,14 +63,14 @@ private
 
 mutual
   reflectᶜ : ∀ {A w} → unwrap w ⊢ A → w ⊩ A
-  reflectᶜ {α P}   t = t
-  reflectᶜ {A ▻ B} t = λ ξ a → reflectᶜ (app (mono⊢ (unwrap≤ ξ) t) (reifyᶜ a))
+  reflectᶜ {α P}   t = t ⅋ t
+  reflectᶜ {A ▻ B} t = t ⅋ λ ξ a → reflectᶜ (app (mono⊢ (unwrap≤ ξ) t) (reifyᶜ a))
   reflectᶜ {A ∧ B} t = reflectᶜ (fst t) , reflectᶜ (snd t)
   reflectᶜ {⊤}    t = ∙
 
   reifyᶜ : ∀ {A w} → w ⊩ A → unwrap w ⊢ A
-  reifyᶜ {α P}   s = s
-  reifyᶜ {A ▻ B} s = lam (reifyᶜ (s weak≤ (reflectᶜ {A} v₀)))
+  reifyᶜ {α P}   s = syn s
+  reifyᶜ {A ▻ B} s = syn s
   reifyᶜ {A ∧ B} s = pair (reifyᶜ (π₁ s)) (reifyᶜ (π₂ s))
   reifyᶜ {⊤}    s = unit
 
