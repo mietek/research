@@ -51,6 +51,11 @@ import BasicIPC.Semantics.BasicTarski
 import BasicIPC.Semantics.TarskiGluedClosedImplicit    -- Implicit closed syntax.
 import BasicIPC.Semantics.TarskiGluedClosedHilbert     -- Hilbert-style closed syntax.
 
+-- Tarski-style semantics with contexts as concrete worlds, and glueing for α and ▻.
+import BasicIPC.Semantics.TarskiConcreteGluedImplicit  -- Implicit syntax.
+import BasicIPC.Semantics.TarskiConcreteGluedHilbert   -- Hilbert-style syntax.
+import BasicIPC.Semantics.TarskiConcreteGluedGentzen   -- Gentzen-style syntax.
+
 -- Kripke-style semantics with contexts as concrete worlds, and glueing for α and ▻.
 import BasicIPC.Semantics.KripkeConcreteGluedImplicit  -- Implicit syntax.
 import BasicIPC.Semantics.KripkeConcreteGluedHilbert   -- Hilbert-style syntax.
@@ -74,6 +79,12 @@ import BasicIPC.Semantics.KripkeGodel                  -- Gödel embedding.
 -- │ TGCI│ e₀q₀│ eq₀ │ eq₀ │     │     │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
 -- │ TGCH│ e₀q₀│ eq₀ │     │     │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ TCGI│     │ eq  │ eq  │     │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ TCGH│     │ eq  │ eq  │     │     │
+-- ├─────┼─────┼─────┼─────┼─────┼─────┤
+-- │ TCGG│     │ eq  │ eq  │     │     │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
 -- │ KCGI│     │ eq  │ eq  │     │     │
 -- ├─────┼─────┼─────┼─────┼─────┼─────┤
@@ -105,6 +116,9 @@ import BasicIPC.Metatheory.ClosedHilbert-TarskiGluedClosedHilbert
 import BasicIPC.Metatheory.Hilbert-BasicTarski
 import BasicIPC.Metatheory.Hilbert-TarskiGluedClosedImplicit
 import BasicIPC.Metatheory.Hilbert-TarskiGluedClosedHilbert
+import BasicIPC.Metatheory.Hilbert-TarskiConcreteGluedImplicit
+import BasicIPC.Metatheory.Hilbert-TarskiConcreteGluedHilbert
+import BasicIPC.Metatheory.Hilbert-TarskiConcreteGluedGentzen
 import BasicIPC.Metatheory.Hilbert-KripkeConcreteGluedImplicit
 import BasicIPC.Metatheory.Hilbert-KripkeConcreteGluedHilbert
 import BasicIPC.Metatheory.Hilbert-KripkeConcreteGluedGentzen
@@ -114,6 +128,9 @@ import BasicIPC.Metatheory.Hilbert-KripkeGodel
 
 import BasicIPC.Metatheory.Gentzen-BasicTarski
 import BasicIPC.Metatheory.Gentzen-TarskiGluedClosedImplicit
+import BasicIPC.Metatheory.Gentzen-TarskiConcreteGluedImplicit
+import BasicIPC.Metatheory.Gentzen-TarskiConcreteGluedHilbert
+import BasicIPC.Metatheory.Gentzen-TarskiConcreteGluedGentzen
 import BasicIPC.Metatheory.Gentzen-KripkeConcreteGluedImplicit
 import BasicIPC.Metatheory.Gentzen-KripkeConcreteGluedHilbert
 import BasicIPC.Metatheory.Gentzen-KripkeConcreteGluedGentzen
