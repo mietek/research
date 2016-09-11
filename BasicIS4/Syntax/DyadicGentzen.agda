@@ -201,7 +201,7 @@ multicut² {∅}     ∙        us v = mmulticut us (mono⊢ bot⊆ v)
 multicut² {Ξ , B} (ts , t) us v = app (multicut² ts us (lam v)) t
 
 
--- Tansitivity.
+-- Transitivity.
 
 trans⊢⋆₀ : ∀ {Γ″ Γ′ Γ} → Γ ⁏ ∅ ⊢⋆ Γ′ → Γ′ ⁏ ∅ ⊢⋆ Γ″ → Γ ⁏ ∅ ⊢⋆ Γ″
 trans⊢⋆₀ {∅}      ts ∙        = ∙
