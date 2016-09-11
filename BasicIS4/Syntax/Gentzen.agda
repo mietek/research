@@ -1,5 +1,6 @@
 -- Basic intuitionistic modal logic S4, without ∨, ⊥, or ◇.
 -- Gentzen-style formalisation of syntax, after Bierman-de Paiva.
+-- Simple terms.
 
 module BasicIS4.Syntax.Gentzen where
 

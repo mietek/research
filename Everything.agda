@@ -241,22 +241,23 @@ import IPC.Metatheory.GentzenSpinalNormalForm-HereditarySubstitution
 import BasicIS4.Syntax.Common
 
 -- Hilbert-style formalisation of closed syntax.
-import BasicIS4.Syntax.ClosedHilbertSequential  -- Sequences of terms.
-import BasicIS4.Syntax.ClosedHilbert            -- Nested terms.
+import BasicIS4.Syntax.ClosedHilbertSequential        -- Sequences of terms.
+import BasicIS4.Syntax.ClosedHilbert                  -- Nested terms.
 
 -- Hilbert-style formalisation of syntax.
-import BasicIS4.Syntax.HilbertSequential        -- Sequences of terms.
-import BasicIS4.Syntax.Hilbert                  -- Nested terms.
+import BasicIS4.Syntax.HilbertSequential              -- Sequences of terms.
+import BasicIS4.Syntax.Hilbert                        -- Nested terms.
 
 -- Gentzen-style formalisation of syntax, after Bierman-de Paiva.
 import BasicIS4.Syntax.Gentzen
 
 -- Hilbert-style formalisation of syntax with context pairs.
-import BasicIS4.Syntax.DyadicHilbertSequential  -- Sequences of terms.
-import BasicIS4.Syntax.DyadicHilbert            -- Nested terms.
+import BasicIS4.Syntax.DyadicHilbertSequential        -- Sequences of terms.
+import BasicIS4.Syntax.DyadicHilbert                  -- Nested terms.
 
 -- Gentzen-style formalisation of syntax with context pairs, after Pfenning-Davies.
-import BasicIS4.Syntax.DyadicGentzen
+import BasicIS4.Syntax.DyadicGentzen                  -- Simple terms.
+import BasicIS4.Syntax.DyadicGentzenNormalForm        -- Normal forms and neutrals.
 
 -- Gentzen-style formalisation of labelled syntax, after Basin-Matthews-Viganò.
 import BasicIS4.Syntax.LabelledGentzen
