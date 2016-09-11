@@ -74,7 +74,7 @@ module _ {{_ : Model}} where
   ⟦λ⟧ f γ = λ a → f (γ , a)
 
   _⟦$⟧_ : ∀ {A B Γ} → ⊩ Γ ⇒ A ▻ B → ⊩ Γ ⇒ A → ⊩ Γ ⇒ B
-  (f ⟦$⟧ g) γ = f γ $ g γ
+  (f ⟦$⟧ a) γ = f γ $ a γ
 
   ⟦S⟧ : ∀ {A B C Γ} → ⊩ Γ ⇒ A ▻ B ▻ C → ⊩ Γ ⇒ A ▻ B → ⊩ Γ ⇒ A → ⊩ Γ ⇒ C
   ⟦S⟧ f g a γ = S (f γ) (g γ) (a γ)
