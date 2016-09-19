@@ -11,6 +11,8 @@ References
 
 • Alechina, N., Mendler, M., de Paiva, V., Ritter, E. (2001) [“Categorical and Kripke semantics for constructive S4 modal logic”](http://dx.doi.org/10.1007/3-540-44802-0_21)
 
+• Abel, A. (2013) [“Normalization by evaluation: Dependent types and impredicativity”](http://www.cse.chalmers.se/~abela/habil.pdf)
+
 • Abel, A., Chapman, J. (2014) [“Normalization by evaluation in the delay monad”](http://dx.doi.org/10.4204/EPTCS.153.4)
 
 • Alt, J., Artemov, S. (2001) [“Reflective λ-calculus”](http://10.1007/3-540-45504-3_2)
@@ -28,6 +30,8 @@ References
 • Coquand, T., Dybjer, P. (1997) [“Intuitionistic model constructions and normalization proofs”](http://dx.doi.org/10.1017/S0960129596002150)
 
 • Davies, R., Pfenning, F. (2001) [“A modal analysis of staged computation”](http://dx.doi.org/10.1145/382780.382785)
+
+• Diehl, L., Sheard, T. (2014) [“Hereditary substitution by canonical evaluation”](http://www.larrytheliquid.com/drafts/sbe.pdf)
 
 • Gabbay, M.J., Nanevski, A. (2012) [“Denotation of contextual modal type theory: Syntax and meta-programming”](http://dx.doi.org/10.1016/j.jal.2012.07.002)
 
