@@ -258,6 +258,7 @@ import BasicIS4.Syntax.DyadicHilbert                  -- Nested terms.
 -- Gentzen-style formalisation of syntax with context pairs, after Pfenning-Davies.
 import BasicIS4.Syntax.DyadicGentzen                  -- Simple terms.
 import BasicIS4.Syntax.DyadicGentzenNormalForm        -- Normal forms and neutrals.
+import BasicIS4.Syntax.DyadicGentzenSpinalNormalForm  -- Normal forms, neutrals, and spines.
 
 -- Gentzen-style formalisation of labelled syntax, after Basin-Matthews-Viganò.
 import BasicIS4.Syntax.LabelledGentzen
@@ -402,6 +403,8 @@ import BasicIS4.Metatheory.DyadicGentzen-TarskiOvergluedDyadicImplicit
 import BasicIS4.Metatheory.DyadicGentzen-TarskiOvergluedDyadicGentzen
 import BasicIS4.Metatheory.DyadicGentzen-TarskiGluedDyadicImplicit -- FIXME
 import BasicIS4.Metatheory.DyadicGentzen-TarskiGluedDyadicGentzen -- FIXME
+
+import BasicIS4.Metatheory.DyadicGentzenSpinalNormalForm-HereditarySubstitution
 
 
 
