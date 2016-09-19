@@ -72,7 +72,7 @@ mutual
   tp→tm t xs (unboxᵗᵖ u) = unbox (sp→tm t xs) (nf→tm u)
 
 
--- Monotonocity with respect to context inclusion.
+-- Monotonicity with respect to context inclusion.
 
 mutual
   mono⊢ⁿᶠ : ∀ {A Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊢ⁿᶠ A → Γ′ ⁏ Δ ⊢ⁿᶠ A
