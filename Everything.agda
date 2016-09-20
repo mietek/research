@@ -417,6 +417,7 @@ import BasicICML.Syntax.Common
 -- Gentzen-style formalisation of syntax with context pairs, after Nanevski-Pfenning-Pientka.
 import BasicICML.Syntax.DyadicGentzen
 import BasicICML.Syntax.DyadicGentzenNormalForm
+import BasicICML.Syntax.DyadicGentzenSpinalNormalForm
 
 
 
