@@ -419,6 +419,9 @@ import BasicICML.Syntax.DyadicGentzen
 import BasicICML.Syntax.DyadicGentzenNormalForm
 import BasicICML.Syntax.DyadicGentzenSpinalNormalForm
 
+-- Available metatheory for basic ICML.
+import BasicICML.Metatheory.DyadicGentzenSpinalNormalForm-HereditarySubstitution
+
 
 
 
