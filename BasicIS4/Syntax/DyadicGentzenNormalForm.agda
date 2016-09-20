@@ -98,7 +98,7 @@ mono⊢⋆ⁿᵉ {Ξ , A} η (ts , t) = mono⊢⋆ⁿᵉ η ts , mono⊢ⁿᵉ �
 
 mutual
   mmono⊢ⁿᶠ : ∀ {A Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊢ⁿᶠ A → Γ ⁏ Δ′ ⊢ⁿᶠ A
-  mmono⊢ⁿᶠ η (neⁿᶠ t)     = neⁿᶠ (mmono⊢ⁿᵉ η t)
+  mmono⊢ⁿᶠ θ (neⁿᶠ t)     = neⁿᶠ (mmono⊢ⁿᵉ θ t)
   mmono⊢ⁿᶠ θ (lamⁿᶠ t)    = lamⁿᶠ (mmono⊢ⁿᶠ θ t)
   mmono⊢ⁿᶠ θ (boxⁿᶠ t)    = boxⁿᶠ (mmono⊢ⁿᶠ θ t)
   mmono⊢ⁿᶠ θ (pairⁿᶠ t u) = pairⁿᶠ (mmono⊢ⁿᶠ θ t) (mmono⊢ⁿᶠ θ u)
@@ -113,12 +113,12 @@ mutual
   mmono⊢ⁿᵉ θ (sndⁿᵉ t)     = sndⁿᵉ (mmono⊢ⁿᵉ θ t)
 
 mmono⊢⋆ⁿᶠ : ∀ {Ξ Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊢⋆ⁿᶠ Ξ → Γ ⁏ Δ′ ⊢⋆ⁿᶠ Ξ
-mmono⊢⋆ⁿᶠ {∅}     η ∙        = ∙
-mmono⊢⋆ⁿᶠ {Ξ , A} η (ts , t) = mmono⊢⋆ⁿᶠ η ts , mmono⊢ⁿᶠ η t
+mmono⊢⋆ⁿᶠ {∅}     θ ∙        = ∙
+mmono⊢⋆ⁿᶠ {Ξ , A} θ (ts , t) = mmono⊢⋆ⁿᶠ θ ts , mmono⊢ⁿᶠ θ t
 
 mmono⊢⋆ⁿᵉ : ∀ {Ξ Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊢⋆ⁿᵉ Ξ → Γ ⁏ Δ′ ⊢⋆ⁿᵉ Ξ
-mmono⊢⋆ⁿᵉ {∅}     η ∙        = ∙
-mmono⊢⋆ⁿᵉ {Ξ , A} η (ts , t) = mmono⊢⋆ⁿᵉ η ts , mmono⊢ⁿᵉ η t
+mmono⊢⋆ⁿᵉ {∅}     θ ∙        = ∙
+mmono⊢⋆ⁿᵉ {Ξ , A} θ (ts , t) = mmono⊢⋆ⁿᵉ θ ts , mmono⊢ⁿᵉ θ t
 
 
 -- Monotonicity using context pairs.
