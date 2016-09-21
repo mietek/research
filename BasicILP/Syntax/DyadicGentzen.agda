@@ -1,5 +1,6 @@
 -- Basic intuitionistic logic of proofs, without ∨, ⊥, or +.
 -- Gentzen-style formalisation of syntax with context pairs.
+-- Simple terms.
 
 module BasicILP.Syntax.DyadicGentzen where
 

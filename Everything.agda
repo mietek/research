@@ -432,6 +432,7 @@ import BasicILP.Syntax.Common
 
 -- Gentzen-style formalisation of syntax with context pairs.
 import BasicILP.Syntax.DyadicGentzen
+import BasicILP.Syntax.DyadicGentzenNormalForm
 
 
 -- (To be rewritten.)
