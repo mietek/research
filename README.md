@@ -15,7 +15,7 @@ References
 
 • Abel, A., Chapman, J. (2014) [“Normalization by evaluation in the delay monad”](http://dx.doi.org/10.4204/EPTCS.153.4)
 
-• Alt, J., Artemov, S. (2001) [“Reflective λ-calculus”](http://10.1007/3-540-45504-3_2)
+• Alt, J., Artemov, S. (2001) [“Reflective λ-calculus”](http://dx.doi.org/10.1007/3-540-45504-3_2)
 
 • Artemov, S. (2001) [“Explicit provability and constructive semantics”](http://dx.doi.org/10.2307/2687821)
 
