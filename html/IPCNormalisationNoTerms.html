@@ -1,0 +1,1357 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><title
+    >IPCNormalisationNoTerms</title
+    ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta http-equiv="Content-Style-Type" content="text/css"
+     /><link href="Agda.css" rel="stylesheet" type="text/css"
+     /></head
+  ><body
+  ><pre
+    ><a name="1" class="Keyword"
+      >module</a
+      ><a name="7"
+      > </a
+      ><a name="8" href="IPCNormalisationNoTerms.html#1" class="Module"
+      >IPCNormalisationNoTerms</a
+      ><a name="31"
+      > </a
+      ><a name="32" class="Keyword"
+      >where</a
+      ><a name="37"
+      >
+
+</a
+      ><a name="39" class="Keyword"
+      >open</a
+      ><a name="43"
+      > </a
+      ><a name="44" class="Keyword"
+      >import</a
+      ><a name="50"
+      > </a
+      ><a name="51" href="IPCSyntaxNoTerms.html#1" class="Module"
+      >IPCSyntaxNoTerms</a
+      ><a name="67"
+      > </a
+      ><a name="68" class="Keyword"
+      >public</a
+      ><a name="74"
+      >
+</a
+      ><a name="75" class="Keyword"
+      >open</a
+      ><a name="79"
+      > </a
+      ><a name="80" class="Keyword"
+      >import</a
+      ><a name="86"
+      > </a
+      ><a name="87" href="IPCSemantics.html#1" class="Module"
+      >IPCSemantics</a
+      ><a name="99"
+      > </a
+      ><a name="100" class="Keyword"
+      >public</a
+      ><a name="106"
+      >
+</a
+      ><a name="107" class="Keyword"
+      >open</a
+      ><a name="111"
+      > </a
+      ><a name="112" href="IPCSemantics.html#1592" class="Module"
+      >IPCSemanticsList</a
+      ><a name="128"
+      > </a
+      ><a name="129" class="Keyword"
+      >public</a
+      ><a name="135"
+      >
+
+
+</a
+      ><a name="138" class="Comment"
+      >-- Absolute values.</a
+      ><a name="157"
+      >
+
+</a
+      ><a name="159" class="Keyword"
+      >infix</a
+      ><a name="164"
+      > </a
+      ><a name="165" class="Number"
+      >3</a
+      ><a name="166"
+      > </a
+      ><a name="167" href="IPCNormalisationNoTerms.html#171" class="Function Operator"
+      >_&#8872;_</a
+      ><a name="170"
+      >
+</a
+      ><a name="171" href="IPCNormalisationNoTerms.html#171" class="Function Operator"
+      >_&#8872;_</a
+      ><a name="174"
+      > </a
+      ><a name="175" class="Symbol"
+      >:</a
+      ><a name="176"
+      > </a
+      ><a name="177" href="IPCSyntaxNoTerms.html#91" class="Function"
+      >Cx</a
+      ><a name="179"
+      > </a
+      ><a name="180" class="Symbol"
+      >&#8594;</a
+      ><a name="181"
+      > </a
+      ><a name="182" href="IPC.html#77" class="Datatype"
+      >Ty</a
+      ><a name="184"
+      > </a
+      ><a name="185" class="Symbol"
+      >&#8594;</a
+      ><a name="186"
+      > </a
+      ><a name="187" class="PrimitiveType"
+      >Set&#8321;</a
+      ><a name="191"
+      >
+</a
+      ><a name="192" href="IPCNormalisationNoTerms.html#192" class="Bound"
+      >&#915;</a
+      ><a name="193"
+      > </a
+      ><a name="194" href="IPCNormalisationNoTerms.html#171" class="Function Operator"
+      >&#8872;</a
+      ><a name="195"
+      > </a
+      ><a name="196" href="IPCNormalisationNoTerms.html#196" class="Bound"
+      >A</a
+      ><a name="197"
+      > </a
+      ><a name="198" class="Symbol"
+      >=</a
+      ><a name="199"
+      > </a
+      ><a name="200" class="Symbol"
+      >&#8704;</a
+      ><a name="201"
+      > </a
+      ><a name="202" class="Symbol"
+      >{{</a
+      ><a name="204" href="IPCNormalisationNoTerms.html#204" class="Bound"
+      >_</a
+      ><a name="205"
+      > </a
+      ><a name="206" class="Symbol"
+      >:</a
+      ><a name="207"
+      > </a
+      ><a name="208" href="IPCSemantics.html#94" class="Record"
+      >Model</a
+      ><a name="213" class="Symbol"
+      >}}</a
+      ><a name="215"
+      > </a
+      ><a name="216" class="Symbol"
+      >{</a
+      ><a name="217" href="IPCNormalisationNoTerms.html#217" class="Bound"
+      >w</a
+      ><a name="218" class="Symbol"
+      >}</a
+      ><a name="219"
+      > </a
+      ><a name="220" class="Symbol"
+      >&#8594;</a
+      ><a name="221"
+      > </a
+      ><a name="222" href="IPCNormalisationNoTerms.html#217" class="Bound"
+      >w</a
+      ><a name="223"
+      > </a
+      ><a name="224" href="IPCSemantics.html#1655" class="Function Operator"
+      >&#8873;&#8902;</a
+      ><a name="226"
+      > </a
+      ><a name="227" href="IPCNormalisationNoTerms.html#192" class="Bound"
+      >&#915;</a
+      ><a name="228"
+      > </a
+      ><a name="229" class="Symbol"
+      >&#8594;</a
+      ><a name="230"
+      > </a
+      ><a name="231" href="IPCNormalisationNoTerms.html#217" class="Bound"
+      >w</a
+      ><a name="232"
+      > </a
+      ><a name="233" href="IPCSemantics.html#869" class="Function Operator"
+      >&#8873;</a
+      ><a name="234"
+      > </a
+      ><a name="235" href="IPCNormalisationNoTerms.html#196" class="Bound"
+      >A</a
+      ><a name="236"
+      >
+
+
+</a
+      ><a name="239" class="Comment"
+      >-- Soundness.</a
+      ><a name="252"
+      >
+
+</a
+      ><a name="254" href="IPCNormalisationNoTerms.html#254" class="Function Operator"
+      >&#10214;_&#10215;</a
+      ><a name="257"
+      > </a
+      ><a name="258" class="Symbol"
+      >:</a
+      ><a name="259"
+      > </a
+      ><a name="260" class="Symbol"
+      >&#8704;</a
+      ><a name="261"
+      > </a
+      ><a name="262" class="Symbol"
+      >{</a
+      ><a name="263" href="IPCNormalisationNoTerms.html#263" class="Bound"
+      >&#915;</a
+      ><a name="264"
+      > </a
+      ><a name="265" href="IPCNormalisationNoTerms.html#265" class="Bound"
+      >A</a
+      ><a name="266" class="Symbol"
+      >}</a
+      ><a name="267"
+      > </a
+      ><a name="268" class="Symbol"
+      >&#8594;</a
+      ><a name="269"
+      > </a
+      ><a name="270" href="IPCNormalisationNoTerms.html#263" class="Bound"
+      >&#915;</a
+      ><a name="271"
+      > </a
+      ><a name="272" href="IPCSyntaxNoTerms.html#145" class="Datatype Operator"
+      >&#8866;</a
+      ><a name="273"
+      > </a
+      ><a name="274" href="IPCNormalisationNoTerms.html#265" class="Bound"
+      >A</a
+      ><a name="275"
+      > </a
+      ><a name="276" class="Symbol"
+      >&#8594;</a
+      ><a name="277"
+      > </a
+      ><a name="278" href="IPCNormalisationNoTerms.html#263" class="Bound"
+      >&#915;</a
+      ><a name="279"
+      > </a
+      ><a name="280" href="IPCNormalisationNoTerms.html#171" class="Function Operator"
+      >&#8872;</a
+      ><a name="281"
+      > </a
+      ><a name="282" href="IPCNormalisationNoTerms.html#265" class="Bound"
+      >A</a
+      ><a name="283"
+      >
+</a
+      ><a name="284" href="IPCNormalisationNoTerms.html#254" class="Function Operator"
+      >&#10214;</a
+      ><a name="285"
+      > </a
+      ><a name="286" href="IPCSyntaxNoTerms.html#173" class="InductiveConstructor"
+      >var</a
+      ><a name="289"
+      > </a
+      ><a name="290" href="IPCNormalisationNoTerms.html#290" class="Bound"
+      >&#119998;</a
+      ><a name="291"
+      > </a
+      ><a name="292" href="IPCNormalisationNoTerms.html#254" class="Function Operator"
+      >&#10215;</a
+      ><a name="293"
+      >   </a
+      ><a name="296" href="IPCNormalisationNoTerms.html#296" class="Bound"
+      >&#947;</a
+      ><a name="297"
+      > </a
+      ><a name="298" class="Symbol"
+      >=</a
+      ><a name="299"
+      > </a
+      ><a name="300" href="IPCSemantics.html#2317" class="Function"
+      >lookup&#8873;</a
+      ><a name="307"
+      > </a
+      ><a name="308" href="IPCNormalisationNoTerms.html#296" class="Bound"
+      >&#947;</a
+      ><a name="309"
+      > </a
+      ><a name="310" href="IPCNormalisationNoTerms.html#290" class="Bound"
+      >&#119998;</a
+      ><a name="311"
+      >
+</a
+      ><a name="312" href="IPCNormalisationNoTerms.html#254" class="Function Operator"
+      >&#10214;</a
+      ><a name="313"
+      > </a
+      ><a name="314" href="IPCSyntaxNoTerms.html#225" class="InductiveConstructor"
+      >lam</a
+      ><a name="317"
+      > </a
+      ><a name="318" href="IPCNormalisationNoTerms.html#318" class="Bound"
+      >&#119967;</a
+      ><a name="319"
+      > </a
+      ><a name="320" href="IPCNormalisationNoTerms.html#254" class="Function Operator"
+      >&#10215;</a
+      ><a name="321"
+      >   </a
+      ><a name="324" href="IPCNormalisationNoTerms.html#324" class="Bound"
+      >&#947;</a
+      ><a name="325"
+      > </a
+      ><a name="326" class="Symbol"
+      >=</a
+      ><a name="327"
+      > </a
+      ><a name="328" class="Symbol"
+      >&#955;</a
+      ><a name="329"
+      > </a
+      ><a name="330" href="IPCNormalisationNoTerms.html#330" class="Bound"
+      >&#951;</a
+      ><a name="331"
+      > </a
+      ><a name="332" href="IPCNormalisationNoTerms.html#332" class="Bound"
+      >a</a
+      ><a name="333"
+      > </a
+      ><a name="334" class="Symbol"
+      >&#8594;</a
+      ><a name="335"
+      >
+                  </a
+      ><a name="354" href="IPCNormalisationNoTerms.html#254" class="Function Operator"
+      >&#10214;</a
+      ><a name="355"
+      > </a
+      ><a name="356" href="IPCNormalisationNoTerms.html#318" class="Bound"
+      >&#119967;</a
+      ><a name="357"
+      > </a
+      ><a name="358" href="IPCNormalisationNoTerms.html#254" class="Function Operator"
+      >&#10215;</a
+      ><a name="359"
+      > </a
+      ><a name="360" class="Symbol"
+      >(</a
+      ><a name="361" href="IPCSemantics.html#1725" class="Function"
+      >mono&#8873;&#8902;</a
+      ><a name="367"
+      > </a
+      ><a name="368" href="IPCNormalisationNoTerms.html#330" class="Bound"
+      >&#951;</a
+      ><a name="369"
+      > </a
+      ><a name="370" href="IPCNormalisationNoTerms.html#324" class="Bound"
+      >&#947;</a
+      ><a name="371"
+      > </a
+      ><a name="372" href="PreludeList.html#1504" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="373"
+      > </a
+      ><a name="374" href="IPCNormalisationNoTerms.html#332" class="Bound"
+      >a</a
+      ><a name="375" class="Symbol"
+      >)</a
+      ><a name="376"
+      >
+</a
+      ><a name="377" href="IPCNormalisationNoTerms.html#254" class="Function Operator"
+      >&#10214;</a
+      ><a name="378"
+      > </a
+      ><a name="379" href="IPCSyntaxNoTerms.html#287" class="InductiveConstructor"
+      >app</a
+      ><a name="382"
+      > </a
+      ><a name="383" href="IPCNormalisationNoTerms.html#383" class="Bound"
+      >&#119967;</a
+      ><a name="384"
+      > </a
+      ><a name="385" href="IPCNormalisationNoTerms.html#385" class="Bound"
+      >&#8496;</a
+      ><a name="386"
+      > </a
+      ><a name="387" href="IPCNormalisationNoTerms.html#254" class="Function Operator"
+      >&#10215;</a
+      ><a name="388"
+      > </a
+      ><a name="389" href="IPCNormalisationNoTerms.html#389" class="Bound"
+      >&#947;</a
+      ><a name="390"
+      > </a
+      ><a name="391" class="Symbol"
+      >=</a
+      ><a name="392"
+      > </a
+      ><a name="393" href="IPCNormalisationNoTerms.html#254" class="Function Operator"
+      >&#10214;</a
+      ><a name="394"
+      > </a
+      ><a name="395" href="IPCNormalisationNoTerms.html#383" class="Bound"
+      >&#119967;</a
+      ><a name="396"
+      > </a
+      ><a name="397" href="IPCNormalisationNoTerms.html#254" class="Function Operator"
+      >&#10215;</a
+      ><a name="398"
+      > </a
+      ><a name="399" href="IPCNormalisationNoTerms.html#389" class="Bound"
+      >&#947;</a
+      ><a name="400"
+      > </a
+      ><a name="401" href="IPCSemantics.html#185" class="Field"
+      >refl&#8850;</a
+      ><a name="406"
+      > </a
+      ><a name="407" class="Symbol"
+      >(</a
+      ><a name="408" href="IPCNormalisationNoTerms.html#254" class="Function Operator"
+      >&#10214;</a
+      ><a name="409"
+      > </a
+      ><a name="410" href="IPCNormalisationNoTerms.html#385" class="Bound"
+      >&#8496;</a
+      ><a name="411"
+      > </a
+      ><a name="412" href="IPCNormalisationNoTerms.html#254" class="Function Operator"
+      >&#10215;</a
+      ><a name="413"
+      > </a
+      ><a name="414" href="IPCNormalisationNoTerms.html#389" class="Bound"
+      >&#947;</a
+      ><a name="415" class="Symbol"
+      >)</a
+      ><a name="416"
+      >
+
+
+</a
+      ><a name="419" class="Comment"
+      >-- Completeness.</a
+      ><a name="435"
+      >
+
+</a
+      ><a name="437" class="Keyword"
+      >private</a
+      ><a name="444"
+      >
+  </a
+      ><a name="447" class="Keyword"
+      >instance</a
+      ><a name="455"
+      >
+    </a
+      ><a name="460" href="IPCNormalisationNoTerms.html#460" class="Function"
+      >canon</a
+      ><a name="465"
+      > </a
+      ><a name="466" class="Symbol"
+      >:</a
+      ><a name="467"
+      > </a
+      ><a name="468" href="IPCSemantics.html#94" class="Record"
+      >Model</a
+      ><a name="473"
+      >
+    </a
+      ><a name="478" href="IPCNormalisationNoTerms.html#460" class="Function"
+      >canon</a
+      ><a name="483"
+      > </a
+      ><a name="484" class="Symbol"
+      >=</a
+      ><a name="485"
+      > </a
+      ><a name="486" class="Keyword"
+      >record</a
+      ><a name="492"
+      >
+      </a
+      ><a name="499" class="Symbol"
+      >{</a
+      ><a name="500"
+      > </a
+      ><a name="501" class="Field"
+      >World</a
+      ><a name="506"
+      >       </a
+      ><a name="513" class="Symbol"
+      >=</a
+      ><a name="514"
+      > </a
+      ><a name="515" href="IPCSyntaxNoTerms.html#91" class="Function"
+      >Cx</a
+      ><a name="517"
+      >
+      </a
+      ><a name="524" class="Symbol"
+      >;</a
+      ><a name="525"
+      > </a
+      ><a name="526" class="Field Operator"
+      >_&#8850;_</a
+      ><a name="529"
+      >         </a
+      ><a name="538" class="Symbol"
+      >=</a
+      ><a name="539"
+      > </a
+      ><a name="540" href="PreludeList.html#1988" class="Datatype Operator"
+      >_&#8839;_</a
+      ><a name="543"
+      >
+      </a
+      ><a name="550" class="Symbol"
+      >;</a
+      ><a name="551"
+      > </a
+      ><a name="552" class="Field"
+      >refl&#8850;</a
+      ><a name="557"
+      >       </a
+      ><a name="564" class="Symbol"
+      >=</a
+      ><a name="565"
+      > </a
+      ><a name="566" href="PreludeList.html#3205" class="Function"
+      >refl&#8839;</a
+      ><a name="571"
+      >
+      </a
+      ><a name="578" class="Symbol"
+      >;</a
+      ><a name="579"
+      > </a
+      ><a name="580" class="Field"
+      >trans&#8850;</a
+      ><a name="586"
+      >      </a
+      ><a name="592" class="Symbol"
+      >=</a
+      ><a name="593"
+      > </a
+      ><a name="594" href="PreludeList.html#3309" class="Function"
+      >trans&#8839;</a
+      ><a name="600"
+      >
+      </a
+      ><a name="607" class="Symbol"
+      >;</a
+      ><a name="608"
+      > </a
+      ><a name="609" class="Field"
+      >idtrans&#8850;&#8321;</a
+      ><a name="618"
+      >   </a
+      ><a name="621" class="Symbol"
+      >=</a
+      ><a name="622"
+      > </a
+      ><a name="623" href="PreludeList.html#3555" class="Function"
+      >idtrans&#8839;&#8321;</a
+      ><a name="632"
+      >
+      </a
+      ><a name="639" class="Symbol"
+      >;</a
+      ><a name="640"
+      > </a
+      ><a name="641" class="Field"
+      >idtrans&#8850;&#8322;</a
+      ><a name="650"
+      >   </a
+      ><a name="653" class="Symbol"
+      >=</a
+      ><a name="654"
+      > </a
+      ><a name="655" href="PreludeList.html#3794" class="Function"
+      >idtrans&#8839;&#8322;</a
+      ><a name="664"
+      >
+      </a
+      ><a name="671" class="Symbol"
+      >;</a
+      ><a name="672"
+      > </a
+      ><a name="673" class="Field"
+      >assoctrans&#8850;</a
+      ><a name="684"
+      > </a
+      ><a name="685" class="Symbol"
+      >=</a
+      ><a name="686"
+      > </a
+      ><a name="687" href="PreludeList.html#4007" class="Function"
+      >assoctrans&#8839;</a
+      ><a name="698"
+      >
+      </a
+      ><a name="705" class="Symbol"
+      >;</a
+      ><a name="706"
+      > </a
+      ><a name="707" class="Field"
+      >G</a
+      ><a name="708"
+      >           </a
+      ><a name="719" class="Symbol"
+      >=</a
+      ><a name="720"
+      > </a
+      ><a name="721" href="IPCSyntaxNoTerms.html#2402" class="Datatype Operator"
+      >_&#8866;&#8319;&#7497;</a
+      ><a name="725"
+      > </a
+      ><a name="726" href="IPC.html#94" class="InductiveConstructor"
+      >&#8226;</a
+      ><a name="727"
+      >
+      </a
+      ><a name="734" class="Symbol"
+      >;</a
+      ><a name="735"
+      > </a
+      ><a name="736" class="Field"
+      >monoG</a
+      ><a name="741"
+      >       </a
+      ><a name="748" class="Symbol"
+      >=</a
+      ><a name="749"
+      > </a
+      ><a name="750" href="IPCSyntaxNoTerms.html#2808" class="Function"
+      >mono&#8866;&#8319;&#7497;</a
+      ><a name="757"
+      >
+      </a
+      ><a name="764" class="Symbol"
+      >;</a
+      ><a name="765"
+      > </a
+      ><a name="766" class="Field"
+      >idmonoG</a
+      ><a name="773"
+      >     </a
+      ><a name="778" class="Symbol"
+      >=</a
+      ><a name="779"
+      > </a
+      ><a name="780" href="IPCSyntaxNoTerms.html#3226" class="Function"
+      >idmono&#8866;&#8319;&#7497;</a
+      ><a name="789"
+      >
+      </a
+      ><a name="796" class="Symbol"
+      >;</a
+      ><a name="797"
+      > </a
+      ><a name="798" class="Field"
+      >assocmonoG</a
+      ><a name="808"
+      >  </a
+      ><a name="810" class="Symbol"
+      >=</a
+      ><a name="811"
+      > </a
+      ><a name="812" href="IPCSyntaxNoTerms.html#3705" class="Function"
+      >assocmono&#8866;&#8319;&#7497;</a
+      ><a name="824"
+      >
+      </a
+      ><a name="831" class="Symbol"
+      >}</a
+      ><a name="832"
+      >
+
+</a
+      ><a name="834" class="Keyword"
+      >mutual</a
+      ><a name="840"
+      >
+  </a
+      ><a name="843" href="IPCNormalisationNoTerms.html#843" class="Function"
+      >reify&#7580;</a
+      ><a name="849"
+      > </a
+      ><a name="850" class="Symbol"
+      >:</a
+      ><a name="851"
+      > </a
+      ><a name="852" class="Symbol"
+      >&#8704;</a
+      ><a name="853"
+      > </a
+      ><a name="854" class="Symbol"
+      >{</a
+      ><a name="855" href="IPCNormalisationNoTerms.html#855" class="Bound"
+      >A</a
+      ><a name="856"
+      > </a
+      ><a name="857" href="IPCNormalisationNoTerms.html#857" class="Bound"
+      >&#915;</a
+      ><a name="858" class="Symbol"
+      >}</a
+      ><a name="859"
+      > </a
+      ><a name="860" class="Symbol"
+      >&#8594;</a
+      ><a name="861"
+      > </a
+      ><a name="862" href="IPCNormalisationNoTerms.html#857" class="Bound"
+      >&#915;</a
+      ><a name="863"
+      > </a
+      ><a name="864" href="IPCSemantics.html#869" class="Function Operator"
+      >&#8873;</a
+      ><a name="865"
+      > </a
+      ><a name="866" href="IPCNormalisationNoTerms.html#855" class="Bound"
+      >A</a
+      ><a name="867"
+      > </a
+      ><a name="868" class="Symbol"
+      >&#8594;</a
+      ><a name="869"
+      > </a
+      ><a name="870" href="IPCNormalisationNoTerms.html#857" class="Bound"
+      >&#915;</a
+      ><a name="871"
+      > </a
+      ><a name="872" href="IPCSyntaxNoTerms.html#2204" class="Datatype Operator"
+      >&#8866;&#8319;&#7584;</a
+      ><a name="875"
+      > </a
+      ><a name="876" href="IPCNormalisationNoTerms.html#855" class="Bound"
+      >A</a
+      ><a name="877"
+      >
+  </a
+      ><a name="880" href="IPCNormalisationNoTerms.html#843" class="Function"
+      >reify&#7580;</a
+      ><a name="886"
+      > </a
+      ><a name="887" class="Symbol"
+      >{</a
+      ><a name="888" href="IPC.html#94" class="InductiveConstructor"
+      >&#8226;</a
+      ><a name="889" class="Symbol"
+      >}</a
+      ><a name="890"
+      >      </a
+      ><a name="896" href="IPCNormalisationNoTerms.html#896" class="Bound"
+      >a</a
+      ><a name="897"
+      > </a
+      ><a name="898" class="Symbol"
+      >=</a
+      ><a name="899"
+      > </a
+      ><a name="900" href="IPCSyntaxNoTerms.html#2314" class="InductiveConstructor"
+      >ne&#8319;&#7584;</a
+      ><a name="904"
+      > </a
+      ><a name="905" href="IPCNormalisationNoTerms.html#896" class="Bound"
+      >a</a
+      ><a name="906"
+      >
+  </a
+      ><a name="909" href="IPCNormalisationNoTerms.html#843" class="Function"
+      >reify&#7580;</a
+      ><a name="915"
+      > </a
+      ><a name="916" class="Symbol"
+      >{</a
+      ><a name="917" href="IPCNormalisationNoTerms.html#917" class="Bound"
+      >A</a
+      ><a name="918"
+      > </a
+      ><a name="919" href="IPC.html#106" class="InductiveConstructor Operator"
+      >&#8658;</a
+      ><a name="920"
+      > </a
+      ><a name="921" href="IPCNormalisationNoTerms.html#921" class="Bound"
+      >B</a
+      ><a name="922" class="Symbol"
+      >}</a
+      ><a name="923"
+      > </a
+      ><a name="924" href="IPCNormalisationNoTerms.html#924" class="Bound"
+      >f</a
+      ><a name="925"
+      > </a
+      ><a name="926" class="Symbol"
+      >=</a
+      ><a name="927"
+      > </a
+      ><a name="928" href="IPCSyntaxNoTerms.html#2236" class="InductiveConstructor"
+      >lam&#8319;&#7584;</a
+      ><a name="933"
+      > </a
+      ><a name="934" class="Symbol"
+      >(</a
+      ><a name="935" href="IPCNormalisationNoTerms.html#843" class="Function"
+      >reify&#7580;</a
+      ><a name="941"
+      > </a
+      ><a name="942" class="Symbol"
+      >(</a
+      ><a name="943" href="IPCNormalisationNoTerms.html#924" class="Bound"
+      >f</a
+      ><a name="944"
+      > </a
+      ><a name="945" class="Symbol"
+      >(</a
+      ><a name="946" href="PreludeList.html#2072" class="InductiveConstructor"
+      >weak</a
+      ><a name="950"
+      > </a
+      ><a name="951" href="PreludeList.html#3205" class="Function"
+      >refl&#8839;</a
+      ><a name="956" class="Symbol"
+      >)</a
+      ><a name="957"
+      > </a
+      ><a name="958" href="IPCNormalisationNoTerms.html#987" class="Function Operator"
+      >&#10214;</a
+      ><a name="959"
+      > </a
+      ><a name="960" href="IPCSyntaxNoTerms.html#2434" class="InductiveConstructor"
+      >var&#8319;&#7497;</a
+      ><a name="965"
+      > </a
+      ><a name="966" class="Symbol"
+      >{</a
+      ><a name="967" class="Argument"
+      >A</a
+      ><a name="968"
+      > </a
+      ><a name="969" class="Symbol"
+      >=</a
+      ><a name="970"
+      > </a
+      ><a name="971" href="IPCNormalisationNoTerms.html#917" class="Bound"
+      >A</a
+      ><a name="972" class="Symbol"
+      >}</a
+      ><a name="973"
+      > </a
+      ><a name="974" href="PreludeList.html#5466" class="InductiveConstructor"
+      >zero</a
+      ><a name="978"
+      > </a
+      ><a name="979" href="IPCNormalisationNoTerms.html#987" class="Function Operator"
+      >&#10215;&#7580;</a
+      ><a name="981" class="Symbol"
+      >))</a
+      ><a name="983"
+      >
+
+  </a
+      ><a name="987" href="IPCNormalisationNoTerms.html#987" class="Function Operator"
+      >&#10214;_&#10215;&#7580;</a
+      ><a name="991"
+      > </a
+      ><a name="992" class="Symbol"
+      >:</a
+      ><a name="993"
+      > </a
+      ><a name="994" class="Symbol"
+      >&#8704;</a
+      ><a name="995"
+      > </a
+      ><a name="996" class="Symbol"
+      >{</a
+      ><a name="997" href="IPCNormalisationNoTerms.html#997" class="Bound"
+      >A</a
+      ><a name="998"
+      > </a
+      ><a name="999" href="IPCNormalisationNoTerms.html#999" class="Bound"
+      >&#915;</a
+      ><a name="1000" class="Symbol"
+      >}</a
+      ><a name="1001"
+      > </a
+      ><a name="1002" class="Symbol"
+      >&#8594;</a
+      ><a name="1003"
+      > </a
+      ><a name="1004" href="IPCNormalisationNoTerms.html#999" class="Bound"
+      >&#915;</a
+      ><a name="1005"
+      > </a
+      ><a name="1006" href="IPCSyntaxNoTerms.html#2402" class="Datatype Operator"
+      >&#8866;&#8319;&#7497;</a
+      ><a name="1009"
+      > </a
+      ><a name="1010" href="IPCNormalisationNoTerms.html#997" class="Bound"
+      >A</a
+      ><a name="1011"
+      > </a
+      ><a name="1012" class="Symbol"
+      >&#8594;</a
+      ><a name="1013"
+      > </a
+      ><a name="1014" href="IPCNormalisationNoTerms.html#999" class="Bound"
+      >&#915;</a
+      ><a name="1015"
+      > </a
+      ><a name="1016" href="IPCSemantics.html#869" class="Function Operator"
+      >&#8873;</a
+      ><a name="1017"
+      > </a
+      ><a name="1018" href="IPCNormalisationNoTerms.html#997" class="Bound"
+      >A</a
+      ><a name="1019"
+      >
+  </a
+      ><a name="1022" href="IPCNormalisationNoTerms.html#987" class="Function Operator"
+      >&#10214;_&#10215;&#7580;</a
+      ><a name="1026"
+      > </a
+      ><a name="1027" class="Symbol"
+      >{</a
+      ><a name="1028" href="IPC.html#94" class="InductiveConstructor"
+      >&#8226;</a
+      ><a name="1029" class="Symbol"
+      >}</a
+      ><a name="1030"
+      >      </a
+      ><a name="1036" href="IPCNormalisationNoTerms.html#1036" class="Bound"
+      >&#119967;</a
+      ><a name="1037"
+      > </a
+      ><a name="1038" class="Symbol"
+      >=</a
+      ><a name="1039"
+      > </a
+      ><a name="1040" href="IPCNormalisationNoTerms.html#1036" class="Bound"
+      >&#119967;</a
+      ><a name="1041"
+      >
+  </a
+      ><a name="1044" href="IPCNormalisationNoTerms.html#987" class="Function Operator"
+      >&#10214;_&#10215;&#7580;</a
+      ><a name="1048"
+      > </a
+      ><a name="1049" class="Symbol"
+      >{</a
+      ><a name="1050" href="IPCNormalisationNoTerms.html#1050" class="Bound"
+      >A</a
+      ><a name="1051"
+      > </a
+      ><a name="1052" href="IPC.html#106" class="InductiveConstructor Operator"
+      >&#8658;</a
+      ><a name="1053"
+      > </a
+      ><a name="1054" href="IPCNormalisationNoTerms.html#1054" class="Bound"
+      >B</a
+      ><a name="1055" class="Symbol"
+      >}</a
+      ><a name="1056"
+      > </a
+      ><a name="1057" href="IPCNormalisationNoTerms.html#1057" class="Bound"
+      >&#119967;</a
+      ><a name="1058"
+      > </a
+      ><a name="1059" class="Symbol"
+      >=</a
+      ><a name="1060"
+      > </a
+      ><a name="1061" class="Symbol"
+      >&#955;</a
+      ><a name="1062"
+      > </a
+      ><a name="1063" href="IPCNormalisationNoTerms.html#1063" class="Bound"
+      >&#951;</a
+      ><a name="1064"
+      > </a
+      ><a name="1065" href="IPCNormalisationNoTerms.html#1065" class="Bound"
+      >a</a
+      ><a name="1066"
+      > </a
+      ><a name="1067" class="Symbol"
+      >&#8594;</a
+      ><a name="1068"
+      >
+                      </a
+      ><a name="1091" href="IPCNormalisationNoTerms.html#987" class="Function Operator"
+      >&#10214;</a
+      ><a name="1092"
+      > </a
+      ><a name="1093" href="IPCSyntaxNoTerms.html#2500" class="InductiveConstructor"
+      >app&#8319;&#7497;</a
+      ><a name="1098"
+      > </a
+      ><a name="1099" class="Symbol"
+      >(</a
+      ><a name="1100" href="IPCSyntaxNoTerms.html#2808" class="Function"
+      >mono&#8866;&#8319;&#7497;</a
+      ><a name="1107"
+      > </a
+      ><a name="1108" href="IPCNormalisationNoTerms.html#1063" class="Bound"
+      >&#951;</a
+      ><a name="1109"
+      > </a
+      ><a name="1110" href="IPCNormalisationNoTerms.html#1057" class="Bound"
+      >&#119967;</a
+      ><a name="1111" class="Symbol"
+      >)</a
+      ><a name="1112"
+      > </a
+      ><a name="1113" class="Symbol"
+      >(</a
+      ><a name="1114" href="IPCNormalisationNoTerms.html#843" class="Function"
+      >reify&#7580;</a
+      ><a name="1120"
+      > </a
+      ><a name="1121" href="IPCNormalisationNoTerms.html#1065" class="Bound"
+      >a</a
+      ><a name="1122" class="Symbol"
+      >)</a
+      ><a name="1123"
+      > </a
+      ><a name="1124" href="IPCNormalisationNoTerms.html#987" class="Function Operator"
+      >&#10215;&#7580;</a
+      ><a name="1126"
+      >
+
+</a
+      ><a name="1128" href="IPCNormalisationNoTerms.html#1128" class="Function"
+      >refl&#8873;&#8902;</a
+      ><a name="1134"
+      > </a
+      ><a name="1135" class="Symbol"
+      >:</a
+      ><a name="1136"
+      > </a
+      ><a name="1137" class="Symbol"
+      >&#8704;</a
+      ><a name="1138"
+      > </a
+      ><a name="1139" class="Symbol"
+      >{</a
+      ><a name="1140" href="IPCNormalisationNoTerms.html#1140" class="Bound"
+      >&#915;</a
+      ><a name="1141" class="Symbol"
+      >}</a
+      ><a name="1142"
+      > </a
+      ><a name="1143" class="Symbol"
+      >&#8594;</a
+      ><a name="1144"
+      > </a
+      ><a name="1145" href="IPCNormalisationNoTerms.html#1140" class="Bound"
+      >&#915;</a
+      ><a name="1146"
+      > </a
+      ><a name="1147" href="IPCSemantics.html#1655" class="Function Operator"
+      >&#8873;&#8902;</a
+      ><a name="1149"
+      > </a
+      ><a name="1150" href="IPCNormalisationNoTerms.html#1140" class="Bound"
+      >&#915;</a
+      ><a name="1151"
+      >
+</a
+      ><a name="1152" href="IPCNormalisationNoTerms.html#1128" class="Function"
+      >refl&#8873;&#8902;</a
+      ><a name="1158"
+      > </a
+      ><a name="1159" class="Symbol"
+      >{</a
+      ><a name="1160" href="PreludeList.html#151" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="1161" class="Symbol"
+      >}</a
+      ><a name="1162"
+      >     </a
+      ><a name="1167" class="Symbol"
+      >=</a
+      ><a name="1168"
+      > </a
+      ><a name="1169" href="PreludeList.html#1486" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="1170"
+      >
+</a
+      ><a name="1171" href="IPCNormalisationNoTerms.html#1128" class="Function"
+      >refl&#8873;&#8902;</a
+      ><a name="1177"
+      > </a
+      ><a name="1178" class="Symbol"
+      >{</a
+      ><a name="1179" href="IPCNormalisationNoTerms.html#1179" class="Bound"
+      >&#915;</a
+      ><a name="1180"
+      > </a
+      ><a name="1181" href="PreludeList.html#168" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1182"
+      > </a
+      ><a name="1183" href="IPCNormalisationNoTerms.html#1183" class="Bound"
+      >A</a
+      ><a name="1184" class="Symbol"
+      >}</a
+      ><a name="1185"
+      > </a
+      ><a name="1186" class="Symbol"
+      >=</a
+      ><a name="1187"
+      > </a
+      ><a name="1188" href="IPCSemantics.html#1725" class="Function"
+      >mono&#8873;&#8902;</a
+      ><a name="1194"
+      > </a
+      ><a name="1195" class="Symbol"
+      >(</a
+      ><a name="1196" href="PreludeList.html#2072" class="InductiveConstructor"
+      >weak</a
+      ><a name="1200"
+      > </a
+      ><a name="1201" href="PreludeList.html#3205" class="Function"
+      >refl&#8839;</a
+      ><a name="1206" class="Symbol"
+      >)</a
+      ><a name="1207"
+      > </a
+      ><a name="1208" href="IPCNormalisationNoTerms.html#1128" class="Function"
+      >refl&#8873;&#8902;</a
+      ><a name="1214"
+      > </a
+      ><a name="1215" href="PreludeList.html#1504" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1216"
+      > </a
+      ><a name="1217" href="IPCNormalisationNoTerms.html#987" class="Function Operator"
+      >&#10214;</a
+      ><a name="1218"
+      > </a
+      ><a name="1219" href="IPCSyntaxNoTerms.html#2434" class="InductiveConstructor"
+      >var&#8319;&#7497;</a
+      ><a name="1224"
+      > </a
+      ><a name="1225" class="Symbol"
+      >{</a
+      ><a name="1226" class="Argument"
+      >A</a
+      ><a name="1227"
+      > </a
+      ><a name="1228" class="Symbol"
+      >=</a
+      ><a name="1229"
+      > </a
+      ><a name="1230" href="IPCNormalisationNoTerms.html#1183" class="Bound"
+      >A</a
+      ><a name="1231" class="Symbol"
+      >}</a
+      ><a name="1232"
+      > </a
+      ><a name="1233" href="PreludeList.html#5466" class="InductiveConstructor"
+      >zero</a
+      ><a name="1237"
+      > </a
+      ><a name="1238" href="IPCNormalisationNoTerms.html#987" class="Function Operator"
+      >&#10215;&#7580;</a
+      ><a name="1240"
+      >
+
+</a
+      ><a name="1242" href="IPCNormalisationNoTerms.html#1242" class="Function"
+      >reify</a
+      ><a name="1247"
+      > </a
+      ><a name="1248" class="Symbol"
+      >:</a
+      ><a name="1249"
+      > </a
+      ><a name="1250" class="Symbol"
+      >&#8704;</a
+      ><a name="1251"
+      > </a
+      ><a name="1252" class="Symbol"
+      >{</a
+      ><a name="1253" href="IPCNormalisationNoTerms.html#1253" class="Bound"
+      >&#915;</a
+      ><a name="1254"
+      > </a
+      ><a name="1255" href="IPCNormalisationNoTerms.html#1255" class="Bound"
+      >A</a
+      ><a name="1256" class="Symbol"
+      >}</a
+      ><a name="1257"
+      > </a
+      ><a name="1258" class="Symbol"
+      >&#8594;</a
+      ><a name="1259"
+      > </a
+      ><a name="1260" href="IPCNormalisationNoTerms.html#1253" class="Bound"
+      >&#915;</a
+      ><a name="1261"
+      > </a
+      ><a name="1262" href="IPCNormalisationNoTerms.html#171" class="Function Operator"
+      >&#8872;</a
+      ><a name="1263"
+      > </a
+      ><a name="1264" href="IPCNormalisationNoTerms.html#1255" class="Bound"
+      >A</a
+      ><a name="1265"
+      > </a
+      ><a name="1266" class="Symbol"
+      >&#8594;</a
+      ><a name="1267"
+      > </a
+      ><a name="1268" href="IPCNormalisationNoTerms.html#1253" class="Bound"
+      >&#915;</a
+      ><a name="1269"
+      > </a
+      ><a name="1270" href="IPCSyntaxNoTerms.html#2204" class="Datatype Operator"
+      >&#8866;&#8319;&#7584;</a
+      ><a name="1273"
+      > </a
+      ><a name="1274" href="IPCNormalisationNoTerms.html#1255" class="Bound"
+      >A</a
+      ><a name="1275"
+      >
+</a
+      ><a name="1276" href="IPCNormalisationNoTerms.html#1242" class="Function"
+      >reify</a
+      ><a name="1281"
+      > </a
+      ><a name="1282" href="IPCNormalisationNoTerms.html#1282" class="Bound"
+      >&#120094;</a
+      ><a name="1283"
+      > </a
+      ><a name="1284" class="Symbol"
+      >=</a
+      ><a name="1285"
+      > </a
+      ><a name="1286" href="IPCNormalisationNoTerms.html#843" class="Function"
+      >reify&#7580;</a
+      ><a name="1292"
+      > </a
+      ><a name="1293" class="Symbol"
+      >(</a
+      ><a name="1294" href="IPCNormalisationNoTerms.html#1282" class="Bound"
+      >&#120094;</a
+      ><a name="1295"
+      > </a
+      ><a name="1296" href="IPCNormalisationNoTerms.html#1128" class="Function"
+      >refl&#8873;&#8902;</a
+      ><a name="1302" class="Symbol"
+      >)</a
+      ><a name="1303"
+      >
+
+
+</a
+      ><a name="1306" class="Comment"
+      >-- Normalisation.</a
+      ><a name="1323"
+      >
+
+</a
+      ><a name="1325" href="IPCNormalisationNoTerms.html#1325" class="Function"
+      >nbe</a
+      ><a name="1328"
+      > </a
+      ><a name="1329" class="Symbol"
+      >:</a
+      ><a name="1330"
+      > </a
+      ><a name="1331" class="Symbol"
+      >&#8704;</a
+      ><a name="1332"
+      > </a
+      ><a name="1333" class="Symbol"
+      >{</a
+      ><a name="1334" href="IPCNormalisationNoTerms.html#1334" class="Bound"
+      >&#915;</a
+      ><a name="1335"
+      > </a
+      ><a name="1336" href="IPCNormalisationNoTerms.html#1336" class="Bound"
+      >A</a
+      ><a name="1337" class="Symbol"
+      >}</a
+      ><a name="1338"
+      > </a
+      ><a name="1339" class="Symbol"
+      >&#8594;</a
+      ><a name="1340"
+      > </a
+      ><a name="1341" href="IPCNormalisationNoTerms.html#1334" class="Bound"
+      >&#915;</a
+      ><a name="1342"
+      > </a
+      ><a name="1343" href="IPCSyntaxNoTerms.html#145" class="Datatype Operator"
+      >&#8866;</a
+      ><a name="1344"
+      > </a
+      ><a name="1345" href="IPCNormalisationNoTerms.html#1336" class="Bound"
+      >A</a
+      ><a name="1346"
+      > </a
+      ><a name="1347" class="Symbol"
+      >&#8594;</a
+      ><a name="1348"
+      > </a
+      ><a name="1349" href="IPCNormalisationNoTerms.html#1334" class="Bound"
+      >&#915;</a
+      ><a name="1350"
+      > </a
+      ><a name="1351" href="IPCSyntaxNoTerms.html#2204" class="Datatype Operator"
+      >&#8866;&#8319;&#7584;</a
+      ><a name="1354"
+      > </a
+      ><a name="1355" href="IPCNormalisationNoTerms.html#1336" class="Bound"
+      >A</a
+      ><a name="1356"
+      >
+</a
+      ><a name="1357" href="IPCNormalisationNoTerms.html#1325" class="Function"
+      >nbe</a
+      ><a name="1360"
+      > </a
+      ><a name="1361" class="Symbol"
+      >=</a
+      ><a name="1362"
+      > </a
+      ><a name="1363" href="IPCNormalisationNoTerms.html#1242" class="Function"
+      >reify</a
+      ><a name="1368"
+      > </a
+      ><a name="1369" href="Prelude.html#750" class="Function Operator"
+      >&#8728;</a
+      ><a name="1370"
+      > </a
+      ><a name="1371" href="IPCNormalisationNoTerms.html#254" class="Function Operator"
+      >&#10214;_&#10215;</a
+      ><a name="1374"
+      >
+</a
+      ></pre
+    ></body
+  ></html
+>

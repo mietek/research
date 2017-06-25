@@ -1,0 +1,701 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><title
+    >IMCML</title
+    ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta http-equiv="Content-Style-Type" content="text/css"
+     /><link href="Agda.css" rel="stylesheet" type="text/css"
+     /></head
+  ><body
+  ><pre
+    ><a name="1" class="Keyword"
+      >module</a
+      ><a name="7"
+      > </a
+      ><a name="8" href="IMCML.html#1" class="Module"
+      >IMCML</a
+      ><a name="13"
+      > </a
+      ><a name="14" class="Keyword"
+      >where</a
+      ><a name="19"
+      >
+
+</a
+      ><a name="21" class="Keyword"
+      >open</a
+      ><a name="25"
+      > </a
+      ><a name="26" class="Keyword"
+      >import</a
+      ><a name="32"
+      > </a
+      ><a name="33" href="Prelude.html#1" class="Module"
+      >Prelude</a
+      ><a name="40"
+      > </a
+      ><a name="41" class="Keyword"
+      >public</a
+      ><a name="47"
+      >
+
+
+</a
+      ><a name="50" class="Comment"
+      >-- Lists of types.</a
+      ><a name="68"
+      >
+
+</a
+      ><a name="70" class="Keyword"
+      >module</a
+      ><a name="76"
+      > </a
+      ><a name="77" href="IMCML.html#77" class="Module"
+      >IMCMLList</a
+      ><a name="86"
+      > </a
+      ><a name="87" class="Keyword"
+      >where</a
+      ><a name="92"
+      >
+  </a
+      ><a name="95" class="Keyword"
+      >open</a
+      ><a name="99"
+      > </a
+      ><a name="100" class="Keyword"
+      >import</a
+      ><a name="106"
+      > </a
+      ><a name="107" href="PreludeList.html#1" class="Module"
+      >PreludeList</a
+      ><a name="118"
+      > </a
+      ><a name="119" class="Keyword"
+      >public</a
+      ><a name="125"
+      >
+
+  </a
+      ><a name="129" class="Keyword"
+      >mutual</a
+      ><a name="135"
+      >
+    </a
+      ><a name="140" class="Keyword"
+      >infixr</a
+      ><a name="146"
+      > </a
+      ><a name="147" class="Number"
+      >7</a
+      ><a name="148"
+      > </a
+      ><a name="149" href="IMCML.html#199" class="InductiveConstructor Operator"
+      >_&#8658;_</a
+      ><a name="152"
+      >
+    </a
+      ><a name="157" class="Keyword"
+      >data</a
+      ><a name="161"
+      > </a
+      ><a name="162" href="IMCML.html#162" class="Datatype"
+      >Ty</a
+      ><a name="164"
+      > </a
+      ><a name="165" class="Symbol"
+      >:</a
+      ><a name="166"
+      > </a
+      ><a name="167" class="PrimitiveType"
+      >Set</a
+      ><a name="170"
+      > </a
+      ><a name="171" class="Keyword"
+      >where</a
+      ><a name="176"
+      >
+      </a
+      ><a name="183" href="IMCML.html#183" class="InductiveConstructor"
+      >&#8226;</a
+      ><a name="184"
+      >    </a
+      ><a name="188" class="Symbol"
+      >:</a
+      ><a name="189"
+      > </a
+      ><a name="190" href="IMCML.html#162" class="Datatype"
+      >Ty</a
+      ><a name="192"
+      >
+      </a
+      ><a name="199" href="IMCML.html#199" class="InductiveConstructor Operator"
+      >_&#8658;_</a
+      ><a name="202"
+      > </a
+      ><a name="203" class="Symbol"
+      >:</a
+      ><a name="204"
+      > </a
+      ><a name="205" href="IMCML.html#162" class="Datatype"
+      >Ty</a
+      ><a name="207"
+      > </a
+      ><a name="208" class="Symbol"
+      >&#8594;</a
+      ><a name="209"
+      > </a
+      ><a name="210" href="IMCML.html#162" class="Datatype"
+      >Ty</a
+      ><a name="212"
+      > </a
+      ><a name="213" class="Symbol"
+      >&#8594;</a
+      ><a name="214"
+      > </a
+      ><a name="215" href="IMCML.html#162" class="Datatype"
+      >Ty</a
+      ><a name="217"
+      >
+      </a
+      ><a name="224" href="IMCML.html#224" class="InductiveConstructor Operator"
+      >[_]_</a
+      ><a name="228"
+      > </a
+      ><a name="229" class="Symbol"
+      >:</a
+      ><a name="230"
+      > </a
+      ><a name="231" href="IMCML.html#390" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="237"
+      > </a
+      ><a name="238" class="Symbol"
+      >&#8594;</a
+      ><a name="239"
+      > </a
+      ><a name="240" href="IMCML.html#162" class="Datatype"
+      >Ty</a
+      ><a name="242"
+      > </a
+      ><a name="243" class="Symbol"
+      >&#8594;</a
+      ><a name="244"
+      > </a
+      ><a name="245" href="IMCML.html#162" class="Datatype"
+      >Ty</a
+      ><a name="247"
+      >
+
+    </a
+      ><a name="253" class="Keyword"
+      >record</a
+      ><a name="259"
+      > </a
+      ><a name="260" href="IMCML.html#260" class="Record"
+      >BoxTy</a
+      ><a name="265"
+      > </a
+      ><a name="266" class="Symbol"
+      >:</a
+      ><a name="267"
+      > </a
+      ><a name="268" class="PrimitiveType"
+      >Set</a
+      ><a name="271"
+      > </a
+      ><a name="272" class="Keyword"
+      >where</a
+      ><a name="277"
+      >
+      </a
+      ><a name="284" class="Keyword"
+      >inductive</a
+      ><a name="293"
+      >
+      </a
+      ><a name="300" class="Keyword"
+      >constructor</a
+      ><a name="311"
+      > </a
+      ><a name="312" href="IMCML.html#312" class="InductiveConstructor Operator"
+      >[_]_</a
+      ><a name="316"
+      >
+      </a
+      ><a name="323" class="Keyword"
+      >field</a
+      ><a name="328"
+      >
+        </a
+      ><a name="337" href="IMCML.html#337" class="Field"
+      >BoxTy&#8594;BoxTy&#8902;</a
+      ><a name="349"
+      > </a
+      ><a name="350" class="Symbol"
+      >:</a
+      ><a name="351"
+      > </a
+      ><a name="352" href="IMCML.html#390" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="358"
+      >
+        </a
+      ><a name="367" href="IMCML.html#367" class="Field"
+      >BoxTy&#8594;Ty</a
+      ><a name="375"
+      >     </a
+      ><a name="380" class="Symbol"
+      >:</a
+      ><a name="381"
+      > </a
+      ><a name="382" href="IMCML.html#162" class="Datatype"
+      >Ty</a
+      ><a name="384"
+      >
+
+    </a
+      ><a name="390" href="IMCML.html#390" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="396"
+      > </a
+      ><a name="397" class="Symbol"
+      >:</a
+      ><a name="398"
+      > </a
+      ><a name="399" class="PrimitiveType"
+      >Set</a
+      ><a name="402"
+      >
+    </a
+      ><a name="407" href="IMCML.html#390" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="413"
+      > </a
+      ><a name="414" class="Symbol"
+      >=</a
+      ><a name="415"
+      > </a
+      ><a name="416" href="PreludeList.html#101" class="Datatype"
+      >List</a
+      ><a name="420"
+      > </a
+      ><a name="421" href="IMCML.html#260" class="Record"
+      >BoxTy</a
+      ><a name="426"
+      >
+  </a
+      ><a name="429" class="Keyword"
+      >open</a
+      ><a name="433"
+      > </a
+      ><a name="434" href="IMCML.html#260" class="Module"
+      >BoxTy</a
+      ><a name="439"
+      > </a
+      ><a name="440" class="Keyword"
+      >public</a
+      ><a name="446"
+      >
+
+  </a
+      ><a name="450" href="IMCML.html#450" class="Function"
+      >Ty&#8902;</a
+      ><a name="453"
+      > </a
+      ><a name="454" class="Symbol"
+      >:</a
+      ><a name="455"
+      > </a
+      ><a name="456" class="PrimitiveType"
+      >Set</a
+      ><a name="459"
+      >
+  </a
+      ><a name="462" href="IMCML.html#450" class="Function"
+      >Ty&#8902;</a
+      ><a name="465"
+      > </a
+      ><a name="466" class="Symbol"
+      >=</a
+      ><a name="467"
+      > </a
+      ><a name="468" href="PreludeList.html#101" class="Datatype"
+      >List</a
+      ><a name="472"
+      > </a
+      ><a name="473" href="IMCML.html#162" class="Datatype"
+      >Ty</a
+      ><a name="475"
+      >
+
+
+</a
+      ><a name="478" class="Comment"
+      >-- Vectors of types.</a
+      ><a name="498"
+      >
+
+</a
+      ><a name="500" class="Keyword"
+      >module</a
+      ><a name="506"
+      > </a
+      ><a name="507" href="IMCML.html#507" class="Module"
+      >IMCMLVec</a
+      ><a name="515"
+      > </a
+      ><a name="516" class="Keyword"
+      >where</a
+      ><a name="521"
+      >
+  </a
+      ><a name="524" class="Keyword"
+      >open</a
+      ><a name="528"
+      > </a
+      ><a name="529" class="Keyword"
+      >import</a
+      ><a name="535"
+      > </a
+      ><a name="536" href="PreludeVec.html#1" class="Module"
+      >PreludeVec</a
+      ><a name="546"
+      > </a
+      ><a name="547" class="Keyword"
+      >public</a
+      ><a name="553"
+      >
+
+  </a
+      ><a name="557" class="Keyword"
+      >mutual</a
+      ><a name="563"
+      >
+    </a
+      ><a name="568" class="Keyword"
+      >infixr</a
+      ><a name="574"
+      > </a
+      ><a name="575" class="Number"
+      >7</a
+      ><a name="576"
+      > </a
+      ><a name="577" href="IMCML.html#627" class="InductiveConstructor Operator"
+      >_&#8658;_</a
+      ><a name="580"
+      >
+    </a
+      ><a name="585" class="Keyword"
+      >data</a
+      ><a name="589"
+      > </a
+      ><a name="590" href="IMCML.html#590" class="Datatype"
+      >Ty</a
+      ><a name="592"
+      > </a
+      ><a name="593" class="Symbol"
+      >:</a
+      ><a name="594"
+      > </a
+      ><a name="595" class="PrimitiveType"
+      >Set</a
+      ><a name="598"
+      > </a
+      ><a name="599" class="Keyword"
+      >where</a
+      ><a name="604"
+      >
+      </a
+      ><a name="611" href="IMCML.html#611" class="InductiveConstructor"
+      >&#8226;</a
+      ><a name="612"
+      >    </a
+      ><a name="616" class="Symbol"
+      >:</a
+      ><a name="617"
+      > </a
+      ><a name="618" href="IMCML.html#590" class="Datatype"
+      >Ty</a
+      ><a name="620"
+      >
+      </a
+      ><a name="627" href="IMCML.html#627" class="InductiveConstructor Operator"
+      >_&#8658;_</a
+      ><a name="630"
+      > </a
+      ><a name="631" class="Symbol"
+      >:</a
+      ><a name="632"
+      > </a
+      ><a name="633" href="IMCML.html#590" class="Datatype"
+      >Ty</a
+      ><a name="635"
+      > </a
+      ><a name="636" class="Symbol"
+      >&#8594;</a
+      ><a name="637"
+      > </a
+      ><a name="638" href="IMCML.html#590" class="Datatype"
+      >Ty</a
+      ><a name="640"
+      > </a
+      ><a name="641" class="Symbol"
+      >&#8594;</a
+      ><a name="642"
+      > </a
+      ><a name="643" href="IMCML.html#590" class="Datatype"
+      >Ty</a
+      ><a name="645"
+      >
+      </a
+      ><a name="652" href="IMCML.html#652" class="InductiveConstructor Operator"
+      >[_]_</a
+      ><a name="656"
+      > </a
+      ><a name="657" class="Symbol"
+      >:</a
+      ><a name="658"
+      > </a
+      ><a name="659" class="Symbol"
+      >&#8704;</a
+      ><a name="660"
+      > </a
+      ><a name="661" class="Symbol"
+      >{</a
+      ><a name="662" href="IMCML.html#662" class="Bound"
+      >q</a
+      ><a name="663" class="Symbol"
+      >}</a
+      ><a name="664"
+      > </a
+      ><a name="665" class="Symbol"
+      >&#8594;</a
+      ><a name="666"
+      > </a
+      ><a name="667" href="IMCML.html#858" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="673"
+      > </a
+      ><a name="674" href="IMCML.html#662" class="Bound"
+      >q</a
+      ><a name="675"
+      > </a
+      ><a name="676" class="Symbol"
+      >&#8594;</a
+      ><a name="677"
+      > </a
+      ><a name="678" href="IMCML.html#590" class="Datatype"
+      >Ty</a
+      ><a name="680"
+      > </a
+      ><a name="681" class="Symbol"
+      >&#8594;</a
+      ><a name="682"
+      > </a
+      ><a name="683" href="IMCML.html#590" class="Datatype"
+      >Ty</a
+      ><a name="685"
+      >
+
+    </a
+      ><a name="691" class="Keyword"
+      >record</a
+      ><a name="697"
+      > </a
+      ><a name="698" href="IMCML.html#698" class="Record"
+      >BoxTy</a
+      ><a name="703"
+      > </a
+      ><a name="704" class="Symbol"
+      >:</a
+      ><a name="705"
+      > </a
+      ><a name="706" class="PrimitiveType"
+      >Set</a
+      ><a name="709"
+      > </a
+      ><a name="710" class="Keyword"
+      >where</a
+      ><a name="715"
+      >
+      </a
+      ><a name="722" class="Keyword"
+      >inductive</a
+      ><a name="731"
+      >
+      </a
+      ><a name="738" class="Keyword"
+      >constructor</a
+      ><a name="749"
+      > </a
+      ><a name="750" href="IMCML.html#750" class="InductiveConstructor Operator"
+      >[_]_</a
+      ><a name="754"
+      >
+      </a
+      ><a name="761" class="Keyword"
+      >field</a
+      ><a name="766"
+      >
+        </a
+      ><a name="775" class="Symbol"
+      >{</a
+      ><a name="776" href="IMCML.html#776" class="Field"
+      >q</a
+      ><a name="777" class="Symbol"
+      >}</a
+      ><a name="778"
+      >           </a
+      ><a name="789" class="Symbol"
+      >:</a
+      ><a name="790"
+      > </a
+      ><a name="791" href="Prelude.html#6297" class="Datatype"
+      >Nat</a
+      ><a name="794"
+      >
+        </a
+      ><a name="803" href="IMCML.html#803" class="Field"
+      >BoxTy&#8594;BoxTy&#8902;</a
+      ><a name="815"
+      > </a
+      ><a name="816" class="Symbol"
+      >:</a
+      ><a name="817"
+      > </a
+      ><a name="818" href="IMCML.html#858" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="824"
+      > </a
+      ><a name="825" href="IMCML.html#776" class="Field"
+      >q</a
+      ><a name="826"
+      >
+        </a
+      ><a name="835" href="IMCML.html#835" class="Field"
+      >BoxTy&#8594;Ty</a
+      ><a name="843"
+      >     </a
+      ><a name="848" class="Symbol"
+      >:</a
+      ><a name="849"
+      > </a
+      ><a name="850" href="IMCML.html#590" class="Datatype"
+      >Ty</a
+      ><a name="852"
+      >
+
+    </a
+      ><a name="858" href="IMCML.html#858" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="864"
+      > </a
+      ><a name="865" class="Symbol"
+      >:</a
+      ><a name="866"
+      > </a
+      ><a name="867" href="Prelude.html#6297" class="Datatype"
+      >Nat</a
+      ><a name="870"
+      > </a
+      ><a name="871" class="Symbol"
+      >&#8594;</a
+      ><a name="872"
+      > </a
+      ><a name="873" class="PrimitiveType"
+      >Set</a
+      ><a name="876"
+      >
+    </a
+      ><a name="881" href="IMCML.html#858" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="887"
+      > </a
+      ><a name="888" href="IMCML.html#888" class="Bound"
+      >d</a
+      ><a name="889"
+      > </a
+      ><a name="890" class="Symbol"
+      >=</a
+      ><a name="891"
+      > </a
+      ><a name="892" href="PreludeVec.html#102" class="Datatype"
+      >Vec</a
+      ><a name="895"
+      > </a
+      ><a name="896" href="IMCML.html#698" class="Record"
+      >BoxTy</a
+      ><a name="901"
+      > </a
+      ><a name="902" href="IMCML.html#888" class="Bound"
+      >d</a
+      ><a name="903"
+      >
+  </a
+      ><a name="906" class="Keyword"
+      >open</a
+      ><a name="910"
+      > </a
+      ><a name="911" href="IMCML.html#698" class="Module"
+      >BoxTy</a
+      ><a name="916"
+      > </a
+      ><a name="917" class="Keyword"
+      >public</a
+      ><a name="923"
+      >
+
+  </a
+      ><a name="927" href="IMCML.html#927" class="Function"
+      >Ty&#8902;</a
+      ><a name="930"
+      > </a
+      ><a name="931" class="Symbol"
+      >:</a
+      ><a name="932"
+      > </a
+      ><a name="933" href="Prelude.html#6297" class="Datatype"
+      >Nat</a
+      ><a name="936"
+      > </a
+      ><a name="937" class="Symbol"
+      >&#8594;</a
+      ><a name="938"
+      > </a
+      ><a name="939" class="PrimitiveType"
+      >Set</a
+      ><a name="942"
+      >
+  </a
+      ><a name="945" href="IMCML.html#927" class="Function"
+      >Ty&#8902;</a
+      ><a name="948"
+      > </a
+      ><a name="949" href="IMCML.html#949" class="Bound"
+      >g</a
+      ><a name="950"
+      > </a
+      ><a name="951" class="Symbol"
+      >=</a
+      ><a name="952"
+      > </a
+      ><a name="953" href="PreludeVec.html#102" class="Datatype"
+      >Vec</a
+      ><a name="956"
+      > </a
+      ><a name="957" href="IMCML.html#590" class="Datatype"
+      >Ty</a
+      ><a name="959"
+      > </a
+      ><a name="960" href="IMCML.html#949" class="Bound"
+      >g</a
+      ><a name="961"
+      >
+</a
+      ></pre
+    ></body
+  ></html
+>

@@ -1,0 +1,772 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><title
+    >ISML</title
+    ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta http-equiv="Content-Style-Type" content="text/css"
+     /><link href="Agda.css" rel="stylesheet" type="text/css"
+     /></head
+  ><body
+  ><pre
+    ><a name="1" class="Keyword"
+      >module</a
+      ><a name="7"
+      > </a
+      ><a name="8" href="ISML.html#1" class="Module"
+      >ISML</a
+      ><a name="12"
+      > </a
+      ><a name="13" class="Keyword"
+      >where</a
+      ><a name="18"
+      >
+
+</a
+      ><a name="20" class="Keyword"
+      >open</a
+      ><a name="24"
+      > </a
+      ><a name="25" class="Keyword"
+      >import</a
+      ><a name="31"
+      > </a
+      ><a name="32" href="Prelude.html#1" class="Module"
+      >Prelude</a
+      ><a name="39"
+      > </a
+      ><a name="40" class="Keyword"
+      >public</a
+      ><a name="46"
+      >
+
+
+</a
+      ><a name="49" class="Comment"
+      >-- Lists of types.</a
+      ><a name="67"
+      >
+
+</a
+      ><a name="69" class="Keyword"
+      >module</a
+      ><a name="75"
+      > </a
+      ><a name="76" href="ISML.html#76" class="Module"
+      >ISMLList</a
+      ><a name="84"
+      > </a
+      ><a name="85" class="Keyword"
+      >where</a
+      ><a name="90"
+      >
+  </a
+      ><a name="93" class="Keyword"
+      >open</a
+      ><a name="97"
+      > </a
+      ><a name="98" class="Keyword"
+      >import</a
+      ><a name="104"
+      > </a
+      ><a name="105" href="PreludeList.html#1" class="Module"
+      >PreludeList</a
+      ><a name="116"
+      > </a
+      ><a name="117" class="Keyword"
+      >public</a
+      ><a name="123"
+      >
+
+  </a
+      ><a name="127" class="Keyword"
+      >mutual</a
+      ><a name="133"
+      >
+    </a
+      ><a name="138" class="Keyword"
+      >infixr</a
+      ><a name="144"
+      > </a
+      ><a name="145" class="Number"
+      >7</a
+      ><a name="146"
+      > </a
+      ><a name="147" href="ISML.html#199" class="InductiveConstructor Operator"
+      >_&#8658;_</a
+      ><a name="150"
+      >
+    </a
+      ><a name="155" class="Keyword"
+      >data</a
+      ><a name="159"
+      > </a
+      ><a name="160" href="ISML.html#160" class="Datatype"
+      >Ty</a
+      ><a name="162"
+      > </a
+      ><a name="163" class="Symbol"
+      >:</a
+      ><a name="164"
+      > </a
+      ><a name="165" class="PrimitiveType"
+      >Set</a
+      ><a name="168"
+      > </a
+      ><a name="169" class="Keyword"
+      >where</a
+      ><a name="174"
+      >
+      </a
+      ><a name="181" href="ISML.html#181" class="InductiveConstructor"
+      >&#8226;</a
+      ><a name="182"
+      >      </a
+      ><a name="188" class="Symbol"
+      >:</a
+      ><a name="189"
+      > </a
+      ><a name="190" href="ISML.html#160" class="Datatype"
+      >Ty</a
+      ><a name="192"
+      >
+      </a
+      ><a name="199" href="ISML.html#199" class="InductiveConstructor Operator"
+      >_&#8658;_</a
+      ><a name="202"
+      >   </a
+      ><a name="205" class="Symbol"
+      >:</a
+      ><a name="206"
+      > </a
+      ><a name="207" href="ISML.html#160" class="Datatype"
+      >Ty</a
+      ><a name="209"
+      > </a
+      ><a name="210" class="Symbol"
+      >&#8594;</a
+      ><a name="211"
+      > </a
+      ><a name="212" href="ISML.html#160" class="Datatype"
+      >Ty</a
+      ><a name="214"
+      > </a
+      ><a name="215" class="Symbol"
+      >&#8594;</a
+      ><a name="216"
+      > </a
+      ><a name="217" href="ISML.html#160" class="Datatype"
+      >Ty</a
+      ><a name="219"
+      >
+      </a
+      ><a name="226" href="ISML.html#226" class="InductiveConstructor Operator"
+      >[_&#8271;_]_</a
+      ><a name="232"
+      > </a
+      ><a name="233" class="Symbol"
+      >:</a
+      ><a name="234"
+      > </a
+      ><a name="235" href="ISML.html#462" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="241"
+      > </a
+      ><a name="242" class="Symbol"
+      >&#8594;</a
+      ><a name="243"
+      > </a
+      ><a name="244" href="ISML.html#429" class="Function"
+      >Ty&#8902;</a
+      ><a name="247"
+      > </a
+      ><a name="248" class="Symbol"
+      >&#8594;</a
+      ><a name="249"
+      > </a
+      ><a name="250" href="ISML.html#160" class="Datatype"
+      >Ty</a
+      ><a name="252"
+      > </a
+      ><a name="253" class="Symbol"
+      >&#8594;</a
+      ><a name="254"
+      > </a
+      ><a name="255" href="ISML.html#160" class="Datatype"
+      >Ty</a
+      ><a name="257"
+      >
+
+    </a
+      ><a name="263" class="Keyword"
+      >record</a
+      ><a name="269"
+      > </a
+      ><a name="270" href="ISML.html#270" class="Record"
+      >BoxTy</a
+      ><a name="275"
+      > </a
+      ><a name="276" class="Symbol"
+      >:</a
+      ><a name="277"
+      > </a
+      ><a name="278" class="PrimitiveType"
+      >Set</a
+      ><a name="281"
+      > </a
+      ><a name="282" class="Keyword"
+      >where</a
+      ><a name="287"
+      >
+      </a
+      ><a name="294" class="Keyword"
+      >inductive</a
+      ><a name="303"
+      >
+      </a
+      ><a name="310" class="Keyword"
+      >constructor</a
+      ><a name="321"
+      > </a
+      ><a name="322" href="ISML.html#322" class="InductiveConstructor Operator"
+      >[_&#8271;_]_</a
+      ><a name="328"
+      >
+      </a
+      ><a name="335" class="Keyword"
+      >field</a
+      ><a name="340"
+      >
+        </a
+      ><a name="349" href="ISML.html#349" class="Field"
+      >BoxTy&#8594;BoxTy&#8902;</a
+      ><a name="361"
+      > </a
+      ><a name="362" class="Symbol"
+      >:</a
+      ><a name="363"
+      > </a
+      ><a name="364" href="ISML.html#462" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="370"
+      >
+        </a
+      ><a name="379" href="ISML.html#379" class="Field"
+      >BoxTy&#8594;Ty&#8902;</a
+      ><a name="388"
+      >    </a
+      ><a name="392" class="Symbol"
+      >:</a
+      ><a name="393"
+      > </a
+      ><a name="394" href="ISML.html#429" class="Function"
+      >Ty&#8902;</a
+      ><a name="397"
+      >
+        </a
+      ><a name="406" href="ISML.html#406" class="Field"
+      >BoxTy&#8594;Ty</a
+      ><a name="414"
+      >     </a
+      ><a name="419" class="Symbol"
+      >:</a
+      ><a name="420"
+      > </a
+      ><a name="421" href="ISML.html#160" class="Datatype"
+      >Ty</a
+      ><a name="423"
+      >
+
+    </a
+      ><a name="429" href="ISML.html#429" class="Function"
+      >Ty&#8902;</a
+      ><a name="432"
+      > </a
+      ><a name="433" class="Symbol"
+      >:</a
+      ><a name="434"
+      > </a
+      ><a name="435" class="PrimitiveType"
+      >Set</a
+      ><a name="438"
+      >
+    </a
+      ><a name="443" href="ISML.html#429" class="Function"
+      >Ty&#8902;</a
+      ><a name="446"
+      > </a
+      ><a name="447" class="Symbol"
+      >=</a
+      ><a name="448"
+      > </a
+      ><a name="449" href="PreludeList.html#101" class="Datatype"
+      >List</a
+      ><a name="453"
+      > </a
+      ><a name="454" href="ISML.html#160" class="Datatype"
+      >Ty</a
+      ><a name="456"
+      >
+
+    </a
+      ><a name="462" href="ISML.html#462" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="468"
+      > </a
+      ><a name="469" class="Symbol"
+      >:</a
+      ><a name="470"
+      > </a
+      ><a name="471" class="PrimitiveType"
+      >Set</a
+      ><a name="474"
+      >
+    </a
+      ><a name="479" href="ISML.html#462" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="485"
+      > </a
+      ><a name="486" class="Symbol"
+      >=</a
+      ><a name="487"
+      > </a
+      ><a name="488" href="PreludeList.html#101" class="Datatype"
+      >List</a
+      ><a name="492"
+      > </a
+      ><a name="493" href="ISML.html#270" class="Record"
+      >BoxTy</a
+      ><a name="498"
+      >
+  </a
+      ><a name="501" class="Keyword"
+      >open</a
+      ><a name="505"
+      > </a
+      ><a name="506" href="ISML.html#270" class="Module"
+      >BoxTy</a
+      ><a name="511"
+      > </a
+      ><a name="512" class="Keyword"
+      >public</a
+      ><a name="518"
+      >
+
+
+</a
+      ><a name="521" class="Comment"
+      >-- Vectors of types.</a
+      ><a name="541"
+      >
+
+</a
+      ><a name="543" class="Keyword"
+      >module</a
+      ><a name="549"
+      > </a
+      ><a name="550" href="ISML.html#550" class="Module"
+      >ISMLVec</a
+      ><a name="557"
+      > </a
+      ><a name="558" class="Keyword"
+      >where</a
+      ><a name="563"
+      >
+  </a
+      ><a name="566" class="Keyword"
+      >open</a
+      ><a name="570"
+      > </a
+      ><a name="571" class="Keyword"
+      >import</a
+      ><a name="577"
+      > </a
+      ><a name="578" href="PreludeVec.html#1" class="Module"
+      >PreludeVec</a
+      ><a name="588"
+      > </a
+      ><a name="589" class="Keyword"
+      >public</a
+      ><a name="595"
+      >
+
+  </a
+      ><a name="599" class="Keyword"
+      >mutual</a
+      ><a name="605"
+      >
+    </a
+      ><a name="610" class="Keyword"
+      >infixr</a
+      ><a name="616"
+      > </a
+      ><a name="617" class="Number"
+      >7</a
+      ><a name="618"
+      > </a
+      ><a name="619" href="ISML.html#671" class="InductiveConstructor Operator"
+      >_&#8658;_</a
+      ><a name="622"
+      >
+    </a
+      ><a name="627" class="Keyword"
+      >data</a
+      ><a name="631"
+      > </a
+      ><a name="632" href="ISML.html#632" class="Datatype"
+      >Ty</a
+      ><a name="634"
+      > </a
+      ><a name="635" class="Symbol"
+      >:</a
+      ><a name="636"
+      > </a
+      ><a name="637" class="PrimitiveType"
+      >Set</a
+      ><a name="640"
+      > </a
+      ><a name="641" class="Keyword"
+      >where</a
+      ><a name="646"
+      >
+      </a
+      ><a name="653" href="ISML.html#653" class="InductiveConstructor"
+      >&#8226;</a
+      ><a name="654"
+      >      </a
+      ><a name="660" class="Symbol"
+      >:</a
+      ><a name="661"
+      > </a
+      ><a name="662" href="ISML.html#632" class="Datatype"
+      >Ty</a
+      ><a name="664"
+      >
+      </a
+      ><a name="671" href="ISML.html#671" class="InductiveConstructor Operator"
+      >_&#8658;_</a
+      ><a name="674"
+      >   </a
+      ><a name="677" class="Symbol"
+      >:</a
+      ><a name="678"
+      > </a
+      ><a name="679" href="ISML.html#632" class="Datatype"
+      >Ty</a
+      ><a name="681"
+      > </a
+      ><a name="682" class="Symbol"
+      >&#8594;</a
+      ><a name="683"
+      > </a
+      ><a name="684" href="ISML.html#632" class="Datatype"
+      >Ty</a
+      ><a name="686"
+      > </a
+      ><a name="687" class="Symbol"
+      >&#8594;</a
+      ><a name="688"
+      > </a
+      ><a name="689" href="ISML.html#632" class="Datatype"
+      >Ty</a
+      ><a name="691"
+      >
+      </a
+      ><a name="698" href="ISML.html#698" class="InductiveConstructor Operator"
+      >[_&#8271;_]_</a
+      ><a name="704"
+      > </a
+      ><a name="705" class="Symbol"
+      >:</a
+      ><a name="706"
+      > </a
+      ><a name="707" class="Symbol"
+      >&#8704;</a
+      ><a name="708"
+      > </a
+      ><a name="709" class="Symbol"
+      >{</a
+      ><a name="710" href="ISML.html#710" class="Bound"
+      >q</a
+      ><a name="711"
+      > </a
+      ><a name="712" href="ISML.html#712" class="Bound"
+      >p</a
+      ><a name="713" class="Symbol"
+      >}</a
+      ><a name="714"
+      > </a
+      ><a name="715" class="Symbol"
+      >&#8594;</a
+      ><a name="716"
+      > </a
+      ><a name="717" href="ISML.html#1017" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="723"
+      > </a
+      ><a name="724" href="ISML.html#710" class="Bound"
+      >q</a
+      ><a name="725"
+      > </a
+      ><a name="726" class="Symbol"
+      >&#8594;</a
+      ><a name="727"
+      > </a
+      ><a name="728" href="ISML.html#975" class="Function"
+      >Ty&#8902;</a
+      ><a name="731"
+      > </a
+      ><a name="732" href="ISML.html#712" class="Bound"
+      >p</a
+      ><a name="733"
+      > </a
+      ><a name="734" class="Symbol"
+      >&#8594;</a
+      ><a name="735"
+      > </a
+      ><a name="736" href="ISML.html#632" class="Datatype"
+      >Ty</a
+      ><a name="738"
+      > </a
+      ><a name="739" class="Symbol"
+      >&#8594;</a
+      ><a name="740"
+      > </a
+      ><a name="741" href="ISML.html#632" class="Datatype"
+      >Ty</a
+      ><a name="743"
+      >
+
+    </a
+      ><a name="749" class="Keyword"
+      >record</a
+      ><a name="755"
+      > </a
+      ><a name="756" href="ISML.html#756" class="Record"
+      >BoxTy</a
+      ><a name="761"
+      > </a
+      ><a name="762" class="Symbol"
+      >:</a
+      ><a name="763"
+      > </a
+      ><a name="764" class="PrimitiveType"
+      >Set</a
+      ><a name="767"
+      > </a
+      ><a name="768" class="Keyword"
+      >where</a
+      ><a name="773"
+      >
+      </a
+      ><a name="780" class="Keyword"
+      >inductive</a
+      ><a name="789"
+      >
+      </a
+      ><a name="796" class="Keyword"
+      >constructor</a
+      ><a name="807"
+      > </a
+      ><a name="808" href="ISML.html#808" class="InductiveConstructor Operator"
+      >[_&#8271;_]_</a
+      ><a name="814"
+      >
+      </a
+      ><a name="821" class="Keyword"
+      >field</a
+      ><a name="826"
+      >
+        </a
+      ><a name="835" class="Symbol"
+      >{</a
+      ><a name="836" href="ISML.html#836" class="Field"
+      >q</a
+      ><a name="837" class="Symbol"
+      >}</a
+      ><a name="838"
+      >           </a
+      ><a name="849" class="Symbol"
+      >:</a
+      ><a name="850"
+      > </a
+      ><a name="851" href="Prelude.html#6297" class="Datatype"
+      >Nat</a
+      ><a name="854"
+      >
+        </a
+      ><a name="863" class="Symbol"
+      >{</a
+      ><a name="864" href="ISML.html#864" class="Field"
+      >p</a
+      ><a name="865" class="Symbol"
+      >}</a
+      ><a name="866"
+      >           </a
+      ><a name="877" class="Symbol"
+      >:</a
+      ><a name="878"
+      > </a
+      ><a name="879" href="Prelude.html#6297" class="Datatype"
+      >Nat</a
+      ><a name="882"
+      >
+        </a
+      ><a name="891" href="ISML.html#891" class="Field"
+      >BoxTy&#8594;BoxTy&#8902;</a
+      ><a name="903"
+      > </a
+      ><a name="904" class="Symbol"
+      >:</a
+      ><a name="905"
+      > </a
+      ><a name="906" href="ISML.html#1017" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="912"
+      > </a
+      ><a name="913" href="ISML.html#836" class="Field"
+      >q</a
+      ><a name="914"
+      >
+        </a
+      ><a name="923" href="ISML.html#923" class="Field"
+      >BoxTy&#8594;Ty&#8902;</a
+      ><a name="932"
+      >    </a
+      ><a name="936" class="Symbol"
+      >:</a
+      ><a name="937"
+      > </a
+      ><a name="938" href="ISML.html#975" class="Function"
+      >Ty&#8902;</a
+      ><a name="941"
+      > </a
+      ><a name="942" href="ISML.html#864" class="Field"
+      >p</a
+      ><a name="943"
+      >
+        </a
+      ><a name="952" href="ISML.html#952" class="Field"
+      >BoxTy&#8594;Ty</a
+      ><a name="960"
+      >     </a
+      ><a name="965" class="Symbol"
+      >:</a
+      ><a name="966"
+      > </a
+      ><a name="967" href="ISML.html#632" class="Datatype"
+      >Ty</a
+      ><a name="969"
+      >
+
+    </a
+      ><a name="975" href="ISML.html#975" class="Function"
+      >Ty&#8902;</a
+      ><a name="978"
+      > </a
+      ><a name="979" class="Symbol"
+      >:</a
+      ><a name="980"
+      > </a
+      ><a name="981" href="Prelude.html#6297" class="Datatype"
+      >Nat</a
+      ><a name="984"
+      > </a
+      ><a name="985" class="Symbol"
+      >&#8594;</a
+      ><a name="986"
+      > </a
+      ><a name="987" class="PrimitiveType"
+      >Set</a
+      ><a name="990"
+      >
+    </a
+      ><a name="995" href="ISML.html#975" class="Function"
+      >Ty&#8902;</a
+      ><a name="998"
+      > </a
+      ><a name="999" href="ISML.html#999" class="Bound"
+      >g</a
+      ><a name="1000"
+      > </a
+      ><a name="1001" class="Symbol"
+      >=</a
+      ><a name="1002"
+      > </a
+      ><a name="1003" href="PreludeVec.html#102" class="Datatype"
+      >Vec</a
+      ><a name="1006"
+      > </a
+      ><a name="1007" href="ISML.html#632" class="Datatype"
+      >Ty</a
+      ><a name="1009"
+      > </a
+      ><a name="1010" href="ISML.html#999" class="Bound"
+      >g</a
+      ><a name="1011"
+      >
+
+    </a
+      ><a name="1017" href="ISML.html#1017" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="1023"
+      > </a
+      ><a name="1024" class="Symbol"
+      >:</a
+      ><a name="1025"
+      > </a
+      ><a name="1026" href="Prelude.html#6297" class="Datatype"
+      >Nat</a
+      ><a name="1029"
+      > </a
+      ><a name="1030" class="Symbol"
+      >&#8594;</a
+      ><a name="1031"
+      > </a
+      ><a name="1032" class="PrimitiveType"
+      >Set</a
+      ><a name="1035"
+      >
+    </a
+      ><a name="1040" href="ISML.html#1017" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="1046"
+      > </a
+      ><a name="1047" href="ISML.html#1047" class="Bound"
+      >d</a
+      ><a name="1048"
+      > </a
+      ><a name="1049" class="Symbol"
+      >=</a
+      ><a name="1050"
+      > </a
+      ><a name="1051" href="PreludeVec.html#102" class="Datatype"
+      >Vec</a
+      ><a name="1054"
+      > </a
+      ><a name="1055" href="ISML.html#756" class="Record"
+      >BoxTy</a
+      ><a name="1060"
+      > </a
+      ><a name="1061" href="ISML.html#1047" class="Bound"
+      >d</a
+      ><a name="1062"
+      >
+  </a
+      ><a name="1065" class="Keyword"
+      >open</a
+      ><a name="1069"
+      > </a
+      ><a name="1070" href="ISML.html#756" class="Module"
+      >BoxTy</a
+      ><a name="1075"
+      > </a
+      ><a name="1076" class="Keyword"
+      >public</a
+      ><a name="1082"
+      >
+</a
+      ></pre
+    ></body
+  ></html
+>
