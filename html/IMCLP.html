@@ -1,0 +1,3140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><title
+    >IMCLP</title
+    ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta http-equiv="Content-Style-Type" content="text/css"
+     /><link href="Agda.css" rel="stylesheet" type="text/css"
+     /></head
+  ><body
+  ><pre
+    ><a name="1" class="Keyword"
+      >module</a
+      ><a name="7"
+      > </a
+      ><a name="8" href="IMCLP.html#1" class="Module"
+      >IMCLP</a
+      ><a name="13"
+      > </a
+      ><a name="14" class="Keyword"
+      >where</a
+      ><a name="19"
+      >
+
+</a
+      ><a name="21" class="Keyword"
+      >open</a
+      ><a name="25"
+      > </a
+      ><a name="26" class="Keyword"
+      >import</a
+      ><a name="32"
+      > </a
+      ><a name="33" href="PreludeVec.html#1" class="Module"
+      >PreludeVec</a
+      ><a name="43"
+      > </a
+      ><a name="44" class="Keyword"
+      >public</a
+      ><a name="50"
+      >
+
+
+</a
+      ><a name="53" class="Comment"
+      >-- Terms.</a
+      ><a name="62"
+      >
+
+</a
+      ><a name="64" class="Keyword"
+      >mutual</a
+      ><a name="70"
+      >
+  </a
+      ><a name="73" class="Keyword"
+      >data</a
+      ><a name="77"
+      > </a
+      ><a name="78" href="IMCLP.html#78" class="Datatype"
+      >Tm</a
+      ><a name="80"
+      > </a
+      ><a name="81" class="Symbol"
+      >(</a
+      ><a name="82" href="IMCLP.html#82" class="Bound"
+      >d</a
+      ><a name="83"
+      > </a
+      ><a name="84" href="IMCLP.html#84" class="Bound"
+      >g</a
+      ><a name="85"
+      > </a
+      ><a name="86" class="Symbol"
+      >:</a
+      ><a name="87"
+      > </a
+      ><a name="88" href="Prelude.html#6297" class="Datatype"
+      >Nat</a
+      ><a name="91" class="Symbol"
+      >)</a
+      ><a name="92"
+      > </a
+      ><a name="93" class="Symbol"
+      >:</a
+      ><a name="94"
+      > </a
+      ><a name="95" class="PrimitiveType"
+      >Set</a
+      ><a name="98"
+      > </a
+      ><a name="99" class="Keyword"
+      >where</a
+      ><a name="104"
+      >
+    </a
+      ><a name="109" href="IMCLP.html#109" class="InductiveConstructor"
+      >VAR</a
+      ><a name="112"
+      >   </a
+      ><a name="115" class="Symbol"
+      >:</a
+      ><a name="116"
+      > </a
+      ><a name="117" href="Prelude.html#9019" class="Datatype"
+      >Fin</a
+      ><a name="120"
+      > </a
+      ><a name="121" href="IMCLP.html#84" class="Bound"
+      >g</a
+      ><a name="122"
+      > </a
+      ><a name="123" class="Symbol"
+      >&#8594;</a
+      ><a name="124"
+      > </a
+      ><a name="125" href="IMCLP.html#78" class="Datatype"
+      >Tm</a
+      ><a name="127"
+      > </a
+      ><a name="128" href="IMCLP.html#82" class="Bound"
+      >d</a
+      ><a name="129"
+      > </a
+      ><a name="130" href="IMCLP.html#84" class="Bound"
+      >g</a
+      ><a name="131"
+      >
+    </a
+      ><a name="136" href="IMCLP.html#136" class="InductiveConstructor"
+      >MVAR</a
+      ><a name="140"
+      >  </a
+      ><a name="142" class="Symbol"
+      >:</a
+      ><a name="143"
+      > </a
+      ><a name="144" class="Symbol"
+      >&#8704;</a
+      ><a name="145"
+      > </a
+      ><a name="146" class="Symbol"
+      >{</a
+      ><a name="147" href="IMCLP.html#147" class="Bound"
+      >`d</a
+      ><a name="149" class="Symbol"
+      >}</a
+      ><a name="150"
+      > </a
+      ><a name="151" class="Symbol"
+      >&#8594;</a
+      ><a name="152"
+      > </a
+      ><a name="153" href="IMCLP.html#342" class="Function"
+      >Tm&#8902;</a
+      ><a name="156"
+      > </a
+      ><a name="157" href="IMCLP.html#82" class="Bound"
+      >d</a
+      ><a name="158"
+      > </a
+      ><a name="159" href="Prelude.html#6328" class="InductiveConstructor"
+      >zero</a
+      ><a name="163"
+      > </a
+      ><a name="164" href="IMCLP.html#147" class="Bound"
+      >`d</a
+      ><a name="166"
+      > </a
+      ><a name="167" class="Symbol"
+      >&#8594;</a
+      ><a name="168"
+      > </a
+      ><a name="169" href="Prelude.html#9019" class="Datatype"
+      >Fin</a
+      ><a name="172"
+      > </a
+      ><a name="173" href="IMCLP.html#82" class="Bound"
+      >d</a
+      ><a name="174"
+      > </a
+      ><a name="175" class="Symbol"
+      >&#8594;</a
+      ><a name="176"
+      > </a
+      ><a name="177" href="IMCLP.html#78" class="Datatype"
+      >Tm</a
+      ><a name="179"
+      > </a
+      ><a name="180" href="IMCLP.html#82" class="Bound"
+      >d</a
+      ><a name="181"
+      > </a
+      ><a name="182" href="IMCLP.html#84" class="Bound"
+      >g</a
+      ><a name="183"
+      >
+    </a
+      ><a name="188" href="IMCLP.html#188" class="InductiveConstructor"
+      >LAM</a
+      ><a name="191"
+      >   </a
+      ><a name="194" class="Symbol"
+      >:</a
+      ><a name="195"
+      > </a
+      ><a name="196" href="IMCLP.html#78" class="Datatype"
+      >Tm</a
+      ><a name="198"
+      > </a
+      ><a name="199" href="IMCLP.html#82" class="Bound"
+      >d</a
+      ><a name="200"
+      > </a
+      ><a name="201" class="Symbol"
+      >(</a
+      ><a name="202" href="Prelude.html#6343" class="InductiveConstructor"
+      >suc</a
+      ><a name="205"
+      > </a
+      ><a name="206" href="IMCLP.html#84" class="Bound"
+      >g</a
+      ><a name="207" class="Symbol"
+      >)</a
+      ><a name="208"
+      > </a
+      ><a name="209" class="Symbol"
+      >&#8594;</a
+      ><a name="210"
+      > </a
+      ><a name="211" href="IMCLP.html#78" class="Datatype"
+      >Tm</a
+      ><a name="213"
+      > </a
+      ><a name="214" href="IMCLP.html#82" class="Bound"
+      >d</a
+      ><a name="215"
+      > </a
+      ><a name="216" href="IMCLP.html#84" class="Bound"
+      >g</a
+      ><a name="217"
+      >
+    </a
+      ><a name="222" href="IMCLP.html#222" class="InductiveConstructor"
+      >APP</a
+      ><a name="225"
+      >   </a
+      ><a name="228" class="Symbol"
+      >:</a
+      ><a name="229"
+      > </a
+      ><a name="230" href="IMCLP.html#78" class="Datatype"
+      >Tm</a
+      ><a name="232"
+      > </a
+      ><a name="233" href="IMCLP.html#82" class="Bound"
+      >d</a
+      ><a name="234"
+      > </a
+      ><a name="235" href="IMCLP.html#84" class="Bound"
+      >g</a
+      ><a name="236"
+      > </a
+      ><a name="237" class="Symbol"
+      >&#8594;</a
+      ><a name="238"
+      > </a
+      ><a name="239" href="IMCLP.html#78" class="Datatype"
+      >Tm</a
+      ><a name="241"
+      > </a
+      ><a name="242" href="IMCLP.html#82" class="Bound"
+      >d</a
+      ><a name="243"
+      > </a
+      ><a name="244" href="IMCLP.html#84" class="Bound"
+      >g</a
+      ><a name="245"
+      > </a
+      ><a name="246" class="Symbol"
+      >&#8594;</a
+      ><a name="247"
+      > </a
+      ><a name="248" href="IMCLP.html#78" class="Datatype"
+      >Tm</a
+      ><a name="250"
+      > </a
+      ><a name="251" href="IMCLP.html#82" class="Bound"
+      >d</a
+      ><a name="252"
+      > </a
+      ><a name="253" href="IMCLP.html#84" class="Bound"
+      >g</a
+      ><a name="254"
+      >
+    </a
+      ><a name="259" href="IMCLP.html#259" class="InductiveConstructor"
+      >BOX</a
+      ><a name="262"
+      >   </a
+      ><a name="265" class="Symbol"
+      >:</a
+      ><a name="266"
+      > </a
+      ><a name="267" class="Symbol"
+      >&#8704;</a
+      ><a name="268"
+      > </a
+      ><a name="269" class="Symbol"
+      >{</a
+      ><a name="270" href="IMCLP.html#270" class="Bound"
+      >`d</a
+      ><a name="272" class="Symbol"
+      >}</a
+      ><a name="273"
+      > </a
+      ><a name="274" class="Symbol"
+      >&#8594;</a
+      ><a name="275"
+      > </a
+      ><a name="276" href="IMCLP.html#78" class="Datatype"
+      >Tm</a
+      ><a name="278"
+      > </a
+      ><a name="279" href="IMCLP.html#270" class="Bound"
+      >`d</a
+      ><a name="281"
+      > </a
+      ><a name="282" href="Prelude.html#6328" class="InductiveConstructor"
+      >zero</a
+      ><a name="286"
+      > </a
+      ><a name="287" class="Symbol"
+      >&#8594;</a
+      ><a name="288"
+      > </a
+      ><a name="289" href="IMCLP.html#78" class="Datatype"
+      >Tm</a
+      ><a name="291"
+      > </a
+      ><a name="292" href="IMCLP.html#82" class="Bound"
+      >d</a
+      ><a name="293"
+      > </a
+      ><a name="294" href="IMCLP.html#84" class="Bound"
+      >g</a
+      ><a name="295"
+      >
+    </a
+      ><a name="300" href="IMCLP.html#300" class="InductiveConstructor"
+      >UNBOX</a
+      ><a name="305"
+      > </a
+      ><a name="306" class="Symbol"
+      >:</a
+      ><a name="307"
+      > </a
+      ><a name="308" href="IMCLP.html#78" class="Datatype"
+      >Tm</a
+      ><a name="310"
+      > </a
+      ><a name="311" href="IMCLP.html#82" class="Bound"
+      >d</a
+      ><a name="312"
+      > </a
+      ><a name="313" href="IMCLP.html#84" class="Bound"
+      >g</a
+      ><a name="314"
+      > </a
+      ><a name="315" class="Symbol"
+      >&#8594;</a
+      ><a name="316"
+      > </a
+      ><a name="317" href="IMCLP.html#78" class="Datatype"
+      >Tm</a
+      ><a name="319"
+      > </a
+      ><a name="320" class="Symbol"
+      >(</a
+      ><a name="321" href="Prelude.html#6343" class="InductiveConstructor"
+      >suc</a
+      ><a name="324"
+      > </a
+      ><a name="325" href="IMCLP.html#82" class="Bound"
+      >d</a
+      ><a name="326" class="Symbol"
+      >)</a
+      ><a name="327"
+      > </a
+      ><a name="328" href="IMCLP.html#84" class="Bound"
+      >g</a
+      ><a name="329"
+      > </a
+      ><a name="330" class="Symbol"
+      >&#8594;</a
+      ><a name="331"
+      > </a
+      ><a name="332" href="IMCLP.html#78" class="Datatype"
+      >Tm</a
+      ><a name="334"
+      > </a
+      ><a name="335" href="IMCLP.html#82" class="Bound"
+      >d</a
+      ><a name="336"
+      > </a
+      ><a name="337" href="IMCLP.html#84" class="Bound"
+      >g</a
+      ><a name="338"
+      >
+
+  </a
+      ><a name="342" href="IMCLP.html#342" class="Function"
+      >Tm&#8902;</a
+      ><a name="345"
+      > </a
+      ><a name="346" class="Symbol"
+      >:</a
+      ><a name="347"
+      > </a
+      ><a name="348" href="Prelude.html#6297" class="Datatype"
+      >Nat</a
+      ><a name="351"
+      > </a
+      ><a name="352" class="Symbol"
+      >&#8594;</a
+      ><a name="353"
+      > </a
+      ><a name="354" href="Prelude.html#6297" class="Datatype"
+      >Nat</a
+      ><a name="357"
+      > </a
+      ><a name="358" class="Symbol"
+      >&#8594;</a
+      ><a name="359"
+      > </a
+      ><a name="360" href="Prelude.html#6297" class="Datatype"
+      >Nat</a
+      ><a name="363"
+      > </a
+      ><a name="364" class="Symbol"
+      >&#8594;</a
+      ><a name="365"
+      > </a
+      ><a name="366" class="PrimitiveType"
+      >Set</a
+      ><a name="369"
+      >
+  </a
+      ><a name="372" href="IMCLP.html#342" class="Function"
+      >Tm&#8902;</a
+      ><a name="375"
+      > </a
+      ><a name="376" href="IMCLP.html#376" class="Bound"
+      >d</a
+      ><a name="377"
+      > </a
+      ><a name="378" href="IMCLP.html#378" class="Bound"
+      >g</a
+      ><a name="379"
+      > </a
+      ><a name="380" href="IMCLP.html#380" class="Bound"
+      >n</a
+      ><a name="381"
+      > </a
+      ><a name="382" class="Symbol"
+      >=</a
+      ><a name="383"
+      > </a
+      ><a name="384" href="PreludeVec.html#102" class="Datatype"
+      >Vec</a
+      ><a name="387"
+      > </a
+      ><a name="388" class="Symbol"
+      >(</a
+      ><a name="389" href="IMCLP.html#78" class="Datatype"
+      >Tm</a
+      ><a name="391"
+      > </a
+      ><a name="392" href="IMCLP.html#376" class="Bound"
+      >d</a
+      ><a name="393"
+      > </a
+      ><a name="394" href="IMCLP.html#378" class="Bound"
+      >g</a
+      ><a name="395" class="Symbol"
+      >)</a
+      ><a name="396"
+      > </a
+      ><a name="397" href="IMCLP.html#380" class="Bound"
+      >n</a
+      ><a name="398"
+      >
+
+</a
+      ><a name="400" class="Keyword"
+      >mutual</a
+      ><a name="406"
+      >
+  </a
+      ><a name="409" href="IMCLP.html#409" class="Function"
+      >monoTm</a
+      ><a name="415"
+      > </a
+      ><a name="416" class="Symbol"
+      >:</a
+      ><a name="417"
+      > </a
+      ><a name="418" class="Symbol"
+      >&#8704;</a
+      ><a name="419"
+      > </a
+      ><a name="420" class="Symbol"
+      >{</a
+      ><a name="421" href="IMCLP.html#421" class="Bound"
+      >d</a
+      ><a name="422"
+      > </a
+      ><a name="423" href="IMCLP.html#423" class="Bound"
+      >g</a
+      ><a name="424"
+      > </a
+      ><a name="425" href="IMCLP.html#425" class="Bound"
+      >d&#8242;</a
+      ><a name="427"
+      > </a
+      ><a name="428" href="IMCLP.html#428" class="Bound"
+      >g&#8242;</a
+      ><a name="430" class="Symbol"
+      >}</a
+      ><a name="431"
+      > </a
+      ><a name="432" class="Symbol"
+      >&#8594;</a
+      ><a name="433"
+      > </a
+      ><a name="434" href="IMCLP.html#425" class="Bound"
+      >d&#8242;</a
+      ><a name="436"
+      > </a
+      ><a name="437" href="Prelude.html#6887" class="Datatype Operator"
+      >&#8805;</a
+      ><a name="438"
+      > </a
+      ><a name="439" href="IMCLP.html#421" class="Bound"
+      >d</a
+      ><a name="440"
+      > </a
+      ><a name="441" class="Symbol"
+      >&#8594;</a
+      ><a name="442"
+      > </a
+      ><a name="443" href="IMCLP.html#428" class="Bound"
+      >g&#8242;</a
+      ><a name="445"
+      > </a
+      ><a name="446" href="Prelude.html#6887" class="Datatype Operator"
+      >&#8805;</a
+      ><a name="447"
+      > </a
+      ><a name="448" href="IMCLP.html#423" class="Bound"
+      >g</a
+      ><a name="449"
+      > </a
+      ><a name="450" class="Symbol"
+      >&#8594;</a
+      ><a name="451"
+      > </a
+      ><a name="452" href="IMCLP.html#78" class="Datatype"
+      >Tm</a
+      ><a name="454"
+      > </a
+      ><a name="455" href="IMCLP.html#421" class="Bound"
+      >d</a
+      ><a name="456"
+      > </a
+      ><a name="457" href="IMCLP.html#423" class="Bound"
+      >g</a
+      ><a name="458"
+      > </a
+      ><a name="459" class="Symbol"
+      >&#8594;</a
+      ><a name="460"
+      > </a
+      ><a name="461" href="IMCLP.html#78" class="Datatype"
+      >Tm</a
+      ><a name="463"
+      > </a
+      ><a name="464" href="IMCLP.html#425" class="Bound"
+      >d&#8242;</a
+      ><a name="466"
+      > </a
+      ><a name="467" href="IMCLP.html#428" class="Bound"
+      >g&#8242;</a
+      ><a name="469"
+      >
+  </a
+      ><a name="472" href="IMCLP.html#409" class="Function"
+      >monoTm</a
+      ><a name="478"
+      > </a
+      ><a name="479" href="IMCLP.html#479" class="Bound"
+      >z</a
+      ><a name="480"
+      > </a
+      ><a name="481" href="IMCLP.html#481" class="Bound"
+      >e</a
+      ><a name="482"
+      > </a
+      ><a name="483" class="Symbol"
+      >(</a
+      ><a name="484" href="IMCLP.html#109" class="InductiveConstructor"
+      >VAR</a
+      ><a name="487"
+      > </a
+      ><a name="488" href="IMCLP.html#488" class="Bound"
+      >i</a
+      ><a name="489" class="Symbol"
+      >)</a
+      ><a name="490"
+      >     </a
+      ><a name="495" class="Symbol"
+      >=</a
+      ><a name="496"
+      > </a
+      ><a name="497" href="IMCLP.html#109" class="InductiveConstructor"
+      >VAR</a
+      ><a name="500"
+      > </a
+      ><a name="501" class="Symbol"
+      >(</a
+      ><a name="502" href="Prelude.html#9468" class="Function"
+      >monoFin</a
+      ><a name="509"
+      > </a
+      ><a name="510" href="IMCLP.html#481" class="Bound"
+      >e</a
+      ><a name="511"
+      > </a
+      ><a name="512" href="IMCLP.html#488" class="Bound"
+      >i</a
+      ><a name="513" class="Symbol"
+      >)</a
+      ><a name="514"
+      >
+  </a
+      ><a name="517" href="IMCLP.html#409" class="Function"
+      >monoTm</a
+      ><a name="523"
+      > </a
+      ><a name="524" href="IMCLP.html#524" class="Bound"
+      >z</a
+      ><a name="525"
+      > </a
+      ><a name="526" href="IMCLP.html#526" class="Bound"
+      >e</a
+      ><a name="527"
+      > </a
+      ><a name="528" class="Symbol"
+      >(</a
+      ><a name="529" href="IMCLP.html#136" class="InductiveConstructor"
+      >MVAR</a
+      ><a name="533"
+      > </a
+      ><a name="534" href="IMCLP.html#534" class="Bound"
+      >q</a
+      ><a name="535"
+      > </a
+      ><a name="536" href="IMCLP.html#536" class="Bound"
+      >i</a
+      ><a name="537" class="Symbol"
+      >)</a
+      ><a name="538"
+      >  </a
+      ><a name="540" class="Symbol"
+      >=</a
+      ><a name="541"
+      > </a
+      ><a name="542" href="IMCLP.html#136" class="InductiveConstructor"
+      >MVAR</a
+      ><a name="546"
+      > </a
+      ><a name="547" class="Symbol"
+      >(</a
+      ><a name="548" href="IMCLP.html#800" class="Function"
+      >monoTm&#8902;</a
+      ><a name="555"
+      > </a
+      ><a name="556" href="IMCLP.html#524" class="Bound"
+      >z</a
+      ><a name="557"
+      > </a
+      ><a name="558" href="Prelude.html#6930" class="InductiveConstructor"
+      >done</a
+      ><a name="562"
+      > </a
+      ><a name="563" href="IMCLP.html#534" class="Bound"
+      >q</a
+      ><a name="564" class="Symbol"
+      >)</a
+      ><a name="565"
+      > </a
+      ><a name="566" class="Symbol"
+      >(</a
+      ><a name="567" href="Prelude.html#9468" class="Function"
+      >monoFin</a
+      ><a name="574"
+      > </a
+      ><a name="575" href="IMCLP.html#524" class="Bound"
+      >z</a
+      ><a name="576"
+      > </a
+      ><a name="577" href="IMCLP.html#536" class="Bound"
+      >i</a
+      ><a name="578" class="Symbol"
+      >)</a
+      ><a name="579"
+      >
+  </a
+      ><a name="582" href="IMCLP.html#409" class="Function"
+      >monoTm</a
+      ><a name="588"
+      > </a
+      ><a name="589" href="IMCLP.html#589" class="Bound"
+      >z</a
+      ><a name="590"
+      > </a
+      ><a name="591" href="IMCLP.html#591" class="Bound"
+      >e</a
+      ><a name="592"
+      > </a
+      ><a name="593" class="Symbol"
+      >(</a
+      ><a name="594" href="IMCLP.html#188" class="InductiveConstructor"
+      >LAM</a
+      ><a name="597"
+      > </a
+      ><a name="598" href="IMCLP.html#598" class="Bound"
+      >M</a
+      ><a name="599" class="Symbol"
+      >)</a
+      ><a name="600"
+      >     </a
+      ><a name="605" class="Symbol"
+      >=</a
+      ><a name="606"
+      > </a
+      ><a name="607" href="IMCLP.html#188" class="InductiveConstructor"
+      >LAM</a
+      ><a name="610"
+      > </a
+      ><a name="611" class="Symbol"
+      >(</a
+      ><a name="612" href="IMCLP.html#409" class="Function"
+      >monoTm</a
+      ><a name="618"
+      > </a
+      ><a name="619" href="IMCLP.html#589" class="Bound"
+      >z</a
+      ><a name="620"
+      > </a
+      ><a name="621" class="Symbol"
+      >(</a
+      ><a name="622" href="Prelude.html#6995" class="InductiveConstructor"
+      >lift</a
+      ><a name="626"
+      > </a
+      ><a name="627" href="IMCLP.html#591" class="Bound"
+      >e</a
+      ><a name="628" class="Symbol"
+      >)</a
+      ><a name="629"
+      > </a
+      ><a name="630" href="IMCLP.html#598" class="Bound"
+      >M</a
+      ><a name="631" class="Symbol"
+      >)</a
+      ><a name="632"
+      >
+  </a
+      ><a name="635" href="IMCLP.html#409" class="Function"
+      >monoTm</a
+      ><a name="641"
+      > </a
+      ><a name="642" href="IMCLP.html#642" class="Bound"
+      >z</a
+      ><a name="643"
+      > </a
+      ><a name="644" href="IMCLP.html#644" class="Bound"
+      >e</a
+      ><a name="645"
+      > </a
+      ><a name="646" class="Symbol"
+      >(</a
+      ><a name="647" href="IMCLP.html#222" class="InductiveConstructor"
+      >APP</a
+      ><a name="650"
+      > </a
+      ><a name="651" href="IMCLP.html#651" class="Bound"
+      >M</a
+      ><a name="652"
+      > </a
+      ><a name="653" href="IMCLP.html#653" class="Bound"
+      >N</a
+      ><a name="654" class="Symbol"
+      >)</a
+      ><a name="655"
+      >   </a
+      ><a name="658" class="Symbol"
+      >=</a
+      ><a name="659"
+      > </a
+      ><a name="660" href="IMCLP.html#222" class="InductiveConstructor"
+      >APP</a
+      ><a name="663"
+      > </a
+      ><a name="664" class="Symbol"
+      >(</a
+      ><a name="665" href="IMCLP.html#409" class="Function"
+      >monoTm</a
+      ><a name="671"
+      > </a
+      ><a name="672" href="IMCLP.html#642" class="Bound"
+      >z</a
+      ><a name="673"
+      > </a
+      ><a name="674" href="IMCLP.html#644" class="Bound"
+      >e</a
+      ><a name="675"
+      > </a
+      ><a name="676" href="IMCLP.html#651" class="Bound"
+      >M</a
+      ><a name="677" class="Symbol"
+      >)</a
+      ><a name="678"
+      > </a
+      ><a name="679" class="Symbol"
+      >(</a
+      ><a name="680" href="IMCLP.html#409" class="Function"
+      >monoTm</a
+      ><a name="686"
+      > </a
+      ><a name="687" href="IMCLP.html#642" class="Bound"
+      >z</a
+      ><a name="688"
+      > </a
+      ><a name="689" href="IMCLP.html#644" class="Bound"
+      >e</a
+      ><a name="690"
+      > </a
+      ><a name="691" href="IMCLP.html#653" class="Bound"
+      >N</a
+      ><a name="692" class="Symbol"
+      >)</a
+      ><a name="693"
+      >
+  </a
+      ><a name="696" href="IMCLP.html#409" class="Function"
+      >monoTm</a
+      ><a name="702"
+      > </a
+      ><a name="703" href="IMCLP.html#703" class="Bound"
+      >z</a
+      ><a name="704"
+      > </a
+      ><a name="705" href="IMCLP.html#705" class="Bound"
+      >e</a
+      ><a name="706"
+      > </a
+      ><a name="707" class="Symbol"
+      >(</a
+      ><a name="708" href="IMCLP.html#259" class="InductiveConstructor"
+      >BOX</a
+      ><a name="711"
+      > </a
+      ><a name="712" href="IMCLP.html#712" class="Bound"
+      >M</a
+      ><a name="713" class="Symbol"
+      >)</a
+      ><a name="714"
+      >     </a
+      ><a name="719" class="Symbol"
+      >=</a
+      ><a name="720"
+      > </a
+      ><a name="721" href="IMCLP.html#259" class="InductiveConstructor"
+      >BOX</a
+      ><a name="724"
+      > </a
+      ><a name="725" href="IMCLP.html#712" class="Bound"
+      >M</a
+      ><a name="726"
+      >
+  </a
+      ><a name="729" href="IMCLP.html#409" class="Function"
+      >monoTm</a
+      ><a name="735"
+      > </a
+      ><a name="736" href="IMCLP.html#736" class="Bound"
+      >z</a
+      ><a name="737"
+      > </a
+      ><a name="738" href="IMCLP.html#738" class="Bound"
+      >e</a
+      ><a name="739"
+      > </a
+      ><a name="740" class="Symbol"
+      >(</a
+      ><a name="741" href="IMCLP.html#300" class="InductiveConstructor"
+      >UNBOX</a
+      ><a name="746"
+      > </a
+      ><a name="747" href="IMCLP.html#747" class="Bound"
+      >M</a
+      ><a name="748"
+      > </a
+      ><a name="749" href="IMCLP.html#749" class="Bound"
+      >N</a
+      ><a name="750" class="Symbol"
+      >)</a
+      ><a name="751"
+      > </a
+      ><a name="752" class="Symbol"
+      >=</a
+      ><a name="753"
+      > </a
+      ><a name="754" href="IMCLP.html#300" class="InductiveConstructor"
+      >UNBOX</a
+      ><a name="759"
+      > </a
+      ><a name="760" class="Symbol"
+      >(</a
+      ><a name="761" href="IMCLP.html#409" class="Function"
+      >monoTm</a
+      ><a name="767"
+      > </a
+      ><a name="768" href="IMCLP.html#736" class="Bound"
+      >z</a
+      ><a name="769"
+      > </a
+      ><a name="770" href="IMCLP.html#738" class="Bound"
+      >e</a
+      ><a name="771"
+      > </a
+      ><a name="772" href="IMCLP.html#747" class="Bound"
+      >M</a
+      ><a name="773" class="Symbol"
+      >)</a
+      ><a name="774"
+      > </a
+      ><a name="775" class="Symbol"
+      >(</a
+      ><a name="776" href="IMCLP.html#409" class="Function"
+      >monoTm</a
+      ><a name="782"
+      > </a
+      ><a name="783" class="Symbol"
+      >(</a
+      ><a name="784" href="Prelude.html#6995" class="InductiveConstructor"
+      >lift</a
+      ><a name="788"
+      > </a
+      ><a name="789" href="IMCLP.html#736" class="Bound"
+      >z</a
+      ><a name="790" class="Symbol"
+      >)</a
+      ><a name="791"
+      > </a
+      ><a name="792" href="IMCLP.html#738" class="Bound"
+      >e</a
+      ><a name="793"
+      > </a
+      ><a name="794" href="IMCLP.html#749" class="Bound"
+      >N</a
+      ><a name="795" class="Symbol"
+      >)</a
+      ><a name="796"
+      >
+
+  </a
+      ><a name="800" href="IMCLP.html#800" class="Function"
+      >monoTm&#8902;</a
+      ><a name="807"
+      > </a
+      ><a name="808" class="Symbol"
+      >:</a
+      ><a name="809"
+      > </a
+      ><a name="810" class="Symbol"
+      >&#8704;</a
+      ><a name="811"
+      > </a
+      ><a name="812" class="Symbol"
+      >{</a
+      ><a name="813" href="IMCLP.html#813" class="Bound"
+      >d</a
+      ><a name="814"
+      > </a
+      ><a name="815" href="IMCLP.html#815" class="Bound"
+      >g</a
+      ><a name="816"
+      > </a
+      ><a name="817" href="IMCLP.html#817" class="Bound"
+      >d&#8242;</a
+      ><a name="819"
+      > </a
+      ><a name="820" href="IMCLP.html#820" class="Bound"
+      >g&#8242;</a
+      ><a name="822"
+      > </a
+      ><a name="823" href="IMCLP.html#823" class="Bound"
+      >n</a
+      ><a name="824" class="Symbol"
+      >}</a
+      ><a name="825"
+      > </a
+      ><a name="826" class="Symbol"
+      >&#8594;</a
+      ><a name="827"
+      > </a
+      ><a name="828" href="IMCLP.html#817" class="Bound"
+      >d&#8242;</a
+      ><a name="830"
+      > </a
+      ><a name="831" href="Prelude.html#6887" class="Datatype Operator"
+      >&#8805;</a
+      ><a name="832"
+      > </a
+      ><a name="833" href="IMCLP.html#813" class="Bound"
+      >d</a
+      ><a name="834"
+      > </a
+      ><a name="835" class="Symbol"
+      >&#8594;</a
+      ><a name="836"
+      > </a
+      ><a name="837" href="IMCLP.html#820" class="Bound"
+      >g&#8242;</a
+      ><a name="839"
+      > </a
+      ><a name="840" href="Prelude.html#6887" class="Datatype Operator"
+      >&#8805;</a
+      ><a name="841"
+      > </a
+      ><a name="842" href="IMCLP.html#815" class="Bound"
+      >g</a
+      ><a name="843"
+      > </a
+      ><a name="844" class="Symbol"
+      >&#8594;</a
+      ><a name="845"
+      > </a
+      ><a name="846" href="IMCLP.html#342" class="Function"
+      >Tm&#8902;</a
+      ><a name="849"
+      > </a
+      ><a name="850" href="IMCLP.html#813" class="Bound"
+      >d</a
+      ><a name="851"
+      > </a
+      ><a name="852" href="IMCLP.html#815" class="Bound"
+      >g</a
+      ><a name="853"
+      > </a
+      ><a name="854" href="IMCLP.html#823" class="Bound"
+      >n</a
+      ><a name="855"
+      > </a
+      ><a name="856" class="Symbol"
+      >&#8594;</a
+      ><a name="857"
+      > </a
+      ><a name="858" href="IMCLP.html#342" class="Function"
+      >Tm&#8902;</a
+      ><a name="861"
+      > </a
+      ><a name="862" href="IMCLP.html#817" class="Bound"
+      >d&#8242;</a
+      ><a name="864"
+      > </a
+      ><a name="865" href="IMCLP.html#820" class="Bound"
+      >g&#8242;</a
+      ><a name="867"
+      > </a
+      ><a name="868" href="IMCLP.html#823" class="Bound"
+      >n</a
+      ><a name="869"
+      >
+  </a
+      ><a name="872" href="IMCLP.html#800" class="Function"
+      >monoTm&#8902;</a
+      ><a name="879"
+      > </a
+      ><a name="880" href="IMCLP.html#880" class="Bound"
+      >z</a
+      ><a name="881"
+      > </a
+      ><a name="882" href="IMCLP.html#882" class="Bound"
+      >e</a
+      ><a name="883"
+      > </a
+      ><a name="884" href="PreludeVec.html#157" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="885"
+      >       </a
+      ><a name="892" class="Symbol"
+      >=</a
+      ><a name="893"
+      > </a
+      ><a name="894" href="PreludeVec.html#157" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="895"
+      >
+  </a
+      ><a name="898" href="IMCLP.html#800" class="Function"
+      >monoTm&#8902;</a
+      ><a name="905"
+      > </a
+      ><a name="906" href="IMCLP.html#906" class="Bound"
+      >z</a
+      ><a name="907"
+      > </a
+      ><a name="908" href="IMCLP.html#908" class="Bound"
+      >e</a
+      ><a name="909"
+      > </a
+      ><a name="910" class="Symbol"
+      >(</a
+      ><a name="911" href="IMCLP.html#911" class="Bound"
+      >x</a
+      ><a name="912"
+      > </a
+      ><a name="913" href="PreludeVec.html#178" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="914"
+      > </a
+      ><a name="915" href="IMCLP.html#915" class="Bound"
+      >M</a
+      ><a name="916" class="Symbol"
+      >)</a
+      ><a name="917"
+      > </a
+      ><a name="918" class="Symbol"
+      >=</a
+      ><a name="919"
+      > </a
+      ><a name="920" href="IMCLP.html#800" class="Function"
+      >monoTm&#8902;</a
+      ><a name="927"
+      > </a
+      ><a name="928" href="IMCLP.html#906" class="Bound"
+      >z</a
+      ><a name="929"
+      > </a
+      ><a name="930" href="IMCLP.html#908" class="Bound"
+      >e</a
+      ><a name="931"
+      > </a
+      ><a name="932" href="IMCLP.html#911" class="Bound"
+      >x</a
+      ><a name="933"
+      > </a
+      ><a name="934" href="PreludeVec.html#178" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="935"
+      > </a
+      ><a name="936" href="IMCLP.html#409" class="Function"
+      >monoTm</a
+      ><a name="942"
+      > </a
+      ><a name="943" href="IMCLP.html#906" class="Bound"
+      >z</a
+      ><a name="944"
+      > </a
+      ><a name="945" href="IMCLP.html#908" class="Bound"
+      >e</a
+      ><a name="946"
+      > </a
+      ><a name="947" href="IMCLP.html#915" class="Bound"
+      >M</a
+      ><a name="948"
+      >
+  </a
+      ><a name="951" class="Comment"
+      >-- NOTE: Equivalent, but does not pass termination check.</a
+      ><a name="1008"
+      >
+  </a
+      ><a name="1011" class="Comment"
+      >-- monoTm&#8902; z e x = map (monoTm z e) x</a
+      ><a name="1048"
+      >
+
+</a
+      ><a name="1050" class="Keyword"
+      >mutual</a
+      ><a name="1056"
+      >
+  </a
+      ><a name="1059" href="IMCLP.html#1059" class="Function"
+      >idmonoTm</a
+      ><a name="1067"
+      > </a
+      ><a name="1068" class="Symbol"
+      >:</a
+      ><a name="1069"
+      > </a
+      ><a name="1070" class="Symbol"
+      >&#8704;</a
+      ><a name="1071"
+      > </a
+      ><a name="1072" class="Symbol"
+      >{</a
+      ><a name="1073" href="IMCLP.html#1073" class="Bound"
+      >d</a
+      ><a name="1074"
+      > </a
+      ><a name="1075" href="IMCLP.html#1075" class="Bound"
+      >g</a
+      ><a name="1076" class="Symbol"
+      >}</a
+      ><a name="1077"
+      > </a
+      ><a name="1078" class="Symbol"
+      >&#8594;</a
+      ><a name="1079"
+      > </a
+      ><a name="1080" class="Symbol"
+      >(</a
+      ><a name="1081" href="IMCLP.html#1081" class="Bound"
+      >M</a
+      ><a name="1082"
+      > </a
+      ><a name="1083" class="Symbol"
+      >:</a
+      ><a name="1084"
+      > </a
+      ><a name="1085" href="IMCLP.html#78" class="Datatype"
+      >Tm</a
+      ><a name="1087"
+      > </a
+      ><a name="1088" href="IMCLP.html#1073" class="Bound"
+      >d</a
+      ><a name="1089"
+      > </a
+      ><a name="1090" href="IMCLP.html#1075" class="Bound"
+      >g</a
+      ><a name="1091" class="Symbol"
+      >)</a
+      ><a name="1092"
+      > </a
+      ><a name="1093" class="Symbol"
+      >&#8594;</a
+      ><a name="1094"
+      > </a
+      ><a name="1095" href="IMCLP.html#409" class="Function"
+      >monoTm</a
+      ><a name="1101"
+      > </a
+      ><a name="1102" href="Prelude.html#7861" class="Function"
+      >refl&#8805;</a
+      ><a name="1107"
+      > </a
+      ><a name="1108" href="Prelude.html#7861" class="Function"
+      >refl&#8805;</a
+      ><a name="1113"
+      > </a
+      ><a name="1114" href="IMCLP.html#1081" class="Bound"
+      >M</a
+      ><a name="1115"
+      > </a
+      ><a name="1116" href="Prelude.html#805" class="Datatype Operator"
+      >&#8801;</a
+      ><a name="1117"
+      > </a
+      ><a name="1118" href="IMCLP.html#1081" class="Bound"
+      >M</a
+      ><a name="1119"
+      >
+  </a
+      ><a name="1122" href="IMCLP.html#1059" class="Function"
+      >idmonoTm</a
+      ><a name="1130"
+      > </a
+      ><a name="1131" class="Symbol"
+      >(</a
+      ><a name="1132" href="IMCLP.html#109" class="InductiveConstructor"
+      >VAR</a
+      ><a name="1135"
+      > </a
+      ><a name="1136" href="IMCLP.html#1136" class="Bound"
+      >i</a
+      ><a name="1137" class="Symbol"
+      >)</a
+      ><a name="1138"
+      >     </a
+      ><a name="1143" class="Symbol"
+      >=</a
+      ><a name="1144"
+      > </a
+      ><a name="1145" href="Prelude.html#1324" class="Function"
+      >cong</a
+      ><a name="1149"
+      > </a
+      ><a name="1150" href="IMCLP.html#109" class="InductiveConstructor"
+      >VAR</a
+      ><a name="1153"
+      > </a
+      ><a name="1154" class="Symbol"
+      >(</a
+      ><a name="1155" href="Prelude.html#10076" class="Function"
+      >idmonoFin</a
+      ><a name="1164"
+      > </a
+      ><a name="1165" href="IMCLP.html#1136" class="Bound"
+      >i</a
+      ><a name="1166" class="Symbol"
+      >)</a
+      ><a name="1167"
+      >
+  </a
+      ><a name="1170" href="IMCLP.html#1059" class="Function"
+      >idmonoTm</a
+      ><a name="1178"
+      > </a
+      ><a name="1179" class="Symbol"
+      >(</a
+      ><a name="1180" href="IMCLP.html#136" class="InductiveConstructor"
+      >MVAR</a
+      ><a name="1184"
+      > </a
+      ><a name="1185" href="IMCLP.html#1185" class="Bound"
+      >q</a
+      ><a name="1186"
+      > </a
+      ><a name="1187" href="IMCLP.html#1187" class="Bound"
+      >i</a
+      ><a name="1188" class="Symbol"
+      >)</a
+      ><a name="1189"
+      >  </a
+      ><a name="1191" class="Symbol"
+      >=</a
+      ><a name="1192"
+      > </a
+      ><a name="1193" href="Prelude.html#1446" class="Function"
+      >cong&#178;</a
+      ><a name="1198"
+      > </a
+      ><a name="1199" href="IMCLP.html#136" class="InductiveConstructor"
+      >MVAR</a
+      ><a name="1203"
+      > </a
+      ><a name="1204" class="Symbol"
+      >(</a
+      ><a name="1205" href="IMCLP.html#1436" class="Function"
+      >idmonoTm&#8902;</a
+      ><a name="1214"
+      > </a
+      ><a name="1215" href="IMCLP.html#1185" class="Bound"
+      >q</a
+      ><a name="1216" class="Symbol"
+      >)</a
+      ><a name="1217"
+      > </a
+      ><a name="1218" class="Symbol"
+      >(</a
+      ><a name="1219" href="Prelude.html#10076" class="Function"
+      >idmonoFin</a
+      ><a name="1228"
+      > </a
+      ><a name="1229" href="IMCLP.html#1187" class="Bound"
+      >i</a
+      ><a name="1230" class="Symbol"
+      >)</a
+      ><a name="1231"
+      >
+  </a
+      ><a name="1234" href="IMCLP.html#1059" class="Function"
+      >idmonoTm</a
+      ><a name="1242"
+      > </a
+      ><a name="1243" class="Symbol"
+      >(</a
+      ><a name="1244" href="IMCLP.html#188" class="InductiveConstructor"
+      >LAM</a
+      ><a name="1247"
+      > </a
+      ><a name="1248" href="IMCLP.html#1248" class="Bound"
+      >M</a
+      ><a name="1249" class="Symbol"
+      >)</a
+      ><a name="1250"
+      >     </a
+      ><a name="1255" class="Symbol"
+      >=</a
+      ><a name="1256"
+      > </a
+      ><a name="1257" href="Prelude.html#1324" class="Function"
+      >cong</a
+      ><a name="1261"
+      > </a
+      ><a name="1262" href="IMCLP.html#188" class="InductiveConstructor"
+      >LAM</a
+      ><a name="1265"
+      > </a
+      ><a name="1266" class="Symbol"
+      >(</a
+      ><a name="1267" href="IMCLP.html#1059" class="Function"
+      >idmonoTm</a
+      ><a name="1275"
+      > </a
+      ><a name="1276" href="IMCLP.html#1248" class="Bound"
+      >M</a
+      ><a name="1277" class="Symbol"
+      >)</a
+      ><a name="1278"
+      >
+  </a
+      ><a name="1281" href="IMCLP.html#1059" class="Function"
+      >idmonoTm</a
+      ><a name="1289"
+      > </a
+      ><a name="1290" class="Symbol"
+      >(</a
+      ><a name="1291" href="IMCLP.html#222" class="InductiveConstructor"
+      >APP</a
+      ><a name="1294"
+      > </a
+      ><a name="1295" href="IMCLP.html#1295" class="Bound"
+      >M</a
+      ><a name="1296"
+      > </a
+      ><a name="1297" href="IMCLP.html#1297" class="Bound"
+      >N</a
+      ><a name="1298" class="Symbol"
+      >)</a
+      ><a name="1299"
+      >   </a
+      ><a name="1302" class="Symbol"
+      >=</a
+      ><a name="1303"
+      > </a
+      ><a name="1304" href="Prelude.html#1446" class="Function"
+      >cong&#178;</a
+      ><a name="1309"
+      > </a
+      ><a name="1310" href="IMCLP.html#222" class="InductiveConstructor"
+      >APP</a
+      ><a name="1313"
+      > </a
+      ><a name="1314" class="Symbol"
+      >(</a
+      ><a name="1315" href="IMCLP.html#1059" class="Function"
+      >idmonoTm</a
+      ><a name="1323"
+      > </a
+      ><a name="1324" href="IMCLP.html#1295" class="Bound"
+      >M</a
+      ><a name="1325" class="Symbol"
+      >)</a
+      ><a name="1326"
+      > </a
+      ><a name="1327" class="Symbol"
+      >(</a
+      ><a name="1328" href="IMCLP.html#1059" class="Function"
+      >idmonoTm</a
+      ><a name="1336"
+      > </a
+      ><a name="1337" href="IMCLP.html#1297" class="Bound"
+      >N</a
+      ><a name="1338" class="Symbol"
+      >)</a
+      ><a name="1339"
+      >
+  </a
+      ><a name="1342" href="IMCLP.html#1059" class="Function"
+      >idmonoTm</a
+      ><a name="1350"
+      > </a
+      ><a name="1351" class="Symbol"
+      >(</a
+      ><a name="1352" href="IMCLP.html#259" class="InductiveConstructor"
+      >BOX</a
+      ><a name="1355"
+      > </a
+      ><a name="1356" href="IMCLP.html#1356" class="Bound"
+      >M</a
+      ><a name="1357" class="Symbol"
+      >)</a
+      ><a name="1358"
+      >     </a
+      ><a name="1363" class="Symbol"
+      >=</a
+      ><a name="1364"
+      > </a
+      ><a name="1365" href="Prelude.html#866" class="InductiveConstructor"
+      >refl</a
+      ><a name="1369"
+      >
+  </a
+      ><a name="1372" href="IMCLP.html#1059" class="Function"
+      >idmonoTm</a
+      ><a name="1380"
+      > </a
+      ><a name="1381" class="Symbol"
+      >(</a
+      ><a name="1382" href="IMCLP.html#300" class="InductiveConstructor"
+      >UNBOX</a
+      ><a name="1387"
+      > </a
+      ><a name="1388" href="IMCLP.html#1388" class="Bound"
+      >M</a
+      ><a name="1389"
+      > </a
+      ><a name="1390" href="IMCLP.html#1390" class="Bound"
+      >N</a
+      ><a name="1391" class="Symbol"
+      >)</a
+      ><a name="1392"
+      > </a
+      ><a name="1393" class="Symbol"
+      >=</a
+      ><a name="1394"
+      > </a
+      ><a name="1395" href="Prelude.html#1446" class="Function"
+      >cong&#178;</a
+      ><a name="1400"
+      > </a
+      ><a name="1401" href="IMCLP.html#300" class="InductiveConstructor"
+      >UNBOX</a
+      ><a name="1406"
+      > </a
+      ><a name="1407" class="Symbol"
+      >(</a
+      ><a name="1408" href="IMCLP.html#1059" class="Function"
+      >idmonoTm</a
+      ><a name="1416"
+      > </a
+      ><a name="1417" href="IMCLP.html#1388" class="Bound"
+      >M</a
+      ><a name="1418" class="Symbol"
+      >)</a
+      ><a name="1419"
+      > </a
+      ><a name="1420" class="Symbol"
+      >(</a
+      ><a name="1421" href="IMCLP.html#1059" class="Function"
+      >idmonoTm</a
+      ><a name="1429"
+      > </a
+      ><a name="1430" href="IMCLP.html#1390" class="Bound"
+      >N</a
+      ><a name="1431" class="Symbol"
+      >)</a
+      ><a name="1432"
+      >
+
+  </a
+      ><a name="1436" href="IMCLP.html#1436" class="Function"
+      >idmonoTm&#8902;</a
+      ><a name="1445"
+      > </a
+      ><a name="1446" class="Symbol"
+      >:</a
+      ><a name="1447"
+      > </a
+      ><a name="1448" class="Symbol"
+      >&#8704;</a
+      ><a name="1449"
+      > </a
+      ><a name="1450" class="Symbol"
+      >{</a
+      ><a name="1451" href="IMCLP.html#1451" class="Bound"
+      >d</a
+      ><a name="1452"
+      > </a
+      ><a name="1453" href="IMCLP.html#1453" class="Bound"
+      >g</a
+      ><a name="1454"
+      > </a
+      ><a name="1455" href="IMCLP.html#1455" class="Bound"
+      >n</a
+      ><a name="1456" class="Symbol"
+      >}</a
+      ><a name="1457"
+      > </a
+      ><a name="1458" class="Symbol"
+      >&#8594;</a
+      ><a name="1459"
+      > </a
+      ><a name="1460" class="Symbol"
+      >(</a
+      ><a name="1461" href="IMCLP.html#1461" class="Bound"
+      >x</a
+      ><a name="1462"
+      > </a
+      ><a name="1463" class="Symbol"
+      >:</a
+      ><a name="1464"
+      > </a
+      ><a name="1465" href="IMCLP.html#342" class="Function"
+      >Tm&#8902;</a
+      ><a name="1468"
+      > </a
+      ><a name="1469" href="IMCLP.html#1451" class="Bound"
+      >d</a
+      ><a name="1470"
+      > </a
+      ><a name="1471" href="IMCLP.html#1453" class="Bound"
+      >g</a
+      ><a name="1472"
+      > </a
+      ><a name="1473" href="IMCLP.html#1455" class="Bound"
+      >n</a
+      ><a name="1474" class="Symbol"
+      >)</a
+      ><a name="1475"
+      > </a
+      ><a name="1476" class="Symbol"
+      >&#8594;</a
+      ><a name="1477"
+      > </a
+      ><a name="1478" href="IMCLP.html#800" class="Function"
+      >monoTm&#8902;</a
+      ><a name="1485"
+      > </a
+      ><a name="1486" href="Prelude.html#7861" class="Function"
+      >refl&#8805;</a
+      ><a name="1491"
+      > </a
+      ><a name="1492" href="Prelude.html#7861" class="Function"
+      >refl&#8805;</a
+      ><a name="1497"
+      > </a
+      ><a name="1498" href="IMCLP.html#1461" class="Bound"
+      >x</a
+      ><a name="1499"
+      > </a
+      ><a name="1500" href="Prelude.html#805" class="Datatype Operator"
+      >&#8801;</a
+      ><a name="1501"
+      > </a
+      ><a name="1502" href="IMCLP.html#1461" class="Bound"
+      >x</a
+      ><a name="1503"
+      >
+  </a
+      ><a name="1506" href="IMCLP.html#1436" class="Function"
+      >idmonoTm&#8902;</a
+      ><a name="1515"
+      > </a
+      ><a name="1516" href="PreludeVec.html#157" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="1517"
+      >       </a
+      ><a name="1524" class="Symbol"
+      >=</a
+      ><a name="1525"
+      > </a
+      ><a name="1526" href="Prelude.html#866" class="InductiveConstructor"
+      >refl</a
+      ><a name="1530"
+      >
+  </a
+      ><a name="1533" href="IMCLP.html#1436" class="Function"
+      >idmonoTm&#8902;</a
+      ><a name="1542"
+      > </a
+      ><a name="1543" class="Symbol"
+      >(</a
+      ><a name="1544" href="IMCLP.html#1544" class="Bound"
+      >x</a
+      ><a name="1545"
+      > </a
+      ><a name="1546" href="PreludeVec.html#178" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1547"
+      > </a
+      ><a name="1548" href="IMCLP.html#1548" class="Bound"
+      >M</a
+      ><a name="1549" class="Symbol"
+      >)</a
+      ><a name="1550"
+      > </a
+      ><a name="1551" class="Symbol"
+      >=</a
+      ><a name="1552"
+      > </a
+      ><a name="1553" href="Prelude.html#1446" class="Function"
+      >cong&#178;</a
+      ><a name="1558"
+      > </a
+      ><a name="1559" href="PreludeVec.html#178" class="InductiveConstructor Operator"
+      >_,_</a
+      ><a name="1562"
+      > </a
+      ><a name="1563" class="Symbol"
+      >(</a
+      ><a name="1564" href="IMCLP.html#1436" class="Function"
+      >idmonoTm&#8902;</a
+      ><a name="1573"
+      > </a
+      ><a name="1574" href="IMCLP.html#1544" class="Bound"
+      >x</a
+      ><a name="1575" class="Symbol"
+      >)</a
+      ><a name="1576"
+      > </a
+      ><a name="1577" class="Symbol"
+      >(</a
+      ><a name="1578" href="IMCLP.html#1059" class="Function"
+      >idmonoTm</a
+      ><a name="1586"
+      > </a
+      ><a name="1587" href="IMCLP.html#1548" class="Bound"
+      >M</a
+      ><a name="1588" class="Symbol"
+      >)</a
+      ><a name="1589"
+      >
+
+</a
+      ><a name="1591" href="IMCLP.html#1591" class="Function"
+      >reflTm&#8902;</a
+      ><a name="1598"
+      > </a
+      ><a name="1599" class="Symbol"
+      >:</a
+      ><a name="1600"
+      > </a
+      ><a name="1601" class="Symbol"
+      >&#8704;</a
+      ><a name="1602"
+      > </a
+      ><a name="1603" class="Symbol"
+      >{</a
+      ><a name="1604" href="IMCLP.html#1604" class="Bound"
+      >d</a
+      ><a name="1605"
+      > </a
+      ><a name="1606" href="IMCLP.html#1606" class="Bound"
+      >g</a
+      ><a name="1607" class="Symbol"
+      >}</a
+      ><a name="1608"
+      > </a
+      ><a name="1609" class="Symbol"
+      >&#8594;</a
+      ><a name="1610"
+      > </a
+      ><a name="1611" href="IMCLP.html#342" class="Function"
+      >Tm&#8902;</a
+      ><a name="1614"
+      > </a
+      ><a name="1615" href="IMCLP.html#1604" class="Bound"
+      >d</a
+      ><a name="1616"
+      > </a
+      ><a name="1617" href="IMCLP.html#1606" class="Bound"
+      >g</a
+      ><a name="1618"
+      > </a
+      ><a name="1619" href="IMCLP.html#1606" class="Bound"
+      >g</a
+      ><a name="1620"
+      >
+</a
+      ><a name="1621" href="IMCLP.html#1591" class="Function"
+      >reflTm&#8902;</a
+      ><a name="1628"
+      > </a
+      ><a name="1629" class="Symbol"
+      >{</a
+      ><a name="1630" class="Argument"
+      >g</a
+      ><a name="1631"
+      > </a
+      ><a name="1632" class="Symbol"
+      >=</a
+      ><a name="1633"
+      > </a
+      ><a name="1634" href="Prelude.html#6328" class="InductiveConstructor"
+      >zero</a
+      ><a name="1638" class="Symbol"
+      >}</a
+      ><a name="1639"
+      >  </a
+      ><a name="1641" class="Symbol"
+      >=</a
+      ><a name="1642"
+      > </a
+      ><a name="1643" href="PreludeVec.html#157" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="1644"
+      >
+</a
+      ><a name="1645" href="IMCLP.html#1591" class="Function"
+      >reflTm&#8902;</a
+      ><a name="1652"
+      > </a
+      ><a name="1653" class="Symbol"
+      >{</a
+      ><a name="1654" class="Argument"
+      >g</a
+      ><a name="1655"
+      > </a
+      ><a name="1656" class="Symbol"
+      >=</a
+      ><a name="1657"
+      > </a
+      ><a name="1658" href="Prelude.html#6343" class="InductiveConstructor"
+      >suc</a
+      ><a name="1661"
+      > </a
+      ><a name="1662" href="IMCLP.html#1662" class="Bound"
+      >g</a
+      ><a name="1663" class="Symbol"
+      >}</a
+      ><a name="1664"
+      > </a
+      ><a name="1665" class="Symbol"
+      >=</a
+      ><a name="1666"
+      > </a
+      ><a name="1667" href="IMCLP.html#800" class="Function"
+      >monoTm&#8902;</a
+      ><a name="1674"
+      > </a
+      ><a name="1675" href="Prelude.html#7861" class="Function"
+      >refl&#8805;</a
+      ><a name="1680"
+      > </a
+      ><a name="1681" class="Symbol"
+      >(</a
+      ><a name="1682" href="Prelude.html#6953" class="InductiveConstructor"
+      >weak</a
+      ><a name="1686"
+      > </a
+      ><a name="1687" href="Prelude.html#7861" class="Function"
+      >refl&#8805;</a
+      ><a name="1692" class="Symbol"
+      >)</a
+      ><a name="1693"
+      > </a
+      ><a name="1694" href="IMCLP.html#1591" class="Function"
+      >reflTm&#8902;</a
+      ><a name="1701"
+      > </a
+      ><a name="1702" href="PreludeVec.html#178" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1703"
+      > </a
+      ><a name="1704" href="IMCLP.html#109" class="InductiveConstructor"
+      >VAR</a
+      ><a name="1707"
+      > </a
+      ><a name="1708" href="Prelude.html#9056" class="InductiveConstructor"
+      >zero</a
+      ><a name="1712"
+      >
+
+</a
+      ><a name="1714" class="Comment"
+      >-- TODO: What is going on here?</a
+      ><a name="1745"
+      >
+</a
+      ><a name="1746" class="Comment"
+      >-- mreflTm&#8902; : &#8704; {d g} &#8594; Tm&#8902; d g d</a
+      ><a name="1779"
+      >
+</a
+      ><a name="1780" class="Comment"
+      >-- mreflTm&#8902; {zero}  = &#8709;</a
+      ><a name="1803"
+      >
+</a
+      ><a name="1804" class="Comment"
+      >-- mreflTm&#8902; {suc d} =</a
+      ><a name="1825"
+      >
+</a
+      ><a name="1826" class="Comment"
+      >--   monoTm&#8902; (weak refl&#8805;) refl&#8805; mreflTm&#8902; ,</a
+      ><a name="1868"
+      >
+</a
+      ><a name="1869" class="Comment"
+      >--   MVAR (monoTm&#8902; (weak refl&#8805;) done {!!}) zero</a
+      ><a name="1916"
+      >
+
+</a
+      ><a name="1918" href="IMCLP.html#1918" class="Function"
+      >lookupTm</a
+      ><a name="1926"
+      > </a
+      ><a name="1927" class="Symbol"
+      >:</a
+      ><a name="1928"
+      > </a
+      ><a name="1929" class="Symbol"
+      >&#8704;</a
+      ><a name="1930"
+      > </a
+      ><a name="1931" class="Symbol"
+      >{</a
+      ><a name="1932" href="IMCLP.html#1932" class="Bound"
+      >d</a
+      ><a name="1933"
+      > </a
+      ><a name="1934" href="IMCLP.html#1934" class="Bound"
+      >g</a
+      ><a name="1935"
+      > </a
+      ><a name="1936" href="IMCLP.html#1936" class="Bound"
+      >n</a
+      ><a name="1937" class="Symbol"
+      >}</a
+      ><a name="1938"
+      > </a
+      ><a name="1939" class="Symbol"
+      >&#8594;</a
+      ><a name="1940"
+      > </a
+      ><a name="1941" href="IMCLP.html#342" class="Function"
+      >Tm&#8902;</a
+      ><a name="1944"
+      > </a
+      ><a name="1945" href="IMCLP.html#1932" class="Bound"
+      >d</a
+      ><a name="1946"
+      > </a
+      ><a name="1947" href="IMCLP.html#1934" class="Bound"
+      >g</a
+      ><a name="1948"
+      > </a
+      ><a name="1949" href="IMCLP.html#1936" class="Bound"
+      >n</a
+      ><a name="1950"
+      > </a
+      ><a name="1951" class="Symbol"
+      >&#8594;</a
+      ><a name="1952"
+      > </a
+      ><a name="1953" href="Prelude.html#9019" class="Datatype"
+      >Fin</a
+      ><a name="1956"
+      > </a
+      ><a name="1957" href="IMCLP.html#1936" class="Bound"
+      >n</a
+      ><a name="1958"
+      > </a
+      ><a name="1959" class="Symbol"
+      >&#8594;</a
+      ><a name="1960"
+      > </a
+      ><a name="1961" href="IMCLP.html#78" class="Datatype"
+      >Tm</a
+      ><a name="1963"
+      > </a
+      ><a name="1964" href="IMCLP.html#1932" class="Bound"
+      >d</a
+      ><a name="1965"
+      > </a
+      ><a name="1966" href="IMCLP.html#1934" class="Bound"
+      >g</a
+      ><a name="1967"
+      >
+</a
+      ><a name="1968" href="IMCLP.html#1918" class="Function"
+      >lookupTm</a
+      ><a name="1976"
+      > </a
+      ><a name="1977" href="IMCLP.html#1977" class="Bound"
+      >x</a
+      ><a name="1978"
+      > </a
+      ><a name="1979" href="IMCLP.html#1979" class="Bound"
+      >i</a
+      ><a name="1980"
+      > </a
+      ><a name="1981" class="Symbol"
+      >=</a
+      ><a name="1982"
+      > </a
+      ><a name="1983" href="PreludeVec.html#290" class="Function"
+      >lookup</a
+      ><a name="1989"
+      > </a
+      ><a name="1990" href="IMCLP.html#1977" class="Bound"
+      >x</a
+      ><a name="1991"
+      > </a
+      ><a name="1992" href="IMCLP.html#1979" class="Bound"
+      >i</a
+      ><a name="1993"
+      >
+
+</a
+      ><a name="1995" href="IMCLP.html#1995" class="Function"
+      >graftTm</a
+      ><a name="2002"
+      > </a
+      ><a name="2003" class="Symbol"
+      >:</a
+      ><a name="2004"
+      > </a
+      ><a name="2005" class="Symbol"
+      >&#8704;</a
+      ><a name="2006"
+      > </a
+      ><a name="2007" class="Symbol"
+      >{</a
+      ><a name="2008" href="IMCLP.html#2008" class="Bound"
+      >d</a
+      ><a name="2009"
+      > </a
+      ><a name="2010" href="IMCLP.html#2010" class="Bound"
+      >g</a
+      ><a name="2011"
+      > </a
+      ><a name="2012" href="IMCLP.html#2012" class="Bound"
+      >`g</a
+      ><a name="2014" class="Symbol"
+      >}</a
+      ><a name="2015"
+      > </a
+      ><a name="2016" class="Symbol"
+      >&#8594;</a
+      ><a name="2017"
+      > </a
+      ><a name="2018" href="IMCLP.html#342" class="Function"
+      >Tm&#8902;</a
+      ><a name="2021"
+      > </a
+      ><a name="2022" href="IMCLP.html#2008" class="Bound"
+      >d</a
+      ><a name="2023"
+      > </a
+      ><a name="2024" href="IMCLP.html#2010" class="Bound"
+      >g</a
+      ><a name="2025"
+      > </a
+      ><a name="2026" href="IMCLP.html#2012" class="Bound"
+      >`g</a
+      ><a name="2028"
+      > </a
+      ><a name="2029" class="Symbol"
+      >&#8594;</a
+      ><a name="2030"
+      > </a
+      ><a name="2031" href="IMCLP.html#78" class="Datatype"
+      >Tm</a
+      ><a name="2033"
+      > </a
+      ><a name="2034" href="IMCLP.html#2008" class="Bound"
+      >d</a
+      ><a name="2035"
+      > </a
+      ><a name="2036" href="IMCLP.html#2012" class="Bound"
+      >`g</a
+      ><a name="2038"
+      > </a
+      ><a name="2039" class="Symbol"
+      >&#8594;</a
+      ><a name="2040"
+      > </a
+      ><a name="2041" href="IMCLP.html#78" class="Datatype"
+      >Tm</a
+      ><a name="2043"
+      > </a
+      ><a name="2044" href="IMCLP.html#2008" class="Bound"
+      >d</a
+      ><a name="2045"
+      > </a
+      ><a name="2046" href="IMCLP.html#2010" class="Bound"
+      >g</a
+      ><a name="2047"
+      >
+</a
+      ><a name="2048" href="IMCLP.html#1995" class="Function"
+      >graftTm</a
+      ><a name="2055"
+      > </a
+      ><a name="2056" href="IMCLP.html#2056" class="Bound"
+      >p</a
+      ><a name="2057"
+      > </a
+      ><a name="2058" class="Symbol"
+      >(</a
+      ><a name="2059" href="IMCLP.html#109" class="InductiveConstructor"
+      >VAR</a
+      ><a name="2062"
+      > </a
+      ><a name="2063" href="IMCLP.html#2063" class="Bound"
+      >i</a
+      ><a name="2064" class="Symbol"
+      >)</a
+      ><a name="2065"
+      >     </a
+      ><a name="2070" class="Symbol"
+      >=</a
+      ><a name="2071"
+      > </a
+      ><a name="2072" href="IMCLP.html#1918" class="Function"
+      >lookupTm</a
+      ><a name="2080"
+      > </a
+      ><a name="2081" href="IMCLP.html#2056" class="Bound"
+      >p</a
+      ><a name="2082"
+      > </a
+      ><a name="2083" href="IMCLP.html#2063" class="Bound"
+      >i</a
+      ><a name="2084"
+      >
+</a
+      ><a name="2085" href="IMCLP.html#1995" class="Function"
+      >graftTm</a
+      ><a name="2092"
+      > </a
+      ><a name="2093" href="IMCLP.html#2093" class="Bound"
+      >p</a
+      ><a name="2094"
+      > </a
+      ><a name="2095" class="Symbol"
+      >(</a
+      ><a name="2096" href="IMCLP.html#136" class="InductiveConstructor"
+      >MVAR</a
+      ><a name="2100"
+      > </a
+      ><a name="2101" href="IMCLP.html#2101" class="Bound"
+      >q</a
+      ><a name="2102"
+      > </a
+      ><a name="2103" href="IMCLP.html#2103" class="Bound"
+      >i</a
+      ><a name="2104" class="Symbol"
+      >)</a
+      ><a name="2105"
+      >  </a
+      ><a name="2107" class="Symbol"
+      >=</a
+      ><a name="2108"
+      > </a
+      ><a name="2109" href="IMCLP.html#136" class="InductiveConstructor"
+      >MVAR</a
+      ><a name="2113"
+      > </a
+      ><a name="2114" href="IMCLP.html#2101" class="Bound"
+      >q</a
+      ><a name="2115"
+      > </a
+      ><a name="2116" href="IMCLP.html#2103" class="Bound"
+      >i</a
+      ><a name="2117"
+      >
+</a
+      ><a name="2118" href="IMCLP.html#1995" class="Function"
+      >graftTm</a
+      ><a name="2125"
+      > </a
+      ><a name="2126" href="IMCLP.html#2126" class="Bound"
+      >p</a
+      ><a name="2127"
+      > </a
+      ><a name="2128" class="Symbol"
+      >(</a
+      ><a name="2129" href="IMCLP.html#188" class="InductiveConstructor"
+      >LAM</a
+      ><a name="2132"
+      > </a
+      ><a name="2133" href="IMCLP.html#2133" class="Bound"
+      >M</a
+      ><a name="2134" class="Symbol"
+      >)</a
+      ><a name="2135"
+      >     </a
+      ><a name="2140" class="Symbol"
+      >=</a
+      ><a name="2141"
+      > </a
+      ><a name="2142" href="IMCLP.html#188" class="InductiveConstructor"
+      >LAM</a
+      ><a name="2145"
+      > </a
+      ><a name="2146" class="Symbol"
+      >(</a
+      ><a name="2147" href="IMCLP.html#1995" class="Function"
+      >graftTm</a
+      ><a name="2154"
+      > </a
+      ><a name="2155" class="Symbol"
+      >(</a
+      ><a name="2156" href="IMCLP.html#800" class="Function"
+      >monoTm&#8902;</a
+      ><a name="2163"
+      > </a
+      ><a name="2164" href="Prelude.html#7861" class="Function"
+      >refl&#8805;</a
+      ><a name="2169"
+      > </a
+      ><a name="2170" class="Symbol"
+      >(</a
+      ><a name="2171" href="Prelude.html#6953" class="InductiveConstructor"
+      >weak</a
+      ><a name="2175"
+      > </a
+      ><a name="2176" href="Prelude.html#7861" class="Function"
+      >refl&#8805;</a
+      ><a name="2181" class="Symbol"
+      >)</a
+      ><a name="2182"
+      > </a
+      ><a name="2183" href="IMCLP.html#2126" class="Bound"
+      >p</a
+      ><a name="2184"
+      > </a
+      ><a name="2185" href="PreludeVec.html#178" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="2186"
+      > </a
+      ><a name="2187" href="IMCLP.html#109" class="InductiveConstructor"
+      >VAR</a
+      ><a name="2190"
+      > </a
+      ><a name="2191" href="Prelude.html#9056" class="InductiveConstructor"
+      >zero</a
+      ><a name="2195" class="Symbol"
+      >)</a
+      ><a name="2196"
+      > </a
+      ><a name="2197" href="IMCLP.html#2133" class="Bound"
+      >M</a
+      ><a name="2198" class="Symbol"
+      >)</a
+      ><a name="2199"
+      >
+</a
+      ><a name="2200" href="IMCLP.html#1995" class="Function"
+      >graftTm</a
+      ><a name="2207"
+      > </a
+      ><a name="2208" href="IMCLP.html#2208" class="Bound"
+      >p</a
+      ><a name="2209"
+      > </a
+      ><a name="2210" class="Symbol"
+      >(</a
+      ><a name="2211" href="IMCLP.html#222" class="InductiveConstructor"
+      >APP</a
+      ><a name="2214"
+      > </a
+      ><a name="2215" href="IMCLP.html#2215" class="Bound"
+      >M</a
+      ><a name="2216"
+      > </a
+      ><a name="2217" href="IMCLP.html#2217" class="Bound"
+      >N</a
+      ><a name="2218" class="Symbol"
+      >)</a
+      ><a name="2219"
+      >   </a
+      ><a name="2222" class="Symbol"
+      >=</a
+      ><a name="2223"
+      > </a
+      ><a name="2224" href="IMCLP.html#222" class="InductiveConstructor"
+      >APP</a
+      ><a name="2227"
+      > </a
+      ><a name="2228" class="Symbol"
+      >(</a
+      ><a name="2229" href="IMCLP.html#1995" class="Function"
+      >graftTm</a
+      ><a name="2236"
+      > </a
+      ><a name="2237" href="IMCLP.html#2208" class="Bound"
+      >p</a
+      ><a name="2238"
+      > </a
+      ><a name="2239" href="IMCLP.html#2215" class="Bound"
+      >M</a
+      ><a name="2240" class="Symbol"
+      >)</a
+      ><a name="2241"
+      > </a
+      ><a name="2242" class="Symbol"
+      >(</a
+      ><a name="2243" href="IMCLP.html#1995" class="Function"
+      >graftTm</a
+      ><a name="2250"
+      > </a
+      ><a name="2251" href="IMCLP.html#2208" class="Bound"
+      >p</a
+      ><a name="2252"
+      > </a
+      ><a name="2253" href="IMCLP.html#2217" class="Bound"
+      >N</a
+      ><a name="2254" class="Symbol"
+      >)</a
+      ><a name="2255"
+      >
+</a
+      ><a name="2256" href="IMCLP.html#1995" class="Function"
+      >graftTm</a
+      ><a name="2263"
+      > </a
+      ><a name="2264" href="IMCLP.html#2264" class="Bound"
+      >p</a
+      ><a name="2265"
+      > </a
+      ><a name="2266" class="Symbol"
+      >(</a
+      ><a name="2267" href="IMCLP.html#259" class="InductiveConstructor"
+      >BOX</a
+      ><a name="2270"
+      > </a
+      ><a name="2271" href="IMCLP.html#2271" class="Bound"
+      >M</a
+      ><a name="2272" class="Symbol"
+      >)</a
+      ><a name="2273"
+      >     </a
+      ><a name="2278" class="Symbol"
+      >=</a
+      ><a name="2279"
+      > </a
+      ><a name="2280" href="IMCLP.html#259" class="InductiveConstructor"
+      >BOX</a
+      ><a name="2283"
+      > </a
+      ><a name="2284" href="IMCLP.html#2271" class="Bound"
+      >M</a
+      ><a name="2285"
+      >
+</a
+      ><a name="2286" href="IMCLP.html#1995" class="Function"
+      >graftTm</a
+      ><a name="2293"
+      > </a
+      ><a name="2294" href="IMCLP.html#2294" class="Bound"
+      >p</a
+      ><a name="2295"
+      > </a
+      ><a name="2296" class="Symbol"
+      >(</a
+      ><a name="2297" href="IMCLP.html#300" class="InductiveConstructor"
+      >UNBOX</a
+      ><a name="2302"
+      > </a
+      ><a name="2303" href="IMCLP.html#2303" class="Bound"
+      >M</a
+      ><a name="2304"
+      > </a
+      ><a name="2305" href="IMCLP.html#2305" class="Bound"
+      >N</a
+      ><a name="2306" class="Symbol"
+      >)</a
+      ><a name="2307"
+      > </a
+      ><a name="2308" class="Symbol"
+      >=</a
+      ><a name="2309"
+      > </a
+      ><a name="2310" href="IMCLP.html#300" class="InductiveConstructor"
+      >UNBOX</a
+      ><a name="2315"
+      > </a
+      ><a name="2316" class="Symbol"
+      >(</a
+      ><a name="2317" href="IMCLP.html#1995" class="Function"
+      >graftTm</a
+      ><a name="2324"
+      > </a
+      ><a name="2325" href="IMCLP.html#2294" class="Bound"
+      >p</a
+      ><a name="2326"
+      > </a
+      ><a name="2327" href="IMCLP.html#2303" class="Bound"
+      >M</a
+      ><a name="2328" class="Symbol"
+      >)</a
+      ><a name="2329"
+      > </a
+      ><a name="2330" class="Symbol"
+      >(</a
+      ><a name="2331" href="IMCLP.html#1995" class="Function"
+      >graftTm</a
+      ><a name="2338"
+      > </a
+      ><a name="2339" class="Symbol"
+      >(</a
+      ><a name="2340" href="IMCLP.html#800" class="Function"
+      >monoTm&#8902;</a
+      ><a name="2347"
+      > </a
+      ><a name="2348" class="Symbol"
+      >(</a
+      ><a name="2349" href="Prelude.html#6953" class="InductiveConstructor"
+      >weak</a
+      ><a name="2353"
+      > </a
+      ><a name="2354" href="Prelude.html#7861" class="Function"
+      >refl&#8805;</a
+      ><a name="2359" class="Symbol"
+      >)</a
+      ><a name="2360"
+      > </a
+      ><a name="2361" href="Prelude.html#7861" class="Function"
+      >refl&#8805;</a
+      ><a name="2366"
+      > </a
+      ><a name="2367" href="IMCLP.html#2294" class="Bound"
+      >p</a
+      ><a name="2368" class="Symbol"
+      >)</a
+      ><a name="2369"
+      > </a
+      ><a name="2370" href="IMCLP.html#2305" class="Bound"
+      >N</a
+      ><a name="2371" class="Symbol"
+      >)</a
+      ><a name="2372"
+      >
+
+</a
+      ><a name="2374" href="IMCLP.html#2374" class="Function"
+      >graftTm&#8902;</a
+      ><a name="2382"
+      > </a
+      ><a name="2383" class="Symbol"
+      >:</a
+      ><a name="2384"
+      > </a
+      ><a name="2385" class="Symbol"
+      >&#8704;</a
+      ><a name="2386"
+      > </a
+      ><a name="2387" class="Symbol"
+      >{</a
+      ><a name="2388" href="IMCLP.html#2388" class="Bound"
+      >d</a
+      ><a name="2389"
+      > </a
+      ><a name="2390" href="IMCLP.html#2390" class="Bound"
+      >g</a
+      ><a name="2391"
+      > </a
+      ><a name="2392" href="IMCLP.html#2392" class="Bound"
+      >`g</a
+      ><a name="2394"
+      > </a
+      ><a name="2395" href="IMCLP.html#2395" class="Bound"
+      >n</a
+      ><a name="2396" class="Symbol"
+      >}</a
+      ><a name="2397"
+      > </a
+      ><a name="2398" class="Symbol"
+      >&#8594;</a
+      ><a name="2399"
+      > </a
+      ><a name="2400" href="IMCLP.html#342" class="Function"
+      >Tm&#8902;</a
+      ><a name="2403"
+      > </a
+      ><a name="2404" href="IMCLP.html#2388" class="Bound"
+      >d</a
+      ><a name="2405"
+      > </a
+      ><a name="2406" href="IMCLP.html#2390" class="Bound"
+      >g</a
+      ><a name="2407"
+      > </a
+      ><a name="2408" href="IMCLP.html#2392" class="Bound"
+      >`g</a
+      ><a name="2410"
+      > </a
+      ><a name="2411" class="Symbol"
+      >&#8594;</a
+      ><a name="2412"
+      > </a
+      ><a name="2413" href="IMCLP.html#342" class="Function"
+      >Tm&#8902;</a
+      ><a name="2416"
+      > </a
+      ><a name="2417" href="IMCLP.html#2388" class="Bound"
+      >d</a
+      ><a name="2418"
+      > </a
+      ><a name="2419" href="IMCLP.html#2392" class="Bound"
+      >`g</a
+      ><a name="2421"
+      > </a
+      ><a name="2422" href="IMCLP.html#2395" class="Bound"
+      >n</a
+      ><a name="2423"
+      > </a
+      ><a name="2424" class="Symbol"
+      >&#8594;</a
+      ><a name="2425"
+      > </a
+      ><a name="2426" href="IMCLP.html#342" class="Function"
+      >Tm&#8902;</a
+      ><a name="2429"
+      > </a
+      ><a name="2430" href="IMCLP.html#2388" class="Bound"
+      >d</a
+      ><a name="2431"
+      > </a
+      ><a name="2432" href="IMCLP.html#2390" class="Bound"
+      >g</a
+      ><a name="2433"
+      > </a
+      ><a name="2434" href="IMCLP.html#2395" class="Bound"
+      >n</a
+      ><a name="2435"
+      >
+</a
+      ><a name="2436" href="IMCLP.html#2374" class="Function"
+      >graftTm&#8902;</a
+      ><a name="2444"
+      > </a
+      ><a name="2445" href="IMCLP.html#2445" class="Bound"
+      >p</a
+      ><a name="2446"
+      > </a
+      ><a name="2447" href="IMCLP.html#2447" class="Bound"
+      >x</a
+      ><a name="2448"
+      > </a
+      ><a name="2449" class="Symbol"
+      >=</a
+      ><a name="2450"
+      > </a
+      ><a name="2451" href="PreludeVec.html#425" class="Function"
+      >map</a
+      ><a name="2454"
+      > </a
+      ><a name="2455" class="Symbol"
+      >(</a
+      ><a name="2456" href="IMCLP.html#1995" class="Function"
+      >graftTm</a
+      ><a name="2463"
+      > </a
+      ><a name="2464" href="IMCLP.html#2445" class="Bound"
+      >p</a
+      ><a name="2465" class="Symbol"
+      >)</a
+      ><a name="2466"
+      > </a
+      ><a name="2467" href="IMCLP.html#2447" class="Bound"
+      >x</a
+      ><a name="2468"
+      >
+
+</a
+      ><a name="2470" href="IMCLP.html#2470" class="Function"
+      >transTm</a
+      ><a name="2477"
+      > </a
+      ><a name="2478" class="Symbol"
+      >:</a
+      ><a name="2479"
+      > </a
+      ><a name="2480" class="Symbol"
+      >&#8704;</a
+      ><a name="2481"
+      > </a
+      ><a name="2482" class="Symbol"
+      >{</a
+      ><a name="2483" href="IMCLP.html#2483" class="Bound"
+      >d</a
+      ><a name="2484"
+      > </a
+      ><a name="2485" href="IMCLP.html#2485" class="Bound"
+      >g</a
+      ><a name="2486"
+      > </a
+      ><a name="2487" href="IMCLP.html#2487" class="Bound"
+      >g&#8242;</a
+      ><a name="2489"
+      > </a
+      ><a name="2490" href="IMCLP.html#2490" class="Bound"
+      >g&#8243;</a
+      ><a name="2492" class="Symbol"
+      >}</a
+      ><a name="2493"
+      > </a
+      ><a name="2494" class="Symbol"
+      >&#8594;</a
+      ><a name="2495"
+      > </a
+      ><a name="2496" href="IMCLP.html#342" class="Function"
+      >Tm&#8902;</a
+      ><a name="2499"
+      > </a
+      ><a name="2500" href="IMCLP.html#2483" class="Bound"
+      >d</a
+      ><a name="2501"
+      > </a
+      ><a name="2502" href="IMCLP.html#2490" class="Bound"
+      >g&#8243;</a
+      ><a name="2504"
+      > </a
+      ><a name="2505" href="IMCLP.html#2487" class="Bound"
+      >g&#8242;</a
+      ><a name="2507"
+      > </a
+      ><a name="2508" class="Symbol"
+      >&#8594;</a
+      ><a name="2509"
+      > </a
+      ><a name="2510" href="IMCLP.html#342" class="Function"
+      >Tm&#8902;</a
+      ><a name="2513"
+      > </a
+      ><a name="2514" href="IMCLP.html#2483" class="Bound"
+      >d</a
+      ><a name="2515"
+      > </a
+      ><a name="2516" href="IMCLP.html#2487" class="Bound"
+      >g&#8242;</a
+      ><a name="2518"
+      > </a
+      ><a name="2519" href="IMCLP.html#2485" class="Bound"
+      >g</a
+      ><a name="2520"
+      > </a
+      ><a name="2521" class="Symbol"
+      >&#8594;</a
+      ><a name="2522"
+      > </a
+      ><a name="2523" href="IMCLP.html#342" class="Function"
+      >Tm&#8902;</a
+      ><a name="2526"
+      > </a
+      ><a name="2527" href="IMCLP.html#2483" class="Bound"
+      >d</a
+      ><a name="2528"
+      > </a
+      ><a name="2529" href="IMCLP.html#2490" class="Bound"
+      >g&#8243;</a
+      ><a name="2531"
+      > </a
+      ><a name="2532" href="IMCLP.html#2485" class="Bound"
+      >g</a
+      ><a name="2533"
+      >
+</a
+      ><a name="2534" href="IMCLP.html#2470" class="Function"
+      >transTm</a
+      ><a name="2541"
+      > </a
+      ><a name="2542" class="Symbol"
+      >=</a
+      ><a name="2543"
+      > </a
+      ><a name="2544" href="IMCLP.html#2374" class="Function"
+      >graftTm&#8902;</a
+      ><a name="2552"
+      >
+
+</a
+      ><a name="2554" class="Comment"
+      >-- TODO: What is going on here?</a
+      ><a name="2585"
+      >
+</a
+      ><a name="2586" class="Comment"
+      >-- mutual</a
+      ><a name="2595"
+      >
+</a
+      ><a name="2596" class="Comment"
+      >--   mgraftTm : &#8704; {d g `d} &#8594; Tm&#8902; d zero `d &#8594; Tm `d g &#8594; Tm d g</a
+      ><a name="2657"
+      >
+</a
+      ><a name="2658" class="Comment"
+      >--   mgraftTm q (VAR i)     = VAR i</a
+      ><a name="2693"
+      >
+</a
+      ><a name="2694" class="Comment"
+      >--   mgraftTm q (MVAR q&#8242; i) = UNBOX (monoTm refl&#8805; inf&#8805; (lookupTm q i))</a
+      ><a name="2764"
+      >
+</a
+      ><a name="2765" class="Comment"
+      >--                                  (MVAR (mgraftTm&#8902; (monoTm&#8902; (weak refl&#8805;) refl&#8805; q) q&#8242;) zero)</a
+      ><a name="2858"
+      >
+</a
+      ><a name="2859" class="Comment"
+      >--   mgraftTm q (LAM M)     = LAM (mgraftTm q M)</a
+      ><a name="2907"
+      >
+</a
+      ><a name="2908" class="Comment"
+      >--   mgraftTm q (APP M N)   = APP (mgraftTm q M) (mgraftTm q N)</a
+      ><a name="2971"
+      >
+</a
+      ><a name="2972" class="Comment"
+      >--   mgraftTm q (BOX M)     = BOX M</a
+      ><a name="3007"
+      >
+</a
+      ><a name="3008" class="Comment"
+      >--   mgraftTm q (UNBOX M N) =</a
+      ><a name="3037"
+      >
+</a
+      ><a name="3038" class="Comment"
+      >--     UNBOX (mgraftTm q M)</a
+      ><a name="3065"
+      >
+</a
+      ><a name="3066" class="Comment"
+      >--           (mgraftTm (monoTm&#8902; (weak refl&#8805;) refl&#8805; q ,</a
+      ><a name="3120"
+      >
+</a
+      ><a name="3121" class="Comment"
+      >--                      BOX (MVAR {!!} zero)) N)</a
+      ><a name="3169"
+      >
+</a
+      ><a name="3170" class="Comment"
+      >--</a
+      ><a name="3172"
+      >
+</a
+      ><a name="3173" class="Comment"
+      >--   mgraftTm&#8902; : &#8704; {d g `d n} &#8594; Tm&#8902; d zero `d &#8594; Tm&#8902; `d g n &#8594; Tm&#8902; d g n</a
+      ><a name="3243"
+      >
+</a
+      ><a name="3244" class="Comment"
+      >--   mgraftTm&#8902; q &#8709;       = &#8709;</a
+      ><a name="3272"
+      >
+</a
+      ><a name="3273" class="Comment"
+      >--   mgraftTm&#8902; q (x , M) = mgraftTm&#8902; q x , mgraftTm q M</a
+      ><a name="3328"
+      >
+</a
+      ><a name="3329" class="Comment"
+      >--</a
+      ><a name="3331"
+      >
+</a
+      ><a name="3332" class="Comment"
+      >-- mtransTm&#8902; : &#8704; {d d&#8242; d&#8243;} &#8594; Tm&#8902; d&#8243; zero d&#8242; &#8594; Tm&#8902; d&#8242; zero d &#8594; Tm&#8902; d&#8243; zero d</a
+      ><a name="3407"
+      >
+</a
+      ><a name="3408" class="Comment"
+      >-- mtransTm&#8902; = mgraftTm&#8902;</a
+      ><a name="3432"
+      >
+
+
+</a
+      ><a name="3435" class="Comment"
+      >-- Types and vectors of types.</a
+      ><a name="3465"
+      >
+
+</a
+      ><a name="3467" class="Keyword"
+      >mutual</a
+      ><a name="3473"
+      >
+  </a
+      ><a name="3476" class="Keyword"
+      >infixr</a
+      ><a name="3482"
+      > </a
+      ><a name="3483" class="Number"
+      >7</a
+      ><a name="3484"
+      > </a
+      ><a name="3485" href="IMCLP.html#3531" class="InductiveConstructor Operator"
+      >_&#8658;_</a
+      ><a name="3488"
+      >
+  </a
+      ><a name="3491" class="Keyword"
+      >data</a
+      ><a name="3495"
+      > </a
+      ><a name="3496" href="IMCLP.html#3496" class="Datatype"
+      >Ty</a
+      ><a name="3498"
+      > </a
+      ><a name="3499" class="Symbol"
+      >:</a
+      ><a name="3500"
+      > </a
+      ><a name="3501" class="PrimitiveType"
+      >Set</a
+      ><a name="3504"
+      > </a
+      ><a name="3505" class="Keyword"
+      >where</a
+      ><a name="3510"
+      >
+    </a
+      ><a name="3515" href="IMCLP.html#3515" class="InductiveConstructor"
+      >&#8226;</a
+      ><a name="3516"
+      >      </a
+      ><a name="3522" class="Symbol"
+      >:</a
+      ><a name="3523"
+      > </a
+      ><a name="3524" href="IMCLP.html#3496" class="Datatype"
+      >Ty</a
+      ><a name="3526"
+      >
+    </a
+      ><a name="3531" href="IMCLP.html#3531" class="InductiveConstructor Operator"
+      >_&#8658;_</a
+      ><a name="3534"
+      >   </a
+      ><a name="3537" class="Symbol"
+      >:</a
+      ><a name="3538"
+      > </a
+      ><a name="3539" href="IMCLP.html#3496" class="Datatype"
+      >Ty</a
+      ><a name="3541"
+      > </a
+      ><a name="3542" class="Symbol"
+      >&#8594;</a
+      ><a name="3543"
+      > </a
+      ><a name="3544" href="IMCLP.html#3496" class="Datatype"
+      >Ty</a
+      ><a name="3546"
+      > </a
+      ><a name="3547" class="Symbol"
+      >&#8594;</a
+      ><a name="3548"
+      > </a
+      ><a name="3549" href="IMCLP.html#3496" class="Datatype"
+      >Ty</a
+      ><a name="3551"
+      >
+    </a
+      ><a name="3556" href="IMCLP.html#3556" class="InductiveConstructor Operator"
+      >[_&#8870;_]_</a
+      ><a name="3562"
+      > </a
+      ><a name="3563" class="Symbol"
+      >:</a
+      ><a name="3564"
+      > </a
+      ><a name="3565" class="Symbol"
+      >&#8704;</a
+      ><a name="3566"
+      > </a
+      ><a name="3567" class="Symbol"
+      >{</a
+      ><a name="3568" href="IMCLP.html#3568" class="Bound"
+      >d</a
+      ><a name="3569" class="Symbol"
+      >}</a
+      ><a name="3570"
+      > </a
+      ><a name="3571" class="Symbol"
+      >&#8594;</a
+      ><a name="3572"
+      > </a
+      ><a name="3573" href="IMCLP.html#3831" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="3579"
+      > </a
+      ><a name="3580" href="IMCLP.html#3568" class="Bound"
+      >d</a
+      ><a name="3581"
+      > </a
+      ><a name="3582" class="Symbol"
+      >&#8594;</a
+      ><a name="3583"
+      > </a
+      ><a name="3584" href="IMCLP.html#78" class="Datatype"
+      >Tm</a
+      ><a name="3586"
+      > </a
+      ><a name="3587" href="IMCLP.html#3568" class="Bound"
+      >d</a
+      ><a name="3588"
+      > </a
+      ><a name="3589" href="Prelude.html#6328" class="InductiveConstructor"
+      >zero</a
+      ><a name="3593"
+      > </a
+      ><a name="3594" class="Symbol"
+      >&#8594;</a
+      ><a name="3595"
+      > </a
+      ><a name="3596" href="IMCLP.html#3496" class="Datatype"
+      >Ty</a
+      ><a name="3598"
+      > </a
+      ><a name="3599" class="Symbol"
+      >&#8594;</a
+      ><a name="3600"
+      > </a
+      ><a name="3601" href="IMCLP.html#3496" class="Datatype"
+      >Ty</a
+      ><a name="3603"
+      >
+
+  </a
+      ><a name="3607" class="Keyword"
+      >record</a
+      ><a name="3613"
+      > </a
+      ><a name="3614" href="IMCLP.html#3614" class="Record"
+      >BoxTy</a
+      ><a name="3619"
+      > </a
+      ><a name="3620" class="Symbol"
+      >:</a
+      ><a name="3621"
+      > </a
+      ><a name="3622" class="PrimitiveType"
+      >Set</a
+      ><a name="3625"
+      > </a
+      ><a name="3626" class="Keyword"
+      >where</a
+      ><a name="3631"
+      >
+    </a
+      ><a name="3636" class="Keyword"
+      >inductive</a
+      ><a name="3645"
+      >
+    </a
+      ><a name="3650" class="Keyword"
+      >constructor</a
+      ><a name="3661"
+      > </a
+      ><a name="3662" href="IMCLP.html#3662" class="InductiveConstructor Operator"
+      >[_&#8870;_]_</a
+      ><a name="3668"
+      >
+    </a
+      ><a name="3673" class="Keyword"
+      >field</a
+      ><a name="3678"
+      >
+      </a
+      ><a name="3685" class="Symbol"
+      >{</a
+      ><a name="3686" href="IMCLP.html#3686" class="Field"
+      >d</a
+      ><a name="3687" class="Symbol"
+      >}</a
+      ><a name="3688"
+      >           </a
+      ><a name="3699" class="Symbol"
+      >:</a
+      ><a name="3700"
+      > </a
+      ><a name="3701" href="Prelude.html#6297" class="Datatype"
+      >Nat</a
+      ><a name="3704"
+      >
+      </a
+      ><a name="3711" href="IMCLP.html#3711" class="Field"
+      >BoxTy&#8594;BoxTy&#8902;</a
+      ><a name="3723"
+      > </a
+      ><a name="3724" class="Symbol"
+      >:</a
+      ><a name="3725"
+      > </a
+      ><a name="3726" href="IMCLP.html#3831" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="3732"
+      > </a
+      ><a name="3733" href="IMCLP.html#3686" class="Field"
+      >d</a
+      ><a name="3734"
+      >
+      </a
+      ><a name="3741" href="IMCLP.html#3741" class="Field"
+      >BoxTy&#8594;Tm</a
+      ><a name="3749"
+      >     </a
+      ><a name="3754" class="Symbol"
+      >:</a
+      ><a name="3755"
+      > </a
+      ><a name="3756" href="IMCLP.html#78" class="Datatype"
+      >Tm</a
+      ><a name="3758"
+      > </a
+      ><a name="3759" href="IMCLP.html#3686" class="Field"
+      >d</a
+      ><a name="3760"
+      > </a
+      ><a name="3761" href="Prelude.html#6328" class="InductiveConstructor"
+      >zero</a
+      ><a name="3765"
+      >
+      </a
+      ><a name="3772" href="IMCLP.html#3772" class="Field"
+      >BoxTy&#8594;Ty</a
+      ><a name="3780"
+      >     </a
+      ><a name="3785" class="Symbol"
+      >:</a
+      ><a name="3786"
+      > </a
+      ><a name="3787" href="IMCLP.html#3496" class="Datatype"
+      >Ty</a
+      ><a name="3789"
+      >
+
+  </a
+      ><a name="3793" href="IMCLP.html#3793" class="Function"
+      >Ty&#8902;</a
+      ><a name="3796"
+      > </a
+      ><a name="3797" class="Symbol"
+      >:</a
+      ><a name="3798"
+      > </a
+      ><a name="3799" href="Prelude.html#6297" class="Datatype"
+      >Nat</a
+      ><a name="3802"
+      > </a
+      ><a name="3803" class="Symbol"
+      >&#8594;</a
+      ><a name="3804"
+      > </a
+      ><a name="3805" class="PrimitiveType"
+      >Set</a
+      ><a name="3808"
+      >
+  </a
+      ><a name="3811" href="IMCLP.html#3793" class="Function"
+      >Ty&#8902;</a
+      ><a name="3814"
+      > </a
+      ><a name="3815" href="IMCLP.html#3815" class="Bound"
+      >g</a
+      ><a name="3816"
+      > </a
+      ><a name="3817" class="Symbol"
+      >=</a
+      ><a name="3818"
+      > </a
+      ><a name="3819" href="PreludeVec.html#102" class="Datatype"
+      >Vec</a
+      ><a name="3822"
+      > </a
+      ><a name="3823" href="IMCLP.html#3496" class="Datatype"
+      >Ty</a
+      ><a name="3825"
+      > </a
+      ><a name="3826" href="IMCLP.html#3815" class="Bound"
+      >g</a
+      ><a name="3827"
+      >
+
+  </a
+      ><a name="3831" href="IMCLP.html#3831" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="3837"
+      > </a
+      ><a name="3838" class="Symbol"
+      >:</a
+      ><a name="3839"
+      > </a
+      ><a name="3840" href="Prelude.html#6297" class="Datatype"
+      >Nat</a
+      ><a name="3843"
+      > </a
+      ><a name="3844" class="Symbol"
+      >&#8594;</a
+      ><a name="3845"
+      > </a
+      ><a name="3846" class="PrimitiveType"
+      >Set</a
+      ><a name="3849"
+      >
+  </a
+      ><a name="3852" href="IMCLP.html#3831" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="3858"
+      > </a
+      ><a name="3859" href="IMCLP.html#3859" class="Bound"
+      >d</a
+      ><a name="3860"
+      > </a
+      ><a name="3861" class="Symbol"
+      >=</a
+      ><a name="3862"
+      > </a
+      ><a name="3863" href="PreludeVec.html#102" class="Datatype"
+      >Vec</a
+      ><a name="3866"
+      > </a
+      ><a name="3867" href="IMCLP.html#3614" class="Record"
+      >BoxTy</a
+      ><a name="3872"
+      > </a
+      ><a name="3873" href="IMCLP.html#3859" class="Bound"
+      >d</a
+      ><a name="3874"
+      >
+</a
+      ><a name="3875" class="Keyword"
+      >open</a
+      ><a name="3879"
+      > </a
+      ><a name="3880" href="IMCLP.html#3614" class="Module"
+      >BoxTy</a
+      ><a name="3885"
+      > </a
+      ><a name="3886" class="Keyword"
+      >public</a
+      ><a name="3892"
+      >
+</a
+      ></pre
+    ></body
+  ></html
+>

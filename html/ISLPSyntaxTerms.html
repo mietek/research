@@ -1,0 +1,3659 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><title
+    >ISLPSyntaxTerms</title
+    ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta http-equiv="Content-Style-Type" content="text/css"
+     /><link href="Agda.css" rel="stylesheet" type="text/css"
+     /></head
+  ><body
+  ><pre
+    ><a name="1" class="Symbol"
+      >{-#</a
+      ><a name="4"
+      > </a
+      ><a name="5" class="Keyword"
+      >OPTIONS</a
+      ><a name="12"
+      > --rewriting </a
+      ><a name="25" class="Symbol"
+      >#-}</a
+      ><a name="28"
+      >
+
+</a
+      ><a name="30" class="Keyword"
+      >module</a
+      ><a name="36"
+      > </a
+      ><a name="37" href="ISLPSyntaxTerms.html#1" class="Module"
+      >ISLPSyntaxTerms</a
+      ><a name="52"
+      > </a
+      ><a name="53" class="Keyword"
+      >where</a
+      ><a name="58"
+      >
+
+</a
+      ><a name="60" class="Keyword"
+      >open</a
+      ><a name="64"
+      > </a
+      ><a name="65" class="Keyword"
+      >import</a
+      ><a name="71"
+      > </a
+      ><a name="72" href="ISLP.html#1" class="Module"
+      >ISLP</a
+      ><a name="76"
+      > </a
+      ><a name="77" class="Keyword"
+      >public</a
+      ><a name="83"
+      >
+
+
+</a
+      ><a name="86" class="Comment"
+      >-- Contexts.</a
+      ><a name="98"
+      >
+
+</a
+      ><a name="100" href="ISLPSyntaxTerms.html#100" class="Function"
+      >Cx</a
+      ><a name="102"
+      > </a
+      ><a name="103" class="Symbol"
+      >:</a
+      ><a name="104"
+      > </a
+      ><a name="105" href="Prelude.html#6297" class="Datatype"
+      >Nat</a
+      ><a name="108"
+      > </a
+      ><a name="109" class="Symbol"
+      >&#8594;</a
+      ><a name="110"
+      > </a
+      ><a name="111" href="Prelude.html#6297" class="Datatype"
+      >Nat</a
+      ><a name="114"
+      > </a
+      ><a name="115" class="Symbol"
+      >&#8594;</a
+      ><a name="116"
+      > </a
+      ><a name="117" class="PrimitiveType"
+      >Set</a
+      ><a name="120"
+      >
+</a
+      ><a name="121" href="ISLPSyntaxTerms.html#100" class="Function"
+      >Cx</a
+      ><a name="123"
+      > </a
+      ><a name="124" href="ISLPSyntaxTerms.html#124" class="Bound"
+      >d</a
+      ><a name="125"
+      > </a
+      ><a name="126" href="ISLPSyntaxTerms.html#126" class="Bound"
+      >g</a
+      ><a name="127"
+      > </a
+      ><a name="128" class="Symbol"
+      >=</a
+      ><a name="129"
+      > </a
+      ><a name="130" href="ISLP.html#4255" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="136"
+      > </a
+      ><a name="137" href="ISLPSyntaxTerms.html#124" class="Bound"
+      >d</a
+      ><a name="138"
+      > </a
+      ><a name="139" href="Prelude.html#2739" class="Function Operator"
+      >&#8743;</a
+      ><a name="140"
+      > </a
+      ><a name="141" href="ISLP.html#4217" class="Function"
+      >Ty&#8902;</a
+      ><a name="144"
+      > </a
+      ><a name="145" href="ISLPSyntaxTerms.html#126" class="Bound"
+      >g</a
+      ><a name="146"
+      >
+
+
+</a
+      ><a name="149" class="Comment"
+      >-- Derivations.</a
+      ><a name="164"
+      >
+
+</a
+      ><a name="166" class="Keyword"
+      >mutual</a
+      ><a name="172"
+      >
+  </a
+      ><a name="175" class="Keyword"
+      >infix</a
+      ><a name="180"
+      > </a
+      ><a name="181" class="Number"
+      >3</a
+      ><a name="182"
+      > </a
+      ><a name="183" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >_&#8866;_&#8759;_</a
+      ><a name="188"
+      >
+  </a
+      ><a name="191" class="Keyword"
+      >data</a
+      ><a name="195"
+      > </a
+      ><a name="196" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >_&#8866;_&#8759;_</a
+      ><a name="201"
+      > </a
+      ><a name="202" class="Symbol"
+      >{</a
+      ><a name="203" href="ISLPSyntaxTerms.html#203" class="Bound"
+      >d</a
+      ><a name="204"
+      > </a
+      ><a name="205" href="ISLPSyntaxTerms.html#205" class="Bound"
+      >g</a
+      ><a name="206" class="Symbol"
+      >}</a
+      ><a name="207"
+      > </a
+      ><a name="208" class="Symbol"
+      >:</a
+      ><a name="209"
+      > </a
+      ><a name="210" href="ISLPSyntaxTerms.html#100" class="Function"
+      >Cx</a
+      ><a name="212"
+      > </a
+      ><a name="213" href="ISLPSyntaxTerms.html#203" class="Bound"
+      >d</a
+      ><a name="214"
+      > </a
+      ><a name="215" href="ISLPSyntaxTerms.html#205" class="Bound"
+      >g</a
+      ><a name="216"
+      > </a
+      ><a name="217" class="Symbol"
+      >&#8594;</a
+      ><a name="218"
+      > </a
+      ><a name="219" href="ISLP.html#77" class="Datatype"
+      >Tm</a
+      ><a name="221"
+      > </a
+      ><a name="222" href="ISLPSyntaxTerms.html#203" class="Bound"
+      >d</a
+      ><a name="223"
+      > </a
+      ><a name="224" href="ISLPSyntaxTerms.html#205" class="Bound"
+      >g</a
+      ><a name="225"
+      > </a
+      ><a name="226" class="Symbol"
+      >&#8594;</a
+      ><a name="227"
+      > </a
+      ><a name="228" href="ISLP.html#3855" class="Datatype"
+      >Ty</a
+      ><a name="230"
+      > </a
+      ><a name="231" class="Symbol"
+      >&#8594;</a
+      ><a name="232"
+      > </a
+      ><a name="233" class="PrimitiveType"
+      >Set</a
+      ><a name="236"
+      > </a
+      ><a name="237" class="Keyword"
+      >where</a
+      ><a name="242"
+      >
+    </a
+      ><a name="247" href="ISLPSyntaxTerms.html#247" class="InductiveConstructor"
+      >var</a
+      ><a name="250"
+      >   </a
+      ><a name="253" class="Symbol"
+      >:</a
+      ><a name="254"
+      > </a
+      ><a name="255" class="Symbol"
+      >&#8704;</a
+      ><a name="256"
+      > </a
+      ><a name="257" class="Symbol"
+      >{</a
+      ><a name="258" href="ISLPSyntaxTerms.html#258" class="Bound"
+      >&#916;</a
+      ><a name="259"
+      > </a
+      ><a name="260" href="ISLPSyntaxTerms.html#260" class="Bound"
+      >&#915;</a
+      ><a name="261"
+      > </a
+      ><a name="262" href="ISLPSyntaxTerms.html#262" class="Bound"
+      >i</a
+      ><a name="263"
+      > </a
+      ><a name="264" href="ISLPSyntaxTerms.html#264" class="Bound"
+      >A</a
+      ><a name="265" class="Symbol"
+      >}</a
+      ><a name="266"
+      > </a
+      ><a name="267" class="Symbol"
+      >&#8594;</a
+      ><a name="268"
+      >
+              </a
+      ><a name="283" href="ISLPSyntaxTerms.html#260" class="Bound"
+      >&#915;</a
+      ><a name="284"
+      > </a
+      ><a name="285" href="PreludeVec.html#3556" class="Datatype Operator"
+      >&#8715;&#10216;</a
+      ><a name="287"
+      > </a
+      ><a name="288" href="ISLPSyntaxTerms.html#262" class="Bound"
+      >i</a
+      ><a name="289"
+      > </a
+      ><a name="290" href="PreludeVec.html#3556" class="Datatype Operator"
+      >&#10217;</a
+      ><a name="291"
+      > </a
+      ><a name="292" href="ISLPSyntaxTerms.html#264" class="Bound"
+      >A</a
+      ><a name="293"
+      > </a
+      ><a name="294" class="Symbol"
+      >&#8594;</a
+      ><a name="295"
+      >
+              </a
+      ><a name="310" href="ISLPSyntaxTerms.html#258" class="Bound"
+      >&#916;</a
+      ><a name="311"
+      > </a
+      ><a name="312" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="313"
+      > </a
+      ><a name="314" href="ISLPSyntaxTerms.html#260" class="Bound"
+      >&#915;</a
+      ><a name="315"
+      > </a
+      ><a name="316" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8866;</a
+      ><a name="317"
+      > </a
+      ><a name="318" href="ISLP.html#108" class="InductiveConstructor"
+      >VAR</a
+      ><a name="321"
+      > </a
+      ><a name="322" href="ISLPSyntaxTerms.html#262" class="Bound"
+      >i</a
+      ><a name="323"
+      > </a
+      ><a name="324" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="325"
+      > </a
+      ><a name="326" href="ISLPSyntaxTerms.html#264" class="Bound"
+      >A</a
+      ><a name="327"
+      >
+    </a
+      ><a name="332" href="ISLPSyntaxTerms.html#332" class="InductiveConstructor"
+      >mvar</a
+      ><a name="336"
+      >  </a
+      ><a name="338" class="Symbol"
+      >:</a
+      ><a name="339"
+      > </a
+      ><a name="340" class="Symbol"
+      >&#8704;</a
+      ><a name="341"
+      > </a
+      ><a name="342" class="Symbol"
+      >{</a
+      ><a name="343" href="ISLPSyntaxTerms.html#343" class="Bound"
+      >`d</a
+      ><a name="345"
+      > </a
+      ><a name="346" href="ISLPSyntaxTerms.html#346" class="Bound"
+      >`g</a
+      ><a name="348"
+      > </a
+      ><a name="349" href="ISLPSyntaxTerms.html#349" class="Bound"
+      >&#916;</a
+      ><a name="350"
+      > </a
+      ><a name="351" href="ISLPSyntaxTerms.html#351" class="Bound"
+      >&#915;</a
+      ><a name="352"
+      > </a
+      ><a name="353" href="ISLPSyntaxTerms.html#353" class="Bound"
+      >q</a
+      ><a name="354"
+      > </a
+      ><a name="355" href="ISLPSyntaxTerms.html#355" class="Bound"
+      >p</a
+      ><a name="356" class="Symbol"
+      >}</a
+      ><a name="357"
+      > </a
+      ><a name="358" class="Symbol"
+      >{</a
+      ><a name="359" href="ISLPSyntaxTerms.html#359" class="Bound"
+      >&#934;</a
+      ><a name="360"
+      > </a
+      ><a name="361" class="Symbol"
+      >:</a
+      ><a name="362"
+      > </a
+      ><a name="363" href="ISLP.html#4255" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="369"
+      > </a
+      ><a name="370" href="ISLPSyntaxTerms.html#343" class="Bound"
+      >`d</a
+      ><a name="372" class="Symbol"
+      >}</a
+      ><a name="373"
+      > </a
+      ><a name="374" class="Symbol"
+      >{</a
+      ><a name="375" href="ISLPSyntaxTerms.html#375" class="Bound"
+      >&#936;</a
+      ><a name="376"
+      > </a
+      ><a name="377" class="Symbol"
+      >:</a
+      ><a name="378"
+      > </a
+      ><a name="379" href="ISLP.html#4217" class="Function"
+      >Ty&#8902;</a
+      ><a name="382"
+      > </a
+      ><a name="383" href="ISLPSyntaxTerms.html#346" class="Bound"
+      >`g</a
+      ><a name="385" class="Symbol"
+      >}</a
+      ><a name="386"
+      > </a
+      ><a name="387" class="Symbol"
+      >{</a
+      ><a name="388" href="ISLPSyntaxTerms.html#388" class="Bound"
+      >i</a
+      ><a name="389"
+      > </a
+      ><a name="390" href="ISLPSyntaxTerms.html#390" class="Bound"
+      >Q</a
+      ><a name="391"
+      > </a
+      ><a name="392" href="ISLPSyntaxTerms.html#392" class="Bound"
+      >A</a
+      ><a name="393" class="Symbol"
+      >}</a
+      ><a name="394"
+      > </a
+      ><a name="395" class="Symbol"
+      >&#8594;</a
+      ><a name="396"
+      >
+              </a
+      ><a name="411" href="ISLPSyntaxTerms.html#349" class="Bound"
+      >&#916;</a
+      ><a name="412"
+      > </a
+      ><a name="413" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="414"
+      > </a
+      ><a name="415" href="PreludeVec.html#157" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="416"
+      > </a
+      ><a name="417" href="ISLPSyntaxTerms.html#1068" class="Datatype Operator"
+      >&#8866;&#10694;</a
+      ><a name="419"
+      > </a
+      ><a name="420" href="ISLPSyntaxTerms.html#353" class="Bound"
+      >q</a
+      ><a name="421"
+      > </a
+      ><a name="422" href="ISLPSyntaxTerms.html#1068" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="423"
+      > </a
+      ><a name="424" href="ISLPSyntaxTerms.html#359" class="Bound"
+      >&#934;</a
+      ><a name="425"
+      > </a
+      ><a name="426" class="Symbol"
+      >&#8594;</a
+      ><a name="427"
+      > </a
+      ><a name="428" href="ISLPSyntaxTerms.html#349" class="Bound"
+      >&#916;</a
+      ><a name="429"
+      > </a
+      ><a name="430" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="431"
+      > </a
+      ><a name="432" href="ISLPSyntaxTerms.html#351" class="Bound"
+      >&#915;</a
+      ><a name="433"
+      > </a
+      ><a name="434" href="ISLPSyntaxTerms.html#1397" class="Datatype Operator"
+      >&#8866;&#8902;</a
+      ><a name="436"
+      > </a
+      ><a name="437" href="ISLPSyntaxTerms.html#355" class="Bound"
+      >p</a
+      ><a name="438"
+      > </a
+      ><a name="439" href="ISLPSyntaxTerms.html#1397" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="440"
+      > </a
+      ><a name="441" href="ISLPSyntaxTerms.html#375" class="Bound"
+      >&#936;</a
+      ><a name="442"
+      > </a
+      ><a name="443" class="Symbol"
+      >&#8594;</a
+      ><a name="444"
+      > </a
+      ><a name="445" href="ISLPSyntaxTerms.html#349" class="Bound"
+      >&#916;</a
+      ><a name="446"
+      > </a
+      ><a name="447" href="PreludeVec.html#3556" class="Datatype Operator"
+      >&#8715;&#10216;</a
+      ><a name="449"
+      > </a
+      ><a name="450" href="ISLPSyntaxTerms.html#388" class="Bound"
+      >i</a
+      ><a name="451"
+      > </a
+      ><a name="452" href="PreludeVec.html#3556" class="Datatype Operator"
+      >&#10217;</a
+      ><a name="453"
+      > </a
+      ><a name="454" href="ISLP.html#4034" class="InductiveConstructor Operator"
+      >[</a
+      ><a name="455"
+      > </a
+      ><a name="456" href="ISLPSyntaxTerms.html#359" class="Bound"
+      >&#934;</a
+      ><a name="457"
+      > </a
+      ><a name="458" href="ISLP.html#4034" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="459"
+      > </a
+      ><a name="460" href="ISLPSyntaxTerms.html#375" class="Bound"
+      >&#936;</a
+      ><a name="461"
+      > </a
+      ><a name="462" href="ISLP.html#4034" class="InductiveConstructor Operator"
+      >&#8870;</a
+      ><a name="463"
+      > </a
+      ><a name="464" href="ISLPSyntaxTerms.html#390" class="Bound"
+      >Q</a
+      ><a name="465"
+      > </a
+      ><a name="466" href="ISLP.html#4034" class="InductiveConstructor Operator"
+      >]</a
+      ><a name="467"
+      > </a
+      ><a name="468" href="ISLPSyntaxTerms.html#392" class="Bound"
+      >A</a
+      ><a name="469"
+      > </a
+      ><a name="470" class="Symbol"
+      >&#8594;</a
+      ><a name="471"
+      >
+              </a
+      ><a name="486" href="ISLPSyntaxTerms.html#349" class="Bound"
+      >&#916;</a
+      ><a name="487"
+      > </a
+      ><a name="488" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="489"
+      > </a
+      ><a name="490" href="ISLPSyntaxTerms.html#351" class="Bound"
+      >&#915;</a
+      ><a name="491"
+      > </a
+      ><a name="492" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8866;</a
+      ><a name="493"
+      > </a
+      ><a name="494" href="ISLP.html#135" class="InductiveConstructor"
+      >MVAR</a
+      ><a name="498"
+      > </a
+      ><a name="499" href="ISLPSyntaxTerms.html#353" class="Bound"
+      >q</a
+      ><a name="500"
+      > </a
+      ><a name="501" href="ISLPSyntaxTerms.html#355" class="Bound"
+      >p</a
+      ><a name="502"
+      > </a
+      ><a name="503" href="ISLPSyntaxTerms.html#388" class="Bound"
+      >i</a
+      ><a name="504"
+      > </a
+      ><a name="505" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="506"
+      > </a
+      ><a name="507" href="ISLPSyntaxTerms.html#392" class="Bound"
+      >A</a
+      ><a name="508"
+      >
+    </a
+      ><a name="513" href="ISLPSyntaxTerms.html#513" class="InductiveConstructor"
+      >lam</a
+      ><a name="516"
+      >   </a
+      ><a name="519" class="Symbol"
+      >:</a
+      ><a name="520"
+      > </a
+      ><a name="521" class="Symbol"
+      >&#8704;</a
+      ><a name="522"
+      > </a
+      ><a name="523" class="Symbol"
+      >{</a
+      ><a name="524" href="ISLPSyntaxTerms.html#524" class="Bound"
+      >&#916;</a
+      ><a name="525"
+      > </a
+      ><a name="526" href="ISLPSyntaxTerms.html#526" class="Bound"
+      >&#915;</a
+      ><a name="527"
+      > </a
+      ><a name="528" href="ISLPSyntaxTerms.html#528" class="Bound"
+      >M</a
+      ><a name="529"
+      > </a
+      ><a name="530" href="ISLPSyntaxTerms.html#530" class="Bound"
+      >A</a
+      ><a name="531"
+      > </a
+      ><a name="532" href="ISLPSyntaxTerms.html#532" class="Bound"
+      >B</a
+      ><a name="533" class="Symbol"
+      >}</a
+      ><a name="534"
+      > </a
+      ><a name="535" class="Symbol"
+      >&#8594;</a
+      ><a name="536"
+      >
+              </a
+      ><a name="551" href="ISLPSyntaxTerms.html#524" class="Bound"
+      >&#916;</a
+      ><a name="552"
+      > </a
+      ><a name="553" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="554"
+      > </a
+      ><a name="555" href="ISLPSyntaxTerms.html#526" class="Bound"
+      >&#915;</a
+      ><a name="556"
+      > </a
+      ><a name="557" href="PreludeVec.html#178" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="558"
+      > </a
+      ><a name="559" href="ISLPSyntaxTerms.html#530" class="Bound"
+      >A</a
+      ><a name="560"
+      > </a
+      ><a name="561" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8866;</a
+      ><a name="562"
+      > </a
+      ><a name="563" href="ISLPSyntaxTerms.html#528" class="Bound"
+      >M</a
+      ><a name="564"
+      > </a
+      ><a name="565" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="566"
+      > </a
+      ><a name="567" href="ISLPSyntaxTerms.html#532" class="Bound"
+      >B</a
+      ><a name="568"
+      > </a
+      ><a name="569" class="Symbol"
+      >&#8594;</a
+      ><a name="570"
+      >
+              </a
+      ><a name="585" href="ISLPSyntaxTerms.html#524" class="Bound"
+      >&#916;</a
+      ><a name="586"
+      > </a
+      ><a name="587" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="588"
+      > </a
+      ><a name="589" href="ISLPSyntaxTerms.html#526" class="Bound"
+      >&#915;</a
+      ><a name="590"
+      > </a
+      ><a name="591" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8866;</a
+      ><a name="592"
+      > </a
+      ><a name="593" href="ISLP.html#203" class="InductiveConstructor"
+      >LAM</a
+      ><a name="596"
+      > </a
+      ><a name="597" href="ISLPSyntaxTerms.html#528" class="Bound"
+      >M</a
+      ><a name="598"
+      > </a
+      ><a name="599" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="600"
+      > </a
+      ><a name="601" href="ISLPSyntaxTerms.html#530" class="Bound"
+      >A</a
+      ><a name="602"
+      > </a
+      ><a name="603" href="ISLP.html#3892" class="InductiveConstructor Operator"
+      >&#8658;</a
+      ><a name="604"
+      > </a
+      ><a name="605" href="ISLPSyntaxTerms.html#532" class="Bound"
+      >B</a
+      ><a name="606"
+      >
+    </a
+      ><a name="611" href="ISLPSyntaxTerms.html#611" class="InductiveConstructor"
+      >app</a
+      ><a name="614"
+      >   </a
+      ><a name="617" class="Symbol"
+      >:</a
+      ><a name="618"
+      > </a
+      ><a name="619" class="Symbol"
+      >&#8704;</a
+      ><a name="620"
+      > </a
+      ><a name="621" class="Symbol"
+      >{</a
+      ><a name="622" href="ISLPSyntaxTerms.html#622" class="Bound"
+      >&#916;</a
+      ><a name="623"
+      > </a
+      ><a name="624" href="ISLPSyntaxTerms.html#624" class="Bound"
+      >&#915;</a
+      ><a name="625"
+      > </a
+      ><a name="626" href="ISLPSyntaxTerms.html#626" class="Bound"
+      >M</a
+      ><a name="627"
+      > </a
+      ><a name="628" href="ISLPSyntaxTerms.html#628" class="Bound"
+      >N</a
+      ><a name="629"
+      > </a
+      ><a name="630" href="ISLPSyntaxTerms.html#630" class="Bound"
+      >A</a
+      ><a name="631"
+      > </a
+      ><a name="632" href="ISLPSyntaxTerms.html#632" class="Bound"
+      >B</a
+      ><a name="633" class="Symbol"
+      >}</a
+      ><a name="634"
+      > </a
+      ><a name="635" class="Symbol"
+      >&#8594;</a
+      ><a name="636"
+      >
+              </a
+      ><a name="651" href="ISLPSyntaxTerms.html#622" class="Bound"
+      >&#916;</a
+      ><a name="652"
+      > </a
+      ><a name="653" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="654"
+      > </a
+      ><a name="655" href="ISLPSyntaxTerms.html#624" class="Bound"
+      >&#915;</a
+      ><a name="656"
+      > </a
+      ><a name="657" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8866;</a
+      ><a name="658"
+      > </a
+      ><a name="659" href="ISLPSyntaxTerms.html#626" class="Bound"
+      >M</a
+      ><a name="660"
+      > </a
+      ><a name="661" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="662"
+      > </a
+      ><a name="663" href="ISLPSyntaxTerms.html#630" class="Bound"
+      >A</a
+      ><a name="664"
+      > </a
+      ><a name="665" href="ISLP.html#3892" class="InductiveConstructor Operator"
+      >&#8658;</a
+      ><a name="666"
+      > </a
+      ><a name="667" href="ISLPSyntaxTerms.html#632" class="Bound"
+      >B</a
+      ><a name="668"
+      > </a
+      ><a name="669" class="Symbol"
+      >&#8594;</a
+      ><a name="670"
+      > </a
+      ><a name="671" href="ISLPSyntaxTerms.html#622" class="Bound"
+      >&#916;</a
+      ><a name="672"
+      > </a
+      ><a name="673" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="674"
+      > </a
+      ><a name="675" href="ISLPSyntaxTerms.html#624" class="Bound"
+      >&#915;</a
+      ><a name="676"
+      > </a
+      ><a name="677" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8866;</a
+      ><a name="678"
+      > </a
+      ><a name="679" href="ISLPSyntaxTerms.html#628" class="Bound"
+      >N</a
+      ><a name="680"
+      > </a
+      ><a name="681" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="682"
+      > </a
+      ><a name="683" href="ISLPSyntaxTerms.html#630" class="Bound"
+      >A</a
+      ><a name="684"
+      > </a
+      ><a name="685" class="Symbol"
+      >&#8594;</a
+      ><a name="686"
+      >
+              </a
+      ><a name="701" href="ISLPSyntaxTerms.html#622" class="Bound"
+      >&#916;</a
+      ><a name="702"
+      > </a
+      ><a name="703" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="704"
+      > </a
+      ><a name="705" href="ISLPSyntaxTerms.html#624" class="Bound"
+      >&#915;</a
+      ><a name="706"
+      > </a
+      ><a name="707" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8866;</a
+      ><a name="708"
+      > </a
+      ><a name="709" href="ISLP.html#237" class="InductiveConstructor"
+      >APP</a
+      ><a name="712"
+      > </a
+      ><a name="713" href="ISLPSyntaxTerms.html#626" class="Bound"
+      >M</a
+      ><a name="714"
+      > </a
+      ><a name="715" href="ISLPSyntaxTerms.html#628" class="Bound"
+      >N</a
+      ><a name="716"
+      > </a
+      ><a name="717" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="718"
+      > </a
+      ><a name="719" href="ISLPSyntaxTerms.html#632" class="Bound"
+      >B</a
+      ><a name="720"
+      >
+    </a
+      ><a name="725" href="ISLPSyntaxTerms.html#725" class="InductiveConstructor"
+      >box</a
+      ><a name="728"
+      >   </a
+      ><a name="731" class="Symbol"
+      >:</a
+      ><a name="732"
+      > </a
+      ><a name="733" class="Symbol"
+      >&#8704;</a
+      ><a name="734"
+      > </a
+      ><a name="735" class="Symbol"
+      >{</a
+      ><a name="736" href="ISLPSyntaxTerms.html#736" class="Bound"
+      >`d</a
+      ><a name="738"
+      > </a
+      ><a name="739" href="ISLPSyntaxTerms.html#739" class="Bound"
+      >`g</a
+      ><a name="741"
+      > </a
+      ><a name="742" href="ISLPSyntaxTerms.html#742" class="Bound"
+      >&#916;</a
+      ><a name="743"
+      > </a
+      ><a name="744" href="ISLPSyntaxTerms.html#744" class="Bound"
+      >&#915;</a
+      ><a name="745" class="Symbol"
+      >}</a
+      ><a name="746"
+      > </a
+      ><a name="747" class="Symbol"
+      >{</a
+      ><a name="748" href="ISLPSyntaxTerms.html#748" class="Bound"
+      >&#934;</a
+      ><a name="749"
+      > </a
+      ><a name="750" class="Symbol"
+      >:</a
+      ><a name="751"
+      > </a
+      ><a name="752" href="ISLP.html#4255" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="758"
+      > </a
+      ><a name="759" href="ISLPSyntaxTerms.html#736" class="Bound"
+      >`d</a
+      ><a name="761" class="Symbol"
+      >}</a
+      ><a name="762"
+      > </a
+      ><a name="763" class="Symbol"
+      >{</a
+      ><a name="764" href="ISLPSyntaxTerms.html#764" class="Bound"
+      >&#936;</a
+      ><a name="765"
+      > </a
+      ><a name="766" class="Symbol"
+      >:</a
+      ><a name="767"
+      > </a
+      ><a name="768" href="ISLP.html#4217" class="Function"
+      >Ty&#8902;</a
+      ><a name="771"
+      > </a
+      ><a name="772" href="ISLPSyntaxTerms.html#739" class="Bound"
+      >`g</a
+      ><a name="774" class="Symbol"
+      >}</a
+      ><a name="775"
+      > </a
+      ><a name="776" class="Symbol"
+      >{</a
+      ><a name="777" href="ISLPSyntaxTerms.html#777" class="Bound"
+      >M</a
+      ><a name="778"
+      > </a
+      ><a name="779" href="ISLPSyntaxTerms.html#779" class="Bound"
+      >A</a
+      ><a name="780" class="Symbol"
+      >}</a
+      ><a name="781"
+      > </a
+      ><a name="782" class="Symbol"
+      >&#8594;</a
+      ><a name="783"
+      >
+              </a
+      ><a name="798" href="ISLPSyntaxTerms.html#748" class="Bound"
+      >&#934;</a
+      ><a name="799"
+      > </a
+      ><a name="800" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="801"
+      > </a
+      ><a name="802" href="ISLPSyntaxTerms.html#764" class="Bound"
+      >&#936;</a
+      ><a name="803"
+      > </a
+      ><a name="804" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8866;</a
+      ><a name="805"
+      > </a
+      ><a name="806" href="ISLPSyntaxTerms.html#777" class="Bound"
+      >M</a
+      ><a name="807"
+      > </a
+      ><a name="808" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="809"
+      > </a
+      ><a name="810" href="ISLPSyntaxTerms.html#779" class="Bound"
+      >A</a
+      ><a name="811"
+      > </a
+      ><a name="812" class="Symbol"
+      >&#8594;</a
+      ><a name="813"
+      >
+              </a
+      ><a name="828" href="ISLPSyntaxTerms.html#742" class="Bound"
+      >&#916;</a
+      ><a name="829"
+      > </a
+      ><a name="830" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="831"
+      > </a
+      ><a name="832" href="ISLPSyntaxTerms.html#744" class="Bound"
+      >&#915;</a
+      ><a name="833"
+      > </a
+      ><a name="834" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8866;</a
+      ><a name="835"
+      > </a
+      ><a name="836" href="ISLP.html#274" class="InductiveConstructor"
+      >BOX</a
+      ><a name="839"
+      > </a
+      ><a name="840" href="ISLPSyntaxTerms.html#777" class="Bound"
+      >M</a
+      ><a name="841"
+      > </a
+      ><a name="842" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="843"
+      > </a
+      ><a name="844" href="ISLP.html#3919" class="InductiveConstructor Operator"
+      >[</a
+      ><a name="845"
+      > </a
+      ><a name="846" href="ISLPSyntaxTerms.html#748" class="Bound"
+      >&#934;</a
+      ><a name="847"
+      > </a
+      ><a name="848" href="ISLP.html#3919" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="849"
+      > </a
+      ><a name="850" href="ISLPSyntaxTerms.html#764" class="Bound"
+      >&#936;</a
+      ><a name="851"
+      > </a
+      ><a name="852" href="ISLP.html#3919" class="InductiveConstructor Operator"
+      >&#8870;</a
+      ><a name="853"
+      > </a
+      ><a name="854" href="ISLPSyntaxTerms.html#777" class="Bound"
+      >M</a
+      ><a name="855"
+      > </a
+      ><a name="856" href="ISLP.html#3919" class="InductiveConstructor Operator"
+      >]</a
+      ><a name="857"
+      > </a
+      ><a name="858" href="ISLPSyntaxTerms.html#779" class="Bound"
+      >A</a
+      ><a name="859"
+      >
+    </a
+      ><a name="864" href="ISLPSyntaxTerms.html#864" class="InductiveConstructor"
+      >unbox</a
+      ><a name="869"
+      > </a
+      ><a name="870" class="Symbol"
+      >:</a
+      ><a name="871"
+      > </a
+      ><a name="872" class="Symbol"
+      >&#8704;</a
+      ><a name="873"
+      > </a
+      ><a name="874" class="Symbol"
+      >{</a
+      ><a name="875" href="ISLPSyntaxTerms.html#875" class="Bound"
+      >`d</a
+      ><a name="877"
+      > </a
+      ><a name="878" href="ISLPSyntaxTerms.html#878" class="Bound"
+      >`g</a
+      ><a name="880"
+      > </a
+      ><a name="881" href="ISLPSyntaxTerms.html#881" class="Bound"
+      >&#916;</a
+      ><a name="882"
+      > </a
+      ><a name="883" href="ISLPSyntaxTerms.html#883" class="Bound"
+      >&#915;</a
+      ><a name="884" class="Symbol"
+      >}</a
+      ><a name="885"
+      > </a
+      ><a name="886" class="Symbol"
+      >{</a
+      ><a name="887" href="ISLPSyntaxTerms.html#887" class="Bound"
+      >&#934;</a
+      ><a name="888"
+      > </a
+      ><a name="889" class="Symbol"
+      >:</a
+      ><a name="890"
+      > </a
+      ><a name="891" href="ISLP.html#4255" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="897"
+      > </a
+      ><a name="898" href="ISLPSyntaxTerms.html#875" class="Bound"
+      >`d</a
+      ><a name="900" class="Symbol"
+      >}</a
+      ><a name="901"
+      > </a
+      ><a name="902" class="Symbol"
+      >{</a
+      ><a name="903" href="ISLPSyntaxTerms.html#903" class="Bound"
+      >&#936;</a
+      ><a name="904"
+      > </a
+      ><a name="905" class="Symbol"
+      >:</a
+      ><a name="906"
+      > </a
+      ><a name="907" href="ISLP.html#4217" class="Function"
+      >Ty&#8902;</a
+      ><a name="910"
+      > </a
+      ><a name="911" href="ISLPSyntaxTerms.html#878" class="Bound"
+      >`g</a
+      ><a name="913" class="Symbol"
+      >}</a
+      ><a name="914"
+      > </a
+      ><a name="915" class="Symbol"
+      >{</a
+      ><a name="916" href="ISLPSyntaxTerms.html#916" class="Bound"
+      >M</a
+      ><a name="917"
+      > </a
+      ><a name="918" href="ISLPSyntaxTerms.html#918" class="Bound"
+      >N</a
+      ><a name="919"
+      > </a
+      ><a name="920" href="ISLPSyntaxTerms.html#920" class="Bound"
+      >Q</a
+      ><a name="921"
+      > </a
+      ><a name="922" href="ISLPSyntaxTerms.html#922" class="Bound"
+      >A</a
+      ><a name="923"
+      > </a
+      ><a name="924" href="ISLPSyntaxTerms.html#924" class="Bound"
+      >C</a
+      ><a name="925" class="Symbol"
+      >}</a
+      ><a name="926"
+      > </a
+      ><a name="927" class="Symbol"
+      >&#8594;</a
+      ><a name="928"
+      >
+              </a
+      ><a name="943" href="ISLPSyntaxTerms.html#881" class="Bound"
+      >&#916;</a
+      ><a name="944"
+      > </a
+      ><a name="945" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="946"
+      > </a
+      ><a name="947" href="ISLPSyntaxTerms.html#883" class="Bound"
+      >&#915;</a
+      ><a name="948"
+      > </a
+      ><a name="949" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8866;</a
+      ><a name="950"
+      > </a
+      ><a name="951" href="ISLPSyntaxTerms.html#916" class="Bound"
+      >M</a
+      ><a name="952"
+      > </a
+      ><a name="953" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="954"
+      > </a
+      ><a name="955" href="ISLP.html#3919" class="InductiveConstructor Operator"
+      >[</a
+      ><a name="956"
+      > </a
+      ><a name="957" href="ISLPSyntaxTerms.html#887" class="Bound"
+      >&#934;</a
+      ><a name="958"
+      > </a
+      ><a name="959" href="ISLP.html#3919" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="960"
+      > </a
+      ><a name="961" href="ISLPSyntaxTerms.html#903" class="Bound"
+      >&#936;</a
+      ><a name="962"
+      > </a
+      ><a name="963" href="ISLP.html#3919" class="InductiveConstructor Operator"
+      >&#8870;</a
+      ><a name="964"
+      > </a
+      ><a name="965" href="ISLPSyntaxTerms.html#920" class="Bound"
+      >Q</a
+      ><a name="966"
+      > </a
+      ><a name="967" href="ISLP.html#3919" class="InductiveConstructor Operator"
+      >]</a
+      ><a name="968"
+      > </a
+      ><a name="969" href="ISLPSyntaxTerms.html#922" class="Bound"
+      >A</a
+      ><a name="970"
+      > </a
+      ><a name="971" class="Symbol"
+      >&#8594;</a
+      ><a name="972"
+      > </a
+      ><a name="973" href="ISLPSyntaxTerms.html#881" class="Bound"
+      >&#916;</a
+      ><a name="974"
+      > </a
+      ><a name="975" href="PreludeVec.html#178" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="976"
+      > </a
+      ><a name="977" href="ISLP.html#4034" class="InductiveConstructor Operator"
+      >[</a
+      ><a name="978"
+      > </a
+      ><a name="979" href="ISLPSyntaxTerms.html#887" class="Bound"
+      >&#934;</a
+      ><a name="980"
+      > </a
+      ><a name="981" href="ISLP.html#4034" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="982"
+      > </a
+      ><a name="983" href="ISLPSyntaxTerms.html#903" class="Bound"
+      >&#936;</a
+      ><a name="984"
+      > </a
+      ><a name="985" href="ISLP.html#4034" class="InductiveConstructor Operator"
+      >&#8870;</a
+      ><a name="986"
+      > </a
+      ><a name="987" href="ISLPSyntaxTerms.html#920" class="Bound"
+      >Q</a
+      ><a name="988"
+      > </a
+      ><a name="989" href="ISLP.html#4034" class="InductiveConstructor Operator"
+      >]</a
+      ><a name="990"
+      > </a
+      ><a name="991" href="ISLPSyntaxTerms.html#922" class="Bound"
+      >A</a
+      ><a name="992"
+      > </a
+      ><a name="993" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="994"
+      > </a
+      ><a name="995" href="ISLPSyntaxTerms.html#883" class="Bound"
+      >&#915;</a
+      ><a name="996"
+      > </a
+      ><a name="997" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8866;</a
+      ><a name="998"
+      > </a
+      ><a name="999" href="ISLPSyntaxTerms.html#918" class="Bound"
+      >N</a
+      ><a name="1000"
+      > </a
+      ><a name="1001" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="1002"
+      > </a
+      ><a name="1003" href="ISLPSyntaxTerms.html#924" class="Bound"
+      >C</a
+      ><a name="1004"
+      > </a
+      ><a name="1005" class="Symbol"
+      >&#8594;</a
+      ><a name="1006"
+      >
+              </a
+      ><a name="1021" href="ISLPSyntaxTerms.html#881" class="Bound"
+      >&#916;</a
+      ><a name="1022"
+      > </a
+      ><a name="1023" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="1024"
+      > </a
+      ><a name="1025" href="ISLPSyntaxTerms.html#883" class="Bound"
+      >&#915;</a
+      ><a name="1026"
+      > </a
+      ><a name="1027" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8866;</a
+      ><a name="1028"
+      > </a
+      ><a name="1029" href="ISLP.html#316" class="InductiveConstructor"
+      >UNBOX</a
+      ><a name="1034"
+      > </a
+      ><a name="1035" href="ISLPSyntaxTerms.html#916" class="Bound"
+      >M</a
+      ><a name="1036"
+      > </a
+      ><a name="1037" href="ISLPSyntaxTerms.html#918" class="Bound"
+      >N</a
+      ><a name="1038"
+      > </a
+      ><a name="1039" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="1040"
+      > </a
+      ><a name="1041" href="ISLPSyntaxTerms.html#924" class="Bound"
+      >C</a
+      ><a name="1042"
+      >
+
+  </a
+      ><a name="1046" class="Keyword"
+      >infix</a
+      ><a name="1051"
+      > </a
+      ><a name="1052" class="Number"
+      >3</a
+      ><a name="1053"
+      > </a
+      ><a name="1054" href="ISLPSyntaxTerms.html#1068" class="Datatype Operator"
+      >_&#8866;&#10694;_&#8759;_</a
+      ><a name="1060"
+      >
+  </a
+      ><a name="1063" class="Keyword"
+      >data</a
+      ><a name="1067"
+      > </a
+      ><a name="1068" href="ISLPSyntaxTerms.html#1068" class="Datatype Operator"
+      >_&#8866;&#10694;_&#8759;_</a
+      ><a name="1074"
+      > </a
+      ><a name="1075" class="Symbol"
+      >{</a
+      ><a name="1076" href="ISLPSyntaxTerms.html#1076" class="Bound"
+      >d</a
+      ><a name="1077"
+      > </a
+      ><a name="1078" href="ISLPSyntaxTerms.html#1078" class="Bound"
+      >g</a
+      ><a name="1079" class="Symbol"
+      >}</a
+      ><a name="1080"
+      > </a
+      ><a name="1081" class="Symbol"
+      >:</a
+      ><a name="1082"
+      > </a
+      ><a name="1083" class="Symbol"
+      >&#8704;</a
+      ><a name="1084"
+      > </a
+      ><a name="1085" class="Symbol"
+      >{</a
+      ><a name="1086" href="ISLPSyntaxTerms.html#1086" class="Bound"
+      >n</a
+      ><a name="1087" class="Symbol"
+      >}</a
+      ><a name="1088"
+      > </a
+      ><a name="1089" class="Symbol"
+      >&#8594;</a
+      ><a name="1090"
+      > </a
+      ><a name="1091" href="ISLPSyntaxTerms.html#100" class="Function"
+      >Cx</a
+      ><a name="1093"
+      > </a
+      ><a name="1094" href="ISLPSyntaxTerms.html#1076" class="Bound"
+      >d</a
+      ><a name="1095"
+      > </a
+      ><a name="1096" href="ISLPSyntaxTerms.html#1078" class="Bound"
+      >g</a
+      ><a name="1097"
+      > </a
+      ><a name="1098" class="Symbol"
+      >&#8594;</a
+      ><a name="1099"
+      > </a
+      ><a name="1100" href="ISLP.html#358" class="Function"
+      >Tm&#8902;</a
+      ><a name="1103"
+      > </a
+      ><a name="1104" href="ISLPSyntaxTerms.html#1076" class="Bound"
+      >d</a
+      ><a name="1105"
+      > </a
+      ><a name="1106" href="ISLPSyntaxTerms.html#1078" class="Bound"
+      >g</a
+      ><a name="1107"
+      > </a
+      ><a name="1108" href="ISLPSyntaxTerms.html#1086" class="Bound"
+      >n</a
+      ><a name="1109"
+      > </a
+      ><a name="1110" class="Symbol"
+      >&#8594;</a
+      ><a name="1111"
+      > </a
+      ><a name="1112" href="ISLP.html#4255" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="1118"
+      > </a
+      ><a name="1119" href="ISLPSyntaxTerms.html#1086" class="Bound"
+      >n</a
+      ><a name="1120"
+      > </a
+      ><a name="1121" class="Symbol"
+      >&#8594;</a
+      ><a name="1122"
+      > </a
+      ><a name="1123" class="PrimitiveType"
+      >Set</a
+      ><a name="1126"
+      > </a
+      ><a name="1127" class="Keyword"
+      >where</a
+      ><a name="1132"
+      >
+    </a
+      ><a name="1137" href="ISLPSyntaxTerms.html#1137" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="1138"
+      >   </a
+      ><a name="1141" class="Symbol"
+      >:</a
+      ><a name="1142"
+      > </a
+      ><a name="1143" class="Symbol"
+      >&#8704;</a
+      ><a name="1144"
+      > </a
+      ><a name="1145" class="Symbol"
+      >{</a
+      ><a name="1146" href="ISLPSyntaxTerms.html#1146" class="Bound"
+      >&#916;</a
+      ><a name="1147"
+      > </a
+      ><a name="1148" href="ISLPSyntaxTerms.html#1148" class="Bound"
+      >&#915;</a
+      ><a name="1149" class="Symbol"
+      >}</a
+      ><a name="1150"
+      > </a
+      ><a name="1151" class="Symbol"
+      >&#8594;</a
+      ><a name="1152"
+      >
+            </a
+      ><a name="1165" href="ISLPSyntaxTerms.html#1146" class="Bound"
+      >&#916;</a
+      ><a name="1166"
+      > </a
+      ><a name="1167" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="1168"
+      > </a
+      ><a name="1169" href="ISLPSyntaxTerms.html#1148" class="Bound"
+      >&#915;</a
+      ><a name="1170"
+      > </a
+      ><a name="1171" href="ISLPSyntaxTerms.html#1068" class="Datatype Operator"
+      >&#8866;&#10694;</a
+      ><a name="1173"
+      > </a
+      ><a name="1174" href="PreludeVec.html#157" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="1175"
+      > </a
+      ><a name="1176" href="ISLPSyntaxTerms.html#1068" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="1177"
+      > </a
+      ><a name="1178" href="PreludeVec.html#157" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="1179"
+      >
+    </a
+      ><a name="1184" href="ISLPSyntaxTerms.html#1184" class="InductiveConstructor Operator"
+      >_,_</a
+      ><a name="1187"
+      > </a
+      ><a name="1188" class="Symbol"
+      >:</a
+      ><a name="1189"
+      > </a
+      ><a name="1190" class="Symbol"
+      >&#8704;</a
+      ><a name="1191"
+      > </a
+      ><a name="1192" class="Symbol"
+      >{</a
+      ><a name="1193" href="ISLPSyntaxTerms.html#1193" class="Bound"
+      >`d</a
+      ><a name="1195"
+      > </a
+      ><a name="1196" href="ISLPSyntaxTerms.html#1196" class="Bound"
+      >`g</a
+      ><a name="1198"
+      > </a
+      ><a name="1199" href="ISLPSyntaxTerms.html#1199" class="Bound"
+      >n</a
+      ><a name="1200"
+      > </a
+      ><a name="1201" href="ISLPSyntaxTerms.html#1201" class="Bound"
+      >&#916;</a
+      ><a name="1202"
+      > </a
+      ><a name="1203" href="ISLPSyntaxTerms.html#1203" class="Bound"
+      >&#915;</a
+      ><a name="1204" class="Symbol"
+      >}</a
+      ><a name="1205"
+      > </a
+      ><a name="1206" class="Symbol"
+      >{</a
+      ><a name="1207" href="ISLPSyntaxTerms.html#1207" class="Bound"
+      >&#934;</a
+      ><a name="1208"
+      > </a
+      ><a name="1209" class="Symbol"
+      >:</a
+      ><a name="1210"
+      > </a
+      ><a name="1211" href="ISLP.html#4255" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="1217"
+      > </a
+      ><a name="1218" href="ISLPSyntaxTerms.html#1193" class="Bound"
+      >`d</a
+      ><a name="1220" class="Symbol"
+      >}</a
+      ><a name="1221"
+      > </a
+      ><a name="1222" class="Symbol"
+      >{</a
+      ><a name="1223" href="ISLPSyntaxTerms.html#1223" class="Bound"
+      >&#936;</a
+      ><a name="1224"
+      > </a
+      ><a name="1225" class="Symbol"
+      >:</a
+      ><a name="1226"
+      > </a
+      ><a name="1227" href="ISLP.html#4217" class="Function"
+      >Ty&#8902;</a
+      ><a name="1230"
+      > </a
+      ><a name="1231" href="ISLPSyntaxTerms.html#1196" class="Bound"
+      >`g</a
+      ><a name="1233" class="Symbol"
+      >}</a
+      ><a name="1234"
+      > </a
+      ><a name="1235" class="Symbol"
+      >{</a
+      ><a name="1236" href="ISLPSyntaxTerms.html#1236" class="Bound"
+      >x</a
+      ><a name="1237" class="Symbol"
+      >}</a
+      ><a name="1238"
+      > </a
+      ><a name="1239" class="Symbol"
+      >{</a
+      ><a name="1240" href="ISLPSyntaxTerms.html#1240" class="Bound"
+      >&#926;</a
+      ><a name="1241"
+      > </a
+      ><a name="1242" class="Symbol"
+      >:</a
+      ><a name="1243"
+      > </a
+      ><a name="1244" href="ISLP.html#4255" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="1250"
+      > </a
+      ><a name="1251" href="ISLPSyntaxTerms.html#1199" class="Bound"
+      >n</a
+      ><a name="1252" class="Symbol"
+      >}</a
+      ><a name="1253"
+      > </a
+      ><a name="1254" class="Symbol"
+      >{</a
+      ><a name="1255" href="ISLPSyntaxTerms.html#1255" class="Bound"
+      >M</a
+      ><a name="1256"
+      > </a
+      ><a name="1257" href="ISLPSyntaxTerms.html#1257" class="Bound"
+      >Q</a
+      ><a name="1258"
+      > </a
+      ><a name="1259" href="ISLPSyntaxTerms.html#1259" class="Bound"
+      >A</a
+      ><a name="1260" class="Symbol"
+      >}</a
+      ><a name="1261"
+      > </a
+      ><a name="1262" class="Symbol"
+      >&#8594;</a
+      ><a name="1263"
+      >
+            </a
+      ><a name="1276" href="ISLPSyntaxTerms.html#1201" class="Bound"
+      >&#916;</a
+      ><a name="1277"
+      > </a
+      ><a name="1278" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="1279"
+      > </a
+      ><a name="1280" href="ISLPSyntaxTerms.html#1203" class="Bound"
+      >&#915;</a
+      ><a name="1281"
+      > </a
+      ><a name="1282" href="ISLPSyntaxTerms.html#1068" class="Datatype Operator"
+      >&#8866;&#10694;</a
+      ><a name="1284"
+      > </a
+      ><a name="1285" href="ISLPSyntaxTerms.html#1236" class="Bound"
+      >x</a
+      ><a name="1286"
+      > </a
+      ><a name="1287" href="ISLPSyntaxTerms.html#1068" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="1288"
+      > </a
+      ><a name="1289" href="ISLPSyntaxTerms.html#1240" class="Bound"
+      >&#926;</a
+      ><a name="1290"
+      > </a
+      ><a name="1291" class="Symbol"
+      >&#8594;</a
+      ><a name="1292"
+      > </a
+      ><a name="1293" href="ISLPSyntaxTerms.html#1201" class="Bound"
+      >&#916;</a
+      ><a name="1294"
+      > </a
+      ><a name="1295" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="1296"
+      > </a
+      ><a name="1297" href="ISLPSyntaxTerms.html#1203" class="Bound"
+      >&#915;</a
+      ><a name="1298"
+      > </a
+      ><a name="1299" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8866;</a
+      ><a name="1300"
+      > </a
+      ><a name="1301" href="ISLPSyntaxTerms.html#1255" class="Bound"
+      >M</a
+      ><a name="1302"
+      > </a
+      ><a name="1303" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="1304"
+      > </a
+      ><a name="1305" href="ISLP.html#3919" class="InductiveConstructor Operator"
+      >[</a
+      ><a name="1306"
+      > </a
+      ><a name="1307" href="ISLPSyntaxTerms.html#1207" class="Bound"
+      >&#934;</a
+      ><a name="1308"
+      > </a
+      ><a name="1309" href="ISLP.html#3919" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="1310"
+      > </a
+      ><a name="1311" href="ISLPSyntaxTerms.html#1223" class="Bound"
+      >&#936;</a
+      ><a name="1312"
+      > </a
+      ><a name="1313" href="ISLP.html#3919" class="InductiveConstructor Operator"
+      >&#8870;</a
+      ><a name="1314"
+      > </a
+      ><a name="1315" href="ISLPSyntaxTerms.html#1257" class="Bound"
+      >Q</a
+      ><a name="1316"
+      > </a
+      ><a name="1317" href="ISLP.html#3919" class="InductiveConstructor Operator"
+      >]</a
+      ><a name="1318"
+      > </a
+      ><a name="1319" href="ISLPSyntaxTerms.html#1259" class="Bound"
+      >A</a
+      ><a name="1320"
+      > </a
+      ><a name="1321" class="Symbol"
+      >&#8594;</a
+      ><a name="1322"
+      >
+            </a
+      ><a name="1335" href="ISLPSyntaxTerms.html#1201" class="Bound"
+      >&#916;</a
+      ><a name="1336"
+      > </a
+      ><a name="1337" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="1338"
+      > </a
+      ><a name="1339" href="ISLPSyntaxTerms.html#1203" class="Bound"
+      >&#915;</a
+      ><a name="1340"
+      > </a
+      ><a name="1341" href="ISLPSyntaxTerms.html#1068" class="Datatype Operator"
+      >&#8866;&#10694;</a
+      ><a name="1343"
+      > </a
+      ><a name="1344" href="ISLPSyntaxTerms.html#1236" class="Bound"
+      >x</a
+      ><a name="1345"
+      > </a
+      ><a name="1346" href="PreludeVec.html#178" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1347"
+      > </a
+      ><a name="1348" href="ISLPSyntaxTerms.html#1255" class="Bound"
+      >M</a
+      ><a name="1349"
+      > </a
+      ><a name="1350" href="ISLPSyntaxTerms.html#1068" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="1351"
+      > </a
+      ><a name="1352" href="ISLPSyntaxTerms.html#1240" class="Bound"
+      >&#926;</a
+      ><a name="1353"
+      > </a
+      ><a name="1354" href="PreludeVec.html#178" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1355"
+      > </a
+      ><a name="1356" href="ISLP.html#4034" class="InductiveConstructor Operator"
+      >[</a
+      ><a name="1357"
+      > </a
+      ><a name="1358" href="ISLPSyntaxTerms.html#1207" class="Bound"
+      >&#934;</a
+      ><a name="1359"
+      > </a
+      ><a name="1360" href="ISLP.html#4034" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="1361"
+      > </a
+      ><a name="1362" href="ISLPSyntaxTerms.html#1223" class="Bound"
+      >&#936;</a
+      ><a name="1363"
+      > </a
+      ><a name="1364" href="ISLP.html#4034" class="InductiveConstructor Operator"
+      >&#8870;</a
+      ><a name="1365"
+      > </a
+      ><a name="1366" href="ISLPSyntaxTerms.html#1257" class="Bound"
+      >Q</a
+      ><a name="1367"
+      > </a
+      ><a name="1368" href="ISLP.html#4034" class="InductiveConstructor Operator"
+      >]</a
+      ><a name="1369"
+      > </a
+      ><a name="1370" href="ISLPSyntaxTerms.html#1259" class="Bound"
+      >A</a
+      ><a name="1371"
+      >
+
+  </a
+      ><a name="1375" class="Keyword"
+      >infix</a
+      ><a name="1380"
+      > </a
+      ><a name="1381" class="Number"
+      >3</a
+      ><a name="1382"
+      > </a
+      ><a name="1383" href="ISLPSyntaxTerms.html#1397" class="Datatype Operator"
+      >_&#8866;&#8902;_&#8759;_</a
+      ><a name="1389"
+      >
+  </a
+      ><a name="1392" class="Keyword"
+      >data</a
+      ><a name="1396"
+      > </a
+      ><a name="1397" href="ISLPSyntaxTerms.html#1397" class="Datatype Operator"
+      >_&#8866;&#8902;_&#8759;_</a
+      ><a name="1403"
+      > </a
+      ><a name="1404" class="Symbol"
+      >{</a
+      ><a name="1405" href="ISLPSyntaxTerms.html#1405" class="Bound"
+      >d</a
+      ><a name="1406"
+      > </a
+      ><a name="1407" href="ISLPSyntaxTerms.html#1407" class="Bound"
+      >g</a
+      ><a name="1408" class="Symbol"
+      >}</a
+      ><a name="1409"
+      > </a
+      ><a name="1410" class="Symbol"
+      >:</a
+      ><a name="1411"
+      > </a
+      ><a name="1412" class="Symbol"
+      >&#8704;</a
+      ><a name="1413"
+      > </a
+      ><a name="1414" class="Symbol"
+      >{</a
+      ><a name="1415" href="ISLPSyntaxTerms.html#1415" class="Bound"
+      >n</a
+      ><a name="1416" class="Symbol"
+      >}</a
+      ><a name="1417"
+      > </a
+      ><a name="1418" class="Symbol"
+      >&#8594;</a
+      ><a name="1419"
+      > </a
+      ><a name="1420" href="ISLPSyntaxTerms.html#100" class="Function"
+      >Cx</a
+      ><a name="1422"
+      > </a
+      ><a name="1423" href="ISLPSyntaxTerms.html#1405" class="Bound"
+      >d</a
+      ><a name="1424"
+      > </a
+      ><a name="1425" href="ISLPSyntaxTerms.html#1407" class="Bound"
+      >g</a
+      ><a name="1426"
+      > </a
+      ><a name="1427" class="Symbol"
+      >&#8594;</a
+      ><a name="1428"
+      > </a
+      ><a name="1429" href="ISLP.html#358" class="Function"
+      >Tm&#8902;</a
+      ><a name="1432"
+      > </a
+      ><a name="1433" href="ISLPSyntaxTerms.html#1405" class="Bound"
+      >d</a
+      ><a name="1434"
+      > </a
+      ><a name="1435" href="ISLPSyntaxTerms.html#1407" class="Bound"
+      >g</a
+      ><a name="1436"
+      > </a
+      ><a name="1437" href="ISLPSyntaxTerms.html#1415" class="Bound"
+      >n</a
+      ><a name="1438"
+      > </a
+      ><a name="1439" class="Symbol"
+      >&#8594;</a
+      ><a name="1440"
+      > </a
+      ><a name="1441" href="ISLP.html#4217" class="Function"
+      >Ty&#8902;</a
+      ><a name="1444"
+      > </a
+      ><a name="1445" href="ISLPSyntaxTerms.html#1415" class="Bound"
+      >n</a
+      ><a name="1446"
+      > </a
+      ><a name="1447" class="Symbol"
+      >&#8594;</a
+      ><a name="1448"
+      > </a
+      ><a name="1449" class="PrimitiveType"
+      >Set</a
+      ><a name="1452"
+      > </a
+      ><a name="1453" class="Keyword"
+      >where</a
+      ><a name="1458"
+      >
+    </a
+      ><a name="1463" href="ISLPSyntaxTerms.html#1463" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="1464"
+      >   </a
+      ><a name="1467" class="Symbol"
+      >:</a
+      ><a name="1468"
+      > </a
+      ><a name="1469" class="Symbol"
+      >&#8704;</a
+      ><a name="1470"
+      > </a
+      ><a name="1471" class="Symbol"
+      >{</a
+      ><a name="1472" href="ISLPSyntaxTerms.html#1472" class="Bound"
+      >&#916;</a
+      ><a name="1473"
+      > </a
+      ><a name="1474" href="ISLPSyntaxTerms.html#1474" class="Bound"
+      >&#915;</a
+      ><a name="1475" class="Symbol"
+      >}</a
+      ><a name="1476"
+      > </a
+      ><a name="1477" class="Symbol"
+      >&#8594;</a
+      ><a name="1478"
+      >
+            </a
+      ><a name="1491" href="ISLPSyntaxTerms.html#1472" class="Bound"
+      >&#916;</a
+      ><a name="1492"
+      > </a
+      ><a name="1493" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="1494"
+      > </a
+      ><a name="1495" href="ISLPSyntaxTerms.html#1474" class="Bound"
+      >&#915;</a
+      ><a name="1496"
+      > </a
+      ><a name="1497" href="ISLPSyntaxTerms.html#1397" class="Datatype Operator"
+      >&#8866;&#8902;</a
+      ><a name="1499"
+      > </a
+      ><a name="1500" href="PreludeVec.html#157" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="1501"
+      > </a
+      ><a name="1502" href="ISLPSyntaxTerms.html#1397" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="1503"
+      > </a
+      ><a name="1504" href="PreludeVec.html#157" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="1505"
+      >
+    </a
+      ><a name="1510" href="ISLPSyntaxTerms.html#1510" class="InductiveConstructor Operator"
+      >_,_</a
+      ><a name="1513"
+      > </a
+      ><a name="1514" class="Symbol"
+      >:</a
+      ><a name="1515"
+      > </a
+      ><a name="1516" class="Symbol"
+      >&#8704;</a
+      ><a name="1517"
+      > </a
+      ><a name="1518" class="Symbol"
+      >{</a
+      ><a name="1519" href="ISLPSyntaxTerms.html#1519" class="Bound"
+      >`d</a
+      ><a name="1521"
+      > </a
+      ><a name="1522" href="ISLPSyntaxTerms.html#1522" class="Bound"
+      >`g</a
+      ><a name="1524"
+      > </a
+      ><a name="1525" href="ISLPSyntaxTerms.html#1525" class="Bound"
+      >n</a
+      ><a name="1526"
+      > </a
+      ><a name="1527" href="ISLPSyntaxTerms.html#1527" class="Bound"
+      >&#916;</a
+      ><a name="1528"
+      > </a
+      ><a name="1529" href="ISLPSyntaxTerms.html#1529" class="Bound"
+      >&#915;</a
+      ><a name="1530" class="Symbol"
+      >}</a
+      ><a name="1531"
+      > </a
+      ><a name="1532" class="Symbol"
+      >{</a
+      ><a name="1533" href="ISLPSyntaxTerms.html#1533" class="Bound"
+      >&#934;</a
+      ><a name="1534"
+      > </a
+      ><a name="1535" class="Symbol"
+      >:</a
+      ><a name="1536"
+      > </a
+      ><a name="1537" href="ISLP.html#4255" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="1543"
+      > </a
+      ><a name="1544" href="ISLPSyntaxTerms.html#1519" class="Bound"
+      >`d</a
+      ><a name="1546" class="Symbol"
+      >}</a
+      ><a name="1547"
+      > </a
+      ><a name="1548" class="Symbol"
+      >{</a
+      ><a name="1549" href="ISLPSyntaxTerms.html#1549" class="Bound"
+      >&#936;</a
+      ><a name="1550"
+      > </a
+      ><a name="1551" class="Symbol"
+      >:</a
+      ><a name="1552"
+      > </a
+      ><a name="1553" href="ISLP.html#4217" class="Function"
+      >Ty&#8902;</a
+      ><a name="1556"
+      > </a
+      ><a name="1557" href="ISLPSyntaxTerms.html#1522" class="Bound"
+      >`g</a
+      ><a name="1559" class="Symbol"
+      >}</a
+      ><a name="1560"
+      > </a
+      ><a name="1561" class="Symbol"
+      >{</a
+      ><a name="1562" href="ISLPSyntaxTerms.html#1562" class="Bound"
+      >x</a
+      ><a name="1563" class="Symbol"
+      >}</a
+      ><a name="1564"
+      > </a
+      ><a name="1565" class="Symbol"
+      >{</a
+      ><a name="1566" href="ISLPSyntaxTerms.html#1566" class="Bound"
+      >&#926;</a
+      ><a name="1567"
+      > </a
+      ><a name="1568" class="Symbol"
+      >:</a
+      ><a name="1569"
+      > </a
+      ><a name="1570" href="ISLP.html#4217" class="Function"
+      >Ty&#8902;</a
+      ><a name="1573"
+      > </a
+      ><a name="1574" href="ISLPSyntaxTerms.html#1525" class="Bound"
+      >n</a
+      ><a name="1575" class="Symbol"
+      >}</a
+      ><a name="1576"
+      > </a
+      ><a name="1577" class="Symbol"
+      >{</a
+      ><a name="1578" href="ISLPSyntaxTerms.html#1578" class="Bound"
+      >M</a
+      ><a name="1579"
+      > </a
+      ><a name="1580" href="ISLPSyntaxTerms.html#1580" class="Bound"
+      >Q</a
+      ><a name="1581"
+      > </a
+      ><a name="1582" href="ISLPSyntaxTerms.html#1582" class="Bound"
+      >A</a
+      ><a name="1583" class="Symbol"
+      >}</a
+      ><a name="1584"
+      > </a
+      ><a name="1585" class="Symbol"
+      >&#8594;</a
+      ><a name="1586"
+      >
+            </a
+      ><a name="1599" href="ISLPSyntaxTerms.html#1527" class="Bound"
+      >&#916;</a
+      ><a name="1600"
+      > </a
+      ><a name="1601" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="1602"
+      > </a
+      ><a name="1603" href="ISLPSyntaxTerms.html#1529" class="Bound"
+      >&#915;</a
+      ><a name="1604"
+      > </a
+      ><a name="1605" href="ISLPSyntaxTerms.html#1397" class="Datatype Operator"
+      >&#8866;&#8902;</a
+      ><a name="1607"
+      > </a
+      ><a name="1608" href="ISLPSyntaxTerms.html#1562" class="Bound"
+      >x</a
+      ><a name="1609"
+      > </a
+      ><a name="1610" href="ISLPSyntaxTerms.html#1397" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="1611"
+      > </a
+      ><a name="1612" href="ISLPSyntaxTerms.html#1566" class="Bound"
+      >&#926;</a
+      ><a name="1613"
+      > </a
+      ><a name="1614" class="Symbol"
+      >&#8594;</a
+      ><a name="1615"
+      > </a
+      ><a name="1616" href="ISLPSyntaxTerms.html#1527" class="Bound"
+      >&#916;</a
+      ><a name="1617"
+      > </a
+      ><a name="1618" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="1619"
+      > </a
+      ><a name="1620" href="ISLPSyntaxTerms.html#1529" class="Bound"
+      >&#915;</a
+      ><a name="1621"
+      > </a
+      ><a name="1622" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8866;</a
+      ><a name="1623"
+      > </a
+      ><a name="1624" href="ISLPSyntaxTerms.html#1578" class="Bound"
+      >M</a
+      ><a name="1625"
+      > </a
+      ><a name="1626" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="1627"
+      > </a
+      ><a name="1628" href="ISLP.html#3919" class="InductiveConstructor Operator"
+      >[</a
+      ><a name="1629"
+      > </a
+      ><a name="1630" href="ISLPSyntaxTerms.html#1533" class="Bound"
+      >&#934;</a
+      ><a name="1631"
+      > </a
+      ><a name="1632" href="ISLP.html#3919" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="1633"
+      > </a
+      ><a name="1634" href="ISLPSyntaxTerms.html#1549" class="Bound"
+      >&#936;</a
+      ><a name="1635"
+      > </a
+      ><a name="1636" href="ISLP.html#3919" class="InductiveConstructor Operator"
+      >&#8870;</a
+      ><a name="1637"
+      > </a
+      ><a name="1638" href="ISLPSyntaxTerms.html#1580" class="Bound"
+      >Q</a
+      ><a name="1639"
+      > </a
+      ><a name="1640" href="ISLP.html#3919" class="InductiveConstructor Operator"
+      >]</a
+      ><a name="1641"
+      > </a
+      ><a name="1642" href="ISLPSyntaxTerms.html#1582" class="Bound"
+      >A</a
+      ><a name="1643"
+      > </a
+      ><a name="1644" class="Symbol"
+      >&#8594;</a
+      ><a name="1645"
+      >
+            </a
+      ><a name="1658" href="ISLPSyntaxTerms.html#1527" class="Bound"
+      >&#916;</a
+      ><a name="1659"
+      > </a
+      ><a name="1660" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="1661"
+      > </a
+      ><a name="1662" href="ISLPSyntaxTerms.html#1529" class="Bound"
+      >&#915;</a
+      ><a name="1663"
+      > </a
+      ><a name="1664" href="ISLPSyntaxTerms.html#1397" class="Datatype Operator"
+      >&#8866;&#8902;</a
+      ><a name="1666"
+      > </a
+      ><a name="1667" href="ISLPSyntaxTerms.html#1562" class="Bound"
+      >x</a
+      ><a name="1668"
+      > </a
+      ><a name="1669" href="PreludeVec.html#178" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1670"
+      > </a
+      ><a name="1671" href="ISLPSyntaxTerms.html#1578" class="Bound"
+      >M</a
+      ><a name="1672"
+      > </a
+      ><a name="1673" href="ISLPSyntaxTerms.html#1397" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="1674"
+      > </a
+      ><a name="1675" href="ISLPSyntaxTerms.html#1566" class="Bound"
+      >&#926;</a
+      ><a name="1676"
+      > </a
+      ><a name="1677" href="PreludeVec.html#178" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1678"
+      > </a
+      ><a name="1679" href="ISLP.html#3919" class="InductiveConstructor Operator"
+      >[</a
+      ><a name="1680"
+      > </a
+      ><a name="1681" href="ISLPSyntaxTerms.html#1533" class="Bound"
+      >&#934;</a
+      ><a name="1682"
+      > </a
+      ><a name="1683" href="ISLP.html#3919" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="1684"
+      > </a
+      ><a name="1685" href="ISLPSyntaxTerms.html#1549" class="Bound"
+      >&#936;</a
+      ><a name="1686"
+      > </a
+      ><a name="1687" href="ISLP.html#3919" class="InductiveConstructor Operator"
+      >&#8870;</a
+      ><a name="1688"
+      > </a
+      ><a name="1689" href="ISLPSyntaxTerms.html#1580" class="Bound"
+      >Q</a
+      ><a name="1690"
+      > </a
+      ><a name="1691" href="ISLP.html#3919" class="InductiveConstructor Operator"
+      >]</a
+      ><a name="1692"
+      > </a
+      ><a name="1693" href="ISLPSyntaxTerms.html#1582" class="Bound"
+      >A</a
+      ><a name="1694"
+      >
+
+</a
+      ><a name="1696" class="Keyword"
+      >mutual</a
+      ><a name="1702"
+      >
+  </a
+      ><a name="1705" href="ISLPSyntaxTerms.html#1705" class="Function"
+      >mono&#8866;</a
+      ><a name="1710"
+      > </a
+      ><a name="1711" class="Symbol"
+      >:</a
+      ><a name="1712"
+      > </a
+      ><a name="1713" class="Symbol"
+      >&#8704;</a
+      ><a name="1714"
+      > </a
+      ><a name="1715" class="Symbol"
+      >{</a
+      ><a name="1716" href="ISLPSyntaxTerms.html#1716" class="Bound"
+      >d</a
+      ><a name="1717"
+      > </a
+      ><a name="1718" href="ISLPSyntaxTerms.html#1718" class="Bound"
+      >g</a
+      ><a name="1719"
+      > </a
+      ><a name="1720" href="ISLPSyntaxTerms.html#1720" class="Bound"
+      >d&#8242;</a
+      ><a name="1722"
+      > </a
+      ><a name="1723" href="ISLPSyntaxTerms.html#1723" class="Bound"
+      >g&#8242;</a
+      ><a name="1725" class="Symbol"
+      >}</a
+      ><a name="1726"
+      > </a
+      ><a name="1727" class="Symbol"
+      >{</a
+      ><a name="1728" href="ISLPSyntaxTerms.html#1728" class="Bound"
+      >&#916;</a
+      ><a name="1729"
+      > </a
+      ><a name="1730" class="Symbol"
+      >:</a
+      ><a name="1731"
+      > </a
+      ><a name="1732" href="ISLP.html#4255" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="1738"
+      > </a
+      ><a name="1739" href="ISLPSyntaxTerms.html#1716" class="Bound"
+      >d</a
+      ><a name="1740" class="Symbol"
+      >}</a
+      ><a name="1741"
+      > </a
+      ><a name="1742" class="Symbol"
+      >{</a
+      ><a name="1743" href="ISLPSyntaxTerms.html#1743" class="Bound"
+      >&#915;</a
+      ><a name="1744"
+      > </a
+      ><a name="1745" class="Symbol"
+      >:</a
+      ><a name="1746"
+      > </a
+      ><a name="1747" href="ISLP.html#4217" class="Function"
+      >Ty&#8902;</a
+      ><a name="1750"
+      > </a
+      ><a name="1751" href="ISLPSyntaxTerms.html#1718" class="Bound"
+      >g</a
+      ><a name="1752" class="Symbol"
+      >}</a
+      ><a name="1753"
+      > </a
+      ><a name="1754" class="Symbol"
+      >{</a
+      ><a name="1755" href="ISLPSyntaxTerms.html#1755" class="Bound"
+      >&#916;&#8242;</a
+      ><a name="1757"
+      > </a
+      ><a name="1758" class="Symbol"
+      >:</a
+      ><a name="1759"
+      > </a
+      ><a name="1760" href="ISLP.html#4255" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="1766"
+      > </a
+      ><a name="1767" href="ISLPSyntaxTerms.html#1720" class="Bound"
+      >d&#8242;</a
+      ><a name="1769" class="Symbol"
+      >}</a
+      ><a name="1770"
+      > </a
+      ><a name="1771" class="Symbol"
+      >{</a
+      ><a name="1772" href="ISLPSyntaxTerms.html#1772" class="Bound"
+      >&#915;&#8242;</a
+      ><a name="1774"
+      > </a
+      ><a name="1775" class="Symbol"
+      >:</a
+      ><a name="1776"
+      > </a
+      ><a name="1777" href="ISLP.html#4217" class="Function"
+      >Ty&#8902;</a
+      ><a name="1780"
+      > </a
+      ><a name="1781" href="ISLPSyntaxTerms.html#1723" class="Bound"
+      >g&#8242;</a
+      ><a name="1783" class="Symbol"
+      >}</a
+      ><a name="1784"
+      > </a
+      ><a name="1785" class="Symbol"
+      >{</a
+      ><a name="1786" href="ISLPSyntaxTerms.html#1786" class="Bound"
+      >M</a
+      ><a name="1787"
+      > </a
+      ><a name="1788" href="ISLPSyntaxTerms.html#1788" class="Bound"
+      >A</a
+      ><a name="1789"
+      > </a
+      ><a name="1790" href="ISLPSyntaxTerms.html#1790" class="Bound"
+      >z</a
+      ><a name="1791"
+      > </a
+      ><a name="1792" href="ISLPSyntaxTerms.html#1792" class="Bound"
+      >e</a
+      ><a name="1793" class="Symbol"
+      >}</a
+      ><a name="1794"
+      > </a
+      ><a name="1795" class="Symbol"
+      >&#8594;</a
+      ><a name="1796"
+      >
+             </a
+      ><a name="1810" href="ISLPSyntaxTerms.html#1755" class="Bound"
+      >&#916;&#8242;</a
+      ><a name="1812"
+      > </a
+      ><a name="1813" href="PreludeVec.html#1021" class="Datatype Operator"
+      >&#8839;&#10216;</a
+      ><a name="1815"
+      > </a
+      ><a name="1816" href="ISLPSyntaxTerms.html#1790" class="Bound"
+      >z</a
+      ><a name="1817"
+      > </a
+      ><a name="1818" href="PreludeVec.html#1021" class="Datatype Operator"
+      >&#10217;</a
+      ><a name="1819"
+      > </a
+      ><a name="1820" href="ISLPSyntaxTerms.html#1728" class="Bound"
+      >&#916;</a
+      ><a name="1821"
+      > </a
+      ><a name="1822" class="Symbol"
+      >&#8594;</a
+      ><a name="1823"
+      > </a
+      ><a name="1824" href="ISLPSyntaxTerms.html#1772" class="Bound"
+      >&#915;&#8242;</a
+      ><a name="1826"
+      > </a
+      ><a name="1827" href="PreludeVec.html#1021" class="Datatype Operator"
+      >&#8839;&#10216;</a
+      ><a name="1829"
+      > </a
+      ><a name="1830" href="ISLPSyntaxTerms.html#1792" class="Bound"
+      >e</a
+      ><a name="1831"
+      > </a
+      ><a name="1832" href="PreludeVec.html#1021" class="Datatype Operator"
+      >&#10217;</a
+      ><a name="1833"
+      > </a
+      ><a name="1834" href="ISLPSyntaxTerms.html#1743" class="Bound"
+      >&#915;</a
+      ><a name="1835"
+      > </a
+      ><a name="1836" class="Symbol"
+      >&#8594;</a
+      ><a name="1837"
+      > </a
+      ><a name="1838" href="ISLPSyntaxTerms.html#1728" class="Bound"
+      >&#916;</a
+      ><a name="1839"
+      > </a
+      ><a name="1840" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="1841"
+      > </a
+      ><a name="1842" href="ISLPSyntaxTerms.html#1743" class="Bound"
+      >&#915;</a
+      ><a name="1843"
+      > </a
+      ><a name="1844" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8866;</a
+      ><a name="1845"
+      > </a
+      ><a name="1846" href="ISLPSyntaxTerms.html#1786" class="Bound"
+      >M</a
+      ><a name="1847"
+      > </a
+      ><a name="1848" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="1849"
+      > </a
+      ><a name="1850" href="ISLPSyntaxTerms.html#1788" class="Bound"
+      >A</a
+      ><a name="1851"
+      > </a
+      ><a name="1852" class="Symbol"
+      >&#8594;</a
+      ><a name="1853"
+      > </a
+      ><a name="1854" href="ISLPSyntaxTerms.html#1755" class="Bound"
+      >&#916;&#8242;</a
+      ><a name="1856"
+      > </a
+      ><a name="1857" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="1858"
+      > </a
+      ><a name="1859" href="ISLPSyntaxTerms.html#1772" class="Bound"
+      >&#915;&#8242;</a
+      ><a name="1861"
+      > </a
+      ><a name="1862" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8866;</a
+      ><a name="1863"
+      > </a
+      ><a name="1864" href="ISLP.html#425" class="Function"
+      >monoTm</a
+      ><a name="1870"
+      > </a
+      ><a name="1871" href="ISLPSyntaxTerms.html#1790" class="Bound"
+      >z</a
+      ><a name="1872"
+      > </a
+      ><a name="1873" href="ISLPSyntaxTerms.html#1792" class="Bound"
+      >e</a
+      ><a name="1874"
+      > </a
+      ><a name="1875" href="ISLPSyntaxTerms.html#1786" class="Bound"
+      >M</a
+      ><a name="1876"
+      > </a
+      ><a name="1877" href="ISLPSyntaxTerms.html#196" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="1878"
+      > </a
+      ><a name="1879" href="ISLPSyntaxTerms.html#1788" class="Bound"
+      >A</a
+      ><a name="1880"
+      >
+  </a
+      ><a name="1883" href="ISLPSyntaxTerms.html#1705" class="Function"
+      >mono&#8866;</a
+      ><a name="1888"
+      > </a
+      ><a name="1889" href="ISLPSyntaxTerms.html#1889" class="Bound"
+      >&#950;</a
+      ><a name="1890"
+      > </a
+      ><a name="1891" href="ISLPSyntaxTerms.html#1891" class="Bound"
+      >&#951;</a
+      ><a name="1892"
+      > </a
+      ><a name="1893" class="Symbol"
+      >(</a
+      ><a name="1894" href="ISLPSyntaxTerms.html#247" class="InductiveConstructor"
+      >var</a
+      ><a name="1897"
+      > </a
+      ><a name="1898" href="ISLPSyntaxTerms.html#1898" class="Bound"
+      >&#119998;</a
+      ><a name="1899" class="Symbol"
+      >)</a
+      ><a name="1900"
+      >      </a
+      ><a name="1906" class="Symbol"
+      >=</a
+      ><a name="1907"
+      > </a
+      ><a name="1908" href="ISLPSyntaxTerms.html#247" class="InductiveConstructor"
+      >var</a
+      ><a name="1911"
+      > </a
+      ><a name="1912" class="Symbol"
+      >(</a
+      ><a name="1913" href="PreludeVec.html#3978" class="Function"
+      >mono&#8715;</a
+      ><a name="1918"
+      > </a
+      ><a name="1919" href="ISLPSyntaxTerms.html#1891" class="Bound"
+      >&#951;</a
+      ><a name="1920"
+      > </a
+      ><a name="1921" href="ISLPSyntaxTerms.html#1898" class="Bound"
+      >&#119998;</a
+      ><a name="1922" class="Symbol"
+      >)</a
+      ><a name="1923"
+      >
+  </a
+      ><a name="1926" href="ISLPSyntaxTerms.html#1705" class="Function"
+      >mono&#8866;</a
+      ><a name="1931"
+      > </a
+      ><a name="1932" href="ISLPSyntaxTerms.html#1932" class="Bound"
+      >&#950;</a
+      ><a name="1933"
+      > </a
+      ><a name="1934" href="ISLPSyntaxTerms.html#1934" class="Bound"
+      >&#951;</a
+      ><a name="1935"
+      > </a
+      ><a name="1936" class="Symbol"
+      >(</a
+      ><a name="1937" href="ISLPSyntaxTerms.html#332" class="InductiveConstructor"
+      >mvar</a
+      ><a name="1941"
+      > </a
+      ><a name="1942" href="ISLPSyntaxTerms.html#1942" class="Bound"
+      >&#966;</a
+      ><a name="1943"
+      > </a
+      ><a name="1944" href="ISLPSyntaxTerms.html#1944" class="Bound"
+      >&#968;</a
+      ><a name="1945"
+      > </a
+      ><a name="1946" href="ISLPSyntaxTerms.html#1946" class="Bound"
+      >&#119998;</a
+      ><a name="1947" class="Symbol"
+      >)</a
+      ><a name="1948"
+      > </a
+      ><a name="1949" class="Symbol"
+      >=</a
+      ><a name="1950"
+      > </a
+      ><a name="1951" href="ISLPSyntaxTerms.html#332" class="InductiveConstructor"
+      >mvar</a
+      ><a name="1955"
+      > </a
+      ><a name="1956" class="Symbol"
+      >(</a
+      ><a name="1957" href="ISLPSyntaxTerms.html#2216" class="Function"
+      >mono&#8866;&#10694;</a
+      ><a name="1963"
+      > </a
+      ><a name="1964" href="ISLPSyntaxTerms.html#1932" class="Bound"
+      >&#950;</a
+      ><a name="1965"
+      > </a
+      ><a name="1966" href="PreludeVec.html#1114" class="InductiveConstructor"
+      >done</a
+      ><a name="1970"
+      > </a
+      ><a name="1971" href="ISLPSyntaxTerms.html#1942" class="Bound"
+      >&#966;</a
+      ><a name="1972" class="Symbol"
+      >)</a
+      ><a name="1973"
+      > </a
+      ><a name="1974" class="Symbol"
+      >(</a
+      ><a name="1975" href="ISLPSyntaxTerms.html#2493" class="Function"
+      >mono&#8866;&#8902;</a
+      ><a name="1981"
+      > </a
+      ><a name="1982" href="ISLPSyntaxTerms.html#1932" class="Bound"
+      >&#950;</a
+      ><a name="1983"
+      > </a
+      ><a name="1984" href="ISLPSyntaxTerms.html#1934" class="Bound"
+      >&#951;</a
+      ><a name="1985"
+      > </a
+      ><a name="1986" href="ISLPSyntaxTerms.html#1944" class="Bound"
+      >&#968;</a
+      ><a name="1987" class="Symbol"
+      >)</a
+      ><a name="1988"
+      > </a
+      ><a name="1989" class="Symbol"
+      >(</a
+      ><a name="1990" href="PreludeVec.html#3978" class="Function"
+      >mono&#8715;</a
+      ><a name="1995"
+      > </a
+      ><a name="1996" href="ISLPSyntaxTerms.html#1932" class="Bound"
+      >&#950;</a
+      ><a name="1997"
+      > </a
+      ><a name="1998" href="ISLPSyntaxTerms.html#1946" class="Bound"
+      >&#119998;</a
+      ><a name="1999" class="Symbol"
+      >)</a
+      ><a name="2000"
+      >
+  </a
+      ><a name="2003" href="ISLPSyntaxTerms.html#1705" class="Function"
+      >mono&#8866;</a
+      ><a name="2008"
+      > </a
+      ><a name="2009" href="ISLPSyntaxTerms.html#2009" class="Bound"
+      >&#950;</a
+      ><a name="2010"
+      > </a
+      ><a name="2011" href="ISLPSyntaxTerms.html#2011" class="Bound"
+      >&#951;</a
+      ><a name="2012"
+      > </a
+      ><a name="2013" class="Symbol"
+      >(</a
+      ><a name="2014" href="ISLPSyntaxTerms.html#513" class="InductiveConstructor"
+      >lam</a
+      ><a name="2017"
+      > </a
+      ><a name="2018" href="ISLPSyntaxTerms.html#2018" class="Bound"
+      >&#119967;</a
+      ><a name="2019" class="Symbol"
+      >)</a
+      ><a name="2020"
+      >      </a
+      ><a name="2026" class="Symbol"
+      >=</a
+      ><a name="2027"
+      > </a
+      ><a name="2028" href="ISLPSyntaxTerms.html#513" class="InductiveConstructor"
+      >lam</a
+      ><a name="2031"
+      > </a
+      ><a name="2032" class="Symbol"
+      >(</a
+      ><a name="2033" href="ISLPSyntaxTerms.html#1705" class="Function"
+      >mono&#8866;</a
+      ><a name="2038"
+      > </a
+      ><a name="2039" href="ISLPSyntaxTerms.html#2009" class="Bound"
+      >&#950;</a
+      ><a name="2040"
+      > </a
+      ><a name="2041" class="Symbol"
+      >(</a
+      ><a name="2042" href="PreludeVec.html#1258" class="InductiveConstructor"
+      >lift</a
+      ><a name="2046"
+      > </a
+      ><a name="2047" href="ISLPSyntaxTerms.html#2011" class="Bound"
+      >&#951;</a
+      ><a name="2048" class="Symbol"
+      >)</a
+      ><a name="2049"
+      > </a
+      ><a name="2050" href="ISLPSyntaxTerms.html#2018" class="Bound"
+      >&#119967;</a
+      ><a name="2051" class="Symbol"
+      >)</a
+      ><a name="2052"
+      >
+  </a
+      ><a name="2055" href="ISLPSyntaxTerms.html#1705" class="Function"
+      >mono&#8866;</a
+      ><a name="2060"
+      > </a
+      ><a name="2061" href="ISLPSyntaxTerms.html#2061" class="Bound"
+      >&#950;</a
+      ><a name="2062"
+      > </a
+      ><a name="2063" href="ISLPSyntaxTerms.html#2063" class="Bound"
+      >&#951;</a
+      ><a name="2064"
+      > </a
+      ><a name="2065" class="Symbol"
+      >(</a
+      ><a name="2066" href="ISLPSyntaxTerms.html#611" class="InductiveConstructor"
+      >app</a
+      ><a name="2069"
+      > </a
+      ><a name="2070" href="ISLPSyntaxTerms.html#2070" class="Bound"
+      >&#119967;</a
+      ><a name="2071"
+      > </a
+      ><a name="2072" href="ISLPSyntaxTerms.html#2072" class="Bound"
+      >&#8496;</a
+      ><a name="2073" class="Symbol"
+      >)</a
+      ><a name="2074"
+      >    </a
+      ><a name="2078" class="Symbol"
+      >=</a
+      ><a name="2079"
+      > </a
+      ><a name="2080" href="ISLPSyntaxTerms.html#611" class="InductiveConstructor"
+      >app</a
+      ><a name="2083"
+      > </a
+      ><a name="2084" class="Symbol"
+      >(</a
+      ><a name="2085" href="ISLPSyntaxTerms.html#1705" class="Function"
+      >mono&#8866;</a
+      ><a name="2090"
+      > </a
+      ><a name="2091" href="ISLPSyntaxTerms.html#2061" class="Bound"
+      >&#950;</a
+      ><a name="2092"
+      > </a
+      ><a name="2093" href="ISLPSyntaxTerms.html#2063" class="Bound"
+      >&#951;</a
+      ><a name="2094"
+      > </a
+      ><a name="2095" href="ISLPSyntaxTerms.html#2070" class="Bound"
+      >&#119967;</a
+      ><a name="2096" class="Symbol"
+      >)</a
+      ><a name="2097"
+      > </a
+      ><a name="2098" class="Symbol"
+      >(</a
+      ><a name="2099" href="ISLPSyntaxTerms.html#1705" class="Function"
+      >mono&#8866;</a
+      ><a name="2104"
+      > </a
+      ><a name="2105" href="ISLPSyntaxTerms.html#2061" class="Bound"
+      >&#950;</a
+      ><a name="2106"
+      > </a
+      ><a name="2107" href="ISLPSyntaxTerms.html#2063" class="Bound"
+      >&#951;</a
+      ><a name="2108"
+      > </a
+      ><a name="2109" href="ISLPSyntaxTerms.html#2072" class="Bound"
+      >&#8496;</a
+      ><a name="2110" class="Symbol"
+      >)</a
+      ><a name="2111"
+      >
+  </a
+      ><a name="2114" href="ISLPSyntaxTerms.html#1705" class="Function"
+      >mono&#8866;</a
+      ><a name="2119"
+      > </a
+      ><a name="2120" href="ISLPSyntaxTerms.html#2120" class="Bound"
+      >&#950;</a
+      ><a name="2121"
+      > </a
+      ><a name="2122" href="ISLPSyntaxTerms.html#2122" class="Bound"
+      >&#951;</a
+      ><a name="2123"
+      > </a
+      ><a name="2124" class="Symbol"
+      >(</a
+      ><a name="2125" href="ISLPSyntaxTerms.html#725" class="InductiveConstructor"
+      >box</a
+      ><a name="2128"
+      > </a
+      ><a name="2129" href="ISLPSyntaxTerms.html#2129" class="Bound"
+      >&#119967;</a
+      ><a name="2130" class="Symbol"
+      >)</a
+      ><a name="2131"
+      >      </a
+      ><a name="2137" class="Symbol"
+      >=</a
+      ><a name="2138"
+      > </a
+      ><a name="2139" href="ISLPSyntaxTerms.html#725" class="InductiveConstructor"
+      >box</a
+      ><a name="2142"
+      > </a
+      ><a name="2143" href="ISLPSyntaxTerms.html#2129" class="Bound"
+      >&#119967;</a
+      ><a name="2144"
+      >
+  </a
+      ><a name="2147" href="ISLPSyntaxTerms.html#1705" class="Function"
+      >mono&#8866;</a
+      ><a name="2152"
+      > </a
+      ><a name="2153" href="ISLPSyntaxTerms.html#2153" class="Bound"
+      >&#950;</a
+      ><a name="2154"
+      > </a
+      ><a name="2155" href="ISLPSyntaxTerms.html#2155" class="Bound"
+      >&#951;</a
+      ><a name="2156"
+      > </a
+      ><a name="2157" class="Symbol"
+      >(</a
+      ><a name="2158" href="ISLPSyntaxTerms.html#864" class="InductiveConstructor"
+      >unbox</a
+      ><a name="2163"
+      > </a
+      ><a name="2164" href="ISLPSyntaxTerms.html#2164" class="Bound"
+      >&#119967;</a
+      ><a name="2165"
+      > </a
+      ><a name="2166" href="ISLPSyntaxTerms.html#2166" class="Bound"
+      >&#8496;</a
+      ><a name="2167" class="Symbol"
+      >)</a
+      ><a name="2168"
+      >  </a
+      ><a name="2170" class="Symbol"
+      >=</a
+      ><a name="2171"
+      > </a
+      ><a name="2172" href="ISLPSyntaxTerms.html#864" class="InductiveConstructor"
+      >unbox</a
+      ><a name="2177"
+      > </a
+      ><a name="2178" class="Symbol"
+      >(</a
+      ><a name="2179" href="ISLPSyntaxTerms.html#1705" class="Function"
+      >mono&#8866;</a
+      ><a name="2184"
+      > </a
+      ><a name="2185" href="ISLPSyntaxTerms.html#2153" class="Bound"
+      >&#950;</a
+      ><a name="2186"
+      > </a
+      ><a name="2187" href="ISLPSyntaxTerms.html#2155" class="Bound"
+      >&#951;</a
+      ><a name="2188"
+      > </a
+      ><a name="2189" href="ISLPSyntaxTerms.html#2164" class="Bound"
+      >&#119967;</a
+      ><a name="2190" class="Symbol"
+      >)</a
+      ><a name="2191"
+      > </a
+      ><a name="2192" class="Symbol"
+      >(</a
+      ><a name="2193" href="ISLPSyntaxTerms.html#1705" class="Function"
+      >mono&#8866;</a
+      ><a name="2198"
+      > </a
+      ><a name="2199" class="Symbol"
+      >(</a
+      ><a name="2200" href="PreludeVec.html#1258" class="InductiveConstructor"
+      >lift</a
+      ><a name="2204"
+      > </a
+      ><a name="2205" href="ISLPSyntaxTerms.html#2153" class="Bound"
+      >&#950;</a
+      ><a name="2206" class="Symbol"
+      >)</a
+      ><a name="2207"
+      > </a
+      ><a name="2208" href="ISLPSyntaxTerms.html#2155" class="Bound"
+      >&#951;</a
+      ><a name="2209"
+      > </a
+      ><a name="2210" href="ISLPSyntaxTerms.html#2166" class="Bound"
+      >&#8496;</a
+      ><a name="2211" class="Symbol"
+      >)</a
+      ><a name="2212"
+      >
+
+  </a
+      ><a name="2216" href="ISLPSyntaxTerms.html#2216" class="Function"
+      >mono&#8866;&#10694;</a
+      ><a name="2222"
+      > </a
+      ><a name="2223" class="Symbol"
+      >:</a
+      ><a name="2224"
+      > </a
+      ><a name="2225" class="Symbol"
+      >&#8704;</a
+      ><a name="2226"
+      > </a
+      ><a name="2227" class="Symbol"
+      >{</a
+      ><a name="2228" href="ISLPSyntaxTerms.html#2228" class="Bound"
+      >d</a
+      ><a name="2229"
+      > </a
+      ><a name="2230" href="ISLPSyntaxTerms.html#2230" class="Bound"
+      >g</a
+      ><a name="2231"
+      > </a
+      ><a name="2232" href="ISLPSyntaxTerms.html#2232" class="Bound"
+      >d&#8242;</a
+      ><a name="2234"
+      > </a
+      ><a name="2235" href="ISLPSyntaxTerms.html#2235" class="Bound"
+      >g&#8242;</a
+      ><a name="2237"
+      > </a
+      ><a name="2238" href="ISLPSyntaxTerms.html#2238" class="Bound"
+      >n</a
+      ><a name="2239" class="Symbol"
+      >}</a
+      ><a name="2240"
+      > </a
+      ><a name="2241" class="Symbol"
+      >{</a
+      ><a name="2242" href="ISLPSyntaxTerms.html#2242" class="Bound"
+      >&#916;</a
+      ><a name="2243"
+      > </a
+      ><a name="2244" class="Symbol"
+      >:</a
+      ><a name="2245"
+      > </a
+      ><a name="2246" href="ISLP.html#4255" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="2252"
+      > </a
+      ><a name="2253" href="ISLPSyntaxTerms.html#2228" class="Bound"
+      >d</a
+      ><a name="2254" class="Symbol"
+      >}</a
+      ><a name="2255"
+      > </a
+      ><a name="2256" class="Symbol"
+      >{</a
+      ><a name="2257" href="ISLPSyntaxTerms.html#2257" class="Bound"
+      >&#915;</a
+      ><a name="2258"
+      > </a
+      ><a name="2259" class="Symbol"
+      >:</a
+      ><a name="2260"
+      > </a
+      ><a name="2261" href="ISLP.html#4217" class="Function"
+      >Ty&#8902;</a
+      ><a name="2264"
+      > </a
+      ><a name="2265" href="ISLPSyntaxTerms.html#2230" class="Bound"
+      >g</a
+      ><a name="2266" class="Symbol"
+      >}</a
+      ><a name="2267"
+      > </a
+      ><a name="2268" class="Symbol"
+      >{</a
+      ><a name="2269" href="ISLPSyntaxTerms.html#2269" class="Bound"
+      >&#916;&#8242;</a
+      ><a name="2271"
+      > </a
+      ><a name="2272" class="Symbol"
+      >:</a
+      ><a name="2273"
+      > </a
+      ><a name="2274" href="ISLP.html#4255" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="2280"
+      > </a
+      ><a name="2281" href="ISLPSyntaxTerms.html#2232" class="Bound"
+      >d&#8242;</a
+      ><a name="2283" class="Symbol"
+      >}</a
+      ><a name="2284"
+      > </a
+      ><a name="2285" class="Symbol"
+      >{</a
+      ><a name="2286" href="ISLPSyntaxTerms.html#2286" class="Bound"
+      >&#915;&#8242;</a
+      ><a name="2288"
+      > </a
+      ><a name="2289" class="Symbol"
+      >:</a
+      ><a name="2290"
+      > </a
+      ><a name="2291" href="ISLP.html#4217" class="Function"
+      >Ty&#8902;</a
+      ><a name="2294"
+      > </a
+      ><a name="2295" href="ISLPSyntaxTerms.html#2235" class="Bound"
+      >g&#8242;</a
+      ><a name="2297" class="Symbol"
+      >}</a
+      ><a name="2298"
+      > </a
+      ><a name="2299" class="Symbol"
+      >{</a
+      ><a name="2300" href="ISLPSyntaxTerms.html#2300" class="Bound"
+      >x</a
+      ><a name="2301" class="Symbol"
+      >}</a
+      ><a name="2302"
+      > </a
+      ><a name="2303" class="Symbol"
+      >{</a
+      ><a name="2304" href="ISLPSyntaxTerms.html#2304" class="Bound"
+      >&#926;</a
+      ><a name="2305"
+      > </a
+      ><a name="2306" class="Symbol"
+      >:</a
+      ><a name="2307"
+      > </a
+      ><a name="2308" href="ISLP.html#4255" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="2314"
+      > </a
+      ><a name="2315" href="ISLPSyntaxTerms.html#2238" class="Bound"
+      >n</a
+      ><a name="2316" class="Symbol"
+      >}</a
+      ><a name="2317"
+      > </a
+      ><a name="2318" class="Symbol"
+      >{</a
+      ><a name="2319" href="ISLPSyntaxTerms.html#2319" class="Bound"
+      >z</a
+      ><a name="2320"
+      > </a
+      ><a name="2321" href="ISLPSyntaxTerms.html#2321" class="Bound"
+      >e</a
+      ><a name="2322" class="Symbol"
+      >}</a
+      ><a name="2323"
+      > </a
+      ><a name="2324" class="Symbol"
+      >&#8594;</a
+      ><a name="2325"
+      >
+               </a
+      ><a name="2341" href="ISLPSyntaxTerms.html#2269" class="Bound"
+      >&#916;&#8242;</a
+      ><a name="2343"
+      > </a
+      ><a name="2344" href="PreludeVec.html#1021" class="Datatype Operator"
+      >&#8839;&#10216;</a
+      ><a name="2346"
+      > </a
+      ><a name="2347" href="ISLPSyntaxTerms.html#2319" class="Bound"
+      >z</a
+      ><a name="2348"
+      > </a
+      ><a name="2349" href="PreludeVec.html#1021" class="Datatype Operator"
+      >&#10217;</a
+      ><a name="2350"
+      > </a
+      ><a name="2351" href="ISLPSyntaxTerms.html#2242" class="Bound"
+      >&#916;</a
+      ><a name="2352"
+      > </a
+      ><a name="2353" class="Symbol"
+      >&#8594;</a
+      ><a name="2354"
+      > </a
+      ><a name="2355" href="ISLPSyntaxTerms.html#2286" class="Bound"
+      >&#915;&#8242;</a
+      ><a name="2357"
+      > </a
+      ><a name="2358" href="PreludeVec.html#1021" class="Datatype Operator"
+      >&#8839;&#10216;</a
+      ><a name="2360"
+      > </a
+      ><a name="2361" href="ISLPSyntaxTerms.html#2321" class="Bound"
+      >e</a
+      ><a name="2362"
+      > </a
+      ><a name="2363" href="PreludeVec.html#1021" class="Datatype Operator"
+      >&#10217;</a
+      ><a name="2364"
+      > </a
+      ><a name="2365" href="ISLPSyntaxTerms.html#2257" class="Bound"
+      >&#915;</a
+      ><a name="2366"
+      > </a
+      ><a name="2367" class="Symbol"
+      >&#8594;</a
+      ><a name="2368"
+      > </a
+      ><a name="2369" href="ISLPSyntaxTerms.html#2242" class="Bound"
+      >&#916;</a
+      ><a name="2370"
+      > </a
+      ><a name="2371" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="2372"
+      > </a
+      ><a name="2373" href="ISLPSyntaxTerms.html#2257" class="Bound"
+      >&#915;</a
+      ><a name="2374"
+      > </a
+      ><a name="2375" href="ISLPSyntaxTerms.html#1068" class="Datatype Operator"
+      >&#8866;&#10694;</a
+      ><a name="2377"
+      > </a
+      ><a name="2378" href="ISLPSyntaxTerms.html#2300" class="Bound"
+      >x</a
+      ><a name="2379"
+      > </a
+      ><a name="2380" href="ISLPSyntaxTerms.html#1068" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="2381"
+      > </a
+      ><a name="2382" href="ISLPSyntaxTerms.html#2304" class="Bound"
+      >&#926;</a
+      ><a name="2383"
+      > </a
+      ><a name="2384" class="Symbol"
+      >&#8594;</a
+      ><a name="2385"
+      > </a
+      ><a name="2386" href="ISLPSyntaxTerms.html#2269" class="Bound"
+      >&#916;&#8242;</a
+      ><a name="2388"
+      > </a
+      ><a name="2389" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="2390"
+      > </a
+      ><a name="2391" href="ISLPSyntaxTerms.html#2286" class="Bound"
+      >&#915;&#8242;</a
+      ><a name="2393"
+      > </a
+      ><a name="2394" href="ISLPSyntaxTerms.html#1068" class="Datatype Operator"
+      >&#8866;&#10694;</a
+      ><a name="2396"
+      > </a
+      ><a name="2397" href="ISLP.html#838" class="Function"
+      >monoTm&#8902;</a
+      ><a name="2404"
+      > </a
+      ><a name="2405" href="ISLPSyntaxTerms.html#2319" class="Bound"
+      >z</a
+      ><a name="2406"
+      > </a
+      ><a name="2407" href="ISLPSyntaxTerms.html#2321" class="Bound"
+      >e</a
+      ><a name="2408"
+      > </a
+      ><a name="2409" href="ISLPSyntaxTerms.html#2300" class="Bound"
+      >x</a
+      ><a name="2410"
+      > </a
+      ><a name="2411" href="ISLPSyntaxTerms.html#1068" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="2412"
+      > </a
+      ><a name="2413" href="ISLPSyntaxTerms.html#2304" class="Bound"
+      >&#926;</a
+      ><a name="2414"
+      >
+  </a
+      ><a name="2417" href="ISLPSyntaxTerms.html#2216" class="Function"
+      >mono&#8866;&#10694;</a
+      ><a name="2423"
+      > </a
+      ><a name="2424" href="ISLPSyntaxTerms.html#2424" class="Bound"
+      >&#950;</a
+      ><a name="2425"
+      > </a
+      ><a name="2426" href="ISLPSyntaxTerms.html#2426" class="Bound"
+      >&#951;</a
+      ><a name="2427"
+      > </a
+      ><a name="2428" href="ISLPSyntaxTerms.html#1137" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="2429"
+      >       </a
+      ><a name="2436" class="Symbol"
+      >=</a
+      ><a name="2437"
+      > </a
+      ><a name="2438" href="ISLPSyntaxTerms.html#1137" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="2439"
+      >
+  </a
+      ><a name="2442" href="ISLPSyntaxTerms.html#2216" class="Function"
+      >mono&#8866;&#10694;</a
+      ><a name="2448"
+      > </a
+      ><a name="2449" href="ISLPSyntaxTerms.html#2449" class="Bound"
+      >&#950;</a
+      ><a name="2450"
+      > </a
+      ><a name="2451" href="ISLPSyntaxTerms.html#2451" class="Bound"
+      >&#951;</a
+      ><a name="2452"
+      > </a
+      ><a name="2453" class="Symbol"
+      >(</a
+      ><a name="2454" href="ISLPSyntaxTerms.html#2454" class="Bound"
+      >&#958;</a
+      ><a name="2455"
+      > </a
+      ><a name="2456" href="ISLPSyntaxTerms.html#1184" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="2457"
+      > </a
+      ><a name="2458" href="ISLPSyntaxTerms.html#2458" class="Bound"
+      >&#119967;</a
+      ><a name="2459" class="Symbol"
+      >)</a
+      ><a name="2460"
+      > </a
+      ><a name="2461" class="Symbol"
+      >=</a
+      ><a name="2462"
+      > </a
+      ><a name="2463" href="ISLPSyntaxTerms.html#2216" class="Function"
+      >mono&#8866;&#10694;</a
+      ><a name="2469"
+      > </a
+      ><a name="2470" href="ISLPSyntaxTerms.html#2449" class="Bound"
+      >&#950;</a
+      ><a name="2471"
+      > </a
+      ><a name="2472" href="ISLPSyntaxTerms.html#2451" class="Bound"
+      >&#951;</a
+      ><a name="2473"
+      > </a
+      ><a name="2474" href="ISLPSyntaxTerms.html#2454" class="Bound"
+      >&#958;</a
+      ><a name="2475"
+      > </a
+      ><a name="2476" href="ISLPSyntaxTerms.html#1184" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="2477"
+      > </a
+      ><a name="2478" href="ISLPSyntaxTerms.html#1705" class="Function"
+      >mono&#8866;</a
+      ><a name="2483"
+      > </a
+      ><a name="2484" href="ISLPSyntaxTerms.html#2449" class="Bound"
+      >&#950;</a
+      ><a name="2485"
+      > </a
+      ><a name="2486" href="ISLPSyntaxTerms.html#2451" class="Bound"
+      >&#951;</a
+      ><a name="2487"
+      > </a
+      ><a name="2488" href="ISLPSyntaxTerms.html#2458" class="Bound"
+      >&#119967;</a
+      ><a name="2489"
+      >
+
+  </a
+      ><a name="2493" href="ISLPSyntaxTerms.html#2493" class="Function"
+      >mono&#8866;&#8902;</a
+      ><a name="2499"
+      > </a
+      ><a name="2500" class="Symbol"
+      >:</a
+      ><a name="2501"
+      > </a
+      ><a name="2502" class="Symbol"
+      >&#8704;</a
+      ><a name="2503"
+      > </a
+      ><a name="2504" class="Symbol"
+      >{</a
+      ><a name="2505" href="ISLPSyntaxTerms.html#2505" class="Bound"
+      >d</a
+      ><a name="2506"
+      > </a
+      ><a name="2507" href="ISLPSyntaxTerms.html#2507" class="Bound"
+      >g</a
+      ><a name="2508"
+      > </a
+      ><a name="2509" href="ISLPSyntaxTerms.html#2509" class="Bound"
+      >d&#8242;</a
+      ><a name="2511"
+      > </a
+      ><a name="2512" href="ISLPSyntaxTerms.html#2512" class="Bound"
+      >g&#8242;</a
+      ><a name="2514"
+      > </a
+      ><a name="2515" href="ISLPSyntaxTerms.html#2515" class="Bound"
+      >n</a
+      ><a name="2516" class="Symbol"
+      >}</a
+      ><a name="2517"
+      > </a
+      ><a name="2518" class="Symbol"
+      >{</a
+      ><a name="2519" href="ISLPSyntaxTerms.html#2519" class="Bound"
+      >&#916;</a
+      ><a name="2520"
+      > </a
+      ><a name="2521" class="Symbol"
+      >:</a
+      ><a name="2522"
+      > </a
+      ><a name="2523" href="ISLP.html#4255" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="2529"
+      > </a
+      ><a name="2530" href="ISLPSyntaxTerms.html#2505" class="Bound"
+      >d</a
+      ><a name="2531" class="Symbol"
+      >}</a
+      ><a name="2532"
+      > </a
+      ><a name="2533" class="Symbol"
+      >{</a
+      ><a name="2534" href="ISLPSyntaxTerms.html#2534" class="Bound"
+      >&#915;</a
+      ><a name="2535"
+      > </a
+      ><a name="2536" class="Symbol"
+      >:</a
+      ><a name="2537"
+      > </a
+      ><a name="2538" href="ISLP.html#4217" class="Function"
+      >Ty&#8902;</a
+      ><a name="2541"
+      > </a
+      ><a name="2542" href="ISLPSyntaxTerms.html#2507" class="Bound"
+      >g</a
+      ><a name="2543" class="Symbol"
+      >}</a
+      ><a name="2544"
+      > </a
+      ><a name="2545" class="Symbol"
+      >{</a
+      ><a name="2546" href="ISLPSyntaxTerms.html#2546" class="Bound"
+      >&#916;&#8242;</a
+      ><a name="2548"
+      > </a
+      ><a name="2549" class="Symbol"
+      >:</a
+      ><a name="2550"
+      > </a
+      ><a name="2551" href="ISLP.html#4255" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="2557"
+      > </a
+      ><a name="2558" href="ISLPSyntaxTerms.html#2509" class="Bound"
+      >d&#8242;</a
+      ><a name="2560" class="Symbol"
+      >}</a
+      ><a name="2561"
+      > </a
+      ><a name="2562" class="Symbol"
+      >{</a
+      ><a name="2563" href="ISLPSyntaxTerms.html#2563" class="Bound"
+      >&#915;&#8242;</a
+      ><a name="2565"
+      > </a
+      ><a name="2566" class="Symbol"
+      >:</a
+      ><a name="2567"
+      > </a
+      ><a name="2568" href="ISLP.html#4217" class="Function"
+      >Ty&#8902;</a
+      ><a name="2571"
+      > </a
+      ><a name="2572" href="ISLPSyntaxTerms.html#2512" class="Bound"
+      >g&#8242;</a
+      ><a name="2574" class="Symbol"
+      >}</a
+      ><a name="2575"
+      > </a
+      ><a name="2576" class="Symbol"
+      >{</a
+      ><a name="2577" href="ISLPSyntaxTerms.html#2577" class="Bound"
+      >x</a
+      ><a name="2578" class="Symbol"
+      >}</a
+      ><a name="2579"
+      > </a
+      ><a name="2580" class="Symbol"
+      >{</a
+      ><a name="2581" href="ISLPSyntaxTerms.html#2581" class="Bound"
+      >&#926;</a
+      ><a name="2582"
+      > </a
+      ><a name="2583" class="Symbol"
+      >:</a
+      ><a name="2584"
+      > </a
+      ><a name="2585" href="ISLP.html#4217" class="Function"
+      >Ty&#8902;</a
+      ><a name="2588"
+      > </a
+      ><a name="2589" href="ISLPSyntaxTerms.html#2515" class="Bound"
+      >n</a
+      ><a name="2590" class="Symbol"
+      >}</a
+      ><a name="2591"
+      > </a
+      ><a name="2592" class="Symbol"
+      >{</a
+      ><a name="2593" href="ISLPSyntaxTerms.html#2593" class="Bound"
+      >z</a
+      ><a name="2594"
+      > </a
+      ><a name="2595" href="ISLPSyntaxTerms.html#2595" class="Bound"
+      >e</a
+      ><a name="2596" class="Symbol"
+      >}</a
+      ><a name="2597"
+      > </a
+      ><a name="2598" class="Symbol"
+      >&#8594;</a
+      ><a name="2599"
+      >
+              </a
+      ><a name="2614" href="ISLPSyntaxTerms.html#2546" class="Bound"
+      >&#916;&#8242;</a
+      ><a name="2616"
+      > </a
+      ><a name="2617" href="PreludeVec.html#1021" class="Datatype Operator"
+      >&#8839;&#10216;</a
+      ><a name="2619"
+      > </a
+      ><a name="2620" href="ISLPSyntaxTerms.html#2593" class="Bound"
+      >z</a
+      ><a name="2621"
+      > </a
+      ><a name="2622" href="PreludeVec.html#1021" class="Datatype Operator"
+      >&#10217;</a
+      ><a name="2623"
+      > </a
+      ><a name="2624" href="ISLPSyntaxTerms.html#2519" class="Bound"
+      >&#916;</a
+      ><a name="2625"
+      > </a
+      ><a name="2626" class="Symbol"
+      >&#8594;</a
+      ><a name="2627"
+      > </a
+      ><a name="2628" href="ISLPSyntaxTerms.html#2563" class="Bound"
+      >&#915;&#8242;</a
+      ><a name="2630"
+      > </a
+      ><a name="2631" href="PreludeVec.html#1021" class="Datatype Operator"
+      >&#8839;&#10216;</a
+      ><a name="2633"
+      > </a
+      ><a name="2634" href="ISLPSyntaxTerms.html#2595" class="Bound"
+      >e</a
+      ><a name="2635"
+      > </a
+      ><a name="2636" href="PreludeVec.html#1021" class="Datatype Operator"
+      >&#10217;</a
+      ><a name="2637"
+      > </a
+      ><a name="2638" href="ISLPSyntaxTerms.html#2534" class="Bound"
+      >&#915;</a
+      ><a name="2639"
+      > </a
+      ><a name="2640" class="Symbol"
+      >&#8594;</a
+      ><a name="2641"
+      > </a
+      ><a name="2642" href="ISLPSyntaxTerms.html#2519" class="Bound"
+      >&#916;</a
+      ><a name="2643"
+      > </a
+      ><a name="2644" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="2645"
+      > </a
+      ><a name="2646" href="ISLPSyntaxTerms.html#2534" class="Bound"
+      >&#915;</a
+      ><a name="2647"
+      > </a
+      ><a name="2648" href="ISLPSyntaxTerms.html#1397" class="Datatype Operator"
+      >&#8866;&#8902;</a
+      ><a name="2650"
+      > </a
+      ><a name="2651" href="ISLPSyntaxTerms.html#2577" class="Bound"
+      >x</a
+      ><a name="2652"
+      > </a
+      ><a name="2653" href="ISLPSyntaxTerms.html#1397" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="2654"
+      > </a
+      ><a name="2655" href="ISLPSyntaxTerms.html#2581" class="Bound"
+      >&#926;</a
+      ><a name="2656"
+      > </a
+      ><a name="2657" class="Symbol"
+      >&#8594;</a
+      ><a name="2658"
+      > </a
+      ><a name="2659" href="ISLPSyntaxTerms.html#2546" class="Bound"
+      >&#916;&#8242;</a
+      ><a name="2661"
+      > </a
+      ><a name="2662" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="2663"
+      > </a
+      ><a name="2664" href="ISLPSyntaxTerms.html#2563" class="Bound"
+      >&#915;&#8242;</a
+      ><a name="2666"
+      > </a
+      ><a name="2667" href="ISLPSyntaxTerms.html#1397" class="Datatype Operator"
+      >&#8866;&#8902;</a
+      ><a name="2669"
+      > </a
+      ><a name="2670" href="ISLP.html#838" class="Function"
+      >monoTm&#8902;</a
+      ><a name="2677"
+      > </a
+      ><a name="2678" href="ISLPSyntaxTerms.html#2593" class="Bound"
+      >z</a
+      ><a name="2679"
+      > </a
+      ><a name="2680" href="ISLPSyntaxTerms.html#2595" class="Bound"
+      >e</a
+      ><a name="2681"
+      > </a
+      ><a name="2682" href="ISLPSyntaxTerms.html#2577" class="Bound"
+      >x</a
+      ><a name="2683"
+      > </a
+      ><a name="2684" href="ISLPSyntaxTerms.html#1397" class="Datatype Operator"
+      >&#8759;</a
+      ><a name="2685"
+      > </a
+      ><a name="2686" href="ISLPSyntaxTerms.html#2581" class="Bound"
+      >&#926;</a
+      ><a name="2687"
+      >
+  </a
+      ><a name="2690" href="ISLPSyntaxTerms.html#2493" class="Function"
+      >mono&#8866;&#8902;</a
+      ><a name="2696"
+      > </a
+      ><a name="2697" href="ISLPSyntaxTerms.html#2697" class="Bound"
+      >&#950;</a
+      ><a name="2698"
+      > </a
+      ><a name="2699" href="ISLPSyntaxTerms.html#2699" class="Bound"
+      >&#951;</a
+      ><a name="2700"
+      > </a
+      ><a name="2701" href="ISLPSyntaxTerms.html#1463" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="2702"
+      >       </a
+      ><a name="2709" class="Symbol"
+      >=</a
+      ><a name="2710"
+      > </a
+      ><a name="2711" href="ISLPSyntaxTerms.html#1463" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="2712"
+      >
+  </a
+      ><a name="2715" href="ISLPSyntaxTerms.html#2493" class="Function"
+      >mono&#8866;&#8902;</a
+      ><a name="2721"
+      > </a
+      ><a name="2722" href="ISLPSyntaxTerms.html#2722" class="Bound"
+      >&#950;</a
+      ><a name="2723"
+      > </a
+      ><a name="2724" href="ISLPSyntaxTerms.html#2724" class="Bound"
+      >&#951;</a
+      ><a name="2725"
+      > </a
+      ><a name="2726" class="Symbol"
+      >(</a
+      ><a name="2727" href="ISLPSyntaxTerms.html#2727" class="Bound"
+      >&#958;</a
+      ><a name="2728"
+      > </a
+      ><a name="2729" href="ISLPSyntaxTerms.html#1510" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="2730"
+      > </a
+      ><a name="2731" href="ISLPSyntaxTerms.html#2731" class="Bound"
+      >&#119967;</a
+      ><a name="2732" class="Symbol"
+      >)</a
+      ><a name="2733"
+      > </a
+      ><a name="2734" class="Symbol"
+      >=</a
+      ><a name="2735"
+      > </a
+      ><a name="2736" href="ISLPSyntaxTerms.html#2493" class="Function"
+      >mono&#8866;&#8902;</a
+      ><a name="2742"
+      > </a
+      ><a name="2743" href="ISLPSyntaxTerms.html#2722" class="Bound"
+      >&#950;</a
+      ><a name="2744"
+      > </a
+      ><a name="2745" href="ISLPSyntaxTerms.html#2724" class="Bound"
+      >&#951;</a
+      ><a name="2746"
+      > </a
+      ><a name="2747" href="ISLPSyntaxTerms.html#2727" class="Bound"
+      >&#958;</a
+      ><a name="2748"
+      > </a
+      ><a name="2749" href="ISLPSyntaxTerms.html#1510" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="2750"
+      > </a
+      ><a name="2751" href="ISLPSyntaxTerms.html#1705" class="Function"
+      >mono&#8866;</a
+      ><a name="2756"
+      > </a
+      ><a name="2757" href="ISLPSyntaxTerms.html#2722" class="Bound"
+      >&#950;</a
+      ><a name="2758"
+      > </a
+      ><a name="2759" href="ISLPSyntaxTerms.html#2724" class="Bound"
+      >&#951;</a
+      ><a name="2760"
+      > </a
+      ><a name="2761" href="ISLPSyntaxTerms.html#2731" class="Bound"
+      >&#119967;</a
+      ><a name="2762"
+      >
+</a
+      ></pre
+    ></body
+  ></html
+>

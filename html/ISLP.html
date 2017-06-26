@@ -1,0 +1,3339 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><title
+    >ISLP</title
+    ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta http-equiv="Content-Style-Type" content="text/css"
+     /><link href="Agda.css" rel="stylesheet" type="text/css"
+     /></head
+  ><body
+  ><pre
+    ><a name="1" class="Keyword"
+      >module</a
+      ><a name="7"
+      > </a
+      ><a name="8" href="ISLP.html#1" class="Module"
+      >ISLP</a
+      ><a name="12"
+      > </a
+      ><a name="13" class="Keyword"
+      >where</a
+      ><a name="18"
+      >
+
+</a
+      ><a name="20" class="Keyword"
+      >open</a
+      ><a name="24"
+      > </a
+      ><a name="25" class="Keyword"
+      >import</a
+      ><a name="31"
+      > </a
+      ><a name="32" href="PreludeVec.html#1" class="Module"
+      >PreludeVec</a
+      ><a name="42"
+      > </a
+      ><a name="43" class="Keyword"
+      >public</a
+      ><a name="49"
+      >
+
+
+</a
+      ><a name="52" class="Comment"
+      >-- Terms.</a
+      ><a name="61"
+      >
+
+</a
+      ><a name="63" class="Keyword"
+      >mutual</a
+      ><a name="69"
+      >
+  </a
+      ><a name="72" class="Keyword"
+      >data</a
+      ><a name="76"
+      > </a
+      ><a name="77" href="ISLP.html#77" class="Datatype"
+      >Tm</a
+      ><a name="79"
+      > </a
+      ><a name="80" class="Symbol"
+      >(</a
+      ><a name="81" href="ISLP.html#81" class="Bound"
+      >d</a
+      ><a name="82"
+      > </a
+      ><a name="83" href="ISLP.html#83" class="Bound"
+      >g</a
+      ><a name="84"
+      > </a
+      ><a name="85" class="Symbol"
+      >:</a
+      ><a name="86"
+      > </a
+      ><a name="87" href="Prelude.html#6297" class="Datatype"
+      >Nat</a
+      ><a name="90" class="Symbol"
+      >)</a
+      ><a name="91"
+      > </a
+      ><a name="92" class="Symbol"
+      >:</a
+      ><a name="93"
+      > </a
+      ><a name="94" class="PrimitiveType"
+      >Set</a
+      ><a name="97"
+      > </a
+      ><a name="98" class="Keyword"
+      >where</a
+      ><a name="103"
+      >
+    </a
+      ><a name="108" href="ISLP.html#108" class="InductiveConstructor"
+      >VAR</a
+      ><a name="111"
+      >   </a
+      ><a name="114" class="Symbol"
+      >:</a
+      ><a name="115"
+      > </a
+      ><a name="116" href="Prelude.html#9019" class="Datatype"
+      >Fin</a
+      ><a name="119"
+      > </a
+      ><a name="120" href="ISLP.html#83" class="Bound"
+      >g</a
+      ><a name="121"
+      > </a
+      ><a name="122" class="Symbol"
+      >&#8594;</a
+      ><a name="123"
+      > </a
+      ><a name="124" href="ISLP.html#77" class="Datatype"
+      >Tm</a
+      ><a name="126"
+      > </a
+      ><a name="127" href="ISLP.html#81" class="Bound"
+      >d</a
+      ><a name="128"
+      > </a
+      ><a name="129" href="ISLP.html#83" class="Bound"
+      >g</a
+      ><a name="130"
+      >
+    </a
+      ><a name="135" href="ISLP.html#135" class="InductiveConstructor"
+      >MVAR</a
+      ><a name="139"
+      >  </a
+      ><a name="141" class="Symbol"
+      >:</a
+      ><a name="142"
+      > </a
+      ><a name="143" class="Symbol"
+      >&#8704;</a
+      ><a name="144"
+      > </a
+      ><a name="145" class="Symbol"
+      >{</a
+      ><a name="146" href="ISLP.html#146" class="Bound"
+      >`d</a
+      ><a name="148"
+      > </a
+      ><a name="149" href="ISLP.html#149" class="Bound"
+      >`g</a
+      ><a name="151" class="Symbol"
+      >}</a
+      ><a name="152"
+      > </a
+      ><a name="153" class="Symbol"
+      >&#8594;</a
+      ><a name="154"
+      > </a
+      ><a name="155" href="ISLP.html#358" class="Function"
+      >Tm&#8902;</a
+      ><a name="158"
+      > </a
+      ><a name="159" href="ISLP.html#81" class="Bound"
+      >d</a
+      ><a name="160"
+      > </a
+      ><a name="161" href="Prelude.html#6328" class="InductiveConstructor"
+      >zero</a
+      ><a name="165"
+      > </a
+      ><a name="166" href="ISLP.html#146" class="Bound"
+      >`d</a
+      ><a name="168"
+      > </a
+      ><a name="169" class="Symbol"
+      >&#8594;</a
+      ><a name="170"
+      > </a
+      ><a name="171" href="ISLP.html#358" class="Function"
+      >Tm&#8902;</a
+      ><a name="174"
+      > </a
+      ><a name="175" href="ISLP.html#81" class="Bound"
+      >d</a
+      ><a name="176"
+      > </a
+      ><a name="177" href="ISLP.html#83" class="Bound"
+      >g</a
+      ><a name="178"
+      > </a
+      ><a name="179" href="ISLP.html#149" class="Bound"
+      >`g</a
+      ><a name="181"
+      > </a
+      ><a name="182" class="Symbol"
+      >&#8594;</a
+      ><a name="183"
+      > </a
+      ><a name="184" href="Prelude.html#9019" class="Datatype"
+      >Fin</a
+      ><a name="187"
+      > </a
+      ><a name="188" href="ISLP.html#81" class="Bound"
+      >d</a
+      ><a name="189"
+      > </a
+      ><a name="190" class="Symbol"
+      >&#8594;</a
+      ><a name="191"
+      > </a
+      ><a name="192" href="ISLP.html#77" class="Datatype"
+      >Tm</a
+      ><a name="194"
+      > </a
+      ><a name="195" href="ISLP.html#81" class="Bound"
+      >d</a
+      ><a name="196"
+      > </a
+      ><a name="197" href="ISLP.html#83" class="Bound"
+      >g</a
+      ><a name="198"
+      >
+    </a
+      ><a name="203" href="ISLP.html#203" class="InductiveConstructor"
+      >LAM</a
+      ><a name="206"
+      >   </a
+      ><a name="209" class="Symbol"
+      >:</a
+      ><a name="210"
+      > </a
+      ><a name="211" href="ISLP.html#77" class="Datatype"
+      >Tm</a
+      ><a name="213"
+      > </a
+      ><a name="214" href="ISLP.html#81" class="Bound"
+      >d</a
+      ><a name="215"
+      > </a
+      ><a name="216" class="Symbol"
+      >(</a
+      ><a name="217" href="Prelude.html#6343" class="InductiveConstructor"
+      >suc</a
+      ><a name="220"
+      > </a
+      ><a name="221" href="ISLP.html#83" class="Bound"
+      >g</a
+      ><a name="222" class="Symbol"
+      >)</a
+      ><a name="223"
+      > </a
+      ><a name="224" class="Symbol"
+      >&#8594;</a
+      ><a name="225"
+      > </a
+      ><a name="226" href="ISLP.html#77" class="Datatype"
+      >Tm</a
+      ><a name="228"
+      > </a
+      ><a name="229" href="ISLP.html#81" class="Bound"
+      >d</a
+      ><a name="230"
+      > </a
+      ><a name="231" href="ISLP.html#83" class="Bound"
+      >g</a
+      ><a name="232"
+      >
+    </a
+      ><a name="237" href="ISLP.html#237" class="InductiveConstructor"
+      >APP</a
+      ><a name="240"
+      >   </a
+      ><a name="243" class="Symbol"
+      >:</a
+      ><a name="244"
+      > </a
+      ><a name="245" href="ISLP.html#77" class="Datatype"
+      >Tm</a
+      ><a name="247"
+      > </a
+      ><a name="248" href="ISLP.html#81" class="Bound"
+      >d</a
+      ><a name="249"
+      > </a
+      ><a name="250" href="ISLP.html#83" class="Bound"
+      >g</a
+      ><a name="251"
+      > </a
+      ><a name="252" class="Symbol"
+      >&#8594;</a
+      ><a name="253"
+      > </a
+      ><a name="254" href="ISLP.html#77" class="Datatype"
+      >Tm</a
+      ><a name="256"
+      > </a
+      ><a name="257" href="ISLP.html#81" class="Bound"
+      >d</a
+      ><a name="258"
+      > </a
+      ><a name="259" href="ISLP.html#83" class="Bound"
+      >g</a
+      ><a name="260"
+      > </a
+      ><a name="261" class="Symbol"
+      >&#8594;</a
+      ><a name="262"
+      > </a
+      ><a name="263" href="ISLP.html#77" class="Datatype"
+      >Tm</a
+      ><a name="265"
+      > </a
+      ><a name="266" href="ISLP.html#81" class="Bound"
+      >d</a
+      ><a name="267"
+      > </a
+      ><a name="268" href="ISLP.html#83" class="Bound"
+      >g</a
+      ><a name="269"
+      >
+    </a
+      ><a name="274" href="ISLP.html#274" class="InductiveConstructor"
+      >BOX</a
+      ><a name="277"
+      >   </a
+      ><a name="280" class="Symbol"
+      >:</a
+      ><a name="281"
+      > </a
+      ><a name="282" class="Symbol"
+      >&#8704;</a
+      ><a name="283"
+      > </a
+      ><a name="284" class="Symbol"
+      >{</a
+      ><a name="285" href="ISLP.html#285" class="Bound"
+      >`d</a
+      ><a name="287"
+      > </a
+      ><a name="288" href="ISLP.html#288" class="Bound"
+      >`g</a
+      ><a name="290" class="Symbol"
+      >}</a
+      ><a name="291"
+      > </a
+      ><a name="292" class="Symbol"
+      >&#8594;</a
+      ><a name="293"
+      > </a
+      ><a name="294" href="ISLP.html#77" class="Datatype"
+      >Tm</a
+      ><a name="296"
+      > </a
+      ><a name="297" href="ISLP.html#285" class="Bound"
+      >`d</a
+      ><a name="299"
+      > </a
+      ><a name="300" href="ISLP.html#288" class="Bound"
+      >`g</a
+      ><a name="302"
+      > </a
+      ><a name="303" class="Symbol"
+      >&#8594;</a
+      ><a name="304"
+      > </a
+      ><a name="305" href="ISLP.html#77" class="Datatype"
+      >Tm</a
+      ><a name="307"
+      > </a
+      ><a name="308" href="ISLP.html#81" class="Bound"
+      >d</a
+      ><a name="309"
+      > </a
+      ><a name="310" href="ISLP.html#83" class="Bound"
+      >g</a
+      ><a name="311"
+      >
+    </a
+      ><a name="316" href="ISLP.html#316" class="InductiveConstructor"
+      >UNBOX</a
+      ><a name="321"
+      > </a
+      ><a name="322" class="Symbol"
+      >:</a
+      ><a name="323"
+      > </a
+      ><a name="324" href="ISLP.html#77" class="Datatype"
+      >Tm</a
+      ><a name="326"
+      > </a
+      ><a name="327" href="ISLP.html#81" class="Bound"
+      >d</a
+      ><a name="328"
+      > </a
+      ><a name="329" href="ISLP.html#83" class="Bound"
+      >g</a
+      ><a name="330"
+      > </a
+      ><a name="331" class="Symbol"
+      >&#8594;</a
+      ><a name="332"
+      > </a
+      ><a name="333" href="ISLP.html#77" class="Datatype"
+      >Tm</a
+      ><a name="335"
+      > </a
+      ><a name="336" class="Symbol"
+      >(</a
+      ><a name="337" href="Prelude.html#6343" class="InductiveConstructor"
+      >suc</a
+      ><a name="340"
+      > </a
+      ><a name="341" href="ISLP.html#81" class="Bound"
+      >d</a
+      ><a name="342" class="Symbol"
+      >)</a
+      ><a name="343"
+      > </a
+      ><a name="344" href="ISLP.html#83" class="Bound"
+      >g</a
+      ><a name="345"
+      > </a
+      ><a name="346" class="Symbol"
+      >&#8594;</a
+      ><a name="347"
+      > </a
+      ><a name="348" href="ISLP.html#77" class="Datatype"
+      >Tm</a
+      ><a name="350"
+      > </a
+      ><a name="351" href="ISLP.html#81" class="Bound"
+      >d</a
+      ><a name="352"
+      > </a
+      ><a name="353" href="ISLP.html#83" class="Bound"
+      >g</a
+      ><a name="354"
+      >
+
+  </a
+      ><a name="358" href="ISLP.html#358" class="Function"
+      >Tm&#8902;</a
+      ><a name="361"
+      > </a
+      ><a name="362" class="Symbol"
+      >:</a
+      ><a name="363"
+      > </a
+      ><a name="364" href="Prelude.html#6297" class="Datatype"
+      >Nat</a
+      ><a name="367"
+      > </a
+      ><a name="368" class="Symbol"
+      >&#8594;</a
+      ><a name="369"
+      > </a
+      ><a name="370" href="Prelude.html#6297" class="Datatype"
+      >Nat</a
+      ><a name="373"
+      > </a
+      ><a name="374" class="Symbol"
+      >&#8594;</a
+      ><a name="375"
+      > </a
+      ><a name="376" href="Prelude.html#6297" class="Datatype"
+      >Nat</a
+      ><a name="379"
+      > </a
+      ><a name="380" class="Symbol"
+      >&#8594;</a
+      ><a name="381"
+      > </a
+      ><a name="382" class="PrimitiveType"
+      >Set</a
+      ><a name="385"
+      >
+  </a
+      ><a name="388" href="ISLP.html#358" class="Function"
+      >Tm&#8902;</a
+      ><a name="391"
+      > </a
+      ><a name="392" href="ISLP.html#392" class="Bound"
+      >d</a
+      ><a name="393"
+      > </a
+      ><a name="394" href="ISLP.html#394" class="Bound"
+      >g</a
+      ><a name="395"
+      > </a
+      ><a name="396" href="ISLP.html#396" class="Bound"
+      >n</a
+      ><a name="397"
+      > </a
+      ><a name="398" class="Symbol"
+      >=</a
+      ><a name="399"
+      > </a
+      ><a name="400" href="PreludeVec.html#102" class="Datatype"
+      >Vec</a
+      ><a name="403"
+      > </a
+      ><a name="404" class="Symbol"
+      >(</a
+      ><a name="405" href="ISLP.html#77" class="Datatype"
+      >Tm</a
+      ><a name="407"
+      > </a
+      ><a name="408" href="ISLP.html#392" class="Bound"
+      >d</a
+      ><a name="409"
+      > </a
+      ><a name="410" href="ISLP.html#394" class="Bound"
+      >g</a
+      ><a name="411" class="Symbol"
+      >)</a
+      ><a name="412"
+      > </a
+      ><a name="413" href="ISLP.html#396" class="Bound"
+      >n</a
+      ><a name="414"
+      >
+
+</a
+      ><a name="416" class="Keyword"
+      >mutual</a
+      ><a name="422"
+      >
+  </a
+      ><a name="425" href="ISLP.html#425" class="Function"
+      >monoTm</a
+      ><a name="431"
+      > </a
+      ><a name="432" class="Symbol"
+      >:</a
+      ><a name="433"
+      > </a
+      ><a name="434" class="Symbol"
+      >&#8704;</a
+      ><a name="435"
+      > </a
+      ><a name="436" class="Symbol"
+      >{</a
+      ><a name="437" href="ISLP.html#437" class="Bound"
+      >d</a
+      ><a name="438"
+      > </a
+      ><a name="439" href="ISLP.html#439" class="Bound"
+      >g</a
+      ><a name="440"
+      > </a
+      ><a name="441" href="ISLP.html#441" class="Bound"
+      >d&#8242;</a
+      ><a name="443"
+      > </a
+      ><a name="444" href="ISLP.html#444" class="Bound"
+      >g&#8242;</a
+      ><a name="446" class="Symbol"
+      >}</a
+      ><a name="447"
+      > </a
+      ><a name="448" class="Symbol"
+      >&#8594;</a
+      ><a name="449"
+      > </a
+      ><a name="450" href="ISLP.html#441" class="Bound"
+      >d&#8242;</a
+      ><a name="452"
+      > </a
+      ><a name="453" href="Prelude.html#6887" class="Datatype Operator"
+      >&#8805;</a
+      ><a name="454"
+      > </a
+      ><a name="455" href="ISLP.html#437" class="Bound"
+      >d</a
+      ><a name="456"
+      > </a
+      ><a name="457" class="Symbol"
+      >&#8594;</a
+      ><a name="458"
+      > </a
+      ><a name="459" href="ISLP.html#444" class="Bound"
+      >g&#8242;</a
+      ><a name="461"
+      > </a
+      ><a name="462" href="Prelude.html#6887" class="Datatype Operator"
+      >&#8805;</a
+      ><a name="463"
+      > </a
+      ><a name="464" href="ISLP.html#439" class="Bound"
+      >g</a
+      ><a name="465"
+      > </a
+      ><a name="466" class="Symbol"
+      >&#8594;</a
+      ><a name="467"
+      > </a
+      ><a name="468" href="ISLP.html#77" class="Datatype"
+      >Tm</a
+      ><a name="470"
+      > </a
+      ><a name="471" href="ISLP.html#437" class="Bound"
+      >d</a
+      ><a name="472"
+      > </a
+      ><a name="473" href="ISLP.html#439" class="Bound"
+      >g</a
+      ><a name="474"
+      > </a
+      ><a name="475" class="Symbol"
+      >&#8594;</a
+      ><a name="476"
+      > </a
+      ><a name="477" href="ISLP.html#77" class="Datatype"
+      >Tm</a
+      ><a name="479"
+      > </a
+      ><a name="480" href="ISLP.html#441" class="Bound"
+      >d&#8242;</a
+      ><a name="482"
+      > </a
+      ><a name="483" href="ISLP.html#444" class="Bound"
+      >g&#8242;</a
+      ><a name="485"
+      >
+  </a
+      ><a name="488" href="ISLP.html#425" class="Function"
+      >monoTm</a
+      ><a name="494"
+      > </a
+      ><a name="495" href="ISLP.html#495" class="Bound"
+      >z</a
+      ><a name="496"
+      > </a
+      ><a name="497" href="ISLP.html#497" class="Bound"
+      >e</a
+      ><a name="498"
+      > </a
+      ><a name="499" class="Symbol"
+      >(</a
+      ><a name="500" href="ISLP.html#108" class="InductiveConstructor"
+      >VAR</a
+      ><a name="503"
+      > </a
+      ><a name="504" href="ISLP.html#504" class="Bound"
+      >i</a
+      ><a name="505" class="Symbol"
+      >)</a
+      ><a name="506"
+      >      </a
+      ><a name="512" class="Symbol"
+      >=</a
+      ><a name="513"
+      > </a
+      ><a name="514" href="ISLP.html#108" class="InductiveConstructor"
+      >VAR</a
+      ><a name="517"
+      > </a
+      ><a name="518" class="Symbol"
+      >(</a
+      ><a name="519" href="Prelude.html#9468" class="Function"
+      >monoFin</a
+      ><a name="526"
+      > </a
+      ><a name="527" href="ISLP.html#497" class="Bound"
+      >e</a
+      ><a name="528"
+      > </a
+      ><a name="529" href="ISLP.html#504" class="Bound"
+      >i</a
+      ><a name="530" class="Symbol"
+      >)</a
+      ><a name="531"
+      >
+  </a
+      ><a name="534" href="ISLP.html#425" class="Function"
+      >monoTm</a
+      ><a name="540"
+      > </a
+      ><a name="541" href="ISLP.html#541" class="Bound"
+      >z</a
+      ><a name="542"
+      > </a
+      ><a name="543" href="ISLP.html#543" class="Bound"
+      >e</a
+      ><a name="544"
+      > </a
+      ><a name="545" class="Symbol"
+      >(</a
+      ><a name="546" href="ISLP.html#135" class="InductiveConstructor"
+      >MVAR</a
+      ><a name="550"
+      > </a
+      ><a name="551" href="ISLP.html#551" class="Bound"
+      >q</a
+      ><a name="552"
+      > </a
+      ><a name="553" href="ISLP.html#553" class="Bound"
+      >p</a
+      ><a name="554"
+      > </a
+      ><a name="555" href="ISLP.html#555" class="Bound"
+      >i</a
+      ><a name="556" class="Symbol"
+      >)</a
+      ><a name="557"
+      > </a
+      ><a name="558" class="Symbol"
+      >=</a
+      ><a name="559"
+      > </a
+      ><a name="560" href="ISLP.html#135" class="InductiveConstructor"
+      >MVAR</a
+      ><a name="564"
+      > </a
+      ><a name="565" class="Symbol"
+      >(</a
+      ><a name="566" href="ISLP.html#838" class="Function"
+      >monoTm&#8902;</a
+      ><a name="573"
+      > </a
+      ><a name="574" href="ISLP.html#541" class="Bound"
+      >z</a
+      ><a name="575"
+      > </a
+      ><a name="576" href="Prelude.html#6930" class="InductiveConstructor"
+      >done</a
+      ><a name="580"
+      > </a
+      ><a name="581" href="ISLP.html#551" class="Bound"
+      >q</a
+      ><a name="582" class="Symbol"
+      >)</a
+      ><a name="583"
+      > </a
+      ><a name="584" class="Symbol"
+      >(</a
+      ><a name="585" href="ISLP.html#838" class="Function"
+      >monoTm&#8902;</a
+      ><a name="592"
+      > </a
+      ><a name="593" href="ISLP.html#541" class="Bound"
+      >z</a
+      ><a name="594"
+      > </a
+      ><a name="595" href="ISLP.html#543" class="Bound"
+      >e</a
+      ><a name="596"
+      > </a
+      ><a name="597" href="ISLP.html#553" class="Bound"
+      >p</a
+      ><a name="598" class="Symbol"
+      >)</a
+      ><a name="599"
+      > </a
+      ><a name="600" class="Symbol"
+      >(</a
+      ><a name="601" href="Prelude.html#9468" class="Function"
+      >monoFin</a
+      ><a name="608"
+      > </a
+      ><a name="609" href="ISLP.html#541" class="Bound"
+      >z</a
+      ><a name="610"
+      > </a
+      ><a name="611" href="ISLP.html#555" class="Bound"
+      >i</a
+      ><a name="612" class="Symbol"
+      >)</a
+      ><a name="613"
+      >
+  </a
+      ><a name="616" href="ISLP.html#425" class="Function"
+      >monoTm</a
+      ><a name="622"
+      > </a
+      ><a name="623" href="ISLP.html#623" class="Bound"
+      >z</a
+      ><a name="624"
+      > </a
+      ><a name="625" href="ISLP.html#625" class="Bound"
+      >e</a
+      ><a name="626"
+      > </a
+      ><a name="627" class="Symbol"
+      >(</a
+      ><a name="628" href="ISLP.html#203" class="InductiveConstructor"
+      >LAM</a
+      ><a name="631"
+      > </a
+      ><a name="632" href="ISLP.html#632" class="Bound"
+      >M</a
+      ><a name="633" class="Symbol"
+      >)</a
+      ><a name="634"
+      >      </a
+      ><a name="640" class="Symbol"
+      >=</a
+      ><a name="641"
+      > </a
+      ><a name="642" href="ISLP.html#203" class="InductiveConstructor"
+      >LAM</a
+      ><a name="645"
+      > </a
+      ><a name="646" class="Symbol"
+      >(</a
+      ><a name="647" href="ISLP.html#425" class="Function"
+      >monoTm</a
+      ><a name="653"
+      > </a
+      ><a name="654" href="ISLP.html#623" class="Bound"
+      >z</a
+      ><a name="655"
+      > </a
+      ><a name="656" class="Symbol"
+      >(</a
+      ><a name="657" href="Prelude.html#6995" class="InductiveConstructor"
+      >lift</a
+      ><a name="661"
+      > </a
+      ><a name="662" href="ISLP.html#625" class="Bound"
+      >e</a
+      ><a name="663" class="Symbol"
+      >)</a
+      ><a name="664"
+      > </a
+      ><a name="665" href="ISLP.html#632" class="Bound"
+      >M</a
+      ><a name="666" class="Symbol"
+      >)</a
+      ><a name="667"
+      >
+  </a
+      ><a name="670" href="ISLP.html#425" class="Function"
+      >monoTm</a
+      ><a name="676"
+      > </a
+      ><a name="677" href="ISLP.html#677" class="Bound"
+      >z</a
+      ><a name="678"
+      > </a
+      ><a name="679" href="ISLP.html#679" class="Bound"
+      >e</a
+      ><a name="680"
+      > </a
+      ><a name="681" class="Symbol"
+      >(</a
+      ><a name="682" href="ISLP.html#237" class="InductiveConstructor"
+      >APP</a
+      ><a name="685"
+      > </a
+      ><a name="686" href="ISLP.html#686" class="Bound"
+      >M</a
+      ><a name="687"
+      > </a
+      ><a name="688" href="ISLP.html#688" class="Bound"
+      >N</a
+      ><a name="689" class="Symbol"
+      >)</a
+      ><a name="690"
+      >    </a
+      ><a name="694" class="Symbol"
+      >=</a
+      ><a name="695"
+      > </a
+      ><a name="696" href="ISLP.html#237" class="InductiveConstructor"
+      >APP</a
+      ><a name="699"
+      > </a
+      ><a name="700" class="Symbol"
+      >(</a
+      ><a name="701" href="ISLP.html#425" class="Function"
+      >monoTm</a
+      ><a name="707"
+      > </a
+      ><a name="708" href="ISLP.html#677" class="Bound"
+      >z</a
+      ><a name="709"
+      > </a
+      ><a name="710" href="ISLP.html#679" class="Bound"
+      >e</a
+      ><a name="711"
+      > </a
+      ><a name="712" href="ISLP.html#686" class="Bound"
+      >M</a
+      ><a name="713" class="Symbol"
+      >)</a
+      ><a name="714"
+      > </a
+      ><a name="715" class="Symbol"
+      >(</a
+      ><a name="716" href="ISLP.html#425" class="Function"
+      >monoTm</a
+      ><a name="722"
+      > </a
+      ><a name="723" href="ISLP.html#677" class="Bound"
+      >z</a
+      ><a name="724"
+      > </a
+      ><a name="725" href="ISLP.html#679" class="Bound"
+      >e</a
+      ><a name="726"
+      > </a
+      ><a name="727" href="ISLP.html#688" class="Bound"
+      >N</a
+      ><a name="728" class="Symbol"
+      >)</a
+      ><a name="729"
+      >
+  </a
+      ><a name="732" href="ISLP.html#425" class="Function"
+      >monoTm</a
+      ><a name="738"
+      > </a
+      ><a name="739" href="ISLP.html#739" class="Bound"
+      >z</a
+      ><a name="740"
+      > </a
+      ><a name="741" href="ISLP.html#741" class="Bound"
+      >e</a
+      ><a name="742"
+      > </a
+      ><a name="743" class="Symbol"
+      >(</a
+      ><a name="744" href="ISLP.html#274" class="InductiveConstructor"
+      >BOX</a
+      ><a name="747"
+      > </a
+      ><a name="748" href="ISLP.html#748" class="Bound"
+      >M</a
+      ><a name="749" class="Symbol"
+      >)</a
+      ><a name="750"
+      >      </a
+      ><a name="756" class="Symbol"
+      >=</a
+      ><a name="757"
+      > </a
+      ><a name="758" href="ISLP.html#274" class="InductiveConstructor"
+      >BOX</a
+      ><a name="761"
+      > </a
+      ><a name="762" href="ISLP.html#748" class="Bound"
+      >M</a
+      ><a name="763"
+      >
+  </a
+      ><a name="766" href="ISLP.html#425" class="Function"
+      >monoTm</a
+      ><a name="772"
+      > </a
+      ><a name="773" href="ISLP.html#773" class="Bound"
+      >z</a
+      ><a name="774"
+      > </a
+      ><a name="775" href="ISLP.html#775" class="Bound"
+      >e</a
+      ><a name="776"
+      > </a
+      ><a name="777" class="Symbol"
+      >(</a
+      ><a name="778" href="ISLP.html#316" class="InductiveConstructor"
+      >UNBOX</a
+      ><a name="783"
+      > </a
+      ><a name="784" href="ISLP.html#784" class="Bound"
+      >M</a
+      ><a name="785"
+      > </a
+      ><a name="786" href="ISLP.html#786" class="Bound"
+      >N</a
+      ><a name="787" class="Symbol"
+      >)</a
+      ><a name="788"
+      >  </a
+      ><a name="790" class="Symbol"
+      >=</a
+      ><a name="791"
+      > </a
+      ><a name="792" href="ISLP.html#316" class="InductiveConstructor"
+      >UNBOX</a
+      ><a name="797"
+      > </a
+      ><a name="798" class="Symbol"
+      >(</a
+      ><a name="799" href="ISLP.html#425" class="Function"
+      >monoTm</a
+      ><a name="805"
+      > </a
+      ><a name="806" href="ISLP.html#773" class="Bound"
+      >z</a
+      ><a name="807"
+      > </a
+      ><a name="808" href="ISLP.html#775" class="Bound"
+      >e</a
+      ><a name="809"
+      > </a
+      ><a name="810" href="ISLP.html#784" class="Bound"
+      >M</a
+      ><a name="811" class="Symbol"
+      >)</a
+      ><a name="812"
+      > </a
+      ><a name="813" class="Symbol"
+      >(</a
+      ><a name="814" href="ISLP.html#425" class="Function"
+      >monoTm</a
+      ><a name="820"
+      > </a
+      ><a name="821" class="Symbol"
+      >(</a
+      ><a name="822" href="Prelude.html#6995" class="InductiveConstructor"
+      >lift</a
+      ><a name="826"
+      > </a
+      ><a name="827" href="ISLP.html#773" class="Bound"
+      >z</a
+      ><a name="828" class="Symbol"
+      >)</a
+      ><a name="829"
+      > </a
+      ><a name="830" href="ISLP.html#775" class="Bound"
+      >e</a
+      ><a name="831"
+      > </a
+      ><a name="832" href="ISLP.html#786" class="Bound"
+      >N</a
+      ><a name="833" class="Symbol"
+      >)</a
+      ><a name="834"
+      >
+
+  </a
+      ><a name="838" href="ISLP.html#838" class="Function"
+      >monoTm&#8902;</a
+      ><a name="845"
+      > </a
+      ><a name="846" class="Symbol"
+      >:</a
+      ><a name="847"
+      > </a
+      ><a name="848" class="Symbol"
+      >&#8704;</a
+      ><a name="849"
+      > </a
+      ><a name="850" class="Symbol"
+      >{</a
+      ><a name="851" href="ISLP.html#851" class="Bound"
+      >d</a
+      ><a name="852"
+      > </a
+      ><a name="853" href="ISLP.html#853" class="Bound"
+      >g</a
+      ><a name="854"
+      > </a
+      ><a name="855" href="ISLP.html#855" class="Bound"
+      >d&#8242;</a
+      ><a name="857"
+      > </a
+      ><a name="858" href="ISLP.html#858" class="Bound"
+      >g&#8242;</a
+      ><a name="860"
+      > </a
+      ><a name="861" href="ISLP.html#861" class="Bound"
+      >n</a
+      ><a name="862" class="Symbol"
+      >}</a
+      ><a name="863"
+      > </a
+      ><a name="864" class="Symbol"
+      >&#8594;</a
+      ><a name="865"
+      > </a
+      ><a name="866" href="ISLP.html#855" class="Bound"
+      >d&#8242;</a
+      ><a name="868"
+      > </a
+      ><a name="869" href="Prelude.html#6887" class="Datatype Operator"
+      >&#8805;</a
+      ><a name="870"
+      > </a
+      ><a name="871" href="ISLP.html#851" class="Bound"
+      >d</a
+      ><a name="872"
+      > </a
+      ><a name="873" class="Symbol"
+      >&#8594;</a
+      ><a name="874"
+      > </a
+      ><a name="875" href="ISLP.html#858" class="Bound"
+      >g&#8242;</a
+      ><a name="877"
+      > </a
+      ><a name="878" href="Prelude.html#6887" class="Datatype Operator"
+      >&#8805;</a
+      ><a name="879"
+      > </a
+      ><a name="880" href="ISLP.html#853" class="Bound"
+      >g</a
+      ><a name="881"
+      > </a
+      ><a name="882" class="Symbol"
+      >&#8594;</a
+      ><a name="883"
+      > </a
+      ><a name="884" href="ISLP.html#358" class="Function"
+      >Tm&#8902;</a
+      ><a name="887"
+      > </a
+      ><a name="888" href="ISLP.html#851" class="Bound"
+      >d</a
+      ><a name="889"
+      > </a
+      ><a name="890" href="ISLP.html#853" class="Bound"
+      >g</a
+      ><a name="891"
+      > </a
+      ><a name="892" href="ISLP.html#861" class="Bound"
+      >n</a
+      ><a name="893"
+      > </a
+      ><a name="894" class="Symbol"
+      >&#8594;</a
+      ><a name="895"
+      > </a
+      ><a name="896" href="ISLP.html#358" class="Function"
+      >Tm&#8902;</a
+      ><a name="899"
+      > </a
+      ><a name="900" href="ISLP.html#855" class="Bound"
+      >d&#8242;</a
+      ><a name="902"
+      > </a
+      ><a name="903" href="ISLP.html#858" class="Bound"
+      >g&#8242;</a
+      ><a name="905"
+      > </a
+      ><a name="906" href="ISLP.html#861" class="Bound"
+      >n</a
+      ><a name="907"
+      >
+  </a
+      ><a name="910" href="ISLP.html#838" class="Function"
+      >monoTm&#8902;</a
+      ><a name="917"
+      > </a
+      ><a name="918" href="ISLP.html#918" class="Bound"
+      >z</a
+      ><a name="919"
+      > </a
+      ><a name="920" href="ISLP.html#920" class="Bound"
+      >e</a
+      ><a name="921"
+      > </a
+      ><a name="922" href="PreludeVec.html#157" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="923"
+      >       </a
+      ><a name="930" class="Symbol"
+      >=</a
+      ><a name="931"
+      > </a
+      ><a name="932" href="PreludeVec.html#157" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="933"
+      >
+  </a
+      ><a name="936" href="ISLP.html#838" class="Function"
+      >monoTm&#8902;</a
+      ><a name="943"
+      > </a
+      ><a name="944" href="ISLP.html#944" class="Bound"
+      >z</a
+      ><a name="945"
+      > </a
+      ><a name="946" href="ISLP.html#946" class="Bound"
+      >e</a
+      ><a name="947"
+      > </a
+      ><a name="948" class="Symbol"
+      >(</a
+      ><a name="949" href="ISLP.html#949" class="Bound"
+      >x</a
+      ><a name="950"
+      > </a
+      ><a name="951" href="PreludeVec.html#178" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="952"
+      > </a
+      ><a name="953" href="ISLP.html#953" class="Bound"
+      >M</a
+      ><a name="954" class="Symbol"
+      >)</a
+      ><a name="955"
+      > </a
+      ><a name="956" class="Symbol"
+      >=</a
+      ><a name="957"
+      > </a
+      ><a name="958" href="ISLP.html#838" class="Function"
+      >monoTm&#8902;</a
+      ><a name="965"
+      > </a
+      ><a name="966" href="ISLP.html#944" class="Bound"
+      >z</a
+      ><a name="967"
+      > </a
+      ><a name="968" href="ISLP.html#946" class="Bound"
+      >e</a
+      ><a name="969"
+      > </a
+      ><a name="970" href="ISLP.html#949" class="Bound"
+      >x</a
+      ><a name="971"
+      > </a
+      ><a name="972" href="PreludeVec.html#178" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="973"
+      > </a
+      ><a name="974" href="ISLP.html#425" class="Function"
+      >monoTm</a
+      ><a name="980"
+      > </a
+      ><a name="981" href="ISLP.html#944" class="Bound"
+      >z</a
+      ><a name="982"
+      > </a
+      ><a name="983" href="ISLP.html#946" class="Bound"
+      >e</a
+      ><a name="984"
+      > </a
+      ><a name="985" href="ISLP.html#953" class="Bound"
+      >M</a
+      ><a name="986"
+      >
+  </a
+      ><a name="989" class="Comment"
+      >-- NOTE: Equivalent, but does not pass termination check.</a
+      ><a name="1046"
+      >
+  </a
+      ><a name="1049" class="Comment"
+      >-- monoTm&#8902; z e x = map (monoTm z e) x</a
+      ><a name="1086"
+      >
+
+</a
+      ><a name="1088" class="Keyword"
+      >mutual</a
+      ><a name="1094"
+      >
+  </a
+      ><a name="1097" href="ISLP.html#1097" class="Function"
+      >idmonoTm</a
+      ><a name="1105"
+      > </a
+      ><a name="1106" class="Symbol"
+      >:</a
+      ><a name="1107"
+      > </a
+      ><a name="1108" class="Symbol"
+      >&#8704;</a
+      ><a name="1109"
+      > </a
+      ><a name="1110" class="Symbol"
+      >{</a
+      ><a name="1111" href="ISLP.html#1111" class="Bound"
+      >d</a
+      ><a name="1112"
+      > </a
+      ><a name="1113" href="ISLP.html#1113" class="Bound"
+      >g</a
+      ><a name="1114" class="Symbol"
+      >}</a
+      ><a name="1115"
+      > </a
+      ><a name="1116" class="Symbol"
+      >&#8594;</a
+      ><a name="1117"
+      > </a
+      ><a name="1118" class="Symbol"
+      >(</a
+      ><a name="1119" href="ISLP.html#1119" class="Bound"
+      >M</a
+      ><a name="1120"
+      > </a
+      ><a name="1121" class="Symbol"
+      >:</a
+      ><a name="1122"
+      > </a
+      ><a name="1123" href="ISLP.html#77" class="Datatype"
+      >Tm</a
+      ><a name="1125"
+      > </a
+      ><a name="1126" href="ISLP.html#1111" class="Bound"
+      >d</a
+      ><a name="1127"
+      > </a
+      ><a name="1128" href="ISLP.html#1113" class="Bound"
+      >g</a
+      ><a name="1129" class="Symbol"
+      >)</a
+      ><a name="1130"
+      > </a
+      ><a name="1131" class="Symbol"
+      >&#8594;</a
+      ><a name="1132"
+      > </a
+      ><a name="1133" href="ISLP.html#425" class="Function"
+      >monoTm</a
+      ><a name="1139"
+      > </a
+      ><a name="1140" href="Prelude.html#7861" class="Function"
+      >refl&#8805;</a
+      ><a name="1145"
+      > </a
+      ><a name="1146" href="Prelude.html#7861" class="Function"
+      >refl&#8805;</a
+      ><a name="1151"
+      > </a
+      ><a name="1152" href="ISLP.html#1119" class="Bound"
+      >M</a
+      ><a name="1153"
+      > </a
+      ><a name="1154" href="Prelude.html#805" class="Datatype Operator"
+      >&#8801;</a
+      ><a name="1155"
+      > </a
+      ><a name="1156" href="ISLP.html#1119" class="Bound"
+      >M</a
+      ><a name="1157"
+      >
+  </a
+      ><a name="1160" href="ISLP.html#1097" class="Function"
+      >idmonoTm</a
+      ><a name="1168"
+      > </a
+      ><a name="1169" class="Symbol"
+      >(</a
+      ><a name="1170" href="ISLP.html#108" class="InductiveConstructor"
+      >VAR</a
+      ><a name="1173"
+      > </a
+      ><a name="1174" href="ISLP.html#1174" class="Bound"
+      >i</a
+      ><a name="1175" class="Symbol"
+      >)</a
+      ><a name="1176"
+      >      </a
+      ><a name="1182" class="Symbol"
+      >=</a
+      ><a name="1183"
+      > </a
+      ><a name="1184" href="Prelude.html#1324" class="Function"
+      >cong</a
+      ><a name="1188"
+      > </a
+      ><a name="1189" href="ISLP.html#108" class="InductiveConstructor"
+      >VAR</a
+      ><a name="1192"
+      > </a
+      ><a name="1193" class="Symbol"
+      >(</a
+      ><a name="1194" href="Prelude.html#10076" class="Function"
+      >idmonoFin</a
+      ><a name="1203"
+      > </a
+      ><a name="1204" href="ISLP.html#1174" class="Bound"
+      >i</a
+      ><a name="1205" class="Symbol"
+      >)</a
+      ><a name="1206"
+      >
+  </a
+      ><a name="1209" href="ISLP.html#1097" class="Function"
+      >idmonoTm</a
+      ><a name="1217"
+      > </a
+      ><a name="1218" class="Symbol"
+      >(</a
+      ><a name="1219" href="ISLP.html#135" class="InductiveConstructor"
+      >MVAR</a
+      ><a name="1223"
+      > </a
+      ><a name="1224" href="ISLP.html#1224" class="Bound"
+      >q</a
+      ><a name="1225"
+      > </a
+      ><a name="1226" href="ISLP.html#1226" class="Bound"
+      >p</a
+      ><a name="1227"
+      > </a
+      ><a name="1228" href="ISLP.html#1228" class="Bound"
+      >i</a
+      ><a name="1229" class="Symbol"
+      >)</a
+      ><a name="1230"
+      > </a
+      ><a name="1231" class="Symbol"
+      >=</a
+      ><a name="1232"
+      > </a
+      ><a name="1233" href="Prelude.html#1616" class="Function"
+      >cong&#179;</a
+      ><a name="1238"
+      > </a
+      ><a name="1239" href="ISLP.html#135" class="InductiveConstructor"
+      >MVAR</a
+      ><a name="1243"
+      > </a
+      ><a name="1244" class="Symbol"
+      >(</a
+      ><a name="1245" href="ISLP.html#1494" class="Function"
+      >idmonoTm&#8902;</a
+      ><a name="1254"
+      > </a
+      ><a name="1255" href="ISLP.html#1224" class="Bound"
+      >q</a
+      ><a name="1256" class="Symbol"
+      >)</a
+      ><a name="1257"
+      > </a
+      ><a name="1258" class="Symbol"
+      >(</a
+      ><a name="1259" href="ISLP.html#1494" class="Function"
+      >idmonoTm&#8902;</a
+      ><a name="1268"
+      > </a
+      ><a name="1269" href="ISLP.html#1226" class="Bound"
+      >p</a
+      ><a name="1270" class="Symbol"
+      >)</a
+      ><a name="1271"
+      > </a
+      ><a name="1272" class="Symbol"
+      >(</a
+      ><a name="1273" href="Prelude.html#10076" class="Function"
+      >idmonoFin</a
+      ><a name="1282"
+      > </a
+      ><a name="1283" href="ISLP.html#1228" class="Bound"
+      >i</a
+      ><a name="1284" class="Symbol"
+      >)</a
+      ><a name="1285"
+      >
+  </a
+      ><a name="1288" href="ISLP.html#1097" class="Function"
+      >idmonoTm</a
+      ><a name="1296"
+      > </a
+      ><a name="1297" class="Symbol"
+      >(</a
+      ><a name="1298" href="ISLP.html#203" class="InductiveConstructor"
+      >LAM</a
+      ><a name="1301"
+      > </a
+      ><a name="1302" href="ISLP.html#1302" class="Bound"
+      >M</a
+      ><a name="1303" class="Symbol"
+      >)</a
+      ><a name="1304"
+      >      </a
+      ><a name="1310" class="Symbol"
+      >=</a
+      ><a name="1311"
+      > </a
+      ><a name="1312" href="Prelude.html#1324" class="Function"
+      >cong</a
+      ><a name="1316"
+      > </a
+      ><a name="1317" href="ISLP.html#203" class="InductiveConstructor"
+      >LAM</a
+      ><a name="1320"
+      > </a
+      ><a name="1321" class="Symbol"
+      >(</a
+      ><a name="1322" href="ISLP.html#1097" class="Function"
+      >idmonoTm</a
+      ><a name="1330"
+      > </a
+      ><a name="1331" href="ISLP.html#1302" class="Bound"
+      >M</a
+      ><a name="1332" class="Symbol"
+      >)</a
+      ><a name="1333"
+      >
+  </a
+      ><a name="1336" href="ISLP.html#1097" class="Function"
+      >idmonoTm</a
+      ><a name="1344"
+      > </a
+      ><a name="1345" class="Symbol"
+      >(</a
+      ><a name="1346" href="ISLP.html#237" class="InductiveConstructor"
+      >APP</a
+      ><a name="1349"
+      > </a
+      ><a name="1350" href="ISLP.html#1350" class="Bound"
+      >M</a
+      ><a name="1351"
+      > </a
+      ><a name="1352" href="ISLP.html#1352" class="Bound"
+      >N</a
+      ><a name="1353" class="Symbol"
+      >)</a
+      ><a name="1354"
+      >    </a
+      ><a name="1358" class="Symbol"
+      >=</a
+      ><a name="1359"
+      > </a
+      ><a name="1360" href="Prelude.html#1446" class="Function"
+      >cong&#178;</a
+      ><a name="1365"
+      > </a
+      ><a name="1366" href="ISLP.html#237" class="InductiveConstructor"
+      >APP</a
+      ><a name="1369"
+      > </a
+      ><a name="1370" class="Symbol"
+      >(</a
+      ><a name="1371" href="ISLP.html#1097" class="Function"
+      >idmonoTm</a
+      ><a name="1379"
+      > </a
+      ><a name="1380" href="ISLP.html#1350" class="Bound"
+      >M</a
+      ><a name="1381" class="Symbol"
+      >)</a
+      ><a name="1382"
+      > </a
+      ><a name="1383" class="Symbol"
+      >(</a
+      ><a name="1384" href="ISLP.html#1097" class="Function"
+      >idmonoTm</a
+      ><a name="1392"
+      > </a
+      ><a name="1393" href="ISLP.html#1352" class="Bound"
+      >N</a
+      ><a name="1394" class="Symbol"
+      >)</a
+      ><a name="1395"
+      >
+  </a
+      ><a name="1398" href="ISLP.html#1097" class="Function"
+      >idmonoTm</a
+      ><a name="1406"
+      > </a
+      ><a name="1407" class="Symbol"
+      >(</a
+      ><a name="1408" href="ISLP.html#274" class="InductiveConstructor"
+      >BOX</a
+      ><a name="1411"
+      > </a
+      ><a name="1412" href="ISLP.html#1412" class="Bound"
+      >M</a
+      ><a name="1413" class="Symbol"
+      >)</a
+      ><a name="1414"
+      >      </a
+      ><a name="1420" class="Symbol"
+      >=</a
+      ><a name="1421"
+      > </a
+      ><a name="1422" href="Prelude.html#866" class="InductiveConstructor"
+      >refl</a
+      ><a name="1426"
+      >
+  </a
+      ><a name="1429" href="ISLP.html#1097" class="Function"
+      >idmonoTm</a
+      ><a name="1437"
+      > </a
+      ><a name="1438" class="Symbol"
+      >(</a
+      ><a name="1439" href="ISLP.html#316" class="InductiveConstructor"
+      >UNBOX</a
+      ><a name="1444"
+      > </a
+      ><a name="1445" href="ISLP.html#1445" class="Bound"
+      >M</a
+      ><a name="1446"
+      > </a
+      ><a name="1447" href="ISLP.html#1447" class="Bound"
+      >N</a
+      ><a name="1448" class="Symbol"
+      >)</a
+      ><a name="1449"
+      >  </a
+      ><a name="1451" class="Symbol"
+      >=</a
+      ><a name="1452"
+      > </a
+      ><a name="1453" href="Prelude.html#1446" class="Function"
+      >cong&#178;</a
+      ><a name="1458"
+      > </a
+      ><a name="1459" href="ISLP.html#316" class="InductiveConstructor"
+      >UNBOX</a
+      ><a name="1464"
+      > </a
+      ><a name="1465" class="Symbol"
+      >(</a
+      ><a name="1466" href="ISLP.html#1097" class="Function"
+      >idmonoTm</a
+      ><a name="1474"
+      > </a
+      ><a name="1475" href="ISLP.html#1445" class="Bound"
+      >M</a
+      ><a name="1476" class="Symbol"
+      >)</a
+      ><a name="1477"
+      > </a
+      ><a name="1478" class="Symbol"
+      >(</a
+      ><a name="1479" href="ISLP.html#1097" class="Function"
+      >idmonoTm</a
+      ><a name="1487"
+      > </a
+      ><a name="1488" href="ISLP.html#1447" class="Bound"
+      >N</a
+      ><a name="1489" class="Symbol"
+      >)</a
+      ><a name="1490"
+      >
+
+  </a
+      ><a name="1494" href="ISLP.html#1494" class="Function"
+      >idmonoTm&#8902;</a
+      ><a name="1503"
+      > </a
+      ><a name="1504" class="Symbol"
+      >:</a
+      ><a name="1505"
+      > </a
+      ><a name="1506" class="Symbol"
+      >&#8704;</a
+      ><a name="1507"
+      > </a
+      ><a name="1508" class="Symbol"
+      >{</a
+      ><a name="1509" href="ISLP.html#1509" class="Bound"
+      >d</a
+      ><a name="1510"
+      > </a
+      ><a name="1511" href="ISLP.html#1511" class="Bound"
+      >g</a
+      ><a name="1512"
+      > </a
+      ><a name="1513" href="ISLP.html#1513" class="Bound"
+      >n</a
+      ><a name="1514" class="Symbol"
+      >}</a
+      ><a name="1515"
+      > </a
+      ><a name="1516" class="Symbol"
+      >&#8594;</a
+      ><a name="1517"
+      > </a
+      ><a name="1518" class="Symbol"
+      >(</a
+      ><a name="1519" href="ISLP.html#1519" class="Bound"
+      >x</a
+      ><a name="1520"
+      > </a
+      ><a name="1521" class="Symbol"
+      >:</a
+      ><a name="1522"
+      > </a
+      ><a name="1523" href="ISLP.html#358" class="Function"
+      >Tm&#8902;</a
+      ><a name="1526"
+      > </a
+      ><a name="1527" href="ISLP.html#1509" class="Bound"
+      >d</a
+      ><a name="1528"
+      > </a
+      ><a name="1529" href="ISLP.html#1511" class="Bound"
+      >g</a
+      ><a name="1530"
+      > </a
+      ><a name="1531" href="ISLP.html#1513" class="Bound"
+      >n</a
+      ><a name="1532" class="Symbol"
+      >)</a
+      ><a name="1533"
+      > </a
+      ><a name="1534" class="Symbol"
+      >&#8594;</a
+      ><a name="1535"
+      > </a
+      ><a name="1536" href="ISLP.html#838" class="Function"
+      >monoTm&#8902;</a
+      ><a name="1543"
+      > </a
+      ><a name="1544" href="Prelude.html#7861" class="Function"
+      >refl&#8805;</a
+      ><a name="1549"
+      > </a
+      ><a name="1550" href="Prelude.html#7861" class="Function"
+      >refl&#8805;</a
+      ><a name="1555"
+      > </a
+      ><a name="1556" href="ISLP.html#1519" class="Bound"
+      >x</a
+      ><a name="1557"
+      > </a
+      ><a name="1558" href="Prelude.html#805" class="Datatype Operator"
+      >&#8801;</a
+      ><a name="1559"
+      > </a
+      ><a name="1560" href="ISLP.html#1519" class="Bound"
+      >x</a
+      ><a name="1561"
+      >
+  </a
+      ><a name="1564" href="ISLP.html#1494" class="Function"
+      >idmonoTm&#8902;</a
+      ><a name="1573"
+      > </a
+      ><a name="1574" href="PreludeVec.html#157" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="1575"
+      >       </a
+      ><a name="1582" class="Symbol"
+      >=</a
+      ><a name="1583"
+      > </a
+      ><a name="1584" href="Prelude.html#866" class="InductiveConstructor"
+      >refl</a
+      ><a name="1588"
+      >
+  </a
+      ><a name="1591" href="ISLP.html#1494" class="Function"
+      >idmonoTm&#8902;</a
+      ><a name="1600"
+      > </a
+      ><a name="1601" class="Symbol"
+      >(</a
+      ><a name="1602" href="ISLP.html#1602" class="Bound"
+      >x</a
+      ><a name="1603"
+      > </a
+      ><a name="1604" href="PreludeVec.html#178" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1605"
+      > </a
+      ><a name="1606" href="ISLP.html#1606" class="Bound"
+      >M</a
+      ><a name="1607" class="Symbol"
+      >)</a
+      ><a name="1608"
+      > </a
+      ><a name="1609" class="Symbol"
+      >=</a
+      ><a name="1610"
+      > </a
+      ><a name="1611" href="Prelude.html#1446" class="Function"
+      >cong&#178;</a
+      ><a name="1616"
+      > </a
+      ><a name="1617" href="PreludeVec.html#178" class="InductiveConstructor Operator"
+      >_,_</a
+      ><a name="1620"
+      > </a
+      ><a name="1621" class="Symbol"
+      >(</a
+      ><a name="1622" href="ISLP.html#1494" class="Function"
+      >idmonoTm&#8902;</a
+      ><a name="1631"
+      > </a
+      ><a name="1632" href="ISLP.html#1602" class="Bound"
+      >x</a
+      ><a name="1633" class="Symbol"
+      >)</a
+      ><a name="1634"
+      > </a
+      ><a name="1635" class="Symbol"
+      >(</a
+      ><a name="1636" href="ISLP.html#1097" class="Function"
+      >idmonoTm</a
+      ><a name="1644"
+      > </a
+      ><a name="1645" href="ISLP.html#1606" class="Bound"
+      >M</a
+      ><a name="1646" class="Symbol"
+      >)</a
+      ><a name="1647"
+      >
+
+</a
+      ><a name="1649" href="ISLP.html#1649" class="Function"
+      >reflTm&#8902;</a
+      ><a name="1656"
+      > </a
+      ><a name="1657" class="Symbol"
+      >:</a
+      ><a name="1658"
+      > </a
+      ><a name="1659" class="Symbol"
+      >&#8704;</a
+      ><a name="1660"
+      > </a
+      ><a name="1661" class="Symbol"
+      >{</a
+      ><a name="1662" href="ISLP.html#1662" class="Bound"
+      >d</a
+      ><a name="1663"
+      > </a
+      ><a name="1664" href="ISLP.html#1664" class="Bound"
+      >g</a
+      ><a name="1665" class="Symbol"
+      >}</a
+      ><a name="1666"
+      > </a
+      ><a name="1667" class="Symbol"
+      >&#8594;</a
+      ><a name="1668"
+      > </a
+      ><a name="1669" href="ISLP.html#358" class="Function"
+      >Tm&#8902;</a
+      ><a name="1672"
+      > </a
+      ><a name="1673" href="ISLP.html#1662" class="Bound"
+      >d</a
+      ><a name="1674"
+      > </a
+      ><a name="1675" href="ISLP.html#1664" class="Bound"
+      >g</a
+      ><a name="1676"
+      > </a
+      ><a name="1677" href="ISLP.html#1664" class="Bound"
+      >g</a
+      ><a name="1678"
+      >
+</a
+      ><a name="1679" href="ISLP.html#1649" class="Function"
+      >reflTm&#8902;</a
+      ><a name="1686"
+      > </a
+      ><a name="1687" class="Symbol"
+      >{</a
+      ><a name="1688" class="Argument"
+      >g</a
+      ><a name="1689"
+      > </a
+      ><a name="1690" class="Symbol"
+      >=</a
+      ><a name="1691"
+      > </a
+      ><a name="1692" href="Prelude.html#6328" class="InductiveConstructor"
+      >zero</a
+      ><a name="1696" class="Symbol"
+      >}</a
+      ><a name="1697"
+      >  </a
+      ><a name="1699" class="Symbol"
+      >=</a
+      ><a name="1700"
+      > </a
+      ><a name="1701" href="PreludeVec.html#157" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="1702"
+      >
+</a
+      ><a name="1703" href="ISLP.html#1649" class="Function"
+      >reflTm&#8902;</a
+      ><a name="1710"
+      > </a
+      ><a name="1711" class="Symbol"
+      >{</a
+      ><a name="1712" class="Argument"
+      >g</a
+      ><a name="1713"
+      > </a
+      ><a name="1714" class="Symbol"
+      >=</a
+      ><a name="1715"
+      > </a
+      ><a name="1716" href="Prelude.html#6343" class="InductiveConstructor"
+      >suc</a
+      ><a name="1719"
+      > </a
+      ><a name="1720" href="ISLP.html#1720" class="Bound"
+      >g</a
+      ><a name="1721" class="Symbol"
+      >}</a
+      ><a name="1722"
+      > </a
+      ><a name="1723" class="Symbol"
+      >=</a
+      ><a name="1724"
+      > </a
+      ><a name="1725" href="ISLP.html#838" class="Function"
+      >monoTm&#8902;</a
+      ><a name="1732"
+      > </a
+      ><a name="1733" href="Prelude.html#7861" class="Function"
+      >refl&#8805;</a
+      ><a name="1738"
+      > </a
+      ><a name="1739" class="Symbol"
+      >(</a
+      ><a name="1740" href="Prelude.html#6953" class="InductiveConstructor"
+      >weak</a
+      ><a name="1744"
+      > </a
+      ><a name="1745" href="Prelude.html#7861" class="Function"
+      >refl&#8805;</a
+      ><a name="1750" class="Symbol"
+      >)</a
+      ><a name="1751"
+      > </a
+      ><a name="1752" href="ISLP.html#1649" class="Function"
+      >reflTm&#8902;</a
+      ><a name="1759"
+      > </a
+      ><a name="1760" href="PreludeVec.html#178" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1761"
+      > </a
+      ><a name="1762" href="ISLP.html#108" class="InductiveConstructor"
+      >VAR</a
+      ><a name="1765"
+      > </a
+      ><a name="1766" href="Prelude.html#9056" class="InductiveConstructor"
+      >zero</a
+      ><a name="1770"
+      >
+
+</a
+      ><a name="1772" class="Comment"
+      >-- TODO: What is going on here?</a
+      ><a name="1803"
+      >
+</a
+      ><a name="1804" class="Comment"
+      >-- mreflTm&#8902; : &#8704; {d g} &#8594; Tm&#8902; d g d</a
+      ><a name="1837"
+      >
+</a
+      ><a name="1838" class="Comment"
+      >-- mreflTm&#8902; {zero}  = &#8709;</a
+      ><a name="1861"
+      >
+</a
+      ><a name="1862" class="Comment"
+      >-- mreflTm&#8902; {suc d} =</a
+      ><a name="1883"
+      >
+</a
+      ><a name="1884" class="Comment"
+      >--   monoTm&#8902; (weak refl&#8805;) refl&#8805; mreflTm&#8902; ,</a
+      ><a name="1926"
+      >
+</a
+      ><a name="1927" class="Comment"
+      >--   MVAR (monoTm&#8902; (weak refl&#8805;) done {!!}) {!!} zero</a
+      ><a name="1979"
+      >
+
+</a
+      ><a name="1981" href="ISLP.html#1981" class="Function"
+      >lookupTm</a
+      ><a name="1989"
+      > </a
+      ><a name="1990" class="Symbol"
+      >:</a
+      ><a name="1991"
+      > </a
+      ><a name="1992" class="Symbol"
+      >&#8704;</a
+      ><a name="1993"
+      > </a
+      ><a name="1994" class="Symbol"
+      >{</a
+      ><a name="1995" href="ISLP.html#1995" class="Bound"
+      >d</a
+      ><a name="1996"
+      > </a
+      ><a name="1997" href="ISLP.html#1997" class="Bound"
+      >g</a
+      ><a name="1998"
+      > </a
+      ><a name="1999" href="ISLP.html#1999" class="Bound"
+      >n</a
+      ><a name="2000" class="Symbol"
+      >}</a
+      ><a name="2001"
+      > </a
+      ><a name="2002" class="Symbol"
+      >&#8594;</a
+      ><a name="2003"
+      > </a
+      ><a name="2004" href="ISLP.html#358" class="Function"
+      >Tm&#8902;</a
+      ><a name="2007"
+      > </a
+      ><a name="2008" href="ISLP.html#1995" class="Bound"
+      >d</a
+      ><a name="2009"
+      > </a
+      ><a name="2010" href="ISLP.html#1997" class="Bound"
+      >g</a
+      ><a name="2011"
+      > </a
+      ><a name="2012" href="ISLP.html#1999" class="Bound"
+      >n</a
+      ><a name="2013"
+      > </a
+      ><a name="2014" class="Symbol"
+      >&#8594;</a
+      ><a name="2015"
+      > </a
+      ><a name="2016" href="Prelude.html#9019" class="Datatype"
+      >Fin</a
+      ><a name="2019"
+      > </a
+      ><a name="2020" href="ISLP.html#1999" class="Bound"
+      >n</a
+      ><a name="2021"
+      > </a
+      ><a name="2022" class="Symbol"
+      >&#8594;</a
+      ><a name="2023"
+      > </a
+      ><a name="2024" href="ISLP.html#77" class="Datatype"
+      >Tm</a
+      ><a name="2026"
+      > </a
+      ><a name="2027" href="ISLP.html#1995" class="Bound"
+      >d</a
+      ><a name="2028"
+      > </a
+      ><a name="2029" href="ISLP.html#1997" class="Bound"
+      >g</a
+      ><a name="2030"
+      >
+</a
+      ><a name="2031" href="ISLP.html#1981" class="Function"
+      >lookupTm</a
+      ><a name="2039"
+      > </a
+      ><a name="2040" href="ISLP.html#2040" class="Bound"
+      >x</a
+      ><a name="2041"
+      > </a
+      ><a name="2042" href="ISLP.html#2042" class="Bound"
+      >i</a
+      ><a name="2043"
+      > </a
+      ><a name="2044" class="Symbol"
+      >=</a
+      ><a name="2045"
+      > </a
+      ><a name="2046" href="PreludeVec.html#290" class="Function"
+      >lookup</a
+      ><a name="2052"
+      > </a
+      ><a name="2053" href="ISLP.html#2040" class="Bound"
+      >x</a
+      ><a name="2054"
+      > </a
+      ><a name="2055" href="ISLP.html#2042" class="Bound"
+      >i</a
+      ><a name="2056"
+      >
+
+</a
+      ><a name="2058" class="Keyword"
+      >mutual</a
+      ><a name="2064"
+      >
+  </a
+      ><a name="2067" href="ISLP.html#2067" class="Function"
+      >graftTm</a
+      ><a name="2074"
+      > </a
+      ><a name="2075" class="Symbol"
+      >:</a
+      ><a name="2076"
+      > </a
+      ><a name="2077" class="Symbol"
+      >&#8704;</a
+      ><a name="2078"
+      > </a
+      ><a name="2079" class="Symbol"
+      >{</a
+      ><a name="2080" href="ISLP.html#2080" class="Bound"
+      >d</a
+      ><a name="2081"
+      > </a
+      ><a name="2082" href="ISLP.html#2082" class="Bound"
+      >g</a
+      ><a name="2083"
+      > </a
+      ><a name="2084" href="ISLP.html#2084" class="Bound"
+      >`g</a
+      ><a name="2086" class="Symbol"
+      >}</a
+      ><a name="2087"
+      > </a
+      ><a name="2088" class="Symbol"
+      >&#8594;</a
+      ><a name="2089"
+      > </a
+      ><a name="2090" href="ISLP.html#358" class="Function"
+      >Tm&#8902;</a
+      ><a name="2093"
+      > </a
+      ><a name="2094" href="ISLP.html#2080" class="Bound"
+      >d</a
+      ><a name="2095"
+      > </a
+      ><a name="2096" href="ISLP.html#2082" class="Bound"
+      >g</a
+      ><a name="2097"
+      > </a
+      ><a name="2098" href="ISLP.html#2084" class="Bound"
+      >`g</a
+      ><a name="2100"
+      > </a
+      ><a name="2101" class="Symbol"
+      >&#8594;</a
+      ><a name="2102"
+      > </a
+      ><a name="2103" href="ISLP.html#77" class="Datatype"
+      >Tm</a
+      ><a name="2105"
+      > </a
+      ><a name="2106" href="ISLP.html#2080" class="Bound"
+      >d</a
+      ><a name="2107"
+      > </a
+      ><a name="2108" href="ISLP.html#2084" class="Bound"
+      >`g</a
+      ><a name="2110"
+      > </a
+      ><a name="2111" class="Symbol"
+      >&#8594;</a
+      ><a name="2112"
+      > </a
+      ><a name="2113" href="ISLP.html#77" class="Datatype"
+      >Tm</a
+      ><a name="2115"
+      > </a
+      ><a name="2116" href="ISLP.html#2080" class="Bound"
+      >d</a
+      ><a name="2117"
+      > </a
+      ><a name="2118" href="ISLP.html#2082" class="Bound"
+      >g</a
+      ><a name="2119"
+      >
+  </a
+      ><a name="2122" href="ISLP.html#2067" class="Function"
+      >graftTm</a
+      ><a name="2129"
+      > </a
+      ><a name="2130" href="ISLP.html#2130" class="Bound"
+      >p</a
+      ><a name="2131"
+      > </a
+      ><a name="2132" class="Symbol"
+      >(</a
+      ><a name="2133" href="ISLP.html#108" class="InductiveConstructor"
+      >VAR</a
+      ><a name="2136"
+      > </a
+      ><a name="2137" href="ISLP.html#2137" class="Bound"
+      >i</a
+      ><a name="2138" class="Symbol"
+      >)</a
+      ><a name="2139"
+      >       </a
+      ><a name="2146" class="Symbol"
+      >=</a
+      ><a name="2147"
+      > </a
+      ><a name="2148" href="ISLP.html#1981" class="Function"
+      >lookupTm</a
+      ><a name="2156"
+      > </a
+      ><a name="2157" href="ISLP.html#2130" class="Bound"
+      >p</a
+      ><a name="2158"
+      > </a
+      ><a name="2159" href="ISLP.html#2137" class="Bound"
+      >i</a
+      ><a name="2160"
+      >
+  </a
+      ><a name="2163" href="ISLP.html#2067" class="Function"
+      >graftTm</a
+      ><a name="2170"
+      > </a
+      ><a name="2171" href="ISLP.html#2171" class="Bound"
+      >p</a
+      ><a name="2172"
+      > </a
+      ><a name="2173" class="Symbol"
+      >(</a
+      ><a name="2174" href="ISLP.html#135" class="InductiveConstructor"
+      >MVAR</a
+      ><a name="2178"
+      > </a
+      ><a name="2179" href="ISLP.html#2179" class="Bound"
+      >q</a
+      ><a name="2180"
+      > </a
+      ><a name="2181" href="ISLP.html#2181" class="Bound"
+      >p&#8242;</a
+      ><a name="2183"
+      > </a
+      ><a name="2184" href="ISLP.html#2184" class="Bound"
+      >i</a
+      ><a name="2185" class="Symbol"
+      >)</a
+      ><a name="2186"
+      > </a
+      ><a name="2187" class="Symbol"
+      >=</a
+      ><a name="2188"
+      > </a
+      ><a name="2189" href="ISLP.html#135" class="InductiveConstructor"
+      >MVAR</a
+      ><a name="2193"
+      > </a
+      ><a name="2194" href="ISLP.html#2179" class="Bound"
+      >q</a
+      ><a name="2195"
+      > </a
+      ><a name="2196" class="Symbol"
+      >(</a
+      ><a name="2197" href="ISLP.html#2488" class="Function"
+      >graftTm&#8902;</a
+      ><a name="2205"
+      > </a
+      ><a name="2206" href="ISLP.html#2171" class="Bound"
+      >p</a
+      ><a name="2207"
+      > </a
+      ><a name="2208" href="ISLP.html#2181" class="Bound"
+      >p&#8242;</a
+      ><a name="2210" class="Symbol"
+      >)</a
+      ><a name="2211"
+      > </a
+      ><a name="2212" href="ISLP.html#2184" class="Bound"
+      >i</a
+      ><a name="2213"
+      >
+  </a
+      ><a name="2216" href="ISLP.html#2067" class="Function"
+      >graftTm</a
+      ><a name="2223"
+      > </a
+      ><a name="2224" href="ISLP.html#2224" class="Bound"
+      >p</a
+      ><a name="2225"
+      > </a
+      ><a name="2226" class="Symbol"
+      >(</a
+      ><a name="2227" href="ISLP.html#203" class="InductiveConstructor"
+      >LAM</a
+      ><a name="2230"
+      > </a
+      ><a name="2231" href="ISLP.html#2231" class="Bound"
+      >M</a
+      ><a name="2232" class="Symbol"
+      >)</a
+      ><a name="2233"
+      >       </a
+      ><a name="2240" class="Symbol"
+      >=</a
+      ><a name="2241"
+      > </a
+      ><a name="2242" href="ISLP.html#203" class="InductiveConstructor"
+      >LAM</a
+      ><a name="2245"
+      > </a
+      ><a name="2246" class="Symbol"
+      >(</a
+      ><a name="2247" href="ISLP.html#2067" class="Function"
+      >graftTm</a
+      ><a name="2254"
+      > </a
+      ><a name="2255" class="Symbol"
+      >(</a
+      ><a name="2256" href="ISLP.html#838" class="Function"
+      >monoTm&#8902;</a
+      ><a name="2263"
+      > </a
+      ><a name="2264" href="Prelude.html#7861" class="Function"
+      >refl&#8805;</a
+      ><a name="2269"
+      > </a
+      ><a name="2270" class="Symbol"
+      >(</a
+      ><a name="2271" href="Prelude.html#6953" class="InductiveConstructor"
+      >weak</a
+      ><a name="2275"
+      > </a
+      ><a name="2276" href="Prelude.html#7861" class="Function"
+      >refl&#8805;</a
+      ><a name="2281" class="Symbol"
+      >)</a
+      ><a name="2282"
+      > </a
+      ><a name="2283" href="ISLP.html#2224" class="Bound"
+      >p</a
+      ><a name="2284"
+      > </a
+      ><a name="2285" href="PreludeVec.html#178" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="2286"
+      > </a
+      ><a name="2287" href="ISLP.html#108" class="InductiveConstructor"
+      >VAR</a
+      ><a name="2290"
+      > </a
+      ><a name="2291" href="Prelude.html#9056" class="InductiveConstructor"
+      >zero</a
+      ><a name="2295" class="Symbol"
+      >)</a
+      ><a name="2296"
+      > </a
+      ><a name="2297" href="ISLP.html#2231" class="Bound"
+      >M</a
+      ><a name="2298" class="Symbol"
+      >)</a
+      ><a name="2299"
+      >
+  </a
+      ><a name="2302" href="ISLP.html#2067" class="Function"
+      >graftTm</a
+      ><a name="2309"
+      > </a
+      ><a name="2310" href="ISLP.html#2310" class="Bound"
+      >p</a
+      ><a name="2311"
+      > </a
+      ><a name="2312" class="Symbol"
+      >(</a
+      ><a name="2313" href="ISLP.html#237" class="InductiveConstructor"
+      >APP</a
+      ><a name="2316"
+      > </a
+      ><a name="2317" href="ISLP.html#2317" class="Bound"
+      >M</a
+      ><a name="2318"
+      > </a
+      ><a name="2319" href="ISLP.html#2319" class="Bound"
+      >N</a
+      ><a name="2320" class="Symbol"
+      >)</a
+      ><a name="2321"
+      >     </a
+      ><a name="2326" class="Symbol"
+      >=</a
+      ><a name="2327"
+      > </a
+      ><a name="2328" href="ISLP.html#237" class="InductiveConstructor"
+      >APP</a
+      ><a name="2331"
+      > </a
+      ><a name="2332" class="Symbol"
+      >(</a
+      ><a name="2333" href="ISLP.html#2067" class="Function"
+      >graftTm</a
+      ><a name="2340"
+      > </a
+      ><a name="2341" href="ISLP.html#2310" class="Bound"
+      >p</a
+      ><a name="2342"
+      > </a
+      ><a name="2343" href="ISLP.html#2317" class="Bound"
+      >M</a
+      ><a name="2344" class="Symbol"
+      >)</a
+      ><a name="2345"
+      > </a
+      ><a name="2346" class="Symbol"
+      >(</a
+      ><a name="2347" href="ISLP.html#2067" class="Function"
+      >graftTm</a
+      ><a name="2354"
+      > </a
+      ><a name="2355" href="ISLP.html#2310" class="Bound"
+      >p</a
+      ><a name="2356"
+      > </a
+      ><a name="2357" href="ISLP.html#2319" class="Bound"
+      >N</a
+      ><a name="2358" class="Symbol"
+      >)</a
+      ><a name="2359"
+      >
+  </a
+      ><a name="2362" href="ISLP.html#2067" class="Function"
+      >graftTm</a
+      ><a name="2369"
+      > </a
+      ><a name="2370" href="ISLP.html#2370" class="Bound"
+      >p</a
+      ><a name="2371"
+      > </a
+      ><a name="2372" class="Symbol"
+      >(</a
+      ><a name="2373" href="ISLP.html#274" class="InductiveConstructor"
+      >BOX</a
+      ><a name="2376"
+      > </a
+      ><a name="2377" href="ISLP.html#2377" class="Bound"
+      >M</a
+      ><a name="2378" class="Symbol"
+      >)</a
+      ><a name="2379"
+      >       </a
+      ><a name="2386" class="Symbol"
+      >=</a
+      ><a name="2387"
+      > </a
+      ><a name="2388" href="ISLP.html#274" class="InductiveConstructor"
+      >BOX</a
+      ><a name="2391"
+      > </a
+      ><a name="2392" href="ISLP.html#2377" class="Bound"
+      >M</a
+      ><a name="2393"
+      >
+  </a
+      ><a name="2396" href="ISLP.html#2067" class="Function"
+      >graftTm</a
+      ><a name="2403"
+      > </a
+      ><a name="2404" href="ISLP.html#2404" class="Bound"
+      >p</a
+      ><a name="2405"
+      > </a
+      ><a name="2406" class="Symbol"
+      >(</a
+      ><a name="2407" href="ISLP.html#316" class="InductiveConstructor"
+      >UNBOX</a
+      ><a name="2412"
+      > </a
+      ><a name="2413" href="ISLP.html#2413" class="Bound"
+      >M</a
+      ><a name="2414"
+      > </a
+      ><a name="2415" href="ISLP.html#2415" class="Bound"
+      >N</a
+      ><a name="2416" class="Symbol"
+      >)</a
+      ><a name="2417"
+      >   </a
+      ><a name="2420" class="Symbol"
+      >=</a
+      ><a name="2421"
+      > </a
+      ><a name="2422" href="ISLP.html#316" class="InductiveConstructor"
+      >UNBOX</a
+      ><a name="2427"
+      > </a
+      ><a name="2428" class="Symbol"
+      >(</a
+      ><a name="2429" href="ISLP.html#2067" class="Function"
+      >graftTm</a
+      ><a name="2436"
+      > </a
+      ><a name="2437" href="ISLP.html#2404" class="Bound"
+      >p</a
+      ><a name="2438"
+      > </a
+      ><a name="2439" href="ISLP.html#2413" class="Bound"
+      >M</a
+      ><a name="2440" class="Symbol"
+      >)</a
+      ><a name="2441"
+      > </a
+      ><a name="2442" class="Symbol"
+      >(</a
+      ><a name="2443" href="ISLP.html#2067" class="Function"
+      >graftTm</a
+      ><a name="2450"
+      > </a
+      ><a name="2451" class="Symbol"
+      >(</a
+      ><a name="2452" href="ISLP.html#838" class="Function"
+      >monoTm&#8902;</a
+      ><a name="2459"
+      > </a
+      ><a name="2460" class="Symbol"
+      >(</a
+      ><a name="2461" href="Prelude.html#6953" class="InductiveConstructor"
+      >weak</a
+      ><a name="2465"
+      > </a
+      ><a name="2466" href="Prelude.html#7861" class="Function"
+      >refl&#8805;</a
+      ><a name="2471" class="Symbol"
+      >)</a
+      ><a name="2472"
+      > </a
+      ><a name="2473" href="Prelude.html#7861" class="Function"
+      >refl&#8805;</a
+      ><a name="2478"
+      > </a
+      ><a name="2479" href="ISLP.html#2404" class="Bound"
+      >p</a
+      ><a name="2480" class="Symbol"
+      >)</a
+      ><a name="2481"
+      > </a
+      ><a name="2482" href="ISLP.html#2415" class="Bound"
+      >N</a
+      ><a name="2483" class="Symbol"
+      >)</a
+      ><a name="2484"
+      >
+
+  </a
+      ><a name="2488" href="ISLP.html#2488" class="Function"
+      >graftTm&#8902;</a
+      ><a name="2496"
+      > </a
+      ><a name="2497" class="Symbol"
+      >:</a
+      ><a name="2498"
+      > </a
+      ><a name="2499" class="Symbol"
+      >&#8704;</a
+      ><a name="2500"
+      > </a
+      ><a name="2501" class="Symbol"
+      >{</a
+      ><a name="2502" href="ISLP.html#2502" class="Bound"
+      >d</a
+      ><a name="2503"
+      > </a
+      ><a name="2504" href="ISLP.html#2504" class="Bound"
+      >g</a
+      ><a name="2505"
+      > </a
+      ><a name="2506" href="ISLP.html#2506" class="Bound"
+      >`g</a
+      ><a name="2508"
+      > </a
+      ><a name="2509" href="ISLP.html#2509" class="Bound"
+      >n</a
+      ><a name="2510" class="Symbol"
+      >}</a
+      ><a name="2511"
+      > </a
+      ><a name="2512" class="Symbol"
+      >&#8594;</a
+      ><a name="2513"
+      > </a
+      ><a name="2514" href="ISLP.html#358" class="Function"
+      >Tm&#8902;</a
+      ><a name="2517"
+      > </a
+      ><a name="2518" href="ISLP.html#2502" class="Bound"
+      >d</a
+      ><a name="2519"
+      > </a
+      ><a name="2520" href="ISLP.html#2504" class="Bound"
+      >g</a
+      ><a name="2521"
+      > </a
+      ><a name="2522" href="ISLP.html#2506" class="Bound"
+      >`g</a
+      ><a name="2524"
+      > </a
+      ><a name="2525" class="Symbol"
+      >&#8594;</a
+      ><a name="2526"
+      > </a
+      ><a name="2527" href="ISLP.html#358" class="Function"
+      >Tm&#8902;</a
+      ><a name="2530"
+      > </a
+      ><a name="2531" href="ISLP.html#2502" class="Bound"
+      >d</a
+      ><a name="2532"
+      > </a
+      ><a name="2533" href="ISLP.html#2506" class="Bound"
+      >`g</a
+      ><a name="2535"
+      > </a
+      ><a name="2536" href="ISLP.html#2509" class="Bound"
+      >n</a
+      ><a name="2537"
+      > </a
+      ><a name="2538" class="Symbol"
+      >&#8594;</a
+      ><a name="2539"
+      > </a
+      ><a name="2540" href="ISLP.html#358" class="Function"
+      >Tm&#8902;</a
+      ><a name="2543"
+      > </a
+      ><a name="2544" href="ISLP.html#2502" class="Bound"
+      >d</a
+      ><a name="2545"
+      > </a
+      ><a name="2546" href="ISLP.html#2504" class="Bound"
+      >g</a
+      ><a name="2547"
+      > </a
+      ><a name="2548" href="ISLP.html#2509" class="Bound"
+      >n</a
+      ><a name="2549"
+      >
+  </a
+      ><a name="2552" href="ISLP.html#2488" class="Function"
+      >graftTm&#8902;</a
+      ><a name="2560"
+      > </a
+      ><a name="2561" href="ISLP.html#2561" class="Bound"
+      >p</a
+      ><a name="2562"
+      > </a
+      ><a name="2563" href="PreludeVec.html#157" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="2564"
+      >       </a
+      ><a name="2571" class="Symbol"
+      >=</a
+      ><a name="2572"
+      > </a
+      ><a name="2573" href="PreludeVec.html#157" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="2574"
+      >
+  </a
+      ><a name="2577" href="ISLP.html#2488" class="Function"
+      >graftTm&#8902;</a
+      ><a name="2585"
+      > </a
+      ><a name="2586" href="ISLP.html#2586" class="Bound"
+      >p</a
+      ><a name="2587"
+      > </a
+      ><a name="2588" class="Symbol"
+      >(</a
+      ><a name="2589" href="ISLP.html#2589" class="Bound"
+      >x</a
+      ><a name="2590"
+      > </a
+      ><a name="2591" href="PreludeVec.html#178" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="2592"
+      > </a
+      ><a name="2593" href="ISLP.html#2593" class="Bound"
+      >M</a
+      ><a name="2594" class="Symbol"
+      >)</a
+      ><a name="2595"
+      > </a
+      ><a name="2596" class="Symbol"
+      >=</a
+      ><a name="2597"
+      > </a
+      ><a name="2598" href="ISLP.html#2488" class="Function"
+      >graftTm&#8902;</a
+      ><a name="2606"
+      > </a
+      ><a name="2607" href="ISLP.html#2586" class="Bound"
+      >p</a
+      ><a name="2608"
+      > </a
+      ><a name="2609" href="ISLP.html#2589" class="Bound"
+      >x</a
+      ><a name="2610"
+      > </a
+      ><a name="2611" href="PreludeVec.html#178" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="2612"
+      > </a
+      ><a name="2613" href="ISLP.html#2067" class="Function"
+      >graftTm</a
+      ><a name="2620"
+      > </a
+      ><a name="2621" href="ISLP.html#2586" class="Bound"
+      >p</a
+      ><a name="2622"
+      > </a
+      ><a name="2623" href="ISLP.html#2593" class="Bound"
+      >M</a
+      ><a name="2624"
+      >
+  </a
+      ><a name="2627" class="Comment"
+      >-- NOTE: Equivalent, but does not pass termination check.</a
+      ><a name="2684"
+      >
+  </a
+      ><a name="2687" class="Comment"
+      >-- graftTm&#8902; p x = map (graftTm p) x</a
+      ><a name="2722"
+      >
+
+</a
+      ><a name="2724" href="ISLP.html#2724" class="Function"
+      >transTm</a
+      ><a name="2731"
+      > </a
+      ><a name="2732" class="Symbol"
+      >:</a
+      ><a name="2733"
+      > </a
+      ><a name="2734" class="Symbol"
+      >&#8704;</a
+      ><a name="2735"
+      > </a
+      ><a name="2736" class="Symbol"
+      >{</a
+      ><a name="2737" href="ISLP.html#2737" class="Bound"
+      >d</a
+      ><a name="2738"
+      > </a
+      ><a name="2739" href="ISLP.html#2739" class="Bound"
+      >g</a
+      ><a name="2740"
+      > </a
+      ><a name="2741" href="ISLP.html#2741" class="Bound"
+      >g&#8242;</a
+      ><a name="2743"
+      > </a
+      ><a name="2744" href="ISLP.html#2744" class="Bound"
+      >g&#8243;</a
+      ><a name="2746" class="Symbol"
+      >}</a
+      ><a name="2747"
+      > </a
+      ><a name="2748" class="Symbol"
+      >&#8594;</a
+      ><a name="2749"
+      > </a
+      ><a name="2750" href="ISLP.html#358" class="Function"
+      >Tm&#8902;</a
+      ><a name="2753"
+      > </a
+      ><a name="2754" href="ISLP.html#2737" class="Bound"
+      >d</a
+      ><a name="2755"
+      > </a
+      ><a name="2756" href="ISLP.html#2744" class="Bound"
+      >g&#8243;</a
+      ><a name="2758"
+      > </a
+      ><a name="2759" href="ISLP.html#2741" class="Bound"
+      >g&#8242;</a
+      ><a name="2761"
+      > </a
+      ><a name="2762" class="Symbol"
+      >&#8594;</a
+      ><a name="2763"
+      > </a
+      ><a name="2764" href="ISLP.html#358" class="Function"
+      >Tm&#8902;</a
+      ><a name="2767"
+      > </a
+      ><a name="2768" href="ISLP.html#2737" class="Bound"
+      >d</a
+      ><a name="2769"
+      > </a
+      ><a name="2770" href="ISLP.html#2741" class="Bound"
+      >g&#8242;</a
+      ><a name="2772"
+      > </a
+      ><a name="2773" href="ISLP.html#2739" class="Bound"
+      >g</a
+      ><a name="2774"
+      > </a
+      ><a name="2775" class="Symbol"
+      >&#8594;</a
+      ><a name="2776"
+      > </a
+      ><a name="2777" href="ISLP.html#358" class="Function"
+      >Tm&#8902;</a
+      ><a name="2780"
+      > </a
+      ><a name="2781" href="ISLP.html#2737" class="Bound"
+      >d</a
+      ><a name="2782"
+      > </a
+      ><a name="2783" href="ISLP.html#2744" class="Bound"
+      >g&#8243;</a
+      ><a name="2785"
+      > </a
+      ><a name="2786" href="ISLP.html#2739" class="Bound"
+      >g</a
+      ><a name="2787"
+      >
+</a
+      ><a name="2788" href="ISLP.html#2724" class="Function"
+      >transTm</a
+      ><a name="2795"
+      > </a
+      ><a name="2796" class="Symbol"
+      >=</a
+      ><a name="2797"
+      > </a
+      ><a name="2798" href="ISLP.html#2488" class="Function"
+      >graftTm&#8902;</a
+      ><a name="2806"
+      >
+
+</a
+      ><a name="2808" class="Comment"
+      >-- TODO: What is going on here?</a
+      ><a name="2839"
+      >
+</a
+      ><a name="2840" class="Comment"
+      >-- mutual</a
+      ><a name="2849"
+      >
+</a
+      ><a name="2850" class="Comment"
+      >--   mgraftTm : &#8704; {d g `d} &#8594; Tm&#8902; d zero `d &#8594; Tm `d g &#8594; Tm d g</a
+      ><a name="2911"
+      >
+</a
+      ><a name="2912" class="Comment"
+      >--   mgraftTm q (VAR i)       = VAR i</a
+      ><a name="2949"
+      >
+</a
+      ><a name="2950" class="Comment"
+      >--   mgraftTm q (MVAR q&#8242; p i) = UNBOX (monoTm refl&#8805; inf&#8805; (lookupTm q i))</a
+      ><a name="3022"
+      >
+</a
+      ><a name="3023" class="Comment"
+      >--                                    (MVAR (mgraftTm&#8902; (monoTm&#8902; (weak refl&#8805;) refl&#8805; q) q&#8242;)</a
+      ><a name="3112"
+      >
+</a
+      ><a name="3113" class="Comment"
+      >--                                          (mgraftTm&#8902; (monoTm&#8902; (weak refl&#8805;) refl&#8805; q) p) zero)</a
+      ><a name="3207"
+      >
+</a
+      ><a name="3208" class="Comment"
+      >--   mgraftTm q (LAM M)       = LAM (mgraftTm q M)</a
+      ><a name="3258"
+      >
+</a
+      ><a name="3259" class="Comment"
+      >--   mgraftTm q (APP M N)     = APP (mgraftTm q M) (mgraftTm q N)</a
+      ><a name="3324"
+      >
+</a
+      ><a name="3325" class="Comment"
+      >--   mgraftTm q (BOX M)       = BOX M</a
+      ><a name="3362"
+      >
+</a
+      ><a name="3363" class="Comment"
+      >--   mgraftTm {g = g} q (UNBOX M N) =</a
+      ><a name="3400"
+      >
+</a
+      ><a name="3401" class="Comment"
+      >--     UNBOX (mgraftTm q M)</a
+      ><a name="3428"
+      >
+</a
+      ><a name="3429" class="Comment"
+      >--       (mgraftTm (monoTm&#8902; (weak refl&#8805;) refl&#8805; q ,</a
+      ><a name="3479"
+      >
+</a
+      ><a name="3480" class="Comment"
+      >--        BOX {`g = g} (MVAR {!!} {!!} zero)) N)</a
+      ><a name="3528"
+      >
+</a
+      ><a name="3529" class="Comment"
+      >--</a
+      ><a name="3531"
+      >
+</a
+      ><a name="3532" class="Comment"
+      >--   mgraftTm&#8902; : &#8704; {d g `d n} &#8594; Tm&#8902; d zero `d &#8594; Tm&#8902; `d g n &#8594; Tm&#8902; d g n</a
+      ><a name="3602"
+      >
+</a
+      ><a name="3603" class="Comment"
+      >--   mgraftTm&#8902; q &#8709;       = &#8709;</a
+      ><a name="3631"
+      >
+</a
+      ><a name="3632" class="Comment"
+      >--   mgraftTm&#8902; q (x , M) = mgraftTm&#8902; q x , mgraftTm q M</a
+      ><a name="3687"
+      >
+</a
+      ><a name="3688" class="Comment"
+      >--</a
+      ><a name="3690"
+      >
+</a
+      ><a name="3691" class="Comment"
+      >-- mtransTm&#8902; : &#8704; {d d&#8242; d&#8243;} &#8594; Tm&#8902; d&#8243; zero d&#8242; &#8594; Tm&#8902; d&#8242; zero d &#8594; Tm&#8902; d&#8243; zero d</a
+      ><a name="3766"
+      >
+</a
+      ><a name="3767" class="Comment"
+      >-- mtransTm&#8902; = mgraftTm&#8902;</a
+      ><a name="3791"
+      >
+
+
+</a
+      ><a name="3794" class="Comment"
+      >-- Types and vectors of types.</a
+      ><a name="3824"
+      >
+
+</a
+      ><a name="3826" class="Keyword"
+      >mutual</a
+      ><a name="3832"
+      >
+  </a
+      ><a name="3835" class="Keyword"
+      >infixr</a
+      ><a name="3841"
+      > </a
+      ><a name="3842" class="Number"
+      >7</a
+      ><a name="3843"
+      > </a
+      ><a name="3844" href="ISLP.html#3892" class="InductiveConstructor Operator"
+      >_&#8658;_</a
+      ><a name="3847"
+      >
+  </a
+      ><a name="3850" class="Keyword"
+      >data</a
+      ><a name="3854"
+      > </a
+      ><a name="3855" href="ISLP.html#3855" class="Datatype"
+      >Ty</a
+      ><a name="3857"
+      > </a
+      ><a name="3858" class="Symbol"
+      >:</a
+      ><a name="3859"
+      > </a
+      ><a name="3860" class="PrimitiveType"
+      >Set</a
+      ><a name="3863"
+      > </a
+      ><a name="3864" class="Keyword"
+      >where</a
+      ><a name="3869"
+      >
+    </a
+      ><a name="3874" href="ISLP.html#3874" class="InductiveConstructor"
+      >&#8226;</a
+      ><a name="3875"
+      >        </a
+      ><a name="3883" class="Symbol"
+      >:</a
+      ><a name="3884"
+      > </a
+      ><a name="3885" href="ISLP.html#3855" class="Datatype"
+      >Ty</a
+      ><a name="3887"
+      >
+    </a
+      ><a name="3892" href="ISLP.html#3892" class="InductiveConstructor Operator"
+      >_&#8658;_</a
+      ><a name="3895"
+      >     </a
+      ><a name="3900" class="Symbol"
+      >:</a
+      ><a name="3901"
+      > </a
+      ><a name="3902" href="ISLP.html#3855" class="Datatype"
+      >Ty</a
+      ><a name="3904"
+      > </a
+      ><a name="3905" class="Symbol"
+      >&#8594;</a
+      ><a name="3906"
+      > </a
+      ><a name="3907" href="ISLP.html#3855" class="Datatype"
+      >Ty</a
+      ><a name="3909"
+      > </a
+      ><a name="3910" class="Symbol"
+      >&#8594;</a
+      ><a name="3911"
+      > </a
+      ><a name="3912" href="ISLP.html#3855" class="Datatype"
+      >Ty</a
+      ><a name="3914"
+      >
+    </a
+      ><a name="3919" href="ISLP.html#3919" class="InductiveConstructor Operator"
+      >[_&#8271;_&#8870;_]_</a
+      ><a name="3927"
+      > </a
+      ><a name="3928" class="Symbol"
+      >:</a
+      ><a name="3929"
+      > </a
+      ><a name="3930" class="Symbol"
+      >&#8704;</a
+      ><a name="3931"
+      > </a
+      ><a name="3932" class="Symbol"
+      >{</a
+      ><a name="3933" href="ISLP.html#3933" class="Bound"
+      >d</a
+      ><a name="3934"
+      > </a
+      ><a name="3935" href="ISLP.html#3935" class="Bound"
+      >g</a
+      ><a name="3936" class="Symbol"
+      >}</a
+      ><a name="3937"
+      > </a
+      ><a name="3938" class="Symbol"
+      >&#8594;</a
+      ><a name="3939"
+      > </a
+      ><a name="3940" href="ISLP.html#4255" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="3946"
+      > </a
+      ><a name="3947" href="ISLP.html#3933" class="Bound"
+      >d</a
+      ><a name="3948"
+      > </a
+      ><a name="3949" class="Symbol"
+      >&#8594;</a
+      ><a name="3950"
+      > </a
+      ><a name="3951" href="ISLP.html#4217" class="Function"
+      >Ty&#8902;</a
+      ><a name="3954"
+      > </a
+      ><a name="3955" href="ISLP.html#3935" class="Bound"
+      >g</a
+      ><a name="3956"
+      > </a
+      ><a name="3957" class="Symbol"
+      >&#8594;</a
+      ><a name="3958"
+      > </a
+      ><a name="3959" href="ISLP.html#77" class="Datatype"
+      >Tm</a
+      ><a name="3961"
+      > </a
+      ><a name="3962" href="ISLP.html#3933" class="Bound"
+      >d</a
+      ><a name="3963"
+      > </a
+      ><a name="3964" href="ISLP.html#3935" class="Bound"
+      >g</a
+      ><a name="3965"
+      > </a
+      ><a name="3966" class="Symbol"
+      >&#8594;</a
+      ><a name="3967"
+      > </a
+      ><a name="3968" href="ISLP.html#3855" class="Datatype"
+      >Ty</a
+      ><a name="3970"
+      > </a
+      ><a name="3971" class="Symbol"
+      >&#8594;</a
+      ><a name="3972"
+      > </a
+      ><a name="3973" href="ISLP.html#3855" class="Datatype"
+      >Ty</a
+      ><a name="3975"
+      >
+
+  </a
+      ><a name="3979" class="Keyword"
+      >record</a
+      ><a name="3985"
+      > </a
+      ><a name="3986" href="ISLP.html#3986" class="Record"
+      >BoxTy</a
+      ><a name="3991"
+      > </a
+      ><a name="3992" class="Symbol"
+      >:</a
+      ><a name="3993"
+      > </a
+      ><a name="3994" class="PrimitiveType"
+      >Set</a
+      ><a name="3997"
+      > </a
+      ><a name="3998" class="Keyword"
+      >where</a
+      ><a name="4003"
+      >
+    </a
+      ><a name="4008" class="Keyword"
+      >inductive</a
+      ><a name="4017"
+      >
+    </a
+      ><a name="4022" class="Keyword"
+      >constructor</a
+      ><a name="4033"
+      > </a
+      ><a name="4034" href="ISLP.html#4034" class="InductiveConstructor Operator"
+      >[_&#8271;_&#8870;_]_</a
+      ><a name="4042"
+      >
+    </a
+      ><a name="4047" class="Keyword"
+      >field</a
+      ><a name="4052"
+      >
+      </a
+      ><a name="4059" class="Symbol"
+      >{</a
+      ><a name="4060" href="ISLP.html#4060" class="Field"
+      >d</a
+      ><a name="4061" class="Symbol"
+      >}</a
+      ><a name="4062"
+      >           </a
+      ><a name="4073" class="Symbol"
+      >:</a
+      ><a name="4074"
+      > </a
+      ><a name="4075" href="Prelude.html#6297" class="Datatype"
+      >Nat</a
+      ><a name="4078"
+      >
+      </a
+      ><a name="4085" class="Symbol"
+      >{</a
+      ><a name="4086" href="ISLP.html#4086" class="Field"
+      >g</a
+      ><a name="4087" class="Symbol"
+      >}</a
+      ><a name="4088"
+      >           </a
+      ><a name="4099" class="Symbol"
+      >:</a
+      ><a name="4100"
+      > </a
+      ><a name="4101" href="Prelude.html#6297" class="Datatype"
+      >Nat</a
+      ><a name="4104"
+      >
+      </a
+      ><a name="4111" href="ISLP.html#4111" class="Field"
+      >BoxTy&#8594;BoxTy&#8902;</a
+      ><a name="4123"
+      > </a
+      ><a name="4124" class="Symbol"
+      >:</a
+      ><a name="4125"
+      > </a
+      ><a name="4126" href="ISLP.html#4255" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="4132"
+      > </a
+      ><a name="4133" href="ISLP.html#4060" class="Field"
+      >d</a
+      ><a name="4134"
+      >
+      </a
+      ><a name="4141" href="ISLP.html#4141" class="Field"
+      >BoxTy&#8594;Ty&#8902;</a
+      ><a name="4150"
+      >    </a
+      ><a name="4154" class="Symbol"
+      >:</a
+      ><a name="4155"
+      > </a
+      ><a name="4156" href="ISLP.html#4217" class="Function"
+      >Ty&#8902;</a
+      ><a name="4159"
+      > </a
+      ><a name="4160" href="ISLP.html#4086" class="Field"
+      >g</a
+      ><a name="4161"
+      >
+      </a
+      ><a name="4168" href="ISLP.html#4168" class="Field"
+      >BoxTy&#8594;Tm</a
+      ><a name="4176"
+      >     </a
+      ><a name="4181" class="Symbol"
+      >:</a
+      ><a name="4182"
+      > </a
+      ><a name="4183" href="ISLP.html#77" class="Datatype"
+      >Tm</a
+      ><a name="4185"
+      > </a
+      ><a name="4186" href="ISLP.html#4060" class="Field"
+      >d</a
+      ><a name="4187"
+      > </a
+      ><a name="4188" href="ISLP.html#4086" class="Field"
+      >g</a
+      ><a name="4189"
+      >
+      </a
+      ><a name="4196" href="ISLP.html#4196" class="Field"
+      >BoxTy&#8594;Ty</a
+      ><a name="4204"
+      >     </a
+      ><a name="4209" class="Symbol"
+      >:</a
+      ><a name="4210"
+      > </a
+      ><a name="4211" href="ISLP.html#3855" class="Datatype"
+      >Ty</a
+      ><a name="4213"
+      >
+
+  </a
+      ><a name="4217" href="ISLP.html#4217" class="Function"
+      >Ty&#8902;</a
+      ><a name="4220"
+      > </a
+      ><a name="4221" class="Symbol"
+      >:</a
+      ><a name="4222"
+      > </a
+      ><a name="4223" href="Prelude.html#6297" class="Datatype"
+      >Nat</a
+      ><a name="4226"
+      > </a
+      ><a name="4227" class="Symbol"
+      >&#8594;</a
+      ><a name="4228"
+      > </a
+      ><a name="4229" class="PrimitiveType"
+      >Set</a
+      ><a name="4232"
+      >
+  </a
+      ><a name="4235" href="ISLP.html#4217" class="Function"
+      >Ty&#8902;</a
+      ><a name="4238"
+      > </a
+      ><a name="4239" href="ISLP.html#4239" class="Bound"
+      >g</a
+      ><a name="4240"
+      > </a
+      ><a name="4241" class="Symbol"
+      >=</a
+      ><a name="4242"
+      > </a
+      ><a name="4243" href="PreludeVec.html#102" class="Datatype"
+      >Vec</a
+      ><a name="4246"
+      > </a
+      ><a name="4247" href="ISLP.html#3855" class="Datatype"
+      >Ty</a
+      ><a name="4249"
+      > </a
+      ><a name="4250" href="ISLP.html#4239" class="Bound"
+      >g</a
+      ><a name="4251"
+      >
+
+  </a
+      ><a name="4255" href="ISLP.html#4255" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="4261"
+      > </a
+      ><a name="4262" class="Symbol"
+      >:</a
+      ><a name="4263"
+      > </a
+      ><a name="4264" href="Prelude.html#6297" class="Datatype"
+      >Nat</a
+      ><a name="4267"
+      > </a
+      ><a name="4268" class="Symbol"
+      >&#8594;</a
+      ><a name="4269"
+      > </a
+      ><a name="4270" class="PrimitiveType"
+      >Set</a
+      ><a name="4273"
+      >
+  </a
+      ><a name="4276" href="ISLP.html#4255" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="4282"
+      > </a
+      ><a name="4283" href="ISLP.html#4283" class="Bound"
+      >d</a
+      ><a name="4284"
+      > </a
+      ><a name="4285" class="Symbol"
+      >=</a
+      ><a name="4286"
+      > </a
+      ><a name="4287" href="PreludeVec.html#102" class="Datatype"
+      >Vec</a
+      ><a name="4290"
+      > </a
+      ><a name="4291" href="ISLP.html#3986" class="Record"
+      >BoxTy</a
+      ><a name="4296"
+      > </a
+      ><a name="4297" href="ISLP.html#4283" class="Bound"
+      >d</a
+      ><a name="4298"
+      >
+</a
+      ><a name="4299" class="Keyword"
+      >open</a
+      ><a name="4303"
+      > </a
+      ><a name="4304" href="ISLP.html#3986" class="Module"
+      >BoxTy</a
+      ><a name="4309"
+      > </a
+      ><a name="4310" class="Keyword"
+      >public</a
+      ><a name="4316"
+      >
+</a
+      ></pre
+    ></body
+  ></html
+>
