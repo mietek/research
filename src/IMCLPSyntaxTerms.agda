@@ -43,6 +43,14 @@ mutual
             Δ ⁏ Γ ⊢⧆ x ∷ Ξ → Δ ⁏ Γ ⊢ M ∷ [ Φ ⊦ Q ] A →
             Δ ⁏ Γ ⊢⧆ x , M ∷ Ξ , [ Φ ⊦ Q ] A
 
+infix 3 _⊢⋆_∷_
+data _⊢⋆_∷_ {d g} : ∀ {n} → Cx d g → Tm⋆ d g n → Ty⋆ n → Set where
+ ∅   : ∀ {Δ Γ} →
+         Δ ⁏ Γ ⊢⋆ ∅ ∷ ∅
+ _,_ : ∀ {n Δ Γ x} {Ξ : Ty⋆ n} {M A} →
+         Δ ⁏ Γ ⊢⋆ x ∷ Ξ → Δ ⁏ Γ ⊢ M ∷ A →
+         Δ ⁏ Γ ⊢⋆ x , M ∷ Ξ , A
+
 mutual
   mono⊢ : ∀ {d g d′ g′} {Δ : BoxTy⋆ d} {Γ : Ty⋆ g} {Δ′ : BoxTy⋆ d′} {Γ′ : Ty⋆ g′} {M A z e} →
              Δ′ ⊇⟨ z ⟩ Δ → Γ′ ⊇⟨ e ⟩ Γ → Δ ⁏ Γ ⊢ M ∷ A → Δ′ ⁏ Γ′ ⊢ monoTm z e M ∷ A
@@ -57,3 +65,19 @@ mutual
                Δ′ ⊇⟨ z ⟩ Δ → Γ′ ⊇⟨ e ⟩ Γ → Δ ⁏ Γ ⊢⧆ x ∷ Ξ → Δ′ ⁏ Γ′ ⊢⧆ monoTm⋆ z e x ∷ Ξ
   mono⊢⧆ ζ η ∅       = ∅
   mono⊢⧆ ζ η (ξ , 𝒟) = mono⊢⧆ ζ η ξ , mono⊢ ζ η 𝒟
+
+mono⊢⋆ : ∀ {d g d′ g′ n} {Δ : BoxTy⋆ d} {Γ : Ty⋆ g} {Δ′ : BoxTy⋆ d′} {Γ′ : Ty⋆ g′} {x} {Ξ : Ty⋆ n} {z e} →
+            Δ′ ⊇⟨ z ⟩ Δ → Γ′ ⊇⟨ e ⟩ Γ → Δ ⁏ Γ ⊢⋆ x ∷ Ξ → Δ′ ⁏ Γ′ ⊢⋆ monoTm⋆ z e x ∷ Ξ
+mono⊢⋆ ζ η ∅       = ∅
+mono⊢⋆ ζ η (ξ , 𝒟) = mono⊢⋆ ζ η ξ , mono⊢ ζ η 𝒟
+
+refl⊢⋆ : ∀ {d g} {Δ : BoxTy⋆ d} {Γ : Ty⋆ g} → Δ ⁏ Γ ⊢⋆ reflTm⋆ ∷ Γ
+refl⊢⋆ {Γ = ∅}     = ∅
+refl⊢⋆ {Γ = Γ , A} = mono⊢⋆ refl⊇ (weak refl⊇) refl⊢⋆ , var zero
+
+-- TODO: What is going on here?
+-- mrefl⊢⋆ : ∀ {d g} {Δ : BoxTy⋆ d} {Γ : Ty⋆ g} → Δ ⁏ Γ ⊢⧆ {!!} ∷ Δ
+-- mrefl⊢⋆ {Δ = ∅}               = ∅
+-- mrefl⊢⋆ {Δ = Δ , [ Φ ⊦ M ] A} =
+--   mono⊢⧆ (weak refl⊇) refl⊇ mrefl⊢⋆ ,
+--   {!box (mvar ? ? zero)!}
