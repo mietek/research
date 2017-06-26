@@ -133,11 +133,13 @@ trans⊢⋆ = graft⊢⋆
 mutual
   mgraft⊢ : ∀ {Δ Γ Φ A} → Δ ⁏ ∅ ⊢⧆ Φ → Φ ⁏ Γ ⊢ A → Δ ⁏ Γ ⊢ A
   mgraft⊢ φ (var 𝒾)     = var 𝒾
-  mgraft⊢ φ (mvar ψ 𝒾)  = unbox (mono⊢ refl⊇ inf⊇ (mlookup⊢ φ 𝒾)) (mvar (mgraft⊢⋆ (mono⊢⧆ (weak refl⊇) refl⊇ φ) ψ) zero)
+  mgraft⊢ φ (mvar ψ 𝒾)  = unbox (mono⊢ refl⊇ inf⊇ (mlookup⊢ φ 𝒾))
+                                 (mvar (mgraft⊢⋆ (mono⊢⧆ (weak refl⊇) refl⊇ φ) ψ) zero)
   mgraft⊢ φ (lam 𝒟)     = lam (mgraft⊢ φ 𝒟)
   mgraft⊢ φ (app 𝒟 ℰ)   = app (mgraft⊢ φ 𝒟) (mgraft⊢ φ ℰ)
   mgraft⊢ φ (box 𝒟)     = box (mgraft⊢ φ 𝒟)
-  mgraft⊢ φ (unbox 𝒟 ℰ) = unbox (mgraft⊢ φ 𝒟) (mgraft⊢ (mono⊢⧆ (weak refl⊇) refl⊇ φ , box (mvar refl⊢⋆ zero)) ℰ)
+  mgraft⊢ φ (unbox 𝒟 ℰ) = unbox (mgraft⊢ φ 𝒟)
+                                 (mgraft⊢ (mono⊢⧆ (weak refl⊇) refl⊇ φ , box (mvar refl⊢⋆ zero)) ℰ)
 
   mgraft⊢⋆ : ∀ {Δ Γ Φ Ξ} → Δ ⁏ ∅ ⊢⧆ Φ → Φ ⁏ Γ ⊢⋆ Ξ → Δ ⁏ Γ ⊢⋆ Ξ
   mgraft⊢⋆ φ ∅       = ∅

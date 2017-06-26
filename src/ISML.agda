@@ -3,7 +3,7 @@ module ISML where
 open import Prelude public
 
 
--- Lists of types.
+-- Types and lists of types.
 
 module ISMLList where
   open import PreludeList public
@@ -31,7 +31,7 @@ module ISMLList where
   open BoxTy public
 
 
--- Vectors of types.
+-- Types and vectors of types.
 
 module ISMLVec where
   open import PreludeVec public
@@ -41,16 +41,16 @@ module ISMLVec where
     data Ty : Set where
       •      : Ty
       _⇒_   : Ty → Ty → Ty
-      [_⁏_]_ : ∀ {q p} → BoxTy⋆ q → Ty⋆ p → Ty → Ty
+      [_⁏_]_ : ∀ {d g} → BoxTy⋆ d → Ty⋆ g → Ty → Ty
 
     record BoxTy : Set where
       inductive
       constructor [_⁏_]_
       field
-        {q}           : Nat
-        {p}           : Nat
-        BoxTy→BoxTy⋆ : BoxTy⋆ q
-        BoxTy→Ty⋆    : Ty⋆ p
+        {d}           : Nat
+        {g}           : Nat
+        BoxTy→BoxTy⋆ : BoxTy⋆ d
+        BoxTy→Ty⋆    : Ty⋆ g
         BoxTy→Ty     : Ty
 
     Ty⋆ : Nat → Set

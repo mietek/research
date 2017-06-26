@@ -3,7 +3,7 @@ module ICML where
 open import Prelude public
 
 
--- Lists of types.
+-- Types and lists of types.
 
 module ICMLList where
   open import PreludeList public
@@ -29,7 +29,7 @@ module ICMLList where
   BoxTy⋆ = List BoxTy
 
 
--- Vectors of types.
+-- Types and vectors of types.
 
 module ICMLVec where
   open import PreludeVec public
@@ -39,7 +39,7 @@ module ICMLVec where
     data Ty : Set where
       •    : Ty
       _⇒_ : Ty → Ty → Ty
-      [_]_ : ∀ {p} → Ty⋆ p → Ty → Ty
+      [_]_ : ∀ {g} → Ty⋆ g → Ty → Ty
 
     Ty⋆ : Nat → Set
     Ty⋆ g = Vec Ty g
@@ -47,8 +47,8 @@ module ICMLVec where
   record BoxTy : Set where
     constructor [_]_
     field
-      {p}        : Nat
-      BoxTy→Ty⋆ : Ty⋆ p
+      {g}        : Nat
+      BoxTy→Ty⋆ : Ty⋆ g
       BoxTy→Ty  : Ty
   open BoxTy public
 

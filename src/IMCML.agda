@@ -3,7 +3,7 @@ module IMCML where
 open import Prelude public
 
 
--- Lists of types.
+-- Types and lists of types.
 
 module IMCMLList where
   open import PreludeList public
@@ -30,7 +30,7 @@ module IMCMLList where
   Ty⋆ = List Ty
 
 
--- Vectors of types.
+-- Types and vectors of types.
 
 module IMCMLVec where
   open import PreludeVec public
@@ -40,14 +40,14 @@ module IMCMLVec where
     data Ty : Set where
       •    : Ty
       _⇒_ : Ty → Ty → Ty
-      [_]_ : ∀ {q} → BoxTy⋆ q → Ty → Ty
+      [_]_ : ∀ {d} → BoxTy⋆ d → Ty → Ty
 
     record BoxTy : Set where
       inductive
       constructor [_]_
       field
-        {q}           : Nat
-        BoxTy→BoxTy⋆ : BoxTy⋆ q
+        {d}           : Nat
+        BoxTy→BoxTy⋆ : BoxTy⋆ d
         BoxTy→Ty     : Ty
 
     BoxTy⋆ : Nat → Set
