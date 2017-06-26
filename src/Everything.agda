@@ -52,4 +52,14 @@ import IMCMLSyntaxNoTerms
 import ISML
 import ISMLSyntaxNoTerms
 
--- TODO: ILP, ICLP, IMCLP, ISLP
+import ILP
+import ILPSyntaxTerms
+
+import ICLP
+import ICLPSyntaxTerms
+
+import IMCLP
+import IMCLPSyntaxTerms
+
+import ISLP
+import ISLPSyntaxTerms
