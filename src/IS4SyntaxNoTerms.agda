@@ -35,7 +35,8 @@ data _⊢_ : Cx → Ty → Set where
 
 infix 3 _⊢⧆_
 data _⊢⧆_ : Cx → BoxTy⋆ → Set where
-  ∅   : ∀ {Δ Γ}     → Δ ⁏ Γ ⊢⧆ ∅
+  ∅   : ∀ {Δ Γ} →
+          Δ ⁏ Γ ⊢⧆ ∅
   _,_ : ∀ {Δ Γ Ξ A} →
           Δ ⁏ Γ ⊢⧆ Ξ → Δ ⁏ Γ ⊢ □ A →
           Δ ⁏ Γ ⊢⧆ Ξ , □ A
