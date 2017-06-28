@@ -19,12 +19,11 @@ module IMCMLList where
       inductive
       constructor [_]_
       field
-        BoxTy→BoxTy⋆ : BoxTy⋆
-        BoxTy→Ty     : Ty
+        Δ : BoxTy⋆
+        A : Ty
 
     BoxTy⋆ : Set
     BoxTy⋆ = List BoxTy
-  open BoxTy public
 
   Ty⋆ : Set
   Ty⋆ = List Ty
@@ -46,13 +45,12 @@ module IMCMLVec where
       inductive
       constructor [_]_
       field
-        {d}           : Nat
-        BoxTy→BoxTy⋆ : BoxTy⋆ d
-        BoxTy→Ty     : Ty
+        {d} : Nat
+        Δ   : BoxTy⋆ d
+        A   : Ty
 
     BoxTy⋆ : Nat → Set
     BoxTy⋆ d = Vec BoxTy d
-  open BoxTy public
 
   Ty⋆ : Nat → Set
   Ty⋆ g = Vec Ty g

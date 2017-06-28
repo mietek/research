@@ -14,8 +14,7 @@ data Ty : Set where
 record BoxTy : Set where
   constructor □_
   field
-    BoxTy→Ty : Ty
-open BoxTy public
+    A : Ty
 
 
 -- Lists of types.

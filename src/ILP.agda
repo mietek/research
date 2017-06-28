@@ -82,13 +82,12 @@ mutual
     inductive
     constructor [_]_
     field
-      {d}       : Nat
-      BoxTy→Tm : Tm d zero
-      BoxTy→Ty : Ty
+      {d} : Nat
+      M   : Tm d zero
+      A   : Ty
 
   Ty⋆ : Nat → Set
   Ty⋆ g = Vec Ty g
 
   BoxTy⋆ : Nat → Set
   BoxTy⋆ d = Vec BoxTy d
-open BoxTy public

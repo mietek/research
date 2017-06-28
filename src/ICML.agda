@@ -21,9 +21,8 @@ module ICMLList where
   record BoxTy : Set where
     constructor [_]_
     field
-      BoxTy→Ty⋆ : Ty⋆
-      BoxTy→Ty  : Ty
-  open BoxTy public
+      Γ : Ty⋆
+      A : Ty
 
   BoxTy⋆ : Set
   BoxTy⋆ = List BoxTy
@@ -47,10 +46,9 @@ module ICMLVec where
   record BoxTy : Set where
     constructor [_]_
     field
-      {g}        : Nat
-      BoxTy→Ty⋆ : Ty⋆ g
-      BoxTy→Ty  : Ty
-  open BoxTy public
+      {g} : Nat
+      Γ   : Ty⋆ g
+      A   : Ty
 
   BoxTy⋆ : Nat → Set
   BoxTy⋆ d = Vec BoxTy d
