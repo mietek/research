@@ -1,0 +1,3867 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><title
+    >IPCSemanticsExperimental</title
+    ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta http-equiv="Content-Style-Type" content="text/css"
+     /><link href="Agda.css" rel="stylesheet" type="text/css"
+     /></head
+  ><body
+  ><pre
+    ><a name="1" class="Keyword"
+      >module</a
+      ><a name="7"
+      > </a
+      ><a name="8" href="IPCSemanticsExperimental.html#1" class="Module"
+      >IPCSemanticsExperimental</a
+      ><a name="32"
+      > </a
+      ><a name="33" class="Keyword"
+      >where</a
+      ><a name="38"
+      >
+
+</a
+      ><a name="40" class="Keyword"
+      >open</a
+      ><a name="44"
+      > </a
+      ><a name="45" class="Keyword"
+      >import</a
+      ><a name="51"
+      > </a
+      ><a name="52" href="IPC.html#1" class="Module"
+      >IPC</a
+      ><a name="55"
+      > </a
+      ><a name="56" class="Keyword"
+      >public</a
+      ><a name="62"
+      >
+
+
+</a
+      ><a name="65" class="Comment"
+      >-- Intuitionistic Kripke models.</a
+      ><a name="97"
+      >
+
+</a
+      ><a name="99" class="Keyword"
+      >record</a
+      ><a name="105"
+      > </a
+      ><a name="106" href="IPCSemanticsExperimental.html#106" class="Record"
+      >Model</a
+      ><a name="111"
+      > </a
+      ><a name="112" class="Symbol"
+      >:</a
+      ><a name="113"
+      > </a
+      ><a name="114" class="PrimitiveType"
+      >Set&#8321;</a
+      ><a name="118"
+      > </a
+      ><a name="119" class="Keyword"
+      >where</a
+      ><a name="124"
+      >
+  </a
+      ><a name="127" class="Keyword"
+      >field</a
+      ><a name="132"
+      >
+    </a
+      ><a name="137" href="IPCSemanticsExperimental.html#137" class="Field"
+      >World</a
+      ><a name="142"
+      >       </a
+      ><a name="149" class="Symbol"
+      >:</a
+      ><a name="150"
+      > </a
+      ><a name="151" class="PrimitiveType"
+      >Set</a
+      ><a name="154"
+      >
+    </a
+      ><a name="159" href="IPCSemanticsExperimental.html#159" class="Field Operator"
+      >_&#8850;_</a
+      ><a name="162"
+      >         </a
+      ><a name="171" class="Symbol"
+      >:</a
+      ><a name="172"
+      > </a
+      ><a name="173" href="IPCSemanticsExperimental.html#137" class="Field"
+      >World</a
+      ><a name="178"
+      > </a
+      ><a name="179" class="Symbol"
+      >&#8594;</a
+      ><a name="180"
+      > </a
+      ><a name="181" href="IPCSemanticsExperimental.html#137" class="Field"
+      >World</a
+      ><a name="186"
+      > </a
+      ><a name="187" class="Symbol"
+      >&#8594;</a
+      ><a name="188"
+      > </a
+      ><a name="189" class="PrimitiveType"
+      >Set</a
+      ><a name="192"
+      >
+    </a
+      ><a name="197" href="IPCSemanticsExperimental.html#197" class="Field"
+      >refl&#8850;</a
+      ><a name="202"
+      >       </a
+      ><a name="209" class="Symbol"
+      >:</a
+      ><a name="210"
+      > </a
+      ><a name="211" class="Symbol"
+      >&#8704;</a
+      ><a name="212"
+      > </a
+      ><a name="213" class="Symbol"
+      >{</a
+      ><a name="214" href="IPCSemanticsExperimental.html#214" class="Bound"
+      >w</a
+      ><a name="215" class="Symbol"
+      >}</a
+      ><a name="216"
+      > </a
+      ><a name="217" class="Symbol"
+      >&#8594;</a
+      ><a name="218"
+      > </a
+      ><a name="219" href="IPCSemanticsExperimental.html#214" class="Bound"
+      >w</a
+      ><a name="220"
+      > </a
+      ><a name="221" href="IPCSemanticsExperimental.html#159" class="Field Operator"
+      >&#8850;</a
+      ><a name="222"
+      > </a
+      ><a name="223" href="IPCSemanticsExperimental.html#214" class="Bound"
+      >w</a
+      ><a name="224"
+      >
+    </a
+      ><a name="229" href="IPCSemanticsExperimental.html#229" class="Field"
+      >trans&#8850;</a
+      ><a name="235"
+      >      </a
+      ><a name="241" class="Symbol"
+      >:</a
+      ><a name="242"
+      > </a
+      ><a name="243" class="Symbol"
+      >&#8704;</a
+      ><a name="244"
+      > </a
+      ><a name="245" class="Symbol"
+      >{</a
+      ><a name="246" href="IPCSemanticsExperimental.html#246" class="Bound"
+      >w</a
+      ><a name="247"
+      > </a
+      ><a name="248" href="IPCSemanticsExperimental.html#248" class="Bound"
+      >w&#8242;</a
+      ><a name="250"
+      > </a
+      ><a name="251" href="IPCSemanticsExperimental.html#251" class="Bound"
+      >w&#8243;</a
+      ><a name="253" class="Symbol"
+      >}</a
+      ><a name="254"
+      > </a
+      ><a name="255" class="Symbol"
+      >&#8594;</a
+      ><a name="256"
+      > </a
+      ><a name="257" href="IPCSemanticsExperimental.html#251" class="Bound"
+      >w&#8243;</a
+      ><a name="259"
+      > </a
+      ><a name="260" href="IPCSemanticsExperimental.html#159" class="Field Operator"
+      >&#8850;</a
+      ><a name="261"
+      > </a
+      ><a name="262" href="IPCSemanticsExperimental.html#248" class="Bound"
+      >w&#8242;</a
+      ><a name="264"
+      > </a
+      ><a name="265" class="Symbol"
+      >&#8594;</a
+      ><a name="266"
+      > </a
+      ><a name="267" href="IPCSemanticsExperimental.html#248" class="Bound"
+      >w&#8242;</a
+      ><a name="269"
+      > </a
+      ><a name="270" href="IPCSemanticsExperimental.html#159" class="Field Operator"
+      >&#8850;</a
+      ><a name="271"
+      > </a
+      ><a name="272" href="IPCSemanticsExperimental.html#246" class="Bound"
+      >w</a
+      ><a name="273"
+      > </a
+      ><a name="274" class="Symbol"
+      >&#8594;</a
+      ><a name="275"
+      > </a
+      ><a name="276" href="IPCSemanticsExperimental.html#251" class="Bound"
+      >w&#8243;</a
+      ><a name="278"
+      > </a
+      ><a name="279" href="IPCSemanticsExperimental.html#159" class="Field Operator"
+      >&#8850;</a
+      ><a name="280"
+      > </a
+      ><a name="281" href="IPCSemanticsExperimental.html#246" class="Bound"
+      >w</a
+      ><a name="282"
+      >
+    </a
+      ><a name="287" href="IPCSemanticsExperimental.html#287" class="Field"
+      >idtrans&#8850;&#8321;</a
+      ><a name="296"
+      >   </a
+      ><a name="299" class="Symbol"
+      >:</a
+      ><a name="300"
+      > </a
+      ><a name="301" class="Symbol"
+      >&#8704;</a
+      ><a name="302"
+      > </a
+      ><a name="303" class="Symbol"
+      >{</a
+      ><a name="304" href="IPCSemanticsExperimental.html#304" class="Bound"
+      >w</a
+      ><a name="305"
+      > </a
+      ><a name="306" href="IPCSemanticsExperimental.html#306" class="Bound"
+      >w&#8242;</a
+      ><a name="308" class="Symbol"
+      >}</a
+      ><a name="309"
+      > </a
+      ><a name="310" class="Symbol"
+      >&#8594;</a
+      ><a name="311"
+      > </a
+      ><a name="312" class="Symbol"
+      >(</a
+      ><a name="313" href="IPCSemanticsExperimental.html#313" class="Bound"
+      >&#951;</a
+      ><a name="314"
+      > </a
+      ><a name="315" class="Symbol"
+      >:</a
+      ><a name="316"
+      > </a
+      ><a name="317" href="IPCSemanticsExperimental.html#306" class="Bound"
+      >w&#8242;</a
+      ><a name="319"
+      > </a
+      ><a name="320" href="IPCSemanticsExperimental.html#159" class="Field Operator"
+      >&#8850;</a
+      ><a name="321"
+      > </a
+      ><a name="322" href="IPCSemanticsExperimental.html#304" class="Bound"
+      >w</a
+      ><a name="323" class="Symbol"
+      >)</a
+      ><a name="324"
+      > </a
+      ><a name="325" class="Symbol"
+      >&#8594;</a
+      ><a name="326"
+      > </a
+      ><a name="327" href="IPCSemanticsExperimental.html#229" class="Field"
+      >trans&#8850;</a
+      ><a name="333"
+      > </a
+      ><a name="334" href="IPCSemanticsExperimental.html#197" class="Field"
+      >refl&#8850;</a
+      ><a name="339"
+      > </a
+      ><a name="340" href="IPCSemanticsExperimental.html#313" class="Bound"
+      >&#951;</a
+      ><a name="341"
+      > </a
+      ><a name="342" href="Prelude.html#805" class="Datatype Operator"
+      >&#8801;</a
+      ><a name="343"
+      > </a
+      ><a name="344" href="IPCSemanticsExperimental.html#313" class="Bound"
+      >&#951;</a
+      ><a name="345"
+      >
+    </a
+      ><a name="350" href="IPCSemanticsExperimental.html#350" class="Field"
+      >idtrans&#8850;&#8322;</a
+      ><a name="359"
+      >   </a
+      ><a name="362" class="Symbol"
+      >:</a
+      ><a name="363"
+      > </a
+      ><a name="364" class="Symbol"
+      >&#8704;</a
+      ><a name="365"
+      > </a
+      ><a name="366" class="Symbol"
+      >{</a
+      ><a name="367" href="IPCSemanticsExperimental.html#367" class="Bound"
+      >w</a
+      ><a name="368"
+      > </a
+      ><a name="369" href="IPCSemanticsExperimental.html#369" class="Bound"
+      >w&#8242;</a
+      ><a name="371" class="Symbol"
+      >}</a
+      ><a name="372"
+      > </a
+      ><a name="373" class="Symbol"
+      >&#8594;</a
+      ><a name="374"
+      > </a
+      ><a name="375" class="Symbol"
+      >(</a
+      ><a name="376" href="IPCSemanticsExperimental.html#376" class="Bound"
+      >&#951;</a
+      ><a name="377"
+      > </a
+      ><a name="378" class="Symbol"
+      >:</a
+      ><a name="379"
+      > </a
+      ><a name="380" href="IPCSemanticsExperimental.html#369" class="Bound"
+      >w&#8242;</a
+      ><a name="382"
+      > </a
+      ><a name="383" href="IPCSemanticsExperimental.html#159" class="Field Operator"
+      >&#8850;</a
+      ><a name="384"
+      > </a
+      ><a name="385" href="IPCSemanticsExperimental.html#367" class="Bound"
+      >w</a
+      ><a name="386" class="Symbol"
+      >)</a
+      ><a name="387"
+      > </a
+      ><a name="388" class="Symbol"
+      >&#8594;</a
+      ><a name="389"
+      > </a
+      ><a name="390" href="IPCSemanticsExperimental.html#229" class="Field"
+      >trans&#8850;</a
+      ><a name="396"
+      > </a
+      ><a name="397" href="IPCSemanticsExperimental.html#376" class="Bound"
+      >&#951;</a
+      ><a name="398"
+      > </a
+      ><a name="399" href="IPCSemanticsExperimental.html#197" class="Field"
+      >refl&#8850;</a
+      ><a name="404"
+      > </a
+      ><a name="405" href="Prelude.html#805" class="Datatype Operator"
+      >&#8801;</a
+      ><a name="406"
+      > </a
+      ><a name="407" href="IPCSemanticsExperimental.html#376" class="Bound"
+      >&#951;</a
+      ><a name="408"
+      >
+    </a
+      ><a name="413" href="IPCSemanticsExperimental.html#413" class="Field"
+      >assoctrans&#8850;</a
+      ><a name="424"
+      > </a
+      ><a name="425" class="Symbol"
+      >:</a
+      ><a name="426"
+      > </a
+      ><a name="427" class="Symbol"
+      >&#8704;</a
+      ><a name="428"
+      > </a
+      ><a name="429" class="Symbol"
+      >{</a
+      ><a name="430" href="IPCSemanticsExperimental.html#430" class="Bound"
+      >w</a
+      ><a name="431"
+      > </a
+      ><a name="432" href="IPCSemanticsExperimental.html#432" class="Bound"
+      >w&#8242;</a
+      ><a name="434"
+      > </a
+      ><a name="435" href="IPCSemanticsExperimental.html#435" class="Bound"
+      >w&#8243;</a
+      ><a name="437"
+      > </a
+      ><a name="438" href="IPCSemanticsExperimental.html#438" class="Bound"
+      >w&#8244;</a
+      ><a name="440" class="Symbol"
+      >}</a
+      ><a name="441"
+      > </a
+      ><a name="442" class="Symbol"
+      >&#8594;</a
+      ><a name="443"
+      > </a
+      ><a name="444" class="Symbol"
+      >(</a
+      ><a name="445" href="IPCSemanticsExperimental.html#445" class="Bound"
+      >&#951;&#8243;</a
+      ><a name="447"
+      > </a
+      ><a name="448" class="Symbol"
+      >:</a
+      ><a name="449"
+      > </a
+      ><a name="450" href="IPCSemanticsExperimental.html#438" class="Bound"
+      >w&#8244;</a
+      ><a name="452"
+      > </a
+      ><a name="453" href="IPCSemanticsExperimental.html#159" class="Field Operator"
+      >&#8850;</a
+      ><a name="454"
+      > </a
+      ><a name="455" href="IPCSemanticsExperimental.html#435" class="Bound"
+      >w&#8243;</a
+      ><a name="457" class="Symbol"
+      >)</a
+      ><a name="458"
+      > </a
+      ><a name="459" class="Symbol"
+      >(</a
+      ><a name="460" href="IPCSemanticsExperimental.html#460" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="462"
+      > </a
+      ><a name="463" class="Symbol"
+      >:</a
+      ><a name="464"
+      > </a
+      ><a name="465" href="IPCSemanticsExperimental.html#435" class="Bound"
+      >w&#8243;</a
+      ><a name="467"
+      > </a
+      ><a name="468" href="IPCSemanticsExperimental.html#159" class="Field Operator"
+      >&#8850;</a
+      ><a name="469"
+      > </a
+      ><a name="470" href="IPCSemanticsExperimental.html#432" class="Bound"
+      >w&#8242;</a
+      ><a name="472" class="Symbol"
+      >)</a
+      ><a name="473"
+      > </a
+      ><a name="474" class="Symbol"
+      >(</a
+      ><a name="475" href="IPCSemanticsExperimental.html#475" class="Bound"
+      >&#951;</a
+      ><a name="476"
+      > </a
+      ><a name="477" class="Symbol"
+      >:</a
+      ><a name="478"
+      > </a
+      ><a name="479" href="IPCSemanticsExperimental.html#432" class="Bound"
+      >w&#8242;</a
+      ><a name="481"
+      > </a
+      ><a name="482" href="IPCSemanticsExperimental.html#159" class="Field Operator"
+      >&#8850;</a
+      ><a name="483"
+      > </a
+      ><a name="484" href="IPCSemanticsExperimental.html#430" class="Bound"
+      >w</a
+      ><a name="485" class="Symbol"
+      >)</a
+      ><a name="486"
+      > </a
+      ><a name="487" class="Symbol"
+      >&#8594;</a
+      ><a name="488"
+      >
+                    </a
+      ><a name="509" href="IPCSemanticsExperimental.html#229" class="Field"
+      >trans&#8850;</a
+      ><a name="515"
+      > </a
+      ><a name="516" href="IPCSemanticsExperimental.html#445" class="Bound"
+      >&#951;&#8243;</a
+      ><a name="518"
+      > </a
+      ><a name="519" class="Symbol"
+      >(</a
+      ><a name="520" href="IPCSemanticsExperimental.html#229" class="Field"
+      >trans&#8850;</a
+      ><a name="526"
+      > </a
+      ><a name="527" href="IPCSemanticsExperimental.html#460" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="529"
+      > </a
+      ><a name="530" href="IPCSemanticsExperimental.html#475" class="Bound"
+      >&#951;</a
+      ><a name="531" class="Symbol"
+      >)</a
+      ><a name="532"
+      > </a
+      ><a name="533" href="Prelude.html#805" class="Datatype Operator"
+      >&#8801;</a
+      ><a name="534"
+      > </a
+      ><a name="535" href="IPCSemanticsExperimental.html#229" class="Field"
+      >trans&#8850;</a
+      ><a name="541"
+      > </a
+      ><a name="542" class="Symbol"
+      >(</a
+      ><a name="543" href="IPCSemanticsExperimental.html#229" class="Field"
+      >trans&#8850;</a
+      ><a name="549"
+      > </a
+      ><a name="550" href="IPCSemanticsExperimental.html#445" class="Bound"
+      >&#951;&#8243;</a
+      ><a name="552"
+      > </a
+      ><a name="553" href="IPCSemanticsExperimental.html#460" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="555" class="Symbol"
+      >)</a
+      ><a name="556"
+      > </a
+      ><a name="557" href="IPCSemanticsExperimental.html#475" class="Bound"
+      >&#951;</a
+      ><a name="558"
+      >
+    </a
+      ><a name="563" href="IPCSemanticsExperimental.html#563" class="Field"
+      >G</a
+      ><a name="564"
+      >           </a
+      ><a name="575" class="Symbol"
+      >:</a
+      ><a name="576"
+      > </a
+      ><a name="577" href="IPCSemanticsExperimental.html#137" class="Field"
+      >World</a
+      ><a name="582"
+      > </a
+      ><a name="583" class="Symbol"
+      >&#8594;</a
+      ><a name="584"
+      > </a
+      ><a name="585" class="PrimitiveType"
+      >Set</a
+      ><a name="588"
+      >
+    </a
+      ><a name="593" href="IPCSemanticsExperimental.html#593" class="Field"
+      >monoG</a
+      ><a name="598"
+      >       </a
+      ><a name="605" class="Symbol"
+      >:</a
+      ><a name="606"
+      > </a
+      ><a name="607" class="Symbol"
+      >&#8704;</a
+      ><a name="608"
+      > </a
+      ><a name="609" class="Symbol"
+      >{</a
+      ><a name="610" href="IPCSemanticsExperimental.html#610" class="Bound"
+      >w</a
+      ><a name="611"
+      > </a
+      ><a name="612" href="IPCSemanticsExperimental.html#612" class="Bound"
+      >w&#8242;</a
+      ><a name="614" class="Symbol"
+      >}</a
+      ><a name="615"
+      > </a
+      ><a name="616" class="Symbol"
+      >&#8594;</a
+      ><a name="617"
+      > </a
+      ><a name="618" href="IPCSemanticsExperimental.html#612" class="Bound"
+      >w&#8242;</a
+      ><a name="620"
+      > </a
+      ><a name="621" href="IPCSemanticsExperimental.html#159" class="Field Operator"
+      >&#8850;</a
+      ><a name="622"
+      > </a
+      ><a name="623" href="IPCSemanticsExperimental.html#610" class="Bound"
+      >w</a
+      ><a name="624"
+      > </a
+      ><a name="625" class="Symbol"
+      >&#8594;</a
+      ><a name="626"
+      > </a
+      ><a name="627" href="IPCSemanticsExperimental.html#563" class="Field"
+      >G</a
+      ><a name="628"
+      > </a
+      ><a name="629" href="IPCSemanticsExperimental.html#610" class="Bound"
+      >w</a
+      ><a name="630"
+      > </a
+      ><a name="631" class="Symbol"
+      >&#8594;</a
+      ><a name="632"
+      > </a
+      ><a name="633" href="IPCSemanticsExperimental.html#563" class="Field"
+      >G</a
+      ><a name="634"
+      > </a
+      ><a name="635" href="IPCSemanticsExperimental.html#612" class="Bound"
+      >w&#8242;</a
+      ><a name="637"
+      >
+    </a
+      ><a name="642" href="IPCSemanticsExperimental.html#642" class="Field"
+      >idmonoG</a
+      ><a name="649"
+      >     </a
+      ><a name="654" class="Symbol"
+      >:</a
+      ><a name="655"
+      > </a
+      ><a name="656" class="Symbol"
+      >&#8704;</a
+      ><a name="657"
+      > </a
+      ><a name="658" class="Symbol"
+      >{</a
+      ><a name="659" href="IPCSemanticsExperimental.html#659" class="Bound"
+      >w</a
+      ><a name="660" class="Symbol"
+      >}</a
+      ><a name="661"
+      > </a
+      ><a name="662" class="Symbol"
+      >&#8594;</a
+      ><a name="663"
+      > </a
+      ><a name="664" class="Symbol"
+      >(</a
+      ><a name="665" href="IPCSemanticsExperimental.html#665" class="Bound"
+      >a</a
+      ><a name="666"
+      > </a
+      ><a name="667" class="Symbol"
+      >:</a
+      ><a name="668"
+      > </a
+      ><a name="669" href="IPCSemanticsExperimental.html#563" class="Field"
+      >G</a
+      ><a name="670"
+      > </a
+      ><a name="671" href="IPCSemanticsExperimental.html#659" class="Bound"
+      >w</a
+      ><a name="672" class="Symbol"
+      >)</a
+      ><a name="673"
+      > </a
+      ><a name="674" class="Symbol"
+      >&#8594;</a
+      ><a name="675"
+      > </a
+      ><a name="676" href="IPCSemanticsExperimental.html#593" class="Field"
+      >monoG</a
+      ><a name="681"
+      > </a
+      ><a name="682" href="IPCSemanticsExperimental.html#197" class="Field"
+      >refl&#8850;</a
+      ><a name="687"
+      > </a
+      ><a name="688" href="IPCSemanticsExperimental.html#665" class="Bound"
+      >a</a
+      ><a name="689"
+      > </a
+      ><a name="690" href="Prelude.html#805" class="Datatype Operator"
+      >&#8801;</a
+      ><a name="691"
+      > </a
+      ><a name="692" href="IPCSemanticsExperimental.html#665" class="Bound"
+      >a</a
+      ><a name="693"
+      >
+    </a
+      ><a name="698" href="IPCSemanticsExperimental.html#698" class="Field"
+      >assocmonoG</a
+      ><a name="708"
+      >  </a
+      ><a name="710" class="Symbol"
+      >:</a
+      ><a name="711"
+      > </a
+      ><a name="712" class="Symbol"
+      >&#8704;</a
+      ><a name="713"
+      > </a
+      ><a name="714" class="Symbol"
+      >{</a
+      ><a name="715" href="IPCSemanticsExperimental.html#715" class="Bound"
+      >w</a
+      ><a name="716"
+      > </a
+      ><a name="717" href="IPCSemanticsExperimental.html#717" class="Bound"
+      >w&#8242;</a
+      ><a name="719"
+      > </a
+      ><a name="720" href="IPCSemanticsExperimental.html#720" class="Bound"
+      >w&#8243;</a
+      ><a name="722" class="Symbol"
+      >}</a
+      ><a name="723"
+      > </a
+      ><a name="724" class="Symbol"
+      >&#8594;</a
+      ><a name="725"
+      > </a
+      ><a name="726" class="Symbol"
+      >(</a
+      ><a name="727" href="IPCSemanticsExperimental.html#727" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="729"
+      > </a
+      ><a name="730" class="Symbol"
+      >:</a
+      ><a name="731"
+      > </a
+      ><a name="732" href="IPCSemanticsExperimental.html#720" class="Bound"
+      >w&#8243;</a
+      ><a name="734"
+      > </a
+      ><a name="735" href="IPCSemanticsExperimental.html#159" class="Field Operator"
+      >&#8850;</a
+      ><a name="736"
+      > </a
+      ><a name="737" href="IPCSemanticsExperimental.html#717" class="Bound"
+      >w&#8242;</a
+      ><a name="739" class="Symbol"
+      >)</a
+      ><a name="740"
+      > </a
+      ><a name="741" class="Symbol"
+      >(</a
+      ><a name="742" href="IPCSemanticsExperimental.html#742" class="Bound"
+      >&#951;</a
+      ><a name="743"
+      > </a
+      ><a name="744" class="Symbol"
+      >:</a
+      ><a name="745"
+      > </a
+      ><a name="746" href="IPCSemanticsExperimental.html#717" class="Bound"
+      >w&#8242;</a
+      ><a name="748"
+      > </a
+      ><a name="749" href="IPCSemanticsExperimental.html#159" class="Field Operator"
+      >&#8850;</a
+      ><a name="750"
+      > </a
+      ><a name="751" href="IPCSemanticsExperimental.html#715" class="Bound"
+      >w</a
+      ><a name="752" class="Symbol"
+      >)</a
+      ><a name="753"
+      > </a
+      ><a name="754" class="Symbol"
+      >(</a
+      ><a name="755" href="IPCSemanticsExperimental.html#755" class="Bound"
+      >a</a
+      ><a name="756"
+      > </a
+      ><a name="757" class="Symbol"
+      >:</a
+      ><a name="758"
+      > </a
+      ><a name="759" href="IPCSemanticsExperimental.html#563" class="Field"
+      >G</a
+      ><a name="760"
+      > </a
+      ><a name="761" href="IPCSemanticsExperimental.html#715" class="Bound"
+      >w</a
+      ><a name="762" class="Symbol"
+      >)</a
+      ><a name="763"
+      > </a
+      ><a name="764" class="Symbol"
+      >&#8594;</a
+      ><a name="765"
+      >
+                    </a
+      ><a name="786" href="IPCSemanticsExperimental.html#593" class="Field"
+      >monoG</a
+      ><a name="791"
+      > </a
+      ><a name="792" href="IPCSemanticsExperimental.html#727" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="794"
+      > </a
+      ><a name="795" class="Symbol"
+      >(</a
+      ><a name="796" href="IPCSemanticsExperimental.html#593" class="Field"
+      >monoG</a
+      ><a name="801"
+      > </a
+      ><a name="802" href="IPCSemanticsExperimental.html#742" class="Bound"
+      >&#951;</a
+      ><a name="803"
+      > </a
+      ><a name="804" href="IPCSemanticsExperimental.html#755" class="Bound"
+      >a</a
+      ><a name="805" class="Symbol"
+      >)</a
+      ><a name="806"
+      > </a
+      ><a name="807" href="Prelude.html#805" class="Datatype Operator"
+      >&#8801;</a
+      ><a name="808"
+      > </a
+      ><a name="809" href="IPCSemanticsExperimental.html#593" class="Field"
+      >monoG</a
+      ><a name="814"
+      > </a
+      ><a name="815" class="Symbol"
+      >(</a
+      ><a name="816" href="IPCSemanticsExperimental.html#229" class="Field"
+      >trans&#8850;</a
+      ><a name="822"
+      > </a
+      ><a name="823" href="IPCSemanticsExperimental.html#727" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="825"
+      > </a
+      ><a name="826" href="IPCSemanticsExperimental.html#742" class="Bound"
+      >&#951;</a
+      ><a name="827" class="Symbol"
+      >)</a
+      ><a name="828"
+      > </a
+      ><a name="829" href="IPCSemanticsExperimental.html#755" class="Bound"
+      >a</a
+      ><a name="830"
+      >
+</a
+      ><a name="831" class="Keyword"
+      >open</a
+      ><a name="835"
+      > </a
+      ><a name="836" href="IPCSemanticsExperimental.html#106" class="Module"
+      >Model</a
+      ><a name="841"
+      > </a
+      ><a name="842" class="Symbol"
+      >{{&#8230;}}</a
+      ><a name="847"
+      > </a
+      ><a name="848" class="Keyword"
+      >public</a
+      ><a name="854"
+      >
+
+
+</a
+      ><a name="857" class="Comment"
+      >-- Values.</a
+      ><a name="867"
+      >
+
+</a
+      ><a name="869" class="Keyword"
+      >infix</a
+      ><a name="874"
+      > </a
+      ><a name="875" class="Number"
+      >3</a
+      ><a name="876"
+      > </a
+      ><a name="877" href="IPCSemanticsExperimental.html#881" class="Function Operator"
+      >_&#8873;_</a
+      ><a name="880"
+      >
+</a
+      ><a name="881" href="IPCSemanticsExperimental.html#881" class="Function Operator"
+      >_&#8873;_</a
+      ><a name="884"
+      > </a
+      ><a name="885" class="Symbol"
+      >:</a
+      ><a name="886"
+      > </a
+      ><a name="887" class="Symbol"
+      >&#8704;</a
+      ><a name="888"
+      > </a
+      ><a name="889" class="Symbol"
+      >{{</a
+      ><a name="891" href="IPCSemanticsExperimental.html#891" class="Bound"
+      >_</a
+      ><a name="892"
+      > </a
+      ><a name="893" class="Symbol"
+      >:</a
+      ><a name="894"
+      > </a
+      ><a name="895" href="IPCSemanticsExperimental.html#106" class="Record"
+      >Model</a
+      ><a name="900" class="Symbol"
+      >}}</a
+      ><a name="902"
+      > </a
+      ><a name="903" class="Symbol"
+      >&#8594;</a
+      ><a name="904"
+      > </a
+      ><a name="905" href="IPCSemanticsExperimental.html#137" class="Field"
+      >World</a
+      ><a name="910"
+      > </a
+      ><a name="911" class="Symbol"
+      >&#8594;</a
+      ><a name="912"
+      > </a
+      ><a name="913" href="IPC.html#77" class="Datatype"
+      >Ty</a
+      ><a name="915"
+      > </a
+      ><a name="916" class="Symbol"
+      >&#8594;</a
+      ><a name="917"
+      > </a
+      ><a name="918" class="PrimitiveType"
+      >Set</a
+      ><a name="921"
+      >
+</a
+      ><a name="922" href="IPCSemanticsExperimental.html#922" class="Bound"
+      >w</a
+      ><a name="923"
+      > </a
+      ><a name="924" href="IPCSemanticsExperimental.html#881" class="Function Operator"
+      >&#8873;</a
+      ><a name="925"
+      > </a
+      ><a name="926" href="IPC.html#94" class="InductiveConstructor"
+      >&#8226;</a
+      ><a name="927"
+      >      </a
+      ><a name="933" class="Symbol"
+      >=</a
+      ><a name="934"
+      > </a
+      ><a name="935" href="IPCSemanticsExperimental.html#563" class="Field"
+      >G</a
+      ><a name="936"
+      > </a
+      ><a name="937" href="IPCSemanticsExperimental.html#922" class="Bound"
+      >w</a
+      ><a name="938"
+      >
+</a
+      ><a name="939" href="IPCSemanticsExperimental.html#939" class="Bound"
+      >w</a
+      ><a name="940"
+      > </a
+      ><a name="941" href="IPCSemanticsExperimental.html#881" class="Function Operator"
+      >&#8873;</a
+      ><a name="942"
+      > </a
+      ><a name="943" href="IPCSemanticsExperimental.html#943" class="Bound"
+      >A</a
+      ><a name="944"
+      > </a
+      ><a name="945" href="IPC.html#106" class="InductiveConstructor Operator"
+      >&#8658;</a
+      ><a name="946"
+      > </a
+      ><a name="947" href="IPCSemanticsExperimental.html#947" class="Bound"
+      >B</a
+      ><a name="948"
+      > </a
+      ><a name="949" class="Symbol"
+      >=</a
+      ><a name="950"
+      > </a
+      ><a name="951" class="Symbol"
+      >&#8704;</a
+      ><a name="952"
+      > </a
+      ><a name="953" class="Symbol"
+      >{</a
+      ><a name="954" href="IPCSemanticsExperimental.html#954" class="Bound"
+      >w&#8242;</a
+      ><a name="956" class="Symbol"
+      >}</a
+      ><a name="957"
+      > </a
+      ><a name="958" class="Symbol"
+      >&#8594;</a
+      ><a name="959"
+      > </a
+      ><a name="960" href="IPCSemanticsExperimental.html#954" class="Bound"
+      >w&#8242;</a
+      ><a name="962"
+      > </a
+      ><a name="963" href="IPCSemanticsExperimental.html#159" class="Field Operator"
+      >&#8850;</a
+      ><a name="964"
+      > </a
+      ><a name="965" href="IPCSemanticsExperimental.html#939" class="Bound"
+      >w</a
+      ><a name="966"
+      > </a
+      ><a name="967" class="Symbol"
+      >&#8594;</a
+      ><a name="968"
+      > </a
+      ><a name="969" href="IPCSemanticsExperimental.html#954" class="Bound"
+      >w&#8242;</a
+      ><a name="971"
+      > </a
+      ><a name="972" href="IPCSemanticsExperimental.html#881" class="Function Operator"
+      >&#8873;</a
+      ><a name="973"
+      > </a
+      ><a name="974" href="IPCSemanticsExperimental.html#943" class="Bound"
+      >A</a
+      ><a name="975"
+      > </a
+      ><a name="976" class="Symbol"
+      >&#8594;</a
+      ><a name="977"
+      > </a
+      ><a name="978" href="IPCSemanticsExperimental.html#954" class="Bound"
+      >w&#8242;</a
+      ><a name="980"
+      > </a
+      ><a name="981" href="IPCSemanticsExperimental.html#881" class="Function Operator"
+      >&#8873;</a
+      ><a name="982"
+      > </a
+      ><a name="983" href="IPCSemanticsExperimental.html#947" class="Bound"
+      >B</a
+      ><a name="984"
+      >
+
+</a
+      ><a name="986" href="IPCSemanticsExperimental.html#986" class="Function"
+      >mono&#8873;</a
+      ><a name="991"
+      > </a
+      ><a name="992" class="Symbol"
+      >:</a
+      ><a name="993"
+      > </a
+      ><a name="994" class="Symbol"
+      >&#8704;</a
+      ><a name="995"
+      > </a
+      ><a name="996" class="Symbol"
+      >{{</a
+      ><a name="998" href="IPCSemanticsExperimental.html#998" class="Bound"
+      >_</a
+      ><a name="999"
+      > </a
+      ><a name="1000" class="Symbol"
+      >:</a
+      ><a name="1001"
+      > </a
+      ><a name="1002" href="IPCSemanticsExperimental.html#106" class="Record"
+      >Model</a
+      ><a name="1007" class="Symbol"
+      >}}</a
+      ><a name="1009"
+      > </a
+      ><a name="1010" class="Symbol"
+      >{</a
+      ><a name="1011" href="IPCSemanticsExperimental.html#1011" class="Bound"
+      >A</a
+      ><a name="1012"
+      > </a
+      ><a name="1013" href="IPCSemanticsExperimental.html#1013" class="Bound"
+      >w</a
+      ><a name="1014"
+      > </a
+      ><a name="1015" href="IPCSemanticsExperimental.html#1015" class="Bound"
+      >w&#8242;</a
+      ><a name="1017" class="Symbol"
+      >}</a
+      ><a name="1018"
+      > </a
+      ><a name="1019" class="Symbol"
+      >&#8594;</a
+      ><a name="1020"
+      > </a
+      ><a name="1021" href="IPCSemanticsExperimental.html#1015" class="Bound"
+      >w&#8242;</a
+      ><a name="1023"
+      > </a
+      ><a name="1024" href="IPCSemanticsExperimental.html#159" class="Field Operator"
+      >&#8850;</a
+      ><a name="1025"
+      > </a
+      ><a name="1026" href="IPCSemanticsExperimental.html#1013" class="Bound"
+      >w</a
+      ><a name="1027"
+      > </a
+      ><a name="1028" class="Symbol"
+      >&#8594;</a
+      ><a name="1029"
+      > </a
+      ><a name="1030" href="IPCSemanticsExperimental.html#1013" class="Bound"
+      >w</a
+      ><a name="1031"
+      > </a
+      ><a name="1032" href="IPCSemanticsExperimental.html#881" class="Function Operator"
+      >&#8873;</a
+      ><a name="1033"
+      > </a
+      ><a name="1034" href="IPCSemanticsExperimental.html#1011" class="Bound"
+      >A</a
+      ><a name="1035"
+      > </a
+      ><a name="1036" class="Symbol"
+      >&#8594;</a
+      ><a name="1037"
+      > </a
+      ><a name="1038" href="IPCSemanticsExperimental.html#1015" class="Bound"
+      >w&#8242;</a
+      ><a name="1040"
+      > </a
+      ><a name="1041" href="IPCSemanticsExperimental.html#881" class="Function Operator"
+      >&#8873;</a
+      ><a name="1042"
+      > </a
+      ><a name="1043" href="IPCSemanticsExperimental.html#1011" class="Bound"
+      >A</a
+      ><a name="1044"
+      >
+</a
+      ><a name="1045" href="IPCSemanticsExperimental.html#986" class="Function"
+      >mono&#8873;</a
+      ><a name="1050"
+      > </a
+      ><a name="1051" class="Symbol"
+      >{</a
+      ><a name="1052" href="IPC.html#94" class="InductiveConstructor"
+      >&#8226;</a
+      ><a name="1053" class="Symbol"
+      >}</a
+      ><a name="1054"
+      >      </a
+      ><a name="1060" href="IPCSemanticsExperimental.html#1060" class="Bound"
+      >&#951;</a
+      ><a name="1061"
+      > </a
+      ><a name="1062" href="IPCSemanticsExperimental.html#1062" class="Bound"
+      >a</a
+      ><a name="1063"
+      > </a
+      ><a name="1064" class="Symbol"
+      >=</a
+      ><a name="1065"
+      > </a
+      ><a name="1066" href="IPCSemanticsExperimental.html#593" class="Field"
+      >monoG</a
+      ><a name="1071"
+      > </a
+      ><a name="1072" href="IPCSemanticsExperimental.html#1060" class="Bound"
+      >&#951;</a
+      ><a name="1073"
+      > </a
+      ><a name="1074" href="IPCSemanticsExperimental.html#1062" class="Bound"
+      >a</a
+      ><a name="1075"
+      >
+</a
+      ><a name="1076" href="IPCSemanticsExperimental.html#986" class="Function"
+      >mono&#8873;</a
+      ><a name="1081"
+      > </a
+      ><a name="1082" class="Symbol"
+      >{</a
+      ><a name="1083" href="IPCSemanticsExperimental.html#1083" class="Bound"
+      >A</a
+      ><a name="1084"
+      > </a
+      ><a name="1085" href="IPC.html#106" class="InductiveConstructor Operator"
+      >&#8658;</a
+      ><a name="1086"
+      > </a
+      ><a name="1087" href="IPCSemanticsExperimental.html#1087" class="Bound"
+      >B</a
+      ><a name="1088" class="Symbol"
+      >}</a
+      ><a name="1089"
+      > </a
+      ><a name="1090" href="IPCSemanticsExperimental.html#1090" class="Bound"
+      >&#951;</a
+      ><a name="1091"
+      > </a
+      ><a name="1092" href="IPCSemanticsExperimental.html#1092" class="Bound"
+      >f</a
+      ><a name="1093"
+      > </a
+      ><a name="1094" class="Symbol"
+      >=</a
+      ><a name="1095"
+      > </a
+      ><a name="1096" class="Symbol"
+      >&#955;</a
+      ><a name="1097"
+      > </a
+      ><a name="1098" href="IPCSemanticsExperimental.html#1098" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="1100"
+      > </a
+      ><a name="1101" href="IPCSemanticsExperimental.html#1101" class="Bound"
+      >a</a
+      ><a name="1102"
+      > </a
+      ><a name="1103" class="Symbol"
+      >&#8594;</a
+      ><a name="1104"
+      > </a
+      ><a name="1105" href="IPCSemanticsExperimental.html#1092" class="Bound"
+      >f</a
+      ><a name="1106"
+      > </a
+      ><a name="1107" class="Symbol"
+      >(</a
+      ><a name="1108" href="IPCSemanticsExperimental.html#229" class="Field"
+      >trans&#8850;</a
+      ><a name="1114"
+      > </a
+      ><a name="1115" href="IPCSemanticsExperimental.html#1098" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="1117"
+      > </a
+      ><a name="1118" href="IPCSemanticsExperimental.html#1090" class="Bound"
+      >&#951;</a
+      ><a name="1119" class="Symbol"
+      >)</a
+      ><a name="1120"
+      > </a
+      ><a name="1121" href="IPCSemanticsExperimental.html#1101" class="Bound"
+      >a</a
+      ><a name="1122"
+      >
+
+</a
+      ><a name="1124" href="IPCSemanticsExperimental.html#1124" class="Function"
+      >idmono&#8873;</a
+      ><a name="1131"
+      > </a
+      ><a name="1132" class="Symbol"
+      >:</a
+      ><a name="1133"
+      > </a
+      ><a name="1134" class="Symbol"
+      >&#8704;</a
+      ><a name="1135"
+      > </a
+      ><a name="1136" class="Symbol"
+      >{{</a
+      ><a name="1138" href="IPCSemanticsExperimental.html#1138" class="Bound"
+      >_</a
+      ><a name="1139"
+      > </a
+      ><a name="1140" class="Symbol"
+      >:</a
+      ><a name="1141"
+      > </a
+      ><a name="1142" href="IPCSemanticsExperimental.html#106" class="Record"
+      >Model</a
+      ><a name="1147" class="Symbol"
+      >}}</a
+      ><a name="1149"
+      > </a
+      ><a name="1150" class="Symbol"
+      >{</a
+      ><a name="1151" href="IPCSemanticsExperimental.html#1151" class="Bound"
+      >A</a
+      ><a name="1152"
+      > </a
+      ><a name="1153" href="IPCSemanticsExperimental.html#1153" class="Bound"
+      >w</a
+      ><a name="1154" class="Symbol"
+      >}</a
+      ><a name="1155"
+      > </a
+      ><a name="1156" class="Symbol"
+      >&#8594;</a
+      ><a name="1157"
+      > </a
+      ><a name="1158" class="Symbol"
+      >(</a
+      ><a name="1159" href="IPCSemanticsExperimental.html#1159" class="Bound"
+      >a</a
+      ><a name="1160"
+      > </a
+      ><a name="1161" class="Symbol"
+      >:</a
+      ><a name="1162"
+      > </a
+      ><a name="1163" href="IPCSemanticsExperimental.html#1153" class="Bound"
+      >w</a
+      ><a name="1164"
+      > </a
+      ><a name="1165" href="IPCSemanticsExperimental.html#881" class="Function Operator"
+      >&#8873;</a
+      ><a name="1166"
+      > </a
+      ><a name="1167" href="IPCSemanticsExperimental.html#1151" class="Bound"
+      >A</a
+      ><a name="1168" class="Symbol"
+      >)</a
+      ><a name="1169"
+      > </a
+      ><a name="1170" class="Symbol"
+      >&#8594;</a
+      ><a name="1171"
+      > </a
+      ><a name="1172" href="IPCSemanticsExperimental.html#986" class="Function"
+      >mono&#8873;</a
+      ><a name="1177"
+      > </a
+      ><a name="1178" class="Symbol"
+      >{</a
+      ><a name="1179" href="IPCSemanticsExperimental.html#1151" class="Bound"
+      >A</a
+      ><a name="1180" class="Symbol"
+      >}</a
+      ><a name="1181"
+      > </a
+      ><a name="1182" href="IPCSemanticsExperimental.html#197" class="Field"
+      >refl&#8850;</a
+      ><a name="1187"
+      > </a
+      ><a name="1188" href="IPCSemanticsExperimental.html#1159" class="Bound"
+      >a</a
+      ><a name="1189"
+      > </a
+      ><a name="1190" href="Prelude.html#805" class="Datatype Operator"
+      >&#8801;</a
+      ><a name="1191"
+      > </a
+      ><a name="1192" href="IPCSemanticsExperimental.html#1159" class="Bound"
+      >a</a
+      ><a name="1193"
+      >
+</a
+      ><a name="1194" href="IPCSemanticsExperimental.html#1124" class="Function"
+      >idmono&#8873;</a
+      ><a name="1201"
+      > </a
+      ><a name="1202" class="Symbol"
+      >{</a
+      ><a name="1203" href="IPC.html#94" class="InductiveConstructor"
+      >&#8226;</a
+      ><a name="1204" class="Symbol"
+      >}</a
+      ><a name="1205"
+      >      </a
+      ><a name="1211" href="IPCSemanticsExperimental.html#1211" class="Bound"
+      >a</a
+      ><a name="1212"
+      > </a
+      ><a name="1213" class="Symbol"
+      >=</a
+      ><a name="1214"
+      > </a
+      ><a name="1215" href="IPCSemanticsExperimental.html#642" class="Field"
+      >idmonoG</a
+      ><a name="1222"
+      > </a
+      ><a name="1223" href="IPCSemanticsExperimental.html#1211" class="Bound"
+      >a</a
+      ><a name="1224"
+      >
+</a
+      ><a name="1225" href="IPCSemanticsExperimental.html#1124" class="Function"
+      >idmono&#8873;</a
+      ><a name="1232"
+      > </a
+      ><a name="1233" class="Symbol"
+      >{</a
+      ><a name="1234" href="IPCSemanticsExperimental.html#1234" class="Bound"
+      >A</a
+      ><a name="1235"
+      > </a
+      ><a name="1236" href="IPC.html#106" class="InductiveConstructor Operator"
+      >&#8658;</a
+      ><a name="1237"
+      > </a
+      ><a name="1238" href="IPCSemanticsExperimental.html#1238" class="Bound"
+      >B</a
+      ><a name="1239" class="Symbol"
+      >}</a
+      ><a name="1240"
+      > </a
+      ><a name="1241" href="IPCSemanticsExperimental.html#1241" class="Bound"
+      >a</a
+      ><a name="1242"
+      > </a
+      ><a name="1243" class="Symbol"
+      >=</a
+      ><a name="1244"
+      > </a
+      ><a name="1245" href="Prelude.html#5275" class="Postulate"
+      >fex&#8242;</a
+      ><a name="1249"
+      > </a
+      ><a name="1250" class="Symbol"
+      >(</a
+      ><a name="1251" href="Prelude.html#5017" class="Postulate"
+      >fex</a
+      ><a name="1254"
+      > </a
+      ><a name="1255" class="Symbol"
+      >(&#955;</a
+      ><a name="1257"
+      > </a
+      ><a name="1258" href="IPCSemanticsExperimental.html#1258" class="Bound"
+      >&#951;</a
+      ><a name="1259"
+      > </a
+      ><a name="1260" class="Symbol"
+      >&#8594;</a
+      ><a name="1261"
+      > </a
+      ><a name="1262" href="Prelude.html#1324" class="Function"
+      >cong</a
+      ><a name="1266"
+      > </a
+      ><a name="1267" href="IPCSemanticsExperimental.html#1241" class="Bound"
+      >a</a
+      ><a name="1268"
+      > </a
+      ><a name="1269" class="Symbol"
+      >(</a
+      ><a name="1270" href="IPCSemanticsExperimental.html#350" class="Field"
+      >idtrans&#8850;&#8322;</a
+      ><a name="1279"
+      > </a
+      ><a name="1280" href="IPCSemanticsExperimental.html#1258" class="Bound"
+      >&#951;</a
+      ><a name="1281" class="Symbol"
+      >)))</a
+      ><a name="1284"
+      >
+
+</a
+      ><a name="1286" href="IPCSemanticsExperimental.html#1286" class="Function"
+      >assocmono&#8873;</a
+      ><a name="1296"
+      > </a
+      ><a name="1297" class="Symbol"
+      >:</a
+      ><a name="1298"
+      > </a
+      ><a name="1299" class="Symbol"
+      >&#8704;</a
+      ><a name="1300"
+      > </a
+      ><a name="1301" class="Symbol"
+      >{{</a
+      ><a name="1303" href="IPCSemanticsExperimental.html#1303" class="Bound"
+      >_</a
+      ><a name="1304"
+      > </a
+      ><a name="1305" class="Symbol"
+      >:</a
+      ><a name="1306"
+      > </a
+      ><a name="1307" href="IPCSemanticsExperimental.html#106" class="Record"
+      >Model</a
+      ><a name="1312" class="Symbol"
+      >}}</a
+      ><a name="1314"
+      > </a
+      ><a name="1315" class="Symbol"
+      >{</a
+      ><a name="1316" href="IPCSemanticsExperimental.html#1316" class="Bound"
+      >A</a
+      ><a name="1317"
+      > </a
+      ><a name="1318" href="IPCSemanticsExperimental.html#1318" class="Bound"
+      >w</a
+      ><a name="1319"
+      > </a
+      ><a name="1320" href="IPCSemanticsExperimental.html#1320" class="Bound"
+      >w&#8242;</a
+      ><a name="1322"
+      > </a
+      ><a name="1323" href="IPCSemanticsExperimental.html#1323" class="Bound"
+      >w&#8243;</a
+      ><a name="1325" class="Symbol"
+      >}</a
+      ><a name="1326"
+      > </a
+      ><a name="1327" class="Symbol"
+      >&#8594;</a
+      ><a name="1328"
+      > </a
+      ><a name="1329" class="Symbol"
+      >(</a
+      ><a name="1330" href="IPCSemanticsExperimental.html#1330" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="1332"
+      > </a
+      ><a name="1333" class="Symbol"
+      >:</a
+      ><a name="1334"
+      > </a
+      ><a name="1335" href="IPCSemanticsExperimental.html#1323" class="Bound"
+      >w&#8243;</a
+      ><a name="1337"
+      > </a
+      ><a name="1338" href="IPCSemanticsExperimental.html#159" class="Field Operator"
+      >&#8850;</a
+      ><a name="1339"
+      > </a
+      ><a name="1340" href="IPCSemanticsExperimental.html#1320" class="Bound"
+      >w&#8242;</a
+      ><a name="1342" class="Symbol"
+      >)</a
+      ><a name="1343"
+      > </a
+      ><a name="1344" class="Symbol"
+      >(</a
+      ><a name="1345" href="IPCSemanticsExperimental.html#1345" class="Bound"
+      >&#951;</a
+      ><a name="1346"
+      > </a
+      ><a name="1347" class="Symbol"
+      >:</a
+      ><a name="1348"
+      > </a
+      ><a name="1349" href="IPCSemanticsExperimental.html#1320" class="Bound"
+      >w&#8242;</a
+      ><a name="1351"
+      > </a
+      ><a name="1352" href="IPCSemanticsExperimental.html#159" class="Field Operator"
+      >&#8850;</a
+      ><a name="1353"
+      > </a
+      ><a name="1354" href="IPCSemanticsExperimental.html#1318" class="Bound"
+      >w</a
+      ><a name="1355" class="Symbol"
+      >)</a
+      ><a name="1356"
+      > </a
+      ><a name="1357" class="Symbol"
+      >(</a
+      ><a name="1358" href="IPCSemanticsExperimental.html#1358" class="Bound"
+      >a</a
+      ><a name="1359"
+      > </a
+      ><a name="1360" class="Symbol"
+      >:</a
+      ><a name="1361"
+      > </a
+      ><a name="1362" href="IPCSemanticsExperimental.html#1318" class="Bound"
+      >w</a
+      ><a name="1363"
+      > </a
+      ><a name="1364" href="IPCSemanticsExperimental.html#881" class="Function Operator"
+      >&#8873;</a
+      ><a name="1365"
+      > </a
+      ><a name="1366" href="IPCSemanticsExperimental.html#1316" class="Bound"
+      >A</a
+      ><a name="1367" class="Symbol"
+      >)</a
+      ><a name="1368"
+      > </a
+      ><a name="1369" class="Symbol"
+      >&#8594;</a
+      ><a name="1370"
+      >
+                </a
+      ><a name="1387" href="IPCSemanticsExperimental.html#986" class="Function"
+      >mono&#8873;</a
+      ><a name="1392"
+      > </a
+      ><a name="1393" class="Symbol"
+      >{</a
+      ><a name="1394" href="IPCSemanticsExperimental.html#1316" class="Bound"
+      >A</a
+      ><a name="1395" class="Symbol"
+      >}</a
+      ><a name="1396"
+      > </a
+      ><a name="1397" href="IPCSemanticsExperimental.html#1330" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="1399"
+      > </a
+      ><a name="1400" class="Symbol"
+      >(</a
+      ><a name="1401" href="IPCSemanticsExperimental.html#986" class="Function"
+      >mono&#8873;</a
+      ><a name="1406"
+      > </a
+      ><a name="1407" class="Symbol"
+      >{</a
+      ><a name="1408" href="IPCSemanticsExperimental.html#1316" class="Bound"
+      >A</a
+      ><a name="1409" class="Symbol"
+      >}</a
+      ><a name="1410"
+      > </a
+      ><a name="1411" href="IPCSemanticsExperimental.html#1345" class="Bound"
+      >&#951;</a
+      ><a name="1412"
+      > </a
+      ><a name="1413" href="IPCSemanticsExperimental.html#1358" class="Bound"
+      >a</a
+      ><a name="1414" class="Symbol"
+      >)</a
+      ><a name="1415"
+      > </a
+      ><a name="1416" href="Prelude.html#805" class="Datatype Operator"
+      >&#8801;</a
+      ><a name="1417"
+      > </a
+      ><a name="1418" href="IPCSemanticsExperimental.html#986" class="Function"
+      >mono&#8873;</a
+      ><a name="1423"
+      > </a
+      ><a name="1424" class="Symbol"
+      >{</a
+      ><a name="1425" href="IPCSemanticsExperimental.html#1316" class="Bound"
+      >A</a
+      ><a name="1426" class="Symbol"
+      >}</a
+      ><a name="1427"
+      > </a
+      ><a name="1428" class="Symbol"
+      >(</a
+      ><a name="1429" href="IPCSemanticsExperimental.html#229" class="Field"
+      >trans&#8850;</a
+      ><a name="1435"
+      > </a
+      ><a name="1436" href="IPCSemanticsExperimental.html#1330" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="1438"
+      > </a
+      ><a name="1439" href="IPCSemanticsExperimental.html#1345" class="Bound"
+      >&#951;</a
+      ><a name="1440" class="Symbol"
+      >)</a
+      ><a name="1441"
+      > </a
+      ><a name="1442" href="IPCSemanticsExperimental.html#1358" class="Bound"
+      >a</a
+      ><a name="1443"
+      >
+</a
+      ><a name="1444" href="IPCSemanticsExperimental.html#1286" class="Function"
+      >assocmono&#8873;</a
+      ><a name="1454"
+      > </a
+      ><a name="1455" class="Symbol"
+      >{</a
+      ><a name="1456" href="IPC.html#94" class="InductiveConstructor"
+      >&#8226;</a
+      ><a name="1457" class="Symbol"
+      >}</a
+      ><a name="1458"
+      >      </a
+      ><a name="1464" href="IPCSemanticsExperimental.html#1464" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="1466"
+      > </a
+      ><a name="1467" href="IPCSemanticsExperimental.html#1467" class="Bound"
+      >&#951;</a
+      ><a name="1468"
+      > </a
+      ><a name="1469" href="IPCSemanticsExperimental.html#1469" class="Bound"
+      >a</a
+      ><a name="1470"
+      > </a
+      ><a name="1471" class="Symbol"
+      >=</a
+      ><a name="1472"
+      > </a
+      ><a name="1473" href="IPCSemanticsExperimental.html#698" class="Field"
+      >assocmonoG</a
+      ><a name="1483"
+      > </a
+      ><a name="1484" href="IPCSemanticsExperimental.html#1464" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="1486"
+      > </a
+      ><a name="1487" href="IPCSemanticsExperimental.html#1467" class="Bound"
+      >&#951;</a
+      ><a name="1488"
+      > </a
+      ><a name="1489" href="IPCSemanticsExperimental.html#1469" class="Bound"
+      >a</a
+      ><a name="1490"
+      >
+</a
+      ><a name="1491" href="IPCSemanticsExperimental.html#1286" class="Function"
+      >assocmono&#8873;</a
+      ><a name="1501"
+      > </a
+      ><a name="1502" class="Symbol"
+      >{</a
+      ><a name="1503" href="IPCSemanticsExperimental.html#1503" class="Bound"
+      >A</a
+      ><a name="1504"
+      > </a
+      ><a name="1505" href="IPC.html#106" class="InductiveConstructor Operator"
+      >&#8658;</a
+      ><a name="1506"
+      > </a
+      ><a name="1507" href="IPCSemanticsExperimental.html#1507" class="Bound"
+      >B</a
+      ><a name="1508" class="Symbol"
+      >}</a
+      ><a name="1509"
+      > </a
+      ><a name="1510" href="IPCSemanticsExperimental.html#1510" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="1512"
+      > </a
+      ><a name="1513" href="IPCSemanticsExperimental.html#1513" class="Bound"
+      >&#951;</a
+      ><a name="1514"
+      > </a
+      ><a name="1515" href="IPCSemanticsExperimental.html#1515" class="Bound"
+      >a</a
+      ><a name="1516"
+      > </a
+      ><a name="1517" class="Symbol"
+      >=</a
+      ><a name="1518"
+      > </a
+      ><a name="1519" href="Prelude.html#5275" class="Postulate"
+      >fex&#8242;</a
+      ><a name="1523"
+      > </a
+      ><a name="1524" class="Symbol"
+      >(</a
+      ><a name="1525" href="Prelude.html#5017" class="Postulate"
+      >fex</a
+      ><a name="1528"
+      > </a
+      ><a name="1529" class="Symbol"
+      >(&#955;</a
+      ><a name="1531"
+      > </a
+      ><a name="1532" href="IPCSemanticsExperimental.html#1532" class="Bound"
+      >&#951;&#8243;</a
+      ><a name="1534"
+      > </a
+      ><a name="1535" class="Symbol"
+      >&#8594;</a
+      ><a name="1536"
+      > </a
+      ><a name="1537" href="Prelude.html#1324" class="Function"
+      >cong</a
+      ><a name="1541"
+      > </a
+      ><a name="1542" href="IPCSemanticsExperimental.html#1515" class="Bound"
+      >a</a
+      ><a name="1543"
+      > </a
+      ><a name="1544" class="Symbol"
+      >(</a
+      ><a name="1545" href="Prelude.html#1138" class="Function"
+      >sym</a
+      ><a name="1548"
+      > </a
+      ><a name="1549" class="Symbol"
+      >(</a
+      ><a name="1550" href="IPCSemanticsExperimental.html#413" class="Field"
+      >assoctrans&#8850;</a
+      ><a name="1561"
+      > </a
+      ><a name="1562" href="IPCSemanticsExperimental.html#1532" class="Bound"
+      >&#951;&#8243;</a
+      ><a name="1564"
+      > </a
+      ><a name="1565" href="IPCSemanticsExperimental.html#1510" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="1567"
+      > </a
+      ><a name="1568" href="IPCSemanticsExperimental.html#1513" class="Bound"
+      >&#951;</a
+      ><a name="1569" class="Symbol"
+      >))))</a
+      ><a name="1573"
+      >
+
+
+</a
+      ><a name="1576" class="Comment"
+      >-- Lists of values.</a
+      ><a name="1595"
+      >
+
+</a
+      ><a name="1597" class="Keyword"
+      >module</a
+      ><a name="1603"
+      > </a
+      ><a name="1604" href="IPCSemanticsExperimental.html#1604" class="Module"
+      >IPCSemanticsExperimentalList</a
+      ><a name="1632"
+      > </a
+      ><a name="1633" class="Keyword"
+      >where</a
+      ><a name="1638"
+      >
+  </a
+      ><a name="1641" class="Keyword"
+      >open</a
+      ><a name="1645"
+      > </a
+      ><a name="1646" href="IPC.html#154" class="Module"
+      >IPCList</a
+      ><a name="1653"
+      > </a
+      ><a name="1654" class="Keyword"
+      >public</a
+      ><a name="1660"
+      >
+
+  </a
+      ><a name="1664" class="Keyword"
+      >infix</a
+      ><a name="1669"
+      > </a
+      ><a name="1670" class="Number"
+      >3</a
+      ><a name="1671"
+      > </a
+      ><a name="1672" href="IPCSemanticsExperimental.html#1679" class="Function Operator"
+      >_&#8873;&#8902;_</a
+      ><a name="1676"
+      >
+  </a
+      ><a name="1679" href="IPCSemanticsExperimental.html#1679" class="Function Operator"
+      >_&#8873;&#8902;_</a
+      ><a name="1683"
+      > </a
+      ><a name="1684" class="Symbol"
+      >:</a
+      ><a name="1685"
+      > </a
+      ><a name="1686" class="Symbol"
+      >&#8704;</a
+      ><a name="1687"
+      > </a
+      ><a name="1688" class="Symbol"
+      >{{</a
+      ><a name="1690" href="IPCSemanticsExperimental.html#1690" class="Bound"
+      >_</a
+      ><a name="1691"
+      > </a
+      ><a name="1692" class="Symbol"
+      >:</a
+      ><a name="1693"
+      > </a
+      ><a name="1694" href="IPCSemanticsExperimental.html#106" class="Record"
+      >Model</a
+      ><a name="1699" class="Symbol"
+      >}}</a
+      ><a name="1701"
+      > </a
+      ><a name="1702" class="Symbol"
+      >&#8594;</a
+      ><a name="1703"
+      > </a
+      ><a name="1704" href="IPCSemanticsExperimental.html#137" class="Field"
+      >World</a
+      ><a name="1709"
+      > </a
+      ><a name="1710" class="Symbol"
+      >&#8594;</a
+      ><a name="1711"
+      > </a
+      ><a name="1712" href="IPC.html#204" class="Function"
+      >Ty&#8902;</a
+      ><a name="1715"
+      > </a
+      ><a name="1716" class="Symbol"
+      >&#8594;</a
+      ><a name="1717"
+      > </a
+      ><a name="1718" class="PrimitiveType"
+      >Set</a
+      ><a name="1721"
+      >
+  </a
+      ><a name="1724" href="IPCSemanticsExperimental.html#1724" class="Bound"
+      >w</a
+      ><a name="1725"
+      > </a
+      ><a name="1726" href="IPCSemanticsExperimental.html#1679" class="Function Operator"
+      >&#8873;&#8902;</a
+      ><a name="1728"
+      > </a
+      ><a name="1729" href="IPCSemanticsExperimental.html#1729" class="Bound"
+      >&#926;</a
+      ><a name="1730"
+      > </a
+      ><a name="1731" class="Symbol"
+      >=</a
+      ><a name="1732"
+      > </a
+      ><a name="1733" href="PreludeList.html#1407" class="Datatype"
+      >All</a
+      ><a name="1736"
+      > </a
+      ><a name="1737" class="Symbol"
+      >(</a
+      ><a name="1738" href="IPCSemanticsExperimental.html#1724" class="Bound"
+      >w</a
+      ><a name="1739"
+      > </a
+      ><a name="1740" href="IPCSemanticsExperimental.html#881" class="Function Operator"
+      >&#8873;_</a
+      ><a name="1742" class="Symbol"
+      >)</a
+      ><a name="1743"
+      > </a
+      ><a name="1744" href="IPCSemanticsExperimental.html#1729" class="Bound"
+      >&#926;</a
+      ><a name="1745"
+      >
+
+  </a
+      ><a name="1749" href="IPCSemanticsExperimental.html#1749" class="Function"
+      >mono&#8873;&#8902;</a
+      ><a name="1755"
+      > </a
+      ><a name="1756" class="Symbol"
+      >:</a
+      ><a name="1757"
+      > </a
+      ><a name="1758" class="Symbol"
+      >&#8704;</a
+      ><a name="1759"
+      > </a
+      ><a name="1760" class="Symbol"
+      >{{</a
+      ><a name="1762" href="IPCSemanticsExperimental.html#1762" class="Bound"
+      >_</a
+      ><a name="1763"
+      > </a
+      ><a name="1764" class="Symbol"
+      >:</a
+      ><a name="1765"
+      > </a
+      ><a name="1766" href="IPCSemanticsExperimental.html#106" class="Record"
+      >Model</a
+      ><a name="1771" class="Symbol"
+      >}}</a
+      ><a name="1773"
+      > </a
+      ><a name="1774" class="Symbol"
+      >{</a
+      ><a name="1775" href="IPCSemanticsExperimental.html#1775" class="Bound"
+      >w</a
+      ><a name="1776"
+      > </a
+      ><a name="1777" href="IPCSemanticsExperimental.html#1777" class="Bound"
+      >w&#8242;</a
+      ><a name="1779"
+      > </a
+      ><a name="1780" href="IPCSemanticsExperimental.html#1780" class="Bound"
+      >&#926;</a
+      ><a name="1781" class="Symbol"
+      >}</a
+      ><a name="1782"
+      > </a
+      ><a name="1783" class="Symbol"
+      >&#8594;</a
+      ><a name="1784"
+      > </a
+      ><a name="1785" href="IPCSemanticsExperimental.html#1777" class="Bound"
+      >w&#8242;</a
+      ><a name="1787"
+      > </a
+      ><a name="1788" href="IPCSemanticsExperimental.html#159" class="Field Operator"
+      >&#8850;</a
+      ><a name="1789"
+      > </a
+      ><a name="1790" href="IPCSemanticsExperimental.html#1775" class="Bound"
+      >w</a
+      ><a name="1791"
+      > </a
+      ><a name="1792" class="Symbol"
+      >&#8594;</a
+      ><a name="1793"
+      > </a
+      ><a name="1794" href="IPCSemanticsExperimental.html#1775" class="Bound"
+      >w</a
+      ><a name="1795"
+      > </a
+      ><a name="1796" href="IPCSemanticsExperimental.html#1679" class="Function Operator"
+      >&#8873;&#8902;</a
+      ><a name="1798"
+      > </a
+      ><a name="1799" href="IPCSemanticsExperimental.html#1780" class="Bound"
+      >&#926;</a
+      ><a name="1800"
+      > </a
+      ><a name="1801" class="Symbol"
+      >&#8594;</a
+      ><a name="1802"
+      > </a
+      ><a name="1803" href="IPCSemanticsExperimental.html#1777" class="Bound"
+      >w&#8242;</a
+      ><a name="1805"
+      > </a
+      ><a name="1806" href="IPCSemanticsExperimental.html#1679" class="Function Operator"
+      >&#8873;&#8902;</a
+      ><a name="1808"
+      > </a
+      ><a name="1809" href="IPCSemanticsExperimental.html#1780" class="Bound"
+      >&#926;</a
+      ><a name="1810"
+      >
+  </a
+      ><a name="1813" href="IPCSemanticsExperimental.html#1749" class="Function"
+      >mono&#8873;&#8902;</a
+      ><a name="1819"
+      > </a
+      ><a name="1820" href="IPCSemanticsExperimental.html#1820" class="Bound"
+      >&#951;</a
+      ><a name="1821"
+      > </a
+      ><a name="1822" href="IPCSemanticsExperimental.html#1822" class="Bound"
+      >&#958;</a
+      ><a name="1823"
+      > </a
+      ><a name="1824" class="Symbol"
+      >=</a
+      ><a name="1825"
+      > </a
+      ><a name="1826" href="PreludeList.html#1551" class="Function"
+      >mapAll</a
+      ><a name="1832"
+      > </a
+      ><a name="1833" class="Symbol"
+      >(&#955;</a
+      ><a name="1835"
+      > </a
+      ><a name="1836" class="Symbol"
+      >{</a
+      ><a name="1837" href="IPCSemanticsExperimental.html#1837" class="Bound"
+      >A</a
+      ><a name="1838" class="Symbol"
+      >}</a
+      ><a name="1839"
+      > </a
+      ><a name="1840" class="Symbol"
+      >&#8594;</a
+      ><a name="1841"
+      > </a
+      ><a name="1842" href="IPCSemanticsExperimental.html#986" class="Function"
+      >mono&#8873;</a
+      ><a name="1847"
+      > </a
+      ><a name="1848" class="Symbol"
+      >{</a
+      ><a name="1849" href="IPCSemanticsExperimental.html#1837" class="Bound"
+      >A</a
+      ><a name="1850" class="Symbol"
+      >}</a
+      ><a name="1851"
+      > </a
+      ><a name="1852" href="IPCSemanticsExperimental.html#1820" class="Bound"
+      >&#951;</a
+      ><a name="1853" class="Symbol"
+      >)</a
+      ><a name="1854"
+      > </a
+      ><a name="1855" href="IPCSemanticsExperimental.html#1822" class="Bound"
+      >&#958;</a
+      ><a name="1856"
+      >
+
+  </a
+      ><a name="1860" href="IPCSemanticsExperimental.html#1860" class="Function"
+      >idmono&#8873;&#8902;</a
+      ><a name="1868"
+      > </a
+      ><a name="1869" class="Symbol"
+      >:</a
+      ><a name="1870"
+      > </a
+      ><a name="1871" class="Symbol"
+      >&#8704;</a
+      ><a name="1872"
+      > </a
+      ><a name="1873" class="Symbol"
+      >{{</a
+      ><a name="1875" href="IPCSemanticsExperimental.html#1875" class="Bound"
+      >_</a
+      ><a name="1876"
+      > </a
+      ><a name="1877" class="Symbol"
+      >:</a
+      ><a name="1878"
+      > </a
+      ><a name="1879" href="IPCSemanticsExperimental.html#106" class="Record"
+      >Model</a
+      ><a name="1884" class="Symbol"
+      >}}</a
+      ><a name="1886"
+      > </a
+      ><a name="1887" class="Symbol"
+      >{</a
+      ><a name="1888" href="IPCSemanticsExperimental.html#1888" class="Bound"
+      >w</a
+      ><a name="1889"
+      > </a
+      ><a name="1890" href="IPCSemanticsExperimental.html#1890" class="Bound"
+      >&#926;</a
+      ><a name="1891" class="Symbol"
+      >}</a
+      ><a name="1892"
+      > </a
+      ><a name="1893" class="Symbol"
+      >&#8594;</a
+      ><a name="1894"
+      > </a
+      ><a name="1895" class="Symbol"
+      >(</a
+      ><a name="1896" href="IPCSemanticsExperimental.html#1896" class="Bound"
+      >&#958;</a
+      ><a name="1897"
+      > </a
+      ><a name="1898" class="Symbol"
+      >:</a
+      ><a name="1899"
+      > </a
+      ><a name="1900" href="IPCSemanticsExperimental.html#1888" class="Bound"
+      >w</a
+      ><a name="1901"
+      > </a
+      ><a name="1902" href="IPCSemanticsExperimental.html#1679" class="Function Operator"
+      >&#8873;&#8902;</a
+      ><a name="1904"
+      > </a
+      ><a name="1905" href="IPCSemanticsExperimental.html#1890" class="Bound"
+      >&#926;</a
+      ><a name="1906" class="Symbol"
+      >)</a
+      ><a name="1907"
+      > </a
+      ><a name="1908" class="Symbol"
+      >&#8594;</a
+      ><a name="1909"
+      > </a
+      ><a name="1910" href="IPCSemanticsExperimental.html#1749" class="Function"
+      >mono&#8873;&#8902;</a
+      ><a name="1916"
+      > </a
+      ><a name="1917" href="IPCSemanticsExperimental.html#197" class="Field"
+      >refl&#8850;</a
+      ><a name="1922"
+      > </a
+      ><a name="1923" href="IPCSemanticsExperimental.html#1896" class="Bound"
+      >&#958;</a
+      ><a name="1924"
+      > </a
+      ><a name="1925" href="Prelude.html#805" class="Datatype Operator"
+      >&#8801;</a
+      ><a name="1926"
+      > </a
+      ><a name="1927" href="IPCSemanticsExperimental.html#1896" class="Bound"
+      >&#958;</a
+      ><a name="1928"
+      >
+  </a
+      ><a name="1931" href="IPCSemanticsExperimental.html#1860" class="Function"
+      >idmono&#8873;&#8902;</a
+      ><a name="1939"
+      > </a
+      ><a name="1940" class="Symbol"
+      >{</a
+      ><a name="1941" class="Argument"
+      >&#926;</a
+      ><a name="1942"
+      > </a
+      ><a name="1943" class="Symbol"
+      >=</a
+      ><a name="1944"
+      > </a
+      ><a name="1945" href="PreludeList.html#151" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="1946" class="Symbol"
+      >}</a
+      ><a name="1947"
+      >     </a
+      ><a name="1952" href="PreludeList.html#1486" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="1953"
+      >       </a
+      ><a name="1960" class="Symbol"
+      >=</a
+      ><a name="1961"
+      > </a
+      ><a name="1962" href="Prelude.html#866" class="InductiveConstructor"
+      >refl</a
+      ><a name="1966"
+      >
+  </a
+      ><a name="1969" href="IPCSemanticsExperimental.html#1860" class="Function"
+      >idmono&#8873;&#8902;</a
+      ><a name="1977"
+      > </a
+      ><a name="1978" class="Symbol"
+      >{</a
+      ><a name="1979" class="Argument"
+      >&#926;</a
+      ><a name="1980"
+      > </a
+      ><a name="1981" class="Symbol"
+      >=</a
+      ><a name="1982"
+      > </a
+      ><a name="1983" href="IPCSemanticsExperimental.html#1983" class="Bound"
+      >&#926;</a
+      ><a name="1984"
+      > </a
+      ><a name="1985" href="PreludeList.html#168" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1986"
+      > </a
+      ><a name="1987" href="IPCSemanticsExperimental.html#1987" class="Bound"
+      >A</a
+      ><a name="1988" class="Symbol"
+      >}</a
+      ><a name="1989"
+      > </a
+      ><a name="1990" class="Symbol"
+      >(</a
+      ><a name="1991" href="IPCSemanticsExperimental.html#1991" class="Bound"
+      >&#958;</a
+      ><a name="1992"
+      > </a
+      ><a name="1993" href="PreludeList.html#1504" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1994"
+      > </a
+      ><a name="1995" href="IPCSemanticsExperimental.html#1995" class="Bound"
+      >a</a
+      ><a name="1996" class="Symbol"
+      >)</a
+      ><a name="1997"
+      > </a
+      ><a name="1998" class="Symbol"
+      >=</a
+      ><a name="1999"
+      > </a
+      ><a name="2000" href="Prelude.html#1446" class="Function"
+      >cong&#178;</a
+      ><a name="2005"
+      > </a
+      ><a name="2006" href="PreludeList.html#1504" class="InductiveConstructor Operator"
+      >_,_</a
+      ><a name="2009"
+      > </a
+      ><a name="2010" class="Symbol"
+      >(</a
+      ><a name="2011" href="IPCSemanticsExperimental.html#1860" class="Function"
+      >idmono&#8873;&#8902;</a
+      ><a name="2019"
+      > </a
+      ><a name="2020" href="IPCSemanticsExperimental.html#1991" class="Bound"
+      >&#958;</a
+      ><a name="2021" class="Symbol"
+      >)</a
+      ><a name="2022"
+      > </a
+      ><a name="2023" class="Symbol"
+      >(</a
+      ><a name="2024" href="IPCSemanticsExperimental.html#1124" class="Function"
+      >idmono&#8873;</a
+      ><a name="2031"
+      > </a
+      ><a name="2032" class="Symbol"
+      >{</a
+      ><a name="2033" href="IPCSemanticsExperimental.html#1987" class="Bound"
+      >A</a
+      ><a name="2034" class="Symbol"
+      >}</a
+      ><a name="2035"
+      > </a
+      ><a name="2036" href="IPCSemanticsExperimental.html#1995" class="Bound"
+      >a</a
+      ><a name="2037" class="Symbol"
+      >)</a
+      ><a name="2038"
+      >
+
+  </a
+      ><a name="2042" href="IPCSemanticsExperimental.html#2042" class="Function"
+      >assocmono&#8873;&#8902;</a
+      ><a name="2053"
+      > </a
+      ><a name="2054" class="Symbol"
+      >:</a
+      ><a name="2055"
+      > </a
+      ><a name="2056" class="Symbol"
+      >&#8704;</a
+      ><a name="2057"
+      > </a
+      ><a name="2058" class="Symbol"
+      >{{</a
+      ><a name="2060" href="IPCSemanticsExperimental.html#2060" class="Bound"
+      >_</a
+      ><a name="2061"
+      > </a
+      ><a name="2062" class="Symbol"
+      >:</a
+      ><a name="2063"
+      > </a
+      ><a name="2064" href="IPCSemanticsExperimental.html#106" class="Record"
+      >Model</a
+      ><a name="2069" class="Symbol"
+      >}}</a
+      ><a name="2071"
+      > </a
+      ><a name="2072" class="Symbol"
+      >{</a
+      ><a name="2073" href="IPCSemanticsExperimental.html#2073" class="Bound"
+      >w</a
+      ><a name="2074"
+      > </a
+      ><a name="2075" href="IPCSemanticsExperimental.html#2075" class="Bound"
+      >w&#8242;</a
+      ><a name="2077"
+      > </a
+      ><a name="2078" href="IPCSemanticsExperimental.html#2078" class="Bound"
+      >w&#8243;</a
+      ><a name="2080"
+      > </a
+      ><a name="2081" href="IPCSemanticsExperimental.html#2081" class="Bound"
+      >&#926;</a
+      ><a name="2082" class="Symbol"
+      >}</a
+      ><a name="2083"
+      > </a
+      ><a name="2084" class="Symbol"
+      >&#8594;</a
+      ><a name="2085"
+      > </a
+      ><a name="2086" class="Symbol"
+      >(</a
+      ><a name="2087" href="IPCSemanticsExperimental.html#2087" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="2089"
+      > </a
+      ><a name="2090" class="Symbol"
+      >:</a
+      ><a name="2091"
+      > </a
+      ><a name="2092" href="IPCSemanticsExperimental.html#2078" class="Bound"
+      >w&#8243;</a
+      ><a name="2094"
+      > </a
+      ><a name="2095" href="IPCSemanticsExperimental.html#159" class="Field Operator"
+      >&#8850;</a
+      ><a name="2096"
+      > </a
+      ><a name="2097" href="IPCSemanticsExperimental.html#2075" class="Bound"
+      >w&#8242;</a
+      ><a name="2099" class="Symbol"
+      >)</a
+      ><a name="2100"
+      > </a
+      ><a name="2101" class="Symbol"
+      >(</a
+      ><a name="2102" href="IPCSemanticsExperimental.html#2102" class="Bound"
+      >&#951;</a
+      ><a name="2103"
+      > </a
+      ><a name="2104" class="Symbol"
+      >:</a
+      ><a name="2105"
+      > </a
+      ><a name="2106" href="IPCSemanticsExperimental.html#2075" class="Bound"
+      >w&#8242;</a
+      ><a name="2108"
+      > </a
+      ><a name="2109" href="IPCSemanticsExperimental.html#159" class="Field Operator"
+      >&#8850;</a
+      ><a name="2110"
+      > </a
+      ><a name="2111" href="IPCSemanticsExperimental.html#2073" class="Bound"
+      >w</a
+      ><a name="2112" class="Symbol"
+      >)</a
+      ><a name="2113"
+      > </a
+      ><a name="2114" class="Symbol"
+      >(</a
+      ><a name="2115" href="IPCSemanticsExperimental.html#2115" class="Bound"
+      >&#958;</a
+      ><a name="2116"
+      > </a
+      ><a name="2117" class="Symbol"
+      >:</a
+      ><a name="2118"
+      > </a
+      ><a name="2119" href="IPCSemanticsExperimental.html#2073" class="Bound"
+      >w</a
+      ><a name="2120"
+      > </a
+      ><a name="2121" href="IPCSemanticsExperimental.html#1679" class="Function Operator"
+      >&#8873;&#8902;</a
+      ><a name="2123"
+      > </a
+      ><a name="2124" href="IPCSemanticsExperimental.html#2081" class="Bound"
+      >&#926;</a
+      ><a name="2125" class="Symbol"
+      >)</a
+      ><a name="2126"
+      > </a
+      ><a name="2127" class="Symbol"
+      >&#8594;</a
+      ><a name="2128"
+      >
+                   </a
+      ><a name="2148" href="IPCSemanticsExperimental.html#1749" class="Function"
+      >mono&#8873;&#8902;</a
+      ><a name="2154"
+      > </a
+      ><a name="2155" href="IPCSemanticsExperimental.html#2087" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="2157"
+      > </a
+      ><a name="2158" class="Symbol"
+      >(</a
+      ><a name="2159" href="IPCSemanticsExperimental.html#1749" class="Function"
+      >mono&#8873;&#8902;</a
+      ><a name="2165"
+      > </a
+      ><a name="2166" href="IPCSemanticsExperimental.html#2102" class="Bound"
+      >&#951;</a
+      ><a name="2167"
+      > </a
+      ><a name="2168" href="IPCSemanticsExperimental.html#2115" class="Bound"
+      >&#958;</a
+      ><a name="2169" class="Symbol"
+      >)</a
+      ><a name="2170"
+      > </a
+      ><a name="2171" href="Prelude.html#805" class="Datatype Operator"
+      >&#8801;</a
+      ><a name="2172"
+      > </a
+      ><a name="2173" href="IPCSemanticsExperimental.html#1749" class="Function"
+      >mono&#8873;&#8902;</a
+      ><a name="2179"
+      > </a
+      ><a name="2180" class="Symbol"
+      >(</a
+      ><a name="2181" href="IPCSemanticsExperimental.html#229" class="Field"
+      >trans&#8850;</a
+      ><a name="2187"
+      > </a
+      ><a name="2188" href="IPCSemanticsExperimental.html#2087" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="2190"
+      > </a
+      ><a name="2191" href="IPCSemanticsExperimental.html#2102" class="Bound"
+      >&#951;</a
+      ><a name="2192" class="Symbol"
+      >)</a
+      ><a name="2193"
+      > </a
+      ><a name="2194" href="IPCSemanticsExperimental.html#2115" class="Bound"
+      >&#958;</a
+      ><a name="2195"
+      >
+  </a
+      ><a name="2198" href="IPCSemanticsExperimental.html#2042" class="Function"
+      >assocmono&#8873;&#8902;</a
+      ><a name="2209"
+      > </a
+      ><a name="2210" class="Symbol"
+      >{</a
+      ><a name="2211" class="Argument"
+      >&#926;</a
+      ><a name="2212"
+      > </a
+      ><a name="2213" class="Symbol"
+      >=</a
+      ><a name="2214"
+      > </a
+      ><a name="2215" href="PreludeList.html#151" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="2216" class="Symbol"
+      >}</a
+      ><a name="2217"
+      >     </a
+      ><a name="2222" href="IPCSemanticsExperimental.html#2222" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="2224"
+      > </a
+      ><a name="2225" href="IPCSemanticsExperimental.html#2225" class="Bound"
+      >&#951;</a
+      ><a name="2226"
+      > </a
+      ><a name="2227" href="PreludeList.html#1486" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="2228"
+      >       </a
+      ><a name="2235" class="Symbol"
+      >=</a
+      ><a name="2236"
+      > </a
+      ><a name="2237" href="Prelude.html#866" class="InductiveConstructor"
+      >refl</a
+      ><a name="2241"
+      >
+  </a
+      ><a name="2244" href="IPCSemanticsExperimental.html#2042" class="Function"
+      >assocmono&#8873;&#8902;</a
+      ><a name="2255"
+      > </a
+      ><a name="2256" class="Symbol"
+      >{</a
+      ><a name="2257" class="Argument"
+      >&#926;</a
+      ><a name="2258"
+      > </a
+      ><a name="2259" class="Symbol"
+      >=</a
+      ><a name="2260"
+      > </a
+      ><a name="2261" href="IPCSemanticsExperimental.html#2261" class="Bound"
+      >&#926;</a
+      ><a name="2262"
+      > </a
+      ><a name="2263" href="PreludeList.html#168" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="2264"
+      > </a
+      ><a name="2265" href="IPCSemanticsExperimental.html#2265" class="Bound"
+      >A</a
+      ><a name="2266" class="Symbol"
+      >}</a
+      ><a name="2267"
+      > </a
+      ><a name="2268" href="IPCSemanticsExperimental.html#2268" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="2270"
+      > </a
+      ><a name="2271" href="IPCSemanticsExperimental.html#2271" class="Bound"
+      >&#951;</a
+      ><a name="2272"
+      > </a
+      ><a name="2273" class="Symbol"
+      >(</a
+      ><a name="2274" href="IPCSemanticsExperimental.html#2274" class="Bound"
+      >&#958;</a
+      ><a name="2275"
+      > </a
+      ><a name="2276" href="PreludeList.html#1504" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="2277"
+      > </a
+      ><a name="2278" href="IPCSemanticsExperimental.html#2278" class="Bound"
+      >a</a
+      ><a name="2279" class="Symbol"
+      >)</a
+      ><a name="2280"
+      > </a
+      ><a name="2281" class="Symbol"
+      >=</a
+      ><a name="2282"
+      > </a
+      ><a name="2283" href="Prelude.html#1446" class="Function"
+      >cong&#178;</a
+      ><a name="2288"
+      > </a
+      ><a name="2289" href="PreludeList.html#1504" class="InductiveConstructor Operator"
+      >_,_</a
+      ><a name="2292"
+      > </a
+      ><a name="2293" class="Symbol"
+      >(</a
+      ><a name="2294" href="IPCSemanticsExperimental.html#2042" class="Function"
+      >assocmono&#8873;&#8902;</a
+      ><a name="2305"
+      > </a
+      ><a name="2306" href="IPCSemanticsExperimental.html#2268" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="2308"
+      > </a
+      ><a name="2309" href="IPCSemanticsExperimental.html#2271" class="Bound"
+      >&#951;</a
+      ><a name="2310"
+      > </a
+      ><a name="2311" href="IPCSemanticsExperimental.html#2274" class="Bound"
+      >&#958;</a
+      ><a name="2312" class="Symbol"
+      >)</a
+      ><a name="2313"
+      > </a
+      ><a name="2314" class="Symbol"
+      >(</a
+      ><a name="2315" href="IPCSemanticsExperimental.html#1286" class="Function"
+      >assocmono&#8873;</a
+      ><a name="2325"
+      > </a
+      ><a name="2326" class="Symbol"
+      >{</a
+      ><a name="2327" href="IPCSemanticsExperimental.html#2265" class="Bound"
+      >A</a
+      ><a name="2328" class="Symbol"
+      >}</a
+      ><a name="2329"
+      > </a
+      ><a name="2330" href="IPCSemanticsExperimental.html#2268" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="2332"
+      > </a
+      ><a name="2333" href="IPCSemanticsExperimental.html#2271" class="Bound"
+      >&#951;</a
+      ><a name="2334"
+      > </a
+      ><a name="2335" href="IPCSemanticsExperimental.html#2278" class="Bound"
+      >a</a
+      ><a name="2336" class="Symbol"
+      >)</a
+      ><a name="2337"
+      >
+
+  </a
+      ><a name="2341" href="IPCSemanticsExperimental.html#2341" class="Function"
+      >lookup&#8873;</a
+      ><a name="2348"
+      > </a
+      ><a name="2349" class="Symbol"
+      >:</a
+      ><a name="2350"
+      > </a
+      ><a name="2351" class="Symbol"
+      >&#8704;</a
+      ><a name="2352"
+      > </a
+      ><a name="2353" class="Symbol"
+      >{{</a
+      ><a name="2355" href="IPCSemanticsExperimental.html#2355" class="Bound"
+      >_</a
+      ><a name="2356"
+      > </a
+      ><a name="2357" class="Symbol"
+      >:</a
+      ><a name="2358"
+      > </a
+      ><a name="2359" href="IPCSemanticsExperimental.html#106" class="Record"
+      >Model</a
+      ><a name="2364" class="Symbol"
+      >}}</a
+      ><a name="2366"
+      > </a
+      ><a name="2367" class="Symbol"
+      >{</a
+      ><a name="2368" href="IPCSemanticsExperimental.html#2368" class="Bound"
+      >w</a
+      ><a name="2369"
+      > </a
+      ><a name="2370" href="IPCSemanticsExperimental.html#2370" class="Bound"
+      >&#926;</a
+      ><a name="2371"
+      > </a
+      ><a name="2372" href="IPCSemanticsExperimental.html#2372" class="Bound"
+      >A</a
+      ><a name="2373" class="Symbol"
+      >}</a
+      ><a name="2374"
+      > </a
+      ><a name="2375" class="Symbol"
+      >&#8594;</a
+      ><a name="2376"
+      > </a
+      ><a name="2377" href="IPCSemanticsExperimental.html#2368" class="Bound"
+      >w</a
+      ><a name="2378"
+      > </a
+      ><a name="2379" href="IPCSemanticsExperimental.html#1679" class="Function Operator"
+      >&#8873;&#8902;</a
+      ><a name="2381"
+      > </a
+      ><a name="2382" href="IPCSemanticsExperimental.html#2370" class="Bound"
+      >&#926;</a
+      ><a name="2383"
+      > </a
+      ><a name="2384" class="Symbol"
+      >&#8594;</a
+      ><a name="2385"
+      > </a
+      ><a name="2386" href="IPCSemanticsExperimental.html#2370" class="Bound"
+      >&#926;</a
+      ><a name="2387"
+      > </a
+      ><a name="2388" href="PreludeList.html#5404" class="Datatype Operator"
+      >&#8715;</a
+      ><a name="2389"
+      > </a
+      ><a name="2390" href="IPCSemanticsExperimental.html#2372" class="Bound"
+      >A</a
+      ><a name="2391"
+      > </a
+      ><a name="2392" class="Symbol"
+      >&#8594;</a
+      ><a name="2393"
+      > </a
+      ><a name="2394" href="IPCSemanticsExperimental.html#2368" class="Bound"
+      >w</a
+      ><a name="2395"
+      > </a
+      ><a name="2396" href="IPCSemanticsExperimental.html#881" class="Function Operator"
+      >&#8873;</a
+      ><a name="2397"
+      > </a
+      ><a name="2398" href="IPCSemanticsExperimental.html#2372" class="Bound"
+      >A</a
+      ><a name="2399"
+      >
+  </a
+      ><a name="2402" href="IPCSemanticsExperimental.html#2341" class="Function"
+      >lookup&#8873;</a
+      ><a name="2409"
+      > </a
+      ><a name="2410" href="IPCSemanticsExperimental.html#2410" class="Bound"
+      >&#958;</a
+      ><a name="2411"
+      > </a
+      ><a name="2412" href="IPCSemanticsExperimental.html#2412" class="Bound"
+      >&#119998;</a
+      ><a name="2413"
+      > </a
+      ><a name="2414" class="Symbol"
+      >=</a
+      ><a name="2415"
+      > </a
+      ><a name="2416" href="PreludeList.html#6132" class="Function"
+      >lookupAll</a
+      ><a name="2425"
+      > </a
+      ><a name="2426" href="IPCSemanticsExperimental.html#2410" class="Bound"
+      >&#958;</a
+      ><a name="2427"
+      > </a
+      ><a name="2428" href="IPCSemanticsExperimental.html#2412" class="Bound"
+      >&#119998;</a
+      ><a name="2429"
+      >
+
+
+</a
+      ><a name="2432" class="Comment"
+      >-- Vectors of values.</a
+      ><a name="2453"
+      >
+
+</a
+      ><a name="2455" class="Keyword"
+      >module</a
+      ><a name="2461"
+      > </a
+      ><a name="2462" href="IPCSemanticsExperimental.html#2462" class="Module"
+      >IPCSemanticsExperimentalVec</a
+      ><a name="2489"
+      > </a
+      ><a name="2490" class="Keyword"
+      >where</a
+      ><a name="2495"
+      >
+  </a
+      ><a name="2498" class="Keyword"
+      >open</a
+      ><a name="2502"
+      > </a
+      ><a name="2503" href="IPC.html#261" class="Module"
+      >IPCVec</a
+      ><a name="2509"
+      > </a
+      ><a name="2510" class="Keyword"
+      >public</a
+      ><a name="2516"
+      >
+
+  </a
+      ><a name="2520" class="Keyword"
+      >infix</a
+      ><a name="2525"
+      > </a
+      ><a name="2526" class="Number"
+      >3</a
+      ><a name="2527"
+      > </a
+      ><a name="2528" href="IPCSemanticsExperimental.html#2535" class="Function Operator"
+      >_&#8873;&#8902;_</a
+      ><a name="2532"
+      >
+  </a
+      ><a name="2535" href="IPCSemanticsExperimental.html#2535" class="Function Operator"
+      >_&#8873;&#8902;_</a
+      ><a name="2539"
+      > </a
+      ><a name="2540" class="Symbol"
+      >:</a
+      ><a name="2541"
+      > </a
+      ><a name="2542" class="Symbol"
+      >&#8704;</a
+      ><a name="2543"
+      > </a
+      ><a name="2544" class="Symbol"
+      >{{</a
+      ><a name="2546" href="IPCSemanticsExperimental.html#2546" class="Bound"
+      >_</a
+      ><a name="2547"
+      > </a
+      ><a name="2548" class="Symbol"
+      >:</a
+      ><a name="2549"
+      > </a
+      ><a name="2550" href="IPCSemanticsExperimental.html#106" class="Record"
+      >Model</a
+      ><a name="2555" class="Symbol"
+      >}}</a
+      ><a name="2557"
+      > </a
+      ><a name="2558" class="Symbol"
+      >{</a
+      ><a name="2559" href="IPCSemanticsExperimental.html#2559" class="Bound"
+      >n</a
+      ><a name="2560" class="Symbol"
+      >}</a
+      ><a name="2561"
+      > </a
+      ><a name="2562" class="Symbol"
+      >&#8594;</a
+      ><a name="2563"
+      > </a
+      ><a name="2564" href="IPCSemanticsExperimental.html#137" class="Field"
+      >World</a
+      ><a name="2569"
+      > </a
+      ><a name="2570" class="Symbol"
+      >&#8594;</a
+      ><a name="2571"
+      > </a
+      ><a name="2572" href="IPC.html#309" class="Function"
+      >Ty&#8902;</a
+      ><a name="2575"
+      > </a
+      ><a name="2576" href="IPCSemanticsExperimental.html#2559" class="Bound"
+      >n</a
+      ><a name="2577"
+      > </a
+      ><a name="2578" class="Symbol"
+      >&#8594;</a
+      ><a name="2579"
+      > </a
+      ><a name="2580" class="PrimitiveType"
+      >Set</a
+      ><a name="2583"
+      >
+  </a
+      ><a name="2586" href="IPCSemanticsExperimental.html#2586" class="Bound"
+      >w</a
+      ><a name="2587"
+      > </a
+      ><a name="2588" href="IPCSemanticsExperimental.html#2535" class="Function Operator"
+      >&#8873;&#8902;</a
+      ><a name="2590"
+      > </a
+      ><a name="2591" href="IPCSemanticsExperimental.html#2591" class="Bound"
+      >&#926;</a
+      ><a name="2592"
+      > </a
+      ><a name="2593" class="Symbol"
+      >=</a
+      ><a name="2594"
+      > </a
+      ><a name="2595" href="PreludeVec.html#581" class="Datatype"
+      >All</a
+      ><a name="2598"
+      > </a
+      ><a name="2599" class="Symbol"
+      >(</a
+      ><a name="2600" href="IPCSemanticsExperimental.html#2586" class="Bound"
+      >w</a
+      ><a name="2601"
+      > </a
+      ><a name="2602" href="IPCSemanticsExperimental.html#881" class="Function Operator"
+      >&#8873;_</a
+      ><a name="2604" class="Symbol"
+      >)</a
+      ><a name="2605"
+      > </a
+      ><a name="2606" href="IPCSemanticsExperimental.html#2591" class="Bound"
+      >&#926;</a
+      ><a name="2607"
+      >
+
+  </a
+      ><a name="2611" href="IPCSemanticsExperimental.html#2611" class="Function"
+      >mono&#8873;&#8902;</a
+      ><a name="2617"
+      > </a
+      ><a name="2618" class="Symbol"
+      >:</a
+      ><a name="2619"
+      > </a
+      ><a name="2620" class="Symbol"
+      >&#8704;</a
+      ><a name="2621"
+      > </a
+      ><a name="2622" class="Symbol"
+      >{{</a
+      ><a name="2624" href="IPCSemanticsExperimental.html#2624" class="Bound"
+      >_</a
+      ><a name="2625"
+      > </a
+      ><a name="2626" class="Symbol"
+      >:</a
+      ><a name="2627"
+      > </a
+      ><a name="2628" href="IPCSemanticsExperimental.html#106" class="Record"
+      >Model</a
+      ><a name="2633" class="Symbol"
+      >}}</a
+      ><a name="2635"
+      > </a
+      ><a name="2636" class="Symbol"
+      >{</a
+      ><a name="2637" href="IPCSemanticsExperimental.html#2637" class="Bound"
+      >w</a
+      ><a name="2638"
+      > </a
+      ><a name="2639" href="IPCSemanticsExperimental.html#2639" class="Bound"
+      >w&#8242;</a
+      ><a name="2641"
+      > </a
+      ><a name="2642" href="IPCSemanticsExperimental.html#2642" class="Bound"
+      >n</a
+      ><a name="2643" class="Symbol"
+      >}</a
+      ><a name="2644"
+      > </a
+      ><a name="2645" class="Symbol"
+      >{</a
+      ><a name="2646" href="IPCSemanticsExperimental.html#2646" class="Bound"
+      >&#926;</a
+      ><a name="2647"
+      > </a
+      ><a name="2648" class="Symbol"
+      >:</a
+      ><a name="2649"
+      > </a
+      ><a name="2650" href="IPC.html#309" class="Function"
+      >Ty&#8902;</a
+      ><a name="2653"
+      > </a
+      ><a name="2654" href="IPCSemanticsExperimental.html#2642" class="Bound"
+      >n</a
+      ><a name="2655" class="Symbol"
+      >}</a
+      ><a name="2656"
+      > </a
+      ><a name="2657" class="Symbol"
+      >&#8594;</a
+      ><a name="2658"
+      >
+              </a
+      ><a name="2673" href="IPCSemanticsExperimental.html#2639" class="Bound"
+      >w&#8242;</a
+      ><a name="2675"
+      > </a
+      ><a name="2676" href="IPCSemanticsExperimental.html#159" class="Field Operator"
+      >&#8850;</a
+      ><a name="2677"
+      > </a
+      ><a name="2678" href="IPCSemanticsExperimental.html#2637" class="Bound"
+      >w</a
+      ><a name="2679"
+      > </a
+      ><a name="2680" class="Symbol"
+      >&#8594;</a
+      ><a name="2681"
+      > </a
+      ><a name="2682" href="IPCSemanticsExperimental.html#2637" class="Bound"
+      >w</a
+      ><a name="2683"
+      > </a
+      ><a name="2684" href="IPCSemanticsExperimental.html#2535" class="Function Operator"
+      >&#8873;&#8902;</a
+      ><a name="2686"
+      > </a
+      ><a name="2687" href="IPCSemanticsExperimental.html#2646" class="Bound"
+      >&#926;</a
+      ><a name="2688"
+      > </a
+      ><a name="2689" class="Symbol"
+      >&#8594;</a
+      ><a name="2690"
+      > </a
+      ><a name="2691" href="IPCSemanticsExperimental.html#2639" class="Bound"
+      >w&#8242;</a
+      ><a name="2693"
+      > </a
+      ><a name="2694" href="IPCSemanticsExperimental.html#2535" class="Function Operator"
+      >&#8873;&#8902;</a
+      ><a name="2696"
+      > </a
+      ><a name="2697" href="IPCSemanticsExperimental.html#2646" class="Bound"
+      >&#926;</a
+      ><a name="2698"
+      >
+  </a
+      ><a name="2701" href="IPCSemanticsExperimental.html#2611" class="Function"
+      >mono&#8873;&#8902;</a
+      ><a name="2707"
+      > </a
+      ><a name="2708" href="IPCSemanticsExperimental.html#2708" class="Bound"
+      >&#951;</a
+      ><a name="2709"
+      > </a
+      ><a name="2710" href="IPCSemanticsExperimental.html#2710" class="Bound"
+      >&#958;</a
+      ><a name="2711"
+      > </a
+      ><a name="2712" class="Symbol"
+      >=</a
+      ><a name="2713"
+      > </a
+      ><a name="2714" href="PreludeVec.html#762" class="Function"
+      >mapAll</a
+      ><a name="2720"
+      > </a
+      ><a name="2721" class="Symbol"
+      >(&#955;</a
+      ><a name="2723"
+      > </a
+      ><a name="2724" class="Symbol"
+      >{</a
+      ><a name="2725" href="IPCSemanticsExperimental.html#2725" class="Bound"
+      >A</a
+      ><a name="2726" class="Symbol"
+      >}</a
+      ><a name="2727"
+      > </a
+      ><a name="2728" class="Symbol"
+      >&#8594;</a
+      ><a name="2729"
+      > </a
+      ><a name="2730" href="IPCSemanticsExperimental.html#986" class="Function"
+      >mono&#8873;</a
+      ><a name="2735"
+      > </a
+      ><a name="2736" class="Symbol"
+      >{</a
+      ><a name="2737" href="IPCSemanticsExperimental.html#2725" class="Bound"
+      >A</a
+      ><a name="2738" class="Symbol"
+      >}</a
+      ><a name="2739"
+      > </a
+      ><a name="2740" href="IPCSemanticsExperimental.html#2708" class="Bound"
+      >&#951;</a
+      ><a name="2741" class="Symbol"
+      >)</a
+      ><a name="2742"
+      > </a
+      ><a name="2743" href="IPCSemanticsExperimental.html#2710" class="Bound"
+      >&#958;</a
+      ><a name="2744"
+      >
+
+  </a
+      ><a name="2748" href="IPCSemanticsExperimental.html#2748" class="Function"
+      >idmono&#8873;&#8902;</a
+      ><a name="2756"
+      > </a
+      ><a name="2757" class="Symbol"
+      >:</a
+      ><a name="2758"
+      > </a
+      ><a name="2759" class="Symbol"
+      >&#8704;</a
+      ><a name="2760"
+      > </a
+      ><a name="2761" class="Symbol"
+      >{{</a
+      ><a name="2763" href="IPCSemanticsExperimental.html#2763" class="Bound"
+      >_</a
+      ><a name="2764"
+      > </a
+      ><a name="2765" class="Symbol"
+      >:</a
+      ><a name="2766"
+      > </a
+      ><a name="2767" href="IPCSemanticsExperimental.html#106" class="Record"
+      >Model</a
+      ><a name="2772" class="Symbol"
+      >}}</a
+      ><a name="2774"
+      > </a
+      ><a name="2775" class="Symbol"
+      >{</a
+      ><a name="2776" href="IPCSemanticsExperimental.html#2776" class="Bound"
+      >w</a
+      ><a name="2777"
+      > </a
+      ><a name="2778" href="IPCSemanticsExperimental.html#2778" class="Bound"
+      >n</a
+      ><a name="2779" class="Symbol"
+      >}</a
+      ><a name="2780"
+      > </a
+      ><a name="2781" class="Symbol"
+      >{</a
+      ><a name="2782" href="IPCSemanticsExperimental.html#2782" class="Bound"
+      >&#926;</a
+      ><a name="2783"
+      > </a
+      ><a name="2784" class="Symbol"
+      >:</a
+      ><a name="2785"
+      > </a
+      ><a name="2786" href="IPC.html#309" class="Function"
+      >Ty&#8902;</a
+      ><a name="2789"
+      > </a
+      ><a name="2790" href="IPCSemanticsExperimental.html#2778" class="Bound"
+      >n</a
+      ><a name="2791" class="Symbol"
+      >}</a
+      ><a name="2792"
+      > </a
+      ><a name="2793" class="Symbol"
+      >&#8594;</a
+      ><a name="2794"
+      >
+                </a
+      ><a name="2811" class="Symbol"
+      >(</a
+      ><a name="2812" href="IPCSemanticsExperimental.html#2812" class="Bound"
+      >&#958;</a
+      ><a name="2813"
+      > </a
+      ><a name="2814" class="Symbol"
+      >:</a
+      ><a name="2815"
+      > </a
+      ><a name="2816" href="IPCSemanticsExperimental.html#2776" class="Bound"
+      >w</a
+      ><a name="2817"
+      > </a
+      ><a name="2818" href="IPCSemanticsExperimental.html#2535" class="Function Operator"
+      >&#8873;&#8902;</a
+      ><a name="2820"
+      > </a
+      ><a name="2821" href="IPCSemanticsExperimental.html#2782" class="Bound"
+      >&#926;</a
+      ><a name="2822" class="Symbol"
+      >)</a
+      ><a name="2823"
+      > </a
+      ><a name="2824" class="Symbol"
+      >&#8594;</a
+      ><a name="2825"
+      > </a
+      ><a name="2826" href="IPCSemanticsExperimental.html#2611" class="Function"
+      >mono&#8873;&#8902;</a
+      ><a name="2832"
+      > </a
+      ><a name="2833" href="IPCSemanticsExperimental.html#197" class="Field"
+      >refl&#8850;</a
+      ><a name="2838"
+      > </a
+      ><a name="2839" href="IPCSemanticsExperimental.html#2812" class="Bound"
+      >&#958;</a
+      ><a name="2840"
+      > </a
+      ><a name="2841" href="Prelude.html#805" class="Datatype Operator"
+      >&#8801;</a
+      ><a name="2842"
+      > </a
+      ><a name="2843" href="IPCSemanticsExperimental.html#2812" class="Bound"
+      >&#958;</a
+      ><a name="2844"
+      >
+  </a
+      ><a name="2847" href="IPCSemanticsExperimental.html#2748" class="Function"
+      >idmono&#8873;&#8902;</a
+      ><a name="2855"
+      > </a
+      ><a name="2856" class="Symbol"
+      >{</a
+      ><a name="2857" class="Argument"
+      >&#926;</a
+      ><a name="2858"
+      > </a
+      ><a name="2859" class="Symbol"
+      >=</a
+      ><a name="2860"
+      > </a
+      ><a name="2861" href="PreludeVec.html#157" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="2862" class="Symbol"
+      >}</a
+      ><a name="2863"
+      >     </a
+      ><a name="2868" href="PreludeVec.html#669" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="2869"
+      >       </a
+      ><a name="2876" class="Symbol"
+      >=</a
+      ><a name="2877"
+      > </a
+      ><a name="2878" href="Prelude.html#866" class="InductiveConstructor"
+      >refl</a
+      ><a name="2882"
+      >
+  </a
+      ><a name="2885" href="IPCSemanticsExperimental.html#2748" class="Function"
+      >idmono&#8873;&#8902;</a
+      ><a name="2893"
+      > </a
+      ><a name="2894" class="Symbol"
+      >{</a
+      ><a name="2895" class="Argument"
+      >&#926;</a
+      ><a name="2896"
+      > </a
+      ><a name="2897" class="Symbol"
+      >=</a
+      ><a name="2898"
+      > </a
+      ><a name="2899" href="IPCSemanticsExperimental.html#2899" class="Bound"
+      >&#926;</a
+      ><a name="2900"
+      > </a
+      ><a name="2901" href="PreludeVec.html#178" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="2902"
+      > </a
+      ><a name="2903" href="IPCSemanticsExperimental.html#2903" class="Bound"
+      >A</a
+      ><a name="2904" class="Symbol"
+      >}</a
+      ><a name="2905"
+      > </a
+      ><a name="2906" class="Symbol"
+      >(</a
+      ><a name="2907" href="IPCSemanticsExperimental.html#2907" class="Bound"
+      >&#958;</a
+      ><a name="2908"
+      > </a
+      ><a name="2909" href="PreludeVec.html#687" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="2910"
+      > </a
+      ><a name="2911" href="IPCSemanticsExperimental.html#2911" class="Bound"
+      >a</a
+      ><a name="2912" class="Symbol"
+      >)</a
+      ><a name="2913"
+      > </a
+      ><a name="2914" class="Symbol"
+      >=</a
+      ><a name="2915"
+      > </a
+      ><a name="2916" href="Prelude.html#1446" class="Function"
+      >cong&#178;</a
+      ><a name="2921"
+      > </a
+      ><a name="2922" href="PreludeVec.html#687" class="InductiveConstructor Operator"
+      >_,_</a
+      ><a name="2925"
+      > </a
+      ><a name="2926" class="Symbol"
+      >(</a
+      ><a name="2927" href="IPCSemanticsExperimental.html#2748" class="Function"
+      >idmono&#8873;&#8902;</a
+      ><a name="2935"
+      > </a
+      ><a name="2936" href="IPCSemanticsExperimental.html#2907" class="Bound"
+      >&#958;</a
+      ><a name="2937" class="Symbol"
+      >)</a
+      ><a name="2938"
+      > </a
+      ><a name="2939" class="Symbol"
+      >(</a
+      ><a name="2940" href="IPCSemanticsExperimental.html#1124" class="Function"
+      >idmono&#8873;</a
+      ><a name="2947"
+      > </a
+      ><a name="2948" class="Symbol"
+      >{</a
+      ><a name="2949" href="IPCSemanticsExperimental.html#2903" class="Bound"
+      >A</a
+      ><a name="2950" class="Symbol"
+      >}</a
+      ><a name="2951"
+      > </a
+      ><a name="2952" href="IPCSemanticsExperimental.html#2911" class="Bound"
+      >a</a
+      ><a name="2953" class="Symbol"
+      >)</a
+      ><a name="2954"
+      >
+
+  </a
+      ><a name="2958" href="IPCSemanticsExperimental.html#2958" class="Function"
+      >assocmono&#8873;&#8902;</a
+      ><a name="2969"
+      > </a
+      ><a name="2970" class="Symbol"
+      >:</a
+      ><a name="2971"
+      > </a
+      ><a name="2972" class="Symbol"
+      >&#8704;</a
+      ><a name="2973"
+      > </a
+      ><a name="2974" class="Symbol"
+      >{{</a
+      ><a name="2976" href="IPCSemanticsExperimental.html#2976" class="Bound"
+      >_</a
+      ><a name="2977"
+      > </a
+      ><a name="2978" class="Symbol"
+      >:</a
+      ><a name="2979"
+      > </a
+      ><a name="2980" href="IPCSemanticsExperimental.html#106" class="Record"
+      >Model</a
+      ><a name="2985" class="Symbol"
+      >}}</a
+      ><a name="2987"
+      > </a
+      ><a name="2988" class="Symbol"
+      >{</a
+      ><a name="2989" href="IPCSemanticsExperimental.html#2989" class="Bound"
+      >w</a
+      ><a name="2990"
+      > </a
+      ><a name="2991" href="IPCSemanticsExperimental.html#2991" class="Bound"
+      >w&#8242;</a
+      ><a name="2993"
+      > </a
+      ><a name="2994" href="IPCSemanticsExperimental.html#2994" class="Bound"
+      >w&#8243;</a
+      ><a name="2996"
+      > </a
+      ><a name="2997" href="IPCSemanticsExperimental.html#2997" class="Bound"
+      >n</a
+      ><a name="2998" class="Symbol"
+      >}</a
+      ><a name="2999"
+      > </a
+      ><a name="3000" class="Symbol"
+      >{</a
+      ><a name="3001" href="IPCSemanticsExperimental.html#3001" class="Bound"
+      >&#926;</a
+      ><a name="3002"
+      > </a
+      ><a name="3003" class="Symbol"
+      >:</a
+      ><a name="3004"
+      > </a
+      ><a name="3005" href="IPC.html#309" class="Function"
+      >Ty&#8902;</a
+      ><a name="3008"
+      > </a
+      ><a name="3009" href="IPCSemanticsExperimental.html#2997" class="Bound"
+      >n</a
+      ><a name="3010" class="Symbol"
+      >}</a
+      ><a name="3011"
+      > </a
+      ><a name="3012" class="Symbol"
+      >&#8594;</a
+      ><a name="3013"
+      >
+                   </a
+      ><a name="3033" class="Symbol"
+      >(</a
+      ><a name="3034" href="IPCSemanticsExperimental.html#3034" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="3036"
+      > </a
+      ><a name="3037" class="Symbol"
+      >:</a
+      ><a name="3038"
+      > </a
+      ><a name="3039" href="IPCSemanticsExperimental.html#2994" class="Bound"
+      >w&#8243;</a
+      ><a name="3041"
+      > </a
+      ><a name="3042" href="IPCSemanticsExperimental.html#159" class="Field Operator"
+      >&#8850;</a
+      ><a name="3043"
+      > </a
+      ><a name="3044" href="IPCSemanticsExperimental.html#2991" class="Bound"
+      >w&#8242;</a
+      ><a name="3046" class="Symbol"
+      >)</a
+      ><a name="3047"
+      > </a
+      ><a name="3048" class="Symbol"
+      >(</a
+      ><a name="3049" href="IPCSemanticsExperimental.html#3049" class="Bound"
+      >&#951;</a
+      ><a name="3050"
+      > </a
+      ><a name="3051" class="Symbol"
+      >:</a
+      ><a name="3052"
+      > </a
+      ><a name="3053" href="IPCSemanticsExperimental.html#2991" class="Bound"
+      >w&#8242;</a
+      ><a name="3055"
+      > </a
+      ><a name="3056" href="IPCSemanticsExperimental.html#159" class="Field Operator"
+      >&#8850;</a
+      ><a name="3057"
+      > </a
+      ><a name="3058" href="IPCSemanticsExperimental.html#2989" class="Bound"
+      >w</a
+      ><a name="3059" class="Symbol"
+      >)</a
+      ><a name="3060"
+      > </a
+      ><a name="3061" class="Symbol"
+      >(</a
+      ><a name="3062" href="IPCSemanticsExperimental.html#3062" class="Bound"
+      >&#958;</a
+      ><a name="3063"
+      > </a
+      ><a name="3064" class="Symbol"
+      >:</a
+      ><a name="3065"
+      > </a
+      ><a name="3066" href="IPCSemanticsExperimental.html#2989" class="Bound"
+      >w</a
+      ><a name="3067"
+      > </a
+      ><a name="3068" href="IPCSemanticsExperimental.html#2535" class="Function Operator"
+      >&#8873;&#8902;</a
+      ><a name="3070"
+      > </a
+      ><a name="3071" href="IPCSemanticsExperimental.html#3001" class="Bound"
+      >&#926;</a
+      ><a name="3072" class="Symbol"
+      >)</a
+      ><a name="3073"
+      > </a
+      ><a name="3074" class="Symbol"
+      >&#8594;</a
+      ><a name="3075"
+      >
+                   </a
+      ><a name="3095" href="IPCSemanticsExperimental.html#2611" class="Function"
+      >mono&#8873;&#8902;</a
+      ><a name="3101"
+      > </a
+      ><a name="3102" href="IPCSemanticsExperimental.html#3034" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="3104"
+      > </a
+      ><a name="3105" class="Symbol"
+      >(</a
+      ><a name="3106" href="IPCSemanticsExperimental.html#2611" class="Function"
+      >mono&#8873;&#8902;</a
+      ><a name="3112"
+      > </a
+      ><a name="3113" href="IPCSemanticsExperimental.html#3049" class="Bound"
+      >&#951;</a
+      ><a name="3114"
+      > </a
+      ><a name="3115" href="IPCSemanticsExperimental.html#3062" class="Bound"
+      >&#958;</a
+      ><a name="3116" class="Symbol"
+      >)</a
+      ><a name="3117"
+      > </a
+      ><a name="3118" href="Prelude.html#805" class="Datatype Operator"
+      >&#8801;</a
+      ><a name="3119"
+      > </a
+      ><a name="3120" href="IPCSemanticsExperimental.html#2611" class="Function"
+      >mono&#8873;&#8902;</a
+      ><a name="3126"
+      > </a
+      ><a name="3127" class="Symbol"
+      >(</a
+      ><a name="3128" href="IPCSemanticsExperimental.html#229" class="Field"
+      >trans&#8850;</a
+      ><a name="3134"
+      > </a
+      ><a name="3135" href="IPCSemanticsExperimental.html#3034" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="3137"
+      > </a
+      ><a name="3138" href="IPCSemanticsExperimental.html#3049" class="Bound"
+      >&#951;</a
+      ><a name="3139" class="Symbol"
+      >)</a
+      ><a name="3140"
+      > </a
+      ><a name="3141" href="IPCSemanticsExperimental.html#3062" class="Bound"
+      >&#958;</a
+      ><a name="3142"
+      >
+  </a
+      ><a name="3145" href="IPCSemanticsExperimental.html#2958" class="Function"
+      >assocmono&#8873;&#8902;</a
+      ><a name="3156"
+      > </a
+      ><a name="3157" class="Symbol"
+      >{</a
+      ><a name="3158" class="Argument"
+      >&#926;</a
+      ><a name="3159"
+      > </a
+      ><a name="3160" class="Symbol"
+      >=</a
+      ><a name="3161"
+      > </a
+      ><a name="3162" href="PreludeVec.html#157" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="3163" class="Symbol"
+      >}</a
+      ><a name="3164"
+      >     </a
+      ><a name="3169" href="IPCSemanticsExperimental.html#3169" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="3171"
+      > </a
+      ><a name="3172" href="IPCSemanticsExperimental.html#3172" class="Bound"
+      >&#951;</a
+      ><a name="3173"
+      > </a
+      ><a name="3174" href="PreludeVec.html#669" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="3175"
+      >       </a
+      ><a name="3182" class="Symbol"
+      >=</a
+      ><a name="3183"
+      > </a
+      ><a name="3184" href="Prelude.html#866" class="InductiveConstructor"
+      >refl</a
+      ><a name="3188"
+      >
+  </a
+      ><a name="3191" href="IPCSemanticsExperimental.html#2958" class="Function"
+      >assocmono&#8873;&#8902;</a
+      ><a name="3202"
+      > </a
+      ><a name="3203" class="Symbol"
+      >{</a
+      ><a name="3204" class="Argument"
+      >&#926;</a
+      ><a name="3205"
+      > </a
+      ><a name="3206" class="Symbol"
+      >=</a
+      ><a name="3207"
+      > </a
+      ><a name="3208" href="IPCSemanticsExperimental.html#3208" class="Bound"
+      >&#926;</a
+      ><a name="3209"
+      > </a
+      ><a name="3210" href="PreludeVec.html#178" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="3211"
+      > </a
+      ><a name="3212" href="IPCSemanticsExperimental.html#3212" class="Bound"
+      >A</a
+      ><a name="3213" class="Symbol"
+      >}</a
+      ><a name="3214"
+      > </a
+      ><a name="3215" href="IPCSemanticsExperimental.html#3215" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="3217"
+      > </a
+      ><a name="3218" href="IPCSemanticsExperimental.html#3218" class="Bound"
+      >&#951;</a
+      ><a name="3219"
+      > </a
+      ><a name="3220" class="Symbol"
+      >(</a
+      ><a name="3221" href="IPCSemanticsExperimental.html#3221" class="Bound"
+      >&#958;</a
+      ><a name="3222"
+      > </a
+      ><a name="3223" href="PreludeVec.html#687" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="3224"
+      > </a
+      ><a name="3225" href="IPCSemanticsExperimental.html#3225" class="Bound"
+      >a</a
+      ><a name="3226" class="Symbol"
+      >)</a
+      ><a name="3227"
+      > </a
+      ><a name="3228" class="Symbol"
+      >=</a
+      ><a name="3229"
+      > </a
+      ><a name="3230" href="Prelude.html#1446" class="Function"
+      >cong&#178;</a
+      ><a name="3235"
+      > </a
+      ><a name="3236" href="PreludeVec.html#687" class="InductiveConstructor Operator"
+      >_,_</a
+      ><a name="3239"
+      > </a
+      ><a name="3240" class="Symbol"
+      >(</a
+      ><a name="3241" href="IPCSemanticsExperimental.html#2958" class="Function"
+      >assocmono&#8873;&#8902;</a
+      ><a name="3252"
+      > </a
+      ><a name="3253" href="IPCSemanticsExperimental.html#3215" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="3255"
+      > </a
+      ><a name="3256" href="IPCSemanticsExperimental.html#3218" class="Bound"
+      >&#951;</a
+      ><a name="3257"
+      > </a
+      ><a name="3258" href="IPCSemanticsExperimental.html#3221" class="Bound"
+      >&#958;</a
+      ><a name="3259" class="Symbol"
+      >)</a
+      ><a name="3260"
+      > </a
+      ><a name="3261" class="Symbol"
+      >(</a
+      ><a name="3262" href="IPCSemanticsExperimental.html#1286" class="Function"
+      >assocmono&#8873;</a
+      ><a name="3272"
+      > </a
+      ><a name="3273" class="Symbol"
+      >{</a
+      ><a name="3274" href="IPCSemanticsExperimental.html#3212" class="Bound"
+      >A</a
+      ><a name="3275" class="Symbol"
+      >}</a
+      ><a name="3276"
+      > </a
+      ><a name="3277" href="IPCSemanticsExperimental.html#3215" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="3279"
+      > </a
+      ><a name="3280" href="IPCSemanticsExperimental.html#3218" class="Bound"
+      >&#951;</a
+      ><a name="3281"
+      > </a
+      ><a name="3282" href="IPCSemanticsExperimental.html#3225" class="Bound"
+      >a</a
+      ><a name="3283" class="Symbol"
+      >)</a
+      ><a name="3284"
+      >
+
+  </a
+      ><a name="3288" href="IPCSemanticsExperimental.html#3288" class="Function"
+      >lookup&#8873;</a
+      ><a name="3295"
+      > </a
+      ><a name="3296" class="Symbol"
+      >:</a
+      ><a name="3297"
+      > </a
+      ><a name="3298" class="Symbol"
+      >&#8704;</a
+      ><a name="3299"
+      > </a
+      ><a name="3300" class="Symbol"
+      >{{</a
+      ><a name="3302" href="IPCSemanticsExperimental.html#3302" class="Bound"
+      >_</a
+      ><a name="3303"
+      > </a
+      ><a name="3304" class="Symbol"
+      >:</a
+      ><a name="3305"
+      > </a
+      ><a name="3306" href="IPCSemanticsExperimental.html#106" class="Record"
+      >Model</a
+      ><a name="3311" class="Symbol"
+      >}}</a
+      ><a name="3313"
+      > </a
+      ><a name="3314" class="Symbol"
+      >{</a
+      ><a name="3315" href="IPCSemanticsExperimental.html#3315" class="Bound"
+      >w</a
+      ><a name="3316"
+      > </a
+      ><a name="3317" href="IPCSemanticsExperimental.html#3317" class="Bound"
+      >n</a
+      ><a name="3318" class="Symbol"
+      >}</a
+      ><a name="3319"
+      > </a
+      ><a name="3320" class="Symbol"
+      >{</a
+      ><a name="3321" href="IPCSemanticsExperimental.html#3321" class="Bound"
+      >&#926;</a
+      ><a name="3322"
+      > </a
+      ><a name="3323" class="Symbol"
+      >:</a
+      ><a name="3324"
+      > </a
+      ><a name="3325" href="IPC.html#309" class="Function"
+      >Ty&#8902;</a
+      ><a name="3328"
+      > </a
+      ><a name="3329" href="IPCSemanticsExperimental.html#3317" class="Bound"
+      >n</a
+      ><a name="3330" class="Symbol"
+      >}</a
+      ><a name="3331"
+      > </a
+      ><a name="3332" class="Symbol"
+      >{</a
+      ><a name="3333" href="IPCSemanticsExperimental.html#3333" class="Bound"
+      >A</a
+      ><a name="3334"
+      > </a
+      ><a name="3335" href="IPCSemanticsExperimental.html#3335" class="Bound"
+      >i</a
+      ><a name="3336" class="Symbol"
+      >}</a
+      ><a name="3337"
+      > </a
+      ><a name="3338" class="Symbol"
+      >&#8594;</a
+      ><a name="3339"
+      >
+               </a
+      ><a name="3355" href="IPCSemanticsExperimental.html#3315" class="Bound"
+      >w</a
+      ><a name="3356"
+      > </a
+      ><a name="3357" href="IPCSemanticsExperimental.html#2535" class="Function Operator"
+      >&#8873;&#8902;</a
+      ><a name="3359"
+      > </a
+      ><a name="3360" href="IPCSemanticsExperimental.html#3321" class="Bound"
+      >&#926;</a
+      ><a name="3361"
+      > </a
+      ><a name="3362" class="Symbol"
+      >&#8594;</a
+      ><a name="3363"
+      > </a
+      ><a name="3364" href="IPCSemanticsExperimental.html#3321" class="Bound"
+      >&#926;</a
+      ><a name="3365"
+      > </a
+      ><a name="3366" href="PreludeVec.html#3556" class="Datatype Operator"
+      >&#8715;&#10216;</a
+      ><a name="3368"
+      > </a
+      ><a name="3369" href="IPCSemanticsExperimental.html#3335" class="Bound"
+      >i</a
+      ><a name="3370"
+      > </a
+      ><a name="3371" href="PreludeVec.html#3556" class="Datatype Operator"
+      >&#10217;</a
+      ><a name="3372"
+      > </a
+      ><a name="3373" href="IPCSemanticsExperimental.html#3333" class="Bound"
+      >A</a
+      ><a name="3374"
+      > </a
+      ><a name="3375" class="Symbol"
+      >&#8594;</a
+      ><a name="3376"
+      > </a
+      ><a name="3377" href="IPCSemanticsExperimental.html#3315" class="Bound"
+      >w</a
+      ><a name="3378"
+      > </a
+      ><a name="3379" href="IPCSemanticsExperimental.html#881" class="Function Operator"
+      >&#8873;</a
+      ><a name="3380"
+      > </a
+      ><a name="3381" href="IPCSemanticsExperimental.html#3333" class="Bound"
+      >A</a
+      ><a name="3382"
+      >
+  </a
+      ><a name="3385" href="IPCSemanticsExperimental.html#3288" class="Function"
+      >lookup&#8873;</a
+      ><a name="3392"
+      > </a
+      ><a name="3393" href="IPCSemanticsExperimental.html#3393" class="Bound"
+      >&#958;</a
+      ><a name="3394"
+      > </a
+      ><a name="3395" href="IPCSemanticsExperimental.html#3395" class="Bound"
+      >&#119998;</a
+      ><a name="3396"
+      > </a
+      ><a name="3397" class="Symbol"
+      >=</a
+      ><a name="3398"
+      > </a
+      ><a name="3399" href="PreludeVec.html#3789" class="Function"
+      >lookupAll</a
+      ><a name="3408"
+      > </a
+      ><a name="3409" href="IPCSemanticsExperimental.html#3393" class="Bound"
+      >&#958;</a
+      ><a name="3410"
+      > </a
+      ><a name="3411" href="IPCSemanticsExperimental.html#3395" class="Bound"
+      >&#119998;</a
+      ><a name="3412"
+      >
+</a
+      ></pre
+    ></body
+  ></html
+>

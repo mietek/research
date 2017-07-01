@@ -1,0 +1,3267 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><title
+    >IS4NormalisationNoTerms</title
+    ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta http-equiv="Content-Style-Type" content="text/css"
+     /><link href="Agda.css" rel="stylesheet" type="text/css"
+     /></head
+  ><body
+  ><pre
+    ><a name="1" class="Keyword"
+      >module</a
+      ><a name="7"
+      > </a
+      ><a name="8" href="IS4NormalisationNoTerms.html#1" class="Module"
+      >IS4NormalisationNoTerms</a
+      ><a name="31"
+      > </a
+      ><a name="32" class="Keyword"
+      >where</a
+      ><a name="37"
+      >
+
+</a
+      ><a name="39" class="Keyword"
+      >open</a
+      ><a name="43"
+      > </a
+      ><a name="44" class="Keyword"
+      >import</a
+      ><a name="50"
+      > </a
+      ><a name="51" href="IS4SemanticsNoTerms.html#1" class="Module"
+      >IS4SemanticsNoTerms</a
+      ><a name="70"
+      > </a
+      ><a name="71" class="Keyword"
+      >public</a
+      ><a name="77"
+      >
+
+
+</a
+      ><a name="80" class="Comment"
+      >-- Absolute values.</a
+      ><a name="99"
+      >
+
+</a
+      ><a name="101" class="Keyword"
+      >infix</a
+      ><a name="106"
+      > </a
+      ><a name="107" class="Number"
+      >3</a
+      ><a name="108"
+      > </a
+      ><a name="109" href="IS4NormalisationNoTerms.html#113" class="Function Operator"
+      >_&#8872;_</a
+      ><a name="112"
+      >
+</a
+      ><a name="113" href="IS4NormalisationNoTerms.html#113" class="Function Operator"
+      >_&#8872;_</a
+      ><a name="116"
+      > </a
+      ><a name="117" class="Symbol"
+      >:</a
+      ><a name="118"
+      > </a
+      ><a name="119" href="IS4SyntaxNoTerms.html#91" class="Function"
+      >Cx</a
+      ><a name="121"
+      > </a
+      ><a name="122" class="Symbol"
+      >&#8594;</a
+      ><a name="123"
+      > </a
+      ><a name="124" href="IS4.html#77" class="Datatype"
+      >Ty</a
+      ><a name="126"
+      > </a
+      ><a name="127" class="Symbol"
+      >&#8594;</a
+      ><a name="128"
+      > </a
+      ><a name="129" class="PrimitiveType"
+      >Set&#8321;</a
+      ><a name="133"
+      >
+</a
+      ><a name="134" href="IS4NormalisationNoTerms.html#134" class="Bound"
+      >&#916;</a
+      ><a name="135"
+      > </a
+      ><a name="136" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="137"
+      > </a
+      ><a name="138" href="IS4NormalisationNoTerms.html#138" class="Bound"
+      >&#915;</a
+      ><a name="139"
+      > </a
+      ><a name="140" href="IS4NormalisationNoTerms.html#113" class="Function Operator"
+      >&#8872;</a
+      ><a name="141"
+      > </a
+      ><a name="142" href="IS4NormalisationNoTerms.html#142" class="Bound"
+      >A</a
+      ><a name="143"
+      > </a
+      ><a name="144" class="Symbol"
+      >=</a
+      ><a name="145"
+      > </a
+      ><a name="146" class="Symbol"
+      >&#8704;</a
+      ><a name="147"
+      > </a
+      ><a name="148" class="Symbol"
+      >{{</a
+      ><a name="150" href="IS4NormalisationNoTerms.html#150" class="Bound"
+      >_</a
+      ><a name="151"
+      > </a
+      ><a name="152" class="Symbol"
+      >:</a
+      ><a name="153"
+      > </a
+      ><a name="154" href="IS4SemanticsNoTerms.html#113" class="Record"
+      >Model</a
+      ><a name="159" class="Symbol"
+      >}}</a
+      ><a name="161"
+      > </a
+      ><a name="162" class="Symbol"
+      >{</a
+      ><a name="163" href="IS4NormalisationNoTerms.html#163" class="Bound"
+      >w</a
+      ><a name="164" class="Symbol"
+      >}</a
+      ><a name="165"
+      > </a
+      ><a name="166" class="Symbol"
+      >&#8594;</a
+      ><a name="167"
+      >
+               </a
+      ><a name="183" class="Symbol"
+      >(&#8704;</a
+      ><a name="185"
+      > </a
+      ><a name="186" class="Symbol"
+      >{</a
+      ><a name="187" href="IS4NormalisationNoTerms.html#187" class="Bound"
+      >w&#8242;</a
+      ><a name="189" class="Symbol"
+      >}</a
+      ><a name="190"
+      > </a
+      ><a name="191" class="Symbol"
+      >&#8594;</a
+      ><a name="192"
+      > </a
+      ><a name="193" href="IS4NormalisationNoTerms.html#187" class="Bound"
+      >w&#8242;</a
+      ><a name="195"
+      > </a
+      ><a name="196" href="IS4SemanticsNoTerms.html#274" class="Field Operator"
+      >&#1071;</a
+      ><a name="197"
+      > </a
+      ><a name="198" href="IS4NormalisationNoTerms.html#163" class="Bound"
+      >w</a
+      ><a name="199"
+      > </a
+      ><a name="200" class="Symbol"
+      >&#8594;</a
+      ><a name="201"
+      > </a
+      ><a name="202" href="Prelude.html#2379" class="Field"
+      >&#960;&#8321;</a
+      ><a name="204"
+      > </a
+      ><a name="205" class="Symbol"
+      >(</a
+      ><a name="206" href="IS4SemanticsNoTerms.html#495" class="Field"
+      >peek</a
+      ><a name="210"
+      > </a
+      ><a name="211" href="IS4NormalisationNoTerms.html#187" class="Bound"
+      >w&#8242;</a
+      ><a name="213" class="Symbol"
+      >)</a
+      ><a name="214"
+      > </a
+      ><a name="215" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="216"
+      > </a
+      ><a name="217" href="PreludeList.html#151" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="218"
+      > </a
+      ><a name="219" href="IS4SyntaxNoTerms.html#653" class="Datatype Operator"
+      >&#8866;&#10694;</a
+      ><a name="221"
+      > </a
+      ><a name="222" href="IS4NormalisationNoTerms.html#134" class="Bound"
+      >&#916;</a
+      ><a name="223" class="Symbol"
+      >)</a
+      ><a name="224"
+      > </a
+      ><a name="225" class="Symbol"
+      >&#8594;</a
+      ><a name="226"
+      >
+               </a
+      ><a name="242" class="Symbol"
+      >(&#8704;</a
+      ><a name="244"
+      > </a
+      ><a name="245" class="Symbol"
+      >{</a
+      ><a name="246" href="IS4NormalisationNoTerms.html#246" class="Bound"
+      >w&#8242;</a
+      ><a name="248" class="Symbol"
+      >}</a
+      ><a name="249"
+      > </a
+      ><a name="250" class="Symbol"
+      >&#8594;</a
+      ><a name="251"
+      > </a
+      ><a name="252" href="IS4NormalisationNoTerms.html#246" class="Bound"
+      >w&#8242;</a
+      ><a name="254"
+      > </a
+      ><a name="255" href="IS4SemanticsNoTerms.html#274" class="Field Operator"
+      >&#1071;</a
+      ><a name="256"
+      > </a
+      ><a name="257" href="IS4NormalisationNoTerms.html#163" class="Bound"
+      >w</a
+      ><a name="258"
+      > </a
+      ><a name="259" class="Symbol"
+      >&#8594;</a
+      ><a name="260"
+      > </a
+      ><a name="261" href="IS4NormalisationNoTerms.html#246" class="Bound"
+      >w&#8242;</a
+      ><a name="263"
+      > </a
+      ><a name="264" href="IS4SemanticsNoTerms.html#1563" class="Function Operator"
+      >&#8873;&#10694;</a
+      ><a name="266"
+      > </a
+      ><a name="267" href="IS4NormalisationNoTerms.html#134" class="Bound"
+      >&#916;</a
+      ><a name="268" class="Symbol"
+      >)</a
+      ><a name="269"
+      > </a
+      ><a name="270" class="Symbol"
+      >&#8594;</a
+      ><a name="271"
+      >
+               </a
+      ><a name="287" href="IS4NormalisationNoTerms.html#163" class="Bound"
+      >w</a
+      ><a name="288"
+      > </a
+      ><a name="289" href="IS4SemanticsNoTerms.html#1261" class="Function Operator"
+      >&#8873;&#8902;</a
+      ><a name="291"
+      > </a
+      ><a name="292" href="IS4NormalisationNoTerms.html#138" class="Bound"
+      >&#915;</a
+      ><a name="293"
+      > </a
+      ><a name="294" class="Symbol"
+      >&#8594;</a
+      ><a name="295"
+      >
+               </a
+      ><a name="311" href="IS4NormalisationNoTerms.html#163" class="Bound"
+      >w</a
+      ><a name="312"
+      > </a
+      ><a name="313" href="IS4SemanticsNoTerms.html#576" class="Function Operator"
+      >&#8873;</a
+      ><a name="314"
+      > </a
+      ><a name="315" href="IS4NormalisationNoTerms.html#142" class="Bound"
+      >A</a
+      ><a name="316"
+      >
+
+
+</a
+      ><a name="319" class="Comment"
+      >-- Soundness.</a
+      ><a name="332"
+      >
+
+</a
+      ><a name="334" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10214;_&#10215;</a
+      ><a name="337"
+      > </a
+      ><a name="338" class="Symbol"
+      >:</a
+      ><a name="339"
+      > </a
+      ><a name="340" class="Symbol"
+      >&#8704;</a
+      ><a name="341"
+      > </a
+      ><a name="342" class="Symbol"
+      >{</a
+      ><a name="343" href="IS4NormalisationNoTerms.html#343" class="Bound"
+      >&#916;</a
+      ><a name="344"
+      > </a
+      ><a name="345" href="IS4NormalisationNoTerms.html#345" class="Bound"
+      >&#915;</a
+      ><a name="346"
+      > </a
+      ><a name="347" href="IS4NormalisationNoTerms.html#347" class="Bound"
+      >A</a
+      ><a name="348" class="Symbol"
+      >}</a
+      ><a name="349"
+      > </a
+      ><a name="350" class="Symbol"
+      >&#8594;</a
+      ><a name="351"
+      > </a
+      ><a name="352" href="IS4NormalisationNoTerms.html#343" class="Bound"
+      >&#916;</a
+      ><a name="353"
+      > </a
+      ><a name="354" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="355"
+      > </a
+      ><a name="356" href="IS4NormalisationNoTerms.html#345" class="Bound"
+      >&#915;</a
+      ><a name="357"
+      > </a
+      ><a name="358" href="IS4SyntaxNoTerms.html#154" class="Datatype Operator"
+      >&#8866;</a
+      ><a name="359"
+      > </a
+      ><a name="360" href="IS4NormalisationNoTerms.html#347" class="Bound"
+      >A</a
+      ><a name="361"
+      > </a
+      ><a name="362" class="Symbol"
+      >&#8594;</a
+      ><a name="363"
+      > </a
+      ><a name="364" href="IS4NormalisationNoTerms.html#343" class="Bound"
+      >&#916;</a
+      ><a name="365"
+      > </a
+      ><a name="366" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="367"
+      > </a
+      ><a name="368" href="IS4NormalisationNoTerms.html#345" class="Bound"
+      >&#915;</a
+      ><a name="369"
+      > </a
+      ><a name="370" href="IS4NormalisationNoTerms.html#113" class="Function Operator"
+      >&#8872;</a
+      ><a name="371"
+      > </a
+      ><a name="372" href="IS4NormalisationNoTerms.html#347" class="Bound"
+      >A</a
+      ><a name="373"
+      >
+</a
+      ><a name="374" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10214;</a
+      ><a name="375"
+      > </a
+      ><a name="376" href="IS4SyntaxNoTerms.html#182" class="InductiveConstructor"
+      >var</a
+      ><a name="379"
+      > </a
+      ><a name="380" href="IS4NormalisationNoTerms.html#380" class="Bound"
+      >&#119998;</a
+      ><a name="381"
+      > </a
+      ><a name="382" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10215;</a
+      ><a name="383"
+      >                 </a
+      ><a name="400" href="IS4NormalisationNoTerms.html#400" class="Bound"
+      >`&#948;</a
+      ><a name="402"
+      > </a
+      ><a name="403" href="IS4NormalisationNoTerms.html#403" class="Bound"
+      >&#948;</a
+      ><a name="404"
+      > </a
+      ><a name="405" href="IS4NormalisationNoTerms.html#405" class="Bound"
+      >&#947;</a
+      ><a name="406"
+      > </a
+      ><a name="407" class="Symbol"
+      >=</a
+      ><a name="408"
+      > </a
+      ><a name="409" href="IS4SemanticsNoTerms.html#1434" class="Function"
+      >lookup&#8873;</a
+      ><a name="416"
+      > </a
+      ><a name="417" href="IS4NormalisationNoTerms.html#405" class="Bound"
+      >&#947;</a
+      ><a name="418"
+      > </a
+      ><a name="419" href="IS4NormalisationNoTerms.html#380" class="Bound"
+      >&#119998;</a
+      ><a name="420"
+      >
+</a
+      ><a name="421" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10214;</a
+      ><a name="422"
+      > </a
+      ><a name="423" href="IS4SyntaxNoTerms.html#246" class="InductiveConstructor"
+      >mvar</a
+      ><a name="427"
+      > </a
+      ><a name="428" href="IS4NormalisationNoTerms.html#428" class="Bound"
+      >&#119998;</a
+      ><a name="429"
+      > </a
+      ><a name="430" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10215;</a
+      ><a name="431"
+      >                </a
+      ><a name="447" href="IS4NormalisationNoTerms.html#447" class="Bound"
+      >`&#948;</a
+      ><a name="449"
+      > </a
+      ><a name="450" href="IS4NormalisationNoTerms.html#450" class="Bound"
+      >&#948;</a
+      ><a name="451"
+      > </a
+      ><a name="452" href="IS4NormalisationNoTerms.html#452" class="Bound"
+      >&#947;</a
+      ><a name="453"
+      > </a
+      ><a name="454" class="Symbol"
+      >=</a
+      ><a name="455"
+      > </a
+      ><a name="456" href="IS4SemanticsNoTerms.html#1819" class="Function"
+      >mlookup&#8873;</a
+      ><a name="464"
+      > </a
+      ><a name="465" class="Symbol"
+      >(</a
+      ><a name="466" href="IS4NormalisationNoTerms.html#450" class="Bound"
+      >&#948;</a
+      ><a name="467"
+      > </a
+      ><a name="468" href="IS4SemanticsNoTerms.html#307" class="Field"
+      >refl&#1071;</a
+      ><a name="473" class="Symbol"
+      >)</a
+      ><a name="474"
+      > </a
+      ><a name="475" href="IS4NormalisationNoTerms.html#428" class="Bound"
+      >&#119998;</a
+      ><a name="476"
+      >
+</a
+      ><a name="477" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10214;</a
+      ><a name="478"
+      > </a
+      ><a name="479" href="IS4SyntaxNoTerms.html#312" class="InductiveConstructor"
+      >lam</a
+      ><a name="482"
+      > </a
+      ><a name="483" class="Symbol"
+      >{</a
+      ><a name="484" class="Argument"
+      >A</a
+      ><a name="485"
+      > </a
+      ><a name="486" class="Symbol"
+      >=</a
+      ><a name="487"
+      > </a
+      ><a name="488" href="IS4NormalisationNoTerms.html#488" class="Bound"
+      >A</a
+      ><a name="489" class="Symbol"
+      >}</a
+      ><a name="490"
+      > </a
+      ><a name="491" class="Symbol"
+      >{</a
+      ><a name="492" href="IS4NormalisationNoTerms.html#492" class="Bound"
+      >B</a
+      ><a name="493" class="Symbol"
+      >}</a
+      ><a name="494"
+      > </a
+      ><a name="495" href="IS4NormalisationNoTerms.html#495" class="Bound"
+      >&#119967;</a
+      ><a name="496"
+      > </a
+      ><a name="497" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10215;</a
+      ><a name="498"
+      >     </a
+      ><a name="503" href="IS4NormalisationNoTerms.html#503" class="Bound"
+      >`&#948;</a
+      ><a name="505"
+      > </a
+      ><a name="506" href="IS4NormalisationNoTerms.html#506" class="Bound"
+      >&#948;</a
+      ><a name="507"
+      > </a
+      ><a name="508" href="IS4NormalisationNoTerms.html#508" class="Bound"
+      >&#947;</a
+      ><a name="509"
+      > </a
+      ><a name="510" class="Symbol"
+      >=</a
+      ><a name="511"
+      > </a
+      ><a name="512" href="IS4SemanticsNoTerms.html#2033" class="Function"
+      >return</a
+      ><a name="518"
+      > </a
+      ><a name="519" class="Symbol"
+      >{</a
+      ><a name="520" href="IS4NormalisationNoTerms.html#488" class="Bound"
+      >A</a
+      ><a name="521"
+      > </a
+      ><a name="522" href="IS4.html#106" class="InductiveConstructor Operator"
+      >&#8658;</a
+      ><a name="523"
+      > </a
+      ><a name="524" href="IS4NormalisationNoTerms.html#492" class="Bound"
+      >B</a
+      ><a name="525" class="Symbol"
+      >}</a
+      ><a name="526"
+      >
+                                     </a
+      ><a name="564" class="Symbol"
+      >&#955;</a
+      ><a name="565"
+      > </a
+      ><a name="566" href="IS4NormalisationNoTerms.html#566" class="Bound"
+      >&#952;</a
+      ><a name="567"
+      > </a
+      ><a name="568" href="IS4NormalisationNoTerms.html#568" class="Bound"
+      >a</a
+      ><a name="569"
+      > </a
+      ><a name="570" class="Symbol"
+      >&#8594;</a
+      ><a name="571"
+      >
+                                       </a
+      ><a name="611" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10214;</a
+      ><a name="612"
+      > </a
+      ><a name="613" href="IS4NormalisationNoTerms.html#495" class="Bound"
+      >&#119967;</a
+      ><a name="614"
+      > </a
+      ><a name="615" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10215;</a
+      ><a name="616"
+      > </a
+      ><a name="617" class="Symbol"
+      >(&#955;</a
+      ><a name="619"
+      > </a
+      ><a name="620" href="IS4NormalisationNoTerms.html#620" class="Bound"
+      >&#950;</a
+      ><a name="621"
+      > </a
+      ><a name="622" class="Symbol"
+      >&#8594;</a
+      ><a name="623"
+      > </a
+      ><a name="624" href="IS4NormalisationNoTerms.html#503" class="Bound"
+      >`&#948;</a
+      ><a name="626"
+      > </a
+      ><a name="627" class="Symbol"
+      >(</a
+      ><a name="628" href="IS4SemanticsNoTerms.html#334" class="Field"
+      >trans&#1071;</a
+      ><a name="634"
+      > </a
+      ><a name="635" href="IS4NormalisationNoTerms.html#620" class="Bound"
+      >&#950;</a
+      ><a name="636"
+      > </a
+      ><a name="637" class="Symbol"
+      >(</a
+      ><a name="638" href="IS4SemanticsNoTerms.html#456" class="Field"
+      >&#8850;&#8594;&#1071;</a
+      ><a name="641"
+      > </a
+      ><a name="642" href="IS4NormalisationNoTerms.html#566" class="Bound"
+      >&#952;</a
+      ><a name="643" class="Symbol"
+      >)))</a
+      ><a name="646"
+      >
+                                             </a
+      ><a name="692" class="Symbol"
+      >(&#955;</a
+      ><a name="694"
+      > </a
+      ><a name="695" href="IS4NormalisationNoTerms.html#695" class="Bound"
+      >&#950;</a
+      ><a name="696"
+      > </a
+      ><a name="697" class="Symbol"
+      >&#8594;</a
+      ><a name="698"
+      > </a
+      ><a name="699" href="IS4NormalisationNoTerms.html#506" class="Bound"
+      >&#948;</a
+      ><a name="700"
+      > </a
+      ><a name="701" class="Symbol"
+      >(</a
+      ><a name="702" href="IS4SemanticsNoTerms.html#334" class="Field"
+      >trans&#1071;</a
+      ><a name="708"
+      > </a
+      ><a name="709" href="IS4NormalisationNoTerms.html#695" class="Bound"
+      >&#950;</a
+      ><a name="710"
+      > </a
+      ><a name="711" class="Symbol"
+      >(</a
+      ><a name="712" href="IS4SemanticsNoTerms.html#456" class="Field"
+      >&#8850;&#8594;&#1071;</a
+      ><a name="715"
+      > </a
+      ><a name="716" href="IS4NormalisationNoTerms.html#566" class="Bound"
+      >&#952;</a
+      ><a name="717" class="Symbol"
+      >)))</a
+      ><a name="720"
+      >
+                                             </a
+      ><a name="766" class="Symbol"
+      >(</a
+      ><a name="767" href="IS4SemanticsNoTerms.html#1327" class="Function"
+      >mono&#8873;&#8902;</a
+      ><a name="773"
+      > </a
+      ><a name="774" href="IS4NormalisationNoTerms.html#566" class="Bound"
+      >&#952;</a
+      ><a name="775"
+      > </a
+      ><a name="776" href="IS4NormalisationNoTerms.html#508" class="Bound"
+      >&#947;</a
+      ><a name="777"
+      > </a
+      ><a name="778" href="PreludeList.html#1504" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="779"
+      > </a
+      ><a name="780" href="IS4NormalisationNoTerms.html#568" class="Bound"
+      >a</a
+      ><a name="781" class="Symbol"
+      >)</a
+      ><a name="782"
+      >
+</a
+      ><a name="783" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10214;</a
+      ><a name="784"
+      > </a
+      ><a name="785" href="IS4SyntaxNoTerms.html#390" class="InductiveConstructor"
+      >app</a
+      ><a name="788"
+      > </a
+      ><a name="789" class="Symbol"
+      >{</a
+      ><a name="790" class="Argument"
+      >A</a
+      ><a name="791"
+      > </a
+      ><a name="792" class="Symbol"
+      >=</a
+      ><a name="793"
+      > </a
+      ><a name="794" href="IS4NormalisationNoTerms.html#794" class="Bound"
+      >A</a
+      ><a name="795" class="Symbol"
+      >}</a
+      ><a name="796"
+      > </a
+      ><a name="797" class="Symbol"
+      >{</a
+      ><a name="798" href="IS4NormalisationNoTerms.html#798" class="Bound"
+      >B</a
+      ><a name="799" class="Symbol"
+      >}</a
+      ><a name="800"
+      > </a
+      ><a name="801" href="IS4NormalisationNoTerms.html#801" class="Bound"
+      >&#119967;</a
+      ><a name="802"
+      > </a
+      ><a name="803" href="IS4NormalisationNoTerms.html#803" class="Bound"
+      >&#8496;</a
+      ><a name="804"
+      > </a
+      ><a name="805" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10215;</a
+      ><a name="806"
+      >   </a
+      ><a name="809" href="IS4NormalisationNoTerms.html#809" class="Bound"
+      >`&#948;</a
+      ><a name="811"
+      > </a
+      ><a name="812" href="IS4NormalisationNoTerms.html#812" class="Bound"
+      >&#948;</a
+      ><a name="813"
+      > </a
+      ><a name="814" href="IS4NormalisationNoTerms.html#814" class="Bound"
+      >&#947;</a
+      ><a name="815"
+      > </a
+      ><a name="816" class="Symbol"
+      >=</a
+      ><a name="817"
+      > </a
+      ><a name="818" href="IS4SemanticsNoTerms.html#2128" class="Function"
+      >bind</a
+      ><a name="822"
+      > </a
+      ><a name="823" class="Symbol"
+      >{</a
+      ><a name="824" href="IS4NormalisationNoTerms.html#794" class="Bound"
+      >A</a
+      ><a name="825"
+      > </a
+      ><a name="826" href="IS4.html#106" class="InductiveConstructor Operator"
+      >&#8658;</a
+      ><a name="827"
+      > </a
+      ><a name="828" href="IS4NormalisationNoTerms.html#798" class="Bound"
+      >B</a
+      ><a name="829" class="Symbol"
+      >}</a
+      ><a name="830"
+      > </a
+      ><a name="831" class="Symbol"
+      >{</a
+      ><a name="832" href="IS4NormalisationNoTerms.html#798" class="Bound"
+      >B</a
+      ><a name="833" class="Symbol"
+      >}</a
+      ><a name="834"
+      > </a
+      ><a name="835" class="Symbol"
+      >(</a
+      ><a name="836" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10214;</a
+      ><a name="837"
+      > </a
+      ><a name="838" href="IS4NormalisationNoTerms.html#801" class="Bound"
+      >&#119967;</a
+      ><a name="839"
+      > </a
+      ><a name="840" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10215;</a
+      ><a name="841"
+      > </a
+      ><a name="842" href="IS4NormalisationNoTerms.html#809" class="Bound"
+      >`&#948;</a
+      ><a name="844"
+      > </a
+      ><a name="845" href="IS4NormalisationNoTerms.html#812" class="Bound"
+      >&#948;</a
+      ><a name="846"
+      > </a
+      ><a name="847" href="IS4NormalisationNoTerms.html#814" class="Bound"
+      >&#947;</a
+      ><a name="848" class="Symbol"
+      >)</a
+      ><a name="849"
+      >
+                                     </a
+      ><a name="887" class="Symbol"
+      >&#955;</a
+      ><a name="888"
+      > </a
+      ><a name="889" href="IS4NormalisationNoTerms.html#889" class="Bound"
+      >&#952;</a
+      ><a name="890"
+      > </a
+      ><a name="891" href="IS4NormalisationNoTerms.html#891" class="Bound"
+      >f</a
+      ><a name="892"
+      > </a
+      ><a name="893" class="Symbol"
+      >&#8594;</a
+      ><a name="894"
+      >
+                                       </a
+      ><a name="934" href="IS4NormalisationNoTerms.html#891" class="Bound"
+      >f</a
+      ><a name="935"
+      > </a
+      ><a name="936" href="IS4SemanticsNoTerms.html#194" class="Field"
+      >refl&#8850;</a
+      ><a name="941"
+      > </a
+      ><a name="942" class="Symbol"
+      >(</a
+      ><a name="943" href="IS4SemanticsNoTerms.html#931" class="Function"
+      >mono&#8873;</a
+      ><a name="948"
+      > </a
+      ><a name="949" class="Symbol"
+      >{</a
+      ><a name="950" href="IS4NormalisationNoTerms.html#794" class="Bound"
+      >A</a
+      ><a name="951" class="Symbol"
+      >}</a
+      ><a name="952"
+      > </a
+      ><a name="953" href="IS4NormalisationNoTerms.html#889" class="Bound"
+      >&#952;</a
+      ><a name="954"
+      > </a
+      ><a name="955" class="Symbol"
+      >(</a
+      ><a name="956" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10214;</a
+      ><a name="957"
+      > </a
+      ><a name="958" href="IS4NormalisationNoTerms.html#803" class="Bound"
+      >&#8496;</a
+      ><a name="959"
+      > </a
+      ><a name="960" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10215;</a
+      ><a name="961"
+      > </a
+      ><a name="962" href="IS4NormalisationNoTerms.html#809" class="Bound"
+      >`&#948;</a
+      ><a name="964"
+      > </a
+      ><a name="965" href="IS4NormalisationNoTerms.html#812" class="Bound"
+      >&#948;</a
+      ><a name="966"
+      > </a
+      ><a name="967" href="IS4NormalisationNoTerms.html#814" class="Bound"
+      >&#947;</a
+      ><a name="968" class="Symbol"
+      >))</a
+      ><a name="970"
+      >
+</a
+      ><a name="971" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10214;</a
+      ><a name="972"
+      > </a
+      ><a name="973" href="IS4SyntaxNoTerms.html#476" class="InductiveConstructor"
+      >box</a
+      ><a name="976"
+      > </a
+      ><a name="977" class="Symbol"
+      >{</a
+      ><a name="978" class="Argument"
+      >A</a
+      ><a name="979"
+      > </a
+      ><a name="980" class="Symbol"
+      >=</a
+      ><a name="981"
+      > </a
+      ><a name="982" href="IS4NormalisationNoTerms.html#982" class="Bound"
+      >A</a
+      ><a name="983" class="Symbol"
+      >}</a
+      ><a name="984"
+      > </a
+      ><a name="985" href="IS4NormalisationNoTerms.html#985" class="Bound"
+      >&#119967;</a
+      ><a name="986"
+      > </a
+      ><a name="987" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10215;</a
+      ><a name="988"
+      >         </a
+      ><a name="997" href="IS4NormalisationNoTerms.html#997" class="Bound"
+      >`&#948;</a
+      ><a name="999"
+      > </a
+      ><a name="1000" href="IS4NormalisationNoTerms.html#1000" class="Bound"
+      >&#948;</a
+      ><a name="1001"
+      > </a
+      ><a name="1002" href="IS4NormalisationNoTerms.html#1002" class="Bound"
+      >&#947;</a
+      ><a name="1003"
+      > </a
+      ><a name="1004" class="Symbol"
+      >=</a
+      ><a name="1005"
+      > </a
+      ><a name="1006" href="IS4SemanticsNoTerms.html#2033" class="Function"
+      >return</a
+      ><a name="1012"
+      > </a
+      ><a name="1013" class="Symbol"
+      >{</a
+      ><a name="1014" href="IS4.html#127" class="InductiveConstructor Operator"
+      >&#9633;</a
+      ><a name="1015"
+      > </a
+      ><a name="1016" href="IS4NormalisationNoTerms.html#982" class="Bound"
+      >A</a
+      ><a name="1017" class="Symbol"
+      >}</a
+      ><a name="1018"
+      >
+                                     </a
+      ><a name="1056" class="Symbol"
+      >&#955;</a
+      ><a name="1057"
+      > </a
+      ><a name="1058" href="IS4NormalisationNoTerms.html#1058" class="Bound"
+      >&#950;</a
+      ><a name="1059"
+      > </a
+      ><a name="1060" class="Symbol"
+      >&#8594;</a
+      ><a name="1061"
+      >
+                                       </a
+      ><a name="1101" href="IS4SyntaxNoTerms.html#3563" class="Function"
+      >mgraft&#8866;</a
+      ><a name="1108"
+      > </a
+      ><a name="1109" class="Symbol"
+      >(</a
+      ><a name="1110" href="IS4NormalisationNoTerms.html#997" class="Bound"
+      >`&#948;</a
+      ><a name="1112"
+      > </a
+      ><a name="1113" href="IS4NormalisationNoTerms.html#1058" class="Bound"
+      >&#950;</a
+      ><a name="1114" class="Symbol"
+      >)</a
+      ><a name="1115"
+      > </a
+      ><a name="1116" href="IS4NormalisationNoTerms.html#985" class="Bound"
+      >&#119967;</a
+      ><a name="1117"
+      > </a
+      ><a name="1118" href="Prelude.html#2363" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1119"
+      >
+                                       </a
+      ><a name="1159" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10214;</a
+      ><a name="1160"
+      > </a
+      ><a name="1161" href="IS4NormalisationNoTerms.html#985" class="Bound"
+      >&#119967;</a
+      ><a name="1162"
+      > </a
+      ><a name="1163" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10215;</a
+      ><a name="1164"
+      > </a
+      ><a name="1165" class="Symbol"
+      >(&#955;</a
+      ><a name="1167"
+      > </a
+      ><a name="1168" href="IS4NormalisationNoTerms.html#1168" class="Bound"
+      >&#950;&#8242;</a
+      ><a name="1170"
+      > </a
+      ><a name="1171" class="Symbol"
+      >&#8594;</a
+      ><a name="1172"
+      > </a
+      ><a name="1173" href="IS4NormalisationNoTerms.html#997" class="Bound"
+      >`&#948;</a
+      ><a name="1175"
+      > </a
+      ><a name="1176" class="Symbol"
+      >(</a
+      ><a name="1177" href="IS4SemanticsNoTerms.html#334" class="Field"
+      >trans&#1071;</a
+      ><a name="1183"
+      > </a
+      ><a name="1184" href="IS4NormalisationNoTerms.html#1168" class="Bound"
+      >&#950;&#8242;</a
+      ><a name="1186"
+      > </a
+      ><a name="1187" href="IS4NormalisationNoTerms.html#1058" class="Bound"
+      >&#950;</a
+      ><a name="1188" class="Symbol"
+      >))</a
+      ><a name="1190"
+      >
+                                             </a
+      ><a name="1236" class="Symbol"
+      >(&#955;</a
+      ><a name="1238"
+      > </a
+      ><a name="1239" href="IS4NormalisationNoTerms.html#1239" class="Bound"
+      >&#950;&#8242;</a
+      ><a name="1241"
+      > </a
+      ><a name="1242" class="Symbol"
+      >&#8594;</a
+      ><a name="1243"
+      > </a
+      ><a name="1244" href="IS4NormalisationNoTerms.html#1000" class="Bound"
+      >&#948;</a
+      ><a name="1245"
+      > </a
+      ><a name="1246" class="Symbol"
+      >(</a
+      ><a name="1247" href="IS4SemanticsNoTerms.html#334" class="Field"
+      >trans&#1071;</a
+      ><a name="1253"
+      > </a
+      ><a name="1254" href="IS4NormalisationNoTerms.html#1239" class="Bound"
+      >&#950;&#8242;</a
+      ><a name="1256"
+      > </a
+      ><a name="1257" href="IS4NormalisationNoTerms.html#1058" class="Bound"
+      >&#950;</a
+      ><a name="1258" class="Symbol"
+      >))</a
+      ><a name="1260"
+      >
+                                             </a
+      ><a name="1306" href="PreludeList.html#1486" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="1307"
+      >
+</a
+      ><a name="1308" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10214;</a
+      ><a name="1309"
+      > </a
+      ><a name="1310" href="IS4SyntaxNoTerms.html#546" class="InductiveConstructor"
+      >unbox</a
+      ><a name="1315"
+      > </a
+      ><a name="1316" class="Symbol"
+      >{</a
+      ><a name="1317" class="Argument"
+      >A</a
+      ><a name="1318"
+      > </a
+      ><a name="1319" class="Symbol"
+      >=</a
+      ><a name="1320"
+      > </a
+      ><a name="1321" href="IS4NormalisationNoTerms.html#1321" class="Bound"
+      >A</a
+      ><a name="1322" class="Symbol"
+      >}</a
+      ><a name="1323"
+      > </a
+      ><a name="1324" class="Symbol"
+      >{</a
+      ><a name="1325" href="IS4NormalisationNoTerms.html#1325" class="Bound"
+      >C</a
+      ><a name="1326" class="Symbol"
+      >}</a
+      ><a name="1327"
+      > </a
+      ><a name="1328" href="IS4NormalisationNoTerms.html#1328" class="Bound"
+      >&#119967;</a
+      ><a name="1329"
+      > </a
+      ><a name="1330" href="IS4NormalisationNoTerms.html#1330" class="Bound"
+      >&#8496;</a
+      ><a name="1331"
+      > </a
+      ><a name="1332" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10215;</a
+      ><a name="1333"
+      > </a
+      ><a name="1334" href="IS4NormalisationNoTerms.html#1334" class="Bound"
+      >`&#948;</a
+      ><a name="1336"
+      > </a
+      ><a name="1337" href="IS4NormalisationNoTerms.html#1337" class="Bound"
+      >&#948;</a
+      ><a name="1338"
+      > </a
+      ><a name="1339" href="IS4NormalisationNoTerms.html#1339" class="Bound"
+      >&#947;</a
+      ><a name="1340"
+      > </a
+      ><a name="1341" class="Symbol"
+      >=</a
+      ><a name="1342"
+      > </a
+      ><a name="1343" href="IS4SemanticsNoTerms.html#2128" class="Function"
+      >bind</a
+      ><a name="1347"
+      > </a
+      ><a name="1348" class="Symbol"
+      >{</a
+      ><a name="1349" href="IS4.html#127" class="InductiveConstructor Operator"
+      >&#9633;</a
+      ><a name="1350"
+      > </a
+      ><a name="1351" href="IS4NormalisationNoTerms.html#1321" class="Bound"
+      >A</a
+      ><a name="1352" class="Symbol"
+      >}</a
+      ><a name="1353"
+      > </a
+      ><a name="1354" class="Symbol"
+      >{</a
+      ><a name="1355" href="IS4NormalisationNoTerms.html#1325" class="Bound"
+      >C</a
+      ><a name="1356" class="Symbol"
+      >}</a
+      ><a name="1357"
+      > </a
+      ><a name="1358" class="Symbol"
+      >(</a
+      ><a name="1359" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10214;</a
+      ><a name="1360"
+      > </a
+      ><a name="1361" href="IS4NormalisationNoTerms.html#1328" class="Bound"
+      >&#119967;</a
+      ><a name="1362"
+      > </a
+      ><a name="1363" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10215;</a
+      ><a name="1364"
+      > </a
+      ><a name="1365" href="IS4NormalisationNoTerms.html#1334" class="Bound"
+      >`&#948;</a
+      ><a name="1367"
+      > </a
+      ><a name="1368" href="IS4NormalisationNoTerms.html#1337" class="Bound"
+      >&#948;</a
+      ><a name="1369"
+      > </a
+      ><a name="1370" href="IS4NormalisationNoTerms.html#1339" class="Bound"
+      >&#947;</a
+      ><a name="1371" class="Symbol"
+      >)</a
+      ><a name="1372"
+      >
+                                     </a
+      ><a name="1410" class="Symbol"
+      >&#955;</a
+      ><a name="1411"
+      > </a
+      ><a name="1412" href="IS4NormalisationNoTerms.html#1412" class="Bound"
+      >&#952;</a
+      ><a name="1413"
+      > </a
+      ><a name="1414" href="IS4NormalisationNoTerms.html#1414" class="Bound"
+      >q</a
+      ><a name="1415"
+      > </a
+      ><a name="1416" class="Symbol"
+      >&#8594;</a
+      ><a name="1417"
+      >
+                                       </a
+      ><a name="1457" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10214;</a
+      ><a name="1458"
+      > </a
+      ><a name="1459" href="IS4NormalisationNoTerms.html#1330" class="Bound"
+      >&#8496;</a
+      ><a name="1460"
+      > </a
+      ><a name="1461" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10215;</a
+      ><a name="1462"
+      > </a
+      ><a name="1463" class="Symbol"
+      >(&#955;</a
+      ><a name="1465"
+      > </a
+      ><a name="1466" href="IS4NormalisationNoTerms.html#1466" class="Bound"
+      >&#950;</a
+      ><a name="1467"
+      > </a
+      ><a name="1468" class="Symbol"
+      >&#8594;</a
+      ><a name="1469"
+      > </a
+      ><a name="1470" href="IS4NormalisationNoTerms.html#1334" class="Bound"
+      >`&#948;</a
+      ><a name="1472"
+      > </a
+      ><a name="1473" class="Symbol"
+      >(</a
+      ><a name="1474" href="IS4SemanticsNoTerms.html#334" class="Field"
+      >trans&#1071;</a
+      ><a name="1480"
+      > </a
+      ><a name="1481" href="IS4NormalisationNoTerms.html#1466" class="Bound"
+      >&#950;</a
+      ><a name="1482"
+      > </a
+      ><a name="1483" class="Symbol"
+      >(</a
+      ><a name="1484" href="IS4SemanticsNoTerms.html#456" class="Field"
+      >&#8850;&#8594;&#1071;</a
+      ><a name="1487"
+      > </a
+      ><a name="1488" href="IS4NormalisationNoTerms.html#1412" class="Bound"
+      >&#952;</a
+      ><a name="1489" class="Symbol"
+      >))</a
+      ><a name="1491"
+      > </a
+      ><a name="1492" href="IS4SyntaxNoTerms.html#725" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1493"
+      > </a
+      ><a name="1494" href="IS4SyntaxNoTerms.html#476" class="InductiveConstructor"
+      >box</a
+      ><a name="1497"
+      > </a
+      ><a name="1498" class="Symbol"
+      >(</a
+      ><a name="1499" href="Prelude.html#2379" class="Field"
+      >&#960;&#8321;</a
+      ><a name="1501"
+      > </a
+      ><a name="1502" class="Symbol"
+      >(</a
+      ><a name="1503" href="IS4NormalisationNoTerms.html#1414" class="Bound"
+      >q</a
+      ><a name="1504"
+      > </a
+      ><a name="1505" href="IS4NormalisationNoTerms.html#1466" class="Bound"
+      >&#950;</a
+      ><a name="1506" class="Symbol"
+      >)))</a
+      ><a name="1509"
+      >
+                                             </a
+      ><a name="1555" class="Symbol"
+      >(&#955;</a
+      ><a name="1557"
+      > </a
+      ><a name="1558" href="IS4NormalisationNoTerms.html#1558" class="Bound"
+      >&#950;</a
+      ><a name="1559"
+      > </a
+      ><a name="1560" class="Symbol"
+      >&#8594;</a
+      ><a name="1561"
+      > </a
+      ><a name="1562" href="IS4NormalisationNoTerms.html#1337" class="Bound"
+      >&#948;</a
+      ><a name="1563"
+      > </a
+      ><a name="1564" class="Symbol"
+      >(</a
+      ><a name="1565" href="IS4SemanticsNoTerms.html#334" class="Field"
+      >trans&#1071;</a
+      ><a name="1571"
+      > </a
+      ><a name="1572" href="IS4NormalisationNoTerms.html#1558" class="Bound"
+      >&#950;</a
+      ><a name="1573"
+      > </a
+      ><a name="1574" class="Symbol"
+      >(</a
+      ><a name="1575" href="IS4SemanticsNoTerms.html#456" class="Field"
+      >&#8850;&#8594;&#1071;</a
+      ><a name="1578"
+      > </a
+      ><a name="1579" href="IS4NormalisationNoTerms.html#1412" class="Bound"
+      >&#952;</a
+      ><a name="1580" class="Symbol"
+      >))</a
+      ><a name="1582"
+      > </a
+      ><a name="1583" href="Prelude.html#2363" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1584"
+      > </a
+      ><a name="1585" href="Prelude.html#2390" class="Field"
+      >&#960;&#8322;</a
+      ><a name="1587"
+      > </a
+      ><a name="1588" class="Symbol"
+      >(</a
+      ><a name="1589" href="IS4NormalisationNoTerms.html#1414" class="Bound"
+      >q</a
+      ><a name="1590"
+      > </a
+      ><a name="1591" href="IS4NormalisationNoTerms.html#1558" class="Bound"
+      >&#950;</a
+      ><a name="1592" class="Symbol"
+      >))</a
+      ><a name="1594"
+      >
+                                             </a
+      ><a name="1640" class="Symbol"
+      >(</a
+      ><a name="1641" href="IS4SemanticsNoTerms.html#1327" class="Function"
+      >mono&#8873;&#8902;</a
+      ><a name="1647"
+      > </a
+      ><a name="1648" href="IS4NormalisationNoTerms.html#1412" class="Bound"
+      >&#952;</a
+      ><a name="1649"
+      > </a
+      ><a name="1650" href="IS4NormalisationNoTerms.html#1339" class="Bound"
+      >&#947;</a
+      ><a name="1651" class="Symbol"
+      >)</a
+      ><a name="1652"
+      >
+
+
+</a
+      ><a name="1655" class="Comment"
+      >-- Completeness.</a
+      ><a name="1671"
+      >
+
+</a
+      ><a name="1673" class="Keyword"
+      >instance</a
+      ><a name="1681"
+      >
+  </a
+      ><a name="1684" href="IS4NormalisationNoTerms.html#1684" class="Function"
+      >canon</a
+      ><a name="1689"
+      > </a
+      ><a name="1690" class="Symbol"
+      >:</a
+      ><a name="1691"
+      > </a
+      ><a name="1692" href="IS4SemanticsNoTerms.html#113" class="Record"
+      >Model</a
+      ><a name="1697"
+      >
+  </a
+      ><a name="1700" href="IS4NormalisationNoTerms.html#1684" class="Function"
+      >canon</a
+      ><a name="1705"
+      > </a
+      ><a name="1706" class="Symbol"
+      >=</a
+      ><a name="1707"
+      > </a
+      ><a name="1708" class="Keyword"
+      >record</a
+      ><a name="1714"
+      >
+    </a
+      ><a name="1719" class="Symbol"
+      >{</a
+      ><a name="1720"
+      > </a
+      ><a name="1721" class="Field"
+      >World</a
+      ><a name="1726"
+      >  </a
+      ><a name="1728" class="Symbol"
+      >=</a
+      ><a name="1729"
+      > </a
+      ><a name="1730" href="IS4SyntaxNoTerms.html#91" class="Function"
+      >Cx</a
+      ><a name="1732"
+      >
+    </a
+      ><a name="1737" class="Symbol"
+      >;</a
+      ><a name="1738"
+      > </a
+      ><a name="1739" class="Field Operator"
+      >_&#8850;_</a
+      ><a name="1742"
+      >    </a
+      ><a name="1746" class="Symbol"
+      >=</a
+      ><a name="1747"
+      > </a
+      ><a name="1748" class="Symbol"
+      >&#955;</a
+      ><a name="1749"
+      > </a
+      ><a name="1750" class="Symbol"
+      >{</a
+      ><a name="1751"
+      > </a
+      ><a name="1752" class="Symbol"
+      >(</a
+      ><a name="1753" href="IS4NormalisationNoTerms.html#1753" class="Bound"
+      >&#916;&#8242;</a
+      ><a name="1755"
+      > </a
+      ><a name="1756" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="1757"
+      > </a
+      ><a name="1758" href="IS4NormalisationNoTerms.html#1758" class="Bound"
+      >&#915;&#8242;</a
+      ><a name="1760" class="Symbol"
+      >)</a
+      ><a name="1761"
+      > </a
+      ><a name="1762" class="Symbol"
+      >(</a
+      ><a name="1763" href="IS4NormalisationNoTerms.html#1763" class="Bound"
+      >&#916;</a
+      ><a name="1764"
+      > </a
+      ><a name="1765" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="1766"
+      > </a
+      ><a name="1767" href="IS4NormalisationNoTerms.html#1767" class="Bound"
+      >&#915;</a
+      ><a name="1768" class="Symbol"
+      >)</a
+      ><a name="1769"
+      > </a
+      ><a name="1770" class="Symbol"
+      >&#8594;</a
+      ><a name="1771"
+      > </a
+      ><a name="1772" href="IS4NormalisationNoTerms.html#1753" class="Bound"
+      >&#916;&#8242;</a
+      ><a name="1774"
+      > </a
+      ><a name="1775" href="PreludeList.html#1988" class="Datatype Operator"
+      >&#8839;</a
+      ><a name="1776"
+      > </a
+      ><a name="1777" href="IS4NormalisationNoTerms.html#1763" class="Bound"
+      >&#916;</a
+      ><a name="1778"
+      > </a
+      ><a name="1779" href="Prelude.html#2739" class="Function Operator"
+      >&#8743;</a
+      ><a name="1780"
+      > </a
+      ><a name="1781" href="IS4NormalisationNoTerms.html#1758" class="Bound"
+      >&#915;&#8242;</a
+      ><a name="1783"
+      > </a
+      ><a name="1784" href="PreludeList.html#1988" class="Datatype Operator"
+      >&#8839;</a
+      ><a name="1785"
+      > </a
+      ><a name="1786" href="IS4NormalisationNoTerms.html#1767" class="Bound"
+      >&#915;</a
+      ><a name="1787"
+      > </a
+      ><a name="1788" class="Symbol"
+      >}</a
+      ><a name="1789"
+      >
+    </a
+      ><a name="1794" class="Symbol"
+      >;</a
+      ><a name="1795"
+      > </a
+      ><a name="1796" class="Field"
+      >refl&#8850;</a
+      ><a name="1801"
+      >  </a
+      ><a name="1803" class="Symbol"
+      >=</a
+      ><a name="1804"
+      > </a
+      ><a name="1805" href="PreludeList.html#3205" class="Function"
+      >refl&#8839;</a
+      ><a name="1810"
+      > </a
+      ><a name="1811" href="Prelude.html#2363" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1812"
+      > </a
+      ><a name="1813" href="PreludeList.html#3205" class="Function"
+      >refl&#8839;</a
+      ><a name="1818"
+      >
+    </a
+      ><a name="1823" class="Symbol"
+      >;</a
+      ><a name="1824"
+      > </a
+      ><a name="1825" class="Field"
+      >trans&#8850;</a
+      ><a name="1831"
+      > </a
+      ><a name="1832" class="Symbol"
+      >=</a
+      ><a name="1833"
+      > </a
+      ><a name="1834" class="Symbol"
+      >&#955;</a
+      ><a name="1835"
+      > </a
+      ><a name="1836" class="Symbol"
+      >{</a
+      ><a name="1837"
+      > </a
+      ><a name="1838" class="Symbol"
+      >(</a
+      ><a name="1839" href="IS4NormalisationNoTerms.html#1839" class="Bound"
+      >&#950;&#8242;</a
+      ><a name="1841"
+      > </a
+      ><a name="1842" href="Prelude.html#2363" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1843"
+      > </a
+      ><a name="1844" href="IS4NormalisationNoTerms.html#1844" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="1846" class="Symbol"
+      >)</a
+      ><a name="1847"
+      > </a
+      ><a name="1848" class="Symbol"
+      >(</a
+      ><a name="1849" href="IS4NormalisationNoTerms.html#1849" class="Bound"
+      >&#950;</a
+      ><a name="1850"
+      > </a
+      ><a name="1851" href="Prelude.html#2363" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1852"
+      > </a
+      ><a name="1853" href="IS4NormalisationNoTerms.html#1853" class="Bound"
+      >&#951;</a
+      ><a name="1854" class="Symbol"
+      >)</a
+      ><a name="1855"
+      > </a
+      ><a name="1856" class="Symbol"
+      >&#8594;</a
+      ><a name="1857"
+      > </a
+      ><a name="1858" href="PreludeList.html#3309" class="Function"
+      >trans&#8839;</a
+      ><a name="1864"
+      > </a
+      ><a name="1865" href="IS4NormalisationNoTerms.html#1839" class="Bound"
+      >&#950;&#8242;</a
+      ><a name="1867"
+      > </a
+      ><a name="1868" href="IS4NormalisationNoTerms.html#1849" class="Bound"
+      >&#950;</a
+      ><a name="1869"
+      > </a
+      ><a name="1870" href="Prelude.html#2363" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1871"
+      > </a
+      ><a name="1872" href="PreludeList.html#3309" class="Function"
+      >trans&#8839;</a
+      ><a name="1878"
+      > </a
+      ><a name="1879" href="IS4NormalisationNoTerms.html#1844" class="Bound"
+      >&#951;&#8242;</a
+      ><a name="1881"
+      > </a
+      ><a name="1882" href="IS4NormalisationNoTerms.html#1853" class="Bound"
+      >&#951;</a
+      ><a name="1883"
+      > </a
+      ><a name="1884" class="Symbol"
+      >}</a
+      ><a name="1885"
+      >
+    </a
+      ><a name="1890" class="Symbol"
+      >;</a
+      ><a name="1891"
+      > </a
+      ><a name="1892" class="Field Operator"
+      >_&#1071;_</a
+      ><a name="1895"
+      >    </a
+      ><a name="1899" class="Symbol"
+      >=</a
+      ><a name="1900"
+      > </a
+      ><a name="1901" class="Symbol"
+      >&#955;</a
+      ><a name="1902"
+      > </a
+      ><a name="1903" class="Symbol"
+      >{</a
+      ><a name="1904"
+      > </a
+      ><a name="1905" class="Symbol"
+      >(</a
+      ><a name="1906" href="IS4NormalisationNoTerms.html#1906" class="Bound"
+      >&#916;&#8242;</a
+      ><a name="1908"
+      > </a
+      ><a name="1909" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="1910"
+      > </a
+      ><a name="1911" href="IS4NormalisationNoTerms.html#1911" class="Bound"
+      >&#915;&#8242;</a
+      ><a name="1913" class="Symbol"
+      >)</a
+      ><a name="1914"
+      > </a
+      ><a name="1915" class="Symbol"
+      >(</a
+      ><a name="1916" href="IS4NormalisationNoTerms.html#1916" class="Bound"
+      >&#916;</a
+      ><a name="1917"
+      > </a
+      ><a name="1918" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="1919"
+      > </a
+      ><a name="1920" href="IS4NormalisationNoTerms.html#1920" class="Bound"
+      >&#915;</a
+      ><a name="1921" class="Symbol"
+      >)</a
+      ><a name="1922"
+      > </a
+      ><a name="1923" class="Symbol"
+      >&#8594;</a
+      ><a name="1924"
+      > </a
+      ><a name="1925" href="IS4NormalisationNoTerms.html#1906" class="Bound"
+      >&#916;&#8242;</a
+      ><a name="1927"
+      > </a
+      ><a name="1928" href="PreludeList.html#1988" class="Datatype Operator"
+      >&#8839;</a
+      ><a name="1929"
+      > </a
+      ><a name="1930" href="IS4NormalisationNoTerms.html#1916" class="Bound"
+      >&#916;</a
+      ><a name="1931"
+      > </a
+      ><a name="1932" class="Symbol"
+      >}</a
+      ><a name="1933"
+      >
+    </a
+      ><a name="1938" class="Symbol"
+      >;</a
+      ><a name="1939"
+      > </a
+      ><a name="1940" class="Field"
+      >refl&#1071;</a
+      ><a name="1945"
+      >  </a
+      ><a name="1947" class="Symbol"
+      >=</a
+      ><a name="1948"
+      > </a
+      ><a name="1949" href="PreludeList.html#3205" class="Function"
+      >refl&#8839;</a
+      ><a name="1954"
+      >
+    </a
+      ><a name="1959" class="Symbol"
+      >;</a
+      ><a name="1960"
+      > </a
+      ><a name="1961" class="Field"
+      >trans&#1071;</a
+      ><a name="1967"
+      > </a
+      ><a name="1968" class="Symbol"
+      >=</a
+      ><a name="1969"
+      > </a
+      ><a name="1970" href="PreludeList.html#3309" class="Function"
+      >trans&#8839;</a
+      ><a name="1976"
+      >
+    </a
+      ><a name="1981" class="Symbol"
+      >;</a
+      ><a name="1982"
+      > </a
+      ><a name="1983" class="Field"
+      >G</a
+      ><a name="1984"
+      >      </a
+      ><a name="1990" class="Symbol"
+      >=</a
+      ><a name="1991"
+      > </a
+      ><a name="1992" href="IS4SyntaxNoTerms.html#4588" class="Datatype Operator"
+      >_&#8866;&#8319;&#7497;</a
+      ><a name="1996"
+      > </a
+      ><a name="1997" href="IS4.html#94" class="InductiveConstructor"
+      >&#8226;</a
+      ><a name="1998"
+      >
+    </a
+      ><a name="2003" class="Symbol"
+      >;</a
+      ><a name="2004"
+      > </a
+      ><a name="2005" class="Field"
+      >monoG</a
+      ><a name="2010"
+      >  </a
+      ><a name="2012" class="Symbol"
+      >=</a
+      ><a name="2013"
+      > </a
+      ><a name="2014" class="Symbol"
+      >&#955;</a
+      ><a name="2015"
+      > </a
+      ><a name="2016" class="Symbol"
+      >{</a
+      ><a name="2017"
+      > </a
+      ><a name="2018" class="Symbol"
+      >(</a
+      ><a name="2019" href="IS4NormalisationNoTerms.html#2019" class="Bound"
+      >&#950;</a
+      ><a name="2020"
+      > </a
+      ><a name="2021" href="Prelude.html#2363" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="2022"
+      > </a
+      ><a name="2023" href="IS4NormalisationNoTerms.html#2023" class="Bound"
+      >&#951;</a
+      ><a name="2024" class="Symbol"
+      >)</a
+      ><a name="2025"
+      > </a
+      ><a name="2026" href="IS4NormalisationNoTerms.html#2026" class="Bound"
+      >&#119967;</a
+      ><a name="2027"
+      > </a
+      ><a name="2028" class="Symbol"
+      >&#8594;</a
+      ><a name="2029"
+      > </a
+      ><a name="2030" href="IS4SyntaxNoTerms.html#5311" class="Function"
+      >mono&#8866;&#8319;&#7497;</a
+      ><a name="2037"
+      > </a
+      ><a name="2038" href="IS4NormalisationNoTerms.html#2019" class="Bound"
+      >&#950;</a
+      ><a name="2039"
+      > </a
+      ><a name="2040" href="IS4NormalisationNoTerms.html#2023" class="Bound"
+      >&#951;</a
+      ><a name="2041"
+      > </a
+      ><a name="2042" href="IS4NormalisationNoTerms.html#2026" class="Bound"
+      >&#119967;</a
+      ><a name="2043"
+      > </a
+      ><a name="2044" class="Symbol"
+      >}</a
+      ><a name="2045"
+      >
+    </a
+      ><a name="2050" class="Symbol"
+      >;</a
+      ><a name="2051"
+      > </a
+      ><a name="2052" class="Field"
+      >&#8850;&#8594;&#1071;</a
+      ><a name="2055"
+      >   </a
+      ><a name="2058" class="Symbol"
+      >=</a
+      ><a name="2059"
+      > </a
+      ><a name="2060" href="Prelude.html#2379" class="Field"
+      >&#960;&#8321;</a
+      ><a name="2062"
+      >
+    </a
+      ><a name="2067" class="Symbol"
+      >;</a
+      ><a name="2068"
+      > </a
+      ><a name="2069" class="Field"
+      >peek</a
+      ><a name="2073"
+      >   </a
+      ><a name="2076" class="Symbol"
+      >=</a
+      ><a name="2077"
+      > </a
+      ><a name="2078" href="Prelude.html#725" class="Function"
+      >id</a
+      ><a name="2080"
+      >
+    </a
+      ><a name="2085" class="Symbol"
+      >}</a
+      ><a name="2086"
+      >
+
+</a
+      ><a name="2088" class="Keyword"
+      >mutual</a
+      ><a name="2094"
+      >
+  </a
+      ><a name="2097" href="IS4NormalisationNoTerms.html#2097" class="Function"
+      >reify&#7580;</a
+      ><a name="2103"
+      > </a
+      ><a name="2104" class="Symbol"
+      >:</a
+      ><a name="2105"
+      > </a
+      ><a name="2106" class="Symbol"
+      >&#8704;</a
+      ><a name="2107"
+      > </a
+      ><a name="2108" class="Symbol"
+      >{</a
+      ><a name="2109" href="IS4NormalisationNoTerms.html#2109" class="Bound"
+      >A</a
+      ><a name="2110"
+      > </a
+      ><a name="2111" href="IS4NormalisationNoTerms.html#2111" class="Bound"
+      >&#916;</a
+      ><a name="2112"
+      > </a
+      ><a name="2113" href="IS4NormalisationNoTerms.html#2113" class="Bound"
+      >&#915;</a
+      ><a name="2114" class="Symbol"
+      >}</a
+      ><a name="2115"
+      > </a
+      ><a name="2116" class="Symbol"
+      >&#8594;</a
+      ><a name="2117"
+      > </a
+      ><a name="2118" href="IS4NormalisationNoTerms.html#2111" class="Bound"
+      >&#916;</a
+      ><a name="2119"
+      > </a
+      ><a name="2120" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="2121"
+      > </a
+      ><a name="2122" href="IS4NormalisationNoTerms.html#2113" class="Bound"
+      >&#915;</a
+      ><a name="2123"
+      > </a
+      ><a name="2124" href="IS4SemanticsNoTerms.html#576" class="Function Operator"
+      >&#8873;</a
+      ><a name="2125"
+      > </a
+      ><a name="2126" href="IS4NormalisationNoTerms.html#2109" class="Bound"
+      >A</a
+      ><a name="2127"
+      > </a
+      ><a name="2128" class="Symbol"
+      >&#8594;</a
+      ><a name="2129"
+      > </a
+      ><a name="2130" href="IS4NormalisationNoTerms.html#2111" class="Bound"
+      >&#916;</a
+      ><a name="2131"
+      > </a
+      ><a name="2132" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="2133"
+      > </a
+      ><a name="2134" href="IS4NormalisationNoTerms.html#2113" class="Bound"
+      >&#915;</a
+      ><a name="2135"
+      > </a
+      ><a name="2136" href="IS4SyntaxNoTerms.html#4274" class="Datatype Operator"
+      >&#8866;&#8319;&#7584;</a
+      ><a name="2139"
+      > </a
+      ><a name="2140" href="IS4NormalisationNoTerms.html#2109" class="Bound"
+      >A</a
+      ><a name="2141"
+      >
+  </a
+      ><a name="2144" href="IS4NormalisationNoTerms.html#2097" class="Function"
+      >reify&#7580;</a
+      ><a name="2150"
+      > </a
+      ><a name="2151" class="Symbol"
+      >{</a
+      ><a name="2152" href="IS4.html#94" class="InductiveConstructor"
+      >&#8226;</a
+      ><a name="2153" class="Symbol"
+      >}</a
+      ><a name="2154"
+      >      </a
+      ><a name="2160" href="IS4NormalisationNoTerms.html#2160" class="Bound"
+      >&#954;</a
+      ><a name="2161"
+      > </a
+      ><a name="2162" class="Symbol"
+      >=</a
+      ><a name="2163"
+      > </a
+      ><a name="2164" href="IS4NormalisationNoTerms.html#2160" class="Bound"
+      >&#954;</a
+      ><a name="2165"
+      > </a
+      ><a name="2166" class="Symbol"
+      >(</a
+      ><a name="2167" href="PreludeList.html#3205" class="Function"
+      >refl&#8839;</a
+      ><a name="2172"
+      > </a
+      ><a name="2173" href="Prelude.html#2363" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="2174"
+      > </a
+      ><a name="2175" href="PreludeList.html#3205" class="Function"
+      >refl&#8839;</a
+      ><a name="2180" class="Symbol"
+      >)</a
+      ><a name="2181"
+      >
+                        </a
+      ><a name="2206" class="Symbol"
+      >&#955;</a
+      ><a name="2207"
+      > </a
+      ><a name="2208" href="IS4NormalisationNoTerms.html#2208" class="Bound"
+      >&#952;</a
+      ><a name="2209"
+      > </a
+      ><a name="2210" href="IS4NormalisationNoTerms.html#2210" class="Bound"
+      >a</a
+      ><a name="2211"
+      > </a
+      ><a name="2212" class="Symbol"
+      >&#8594;</a
+      ><a name="2213"
+      >
+                          </a
+      ><a name="2240" href="IS4SyntaxNoTerms.html#4484" class="InductiveConstructor"
+      >ne&#8319;&#7584;</a
+      ><a name="2244"
+      > </a
+      ><a name="2245" href="IS4NormalisationNoTerms.html#2210" class="Bound"
+      >a</a
+      ><a name="2246"
+      >
+  </a
+      ><a name="2249" href="IS4NormalisationNoTerms.html#2097" class="Function"
+      >reify&#7580;</a
+      ><a name="2255"
+      > </a
+      ><a name="2256" class="Symbol"
+      >{</a
+      ><a name="2257" href="IS4NormalisationNoTerms.html#2257" class="Bound"
+      >A</a
+      ><a name="2258"
+      > </a
+      ><a name="2259" href="IS4.html#106" class="InductiveConstructor Operator"
+      >&#8658;</a
+      ><a name="2260"
+      > </a
+      ><a name="2261" href="IS4NormalisationNoTerms.html#2261" class="Bound"
+      >B</a
+      ><a name="2262" class="Symbol"
+      >}</a
+      ><a name="2263"
+      > </a
+      ><a name="2264" href="IS4NormalisationNoTerms.html#2264" class="Bound"
+      >&#954;</a
+      ><a name="2265"
+      > </a
+      ><a name="2266" class="Symbol"
+      >=</a
+      ><a name="2267"
+      > </a
+      ><a name="2268" href="IS4NormalisationNoTerms.html#2264" class="Bound"
+      >&#954;</a
+      ><a name="2269"
+      > </a
+      ><a name="2270" class="Symbol"
+      >(</a
+      ><a name="2271" href="PreludeList.html#3205" class="Function"
+      >refl&#8839;</a
+      ><a name="2276"
+      > </a
+      ><a name="2277" href="Prelude.html#2363" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="2278"
+      > </a
+      ><a name="2279" href="PreludeList.html#3205" class="Function"
+      >refl&#8839;</a
+      ><a name="2284" class="Symbol"
+      >)</a
+      ><a name="2285"
+      >
+                        </a
+      ><a name="2310" class="Symbol"
+      >&#955;</a
+      ><a name="2311"
+      > </a
+      ><a name="2312" href="IS4NormalisationNoTerms.html#2312" class="Bound"
+      >&#952;</a
+      ><a name="2313"
+      > </a
+      ><a name="2314" href="IS4NormalisationNoTerms.html#2314" class="Bound"
+      >f</a
+      ><a name="2315"
+      > </a
+      ><a name="2316" class="Symbol"
+      >&#8594;</a
+      ><a name="2317"
+      >
+                          </a
+      ><a name="2344" href="IS4SyntaxNoTerms.html#4306" class="InductiveConstructor"
+      >lam&#8319;&#7584;</a
+      ><a name="2349"
+      > </a
+      ><a name="2350" class="Symbol"
+      >(</a
+      ><a name="2351" href="IS4NormalisationNoTerms.html#2097" class="Function"
+      >reify&#7580;</a
+      ><a name="2357"
+      > </a
+      ><a name="2358" class="Symbol"
+      >(</a
+      ><a name="2359" href="IS4NormalisationNoTerms.html#2314" class="Bound"
+      >f</a
+      ><a name="2360"
+      > </a
+      ><a name="2361" class="Symbol"
+      >(</a
+      ><a name="2362" href="PreludeList.html#3205" class="Function"
+      >refl&#8839;</a
+      ><a name="2367"
+      > </a
+      ><a name="2368" href="Prelude.html#2363" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="2369"
+      > </a
+      ><a name="2370" href="PreludeList.html#2072" class="InductiveConstructor"
+      >weak</a
+      ><a name="2374"
+      > </a
+      ><a name="2375" href="PreludeList.html#3205" class="Function"
+      >refl&#8839;</a
+      ><a name="2380" class="Symbol"
+      >)</a
+      ><a name="2381"
+      > </a
+      ><a name="2382" href="IS4NormalisationNoTerms.html#2544" class="Function Operator"
+      >&#10214;</a
+      ><a name="2383"
+      > </a
+      ><a name="2384" href="IS4SyntaxNoTerms.html#4620" class="InductiveConstructor"
+      >var&#8319;&#7497;</a
+      ><a name="2389"
+      > </a
+      ><a name="2390" href="PreludeList.html#5466" class="InductiveConstructor"
+      >zero</a
+      ><a name="2394"
+      > </a
+      ><a name="2395" href="IS4NormalisationNoTerms.html#2544" class="Function Operator"
+      >&#10215;&#7580;</a
+      ><a name="2397" class="Symbol"
+      >))</a
+      ><a name="2399"
+      >
+  </a
+      ><a name="2402" href="IS4NormalisationNoTerms.html#2097" class="Function"
+      >reify&#7580;</a
+      ><a name="2408"
+      > </a
+      ><a name="2409" class="Symbol"
+      >{</a
+      ><a name="2410" href="IS4.html#127" class="InductiveConstructor Operator"
+      >&#9633;</a
+      ><a name="2411"
+      > </a
+      ><a name="2412" href="IS4NormalisationNoTerms.html#2412" class="Bound"
+      >A</a
+      ><a name="2413" class="Symbol"
+      >}</a
+      ><a name="2414"
+      >    </a
+      ><a name="2418" href="IS4NormalisationNoTerms.html#2418" class="Bound"
+      >&#954;</a
+      ><a name="2419"
+      > </a
+      ><a name="2420" class="Symbol"
+      >=</a
+      ><a name="2421"
+      > </a
+      ><a name="2422" href="IS4NormalisationNoTerms.html#2418" class="Bound"
+      >&#954;</a
+      ><a name="2423"
+      > </a
+      ><a name="2424" class="Symbol"
+      >(</a
+      ><a name="2425" href="PreludeList.html#3205" class="Function"
+      >refl&#8839;</a
+      ><a name="2430"
+      > </a
+      ><a name="2431" href="Prelude.html#2363" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="2432"
+      > </a
+      ><a name="2433" href="PreludeList.html#3205" class="Function"
+      >refl&#8839;</a
+      ><a name="2438" class="Symbol"
+      >)</a
+      ><a name="2439"
+      >
+                        </a
+      ><a name="2464" class="Symbol"
+      >&#955;</a
+      ><a name="2465"
+      > </a
+      ><a name="2466" class="Symbol"
+      >{</a
+      ><a name="2467" href="IS4NormalisationNoTerms.html#2467" class="Bound"
+      >w&#8243;</a
+      ><a name="2469" class="Symbol"
+      >}</a
+      ><a name="2470"
+      > </a
+      ><a name="2471" href="IS4NormalisationNoTerms.html#2471" class="Bound"
+      >&#952;</a
+      ><a name="2472"
+      > </a
+      ><a name="2473" href="IS4NormalisationNoTerms.html#2473" class="Bound"
+      >q</a
+      ><a name="2474"
+      > </a
+      ><a name="2475" class="Symbol"
+      >&#8594;</a
+      ><a name="2476"
+      >
+                          </a
+      ><a name="2503" href="IS4SyntaxNoTerms.html#4400" class="InductiveConstructor"
+      >box&#8319;&#7584;</a
+      ><a name="2508"
+      > </a
+      ><a name="2509" class="Symbol"
+      >(</a
+      ><a name="2510" href="Prelude.html#2379" class="Field"
+      >&#960;&#8321;</a
+      ><a name="2512"
+      > </a
+      ><a name="2513" class="Symbol"
+      >(</a
+      ><a name="2514" href="IS4NormalisationNoTerms.html#2473" class="Bound"
+      >q</a
+      ><a name="2515"
+      > </a
+      ><a name="2516" class="Symbol"
+      >{</a
+      ><a name="2517" class="Argument"
+      >w&#8242;</a
+      ><a name="2519"
+      > </a
+      ><a name="2520" class="Symbol"
+      >=</a
+      ><a name="2521"
+      > </a
+      ><a name="2522" href="Prelude.html#2379" class="Field"
+      >&#960;&#8321;</a
+      ><a name="2524"
+      > </a
+      ><a name="2525" href="IS4NormalisationNoTerms.html#2467" class="Bound"
+      >w&#8243;</a
+      ><a name="2527"
+      > </a
+      ><a name="2528" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="2529"
+      > </a
+      ><a name="2530" href="PreludeList.html#151" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="2531" class="Symbol"
+      >}</a
+      ><a name="2532"
+      > </a
+      ><a name="2533" href="PreludeList.html#3205" class="Function"
+      >refl&#8839;</a
+      ><a name="2538" class="Symbol"
+      >))</a
+      ><a name="2540"
+      >
+
+  </a
+      ><a name="2544" href="IS4NormalisationNoTerms.html#2544" class="Function Operator"
+      >&#10214;_&#10215;&#7580;</a
+      ><a name="2548"
+      > </a
+      ><a name="2549" class="Symbol"
+      >:</a
+      ><a name="2550"
+      > </a
+      ><a name="2551" class="Symbol"
+      >&#8704;</a
+      ><a name="2552"
+      > </a
+      ><a name="2553" class="Symbol"
+      >{</a
+      ><a name="2554" href="IS4NormalisationNoTerms.html#2554" class="Bound"
+      >A</a
+      ><a name="2555"
+      > </a
+      ><a name="2556" href="IS4NormalisationNoTerms.html#2556" class="Bound"
+      >&#916;</a
+      ><a name="2557"
+      > </a
+      ><a name="2558" href="IS4NormalisationNoTerms.html#2558" class="Bound"
+      >&#915;</a
+      ><a name="2559" class="Symbol"
+      >}</a
+      ><a name="2560"
+      > </a
+      ><a name="2561" class="Symbol"
+      >&#8594;</a
+      ><a name="2562"
+      > </a
+      ><a name="2563" href="IS4NormalisationNoTerms.html#2556" class="Bound"
+      >&#916;</a
+      ><a name="2564"
+      > </a
+      ><a name="2565" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="2566"
+      > </a
+      ><a name="2567" href="IS4NormalisationNoTerms.html#2558" class="Bound"
+      >&#915;</a
+      ><a name="2568"
+      > </a
+      ><a name="2569" href="IS4SyntaxNoTerms.html#4588" class="Datatype Operator"
+      >&#8866;&#8319;&#7497;</a
+      ><a name="2572"
+      > </a
+      ><a name="2573" href="IS4NormalisationNoTerms.html#2554" class="Bound"
+      >A</a
+      ><a name="2574"
+      > </a
+      ><a name="2575" class="Symbol"
+      >&#8594;</a
+      ><a name="2576"
+      > </a
+      ><a name="2577" href="IS4NormalisationNoTerms.html#2556" class="Bound"
+      >&#916;</a
+      ><a name="2578"
+      > </a
+      ><a name="2579" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="2580"
+      > </a
+      ><a name="2581" href="IS4NormalisationNoTerms.html#2558" class="Bound"
+      >&#915;</a
+      ><a name="2582"
+      > </a
+      ><a name="2583" href="IS4SemanticsNoTerms.html#576" class="Function Operator"
+      >&#8873;</a
+      ><a name="2584"
+      > </a
+      ><a name="2585" href="IS4NormalisationNoTerms.html#2554" class="Bound"
+      >A</a
+      ><a name="2586"
+      >
+  </a
+      ><a name="2589" href="IS4NormalisationNoTerms.html#2544" class="Function Operator"
+      >&#10214;_&#10215;&#7580;</a
+      ><a name="2593"
+      > </a
+      ><a name="2594" class="Symbol"
+      >{</a
+      ><a name="2595" href="IS4.html#94" class="InductiveConstructor"
+      >&#8226;</a
+      ><a name="2596" class="Symbol"
+      >}</a
+      ><a name="2597"
+      >      </a
+      ><a name="2603" href="IS4NormalisationNoTerms.html#2603" class="Bound"
+      >&#119967;</a
+      ><a name="2604"
+      > </a
+      ><a name="2605" class="Symbol"
+      >=</a
+      ><a name="2606"
+      > </a
+      ><a name="2607" href="IS4SemanticsNoTerms.html#2033" class="Function"
+      >return</a
+      ><a name="2613"
+      > </a
+      ><a name="2614" class="Symbol"
+      >{</a
+      ><a name="2615" href="IS4.html#94" class="InductiveConstructor"
+      >&#8226;</a
+      ><a name="2616" class="Symbol"
+      >}</a
+      ><a name="2617"
+      > </a
+      ><a name="2618" href="IS4NormalisationNoTerms.html#2603" class="Bound"
+      >&#119967;</a
+      ><a name="2619"
+      >
+  </a
+      ><a name="2622" href="IS4NormalisationNoTerms.html#2544" class="Function Operator"
+      >&#10214;_&#10215;&#7580;</a
+      ><a name="2626"
+      > </a
+      ><a name="2627" class="Symbol"
+      >{</a
+      ><a name="2628" href="IS4NormalisationNoTerms.html#2628" class="Bound"
+      >A</a
+      ><a name="2629"
+      > </a
+      ><a name="2630" href="IS4.html#106" class="InductiveConstructor Operator"
+      >&#8658;</a
+      ><a name="2631"
+      > </a
+      ><a name="2632" href="IS4NormalisationNoTerms.html#2632" class="Bound"
+      >B</a
+      ><a name="2633" class="Symbol"
+      >}</a
+      ><a name="2634"
+      > </a
+      ><a name="2635" href="IS4NormalisationNoTerms.html#2635" class="Bound"
+      >&#119967;</a
+      ><a name="2636"
+      > </a
+      ><a name="2637" class="Symbol"
+      >=</a
+      ><a name="2638"
+      > </a
+      ><a name="2639" href="IS4SemanticsNoTerms.html#2033" class="Function"
+      >return</a
+      ><a name="2645"
+      > </a
+      ><a name="2646" class="Symbol"
+      >{</a
+      ><a name="2647" href="IS4NormalisationNoTerms.html#2628" class="Bound"
+      >A</a
+      ><a name="2648"
+      > </a
+      ><a name="2649" href="IS4.html#106" class="InductiveConstructor Operator"
+      >&#8658;</a
+      ><a name="2650"
+      > </a
+      ><a name="2651" href="IS4NormalisationNoTerms.html#2632" class="Bound"
+      >B</a
+      ><a name="2652" class="Symbol"
+      >}</a
+      ><a name="2653"
+      >
+                      </a
+      ><a name="2676" class="Symbol"
+      >&#955;</a
+      ><a name="2677"
+      > </a
+      ><a name="2678" class="Symbol"
+      >{</a
+      ><a name="2679"
+      > </a
+      ><a name="2680" class="Symbol"
+      >(</a
+      ><a name="2681" href="IS4NormalisationNoTerms.html#2681" class="Bound"
+      >&#950;</a
+      ><a name="2682"
+      > </a
+      ><a name="2683" href="Prelude.html#2363" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="2684"
+      > </a
+      ><a name="2685" href="IS4NormalisationNoTerms.html#2685" class="Bound"
+      >&#951;</a
+      ><a name="2686" class="Symbol"
+      >)</a
+      ><a name="2687"
+      > </a
+      ><a name="2688" href="IS4NormalisationNoTerms.html#2688" class="Bound"
+      >a</a
+      ><a name="2689"
+      > </a
+      ><a name="2690" class="Symbol"
+      >&#8594;</a
+      ><a name="2691"
+      >
+                        </a
+      ><a name="2716" href="IS4NormalisationNoTerms.html#2544" class="Function Operator"
+      >&#10214;</a
+      ><a name="2717"
+      > </a
+      ><a name="2718" href="IS4SyntaxNoTerms.html#4778" class="InductiveConstructor"
+      >app&#8319;&#7497;</a
+      ><a name="2723"
+      > </a
+      ><a name="2724" class="Symbol"
+      >(</a
+      ><a name="2725" href="IS4SyntaxNoTerms.html#5311" class="Function"
+      >mono&#8866;&#8319;&#7497;</a
+      ><a name="2732"
+      > </a
+      ><a name="2733" href="IS4NormalisationNoTerms.html#2681" class="Bound"
+      >&#950;</a
+      ><a name="2734"
+      > </a
+      ><a name="2735" href="IS4NormalisationNoTerms.html#2685" class="Bound"
+      >&#951;</a
+      ><a name="2736"
+      > </a
+      ><a name="2737" href="IS4NormalisationNoTerms.html#2635" class="Bound"
+      >&#119967;</a
+      ><a name="2738" class="Symbol"
+      >)</a
+      ><a name="2739"
+      > </a
+      ><a name="2740" class="Symbol"
+      >(</a
+      ><a name="2741" href="IS4NormalisationNoTerms.html#2097" class="Function"
+      >reify&#7580;</a
+      ><a name="2747"
+      > </a
+      ><a name="2748" href="IS4NormalisationNoTerms.html#2688" class="Bound"
+      >a</a
+      ><a name="2749" class="Symbol"
+      >)</a
+      ><a name="2750"
+      > </a
+      ><a name="2751" href="IS4NormalisationNoTerms.html#2544" class="Function Operator"
+      >&#10215;&#7580;</a
+      ><a name="2753"
+      > </a
+      ><a name="2754" class="Symbol"
+      >}</a
+      ><a name="2755"
+      >
+  </a
+      ><a name="2758" href="IS4NormalisationNoTerms.html#2544" class="Function Operator"
+      >&#10214;_&#10215;&#7580;</a
+      ><a name="2762"
+      > </a
+      ><a name="2763" class="Symbol"
+      >{</a
+      ><a name="2764" href="IS4.html#127" class="InductiveConstructor Operator"
+      >&#9633;</a
+      ><a name="2765"
+      > </a
+      ><a name="2766" href="IS4NormalisationNoTerms.html#2766" class="Bound"
+      >A</a
+      ><a name="2767" class="Symbol"
+      >}</a
+      ><a name="2768"
+      >    </a
+      ><a name="2772" href="IS4NormalisationNoTerms.html#2772" class="Bound"
+      >&#119967;</a
+      ><a name="2773"
+      > </a
+      ><a name="2774" class="Symbol"
+      >=</a
+      ><a name="2775"
+      > </a
+      ><a name="2776" class="Symbol"
+      >&#955;</a
+      ><a name="2777"
+      > </a
+      ><a name="2778" class="Symbol"
+      >{</a
+      ><a name="2779"
+      > </a
+      ><a name="2780" class="Symbol"
+      >(</a
+      ><a name="2781" href="IS4NormalisationNoTerms.html#2781" class="Bound"
+      >&#950;</a
+      ><a name="2782"
+      > </a
+      ><a name="2783" href="Prelude.html#2363" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="2784"
+      > </a
+      ><a name="2785" href="IS4NormalisationNoTerms.html#2785" class="Bound"
+      >&#951;</a
+      ><a name="2786" class="Symbol"
+      >)</a
+      ><a name="2787"
+      > </a
+      ><a name="2788" href="IS4NormalisationNoTerms.html#2788" class="Bound"
+      >&#954;</a
+      ><a name="2789"
+      > </a
+      ><a name="2790" class="Symbol"
+      >&#8594;</a
+      ><a name="2791"
+      >
+                      </a
+      ><a name="2814" href="IS4SyntaxNoTerms.html#4484" class="InductiveConstructor"
+      >ne&#8319;&#7584;</a
+      ><a name="2818"
+      > </a
+      ><a name="2819" class="Symbol"
+      >(</a
+      ><a name="2820" href="IS4SyntaxNoTerms.html#4882" class="InductiveConstructor"
+      >unbox&#8319;&#7497;</a
+      ><a name="2827"
+      > </a
+      ><a name="2828" class="Symbol"
+      >(</a
+      ><a name="2829" href="IS4SyntaxNoTerms.html#5311" class="Function"
+      >mono&#8866;&#8319;&#7497;</a
+      ><a name="2836"
+      > </a
+      ><a name="2837" href="IS4NormalisationNoTerms.html#2781" class="Bound"
+      >&#950;</a
+      ><a name="2838"
+      > </a
+      ><a name="2839" href="IS4NormalisationNoTerms.html#2785" class="Bound"
+      >&#951;</a
+      ><a name="2840"
+      > </a
+      ><a name="2841" href="IS4NormalisationNoTerms.html#2772" class="Bound"
+      >&#119967;</a
+      ><a name="2842" class="Symbol"
+      >)</a
+      ><a name="2843"
+      >
+                                    </a
+      ><a name="2880" class="Symbol"
+      >(</a
+      ><a name="2881" href="IS4NormalisationNoTerms.html#2788" class="Bound"
+      >&#954;</a
+      ><a name="2882"
+      > </a
+      ><a name="2883" class="Symbol"
+      >(</a
+      ><a name="2884" href="PreludeList.html#2072" class="InductiveConstructor"
+      >weak</a
+      ><a name="2888"
+      > </a
+      ><a name="2889" href="PreludeList.html#3205" class="Function"
+      >refl&#8839;</a
+      ><a name="2894"
+      > </a
+      ><a name="2895" href="Prelude.html#2363" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="2896"
+      > </a
+      ><a name="2897" href="PreludeList.html#3205" class="Function"
+      >refl&#8839;</a
+      ><a name="2902" class="Symbol"
+      >)</a
+      ><a name="2903"
+      >
+                                       </a
+      ><a name="2943" class="Symbol"
+      >(&#955;</a
+      ><a name="2945"
+      > </a
+      ><a name="2946" href="IS4NormalisationNoTerms.html#2946" class="Bound"
+      >&#950;&#8242;</a
+      ><a name="2948"
+      > </a
+      ><a name="2949" class="Symbol"
+      >&#8594;</a
+      ><a name="2950"
+      >
+                                         </a
+      ><a name="2992" href="IS4SyntaxNoTerms.html#876" class="Function"
+      >mono&#8866;</a
+      ><a name="2997"
+      > </a
+      ><a name="2998" href="IS4NormalisationNoTerms.html#2946" class="Bound"
+      >&#950;&#8242;</a
+      ><a name="3000"
+      > </a
+      ><a name="3001" href="PreludeList.html#3205" class="Function"
+      >refl&#8839;</a
+      ><a name="3006"
+      > </a
+      ><a name="3007" class="Symbol"
+      >(</a
+      ><a name="3008" href="IS4SyntaxNoTerms.html#246" class="InductiveConstructor"
+      >mvar</a
+      ><a name="3012"
+      > </a
+      ><a name="3013" href="PreludeList.html#5466" class="InductiveConstructor"
+      >zero</a
+      ><a name="3017" class="Symbol"
+      >)</a
+      ><a name="3018"
+      > </a
+      ><a name="3019" href="Prelude.html#2363" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="3020"
+      >
+                                         </a
+      ><a name="3062" href="IS4NormalisationNoTerms.html#2544" class="Function Operator"
+      >&#10214;</a
+      ><a name="3063"
+      > </a
+      ><a name="3064" href="IS4SyntaxNoTerms.html#5311" class="Function"
+      >mono&#8866;&#8319;&#7497;</a
+      ><a name="3071"
+      > </a
+      ><a name="3072" href="IS4NormalisationNoTerms.html#2946" class="Bound"
+      >&#950;&#8242;</a
+      ><a name="3074"
+      > </a
+      ><a name="3075" href="PreludeList.html#3205" class="Function"
+      >refl&#8839;</a
+      ><a name="3080"
+      > </a
+      ><a name="3081" class="Symbol"
+      >(</a
+      ><a name="3082" href="IS4SyntaxNoTerms.html#4698" class="InductiveConstructor"
+      >mvar&#8319;&#7497;</a
+      ><a name="3088"
+      > </a
+      ><a name="3089" href="PreludeList.html#5466" class="InductiveConstructor"
+      >zero</a
+      ><a name="3093" class="Symbol"
+      >)</a
+      ><a name="3094"
+      > </a
+      ><a name="3095" href="IS4NormalisationNoTerms.html#2544" class="Function Operator"
+      >&#10215;&#7580;</a
+      ><a name="3097" class="Symbol"
+      >)))</a
+      ><a name="3100"
+      > </a
+      ><a name="3101" class="Symbol"
+      >}</a
+      ><a name="3102"
+      >
+
+</a
+      ><a name="3104" href="IS4NormalisationNoTerms.html#3104" class="Function"
+      >refl&#8873;&#8902;</a
+      ><a name="3110"
+      > </a
+      ><a name="3111" class="Symbol"
+      >:</a
+      ><a name="3112"
+      > </a
+      ><a name="3113" class="Symbol"
+      >&#8704;</a
+      ><a name="3114"
+      > </a
+      ><a name="3115" class="Symbol"
+      >{</a
+      ><a name="3116" href="IS4NormalisationNoTerms.html#3116" class="Bound"
+      >&#916;</a
+      ><a name="3117"
+      > </a
+      ><a name="3118" href="IS4NormalisationNoTerms.html#3118" class="Bound"
+      >&#915;</a
+      ><a name="3119" class="Symbol"
+      >}</a
+      ><a name="3120"
+      > </a
+      ><a name="3121" class="Symbol"
+      >&#8594;</a
+      ><a name="3122"
+      > </a
+      ><a name="3123" href="IS4NormalisationNoTerms.html#3116" class="Bound"
+      >&#916;</a
+      ><a name="3124"
+      > </a
+      ><a name="3125" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="3126"
+      > </a
+      ><a name="3127" href="IS4NormalisationNoTerms.html#3118" class="Bound"
+      >&#915;</a
+      ><a name="3128"
+      > </a
+      ><a name="3129" href="IS4SemanticsNoTerms.html#1261" class="Function Operator"
+      >&#8873;&#8902;</a
+      ><a name="3131"
+      > </a
+      ><a name="3132" href="IS4NormalisationNoTerms.html#3118" class="Bound"
+      >&#915;</a
+      ><a name="3133"
+      >
+</a
+      ><a name="3134" href="IS4NormalisationNoTerms.html#3104" class="Function"
+      >refl&#8873;&#8902;</a
+      ><a name="3140"
+      > </a
+      ><a name="3141" class="Symbol"
+      >{</a
+      ><a name="3142" class="Argument"
+      >&#915;</a
+      ><a name="3143"
+      > </a
+      ><a name="3144" class="Symbol"
+      >=</a
+      ><a name="3145"
+      > </a
+      ><a name="3146" href="PreludeList.html#151" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="3147" class="Symbol"
+      >}</a
+      ><a name="3148"
+      >     </a
+      ><a name="3153" class="Symbol"
+      >=</a
+      ><a name="3154"
+      > </a
+      ><a name="3155" href="PreludeList.html#1486" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="3156"
+      >
+</a
+      ><a name="3157" href="IS4NormalisationNoTerms.html#3104" class="Function"
+      >refl&#8873;&#8902;</a
+      ><a name="3163"
+      > </a
+      ><a name="3164" class="Symbol"
+      >{</a
+      ><a name="3165" class="Argument"
+      >&#915;</a
+      ><a name="3166"
+      > </a
+      ><a name="3167" class="Symbol"
+      >=</a
+      ><a name="3168"
+      > </a
+      ><a name="3169" href="IS4NormalisationNoTerms.html#3169" class="Bound"
+      >&#915;</a
+      ><a name="3170"
+      > </a
+      ><a name="3171" href="PreludeList.html#168" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="3172"
+      > </a
+      ><a name="3173" href="IS4NormalisationNoTerms.html#3173" class="Bound"
+      >A</a
+      ><a name="3174" class="Symbol"
+      >}</a
+      ><a name="3175"
+      > </a
+      ><a name="3176" class="Symbol"
+      >=</a
+      ><a name="3177"
+      > </a
+      ><a name="3178" href="IS4SemanticsNoTerms.html#1327" class="Function"
+      >mono&#8873;&#8902;</a
+      ><a name="3184"
+      > </a
+      ><a name="3185" class="Symbol"
+      >(</a
+      ><a name="3186" href="PreludeList.html#3205" class="Function"
+      >refl&#8839;</a
+      ><a name="3191"
+      > </a
+      ><a name="3192" href="Prelude.html#2363" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="3193"
+      > </a
+      ><a name="3194" href="PreludeList.html#2072" class="InductiveConstructor"
+      >weak</a
+      ><a name="3198"
+      > </a
+      ><a name="3199" href="PreludeList.html#3205" class="Function"
+      >refl&#8839;</a
+      ><a name="3204" class="Symbol"
+      >)</a
+      ><a name="3205"
+      > </a
+      ><a name="3206" href="IS4NormalisationNoTerms.html#3104" class="Function"
+      >refl&#8873;&#8902;</a
+      ><a name="3212"
+      > </a
+      ><a name="3213" href="PreludeList.html#1504" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="3214"
+      > </a
+      ><a name="3215" href="IS4NormalisationNoTerms.html#2544" class="Function Operator"
+      >&#10214;</a
+      ><a name="3216"
+      > </a
+      ><a name="3217" href="IS4SyntaxNoTerms.html#4620" class="InductiveConstructor"
+      >var&#8319;&#7497;</a
+      ><a name="3222"
+      > </a
+      ><a name="3223" href="PreludeList.html#5466" class="InductiveConstructor"
+      >zero</a
+      ><a name="3227"
+      > </a
+      ><a name="3228" href="IS4NormalisationNoTerms.html#2544" class="Function Operator"
+      >&#10215;&#7580;</a
+      ><a name="3230"
+      >
+
+</a
+      ><a name="3232" href="IS4NormalisationNoTerms.html#3232" class="Function"
+      >mrefl&#8873;&#10694;</a
+      ><a name="3239"
+      > </a
+      ><a name="3240" class="Symbol"
+      >:</a
+      ><a name="3241"
+      > </a
+      ><a name="3242" class="Symbol"
+      >&#8704;</a
+      ><a name="3243"
+      > </a
+      ><a name="3244" class="Symbol"
+      >{</a
+      ><a name="3245" href="IS4NormalisationNoTerms.html#3245" class="Bound"
+      >&#916;</a
+      ><a name="3246"
+      > </a
+      ><a name="3247" href="IS4NormalisationNoTerms.html#3247" class="Bound"
+      >&#915;</a
+      ><a name="3248" class="Symbol"
+      >}</a
+      ><a name="3249"
+      > </a
+      ><a name="3250" class="Symbol"
+      >&#8594;</a
+      ><a name="3251"
+      > </a
+      ><a name="3252" href="IS4NormalisationNoTerms.html#3245" class="Bound"
+      >&#916;</a
+      ><a name="3253"
+      > </a
+      ><a name="3254" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="3255"
+      > </a
+      ><a name="3256" href="IS4NormalisationNoTerms.html#3247" class="Bound"
+      >&#915;</a
+      ><a name="3257"
+      > </a
+      ><a name="3258" href="IS4SemanticsNoTerms.html#1563" class="Function Operator"
+      >&#8873;&#10694;</a
+      ><a name="3260"
+      > </a
+      ><a name="3261" href="IS4NormalisationNoTerms.html#3245" class="Bound"
+      >&#916;</a
+      ><a name="3262"
+      >
+</a
+      ><a name="3263" href="IS4NormalisationNoTerms.html#3232" class="Function"
+      >mrefl&#8873;&#10694;</a
+      ><a name="3270"
+      > </a
+      ><a name="3271" class="Symbol"
+      >{</a
+      ><a name="3272" href="PreludeList.html#151" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="3273" class="Symbol"
+      >}</a
+      ><a name="3274"
+      >     </a
+      ><a name="3279" class="Symbol"
+      >=</a
+      ><a name="3280"
+      > </a
+      ><a name="3281" href="Prelude.html#182" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="3282"
+      >
+</a
+      ><a name="3283" href="IS4NormalisationNoTerms.html#3232" class="Function"
+      >mrefl&#8873;&#10694;</a
+      ><a name="3290"
+      > </a
+      ><a name="3291" class="Symbol"
+      >{</a
+      ><a name="3292" href="IS4NormalisationNoTerms.html#3292" class="Bound"
+      >&#916;</a
+      ><a name="3293"
+      > </a
+      ><a name="3294" href="PreludeList.html#168" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="3295"
+      > </a
+      ><a name="3296" href="IS4NormalisationNoTerms.html#3296" class="Bound"
+      >A</a
+      ><a name="3297" class="Symbol"
+      >}</a
+      ><a name="3298"
+      > </a
+      ><a name="3299" class="Symbol"
+      >=</a
+      ><a name="3300"
+      > </a
+      ><a name="3301" href="IS4SemanticsNoTerms.html#1661" class="Function"
+      >mono&#8873;&#10694;</a
+      ><a name="3307"
+      > </a
+      ><a name="3308" class="Symbol"
+      >(</a
+      ><a name="3309" href="PreludeList.html#2072" class="InductiveConstructor"
+      >weak</a
+      ><a name="3313"
+      > </a
+      ><a name="3314" href="PreludeList.html#3205" class="Function"
+      >refl&#8839;</a
+      ><a name="3319"
+      > </a
+      ><a name="3320" href="Prelude.html#2363" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="3321"
+      > </a
+      ><a name="3322" href="PreludeList.html#3205" class="Function"
+      >refl&#8839;</a
+      ><a name="3327" class="Symbol"
+      >)</a
+      ><a name="3328"
+      > </a
+      ><a name="3329" href="IS4NormalisationNoTerms.html#3232" class="Function"
+      >mrefl&#8873;&#10694;</a
+      ><a name="3336"
+      > </a
+      ><a name="3337" href="Prelude.html#2363" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="3338"
+      > </a
+      ><a name="3339" href="IS4NormalisationNoTerms.html#2544" class="Function Operator"
+      >&#10214;</a
+      ><a name="3340"
+      > </a
+      ><a name="3341" href="IS4SyntaxNoTerms.html#4698" class="InductiveConstructor"
+      >mvar&#8319;&#7497;</a
+      ><a name="3347"
+      > </a
+      ><a name="3348" href="PreludeList.html#5466" class="InductiveConstructor"
+      >zero</a
+      ><a name="3352"
+      > </a
+      ><a name="3353" href="IS4NormalisationNoTerms.html#2544" class="Function Operator"
+      >&#10215;&#7580;</a
+      ><a name="3355"
+      >
+
+</a
+      ><a name="3357" href="IS4NormalisationNoTerms.html#3357" class="Function"
+      >reify</a
+      ><a name="3362"
+      > </a
+      ><a name="3363" class="Symbol"
+      >:</a
+      ><a name="3364"
+      > </a
+      ><a name="3365" class="Symbol"
+      >&#8704;</a
+      ><a name="3366"
+      > </a
+      ><a name="3367" class="Symbol"
+      >{</a
+      ><a name="3368" href="IS4NormalisationNoTerms.html#3368" class="Bound"
+      >&#916;</a
+      ><a name="3369"
+      > </a
+      ><a name="3370" href="IS4NormalisationNoTerms.html#3370" class="Bound"
+      >&#915;</a
+      ><a name="3371"
+      > </a
+      ><a name="3372" href="IS4NormalisationNoTerms.html#3372" class="Bound"
+      >A</a
+      ><a name="3373" class="Symbol"
+      >}</a
+      ><a name="3374"
+      > </a
+      ><a name="3375" class="Symbol"
+      >&#8594;</a
+      ><a name="3376"
+      > </a
+      ><a name="3377" href="IS4NormalisationNoTerms.html#3368" class="Bound"
+      >&#916;</a
+      ><a name="3378"
+      > </a
+      ><a name="3379" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="3380"
+      > </a
+      ><a name="3381" href="IS4NormalisationNoTerms.html#3370" class="Bound"
+      >&#915;</a
+      ><a name="3382"
+      > </a
+      ><a name="3383" href="IS4NormalisationNoTerms.html#113" class="Function Operator"
+      >&#8872;</a
+      ><a name="3384"
+      > </a
+      ><a name="3385" href="IS4NormalisationNoTerms.html#3372" class="Bound"
+      >A</a
+      ><a name="3386"
+      > </a
+      ><a name="3387" class="Symbol"
+      >&#8594;</a
+      ><a name="3388"
+      > </a
+      ><a name="3389" href="IS4NormalisationNoTerms.html#3368" class="Bound"
+      >&#916;</a
+      ><a name="3390"
+      > </a
+      ><a name="3391" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="3392"
+      > </a
+      ><a name="3393" href="IS4NormalisationNoTerms.html#3370" class="Bound"
+      >&#915;</a
+      ><a name="3394"
+      > </a
+      ><a name="3395" href="IS4SyntaxNoTerms.html#4274" class="Datatype Operator"
+      >&#8866;&#8319;&#7584;</a
+      ><a name="3398"
+      > </a
+      ><a name="3399" href="IS4NormalisationNoTerms.html#3372" class="Bound"
+      >A</a
+      ><a name="3400"
+      >
+</a
+      ><a name="3401" href="IS4NormalisationNoTerms.html#3357" class="Function"
+      >reify</a
+      ><a name="3406"
+      > </a
+      ><a name="3407" href="IS4NormalisationNoTerms.html#3407" class="Bound"
+      >&#120094;</a
+      ><a name="3408"
+      > </a
+      ><a name="3409" class="Symbol"
+      >=</a
+      ><a name="3410"
+      > </a
+      ><a name="3411" href="IS4NormalisationNoTerms.html#2097" class="Function"
+      >reify&#7580;</a
+      ><a name="3417"
+      > </a
+      ><a name="3418" class="Symbol"
+      >(</a
+      ><a name="3419" href="IS4NormalisationNoTerms.html#3407" class="Bound"
+      >&#120094;</a
+      ><a name="3420"
+      > </a
+      ><a name="3421" class="Symbol"
+      >(&#955;</a
+      ><a name="3423"
+      > </a
+      ><a name="3424" href="IS4NormalisationNoTerms.html#3424" class="Bound"
+      >&#950;</a
+      ><a name="3425"
+      > </a
+      ><a name="3426" class="Symbol"
+      >&#8594;</a
+      ><a name="3427"
+      > </a
+      ><a name="3428" href="IS4SyntaxNoTerms.html#1350" class="Function"
+      >mono&#8866;&#10694;</a
+      ><a name="3434"
+      > </a
+      ><a name="3435" href="IS4NormalisationNoTerms.html#3424" class="Bound"
+      >&#950;</a
+      ><a name="3436"
+      > </a
+      ><a name="3437" href="PreludeList.html#3205" class="Function"
+      >refl&#8839;</a
+      ><a name="3442"
+      > </a
+      ><a name="3443" href="IS4SyntaxNoTerms.html#2666" class="Function"
+      >mrefl&#8866;&#10694;</a
+      ><a name="3450" class="Symbol"
+      >)</a
+      ><a name="3451"
+      >
+                    </a
+      ><a name="3472" class="Symbol"
+      >(&#955;</a
+      ><a name="3474"
+      > </a
+      ><a name="3475" href="IS4NormalisationNoTerms.html#3475" class="Bound"
+      >&#950;</a
+      ><a name="3476"
+      > </a
+      ><a name="3477" class="Symbol"
+      >&#8594;</a
+      ><a name="3478"
+      > </a
+      ><a name="3479" href="IS4SemanticsNoTerms.html#1661" class="Function"
+      >mono&#8873;&#10694;</a
+      ><a name="3485"
+      > </a
+      ><a name="3486" class="Symbol"
+      >(</a
+      ><a name="3487" href="IS4NormalisationNoTerms.html#3475" class="Bound"
+      >&#950;</a
+      ><a name="3488"
+      > </a
+      ><a name="3489" href="Prelude.html#2363" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="3490"
+      > </a
+      ><a name="3491" href="PreludeList.html#3205" class="Function"
+      >refl&#8839;</a
+      ><a name="3496" class="Symbol"
+      >)</a
+      ><a name="3497"
+      > </a
+      ><a name="3498" href="IS4NormalisationNoTerms.html#3232" class="Function"
+      >mrefl&#8873;&#10694;</a
+      ><a name="3505" class="Symbol"
+      >)</a
+      ><a name="3506"
+      >
+                    </a
+      ><a name="3527" href="IS4NormalisationNoTerms.html#3104" class="Function"
+      >refl&#8873;&#8902;</a
+      ><a name="3533" class="Symbol"
+      >)</a
+      ><a name="3534"
+      >
+
+
+</a
+      ><a name="3537" class="Comment"
+      >-- Normalisation.</a
+      ><a name="3554"
+      >
+
+</a
+      ><a name="3556" href="IS4NormalisationNoTerms.html#3556" class="Function"
+      >nbe</a
+      ><a name="3559"
+      > </a
+      ><a name="3560" class="Symbol"
+      >:</a
+      ><a name="3561"
+      > </a
+      ><a name="3562" class="Symbol"
+      >&#8704;</a
+      ><a name="3563"
+      > </a
+      ><a name="3564" class="Symbol"
+      >{</a
+      ><a name="3565" href="IS4NormalisationNoTerms.html#3565" class="Bound"
+      >&#916;</a
+      ><a name="3566"
+      > </a
+      ><a name="3567" href="IS4NormalisationNoTerms.html#3567" class="Bound"
+      >&#915;</a
+      ><a name="3568"
+      > </a
+      ><a name="3569" href="IS4NormalisationNoTerms.html#3569" class="Bound"
+      >A</a
+      ><a name="3570" class="Symbol"
+      >}</a
+      ><a name="3571"
+      > </a
+      ><a name="3572" class="Symbol"
+      >&#8594;</a
+      ><a name="3573"
+      > </a
+      ><a name="3574" href="IS4NormalisationNoTerms.html#3565" class="Bound"
+      >&#916;</a
+      ><a name="3575"
+      > </a
+      ><a name="3576" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="3577"
+      > </a
+      ><a name="3578" href="IS4NormalisationNoTerms.html#3567" class="Bound"
+      >&#915;</a
+      ><a name="3579"
+      > </a
+      ><a name="3580" href="IS4SyntaxNoTerms.html#154" class="Datatype Operator"
+      >&#8866;</a
+      ><a name="3581"
+      > </a
+      ><a name="3582" href="IS4NormalisationNoTerms.html#3569" class="Bound"
+      >A</a
+      ><a name="3583"
+      > </a
+      ><a name="3584" class="Symbol"
+      >&#8594;</a
+      ><a name="3585"
+      > </a
+      ><a name="3586" href="IS4NormalisationNoTerms.html#3565" class="Bound"
+      >&#916;</a
+      ><a name="3587"
+      > </a
+      ><a name="3588" href="Prelude.html#2436" class="InductiveConstructor Operator"
+      >&#8271;</a
+      ><a name="3589"
+      > </a
+      ><a name="3590" href="IS4NormalisationNoTerms.html#3567" class="Bound"
+      >&#915;</a
+      ><a name="3591"
+      > </a
+      ><a name="3592" href="IS4SyntaxNoTerms.html#4274" class="Datatype Operator"
+      >&#8866;&#8319;&#7584;</a
+      ><a name="3595"
+      > </a
+      ><a name="3596" href="IS4NormalisationNoTerms.html#3569" class="Bound"
+      >A</a
+      ><a name="3597"
+      >
+</a
+      ><a name="3598" href="IS4NormalisationNoTerms.html#3556" class="Function"
+      >nbe</a
+      ><a name="3601"
+      > </a
+      ><a name="3602" class="Symbol"
+      >=</a
+      ><a name="3603"
+      > </a
+      ><a name="3604" href="IS4NormalisationNoTerms.html#3357" class="Function"
+      >reify</a
+      ><a name="3609"
+      > </a
+      ><a name="3610" href="Prelude.html#750" class="Function Operator"
+      >&#8728;</a
+      ><a name="3611"
+      > </a
+      ><a name="3612" href="IS4NormalisationNoTerms.html#334" class="Function Operator"
+      >&#10214;_&#10215;</a
+      ><a name="3615"
+      >
+</a
+      ></pre
+    ></body
+  ></html
+>
