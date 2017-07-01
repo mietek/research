@@ -45,11 +45,11 @@ mutual
 
   infix 3 _⊢⋆_∷_
   data _⊢⋆_∷_ {d g} : ∀ {n} → Cx d g → Tm⋆ d g n → Ty⋆ n → Set where
-   ∅   : ∀ {Δ Γ} →
-           Δ ⁏ Γ ⊢⋆ ∅ ∷ ∅
-   _,_ : ∀ {n Δ Γ x} {Ξ : Ty⋆ n} {M A} →
-           Δ ⁏ Γ ⊢⋆ x ∷ Ξ → Δ ⁏ Γ ⊢ M ∷ A →
-           Δ ⁏ Γ ⊢⋆ x , M ∷ Ξ , A
+    ∅   : ∀ {Δ Γ} →
+            Δ ⁏ Γ ⊢⋆ ∅ ∷ ∅
+    _,_ : ∀ {n Δ Γ x} {Ξ : Ty⋆ n} {M A} →
+            Δ ⁏ Γ ⊢⋆ x ∷ Ξ → Δ ⁏ Γ ⊢ M ∷ A →
+            Δ ⁏ Γ ⊢⋆ x , M ∷ Ξ , A
 
 mutual
   mono⊢ : ∀ {d g d′ g′} {Δ : BoxTy⋆ d} {Γ : Ty⋆ g} {Δ′ : BoxTy⋆ d′} {Γ′ : Ty⋆ g′} {M A z e} →
