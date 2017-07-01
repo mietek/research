@@ -26,6 +26,8 @@ import IPCNormalisationExperimentalNoTerms
 -- □A
 import IS4
 import IS4SyntaxNoTerms
+import IS4SemanticsNoTerms
+import IS4NormalisationNoTerms
 
 -- Intuitionistic contextual modal logic
 -- [Γ]A

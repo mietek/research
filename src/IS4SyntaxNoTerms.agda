@@ -75,7 +75,7 @@ assocmono⊢ ζ′ η′ ζ η (var 𝒾)     = cong var (assocmono∋ η′ η 
 assocmono⊢ ζ′ η′ ζ η (mvar 𝒾)    = cong mvar (assocmono∋ ζ′ ζ 𝒾)
 assocmono⊢ ζ′ η′ ζ η (lam 𝒟)     = cong lam (assocmono⊢ ζ′ (lift η′) ζ (lift η) 𝒟)
 assocmono⊢ ζ′ η′ ζ η (app 𝒟 ℰ)   = cong² app (assocmono⊢ ζ′ η′ ζ η 𝒟) (assocmono⊢ ζ′ η′ ζ η ℰ)
-assocmono⊢ ζ′ η′ ζ η (box 𝒟)     = cong box (assocmono⊢ ζ′ done ζ done 𝒟)
+assocmono⊢ ζ′ η′ ζ η (box 𝒟)     = cong box (assocmono⊢ ζ′ refl⊇ ζ refl⊇ 𝒟)
 assocmono⊢ ζ′ η′ ζ η (unbox 𝒟 ℰ) = cong² unbox (assocmono⊢ ζ′ η′ ζ η 𝒟) (assocmono⊢ (lift ζ′) η′ (lift ζ) η ℰ)
 
 refl⊢⋆ : ∀ {Δ Γ} → Δ ⁏ Γ ⊢⋆ Γ
@@ -190,7 +190,7 @@ mutual
                     (ζ′ : Δ″ ⊇ Δ′) (η′ : Γ″ ⊇ Γ′) (ζ : Δ′ ⊇ Δ) (η : Γ′ ⊇ Γ) (𝒟 : Δ ⁏ Γ ⊢ⁿᶠ A) →
                     mono⊢ⁿᶠ ζ′ η′ (mono⊢ⁿᶠ ζ η 𝒟) ≡ mono⊢ⁿᶠ (trans⊇ ζ′ ζ) (trans⊇ η′ η) 𝒟
   assocmono⊢ⁿᶠ ζ′ η′ ζ η (lamⁿᶠ 𝒟)     = cong lamⁿᶠ (assocmono⊢ⁿᶠ ζ′ (lift η′) ζ (lift η) 𝒟)
-  assocmono⊢ⁿᶠ ζ′ η′ ζ η (boxⁿᶠ 𝒟)     = cong boxⁿᶠ (assocmono⊢ ζ′ done ζ done 𝒟)
+  assocmono⊢ⁿᶠ ζ′ η′ ζ η (boxⁿᶠ 𝒟)     = cong boxⁿᶠ (assocmono⊢ ζ′ refl⊇ ζ refl⊇ 𝒟)
   assocmono⊢ⁿᶠ ζ′ η′ ζ η (neⁿᶠ 𝒟)      = cong neⁿᶠ (assocmono⊢ⁿᵉ ζ′ η′ ζ η 𝒟)
 
   assocmono⊢ⁿᵉ : ∀ {Δ Γ Δ′ Γ′ Γ″ Δ″ A} →
