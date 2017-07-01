@@ -12,6 +12,7 @@ _⊨_ : Cx → Ty → Set₁
                (∀ {w′} → w′ Я w → w′ ⊩⧆ Δ) →
                w ⊩⋆ Γ →
                w ⊩ A
+
 infix 3 _⊨⋆_
 _⊨⋆_ : Cx → Ty⋆ → Set₁
 Δ ⁏ Γ ⊨⋆ Ξ = ∀ {{_ : Model}} {w} →
@@ -19,12 +20,6 @@ _⊨⋆_ : Cx → Ty⋆ → Set₁
                 (∀ {w′} → w′ Я w → w′ ⊩⧆ Δ) →
                 w ⊩⋆ Γ →
                 w ⊩⋆ Ξ
-
-postulate
-  mlookup⊩ : ∀ {{_ : Model}} {w Ξ Ψ A} → w ⊩⋆ Ψ → w ⊩⧆ Ξ → Ξ ∋ [ Ψ ] A → w ⊩ A
--- mlookup⊩ {Ξ = ∅}           ψ ∅       ()
--- mlookup⊩ {Ξ = Ξ , [ Ψ ] A} ψ (ξ , a) zero    = {!π₂ a ψ!} -- TODO
--- mlookup⊩ {Ξ = Ξ , B}       ψ (ξ , b) (suc 𝒾) = mlookup⊩ ψ ξ 𝒾
 
 
 -- Soundness.
@@ -50,7 +45,7 @@ mutual
   ⟦ unbox {Ψ = Ψ} {A} {C} 𝒟 ℰ ⟧ `δ δ γ = bind {[ Ψ ] A} {C} (⟦ 𝒟 ⟧ `δ δ γ)
                                            λ θ q →
                                              ⟦ ℰ ⟧ (λ ζ → `δ (transЯ ζ (⊒→Я θ)) , box (π₁ (q ζ)))
-                                                   (λ ζ → δ (transЯ ζ (⊒→Я θ)) , q ζ)
+                                                   (λ ζ → δ (transЯ ζ (⊒→Я θ)) , π₂ (q ζ))
                                                    (mono⊩⋆ θ γ)
 
   ⟦_⟧⋆ : ∀ {Δ Γ Ξ} → Δ ⁏ Γ ⊢⋆ Ξ → Δ ⁏ Γ ⊨⋆ Ξ
@@ -74,8 +69,6 @@ instance
     ; monoG  = λ { (ζ , η) 𝒟 → mono⊢ⁿᵉ ζ η 𝒟 }
     ; ⊒→Я   = π₁
     ; peek   = id
-    ; peek⊒₁ = π₁
-    ; peek⊒₂ = π₂
     }
 
 mutual

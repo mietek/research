@@ -18,8 +18,6 @@ record Model : Set₁ where
     monoG  : ∀ {w w′} → w′ ⊒ w → G w → G w′
     ⊒→Я   : ∀ {w w′} → w′ ⊒ w → w′ Я w
     peek   : World → Cx
-    peek⊒₁ : ∀ {w w′} → w′ ⊒ w → π₁ (peek w′) ⊇ π₁ (peek w)
-    peek⊒₂ : ∀ {w w′} → w′ ⊒ w → π₂ (peek w′) ⊇ π₂ (peek w)
 open Model {{…}} public
 
 
@@ -46,7 +44,7 @@ mutual
 infix 3 _⊩⧆_
 _⊩⧆_ : ∀ {{_ : Model}} → World → BoxTy⋆ → Set
 w ⊩⧆ ∅             = ⊤
-w ⊩⧆ (Ξ , [ Ψ ] A) = w ⊩⧆ Ξ ∧ (π₁ (peek w) ⁏ Ψ ⊢ A ∧ (∀ {w′} → w′ ⊒ w → w′ ⊩⋆ Ψ → w′ ⊩ A))
+w ⊩⧆ (Ξ , [ Ψ ] A) = w ⊩⧆ Ξ ∧ (∀ {w′} → w′ ⊒ w → w′ ⊩⋆ Ψ → w′ ⊩ A)
 
 mutual
   mono⊩ : ∀ {{_ : Model}} {A w w′} → w′ ⊒ w → w ⊩ A → w′ ⊩ A
@@ -63,12 +61,16 @@ mono⊩⋆ {Ξ = Ξ , A} θ (ξ , a) = mono⊩⋆ θ ξ , mono⊩ {A} θ a
 
 mono⊩⧆ : ∀ {{_ : Model}} {w w′ Ξ} → w′ ⊒ w → w ⊩⧆ Ξ → w′ ⊩⧆ Ξ
 mono⊩⧆ {Ξ = ∅}           θ ∅       = ∅
-mono⊩⧆ {Ξ = Ξ , [ Ψ ] A} θ (ξ , a) = mono⊩⧆ θ ξ , (mono⊢ (peek⊒₁ θ) refl⊇ (π₁ a) ,
-                                       λ θ′ ψ → π₂ a (trans⊒ θ′ θ) ψ)
+mono⊩⧆ {Ξ = Ξ , [ Ψ ] A} θ (ξ , a) = mono⊩⧆ θ ξ , λ θ′ ψ → a (trans⊒ θ′ θ) ψ
 
 lookup⊩ : ∀ {{_ : Model}} {w Ξ A} → w ⊩⋆ Ξ → Ξ ∋ A → w ⊩ A
 lookup⊩ (ξ , a) zero    = a
 lookup⊩ (ξ , b) (suc 𝒾) = lookup⊩ ξ 𝒾
+
+mlookup⊩ : ∀ {{_ : Model}} {w Ξ Ψ A} → w ⊩⋆ Ψ → w ⊩⧆ Ξ → Ξ ∋ [ Ψ ] A → w ⊩ A
+mlookup⊩ {Ξ = ∅}           ψ ∅       ()
+mlookup⊩ {Ξ = Ξ , [ Ψ ] A} ψ (ξ , a) zero    = a refl⊒ ψ
+mlookup⊩ {Ξ = Ξ , B}       ψ (ξ , b) (suc 𝒾) = mlookup⊩ ψ ξ 𝒾
 
 
 -- Continuations.
