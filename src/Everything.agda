@@ -27,6 +27,8 @@ import IS4SyntaxNoTerms
 -- [Γ]A
 import ICML
 import ICMLSyntaxNoTerms
+import ICMLSemanticsNoTerms
+import ICMLNormalisationNoTerms -- TODO
 
 -- [Δ]A
 import IMCML

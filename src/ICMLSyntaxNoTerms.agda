@@ -177,7 +177,7 @@ mutual
                 Γ ∋ A →
                 Δ ⁏ Γ ⊢ⁿᵉ A
     mvarⁿᵉ  : ∀ {Δ Γ Ψ A} →
-                Δ ⁏ Γ ⊢⋆ Ψ → Δ ∋ [ Ψ ] A →
+                Δ ⁏ Γ ⊢⋆ⁿᶠ Ψ → Δ ∋ [ Ψ ] A →
                 Δ ⁏ Γ ⊢ⁿᵉ A
     appⁿᵉ   : ∀ {Δ Γ A B} →
                 Δ ⁏ Γ ⊢ⁿᵉ A ⇒ B → Δ ⁏ Γ ⊢ⁿᶠ A →
@@ -185,6 +185,10 @@ mutual
     unboxⁿᵉ : ∀ {Δ Γ Ψ A C} →
                 Δ ⁏ Γ ⊢ⁿᵉ [ Ψ ] A → Δ , [ Ψ ] A ⁏ Γ ⊢ⁿᶠ C →
                 Δ ⁏ Γ ⊢ⁿᵉ C
+
+  infix 3 _⊢⋆ⁿᶠ_
+  _⊢⋆ⁿᶠ_ : Cx → Ty⋆ → Set
+  Δ ⁏ Γ ⊢⋆ⁿᶠ Ξ = All (Δ ⁏ Γ ⊢ⁿᶠ_) Ξ
 
 infix 3 _⊢⋆ⁿᵉ_
 _⊢⋆ⁿᵉ_ : Cx → Ty⋆ → Set
@@ -198,9 +202,15 @@ mutual
 
   mono⊢ⁿᵉ : ∀ {Δ Γ Δ′ Γ′ A} → Δ′ ⊇ Δ → Γ′ ⊇ Γ → Δ ⁏ Γ ⊢ⁿᵉ A → Δ′ ⁏ Γ′ ⊢ⁿᵉ A
   mono⊢ⁿᵉ ζ η (varⁿᵉ 𝒾)     = varⁿᵉ (mono∋ η 𝒾)
-  mono⊢ⁿᵉ ζ η (mvarⁿᵉ ψ 𝒾)  = mvarⁿᵉ (mono⊢⋆ ζ η ψ) (mono∋ ζ 𝒾)
+  mono⊢ⁿᵉ ζ η (mvarⁿᵉ ψ 𝒾)  = mvarⁿᵉ (mono⊢⋆ⁿᶠ ζ η ψ) (mono∋ ζ 𝒾)
   mono⊢ⁿᵉ ζ η (appⁿᵉ 𝒟 ℰ)   = appⁿᵉ (mono⊢ⁿᵉ ζ η 𝒟) (mono⊢ⁿᶠ ζ η ℰ)
   mono⊢ⁿᵉ ζ η (unboxⁿᵉ 𝒟 ℰ) = unboxⁿᵉ (mono⊢ⁿᵉ ζ η 𝒟) (mono⊢ⁿᶠ (lift ζ) η ℰ)
+
+  mono⊢⋆ⁿᶠ : ∀ {Δ Γ Δ′ Γ′ Ξ} → Δ′ ⊇ Δ → Γ′ ⊇ Γ → Δ ⁏ Γ ⊢⋆ⁿᶠ Ξ → Δ′ ⁏ Γ′ ⊢⋆ⁿᶠ Ξ
+  mono⊢⋆ⁿᶠ {Ξ = ∅}     ζ η ∅       = ∅
+  mono⊢⋆ⁿᶠ {Ξ = Ξ , A} ζ η (ξ , 𝒟) = mono⊢⋆ⁿᶠ ζ η ξ , mono⊢ⁿᶠ ζ η 𝒟
+  -- NOTE: Equivalent, but does not pass termination check.
+  -- mono⊢⋆ⁿᶠ ζ η ξ = mapAll (mono⊢ⁿᶠ ζ η) ξ
 
 mono⊢⋆ⁿᵉ : ∀ {Δ Γ Δ′ Γ′ Ξ} → Δ′ ⊇ Δ → Γ′ ⊇ Γ → Δ ⁏ Γ ⊢⋆ⁿᵉ Ξ → Δ′ ⁏ Γ′ ⊢⋆ⁿᵉ Ξ
 mono⊢⋆ⁿᵉ ζ η ξ = mapAll (mono⊢ⁿᵉ ζ η) ξ
@@ -213,9 +223,17 @@ mutual
 
   idmono⊢ⁿᵉ : ∀ {Δ Γ A} → (𝒟 : Δ ⁏ Γ ⊢ⁿᵉ A) → mono⊢ⁿᵉ refl⊇ refl⊇ 𝒟 ≡ 𝒟
   idmono⊢ⁿᵉ (varⁿᵉ 𝒾)     = cong varⁿᵉ (idmono∋ 𝒾)
-  idmono⊢ⁿᵉ (mvarⁿᵉ ψ 𝒾)  = cong² mvarⁿᵉ (idmono⊢⋆ ψ) (idmono∋ 𝒾)
+  idmono⊢ⁿᵉ (mvarⁿᵉ ψ 𝒾)  = cong² mvarⁿᵉ (idmono⊢⋆ⁿᶠ ψ) (idmono∋ 𝒾)
   idmono⊢ⁿᵉ (appⁿᵉ 𝒟 ℰ)   = cong² appⁿᵉ (idmono⊢ⁿᵉ 𝒟) (idmono⊢ⁿᶠ ℰ)
   idmono⊢ⁿᵉ (unboxⁿᵉ 𝒟 ℰ) = cong² unboxⁿᵉ (idmono⊢ⁿᵉ 𝒟) (idmono⊢ⁿᶠ ℰ)
+
+  idmono⊢⋆ⁿᶠ : ∀ {Δ Γ Ξ} → (ξ : Δ ⁏ Γ ⊢⋆ⁿᶠ Ξ) → mono⊢⋆ⁿᶠ refl⊇ refl⊇ ξ ≡ ξ
+  idmono⊢⋆ⁿᶠ ∅       = refl
+  idmono⊢⋆ⁿᶠ (ξ , 𝒟) = cong² _,_ (idmono⊢⋆ⁿᶠ ξ) (idmono⊢ⁿᶠ 𝒟)
+
+idmono⊢⋆ⁿᵉ : ∀ {Δ Γ Ξ} → (ξ : Δ ⁏ Γ ⊢⋆ⁿᵉ Ξ) → mono⊢⋆ⁿᵉ refl⊇ refl⊇ ξ ≡ ξ
+idmono⊢⋆ⁿᵉ ∅       = refl
+idmono⊢⋆ⁿᵉ (ξ , 𝒟) = cong² _,_ (idmono⊢⋆ⁿᵉ ξ) (idmono⊢ⁿᵉ 𝒟)
 
 mutual
   assocmono⊢ⁿᶠ : ∀ {Δ Γ Δ′ Γ′ Γ″ Δ″ A} →
@@ -229,13 +247,15 @@ mutual
                     (ζ′ : Δ″ ⊇ Δ′) (η′ : Γ″ ⊇ Γ′) (ζ : Δ′ ⊇ Δ) (η : Γ′ ⊇ Γ) (𝒟 : Δ ⁏ Γ ⊢ⁿᵉ A) →
                     mono⊢ⁿᵉ ζ′ η′ (mono⊢ⁿᵉ ζ η 𝒟) ≡ mono⊢ⁿᵉ (trans⊇ ζ′ ζ) (trans⊇ η′ η) 𝒟
   assocmono⊢ⁿᵉ ζ′ η′ ζ η (varⁿᵉ 𝒾)     = cong varⁿᵉ (assocmono∋ η′ η 𝒾)
-  assocmono⊢ⁿᵉ ζ′ η′ ζ η (mvarⁿᵉ ψ 𝒾)  = cong² mvarⁿᵉ (assocmono⊢⋆ ζ′ η′ ζ η ψ) (assocmono∋ ζ′ ζ 𝒾)
+  assocmono⊢ⁿᵉ ζ′ η′ ζ η (mvarⁿᵉ ψ 𝒾)  = cong² mvarⁿᵉ (assocmono⊢⋆ⁿᶠ ζ′ η′ ζ η ψ) (assocmono∋ ζ′ ζ 𝒾)
   assocmono⊢ⁿᵉ ζ′ η′ ζ η (appⁿᵉ 𝒟 ℰ)   = cong² appⁿᵉ (assocmono⊢ⁿᵉ ζ′ η′ ζ η 𝒟) (assocmono⊢ⁿᶠ ζ′ η′ ζ η ℰ)
   assocmono⊢ⁿᵉ ζ′ η′ ζ η (unboxⁿᵉ 𝒟 ℰ) = cong² unboxⁿᵉ (assocmono⊢ⁿᵉ ζ′ η′ ζ η 𝒟) (assocmono⊢ⁿᶠ (lift ζ′) η′ (lift ζ) η ℰ)
 
-idmono⊢⋆ⁿᵉ : ∀ {Δ Γ Ξ} → (ξ : Δ ⁏ Γ ⊢⋆ⁿᵉ Ξ) → mono⊢⋆ⁿᵉ refl⊇ refl⊇ ξ ≡ ξ
-idmono⊢⋆ⁿᵉ ∅       = refl
-idmono⊢⋆ⁿᵉ (ξ , 𝒟) = cong² _,_ (idmono⊢⋆ⁿᵉ ξ) (idmono⊢ⁿᵉ 𝒟)
+  assocmono⊢⋆ⁿᶠ : ∀ {Δ Γ Δ′ Γ′ Γ″ Δ″ Ξ} →
+                     (ζ′ : Δ″ ⊇ Δ′) (η′ : Γ″ ⊇ Γ′) (ζ : Δ′ ⊇ Δ) (η : Γ′ ⊇ Γ) (ξ : Δ ⁏ Γ ⊢⋆ⁿᶠ Ξ) →
+                     mono⊢⋆ⁿᶠ ζ′ η′ (mono⊢⋆ⁿᶠ ζ η ξ) ≡ mono⊢⋆ⁿᶠ (trans⊇ ζ′ ζ) (trans⊇ η′ η) ξ
+  assocmono⊢⋆ⁿᶠ ζ′ η′ ζ η ∅       = refl
+  assocmono⊢⋆ⁿᶠ ζ′ η′ ζ η (ξ , 𝒟) = cong² _,_ (assocmono⊢⋆ⁿᶠ ζ′ η′ ζ η ξ) (assocmono⊢ⁿᶠ ζ′ η′ ζ η 𝒟)
 
 assocmono⊢⋆ⁿᵉ : ∀ {Δ Γ Δ′ Γ′ Γ″ Δ″ Ξ} →
                    (ζ′ : Δ″ ⊇ Δ′) (η′ : Γ″ ⊇ Γ′) (ζ : Δ′ ⊇ Δ) (η : Γ′ ⊇ Γ) (ξ : Δ ⁏ Γ ⊢⋆ⁿᵉ Ξ) →
