@@ -21,7 +21,7 @@ record Model : Set₁ where
 open Model {{…}} public
 
 
--- Values.
+-- Values and lists of values.
 
 mutual
   infix 3 _⊩_
@@ -41,11 +41,6 @@ mutual
   w ⊩⋆ ∅       = ⊤
   w ⊩⋆ (Ξ , A) = w ⊩⋆ Ξ ∧ w ⊩ A
 
-infix 3 _⊩⧆_
-_⊩⧆_ : ∀ {{_ : Model}} → World → BoxTy⋆ → Set
-w ⊩⧆ ∅             = ⊤
-w ⊩⧆ (Ξ , [ Ψ ] A) = w ⊩⧆ Ξ ∧ (∀ {w′} → w′ ⊒ w → w′ ⊩⋆ Ψ → w′ ⊩ A)
-
 mutual
   mono⊩ : ∀ {{_ : Model}} {A w w′} → w′ ⊒ w → w ⊩ A → w′ ⊩ A
   mono⊩ θ f = λ θ′ κ → f (trans⊒ θ′ θ) κ
@@ -59,13 +54,21 @@ mono⊩⋆ : ∀ {{_ : Model}} {w w′ Ξ} → w′ ⊒ w → w ⊩⋆ Ξ → w�
 mono⊩⋆ {Ξ = ∅}     θ ∅       = ∅
 mono⊩⋆ {Ξ = Ξ , A} θ (ξ , a) = mono⊩⋆ θ ξ , mono⊩ {A} θ a
 
-mono⊩⧆ : ∀ {{_ : Model}} {w w′ Ξ} → w′ ⊒ w → w ⊩⧆ Ξ → w′ ⊩⧆ Ξ
-mono⊩⧆ {Ξ = ∅}           θ ∅       = ∅
-mono⊩⧆ {Ξ = Ξ , [ Ψ ] A} θ (ξ , a) = mono⊩⧆ θ ξ , λ θ′ ψ → a (trans⊒ θ′ θ) ψ
-
 lookup⊩ : ∀ {{_ : Model}} {w Ξ A} → w ⊩⋆ Ξ → Ξ ∋ A → w ⊩ A
 lookup⊩ (ξ , a) zero    = a
 lookup⊩ (ξ , b) (suc 𝒾) = lookup⊩ ξ 𝒾
+
+
+-- Lists of boxed values.
+
+infix 3 _⊩⧆_
+_⊩⧆_ : ∀ {{_ : Model}} → World → BoxTy⋆ → Set
+w ⊩⧆ ∅             = ⊤
+w ⊩⧆ (Ξ , [ Ψ ] A) = w ⊩⧆ Ξ ∧ (∀ {w′} → w′ ⊒ w → w′ ⊩⋆ Ψ → w′ ⊩ A)
+
+mono⊩⧆ : ∀ {{_ : Model}} {w w′ Ξ} → w′ ⊒ w → w ⊩⧆ Ξ → w′ ⊩⧆ Ξ
+mono⊩⧆ {Ξ = ∅}           θ ∅       = ∅
+mono⊩⧆ {Ξ = Ξ , [ Ψ ] A} θ (ξ , a) = mono⊩⧆ θ ξ , λ θ′ ψ → a (trans⊒ θ′ θ) ψ
 
 mlookup⊩ : ∀ {{_ : Model}} {w Ξ Ψ A} → w ⊩⋆ Ψ → w ⊩⧆ Ξ → Ξ ∋ [ Ψ ] A → w ⊩ A
 mlookup⊩ {Ξ = ∅}           ψ ∅       ()
