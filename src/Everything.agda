@@ -7,7 +7,9 @@ import PreludeVec
 import IPC
 import IPCSyntaxNoTerms
 import IPCSemantics
+import IPCSemanticsExperimental
 import IPCNormalisationNoTerms
+import IPCNormalisationExperimentalNoTerms
 
 --     IMCLP──────ISLP                     [Δ⊦M]A──[Δ;Γ⊦M]A
 --      ╱│        ╱│    IS4         □A      ╱│        ╱│

@@ -1,8 +1,8 @@
-module IPCNormalisationNoTerms where
+module IPCNormalisationExperimentalNoTerms where
 
 open import IPCSyntaxNoTerms public
-open import IPCSemantics public
-open IPCSemanticsList public
+open import IPCSemanticsExperimental public
+open IPCSemanticsExperimentalList public
 
 
 -- Absolute values.
@@ -27,12 +27,17 @@ private
   instance
     canon : Model
     canon = record
-      { World  = Cx
-      ; _⊒_    = _⊇_
-      ; refl⊒  = refl⊇
-      ; trans⊒ = trans⊇
-      ; G      = _⊢ⁿᵉ •
-      ; monoG  = mono⊢ⁿᵉ
+      { World       = Cx
+      ; _⊒_         = _⊇_
+      ; refl⊒       = refl⊇
+      ; trans⊒      = trans⊇
+      ; idtrans⊒₁   = idtrans⊇₁
+      ; idtrans⊒₂   = idtrans⊇₂
+      ; assoctrans⊒ = assoctrans⊇
+      ; G           = _⊢ⁿᵉ •
+      ; monoG       = mono⊢ⁿᵉ
+      ; idmonoG     = idmono⊢ⁿᵉ
+      ; assocmonoG  = assocmono⊢ⁿᵉ
       }
 
 mutual
