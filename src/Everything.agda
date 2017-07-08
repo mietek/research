@@ -34,7 +34,7 @@ import IS4NormalisationNoTerms
 import ICML
 import ICMLSyntaxNoTerms
 import ICMLSemanticsNoTerms
-import ICMLNormalisationNoTerms -- TODO
+import ICMLNormalisationNoTerms
 
 -- Intuitionistic modally-contextual modal logic
 -- [Δ]A

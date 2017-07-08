@@ -24,56 +24,69 @@ open Model {{…}} public
 -- Values and lists of values.
 
 mutual
+  infix 3 _[⊩₁]_
+  _[⊩₁]_ : ∀ {{_ : Model}} → World → BoxTy → Set
+  w [⊩₁] [ Ψ ] A = peek w [⊢] [ Ψ ] A
+
+  infix 3 _[⊩₂]_
+  _[⊩₂]_ : ∀ {{_ : Model}} → World → BoxTy → Set
+  w [⊩₂] [ Ψ ] A = ∀ {w′} → w′ ⊒ w → w′ ⊩⋆ Ψ → w′ ⊩ A
+
+  infix 3 _⊪_
+  _⊪_ : ∀ {{_ : Model}} → World → Ty → Set
+  w ⊪ •       = G w
+  w ⊪ A ⇒ B  = ∀ {w′} → w′ ⊒ w → w′ ⊩ A → w′ ⊩ B
+  w ⊪ [ Ψ ] A = ∀ {w′} → w′ Я w → w′ [⊩₁] [ Ψ ] A ∧ w′ [⊩₂] [ Ψ ] A
+
   infix 3 _⊩_
   _⊩_ : ∀ {{_ : Model}} → World → Ty → Set
   w ⊩ A = ∀ {C w′} → w′ ⊒ w →
              (∀ {w″} → w″ ⊒ w′ → w″ ⊪ A → peek w″ ⊢ⁿᶠ C) →
              peek w′ ⊢ⁿᶠ C
 
-  infix 3 _⊪_
-  _⊪_ : ∀ {{_ : Model}} → World → Ty → Set
-  w ⊪ •       = G w
-  w ⊪ A ⇒ B  = ∀ {w′} → w′ ⊒ w → w′ ⊩ A → w′ ⊩ B
-  w ⊪ [ Ψ ] A = ∀ {w′} → w′ Я w → π₁ (peek w′) ⁏ Ψ ⊢ A ∧ (∀ {w″} → w″ ⊒ w′ → w″ ⊩⋆ Ψ → w″ ⊩ A)
-
   infix 3 _⊩⋆_
   _⊩⋆_ : ∀ {{_ : Model}} → World → Ty⋆ → Set
   w ⊩⋆ ∅       = ⊤
   w ⊩⋆ (Ξ , A) = w ⊩⋆ Ξ ∧ w ⊩ A
+  -- NOTE: Equivalent, but does not pass termination check.
+  -- w ⊩⋆ Ξ = All (w ⊩_) Ξ
 
 mutual
-  mono⊩ : ∀ {{_ : Model}} {A w w′} → w′ ⊒ w → w ⊩ A → w′ ⊩ A
-  mono⊩ θ f = λ θ′ κ → f (trans⊒ θ′ θ) κ
-
   mono⊪ : ∀ {{_ : Model}} {A w w′} → w′ ⊒ w → w ⊪ A → w′ ⊪ A
   mono⊪ {•}       θ a = monoG θ a
   mono⊪ {A ⇒ B}  θ f = λ θ′ a → f (trans⊒ θ′ θ) a
   mono⊪ {[ Ψ ] A} θ q = λ ζ → q (transЯ ζ (⊒→Я θ))
 
-mono⊩⋆ : ∀ {{_ : Model}} {w w′ Ξ} → w′ ⊒ w → w ⊩⋆ Ξ → w′ ⊩⋆ Ξ
-mono⊩⋆ {Ξ = ∅}     θ ∅       = ∅
-mono⊩⋆ {Ξ = Ξ , A} θ (ξ , a) = mono⊩⋆ θ ξ , mono⊩ {A} θ a
+  mono⊩ : ∀ {{_ : Model}} {A w w′} → w′ ⊒ w → w ⊩ A → w′ ⊩ A
+  mono⊩ θ f = λ θ′ κ → f (trans⊒ θ′ θ) κ
+
+mono⊩⋆ : ∀ {{_ : Model}} {Ξ w w′} → w′ ⊒ w → w ⊩⋆ Ξ → w′ ⊩⋆ Ξ
+mono⊩⋆ {∅}     θ ∅       = ∅
+mono⊩⋆ {Ξ , A} θ (ξ , a) = mono⊩⋆ θ ξ , mono⊩ {A} θ a
 
 lookup⊩ : ∀ {{_ : Model}} {w Ξ A} → w ⊩⋆ Ξ → Ξ ∋ A → w ⊩ A
 lookup⊩ (ξ , a) zero    = a
 lookup⊩ (ξ , b) (suc 𝒾) = lookup⊩ ξ 𝒾
 
 
--- Lists of boxed values.
+-- TODO: Needs a name.
 
-infix 3 _⊩⧆_
-_⊩⧆_ : ∀ {{_ : Model}} → World → BoxTy⋆ → Set
-w ⊩⧆ ∅             = ⊤
-w ⊩⧆ (Ξ , [ Ψ ] A) = w ⊩⧆ Ξ ∧ (∀ {w′} → w′ ⊒ w → w′ ⊩⋆ Ψ → w′ ⊩ A)
+infix 3 _[⊩₁]⋆_
+_[⊩₁]⋆_ : ∀ {{_ : Model}} → World → BoxTy⋆ → Set
+w [⊩₁]⋆ Ξ = All (w [⊩₁]_) Ξ
 
-mono⊩⧆ : ∀ {{_ : Model}} {w w′ Ξ} → w′ ⊒ w → w ⊩⧆ Ξ → w′ ⊩⧆ Ξ
-mono⊩⧆ {Ξ = ∅}           θ ∅       = ∅
-mono⊩⧆ {Ξ = Ξ , [ Ψ ] A} θ (ξ , a) = mono⊩⧆ θ ξ , λ θ′ ψ → a (trans⊒ θ′ θ) ψ
+mlookup[⊩₁] : ∀ {{_ : Model}} {w Ξ Ψ A} → w [⊩₁]⋆ Ξ → Ξ ∋ [ Ψ ] A → w [⊩₁] [ Ψ ] A
+mlookup[⊩₁] ξ 𝒾 = lookupAll ξ 𝒾
 
-mlookup⊩ : ∀ {{_ : Model}} {w Ξ Ψ A} → w ⊩⋆ Ψ → w ⊩⧆ Ξ → Ξ ∋ [ Ψ ] A → w ⊩ A
-mlookup⊩ {Ξ = ∅}           ψ ∅       ()
-mlookup⊩ {Ξ = Ξ , [ Ψ ] A} ψ (ξ , a) zero    = a refl⊒ ψ
-mlookup⊩ {Ξ = Ξ , B}       ψ (ξ , b) (suc 𝒾) = mlookup⊩ ψ ξ 𝒾
+
+-- TODO: Needs a name.
+
+infix 3 _[⊩₂]⋆_
+_[⊩₂]⋆_ : ∀ {{_ : Model}} → World → BoxTy⋆ → Set
+w [⊩₂]⋆ Ξ = All (w [⊩₂]_) Ξ
+
+mlookup[⊩₂] : ∀ {{_ : Model}} {w Ξ Ψ A} → w [⊩₂]⋆ Ξ → Ξ ∋ [ Ψ ] A → w [⊩₂] [ Ψ ] A
+mlookup[⊩₂] ξ 𝒾 = lookupAll ξ 𝒾
 
 
 -- Continuations.
