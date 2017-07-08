@@ -6,6 +6,8 @@ open import ICMLSyntaxNoTerms public
 -- Introspective Kripke models.
 
 record Model : Set₁ where
+  infix 3 _⊒_
+  infix 3 _Я_
   field
     World  : Set
     _⊒_    : World → World → Set

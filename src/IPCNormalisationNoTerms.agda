@@ -21,7 +21,7 @@ _⊨_ : Cx → Ty → Set₁
 ⟦ app 𝒟 ℰ ⟧ γ = ⟦ 𝒟 ⟧ γ refl⊒ (⟦ ℰ ⟧ γ)
 
 
--- Completeness.
+-- Canonical model.
 
 private
   instance
@@ -45,9 +45,15 @@ mutual
   ⟦_⟧ᶜ {A ⇒ B} 𝒟 = λ η a →
                       ⟦ appⁿᵉ (mono⊢ⁿᵉ η 𝒟) (reifyᶜ a) ⟧ᶜ
 
+
+-- Lists of values, continued.
+
 refl⊩⋆ : ∀ {Γ} → Γ ⊩⋆ Γ
 refl⊩⋆ {∅}     = ∅
 refl⊩⋆ {Γ , A} = mono⊩⋆ (weak refl⊇) refl⊩⋆ , ⟦ varⁿᵉ {A = A} zero ⟧ᶜ
+
+
+-- Completeness.
 
 reify : ∀ {Γ A} → Γ ⊨ A → Γ ⊢ⁿᶠ A
 reify 𝔞 = reifyᶜ (𝔞 refl⊩⋆)

@@ -6,6 +6,7 @@ open import IPC public
 -- Intuitionistic Kripke models.
 
 record Model : Set₁ where
+  infix 3 _⊒_
   field
     World  : Set
     _⊒_    : World → World → Set
