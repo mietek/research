@@ -24,26 +24,34 @@ open Model {{…}} public
 -- Values.
 
 mutual
+  infix 3 _[⊩₁]_
+  _[⊩₁]_ : ∀ {{_ : Model}} → World → BoxTy → Set
+  w [⊩₁] □ A = peek w [⊢] □ A
+
+  infix 3 _[⊩₂]_
+  _[⊩₂]_ : ∀ {{_ : Model}} → World → BoxTy → Set
+  w [⊩₂] □ A = w ⊩ A
+
+  infix 3 _⊪_
+  _⊪_ : ∀ {{_ : Model}} → World → Ty → Set
+  w ⊪ •      = G w
+  w ⊪ A ⇒ B = ∀ {w′} → w′ ⊒ w → w′ ⊩ A → w′ ⊩ B
+  w ⊪ □ A    = ∀ {w′} → w′ Я w → w′ [⊩₁] □ A ∧ w′ [⊩₂] □ A
+
   infix 3 _⊩_
   _⊩_ : ∀ {{_ : Model}} → World → Ty → Set
   w ⊩ A = ∀ {C w′} → w′ ⊒ w →
              (∀ {w″} → w″ ⊒ w′ → w″ ⊪ A → peek w″ ⊢ⁿᶠ C) →
              peek w′ ⊢ⁿᶠ C
 
-  infix 3 _⊪_
-  _⊪_ : ∀ {{_ : Model}} → World → Ty → Set
-  w ⊪ •      = G w
-  w ⊪ A ⇒ B = ∀ {w′} → w′ ⊒ w → w′ ⊩ A → w′ ⊩ B
-  w ⊪ □ A    = ∀ {w′} → w′ Я w → π₁ (peek w′) ⁏ ∅ ⊢ A ∧ w′ ⊩ A
-
 mutual
-  mono⊩ : ∀ {{_ : Model}} {A w w′} → w′ ⊒ w → w ⊩ A → w′ ⊩ A
-  mono⊩ θ f = λ θ′ κ → f (trans⊒ θ′ θ) κ
-
   mono⊪ : ∀ {{_ : Model}} {A w w′} → w′ ⊒ w → w ⊪ A → w′ ⊪ A
   mono⊪ {•}      θ a = monoG θ a
   mono⊪ {A ⇒ B} θ f = λ θ′ a → f (trans⊒ θ′ θ) a
   mono⊪ {□ A}    θ q = λ ζ → q (transЯ ζ (⊒→Я θ))
+
+  mono⊩ : ∀ {{_ : Model}} {A w w′} → w′ ⊒ w → w ⊩ A → w′ ⊩ A
+  mono⊩ θ f = λ θ′ κ → f (trans⊒ θ′ θ) κ
 
 
 -- Lists of values.
@@ -59,21 +67,24 @@ lookup⊩ : ∀ {{_ : Model}} {w Ξ A} → w ⊩⋆ Ξ → Ξ ∋ A → w ⊩ A
 lookup⊩ ξ 𝒾 = lookupAll ξ 𝒾
 
 
--- Lists of boxed values.
+-- TODO: Needs a name.
 
-infix 3 _⊩⧆_
-_⊩⧆_ : ∀ {{_ : Model}} → World → BoxTy⋆ → Set
-w ⊩⧆ ∅         = ⊤
-w ⊩⧆ (Ξ , □ A) = w ⊩⧆ Ξ ∧ w ⊩ A
+infix 3 _[⊩₁]⋆_
+_[⊩₁]⋆_ : ∀ {{_ : Model}} → World → BoxTy⋆ → Set
+w [⊩₁]⋆ Ξ = All (w [⊩₁]_) Ξ
 
-mono⊩⧆ : ∀ {{_ : Model}} {w w′ Ξ} → w′ ⊒ w → w ⊩⧆ Ξ → w′ ⊩⧆ Ξ
-mono⊩⧆ {Ξ = ∅}       θ ∅       = ∅
-mono⊩⧆ {Ξ = Ξ , □ A} θ (ξ , a) = mono⊩⧆ θ ξ , mono⊩ {A} θ a
+mlookup[⊩₁] : ∀ {{_ : Model}} {w Ξ A} → w [⊩₁]⋆ Ξ → Ξ ∋ □ A → w [⊩₁] □ A
+mlookup[⊩₁] ξ 𝒾 = lookupAll ξ 𝒾
 
-mlookup⊩ : ∀ {{_ : Model}} {w Ξ A} → w ⊩⧆ Ξ → Ξ ∋ □ A → w ⊩ A
-mlookup⊩ {Ξ = ∅}       ∅       ()
-mlookup⊩ {Ξ = Ξ , □ A} (ξ , a) zero    = a
-mlookup⊩ {Ξ = Ξ , B}   (ξ , b) (suc 𝒾) = mlookup⊩ ξ 𝒾
+
+-- TODO: Needs a name.
+
+infix 3 _[⊩₂]⋆_
+_[⊩₂]⋆_ : ∀ {{_ : Model}} → World → BoxTy⋆ → Set
+w [⊩₂]⋆ Ξ = All (w [⊩₂]_) Ξ
+
+mlookup[⊩₂] : ∀ {{_ : Model}} {w Ξ A} → w [⊩₂]⋆ Ξ → Ξ ∋ □ A → w [⊩₂] □ A
+mlookup[⊩₂] ξ 𝒾 = lookupAll ξ 𝒾
 
 
 -- Continuations.
