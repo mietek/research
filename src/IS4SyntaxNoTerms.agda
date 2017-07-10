@@ -12,63 +12,85 @@ Cx = BoxTy⋆ ∧ Ty⋆
 
 -- Derivations.
 
-infix 3 _⊢_
-data _⊢_ : Cx → Ty → Set where
-  var   : ∀ {Δ Γ A} →
-            Γ ∋ A →
-            Δ ⁏ Γ ⊢ A
-  mvar  : ∀ {Δ Γ A} →
-            Δ ∋ □ A →
-            Δ ⁏ Γ ⊢ A
-  lam   : ∀ {Δ Γ A B} →
-            Δ ⁏ Γ , A ⊢ B →
-            Δ ⁏ Γ ⊢ A ⇒ B
-  app   : ∀ {Δ Γ A B} →
-            Δ ⁏ Γ ⊢ A ⇒ B → Δ ⁏ Γ ⊢ A →
-            Δ ⁏ Γ ⊢ B
-  box   : ∀ {Δ Γ A} →
-            Δ ⁏ ∅ ⊢ A →
-            Δ ⁏ Γ ⊢ □ A
-  unbox : ∀ {Δ Γ A C} →
-            Δ ⁏ Γ ⊢ □ A → Δ , □ A ⁏ Γ ⊢ C →
-            Δ ⁏ Γ ⊢ C
+mutual
+  infix 3 _⊢_
+  data _⊢_ : Cx → Ty → Set where
+    var   : ∀ {Δ Γ A} →
+              Γ ∋ A →
+              Δ ⁏ Γ ⊢ A
+    mvar  : ∀ {Δ Γ A} →
+              Δ ∋ □ A →
+              Δ ⁏ Γ ⊢ A
+    lam   : ∀ {Δ Γ A B} →
+              Δ ⁏ Γ , A ⊢ B →
+              Δ ⁏ Γ ⊢ A ⇒ B
+    app   : ∀ {Δ Γ A B} →
+              Δ ⁏ Γ ⊢ A ⇒ B → Δ ⁏ Γ ⊢ A →
+              Δ ⁏ Γ ⊢ B
+    box   : ∀ {Δ Γ A} →
+              Δ ⟨⊢⟩ □ A →
+              Δ ⁏ Γ ⊢ □ A
+    unbox : ∀ {Δ Γ A C} →
+              Δ ⁏ Γ ⊢ □ A → Δ , □ A ⁏ Γ ⊢ C →
+              Δ ⁏ Γ ⊢ C
+
+  infix 3 _⟨⊢⟩_
+  _⟨⊢⟩_ : BoxTy⋆ → BoxTy → Set
+  Δ ⟨⊢⟩ □ A = Δ ⁏ ∅ ⊢ A
+
+mutual
+  mono⊢ : ∀ {Δ Γ Δ′ Γ′ A} → Δ′ ⊇ Δ → Γ′ ⊇ Γ → Δ ⁏ Γ ⊢ A → Δ′ ⁏ Γ′ ⊢ A
+  mono⊢ ζ η (var 𝒾)     = var (mono∋ η 𝒾)
+  mono⊢ ζ η (mvar 𝒾)    = mvar (mono∋ ζ 𝒾)
+  mono⊢ ζ η (lam 𝒟)     = lam (mono⊢ ζ (lift η) 𝒟)
+  mono⊢ ζ η (app 𝒟 ℰ)   = app (mono⊢ ζ η 𝒟) (mono⊢ ζ η ℰ)
+  mono⊢ ζ η (box 𝒟)     = box (mono⟨⊢⟩ ζ 𝒟)
+  mono⊢ ζ η (unbox 𝒟 ℰ) = unbox (mono⊢ ζ η 𝒟) (mono⊢ (lift ζ) η ℰ)
+
+  mono⟨⊢⟩ : ∀ {Δ Δ′ A} → Δ′ ⊇ Δ → Δ ⟨⊢⟩ □ A → Δ′ ⟨⊢⟩ □ A
+  mono⟨⊢⟩ ζ 𝒟 = mono⊢ ζ refl⊇ 𝒟
+
+mutual
+  idmono⊢ : ∀ {Δ Γ A} → (𝒟 : Δ ⁏ Γ ⊢ A) → mono⊢ refl⊇ refl⊇ 𝒟 ≡ 𝒟
+  idmono⊢ (var 𝒾)     = cong var (idmono∋ 𝒾)
+  idmono⊢ (mvar 𝒾)    = cong mvar (idmono∋ 𝒾)
+  idmono⊢ (lam 𝒟)     = cong lam (idmono⊢ 𝒟)
+  idmono⊢ (app 𝒟 ℰ)   = cong² app (idmono⊢ 𝒟) (idmono⊢ ℰ)
+  idmono⊢ (box 𝒟)     = cong box (idmono⟨⊢⟩ 𝒟)
+  idmono⊢ (unbox 𝒟 ℰ) = cong² unbox (idmono⊢ 𝒟) (idmono⊢ ℰ)
+
+  idmono⟨⊢⟩ : ∀ {Δ A} → (𝒟 : Δ ⟨⊢⟩ □ A) → mono⟨⊢⟩ refl⊇ 𝒟 ≡ 𝒟
+  idmono⟨⊢⟩ 𝒟 = idmono⊢ 𝒟
+
+mutual
+  assocmono⊢ : ∀ {Δ Γ Δ′ Γ′ Γ″ Δ″ A} →
+                  (ζ′ : Δ″ ⊇ Δ′) (η′ : Γ″ ⊇ Γ′) (ζ : Δ′ ⊇ Δ) (η : Γ′ ⊇ Γ) (𝒟 : Δ ⁏ Γ ⊢ A) →
+                  mono⊢ ζ′ η′ (mono⊢ ζ η 𝒟) ≡ mono⊢ (trans⊇ ζ′ ζ) (trans⊇ η′ η) 𝒟
+  assocmono⊢ ζ′ η′ ζ η (var 𝒾)     = cong var (assocmono∋ η′ η 𝒾)
+  assocmono⊢ ζ′ η′ ζ η (mvar 𝒾)    = cong mvar (assocmono∋ ζ′ ζ 𝒾)
+  assocmono⊢ ζ′ η′ ζ η (lam 𝒟)     = cong lam (assocmono⊢ ζ′ (lift η′) ζ (lift η) 𝒟)
+  assocmono⊢ ζ′ η′ ζ η (app 𝒟 ℰ)   = cong² app (assocmono⊢ ζ′ η′ ζ η 𝒟) (assocmono⊢ ζ′ η′ ζ η ℰ)
+  assocmono⊢ ζ′ η′ ζ η (box 𝒟)     = cong box (assocmono⟨⊢⟩ ζ′ ζ 𝒟)
+  assocmono⊢ ζ′ η′ ζ η (unbox 𝒟 ℰ) = cong² unbox (assocmono⊢ ζ′ η′ ζ η 𝒟) (assocmono⊢ (lift ζ′) η′ (lift ζ) η ℰ)
+
+  assocmono⟨⊢⟩ : ∀ {Δ Δ′ Δ″ A} →
+                    (ζ′ : Δ″ ⊇ Δ′) (ζ : Δ′ ⊇ Δ) (𝒟 : Δ ⟨⊢⟩ A) →
+                    mono⟨⊢⟩ ζ′ (mono⟨⊢⟩ ζ 𝒟) ≡ mono⟨⊢⟩ (trans⊇ ζ′ ζ) 𝒟
+  assocmono⟨⊢⟩ ζ′ ζ 𝒟 = assocmono⊢ ζ′ refl⊇ ζ refl⊇ 𝒟
+
+
+-- Lists of derivations.
 
 infix 3 _⊢⋆_
 _⊢⋆_ : Cx → Ty⋆ → Set
 Δ ⁏ Γ ⊢⋆ Ξ = All (Δ ⁏ Γ ⊢_) Ξ
 
-mono⊢ : ∀ {Δ Γ Δ′ Γ′ A} → Δ′ ⊇ Δ → Γ′ ⊇ Γ → Δ ⁏ Γ ⊢ A → Δ′ ⁏ Γ′ ⊢ A
-mono⊢ ζ η (var 𝒾)     = var (mono∋ η 𝒾)
-mono⊢ ζ η (mvar 𝒾)    = mvar (mono∋ ζ 𝒾)
-mono⊢ ζ η (lam 𝒟)     = lam (mono⊢ ζ (lift η) 𝒟)
-mono⊢ ζ η (app 𝒟 ℰ)   = app (mono⊢ ζ η 𝒟) (mono⊢ ζ η ℰ)
-mono⊢ ζ η (box 𝒟)     = box (mono⊢ ζ refl⊇ 𝒟)
-mono⊢ ζ η (unbox 𝒟 ℰ) = unbox (mono⊢ ζ η 𝒟) (mono⊢ (lift ζ) η ℰ)
-
 mono⊢⋆ : ∀ {Δ Γ Δ′ Γ′ Ξ} → Δ′ ⊇ Δ → Γ′ ⊇ Γ → Δ ⁏ Γ ⊢⋆ Ξ → Δ′ ⁏ Γ′ ⊢⋆ Ξ
 mono⊢⋆ ζ η ξ = mapAll (mono⊢ ζ η) ξ
 
-idmono⊢ : ∀ {Δ Γ A} → (𝒟 : Δ ⁏ Γ ⊢ A) → mono⊢ refl⊇ refl⊇ 𝒟 ≡ 𝒟
-idmono⊢ (var 𝒾)     = cong var (idmono∋ 𝒾)
-idmono⊢ (mvar 𝒾)    = cong mvar (idmono∋ 𝒾)
-idmono⊢ (lam 𝒟)     = cong lam (idmono⊢ 𝒟)
-idmono⊢ (app 𝒟 ℰ)   = cong² app (idmono⊢ 𝒟) (idmono⊢ ℰ)
-idmono⊢ (box 𝒟)     = cong box (idmono⊢ 𝒟)
-idmono⊢ (unbox 𝒟 ℰ) = cong² unbox (idmono⊢ 𝒟) (idmono⊢ ℰ)
-
-assocmono⊢ : ∀ {Δ Γ Δ′ Γ′ Γ″ Δ″ A} →
-                (ζ′ : Δ″ ⊇ Δ′) (η′ : Γ″ ⊇ Γ′) (ζ : Δ′ ⊇ Δ) (η : Γ′ ⊇ Γ) (𝒟 : Δ ⁏ Γ ⊢ A) →
-                mono⊢ ζ′ η′ (mono⊢ ζ η 𝒟) ≡ mono⊢ (trans⊇ ζ′ ζ) (trans⊇ η′ η) 𝒟
-assocmono⊢ ζ′ η′ ζ η (var 𝒾)     = cong var (assocmono∋ η′ η 𝒾)
-assocmono⊢ ζ′ η′ ζ η (mvar 𝒾)    = cong mvar (assocmono∋ ζ′ ζ 𝒾)
-assocmono⊢ ζ′ η′ ζ η (lam 𝒟)     = cong lam (assocmono⊢ ζ′ (lift η′) ζ (lift η) 𝒟)
-assocmono⊢ ζ′ η′ ζ η (app 𝒟 ℰ)   = cong² app (assocmono⊢ ζ′ η′ ζ η 𝒟) (assocmono⊢ ζ′ η′ ζ η ℰ)
-assocmono⊢ ζ′ η′ ζ η (box 𝒟)     = cong box (assocmono⊢ ζ′ refl⊇ ζ refl⊇ 𝒟)
-assocmono⊢ ζ′ η′ ζ η (unbox 𝒟 ℰ) = cong² unbox (assocmono⊢ ζ′ η′ ζ η 𝒟) (assocmono⊢ (lift ζ′) η′ (lift ζ) η ℰ)
-
-refl⊢⋆ : ∀ {Δ Γ} → Δ ⁏ Γ ⊢⋆ Γ
-refl⊢⋆ {Γ = ∅}     = ∅
-refl⊢⋆ {Γ = Γ , A} = mono⊢⋆ refl⊇ (weak refl⊇) refl⊢⋆ , var zero
+refl⊢⋆ : ∀ {Γ Δ} → Δ ⁏ Γ ⊢⋆ Γ
+refl⊢⋆ {∅}     = ∅
+refl⊢⋆ {Γ , A} = mono⊢⋆ refl⊇ (weak refl⊇) refl⊢⋆ , var zero
 
 lookup⊢ : ∀ {Δ Γ Ξ A} → Δ ⁏ Γ ⊢⋆ Ξ → Ξ ∋ A → Δ ⁏ Γ ⊢ A
 lookup⊢ ξ 𝒾 = lookupAll ξ 𝒾
@@ -85,40 +107,44 @@ graft⊢⋆ : ∀ {Δ Γ Ψ Ξ} → Δ ⁏ Γ ⊢⋆ Ψ → Δ ⁏ Ψ ⊢⋆ Ξ 
 graft⊢⋆ ψ ξ = mapAll (graft⊢ ψ) ξ
 
 trans⊢⋆ : ∀ {Δ Γ Γ′ Γ″} → Δ ⁏ Γ″ ⊢⋆ Γ′ → Δ ⁏ Γ′ ⊢⋆ Γ → Δ ⁏ Γ″ ⊢⋆ Γ
-trans⊢⋆ = graft⊢⋆
+trans⊢⋆ γ′ γ = graft⊢⋆ γ′ γ
 
 
 -- TODO: Needs a name.
 
-infix 3 _[⊢]_
-_[⊢]_ : Cx → BoxTy → Set
-Δ ⁏ Γ [⊢] □ A = Δ ⁏ ∅ ⊢ A
+infix 3 _⟨⊢⟩⋆_
+_⟨⊢⟩⋆_ : BoxTy⋆ → BoxTy⋆ → Set
+Δ ⟨⊢⟩⋆ Ξ = All (Δ ⟨⊢⟩_) Ξ
 
-mono[⊢] : ∀ {Γ Δ Γ′ Δ′ A} → Δ′ ⊇ Δ → Γ′ ⊇ Γ → Δ ⁏ Γ [⊢] □ A → Δ′ ⁏ Γ′ [⊢] □ A
-mono[⊢] ζ η 𝒟 = mono⊢ ζ refl⊇ 𝒟
+mono⟨⊢⟩⋆ : ∀ {Δ Δ′ Ξ} → Δ′ ⊇ Δ → Δ ⟨⊢⟩⋆ Ξ → Δ′ ⟨⊢⟩⋆ Ξ
+mono⟨⊢⟩⋆ ζ ξ = mapAll (mono⟨⊢⟩ ζ) ξ
 
-infix 3 _[⊢]⋆_
-_[⊢]⋆_ : Cx → BoxTy⋆ → Set
-Δ ⁏ Γ [⊢]⋆ Ξ = All (Δ ⁏ Γ [⊢]_) Ξ
+mrefl⟨⊢⟩⋆ : ∀ {Δ} → Δ ⟨⊢⟩⋆ Δ
+mrefl⟨⊢⟩⋆ {∅}       = ∅
+mrefl⟨⊢⟩⋆ {Δ , □ A} = mono⟨⊢⟩⋆ (weak refl⊇) mrefl⟨⊢⟩⋆ , mvar zero
 
-mono[⊢]⋆ : ∀ {Γ Δ Γ′ Δ′ Ξ} → Δ′ ⊇ Δ → Γ′ ⊇ Γ → Δ ⁏ Γ [⊢]⋆ Ξ → Δ′ ⁏ Γ′ [⊢]⋆ Ξ
-mono[⊢]⋆ {Γ} ζ η ξ = mapAll (mono[⊢] {Γ} ζ η) ξ
+mlookup⟨⊢⟩ : ∀ {Δ Ξ A} → Δ ⟨⊢⟩⋆ Ξ → Ξ ∋ □ A → Δ ⟨⊢⟩ □ A
+mlookup⟨⊢⟩ ξ 𝒾 = lookupAll ξ 𝒾
 
-mrefl[⊢]⋆ : ∀ {Γ Δ} → Δ ⁏ Γ [⊢]⋆ Δ
-mrefl[⊢]⋆ {Γ} {∅}       = ∅
-mrefl[⊢]⋆ {Γ} {Δ , □ A} = mono[⊢]⋆ {Γ} (weak refl⊇) refl⊇ (mrefl[⊢]⋆ {Γ}) , mvar zero
+mgraft⊢ : ∀ {Δ Γ Φ A} → Δ ⟨⊢⟩⋆ Φ → Φ ⁏ Γ ⊢ A → Δ ⁏ Γ ⊢ A
+mgraft⊢ φ (var 𝒾)     = var 𝒾
+mgraft⊢ φ (mvar 𝒾)    = graft⊢ ∅ (mlookup⟨⊢⟩ φ 𝒾)
+mgraft⊢ φ (lam 𝒟)     = lam (mgraft⊢ φ 𝒟)
+mgraft⊢ φ (app 𝒟 ℰ)   = app (mgraft⊢ φ 𝒟) (mgraft⊢ φ ℰ)
+mgraft⊢ φ (box 𝒟)     = box (mgraft⊢ φ 𝒟)
+mgraft⊢ φ (unbox 𝒟 ℰ) = unbox (mgraft⊢ φ 𝒟) (mgraft⊢ (mono⟨⊢⟩⋆ (weak refl⊇) φ , mvar zero) ℰ)
 
-mlookup[⊢] : ∀ {Γ Δ Ξ A} → Δ ⁏ Γ [⊢]⋆ Ξ → Ξ ∋ □ A → Δ ⁏ Γ [⊢] □ A
-mlookup[⊢] ξ 𝒾 = lookupAll ξ 𝒾
+mgraft⊢⋆ : ∀ {Δ Φ Ψ Ξ} → Δ ⟨⊢⟩⋆ Φ → Φ ⁏ Ψ ⊢⋆ Ξ → Δ ⁏ Ψ ⊢⋆ Ξ
+mgraft⊢⋆ φ ξ = mapAll (mgraft⊢ φ) ξ
 
-mgraft⊢ : ∀ {Γ Δ Φ A} → Δ ⁏ Γ [⊢]⋆ Φ → Φ ⁏ Γ ⊢ A → Δ ⁏ Γ ⊢ A
-mgraft⊢ {Γ} φ (var 𝒾)     = var 𝒾
-mgraft⊢ {Γ} φ (mvar 𝒾)    = graft⊢ ∅ (mlookup[⊢] {Γ} φ 𝒾)
-mgraft⊢ {Γ} φ (lam 𝒟)     = lam (mgraft⊢ φ 𝒟)
-mgraft⊢ {Γ} φ (app 𝒟 ℰ)   = app (mgraft⊢ φ 𝒟) (mgraft⊢ φ ℰ)
-mgraft⊢ {Γ} φ (box 𝒟)     = box (mgraft⊢ φ 𝒟)
-mgraft⊢ {Γ} φ (unbox 𝒟 ℰ) = unbox (mgraft⊢ φ 𝒟)
-                                   (mgraft⊢ (mono[⊢]⋆ {Γ} (weak refl⊇) refl⊇ φ , mvar zero) ℰ)
+mgraft⟨⊢⟩ : ∀ {Δ Φ A} → Δ ⟨⊢⟩⋆ Φ → Φ ⟨⊢⟩ □ A → Δ ⟨⊢⟩ □ A
+mgraft⟨⊢⟩ φ 𝒟 = mgraft⊢ φ 𝒟
+
+mgraft⟨⊢⟩⋆ : ∀ {Δ Φ Ξ} → Δ ⟨⊢⟩⋆ Φ → Φ ⟨⊢⟩⋆ Ξ → Δ ⟨⊢⟩⋆ Ξ
+mgraft⟨⊢⟩⋆ φ ξ = mapAll (mgraft⟨⊢⟩ φ) ξ
+
+mtrans⟨⊢⟩⋆ : ∀ {Δ Δ′ Δ″} → Δ″ ⟨⊢⟩⋆ Δ′ → Δ′ ⟨⊢⟩⋆ Δ → Δ″ ⟨⊢⟩⋆ Δ
+mtrans⟨⊢⟩⋆ δ′ δ = mgraft⟨⊢⟩⋆ δ′ δ
 
 
 -- Normal forms.
@@ -130,7 +156,7 @@ mutual
                 Δ ⁏ Γ , A ⊢ⁿᶠ B →
                 Δ ⁏ Γ ⊢ⁿᶠ A ⇒ B
     boxⁿᶠ   : ∀ {Δ Γ A} →
-                Δ ⁏ ∅ ⊢ A →
+                Δ ⟨⊢⟩ □ A →
                 Δ ⁏ Γ ⊢ⁿᶠ □ A
     neⁿᶠ    : ∀ {Δ Γ A} →
                 Δ ⁏ Γ ⊢ⁿᵉ A →
@@ -151,14 +177,10 @@ mutual
                 Δ ⁏ Γ ⊢ⁿᵉ □ A → Δ , □ A ⁏ Γ ⊢ⁿᶠ C →
                 Δ ⁏ Γ ⊢ⁿᵉ C
 
-infix 3 _⊢⋆ⁿᵉ_
-_⊢⋆ⁿᵉ_ : Cx → Ty⋆ → Set
-Δ ⁏ Γ ⊢⋆ⁿᵉ Ξ = All (Δ ⁏ Γ ⊢ⁿᵉ_) Ξ
-
 mutual
   mono⊢ⁿᶠ : ∀ {Δ Γ Δ′ Γ′ A} → Δ′ ⊇ Δ → Γ′ ⊇ Γ → Δ ⁏ Γ ⊢ⁿᶠ A → Δ′ ⁏ Γ′ ⊢ⁿᶠ A
   mono⊢ⁿᶠ ζ η (lamⁿᶠ 𝒟)     = lamⁿᶠ (mono⊢ⁿᶠ ζ (lift η) 𝒟)
-  mono⊢ⁿᶠ ζ η (boxⁿᶠ 𝒟)     = boxⁿᶠ (mono⊢ ζ refl⊇ 𝒟)
+  mono⊢ⁿᶠ ζ η (boxⁿᶠ 𝒟)     = boxⁿᶠ (mono⟨⊢⟩ ζ 𝒟)
   mono⊢ⁿᶠ ζ η (neⁿᶠ 𝒟)      = neⁿᶠ (mono⊢ⁿᵉ ζ η 𝒟)
 
   mono⊢ⁿᵉ : ∀ {Δ Γ Δ′ Γ′ A} → Δ′ ⊇ Δ → Γ′ ⊇ Γ → Δ ⁏ Γ ⊢ⁿᵉ A → Δ′ ⁏ Γ′ ⊢ⁿᵉ A
@@ -167,13 +189,10 @@ mutual
   mono⊢ⁿᵉ ζ η (appⁿᵉ 𝒟 ℰ)   = appⁿᵉ (mono⊢ⁿᵉ ζ η 𝒟) (mono⊢ⁿᶠ ζ η ℰ)
   mono⊢ⁿᵉ ζ η (unboxⁿᵉ 𝒟 ℰ) = unboxⁿᵉ (mono⊢ⁿᵉ ζ η 𝒟) (mono⊢ⁿᶠ (lift ζ) η ℰ)
 
-mono⊢⋆ⁿᵉ : ∀ {Δ Γ Δ′ Γ′ Ξ} → Δ′ ⊇ Δ → Γ′ ⊇ Γ → Δ ⁏ Γ ⊢⋆ⁿᵉ Ξ → Δ′ ⁏ Γ′ ⊢⋆ⁿᵉ Ξ
-mono⊢⋆ⁿᵉ ζ η ξ = mapAll (mono⊢ⁿᵉ ζ η) ξ
-
 mutual
   idmono⊢ⁿᶠ : ∀ {Δ Γ A} → (𝒟 : Δ ⁏ Γ ⊢ⁿᶠ A) → mono⊢ⁿᶠ refl⊇ refl⊇ 𝒟 ≡ 𝒟
   idmono⊢ⁿᶠ (lamⁿᶠ 𝒟)     = cong lamⁿᶠ (idmono⊢ⁿᶠ 𝒟)
-  idmono⊢ⁿᶠ (boxⁿᶠ 𝒟)     = cong boxⁿᶠ (idmono⊢ 𝒟)
+  idmono⊢ⁿᶠ (boxⁿᶠ 𝒟)     = cong boxⁿᶠ (idmono⟨⊢⟩ 𝒟)
   idmono⊢ⁿᶠ (neⁿᶠ 𝒟)      = cong neⁿᶠ (idmono⊢ⁿᵉ 𝒟)
 
   idmono⊢ⁿᵉ : ∀ {Δ Γ A} → (𝒟 : Δ ⁏ Γ ⊢ⁿᵉ A) → mono⊢ⁿᵉ refl⊇ refl⊇ 𝒟 ≡ 𝒟
@@ -187,7 +206,7 @@ mutual
                     (ζ′ : Δ″ ⊇ Δ′) (η′ : Γ″ ⊇ Γ′) (ζ : Δ′ ⊇ Δ) (η : Γ′ ⊇ Γ) (𝒟 : Δ ⁏ Γ ⊢ⁿᶠ A) →
                     mono⊢ⁿᶠ ζ′ η′ (mono⊢ⁿᶠ ζ η 𝒟) ≡ mono⊢ⁿᶠ (trans⊇ ζ′ ζ) (trans⊇ η′ η) 𝒟
   assocmono⊢ⁿᶠ ζ′ η′ ζ η (lamⁿᶠ 𝒟)     = cong lamⁿᶠ (assocmono⊢ⁿᶠ ζ′ (lift η′) ζ (lift η) 𝒟)
-  assocmono⊢ⁿᶠ ζ′ η′ ζ η (boxⁿᶠ 𝒟)     = cong boxⁿᶠ (assocmono⊢ ζ′ refl⊇ ζ refl⊇ 𝒟)
+  assocmono⊢ⁿᶠ ζ′ η′ ζ η (boxⁿᶠ 𝒟)     = cong boxⁿᶠ (assocmono⟨⊢⟩ ζ′ ζ 𝒟)
   assocmono⊢ⁿᶠ ζ′ η′ ζ η (neⁿᶠ 𝒟)      = cong neⁿᶠ (assocmono⊢ⁿᵉ ζ′ η′ ζ η 𝒟)
 
   assocmono⊢ⁿᵉ : ∀ {Δ Γ Δ′ Γ′ Γ″ Δ″ A} →
@@ -198,15 +217,15 @@ mutual
   assocmono⊢ⁿᵉ ζ′ η′ ζ η (appⁿᵉ 𝒟 ℰ)   = cong² appⁿᵉ (assocmono⊢ⁿᵉ ζ′ η′ ζ η 𝒟) (assocmono⊢ⁿᶠ ζ′ η′ ζ η ℰ)
   assocmono⊢ⁿᵉ ζ′ η′ ζ η (unboxⁿᵉ 𝒟 ℰ) = cong² unboxⁿᵉ (assocmono⊢ⁿᵉ ζ′ η′ ζ η 𝒟) (assocmono⊢ⁿᶠ (lift ζ′) η′ (lift ζ) η ℰ)
 
-idmono⊢⋆ⁿᵉ : ∀ {Δ Γ Ξ} → (ξ : Δ ⁏ Γ ⊢⋆ⁿᵉ Ξ) → mono⊢⋆ⁿᵉ refl⊇ refl⊇ ξ ≡ ξ
-idmono⊢⋆ⁿᵉ ∅       = refl
-idmono⊢⋆ⁿᵉ (ξ , 𝒟) = cong² _,_ (idmono⊢⋆ⁿᵉ ξ) (idmono⊢ⁿᵉ 𝒟)
 
-assocmono⊢⋆ⁿᵉ : ∀ {Δ Γ Δ′ Γ′ Γ″ Δ″ Ξ} →
-                   (ζ′ : Δ″ ⊇ Δ′) (η′ : Γ″ ⊇ Γ′) (ζ : Δ′ ⊇ Δ) (η : Γ′ ⊇ Γ) (ξ : Δ ⁏ Γ ⊢⋆ⁿᵉ Ξ) →
-                   mono⊢⋆ⁿᵉ ζ′ η′ (mono⊢⋆ⁿᵉ ζ η ξ) ≡ mono⊢⋆ⁿᵉ (trans⊇ ζ′ ζ) (trans⊇ η′ η) ξ
-assocmono⊢⋆ⁿᵉ ζ′ η′ ζ η ∅       = refl
-assocmono⊢⋆ⁿᵉ ζ′ η′ ζ η (ξ , 𝒟) = cong² _,_ (assocmono⊢⋆ⁿᵉ ζ′ η′ ζ η ξ) (assocmono⊢ⁿᵉ ζ′ η′ ζ η 𝒟)
+-- Lists of normal forms.
+
+infix 3 _⊢⋆ⁿᵉ_
+_⊢⋆ⁿᵉ_ : Cx → Ty⋆ → Set
+Δ ⁏ Γ ⊢⋆ⁿᵉ Ξ = All (Δ ⁏ Γ ⊢ⁿᵉ_) Ξ
+
+mono⊢⋆ⁿᵉ : ∀ {Δ Γ Δ′ Γ′ Ξ} → Δ′ ⊇ Δ → Γ′ ⊇ Γ → Δ ⁏ Γ ⊢⋆ⁿᵉ Ξ → Δ′ ⁏ Γ′ ⊢⋆ⁿᵉ Ξ
+mono⊢⋆ⁿᵉ ζ η ξ = mapAll (mono⊢ⁿᵉ ζ η) ξ
 
 
 -- Example derivations.

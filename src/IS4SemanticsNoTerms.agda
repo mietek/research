@@ -26,19 +26,19 @@ open Model {{…}} public
 -- Values.
 
 mutual
-  infix 3 _[⊩₁]_
-  _[⊩₁]_ : ∀ {{_ : Model}} → World → BoxTy → Set
-  w [⊩₁] □ A = peek w [⊢] □ A
-
-  infix 3 _[⊩₂]_
-  _[⊩₂]_ : ∀ {{_ : Model}} → World → BoxTy → Set
-  w [⊩₂] □ A = w ⊩ A
-
   infix 3 _⊪_
   _⊪_ : ∀ {{_ : Model}} → World → Ty → Set
   w ⊪ •      = G w
   w ⊪ A ⇒ B = ∀ {w′} → w′ ⊒ w → w′ ⊩ A → w′ ⊩ B
-  w ⊪ □ A    = ∀ {w′} → w′ Я w → w′ [⊩₁] □ A ∧ w′ [⊩₂] □ A
+  w ⊪ □ A    = ∀ {w′} → w′ Я w → w′ ⟪⊢⟫ □ A ∧ w′ ⟪⊩⟫ □ A
+
+  infix 3 _⟪⊢⟫_
+  _⟪⊢⟫_ : ∀ {{_ : Model}} → World → BoxTy → Set
+  w ⟪⊢⟫ □ A = π₁ (peek w) ⟨⊢⟩ □ A
+
+  infix 3 _⟪⊩⟫_
+  _⟪⊩⟫_ : ∀ {{_ : Model}} → World → BoxTy → Set
+  w ⟪⊩⟫ □ A = w ⊩ A
 
   infix 3 _⊩_
   _⊩_ : ∀ {{_ : Model}} → World → Ty → Set
@@ -71,22 +71,28 @@ lookup⊩ ξ 𝒾 = lookupAll ξ 𝒾
 
 -- TODO: Needs a name.
 
-infix 3 _[⊩₁]⋆_
-_[⊩₁]⋆_ : ∀ {{_ : Model}} → World → BoxTy⋆ → Set
-w [⊩₁]⋆ Ξ = All (w [⊩₁]_) Ξ
+infix 3 _⟪⊢⟫⋆_
+_⟪⊢⟫⋆_ : ∀ {{_ : Model}} → World → BoxTy⋆ → Set
+w ⟪⊢⟫⋆ Ξ = All (w ⟪⊢⟫_) Ξ
 
-mlookup[⊩₁] : ∀ {{_ : Model}} {w Ξ A} → w [⊩₁]⋆ Ξ → Ξ ∋ □ A → w [⊩₁] □ A
-mlookup[⊩₁] ξ 𝒾 = lookupAll ξ 𝒾
+mlookup⟪⊢⟫ : ∀ {{_ : Model}} {w Ξ A} → w ⟪⊢⟫⋆ Ξ → Ξ ∋ □ A → w ⟪⊢⟫ □ A
+mlookup⟪⊢⟫ ξ 𝒾 = lookupAll ξ 𝒾
 
 
 -- TODO: Needs a name.
 
-infix 3 _[⊩₂]⋆_
-_[⊩₂]⋆_ : ∀ {{_ : Model}} → World → BoxTy⋆ → Set
-w [⊩₂]⋆ Ξ = All (w [⊩₂]_) Ξ
+infix 3 _⟪⊩⟫⋆_
+_⟪⊩⟫⋆_ : ∀ {{_ : Model}} → World → BoxTy⋆ → Set
+w ⟪⊩⟫⋆ Ξ = All (w ⟪⊩⟫_) Ξ
 
-mlookup[⊩₂] : ∀ {{_ : Model}} {w Ξ A} → w [⊩₂]⋆ Ξ → Ξ ∋ □ A → w [⊩₂] □ A
-mlookup[⊩₂] ξ 𝒾 = lookupAll ξ 𝒾
+mlookup⟪⊩⟫ : ∀ {{_ : Model}} {w Ξ A} → w ⟪⊩⟫⋆ Ξ → Ξ ∋ □ A → w ⟪⊩⟫ □ A
+mlookup⟪⊩⟫ ξ 𝒾 = lookupAll ξ 𝒾
+
+mono⟪⊩⟫ : ∀ {{_ : Model}} {A w w′} → w′ ⊒ w → w ⟪⊩⟫ □ A → w′ ⟪⊩⟫ □ A
+mono⟪⊩⟫ {A} θ q = mono⊩ {A} θ q
+
+mono⟪⊩⟫⋆ : ∀ {{_ : Model}} {Ξ w w′} → w′ ⊒ w → w ⟪⊩⟫⋆ Ξ → w′ ⟪⊩⟫⋆ Ξ
+mono⟪⊩⟫⋆ θ ξ = mapAll (λ { {□ A} → mono⟪⊩⟫ {A} θ }) ξ
 
 
 -- Continuations.
