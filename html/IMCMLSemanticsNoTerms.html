@@ -1,0 +1,3680 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><title
+    >IMCMLSemanticsNoTerms</title
+    ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta http-equiv="Content-Style-Type" content="text/css"
+     /><link href="Agda.css" rel="stylesheet" type="text/css"
+     /></head
+  ><body
+  ><pre
+    ><a name="1" class="Keyword"
+      >module</a
+      ><a name="7"
+      > </a
+      ><a name="8" href="IMCMLSemanticsNoTerms.html#1" class="Module"
+      >IMCMLSemanticsNoTerms</a
+      ><a name="29"
+      > </a
+      ><a name="30" class="Keyword"
+      >where</a
+      ><a name="35"
+      >
+
+</a
+      ><a name="37" class="Keyword"
+      >open</a
+      ><a name="41"
+      > </a
+      ><a name="42" class="Keyword"
+      >import</a
+      ><a name="48"
+      > </a
+      ><a name="49" href="IMCMLSyntaxNoTerms.html#1" class="Module"
+      >IMCMLSyntaxNoTerms</a
+      ><a name="67"
+      > </a
+      ><a name="68" class="Keyword"
+      >public</a
+      ><a name="74"
+      >
+
+
+</a
+      ><a name="77" class="Comment"
+      >-- Introspective Kripke models.</a
+      ><a name="108"
+      >
+
+</a
+      ><a name="110" class="Keyword"
+      >record</a
+      ><a name="116"
+      > </a
+      ><a name="117" href="IMCMLSemanticsNoTerms.html#117" class="Record"
+      >Model</a
+      ><a name="122"
+      > </a
+      ><a name="123" class="Symbol"
+      >:</a
+      ><a name="124"
+      > </a
+      ><a name="125" class="PrimitiveType"
+      >Set&#8321;</a
+      ><a name="129"
+      > </a
+      ><a name="130" class="Keyword"
+      >where</a
+      ><a name="135"
+      >
+  </a
+      ><a name="138" class="Keyword"
+      >infix</a
+      ><a name="143"
+      > </a
+      ><a name="144" class="Number"
+      >3</a
+      ><a name="145"
+      > </a
+      ><a name="146" href="IMCMLSemanticsNoTerms.html#193" class="Field Operator"
+      >_&#8850;_</a
+      ><a name="149"
+      >
+  </a
+      ><a name="152" class="Keyword"
+      >infix</a
+      ><a name="157"
+      > </a
+      ><a name="158" class="Number"
+      >3</a
+      ><a name="159"
+      > </a
+      ><a name="160" href="IMCMLSemanticsNoTerms.html#306" class="Field Operator"
+      >_&#1071;_</a
+      ><a name="163"
+      >
+  </a
+      ><a name="166" class="Keyword"
+      >field</a
+      ><a name="171"
+      >
+    </a
+      ><a name="176" href="IMCMLSemanticsNoTerms.html#176" class="Field"
+      >World</a
+      ><a name="181"
+      >  </a
+      ><a name="183" class="Symbol"
+      >:</a
+      ><a name="184"
+      > </a
+      ><a name="185" class="PrimitiveType"
+      >Set</a
+      ><a name="188"
+      >
+    </a
+      ><a name="193" href="IMCMLSemanticsNoTerms.html#193" class="Field Operator"
+      >_&#8850;_</a
+      ><a name="196"
+      >    </a
+      ><a name="200" class="Symbol"
+      >:</a
+      ><a name="201"
+      > </a
+      ><a name="202" href="IMCMLSemanticsNoTerms.html#176" class="Field"
+      >World</a
+      ><a name="207"
+      > </a
+      ><a name="208" class="Symbol"
+      >&#8594;</a
+      ><a name="209"
+      > </a
+      ><a name="210" href="IMCMLSemanticsNoTerms.html#176" class="Field"
+      >World</a
+      ><a name="215"
+      > </a
+      ><a name="216" class="Symbol"
+      >&#8594;</a
+      ><a name="217"
+      > </a
+      ><a name="218" class="PrimitiveType"
+      >Set</a
+      ><a name="221"
+      >
+    </a
+      ><a name="226" href="IMCMLSemanticsNoTerms.html#226" class="Field"
+      >refl&#8850;</a
+      ><a name="231"
+      >  </a
+      ><a name="233" class="Symbol"
+      >:</a
+      ><a name="234"
+      > </a
+      ><a name="235" class="Symbol"
+      >&#8704;</a
+      ><a name="236"
+      > </a
+      ><a name="237" class="Symbol"
+      >{</a
+      ><a name="238" href="IMCMLSemanticsNoTerms.html#238" class="Bound"
+      >w</a
+      ><a name="239" class="Symbol"
+      >}</a
+      ><a name="240"
+      > </a
+      ><a name="241" class="Symbol"
+      >&#8594;</a
+      ><a name="242"
+      > </a
+      ><a name="243" href="IMCMLSemanticsNoTerms.html#238" class="Bound"
+      >w</a
+      ><a name="244"
+      > </a
+      ><a name="245" href="IMCMLSemanticsNoTerms.html#193" class="Field Operator"
+      >&#8850;</a
+      ><a name="246"
+      > </a
+      ><a name="247" href="IMCMLSemanticsNoTerms.html#238" class="Bound"
+      >w</a
+      ><a name="248"
+      >
+    </a
+      ><a name="253" href="IMCMLSemanticsNoTerms.html#253" class="Field"
+      >trans&#8850;</a
+      ><a name="259"
+      > </a
+      ><a name="260" class="Symbol"
+      >:</a
+      ><a name="261"
+      > </a
+      ><a name="262" class="Symbol"
+      >&#8704;</a
+      ><a name="263"
+      > </a
+      ><a name="264" class="Symbol"
+      >{</a
+      ><a name="265" href="IMCMLSemanticsNoTerms.html#265" class="Bound"
+      >w</a
+      ><a name="266"
+      > </a
+      ><a name="267" href="IMCMLSemanticsNoTerms.html#267" class="Bound"
+      >w&#8242;</a
+      ><a name="269"
+      > </a
+      ><a name="270" href="IMCMLSemanticsNoTerms.html#270" class="Bound"
+      >w&#8243;</a
+      ><a name="272" class="Symbol"
+      >}</a
+      ><a name="273"
+      > </a
+      ><a name="274" class="Symbol"
+      >&#8594;</a
+      ><a name="275"
+      > </a
+      ><a name="276" href="IMCMLSemanticsNoTerms.html#270" class="Bound"
+      >w&#8243;</a
+      ><a name="278"
+      > </a
+      ><a name="279" href="IMCMLSemanticsNoTerms.html#193" class="Field Operator"
+      >&#8850;</a
+      ><a name="280"
+      > </a
+      ><a name="281" href="IMCMLSemanticsNoTerms.html#267" class="Bound"
+      >w&#8242;</a
+      ><a name="283"
+      > </a
+      ><a name="284" class="Symbol"
+      >&#8594;</a
+      ><a name="285"
+      > </a
+      ><a name="286" href="IMCMLSemanticsNoTerms.html#267" class="Bound"
+      >w&#8242;</a
+      ><a name="288"
+      > </a
+      ><a name="289" href="IMCMLSemanticsNoTerms.html#193" class="Field Operator"
+      >&#8850;</a
+      ><a name="290"
+      > </a
+      ><a name="291" href="IMCMLSemanticsNoTerms.html#265" class="Bound"
+      >w</a
+      ><a name="292"
+      > </a
+      ><a name="293" class="Symbol"
+      >&#8594;</a
+      ><a name="294"
+      > </a
+      ><a name="295" href="IMCMLSemanticsNoTerms.html#270" class="Bound"
+      >w&#8243;</a
+      ><a name="297"
+      > </a
+      ><a name="298" href="IMCMLSemanticsNoTerms.html#193" class="Field Operator"
+      >&#8850;</a
+      ><a name="299"
+      > </a
+      ><a name="300" href="IMCMLSemanticsNoTerms.html#265" class="Bound"
+      >w</a
+      ><a name="301"
+      >
+    </a
+      ><a name="306" href="IMCMLSemanticsNoTerms.html#306" class="Field Operator"
+      >_&#1071;_</a
+      ><a name="309"
+      >    </a
+      ><a name="313" class="Symbol"
+      >:</a
+      ><a name="314"
+      > </a
+      ><a name="315" href="IMCMLSemanticsNoTerms.html#176" class="Field"
+      >World</a
+      ><a name="320"
+      > </a
+      ><a name="321" class="Symbol"
+      >&#8594;</a
+      ><a name="322"
+      > </a
+      ><a name="323" href="IMCMLSemanticsNoTerms.html#176" class="Field"
+      >World</a
+      ><a name="328"
+      > </a
+      ><a name="329" class="Symbol"
+      >&#8594;</a
+      ><a name="330"
+      > </a
+      ><a name="331" class="PrimitiveType"
+      >Set</a
+      ><a name="334"
+      >
+    </a
+      ><a name="339" href="IMCMLSemanticsNoTerms.html#339" class="Field"
+      >refl&#1071;</a
+      ><a name="344"
+      >  </a
+      ><a name="346" class="Symbol"
+      >:</a
+      ><a name="347"
+      > </a
+      ><a name="348" class="Symbol"
+      >&#8704;</a
+      ><a name="349"
+      > </a
+      ><a name="350" class="Symbol"
+      >{</a
+      ><a name="351" href="IMCMLSemanticsNoTerms.html#351" class="Bound"
+      >w</a
+      ><a name="352" class="Symbol"
+      >}</a
+      ><a name="353"
+      > </a
+      ><a name="354" class="Symbol"
+      >&#8594;</a
+      ><a name="355"
+      > </a
+      ><a name="356" href="IMCMLSemanticsNoTerms.html#351" class="Bound"
+      >w</a
+      ><a name="357"
+      > </a
+      ><a name="358" href="IMCMLSemanticsNoTerms.html#306" class="Field Operator"
+      >&#1071;</a
+      ><a name="359"
+      > </a
+      ><a name="360" href="IMCMLSemanticsNoTerms.html#351" class="Bound"
+      >w</a
+      ><a name="361"
+      >
+    </a
+      ><a name="366" href="IMCMLSemanticsNoTerms.html#366" class="Field"
+      >trans&#1071;</a
+      ><a name="372"
+      > </a
+      ><a name="373" class="Symbol"
+      >:</a
+      ><a name="374"
+      > </a
+      ><a name="375" class="Symbol"
+      >&#8704;</a
+      ><a name="376"
+      > </a
+      ><a name="377" class="Symbol"
+      >{</a
+      ><a name="378" href="IMCMLSemanticsNoTerms.html#378" class="Bound"
+      >w</a
+      ><a name="379"
+      > </a
+      ><a name="380" href="IMCMLSemanticsNoTerms.html#380" class="Bound"
+      >w&#8242;</a
+      ><a name="382"
+      > </a
+      ><a name="383" href="IMCMLSemanticsNoTerms.html#383" class="Bound"
+      >w&#8243;</a
+      ><a name="385" class="Symbol"
+      >}</a
+      ><a name="386"
+      > </a
+      ><a name="387" class="Symbol"
+      >&#8594;</a
+      ><a name="388"
+      > </a
+      ><a name="389" href="IMCMLSemanticsNoTerms.html#383" class="Bound"
+      >w&#8243;</a
+      ><a name="391"
+      > </a
+      ><a name="392" href="IMCMLSemanticsNoTerms.html#306" class="Field Operator"
+      >&#1071;</a
+      ><a name="393"
+      > </a
+      ><a name="394" href="IMCMLSemanticsNoTerms.html#380" class="Bound"
+      >w&#8242;</a
+      ><a name="396"
+      > </a
+      ><a name="397" class="Symbol"
+      >&#8594;</a
+      ><a name="398"
+      > </a
+      ><a name="399" href="IMCMLSemanticsNoTerms.html#380" class="Bound"
+      >w&#8242;</a
+      ><a name="401"
+      > </a
+      ><a name="402" href="IMCMLSemanticsNoTerms.html#306" class="Field Operator"
+      >&#1071;</a
+      ><a name="403"
+      > </a
+      ><a name="404" href="IMCMLSemanticsNoTerms.html#378" class="Bound"
+      >w</a
+      ><a name="405"
+      > </a
+      ><a name="406" class="Symbol"
+      >&#8594;</a
+      ><a name="407"
+      > </a
+      ><a name="408" href="IMCMLSemanticsNoTerms.html#383" class="Bound"
+      >w&#8243;</a
+      ><a name="410"
+      > </a
+      ><a name="411" href="IMCMLSemanticsNoTerms.html#306" class="Field Operator"
+      >&#1071;</a
+      ><a name="412"
+      > </a
+      ><a name="413" href="IMCMLSemanticsNoTerms.html#378" class="Bound"
+      >w</a
+      ><a name="414"
+      >
+    </a
+      ><a name="419" href="IMCMLSemanticsNoTerms.html#419" class="Field"
+      >G</a
+      ><a name="420"
+      >      </a
+      ><a name="426" class="Symbol"
+      >:</a
+      ><a name="427"
+      > </a
+      ><a name="428" href="IMCMLSemanticsNoTerms.html#176" class="Field"
+      >World</a
+      ><a name="433"
+      > </a
+      ><a name="434" class="Symbol"
+      >&#8594;</a
+      ><a name="435"
+      > </a
+      ><a name="436" class="PrimitiveType"
+      >Set</a
+      ><a name="439"
+      >
+    </a
+      ><a name="444" href="IMCMLSemanticsNoTerms.html#444" class="Field"
+      >monoG</a
+      ><a name="449"
+      >  </a
+      ><a name="451" class="Symbol"
+      >:</a
+      ><a name="452"
+      > </a
+      ><a name="453" class="Symbol"
+      >&#8704;</a
+      ><a name="454"
+      > </a
+      ><a name="455" class="Symbol"
+      >{</a
+      ><a name="456" href="IMCMLSemanticsNoTerms.html#456" class="Bound"
+      >w</a
+      ><a name="457"
+      > </a
+      ><a name="458" href="IMCMLSemanticsNoTerms.html#458" class="Bound"
+      >w&#8242;</a
+      ><a name="460" class="Symbol"
+      >}</a
+      ><a name="461"
+      > </a
+      ><a name="462" class="Symbol"
+      >&#8594;</a
+      ><a name="463"
+      > </a
+      ><a name="464" href="IMCMLSemanticsNoTerms.html#458" class="Bound"
+      >w&#8242;</a
+      ><a name="466"
+      > </a
+      ><a name="467" href="IMCMLSemanticsNoTerms.html#193" class="Field Operator"
+      >&#8850;</a
+      ><a name="468"
+      > </a
+      ><a name="469" href="IMCMLSemanticsNoTerms.html#456" class="Bound"
+      >w</a
+      ><a name="470"
+      > </a
+      ><a name="471" class="Symbol"
+      >&#8594;</a
+      ><a name="472"
+      > </a
+      ><a name="473" href="IMCMLSemanticsNoTerms.html#419" class="Field"
+      >G</a
+      ><a name="474"
+      > </a
+      ><a name="475" href="IMCMLSemanticsNoTerms.html#456" class="Bound"
+      >w</a
+      ><a name="476"
+      > </a
+      ><a name="477" class="Symbol"
+      >&#8594;</a
+      ><a name="478"
+      > </a
+      ><a name="479" href="IMCMLSemanticsNoTerms.html#419" class="Field"
+      >G</a
+      ><a name="480"
+      > </a
+      ><a name="481" href="IMCMLSemanticsNoTerms.html#458" class="Bound"
+      >w&#8242;</a
+      ><a name="483"
+      >
+    </a
+      ><a name="488" href="IMCMLSemanticsNoTerms.html#488" class="Field"
+      >&#8850;&#8594;&#1071;</a
+      ><a name="491"
+      >   </a
+      ><a name="494" class="Symbol"
+      >:</a
+      ><a name="495"
+      > </a
+      ><a name="496" class="Symbol"
+      >&#8704;</a
+      ><a name="497"
+      > </a
+      ><a name="498" class="Symbol"
+      >{</a
+      ><a name="499" href="IMCMLSemanticsNoTerms.html#499" class="Bound"
+      >w</a
+      ><a name="500"
+      > </a
+      ><a name="501" href="IMCMLSemanticsNoTerms.html#501" class="Bound"
+      >w&#8242;</a
+      ><a name="503" class="Symbol"
+      >}</a
+      ><a name="504"
+      > </a
+      ><a name="505" class="Symbol"
+      >&#8594;</a
+      ><a name="506"
+      > </a
+      ><a name="507" href="IMCMLSemanticsNoTerms.html#501" class="Bound"
+      >w&#8242;</a
+      ><a name="509"
+      > </a
+      ><a name="510" href="IMCMLSemanticsNoTerms.html#193" class="Field Operator"
+      >&#8850;</a
+      ><a name="511"
+      > </a
+      ><a name="512" href="IMCMLSemanticsNoTerms.html#499" class="Bound"
+      >w</a
+      ><a name="513"
+      > </a
+      ><a name="514" class="Symbol"
+      >&#8594;</a
+      ><a name="515"
+      > </a
+      ><a name="516" href="IMCMLSemanticsNoTerms.html#501" class="Bound"
+      >w&#8242;</a
+      ><a name="518"
+      > </a
+      ><a name="519" href="IMCMLSemanticsNoTerms.html#306" class="Field Operator"
+      >&#1071;</a
+      ><a name="520"
+      > </a
+      ><a name="521" href="IMCMLSemanticsNoTerms.html#499" class="Bound"
+      >w</a
+      ><a name="522"
+      >
+    </a
+      ><a name="527" href="IMCMLSemanticsNoTerms.html#527" class="Field"
+      >peek</a
+      ><a name="531"
+      >   </a
+      ><a name="534" class="Symbol"
+      >:</a
+      ><a name="535"
+      > </a
+      ><a name="536" href="IMCMLSemanticsNoTerms.html#176" class="Field"
+      >World</a
+      ><a name="541"
+      > </a
+      ><a name="542" class="Symbol"
+      >&#8594;</a
+      ><a name="543"
+      > </a
+      ><a name="544" href="IMCMLSyntaxNoTerms.html#288" class="Function"
+      >Cx</a
+      ><a name="546"
+      >
+</a
+      ><a name="547" class="Keyword"
+      >open</a
+      ><a name="551"
+      > </a
+      ><a name="552" href="IMCMLSemanticsNoTerms.html#117" class="Module"
+      >Model</a
+      ><a name="557"
+      > </a
+      ><a name="558" class="Symbol"
+      >{{&#8230;}}</a
+      ><a name="563"
+      > </a
+      ><a name="564" class="Keyword"
+      >public</a
+      ><a name="570"
+      >
+
+
+</a
+      ><a name="573" class="Comment"
+      >-- Values.</a
+      ><a name="583"
+      >
+
+</a
+      ><a name="585" class="Keyword"
+      >mutual</a
+      ><a name="591"
+      >
+  </a
+      ><a name="594" class="Keyword"
+      >infix</a
+      ><a name="599"
+      > </a
+      ><a name="600" class="Number"
+      >3</a
+      ><a name="601"
+      > </a
+      ><a name="602" href="IMCMLSemanticsNoTerms.html#608" class="Function Operator"
+      >_&#8874;_</a
+      ><a name="605"
+      >
+  </a
+      ><a name="608" href="IMCMLSemanticsNoTerms.html#608" class="Function Operator"
+      >_&#8874;_</a
+      ><a name="611"
+      > </a
+      ><a name="612" class="Symbol"
+      >:</a
+      ><a name="613"
+      > </a
+      ><a name="614" class="Symbol"
+      >&#8704;</a
+      ><a name="615"
+      > </a
+      ><a name="616" class="Symbol"
+      >{{</a
+      ><a name="618" href="IMCMLSemanticsNoTerms.html#618" class="Bound"
+      >_</a
+      ><a name="619"
+      > </a
+      ><a name="620" class="Symbol"
+      >:</a
+      ><a name="621"
+      > </a
+      ><a name="622" href="IMCMLSemanticsNoTerms.html#117" class="Record"
+      >Model</a
+      ><a name="627" class="Symbol"
+      >}}</a
+      ><a name="629"
+      > </a
+      ><a name="630" class="Symbol"
+      >&#8594;</a
+      ><a name="631"
+      > </a
+      ><a name="632" href="IMCMLSemanticsNoTerms.html#176" class="Field"
+      >World</a
+      ><a name="637"
+      > </a
+      ><a name="638" class="Symbol"
+      >&#8594;</a
+      ><a name="639"
+      > </a
+      ><a name="640" href="IMCML.html#172" class="Datatype"
+      >Ty</a
+      ><a name="642"
+      > </a
+      ><a name="643" class="Symbol"
+      >&#8594;</a
+      ><a name="644"
+      > </a
+      ><a name="645" class="PrimitiveType"
+      >Set</a
+      ><a name="648"
+      >
+  </a
+      ><a name="651" href="IMCMLSemanticsNoTerms.html#651" class="Bound"
+      >w</a
+      ><a name="652"
+      > </a
+      ><a name="653" href="IMCMLSemanticsNoTerms.html#608" class="Function Operator"
+      >&#8874;</a
+      ><a name="654"
+      > </a
+      ><a name="655" href="IMCML.html#193" class="InductiveConstructor"
+      >&#8226;</a
+      ><a name="656"
+      >       </a
+      ><a name="663" class="Symbol"
+      >=</a
+      ><a name="664"
+      > </a
+      ><a name="665" href="IMCMLSemanticsNoTerms.html#419" class="Field"
+      >G</a
+      ><a name="666"
+      > </a
+      ><a name="667" href="IMCMLSemanticsNoTerms.html#651" class="Bound"
+      >w</a
+      ><a name="668"
+      >
+  </a
+      ><a name="671" href="IMCMLSemanticsNoTerms.html#671" class="Bound"
+      >w</a
+      ><a name="672"
+      > </a
+      ><a name="673" href="IMCMLSemanticsNoTerms.html#608" class="Function Operator"
+      >&#8874;</a
+      ><a name="674"
+      > </a
+      ><a name="675" href="IMCMLSemanticsNoTerms.html#675" class="Bound"
+      >A</a
+      ><a name="676"
+      > </a
+      ><a name="677" href="IMCML.html#209" class="InductiveConstructor Operator"
+      >&#8658;</a
+      ><a name="678"
+      > </a
+      ><a name="679" href="IMCMLSemanticsNoTerms.html#679" class="Bound"
+      >B</a
+      ><a name="680"
+      >  </a
+      ><a name="682" class="Symbol"
+      >=</a
+      ><a name="683"
+      > </a
+      ><a name="684" class="Symbol"
+      >&#8704;</a
+      ><a name="685"
+      > </a
+      ><a name="686" class="Symbol"
+      >{</a
+      ><a name="687" href="IMCMLSemanticsNoTerms.html#687" class="Bound"
+      >w&#8242;</a
+      ><a name="689" class="Symbol"
+      >}</a
+      ><a name="690"
+      > </a
+      ><a name="691" class="Symbol"
+      >&#8594;</a
+      ><a name="692"
+      > </a
+      ><a name="693" href="IMCMLSemanticsNoTerms.html#687" class="Bound"
+      >w&#8242;</a
+      ><a name="695"
+      > </a
+      ><a name="696" href="IMCMLSemanticsNoTerms.html#193" class="Field Operator"
+      >&#8850;</a
+      ><a name="697"
+      > </a
+      ><a name="698" href="IMCMLSemanticsNoTerms.html#671" class="Bound"
+      >w</a
+      ><a name="699"
+      > </a
+      ><a name="700" class="Symbol"
+      >&#8594;</a
+      ><a name="701"
+      > </a
+      ><a name="702" href="IMCMLSemanticsNoTerms.html#687" class="Bound"
+      >w&#8242;</a
+      ><a name="704"
+      > </a
+      ><a name="705" href="IMCMLSemanticsNoTerms.html#1032" class="Function Operator"
+      >&#8873;</a
+      ><a name="706"
+      > </a
+      ><a name="707" href="IMCMLSemanticsNoTerms.html#675" class="Bound"
+      >A</a
+      ><a name="708"
+      > </a
+      ><a name="709" class="Symbol"
+      >&#8594;</a
+      ><a name="710"
+      > </a
+      ><a name="711" href="IMCMLSemanticsNoTerms.html#687" class="Bound"
+      >w&#8242;</a
+      ><a name="713"
+      > </a
+      ><a name="714" href="IMCMLSemanticsNoTerms.html#1032" class="Function Operator"
+      >&#8873;</a
+      ><a name="715"
+      > </a
+      ><a name="716" href="IMCMLSemanticsNoTerms.html#679" class="Bound"
+      >B</a
+      ><a name="717"
+      >
+  </a
+      ><a name="720" href="IMCMLSemanticsNoTerms.html#720" class="Bound"
+      >w</a
+      ><a name="721"
+      > </a
+      ><a name="722" href="IMCMLSemanticsNoTerms.html#608" class="Function Operator"
+      >&#8874;</a
+      ><a name="723"
+      > </a
+      ><a name="724" href="IMCML.html#234" class="InductiveConstructor Operator"
+      >[</a
+      ><a name="725"
+      > </a
+      ><a name="726" href="IMCMLSemanticsNoTerms.html#726" class="Bound"
+      >&#934;</a
+      ><a name="727"
+      > </a
+      ><a name="728" href="IMCML.html#234" class="InductiveConstructor Operator"
+      >]</a
+      ><a name="729"
+      > </a
+      ><a name="730" href="IMCMLSemanticsNoTerms.html#730" class="Bound"
+      >A</a
+      ><a name="731"
+      > </a
+      ><a name="732" class="Symbol"
+      >=</a
+      ><a name="733"
+      > </a
+      ><a name="734" class="Symbol"
+      >&#8704;</a
+      ><a name="735"
+      > </a
+      ><a name="736" class="Symbol"
+      >{</a
+      ><a name="737" href="IMCMLSemanticsNoTerms.html#737" class="Bound"
+      >w&#8242;</a
+      ><a name="739" class="Symbol"
+      >}</a
+      ><a name="740"
+      > </a
+      ><a name="741" class="Symbol"
+      >&#8594;</a
+      ><a name="742"
+      > </a
+      ><a name="743" href="IMCMLSemanticsNoTerms.html#737" class="Bound"
+      >w&#8242;</a
+      ><a name="745"
+      > </a
+      ><a name="746" href="IMCMLSemanticsNoTerms.html#306" class="Field Operator"
+      >&#1071;</a
+      ><a name="747"
+      > </a
+      ><a name="748" href="IMCMLSemanticsNoTerms.html#720" class="Bound"
+      >w</a
+      ><a name="749"
+      > </a
+      ><a name="750" class="Symbol"
+      >&#8594;</a
+      ><a name="751"
+      > </a
+      ><a name="752" href="IMCMLSemanticsNoTerms.html#737" class="Bound"
+      >w&#8242;</a
+      ><a name="754"
+      > </a
+      ><a name="755" href="IMCMLSemanticsNoTerms.html#803" class="Function Operator"
+      >&#10218;&#8866;&#10219;</a
+      ><a name="758"
+      > </a
+      ><a name="759" href="IMCML.html#332" class="InductiveConstructor Operator"
+      >[</a
+      ><a name="760"
+      > </a
+      ><a name="761" href="IMCMLSemanticsNoTerms.html#726" class="Bound"
+      >&#934;</a
+      ><a name="762"
+      > </a
+      ><a name="763" href="IMCML.html#332" class="InductiveConstructor Operator"
+      >]</a
+      ><a name="764"
+      > </a
+      ><a name="765" href="IMCMLSemanticsNoTerms.html#730" class="Bound"
+      >A</a
+      ><a name="766"
+      > </a
+      ><a name="767" href="Prelude.html#2739" class="Function Operator"
+      >&#8743;</a
+      ><a name="768"
+      > </a
+      ><a name="769" href="IMCMLSemanticsNoTerms.html#737" class="Bound"
+      >w&#8242;</a
+      ><a name="771"
+      > </a
+      ><a name="772" href="IMCMLSemanticsNoTerms.html#910" class="Function Operator"
+      >&#10218;&#8873;&#10219;</a
+      ><a name="775"
+      > </a
+      ><a name="776" href="IMCML.html#332" class="InductiveConstructor Operator"
+      >[</a
+      ><a name="777"
+      > </a
+      ><a name="778" href="IMCMLSemanticsNoTerms.html#726" class="Bound"
+      >&#934;</a
+      ><a name="779"
+      > </a
+      ><a name="780" href="IMCML.html#332" class="InductiveConstructor Operator"
+      >]</a
+      ><a name="781"
+      > </a
+      ><a name="782" href="IMCMLSemanticsNoTerms.html#730" class="Bound"
+      >A</a
+      ><a name="783"
+      >
+
+  </a
+      ><a name="787" class="Keyword"
+      >infix</a
+      ><a name="792"
+      > </a
+      ><a name="793" class="Number"
+      >3</a
+      ><a name="794"
+      > </a
+      ><a name="795" href="IMCMLSemanticsNoTerms.html#803" class="Function Operator"
+      >_&#10218;&#8866;&#10219;_</a
+      ><a name="800"
+      >
+  </a
+      ><a name="803" href="IMCMLSemanticsNoTerms.html#803" class="Function Operator"
+      >_&#10218;&#8866;&#10219;_</a
+      ><a name="808"
+      > </a
+      ><a name="809" class="Symbol"
+      >:</a
+      ><a name="810"
+      > </a
+      ><a name="811" class="Symbol"
+      >&#8704;</a
+      ><a name="812"
+      > </a
+      ><a name="813" class="Symbol"
+      >{{</a
+      ><a name="815" href="IMCMLSemanticsNoTerms.html#815" class="Bound"
+      >_</a
+      ><a name="816"
+      > </a
+      ><a name="817" class="Symbol"
+      >:</a
+      ><a name="818"
+      > </a
+      ><a name="819" href="IMCMLSemanticsNoTerms.html#117" class="Record"
+      >Model</a
+      ><a name="824" class="Symbol"
+      >}}</a
+      ><a name="826"
+      > </a
+      ><a name="827" class="Symbol"
+      >&#8594;</a
+      ><a name="828"
+      > </a
+      ><a name="829" href="IMCMLSemanticsNoTerms.html#176" class="Field"
+      >World</a
+      ><a name="834"
+      > </a
+      ><a name="835" class="Symbol"
+      >&#8594;</a
+      ><a name="836"
+      > </a
+      ><a name="837" href="IMCML.html#298" class="Record"
+      >BoxTy</a
+      ><a name="842"
+      > </a
+      ><a name="843" class="Symbol"
+      >&#8594;</a
+      ><a name="844"
+      > </a
+      ><a name="845" class="PrimitiveType"
+      >Set</a
+      ><a name="848"
+      >
+  </a
+      ><a name="851" href="IMCMLSemanticsNoTerms.html#851" class="Bound"
+      >w</a
+      ><a name="852"
+      > </a
+      ><a name="853" href="IMCMLSemanticsNoTerms.html#803" class="Function Operator"
+      >&#10218;&#8866;&#10219;</a
+      ><a name="856"
+      > </a
+      ><a name="857" href="IMCML.html#332" class="InductiveConstructor Operator"
+      >[</a
+      ><a name="858"
+      > </a
+      ><a name="859" href="IMCMLSemanticsNoTerms.html#859" class="Bound"
+      >&#934;</a
+      ><a name="860"
+      > </a
+      ><a name="861" href="IMCML.html#332" class="InductiveConstructor Operator"
+      >]</a
+      ><a name="862"
+      > </a
+      ><a name="863" href="IMCMLSemanticsNoTerms.html#863" class="Bound"
+      >A</a
+      ><a name="864"
+      > </a
+      ><a name="865" class="Symbol"
+      >=</a
+      ><a name="866"
+      > </a
+      ><a name="867" href="Prelude.html#2379" class="Field"
+      >&#960;&#8321;</a
+      ><a name="869"
+      > </a
+      ><a name="870" class="Symbol"
+      >(</a
+      ><a name="871" href="IMCMLSemanticsNoTerms.html#527" class="Field"
+      >peek</a
+      ><a name="875"
+      > </a
+      ><a name="876" href="IMCMLSemanticsNoTerms.html#851" class="Bound"
+      >w</a
+      ><a name="877" class="Symbol"
+      >)</a
+      ><a name="878"
+      > </a
+      ><a name="879" href="IMCMLSyntaxNoTerms.html#921" class="Function Operator"
+      >&#10216;&#8866;&#10217;</a
+      ><a name="882"
+      > </a
+      ><a name="883" href="IMCML.html#332" class="InductiveConstructor Operator"
+      >[</a
+      ><a name="884"
+      > </a
+      ><a name="885" href="IMCMLSemanticsNoTerms.html#859" class="Bound"
+      >&#934;</a
+      ><a name="886"
+      > </a
+      ><a name="887" href="IMCML.html#332" class="InductiveConstructor Operator"
+      >]</a
+      ><a name="888"
+      > </a
+      ><a name="889" href="IMCMLSemanticsNoTerms.html#863" class="Bound"
+      >A</a
+      ><a name="890"
+      >
+
+  </a
+      ><a name="894" class="Keyword"
+      >infix</a
+      ><a name="899"
+      > </a
+      ><a name="900" class="Number"
+      >3</a
+      ><a name="901"
+      > </a
+      ><a name="902" href="IMCMLSemanticsNoTerms.html#910" class="Function Operator"
+      >_&#10218;&#8873;&#10219;_</a
+      ><a name="907"
+      >
+  </a
+      ><a name="910" href="IMCMLSemanticsNoTerms.html#910" class="Function Operator"
+      >_&#10218;&#8873;&#10219;_</a
+      ><a name="915"
+      > </a
+      ><a name="916" class="Symbol"
+      >:</a
+      ><a name="917"
+      > </a
+      ><a name="918" class="Symbol"
+      >&#8704;</a
+      ><a name="919"
+      > </a
+      ><a name="920" class="Symbol"
+      >{{</a
+      ><a name="922" href="IMCMLSemanticsNoTerms.html#922" class="Bound"
+      >_</a
+      ><a name="923"
+      > </a
+      ><a name="924" class="Symbol"
+      >:</a
+      ><a name="925"
+      > </a
+      ><a name="926" href="IMCMLSemanticsNoTerms.html#117" class="Record"
+      >Model</a
+      ><a name="931" class="Symbol"
+      >}}</a
+      ><a name="933"
+      > </a
+      ><a name="934" class="Symbol"
+      >&#8594;</a
+      ><a name="935"
+      > </a
+      ><a name="936" href="IMCMLSemanticsNoTerms.html#176" class="Field"
+      >World</a
+      ><a name="941"
+      > </a
+      ><a name="942" class="Symbol"
+      >&#8594;</a
+      ><a name="943"
+      > </a
+      ><a name="944" href="IMCML.html#298" class="Record"
+      >BoxTy</a
+      ><a name="949"
+      > </a
+      ><a name="950" class="Symbol"
+      >&#8594;</a
+      ><a name="951"
+      > </a
+      ><a name="952" class="PrimitiveType"
+      >Set</a
+      ><a name="955"
+      >
+  </a
+      ><a name="958" href="IMCMLSemanticsNoTerms.html#958" class="Bound"
+      >w</a
+      ><a name="959"
+      > </a
+      ><a name="960" href="IMCMLSemanticsNoTerms.html#910" class="Function Operator"
+      >&#10218;&#8873;&#10219;</a
+      ><a name="963"
+      > </a
+      ><a name="964" href="IMCML.html#332" class="InductiveConstructor Operator"
+      >[</a
+      ><a name="965"
+      > </a
+      ><a name="966" href="IMCMLSemanticsNoTerms.html#966" class="Bound"
+      >&#934;</a
+      ><a name="967"
+      > </a
+      ><a name="968" href="IMCML.html#332" class="InductiveConstructor Operator"
+      >]</a
+      ><a name="969"
+      > </a
+      ><a name="970" href="IMCMLSemanticsNoTerms.html#970" class="Bound"
+      >A</a
+      ><a name="971"
+      > </a
+      ><a name="972" class="Symbol"
+      >=</a
+      ><a name="973"
+      > </a
+      ><a name="974" class="Symbol"
+      >&#8704;</a
+      ><a name="975"
+      > </a
+      ><a name="976" class="Symbol"
+      >{</a
+      ><a name="977" href="IMCMLSemanticsNoTerms.html#977" class="Bound"
+      >w&#8242;</a
+      ><a name="979" class="Symbol"
+      >}</a
+      ><a name="980"
+      > </a
+      ><a name="981" class="Symbol"
+      >&#8594;</a
+      ><a name="982"
+      > </a
+      ><a name="983" href="IMCMLSemanticsNoTerms.html#977" class="Bound"
+      >w&#8242;</a
+      ><a name="985"
+      > </a
+      ><a name="986" href="IMCMLSemanticsNoTerms.html#306" class="Field Operator"
+      >&#1071;</a
+      ><a name="987"
+      > </a
+      ><a name="988" href="IMCMLSemanticsNoTerms.html#958" class="Bound"
+      >w</a
+      ><a name="989"
+      > </a
+      ><a name="990" class="Symbol"
+      >&#8594;</a
+      ><a name="991"
+      > </a
+      ><a name="992" href="IMCMLSemanticsNoTerms.html#977" class="Bound"
+      >w&#8242;</a
+      ><a name="994"
+      > </a
+      ><a name="995" href="IMCMLSemanticsNoTerms.html#1209" class="Function Operator"
+      >&#10218;&#8866;&#10219;&#8902;</a
+      ><a name="999"
+      > </a
+      ><a name="1000" href="IMCMLSyntaxNoTerms.html#136" class="Function Operator"
+      >&#8968;</a
+      ><a name="1001"
+      > </a
+      ><a name="1002" href="IMCMLSemanticsNoTerms.html#966" class="Bound"
+      >&#934;</a
+      ><a name="1003"
+      > </a
+      ><a name="1004" href="IMCMLSyntaxNoTerms.html#136" class="Function Operator"
+      >&#8969;</a
+      ><a name="1005"
+      > </a
+      ><a name="1006" class="Symbol"
+      >&#8594;</a
+      ><a name="1007"
+      > </a
+      ><a name="1008" href="IMCMLSemanticsNoTerms.html#977" class="Bound"
+      >w&#8242;</a
+      ><a name="1010"
+      > </a
+      ><a name="1011" href="IMCMLSemanticsNoTerms.html#1032" class="Function Operator"
+      >&#8873;</a
+      ><a name="1012"
+      > </a
+      ><a name="1013" href="IMCMLSemanticsNoTerms.html#970" class="Bound"
+      >A</a
+      ><a name="1014"
+      >
+
+  </a
+      ><a name="1018" class="Keyword"
+      >infix</a
+      ><a name="1023"
+      > </a
+      ><a name="1024" class="Number"
+      >3</a
+      ><a name="1025"
+      > </a
+      ><a name="1026" href="IMCMLSemanticsNoTerms.html#1032" class="Function Operator"
+      >_&#8873;_</a
+      ><a name="1029"
+      >
+  </a
+      ><a name="1032" href="IMCMLSemanticsNoTerms.html#1032" class="Function Operator"
+      >_&#8873;_</a
+      ><a name="1035"
+      > </a
+      ><a name="1036" class="Symbol"
+      >:</a
+      ><a name="1037"
+      > </a
+      ><a name="1038" class="Symbol"
+      >&#8704;</a
+      ><a name="1039"
+      > </a
+      ><a name="1040" class="Symbol"
+      >{{</a
+      ><a name="1042" href="IMCMLSemanticsNoTerms.html#1042" class="Bound"
+      >_</a
+      ><a name="1043"
+      > </a
+      ><a name="1044" class="Symbol"
+      >:</a
+      ><a name="1045"
+      > </a
+      ><a name="1046" href="IMCMLSemanticsNoTerms.html#117" class="Record"
+      >Model</a
+      ><a name="1051" class="Symbol"
+      >}}</a
+      ><a name="1053"
+      > </a
+      ><a name="1054" class="Symbol"
+      >&#8594;</a
+      ><a name="1055"
+      > </a
+      ><a name="1056" href="IMCMLSemanticsNoTerms.html#176" class="Field"
+      >World</a
+      ><a name="1061"
+      > </a
+      ><a name="1062" class="Symbol"
+      >&#8594;</a
+      ><a name="1063"
+      > </a
+      ><a name="1064" href="IMCML.html#172" class="Datatype"
+      >Ty</a
+      ><a name="1066"
+      > </a
+      ><a name="1067" class="Symbol"
+      >&#8594;</a
+      ><a name="1068"
+      > </a
+      ><a name="1069" class="PrimitiveType"
+      >Set</a
+      ><a name="1072"
+      >
+  </a
+      ><a name="1075" href="IMCMLSemanticsNoTerms.html#1075" class="Bound"
+      >w</a
+      ><a name="1076"
+      > </a
+      ><a name="1077" href="IMCMLSemanticsNoTerms.html#1032" class="Function Operator"
+      >&#8873;</a
+      ><a name="1078"
+      > </a
+      ><a name="1079" href="IMCMLSemanticsNoTerms.html#1079" class="Bound"
+      >A</a
+      ><a name="1080"
+      > </a
+      ><a name="1081" class="Symbol"
+      >=</a
+      ><a name="1082"
+      > </a
+      ><a name="1083" class="Symbol"
+      >&#8704;</a
+      ><a name="1084"
+      > </a
+      ><a name="1085" class="Symbol"
+      >{</a
+      ><a name="1086" href="IMCMLSemanticsNoTerms.html#1086" class="Bound"
+      >C</a
+      ><a name="1087"
+      > </a
+      ><a name="1088" href="IMCMLSemanticsNoTerms.html#1088" class="Bound"
+      >w&#8242;</a
+      ><a name="1090" class="Symbol"
+      >}</a
+      ><a name="1091"
+      > </a
+      ><a name="1092" class="Symbol"
+      >&#8594;</a
+      ><a name="1093"
+      > </a
+      ><a name="1094" href="IMCMLSemanticsNoTerms.html#1088" class="Bound"
+      >w&#8242;</a
+      ><a name="1096"
+      > </a
+      ><a name="1097" href="IMCMLSemanticsNoTerms.html#193" class="Field Operator"
+      >&#8850;</a
+      ><a name="1098"
+      > </a
+      ><a name="1099" href="IMCMLSemanticsNoTerms.html#1075" class="Bound"
+      >w</a
+      ><a name="1100"
+      > </a
+      ><a name="1101" class="Symbol"
+      >&#8594;</a
+      ><a name="1102"
+      >
+             </a
+      ><a name="1116" class="Symbol"
+      >(&#8704;</a
+      ><a name="1118"
+      > </a
+      ><a name="1119" class="Symbol"
+      >{</a
+      ><a name="1120" href="IMCMLSemanticsNoTerms.html#1120" class="Bound"
+      >w&#8243;</a
+      ><a name="1122" class="Symbol"
+      >}</a
+      ><a name="1123"
+      > </a
+      ><a name="1124" class="Symbol"
+      >&#8594;</a
+      ><a name="1125"
+      > </a
+      ><a name="1126" href="IMCMLSemanticsNoTerms.html#1120" class="Bound"
+      >w&#8243;</a
+      ><a name="1128"
+      > </a
+      ><a name="1129" href="IMCMLSemanticsNoTerms.html#193" class="Field Operator"
+      >&#8850;</a
+      ><a name="1130"
+      > </a
+      ><a name="1131" href="IMCMLSemanticsNoTerms.html#1088" class="Bound"
+      >w&#8242;</a
+      ><a name="1133"
+      > </a
+      ><a name="1134" class="Symbol"
+      >&#8594;</a
+      ><a name="1135"
+      > </a
+      ><a name="1136" href="IMCMLSemanticsNoTerms.html#1120" class="Bound"
+      >w&#8243;</a
+      ><a name="1138"
+      > </a
+      ><a name="1139" href="IMCMLSemanticsNoTerms.html#608" class="Function Operator"
+      >&#8874;</a
+      ><a name="1140"
+      > </a
+      ><a name="1141" href="IMCMLSemanticsNoTerms.html#1079" class="Bound"
+      >A</a
+      ><a name="1142"
+      > </a
+      ><a name="1143" class="Symbol"
+      >&#8594;</a
+      ><a name="1144"
+      > </a
+      ><a name="1145" href="IMCMLSemanticsNoTerms.html#527" class="Field"
+      >peek</a
+      ><a name="1149"
+      > </a
+      ><a name="1150" href="IMCMLSemanticsNoTerms.html#1120" class="Bound"
+      >w&#8243;</a
+      ><a name="1152"
+      > </a
+      ><a name="1153" href="IMCMLSyntaxNoTerms.html#6586" class="Datatype Operator"
+      >&#8866;&#8319;&#7584;</a
+      ><a name="1156"
+      > </a
+      ><a name="1157" href="IMCMLSemanticsNoTerms.html#1086" class="Bound"
+      >C</a
+      ><a name="1158" class="Symbol"
+      >)</a
+      ><a name="1159"
+      > </a
+      ><a name="1160" class="Symbol"
+      >&#8594;</a
+      ><a name="1161"
+      >
+             </a
+      ><a name="1175" href="IMCMLSemanticsNoTerms.html#527" class="Field"
+      >peek</a
+      ><a name="1179"
+      > </a
+      ><a name="1180" href="IMCMLSemanticsNoTerms.html#1088" class="Bound"
+      >w&#8242;</a
+      ><a name="1182"
+      > </a
+      ><a name="1183" href="IMCMLSyntaxNoTerms.html#6586" class="Datatype Operator"
+      >&#8866;&#8319;&#7584;</a
+      ><a name="1186"
+      > </a
+      ><a name="1187" href="IMCMLSemanticsNoTerms.html#1086" class="Bound"
+      >C</a
+      ><a name="1188"
+      >
+
+  </a
+      ><a name="1192" class="Keyword"
+      >infix</a
+      ><a name="1197"
+      > </a
+      ><a name="1198" class="Number"
+      >3</a
+      ><a name="1199"
+      > </a
+      ><a name="1200" href="IMCMLSemanticsNoTerms.html#1209" class="Function Operator"
+      >_&#10218;&#8866;&#10219;&#8902;_</a
+      ><a name="1206"
+      >
+  </a
+      ><a name="1209" href="IMCMLSemanticsNoTerms.html#1209" class="Function Operator"
+      >_&#10218;&#8866;&#10219;&#8902;_</a
+      ><a name="1215"
+      > </a
+      ><a name="1216" class="Symbol"
+      >:</a
+      ><a name="1217"
+      > </a
+      ><a name="1218" class="Symbol"
+      >&#8704;</a
+      ><a name="1219"
+      > </a
+      ><a name="1220" class="Symbol"
+      >{{</a
+      ><a name="1222" href="IMCMLSemanticsNoTerms.html#1222" class="Bound"
+      >_</a
+      ><a name="1223"
+      > </a
+      ><a name="1224" class="Symbol"
+      >:</a
+      ><a name="1225"
+      > </a
+      ><a name="1226" href="IMCMLSemanticsNoTerms.html#117" class="Record"
+      >Model</a
+      ><a name="1231" class="Symbol"
+      >}}</a
+      ><a name="1233"
+      > </a
+      ><a name="1234" class="Symbol"
+      >&#8594;</a
+      ><a name="1235"
+      > </a
+      ><a name="1236" href="IMCMLSemanticsNoTerms.html#176" class="Field"
+      >World</a
+      ><a name="1241"
+      > </a
+      ><a name="1242" class="Symbol"
+      >&#8594;</a
+      ><a name="1243"
+      > </a
+      ><a name="1244" href="IMCML.html#377" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="1250"
+      > </a
+      ><a name="1251" class="Symbol"
+      >&#8594;</a
+      ><a name="1252"
+      > </a
+      ><a name="1253" class="PrimitiveType"
+      >Set</a
+      ><a name="1256"
+      >
+  </a
+      ><a name="1259" href="IMCMLSemanticsNoTerms.html#1259" class="Bound"
+      >w</a
+      ><a name="1260"
+      > </a
+      ><a name="1261" href="IMCMLSemanticsNoTerms.html#1209" class="Function Operator"
+      >&#10218;&#8866;&#10219;&#8902;</a
+      ><a name="1265"
+      > </a
+      ><a name="1266" href="IMCMLSemanticsNoTerms.html#1266" class="Bound"
+      >&#926;</a
+      ><a name="1267"
+      > </a
+      ><a name="1268" class="Symbol"
+      >=</a
+      ><a name="1269"
+      > </a
+      ><a name="1270" href="PreludeList.html#1407" class="Datatype"
+      >All</a
+      ><a name="1273"
+      > </a
+      ><a name="1274" class="Symbol"
+      >(</a
+      ><a name="1275" href="IMCMLSemanticsNoTerms.html#1259" class="Bound"
+      >w</a
+      ><a name="1276"
+      > </a
+      ><a name="1277" href="IMCMLSemanticsNoTerms.html#803" class="Function Operator"
+      >&#10218;&#8866;&#10219;_</a
+      ><a name="1281" class="Symbol"
+      >)</a
+      ><a name="1282"
+      > </a
+      ><a name="1283" href="IMCMLSemanticsNoTerms.html#1266" class="Bound"
+      >&#926;</a
+      ><a name="1284"
+      >
+
+  </a
+      ><a name="1288" class="Keyword"
+      >infix</a
+      ><a name="1293"
+      > </a
+      ><a name="1294" class="Number"
+      >3</a
+      ><a name="1295"
+      > </a
+      ><a name="1296" href="IMCMLSemanticsNoTerms.html#1303" class="Function Operator"
+      >_&#8873;&#8902;_</a
+      ><a name="1300"
+      >
+  </a
+      ><a name="1303" href="IMCMLSemanticsNoTerms.html#1303" class="Function Operator"
+      >_&#8873;&#8902;_</a
+      ><a name="1307"
+      > </a
+      ><a name="1308" class="Symbol"
+      >:</a
+      ><a name="1309"
+      > </a
+      ><a name="1310" class="Symbol"
+      >&#8704;</a
+      ><a name="1311"
+      > </a
+      ><a name="1312" class="Symbol"
+      >{{</a
+      ><a name="1314" href="IMCMLSemanticsNoTerms.html#1314" class="Bound"
+      >_</a
+      ><a name="1315"
+      > </a
+      ><a name="1316" class="Symbol"
+      >:</a
+      ><a name="1317"
+      > </a
+      ><a name="1318" href="IMCMLSemanticsNoTerms.html#117" class="Record"
+      >Model</a
+      ><a name="1323" class="Symbol"
+      >}}</a
+      ><a name="1325"
+      > </a
+      ><a name="1326" class="Symbol"
+      >&#8594;</a
+      ><a name="1327"
+      > </a
+      ><a name="1328" href="IMCMLSemanticsNoTerms.html#176" class="Field"
+      >World</a
+      ><a name="1333"
+      > </a
+      ><a name="1334" class="Symbol"
+      >&#8594;</a
+      ><a name="1335"
+      > </a
+      ><a name="1336" href="IMCML.html#260" class="Function"
+      >Ty&#8902;</a
+      ><a name="1339"
+      > </a
+      ><a name="1340" class="Symbol"
+      >&#8594;</a
+      ><a name="1341"
+      > </a
+      ><a name="1342" class="PrimitiveType"
+      >Set</a
+      ><a name="1345"
+      >
+  </a
+      ><a name="1348" href="IMCMLSemanticsNoTerms.html#1348" class="Bound"
+      >w</a
+      ><a name="1349"
+      > </a
+      ><a name="1350" href="IMCMLSemanticsNoTerms.html#1303" class="Function Operator"
+      >&#8873;&#8902;</a
+      ><a name="1352"
+      > </a
+      ><a name="1353" href="PreludeList.html#151" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="1354"
+      >       </a
+      ><a name="1361" class="Symbol"
+      >=</a
+      ><a name="1362"
+      > </a
+      ><a name="1363" href="Prelude.html#135" class="Record"
+      >&#8868;</a
+      ><a name="1364"
+      >
+  </a
+      ><a name="1367" href="IMCMLSemanticsNoTerms.html#1367" class="Bound"
+      >w</a
+      ><a name="1368"
+      > </a
+      ><a name="1369" href="IMCMLSemanticsNoTerms.html#1303" class="Function Operator"
+      >&#8873;&#8902;</a
+      ><a name="1371"
+      > </a
+      ><a name="1372" class="Symbol"
+      >(</a
+      ><a name="1373" href="IMCMLSemanticsNoTerms.html#1373" class="Bound"
+      >&#926;</a
+      ><a name="1374"
+      > </a
+      ><a name="1375" href="PreludeList.html#168" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1376"
+      > </a
+      ><a name="1377" href="IMCMLSemanticsNoTerms.html#1377" class="Bound"
+      >A</a
+      ><a name="1378" class="Symbol"
+      >)</a
+      ><a name="1379"
+      > </a
+      ><a name="1380" class="Symbol"
+      >=</a
+      ><a name="1381"
+      > </a
+      ><a name="1382" href="IMCMLSemanticsNoTerms.html#1367" class="Bound"
+      >w</a
+      ><a name="1383"
+      > </a
+      ><a name="1384" href="IMCMLSemanticsNoTerms.html#1303" class="Function Operator"
+      >&#8873;&#8902;</a
+      ><a name="1386"
+      > </a
+      ><a name="1387" href="IMCMLSemanticsNoTerms.html#1373" class="Bound"
+      >&#926;</a
+      ><a name="1388"
+      > </a
+      ><a name="1389" href="Prelude.html#2739" class="Function Operator"
+      >&#8743;</a
+      ><a name="1390"
+      > </a
+      ><a name="1391" href="IMCMLSemanticsNoTerms.html#1367" class="Bound"
+      >w</a
+      ><a name="1392"
+      > </a
+      ><a name="1393" href="IMCMLSemanticsNoTerms.html#1032" class="Function Operator"
+      >&#8873;</a
+      ><a name="1394"
+      > </a
+      ><a name="1395" href="IMCMLSemanticsNoTerms.html#1377" class="Bound"
+      >A</a
+      ><a name="1396"
+      >
+  </a
+      ><a name="1399" class="Comment"
+      >-- NOTE: Equivalent, but does not pass termination check.</a
+      ><a name="1456"
+      >
+  </a
+      ><a name="1459" class="Comment"
+      >-- w &#8873;&#8902; &#926; = All (w &#8873;_) &#926;</a
+      ><a name="1483"
+      >
+
+</a
+      ><a name="1485" class="Keyword"
+      >mutual</a
+      ><a name="1491"
+      >
+  </a
+      ><a name="1494" href="IMCMLSemanticsNoTerms.html#1494" class="Function"
+      >mono&#8874;</a
+      ><a name="1499"
+      > </a
+      ><a name="1500" class="Symbol"
+      >:</a
+      ><a name="1501"
+      > </a
+      ><a name="1502" class="Symbol"
+      >&#8704;</a
+      ><a name="1503"
+      > </a
+      ><a name="1504" class="Symbol"
+      >{{</a
+      ><a name="1506" href="IMCMLSemanticsNoTerms.html#1506" class="Bound"
+      >_</a
+      ><a name="1507"
+      > </a
+      ><a name="1508" class="Symbol"
+      >:</a
+      ><a name="1509"
+      > </a
+      ><a name="1510" href="IMCMLSemanticsNoTerms.html#117" class="Record"
+      >Model</a
+      ><a name="1515" class="Symbol"
+      >}}</a
+      ><a name="1517"
+      > </a
+      ><a name="1518" class="Symbol"
+      >{</a
+      ><a name="1519" href="IMCMLSemanticsNoTerms.html#1519" class="Bound"
+      >A</a
+      ><a name="1520"
+      > </a
+      ><a name="1521" href="IMCMLSemanticsNoTerms.html#1521" class="Bound"
+      >w</a
+      ><a name="1522"
+      > </a
+      ><a name="1523" href="IMCMLSemanticsNoTerms.html#1523" class="Bound"
+      >w&#8242;</a
+      ><a name="1525" class="Symbol"
+      >}</a
+      ><a name="1526"
+      > </a
+      ><a name="1527" class="Symbol"
+      >&#8594;</a
+      ><a name="1528"
+      > </a
+      ><a name="1529" href="IMCMLSemanticsNoTerms.html#1523" class="Bound"
+      >w&#8242;</a
+      ><a name="1531"
+      > </a
+      ><a name="1532" href="IMCMLSemanticsNoTerms.html#193" class="Field Operator"
+      >&#8850;</a
+      ><a name="1533"
+      > </a
+      ><a name="1534" href="IMCMLSemanticsNoTerms.html#1521" class="Bound"
+      >w</a
+      ><a name="1535"
+      > </a
+      ><a name="1536" class="Symbol"
+      >&#8594;</a
+      ><a name="1537"
+      > </a
+      ><a name="1538" href="IMCMLSemanticsNoTerms.html#1521" class="Bound"
+      >w</a
+      ><a name="1539"
+      > </a
+      ><a name="1540" href="IMCMLSemanticsNoTerms.html#608" class="Function Operator"
+      >&#8874;</a
+      ><a name="1541"
+      > </a
+      ><a name="1542" href="IMCMLSemanticsNoTerms.html#1519" class="Bound"
+      >A</a
+      ><a name="1543"
+      > </a
+      ><a name="1544" class="Symbol"
+      >&#8594;</a
+      ><a name="1545"
+      > </a
+      ><a name="1546" href="IMCMLSemanticsNoTerms.html#1523" class="Bound"
+      >w&#8242;</a
+      ><a name="1548"
+      > </a
+      ><a name="1549" href="IMCMLSemanticsNoTerms.html#608" class="Function Operator"
+      >&#8874;</a
+      ><a name="1550"
+      > </a
+      ><a name="1551" href="IMCMLSemanticsNoTerms.html#1519" class="Bound"
+      >A</a
+      ><a name="1552"
+      >
+  </a
+      ><a name="1555" href="IMCMLSemanticsNoTerms.html#1494" class="Function"
+      >mono&#8874;</a
+      ><a name="1560"
+      > </a
+      ><a name="1561" class="Symbol"
+      >{</a
+      ><a name="1562" href="IMCML.html#193" class="InductiveConstructor"
+      >&#8226;</a
+      ><a name="1563" class="Symbol"
+      >}</a
+      ><a name="1564"
+      >       </a
+      ><a name="1571" href="IMCMLSemanticsNoTerms.html#1571" class="Bound"
+      >&#952;</a
+      ><a name="1572"
+      > </a
+      ><a name="1573" href="IMCMLSemanticsNoTerms.html#1573" class="Bound"
+      >a</a
+      ><a name="1574"
+      > </a
+      ><a name="1575" class="Symbol"
+      >=</a
+      ><a name="1576"
+      > </a
+      ><a name="1577" href="IMCMLSemanticsNoTerms.html#444" class="Field"
+      >monoG</a
+      ><a name="1582"
+      > </a
+      ><a name="1583" href="IMCMLSemanticsNoTerms.html#1571" class="Bound"
+      >&#952;</a
+      ><a name="1584"
+      > </a
+      ><a name="1585" href="IMCMLSemanticsNoTerms.html#1573" class="Bound"
+      >a</a
+      ><a name="1586"
+      >
+  </a
+      ><a name="1589" href="IMCMLSemanticsNoTerms.html#1494" class="Function"
+      >mono&#8874;</a
+      ><a name="1594"
+      > </a
+      ><a name="1595" class="Symbol"
+      >{</a
+      ><a name="1596" href="IMCMLSemanticsNoTerms.html#1596" class="Bound"
+      >A</a
+      ><a name="1597"
+      > </a
+      ><a name="1598" href="IMCML.html#209" class="InductiveConstructor Operator"
+      >&#8658;</a
+      ><a name="1599"
+      > </a
+      ><a name="1600" href="IMCMLSemanticsNoTerms.html#1600" class="Bound"
+      >B</a
+      ><a name="1601" class="Symbol"
+      >}</a
+      ><a name="1602"
+      >  </a
+      ><a name="1604" href="IMCMLSemanticsNoTerms.html#1604" class="Bound"
+      >&#952;</a
+      ><a name="1605"
+      > </a
+      ><a name="1606" href="IMCMLSemanticsNoTerms.html#1606" class="Bound"
+      >f</a
+      ><a name="1607"
+      > </a
+      ><a name="1608" class="Symbol"
+      >=</a
+      ><a name="1609"
+      > </a
+      ><a name="1610" class="Symbol"
+      >&#955;</a
+      ><a name="1611"
+      > </a
+      ><a name="1612" href="IMCMLSemanticsNoTerms.html#1612" class="Bound"
+      >&#952;&#8242;</a
+      ><a name="1614"
+      > </a
+      ><a name="1615" href="IMCMLSemanticsNoTerms.html#1615" class="Bound"
+      >a</a
+      ><a name="1616"
+      > </a
+      ><a name="1617" class="Symbol"
+      >&#8594;</a
+      ><a name="1618"
+      > </a
+      ><a name="1619" href="IMCMLSemanticsNoTerms.html#1606" class="Bound"
+      >f</a
+      ><a name="1620"
+      > </a
+      ><a name="1621" class="Symbol"
+      >(</a
+      ><a name="1622" href="IMCMLSemanticsNoTerms.html#253" class="Field"
+      >trans&#8850;</a
+      ><a name="1628"
+      > </a
+      ><a name="1629" href="IMCMLSemanticsNoTerms.html#1612" class="Bound"
+      >&#952;&#8242;</a
+      ><a name="1631"
+      > </a
+      ><a name="1632" href="IMCMLSemanticsNoTerms.html#1604" class="Bound"
+      >&#952;</a
+      ><a name="1633" class="Symbol"
+      >)</a
+      ><a name="1634"
+      > </a
+      ><a name="1635" href="IMCMLSemanticsNoTerms.html#1615" class="Bound"
+      >a</a
+      ><a name="1636"
+      >
+  </a
+      ><a name="1639" href="IMCMLSemanticsNoTerms.html#1494" class="Function"
+      >mono&#8874;</a
+      ><a name="1644"
+      > </a
+      ><a name="1645" class="Symbol"
+      >{</a
+      ><a name="1646" href="IMCML.html#234" class="InductiveConstructor Operator"
+      >[</a
+      ><a name="1647"
+      > </a
+      ><a name="1648" href="IMCMLSemanticsNoTerms.html#1648" class="Bound"
+      >&#934;</a
+      ><a name="1649"
+      > </a
+      ><a name="1650" href="IMCML.html#234" class="InductiveConstructor Operator"
+      >]</a
+      ><a name="1651"
+      > </a
+      ><a name="1652" href="IMCMLSemanticsNoTerms.html#1652" class="Bound"
+      >A</a
+      ><a name="1653" class="Symbol"
+      >}</a
+      ><a name="1654"
+      > </a
+      ><a name="1655" href="IMCMLSemanticsNoTerms.html#1655" class="Bound"
+      >&#952;</a
+      ><a name="1656"
+      > </a
+      ><a name="1657" href="IMCMLSemanticsNoTerms.html#1657" class="Bound"
+      >q</a
+      ><a name="1658"
+      > </a
+      ><a name="1659" class="Symbol"
+      >=</a
+      ><a name="1660"
+      > </a
+      ><a name="1661" class="Symbol"
+      >&#955;</a
+      ><a name="1662"
+      > </a
+      ><a name="1663" href="IMCMLSemanticsNoTerms.html#1663" class="Bound"
+      >&#950;</a
+      ><a name="1664"
+      > </a
+      ><a name="1665" class="Symbol"
+      >&#8594;</a
+      ><a name="1666"
+      > </a
+      ><a name="1667" href="IMCMLSemanticsNoTerms.html#1657" class="Bound"
+      >q</a
+      ><a name="1668"
+      > </a
+      ><a name="1669" class="Symbol"
+      >(</a
+      ><a name="1670" href="IMCMLSemanticsNoTerms.html#366" class="Field"
+      >trans&#1071;</a
+      ><a name="1676"
+      > </a
+      ><a name="1677" href="IMCMLSemanticsNoTerms.html#1663" class="Bound"
+      >&#950;</a
+      ><a name="1678"
+      > </a
+      ><a name="1679" class="Symbol"
+      >(</a
+      ><a name="1680" href="IMCMLSemanticsNoTerms.html#488" class="Field"
+      >&#8850;&#8594;&#1071;</a
+      ><a name="1683"
+      > </a
+      ><a name="1684" href="IMCMLSemanticsNoTerms.html#1655" class="Bound"
+      >&#952;</a
+      ><a name="1685" class="Symbol"
+      >))</a
+      ><a name="1687"
+      >
+
+  </a
+      ><a name="1691" href="IMCMLSemanticsNoTerms.html#1691" class="Function"
+      >mono&#8873;</a
+      ><a name="1696"
+      > </a
+      ><a name="1697" class="Symbol"
+      >:</a
+      ><a name="1698"
+      > </a
+      ><a name="1699" class="Symbol"
+      >&#8704;</a
+      ><a name="1700"
+      > </a
+      ><a name="1701" class="Symbol"
+      >{{</a
+      ><a name="1703" href="IMCMLSemanticsNoTerms.html#1703" class="Bound"
+      >_</a
+      ><a name="1704"
+      > </a
+      ><a name="1705" class="Symbol"
+      >:</a
+      ><a name="1706"
+      > </a
+      ><a name="1707" href="IMCMLSemanticsNoTerms.html#117" class="Record"
+      >Model</a
+      ><a name="1712" class="Symbol"
+      >}}</a
+      ><a name="1714"
+      > </a
+      ><a name="1715" class="Symbol"
+      >{</a
+      ><a name="1716" href="IMCMLSemanticsNoTerms.html#1716" class="Bound"
+      >A</a
+      ><a name="1717"
+      > </a
+      ><a name="1718" href="IMCMLSemanticsNoTerms.html#1718" class="Bound"
+      >w</a
+      ><a name="1719"
+      > </a
+      ><a name="1720" href="IMCMLSemanticsNoTerms.html#1720" class="Bound"
+      >w&#8242;</a
+      ><a name="1722" class="Symbol"
+      >}</a
+      ><a name="1723"
+      > </a
+      ><a name="1724" class="Symbol"
+      >&#8594;</a
+      ><a name="1725"
+      > </a
+      ><a name="1726" href="IMCMLSemanticsNoTerms.html#1720" class="Bound"
+      >w&#8242;</a
+      ><a name="1728"
+      > </a
+      ><a name="1729" href="IMCMLSemanticsNoTerms.html#193" class="Field Operator"
+      >&#8850;</a
+      ><a name="1730"
+      > </a
+      ><a name="1731" href="IMCMLSemanticsNoTerms.html#1718" class="Bound"
+      >w</a
+      ><a name="1732"
+      > </a
+      ><a name="1733" class="Symbol"
+      >&#8594;</a
+      ><a name="1734"
+      > </a
+      ><a name="1735" href="IMCMLSemanticsNoTerms.html#1718" class="Bound"
+      >w</a
+      ><a name="1736"
+      > </a
+      ><a name="1737" href="IMCMLSemanticsNoTerms.html#1032" class="Function Operator"
+      >&#8873;</a
+      ><a name="1738"
+      > </a
+      ><a name="1739" href="IMCMLSemanticsNoTerms.html#1716" class="Bound"
+      >A</a
+      ><a name="1740"
+      > </a
+      ><a name="1741" class="Symbol"
+      >&#8594;</a
+      ><a name="1742"
+      > </a
+      ><a name="1743" href="IMCMLSemanticsNoTerms.html#1720" class="Bound"
+      >w&#8242;</a
+      ><a name="1745"
+      > </a
+      ><a name="1746" href="IMCMLSemanticsNoTerms.html#1032" class="Function Operator"
+      >&#8873;</a
+      ><a name="1747"
+      > </a
+      ><a name="1748" href="IMCMLSemanticsNoTerms.html#1716" class="Bound"
+      >A</a
+      ><a name="1749"
+      >
+  </a
+      ><a name="1752" href="IMCMLSemanticsNoTerms.html#1691" class="Function"
+      >mono&#8873;</a
+      ><a name="1757"
+      > </a
+      ><a name="1758" href="IMCMLSemanticsNoTerms.html#1758" class="Bound"
+      >&#952;</a
+      ><a name="1759"
+      > </a
+      ><a name="1760" href="IMCMLSemanticsNoTerms.html#1760" class="Bound"
+      >f</a
+      ><a name="1761"
+      > </a
+      ><a name="1762" class="Symbol"
+      >=</a
+      ><a name="1763"
+      > </a
+      ><a name="1764" class="Symbol"
+      >&#955;</a
+      ><a name="1765"
+      > </a
+      ><a name="1766" href="IMCMLSemanticsNoTerms.html#1766" class="Bound"
+      >&#952;&#8242;</a
+      ><a name="1768"
+      > </a
+      ><a name="1769" href="IMCMLSemanticsNoTerms.html#1769" class="Bound"
+      >&#954;</a
+      ><a name="1770"
+      > </a
+      ><a name="1771" class="Symbol"
+      >&#8594;</a
+      ><a name="1772"
+      > </a
+      ><a name="1773" href="IMCMLSemanticsNoTerms.html#1760" class="Bound"
+      >f</a
+      ><a name="1774"
+      > </a
+      ><a name="1775" class="Symbol"
+      >(</a
+      ><a name="1776" href="IMCMLSemanticsNoTerms.html#253" class="Field"
+      >trans&#8850;</a
+      ><a name="1782"
+      > </a
+      ><a name="1783" href="IMCMLSemanticsNoTerms.html#1766" class="Bound"
+      >&#952;&#8242;</a
+      ><a name="1785"
+      > </a
+      ><a name="1786" href="IMCMLSemanticsNoTerms.html#1758" class="Bound"
+      >&#952;</a
+      ><a name="1787" class="Symbol"
+      >)</a
+      ><a name="1788"
+      > </a
+      ><a name="1789" href="IMCMLSemanticsNoTerms.html#1769" class="Bound"
+      >&#954;</a
+      ><a name="1790"
+      >
+
+
+</a
+      ><a name="1793" class="Comment"
+      >-- Lists of values.</a
+      ><a name="1812"
+      >
+
+</a
+      ><a name="1814" href="IMCMLSemanticsNoTerms.html#1814" class="Function"
+      >mono&#8873;&#8902;</a
+      ><a name="1820"
+      > </a
+      ><a name="1821" class="Symbol"
+      >:</a
+      ><a name="1822"
+      > </a
+      ><a name="1823" class="Symbol"
+      >&#8704;</a
+      ><a name="1824"
+      > </a
+      ><a name="1825" class="Symbol"
+      >{{</a
+      ><a name="1827" href="IMCMLSemanticsNoTerms.html#1827" class="Bound"
+      >_</a
+      ><a name="1828"
+      > </a
+      ><a name="1829" class="Symbol"
+      >:</a
+      ><a name="1830"
+      > </a
+      ><a name="1831" href="IMCMLSemanticsNoTerms.html#117" class="Record"
+      >Model</a
+      ><a name="1836" class="Symbol"
+      >}}</a
+      ><a name="1838"
+      > </a
+      ><a name="1839" class="Symbol"
+      >{</a
+      ><a name="1840" href="IMCMLSemanticsNoTerms.html#1840" class="Bound"
+      >&#926;</a
+      ><a name="1841"
+      > </a
+      ><a name="1842" href="IMCMLSemanticsNoTerms.html#1842" class="Bound"
+      >w</a
+      ><a name="1843"
+      > </a
+      ><a name="1844" href="IMCMLSemanticsNoTerms.html#1844" class="Bound"
+      >w&#8242;</a
+      ><a name="1846" class="Symbol"
+      >}</a
+      ><a name="1847"
+      > </a
+      ><a name="1848" class="Symbol"
+      >&#8594;</a
+      ><a name="1849"
+      > </a
+      ><a name="1850" href="IMCMLSemanticsNoTerms.html#1844" class="Bound"
+      >w&#8242;</a
+      ><a name="1852"
+      > </a
+      ><a name="1853" href="IMCMLSemanticsNoTerms.html#193" class="Field Operator"
+      >&#8850;</a
+      ><a name="1854"
+      > </a
+      ><a name="1855" href="IMCMLSemanticsNoTerms.html#1842" class="Bound"
+      >w</a
+      ><a name="1856"
+      > </a
+      ><a name="1857" class="Symbol"
+      >&#8594;</a
+      ><a name="1858"
+      > </a
+      ><a name="1859" href="IMCMLSemanticsNoTerms.html#1842" class="Bound"
+      >w</a
+      ><a name="1860"
+      > </a
+      ><a name="1861" href="IMCMLSemanticsNoTerms.html#1303" class="Function Operator"
+      >&#8873;&#8902;</a
+      ><a name="1863"
+      > </a
+      ><a name="1864" href="IMCMLSemanticsNoTerms.html#1840" class="Bound"
+      >&#926;</a
+      ><a name="1865"
+      > </a
+      ><a name="1866" class="Symbol"
+      >&#8594;</a
+      ><a name="1867"
+      > </a
+      ><a name="1868" href="IMCMLSemanticsNoTerms.html#1844" class="Bound"
+      >w&#8242;</a
+      ><a name="1870"
+      > </a
+      ><a name="1871" href="IMCMLSemanticsNoTerms.html#1303" class="Function Operator"
+      >&#8873;&#8902;</a
+      ><a name="1873"
+      > </a
+      ><a name="1874" href="IMCMLSemanticsNoTerms.html#1840" class="Bound"
+      >&#926;</a
+      ><a name="1875"
+      >
+</a
+      ><a name="1876" href="IMCMLSemanticsNoTerms.html#1814" class="Function"
+      >mono&#8873;&#8902;</a
+      ><a name="1882"
+      > </a
+      ><a name="1883" class="Symbol"
+      >{</a
+      ><a name="1884" href="PreludeList.html#151" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="1885" class="Symbol"
+      >}</a
+      ><a name="1886"
+      >     </a
+      ><a name="1891" href="IMCMLSemanticsNoTerms.html#1891" class="Bound"
+      >&#952;</a
+      ><a name="1892"
+      > </a
+      ><a name="1893" href="Prelude.html#182" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="1894"
+      >       </a
+      ><a name="1901" class="Symbol"
+      >=</a
+      ><a name="1902"
+      > </a
+      ><a name="1903" href="Prelude.html#182" class="InductiveConstructor"
+      >&#8709;</a
+      ><a name="1904"
+      >
+</a
+      ><a name="1905" href="IMCMLSemanticsNoTerms.html#1814" class="Function"
+      >mono&#8873;&#8902;</a
+      ><a name="1911"
+      > </a
+      ><a name="1912" class="Symbol"
+      >{</a
+      ><a name="1913" href="IMCMLSemanticsNoTerms.html#1913" class="Bound"
+      >&#926;</a
+      ><a name="1914"
+      > </a
+      ><a name="1915" href="PreludeList.html#168" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1916"
+      > </a
+      ><a name="1917" href="IMCMLSemanticsNoTerms.html#1917" class="Bound"
+      >A</a
+      ><a name="1918" class="Symbol"
+      >}</a
+      ><a name="1919"
+      > </a
+      ><a name="1920" href="IMCMLSemanticsNoTerms.html#1920" class="Bound"
+      >&#952;</a
+      ><a name="1921"
+      > </a
+      ><a name="1922" class="Symbol"
+      >(</a
+      ><a name="1923" href="IMCMLSemanticsNoTerms.html#1923" class="Bound"
+      >&#958;</a
+      ><a name="1924"
+      > </a
+      ><a name="1925" href="Prelude.html#2363" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1926"
+      > </a
+      ><a name="1927" href="IMCMLSemanticsNoTerms.html#1927" class="Bound"
+      >a</a
+      ><a name="1928" class="Symbol"
+      >)</a
+      ><a name="1929"
+      > </a
+      ><a name="1930" class="Symbol"
+      >=</a
+      ><a name="1931"
+      > </a
+      ><a name="1932" href="IMCMLSemanticsNoTerms.html#1814" class="Function"
+      >mono&#8873;&#8902;</a
+      ><a name="1938"
+      > </a
+      ><a name="1939" href="IMCMLSemanticsNoTerms.html#1920" class="Bound"
+      >&#952;</a
+      ><a name="1940"
+      > </a
+      ><a name="1941" href="IMCMLSemanticsNoTerms.html#1923" class="Bound"
+      >&#958;</a
+      ><a name="1942"
+      > </a
+      ><a name="1943" href="Prelude.html#2363" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1944"
+      > </a
+      ><a name="1945" href="IMCMLSemanticsNoTerms.html#1691" class="Function"
+      >mono&#8873;</a
+      ><a name="1950"
+      > </a
+      ><a name="1951" class="Symbol"
+      >{</a
+      ><a name="1952" href="IMCMLSemanticsNoTerms.html#1917" class="Bound"
+      >A</a
+      ><a name="1953" class="Symbol"
+      >}</a
+      ><a name="1954"
+      > </a
+      ><a name="1955" href="IMCMLSemanticsNoTerms.html#1920" class="Bound"
+      >&#952;</a
+      ><a name="1956"
+      > </a
+      ><a name="1957" href="IMCMLSemanticsNoTerms.html#1927" class="Bound"
+      >a</a
+      ><a name="1958"
+      >
+
+</a
+      ><a name="1960" href="IMCMLSemanticsNoTerms.html#1960" class="Function"
+      >lookup&#8873;</a
+      ><a name="1967"
+      > </a
+      ><a name="1968" class="Symbol"
+      >:</a
+      ><a name="1969"
+      > </a
+      ><a name="1970" class="Symbol"
+      >&#8704;</a
+      ><a name="1971"
+      > </a
+      ><a name="1972" class="Symbol"
+      >{{</a
+      ><a name="1974" href="IMCMLSemanticsNoTerms.html#1974" class="Bound"
+      >_</a
+      ><a name="1975"
+      > </a
+      ><a name="1976" class="Symbol"
+      >:</a
+      ><a name="1977"
+      > </a
+      ><a name="1978" href="IMCMLSemanticsNoTerms.html#117" class="Record"
+      >Model</a
+      ><a name="1983" class="Symbol"
+      >}}</a
+      ><a name="1985"
+      > </a
+      ><a name="1986" class="Symbol"
+      >{</a
+      ><a name="1987" href="IMCMLSemanticsNoTerms.html#1987" class="Bound"
+      >w</a
+      ><a name="1988"
+      > </a
+      ><a name="1989" href="IMCMLSemanticsNoTerms.html#1989" class="Bound"
+      >&#926;</a
+      ><a name="1990"
+      > </a
+      ><a name="1991" href="IMCMLSemanticsNoTerms.html#1991" class="Bound"
+      >A</a
+      ><a name="1992" class="Symbol"
+      >}</a
+      ><a name="1993"
+      > </a
+      ><a name="1994" class="Symbol"
+      >&#8594;</a
+      ><a name="1995"
+      > </a
+      ><a name="1996" href="IMCMLSemanticsNoTerms.html#1987" class="Bound"
+      >w</a
+      ><a name="1997"
+      > </a
+      ><a name="1998" href="IMCMLSemanticsNoTerms.html#1303" class="Function Operator"
+      >&#8873;&#8902;</a
+      ><a name="2000"
+      > </a
+      ><a name="2001" href="IMCMLSemanticsNoTerms.html#1989" class="Bound"
+      >&#926;</a
+      ><a name="2002"
+      > </a
+      ><a name="2003" class="Symbol"
+      >&#8594;</a
+      ><a name="2004"
+      > </a
+      ><a name="2005" href="IMCMLSemanticsNoTerms.html#1989" class="Bound"
+      >&#926;</a
+      ><a name="2006"
+      > </a
+      ><a name="2007" href="PreludeList.html#5404" class="Datatype Operator"
+      >&#8715;</a
+      ><a name="2008"
+      > </a
+      ><a name="2009" href="IMCMLSemanticsNoTerms.html#1991" class="Bound"
+      >A</a
+      ><a name="2010"
+      > </a
+      ><a name="2011" class="Symbol"
+      >&#8594;</a
+      ><a name="2012"
+      > </a
+      ><a name="2013" href="IMCMLSemanticsNoTerms.html#1987" class="Bound"
+      >w</a
+      ><a name="2014"
+      > </a
+      ><a name="2015" href="IMCMLSemanticsNoTerms.html#1032" class="Function Operator"
+      >&#8873;</a
+      ><a name="2016"
+      > </a
+      ><a name="2017" href="IMCMLSemanticsNoTerms.html#1991" class="Bound"
+      >A</a
+      ><a name="2018"
+      >
+</a
+      ><a name="2019" href="IMCMLSemanticsNoTerms.html#1960" class="Function"
+      >lookup&#8873;</a
+      ><a name="2026"
+      > </a
+      ><a name="2027" class="Symbol"
+      >(</a
+      ><a name="2028" href="IMCMLSemanticsNoTerms.html#2028" class="Bound"
+      >&#958;</a
+      ><a name="2029"
+      > </a
+      ><a name="2030" href="Prelude.html#2363" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="2031"
+      > </a
+      ><a name="2032" href="IMCMLSemanticsNoTerms.html#2032" class="Bound"
+      >a</a
+      ><a name="2033" class="Symbol"
+      >)</a
+      ><a name="2034"
+      > </a
+      ><a name="2035" href="PreludeList.html#5466" class="InductiveConstructor"
+      >zero</a
+      ><a name="2039"
+      >    </a
+      ><a name="2043" class="Symbol"
+      >=</a
+      ><a name="2044"
+      > </a
+      ><a name="2045" href="IMCMLSemanticsNoTerms.html#2032" class="Bound"
+      >a</a
+      ><a name="2046"
+      >
+</a
+      ><a name="2047" href="IMCMLSemanticsNoTerms.html#1960" class="Function"
+      >lookup&#8873;</a
+      ><a name="2054"
+      > </a
+      ><a name="2055" class="Symbol"
+      >(</a
+      ><a name="2056" href="IMCMLSemanticsNoTerms.html#2056" class="Bound"
+      >&#958;</a
+      ><a name="2057"
+      > </a
+      ><a name="2058" href="Prelude.html#2363" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="2059"
+      > </a
+      ><a name="2060" href="IMCMLSemanticsNoTerms.html#2060" class="Bound"
+      >b</a
+      ><a name="2061" class="Symbol"
+      >)</a
+      ><a name="2062"
+      > </a
+      ><a name="2063" class="Symbol"
+      >(</a
+      ><a name="2064" href="PreludeList.html#5499" class="InductiveConstructor"
+      >suc</a
+      ><a name="2067"
+      > </a
+      ><a name="2068" href="IMCMLSemanticsNoTerms.html#2068" class="Bound"
+      >&#119998;</a
+      ><a name="2069" class="Symbol"
+      >)</a
+      ><a name="2070"
+      > </a
+      ><a name="2071" class="Symbol"
+      >=</a
+      ><a name="2072"
+      > </a
+      ><a name="2073" href="IMCMLSemanticsNoTerms.html#1960" class="Function"
+      >lookup&#8873;</a
+      ><a name="2080"
+      > </a
+      ><a name="2081" href="IMCMLSemanticsNoTerms.html#2056" class="Bound"
+      >&#958;</a
+      ><a name="2082"
+      > </a
+      ><a name="2083" href="IMCMLSemanticsNoTerms.html#2068" class="Bound"
+      >&#119998;</a
+      ><a name="2084"
+      >
+
+
+</a
+      ><a name="2087" class="Comment"
+      >-- TODO: Needs a name.</a
+      ><a name="2109"
+      >
+
+</a
+      ><a name="2111" href="IMCMLSemanticsNoTerms.html#2111" class="Function"
+      >mlookup&#10218;&#8866;&#10219;</a
+      ><a name="2121"
+      > </a
+      ><a name="2122" class="Symbol"
+      >:</a
+      ><a name="2123"
+      > </a
+      ><a name="2124" class="Symbol"
+      >&#8704;</a
+      ><a name="2125"
+      > </a
+      ><a name="2126" class="Symbol"
+      >{{</a
+      ><a name="2128" href="IMCMLSemanticsNoTerms.html#2128" class="Bound"
+      >_</a
+      ><a name="2129"
+      > </a
+      ><a name="2130" class="Symbol"
+      >:</a
+      ><a name="2131"
+      > </a
+      ><a name="2132" href="IMCMLSemanticsNoTerms.html#117" class="Record"
+      >Model</a
+      ><a name="2137" class="Symbol"
+      >}}</a
+      ><a name="2139"
+      > </a
+      ><a name="2140" class="Symbol"
+      >{</a
+      ><a name="2141" href="IMCMLSemanticsNoTerms.html#2141" class="Bound"
+      >w</a
+      ><a name="2142"
+      > </a
+      ><a name="2143" href="IMCMLSemanticsNoTerms.html#2143" class="Bound"
+      >&#926;</a
+      ><a name="2144"
+      > </a
+      ><a name="2145" href="IMCMLSemanticsNoTerms.html#2145" class="Bound"
+      >&#934;</a
+      ><a name="2146"
+      > </a
+      ><a name="2147" href="IMCMLSemanticsNoTerms.html#2147" class="Bound"
+      >A</a
+      ><a name="2148" class="Symbol"
+      >}</a
+      ><a name="2149"
+      > </a
+      ><a name="2150" class="Symbol"
+      >&#8594;</a
+      ><a name="2151"
+      > </a
+      ><a name="2152" href="IMCMLSemanticsNoTerms.html#2141" class="Bound"
+      >w</a
+      ><a name="2153"
+      > </a
+      ><a name="2154" href="IMCMLSemanticsNoTerms.html#1209" class="Function Operator"
+      >&#10218;&#8866;&#10219;&#8902;</a
+      ><a name="2158"
+      > </a
+      ><a name="2159" href="IMCMLSemanticsNoTerms.html#2143" class="Bound"
+      >&#926;</a
+      ><a name="2160"
+      > </a
+      ><a name="2161" class="Symbol"
+      >&#8594;</a
+      ><a name="2162"
+      > </a
+      ><a name="2163" href="IMCMLSemanticsNoTerms.html#2143" class="Bound"
+      >&#926;</a
+      ><a name="2164"
+      > </a
+      ><a name="2165" href="PreludeList.html#5404" class="Datatype Operator"
+      >&#8715;</a
+      ><a name="2166"
+      > </a
+      ><a name="2167" href="IMCML.html#332" class="InductiveConstructor Operator"
+      >[</a
+      ><a name="2168"
+      > </a
+      ><a name="2169" href="IMCMLSemanticsNoTerms.html#2145" class="Bound"
+      >&#934;</a
+      ><a name="2170"
+      > </a
+      ><a name="2171" href="IMCML.html#332" class="InductiveConstructor Operator"
+      >]</a
+      ><a name="2172"
+      > </a
+      ><a name="2173" href="IMCMLSemanticsNoTerms.html#2147" class="Bound"
+      >A</a
+      ><a name="2174"
+      > </a
+      ><a name="2175" class="Symbol"
+      >&#8594;</a
+      ><a name="2176"
+      > </a
+      ><a name="2177" href="IMCMLSemanticsNoTerms.html#2141" class="Bound"
+      >w</a
+      ><a name="2178"
+      > </a
+      ><a name="2179" href="IMCMLSemanticsNoTerms.html#803" class="Function Operator"
+      >&#10218;&#8866;&#10219;</a
+      ><a name="2182"
+      > </a
+      ><a name="2183" href="IMCML.html#332" class="InductiveConstructor Operator"
+      >[</a
+      ><a name="2184"
+      > </a
+      ><a name="2185" href="IMCMLSemanticsNoTerms.html#2145" class="Bound"
+      >&#934;</a
+      ><a name="2186"
+      > </a
+      ><a name="2187" href="IMCML.html#332" class="InductiveConstructor Operator"
+      >]</a
+      ><a name="2188"
+      > </a
+      ><a name="2189" href="IMCMLSemanticsNoTerms.html#2147" class="Bound"
+      >A</a
+      ><a name="2190"
+      >
+</a
+      ><a name="2191" href="IMCMLSemanticsNoTerms.html#2111" class="Function"
+      >mlookup&#10218;&#8866;&#10219;</a
+      ><a name="2201"
+      > </a
+      ><a name="2202" href="IMCMLSemanticsNoTerms.html#2202" class="Bound"
+      >&#958;</a
+      ><a name="2203"
+      > </a
+      ><a name="2204" href="IMCMLSemanticsNoTerms.html#2204" class="Bound"
+      >&#119998;</a
+      ><a name="2205"
+      > </a
+      ><a name="2206" class="Symbol"
+      >=</a
+      ><a name="2207"
+      > </a
+      ><a name="2208" href="PreludeList.html#6132" class="Function"
+      >lookupAll</a
+      ><a name="2217"
+      > </a
+      ><a name="2218" href="IMCMLSemanticsNoTerms.html#2202" class="Bound"
+      >&#958;</a
+      ><a name="2219"
+      > </a
+      ><a name="2220" href="IMCMLSemanticsNoTerms.html#2204" class="Bound"
+      >&#119998;</a
+      ><a name="2221"
+      >
+
+
+</a
+      ><a name="2224" class="Comment"
+      >-- TODO: Needs a name.</a
+      ><a name="2246"
+      >
+
+</a
+      ><a name="2248" class="Keyword"
+      >infix</a
+      ><a name="2253"
+      > </a
+      ><a name="2254" class="Number"
+      >3</a
+      ><a name="2255"
+      > </a
+      ><a name="2256" href="IMCMLSemanticsNoTerms.html#2263" class="Function Operator"
+      >_&#10218;&#8873;&#10219;&#8902;_</a
+      ><a name="2262"
+      >
+</a
+      ><a name="2263" href="IMCMLSemanticsNoTerms.html#2263" class="Function Operator"
+      >_&#10218;&#8873;&#10219;&#8902;_</a
+      ><a name="2269"
+      > </a
+      ><a name="2270" class="Symbol"
+      >:</a
+      ><a name="2271"
+      > </a
+      ><a name="2272" class="Symbol"
+      >&#8704;</a
+      ><a name="2273"
+      > </a
+      ><a name="2274" class="Symbol"
+      >{{</a
+      ><a name="2276" href="IMCMLSemanticsNoTerms.html#2276" class="Bound"
+      >_</a
+      ><a name="2277"
+      > </a
+      ><a name="2278" class="Symbol"
+      >:</a
+      ><a name="2279"
+      > </a
+      ><a name="2280" href="IMCMLSemanticsNoTerms.html#117" class="Record"
+      >Model</a
+      ><a name="2285" class="Symbol"
+      >}}</a
+      ><a name="2287"
+      > </a
+      ><a name="2288" class="Symbol"
+      >&#8594;</a
+      ><a name="2289"
+      > </a
+      ><a name="2290" href="IMCMLSemanticsNoTerms.html#176" class="Field"
+      >World</a
+      ><a name="2295"
+      > </a
+      ><a name="2296" class="Symbol"
+      >&#8594;</a
+      ><a name="2297"
+      > </a
+      ><a name="2298" href="IMCML.html#377" class="Function"
+      >BoxTy&#8902;</a
+      ><a name="2304"
+      > </a
+      ><a name="2305" class="Symbol"
+      >&#8594;</a
+      ><a name="2306"
+      > </a
+      ><a name="2307" class="PrimitiveType"
+      >Set</a
+      ><a name="2310"
+      >
+</a
+      ><a name="2311" href="IMCMLSemanticsNoTerms.html#2311" class="Bound"
+      >w</a
+      ><a name="2312"
+      > </a
+      ><a name="2313" href="IMCMLSemanticsNoTerms.html#2263" class="Function Operator"
+      >&#10218;&#8873;&#10219;&#8902;</a
+      ><a name="2317"
+      > </a
+      ><a name="2318" href="IMCMLSemanticsNoTerms.html#2318" class="Bound"
+      >&#926;</a
+      ><a name="2319"
+      > </a
+      ><a name="2320" class="Symbol"
+      >=</a
+      ><a name="2321"
+      > </a
+      ><a name="2322" href="PreludeList.html#1407" class="Datatype"
+      >All</a
+      ><a name="2325"
+      > </a
+      ><a name="2326" class="Symbol"
+      >(</a
+      ><a name="2327" href="IMCMLSemanticsNoTerms.html#2311" class="Bound"
+      >w</a
+      ><a name="2328"
+      > </a
+      ><a name="2329" href="IMCMLSemanticsNoTerms.html#910" class="Function Operator"
+      >&#10218;&#8873;&#10219;_</a
+      ><a name="2333" class="Symbol"
+      >)</a
+      ><a name="2334"
+      > </a
+      ><a name="2335" href="IMCMLSemanticsNoTerms.html#2318" class="Bound"
+      >&#926;</a
+      ><a name="2336"
+      >
+
+</a
+      ><a name="2338" href="IMCMLSemanticsNoTerms.html#2338" class="Function"
+      >mlookup&#10218;&#8873;&#10219;</a
+      ><a name="2348"
+      > </a
+      ><a name="2349" class="Symbol"
+      >:</a
+      ><a name="2350"
+      > </a
+      ><a name="2351" class="Symbol"
+      >&#8704;</a
+      ><a name="2352"
+      > </a
+      ><a name="2353" class="Symbol"
+      >{{</a
+      ><a name="2355" href="IMCMLSemanticsNoTerms.html#2355" class="Bound"
+      >_</a
+      ><a name="2356"
+      > </a
+      ><a name="2357" class="Symbol"
+      >:</a
+      ><a name="2358"
+      > </a
+      ><a name="2359" href="IMCMLSemanticsNoTerms.html#117" class="Record"
+      >Model</a
+      ><a name="2364" class="Symbol"
+      >}}</a
+      ><a name="2366"
+      > </a
+      ><a name="2367" class="Symbol"
+      >{</a
+      ><a name="2368" href="IMCMLSemanticsNoTerms.html#2368" class="Bound"
+      >w</a
+      ><a name="2369"
+      > </a
+      ><a name="2370" href="IMCMLSemanticsNoTerms.html#2370" class="Bound"
+      >&#926;</a
+      ><a name="2371"
+      > </a
+      ><a name="2372" href="IMCMLSemanticsNoTerms.html#2372" class="Bound"
+      >&#934;</a
+      ><a name="2373"
+      > </a
+      ><a name="2374" href="IMCMLSemanticsNoTerms.html#2374" class="Bound"
+      >A</a
+      ><a name="2375" class="Symbol"
+      >}</a
+      ><a name="2376"
+      > </a
+      ><a name="2377" class="Symbol"
+      >&#8594;</a
+      ><a name="2378"
+      > </a
+      ><a name="2379" href="IMCMLSemanticsNoTerms.html#2368" class="Bound"
+      >w</a
+      ><a name="2380"
+      > </a
+      ><a name="2381" href="IMCMLSemanticsNoTerms.html#2263" class="Function Operator"
+      >&#10218;&#8873;&#10219;&#8902;</a
+      ><a name="2385"
+      > </a
+      ><a name="2386" href="IMCMLSemanticsNoTerms.html#2370" class="Bound"
+      >&#926;</a
+      ><a name="2387"
+      > </a
+      ><a name="2388" class="Symbol"
+      >&#8594;</a
+      ><a name="2389"
+      > </a
+      ><a name="2390" href="IMCMLSemanticsNoTerms.html#2370" class="Bound"
+      >&#926;</a
+      ><a name="2391"
+      > </a
+      ><a name="2392" href="PreludeList.html#5404" class="Datatype Operator"
+      >&#8715;</a
+      ><a name="2393"
+      > </a
+      ><a name="2394" href="IMCML.html#332" class="InductiveConstructor Operator"
+      >[</a
+      ><a name="2395"
+      > </a
+      ><a name="2396" href="IMCMLSemanticsNoTerms.html#2372" class="Bound"
+      >&#934;</a
+      ><a name="2397"
+      > </a
+      ><a name="2398" href="IMCML.html#332" class="InductiveConstructor Operator"
+      >]</a
+      ><a name="2399"
+      > </a
+      ><a name="2400" href="IMCMLSemanticsNoTerms.html#2374" class="Bound"
+      >A</a
+      ><a name="2401"
+      > </a
+      ><a name="2402" class="Symbol"
+      >&#8594;</a
+      ><a name="2403"
+      > </a
+      ><a name="2404" href="IMCMLSemanticsNoTerms.html#2368" class="Bound"
+      >w</a
+      ><a name="2405"
+      > </a
+      ><a name="2406" href="IMCMLSemanticsNoTerms.html#910" class="Function Operator"
+      >&#10218;&#8873;&#10219;</a
+      ><a name="2409"
+      > </a
+      ><a name="2410" href="IMCML.html#332" class="InductiveConstructor Operator"
+      >[</a
+      ><a name="2411"
+      > </a
+      ><a name="2412" href="IMCMLSemanticsNoTerms.html#2372" class="Bound"
+      >&#934;</a
+      ><a name="2413"
+      > </a
+      ><a name="2414" href="IMCML.html#332" class="InductiveConstructor Operator"
+      >]</a
+      ><a name="2415"
+      > </a
+      ><a name="2416" href="IMCMLSemanticsNoTerms.html#2374" class="Bound"
+      >A</a
+      ><a name="2417"
+      >
+</a
+      ><a name="2418" href="IMCMLSemanticsNoTerms.html#2338" class="Function"
+      >mlookup&#10218;&#8873;&#10219;</a
+      ><a name="2428"
+      > </a
+      ><a name="2429" href="IMCMLSemanticsNoTerms.html#2429" class="Bound"
+      >&#958;</a
+      ><a name="2430"
+      > </a
+      ><a name="2431" href="IMCMLSemanticsNoTerms.html#2431" class="Bound"
+      >&#119998;</a
+      ><a name="2432"
+      > </a
+      ><a name="2433" class="Symbol"
+      >=</a
+      ><a name="2434"
+      > </a
+      ><a name="2435" href="PreludeList.html#6132" class="Function"
+      >lookupAll</a
+      ><a name="2444"
+      > </a
+      ><a name="2445" href="IMCMLSemanticsNoTerms.html#2429" class="Bound"
+      >&#958;</a
+      ><a name="2446"
+      > </a
+      ><a name="2447" href="IMCMLSemanticsNoTerms.html#2431" class="Bound"
+      >&#119998;</a
+      ><a name="2448"
+      >
+
+</a
+      ><a name="2450" href="IMCMLSemanticsNoTerms.html#2450" class="Function"
+      >mono&#10218;&#8873;&#10219;</a
+      ><a name="2457"
+      > </a
+      ><a name="2458" class="Symbol"
+      >:</a
+      ><a name="2459"
+      > </a
+      ><a name="2460" class="Symbol"
+      >&#8704;</a
+      ><a name="2461"
+      > </a
+      ><a name="2462" class="Symbol"
+      >{{</a
+      ><a name="2464" href="IMCMLSemanticsNoTerms.html#2464" class="Bound"
+      >_</a
+      ><a name="2465"
+      > </a
+      ><a name="2466" class="Symbol"
+      >:</a
+      ><a name="2467"
+      > </a
+      ><a name="2468" href="IMCMLSemanticsNoTerms.html#117" class="Record"
+      >Model</a
+      ><a name="2473" class="Symbol"
+      >}}</a
+      ><a name="2475"
+      > </a
+      ><a name="2476" class="Symbol"
+      >{</a
+      ><a name="2477" href="IMCMLSemanticsNoTerms.html#2477" class="Bound"
+      >A</a
+      ><a name="2478"
+      > </a
+      ><a name="2479" href="IMCMLSemanticsNoTerms.html#2479" class="Bound"
+      >w</a
+      ><a name="2480"
+      > </a
+      ><a name="2481" href="IMCMLSemanticsNoTerms.html#2481" class="Bound"
+      >w&#8242;</a
+      ><a name="2483"
+      > </a
+      ><a name="2484" href="IMCMLSemanticsNoTerms.html#2484" class="Bound"
+      >&#934;</a
+      ><a name="2485" class="Symbol"
+      >}</a
+      ><a name="2486"
+      > </a
+      ><a name="2487" class="Symbol"
+      >&#8594;</a
+      ><a name="2488"
+      > </a
+      ><a name="2489" href="IMCMLSemanticsNoTerms.html#2481" class="Bound"
+      >w&#8242;</a
+      ><a name="2491"
+      > </a
+      ><a name="2492" href="IMCMLSemanticsNoTerms.html#193" class="Field Operator"
+      >&#8850;</a
+      ><a name="2493"
+      > </a
+      ><a name="2494" href="IMCMLSemanticsNoTerms.html#2479" class="Bound"
+      >w</a
+      ><a name="2495"
+      > </a
+      ><a name="2496" class="Symbol"
+      >&#8594;</a
+      ><a name="2497"
+      > </a
+      ><a name="2498" href="IMCMLSemanticsNoTerms.html#2479" class="Bound"
+      >w</a
+      ><a name="2499"
+      > </a
+      ><a name="2500" href="IMCMLSemanticsNoTerms.html#910" class="Function Operator"
+      >&#10218;&#8873;&#10219;</a
+      ><a name="2503"
+      > </a
+      ><a name="2504" href="IMCML.html#332" class="InductiveConstructor Operator"
+      >[</a
+      ><a name="2505"
+      > </a
+      ><a name="2506" href="IMCMLSemanticsNoTerms.html#2484" class="Bound"
+      >&#934;</a
+      ><a name="2507"
+      > </a
+      ><a name="2508" href="IMCML.html#332" class="InductiveConstructor Operator"
+      >]</a
+      ><a name="2509"
+      > </a
+      ><a name="2510" href="IMCMLSemanticsNoTerms.html#2477" class="Bound"
+      >A</a
+      ><a name="2511"
+      > </a
+      ><a name="2512" class="Symbol"
+      >&#8594;</a
+      ><a name="2513"
+      > </a
+      ><a name="2514" href="IMCMLSemanticsNoTerms.html#2481" class="Bound"
+      >w&#8242;</a
+      ><a name="2516"
+      > </a
+      ><a name="2517" href="IMCMLSemanticsNoTerms.html#910" class="Function Operator"
+      >&#10218;&#8873;&#10219;</a
+      ><a name="2520"
+      > </a
+      ><a name="2521" href="IMCML.html#332" class="InductiveConstructor Operator"
+      >[</a
+      ><a name="2522"
+      > </a
+      ><a name="2523" href="IMCMLSemanticsNoTerms.html#2484" class="Bound"
+      >&#934;</a
+      ><a name="2524"
+      > </a
+      ><a name="2525" href="IMCML.html#332" class="InductiveConstructor Operator"
+      >]</a
+      ><a name="2526"
+      > </a
+      ><a name="2527" href="IMCMLSemanticsNoTerms.html#2477" class="Bound"
+      >A</a
+      ><a name="2528"
+      >
+</a
+      ><a name="2529" href="IMCMLSemanticsNoTerms.html#2450" class="Function"
+      >mono&#10218;&#8873;&#10219;</a
+      ><a name="2536"
+      > </a
+      ><a name="2537" class="Symbol"
+      >{</a
+      ><a name="2538" href="IMCMLSemanticsNoTerms.html#2538" class="Bound"
+      >A</a
+      ><a name="2539" class="Symbol"
+      >}</a
+      ><a name="2540"
+      > </a
+      ><a name="2541" href="IMCMLSemanticsNoTerms.html#2541" class="Bound"
+      >&#952;</a
+      ><a name="2542"
+      > </a
+      ><a name="2543" href="IMCMLSemanticsNoTerms.html#2543" class="Bound"
+      >q</a
+      ><a name="2544"
+      > </a
+      ><a name="2545" class="Symbol"
+      >=</a
+      ><a name="2546"
+      > </a
+      ><a name="2547" class="Symbol"
+      >&#955;</a
+      ><a name="2548"
+      > </a
+      ><a name="2549" href="IMCMLSemanticsNoTerms.html#2549" class="Bound"
+      >&#950;</a
+      ><a name="2550"
+      > </a
+      ><a name="2551" href="IMCMLSemanticsNoTerms.html#2551" class="Bound"
+      >&#966;</a
+      ><a name="2552"
+      > </a
+      ><a name="2553" class="Symbol"
+      >&#8594;</a
+      ><a name="2554"
+      > </a
+      ><a name="2555" href="IMCMLSemanticsNoTerms.html#2543" class="Bound"
+      >q</a
+      ><a name="2556"
+      > </a
+      ><a name="2557" class="Symbol"
+      >(</a
+      ><a name="2558" href="IMCMLSemanticsNoTerms.html#366" class="Field"
+      >trans&#1071;</a
+      ><a name="2564"
+      > </a
+      ><a name="2565" href="IMCMLSemanticsNoTerms.html#2549" class="Bound"
+      >&#950;</a
+      ><a name="2566"
+      > </a
+      ><a name="2567" class="Symbol"
+      >(</a
+      ><a name="2568" href="IMCMLSemanticsNoTerms.html#488" class="Field"
+      >&#8850;&#8594;&#1071;</a
+      ><a name="2571"
+      > </a
+      ><a name="2572" href="IMCMLSemanticsNoTerms.html#2541" class="Bound"
+      >&#952;</a
+      ><a name="2573" class="Symbol"
+      >))</a
+      ><a name="2575"
+      > </a
+      ><a name="2576" href="IMCMLSemanticsNoTerms.html#2551" class="Bound"
+      >&#966;</a
+      ><a name="2577"
+      >
+
+</a
+      ><a name="2579" href="IMCMLSemanticsNoTerms.html#2579" class="Function"
+      >mono&#10218;&#8873;&#10219;&#8902;</a
+      ><a name="2587"
+      > </a
+      ><a name="2588" class="Symbol"
+      >:</a
+      ><a name="2589"
+      > </a
+      ><a name="2590" class="Symbol"
+      >&#8704;</a
+      ><a name="2591"
+      > </a
+      ><a name="2592" class="Symbol"
+      >{{</a
+      ><a name="2594" href="IMCMLSemanticsNoTerms.html#2594" class="Bound"
+      >_</a
+      ><a name="2595"
+      > </a
+      ><a name="2596" class="Symbol"
+      >:</a
+      ><a name="2597"
+      > </a
+      ><a name="2598" href="IMCMLSemanticsNoTerms.html#117" class="Record"
+      >Model</a
+      ><a name="2603" class="Symbol"
+      >}}</a
+      ><a name="2605"
+      > </a
+      ><a name="2606" class="Symbol"
+      >{</a
+      ><a name="2607" href="IMCMLSemanticsNoTerms.html#2607" class="Bound"
+      >&#926;</a
+      ><a name="2608"
+      > </a
+      ><a name="2609" href="IMCMLSemanticsNoTerms.html#2609" class="Bound"
+      >w</a
+      ><a name="2610"
+      > </a
+      ><a name="2611" href="IMCMLSemanticsNoTerms.html#2611" class="Bound"
+      >w&#8242;</a
+      ><a name="2613" class="Symbol"
+      >}</a
+      ><a name="2614"
+      > </a
+      ><a name="2615" class="Symbol"
+      >&#8594;</a
+      ><a name="2616"
+      > </a
+      ><a name="2617" href="IMCMLSemanticsNoTerms.html#2611" class="Bound"
+      >w&#8242;</a
+      ><a name="2619"
+      > </a
+      ><a name="2620" href="IMCMLSemanticsNoTerms.html#193" class="Field Operator"
+      >&#8850;</a
+      ><a name="2621"
+      > </a
+      ><a name="2622" href="IMCMLSemanticsNoTerms.html#2609" class="Bound"
+      >w</a
+      ><a name="2623"
+      > </a
+      ><a name="2624" class="Symbol"
+      >&#8594;</a
+      ><a name="2625"
+      > </a
+      ><a name="2626" href="IMCMLSemanticsNoTerms.html#2609" class="Bound"
+      >w</a
+      ><a name="2627"
+      > </a
+      ><a name="2628" href="IMCMLSemanticsNoTerms.html#2263" class="Function Operator"
+      >&#10218;&#8873;&#10219;&#8902;</a
+      ><a name="2632"
+      > </a
+      ><a name="2633" href="IMCMLSemanticsNoTerms.html#2607" class="Bound"
+      >&#926;</a
+      ><a name="2634"
+      > </a
+      ><a name="2635" class="Symbol"
+      >&#8594;</a
+      ><a name="2636"
+      > </a
+      ><a name="2637" href="IMCMLSemanticsNoTerms.html#2611" class="Bound"
+      >w&#8242;</a
+      ><a name="2639"
+      > </a
+      ><a name="2640" href="IMCMLSemanticsNoTerms.html#2263" class="Function Operator"
+      >&#10218;&#8873;&#10219;&#8902;</a
+      ><a name="2644"
+      > </a
+      ><a name="2645" href="IMCMLSemanticsNoTerms.html#2607" class="Bound"
+      >&#926;</a
+      ><a name="2646"
+      >
+</a
+      ><a name="2647" href="IMCMLSemanticsNoTerms.html#2579" class="Function"
+      >mono&#10218;&#8873;&#10219;&#8902;</a
+      ><a name="2655"
+      > </a
+      ><a name="2656" href="IMCMLSemanticsNoTerms.html#2656" class="Bound"
+      >&#952;</a
+      ><a name="2657"
+      > </a
+      ><a name="2658" href="IMCMLSemanticsNoTerms.html#2658" class="Bound"
+      >&#958;</a
+      ><a name="2659"
+      > </a
+      ><a name="2660" class="Symbol"
+      >=</a
+      ><a name="2661"
+      > </a
+      ><a name="2662" href="PreludeList.html#1551" class="Function"
+      >mapAll</a
+      ><a name="2668"
+      > </a
+      ><a name="2669" class="Symbol"
+      >(&#955;</a
+      ><a name="2671"
+      > </a
+      ><a name="2672" class="Symbol"
+      >{</a
+      ><a name="2673"
+      > </a
+      ><a name="2674" class="Symbol"
+      >{</a
+      ><a name="2675" href="IMCML.html#332" class="InductiveConstructor Operator"
+      >[</a
+      ><a name="2676"
+      > </a
+      ><a name="2677" href="IMCMLSemanticsNoTerms.html#2677" class="Bound"
+      >&#934;</a
+      ><a name="2678"
+      > </a
+      ><a name="2679" href="IMCML.html#332" class="InductiveConstructor Operator"
+      >]</a
+      ><a name="2680"
+      > </a
+      ><a name="2681" href="IMCMLSemanticsNoTerms.html#2681" class="Bound"
+      >A</a
+      ><a name="2682" class="Symbol"
+      >}</a
+      ><a name="2683"
+      > </a
+      ><a name="2684" class="Symbol"
+      >&#8594;</a
+      ><a name="2685"
+      > </a
+      ><a name="2686" href="IMCMLSemanticsNoTerms.html#2450" class="Function"
+      >mono&#10218;&#8873;&#10219;</a
+      ><a name="2693"
+      > </a
+      ><a name="2694" class="Symbol"
+      >{</a
+      ><a name="2695" href="IMCMLSemanticsNoTerms.html#2681" class="Bound"
+      >A</a
+      ><a name="2696" class="Symbol"
+      >}</a
+      ><a name="2697"
+      > </a
+      ><a name="2698" href="IMCMLSemanticsNoTerms.html#2656" class="Bound"
+      >&#952;</a
+      ><a name="2699"
+      > </a
+      ><a name="2700" class="Symbol"
+      >})</a
+      ><a name="2702"
+      > </a
+      ><a name="2703" href="IMCMLSemanticsNoTerms.html#2658" class="Bound"
+      >&#958;</a
+      ><a name="2704"
+      >
+
+
+</a
+      ><a name="2707" class="Comment"
+      >-- Continuations.</a
+      ><a name="2724"
+      >
+
+</a
+      ><a name="2726" href="IMCMLSemanticsNoTerms.html#2726" class="Function"
+      >return</a
+      ><a name="2732"
+      > </a
+      ><a name="2733" class="Symbol"
+      >:</a
+      ><a name="2734"
+      > </a
+      ><a name="2735" class="Symbol"
+      >&#8704;</a
+      ><a name="2736"
+      > </a
+      ><a name="2737" class="Symbol"
+      >{{</a
+      ><a name="2739" href="IMCMLSemanticsNoTerms.html#2739" class="Bound"
+      >_</a
+      ><a name="2740"
+      > </a
+      ><a name="2741" class="Symbol"
+      >:</a
+      ><a name="2742"
+      > </a
+      ><a name="2743" href="IMCMLSemanticsNoTerms.html#117" class="Record"
+      >Model</a
+      ><a name="2748" class="Symbol"
+      >}}</a
+      ><a name="2750"
+      > </a
+      ><a name="2751" class="Symbol"
+      >{</a
+      ><a name="2752" href="IMCMLSemanticsNoTerms.html#2752" class="Bound"
+      >A</a
+      ><a name="2753"
+      > </a
+      ><a name="2754" href="IMCMLSemanticsNoTerms.html#2754" class="Bound"
+      >w</a
+      ><a name="2755" class="Symbol"
+      >}</a
+      ><a name="2756"
+      > </a
+      ><a name="2757" class="Symbol"
+      >&#8594;</a
+      ><a name="2758"
+      > </a
+      ><a name="2759" href="IMCMLSemanticsNoTerms.html#2754" class="Bound"
+      >w</a
+      ><a name="2760"
+      > </a
+      ><a name="2761" href="IMCMLSemanticsNoTerms.html#608" class="Function Operator"
+      >&#8874;</a
+      ><a name="2762"
+      > </a
+      ><a name="2763" href="IMCMLSemanticsNoTerms.html#2752" class="Bound"
+      >A</a
+      ><a name="2764"
+      > </a
+      ><a name="2765" class="Symbol"
+      >&#8594;</a
+      ><a name="2766"
+      > </a
+      ><a name="2767" href="IMCMLSemanticsNoTerms.html#2754" class="Bound"
+      >w</a
+      ><a name="2768"
+      > </a
+      ><a name="2769" href="IMCMLSemanticsNoTerms.html#1032" class="Function Operator"
+      >&#8873;</a
+      ><a name="2770"
+      > </a
+      ><a name="2771" href="IMCMLSemanticsNoTerms.html#2752" class="Bound"
+      >A</a
+      ><a name="2772"
+      >
+</a
+      ><a name="2773" href="IMCMLSemanticsNoTerms.html#2726" class="Function"
+      >return</a
+      ><a name="2779"
+      > </a
+      ><a name="2780" class="Symbol"
+      >{</a
+      ><a name="2781" href="IMCMLSemanticsNoTerms.html#2781" class="Bound"
+      >A</a
+      ><a name="2782" class="Symbol"
+      >}</a
+      ><a name="2783"
+      > </a
+      ><a name="2784" href="IMCMLSemanticsNoTerms.html#2784" class="Bound"
+      >a</a
+      ><a name="2785"
+      > </a
+      ><a name="2786" class="Symbol"
+      >=</a
+      ><a name="2787"
+      > </a
+      ><a name="2788" class="Symbol"
+      >&#955;</a
+      ><a name="2789"
+      > </a
+      ><a name="2790" href="IMCMLSemanticsNoTerms.html#2790" class="Bound"
+      >&#952;</a
+      ><a name="2791"
+      > </a
+      ><a name="2792" href="IMCMLSemanticsNoTerms.html#2792" class="Bound"
+      >&#954;</a
+      ><a name="2793"
+      > </a
+      ><a name="2794" class="Symbol"
+      >&#8594;</a
+      ><a name="2795"
+      > </a
+      ><a name="2796" href="IMCMLSemanticsNoTerms.html#2792" class="Bound"
+      >&#954;</a
+      ><a name="2797"
+      > </a
+      ><a name="2798" href="IMCMLSemanticsNoTerms.html#226" class="Field"
+      >refl&#8850;</a
+      ><a name="2803"
+      > </a
+      ><a name="2804" class="Symbol"
+      >(</a
+      ><a name="2805" href="IMCMLSemanticsNoTerms.html#1494" class="Function"
+      >mono&#8874;</a
+      ><a name="2810"
+      > </a
+      ><a name="2811" class="Symbol"
+      >{</a
+      ><a name="2812" href="IMCMLSemanticsNoTerms.html#2781" class="Bound"
+      >A</a
+      ><a name="2813" class="Symbol"
+      >}</a
+      ><a name="2814"
+      > </a
+      ><a name="2815" href="IMCMLSemanticsNoTerms.html#2790" class="Bound"
+      >&#952;</a
+      ><a name="2816"
+      > </a
+      ><a name="2817" href="IMCMLSemanticsNoTerms.html#2784" class="Bound"
+      >a</a
+      ><a name="2818" class="Symbol"
+      >)</a
+      ><a name="2819"
+      >
+
+</a
+      ><a name="2821" href="IMCMLSemanticsNoTerms.html#2821" class="Function"
+      >bind</a
+      ><a name="2825"
+      > </a
+      ><a name="2826" class="Symbol"
+      >:</a
+      ><a name="2827"
+      > </a
+      ><a name="2828" class="Symbol"
+      >&#8704;</a
+      ><a name="2829"
+      > </a
+      ><a name="2830" class="Symbol"
+      >{{</a
+      ><a name="2832" href="IMCMLSemanticsNoTerms.html#2832" class="Bound"
+      >_</a
+      ><a name="2833"
+      > </a
+      ><a name="2834" class="Symbol"
+      >:</a
+      ><a name="2835"
+      > </a
+      ><a name="2836" href="IMCMLSemanticsNoTerms.html#117" class="Record"
+      >Model</a
+      ><a name="2841" class="Symbol"
+      >}}</a
+      ><a name="2843"
+      > </a
+      ><a name="2844" class="Symbol"
+      >{</a
+      ><a name="2845" href="IMCMLSemanticsNoTerms.html#2845" class="Bound"
+      >A</a
+      ><a name="2846"
+      > </a
+      ><a name="2847" href="IMCMLSemanticsNoTerms.html#2847" class="Bound"
+      >B</a
+      ><a name="2848"
+      > </a
+      ><a name="2849" href="IMCMLSemanticsNoTerms.html#2849" class="Bound"
+      >w</a
+      ><a name="2850" class="Symbol"
+      >}</a
+      ><a name="2851"
+      > </a
+      ><a name="2852" class="Symbol"
+      >&#8594;</a
+      ><a name="2853"
+      > </a
+      ><a name="2854" href="IMCMLSemanticsNoTerms.html#2849" class="Bound"
+      >w</a
+      ><a name="2855"
+      > </a
+      ><a name="2856" href="IMCMLSemanticsNoTerms.html#1032" class="Function Operator"
+      >&#8873;</a
+      ><a name="2857"
+      > </a
+      ><a name="2858" href="IMCMLSemanticsNoTerms.html#2845" class="Bound"
+      >A</a
+      ><a name="2859"
+      > </a
+      ><a name="2860" class="Symbol"
+      >&#8594;</a
+      ><a name="2861"
+      >
+         </a
+      ><a name="2871" class="Symbol"
+      >(&#8704;</a
+      ><a name="2873"
+      > </a
+      ><a name="2874" class="Symbol"
+      >{</a
+      ><a name="2875" href="IMCMLSemanticsNoTerms.html#2875" class="Bound"
+      >w&#8242;</a
+      ><a name="2877" class="Symbol"
+      >}</a
+      ><a name="2878"
+      > </a
+      ><a name="2879" class="Symbol"
+      >&#8594;</a
+      ><a name="2880"
+      > </a
+      ><a name="2881" href="IMCMLSemanticsNoTerms.html#2875" class="Bound"
+      >w&#8242;</a
+      ><a name="2883"
+      > </a
+      ><a name="2884" href="IMCMLSemanticsNoTerms.html#193" class="Field Operator"
+      >&#8850;</a
+      ><a name="2885"
+      > </a
+      ><a name="2886" href="IMCMLSemanticsNoTerms.html#2849" class="Bound"
+      >w</a
+      ><a name="2887"
+      > </a
+      ><a name="2888" class="Symbol"
+      >&#8594;</a
+      ><a name="2889"
+      > </a
+      ><a name="2890" href="IMCMLSemanticsNoTerms.html#2875" class="Bound"
+      >w&#8242;</a
+      ><a name="2892"
+      > </a
+      ><a name="2893" href="IMCMLSemanticsNoTerms.html#608" class="Function Operator"
+      >&#8874;</a
+      ><a name="2894"
+      > </a
+      ><a name="2895" href="IMCMLSemanticsNoTerms.html#2845" class="Bound"
+      >A</a
+      ><a name="2896"
+      > </a
+      ><a name="2897" class="Symbol"
+      >&#8594;</a
+      ><a name="2898"
+      > </a
+      ><a name="2899" href="IMCMLSemanticsNoTerms.html#2875" class="Bound"
+      >w&#8242;</a
+      ><a name="2901"
+      > </a
+      ><a name="2902" href="IMCMLSemanticsNoTerms.html#1032" class="Function Operator"
+      >&#8873;</a
+      ><a name="2903"
+      > </a
+      ><a name="2904" href="IMCMLSemanticsNoTerms.html#2847" class="Bound"
+      >B</a
+      ><a name="2905" class="Symbol"
+      >)</a
+      ><a name="2906"
+      > </a
+      ><a name="2907" class="Symbol"
+      >&#8594;</a
+      ><a name="2908"
+      >
+         </a
+      ><a name="2918" href="IMCMLSemanticsNoTerms.html#2849" class="Bound"
+      >w</a
+      ><a name="2919"
+      > </a
+      ><a name="2920" href="IMCMLSemanticsNoTerms.html#1032" class="Function Operator"
+      >&#8873;</a
+      ><a name="2921"
+      > </a
+      ><a name="2922" href="IMCMLSemanticsNoTerms.html#2847" class="Bound"
+      >B</a
+      ><a name="2923"
+      >
+</a
+      ><a name="2924" href="IMCMLSemanticsNoTerms.html#2821" class="Function"
+      >bind</a
+      ><a name="2928"
+      > </a
+      ><a name="2929" href="IMCMLSemanticsNoTerms.html#2929" class="Bound"
+      >f</a
+      ><a name="2930"
+      > </a
+      ><a name="2931" href="IMCMLSemanticsNoTerms.html#2931" class="Bound"
+      >&#954;</a
+      ><a name="2932"
+      > </a
+      ><a name="2933" class="Symbol"
+      >=</a
+      ><a name="2934"
+      > </a
+      ><a name="2935" class="Symbol"
+      >&#955;</a
+      ><a name="2936"
+      > </a
+      ><a name="2937" href="IMCMLSemanticsNoTerms.html#2937" class="Bound"
+      >&#952;</a
+      ><a name="2938"
+      > </a
+      ><a name="2939" href="IMCMLSemanticsNoTerms.html#2939" class="Bound"
+      >&#954;&#8242;</a
+      ><a name="2941"
+      > </a
+      ><a name="2942" class="Symbol"
+      >&#8594;</a
+      ><a name="2943"
+      > </a
+      ><a name="2944" href="IMCMLSemanticsNoTerms.html#2929" class="Bound"
+      >f</a
+      ><a name="2945"
+      > </a
+      ><a name="2946" href="IMCMLSemanticsNoTerms.html#2937" class="Bound"
+      >&#952;</a
+      ><a name="2947"
+      >
+             </a
+      ><a name="2961" class="Symbol"
+      >&#955;</a
+      ><a name="2962"
+      > </a
+      ><a name="2963" href="IMCMLSemanticsNoTerms.html#2963" class="Bound"
+      >&#952;&#8242;</a
+      ><a name="2965"
+      > </a
+      ><a name="2966" href="IMCMLSemanticsNoTerms.html#2966" class="Bound"
+      >a</a
+      ><a name="2967"
+      > </a
+      ><a name="2968" class="Symbol"
+      >&#8594;</a
+      ><a name="2969"
+      > </a
+      ><a name="2970" href="IMCMLSemanticsNoTerms.html#2931" class="Bound"
+      >&#954;</a
+      ><a name="2971"
+      > </a
+      ><a name="2972" class="Symbol"
+      >(</a
+      ><a name="2973" href="IMCMLSemanticsNoTerms.html#253" class="Field"
+      >trans&#8850;</a
+      ><a name="2979"
+      > </a
+      ><a name="2980" href="IMCMLSemanticsNoTerms.html#2963" class="Bound"
+      >&#952;&#8242;</a
+      ><a name="2982"
+      > </a
+      ><a name="2983" href="IMCMLSemanticsNoTerms.html#2937" class="Bound"
+      >&#952;</a
+      ><a name="2984" class="Symbol"
+      >)</a
+      ><a name="2985"
+      > </a
+      ><a name="2986" href="IMCMLSemanticsNoTerms.html#2966" class="Bound"
+      >a</a
+      ><a name="2987"
+      > </a
+      ><a name="2988" href="IMCMLSemanticsNoTerms.html#226" class="Field"
+      >refl&#8850;</a
+      ><a name="2993"
+      >
+               </a
+      ><a name="3009" class="Symbol"
+      >&#955;</a
+      ><a name="3010"
+      > </a
+      ><a name="3011" href="IMCMLSemanticsNoTerms.html#3011" class="Bound"
+      >&#952;&#8243;</a
+      ><a name="3013"
+      > </a
+      ><a name="3014" href="IMCMLSemanticsNoTerms.html#3014" class="Bound"
+      >b</a
+      ><a name="3015"
+      > </a
+      ><a name="3016" class="Symbol"
+      >&#8594;</a
+      ><a name="3017"
+      > </a
+      ><a name="3018" href="IMCMLSemanticsNoTerms.html#2939" class="Bound"
+      >&#954;&#8242;</a
+      ><a name="3020"
+      > </a
+      ><a name="3021" class="Symbol"
+      >(</a
+      ><a name="3022" href="IMCMLSemanticsNoTerms.html#253" class="Field"
+      >trans&#8850;</a
+      ><a name="3028"
+      > </a
+      ><a name="3029" href="IMCMLSemanticsNoTerms.html#3011" class="Bound"
+      >&#952;&#8243;</a
+      ><a name="3031"
+      > </a
+      ><a name="3032" href="IMCMLSemanticsNoTerms.html#2963" class="Bound"
+      >&#952;&#8242;</a
+      ><a name="3034" class="Symbol"
+      >)</a
+      ><a name="3035"
+      > </a
+      ><a name="3036" href="IMCMLSemanticsNoTerms.html#3014" class="Bound"
+      >b</a
+      ><a name="3037"
+      >
+</a
+      ></pre
+    ></body
+  ></html
+>
