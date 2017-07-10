@@ -221,3 +221,48 @@ assocmono∋ (weak η′) η        𝒾       = cong suc (assocmono∋ η′ η
 assocmono∋ (lift η′) (weak η) 𝒾       = cong suc (assocmono∋ η′ η 𝒾)
 assocmono∋ (lift η′) (lift η) zero    = refl
 assocmono∋ (lift η′) (lift η) (suc 𝒾) = cong suc (assocmono∋ η′ η 𝒾)
+
+
+-- List concatenation.
+
+_⧺_ : ∀ {ℓ} {X : Set ℓ} → List X → List X → List X
+L ⧺ ∅       = L
+L ⧺ (K , x) = (L ⧺ K) , x
+
+weak⊇⧺ : ∀ {ℓ} {X : Set ℓ} {L L′ : List X} → L′ ⊇ L → (K : List X) → L′ ⧺ K ⊇ L
+weak⊇⧺ η ∅       = η
+weak⊇⧺ η (K , x) = weak (weak⊇⧺ η K)
+
+lift⊇⧺ : ∀ {ℓ} {X : Set ℓ} {L L′ : List X} → L′ ⊇ L → (K : List X) → L′ ⧺ K ⊇ L ⧺ K
+lift⊇⧺ η ∅       = η
+lift⊇⧺ η (K , x) = lift (lift⊇⧺ η K)
+
+id⊇⧺₁ : ∀ {ℓ} {X : Set ℓ} → (L : List X) → ∅ ⧺ L ⊇ L
+id⊇⧺₁ ∅       = done
+id⊇⧺₁ (L , x) = lift (id⊇⧺₁ L)
+
+id⊇⧺₂ : ∀ {ℓ} {X : Set ℓ} → (L : List X) → L ⧺ ∅ ⊇ L
+id⊇⧺₂ L = refl⊇
+
+weak⊇⧺₁ : ∀ {ℓ} {X : Set ℓ} {L : List X} → (K : List X) → L ⧺ K ⊇ K
+weak⊇⧺₁ K = trans⊇ (lift⊇⧺ inf⊇ K) (id⊇⧺₁ K)
+
+weak⊇⧺₂ : ∀ {ℓ} {X : Set ℓ} {L : List X} → (K : List X) → L ⧺ K ⊇ L
+weak⊇⧺₂ K = weak⊇⧺ refl⊇ K
+
+idlift⊇⧺ : ∀ {ℓ} {X : Set ℓ} {L : List X} → (K : List X) → lift⊇⧺ {L = L} refl⊇ K ≡ refl⊇
+idlift⊇⧺ ∅       = refl
+idlift⊇⧺ (K , x) = cong lift (idlift⊇⧺ K)
+{-# REWRITE idlift⊇⧺ #-}
+
+assoclift⊇⧺ : ∀ {ℓ} {X : Set ℓ} {L L′ L″ : List X} →
+                (η′ : L″ ⊇ L′) (η : L′ ⊇ L) (K : List X) →
+                trans⊇ (lift⊇⧺ η′ K) (lift⊇⧺ η K) ≡ lift⊇⧺ (trans⊇ η′ η) K
+assoclift⊇⧺ η′ η ∅       = refl
+assoclift⊇⧺ η′ η (K , x) = cong lift (assoclift⊇⧺ η′ η K)
+{-# REWRITE assoclift⊇⧺ #-}
+
+invert : ∀ {ℓ} {X : Set ℓ} {L K : List X} → L ⊇ K → Σ (List X) (λ K′ → L ⊇ K′)
+invert {L = ∅}     {∅}      done     = ∅ , done
+invert {L = L , x} {K}      (weak η) = mapΣ (_, x) lift (invert η)
+invert {L = L , x} {K , .x} (lift η) = mapΣ id weak (invert η)
