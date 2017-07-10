@@ -217,9 +217,9 @@ mutual
   mono⊢ⁿᵉ ζ η (appⁿᵉ 𝒟 ℰ)   = appⁿᵉ (mono⊢ⁿᵉ ζ η 𝒟) (mono⊢ⁿᶠ ζ η ℰ)
   mono⊢ⁿᵉ ζ η (unboxⁿᵉ 𝒟 ℰ) = unboxⁿᵉ (mono⊢ⁿᵉ ζ η 𝒟) (mono⊢ⁿᶠ (lift ζ) η ℰ)
 
-  mono⊢⋆ⁿᶠ : ∀ {Δ Γ Δ′ Γ′ Ξ} → Δ′ ⊇ Δ → Γ′ ⊇ Γ → Δ ⁏ Γ ⊢⋆ⁿᶠ Ξ → Δ′ ⁏ Γ′ ⊢⋆ⁿᶠ Ξ
-  mono⊢⋆ⁿᶠ {Ξ = ∅}     ζ η ∅       = ∅
-  mono⊢⋆ⁿᶠ {Ξ = Ξ , A} ζ η (ξ , 𝒟) = mono⊢⋆ⁿᶠ ζ η ξ , mono⊢ⁿᶠ ζ η 𝒟
+  mono⊢⋆ⁿᶠ : ∀ {Ξ Δ Γ Δ′ Γ′} → Δ′ ⊇ Δ → Γ′ ⊇ Γ → Δ ⁏ Γ ⊢⋆ⁿᶠ Ξ → Δ′ ⁏ Γ′ ⊢⋆ⁿᶠ Ξ
+  mono⊢⋆ⁿᶠ {∅}     ζ η ∅       = ∅
+  mono⊢⋆ⁿᶠ {Ξ , A} ζ η (ξ , 𝒟) = mono⊢⋆ⁿᶠ ζ η ξ , mono⊢ⁿᶠ ζ η 𝒟
   -- NOTE: Equivalent, but does not pass termination check.
   -- mono⊢⋆ⁿᶠ ζ η ξ = mapAll (mono⊢ⁿᶠ ζ η) ξ
 

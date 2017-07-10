@@ -90,7 +90,7 @@ refl⊩⋆ {∅}     = ∅
 refl⊩⋆ {Γ , A} = mono⊩⋆ (refl⊇ , weak refl⊇) refl⊩⋆ , ⟦ varⁿᵉ zero ⟧ᶜ
 
 mrefl⟪⊩⟫⋆ : ∀ {Δ Γ} → Δ ⁏ Γ ⟪⊩⟫⋆ Δ
-mrefl⟪⊩⟫⋆ {∅      } = ∅
+mrefl⟪⊩⟫⋆ {∅}       = ∅
 mrefl⟪⊩⟫⋆ {Δ , □ A} = mono⟪⊩⟫⋆ (weak refl⊇ , refl⊇) mrefl⟪⊩⟫⋆ , ⟦ mvarⁿᵉ zero ⟧ᶜ
 
 
