@@ -24,17 +24,10 @@ data _⊢_ : Cx → Ty → Set where
           Γ ⊢ A ⇒ B → Γ ⊢ A →
           Γ ⊢ B
 
-infix 3 _⊢⋆_
-_⊢⋆_ : Cx → Ty⋆ → Set
-Γ ⊢⋆ Ξ = All (Γ ⊢_) Ξ
-
 mono⊢ : ∀ {Γ Γ′ A} → Γ′ ⊇ Γ → Γ ⊢ A → Γ′ ⊢ A
 mono⊢ η (var 𝒾)   = var (mono∋ η 𝒾)
 mono⊢ η (lam 𝒟)   = lam (mono⊢ (lift η) 𝒟)
 mono⊢ η (app 𝒟 ℰ) = app (mono⊢ η 𝒟) (mono⊢ η ℰ)
-
-mono⊢⋆ : ∀ {Γ Γ′ Ξ} → Γ′ ⊇ Γ → Γ ⊢⋆ Ξ → Γ′ ⊢⋆ Ξ
-mono⊢⋆ η ξ = mapAll (mono⊢ η) ξ
 
 idmono⊢ : ∀ {Γ A} → (𝒟 : Γ ⊢ A) → mono⊢ refl⊇ 𝒟 ≡ 𝒟
 idmono⊢ (var 𝒾)   = cong var (idmono∋ 𝒾)
@@ -47,14 +40,15 @@ assocmono⊢ η′ η (var 𝒾)   = cong var (assocmono∋ η′ η 𝒾)
 assocmono⊢ η′ η (lam 𝒟)   = cong lam (assocmono⊢ (lift η′) (lift η) 𝒟)
 assocmono⊢ η′ η (app 𝒟 ℰ) = cong² app (assocmono⊢ η′ η 𝒟) (assocmono⊢ η′ η ℰ)
 
-idmono⊢⋆ : ∀ {Γ Ξ} → (ξ : Γ ⊢⋆ Ξ) → mono⊢⋆ refl⊇ ξ ≡ ξ
-idmono⊢⋆ ∅       = refl
-idmono⊢⋆ (ξ , 𝒟) = cong² _,_ (idmono⊢⋆ ξ) (idmono⊢ 𝒟)
 
-assocmono⊢⋆ : ∀ {Γ Γ′ Γ″ Ξ} → (η′ : Γ″ ⊇ Γ′) (η : Γ′ ⊇ Γ) (ξ : Γ ⊢⋆ Ξ) →
-                 mono⊢⋆ η′ (mono⊢⋆ η ξ) ≡ mono⊢⋆ (trans⊇ η′ η) ξ
-assocmono⊢⋆ η′ η ∅       = refl
-assocmono⊢⋆ η′ η (ξ , 𝒟) = cong² _,_ (assocmono⊢⋆ η′ η ξ) (assocmono⊢ η′ η 𝒟)
+-- Lists of derivations.
+
+infix 3 _⊢⋆_
+_⊢⋆_ : Cx → Ty⋆ → Set
+Γ ⊢⋆ Ξ = All (Γ ⊢_) Ξ
+
+mono⊢⋆ : ∀ {Γ Γ′ Ξ} → Γ′ ⊇ Γ → Γ ⊢⋆ Ξ → Γ′ ⊢⋆ Ξ
+mono⊢⋆ η ξ = mapAll (mono⊢ η) ξ
 
 refl⊢⋆ : ∀ {Γ} → Γ ⊢⋆ Γ
 refl⊢⋆ {∅}     = ∅
@@ -72,8 +66,7 @@ graft⊢⋆ : ∀ {Γ Φ Ξ} → Γ ⊢⋆ Φ → Φ ⊢⋆ Ξ → Γ ⊢⋆ Ξ
 graft⊢⋆ φ ξ = mapAll (graft⊢ φ) ξ
 
 trans⊢⋆ : ∀ {Γ Γ′ Γ″} → Γ″ ⊢⋆ Γ′ → Γ′ ⊢⋆ Γ → Γ″ ⊢⋆ Γ
-trans⊢⋆ γ′ ∅       = ∅
-trans⊢⋆ γ′ (γ , 𝒟) = trans⊢⋆ γ′ γ , graft⊢ γ′ 𝒟
+trans⊢⋆ γ′ γ = graft⊢⋆ γ′ γ
 
 
 -- Normal forms.
@@ -97,10 +90,6 @@ mutual
               Γ ⊢ⁿᵉ A ⇒ B → Γ ⊢ⁿᶠ A →
               Γ ⊢ⁿᵉ B
 
-infix 3 _⊢⋆ⁿᵉ_
-_⊢⋆ⁿᵉ_ : Cx → Ty⋆ → Set
-Γ ⊢⋆ⁿᵉ Ξ = All (Γ ⊢ⁿᵉ_) Ξ
-
 mutual
   mono⊢ⁿᶠ : ∀ {Γ Γ′ A} → Γ′ ⊇ Γ → Γ ⊢ⁿᶠ A → Γ′ ⊢ⁿᶠ A
   mono⊢ⁿᶠ η (lamⁿᶠ 𝒟)   = lamⁿᶠ (mono⊢ⁿᶠ (lift η) 𝒟)
@@ -109,9 +98,6 @@ mutual
   mono⊢ⁿᵉ : ∀ {Γ Γ′ A} → Γ′ ⊇ Γ → Γ ⊢ⁿᵉ A → Γ′ ⊢ⁿᵉ A
   mono⊢ⁿᵉ η (varⁿᵉ 𝒾)   = varⁿᵉ (mono∋ η 𝒾)
   mono⊢ⁿᵉ η (appⁿᵉ 𝒟 ℰ) = appⁿᵉ (mono⊢ⁿᵉ η 𝒟) (mono⊢ⁿᶠ η ℰ)
-
-mono⊢⋆ⁿᵉ : ∀ {Γ Γ′ Ξ} → Γ′ ⊇ Γ → Γ ⊢⋆ⁿᵉ Ξ → Γ′ ⊢⋆ⁿᵉ Ξ
-mono⊢⋆ⁿᵉ η ξ = mapAll (mono⊢ⁿᵉ η) ξ
 
 mutual
   idmono⊢ⁿᶠ : ∀ {Γ A} → (𝒟 : Γ ⊢ⁿᶠ A) → mono⊢ⁿᶠ refl⊇ 𝒟 ≡ 𝒟
@@ -133,14 +119,15 @@ mutual
   assocmono⊢ⁿᵉ η′ η (varⁿᵉ 𝒾)   = cong varⁿᵉ (assocmono∋ η′ η 𝒾)
   assocmono⊢ⁿᵉ η′ η (appⁿᵉ 𝒟 ℰ) = cong² appⁿᵉ (assocmono⊢ⁿᵉ η′ η 𝒟) (assocmono⊢ⁿᶠ η′ η ℰ)
 
-idmono⊢⋆ⁿᵉ : ∀ {Γ Ξ} → (ξ : Γ ⊢⋆ⁿᵉ Ξ) → mono⊢⋆ⁿᵉ refl⊇ ξ ≡ ξ
-idmono⊢⋆ⁿᵉ ∅       = refl
-idmono⊢⋆ⁿᵉ (ξ , 𝒟) = cong² _,_ (idmono⊢⋆ⁿᵉ ξ) (idmono⊢ⁿᵉ 𝒟)
 
-assocmono⊢⋆ⁿᵉ : ∀ {Γ Γ′ Γ″ Ξ} → (η′ : Γ″ ⊇ Γ′) (η : Γ′ ⊇ Γ) (ξ : Γ ⊢⋆ⁿᵉ Ξ) →
-                   mono⊢⋆ⁿᵉ η′ (mono⊢⋆ⁿᵉ η ξ) ≡ mono⊢⋆ⁿᵉ (trans⊇ η′ η) ξ
-assocmono⊢⋆ⁿᵉ η′ η ∅       = refl
-assocmono⊢⋆ⁿᵉ η′ η (ξ , 𝒟) = cong² _,_ (assocmono⊢⋆ⁿᵉ η′ η ξ) (assocmono⊢ⁿᵉ η′ η 𝒟)
+-- Lists of normal forms.
+
+infix 3 _⊢⋆ⁿᵉ_
+_⊢⋆ⁿᵉ_ : Cx → Ty⋆ → Set
+Γ ⊢⋆ⁿᵉ Ξ = All (Γ ⊢ⁿᵉ_) Ξ
+
+mono⊢⋆ⁿᵉ : ∀ {Γ Γ′ Ξ} → Γ′ ⊇ Γ → Γ ⊢⋆ⁿᵉ Ξ → Γ′ ⊢⋆ⁿᵉ Ξ
+mono⊢⋆ⁿᵉ η ξ = mapAll (mono⊢ⁿᵉ η) ξ
 
 
 -- Example derivations.
