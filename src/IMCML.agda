@@ -13,20 +13,19 @@ module IMCMLList where
     data Ty : Set where
       •    : Ty
       _⇒_ : Ty → Ty → Ty
-      [_]_ : BoxTy⋆ → Ty → Ty
+      [_]_ : Ty⋆ → Ty → Ty
 
-    record BoxTy : Set where
-      inductive
-      constructor [_]_
-      field
-        Δ : BoxTy⋆
-        A : Ty
+    Ty⋆ : Set
+    Ty⋆ = List Ty
 
-    BoxTy⋆ : Set
-    BoxTy⋆ = List BoxTy
+  record BoxTy : Set where
+    constructor [_]_
+    field
+      Δ : Ty⋆
+      A : Ty
 
-  Ty⋆ : Set
-  Ty⋆ = List Ty
+  BoxTy⋆ : Set
+  BoxTy⋆ = List BoxTy
 
 
 -- Types and vectors of types.
@@ -39,18 +38,17 @@ module IMCMLVec where
     data Ty : Set where
       •    : Ty
       _⇒_ : Ty → Ty → Ty
-      [_]_ : ∀ {d} → BoxTy⋆ d → Ty → Ty
+      [_]_ : ∀ {d} → Ty⋆ d → Ty → Ty
 
-    record BoxTy : Set where
-      inductive
-      constructor [_]_
-      field
-        {d} : Nat
-        Δ   : BoxTy⋆ d
-        A   : Ty
+    Ty⋆ : Nat → Set
+    Ty⋆ g = Vec Ty g
 
-    BoxTy⋆ : Nat → Set
-    BoxTy⋆ d = Vec BoxTy d
+  record BoxTy : Set where
+    constructor [_]_
+    field
+      {d} : Nat
+      Δ   : Ty⋆ d
+      A   : Ty
 
-  Ty⋆ : Nat → Set
-  Ty⋆ g = Vec Ty g
+  BoxTy⋆ : Nat → Set
+  BoxTy⋆ d = Vec BoxTy d
