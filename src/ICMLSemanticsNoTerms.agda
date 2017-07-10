@@ -23,22 +23,22 @@ record Model : Set₁ where
 open Model {{…}} public
 
 
--- Values and lists of values.
+-- Values.
 
 mutual
-  infix 3 _[⊩₁]_
-  _[⊩₁]_ : ∀ {{_ : Model}} → World → BoxTy → Set
-  w [⊩₁] [ Ψ ] A = peek w [⊢] [ Ψ ] A
-
-  infix 3 _[⊩₂]_
-  _[⊩₂]_ : ∀ {{_ : Model}} → World → BoxTy → Set
-  w [⊩₂] [ Ψ ] A = ∀ {w′} → w′ ⊒ w → w′ ⊩⋆ Ψ → w′ ⊩ A
-
   infix 3 _⊪_
   _⊪_ : ∀ {{_ : Model}} → World → Ty → Set
   w ⊪ •       = G w
   w ⊪ A ⇒ B  = ∀ {w′} → w′ ⊒ w → w′ ⊩ A → w′ ⊩ B
-  w ⊪ [ Ψ ] A = ∀ {w′} → w′ Я w → w′ [⊩₁] [ Ψ ] A ∧ w′ [⊩₂] [ Ψ ] A
+  w ⊪ [ Ψ ] A = ∀ {w′} → w′ Я w → w′ ⟪⊢⟫ [ Ψ ] A ∧ w′ ⟪⊩⟫ [ Ψ ] A
+
+  infix 3 _⟪⊢⟫_
+  _⟪⊢⟫_ : ∀ {{_ : Model}} → World → BoxTy → Set
+  w ⟪⊢⟫ [ Ψ ] A = π₁ (peek w) ⟨⊢⟩ [ Ψ ] A
+
+  infix 3 _⟪⊩⟫_
+  _⟪⊩⟫_ : ∀ {{_ : Model}} → World → BoxTy → Set
+  w ⟪⊩⟫ [ Ψ ] A = ∀ {w′} → w′ ⊒ w → w′ ⊩⋆ Ψ → w′ ⊩ A
 
   infix 3 _⊩_
   _⊩_ : ∀ {{_ : Model}} → World → Ty → Set
@@ -62,6 +62,9 @@ mutual
   mono⊩ : ∀ {{_ : Model}} {A w w′} → w′ ⊒ w → w ⊩ A → w′ ⊩ A
   mono⊩ θ f = λ θ′ κ → f (trans⊒ θ′ θ) κ
 
+
+-- Lists of values.
+
 mono⊩⋆ : ∀ {{_ : Model}} {Ξ w w′} → w′ ⊒ w → w ⊩⋆ Ξ → w′ ⊩⋆ Ξ
 mono⊩⋆ {∅}     θ ∅       = ∅
 mono⊩⋆ {Ξ , A} θ (ξ , a) = mono⊩⋆ θ ξ , mono⊩ {A} θ a
@@ -73,22 +76,28 @@ lookup⊩ (ξ , b) (suc 𝒾) = lookup⊩ ξ 𝒾
 
 -- TODO: Needs a name.
 
-infix 3 _[⊩₁]⋆_
-_[⊩₁]⋆_ : ∀ {{_ : Model}} → World → BoxTy⋆ → Set
-w [⊩₁]⋆ Ξ = All (w [⊩₁]_) Ξ
+infix 3 _⟪⊢⟫⋆_
+_⟪⊢⟫⋆_ : ∀ {{_ : Model}} → World → BoxTy⋆ → Set
+w ⟪⊢⟫⋆ Ξ = All (w ⟪⊢⟫_) Ξ
 
-mlookup[⊩₁] : ∀ {{_ : Model}} {w Ξ Ψ A} → w [⊩₁]⋆ Ξ → Ξ ∋ [ Ψ ] A → w [⊩₁] [ Ψ ] A
-mlookup[⊩₁] ξ 𝒾 = lookupAll ξ 𝒾
+mlookup⟪⊢⟫ : ∀ {{_ : Model}} {w Ξ Ψ A} → w ⟪⊢⟫⋆ Ξ → Ξ ∋ [ Ψ ] A → w ⟪⊢⟫ [ Ψ ] A
+mlookup⟪⊢⟫ ξ 𝒾 = lookupAll ξ 𝒾
 
 
 -- TODO: Needs a name.
 
-infix 3 _[⊩₂]⋆_
-_[⊩₂]⋆_ : ∀ {{_ : Model}} → World → BoxTy⋆ → Set
-w [⊩₂]⋆ Ξ = All (w [⊩₂]_) Ξ
+infix 3 _⟪⊩⟫⋆_
+_⟪⊩⟫⋆_ : ∀ {{_ : Model}} → World → BoxTy⋆ → Set
+w ⟪⊩⟫⋆ Ξ = All (w ⟪⊩⟫_) Ξ
 
-mlookup[⊩₂] : ∀ {{_ : Model}} {w Ξ Ψ A} → w [⊩₂]⋆ Ξ → Ξ ∋ [ Ψ ] A → w [⊩₂] [ Ψ ] A
-mlookup[⊩₂] ξ 𝒾 = lookupAll ξ 𝒾
+mlookup⟪⊩⟫ : ∀ {{_ : Model}} {w Ξ Ψ A} → w ⟪⊩⟫⋆ Ξ → Ξ ∋ [ Ψ ] A → w ⟪⊩⟫ [ Ψ ] A
+mlookup⟪⊩⟫ ξ 𝒾 = lookupAll ξ 𝒾
+
+mono⟪⊩⟫ : ∀ {{_ : Model}} {A w w′ Ψ} → w′ ⊒ w → w ⟪⊩⟫ [ Ψ ] A → w′ ⟪⊩⟫ [ Ψ ] A
+mono⟪⊩⟫ {A} θ q = λ θ′ ψ → q (trans⊒ θ′ θ) ψ
+
+mono⟪⊩⟫⋆ : ∀ {{_ : Model}} {Ξ w w′} → w′ ⊒ w → w ⟪⊩⟫⋆ Ξ → w′ ⟪⊩⟫⋆ Ξ
+mono⟪⊩⟫⋆ θ ξ = mapAll (λ { {[ Ψ ] A} → mono⟪⊩⟫ {A} θ }) ξ
 
 
 -- Continuations.
