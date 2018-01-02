@@ -1,3 +1,5 @@
+{-# OPTIONS --rewriting #-}
+
 module Prelude where
 
 open import Agda.Primitive public
@@ -5,6 +7,8 @@ open import Agda.Primitive public
 
 open import Agda.Builtin.Equality public
   using (_≡_ ; refl)
+
+{-# BUILTIN REWRITE _≡_ #-}
 
 open import Agda.Builtin.Nat public
   using (Nat ; zero ; suc)

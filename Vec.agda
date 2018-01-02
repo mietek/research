@@ -24,6 +24,12 @@ get : ∀ {X n} → Vec X n → Fin n
 get (Ξ , A) zero    = A
 get (Ξ , B) (suc i) = get Ξ i
 
+gets : ∀ {X n n′} → Vec X n′ → n′ ≥ n
+                  → Vec X n
+gets Ξ       done     = ∙
+gets (Ξ , A) (drop e) = gets Ξ e
+gets (Ξ , A) (keep e) = gets Ξ e , A
+
 zip : ∀ {X Y n} → Vec X n → Vec Y n
                 → Vec (X × Y) n
 zip ∙         ∙         = ∙
