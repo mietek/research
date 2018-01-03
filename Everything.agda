@@ -1,24 +1,50 @@
 module Everything where
 
+
+--------------------------------------------------------------------------------
+
+
 import Prelude
+
 import Fin
+import FinLemmas
+
 import List
+import ListLemmas
+import ListOrnaments
+
 import Vec
+import VecLemmas
+import VecOrnaments
+
+
+--------------------------------------------------------------------------------
+
 
 import StdIPL
-import StdIPLLemmas
+import StdIPLNormalForms
 import StdIPLSemantics
+import StdIPLLemmas
+
 import StdS4
+import StdS4NormalForms
 import StdS4Semantics
+
 import StdCML
+import StdCMLNormalForms
 import StdCMLSemantics
 
+import StdSTLCTerms
 import StdSTLC
--- import StdSTLCSemantics
-import StdS4TT
--- import StdS4TTSemantics
-import StdCMTT
--- import StdCMTTSemantics
 
--- import StdLPTT
--- import StdLPTTSemantics
+import StdS4TTTerms
+import StdS4TT
+
+import StdCMTTTerms
+import StdCMTT
+
+import StdLPTTTerms
+import StdLPTT
+
+
+--------------------------------------------------------------------------------
