@@ -71,6 +71,12 @@ ids : ∀ {Γ} → Γ ⊢⋆ Γ
 ids {∙}          = ∙
 ids {Γ , A true} = lifts ids
 
+hyps : ∀ {Γ Γ′} → Γ′ ⊇ Γ
+                → Γ′ ⊢⋆ Γ
+hyps done     = ∙
+hyps (drop η) = wks (hyps η)
+hyps (keep η) = lifts (hyps η)
+
 
 sub : ∀ {Γ Ξ A} → Γ ⊢⋆ Ξ → Ξ ⊢ A true
                 → Γ ⊢ A true
@@ -81,6 +87,11 @@ sub ξ (app 𝒟 ℰ) = app (sub ξ 𝒟) (sub ξ ℰ)
 cut : ∀ {Γ A B} → Γ ⊢ A true → Γ , A true ⊢ B true
                 → Γ ⊢ B true
 cut 𝒟 ℰ = sub (ids , 𝒟) ℰ
+
+
+subs : ∀ {Γ Ξ Ψ} → Γ ⊢⋆ Ξ → Ξ ⊢⋆ Ψ
+                 → Γ ⊢⋆ Ψ
+subs ξ ψ = mapAll (sub ξ) ψ
 
 
 unlam : ∀ {Γ A B} → Γ ⊢ A ⊃ B true

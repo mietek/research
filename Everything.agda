@@ -6,6 +6,7 @@ import List
 import Vec
 
 import StdIPL
+import StdIPLLemmas
 import StdIPLSemantics
 import StdS4
 import StdS4Semantics

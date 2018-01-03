@@ -20,6 +20,11 @@ open import Agda.Builtin.Unit public
 id : ∀ {ℓ} → {X : Set ℓ} → X → X
 id x = x
 
+flip : ∀ {ℓ ℓ′ ℓ″} → {X : Set ℓ} {Y : Set ℓ′} {Z : Set ℓ″}
+                   → (X → Y → Z) → Y → X
+                   → Z
+flip f y x = f x y
+
 _∘_ : ∀ {ℓ ℓ′ ℓ″} → {X : Set ℓ} {P : X → Set ℓ′} {Q : ∀ {x} → P x → Set ℓ″}
                   → (g : ∀ {x} → (y : P x) → Q y) (f : (x : X) → P x) (x : X)
                   → Q (f x)

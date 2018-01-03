@@ -25,6 +25,12 @@ get ∙       ()
 get (Ξ , A) zero    = A
 get (Ξ , B) (suc i) = get Ξ i
 
+gets : ∀ {X n} → (Ξ : List X) → len Ξ ≥ n
+               → List X
+gets ∙       done     = ∙
+gets (Ξ , A) (drop e) = gets Ξ e
+gets (Ξ , A) (keep e) = gets Ξ e , A
+
 
 infix 4 _⊇_
 data _⊇_ {X} : List X → List X → Set
@@ -64,6 +70,30 @@ keep η₁ ∘⊇ keep η₂ = keep (η₁ ∘⊇ η₂)
 ⌊ keep η ⌋⊇ = keep ⌊ η ⌋⊇
 
 
+lid∘⊇ : ∀ {X} → {Ξ Ξ′ : List X}
+              → (η : Ξ′ ⊇ Ξ)
+              → id⊇ ∘⊇ η ≡ η
+lid∘⊇ done     = refl
+lid∘⊇ (drop η) = drop & lid∘⊇ η
+lid∘⊇ (keep η) = keep & lid∘⊇ η
+
+rid∘⊇ : ∀ {X} → {Ξ Ξ′ : List X}
+              → (η : Ξ′ ⊇ Ξ)
+              → η ∘⊇ id⊇ ≡ η
+rid∘⊇ done     = refl
+rid∘⊇ (drop η) = drop & rid∘⊇ η
+rid∘⊇ (keep η) = keep & rid∘⊇ η
+
+assoc∘⊇ : ∀ {X} → {Ξ Ξ′ Ξ″ Ξ‴ : List X}
+                → (η₁ : Ξ′ ⊇ Ξ) (η₂ : Ξ″ ⊇ Ξ′) (η₃ : Ξ‴ ⊇ Ξ″)
+                → η₁ ∘⊇ (η₂ ∘⊇ η₃) ≡ (η₁ ∘⊇ η₂) ∘⊇ η₃
+assoc∘⊇ η₁        η₂        done      = refl
+assoc∘⊇ η₁        η₂        (drop η₃) = drop & assoc∘⊇ η₁ η₂ η₃
+assoc∘⊇ η₁        (drop η₂) (keep η₃) = drop & assoc∘⊇ η₁ η₂ η₃
+assoc∘⊇ (drop η₁) (keep η₂) (keep η₃) = drop & assoc∘⊇ η₁ η₂ η₃
+assoc∘⊇ (keep η₁) (keep η₂) (keep η₃) = keep & assoc∘⊇ η₁ η₂ η₃
+
+
 infix 4 _∋_
 data _∋_ {X} : List X → X → Set
   where
@@ -86,6 +116,23 @@ ren∋ done     𝒾       = 𝒾
 ren∋ (drop η) 𝒾       = suc (ren∋ η 𝒾)
 ren∋ (keep η) zero    = zero
 ren∋ (keep η) (suc 𝒾) = suc (ren∋ η 𝒾)
+
+
+idren∋ : ∀ {X A} → {Ξ : List X}
+                 → (𝒾 : Ξ ∋ A)
+                 → ren∋ id⊇ 𝒾 ≡ 𝒾
+idren∋ zero    = refl
+idren∋ (suc 𝒾) = suc & idren∋ 𝒾
+
+assocren∋ : ∀ {X A} → {Ξ Ξ′ Ξ″ : List X}
+                    → (η₁ : Ξ′ ⊇ Ξ) (η₂ : Ξ″ ⊇ Ξ′) (𝒾 : Ξ ∋ A)
+                    → ren∋ η₂ (ren∋ η₁ 𝒾) ≡ ren∋ (η₁ ∘⊇ η₂) 𝒾
+assocren∋ η₁        done      𝒾       = refl
+assocren∋ η₁        (drop η₂) 𝒾       = suc & assocren∋ η₁ η₂ 𝒾
+assocren∋ (drop η₁) (keep η₂) 𝒾       = suc & assocren∋ η₁ η₂ 𝒾
+assocren∋ (keep η₁) (keep η₂) zero    = refl
+assocren∋ (keep η₁) (keep η₂) (suc 𝒾) = suc & assocren∋ η₁ η₂ 𝒾
+
 
 ⌊_⌋∋ : ∀ {X A} → {Ξ : List X}
                → Ξ ∋ A
@@ -113,6 +160,13 @@ lookup : ∀ {X P A} → {Ξ : List X}
                    → P A
 lookup (ξ , x) zero    = x
 lookup (ξ , y) (suc 𝒾) = lookup ξ 𝒾
+
+lookups : ∀ {X P} → {Ξ : List X} {Ξ′ : List X}
+                  → All P Ξ′ → Ξ′ ⊇ Ξ
+                  → All P Ξ
+lookups ξ       done     = ∙
+lookups (ξ , x) (drop η) = lookups ξ η
+lookups (ξ , y) (keep η) = lookups ξ η , y
 
 mapAll : ∀ {X P Q} → {Ξ : List X}
                    → (∀ {A} → P A → Q A) → All P Ξ

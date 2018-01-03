@@ -1,3 +1,5 @@
+{-# OPTIONS --rewriting #-}
+
 module Vec where
 
 open import Prelude
@@ -69,6 +71,33 @@ drop η₁ ∘⊇ keep η₂ = drop (η₁ ∘⊇ η₂)
 keep η₁ ∘⊇ keep η₂ = keep (η₁ ∘⊇ η₂)
 
 
+-- NOTE: Uses REWRITE lid∘≥
+-- lid∘⊇ : ∀ {X n n′ e} → {Ξ : Vec X n} {Ξ′ : Vec X n′}
+--                      → (η : Ξ′ ⊇⟨ e ⟩ Ξ)
+--                      → id⊇ ∘⊇ η ≡ η
+-- lid∘⊇ done     = refl
+-- lid∘⊇ (drop η) = drop & lid∘⊇ η
+-- lid∘⊇ (keep η) = keep & lid∘⊇ η
+
+-- NOTE: Uses REWRITE rid∘≥
+-- rid∘⊇ : ∀ {X n n′ e} → {Ξ : Vec X n} {Ξ′ : Vec X n′}
+--                      → (η : Ξ′ ⊇⟨ e ⟩ Ξ)
+--                      → η ∘⊇ id⊇ ≡ η
+-- rid∘⊇ done     = refl
+-- rid∘⊇ (drop η) = drop & rid∘⊇ η
+-- rid∘⊇ (keep η) = keep & rid∘⊇ η
+
+-- NOTE: Uses REWRITE assoc∘≥
+-- assoc∘⊇ : ∀ {X n n′ n″ n‴ e₁ e₂ e₃} → {Ξ : Vec X n} {Ξ′ : Vec X n′} {Ξ″ : Vec X n″} {Ξ‴ : Vec X n‴}
+--                                     → (η₁ : Ξ′ ⊇⟨ e₁ ⟩ Ξ) (η₂ : Ξ″ ⊇⟨ e₂ ⟩ Ξ′) (η₃ : Ξ‴ ⊇⟨ e₃ ⟩ Ξ″)
+--                                     → η₁ ∘⊇ (η₂ ∘⊇ η₃) ≡ (η₁ ∘⊇ η₂) ∘⊇ η₃
+-- assoc∘⊇ η₁        η₂        done      = refl
+-- assoc∘⊇ η₁        η₂        (drop η₃) = drop & assoc∘⊇ η₁ η₂ η₃
+-- assoc∘⊇ η₁        (drop η₂) (keep η₃) = drop & assoc∘⊇ η₁ η₂ η₃
+-- assoc∘⊇ (drop η₁) (keep η₂) (keep η₃) = drop & assoc∘⊇ η₁ η₂ η₃
+-- assoc∘⊇ (keep η₁) (keep η₂) (keep η₃) = keep & assoc∘⊇ η₁ η₂ η₃
+
+
 infix 4 _∋⟨_⟩_
 data _∋⟨_⟩_ {X} : ∀ {n} → Vec X n → Fin n → X → Set
   where
@@ -104,6 +133,24 @@ zip∋₂ : ∀ {X Y A₂ n i} → {Ξ₁ : Vec X n} {Ξ₂ : Vec Y n}
                        → zip Ξ₁ Ξ₂ ∋⟨ i ⟩ (get Ξ₁ i , A₂)
 zip∋₂ {Ξ₁ = Ξ₁ , A₁} {Ξ₂ , A₂} zero    = zero
 zip∋₂ {Ξ₁ = Ξ₁ , B₁} {Ξ₂ , B₂} (suc 𝒾) = suc (zip∋₂ 𝒾)
+
+
+-- NOTE: Uses REWRITE idrenFin
+-- idren∋ : ∀ {X A n i} → {Ξ : Vec X n}
+--                      → (𝒾 : Ξ ∋⟨ i ⟩ A)
+--                      → ren∋ id⊇ 𝒾 ≡ 𝒾
+-- idren∋ zero    = refl
+-- idren∋ (suc 𝒾) = suc & idren∋ 𝒾
+
+-- NOTE: Uses REWRITE assocrenFin
+-- assocren∋ : ∀ {X A n n′ n″ e₁ e₂ i} → {Ξ : Vec X n} {Ξ′ : Vec X n′} {Ξ″ : Vec X n″}
+--                                     → (η₁ : Ξ′ ⊇⟨ e₁ ⟩ Ξ) (η₂ : Ξ″ ⊇⟨ e₂ ⟩ Ξ′) (𝒾 : Ξ ∋⟨ i ⟩ A)
+--                                     → ren∋ η₂ (ren∋ η₁ 𝒾) ≡ ren∋ (η₁ ∘⊇ η₂) 𝒾
+-- assocren∋ η₁        done      𝒾       = refl
+-- assocren∋ η₁        (drop η₂) 𝒾       = suc & assocren∋ η₁ η₂ 𝒾
+-- assocren∋ (drop η₁) (keep η₂) 𝒾       = suc & assocren∋ η₁ η₂ 𝒾
+-- assocren∋ (keep η₁) (keep η₂) zero    = refl
+-- assocren∋ (keep η₁) (keep η₂) (suc 𝒾) = suc & assocren∋ η₁ η₂ 𝒾
 
 
 data All {X} (P : X → Set) : ∀ {n} → Vec X n → Set
