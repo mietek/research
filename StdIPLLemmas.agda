@@ -84,8 +84,8 @@ ids-lookup : ∀ {Γ A} → (𝒾 : Γ ∋ A true)
                      → lookup ids 𝒾 ≡ var 𝒾
 ids-lookup zero    = refl
 ids-lookup (suc 𝒾) = wks-lookup ids 𝒾
-                   ⦙ wk & ids-lookup 𝒾
-                   ⦙ (\ 𝒾′ → var (suc 𝒾′)) & id-ren∋ 𝒾
+                   ⋮ wk & ids-lookup 𝒾
+                   ⋮ (\ 𝒾′ → var (suc 𝒾′)) & id-ren∋ 𝒾
 
 
 subs-lookup : ∀ {Γ Ξ Ψ A} → (ξ : Γ ⊢⋆ Ξ) (ψ : Ξ ⊢⋆ Ψ) (𝒾 : Ψ ∋ A true)
@@ -187,7 +187,7 @@ drop-wks-rens : ∀ {Γ Γ′ Ξ A} → (η : Γ′ ⊇ Γ) (ξ : Γ ⊢⋆ Ξ)
 drop-wks-rens η ∙       = refl
 drop-wks-rens η (ξ , 𝒟) = _,_ & drop-wks-rens η ξ
                               ⊗ ( (\ η′ → ren (drop η′) 𝒟) & rid-∘⊇ η ⁻¹
-                                ⦙ comp-ren η (drop id⊇) 𝒟
+                                ⋮ comp-ren η (drop id⊇) 𝒟
                                 )
 
 
@@ -196,8 +196,8 @@ keep-wks-rens : ∀ {Γ Γ′ Ξ A} → (η : Γ′ ⊇ Γ) (ξ : Γ ⊢⋆ Ξ)
 keep-wks-rens η ∙       = refl
 keep-wks-rens η (ξ , 𝒟) = _,_ & keep-wks-rens η ξ
                               ⊗ ( comp-ren (drop id⊇) (keep η) 𝒟 ⁻¹
-                                ⦙ (\ η′ → ren (drop η′) 𝒟) & (lid-∘⊇ η ⦙ rid-∘⊇ η ⁻¹)
-                                ⦙ comp-ren η (drop id⊇) 𝒟
+                                ⋮ (\ η′ → ren (drop η′) 𝒟) & (lid-∘⊇ η ⋮ rid-∘⊇ η ⁻¹)
+                                ⋮ comp-ren η (drop id⊇) 𝒟
                                 )
 
 
@@ -226,7 +226,7 @@ mutual
   lookups-lifts-sub : ∀ {Γ Ξ Ξ′ A B} → (ξ : Γ ⊢⋆ Ξ′) (η : Ξ′ ⊇ Ξ) (𝒟 : Ξ , B true ⊢ A true)
                                      → sub (lifts {B} (lookups ξ η)) 𝒟 ≡ sub (lifts ξ) (ren (keep η) 𝒟)
   lookups-lifts-sub ξ η 𝒟 = (\ ξ′ → sub ξ′ 𝒟) & lifts-lookups ξ η ⁻¹
-                          ⦙ lookups-sub (lifts ξ) (keep η) 𝒟
+                          ⋮ lookups-sub (lifts ξ) (keep η) 𝒟
 
 
 mutual
@@ -239,7 +239,7 @@ mutual
   rens-lifts-sub : ∀ {Γ Γ′ Ξ A B} → (η : Γ′ ⊇ Γ) (ξ : Γ ⊢⋆ Ξ) (𝒟 : Ξ , B true ⊢ A true)
                                   → sub (lifts {B} (rens η ξ)) 𝒟 ≡ ren (keep η) (sub (lifts ξ) 𝒟)
   rens-lifts-sub η ξ 𝒟 = (\ ξ′ → sub ξ′ 𝒟) & keep-lifts-rens η ξ ⁻¹
-                       ⦙ rens-sub (keep η) (lifts ξ) 𝒟
+                       ⋮ rens-sub (keep η) (lifts ξ) 𝒟
 
 
 --------------------------------------------------------------------------------
@@ -250,7 +250,7 @@ absorb-subs : ∀ {Γ Ξ Ψ A} → (ξ : Γ ⊢⋆ Ξ) (ψ : Ξ ⊢⋆ Ψ) (𝒟
 absorb-subs ξ ∙       𝒟 = refl
 absorb-subs ξ (ψ , ℰ) 𝒟 = _,_ & absorb-subs ξ ψ 𝒟
                               ⊗ ( lookups-sub (ξ , 𝒟) (drop id⊇) ℰ ⁻¹
-                                ⦙ (\ ξ′ → sub ξ′ ℰ) & id-lookups ξ
+                                ⋮ (\ ξ′ → sub ξ′ ℰ) & id-lookups ξ
                                 )
 
 
@@ -264,7 +264,7 @@ rid-subs : ∀ {Γ Ξ} → (ξ : Γ ⊢⋆ Ξ)
                    → subs ξ ids ≡ ξ
 rid-subs ∙       = refl
 rid-subs (ξ , 𝒟) = (_, 𝒟) & ( absorb-subs ξ ids 𝒟
-                            ⦙ rid-subs ξ
+                            ⋮ rid-subs ξ
                             )
 
 
@@ -288,18 +288,18 @@ wks-subs ξ ψ = rens-subs (drop id⊇) ξ ψ
 lifts-subs : ∀ {Γ Ξ Ψ A} → (ξ : Γ ⊢⋆ Ξ) (ψ : Ξ ⊢⋆ Ψ)
                          → subs (lifts {A} ξ) (lifts ψ) ≡ lifts (subs ξ ψ)
 lifts-subs ξ ψ = (_, vz) & ( absorb-subs (wks ξ) ψ vz
-                           ⦙ wks-subs ξ ψ
+                           ⋮ wks-subs ξ ψ
                            )
 
 
 lid-rens-subs : ∀ {Γ Γ′ Ξ} → (η : Γ′ ⊇ Γ) (ξ : Γ ⊢⋆ Ξ)
                            → subs (rens η ids) ξ ≡ rens η ξ
-lid-rens-subs η ξ = rens-subs η ids ξ ⦙ (rens η & lid-subs ξ)
+lid-rens-subs η ξ = rens-subs η ids ξ ⋮ (rens η & lid-subs ξ)
 
 
 rid-rens-subs : ∀ {Γ Γ′ Ξ} → (η : Γ′ ⊇ Γ) (ξ : Γ ⊢⋆ Ξ)
                            → subs (rens η ξ) ids ≡ rens η ξ
-rid-rens-subs η ξ = rens-subs η ξ ids ⦙ (rens η & rid-subs ξ)
+rid-rens-subs η ξ = rens-subs η ξ ids ⋮ (rens η & rid-subs ξ)
 
 
 lid-wks-subs : ∀ {Γ Ξ A} → (ξ : Γ ⊢⋆ Ξ)
@@ -325,7 +325,7 @@ mutual
   subs-lifts-sub : ∀ {Γ Ξ Ψ A B} → (ξ : Γ ⊢⋆ Ξ) (ψ : Ξ ⊢⋆ Ψ) (𝒟 : Ψ , B true ⊢ A true)
                                  → sub (lifts {B} (subs ξ ψ)) 𝒟 ≡ sub (lifts ξ) (sub (lifts ψ) 𝒟)
   subs-lifts-sub ξ ψ 𝒟 = (\ ξ′ → sub ξ′ 𝒟) & lifts-subs ξ ψ ⁻¹
-                       ⦙ subs-sub (lifts ξ) (lifts ψ) 𝒟
+                       ⋮ subs-sub (lifts ξ) (lifts ψ) 𝒟
 
 
 --------------------------------------------------------------------------------

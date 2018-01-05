@@ -290,11 +290,11 @@ ren∋◈ {i = i} {Aᵥ = Aᵥ} done 𝒾             = coerce 𝒾 ((\ Aᵥ′ 
 ren∋◈         {Aᵥ = Aᵥ} (drop {e = e} η) 𝒾 = suc {{comp-MRENᵥ e (drop id≥) Aᵥ ⁻¹}} (ren∋◈ η 𝒾)
 ren∋◈                   (keep {e = e} {Aᵥ = Aᵥ} {{refl}} η) (zero {{refl}})
   = zero {{ comp-MRENᵥ e (drop id≥) Aᵥ ⁻¹
-          ⦙ comp-MRENᵥ (drop id≥) (keep e) Aᵥ
+          ⋮ comp-MRENᵥ (drop id≥) (keep e) Aᵥ
          }}
 ren∋◈                   (keep {e = e} {{refl}} η) (suc {Aᵥ = Aᵥ} {{refl}} 𝒾)
   = suc {{ comp-MRENᵥ e (drop id≥) Aᵥ ⁻¹
-         ⦙ comp-MRENᵥ (drop id≥) (keep e) Aᵥ
+         ⋮ comp-MRENᵥ (drop id≥) (keep e) Aᵥ
         }} (ren∋◈ η 𝒾)
 
 
@@ -379,20 +379,21 @@ vz = var zero
 --------------------------------------------------------------------------------
 
 
-mren : ∀ {d d′ g e M} → {Δ : Validities d} {Δ′ : Validities d′} {Γ : Truths d g}
-                         {A : Prop d}
-                      → Δ′ ⊇⟪ e ⟫ Δ → Δ ⋙ [ Γ ⊢ M ⦂ A true ]
-                      → Δ′ ⋙ [ MRENSₜ e Γ ⊢ MREN e M ⦂ MRENₚ e A true ]
-mren η (var 𝒾)   = var (resp-MRENSₜ-∋ _ 𝒾)
-mren η (lam 𝒟)   = lam (mren η 𝒟)
-mren η (app 𝒟 ℰ) = app (mren η 𝒟) (mren η ℰ)
-mren η (mvar 𝒾)  = mvar (ren∋◈ η 𝒾)
-mren η (box 𝒟)   = box (mren η 𝒟)
-mren {e = e} η (letbox {O = O} {Γ = Γ} {A = A} {B} {{refl}} {{refl}} 𝒟 ℰ)
-  = letbox {{ comp-MRENSₜ (drop id≥) (keep e) Γ ⁻¹
-            ⦙ comp-MRENSₜ e (drop id≥) Γ
-           }} {{ {!refl!}
-           }} (mren η 𝒟) (mren (keep {{refl}} η) ℰ)
+postulate
+  mren : ∀ {d d′ g e M} → {Δ : Validities d} {Δ′ : Validities d′} {Γ : Truths d g}
+                           {A : Prop d}
+                        → Δ′ ⊇⟪ e ⟫ Δ → Δ ⋙ [ Γ ⊢ M ⦂ A true ]
+                        → Δ′ ⋙ [ MRENSₜ e Γ ⊢ MREN e M ⦂ MRENₚ e A true ]
+-- mren η (var 𝒾)   = var (resp-MRENSₜ-∋ _ 𝒾)
+-- mren η (lam 𝒟)   = lam (mren η 𝒟)
+-- mren η (app 𝒟 ℰ) = app (mren η 𝒟) (mren η ℰ)
+-- mren η (mvar 𝒾)  = mvar (ren∋◈ η 𝒾)
+-- mren η (box 𝒟)   = box (mren η 𝒟)
+-- mren {e = e} η (letbox {O = O} {Γ = Γ} {A = A} {B} {{refl}} {{refl}} 𝒟 ℰ)
+--   = letbox {{ comp-MRENSₜ (drop id≥) (keep e) Γ ⁻¹
+--             ⋮ comp-MRENSₜ e (drop id≥) Γ
+--            }} {{ {!refl!}
+--            }} (mren η 𝒟) (mren (keep {{refl}} η) ℰ)
 
 
 mwk : ∀ {d g M} → {Δ : Validities d} {Γ : Truths d g}

@@ -81,8 +81,8 @@ comm-get-IDS : ∀ {d g} → (i : Fin g)
                        → get (IDS {d}) i ≡ VAR i
 comm-get-IDS zero    = refl
 comm-get-IDS (suc i) = comm-get-WKS IDS i
-                     ⦙ WK & comm-get-IDS i
-                     ⦙ (\ i′ → VAR (suc i′)) & id-renF i
+                     ⋮ WK & comm-get-IDS i
+                     ⋮ (\ i′ → VAR (suc i′)) & id-renF i
 
 
 id-RENS : ∀ {d g x} → (ζ : Terms d g x)
@@ -142,10 +142,10 @@ comm-MRENS-RENS e₁ e₂ (ζ , M) = _,_ & comm-MRENS-RENS e₁ e₂ ζ ⊗ comm
 --                      → get (MRENS e IDS) i ≡ VAR i
 -- xcomm-get-IDS e zero    = refl
 -- xcomm-get-IDS e (suc i) = xcomm-get-WKS e IDS i
---                   ⦙ comm-MREN-REN e (drop id≥) (get IDS i)
---                   ⦙ REN (drop id≥) & comm-get-MRENS e IDS i ⁻¹
---                   ⦙ WK & xcomm-get-IDS e i
---                   ⦙ VAR & (suc & id-renF i)
+--                   ⋮ comm-MREN-REN e (drop id≥) (get IDS i)
+--                   ⋮ REN (drop id≥) & comm-get-MRENS e IDS i ⁻¹
+--                   ⋮ WK & xcomm-get-IDS e i
+--                   ⋮ VAR & (suc & id-renF i)
 
 
 -- huh : ∀ {d d′ g} → (e : d′ ≥ d) (M : Term d g)
@@ -154,14 +154,14 @@ comm-MRENS-RENS e₁ e₂ (ζ , M) = _,_ & comm-MRENS-RENS e₁ e₂ ζ ⊗ comm
 -- huh e (LAM M)      = LAM & huh e M
 -- huh e (APP M N)    = APP & huh e M ⊗ huh e N
 -- huh e (MVAR i)     = MVAR & ( suc & ( id-renF (renF e i)
---                                     ⦙ renF e & id-renF i ⁻¹
+--                                     ⋮ renF e & id-renF i ⁻¹
 --                                     )
 --                             )
 -- huh e (BOX M)      = BOX & huh e M
 -- huh e (LETBOX M N) = LETBOX & huh e M ⊗ ( comp-MREN (keep e) (keep (drop id≥)) N
---                                         ⦙ ( comp-MREN (keep (drop id≥)) (keep (keep e)) N
---                                           ⦙ (\ e′ → MREN (keep (drop e′)) N)
---                                             & (lid-∘≥ e ⦙ rid-∘≥ e ⁻¹)
+--                                         ⋮ ( comp-MREN (keep (drop id≥)) (keep (keep e)) N
+--                                           ⋮ (\ e′ → MREN (keep (drop e′)) N)
+--                                             & (lid-∘≥ e ⋮ rid-∘≥ e ⁻¹)
 --                                           ) ⁻¹
 --                                         )
 --
@@ -192,7 +192,7 @@ comm-MRENS-RENS e₁ e₂ (ζ , M) = _,_ & comm-MRENS-RENS e₁ e₂ ζ ⊗ comm
 --                                 & ( (_, VZ)
 --                                     & comm-MRENS-RENS (drop id≥) e IDS
 --                                   ) ⁻¹
---                               ⦙ xidSUB e M
+--                               ⋮ xidSUB e M
 --                               )
 -- xidSUB e (APP M N)    = APP & xidSUB e M ⊗ xidSUB e N
 -- xidSUB e (MVAR i)     = refl
@@ -200,8 +200,8 @@ comm-MRENS-RENS e₁ e₂ (ζ , M) = _,_ & comm-MRENS-RENS e₁ e₂ ζ ⊗ comm
 -- xidSUB e (LETBOX M N) = LETBOX & xidSUB e M ⊗ {!!}
 -- -- xidSUB e (LETBOX M N) = LETBOX & xidSUB e M ⊗ ( (\ ζ → SUB ζ N)
 -- --                                                 & huhs e IDS
--- --                                                 ⦙ {!(\ !}
--- --                                               ⦙ xidSUB (keep e) N
+-- --                                                 ⋮ {!(\ !}
+-- --                                               ⋮ xidSUB (keep e) N
 -- --                                               )
 
 
@@ -236,8 +236,8 @@ comm-get-MIDS₁ : ∀ {d} → (i : Fin d)
                        → get (MIDS₁ {d}) i ≡ MVAR i
 comm-get-MIDS₁ zero    = refl
 comm-get-MIDS₁ (suc i) = comm-get-MWKS₁ MIDS₁ i
-                       ⦙ MWK & comm-get-MIDS₁ i
-                       ⦙ (\ i′ → MVAR (suc i′)) & id-renF i
+                       ⋮ MWK & comm-get-MIDS₁ i
+                       ⋮ (\ i′ → MVAR (suc i′)) & id-renF i
 
 
 id-MRENS₁ : ∀ {d x} → (ζ : Terms₁ d x)

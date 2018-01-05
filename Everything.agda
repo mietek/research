@@ -46,8 +46,8 @@ import StdCMTT
 
 import StdLPTTTerms
 import StdLPTTTermsLemmas
--- import StdLPTT
--- import StdLPTTLemmas
+import StdLPTT
+import StdLPTTLemmas
 
 
 --------------------------------------------------------------------------------

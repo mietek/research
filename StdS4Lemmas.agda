@@ -116,8 +116,8 @@ ids-lookup : ∀ {Δ Γ A} → (𝒾 : Γ ∋ A true)
                        → lookup (ids {Δ = Δ}) 𝒾 ≡ var 𝒾
 ids-lookup zero    = refl
 ids-lookup (suc 𝒾) = wks-lookup ids 𝒾
-                   ⦙ wk & ids-lookup 𝒾
-                   ⦙ (\ 𝒾′ → var (suc 𝒾′)) & id-ren∋ 𝒾
+                   ⋮ wk & ids-lookup 𝒾
+                   ⋮ (\ 𝒾′ → var (suc 𝒾′)) & id-ren∋ 𝒾
 
 
 mrens-lookup : ∀ {Δ Δ′ Γ Ξ A} → (η : Δ′ ⊇ Δ) (ξ : Δ ⨾ Γ ⊢⋆ Ξ) (𝒾 : Ξ ∋ A true)
@@ -146,8 +146,8 @@ mids₁-lookup : ∀ {Δ A} → (𝒾 : Δ ∋ A valid)
                        → lookup mids₁ 𝒾 ≡ mvar 𝒾
 mids₁-lookup zero    = refl
 mids₁-lookup (suc 𝒾) = mwks₁-lookup mids₁ 𝒾
-                     ⦙ mwk & mids₁-lookup 𝒾
-                     ⦙ (\ 𝒾′ → mvar (suc 𝒾′)) & id-ren∋ 𝒾
+                     ⋮ mwk & mids₁-lookup 𝒾
+                     ⋮ (\ 𝒾′ → mvar (suc 𝒾′)) & id-ren∋ 𝒾
 
 
 subs-lookup : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⨾ Γ ⊢⋆ Ξ) (ψ : Δ ⨾ Ξ ⊢⋆ Ψ) (𝒾 : Ψ ∋ A true)
@@ -340,7 +340,7 @@ drop-wks-rens : ∀ {Δ Γ Γ′ Ξ A} → (η : Γ′ ⊇ Γ) (ξ : Δ ⨾ Γ �
 drop-wks-rens η ∙       = refl
 drop-wks-rens η (ξ , 𝒟) = _,_ & drop-wks-rens η ξ
                               ⊗ ( (\ η′ → ren (drop η′) 𝒟) & rid-∘⊇ η ⁻¹
-                                ⦙ comp-ren η (drop id⊇) 𝒟
+                                ⋮ comp-ren η (drop id⊇) 𝒟
                                 )
 
 
@@ -349,8 +349,8 @@ keep-wks-rens : ∀ {Δ Γ Γ′ Ξ A} → (η : Γ′ ⊇ Γ) (ξ : Δ ⨾ Γ �
 keep-wks-rens η ∙       = refl
 keep-wks-rens η (ξ , 𝒟) = _,_ & keep-wks-rens η ξ
                               ⊗ ( comp-ren (drop id⊇) (keep η) 𝒟 ⁻¹
-                                ⦙ (\ η′ → ren (drop η′) 𝒟) & (lid-∘⊇ η ⦙ rid-∘⊇ η ⁻¹)
-                                ⦙ comp-ren η (drop id⊇) 𝒟
+                                ⋮ (\ η′ → ren (drop η′) 𝒟) & (lid-∘⊇ η ⋮ rid-∘⊇ η ⁻¹)
+                                ⋮ comp-ren η (drop id⊇) 𝒟
                                 )
 
 
@@ -379,7 +379,7 @@ drop-mwks-mrens : ∀ {Δ Δ′ Γ Ξ A} → (η : Δ′ ⊇ Δ) (ξ : Δ ⨾ Γ
 drop-mwks-mrens η ∙       = refl
 drop-mwks-mrens η (ξ , 𝒟) = _,_ & drop-mwks-mrens η ξ
                                 ⊗ ( (\ η′ → mren (drop η′) 𝒟) & rid-∘⊇ η ⁻¹
-                                  ⦙ comp-mren η (drop id⊇) 𝒟
+                                  ⋮ comp-mren η (drop id⊇) 𝒟
                                   )
 
 
@@ -388,8 +388,8 @@ keep-mwks-mrens : ∀ {Δ Δ′ Γ Ξ A} → (η : Δ′ ⊇ Δ) (ξ : Δ ⨾ Γ
 keep-mwks-mrens η ∙       = refl
 keep-mwks-mrens η (ξ , 𝒟) = _,_ & keep-mwks-mrens η ξ
                                 ⊗ ( comp-mren (drop id⊇) (keep η) 𝒟 ⁻¹
-                                  ⦙ (\ η′ → mren (drop η′) 𝒟) & (lid-∘⊇ η ⦙ rid-∘⊇ η ⁻¹)
-                                  ⦙ comp-mren η (drop id⊇) 𝒟
+                                  ⋮ (\ η′ → mren (drop η′) 𝒟) & (lid-∘⊇ η ⋮ rid-∘⊇ η ⁻¹)
+                                  ⋮ comp-mren η (drop id⊇) 𝒟
                                   )
 
 
@@ -413,7 +413,7 @@ drop-mwks₁-mrens₁ : ∀ {Δ Δ′ Ξ A} → (η : Δ′ ⊇ Δ) (ξ : Δ ⊢
 drop-mwks₁-mrens₁ η ∙       = refl
 drop-mwks₁-mrens₁ η (ξ , 𝒟) = _,_ & drop-mwks₁-mrens₁ η ξ
                                   ⊗ ( (\ η′ → mren (drop η′) 𝒟) & rid-∘⊇ η ⁻¹
-                                    ⦙ comp-mren η (drop id⊇) 𝒟
+                                    ⋮ comp-mren η (drop id⊇) 𝒟
                                     )
 
 
@@ -422,8 +422,8 @@ keep-mwks₁-mrens₁ : ∀ {Δ Δ′ Ξ A} → (η : Δ′ ⊇ Δ) (ξ : Δ ⊢
 keep-mwks₁-mrens₁ η ∙       = refl
 keep-mwks₁-mrens₁ η (ξ , 𝒟) = _,_ & keep-mwks₁-mrens₁ η ξ
                                   ⊗ ( comp-mren (drop id⊇) (keep η) 𝒟 ⁻¹
-                                    ⦙ (\ η′ → mren (drop η′) 𝒟) & (lid-∘⊇ η ⦙ rid-∘⊇ η ⁻¹)
-                                    ⦙ comp-mren η (drop id⊇) 𝒟
+                                    ⋮ (\ η′ → mren (drop η′) 𝒟) & (lid-∘⊇ η ⋮ rid-∘⊇ η ⁻¹)
+                                    ⋮ comp-mren η (drop id⊇) 𝒟
                                     )
 
 
@@ -477,12 +477,12 @@ mutual
   mren-lifts-sub : ∀ {Δ Δ′ Γ Ξ A B} → (η : Δ′ ⊇ Δ) (ξ : Δ ⨾ Γ ⊢⋆ Ξ) (𝒟 : Δ ⨾ Ξ , B true ⊢ A true)
                                     → sub (lifts {B} (mrens η ξ)) (mren η 𝒟) ≡ mren η (sub (lifts ξ) 𝒟)
   mren-lifts-sub η ξ 𝒟 = (\ ξ′ → sub ξ′ (mren η 𝒟)) & lifts-mrens η ξ ⁻¹
-                       ⦙ mren-sub η (lifts ξ) 𝒟
+                       ⋮ mren-sub η (lifts ξ) 𝒟
 
   mren-mwks-sub : ∀ {Δ Δ′ Γ Ξ A B} → (η : Δ′ ⊇ Δ) (ξ : Δ ⨾ Γ ⊢⋆ Ξ) (𝒟 : Δ , B valid ⨾ Ξ ⊢ A true)
                                    → sub (mwks {B} (mrens η ξ)) (mren (keep η) 𝒟) ≡ mren (keep η) (sub (mwks ξ) 𝒟)
   mren-mwks-sub η ξ 𝒟 = (\ ξ′ → sub ξ′ (mren (keep η) 𝒟)) & keep-mwks-mrens η ξ ⁻¹
-                      ⦙ mren-sub (keep η) (mwks ξ) 𝒟
+                      ⋮ mren-sub (keep η) (mwks ξ) 𝒟
 
 
 mrens-subs : ∀ {Δ Δ′ Γ Ξ Ψ} → (η : Δ′ ⊇ Δ) (ξ : Δ ⨾ Γ ⊢⋆ Ξ) (ψ : Δ ⨾ Ξ ⊢⋆ Ψ)
@@ -501,16 +501,16 @@ mwks-subs ξ ψ = mrens-subs (drop id⊇) ξ ψ
 id-mrens-sub : ∀ {Δ Δ′ Γ A} → (η : Δ′ ⊇ Δ) (𝒟 : Δ′ ⨾ Γ ⊢ A true)
                             → sub (mrens η ids) 𝒟 ≡ 𝒟
 id-mrens-sub η (var 𝒾)      = mrens-lookup η ids 𝒾
-                            ⦙ mren η & ids-lookup 𝒾
+                            ⋮ mren η & ids-lookup 𝒾
 id-mrens-sub η (lam 𝒟)      = lam & ( (\ ξ′ → sub ξ′ 𝒟) & lifts-mrens η ids ⁻¹
-                                    ⦙ id-mrens-sub η 𝒟
+                                    ⋮ id-mrens-sub η 𝒟
                                     )
 id-mrens-sub η (app 𝒟 ℰ)    = app & id-mrens-sub η 𝒟 ⊗ id-mrens-sub η ℰ
 id-mrens-sub η (mvar 𝒾)     = refl
 id-mrens-sub η (box 𝒟)      = refl
 id-mrens-sub η (letbox 𝒟 ℰ) = letbox & id-mrens-sub η 𝒟
                                      ⊗ ( (\ ξ′ → sub ξ′ ℰ) & drop-mwks-mrens η ids ⁻¹
-                                       ⦙ id-mrens-sub (drop η) ℰ
+                                       ⋮ id-mrens-sub (drop η) ℰ
                                        )
 
 
@@ -537,12 +537,12 @@ mutual
   lookups-lifts-sub : ∀ {Δ Γ Ξ Ξ′ A B} → (ξ : Δ ⨾ Γ ⊢⋆ Ξ′) (η : Ξ′ ⊇ Ξ) (𝒟 : Δ ⨾ Ξ , B true ⊢ A true)
                                        → sub (lifts {B} (lookups ξ η)) 𝒟 ≡ sub (lifts ξ) (ren (keep η) 𝒟)
   lookups-lifts-sub ξ η 𝒟 = (\ ξ′ → sub ξ′ 𝒟) & lifts-lookups ξ η ⁻¹
-                          ⦙ lookups-sub (lifts ξ) (keep η) 𝒟
+                          ⋮ lookups-sub (lifts ξ) (keep η) 𝒟
 
   lookups-mwks-sub : ∀ {Δ Γ Ξ Ξ′ A B} → (ξ : Δ ⨾ Γ ⊢⋆ Ξ′) (η : Ξ′ ⊇ Ξ) (𝒟 : Δ , B valid ⨾ Ξ ⊢ A true)
                                       → sub (mwks {B} (lookups ξ η)) 𝒟 ≡ sub (mwks ξ) (ren η 𝒟)
   lookups-mwks-sub ξ η 𝒟 = (\ ξ′ → sub ξ′ 𝒟) & mwks-lookups ξ η ⁻¹
-                         ⦙ lookups-sub (mwks ξ) η 𝒟
+                         ⋮ lookups-sub (mwks ξ) η 𝒟
 
 
 mutual
@@ -558,12 +558,12 @@ mutual
   rens-lifts-sub : ∀ {Δ Γ Γ′ Ξ A B} → (η : Γ′ ⊇ Γ) (ξ : Δ ⨾ Γ ⊢⋆ Ξ) (𝒟 : Δ ⨾ Ξ , B true ⊢ A true)
                                     → sub (lifts {B} (rens η ξ)) 𝒟 ≡ ren (keep η) (sub (lifts ξ) 𝒟)
   rens-lifts-sub η ξ 𝒟 = (\ ξ′ → sub ξ′ 𝒟) & keep-lifts-rens η ξ ⁻¹
-                       ⦙ rens-sub (keep η) (lifts ξ) 𝒟
+                       ⋮ rens-sub (keep η) (lifts ξ) 𝒟
 
   rens-mwks-sub : ∀ {Δ Γ Γ′ Ξ A B} → (η : Γ′ ⊇ Γ) (ξ : Δ ⨾ Γ ⊢⋆ Ξ) (𝒟 : Δ , B valid ⨾ Ξ ⊢ A true)
                                    → sub (mwks {B} (rens η ξ)) 𝒟 ≡ ren η (sub (mwks ξ) 𝒟)
   rens-mwks-sub η ξ 𝒟 = (\ ξ′ → sub ξ′ 𝒟) & mwks-rens η ξ ⁻¹
-                      ⦙ rens-sub η (mwks ξ) 𝒟
+                      ⋮ rens-sub η (mwks ξ) 𝒟
 
 
 --------------------------------------------------------------------------------
@@ -574,7 +574,7 @@ absorb-subs : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⨾ Γ ⊢⋆ Ξ) (ψ : Δ ⨾ Ξ
 absorb-subs ξ ∙       𝒟 = refl
 absorb-subs ξ (ψ , ℰ) 𝒟 = _,_ & absorb-subs ξ ψ 𝒟
                               ⊗ ( lookups-sub (ξ , 𝒟) (drop id⊇) ℰ ⁻¹
-                                ⦙ (\ ξ′ → sub ξ′ ℰ) & id-lookups ξ
+                                ⋮ (\ ξ′ → sub ξ′ ℰ) & id-lookups ξ
                                 )
 
 
@@ -588,7 +588,7 @@ rid-subs : ∀ {Δ Γ Ξ} → (ξ : Δ ⨾ Γ ⊢⋆ Ξ)
                      → subs ξ ids ≡ ξ
 rid-subs ∙       = refl
 rid-subs (ξ , 𝒟) = (_, 𝒟) & ( absorb-subs ξ ids 𝒟
-                            ⦙ rid-subs ξ
+                            ⋮ rid-subs ξ
                             )
 
 
@@ -612,18 +612,18 @@ wks-subs ξ ψ = rens-subs (drop id⊇) ξ ψ
 lifts-subs : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⨾ Γ ⊢⋆ Ξ) (ψ : Δ ⨾ Ξ ⊢⋆ Ψ)
                            → subs (lifts {A} ξ) (lifts ψ) ≡ lifts (subs ξ ψ)
 lifts-subs ξ ψ = (_, vz) & ( absorb-subs (wks ξ) ψ vz
-                           ⦙ wks-subs ξ ψ
+                           ⋮ wks-subs ξ ψ
                            )
 
 
 lid-rens-subs : ∀ {Δ Γ Γ′ Ξ} → (η : Γ′ ⊇ Γ) (ξ : Δ ⨾ Γ ⊢⋆ Ξ)
                              → subs (rens η ids) ξ ≡ rens η ξ
-lid-rens-subs η ξ = rens-subs η ids ξ ⦙ (rens η & lid-subs ξ)
+lid-rens-subs η ξ = rens-subs η ids ξ ⋮ (rens η & lid-subs ξ)
 
 
 rid-rens-subs : ∀ {Δ Γ Γ′ Ξ} → (η : Γ′ ⊇ Γ) (ξ : Δ ⨾ Γ ⊢⋆ Ξ)
                              → subs (rens η ξ) ids ≡ rens η ξ
-rid-rens-subs η ξ = rens-subs η ξ ids ⦙ (rens η & rid-subs ξ)
+rid-rens-subs η ξ = rens-subs η ξ ids ⋮ (rens η & rid-subs ξ)
 
 
 lid-wks-subs : ∀ {Δ Γ Ξ A} → (ξ : Δ ⨾ Γ ⊢⋆ Ξ)
@@ -652,12 +652,12 @@ mutual
   subs-lifts-sub : ∀ {Δ Γ Ξ Ψ A B} → (ξ : Δ ⨾ Γ ⊢⋆ Ξ) (ψ : Δ ⨾ Ξ ⊢⋆ Ψ) (𝒟 : Δ ⨾ Ψ , B true ⊢ A true)
                                    → sub (lifts {B} (subs ξ ψ)) 𝒟 ≡ sub (lifts ξ) (sub (lifts ψ) 𝒟)
   subs-lifts-sub ξ ψ 𝒟 = (\ ξ′ → sub ξ′ 𝒟) & lifts-subs ξ ψ ⁻¹
-                       ⦙ subs-sub (lifts ξ) (lifts ψ) 𝒟
+                       ⋮ subs-sub (lifts ξ) (lifts ψ) 𝒟
 
   subs-mwks-sub : ∀ {Δ Γ Ξ Ψ A B} → (ξ : Δ ⨾ Γ ⊢⋆ Ξ) (ψ : Δ ⨾ Ξ ⊢⋆ Ψ) (𝒟 : Δ , B valid ⨾ Ψ ⊢ A true)
                                   → sub (mwks {B} (subs ξ ψ)) 𝒟 ≡ sub (mwks ξ) (sub (mwks ψ) 𝒟)
   subs-mwks-sub ξ ψ 𝒟 = (\ ξ′ → sub ξ′ 𝒟) & mwks-subs ξ ψ ⁻¹
-                      ⦙ subs-sub (mwks ξ) (mwks ψ) 𝒟
+                      ⋮ subs-sub (mwks ξ) (mwks ψ) 𝒟
 
 
 --------------------------------------------------------------------------------

@@ -69,9 +69,9 @@ _⁻¹≡ : ∀ {ℓ} → {X : Set ℓ} {x₁ x₂ : X}
 refl ⁻¹≡ = refl
 
 
-_⦙≡_ : ∀ {ℓ} → {X : Set ℓ} {x₁ x₂ x₃ : X}
+_⋮≡_ : ∀ {ℓ} → {X : Set ℓ} {x₁ x₂ x₃ : X}
              → x₁ ≡ x₂ → x₂ ≡ x₃ → x₁ ≡ x₃
-refl ⦙≡ refl = refl
+refl ⋮≡ refl = refl
 
 
 --------------------------------------------------------------------------------
@@ -80,12 +80,12 @@ refl ⦙≡ refl = refl
 record PER {ℓ} (X : Set ℓ) (_≈_ : X → X → Set ℓ) : Set ℓ
   where
     infix  9 _⁻¹
-    infixr 4 _⦙_
+    infixr 4 _⋮_
     field
       _⁻¹ : ∀ {x₁ x₂} → x₁ ≈ x₂
                       → x₂ ≈ x₁
 
-      _⦙_ : ∀ {x₁ x₂ x₃} → x₁ ≈ x₂ → x₂ ≈ x₃
+      _⋮_ : ∀ {x₁ x₂ x₃} → x₁ ≈ x₂ → x₂ ≈ x₃
                          → x₁ ≈ x₃
 
 open PER {{...}} public
@@ -96,7 +96,7 @@ instance
   per≡ =
     record
       { _⁻¹ = _⁻¹≡
-      ; _⦙_ = _⦙≡_
+      ; _⋮_ = _⋮≡_
       }
 
 
@@ -137,7 +137,7 @@ module ≡-Reasoning {ℓ} {X : Set ℓ}
 
     infixr 2 _≡⟨_⟩_
     _≡⟨_⟩_ : ∀ (x {x′ x″} : X) → x ≡ x′ → x′ ≡ x″ → x ≡ x″
-    x ≡⟨ p ⟩ q = p ⦙ q
+    x ≡⟨ p ⟩ q = p ⋮ q
 
     infix 3 _∎
     _∎ : ∀ (x : X) → x ≡ x
