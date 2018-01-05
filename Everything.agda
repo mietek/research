@@ -29,6 +29,7 @@ import StdIPLLemmas
 import StdS4
 import StdS4NormalForms
 import StdS4Semantics
+import StdS4Lemmas
 
 import StdCML
 import StdCMLNormalForms
@@ -44,7 +45,9 @@ import StdCMTTTerms
 import StdCMTT
 
 import StdLPTTTerms
-import StdLPTT
+import StdLPTTTermsLemmas
+-- import StdLPTT
+-- import StdLPTTLemmas
 
 
 --------------------------------------------------------------------------------

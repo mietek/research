@@ -238,9 +238,9 @@ slifts : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊪⋆ Ξ
 slifts ξ = swks ξ , svz
 
 
-sids : ∀ {Γ Δ} → Δ ⨾ Γ ⊪⋆ Γ
-sids {∙}          = ∙
-sids {Γ , A true} = slifts sids
+sids : ∀ {Δ Γ} → Δ ⨾ Γ ⊪⋆ Γ
+sids {Γ = ∙}          = ∙
+sids {Γ = Γ , A true} = slifts sids
 
 
 --------------------------------------------------------------------------------

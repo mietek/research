@@ -1,10 +1,17 @@
+{-# OPTIONS --rewriting #-}
+
 module StdLPTT where
 
 open import Prelude
 open import Fin
 open import FinLemmas
 open import Vec
+open import VecLemmas
 open import StdLPTTTerms
+open import StdLPTTTermsLemmas
+
+
+--------------------------------------------------------------------------------
 
 
 infixr 8 _⊃_
@@ -21,9 +28,11 @@ MRENₚ e BASE      = BASE
 MRENₚ e (A ⊃ B)   = MRENₚ e A ⊃ MRENₚ e B
 MRENₚ e ([ M ] A) = [ MREN e M ] MRENₚ e A
 
+
 MWKₚ : ∀ {d} → Prop d
              → Prop (suc d)
 MWKₚ A = MRENₚ (drop id≥) A
+
 
 MSUBₚ : ∀ {d x} → Terms₁ d x → Prop x
                 → Prop d
@@ -31,21 +40,13 @@ MSUBₚ ζ BASE      = BASE
 MSUBₚ ζ (A ⊃ B)   = MSUBₚ ζ A ⊃ MSUBₚ ζ B
 MSUBₚ ζ ([ M ] A) = [ MSUB ζ M ] MSUBₚ ζ A
 
+
 MCUTₚ : ∀ {d} → Term₁ d → Prop (suc d)
               → Prop d
 MCUTₚ M A = MSUBₚ (MIDS₁ , M) A
 
-idMRENₚ : ∀ {d} → (A : Prop d)
-                → MRENₚ id≥ A ≡ A
-idMRENₚ BASE      = refl
-idMRENₚ (A ⊃ B)   = _⊃_ & idMRENₚ A ⊗ idMRENₚ B
-idMRENₚ ([ M ] A) = [_]_ & idMREN M ⊗ idMRENₚ A
 
-assocMRENₚ : ∀ {d d′ d″} → (e₁ : d′ ≥ d) (e₂ : d″ ≥ d′) (A : Prop d)
-                         → MRENₚ e₂ (MRENₚ e₁ A) ≡ MRENₚ (e₁ ∘≥ e₂) A
-assocMRENₚ e₁ e₂ BASE      = refl
-assocMRENₚ e₁ e₂ (A ⊃ B)   = _⊃_ & assocMRENₚ e₁ e₂ A ⊗ assocMRENₚ e₁ e₂ B
-assocMRENₚ e₁ e₂ ([ M ] A) = [_]_ & assocMREN e₁ e₂ M ⊗ assocMRENₚ e₁ e₂ A
+--------------------------------------------------------------------------------
 
 
 infix 7 _true
@@ -60,47 +61,40 @@ MRENₜ : ∀ {d d′} → d′ ≥ d → Truth d
                  → Truth d′
 MRENₜ e (A true) = MRENₚ e A true
 
+
 MWKₜ : ∀ {d} → Truth d
              → Truth (suc d)
 MWKₜ (A true) = MWKₚ A true
+
 
 MSUBₜ : ∀ {d x} → Terms₁ d x → Truth x
                 → Truth d
 MSUBₜ ζ (A true) = MSUBₚ ζ A true
 
+
 MCUTₜ : ∀ {d} → Term₁ d → Truth (suc d)
               → Truth d
 MCUTₜ M (A true) = MCUTₚ M A true
 
-idMRENₜ : ∀ {d} → (Aₜ : Truth d)
-                → MRENₜ id≥ Aₜ ≡ Aₜ
-idMRENₜ (A true) = _true & idMRENₚ A
 
-assocMRENₜ : ∀ {d d′ d″} → (e₁ : d′ ≥ d) (e₂ : d″ ≥ d′) (Aₜ : Truth d)
-                         → MRENₜ e₂ (MRENₜ e₁ Aₜ) ≡ MRENₜ (e₁ ∘≥ e₂) Aₜ
-assocMRENₜ e₁ e₂ (A true) = _true & assocMRENₚ e₁ e₂ A
+--------------------------------------------------------------------------------
 
 
 Truths : Nat → Nat → Set
 Truths d g = Vec (Truth d) g
 
+
 MRENSₜ : ∀ {d d′ g} → d′ ≥ d → Truths d g
                     → Truths d′ g
 MRENSₜ e Γ = map (MRENₜ e) Γ
+
 
 MWKSₜ : ∀ {d g} → Truths d g
                 → Truths (suc d) g
 MWKSₜ Γ = map MWKₜ Γ
 
-idMRENSₜ : ∀ {d g} → (Γ : Truths d g)
-                   → MRENSₜ id≥ Γ ≡ Γ
-idMRENSₜ ∙        = refl
-idMRENSₜ (Γ , Aₜ) = _,_ & idMRENSₜ Γ ⊗ idMRENₜ Aₜ
 
-assocMRENSₜ : ∀ {d d′ d″ g} → (e₁ : d′ ≥ d) (e₂ : d″ ≥ d′) (Γ : Truths d g)
-                            → MRENSₜ e₂ (MRENSₜ e₁ Γ) ≡ MRENSₜ (e₁ ∘≥ e₂) Γ
-assocMRENSₜ e₁ e₂ ∙        = refl
-assocMRENSₜ e₁ e₂ (Γ , Aₜ) = _,_ & assocMRENSₜ e₁ e₂ Γ ⊗ assocMRENₜ e₁ e₂ Aₜ
+--------------------------------------------------------------------------------
 
 
 infix 7 _valid
@@ -115,25 +109,81 @@ MRENᵥ : ∀ {d d′} → d′ ≥ d → Validity d
                  → Validity d′
 MRENᵥ e (A valid) = MRENₚ e A valid
 
+
 MWKᵥ : ∀ {d} → Validity d
              → Validity (suc d)
 MWKᵥ (A valid) = MWKₚ A valid
+
 
 MSUBᵥ : ∀ {d x} → Terms₁ d x → Validity x
                 → Validity d
 MSUBᵥ ζ (A valid) = MSUBₚ ζ A valid
 
+
 MCUTᵥ : ∀ {d} → Term₁ d → Validity (suc d)
               → Validity d
 MCUTᵥ M (A valid) = MCUTₚ M A valid
 
-idMRENᵥ : ∀ {d} → (Aᵥ : Validity d)
-                → MRENᵥ id≥ Aᵥ ≡ Aᵥ
-idMRENᵥ (A valid) = _valid & idMRENₚ A
 
-assocMRENᵥ : ∀ {d d′ d″} → (e₁ : d′ ≥ d) (e₂ : d″ ≥ d′) (Aᵥ : Validity d)
-                         → MRENᵥ e₂ (MRENᵥ e₁ Aᵥ) ≡ MRENᵥ (e₁ ∘≥ e₂) Aᵥ
-assocMRENᵥ e₁ e₂ (A valid) = _valid & assocMRENₚ e₁ e₂ A
+--------------------------------------------------------------------------------
+
+
+id-MRENₚ : ∀ {d} → (A : Prop d)
+                 → MRENₚ id≥ A ≡ A
+id-MRENₚ BASE      = refl
+id-MRENₚ (A ⊃ B)   = _⊃_ & id-MRENₚ A ⊗ id-MRENₚ B
+id-MRENₚ ([ M ] A) = [_]_ & id-MREN M ⊗ id-MRENₚ A
+
+
+comp-MRENₚ : ∀ {d d′ d″} → (e₁ : d′ ≥ d) (e₂ : d″ ≥ d′) (A : Prop d)
+                         → MRENₚ (e₁ ∘≥ e₂) A ≡ MRENₚ e₂ (MRENₚ e₁ A)
+comp-MRENₚ e₁ e₂ BASE      = refl
+comp-MRENₚ e₁ e₂ (A ⊃ B)   = _⊃_ & comp-MRENₚ e₁ e₂ A ⊗ comp-MRENₚ e₁ e₂ B
+comp-MRENₚ e₁ e₂ ([ M ] A) = [_]_ & comp-MREN e₁ e₂ M ⊗ comp-MRENₚ e₁ e₂ A
+
+
+--------------------------------------------------------------------------------
+
+
+id-MRENₜ : ∀ {d} → (Aₜ : Truth d)
+                 → MRENₜ id≥ Aₜ ≡ Aₜ
+id-MRENₜ (A true) = _true & id-MRENₚ A
+
+
+comp-MRENₜ : ∀ {d d′ d″} → (e₁ : d′ ≥ d) (e₂ : d″ ≥ d′) (Aₜ : Truth d)
+                         → MRENₜ (e₁ ∘≥ e₂) Aₜ ≡ MRENₜ e₂ (MRENₜ e₁ Aₜ)
+comp-MRENₜ e₁ e₂ (A true) = _true & comp-MRENₚ e₁ e₂ A
+
+
+--------------------------------------------------------------------------------
+
+
+id-MRENSₜ : ∀ {d g} → (Γ : Truths d g)
+                    → MRENSₜ id≥ Γ ≡ Γ
+id-MRENSₜ ∙        = refl
+id-MRENSₜ (Γ , Aₜ) = _,_ & id-MRENSₜ Γ ⊗ id-MRENₜ Aₜ
+
+
+comp-MRENSₜ : ∀ {d d′ d″ g} → (e₁ : d′ ≥ d) (e₂ : d″ ≥ d′) (Γ : Truths d g)
+                            → MRENSₜ (e₁ ∘≥ e₂) Γ ≡ MRENSₜ e₂ (MRENSₜ e₁ Γ)
+comp-MRENSₜ e₁ e₂ ∙        = refl
+comp-MRENSₜ e₁ e₂ (Γ , Aₜ) = _,_ & comp-MRENSₜ e₁ e₂ Γ ⊗ comp-MRENₜ e₁ e₂ Aₜ
+
+
+--------------------------------------------------------------------------------
+
+
+id-MRENᵥ : ∀ {d} → (Aᵥ : Validity d)
+                 → MRENᵥ id≥ Aᵥ ≡ Aᵥ
+id-MRENᵥ (A valid) = _valid & id-MRENₚ A
+
+
+comp-MRENᵥ : ∀ {d d′ d″} → (e₁ : d′ ≥ d) (e₂ : d″ ≥ d′) (Aᵥ : Validity d)
+                         → MRENᵥ (e₁ ∘≥ e₂) Aᵥ ≡ MRENᵥ e₂ (MRENᵥ e₁ Aᵥ)
+comp-MRENᵥ e₁ e₂ (A valid) = _valid & comp-MRENₚ e₁ e₂ A
+
+
+--------------------------------------------------------------------------------
 
 
 data Validities : Nat → Set
@@ -143,55 +193,63 @@ data Validities : Nat → Set
     _,_ : ∀ {d} → Validities d → Validity d
                 → Validities (suc d)
 
+
 infix 4 _⊇⟪_⟫_
 data _⊇⟪_⟫_ : ∀ {d d′} → Validities d′ → d′ ≥ d → Validities d → Set
   where
     done : ∙ ⊇⟪ done ⟫ ∙
 
-    drop : ∀ {d d′ e} → {Δ : Validities d} {Δ′ : Validities d′} {Aᵥ : Validity d′}
+    drop : ∀ {d d′ e} → {Δ : Validities d} {Δ′ : Validities d′} {Aᵥ : Validity d}
+                         {Aᵥ° : Validity d′} {{_ : Aᵥ° ≡ MRENᵥ e Aᵥ}}
                       → Δ′ ⊇⟪ e ⟫ Δ
-                      → Δ′ , Aᵥ ⊇⟪ drop e ⟫ Δ
+                      → Δ′ , Aᵥ° ⊇⟪ drop e ⟫ Δ
 
     keep : ∀ {d d′ e} → {Δ : Validities d} {Δ′ : Validities d′} {Aᵥ : Validity d}
+                         {Aᵥ° : Validity d′} {{_ : Aᵥ° ≡ MRENᵥ e Aᵥ}}
                       → Δ′ ⊇⟪ e ⟫ Δ
-                      → Δ′ , MRENᵥ e Aᵥ ⊇⟪ keep e ⟫ Δ , Aᵥ
+                      → Δ′ , Aᵥ° ⊇⟪ keep e ⟫ Δ , Aᵥ
 
 
-postulate
-  id⊇◈ : ∀ {d} → {Δ : Validities d}
-               → Δ ⊇⟪ id≥ ⟫ Δ
--- id⊇◈ {Δ = ∙}      = done
--- id⊇◈ {Δ = Δ , Aᵥ} = {!keep id⊇◈!}
+{-# REWRITE id-MRENₚ #-}
+id⊇◈ : ∀ {d} → {Δ : Validities d}
+             → Δ ⊇⟪ id≥ ⟫ Δ
+id⊇◈ {Δ = ∙}      = done
+id⊇◈ {Δ = Δ , Aᵥ} = keep id⊇◈
 
-postulate
-  _∘⊇◈_ : ∀ {d d′ d″ e₁ e₂} → {Δ : Validities d} {Δ′ : Validities d′} {Δ″ : Validities d″}
-                            → Δ′ ⊇⟪ e₁ ⟫ Δ → Δ″ ⊇⟪ e₂ ⟫ Δ′
-                            → Δ″ ⊇⟪ e₁ ∘≥ e₂ ⟫ Δ
--- η₁      ∘⊇◈ done    = η₁
--- η₁      ∘⊇◈ drop η₂ = drop (η₁ ∘⊇◈ η₂)
--- drop η₁ ∘⊇◈ keep η₂ = drop (η₁ ∘⊇◈ η₂)
--- keep η₁ ∘⊇◈ keep η₂ = {!keep (η₁ ∘⊇◈ η₂)!}
+
+{-# REWRITE comp-MRENₚ #-}
+_∘⊇◈_ : ∀ {d d′ d″ e₁ e₂} → {Δ : Validities d} {Δ′ : Validities d′} {Δ″ : Validities d″}
+                          → Δ′ ⊇⟪ e₁ ⟫ Δ → Δ″ ⊇⟪ e₂ ⟫ Δ′
+                          → Δ″ ⊇⟪ e₁ ∘≥ e₂ ⟫ Δ
+η₁      ∘⊇◈ done    = η₁
+η₁      ∘⊇◈ drop η₂ = drop (η₁ ∘⊇◈ η₂)
+drop η₁ ∘⊇◈ keep η₂ = drop (η₁ ∘⊇◈ η₂)
+keep η₁ ∘⊇◈ keep η₂ = {!keep (η₁ ∘⊇◈ η₂)!}
 
 
 infix 4 _∋⟪_⟫_
 data _∋⟪_⟫_ : ∀ {d} → Validities d → Fin d → Validity d → Set
   where
     zero : ∀ {d} → {Δ : Validities d} {Aᵥ : Validity d}
-                 → Δ , Aᵥ ∋⟪ zero ⟫ MWKᵥ Aᵥ
+                    {Aᵥ° : Validity (suc d)} {{_ : Aᵥ° ≡ MWKᵥ Aᵥ}}
+                 → Δ , Aᵥ ∋⟪ zero ⟫ Aᵥ°
 
     suc : ∀ {d i} → {Δ : Validities d} {Aᵥ : Validity d} {Bᵥ : Validity d}
+                     {Aᵥ° : Validity (suc d)} {{_ : Aᵥ° ≡ MWKᵥ Aᵥ}}
                   → Δ ∋⟪ i ⟫ Aᵥ
-                  → Δ , Bᵥ ∋⟪ suc i ⟫ MWKᵥ Aᵥ
+                  → Δ , Bᵥ ∋⟪ suc i ⟫ Aᵥ°
 
 
-postulate
-  ren∋◈ : ∀ {d d′ e i} → {Δ : Validities d} {Δ′ : Validities d′} {Aᵥ : Validity d}
-                       → Δ′ ⊇⟪ e ⟫ Δ → Δ ∋⟪ i ⟫ Aᵥ
-                       → Δ′ ∋⟪ renF e i ⟫ MRENᵥ e Aᵥ
--- ren∋◈ {Aᵥ = Aᵥ} done     𝒾       rewrite idMRENᵥ Aᵥ = 𝒾
--- ren∋◈           (drop η) 𝒾       = {!suc (ren∋◈ η 𝒾)!}
--- ren∋◈           (keep η) zero    = {!zero!}
--- ren∋◈           (keep η) (suc 𝒾) = {!suc (ren∋◈ η 𝒾)!}
+ren∋◈ : ∀ {d d′ e i} → {Δ : Validities d} {Δ′ : Validities d′} {Aᵥ : Validity d}
+                     → Δ′ ⊇⟪ e ⟫ Δ → Δ ∋⟪ i ⟫ Aᵥ
+                     → Δ′ ∋⟪ renF e i ⟫ MRENᵥ e Aᵥ
+ren∋◈ {Aᵥ = Aᵥ} done     𝒾       rewrite id-MRENᵥ Aᵥ = 𝒾
+ren∋◈ {Aᵥ = Aᵥ} (drop η) 𝒾       = {!_∋⟪_⟫_.suc {Aᵥ = MWKᵥ Aᵥ} (ren∋◈ {Aᵥ = Aᵥ} η 𝒾)!}
+ren∋◈ {Aᵥ = Aᵥ} (keep η) zero    = {!zero!}
+ren∋◈ {Aᵥ = Aᵥ} (keep η) (suc 𝒾) = {!suc (ren∋◈ η 𝒾)!}
+
+
+--------------------------------------------------------------------------------
 
 
 record Derivation (d : Nat) : Set
@@ -241,6 +299,9 @@ data _⋙_ : ∀ {d} → Validities d → Derivation d → Set
                            → Δ ⋙ [ Γ ⊢ LETBOX M N ⦂ B° true ]
 
 
+--------------------------------------------------------------------------------
+
+
 postulate
   MRENSₜ⊇ : ∀ {d d′ g g′ e} → {Γ : Truths d g} {Γ′ : Truths d g′}
                             → (f : d′ ≥ d) → Γ′ ⊇⟨ e ⟩ Γ
@@ -267,6 +328,9 @@ MWKSₜ∋ : ∀ {d g i} → {Γ : Truths d g} {A : Prop d}
 MWKSₜ∋ 𝒾 = MRENSₜ∋ (drop id≥) 𝒾
 
 
+--------------------------------------------------------------------------------
+
+
 ren : ∀ {d g g′ e M} → {Δ : Validities d} {Γ : Truths d g} {Γ′ : Truths d g′}
                         {A : Prop d}
                      → Γ′ ⊇⟨ e ⟩ Γ → Δ ⋙ [ Γ ⊢ M ⦂ A true ]
@@ -279,16 +343,21 @@ ren η (box 𝒟)   = box 𝒟
 ren η (letbox {{refl}} {{refl}} 𝒟 ℰ)
   = letbox (ren η 𝒟) (ren (MWKSₜ⊇ η) ℰ)
 
+
 wk : ∀ {d g M} → {Δ : Validities d} {Γ : Truths d g}
                   {A B : Prop d}
                → Δ ⋙ [ Γ ⊢ M ⦂ A true ]
                → Δ ⋙ [ Γ , B true ⊢ WK M ⦂ A true ]
 wk 𝒟 = ren (drop id⊇) 𝒟
 
+
 vz : ∀ {d g} → {Δ : Validities d} {Γ : Truths d g}
                 {A : Prop d}
              → Δ ⋙ [ Γ , A true ⊢ VZ ⦂ A true ]
 vz = var zero
+
+
+--------------------------------------------------------------------------------
 
 
 -- mren : ∀ {d d′ g e M} → {Δ : Validities d} {Δ′ : Validities d′} {Γ : Truths d g}
@@ -506,3 +575,6 @@ vz = var zero
 -- -- -- -- -- --                       → Δ , A valid , B valid ⋙ [ Γ ⊢ M ⦂ C true ]
 -- -- -- -- -- --                       → Δ , B valid , A valid ⋙ [ Γ ⊢ MEX M ⦂ C true ]
 -- -- -- -- -- -- mex 𝒟 = shl (shl (ex (shr (shr 𝒟))))
+
+
+--------------------------------------------------------------------------------

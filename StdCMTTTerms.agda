@@ -93,10 +93,10 @@ LIFTS : ∀ {d g x} → {σ : Scopes d}
 LIFTS ζ = WKS ζ , VZ
 
 
-IDS : ∀ {g d} → {σ : Scopes d}
+IDS : ∀ {d g} → {σ : Scopes d}
               → Terms σ g g
-IDS {zero}  = ∙
-IDS {suc g} = LIFTS IDS
+IDS {g = zero}  = ∙
+IDS {g = suc g} = LIFTS IDS
 
 
 --------------------------------------------------------------------------------

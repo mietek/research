@@ -87,9 +87,9 @@ LIFTS : ∀ {d g x} → Terms d g x
 LIFTS ζ = WKS ζ , VZ
 
 
-IDS : ∀ {g d} → Terms d g g
-IDS {zero}  = ∙
-IDS {suc g} = LIFTS IDS
+IDS : ∀ {d g} → Terms d g g
+IDS {g = zero}  = ∙
+IDS {g = suc g} = LIFTS IDS
 
 
 --------------------------------------------------------------------------------

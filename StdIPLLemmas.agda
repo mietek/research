@@ -8,35 +8,38 @@ open import StdIPL
 
 --------------------------------------------------------------------------------
 {-
-                                                                              
+
                 lookup (lookups ξ η) 𝒾 ≡ lookup ξ (ren∋ η 𝒾)                    lookups-lookup
                    lookup (rens η ξ) 𝒾 ≡ ren η (lookup ξ 𝒾)                     rens-lookup
                       lookup (wks ξ) 𝒾 ≡ wk (lookup ξ 𝒾)                        wks-lookup
                           lookup ids 𝒾 ≡ var 𝒾                                  ids-lookup
                    lookup (subs ξ ψ) 𝒾 ≡ sub ξ (lookup ψ 𝒾)                     subs-lookup
-         
+
                          lookups ξ id⊇ ≡ ξ                                      id-lookups
                   lookups ξ (η₁ ∘⊇ η₂) ≡ lookups (lookups ξ η₂) η₁              comp-lookups
                 lookups (rens η₁ ξ) η₂ ≡ rens η₁ (lookups ξ η₂)                 rens-lookups
                      lookups (wks ξ) η ≡ wks (lookups ξ η)                      wks-lookups
             lookups (lifts ξ) (keep η) ≡ lifts (lookups ξ η)                    lifts-lookups
+                lookups (rens η ξ) id⊇ ≡ rens η ξ                               id-rens-lookups
+                   lookups (wks ξ) id⊇ ≡ wks ξ                                  id-wks-lookups
+          lookups (lifts ξ) (keep id⊇) ≡ lifts ξ                                id-lifts-lookups
                   lookups (subs ξ ψ) η ≡ subs ξ (lookups ψ η)                   subs-lookups
-         
+
                              ren id⊇ 𝒟 ≡ 𝒟                                      id-ren
                       ren (η₁ ∘⊇ η₂) 𝒟 ≡ ren η₂ (ren η₁ 𝒟)                      comp-ren
-         
+
                             rens id⊇ ξ ≡ ξ                                      id-rens
                      rens (η₁ ∘⊇ η₂) ξ ≡ rens η₂ (rens η₁ ξ)                    comp-rens
                        rens (drop η) ξ ≡ wks (rens η ξ)                         drop-wks-rens
                  rens (keep η) (wks ξ) ≡ wks (rens η ξ)                         keep-wks-rens
                rens (keep η) (lifts ξ) ≡ lifts (rens η ξ)                       keep-lifts-rens
-         
+
                              sub ids 𝒟 ≡ 𝒟                                      id-sub
                    sub (lookups ξ η) 𝒟 ≡ sub ξ (ren η 𝒟)                        lookups-sub
            sub (lifts (lookups ξ η)) 𝒟 ≡ sub (lifts ξ) (ren (keep η) 𝒟)         lookups-lifts-sub
                       sub (rens η ξ) 𝒟 ≡ ren η (sub ξ 𝒟)                        rens-sub
               sub (lifts (rens η ξ)) 𝒟 ≡ ren (keep η) (sub (lifts ξ) 𝒟)         rens-lifts-sub
-         
+
                   subs (ξ , 𝒟) (wks ψ) ≡ subs ξ ψ                               absorb-subs
                             subs ids ξ ≡ ξ                                      lid-subs
                             subs ξ ids ≡ ξ                                      rid-subs
@@ -44,10 +47,14 @@ open import StdIPL
                      subs (rens η ξ) ψ = rens η (subs ξ ψ)                      rens-subs
                         subs (wks ξ) ψ ≡ wks (subs ξ ψ)                         wks-subs
               subs (lifts ξ) (lifts ψ) ≡ lifts (subs ξ ψ)                       lifts-subs
-         
+                   subs (rens η ids) ξ ≡ rens η ξ                               lid-rens-subs
+                   subs (rens η ξ) ids ≡ rens η ξ                               rid-rens-subs
+                      subs (wks ids) ξ ≡ wks ξ                                  lid-wks-subs
+                      subs (wks ξ) ids ≡ wks ξ                                  rid-wks-subs
+
                       sub (subs ξ ψ) 𝒟 ≡ sub ξ (sub ψ 𝒟)                        subs-sub
               sub (lifts (subs ξ ψ)) 𝒟 ≡ sub (lifts ξ) (sub (lifts ψ) 𝒟)        subs-lifts-sub
-         
+
                      subs (subs ξ ψ) φ ≡ subs ξ (subs ψ φ)                      assoc-subs
 
 -}
@@ -78,7 +85,7 @@ ids-lookup : ∀ {Γ A} → (𝒾 : Γ ∋ A true)
 ids-lookup zero    = refl
 ids-lookup (suc 𝒾) = wks-lookup ids 𝒾
                    ⦙ wk & ids-lookup 𝒾
-                   ⦙ (\ 𝒾′ → var (suc 𝒾′)) & id-ren∋ 𝒾 
+                   ⦙ (\ 𝒾′ → var (suc 𝒾′)) & id-ren∋ 𝒾
 
 
 subs-lookup : ∀ {Γ Ξ Ψ A} → (ξ : Γ ⊢⋆ Ξ) (ψ : Ξ ⊢⋆ Ψ) (𝒾 : Ψ ∋ A true)
@@ -121,6 +128,21 @@ lifts-lookups : ∀ {Γ Ξ Ξ′ A} → (ξ : Γ ⊢⋆ Ξ′) (η : Ξ′ ⊇ �
 lifts-lookups ξ η = (_, vz) & wks-lookups ξ η
 
 
+id-rens-lookups : ∀ {Γ Γ′ Ξ} → (η : Γ′ ⊇ Γ) (ξ : Γ ⊢⋆ Ξ)
+                             → lookups (rens η ξ) id⊇ ≡ rens η ξ
+id-rens-lookups η ξ = id-lookups (rens η ξ)
+
+
+id-wks-lookups : ∀ {Γ Ξ A} → (ξ : Γ ⊢⋆ Ξ)
+                           → lookups (wks {A} ξ) id⊇ ≡ wks ξ
+id-wks-lookups ξ = id-rens-lookups (drop id⊇) ξ
+
+
+id-lifts-lookups : ∀ {Γ Ξ A} → (ξ : Γ ⊢⋆ Ξ)
+                             → lookups (lifts {A} ξ) (keep id⊇) ≡ lifts ξ
+id-lifts-lookups ξ = (_, vz) & id-wks-lookups ξ
+
+
 subs-lookups : ∀ {Γ Ξ Ψ Ψ′} → (ξ : Γ ⊢⋆ Ξ) (ψ : Ξ ⊢⋆ Ψ′) (η : Ψ′ ⊇ Ψ)
                             → lookups (subs ξ ψ) η ≡ subs ξ (lookups ψ η)
 subs-lookups ξ ∙       done     = refl
@@ -140,7 +162,7 @@ id-ren (app 𝒟 ℰ) = app & id-ren 𝒟 ⊗ id-ren ℰ
 
 comp-ren : ∀ {Γ Γ′ Γ″ A} → (η₁ : Γ′ ⊇ Γ) (η₂ : Γ″ ⊇ Γ′) (𝒟 : Γ ⊢ A true)
                          → ren (η₁ ∘⊇ η₂) 𝒟 ≡ ren η₂ (ren η₁ 𝒟)
-comp-ren η₁ η₂ (var 𝒾)   = var & comp-ren∋ η₁ η₂ 𝒾 
+comp-ren η₁ η₂ (var 𝒾)   = var & comp-ren∋ η₁ η₂ 𝒾
 comp-ren η₁ η₂ (lam 𝒟)   = lam & comp-ren (keep η₁) (keep η₂) 𝒟
 comp-ren η₁ η₂ (app 𝒟 ℰ) = app & comp-ren η₁ η₂ 𝒟 ⊗ comp-ren η₁ η₂ ℰ
 
@@ -161,26 +183,26 @@ comp-rens η₁ η₂ (ξ , 𝒟) = _,_ & comp-rens η₁ η₂ ξ ⊗ comp-ren 
 
 
 drop-wks-rens : ∀ {Γ Γ′ Ξ A} → (η : Γ′ ⊇ Γ) (ξ : Γ ⊢⋆ Ξ)
-                             → rens (drop η) ξ ≡ wks {A} (rens η ξ)
+                             → rens (drop {A = A} η) ξ ≡ wks (rens η ξ)
 drop-wks-rens η ∙       = refl
 drop-wks-rens η (ξ , 𝒟) = _,_ & drop-wks-rens η ξ
                               ⊗ ( (\ η′ → ren (drop η′) 𝒟) & rid-∘⊇ η ⁻¹
                                 ⦙ comp-ren η (drop id⊇) 𝒟
-                                )                     
+                                )
 
 
 keep-wks-rens : ∀ {Γ Γ′ Ξ A} → (η : Γ′ ⊇ Γ) (ξ : Γ ⊢⋆ Ξ)
-                             → rens (keep η) (wks ξ) ≡ wks {A} (rens η ξ)
+                             → rens (keep {A = A} η) (wks ξ) ≡ wks (rens η ξ)
 keep-wks-rens η ∙       = refl
 keep-wks-rens η (ξ , 𝒟) = _,_ & keep-wks-rens η ξ
                               ⊗ ( comp-ren (drop id⊇) (keep η) 𝒟 ⁻¹
                                 ⦙ (\ η′ → ren (drop η′) 𝒟) & (lid-∘⊇ η ⦙ rid-∘⊇ η ⁻¹)
-                                ⦙ comp-ren η (drop id⊇) 𝒟 
+                                ⦙ comp-ren η (drop id⊇) 𝒟
                                 )
 
 
 keep-lifts-rens : ∀ {Γ Γ′ Ξ A} → (η : Γ′ ⊇ Γ) (ξ : Γ ⊢⋆ Ξ)
-                               → rens (keep η) (lifts ξ) ≡ lifts {A} (rens η ξ)
+                               → rens (keep {A = A} η) (lifts ξ) ≡ lifts (rens η ξ)
 keep-lifts-rens η ξ = (_, vz) & keep-wks-rens η ξ
 
 
@@ -189,7 +211,7 @@ keep-lifts-rens η ξ = (_, vz) & keep-wks-rens η ξ
 
 id-sub : ∀ {Γ A} → (𝒟 : Γ ⊢ A true)
                  → sub ids 𝒟 ≡ 𝒟
-id-sub (var 𝒾)   = ids-lookup 𝒾 
+id-sub (var 𝒾)   = ids-lookup 𝒾
 id-sub (lam 𝒟)   = lam & id-sub 𝒟
 id-sub (app 𝒟 ℰ) = app & id-sub 𝒟 ⊗ id-sub ℰ
 
@@ -202,7 +224,7 @@ mutual
   lookups-sub ξ η (app 𝒟 ℰ) = app & lookups-sub ξ η 𝒟 ⊗ lookups-sub ξ η ℰ
 
   lookups-lifts-sub : ∀ {Γ Ξ Ξ′ A B} → (ξ : Γ ⊢⋆ Ξ′) (η : Ξ′ ⊇ Ξ) (𝒟 : Ξ , B true ⊢ A true)
-                                     → sub (lifts (lookups ξ η)) 𝒟 ≡ sub (lifts {B} ξ) (ren (keep η) 𝒟)
+                                     → sub (lifts {B} (lookups ξ η)) 𝒟 ≡ sub (lifts ξ) (ren (keep η) 𝒟)
   lookups-lifts-sub ξ η 𝒟 = (\ ξ′ → sub ξ′ 𝒟) & lifts-lookups ξ η ⁻¹
                           ⦙ lookups-sub (lifts ξ) (keep η) 𝒟
 
@@ -255,7 +277,7 @@ lookups-subs ξ η (ψ , 𝒟) = _,_ & lookups-subs ξ η ψ ⊗ lookups-sub ξ 
 rens-subs : ∀ {Γ Γ′ Ξ Ψ} → (η : Γ′ ⊇ Γ) (ξ : Γ ⊢⋆ Ξ) (ψ : Ξ ⊢⋆ Ψ)
                          → subs (rens η ξ) ψ ≡ rens η (subs ξ ψ)
 rens-subs η ξ ∙       = refl
-rens-subs η ξ (ψ , 𝒟) = _,_ & rens-subs η ξ ψ ⊗ rens-sub η ξ 𝒟 
+rens-subs η ξ (ψ , 𝒟) = _,_ & rens-subs η ξ ψ ⊗ rens-sub η ξ 𝒟
 
 
 wks-subs : ∀ {Γ Ξ Ψ A} → (ξ : Γ ⊢⋆ Ξ) (ψ : Ξ ⊢⋆ Ψ)
@@ -265,9 +287,29 @@ wks-subs ξ ψ = rens-subs (drop id⊇) ξ ψ
 
 lifts-subs : ∀ {Γ Ξ Ψ A} → (ξ : Γ ⊢⋆ Ξ) (ψ : Ξ ⊢⋆ Ψ)
                          → subs (lifts {A} ξ) (lifts ψ) ≡ lifts (subs ξ ψ)
-lifts-subs ξ ψ = (_, vz) & ( absorb-subs (wks ξ) ψ vz 
+lifts-subs ξ ψ = (_, vz) & ( absorb-subs (wks ξ) ψ vz
                            ⦙ wks-subs ξ ψ
                            )
+
+
+lid-rens-subs : ∀ {Γ Γ′ Ξ} → (η : Γ′ ⊇ Γ) (ξ : Γ ⊢⋆ Ξ)
+                           → subs (rens η ids) ξ ≡ rens η ξ
+lid-rens-subs η ξ = rens-subs η ids ξ ⦙ (rens η & lid-subs ξ)
+
+
+rid-rens-subs : ∀ {Γ Γ′ Ξ} → (η : Γ′ ⊇ Γ) (ξ : Γ ⊢⋆ Ξ)
+                           → subs (rens η ξ) ids ≡ rens η ξ
+rid-rens-subs η ξ = rens-subs η ξ ids ⦙ (rens η & rid-subs ξ)
+
+
+lid-wks-subs : ∀ {Γ Ξ A} → (ξ : Γ ⊢⋆ Ξ)
+                         → subs (wks {A} ids) ξ ≡ wks ξ
+lid-wks-subs ξ = lid-rens-subs (drop id⊇) ξ
+
+
+rid-wks-subs : ∀ {Γ Ξ A} → (ξ : Γ ⊢⋆ Ξ)
+                         → subs (wks {A} ξ) ids ≡ wks ξ
+rid-wks-subs ξ = rid-rens-subs (drop id⊇) ξ
 
 
 --------------------------------------------------------------------------------
@@ -275,7 +317,7 @@ lifts-subs ξ ψ = (_, vz) & ( absorb-subs (wks ξ) ψ vz
 
 mutual
   subs-sub : ∀ {Γ Ξ Ψ A} → (ξ : Γ ⊢⋆ Ξ) (ψ : Ξ ⊢⋆ Ψ) (𝒟 : Ψ ⊢ A true)
-                         → sub (subs ξ ψ) 𝒟 ≡ sub ξ (sub ψ 𝒟) 
+                         → sub (subs ξ ψ) 𝒟 ≡ sub ξ (sub ψ 𝒟)
   subs-sub ξ ψ (var 𝒾)   = subs-lookup ξ ψ 𝒾
   subs-sub ξ ψ (lam 𝒟)   = lam & subs-lifts-sub ξ ψ 𝒟
   subs-sub ξ ψ (app 𝒟 ℰ) = app & subs-sub ξ ψ 𝒟 ⊗ subs-sub ξ ψ ℰ
