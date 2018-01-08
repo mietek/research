@@ -2,8 +2,10 @@ module StdIPLSemantics where
 
 open import Prelude
 open import List
+open import AllList
 open import StdIPL
 open import StdIPLNormalForms
+open GetAllList
 
 
 --------------------------------------------------------------------------------
@@ -55,7 +57,7 @@ W ⊩⋆ Γ = All (W ⊩_) Γ
 
 rels : ∀ {{_ : Model}} {Γ W W′} → W′ ≥ W → W ⊩⋆ Γ
                                 → W′ ⊩⋆ Γ
-rels η γ = mapAll (\ {A} a → rel {A} η a) γ
+rels η γ = maps (\ {A} a → rel {A} η a) γ
 
 
 --------------------------------------------------------------------------------
@@ -69,7 +71,7 @@ _⊨_ : Context → Truth → Set₁
 
 ↓ : ∀ {Γ A} → Γ ⊢ A true
             → Γ ⊨ A true
-↓ (var 𝒾)   γ = lookup γ 𝒾
+↓ (var 𝒾)   γ = get γ 𝒾
 ↓ (lam 𝒟)   γ = \ η a → ↓ 𝒟 (rels η γ , a)
 ↓ (app 𝒟 ℰ) γ = (↓ 𝒟 γ) id≥ (↓ ℰ γ)
 

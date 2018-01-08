@@ -18,14 +18,9 @@ data _≥_ : Nat → Nat → Set
                     → suc n′ ≥ suc n
 
 
-bot≥ : ∀ {n} → n ≥ zero
-bot≥ {zero}  = done
-bot≥ {suc n} = drop bot≥
-
-
 id≥ : ∀ {n} → n ≥ n
 id≥ {zero}  = done
-id≥ {suc n} = keep id≥
+id≥ {suc i} = keep id≥
 
 
 _∘≥_ : ∀ {n n′ n″} → n′ ≥ n → n″ ≥ n′

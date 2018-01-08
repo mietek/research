@@ -3,7 +3,6 @@ module StdCMTTTerms where
 open import Prelude
 open import Fin
 open import Vec
-open import VecOrnaments
 
 
 --------------------------------------------------------------------------------

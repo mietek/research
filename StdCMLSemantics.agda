@@ -1,6 +1,7 @@
 module StdCMLSemantics where
 
 open import Prelude
+open import Category
 open import List
 open import StdCML
 open import StdCMLNormalForms

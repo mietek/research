@@ -1,6 +1,7 @@
 module StdS4Semantics where
 
 open import Prelude
+open import Category
 open import List
 open import StdS4
 open import StdS4NormalForms
