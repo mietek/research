@@ -10,6 +10,102 @@ open import StdS4TTTerms
 
 
 --------------------------------------------------------------------------------
+{-
+                             REN id≥ M ≡ M                                      id-REN   ⎱ 𝐑𝐄𝐍
+                       REN (e₁ ∘ e₂) M ≡ REN e₂ (REN e₁ M)                      comp-REN ⎰
+                 (REN (keep e) ∘ WK) M ≡ (WK ∘ REN e) M                         comp-WK-REN-keep
+
+                            MREN id≥ M ≡ M                                      id-MREN   ⎱ 𝐌𝐑𝐄𝐍
+                      MREN (e₁ ∘ e₂) M ≡ MREN e₂ (MREN e₁ M)                    comp-MREN ⎰
+                       MREN (drop e) M ≡ (MWK ∘ MREN e) M                       comp-MWK-MREN-drop
+               (MREN (keep e) ∘ MWK) M ≡ (MWK ∘ MREN e) M                       comp-MWK-MREN-keep
+
+                  (MREN e₁ ∘ REN e₂) M ≡ (REN e₂ ∘ MREN e₁) M                   comp-REN-MREN
+                (MRENS e₁ ∘ RENS e₂) x ≡ (RENS e₂ ∘ MRENS e₁) x                 comp-RENS-MRENS
+                   (MRENS e ∘ LIFTS) x ≡ (LIFTS ∘ MRENS e) x                    comp-LIFTS-MRENS
+
+                            RENS id≥ x ≡ x                                      id-RENS   ⎱ 𝐑𝐄𝐍𝐒
+                      RENS (e₁ ∘ e₂) x ≡ (RENS e₂ ∘ RENS e₁) x                  comp-RENS ⎰
+               (RENS (keep e) ∘ WKS) x ≡ (WKS ∘ RENS e) x                       comp-WKS-RENS-keep
+             (RENS (keep e) ∘ LIFTS) x ≡ (LIFTS ∘ RENS e) x                     comp-LIFTS-RENS
+
+                           MRENS id≥ x ≡ x                                      id-MRENS   ⎱ 𝐌𝐑𝐄𝐍𝐒
+                     MRENS (e₁ ∘ e₂) x ≡ (MRENS e₂ ∘ MRENS e₁) x                comp-MRENS ⎰
+                      MRENS (drop e) x ≡ (MWKS ∘ MRENS e) x                     comp-MWKS-MRENS-drop
+             (MRENS (keep e) ∘ MWKS) x ≡ (MWKS ∘ MRENS e) x                     comp-MWKS-MRENS-keep
+
+                          MRENS₁ id≥ x ≡ x                                      id-MRENS₁   ⎱ 𝐌𝐑𝐄𝐍𝐒₁
+                    MRENS₁ (e₁ ∘ e₂) x ≡ (MRENS₁ e₂ ∘ MRENS₁ e₁) x              comp-MRENS₁ ⎰
+           (MRENS₁ (keep e) ∘ MWKS₁) x ≡ (MWKS₁ ∘ MRENS₁ e) x                   comp-MWKS₁-MRENS₁-keep
+         (MRENS₁ (keep e) ∘ MLIFTS₁) x ≡ (MLIFTS₁ ∘ MRENS₁ e) x                 comp-MLIFTS₁-MRENS₁
+
+                      GET (RENS e x) i ≡ (REN e ∘ GET x) i                      comp-REN-GET
+                   GET (IDS {d = d}) i ≡ VAR i                                  VAR-id-GET
+
+                     GET (MRENS e x) i ≡ (MREN e ∘ GET x) i                     comp-MREN-GET
+
+                    GET (MRENS₁ e x) i ≡ (MREN e ∘ GET x) i                     comp-MREN-GET₁
+                           GET MIDS₁ i ≡ MVAR i                                 MVAR-id-GET₁
+
+                   GETS (RENS e₁ x) e₂ ≡ (RENS e₁ ∘ GETS x) e₂                  comp-RENS-GETS
+               GETS (LIFTS x) (keep e) ≡ (LIFTS ∘ GETS x) e                     comp-LIFTS-GETS
+
+                  GETS (MRENS e₁ x) e₂ ≡ (MRENS e₁ ∘ GETS x) e₂                 comp-MRENS-GETS
+
+                 GETS (MRENS₁ e₁ x) e₂ ≡ (MRENS₁ e₁ ∘ GETS x) e₂                comp-MRENS₁-GETS
+             GETS (MLIFTS₁ x) (keep e) ≡ (MLIFTS₁ ∘ GETS x) e                   comp-MLIFTS₁-GETS
+
+                      GET (SUBS x y) i ≡ (SUB x ∘ GET y) i                      comp-SUB-GET
+
+                     GET (MSUBS x y) i ≡ (MSUB x ∘ GET y) i                     comp-MSUB-GET
+
+                    GET (MSUBS₁ x y) i ≡ (MSUB x ∘ GET y) i                     comp-MSUB-GET₁
+
+                      SUB (GETS x e) M ≡ (SUB x ∘ REN e) M                      comp-SUB-REN
+
+                    SUB (x , M) (WK N) ≡ SUB x N                                expand-SUB
+                  SUBS (x , M) (WKS y) ≡ SUBS x y                               expand-SUBS
+
+                      SUB (RENS e x) M ≡ (REN e ∘ SUB x) M                      comp-REN-SUB
+                     SUBS (RENS e x) y ≡ (RENS e ∘ SUBS x) y                    comp-RENS-SUBS
+              SUBS (LIFTS x) (LIFTS y) ≡ (LIFTS ∘ SUBS x) y                     comp-LIFTS-SUBS
+
+                   SUB (MRENS e IDS) M ≡ M                                      id-MREN-SUB
+            SUB (MRENS e x) (MREN e M) ≡ (MREN e ∘ SUB x) M                     comp-MREN-SUB
+          SUBS (MRENS e x) (MRENS e y) ≡ (MRENS e ∘ SUBS x) y                   comp-MRENS-SUBS
+
+                             SUB IDS M ≡ M                                      id-SUB   ⎱ 𝐒𝐔𝐁
+                      SUB (SUBS x y) M ≡ (SUB x ∘ SUB y) M                      comp-SUB ⎰
+                            SUBS IDS x ≡ x                                      lid-SUBS   ⎫
+                            SUBS x IDS ≡ x                                      rid-SUBS   ⎬ 𝐒𝟒𝐓𝐞𝐫𝐦𝐬
+                     SUBS (SUBS x y) z ≡ SUBS x (SUBS y z)                      assoc-SUBS ⎭
+
+                    (REN e ∘ MSUB x) M ≡ (MSUB x ∘ REN e) M                     comp-MSUB-REN
+                  (RENS e ∘ MSUBS x) y ≡ (MSUBS x ∘ RENS e) y                   comp-MSUBS-RENS
+                   (LIFTS ∘ MSUBS x) y ≡ (MSUBS x ∘ LIFTS) y                    comp-MSUBS-LIFTS
+
+                     MSUB (GETS x e) M ≡ (MSUB x ∘ MREN e) M                    comp-MSUB-MREN
+
+                  MSUB (x , M) (MWK N) ≡ MSUB x N                               expand-MSUB
+                MSUBS (x , M) (MWKS y) ≡ MSUBS x y                              expand-MSUBS
+              MSUBS₁ (x , M) (MWKS₁ y) ≡ MSUBS₁ x y                             expand-MSUBS₁
+
+                   MSUB (MRENS₁ e x) M ≡ (MREN e ∘ MSUB x) M                    comp-MREN-MSUB
+                  MSUBS (MRENS₁ e x) y ≡ (MRENS e ∘ MSUBS x) y                  comp-MRENS-MSUBS
+          (MSUBS (MLIFTS₁ x) ∘ MWKS) y ≡ (MWKS ∘ MSUBS x) y                     comp-MWKS-MSUBS
+                 MSUBS₁ (MRENS₁ e x) y ≡ (MRENS₁ e ∘ MSUBS₁ x) y                comp-MRENS₁-MSUBS₁
+        (MSUBS₁ (MLIFTS₁ x) ∘ MWKS₁) y ≡ (MWKS₁ ∘ MSUBS₁ x) y                   comp-MWKS₁-MSUBS₁
+      (MSUBS₁ (MLIFTS₁ x) ∘ MLIFTS₁) y ≡ (MLIFTS₁ ∘ MSUBS₁ x) y                 comp-MLIFTS₁-MSUBS₁
+
+          (SUB (MSUBS x y) ∘ MSUB x) M ≡ (MSUB x ∘ SUB y) M                     comp-MSUB-SUB
+
+                          MSUB MIDS₁ M ≡ M                                      id-MSUB   ⎱ 𝐌𝐒𝐔𝐁
+                   MSUB (MSUBS₁ x y) M ≡ (MSUB x ∘ MSUB y) M                    comp-MSUB ⎰
+                        MSUBS₁ MIDS₁ x ≡ x                                      lid-MSUBS₁   ⎫
+                        MSUBS₁ x MIDS₁ ≡ x                                      rid-MSUBS₁   ⎬ 𝐒𝟒𝐓𝐞𝐫𝐦𝐬₁
+                 MSUBS₁ (MSUBS₁ x y) z ≡ MSUBS₁ x (MSUBS₁ y z)                  assoc-MSUBS₁ ⎭
+-}
+--------------------------------------------------------------------------------
 
 
 id-REN : ∀ {d g} → (M : Term d g)
@@ -604,16 +700,6 @@ comp-MLIFTS₁-MSUBS₁ x y = (_, MVZ) & comp-MWKS₁-MSUBS₁ x y
 --------------------------------------------------------------------------------
 
 
-id-MSUB : ∀ {d g} → (M : Term d g)
-                  → MSUB MIDS₁ M ≡ M
-id-MSUB (VAR i)      = refl
-id-MSUB (LAM M)      = LAM & id-MSUB M
-id-MSUB (APP M N)    = APP & id-MSUB M ⊗ id-MSUB N
-id-MSUB (MVAR i)     = SUB ∙ & MVAR-id-GET₁ i
-id-MSUB (BOX M)      = BOX & id-MSUB M
-id-MSUB (LETBOX M N) = LETBOX & id-MSUB M ⊗ id-MSUB N
-
-
 comp-MSUB-SUB : ∀ {d g n m} → (x : Terms₁ d n) (y : Terms n g m) (M : Term n m)
                             → (SUB (MSUBS x y) ∘ MSUB x) M ≡ (MSUB x ∘ SUB y) M
 comp-MSUB-SUB x y (VAR i)      = comp-MSUB-GET x y i
@@ -627,6 +713,19 @@ comp-MSUB-SUB x y (LETBOX M N) = LETBOX & comp-MSUB-SUB x y M
                                         ⊗ ( (\ x′ → SUB x′ (MSUB (MWKS₁ x , MVZ) N)) & comp-MWKS-MSUBS x y ⁻¹
                                           ⋮ comp-MSUB-SUB (MLIFTS₁ x) (MWKS y) N
                                           )
+
+
+--------------------------------------------------------------------------------
+
+
+id-MSUB : ∀ {d g} → (M : Term d g)
+                  → MSUB MIDS₁ M ≡ M
+id-MSUB (VAR i)      = refl
+id-MSUB (LAM M)      = LAM & id-MSUB M
+id-MSUB (APP M N)    = APP & id-MSUB M ⊗ id-MSUB N
+id-MSUB (MVAR i)     = SUB ∙ & MVAR-id-GET₁ i
+id-MSUB (BOX M)      = BOX & id-MSUB M
+id-MSUB (LETBOX M N) = LETBOX & id-MSUB M ⊗ id-MSUB N
 
 
 comp-MSUB : ∀ {d g n m} → (x : Terms₁ d n) (y : Terms₁ n m) (M : Term m g)

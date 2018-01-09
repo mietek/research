@@ -3,6 +3,7 @@ module StdCMTTTerms where
 open import Prelude
 open import Fin
 open import Vec
+open import AllVec
 
 
 --------------------------------------------------------------------------------
@@ -30,20 +31,20 @@ mutual
                     → Term σ g → Term σ g
                     → Term σ g
 
-      MVAR : ∀ {p d g i} → {σ : Scopes d}
-                         → σ ∋⟨ i ⟩ p → Terms σ g p
+      MVAR : ∀ {m d g i} → {σ : Scopes d}
+                         → σ ∋⟨ i ⟩ m → Terms σ g m
                          → Term σ g
 
-      BOX : ∀ {p d g} → {σ : Scopes d}
-                      → Term σ p
+      BOX : ∀ {m d g} → {σ : Scopes d}
+                      → Term σ m
                       → Term σ g
 
-      LETBOX : ∀ {p d g} → {σ : Scopes d}
-                         → Term σ g → Term (σ , p) g
+      LETBOX : ∀ {m d g} → {σ : Scopes d}
+                         → Term σ g → Term (σ , m) g
                          → Term σ g
 
   Terms : ∀ {d} → Scopes d → Nat → Nat → Set
-  Terms σ g x = Vec (Term σ g) x
+  Terms σ g n = Vec (Term σ g) n
 
 
 --------------------------------------------------------------------------------
@@ -53,20 +54,23 @@ mutual
   REN : ∀ {d g g′} → {σ : Scopes d}
                    → g′ ≥ g → Term σ g
                    → Term σ g′
-  REN e (VAR i)      = VAR (renF e i)
+  REN e (VAR i)      = VAR (REN∋ e i)
   REN e (LAM M)      = LAM (REN (keep e) M)
   REN e (APP M N)    = APP (REN e M) (REN e N)
-  REN e (MVAR 𝒾 φ)   = MVAR 𝒾 (RENS e φ)
+  REN e (MVAR 𝒾 y)   = MVAR 𝒾 (RENS e y)
   REN e (BOX M)      = BOX M
   REN e (LETBOX M N) = LETBOX (REN e M) (REN e N)
 
-  RENS : ∀ {d g g′ x} → {σ : Scopes d}
-                      → g′ ≥ g → Terms σ g x
-                      → Terms σ g′ x
+  RENS : ∀ {d g g′ n} → {σ : Scopes d}
+                      → g′ ≥ g → Terms σ g n
+                      → Terms σ g′ n
   RENS e ∙       = ∙
-  RENS e (ζ , M) = RENS e ζ , REN e M
+  RENS e (x , M) = RENS e x , REN e M
   -- NOTE: Equivalent to
-  -- RENS e ζ = map (REN e) ζ
+  -- RENS e x = maps (REN e) x
+
+
+--------------------------------------------------------------------------------
 
 
 WK : ∀ {d g} → {σ : Scopes d}
@@ -80,22 +84,29 @@ VZ : ∀ {d g} → {σ : Scopes d}
 VZ = VAR zero
 
 
-WKS : ∀ {d g x} → {σ : Scopes d}
-                → Terms σ g x
-                → Terms σ (suc g) x
-WKS ζ = RENS (drop id≥) ζ
+WKS : ∀ {d g n} → {σ : Scopes d}
+                → Terms σ g n
+                → Terms σ (suc g) n
+WKS x = RENS (drop id≥) x
 
 
-LIFTS : ∀ {d g x} → {σ : Scopes d}
-                  → Terms σ g x
-                  → Terms σ (suc g) (suc x)
-LIFTS ζ = WKS ζ , VZ
+LIFTS : ∀ {d g n} → {σ : Scopes d}
+                  → Terms σ g n
+                  → Terms σ (suc g) (suc n)
+LIFTS x = WKS x , VZ
+
+
+VARS : ∀ {d g g′} → {σ : Scopes d}
+                  → g′ ≥ g
+                  → Terms σ g′ g
+VARS done     = ∙
+VARS (drop e) = WKS (VARS e)
+VARS (keep e) = LIFTS (VARS e)
 
 
 IDS : ∀ {d g} → {σ : Scopes d}
               → Terms σ g g
-IDS {g = zero}  = ∙
-IDS {g = suc g} = LIFTS IDS
+IDS = VARS id≥
 
 
 --------------------------------------------------------------------------------
@@ -108,58 +119,61 @@ mutual
   MREN η (VAR i)      = VAR i
   MREN η (LAM M)      = LAM (MREN η M)
   MREN η (APP M N)    = APP (MREN η M) (MREN η N)
-  MREN η (MVAR 𝒾 φ)   = MVAR (ren∋ η 𝒾) (MRENS η φ)
+  MREN η (MVAR 𝒾 y)   = MVAR (ren∋ η 𝒾) (MRENS η y)
   MREN η (BOX M)      = BOX (MREN η M)
   MREN η (LETBOX M N) = LETBOX (MREN η M) (MREN (keep η) N)
 
-  MRENS : ∀ {d d′ e g x} → {σ : Scopes d} {σ′ : Scopes d′}
-                         → σ′ ⊇⟨ e ⟩ σ → Terms σ g x
-                         → Terms σ′ g x
+  MRENS : ∀ {d d′ e g n} → {σ : Scopes d} {σ′ : Scopes d′}
+                         → σ′ ⊇⟨ e ⟩ σ → Terms σ g n
+                         → Terms σ′ g n
   MRENS η ∙       = ∙
-  MRENS η (ζ , M) = MRENS η ζ , MREN η M
+  MRENS η (x , M) = MRENS η x , MREN η M
   -- NOTE: Equivalent to
-  -- MRENS η ζ = map (MREN η) ζ
+  -- MRENS η x = maps (MREN η) x
 
 
-MWK : ∀ {p d g} → {σ : Scopes d}
+--------------------------------------------------------------------------------
+
+
+MWK : ∀ {m d g} → {σ : Scopes d}
                 → Term σ g
-                → Term (σ , p) g
+                → Term (σ , m) g
 MWK M = MREN (drop id⊇) M
 
 
-MWKS : ∀ {p d g x} → {σ : Scopes d}
-                   → Terms σ g x
-                   → Terms (σ , p) g x
-MWKS ζ = MRENS (drop id⊇) ζ
+MWKS : ∀ {m d g n} → {σ : Scopes d}
+                   → Terms σ g n
+                   → Terms (σ , m) g n
+MWKS x = MRENS (drop id⊇) x
 
 
-MVZ : ∀ {p d g} → {σ : Scopes d}
-                → Terms σ g p
-                → Term (σ , p) g
-MVZ φ = MVAR zero (MWKS φ)
+MVZ : ∀ {m d g} → {σ : Scopes d}
+                → Terms σ g m
+                → Term (σ , m) g
+MVZ y = MVAR zero (MWKS y)
 
 
 --------------------------------------------------------------------------------
 
 
 mutual
-  SUB : ∀ {d g x} → {σ : Scopes d}
-                  → Terms σ g x → Term σ x
+  SUB : ∀ {d g n} → {σ : Scopes d}
+                  → Terms σ g n → Term σ n
                   → Term σ g
-  SUB ζ (VAR i)      = get ζ i
-  SUB ζ (LAM M)      = LAM (SUB (LIFTS ζ) M)
-  SUB ζ (APP M N)    = APP (SUB ζ M) (SUB ζ N)
-  SUB ζ (MVAR 𝒾 φ)   = MVAR 𝒾 (SUBS ζ φ)
-  SUB ζ (BOX M)      = BOX M
-  SUB ζ (LETBOX M N) = LETBOX (SUB ζ M) (SUB (MWKS ζ) N)
+  SUB x (VAR i)      = GET x i
+  SUB x (LAM M)      = LAM (SUB (LIFTS x) M)
+  SUB x (APP M N)    = APP (SUB x M) (SUB x N)
+  SUB x (MVAR 𝒾 y)   = MVAR 𝒾 (SUBS x y)
+  SUB x (BOX M)      = BOX M
+  SUB x (LETBOX M N) = LETBOX (SUB x M) (SUB (MWKS x) N)
 
-  SUBS : ∀ {d g x p} → {σ : Scopes d}
-                     → Terms σ g x → Terms σ x p
-                     → Terms σ g p
-  SUBS ζ ∙       = ∙
-  SUBS ζ (φ , M) = SUBS ζ φ , SUB ζ M
+  SUBS : ∀ {d g n m} → {σ : Scopes d}
+                     → Terms σ g n → Terms σ n m
+                     → Terms σ g m
+  SUBS x ∙       = ∙
+  SUBS x (y , M) = SUBS x y , SUB x M
   -- NOTE: Equivalent to
-  -- SUBS ζ φ = map (SUB ζ) φ
+  -- SUBS x y = maps (SUB x) y
 
 
 CUT : ∀ {d g} → {σ : Scopes d}
@@ -172,65 +186,72 @@ CUT M N = SUB (IDS , M) N
 
 
 Term₁ : ∀ {d} → Scopes d → Nat → Set
-Term₁ σ p = Term σ p
+Term₁ σ m = Term σ m
 
 
-Terms₁ : ∀ {d x} → Scopes d → Scopes x → Set
-Terms₁ σ ξ = All (Term₁ σ) ξ
+Terms₁ : ∀ {d n} → Scopes d → Scopes n → Set
+Terms₁ σ τ = All (Term₁ σ) τ
 
 
 --------------------------------------------------------------------------------
 
 
-MRENS₁ : ∀ {d d′ e x} → {σ : Scopes d} {σ′ : Scopes d′} {ξ : Scopes x}
-                      → σ′ ⊇⟨ e ⟩ σ → Terms₁ σ ξ
-                      → Terms₁ σ′ ξ
-MRENS₁ e ζ = mapAll (MREN e) ζ
+MRENS₁ : ∀ {d d′ e n} → {σ : Scopes d} {σ′ : Scopes d′} {τ : Scopes n}
+                      → σ′ ⊇⟨ e ⟩ σ → Terms₁ σ τ
+                      → Terms₁ σ′ τ
+MRENS₁ e x = maps (MREN e) x
 
 
-MWKS₁ : ∀ {p d x} → {σ : Scopes d} {ξ : Scopes x}
-                  → Terms₁ σ ξ
-                  → Terms₁ (σ , p) ξ
-MWKS₁ ζ = MRENS₁ (drop id⊇) ζ
+MWKS₁ : ∀ {m d n} → {σ : Scopes d} {τ : Scopes n}
+                  → Terms₁ σ τ
+                  → Terms₁ (σ , m) τ
+MWKS₁ x = MRENS₁ (drop id⊇) x
 
 
-MLIFTS₁ : ∀ {p d x} → {σ : Scopes d} {ξ : Scopes x}
-                    → Terms₁ σ ξ
-                    → Terms₁ (σ , p) (ξ , p)
-MLIFTS₁ ζ = MWKS₁ ζ , MVZ IDS
+MLIFTS₁ : ∀ {m d n} → {σ : Scopes d} {τ : Scopes n}
+                    → Terms₁ σ τ
+                    → Terms₁ (σ , m) (τ , m)
+MLIFTS₁ x = MWKS₁ x , MVZ IDS
+
+
+MVARS₁ : ∀ {d d′ e} → {σ : Scopes d} {σ′ : Scopes d′}
+                    → σ′ ⊇⟨ e ⟩ σ
+                    → Terms₁ σ′ σ
+MVARS₁ done     = ∙
+MVARS₁ (drop η) = MWKS₁ (MVARS₁ η)
+MVARS₁ (keep η) = MLIFTS₁ (MVARS₁ η)
 
 
 MIDS₁ : ∀ {d} → {σ : Scopes d}
               → Terms₁ σ σ
-MIDS₁ {σ = ∙}     = ∙
-MIDS₁ {σ = σ , p} = MLIFTS₁ MIDS₁
+MIDS₁ = MVARS₁ id⊇
 
 
 --------------------------------------------------------------------------------
 
 
 mutual
-  MSUB : ∀ {d g x} → {σ : Scopes d} {ξ : Scopes x}
-                   → Terms₁ σ ξ → Term ξ g
+  MSUB : ∀ {d g n} → {σ : Scopes d} {τ : Scopes n}
+                   → Terms₁ σ τ → Term τ g
                    → Term σ g
-  MSUB ζ (VAR i)      = VAR i
-  MSUB ζ (LAM M)      = LAM (MSUB ζ M)
-  MSUB ζ (APP M N)    = APP (MSUB ζ M) (MSUB ζ N)
-  MSUB ζ (MVAR 𝒾 φ)   = SUB (MSUBS ζ φ) (lookup ζ 𝒾)
-  MSUB ζ (BOX M)      = BOX (MSUB ζ M)
-  MSUB ζ (LETBOX M N) = LETBOX (MSUB ζ M) (MSUB (MLIFTS₁ ζ) N)
+  MSUB x (VAR i)      = VAR i
+  MSUB x (LAM M)      = LAM (MSUB x M)
+  MSUB x (APP M N)    = APP (MSUB x M) (MSUB x N)
+  MSUB x (MVAR 𝒾 y)   = SUB (MSUBS x y) (get x 𝒾)
+  MSUB x (BOX M)      = BOX (MSUB x M)
+  MSUB x (LETBOX M N) = LETBOX (MSUB x M) (MSUB (MLIFTS₁ x) N)
 
-  MSUBS : ∀ {d g x p} → {σ : Scopes d} {ξ : Scopes x}
-                      → Terms₁ σ ξ → Terms ξ g p
-                      → Terms σ g p
-  MSUBS ζ ∙       = ∙
-  MSUBS ζ (φ , M) = MSUBS ζ φ , MSUB ζ M
+  MSUBS : ∀ {d g n m} → {σ : Scopes d} {τ : Scopes n}
+                      → Terms₁ σ τ → Terms τ g m
+                      → Terms σ g m
+  MSUBS x ∙       = ∙
+  MSUBS x (y , M) = MSUBS x y , MSUB x M
   -- NOTE: Equivalent to
-  -- MSUBS ζ φ = map (MSUB ζ) φ
+  -- MSUBS x y = maps (MSUB x) y
 
 
-MCUT : ∀ {p d g} → {σ : Scopes d}
-                 → Term₁ σ p → Term (σ , p) g
+MCUT : ∀ {m d g} → {σ : Scopes d}
+                 → Term₁ σ m → Term (σ , m) g
                  → Term σ g
 MCUT M N = MSUB (MIDS₁ , M) N
 
@@ -253,22 +274,22 @@ EX M = APP (APP (WK (WK (LAM (LAM M)))) VZ) (WK VZ)
 --------------------------------------------------------------------------------
 
 
-SHL : ∀ {p d g} → {σ : Scopes d}
-                → Term σ (suc g)
-                → Term (σ , p) g
-SHL M = APP (LAM (MWK M)) (BOX (MVZ IDS))
+UP : ∀ {m d g} → {σ : Scopes d}
+               → Term σ (suc g)
+               → Term (σ , m) g
+UP M = APP (LAM (MWK M)) (BOX (MVZ IDS))
 
 
-SHR : ∀ {p d g} → {σ : Scopes d}
-                → Term (σ , p) g
-                → Term σ (suc g)
-SHR M = LETBOX VZ (WK M)
+DOWN : ∀ {m d g} → {σ : Scopes d}
+                 → Term (σ , m) g
+                 → Term σ (suc g)
+DOWN M = LETBOX VZ (WK M)
 
 
-MEX : ∀ {p q d g} → {σ : Scopes d}
-                  → Term (σ , p , q) g
-                  → Term (σ , q , p) g
-MEX M = SHL (SHL (EX (SHR (SHR M))))
+MEX : ∀ {m o d g} → {σ : Scopes d}
+                  → Term (σ , m , o) g
+                  → Term (σ , o , m) g
+MEX M = UP (UP (EX (DOWN (DOWN M))))
 
 
 --------------------------------------------------------------------------------

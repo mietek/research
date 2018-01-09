@@ -11,13 +11,13 @@ open import StdIPL
 
 --------------------------------------------------------------------------------
 {-
-                             ren id⊇ 𝒟 ≡ 𝒟                                      id-ren
-                       ren (η₁ ∘ η₂) 𝒟 ≡ (ren η₂ ∘ ren η₁) 𝒟                    comp-ren
+                             ren id⊇ 𝒟 ≡ 𝒟                                      id-ren   ⎱ 𝐫𝐞𝐧
+                       ren (η₁ ∘ η₂) 𝒟 ≡ (ren η₂ ∘ ren η₁) 𝒟                    comp-ren ⎰
                         ren (drop η) 𝒟 ≡ (wk ∘ ren η) 𝒟                         -- comp-wk-ren-drop
                  (ren (keep η) ∘ wk) 𝒟 ≡ (wk ∘ ren η) 𝒟                         comp-wk-ren-keep
 
-                            rens id⊇ ξ ≡ ξ                                      id-rens
-                      rens (η₁ ∘ η₂) ξ ≡ (rens η₂ ∘ rens η₁) ξ                  comp-rens
+                            rens id⊇ ξ ≡ ξ                                      id-rens   ⎱ 𝐫𝐞𝐧𝐬
+                      rens (η₁ ∘ η₂) ξ ≡ (rens η₂ ∘ rens η₁) ξ                  comp-rens ⎰
                        rens (drop η) ξ ≡ (wks ∘ rens η) ξ                       -- comp-wks-rens-drop
                (rens (keep η) ∘ wks) ξ ≡ (wks ∘ rens η) ξ                       comp-wks-rens-keep
              (rens (keep η) ∘ lifts) ξ ≡ (lifts ∘ rens η) ξ                     comp-lifts-rens
@@ -41,11 +41,11 @@ open import StdIPL
                      subs (rens η ξ) ψ = (rens η ∘ subs ξ) ψ                    comp-rens-subs
               subs (lifts ξ) (lifts ψ) ≡ (lifts ∘ subs ξ) ψ                     comp-lifts-subs
 
-                             sub ids 𝒟 ≡ 𝒟                                      id-sub
-                      sub (subs ξ ψ) 𝒟 ≡ (sub ξ ∘ sub ψ) 𝒟                      comp-sub
-                            subs ids ξ ≡ ξ                                      lid-subs
-                            subs ξ ids ≡ ξ                                      rid-subs
-                     subs (subs ξ ψ) φ ≡ subs ξ (subs ψ φ)                      assoc-subs
+                             sub ids 𝒟 ≡ 𝒟                                      id-sub   ⎱ 𝐬𝐮𝐛
+                      sub (subs ξ ψ) 𝒟 ≡ (sub ξ ∘ sub ψ) 𝒟                      comp-sub ⎰
+                            subs ids ξ ≡ ξ                                      lid-subs   ⎫
+                            subs ξ ids ≡ ξ                                      rid-subs   ⎬ 𝐈𝐏𝐋
+                     subs (subs ξ ψ) φ ≡ subs ξ (subs ψ φ)                      assoc-subs ⎭
 -}
 --------------------------------------------------------------------------------
 

@@ -48,8 +48,8 @@ import StdS4TTTerms
 import StdS4TTTermsLemmas
 import StdS4TT
 
--- import StdCMTTTerms
--- import StdCMTT
+import StdCMTTTerms
+import StdCMTT
 
 -- import StdLPTTTerms
 -- import StdLPTTTermsLemmas

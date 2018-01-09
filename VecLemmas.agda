@@ -13,15 +13,15 @@ open import Vec
 {-
                       GET (GETS Ξ e) i ≡ (GET Ξ ∘ REN∋ e) i                     comp-GET-REN∋
 
-                            GETS ξ id⊇ ≡ ξ                                      id-GETS
-                      GETS ξ (η₁ ∘ η₂) ≡ GETS (GETS ξ η₂) η₁                    comp-GETS
+                            GETS ξ id⊇ ≡ ξ                                      id-GETS   ⎱ 𝐆𝐄𝐓𝐒
+                      GETS ξ (η₁ ∘ η₂) ≡ GETS (GETS ξ η₂) η₁                    comp-GETS ⎰
 
-                              id⊇ ∘⊇ η ≡ η                                      lid∘⊇
-                              η ∘⊇ id⊇ ≡ η                                      rid∘⊇
-                      (η₁ ∘⊇ η₂) ∘⊇ η₃ ≡ η₁ ∘⊇ (η₂ ∘⊇ η₃)                       assoc∘⊇
+                              id⊇ ∘⊇ η ≡ η                                      lid∘⊇   ⎫
+                              η ∘⊇ id⊇ ≡ η                                      rid∘⊇   ⎬ 𝐎𝐏𝐄
+                      (η₁ ∘⊇ η₂) ∘⊇ η₃ ≡ η₁ ∘⊇ (η₂ ∘⊇ η₃)                       assoc∘⊇ ⎭
 
-                            ren∋ id⊇ 𝒾 ≡ 𝒾                                      id-ren∋
-                      ren∋ (η₁ ∘ η₂) 𝒾 ≡ (ren∋ η₂ ∘ ren∋ η₁) 𝒾                  comp-ren∋
+                            ren∋ id⊇ 𝒾 ≡ 𝒾                                      id-ren∋   ⎱ 𝐫𝐞𝐧∋
+                      ren∋ (η₁ ∘ η₂) 𝒾 ≡ (ren∋ η₂ ∘ ren∋ η₁) 𝒾                  comp-ren∋ ⎰
 -}
 --------------------------------------------------------------------------------
 

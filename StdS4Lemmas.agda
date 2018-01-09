@@ -11,13 +11,13 @@ open import StdS4
 
 --------------------------------------------------------------------------------
 {-
-                             ren id⊇ 𝒟 ≡ 𝒟                                      id-ren
-                       ren (η₁ ∘ η₂) 𝒟 ≡ (ren η₂ ∘ ren η₁) 𝒟                    comp-ren
+                             ren id⊇ 𝒟 ≡ 𝒟                                      id-ren   ⎱ 𝐫𝐞𝐧
+                       ren (η₁ ∘ η₂) 𝒟 ≡ (ren η₂ ∘ ren η₁) 𝒟                    comp-ren ⎰
                         ren (drop η) 𝒟 ≡ (wk ∘ ren η) 𝒟                         -- comp-wk-ren-drop
                  (ren (keep η) ∘ wk) 𝒟 ≡ (wk ∘ ren η) 𝒟                         comp-wk-ren-keep
 
-                            mren id⊇ 𝒟 ≡ 𝒟                                      id-mren
-                      mren (η₁ ∘ η₂) 𝒟 ≡ (mren η₂ ∘ mren η₁) 𝒟                  comp-mren
+                            mren id⊇ 𝒟 ≡ 𝒟                                      id-mren   ⎱ 𝐦𝐫𝐞𝐧
+                      mren (η₁ ∘ η₂) 𝒟 ≡ (mren η₂ ∘ mren η₁) 𝒟                  comp-mren ⎰
                        mren (drop η) 𝒟 ≡ (mwk ∘ mren η) 𝒟                       comp-mwk-mren-drop
                (mren (keep η) ∘ mwk) 𝒟 ≡ (mwk ∘ mren η) 𝒟                       comp-mwk-mren-keep
 
@@ -25,19 +25,19 @@ open import StdS4
                 (mrens η₁ ∘ rens η₂) ξ ≡ (rens η₂ ∘ mrens η₁) ξ                 comp-rens-mrens
                    (mrens η ∘ lifts) ξ ≡ (lifts ∘ mrens η) ξ                    comp-lifts-mrens
 
-                            rens id⊇ ξ ≡ ξ                                      id-rens
-                      rens (η₁ ∘ η₂) ξ ≡ (rens η₂ ∘ rens η₁) ξ                  comp-rens
+                            rens id⊇ ξ ≡ ξ                                      id-rens   ⎱ 𝐫𝐞𝐧𝐬
+                      rens (η₁ ∘ η₂) ξ ≡ (rens η₂ ∘ rens η₁) ξ                  comp-rens ⎰
                        rens (drop η) ξ ≡ (wks ∘ rens η) ξ                       -- comp-wks-rens-drop
                (rens (keep η) ∘ wks) ξ ≡ (wks ∘ rens η) ξ                       comp-wks-rens-keep
              (rens (keep η) ∘ lifts) ξ ≡ (lifts ∘ rens η) ξ                     comp-lifts-rens
 
-                           mrens id⊇ ξ ≡ ξ                                      id-mrens
-                     mrens (η₁ ∘ η₂) ξ ≡ (mrens η₂ ∘ mrens η₁) ξ                comp-mrens
+                           mrens id⊇ ξ ≡ ξ                                      id-mrens   ⎱ 𝐦𝐫𝐞𝐧𝐬
+                     mrens (η₁ ∘ η₂) ξ ≡ (mrens η₂ ∘ mrens η₁) ξ                comp-mrens ⎰
                       mrens (drop η) ξ ≡ (mwks ∘ mrens η) ξ                     comp-mwks-mrens-drop
              (mrens (keep η) ∘ mwks) ξ ≡ (mwks ∘ mrens η) ξ                     comp-mwks-mrens-keep
 
-                          mrens₁ id⊇ ξ ≡ ξ                                      id-mrens₁
-                    mrens₁ (η₁ ∘ η₂) ξ ≡ (mrens₁ η₂ ∘ mrens₁ η₁) ξ              comp-mrens₁
+                          mrens₁ id⊇ ξ ≡ ξ                                      id-mrens₁   ⎱ 𝐦𝐫𝐞𝐧𝐬₁
+                    mrens₁ (η₁ ∘ η₂) ξ ≡ (mrens₁ η₂ ∘ mrens₁ η₁) ξ              comp-mrens₁ ⎰
                      mrens₁ (drop η) ξ ≡ (mwks₁ ∘ mrens₁ η) ξ                   -- comp-mwks₁-mrens₁-drop
            (mrens₁ (keep η) ∘ mwks₁) ξ ≡ (mwks₁ ∘ mrens₁ η) ξ                   comp-mwks₁-mrens₁-keep
          (mrens₁ (keep η) ∘ mlifts₁) ξ ≡ (mlifts₁ ∘ mrens₁ η) ξ                 comp-mlifts₁-mrens₁
@@ -81,11 +81,11 @@ open import StdS4
             sub (mrens η ξ) (mren η 𝒟) ≡ (mren η ∘ sub ξ) 𝒟                     comp-mren-sub
           subs (mrens η ξ) (mrens η ψ) ≡ (mrens η ∘ subs ξ) ψ                   comp-mrens-subs
 
-                             sub ids 𝒟 ≡ 𝒟                                      id-sub
-                      sub (subs ξ ψ) 𝒟 ≡ (sub ξ ∘ sub ψ) 𝒟                      comp-sub
-                            subs ids ξ ≡ ξ                                      lid-subs
-                            subs ξ ids ≡ ξ                                      rid-subs
-                     subs (subs ξ ψ) φ ≡ subs ξ (subs ψ φ)                      assoc-subs
+                             sub ids 𝒟 ≡ 𝒟                                      id-sub   ⎱ 𝐬𝐮𝐛
+                      sub (subs ξ ψ) 𝒟 ≡ (sub ξ ∘ sub ψ) 𝒟                      comp-sub ⎰
+                            subs ids ξ ≡ ξ                                      lid-subs   ⎫
+                            subs ξ ids ≡ ξ                                      rid-subs   ⎬ 𝐒𝟒
+                     subs (subs ξ ψ) φ ≡ subs ξ (subs ψ φ)                      assoc-subs ⎭
 
                     (ren η ∘ msub ξ) 𝒟 ≡ (msub ξ ∘ ren η) 𝒟                     comp-msub-ren
                   (rens η ∘ msubs ξ) ψ ≡ (msubs ξ ∘ rens η) ψ                   comp-msubs-rens
@@ -106,13 +106,14 @@ open import StdS4
         (msubs₁ (mlifts₁ ξ) ∘ mwks₁) ψ ≡ (mwks₁ ∘ msubs₁ ξ) ψ                   comp-mwks₁-msubs₁
       (msubs₁ (mlifts₁ ξ) ∘ mlifts₁) ψ ≡ (mlifts₁ ∘ msubs₁ ξ) ψ                 comp-mlifts₁-msubs₁
 
-                          msub mids₁ 𝒟 ≡ 𝒟                                      id-msub
-                   msub (msubs₁ ξ ψ) 𝒟 ≡ (msub ξ ∘ msub ψ) 𝒟                    comp-msub
-                         msubs mids₁ ξ ≡ ξ                                      -- lid-msubs
-                        msubs₁ mids₁ ξ ≡ ξ                                      lid-msubs₁
-                        msubs₁ ξ mids₁ ≡ ξ                                      rid-msubs₁
-                 msubs₁ (msubs₁ ξ ψ) φ ≡ msubs₁ ξ (msubs₁ ψ φ)                  assoc-msubs₁
+          (sub (msubs ξ ψ) ∘ msub ξ) 𝒟 ≡ (msub ξ ∘ sub ψ) 𝒟                     comp-msub-sub
 
+                          msub mids₁ 𝒟 ≡ 𝒟                                      id-msub   ⎱ 𝐦𝐬𝐮𝐛
+                   msub (msubs₁ ξ ψ) 𝒟 ≡ (msub ξ ∘ msub ψ) 𝒟                    comp-msub ⎰
+                         msubs mids₁ ξ ≡ ξ                                      -- lid-msubs
+                        msubs₁ mids₁ ξ ≡ ξ                                      lid-msubs₁   ⎫
+                        msubs₁ ξ mids₁ ≡ ξ                                      rid-msubs₁   ⎬ 𝐒𝟒₁
+                 msubs₁ (msubs₁ ξ ψ) φ ≡ msubs₁ ξ (msubs₁ ψ φ)                  assoc-msubs₁ ⎭
 -}
 --------------------------------------------------------------------------------
 
@@ -791,16 +792,6 @@ comp-mlifts₁-msubs₁ ξ ψ = (_, mvz) & comp-mwks₁-msubs₁ ξ ψ
 --------------------------------------------------------------------------------
 
 
-id-msub : ∀ {Δ Γ A} → (𝒟 : Δ ⨾ Γ ⊢ A true)
-                    → msub mids₁ 𝒟 ≡ 𝒟
-id-msub (var 𝒾)      = refl
-id-msub (lam 𝒟)      = lam & id-msub 𝒟
-id-msub (app 𝒟 ℰ)    = app & id-msub 𝒟 ⊗ id-msub ℰ
-id-msub (mvar 𝒾)     = sub ∙ & mvar-id-get₁ 𝒾
-id-msub (box 𝒟)      = box & id-msub 𝒟
-id-msub (letbox 𝒟 ℰ) = letbox & id-msub 𝒟 ⊗ id-msub ℰ
-
-
 comp-msub-sub : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⊢⋆₁ Ξ) (ψ : Ξ ⨾ Γ ⊢⋆ Ψ) (𝒟 : Ξ ⨾ Ψ ⊢ A true)
                               → (sub (msubs ξ ψ) ∘ msub ξ) 𝒟 ≡ (msub ξ ∘ sub ψ) 𝒟
 comp-msub-sub ξ ψ (var 𝒾)      = comp-msub-get ξ ψ 𝒾
@@ -814,6 +805,19 @@ comp-msub-sub ξ ψ (letbox 𝒟 ℰ) = letbox & comp-msub-sub ξ ψ 𝒟
                                         ⊗ ( (\ ξ′ → sub ξ′ (msub (mwks₁ ξ , mvz) ℰ)) & comp-mwks-msubs ξ ψ ⁻¹
                                           ⋮ comp-msub-sub (mlifts₁ ξ) (mwks ψ) ℰ
                                           )
+
+
+--------------------------------------------------------------------------------
+
+
+id-msub : ∀ {Δ Γ A} → (𝒟 : Δ ⨾ Γ ⊢ A true)
+                    → msub mids₁ 𝒟 ≡ 𝒟
+id-msub (var 𝒾)      = refl
+id-msub (lam 𝒟)      = lam & id-msub 𝒟
+id-msub (app 𝒟 ℰ)    = app & id-msub 𝒟 ⊗ id-msub ℰ
+id-msub (mvar 𝒾)     = sub ∙ & mvar-id-get₁ 𝒾
+id-msub (box 𝒟)      = box & id-msub 𝒟
+id-msub (letbox 𝒟 ℰ) = letbox & id-msub 𝒟 ⊗ id-msub ℰ
 
 
 comp-msub : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⊢⋆₁ Ξ) (ψ : Ξ ⊢⋆₁ Ψ) (𝒟 : Ψ ⨾ Γ ⊢ A true)

@@ -13,15 +13,15 @@ open import List
 {-
                       GET (GETS Ξ e) i ≡ (GET Ξ ∘ REN∋ e) i                     comp-GET-REN∋
 
-                            GETS Ξ id≥ ≡ Ξ                                      id-GETS
-                      GETS Ξ (e₁ ∘ e₂) ≡ GETS (GETS Ξ e₂) e₁                    comp-GETS
+                            GETS Ξ id≥ ≡ Ξ                                      id-GETS   ⎱ 𝐆𝐄𝐓𝐒
+                      GETS Ξ (e₁ ∘ e₂) ≡ GETS (GETS Ξ e₂) e₁                    comp-GETS ⎰
 
-                              id⊇ ∘⊇ η ≡ η                                      lid∘⊇
-                              η ∘⊇ id⊇ ≡ η                                      rid∘⊇
-                      (η₁ ∘⊇ η₂) ∘⊇ η₃ ≡ η₁ ∘⊇ (η₂ ∘⊇ η₃)                       assoc∘⊇
+                              id⊇ ∘⊇ η ≡ η                                      lid∘⊇   ⎫
+                              η ∘⊇ id⊇ ≡ η                                      rid∘⊇   ⎬ 𝐎𝐏𝐄
+                      (η₁ ∘⊇ η₂) ∘⊇ η₃ ≡ η₁ ∘⊇ (η₂ ∘⊇ η₃)                       assoc∘⊇ ⎭
 
-                            ren∋ id⊇ 𝒾 ≡ 𝒾                                      id-ren∋
-                      ren∋ (η₁ ∘ η₂) 𝒾 ≡ (ren∋ η₂ ∘ ren∋ η₁) 𝒾                  comp-ren∋
+                            ren∋ id⊇ 𝒾 ≡ 𝒾                                      id-ren∋   ⎱ 𝐫𝐞𝐧∋
+                      ren∋ (η₁ ∘ η₂) 𝒾 ≡ (ren∋ η₂ ∘ ren∋ η₁) 𝒾                  comp-ren∋ ⎰
 -}
 --------------------------------------------------------------------------------
 

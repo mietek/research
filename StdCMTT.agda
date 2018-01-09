@@ -3,7 +3,7 @@ module StdCMTT where
 open import Prelude
 open import Fin
 open import Vec
-open import OrnamentedVec
+open import AllVec
 open import StdCMTTTerms
 
 
@@ -31,12 +31,12 @@ mutual
 
 
 infix 7 _valid[_]
-record Validity (p : Nat) : Set
+record Validity (m : Nat) : Set
   where
     constructor _valid[_]
     field
       A : Prop
-      Ψ : Truths p
+      Ψ : Truths m
 
 
 Validities : ∀ {d} → Scopes d → Set
@@ -56,19 +56,19 @@ record Derivation {d} (σ : Scopes d) : Set
       Aₜ  : Truth
 
 
-zap : ∀ {d g x} → {σ : Scopes d}
-                → Truths g → Terms σ g x → Truths x
-                → Vec (Derivation σ) x
+zap : ∀ {d g n} → {σ : Scopes d}
+                → Truths g → Terms σ g n → Truths n
+                → Vec (Derivation σ) n
 zap Γ ∙       ∙            = ∙
-zap Γ (ζ , M) (Ξ , A true) = zap Γ ζ Ξ , [ Γ ⊢ M ⦂ A true ]
+zap Γ (x , M) (Ξ , A true) = zap Γ x Ξ , [ Γ ⊢ M ⦂ A true ]
 
 
-zap∋ : ∀ {d g x i A} → {σ : Scopes d} {Γ : Truths g}
-                        {ζ : Terms σ g x} {Ξ : Truths x}
+zap∋ : ∀ {d g n i A} → {σ : Scopes d} {Γ : Truths g}
+                        {x : Terms σ g n} {Ξ : Truths n}
                      → Ξ ∋⟨ i ⟩ A true
-                     → zap Γ ζ Ξ ∋⟨ i ⟩ [ Γ ⊢ get ζ i ⦂ A true ]
-zap∋ {ζ = ζ , M} {Ξ , A true} zero    = zero
-zap∋ {ζ = ζ , N} {Ξ , B true} (suc 𝒾) = suc (zap∋ 𝒾)
+                     → zap Γ x Ξ ∋⟨ i ⟩ [ Γ ⊢ GET x i ⦂ A true ]
+zap∋ {x = x , M} {Ξ , A true} zero    = zero
+zap∋ {x = x , N} {Ξ , B true} (suc 𝒾) = suc (zap∋ 𝒾)
 
 
 record Derivations {d} (σ : Scopes d) : Set
@@ -76,10 +76,10 @@ record Derivations {d} (σ : Scopes d) : Set
     constructor [_⊢⋆_⦂_]
     field
       {g} : Nat
-      {x} : Nat
+      {n} : Nat
       Γ   : Truths g
-      ζ   : Terms σ g x
-      Ξ   : Truths x
+      x   : Terms σ g n
+      Ξ   : Truths n
 
 
 mutual
@@ -100,24 +100,24 @@ mutual
                         → Δ ⋙ [ Γ ⊢ M ⦂ A ⊃ B true ] → Δ ⋙ [ Γ ⊢ N ⦂ A true ]
                         → Δ ⋙ [ Γ ⊢ APP M N ⦂ B true ]
 
-      mvar : ∀ {A p d g i} → {Ψ : Truths p} {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g}
-                              {𝒾 : σ ∋⟨ i ⟩ p} {ζ : Terms σ g p}
-                           → Δ ∋◇⟨ 𝒾 ⟩ A valid[ Ψ ] → Δ ⋙⋆ [ Γ ⊢⋆ ζ ⦂ Ψ ]
-                           → Δ ⋙ [ Γ ⊢ MVAR 𝒾 ζ ⦂ A true ]
+      mvar : ∀ {A m d g i} → {Ψ : Truths m} {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g}
+                              {𝒾 : σ ∋⟨ i ⟩ m} {x : Terms σ g m}
+                           → Δ ∋◇⟨ 𝒾 ⟩ A valid[ Ψ ] → Δ ⋙⋆ [ Γ ⊢⋆ x ⦂ Ψ ]
+                           → Δ ⋙ [ Γ ⊢ MVAR 𝒾 x ⦂ A true ]
 
-      box : ∀ {A p d g} → {Ψ : Truths p} {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g}
-                           {M : Term σ p}
+      box : ∀ {A m d g} → {Ψ : Truths m} {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g}
+                           {M : Term σ m}
                         → Δ ⋙ [ Ψ ⊢ M ⦂ A true ]
                         → Δ ⋙ [ Γ ⊢ BOX M ⦂ [ Ψ ] A true ]
 
-      letbox : ∀ {A B p d g} → {Ψ : Truths p} {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g}
-                                {M : Term σ g} {N : Term (σ , p) g}
+      letbox : ∀ {A B m d g} → {Ψ : Truths m} {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g}
+                                {M : Term σ g} {N : Term (σ , m) g}
                              → Δ ⋙ [ Γ ⊢ M ⦂ [ Ψ ] A true ] → Δ , A valid[ Ψ ] ⋙ [ Γ ⊢ N ⦂ B true ]
                              → Δ ⋙ [ Γ ⊢ LETBOX M N ⦂ B true ]
 
   infix 3 _⋙⋆_
   _⋙⋆_ : ∀ {d} → {σ : Scopes d} → Validities σ → Derivations σ → Set
-  Δ ⋙⋆ [ Γ ⊢⋆ ζ ⦂ Ξ ] = All (Δ ⋙_) (zap Γ ζ Ξ)
+  Δ ⋙⋆ [ Γ ⊢⋆ x ⦂ Ξ ] = All (Δ ⋙_) (zap Γ x Ξ)
 
 
 --------------------------------------------------------------------------------
@@ -135,14 +135,14 @@ mutual
   ren η (box 𝒟)      = box 𝒟
   ren η (letbox 𝒟 ℰ) = letbox (ren η 𝒟) (ren η ℰ)
 
-  rens : ∀ {d g g′ e x} → {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g} {Γ′ : Truths g′}
-                           {ζ : Terms σ g x} {Ξ : Truths x}
-                        → Γ′ ⊇⟨ e ⟩ Γ → Δ ⋙⋆ [ Γ ⊢⋆ ζ ⦂ Ξ ]
-                        → Δ ⋙⋆ [ Γ′ ⊢⋆ RENS e ζ ⦂ Ξ ]
-  rens {ζ = ∙}     {∙}          η ∙       = ∙
-  rens {ζ = ζ , M} {Ξ , A true} η (ξ , 𝒟) = rens η ξ , ren η 𝒟
+  rens : ∀ {d g g′ e n} → {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g} {Γ′ : Truths g′}
+                           {x : Terms σ g n} {Ξ : Truths n}
+                        → Γ′ ⊇⟨ e ⟩ Γ → Δ ⋙⋆ [ Γ ⊢⋆ x ⦂ Ξ ]
+                        → Δ ⋙⋆ [ Γ′ ⊢⋆ RENS e x ⦂ Ξ ]
+  rens {x = ∙}     {∙}          η ∙       = ∙
+  rens {x = x , M} {Ξ , A true} η (ξ , 𝒟) = rens η ξ , ren η 𝒟
   -- NOTE: Equivalent to
-  -- rens η ξ = mapAll (ren η) ξ
+  -- rens η ξ = maps (ren η) ξ
 
 
 wk : ∀ {B d g A} → {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g}
@@ -157,17 +157,17 @@ vz : ∀ {d g A} → {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g}
 vz = var zero
 
 
-wks : ∀ {d g x A} → {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g}
-                     {ζ : Terms σ g x} {Ξ : Truths x}
-                  → Δ ⋙⋆ [ Γ ⊢⋆ ζ ⦂ Ξ ]
-                  → Δ ⋙⋆ [ Γ , A true ⊢⋆ WKS ζ ⦂ Ξ ]
+wks : ∀ {d g n A} → {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g}
+                     {x : Terms σ g n} {Ξ : Truths n}
+                  → Δ ⋙⋆ [ Γ ⊢⋆ x ⦂ Ξ ]
+                  → Δ ⋙⋆ [ Γ , A true ⊢⋆ WKS x ⦂ Ξ ]
 wks ξ = rens (drop id⊇) ξ
 
 
-lifts : ∀ {d g x A} → {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g}
-                       {ζ : Terms σ g x} {Ξ : Truths x}
-                    → Δ ⋙⋆ [ Γ ⊢⋆ ζ ⦂ Ξ ]
-                    → Δ ⋙⋆ [ Γ , A true ⊢⋆ LIFTS ζ ⦂ Ξ , A true ]
+lifts : ∀ {d g n A} → {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g}
+                       {x : Terms σ g n} {Ξ : Truths n}
+                    → Δ ⋙⋆ [ Γ ⊢⋆ x ⦂ Ξ ]
+                    → Δ ⋙⋆ [ Γ , A true ⊢⋆ LIFTS x ⦂ Ξ , A true ]
 lifts ξ = wks ξ , vz
 
 
@@ -193,35 +193,35 @@ mutual
   mren `η (box 𝒟)      = box (mren `η 𝒟)
   mren `η (letbox 𝒟 ℰ) = letbox (mren `η 𝒟) (mren (keep `η) ℰ)
 
-  mrens : ∀ {d d′ g e x} → {σ : Scopes d} {σ′ : Scopes d′} {η : σ′ ⊇⟨ e ⟩ σ}
+  mrens : ∀ {d d′ g e n} → {σ : Scopes d} {σ′ : Scopes d′} {η : σ′ ⊇⟨ e ⟩ σ}
                             {Δ : Validities σ} {Δ′ : Validities σ′} {Γ : Truths g}
-                            {ζ : Terms σ g x} {Ξ : Truths x}
-                         → Δ′ ⊇◇⟨ η ⟩ Δ → Δ ⋙⋆ [ Γ ⊢⋆ ζ ⦂ Ξ ]
-                         → Δ′ ⋙⋆ [ Γ ⊢⋆ MRENS η ζ ⦂ Ξ ]
-  mrens {ζ = ∙}     {∙}          `η ∙       = ∙
-  mrens {ζ = ζ , M} {Ξ , A true} `η (ξ , 𝒟) = mrens `η ξ , mren `η 𝒟
+                            {x : Terms σ g n} {Ξ : Truths n}
+                         → Δ′ ⊇◇⟨ η ⟩ Δ → Δ ⋙⋆ [ Γ ⊢⋆ x ⦂ Ξ ]
+                         → Δ′ ⋙⋆ [ Γ ⊢⋆ MRENS η x ⦂ Ξ ]
+  mrens {x = ∙}     {∙}          `η ∙       = ∙
+  mrens {x = x , M} {Ξ , A true} `η (ξ , 𝒟) = mrens `η ξ , mren `η 𝒟
   -- NOTE: Equivalent to
-  -- mrens `η ξ = mapAll (mren `η) ξ
+  -- mrens `η ξ = maps (mren `η) ξ
 
 
-mwk : ∀ {B p d g A} → {Ψ : Truths p} {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g}
+mwk : ∀ {B m d g A} → {Ψ : Truths m} {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g}
                        {M : Term σ g}
                     → Δ ⋙ [ Γ ⊢ M ⦂ A true ]
                     → Δ , B valid[ Ψ ] ⋙ [ Γ ⊢ MWK M ⦂ A true ]
 mwk 𝒟 = mren (drop id⊇◇) 𝒟
 
 
-mwks : ∀ {p d g x A} → {Ψ : Truths p} {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g}
-                        {ζ : Terms σ g x} {Ξ : Truths x}
-                     → Δ ⋙⋆ [ Γ ⊢⋆ ζ ⦂ Ξ ]
-                     → Δ , A valid[ Ψ ] ⋙⋆ [ Γ ⊢⋆ MWKS ζ ⦂ Ξ ]
+mwks : ∀ {m d g n A} → {Ψ : Truths m} {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g}
+                        {x : Terms σ g n} {Ξ : Truths n}
+                     → Δ ⋙⋆ [ Γ ⊢⋆ x ⦂ Ξ ]
+                     → Δ , A valid[ Ψ ] ⋙⋆ [ Γ ⊢⋆ MWKS x ⦂ Ξ ]
 mwks ξ = mrens (drop id⊇◇) ξ
 
 
-mvz : ∀ {p d g A} → {Ψ : Truths p} {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g}
-                     {φ : Terms σ g p}
-                  → Δ ⋙⋆ [ Γ ⊢⋆ φ ⦂ Ψ ]
-                  → Δ , A valid[ Ψ ] ⋙ [ Γ ⊢ MVZ φ ⦂ A true ]
+mvz : ∀ {m d g A} → {Ψ : Truths m} {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g}
+                     {y : Terms σ g m}
+                  → Δ ⋙⋆ [ Γ ⊢⋆ y ⦂ Ψ ]
+                  → Δ , A valid[ Ψ ] ⋙ [ Γ ⊢ MVZ y ⦂ A true ]
 mvz ψ = mvar zero (mwks ψ)
 
 
@@ -229,25 +229,25 @@ mvz ψ = mvar zero (mwks ψ)
 
 
 mutual
-  sub : ∀ {d g x A} → {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g}
-                       {ζ : Terms σ g x} {Ξ : Truths x} {M : Term σ x}
-                    → Δ ⋙⋆ [ Γ ⊢⋆ ζ ⦂ Ξ ] → Δ ⋙ [ Ξ ⊢ M ⦂ A true ]
-                    → Δ ⋙ [ Γ ⊢ SUB ζ M ⦂ A true ]
-  sub ξ (var 𝒾)      = lookup ξ (zap∋ 𝒾)
+  sub : ∀ {d g n A} → {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g}
+                       {x : Terms σ g n} {Ξ : Truths n} {M : Term σ n}
+                    → Δ ⋙⋆ [ Γ ⊢⋆ x ⦂ Ξ ] → Δ ⋙ [ Ξ ⊢ M ⦂ A true ]
+                    → Δ ⋙ [ Γ ⊢ SUB x M ⦂ A true ]
+  sub ξ (var 𝒾)      = get ξ (zap∋ 𝒾)
   sub ξ (lam 𝒟)      = lam (sub (lifts ξ) 𝒟)
   sub ξ (app 𝒟 ℰ)    = app (sub ξ 𝒟) (sub ξ ℰ)
   sub ξ (mvar `𝒾 ψ)  = mvar `𝒾 (subs ξ ψ)
   sub ξ (box 𝒟)      = box 𝒟
   sub ξ (letbox 𝒟 ℰ) = letbox (sub ξ 𝒟) (sub (mwks ξ) ℰ)
 
-  subs : ∀ {d g x p} → {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g}
-                        {ζ : Terms σ g x} {Ξ : Truths x} {φ : Terms σ x p} {Ψ : Truths p}
-                     → Δ ⋙⋆ [ Γ ⊢⋆ ζ ⦂ Ξ ] → Δ ⋙⋆ [ Ξ ⊢⋆ φ ⦂ Ψ ]
-                     → Δ ⋙⋆ [ Γ ⊢⋆ SUBS ζ φ ⦂ Ψ ]
-  subs {φ = ∙}     {∙}          ξ ∙       = ∙
-  subs {φ = φ , M} {Ψ , A true} ξ (ψ , 𝒟) = subs ξ ψ , sub ξ 𝒟
+  subs : ∀ {d g n m} → {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g}
+                        {x : Terms σ g n} {Ξ : Truths n} {y : Terms σ n m} {Ψ : Truths m}
+                     → Δ ⋙⋆ [ Γ ⊢⋆ x ⦂ Ξ ] → Δ ⋙⋆ [ Ξ ⊢⋆ y ⦂ Ψ ]
+                     → Δ ⋙⋆ [ Γ ⊢⋆ SUBS x y ⦂ Ψ ]
+  subs {y = ∙}     {∙}          ξ ∙       = ∙
+  subs {y = y , M} {Ψ , A true} ξ (ψ , 𝒟) = subs ξ ψ , sub ξ 𝒟
   -- NOTE: Equivalent to
-  -- subs ξ ψ = mapAll (sub ξ) ψ
+  -- subs ξ ψ = maps (sub ξ) ψ
 
 
 cut : ∀ {d g A B} → {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g}
@@ -264,33 +264,33 @@ record Derivation₁ {d} (σ : Scopes d) : Set
   where
     constructor [∙⊢₁_⦂_]
     field
-      {p} : Nat
-      M   : Term₁ σ p
-      Aᵥ  : Validity p
+      {m} : Nat
+      M   : Term₁ σ m
+      Aᵥ  : Validity m
 
 
 record Derivations₁ {d} (σ : Scopes d) : Set
   where
     constructor [∙⊢⋆₁_⦂_]
     field
-      {x} : Nat
-      {ξ} : Scopes x
-      ζ   : Terms₁ σ ξ
+      {n} : Nat
+      {ξ} : Scopes n
+      x   : Terms₁ σ ξ
       Ξ   : Validities ξ
 
 
-zap₁ : ∀ {d x} → {σ : Scopes d} {ξ : Scopes x}
+zap₁ : ∀ {d n} → {σ : Scopes d} {ξ : Scopes n}
                → Terms₁ σ ξ → Validities ξ
-               → Vec (Derivation₁ σ) x
+               → Vec (Derivation₁ σ) n
 zap₁ ∙       ∙                  = ∙
-zap₁ (ζ , M) (Ξ , A valid[ Ψ ]) = zap₁ ζ Ξ , [∙⊢₁ M ⦂ A valid[ Ψ ] ]
+zap₁ (x , M) (Ξ , A valid[ Ψ ]) = zap₁ x Ξ , [∙⊢₁ M ⦂ A valid[ Ψ ] ]
 
-zap∋₁ : ∀ {p d x i A} → {Ψ : Truths p} {σ : Scopes d} {ξ : Scopes x}
-                         {ζ : Terms₁ σ ξ} {Ξ : Validities ξ} {𝒾 : ξ ∋⟨ i ⟩ p}
+zap∋₁ : ∀ {m d n i A} → {Ψ : Truths m} {σ : Scopes d} {ξ : Scopes n}
+                         {x : Terms₁ σ ξ} {Ξ : Validities ξ} {𝒾 : ξ ∋⟨ i ⟩ m}
                       → Ξ ∋◇⟨ 𝒾 ⟩ A valid[ Ψ ]
-                      → zap₁ ζ Ξ ∋⟨ i ⟩ [∙⊢₁ lookup ζ 𝒾 ⦂ A valid[ Ψ ] ]
-zap∋₁ {ζ = ζ , M} {Ξ , A valid[ Ψ ]} zero    = zero
-zap∋₁ {ζ = ζ , N} {Ξ , B valid[ Φ ]} (suc 𝒾) = suc (zap∋₁ 𝒾)
+                      → zap₁ x Ξ ∋⟨ i ⟩ [∙⊢₁ get x 𝒾 ⦂ A valid[ Ψ ] ]
+zap∋₁ {x = x , M} {Ξ , A valid[ Ψ ]} zero    = zero
+zap∋₁ {x = x , N} {Ξ , B valid[ Y ]} (suc 𝒾) = suc (zap∋₁ 𝒾)
 
 
 infix 3 _⋙₁_
@@ -300,36 +300,36 @@ _⋙₁_ : ∀ {d} → {σ : Scopes d} → Validities σ → Derivation₁ σ �
 
 infix 3 _⋙⋆₁_
 _⋙⋆₁_ : ∀ {d} → {σ : Scopes d} → Validities σ → Derivations₁ σ → Set
-Δ ⋙⋆₁ [∙⊢⋆₁ ζ ⦂ Ξ ] = All (Δ ⋙₁_) (zap₁ ζ Ξ)
+Δ ⋙⋆₁ [∙⊢⋆₁ x ⦂ Ξ ] = All (Δ ⋙₁_) (zap₁ x Ξ)
 
 
 --------------------------------------------------------------------------------
 
 
-mrens₁ : ∀ {d d′ e x} → {σ : Scopes d} {σ′ : Scopes d′} {ξ : Scopes x} {η : σ′ ⊇⟨ e ⟩ σ}
+mrens₁ : ∀ {d d′ e n} → {σ : Scopes d} {σ′ : Scopes d′} {ξ : Scopes n} {η : σ′ ⊇⟨ e ⟩ σ}
                          {Δ : Validities σ} {Δ′ : Validities σ′}
-                         {ζ : Terms₁ σ ξ} {Ξ : Validities ξ}
-                      → Δ′ ⊇◇⟨ η ⟩ Δ → Δ ⋙⋆₁ [∙⊢⋆₁ ζ ⦂ Ξ ]
-                      → Δ′ ⋙⋆₁ [∙⊢⋆₁ MRENS₁ η ζ ⦂ Ξ ]
-mrens₁ {ζ = ∙}     {∙}                `η ∙       = ∙
-mrens₁ {ζ = ζ , M} {Ξ , A valid[ Ψ ]} `η (ξ , 𝒟) = mrens₁ `η ξ , mren `η 𝒟
+                         {x : Terms₁ σ ξ} {Ξ : Validities ξ}
+                      → Δ′ ⊇◇⟨ η ⟩ Δ → Δ ⋙⋆₁ [∙⊢⋆₁ x ⦂ Ξ ]
+                      → Δ′ ⋙⋆₁ [∙⊢⋆₁ MRENS₁ η x ⦂ Ξ ]
+mrens₁ {x = ∙}     {∙}                `η ∙       = ∙
+mrens₁ {x = x , M} {Ξ , A valid[ Ψ ]} `η (ξ , 𝒟) = mrens₁ `η ξ , mren `η 𝒟
 -- NOTE: Equivalent to
--- mrens₁ `η ξ = mapAll (mren `η) ξ
+-- mrens₁ `η ξ = maps (mren `η) ξ
 
 
-mwks₁ : ∀ {p d x A} → {Ψ : Truths p} {σ : Scopes d} {ξ : Scopes x}
+mwks₁ : ∀ {m d n A} → {Ψ : Truths m} {σ : Scopes d} {ξ : Scopes n}
                        {Δ : Validities σ}
-                       {ζ : Terms₁ σ ξ} {Ξ : Validities ξ}
-                    → Δ ⋙⋆₁ [∙⊢⋆₁ ζ ⦂ Ξ ]
-                    → Δ , A valid[ Ψ ] ⋙⋆₁ [∙⊢⋆₁ MWKS₁ ζ ⦂ Ξ ]
+                       {x : Terms₁ σ ξ} {Ξ : Validities ξ}
+                    → Δ ⋙⋆₁ [∙⊢⋆₁ x ⦂ Ξ ]
+                    → Δ , A valid[ Ψ ] ⋙⋆₁ [∙⊢⋆₁ MWKS₁ x ⦂ Ξ ]
 mwks₁ ξ = mrens₁ (drop id⊇◇) ξ
 
 
-mlifts₁ : ∀ {p d x A} → {Ψ : Truths p} {σ : Scopes d} {ξ : Scopes x}
+mlifts₁ : ∀ {m d n A} → {Ψ : Truths m} {σ : Scopes d} {ξ : Scopes n}
                          {Δ : Validities σ}
-                         {ζ : Terms₁ σ ξ} {Ξ : Validities ξ}
-                      → Δ ⋙⋆₁ [∙⊢⋆₁ ζ ⦂ Ξ ]
-                      → Δ , A valid[ Ψ ] ⋙⋆₁ [∙⊢⋆₁ MLIFTS₁ ζ ⦂ Ξ , A valid[ Ψ ] ]
+                         {x : Terms₁ σ ξ} {Ξ : Validities ξ}
+                      → Δ ⋙⋆₁ [∙⊢⋆₁ x ⦂ Ξ ]
+                      → Δ , A valid[ Ψ ] ⋙⋆₁ [∙⊢⋆₁ MLIFTS₁ x ⦂ Ξ , A valid[ Ψ ] ]
 mlifts₁ ξ = mwks₁ ξ , mvz ids
 
 
@@ -344,31 +344,31 @@ mids₁ {Δ = Δ , A valid[ Ψ ]} = mlifts₁ mids₁
 
 
 mutual
-  msub : ∀ {d g x A} → {σ : Scopes d} {ξ : Scopes x}
+  msub : ∀ {d g n A} → {σ : Scopes d} {ξ : Scopes n}
                         {Δ : Validities σ} {Γ : Truths g}
-                        {ζ : Terms₁ σ ξ} {Ξ : Validities ξ} {M : Term ξ g}
-                     → Δ ⋙⋆₁ [∙⊢⋆₁ ζ ⦂ Ξ ] → Ξ ⋙ [ Γ ⊢ M ⦂ A true ]
-                     → Δ ⋙ [ Γ ⊢ MSUB ζ M ⦂ A true ]
+                        {x : Terms₁ σ ξ} {Ξ : Validities ξ} {M : Term ξ g}
+                     → Δ ⋙⋆₁ [∙⊢⋆₁ x ⦂ Ξ ] → Ξ ⋙ [ Γ ⊢ M ⦂ A true ]
+                     → Δ ⋙ [ Γ ⊢ MSUB x M ⦂ A true ]
   msub ξ (var 𝒾)      = var 𝒾
   msub ξ (lam 𝒟)      = lam (msub ξ 𝒟)
   msub ξ (app 𝒟 ℰ)    = app (msub ξ 𝒟) (msub ξ ℰ)
-  msub ξ (mvar `𝒾 ψ)  = sub (msubs ξ ψ) (lookup ξ (zap∋₁ `𝒾))
+  msub ξ (mvar `𝒾 ψ)  = sub (msubs ξ ψ) (get ξ (zap∋₁ `𝒾))
   msub ξ (box 𝒟)      = box (msub ξ 𝒟)
   msub ξ (letbox 𝒟 ℰ) = letbox (msub ξ 𝒟) (msub (mlifts₁ ξ) ℰ)
 
-  msubs : ∀ {d g x p} → {σ : Scopes d} {ξ : Scopes x}
+  msubs : ∀ {d g n m} → {σ : Scopes d} {ξ : Scopes n}
                          {Δ : Validities σ} {Γ : Truths g}
-                         {ζ : Terms₁ σ ξ} {Ξ : Validities ξ} {φ : Terms ξ g p} {Ψ : Truths p}
-                      → Δ ⋙⋆₁ [∙⊢⋆₁ ζ ⦂ Ξ ] → Ξ ⋙⋆ [ Γ ⊢⋆ φ ⦂ Ψ ]
-                      → Δ ⋙⋆ [ Γ ⊢⋆ MSUBS ζ φ ⦂ Ψ ]
-  msubs {φ = ∙}     {∙}          ξ ∙       = ∙
-  msubs {φ = φ , M} {Ψ , A true} ξ (ψ , 𝒟) = msubs ξ ψ , msub ξ 𝒟
+                         {x : Terms₁ σ ξ} {Ξ : Validities ξ} {y : Terms ξ g m} {Ψ : Truths m}
+                      → Δ ⋙⋆₁ [∙⊢⋆₁ x ⦂ Ξ ] → Ξ ⋙⋆ [ Γ ⊢⋆ y ⦂ Ψ ]
+                      → Δ ⋙⋆ [ Γ ⊢⋆ MSUBS x y ⦂ Ψ ]
+  msubs {y = ∙}     {∙}          ξ ∙       = ∙
+  msubs {y = y , M} {Ψ , A true} ξ (ψ , 𝒟) = msubs ξ ψ , msub ξ 𝒟
   -- NOTE: Equivalent to
-  -- msubs ξ ψ = mapAll (msub ξ) ψ
+  -- msubs ξ ψ = maps (msub ξ) ψ
 
 
-mcut : ∀ {d g p A B} → {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g} {Ψ : Truths p}
-                        {M : Term σ p} {N : Term (σ , p) g}
+mcut : ∀ {d g m A B} → {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g} {Ψ : Truths m}
+                        {M : Term σ m} {N : Term (σ , m) g}
                      → Δ ⋙₁ [∙⊢₁ M ⦂ A valid[ Ψ ] ] → Δ , A valid[ Ψ ] ⋙ [ Γ ⊢ N ⦂ B true ]
                      → Δ ⋙ [ Γ ⊢ MCUT M N ⦂ B true ]
 mcut 𝒟 ℰ = msub (mids₁ , 𝒟) ℰ
@@ -394,25 +394,25 @@ ex 𝒟 = app (app (wk (wk (lam (lam 𝒟)))) vz) (wk vz)
 --------------------------------------------------------------------------------
 
 
-shl : ∀ {d g p A B} → {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g} {Ψ : Truths p}
+up : ∀ {d g m A B} → {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g} {Ψ : Truths m}
                        {M : Term σ (suc g)}
-                    → Δ ⋙ [ Γ , [ Ψ ] A true ⊢ M ⦂ B true ]
-                    → Δ , A valid[ Ψ ] ⋙ [ Γ ⊢ SHL M ⦂ B true ]
-shl 𝒟 = app (lam (mwk 𝒟)) (box (mvz ids))
+                   → Δ ⋙ [ Γ , [ Ψ ] A true ⊢ M ⦂ B true ]
+                   → Δ , A valid[ Ψ ] ⋙ [ Γ ⊢ UP M ⦂ B true ]
+up 𝒟 = app (lam (mwk 𝒟)) (box (mvz ids))
 
 
-shr : ∀ {d g p A B} → {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g} {Ψ : Truths p}
-                       {M : Term (σ , p) g}
-                    → Δ , A valid[ Ψ ] ⋙ [ Γ ⊢ M ⦂ B true ]
-                    → Δ ⋙ [ Γ , [ Ψ ] A true ⊢ SHR M ⦂ B true ]
-shr 𝒟 = letbox vz (wk 𝒟)
+down : ∀ {d g m A B} → {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g} {Ψ : Truths m}
+                        {M : Term (σ , m) g}
+                     → Δ , A valid[ Ψ ] ⋙ [ Γ ⊢ M ⦂ B true ]
+                     → Δ ⋙ [ Γ , [ Ψ ] A true ⊢ DOWN M ⦂ B true ]
+down 𝒟 = letbox vz (wk 𝒟)
 
 
-mex : ∀ {d g p q A B C} → {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g} {Ψ : Truths p} {Φ : Truths q}
-                           {M : Term (σ , p , q) g}
+mex : ∀ {d g m o A B C} → {σ : Scopes d} {Δ : Validities σ} {Γ : Truths g} {Ψ : Truths m} {Φ : Truths o}
+                           {M : Term (σ , m , o) g}
                         → Δ , A valid[ Ψ ] , B valid[ Φ ] ⋙ [ Γ ⊢ M ⦂ C true ]
                         → Δ , B valid[ Φ ] , A valid[ Ψ ] ⋙ [ Γ ⊢ MEX M ⦂ C true ]
-mex 𝒟 = shl (shl (ex (shr (shr 𝒟))))
+mex 𝒟 = up (up (ex (down (down 𝒟))))
 
 
 --------------------------------------------------------------------------------
