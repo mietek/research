@@ -2,6 +2,7 @@ module StdCML where
 
 open import Prelude
 open import List
+open import AllList
 
 
 --------------------------------------------------------------------------------
@@ -43,6 +44,9 @@ record Context : Set
     field
       Δ : List Validity
       Γ : List Truth
+
+
+--------------------------------------------------------------------------------
 
 
 infix 4 _⊇²_
@@ -117,7 +121,10 @@ mutual
   rens η ∙       = ∙
   rens η (ξ , 𝒟) = rens η ξ , ren η 𝒟
   -- NOTE: Equivalent to
-  -- rens η ξ = mapAll (ren η) ξ
+  -- rens η ξ = maps (ren η) ξ
+
+
+--------------------------------------------------------------------------------
 
 
 wk : ∀ {B A Δ Γ} → Δ ⨾ Γ ⊢ A true
@@ -127,6 +134,9 @@ wk 𝒟 = ren (drop id⊇) 𝒟
 
 vz : ∀ {A Δ Γ} → Δ ⨾ Γ , A true ⊢ A true
 vz = var zero
+
+
+--------------------------------------------------------------------------------
 
 
 wks : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊢⋆ Ξ
@@ -139,9 +149,15 @@ lifts : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊢⋆ Ξ
 lifts ξ = wks ξ , vz
 
 
+vars : ∀ {Δ Γ Γ′} → Γ′ ⊇ Γ
+                  → Δ ⨾ Γ′ ⊢⋆ Γ
+vars done     = ∙
+vars (drop η) = wks (vars η)
+vars (keep η) = lifts (vars η)
+
+
 ids : ∀ {Δ Γ} → Δ ⨾ Γ ⊢⋆ Γ
-ids {Γ = ∙}          = ∙
-ids {Γ = Γ , A true} = lifts ids
+ids = vars id⊇
 
 
 --------------------------------------------------------------------------------
@@ -162,7 +178,10 @@ mutual
   mrens η ∙       = ∙
   mrens η (ξ , 𝒟) = mrens η ξ , mren η 𝒟
   -- NOTE: Equivalent to
-  -- mrens η ξ = mapAll (mren η) ξ
+  -- mrens η ξ = maps (mren η) ξ
+
+
+--------------------------------------------------------------------------------
 
 
 mwk : ∀ {B Ψ A Δ Γ} → Δ ⨾ Γ ⊢ A true
@@ -175,9 +194,9 @@ mwks : ∀ {A Ψ Δ Γ Ξ} → Δ ⨾ Γ ⊢⋆ Ξ
 mwks ξ = mrens (drop id⊇) ξ
 
 
-mvz : ∀ {A Ψ Δ Γ} → Δ ⨾ Γ ⊢⋆ Ψ
+mvz : ∀ {A Ψ Δ Γ} → Δ , A valid[ Ψ ] ⨾ Γ ⊢⋆ Ψ
                   → Δ , A valid[ Ψ ] ⨾ Γ ⊢ A true
-mvz ψ = mvar zero (mwks ψ)
+mvz ψ = mvar zero ψ
 
 
 --------------------------------------------------------------------------------
@@ -186,7 +205,7 @@ mvz ψ = mvar zero (mwks ψ)
 mutual
   sub : ∀ {Δ Γ Ξ A} → Δ ⨾ Γ ⊢⋆ Ξ → Δ ⨾ Ξ ⊢ A true
                     → Δ ⨾ Γ ⊢ A true
-  sub ξ (var 𝒾)      = lookup ξ 𝒾
+  sub ξ (var 𝒾)      = get ξ 𝒾
   sub ξ (lam 𝒟)      = lam (sub (lifts ξ) 𝒟)
   sub ξ (app 𝒟 ℰ)    = app (sub ξ 𝒟) (sub ξ ℰ)
   sub ξ (mvar 𝒾 ψ)   = mvar 𝒾 (subs ξ ψ)
@@ -198,7 +217,7 @@ mutual
   subs ξ ∙       = ∙
   subs ξ (ψ , 𝒟) = subs ξ ψ , sub ξ 𝒟
   -- NOTE: Equivalent to
-  -- subs ξ ψ = mapAll (sub ξ) ψ
+  -- subs ξ ψ = maps (sub ξ) ψ
 
 
 cut : ∀ {Δ Γ A B} → Δ ⨾ Γ ⊢ A true → Δ ⨾ Γ , A true ⊢ B true
@@ -223,7 +242,7 @@ _⊢⋆₁_ : List Validity → List Validity → Set
 
 mrens₁ : ∀ {Δ Δ′ Ξ} → Δ′ ⊇ Δ → Δ ⊢⋆₁ Ξ
                     → Δ′ ⊢⋆₁ Ξ
-mrens₁ η ξ = mapAll (mren η) ξ
+mrens₁ η ξ = maps (mren η) ξ
 
 
 mwks₁ : ∀ {A Ψ Δ Ξ} → Δ ⊢⋆₁ Ξ
@@ -236,9 +255,15 @@ mlifts₁ : ∀ {A Ψ Δ Ξ} → Δ ⊢⋆₁ Ξ
 mlifts₁ ξ = mwks₁ ξ , mvz ids
 
 
+mvars₁ : ∀ {Δ Δ′} → Δ′ ⊇ Δ
+                  → Δ′ ⊢⋆₁ Δ
+mvars₁ done     = ∙
+mvars₁ (drop η) = mwks₁ (mvars₁ η)
+mvars₁ (keep η) = mlifts₁ (mvars₁ η)
+
+
 mids₁ : ∀ {Δ} → Δ ⊢⋆₁ Δ
-mids₁ {∙}                = ∙
-mids₁ {Δ , A valid[ Ψ ]} = mlifts₁ mids₁
+mids₁ = mvars₁ id⊇
 
 
 --------------------------------------------------------------------------------
@@ -250,7 +275,7 @@ mutual
   msub ξ (var 𝒾)      = var 𝒾
   msub ξ (lam 𝒟)      = lam (msub ξ 𝒟)
   msub ξ (app 𝒟 ℰ)    = app (msub ξ 𝒟) (msub ξ ℰ)
-  msub ξ (mvar 𝒾 ψ)   = sub (msubs ξ ψ) (lookup ξ 𝒾)
+  msub ξ (mvar 𝒾 ψ)   = sub (msubs ξ ψ) (get ξ 𝒾)
   msub ξ (box 𝒟)      = box (msub ξ 𝒟)
   msub ξ (letbox 𝒟 ℰ) = letbox (msub ξ 𝒟) (msub (mlifts₁ ξ) ℰ)
 
@@ -259,7 +284,7 @@ mutual
   msubs ξ ∙       = ∙
   msubs ξ (ψ , 𝒟) = msubs ξ ψ , msub ξ 𝒟
   -- NOTE: Equivalent to
-  -- msubs ξ ψ = mapAll (msub ξ) ψ
+  -- msubs ξ ψ = maps (msub ξ) ψ
 
 
 mcut : ∀ {Δ Γ Ψ A B} → Δ ⊢₁ A valid[ Ψ ] → Δ , A valid[ Ψ ] ⨾ Γ ⊢ B true
@@ -283,19 +308,19 @@ ex 𝒟 = app (app (wk (wk (lam (lam 𝒟)))) vz) (wk vz)
 --------------------------------------------------------------------------------
 
 
-shl : ∀ {Δ Γ Ψ A B} → Δ ⨾ Γ , [ Ψ ] A true ⊢ B true
-                    → Δ , A valid[ Ψ ] ⨾ Γ ⊢ B true
-shl 𝒟 = app (lam (mwk 𝒟)) (box (mvz ids))
+up : ∀ {Δ Γ Ψ A B} → Δ ⨾ Γ , [ Ψ ] A true ⊢ B true
+                   → Δ , A valid[ Ψ ] ⨾ Γ ⊢ B true
+up 𝒟 = app (lam (mwk 𝒟)) (box (mvz ids))
 
 
-shr : ∀ {Δ Γ Ψ A B} → Δ , A valid[ Ψ ] ⨾ Γ ⊢ B true
-                    → Δ ⨾ Γ , [ Ψ ] A true ⊢ B true
-shr 𝒟 = letbox vz (wk 𝒟)
+down : ∀ {Δ Γ Ψ A B} → Δ , A valid[ Ψ ] ⨾ Γ ⊢ B true
+                     → Δ ⨾ Γ , [ Ψ ] A true ⊢ B true
+down 𝒟 = letbox vz (wk 𝒟)
 
 
 mex : ∀ {Δ Γ Ψ Φ A B C} → Δ , A valid[ Ψ ] , B valid[ Φ ] ⨾ Γ ⊢ C true
                         → Δ , B valid[ Φ ] , A valid[ Ψ ] ⨾ Γ ⊢ C true
-mex 𝒟 = shl (shl (ex (shr (shr 𝒟))))
+mex 𝒟 = up (up (ex (down (down 𝒟))))
 
 
 --------------------------------------------------------------------------------

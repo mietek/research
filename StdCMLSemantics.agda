@@ -3,6 +3,7 @@ module StdCMLSemantics where
 open import Prelude
 open import Category
 open import List
+open import AllList
 open import StdCML
 open import StdCMLNormalForms
 
@@ -77,11 +78,11 @@ mutual
   -- W ⊪⋆ Γ = All (W ⊪_) Γ
 
 
-clookup : ∀ {{_ : Model}} {Γ A W} → W ⊪⋆ Γ → Γ ∋ A true
-                                  → W ⊪ A true
-clookup {Γ , A true} (γ , a) zero    = a
-clookup {Γ , B true} (γ , b) (suc 𝒾) = clookup γ 𝒾
--- NOTE: Equivalent to lookup
+cget : ∀ {{_ : Model}} {Γ A W} → W ⊪⋆ Γ → Γ ∋ A true
+                               → W ⊪ A true
+cget {Γ , A true} (γ , a) zero    = a
+cget {Γ , B true} (γ , b) (suc 𝒾) = cget γ 𝒾
+-- NOTE: Equivalent to get
 
 
 syn : ∀ {{_ : Model}} {A Ψ W} → W ⊪₁ A valid[ Ψ ]
@@ -116,10 +117,10 @@ mutual
 
   crels : ∀ {{_ : Model}} {Γ W W′} → W′ ≥ W → W ⊪⋆ Γ
                                    → W′ ⊪⋆ Γ
-  crels {∙}          η tt      = tt
+  crels {∙}          η ∙       = ∙
   crels {Γ , A true} η (γ , a) = crels η γ , crel {A true} η a
   -- NOTE: Equivalent to
-  -- crels η γ = mapAll (crel η) γ
+  -- crels η γ = maps (crel η) γ
 
 
 --------------------------------------------------------------------------------
@@ -132,7 +133,7 @@ W ⊪⋆₁ Δ = All (W ⊪₁_) Δ
 
 syns : ∀ {{_ : Model}} {Δ W} → W ⊪⋆₁ Δ
                              → ⌊ W ⌋₁ ⊢⋆₁ Δ
-syns δ = mapAll syn δ
+syns δ = maps syn δ
 
 
 --------------------------------------------------------------------------------
@@ -140,7 +141,7 @@ syns δ = mapAll syn δ
 
 crels₁ : ∀ {{_ : Model}} {Δ W W′} → W′ ≥ W → W ⊪⋆₁ Δ
                                   → W′ ⊪⋆₁ Δ
-crels₁ η δ = mapAll (crel₁ η) δ
+crels₁ η δ = maps (crel₁ η) δ
 
 
 --------------------------------------------------------------------------------
@@ -176,12 +177,12 @@ _⊨⋆_ : Context → List Truth → Set₁
 mutual
   ↓ : ∀ {Δ Γ A} → Δ ⨾ Γ ⊢ A true
                 → Δ ⨾ Γ ⊨ A true
-  ↓ (var 𝒾)                  δ γ = clookup γ 𝒾
+  ↓ (var 𝒾)                  δ γ = cget γ 𝒾
   ↓ (lam {A} {B} 𝒟)          δ γ = return {A ⊃ B} (\ η k →
                                      ↓ 𝒟 (crels₁ η δ) (crels η γ , k))
   ↓ (app {A} {B} 𝒟 ℰ)        δ γ = bind {A ⊃ B} {B} (↓ 𝒟 δ γ) (\ η f →
                                      f id≥ (↓ ℰ (crels₁ η δ) (crels η γ)))
-  ↓ (mvar 𝒾 ψ)               δ γ = sem (lookup δ 𝒾) id≥ (↓⋆ ψ δ γ)
+  ↓ (mvar 𝒾 ψ)               δ γ = sem (get δ 𝒾) id≥ (↓⋆ ψ δ γ)
   ↓ (box {A} {Ψ} 𝒟)          δ γ = return {[ Ψ ] A} (\ η →
                                      msub (syns (crels₁ η δ)) 𝒟 ,
                                      \ η′ ψ → ↓ 𝒟 (crels₁ (η ∘≥ η′) δ) ψ)
@@ -190,7 +191,7 @@ mutual
 
   ↓⋆ : ∀ {Ξ Δ Γ} → Δ ⨾ Γ ⊢⋆ Ξ
                  → Δ ⨾ Γ ⊨⋆ Ξ
-  ↓⋆ ∙       δ γ = tt
+  ↓⋆ ∙       δ γ = ∙
   ↓⋆ (ξ , 𝒟) δ γ = ↓⋆ ξ δ γ , ↓ 𝒟 δ γ
 
 
@@ -238,7 +239,7 @@ mutual
 
   ⇑⋆ : ∀ {Ξ Δ Γ} → Δ ⨾ Γ ⊪⋆ Ξ
                  → Δ ⨾ Γ ⊢⋆ₙₘ Ξ
-  ⇑⋆ {∙}          tt      = ∙
+  ⇑⋆ {∙}          ∙       = ∙
   ⇑⋆ {Ξ , A true} (ξ , a) = ⇑⋆ ξ , ⇑ a
 
 
@@ -280,9 +281,15 @@ slifts : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊪⋆ Ξ
 slifts ξ = swks ξ , svz
 
 
+svars : ∀ {Δ Γ Γ′} → Γ′ ⊇ Γ
+                   → Δ ⨾ Γ′ ⊪⋆ Γ
+svars done     = ∙
+svars (drop η) = swks (svars η)
+svars (keep η) = slifts (svars η)
+
+
 sids : ∀ {Δ Γ} → Δ ⨾ Γ ⊪⋆ Γ
-sids {Γ = ∙}          = tt
-sids {Γ = Γ , A true} = slifts sids
+sids = svars id⊇
 
 
 --------------------------------------------------------------------------------
@@ -311,9 +318,15 @@ smlifts₁ : ∀ {A Ψ Δ Γ Ξ} → Δ ⨾ Γ ⊪⋆₁ Ξ
 smlifts₁ ξ = smwks₁ ξ , smvz₁
 
 
+smvars₁ : ∀ {Δ Δ′ Γ} → Δ′ ⊇ Δ
+                     → Δ′ ⨾ Γ ⊪⋆₁ Δ
+smvars₁ done     = ∙
+smvars₁ (drop η) = smwks₁ (smvars₁ η)
+smvars₁ (keep η) = smlifts₁ (smvars₁ η)
+
+
 smids₁ : ∀ {Δ Γ} → Δ ⨾ Γ ⊪⋆₁ Δ
-smids₁ {∙}                = ∙
-smids₁ {Δ , A valid[ Ψ ]} = smlifts₁ smids₁
+smids₁ = smvars₁ id⊇
 
 
 --------------------------------------------------------------------------------

@@ -5,7 +5,6 @@ open import List
 open import AllList
 open import StdIPL
 open import StdIPLNormalForms
-open GetAllList
 
 
 --------------------------------------------------------------------------------
@@ -128,9 +127,15 @@ slifts : ∀ {A Γ Ξ} → Γ ⊩⋆ Ξ
 slifts {A} ξ = swks ξ , svz {A}
 
 
+svars : ∀ {Γ Γ′} → Γ′ ⊇ Γ
+                 → Γ′ ⊩⋆ Γ
+svars done     = ∙
+svars (drop η) = swks (svars η)
+svars (keep η) = slifts (svars η)
+
+
 sids : ∀ {Γ} → Γ ⊩⋆ Γ
-sids {∙}          = ∙
-sids {Γ , A true} = slifts sids
+sids = svars id⊇
 
 
 --------------------------------------------------------------------------------

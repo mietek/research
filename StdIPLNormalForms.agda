@@ -2,6 +2,7 @@ module StdIPLNormalForms where
 
 open import Prelude
 open import List
+open import AllList
 open import StdIPL
 
 

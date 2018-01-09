@@ -42,12 +42,12 @@ data Fin : Nat → Set
                 → Fin (suc n)
 
 
-renF : ∀ {n n′} → n′ ≥ n → Fin n
+REN∋ : ∀ {n n′} → n′ ≥ n → Fin n
                 → Fin n′
-renF done     i       = i
-renF (drop e) i       = suc (renF e i)
-renF (keep e) zero    = zero
-renF (keep e) (suc i) = suc (renF e i)
+REN∋ done     i       = i
+REN∋ (drop e) i       = suc (REN∋ e i)
+REN∋ (keep e) zero    = zero
+REN∋ (keep e) (suc i) = suc (REN∋ e i)
 
 
 --------------------------------------------------------------------------------

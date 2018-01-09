@@ -11,8 +11,8 @@ open import Fin
                               e ∘≥ id≥ ≡ e                                      rid∘≥
                       (e₁ ∘≥ e₂) ∘≥ e₃ ≡ e₁ ∘≥ (e₂ ∘≥ e₃)                       assoc∘≥
 
-                            renF id≥ i ≡ i                                      id-renF
-                     renF (e₁ ∘≥ e₂) i ≡ (renF e₂ ∘ renF e₁) i                  comp-renF
+                            REN∋ id≥ i ≡ i                                      id-REN∋
+                     REN∋ (e₁ ∘≥ e₂) i ≡ (REN∋ e₂ ∘ REN∋ e₁) i                  comp-REN∋
 -}
 --------------------------------------------------------------------------------
 
@@ -41,8 +41,8 @@ assoc∘≥ (keep e₁) (keep e₂) (keep e₃) = keep & assoc∘≥ e₁ e₂ e
 
 
 instance
-  Geq : Category Nat _≥_
-  Geq = record
+  𝐆𝐄𝐐 : Category Nat _≥_
+  𝐆𝐄𝐐 = record
           { id     = id≥
           ; _∘_    = _∘≥_
           ; lid∘   = lid∘≥
@@ -54,25 +54,25 @@ instance
 --------------------------------------------------------------------------------
 
 
-id-renF : ∀ {n} → (i : Fin n)
-                → renF id≥ i ≡ i
-id-renF zero    = refl
-id-renF (suc i) = suc & id-renF i
+id-REN∋ : ∀ {n} → (i : Fin n)
+                → REN∋ id≥ i ≡ i
+id-REN∋ zero    = refl
+id-REN∋ (suc i) = suc & id-REN∋ i
 
 
-comp-renF : ∀ {n n′ n″} → (e₁ : n′ ≥ n) (e₂ : n″ ≥ n′) (i : Fin n)
-                        → renF (e₁ ∘≥ e₂) i ≡ (renF e₂ ∘ renF e₁) i
-comp-renF e₁        done      i       = refl
-comp-renF e₁        (drop e₂) i       = suc & comp-renF e₁ e₂ i
-comp-renF (drop e₁) (keep e₂) i       = suc & comp-renF e₁ e₂ i
-comp-renF (keep e₁) (keep e₂) zero    = refl
-comp-renF (keep e₁) (keep e₂) (suc i) = suc & comp-renF e₁ e₂ i
+comp-REN∋ : ∀ {n n′ n″} → (e₁ : n′ ≥ n) (e₂ : n″ ≥ n′) (i : Fin n)
+                        → REN∋ (e₁ ∘ e₂) i ≡ (REN∋ e₂ ∘ REN∋ e₁) i
+comp-REN∋ e₁        done      i       = refl
+comp-REN∋ e₁        (drop e₂) i       = suc & comp-REN∋ e₁ e₂ i
+comp-REN∋ (drop e₁) (keep e₂) i       = suc & comp-REN∋ e₁ e₂ i
+comp-REN∋ (keep e₁) (keep e₂) zero    = refl
+comp-REN∋ (keep e₁) (keep e₂) (suc i) = suc & comp-REN∋ e₁ e₂ i
 
 
-RenF : Presheaf Fin renF
-RenF = record
-         { idℱ   = funext! id-renF
-         ; compℱ = \ e₁ e₂ → funext! (comp-renF e₁ e₂)
+𝐑𝐄𝐍∋ : Presheaf Fin REN∋
+𝐑𝐄𝐍∋ = record
+         { idℱ   = funext! id-REN∋
+         ; compℱ = \ e₁ e₂ → funext! (comp-REN∋ e₁ e₂)
          }
 
 

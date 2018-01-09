@@ -1,7 +1,9 @@
 module Vec where
 
 open import Prelude
+open import Category
 open import Fin
+open import FinLemmas
 
 
 --------------------------------------------------------------------------------
@@ -13,25 +15,26 @@ data Vec (X : Set) : Nat → Set
     _,_ : ∀ {n} → Vec X n → X → Vec X (suc n)
 
 
-map : ∀ {X Y n} → (X → Y) → Vec X n
-                → Vec Y n
-map F ∙       = ∙
-map F (Ξ , A) = map F Ξ , F A
+MAPS : ∀ {X Y n} → (X → Y) → Vec X n
+                 → Vec Y n
+MAPS F ∙       = ∙
+MAPS F (Ξ , A) = MAPS F Ξ , F A
 
 
-module GetVec
-  where
-    get : ∀ {X n} → Vec X n → Fin n
-                  → X
-    get (Ξ , A) zero    = A
-    get (Ξ , B) (suc i) = get Ξ i
+--------------------------------------------------------------------------------
 
 
-    gets : ∀ {X n n′} → Vec X n′ → n′ ≥ n
-                      → Vec X n
-    gets Ξ       done     = ∙
-    gets (Ξ , B) (drop e) = gets Ξ e
-    gets (Ξ , A) (keep e) = gets Ξ e , A
+GET : ∀ {X n} → Vec X n → Fin n
+              → X
+GET (Ξ , A) zero    = A
+GET (Ξ , B) (suc i) = GET Ξ i
+
+
+GETS : ∀ {X n n′} → Vec X n′ → n′ ≥ n
+                  → Vec X n
+GETS Ξ       done     = ∙
+GETS (Ξ , B) (drop e) = GETS Ξ e
+GETS (Ξ , A) (keep e) = GETS Ξ e , A
 
 
 --------------------------------------------------------------------------------
@@ -59,7 +62,7 @@ id⊇ {Ξ = Ξ , A} = keep id⊇
 
 _∘⊇_ : ∀ {X n n′ n″ e₁ e₂} → {Ξ : Vec X n} {Ξ′ : Vec X n′} {Ξ″ : Vec X n″}
                            → Ξ′ ⊇⟨ e₁ ⟩ Ξ → Ξ″ ⊇⟨ e₂ ⟩ Ξ′
-                           → Ξ″ ⊇⟨ e₁ ∘≥ e₂ ⟩ Ξ
+                           → Ξ″ ⊇⟨ e₁ ∘ e₂ ⟩ Ξ
 η₁      ∘⊇ done    = η₁
 η₁      ∘⊇ drop η₂ = drop (η₁ ∘⊇ η₂)
 drop η₁ ∘⊇ keep η₂ = drop (η₁ ∘⊇ η₂)
@@ -82,7 +85,7 @@ data _∋⟨_⟩_ {X} : ∀ {n} → Vec X n → Fin n → X → Set
 
 ren∋ : ∀ {X A n n′ e i} → {Ξ : Vec X n} {Ξ′ : Vec X n′}
                         → Ξ′ ⊇⟨ e ⟩ Ξ → Ξ ∋⟨ i ⟩ A
-                        → Ξ′ ∋⟨ renF e i ⟩ A
+                        → Ξ′ ∋⟨ REN∋ e i ⟩ A
 ren∋ done     𝒾       = 𝒾
 ren∋ (drop η) 𝒾       = suc (ren∋ η 𝒾)
 ren∋ (keep η) zero    = zero

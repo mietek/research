@@ -20,7 +20,7 @@ data Term : Nat → Set
 
 REN : ∀ {g g′} → g′ ≥ g → Term g
                → Term g′
-REN e (VAR i)   = VAR (renF e i)
+REN e (VAR i)   = VAR (REN∋ e i)
 REN e (LAM M)   = LAM (REN (keep e) M)
 REN e (APP M N) = APP (REN e M) (REN e N)
 
@@ -38,45 +38,59 @@ VZ = VAR zero
 
 
 Terms : Nat → Nat → Set
-Terms g x = Vec (Term g) x
+Terms g n = Vec (Term g) n
 
 
 --------------------------------------------------------------------------------
 
 
-RENS : ∀ {g g′ x} → g′ ≥ g → Terms g x
-                  → Terms g′ x
-RENS e ζ = map (REN e) ζ
+RENS : ∀ {g g′ n} → g′ ≥ g → Terms g n
+                  → Terms g′ n
+RENS e x = MAPS (REN e) x
 
 
-WKS : ∀ {g x} → Terms g x
-              → Terms (suc g) x
-WKS ζ = RENS (drop id≥) ζ
+WKS : ∀ {g n} → Terms g n
+              → Terms (suc g) n
+WKS x = RENS (drop id≥) x
 
 
-LIFTS : ∀ {g x} → Terms g x
-                → Terms (suc g) (suc x)
-LIFTS ζ = WKS ζ , VZ
+LIFTS : ∀ {g n} → Terms g n
+                → Terms (suc g) (suc n)
+LIFTS x = WKS x , VZ
+
+
+VARS : ∀ {g g′} → g′ ≥ g
+                → Terms g′ g
+VARS done     = ∙
+VARS (drop e) = WKS (VARS e)
+VARS (keep e) = LIFTS (VARS e)
 
 
 IDS : ∀ {g} → Terms g g
-IDS {zero}  = ∙
-IDS {suc g} = LIFTS IDS
+IDS = VARS id≥
 
 
 --------------------------------------------------------------------------------
 
 
-SUB : ∀ {g x} → Terms g x → Term x
+SUB : ∀ {g n} → Terms g n → Term n
               → Term g
-SUB ζ (VAR i)   = get ζ i
-SUB ζ (LAM M)   = LAM (SUB (LIFTS ζ) M)
-SUB ζ (APP M N) = APP (SUB ζ M) (SUB ζ N)
+SUB x (VAR i)   = GET x i
+SUB x (LAM M)   = LAM (SUB (LIFTS x) M)
+SUB x (APP M N) = APP (SUB x M) (SUB x N)
 
 
 CUT : ∀ {g} → Term g → Term (suc g)
             → Term g
 CUT M N = SUB (IDS , M) N
+
+
+--------------------------------------------------------------------------------
+
+
+SUBS : ∀ {g n m} → Terms g n → Terms n m
+                 → Terms g m
+SUBS x y = MAPS (SUB x) y
 
 
 --------------------------------------------------------------------------------

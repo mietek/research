@@ -23,7 +23,7 @@ data Term : Nat → Nat → Set
 
 REN : ∀ {d g g′} → g′ ≥ g → Term d g
                  → Term d g′
-REN e (VAR i)      = VAR (renF e i)
+REN e (VAR i)      = VAR (REN∋ e i)
 REN e (LAM M)      = LAM (REN (keep e) M)
 REN e (APP M N)    = APP (REN e M) (REN e N)
 REN e (MVAR i)     = MVAR i
@@ -48,7 +48,7 @@ MREN : ∀ {d d′ g} → d′ ≥ d → Term d g
 MREN e (VAR i)      = VAR i
 MREN e (LAM M)      = LAM (MREN e M)
 MREN e (APP M N)    = APP (MREN e M) (MREN e N)
-MREN e (MVAR i)     = MVAR (renF e i)
+MREN e (MVAR i)     = MVAR (REN∋ e i)
 MREN e (BOX M)      = BOX (MREN e M)
 MREN e (LETBOX M N) = LETBOX (MREN e M) (MREN (keep e) N)
 
@@ -66,56 +66,62 @@ MVZ = MVAR zero
 
 
 Terms : Nat → Nat → Nat → Set
-Terms d g x = Vec (Term d g) x
+Terms d g n = Vec (Term d g) n
 
 
 --------------------------------------------------------------------------------
 
 
-RENS : ∀ {d g g′ x} → g′ ≥ g → Terms d g x
-                    → Terms d g′ x
-RENS e ζ = map (REN e) ζ
+RENS : ∀ {d g g′ n} → g′ ≥ g → Terms d g n
+                    → Terms d g′ n
+RENS e x = MAPS (REN e) x
 
 
-WKS : ∀ {d g x} → Terms d g x
-                → Terms d (suc g) x
-WKS ζ = RENS (drop id≥) ζ
+WKS : ∀ {d g n} → Terms d g n
+                → Terms d (suc g) n
+WKS x = RENS (drop id≥) x
 
 
-LIFTS : ∀ {d g x} → Terms d g x
-                  → Terms d (suc g) (suc x)
-LIFTS ζ = WKS ζ , VZ
+LIFTS : ∀ {d g n} → Terms d g n
+                  → Terms d (suc g) (suc n)
+LIFTS x = WKS x , VZ
+
+
+VARS : ∀ {d g g′} → g′ ≥ g
+                  → Terms d g′ g
+VARS done     = ∙
+VARS (drop e) = WKS (VARS e)
+VARS (keep e) = LIFTS (VARS e)
 
 
 IDS : ∀ {d g} → Terms d g g
-IDS {g = zero}  = ∙
-IDS {g = suc g} = LIFTS IDS
+IDS = VARS id≥
 
 
 --------------------------------------------------------------------------------
 
 
-MRENS : ∀ {d d′ g x} → d′ ≥ d → Terms d g x
-                     → Terms d′ g x
-MRENS e ζ = map (MREN e) ζ
+MRENS : ∀ {d d′ g n} → d′ ≥ d → Terms d g n
+                     → Terms d′ g n
+MRENS e x = MAPS (MREN e) x
 
 
-MWKS : ∀ {d g x} → Terms d g x
-                 → Terms (suc d) g x
-MWKS ζ = MRENS (drop id≥) ζ
+MWKS : ∀ {d g n} → Terms d g n
+                 → Terms (suc d) g n
+MWKS x = MRENS (drop id≥) x
 
 
 --------------------------------------------------------------------------------
 
 
-SUB : ∀ {d g x} → Terms d g x → Term d x
+SUB : ∀ {d g n} → Terms d g n → Term d n
                 → Term d g
-SUB ζ (VAR i)      = get ζ i
-SUB ζ (LAM M)      = LAM (SUB (LIFTS ζ) M)
-SUB ζ (APP M N)    = APP (SUB ζ M) (SUB ζ N)
-SUB ζ (MVAR i)     = MVAR i
-SUB ζ (BOX M)      = BOX M
-SUB ζ (LETBOX M N) = LETBOX (SUB ζ M) (SUB (MWKS ζ) N)
+SUB x (VAR i)      = GET x i
+SUB x (LAM M)      = LAM (SUB (LIFTS x) M)
+SUB x (APP M N)    = APP (SUB x M) (SUB x N)
+SUB x (MVAR i)     = MVAR i
+SUB x (BOX M)      = BOX M
+SUB x (LETBOX M N) = LETBOX (SUB x M) (SUB (MWKS x) N)
 
 
 CUT : ∀ {d g} → Term d g → Term d (suc g)
@@ -126,52 +132,80 @@ CUT M N = SUB (IDS , M) N
 --------------------------------------------------------------------------------
 
 
+SUBS : ∀ {d g n m} → Terms d g n → Terms d n m
+                   → Terms d g m
+SUBS x y = MAPS (SUB x) y
+
+
+--------------------------------------------------------------------------------
+
+
 Term₁ : Nat → Set
 Term₁ d = Term d zero
 
+
 Terms₁ : Nat → Nat → Set
-Terms₁ d x = Vec (Term₁ d) x
+Terms₁ d n = Vec (Term₁ d) n
 
 
 --------------------------------------------------------------------------------
 
 
-MRENS₁ : ∀ {d d′ x} → d′ ≥ d → Terms₁ d x
-                    → Terms₁ d′ x
-MRENS₁ e ζ = map (MREN e) ζ
+MRENS₁ : ∀ {d d′ n} → d′ ≥ d → Terms₁ d n
+                    → Terms₁ d′ n
+MRENS₁ e x = MRENS e x
 
 
-MWKS₁ : ∀ {d x} → Terms₁ d x
-                → Terms₁ (suc d) x
-MWKS₁ ζ = MRENS₁ (drop id≥) ζ
+MWKS₁ : ∀ {d n} → Terms₁ d n
+                → Terms₁ (suc d) n
+MWKS₁ x = MWKS x
 
 
-MLIFTS₁ : ∀ {d x} → Terms₁ d x
-                  → Terms₁ (suc d) (suc x)
-MLIFTS₁ ζ = MWKS₁ ζ , MVZ
+MLIFTS₁ : ∀ {d n} → Terms₁ d n
+                  → Terms₁ (suc d) (suc n)
+MLIFTS₁ x = MWKS₁ x , MVZ
+
+
+MVARS₁ : ∀ {d d′} → d′ ≥ d
+                  → Terms₁ d′ d
+MVARS₁ done     = ∙
+MVARS₁ (drop e) = MWKS₁ (MVARS₁ e)
+MVARS₁ (keep e) = MLIFTS₁ (MVARS₁ e)
 
 
 MIDS₁ : ∀ {d} → Terms₁ d d
-MIDS₁ {zero}  = ∙
-MIDS₁ {suc d} = MLIFTS₁ MIDS₁
+MIDS₁ = MVARS₁ id≥
 
 
 --------------------------------------------------------------------------------
 
 
-MSUB : ∀ {d g x} → Terms₁ d x → Term x g
+MSUB : ∀ {d g n} → Terms₁ d n → Term n g
                  → Term d g
-MSUB ζ (VAR i)      = VAR i
-MSUB ζ (LAM M)      = LAM (MSUB ζ M)
-MSUB ζ (APP M N)    = APP (MSUB ζ M) (MSUB ζ N)
-MSUB ζ (MVAR i)     = SUB ∙ (get ζ i)
-MSUB ζ (BOX M)      = BOX (MSUB ζ M)
-MSUB ζ (LETBOX M N) = LETBOX (MSUB ζ M) (MSUB (MLIFTS₁ ζ) N)
+MSUB x (VAR i)      = VAR i
+MSUB x (LAM M)      = LAM (MSUB x M)
+MSUB x (APP M N)    = APP (MSUB x M) (MSUB x N)
+MSUB x (MVAR i)     = SUB ∙ (GET x i)
+MSUB x (BOX M)      = BOX (MSUB x M)
+MSUB x (LETBOX M N) = LETBOX (MSUB x M) (MSUB (MLIFTS₁ x) N)
 
 
 MCUT : ∀ {d g} → Term₁ d → Term (suc d) g
                → Term d g
 MCUT M N = MSUB (MIDS₁ , M) N
+
+
+--------------------------------------------------------------------------------
+
+
+MSUBS : ∀ {d g n m} → Terms₁ d n → Terms n g m
+                    → Terms d g m
+MSUBS x y = MAPS (MSUB x) y
+
+
+MSUBS₁ : ∀ {d n m} → Terms₁ d n → Terms₁ n m
+                   → Terms₁ d m
+MSUBS₁ x y = MSUBS x y
 
 
 --------------------------------------------------------------------------------
@@ -190,19 +224,19 @@ EX M = APP (APP (WK (WK (LAM (LAM M)))) VZ) (WK VZ)
 --------------------------------------------------------------------------------
 
 
-SHL : ∀ {d g} → Term d (suc g)
-              → Term (suc d) g
-SHL M = APP (LAM (MWK M)) (BOX MVZ)
+UP : ∀ {d g} → Term d (suc g)
+             → Term (suc d) g
+UP M = APP (LAM (MWK M)) (BOX MVZ)
 
 
-SHR : ∀ {d g} → Term (suc d) g
-              → Term d (suc g)
-SHR M = LETBOX VZ (WK M)
+DOWN : ∀ {d g} → Term (suc d) g
+               → Term d (suc g)
+DOWN M = LETBOX VZ (WK M)
 
 
 MEX : ∀ {d g} → Term (suc (suc d)) g
               → Term (suc (suc d)) g
-MEX M = SHL (SHL (EX (SHR (SHR M))))
+MEX M = UP (UP (EX (DOWN (DOWN M))))
 
 
 --------------------------------------------------------------------------------

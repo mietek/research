@@ -3,6 +3,7 @@ module StdS4Semantics where
 open import Prelude
 open import Category
 open import List
+open import AllList
 open import StdS4
 open import StdS4NormalForms
 
@@ -114,7 +115,7 @@ W ⊪⋆₁ Δ = All (W ⊪₁_) Δ
 
 syns : ∀ {{_ : Model}} {Δ W} → W ⊪⋆₁ Δ
                              → ⌊ W ⌋₁ ⊢⋆₁ Δ
-syns δ = mapAll syn δ
+syns δ = maps syn δ
 
 
 --------------------------------------------------------------------------------
@@ -122,14 +123,14 @@ syns δ = mapAll syn δ
 
 crels : ∀ {{_ : Model}} {Γ W W′} → W′ ≥ W → W ⊪⋆ Γ
                                  → W′ ⊪⋆ Γ
-crels η γ = mapAll (\ {Aₜ} k {B} {W′} → crel {Aₜ} η (\ {C} {W″} → k {C} {W″})) γ
+crels η γ = maps (\ {Aₜ} k {B} {W′} → crel {Aₜ} η (\ {C} {W″} → k {C} {W″})) γ
 -- NOTE: Equivalent to
--- crels η γ = mapAll (crel η) γ
+-- crels η γ = maps (crel η) γ
 
 
 crels₁ : ∀ {{_ : Model}} {Δ W W′} → W′ ≥ W → W ⊪⋆₁ Δ
                                   → W′ ⊪⋆₁ Δ
-crels₁ η δ = mapAll (crel₁ η) δ
+crels₁ η δ = maps (crel₁ η) δ
 
 
 --------------------------------------------------------------------------------
@@ -160,12 +161,12 @@ _⊨_ : Context → Truth → Set₁
 
 ↓ : ∀ {Δ Γ A} → Δ ⨾ Γ ⊢ A true
               → Δ ⨾ Γ ⊨ A true
-↓ (var 𝒾)              δ γ = lookup γ 𝒾
+↓ (var 𝒾)              δ γ = get γ 𝒾
 ↓ (lam {A} {B} 𝒟)      δ γ = return {A ⊃ B} (\ η k →
                                ↓ 𝒟 (crels₁ η δ) (crels η γ , k))
 ↓ (app {A} {B} 𝒟 ℰ)    δ γ = bind {A ⊃ B} {B} (↓ 𝒟 δ γ) (\ η f →
                                f id≥ (↓ ℰ (crels₁ η δ) (crels η γ)))
-↓ (mvar 𝒾)             δ γ = sem (lookup δ 𝒾)
+↓ (mvar 𝒾)             δ γ = sem (get δ 𝒾)
 ↓ (box {A} 𝒟)          δ γ = return {□ A} (msub (syns δ) 𝒟 , ↓ 𝒟 δ ∙)
 ↓ (letbox {A} {B} 𝒟 ℰ) δ γ = bind {□ A} {B} (↓ 𝒟 δ γ) (\ η v →
                                ↓ ℰ (crels₁ η δ , v) (crels η γ))
@@ -239,9 +240,15 @@ slifts : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊪⋆ Ξ
 slifts ξ = swks ξ , svz
 
 
+svars : ∀ {Δ Γ Γ′} → Γ′ ⊇ Γ
+                   → Δ ⨾ Γ′ ⊪⋆ Γ
+svars done     = ∙
+svars (drop η) = swks (svars η)
+svars (keep η) = slifts (svars η)
+
+
 sids : ∀ {Δ Γ} → Δ ⨾ Γ ⊪⋆ Γ
-sids {Γ = ∙}          = ∙
-sids {Γ = Γ , A true} = slifts sids
+sids = svars id⊇
 
 
 --------------------------------------------------------------------------------
@@ -269,9 +276,15 @@ smlifts₁ : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊪⋆₁ Ξ
 smlifts₁ ξ = smwks₁ ξ , smvz₁
 
 
+smvars₁ : ∀ {Δ Δ′ Γ} → Δ′ ⊇ Δ
+                     → Δ′ ⨾ Γ ⊪⋆₁ Δ
+smvars₁ done     = ∙
+smvars₁ (drop η) = smwks₁ (smvars₁ η)
+smvars₁ (keep η) = smlifts₁ (smvars₁ η)
+
+
 smids₁ : ∀ {Δ Γ} → Δ ⨾ Γ ⊪⋆₁ Δ
-smids₁ {∙}           = ∙
-smids₁ {Δ , A valid} = smlifts₁ smids₁
+smids₁ = smvars₁ id⊇
 
 
 --------------------------------------------------------------------------------

@@ -3,6 +3,7 @@ module StdSTLC where
 open import Prelude
 open import Fin
 open import Vec
+open import AllVec
 open import StdSTLCTerms
 
 
@@ -87,54 +88,74 @@ record Derivations : Set
     constructor [_⊢⋆_⦂_]
     field
       {g} : Nat
-      {x} : Nat
+      {n} : Nat
       Γ   : Truths g
-      ζ   : Terms g x
-      Ξ   : Truths x
+      x   : Terms g n
+      Ξ   : Truths n
+
+
+zip : ∀ {g n} → Truths g → Terms g n → Truths n
+              → Vec Derivation n
+zip Γ ∙       ∙            = ∙
+zip Γ (x , M) (Ξ , A true) = zip Γ x Ξ , [ Γ ⊢ M ⦂ A true ]
+
+
+zip∋ : ∀ {g n i A} → {Γ : Truths g} {x : Terms g n} {Ξ : Truths n}
+                   → Ξ ∋⟨ i ⟩ A true
+                   → zip Γ x Ξ ∋⟨ i ⟩ [ Γ ⊢ GET x i ⦂ A true ]
+zip∋ {x = x , M} {Ξ , A true} zero    = zero
+zip∋ {x = x , N} {Ξ , B true} (suc 𝒾) = suc (zip∋ 𝒾)
 
 
 infix 3 ∙⋙⋆_
 ∙⋙⋆_ : Derivations → Set
-∙⋙⋆ [ Γ ⊢⋆ ζ ⦂ Ξ ] = All (\ { (M , A true) → ∙⋙ [ Γ ⊢ M ⦂ A true ] }) (zip ζ Ξ)
+∙⋙⋆ [ Γ ⊢⋆ x ⦂ Ξ ] = All (∙⋙_) (zip Γ x Ξ)
 
 
 --------------------------------------------------------------------------------
 
 
-rens : ∀ {g g′ e x} → {Γ : Truths g} {Γ′ : Truths g′} {ζ : Terms g x} {Ξ : Truths x}
-                    → Γ′ ⊇⟨ e ⟩ Γ → ∙⋙⋆ [ Γ ⊢⋆ ζ ⦂ Ξ ]
-                    → ∙⋙⋆ [ Γ′ ⊢⋆ RENS e ζ ⦂ Ξ ]
-rens {ζ = ∙}     {∙}          η ∙       = ∙
-rens {ζ = ζ , M} {Ξ , A true} η (ξ , 𝒟) = rens η ξ , ren η 𝒟
+rens : ∀ {g g′ e n} → {Γ : Truths g} {Γ′ : Truths g′} {x : Terms g n} {Ξ : Truths n}
+                    → Γ′ ⊇⟨ e ⟩ Γ → ∙⋙⋆ [ Γ ⊢⋆ x ⦂ Ξ ]
+                    → ∙⋙⋆ [ Γ′ ⊢⋆ RENS e x ⦂ Ξ ]
+rens {x = ∙}     {∙}          η ∙       = ∙
+rens {x = x , M} {Ξ , A true} η (ξ , 𝒟) = rens η ξ , ren η 𝒟
 -- NOTE: Equivalent to
--- rens η ξ = mapAll (ren η) ξ
+-- rens η ξ = maps (ren η) ξ
 
 
-wks : ∀ {g x A} → {Γ : Truths g} {ζ : Terms g x} {Ξ : Truths x}
-                → ∙⋙⋆ [ Γ ⊢⋆ ζ ⦂ Ξ ]
-                → ∙⋙⋆ [ Γ , A true ⊢⋆ WKS ζ ⦂ Ξ ]
+wks : ∀ {g n A} → {Γ : Truths g} {x : Terms g n} {Ξ : Truths n}
+                → ∙⋙⋆ [ Γ ⊢⋆ x ⦂ Ξ ]
+                → ∙⋙⋆ [ Γ , A true ⊢⋆ WKS x ⦂ Ξ ]
 wks ξ = rens (drop id⊇) ξ
 
 
-lifts : ∀ {g x A} → {Γ : Truths g} {ζ : Terms g x} {Ξ : Truths x}
-                  → ∙⋙⋆ [ Γ ⊢⋆ ζ ⦂ Ξ ]
-                  → ∙⋙⋆ [ Γ , A true ⊢⋆ LIFTS ζ ⦂ Ξ , A true ]
+lifts : ∀ {g n A} → {Γ : Truths g} {x : Terms g n} {Ξ : Truths n}
+                  → ∙⋙⋆ [ Γ ⊢⋆ x ⦂ Ξ ]
+                  → ∙⋙⋆ [ Γ , A true ⊢⋆ LIFTS x ⦂ Ξ , A true ]
 lifts ξ = wks ξ , vz
+
+
+vars : ∀ {g g′ e} → {Γ : Truths g} {Γ′ : Truths g′}
+                  → Γ′ ⊇⟨ e ⟩ Γ
+                  → ∙⋙⋆ [ Γ′ ⊢⋆ VARS e ⦂ Γ ]
+vars done     = ∙
+vars (drop η) = wks (vars η)
+vars (keep η) = lifts (vars η)
 
 
 ids : ∀ {g} → {Γ : Truths g}
             → ∙⋙⋆ [ Γ ⊢⋆ IDS ⦂ Γ ]
-ids {Γ = ∙}          = ∙
-ids {Γ = Γ , A true} = lifts ids
+ids = vars id⊇
 
 
 --------------------------------------------------------------------------------
 
 
-sub : ∀ {g x M A} → {Γ : Truths g} {ζ : Terms g x} {Ξ : Truths x}
-                  → ∙⋙⋆ [ Γ ⊢⋆ ζ ⦂ Ξ ] → ∙⋙ [ Ξ ⊢ M ⦂ A ]
-                  → ∙⋙ [ Γ ⊢ SUB ζ M ⦂ A ]
-sub ξ (var 𝒾)   = lookup ξ (zip∋₂ 𝒾)
+sub : ∀ {g n M A} → {Γ : Truths g} {x : Terms g n} {Ξ : Truths n}
+                  → ∙⋙⋆ [ Γ ⊢⋆ x ⦂ Ξ ] → ∙⋙ [ Ξ ⊢ M ⦂ A ]
+                  → ∙⋙ [ Γ ⊢ SUB x M ⦂ A ]
+sub ξ (var 𝒾)   = get ξ (zip∋ 𝒾)
 sub ξ (lam 𝒟)   = lam (sub (lifts ξ) 𝒟)
 sub ξ (app 𝒟 ℰ) = app (sub ξ 𝒟) (sub ξ ℰ)
 

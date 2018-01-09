@@ -4,6 +4,7 @@ open import Prelude
 open import Fin
 open import FinLemmas
 open import Vec
+open GetVec
 open import StdLPTTTerms
 
 

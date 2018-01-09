@@ -5,21 +5,19 @@ open import Category
 open import List
 open import ListLemmas
 open import AllList
-open GetAllList
 open import AllListLemmas
-open GetsAllList
 open import StdIPL
 
 
 --------------------------------------------------------------------------------
 {-
                              ren id⊇ 𝒟 ≡ 𝒟                                      id-ren
-                      ren (η₁ ∘⊇ η₂) 𝒟 ≡ (ren η₂ ∘ ren η₁) 𝒟                    comp-ren
+                       ren (η₁ ∘ η₂) 𝒟 ≡ (ren η₂ ∘ ren η₁) 𝒟                    comp-ren
                         ren (drop η) 𝒟 ≡ (wk ∘ ren η) 𝒟                         -- comp-wk-ren-drop
                  (ren (keep η) ∘ wk) 𝒟 ≡ (wk ∘ ren η) 𝒟                         comp-wk-ren-keep
 
                             rens id⊇ ξ ≡ ξ                                      id-rens
-                     rens (η₁ ∘⊇ η₂) ξ ≡ (rens η₂ ∘ rens η₁) ξ                  comp-rens
+                      rens (η₁ ∘ η₂) ξ ≡ (rens η₂ ∘ rens η₁) ξ                  comp-rens
                        rens (drop η) ξ ≡ (wks ∘ rens η) ξ                       -- comp-wks-rens-drop
                (rens (keep η) ∘ wks) ξ ≡ (wks ∘ rens η) ξ                       comp-wks-rens-keep
              (rens (keep η) ∘ lifts) ξ ≡ (lifts ∘ rens η) ξ                     comp-lifts-rens
@@ -60,14 +58,14 @@ id-ren (app 𝒟 ℰ) = app & id-ren 𝒟 ⊗ id-ren ℰ
 
 
 comp-ren : ∀ {Γ Γ′ Γ″ A} → (η₁ : Γ′ ⊇ Γ) (η₂ : Γ″ ⊇ Γ′) (𝒟 : Γ ⊢ A true)
-                         → ren (η₁ ∘⊇ η₂) 𝒟 ≡ (ren η₂ ∘ ren η₁) 𝒟
+                         → ren (η₁ ∘ η₂) 𝒟 ≡ (ren η₂ ∘ ren η₁) 𝒟
 comp-ren η₁ η₂ (var 𝒾)   = var & comp-ren∋ η₁ η₂ 𝒾
 comp-ren η₁ η₂ (lam 𝒟)   = lam & comp-ren (keep η₁) (keep η₂) 𝒟
 comp-ren η₁ η₂ (app 𝒟 ℰ) = app & comp-ren η₁ η₂ 𝒟 ⊗ comp-ren η₁ η₂ ℰ
 
 
-Ren : ∀ {A} → Presheaf (_⊢ A true) ren
-Ren = record
+𝐫𝐞𝐧 : ∀ {A} → Presheaf (_⊢ A true) ren
+𝐫𝐞𝐧 = record
         { idℱ   = funext! id-ren
         ; compℱ = \ η₁ η₂ → funext! (comp-ren η₁ η₂)
         }
@@ -77,14 +75,14 @@ Ren = record
 
 -- comp-wk-ren-drop : ∀ {Γ Γ′ A B} → (η : Γ′ ⊇ Γ) (𝒟 : Γ ⊢ A true)
 --                                 → ren (drop {A = B} η) 𝒟 ≡ (wk ∘ ren η) 𝒟
--- comp-wk-ren-drop η 𝒟 = (\ η′ → ren (drop η′) 𝒟) & rid∘⊇ η ⁻¹
+-- comp-wk-ren-drop η 𝒟 = (\ η′ → ren (drop η′) 𝒟) & rid∘ η ⁻¹
 --                      ⋮ comp-ren η (drop id⊇) 𝒟
 
 
 comp-wk-ren-keep : ∀ {Γ Γ′ A B} → (η : Γ′ ⊇ Γ) (𝒟 : Γ ⊢ A true)
                                 → (ren (keep {A = B} η) ∘ wk) 𝒟 ≡ (wk ∘ ren η) 𝒟
 comp-wk-ren-keep η 𝒟 = comp-ren (drop id⊇) (keep η) 𝒟 ⁻¹
-                     ⋮ (\ η′ → ren (drop η′) 𝒟) & (lid∘⊇ η ⋮ rid∘⊇ η ⁻¹)
+                     ⋮ (\ η′ → ren (drop η′) 𝒟) & (lid∘ η ⋮ rid∘ η ⁻¹)
                      ⋮ comp-ren η (drop id⊇) 𝒟
 
 
@@ -98,13 +96,13 @@ id-rens (ξ , 𝒟) = _,_ & id-rens ξ ⊗ id-ren 𝒟
 
 
 comp-rens : ∀ {Γ Γ′ Γ″ Ξ} → (η₁ : Γ′ ⊇ Γ) (η₂ : Γ″ ⊇ Γ′) (ξ : Γ ⊢⋆ Ξ)
-                          → rens (η₁ ∘⊇ η₂) ξ ≡ (rens η₂ ∘ rens η₁) ξ
+                          → rens (η₁ ∘ η₂) ξ ≡ (rens η₂ ∘ rens η₁) ξ
 comp-rens η₁ η₂ ∙       = refl
 comp-rens η₁ η₂ (ξ , 𝒟) = _,_ & comp-rens η₁ η₂ ξ ⊗ comp-ren η₁ η₂ 𝒟
 
 
-Rens : ∀ {Ξ} → Presheaf (_⊢⋆ Ξ) rens
-Rens = record
+𝐫𝐞𝐧𝐬 : ∀ {Ξ} → Presheaf (_⊢⋆ Ξ) rens
+𝐫𝐞𝐧𝐬 = record
          { idℱ   = funext! id-rens
          ; compℱ = \ η₁ η₂ → funext! (comp-rens η₁ η₂)
          }
@@ -281,8 +279,8 @@ assoc-subs ξ ψ (φ , 𝒟) = _,_ & assoc-subs ξ ψ φ ⊗ comp-sub ξ ψ 𝒟
 
 
 instance
-  IPL : Category Context _⊢⋆_
-  IPL = record
+  𝐈𝐏𝐋 : Category Context _⊢⋆_
+  𝐈𝐏𝐋 = record
           { id     = ids
           ; _∘_    = flip subs
           ; lid∘   = rid-subs
@@ -291,8 +289,8 @@ instance
           }
 
 
-Sub : ∀ {A} → Presheaf (_⊢ A true) sub
-Sub = record
+𝐬𝐮𝐛 : ∀ {A} → Presheaf (_⊢ A true) sub
+𝐬𝐮𝐛 = record
         { idℱ   = funext! id-sub
         ; compℱ = \ ξ₁ ξ₂ → funext! (comp-sub ξ₂ ξ₁)
         }

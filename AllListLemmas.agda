@@ -7,7 +7,6 @@ open import Category
 open import List
 open import ListLemmas
 open import AllList
-open GetAllList
 
 
 --------------------------------------------------------------------------------
@@ -15,7 +14,7 @@ open GetAllList
                       get (gets ξ η) 𝒾 ≡ (get ξ ∘ ren∋ η) 𝒾                     comp-get-ren∋
 
                             gets ξ id⊇ ≡ ξ                                      id-gets
-                     gets ξ (η₁ ∘⊇ η₂) ≡ gets (gets ξ η₂) η₁                    comp-gets
+                      gets ξ (η₁ ∘ η₂) ≡ gets (gets ξ η₂) η₁                    comp-gets
 
                             id⊇′ ∘⊇′ 𝛈 ≡ 𝛈                                      lid∘⊇′
                             𝛈 ∘⊇′ id⊇′ ≡ 𝛈                                      rid∘⊇′
@@ -39,29 +38,27 @@ comp-get-ren∋ (ξ , b) (keep η) (suc 𝒾) = comp-get-ren∋ ξ η 𝒾
 --------------------------------------------------------------------------------
 
 
-module GetsAllList
-  where
-    id-gets : ∀ {X P} → {Ξ : List X}
-                      → (ξ : All P Ξ)
-                      → gets ξ id⊇ ≡ ξ
-    id-gets ∙       = refl
-    id-gets (ξ , a) = (_, a) & id-gets ξ
+id-gets : ∀ {X P} → {Ξ : List X}
+                  → (ξ : All P Ξ)
+                  → gets ξ id⊇ ≡ ξ
+id-gets ∙       = refl
+id-gets (ξ , a) = (_, a) & id-gets ξ
 
 
-    comp-gets : ∀ {X P} → {Ξ Ξ′ Ξ″ : List X}
-                        → (ξ : All P Ξ″) (η₁ : Ξ′ ⊇ Ξ) (η₂ : Ξ″ ⊇ Ξ′)
-                        → gets ξ (η₁ ∘⊇ η₂) ≡ gets (gets ξ η₂) η₁
-    comp-gets ∙       η₁        done      = refl
-    comp-gets (ξ , b) η₁        (drop η₂) = comp-gets ξ η₁ η₂
-    comp-gets (ξ , b) (drop η₁) (keep η₂) = comp-gets ξ η₁ η₂
-    comp-gets (ξ , a) (keep η₁) (keep η₂) = (_, a) & comp-gets ξ η₁ η₂
+comp-gets : ∀ {X P} → {Ξ Ξ′ Ξ″ : List X}
+                    → (ξ : All P Ξ″) (η₁ : Ξ′ ⊇ Ξ) (η₂ : Ξ″ ⊇ Ξ′)
+                    → gets ξ (η₁ ∘ η₂) ≡ gets (gets ξ η₂) η₁
+comp-gets ∙       η₁        done      = refl
+comp-gets (ξ , b) η₁        (drop η₂) = comp-gets ξ η₁ η₂
+comp-gets (ξ , b) (drop η₁) (keep η₂) = comp-gets ξ η₁ η₂
+comp-gets (ξ , a) (keep η₁) (keep η₂) = (_, a) & comp-gets ξ η₁ η₂
 
 
-    Gets : ∀ {X P} → Presheaf {{Opposite OPE}} (All P) (flip (gets {X} {P}))
-    Gets = record
-             { idℱ   = funext! id-gets
-             ; compℱ = \ η₁ η₂ → funext! (\ ξ → comp-gets ξ η₂ η₁)
-             }
+𝐠𝐞𝐭𝐬 : ∀ {X P} → Presheaf {{Opposite (𝐎𝐏𝐄 {X})}} (All P) (flip gets)
+𝐠𝐞𝐭𝐬 = record
+         { idℱ   = funext! id-gets
+         ; compℱ = \ η₁ η₂ → funext! (\ ξ → comp-gets ξ η₂ η₁)
+         }
 
 
 --------------------------------------------------------------------------------
@@ -99,10 +96,10 @@ assoc∘⊇′ (keep 𝛈₁) (keep 𝛈₂) (keep 𝛈₃) = keep & assoc∘⊇
 
 
 instance
-  OPE′ : ∀ {X P} → Category (Σ (List X) (All P))
+  𝐎𝐏𝐄′ : ∀ {X P} → Category (Σ (List X) (All P))
                              (\ { (Ξ′ , ξ′) (Ξ , ξ) →
                                Σ (Ξ′ ⊇ Ξ) (\ η → ξ′ ⊇′⟨ η ⟩ ξ) })
-  OPE′ = record
+  𝐎𝐏𝐄′ = record
            { id     = id⊇ , id⊇′
            ; _∘_    = \ { (η₁ , 𝛈₁) (η₂ , 𝛈₂) → η₁ ∘⊇ η₂ , 𝛈₁ ∘⊇′ 𝛈₂ }
            ; lid∘   = \ { (η , 𝛈) → (η ,_) & lid∘⊇′ 𝛈 }
@@ -135,12 +132,12 @@ comp-ren∋′ (keep 𝛈₁) (keep 𝛈₂) zero    = refl
 comp-ren∋′ (keep 𝛈₁) (keep 𝛈₂) (suc 𝓲) = suc & comp-ren∋′ 𝛈₁ 𝛈₂ 𝓲
 
 
-Ren∋′ : ∀ {X P A} → {a : P A}
-                  → Presheaf {{OPE′ {X} {P}}}
+𝐫𝐞𝐧∋′ : ∀ {X P A} → {a : P A}
+                  → Presheaf {{𝐎𝐏𝐄′ {X} {P}}}
                               (\ { (Ξ , ξ) →
                                 Σ (Ξ ∋ A) (\ 𝒾 → ξ ∋′⟨ 𝒾 ⟩ a) })
                               (\ { (η , 𝛈) (i , 𝓲) → ren∋ η i , ren∋′ 𝛈 𝓲 })
-Ren∋′ = record
+𝐫𝐞𝐧∋′ = record
           { idℱ   = funext! (\ { (𝒾 , 𝓲) →
                       (ren∋ id⊇ 𝒾 ,_) & id-ren∋′ 𝓲 })
           ; compℱ = \ { (η₁ , 𝛈₁) (η₂ , 𝛈₂) →

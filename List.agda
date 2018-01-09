@@ -25,20 +25,18 @@ map F ∙       = ∙
 map F (Ξ , A) = map F Ξ , F A
 
 
-module GetList
-  where
-    get : ∀ {X n} → (Ξ : List X) {{_ : len Ξ ≡ n}} → Fin n
-                  → X
-    get ∙       {{refl}} ()
-    get (Ξ , A) {{refl}} zero    = A
-    get (Ξ , B) {{refl}} (suc i) = get Ξ i
+GET : ∀ {X n} → (Ξ : List X) {{_ : len Ξ ≡ n}} → Fin n
+              → X
+GET ∙       {{refl}} ()
+GET (Ξ , A) {{refl}} zero    = A
+GET (Ξ , B) {{refl}} (suc i) = GET Ξ i
 
 
-    gets : ∀ {X n n′} → (Ξ : List X) {{_ : len Ξ ≡ n′}} → n′ ≥ n
-                      → List X
-    gets ∙       {{refl}} done     = ∙
-    gets (Ξ , B) {{refl}} (drop e) = gets Ξ e
-    gets (Ξ , A) {{refl}} (keep e) = gets Ξ e , A
+GETS : ∀ {X n n′} → (Ξ : List X) {{_ : len Ξ ≡ n′}} → n′ ≥ n
+                  → List X
+GETS ∙       {{refl}} done     = ∙
+GETS (Ξ , B) {{refl}} (drop e) = GETS Ξ e
+GETS (Ξ , A) {{refl}} (keep e) = GETS Ξ e , A
 
 
 --------------------------------------------------------------------------------

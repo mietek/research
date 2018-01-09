@@ -20,21 +20,22 @@ maps f ∙       = ∙
 maps f (ξ , a) = maps f ξ , f a
 
 
-module GetAllList
-  where
-    get : ∀ {X P A} → {Ξ : List X}
-                    → All P Ξ → Ξ ∋ A
-                    → P A
-    get (ξ , a) zero    = a
-    get (ξ , b) (suc 𝒾) = get ξ 𝒾
+--------------------------------------------------------------------------------
 
 
-    gets : ∀ {X P} → {Ξ Ξ′ : List X}
-                   → All P Ξ′ → Ξ′ ⊇ Ξ
-                   → All P Ξ
-    gets ξ       done     = ∙
-    gets (ξ , b) (drop η) = gets ξ η
-    gets (ξ , a) (keep η) = gets ξ η , a
+get : ∀ {X P A} → {Ξ : List X}
+                → All P Ξ → Ξ ∋ A
+                → P A
+get (ξ , a) zero    = a
+get (ξ , b) (suc 𝒾) = get ξ 𝒾
+
+
+gets : ∀ {X P} → {Ξ Ξ′ : List X}
+               → All P Ξ′ → Ξ′ ⊇ Ξ
+               → All P Ξ
+gets ξ       done     = ∙
+gets (ξ , b) (drop η) = gets ξ η
+gets (ξ , a) (keep η) = gets ξ η , a
 
 
 --------------------------------------------------------------------------------

@@ -7,29 +7,55 @@ open import Category
 open import Fin
 open import FinLemmas
 open import Vec
-open GetVec
 
 
 --------------------------------------------------------------------------------
 {-
-                      get (gets Ξ e) i ≡ (get Ξ ∘ renF e) i                     comp-get-renF
+                      GET (GETS Ξ e) i ≡ (GET Ξ ∘ REN∋ e) i                     comp-GET-REN∋
+
+                            GETS ξ id⊇ ≡ ξ                                      id-GETS
+                      GETS ξ (η₁ ∘ η₂) ≡ GETS (GETS ξ η₂) η₁                    comp-GETS
 
                               id⊇ ∘⊇ η ≡ η                                      lid∘⊇
                               η ∘⊇ id⊇ ≡ η                                      rid∘⊇
                       (η₁ ∘⊇ η₂) ∘⊇ η₃ ≡ η₁ ∘⊇ (η₂ ∘⊇ η₃)                       assoc∘⊇
 
                             ren∋ id⊇ 𝒾 ≡ 𝒾                                      id-ren∋
-                     ren∋ (η₁ ∘⊇ η₂) 𝒾 ≡ (ren∋ η₂ ∘ ren∋ η₁) 𝒾                  comp-ren∋
+                      ren∋ (η₁ ∘ η₂) 𝒾 ≡ (ren∋ η₂ ∘ ren∋ η₁) 𝒾                  comp-ren∋
 -}
 --------------------------------------------------------------------------------
 
 
-comp-get-renF : ∀ {X n n′} → (Ξ : Vec X n′) (e : n′ ≥ n) (i : Fin n)
-                           → get (gets Ξ e) i ≡ (get Ξ ∘ renF e) i
-comp-get-renF ∙       done     ()
-comp-get-renF (Ξ , B) (drop e) i       = comp-get-renF Ξ e i
-comp-get-renF (Ξ , A) (keep e) zero    = refl
-comp-get-renF (Ξ , B) (keep e) (suc i) = comp-get-renF Ξ e i
+comp-GET-REN∋ : ∀ {X n n′} → (Ξ : Vec X n′) (e : n′ ≥ n) (i : Fin n)
+                           → GET (GETS Ξ e) i ≡ (GET Ξ ∘ REN∋ e) i
+comp-GET-REN∋ ∙       done     ()
+comp-GET-REN∋ (Ξ , B) (drop e) i       = comp-GET-REN∋ Ξ e i
+comp-GET-REN∋ (Ξ , A) (keep e) zero    = refl
+comp-GET-REN∋ (Ξ , B) (keep e) (suc i) = comp-GET-REN∋ Ξ e i
+
+
+--------------------------------------------------------------------------------
+
+
+id-GETS : ∀ {X n} → (Ξ : Vec X n)
+                  → GETS Ξ id≥ ≡ Ξ
+id-GETS ∙       = refl
+id-GETS (Ξ , A) = (_, A) & id-GETS Ξ
+
+
+comp-GETS : ∀ {X n n′ n″} → (Ξ : Vec X n″) (e₁ : n′ ≥ n) (e₂ : n″ ≥ n′)
+                          → GETS Ξ (e₁ ∘ e₂) ≡ GETS (GETS Ξ e₂) e₁
+comp-GETS ∙       e₁        done      = refl
+comp-GETS (Ξ , B) e₁        (drop e₂) = comp-GETS Ξ e₁ e₂
+comp-GETS (Ξ , B) (drop e₁) (keep e₂) = comp-GETS Ξ e₁ e₂
+comp-GETS (Ξ , A) (keep e₁) (keep e₂) = (_, A) & comp-GETS Ξ e₁ e₂
+
+
+𝐆𝐄𝐓𝐒 : ∀ {X} → Presheaf {{Opposite 𝐆𝐄𝐐}} (Vec X) (flip GETS)
+𝐆𝐄𝐓𝐒 = record
+         { idℱ   = funext! id-GETS
+         ; compℱ = \ e₁ e₂ → funext! (\ Ξ → comp-GETS Ξ e₂ e₁)
+         }
 
 
 --------------------------------------------------------------------------------
@@ -65,10 +91,10 @@ assoc∘⊇ (keep η₁) (keep η₂) (keep η₃) = keep & assoc∘⊇ η₁ η
 
 
 instance
-  OPE : ∀ {X} → Category (Σ Nat (Vec X))
+  𝐎𝐏𝐄 : ∀ {X} → Category (Σ Nat (Vec X))
                           (\ { (n′ , Ξ′) (n , Ξ) →
                             Σ (n′ ≥ n) (\ e → Ξ′ ⊇⟨ e ⟩ Ξ )})
-  OPE = record
+  𝐎𝐏𝐄 = record
           { id     = id≥ , id⊇
           ; _∘_    = \ { (e₁ , η₁) (e₂ , η₂) → e₁ ∘≥ e₂ , η₁ ∘⊇ η₂ }
           ; lid∘   = \ { (e , η) → (e ,_) & lid∘⊇ η }
@@ -81,7 +107,7 @@ instance
 --------------------------------------------------------------------------------
 
 
-{-# REWRITE id-renF #-}
+{-# REWRITE id-REN∋ #-}
 id-ren∋ : ∀ {X A n i} → {Ξ : Vec X n}
                       → (𝒾 : Ξ ∋⟨ i ⟩ A)
                       → ren∋ id⊇ 𝒾 ≡ 𝒾
@@ -89,7 +115,7 @@ id-ren∋ zero    = refl
 id-ren∋ (suc 𝒾) = suc & id-ren∋ 𝒾
 
 
-{-# REWRITE comp-renF #-}
+{-# REWRITE comp-REN∋ #-}
 comp-ren∋ : ∀ {X A n n′ n″ e₁ e₂ i} → {Ξ : Vec X n} {Ξ′ : Vec X n′} {Ξ″ : Vec X n″}
                                     → (η₁ : Ξ′ ⊇⟨ e₁ ⟩ Ξ) (η₂ : Ξ″ ⊇⟨ e₂ ⟩ Ξ′) (𝒾 : Ξ ∋⟨ i ⟩ A)
                                     → ren∋ (η₁ ∘⊇ η₂) 𝒾 ≡ (ren∋ η₂ ∘ ren∋ η₁) 𝒾
@@ -100,16 +126,16 @@ comp-ren∋ (keep η₁) (keep η₂) zero    = refl
 comp-ren∋ (keep η₁) (keep η₂) (suc 𝒾) = suc & comp-ren∋ η₁ η₂ 𝒾
 
 
-Ren∋ : ∀ {X A} → Presheaf {{OPE {X}}}
+𝐫𝐞𝐧∋ : ∀ {X A} → Presheaf {{𝐎𝐏𝐄 {X}}}
                            (\ { (n , Ξ) →
                              Σ (Fin n) (\ i → Ξ ∋⟨ i ⟩ A) })
-                           (\ { (e , η) (i , 𝒾) → renF e i , ren∋ η 𝒾 })
-Ren∋ = record
+                           (\ { (e , η) (i , 𝒾) → REN∋ e i , ren∋ η 𝒾 })
+𝐫𝐞𝐧∋ = record
          { idℱ   = funext! (\ { (i , 𝒾) →
-                     (renF id≥ i ,_) & id-ren∋ 𝒾 })
+                     (REN∋ id≥ i ,_) & id-ren∋ 𝒾 })
          ; compℱ = \ { (e₁ , η₁) (e₂ , η₂) →
                      funext! (\ { (i , 𝒾) →
-                       (renF (e₁ ∘≥ e₂) i ,_) & comp-ren∋ η₁ η₂ 𝒾 }) }
+                       (REN∋ (e₁ ∘≥ e₂) i ,_) & comp-ren∋ η₁ η₂ 𝒾 }) }
          }
 
 

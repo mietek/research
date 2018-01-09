@@ -3,6 +3,7 @@ module StdS4TT where
 open import Prelude
 open import Fin
 open import Vec
+open import AllVec
 open import StdS4TTTerms
 
 
@@ -140,91 +141,98 @@ record Derivations (d : Nat) : Set
     constructor [_⊢⋆_⦂_]
     field
       {g} : Nat
-      {x} : Nat
+      {n} : Nat
       Γ   : Truths g
-      ζ   : Terms d g x
-      Ξ   : Truths x
+      x   : Terms d g n
+      Ξ   : Truths n
 
 
-zap : ∀ {d g x} → Truths g → Terms d g x → Truths x
-                → Vec (Derivation d) x
-zap Γ ∙       ∙            = ∙
-zap Γ (ζ , M) (Ξ , A true) = zap Γ ζ Ξ , [ Γ ⊢ M ⦂ A true ]
+zip : ∀ {d g n} → Truths g → Terms d g n → Truths n
+                → Vec (Derivation d) n
+zip Γ ∙       ∙            = ∙
+zip Γ (x , M) (Ξ , A true) = zip Γ x Ξ , [ Γ ⊢ M ⦂ A true ]
 
-zap∋ : ∀ {d g x i A} → {Γ : Truths g}
-                        {ζ : Terms d g x} {Ξ : Truths x}
+
+zip∋ : ∀ {d g n i A} → {Γ : Truths g} {x : Terms d g n} {Ξ : Truths n}
                      → Ξ ∋⟨ i ⟩ A true
-                     → zap Γ ζ Ξ ∋⟨ i ⟩ [ Γ ⊢ get ζ i ⦂ A true ]
-zap∋ {ζ = ζ , M} {Ξ , A true} zero    = zero
-zap∋ {ζ = ζ , N} {Ξ , B true} (suc 𝒾) = suc (zap∋ 𝒾)
+                     → zip Γ x Ξ ∋⟨ i ⟩ [ Γ ⊢ GET x i ⦂ A true ]
+zip∋ {x = x , M} {Ξ , A true} zero    = zero
+zip∋ {x = x , N} {Ξ , B true} (suc 𝒾) = suc (zip∋ 𝒾)
 
 
 infix 3 _⋙⋆_
 _⋙⋆_ : ∀ {d} → Validities d → Derivations d → Set
-Δ ⋙⋆ [ Γ ⊢⋆ ζ ⦂ Ξ ] = All (Δ ⋙_) (zap Γ ζ Ξ)
+Δ ⋙⋆ [ Γ ⊢⋆ x ⦂ Ξ ] = All (Δ ⋙_) (zip Γ x Ξ)
 
 
 --------------------------------------------------------------------------------
 
 
-rens : ∀ {d g g′ e x} → {Δ : Validities d} {Γ : Truths g} {Γ′ : Truths g′}
-                         {ζ : Terms d g x} {Ξ : Truths x}
-                      → Γ′ ⊇⟨ e ⟩ Γ → Δ ⋙⋆ [ Γ ⊢⋆ ζ ⦂ Ξ ]
-                      → Δ ⋙⋆ [ Γ′ ⊢⋆ RENS e ζ ⦂ Ξ ]
-rens {ζ = ∙}     {∙}          η ∙       = ∙
-rens {ζ = ζ , M} {Ξ , A true} η (ξ , 𝒟) = rens η ξ , ren η 𝒟
+rens : ∀ {d g g′ e n} → {Δ : Validities d} {Γ : Truths g} {Γ′ : Truths g′}
+                         {x : Terms d g n} {Ξ : Truths n}
+                      → Γ′ ⊇⟨ e ⟩ Γ → Δ ⋙⋆ [ Γ ⊢⋆ x ⦂ Ξ ]
+                      → Δ ⋙⋆ [ Γ′ ⊢⋆ RENS e x ⦂ Ξ ]
+rens {x = ∙}     {∙}          η ∙       = ∙
+rens {x = x , M} {Ξ , A true} η (ξ , 𝒟) = rens η ξ , ren η 𝒟
 -- NOTE: Equivalent to
--- rens η ξ = mapAll (ren η) ξ
+-- rens η ξ = maps (ren η) ξ
 
 
-wks : ∀ {d g x A} → {Δ : Validities d} {Γ : Truths g}
-                     {ζ : Terms d g x} {Ξ : Truths x}
-                  → Δ ⋙⋆ [ Γ ⊢⋆ ζ ⦂ Ξ ]
-                  → Δ ⋙⋆ [ Γ , A true ⊢⋆ WKS ζ ⦂ Ξ ]
+wks : ∀ {d g n A} → {Δ : Validities d} {Γ : Truths g}
+                     {x : Terms d g n} {Ξ : Truths n}
+                  → Δ ⋙⋆ [ Γ ⊢⋆ x ⦂ Ξ ]
+                  → Δ ⋙⋆ [ Γ , A true ⊢⋆ WKS x ⦂ Ξ ]
 wks ξ = rens (drop id⊇) ξ
 
 
-lifts : ∀ {d g x A} → {Δ : Validities d} {Γ : Truths g}
-                       {ζ : Terms d g x} {Ξ : Truths x}
-                    → Δ ⋙⋆ [ Γ ⊢⋆ ζ ⦂ Ξ ]
-                    → Δ ⋙⋆ [ Γ , A true ⊢⋆ LIFTS ζ ⦂ Ξ , A true ]
+lifts : ∀ {d g n A} → {Δ : Validities d} {Γ : Truths g}
+                       {x : Terms d g n} {Ξ : Truths n}
+                    → Δ ⋙⋆ [ Γ ⊢⋆ x ⦂ Ξ ]
+                    → Δ ⋙⋆ [ Γ , A true ⊢⋆ LIFTS x ⦂ Ξ , A true ]
 lifts ξ = wks ξ , vz
+
+
+vars : ∀ {d g g′ e} → {Δ : Validities d} {Γ : Truths g} {Γ′ : Truths g′}
+                    → Γ′ ⊇⟨ e ⟩ Γ
+                    → Δ ⋙⋆ [ Γ′ ⊢⋆ VARS e ⦂ Γ ]
+vars done     = ∙
+vars (drop η) = wks (vars η)
+vars (keep η) = lifts (vars η)
 
 
 ids : ∀ {d g} → {Δ : Validities d} {Γ : Truths g}
               → Δ ⋙⋆ [ Γ ⊢⋆ IDS ⦂ Γ ]
-ids {Γ = ∙}          = ∙
-ids {Γ = Γ , A true} = lifts ids
+ids = vars id⊇
 
 
 --------------------------------------------------------------------------------
 
 
-mrens : ∀ {d d′ g e x} → {Δ : Validities d} {Δ′ : Validities d′} {Γ : Truths g}
-                          {ζ : Terms d g x} {Ξ : Truths x}
-                       → Δ′ ⊇⟨ e ⟩ Δ → Δ ⋙⋆ [ Γ ⊢⋆ ζ ⦂ Ξ ]
-                       → Δ′ ⋙⋆ [ Γ ⊢⋆ MRENS e ζ ⦂ Ξ ]
-mrens {ζ = ∙}     {∙}          η ∙       = ∙
-mrens {ζ = ζ , M} {Ξ , A true} η (ξ , 𝒟) = mrens η ξ , mren η 𝒟
+mrens : ∀ {d d′ g e n} → {Δ : Validities d} {Δ′ : Validities d′} {Γ : Truths g}
+                          {x : Terms d g n} {Ξ : Truths n}
+                       → Δ′ ⊇⟨ e ⟩ Δ → Δ ⋙⋆ [ Γ ⊢⋆ x ⦂ Ξ ]
+                       → Δ′ ⋙⋆ [ Γ ⊢⋆ MRENS e x ⦂ Ξ ]
+mrens {x = ∙}     {∙}          η ∙       = ∙
+mrens {x = x , M} {Ξ , A true} η (ξ , 𝒟) = mrens η ξ , mren η 𝒟
 -- NOTE: Equivalent to
--- mrens η ξ = mapAll (mren η) ξ
+-- mrens η ξ = maps (mren η) ξ
 
 
-mwks : ∀ {d g x A} → {Δ : Validities d} {Γ : Truths g}
-                      {ζ : Terms d g x} {Ξ : Truths x}
-                   → Δ ⋙⋆ [ Γ ⊢⋆ ζ ⦂ Ξ ]
-                   → Δ , A valid ⋙⋆ [ Γ ⊢⋆ MWKS ζ ⦂ Ξ ]
+mwks : ∀ {d g n A} → {Δ : Validities d} {Γ : Truths g}
+                      {x : Terms d g n} {Ξ : Truths n}
+                   → Δ ⋙⋆ [ Γ ⊢⋆ x ⦂ Ξ ]
+                   → Δ , A valid ⋙⋆ [ Γ ⊢⋆ MWKS x ⦂ Ξ ]
 mwks ξ = mrens (drop id⊇) ξ
 
 
 --------------------------------------------------------------------------------
 
 
-sub : ∀ {d g x M A} → {Δ : Validities d} {Γ : Truths g}
-                       {ζ : Terms d g x} {Ξ : Truths x}
-                    → Δ ⋙⋆ [ Γ ⊢⋆ ζ ⦂ Ξ ] → Δ ⋙ [ Ξ ⊢ M ⦂ A true ]
-                    → Δ ⋙ [ Γ ⊢ SUB ζ M ⦂ A true ]
-sub ξ (var 𝒾)      = lookup ξ (zap∋ 𝒾)
+sub : ∀ {d g n M A} → {Δ : Validities d} {Γ : Truths g}
+                       {x : Terms d g n} {Ξ : Truths n}
+                    → Δ ⋙⋆ [ Γ ⊢⋆ x ⦂ Ξ ] → Δ ⋙ [ Ξ ⊢ M ⦂ A true ]
+                    → Δ ⋙ [ Γ ⊢ SUB x M ⦂ A true ]
+sub ξ (var 𝒾)      = get ξ (zip∋ 𝒾)
 sub ξ (lam 𝒟)      = lam (sub (lifts ξ) 𝒟)
 sub ξ (app 𝒟 ℰ)    = app (sub ξ 𝒟) (sub ξ ℰ)
 sub ξ (mvar 𝒾)     = mvar 𝒾
@@ -253,22 +261,22 @@ record Derivations₁ (d : Nat) : Set
   where
     constructor [∙⊢⋆₁_⦂_]
     field
-      {x} : Nat
-      ζ   : Terms₁ d x
-      Ξ   : Validities x
+      {n} : Nat
+      x   : Terms₁ d n
+      Ξ   : Validities n
 
 
-zap₁ : ∀ {d x} → Terms₁ d x → Validities x
-               → Vec (Derivation₁ d) x
-zap₁ ∙       ∙             = ∙
-zap₁ (ζ , M) (Ξ , A valid) = zap₁ ζ Ξ , [∙⊢₁ M ⦂ A valid ]
+zip₁ : ∀ {d n} → Terms₁ d n → Validities n
+               → Vec (Derivation₁ d) n
+zip₁ ∙       ∙             = ∙
+zip₁ (x , M) (Ξ , A valid) = zip₁ x Ξ , [∙⊢₁ M ⦂ A valid ]
 
 
-zap∋₁ : ∀ {d x i A} → {ζ : Terms₁ d x} {Ξ : Validities x}
+zip∋₁ : ∀ {d n i A} → {x : Terms₁ d n} {Ξ : Validities n}
                     → Ξ ∋⟨ i ⟩ A valid
-                    → zap₁ ζ Ξ ∋⟨ i ⟩ [∙⊢₁ get ζ i ⦂ A valid ]
-zap∋₁ {ζ = ζ , M} {Ξ , A valid} zero    = zero
-zap∋₁ {ζ = ζ , N} {Ξ , B valid} (suc 𝒾) = suc (zap∋₁ 𝒾)
+                    → zip₁ x Ξ ∋⟨ i ⟩ [∙⊢₁ GET x i ⦂ A valid ]
+zip∋₁ {x = x , M} {Ξ , A valid} zero    = zero
+zip∋₁ {x = x , N} {Ξ , B valid} (suc 𝒾) = suc (zip∋₁ 𝒾)
 
 
 infix 3 _⋙₁_
@@ -278,50 +286,57 @@ _⋙₁_ : ∀ {d} → Validities d → Derivation₁ d → Set
 
 infix 3 _⋙⋆₁_
 _⋙⋆₁_ : ∀ {d} → Validities d → Derivations₁ d → Set
-Δ ⋙⋆₁ [∙⊢⋆₁ ζ ⦂ Ξ ] = All (Δ ⋙₁_) (zap₁ ζ Ξ)
+Δ ⋙⋆₁ [∙⊢⋆₁ x ⦂ Ξ ] = All (Δ ⋙₁_) (zip₁ x Ξ)
 
 
 --------------------------------------------------------------------------------
 
 
-mrens₁ : ∀ {d d′ e x} → {Δ : Validities d} {Δ′ : Validities d′} {ζ : Terms₁ d x} {Ξ : Validities x}
-                      → Δ′ ⊇⟨ e ⟩ Δ → Δ ⋙⋆₁ [∙⊢⋆₁ ζ ⦂ Ξ ]
-                      → Δ′ ⋙⋆₁ [∙⊢⋆₁ MRENS₁ e ζ ⦂ Ξ ]
-mrens₁ {ζ = ∙}     {∙}           η ∙       = ∙
-mrens₁ {ζ = ζ , M} {Ξ , A valid} η (ξ , 𝒟) = mrens₁ η ξ , mren η 𝒟
+mrens₁ : ∀ {d d′ e n} → {Δ : Validities d} {Δ′ : Validities d′} {x : Terms₁ d n} {Ξ : Validities n}
+                      → Δ′ ⊇⟨ e ⟩ Δ → Δ ⋙⋆₁ [∙⊢⋆₁ x ⦂ Ξ ]
+                      → Δ′ ⋙⋆₁ [∙⊢⋆₁ MRENS₁ e x ⦂ Ξ ]
+mrens₁ {x = ∙}     {∙}           η ∙       = ∙
+mrens₁ {x = x , M} {Ξ , A valid} η (ξ , 𝒟) = mrens₁ η ξ , mren η 𝒟
 -- NOTE: Equivalent to
--- mrens₁ η ξ = mapAll (mren η) ξ
+-- mrens₁ η ξ = maps (mren η) ξ
 
 
-mwks₁ : ∀ {d x A} → {Δ : Validities d} {ζ : Terms₁ d x} {Ξ : Validities x}
-                  → Δ ⋙⋆₁ [∙⊢⋆₁ ζ ⦂ Ξ ]
-                  → Δ , A valid ⋙⋆₁ [∙⊢⋆₁ MWKS₁ ζ ⦂ Ξ ]
+mwks₁ : ∀ {d n A} → {Δ : Validities d} {x : Terms₁ d n} {Ξ : Validities n}
+                  → Δ ⋙⋆₁ [∙⊢⋆₁ x ⦂ Ξ ]
+                  → Δ , A valid ⋙⋆₁ [∙⊢⋆₁ MWKS₁ x ⦂ Ξ ]
 mwks₁ ξ = mrens₁ (drop id⊇) ξ
 
 
-mlifts₁ : ∀ {d x A} → {Δ : Validities d} {ζ : Terms₁ d x} {Ξ : Validities x}
-                    → Δ ⋙⋆₁ [∙⊢⋆₁ ζ ⦂ Ξ ]
-                    → Δ , A valid ⋙⋆₁ [∙⊢⋆₁ MLIFTS₁ ζ ⦂ Ξ , A valid ]
+mlifts₁ : ∀ {d n A} → {Δ : Validities d} {x : Terms₁ d n} {Ξ : Validities n}
+                    → Δ ⋙⋆₁ [∙⊢⋆₁ x ⦂ Ξ ]
+                    → Δ , A valid ⋙⋆₁ [∙⊢⋆₁ MLIFTS₁ x ⦂ Ξ , A valid ]
 mlifts₁ ξ = mwks₁ ξ , mvz
+
+
+mvars₁ : ∀ {d d′ e} → {Δ : Validities d} {Δ′ : Validities d′}
+                    → Δ′ ⊇⟨ e ⟩ Δ
+                    → Δ′ ⋙⋆₁ [∙⊢⋆₁ MVARS₁ e ⦂ Δ ]
+mvars₁ done     = ∙
+mvars₁ (drop η) = mwks₁ (mvars₁ η)
+mvars₁ (keep η) = mlifts₁ (mvars₁ η)
 
 
 mids₁ : ∀ {d} → {Δ : Validities d}
               → Δ ⋙⋆₁ [∙⊢⋆₁ MIDS₁ ⦂ Δ ]
-mids₁ {Δ = ∙}           = ∙
-mids₁ {Δ = Δ , A valid} = mlifts₁ mids₁
+mids₁ = mvars₁ id⊇
 
 
 --------------------------------------------------------------------------------
 
 
-msub : ∀ {d g x M A} → {Δ : Validities d} {Γ : Truths g}
-                        {ζ : Terms₁ d x} {Ξ : Validities x}
-                     → Δ ⋙⋆₁ [∙⊢⋆₁ ζ ⦂ Ξ ] → Ξ ⋙ [ Γ ⊢ M ⦂ A true ]
-                     → Δ ⋙ [ Γ ⊢ MSUB ζ M ⦂ A true ]
+msub : ∀ {d g n M A} → {Δ : Validities d} {Γ : Truths g}
+                        {x : Terms₁ d n} {Ξ : Validities n}
+                     → Δ ⋙⋆₁ [∙⊢⋆₁ x ⦂ Ξ ] → Ξ ⋙ [ Γ ⊢ M ⦂ A true ]
+                     → Δ ⋙ [ Γ ⊢ MSUB x M ⦂ A true ]
 msub ξ (var 𝒾)      = var 𝒾
 msub ξ (lam 𝒟)      = lam (msub ξ 𝒟)
 msub ξ (app 𝒟 ℰ)    = app (msub ξ 𝒟) (msub ξ ℰ)
-msub ξ (mvar 𝒾)     = sub ∙ (lookup ξ (zap∋₁ 𝒾))
+msub ξ (mvar 𝒾)     = sub ∙ (get ξ (zip∋₁ 𝒾))
 msub ξ (box 𝒟)      = box (msub ξ 𝒟)
 msub ξ (letbox 𝒟 ℰ) = letbox (msub ξ 𝒟) (msub (mlifts₁ ξ) ℰ)
 
@@ -350,22 +365,22 @@ ex 𝒟 = app (app (wk (wk (lam (lam 𝒟)))) vz) (wk vz)
 --------------------------------------------------------------------------------
 
 
-shl : ∀ {d g M A B} → {Δ : Validities d} {Γ : Truths g}
-                    → Δ ⋙ [ Γ , □ A true ⊢ M ⦂ B true ]
-                    → Δ , A valid ⋙ [ Γ ⊢ SHL M ⦂ B true ]
-shl 𝒟 = app (lam (mwk 𝒟)) (box mvz)
+up : ∀ {d g M A B} → {Δ : Validities d} {Γ : Truths g}
+                   → Δ ⋙ [ Γ , □ A true ⊢ M ⦂ B true ]
+                   → Δ , A valid ⋙ [ Γ ⊢ UP M ⦂ B true ]
+up 𝒟 = app (lam (mwk 𝒟)) (box mvz)
 
 
-shr : ∀ {d g M A B} → {Δ : Validities d} {Γ : Truths g}
-                    → Δ , A valid ⋙ [ Γ ⊢ M ⦂ B true ]
-                    → Δ ⋙ [ Γ , □ A true ⊢ SHR M ⦂ B true ]
-shr 𝒟 = letbox vz (wk 𝒟)
+down : ∀ {d g M A B} → {Δ : Validities d} {Γ : Truths g}
+                     → Δ , A valid ⋙ [ Γ ⊢ M ⦂ B true ]
+                     → Δ ⋙ [ Γ , □ A true ⊢ DOWN M ⦂ B true ]
+down 𝒟 = letbox vz (wk 𝒟)
 
 
 mex : ∀ {d g M A B C} → {Δ : Validities d} {Γ : Truths g}
                       → Δ , A valid , B valid ⋙ [ Γ ⊢ M ⦂ C true ]
                       → Δ , B valid , A valid ⋙ [ Γ ⊢ MEX M ⦂ C true ]
-mex 𝒟 = shl (shl (ex (shr (shr 𝒟))))
+mex 𝒟 = up (up (ex (down (down 𝒟))))
 
 
 --------------------------------------------------------------------------------

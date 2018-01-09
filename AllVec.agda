@@ -20,21 +20,22 @@ maps f ∙       = ∙
 maps f (ξ , a) = maps f ξ , f a
 
 
-module GetAllVec
-  where
-    get : ∀ {X P A n i} → {Ξ : Vec X n}
-                        → All P Ξ → Ξ ∋⟨ i ⟩ A
-                        → P A
-    get (ξ , a) zero    = a
-    get (ξ , b) (suc 𝒾) = get ξ 𝒾
+--------------------------------------------------------------------------------
 
 
-    gets : ∀ {X P n n′ e} → {Ξ : Vec X n} {Ξ′ : Vec X n′}
-                          → All P Ξ′ → Ξ′ ⊇⟨ e ⟩ Ξ
-                          → All P Ξ
-    gets ξ       done     = ∙
-    gets (ξ , b) (drop η) = gets ξ η
-    gets (ξ , a) (keep η) = gets ξ η , a
+get : ∀ {X P A n i} → {Ξ : Vec X n}
+                    → All P Ξ → Ξ ∋⟨ i ⟩ A
+                    → P A
+get (ξ , a) zero    = a
+get (ξ , b) (suc 𝒾) = get ξ 𝒾
+
+
+gets : ∀ {X P n n′ e} → {Ξ : Vec X n} {Ξ′ : Vec X n′}
+                      → All P Ξ′ → Ξ′ ⊇⟨ e ⟩ Ξ
+                      → All P Ξ
+gets ξ       done     = ∙
+gets (ξ , b) (drop η) = gets ξ η
+gets (ξ , a) (keep η) = gets ξ η , a
 
 
 --------------------------------------------------------------------------------

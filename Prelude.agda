@@ -12,7 +12,8 @@ open import Agda.Builtin.Nat public
   using (Nat ; zero ; suc)
 
 open import Agda.Builtin.Unit public
-  using (⊤ ; tt)
+  using (⊤)
+  renaming (tt to ∙)
 
 
 --------------------------------------------------------------------------------
@@ -165,19 +166,21 @@ data Dec {ℓ} (X : Set ℓ) : Set ℓ
       no  : ¬ X → Dec X
 
 
-record Reveal_$_is_ {ℓ ℓ′} {X : Set ℓ} {P : X → Set ℓ′}
-                           (f : ∀ x → P x) (x : X) (y : P x)
-                         : Set (ℓ ⊔ ℓ′)
+module Inspect
   where
-    constructor [_]
-    field
-      eq : f x ≡ y
+    record Reveal_$_is_ {ℓ ℓ′} {X : Set ℓ} {P : X → Set ℓ′}
+                               (f : ∀ x → P x) (x : X) (y : P x)
+                             : Set (ℓ ⊔ ℓ′)
+      where
+        constructor [_]
+        field
+          eq : f x ≡ y
 
 
-inspect : ∀ {ℓ ℓ′} → {X : Set ℓ} {P : X → Set ℓ′}
-                   → (f : ∀ x → P x) (x : X)
-                   → Reveal f $ x is f x
-inspect f x = [ refl ]
+    inspect : ∀ {ℓ ℓ′} → {X : Set ℓ} {P : X → Set ℓ′}
+                       → (f : ∀ x → P x) (x : X)
+                       → Reveal f $ x is f x
+    inspect f x = [ refl ]
 
 
 --------------------------------------------------------------------------------
