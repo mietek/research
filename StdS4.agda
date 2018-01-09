@@ -306,19 +306,32 @@ ex 𝒟 = app (app (wk (wk (lam (lam 𝒟)))) vz) (wk vz)
 --------------------------------------------------------------------------------
 
 
-shl : ∀ {Δ Γ A B} → Δ ⨾ Γ , □ A true ⊢ B true
-                  → Δ , A valid ⨾ Γ ⊢ B true
-shl 𝒟 = app (lam (mwk 𝒟)) (box mvz)
+up : ∀ {Δ Γ A B} → Δ ⨾ Γ , □ A true ⊢ B true
+                 → Δ , A valid ⨾ Γ ⊢ B true
+up 𝒟 = app (lam (mwk 𝒟)) (box mvz)
 
 
-shr : ∀ {Δ Γ A B} → Δ , A valid ⨾ Γ ⊢ B true
-                  → Δ ⨾ Γ , □ A true ⊢ B true
-shr 𝒟 = letbox vz (wk 𝒟)
+down : ∀ {Δ Γ A B} → Δ , A valid ⨾ Γ ⊢ B true
+                   → Δ ⨾ Γ , □ A true ⊢ B true
+down 𝒟 = letbox vz (wk 𝒟)
 
 
 mex : ∀ {Δ Γ A B C} → Δ , A valid , B valid ⨾ Γ ⊢ C true
                     → Δ , B valid , A valid ⨾ Γ ⊢ C true
-mex 𝒟 = shl (shl (ex (shr (shr 𝒟))))
+mex 𝒟 = up (up (ex (down (down 𝒟))))
+
+
+--------------------------------------------------------------------------------
+
+
+ups : ∀ {Δ Γ A Ξ} → Δ ⨾ Γ , □ A true ⊢⋆ Ξ
+                  → Δ , A valid ⨾ Γ ⊢⋆ Ξ
+ups ξ = maps up ξ
+
+
+downs : ∀ {Δ Γ A Ξ} → Δ , A valid ⨾ Γ ⊢⋆ Ξ
+                    → Δ ⨾ Γ , □ A true ⊢⋆ Ξ
+downs ξ = maps down ξ
 
 
 --------------------------------------------------------------------------------

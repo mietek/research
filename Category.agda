@@ -64,8 +64,8 @@ Opposite C = record
 instance
   𝗦𝗲𝘁 : (ℓ : Level) → Category (Set ℓ) Π
   𝗦𝗲𝘁 ℓ = record
-            { id     = idΠ
-            ; _∘_    = _∘Π_
+            { id     = \ x → x
+            ; _∘_    = \ f g x → f (g x)
             ; lid∘   = \ f → refl
             ; rid∘   = \ f → refl
             ; assoc∘ = \ f g h → refl

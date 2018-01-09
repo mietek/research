@@ -36,6 +36,7 @@ open import StdIPL
                       sub (gets ξ η) 𝒟 ≡ (sub ξ ∘ ren η) 𝒟                      comp-sub-ren
                      subs (gets ξ η) ψ ≡ (subs ξ ∘ rens η) ψ                    -- comp-subs-rens
 
+                    sub (ξ , 𝒟) (wk ℰ) ≡ sub ξ ℰ                                expand-sub
                   subs (ξ , 𝒟) (wks ψ) ≡ subs ξ ψ                               expand-subs
 
                       sub (rens η ξ) 𝒟 ≡ (ren η ∘ sub ξ) 𝒟                      comp-ren-sub
@@ -203,13 +204,16 @@ comp-sub-ren ξ η (app 𝒟 ℰ) = app & comp-sub-ren ξ η 𝒟 ⊗ comp-sub-r
 
 -- TODO: Better name?
 
-expand-subs : ∀ {Γ Ξ Ψ A} → (ξ : Γ ⊢⋆ Ξ) (ψ : Ξ ⊢⋆ Ψ) (𝒟 : Γ ⊢ A true)
+expand-sub : ∀ {Γ Ξ A B} → (ξ : Γ ⊢⋆ Ξ) (𝒟 : Γ ⊢ A true) (ℰ : Ξ ⊢ B true)
+                         → sub (ξ , 𝒟) (wk ℰ) ≡ sub ξ ℰ
+expand-sub ξ 𝒟 ℰ = comp-sub-ren (ξ , 𝒟) (drop id⊇) ℰ ⁻¹
+                 ⋮ (\ ξ′ → sub ξ′ ℰ) & id-gets ξ
+
+
+expand-subs : ∀ {Γ Ξ Ψ A} → (ξ : Γ ⊢⋆ Ξ) (𝒟 : Γ ⊢ A true) (ψ : Ξ ⊢⋆ Ψ)
                           → subs (ξ , 𝒟) (wks ψ) ≡ subs ξ ψ
-expand-subs ξ ∙       𝒟 = refl
-expand-subs ξ (ψ , ℰ) 𝒟 = _,_ & expand-subs ξ ψ 𝒟
-                              ⊗ ( comp-sub-ren (ξ , 𝒟) (drop id⊇) ℰ ⁻¹
-                                ⋮ (\ ξ′ → sub ξ′ ℰ) & id-gets ξ
-                                )
+expand-subs ξ 𝒟 ∙       = refl
+expand-subs ξ 𝒟 (ψ , ℰ) = _,_ & expand-subs ξ 𝒟 ψ ⊗ expand-sub ξ 𝒟 ℰ
 
 
 --------------------------------------------------------------------------------
@@ -232,7 +236,7 @@ comp-rens-subs η ξ (ψ , 𝒟) = _,_ & comp-rens-subs η ξ ψ ⊗ comp-ren-su
 
 comp-lifts-subs : ∀ {Γ Ξ Ψ A} → (ξ : Γ ⊢⋆ Ξ) (ψ : Ξ ⊢⋆ Ψ)
                               → subs (lifts {A} ξ) (lifts ψ) ≡ (lifts ∘ subs ξ) ψ
-comp-lifts-subs ξ ψ = (_, vz) & ( expand-subs (wks ξ) ψ vz
+comp-lifts-subs ξ ψ = (_, vz) & ( expand-subs (wks ξ) vz ψ
                                 ⋮ comp-rens-subs (drop id⊇) ξ ψ
                                 )
 
@@ -265,7 +269,7 @@ lid-subs (ξ , 𝒟) = _,_ & lid-subs ξ ⊗ id-sub 𝒟
 rid-subs : ∀ {Γ Ξ} → (ξ : Γ ⊢⋆ Ξ)
                    → subs ξ ids ≡ ξ
 rid-subs ∙       = refl
-rid-subs (ξ , 𝒟) = (_, 𝒟) & ( expand-subs ξ ids 𝒟
+rid-subs (ξ , 𝒟) = (_, 𝒟) & ( expand-subs ξ 𝒟 ids
                             ⋮ rid-subs ξ
                             )
 

@@ -22,20 +22,10 @@ open import Agda.Builtin.Unit public
 Π X Y = X → Y
 
 
-idΠ : ∀ {ℓ} → {X : Set ℓ} → X → X
-idΠ x = x
-
-
-_∘Π_ : ∀ {ℓ ℓ′ ℓ″} → {X : Set ℓ} {Y : Set ℓ′} {Z : Set ℓ″}
-                   → (Y → Z) → (X → Y)
-                   → (X → Z)
-(f ∘Π g) x = f (g x)
-
-
-_∘Π′_ : ∀ {ℓ ℓ′ ℓ″} → {X : Set ℓ} {P : X → Set ℓ′} {Q : ∀ {x} → P x → Set ℓ″}
-                    → (f : ∀ {x} → (y : P x) → Q y) (g : ∀ x → P x) (x : X)
-                    → Q (g x)
-(f ∘Π′ g) x = f (g x)
+_∘′_ : ∀ {ℓ ℓ′ ℓ″} → {X : Set ℓ} {P : X → Set ℓ′} {Q : ∀ {x} → P x → Set ℓ″}
+                   → (f : ∀ {x} → (y : P x) → Q y) (g : ∀ x → P x) (x : X)
+                   → Q (g x)
+(f ∘′ g) x = f (g x)
 
 
 flip : ∀ {ℓ ℓ′ ℓ″} → {X : Set ℓ} {Y : Set ℓ′} {Z : Set ℓ″}
