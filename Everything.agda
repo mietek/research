@@ -51,8 +51,6 @@ import StdS4TT
 import StdCMTTTerms
 import StdCMTT
 
--- import StdLPTTTerms
--- import StdLPTTTermsLemmas
 -- import StdLPTT
 -- import StdLPTTLemmas
 
