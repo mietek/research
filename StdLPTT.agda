@@ -3,12 +3,13 @@
 module StdLPTT where
 
 open import Prelude
+open import Category
 open import Fin
 open import FinLemmas
 open import Vec
 open import VecLemmas
-open import StdLPTTTerms
-open import StdLPTTTermsLemmas
+open import StdS4TTTerms
+open import StdS4TTTermsLemmas
 
 
 --------------------------------------------------------------------------------
@@ -37,11 +38,11 @@ MWKₚ : ∀ {d} → Prop d
 MWKₚ A = MRENₚ (drop id≥) A
 
 
-MSUBₚ : ∀ {d x} → Terms₁ d x → Prop x
+MSUBₚ : ∀ {d n} → Terms₁ d n → Prop n
                 → Prop d
-MSUBₚ ζ BASE      = BASE
-MSUBₚ ζ (A ⊃ B)   = MSUBₚ ζ A ⊃ MSUBₚ ζ B
-MSUBₚ ζ ([ M ] A) = [ MSUB ζ M ] MSUBₚ ζ A
+MSUBₚ x BASE      = BASE
+MSUBₚ x (A ⊃ B)   = MSUBₚ x A ⊃ MSUBₚ x B
+MSUBₚ x ([ M ] A) = [ MSUB x M ] MSUBₚ x A
 
 
 MCUTₚ : ∀ {d} → Term₁ d → Prop (suc d)
@@ -90,9 +91,9 @@ MWKₜ : ∀ {d} → Truth d
 MWKₜ (A true) = MWKₚ A true
 
 
-MSUBₜ : ∀ {d x} → Terms₁ d x → Truth x
+MSUBₜ : ∀ {d n} → Terms₁ d n → Truth n
                 → Truth d
-MSUBₜ ζ (A true) = MSUBₚ ζ A true
+MSUBₜ x (A true) = MSUBₚ x A true
 
 
 MCUTₜ : ∀ {d} → Term₁ d → Truth (suc d)
@@ -125,12 +126,12 @@ Truths d g = Vec (Truth d) g
 
 MRENSₜ : ∀ {d d′ g} → d′ ≥ d → Truths d g
                     → Truths d′ g
-MRENSₜ e Γ = map (MRENₜ e) Γ
+MRENSₜ e Γ = MAPS (MRENₜ e) Γ
 
 
 MWKSₜ : ∀ {d g} → Truths d g
                 → Truths (suc d) g
-MWKSₜ Γ = map MWKₜ Γ
+MWKSₜ Γ = MAPS MWKₜ Γ
 
 
 --------------------------------------------------------------------------------
@@ -148,12 +149,12 @@ comp-MRENSₜ e₁ e₂ ∙        = refl
 comp-MRENSₜ e₁ e₂ (Γ , Aₜ) = _,_ & comp-MRENSₜ e₁ e₂ Γ ⊗ comp-MRENₜ e₁ e₂ Aₜ
 
 
-resp-MRENSₜ-⊇ : ∀ {d d′ g g′ e} → {Γ : Truths d g} {Γ′ : Truths d g′}
-                                → (f : d′ ≥ d) → Γ′ ⊇⟨ e ⟩ Γ
-                                → MRENSₜ f Γ′ ⊇⟨ e ⟩ MRENSₜ f Γ
-resp-MRENSₜ-⊇  f done     = done
-resp-MRENSₜ-⊇  f (drop η) = resp-MRENSₜ-⊇ f η ∘⊇ drop id⊇
-resp-MRENSₜ-⊇  f (keep η) = keep (resp-MRENSₜ-⊇ f η)
+resp-MRENSₜ-⊇ : ∀ {d d′ g g′ e₂} → {Γ : Truths d g} {Γ′ : Truths d g′}
+                                 → (e₁ : d′ ≥ d) → Γ′ ⊇⟨ e₂ ⟩ Γ
+                                 → MRENSₜ e₁ Γ′ ⊇⟨ e₂ ⟩ MRENSₜ e₁ Γ
+resp-MRENSₜ-⊇ e₁ done     = done
+resp-MRENSₜ-⊇ e₁ (drop η) = resp-MRENSₜ-⊇ e₁ η ∘⊇ drop id⊇
+resp-MRENSₜ-⊇ e₁ (keep η) = keep (resp-MRENSₜ-⊇ e₁ η)
 
 
 resp-MWKSₜ-⊇ : ∀ {d g g′ e} → {Γ : Truths d g} {Γ′ : Truths d g′}
@@ -163,10 +164,10 @@ resp-MWKSₜ-⊇ η = resp-MRENSₜ-⊇ (drop id≥) η
 
 
 resp-MRENSₜ-∋ : ∀ {d d′ g i} → {Γ : Truths d g} {A : Prop d}
-                             → (f : d′ ≥ d) → Γ ∋⟨ i ⟩ A true
-                             → MRENSₜ f Γ ∋⟨ i ⟩ MRENₚ f A true
-resp-MRENSₜ-∋ f zero    = zero
-resp-MRENSₜ-∋ f (suc 𝒾) = suc (resp-MRENSₜ-∋ f 𝒾)
+                             → (e : d′ ≥ d) → Γ ∋⟨ i ⟩ A true
+                             → MRENSₜ e Γ ∋⟨ i ⟩ MRENₚ e A true
+resp-MRENSₜ-∋ e zero    = zero
+resp-MRENSₜ-∋ e (suc 𝒾) = suc (resp-MRENSₜ-∋ e 𝒾)
 
 
 resp-MWKSₜ-∋ : ∀ {d g i} → {Γ : Truths d g} {A : Prop d}
@@ -199,9 +200,9 @@ MWKᵥ : ∀ {d} → Validity d
 MWKᵥ (A valid) = MWKₚ A valid
 
 
-MSUBᵥ : ∀ {d x} → Terms₁ d x → Validity x
+MSUBᵥ : ∀ {d n} → Terms₁ d n → Validity n
                 → Validity d
-MSUBᵥ ζ (A valid) = MSUBₚ ζ A valid
+MSUBᵥ x (A valid) = MSUBₚ x A valid
 
 
 MCUTᵥ : ∀ {d} → Term₁ d → Validity (suc d)
@@ -285,7 +286,7 @@ data _∋⟪_⟫_ : ∀ {d} → Validities d → Fin d → Validity d → Set
 
 ren∋◈ : ∀ {d d′ e i} → {Δ : Validities d} {Δ′ : Validities d′} {Aᵥ : Validity d}
                      → Δ′ ⊇⟪ e ⟫ Δ → Δ ∋⟪ i ⟫ Aᵥ
-                     → Δ′ ∋⟪ renF e i ⟫ MRENᵥ e Aᵥ
+                     → Δ′ ∋⟪ REN∋ e i ⟫ MRENᵥ e Aᵥ
 ren∋◈ {i = i} {Aᵥ = Aᵥ} done 𝒾             = coerce 𝒾 ((\ Aᵥ′ → ∙ ∋⟪ i ⟫ Aᵥ′) & id-MRENᵥ Aᵥ ⁻¹)
 ren∋◈         {Aᵥ = Aᵥ} (drop {e = e} η) 𝒾 = suc {{comp-MRENᵥ e (drop id≥) Aᵥ ⁻¹}} (ren∋◈ η 𝒾)
 ren∋◈                   (keep {e = e} {Aᵥ = Aᵥ} {{refl}} η) (zero {{refl}})
@@ -379,21 +380,64 @@ vz = var zero
 --------------------------------------------------------------------------------
 
 
-postulate
-  mren : ∀ {d d′ g e M} → {Δ : Validities d} {Δ′ : Validities d′} {Γ : Truths d g}
-                           {A : Prop d}
-                        → Δ′ ⊇⟪ e ⟫ Δ → Δ ⋙ [ Γ ⊢ M ⦂ A true ]
-                        → Δ′ ⋙ [ MRENSₜ e Γ ⊢ MREN e M ⦂ MRENₚ e A true ]
--- mren η (var 𝒾)   = var (resp-MRENSₜ-∋ _ 𝒾)
--- mren η (lam 𝒟)   = lam (mren η 𝒟)
--- mren η (app 𝒟 ℰ) = app (mren η 𝒟) (mren η ℰ)
--- mren η (mvar 𝒾)  = mvar (ren∋◈ η 𝒾)
--- mren η (box 𝒟)   = box (mren η 𝒟)
--- mren {e = e} η (letbox {O = O} {Γ = Γ} {A = A} {B} {{refl}} {{refl}} 𝒟 ℰ)
---   = letbox {{ comp-MRENSₜ (drop id≥) (keep e) Γ ⁻¹
---             ⋮ comp-MRENSₜ e (drop id≥) Γ
---            }} {{ {!refl!}
---            }} (mren η 𝒟) (mren (keep {{refl}} η) ℰ)
+comp-MWKₚ-MRENₚ-keep : ∀ {d d′} → (e : d′ ≥ d) (A : Prop d)
+                                → (MRENₚ (keep e) ∘ MWKₚ) A ≡ (MWKₚ ∘ MRENₚ e) A
+comp-MWKₚ-MRENₚ-keep e A = comp-MRENₚ (drop id≥) (keep e) A ⁻¹
+                         ⋮ (\ e′ → MRENₚ (drop e′) A) & (lid∘ e ⋮ rid∘ e ⁻¹)
+                         ⋮ comp-MRENₚ e (drop id≥) A
+
+
+comp-MWKSₜ-MRENSₜ-keep : ∀ {d d′ g} → (e : d′ ≥ d) (Γ : Truths d g)
+                                    → (MRENSₜ (keep e) ∘ MWKSₜ) Γ ≡ (MWKSₜ ∘ MRENSₜ e) Γ
+comp-MWKSₜ-MRENSₜ-keep e ∙            = refl
+comp-MWKSₜ-MRENSₜ-keep e (Γ , A true) = _,_ & comp-MWKSₜ-MRENSₜ-keep e Γ
+                                            ⊗ _true & comp-MWKₚ-MRENₚ-keep e A
+
+
+comp-MRENₚ-MSUBₚ : ∀ {d d′ n} → (e : d′ ≥ d) (x : Terms₁ d n) (A : Prop n)
+                              → MSUBₚ (MRENS₁ e x) A ≡ (MRENₚ e ∘ MSUBₚ x) A
+comp-MRENₚ-MSUBₚ e x BASE      = refl
+comp-MRENₚ-MSUBₚ e x (A ⊃ B)   = _⊃_ & comp-MRENₚ-MSUBₚ e x A ⊗ comp-MRENₚ-MSUBₚ e x B
+comp-MRENₚ-MSUBₚ e x ([ M ] A) = [_]_ & comp-MREN-MSUB e x M ⊗ comp-MRENₚ-MSUBₚ e x A
+
+
+comp-MSUBₚ-MRENₚ : ∀ {d n n′} → (x : Terms₁ d n′) (e : n′ ≥ n) (A : Prop n)
+                              → MSUBₚ (GETS x e) A ≡ (MSUBₚ x ∘ MRENₚ e) A
+comp-MSUBₚ-MRENₚ x e BASE      = refl
+comp-MSUBₚ-MRENₚ x e (A ⊃ B)   = _⊃_ & comp-MSUBₚ-MRENₚ x e A ⊗ comp-MSUBₚ-MRENₚ x e B
+comp-MSUBₚ-MRENₚ x e ([ M ] A) = [_]_ & comp-MSUB-MREN x e M ⊗ comp-MSUBₚ-MRENₚ x e A
+
+
+oops : ∀ {d d′} → (e : d′ ≥ d)
+                → MRENS e MIDS₁ ≡ GETS MIDS₁ e
+oops done     = refl
+oops (drop e) = comp-MRENS e (drop id≥) MIDS₁
+              ⋮ MWKS & oops e
+              ⋮ comp-MRENS-GETS (drop id≥) MIDS₁ e ⁻¹
+oops (keep e) = (_, MVZ) & ( comp-MWKS-MRENS-keep e MIDS₁
+                           ⋮ MWKS & oops e
+                           ⋮ comp-MRENS-GETS (drop id≥) MIDS₁ e ⁻¹
+                           )
+
+
+mren : ∀ {d d′ g e M} → {Δ : Validities d} {Δ′ : Validities d′} {Γ : Truths d g}
+                         {A : Prop d}
+                      → Δ′ ⊇⟪ e ⟫ Δ → Δ ⋙ [ Γ ⊢ M ⦂ A true ]
+                      → Δ′ ⋙ [ MRENSₜ e Γ ⊢ MREN e M ⦂ MRENₚ e A true ]
+mren η (var 𝒾)   = var (resp-MRENSₜ-∋ _ 𝒾)
+mren η (lam 𝒟)   = lam (mren η 𝒟)
+mren η (app 𝒟 ℰ) = app (mren η 𝒟) (mren η ℰ)
+mren η (mvar 𝒾)  = mvar (ren∋◈ η 𝒾)
+mren η (box 𝒟)   = box (mren η 𝒟)
+mren {e = e} η (letbox {O = O} {Γ = Γ} {A = A} {B} {{refl}} {{refl}} 𝒟 ℰ)
+  = letbox
+      {{comp-MWKSₜ-MRENSₜ-keep e Γ}}
+      {{( comp-MRENₚ-MSUBₚ e (MIDS₁ , O) B ⁻¹
+        ⋮ (\ x′ → MSUBₚ (x′ , MREN e O) B) & oops e
+        ⋮ comp-MSUBₚ-MRENₚ (MIDS₁ , MREN e O) (keep e) B
+        )}}
+      (mren η 𝒟)
+      (mren (keep {{refl}} η) ℰ)
 
 
 mwk : ∀ {d g M} → {Δ : Validities d} {Γ : Truths d g}
