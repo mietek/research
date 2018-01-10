@@ -302,9 +302,10 @@ ren∋◈                   (keep {e = e} {{refl}} η) (suc {Aᵥ = Aᵥ} {{refl
 --------------------------------------------------------------------------------
 
 
+infix 4 _⊢_⦂_
 record Derivation (d : Nat) : Set
   where
-    constructor [_⊢_⦂_]
+    constructor _⊢_⦂_
     field
       {g} : Nat
       Γ   : Truths d g
@@ -312,40 +313,40 @@ record Derivation (d : Nat) : Set
       Aₜ  : Truth d
 
 
-infix 3 _⋙_
-data _⋙_ : ∀ {d} → Validities d → Derivation d → Set
+infix 3 _⨾_
+data _⨾_ : ∀ {d} → Validities d → Derivation d → Set
   where
     var : ∀ {d g i} → {Δ : Validities d} {Γ : Truths d g}
                        {A : Prop d}
                     → Γ ∋⟨ i ⟩ A true
-                    → Δ ⋙ [ Γ ⊢ VAR i ⦂ A true ]
+                    → Δ ⨾ Γ ⊢ VAR i ⦂ A true
 
     lam : ∀ {d g M} → {Δ : Validities d} {Γ : Truths d g}
                        {A B : Prop d}
-                    → Δ ⋙ [ Γ , A true ⊢ M ⦂ B true ]
-                    → Δ ⋙ [ Γ ⊢ LAM M ⦂ A ⊃ B true ]
+                    → Δ ⨾ Γ , A true ⊢ M ⦂ B true
+                    → Δ ⨾ Γ ⊢ LAM M ⦂ A ⊃ B true
 
     app : ∀ {d g M N} → {Δ : Validities d} {Γ : Truths d g}
                          {A B : Prop d}
-                      → Δ ⋙ [ Γ ⊢ M ⦂ A ⊃ B true ] → Δ ⋙ [ Γ ⊢ N ⦂ A true ]
-                      → Δ ⋙ [ Γ ⊢ APP M N ⦂ B true ]
+                      → Δ ⨾ Γ ⊢ M ⦂ A ⊃ B true → Δ ⨾ Γ ⊢ N ⦂ A true 
+                      → Δ ⨾ Γ ⊢ APP M N ⦂ B true 
 
     mvar : ∀ {d g i} → {Δ : Validities d} {Γ : Truths d g}
                         {A : Prop d}
                      → Δ ∋⟪ i ⟫ A valid
-                     → Δ ⋙ [ Γ ⊢ MVAR i ⦂ A true ]
+                     → Δ ⨾ Γ ⊢ MVAR i ⦂ A true 
 
     box : ∀ {d g M} → {Δ : Validities d} {Γ : Truths d g}
                        {A : Prop d}
-                    → Δ ⋙ [ ∙ ⊢ M ⦂ A true ]
-                    → Δ ⋙ [ Γ ⊢ BOX M ⦂ [ M ] A true ]
+                    → Δ ⨾ ∙ ⊢ M ⦂ A true
+                    → Δ ⨾ Γ ⊢ BOX M ⦂ [ M ] A true
 
     letbox : ∀ {d g M N O} → {Δ : Validities d} {Γ : Truths d g}
                               {A : Prop d} {B : Prop (suc d)}
                               {Γ° : Truths (suc d) g} {{_ : Γ° ≡ MWKSₜ Γ}}
                               {B° : Prop d} {{_ : B° ≡ MCUTₚ O B}}
-                           → Δ ⋙ [ Γ ⊢ M ⦂ [ O ] A true ] → Δ , A valid ⋙ [ Γ° ⊢ N ⦂ B true ]
-                           → Δ ⋙ [ Γ ⊢ LETBOX M N ⦂ B° true ]
+                           → Δ ⨾ Γ ⊢ M ⦂ [ O ] A true → Δ , A valid ⨾ Γ° ⊢ N ⦂ B true
+                           → Δ ⨾ Γ ⊢ LETBOX M N ⦂ B° true
 
 
 --------------------------------------------------------------------------------
@@ -353,8 +354,8 @@ data _⋙_ : ∀ {d} → Validities d → Derivation d → Set
 
 ren : ∀ {d g g′ e M} → {Δ : Validities d} {Γ : Truths d g} {Γ′ : Truths d g′}
                         {A : Prop d}
-                     → Γ′ ⊇⟨ e ⟩ Γ → Δ ⋙ [ Γ ⊢ M ⦂ A true ]
-                     → Δ ⋙ [ Γ′ ⊢ REN e M ⦂ A true ]
+                     → Γ′ ⊇⟨ e ⟩ Γ → Δ ⨾ Γ ⊢ M ⦂ A true
+                     → Δ ⨾ Γ′ ⊢ REN e M ⦂ A true
 ren η (var 𝒾)   = var (ren∋ η 𝒾)
 ren η (lam 𝒟)   = lam (ren (keep η) 𝒟)
 ren η (app 𝒟 ℰ) = app (ren η 𝒟) (ren η ℰ)
@@ -366,14 +367,14 @@ ren η (letbox {{refl}} {{refl}} 𝒟 ℰ)
 
 wk : ∀ {d g M} → {Δ : Validities d} {Γ : Truths d g}
                   {A B : Prop d}
-               → Δ ⋙ [ Γ ⊢ M ⦂ A true ]
-               → Δ ⋙ [ Γ , B true ⊢ WK M ⦂ A true ]
+               → Δ ⨾ Γ ⊢ M ⦂ A true 
+               → Δ ⨾ Γ , B true ⊢ WK M ⦂ A true 
 wk 𝒟 = ren (drop id⊇) 𝒟
 
 
 vz : ∀ {d g} → {Δ : Validities d} {Γ : Truths d g}
                 {A : Prop d}
-             → Δ ⋙ [ Γ , A true ⊢ VZ ⦂ A true ]
+             → Δ ⨾ Γ , A true ⊢ VZ ⦂ A true
 vz = var zero
 
 
@@ -422,8 +423,8 @@ oops (keep e) = (_, MVZ) & ( comp-MWKS-MRENS-keep e MIDS₁
 
 mren : ∀ {d d′ g e M} → {Δ : Validities d} {Δ′ : Validities d′} {Γ : Truths d g}
                          {A : Prop d}
-                      → Δ′ ⊇⟪ e ⟫ Δ → Δ ⋙ [ Γ ⊢ M ⦂ A true ]
-                      → Δ′ ⋙ [ MRENSₜ e Γ ⊢ MREN e M ⦂ MRENₚ e A true ]
+                      → Δ′ ⊇⟪ e ⟫ Δ → Δ ⨾ Γ ⊢ M ⦂ A true
+                      → Δ′ ⨾ MRENSₜ e Γ ⊢ MREN e M ⦂ MRENₚ e A true
 mren η (var 𝒾)   = var (resp-MRENSₜ-∋ _ 𝒾)
 mren η (lam 𝒟)   = lam (mren η 𝒟)
 mren η (app 𝒟 ℰ) = app (mren η 𝒟) (mren η ℰ)
@@ -442,14 +443,14 @@ mren {e = e} η (letbox {O = O} {Γ = Γ} {A = A} {B} {{refl}} {{refl}} 𝒟 ℰ
 
 mwk : ∀ {d g M} → {Δ : Validities d} {Γ : Truths d g}
                    {A B : Prop d}
-                → Δ ⋙ [ Γ ⊢ M ⦂ A true ]
-                → Δ , B valid ⋙ [ MWKSₜ Γ ⊢ MWK M ⦂ MWKₚ A true ]
+                → Δ ⨾ Γ ⊢ M ⦂ A true
+                → Δ , B valid ⨾ MWKSₜ Γ ⊢ MWK M ⦂ MWKₚ A true
 mwk 𝒟 = mren (drop id⊇◈) 𝒟
 
 
 mvz : ∀ {d g} → {Δ : Validities d} {Γ : Truths d g}
                  {A : Prop d}
-              → Δ , A valid ⋙ [ MWKSₜ Γ ⊢ MVZ ⦂ MWKₚ A true ]
+              → Δ , A valid ⨾ MWKSₜ Γ ⊢ MVZ ⦂ MWKₚ A true
 mvz = mvar zero
 
 
