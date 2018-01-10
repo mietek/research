@@ -137,9 +137,10 @@ mvz = mvar zero
 --------------------------------------------------------------------------------
 
 
+infix 4 _⊢⋆_⦂_
 record Derivations (d : Nat) : Set
   where
-    constructor [_⊢⋆_⦂_]
+    constructor _⊢⋆_⦂_
     field
       {g} : Nat
       {n} : Nat
@@ -163,7 +164,7 @@ pac∋ {x = x , N} {Ξ , B true} (suc 𝒾) = suc (pac∋ 𝒾)
 
 infix 3 _⨾⋆_
 _⨾⋆_ : ∀ {d} → Validities d → Derivations d → Set
-Δ ⨾⋆ [ Γ ⊢⋆ x ⦂ Ξ ] = All (Δ ⨾_) (pac Γ x Ξ)
+Δ ⨾⋆ Γ ⊢⋆ x ⦂ Ξ = All (Δ ⨾_) (pac Γ x Ξ)
 
 
 --------------------------------------------------------------------------------
@@ -171,8 +172,8 @@ _⨾⋆_ : ∀ {d} → Validities d → Derivations d → Set
 
 rens : ∀ {d g g′ e n} → {Δ : Validities d} {Γ : Truths g} {Γ′ : Truths g′}
                          {x : Terms d g n} {Ξ : Truths n}
-                      → Γ′ ⊇⟨ e ⟩ Γ → Δ ⨾⋆ [ Γ ⊢⋆ x ⦂ Ξ ]
-                      → Δ ⨾⋆ [ Γ′ ⊢⋆ RENS e x ⦂ Ξ ]
+                      → Γ′ ⊇⟨ e ⟩ Γ → Δ ⨾⋆ Γ ⊢⋆ x ⦂ Ξ
+                      → Δ ⨾⋆ Γ′ ⊢⋆ RENS e x ⦂ Ξ
 rens {x = ∙}     {∙}          η ∙       = ∙
 rens {x = x , M} {Ξ , A true} η (ξ , 𝒟) = rens η ξ , ren η 𝒟
 -- NOTE: Equivalent to
@@ -181,28 +182,28 @@ rens {x = x , M} {Ξ , A true} η (ξ , 𝒟) = rens η ξ , ren η 𝒟
 
 wks : ∀ {d g n A} → {Δ : Validities d} {Γ : Truths g}
                      {x : Terms d g n} {Ξ : Truths n}
-                  → Δ ⨾⋆ [ Γ ⊢⋆ x ⦂ Ξ ]
-                  → Δ ⨾⋆ [ Γ , A true ⊢⋆ WKS x ⦂ Ξ ]
+                  → Δ ⨾⋆ Γ ⊢⋆ x ⦂ Ξ
+                  → Δ ⨾⋆ Γ , A true ⊢⋆ WKS x ⦂ Ξ
 wks ξ = rens (drop id⊇) ξ
 
 
 lifts : ∀ {d g n A} → {Δ : Validities d} {Γ : Truths g}
                        {x : Terms d g n} {Ξ : Truths n}
-                    → Δ ⨾⋆ [ Γ ⊢⋆ x ⦂ Ξ ]
-                    → Δ ⨾⋆ [ Γ , A true ⊢⋆ LIFTS x ⦂ Ξ , A true ]
+                    → Δ ⨾⋆ Γ ⊢⋆ x ⦂ Ξ
+                    → Δ ⨾⋆ Γ , A true ⊢⋆ LIFTS x ⦂ Ξ , A true
 lifts ξ = wks ξ , vz
 
 
 vars : ∀ {d g g′ e} → {Δ : Validities d} {Γ : Truths g} {Γ′ : Truths g′}
                     → Γ′ ⊇⟨ e ⟩ Γ
-                    → Δ ⨾⋆ [ Γ′ ⊢⋆ VARS e ⦂ Γ ]
+                    → Δ ⨾⋆ Γ′ ⊢⋆ VARS e ⦂ Γ
 vars done     = ∙
 vars (drop η) = wks (vars η)
 vars (keep η) = lifts (vars η)
 
 
 ids : ∀ {d g} → {Δ : Validities d} {Γ : Truths g}
-              → Δ ⨾⋆ [ Γ ⊢⋆ IDS ⦂ Γ ]
+              → Δ ⨾⋆ Γ ⊢⋆ IDS ⦂ Γ
 ids = vars id⊇
 
 
@@ -211,8 +212,8 @@ ids = vars id⊇
 
 mrens : ∀ {d d′ g e n} → {Δ : Validities d} {Δ′ : Validities d′} {Γ : Truths g}
                           {x : Terms d g n} {Ξ : Truths n}
-                       → Δ′ ⊇⟨ e ⟩ Δ → Δ ⨾⋆ [ Γ ⊢⋆ x ⦂ Ξ ]
-                       → Δ′ ⨾⋆ [ Γ ⊢⋆ MRENS e x ⦂ Ξ ]
+                       → Δ′ ⊇⟨ e ⟩ Δ → Δ ⨾⋆ Γ ⊢⋆ x ⦂ Ξ
+                       → Δ′ ⨾⋆ Γ ⊢⋆ MRENS e x ⦂ Ξ
 mrens {x = ∙}     {∙}          η ∙       = ∙
 mrens {x = x , M} {Ξ , A true} η (ξ , 𝒟) = mrens η ξ , mren η 𝒟
 -- NOTE: Equivalent to
@@ -221,8 +222,8 @@ mrens {x = x , M} {Ξ , A true} η (ξ , 𝒟) = mrens η ξ , mren η 𝒟
 
 mwks : ∀ {d g n A} → {Δ : Validities d} {Γ : Truths g}
                       {x : Terms d g n} {Ξ : Truths n}
-                   → Δ ⨾⋆ [ Γ ⊢⋆ x ⦂ Ξ ]
-                   → Δ , A valid ⨾⋆ [ Γ ⊢⋆ MWKS x ⦂ Ξ ]
+                   → Δ ⨾⋆ Γ ⊢⋆ x ⦂ Ξ
+                   → Δ , A valid ⨾⋆ Γ ⊢⋆ MWKS x ⦂ Ξ
 mwks ξ = mrens (drop id⊇) ξ
 
 
@@ -231,7 +232,7 @@ mwks ξ = mrens (drop id⊇) ξ
 
 sub : ∀ {d g n M A} → {Δ : Validities d} {Γ : Truths g}
                        {x : Terms d g n} {Ξ : Truths n}
-                    → Δ ⨾⋆ [ Γ ⊢⋆ x ⦂ Ξ ] → Δ ⨾ Ξ ⊢ M ⦂ A true
+                    → Δ ⨾⋆ Γ ⊢⋆ x ⦂ Ξ → Δ ⨾ Ξ ⊢ M ⦂ A true
                     → Δ ⨾ Γ ⊢ SUB x M ⦂ A true
 sub ξ (var 𝒾)      = get ξ (pac∋ 𝒾)
 sub ξ (lam 𝒟)      = lam (sub (lifts ξ) 𝒟)
