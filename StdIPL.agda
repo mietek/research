@@ -26,15 +26,8 @@ record Truth : Set
 --------------------------------------------------------------------------------
 
 
-Context : Set
-Context = List Truth
-
-
---------------------------------------------------------------------------------
-
-
 infix 3 _⊢_
-data _⊢_ : Context → Truth → Set
+data _⊢_ : List Truth → Truth → Set
   where
     var : ∀ {A Γ} → Γ ∋ A true
                   → Γ ⊢ A true
@@ -69,7 +62,7 @@ vz = var zero
 
 
 infix 3 _⊢⋆_
-_⊢⋆_ : Context → List Truth → Set
+_⊢⋆_ : List Truth → List Truth → Set
 Γ ⊢⋆ Ξ = All (Γ ⊢_) Ξ
 
 

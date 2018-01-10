@@ -63,7 +63,7 @@ rels η γ = maps (\ {A} a → rel {A} η a) γ
 
 
 infix 3 _⊨_
-_⊨_ : Context → Truth → Set₁
+_⊨_ : List Truth → Truth → Set₁
 Γ ⊨ A true = ∀ {{_ : Model}} {W} → W ⊩⋆ Γ
                                   → W ⊩ A true
 
@@ -81,7 +81,7 @@ _⊨_ : Context → Truth → Set₁
 instance
   canon : Model
   canon = record
-            { World  = Context
+            { World  = List Truth
             ; Ground = _⊢ₙₜ BASE true
             ; _≥_    = _⊇_
             ; id≥    = id⊇

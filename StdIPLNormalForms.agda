@@ -11,7 +11,7 @@ open import StdIPL
 
 mutual
   infix 3 _⊢ₙₘ_
-  data _⊢ₙₘ_ : Context → Truth → Set
+  data _⊢ₙₘ_ : List Truth → Truth → Set
     where
       lam : ∀ {A B Γ} → Γ , A true ⊢ₙₘ B true
                       → Γ ⊢ₙₘ A ⊃ B true
@@ -20,7 +20,7 @@ mutual
                  → Γ ⊢ₙₘ BASE true
 
   infix 3 _⊢ₙₜ_
-  data _⊢ₙₜ_ : Context → Truth → Set
+  data _⊢ₙₜ_ : List Truth → Truth → Set
     where
       var : ∀ {A Γ} → Γ ∋ A true
                     → Γ ⊢ₙₜ A true
