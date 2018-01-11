@@ -2,6 +2,7 @@ module StdCMLNormalForms where
 
 open import Prelude
 open import List
+open List²
 open import AllList
 open import StdCML
 

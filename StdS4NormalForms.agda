@@ -2,6 +2,7 @@ module StdS4NormalForms where
 
 open import Prelude
 open import List
+open List²
 open import StdS4
 
 
