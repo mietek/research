@@ -11,12 +11,12 @@ open import StdIPL
 
 --------------------------------------------------------------------------------
 {-
-                             ren id⊇ 𝒟 ≡ 𝒟                                      id-ren   ⎱ 𝐫𝐞𝐧
+                              ren id 𝒟 ≡ 𝒟                                      id-ren   ⎱ 𝐫𝐞𝐧
                        ren (η₁ ∘ η₂) 𝒟 ≡ (ren η₂ ∘ ren η₁) 𝒟                    comp-ren ⎰
                         ren (drop η) 𝒟 ≡ (wk ∘ ren η) 𝒟                         -- comp-wk-ren-drop
                  (ren (keep η) ∘ wk) 𝒟 ≡ (wk ∘ ren η) 𝒟                         comp-wk-ren-keep
 
-                            rens id⊇ ξ ≡ ξ                                      id-rens   ⎱ 𝐫𝐞𝐧𝐬
+                             rens id ξ ≡ ξ                                      id-rens   ⎱ 𝐫𝐞𝐧𝐬
                       rens (η₁ ∘ η₂) ξ ≡ (rens η₂ ∘ rens η₁) ξ                  comp-rens ⎰
                        rens (drop η) ξ ≡ (wks ∘ rens η) ξ                       -- comp-wks-rens-drop
                (rens (keep η) ∘ wks) ξ ≡ (wks ∘ rens η) ξ                       comp-wks-rens-keep
@@ -51,7 +51,7 @@ open import StdIPL
 
 
 id-ren : ∀ {Γ A} → (𝒟 : Γ ⊢ A true)
-                 → ren id⊇ 𝒟 ≡ 𝒟
+                 → ren id 𝒟 ≡ 𝒟
 id-ren (var 𝒾)   = var & id-ren∋ 𝒾
 id-ren (lam 𝒟)   = lam & id-ren 𝒟
 id-ren (app 𝒟 ℰ) = app & id-ren 𝒟 ⊗ id-ren ℰ
@@ -64,7 +64,7 @@ comp-ren η₁ η₂ (lam 𝒟)   = lam & comp-ren (keep η₁) (keep η₂) �
 comp-ren η₁ η₂ (app 𝒟 ℰ) = app & comp-ren η₁ η₂ 𝒟 ⊗ comp-ren η₁ η₂ ℰ
 
 
-𝐫𝐞𝐧 : ∀ {A} → Presheaf (_⊢ A true) ren
+𝐫𝐞𝐧 : ∀ {A} → Presheaf 𝐎𝐏𝐄 (_⊢ A true) ren
 𝐫𝐞𝐧 = record
         { idℱ   = funext! id-ren
         ; compℱ = \ η₁ η₂ → funext! (comp-ren η₁ η₂)
@@ -76,21 +76,21 @@ comp-ren η₁ η₂ (app 𝒟 ℰ) = app & comp-ren η₁ η₂ 𝒟 ⊗ comp-r
 -- comp-wk-ren-drop : ∀ {Γ Γ′ A B} → (η : Γ′ ⊇ Γ) (𝒟 : Γ ⊢ A true)
 --                                 → ren (drop {A = B} η) 𝒟 ≡ (wk ∘ ren η) 𝒟
 -- comp-wk-ren-drop η 𝒟 = (\ η′ → ren (drop η′) 𝒟) & rid∘ η ⁻¹
---                      ⋮ comp-ren η (drop id⊇) 𝒟
+--                      ⋮ comp-ren η (drop id) 𝒟
 
 
 comp-wk-ren-keep : ∀ {Γ Γ′ A B} → (η : Γ′ ⊇ Γ) (𝒟 : Γ ⊢ A true)
                                 → (ren (keep {A = B} η) ∘ wk) 𝒟 ≡ (wk ∘ ren η) 𝒟
-comp-wk-ren-keep η 𝒟 = comp-ren (drop id⊇) (keep η) 𝒟 ⁻¹
+comp-wk-ren-keep η 𝒟 = comp-ren (drop id) (keep η) 𝒟 ⁻¹
                      ⋮ (\ η′ → ren (drop η′) 𝒟) & (lid∘ η ⋮ rid∘ η ⁻¹)
-                     ⋮ comp-ren η (drop id⊇) 𝒟
+                     ⋮ comp-ren η (drop id) 𝒟
 
 
 --------------------------------------------------------------------------------
 
 
 id-rens : ∀ {Γ Ξ} → (ξ : Γ ⊢⋆ Ξ)
-                  → rens id⊇ ξ ≡ ξ
+                  → rens id ξ ≡ ξ
 id-rens ∙       = refl
 id-rens (ξ , 𝒟) = _,_ & id-rens ξ ⊗ id-ren 𝒟
 
@@ -101,7 +101,7 @@ comp-rens η₁ η₂ ∙       = refl
 comp-rens η₁ η₂ (ξ , 𝒟) = _,_ & comp-rens η₁ η₂ ξ ⊗ comp-ren η₁ η₂ 𝒟
 
 
-𝐫𝐞𝐧𝐬 : ∀ {Ξ} → Presheaf (_⊢⋆ Ξ) rens
+𝐫𝐞𝐧𝐬 : ∀ {Ξ} → Presheaf 𝐎𝐏𝐄 (_⊢⋆ Ξ) rens
 𝐫𝐞𝐧𝐬 = record
          { idℱ   = funext! id-rens
          ; compℱ = \ η₁ η₂ → funext! (comp-rens η₁ η₂)
@@ -139,7 +139,7 @@ comp-ren-get η (ξ , 𝒟) (suc 𝒾) = comp-ren-get η ξ 𝒾
 var-id-get : ∀ {Γ A} → (𝒾 : Γ ∋ A true)
                      → get ids 𝒾 ≡ var 𝒾
 var-id-get zero    = refl
-var-id-get (suc 𝒾) = comp-ren-get (drop id⊇) ids 𝒾
+var-id-get (suc 𝒾) = comp-ren-get (drop id) ids 𝒾
                    ⋮ wk & var-id-get 𝒾
                    ⋮ (\ 𝒾′ → var (suc 𝒾′)) & id-ren∋ 𝒾
 
@@ -156,7 +156,7 @@ comp-rens-gets η₁ (ξ , 𝒟) (keep η₂) = (_, ren η₁ 𝒟) & comp-rens-
 
 comp-lifts-gets : ∀ {Γ Ξ Ξ′ A} → (ξ : Γ ⊢⋆ Ξ′) (η : Ξ′ ⊇ Ξ)
                                → gets (lifts {A} ξ) (keep η) ≡ (lifts ∘ gets ξ) η
-comp-lifts-gets ξ η = (_, vz) & comp-rens-gets (drop id⊇) ξ η
+comp-lifts-gets ξ η = (_, vz) & comp-rens-gets (drop id) ξ η
 
 
 --------------------------------------------------------------------------------
@@ -204,7 +204,7 @@ comp-sub-ren ξ η (app 𝒟 ℰ) = app & comp-sub-ren ξ η 𝒟 ⊗ comp-sub-r
 
 expand-sub : ∀ {Γ Ξ A B} → (ξ : Γ ⊢⋆ Ξ) (𝒟 : Γ ⊢ A true) (ℰ : Ξ ⊢ B true)
                          → sub (ξ , 𝒟) (wk ℰ) ≡ sub ξ ℰ
-expand-sub ξ 𝒟 ℰ = comp-sub-ren (ξ , 𝒟) (drop id⊇) ℰ ⁻¹
+expand-sub ξ 𝒟 ℰ = comp-sub-ren (ξ , 𝒟) (drop id) ℰ ⁻¹
                  ⋮ (\ ξ′ → sub ξ′ ℰ) & id-gets ξ
 
 
@@ -235,7 +235,7 @@ comp-rens-subs η ξ (ψ , 𝒟) = _,_ & comp-rens-subs η ξ ψ ⊗ comp-ren-su
 comp-lifts-subs : ∀ {Γ Ξ Ψ A} → (ξ : Γ ⊢⋆ Ξ) (ψ : Ξ ⊢⋆ Ψ)
                               → subs (lifts {A} ξ) (lifts ψ) ≡ (lifts ∘ subs ξ) ψ
 comp-lifts-subs ξ ψ = (_, vz) & ( expand-subs (wks ξ) vz ψ
-                                ⋮ comp-rens-subs (drop id⊇) ξ ψ
+                                ⋮ comp-rens-subs (drop id) ξ ψ
                                 )
 
 
@@ -289,7 +289,7 @@ instance
           }
 
 
-𝐬𝐮𝐛 : ∀ {A} → Presheaf (_⊢ A true) sub
+𝐬𝐮𝐛 : ∀ {A} → Presheaf 𝐈𝐏𝐋 (_⊢ A true) sub
 𝐬𝐮𝐛 = record
         { idℱ   = funext! id-sub
         ; compℱ = \ ξ₁ ξ₂ → funext! (comp-sub ξ₂ ξ₁)

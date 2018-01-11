@@ -11,7 +11,7 @@ open import Fin
                               e ∘≥ id≥ ≡ e                                      rid∘≥   ⎬ 𝐆𝐄𝐐
                       (e₁ ∘≥ e₂) ∘≥ e₃ ≡ e₁ ∘≥ (e₂ ∘≥ e₃)                       assoc∘≥ ⎭
 
-                            REN∋ id≥ i ≡ i                                      id-REN∋   ⎱ 𝐑𝐄𝐍∋
+                             REN∋ id i ≡ i                                      id-REN∋   ⎱ 𝐑𝐄𝐍∋
                      REN∋ (e₁ ∘≥ e₂) i ≡ (REN∋ e₂ ∘ REN∋ e₁) i                  comp-REN∋ ⎰
 -}
 --------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ instance
 
 
 id-REN∋ : ∀ {n} → (i : Fin n)
-                → REN∋ id≥ i ≡ i
+                → REN∋ id i ≡ i
 id-REN∋ zero    = refl
 id-REN∋ (suc i) = suc & id-REN∋ i
 
@@ -69,7 +69,7 @@ comp-REN∋ (keep e₁) (keep e₂) zero    = refl
 comp-REN∋ (keep e₁) (keep e₂) (suc i) = suc & comp-REN∋ e₁ e₂ i
 
 
-𝐑𝐄𝐍∋ : Presheaf Fin REN∋
+𝐑𝐄𝐍∋ : Presheaf 𝐆𝐄𝐐 Fin REN∋
 𝐑𝐄𝐍∋ = record
          { idℱ   = funext! id-REN∋
          ; compℱ = \ e₁ e₂ → funext! (comp-REN∋ e₁ e₂)

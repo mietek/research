@@ -32,10 +32,14 @@ open Category {{...}} public
 
 record Functor {ℓ ℓ′ ℓ″ ℓ‴} {X : Set ℓ} {_▻_ : X → X → Set ℓ′}
                             {Y : Set ℓ″} {_►_ : Y → Y → Set ℓ‴}
-                            {{C : Category X _▻_}} {{D : Category Y _►_}}
+                            (C : Category X _▻_) (D : Category Y _►_)
                             (f : X → Y) (ℱ : ∀ {x y} → y ▻ x → f y ► f x)
                           : Set (ℓ ⊔ ℓ′ ⊔ ℓ″ ⊔ ℓ‴)
   where
+    private
+      instance _ = C
+      instance _ = D
+
     field
       idℱ : ∀ {x} → ℱ (id {x = x}) ≡ id
 
@@ -73,15 +77,15 @@ instance
 
 
 instance
-  𝗦𝗲𝘁₀ : Category Set Π
+  𝗦𝗲𝘁₀ : Category Set₀ Π
   𝗦𝗲𝘁₀ = 𝗦𝗲𝘁 lzero
 
 
 Presheaf : ∀ {ℓ ℓ′ ℓ″} → {X : Set ℓ′} {_▻_ : X → X → Set ℓ″}
-                          {{C : Category X _▻_}}
+                          (C : Category X _▻_)
                        → (P : X → Set ℓ) (ℱ : ∀ {x y} → x ▻ y → P y → P x)
                        → Set _
-Presheaf {{C}} = Functor {{Opposite C}}
+Presheaf {ℓ} C = Functor (Opposite C) (𝗦𝗲𝘁 ℓ)
 
 
 --------------------------------------------------------------------------------
@@ -92,7 +96,7 @@ record NatTrans {ℓ ℓ′ ℓ″ ℓ‴} {X : Set ℓ} {_▻_ : X → X → Se
                              {{C : Category X _▻_}} {{D : Category Y _►_}}
                              {f : X → Y} {ℱ : ∀ {x y} → y ▻ x → f y ► f x}
                              {g : X → Y} {𝒢 : ∀ {x y} → y ▻ x → g y ► g x}
-                             (F : Functor f ℱ) (G : Functor g 𝒢)
+                             (F : Functor C D f ℱ) (G : Functor C D g 𝒢)
                            : Set (ℓ ⊔ ℓ′ ⊔ ℓ″ ⊔ ℓ‴)
   where
     field

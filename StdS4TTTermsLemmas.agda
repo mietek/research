@@ -11,11 +11,11 @@ open import StdS4TTTerms
 
 --------------------------------------------------------------------------------
 {-
-                             REN id≥ M ≡ M                                      id-REN   ⎱ 𝐑𝐄𝐍
+                              REN id M ≡ M                                      id-REN   ⎱ 𝐑𝐄𝐍
                        REN (e₁ ∘ e₂) M ≡ REN e₂ (REN e₁ M)                      comp-REN ⎰
                  (REN (keep e) ∘ WK) M ≡ (WK ∘ REN e) M                         comp-WK-REN-keep
 
-                            MREN id≥ M ≡ M                                      id-MREN   ⎱ 𝐌𝐑𝐄𝐍
+                             MREN id M ≡ M                                      id-MREN   ⎱ 𝐌𝐑𝐄𝐍
                       MREN (e₁ ∘ e₂) M ≡ MREN e₂ (MREN e₁ M)                    comp-MREN ⎰
                        MREN (drop e) M ≡ (MWK ∘ MREN e) M                       comp-MWK-MREN-drop
                (MREN (keep e) ∘ MWK) M ≡ (MWK ∘ MREN e) M                       comp-MWK-MREN-keep
@@ -24,17 +24,17 @@ open import StdS4TTTerms
                 (MRENS e₁ ∘ RENS e₂) x ≡ (RENS e₂ ∘ MRENS e₁) x                 comp-RENS-MRENS
                    (MRENS e ∘ LIFTS) x ≡ (LIFTS ∘ MRENS e) x                    comp-LIFTS-MRENS
 
-                            RENS id≥ x ≡ x                                      id-RENS   ⎱ 𝐑𝐄𝐍𝐒
+                             RENS id x ≡ x                                      id-RENS   ⎱ 𝐑𝐄𝐍𝐒
                       RENS (e₁ ∘ e₂) x ≡ (RENS e₂ ∘ RENS e₁) x                  comp-RENS ⎰
                (RENS (keep e) ∘ WKS) x ≡ (WKS ∘ RENS e) x                       comp-WKS-RENS-keep
              (RENS (keep e) ∘ LIFTS) x ≡ (LIFTS ∘ RENS e) x                     comp-LIFTS-RENS
 
-                           MRENS id≥ x ≡ x                                      id-MRENS   ⎱ 𝐌𝐑𝐄𝐍𝐒
+                            MRENS id x ≡ x                                      id-MRENS   ⎱ 𝐌𝐑𝐄𝐍𝐒
                      MRENS (e₁ ∘ e₂) x ≡ (MRENS e₂ ∘ MRENS e₁) x                comp-MRENS ⎰
                       MRENS (drop e) x ≡ (MWKS ∘ MRENS e) x                     comp-MWKS-MRENS-drop
              (MRENS (keep e) ∘ MWKS) x ≡ (MWKS ∘ MRENS e) x                     comp-MWKS-MRENS-keep
 
-                          MRENS₁ id≥ x ≡ x                                      id-MRENS₁   ⎱ 𝐌𝐑𝐄𝐍𝐒₁
+                           MRENS₁ id x ≡ x                                      id-MRENS₁   ⎱ 𝐌𝐑𝐄𝐍𝐒₁
                     MRENS₁ (e₁ ∘ e₂) x ≡ (MRENS₁ e₂ ∘ MRENS₁ e₁) x              comp-MRENS₁ ⎰
            (MRENS₁ (keep e) ∘ MWKS₁) x ≡ (MWKS₁ ∘ MRENS₁ e) x                   comp-MWKS₁-MRENS₁-keep
          (MRENS₁ (keep e) ∘ MLIFTS₁) x ≡ (MLIFTS₁ ∘ MRENS₁ e) x                 comp-MLIFTS₁-MRENS₁
@@ -109,7 +109,7 @@ open import StdS4TTTerms
 
 
 id-REN : ∀ {d g} → (M : Term d g)
-                 → REN id≥ M ≡ M
+                 → REN id M ≡ M
 id-REN (VAR i)      = VAR & id-REN∋ i
 id-REN (LAM M)      = LAM & id-REN M
 id-REN (APP M N)    = APP & id-REN M ⊗ id-REN N
@@ -128,8 +128,8 @@ comp-REN e₁ e₂ (BOX M)      = refl
 comp-REN e₁ e₂ (LETBOX M N) = LETBOX & comp-REN e₁ e₂ M ⊗ comp-REN e₁ e₂ N
 
 
-𝐑𝐄𝐍 : Presheaf (\ g → Σ Nat (\ d → Term d g))
-               (\ { e (d , M) → d , REN e M })
+𝐑𝐄𝐍 : Presheaf 𝐆𝐄𝐐 (\ g → Σ Nat (\ d → Term d g))
+                   (\ { e (d , M) → d , REN e M })
 𝐑𝐄𝐍 = record
         { idℱ   = funext! (\ { (d , M) → (d ,_) & id-REN M })
         ; compℱ = \ e₁ e₂ → funext! (\ { (d , M) → (d ,_) & comp-REN e₁ e₂ M })
@@ -138,16 +138,16 @@ comp-REN e₁ e₂ (LETBOX M N) = LETBOX & comp-REN e₁ e₂ M ⊗ comp-REN e�
 
 comp-WK-REN-keep : ∀ {d g g′} → (e : g′ ≥ g) (M : Term d g)
                               → (REN (keep e) ∘ WK) M ≡ (WK ∘ REN e) M
-comp-WK-REN-keep e M = comp-REN (drop id≥) (keep e) M ⁻¹
+comp-WK-REN-keep e M = comp-REN (drop id) (keep e) M ⁻¹
                      ⋮ (\ e′ → REN (drop e′) M) & (lid∘ e ⋮ rid∘ e ⁻¹)
-                     ⋮ comp-REN e (drop id≥) M
+                     ⋮ comp-REN e (drop id) M
 
 
 --------------------------------------------------------------------------------
 
 
 id-MREN : ∀ {d g} → (M : Term d g)
-                  → MREN id≥ M ≡ M
+                  → MREN id M ≡ M
 id-MREN (VAR i)      = refl
 id-MREN (LAM M)      = LAM & id-MREN M
 id-MREN (APP M N)    = APP & id-MREN M ⊗ id-MREN N
@@ -166,8 +166,8 @@ comp-MREN e₁ e₂ (BOX M)      = BOX & comp-MREN e₁ e₂ M
 comp-MREN e₁ e₂ (LETBOX M N) = LETBOX & comp-MREN e₁ e₂ M ⊗ comp-MREN (keep e₁) (keep e₂) N
 
 
-𝐌𝐑𝐄𝐍 : Presheaf (\ d → Σ Nat (\ g → Term d g))
-                (\ { e (g , M) → g , MREN e M })
+𝐌𝐑𝐄𝐍 : Presheaf 𝐆𝐄𝐐 (\ d → Σ Nat (\ g → Term d g))
+                    (\ { e (g , M) → g , MREN e M })
 𝐌𝐑𝐄𝐍 = record
          { idℱ   = funext! (\ { (g , M) → (g ,_) & id-MREN M })
          ; compℱ = \ e₁ e₂ → funext! (\ { (g , M) → (g ,_) & comp-MREN e₁ e₂ M })
@@ -177,14 +177,14 @@ comp-MREN e₁ e₂ (LETBOX M N) = LETBOX & comp-MREN e₁ e₂ M ⊗ comp-MREN 
 comp-MWK-MREN-drop : ∀ {d d′ g} → (e : d′ ≥ d) (M : Term d g)
                                 → MREN (drop e) M ≡ (MWK ∘ MREN e) M
 comp-MWK-MREN-drop e M = (\ e′ → MREN (drop e′) M) & rid∘ e ⁻¹
-                       ⋮ comp-MREN e (drop id≥) M
+                       ⋮ comp-MREN e (drop id) M
 
 
 comp-MWK-MREN-keep : ∀ {d d′ g} → (e : d′ ≥ d) (M : Term d g)
                                 → (MREN (keep e) ∘ MWK) M ≡ (MWK ∘ MREN e) M
-comp-MWK-MREN-keep e M = comp-MREN (drop id≥) (keep e) M ⁻¹
+comp-MWK-MREN-keep e M = comp-MREN (drop id) (keep e) M ⁻¹
                        ⋮ (\ e′ → MREN (drop e′) M) & (lid∘ e ⋮ rid∘ e ⁻¹)
-                       ⋮ comp-MREN e (drop id≥) M
+                       ⋮ comp-MREN e (drop id) M
 
 
 --------------------------------------------------------------------------------
@@ -208,14 +208,14 @@ comp-RENS-MRENS e₁ e₂ (x , M) = _,_ & comp-RENS-MRENS e₁ e₂ x ⊗ comp-R
 
 comp-LIFTS-MRENS : ∀ {d d′ g n} → (e : d′ ≥ d) (x : Terms d g n)
                                 → (MRENS e ∘ LIFTS) x ≡ (LIFTS ∘ MRENS e) x
-comp-LIFTS-MRENS e x = (_, VZ) & comp-RENS-MRENS e (drop id≥) x
+comp-LIFTS-MRENS e x = (_, VZ) & comp-RENS-MRENS e (drop id) x
 
 
 --------------------------------------------------------------------------------
 
 
 id-RENS : ∀ {d g n} → (x : Terms d g n)
-                    → RENS id≥ x ≡ x
+                    → RENS id x ≡ x
 id-RENS ∙       = refl
 id-RENS (x , M) = _,_ & id-RENS x ⊗ id-REN M
 
@@ -226,8 +226,8 @@ comp-RENS e₁ e₂ ∙       = refl
 comp-RENS e₁ e₂ (x , M) = _,_ & comp-RENS e₁ e₂ x ⊗ comp-REN e₁ e₂ M
 
 
-𝐑𝐄𝐍𝐒 : ∀ {n} → Presheaf (\ g → Σ Nat (\ d → Terms d g n))
-                         (\ { e (d , x) → d , RENS e x })
+𝐑𝐄𝐍𝐒 : ∀ {n} → Presheaf 𝐆𝐄𝐐 (\ g → Σ Nat (\ d → Terms d g n))
+                             (\ { e (d , x) → d , RENS e x })
 𝐑𝐄𝐍𝐒 = record
          { idℱ   = funext! (\ { (d , x) → (d ,_) & id-RENS x })
          ; compℱ = \ e₁ e₂ → funext! (\ { (d , x) → (d ,_) & comp-RENS e₁ e₂ x })
@@ -249,7 +249,7 @@ comp-LIFTS-RENS e x = (_, VZ) & comp-WKS-RENS-keep e x
 
 
 id-MRENS : ∀ {d g n} → (x : Terms d g n)
-                     → MRENS id≥ x ≡ x
+                     → MRENS id x ≡ x
 id-MRENS ∙       = refl
 id-MRENS (x , M) = _,_ & id-MRENS x ⊗ id-MREN M
 
@@ -260,8 +260,8 @@ comp-MRENS e₁ e₂ ∙       = refl
 comp-MRENS e₁ e₂ (x , M) = _,_ & comp-MRENS e₁ e₂ x ⊗ comp-MREN e₁ e₂ M
 
 
-𝐌𝐑𝐄𝐍𝐒 : ∀ {n} → Presheaf (\ d → Σ Nat (\ g → Terms d g n))
-                          (\ { e (g , x) → g , MRENS e x })
+𝐌𝐑𝐄𝐍𝐒 : ∀ {n} → Presheaf 𝐆𝐄𝐐 (\ d → Σ Nat (\ g → Terms d g n))
+                              (\ { e (g , x) → g , MRENS e x })
 𝐌𝐑𝐄𝐍𝐒 = record
           { idℱ   = funext! (\ { (g , x) → (g ,_) & id-MRENS x })
           ; compℱ = \ e₁ e₂ → funext! (\ { (g , x) → (g ,_) & comp-MRENS e₁ e₂ x })
@@ -284,7 +284,7 @@ comp-MWKS-MRENS-keep e (x , M) = _,_ & comp-MWKS-MRENS-keep e x ⊗ comp-MWK-MRE
 
 
 id-MRENS₁ : ∀ {d n} → (x : Terms₁ d n)
-                    → MRENS₁ id≥ x ≡ x
+                    → MRENS₁ id x ≡ x
 id-MRENS₁ x = id-MRENS x
 
 
@@ -293,7 +293,7 @@ comp-MRENS₁ : ∀ {d d′ d″ n} → (e₁ : d′ ≥ d) (e₂ : d″ ≥ d�
 comp-MRENS₁ e₁ e₂ x = comp-MRENS e₁ e₂ x
 
 
-𝐌𝐑𝐄𝐍𝐒₁ : ∀ {n} → Presheaf (flip Terms₁ n) MRENS₁
+𝐌𝐑𝐄𝐍𝐒₁ : ∀ {n} → Presheaf 𝐆𝐄𝐐 (flip Terms₁ n) MRENS₁
 𝐌𝐑𝐄𝐍𝐒₁ = record
            { idℱ   = funext! id-MRENS₁
            ; compℱ = \ e₁ e₂ → funext! (comp-MRENS₁ e₁ e₂)
@@ -322,7 +322,7 @@ comp-REN-GET e (x , N) (suc i) = comp-REN-GET e x i
 VAR-id-GET : ∀ {d g} → (i : Fin g)
                      → GET (IDS {d = d}) i ≡ VAR i
 VAR-id-GET zero    = refl
-VAR-id-GET (suc i) = comp-REN-GET (drop id≥) IDS i
+VAR-id-GET (suc i) = comp-REN-GET (drop id) IDS i
                    ⋮ WK & VAR-id-GET i
                    ⋮ (\ i′ → VAR (suc i′)) & id-REN∋ i
 
@@ -348,7 +348,7 @@ comp-MREN-GET₁ e (x , N) (suc i) = comp-MREN-GET₁ e x i
 MVAR-id-GET₁ : ∀ {d} → (i : Fin d)
                      → GET MIDS₁ i ≡ MVAR i
 MVAR-id-GET₁ zero    = refl
-MVAR-id-GET₁ (suc i) = comp-MREN-GET₁ (drop id≥) MIDS₁ i
+MVAR-id-GET₁ (suc i) = comp-MREN-GET₁ (drop id) MIDS₁ i
                      ⋮ MWK & MVAR-id-GET₁ i
                      ⋮ (\ i′ → MVAR (suc i′)) & id-REN∋ i
 
@@ -365,7 +365,7 @@ comp-RENS-GETS e₁ (x , M) (keep e₂) = (_, REN e₁ M) & comp-RENS-GETS e₁ 
 
 comp-LIFTS-GETS : ∀ {d g n n′} → (x : Terms d g n′) (e : n′ ≥ n)
                                → GETS (LIFTS x) (keep e) ≡ (LIFTS ∘ GETS x) e
-comp-LIFTS-GETS x e = (_, VZ) & comp-RENS-GETS (drop id≥) x e
+comp-LIFTS-GETS x e = (_, VZ) & comp-RENS-GETS (drop id) x e
 
 
 --------------------------------------------------------------------------------
@@ -388,7 +388,7 @@ comp-MRENS₁-GETS e₁ x e₂ = comp-MRENS-GETS e₁ x e₂
 
 comp-MLIFTS₁-GETS : ∀ {d n n′} → (x : Terms₁ d n′) (e : n′ ≥ n)
                                → GETS (MLIFTS₁ x) (keep e) ≡ (MLIFTS₁ ∘ GETS x) e
-comp-MLIFTS₁-GETS x e = (_, MVZ) & comp-MRENS₁-GETS (drop id≥) x e
+comp-MLIFTS₁-GETS x e = (_, MVZ) & comp-MRENS₁-GETS (drop id) x e
 
 
 --------------------------------------------------------------------------------
@@ -431,7 +431,7 @@ comp-SUB-REN x e (APP M N)    = APP & comp-SUB-REN x e M ⊗ comp-SUB-REN x e N
 comp-SUB-REN x e (MVAR i)     = refl
 comp-SUB-REN x e (BOX M)      = refl
 comp-SUB-REN x e (LETBOX M N) = LETBOX & comp-SUB-REN x e M
-                                       ⊗ ( (\ x′ → SUB x′ N) & comp-MRENS-GETS (drop id≥) x e ⁻¹
+                                       ⊗ ( (\ x′ → SUB x′ N) & comp-MRENS-GETS (drop id) x e ⁻¹
                                          ⋮ comp-SUB-REN (MWKS x) e N
                                          )
 
@@ -443,7 +443,7 @@ comp-SUB-REN x e (LETBOX M N) = LETBOX & comp-SUB-REN x e M
 
 expand-SUB : ∀ {d g n} → (x : Terms d g n) (M : Term d g) (N : Term d n)
                        → SUB (x , M) (WK N) ≡ SUB x N
-expand-SUB x M N = comp-SUB-REN (x , M) (drop id≥) N ⁻¹
+expand-SUB x M N = comp-SUB-REN (x , M) (drop id) N ⁻¹
                  ⋮ (\ x′ → SUB x′ N) & id-GETS x
 
 
@@ -466,7 +466,7 @@ comp-REN-SUB e x (APP M N)    = APP & comp-REN-SUB e x M ⊗ comp-REN-SUB e x N
 comp-REN-SUB e x (MVAR i)     = refl
 comp-REN-SUB e x (BOX M)      = refl
 comp-REN-SUB e x (LETBOX M N) = LETBOX & comp-REN-SUB e x M
-                                       ⊗ ( (\ x′ → SUB x′ N) & comp-RENS-MRENS (drop id≥) e x
+                                       ⊗ ( (\ x′ → SUB x′ N) & comp-RENS-MRENS (drop id) e x
                                          ⋮ comp-REN-SUB e (MWKS x) N
                                          )
 
@@ -480,7 +480,7 @@ comp-RENS-SUBS e x (y , M) = _,_ & comp-RENS-SUBS e x y ⊗ comp-REN-SUB e x M
 comp-LIFTS-SUBS : ∀ {d g n m} → (x : Terms d g n) (y : Terms d n m)
                               → SUBS (LIFTS x) (LIFTS y) ≡ (LIFTS ∘ SUBS x) y
 comp-LIFTS-SUBS x y = (_, VZ) & ( expand-SUBS (WKS x) VZ y
-                                ⋮ comp-RENS-SUBS (drop id≥) x y
+                                ⋮ comp-RENS-SUBS (drop id) x y
                                 )
 
 
@@ -534,7 +534,7 @@ id-SUB (LAM M)      = LAM & id-SUB M
 id-SUB (APP M N)    = APP & id-SUB M ⊗ id-SUB N
 id-SUB (MVAR i)     = refl
 id-SUB (BOX M)      = refl
-id-SUB (LETBOX M N) = LETBOX & id-SUB M ⊗ id-MREN-SUB (drop id≥) N
+id-SUB (LETBOX M N) = LETBOX & id-SUB M ⊗ id-MREN-SUB (drop id) N
 
 
 comp-SUB : ∀ {d g m n} → (x : Terms d g n) (y : Terms d n m) (M : Term d m)
@@ -547,7 +547,7 @@ comp-SUB x y (APP M N)    = APP & comp-SUB x y M ⊗ comp-SUB x y N
 comp-SUB x y (MVAR i)     = refl
 comp-SUB x y (BOX M)      = refl
 comp-SUB x y (LETBOX M N) = LETBOX & comp-SUB x y M
-                                   ⊗ ( (\ x′ → SUB x′ N) & comp-MRENS-SUBS (drop id≥) x y ⁻¹
+                                   ⊗ ( (\ x′ → SUB x′ N) & comp-MRENS-SUBS (drop id) x y ⁻¹
                                      ⋮ comp-SUB (MWKS x) (MWKS y) N
                                      )
 
@@ -583,7 +583,7 @@ instance
               }
 
 
-𝐒𝐔𝐁 : ∀ {d} → Presheaf (Term d) SUB
+𝐒𝐔𝐁 : ∀ {d} → Presheaf 𝐒𝟒𝐓𝐞𝐫𝐦𝐬 (Term d) SUB
 𝐒𝐔𝐁 = record
         { idℱ   = funext! id-SUB
         ; compℱ = \ y x → funext! (comp-SUB x y)
@@ -611,7 +611,7 @@ comp-MSUBS-RENS x e (y , M) = _,_ & comp-MSUBS-RENS x e y ⊗ comp-MSUB-REN x e 
 
 comp-MSUBS-LIFTS : ∀ {d g n m} → (x : Terms₁ d n) (y : Terms n g m)
                                → (LIFTS ∘ MSUBS x) y ≡ (MSUBS x ∘ LIFTS) y
-comp-MSUBS-LIFTS x y = (_, VZ) & comp-MSUBS-RENS x (drop id≥) y
+comp-MSUBS-LIFTS x y = (_, VZ) & comp-MSUBS-RENS x (drop id) y
 
 
 --------------------------------------------------------------------------------
@@ -637,7 +637,7 @@ comp-MSUB-MREN x e (LETBOX M N) = LETBOX & comp-MSUB-MREN x e M
 
 expand-MSUB : ∀ {d g n} → (x : Terms₁ d n) (M : Term₁ d) (N : Term n g)
                         → MSUB (x , M) (MWK N) ≡ MSUB x N
-expand-MSUB x M N = comp-MSUB-MREN (x , M) (drop id≥) N ⁻¹
+expand-MSUB x M N = comp-MSUB-MREN (x , M) (drop id) N ⁻¹
                   ⋮ (\ x′ → MSUB x′ N) & id-GETS x
 
 
@@ -678,7 +678,7 @@ comp-MRENS-MSUBS e x (y , M) = _,_ & comp-MRENS-MSUBS e x y ⊗ comp-MREN-MSUB e
 comp-MWKS-MSUBS : ∀ {d g n m} → (x : Terms₁ d n) (y : Terms n g m)
                               → (MSUBS (MLIFTS₁ x) ∘ MWKS) y ≡ (MWKS ∘ MSUBS x) y
 comp-MWKS-MSUBS x y = expand-MSUBS (MWKS₁ x) MVZ y
-                    ⋮ comp-MRENS-MSUBS (drop id≥) x y
+                    ⋮ comp-MRENS-MSUBS (drop id) x y
 
 
 comp-MRENS₁-MSUBS₁ : ∀ {d d′ n m} → (e : d′ ≥ d) (x : Terms₁ d n) (y : Terms₁ n m)
@@ -689,7 +689,7 @@ comp-MRENS₁-MSUBS₁ e x y = comp-MRENS-MSUBS e x y
 comp-MWKS₁-MSUBS₁ : ∀ {d n m} → (x : Terms₁ d n) (y : Terms₁ n m)
                               → (MSUBS₁ (MLIFTS₁ x) ∘ MWKS₁) y ≡ (MWKS₁ ∘ MSUBS₁ x) y
 comp-MWKS₁-MSUBS₁ x y = expand-MSUBS₁ (MWKS₁ x) MVZ y
-                      ⋮ comp-MRENS₁-MSUBS₁ (drop id≥) x y
+                      ⋮ comp-MRENS₁-MSUBS₁ (drop id) x y
 
 
 comp-MLIFTS₁-MSUBS₁ : ∀ {d n m} → (x : Terms₁ d n) (y : Terms₁ n m)
@@ -774,7 +774,7 @@ instance
                }
 
 
-𝐌𝐒𝐔𝐁 : Presheaf Term₁ MSUB
+𝐌𝐒𝐔𝐁 : Presheaf 𝐒𝟒𝐓𝐞𝐫𝐦𝐬₁ Term₁ MSUB
 𝐌𝐒𝐔𝐁 = record
          { idℱ   = funext! id-MSUB
          ; compℱ = \ y x → funext! (comp-MSUB x y)
