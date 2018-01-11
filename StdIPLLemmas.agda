@@ -64,9 +64,10 @@ comp-ren η₁ η₂ (lam 𝒟)   = lam & comp-ren (keep η₁) (keep η₂) �
 comp-ren η₁ η₂ (app 𝒟 ℰ) = app & comp-ren η₁ η₂ 𝒟 ⊗ comp-ren η₁ η₂ ℰ
 
 
-𝐫𝐞𝐧 : ∀ {A} → Presheaf 𝐎𝐏𝐄 (_⊢ A true) ren
+𝐫𝐞𝐧 : ∀ {A} → Presheaf 𝐎𝐏𝐄 (_⊢ A true)
 𝐫𝐞𝐧 = record
-        { idℱ   = funext! id-ren
+        { ℱ     = ren
+        ; idℱ   = funext! id-ren
         ; compℱ = \ η₁ η₂ → funext! (comp-ren η₁ η₂)
         }
 
@@ -101,9 +102,10 @@ comp-rens η₁ η₂ ∙       = refl
 comp-rens η₁ η₂ (ξ , 𝒟) = _,_ & comp-rens η₁ η₂ ξ ⊗ comp-ren η₁ η₂ 𝒟
 
 
-𝐫𝐞𝐧𝐬 : ∀ {Ξ} → Presheaf 𝐎𝐏𝐄 (_⊢⋆ Ξ) rens
+𝐫𝐞𝐧𝐬 : ∀ {Ξ} → Presheaf 𝐎𝐏𝐄 (_⊢⋆ Ξ)
 𝐫𝐞𝐧𝐬 = record
-         { idℱ   = funext! id-rens
+         { ℱ     = rens
+         ; idℱ   = funext! id-rens
          ; compℱ = \ η₁ η₂ → funext! (comp-rens η₁ η₂)
          }
 
@@ -289,9 +291,10 @@ instance
           }
 
 
-𝐬𝐮𝐛 : ∀ {A} → Presheaf 𝐈𝐏𝐋 (_⊢ A true) sub
+𝐬𝐮𝐛 : ∀ {A} → Presheaf 𝐈𝐏𝐋 (_⊢ A true)
 𝐬𝐮𝐛 = record
-        { idℱ   = funext! id-sub
+        { ℱ     = sub
+        ; idℱ   = funext! id-sub
         ; compℱ = \ ξ₁ ξ₂ → funext! (comp-sub ξ₂ ξ₁)
         }
 

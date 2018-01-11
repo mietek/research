@@ -129,9 +129,9 @@ comp-REN e₁ e₂ (LETBOX M N) = LETBOX & comp-REN e₁ e₂ M ⊗ comp-REN e�
 
 
 𝐑𝐄𝐍 : Presheaf 𝐆𝐄𝐐 (\ g → Σ Nat (\ d → Term d g))
-                   (\ { e (d , M) → d , REN e M })
 𝐑𝐄𝐍 = record
-        { idℱ   = funext! (\ { (d , M) → (d ,_) & id-REN M })
+        { ℱ     = \ { e (d , M) → d , REN e M }
+        ; idℱ   = funext! (\ { (d , M) → (d ,_) & id-REN M })
         ; compℱ = \ e₁ e₂ → funext! (\ { (d , M) → (d ,_) & comp-REN e₁ e₂ M })
         }
 
@@ -167,9 +167,9 @@ comp-MREN e₁ e₂ (LETBOX M N) = LETBOX & comp-MREN e₁ e₂ M ⊗ comp-MREN 
 
 
 𝐌𝐑𝐄𝐍 : Presheaf 𝐆𝐄𝐐 (\ d → Σ Nat (\ g → Term d g))
-                    (\ { e (g , M) → g , MREN e M })
 𝐌𝐑𝐄𝐍 = record
-         { idℱ   = funext! (\ { (g , M) → (g ,_) & id-MREN M })
+         { ℱ     = \ { e (g , M) → g , MREN e M }
+         ; idℱ   = funext! (\ { (g , M) → (g ,_) & id-MREN M })
          ; compℱ = \ e₁ e₂ → funext! (\ { (g , M) → (g ,_) & comp-MREN e₁ e₂ M })
          }
 
@@ -227,9 +227,9 @@ comp-RENS e₁ e₂ (x , M) = _,_ & comp-RENS e₁ e₂ x ⊗ comp-REN e₁ e₂
 
 
 𝐑𝐄𝐍𝐒 : ∀ {n} → Presheaf 𝐆𝐄𝐐 (\ g → Σ Nat (\ d → Terms d g n))
-                             (\ { e (d , x) → d , RENS e x })
 𝐑𝐄𝐍𝐒 = record
-         { idℱ   = funext! (\ { (d , x) → (d ,_) & id-RENS x })
+         { ℱ     = \ { e (d , x) → d , RENS e x }
+         ; idℱ   = funext! (\ { (d , x) → (d ,_) & id-RENS x })
          ; compℱ = \ e₁ e₂ → funext! (\ { (d , x) → (d ,_) & comp-RENS e₁ e₂ x })
          }
 
@@ -261,9 +261,9 @@ comp-MRENS e₁ e₂ (x , M) = _,_ & comp-MRENS e₁ e₂ x ⊗ comp-MREN e₁ e
 
 
 𝐌𝐑𝐄𝐍𝐒 : ∀ {n} → Presheaf 𝐆𝐄𝐐 (\ d → Σ Nat (\ g → Terms d g n))
-                              (\ { e (g , x) → g , MRENS e x })
 𝐌𝐑𝐄𝐍𝐒 = record
-          { idℱ   = funext! (\ { (g , x) → (g ,_) & id-MRENS x })
+          { ℱ     = \ { e (g , x) → g , MRENS e x }
+          ; idℱ   = funext! (\ { (g , x) → (g ,_) & id-MRENS x })
           ; compℱ = \ e₁ e₂ → funext! (\ { (g , x) → (g ,_) & comp-MRENS e₁ e₂ x })
           }
 
@@ -293,9 +293,10 @@ comp-MRENS₁ : ∀ {d d′ d″ n} → (e₁ : d′ ≥ d) (e₂ : d″ ≥ d�
 comp-MRENS₁ e₁ e₂ x = comp-MRENS e₁ e₂ x
 
 
-𝐌𝐑𝐄𝐍𝐒₁ : ∀ {n} → Presheaf 𝐆𝐄𝐐 (flip Terms₁ n) MRENS₁
+𝐌𝐑𝐄𝐍𝐒₁ : ∀ {n} → Presheaf 𝐆𝐄𝐐 (flip Terms₁ n)
 𝐌𝐑𝐄𝐍𝐒₁ = record
-           { idℱ   = funext! id-MRENS₁
+           { ℱ     = MRENS₁
+           ; idℱ   = funext! id-MRENS₁
            ; compℱ = \ e₁ e₂ → funext! (comp-MRENS₁ e₁ e₂)
            }
 
@@ -583,9 +584,10 @@ instance
               }
 
 
-𝐒𝐔𝐁 : ∀ {d} → Presheaf 𝐒𝟒𝐓𝐞𝐫𝐦𝐬 (Term d) SUB
+𝐒𝐔𝐁 : ∀ {d} → Presheaf 𝐒𝟒𝐓𝐞𝐫𝐦𝐬 (Term d)
 𝐒𝐔𝐁 = record
-        { idℱ   = funext! id-SUB
+        { ℱ     = SUB
+        ; idℱ   = funext! id-SUB
         ; compℱ = \ y x → funext! (comp-SUB x y)
         }
 
@@ -774,9 +776,10 @@ instance
                }
 
 
-𝐌𝐒𝐔𝐁 : Presheaf 𝐒𝟒𝐓𝐞𝐫𝐦𝐬₁ Term₁ MSUB
+𝐌𝐒𝐔𝐁 : Presheaf 𝐒𝟒𝐓𝐞𝐫𝐦𝐬₁ Term₁
 𝐌𝐒𝐔𝐁 = record
-         { idℱ   = funext! id-MSUB
+         { ℱ     = MSUB
+         ; idℱ   = funext! id-MSUB
          ; compℱ = \ y x → funext! (comp-MSUB x y)
          }
 

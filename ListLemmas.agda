@@ -129,9 +129,10 @@ comp-ren∋ (keep η₁) (keep η₂) zero    = refl
 comp-ren∋ (keep η₁) (keep η₂) (suc 𝒾) = suc & comp-ren∋ η₁ η₂ 𝒾
 
 
-𝐫𝐞𝐧∋ : ∀ {X} → {A : X} → Presheaf 𝐎𝐏𝐄 (_∋ A) ren∋
+𝐫𝐞𝐧∋ : ∀ {X} → {A : X} → Presheaf 𝐎𝐏𝐄 (_∋ A)
 𝐫𝐞𝐧∋ = record
-         { idℱ   = funext! id-ren∋
+         { ℱ     = ren∋
+         ; idℱ   = funext! id-ren∋
          ; compℱ = \ η₁ η₂ → funext! (comp-ren∋ η₁ η₂)
          }
 

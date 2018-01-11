@@ -69,9 +69,10 @@ comp-REN∋ (keep e₁) (keep e₂) zero    = refl
 comp-REN∋ (keep e₁) (keep e₂) (suc i) = suc & comp-REN∋ e₁ e₂ i
 
 
-𝐑𝐄𝐍∋ : Presheaf 𝐆𝐄𝐐 Fin REN∋
+𝐑𝐄𝐍∋ : Presheaf 𝐆𝐄𝐐 Fin
 𝐑𝐄𝐍∋ = record
-         { idℱ   = funext! id-REN∋
+         { ℱ     = REN∋
+         ; idℱ   = funext! id-REN∋
          ; compℱ = \ e₁ e₂ → funext! (comp-REN∋ e₁ e₂)
          }
 

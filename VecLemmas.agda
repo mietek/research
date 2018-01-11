@@ -51,9 +51,10 @@ comp-GETS (Ξ , B) (drop e₁) (keep e₂) = comp-GETS Ξ e₁ e₂
 comp-GETS (Ξ , A) (keep e₁) (keep e₂) = (_, A) & comp-GETS Ξ e₁ e₂
 
 
-𝐆𝐄𝐓𝐒 : ∀ {X} → Presheaf (Opposite 𝐆𝐄𝐐) (Vec X) (flip GETS)
+𝐆𝐄𝐓𝐒 : ∀ {X} → Presheaf (Opposite 𝐆𝐄𝐐) (Vec X)
 𝐆𝐄𝐓𝐒 = record
-         { idℱ   = funext! id-GETS
+         { ℱ     = flip GETS
+         ; idℱ   = funext! id-GETS
          ; compℱ = \ e₁ e₂ → funext! (\ Ξ → comp-GETS Ξ e₂ e₁)
          }
 
@@ -129,9 +130,9 @@ comp-ren∋ (keep η₁) (keep η₂) (suc 𝒾) = suc & comp-ren∋ η₁ η₂
 𝐫𝐞𝐧∋ : ∀ {X A} → Presheaf (𝐎𝐏𝐄 {X})
                            (\ { (n , Ξ) →
                              Σ (Fin n) (\ i → Ξ ∋⟨ i ⟩ A) })
-                           (\ { (e , η) (i , 𝒾) → REN∋ e i , ren∋ η 𝒾 })
 𝐫𝐞𝐧∋ = record
-         { idℱ   = funext! (\ { (i , 𝒾) →
+         { ℱ     = \ { (e , η) (i , 𝒾) → REN∋ e i , ren∋ η 𝒾 }
+         ; idℱ   = funext! (\ { (i , 𝒾) →
                      (REN∋ id i ,_) & id-ren∋ 𝒾 })
          ; compℱ = \ { (e₁ , η₁) (e₂ , η₂) →
                      funext! (\ { (i , 𝒾) →
