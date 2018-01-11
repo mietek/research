@@ -2,6 +2,7 @@ module StdS4NormalForms where
 
 open import Prelude
 open import List
+open import List2
 open import StdS4
 
 
@@ -10,7 +11,7 @@ open import StdS4
 
 mutual
   infix 3 _⊢ₙₘ_
-  data _⊢ₙₘ_ : Context → Truth → Set
+  data _⊢ₙₘ_ : List² Validity Truth → Truth → Set
     where
       lam : ∀ {A B Δ Γ} → Δ ⨾ Γ , A true ⊢ₙₘ B true
                         → Δ ⨾ Γ ⊢ₙₘ A ⊃ B true
@@ -25,7 +26,7 @@ mutual
                    → Δ ⨾ Γ ⊢ₙₘ BASE true
 
   infix 3 _⊢ₙₜ_
-  data _⊢ₙₜ_ : Context → Truth → Set
+  data _⊢ₙₜ_ : List² Validity Truth → Truth → Set
     where
       var : ∀ {A Δ Γ} → Γ ∋ A true
                       → Δ ⨾ Γ ⊢ₙₜ A true

@@ -11,8 +11,8 @@ open import Fin
                               e ∘≥ id≥ ≡ e                                      rid∘≥   ⎬ 𝐆𝐄𝐐
                       (e₁ ∘≥ e₂) ∘≥ e₃ ≡ e₁ ∘≥ (e₂ ∘≥ e₃)                       assoc∘≥ ⎭
 
-                             REN∋ id i ≡ i                                      id-REN∋   ⎱ 𝐑𝐄𝐍∋
-                     REN∋ (e₁ ∘≥ e₂) i ≡ (REN∋ e₂ ∘ REN∋ e₁) i                  comp-REN∋ ⎰
+                             REN∋ id I ≡ I                                      id-REN∋   ⎱ 𝐑𝐄𝐍∋
+                     REN∋ (e₁ ∘≥ e₂) I ≡ (REN∋ e₂ ∘ REN∋ e₁) I                  comp-REN∋ ⎰
 -}
 --------------------------------------------------------------------------------
 
@@ -54,19 +54,19 @@ instance
 --------------------------------------------------------------------------------
 
 
-id-REN∋ : ∀ {n} → (i : Fin n)
-                → REN∋ id i ≡ i
+id-REN∋ : ∀ {n} → (I : Fin n)
+                → REN∋ id I ≡ I
 id-REN∋ zero    = refl
-id-REN∋ (suc i) = suc & id-REN∋ i
+id-REN∋ (suc I) = suc & id-REN∋ I
 
 
-comp-REN∋ : ∀ {n n′ n″} → (e₁ : n′ ≥ n) (e₂ : n″ ≥ n′) (i : Fin n)
-                        → REN∋ (e₁ ∘ e₂) i ≡ (REN∋ e₂ ∘ REN∋ e₁) i
-comp-REN∋ e₁        done      i       = refl
-comp-REN∋ e₁        (drop e₂) i       = suc & comp-REN∋ e₁ e₂ i
-comp-REN∋ (drop e₁) (keep e₂) i       = suc & comp-REN∋ e₁ e₂ i
+comp-REN∋ : ∀ {n n′ n″} → (e₁ : n′ ≥ n) (e₂ : n″ ≥ n′) (I : Fin n)
+                        → REN∋ (e₁ ∘ e₂) I ≡ (REN∋ e₂ ∘ REN∋ e₁) I
+comp-REN∋ e₁        done      I       = refl
+comp-REN∋ e₁        (drop e₂) I       = suc & comp-REN∋ e₁ e₂ I
+comp-REN∋ (drop e₁) (keep e₂) I       = suc & comp-REN∋ e₁ e₂ I
 comp-REN∋ (keep e₁) (keep e₂) zero    = refl
-comp-REN∋ (keep e₁) (keep e₂) (suc i) = suc & comp-REN∋ e₁ e₂ i
+comp-REN∋ (keep e₁) (keep e₂) (suc I) = suc & comp-REN∋ e₁ e₂ I
 
 
 𝐑𝐄𝐍∋ : Presheaf 𝐆𝐄𝐐 Fin

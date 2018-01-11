@@ -3,6 +3,7 @@ module StdS4Semantics where
 open import Prelude
 open import Category
 open import List
+open import List2
 open import AllList
 open import StdS4
 open import StdS4NormalForms
@@ -28,7 +29,7 @@ record Model : Set₁
       relG : ∀ {W W′} → W′ ≥ W → Ground W
                       → Ground W′
 
-      ⌊_⌋ : World → Context
+      ⌊_⌋ : World → List² Validity Truth
 
       ⌊_⌋≥ : ∀ {W W′} → W′ ≥ W
                       → ⌊ W′ ⌋ ⊇² ⌊ W ⌋
@@ -40,7 +41,7 @@ open Model {{...}}
 
 
 ⌊_⌋₁ : ∀ {{_ : Model}} → World → List Validity
-⌊ W ⌋₁ = Context.Δ ⌊ W ⌋
+⌊ W ⌋₁ = proj₁ ⌊ W ⌋
 
 
 ⌊_⌋≥₁ : ∀ {{_ : Model}} {W W′} → W′ ≥ W
@@ -154,7 +155,7 @@ bind k f = \ η f′ →
 
 
 infix 3 _⊨_
-_⊨_ : Context → Truth → Set₁
+_⊨_ : List² Validity Truth → Truth → Set₁
 Δ ⨾ Γ ⊨ A true = ∀ {{_ : Model}} {W} → W ⊪⋆₁ Δ → W ⊪⋆ Γ
                                       → W ⊪ A true
 
@@ -178,11 +179,11 @@ _⊨_ : Context → Truth → Set₁
 instance
   canon : Model
   canon = record
-            { World  = Context
+            { World  = List² Validity Truth
             ; Ground = _⊢ₙₜ BASE true
             ; _≥_    = _⊇²_
-            ; id≥    = id⊇²
-            ; _∘≥_   = _∘⊇²_
+            ; id≥    = id
+            ; _∘≥_   = _∘_
             ; relG   = renₙₜ²
             ; ⌊_⌋    = id
             ; ⌊_⌋≥   = id
@@ -194,13 +195,13 @@ mutual
                 → Δ ⨾ Γ ⊪ A true
   ⇓ {BASE}  𝒟 = return {BASE} 𝒟
   ⇓ {A ⊃ B} 𝒟 = return {A ⊃ B} (\ η k → ⇓ (app (renₙₜ² η 𝒟) (⇑ k)))
-  ⇓ {□ A}   𝒟 = \ η f → letbox (renₙₜ² η 𝒟) (f (mdrop⊇² id⊇²) (mvz , ⇓ mvzₙₜ))
+  ⇓ {□ A}   𝒟 = \ η f → letbox (renₙₜ² η 𝒟) (f (drop₁ id) (mvz , ⇓ mvzₙₜ))
 
   ⇑ : ∀ {A Δ Γ} → Δ ⨾ Γ ⊪ A true
                 → Δ ⨾ Γ ⊢ₙₘ A true
-  ⇑ {BASE}  k = k id⊇² (\ η 𝒟 → nt 𝒟)
-  ⇑ {A ⊃ B} k = k id⊇² (\ η f → lam (⇑ (f (drop⊇² id⊇²) (⇓ vzₙₜ))))
-  ⇑ {□ A}   k = k id⊇² (\ η v → box (syn v))
+  ⇑ {BASE}  k = k id (\ η 𝒟 → nt 𝒟)
+  ⇑ {A ⊃ B} k = k id (\ η f → lam (⇑ (f (drop₂ id) (⇓ vzₙₜ))))
+  ⇑ {□ A}   k = k id (\ η v → box (syn v))
 
 
 --------------------------------------------------------------------------------
@@ -208,7 +209,7 @@ mutual
 
 swk : ∀ {A B Δ Γ} → Δ ⨾ Γ ⊪ A true
                   → Δ ⨾ Γ , B true ⊪ A true
-swk {A} k = crel {A true} (drop⊇² id⊇²) k
+swk {A} k = crel {A true} (drop₂ id) k
 
 
 svz : ∀ {A Δ Γ} → Δ ⨾ Γ , A true ⊪ A true
@@ -220,7 +221,7 @@ svz = ⇓ vzₙₜ
 
 smwk : ∀ {A B Δ Γ} → Δ ⨾ Γ ⊪ A true
                    → Δ , B valid ⨾ Γ ⊪ A true
-smwk {A} k = crel {A true} (mdrop⊇² id⊇²) k
+smwk {A} k = crel {A true} (drop₁ id) k
 
 
 smvz : ∀ {A Δ Γ} → Δ , A valid ⨾ Γ ⊪ A true
@@ -232,7 +233,7 @@ smvz = ⇓ mvzₙₜ
 
 swks : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊪⋆ Ξ
                    → Δ ⨾ Γ , A true ⊪⋆ Ξ
-swks ξ = crels (drop⊇² id⊇²) ξ
+swks ξ = crels (drop₂ id) ξ
 
 
 slifts : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊪⋆ Ξ
@@ -256,7 +257,7 @@ sids = svars id⊇
 
 smwks : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊪⋆ Ξ
                     → Δ , A valid ⨾ Γ ⊪⋆ Ξ
-smwks ξ = crels (mdrop⊇² id⊇²) ξ
+smwks ξ = crels (drop₁ id) ξ
 
 
 --------------------------------------------------------------------------------
@@ -264,7 +265,7 @@ smwks ξ = crels (mdrop⊇² id⊇²) ξ
 
 smwks₁ : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊪⋆₁ Ξ
                      → Δ , A valid ⨾ Γ ⊪⋆₁ Ξ
-smwks₁ ξ = crels₁ (mdrop⊇² id⊇²) ξ
+smwks₁ ξ = crels₁ (drop₁ id) ξ
 
 
 smvz₁ : ∀ {A Δ Γ} → Δ , A valid ⨾ Γ ⊪₁ A valid

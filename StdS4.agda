@@ -2,6 +2,7 @@ module StdS4 where
 
 open import Prelude
 open import List
+open import List2
 open import AllList
 
 
@@ -35,47 +36,8 @@ record Validity : Set
 --------------------------------------------------------------------------------
 
 
-infix 5 _⨾_
-record Context : Set
-  where
-    constructor _⨾_
-    field
-      Δ : List Validity
-      Γ : List Truth
-
-
---------------------------------------------------------------------------------
-
-
-infix 4 _⊇²_
-_⊇²_ : Context → Context → Set
-Δ′ ⨾ Γ′ ⊇² Δ ⨾ Γ = Δ′ ⊇ Δ × Γ′ ⊇ Γ
-
-
-drop⊇² : ∀ {A Δ Δ′ Γ Γ′} → Δ′ ⨾ Γ′ ⊇² Δ ⨾ Γ
-                         → Δ′ ⨾ Γ′ , A true ⊇² Δ ⨾ Γ
-drop⊇² η = proj₁ η , drop (proj₂ η)
-
-
-mdrop⊇² : ∀ {A Δ Δ′ Γ Γ′} → Δ′ ⨾ Γ′ ⊇² Δ ⨾ Γ
-                          → Δ′ , A valid ⨾ Γ′ ⊇² Δ ⨾ Γ
-mdrop⊇² η = drop (proj₁ η) , proj₂ η
-
-
-id⊇² : ∀ {Δ Γ} → Δ ⨾ Γ ⊇² Δ ⨾ Γ
-id⊇² = id⊇ , id⊇
-
-
-_∘⊇²_ : ∀ {Δ Δ′ Δ″ Γ Γ′ Γ″} → Δ′ ⨾ Γ′ ⊇² Δ ⨾ Γ → Δ″ ⨾ Γ″ ⊇² Δ′ ⨾ Γ′
-                            → Δ″ ⨾ Γ″ ⊇² Δ ⨾ Γ
-η₁ ∘⊇² η₂ = (proj₁ η₁ ∘⊇ proj₁ η₂) , (proj₂ η₁ ∘⊇ proj₂ η₂)
-
-
---------------------------------------------------------------------------------
-
-
 infix 3 _⊢_
-data _⊢_ : Context → Truth → Set
+data _⊢_ : List² Validity Truth → Truth → Set
   where
     var : ∀ {A Δ Γ} → Γ ∋ A true
                     → Δ ⨾ Γ ⊢ A true
@@ -144,7 +106,7 @@ mvz = mvar zero
 
 
 infix 3 _⊢⋆_
-_⊢⋆_ : Context → List Truth → Set
+_⊢⋆_ : List² Validity Truth → List Truth → Set
 Δ ⨾ Γ ⊢⋆ Ξ = All (Δ ⨾ Γ ⊢_) Ξ
 
 

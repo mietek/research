@@ -20,7 +20,7 @@ data _≥_ : Nat → Nat → Set
 
 id≥ : ∀ {n} → n ≥ n
 id≥ {zero}  = done
-id≥ {suc i} = keep id≥
+id≥ {suc I} = keep id≥
 
 
 _∘≥_ : ∀ {n n′ n″} → n′ ≥ n → n″ ≥ n′
@@ -44,10 +44,10 @@ data Fin : Nat → Set
 
 REN∋ : ∀ {n n′} → n′ ≥ n → Fin n
                 → Fin n′
-REN∋ done     i       = i
-REN∋ (drop e) i       = suc (REN∋ e i)
+REN∋ done     I       = I
+REN∋ (drop e) I       = suc (REN∋ e I)
 REN∋ (keep e) zero    = zero
-REN∋ (keep e) (suc i) = suc (REN∋ e i)
+REN∋ (keep e) (suc I) = suc (REN∋ e I)
 
 
 --------------------------------------------------------------------------------

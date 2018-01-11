@@ -30,6 +30,41 @@ open Category {{...}} public
 --------------------------------------------------------------------------------
 
 
+Opposite : ∀ {ℓ ℓ′} → {X : Set ℓ} {_▻_ : X → X → Set ℓ′}
+                    → Category X _▻_
+                    → Category X (flip _▻_)
+Opposite C = record
+               { id     = id
+               ; _∘_    = flip _∘_
+               ; lid∘   = rid∘
+               ; rid∘   = lid∘
+               ; assoc∘ = \ f g h → assoc∘ h g f ⁻¹
+               }
+  where
+    private
+      instance _ = C
+
+
+Product : ∀ {ℓ ℓ′ ℓ″ ℓ‴} → {X : Set ℓ} {_▻_ : X → X → Set ℓ′}
+                            {Y : Set ℓ″} {_►_ : Y → Y → Set ℓ‴}
+                         → Category X _▻_ → Category Y _►_
+                         → Category (X × Y) (\ { (x , a) (y , b) → x ▻ y × a ► b })
+Product C D = record
+                { id     = id , id
+                ; _∘_    = \ { (f , p) (g , q) → f ∘ g , p ∘ q }
+                ; lid∘   = \ { (f , p) → _,_ & lid∘ f ⊗ lid∘ p }
+                ; rid∘   = \ { (f , p) → _,_ & rid∘ f ⊗ rid∘ p }
+                ; assoc∘ = \ { (f , p) (g , q) (h , r) → _,_ & assoc∘ f g h ⊗ assoc∘ p q r }
+                }
+  where
+    private
+      instance _ = C
+      instance _ = D
+
+
+--------------------------------------------------------------------------------
+
+
 record Functor {ℓ ℓ′ ℓ″ ℓ‴} {X : Set ℓ} {_▻_ : X → X → Set ℓ′}
                             {Y : Set ℓ″} {_►_ : Y → Y → Set ℓ‴}
                             (C : Category X _▻_) (D : Category Y _►_)
@@ -52,21 +87,6 @@ open Functor {{...}} public
 
 
 --------------------------------------------------------------------------------
-
-
-Opposite : ∀ {ℓ ℓ′} → {X : Set ℓ} {_▻_ : X → X → Set ℓ′}
-                    → Category X _▻_
-                    → Category X (flip _▻_)
-Opposite C = record
-               { id     = id
-               ; _∘_    = flip _∘_
-               ; lid∘   = rid∘
-               ; rid∘   = lid∘
-               ; assoc∘ = \ f g h → assoc∘ h g f ⁻¹
-               }
-  where
-    private
-      instance _ = C
 
 
 instance

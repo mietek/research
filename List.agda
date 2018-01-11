@@ -32,7 +32,7 @@ GET : ∀ {X n} → (Ξ : List X) {{_ : len Ξ ≡ n}} → Fin n
               → X
 GET ∙       {{refl}} ()
 GET (Ξ , A) {{refl}} zero    = A
-GET (Ξ , B) {{refl}} (suc i) = GET Ξ i
+GET (Ξ , B) {{refl}} (suc I) = GET Ξ I
 
 
 GETS : ∀ {X n n′} → (Ξ : List X) {{_ : len Ξ ≡ n′}} → n′ ≥ n
@@ -55,12 +55,6 @@ data _⊇_ {X} : List X → List X → Set
 
     keep : ∀ {A Ξ Ξ′} → Ξ′ ⊇ Ξ
                       → Ξ′ , A ⊇ Ξ , A
-
-
-bot⊇ : ∀ {X} → {Ξ : List X}
-             → Ξ ⊇ ∙
-bot⊇ {Ξ = ∙}     = done
-bot⊇ {Ξ = Ξ , A} = drop bot⊇
 
 
 id⊇ : ∀ {X} → {Ξ : List X}

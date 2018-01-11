@@ -1,7 +1,10 @@
 module StdCML where
 
 open import Prelude
+open import Category
 open import List
+open import ListLemmas
+open import List2
 open import AllList
 
 
@@ -37,48 +40,9 @@ record Validity : Set
 --------------------------------------------------------------------------------
 
 
-infix 5 _⨾_
-record Context : Set
-  where
-    constructor _⨾_
-    field
-      Δ : List Validity
-      Γ : List Truth
-
-
---------------------------------------------------------------------------------
-
-
-infix 4 _⊇²_
-_⊇²_ : Context → Context → Set
-Δ′ ⨾ Γ′ ⊇² Δ ⨾ Γ = Δ′ ⊇ Δ × Γ′ ⊇ Γ
-
-
-drop⊇² : ∀ {A Δ Δ′ Γ Γ′} → Δ′ ⨾ Γ′ ⊇² Δ ⨾ Γ
-                         → Δ′ ⨾ Γ′ , A true ⊇² Δ ⨾ Γ
-drop⊇² η = proj₁ η , drop (proj₂ η)
-
-
-mdrop⊇² : ∀ {A Ψ Δ Δ′ Γ Γ′} → Δ′ ⨾ Γ′ ⊇² Δ ⨾ Γ
-                            → Δ′ , A valid[ Ψ ] ⨾ Γ′ ⊇² Δ ⨾ Γ
-mdrop⊇² η = drop (proj₁ η) , proj₂ η
-
-
-id⊇² : ∀ {Δ Γ} → Δ ⨾ Γ ⊇² Δ ⨾ Γ
-id⊇² = id⊇ , id⊇
-
-
-_∘⊇²_ : ∀ {Δ Δ′ Δ″ Γ Γ′ Γ″} → Δ′ ⨾ Γ′ ⊇² Δ ⨾ Γ → Δ″ ⨾ Γ″ ⊇² Δ′ ⨾ Γ′
-                            → Δ″ ⨾ Γ″ ⊇² Δ ⨾ Γ
-η₁ ∘⊇² η₂ = (proj₁ η₁ ∘⊇ proj₁ η₂) , (proj₂ η₁ ∘⊇ proj₂ η₂)
-
-
---------------------------------------------------------------------------------
-
-
 mutual
   infix 3 _⊢_
-  data _⊢_ : Context → Truth → Set
+  data _⊢_ : List² Validity Truth → Truth → Set
     where
       var : ∀ {A Δ Γ} → Γ ∋ A true
                       → Δ ⨾ Γ ⊢ A true
@@ -99,7 +63,7 @@ mutual
                              → Δ ⨾ Γ ⊢ B true
 
   infix 3 _⊢⋆_
-  _⊢⋆_ : Context → List Truth → Set
+  _⊢⋆_ : List² Validity Truth → List Truth → Set
   Δ ⨾ Γ ⊢⋆ Ξ = All (Δ ⨾ Γ ⊢_) Ξ
 
 
@@ -129,7 +93,7 @@ mutual
 
 wk : ∀ {B A Δ Γ} → Δ ⨾ Γ ⊢ A true
                  → Δ ⨾ Γ , B true ⊢ A true
-wk 𝒟 = ren (drop id⊇) 𝒟
+wk 𝒟 = ren (drop id) 𝒟
 
 
 vz : ∀ {A Δ Γ} → Δ ⨾ Γ , A true ⊢ A true
@@ -141,7 +105,7 @@ vz = var zero
 
 wks : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊢⋆ Ξ
                   → Δ ⨾ Γ , A true ⊢⋆ Ξ
-wks ξ = rens (drop id⊇) ξ
+wks ξ = rens (drop id) ξ
 
 
 lifts : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊢⋆ Ξ
@@ -157,7 +121,7 @@ vars (keep η) = lifts (vars η)
 
 
 ids : ∀ {Δ Γ} → Δ ⨾ Γ ⊢⋆ Γ
-ids = vars id⊇
+ids = vars id
 
 
 --------------------------------------------------------------------------------
@@ -186,12 +150,12 @@ mutual
 
 mwk : ∀ {B Ψ A Δ Γ} → Δ ⨾ Γ ⊢ A true
                     → Δ , B valid[ Ψ ] ⨾ Γ ⊢ A true
-mwk 𝒟 = mren (drop id⊇) 𝒟
+mwk 𝒟 = mren (drop id) 𝒟
 
 
 mwks : ∀ {A Ψ Δ Γ Ξ} → Δ ⨾ Γ ⊢⋆ Ξ
                      → Δ , A valid[ Ψ ] ⨾ Γ ⊢⋆ Ξ
-mwks ξ = mrens (drop id⊇) ξ
+mwks ξ = mrens (drop id) ξ
 
 
 mvz : ∀ {A Ψ Δ Γ} → Δ , A valid[ Ψ ] ⨾ Γ ⊢⋆ Ψ
@@ -247,7 +211,7 @@ mrens₁ η ξ = maps (mren η) ξ
 
 mwks₁ : ∀ {A Ψ Δ Ξ} → Δ ⊢⋆₁ Ξ
                     → Δ , A valid[ Ψ ] ⊢⋆₁ Ξ
-mwks₁ ξ = mrens₁ (drop id⊇) ξ
+mwks₁ ξ = mrens₁ (drop id) ξ
 
 
 mlifts₁ : ∀ {A Ψ Δ Ξ} → Δ ⊢⋆₁ Ξ
@@ -263,7 +227,7 @@ mvars₁ (keep η) = mlifts₁ (mvars₁ η)
 
 
 mids₁ : ∀ {Δ} → Δ ⊢⋆₁ Δ
-mids₁ = mvars₁ id⊇
+mids₁ = mvars₁ id
 
 
 --------------------------------------------------------------------------------

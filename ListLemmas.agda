@@ -11,9 +11,9 @@ open import List
 
 --------------------------------------------------------------------------------
 {-
-                      GET (GETS Ξ e) i ≡ (GET Ξ ∘ REN∋ e) i                     comp-GET-REN∋
+                      GET (GETS Ξ e) I ≡ (GET Ξ ∘ REN∋ e) I                     comp-GET-REN∋
 
-                            GETS Ξ id≥ ≡ Ξ                                      id-GETS   ⎱ 𝐆𝐄𝐓𝐒
+                             GETS Ξ id ≡ Ξ                                      id-GETS   ⎱ 𝐆𝐄𝐓𝐒
                       GETS Ξ (e₁ ∘ e₂) ≡ GETS (GETS Ξ e₂) e₁                    comp-GETS ⎰
 
                               id⊇ ∘⊇ η ≡ η                                      lid∘⊇   ⎫
@@ -34,19 +34,19 @@ len-GETS (Ξ , A) {{refl}} (keep e) = suc & len-GETS Ξ e
 
 
 {-# REWRITE len-GETS #-}
-comp-GET-REN∋ : ∀ {X n n′} → (Ξ : List X) {{_ : len Ξ ≡ n′}} (e : n′ ≥ n) (i : Fin n)
-                           → GET (GETS Ξ e) i ≡ (GET Ξ ∘ REN∋ e) i
+comp-GET-REN∋ : ∀ {X n n′} → (Ξ : List X) {{_ : len Ξ ≡ n′}} (e : n′ ≥ n) (I : Fin n)
+                           → GET (GETS Ξ e) I ≡ (GET Ξ ∘ REN∋ e) I
 comp-GET-REN∋ ∙       {{refl}} done     ()
-comp-GET-REN∋ (Ξ , B) {{refl}} (drop e) i       = comp-GET-REN∋ Ξ e i
+comp-GET-REN∋ (Ξ , B) {{refl}} (drop e) I       = comp-GET-REN∋ Ξ e I
 comp-GET-REN∋ (Ξ , A) {{refl}} (keep e) zero    = refl
-comp-GET-REN∋ (Ξ , B) {{refl}} (keep e) (suc i) = comp-GET-REN∋ Ξ e i
+comp-GET-REN∋ (Ξ , B) {{refl}} (keep e) (suc I) = comp-GET-REN∋ Ξ e I
 
 
 --------------------------------------------------------------------------------
 
 
 id-GETS : ∀ {X n} → (Ξ : List X) {{p : len Ξ ≡ n}}
-                  → GETS Ξ {{p}} id≥ ≡ Ξ
+                  → GETS Ξ {{p}} id ≡ Ξ
 id-GETS ∙       {{refl}} = refl
 id-GETS (Ξ , A) {{refl}} = (_, A) & id-GETS Ξ
 

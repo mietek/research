@@ -3,6 +3,8 @@ module StdCMLSemantics where
 open import Prelude
 open import Category
 open import List
+open import ListLemmas
+open import List2
 open import AllList
 open import StdCML
 open import StdCMLNormalForms
@@ -28,7 +30,7 @@ record Model : Set₁
       relG : ∀ {W W′} → W′ ≥ W → Ground W
                       → Ground W′
 
-      ⌊_⌋ : World → Context
+      ⌊_⌋ : World → List² Validity Truth
 
       ⌊_⌋≥ : ∀ {W W′} → W′ ≥ W
                       → ⌊ W′ ⌋ ⊇² ⌊ W ⌋
@@ -40,7 +42,7 @@ open Model {{...}}
 
 
 ⌊_⌋₁ : ∀ {{_ : Model}} → World → List Validity
-⌊ W ⌋₁ = Context.Δ ⌊ W ⌋
+⌊ W ⌋₁ = proj₁ ⌊ W ⌋
 
 
 ⌊_⌋≥₁ : ∀ {{_ : Model}} {W W′} → W′ ≥ W
@@ -164,12 +166,12 @@ bind k f = \ η f′ →
 
 
 infix 3 _⊨_
-_⊨_ : Context → Truth → Set₁
+_⊨_ : List² Validity Truth → Truth → Set₁
 Δ ⨾ Γ ⊨ A true = ∀ {{_ : Model}} {W} → W ⊪⋆₁ Δ → W ⊪⋆ Γ
                                       → W ⊪ A true
 
 infix 3 _⊨⋆_
-_⊨⋆_ : Context → List Truth → Set₁
+_⊨⋆_ : List² Validity Truth → List Truth → Set₁
 Δ ⨾ Γ ⊨⋆ Ξ = ∀ {{_ : Model}} {W} → W ⊪⋆₁ Δ → W ⊪⋆ Γ
                                   → W ⊪⋆ Ξ
 
@@ -201,11 +203,11 @@ mutual
 instance
   canon : Model
   canon = record
-            { World  = Context
+            { World  = List² Validity Truth
             ; Ground = _⊢ₙₜ BASE true
             ; _≥_    = _⊇²_
-            ; id≥    = id⊇²
-            ; _∘≥_   = _∘⊇²_
+            ; id≥    = id
+            ; _∘≥_   = _∘_
             ; relG   = renₙₜ²
             ; ⌊_⌋    = id
             ; ⌊_⌋≥   = id
@@ -227,15 +229,15 @@ mutual
                 → Δ ⨾ Γ ⊪ A true
   ⇓ {BASE}    𝒟 = return {BASE} 𝒟
   ⇓ {A ⊃ B}   𝒟 = return {A ⊃ B} (\ η k → ⇓ (app (renₙₜ² η 𝒟) (⇑ k)))
-  ⇓ {[ Ψ ] A} 𝒟 = \ η f → letbox (renₙₜ² η 𝒟) (f (mdrop⊇² id⊇²) (\ η′ →
+  ⇓ {[ Ψ ] A} 𝒟 = \ η f → letbox (renₙₜ² η 𝒟) (f (drop₁ id) (\ η′ →
                     xmvz (proj₁ η′) ids ,
-                    \ η″ ψ → ⇓ (xmvzₙₜ (proj₁ (η′ ∘⊇² η″)) (⇑⋆ ψ))))
+                    \ η″ ψ → ⇓ (xmvzₙₜ (proj₁ (η′ ∘ η″)) (⇑⋆ ψ))))
 
   ⇑ : ∀ {A Δ Γ} → Δ ⨾ Γ ⊪ A true
                 → Δ ⨾ Γ ⊢ₙₘ A true
-  ⇑ {BASE}    k = k id⊇² (\ η 𝒟 → nt 𝒟)
-  ⇑ {A ⊃ B}   k = k id⊇² (\ η f → lam (⇑ (f (drop⊇² id⊇²) (⇓ vzₙₜ))))
-  ⇑ {[ Ψ ] A} k = k id⊇² (\ η f → box (syn (f id⊇²)))
+  ⇑ {BASE}    k = k id (\ η 𝒟 → nt 𝒟)
+  ⇑ {A ⊃ B}   k = k id (\ η f → lam (⇑ (f (drop₂ id) (⇓ vzₙₜ))))
+  ⇑ {[ Ψ ] A} k = k id (\ η f → box (syn (f id)))
 
   ⇑⋆ : ∀ {Ξ Δ Γ} → Δ ⨾ Γ ⊪⋆ Ξ
                  → Δ ⨾ Γ ⊢⋆ₙₘ Ξ
@@ -248,7 +250,7 @@ mutual
 
 swk : ∀ {A B Δ Γ} → Δ ⨾ Γ ⊪ A true
                   → Δ ⨾ Γ , B true ⊪ A true
-swk {A} k = crel {A true} (drop⊇² id⊇²) k
+swk {A} k = crel {A true} (drop₂ id) k
 
 
 svz : ∀ {A Δ Γ} → Δ ⨾ Γ , A true ⊪ A true
@@ -260,7 +262,7 @@ svz = ⇓ vzₙₜ
 
 smwk : ∀ {A B Ψ Δ Γ} → Δ ⨾ Γ ⊪ A true
                      → Δ , B valid[ Ψ ] ⨾ Γ ⊪ A true
-smwk {A} k = crel {A true} (mdrop⊇² id⊇²) k
+smwk {A} k = crel {A true} (drop₁ id) k
 
 
 smvz : ∀ {A Ψ Δ Γ} → Δ ⨾ Γ ⊢⋆ₙₘ Ψ
@@ -273,7 +275,7 @@ smvz ψ = ⇓ (mvzₙₜ ψ)
 
 swks : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊪⋆ Ξ
                    → Δ ⨾ Γ , A true ⊪⋆ Ξ
-swks ξ = crels (drop⊇² id⊇²) ξ
+swks ξ = crels (drop₂ id) ξ
 
 
 slifts : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊪⋆ Ξ
@@ -289,7 +291,7 @@ svars (keep η) = slifts (svars η)
 
 
 sids : ∀ {Δ Γ} → Δ ⨾ Γ ⊪⋆ Γ
-sids = svars id⊇
+sids = svars id
 
 
 --------------------------------------------------------------------------------
@@ -297,7 +299,7 @@ sids = svars id⊇
 
 smwks : ∀ {A Ψ Δ Γ Ξ} → Δ ⨾ Γ ⊪⋆ Ξ
                       → Δ , A valid[ Ψ ] ⨾ Γ ⊪⋆ Ξ
-smwks ξ = crels (mdrop⊇² id⊇²) ξ
+smwks ξ = crels (drop₁ id) ξ
 
 
 --------------------------------------------------------------------------------
@@ -305,7 +307,7 @@ smwks ξ = crels (mdrop⊇² id⊇²) ξ
 
 smwks₁ : ∀ {A Ψ Δ Γ Ξ} → Δ ⨾ Γ ⊪⋆₁ Ξ
                        → Δ , A valid[ Ψ ] ⨾ Γ ⊪⋆₁ Ξ
-smwks₁ ξ = crels₁ (mdrop⊇² id⊇²) ξ
+smwks₁ ξ = crels₁ (drop₁ id) ξ
 
 
 smvz₁ : ∀ {A Ψ Δ Γ} → Δ , A valid[ Ψ ] ⨾ Γ ⊪₁ A valid[ Ψ ]
@@ -326,7 +328,7 @@ smvars₁ (keep η) = smlifts₁ (smvars₁ η)
 
 
 smids₁ : ∀ {Δ Γ} → Δ ⨾ Γ ⊪⋆₁ Δ
-smids₁ = smvars₁ id⊇
+smids₁ = smvars₁ id
 
 
 --------------------------------------------------------------------------------

@@ -2,6 +2,7 @@ module StdCMLNormalForms where
 
 open import Prelude
 open import List
+open import List2
 open import AllList
 open import StdCML
 
@@ -11,7 +12,7 @@ open import StdCML
 
 mutual
   infix 3 _⊢ₙₘ_
-  data _⊢ₙₘ_ : Context → Truth → Set
+  data _⊢ₙₘ_ : List² Validity Truth → Truth → Set
     where
       lam : ∀ {A B Δ Γ} → Δ ⨾ Γ , A true ⊢ₙₘ B true
                         → Δ ⨾ Γ ⊢ₙₘ A ⊃ B true
@@ -26,7 +27,7 @@ mutual
                    → Δ ⨾ Γ ⊢ₙₘ BASE true
 
   infix 3 _⊢ₙₜ_
-  data _⊢ₙₜ_ : Context → Truth → Set
+  data _⊢ₙₜ_ : List² Validity Truth → Truth → Set
     where
       var : ∀ {A Δ Γ} → Γ ∋ A true
                       → Δ ⨾ Γ ⊢ₙₜ A true
@@ -38,12 +39,12 @@ mutual
                          → Δ ⨾ Γ ⊢ₙₜ A true
 
   infix 3 _⊢⋆ₙₘ_
-  _⊢⋆ₙₘ_ : Context → List Truth → Set
+  _⊢⋆ₙₘ_ : List² Validity Truth → List Truth → Set
   Δ ⨾ Γ ⊢⋆ₙₘ Ξ = All (Δ ⨾ Γ ⊢ₙₘ_) Ξ
 
 
 infix 3 _⊢⋆ₙₜ_
-_⊢⋆ₙₜ_ : Context → List Truth → Set
+_⊢⋆ₙₜ_ : List² Validity Truth → List Truth → Set
 Δ ⨾ Γ ⊢⋆ₙₜ Ξ = All (Δ ⨾ Γ ⊢ₙₜ_) Ξ
 
 
