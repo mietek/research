@@ -3,7 +3,7 @@ module StdS4Semantics where
 open import Prelude
 open import Category
 open import List
-open import List2
+open import ListLemmas
 open import AllList
 open import StdS4
 open import StdS4NormalForms

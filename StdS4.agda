@@ -2,7 +2,6 @@ module StdS4 where
 
 open import Prelude
 open import List
-open import List2
 open import AllList
 
 
