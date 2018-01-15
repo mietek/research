@@ -1,13 +1,13 @@
-{-# OPTIONS --rewriting #-}
-
-module StdIPLSemantics where
+module SimpleIPLSemantics where
 
 open import Prelude
+open import Category
 open import List
+open import ListLemmas
 open import AllList
-open import StdIPLPropositions
-open import StdIPLDerivations
-open import StdIPLVerifications
+open import IPLPropositions
+open import SimpleIPLDerivations
+open import SimpleIPLVerifications
 
 
 --------------------------------------------------------------------------------
@@ -43,23 +43,23 @@ W ⊩ A ⊃ B true = ∀ {W′} → W′ ≥ W → W′ ⊩ A true
                          → W′ ⊩ B true
 
 
+infix 3 _⊩⋆_
+_⊩⋆_ : ∀ {{_ : Model}} → World → List Truth → Set
+W ⊩⋆ Γ = All (W ⊩_) Γ
+
+
+--------------------------------------------------------------------------------
+
+
 rel : ∀ {{_ : Model}} {A W W′} → W′ ≥ W → W ⊩ A
                                → W′ ⊩ A
 rel {BASE true}  η 𝒟 = relG η 𝒟
 rel {A ⊃ B true} η f = \ η′ a → f (η ∘≥ η′) a
 
 
---------------------------------------------------------------------------------
-
-
-infix 3 _⊩⋆_
-_⊩⋆_ : ∀ {{_ : Model}} → World → List Truth → Set
-W ⊩⋆ Γ = All (W ⊩_) Γ
-
-
 rels : ∀ {{_ : Model}} {Γ W W′} → W′ ≥ W → W ⊩⋆ Γ
                                 → W′ ⊩⋆ Γ
-rels η γ = maps (\ {A} a → rel {A} η a) γ
+rels η γ = maps (\ { {A} a → rel {A} η a }) γ
 
 
 --------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ _⊨_ : List Truth → Truth → Set₁
 
 ↓ : ∀ {Γ A} → Γ ⊢ A true
             → Γ ⊨ A true
-↓ (var 𝒾)   γ = get γ 𝒾
+↓ (var i)   γ = get γ i
 ↓ (lam 𝒟)   γ = \ η a → ↓ 𝒟 (rels η γ , a)
 ↓ (app 𝒟 ℰ) γ = (↓ 𝒟 γ) id≥ (↓ ℰ γ)
 
@@ -81,85 +81,73 @@ _⊨_ : List Truth → Truth → Set₁
 --------------------------------------------------------------------------------
 
 
-postulate
-  id-t2u-u2t : ∀ {Γ} → map t→u (map u→t Γ) ≡ Γ
-  id-u2t-t2u : ∀ {Γ} → map u→t (map t→u Γ) ≡ Γ
-
-{-# REWRITE id-t2u-u2t #-}
-{-# REWRITE id-u2t-t2u #-}
-
-
-
 instance
   canon : Model
   canon = record
             { World  = List Truth
-            ; Ground = \ Γ → map t→u Γ ⊢ᵣ BASE usable
+            ; Ground = _⊢ᵤ BASE true
             ; _≥_    = _⊇_
-            ; id≥    = id⊇
-            ; _∘≥_   = _∘⊇_
-            ; relG   = \ η 𝒟 → renᵣ (map⊇ η) 𝒟
+            ; id≥    = id
+            ; _∘≥_   = _∘_
+            ; relG   = renU
             }
 
 
 mutual
-  ⇓ : ∀ {A Γ} → Γ ⊢ᵣ A usable
-              → map u→t Γ ⊩ A true
+  ⇓ : ∀ {A Γ} → Γ ⊢ᵤ A true
+              → Γ ⊩ A true
   ⇓ {BASE}  𝒟 = 𝒟
-  ⇓ {A ⊃ B} 𝒟 = \ η a → ⇓ (app (renᵣ (map⊇ η) 𝒟) (⇑ a))
+  ⇓ {A ⊃ B} 𝒟 = \ η a → ⇓ (app (renU η 𝒟) (⇑ a))
 
   ⇑ : ∀ {A Γ} → Γ ⊩ A true
-              → map t→u Γ ⊢ₙ A verified
-  ⇑ {BASE}      𝒟 = use 𝒟
-  ⇑ {A ⊃ B} {Γ} f = lam (⇑ (f (drop id⊇) (⇓ {A} {map t→u Γ , A usable} vzᵣ)))
+              → Γ ⊢ᵥ A true
+  ⇑ {BASE}  𝒟 = use 𝒟
+  ⇑ {A ⊃ B} f = lam (⇑ (f (drop id) (⇓ {A} vzU)))
 
 
 --------------------------------------------------------------------------------
 
 
-swk : ∀ {A B Γ} → Γ ⊩ A
-                → Γ , B true ⊩ A
-swk {A} a = rel {A} (drop id⊇) a
+wkS : ∀ {A B Γ} → Γ ⊩ A true
+                → Γ , B true ⊩ A true
+wkS {A} a = rel {A true} (drop id) a
 
 
-svz : ∀ {A Γ} → Γ , A true ⊩ A true
-svz {A} {Γ} = ⇓ {A} {map t→u Γ , A usable} vzᵣ
-
-
---------------------------------------------------------------------------------
-
-
-swks : ∀ {A Γ Ξ} → Γ ⊩⋆ Ξ
+wksS : ∀ {A Γ Ξ} → Γ ⊩⋆ Ξ
                  → Γ , A true ⊩⋆ Ξ
-swks ξ = rels (drop id⊇) ξ
+wksS ξ = rels (drop id) ξ
 
 
-slifts : ∀ {A Γ Ξ} → Γ ⊩⋆ Ξ
+vzS : ∀ {A Γ} → Γ , A true ⊩ A true
+vzS {A} = ⇓ {A} vzU
+
+
+liftsS : ∀ {A Γ Ξ} → Γ ⊩⋆ Ξ
                    → Γ , A true ⊩⋆ Ξ , A true
-slifts {A} ξ = swks ξ , svz {A}
+liftsS {A} ξ = wksS ξ , vzS {A}
 
 
-svars : ∀ {Γ Γ′} → Γ′ ⊇ Γ
+varsS : ∀ {Γ Γ′} → Γ′ ⊇ Γ
                  → Γ′ ⊩⋆ Γ
-svars done     = ∙
-svars (drop η) = swks (svars η)
-svars (keep η) = slifts (svars η)
+varsS done     = ∙
+varsS (drop η) = wksS (varsS η)
+varsS (keep η) = liftsS (varsS η)
 
 
-sids : ∀ {Γ} → Γ ⊩⋆ Γ
-sids = svars id⊇
+idsS : ∀ {Γ} → Γ ⊩⋆ Γ
+idsS = varsS id
 
 
 --------------------------------------------------------------------------------
 
 
 ↑ : ∀ {Γ A} → Γ ⊨ A true
-            → map t→u Γ ⊢ₙ A verified
-↑ f = ⇑ (f sids)
+            → Γ ⊢ᵥ A true
+↑ f = ⇑ (f idsS)
 
 
 nbe : ∀ {Γ A} → Γ ⊢ A true
-              → map t→u Γ ⊢ₙ A verified
+              → Γ ⊢ᵥ A true
 nbe 𝒟 = ↑ (↓ 𝒟)
 
 

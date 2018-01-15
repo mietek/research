@@ -22,6 +22,13 @@ maps f ∙       = ∙
 maps f (ξ , a) = maps f ξ , f a
 
 
+-- gmaps : ∀ {X Y P Q} → {Ξ : List X} {f : X → Y}
+--                     → (∀ {A} → P A → Q (f A)) → All P Ξ
+--                     → All Q (map f Ξ)
+-- gmaps p ∙       = ∙
+-- gmaps p (ξ , a) = gmaps p ξ , p a
+
+
 --------------------------------------------------------------------------------
 
 

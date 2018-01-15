@@ -40,8 +40,10 @@ record Derivation : Set
       {g} : Nat
       Γ   : Truths g
       M   : Term g
-      A   : Truth
+      Aₜ  : Truth
 
+
+-- Evidence for the categorical judgment of derivation.
 
 infix 3 ∙⨾_
 data ∙⨾_ : Derivation → Set
@@ -119,7 +121,7 @@ infix 3 ∙⨾⋆_
 
 rens : ∀ {g g′ e n} → {Γ : Truths g} {Γ′ : Truths g′} {x : Terms g n} {Ξ : Truths n}
                     → Γ′ ⊇⟨ e ⟩ Γ → ∙⨾⋆ Γ ⊢⋆ x ⦂ Ξ
-                    → ∙⨾⋆ Γ′ ⊢⋆ RENS e x ⦂ Ξ 
+                    → ∙⨾⋆ Γ′ ⊢⋆ RENS e x ⦂ Ξ
 rens {x = ∙}     {∙}          η ∙       = ∙
 rens {x = x , M} {Ξ , A true} η (ξ , 𝒟) = rens η ξ , ren η 𝒟
 -- NOTE: Equivalent to
@@ -133,21 +135,21 @@ wks ξ = rens (drop id⊇) ξ
 
 
 lifts : ∀ {g n A} → {Γ : Truths g} {x : Terms g n} {Ξ : Truths n}
-                  → ∙⨾⋆ Γ ⊢⋆ x ⦂ Ξ 
-                  → ∙⨾⋆ Γ , A true ⊢⋆ LIFTS x ⦂ Ξ , A true 
+                  → ∙⨾⋆ Γ ⊢⋆ x ⦂ Ξ
+                  → ∙⨾⋆ Γ , A true ⊢⋆ LIFTS x ⦂ Ξ , A true
 lifts ξ = wks ξ , vz
 
 
 vars : ∀ {g g′ e} → {Γ : Truths g} {Γ′ : Truths g′}
                   → Γ′ ⊇⟨ e ⟩ Γ
-                  → ∙⨾⋆ Γ′ ⊢⋆ VARS e ⦂ Γ 
+                  → ∙⨾⋆ Γ′ ⊢⋆ VARS e ⦂ Γ
 vars done     = ∙
 vars (drop η) = wks (vars η)
 vars (keep η) = lifts (vars η)
 
 
 ids : ∀ {g} → {Γ : Truths g}
-            → ∙⨾⋆ Γ ⊢⋆ IDS ⦂ Γ 
+            → ∙⨾⋆ Γ ⊢⋆ IDS ⦂ Γ
 ids = vars id⊇
 
 

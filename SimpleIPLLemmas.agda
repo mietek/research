@@ -1,4 +1,4 @@
-module StdIPLLemmas where
+module SimpleIPLLemmas where
 
 open import Prelude
 open import Category
@@ -6,34 +6,30 @@ open import List
 open import ListLemmas
 open import AllList
 open import AllListLemmas
-open import StdIPLPropositions
-open import StdIPLDerivations
+open import IPLPropositions
+open import SimpleIPLDerivations
 
 
 --------------------------------------------------------------------------------
 {-
                               ren id 𝒟 ≡ 𝒟                                      id-ren   ⎱ 𝐫𝐞𝐧
                        ren (η₁ ∘ η₂) 𝒟 ≡ (ren η₂ ∘ ren η₁) 𝒟                    comp-ren ⎰
-                        ren (drop η) 𝒟 ≡ (wk ∘ ren η) 𝒟                         -- comp-wk-ren-drop
                  (ren (keep η) ∘ wk) 𝒟 ≡ (wk ∘ ren η) 𝒟                         comp-wk-ren-keep
 
                              rens id ξ ≡ ξ                                      id-rens   ⎱ 𝐫𝐞𝐧𝐬
                       rens (η₁ ∘ η₂) ξ ≡ (rens η₂ ∘ rens η₁) ξ                  comp-rens ⎰
-                       rens (drop η) ξ ≡ (wks ∘ rens η) ξ                       -- comp-wks-rens-drop
                (rens (keep η) ∘ wks) ξ ≡ (wks ∘ rens η) ξ                       comp-wks-rens-keep
              (rens (keep η) ∘ lifts) ξ ≡ (lifts ∘ rens η) ξ                     comp-lifts-rens
 
-                      get (rens η ξ) 𝒾 ≡ (ren η ∘ get ξ) 𝒾                      comp-ren-get
-                             get ids 𝒾 ≡ var 𝒾                                  var-id-get
+                      get (rens η ξ) i ≡ (ren η ∘ get ξ) i                      comp-ren-get
+                             get ids i ≡ var i                                  var-id-get
 
                    gets (rens η₁ ξ) η₂ ≡ (rens η₁ ∘ gets ξ) η₂                  comp-rens-gets
                gets (lifts ξ) (keep η) ≡ (lifts ∘ gets ξ) η                     comp-lifts-gets
 
-                      get (subs ξ ψ) 𝒾 ≡ (sub ξ ∘ get ψ) 𝒾                      comp-sub-get
-                     gets (subs ξ ψ) η ≡ (subs ξ ∘ gets ψ) η                    -- comp-subs-gets
+                      get (subs ξ ψ) i ≡ (sub ξ ∘ get ψ) i                      comp-sub-get
 
                       sub (gets ξ η) 𝒟 ≡ (sub ξ ∘ ren η) 𝒟                      comp-sub-ren
-                     subs (gets ξ η) ψ ≡ (subs ξ ∘ rens η) ψ                    -- comp-subs-rens
 
                     sub (ξ , 𝒟) (wk ℰ) ≡ sub ξ ℰ                                expand-sub
                   subs (ξ , 𝒟) (wks ψ) ≡ subs ξ ψ                               expand-subs
@@ -44,6 +40,7 @@ open import StdIPLDerivations
 
                              sub ids 𝒟 ≡ 𝒟                                      id-sub   ⎱ 𝐬𝐮𝐛
                       sub (subs ξ ψ) 𝒟 ≡ (sub ξ ∘ sub ψ) 𝒟                      comp-sub ⎰
+
                             subs ids ξ ≡ ξ                                      lid-subs   ⎫
                             subs ξ ids ≡ ξ                                      rid-subs   ⎬ 𝐈𝐏𝐋
                      subs (subs ξ ψ) φ ≡ subs ξ (subs ψ φ)                      assoc-subs ⎭
@@ -53,14 +50,14 @@ open import StdIPLDerivations
 
 id-ren : ∀ {Γ A} → (𝒟 : Γ ⊢ A true)
                  → ren id 𝒟 ≡ 𝒟
-id-ren (var 𝒾)   = var & id-ren∋ 𝒾
+id-ren (var i)   = var & id-ren∋ i
 id-ren (lam 𝒟)   = lam & id-ren 𝒟
 id-ren (app 𝒟 ℰ) = app & id-ren 𝒟 ⊗ id-ren ℰ
 
 
 comp-ren : ∀ {Γ Γ′ Γ″ A} → (η₁ : Γ′ ⊇ Γ) (η₂ : Γ″ ⊇ Γ′) (𝒟 : Γ ⊢ A true)
                          → ren (η₁ ∘ η₂) 𝒟 ≡ (ren η₂ ∘ ren η₁) 𝒟
-comp-ren η₁ η₂ (var 𝒾)   = var & comp-ren∋ η₁ η₂ 𝒾
+comp-ren η₁ η₂ (var i)   = var & comp-ren∋ η₁ η₂ i
 comp-ren η₁ η₂ (lam 𝒟)   = lam & comp-ren (keep η₁) (keep η₂) 𝒟
 comp-ren η₁ η₂ (app 𝒟 ℰ) = app & comp-ren η₁ η₂ 𝒟 ⊗ comp-ren η₁ η₂ ℰ
 
@@ -71,14 +68,6 @@ comp-ren η₁ η₂ (app 𝒟 ℰ) = app & comp-ren η₁ η₂ 𝒟 ⊗ comp-r
         ; idℱ   = funext! id-ren
         ; compℱ = \ η₁ η₂ → funext! (comp-ren η₁ η₂)
         }
-
-
--- NOTE: Unused.
-
--- comp-wk-ren-drop : ∀ {Γ Γ′ A B} → (η : Γ′ ⊇ Γ) (𝒟 : Γ ⊢ A true)
---                                 → ren (drop {A = B} η) 𝒟 ≡ (wk ∘ ren η) 𝒟
--- comp-wk-ren-drop η 𝒟 = (\ η′ → ren (drop η′) 𝒟) & rid∘ η ⁻¹
---                      ⋮ comp-ren η (drop id) 𝒟
 
 
 comp-wk-ren-keep : ∀ {Γ Γ′ A B} → (η : Γ′ ⊇ Γ) (𝒟 : Γ ⊢ A true)
@@ -111,14 +100,6 @@ comp-rens η₁ η₂ (ξ , 𝒟) = _,_ & comp-rens η₁ η₂ ξ ⊗ comp-ren 
          }
 
 
--- NOTE: Unused.
-
--- comp-wks-rens-drop : ∀ {Γ Γ′ Ξ A} → (η : Γ′ ⊇ Γ) (ξ : Γ ⊢⋆ Ξ)
---                                   → rens (drop {A = A} η) ξ ≡ (wks ∘ rens η) ξ
--- comp-wks-rens-drop η ∙       = refl
--- comp-wks-rens-drop η (ξ , 𝒟) = _,_ & comp-wks-rens-drop η ξ ⊗ comp-wk-ren-drop η 𝒟
-
-
 comp-wks-rens-keep : ∀ {Γ Γ′ Ξ A} → (η : Γ′ ⊇ Γ) (ξ : Γ ⊢⋆ Ξ)
                                   → (rens (keep {A = A} η) ∘ wks) ξ ≡ (wks ∘ rens η) ξ
 comp-wks-rens-keep η ∙       = refl
@@ -133,18 +114,18 @@ comp-lifts-rens η ξ = (_, vz) & comp-wks-rens-keep η ξ
 --------------------------------------------------------------------------------
 
 
-comp-ren-get : ∀ {Γ Γ′ Ξ A} → (η : Γ′ ⊇ Γ) (ξ : Γ ⊢⋆ Ξ) (𝒾 : Ξ ∋ A true)
-                            → get (rens η ξ) 𝒾 ≡ (ren η ∘ get ξ) 𝒾
+comp-ren-get : ∀ {Γ Γ′ Ξ A} → (η : Γ′ ⊇ Γ) (ξ : Γ ⊢⋆ Ξ) (i : Ξ ∋ A true)
+                            → get (rens η ξ) i ≡ (ren η ∘ get ξ) i
 comp-ren-get η (ξ , 𝒟) zero    = refl
-comp-ren-get η (ξ , 𝒟) (suc 𝒾) = comp-ren-get η ξ 𝒾
+comp-ren-get η (ξ , 𝒟) (suc i) = comp-ren-get η ξ i
 
 
-var-id-get : ∀ {Γ A} → (𝒾 : Γ ∋ A true)
-                     → get ids 𝒾 ≡ var 𝒾
+var-id-get : ∀ {Γ A} → (i : Γ ∋ A true)
+                     → get ids i ≡ var i
 var-id-get zero    = refl
-var-id-get (suc 𝒾) = comp-ren-get (drop id) ids 𝒾
-                   ⋮ wk & var-id-get 𝒾
-                   ⋮ (\ 𝒾′ → var (suc 𝒾′)) & id-ren∋ 𝒾
+var-id-get (suc i) = comp-ren-get (drop id) ids i
+                   ⋮ wk & var-id-get i
+                   ⋮ (\ i′ → var (suc i′)) & id-ren∋ i
 
 
 --------------------------------------------------------------------------------
@@ -165,19 +146,10 @@ comp-lifts-gets ξ η = (_, vz) & comp-rens-gets (drop id) ξ η
 --------------------------------------------------------------------------------
 
 
-comp-sub-get : ∀ {Γ Ξ Ψ A} → (ξ : Γ ⊢⋆ Ξ) (ψ : Ξ ⊢⋆ Ψ) (𝒾 : Ψ ∋ A true)
-                           → get (subs ξ ψ) 𝒾 ≡ (sub ξ ∘ get ψ) 𝒾
+comp-sub-get : ∀ {Γ Ξ Ψ A} → (ξ : Γ ⊢⋆ Ξ) (ψ : Ξ ⊢⋆ Ψ) (i : Ψ ∋ A true)
+                           → get (subs ξ ψ) i ≡ (sub ξ ∘ get ψ) i
 comp-sub-get ξ (ψ , 𝒟) zero    = refl
-comp-sub-get ξ (ψ , ℰ) (suc 𝒾) = comp-sub-get ξ ψ 𝒾
-
-
--- NOTE: Unused.
-
--- comp-subs-gets : ∀ {Γ Ξ Ψ Ψ′} → (ξ : Γ ⊢⋆ Ξ) (ψ : Ξ ⊢⋆ Ψ′) (η : Ψ′ ⊇ Ψ)
---                               → gets (subs ξ ψ) η ≡ (subs ξ ∘ gets ψ) η
--- comp-subs-gets ξ ∙       done     = refl
--- comp-subs-gets ξ (ψ , 𝒟) (drop η) = comp-subs-gets ξ ψ η
--- comp-subs-gets ξ (ψ , 𝒟) (keep η) = (_, sub ξ 𝒟) & comp-subs-gets ξ ψ η
+comp-sub-get ξ (ψ , ℰ) (suc i) = comp-sub-get ξ ψ i
 
 
 --------------------------------------------------------------------------------
@@ -185,19 +157,11 @@ comp-sub-get ξ (ψ , ℰ) (suc 𝒾) = comp-sub-get ξ ψ 𝒾
 
 comp-sub-ren : ∀ {Γ Ξ Ξ′ A} → (ξ : Γ ⊢⋆ Ξ′) (η : Ξ′ ⊇ Ξ) (𝒟 : Ξ ⊢ A true)
                             → sub (gets ξ η) 𝒟 ≡ (sub ξ ∘ ren η) 𝒟
-comp-sub-ren ξ η (var 𝒾)   = comp-get-ren∋ ξ η 𝒾
+comp-sub-ren ξ η (var i)   = comp-get-ren∋ ξ η i
 comp-sub-ren ξ η (lam 𝒟)   = lam & ( (\ ξ′ → sub ξ′ 𝒟) & comp-lifts-gets ξ η ⁻¹
                                    ⋮ comp-sub-ren (lifts ξ) (keep η) 𝒟
                                    )
 comp-sub-ren ξ η (app 𝒟 ℰ) = app & comp-sub-ren ξ η 𝒟 ⊗ comp-sub-ren ξ η ℰ
-
-
--- NOTE: Unused.
-
--- comp-subs-rens : ∀ {Γ Ξ Ξ′ Ψ} → (ξ : Γ ⊢⋆ Ξ′) (η : Ξ′ ⊇ Ξ) (ψ : Ξ ⊢⋆ Ψ)
---                               → subs (gets ξ η) ψ ≡ (subs ξ ∘ rens η) ψ
--- comp-subs-rens ξ η ∙       = refl
--- comp-subs-rens ξ η (ψ , 𝒟) = _,_ & comp-subs-rens ξ η ψ ⊗ comp-sub-ren ξ η 𝒟
 
 
 --------------------------------------------------------------------------------
@@ -222,7 +186,7 @@ expand-subs ξ 𝒟 (ψ , ℰ) = _,_ & expand-subs ξ 𝒟 ψ ⊗ expand-sub ξ 
 
 comp-ren-sub : ∀ {Γ Γ′ Ξ A} → (η : Γ′ ⊇ Γ) (ξ : Γ ⊢⋆ Ξ) (𝒟 : Ξ ⊢ A true)
                             → sub (rens η ξ) 𝒟 ≡ (ren η ∘ sub ξ) 𝒟
-comp-ren-sub η ξ (var 𝒾)   = comp-ren-get η ξ 𝒾
+comp-ren-sub η ξ (var i)   = comp-ren-get η ξ i
 comp-ren-sub η ξ (lam 𝒟)   = lam & ( (\ ξ′ → sub ξ′ 𝒟) & comp-lifts-rens η ξ ⁻¹
                                    ⋮ comp-ren-sub (keep η) (lifts ξ) 𝒟
                                    )
@@ -247,18 +211,21 @@ comp-lifts-subs ξ ψ = (_, vz) & ( expand-subs (wks ξ) vz ψ
 
 id-sub : ∀ {Γ A} → (𝒟 : Γ ⊢ A true)
                  → sub ids 𝒟 ≡ 𝒟
-id-sub (var 𝒾)   = var-id-get 𝒾
+id-sub (var i)   = var-id-get i
 id-sub (lam 𝒟)   = lam & id-sub 𝒟
 id-sub (app 𝒟 ℰ) = app & id-sub 𝒟 ⊗ id-sub ℰ
 
 
 comp-sub : ∀ {Γ Ξ Ψ A} → (ξ : Γ ⊢⋆ Ξ) (ψ : Ξ ⊢⋆ Ψ) (𝒟 : Ψ ⊢ A true)
                        → sub (subs ξ ψ) 𝒟 ≡ (sub ξ ∘ sub ψ) 𝒟
-comp-sub ξ ψ (var 𝒾)   = comp-sub-get ξ ψ 𝒾
+comp-sub ξ ψ (var i)   = comp-sub-get ξ ψ i
 comp-sub ξ ψ (lam 𝒟)   = lam & ( (\ ξ′ → sub ξ′ 𝒟) & comp-lifts-subs ξ ψ ⁻¹
                                ⋮ comp-sub (lifts ξ) (lifts ψ) 𝒟
                                )
 comp-sub ξ ψ (app 𝒟 ℰ) = app & comp-sub ξ ψ 𝒟 ⊗ comp-sub ξ ψ ℰ
+
+
+--------------------------------------------------------------------------------
 
 
 lid-subs : ∀ {Γ Ξ} → (ξ : Γ ⊢⋆ Ξ)
@@ -288,7 +255,7 @@ instance
           ; _∘_    = flip subs
           ; lid∘   = rid-subs
           ; rid∘   = lid-subs
-          ; assoc∘ = \ ξ₁ ξ₂ ξ₃ → assoc-subs ξ₃ ξ₂ ξ₁ ⁻¹
+          ; assoc∘ = \ φ ψ ξ → assoc-subs ξ ψ φ ⁻¹
           }
 
 
@@ -296,7 +263,7 @@ instance
 𝐬𝐮𝐛 = record
         { ℱ     = sub
         ; idℱ   = funext! id-sub
-        ; compℱ = \ ξ₁ ξ₂ → funext! (comp-sub ξ₂ ξ₁)
+        ; compℱ = \ ψ ξ → funext! (comp-sub ξ ψ)
         }
 
 
