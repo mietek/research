@@ -37,7 +37,7 @@ data _⨾_⊢_ : List Validity → List Truth → Truth → Set
 
     vau : ∀ {A B Δ Γ} → Δ , A valid ⨾ Γ ⊢ B true
                       → Δ ⨾ Γ , □ A true ⊢ B true
-                       
+
     unvau : ∀ {A B Δ Γ} → Δ ⨾ Γ , □ A true ⊢ B true
                         → Δ , A valid ⨾ Γ ⊢ B true
 
@@ -131,7 +131,7 @@ vaus 𝒟 = maps vau 𝒟
 
 -- NOTE: Similar shape to lift or cut
 
-unnamed : ∀ {Δ Γ A Ξ} → Δ , A valid ⨾ Γ ⊢⋆ Ξ 
+unnamed : ∀ {Δ Γ A Ξ} → Δ , A valid ⨾ Γ ⊢⋆ Ξ
                       → Δ ⨾ Γ , □ A true ⊢⋆ Ξ , □ A true
 unnamed 𝒟 = vaus 𝒟 , vz
 
@@ -145,7 +145,7 @@ sub ξ       (lam 𝒟)   = lam (sub (lifts ξ) 𝒟)
 sub (ξ , 𝒞) (unlam 𝒟) = cut 𝒞 (unlam (sub ξ 𝒟))
 sub ξ       (box 𝒟)   = box 𝒟
 sub ξ       (unbox 𝒟) = unbox 𝒟
-sub (ξ , 𝒞) (vau 𝒟)   = cut 𝒞 (vau (sub (mwks ξ) 𝒟))  
+sub (ξ , 𝒞) (vau 𝒟)   = cut 𝒞 (vau (sub (mwks ξ) 𝒟))
 sub ξ       (unvau 𝒟) = unvau (sub (unnamed ξ) 𝒟)  -- NOTE: Interesting
 
 
@@ -220,7 +220,3 @@ letbox 𝒟 ℰ = cut 𝒟 (vau ℰ)
 
 
 --------------------------------------------------------------------------------
-
-
-
-
