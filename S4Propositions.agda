@@ -1,6 +1,7 @@
 module S4Propositions where
 
 open import Prelude
+open import List
 
 
 --------------------------------------------------------------------------------
@@ -31,6 +32,18 @@ record Validity : Set
     constructor _valid
     field
       A : Prop
+
+
+--------------------------------------------------------------------------------
+
+
+infix 7 _valid[_]
+record ContextualValidity : Set
+  where
+    constructor _valid[_]
+    field
+      A : Prop
+      Ψ : List Truth
 
 
 --------------------------------------------------------------------------------
