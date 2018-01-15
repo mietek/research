@@ -35,10 +35,10 @@ data _⊢_ : List Validity → ContextualValidity → Set
     unbox : ∀ {A Δ Γ} → Δ ⊢ □ A valid[ ∙ ]
                       → Δ ⊢ A valid[ Γ ]
 
-    vau : ∀ {A B Δ Γ} → Δ , A valid ⊢ B valid[ Γ ]  
+    vau : ∀ {A B Δ Γ} → Δ , A valid ⊢ B valid[ Γ ]
                       → Δ ⊢ B valid[ Γ , □ A true ]
-                       
-    unvau : ∀ {A B Δ Γ} → Δ ⊢ B valid[ Γ , □ A true ] 
+
+    unvau : ∀ {A B Δ Γ} → Δ ⊢ B valid[ Γ , □ A true ]
                         → Δ , A valid ⊢ B valid[ Γ ]
 
 
