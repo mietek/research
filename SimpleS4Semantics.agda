@@ -74,8 +74,8 @@ mutual
   infix 3 _⊪_
   _⊪_ : ∀ {{_ : Model}} → World → Truth → Set
   W ⊪ A true = ∀ {B W′} → W′ ≥ W → (∀ {W″} → W″ ≥ W′ → W″ ⊩ A true
-                                              → ⌊ W″ ⌋₁ ⨾ ⌊ W″ ⌋₂ ⊢ᵥ B)
-                         → ⌊ W′ ⌋₁ ⨾ ⌊ W′ ⌋₂ ⊢ᵥ B
+                                              → ⌊ W″ ⌋₁ ⨾ ⌊ W″ ⌋₂ ⊢ₗ B)
+                         → ⌊ W′ ⌋₁ ⨾ ⌊ W′ ⌋₂ ⊢ₗ B
 
   infix 3 _⊪₁_
   _⊪₁_ : ∀ {{_ : Model}} → World → Validity → Set
@@ -185,36 +185,36 @@ _⊨_ : List² Validity Truth → Truth → Set₁
 --------------------------------------------------------------------------------
 
 
-renU² : ∀ {Δ Δ′ Γ Γ′ A} → Δ′ ⨾ Γ′ ⊇² Δ ⨾ Γ → Δ ⨾ Γ ⊢ᵤ A true
-                        → Δ′ ⨾ Γ′ ⊢ᵤ A true
-renU² η 𝒟 = mrenU (proj₁ η) (renU (proj₂ η) 𝒟)
+renR² : ∀ {Δ Δ′ Γ Γ′ A} → Δ′ ⨾ Γ′ ⊇² Δ ⨾ Γ → Δ ⨾ Γ ⊢ᵣ A true
+                        → Δ′ ⨾ Γ′ ⊢ᵣ A true
+renR² η 𝒟 = mrenR (proj₁ η) (renR (proj₂ η) 𝒟)
 
 
 instance
   canon : Model
   canon = record
             { World  = List² Validity Truth
-            ; Ground = \ { (Δ ⨾ Γ) → Δ ⨾ Γ ⊢ᵤ BASE true }
+            ; Ground = \ { (Δ ⨾ Γ) → Δ ⨾ Γ ⊢ᵣ BASE true }
             ; _≥_    = _⊇²_
             ; id≥    = id
             ; _∘≥_   = _∘_
-            ; relG   = renU²
+            ; relG   = renR²
             ; ⌊_⌋    = id
             ; ⌊_⌋≥   = id
             }
 
 
 mutual
-  ⇓ : ∀ {A Δ Γ} → Δ ⨾ Γ ⊢ᵤ A true
+  ⇓ : ∀ {A Δ Γ} → Δ ⨾ Γ ⊢ᵣ A true
                 → Δ ⨾ Γ ⊪ A true
   ⇓ {BASE}  𝒟 = return {BASE} 𝒟
-  ⇓ {A ⊃ B} 𝒟 = return {A ⊃ B} (\ η k → ⇓ (app (renU² η 𝒟) (⇑ k)))
-  ⇓ {□ A}   𝒟 = \ η f → letbox (renU² η 𝒟) (f (drop₁ id) (mvz , ⇓ mvzU))
+  ⇓ {A ⊃ B} 𝒟 = return {A ⊃ B} (\ η k → ⇓ (app (renR² η 𝒟) (⇑ k)))
+  ⇓ {□ A}   𝒟 = \ η f → letbox (renR² η 𝒟) (f (drop₁ id) (mvz , ⇓ mvzR))
 
   ⇑ : ∀ {A Δ Γ} → Δ ⨾ Γ ⊪ A true
-                → Δ ⨾ Γ ⊢ᵥ A true
+                → Δ ⨾ Γ ⊢ₗ A true
   ⇑ {BASE}  k = k id (\ η 𝒟 → use 𝒟)
-  ⇑ {A ⊃ B} k = k id (\ η f → lam (⇑ (f (drop₂ id) (⇓ vzU))))
+  ⇑ {A ⊃ B} k = k id (\ η f → lam (⇑ (f (drop₂ id) (⇓ vzR))))
   ⇑ {□ A}   k = k id (\ η v → box (syn v))
 
 
@@ -228,7 +228,7 @@ wksS ξ = relsC (drop₂ id) ξ
 
 liftsS : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊪⋆ Ξ
                      → Δ ⨾ Γ , A true ⊪⋆ Ξ , A true
-liftsS ξ = wksS ξ , ⇓ vzU
+liftsS ξ = wksS ξ , ⇓ vzR
 
 
 varsS : ∀ {Δ Γ Γ′} → Γ′ ⊇ Γ
@@ -252,7 +252,7 @@ mwksS₁ ξ = relsC₁ (drop₁ id) ξ
 
 mliftsS₁ : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊪⋆₁ Ξ
                        → Δ , A valid ⨾ Γ ⊪⋆₁ Ξ , A valid
-mliftsS₁ ξ = mwksS₁ ξ , (mvz , ⇓ mvzU)
+mliftsS₁ ξ = mwksS₁ ξ , (mvz , ⇓ mvzR)
 
 
 mvarsS₁ : ∀ {Δ Δ′ Γ} → Δ′ ⊇ Δ
@@ -270,12 +270,12 @@ midsS₁ = mvarsS₁ id
 
 
 ↑ : ∀ {Δ Γ A} → Δ ⨾ Γ ⊨ A true
-              → Δ ⨾ Γ ⊢ᵥ A true
+              → Δ ⨾ Γ ⊢ₗ A true
 ↑ f = ⇑ (f midsS₁ idsS)
 
 
 nbe : ∀ {Δ Γ A} → Δ ⨾ Γ ⊢ A true
-                → Δ ⨾ Γ ⊢ᵥ A true
+                → Δ ⨾ Γ ⊢ₗ A true
 nbe 𝒟 = ↑ (↓ 𝒟)
 
 

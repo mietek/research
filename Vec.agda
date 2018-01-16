@@ -83,6 +83,12 @@ data _∋⟨_⟩_ {X} : ∀ {n} → Vec X n → Fin n → X → Set
                       → Ξ , B ∋⟨ suc i ⟩ A
 
 
+get∋ : ∀ {X n} → {Ξ : Vec X n} {I : Fin n}
+               → Ξ ∋⟨ I ⟩ GET Ξ I
+get∋ {Ξ = Ξ , A} {zero}  = zero
+get∋ {Ξ = Ξ , B} {suc I} = suc get∋
+
+
 ren∋ : ∀ {X A n n′ e I} → {Ξ : Vec X n} {Ξ′ : Vec X n′}
                         → Ξ′ ⊇⟨ e ⟩ Ξ → Ξ ∋⟨ I ⟩ A
                         → Ξ′ ∋⟨ REN∋ e I ⟩ A

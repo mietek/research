@@ -8,7 +8,6 @@ open import Vec
 
 
 open import IPLPropositions public
-  using (BASE ; _⊃_)
   renaming (Prop to Type)
 
 

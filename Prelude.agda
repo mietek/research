@@ -11,6 +11,9 @@ open import Agda.Builtin.Equality public
 open import Agda.Builtin.Nat public
   using (Nat ; zero ; suc)
 
+open import Agda.Builtin.String public
+  using (String)
+
 open import Agda.Builtin.Unit public
   using (⊤)
   renaming (tt to ∙)
@@ -118,6 +121,11 @@ coerce : ∀ {ℓ} → {X Y : Set ℓ}
 coerce x refl = x
 
 
+case_of_ : ∀ {ℓ ℓ′} → {X : Set ℓ} {Y : Set ℓ′}
+                    → X → (X → Y) → Y
+case x of f = f x
+
+
 postulate
   funext! : ∀ {ℓ ℓ′} → {X : Set ℓ} {P : X → Set ℓ′} {f g : ∀ x → P x}
                      → (∀ x → f x ≡ g x)
@@ -198,9 +206,52 @@ record Σ {ℓ ℓ′} (X : Set ℓ) (P : X → Set ℓ′) : Set (ℓ ⊔ ℓ�
 open Σ public
 
 
+forΣ : ∀ {ℓ ℓ′ ℓ″ ℓ‴} → {X : Set ℓ} {Y : Set ℓ′} {P : X → Set ℓ″} {Q : Y → Set ℓ‴}
+                      → Σ X P → (f : X → Y) (g : ∀ {x} → P x → Q (f x))
+                      → Σ Y Q
+forΣ (x , y) f g = f x , g y
+
+
+mapΣ : ∀ {ℓ ℓ′ ℓ″ ℓ‴} → {X : Set ℓ} {Y : Set ℓ′} {P : X → Set ℓ″} {Q : Y → Set ℓ‴}
+                      → (f : X → Y) (g : ∀ {x} → P x → Q (f x)) → Σ X P
+                      → Σ Y Q
+mapΣ f g p = forΣ p f g
+
+
+
 infixl 2 _×_
 _×_ : ∀ {ℓ ℓ′} → Set ℓ → Set ℓ′ → Set (ℓ ⊔ ℓ′)
 X × Y = Σ X (\ x → Y)
 
 
 --------------------------------------------------------------------------------
+
+
+infixl 1 _⊎_
+data _⊎_ {ℓ ℓ′} (X : Set ℓ) (Y : Set ℓ′) : Set (ℓ ⊔ ℓ′)
+  where
+    inj₁ : (x : X) → X ⊎ Y
+    inj₂ : (y : Y) → X ⊎ Y
+
+
+elim⊎ : ∀ {ℓ ℓ′ ℓ″} → {X : Set ℓ} {Y : Set ℓ′} {Z : Set ℓ″}
+                    → X ⊎ Y → (X → Z) → (Y → Z)
+                    → Z
+elim⊎ (inj₁ x) f g = f x
+elim⊎ (inj₂ y) f g = g y
+
+
+for⊎ : ∀ {ℓ ℓ′ ℓ″ ℓ‴} → {X : Set ℓ} {Y : Set ℓ′} {U : Set ℓ″} {V : Set ℓ‴}
+                      → X ⊎ Y → (X → U) → (Y → V)
+                      → U ⊎ V
+for⊎ s f g = elim⊎ s (\ x → inj₁ (f x)) (\ y → inj₂ (g y))
+
+
+map⊎ : ∀ {ℓ ℓ′ ℓ″ ℓ‴} → {X : Set ℓ} {Y : Set ℓ′} {U : Set ℓ″} {V : Set ℓ‴}
+                      → (X → U) → (Y → V) → X ⊎ Y
+                      → U ⊎ V
+map⊎ f g s = for⊎ s f g
+
+
+--------------------------------------------------------------------------------
+

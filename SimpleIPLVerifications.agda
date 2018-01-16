@@ -12,69 +12,69 @@ open import SimpleIPLDerivations
 --------------------------------------------------------------------------------
 
 
--- We read “A₁, …, Aₙ ⊢ᵥ A” as “from the assumptions that A₁ may be used …,
+-- We read “A₁, …, Aₙ ⊢ₗ A” as “from the assumptions that A₁ may be used …,
 -- and that Aₙ may be used, we deduce that A has a verification”.
 --
--- We read “A₁, …, Aₙ ⊢ᵤ A” as “from the assumptions that A₁ may be used …,
+-- We read “A₁, …, Aₙ ⊢ᵣ A” as “from the assumptions that A₁ may be used …,
 -- and that Aₙ may be used, we deduce that A may be used”.
 
 mutual
-  infix 3 _⊢ᵥ_
-  data _⊢ᵥ_ : List Truth → Truth → Set
+  infix 3 _⊢ₗ_
+  data _⊢ₗ_ : List Truth → Truth → Set
     where
-      lam : ∀ {A B Γ} → Γ , A true ⊢ᵥ B true
-                      → Γ ⊢ᵥ A ⊃ B true
+      lam : ∀ {A B Γ} → Γ , A true ⊢ₗ B true
+                      → Γ ⊢ₗ A ⊃ B true
 
-      use : ∀ {Γ} → Γ ⊢ᵤ BASE true
-                  → Γ ⊢ᵥ BASE true
+      use : ∀ {Γ} → Γ ⊢ᵣ BASE true
+                  → Γ ⊢ₗ BASE true
 
-  infix 3 _⊢ᵤ_
-  data _⊢ᵤ_ : List Truth → Truth → Set
+  infix 3 _⊢ᵣ_
+  data _⊢ᵣ_ : List Truth → Truth → Set
     where
       var : ∀ {A Γ} → Γ ∋ A true
-                    → Γ ⊢ᵤ A true
+                    → Γ ⊢ᵣ A true
 
-      app : ∀ {A B Γ} → Γ ⊢ᵤ A ⊃ B true → Γ ⊢ᵥ A true
-                      → Γ ⊢ᵤ B true
-
-
---------------------------------------------------------------------------------
-
-
-mutual
-  recV : ∀ {Γ A} → Γ ⊢ᵥ A true
-                 → Γ ⊢ A true
-  recV (lam 𝒟) = lam (recV 𝒟)
-  recV (use 𝒟) = recU 𝒟
-
-  recU : ∀ {Γ A} → Γ ⊢ᵤ A true
-                 → Γ ⊢ A true
-  recU (var i)   = var i
-  recU (app 𝒟 ℰ) = app (recU 𝒟) (recV ℰ)
+      app : ∀ {A B Γ} → Γ ⊢ᵣ A ⊃ B true → Γ ⊢ₗ A true
+                      → Γ ⊢ᵣ B true
 
 
 --------------------------------------------------------------------------------
 
 
 mutual
-  renV : ∀ {Γ Γ′ A} → Γ′ ⊇ Γ → Γ ⊢ᵥ A true
-                    → Γ′ ⊢ᵥ A true
-  renV η (lam 𝒟) = lam (renV (keep η) 𝒟)
-  renV η (use 𝒟) = use (renU η 𝒟)
+  recoverL : ∀ {Γ A} → Γ ⊢ₗ A true
+                 → Γ ⊢ A true
+  recoverL (lam 𝒟) = lam (recoverL 𝒟)
+  recoverL (use 𝒟) = recoverR 𝒟
 
-  renU : ∀ {Γ Γ′ A} → Γ′ ⊇ Γ → Γ ⊢ᵤ A true
-                    → Γ′ ⊢ᵤ A true
-  renU η (var i)   = var (ren∋ η i)
-  renU η (app 𝒟 ℰ) = app (renU η 𝒟) (renV η ℰ)
-
-
-wkU : ∀ {B A Γ} → Γ ⊢ᵤ A true
-                → Γ , B ⊢ᵤ A true
-wkU 𝒟 = renU (drop id) 𝒟
+  recoverR : ∀ {Γ A} → Γ ⊢ᵣ A true
+                 → Γ ⊢ A true
+  recoverR (var i)   = var i
+  recoverR (app 𝒟 ℰ) = app (recoverR 𝒟) (recoverL ℰ)
 
 
-vzU : ∀ {A Γ} → Γ , A true ⊢ᵤ A true
-vzU = var zero
+--------------------------------------------------------------------------------
+
+
+mutual
+  renL : ∀ {Γ Γ′ A} → Γ′ ⊇ Γ → Γ ⊢ₗ A true
+                    → Γ′ ⊢ₗ A true
+  renL η (lam 𝒟) = lam (renL (keep η) 𝒟)
+  renL η (use 𝒟) = use (renR η 𝒟)
+
+  renR : ∀ {Γ Γ′ A} → Γ′ ⊇ Γ → Γ ⊢ᵣ A true
+                    → Γ′ ⊢ᵣ A true
+  renR η (var i)   = var (ren∋ η i)
+  renR η (app 𝒟 ℰ) = app (renR η 𝒟) (renL η ℰ)
+
+
+wkR : ∀ {B A Γ} → Γ ⊢ᵣ A true
+                → Γ , B ⊢ᵣ A true
+wkR 𝒟 = renR (drop id) 𝒟
+
+
+vzR : ∀ {A Γ} → Γ , A true ⊢ᵣ A true
+vzR = var zero
 
 
 --------------------------------------------------------------------------------

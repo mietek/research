@@ -85,24 +85,24 @@ instance
   canon : Model
   canon = record
             { World  = List Truth
-            ; Ground = _⊢ᵤ BASE true
+            ; Ground = _⊢ᵣ BASE true
             ; _≥_    = _⊇_
             ; id≥    = id
             ; _∘≥_   = _∘_
-            ; relG   = renU
+            ; relG   = renR
             }
 
 
 mutual
-  ⇓ : ∀ {A Γ} → Γ ⊢ᵤ A true
+  ⇓ : ∀ {A Γ} → Γ ⊢ᵣ A true
               → Γ ⊩ A true
   ⇓ {BASE}  𝒟 = 𝒟
-  ⇓ {A ⊃ B} 𝒟 = \ η a → ⇓ (app (renU η 𝒟) (⇑ a))
+  ⇓ {A ⊃ B} 𝒟 = \ η a → ⇓ (app (renR η 𝒟) (⇑ a))
 
   ⇑ : ∀ {A Γ} → Γ ⊩ A true
-              → Γ ⊢ᵥ A true
+              → Γ ⊢ₗ A true
   ⇑ {BASE}  𝒟 = use 𝒟
-  ⇑ {A ⊃ B} f = lam (⇑ (f (drop id) (⇓ {A} vzU)))
+  ⇑ {A ⊃ B} f = lam (⇑ (f (drop id) (⇓ {A} vzR)))
 
 
 --------------------------------------------------------------------------------
@@ -119,7 +119,7 @@ wksS ξ = rels (drop id) ξ
 
 
 vzS : ∀ {A Γ} → Γ , A true ⊩ A true
-vzS {A} = ⇓ {A} vzU
+vzS {A} = ⇓ {A} vzR
 
 
 liftsS : ∀ {A Γ Ξ} → Γ ⊩⋆ Ξ
@@ -142,12 +142,12 @@ idsS = varsS id
 
 
 ↑ : ∀ {Γ A} → Γ ⊨ A true
-            → Γ ⊢ᵥ A true
+            → Γ ⊢ₗ A true
 ↑ f = ⇑ (f idsS)
 
 
 nbe : ∀ {Γ A} → Γ ⊢ A true
-              → Γ ⊢ᵥ A true
+              → Γ ⊢ₗ A true
 nbe 𝒟 = ↑ (↓ 𝒟)
 
 

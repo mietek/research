@@ -5,6 +5,7 @@ open import Category
 open import Fin
 open import FinLemmas
 open import Vec
+open import STLCTypes
 
 
 --------------------------------------------------------------------------------
@@ -12,9 +13,10 @@ open import Vec
 
 data Term : Nat → Set
   where
-    VAR : ∀ {g} → Fin g → Term g
-    LAM : ∀ {g} → Term (suc g) → Term g
-    APP : ∀ {g} → Term g → Term g → Term g
+    VAR  : ∀ {g} → Fin g → Term g
+    LAM  : ∀ {g} → Term (suc g) → Term g
+    APP  : ∀ {g} → Term g → Term g → Term g
+    TYPE : ∀ {g} → Type → Term g → Term g
 
 
 Terms : Nat → Nat → Set
@@ -26,9 +28,10 @@ Terms g n = Vec (Term g) n
 
 REN : ∀ {g g′} → g′ ≥ g → Term g
                → Term g′
-REN e (VAR I)   = VAR (REN∋ e I)
-REN e (LAM M)   = LAM (REN (keep e) M)
-REN e (APP M N) = APP (REN e M) (REN e N)
+REN e (VAR I)    = VAR (REN∋ e I)
+REN e (LAM M)    = LAM (REN (keep e) M)
+REN e (APP M N)  = APP (REN e M) (REN e N)
+REN e (TYPE A M) = TYPE A (REN e M)
 
 
 RENS : ∀ {g g′ n} → g′ ≥ g → Terms g n
@@ -74,9 +77,10 @@ IDS = VARS id
 
 SUB : ∀ {g n} → Terms g n → Term n
               → Term g
-SUB x (VAR I)   = GET x I
-SUB x (LAM M)   = LAM (SUB (LIFTS x) M)
-SUB x (APP M N) = APP (SUB x M) (SUB x N)
+SUB x (VAR I)    = GET x I
+SUB x (LAM M)    = LAM (SUB (LIFTS x) M)
+SUB x (APP M N)  = APP (SUB x M) (SUB x N)
+SUB x (TYPE A M) = TYPE A (SUB x M)
 
 
 SUBS : ∀ {g n m} → Terms g n → Terms n m
