@@ -72,12 +72,14 @@ drop η₁ ∘⊇ keep η₂ = drop (η₁ ∘⊇ η₂)
 keep η₁ ∘⊇ keep η₂ = keep (η₁ ∘⊇ η₂)
 
 
-map⊇ : ∀ {X Y} → {Ξ Ξ′ : List X} {f : X → Y}
-               → Ξ′ ⊇ Ξ
-               → map f Ξ′ ⊇ map f Ξ
-map⊇ done     = done
-map⊇ (drop η) = drop (map⊇ η)
-map⊇ (keep η) = keep (map⊇ η)
+-- TODO: Remove this
+
+-- map⊇ : ∀ {X Y} → {Ξ Ξ′ : List X} {f : X → Y}
+--                → Ξ′ ⊇ Ξ
+--                → map f Ξ′ ⊇ map f Ξ
+-- map⊇ done     = done
+-- map⊇ (drop η) = drop (map⊇ η)
+-- map⊇ (keep η) = keep (map⊇ η)
 
 
 --------------------------------------------------------------------------------
@@ -92,25 +94,28 @@ data _∋_ {X} : List X → X → Set
                     → Ξ , B ∋ A
 
 
-map∋ : ∀ {X Y A} → {Ξ : List X} {f : X → Y}
-                 → Ξ ∋ A
-                 → map f Ξ ∋ f A
-map∋ zero    = zero
-map∋ (suc 𝒾) = suc (map∋ 𝒾)
-
-
 ren∋ : ∀ {X A} → {Ξ Ξ′ : List X}
                → Ξ′ ⊇ Ξ → Ξ ∋ A
                → Ξ′ ∋ A
-ren∋ done     𝒾       = 𝒾
-ren∋ (drop η) 𝒾       = suc (ren∋ η 𝒾)
+ren∋ done     i       = i
+ren∋ (drop η) i       = suc (ren∋ η i)
 ren∋ (keep η) zero    = zero
-ren∋ (keep η) (suc 𝒾) = suc (ren∋ η 𝒾)
+ren∋ (keep η) (suc i) = suc (ren∋ η i)
+
+
+-- TODO: Remove this
+
+-- map∋ : ∀ {X Y A} → {Ξ : List X} {f : X → Y}
+--                  → Ξ ∋ A
+--                  → map f Ξ ∋ f A
+-- map∋ zero    = zero
+-- map∋ (suc i) = suc (map∋ i)
 
 
 --------------------------------------------------------------------------------
 
 
+-- TODO: Remove this
 
 module List²
   where

@@ -38,6 +38,10 @@ import ExperimentalIPLDerivations1  -- vz/wk/lam/app
 import ExperimentalIPLDerivations2  -- vz/wk/cut/lam/unlam
 
 
+import SimpleSTLCTerms
+import SimpleSTLCDerivations
+
+
 --------------------------------------------------------------------------------
 
 
@@ -61,7 +65,9 @@ import ExperimentalS4Derivations4a  -- 4 + contextual validity
 
 import ExperimentalS4Derivations3x  -- 3 + explicit conversions
 
+
 --------------------------------------------------------------------------------
+
 
 
 -- import StdIPLLemmas

@@ -20,8 +20,8 @@ open import List
                               η ∘⊇ id⊇ ≡ η                                      rid∘⊇   ⎬ 𝐎𝐏𝐄, 𝐎𝐏𝐄²
                       (η₁ ∘⊇ η₂) ∘⊇ η₃ ≡ η₁ ∘⊇ (η₂ ∘⊇ η₃)                       assoc∘⊇ ⎭
 
-                             ren∋ id 𝒾 ≡ 𝒾                                      id-ren∋   ⎱ 𝐫𝐞𝐧∋
-                      ren∋ (η₁ ∘ η₂) 𝒾 ≡ (ren∋ η₂ ∘ ren∋ η₁) 𝒾                  comp-ren∋ ⎰
+                             ren∋ id i ≡ i                                      id-ren∋   ⎱ 𝐫𝐞𝐧∋
+                      ren∋ (η₁ ∘ η₂) i ≡ (ren∋ η₂ ∘ ren∋ η₁) i                  comp-ren∋ ⎰
 -}
 --------------------------------------------------------------------------------
 
@@ -113,20 +113,20 @@ instance
 
 
 id-ren∋ : ∀ {X A} → {Ξ : List X}
-                  → (𝒾 : Ξ ∋ A)
-                  → ren∋ id 𝒾 ≡ 𝒾
+                  → (i : Ξ ∋ A)
+                  → ren∋ id i ≡ i
 id-ren∋ zero    = refl
-id-ren∋ (suc 𝒾) = suc & id-ren∋ 𝒾
+id-ren∋ (suc i) = suc & id-ren∋ i
 
 
 comp-ren∋ : ∀ {X A} → {Ξ Ξ′ Ξ″ : List X}
-                    → (η₁ : Ξ′ ⊇ Ξ) (η₂ : Ξ″ ⊇ Ξ′) (𝒾 : Ξ ∋ A)
-                    → ren∋ (η₁ ∘ η₂) 𝒾 ≡ (ren∋ η₂ ∘ ren∋ η₁) 𝒾
-comp-ren∋ η₁        done      𝒾       = refl
-comp-ren∋ η₁        (drop η₂) 𝒾       = suc & comp-ren∋ η₁ η₂ 𝒾
-comp-ren∋ (drop η₁) (keep η₂) 𝒾       = suc & comp-ren∋ η₁ η₂ 𝒾
+                    → (η₁ : Ξ′ ⊇ Ξ) (η₂ : Ξ″ ⊇ Ξ′) (i : Ξ ∋ A)
+                    → ren∋ (η₁ ∘ η₂) i ≡ (ren∋ η₂ ∘ ren∋ η₁) i
+comp-ren∋ η₁        done      i       = refl
+comp-ren∋ η₁        (drop η₂) i       = suc & comp-ren∋ η₁ η₂ i
+comp-ren∋ (drop η₁) (keep η₂) i       = suc & comp-ren∋ η₁ η₂ i
 comp-ren∋ (keep η₁) (keep η₂) zero    = refl
-comp-ren∋ (keep η₁) (keep η₂) (suc 𝒾) = suc & comp-ren∋ η₁ η₂ 𝒾
+comp-ren∋ (keep η₁) (keep η₂) (suc i) = suc & comp-ren∋ η₁ η₂ i
 
 
 𝐫𝐞𝐧∋ : ∀ {X} → {A : X} → Presheaf 𝐎𝐏𝐄 (_∋ A)
