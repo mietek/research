@@ -1,7 +1,6 @@
 module IPLPropositions where
 
 open import Prelude
-open import Vec
 
 
 --------------------------------------------------------------------------------
@@ -23,10 +22,6 @@ record Truth : Set
     constructor _true
     field
       A : Prop
-
-
-Truths : Nat → Set
-Truths g = Vec Truth g
 
 
 --------------------------------------------------------------------------------

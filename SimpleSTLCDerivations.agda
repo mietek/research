@@ -5,160 +5,191 @@ open import Category
 open import Fin
 open import Vec
 open import AllVec
-open import IPLPropositions
-open import StdSTLCTerms
+open import STLCTypes
+open import SimpleSTLCTerms
 
 
 --------------------------------------------------------------------------------
 
 
-record Derivation : Set
+infix 4 _⊦_⦂_
+record Typing : Set
   where
-    constructor [_⊦_⦂_]
+    constructor _⊦_⦂_
     field
       {g} : Nat
-      Γ   : Truths g
+      Γ   : Types g
       M   : Term g
-      Aₜ  : Truth
+      A   : Type
 
 
-record Derivations : Set
+infix 4 _⊦⋆_⦂_
+record Typings : Set
   where
-    constructor [_⊦⋆_⦂_]
+    constructor _⊦⋆_⦂_
     field
       {g} : Nat
       {n} : Nat
-      Γ   : Truths g
+      Γ   : Types g
       x   : Terms g n
-      Ξ   : Truths n
+      Ξ   : Types n
 
 
-pac : ∀ {g n} → Truths g → Terms g n → Truths n
-              → Vec Derivation n
-pac Γ ∙       ∙            = ∙
-pac Γ (x , M) (Ξ , A true) = pac Γ x Ξ , [ Γ ⊦ M ⦂ A true ]
+pac : ∀ {g n} → Types g → Terms g n → Types n
+              → Vec Typing n
+pac Γ ∙       ∙       = ∙
+pac Γ (x , M) (Ξ , A) = pac Γ x Ξ , (Γ ⊦ M ⦂ A)
 
 
-pac∋ : ∀ {g n i A} → {Γ : Truths g} {x : Terms g n} {Ξ : Truths n}
-                   → Ξ ∋⟨ i ⟩ A true
-                   → pac Γ x Ξ ∋⟨ i ⟩ [ Γ ⊦ GET x i ⦂ A true ]
-pac∋ {x = x , M} {Ξ , A true} zero    = zero
-pac∋ {x = x , N} {Ξ , B true} (suc 𝒾) = suc (pac∋ 𝒾)
+pac∋ : ∀ {g n I A} → {Γ : Types g} {x : Terms g n} {Ξ : Types n}
+                   → Ξ ∋⟨ I ⟩ A
+                   → pac Γ x Ξ ∋⟨ I ⟩ (Γ ⊦ GET x I ⦂ A)
+pac∋ {x = x , M} {Ξ , A} zero    = zero
+pac∋ {x = x , N} {Ξ , B} (suc i) = suc (pac∋ i)
 
 
 --------------------------------------------------------------------------------
 
 
 infix 3 ⊢_
-data ⊢_ : Derivation → Set
+data ⊢_ : Typing → Set
   where
-    var : ∀ {A g i} → {Γ : Truths g}
-                    → Γ ∋⟨ i ⟩ A true
-                    → ⊢ [ Γ ⊦ VAR i ⦂ A true ]
+    var : ∀ {A g I} → {Γ : Types g}
+                    → Γ ∋⟨ I ⟩ A
+                    → ⊢ Γ ⊦ VAR I ⦂ A
 
-    lam : ∀ {A B g M} → {Γ : Truths g}
-                      → ⊢ [ Γ , A true ⊦ M ⦂ B true ]
-                      → ⊢ [ Γ ⊦ LAM M ⦂ A ⊃ B true ]
+    lam : ∀ {A B g M} → {Γ : Types g}
+                      → ⊢ Γ , A ⊦ M ⦂ B
+                      → ⊢ Γ ⊦ LAM M ⦂ A ⊃ B
 
-    app : ∀ {A B g M N} → {Γ : Truths g}
-                        → ⊢ [ Γ ⊦ M ⦂ A ⊃ B true ] → ⊢ [ Γ ⊦ N ⦂ A true ]
-                        → ⊢ [ Γ ⊦ APP M N ⦂ B true ]
+    app : ∀ {A B g M N} → {Γ : Types g}
+                        → ⊢ Γ ⊦ M ⦂ A ⊃ B → ⊢ Γ ⊦ N ⦂ A
+                        → ⊢ Γ ⊦ APP M N ⦂ B
 
 
 infix 3 ⊢⋆_
-⊢⋆_ : Derivations → Set
-⊢⋆ [ Γ ⊦⋆ x ⦂ Ξ ] = All (⊢_) (pac Γ x Ξ)
+⊢⋆_ : Typings → Set
+⊢⋆ Γ ⊦⋆ x ⦂ Ξ = All (⊢_) (pac Γ x Ξ)
 
 
 --------------------------------------------------------------------------------
 
 
-ren : ∀ {g g′ e M A} → {Γ : Truths g} {Γ′ : Truths g′}
-                     → Γ′ ⊇⟨ e ⟩ Γ → ⊢ [ Γ ⊦ M ⦂ A true ]
-                     → ⊢ [ Γ′ ⊦ REN e M ⦂ A true ]
-ren η (var 𝒾)   = var (ren∋ η 𝒾)
+ren : ∀ {g g′ e M A} → {Γ : Types g} {Γ′ : Types g′}
+                     → Γ′ ⊇⟨ e ⟩ Γ → ⊢ Γ ⊦ M ⦂ A
+                     → ⊢ Γ′ ⊦ REN e M ⦂ A
+ren η (var i)   = var (ren∋ η i)
 ren η (lam 𝒟)   = lam (ren (keep η) 𝒟)
 ren η (app 𝒟 ℰ) = app (ren η 𝒟) (ren η ℰ)
 
 
-wk : ∀ {B g M A} → {Γ : Truths g}
-                 → ⊢ [ Γ ⊦ M ⦂ A true ]
-                 → ⊢ [ Γ , B true ⊦ WK M ⦂ A true ]
-wk 𝒟 = ren (drop id⊇) 𝒟
-
-
-vz : ∀ {g A} → {Γ : Truths g}
-             → ⊢ [ Γ , A true ⊦ VZ ⦂ A true ]
-vz = var zero
+rens : ∀ {g g′ e n} → {Γ : Types g} {Γ′ : Types g′} {x : Terms g n} {Ξ : Types n}
+                    → Γ′ ⊇⟨ e ⟩ Γ → ⊢⋆ Γ ⊦⋆ x ⦂ Ξ
+                    → ⊢⋆ Γ′ ⊦⋆ RENS e x ⦂ Ξ
+rens {x = ∙}     {∙}     η ∙       = ∙
+rens {x = x , M} {Ξ , A} η (ξ , 𝒟) = rens η ξ , ren η 𝒟
+-- NOTE: Equivalent to
+-- rens η ξ = maps (ren η) ξ
 
 
 --------------------------------------------------------------------------------
 
 
-rens : ∀ {g g′ e n} → {Γ : Truths g} {Γ′ : Truths g′} {x : Terms g n} {Ξ : Truths n}
-                    → Γ′ ⊇⟨ e ⟩ Γ → ⊢⋆ [ Γ ⊦⋆ x ⦂ Ξ ]
-                    → ⊢⋆ [ Γ′ ⊦⋆ RENS e x ⦂ Ξ ]
-rens {x = ∙}     {∙}          η ∙       = ∙
-rens {x = x , M} {Ξ , A true} η (ξ , 𝒟) = rens η ξ , ren η 𝒟
--- NOTE: Equivalent to
--- rens η ξ = maps (ren η) ξ
+wk : ∀ {B g M A} → {Γ : Types g}
+                 → ⊢ Γ ⊦ M ⦂ A
+                 → ⊢ Γ , B ⊦ WK M ⦂ A
+wk 𝒟 = ren (drop id⊇) 𝒟
 
 
-wks : ∀ {g n A} → {Γ : Truths g} {x : Terms g n} {Ξ : Truths n}
-                → ⊢⋆ [ Γ ⊦⋆ x ⦂ Ξ ]
-                → ⊢⋆ [ Γ , A true ⊦⋆ WKS x ⦂ Ξ ]
+vz : ∀ {g A} → {Γ : Types g}
+             → ⊢ Γ , A ⊦ VZ ⦂ A
+vz = var zero
+
+
+wks : ∀ {g n A} → {Γ : Types g} {x : Terms g n} {Ξ : Types n}
+                → ⊢⋆ Γ ⊦⋆ x ⦂ Ξ
+                → ⊢⋆ Γ , A ⊦⋆ WKS x ⦂ Ξ
 wks ξ = rens (drop id⊇) ξ
 
 
-lifts : ∀ {g n A} → {Γ : Truths g} {x : Terms g n} {Ξ : Truths n}
-                  → ⊢⋆ [ Γ ⊦⋆ x ⦂ Ξ ]
-                  → ⊢⋆ [ Γ , A true ⊦⋆ LIFTS x ⦂ Ξ , A true ]
+lifts : ∀ {g n A} → {Γ : Types g} {x : Terms g n} {Ξ : Types n}
+                  → ⊢⋆ Γ ⊦⋆ x ⦂ Ξ
+                  → ⊢⋆ Γ , A ⊦⋆ LIFTS x ⦂ Ξ , A
 lifts ξ = wks ξ , vz
 
 
-vars : ∀ {g g′ e} → {Γ : Truths g} {Γ′ : Truths g′}
+vars : ∀ {g g′ e} → {Γ : Types g} {Γ′ : Types g′}
                   → Γ′ ⊇⟨ e ⟩ Γ
-                  → ⊢⋆ [ Γ′ ⊦⋆ VARS e ⦂ Γ ]
+                  → ⊢⋆ Γ′ ⊦⋆ VARS e ⦂ Γ
 vars done     = ∙
 vars (drop η) = wks (vars η)
 vars (keep η) = lifts (vars η)
 
 
-ids : ∀ {g} → {Γ : Truths g}
-            → ⊢⋆ [ Γ ⊦⋆ IDS ⦂ Γ ]
+ids : ∀ {g} → {Γ : Types g}
+            → ⊢⋆ Γ ⊦⋆ IDS ⦂ Γ
 ids = vars id⊇
 
 
 --------------------------------------------------------------------------------
 
 
-sub : ∀ {g n M A} → {Γ : Truths g} {x : Terms g n} {Ξ : Truths n}
-                  → ⊢⋆ [ Γ ⊦⋆ x ⦂ Ξ ] → ⊢ [ Ξ ⊦ M ⦂ A ]
-                  → ⊢ [ Γ ⊦ SUB x M ⦂ A ]
-sub ξ (var 𝒾)   = get ξ (pac∋ 𝒾)
+sub : ∀ {g n M A} → {Γ : Types g} {x : Terms g n} {Ξ : Types n}
+                  → ⊢⋆ Γ ⊦⋆ x ⦂ Ξ → ⊢ Ξ ⊦ M ⦂ A
+                  → ⊢ Γ ⊦ SUB x M ⦂ A
+sub ξ (var i)   = get ξ (pac∋ i)
 sub ξ (lam 𝒟)   = lam (sub (lifts ξ) 𝒟)
 sub ξ (app 𝒟 ℰ) = app (sub ξ 𝒟) (sub ξ ℰ)
 
 
-cut : ∀ {g M N A B} → {Γ : Truths g}
-                    → ⊢ [ Γ ⊦ M ⦂ A true ] → ⊢ [ Γ , A true ⊦ N ⦂ B true ]
-                    → ⊢ [ Γ ⊦ CUT M N ⦂ B true ]
-cut 𝒟 ℰ = sub (ids , 𝒟) ℰ
+subs : ∀ {g n m} → {Γ : Types g} {x : Terms g n} {y : Terms n m} {Ξ : Types n} {Ψ : Types m}
+                 → ⊢⋆ Γ ⊦⋆ x ⦂ Ξ → ⊢⋆ Ξ ⊦⋆ y ⦂ Ψ
+                 → ⊢⋆ Γ ⊦⋆ SUBS x y ⦂ Ψ
+subs {y = ∙}     {Ψ = ∙}     ξ ∙       = ∙
+subs {y = y , M} {Ψ = Ψ , A} ξ (ψ , 𝒟) = subs ξ ψ , sub ξ 𝒟
+-- NOTE: Equivalent to
+-- subs ξ ψ = maps (sub ξ) ψ
 
 
 --------------------------------------------------------------------------------
 
 
-unlam : ∀ {g M A B} → {Γ : Truths g}
-                    → ⊢ [ Γ ⊦ M ⦂ A ⊃ B true ]
-                    → ⊢ [ Γ , A true ⊦ UNLAM M ⦂ B true ]
+unlam : ∀ {g M A B} → {Γ : Types g}
+                    → ⊢ Γ ⊦ M ⦂ A ⊃ B
+                    → ⊢ Γ , A ⊦ UNLAM M ⦂ B
 unlam 𝒟 = app (wk 𝒟) vz
 
 
-ex : ∀ {g M A B C} → {Γ : Truths g}
-                   → ⊢ [ Γ , A true , B true ⊦ M ⦂ C true ]
-                   → ⊢ [ Γ , B true , A true ⊦ EX M ⦂ C true ]
-ex 𝒟 = app (app (wk (wk (lam (lam 𝒟)))) vz) (wk vz)
+cut : ∀ {g M N A B} → {Γ : Types g}
+                    → ⊢ Γ ⊦ M ⦂ A → ⊢ Γ , A ⊦ N ⦂ B
+                    → ⊢ Γ ⊦ CUT M N ⦂ B
+cut 𝒟 ℰ = sub (ids , 𝒟) ℰ
+
+
+cut′ : ∀ {g M N A B} → {Γ : Types g}
+                     → ⊢ Γ ⊦ M ⦂ A → ⊢ Γ , A ⊦ N ⦂ B
+                     → ⊢ Γ ⊦ CUT′ M N ⦂ B
+cut′ 𝒟 ℰ = app (lam ℰ) 𝒟
+
+
+wkn : ∀ {g M A} → {Γ : Types g}
+                → ⊢ ∙ ⊦ M ⦂ A
+                → ⊢ Γ ⊦ WKN M ⦂ A
+wkn {Γ = ∙}     𝒟 = 𝒟
+wkn {Γ = Γ , B} 𝒟 = wk (wkn 𝒟)
+
+
+sub′ : ∀ {g n M A} → {Γ : Types g} {x : Terms g n} {Ξ : Types n}
+                   → ⊢⋆ Γ ⊦⋆ x ⦂ Ξ → ⊢ Ξ ⊦ M ⦂ A
+                   → ⊢ Γ ⊦ SUB′ x M ⦂ A
+sub′ {x = ∙}     {∙}     ∙       𝒟 = wkn 𝒟
+sub′ {x = x , M} {Ξ , B} (ξ , 𝒞) 𝒟 = app (sub′ ξ (lam 𝒟)) 𝒞
+
+
+exch : ∀ {g M A B C} → {Γ : Types g}
+                     → ⊢ Γ , A , B ⊦ M ⦂ C
+                     → ⊢ Γ , B , A ⊦ EXCH M ⦂ C
+exch 𝒟 = app (app (wk (wk (lam (lam 𝒟)))) vz) (wk vz)
 
 
 --------------------------------------------------------------------------------

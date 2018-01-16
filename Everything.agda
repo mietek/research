@@ -38,6 +38,8 @@ import ExperimentalIPLDerivations1  -- vz/wk/lam/app
 import ExperimentalIPLDerivations2  -- vz/wk/cut/lam/unlam
 
 
+import STLCTypes
+
 import SimpleSTLCTerms
 import SimpleSTLCDerivations
 
@@ -70,9 +72,9 @@ import ExperimentalS4Derivations3x  -- 3 + explicit conversions
 
 
 
--- import StdIPLLemmas
--- import StdIPLNormalForms
--- import StdIPLSemantics
+-- import StdIPLLemmas      -- done 
+-- import StdIPLNormalForms -- done 
+-- import StdIPLSemantics   -- done 
 
 -- import StdS4
 -- import StdS4Lemmas
@@ -83,8 +85,8 @@ import ExperimentalS4Derivations3x  -- 3 + explicit conversions
 -- import StdCMLNormalForms
 -- import StdCMLSemantics
 
--- import StdSTLCTerms
--- import StdSTLC
+-- import StdSTLCTerms -- done 
+-- import StdSTLC      -- done 
 
 -- import StdS4TTTerms
 -- import StdS4TTTermsLemmas

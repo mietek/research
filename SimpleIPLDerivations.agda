@@ -98,6 +98,11 @@ subs ξ ψ = maps (sub ξ) ψ
 --------------------------------------------------------------------------------
 
 
+unlam : ∀ {Γ A B} → Γ ⊢ A ⊃ B true
+                  → Γ , A true ⊢ B true
+unlam 𝒟 = app (wk 𝒟) vz
+
+
 cut : ∀ {Γ A B} → Γ ⊢ A true → Γ , A true ⊢ B true
                 → Γ ⊢ B true
 cut 𝒟 ℰ = sub (ids , 𝒟) ℰ
@@ -106,16 +111,6 @@ cut 𝒟 ℰ = sub (ids , 𝒟) ℰ
 cut′ : ∀ {Γ A B} → Γ ⊢ A true → Γ , A true ⊢ B true
                  → Γ ⊢ B true
 cut′ 𝒟 ℰ = app (lam ℰ) 𝒟
-
-
-unlam : ∀ {Γ A B} → Γ ⊢ A ⊃ B true
-                  → Γ , A true ⊢ B true
-unlam 𝒟 = app (wk 𝒟) vz
-
-
-exch : ∀ {Γ A B C} → Γ , A true , B true ⊢ C true
-                   → Γ , B true , A true ⊢ C true
-exch 𝒟 = app (app (wk (wk (lam (lam 𝒟)))) vz) (wk vz)
 
 
 wkn : ∀ {Γ A} → ∙ ⊢ A true
@@ -128,6 +123,11 @@ sub′ : ∀ {Γ Ξ A} → Γ ⊢⋆ Ξ → Ξ ⊢ A true
                  → Γ ⊢ A true
 sub′ ∙       𝒟 = wkn 𝒟
 sub′ (ξ , 𝒞) 𝒟 = app (sub′ ξ (lam 𝒟)) 𝒞
+
+
+exch : ∀ {Γ A B C} → Γ , A true , B true ⊢ C true
+                   → Γ , B true , A true ⊢ C true
+exch 𝒟 = app (app (wk (wk (lam (lam 𝒟)))) vz) (wk vz)
 
 
 --------------------------------------------------------------------------------

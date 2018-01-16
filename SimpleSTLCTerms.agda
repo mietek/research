@@ -1,7 +1,9 @@
 module SimpleSTLCTerms where
 
 open import Prelude
+open import Category
 open import Fin
+open import FinLemmas
 open import Vec
 
 
@@ -24,7 +26,7 @@ Terms g n = Vec (Term g) n
 
 REN : ∀ {g g′} → g′ ≥ g → Term g
                → Term g′
-REN e (VAR i)   = VAR (REN∋ e i)
+REN e (VAR I)   = VAR (REN∋ e I)
 REN e (LAM M)   = LAM (REN (keep e) M)
 REN e (APP M N) = APP (REN e M) (REN e N)
 
@@ -39,7 +41,7 @@ RENS e x = MAPS (REN e) x
 
 WK : ∀ {g} → Term g
            → Term (suc g)
-WK M = REN (drop id≥) M
+WK M = REN (drop id) M
 
 
 VZ : ∀ {g} → Term (suc g)
@@ -48,7 +50,7 @@ VZ = VAR zero
 
 WKS : ∀ {g n} → Terms g n
               → Terms (suc g) n
-WKS x = RENS (drop id≥) x
+WKS x = RENS (drop id) x
 
 
 LIFTS : ∀ {g n} → Terms g n
@@ -64,7 +66,7 @@ VARS (keep e) = LIFTS (VARS e)
 
 
 IDS : ∀ {g} → Terms g g
-IDS = VARS id≥
+IDS = VARS id
 
 
 --------------------------------------------------------------------------------
@@ -72,7 +74,7 @@ IDS = VARS id≥
 
 SUB : ∀ {g n} → Terms g n → Term n
               → Term g
-SUB x (VAR i)   = GET x i
+SUB x (VAR I)   = GET x I
 SUB x (LAM M)   = LAM (SUB (LIFTS x) M)
 SUB x (APP M N) = APP (SUB x M) (SUB x N)
 
