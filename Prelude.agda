@@ -12,7 +12,7 @@ open import Agda.Builtin.Nat public
   using (Nat ; zero ; suc)
 
 open import Agda.Builtin.String public
-  using (String)
+  using (String ; primStringEquality)
 
 open import Agda.Builtin.Unit public
   using (⊤)
@@ -162,18 +162,6 @@ module ≡-Reasoning {ℓ} {X : Set ℓ}
 --------------------------------------------------------------------------------
 
 
-suc-inj : ∀ {n m} → suc n ≡ suc m
-                  → n ≡ m
-suc-inj refl = refl
-
-
-data Dec {ℓ} (X : Set ℓ) : Set ℓ
-  where
-    instance
-      yes : X → Dec X
-      no  : ¬ X → Dec X
-
-
 module Inspect
   where
     record Reveal_$_is_ {ℓ ℓ′} {X : Set ℓ} {P : X → Set ℓ′}
@@ -189,6 +177,29 @@ module Inspect
                        → (f : ∀ x → P x) (x : X)
                        → Reveal f $ x is f x
     inspect f x = [ refl ]
+
+
+--------------------------------------------------------------------------------
+
+
+data Dec {ℓ} (X : Set ℓ) : Set ℓ
+  where
+    instance
+      yes : X → Dec X
+      no  : ¬ X → Dec X
+
+
+forD : ∀ {ℓ ℓ′} → {X : Set ℓ} {Y : Set ℓ′}
+                → Dec X → (X → Y) → (Y → X)
+                → Dec Y
+forD (yes x) f g = yes (f x)
+forD (no ¬x) f g = no (\ y → g y ↯ ¬x)
+
+
+mapD : ∀ {ℓ ℓ′} → {X : Set ℓ} {Y : Set ℓ′}
+                → (X → Y) → (Y → X) → Dec X
+                → Dec Y
+mapD f g x = forD x f g
 
 
 --------------------------------------------------------------------------------
@@ -216,7 +227,6 @@ mapΣ : ∀ {ℓ ℓ′ ℓ″ ℓ‴} → {X : Set ℓ} {Y : Set ℓ′} {P : X
                       → (f : X → Y) (g : ∀ {x} → P x → Q (f x)) → Σ X P
                       → Σ Y Q
 mapΣ f g p = forΣ p f g
-
 
 
 infixl 2 _×_
@@ -255,3 +265,59 @@ map⊎ f g s = for⊎ s f g
 
 --------------------------------------------------------------------------------
 
+
+-- not : Bool → Bool
+-- not true  = false
+-- not false = true
+--
+--
+-- ⊺ : Bool → Set
+-- ⊺ true  = ⊤
+-- ⊺ false = ⊥
+--
+--
+-- ⌊_⌋ : ∀ {ℓ} → {X : Set ℓ}
+--             → Dec X
+--             → Bool
+-- ⌊ yes _ ⌋ = true
+-- ⌊ no  _ ⌋ = false
+--
+--
+-- True : ∀ {ℓ} → {X : Set ℓ}
+--              → Dec X
+--              → Set
+-- True p = ⊺ ⌊ p ⌋
+--
+--
+-- False : ∀ {ℓ} → {X : Set ℓ}
+--               → Dec X
+--               → Set
+-- False p = ⊺ (not ⌊ p ⌋)
+
+
+--------------------------------------------------------------------------------
+
+
+suc-inj : ∀ {n m} → suc n ≡ suc m
+                  → n ≡ m
+suc-inj refl = refl
+
+
+--------------------------------------------------------------------------------
+
+
+module _
+  where
+    open import Agda.Builtin.Bool
+    open import Agda.Builtin.TrustMe
+
+    _≟ₛ_ : (s s′ : String) → Dec (s ≡ s′)
+    s ≟ₛ s′ with primStringEquality s s′
+    ...    | true  = yes primTrustMe
+    ...    | false = no s≢s′
+      where
+        postulate
+          s≢s′ : s ≢ s′
+
+
+--------------------------------------------------------------------------------

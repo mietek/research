@@ -83,12 +83,6 @@ data _∋⟨_⟩_ {X} : ∀ {n} → Vec X n → Fin n → X → Set
                       → Ξ , B ∋⟨ suc i ⟩ A
 
 
-get∋ : ∀ {X n} → {Ξ : Vec X n} {I : Fin n}
-               → Ξ ∋⟨ I ⟩ GET Ξ I
-get∋ {Ξ = Ξ , A} {zero}  = zero
-get∋ {Ξ = Ξ , B} {suc I} = suc get∋
-
-
 ren∋ : ∀ {X A n n′ e I} → {Ξ : Vec X n} {Ξ′ : Vec X n′}
                         → Ξ′ ⊇⟨ e ⟩ Ξ → Ξ ∋⟨ I ⟩ A
                         → Ξ′ ∋⟨ REN∋ e I ⟩ A
@@ -96,6 +90,19 @@ ren∋ done     i       = i
 ren∋ (drop η) i       = suc (ren∋ η i)
 ren∋ (keep η) zero    = zero
 ren∋ (keep η) (suc i) = suc (ren∋ η i)
+
+
+get∋ : ∀ {X n} → {Ξ : Vec X n} {I : Fin n}
+               → Ξ ∋⟨ I ⟩ GET Ξ I
+get∋ {Ξ = Ξ , A} {zero}  = zero
+get∋ {Ξ = Ξ , B} {suc I} = suc get∋
+
+
+uniq∋ : ∀ {X n I A₁ A₂} → {Ξ : Vec X n}
+                        → (i₁ : Ξ ∋⟨ I ⟩ A₁) (i₂ : Ξ ∋⟨ I ⟩ A₂)
+                        → A₁ ≡ A₂
+uniq∋ zero     zero     = refl
+uniq∋ (suc i₁) (suc i₂) = uniq∋ i₁ i₂
 
 
 --------------------------------------------------------------------------------

@@ -8,7 +8,7 @@ open import Vec
 
 
 open import IPLPropositions public
-  renaming (Prop to Type)
+  renaming (Prop to Type ; _≟ₚ_ to _≟ₜ_)
 
 
 Types : Nat → Set
