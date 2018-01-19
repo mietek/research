@@ -59,23 +59,24 @@ import STLCNameResolution
 
 import S4Propositions
 
-import SimpleS4Derivations  -- var/lam/app; mvar/box/letbox
-import SimpleS4Lemmas
-import SimpleS4Verifications
-import SimpleS4Semantics
+import S4Derivations  -- var/lam/app; mvar/box/letbox
+import S4Lemmas
 
-import ExperimentalS4Derivations1  -- vz/wk/lam/app;       mvz/mwk/box/letbox
-import ExperimentalS4Derivations2  -- vz/wk/cut/lam/unlam; mvz/mwk/box/letbox
-import ExperimentalS4Derivations3  -- vz/wk/cut/lam/unlam; mvz/mwk/mcut/vau/unvau
-import ExperimentalS4Derivations4  -- vz/wk/cut/lam/unlam; box/unbox/vau/unvau
--- import ExperimentalS4Derivations5  -- vz/wk/cut/lam/unlam; mvz/mwk/mcut/box/unbox; missing letbox
+import S4BidirectionalDerivationsForNormalisation
+import S4Normalisation
 
-import ExperimentalS4Derivations0a  -- Simple + contextual validity
-import ExperimentalS4Derivations2a  -- 2 + contextual validity
-import ExperimentalS4Derivations3a  -- 3 + contextual validity
-import ExperimentalS4Derivations4a  -- 4 + contextual validity
+import S4ExperimentalDerivations1  -- vz/wk/lam/app;       mvz/mwk/box/letbox
+import S4ExperimentalDerivations2  -- vz/wk/cut/lam/unlam; mvz/mwk/box/letbox
+import S4ExperimentalDerivations3  -- vz/wk/cut/lam/unlam; mvz/mwk/mcut/vau/unvau
+import S4ExperimentalDerivations4  -- vz/wk/cut/lam/unlam; box/unbox/vau/unvau
+-- import S4ExperimentalDerivations5  -- vz/wk/cut/lam/unlam; mvz/mwk/mcut/box/unbox; problem with vau
 
-import ExperimentalS4Derivations3x  -- 3 + explicit conversions
+import S4ExperimentalDerivations0a  -- contextual validity
+import S4ExperimentalDerivations1a  -- 1 + contextual validity
+import S4ExperimentalDerivations3a  -- 3 + contextual validity
+import S4ExperimentalDerivations4a  -- 4 + contextual validity
+
+import S4ExperimentalDerivations3x  -- 3 + explicit conversions
 
 
 -- --------------------------------------------------------------------------------

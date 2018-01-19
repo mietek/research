@@ -1,4 +1,4 @@
-module ExperimentalS4Derivations4 where
+module S4ExperimentalDerivations4 where
 
 open import Prelude
 open import Category
@@ -6,7 +6,7 @@ open import List
 open import ListLemmas
 open import AllList
 open import S4Propositions
-import SimpleS4Derivations as S4
+import S4Derivations as S4
 
 
 --------------------------------------------------------------------------------

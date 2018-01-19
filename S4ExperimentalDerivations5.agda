@@ -1,4 +1,4 @@
-module ExperimentalS4Derivations5 where
+module S4ExperimentalDerivations5 where
 
 open import Prelude
 open import Category
@@ -6,7 +6,7 @@ open import List
 open import ListLemmas
 open import AllList
 open import S4Propositions
-import SimpleS4Derivations as S4
+import S4Derivations as S4
 
 
 --------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ data _⨾_⊢_ : List Validity → List Truth → Truth → Set
 
     unbox : ∀ {A Δ Γ} → Δ ⨾ ∙ ⊢ □ A true
                       → Δ ⨾ Γ ⊢ A true
-                        
+
 
 --------------------------------------------------------------------------------
 

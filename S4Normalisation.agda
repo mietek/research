@@ -1,4 +1,4 @@
-module SimpleS4Semantics where
+module S4Normalisation where
 
 open import Prelude
 open import Category
@@ -7,8 +7,8 @@ open List²
 open import ListLemmas
 open import AllList
 open import S4Propositions
-open import SimpleS4Derivations
-open import SimpleS4Verifications
+open import S4Derivations
+open import S4BidirectionalDerivationsForNormalisation
 
 
 --------------------------------------------------------------------------------

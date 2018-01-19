@@ -1,4 +1,4 @@
-module SimpleS4Verifications where
+module S4BidirectionalDerivationsForNormalisation where
 
 open import Prelude
 open import Category
@@ -6,7 +6,7 @@ open import List
 open import ListLemmas
 open import AllList
 open import S4Propositions
-open import SimpleS4Derivations
+open import S4Derivations
 
 
 --------------------------------------------------------------------------------

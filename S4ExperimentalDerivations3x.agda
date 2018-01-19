@@ -1,4 +1,4 @@
-module ExperimentalS4Derivations3x where
+module S4ExperimentalDerivations3x where
 
 open import Prelude
 open import Category
@@ -6,7 +6,7 @@ open import List
 open import ListLemmas
 open import AllList
 open import S4Propositions
-import SimpleS4Derivations as S4
+import S4Derivations as S4
 
 
 --------------------------------------------------------------------------------
@@ -17,25 +17,25 @@ mutual
   data _⨾_⊢_ : List Validity → List Truth → Truth → Set
     where
       vz : ∀ {A Δ Γ} → Δ ⨾ Γ , A true ⊢ A true
-   
+
       wk : ∀ {A B Δ Γ} → Δ ⨾ Γ ⊢ A true
                        → Δ ⨾ Γ , B true ⊢ A true
-   
+
       cut : ∀ {A B Δ Γ} → Δ ⨾ Γ ⊢ A true → Δ ⨾ Γ , A true ⊢ B true
                         → Δ ⨾ Γ ⊢ B true
-   
+
       lam : ∀ {A B Δ Γ} → Δ ⨾ Γ , A true ⊢ B true
                         → Δ ⨾ Γ ⊢ A ⊃ B true
-   
+
       unlam : ∀ {A B Δ Γ} → Δ ⨾ Γ ⊢ A ⊃ B true
                           → Δ ⨾ Γ , A true ⊢ B true
-       
+
       vau : ∀ {A B Δ Γ} → Δ , A valid ⨾ Γ ⊢ B true
                         → Δ ⨾ Γ , □ A true ⊢ B true
 
       unvau : ∀ {A B Δ Γ} → Δ ⨾ Γ , □ A true ⊢ B true
                           → Δ , A valid ⨾ Γ ⊢ B true
-                       
+
       v→t : ∀ {A Δ Γ} → Δ ⊢₁ A valid
                        → Δ ⨾ Γ ⊢ A true
 
@@ -132,7 +132,7 @@ vaus 𝒟 = maps vau 𝒟
 
 -- NOTE: Similar shape to lift or cut
 
-unnamed : ∀ {Δ Γ A Ξ} → Δ , A valid ⨾ Γ ⊢⋆ Ξ 
+unnamed : ∀ {Δ Γ A Ξ} → Δ , A valid ⨾ Γ ⊢⋆ Ξ
                       → Δ ⨾ Γ , □ A true ⊢⋆ Ξ , □ A true
 unnamed 𝒟 = vaus 𝒟 , vz
 
@@ -144,7 +144,7 @@ sub (ξ , 𝒞) (wk 𝒟)       = sub ξ 𝒟
 sub ξ       (cut 𝒟 ℰ)    = cut (sub ξ 𝒟) (sub (lifts ξ) ℰ)
 sub ξ       (lam 𝒟)      = lam (sub (lifts ξ) 𝒟)
 sub (ξ , 𝒞) (unlam 𝒟)    = cut 𝒞 (unlam (sub ξ 𝒟))
-sub (ξ , 𝒞) (vau 𝒟)      = cut 𝒞 (vau (sub (mwks ξ) 𝒟)) 
+sub (ξ , 𝒞) (vau 𝒟)      = cut 𝒞 (vau (sub (mwks ξ) 𝒟))
 sub ξ       (unvau 𝒟)    = unvau (sub (unnamed ξ) 𝒟)  -- NOTE: Interesting
 sub ξ       (v→t 𝒟)     = v→t 𝒟
 
@@ -164,7 +164,7 @@ letbox 𝒟 ℰ = cut 𝒟 (vau ℰ)
 
 mcut′ : ∀ {Δ Γ A B} → Δ ⨾ ∙ ⊢ A true → Δ , A valid ⨾ Γ ⊢ B true
                     → Δ ⨾ Γ ⊢ B true
-mcut′ 𝒟 ℰ = cut (box 𝒟) (vau ℰ) 
+mcut′ 𝒟 ℰ = cut (box 𝒟) (vau ℰ)
 
 
 mutual
@@ -234,7 +234,7 @@ mutual
   ↓₁ (t→v 𝒟)    = S4.t→v (↓ 𝒟)
   ↓₁ mvz₁        = S4.mvz
   ↓₁ (mwk₁ 𝒟)    = S4.mwk (↓₁ 𝒟)
-  ↓₁ (mcut₁ 𝒟 ℰ) = S4.mcut (↓₁ 𝒟) (↓₁ ℰ)               
+  ↓₁ (mcut₁ 𝒟 ℰ) = S4.mcut (↓₁ 𝒟) (↓₁ ℰ)
 
 
 ↑ : ∀ {Δ Γ A} → Δ S4.⨾ Γ ⊢ A true

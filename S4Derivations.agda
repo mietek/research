@@ -1,4 +1,4 @@
-module SimpleS4Derivations where
+module S4Derivations where
 
 open import Prelude
 open import Category

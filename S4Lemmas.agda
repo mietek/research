@@ -1,4 +1,4 @@
-module SimpleS4Lemmas where
+module S4Lemmas where
 
 open import Prelude
 open import Category
@@ -7,7 +7,7 @@ open import ListLemmas
 open import AllList
 open import AllListLemmas
 open import S4Propositions
-open import SimpleS4Derivations
+open import S4Derivations
 
 
 --------------------------------------------------------------------------------

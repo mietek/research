@@ -1,4 +1,4 @@
-module ExperimentalS4Derivations3 where
+module S4ExperimentalDerivations3 where
 
 open import Prelude
 open import Category
@@ -6,7 +6,7 @@ open import List
 open import ListLemmas
 open import AllList
 open import S4Propositions
-import SimpleS4Derivations as S4
+import S4Derivations as S4
 
 
 --------------------------------------------------------------------------------
@@ -124,7 +124,7 @@ vaus 𝒟 = maps vau 𝒟
 
 -- NOTE: Similar shape to lift or cut
 
-unnamed : ∀ {Δ Γ A Ξ} → Δ , A valid ⨾ Γ ⊢⋆ Ξ 
+unnamed : ∀ {Δ Γ A Ξ} → Δ , A valid ⨾ Γ ⊢⋆ Ξ
                       → Δ ⨾ Γ , □ A true ⊢⋆ Ξ , □ A true
 unnamed 𝒟 = vaus 𝒟 , vz
 

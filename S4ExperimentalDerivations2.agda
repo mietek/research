@@ -1,4 +1,4 @@
-module ExperimentalS4Derivations2 where
+module S4ExperimentalDerivations2 where
 
 open import Prelude
 open import Category
@@ -6,7 +6,7 @@ open import List
 open import ListLemmas
 open import AllList
 open import S4Propositions
-import SimpleS4Derivations as S4
+import S4Derivations as S4
 
 
 --------------------------------------------------------------------------------
@@ -118,8 +118,8 @@ mids₁ = mvars₁ id
 vau : ∀ {Δ Γ A B} → Δ , A valid ⨾ Γ ⊢ B true
                   → Δ ⨾ Γ , □ A true ⊢ B true
 vau 𝒟 = letbox vz (wk 𝒟)
- 
- 
+
+
 unvau : ∀ {Δ Γ A B} → Δ ⨾ Γ , □ A true ⊢ B true
                     → Δ , A valid ⨾ Γ ⊢ B true
 unvau 𝒟 = cut (box mvz) (mwk 𝒟)
