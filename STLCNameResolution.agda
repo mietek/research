@@ -1,11 +1,12 @@
-module SimpleSTLCScopeChecking2 where
+module STLCNameResolution where
 
 open import Prelude
+open import Names
 open import Fin
 open import Vec
-open import BidirectionalSTLCRawTermsForNameResolution
-open import BidirectionalSTLCRawDerivationsForNameResolution
-open import BidirectionalSTLCTermsForTypeChecking
+open import STLCBidirectionalTermsForTypeChecking
+open import STLCBidirectionalRawTermsForNameResolution
+open import STLCBidirectionalRawDerivationsForNameResolution
 
 
 --------------------------------------------------------------------------------
@@ -19,8 +20,8 @@ injvzwk (wk p 𝒟) = inj₂ (VAR _ , 𝒟)
 
 
 find : ∀ {g} → (И : Names g) (x : Name)
-                 → Dec (Σ (Termᵣ g) (\ M → ⊢ᵣ И ⊦ VAR x ≫ M))
-find ∙       x  = no (\ ())
+             → Dec (Σ (Termᵣ g) (\ M → ⊢ᵣ И ⊦ VAR x ≫ M))
+find ∙       x  = no (\ { (M , ())})
 find (И , y) x  with x ≟ₛ y
 find (И , x) .x | yes refl = yes (VAR zero , vz)
 find (И , y) x  | no x≢y   with find И x

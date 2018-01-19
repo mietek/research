@@ -29,29 +29,29 @@ import AllVecLemmas
 
 import IPLPropositions
 
-import SimpleIPLDerivations  -- var/lam/app
-import SimpleIPLLemmas
+import IPLDerivations  -- var/lam/app
+import IPLLemmas
 
-import BidirectionalIPLDerivationsForNormalisation
-import SimpleIPLNormalisation
+import IPLBidirectionalDerivationsForNormalisation
+import IPLNormalisation
 
-import ExperimentalIPLDerivations1  -- vz/wk/lam/app
-import ExperimentalIPLDerivations2  -- vz/wk/cut/lam/unlam
--- import ExperimentalIPLDerivations3  -- var/cut/lam/unlam; problem with renaming
+import IPLExperimentalDerivations1  -- vz/wk/lam/app
+import IPLExperimentalDerivations2  -- vz/wk/cut/lam/unlam
+-- import IPLExperimentalDerivations3  -- var/cut/lam/unlam; problem with renaming
 
 
 import STLCTypes
 
-import SimpleSTLCTerms
-import SimpleSTLCDerivations
+import STLCTerms
+import STLCDerivations
 
-import BidirectionalSTLCTermsForTypeChecking
-import BidirectionalSTLCDerivationsForTypeChecking
-import BidirectionalSTLCRawDerivationsForNameResolution
-import SimpleSTLCTypeChecking
+import STLCBidirectionalTermsForTypeChecking
+import STLCBidirectionalDerivationsForTypeChecking
+import STLCTypeChecking
 
-import BidirectionalSTLCRawTermsForNameResolution
--- import SimpleSTLCScopeChecking
+import STLCBidirectionalRawTermsForNameResolution
+import STLCBidirectionalRawDerivationsForNameResolution
+import STLCNameResolution
 
 
 --------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-module SimpleSTLCTypeChecking where
+module STLCTypeChecking where
 
 open import Prelude
 open import Category
@@ -7,10 +7,10 @@ open import FinLemmas
 open import Vec
 open import AllVec
 open import STLCTypes
-open import BidirectionalSTLCTermsForTypeChecking
-open import BidirectionalSTLCDerivationsForTypeChecking
-open import SimpleSTLCTerms
-open import SimpleSTLCDerivations
+open import STLCTerms
+open import STLCDerivations
+open import STLCBidirectionalTermsForTypeChecking
+open import STLCBidirectionalDerivationsForTypeChecking
 
 
 --------------------------------------------------------------------------------

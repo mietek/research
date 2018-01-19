@@ -1,18 +1,8 @@
-module BidirectionalSTLCRawTermsForNameResolution where
+module STLCBidirectionalRawTermsForNameResolution where
 
 open import Prelude
-open import Vec
+open import Names
 open import STLCTypes
-
-
---------------------------------------------------------------------------------
-
-
-Name : Set
-Name = String
-
-Names : Nat → Set
-Names n = Vec Name n
 
 
 --------------------------------------------------------------------------------

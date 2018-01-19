@@ -1,10 +1,10 @@
-module BidirectionalSTLCDerivationsForTypeChecking where
+module STLCBidirectionalDerivationsForTypeChecking where
 
 open import Prelude
 open import Vec
 open import STLCTypes
-open import BidirectionalSTLCTermsForTypeChecking
-open import SimpleSTLCDerivations
+open import STLCDerivations
+open import STLCBidirectionalTermsForTypeChecking
 
 
 --------------------------------------------------------------------------------
@@ -61,24 +61,6 @@ mutual
       chk : ∀ {A g M} → {Γ : Types g}
                       → ⊢ₗ Γ ⊦ M ≪ A
                       → ⊢ᵣ Γ ⊦ CHK M A ≫ A
-
-
---------------------------------------------------------------------------------
-
-
-mutual
-  forgetₗ : ∀ {g M A} → {Γ : Types g}
-                      → ⊢ₗ Γ ⊦ M ≪ A
-                      → ⊢ Γ ⊦ FORGETₗ M ⦂ A
-  forgetₗ (lam 𝒟) = lam (forgetₗ 𝒟)
-  forgetₗ (inf 𝒟) = forgetᵣ 𝒟
-
-  forgetᵣ : ∀ {g M A} → {Γ : Types g}
-                      → ⊢ᵣ Γ ⊦ M ≫ A
-                      → ⊢ Γ ⊦ FORGETᵣ M ⦂ A
-  forgetᵣ (var i)   = var i
-  forgetᵣ (app 𝒟 ℰ) = app (forgetᵣ 𝒟) (forgetₗ ℰ)
-  forgetᵣ (chk 𝒟)   = forgetₗ 𝒟
 
 
 --------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-module SimpleIPLDerivations where
+module IPLDerivations where
 
 open import Prelude
 open import Category

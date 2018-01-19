@@ -1,4 +1,4 @@
-module SimpleSTLCTerms where
+module STLCTerms where
 
 open import Prelude
 open import Category

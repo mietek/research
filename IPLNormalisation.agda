@@ -1,4 +1,4 @@
-module SimpleIPLNormalisation where
+module IPLNormalisation where
 
 open import Prelude
 open import Category
@@ -6,8 +6,8 @@ open import List
 open import ListLemmas
 open import AllList
 open import IPLPropositions
-open import SimpleIPLDerivations
-open import BidirectionalIPLDerivationsForNormalisation
+open import IPLDerivations
+open import IPLBidirectionalDerivationsForNormalisation
 
 
 --------------------------------------------------------------------------------

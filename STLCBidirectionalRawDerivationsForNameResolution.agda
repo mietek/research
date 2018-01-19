@@ -1,10 +1,11 @@
-module BidirectionalSTLCRawDerivationsForNameResolution where
+module STLCBidirectionalRawDerivationsForNameResolution where
 
 open import Prelude
+open import Names
 open import Fin
 open import Vec
-open import BidirectionalSTLCRawTermsForNameResolution
-open import BidirectionalSTLCTermsForTypeChecking
+open import STLCBidirectionalTermsForTypeChecking
+open import STLCBidirectionalRawTermsForNameResolution
 
 
 --------------------------------------------------------------------------------

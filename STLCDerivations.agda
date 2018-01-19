@@ -1,4 +1,4 @@
-module SimpleSTLCDerivations where
+module STLCDerivations where
 
 open import Prelude
 open import Category
@@ -6,7 +6,7 @@ open import Fin
 open import Vec
 open import AllVec
 open import STLCTypes
-open import SimpleSTLCTerms
+open import STLCTerms
 
 
 --------------------------------------------------------------------------------

@@ -1,11 +1,10 @@
-module BidirectionalSTLCTermsForTypeChecking where
+module STLCBidirectionalTermsForTypeChecking where
 
 open import Prelude
 open import Category
 open import Fin
 open import FinLemmas
 open import STLCTypes
-open import SimpleSTLCTerms
 
 
 --------------------------------------------------------------------------------
@@ -22,22 +21,6 @@ mutual
       VAR : ∀ {g} → Fin g → Termᵣ g
       APP : ∀ {g} → Termᵣ g → Termₗ g → Termᵣ g
       CHK : ∀ {g} → Termₗ g → Type → Termᵣ g
-
-
---------------------------------------------------------------------------------
-
-
-mutual
-  FORGETₗ : ∀ {g} → Termₗ g
-                  → Term g
-  FORGETₗ (LAM M) = LAM (FORGETₗ M)
-  FORGETₗ (INF M) = FORGETᵣ M
-
-  FORGETᵣ : ∀ {g} → Termᵣ g
-                  → Term g
-  FORGETᵣ (VAR I)   = VAR I
-  FORGETᵣ (APP M N) = APP (FORGETᵣ M) (FORGETₗ N)
-  FORGETᵣ (CHK M A) = FORGETₗ M
 
 
 --------------------------------------------------------------------------------

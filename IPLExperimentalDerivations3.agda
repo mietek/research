@@ -1,4 +1,4 @@
-module ExperimentalIPLDerivations3 where
+module IPLExperimentalDerivations3 where
 
 open import Prelude
 open import Category
@@ -6,7 +6,7 @@ open import List
 open import ListLemmas
 open import AllList
 open import IPLPropositions
-import SimpleIPLDerivations as IPL
+import IPLDerivations as IPL
 
 
 --------------------------------------------------------------------------------

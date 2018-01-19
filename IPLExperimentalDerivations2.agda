@@ -1,4 +1,4 @@
-module ExperimentalIPLDerivations1 where
+module IPLExperimentalDerivations2 where
 
 open import Prelude
 open import Category
@@ -6,7 +6,7 @@ open import List
 open import ListLemmas
 open import AllList
 open import IPLPropositions
-import SimpleIPLDerivations as IPL
+import IPLDerivations as IPL
 
 
 --------------------------------------------------------------------------------
@@ -20,11 +20,14 @@ data _⊢_ : List Truth → Truth → Set
     wk : ∀ {A B Γ} → Γ ⊢ A true
                    → Γ , B true ⊢ A true
 
+    cut : ∀ {A B Γ} → Γ ⊢ A true → Γ , A true ⊢ B true
+                    → Γ ⊢ B true
+
     lam : ∀ {A B Γ} → Γ , A true ⊢ B true
                     → Γ ⊢ A ⊃ B true
 
-    app : ∀ {A B Γ} → Γ ⊢ A ⊃ B true → Γ ⊢ A true
-                    → Γ ⊢ B true
+    unlam : ∀ {A B Γ} → Γ ⊢ A ⊃ B true
+                      → Γ , A true ⊢ B true
 
 
 infix 3 _⊢⋆_
@@ -63,8 +66,9 @@ sub : ∀ {Γ Ξ A} → Γ ⊢⋆ Ξ → Ξ ⊢ A true
                 → Γ ⊢ A true
 sub (ξ , 𝒞) vz        = 𝒞
 sub (ξ , 𝒞) (wk 𝒟)    = sub ξ 𝒟
+sub ξ       (cut 𝒟 ℰ) = cut (sub ξ 𝒟) (sub (lifts ξ) ℰ)
 sub ξ       (lam 𝒟)   = lam (sub (lifts ξ) 𝒟)
-sub ξ       (app 𝒟 ℰ) = app (sub ξ 𝒟) (sub ξ ℰ)
+sub (ξ , 𝒞) (unlam 𝒟) = cut 𝒞 (unlam (sub ξ 𝒟)) 
 
 
 --------------------------------------------------------------------------------
@@ -76,6 +80,11 @@ var zero    = vz
 var (suc i) = wk (var i)
 
 
+app : ∀ {A B Γ} → Γ ⊢ A ⊃ B true → Γ ⊢ A true
+                → Γ ⊢ B true
+app 𝒟 ℰ = cut ℰ (unlam 𝒟)
+
+
 --------------------------------------------------------------------------------
 
 
@@ -83,12 +92,13 @@ var (suc i) = wk (var i)
             → Γ IPL.⊢ A true
 ↓ vz        = IPL.vz
 ↓ (wk 𝒟)    = IPL.wk (↓ 𝒟)
+↓ (cut 𝒟 ℰ) = IPL.cut (↓ 𝒟) (↓ ℰ)
 ↓ (lam 𝒟)   = IPL.lam (↓ 𝒟)
-↓ (app 𝒟 ℰ) = IPL.app (↓ 𝒟) (↓ ℰ)
+↓ (unlam 𝒟) = IPL.unlam (↓ 𝒟)
 
 
-↑ : ∀ {Γ A} → Γ IPL.⊢ A
-            → Γ ⊢ A
+↑ : ∀ {Γ A} → Γ IPL.⊢ A true
+            → Γ ⊢ A true
 ↑ (IPL.var i)   = var i
 ↑ (IPL.lam 𝒟)   = lam (↑ 𝒟)
 ↑ (IPL.app 𝒟 ℰ) = app (↑ 𝒟) (↑ ℰ)
