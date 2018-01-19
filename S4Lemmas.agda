@@ -130,7 +130,7 @@ comp-ren η₁ η₂ (box 𝒟)      = refl
 comp-ren η₁ η₂ (letbox 𝒟 ℰ) = letbox & comp-ren η₁ η₂ 𝒟 ⊗ comp-ren η₁ η₂ ℰ
 
 
-𝐫𝐞𝐧 : ∀ {A} → Presheaf 𝐎𝐏𝐄 (\ Γ → Σ (List Validity) (\ Δ → Δ ⨾ Γ ⊢ A true))
+𝐫𝐞𝐧 : ∀ {A} → Presheaf 𝐎𝐏𝐄 (\ Γ → Σ (List Prop) (\ Δ → Δ ⨾ Γ ⊢ A true))
 𝐫𝐞𝐧 = record
         { ℱ     = \ { η (Δ , 𝒟) → Δ , ren η 𝒟 }
         ; idℱ   = funext! (\ { (Δ , 𝒟) → (Δ ,_) & id-ren 𝒟 })
@@ -168,7 +168,7 @@ comp-mren η₁ η₂ (box 𝒟)      = box & comp-mren η₁ η₂ 𝒟
 comp-mren η₁ η₂ (letbox 𝒟 ℰ) = letbox & comp-mren η₁ η₂ 𝒟 ⊗ comp-mren (keep η₁) (keep η₂) ℰ
 
 
-𝐦𝐫𝐞𝐧 : ∀ {A} → Presheaf 𝐎𝐏𝐄 (\ Δ → Σ (List Truth) (\ Γ → Δ ⨾ Γ ⊢ A true))
+𝐦𝐫𝐞𝐧 : ∀ {A} → Presheaf 𝐎𝐏𝐄 (\ Δ → Σ (List Prop) (\ Γ → Δ ⨾ Γ ⊢ A true))
 𝐦𝐫𝐞𝐧 = record
          { ℱ     = \ { η (Γ , 𝒟) → Γ , mren η 𝒟 }
          ; idℱ   = funext! (\ { (Γ , 𝒟) → (Γ ,_) & id-mren 𝒟 })
@@ -202,13 +202,13 @@ comp-ren-mren η₁ η₂ (box 𝒟)      = refl
 comp-ren-mren η₁ η₂ (letbox 𝒟 ℰ) = letbox & comp-ren-mren η₁ η₂ 𝒟 ⊗ comp-ren-mren (keep η₁) η₂ ℰ
 
 
-comp-rens-mrens : ∀ {Δ Δ′ Γ Γ′ Ξ} → (η₁ : Δ′ ⊇ Δ) (η₂ : Γ′ ⊇ Γ) (ξ : Δ ⨾ Γ ⊢⋆ Ξ)
+comp-rens-mrens : ∀ {Δ Δ′ Γ Γ′ Ξ} → (η₁ : Δ′ ⊇ Δ) (η₂ : Γ′ ⊇ Γ) (ξ : Δ ⨾ Γ ⊢ Ξ true*)
                                   → (mrens η₁ ∘ rens η₂) ξ ≡ (rens η₂ ∘ mrens η₁) ξ
 comp-rens-mrens η₁ η₂ ∙       = refl
 comp-rens-mrens η₁ η₂ (ξ , 𝒟) = _,_ & comp-rens-mrens η₁ η₂ ξ ⊗ comp-ren-mren η₁ η₂ 𝒟
 
 
-comp-lifts-mrens : ∀ {Δ Δ′ Γ Ξ A} → (η : Δ′ ⊇ Δ) (ξ : Δ ⨾ Γ ⊢⋆ Ξ)
+comp-lifts-mrens : ∀ {Δ Δ′ Γ Ξ A} → (η : Δ′ ⊇ Δ) (ξ : Δ ⨾ Γ ⊢ Ξ true*)
                                   → (mrens η ∘ lifts {A}) ξ ≡ (lifts ∘ mrens η) ξ
 comp-lifts-mrens η ξ = (_, vz) & comp-rens-mrens η (drop id) ξ
 
@@ -216,19 +216,19 @@ comp-lifts-mrens η ξ = (_, vz) & comp-rens-mrens η (drop id) ξ
 --------------------------------------------------------------------------------
 
 
-id-rens : ∀ {Δ Γ Ξ} → (ξ : Δ ⨾ Γ ⊢⋆ Ξ)
+id-rens : ∀ {Δ Γ Ξ} → (ξ : Δ ⨾ Γ ⊢ Ξ true*)
                     → rens id ξ ≡ ξ
 id-rens ∙       = refl
 id-rens (ξ , 𝒟) = _,_ & id-rens ξ ⊗ id-ren 𝒟
 
 
-comp-rens : ∀ {Δ Γ Γ′ Γ″ Ξ} → (η₁ : Γ′ ⊇ Γ) (η₂ : Γ″ ⊇ Γ′) (ξ : Δ ⨾ Γ ⊢⋆ Ξ)
+comp-rens : ∀ {Δ Γ Γ′ Γ″ Ξ} → (η₁ : Γ′ ⊇ Γ) (η₂ : Γ″ ⊇ Γ′) (ξ : Δ ⨾ Γ ⊢ Ξ true*)
                             → rens (η₁ ∘ η₂) ξ ≡ (rens η₂ ∘ rens η₁) ξ
 comp-rens η₁ η₂ ∙       = refl
 comp-rens η₁ η₂ (ξ , 𝒟) = _,_ & comp-rens η₁ η₂ ξ ⊗ comp-ren η₁ η₂ 𝒟
 
 
-𝐫𝐞𝐧𝐬 : ∀ {Ξ} → Presheaf 𝐎𝐏𝐄 (\ Γ → Σ (List Validity) (\ Δ → Δ ⨾ Γ ⊢⋆ Ξ))
+𝐫𝐞𝐧𝐬 : ∀ {Ξ} → Presheaf 𝐎𝐏𝐄 (\ Γ → Σ (List Prop) (\ Δ → Δ ⨾ Γ ⊢ Ξ true*))
 𝐫𝐞𝐧𝐬 = record
          { ℱ     = \ { η (Δ , ξ) → Δ , rens η ξ }
          ; idℱ   = funext! (\ { (Δ , ξ) → (Δ ,_) & id-rens ξ })
@@ -236,13 +236,13 @@ comp-rens η₁ η₂ (ξ , 𝒟) = _,_ & comp-rens η₁ η₂ ξ ⊗ comp-ren 
          }
 
 
-comp-wks-rens-keep : ∀ {Δ Γ Γ′ Ξ A} → (η : Γ′ ⊇ Γ) (ξ : Δ ⨾ Γ ⊢⋆ Ξ)
+comp-wks-rens-keep : ∀ {Δ Γ Γ′ Ξ A} → (η : Γ′ ⊇ Γ) (ξ : Δ ⨾ Γ ⊢ Ξ true*)
                                     → (rens (keep {A = A} η) ∘ wks) ξ ≡ (wks ∘ rens η) ξ
 comp-wks-rens-keep η ∙       = refl
 comp-wks-rens-keep η (ξ , 𝒟) = _,_ & comp-wks-rens-keep η ξ ⊗ comp-wk-ren-keep η 𝒟
 
 
-comp-lifts-rens : ∀ {Δ Γ Γ′ Ξ A} → (η : Γ′ ⊇ Γ) (ξ : Δ ⨾ Γ ⊢⋆ Ξ)
+comp-lifts-rens : ∀ {Δ Γ Γ′ Ξ A} → (η : Γ′ ⊇ Γ) (ξ : Δ ⨾ Γ ⊢ Ξ true*)
                                  → (rens (keep {A = A} η) ∘ lifts) ξ ≡ (lifts ∘ rens η) ξ
 comp-lifts-rens η ξ = (_, vz) & comp-wks-rens-keep η ξ
 
@@ -250,19 +250,19 @@ comp-lifts-rens η ξ = (_, vz) & comp-wks-rens-keep η ξ
 --------------------------------------------------------------------------------
 
 
-id-mrens : ∀ {Δ Γ Ξ} → (ξ : Δ ⨾ Γ ⊢⋆ Ξ)
+id-mrens : ∀ {Δ Γ Ξ} → (ξ : Δ ⨾ Γ ⊢ Ξ true*)
                      → mrens id ξ ≡ ξ
 id-mrens ∙       = refl
 id-mrens (ξ , 𝒟) = _,_ & id-mrens ξ ⊗ id-mren 𝒟
 
 
-comp-mrens : ∀ {Δ Δ′ Δ″ Γ Ξ} → (η₁ : Δ′ ⊇ Δ) (η₂ : Δ″ ⊇ Δ′) (ξ : Δ ⨾ Γ ⊢⋆ Ξ)
+comp-mrens : ∀ {Δ Δ′ Δ″ Γ Ξ} → (η₁ : Δ′ ⊇ Δ) (η₂ : Δ″ ⊇ Δ′) (ξ : Δ ⨾ Γ ⊢ Ξ true*)
                              → mrens (η₁ ∘ η₂) ξ ≡ (mrens η₂ ∘ mrens η₁) ξ
 comp-mrens η₁ η₂ ∙       = refl
 comp-mrens η₁ η₂ (ξ , 𝒟) = _,_ & comp-mrens η₁ η₂ ξ ⊗ comp-mren η₁ η₂ 𝒟
 
 
-𝐦𝐫𝐞𝐧𝐬 : ∀ {Ξ} → Presheaf 𝐎𝐏𝐄 (\ Δ → Σ (List Truth) (\ Γ → Δ ⨾ Γ ⊢⋆ Ξ))
+𝐦𝐫𝐞𝐧𝐬 : ∀ {Ξ} → Presheaf 𝐎𝐏𝐄 (\ Δ → Σ (List Prop) (\ Γ → Δ ⨾ Γ ⊢ Ξ true*))
 𝐦𝐫𝐞𝐧𝐬 = record
           { ℱ     = \ { η (Γ , ξ) → Γ , mrens η ξ}
           ; idℱ   = funext! (\ { (Γ , ξ) → (Γ ,_) & id-mrens ξ })
@@ -270,13 +270,13 @@ comp-mrens η₁ η₂ (ξ , 𝒟) = _,_ & comp-mrens η₁ η₂ ξ ⊗ comp-mr
           }
 
 
-comp-mwks-mrens-drop : ∀ {Δ Δ′ Γ Ξ A} → (η : Δ′ ⊇ Δ) (ξ : Δ ⨾ Γ ⊢⋆ Ξ)
+comp-mwks-mrens-drop : ∀ {Δ Δ′ Γ Ξ A} → (η : Δ′ ⊇ Δ) (ξ : Δ ⨾ Γ ⊢ Ξ true*)
                                       → mrens (drop {A = A} η) ξ ≡ (mwks ∘ mrens η) ξ
 comp-mwks-mrens-drop η ∙       = refl
 comp-mwks-mrens-drop η (ξ , 𝒟) = _,_ & comp-mwks-mrens-drop η ξ ⊗ comp-mwk-mren-drop η 𝒟
 
 
-comp-mwks-mrens-keep : ∀ {Δ Δ′ Γ Ξ A} → (η : Δ′ ⊇ Δ) (ξ : Δ ⨾ Γ ⊢⋆ Ξ)
+comp-mwks-mrens-keep : ∀ {Δ Δ′ Γ Ξ A} → (η : Δ′ ⊇ Δ) (ξ : Δ ⨾ Γ ⊢ Ξ true*)
                                       → (mrens (keep {A = A} η) ∘ mwks) ξ ≡ (mwks ∘ mrens η) ξ
 comp-mwks-mrens-keep η ∙       = refl
 comp-mwks-mrens-keep η (ξ , 𝒟) = _,_ & comp-mwks-mrens-keep η ξ ⊗ comp-mwk-mren-keep η 𝒟
@@ -285,19 +285,19 @@ comp-mwks-mrens-keep η (ξ , 𝒟) = _,_ & comp-mwks-mrens-keep η ξ ⊗ comp-
 --------------------------------------------------------------------------------
 
 
-id-mrens₁ : ∀ {Δ Ξ} → (ξ : Δ ⊢⋆₁ Ξ)
+id-mrens₁ : ∀ {Δ Ξ} → (ξ : Δ ⊢ Ξ valid*)
                     → mrens₁ id ξ ≡ ξ
 id-mrens₁ ∙       = refl
 id-mrens₁ (ξ , 𝒟) = _,_ & id-mrens₁ ξ ⊗ id-mren 𝒟
 
 
-comp-mrens₁ : ∀ {Δ Δ′ Δ″ Ξ} → (η₁ : Δ′ ⊇ Δ) (η₂ : Δ″ ⊇ Δ′) (ξ : Δ ⊢⋆₁ Ξ)
+comp-mrens₁ : ∀ {Δ Δ′ Δ″ Ξ} → (η₁ : Δ′ ⊇ Δ) (η₂ : Δ″ ⊇ Δ′) (ξ : Δ ⊢ Ξ valid*)
                             → mrens₁ (η₁ ∘ η₂) ξ ≡ (mrens₁ η₂ ∘ mrens₁ η₁) ξ
 comp-mrens₁ η₁ η₂ ∙       = refl
 comp-mrens₁ η₁ η₂ (ξ , 𝒟) = _,_ & comp-mrens₁ η₁ η₂ ξ ⊗ comp-mren η₁ η₂ 𝒟
 
 
-𝐦𝐫𝐞𝐧𝐬₁ : ∀ {Ξ} → Presheaf 𝐎𝐏𝐄 (_⊢⋆₁ Ξ)
+𝐦𝐫𝐞𝐧𝐬₁ : ∀ {Ξ} → Presheaf 𝐎𝐏𝐄 (_⊢ Ξ valid*)
 𝐦𝐫𝐞𝐧𝐬₁ = record
            { ℱ     = mrens₁
            ; idℱ   = funext! id-mrens₁
@@ -305,13 +305,13 @@ comp-mrens₁ η₁ η₂ (ξ , 𝒟) = _,_ & comp-mrens₁ η₁ η₂ ξ ⊗ c
            }
 
 
-comp-mwks₁-mrens₁-keep : ∀ {Δ Δ′ Ξ A} → (η : Δ′ ⊇ Δ) (ξ : Δ ⊢⋆₁ Ξ)
+comp-mwks₁-mrens₁-keep : ∀ {Δ Δ′ Ξ A} → (η : Δ′ ⊇ Δ) (ξ : Δ ⊢ Ξ valid*)
                                       → (mrens₁ (keep {A = A} η) ∘ mwks₁) ξ ≡ (mwks₁ ∘ mrens₁ η) ξ
 comp-mwks₁-mrens₁-keep η ∙       = refl
 comp-mwks₁-mrens₁-keep η (ξ , 𝒟) = _,_ & comp-mwks₁-mrens₁-keep η ξ ⊗ comp-mwk-mren-keep η 𝒟
 
 
-comp-mlifts₁-mrens₁ : ∀ {Δ Δ′ Ξ A} → (η : Δ′ ⊇ Δ) (ξ : Δ ⊢⋆₁ Ξ)
+comp-mlifts₁-mrens₁ : ∀ {Δ Δ′ Ξ A} → (η : Δ′ ⊇ Δ) (ξ : Δ ⊢ Ξ valid*)
                                    → (mrens₁ (keep {A = A} η) ∘ mlifts₁) ξ ≡ (mlifts₁ ∘ mrens₁ η) ξ
 comp-mlifts₁-mrens₁ η ξ = (_, mvz) & comp-mwks₁-mrens₁-keep η ξ
 
@@ -319,13 +319,13 @@ comp-mlifts₁-mrens₁ η ξ = (_, mvz) & comp-mwks₁-mrens₁-keep η ξ
 --------------------------------------------------------------------------------
 
 
-comp-ren-get : ∀ {Δ Γ Γ′ Ξ A} → (η : Γ′ ⊇ Γ) (ξ : Δ ⨾ Γ ⊢⋆ Ξ) (i : Ξ ∋ A true)
+comp-ren-get : ∀ {Δ Γ Γ′ Ξ A} → (η : Γ′ ⊇ Γ) (ξ : Δ ⨾ Γ ⊢ Ξ true*) (i : Ξ ∋ A)
                               → get (rens η ξ) i ≡ (ren η ∘ get ξ) i
 comp-ren-get η (ξ , 𝒟) zero    = refl
 comp-ren-get η (ξ , ℰ) (suc i) = comp-ren-get η ξ i
 
 
-var-id-get : ∀ {Δ Γ A} → (i : Γ ∋ A true)
+var-id-get : ∀ {Δ Γ A} → (i : Γ ∋ A)
                        → get (ids {Δ = Δ}) i ≡ var i
 var-id-get zero    = refl
 var-id-get (suc i) = comp-ren-get (drop id) ids i
@@ -336,7 +336,7 @@ var-id-get (suc i) = comp-ren-get (drop id) ids i
 --------------------------------------------------------------------------------
 
 
-comp-mren-get : ∀ {Δ Δ′ Γ Ξ A} → (η : Δ′ ⊇ Δ) (ξ : Δ ⨾ Γ ⊢⋆ Ξ) (i : Ξ ∋ A true)
+comp-mren-get : ∀ {Δ Δ′ Γ Ξ A} → (η : Δ′ ⊇ Δ) (ξ : Δ ⨾ Γ ⊢ Ξ true*) (i : Ξ ∋ A)
                                → get (mrens η ξ) i ≡ (mren η ∘ get ξ) i
 comp-mren-get η (ξ , 𝒟) zero    = refl
 comp-mren-get η (ξ , ℰ) (suc i) = comp-mren-get η ξ i
@@ -345,13 +345,13 @@ comp-mren-get η (ξ , ℰ) (suc i) = comp-mren-get η ξ i
 --------------------------------------------------------------------------------
 
 
-comp-mren-get₁ : ∀ {Δ Δ′ Ξ A} → (η : Δ′ ⊇ Δ) (ξ : Δ ⊢⋆₁ Ξ) (i : Ξ ∋ A valid)
+comp-mren-get₁ : ∀ {Δ Δ′ Ξ A} → (η : Δ′ ⊇ Δ) (ξ : Δ ⊢ Ξ valid*) (i : Ξ ∋ A)
                               → get (mrens₁ η ξ) i ≡ (mren η ∘ get ξ) i
 comp-mren-get₁ η (ξ , 𝒟) zero    = refl
 comp-mren-get₁ η (ξ , ℰ) (suc i) = comp-mren-get₁ η ξ i
 
 
-mvar-id-get₁ : ∀ {Δ A} → (i : Δ ∋ A valid)
+mvar-id-get₁ : ∀ {Δ A} → (i : Δ ∋ A)
                        → get mids₁ i ≡ mvar i
 mvar-id-get₁ zero    = refl
 mvar-id-get₁ (suc i) = comp-mren-get₁ (drop id) mids₁ i
@@ -362,14 +362,14 @@ mvar-id-get₁ (suc i) = comp-mren-get₁ (drop id) mids₁ i
 --------------------------------------------------------------------------------
 
 
-comp-rens-gets : ∀ {Δ Γ Γ′ Ξ Ξ′} → (η₁ : Γ′ ⊇ Γ) (ξ : Δ ⨾ Γ ⊢⋆ Ξ′) (η₂ : Ξ′ ⊇ Ξ)
+comp-rens-gets : ∀ {Δ Γ Γ′ Ξ Ξ′} → (η₁ : Γ′ ⊇ Γ) (ξ : Δ ⨾ Γ ⊢ Ξ′ true*) (η₂ : Ξ′ ⊇ Ξ)
                                  → gets (rens η₁ ξ) η₂ ≡ (rens η₁ ∘ gets ξ) η₂
 comp-rens-gets η₁ ∙       done      = refl
 comp-rens-gets η₁ (ξ , ℰ) (drop η₂) = comp-rens-gets η₁ ξ η₂
 comp-rens-gets η₁ (ξ , 𝒟) (keep η₂) = (_, ren η₁ 𝒟) & comp-rens-gets η₁ ξ η₂
 
 
-comp-lifts-gets : ∀ {Δ Γ Ξ Ξ′ A} → (ξ : Δ ⨾ Γ ⊢⋆ Ξ′) (η : Ξ′ ⊇ Ξ)
+comp-lifts-gets : ∀ {Δ Γ Ξ Ξ′ A} → (ξ : Δ ⨾ Γ ⊢ Ξ′ true*) (η : Ξ′ ⊇ Ξ)
                                  → gets (lifts {A} ξ) (keep η) ≡ (lifts ∘ gets ξ) η
 comp-lifts-gets ξ η = (_, vz) & comp-rens-gets (drop id) ξ η
 
@@ -377,7 +377,7 @@ comp-lifts-gets ξ η = (_, vz) & comp-rens-gets (drop id) ξ η
 --------------------------------------------------------------------------------
 
 
-comp-mrens-gets : ∀ {Δ Δ′ Γ Ξ Ξ′} → (η₁ : Δ′ ⊇ Δ) (ξ : Δ ⨾ Γ ⊢⋆ Ξ′) (η₂ : Ξ′ ⊇ Ξ)
+comp-mrens-gets : ∀ {Δ Δ′ Γ Ξ Ξ′} → (η₁ : Δ′ ⊇ Δ) (ξ : Δ ⨾ Γ ⊢ Ξ′ true*) (η₂ : Ξ′ ⊇ Ξ)
                                   → gets (mrens η₁ ξ) η₂ ≡ (mrens η₁ ∘ gets ξ) η₂
 comp-mrens-gets η₁ ∙       done      = refl
 comp-mrens-gets η₁ (ξ , ℰ) (drop η₂) = comp-mrens-gets η₁ ξ η₂
@@ -387,14 +387,14 @@ comp-mrens-gets η₁ (ξ , 𝒟) (keep η₂) = (_, mren η₁ 𝒟) & comp-mre
 --------------------------------------------------------------------------------
 
 
-comp-mrens₁-gets : ∀ {Δ Δ′ Ξ Ξ′} → (η₁ : Δ′ ⊇ Δ) (ξ : Δ ⊢⋆₁ Ξ′) (η₂ : Ξ′ ⊇ Ξ)
+comp-mrens₁-gets : ∀ {Δ Δ′ Ξ Ξ′} → (η₁ : Δ′ ⊇ Δ) (ξ : Δ ⊢ Ξ′ valid*) (η₂ : Ξ′ ⊇ Ξ)
                                  → gets (mrens₁ η₁ ξ) η₂ ≡ (mrens₁ η₁ ∘ gets ξ) η₂
 comp-mrens₁-gets η₁ ∙       done      = refl
 comp-mrens₁-gets η₁ (ξ , ℰ) (drop η₂) = comp-mrens₁-gets η₁ ξ η₂
 comp-mrens₁-gets η₁ (ξ , 𝒟) (keep η₂) = (_, mren η₁ 𝒟) & comp-mrens₁-gets η₁ ξ η₂
 
 
-comp-mlifts₁-gets : ∀ {Δ Ξ Ξ′ A} → (ξ : Δ ⊢⋆₁ Ξ′) (η : Ξ′ ⊇ Ξ)
+comp-mlifts₁-gets : ∀ {Δ Ξ Ξ′ A} → (ξ : Δ ⊢ Ξ′ valid*) (η : Ξ′ ⊇ Ξ)
                                  → gets (mlifts₁ {A} ξ) (keep η) ≡ (mlifts₁ ∘ gets ξ) η
 comp-mlifts₁-gets ξ η = (_, mvz) & comp-mrens₁-gets (drop id) ξ η
 
@@ -402,19 +402,19 @@ comp-mlifts₁-gets ξ η = (_, mvz) & comp-mrens₁-gets (drop id) ξ η
 --------------------------------------------------------------------------------
 
 
-comp-sub-get : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⨾ Γ ⊢⋆ Ξ) (ψ : Δ ⨾ Ξ ⊢⋆ Ψ) (i : Ψ ∋ A true)
+comp-sub-get : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⨾ Γ ⊢ Ξ true*) (ψ : Δ ⨾ Ξ ⊢ Ψ true*) (i : Ψ ∋ A)
                              → get (subs ξ ψ) i ≡ (sub ξ ∘ get ψ) i
 comp-sub-get ξ (ψ , 𝒟) zero    = refl
 comp-sub-get ξ (ψ , ℰ) (suc i) = comp-sub-get ξ ψ i
 
 
-comp-msub-get : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⊢⋆₁ Ξ) (ψ : Ξ ⨾ Γ ⊢⋆ Ψ) (i : Ψ ∋ A true)
+comp-msub-get : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⊢ Ξ valid*) (ψ : Ξ ⨾ Γ ⊢ Ψ true*) (i : Ψ ∋ A)
                               → get (msubs ξ ψ) i ≡ (msub ξ ∘ get ψ) i
 comp-msub-get ξ (ψ , 𝒟) zero    = refl
 comp-msub-get ξ (ψ , ℰ) (suc i) = comp-msub-get ξ ψ i
 
 
-comp-msub-get₁ : ∀ {Δ Ξ Ψ A} → (ξ : Δ ⊢⋆₁ Ξ) (ψ : Ξ ⊢⋆₁ Ψ) (i : Ψ ∋ A valid)
+comp-msub-get₁ : ∀ {Δ Ξ Ψ A} → (ξ : Δ ⊢ Ξ valid*) (ψ : Ξ ⊢ Ψ valid*) (i : Ψ ∋ A)
                              → get (msubs₁ ξ ψ) i ≡ (msub ξ ∘ get ψ) i
 comp-msub-get₁ ξ (ψ , 𝒟) zero    = refl
 comp-msub-get₁ ξ (ψ , ℰ) (suc i) = comp-msub-get₁ ξ ψ i
@@ -423,7 +423,7 @@ comp-msub-get₁ ξ (ψ , ℰ) (suc i) = comp-msub-get₁ ξ ψ i
 --------------------------------------------------------------------------------
 
 
-comp-sub-ren : ∀ {Δ Γ Ξ Ξ′ A} → (ξ : Δ ⨾ Γ ⊢⋆ Ξ′) (η : Ξ′ ⊇ Ξ) (𝒟 : Δ ⨾ Ξ ⊢ A true)
+comp-sub-ren : ∀ {Δ Γ Ξ Ξ′ A} → (ξ : Δ ⨾ Γ ⊢ Ξ′ true*) (η : Ξ′ ⊇ Ξ) (𝒟 : Δ ⨾ Ξ ⊢ A true)
                               → sub (gets ξ η) 𝒟 ≡ (sub ξ ∘ ren η) 𝒟
 comp-sub-ren ξ η (var i)      = comp-get-ren∋ ξ η i
 comp-sub-ren ξ η (lam 𝒟)      = lam & ( (\ ξ′ → sub ξ′ 𝒟) & comp-lifts-gets ξ η ⁻¹
@@ -443,13 +443,13 @@ comp-sub-ren ξ η (letbox 𝒟 ℰ) = letbox & comp-sub-ren ξ η 𝒟
 
 -- TODO: Better name?
 
-expand-sub : ∀ {Δ Γ Ξ A B} → (ξ : Δ ⨾ Γ ⊢⋆ Ξ) (𝒟 : Δ ⨾ Γ ⊢ A true) (ℰ : Δ ⨾ Ξ ⊢ B true)
+expand-sub : ∀ {Δ Γ Ξ A B} → (ξ : Δ ⨾ Γ ⊢ Ξ true*) (𝒟 : Δ ⨾ Γ ⊢ A true) (ℰ : Δ ⨾ Ξ ⊢ B true)
                            → sub (ξ , 𝒟) (wk ℰ) ≡ sub ξ ℰ
 expand-sub ξ 𝒟 ℰ = comp-sub-ren (ξ , 𝒟) (drop id) ℰ ⁻¹
                  ⋮ (\ ξ′ → sub ξ′ ℰ) & id-gets ξ
 
 
-expand-subs : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⨾ Γ ⊢⋆ Ξ) (𝒟 : Δ ⨾ Γ ⊢ A true) (ψ : Δ ⨾ Ξ ⊢⋆ Ψ)
+expand-subs : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⨾ Γ ⊢ Ξ true*) (𝒟 : Δ ⨾ Γ ⊢ A true) (ψ : Δ ⨾ Ξ ⊢ Ψ true*)
                             → subs (ξ , 𝒟) (wks ψ) ≡ subs ξ ψ
 expand-subs ξ 𝒟 ∙       = refl
 expand-subs ξ 𝒟 (ψ , ℰ) = _,_ & expand-subs ξ 𝒟 ψ ⊗ expand-sub ξ 𝒟 ℰ
@@ -458,7 +458,7 @@ expand-subs ξ 𝒟 (ψ , ℰ) = _,_ & expand-subs ξ 𝒟 ψ ⊗ expand-sub ξ 
 --------------------------------------------------------------------------------
 
 
-comp-ren-sub : ∀ {Δ Γ Γ′ Ξ A} → (η : Γ′ ⊇ Γ) (ξ : Δ ⨾ Γ ⊢⋆ Ξ) (𝒟 : Δ ⨾ Ξ ⊢ A true)
+comp-ren-sub : ∀ {Δ Γ Γ′ Ξ A} → (η : Γ′ ⊇ Γ) (ξ : Δ ⨾ Γ ⊢ Ξ true*) (𝒟 : Δ ⨾ Ξ ⊢ A true)
                               → sub (rens η ξ) 𝒟 ≡ (ren η ∘ sub ξ) 𝒟
 comp-ren-sub η ξ (var i)      = comp-ren-get η ξ i
 comp-ren-sub η ξ (lam 𝒟)      = lam & ( (\ ξ′ → sub ξ′ 𝒟) & comp-lifts-rens η ξ ⁻¹
@@ -473,13 +473,13 @@ comp-ren-sub η ξ (letbox 𝒟 ℰ) = letbox & comp-ren-sub η ξ 𝒟
                                          )
 
 
-comp-rens-subs : ∀ {Δ Γ Γ′ Ξ Ψ} → (η : Γ′ ⊇ Γ) (ξ : Δ ⨾ Γ ⊢⋆ Ξ) (ψ : Δ ⨾ Ξ ⊢⋆ Ψ)
+comp-rens-subs : ∀ {Δ Γ Γ′ Ξ Ψ} → (η : Γ′ ⊇ Γ) (ξ : Δ ⨾ Γ ⊢ Ξ true*) (ψ : Δ ⨾ Ξ ⊢ Ψ true*)
                                 → subs (rens η ξ) ψ ≡ (rens η ∘ subs ξ) ψ
 comp-rens-subs η ξ ∙       = refl
 comp-rens-subs η ξ (ψ , 𝒟) = _,_ & comp-rens-subs η ξ ψ ⊗ comp-ren-sub η ξ 𝒟
 
 
-comp-lifts-subs : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⨾ Γ ⊢⋆ Ξ) (ψ : Δ ⨾ Ξ ⊢⋆ Ψ)
+comp-lifts-subs : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⨾ Γ ⊢ Ξ true*) (ψ : Δ ⨾ Ξ ⊢ Ψ true*)
                                 → subs (lifts {A} ξ) (lifts ψ) ≡ (lifts ∘ subs ξ) ψ
 comp-lifts-subs ξ ψ = (_, vz) & ( expand-subs (wks ξ) vz ψ
                                 ⋮ comp-rens-subs (drop id) ξ ψ
@@ -505,7 +505,7 @@ id-mren-sub η (letbox 𝒟 ℰ) = letbox & id-mren-sub η 𝒟
                                       )
 
 
-comp-mren-sub : ∀ {Δ Δ′ Γ Ξ A} → (η : Δ′ ⊇ Δ) (ξ : Δ ⨾ Γ ⊢⋆ Ξ) (𝒟 : Δ ⨾ Ξ ⊢ A true)
+comp-mren-sub : ∀ {Δ Δ′ Γ Ξ A} → (η : Δ′ ⊇ Δ) (ξ : Δ ⨾ Γ ⊢ Ξ true*) (𝒟 : Δ ⨾ Ξ ⊢ A true)
                                → sub (mrens η ξ) (mren η 𝒟) ≡ (mren η ∘ sub ξ) 𝒟
 comp-mren-sub η ξ (var i)      = comp-mren-get η ξ i
 comp-mren-sub η ξ (lam 𝒟)      = lam & ( (\ ξ′ → sub ξ′ (mren η 𝒟)) & comp-lifts-mrens η ξ ⁻¹
@@ -520,7 +520,7 @@ comp-mren-sub η ξ (letbox 𝒟 ℰ) = letbox & comp-mren-sub η ξ 𝒟
                                           )
 
 
-comp-mrens-subs : ∀ {Δ Δ′ Γ Ξ Ψ} → (η : Δ′ ⊇ Δ) (ξ : Δ ⨾ Γ ⊢⋆ Ξ) (ψ : Δ ⨾ Ξ ⊢⋆ Ψ)
+comp-mrens-subs : ∀ {Δ Δ′ Γ Ξ Ψ} → (η : Δ′ ⊇ Δ) (ξ : Δ ⨾ Γ ⊢ Ξ true*) (ψ : Δ ⨾ Ξ ⊢ Ψ true*)
                                  → subs (mrens η ξ) (mrens η ψ) ≡ (mrens η ∘ subs ξ) ψ
 comp-mrens-subs η ξ ∙       = refl
 comp-mrens-subs η ξ (ψ , 𝒟) = _,_ & comp-mrens-subs η ξ ψ ⊗ comp-mren-sub η ξ 𝒟
@@ -539,7 +539,7 @@ id-sub (box 𝒟)      = refl
 id-sub (letbox 𝒟 ℰ) = letbox & id-sub 𝒟 ⊗ id-mren-sub (drop id) ℰ
 
 
-comp-sub : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⨾ Γ ⊢⋆ Ξ) (ψ : Δ ⨾ Ξ ⊢⋆ Ψ) (𝒟 : Δ ⨾ Ψ ⊢ A true)
+comp-sub : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⨾ Γ ⊢ Ξ true*) (ψ : Δ ⨾ Ξ ⊢ Ψ true*) (𝒟 : Δ ⨾ Ψ ⊢ A true)
                          → sub (subs ξ ψ) 𝒟 ≡ (sub ξ ∘ sub ψ) 𝒟
 comp-sub ξ ψ (var i)      = comp-sub-get ξ ψ i
 comp-sub ξ ψ (lam 𝒟)      = lam & ( (\ ξ′ → sub ξ′ 𝒟) & comp-lifts-subs ξ ψ ⁻¹
@@ -557,13 +557,13 @@ comp-sub ξ ψ (letbox 𝒟 ℰ) = letbox & comp-sub ξ ψ 𝒟
 --------------------------------------------------------------------------------
 
 
-lid-subs : ∀ {Δ Γ Ξ} → (ξ : Δ ⨾ Γ ⊢⋆ Ξ)
+lid-subs : ∀ {Δ Γ Ξ} → (ξ : Δ ⨾ Γ ⊢ Ξ true*)
                      → subs ids ξ ≡ ξ
 lid-subs ∙       = refl
 lid-subs (ξ , 𝒟) = _,_ & lid-subs ξ ⊗ id-sub 𝒟
 
 
-rid-subs : ∀ {Δ Γ Ξ} → (ξ : Δ ⨾ Γ ⊢⋆ Ξ)
+rid-subs : ∀ {Δ Γ Ξ} → (ξ : Δ ⨾ Γ ⊢ Ξ true*)
                      → subs ξ ids ≡ ξ
 rid-subs ∙       = refl
 rid-subs (ξ , 𝒟) = (_, 𝒟) & ( expand-subs ξ 𝒟 ids
@@ -571,20 +571,20 @@ rid-subs (ξ , 𝒟) = (_, 𝒟) & ( expand-subs ξ 𝒟 ids
                             )
 
 
-assoc-subs : ∀ {Δ Γ Ξ Ψ Φ} → (ξ : Δ ⨾ Γ ⊢⋆ Ξ) (ψ : Δ ⨾ Ξ ⊢⋆ Ψ) (φ : Δ ⨾ Ψ ⊢⋆ Φ)
+assoc-subs : ∀ {Δ Γ Ξ Ψ Φ} → (ξ : Δ ⨾ Γ ⊢ Ξ true*) (ψ : Δ ⨾ Ξ ⊢ Ψ true*) (φ : Δ ⨾ Ψ ⊢ Φ true*)
                            → subs (subs ξ ψ) φ ≡ subs ξ (subs ψ φ)
 assoc-subs ξ ψ ∙       = refl
 assoc-subs ξ ψ (φ , 𝒟) = _,_ & assoc-subs ξ ψ φ ⊗ comp-sub ξ ψ 𝒟
 
 
 instance
-  𝐒𝟒 : ∀ {Δ} → Category (List Truth) (\ Γ Ξ → Δ ⨾ Γ ⊢⋆ Ξ)
+  𝐒𝟒 : ∀ {Δ} → Category (List Prop) (\ Γ Ξ → Δ ⨾ Γ ⊢ Ξ true*)
   𝐒𝟒 = record
          { id     = ids
          ; _∘_    = flip subs
          ; lid∘   = rid-subs
          ; rid∘   = lid-subs
-         ; assoc∘ = \ ξ₁ ξ₂ ξ₃ → assoc-subs ξ₃ ξ₂ ξ₁ ⁻¹
+         ; assoc∘ = \ φ ψ ξ → assoc-subs ξ ψ φ ⁻¹
          }
 
 
@@ -592,14 +592,14 @@ instance
 𝐬𝐮𝐛 = record
         { ℱ     = sub
         ; idℱ   = funext! id-sub
-        ; compℱ = \ ξ₁ ξ₂ → funext! (comp-sub ξ₂ ξ₁)
+        ; compℱ = \ ψ ξ → funext! (comp-sub ξ ψ)
         }
 
 
 --------------------------------------------------------------------------------
 
 
-comp-msub-ren : ∀ {Δ Γ Γ′ Ξ A} → (ξ : Δ ⊢⋆₁ Ξ) (η : Γ′ ⊇ Γ) (𝒟 : Ξ ⨾ Γ ⊢ A true)
+comp-msub-ren : ∀ {Δ Γ Γ′ Ξ A} → (ξ : Δ ⊢ Ξ valid*) (η : Γ′ ⊇ Γ) (𝒟 : Ξ ⨾ Γ ⊢ A true)
                                → (ren η ∘ msub ξ) 𝒟 ≡ (msub ξ ∘ ren η) 𝒟
 comp-msub-ren ξ η (var i)      = refl
 comp-msub-ren ξ η (lam 𝒟)      = lam & comp-msub-ren ξ (keep η) 𝒟
@@ -609,13 +609,13 @@ comp-msub-ren ξ η (box 𝒟)      = refl
 comp-msub-ren ξ η (letbox 𝒟 ℰ) = letbox & comp-msub-ren ξ η 𝒟 ⊗ comp-msub-ren (mlifts₁ ξ) η ℰ
 
 
-comp-msubs-rens : ∀ {Δ Γ Γ′ Ξ Ψ} → (ξ : Δ ⊢⋆₁ Ξ) (η : Γ′ ⊇ Γ) (ψ : Ξ ⨾ Γ ⊢⋆ Ψ)
+comp-msubs-rens : ∀ {Δ Γ Γ′ Ξ Ψ} → (ξ : Δ ⊢ Ξ valid*) (η : Γ′ ⊇ Γ) (ψ : Ξ ⨾ Γ ⊢ Ψ true*)
                                  → (rens η ∘ msubs ξ) ψ ≡ (msubs ξ ∘ rens η) ψ
 comp-msubs-rens ξ η ∙       = refl
 comp-msubs-rens ξ η (ψ , 𝒟) = _,_ & comp-msubs-rens ξ η ψ ⊗ comp-msub-ren ξ η 𝒟
 
 
-comp-msubs-lifts : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⊢⋆₁ Ξ) (ψ : Ξ ⨾ Γ ⊢⋆ Ψ)
+comp-msubs-lifts : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⊢ Ξ valid*) (ψ : Ξ ⨾ Γ ⊢ Ψ true*)
                                  → (lifts {A} ∘ msubs ξ) ψ ≡ (msubs ξ ∘ lifts) ψ
 comp-msubs-lifts ξ ψ = (_, vz) & comp-msubs-rens ξ (drop id) ψ
 
@@ -623,7 +623,7 @@ comp-msubs-lifts ξ ψ = (_, vz) & comp-msubs-rens ξ (drop id) ψ
 --------------------------------------------------------------------------------
 
 
-comp-msub-mren : ∀ {Δ Γ Ξ Ξ′ A} → (ξ : Δ ⊢⋆₁ Ξ′) (η : Ξ′ ⊇ Ξ) (𝒟 : Ξ ⨾ Γ ⊢ A true)
+comp-msub-mren : ∀ {Δ Γ Ξ Ξ′ A} → (ξ : Δ ⊢ Ξ′ valid*) (η : Ξ′ ⊇ Ξ) (𝒟 : Ξ ⨾ Γ ⊢ A true)
                                 → msub (gets ξ η) 𝒟 ≡ (msub ξ ∘ mren η) 𝒟
 comp-msub-mren ξ η (var i)      = refl
 comp-msub-mren ξ η (lam 𝒟)      = lam & comp-msub-mren ξ η 𝒟
@@ -641,19 +641,19 @@ comp-msub-mren ξ η (letbox 𝒟 ℰ) = letbox & comp-msub-mren ξ η 𝒟
 
 -- TODO: Better name?
 
-expand-msub : ∀ {Δ Γ Ξ A B} → (ξ : Δ ⊢⋆₁ Ξ) (𝒟 : Δ ⊢₁ A valid) (ℰ : Ξ ⨾ Γ ⊢ B true)
+expand-msub : ∀ {Δ Γ Ξ A B} → (ξ : Δ ⊢ Ξ valid*) (𝒟 : Δ ⊢ A valid) (ℰ : Ξ ⨾ Γ ⊢ B true)
                             → msub (ξ , 𝒟) (mwk ℰ) ≡ msub ξ ℰ
 expand-msub ξ 𝒟 ℰ = comp-msub-mren (ξ , 𝒟) (drop id) ℰ ⁻¹
                   ⋮ (\ ξ′ → msub ξ′ ℰ) & id-gets ξ
 
 
-expand-msubs : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⊢⋆₁ Ξ) (𝒟 : Δ ⊢₁ A valid) (ψ : Ξ ⨾ Γ ⊢⋆ Ψ)
+expand-msubs : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⊢ Ξ valid*) (𝒟 : Δ ⊢ A valid) (ψ : Ξ ⨾ Γ ⊢ Ψ true*)
                              → msubs (ξ , 𝒟) (mwks ψ) ≡ msubs ξ ψ
 expand-msubs ξ 𝒟 ∙       = refl
 expand-msubs ξ 𝒟 (ψ , ℰ) = _,_ & expand-msubs ξ 𝒟 ψ ⊗ expand-msub ξ 𝒟 ℰ
 
 
-expand-msubs₁ : ∀ {Δ Ξ Ψ A} → (ξ : Δ ⊢⋆₁ Ξ) (𝒟 : Δ ⊢₁ A valid) (ψ : Ξ ⊢⋆₁ Ψ)
+expand-msubs₁ : ∀ {Δ Ξ Ψ A} → (ξ : Δ ⊢ Ξ valid*) (𝒟 : Δ ⊢ A valid) (ψ : Ξ ⊢ Ψ valid*)
                             → msubs₁ (ξ , 𝒟) (mwks₁ ψ) ≡ msubs₁ ξ ψ
 expand-msubs₁ ξ 𝒟 ∙       = refl
 expand-msubs₁ ξ 𝒟 (ψ , ℰ) = _,_ & expand-msubs₁ ξ 𝒟 ψ ⊗ expand-msub ξ 𝒟 ℰ
@@ -662,7 +662,7 @@ expand-msubs₁ ξ 𝒟 (ψ , ℰ) = _,_ & expand-msubs₁ ξ 𝒟 ψ ⊗ expand
 --------------------------------------------------------------------------------
 
 
-comp-mren-msub : ∀ {Δ Δ′ Γ Ξ A} → (η : Δ′ ⊇ Δ) (ξ : Δ ⊢⋆₁ Ξ) (𝒟 : Ξ ⨾ Γ ⊢ A true)
+comp-mren-msub : ∀ {Δ Δ′ Γ Ξ A} → (η : Δ′ ⊇ Δ) (ξ : Δ ⊢ Ξ valid*) (𝒟 : Ξ ⨾ Γ ⊢ A true)
                                 → msub (mrens₁ η ξ) 𝒟 ≡ (mren η ∘ msub ξ) 𝒟
 comp-mren-msub η ξ (var i)      = refl
 comp-mren-msub η ξ (lam 𝒟)      = lam & comp-mren-msub η ξ 𝒟
@@ -676,13 +676,13 @@ comp-mren-msub η ξ (letbox 𝒟 ℰ) = letbox & comp-mren-msub η ξ 𝒟
                                            )
 
 
-comp-mrens-msubs : ∀ {Δ Δ′ Γ Ξ Ψ} → (η : Δ′ ⊇ Δ) (ξ : Δ ⊢⋆₁ Ξ) (ψ : Ξ ⨾ Γ ⊢⋆ Ψ)
+comp-mrens-msubs : ∀ {Δ Δ′ Γ Ξ Ψ} → (η : Δ′ ⊇ Δ) (ξ : Δ ⊢ Ξ valid*) (ψ : Ξ ⨾ Γ ⊢ Ψ true*)
                                   → msubs (mrens₁ η ξ) ψ ≡ (mrens η ∘ msubs ξ) ψ
 comp-mrens-msubs η ξ ∙       = refl
 comp-mrens-msubs η ξ (ψ , 𝒟) = _,_ & comp-mrens-msubs η ξ ψ ⊗ comp-mren-msub η ξ 𝒟
 
 
-comp-mwks-msubs : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⊢⋆₁ Ξ) (ψ : Ξ ⨾ Γ ⊢⋆ Ψ)
+comp-mwks-msubs : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⊢ Ξ valid*) (ψ : Ξ ⨾ Γ ⊢ Ψ true*)
                                 → (msubs (mlifts₁ {A} ξ) ∘ mwks) ψ ≡ (mwks ∘ msubs ξ) ψ
 comp-mwks-msubs ξ ψ = expand-msubs (mwks₁ ξ) mvz ψ
                     ⋮ comp-mrens-msubs (drop id) ξ ψ
@@ -691,19 +691,19 @@ comp-mwks-msubs ξ ψ = expand-msubs (mwks₁ ξ) mvz ψ
 --------------------------------------------------------------------------------
 
 
-comp-mrens₁-msubs₁ : ∀ {Δ Δ′ Ξ Ψ} → (η : Δ′ ⊇ Δ) (ξ : Δ ⊢⋆₁ Ξ) (ψ : Ξ ⊢⋆₁ Ψ)
+comp-mrens₁-msubs₁ : ∀ {Δ Δ′ Ξ Ψ} → (η : Δ′ ⊇ Δ) (ξ : Δ ⊢ Ξ valid*) (ψ : Ξ ⊢ Ψ valid*)
                                   → msubs₁ (mrens₁ η ξ) ψ ≡ (mrens₁ η ∘ msubs₁ ξ) ψ
 comp-mrens₁-msubs₁ η ξ ∙       = refl
 comp-mrens₁-msubs₁ η ξ (ψ , 𝒟) = _,_ & comp-mrens₁-msubs₁ η ξ ψ ⊗ comp-mren-msub η ξ 𝒟
 
 
-comp-mwks₁-msubs₁ : ∀ {Δ Ξ Ψ A} → (ξ : Δ ⊢⋆₁ Ξ) (ψ : Ξ ⊢⋆₁ Ψ)
+comp-mwks₁-msubs₁ : ∀ {Δ Ξ Ψ A} → (ξ : Δ ⊢ Ξ valid*) (ψ : Ξ ⊢ Ψ valid*)
                                 → (msubs₁ (mlifts₁ {A} ξ) ∘ mwks₁) ψ ≡ (mwks₁ ∘ msubs₁ ξ) ψ
 comp-mwks₁-msubs₁ ξ ψ = expand-msubs₁ (mwks₁ ξ) mvz ψ
                       ⋮ comp-mrens₁-msubs₁ (drop id) ξ ψ
 
 
-comp-mlifts₁-msubs₁ : ∀ {Δ Ξ Ψ A} → (ξ : Δ ⊢⋆₁ Ξ) (ψ : Ξ ⊢⋆₁ Ψ)
+comp-mlifts₁-msubs₁ : ∀ {Δ Ξ Ψ A} → (ξ : Δ ⊢ Ξ valid*) (ψ : Ξ ⊢ Ψ valid*)
                                   → (msubs₁ (mlifts₁ {A} ξ) ∘ mlifts₁) ψ ≡ (mlifts₁ ∘ msubs₁ ξ) ψ
 comp-mlifts₁-msubs₁ ξ ψ = (_, mvz) & comp-mwks₁-msubs₁ ξ ψ
 
@@ -711,7 +711,7 @@ comp-mlifts₁-msubs₁ ξ ψ = (_, mvz) & comp-mwks₁-msubs₁ ξ ψ
 --------------------------------------------------------------------------------
 
 
-comp-msub-sub : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⊢⋆₁ Ξ) (ψ : Ξ ⨾ Γ ⊢⋆ Ψ) (𝒟 : Ξ ⨾ Ψ ⊢ A true)
+comp-msub-sub : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⊢ Ξ valid*) (ψ : Ξ ⨾ Γ ⊢ Ψ true*) (𝒟 : Ξ ⨾ Ψ ⊢ A true)
                               → (sub (msubs ξ ψ) ∘ msub ξ) 𝒟 ≡ (msub ξ ∘ sub ψ) 𝒟
 comp-msub-sub ξ ψ (var i)      = comp-msub-get ξ ψ i
 comp-msub-sub ξ ψ (lam 𝒟)      = lam & ( (\ ξ′ → sub ξ′ (msub ξ 𝒟)) & comp-msubs-lifts ξ ψ
@@ -739,7 +739,7 @@ id-msub (box 𝒟)      = box & id-msub 𝒟
 id-msub (letbox 𝒟 ℰ) = letbox & id-msub 𝒟 ⊗ id-msub ℰ
 
 
-comp-msub : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⊢⋆₁ Ξ) (ψ : Ξ ⊢⋆₁ Ψ) (𝒟 : Ψ ⨾ Γ ⊢ A true)
+comp-msub : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⊢ Ξ valid*) (ψ : Ξ ⊢ Ψ valid*) (𝒟 : Ψ ⨾ Γ ⊢ A true)
                           → msub (msubs₁ ξ ψ) 𝒟 ≡ (msub ξ ∘ msub ψ) 𝒟
 comp-msub ξ ψ (var i)      = refl
 comp-msub ξ ψ (lam 𝒟)      = lam & comp-msub ξ ψ 𝒟
@@ -756,13 +756,13 @@ comp-msub ξ ψ (letbox 𝒟 ℰ) = letbox & comp-msub ξ ψ 𝒟
 --------------------------------------------------------------------------------
 
 
-lid-msubs₁ : ∀ {Δ Ξ} → (ξ : Δ ⊢⋆₁ Ξ)
+lid-msubs₁ : ∀ {Δ Ξ} → (ξ : Δ ⊢ Ξ valid*)
                      → msubs₁ mids₁ ξ ≡ ξ
 lid-msubs₁ ∙       = refl
 lid-msubs₁ (ξ , 𝒟) = _,_ & lid-msubs₁ ξ ⊗ id-msub 𝒟
 
 
-rid-msubs₁ : ∀ {Δ Ξ} → (ξ : Δ ⊢⋆₁ Ξ)
+rid-msubs₁ : ∀ {Δ Ξ} → (ξ : Δ ⊢ Ξ valid*)
                      → msubs₁ ξ mids₁ ≡ ξ
 rid-msubs₁ ∙       = refl
 rid-msubs₁ (ξ , 𝒟) = _,_ & ( expand-msubs₁ ξ 𝒟 mids₁
@@ -771,28 +771,28 @@ rid-msubs₁ (ξ , 𝒟) = _,_ & ( expand-msubs₁ ξ 𝒟 mids₁
                          ⊗ id-sub 𝒟
 
 
-assoc-msubs₁ : ∀ {Δ Ξ Ψ Φ} → (ξ : Δ ⊢⋆₁ Ξ) (ψ : Ξ ⊢⋆₁ Ψ) (φ : Ψ ⊢⋆₁ Φ)
+assoc-msubs₁ : ∀ {Δ Ξ Ψ Φ} → (ξ : Δ ⊢ Ξ valid*) (ψ : Ξ ⊢ Ψ valid*) (φ : Ψ ⊢ Φ valid*)
                            → msubs₁ (msubs₁ ξ ψ) φ ≡ msubs₁ ξ (msubs₁ ψ φ)
 assoc-msubs₁ ξ ψ ∙       = refl
 assoc-msubs₁ ξ ψ (φ , 𝒟) = _,_ & assoc-msubs₁ ξ ψ φ ⊗ comp-msub ξ ψ 𝒟
 
 
 instance
-  𝐒𝟒₁ : Category (List Validity) _⊢⋆₁_
+  𝐒𝟒₁ : Category (List Prop) _⊢_valid*
   𝐒𝟒₁ = record
           { id     = mids₁
           ; _∘_    = flip msubs₁
           ; lid∘   = rid-msubs₁
           ; rid∘   = lid-msubs₁
-          ; assoc∘ = \ ξ₁ ξ₂ ξ₃ → assoc-msubs₁ ξ₃ ξ₂ ξ₁ ⁻¹
+          ; assoc∘ = \ φ ψ ξ → assoc-msubs₁ ξ ψ φ ⁻¹
           }
 
 
-𝐦𝐬𝐮𝐛 : ∀ {A} → Presheaf 𝐒𝟒₁ (_⊢₁ A valid)
+𝐦𝐬𝐮𝐛 : ∀ {A} → Presheaf 𝐒𝟒₁ (_⊢ A valid)
 𝐦𝐬𝐮𝐛 = record
          { ℱ     = msub
          ; idℱ   = funext! id-msub
-         ; compℱ = \ ξ₁ ξ₂ → funext! (comp-msub ξ₂ ξ₁)
+         ; compℱ = \ ψ ξ → funext! (comp-msub ξ ψ)
          }
 
 

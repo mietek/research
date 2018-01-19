@@ -57,6 +57,12 @@ data _⊇_ {X} : List X → List X → Set
                       → Ξ′ , A ⊇ Ξ , A
 
 
+bot⊇ : ∀ {X} → {Ξ : List X}
+             → Ξ ⊇ ∙
+bot⊇ {Ξ = ∙}     = done
+bot⊇ {Ξ = Ξ , A} = drop bot⊇
+
+
 id⊇ : ∀ {X} → {Ξ : List X}
             → Ξ ⊇ Ξ
 id⊇ {Ξ = ∙}     = done

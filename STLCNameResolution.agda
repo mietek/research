@@ -5,55 +5,55 @@ open import Names
 open import Fin
 open import Vec
 open import STLCBidirectionalTermsForTypeChecking
-open import STLCBidirectionalRawTermsForNameResolution
-open import STLCBidirectionalRawDerivationsForNameResolution
+open import STLCBidirectionalTermsForNameResolution
+open import STLCBidirectionalDerivationsForNameResolution
 
 
 --------------------------------------------------------------------------------
 
 
-injvzwk : ∀ {g x y M} → {И : Names g}
-                      → ⊢ᵣ И , y ⊦ VAR x ≫ M
-                      → x ≡ y ⊎ Σ (Termᵣ g) (\ M′ → ⊢ᵣ И ⊦ VAR x ≫ M′)
+injvzwk : ∀ {g x y M} → {Γ : Names g}
+                      → ⊢ Γ , y ⊦ VAR x ≫ M toinfer
+                      → x ≡ y ⊎ Σ (Termᵣ g) (\ M′ → ⊢ Γ ⊦ VAR x ≫ M′ toinfer)
 injvzwk vz       = inj₁ refl
 injvzwk (wk p 𝒟) = inj₂ (VAR _ , 𝒟)
 
 
-find : ∀ {g} → (И : Names g) (x : Name)
-             → Dec (Σ (Termᵣ g) (\ M → ⊢ᵣ И ⊦ VAR x ≫ M))
+find : ∀ {g} → (Γ : Names g) (x : Name)
+             → Dec (Σ (Termᵣ g) (\ M → ⊢ Γ ⊦ VAR x ≫ M toinfer))
 find ∙       x  = no (\ { (M , ())})
-find (И , y) x  with x ≟ₛ y
-find (И , x) .x | yes refl = yes (VAR zero , vz)
-find (И , y) x  | no x≢y   with find И x
-find (И , y) x  | no x≢y   | yes (VAR I , 𝒟)    = yes (VAR (suc I) , wk x≢y 𝒟)
-find (И , y) x  | no x≢y   | yes (APP M N , ())
-find (И , y) x  | no x≢y   | yes (CHK M A , ())
-find (И , y) x  | no x≢y   | no ¬M𝒟             = no (\ { (M′ , 𝒟′) → case injvzwk 𝒟′ of
-                                                       (\ { (inj₁ refl) → refl ↯ x≢y
+find (Γ , y) x  with x ≟ₛ y
+find (Γ , x) .x | yes refl = yes (VAR zero , vz)
+find (Γ , y) x  | no x≢y   with find Γ x
+find (Γ , y) x  | no x≢y   | yes (VAR I , 𝒟)    = yes (VAR (suc I) , wk x≢y 𝒟)
+find (Γ , y) x  | no x≢y   | yes (APP M N , ())
+find (Γ , y) x  | no x≢y   | yes (CHK M A , ())
+find (Γ , y) x  | no x≢y   | no ¬M𝒟             = no (\ { (M′ , 𝒟′) → case injvzwk 𝒟′ of
+                                                       (\ { (inj₁ x≡y) → x≡y ↯ x≢y
                                                           ; (inj₂ M𝒟) → M𝒟 ↯ ¬M𝒟
                                                           }) })
 
 
 mutual
-  resolveₗ : ∀ {g} → (И : Names g) (P : RawTermₗ)
-                   → Dec (Σ (Termₗ g) (\ M → ⊢ₗ И ⊦ P ≪ M))
-  resolveₗ И (LAM x P) with resolveₗ (И , x) P
-  resolveₗ И (LAM x P) | yes (M , 𝒟) = yes (LAM M , lam 𝒟)
-  resolveₗ И (LAM x P) | no ¬M𝒟      = no (\ { (LAM M′ , lam 𝒟′) → (M′ , 𝒟′) ↯ ¬M𝒟 })
-  resolveₗ И (INF P)   with resolveᵣ И P
-  resolveₗ И (INF P)   | yes (M , 𝒟) = yes (INF M , inf 𝒟)
-  resolveₗ И (INF P)   | no ¬M𝒟      = no (\ { (INF M′ , inf 𝒟′) → (M′ , 𝒟′) ↯ ¬M𝒟  })
+  resolveₗ : ∀ {g} → (Γ : Names g) (P : PreTermₗ)
+                   → Dec (Σ (Termₗ g) (\ M → ⊢ Γ ⊦ P ≫ M tocheck))
+  resolveₗ Γ (LAM x P) with resolveₗ (Γ , x) P
+  resolveₗ Γ (LAM x P) | yes (M , 𝒟) = yes (LAM M , lam 𝒟)
+  resolveₗ Γ (LAM x P) | no ¬M𝒟      = no (\ { (LAM M′ , lam 𝒟′) → (M′ , 𝒟′) ↯ ¬M𝒟 })
+  resolveₗ Γ (INF P)   with resolveᵣ Γ P
+  resolveₗ Γ (INF P)   | yes (M , 𝒟) = yes (INF M , inf 𝒟)
+  resolveₗ Γ (INF P)   | no ¬M𝒟      = no (\ { (INF M′ , inf 𝒟′) → (M′ , 𝒟′) ↯ ¬M𝒟  })
 
-  resolveᵣ : ∀ {g} → (И : Names g) (P : RawTermᵣ)
-                   → Dec (Σ (Termᵣ g) (\ M → ⊢ᵣ И ⊦ P ≫ M))
-  resolveᵣ И (VAR x)   = find И x
-  resolveᵣ И (APP P Q) with resolveᵣ И P | resolveₗ И Q
-  resolveᵣ И (APP P Q) | yes (M , 𝒟) | yes (N , ℰ) = yes (APP M N , app 𝒟 ℰ)
-  resolveᵣ И (APP P Q) | yes (M , 𝒟) | no ¬Nℰ      = no (\ { (APP M′ N′ , app 𝒟′ ℰ′) → (N′ , ℰ′) ↯ ¬Nℰ })
-  resolveᵣ И (APP P Q) | no ¬M𝒟      | _           = no (\ { (APP M′ N′ , app 𝒟′ ℰ′) → (M′ , 𝒟′) ↯ ¬M𝒟 })
-  resolveᵣ И (CHK P A) with resolveₗ И P
-  resolveᵣ И (CHK P A) | yes (M , 𝒟) = yes (CHK M A , chk 𝒟)
-  resolveᵣ И (CHK P A) | no ¬M𝒟      = no (\ { (CHK M′ A′ , chk 𝒟′) → (M′ , 𝒟′) ↯ ¬M𝒟  })
+  resolveᵣ : ∀ {g} → (Γ : Names g) (P : PreTermᵣ)
+                   → Dec (Σ (Termᵣ g) (\ M → ⊢ Γ ⊦ P ≫ M toinfer))
+  resolveᵣ Γ (VAR x)   = find Γ x
+  resolveᵣ Γ (APP P Q) with resolveᵣ Γ P | resolveₗ Γ Q
+  resolveᵣ Γ (APP P Q) | yes (M , 𝒟) | yes (N , ℰ) = yes (APP M N , app 𝒟 ℰ)
+  resolveᵣ Γ (APP P Q) | yes (M , 𝒟) | no ¬Nℰ      = no (\ { (APP M′ N′ , app 𝒟′ ℰ′) → (N′ , ℰ′) ↯ ¬Nℰ })
+  resolveᵣ Γ (APP P Q) | no ¬M𝒟      | _           = no (\ { (APP M′ N′ , app 𝒟′ ℰ′) → (M′ , 𝒟′) ↯ ¬M𝒟 })
+  resolveᵣ Γ (CHK P A) with resolveₗ Γ P
+  resolveᵣ Γ (CHK P A) | yes (M , 𝒟) = yes (CHK M A , chk 𝒟)
+  resolveᵣ Γ (CHK P A) | no ¬M𝒟      = no (\ { (CHK M′ A′ , chk 𝒟′) → (M′ , 𝒟′) ↯ ¬M𝒟  })
 
 
 --------------------------------------------------------------------------------

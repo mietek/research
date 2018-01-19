@@ -12,20 +12,20 @@ import IPLDerivations as IPL
 --------------------------------------------------------------------------------
 
 
-infix 3 _⊢_
-data _⊢_ : List Truth → Truth → Set
+infix 3 _⊢_true
+data _⊢_true : List Prop → Prop → Set
   where
-    var : ∀ {A Γ} → Γ ∋ A true
+    var : ∀ {A Γ} → Γ ∋ A 
                   → Γ ⊢ A true
 
-    cut : ∀ {A B Γ} → Γ ⊢ A true → Γ , A true ⊢ B true
+    cut : ∀ {A B Γ} → Γ ⊢ A true → Γ , A ⊢ B true
                     → Γ ⊢ B true
 
-    lam : ∀ {A B Γ} → Γ , A true ⊢ B true
+    lam : ∀ {A B Γ} → Γ , A ⊢ B true
                     → Γ ⊢ A ⊃ B true
 
     unlam : ∀ {A B Γ} → Γ ⊢ A ⊃ B true
-                      → Γ , A true ⊢ B true
+                      → Γ , A ⊢ B true
 
 
 --------------------------------------------------------------------------------

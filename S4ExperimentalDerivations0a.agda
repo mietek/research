@@ -12,6 +12,17 @@ import S4Derivations as S4
 --------------------------------------------------------------------------------
 
 
+-- TODO: Remove this
+
+infix 7 _valid[_]
+record ContextualValidity : Set
+  where
+    constructor _valid[_]
+    field
+      A : Prop
+      Ψ : List Truth
+
+
 infix 3 _⊢_
 data _⊢_ : List Validity → ContextualValidity → Set
   where

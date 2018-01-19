@@ -19,6 +19,7 @@ record Model : Set₁
     field
       World : Set
 
+      -- TODO: Better name
       Ground : World → Set
 
       _≥_ : World → World → Set
@@ -31,7 +32,7 @@ record Model : Set₁
       relG : ∀ {W W′} → W′ ≥ W → Ground W
                       → Ground W′
 
-      ⌊_⌋ : World → List² Validity Truth
+      ⌊_⌋ : World → List² Prop Prop
 
       ⌊_⌋≥ : ∀ {W W′} → W′ ≥ W
                       → ⌊ W′ ⌋ ⊇² ⌊ W ⌋
@@ -42,11 +43,11 @@ open Model {{...}}
 --------------------------------------------------------------------------------
 
 
-⌊_⌋₁ : ∀ {{_ : Model}} → World → List Validity
+⌊_⌋₁ : ∀ {{_ : Model}} → World → List Prop
 ⌊ W ⌋₁ = proj₁ ⌊ W ⌋
 
 
-⌊_⌋₂ : ∀ {{_ : Model}} → World → List Truth
+⌊_⌋₂ : ∀ {{_ : Model}} → World → List Prop
 ⌊ W ⌋₂ = proj₂ ⌊ W ⌋
 
 
@@ -64,49 +65,49 @@ open Model {{...}}
 
 
 mutual
-  infix 3 _⊩_
-  _⊩_ : ∀ {{_ : Model}} → World → Truth → Set
-  W ⊩ BASE true  = Ground W
-  W ⊩ A ⊃ B true = ∀ {W′} → W′ ≥ W → W′ ⊪ A true
-                           → W′ ⊪ B true
-  W ⊩ □ A true   = W ⊪₁ A valid
+  infix 3 _⊩_value
+  _⊩_value : ∀ {{_ : Model}} → World → Prop → Set
+  W ⊩ BASE value  = Ground W
+  W ⊩ A ⊃ B value = ∀ {W′} → W′ ≥ W → W′ ⊩ A thunk
+                            → W′ ⊩ B thunk
+  W ⊩ □ A value   = W ⊩ A chunk
 
-  infix 3 _⊪_
-  _⊪_ : ∀ {{_ : Model}} → World → Truth → Set
-  W ⊪ A true = ∀ {B W′} → W′ ≥ W → (∀ {W″} → W″ ≥ W′ → W″ ⊩ A true
-                                              → ⌊ W″ ⌋₁ ⨾ ⌊ W″ ⌋₂ ⊢ₗ B)
-                         → ⌊ W′ ⌋₁ ⨾ ⌊ W′ ⌋₂ ⊢ₗ B
+  infix 3 _⊩_thunk
+  _⊩_thunk : ∀ {{_ : Model}} → World → Prop → Set
+  W ⊩ A thunk = ∀ {B W′} → W′ ≥ W → (∀ {W″} → W″ ≥ W′ → W″ ⊩ A value
+                                               → ⌊ W″ ⌋₁ ⨾ ⌊ W″ ⌋₂ ⊢ B verifiable)
+                          → ⌊ W′ ⌋₁ ⨾ ⌊ W′ ⌋₂ ⊢ B verifiable
 
-  infix 3 _⊪₁_
-  _⊪₁_ : ∀ {{_ : Model}} → World → Validity → Set
-  W ⊪₁ A valid = ⌊ W ⌋₁ ⊢₁ A valid × W ⊪ A true
-
-
-infix 3 _⊪⋆_
-_⊪⋆_ : ∀ {{_ : Model}} → World → List Truth → Set
-W ⊪⋆ Γ = All (W ⊪_) Γ
+  infix 3 _⊩_chunk
+  _⊩_chunk : ∀ {{_ : Model}} → World → Prop → Set
+  W ⊩ A chunk = ⌊ W ⌋₁ ⊢ A valid × W ⊩ A thunk
 
 
-infix 3 _⊪⋆₁_
-_⊪⋆₁_ : ∀ {{_ : Model}} → World → List Validity → Set
-W ⊪⋆₁ Δ = All (W ⊪₁_) Δ
+infix 3 _⊩_thunk*
+_⊩_thunk* : ∀ {{_ : Model}} → World → List Prop → Set
+W ⊩ Γ thunk* = All (W ⊩_thunk) Γ
+
+
+infix 3 _⊩_chunk*
+_⊩_chunk* : ∀ {{_ : Model}} → World → List Prop → Set
+W ⊩ Δ chunk* = All (W ⊩_chunk) Δ
 
 
 --------------------------------------------------------------------------------
 
 
-syn : ∀ {{_ : Model}} {A W} → W ⊪₁ A valid
-                            → ⌊ W ⌋₁ ⊢₁ A valid
+syn : ∀ {{_ : Model}} {A W} → W ⊩ A chunk
+                            → ⌊ W ⌋₁ ⊢ A valid
 syn v = proj₁ v
 
 
-syns : ∀ {{_ : Model}} {Δ W} → W ⊪⋆₁ Δ
-                             → ⌊ W ⌋₁ ⊢⋆₁ Δ
+syns : ∀ {{_ : Model}} {Δ W} → W ⊩ Δ chunk*
+                             → ⌊ W ⌋₁ ⊢ Δ valid*
 syns δ = maps syn δ
 
 
-sem : ∀ {{_ : Model}} {A W} → W ⊪₁ A valid
-                            → W ⊪ A true
+sem : ∀ {{_ : Model}} {A W} → W ⊩ A chunk
+                            → W ⊩ A thunk
 sem v = proj₂ v
 
 
@@ -114,46 +115,45 @@ sem v = proj₂ v
 
 
 mutual
-  rel : ∀ {{_ : Model}} {A W W′} → W′ ≥ W → W ⊩ A
-                                 → W′ ⊩ A
-  rel {BASE true}  η 𝒟 = relG η 𝒟
-  rel {A ⊃ B true} η f = \ η′ k → f (η ∘≥ η′) k
-  rel {□ A true}   η v = relC₁ η v
+  rel : ∀ {{_ : Model}} {A W W′} → W′ ≥ W → W ⊩ A value
+                                 → W′ ⊩ A value
+  rel {BASE}  η 𝒟 = relG η 𝒟
+  rel {A ⊃ B} η f = \ η′ k → f (η ∘≥ η′) k
+  rel {□ A}   η v = relₖ₁ η v
 
-  relC : ∀ {{_ : Model}} {A W W′} → W′ ≥ W → W ⊪ A
-                                  → W′ ⊪ A
-  relC η k = \ η′ f → k (η ∘≥ η′) f
+  relₖ : ∀ {{_ : Model}} {A W W′} → W′ ≥ W → W ⊩ A thunk
+                                  → W′ ⊩ A thunk
+  relₖ η k = \ η′ f → k (η ∘≥ η′) f
 
-  relC₁ : ∀ {{_ : Model}} {A W W′} → W′ ≥ W → W ⊪₁ A
-                                   → W′ ⊪₁ A
-  relC₁ {A valid} η v = mren ⌊ η ⌋≥₁ (syn v) ,
-                        relC {A true} η (sem v)
+  relₖ₁ : ∀ {{_ : Model}} {A W W′} → W′ ≥ W → W ⊩ A chunk
+                                   → W′ ⊩ A chunk
+  relₖ₁ {A} η v = mren ⌊ η ⌋≥₁ (syn v) , relₖ {A} η (sem v)
 
 
-relsC : ∀ {{_ : Model}} {Γ W W′} → W′ ≥ W → W ⊪⋆ Γ
-                                 → W′ ⊪⋆ Γ
-relsC η γ = maps (\ {A} k {B} {W′} → relC {A} η (\ {C} {W″} → k {C} {W″})) γ
+relsₖ : ∀ {{_ : Model}} {Γ W W′} → W′ ≥ W → W ⊩ Γ thunk*
+                                 → W′ ⊩ Γ thunk*
+relsₖ η γ = maps (\ {A} k {B} {W′} → relₖ {A} η (\ {C} {W″} → k {C} {W″})) γ
 -- NOTE: Pattern-matching problem here prevents rel from taking “A true”
 -- NOTE: Equivalent to
--- relsC η γ = maps (relC η) γ
+-- relsₖ η γ = maps (relₖ η) γ
 
 
-relsC₁ : ∀ {{_ : Model}} {Δ W W′} → W′ ≥ W → W ⊪⋆₁ Δ
-                                  → W′ ⊪⋆₁ Δ
-relsC₁ η δ = maps (relC₁ η) δ
+relsₖ₁ : ∀ {{_ : Model}} {Δ W W′} → W′ ≥ W → W ⊩ Δ chunk*
+                                  → W′ ⊩ Δ chunk*
+relsₖ₁ η δ = maps (relₖ₁ η) δ
 
 
 --------------------------------------------------------------------------------
 
 
-return : ∀ {{_ : Model}} {A W} → W ⊩ A true
-                               → W ⊪ A true
-return {A} a = \ η f → f id≥ (rel {A true} η a)
+return : ∀ {{_ : Model}} {A W} → W ⊩ A value
+                               → W ⊩ A thunk
+return {A} a = \ η f → f id≥ (rel {A} η a)
 
 
-bind : ∀ {{_ : Model}} {A B W} → W ⊪ A true → (∀ {W′} → W′ ≥ W → W′ ⊩ A true
-                                                         → W′ ⊪ B true)
-                               → W ⊪ B true
+bind : ∀ {{_ : Model}} {A B W} → W ⊩ A thunk → (∀ {W′} → W′ ≥ W → W′ ⊩ A value
+                                                          → W′ ⊩ B thunk)
+                               → W ⊩ B thunk
 bind k f = \ η f′ →
              k η (\ η′ a →
                f (η ∘≥ η′) a id≥ (\ η″ b →
@@ -163,119 +163,119 @@ bind k f = \ η f′ →
 --------------------------------------------------------------------------------
 
 
-infix 3 _⊨_
-_⊨_ : List² Validity Truth → Truth → Set₁
-Δ ⨾ Γ ⊨ A true = ∀ {{_ : Model}} {W} → W ⊪⋆₁ Δ → W ⊪⋆ Γ
-                                      → W ⊪ A true
+infix 3 _⊨_true
+_⊨_true : List² Prop Prop → Prop → Set₁
+Δ ⨾ Γ ⊨ A true = ∀ {{_ : Model}} {W} → W ⊩ Δ chunk* → W ⊩ Γ thunk*
+                                      → W ⊩ A thunk
 
 
 ↓ : ∀ {Δ Γ A} → Δ ⨾ Γ ⊢ A true
               → Δ ⨾ Γ ⊨ A true
 ↓ (var i)              δ γ = get γ i
 ↓ (lam {A} {B} 𝒟)      δ γ = return {A ⊃ B} (\ η k →
-                               ↓ 𝒟 (relsC₁ η δ) (relsC η γ , k))
+                               ↓ 𝒟 (relsₖ₁ η δ) (relsₖ η γ , k))
 ↓ (app {A} {B} 𝒟 ℰ)    δ γ = bind {A ⊃ B} {B} (↓ 𝒟 δ γ) (\ η f →
-                               f id≥ (↓ ℰ (relsC₁ η δ) (relsC η γ)))
+                               f id≥ (↓ ℰ (relsₖ₁ η δ) (relsₖ η γ)))
 ↓ (mvar i)             δ γ = sem (get δ i)
 ↓ (box {A} 𝒟)          δ γ = return {□ A} (msub (syns δ) 𝒟 , ↓ 𝒟 δ ∙)
 ↓ (letbox {A} {B} 𝒟 ℰ) δ γ = bind {□ A} {B} (↓ 𝒟 δ γ) (\ η v →
-                               ↓ ℰ (relsC₁ η δ , v) (relsC η γ))
+                               ↓ ℰ (relsₖ₁ η δ , v) (relsₖ η γ))
 
 
 --------------------------------------------------------------------------------
 
 
-renR² : ∀ {Δ Δ′ Γ Γ′ A} → Δ′ ⨾ Γ′ ⊇² Δ ⨾ Γ → Δ ⨾ Γ ⊢ᵣ A true
-                        → Δ′ ⨾ Γ′ ⊢ᵣ A true
-renR² η 𝒟 = mrenR (proj₁ η) (renR (proj₂ η) 𝒟)
+renᵣ² : ∀ {Δ Δ′ Γ Γ′ A} → Δ′ ⨾ Γ′ ⊇² Δ ⨾ Γ → Δ ⨾ Γ ⊢ A usable
+                        → Δ′ ⨾ Γ′ ⊢ A usable
+renᵣ² η 𝒟 = mrenᵣ (proj₁ η) (renᵣ (proj₂ η) 𝒟)
 
 
 instance
   canon : Model
   canon = record
-            { World  = List² Validity Truth
-            ; Ground = \ { (Δ ⨾ Γ) → Δ ⨾ Γ ⊢ᵣ BASE true }
+            { World  = List² Prop Prop
+            ; Ground = \ { (Δ ⨾ Γ) → Δ ⨾ Γ ⊢ BASE usable }
             ; _≥_    = _⊇²_
             ; id≥    = id
             ; _∘≥_   = _∘_
-            ; relG   = renR²
+            ; relG   = renᵣ²
             ; ⌊_⌋    = id
             ; ⌊_⌋≥   = id
             }
 
 
 mutual
-  ⇓ : ∀ {A Δ Γ} → Δ ⨾ Γ ⊢ᵣ A true
-                → Δ ⨾ Γ ⊪ A true
+  ⇓ : ∀ {A Δ Γ} → Δ ⨾ Γ ⊢ A usable
+                → Δ ⨾ Γ ⊩ A thunk
   ⇓ {BASE}  𝒟 = return {BASE} 𝒟
-  ⇓ {A ⊃ B} 𝒟 = return {A ⊃ B} (\ η k → ⇓ (app (renR² η 𝒟) (⇑ k)))
-  ⇓ {□ A}   𝒟 = \ η f → letbox (renR² η 𝒟) (f (drop₁ id) (mvz , ⇓ mvzR))
+  ⇓ {A ⊃ B} 𝒟 = return {A ⊃ B} (\ η k → ⇓ (app (renᵣ² η 𝒟) (⇑ k)))
+  ⇓ {□ A}   𝒟 = \ η f → letbox (renᵣ² η 𝒟) (f (drop₁ id) (mvz , ⇓ mvzᵣ))
 
-  ⇑ : ∀ {A Δ Γ} → Δ ⨾ Γ ⊪ A true
-                → Δ ⨾ Γ ⊢ₗ A true
+  ⇑ : ∀ {A Δ Γ} → Δ ⨾ Γ ⊩ A thunk
+                → Δ ⨾ Γ ⊢ A verifiable
   ⇑ {BASE}  k = k id (\ η 𝒟 → use 𝒟)
-  ⇑ {A ⊃ B} k = k id (\ η f → lam (⇑ (f (drop₂ id) (⇓ vzR))))
+  ⇑ {A ⊃ B} k = k id (\ η f → lam (⇑ (f (drop₂ id) (⇓ vzᵣ))))
   ⇑ {□ A}   k = k id (\ η v → box (syn v))
 
 
 --------------------------------------------------------------------------------
 
 
-wksS : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊪⋆ Ξ
-                   → Δ ⨾ Γ , A true ⊪⋆ Ξ
-wksS ξ = relsC (drop₂ id) ξ
+wksₛ : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ thunk*
+                   → Δ ⨾ Γ , A ⊩ Ξ thunk*
+wksₛ ξ = relsₖ (drop₂ id) ξ
 
 
-liftsS : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊪⋆ Ξ
-                     → Δ ⨾ Γ , A true ⊪⋆ Ξ , A true
-liftsS ξ = wksS ξ , ⇓ vzR
+liftsₛ : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ thunk*
+                     → Δ ⨾ Γ , A ⊩ Ξ , A thunk*
+liftsₛ ξ = wksₛ ξ , ⇓ vzᵣ
 
 
-varsS : ∀ {Δ Γ Γ′} → Γ′ ⊇ Γ
-                   → Δ ⨾ Γ′ ⊪⋆ Γ
-varsS done     = ∙
-varsS (drop η) = wksS (varsS η)
-varsS (keep η) = liftsS (varsS η)
+varsₛ : ∀ {Δ Γ Γ′} → Γ′ ⊇ Γ
+                   → Δ ⨾ Γ′ ⊩ Γ thunk*
+varsₛ done     = ∙
+varsₛ (drop η) = wksₛ (varsₛ η)
+varsₛ (keep η) = liftsₛ (varsₛ η)
 
 
-idsS : ∀ {Δ Γ} → Δ ⨾ Γ ⊪⋆ Γ
-idsS = varsS id
+idsₛ : ∀ {Δ Γ} → Δ ⨾ Γ ⊩ Γ thunk*
+idsₛ = varsₛ id
 
 
 --------------------------------------------------------------------------------
 
 
-mwksS₁ : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊪⋆₁ Ξ
-                     → Δ , A valid ⨾ Γ ⊪⋆₁ Ξ
-mwksS₁ ξ = relsC₁ (drop₁ id) ξ
+mwksₛ₁ : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ chunk*
+                     → Δ , A ⨾ Γ ⊩ Ξ chunk*
+mwksₛ₁ ξ = relsₖ₁ (drop₁ id) ξ
 
 
-mliftsS₁ : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊪⋆₁ Ξ
-                       → Δ , A valid ⨾ Γ ⊪⋆₁ Ξ , A valid
-mliftsS₁ ξ = mwksS₁ ξ , (mvz , ⇓ mvzR)
+mliftsₛ₁ : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ chunk*
+                       → Δ , A ⨾ Γ ⊩ Ξ , A chunk*
+mliftsₛ₁ ξ = mwksₛ₁ ξ , (mvz , ⇓ mvzᵣ)
 
 
-mvarsS₁ : ∀ {Δ Δ′ Γ} → Δ′ ⊇ Δ
-                     → Δ′ ⨾ Γ ⊪⋆₁ Δ
-mvarsS₁ done     = ∙
-mvarsS₁ (drop η) = mwksS₁ (mvarsS₁ η)
-mvarsS₁ (keep η) = mliftsS₁ (mvarsS₁ η)
+mvarsₛ₁ : ∀ {Δ Δ′ Γ} → Δ′ ⊇ Δ
+                     → Δ′ ⨾ Γ ⊩ Δ chunk*
+mvarsₛ₁ done     = ∙
+mvarsₛ₁ (drop η) = mwksₛ₁ (mvarsₛ₁ η)
+mvarsₛ₁ (keep η) = mliftsₛ₁ (mvarsₛ₁ η)
 
 
-midsS₁ : ∀ {Δ Γ} → Δ ⨾ Γ ⊪⋆₁ Δ
-midsS₁ = mvarsS₁ id
+midsₛ₁ : ∀ {Δ Γ} → Δ ⨾ Γ ⊩ Δ chunk*
+midsₛ₁ = mvarsₛ₁ id
 
 
 --------------------------------------------------------------------------------
 
 
 ↑ : ∀ {Δ Γ A} → Δ ⨾ Γ ⊨ A true
-              → Δ ⨾ Γ ⊢ₗ A true
-↑ f = ⇑ (f midsS₁ idsS)
+              → Δ ⨾ Γ ⊢ A verifiable
+↑ f = ⇑ (f midsₛ₁ idsₛ)
 
 
 nbe : ∀ {Δ Γ A} → Δ ⨾ Γ ⊢ A true
-                → Δ ⨾ Γ ⊢ₗ A true
+                → Δ ⨾ Γ ⊢ A verifiable
 nbe 𝒟 = ↑ (↓ 𝒟)
 
 

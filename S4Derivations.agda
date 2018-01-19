@@ -11,51 +11,44 @@ open import S4Propositions
 --------------------------------------------------------------------------------
 
 
--- We read “B₁, …, Bₘ ⨾ A₁, …, Aₙ ⊢ A” as “from the assumptions that A₁ is
--- true, …, and that Aₙ is true, and that B₁ is valid, …, and that Bₘ is
--- valid, we deduce that A is true”.
-
-infix 3 _⨾_⊢_
-data _⨾_⊢_ : List Validity → List Truth → Truth → Set
+infix 3 _⨾_⊢_true
+data _⨾_⊢_true : List Prop → List Prop → Prop → Set
   where
-    var : ∀ {A Δ Γ} → Γ ∋ A true
+    var : ∀ {A Δ Γ} → Γ ∋ A
                     → Δ ⨾ Γ ⊢ A true
 
-    lam : ∀ {A B Δ Γ} → Δ ⨾ Γ , A true ⊢ B true
+    lam : ∀ {A B Δ Γ} → Δ ⨾ Γ , A ⊢ B true
                       → Δ ⨾ Γ ⊢ A ⊃ B true
 
     app : ∀ {A B Δ Γ} → Δ ⨾ Γ ⊢ A ⊃ B true → Δ ⨾ Γ ⊢ A true
                       → Δ ⨾ Γ ⊢ B true
 
-    mvar : ∀ {A Δ Γ} → Δ ∋ A valid
+    mvar : ∀ {A Δ Γ} → Δ ∋ A
                      → Δ ⨾ Γ ⊢ A true
 
     box : ∀ {A Δ Γ} → Δ ⨾ ∙ ⊢ A true
                     → Δ ⨾ Γ ⊢ □ A true
 
-    letbox : ∀ {A B Δ Γ} → Δ ⨾ Γ ⊢ □ A true → Δ , A valid ⨾ Γ ⊢ B true
+    letbox : ∀ {A B Δ Γ} → Δ ⨾ Γ ⊢ □ A true → Δ , A ⨾ Γ ⊢ B true
                          → Δ ⨾ Γ ⊢ B true
 
 
-infix 3 _⨾_⊢⋆_
-_⨾_⊢⋆_ : List Validity → List Truth → List Truth → Set
-Δ ⨾ Γ ⊢⋆ Ξ = All (Δ ⨾ Γ ⊢_) Ξ
+infix 3 _⨾_⊢_true*
+_⨾_⊢_true* : List Prop → List Prop → List Prop → Set
+Δ ⨾ Γ ⊢ Ξ true* = All (Δ ⨾ Γ ⊢_true) Ξ
 
 
 --------------------------------------------------------------------------------
 
 
--- We read “A₁, …, Aₙ ⊢₁ A” as “from the assumptions that A₁ is valid, …,
--- and that Aₙ is valid, we deduce that A is valid”.
-
-infix 3 _⊢₁_
-_⊢₁_ : List Validity → Validity → Set
-Δ ⊢₁ A valid = Δ ⨾ ∙ ⊢ A true
+infix 3 _⊢_valid
+_⊢_valid : List Prop → Prop → Set
+Δ ⊢ A valid = Δ ⨾ ∙ ⊢ A true
 
 
-infix 3 _⊢⋆₁_
-_⊢⋆₁_ : List Validity → List Validity → Set
-Δ ⊢⋆₁ Ξ = All (Δ ⊢₁_) Ξ
+infix 3 _⊢_valid*
+_⊢_valid* : List Prop → List Prop → Set
+Δ ⊢ Ξ valid* = All (Δ ⊢_valid) Ξ
 
 
 --------------------------------------------------------------------------------
@@ -71,8 +64,8 @@ ren η (box 𝒟)      = box 𝒟
 ren η (letbox 𝒟 ℰ) = letbox (ren η 𝒟) (ren η ℰ)
 
 
-rens : ∀ {Δ Γ Γ′ Ξ} → Γ′ ⊇ Γ → Δ ⨾ Γ ⊢⋆ Ξ
-                    → Δ ⨾ Γ′ ⊢⋆ Ξ
+rens : ∀ {Δ Γ Γ′ Ξ} → Γ′ ⊇ Γ → Δ ⨾ Γ ⊢ Ξ true*
+                    → Δ ⨾ Γ′ ⊢ Ξ true*
 rens η ξ = maps (ren η) ξ
 
 
@@ -89,13 +82,13 @@ mren η (box 𝒟)      = box (mren η 𝒟)
 mren η (letbox 𝒟 ℰ) = letbox (mren η 𝒟) (mren (keep η) ℰ)
 
 
-mrens : ∀ {Δ Δ′ Γ Ξ} → Δ′ ⊇ Δ → Δ ⨾ Γ ⊢⋆ Ξ
-                     → Δ′ ⨾ Γ ⊢⋆ Ξ
+mrens : ∀ {Δ Δ′ Γ Ξ} → Δ′ ⊇ Δ → Δ ⨾ Γ ⊢ Ξ true*
+                     → Δ′ ⨾ Γ ⊢ Ξ true*
 mrens η ξ = maps (mren η) ξ
 
 
-mrens₁ : ∀ {Δ Δ′ Ξ} → Δ′ ⊇ Δ → Δ ⊢⋆₁ Ξ
-                    → Δ′ ⊢⋆₁ Ξ
+mrens₁ : ∀ {Δ Δ′ Ξ} → Δ′ ⊇ Δ → Δ ⊢ Ξ valid*
+                    → Δ′ ⊢ Ξ valid*
 mrens₁ η ξ = maps (mren η) ξ
 
 
@@ -103,32 +96,32 @@ mrens₁ η ξ = maps (mren η) ξ
 
 
 wk : ∀ {B A Δ Γ} → Δ ⨾ Γ ⊢ A true
-                 → Δ ⨾ Γ , B true ⊢ A true
+                 → Δ ⨾ Γ , B ⊢ A true
 wk 𝒟 = ren (drop id) 𝒟
 
 
-vz : ∀ {A Δ Γ} → Δ ⨾ Γ , A true ⊢ A true
+vz : ∀ {A Δ Γ} → Δ ⨾ Γ , A ⊢ A true
 vz = var zero
 
 
-wks : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊢⋆ Ξ
-                  → Δ ⨾ Γ , A true ⊢⋆ Ξ
+wks : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊢ Ξ true*
+                  → Δ ⨾ Γ , A ⊢ Ξ true*
 wks ξ = rens (drop id) ξ
 
 
-lifts : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊢⋆ Ξ
-                    → Δ ⨾ Γ , A true ⊢⋆ Ξ , A true
+lifts : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊢ Ξ true*
+                    → Δ ⨾ Γ , A ⊢ Ξ , A true*
 lifts ξ = wks ξ , vz
 
 
 vars : ∀ {Δ Γ Γ′} → Γ′ ⊇ Γ
-                  → Δ ⨾ Γ′ ⊢⋆ Γ
+                  → Δ ⨾ Γ′ ⊢ Γ true*
 vars done     = ∙
 vars (drop η) = wks (vars η)
 vars (keep η) = lifts (vars η)
 
 
-ids : ∀ {Δ Γ} → Δ ⨾ Γ ⊢⋆ Γ
+ids : ∀ {Δ Γ} → Δ ⨾ Γ ⊢ Γ true*
 ids = vars id
 
 
@@ -136,44 +129,44 @@ ids = vars id
 
 
 mwk : ∀ {B A Δ Γ} → Δ ⨾ Γ ⊢ A true
-                  → Δ , B valid ⨾ Γ ⊢ A true
+                  → Δ , B ⨾ Γ ⊢ A true
 mwk 𝒟 = mren (drop id) 𝒟
 
 
-mvz : ∀ {A Δ Γ} → Δ , A valid ⨾ Γ ⊢ A true
+mvz : ∀ {A Δ Γ} → Δ , A ⨾ Γ ⊢ A true
 mvz = mvar zero
 
 
-mwks : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊢⋆ Ξ
-                   → Δ , A valid ⨾ Γ ⊢⋆ Ξ
+mwks : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊢ Ξ true*
+                   → Δ , A ⨾ Γ ⊢ Ξ true*
 mwks ξ = mrens (drop id) ξ
 
 
-mwks₁ : ∀ {A Δ Ξ} → Δ ⊢⋆₁ Ξ
-                  → Δ , A valid ⊢⋆₁ Ξ
+mwks₁ : ∀ {A Δ Ξ} → Δ ⊢ Ξ valid*
+                  → Δ , A ⊢ Ξ valid*
 mwks₁ ξ = mrens₁ (drop id) ξ
 
 
-mlifts₁ : ∀ {A Δ Ξ} → Δ ⊢⋆₁ Ξ
-                    → Δ , A valid ⊢⋆₁ Ξ , A valid
+mlifts₁ : ∀ {A Δ Ξ} → Δ ⊢ Ξ valid*
+                    → Δ , A ⊢ Ξ , A valid*
 mlifts₁ ξ = mwks₁ ξ , mvz
 
 
 mvars₁ : ∀ {Δ Δ′} → Δ′ ⊇ Δ
-                  → Δ′ ⊢⋆₁ Δ
+                  → Δ′ ⊢ Δ valid*
 mvars₁ done     = ∙
 mvars₁ (drop η) = mwks₁ (mvars₁ η)
 mvars₁ (keep η) = mlifts₁ (mvars₁ η)
 
 
-mids₁ : ∀ {Δ} → Δ ⊢⋆₁ Δ
+mids₁ : ∀ {Δ} → Δ ⊢ Δ valid*
 mids₁ = mvars₁ id
 
 
 --------------------------------------------------------------------------------
 
 
-sub : ∀ {Δ Γ Ξ A} → Δ ⨾ Γ ⊢⋆ Ξ → Δ ⨾ Ξ ⊢ A true
+sub : ∀ {Δ Γ Ξ A} → Δ ⨾ Γ ⊢ Ξ true* → Δ ⨾ Ξ ⊢ A true
                   → Δ ⨾ Γ ⊢ A true
 sub ξ (var i)      = get ξ i
 sub ξ (lam 𝒟)      = lam (sub (lifts ξ) 𝒟)
@@ -183,15 +176,15 @@ sub ξ (box 𝒟)      = box 𝒟
 sub ξ (letbox 𝒟 ℰ) = letbox (sub ξ 𝒟) (sub (mwks ξ) ℰ)
 
 
-subs : ∀ {Δ Γ Ξ Ψ} → Δ ⨾ Γ ⊢⋆ Ξ → Δ ⨾ Ξ ⊢⋆ Ψ
-                   → Δ ⨾ Γ ⊢⋆ Ψ
+subs : ∀ {Δ Γ Ξ Ψ} → Δ ⨾ Γ ⊢ Ξ true* → Δ ⨾ Ξ ⊢ Ψ true*
+                   → Δ ⨾ Γ ⊢ Ψ true*
 subs ξ ψ = maps (sub ξ) ψ
 
 
 --------------------------------------------------------------------------------
 
 
-msub : ∀ {Δ Γ Ξ A} → Δ ⊢⋆₁ Ξ → Ξ ⨾ Γ ⊢ A true
+msub : ∀ {Δ Γ Ξ A} → Δ ⊢ Ξ valid* → Ξ ⨾ Γ ⊢ A true
                    → Δ ⨾ Γ ⊢ A true
 msub ξ (var i)      = var i
 msub ξ (lam 𝒟)      = lam (msub ξ 𝒟)
@@ -201,13 +194,13 @@ msub ξ (box 𝒟)      = box (msub ξ 𝒟)
 msub ξ (letbox 𝒟 ℰ) = letbox (msub ξ 𝒟) (msub (mlifts₁ ξ) ℰ)
 
 
-msubs : ∀ {Δ Γ Ξ Ψ} → Δ ⊢⋆₁ Ξ → Ξ ⨾ Γ ⊢⋆ Ψ
-                    → Δ ⨾ Γ ⊢⋆ Ψ
+msubs : ∀ {Δ Γ Ξ Ψ} → Δ ⊢ Ξ valid* → Ξ ⨾ Γ ⊢ Ψ true*
+                    → Δ ⨾ Γ ⊢ Ψ true*
 msubs ξ ψ = maps (msub ξ) ψ
 
 
-msubs₁ : ∀ {Δ Ξ Ψ} → Δ ⊢⋆₁ Ξ → Ξ ⊢⋆₁ Ψ
-                   → Δ ⊢⋆₁ Ψ
+msubs₁ : ∀ {Δ Ξ Ψ} → Δ ⊢ Ξ valid* → Ξ ⊢ Ψ valid*
+                   → Δ ⊢ Ψ valid*
 msubs₁ ξ ψ = maps (msub ξ) ψ
 
 
@@ -215,34 +208,34 @@ msubs₁ ξ ψ = maps (msub ξ) ψ
 
 
 unlam : ∀ {Δ Γ A B} → Δ ⨾ Γ ⊢ A ⊃ B true
-                    → Δ ⨾ Γ , A true ⊢ B true
+                    → Δ ⨾ Γ , A ⊢ B true
 unlam 𝒟 = app (wk 𝒟) vz
 
 
-cut : ∀ {Δ Γ A B} → Δ ⨾ Γ ⊢ A true → Δ ⨾ Γ , A true ⊢ B true
+cut : ∀ {Δ Γ A B} → Δ ⨾ Γ ⊢ A true → Δ ⨾ Γ , A ⊢ B true
                   → Δ ⨾ Γ ⊢ B true
 cut 𝒟 ℰ = sub (ids , 𝒟) ℰ
 
 
-cut′ : ∀ {Δ Γ A B} → Δ ⨾ Γ ⊢ A true → Δ ⨾ Γ , A true ⊢ B true
+cut′ : ∀ {Δ Γ A B} → Δ ⨾ Γ ⊢ A true → Δ ⨾ Γ , A ⊢ B true
                    → Δ ⨾ Γ ⊢ B true
 cut′ 𝒟 ℰ = app (lam ℰ) 𝒟
 
 
 wkn : ∀ {Δ Γ A} → Δ ⨾ ∙ ⊢ A true
                 → Δ ⨾ Γ ⊢ A true
-wkn {Γ = ∙}          𝒟 = 𝒟
-wkn {Γ = Γ , B true} 𝒟 = wk (wkn 𝒟)
+wkn {Γ = ∙}     𝒟 = 𝒟
+wkn {Γ = Γ , B} 𝒟 = wk (wkn 𝒟)
 
 
-sub′ : ∀ {Δ Γ Ξ A} → Δ ⨾ Γ ⊢⋆ Ξ → Δ ⨾ Ξ ⊢ A true
+sub′ : ∀ {Δ Γ Ξ A} → Δ ⨾ Γ ⊢ Ξ true* → Δ ⨾ Ξ ⊢ A true
                    → Δ ⨾ Γ ⊢ A true
 sub′ ∙       𝒟 = wkn 𝒟
 sub′ (ξ , 𝒞) 𝒟 = app (sub′ ξ (lam 𝒟)) 𝒞
 
 
-exch : ∀ {Δ Γ A B C} → Δ ⨾ Γ , A true , B true ⊢ C true
-                     → Δ ⨾ Γ , B true , A true ⊢ C true
+exch : ∀ {Δ Γ A B C} → Δ ⨾ Γ , A , B ⊢ C true
+                     → Δ ⨾ Γ , B , A ⊢ C true
 exch 𝒟 = app (app (wk (wk (lam (lam 𝒟)))) vz) (wk vz)
 
 
@@ -254,13 +247,13 @@ unbox : ∀ {A Δ Γ} → Δ ⨾ ∙ ⊢ □ A true
 unbox 𝒟 = letbox (box (letbox 𝒟 mvz)) mvz
 
 
-vau : ∀ {Δ Γ A B} → Δ , A valid ⨾ Γ ⊢ B true
-                  → Δ ⨾ Γ , □ A true ⊢ B true
+vau : ∀ {Δ Γ A B} → Δ , A ⨾ Γ ⊢ B true
+                  → Δ ⨾ Γ , □ A ⊢ B true
 vau 𝒟 = letbox vz (wk 𝒟)
 
 
-unvau : ∀ {Δ Γ A B} → Δ ⨾ Γ , □ A true ⊢ B true
-                    → Δ , A valid ⨾ Γ ⊢ B true
+unvau : ∀ {Δ Γ A B} → Δ ⨾ Γ , □ A ⊢ B true
+                    → Δ , A ⨾ Γ ⊢ B true
 unvau 𝒟 = app (lam (mwk 𝒟)) (box mvz)
 
 
@@ -279,40 +272,40 @@ axiom4 : ∀ {A Δ Γ} → Δ ⨾ Γ ⊢ □ A true
 axiom4 𝒟 = letbox 𝒟 (box (box mvz))
 
 
-v→t : ∀ {A Δ Γ} → Δ ⊢₁ A valid
+v→t : ∀ {A Δ Γ} → Δ ⊢ A valid
                  → Δ ⨾ Γ ⊢ A true
 v→t 𝒟 = letbox (box 𝒟) mvz
 
 
 t→v : ∀ {A Δ} → Δ ⨾ ∙ ⊢ A true
-               → Δ ⊢₁ A valid
+               → Δ ⊢ A valid
 t→v 𝒟 = 𝒟
 
 
-mcut : ∀ {Δ Γ A B} → Δ ⨾ ∙ ⊢ A true → Δ , A valid ⨾ Γ ⊢ B true
+mcut : ∀ {Δ Γ A B} → Δ ⨾ ∙ ⊢ A true → Δ , A ⨾ Γ ⊢ B true
                    → Δ ⨾ Γ ⊢ B true
 mcut 𝒟 ℰ = msub (mids₁ , 𝒟) ℰ
 
 
-mcut′ : ∀ {Δ Γ A B} → Δ ⨾ ∙ ⊢ A true → Δ , A valid ⨾ Γ ⊢ B true
+mcut′ : ∀ {Δ Γ A B} → Δ ⨾ ∙ ⊢ A true → Δ , A ⨾ Γ ⊢ B true
                     → Δ ⨾ Γ ⊢ B true
 mcut′ 𝒟 ℰ = letbox (box 𝒟) ℰ
 
 
 mwkn : ∀ {Δ Γ A} → ∙ ⨾ Γ ⊢ A true
                  → Δ ⨾ Γ ⊢ A true
-mwkn {∙}           𝒟 = 𝒟
-mwkn {Δ , B valid} 𝒟 = mwk (mwkn 𝒟)
+mwkn {∙}     𝒟 = 𝒟
+mwkn {Δ , B} 𝒟 = mwk (mwkn 𝒟)
 
 
-msub′ : ∀ {Δ Γ Ξ A} → Δ ⊢⋆₁ Ξ → Ξ ⨾ Γ ⊢ A true
+msub′ : ∀ {Δ Γ Ξ A} → Δ ⊢ Ξ valid* → Ξ ⨾ Γ ⊢ A true
                     → Δ ⨾ Γ ⊢ A true
 msub′ ∙       𝒟 = mwkn 𝒟
 msub′ (ξ , 𝒞) 𝒟 = app (msub′ ξ (lam (vau 𝒟))) (box 𝒞)
 
 
-mexch : ∀ {Δ Γ A B C} → Δ , A valid , B valid ⨾ Γ ⊢ C true
-                      → Δ , B valid , A valid ⨾ Γ ⊢ C true
+mexch : ∀ {Δ Γ A B C} → Δ , A , B ⨾ Γ ⊢ C true
+                      → Δ , B , A ⨾ Γ ⊢ C true
 mexch 𝒟 = unvau (unvau (exch (vau (vau 𝒟))))
 
 

@@ -13,104 +13,104 @@ open import S4Derivations
 
 
 mutual
-  infix 3 _⨾_⊢ₗ_
-  data _⨾_⊢ₗ_ : List Validity → List Truth → Truth → Set
+  infix 3 _⨾_⊢_verifiable
+  data _⨾_⊢_verifiable : List Prop → List Prop → Prop → Set
     where
-      lam : ∀ {A B Δ Γ} → Δ ⨾ Γ , A true ⊢ₗ B true
-                        → Δ ⨾ Γ ⊢ₗ A ⊃ B true
+      lam : ∀ {A B Δ Γ} → Δ ⨾ Γ , A ⊢ B verifiable
+                        → Δ ⨾ Γ ⊢ A ⊃ B verifiable
 
       box : ∀ {A Δ Γ} → Δ ⨾ ∙ ⊢ A true
-                      → Δ ⨾ Γ ⊢ₗ □ A true
+                      → Δ ⨾ Γ ⊢ □ A verifiable
 
-      letbox : ∀ {A B Δ Γ} → Δ ⨾ Γ ⊢ᵣ □ A true → Δ , A valid ⨾ Γ ⊢ₗ B true
-                           → Δ ⨾ Γ ⊢ₗ B true
+      letbox : ∀ {A B Δ Γ} → Δ ⨾ Γ ⊢ □ A usable → Δ , A ⨾ Γ ⊢ B verifiable
+                           → Δ ⨾ Γ ⊢ B verifiable
 
-      use : ∀ {Δ Γ} → Δ ⨾ Γ ⊢ᵣ BASE true
-                    → Δ ⨾ Γ ⊢ₗ BASE true
+      use : ∀ {Δ Γ} → Δ ⨾ Γ ⊢ BASE usable
+                    → Δ ⨾ Γ ⊢  BASE verifiable
 
-  infix 3 _⨾_⊢ᵣ_
-  data _⨾_⊢ᵣ_ : List Validity → List Truth → Truth → Set
+  infix 3 _⨾_⊢_usable
+  data _⨾_⊢_usable : List Prop → List Prop → Prop → Set
     where
-      var : ∀ {A Δ Γ} → Γ ∋ A true
-                      → Δ ⨾ Γ ⊢ᵣ A true
+      var : ∀ {A Δ Γ} → Γ ∋ A
+                      → Δ ⨾ Γ ⊢ A usable
 
-      app : ∀ {A B Δ Γ} → Δ ⨾ Γ ⊢ᵣ A ⊃ B true → Δ ⨾ Γ ⊢ₗ A true
-                        → Δ ⨾ Γ ⊢ᵣ B true
+      app : ∀ {A B Δ Γ} → Δ ⨾ Γ ⊢ A ⊃ B usable → Δ ⨾ Γ ⊢ A verifiable
+                        → Δ ⨾ Γ ⊢ B usable
 
-      mvar : ∀ {A Δ Γ} → Δ ∋ A valid
-                       → Δ ⨾ Γ ⊢ᵣ A true
-
-
---------------------------------------------------------------------------------
-
-
-mutual
-  recoverL : ∀ {Δ Γ A} → Δ ⨾ Γ ⊢ₗ A true
-                   → Δ ⨾ Γ ⊢ A true
-  recoverL (lam 𝒟)      = lam (recoverL 𝒟)
-  recoverL (box 𝒟)      = box 𝒟
-  recoverL (letbox 𝒟 ℰ) = letbox (recoverR 𝒟) (recoverL ℰ)
-  recoverL (use 𝒟)      = recoverR 𝒟
-
-  recoverR : ∀ {Δ Γ A} → Δ ⨾ Γ ⊢ᵣ A true
-                   → Δ ⨾ Γ ⊢ A true
-  recoverR (var i)   = var i
-  recoverR (app 𝒟 ℰ) = app (recoverR 𝒟) (recoverL ℰ)
-  recoverR (mvar i)  = mvar i
+      mvar : ∀ {A Δ Γ} → Δ ∋ A
+                       → Δ ⨾ Γ ⊢ A usable
 
 
 --------------------------------------------------------------------------------
 
 
 mutual
-  renL : ∀ {Δ Γ Γ′ A} → Γ′ ⊇ Γ → Δ ⨾ Γ ⊢ₗ A true
-                      → Δ ⨾ Γ′ ⊢ₗ A true
-  renL η (lam 𝒟)      = lam (renL (keep η) 𝒟)
-  renL η (box 𝒟)      = box 𝒟
-  renL η (letbox 𝒟 ℰ) = letbox (renR η 𝒟) (renL η ℰ)
-  renL η (use 𝒟)      = use (renR η 𝒟)
+  forgetₗ : ∀ {Δ Γ A} → Δ ⨾ Γ ⊢ A verifiable
+                      → Δ ⨾ Γ ⊢ A true
+  forgetₗ (lam 𝒟)      = lam (forgetₗ 𝒟)
+  forgetₗ (box 𝒟)      = box 𝒟
+  forgetₗ (letbox 𝒟 ℰ) = letbox (forgetᵣ 𝒟) (forgetₗ ℰ)
+  forgetₗ (use 𝒟)      = forgetᵣ 𝒟
 
-  renR : ∀ {Δ Γ Γ′ A} → Γ′ ⊇ Γ → Δ ⨾ Γ ⊢ᵣ A true
-                      → Δ ⨾ Γ′ ⊢ᵣ A true
-  renR η (var i)   = var (ren∋ η i)
-  renR η (app 𝒟 ℰ) = app (renR η 𝒟) (renL η ℰ)
-  renR η (mvar i)  = mvar i
-
-
-wkR : ∀ {B A Δ Γ} → Δ ⨾ Γ ⊢ᵣ A true
-                  → Δ ⨾ Γ , B true ⊢ᵣ A true
-wkR 𝒟 = renR (drop id⊇) 𝒟
-
-
-vzR : ∀ {A Δ Γ} → Δ ⨾ Γ , A true ⊢ᵣ A true
-vzR = var zero
+  forgetᵣ : ∀ {Δ Γ A} → Δ ⨾ Γ ⊢ A usable
+                      → Δ ⨾ Γ ⊢ A true
+  forgetᵣ (var i)   = var i
+  forgetᵣ (app 𝒟 ℰ) = app (forgetᵣ 𝒟) (forgetₗ ℰ)
+  forgetᵣ (mvar i)  = mvar i
 
 
 --------------------------------------------------------------------------------
 
 
 mutual
-  mrenL : ∀ {Δ Δ′ Γ A} → Δ′ ⊇ Δ → Δ ⨾ Γ ⊢ₗ A true
-                       → Δ′ ⨾ Γ ⊢ₗ A true
-  mrenL η (lam 𝒟)      = lam (mrenL η 𝒟)
-  mrenL η (box 𝒟)      = box (mren η 𝒟)
-  mrenL η (letbox 𝒟 ℰ) = letbox (mrenR η 𝒟) (mrenL (keep η) ℰ)
-  mrenL η (use 𝒟)      = use (mrenR η 𝒟)
+  renₗ : ∀ {Δ Γ Γ′ A} → Γ′ ⊇ Γ → Δ ⨾ Γ ⊢ A verifiable
+                      → Δ ⨾ Γ′ ⊢ A verifiable
+  renₗ η (lam 𝒟)      = lam (renₗ (keep η) 𝒟)
+  renₗ η (box 𝒟)      = box 𝒟
+  renₗ η (letbox 𝒟 ℰ) = letbox (renᵣ η 𝒟) (renₗ η ℰ)
+  renₗ η (use 𝒟)      = use (renᵣ η 𝒟)
 
-  mrenR : ∀ {Δ Δ′ Γ A} → Δ′ ⊇ Δ → Δ ⨾ Γ ⊢ᵣ A true
-                       → Δ′ ⨾ Γ ⊢ᵣ A true
-  mrenR η (var i)   = var i
-  mrenR η (app 𝒟 ℰ) = app (mrenR η 𝒟) (mrenL η ℰ)
-  mrenR η (mvar i)  = mvar (ren∋ η i)
-
-
-mwkR : ∀ {B A Δ Γ} → Δ ⨾ Γ ⊢ᵣ A true
-                   → Δ , B valid ⨾ Γ ⊢ᵣ A true
-mwkR 𝒟 = mrenR (drop id⊇) 𝒟
+  renᵣ : ∀ {Δ Γ Γ′ A} → Γ′ ⊇ Γ → Δ ⨾ Γ ⊢ A usable
+                      → Δ ⨾ Γ′ ⊢ A usable
+  renᵣ η (var i)   = var (ren∋ η i)
+  renᵣ η (app 𝒟 ℰ) = app (renᵣ η 𝒟) (renₗ η ℰ)
+  renᵣ η (mvar i)  = mvar i
 
 
-mvzR : ∀ {A Δ Γ} → Δ , A valid ⨾ Γ ⊢ᵣ A true
-mvzR = mvar zero
+wkᵣ : ∀ {B A Δ Γ} → Δ ⨾ Γ ⊢ A usable
+                  → Δ ⨾ Γ , B ⊢ A usable
+wkᵣ 𝒟 = renᵣ (drop id⊇) 𝒟
+
+
+vzᵣ : ∀ {A Δ Γ} → Δ ⨾ Γ , A ⊢ A usable
+vzᵣ = var zero
+
+
+--------------------------------------------------------------------------------
+
+
+mutual
+  mrenₗ : ∀ {Δ Δ′ Γ A} → Δ′ ⊇ Δ → Δ ⨾ Γ ⊢ A verifiable
+                       → Δ′ ⨾ Γ ⊢ A verifiable
+  mrenₗ η (lam 𝒟)      = lam (mrenₗ η 𝒟)
+  mrenₗ η (box 𝒟)      = box (mren η 𝒟)
+  mrenₗ η (letbox 𝒟 ℰ) = letbox (mrenᵣ η 𝒟) (mrenₗ (keep η) ℰ)
+  mrenₗ η (use 𝒟)      = use (mrenᵣ η 𝒟)
+
+  mrenᵣ : ∀ {Δ Δ′ Γ A} → Δ′ ⊇ Δ → Δ ⨾ Γ ⊢ A usable
+                       → Δ′ ⨾ Γ ⊢ A usable
+  mrenᵣ η (var i)   = var i
+  mrenᵣ η (app 𝒟 ℰ) = app (mrenᵣ η 𝒟) (mrenₗ η ℰ)
+  mrenᵣ η (mvar i)  = mvar (ren∋ η i)
+
+
+mwkᵣ : ∀ {B A Δ Γ} → Δ ⨾ Γ ⊢ A usable
+                   → Δ , B ⨾ Γ ⊢ A usable
+mwkᵣ 𝒟 = mrenᵣ (drop id⊇) 𝒟
+
+
+mvzᵣ : ∀ {A Δ Γ} → Δ , A ⨾ Γ ⊢ A usable
+mvzᵣ = mvar zero
 
 
 --------------------------------------------------------------------------------

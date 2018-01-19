@@ -1,35 +1,11 @@
 module Alt1-S4 where
 
 open import Prelude
+open import Category
 open import List
+open import ListLemmas
 open import AllList
-
-
---------------------------------------------------------------------------------
-
-
-infixr 8 _⊃_
-data Prop : Set
-  where
-    BASE : Prop
-    _⊃_  : Prop → Prop → Prop
-    □_   : Prop → Prop
-
-
-infix 7 _true
-record Truth : Set
-  where
-    constructor _true
-    field
-      A : Prop
-
-
-infix 7 _valid
-record Validity : Set
-  where
-    constructor _valid
-    field
-      A : Prop
+open import S4Propositions
 
 
 --------------------------------------------------------------------------------
@@ -40,8 +16,8 @@ record Derivability : Set
   where
     constructor _⊢_
     field
-      Γ  : List Truth
-      Aₜ : Truth
+      Γ : List Prop
+      A : Prop
 
 
 infix 3 _⨾_

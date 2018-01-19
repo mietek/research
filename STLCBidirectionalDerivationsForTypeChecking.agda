@@ -36,31 +36,31 @@ record TypeInference : Set
 
 
 mutual
-  infix 3 ⊢ₗ_
-  data ⊢ₗ_ : TypeChecking → Set
+  infix 3 ⊢_checked
+  data ⊢_checked : TypeChecking → Set
     where
       lam : ∀ {A B g M} → {Γ : Types g}
-                        → ⊢ₗ Γ , A ⊦ M ≪ B
-                        → ⊢ₗ Γ ⊦ LAM M ≪ A ⊃ B
+                        → ⊢ Γ , A ⊦ M ≪ B checked
+                        → ⊢ Γ ⊦ LAM M ≪ A ⊃ B checked
 
       inf : ∀ {A g M} → {Γ : Types g}
-                      → ⊢ᵣ Γ ⊦ M ≫ A
-                      → ⊢ₗ Γ ⊦ INF M ≪ A
+                      → ⊢ Γ ⊦ M ≫ A inferred
+                      → ⊢ Γ ⊦ INF M ≪ A checked
 
-  infix 3 ⊢ᵣ_
-  data ⊢ᵣ_ : TypeInference → Set
+  infix 3 ⊢_inferred
+  data ⊢_inferred : TypeInference → Set
     where
       var : ∀ {A g I} → {Γ : Types g}
                       → Γ ∋⟨ I ⟩ A
-                      → ⊢ᵣ Γ ⊦ VAR I ≫ A
+                      → ⊢ Γ ⊦ VAR I ≫ A inferred
 
       app : ∀ {A B g M N} → {Γ : Types g}
-                          → ⊢ᵣ Γ ⊦ M ≫ A ⊃ B → ⊢ₗ Γ ⊦ N ≪ A
-                          → ⊢ᵣ Γ ⊦ APP M N ≫ B
+                          → ⊢ Γ ⊦ M ≫ A ⊃ B inferred → ⊢ Γ ⊦ N ≪ A checked
+                          → ⊢ Γ ⊦ APP M N ≫ B inferred
 
       chk : ∀ {A g M} → {Γ : Types g}
-                      → ⊢ₗ Γ ⊦ M ≪ A
-                      → ⊢ᵣ Γ ⊦ CHK M A ≫ A
+                      → ⊢ Γ ⊦ M ≪ A checked
+                      → ⊢ Γ ⊦ CHK M A ≫ A inferred
 
 
 --------------------------------------------------------------------------------
@@ -68,27 +68,27 @@ mutual
 
 mutual
   renₗ : ∀ {g g′ e M A} → {Γ : Types g} {Γ′ : Types g′}
-                        → Γ′ ⊇⟨ e ⟩ Γ → ⊢ₗ Γ ⊦ M ≪ A
-                        → ⊢ₗ Γ′ ⊦ RENₗ e M ≪ A
+                        → Γ′ ⊇⟨ e ⟩ Γ → ⊢ Γ ⊦ M ≪ A checked
+                        → ⊢ Γ′ ⊦ RENₗ e M ≪ A checked
   renₗ η (lam 𝒟) = lam (renₗ (keep η) 𝒟)
   renₗ η (inf 𝒟) = inf (renᵣ η 𝒟)
 
   renᵣ : ∀ {g g′ e M A} → {Γ : Types g} {Γ′ : Types g′}
-                        → Γ′ ⊇⟨ e ⟩ Γ → ⊢ᵣ Γ ⊦ M ≫ A
-                        → ⊢ᵣ Γ′ ⊦ RENᵣ e M ≫ A
+                        → Γ′ ⊇⟨ e ⟩ Γ → ⊢ Γ ⊦ M ≫ A inferred
+                        → ⊢ Γ′ ⊦ RENᵣ e M ≫ A inferred
   renᵣ η (var i)   = var (ren∋ η i)
   renᵣ η (app 𝒟 ℰ) = app (renᵣ η 𝒟) (renₗ η ℰ)
   renᵣ η (chk 𝒟)   = chk (renₗ η 𝒟)
 
 
 wkᵣ : ∀ {B g M A} → {Γ : Types g}
-                  → ⊢ᵣ Γ ⊦ M ≫ A
-                  → ⊢ᵣ Γ , B ⊦ WKᵣ M ≫ A
+                  → ⊢ Γ ⊦ M ≫ A inferred
+                  → ⊢ Γ , B ⊦ WKᵣ M ≫ A inferred
 wkᵣ 𝒟 = renᵣ (drop id⊇) 𝒟
 
 
 vzᵣ : ∀ {A g} → {Γ : Types g}
-              → ⊢ᵣ Γ , A ⊦ VZᵣ ≫ A
+              → ⊢ Γ , A ⊦ VZᵣ ≫ A inferred
 vzᵣ = var zero
 
 

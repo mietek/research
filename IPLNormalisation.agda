@@ -37,39 +37,39 @@ open Model {{...}}
 --------------------------------------------------------------------------------
 
 
-infix 3 _⊩_
-_⊩_ : ∀ {{_ : Model}} → World → Truth → Set
-W ⊩ BASE true  = Ground W
-W ⊩ A ⊃ B true = ∀ {W′} → W′ ≥ W → W′ ⊩ A true
-                         → W′ ⊩ B true
+infix 3 _⊩_value
+_⊩_value : ∀ {{_ : Model}} → World → Prop → Set
+W ⊩ BASE value  = Ground W
+W ⊩ A ⊃ B value = ∀ {W′} → W′ ≥ W → W′ ⊩ A value
+                          → W′ ⊩ B value
 
 
-infix 3 _⊩⋆_
-_⊩⋆_ : ∀ {{_ : Model}} → World → List Truth → Set
-W ⊩⋆ Γ = All (W ⊩_) Γ
+infix 3 _⊩_value*
+_⊩_value* : ∀ {{_ : Model}} → World → List Prop → Set
+W ⊩ Γ value* = All (W ⊩_value) Γ
 
 
 --------------------------------------------------------------------------------
 
 
-rel : ∀ {{_ : Model}} {A W W′} → W′ ≥ W → W ⊩ A
-                               → W′ ⊩ A
-rel {BASE true}  η 𝒟 = relG η 𝒟
-rel {A ⊃ B true} η f = \ η′ a → f (η ∘≥ η′) a
+rel : ∀ {{_ : Model}} {A W W′} → W′ ≥ W → W ⊩ A value
+                               → W′ ⊩ A value
+rel {BASE}  η 𝒟 = relG η 𝒟
+rel {A ⊃ B} η f = \ η′ a → f (η ∘≥ η′) a
 
 
-rels : ∀ {{_ : Model}} {Γ W W′} → W′ ≥ W → W ⊩⋆ Γ
-                                → W′ ⊩⋆ Γ
+rels : ∀ {{_ : Model}} {Γ W W′} → W′ ≥ W → W ⊩ Γ value*
+                                → W′ ⊩ Γ value*
 rels η γ = maps (\ { {A} a → rel {A} η a }) γ
 
 
 --------------------------------------------------------------------------------
 
 
-infix 3 _⊨_
-_⊨_ : List Truth → Truth → Set₁
-Γ ⊨ A true = ∀ {{_ : Model}} {W} → W ⊩⋆ Γ
-                                  → W ⊩ A true
+infix 3 _⊨_true
+_⊨_true : List Prop → Prop → Set₁
+Γ ⊨ A true = ∀ {{_ : Model}} {W} → W ⊩ Γ value*
+                                  → W ⊩ A value
 
 
 ↓ : ∀ {Γ A} → Γ ⊢ A true
@@ -85,8 +85,8 @@ _⊨_ : List Truth → Truth → Set₁
 instance
   canon : Model
   canon = record
-            { World  = List Truth
-            ; Ground = _⊢ᵣ BASE true
+            { World  = List Prop
+            ; Ground = _⊢ BASE usable
             ; _≥_    = _⊇_
             ; id≥    = id
             ; _∘≥_   = _∘_
@@ -95,13 +95,13 @@ instance
 
 
 mutual
-  ⇓ : ∀ {A Γ} → Γ ⊢ᵣ A true
-              → Γ ⊩ A true
+  ⇓ : ∀ {A Γ} → Γ ⊢ A usable
+              → Γ ⊩ A value
   ⇓ {BASE}  𝒟 = 𝒟
   ⇓ {A ⊃ B} 𝒟 = \ η a → ⇓ (app (renᵣ η 𝒟) (⇑ a))
 
-  ⇑ : ∀ {A Γ} → Γ ⊩ A true
-              → Γ ⊢ₗ A true
+  ⇑ : ∀ {A Γ} → Γ ⊩ A value
+              → Γ ⊢ A verifiable
   ⇑ {BASE}  𝒟 = use 𝒟
   ⇑ {A ⊃ B} f = lam (⇑ (f (drop id) (⇓ {A} vzᵣ)))
 
@@ -109,33 +109,33 @@ mutual
 --------------------------------------------------------------------------------
 
 
-wkₛ : ∀ {A B Γ} → Γ ⊩ A true
-                → Γ , B true ⊩ A true
-wkₛ {A} a = rel {A true} (drop id) a
+wkₛ : ∀ {A B Γ} → Γ ⊩ A value
+                → Γ , B ⊩ A value
+wkₛ {A} a = rel {A} (drop id) a
 
 
-wksₛ : ∀ {A Γ Ξ} → Γ ⊩⋆ Ξ
-                 → Γ , A true ⊩⋆ Ξ
+wksₛ : ∀ {A Γ Ξ} → Γ ⊩ Ξ value* 
+                 → Γ , A ⊩ Ξ value*
 wksₛ ξ = rels (drop id) ξ
 
 
-vzₛ : ∀ {A Γ} → Γ , A true ⊩ A true
+vzₛ : ∀ {A Γ} → Γ , A ⊩ A value
 vzₛ {A} = ⇓ {A} vzᵣ
 
 
-liftsₛ : ∀ {A Γ Ξ} → Γ ⊩⋆ Ξ
-                   → Γ , A true ⊩⋆ Ξ , A true
+liftsₛ : ∀ {A Γ Ξ} → Γ ⊩ Ξ value*
+                   → Γ , A ⊩ Ξ , A value*
 liftsₛ {A} ξ = wksₛ ξ , vzₛ {A}
 
 
 varsₛ : ∀ {Γ Γ′} → Γ′ ⊇ Γ
-                 → Γ′ ⊩⋆ Γ
+                 → Γ′ ⊩ Γ value*
 varsₛ done     = ∙
 varsₛ (drop η) = wksₛ (varsₛ η)
 varsₛ (keep η) = liftsₛ (varsₛ η)
 
 
-idsₛ : ∀ {Γ} → Γ ⊩⋆ Γ
+idsₛ : ∀ {Γ} → Γ ⊩ Γ value*
 idsₛ = varsₛ id
 
 
@@ -143,12 +143,12 @@ idsₛ = varsₛ id
 
 
 ↑ : ∀ {Γ A} → Γ ⊨ A true
-            → Γ ⊢ₗ A true
+            → Γ ⊢ A verifiable
 ↑ f = ⇑ (f idsₛ)
 
 
 nbe : ∀ {Γ A} → Γ ⊢ A true
-              → Γ ⊢ₗ A true
+              → Γ ⊢ A verifiable
 nbe 𝒟 = ↑ (↓ 𝒟)
 
 
