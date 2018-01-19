@@ -1,4 +1,4 @@
-module SimpleIPLSemantics where
+module SimpleIPLNormalisation where
 
 open import Prelude
 open import Category
@@ -7,7 +7,7 @@ open import ListLemmas
 open import AllList
 open import IPLPropositions
 open import SimpleIPLDerivations
-open import SimpleIPLVerifications
+open import BidirectionalIPLDerivationsForNormalisation
 
 
 --------------------------------------------------------------------------------
@@ -18,6 +18,7 @@ record Model : Set₁
     field
       World : Set
 
+      -- TODO: Better name
       Ground : World → Set
 
       _≥_ : World → World → Set
@@ -89,7 +90,7 @@ instance
             ; _≥_    = _⊇_
             ; id≥    = id
             ; _∘≥_   = _∘_
-            ; relG   = renR
+            ; relG   = renᵣ
             }
 
 
@@ -97,45 +98,45 @@ mutual
   ⇓ : ∀ {A Γ} → Γ ⊢ᵣ A true
               → Γ ⊩ A true
   ⇓ {BASE}  𝒟 = 𝒟
-  ⇓ {A ⊃ B} 𝒟 = \ η a → ⇓ (app (renR η 𝒟) (⇑ a))
+  ⇓ {A ⊃ B} 𝒟 = \ η a → ⇓ (app (renᵣ η 𝒟) (⇑ a))
 
   ⇑ : ∀ {A Γ} → Γ ⊩ A true
               → Γ ⊢ₗ A true
   ⇑ {BASE}  𝒟 = use 𝒟
-  ⇑ {A ⊃ B} f = lam (⇑ (f (drop id) (⇓ {A} vzR)))
+  ⇑ {A ⊃ B} f = lam (⇑ (f (drop id) (⇓ {A} vzᵣ)))
 
 
 --------------------------------------------------------------------------------
 
 
-wkS : ∀ {A B Γ} → Γ ⊩ A true
+wkₛ : ∀ {A B Γ} → Γ ⊩ A true
                 → Γ , B true ⊩ A true
-wkS {A} a = rel {A true} (drop id) a
+wkₛ {A} a = rel {A true} (drop id) a
 
 
-wksS : ∀ {A Γ Ξ} → Γ ⊩⋆ Ξ
+wksₛ : ∀ {A Γ Ξ} → Γ ⊩⋆ Ξ
                  → Γ , A true ⊩⋆ Ξ
-wksS ξ = rels (drop id) ξ
+wksₛ ξ = rels (drop id) ξ
 
 
-vzS : ∀ {A Γ} → Γ , A true ⊩ A true
-vzS {A} = ⇓ {A} vzR
+vzₛ : ∀ {A Γ} → Γ , A true ⊩ A true
+vzₛ {A} = ⇓ {A} vzᵣ
 
 
-liftsS : ∀ {A Γ Ξ} → Γ ⊩⋆ Ξ
+liftsₛ : ∀ {A Γ Ξ} → Γ ⊩⋆ Ξ
                    → Γ , A true ⊩⋆ Ξ , A true
-liftsS {A} ξ = wksS ξ , vzS {A}
+liftsₛ {A} ξ = wksₛ ξ , vzₛ {A}
 
 
-varsS : ∀ {Γ Γ′} → Γ′ ⊇ Γ
+varsₛ : ∀ {Γ Γ′} → Γ′ ⊇ Γ
                  → Γ′ ⊩⋆ Γ
-varsS done     = ∙
-varsS (drop η) = wksS (varsS η)
-varsS (keep η) = liftsS (varsS η)
+varsₛ done     = ∙
+varsₛ (drop η) = wksₛ (varsₛ η)
+varsₛ (keep η) = liftsₛ (varsₛ η)
 
 
-idsS : ∀ {Γ} → Γ ⊩⋆ Γ
-idsS = varsS id
+idsₛ : ∀ {Γ} → Γ ⊩⋆ Γ
+idsₛ = varsₛ id
 
 
 --------------------------------------------------------------------------------
@@ -143,7 +144,7 @@ idsS = varsS id
 
 ↑ : ∀ {Γ A} → Γ ⊨ A true
             → Γ ⊢ₗ A true
-↑ f = ⇑ (f idsS)
+↑ f = ⇑ (f idsₛ)
 
 
 nbe : ∀ {Γ A} → Γ ⊢ A true

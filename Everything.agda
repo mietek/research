@@ -31,8 +31,9 @@ import IPLPropositions
 
 import SimpleIPLDerivations  -- var/lam/app
 import SimpleIPLLemmas
-import SimpleIPLVerifications
-import SimpleIPLSemantics
+
+import BidirectionalIPLDerivationsForNormalisation
+import SimpleIPLNormalisation
 
 import ExperimentalIPLDerivations1  -- vz/wk/lam/app
 import ExperimentalIPLDerivations2  -- vz/wk/cut/lam/unlam
@@ -44,13 +45,13 @@ import STLCTypes
 import SimpleSTLCTerms
 import SimpleSTLCDerivations
 
-import STLCScopeCheckingTerms
-import STLCScopeCheckingDerivations
-import STLCTypeCheckingTerms
-import STLCTypeCheckingDerivations
-
-import SimpleSTLCScopeChecking
+import BidirectionalSTLCTermsForTypeChecking
+import BidirectionalSTLCDerivationsForTypeChecking
+import BidirectionalSTLCRawDerivationsForNameResolution
 import SimpleSTLCTypeChecking
+
+import BidirectionalSTLCRawTermsForNameResolution
+-- import SimpleSTLCScopeChecking
 
 
 --------------------------------------------------------------------------------

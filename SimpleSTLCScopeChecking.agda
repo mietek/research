@@ -6,8 +6,7 @@ open import Fin
 open import FinLemmas
 open import Vec
 open import STLCTypes
-open import STLCScopeCheckingTerms
-open import STLCTypeCheckingTerms
+open import BidirectionalSTLCTermsForTypeChecking
 
 
 --------------------------------------------------------------------------------

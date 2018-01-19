@@ -1,4 +1,4 @@
-module SimpleIPLVerifications where
+module BidirectionalIPLDerivationsForNormalisation where
 
 open import Prelude
 open import Category
@@ -17,6 +17,8 @@ open import SimpleIPLDerivations
 --
 -- We read “A₁, …, Aₙ ⊢ᵣ A” as “from the assumptions that A₁ may be used …,
 -- and that Aₙ may be used, we deduce that A may be used”.
+
+-- TODO: Explicit judgments
 
 mutual
   infix 3 _⊢ₗ_
@@ -42,39 +44,39 @@ mutual
 
 
 mutual
-  recoverL : ∀ {Γ A} → Γ ⊢ₗ A true
-                 → Γ ⊢ A true
-  recoverL (lam 𝒟) = lam (recoverL 𝒟)
-  recoverL (use 𝒟) = recoverR 𝒟
+  forgetₗ : ∀ {Γ A} → Γ ⊢ₗ A true
+                    → Γ ⊢ A true
+  forgetₗ (lam 𝒟) = lam (forgetₗ 𝒟)
+  forgetₗ (use 𝒟) = forgetᵣ 𝒟
 
-  recoverR : ∀ {Γ A} → Γ ⊢ᵣ A true
-                 → Γ ⊢ A true
-  recoverR (var i)   = var i
-  recoverR (app 𝒟 ℰ) = app (recoverR 𝒟) (recoverL ℰ)
+  forgetᵣ : ∀ {Γ A} → Γ ⊢ᵣ A true
+                    → Γ ⊢ A true
+  forgetᵣ (var i)   = var i
+  forgetᵣ (app 𝒟 ℰ) = app (forgetᵣ 𝒟) (forgetₗ ℰ)
 
 
 --------------------------------------------------------------------------------
 
 
 mutual
-  renL : ∀ {Γ Γ′ A} → Γ′ ⊇ Γ → Γ ⊢ₗ A true
+  renₗ : ∀ {Γ Γ′ A} → Γ′ ⊇ Γ → Γ ⊢ₗ A true
                     → Γ′ ⊢ₗ A true
-  renL η (lam 𝒟) = lam (renL (keep η) 𝒟)
-  renL η (use 𝒟) = use (renR η 𝒟)
+  renₗ η (lam 𝒟) = lam (renₗ (keep η) 𝒟)
+  renₗ η (use 𝒟) = use (renᵣ η 𝒟)
 
-  renR : ∀ {Γ Γ′ A} → Γ′ ⊇ Γ → Γ ⊢ᵣ A true
+  renᵣ : ∀ {Γ Γ′ A} → Γ′ ⊇ Γ → Γ ⊢ᵣ A true
                     → Γ′ ⊢ᵣ A true
-  renR η (var i)   = var (ren∋ η i)
-  renR η (app 𝒟 ℰ) = app (renR η 𝒟) (renL η ℰ)
+  renᵣ η (var i)   = var (ren∋ η i)
+  renᵣ η (app 𝒟 ℰ) = app (renᵣ η 𝒟) (renₗ η ℰ)
 
 
-wkR : ∀ {B A Γ} → Γ ⊢ᵣ A true
+wkᵣ : ∀ {B A Γ} → Γ ⊢ᵣ A true
                 → Γ , B ⊢ᵣ A true
-wkR 𝒟 = renR (drop id) 𝒟
+wkᵣ 𝒟 = renᵣ (drop id) 𝒟
 
 
-vzR : ∀ {A Γ} → Γ , A true ⊢ᵣ A true
-vzR = var zero
+vzᵣ : ∀ {A Γ} → Γ , A true ⊢ᵣ A true
+vzᵣ = var zero
 
 
 --------------------------------------------------------------------------------
