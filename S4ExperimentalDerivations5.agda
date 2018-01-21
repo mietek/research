@@ -12,29 +12,29 @@ import S4Derivations as S4
 --------------------------------------------------------------------------------
 
 
-infix 3 _⨾_⊢_
-data _⨾_⊢_ : List Validity → List Truth → Truth → Set
+infix 3 _⨾_⊢_true
+data _⨾_⊢_true : List Prop → List Prop → Prop → Set
   where
-    vz : ∀ {A Δ Γ} → Δ ⨾ Γ , A true ⊢ A true
+    vz : ∀ {A Δ Γ} → Δ ⨾ Γ , A ⊢ A true
 
     wk : ∀ {A B Δ Γ} → Δ ⨾ Γ ⊢ A true
-                     → Δ ⨾ Γ , B true ⊢ A true
+                     → Δ ⨾ Γ , B ⊢ A true
 
-    cut : ∀ {A B Δ Γ} → Δ ⨾ Γ ⊢ A true → Δ ⨾ Γ , A true ⊢ B true
+    cut : ∀ {A B Δ Γ} → Δ ⨾ Γ ⊢ A true → Δ ⨾ Γ , A ⊢ B true
                       → Δ ⨾ Γ ⊢ B true
 
-    lam : ∀ {A B Δ Γ} → Δ ⨾ Γ , A true ⊢ B true
+    lam : ∀ {A B Δ Γ} → Δ ⨾ Γ , A ⊢ B true
                       → Δ ⨾ Γ ⊢ A ⊃ B true
 
     unlam : ∀ {A B Δ Γ} → Δ ⨾ Γ ⊢ A ⊃ B true
-                        → Δ ⨾ Γ , A true ⊢ B true
+                        → Δ ⨾ Γ , A ⊢ B true
 
-    mvz : ∀ {A Δ Γ} → Δ , A valid ⨾ Γ ⊢ A true
+    mvz : ∀ {A Δ Γ} → Δ , A ⨾ Γ ⊢ A true
 
     mwk : ∀ {A B Δ Γ} → Δ ⨾ Γ ⊢ A true
-                      → Δ , B valid ⨾ Γ ⊢ A true
+                      → Δ , B ⨾ Γ ⊢ A true
 
-    mcut : ∀ {A B Δ Γ} → Δ ⨾ ∙ ⊢ A true → Δ , A valid ⨾ Γ ⊢ B true
+    mcut : ∀ {A B Δ Γ} → Δ ⨾ ∙ ⊢ A true → Δ , A ⨾ Γ ⊢ B true
                        → Δ ⨾ Γ ⊢ B true
 
     box : ∀ {A Δ Γ} → Δ ⨾ ∙ ⊢ A true
@@ -47,7 +47,7 @@ data _⨾_⊢_ : List Validity → List Truth → Truth → Set
 --------------------------------------------------------------------------------
 
 
-var : ∀ {A Δ Γ} → Γ ∋ A true
+var : ∀ {A Δ Γ} → Γ ∋ A
                 → Δ ⨾ Γ ⊢ A true
 var zero    = vz
 var (suc i) = wk (var i)
@@ -58,21 +58,18 @@ app : ∀ {A B Δ Γ} → Δ ⨾ Γ ⊢ A ⊃ B true → Δ ⨾ Γ ⊢ A true
 app 𝒟 ℰ = cut ℰ (unlam 𝒟)
 
 
---------------------------------------------------------------------------------
-
-
-mvar : ∀ {A Δ Γ} → Δ ∋ A valid
+mvar : ∀ {A Δ Γ} → Δ ∋ A
                  → Δ ⨾ Γ ⊢ A true
 mvar zero    = mvz
 mvar (suc i) = mwk (mvar i)
 
 
-vau : ∀ {Δ Γ A B} → Δ , A valid ⨾ Γ ⊢ B true
-                  → Δ ⨾ Γ , □ A true ⊢ B true
+vau : ∀ {Δ Γ A B} → Δ , A ⨾ Γ ⊢ B true
+                  → Δ ⨾ Γ , □ A ⊢ B true
 vau 𝒟 = {!mcut ? (wk 𝒟)!}
 
 
-letbox : ∀ {A B Δ Γ} → Δ ⨾ Γ ⊢ □ A true → Δ , A valid ⨾ Γ ⊢ B true
+letbox : ∀ {A B Δ Γ} → Δ ⨾ Γ ⊢ □ A true → Δ , A ⨾ Γ ⊢ B true
                      → Δ ⨾ Γ ⊢ B true
 letbox 𝒟 ℰ = cut 𝒟 (vau ℰ)
 

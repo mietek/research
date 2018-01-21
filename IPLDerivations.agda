@@ -4,6 +4,7 @@ open import Prelude
 open import Category
 open import List
 open import ListLemmas
+open import ListConcatenation
 open import AllList
 open import IPLPropositions
 
@@ -125,6 +126,16 @@ sub′ (ξ , 𝒞) 𝒟 = app (sub′ ξ (lam 𝒟)) 𝒞
 exch : ∀ {Γ A B C} → Γ , A , B ⊢ C true
                    → Γ , B , A ⊢ C true
 exch 𝒟 = app (app (wk (wk (lam (lam 𝒟)))) vz) (wk vz)
+
+
+--------------------------------------------------------------------------------
+
+
+pull : ∀ {Δ A B} → (Γ : List Prop) → (Δ , A) ⧺ Γ ⊢ B true
+                 → Δ ⧺ (Γ , A) ⊢ B true
+pull Γ (var i)   = var (pull∋ Γ i )
+pull Γ (lam 𝒟)   = lam (exch (pull (Γ , _) 𝒟))
+pull Γ (app 𝒟 ℰ) = app (pull Γ 𝒟) (pull Γ ℰ)
 
 
 --------------------------------------------------------------------------------

@@ -91,25 +91,20 @@ mwks : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊢ Ξ true*
 mwks ξ = maps mwk ξ
 
 
-mwks₁ : ∀ {A Δ Ξ} → Δ ⊢ Ξ valid*
-                  → Δ , A ⊢ Ξ valid*
-mwks₁ ξ = maps mwk ξ
+mlifts : ∀ {A Δ Ξ} → Δ ⊢ Ξ valid*
+                   → Δ , A ⊢ Ξ , A valid*
+mlifts ξ = mwks ξ , mvz
 
 
-mlifts₁ : ∀ {A Δ Ξ} → Δ ⊢ Ξ valid*
-                    → Δ , A ⊢ Ξ , A valid*
-mlifts₁ ξ = mwks₁ ξ , mvz
+mvars : ∀ {Δ Δ′} → Δ′ ⊇ Δ
+                 → Δ′ ⊢ Δ valid*
+mvars done     = ∙
+mvars (drop η) = mwks (mvars η)
+mvars (keep η) = mlifts (mvars η)
 
 
-mvars₁ : ∀ {Δ Δ′} → Δ′ ⊇ Δ
-                  → Δ′ ⊢ Δ valid*
-mvars₁ done     = ∙
-mvars₁ (drop η) = mwks₁ (mvars₁ η)
-mvars₁ (keep η) = mlifts₁ (mvars₁ η)
-
-
-mids₁ : ∀ {Δ} → Δ ⊢ Δ valid*
-mids₁ = mvars₁ id
+mids : ∀ {Δ} → Δ ⊢ Δ valid*
+mids = mvars id
 
 
 --------------------------------------------------------------------------------
@@ -161,7 +156,7 @@ msub ξ       (unlam 𝒟)    = unlam (msub ξ 𝒟)
 msub (ξ , 𝒞) mvz          = mcut′ 𝒞 mvz
 msub (ξ , 𝒞) (mwk 𝒟)      = msub ξ 𝒟
 msub ξ       (box 𝒟)      = box (msub ξ 𝒟)
-msub ξ       (letbox 𝒟 ℰ) = letbox (msub ξ 𝒟) (msub (mlifts₁ ξ) ℰ)
+msub ξ       (letbox 𝒟 ℰ) = letbox (msub ξ 𝒟) (msub (mlifts ξ) ℰ)
 
 
 --------------------------------------------------------------------------------
@@ -176,9 +171,6 @@ var (suc i) = wk (var i)
 app : ∀ {A B Δ Γ} → Δ ⨾ Γ ⊢ A ⊃ B true → Δ ⨾ Γ ⊢ A true
                   → Δ ⨾ Γ ⊢ B true
 app 𝒟 ℰ = cut ℰ (unlam 𝒟)
-
-
---------------------------------------------------------------------------------
 
 
 mvar : ∀ {A Δ Γ} → Δ ∋ A

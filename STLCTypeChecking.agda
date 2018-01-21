@@ -17,7 +17,7 @@ open import STLCBidirectionalDerivationsForTypeChecking
 
 
 unique : ∀ {g M A₁ A₂} → {Γ : Types g}
-                       → ⊢ Γ ⊦ M ≫ A₁ inferred → ⊢ Γ ⊦ M ≫ A₂ inferred
+                       → ⊢ Γ ⊦ M ≫ A₁ infers → ⊢ Γ ⊦ M ≫ A₂ infers
                        → A₁ ≡ A₂
 unique (var i₁)    (var i₂)    = uniq∋ i₁ i₂
 unique (app 𝒟₁ ℰ₁) (app 𝒟₂ ℰ₂) = inj⊃₂ (unique 𝒟₁ 𝒟₂)
@@ -26,7 +26,7 @@ unique (chk 𝒟₁)    (chk 𝒟₂)    = refl
 
 mutual
   check : ∀ {g} → (Γ : Types g) (M : Termₗ g) (A : Type)
-                → Dec (⊢ Γ ⊦ M ≪ A checked)
+                → Dec (⊢ Γ ⊦ M ≪ A checks)
   check Γ (LAM M) BASE    = no (\ ())
   check Γ (LAM M) (A ⊃ B) with check (Γ , A) M B
   check Γ (LAM M) (A ⊃ B) | yes 𝒟 = yes (lam 𝒟)
@@ -38,7 +38,7 @@ mutual
   check Γ (INF M) A       | no ¬A𝒟        = no (\ { (inf 𝒟) → (A , 𝒟) ↯ ¬A𝒟 })
 
   infer : ∀ {g} → (Γ : Types g) (M : Termᵣ g)
-                → Dec (Σ Type (\ A → ⊢ Γ ⊦ M ≫ A inferred))
+                → Dec (Σ Type (\ A → ⊢ Γ ⊦ M ≫ A infers))
   infer Γ (VAR I)   = yes (GET Γ I , var get∋)
   infer Γ (APP M N) with infer Γ M
   infer Γ (APP M N) | yes (BASE    , 𝒟′) = no (\ { (B , app 𝒟 ℰ) → unique 𝒟 𝒟′ ↯ (\ ()) })
@@ -55,11 +55,11 @@ mutual
 --------------------------------------------------------------------------------
 
 
-testₗ : (𝒥 : TypeChecking) → ⊢ 𝒥 checked → Set
+testₗ : (𝒥 : TypeChecking) → ⊢ 𝒥 checks → Set
 testₗ (Γ ⊦ M ≪ A) 𝒟 = check Γ M A ≡ yes 𝒟
 
 
-testᵣ : (𝒥 : TypeInference) → ⊢ 𝒥 inferred → Set
+testᵣ : (𝒥 : TypeInference) → ⊢ 𝒥 infers → Set
 testᵣ (Γ ⊦ M ≫ A) 𝒟 = infer Γ M ≡ yes (A , 𝒟)
 
 

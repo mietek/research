@@ -4,8 +4,11 @@ open import Prelude
 open import Category
 open import List
 open import ListLemmas
+open import ListConcatenation
 open import AllList
 open import S4Propositions
+import IPLPropositions as IPL
+import IPLDerivations as IPL
 
 
 --------------------------------------------------------------------------------
@@ -87,11 +90,6 @@ mrens : ∀ {Δ Δ′ Γ Ξ} → Δ′ ⊇ Δ → Δ ⨾ Γ ⊢ Ξ true*
 mrens η ξ = maps (mren η) ξ
 
 
-mrens₁ : ∀ {Δ Δ′ Ξ} → Δ′ ⊇ Δ → Δ ⊢ Ξ valid*
-                    → Δ′ ⊢ Ξ valid*
-mrens₁ η ξ = maps (mren η) ξ
-
-
 --------------------------------------------------------------------------------
 
 
@@ -142,25 +140,20 @@ mwks : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊢ Ξ true*
 mwks ξ = mrens (drop id) ξ
 
 
-mwks₁ : ∀ {A Δ Ξ} → Δ ⊢ Ξ valid*
-                  → Δ , A ⊢ Ξ valid*
-mwks₁ ξ = mrens₁ (drop id) ξ
+mlifts : ∀ {A Δ Ξ} → Δ ⊢ Ξ valid*
+                   → Δ , A ⊢ Ξ , A valid*
+mlifts ξ = mwks ξ , mvz
 
 
-mlifts₁ : ∀ {A Δ Ξ} → Δ ⊢ Ξ valid*
-                    → Δ , A ⊢ Ξ , A valid*
-mlifts₁ ξ = mwks₁ ξ , mvz
+mvars : ∀ {Δ Δ′} → Δ′ ⊇ Δ
+                 → Δ′ ⊢ Δ valid*
+mvars done     = ∙
+mvars (drop η) = mwks (mvars η)
+mvars (keep η) = mlifts (mvars η)
 
 
-mvars₁ : ∀ {Δ Δ′} → Δ′ ⊇ Δ
-                  → Δ′ ⊢ Δ valid*
-mvars₁ done     = ∙
-mvars₁ (drop η) = mwks₁ (mvars₁ η)
-mvars₁ (keep η) = mlifts₁ (mvars₁ η)
-
-
-mids₁ : ∀ {Δ} → Δ ⊢ Δ valid*
-mids₁ = mvars₁ id
+mids : ∀ {Δ} → Δ ⊢ Δ valid*
+mids = mvars id
 
 
 --------------------------------------------------------------------------------
@@ -191,17 +184,12 @@ msub ξ (lam 𝒟)      = lam (msub ξ 𝒟)
 msub ξ (app 𝒟 ℰ)    = app (msub ξ 𝒟) (msub ξ ℰ)
 msub ξ (mvar i)     = sub ∙ (get ξ i)
 msub ξ (box 𝒟)      = box (msub ξ 𝒟)
-msub ξ (letbox 𝒟 ℰ) = letbox (msub ξ 𝒟) (msub (mlifts₁ ξ) ℰ)
+msub ξ (letbox 𝒟 ℰ) = letbox (msub ξ 𝒟) (msub (mlifts ξ) ℰ)
 
 
 msubs : ∀ {Δ Γ Ξ Ψ} → Δ ⊢ Ξ valid* → Ξ ⨾ Γ ⊢ Ψ true*
                     → Δ ⨾ Γ ⊢ Ψ true*
 msubs ξ ψ = maps (msub ξ) ψ
-
-
-msubs₁ : ∀ {Δ Ξ Ψ} → Δ ⊢ Ξ valid* → Ξ ⊢ Ψ valid*
-                   → Δ ⊢ Ψ valid*
-msubs₁ ξ ψ = maps (msub ξ) ψ
 
 
 --------------------------------------------------------------------------------
@@ -284,7 +272,7 @@ t→v 𝒟 = 𝒟
 
 mcut : ∀ {Δ Γ A B} → Δ ⨾ ∙ ⊢ A true → Δ , A ⨾ Γ ⊢ B true
                    → Δ ⨾ Γ ⊢ B true
-mcut 𝒟 ℰ = msub (mids₁ , 𝒟) ℰ
+mcut 𝒟 ℰ = msub (mids , 𝒟) ℰ
 
 
 mcut′ : ∀ {Δ Γ A B} → Δ ⨾ ∙ ⊢ A true → Δ , A ⨾ Γ ⊢ B true
@@ -307,6 +295,60 @@ msub′ (ξ , 𝒞) 𝒟 = app (msub′ ξ (lam (vau 𝒟))) (box 𝒞)
 mexch : ∀ {Δ Γ A B C} → Δ , A , B ⨾ Γ ⊢ C true
                       → Δ , B , A ⨾ Γ ⊢ C true
 mexch 𝒟 = unvau (unvau (exch (vau (vau 𝒟))))
+
+
+--------------------------------------------------------------------------------
+
+
+⌈_⌉ : IPL.Prop → Prop
+⌈ IPL.BASE ⌉  = BASE
+⌈ A IPL.⊃ B ⌉ = ⌈ A ⌉ ⊃ ⌈ B ⌉
+
+
+⌈_⌉* : List IPL.Prop → List Prop
+⌈ Γ ⌉* = map ⌈_⌉ Γ
+
+
+↑∋ : ∀ {Γ A} → Γ ∋ A
+             → ⌈ Γ ⌉* ∋ ⌈ A ⌉
+↑∋ zero    = zero
+↑∋ (suc i) = suc (↑∋ i)
+
+
+↑ : ∀ {Δ Γ A} → Γ IPL.⊢ A true
+              → Δ ⨾ ⌈ Γ ⌉* ⊢ ⌈ A ⌉ true
+↑ (IPL.var i)   = var (↑∋ i)
+↑ (IPL.lam 𝒟)   = lam (↑ 𝒟)
+↑ (IPL.app 𝒟 ℰ) = app (↑ 𝒟) (↑ ℰ)
+
+
+--------------------------------------------------------------------------------
+
+
+⌊_⌋ : Prop → IPL.Prop
+⌊ BASE ⌋  = IPL.BASE
+⌊ A ⊃ B ⌋ = ⌊ A ⌋ IPL.⊃ ⌊ B ⌋
+⌊ □ A ⌋   = ⌊ A ⌋
+
+
+⌊_⌋* : List Prop → List IPL.Prop
+⌊ Γ ⌋* = map ⌊_⌋ Γ
+
+
+↓∋ : ∀ {Γ A} → Γ ∋ A
+             → ⌊ Γ ⌋* ∋ ⌊ A ⌋
+↓∋ zero    = zero
+↓∋ (suc i) = suc (↓∋ i)
+
+
+↓ : ∀ {Δ Γ A} → Δ ⨾ Γ ⊢ A true
+              → ⌊ Δ ⌋* ⧺ ⌊ Γ ⌋* IPL.⊢ ⌊ A ⌋ true
+↓ {Δ = Δ} (var i)      = IPL.ren (ldrops ⌊ Δ ⌋* id⊇) (IPL.var (↓∋ i))
+↓         (lam 𝒟)      = IPL.lam (↓ 𝒟)
+↓         (app 𝒟 ℰ)    = IPL.app (↓ 𝒟) (↓ ℰ)
+↓ {Γ = Γ} (mvar i)     = IPL.ren (rdrops ⌊ Γ ⌋* id⊇) (IPL.var (↓∋ i))
+↓ {Γ = Γ} (box 𝒟)      = IPL.ren (rdrops ⌊ Γ ⌋* id⊇) (↓ 𝒟)
+↓ {Γ = Γ} (letbox 𝒟 ℰ) = IPL.cut (↓ 𝒟) (IPL.pull ⌊ Γ ⌋* (↓ ℰ))
 
 
 --------------------------------------------------------------------------------

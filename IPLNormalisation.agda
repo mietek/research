@@ -114,7 +114,7 @@ wkₛ : ∀ {A B Γ} → Γ ⊩ A value
 wkₛ {A} a = rel {A} (drop id) a
 
 
-wksₛ : ∀ {A Γ Ξ} → Γ ⊩ Ξ value* 
+wksₛ : ∀ {A Γ Ξ} → Γ ⊩ Ξ value*
                  → Γ , A ⊩ Ξ value*
 wksₛ ξ = rels (drop id) ξ
 
