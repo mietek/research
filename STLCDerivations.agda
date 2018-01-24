@@ -153,20 +153,6 @@ exch 𝒟 = app (app (wk (wk (lam (lam 𝒟)))) vz) (wk vz)
 
 module IPL⟷STLC-Try1
   where
-    toTerm : ∀ {Γ A} → Γ IPL.⊢ A true
-                     → Term (List.len Γ)
-    toTerm (IPL.var i)   = VAR (toFin i)
-    toTerm (IPL.lam 𝒟)   = LAM (toTerm 𝒟)
-    toTerm (IPL.app 𝒟 ℰ) = APP (toTerm 𝒟) (toTerm ℰ)
-
-
-    ↑ : ∀ {Γ A} → (𝒟 : Γ IPL.⊢ A true)
-                → ⊢ toTerm 𝒟 ⦂ A valid[ fromList Γ ]
-    ↑ (IPL.var i)   = var (from∋ i)
-    ↑ (IPL.lam 𝒟)   = lam (↑ 𝒟)
-    ↑ (IPL.app 𝒟 ℰ) = app (↑ 𝒟) (↑ ℰ)
-
-
     ↓ : ∀ {g M A} → {Γ : Types g}
                   → ⊢ M ⦂ A valid[ Γ ]
                   → toList Γ IPL.⊢ A true
@@ -175,33 +161,6 @@ module IPL⟷STLC-Try1
     ↓ (app 𝒟 ℰ) = IPL.app (↓ 𝒟) (↓ ℰ)
 
 
-    {-# REWRITE id-to∋-from∋ #-}
-    id↓↑ : ∀ {Γ A} → (𝒟 : Γ IPL.⊢ A true)
-                   → ↓ (↑ 𝒟) ≡ 𝒟
-    id↓↑ (IPL.var i)   = refl
-    id↓↑ (IPL.lam 𝒟)   = IPL.lam & id↓↑ 𝒟
-    id↓↑ (IPL.app 𝒟 ℰ) = IPL.app & id↓↑ 𝒟 ⊗ id↓↑ ℰ
-
-    id-toTerm↓ : ∀ {g M A} → {Γ : Types g}
-                           → (𝒟 : ⊢ M ⦂ A valid[ Γ ])
-                           → toTerm (↓ 𝒟) ≡ M
-    id-toTerm↓ (var i)   = refl
-    id-toTerm↓ (lam 𝒟)   = LAM & id-toTerm↓ 𝒟
-    id-toTerm↓ (app 𝒟 ℰ) = APP & id-toTerm↓ 𝒟 ⊗ id-toTerm↓ ℰ
-
-
-    {-# REWRITE id-toTerm↓ #-}
-    {-# REWRITE id-from∋-to∋ #-}
-    -- id↑↓ : ∀ {g M A} → {Γ : Types g}
-    --                  → (𝒟 : ⊢ M ⦂ A valid[ Γ ])
-    --                  → ↑ (↓ 𝒟) ≡ 𝒟
-    -- id↑↓ (var i)   = refl
-    -- id↑↓ (lam 𝒟)   = {!lam & id↑↓ 𝒟!}  -- TODO: Problematic rewrite
-    -- id↑↓ (app 𝒟 ℰ) = app & id↑↓ 𝒟 ⊗ id↑↓ ℰ 
-
-
-module IPL⟷STLC-Try2
-  where
     ↑ : ∀ {Γ A} → Γ IPL.⊢ A true
                 → Σ (Term (List.len Γ)) (\ M → ⊢ M ⦂ A valid[ fromList Γ ])
     ↑ (IPL.var i)   = VAR (toFin i) , var (from∋ i)
@@ -212,14 +171,7 @@ module IPL⟷STLC-Try2
                       APP M′ N′ , app 𝒟′ ℰ′
 
 
-    ↓ : ∀ {g M A} → {Γ : Types g}
-                  → ⊢ M ⦂ A valid[ Γ ]
-                  → toList Γ IPL.⊢ A true
-    ↓ (var i)   = IPL.var (to∋ i)
-    ↓ (lam 𝒟)   = IPL.lam (↓ 𝒟)
-    ↓ (app 𝒟 ℰ) = IPL.app (↓ 𝒟) (↓ ℰ)
-
-
+    {-# REWRITE id-to∋-from∋ #-}
     id↓↑ : ∀ {Γ A} → (𝒟 : Γ IPL.⊢ A true)
                    → ↓ (proj₂ (↑ 𝒟)) ≡ 𝒟
     id↓↑ (IPL.var i)   = refl
@@ -235,10 +187,127 @@ module IPL⟷STLC-Try2
     id↑↓₁ (app 𝒟 ℰ) = APP & id↑↓₁ 𝒟 ⊗ id↑↓₁ ℰ
     
     
-    {-# REWRITE id↑↓₁ #-}
+    {-# REWRITE id-from∋-to∋ #-}
+    -- {-# REWRITE id↑↓₁ #-}
     -- id↑↓₂ : ∀ {g M A} → {Γ : Types g}
     --                   → (𝒟 : ⊢ M ⦂ A valid[ Γ ])
     --                   → proj₂ (↑ (↓ 𝒟)) ≡ 𝒟
     -- id↑↓₂ (var i)   = refl
     -- id↑↓₂ (lam 𝒟)   = {!lam & id↑↓₂ 𝒟!}  -- TODO: Problematic rewrite
     -- id↑↓₂ (app 𝒟 ℰ) = app & id↑↓₂ 𝒟 ⊗ id↑↓₂ ℰ
+
+
+module IPL⟷STLC-Try2
+  where
+    ↓ : ∀ {g M A} → {Γ : Types g}
+                  → ⊢ M ⦂ A valid[ Γ ]
+                  → toList Γ IPL.⊢ A true
+    ↓ (var i)   = IPL.var (to∋ i)
+    ↓ (lam 𝒟)   = IPL.lam (↓ 𝒟)
+    ↓ (app 𝒟 ℰ) = IPL.app (↓ 𝒟) (↓ ℰ)
+
+
+    toTerm : ∀ {Γ A} → Γ IPL.⊢ A true
+                     → Term (List.len Γ)
+    toTerm (IPL.var i)   = VAR (toFin i)
+    toTerm (IPL.lam 𝒟)   = LAM (toTerm 𝒟)
+    toTerm (IPL.app 𝒟 ℰ) = APP (toTerm 𝒟) (toTerm ℰ)
+
+
+    ↑ : ∀ {Γ A} → (𝒟 : Γ IPL.⊢ A true)
+                → ⊢ toTerm 𝒟 ⦂ A valid[ fromList Γ ]
+    ↑ (IPL.var i)   = var (from∋ i)
+    ↑ (IPL.lam 𝒟)   = lam (↑ 𝒟)
+    ↑ (IPL.app 𝒟 ℰ) = app (↑ 𝒟) (↑ ℰ)
+
+
+    id↓↑ : ∀ {Γ A} → (𝒟 : Γ IPL.⊢ A true)
+                   → ↓ (↑ 𝒟) ≡ 𝒟
+    id↓↑ (IPL.var i)   = refl
+    id↓↑ (IPL.lam 𝒟)   = IPL.lam & id↓↑ 𝒟
+    id↓↑ (IPL.app 𝒟 ℰ) = IPL.app & id↓↑ 𝒟 ⊗ id↓↑ ℰ
+
+
+    id-toTerm↓ : ∀ {g M A} → {Γ : Types g}
+                           → (𝒟 : ⊢ M ⦂ A valid[ Γ ])
+                           → toTerm (↓ 𝒟) ≡ M
+    id-toTerm↓ (var i)   = refl
+    id-toTerm↓ (lam 𝒟)   = LAM & id-toTerm↓ 𝒟
+    id-toTerm↓ (app 𝒟 ℰ) = APP & id-toTerm↓ 𝒟 ⊗ id-toTerm↓ ℰ
+
+
+    -- {-# REWRITE id-toTerm↓ #-}
+    -- id↑↓ : ∀ {g M A} → {Γ : Types g}
+    --                  → (𝒟 : ⊢ M ⦂ A valid[ Γ ])
+    --                  → ↑ (↓ 𝒟) ≡ 𝒟
+    -- id↑↓ (var i)   = refl
+    -- id↑↓ (lam 𝒟)   = {!lam & id↑↓ 𝒟!}  -- TODO: Problematic rewrite
+    -- id↑↓ (app 𝒟 ℰ) = app & id↑↓ 𝒟 ⊗ id↑↓ ℰ 
+
+
+module IPL⟷STLC-Try3
+  where
+    ↓ : ∀ {g M A} → {Γ : Types g}
+                  → ⊢ M ⦂ A valid[ Γ ]
+                  → toList Γ IPL.⊢ A true
+    ↓ (var i)   = IPL.var (to∋ i)
+    ↓ (lam 𝒟)   = IPL.lam (↓ 𝒟)
+    ↓ (app 𝒟 ℰ) = IPL.app (↓ 𝒟) (↓ ℰ)
+
+
+    toTerm : ∀ {Γ A} → Γ IPL.⊢ A true
+                     → Term (List.len Γ)
+    toTerm (IPL.var i)   = VAR (toFin i)
+    toTerm (IPL.lam 𝒟)   = LAM (toTerm 𝒟)
+    toTerm (IPL.app 𝒟 ℰ) = APP (toTerm 𝒟) (toTerm ℰ)
+
+
+    ↑ : ∀ {Γ M A} → (𝒟 : Γ IPL.⊢ A true) → M ≡ toTerm 𝒟
+                  → ⊢ M ⦂ A valid[ fromList Γ ]
+    ↑ (IPL.var i)   refl = var (from∋ i)
+    ↑ (IPL.lam 𝒟)   refl = lam (↑ 𝒟 refl)
+    ↑ (IPL.app 𝒟 ℰ) refl = app (↑ 𝒟 refl) (↑ ℰ refl)
+
+
+    id↓↑ : ∀ {Γ A} → (𝒟 : Γ IPL.⊢ A true)
+                   → ↓ (↑ 𝒟 refl) ≡ 𝒟
+    id↓↑ (IPL.var i)   = refl
+    id↓↑ (IPL.lam 𝒟)   = IPL.lam & id↓↑ 𝒟
+    id↓↑ (IPL.app 𝒟 ℰ) = IPL.app & id↓↑ 𝒟 ⊗ id↓↑ ℰ
+
+
+    id-toTerm↓ : ∀ {g M A} → {Γ : Types g}
+                           → (𝒟 : ⊢ M ⦂ A valid[ Γ ])
+                           → toTerm (↓ 𝒟) ≡ M
+    id-toTerm↓ (var i)   = refl
+    id-toTerm↓ (lam 𝒟)   = LAM & id-toTerm↓ 𝒟
+    id-toTerm↓ (app 𝒟 ℰ) = APP & id-toTerm↓ 𝒟 ⊗ id-toTerm↓ ℰ
+
+
+    injLAM : ∀ {g} → {M₁ M₂ : Term (suc g)}
+                   → LAM M₁ ≡ LAM M₂
+                   → M₁ ≡ M₂
+    injLAM refl = refl
+
+
+    injAPP₁ : ∀ {g} → {M₁ M₂ N₁ N₂ : Term g}
+                    → APP M₁ N₁ ≡ APP M₂ N₂
+                    → M₁ ≡ M₂
+    injAPP₁ refl = refl
+
+
+    injAPP₂ : ∀ {g} → {M₁ M₂ N₁ N₂ : Term g}
+                    → APP M₁ N₁ ≡ APP M₂ N₂
+                    → N₁ ≡ N₂
+    injAPP₂ refl = refl
+
+
+    -- id↑↓ : ∀ {g M M′ A} → {Γ : Types g}
+    --                     → (𝒟 : ⊢ M ⦂ A valid[ Γ ]) (p : M′ ≡ toTerm (↓ 𝒟)) (q : M ≡ M′)
+    --                     → ↑ (↓ 𝒟) p ≡ subst (\ M″ → ⊢ M″ ⦂ A valid[ Γ ]) q 𝒟
+    -- id↑↓ (var i)   refl refl = refl
+    -- id↑↓ (lam 𝒟)   p    refl = {!!} ⋮ lam & id↑↓ 𝒟 (injLAM p) refl
+    -- id↑↓ (app 𝒟 ℰ) p    refl = {!!} ⋮ app & id↑↓ 𝒟 (injAPP₁ p) refl ⊗ id↑↓ ℰ (injAPP₂ p) refl
+
+
+--------------------------------------------------------------------------------

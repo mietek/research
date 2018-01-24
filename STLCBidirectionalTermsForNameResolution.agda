@@ -9,16 +9,16 @@ open import STLCTypes
 
 
 mutual
-  data PreTermₗ : Set
+  data RawTermₗ : Set
     where
-      LAM : Name → PreTermₗ → PreTermₗ
-      INF : PreTermᵣ → PreTermₗ
+      LAM : Name → RawTermₗ → RawTermₗ
+      INF : RawTermᵣ → RawTermₗ
 
-  data PreTermᵣ : Set
+  data RawTermᵣ : Set
     where
-      VAR : Name → PreTermᵣ
-      APP : PreTermᵣ → PreTermₗ → PreTermᵣ
-      CHK : PreTermₗ → Type → PreTermᵣ
+      VAR : Name → RawTermᵣ
+      APP : RawTermᵣ → RawTermₗ → RawTermᵣ
+      CHK : RawTermₗ → Type → RawTermᵣ
 
 
 --------------------------------------------------------------------------------

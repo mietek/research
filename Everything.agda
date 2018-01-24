@@ -62,6 +62,10 @@ import STLCBidirectionalDerivationsForNameResolution
 import STLCNameResolution
 
 
+-- import StdSTLC                                                          
+-- import StdSTLCTerms
+
+
 --------------------------------------------------------------------------------
 
 
@@ -81,6 +85,35 @@ import S4BidirectionalDerivationsForNormalisation
 import S4Normalisation
 
 
+-- import RealS4Derivations
+
+-- import S4ExperimentalDerivations0a                                      
+-- import S4ExperimentalDerivations1a                                      
+-- import S4ExperimentalDerivations3a                                      
+-- import S4ExperimentalDerivations3x                                      
+-- import S4ExperimentalDerivations4a
+
+-- import StdS4                                                            
+-- import StdS4Lemmas                                                      
+-- import StdS4NormalForms                                                 
+-- import StdS4Semantics
+
+-- import Alt1-S4                                                          
+-- import Alt1-S4NormalForms                                               
+-- import Alt1-S4Semantics                                                 
+-- import Alt2-S4                                 
+
+-- import SymS4
+
+
+--------------------------------------------------------------------------------
+
+
+-- import StdS4TT                                                          
+-- import StdS4TTTerms                                                     
+-- import StdS4TTTermsLemmas
+
+
 --------------------------------------------------------------------------------
 
 
@@ -88,50 +121,26 @@ import CMLPropositions
 
 import CMLDerivations
 
+import CMLLemmas
+
+
+-- import StdCML                                                           
+-- import StdCMLNormalForms                                                
+-- import StdCMLSemantics
+
 
 --------------------------------------------------------------------------------
 
 
-
--- -- -- import StdIPLLemmas      -- done
--- -- -- import StdIPLNormalForms -- done
--- -- -- import StdIPLSemantics   -- done
-
--- -- -- import StdS4
--- -- -- import StdS4Lemmas
--- -- -- import StdS4NormalForms
--- -- -- import StdS4Semantics
-
--- -- -- import StdCML
--- -- -- import StdCMLNormalForms
--- -- -- import StdCMLSemantics
-
--- -- -- import StdSTLCTerms -- done
--- -- -- import StdSTLC      -- done
-
--- -- -- import StdS4TTTerms
--- -- -- import StdS4TTTermsLemmas
--- -- -- import StdS4TT
-
--- -- -- import StdCMTTTerms
--- -- -- import StdCMTT
-
--- -- -- import StdLPTT
--- -- -- -- import StdLPTTLemmas
+-- import StdCMTT                                                          
+-- import StdCMTTTerms
 
 
--- -- -- --------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 
--- -- -- import SymIPL
+-- import StdLPTT                                                          
+-- import StdLPTTLemmas
 
 
--- -- -- --------------------------------------------------------------------------------
-
-
--- -- -- import Alt1-S4
--- -- -- import Alt1-S4NormalForms
--- -- -- -- import Alt1-S4Semantics
-
-
--- -- -- --------------------------------------------------------------------------------
+--------------------------------------------------------------------------------

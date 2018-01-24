@@ -32,20 +32,20 @@ data _⊢_⦂_ : ∀ {g} → Types g → Term g → Type → Set
 --------------------------------------------------------------------------------
 
 
-↑ : ∀ {g M A} → {Γ : Types g}
-              → STLC.⊢ M ⦂ A valid[ Γ ]
-              → Γ ⊢ M ⦂ A
-↑ (STLC.var i)   = var i
-↑ (STLC.lam 𝒟)   = lam (↑ 𝒟)
-↑ (STLC.app 𝒟 ℰ) = app (↑ 𝒟) (↑ ℰ)
-
-
 ↓ : ∀ {g M A} → {Γ : Types g}
               → Γ ⊢ M ⦂ A
               → STLC.⊢ M ⦂ A valid[ Γ ]
 ↓ (var i)   = STLC.var i
 ↓ (lam 𝒟)   = STLC.lam (↓ 𝒟)
 ↓ (app 𝒟 ℰ) = STLC.app (↓ 𝒟) (↓ ℰ)
+
+
+↑ : ∀ {g M A} → {Γ : Types g}
+              → STLC.⊢ M ⦂ A valid[ Γ ]
+              → Γ ⊢ M ⦂ A
+↑ (STLC.var i)   = var i
+↑ (STLC.lam 𝒟)   = lam (↑ 𝒟)
+↑ (STLC.app 𝒟 ℰ) = app (↑ 𝒟) (↑ ℰ)
 
 
 id↓↑ : ∀ {g M A} → {Γ : Types g}

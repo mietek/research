@@ -124,6 +124,12 @@ coerce : ∀ {ℓ} → {X Y : Set ℓ}
 coerce x refl = x
 
 
+subst : ∀ {ℓ ℓ′} → {X : Set ℓ} {x y : X}
+                 → (P : X → Set ℓ′) → x ≡ y → P x
+                 → P y
+subst P refl p = p
+
+
 case_of_ : ∀ {ℓ ℓ′} → {X : Set ℓ} {Y : Set ℓ′}
                     → X → (X → Y) → Y
 case x of f = f x

@@ -35,16 +35,16 @@ find (Γ , y) x  | no x≢y   | no ¬M𝒟             = no (\ { (M′ , 𝒟′
 
 
 mutual
-  resolveₗ : ∀ {g} → (Γ : Names g) (P : PreTermₗ)
+  resolveₗ : ∀ {g} → (Γ : Names g) (P : RawTermₗ)
                    → Dec (Σ (Termₗ g) (\ M → ⊢ Γ ⊦ P ≫ M tocheck))
   resolveₗ Γ (LAM x P) with resolveₗ (Γ , x) P
   resolveₗ Γ (LAM x P) | yes (M , 𝒟) = yes (LAM M , lam 𝒟)
   resolveₗ Γ (LAM x P) | no ¬M𝒟      = no (\ { (LAM M′ , lam 𝒟′) → (M′ , 𝒟′) ↯ ¬M𝒟 })
   resolveₗ Γ (INF P)   with resolveᵣ Γ P
   resolveₗ Γ (INF P)   | yes (M , 𝒟) = yes (INF M , inf 𝒟)
-  resolveₗ Γ (INF P)   | no ¬M𝒟      = no (\ { (INF M′ , inf 𝒟′) → (M′ , 𝒟′) ↯ ¬M𝒟  })
+  resolveₗ Γ (INF P)   | no ¬M𝒟      = no (\ { (INF M′ , inf 𝒟′) → (M′ , 𝒟′) ↯ ¬M𝒟 })
 
-  resolveᵣ : ∀ {g} → (Γ : Names g) (P : PreTermᵣ)
+  resolveᵣ : ∀ {g} → (Γ : Names g) (P : RawTermᵣ)
                    → Dec (Σ (Termᵣ g) (\ M → ⊢ Γ ⊦ P ≫ M toinfer))
   resolveᵣ Γ (VAR x)   = find Γ x
   resolveᵣ Γ (APP P Q) with resolveᵣ Γ P | resolveₗ Γ Q
@@ -53,7 +53,7 @@ mutual
   resolveᵣ Γ (APP P Q) | no ¬M𝒟      | _           = no (\ { (APP M′ N′ , app 𝒟′ ℰ′) → (M′ , 𝒟′) ↯ ¬M𝒟 })
   resolveᵣ Γ (CHK P A) with resolveₗ Γ P
   resolveᵣ Γ (CHK P A) | yes (M , 𝒟) = yes (CHK M A , chk 𝒟)
-  resolveᵣ Γ (CHK P A) | no ¬M𝒟      = no (\ { (CHK M′ A′ , chk 𝒟′) → (M′ , 𝒟′) ↯ ¬M𝒟  })
+  resolveᵣ Γ (CHK P A) | no ¬M𝒟      = no (\ { (CHK M′ A′ , chk 𝒟′) → (M′ , 𝒟′) ↯ ¬M𝒟 })
 
 
 --------------------------------------------------------------------------------

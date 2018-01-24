@@ -11,35 +11,9 @@ open import STLCBidirectionalTermsForNameResolution
 --------------------------------------------------------------------------------
 
 
-infix 4 _⊦_≫_
-
-
-record PreTypeChecking : Set
-  where
-    constructor _⊦_≫_
-    field
-      {g} : Nat
-      Γ   : Names g
-      P   : PreTermₗ
-      M   : Termₗ g
-
-
-record PreTypeInference : Set
-  where
-    constructor _⊦_≫_
-    field
-      {g} : Nat
-      Γ   : Names g
-      P   : PreTermᵣ
-      M   : Termᵣ g
-
-
---------------------------------------------------------------------------------
-
-
 mutual
-  infix 3 ⊢_tocheck
-  data ⊢_tocheck : PreTypeChecking → Set
+  infix 3 ⊢_⊦_≫_tocheck
+  data ⊢_⊦_≫_tocheck : ∀ {g} → Names g → RawTermₗ → Termₗ g → Set
     where
       lam : ∀ {x g P M} → {Γ : Names g}
                         → ⊢ Γ , x ⊦ P ≫ M tocheck
@@ -49,8 +23,8 @@ mutual
                       → ⊢ Γ ⊦ P ≫ M toinfer
                       → ⊢ Γ ⊦ INF P ≫ INF M tocheck
 
-  infix 3 ⊢_toinfer
-  data ⊢_toinfer : PreTypeInference → Set
+  infix 3 ⊢_⊦_≫_toinfer
+  data ⊢_⊦_≫_toinfer : ∀ {g} → Names g → RawTermᵣ → Termᵣ g → Set
     where
       vz : ∀ {x g} → {Γ : Names g}
                    → ⊢ Γ , x ⊦ VAR x ≫ VAR zero toinfer

@@ -39,6 +39,9 @@ mutual
   RENᵣ e (CHK M A) = CHK (RENₗ e M) A
 
 
+--------------------------------------------------------------------------------
+
+
 WKᵣ : ∀ {g} → Termᵣ g
             → Termᵣ (suc g)
 WKᵣ M = RENᵣ (drop id) M

@@ -55,50 +55,50 @@ mutual
 --------------------------------------------------------------------------------
 
 
-testₗ : (𝒥 : TypeChecking) → ⊢ 𝒥 checks → Set
-testₗ (Γ ⊦ M ≪ A) 𝒟 = check Γ M A ≡ yes 𝒟
+testₗ : ∀ {g} → (Γ : Types g) (M : Termₗ g) (A : Type) → ⊢ Γ ⊦ M ≪ A checks → Set
+testₗ Γ M A 𝒟 = check Γ M A ≡ yes 𝒟
 
 
-testᵣ : (𝒥 : TypeInference) → ⊢ 𝒥 infers → Set
-testᵣ (Γ ⊦ M ≫ A) 𝒟 = infer Γ M ≡ yes (A , 𝒟)
+testᵣ : ∀ {g} → (Γ : Types g) (M : Termᵣ g) (A : Type) → ⊢ Γ ⊦ M ≫ A infers → Set
+testᵣ Γ M A 𝒟 = infer Γ M ≡ yes (A , 𝒟)
 
 
 --------------------------------------------------------------------------------
 
 
-testIₗ : testₗ (∙ ⊦ LAM (INF VZᵣ)
-                  ≪ "A" ⊃ "A")
-               (lam (inf vzᵣ))
+testIₗ : testₗ ∙ (LAM (INF VZᵣ))
+                 ("A" ⊃ "A")
+                 (lam (inf vzᵣ))
 testIₗ = refl
 
 
-testIᵣ : testᵣ (∙ ⊦ CHK (LAM (INF VZᵣ)) ("A" ⊃ "A")
-                  ≫ "A" ⊃ "A")
-               (chk (lam (inf vzᵣ)))
+testIᵣ : testᵣ ∙ (CHK (LAM (INF VZᵣ))
+                 ("A" ⊃ "A")) ("A" ⊃ "A")
+                 (chk (lam (inf vzᵣ)))
 testIᵣ = refl
 
 
-testKₗ : testₗ (∙ ⊦ LAM (LAM (INF (WKᵣ VZᵣ)))
-                  ≪ "A" ⊃ "B" ⊃ "A")
-               (lam (lam (inf (wkᵣ vzᵣ))))
+testKₗ : testₗ ∙ (LAM (LAM (INF (WKᵣ VZᵣ))))
+                 ("A" ⊃ "B" ⊃ "A")
+                 (lam (lam (inf (wkᵣ vzᵣ))))
 testKₗ = refl
 
 
-testSₗ : testₗ (∙ ⊦ LAM (LAM (LAM (INF (APP
-                      (APP
-                        (WKᵣ (WKᵣ VZᵣ))
-                        (INF VZᵣ))
-                      (INF (APP
-                        (WKᵣ VZᵣ)
-                        (INF VZᵣ)))))))
-                  ≪ ("A" ⊃ "B" ⊃ "C") ⊃ ("A" ⊃ "B") ⊃ "A" ⊃ "C")
-               (lam (lam (lam (inf (app
-                 (app
-                   (wkᵣ (wkᵣ vzᵣ))
-                   (inf vzᵣ))
-                 (inf (app
-                   (wkᵣ vzᵣ)
-                   (inf vzᵣ))))))))
+testSₗ : testₗ ∙ (LAM (LAM (LAM (INF (APP
+                 (APP
+                   (WKᵣ (WKᵣ VZᵣ))
+                   (INF VZᵣ))
+                 (INF (APP
+                   (WKᵣ VZᵣ)
+                   (INF VZᵣ))))))))
+                 (("A" ⊃ "B" ⊃ "C") ⊃ ("A" ⊃ "B") ⊃ "A" ⊃ "C")
+                 (lam (lam (lam (inf (app
+                   (app
+                     (wkᵣ (wkᵣ vzᵣ))
+                     (inf vzᵣ))
+                   (inf (app
+                     (wkᵣ vzᵣ)
+                     (inf vzᵣ))))))))
 testSₗ = refl
 
 

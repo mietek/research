@@ -10,34 +10,9 @@ open import STLCBidirectionalTermsForTypeChecking
 --------------------------------------------------------------------------------
 
 
-infix 4 _⊦_≪_
-record TypeChecking : Set
-  where
-    constructor _⊦_≪_
-    field
-      {g} : Nat
-      Γ   : Types g
-      M   : Termₗ g
-      A   : Type
-
-
-infix 4 _⊦_≫_
-record TypeInference : Set
-  where
-    constructor _⊦_≫_
-    field
-      {g} : Nat
-      Γ   : Types g
-      M   : Termᵣ g
-      A   : Type
-
-
---------------------------------------------------------------------------------
-
-
 mutual
-  infix 3 ⊢_checks
-  data ⊢_checks : TypeChecking → Set
+  infix 3 ⊢_⊦_≪_checks
+  data ⊢_⊦_≪_checks : ∀ {g} → Types g → Termₗ g → Type → Set
     where
       lam : ∀ {A B g M} → {Γ : Types g}
                         → ⊢ Γ , A ⊦ M ≪ B checks
@@ -47,8 +22,8 @@ mutual
                       → ⊢ Γ ⊦ M ≫ A infers
                       → ⊢ Γ ⊦ INF M ≪ A checks
 
-  infix 3 ⊢_infers
-  data ⊢_infers : TypeInference → Set
+  infix 3 ⊢_⊦_≫_infers
+  data ⊢_⊦_≫_infers : ∀ {g} → Types g → Termᵣ g → Type → Set
     where
       var : ∀ {A g I} → {Γ : Types g}
                       → Γ ∋⟨ I ⟩ A
@@ -79,6 +54,9 @@ mutual
   renᵣ η (var i)   = var (ren∋ η i)
   renᵣ η (app 𝒟 ℰ) = app (renᵣ η 𝒟) (renₗ η ℰ)
   renᵣ η (chk 𝒟)   = chk (renₗ η 𝒟)
+
+
+--------------------------------------------------------------------------------
 
 
 wkᵣ : ∀ {B g M A} → {Γ : Types g}
