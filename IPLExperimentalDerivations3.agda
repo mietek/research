@@ -6,7 +6,6 @@ open import List
 open import ListLemmas
 open import AllList
 open import IPLPropositions
-import IPLDerivations as IPL
 
 
 --------------------------------------------------------------------------------
@@ -31,12 +30,14 @@ data _⊢_true : List Prop → Prop → Set
 --------------------------------------------------------------------------------
 
 
-ren : ∀ {Γ Γ′ A} → Γ′ ⊇ Γ → Γ ⊢ A true
-                 → Γ′ ⊢ A true
-ren η (var i)   = var (ren∋ η i)
-ren η (cut 𝒟 ℰ) = cut (ren η 𝒟) (ren (keep η) ℰ)
-ren η (lam 𝒟)   = lam (ren (keep η) 𝒟)
-ren η (unlam 𝒟) = {!!}
+-- NOTE: Problematic
+
+-- ren : ∀ {Γ Γ′ A} → Γ′ ⊇ Γ → Γ ⊢ A true
+--                  → Γ′ ⊢ A true
+-- ren η (var i)   = var (ren∋ η i)
+-- ren η (cut 𝒟 ℰ) = cut (ren η 𝒟) (ren (keep η) ℰ)
+-- ren η (lam 𝒟)   = lam (ren (keep η) 𝒟)
+-- ren η (unlam 𝒟) = {!!} 
 
 
 --------------------------------------------------------------------------------

@@ -6,7 +6,6 @@ open import List
 open import ListLemmas
 open import AllList
 open import IPLPropositions
-import IPLDerivations as IPL
 
 
 --------------------------------------------------------------------------------
@@ -88,20 +87,25 @@ app 𝒟 ℰ = cut ℰ (unlam 𝒟)
 --------------------------------------------------------------------------------
 
 
-↓ : ∀ {Γ A} → Γ ⊢ A true
-            → Γ IPL.⊢ A true
-↓ vz        = IPL.vz
-↓ (wk 𝒟)    = IPL.wk (↓ 𝒟)
-↓ (cut 𝒟 ℰ) = IPL.cut (↓ 𝒟) (↓ ℰ)
-↓ (lam 𝒟)   = IPL.lam (↓ 𝒟)
-↓ (unlam 𝒟) = IPL.unlam (↓ 𝒟)
+module Default⟷Experimental2
+  where
+    import IPLDerivations as Def
 
 
-↑ : ∀ {Γ A} → Γ IPL.⊢ A true
-            → Γ ⊢ A true
-↑ (IPL.var i)   = var i
-↑ (IPL.lam 𝒟)   = lam (↑ 𝒟)
-↑ (IPL.app 𝒟 ℰ) = app (↑ 𝒟) (↑ ℰ)
+    ↓ : ∀ {Γ A} → Γ ⊢ A true
+                → Γ Def.⊢ A true
+    ↓ vz        = Def.vz
+    ↓ (wk 𝒟)    = Def.wk (↓ 𝒟)
+    ↓ (cut 𝒟 ℰ) = Def.cut (↓ 𝒟) (↓ ℰ)
+    ↓ (lam 𝒟)   = Def.lam (↓ 𝒟)
+    ↓ (unlam 𝒟) = Def.unlam (↓ 𝒟)
+     
+     
+    ↑ : ∀ {Γ A} → Γ Def.⊢ A true
+                → Γ ⊢ A true
+    ↑ (Def.var i)   = var i
+    ↑ (Def.lam 𝒟)   = lam (↑ 𝒟)
+    ↑ (Def.app 𝒟 ℰ) = app (↑ 𝒟) (↑ ℰ)
 
 
 --------------------------------------------------------------------------------

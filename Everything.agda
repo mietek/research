@@ -33,10 +33,10 @@ import AllVecLemmas
 
 import IPLPropositions
 
-import IPLDerivations                  -- _⊢_ ; var/lam/app
-import IPLExperimentalDerivations1     -- _⊢_ ; vz/wk/lam/app
-import IPLExperimentalDerivations2     -- _⊢_ ; vz/wk/cut/lam/unlam
--- import IPLExperimentalDerivations3  -- _⊢_ ; var/cut/lam/unlam ; problem with renaming
+import IPLDerivations               -- _⊢_ ; var/lam/app
+import IPLExperimentalDerivations1  -- _⊢_ ; vz/wk/lam/app
+import IPLExperimentalDerivations2  -- _⊢_ ; vz/wk/cut/lam/unlam
+import IPLExperimentalDerivations3  -- _⊢_ ; var/cut/lam/unlam ; problem with renaming
 
 import IPLLemmas
 
