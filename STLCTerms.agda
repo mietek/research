@@ -88,36 +88,30 @@ SUBS x y = MAPS (SUB x) y
 --------------------------------------------------------------------------------
 
 
-CUT : ∀ {g} → Term g → Term (suc g)
-            → Term g
-CUT M N = SUB (IDS , M) N
-
-
-CUT′ : ∀ {g} → Term g → Term (suc g)
-             → Term g
-CUT′ M N = APP (LAM N) M
-
-
 UNLAM : ∀ {g} → Term g
               → Term (suc g)
 UNLAM M = APP (WK M) VZ
 
 
+CUT : ∀ {g} → Term g → Term (suc g)
+            → Term g
+CUT M N = SUB (IDS , M) N
+
+
+PSEUDOCUT : ∀ {g} → Term g → Term (suc g)
+                  → Term g
+PSEUDOCUT M N = APP (LAM N) M
+
+
+PSEUDOSUB : ∀ {g n} → Terms g n → Term n
+                    → Term g
+PSEUDOSUB ∙       M = REN bot≥ M
+PSEUDOSUB (x , L) M = APP (PSEUDOSUB x (LAM M)) L
+
+
 EXCH : ∀ {g} → Term (suc (suc g))
              → Term (suc (suc g))
 EXCH M = APP (APP (WK (WK (LAM (LAM M)))) VZ) (WK VZ)
-
-
-WKN : ∀ {g} → Term zero
-            → Term g
-WKN {zero}  M = M
-WKN {suc g} M = WK (WKN M)
-
-
-SUB′ : ∀ {g n} → Terms g n → Term n
-               → Term g
-SUB′ ∙       M = WKN M
-SUB′ (x , L) M = APP (SUB′ x (LAM M)) L
 
 
 --------------------------------------------------------------------------------

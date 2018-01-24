@@ -8,6 +8,9 @@ open import Agda.Primitive public
 open import Agda.Builtin.Equality public
   using (_≡_ ; refl)
 
+open import Agda.Builtin.FromString public
+  using (IsString ; fromString)
+
 open import Agda.Builtin.Nat public
   using (Nat ; zero ; suc)
 
@@ -318,6 +321,15 @@ module _
       where
         postulate
           s≢s′ : s ≢ s′
+
+
+instance
+  stringIsString : IsString String
+  stringIsString =
+    record
+      { Constraint = λ s → ⊤
+      ; fromString = λ s → s
+      }
 
 
 --------------------------------------------------------------------------------

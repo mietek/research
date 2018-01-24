@@ -41,9 +41,9 @@ data _⨾_⊢_true : List Prop → List Prop → Prop → Set
                          → Δ ⨾ Γ ⊢ B true
 
 
-infix 3 _⨾_⊢_true*
-_⨾_⊢_true* : List Prop → List Prop → List Prop → Set
-Δ ⨾ Γ ⊢ Ξ true* = All (Δ ⨾ Γ ⊢_true) Ξ
+infix 3 _⨾_⊢_alltrue
+_⨾_⊢_alltrue : List Prop → List Prop → List Prop → Set
+Δ ⨾ Γ ⊢ Ξ alltrue = All (Δ ⨾ Γ ⊢_true) Ξ
 
 
 --------------------------------------------------------------------------------
@@ -54,56 +54,56 @@ _⊢_valid : List Prop → Prop → Set
 Δ ⊢ A valid = Δ ⨾ ∙ ⊢ A true
 
 
-infix 3 _⊢_valid*
-_⊢_valid* : List Prop → List Prop → Set
-Δ ⊢ Ξ valid* = All (Δ ⊢_valid) Ξ
+infix 3 _⊢_allvalid
+_⊢_allvalid : List Prop → List Prop → Set
+Δ ⊢ Ξ allvalid = All (Δ ⊢_valid) Ξ
 
 
 --------------------------------------------------------------------------------
 
 
-wks : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊢ Ξ true*
-                  → Δ ⨾ Γ , A ⊢ Ξ true*
+wks : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊢ Ξ alltrue
+                  → Δ ⨾ Γ , A ⊢ Ξ alltrue
 wks ξ = maps wk ξ
 
 
-lifts : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊢ Ξ true*
-                    → Δ ⨾ Γ , A ⊢ Ξ , A true*
+lifts : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊢ Ξ alltrue
+                    → Δ ⨾ Γ , A ⊢ Ξ , A alltrue
 lifts ξ = wks ξ , vz
 
 
 vars : ∀ {Δ Γ Γ′} → Γ′ ⊇ Γ
-                  → Δ ⨾ Γ′ ⊢ Γ true*
+                  → Δ ⨾ Γ′ ⊢ Γ alltrue
 vars done     = ∙
 vars (drop η) = wks (vars η)
 vars (keep η) = lifts (vars η)
 
 
-ids : ∀ {Δ Γ} → Δ ⨾ Γ ⊢ Γ true*
+ids : ∀ {Δ Γ} → Δ ⨾ Γ ⊢ Γ alltrue
 ids = vars id
 
 
 --------------------------------------------------------------------------------
 
 
-mwks : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊢ Ξ true*
-                   → Δ , A ⨾ Γ ⊢ Ξ true*
+mwks : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊢ Ξ alltrue
+                   → Δ , A ⨾ Γ ⊢ Ξ alltrue
 mwks ξ = maps mwk ξ
 
 
-mlifts : ∀ {A Δ Ξ} → Δ ⊢ Ξ valid*
-                   → Δ , A ⊢ Ξ , A valid*
+mlifts : ∀ {A Δ Ξ} → Δ ⊢ Ξ allvalid
+                   → Δ , A ⊢ Ξ , A allvalid
 mlifts ξ = mwks ξ , mvz
 
 
 mvars : ∀ {Δ Δ′} → Δ′ ⊇ Δ
-                 → Δ′ ⊢ Δ valid*
+                 → Δ′ ⊢ Δ allvalid
 mvars done     = ∙
 mvars (drop η) = mwks (mvars η)
 mvars (keep η) = mlifts (mvars η)
 
 
-mids : ∀ {Δ} → Δ ⊢ Δ valid*
+mids : ∀ {Δ} → Δ ⊢ Δ allvalid
 mids = mvars id
 
 
@@ -120,12 +120,12 @@ unvau : ∀ {Δ Γ A B} → Δ ⨾ Γ , □ A ⊢ B true
 unvau 𝒟 = cut (box mvz) (mwk 𝒟)
 
 
-vaus : ∀ {Δ Γ A Ξ} → Δ , A ⨾ Γ ⊢ Ξ true*
-                   → Δ ⨾ Γ , □ A ⊢ Ξ true*
+vaus : ∀ {Δ Γ A Ξ} → Δ , A ⨾ Γ ⊢ Ξ alltrue
+                   → Δ ⨾ Γ , □ A ⊢ Ξ alltrue
 vaus 𝒟 = maps vau 𝒟
 
 
-sub : ∀ {Δ Γ Ξ A} → Δ ⨾ Γ ⊢ Ξ true* → Δ ⨾ Ξ ⊢ A true
+sub : ∀ {Δ Γ Ξ A} → Δ ⨾ Γ ⊢ Ξ alltrue → Δ ⨾ Ξ ⊢ A true
                   → Δ ⨾ Γ ⊢ A true
 sub (ξ , 𝒞) vz           = 𝒞
 sub (ξ , 𝒞) (wk 𝒟)       = sub ξ 𝒟
@@ -146,7 +146,7 @@ mcut′ : ∀ {Δ Γ A B} → Δ ⨾ ∙ ⊢ A true → Δ , A ⨾ Γ ⊢ B true
 mcut′ 𝒟 ℰ = letbox (box 𝒟) ℰ
 
 
-msub : ∀ {Δ Γ Ξ A} → Δ ⊢ Ξ valid* → Ξ ⨾ Γ ⊢ A true
+msub : ∀ {Δ Γ Ξ A} → Δ ⊢ Ξ allvalid → Ξ ⨾ Γ ⊢ A true
                    → Δ ⨾ Γ ⊢ A true
 msub ξ       vz           = vz
 msub ξ       (wk 𝒟)       = wk (msub ξ 𝒟)

@@ -13,15 +13,18 @@ open import Vec
 {-
                       GET (GETS Ξ e) I ≡ (GET Ξ ∘ REN∋ e) I                     comp-GET-REN∋
 
-                             GETS ξ id ≡ ξ                                      id-GETS   ⎱ 𝐆𝐄𝐓𝐒
-                      GETS ξ (η₁ ∘ η₂) ≡ GETS (GETS ξ η₂) η₁                    comp-GETS ⎰
+                             GETS ξ id ≡ ξ                                      id-GETS
+                      GETS ξ (η₁ ∘ η₂) ≡ GETS (GETS ξ η₂) η₁                    comp-GETS
+                                                                                𝐆𝐄𝐓𝐒
 
-                              id⊇ ∘⊇ η ≡ η                                      lid∘⊇   ⎫
-                              η ∘⊇ id⊇ ≡ η                                      rid∘⊇   ⎬ 𝐎𝐏𝐄
-                      (η₁ ∘⊇ η₂) ∘⊇ η₃ ≡ η₁ ∘⊇ (η₂ ∘⊇ η₃)                       assoc∘⊇ ⎭
+                              id⊇ ∘⊇ η ≡ η                                      lid∘⊇
+                              η ∘⊇ id⊇ ≡ η                                      rid∘⊇
+                      (η₁ ∘⊇ η₂) ∘⊇ η₃ ≡ η₁ ∘⊇ (η₂ ∘⊇ η₃)                       assoc∘⊇
+                                                                                𝐎𝐏𝐄
 
-                             ren∋ id 𝒾 ≡ 𝒾                                      id-ren∋   ⎱ 𝐫𝐞𝐧∋
-                      ren∋ (η₁ ∘ η₂) 𝒾 ≡ (ren∋ η₂ ∘ ren∋ η₁) 𝒾                  comp-ren∋ ⎰
+                             ren∋ id 𝒾 ≡ 𝒾                                      id-ren∋
+                      ren∋ (η₁ ∘ η₂) 𝒾 ≡ (ren∋ η₂ ∘ ren∋ η₁) 𝒾                  comp-ren∋
+                                                                                𝐫𝐞𝐧∋
 -}
 --------------------------------------------------------------------------------
 
@@ -138,6 +141,57 @@ comp-ren∋ (keep η₁) (keep η₂) (suc i) = suc & comp-ren∋ η₁ η₂ i
                      funext! (\ { (I , i) →
                        (REN∋ (e₁ ∘ e₂) I ,_) & comp-ren∋ η₁ η₂ i }) }
          }
+
+
+--------------------------------------------------------------------------------
+
+
+module _
+  where
+    open import List
+
+
+    id-len-toList : ∀ {X n} → (Ξ : Vec X n)
+                            → len (toList Ξ) ≡ n
+    id-len-toList ∙       = refl
+    id-len-toList (Ξ , A) = suc & id-len-toList Ξ
+
+
+    {-# REWRITE id-len-toList #-}
+    id-toFin-to∋ : ∀ {X n I A} → {Ξ : Vec X n}
+                               → (i : Ξ ∋⟨ I ⟩ A)
+                               → toFin (to∋ i) ≡ I
+    id-toFin-to∋ zero    = refl
+    id-toFin-to∋ (suc i) = suc & id-toFin-to∋ i
+
+
+    id-toList-fromList : ∀ {X} → (Ξ : List X)
+                               → toList (fromList Ξ) ≡ Ξ
+    id-toList-fromList ∙       = refl
+    id-toList-fromList (Ξ , A) = (_, A) & id-toList-fromList Ξ
+
+
+    {-# REWRITE id-toList-fromList #-}
+    id-to∋-from∋ : ∀ {X A} → {Ξ : List X}
+                           → (i : Ξ ∋ A)
+                           → to∋ (from∋ i) ≡ i
+    id-to∋-from∋ zero    = refl
+    id-to∋-from∋ (suc i) = suc & id-to∋-from∋ i
+
+
+    id-fromList-toList : ∀ {X n} → (Ξ : Vec X n)
+                                 → fromList (toList Ξ) ≡ Ξ
+    id-fromList-toList ∙       = refl
+    id-fromList-toList (Ξ , A) = (_, A) & id-fromList-toList Ξ
+
+
+    {-# REWRITE id-toFin-to∋ #-}
+    {-# REWRITE id-fromList-toList #-}
+    id-from∋-to∋ : ∀ {X n I A} → {Ξ : Vec X n}
+                               → (i : Ξ ∋⟨ I ⟩ A)
+                               → from∋ (to∋ i) ≡ i
+    id-from∋-to∋ zero    = refl
+    id-from∋-to∋ (suc i) = suc & id-from∋-to∋ i
 
 
 --------------------------------------------------------------------------------

@@ -1,6 +1,7 @@
 module List where
 
 open import Prelude
+open import Category
 open import Fin
 
 
@@ -23,6 +24,21 @@ map : ∀ {X Y} → (X → Y) → List X
               → List Y
 map f ∙       = ∙
 map f (Ξ , A) = map f Ξ , f A
+
+
+--------------------------------------------------------------------------------
+
+
+inj,₁ : ∀ {X A₁ A₂} → {Ξ₁ Ξ₂ : List X}
+                    → Ξ₁ List., A₁ ≡ Ξ₂ , A₂
+                    → Ξ₁ ≡ Ξ₂
+inj,₁ refl = refl
+
+
+inj,₂ : ∀ {X A₁ A₂} → {Ξ₁ Ξ₂ : List X}
+                    → Ξ₁ List., A₁ ≡ Ξ₂ , A₂
+                    → A₁ ≡ A₂
+inj,₂ refl = refl
 
 
 --------------------------------------------------------------------------------

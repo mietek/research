@@ -25,9 +25,9 @@ data _⊢_true : List Prop → Prop → Set
                     → Γ ⊢ B true
 
 
-infix 3 _⊢_true*
-_⊢_true* : List Prop → List Prop → Set
-Γ ⊢ Ξ true* = All (Γ ⊢_true) Ξ
+infix 3 _⊢_alltrue
+_⊢_alltrue : List Prop → List Prop → Set
+Γ ⊢ Ξ alltrue = All (Γ ⊢_true) Ξ
 
 
 --------------------------------------------------------------------------------
@@ -40,8 +40,8 @@ ren η (lam 𝒟)   = lam (ren (keep η) 𝒟)
 ren η (app 𝒟 ℰ) = app (ren η 𝒟) (ren η ℰ)
 
 
-rens : ∀ {Γ Γ′ Ξ} → Γ′ ⊇ Γ → Γ ⊢ Ξ true*
-                  → Γ′ ⊢ Ξ true*
+rens : ∀ {Γ Γ′ Ξ} → Γ′ ⊇ Γ → Γ ⊢ Ξ alltrue
+                  → Γ′ ⊢ Ξ alltrue
 rens η ξ = maps (ren η) ξ
 
 
@@ -57,39 +57,39 @@ vz : ∀ {A Γ} → Γ , A ⊢ A true
 vz = var zero
 
 
-wks : ∀ {A Γ Ξ} → Γ ⊢ Ξ true*
-                → Γ , A ⊢ Ξ true*
+wks : ∀ {A Γ Ξ} → Γ ⊢ Ξ alltrue
+                → Γ , A ⊢ Ξ alltrue
 wks ξ = rens (drop id) ξ
 
 
-lifts : ∀ {A Γ Ξ} → Γ ⊢ Ξ true*
-                  → Γ , A ⊢ Ξ , A true*
+lifts : ∀ {A Γ Ξ} → Γ ⊢ Ξ alltrue
+                  → Γ , A ⊢ Ξ , A alltrue
 lifts ξ = wks ξ , vz
 
 
 vars : ∀ {Γ Γ′} → Γ′ ⊇ Γ
-                → Γ′ ⊢ Γ true*
+                → Γ′ ⊢ Γ alltrue
 vars done     = ∙
 vars (drop η) = wks (vars η)
 vars (keep η) = lifts (vars η)
 
 
-ids : ∀ {Γ} → Γ ⊢ Γ true*
+ids : ∀ {Γ} → Γ ⊢ Γ alltrue
 ids = vars id
 
 
 --------------------------------------------------------------------------------
 
 
-sub : ∀ {Γ Ξ A} → Γ ⊢ Ξ true* → Ξ ⊢ A true
+sub : ∀ {Γ Ξ A} → Γ ⊢ Ξ alltrue → Ξ ⊢ A true
                 → Γ ⊢ A true
 sub ξ (var i)   = get ξ i
 sub ξ (lam 𝒟)   = lam (sub (lifts ξ) 𝒟)
 sub ξ (app 𝒟 ℰ) = app (sub ξ 𝒟) (sub ξ ℰ)
 
 
-subs : ∀ {Γ Ξ Ψ} → Γ ⊢ Ξ true* → Ξ ⊢ Ψ true*
-                 → Γ ⊢ Ψ true*
+subs : ∀ {Γ Ξ Ψ} → Γ ⊢ Ξ alltrue → Ξ ⊢ Ψ alltrue
+                 → Γ ⊢ Ψ alltrue
 subs ξ ψ = maps (sub ξ) ψ
 
 
@@ -106,21 +106,15 @@ cut : ∀ {Γ A B} → Γ ⊢ A true → Γ , A ⊢ B true
 cut 𝒟 ℰ = sub (ids , 𝒟) ℰ
 
 
-cut′ : ∀ {Γ A B} → Γ ⊢ A true → Γ , A ⊢ B true
-                 → Γ ⊢ B true
-cut′ 𝒟 ℰ = app (lam ℰ) 𝒟
+pseudocut : ∀ {Γ A B} → Γ ⊢ A true → Γ , A ⊢ B true
+                      → Γ ⊢ B true
+pseudocut 𝒟 ℰ = app (lam ℰ) 𝒟
 
 
-wkn : ∀ {Γ A} → ∙ ⊢ A true
-              → Γ ⊢ A true
-wkn {∙}     𝒟 = 𝒟
-wkn {Γ , B} 𝒟 = wk (wkn 𝒟)
-
-
-sub′ : ∀ {Γ Ξ A} → Γ ⊢ Ξ true* → Ξ ⊢ A true
-                 → Γ ⊢ A true
-sub′ ∙       𝒟 = wkn 𝒟
-sub′ (ξ , 𝒞) 𝒟 = app (sub′ ξ (lam 𝒟)) 𝒞
+pseudosub : ∀ {Γ Ξ A} → Γ ⊢ Ξ alltrue → Ξ ⊢ A true
+                      → Γ ⊢ A true
+pseudosub ∙       𝒟 = ren bot⊇ 𝒟
+pseudosub (ξ , 𝒞) 𝒟 = app (pseudosub ξ (lam 𝒟)) 𝒞
 
 
 exch : ∀ {Γ A B C} → Γ , A , B ⊢ C true
@@ -133,9 +127,27 @@ exch 𝒟 = app (app (wk (wk (lam (lam 𝒟)))) vz) (wk vz)
 
 pull : ∀ {Δ A B} → (Γ : List Prop) → (Δ , A) ⧺ Γ ⊢ B true
                  → Δ ⧺ (Γ , A) ⊢ B true
-pull Γ (var i)   = var (pull∋ Γ i )
+pull Γ (var i)   = var (pull∋ Γ i)
 pull Γ (lam 𝒟)   = lam (exch (pull (Γ , _) 𝒟))
 pull Γ (app 𝒟 ℰ) = app (pull Γ 𝒟) (pull Γ ℰ)
+
+
+lam* : ∀ {Γ A} → (Ξ : List Prop) → Γ ⧺ Ξ ⊢ A true
+               → Γ ⊢ Ξ *⊃ A true
+lam* ∙       𝒟 = 𝒟
+lam* (Ξ , B) 𝒟 = lam* Ξ (lam 𝒟)
+
+
+unlam* : ∀ {Γ A} → (Ξ : List Prop) → Γ ⊢ Ξ *⊃ A true
+                 → Γ ⧺ Ξ ⊢ A true
+unlam* ∙       𝒟 = 𝒟
+unlam* (Ξ , B) 𝒟 = unlam (unlam* Ξ 𝒟)
+
+
+app* : ∀ {Γ Ξ A} → Γ ⊢ Ξ *⊃ A true → Γ ⊢ Ξ alltrue
+                 → Γ ⊢ A true
+app* 𝒟 ∙       = 𝒟
+app* 𝒟 (ξ , ℰ) = app (app* 𝒟 ξ) ℰ
 
 
 --------------------------------------------------------------------------------

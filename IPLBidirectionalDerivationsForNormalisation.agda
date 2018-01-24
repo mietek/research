@@ -19,8 +19,8 @@ mutual
       lam : ∀ {A B Γ} → Γ , A ⊢ B verifiable
                       → Γ ⊢ A ⊃ B verifiable
 
-      use : ∀ {Γ} → Γ ⊢ BASE usable
-                  → Γ ⊢ BASE verifiable
+      use : ∀ {P Γ} → Γ ⊢ ι P usable
+                    → Γ ⊢ ι P verifiable
 
   infix 3 _⊢_usable
   data _⊢_usable : List Prop → Prop → Set

@@ -54,6 +54,12 @@ data _⊇⟨_⟩_ {X} : ∀ {n n′} → Vec X n′ → n′ ≥ n → Vec X n �
                         → Ξ′ , A ⊇⟨ keep e ⟩ Ξ , A
 
 
+bot⊇ : ∀ {X n} → {Ξ : Vec X n}
+               → Ξ ⊇⟨ bot≥ ⟩ ∙
+bot⊇ {Ξ = ∙}     = done
+bot⊇ {Ξ = Ξ , A} = drop bot⊇
+
+
 id⊇ : ∀ {X n} → {Ξ : Vec X n}
               → Ξ ⊇⟨ id ⟩ Ξ
 id⊇ {Ξ = ∙}     = done
@@ -103,6 +109,64 @@ uniq∋ : ∀ {X n I A₁ A₂} → {Ξ : Vec X n}
                         → A₁ ≡ A₂
 uniq∋ zero     zero     = refl
 uniq∋ (suc i₁) (suc i₂) = uniq∋ i₁ i₂
+
+
+--------------------------------------------------------------------------------
+
+
+zip : ∀ {X Y n} → Vec X n → Vec Y n
+                → Vec (X × Y) n
+zip ∙         ∙         = ∙
+zip (Ξ₁ , A₁) (Ξ₂ , A₂) = zip Ξ₁ Ξ₂ , (A₁ , A₂)
+
+
+zip∋₁ : ∀ {X Y n I A₁} → {Ξ₁ : Vec X n} {Ξ₂ : Vec Y n}
+                       → Ξ₁ ∋⟨ I ⟩ A₁
+                       → zip Ξ₁ Ξ₂ ∋⟨ I ⟩ (A₁ , GET Ξ₂ I)
+zip∋₁ {Ξ₁ = Ξ₁ , A₁} {Ξ₂ , A₂} zero    = zero
+zip∋₁ {Ξ₁ = Ξ₁ , B₁} {Ξ₂ , B₂} (suc i) = suc (zip∋₁ i)
+
+zip∋₂ : ∀ {X Y n I A₂} → {Ξ₁ : Vec X n} {Ξ₂ : Vec Y n}
+                       → Ξ₂ ∋⟨ I ⟩ A₂
+                       → zip Ξ₁ Ξ₂ ∋⟨ I ⟩ (GET Ξ₁ I , A₂)
+zip∋₂ {Ξ₁ = Ξ₁ , A₁} {Ξ₂ , A₂} zero    = zero
+zip∋₂ {Ξ₁ = Ξ₁ , B₁} {Ξ₂ , B₂} (suc i) = suc (zip∋₂ i)
+
+
+--------------------------------------------------------------------------------
+
+
+module _
+  where
+    open import List using (List ; ∙ ; _,_ ; len ; _∋_ ; zero ; suc)
+
+    fromList : ∀ {X} → (Ξ : List X)
+                     → Vec X (len Ξ)
+    fromList ∙       = ∙
+    fromList (Ξ , A) = fromList Ξ , A
+
+    toList : ∀ {X n} → Vec X n
+                     → List X
+    toList ∙       = ∙
+    toList (Ξ , A) = toList Ξ , A
+
+    toFin : ∀ {X A} → {Ξ : List X}
+                    → (i : Ξ ∋ A)
+                    → Fin (len Ξ)
+    toFin zero    = zero
+    toFin (suc i) = suc (toFin i)
+
+    from∋ : ∀ {X A} → {Ξ : List X}
+                    → (i : Ξ ∋ A)
+                    → fromList Ξ ∋⟨ toFin i ⟩ A
+    from∋ zero    = zero
+    from∋ (suc i) = suc (from∋ i)
+
+    to∋ : ∀ {X n I A} → {Ξ : Vec X n}
+                      → Ξ ∋⟨ I ⟩ A
+                      → toList Ξ ∋ A
+    to∋ zero    = zero
+    to∋ (suc i) = suc (to∋ i)
 
 
 --------------------------------------------------------------------------------

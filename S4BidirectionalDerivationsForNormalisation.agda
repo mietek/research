@@ -25,8 +25,8 @@ mutual
       letbox : ∀ {A B Δ Γ} → Δ ⨾ Γ ⊢ □ A usable → Δ , A ⨾ Γ ⊢ B verifiable
                            → Δ ⨾ Γ ⊢ B verifiable
 
-      use : ∀ {Δ Γ} → Δ ⨾ Γ ⊢ BASE usable
-                    → Δ ⨾ Γ ⊢  BASE verifiable
+      use : ∀ {P Δ Γ} → Δ ⨾ Γ ⊢ ι P usable
+                      → Δ ⨾ Γ ⊢ ι P verifiable
 
   infix 3 _⨾_⊢_usable
   data _⨾_⊢_usable : List Prop → List Prop → Prop → Set

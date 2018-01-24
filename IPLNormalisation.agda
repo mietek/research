@@ -19,7 +19,7 @@ record Model : Set₁
       World : Set
 
       -- TODO: Better name
-      Ground : World → Set
+      Ground : World → String → Set
 
       _≥_ : World → World → Set
 
@@ -28,8 +28,8 @@ record Model : Set₁
       _∘≥_ : ∀ {W W′ W″} → W′ ≥ W → W″ ≥ W′
                          → W″ ≥ W
 
-      relG : ∀ {W W′} → W′ ≥ W → Ground W
-                      → Ground W′
+      relG : ∀ {P W W′} → W′ ≥ W → Ground W P
+                        → Ground W′ P
 
 open Model {{...}}
 
@@ -39,14 +39,14 @@ open Model {{...}}
 
 infix 3 _⊩_value
 _⊩_value : ∀ {{_ : Model}} → World → Prop → Set
-W ⊩ BASE value  = Ground W
+W ⊩ ι P value   = Ground W P
 W ⊩ A ⊃ B value = ∀ {W′} → W′ ≥ W → W′ ⊩ A value
                           → W′ ⊩ B value
 
 
-infix 3 _⊩_value*
-_⊩_value* : ∀ {{_ : Model}} → World → List Prop → Set
-W ⊩ Γ value* = All (W ⊩_value) Γ
+infix 3 _⊩_allvalue
+_⊩_allvalue : ∀ {{_ : Model}} → World → List Prop → Set
+W ⊩ Γ allvalue = All (W ⊩_value) Γ
 
 
 --------------------------------------------------------------------------------
@@ -54,12 +54,12 @@ W ⊩ Γ value* = All (W ⊩_value) Γ
 
 rel : ∀ {{_ : Model}} {A W W′} → W′ ≥ W → W ⊩ A value
                                → W′ ⊩ A value
-rel {BASE}  η 𝒟 = relG η 𝒟
+rel {ι P}   η 𝒟 = relG η 𝒟
 rel {A ⊃ B} η f = \ η′ a → f (η ∘≥ η′) a
 
 
-rels : ∀ {{_ : Model}} {Γ W W′} → W′ ≥ W → W ⊩ Γ value*
-                                → W′ ⊩ Γ value*
+rels : ∀ {{_ : Model}} {Γ W W′} → W′ ≥ W → W ⊩ Γ allvalue
+                                → W′ ⊩ Γ allvalue
 rels η γ = maps (\ { {A} a → rel {A} η a }) γ
 
 
@@ -68,7 +68,7 @@ rels η γ = maps (\ { {A} a → rel {A} η a }) γ
 
 infix 3 _⊨_true
 _⊨_true : List Prop → Prop → Set₁
-Γ ⊨ A true = ∀ {{_ : Model}} {W} → W ⊩ Γ value*
+Γ ⊨ A true = ∀ {{_ : Model}} {W} → W ⊩ Γ allvalue
                                   → W ⊩ A value
 
 
@@ -86,7 +86,7 @@ instance
   canon : Model
   canon = record
             { World  = List Prop
-            ; Ground = _⊢ BASE usable
+            ; Ground = \ Γ P → Γ ⊢ ι P usable
             ; _≥_    = _⊇_
             ; id≥    = id
             ; _∘≥_   = _∘_
@@ -97,12 +97,12 @@ instance
 mutual
   ⇓ : ∀ {A Γ} → Γ ⊢ A usable
               → Γ ⊩ A value
-  ⇓ {BASE}  𝒟 = 𝒟
+  ⇓ {ι P}   𝒟 = 𝒟
   ⇓ {A ⊃ B} 𝒟 = \ η a → ⇓ (app (renᵣ η 𝒟) (⇑ a))
 
   ⇑ : ∀ {A Γ} → Γ ⊩ A value
               → Γ ⊢ A verifiable
-  ⇑ {BASE}  𝒟 = use 𝒟
+  ⇑ {ι P}   𝒟 = use 𝒟
   ⇑ {A ⊃ B} f = lam (⇑ (f (drop id) (⇓ {A} vzᵣ)))
 
 
@@ -114,8 +114,8 @@ wkₛ : ∀ {A B Γ} → Γ ⊩ A value
 wkₛ {A} a = rel {A} (drop id) a
 
 
-wksₛ : ∀ {A Γ Ξ} → Γ ⊩ Ξ value*
-                 → Γ , A ⊩ Ξ value*
+wksₛ : ∀ {A Γ Ξ} → Γ ⊩ Ξ allvalue
+                 → Γ , A ⊩ Ξ allvalue
 wksₛ ξ = rels (drop id) ξ
 
 
@@ -123,19 +123,19 @@ vzₛ : ∀ {A Γ} → Γ , A ⊩ A value
 vzₛ {A} = ⇓ {A} vzᵣ
 
 
-liftsₛ : ∀ {A Γ Ξ} → Γ ⊩ Ξ value*
-                   → Γ , A ⊩ Ξ , A value*
+liftsₛ : ∀ {A Γ Ξ} → Γ ⊩ Ξ allvalue
+                   → Γ , A ⊩ Ξ , A allvalue
 liftsₛ {A} ξ = wksₛ ξ , vzₛ {A}
 
 
 varsₛ : ∀ {Γ Γ′} → Γ′ ⊇ Γ
-                 → Γ′ ⊩ Γ value*
+                 → Γ′ ⊩ Γ allvalue
 varsₛ done     = ∙
 varsₛ (drop η) = wksₛ (varsₛ η)
 varsₛ (keep η) = liftsₛ (varsₛ η)
 
 
-idsₛ : ∀ {Γ} → Γ ⊩ Γ value*
+idsₛ : ∀ {Γ} → Γ ⊩ Γ allvalue
 idsₛ = varsₛ id
 
 

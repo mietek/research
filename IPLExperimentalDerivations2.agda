@@ -30,45 +30,45 @@ data _⊢_true : List Prop → Prop → Set
                       → Γ , A ⊢ B true
 
 
-infix 3 _⊢_true*
-_⊢_true* : List Prop → List Prop → Set
-Γ ⊢ Ξ true* = All (Γ ⊢_true) Ξ
+infix 3 _⊢_alltrue
+_⊢_alltrue : List Prop → List Prop → Set
+Γ ⊢ Ξ alltrue = All (Γ ⊢_true) Ξ
 
 
 --------------------------------------------------------------------------------
 
 
-wks : ∀ {A Γ Ξ} → Γ ⊢ Ξ true*
-                → Γ , A ⊢ Ξ true*
+wks : ∀ {A Γ Ξ} → Γ ⊢ Ξ alltrue
+                → Γ , A ⊢ Ξ alltrue
 wks ξ = maps wk ξ
 
 
-lifts : ∀ {A Γ Ξ} → Γ ⊢ Ξ true*
-                  → Γ , A ⊢ Ξ , A true*
+lifts : ∀ {A Γ Ξ} → Γ ⊢ Ξ alltrue
+                  → Γ , A ⊢ Ξ , A alltrue
 lifts ξ = wks ξ , vz
 
 
 vars : ∀ {Γ Γ′} → Γ′ ⊇ Γ
-                → Γ′ ⊢ Γ true*
+                → Γ′ ⊢ Γ alltrue
 vars done     = ∙
 vars (drop η) = wks (vars η)
 vars (keep η) = lifts (vars η)
 
 
-ids : ∀ {Γ} → Γ ⊢ Γ true*
+ids : ∀ {Γ} → Γ ⊢ Γ alltrue
 ids = vars id
 
 
 --------------------------------------------------------------------------------
 
 
-sub : ∀ {Γ Ξ A} → Γ ⊢ Ξ true* → Ξ ⊢ A true
+sub : ∀ {Γ Ξ A} → Γ ⊢ Ξ alltrue → Ξ ⊢ A true
                 → Γ ⊢ A true
 sub (ξ , 𝒞) vz        = 𝒞
 sub (ξ , 𝒞) (wk 𝒟)    = sub ξ 𝒟
 sub ξ       (cut 𝒟 ℰ) = cut (sub ξ 𝒟) (sub (lifts ξ) ℰ)
 sub ξ       (lam 𝒟)   = lam (sub (lifts ξ) 𝒟)
-sub (ξ , 𝒞) (unlam 𝒟) = cut 𝒞 (unlam (sub ξ 𝒟)) 
+sub (ξ , 𝒞) (unlam 𝒟) = cut 𝒞 (unlam (sub ξ 𝒟))
 
 
 --------------------------------------------------------------------------------

@@ -27,7 +27,7 @@ unique (chk 𝒟₁)    (chk 𝒟₂)    = refl
 mutual
   check : ∀ {g} → (Γ : Types g) (M : Termₗ g) (A : Type)
                 → Dec (⊢ Γ ⊦ M ≪ A checks)
-  check Γ (LAM M) BASE    = no (\ ())
+  check Γ (LAM M) (ι P)   = no (\ ())
   check Γ (LAM M) (A ⊃ B) with check (Γ , A) M B
   check Γ (LAM M) (A ⊃ B) | yes 𝒟 = yes (lam 𝒟)
   check Γ (LAM M) (A ⊃ B) | no ¬𝒟 = no (\ { (lam 𝒟) → 𝒟 ↯ ¬𝒟 })
@@ -41,7 +41,7 @@ mutual
                 → Dec (Σ Type (\ A → ⊢ Γ ⊦ M ≫ A infers))
   infer Γ (VAR I)   = yes (GET Γ I , var get∋)
   infer Γ (APP M N) with infer Γ M
-  infer Γ (APP M N) | yes (BASE    , 𝒟′) = no (\ { (B , app 𝒟 ℰ) → unique 𝒟 𝒟′ ↯ (\ ()) })
+  infer Γ (APP M N) | yes (ι P     , 𝒟′) = no (\ { (B , app 𝒟 ℰ) → unique 𝒟 𝒟′ ↯ (\ ()) })
   infer Γ (APP M N) | yes (A ⊃ B   , 𝒟)  with check Γ N A
   infer Γ (APP M N) | yes (A ⊃ B   , 𝒟)  | yes ℰ = yes (B , app 𝒟 ℰ)
   infer Γ (APP M N) | yes (A′ ⊃ B′ , 𝒟′) | no ¬ℰ = no (\ { (B , app 𝒟 ℰ) →
@@ -66,17 +66,20 @@ testᵣ (Γ ⊦ M ≫ A) 𝒟 = infer Γ M ≡ yes (A , 𝒟)
 --------------------------------------------------------------------------------
 
 
-testIₗ : testₗ (∙ ⊦ LAM (INF VZᵣ) ≪ BASE ⊃ BASE)
+testIₗ : testₗ (∙ ⊦ LAM (INF VZᵣ)
+                  ≪ "A" ⊃ "A")
                (lam (inf vzᵣ))
 testIₗ = refl
 
 
-testIᵣ : testᵣ (∙ ⊦ CHK (LAM (INF VZᵣ)) (BASE ⊃ BASE) ≫ BASE ⊃ BASE)
+testIᵣ : testᵣ (∙ ⊦ CHK (LAM (INF VZᵣ)) ("A" ⊃ "A")
+                  ≫ "A" ⊃ "A")
                (chk (lam (inf vzᵣ)))
 testIᵣ = refl
 
 
-testKₗ : testₗ (∙ ⊦ LAM (LAM (INF (WKᵣ VZᵣ))) ≪ BASE ⊃ BASE ⊃ BASE)
+testKₗ : testₗ (∙ ⊦ LAM (LAM (INF (WKᵣ VZᵣ)))
+                  ≪ "A" ⊃ "B" ⊃ "A")
                (lam (lam (inf (wkᵣ vzᵣ))))
 testKₗ = refl
 
@@ -88,7 +91,7 @@ testSₗ : testₗ (∙ ⊦ LAM (LAM (LAM (INF (APP
                       (INF (APP
                         (WKᵣ VZᵣ)
                         (INF VZᵣ)))))))
-                  ≪ (BASE ⊃ BASE ⊃ BASE) ⊃ (BASE ⊃ BASE) ⊃ BASE ⊃ BASE)
+                  ≪ ("A" ⊃ "B" ⊃ "C") ⊃ ("A" ⊃ "B") ⊃ "A" ⊃ "C")
                (lam (lam (lam (inf (app
                  (app
                    (wkᵣ (wkᵣ vzᵣ))

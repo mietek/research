@@ -36,9 +36,9 @@ data _⨾_⊢_true : List Prop → List Prop → Prop → Set
                          → Δ ⨾ Γ ⊢ B true
 
 
-infix 3 _⨾_⊢_true*
-_⨾_⊢_true* : List Prop → List Prop → List Prop → Set
-Δ ⨾ Γ ⊢ Ξ true* = All (Δ ⨾ Γ ⊢_true) Ξ
+infix 3 _⨾_⊢_alltrue
+_⨾_⊢_alltrue : List Prop → List Prop → List Prop → Set
+Δ ⨾ Γ ⊢ Ξ alltrue = All (Δ ⨾ Γ ⊢_true) Ξ
 
 
 --------------------------------------------------------------------------------
@@ -49,9 +49,9 @@ _⊢_valid : List Prop → Prop → Set
 Δ ⊢ A valid = Δ ⨾ ∙ ⊢ A true
 
 
-infix 3 _⊢_valid*
-_⊢_valid* : List Prop → List Prop → Set
-Δ ⊢ Ξ valid* = All (Δ ⊢_valid) Ξ
+infix 3 _⊢_allvalid
+_⊢_allvalid : List Prop → List Prop → Set
+Δ ⊢ Ξ allvalid = All (Δ ⊢_valid) Ξ
 
 
 --------------------------------------------------------------------------------
@@ -67,8 +67,8 @@ ren η (box 𝒟)      = box 𝒟
 ren η (letbox 𝒟 ℰ) = letbox (ren η 𝒟) (ren η ℰ)
 
 
-rens : ∀ {Δ Γ Γ′ Ξ} → Γ′ ⊇ Γ → Δ ⨾ Γ ⊢ Ξ true*
-                    → Δ ⨾ Γ′ ⊢ Ξ true*
+rens : ∀ {Δ Γ Γ′ Ξ} → Γ′ ⊇ Γ → Δ ⨾ Γ ⊢ Ξ alltrue
+                    → Δ ⨾ Γ′ ⊢ Ξ alltrue
 rens η ξ = maps (ren η) ξ
 
 
@@ -85,8 +85,8 @@ mren η (box 𝒟)      = box (mren η 𝒟)
 mren η (letbox 𝒟 ℰ) = letbox (mren η 𝒟) (mren (keep η) ℰ)
 
 
-mrens : ∀ {Δ Δ′ Γ Ξ} → Δ′ ⊇ Δ → Δ ⨾ Γ ⊢ Ξ true*
-                     → Δ′ ⨾ Γ ⊢ Ξ true*
+mrens : ∀ {Δ Δ′ Γ Ξ} → Δ′ ⊇ Δ → Δ ⨾ Γ ⊢ Ξ alltrue
+                     → Δ′ ⨾ Γ ⊢ Ξ alltrue
 mrens η ξ = maps (mren η) ξ
 
 
@@ -102,24 +102,24 @@ vz : ∀ {A Δ Γ} → Δ ⨾ Γ , A ⊢ A true
 vz = var zero
 
 
-wks : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊢ Ξ true*
-                  → Δ ⨾ Γ , A ⊢ Ξ true*
+wks : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊢ Ξ alltrue
+                  → Δ ⨾ Γ , A ⊢ Ξ alltrue
 wks ξ = rens (drop id) ξ
 
 
-lifts : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊢ Ξ true*
-                    → Δ ⨾ Γ , A ⊢ Ξ , A true*
+lifts : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊢ Ξ alltrue
+                    → Δ ⨾ Γ , A ⊢ Ξ , A alltrue
 lifts ξ = wks ξ , vz
 
 
 vars : ∀ {Δ Γ Γ′} → Γ′ ⊇ Γ
-                  → Δ ⨾ Γ′ ⊢ Γ true*
+                  → Δ ⨾ Γ′ ⊢ Γ alltrue
 vars done     = ∙
 vars (drop η) = wks (vars η)
 vars (keep η) = lifts (vars η)
 
 
-ids : ∀ {Δ Γ} → Δ ⨾ Γ ⊢ Γ true*
+ids : ∀ {Δ Γ} → Δ ⨾ Γ ⊢ Γ alltrue
 ids = vars id
 
 
@@ -135,31 +135,31 @@ mvz : ∀ {A Δ Γ} → Δ , A ⨾ Γ ⊢ A true
 mvz = mvar zero
 
 
-mwks : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊢ Ξ true*
-                   → Δ , A ⨾ Γ ⊢ Ξ true*
+mwks : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊢ Ξ alltrue
+                   → Δ , A ⨾ Γ ⊢ Ξ alltrue
 mwks ξ = mrens (drop id) ξ
 
 
-mlifts : ∀ {A Δ Ξ} → Δ ⊢ Ξ valid*
-                   → Δ , A ⊢ Ξ , A valid*
+mlifts : ∀ {A Δ Ξ} → Δ ⊢ Ξ allvalid
+                   → Δ , A ⊢ Ξ , A allvalid
 mlifts ξ = mwks ξ , mvz
 
 
 mvars : ∀ {Δ Δ′} → Δ′ ⊇ Δ
-                 → Δ′ ⊢ Δ valid*
+                 → Δ′ ⊢ Δ allvalid
 mvars done     = ∙
 mvars (drop η) = mwks (mvars η)
 mvars (keep η) = mlifts (mvars η)
 
 
-mids : ∀ {Δ} → Δ ⊢ Δ valid*
+mids : ∀ {Δ} → Δ ⊢ Δ allvalid
 mids = mvars id
 
 
 --------------------------------------------------------------------------------
 
 
-sub : ∀ {Δ Γ Ξ A} → Δ ⨾ Γ ⊢ Ξ true* → Δ ⨾ Ξ ⊢ A true
+sub : ∀ {Δ Γ Ξ A} → Δ ⨾ Γ ⊢ Ξ alltrue → Δ ⨾ Ξ ⊢ A true
                   → Δ ⨾ Γ ⊢ A true
 sub ξ (var i)      = get ξ i
 sub ξ (lam 𝒟)      = lam (sub (lifts ξ) 𝒟)
@@ -169,15 +169,15 @@ sub ξ (box 𝒟)      = box 𝒟
 sub ξ (letbox 𝒟 ℰ) = letbox (sub ξ 𝒟) (sub (mwks ξ) ℰ)
 
 
-subs : ∀ {Δ Γ Ξ Ψ} → Δ ⨾ Γ ⊢ Ξ true* → Δ ⨾ Ξ ⊢ Ψ true*
-                   → Δ ⨾ Γ ⊢ Ψ true*
+subs : ∀ {Δ Γ Ξ Ψ} → Δ ⨾ Γ ⊢ Ξ alltrue → Δ ⨾ Ξ ⊢ Ψ alltrue
+                   → Δ ⨾ Γ ⊢ Ψ alltrue
 subs ξ ψ = maps (sub ξ) ψ
 
 
 --------------------------------------------------------------------------------
 
 
-msub : ∀ {Δ Γ Ξ A} → Δ ⊢ Ξ valid* → Ξ ⨾ Γ ⊢ A true
+msub : ∀ {Δ Γ Ξ A} → Δ ⊢ Ξ allvalid → Ξ ⨾ Γ ⊢ A true
                    → Δ ⨾ Γ ⊢ A true
 msub ξ (var i)      = var i
 msub ξ (lam 𝒟)      = lam (msub ξ 𝒟)
@@ -187,8 +187,8 @@ msub ξ (box 𝒟)      = box (msub ξ 𝒟)
 msub ξ (letbox 𝒟 ℰ) = letbox (msub ξ 𝒟) (msub (mlifts ξ) ℰ)
 
 
-msubs : ∀ {Δ Γ Ξ Ψ} → Δ ⊢ Ξ valid* → Ξ ⨾ Γ ⊢ Ψ true*
-                    → Δ ⨾ Γ ⊢ Ψ true*
+msubs : ∀ {Δ Γ Ξ Ψ} → Δ ⊢ Ξ allvalid → Ξ ⨾ Γ ⊢ Ψ alltrue
+                    → Δ ⨾ Γ ⊢ Ψ alltrue
 msubs ξ ψ = maps (msub ξ) ψ
 
 
@@ -216,7 +216,7 @@ wkn {Γ = ∙}     𝒟 = 𝒟
 wkn {Γ = Γ , B} 𝒟 = wk (wkn 𝒟)
 
 
-sub′ : ∀ {Δ Γ Ξ A} → Δ ⨾ Γ ⊢ Ξ true* → Δ ⨾ Ξ ⊢ A true
+sub′ : ∀ {Δ Γ Ξ A} → Δ ⨾ Γ ⊢ Ξ alltrue → Δ ⨾ Ξ ⊢ A true
                    → Δ ⨾ Γ ⊢ A true
 sub′ ∙       𝒟 = wkn 𝒟
 sub′ (ξ , 𝒞) 𝒟 = app (sub′ ξ (lam 𝒟)) 𝒞
@@ -231,7 +231,7 @@ exch 𝒟 = app (app (wk (wk (lam (lam 𝒟)))) vz) (wk vz)
 
 
 unbox : ∀ {A Δ Γ} → Δ ⨾ ∙ ⊢ □ A true
-                  → Δ ⨾ Γ ⊢ A true
+                  → Δ ⨾ Γ ⊢ A true  -- the built-in weakening obscures the true shape!
 unbox 𝒟 = letbox (box (letbox 𝒟 mvz)) mvz
 
 
@@ -286,7 +286,7 @@ mwkn {∙}     𝒟 = 𝒟
 mwkn {Δ , B} 𝒟 = mwk (mwkn 𝒟)
 
 
-msub′ : ∀ {Δ Γ Ξ A} → Δ ⊢ Ξ valid* → Ξ ⨾ Γ ⊢ A true
+msub′ : ∀ {Δ Γ Ξ A} → Δ ⊢ Ξ allvalid → Ξ ⨾ Γ ⊢ A true
                     → Δ ⨾ Γ ⊢ A true
 msub′ ∙       𝒟 = mwkn 𝒟
 msub′ (ξ , 𝒞) 𝒟 = app (msub′ ξ (lam (vau 𝒟))) (box 𝒞)
@@ -300,55 +300,59 @@ mexch 𝒟 = unvau (unvau (exch (vau (vau 𝒟))))
 --------------------------------------------------------------------------------
 
 
-⌈_⌉ : IPL.Prop → Prop
-⌈ IPL.BASE ⌉  = BASE
-⌈ A IPL.⊃ B ⌉ = ⌈ A ⌉ ⊃ ⌈ B ⌉
+-- module IPL→S4
+--   where
+--     ⌈_⌉ : IPL.Prop → Prop
+--     ⌈ IPL.BASE ⌉  = BASE
+--     ⌈ A IPL.⊃ B ⌉ = ⌈ A ⌉ ⊃ ⌈ B ⌉
 
 
-⌈_⌉* : List IPL.Prop → List Prop
-⌈ Γ ⌉* = map ⌈_⌉ Γ
+--     ⌈_⌉* : List IPL.Prop → List Prop
+--     ⌈ Γ ⌉* = map ⌈_⌉ Γ
 
 
-↑∋ : ∀ {Γ A} → Γ ∋ A
-             → ⌈ Γ ⌉* ∋ ⌈ A ⌉
-↑∋ zero    = zero
-↑∋ (suc i) = suc (↑∋ i)
+--     ↑∋ : ∀ {Γ A} → Γ ∋ A
+--                  → ⌈ Γ ⌉* ∋ ⌈ A ⌉
+--     ↑∋ zero    = zero
+--     ↑∋ (suc i) = suc (↑∋ i)
 
 
-↑ : ∀ {Δ Γ A} → Γ IPL.⊢ A true
-              → Δ ⨾ ⌈ Γ ⌉* ⊢ ⌈ A ⌉ true
-↑ (IPL.var i)   = var (↑∋ i)
-↑ (IPL.lam 𝒟)   = lam (↑ 𝒟)
-↑ (IPL.app 𝒟 ℰ) = app (↑ 𝒟) (↑ ℰ)
+--     ↑ : ∀ {Δ Γ A} → Γ IPL.⊢ A true
+--                   → Δ ⨾ ⌈ Γ ⌉* ⊢ ⌈ A ⌉ true
+--     ↑ (IPL.var i)   = var (↑∋ i)
+--     ↑ (IPL.lam 𝒟)   = lam (↑ 𝒟)
+--     ↑ (IPL.app 𝒟 ℰ) = app (↑ 𝒟) (↑ ℰ)
 
 
---------------------------------------------------------------------------------
+-- --------------------------------------------------------------------------------
 
 
-⌊_⌋ : Prop → IPL.Prop
-⌊ BASE ⌋  = IPL.BASE
-⌊ A ⊃ B ⌋ = ⌊ A ⌋ IPL.⊃ ⌊ B ⌋
-⌊ □ A ⌋   = ⌊ A ⌋
+-- module S4→IPL
+--   where
+--     ⌊_⌋ : Prop → IPL.Prop
+--     ⌊ BASE ⌋  = IPL.BASE
+--     ⌊ A ⊃ B ⌋ = ⌊ A ⌋ IPL.⊃ ⌊ B ⌋
+--     ⌊ □ A ⌋   = ⌊ A ⌋
 
 
-⌊_⌋* : List Prop → List IPL.Prop
-⌊ Γ ⌋* = map ⌊_⌋ Γ
+--     ⌊_⌋* : List Prop → List IPL.Prop
+--     ⌊ Γ ⌋* = map ⌊_⌋ Γ
 
 
-↓∋ : ∀ {Γ A} → Γ ∋ A
-             → ⌊ Γ ⌋* ∋ ⌊ A ⌋
-↓∋ zero    = zero
-↓∋ (suc i) = suc (↓∋ i)
+--     ↓∋ : ∀ {Γ A} → Γ ∋ A
+--                  → ⌊ Γ ⌋* ∋ ⌊ A ⌋
+--     ↓∋ zero    = zero
+--     ↓∋ (suc i) = suc (↓∋ i)
 
 
-↓ : ∀ {Δ Γ A} → Δ ⨾ Γ ⊢ A true
-              → ⌊ Δ ⌋* ⧺ ⌊ Γ ⌋* IPL.⊢ ⌊ A ⌋ true
-↓ {Δ = Δ} (var i)      = IPL.ren (ldrops ⌊ Δ ⌋* id⊇) (IPL.var (↓∋ i))
-↓         (lam 𝒟)      = IPL.lam (↓ 𝒟)
-↓         (app 𝒟 ℰ)    = IPL.app (↓ 𝒟) (↓ ℰ)
-↓ {Γ = Γ} (mvar i)     = IPL.ren (rdrops ⌊ Γ ⌋* id⊇) (IPL.var (↓∋ i))
-↓ {Γ = Γ} (box 𝒟)      = IPL.ren (rdrops ⌊ Γ ⌋* id⊇) (↓ 𝒟)
-↓ {Γ = Γ} (letbox 𝒟 ℰ) = IPL.cut (↓ 𝒟) (IPL.pull ⌊ Γ ⌋* (↓ ℰ))
+--     ↓ : ∀ {Δ Γ A} → Δ ⨾ Γ ⊢ A true
+--                   → ⌊ Δ ⌋* ⧺ ⌊ Γ ⌋* IPL.⊢ ⌊ A ⌋ true
+--     ↓ {Δ = Δ} (var i)      = IPL.ren (ldrops ⌊ Δ ⌋* id⊇) (IPL.var (↓∋ i))
+--     ↓         (lam 𝒟)      = IPL.lam (↓ 𝒟)
+--     ↓         (app 𝒟 ℰ)    = IPL.app (↓ 𝒟) (↓ ℰ)
+--     ↓ {Γ = Γ} (mvar i)     = IPL.ren (rdrops ⌊ Γ ⌋* id⊇) (IPL.var (↓∋ i))
+--     ↓ {Γ = Γ} (box 𝒟)      = IPL.ren (rdrops ⌊ Γ ⌋* id⊇) (↓ 𝒟)
+--     ↓ {Γ = Γ} (letbox 𝒟 ℰ) = IPL.cut (↓ 𝒟) (IPL.pull ⌊ Γ ⌋* (↓ ℰ))
 
 
---------------------------------------------------------------------------------
+-- --------------------------------------------------------------------------------

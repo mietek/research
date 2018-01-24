@@ -20,7 +20,10 @@ record Model : Set₁
       World : Set
 
       -- TODO: Better name
-      Ground : World → Set
+      Ground : World → String → Set
+
+      -- TODO: Better name
+      Explode : World → Prop → Set
 
       _≥_ : World → World → Set
 
@@ -29,36 +32,15 @@ record Model : Set₁
       _∘≥_ : ∀ {W W′ W″} → W′ ≥ W → W″ ≥ W′
                          → W″ ≥ W
 
-      relG : ∀ {W W′} → W′ ≥ W → Ground W
-                      → Ground W′
+      relG : ∀ {P W W′} → W′ ≥ W → Ground W P
+                        → Ground W′ P
 
-      ⌊_⌋ : World → List² Prop Prop
+      ⌊_⌋₁ : World → List Prop
 
-      ⌊_⌋≥ : ∀ {W W′} → W′ ≥ W
-                      → ⌊ W′ ⌋ ⊇² ⌊ W ⌋
+      ⌊_⌋≥₁ : ∀ {W W′} → W′ ≥ W
+                       → ⌊ W′ ⌋₁ ⊇ ⌊ W ⌋₁
 
 open Model {{...}}
-
-
---------------------------------------------------------------------------------
-
-
-⌊_⌋₁ : ∀ {{_ : Model}} → World → List Prop
-⌊ W ⌋₁ = proj₁ ⌊ W ⌋
-
-
-⌊_⌋₂ : ∀ {{_ : Model}} → World → List Prop
-⌊ W ⌋₂ = proj₂ ⌊ W ⌋
-
-
-⌊_⌋≥₁ : ∀ {{_ : Model}} {W W′} → W′ ≥ W
-                               → ⌊ W′ ⌋₁ ⊇ ⌊ W ⌋₁
-⌊ η ⌋≥₁ = proj₁ ⌊ η ⌋≥
-
-
-⌊_⌋≥₂ : ∀ {{_ : Model}} {W W′} → W′ ≥ W
-                               → ⌊ W′ ⌋₂ ⊇ ⌊ W ⌋₂
-⌊ η ⌋≥₂ = proj₂ ⌊ η ⌋≥
 
 
 --------------------------------------------------------------------------------
@@ -67,7 +49,7 @@ open Model {{...}}
 mutual
   infix 3 _⊩_value
   _⊩_value : ∀ {{_ : Model}} → World → Prop → Set
-  W ⊩ BASE value  = Ground W
+  W ⊩ ι P value   = Ground W P
   W ⊩ A ⊃ B value = ∀ {W′} → W′ ≥ W → W′ ⊩ A thunk
                             → W′ ⊩ B thunk
   W ⊩ □ A value   = W ⊩ A chunk
@@ -75,22 +57,22 @@ mutual
   infix 3 _⊩_thunk
   _⊩_thunk : ∀ {{_ : Model}} → World → Prop → Set
   W ⊩ A thunk = ∀ {B W′} → W′ ≥ W → (∀ {W″} → W″ ≥ W′ → W″ ⊩ A value
-                                               → ⌊ W″ ⌋₁ ⨾ ⌊ W″ ⌋₂ ⊢ B verifiable)
-                          → ⌊ W′ ⌋₁ ⨾ ⌊ W′ ⌋₂ ⊢ B verifiable
+                                               → Explode W″ B)
+                          → Explode W′ B
 
   infix 3 _⊩_chunk
   _⊩_chunk : ∀ {{_ : Model}} → World → Prop → Set
   W ⊩ A chunk = ⌊ W ⌋₁ ⊢ A valid × W ⊩ A thunk
 
 
-infix 3 _⊩_thunk*
-_⊩_thunk* : ∀ {{_ : Model}} → World → List Prop → Set
-W ⊩ Γ thunk* = All (W ⊩_thunk) Γ
+infix 3 _⊩_allthunk
+_⊩_allthunk : ∀ {{_ : Model}} → World → List Prop → Set
+W ⊩ Γ allthunk = All (W ⊩_thunk) Γ
 
 
-infix 3 _⊩_chunk*
-_⊩_chunk* : ∀ {{_ : Model}} → World → List Prop → Set
-W ⊩ Δ chunk* = All (W ⊩_chunk) Δ
+infix 3 _⊩_allchunk
+_⊩_allchunk : ∀ {{_ : Model}} → World → List Prop → Set
+W ⊩ Δ allchunk = All (W ⊩_chunk) Δ
 
 
 --------------------------------------------------------------------------------
@@ -101,8 +83,8 @@ syn : ∀ {{_ : Model}} {A W} → W ⊩ A chunk
 syn v = proj₁ v
 
 
-syns : ∀ {{_ : Model}} {Δ W} → W ⊩ Δ chunk*
-                             → ⌊ W ⌋₁ ⊢ Δ valid*
+syns : ∀ {{_ : Model}} {Δ W} → W ⊩ Δ allchunk
+                             → ⌊ W ⌋₁ ⊢ Δ allvalid
 syns δ = maps syn δ
 
 
@@ -117,7 +99,7 @@ sem v = proj₂ v
 mutual
   rel : ∀ {{_ : Model}} {A W W′} → W′ ≥ W → W ⊩ A value
                                  → W′ ⊩ A value
-  rel {BASE}  η 𝒟 = relG η 𝒟
+  rel {ι P}   η 𝒟 = relG η 𝒟
   rel {A ⊃ B} η f = \ η′ k → f (η ∘≥ η′) k
   rel {□ A}   η v = relₖ₁ η v
 
@@ -130,16 +112,16 @@ mutual
   relₖ₁ {A} η v = mren ⌊ η ⌋≥₁ (syn v) , relₖ {A} η (sem v)
 
 
-relsₖ : ∀ {{_ : Model}} {Γ W W′} → W′ ≥ W → W ⊩ Γ thunk*
-                                 → W′ ⊩ Γ thunk*
+relsₖ : ∀ {{_ : Model}} {Γ W W′} → W′ ≥ W → W ⊩ Γ allthunk
+                                 → W′ ⊩ Γ allthunk
 relsₖ η γ = maps (\ {A} k {B} {W′} → relₖ {A} η (\ {C} {W″} → k {C} {W″})) γ
 -- NOTE: Pattern-matching problem here prevents rel from taking “A true”
 -- NOTE: Equivalent to
 -- relsₖ η γ = maps (relₖ η) γ
 
 
-relsₖ₁ : ∀ {{_ : Model}} {Δ W W′} → W′ ≥ W → W ⊩ Δ chunk*
-                                  → W′ ⊩ Δ chunk*
+relsₖ₁ : ∀ {{_ : Model}} {Δ W W′} → W′ ≥ W → W ⊩ Δ allchunk
+                                  → W′ ⊩ Δ allchunk
 relsₖ₁ η δ = maps (relₖ₁ η) δ
 
 
@@ -165,7 +147,7 @@ bind k f = \ η f′ →
 
 infix 3 _⊨_true
 _⊨_true : List² Prop Prop → Prop → Set₁
-Δ ⨾ Γ ⊨ A true = ∀ {{_ : Model}} {W} → W ⊩ Δ chunk* → W ⊩ Γ thunk*
+Δ ⨾ Γ ⊨ A true = ∀ {{_ : Model}} {W} → W ⊩ Δ allchunk → W ⊩ Γ allthunk
                                       → W ⊩ A thunk
 
 
@@ -193,27 +175,28 @@ renᵣ² η 𝒟 = mrenᵣ (proj₁ η) (renᵣ (proj₂ η) 𝒟)
 instance
   canon : Model
   canon = record
-            { World  = List² Prop Prop
-            ; Ground = \ { (Δ ⨾ Γ) → Δ ⨾ Γ ⊢ BASE usable }
-            ; _≥_    = _⊇²_
-            ; id≥    = id
-            ; _∘≥_   = _∘_
-            ; relG   = renᵣ²
-            ; ⌊_⌋    = id
-            ; ⌊_⌋≥   = id
+            { World   = List² Prop Prop
+            ; Ground  = \ { (Δ ⨾ Γ) P → Δ ⨾ Γ ⊢ ι P usable }
+            ; Explode = \ { (Δ ⨾ Γ) A → Δ ⨾ Γ ⊢ A verifiable }
+            ; _≥_     = _⊇²_
+            ; id≥     = id
+            ; _∘≥_    = _∘_
+            ; relG    = renᵣ²
+            ; ⌊_⌋₁    = proj₁
+            ; ⌊_⌋≥₁   = proj₁
             }
 
 
 mutual
   ⇓ : ∀ {A Δ Γ} → Δ ⨾ Γ ⊢ A usable
                 → Δ ⨾ Γ ⊩ A thunk
-  ⇓ {BASE}  𝒟 = return {BASE} 𝒟
+  ⇓ {ι P}   𝒟 = return {ι P} 𝒟
   ⇓ {A ⊃ B} 𝒟 = return {A ⊃ B} (\ η k → ⇓ (app (renᵣ² η 𝒟) (⇑ k)))
   ⇓ {□ A}   𝒟 = \ η f → letbox (renᵣ² η 𝒟) (f (drop₁ id) (mvz , ⇓ mvzᵣ))
 
   ⇑ : ∀ {A Δ Γ} → Δ ⨾ Γ ⊩ A thunk
                 → Δ ⨾ Γ ⊢ A verifiable
-  ⇑ {BASE}  k = k id (\ η 𝒟 → use 𝒟)
+  ⇑ {ι P}   k = k id (\ η 𝒟 → use 𝒟)
   ⇑ {A ⊃ B} k = k id (\ η f → lam (⇑ (f (drop₂ id) (⇓ vzᵣ))))
   ⇑ {□ A}   k = k id (\ η v → box (syn v))
 
@@ -221,48 +204,48 @@ mutual
 --------------------------------------------------------------------------------
 
 
-wksₛ : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ thunk*
-                   → Δ ⨾ Γ , A ⊩ Ξ thunk*
+wksₛ : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ allthunk
+                   → Δ ⨾ Γ , A ⊩ Ξ allthunk
 wksₛ ξ = relsₖ (drop₂ id) ξ
 
 
-liftsₛ : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ thunk*
-                     → Δ ⨾ Γ , A ⊩ Ξ , A thunk*
+liftsₛ : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ allthunk
+                     → Δ ⨾ Γ , A ⊩ Ξ , A allthunk
 liftsₛ ξ = wksₛ ξ , ⇓ vzᵣ
 
 
 varsₛ : ∀ {Δ Γ Γ′} → Γ′ ⊇ Γ
-                   → Δ ⨾ Γ′ ⊩ Γ thunk*
+                   → Δ ⨾ Γ′ ⊩ Γ allthunk
 varsₛ done     = ∙
 varsₛ (drop η) = wksₛ (varsₛ η)
 varsₛ (keep η) = liftsₛ (varsₛ η)
 
 
-idsₛ : ∀ {Δ Γ} → Δ ⨾ Γ ⊩ Γ thunk*
+idsₛ : ∀ {Δ Γ} → Δ ⨾ Γ ⊩ Γ allthunk
 idsₛ = varsₛ id
 
 
 --------------------------------------------------------------------------------
 
 
-mwksₛ₁ : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ chunk*
-                     → Δ , A ⨾ Γ ⊩ Ξ chunk*
+mwksₛ₁ : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ allchunk
+                     → Δ , A ⨾ Γ ⊩ Ξ allchunk
 mwksₛ₁ ξ = relsₖ₁ (drop₁ id) ξ
 
 
-mliftsₛ₁ : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ chunk*
-                       → Δ , A ⨾ Γ ⊩ Ξ , A chunk*
+mliftsₛ₁ : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ allchunk
+                       → Δ , A ⨾ Γ ⊩ Ξ , A allchunk
 mliftsₛ₁ ξ = mwksₛ₁ ξ , (mvz , ⇓ mvzᵣ)
 
 
 mvarsₛ₁ : ∀ {Δ Δ′ Γ} → Δ′ ⊇ Δ
-                     → Δ′ ⨾ Γ ⊩ Δ chunk*
+                     → Δ′ ⨾ Γ ⊩ Δ allchunk
 mvarsₛ₁ done     = ∙
 mvarsₛ₁ (drop η) = mwksₛ₁ (mvarsₛ₁ η)
 mvarsₛ₁ (keep η) = mliftsₛ₁ (mvarsₛ₁ η)
 
 
-midsₛ₁ : ∀ {Δ Γ} → Δ ⨾ Γ ⊩ Δ chunk*
+midsₛ₁ : ∀ {Δ Γ} → Δ ⨾ Γ ⊩ Δ allchunk
 midsₛ₁ = mvarsₛ₁ id
 
 
