@@ -53,6 +53,8 @@ import STLCTerms
 import STLCDerivations          -- ⊢_⦂_valid[_] ; var/lam/app
 import STLCStandardDerivations  -- _⊢_⦂_        ; var/lam/app
 
+-- TODO: Below
+
 import STLCBidirectionalTermsForTypeChecking
 import STLCBidirectionalDerivationsForTypeChecking
 import STLCTypeChecking

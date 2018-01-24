@@ -5,14 +5,11 @@ module STLCDerivations where
 open import Prelude
 open import Category
 open import Fin
-import List
 open import Vec
 open import VecLemmas
 open import AllVec
 open import STLCTypes
 open import STLCTerms
-import IPLPropositions as IPL
-import IPLDerivations as IPL
 
 
 --------------------------------------------------------------------------------
@@ -151,9 +148,10 @@ exch 𝒟 = app (app (wk (wk (lam (lam 𝒟)))) vz) (wk vz)
 --------------------------------------------------------------------------------
 
 
-module IPL⟷STLC
+module STLC⟷IPL
   where
-    open List using (List ; ∙ ; _,_ ; len ; _∋_ ; zero ; suc)
+    import IPLDerivations as IPL
+    open import List
 
 
     ↓ : ∀ {g M A} → {Γ : Types g}
@@ -162,6 +160,7 @@ module IPL⟷STLC
     ↓ (var i)   = IPL.var (to∋ i)
     ↓ (lam 𝒟)   = IPL.lam (↓ 𝒟)
     ↓ (app 𝒟 ℰ) = IPL.app (↓ 𝒟) (↓ ℰ)
+
 
 
     data _⌊=⌋_ : ∀ {g Γ A} → Term g → Γ IPL.⊢ A true → Set

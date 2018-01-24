@@ -78,7 +78,7 @@ var (suc i) = wk (var i)
 --------------------------------------------------------------------------------
 
 
-module Default⟷Experimental1
+module Experimental1⟷Default
   where
     import IPLDerivations as Def
 

@@ -87,7 +87,7 @@ app 𝒟 ℰ = cut ℰ (unlam 𝒟)
 --------------------------------------------------------------------------------
 
 
-module Default⟷Experimental2
+module Experimental2⟷Default
   where
     import IPLDerivations as Def
 
