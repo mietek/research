@@ -91,6 +91,20 @@ ren : ∀ {Γ Γ′ A} → Γ′ ⊇ Γ → Γ ⊢ A true
 ren η 𝒟 = sub (vars η) 𝒟
 
 
+-- NOTE: Local soundness of ⊃
+
+pseudocut : ∀ {Γ A B} → Γ ⊢ A true → Γ , A ⊢ B true
+                      → Γ ⊢ B true
+pseudocut 𝒟 ℰ = app (lam ℰ) 𝒟
+
+
+-- NOTE: Local completeness of ⊃
+
+relam : ∀ {Γ A B} → Γ ⊢ A ⊃ B true
+                  → Γ ⊢ A ⊃ B true
+relam 𝒟 = lam (unlam 𝒟)
+
+
 --------------------------------------------------------------------------------
 
 

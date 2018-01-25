@@ -83,13 +83,4 @@ assoc⧺ Ξ Ψ ∙       = refl
 assoc⧺ Ξ Ψ (Φ , A) = (_, A) & assoc⧺ Ξ Ψ Φ
 
 
-{-# REWRITE lid⧺ #-}
-lid-ldrops : ∀ {X} → {Ξ Ξ′ : List X}
-                   → (η : Ξ′ ⊇ Ξ)
-                   → ldrops ∙ η ≡ η
-lid-ldrops done     = refl
-lid-ldrops (drop η) = drop & lid-ldrops η
-lid-ldrops (keep η) = keep & lid-ldrops η
-
-
 --------------------------------------------------------------------------------

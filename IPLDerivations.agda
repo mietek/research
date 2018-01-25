@@ -106,9 +106,25 @@ cut : ∀ {Γ A B} → Γ ⊢ A true → Γ , A ⊢ B true
 cut 𝒟 ℰ = sub (ids , 𝒟) ℰ
 
 
+-- NOTE: Local soundness of ⊃
+
 pseudocut : ∀ {Γ A B} → Γ ⊢ A true → Γ , A ⊢ B true
                       → Γ ⊢ B true
 pseudocut 𝒟 ℰ = app (lam ℰ) 𝒟
+
+
+-- NOTE: Interesting
+
+pseudocut′ : ∀ {Γ A B} → Γ ⊢ A true → Γ , A ⊢ B true
+                       → Γ ⊢ B true
+pseudocut′ 𝒟 ℰ = cut 𝒟 (unlam (lam ℰ))
+
+
+-- NOTE: Local completeness of ⊃
+
+relam : ∀ {Γ A B} → Γ ⊢ A ⊃ B true
+                  → Γ ⊢ A ⊃ B true
+relam 𝒟 = lam (unlam 𝒟)
 
 
 pseudosub : ∀ {Γ Ξ A} → Γ ⊢ Ξ alltrue → Ξ ⊢ A true
@@ -132,22 +148,22 @@ pull Γ (lam 𝒟)   = lam (exch (pull (Γ , _) 𝒟))
 pull Γ (app 𝒟 ℰ) = app (pull Γ 𝒟) (pull Γ ℰ)
 
 
-lam* : ∀ {Γ A} → (Ξ : List Prop) → Γ ⧺ Ξ ⊢ A true
-               → Γ ⊢ Ξ *⊃ A true
-lam* ∙       𝒟 = 𝒟
-lam* (Ξ , B) 𝒟 = lam* Ξ (lam 𝒟)
+lams : ∀ {Γ A} → (Ξ : List Prop) → Γ ⧺ Ξ ⊢ A true
+               → Γ ⊢ Ξ ⊃⋯⊃ A true
+lams ∙       𝒟 = 𝒟
+lams (Ξ , B) 𝒟 = lams Ξ (lam 𝒟)
 
 
-unlam* : ∀ {Γ A} → (Ξ : List Prop) → Γ ⊢ Ξ *⊃ A true
+unlams : ∀ {Γ A} → (Ξ : List Prop) → Γ ⊢ Ξ ⊃⋯⊃ A true
                  → Γ ⧺ Ξ ⊢ A true
-unlam* ∙       𝒟 = 𝒟
-unlam* (Ξ , B) 𝒟 = unlam (unlam* Ξ 𝒟)
+unlams ∙       𝒟 = 𝒟
+unlams (Ξ , B) 𝒟 = unlam (unlams Ξ 𝒟)
 
 
-app* : ∀ {Γ Ξ A} → Γ ⊢ Ξ *⊃ A true → Γ ⊢ Ξ alltrue
+apps : ∀ {Γ Ξ A} → Γ ⊢ Ξ ⊃⋯⊃ A true → Γ ⊢ Ξ alltrue
                  → Γ ⊢ A true
-app* 𝒟 ∙       = 𝒟
-app* 𝒟 (ξ , ℰ) = app (app* 𝒟 ξ) ℰ
+apps 𝒟 ∙       = 𝒟
+apps 𝒟 (ξ , ℰ) = app (apps 𝒟 ξ) ℰ
 
 
 --------------------------------------------------------------------------------

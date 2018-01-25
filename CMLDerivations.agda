@@ -4,7 +4,6 @@ open import Prelude
 open import Category
 open import List
 open import ListLemmas
-open import ListConcatenation
 open import AllList
 open import CMLPropositions
 
@@ -246,34 +245,41 @@ unvau : ∀ {Δ Γ Ψ A B} → Δ ⊢ B valid[ Γ , [ Ψ ] A ]
 unvau 𝒟 = app (lam (mwk 𝒟)) (box (mvz ids))
 
 
-axiomCK : ∀ {Δ Γ Ψ A B} → Δ ⊢ [ Ψ ] (A ⊃ B) valid[ Γ ] → Δ ⊢ [ Ψ ] A valid[ Γ ]
-                        → Δ ⊢ [ Ψ ] B valid[ Γ ]
-axiomCK 𝒟 ℰ = letbox 𝒟 (letbox (mwk ℰ) (box (app (mwk (mvz ids)) (mvz ids))))
+boxapp : ∀ {Δ Γ Ψ A B} → Δ ⊢ [ Ψ ] (A ⊃ B) valid[ Γ ] → Δ ⊢ [ Ψ ] A valid[ Γ ]
+                       → Δ ⊢ [ Ψ ] B valid[ Γ ]
+boxapp 𝒟 ℰ = letbox 𝒟 (letbox (mwk ℰ) (box (app (mwk (mvz ids)) (mvz ids))))
 
 
-axiomCT : ∀ {Δ Γ Ψ A} → Δ ⊢ [ Ψ ] A valid[ Γ ] → Δ ⊢ Ψ allvalid[ Γ ]
-                      → Δ ⊢ A valid[ Γ ]
-axiomCT 𝒟 ψ = letbox 𝒟 (mvz (mwks ψ))
+unbox : ∀ {Δ Γ Ψ A} → Δ ⊢ [ Ψ ] A valid[ Γ ] → Δ ⊢ Ψ allvalid[ Γ ]
+                    → Δ ⊢ A valid[ Γ ]
+unbox 𝒟 ψ = letbox 𝒟 (mvz (mwks ψ))
 
 
-axiomC4 : ∀ {Δ Γ Ψ Φ A} → Δ ⊢ [ Ψ ] A valid[ Γ ]
-                        → Δ ⊢ [ Φ ] [ Ψ ] A valid[ Γ ]
-axiomC4 𝒟 = letbox 𝒟 (box (box (mvz ids)))
+dupbox : ∀ {Δ Γ Ψ Φ A} → Δ ⊢ [ Ψ ] A valid[ Γ ]
+                       → Δ ⊢ [ Φ ] [ Ψ ] A valid[ Γ ]
+dupbox 𝒟 = letbox 𝒟 (box (box (mvz ids)))
 
 
-axiomK : ∀ {Δ Γ A B} → Δ ⊢ [ ∙ ] (A ⊃ B) valid[ Γ ] → Δ ⊢ [ ∙ ] A valid[ Γ ]
-                     → Δ ⊢ [ ∙ ] B valid[ Γ ]
-axiomK 𝒟 ℰ = axiomCK 𝒟 ℰ
+boxapp₀ : ∀ {Δ Γ A B} → Δ ⊢ [ ∙ ] (A ⊃ B) valid[ Γ ] → Δ ⊢ [ ∙ ] A valid[ Γ ]
+                      → Δ ⊢ [ ∙ ] B valid[ Γ ]
+boxapp₀ 𝒟 ℰ = boxapp 𝒟 ℰ
 
 
-axiomT : ∀ {Δ Γ A} → Δ ⊢ [ ∙ ] A valid[ Γ ]
+unbox₀ : ∀ {Δ Γ A} → Δ ⊢ [ ∙ ] A valid[ Γ ]
                    → Δ ⊢ A valid[ Γ ]
-axiomT 𝒟 = axiomCT 𝒟 ∙
+unbox₀ 𝒟 = unbox 𝒟 ∙
 
 
-axiom4 : ∀ {Δ Γ A} → Δ ⊢ [ ∙ ] A valid[ Γ ]
-                   → Δ ⊢ [ ∙ ] [ ∙ ] A valid[ Γ ]
-axiom4 𝒟 = axiomC4 𝒟
+-- NOTE: Local completeness of [_]
+
+rebox : ∀ {Δ Γ Ψ A} → Δ ⊢ [ Ψ ] A valid[ Γ ]
+                    → Δ ⊢ [ Ψ ] A valid[ Γ ]
+rebox 𝒟 = letbox 𝒟 (box (mvz ids))
+
+
+dupbox₀ : ∀ {Δ Γ A} → Δ ⊢ [ ∙ ] A valid[ Γ ]
+                    → Δ ⊢ [ ∙ ] [ ∙ ] A valid[ Γ ]
+dupbox₀ 𝒟 = dupbox 𝒟
 
 
 mcut : ∀ {Δ Γ Ψ A B} → Δ ⊢ A valid[ Ψ ] → Δ , ⟪ Ψ ⊫ A ⟫ ⊢ B valid[ Γ ]
@@ -281,94 +287,29 @@ mcut : ∀ {Δ Γ Ψ A B} → Δ ⊢ A valid[ Ψ ] → Δ , ⟪ Ψ ⊫ A ⟫ ⊢
 mcut 𝒟 ℰ = msub (mids* , 𝒟) ℰ
 
 
-mpseudocut : ∀ {Δ Γ Ψ A B} → Δ ⊢ A valid[ Ψ ] → Δ , ⟪ Ψ ⊫ A ⟫ ⊢ B valid[ Γ ]
+-- NOTE: Local soundness of [_]
+
+pseudomcut : ∀ {Δ Γ Ψ A B} → Δ ⊢ A valid[ Ψ ] → Δ , ⟪ Ψ ⊫ A ⟫ ⊢ B valid[ Γ ]
                            → Δ ⊢ B valid[ Γ ]
-mpseudocut 𝒟 ℰ = letbox (box 𝒟) ℰ
+pseudomcut 𝒟 ℰ = letbox (box 𝒟) ℰ
 
 
-mpseudosub : ∀ {Δ Γ Ξ A} → Δ ⊢ Ξ allvalid* → Ξ ⊢ A valid[ Γ ]
+-- NOTE: Interesting
+
+pseudomcut′ : ∀ {Δ Γ Ψ A B} → Δ ⊢ A valid[ Ψ ] → Δ , ⟪ Ψ ⊫ A ⟫ ⊢ B valid[ Γ ]
+                            → Δ ⊢ B valid[ Γ ]
+pseudomcut′ 𝒟 ℰ = mcut 𝒟 (unbox (box ℰ) ids)
+
+
+pseudomsub : ∀ {Δ Γ Ξ A} → Δ ⊢ Ξ allvalid* → Ξ ⊢ A valid[ Γ ]
                          → Δ ⊢ A valid[ Γ ]
-mpseudosub ∙       𝒟 = mren bot⊇ 𝒟
-mpseudosub (ξ , 𝒞) 𝒟 = app (mpseudosub ξ (lam (vau 𝒟))) (box 𝒞)
+pseudomsub ∙       𝒟 = mren bot⊇ 𝒟
+pseudomsub (ξ , 𝒞) 𝒟 = app (pseudomsub ξ (lam (vau 𝒟))) (box 𝒞)
 
 
 mexch : ∀ {Δ Γ Ψ Φ A B C} → Δ , ⟪ Ψ ⊫ A ⟫ , ⟪ Φ ⊫ B ⟫ ⊢ C valid[ Γ ]
                           → Δ , ⟪ Φ ⊫ B ⟫ , ⟪ Ψ ⊫ A ⟫ ⊢ C valid[ Γ ]
 mexch 𝒟 = unvau (unvau (exch (vau (vau 𝒟))))
-
-
---------------------------------------------------------------------------------
-
-
-module CML⟷IPL
-  where
-    import IPLPropositions as IPL
-    import IPLDerivations as IPL
-
-
-    ⌈_⌉ : IPL.Prop → Prop
-    ⌈ IPL.ι P ⌉   = ι P
-    ⌈ A IPL.⊃ B ⌉ = ⌈ A ⌉ ⊃ ⌈ B ⌉
-
-
-    ⌈_⌉* : List IPL.Prop → List Prop
-    ⌈ Γ ⌉* = map ⌈_⌉ Γ
-
-
-    ↑∋ : ∀ {Γ A} → Γ ∋ A
-                 → ⌈ Γ ⌉* ∋ ⌈ A ⌉
-    ↑∋ zero    = zero
-    ↑∋ (suc i) = suc (↑∋ i)
-
-
-    ↑ : ∀ {Δ Γ A} → Γ IPL.⊢ A true
-                  → Δ ⊢ ⌈ A ⌉ valid[ ⌈ Γ ⌉* ]
-    ↑ (IPL.var i)   = var (↑∋ i)
-    ↑ (IPL.lam 𝒟)   = lam (↑ 𝒟)
-    ↑ (IPL.app 𝒟 ℰ) = app (↑ 𝒟) (↑ ℰ)
-
-
-    mutual
-      ⌊_⌋ : Prop → IPL.Prop
-      ⌊ ι P ⌋     = IPL.ι P
-      ⌊ A ⊃ B ⌋   = ⌊ A ⌋ IPL.⊃ ⌊ B ⌋
-      ⌊ [ Ψ ] A ⌋ = ⌊ Ψ ⌋*₂ IPL.*⊃ ⌊ A ⌋
-
-      ⌊_⌋*₂ : List Prop → List IPL.Prop
-      ⌊ ∙ ⌋*₂     = ∙
-      ⌊ Ξ , A ⌋*₂ = ⌊ Ξ ⌋*₂ , ⌊ A ⌋
-
-
-    ⌊_⌋*₁ : List Assert → List IPL.Prop
-    ⌊ Δ ⌋*₁ = map (\ { ⟪ Γ ⊫ A ⟫ → ⌊ Γ ⌋*₂ IPL.*⊃ ⌊ A ⌋ }) Δ
-
-
-    ↓∋₁ : ∀ {Δ Γ A} → Δ ∋ ⟪ Γ ⊫ A ⟫
-                    → ⌊ Δ ⌋*₁ ∋ ⌊ Γ ⌋*₂ IPL.*⊃ ⌊ A ⌋
-    ↓∋₁ zero    = zero
-    ↓∋₁ (suc i) = suc (↓∋₁ i)
-
-
-    ↓∋₂ : ∀ {Γ A} → Γ ∋ A
-                  → ⌊ Γ ⌋*₂ ∋ ⌊ A ⌋
-    ↓∋₂ zero    = zero
-    ↓∋₂ (suc i) = suc (↓∋₂ i)
-
-
-    mutual
-      ↓ : ∀ {Δ Γ A} → Δ ⊢ A valid[ Γ ]
-                    → ⌊ Δ ⌋*₁ ⧺ ⌊ Γ ⌋*₂ IPL.⊢ ⌊ A ⌋ true
-      ↓ {Δ = Δ} (var i)         = IPL.ren (ldrops ⌊ Δ ⌋*₁ id⊇) (IPL.var (↓∋₂ i))
-      ↓         (lam 𝒟)         = IPL.lam (↓ 𝒟)
-      ↓         (app 𝒟 ℰ)       = IPL.app (↓ 𝒟) (↓ ℰ)
-      ↓ {Γ = Γ} (mvar i ψ)      = IPL.app* (IPL.ren (rdrops ⌊ Γ ⌋*₂ id) (IPL.var (↓∋₁ i))) (↓* ψ)
-      ↓ {Γ = Γ} (box {Ψ = Ψ} 𝒟) = IPL.ren (rdrops ⌊ Γ ⌋*₂ id) (IPL.lam* ⌊ Ψ ⌋*₂ (↓ 𝒟))
-      ↓ {Γ = Γ} (letbox 𝒟 ℰ)    = IPL.cut (↓ 𝒟) (IPL.pull ⌊ Γ ⌋*₂ (↓ ℰ))
-
-      ↓* : ∀ {Δ Γ Ξ} → Δ ⊢ Ξ allvalid[ Γ ]
-                     → ⌊ Δ ⌋*₁ ⧺ ⌊ Γ ⌋*₂ IPL.⊢ ⌊ Ξ ⌋*₂ alltrue
-      ↓* ∙       = ∙
-      ↓* (ξ , 𝒟) = ↓* ξ , ↓ 𝒟
 
 
 --------------------------------------------------------------------------------

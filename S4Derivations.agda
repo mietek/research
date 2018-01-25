@@ -209,9 +209,18 @@ cut : ∀ {Δ Γ A B} → Δ ⊢ A valid[ Γ ] → Δ ⊢ B valid[ Γ , A ]
 cut 𝒟 ℰ = sub (ids , 𝒟) ℰ
 
 
+-- NOTE: Local soundness of ⊃
+
 pseudocut : ∀ {Δ Γ A B} → Δ ⊢ A valid[ Γ ] → Δ ⊢ B valid[ Γ , A ]
                         → Δ ⊢ B valid[ Γ ]
 pseudocut 𝒟 ℰ = app (lam ℰ) 𝒟
+
+
+-- NOTE: Local completeness of ⊃
+
+relam : ∀ {Δ Γ A B} → Δ ⊢ A ⊃ B valid[ Γ ]
+                    → Δ ⊢ A ⊃ B valid[ Γ ]
+relam 𝒟 = lam (unlam 𝒟)
 
 
 pseudosub : ∀ {Δ Γ Ξ A} → Δ ⊢ Ξ allvalid[ Γ ] → Δ ⊢ A valid[ Ξ ]
@@ -238,19 +247,26 @@ unvau : ∀ {Δ Γ A B} → Δ ⊢ B valid[ Γ , □ A ]
 unvau 𝒟 = app (lam (mwk 𝒟)) (box mvz)
 
 
-axiomK : ∀ {A B Δ Γ} → Δ ⊢ □ (A ⊃ B) valid[ Γ ] → Δ ⊢ □ A valid[ Γ ]
+boxapp : ∀ {A B Δ Γ} → Δ ⊢ □ (A ⊃ B) valid[ Γ ] → Δ ⊢ □ A valid[ Γ ]
                      → Δ ⊢ □ B valid[ Γ ]
-axiomK 𝒟 ℰ = letbox 𝒟 (letbox (mwk ℰ) (box (app (mwk mvz) mvz)))
+boxapp 𝒟 ℰ = letbox 𝒟 (letbox (mwk ℰ) (box (app (mwk mvz) mvz)))
 
 
-axiomT : ∀ {A Δ Γ} → Δ ⊢ □ A valid[ Γ ]
-                   → Δ ⊢ A valid[ Γ ]
-axiomT 𝒟 = letbox 𝒟 mvz
+unbox : ∀ {A Δ Γ} → Δ ⊢ □ A valid[ Γ ]
+                  → Δ ⊢ A valid[ Γ ]
+unbox 𝒟 = letbox 𝒟 mvz
 
 
-axiom4 : ∀ {A Δ Γ} → Δ ⊢ □ A valid[ Γ ]
+-- NOTE: Local completeness of □
+
+rebox : ∀ {Δ Γ A} → Δ ⊢ □ A valid[ Γ ]
+                   → Δ ⊢ □ A valid[ Γ ]
+rebox 𝒟 = letbox 𝒟 (box mvz)
+
+
+dupbox : ∀ {A Δ Γ} → Δ ⊢ □ A valid[ Γ ]
                    → Δ ⊢ □ □ A valid[ Γ ]
-axiom4 𝒟 = letbox 𝒟 (box (box mvz))
+dupbox 𝒟 = letbox 𝒟 (box (box mvz))
 
 
 mcut : ∀ {Δ Γ A B} → Δ ⊢ A valid[ ∙ ] → Δ , ⟪⊫ A ⟫ ⊢ B valid[ Γ ]
@@ -258,9 +274,18 @@ mcut : ∀ {Δ Γ A B} → Δ ⊢ A valid[ ∙ ] → Δ , ⟪⊫ A ⟫ ⊢ B val
 mcut 𝒟 ℰ = msub (mids* , 𝒟) ℰ
 
 
+-- NOTE: Local soundness of □
+
 pseudomcut : ∀ {Δ Γ A B} → Δ ⊢ A valid[ ∙ ] → Δ , ⟪⊫ A ⟫ ⊢ B valid[ Γ ]
                          → Δ ⊢ B valid[ Γ ]
 pseudomcut 𝒟 ℰ = letbox (box 𝒟) ℰ
+
+
+-- NOTE: Interesting; too limited to support local soundness?
+
+pseudomcut′ : ∀ {Δ Γ A B} → Δ ⊢ A valid[ ∙ ] → Δ , ⟪⊫ A ⟫ ⊢ B valid[ ∙ ]
+                          → Δ ⊢ B valid[ Γ ]
+pseudomcut′ 𝒟 ℰ = mcut 𝒟 (unbox (box ℰ))
 
 
 pseudomsub : ∀ {Δ Γ Ξ A} → Δ ⊢ Ξ allvalid* → Ξ ⊢ A valid[ Γ ]

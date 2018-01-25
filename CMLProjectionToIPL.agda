@@ -1,6 +1,6 @@
 {-# OPTIONS --rewriting #-}
 
-module S4ProjectionToIPL where
+module CMLProjectionToIPL where
 
 open import Prelude
 open import Category
@@ -8,8 +8,8 @@ open import List
 open import ListLemmas
 open import ListConcatenation
 open import AllList
-open import S4Propositions
-open import S4Derivations
+open import CMLPropositions
+open import CMLDerivations
 import IPLPropositions as IPL
 import IPLDerivations as IPL
 
@@ -17,18 +17,19 @@ import IPLDerivations as IPL
 --------------------------------------------------------------------------------
 
 
-↓ₚ : Prop → IPL.Prop
-↓ₚ (ι P)   = IPL.ι P
-↓ₚ (A ⊃ B) = ↓ₚ A IPL.⊃ ↓ₚ B
-↓ₚ (□ A)   = ↓ₚ A
+mutual
+  ↓ₚ : Prop → IPL.Prop
+  ↓ₚ (ι P)     = IPL.ι P
+  ↓ₚ (A ⊃ B)   = ↓ₚ A IPL.⊃ ↓ₚ B
+  ↓ₚ ([ Ψ ] A) = ↓ₚₛ Ψ IPL.⊃⋯⊃ ↓ₚ A
+
+  ↓ₚₛ : List Prop → List IPL.Prop
+  ↓ₚₛ ∙       = ∙
+  ↓ₚₛ (Ξ , A) = ↓ₚₛ Ξ , ↓ₚ A
 
 
 ↓ₐ : Assert → IPL.Prop
-↓ₐ ⟪⊫ A ⟫ = ↓ₚ A
-
-
-↓ₚₛ : List Prop → List IPL.Prop
-↓ₚₛ Γ = map ↓ₚ Γ
+↓ₐ ⟪ Γ ⊫ A ⟫ = ↓ₚₛ Γ IPL.⊃⋯⊃ ↓ₚ A
 
 
 ↓ₐₛ : List Assert → List IPL.Prop
@@ -41,20 +42,26 @@ import IPLDerivations as IPL
 ↓∋ₚ (suc i) = suc (↓∋ₚ i)
 
 
-↓∋ₐ : ∀ {Δ A} → Δ ∋ ⟪⊫ A ⟫
-              → ↓ₐₛ Δ ∋ ↓ₚ A
+↓∋ₐ : ∀ {Δ Γ A} → Δ ∋ ⟪ Γ ⊫ A ⟫
+                → ↓ₐₛ Δ ∋ ↓ₚₛ Γ IPL.⊃⋯⊃ ↓ₚ A
 ↓∋ₐ zero    = zero
 ↓∋ₐ (suc i) = suc (↓∋ₐ i)
 
 
-↓ : ∀ {Δ Γ A} → Δ ⊢ A valid[ Γ ]
-              → ↓ₐₛ Δ ⧺ ↓ₚₛ Γ IPL.⊢ ↓ₚ A true
-↓ {Δ = Δ} (var i)      = IPL.ren (ldrops (↓ₐₛ Δ) id) (IPL.var (↓∋ₚ i))
-↓         (lam 𝒟)      = IPL.lam (↓ 𝒟)
-↓         (app 𝒟 ℰ)    = IPL.app (↓ 𝒟) (↓ ℰ)
-↓ {Γ = Γ} (mvar i)     = IPL.ren (rdrops (↓ₚₛ Γ) id) (IPL.var (↓∋ₐ i))
-↓ {Γ = Γ} (box 𝒟)      = IPL.ren (rdrops (↓ₚₛ Γ) id) (↓ 𝒟)
-↓ {Γ = Γ} (letbox 𝒟 ℰ) = IPL.cut (↓ 𝒟) (IPL.pull (↓ₚₛ Γ) (↓ ℰ))
+mutual
+  ↓ : ∀ {Δ Γ A} → Δ ⊢ A valid[ Γ ]
+                → ↓ₐₛ Δ ⧺ ↓ₚₛ Γ IPL.⊢ ↓ₚ A true
+  ↓ {Δ = Δ} (var i)         = IPL.ren (ldrops (↓ₐₛ Δ) id⊇) (IPL.var (↓∋ₚ i))
+  ↓         (lam 𝒟)         = IPL.lam (↓ 𝒟)
+  ↓         (app 𝒟 ℰ)       = IPL.app (↓ 𝒟) (↓ ℰ)
+  ↓ {Γ = Γ} (mvar i ψ)      = IPL.apps (IPL.ren (rdrops (↓ₚₛ Γ) id) (IPL.var (↓∋ₐ i))) (↓ₛ ψ)
+  ↓ {Γ = Γ} (box {Ψ = Ψ} 𝒟) = IPL.ren (rdrops (↓ₚₛ Γ) id⊇) (IPL.lams (↓ₚₛ Ψ) (↓ 𝒟))
+  ↓ {Γ = Γ} (letbox 𝒟 ℰ)    = IPL.cut (↓ 𝒟) (IPL.pull (↓ₚₛ Γ) (↓ ℰ))
+
+  ↓ₛ : ∀ {Δ Γ Ξ} → Δ ⊢ Ξ allvalid[ Γ ]
+                 → ↓ₐₛ Δ ⧺ ↓ₚₛ Γ IPL.⊢ ↓ₚₛ Ξ alltrue
+  ↓ₛ ∙       = ∙
+  ↓ₛ (ξ , 𝒟) = ↓ₛ ξ , ↓ 𝒟
 
 
 --------------------------------------------------------------------------------
@@ -93,7 +100,7 @@ id↓↑ₚ {A IPL.⊃ B} = IPL._⊃_ & id↓↑ₚ ⊗ id↓↑ₚ
 -- NOTE: Agda does not accept this type for REWRITE
 -- id↓↑ₚₛ : ∀ {Γ} → (↓ₚₛ ∘ ↑ₚₛ) Γ ≡ Γ
 
-id↓↑ₚₛ : ∀ {Γ} → map ↓ₚ (map ↑ₚ Γ) ≡ Γ
+id↓↑ₚₛ : ∀ {Γ} → ↓ₚₛ (map ↑ₚ Γ) ≡ Γ
 id↓↑ₚₛ {∙}     = refl
 id↓↑ₚₛ {Γ , A} = _,_ & id↓↑ₚₛ ⊗ id↓↑ₚ
 
@@ -106,7 +113,7 @@ id↓↑∋ₚ zero    = refl
 id↓↑∋ₚ (suc i) = suc & id↓↑∋ₚ i
 
 
--- TODO: Deduplicate with CMLProjectionToIPL
+-- TODO: Deduplicate with S4ProjectionToIPL
 
 {-# REWRITE lid⧺ #-}
 lid-ldrops : ∀ {X} → {Ξ Ξ′ : List X}
