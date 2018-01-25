@@ -101,27 +101,27 @@ mutual
                                  → W′ ⊩ A value
   rel {ι P}   η 𝒟 = relG η 𝒟
   rel {A ⊃ B} η f = \ η′ k → f (η ∘≥ η′) k
-  rel {□ A}   η v = relₖ₁ η v
+  rel {□ A}   η v = chrel η v
 
-  relₖ : ∀ {{_ : Model}} {A W W′} → W′ ≥ W → W ⊩ A thunk
-                                  → W′ ⊩ A thunk
-  relₖ η k = \ η′ f → k (η ∘≥ η′) f
+  threl : ∀ {{_ : Model}} {A W W′} → W′ ≥ W → W ⊩ A thunk
+                                   → W′ ⊩ A thunk
+  threl η k = \ η′ f → k (η ∘≥ η′) f
 
-  relₖ₁ : ∀ {{_ : Model}} {A W W′} → W′ ≥ W → W ⊩ A chunk
+  chrel : ∀ {{_ : Model}} {A W W′} → W′ ≥ W → W ⊩ A chunk
                                    → W′ ⊩ A chunk
-  relₖ₁ {⟪⊫ A ⟫} η v = mren (peek≥ η) (syn v) , relₖ {A} η (sem v)
+  chrel {⟪⊫ A ⟫} η v = mren (peek≥ η) (syn v) , threl {A} η (sem v)
 
 
 -- NOTE: Annoying
 
-relsₖ : ∀ {{_ : Model}} {Γ W W′} → W′ ≥ W → W ⊩ Γ allthunk
-                                 → W′ ⊩ Γ allthunk
-relsₖ η γ = maps (\ {A} k {B} {W′} → relₖ {A} η (\ {C} {W″} → k {C} {W″})) γ
+threls : ∀ {{_ : Model}} {Γ W W′} → W′ ≥ W → W ⊩ Γ allthunk
+                                  → W′ ⊩ Γ allthunk
+threls η γ = maps (\ {A} k {B} {W′} → threl {A} η (\ {C} {W″} → k {C} {W″})) γ
 
 
-relsₖ₁ : ∀ {{_ : Model}} {Δ W W′} → W′ ≥ W → W ⊩ Δ allchunk
+chrels : ∀ {{_ : Model}} {Δ W W′} → W′ ≥ W → W ⊩ Δ allchunk
                                   → W′ ⊩ Δ allchunk
-relsₖ₁ η δ = maps (relₖ₁ η) δ
+chrels η δ = maps (chrel η) δ
 
 
 --------------------------------------------------------------------------------
@@ -154,13 +154,13 @@ _⊨_valid[_] : List Assert → Prop → List Prop → Set₁
               → Δ ⊨ A valid[ Γ ]
 ↓ (var i)              δ γ = get γ i
 ↓ (lam {A} {B} 𝒟)      δ γ = return {A ⊃ B} (\ η k →
-                               ↓ 𝒟 (relsₖ₁ η δ) (relsₖ η γ , k))
+                               ↓ 𝒟 (chrels η δ) (threls η γ , k))
 ↓ (app {A} {B} 𝒟 ℰ)    δ γ = bind {A ⊃ B} {B} (↓ 𝒟 δ γ) (\ η f →
-                               f id≥ (↓ ℰ (relsₖ₁ η δ) (relsₖ η γ)))
+                               f id≥ (↓ ℰ (chrels η δ) (threls η γ)))
 ↓ (mvar i)             δ γ = sem (get δ i)
 ↓ (box {A} 𝒟)          δ γ = return {□ A} (msub (syns δ) 𝒟 , ↓ 𝒟 δ ∙)
 ↓ (letbox {A} {B} 𝒟 ℰ) δ γ = bind {□ A} {B} (↓ 𝒟 δ γ) (\ η v →
-                               ↓ ℰ (relsₖ₁ η δ , v) (relsₖ η γ))
+                               ↓ ℰ (chrels η δ , v) (threls η γ))
 
 
 --------------------------------------------------------------------------------
@@ -205,7 +205,7 @@ mutual
 
 swks : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ allthunk
                    → Δ ⨾ Γ , A ⊩ Ξ allthunk
-swks ξ = relsₖ (drop₂ id) ξ
+swks ξ = threls (drop₂ id) ξ
 
 
 slifts : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ allthunk
@@ -229,7 +229,7 @@ sids = svars id
 
 smwks : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ allchunk
                      → Δ , A ⨾ Γ ⊩ Ξ allchunk
-smwks ξ = relsₖ₁ (drop₁ id) ξ
+smwks ξ = chrels (drop₁ id) ξ
 
 
 smlifts : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ allchunk
