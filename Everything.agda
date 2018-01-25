@@ -79,8 +79,8 @@ import S4Lemmas
 
 import S4ProjectionToIPL
 
--- import S4BidirectionalDerivationsForNormalisation
--- import S4Normalisation
+import S4BidirectionalDerivationsForNormalisation
+import S4Normalisation
 
 
 -- import S4ExperimentalDerivations0a

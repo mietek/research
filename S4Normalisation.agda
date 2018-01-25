@@ -35,10 +35,10 @@ record Model : Set₁
       relG : ∀ {P W W′} → W′ ≥ W → Ground W P
                         → Ground W′ P
 
-      ⌊_⌋₁ : World → List Prop
+      peek : World → List Assert
 
-      ⌊_⌋≥₁ : ∀ {W W′} → W′ ≥ W
-                       → ⌊ W′ ⌋₁ ⊇ ⌊ W ⌋₁
+      peek≥ : ∀ {W W′} → W′ ≥ W
+                       → peek W′ ⊇ peek W
 
 open Model {{...}}
 
@@ -52,7 +52,7 @@ mutual
   W ⊩ ι P value   = Ground W P
   W ⊩ A ⊃ B value = ∀ {W′} → W′ ≥ W → W′ ⊩ A thunk
                             → W′ ⊩ B thunk
-  W ⊩ □ A value   = W ⊩ A chunk
+  W ⊩ □ A value   = W ⊩ ⟪⊫ A ⟫ chunk
 
   infix 3 _⊩_thunk
   _⊩_thunk : ∀ {{_ : Model}} → World → Prop → Set
@@ -61,8 +61,8 @@ mutual
                           → Explode W′ B
 
   infix 3 _⊩_chunk
-  _⊩_chunk : ∀ {{_ : Model}} → World → Prop → Set
-  W ⊩ A chunk = ⌊ W ⌋₁ ⊢ A valid × W ⊩ A thunk
+  _⊩_chunk : ∀ {{_ : Model}} → World → Assert → Set
+  W ⊩ ⟪⊫ A ⟫ chunk = peek W ⊢ A valid[ ∙ ] × W ⊩ A thunk
 
 
 infix 3 _⊩_allthunk
@@ -71,24 +71,24 @@ W ⊩ Γ allthunk = All (W ⊩_thunk) Γ
 
 
 infix 3 _⊩_allchunk
-_⊩_allchunk : ∀ {{_ : Model}} → World → List Prop → Set
+_⊩_allchunk : ∀ {{_ : Model}} → World → List Assert → Set
 W ⊩ Δ allchunk = All (W ⊩_chunk) Δ
 
 
 --------------------------------------------------------------------------------
 
 
-syn : ∀ {{_ : Model}} {A W} → W ⊩ A chunk
-                            → ⌊ W ⌋₁ ⊢ A valid
+syn : ∀ {{_ : Model}} {A W} → W ⊩ ⟪⊫ A ⟫ chunk
+                            → peek W ⊢ A valid[ ∙ ]
 syn v = proj₁ v
 
 
 syns : ∀ {{_ : Model}} {Δ W} → W ⊩ Δ allchunk
-                             → ⌊ W ⌋₁ ⊢ Δ allvalid
+                             → peek W ⊢ Δ allvalid*
 syns δ = maps syn δ
 
 
-sem : ∀ {{_ : Model}} {A W} → W ⊩ A chunk
+sem : ∀ {{_ : Model}} {A W} → W ⊩ ⟪⊫ A ⟫ chunk
                             → W ⊩ A thunk
 sem v = proj₂ v
 
@@ -109,15 +109,14 @@ mutual
 
   relₖ₁ : ∀ {{_ : Model}} {A W W′} → W′ ≥ W → W ⊩ A chunk
                                    → W′ ⊩ A chunk
-  relₖ₁ {A} η v = mren ⌊ η ⌋≥₁ (syn v) , relₖ {A} η (sem v)
+  relₖ₁ {⟪⊫ A ⟫} η v = mren (peek≥ η) (syn v) , relₖ {A} η (sem v)
 
+
+-- NOTE: Annoying
 
 relsₖ : ∀ {{_ : Model}} {Γ W W′} → W′ ≥ W → W ⊩ Γ allthunk
                                  → W′ ⊩ Γ allthunk
 relsₖ η γ = maps (\ {A} k {B} {W′} → relₖ {A} η (\ {C} {W″} → k {C} {W″})) γ
--- NOTE: Pattern-matching problem here prevents rel from taking “A true”
--- NOTE: Equivalent to
--- relsₖ η γ = maps (relₖ η) γ
 
 
 relsₖ₁ : ∀ {{_ : Model}} {Δ W W′} → W′ ≥ W → W ⊩ Δ allchunk
@@ -145,14 +144,14 @@ bind k f = \ η f′ →
 --------------------------------------------------------------------------------
 
 
-infix 3 _⊨_true
-_⊨_true : List² Prop Prop → Prop → Set₁
-Δ ⨾ Γ ⊨ A true = ∀ {{_ : Model}} {W} → W ⊩ Δ allchunk → W ⊩ Γ allthunk
-                                      → W ⊩ A thunk
+infix 3 _⊨_valid[_]
+_⊨_valid[_] : List Assert → Prop → List Prop → Set₁
+Δ ⊨ A valid[ Γ ] = ∀ {{_ : Model}} {W} → W ⊩ Δ allchunk → W ⊩ Γ allthunk
+                                        → W ⊩ A thunk
 
 
-↓ : ∀ {Δ Γ A} → Δ ⨾ Γ ⊢ A true
-              → Δ ⨾ Γ ⊨ A true
+↓ : ∀ {Δ Γ A} → Δ ⊢ A valid[ Γ ]
+              → Δ ⊨ A valid[ Γ ]
 ↓ (var i)              δ γ = get γ i
 ↓ (lam {A} {B} 𝒟)      δ γ = return {A ⊃ B} (\ η k →
                                ↓ 𝒟 (relsₖ₁ η δ) (relsₖ η γ , k))
@@ -167,35 +166,35 @@ _⊨_true : List² Prop Prop → Prop → Set₁
 --------------------------------------------------------------------------------
 
 
-renᵣ² : ∀ {Δ Δ′ Γ Γ′ A} → Δ′ ⨾ Γ′ ⊇² Δ ⨾ Γ → Δ ⨾ Γ ⊢ A usable
-                        → Δ′ ⨾ Γ′ ⊢ A usable
+renᵣ² : ∀ {Δ Δ′ Γ Γ′ A} → Δ′ ⨾ Γ′ ⊇² Δ ⨾ Γ → Δ ⊢ A usable[ Γ ]
+                        → Δ′ ⊢ A usable[ Γ′ ]
 renᵣ² η 𝒟 = mrenᵣ (proj₁ η) (renᵣ (proj₂ η) 𝒟)
 
 
 instance
   canon : Model
   canon = record
-            { World   = List² Prop Prop
-            ; Ground  = \ { (Δ ⨾ Γ) P → Δ ⨾ Γ ⊢ ι P usable }
-            ; Explode = \ { (Δ ⨾ Γ) A → Δ ⨾ Γ ⊢ A verifiable }
+            { World   = List² Assert Prop
+            ; Ground  = \ { (Δ ⨾ Γ) P → Δ ⊢ ι P usable[ Γ ] }
+            ; Explode = \ { (Δ ⨾ Γ) A → Δ ⊢ A checkable[ Γ ] }
             ; _≥_     = _⊇²_
             ; id≥     = id
             ; _∘≥_    = _∘_
             ; relG    = renᵣ²
-            ; ⌊_⌋₁    = proj₁
-            ; ⌊_⌋≥₁   = proj₁
+            ; peek    = proj₁
+            ; peek≥   = proj₁
             }
 
 
 mutual
-  ⇓ : ∀ {A Δ Γ} → Δ ⨾ Γ ⊢ A usable
+  ⇓ : ∀ {A Δ Γ} → Δ ⊢ A usable[ Γ ]
                 → Δ ⨾ Γ ⊩ A thunk
   ⇓ {ι P}   𝒟 = return {ι P} 𝒟
   ⇓ {A ⊃ B} 𝒟 = return {A ⊃ B} (\ η k → ⇓ (app (renᵣ² η 𝒟) (⇑ k)))
   ⇓ {□ A}   𝒟 = \ η f → letbox (renᵣ² η 𝒟) (f (drop₁ id) (mvz , ⇓ mvzᵣ))
 
   ⇑ : ∀ {A Δ Γ} → Δ ⨾ Γ ⊩ A thunk
-                → Δ ⨾ Γ ⊢ A verifiable
+                → Δ ⊢ A checkable[ Γ ]
   ⇑ {ι P}   k = k id (\ η 𝒟 → use 𝒟)
   ⇑ {A ⊃ B} k = k id (\ η f → lam (⇑ (f (drop₂ id) (⇓ vzᵣ))))
   ⇑ {□ A}   k = k id (\ η v → box (syn v))
@@ -204,62 +203,62 @@ mutual
 --------------------------------------------------------------------------------
 
 
-wksₛ : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ allthunk
+swks : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ allthunk
                    → Δ ⨾ Γ , A ⊩ Ξ allthunk
-wksₛ ξ = relsₖ (drop₂ id) ξ
+swks ξ = relsₖ (drop₂ id) ξ
 
 
-liftsₛ : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ allthunk
+slifts : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ allthunk
                      → Δ ⨾ Γ , A ⊩ Ξ , A allthunk
-liftsₛ ξ = wksₛ ξ , ⇓ vzᵣ
+slifts ξ = swks ξ , ⇓ vzᵣ
 
 
-varsₛ : ∀ {Δ Γ Γ′} → Γ′ ⊇ Γ
+svars : ∀ {Δ Γ Γ′} → Γ′ ⊇ Γ
                    → Δ ⨾ Γ′ ⊩ Γ allthunk
-varsₛ done     = ∙
-varsₛ (drop η) = wksₛ (varsₛ η)
-varsₛ (keep η) = liftsₛ (varsₛ η)
+svars done     = ∙
+svars (drop η) = swks (svars η)
+svars (keep η) = slifts (svars η)
 
 
-idsₛ : ∀ {Δ Γ} → Δ ⨾ Γ ⊩ Γ allthunk
-idsₛ = varsₛ id
+sids : ∀ {Δ Γ} → Δ ⨾ Γ ⊩ Γ allthunk
+sids = svars id
 
 
 --------------------------------------------------------------------------------
 
 
-mwksₛ₁ : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ allchunk
+smwks : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ allchunk
                      → Δ , A ⨾ Γ ⊩ Ξ allchunk
-mwksₛ₁ ξ = relsₖ₁ (drop₁ id) ξ
+smwks ξ = relsₖ₁ (drop₁ id) ξ
 
 
-mliftsₛ₁ : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ allchunk
-                       → Δ , A ⨾ Γ ⊩ Ξ , A allchunk
-mliftsₛ₁ ξ = mwksₛ₁ ξ , (mvz , ⇓ mvzᵣ)
+smlifts : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ allchunk
+                      → Δ , A ⨾ Γ ⊩ Ξ , A allchunk
+smlifts ξ = smwks ξ , (mvz , ⇓ mvzᵣ)
 
 
-mvarsₛ₁ : ∀ {Δ Δ′ Γ} → Δ′ ⊇ Δ
-                     → Δ′ ⨾ Γ ⊩ Δ allchunk
-mvarsₛ₁ done     = ∙
-mvarsₛ₁ (drop η) = mwksₛ₁ (mvarsₛ₁ η)
-mvarsₛ₁ (keep η) = mliftsₛ₁ (mvarsₛ₁ η)
+smvars : ∀ {Δ Δ′ Γ} → Δ′ ⊇ Δ
+                    → Δ′ ⨾ Γ ⊩ Δ allchunk
+smvars done     = ∙
+smvars (drop η) = smwks (smvars η)
+smvars (keep η) = smlifts (smvars η)
 
 
-midsₛ₁ : ∀ {Δ Γ} → Δ ⨾ Γ ⊩ Δ allchunk
-midsₛ₁ = mvarsₛ₁ id
+smids : ∀ {Δ Γ} → Δ ⨾ Γ ⊩ Δ allchunk
+smids = smvars id
 
 
 --------------------------------------------------------------------------------
 
 
-↑ : ∀ {Δ Γ A} → Δ ⨾ Γ ⊨ A true
-              → Δ ⨾ Γ ⊢ A verifiable
-↑ f = ⇑ (f midsₛ₁ idsₛ)
+↑ : ∀ {Δ Γ A} → Δ ⊨ A valid[ Γ ]
+              → Δ ⊢ A checkable[ Γ ]
+↑ f = ⇑ (f smids sids)
 
 
-nbe : ∀ {Δ Γ A} → Δ ⨾ Γ ⊢ A true
-                → Δ ⨾ Γ ⊢ A verifiable
-nbe 𝒟 = ↑ (↓ 𝒟)
+nm : ∀ {Δ Γ A} → Δ ⊢ A valid[ Γ ]
+               → Δ ⊢ A checkable[ Γ ]
+nm 𝒟 = ↑ (↓ 𝒟)
 
 
 --------------------------------------------------------------------------------

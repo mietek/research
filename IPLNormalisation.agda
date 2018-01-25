@@ -86,7 +86,7 @@ instance
   canon : Model
   canon = record
             { World  = List Prop
-            ; Ground = \ Γ P → Γ ⊢ ι P inferrable
+            ; Ground = \ Γ P → Γ ⊢ ι P usable
             ; _≥_    = _⊇_
             ; id≥    = id
             ; _∘≥_   = _∘_
@@ -95,7 +95,7 @@ instance
 
 
 mutual
-  ⇓ : ∀ {A Γ} → Γ ⊢ A inferrable
+  ⇓ : ∀ {A Γ} → Γ ⊢ A usable
               → Γ ⊩ A value
   ⇓ {ι P}   𝒟 = 𝒟
   ⇓ {A ⊃ B} 𝒟 = \ η a → ⇓ (app (renᵣ η 𝒟) (⇑ a))
@@ -109,34 +109,30 @@ mutual
 --------------------------------------------------------------------------------
 
 
-wkₛ : ∀ {A B Γ} → Γ ⊩ A value
+swk : ∀ {A B Γ} → Γ ⊩ A value
                 → Γ , B ⊩ A value
-wkₛ {A} a = rel {A} (drop id) a
+swk {A} a = rel {A} (drop id) a
 
 
-wksₛ : ∀ {A Γ Ξ} → Γ ⊩ Ξ allvalue
+swks : ∀ {A Γ Ξ} → Γ ⊩ Ξ allvalue
                  → Γ , A ⊩ Ξ allvalue
-wksₛ ξ = rels (drop id) ξ
+swks ξ = rels (drop id) ξ
 
 
-vzₛ : ∀ {A Γ} → Γ , A ⊩ A value
-vzₛ {A} = ⇓ {A} vzᵣ
-
-
-liftsₛ : ∀ {A Γ Ξ} → Γ ⊩ Ξ allvalue
+slifts : ∀ {A Γ Ξ} → Γ ⊩ Ξ allvalue
                    → Γ , A ⊩ Ξ , A allvalue
-liftsₛ {A} ξ = wksₛ ξ , vzₛ {A}
+slifts {A} ξ = swks ξ , ⇓ {A} vzᵣ
 
 
-varsₛ : ∀ {Γ Γ′} → Γ′ ⊇ Γ
+svars : ∀ {Γ Γ′} → Γ′ ⊇ Γ
                  → Γ′ ⊩ Γ allvalue
-varsₛ done     = ∙
-varsₛ (drop η) = wksₛ (varsₛ η)
-varsₛ (keep η) = liftsₛ (varsₛ η)
+svars done     = ∙
+svars (drop η) = swks (svars η)
+svars (keep η) = slifts (svars η)
 
 
-idsₛ : ∀ {Γ} → Γ ⊩ Γ allvalue
-idsₛ = varsₛ id
+sids : ∀ {Γ} → Γ ⊩ Γ allvalue
+sids = svars id
 
 
 --------------------------------------------------------------------------------
@@ -144,7 +140,7 @@ idsₛ = varsₛ id
 
 ↑ : ∀ {Γ A} → Γ ⊨ A true
             → Γ ⊢ A checkable
-↑ f = ⇑ (f idsₛ)
+↑ f = ⇑ (f sids)
 
 
 nm : ∀ {Γ A} → Γ ⊢ A true

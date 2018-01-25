@@ -19,17 +19,17 @@ mutual
       lam : ∀ {A B Γ} → Γ , A ⊢ B checkable
                       → Γ ⊢ A ⊃ B checkable
 
-      use : ∀ {P Γ} → Γ ⊢ ι P inferrable
+      use : ∀ {P Γ} → Γ ⊢ ι P usable
                     → Γ ⊢ ι P checkable
 
-  infix 3 _⊢_inferrable
-  data _⊢_inferrable : List Prop → Prop → Set
+  infix 3 _⊢_usable
+  data _⊢_usable : List Prop → Prop → Set
     where
       var : ∀ {A Γ} → Γ ∋ A
-                    → Γ ⊢ A inferrable
+                    → Γ ⊢ A usable
 
-      app : ∀ {A B Γ} → Γ ⊢ A ⊃ B inferrable → Γ ⊢ A checkable
-                      → Γ ⊢ B inferrable
+      app : ∀ {A B Γ} → Γ ⊢ A ⊃ B usable → Γ ⊢ A checkable
+                      → Γ ⊢ B usable
 
 
 --------------------------------------------------------------------------------
@@ -41,8 +41,8 @@ mutual
   renₗ η (lam 𝒟) = lam (renₗ (keep η) 𝒟)
   renₗ η (use 𝒟) = use (renᵣ η 𝒟)
 
-  renᵣ : ∀ {Γ Γ′ A} → Γ′ ⊇ Γ → Γ ⊢ A inferrable
-                    → Γ′ ⊢ A inferrable
+  renᵣ : ∀ {Γ Γ′ A} → Γ′ ⊇ Γ → Γ ⊢ A usable
+                    → Γ′ ⊢ A usable
   renᵣ η (var i)   = var (ren∋ η i)
   renᵣ η (app 𝒟 ℰ) = app (renᵣ η 𝒟) (renₗ η ℰ)
 
@@ -50,12 +50,12 @@ mutual
 --------------------------------------------------------------------------------
 
 
-wkᵣ : ∀ {B A Γ} → Γ ⊢ A inferrable
-                → Γ , B ⊢ A inferrable
+wkᵣ : ∀ {B A Γ} → Γ ⊢ A usable
+                → Γ , B ⊢ A usable
 wkᵣ 𝒟 = renᵣ (drop id) 𝒟
 
 
-vzᵣ : ∀ {A Γ} → Γ , A ⊢ A inferrable
+vzᵣ : ∀ {A Γ} → Γ , A ⊢ A usable
 vzᵣ = var zero
 
 
@@ -68,7 +68,7 @@ mutual
   denmₗ (lam 𝒟) = lam (denmₗ 𝒟)
   denmₗ (use 𝒟) = denmᵣ 𝒟
 
-  denmᵣ : ∀ {Γ A} → Γ ⊢ A inferrable
+  denmᵣ : ∀ {Γ A} → Γ ⊢ A usable
                   → Γ ⊢ A true
   denmᵣ (var i)   = var i
   denmᵣ (app 𝒟 ℰ) = app (denmᵣ 𝒟) (denmₗ ℰ)
