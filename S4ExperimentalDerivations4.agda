@@ -6,6 +6,7 @@ open import List
 open import ListLemmas
 open import AllList
 open import S4Propositions
+open import S4Lemmas
 import S4Derivations as S4
 
 
@@ -221,6 +222,58 @@ pseudomcut 𝒟 ℰ = cut (box 𝒟) (vau ℰ)
 ↑ (S4.mvar i)     = mvar i
 ↑ (S4.box 𝒟)      = box (↑ 𝒟)
 ↑ (S4.letbox 𝒟 ℰ) = letbox (↑ 𝒟) (↑ ℰ)
+
+
+lem-var : ∀ {Δ Γ A} → (i : Γ ∋ A)
+                    → ↓ {Δ} (var i) ≡ S4.var i
+lem-var zero    = refl
+lem-var (suc i) = S4.wk & lem-var i
+                ⋮ S4.var ∘ suc & id-ren∋ i
+
+
+-- NOTE: Problematic
+
+-- lem-mvar : ∀ {Δ Γ A} → (i : Δ ∋ ⟪⊫ A ⟫)
+--                      → ↓ {Γ = Γ} (mvar i) ≡ S4.mvar i
+-- lem-mvar zero    = {!!} -- S4.unbox (S4.unvau S4.vz) ≡ S4.mvar zero
+-- lem-mvar (suc i) = {!!} -- S4.unvau (S4.wk (↓ (mvar i))) ≡ S4.mvar (suc i)
+
+
+-- id↓↑ : ∀ {Δ Γ A} → (𝒟 : Δ S4.⊢ A valid[ Γ ])
+--                  → (↓ ∘ ↑) 𝒟 ≡ 𝒟
+-- id↓↑ (S4.var i)      = lem-var i
+-- id↓↑ (S4.lam 𝒟)      = S4.lam & id↓↑ 𝒟
+-- id↓↑ (S4.app 𝒟 ℰ)    = S4.app & ( id-cons-wk-sub S4.ids (↓ (↑ ℰ)) (↓ (↑ 𝒟))
+--                                 ⋮ id-sub (↓ (↑ 𝒟))
+--                                 ⋮ id↓↑ 𝒟
+--                                 )
+--                               ⊗ id↓↑ ℰ
+-- id↓↑ (S4.mvar i)     = lem-mvar i
+-- id↓↑ (S4.box 𝒟)      = S4.box & id↓↑ 𝒟
+-- id↓↑ (S4.letbox 𝒟 ℰ) = S4.letbox & id↓↑ 𝒟 ⊗ ( id-cons-wk-sub (S4.mwks S4.ids) (S4.mwk (↓ (↑ 𝒟))) (↓ (↑ ℰ))
+--                                             ⋮ (\ ξ′ → S4.sub ξ′ (↓ (↑ ℰ))) & id-mrens-ids (drop id)
+--                                             ⋮ id-sub (↓ (↑ ℰ))
+--                                             ⋮ id↓↑ ℰ
+--                                             )
+
+
+-- NOTE: Problematic
+
+-- id↑↓ : ∀ {Δ Γ A} → (𝒟 : Δ ⊢ A valid[ Γ ])
+--                  → (↑ ∘ ↓) 𝒟 ≡ 𝒟
+-- id↑↓ vz        = refl
+-- id↑↓ (wk 𝒟)    = {!!} -- ↑ (S4.wk (↓ 𝒟)) ≡ wk 𝒟
+-- id↑↓ (cut 𝒟 ℰ) = {!!} -- ↑ (S4.cut (↓ 𝒟) (↓ ℰ)) ≡ cut 𝒟 ℰ
+-- id↑↓ (lam 𝒟)   = lam & id↑↓ 𝒟
+-- id↑↓ (unlam 𝒟) = {!!} -- app (↑ (S4.wk (↓ 𝒟))) vz ≡ unlam 𝒟
+-- id↑↓ (box 𝒟)   = box & id↑↓ 𝒟
+-- id↑↓ (unbox 𝒟) = {!!} -- letbox (↑ (↓ 𝒟)) mvz ≡ unbox 𝒟
+-- id↑↓ (vau 𝒟)   = {!!} -- letbox vz (↑ (S4.wk (↓ 𝒟))) ≡ vau 𝒟
+-- id↑↓ (unvau 𝒟) = {!!} -- app (lam (↑ (S4.mwk (↓ 𝒟)))) (box mvz) ≡ unvau 𝒟
+
+
+-- TODO: Semantic equivalence
+
 
 
 --------------------------------------------------------------------------------

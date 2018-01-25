@@ -130,8 +130,8 @@ id↓↑ : ∀ {Γ A} → (𝒟 : Γ IPL.⊢ A true)
                → (↓ ∘ ↑) 𝒟 ≡ 𝒟
 id↓↑ (IPL.var i)   = lem-var i
 id↓↑ (IPL.lam 𝒟)   = IPL.lam & id↓↑ 𝒟
-id↓↑ (IPL.app 𝒟 ℰ) = IPL.app & ( id-cons-wk-sub IPL.ids ((↓ ∘ ↑) ℰ) ((↓ ∘ ↑) 𝒟)
-                               ⋮ id-sub ((↓ ∘ ↑) 𝒟)
+id↓↑ (IPL.app 𝒟 ℰ) = IPL.app & ( id-cons-wk-sub IPL.ids (↓ (↑ ℰ)) (↓ (↑ 𝒟))
+                               ⋮ id-sub (↓ (↑ 𝒟))
                                ⋮ id↓↑ 𝒟
                                )
                              ⊗ id↓↑ ℰ

@@ -36,7 +36,7 @@ import IPLPropositions
 import IPLDerivations               -- _⊢_ ; var/lam/app
 import IPLExperimentalDerivations1  -- _⊢_ ; vz/wk/lam/app
 import IPLExperimentalDerivations2  -- _⊢_ ; vz/wk/cut/lam/unlam
-import IPLExperimentalDerivations3  -- _⊢_ ; var/cut/lam/unlam ; problem with renaming
+import IPLExperimentalDerivations3  -- _⊢_ ; var/cut/lam/unlam ; problematic
 
 import IPLLemmas
 
@@ -67,13 +67,13 @@ import STLCNameResolution
 
 import S4Propositions
 
-import S4Derivations                   -- _⊢_valid[_] ; var/lam/app ; mvar/box/letbox
-import S4StandardDerivations           -- _⨾_⊢_       ; var/lam/app ; mvar/box/letbox
-import S4ExperimentalDerivations1      -- vz/wk/lam/app; mvz/mwk/box/letbox
-import S4ExperimentalDerivations2      -- vz/wk/cut/lam/unlam; mvz/mwk/box/letbox
-import S4ExperimentalDerivations3      -- vz/wk/cut/lam/unlam; mvz/mwk/mcut/vau/unvau
-import S4ExperimentalDerivations4      -- vz/wk/cut/lam/unlam; box/unbox/vau/unvau
--- import S4ExperimentalDerivations5   -- vz/wk/cut/lam/unlam; mvz/mwk/mcut/box/unbox; problem with vau
+import S4Derivations                -- _⊢_valid[_] ; var/lam/app         ; mvar/box/letbox
+import S4StandardDerivations        -- _⨾_⊢_       ; var/lam/app         ; mvar/box/letbox
+import S4ExperimentalDerivations1   -- _⊢_valid[_] ; vz/wk/lam/app       ; mvz/mwk/box/letbox
+import S4ExperimentalDerivations2   -- _⊢_valid[_] ; vz/wk/cut/lam/unlam ; mvz/mwk/box/letbox
+import S4ExperimentalDerivations3   -- _⊢_valid[_] ; vz/wk/cut/lam/unlam ; mvz/mwk/mcut/vau/unvau
+import S4ExperimentalDerivations4   -- _⊢_valid[_] ; vz/wk/cut/lam/unlam ; box/unbox/vau/unvau
+import S4ExperimentalDerivations5   -- _⊢_valid[_] ; vz/wk/cut/lam/unlam ; mvz/mwk/mcut/box/unbox ; problematic
 
 import S4Lemmas
 
