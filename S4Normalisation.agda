@@ -112,11 +112,9 @@ mutual
   chrel {⟪⊫ A ⟫} η v = mren (peek≥ η) (syn v) , threl {A} η (sem v)
 
 
--- NOTE: Annoying
-
 threls : ∀ {{_ : Model}} {Γ W W′} → W′ ≥ W → W ⊩ Γ allthunk
                                   → W′ ⊩ Γ allthunk
-threls η γ = maps (\ {A} k {B} {W′} → threl {A} η (\ {C} {W″} → k {C} {W″})) γ
+threls η γ = maps (\ {A} k {B} {W′} → threl {A} η (\ {C} {W″} → k {C} {W″})) γ  -- NOTE: Annoying
 
 
 chrels : ∀ {{_ : Model}} {Δ W W′} → W′ ≥ W → W ⊩ Δ allchunk
