@@ -86,7 +86,7 @@ instance
   canon : Model
   canon = record
             { World  = List Prop
-            ; Ground = \ Γ P → Γ ⊢ ι P usable
+            ; Ground = \ Γ P → Γ ⊢ ι P inferrable
             ; _≥_    = _⊇_
             ; id≥    = id
             ; _∘≥_   = _∘_
@@ -95,13 +95,13 @@ instance
 
 
 mutual
-  ⇓ : ∀ {A Γ} → Γ ⊢ A usable
+  ⇓ : ∀ {A Γ} → Γ ⊢ A inferrable
               → Γ ⊩ A value
   ⇓ {ι P}   𝒟 = 𝒟
   ⇓ {A ⊃ B} 𝒟 = \ η a → ⇓ (app (renᵣ η 𝒟) (⇑ a))
 
   ⇑ : ∀ {A Γ} → Γ ⊩ A value
-              → Γ ⊢ A verifiable
+              → Γ ⊢ A checkable
   ⇑ {ι P}   𝒟 = use 𝒟
   ⇑ {A ⊃ B} f = lam (⇑ (f (drop id) (⇓ {A} vzᵣ)))
 
@@ -143,12 +143,12 @@ idsₛ = varsₛ id
 
 
 ↑ : ∀ {Γ A} → Γ ⊨ A true
-            → Γ ⊢ A verifiable
+            → Γ ⊢ A checkable
 ↑ f = ⇑ (f idsₛ)
 
 
 nm : ∀ {Γ A} → Γ ⊢ A true
-             → Γ ⊢ A verifiable
+             → Γ ⊢ A checkable
 nm 𝒟 = ↑ (↓ 𝒟)
 
 

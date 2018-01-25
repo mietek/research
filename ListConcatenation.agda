@@ -1,3 +1,5 @@
+{-# OPTIONS --rewriting #-}
+
 module ListConcatenation where
 
 open import Prelude
@@ -54,7 +56,7 @@ push∋ : ∀ {X A B} → {Ξ : List X}
 push∋ Ψ       zero    = ren∋ (rdrops Ψ id⊇) zero
 push∋ ∙       (suc i) = suc i
 push∋ (Ψ , C) (suc i) = ren∋ (keep (rkeeps Ψ (drop id⊇))) i
-    
+
 
 pull∋ : ∀ {X A B} → {Ξ : List X}
                   → (Ψ : List X) → ((Ξ , A) ⧺ Ψ) ∋ B
@@ -79,6 +81,15 @@ assoc⧺ : ∀ {X} → (Ξ Ψ Φ : List X)
                → (Ξ ⧺ Ψ) ⧺ Φ ≡ Ξ ⧺ (Ψ ⧺ Φ)
 assoc⧺ Ξ Ψ ∙       = refl
 assoc⧺ Ξ Ψ (Φ , A) = (_, A) & assoc⧺ Ξ Ψ Φ
+
+
+{-# REWRITE lid⧺ #-}
+lid-ldrops : ∀ {X} → {Ξ Ξ′ : List X}
+                   → (η : Ξ′ ⊇ Ξ)
+                   → ldrops ∙ η ≡ η
+lid-ldrops done     = refl
+lid-ldrops (drop η) = drop & lid-ldrops η
+lid-ldrops (keep η) = keep & lid-ldrops η
 
 
 --------------------------------------------------------------------------------

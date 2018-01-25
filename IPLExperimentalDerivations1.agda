@@ -6,6 +6,7 @@ open import List
 open import ListLemmas
 open import AllList
 open import IPLPropositions
+import IPLDerivations as IPL
 
 
 --------------------------------------------------------------------------------
@@ -75,27 +76,54 @@ var zero    = vz
 var (suc i) = wk (var i)
 
 
+ren : ∀ {Γ Γ′ A} → Γ′ ⊇ Γ → Γ ⊢ A true
+                 → Γ′ ⊢ A true
+ren η 𝒟 = sub (vars η) 𝒟
+
+
 --------------------------------------------------------------------------------
 
 
-module Experimental1⟷Default
-  where
-    import IPLDerivations as Def
+↓ : ∀ {Γ A} → Γ ⊢ A true
+            → Γ IPL.⊢ A true
+↓ vz        = IPL.vz
+↓ (wk 𝒟)    = IPL.wk (↓ 𝒟)
+↓ (lam 𝒟)   = IPL.lam (↓ 𝒟)
+↓ (app 𝒟 ℰ) = IPL.app (↓ 𝒟) (↓ ℰ)
 
 
-    ↓ : ∀ {Γ A} → Γ ⊢ A true
-                → Γ Def.⊢ A true
-    ↓ vz        = Def.vz
-    ↓ (wk 𝒟)    = Def.wk (↓ 𝒟)
-    ↓ (lam 𝒟)   = Def.lam (↓ 𝒟)
-    ↓ (app 𝒟 ℰ) = Def.app (↓ 𝒟) (↓ ℰ)
-     
-     
-    ↑ : ∀ {Γ A} → Γ Def.⊢ A true
-                → Γ ⊢ A true
-    ↑ (Def.var i)   = var i
-    ↑ (Def.lam 𝒟)   = lam (↑ 𝒟)
-    ↑ (Def.app 𝒟 ℰ) = app (↑ 𝒟) (↑ ℰ)
+↑ : ∀ {Γ A} → Γ IPL.⊢ A true
+            → Γ ⊢ A true
+↑ (IPL.var i)   = var i
+↑ (IPL.lam 𝒟)   = lam (↑ 𝒟)
+↑ (IPL.app 𝒟 ℰ) = app (↑ 𝒟) (↑ ℰ)
+
+
+lem-var : ∀ {Γ A} → (i : Γ ∋ A)
+                    → ↓ (var i) ≡ IPL.var i
+lem-var zero    = refl
+lem-var (suc i) = IPL.wk & lem-var i
+                ⋮ IPL.var ∘ suc & id-ren∋ i
+
+
+id↓↑ : ∀ {Γ A} → (𝒟 : Γ IPL.⊢ A true)
+               → (↓ ∘ ↑) 𝒟 ≡ 𝒟
+id↓↑ (IPL.var i)   = lem-var i
+id↓↑ (IPL.lam 𝒟)   = IPL.lam & id↓↑ 𝒟
+id↓↑ (IPL.app 𝒟 ℰ) = IPL.app & id↓↑ 𝒟 ⊗ id↓↑ ℰ
+
+
+-- NOTE: Problematic
+
+-- id↑↓ : ∀ {Γ A} → (𝒟 : Γ ⊢ A true)
+--                → (↑ ∘ ↓) 𝒟 ≡ 𝒟
+-- id↑↓ vz        = refl
+-- id↑↓ (wk 𝒟)    = {!!} -- ↑ (IPL.wk (↓ 𝒟)) ≡ wk 𝒟
+-- id↑↓ (lam 𝒟)   = lam & id↑↓ 𝒟
+-- id↑↓ (app 𝒟 ℰ) = app & id↑↓ 𝒟 ⊗ id↑↓ ℰ
+
+
+-- TODO: Semantic equivalence
 
 
 --------------------------------------------------------------------------------

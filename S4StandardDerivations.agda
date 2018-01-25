@@ -8,7 +8,6 @@ open import ListConcatenation
 open import AllList
 open import S4Propositions
 import S4Derivations as S4
-open S4 using (Assert ; ⟪⊫_⟫)
 
 
 --------------------------------------------------------------------------------
@@ -57,9 +56,6 @@ data _⨾_⊢_true : List Assert → List Prop → Prop → Set
 ↑ (S4.mvar i)     = mvar i
 ↑ (S4.box 𝒟)      = box (↑ 𝒟)
 ↑ (S4.letbox 𝒟 ℰ) = letbox (↑ 𝒟) (↑ ℰ)
-
-
---------------------------------------------------------------------------------
 
 
 id↓↑ : ∀ {Δ Γ A} → (𝒟 : Δ S4.⊢ A valid[ Γ ])

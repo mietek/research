@@ -7,6 +7,7 @@ open import Vec
 open import AllVec
 open import STLCTypes
 open import STLCTerms
+import STLCDerivations as STLC
 
 
 --------------------------------------------------------------------------------
@@ -31,41 +32,36 @@ data _⊢_⦂_ : ∀ {g} → Types g → Term g → Type → Set
 --------------------------------------------------------------------------------
 
 
-module Standard⟷Default
-  where
-    import STLCDerivations as Def
+↓ : ∀ {g M A} → {Γ : Types g}
+              → Γ ⊢ M ⦂ A
+              → STLC.⊢ M ⦂ A valid[ Γ ]
+↓ (var i)   = STLC.var i
+↓ (lam 𝒟)   = STLC.lam (↓ 𝒟)
+↓ (app 𝒟 ℰ) = STLC.app (↓ 𝒟) (↓ ℰ)
 
 
-    ↓ : ∀ {g M A} → {Γ : Types g}
-                  → Γ ⊢ M ⦂ A
-                  → Def.⊢ M ⦂ A valid[ Γ ]
-    ↓ (var i)   = Def.var i
-    ↓ (lam 𝒟)   = Def.lam (↓ 𝒟)
-    ↓ (app 𝒟 ℰ) = Def.app (↓ 𝒟) (↓ ℰ)
-     
-     
-    ↑ : ∀ {g M A} → {Γ : Types g}
-                  → Def.⊢ M ⦂ A valid[ Γ ]
-                  → Γ ⊢ M ⦂ A
-    ↑ (Def.var i)   = var i
-    ↑ (Def.lam 𝒟)   = lam (↑ 𝒟)
-    ↑ (Def.app 𝒟 ℰ) = app (↑ 𝒟) (↑ ℰ)
-     
-          
-    id↓↑ : ∀ {g M A} → {Γ : Types g}
-                     → (𝒟 : Def.⊢ M ⦂ A valid[ Γ ])
-                     → (↓ ∘ ↑) 𝒟 ≡ 𝒟
-    id↓↑ (Def.var i)   = refl
-    id↓↑ (Def.lam 𝒟)   = Def.lam & id↓↑ 𝒟
-    id↓↑ (Def.app 𝒟 ℰ) = Def.app & id↓↑ 𝒟 ⊗ id↓↑ ℰ
-     
-     
-    id↑↓ : ∀ {g M A} → {Γ : Types g}
-                     → (𝒟 : Γ ⊢ M ⦂ A)
-                     → (↑ ∘ ↓) 𝒟 ≡ 𝒟
-    id↑↓ (var i)   = refl
-    id↑↓ (lam 𝒟)   = lam & id↑↓ 𝒟
-    id↑↓ (app 𝒟 ℰ) = app & id↑↓ 𝒟 ⊗ id↑↓ ℰ
+↑ : ∀ {g M A} → {Γ : Types g}
+              → STLC.⊢ M ⦂ A valid[ Γ ]
+              → Γ ⊢ M ⦂ A
+↑ (STLC.var i)   = var i
+↑ (STLC.lam 𝒟)   = lam (↑ 𝒟)
+↑ (STLC.app 𝒟 ℰ) = app (↑ 𝒟) (↑ ℰ)
+
+
+id↓↑ : ∀ {g M A} → {Γ : Types g}
+                 → (𝒟 : STLC.⊢ M ⦂ A valid[ Γ ])
+                 → (↓ ∘ ↑) 𝒟 ≡ 𝒟
+id↓↑ (STLC.var i)   = refl
+id↓↑ (STLC.lam 𝒟)   = STLC.lam & id↓↑ 𝒟
+id↓↑ (STLC.app 𝒟 ℰ) = STLC.app & id↓↑ 𝒟 ⊗ id↓↑ ℰ
+
+
+id↑↓ : ∀ {g M A} → {Γ : Types g}
+                 → (𝒟 : Γ ⊢ M ⦂ A)
+                 → (↑ ∘ ↓) 𝒟 ≡ 𝒟
+id↑↓ (var i)   = refl
+id↑↓ (lam 𝒟)   = lam & id↑↓ 𝒟
+id↑↓ (app 𝒟 ℰ) = app & id↑↓ 𝒟 ⊗ id↑↓ ℰ
 
 
 --------------------------------------------------------------------------------

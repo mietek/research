@@ -7,19 +7,6 @@ open import ListLemmas
 open import ListConcatenation
 open import AllList
 open import CMLPropositions
-import IPLPropositions as IPL
-import IPLDerivations as IPL
-
-
---------------------------------------------------------------------------------
-
-
-record Assert : Set
-  where
-    constructor ⟪_⊫_⟫
-    field
-      Γ : List Prop
-      A : Prop
 
 
 --------------------------------------------------------------------------------
@@ -313,19 +300,26 @@ mexch 𝒟 = unvau (unvau (exch (vau (vau 𝒟))))
 --------------------------------------------------------------------------------
 
 
-module IPL→CML
+module CML⟷IPL
   where
+    import IPLPropositions as IPL
+    import IPLDerivations as IPL
+
+
     ⌈_⌉ : IPL.Prop → Prop
     ⌈ IPL.ι P ⌉   = ι P
     ⌈ A IPL.⊃ B ⌉ = ⌈ A ⌉ ⊃ ⌈ B ⌉
 
+
     ⌈_⌉* : List IPL.Prop → List Prop
     ⌈ Γ ⌉* = map ⌈_⌉ Γ
+
 
     ↑∋ : ∀ {Γ A} → Γ ∋ A
                  → ⌈ Γ ⌉* ∋ ⌈ A ⌉
     ↑∋ zero    = zero
     ↑∋ (suc i) = suc (↑∋ i)
+
 
     ↑ : ∀ {Δ Γ A} → Γ IPL.⊢ A true
                   → Δ ⊢ ⌈ A ⌉ valid[ ⌈ Γ ⌉* ]
@@ -334,43 +328,45 @@ module IPL→CML
     ↑ (IPL.app 𝒟 ℰ) = app (↑ 𝒟) (↑ ℰ)
 
 
-module CML→IPL
-  where
     mutual
       ⌊_⌋ : Prop → IPL.Prop
       ⌊ ι P ⌋     = IPL.ι P
       ⌊ A ⊃ B ⌋   = ⌊ A ⌋ IPL.⊃ ⌊ B ⌋
-      ⌊ [ Ψ ] A ⌋ = ⌊ Ψ ⌋* IPL.*⊃ ⌊ A ⌋
+      ⌊ [ Ψ ] A ⌋ = ⌊ Ψ ⌋*₂ IPL.*⊃ ⌊ A ⌋
 
-      ⌊_⌋* : List Prop → List IPL.Prop
-      ⌊ ∙ ⌋*     = ∙
-      ⌊ Ξ , A ⌋* = ⌊ Ξ ⌋* , ⌊ A ⌋
+      ⌊_⌋*₂ : List Prop → List IPL.Prop
+      ⌊ ∙ ⌋*₂     = ∙
+      ⌊ Ξ , A ⌋*₂ = ⌊ Ξ ⌋*₂ , ⌊ A ⌋
 
-    ⌊_⌋** : List Assert → List IPL.Prop
-    ⌊ Δ ⌋** = map (\ { ⟪ Γ ⊫ A ⟫ → ⌊ Γ ⌋* IPL.*⊃ ⌊ A ⌋ }) Δ
 
-    ↓∋ : ∀ {Γ A} → Γ ∋ A
-                 → ⌊ Γ ⌋* ∋ ⌊ A ⌋
-    ↓∋ zero    = zero
-    ↓∋ (suc i) = suc (↓∋ i)
+    ⌊_⌋*₁ : List Assert → List IPL.Prop
+    ⌊ Δ ⌋*₁ = map (\ { ⟪ Γ ⊫ A ⟫ → ⌊ Γ ⌋*₂ IPL.*⊃ ⌊ A ⌋ }) Δ
 
-    ↓∋* : ∀ {Δ Γ A} → Δ ∋ ⟪ Γ ⊫ A ⟫
-                    → ⌊ Δ ⌋** ∋ ⌊ Γ ⌋* IPL.*⊃ ⌊ A ⌋
-    ↓∋* zero    = zero
-    ↓∋* (suc i) = suc (↓∋* i)
+
+    ↓∋₁ : ∀ {Δ Γ A} → Δ ∋ ⟪ Γ ⊫ A ⟫
+                    → ⌊ Δ ⌋*₁ ∋ ⌊ Γ ⌋*₂ IPL.*⊃ ⌊ A ⌋
+    ↓∋₁ zero    = zero
+    ↓∋₁ (suc i) = suc (↓∋₁ i)
+
+
+    ↓∋₂ : ∀ {Γ A} → Γ ∋ A
+                  → ⌊ Γ ⌋*₂ ∋ ⌊ A ⌋
+    ↓∋₂ zero    = zero
+    ↓∋₂ (suc i) = suc (↓∋₂ i)
+
 
     mutual
       ↓ : ∀ {Δ Γ A} → Δ ⊢ A valid[ Γ ]
-                    → ⌊ Δ ⌋** ⧺ ⌊ Γ ⌋* IPL.⊢ ⌊ A ⌋ true
-      ↓ {Δ = Δ} (var i)         = IPL.ren (ldrops ⌊ Δ ⌋** id⊇) (IPL.var (↓∋ i))
+                    → ⌊ Δ ⌋*₁ ⧺ ⌊ Γ ⌋*₂ IPL.⊢ ⌊ A ⌋ true
+      ↓ {Δ = Δ} (var i)         = IPL.ren (ldrops ⌊ Δ ⌋*₁ id⊇) (IPL.var (↓∋₂ i))
       ↓         (lam 𝒟)         = IPL.lam (↓ 𝒟)
       ↓         (app 𝒟 ℰ)       = IPL.app (↓ 𝒟) (↓ ℰ)
-      ↓ {Γ = Γ} (mvar i ψ)      = IPL.app* (IPL.ren (rdrops ⌊ Γ ⌋* id) (IPL.var (↓∋* i))) (↓* ψ)
-      ↓ {Γ = Γ} (box {Ψ = Ψ} 𝒟) = IPL.ren (rdrops ⌊ Γ ⌋* id) (IPL.lam* ⌊ Ψ ⌋* (↓ 𝒟))
-      ↓ {Γ = Γ} (letbox 𝒟 ℰ)    = IPL.cut (↓ 𝒟) (IPL.pull ⌊ Γ ⌋* (↓ ℰ))
+      ↓ {Γ = Γ} (mvar i ψ)      = IPL.app* (IPL.ren (rdrops ⌊ Γ ⌋*₂ id) (IPL.var (↓∋₁ i))) (↓* ψ)
+      ↓ {Γ = Γ} (box {Ψ = Ψ} 𝒟) = IPL.ren (rdrops ⌊ Γ ⌋*₂ id) (IPL.lam* ⌊ Ψ ⌋*₂ (↓ 𝒟))
+      ↓ {Γ = Γ} (letbox 𝒟 ℰ)    = IPL.cut (↓ 𝒟) (IPL.pull ⌊ Γ ⌋*₂ (↓ ℰ))
 
       ↓* : ∀ {Δ Γ Ξ} → Δ ⊢ Ξ allvalid[ Γ ]
-                     → ⌊ Δ ⌋** ⧺ ⌊ Γ ⌋* IPL.⊢ ⌊ Ξ ⌋* alltrue
+                     → ⌊ Δ ⌋*₁ ⧺ ⌊ Γ ⌋*₂ IPL.⊢ ⌊ Ξ ⌋*₂ alltrue
       ↓* ∙       = ∙
       ↓* (ξ , 𝒟) = ↓* ξ , ↓ 𝒟
 

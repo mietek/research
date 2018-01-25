@@ -7,7 +7,6 @@ open import ListLemmas
 open import AllList
 open import S4Propositions
 import S4Derivations as S4
-open S4 using (Assert ; ⟪⊫_⟫)
 
 
 --------------------------------------------------------------------------------
@@ -132,11 +131,6 @@ sub ξ       (box 𝒟)      = box 𝒟
 sub ξ       (letbox 𝒟 ℰ) = letbox (sub ξ 𝒟) (sub (mwks ξ) ℰ)
 
 
-subs : ∀ {Δ Γ Ξ Ψ} → Δ ⊢ Ξ allvalid[ Γ ] → Δ ⊢ Ψ allvalid[ Ξ ]
-                   → Δ ⊢ Ψ allvalid[ Γ ] 
-subs ξ ψ = maps (sub ξ) ψ
-
-
 --------------------------------------------------------------------------------
 
 
@@ -150,16 +144,6 @@ msub (ξ , 𝒞) mvz          = letbox (box 𝒞) mvz
 msub (ξ , 𝒞) (mwk 𝒟)      = msub ξ 𝒟
 msub ξ       (box 𝒟)      = box (msub ξ 𝒟)
 msub ξ       (letbox 𝒟 ℰ) = letbox (msub ξ 𝒟) (msub (mlifts* ξ) ℰ)
-
-
-msubs : ∀ {Δ Γ Ξ Ψ} → Δ ⊢ Ξ allvalid* → Ξ ⊢ Ψ allvalid[ Γ ]
-                    → Δ ⊢ Ψ allvalid[ Γ ]
-msubs ξ ψ = maps (msub ξ) ψ
-
-
-msubs* : ∀ {Δ Ξ Ψ} → Δ ⊢ Ξ allvalid* → Ξ ⊢ Ψ allvalid*
-                   → Δ ⊢ Ψ allvalid* 
-msubs* ξ ψ = maps (msub ξ) ψ
 
 
 --------------------------------------------------------------------------------
@@ -202,9 +186,6 @@ mvar (suc i) = mwk (mvar i)
 ↑ (S4.letbox 𝒟 ℰ) = letbox (↑ 𝒟) (↑ ℰ)
 
 
---------------------------------------------------------------------------------
-
-
 lem-var : ∀ {Δ Γ A} → (i : Γ ∋ A)
                     → ↓ {Δ} (var i) ≡ S4.var i
 lem-var zero    = refl
@@ -222,36 +203,28 @@ lem-mvar (suc i) = S4.mwk & lem-mvar i
 id↓↑ : ∀ {Δ Γ A} → (𝒟 : Δ S4.⊢ A valid[ Γ ])
                  → (↓ ∘ ↑) 𝒟 ≡ 𝒟
 id↓↑ (S4.var i)      = lem-var i
-id↓↑ (S4.lam 𝒟)      = S4.lam & id↓↑ 𝒟 
+id↓↑ (S4.lam 𝒟)      = S4.lam & id↓↑ 𝒟
 id↓↑ (S4.app 𝒟 ℰ)    = S4.app & id↓↑ 𝒟 ⊗ id↓↑ ℰ
 id↓↑ (S4.mvar i)     = lem-mvar i
 id↓↑ (S4.box 𝒟)      = S4.box & id↓↑ 𝒟
 id↓↑ (S4.letbox 𝒟 ℰ) = S4.letbox & id↓↑ 𝒟 ⊗ id↓↑ ℰ
 
 
--- NOTE: The other direction cannot hold syntactically
-
--- lem-wk : ∀ {Δ Γ A B} → (𝒟 : Δ S4.⊢ A valid[ Γ ])
---                      → ↑ (S4.wk {B} 𝒟) ≡ wk (↑ 𝒟)
--- lem-wk (S4.var i)      = wk ∘ var & id-ren∋ i 
--- lem-wk (S4.lam 𝒟)      = {!!}
--- lem-wk (S4.app 𝒟 ℰ)    = {!!}
--- lem-wk (S4.mvar i)     = {!!}
--- lem-wk (S4.box 𝒟)      = {!!} -- NOTE: `box (↑ 𝒟) ≡ wk (box (↑ 𝒟))` cannot hold
--- lem-wk (S4.letbox 𝒟 ℰ) = {!!}
-
+-- NOTE: Problematic
 
 -- id↑↓ : ∀ {Δ Γ A} → (𝒟 : Δ ⊢ A valid[ Γ ])
 --                  → (↑ ∘ ↓) 𝒟 ≡ 𝒟
 -- id↑↓ vz           = refl
--- id↑↓ (wk 𝒟)       = lem-wk (↓ 𝒟)
---                   ⋮ wk & id↑↓ 𝒟
--- id↑↓ (lam 𝒟)      = lam & id↑↓ 𝒟 
+-- id↑↓ (wk 𝒟)       = {!!} -- ↑ (S4.wk (↓ 𝒟)) ≡ wk 𝒟
+-- id↑↓ (lam 𝒟)      = lam & id↑↓ 𝒟
 -- id↑↓ (app 𝒟 ℰ)    = app & id↑↓ 𝒟 ⊗ id↑↓ ℰ
 -- id↑↓ mvz          = refl
--- id↑↓ (mwk 𝒟)      = {!!}
+-- id↑↓ (mwk 𝒟)      = {!!} -- ↑ (S4.mwk (↓ 𝒟)) ≡ mwk 𝒟
 -- id↑↓ (box 𝒟)      = box & id↑↓ 𝒟
 -- id↑↓ (letbox 𝒟 ℰ) = letbox & id↑↓ 𝒟 ⊗ id↑↓ ℰ
+
+
+-- TODO: Semantic equivalence
 
 
 --------------------------------------------------------------------------------

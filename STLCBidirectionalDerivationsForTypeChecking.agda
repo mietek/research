@@ -11,31 +11,31 @@ open import STLCBidirectionalTermsForTypeChecking
 
 
 mutual
-  infix 3 ⊢_⊦_≪_checks
-  data ⊢_⊦_≪_checks : ∀ {g} → Types g → Termₗ g → Type → Set
+  infix 3 ⊢_≪_checked[_]
+  data ⊢_≪_checked[_] : ∀ {g} → Termₗ g → Type → Types g → Set
     where
       lam : ∀ {A B g M} → {Γ : Types g}
-                        → ⊢ Γ , A ⊦ M ≪ B checks
-                        → ⊢ Γ ⊦ LAM M ≪ A ⊃ B checks
+                        → ⊢ M ≪ B checked[ Γ , A ]
+                        → ⊢ LAM M ≪ A ⊃ B checked[ Γ ]
 
       inf : ∀ {A g M} → {Γ : Types g}
-                      → ⊢ Γ ⊦ M ≫ A infers
-                      → ⊢ Γ ⊦ INF M ≪ A checks
+                      → ⊢ M ≫ A inferred[ Γ ]
+                      → ⊢ INF M ≪ A checked[ Γ ]
 
-  infix 3 ⊢_⊦_≫_infers
-  data ⊢_⊦_≫_infers : ∀ {g} → Types g → Termᵣ g → Type → Set
+  infix 3 ⊢_≫_inferred[_]
+  data ⊢_≫_inferred[_] : ∀ {g} → Termᵣ g → Type → Types g → Set
     where
       var : ∀ {A g I} → {Γ : Types g}
                       → Γ ∋⟨ I ⟩ A
-                      → ⊢ Γ ⊦ VAR I ≫ A infers
+                      → ⊢ VAR I ≫ A inferred[ Γ ]
 
       app : ∀ {A B g M N} → {Γ : Types g}
-                          → ⊢ Γ ⊦ M ≫ A ⊃ B infers → ⊢ Γ ⊦ N ≪ A checks
-                          → ⊢ Γ ⊦ APP M N ≫ B infers
+                          → ⊢ M ≫ A ⊃ B inferred[ Γ ] → ⊢ N ≪ A checked[ Γ ]
+                          → ⊢ APP M N ≫ B inferred[ Γ ]
 
       chk : ∀ {A g M} → {Γ : Types g}
-                      → ⊢ Γ ⊦ M ≪ A checks
-                      → ⊢ Γ ⊦ CHK M A ≫ A infers
+                      → ⊢ M ≪ A checked[ Γ ]
+                      → ⊢ CHK M A ≫ A inferred[ Γ ]
 
 
 --------------------------------------------------------------------------------
@@ -43,14 +43,14 @@ mutual
 
 mutual
   renₗ : ∀ {g g′ e M A} → {Γ : Types g} {Γ′ : Types g′}
-                        → Γ′ ⊇⟨ e ⟩ Γ → ⊢ Γ ⊦ M ≪ A checks
-                        → ⊢ Γ′ ⊦ RENₗ e M ≪ A checks
+                        → Γ′ ⊇⟨ e ⟩ Γ → ⊢ M ≪ A checked[ Γ ]
+                        → ⊢ RENₗ e M ≪ A checked[ Γ′ ]
   renₗ η (lam 𝒟) = lam (renₗ (keep η) 𝒟)
   renₗ η (inf 𝒟) = inf (renᵣ η 𝒟)
 
   renᵣ : ∀ {g g′ e M A} → {Γ : Types g} {Γ′ : Types g′}
-                        → Γ′ ⊇⟨ e ⟩ Γ → ⊢ Γ ⊦ M ≫ A infers
-                        → ⊢ Γ′ ⊦ RENᵣ e M ≫ A infers
+                        → Γ′ ⊇⟨ e ⟩ Γ → ⊢ M ≫ A inferred[ Γ ]
+                        → ⊢ RENᵣ e M ≫ A inferred[ Γ′ ]
   renᵣ η (var i)   = var (ren∋ η i)
   renᵣ η (app 𝒟 ℰ) = app (renᵣ η 𝒟) (renₗ η ℰ)
   renᵣ η (chk 𝒟)   = chk (renₗ η 𝒟)
@@ -60,13 +60,13 @@ mutual
 
 
 wkᵣ : ∀ {B g M A} → {Γ : Types g}
-                  → ⊢ Γ ⊦ M ≫ A infers
-                  → ⊢ Γ , B ⊦ WKᵣ M ≫ A infers
+                  → ⊢ M ≫ A inferred[ Γ ]
+                  → ⊢ WKᵣ M ≫ A inferred[ Γ , B ]
 wkᵣ 𝒟 = renᵣ (drop id⊇) 𝒟
 
 
 vzᵣ : ∀ {A g} → {Γ : Types g}
-              → ⊢ Γ , A ⊦ VZᵣ ≫ A infers
+              → ⊢ VZᵣ ≫ A inferred[ Γ , A ]
 vzᵣ = var zero
 
 

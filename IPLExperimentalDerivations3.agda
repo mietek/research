@@ -14,7 +14,7 @@ open import IPLPropositions
 infix 3 _⊢_true
 data _⊢_true : List Prop → Prop → Set
   where
-    var : ∀ {A Γ} → Γ ∋ A 
+    var : ∀ {A Γ} → Γ ∋ A
                   → Γ ⊢ A true
 
     cut : ∀ {A B Γ} → Γ ⊢ A true → Γ , A ⊢ B true
@@ -37,7 +37,7 @@ data _⊢_true : List Prop → Prop → Set
 -- ren η (var i)   = var (ren∋ η i)
 -- ren η (cut 𝒟 ℰ) = cut (ren η 𝒟) (ren (keep η) ℰ)
 -- ren η (lam 𝒟)   = lam (ren (keep η) 𝒟)
--- ren η (unlam 𝒟) = {!!} 
+-- ren η (unlam 𝒟) = {!!} -- Γ′ ⊢ B true
 
 
 --------------------------------------------------------------------------------

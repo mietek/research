@@ -4,21 +4,8 @@ open import Prelude
 open import Category
 open import List
 open import ListLemmas
-open import ListConcatenation
 open import AllList
 open import S4Propositions
-import IPLPropositions as IPL
-import IPLDerivations as IPL
-
-
---------------------------------------------------------------------------------
-
-
-record Assert : Set
-  where
-    constructor ⟪⊫_⟫
-    field
-      A : Prop
 
 
 --------------------------------------------------------------------------------
@@ -272,7 +259,7 @@ mcut 𝒟 ℰ = msub (mids* , 𝒟) ℰ
 
 
 pseudomcut : ∀ {Δ Γ A B} → Δ ⊢ A valid[ ∙ ] → Δ , ⟪⊫ A ⟫ ⊢ B valid[ Γ ]
-                   → Δ ⊢ B valid[ Γ ]
+                         → Δ ⊢ B valid[ Γ ]
 pseudomcut 𝒟 ℰ = letbox (box 𝒟) ℰ
 
 
@@ -285,63 +272,6 @@ pseudomsub (ξ , 𝒞) 𝒟 = app (pseudomsub ξ (lam (vau 𝒟))) (box 𝒞)
 mexch : ∀ {Δ Γ A B C} → Δ , ⟪⊫ A ⟫ , ⟪⊫ B ⟫ ⊢ C valid[ Γ ]
                       → Δ , ⟪⊫ B ⟫ , ⟪⊫ A ⟫ ⊢ C valid[ Γ ]
 mexch 𝒟 = unvau (unvau (exch (vau (vau 𝒟))))
-
-
---------------------------------------------------------------------------------
-
-
-module IPL→S4
-  where
-    ⌈_⌉ : IPL.Prop → Prop
-    ⌈ IPL.ι P ⌉   = ι P
-    ⌈ A IPL.⊃ B ⌉ = ⌈ A ⌉ ⊃ ⌈ B ⌉
-
-    ⌈_⌉* : List IPL.Prop → List Prop
-    ⌈ Γ ⌉* = map ⌈_⌉ Γ
-
-    ↑∋ : ∀ {Γ A} → Γ ∋ A
-                 → ⌈ Γ ⌉* ∋ ⌈ A ⌉
-    ↑∋ zero    = zero
-    ↑∋ (suc i) = suc (↑∋ i)
-
-    ↑ : ∀ {Δ Γ A} → Γ IPL.⊢ A true
-                  → Δ ⊢ ⌈ A ⌉ valid[ ⌈ Γ ⌉* ]
-    ↑ (IPL.var i)   = var (↑∋ i)
-    ↑ (IPL.lam 𝒟)   = lam (↑ 𝒟)
-    ↑ (IPL.app 𝒟 ℰ) = app (↑ 𝒟) (↑ ℰ)
-
-
-module S4→IPL
-  where
-    ⌊_⌋ : Prop → IPL.Prop
-    ⌊ ι P ⌋   = IPL.ι P
-    ⌊ A ⊃ B ⌋ = ⌊ A ⌋ IPL.⊃ ⌊ B ⌋
-    ⌊ □ A ⌋   = ⌊ A ⌋
-
-    ⌊_⌋* : List Prop → List IPL.Prop
-    ⌊ Γ ⌋* = map ⌊_⌋ Γ
-
-    ⌊_⌋** : List Assert → List IPL.Prop
-    ⌊ Δ ⌋** = map (\ { ⟪⊫ A ⟫ → ⌊ A ⌋ }) Δ
-
-    ↓∋ : ∀ {Γ A} → Γ ∋ A
-                 → ⌊ Γ ⌋* ∋ ⌊ A ⌋
-    ↓∋ zero    = zero
-    ↓∋ (suc i) = suc (↓∋ i)
-
-    ↓∋* : ∀ {Δ A} → Δ ∋ ⟪⊫ A ⟫
-                  → ⌊ Δ ⌋** ∋ ⌊ A ⌋
-    ↓∋* zero    = zero
-    ↓∋* (suc i) = suc (↓∋* i)
-
-    ↓ : ∀ {Δ Γ A} → Δ ⊢ A valid[ Γ ]
-                  → ⌊ Δ ⌋** ⧺ ⌊ Γ ⌋* IPL.⊢ ⌊ A ⌋ true
-    ↓ {Δ = Δ} (var i)      = IPL.ren (ldrops ⌊ Δ ⌋** id) (IPL.var (↓∋ i))
-    ↓         (lam 𝒟)      = IPL.lam (↓ 𝒟)
-    ↓         (app 𝒟 ℰ)    = IPL.app (↓ 𝒟) (↓ ℰ)
-    ↓ {Γ = Γ} (mvar i)     = IPL.ren (rdrops ⌊ Γ ⌋* id) (IPL.var (↓∋* i))
-    ↓ {Γ = Γ} (box 𝒟)      = IPL.ren (rdrops ⌊ Γ ⌋* id) (↓ 𝒟)
-    ↓ {Γ = Γ} (letbox 𝒟 ℰ) = IPL.cut (↓ 𝒟) (IPL.pull ⌊ Γ ⌋* (↓ ℰ))
 
 
 --------------------------------------------------------------------------------

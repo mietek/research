@@ -65,8 +65,6 @@ open import CMLDerivations
                      subs (rens η ξ) ψ ≡ (rens η ∘ subs ξ) ψ                    comp-rens-subs
             (subs (lifts ξ) ∘ lifts) ψ ≡ (lifts ∘ subs ξ) ψ                     comp-lifts-subs
 
-                     get (msubs ξ ψ) i ≡ (msub ξ ∘ get ψ) i                     comp-msub-get
-                    get (msubs* ξ ψ) i ≡ (msub ξ ∘ get ψ) i                     comp-msub-get*
           (sub (mrens η ξ) ∘ mren η) 𝒟 ≡ (mren η ∘ sub ξ) 𝒟                     comp-mren-sub
         (subs (mrens η ξ) ∘ mrens η) ψ ≡ (mrens η ∘ subs ξ) ψ                   comp-mrens-subs
 
@@ -75,9 +73,11 @@ open import CMLDerivations
                             subs ξ ids ≡ ξ                                      rid-subs
                       sub (subs ξ ψ) 𝒟 ≡ (sub ξ ∘ sub ψ) 𝒟                      comp-sub
                      subs (subs ξ ψ) φ ≡ (subs ξ ∘ subs ψ) φ                    assoc-subs
-                                                                                𝐒𝟒
+                                                                                𝐂𝐌𝐋
                                                                                 𝐬𝐮𝐛
 
+                     get (msubs ξ ψ) i ≡ (msub ξ ∘ get ψ) i                     comp-msub-get
+                    get (msubs* ξ ψ) i ≡ (msub ξ ∘ get ψ) i                     comp-msub-get*
                     (ren η ∘ msub ξ) 𝒟 ≡ (msub ξ ∘ ren η) 𝒟                     comp-msub-ren
                   (rens η ∘ msubs ξ) ψ ≡ (msubs ξ ∘ rens η) ψ                   comp-msubs-rens
                    (lifts ∘ msubs ξ) ψ ≡ (msubs ξ ∘ lifts) ψ                    comp-msubs-lifts
@@ -94,17 +94,20 @@ open import CMLDerivations
                  msubs* (mrens* η ξ) ψ ≡ (mrens* η ∘ msubs* ξ) ψ                comp-mrens*-msubs*
         (msubs* (mlifts* ξ) ∘ mwks*) ψ ≡ (mwks* ∘ msubs* ξ) ψ                   comp-mwks*-msubs*
       (msubs* (mlifts* ξ) ∘ mlifts*) ψ ≡ (mlifts* ∘ msubs* ξ) ψ                 comp-mlifts*-msubs*
+
           (sub (msubs ξ ψ) ∘ msub ξ) 𝒟 ≡ (msub ξ ∘ sub ψ) 𝒟                     comp-msub-sub
+        (subs (msubs ξ ψ) ∘ msubs ξ) φ ≡ (msubs ξ ∘ subs ψ) φ                   comp-msubs-subs
 
                           msub mids* 𝒟 ≡ 𝒟                                      id-msub
                          msubs mids* ξ ≡ ξ                                      id-msubs
                         msubs* mids* ξ ≡ ξ                                      lid-msubs*
                         msubs* ξ mids* ≡ ξ                                      rid-msubs*
                    msub (msubs* ξ ψ) 𝒟 ≡ (msub ξ ∘ msub ψ) 𝒟                    comp-msub
+                  msubs (msubs* ξ ψ) φ ≡ (msubs ξ ∘ msubs ψ) φ                  comp-msubs
                  msubs* (msubs* ξ ψ) φ ≡ (msubs* ξ ∘ msubs* ψ) φ                assoc-msubs*
-                                                                                𝐒𝟒*
+                                                                                𝐂𝐌𝐋*
                                                                                 𝐦𝐬𝐮𝐛
-
+                                                                                𝐦𝐬𝐮𝐛𝐬
 -}
 --------------------------------------------------------------------------------
 
@@ -277,7 +280,7 @@ get-mvar : ∀ {Δ A Ψ} → (i : Δ ∋ ⟪ Ψ ⊫ A ⟫)
 get-mvar zero    = refl
 get-mvar (suc i) = comp-mren-get* (drop id) mids* i
                  ⋮ mwk & get-mvar i
-                 ⋮ (\ i′ ι′ → mvar (suc i′) ι′) & id-ren∋ i ⊗ id-mrens-ids (drop id)
+                 ⋮ (\ i′ ξ′ → mvar (suc i′) ξ′) & id-ren∋ i ⊗ id-mrens-ids (drop id)
 
 
 --------------------------------------------------------------------------------
@@ -375,7 +378,7 @@ comp-mwks*-mrens*-keep η (ξ , 𝒟) = _,_ & comp-mwks*-mrens*-keep η ξ ⊗ c
 
 comp-mlifts*-mrens* : ∀ {Δ Δ′ Ξ A} → (η : Δ′ ⊇ Δ) (ξ : Δ ⊢ Ξ allvalid*)
                                    → (mrens* (keep {A = A} η) ∘ mlifts*) ξ ≡ (mlifts* ∘ mrens* η) ξ
-comp-mlifts*-mrens* η ξ = (\ ξ′ ι′ → ξ′ , mvz ι′) & comp-mwks*-mrens*-keep η ξ ⊗ id-mrens-ids (keep η)
+comp-mlifts*-mrens* η ξ = (\ ξ′ ψ′ → ξ′ , mvz ψ′) & comp-mwks*-mrens*-keep η ξ ⊗ id-mrens-ids (keep η)
 
 
 --------------------------------------------------------------------------------
@@ -454,18 +457,6 @@ comp-lifts-subs ξ ψ = (_, vz) & ( id-cons-wks-subs (wks ξ) vz ψ
 --------------------------------------------------------------------------------
 
 
-comp-msub-get : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⊢ Ξ allvalid*) (ψ : Ξ ⊢ Ψ allvalid[ Γ ]) (i : Ψ ∋ A)
-                              → get (msubs ξ ψ) i ≡ (msub ξ ∘ get ψ) i
-comp-msub-get ξ (ψ , 𝒟) zero    = refl
-comp-msub-get ξ (ψ , ℰ) (suc i) = comp-msub-get ξ ψ i
-
-
-comp-msub-get* : ∀ {Δ Ξ Ψ Φ A} → (ξ : Δ ⊢ Ξ allvalid*) (ψ : Ξ ⊢ Ψ allvalid*) (i : Ψ ∋ ⟪ Φ ⊫ A ⟫)
-                               → get (msubs* ξ ψ) i ≡ (msub ξ ∘ get ψ) i
-comp-msub-get* ξ (ψ , 𝒟) zero    = refl
-comp-msub-get* ξ (ψ , ℰ) (suc i) = comp-msub-get* ξ ψ i
-
-
 mutual
   comp-mren-sub : ∀ {Δ Δ′ Γ Ξ A} → (η : Δ′ ⊇ Δ) (ξ : Δ ⊢ Ξ allvalid[ Γ ]) (𝒟 : Δ ⊢ A valid[ Ξ ])
                                  → (sub (mrens η ξ) ∘ mren η) 𝒟 ≡ (mren η ∘ sub ξ) 𝒟
@@ -490,6 +481,7 @@ mutual
 --------------------------------------------------------------------------------
 
 
+
 mutual
   id-sub : ∀ {Δ Γ A} → (𝒟 : Δ ⊢ A valid[ Γ ])
                      → sub ids 𝒟 ≡ 𝒟
@@ -498,7 +490,7 @@ mutual
   id-sub (app 𝒟 ℰ)    = app & id-sub 𝒟 ⊗ id-sub ℰ
   id-sub (mvar i ψ)   = mvar i & lid-subs ψ
   id-sub (box 𝒟)      = refl
-  id-sub (letbox 𝒟 ℰ) = letbox & id-sub 𝒟 ⊗ ( (\ ι′ → sub ι′ ℰ) & id-mrens-ids (drop id)
+  id-sub (letbox 𝒟 ℰ) = letbox & id-sub 𝒟 ⊗ ( (\ ξ′ → sub ξ′ ℰ) & id-mrens-ids (drop id)
                                             ⋮ id-sub ℰ
                                             )
 
@@ -538,17 +530,17 @@ mutual
 
 
 instance
-  𝐒𝟒 : ∀ {Δ} → Category (List Prop) (\ Γ Ξ → Δ ⊢ Ξ allvalid[ Γ ])
-  𝐒𝟒 = record
-         { id     = ids
-         ; _∘_    = flip subs
-         ; lid∘   = rid-subs
-         ; rid∘   = lid-subs
-         ; assoc∘ = \ φ ψ ξ → assoc-subs ξ ψ φ ⁻¹
-         }
+  𝐂𝐌𝐋 : ∀ {Δ} → Category (List Prop) (\ Γ Ξ → Δ ⊢ Ξ allvalid[ Γ ])
+  𝐂𝐌𝐋 = record
+          { id     = ids
+          ; _∘_    = flip subs
+          ; lid∘   = rid-subs
+          ; rid∘   = lid-subs
+          ; assoc∘ = \ φ ψ ξ → assoc-subs ξ ψ φ ⁻¹
+          }
 
 
-𝐬𝐮𝐛 : ∀ {Δ A} → Presheaf (𝐒𝟒 {Δ}) (\ Γ → Δ ⊢ A valid[ Γ ])
+𝐬𝐮𝐛 : ∀ {Δ A} → Presheaf (𝐂𝐌𝐋 {Δ}) (\ Γ → Δ ⊢ A valid[ Γ ])
 𝐬𝐮𝐛 = record
         { ℱ     = sub
         ; idℱ   = funext! id-sub
@@ -557,6 +549,18 @@ instance
 
 
 --------------------------------------------------------------------------------
+
+
+comp-msub-get : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⊢ Ξ allvalid*) (ψ : Ξ ⊢ Ψ allvalid[ Γ ]) (i : Ψ ∋ A)
+                              → get (msubs ξ ψ) i ≡ (msub ξ ∘ get ψ) i
+comp-msub-get ξ (ψ , 𝒟) zero    = refl
+comp-msub-get ξ (ψ , ℰ) (suc i) = comp-msub-get ξ ψ i
+
+
+comp-msub-get* : ∀ {Δ Ξ Ψ Φ A} → (ξ : Δ ⊢ Ξ allvalid*) (ψ : Ξ ⊢ Ψ allvalid*) (i : Ψ ∋ ⟪ Φ ⊫ A ⟫)
+                               → get (msubs* ξ ψ) i ≡ (msub ξ ∘ get ψ) i
+comp-msub-get* ξ (ψ , 𝒟) zero    = refl
+comp-msub-get* ξ (ψ , ℰ) (suc i) = comp-msub-get* ξ ψ i
 
 
 mutual
@@ -672,9 +676,12 @@ comp-mwks*-msubs* ξ ψ = id-cons-mwks*-msubs* (mwks* ξ) (mvz ids) ψ
 comp-mlifts*-msubs* : ∀ {Δ Ξ Ψ Φ A} → (ξ : Δ ⊢ Ξ allvalid*) (ψ : Ξ ⊢ Ψ allvalid*)
                                     → (msubs* (mlifts* {A} {Φ} ξ) ∘ mlifts*) ψ ≡ (mlifts* ∘ msubs* ξ) ψ
 comp-mlifts*-msubs* ξ ψ = (\ ξ′ ψ′ → ξ′ , mvz ψ′) & comp-mwks*-msubs* ξ ψ
-                                                   ⊗ ( (\ ι′ → subs ι′ ids) & id-msubs-ids (mlifts* ξ)
+                                                   ⊗ ( (\ φ′ → subs φ′ ids) & id-msubs-ids (mlifts* ξ)
                                                      ⋮ lid-subs ids
                                                      )
+
+
+--------------------------------------------------------------------------------
 
 
 mutual
@@ -733,7 +740,7 @@ rid-msubs* ∙       = refl
 rid-msubs* (ξ , 𝒟) = _,_ & ( id-cons-mwks*-msubs* ξ 𝒟 mids*
                            ⋮ rid-msubs* ξ
                            )
-                         ⊗ ( (\ ι′ → sub ι′ 𝒟) & id-msubs-ids (ξ , 𝒟)
+                         ⊗ ( (\ ψ′ → sub ψ′ 𝒟) & id-msubs-ids (ξ , 𝒟)
                            ⋮ id-sub 𝒟
                            )
 
@@ -765,22 +772,30 @@ assoc-msubs* ξ ψ (φ , 𝒟) = _,_ & assoc-msubs* ξ ψ φ ⊗ comp-msub ξ ψ
 
 
 instance
-  𝐒𝟒* : Category (List Assert) _⊢_allvalid*
-  𝐒𝟒* = record
-          { id     = mids*
-          ; _∘_    = flip msubs*
-          ; lid∘   = rid-msubs*
-          ; rid∘   = lid-msubs*
-          ; assoc∘ = \ φ ψ ξ → assoc-msubs* ξ ψ φ ⁻¹
-          }
+  𝐂𝐌𝐋* : Category (List Assert) _⊢_allvalid*
+  𝐂𝐌𝐋* = record
+           { id     = mids*
+           ; _∘_    = flip msubs*
+           ; lid∘   = rid-msubs*
+           ; rid∘   = lid-msubs*
+           ; assoc∘ = \ φ ψ ξ → assoc-msubs* ξ ψ φ ⁻¹
+           }
 
 
-𝐦𝐬𝐮𝐛 : ∀ {A Γ} → Presheaf 𝐒𝟒* (_⊢ A valid[ Γ ])
+𝐦𝐬𝐮𝐛 : ∀ {A Γ} → Presheaf 𝐂𝐌𝐋* (_⊢ A valid[ Γ ])
 𝐦𝐬𝐮𝐛 = record
          { ℱ     = msub
          ; idℱ   = funext! id-msub
          ; compℱ = \ ψ ξ → funext! (comp-msub ξ ψ)
          }
+
+
+𝐦𝐬𝐮𝐛𝐬 : ∀ {Γ Ξ} → Presheaf 𝐂𝐌𝐋* (_⊢ Ξ allvalid[ Γ ])
+𝐦𝐬𝐮𝐛𝐬 = record
+          { ℱ     = msubs
+          ; idℱ   = funext! id-msubs
+          ; compℱ = \ ψ ξ → funext! (comp-msubs ξ ψ)
+          }
 
 
 --------------------------------------------------------------------------------
