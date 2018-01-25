@@ -83,22 +83,6 @@ import S4BidirectionalDerivationsForNormalisation
 import S4Normalisation
 
 
--- import S4ExperimentalDerivations0a
--- import S4ExperimentalDerivations1a
--- import S4ExperimentalDerivations3a
--- import S4ExperimentalDerivations3x
--- import S4ExperimentalDerivations4a
-
--- import StdS4
--- import StdS4Lemmas
--- import StdS4NormalForms
--- import StdS4Semantics
-
--- import Alt1-S4
--- import Alt1-S4NormalForms
--- import Alt1-S4Semantics
--- import Alt2-S4
-
 -- import SymS4
 
 
