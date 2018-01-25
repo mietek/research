@@ -67,13 +67,13 @@ import STLCNameResolution
 
 import S4Propositions
 
-import S4Derivations                -- _⊢_valid[_] ; var/lam/app         ; mvar/box/letbox
-import S4StandardDerivations        -- _⨾_⊢_       ; var/lam/app         ; mvar/box/letbox
-import S4ExperimentalDerivations1   -- _⊢_valid[_] ; vz/wk/lam/app       ; mvz/mwk/box/letbox
-import S4ExperimentalDerivations2   -- _⊢_valid[_] ; vz/wk/cut/lam/unlam ; mvz/mwk/box/letbox
-import S4ExperimentalDerivations3   -- _⊢_valid[_] ; vz/wk/cut/lam/unlam ; mvz/mwk/mcut/vau/unvau
-import S4ExperimentalDerivations4   -- _⊢_valid[_] ; vz/wk/cut/lam/unlam ; box/unbox/vau/unvau
-import S4ExperimentalDerivations5   -- _⊢_valid[_] ; vz/wk/cut/lam/unlam ; mvz/mwk/mcut/box/unbox ; problematic
+import S4Derivations               -- _⊢_valid[_] ; var/lam/app         ; mvar/box/letbox
+import S4ExperimentalDerivations1  -- _⊢_valid[_] ; vz/wk/lam/app       ; mvz/mwk/box/letbox
+import S4ExperimentalDerivations2  -- _⊢_valid[_] ; vz/wk/cut/lam/unlam ; mvz/mwk/box/letbox
+import S4ExperimentalDerivations3  -- _⊢_valid[_] ; vz/wk/cut/lam/unlam ; mvz/mwk/mcut/vau/unvau
+import S4ExperimentalDerivations4  -- _⊢_valid[_] ; vz/wk/cut/lam/unlam ; box/unbox/vau/unvau
+import S4ExperimentalDerivations5  -- _⊢_valid[_] ; vz/wk/cut/lam/unlam ; mvz/mwk/mcut/box/unbox ; problematic
+import S4StandardDerivations       -- _⨾_⊢_       ; var/lam/app         ; mvar/box/letbox
 
 import S4Lemmas
 
@@ -81,9 +81,6 @@ import S4ProjectionToIPL
 
 import S4BidirectionalDerivationsForNormalisation
 import S4Normalisation
-
-
--- import SymS4
 
 
 --------------------------------------------------------------------------------
