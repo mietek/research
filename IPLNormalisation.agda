@@ -86,7 +86,7 @@ instance
   canon : Model
   canon = record
             { World  = List Prop
-            ; Ground = \ Γ P → Γ ⊢ ι P usable
+            ; Ground = \ Γ P → Γ ⊢ ι P neutral
             ; _≥_    = _⊇_
             ; id≥    = id
             ; _∘≥_   = _∘_
@@ -95,13 +95,13 @@ instance
 
 
 mutual
-  ⇓ : ∀ {A Γ} → Γ ⊢ A usable
+  ⇓ : ∀ {A Γ} → Γ ⊢ A neutral
               → Γ ⊩ A value
   ⇓ {ι P}   𝒟 = 𝒟
   ⇓ {A ⊃ B} 𝒟 = \ η a → ⇓ (app (renᵣ η 𝒟) (⇑ a))
 
   ⇑ : ∀ {A Γ} → Γ ⊩ A value
-              → Γ ⊢ A checkable
+              → Γ ⊢ A normal
   ⇑ {ι P}   𝒟 = use 𝒟
   ⇑ {A ⊃ B} f = lam (⇑ (f (drop id) (⇓ {A} vzᵣ)))
 
@@ -139,12 +139,12 @@ sids = svars id
 
 
 ↑ : ∀ {Γ A} → Γ ⊨ A true
-            → Γ ⊢ A checkable
+            → Γ ⊢ A normal
 ↑ f = ⇑ (f sids)
 
 
 nm : ∀ {Γ A} → Γ ⊢ A true
-             → Γ ⊢ A checkable
+             → Γ ⊢ A normal
 nm 𝒟 = ↑ (↓ 𝒟)
 
 

@@ -80,7 +80,7 @@ W ⊩ Δ allchunk = All (W ⊩_chunk) Δ
 
 syn : ∀ {{_ : Model}} {A W} → W ⊩ ⟪⊫ A ⟫ chunk
                             → peek W ⊢ A valid[ ∙ ]
-syn v = proj₁ v
+syn (𝒟 , k) = 𝒟
 
 
 syns : ∀ {{_ : Model}} {Δ W} → W ⊩ Δ allchunk
@@ -90,7 +90,7 @@ syns δ = maps syn δ
 
 sem : ∀ {{_ : Model}} {A W} → W ⊩ ⟪⊫ A ⟫ chunk
                             → W ⊩ A thunk
-sem v = proj₂ v
+sem (𝒟 , k) = k
 
 
 --------------------------------------------------------------------------------
@@ -164,35 +164,35 @@ _⊨_valid[_] : List Assert → Prop → List Prop → Set₁
 --------------------------------------------------------------------------------
 
 
-renᵣ² : ∀ {Δ Δ′ Γ Γ′ A} → Δ′ ⨾ Γ′ ⊇² Δ ⨾ Γ → Δ ⊢ A usable[ Γ ]
-                        → Δ′ ⊢ A usable[ Γ′ ]
-renᵣ² η 𝒟 = mrenᵣ (proj₁ η) (renᵣ (proj₂ η) 𝒟)
+ren² : ∀ {Δ Δ′ Γ Γ′ A} → Δ′ ⨾ Γ′ ⊇² Δ ⨾ Γ → Δ ⊢ A neutral[ Γ ]
+                       → Δ′ ⊢ A neutral[ Γ′ ]
+ren² (η₁ , η₂) 𝒟 = mrenᵣ η₁ (renᵣ η₂ 𝒟)
 
 
 instance
   canon : Model
   canon = record
             { World   = List² Assert Prop
-            ; Ground  = \ { (Δ ⨾ Γ) P → Δ ⊢ ι P usable[ Γ ] }
-            ; Explode = \ { (Δ ⨾ Γ) A → Δ ⊢ A checkable[ Γ ] }
+            ; Ground  = \ { (Δ ⨾ Γ) P → Δ ⊢ ι P neutral[ Γ ] }
+            ; Explode = \ { (Δ ⨾ Γ) A → Δ ⊢ A normal[ Γ ] }
             ; _≥_     = _⊇²_
             ; id≥     = id
             ; _∘≥_    = _∘_
-            ; relG    = renᵣ²
-            ; peek    = proj₁
-            ; peek≥   = proj₁
+            ; relG    = ren²
+            ; peek    = \ { (Δ ⨾ Γ) → Δ }
+            ; peek≥   = \ { (η₁ , η₂) → η₁ }
             }
 
 
 mutual
-  ⇓ : ∀ {A Δ Γ} → Δ ⊢ A usable[ Γ ]
+  ⇓ : ∀ {A Δ Γ} → Δ ⊢ A neutral[ Γ ]
                 → Δ ⨾ Γ ⊩ A thunk
   ⇓ {ι P}   𝒟 = return {ι P} 𝒟
-  ⇓ {A ⊃ B} 𝒟 = return {A ⊃ B} (\ η k → ⇓ (app (renᵣ² η 𝒟) (⇑ k)))
-  ⇓ {□ A}   𝒟 = \ η f → letbox (renᵣ² η 𝒟) (f (drop₁ id) (mvz , ⇓ mvzᵣ))
+  ⇓ {A ⊃ B} 𝒟 = return {A ⊃ B} (\ η k → ⇓ (app (ren² η 𝒟) (⇑ k)))
+  ⇓ {□ A}   𝒟 = \ η f → letbox (ren² η 𝒟) (f (drop₁ id) (mvz , ⇓ mvzᵣ))
 
   ⇑ : ∀ {A Δ Γ} → Δ ⨾ Γ ⊩ A thunk
-                → Δ ⊢ A checkable[ Γ ]
+                → Δ ⊢ A normal[ Γ ]
   ⇑ {ι P}   k = k id (\ η 𝒟 → use 𝒟)
   ⇑ {A ⊃ B} k = k id (\ η f → lam (⇑ (f (drop₂ id) (⇓ vzᵣ))))
   ⇑ {□ A}   k = k id (\ η v → box (syn v))
@@ -250,12 +250,12 @@ smids = smvars id
 
 
 ↑ : ∀ {Δ Γ A} → Δ ⊨ A valid[ Γ ]
-              → Δ ⊢ A checkable[ Γ ]
+              → Δ ⊢ A normal[ Γ ]
 ↑ f = ⇑ (f smids sids)
 
 
 nm : ∀ {Δ Γ A} → Δ ⊢ A valid[ Γ ]
-               → Δ ⊢ A checkable[ Γ ]
+               → Δ ⊢ A normal[ Γ ]
 nm 𝒟 = ↑ (↓ 𝒟)
 
 
