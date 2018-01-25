@@ -139,6 +139,8 @@ sub ξ       (letbox 𝒟 ℰ) = letbox (sub ξ 𝒟) (sub (mwks ξ) ℰ)
 --------------------------------------------------------------------------------
 
 
+-- NOTE: Local soundness of □
+
 pseudomcut : ∀ {Δ Γ A B} → Δ ⊢ A valid[ ∙ ] → Δ , ⟪⊫ A ⟫ ⊢ B valid[ Γ ]
                          → Δ ⊢ B valid[ Γ ]
 pseudomcut 𝒟 ℰ = letbox (box 𝒟) ℰ
@@ -151,7 +153,7 @@ msub ξ       (wk 𝒟)       = wk (msub ξ 𝒟)
 msub ξ       (cut 𝒟 ℰ)    = cut (msub ξ 𝒟) (msub ξ ℰ)
 msub ξ       (lam 𝒟)      = lam (msub ξ 𝒟)
 msub ξ       (unlam 𝒟)    = unlam (msub ξ 𝒟)
-msub (ξ , 𝒞) mvz          = pseudomcut 𝒞 mvz
+msub (ξ , 𝒞) mvz          = pseudomcut 𝒞 mvz -- NOTE: Interesting
 msub (ξ , 𝒞) (mwk 𝒟)      = msub ξ 𝒟
 msub ξ       (box 𝒟)      = box (msub ξ 𝒟)
 msub ξ       (letbox 𝒟 ℰ) = letbox (msub ξ 𝒟) (msub (mlifts* ξ) ℰ)
@@ -175,6 +177,13 @@ mvar : ∀ {A Δ Γ} → Δ ∋ ⟪⊫ A ⟫
                  → Δ ⊢ A valid[ Γ ]
 mvar zero    = mvz
 mvar (suc i) = mwk (mvar i)
+
+
+-- NOTE: Local completeness of □
+
+rebox : ∀ {Δ Γ A} → Δ ⊢ □ A valid[ Γ ]
+                  → Δ ⊢ □ A valid[ Γ ]
+rebox 𝒟 = letbox 𝒟 (box mvz)
 
 
 --------------------------------------------------------------------------------

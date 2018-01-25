@@ -106,17 +106,6 @@ id↓↑∋ₚ zero    = refl
 id↓↑∋ₚ (suc i) = suc & id↓↑∋ₚ i
 
 
--- TODO: Deduplicate with CMLProjectionToIPL
-
-{-# REWRITE lid⧺ #-}
-lid-ldrops : ∀ {X} → {Ξ Ξ′ : List X}
-                   → (η : Ξ′ ⊇ Ξ)
-                   → ldrops ∙ η ≡ η
-lid-ldrops done     = refl
-lid-ldrops (drop η) = drop & lid-ldrops η
-lid-ldrops (keep η) = keep & lid-ldrops η
-
-
 {-# REWRITE id↓↑∋ₚ #-}
 id↓↑ : ∀ {Γ A} → (𝒟 : Γ IPL.⊢ A true)
                → (↓ {∙} ∘ ↑ {∙}) 𝒟 ≡ 𝒟

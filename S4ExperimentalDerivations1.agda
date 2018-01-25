@@ -161,6 +161,20 @@ mvar zero    = mvz
 mvar (suc i) = mwk (mvar i)
 
 
+-- NOTE: Local completeness of □
+
+rebox : ∀ {Δ Γ A} → Δ ⊢ □ A valid[ Γ ]
+                  → Δ ⊢ □ A valid[ Γ ]
+rebox 𝒟 = letbox 𝒟 (box mvz)
+
+
+-- NOTE: Local soundness of □
+
+pseudomcut : ∀ {Δ Γ A B} → Δ ⊢ A valid[ ∙ ] → Δ , ⟪⊫ A ⟫ ⊢ B valid[ Γ ]
+                         → Δ ⊢ B valid[ Γ ]
+pseudomcut 𝒟 ℰ = letbox (box 𝒟) ℰ
+
+
 --------------------------------------------------------------------------------
 
 

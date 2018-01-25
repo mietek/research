@@ -116,7 +116,7 @@ vaus : ∀ {Δ Γ A Ξ} → Δ , ⟪⊫ A ⟫ ⊢ Ξ allvalid[ Γ ]
 vaus 𝒟 = maps vau 𝒟
 
 
--- NOTE: Similar shape to lift or cut
+-- NOTE: Interesting; similar shape to lift or cut
 
 unnamed : ∀ {Δ Γ A Ξ} → Δ , ⟪⊫ A ⟫ ⊢ Ξ allvalid[ Γ ]
                       → Δ ⊢ Ξ , □ A allvalid[ Γ , □ A ]
@@ -182,6 +182,20 @@ box 𝒟 = mcut 𝒟 (unvau vz)
 letbox : ∀ {A B Δ Γ} → Δ ⊢ □ A valid[ Γ ] → Δ , ⟪⊫ A ⟫ ⊢ B valid[ Γ ]
                      → Δ ⊢ B valid[ Γ ]
 letbox 𝒟 ℰ = cut 𝒟 (vau ℰ)
+
+
+-- NOTE: Local completeness of □
+
+rebox : ∀ {Δ Γ A} → Δ ⊢ □ A valid[ Γ ]
+                  → Δ ⊢ □ A valid[ Γ ]
+rebox 𝒟 = letbox 𝒟 (box mvz)
+
+
+-- NOTE: Local soundness of □
+
+pseudomcut : ∀ {Δ Γ A B} → Δ ⊢ A valid[ ∙ ] → Δ , ⟪⊫ A ⟫ ⊢ B valid[ Γ ]
+                         → Δ ⊢ B valid[ Γ ]
+pseudomcut 𝒟 ℰ = letbox (box 𝒟) ℰ
 
 
 --------------------------------------------------------------------------------

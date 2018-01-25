@@ -51,12 +51,12 @@ mutual
 mutual
   ↓ : ∀ {Δ Γ A} → Δ ⊢ A valid[ Γ ]
                 → ↓ₐₛ Δ ⧺ ↓ₚₛ Γ IPL.⊢ ↓ₚ A true
-  ↓ {Δ = Δ} (var i)         = IPL.ren (ldrops (↓ₐₛ Δ) id⊇) (IPL.var (↓∋ₚ i))
-  ↓         (lam 𝒟)         = IPL.lam (↓ 𝒟)
-  ↓         (app 𝒟 ℰ)       = IPL.app (↓ 𝒟) (↓ ℰ)
-  ↓ {Γ = Γ} (mvar i ψ)      = IPL.apps (IPL.ren (rdrops (↓ₚₛ Γ) id) (IPL.var (↓∋ₐ i))) (↓ₛ ψ)
-  ↓ {Γ = Γ} (box {Ψ = Ψ} 𝒟) = IPL.ren (rdrops (↓ₚₛ Γ) id⊇) (IPL.lams (↓ₚₛ Ψ) (↓ 𝒟))
-  ↓ {Γ = Γ} (letbox 𝒟 ℰ)    = IPL.cut (↓ 𝒟) (IPL.pull (↓ₚₛ Γ) (↓ ℰ))
+  ↓ {Δ = Δ}     (var i)         = IPL.ren (ldrops (↓ₐₛ Δ) id⊇) (IPL.var (↓∋ₚ i))
+  ↓             (lam 𝒟)         = IPL.lam (↓ 𝒟)
+  ↓             (app 𝒟 ℰ)       = IPL.app (↓ 𝒟) (↓ ℰ)
+  ↓ {Γ = Γ}     (mvar i ψ)      = IPL.apps (IPL.ren (rdrops (↓ₚₛ Γ) id) (IPL.var (↓∋ₐ i))) (↓ₛ ψ)
+  ↓ {Δ = Δ} {Γ} (box {Ψ = Ψ} 𝒟) = IPL.ren {Γ = ↓ₐₛ Δ} (rdrops (↓ₚₛ Γ) id⊇) (IPL.lams (↓ₚₛ Ψ) (↓ 𝒟))
+  ↓ {Γ = Γ}     (letbox 𝒟 ℰ)    = IPL.cut (↓ 𝒟) (IPL.pull (↓ₚₛ Γ) (↓ ℰ))
 
   ↓ₛ : ∀ {Δ Γ Ξ} → Δ ⊢ Ξ allvalid[ Γ ]
                  → ↓ₐₛ Δ ⧺ ↓ₚₛ Γ IPL.⊢ ↓ₚₛ Ξ alltrue
@@ -111,17 +111,6 @@ id↓↑∋ₚ : ∀ {Γ A} → (i : Γ ∋ A)
                  → (↓∋ₚ ∘ ↑∋ₚ) i ≡ i
 id↓↑∋ₚ zero    = refl
 id↓↑∋ₚ (suc i) = suc & id↓↑∋ₚ i
-
-
--- TODO: Deduplicate with S4ProjectionToIPL
-
-{-# REWRITE lid⧺ #-}
-lid-ldrops : ∀ {X} → {Ξ Ξ′ : List X}
-                   → (η : Ξ′ ⊇ Ξ)
-                   → ldrops ∙ η ≡ η
-lid-ldrops done     = refl
-lid-ldrops (drop η) = drop & lid-ldrops η
-lid-ldrops (keep η) = keep & lid-ldrops η
 
 
 {-# REWRITE id↓↑∋ₚ #-}

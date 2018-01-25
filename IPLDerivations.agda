@@ -101,6 +101,13 @@ unlam : ∀ {Γ A B} → Γ ⊢ A ⊃ B true
 unlam 𝒟 = app (wk 𝒟) vz
 
 
+-- NOTE: Local completeness of ⊃
+
+relam : ∀ {Γ A B} → Γ ⊢ A ⊃ B true
+                  → Γ ⊢ A ⊃ B true
+relam 𝒟 = lam (unlam 𝒟)
+
+
 cut : ∀ {Γ A B} → Γ ⊢ A true → Γ , A ⊢ B true
                 → Γ ⊢ B true
 cut 𝒟 ℰ = sub (ids , 𝒟) ℰ
@@ -118,13 +125,6 @@ pseudocut 𝒟 ℰ = app (lam ℰ) 𝒟
 pseudocut′ : ∀ {Γ A B} → Γ ⊢ A true → Γ , A ⊢ B true
                        → Γ ⊢ B true
 pseudocut′ 𝒟 ℰ = cut 𝒟 (unlam (lam ℰ))
-
-
--- NOTE: Local completeness of ⊃
-
-relam : ∀ {Γ A B} → Γ ⊢ A ⊃ B true
-                  → Γ ⊢ A ⊃ B true
-relam 𝒟 = lam (unlam 𝒟)
 
 
 pseudosub : ∀ {Γ Ξ A} → Γ ⊢ Ξ alltrue → Ξ ⊢ A true

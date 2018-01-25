@@ -209,18 +209,9 @@ cut : ∀ {Δ Γ A B} → Δ ⊢ A valid[ Γ ] → Δ ⊢ B valid[ Γ , A ]
 cut 𝒟 ℰ = sub (ids , 𝒟) ℰ
 
 
--- NOTE: Local soundness of ⊃
-
 pseudocut : ∀ {Δ Γ A B} → Δ ⊢ A valid[ Γ ] → Δ ⊢ B valid[ Γ , A ]
                         → Δ ⊢ B valid[ Γ ]
 pseudocut 𝒟 ℰ = app (lam ℰ) 𝒟
-
-
--- NOTE: Local completeness of ⊃
-
-relam : ∀ {Δ Γ A B} → Δ ⊢ A ⊃ B valid[ Γ ]
-                    → Δ ⊢ A ⊃ B valid[ Γ ]
-relam 𝒟 = lam (unlam 𝒟)
 
 
 pseudosub : ∀ {Δ Γ Ξ A} → Δ ⊢ Ξ allvalid[ Γ ] → Δ ⊢ A valid[ Ξ ]
@@ -260,7 +251,7 @@ unbox 𝒟 = letbox 𝒟 mvz
 -- NOTE: Local completeness of □
 
 rebox : ∀ {Δ Γ A} → Δ ⊢ □ A valid[ Γ ]
-                   → Δ ⊢ □ A valid[ Γ ]
+                  → Δ ⊢ □ A valid[ Γ ]
 rebox 𝒟 = letbox 𝒟 (box mvz)
 
 
