@@ -1,4 +1,4 @@
-module S4Normalisation where
+module CMLNormalisation where
 
 open import Prelude
 open import Category
@@ -6,9 +6,9 @@ open import List
 open List²
 open import ListLemmas
 open import AllList
-open import S4Propositions
-open import S4Derivations
-open import S4BidirectionalDerivationsForNormalisation
+open import CMLPropositions
+open import CMLDerivations
+open import CMLBidirectionalDerivationsForNormalisation
 
 
 --------------------------------------------------------------------------------
@@ -49,10 +49,10 @@ open Model {{...}}
 mutual
   infix 3 _⊩_value
   _⊩_value : ∀ {{_ : Model}} → World → Prop → Set
-  W ⊩ ι P value   = Ground W P
-  W ⊩ A ⊃ B value = ∀ {W′} → W′ ≥ W → W′ ⊩ A thunk
-                            → W′ ⊩ B thunk
-  W ⊩ □ A value   = W ⊩ ⟪⊫ A ⟫ chunk
+  W ⊩ ι P value     = Ground W P
+  W ⊩ A ⊃ B value   = ∀ {W′} → W′ ≥ W → W′ ⊩ A thunk
+                              → W′ ⊩ B thunk
+  W ⊩ [ Ψ ] A value = W ⊩ ⟪ Ψ ⊫ A ⟫ chunk
 
   infix 3 _⊩_thunk
   _⊩_thunk : ∀ {{_ : Model}} → World → Prop → Set
@@ -62,12 +62,13 @@ mutual
 
   infix 3 _⊩_chunk
   _⊩_chunk : ∀ {{_ : Model}} → World → Assert → Set
-  W ⊩ ⟪⊫ A ⟫ chunk = peek W ⊢ A valid[ ∙ ] × W ⊩ A thunk
+  W ⊩ ⟪ Ψ ⊫ A ⟫ chunk = peek W ⊢ A valid[ Ψ ] × (∀ {W′} → W′ ≥ W → W′ ⊩ Ψ allthunk
+                                                           → W′ ⊩ A thunk)
 
-
-infix 3 _⊩_allthunk
-_⊩_allthunk : ∀ {{_ : Model}} → World → List Prop → Set
-W ⊩ Γ allthunk = All (W ⊩_thunk) Γ
+  infix 3 _⊩_allthunk
+  _⊩_allthunk : ∀ {{_ : Model}} → World → List Prop → Set
+  W ⊩ ∙     allthunk = ⊤
+  W ⊩ Γ , A allthunk = W ⊩ Γ allthunk × W ⊩ A thunk
 
 
 infix 3 _⊩_allchunk
@@ -78,8 +79,8 @@ W ⊩ Δ allchunk = All (W ⊩_chunk) Δ
 --------------------------------------------------------------------------------
 
 
-syn : ∀ {{_ : Model}} {A W} → W ⊩ ⟪⊫ A ⟫ chunk
-                            → peek W ⊢ A valid[ ∙ ]
+syn : ∀ {{_ : Model}} {A Ψ W} → W ⊩ ⟪ Ψ ⊫ A ⟫ chunk
+                              → peek W ⊢ A valid[ Ψ ]
 syn (𝒟 , k) = 𝒟
 
 
@@ -88,8 +89,9 @@ syns : ∀ {{_ : Model}} {Δ W} → W ⊩ Δ allchunk
 syns δ = maps syn δ
 
 
-sem : ∀ {{_ : Model}} {A W} → W ⊩ ⟪⊫ A ⟫ chunk
-                            → W ⊩ A thunk
+sem : ∀ {{_ : Model}} {A Ψ W} → W ⊩ ⟪ Ψ ⊫ A ⟫ chunk
+                              → (∀ {W′} → W′ ≥ W → W′ ⊩ Ψ allthunk
+                                         → W′ ⊩ A thunk)
 sem (𝒟 , k) = k
 
 
@@ -99,9 +101,9 @@ sem (𝒟 , k) = k
 mutual
   rel : ∀ {{_ : Model}} {A W W′} → W′ ≥ W → W ⊩ A value
                                  → W′ ⊩ A value
-  rel {ι P}   η 𝒟 = relG η 𝒟
-  rel {A ⊃ B} η f = \ η′ k → f (η ∘≥ η′) k
-  rel {□ A}   η c = chrel η c
+  rel {ι P}     η 𝒟 = relG η 𝒟
+  rel {A ⊃ B}   η f = \ η′ k → f (η ∘≥ η′) k
+  rel {[ Ψ ] A} η f = chrel η f
 
   threl : ∀ {{_ : Model}} {A W W′} → W′ ≥ W → W ⊩ A thunk
                                    → W′ ⊩ A thunk
@@ -109,12 +111,14 @@ mutual
 
   chrel : ∀ {{_ : Model}} {A W W′} → W′ ≥ W → W ⊩ A chunk
                                    → W′ ⊩ A chunk
-  chrel {⟪⊫ A ⟫} η c = mren (peek≥ η) (syn c) , threl {A} η (sem c)
+  chrel {⟪ Ψ ⊫ A ⟫} η c = mren (peek≥ η) (syn c) , \ η′ ψ →
+                           sem c (η ∘≥ η′) ψ
 
 
 threls : ∀ {{_ : Model}} {Γ W W′} → W′ ≥ W → W ⊩ Γ allthunk
                                   → W′ ⊩ Γ allthunk
-threls η γ = maps (\ {A} k {B} {W′} → threl {A} η (\ {C} {W″} → k {C} {W″})) γ  -- NOTE: Annoying
+threls {∙}     η ∙       = ∙
+threls {Γ , A} η (γ , k) = threls η γ , threl {A} η k
 
 
 chrels : ∀ {{_ : Model}} {Δ W W′} → W′ ≥ W → W ⊩ Δ allchunk
@@ -148,17 +152,36 @@ _⊨_valid[_] : List Assert → Prop → List Prop → Set₁
                                         → W ⊩ A thunk
 
 
-↓ : ∀ {Δ Γ A} → Δ ⊢ A valid[ Γ ]
-              → Δ ⊨ A valid[ Γ ]
-↓ (var i)              δ γ = get γ i
-↓ (lam {A} {B} 𝒟)      δ γ = return {A ⊃ B} (\ η k →
-                               ↓ 𝒟 (chrels η δ) (threls η γ , k))
-↓ (app {A} {B} 𝒟 ℰ)    δ γ = bind {A ⊃ B} {B} (↓ 𝒟 δ γ) (\ η f →
-                               f id≥ (↓ ℰ (chrels η δ) (threls η γ)))
-↓ (mvar i)             δ γ = sem (get δ i)
-↓ (box {A} 𝒟)          δ γ = return {□ A} (msub (syns δ) 𝒟 , ↓ 𝒟 δ ∙)
-↓ (letbox {A} {B} 𝒟 ℰ) δ γ = bind {□ A} {B} (↓ 𝒟 δ γ) (\ η c →
-                               ↓ ℰ (chrels η δ , c) (threls η γ))
+infix 3 _⊨_allvalid[_]
+_⊨_allvalid[_] : List Assert → List Prop → List Prop → Set₁
+Δ ⊨ Ξ allvalid[ Γ ] = ∀ {{_ : Model}} {W} → W ⊩ Δ allchunk → W ⊩ Γ allthunk
+                                           → W ⊩ Ξ allthunk
+
+
+thget : ∀ {{_ : Model}} {Γ A W} → W ⊩ Γ allthunk → Γ ∋ A
+                                → W ⊩ A thunk
+thget {Γ = Γ , x} (γ , k) zero    = k
+thget {Γ = Γ , x} (γ , l) (suc i) = thget γ i
+
+
+mutual
+  ↓ : ∀ {Δ Γ A} → Δ ⊢ A valid[ Γ ]
+                → Δ ⊨ A valid[ Γ ]
+  ↓ (var i)                  δ γ = thget γ i
+  ↓ (lam {A} {B} 𝒟)          δ γ = return {A ⊃ B} (\ η k →
+                                     ↓ 𝒟 (chrels η δ) (threls η γ , k))
+  ↓ (app {A} {B} 𝒟 ℰ)        δ γ = bind {A ⊃ B} {B} (↓ 𝒟 δ γ) (\ η f →
+                                     f id≥ (↓ ℰ (chrels η δ) (threls η γ)))
+  ↓ (mvar i ψ)               δ γ = sem (get δ i) id≥ (↓ⁿ ψ δ γ)
+  ↓ (box {A} {Ψ} 𝒟)          δ γ = return {[ Ψ ] A} (msub (syns δ) 𝒟 , \ η′ ψ →
+                                     ↓ 𝒟 (chrels η′ δ) (threls id≥ ψ))
+  ↓ (letbox {A} {B} {Ψ} 𝒟 ℰ) δ γ = bind {[ Ψ ] A} {B} (↓ 𝒟 δ γ) (\ η f →
+                                     ↓ ℰ (chrels η δ , f) (threls η γ))
+
+  ↓ⁿ : ∀ {Δ Γ Ξ} → Δ ⊢ Ξ allvalid[ Γ ]
+                 → Δ ⊨ Ξ allvalid[ Γ ]
+  ↓ⁿ ∙       δ γ = ∙
+  ↓ⁿ (ξ , 𝒟) δ γ = ↓ⁿ ξ δ γ , ↓ 𝒟 δ γ
 
 
 --------------------------------------------------------------------------------
@@ -187,15 +210,21 @@ instance
 mutual
   ⇓ : ∀ {A Δ Γ} → Δ ⊢ A neutral[ Γ ]
                 → Δ ⨾ Γ ⊩ A thunk
-  ⇓ {ι P}   𝒟 = return {ι P} 𝒟
-  ⇓ {A ⊃ B} 𝒟 = return {A ⊃ B} (\ η k → ⇓ (app (ren² η 𝒟) (⇑ k)))
-  ⇓ {□ A}   𝒟 = \ η f → letbox (ren² η 𝒟) (f (drop₁ id) (mvz , ⇓ mvzᵣ))
+  ⇓ {ι P}     𝒟 = return {ι P} 𝒟
+  ⇓ {A ⊃ B}   𝒟 = return {A ⊃ B} (\ η k → ⇓ (app (ren² η 𝒟) (⇑ k)))
+  ⇓ {[ Ψ ] A} 𝒟 = \ η f → letbox (ren² η 𝒟) (f (drop₁ id) (mvz ids , \ η′ ψ →
+                    ⇓ (xmvzᵣ (proj₁ η′) (⇑ⁿ ψ))))
 
   ⇑ : ∀ {A Δ Γ} → Δ ⨾ Γ ⊩ A thunk
                 → Δ ⊢ A normal[ Γ ]
-  ⇑ {ι P}   k = k id (\ η 𝒟 → use 𝒟)
-  ⇑ {A ⊃ B} k = k id (\ η f → lam (⇑ (f (drop₂ id) (⇓ vzᵣ))))
-  ⇑ {□ A}   k = k id (\ η c → box (syn c))
+  ⇑ {ι P}     k = k id (\ η 𝒟 → use 𝒟)
+  ⇑ {A ⊃ B}   k = k id (\ η f → lam (⇑ (f (drop₂ id) (⇓ vzᵣ))))
+  ⇑ {[ Ψ ] A} k = k id (\ η f → box (syn f))
+
+  ⇑ⁿ : ∀ {Ξ Δ Γ} → Δ ⨾ Γ ⊩ Ξ allthunk
+                 → Δ ⊢ Ξ allnormal[ Γ ]
+  ⇑ⁿ {∙}     ∙       = ∙
+  ⇑ⁿ {Ξ , A} (ξ , k) = ⇑ⁿ ξ , ⇑ k
 
 
 --------------------------------------------------------------------------------
@@ -232,7 +261,8 @@ smwks ξ = chrels (drop₁ id) ξ
 
 smlifts : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ allchunk
                       → Δ , A ⨾ Γ ⊩ Ξ , A allchunk
-smlifts ξ = smwks ξ , (mvz , ⇓ mvzᵣ)
+smlifts ξ = smwks ξ , (mvz ids , \ η ψ →
+              ⇓ (xmvzᵣ (proj₁ η) (⇑ⁿ ψ)))
 
 
 smvars : ∀ {Δ Δ′ Γ} → Δ′ ⊇ Δ
