@@ -184,18 +184,18 @@ letbox : ∀ {Δ Γ A B} → Δ ⊢ □ A valid[ Γ ] → Δ , ⟪⊫ A ⟫ ⊢ 
 letbox 𝒟 ℰ = cut 𝒟 (vau ℰ)
 
 
--- NOTE: Local completeness of □; interesting
+-- NOTE: Local completeness of □
 
 rebox : ∀ {Δ Γ A} → Δ ⊢ □ A valid[ Γ ]
                   → Δ ⊢ □ A valid[ Γ ]
-rebox 𝒟 = cut 𝒟 (vau (box (unbox (unvau vz))))
+rebox 𝒟 = letbox 𝒟 (box mvz)
 
 
--- NOTE: Local soundness of □; interesting
+-- NOTE: Local soundness of □
 
 pseudomcut : ∀ {Δ Γ A B} → Δ ⊢ A valid[ ∙ ] → Δ , ⟪⊫ A ⟫ ⊢ B valid[ Γ ]
                          → Δ ⊢ B valid[ Γ ]
-pseudomcut 𝒟 ℰ = cut (box 𝒟) (vau ℰ)
+pseudomcut 𝒟 ℰ = letbox (box 𝒟) ℰ
 
 
 --------------------------------------------------------------------------------
