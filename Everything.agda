@@ -96,9 +96,9 @@ import S4Normalisation
 
 import CMLPropositions
 
-import CMLDerivations              -- _⊢_valid[_] ; var/lam/app ; mvar/box/unbox
+import CMLDerivations              -- _⊢_valid[_] ; var/lam/app         ; mvar/box/unbox
 import CMLExperimentalDerivations  -- _⊢_valid[_] ; vz/wk/cut/lam/unlam ; box/unbox/vau/unvau ; TODO mvar
-import CMLStandardDerivations      -- _⨾_⊢_true   ; var/lam/app ; mvar/box/unbox
+import CMLStandardDerivations      -- _⨾_⊢_true   ; var/lam/app         ; mvar/box/unbox
 
 import CMLLemmas
 
