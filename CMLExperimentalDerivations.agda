@@ -192,12 +192,10 @@ app : ∀ {Δ Γ A B} → Δ ⊢ A ⊃ B valid[ Γ ] → Δ ⊢ A valid[ Γ ]
 app 𝒟 ℰ = cut ℰ (unlam 𝒟)
 
 
--- TODO!
-
--- mvar : ∀ {Δ Γ Ψ A} → Δ ∋ ⟪ Ψ ⊫ A ⟫ → Δ ⊢ Ψ allvalid[ Γ ]
---                    → Δ ⊢ A valid[ Γ ]
--- mvar zero    ψ = mvz ψ
--- mvar (suc {B = ⟪ Φ ⊫ B ⟫} {Ξ} i) ψ = {!!}
+mvar : ∀ {Δ Γ Ψ A} → Δ ∋ ⟪ Ψ ⊫ A ⟫ → Δ ⊢ Ψ allvalid[ Γ ]
+                   → Δ ⊢ A valid[ Γ ]
+mvar zero    ψ = mvz ψ
+mvar (suc i) ψ = unvau (mvar i (vaus ψ))
 
 
 letbox : ∀ {Δ Γ Ψ A B} → Δ ⊢ [ Ψ ] A valid[ Γ ] → Δ , ⟪ Ψ ⊫ A ⟫ ⊢ B valid[ Γ ]
@@ -222,6 +220,7 @@ pseudomcut 𝒟 ℰ = cut (box 𝒟) (vau ℰ)
 --------------------------------------------------------------------------------
 
 
+
 mutual
   ↓ : ∀ {Δ Γ A} → Δ ⊢ A valid[ Γ ]
                 → Δ CML.⊢ A valid[ Γ ]
@@ -241,20 +240,20 @@ mutual
   ↓ⁿ (ξ , 𝒟) = ↓ⁿ ξ , ↓ 𝒟
 
 
--- mutual
---   ↑ : ∀ {Δ Γ A} → Δ CML.⊢ A valid[ Γ ]
---                 → Δ ⊢ A valid[ Γ ]
---   ↑ (CML.var i)      = var i
---   ↑ (CML.lam 𝒟)      = lam (↑ 𝒟)
---   ↑ (CML.app 𝒟 ℰ)    = app (↑ 𝒟) (↑ ℰ)
---   ↑ (CML.mvar i ψ)   = mvar i (↑ⁿ ψ)
---   ↑ (CML.box 𝒟)      = box (↑ 𝒟)
---   ↑ (CML.letbox 𝒟 ℰ) = letbox (↑ 𝒟) (↑ ℰ)
---
---   ↑ⁿ : ∀ {Δ Γ Ξ} → Δ CML.⊢ Ξ allvalid[ Γ ]
---                  → Δ ⊢ Ξ allvalid[ Γ ]
---   ↑ⁿ ∙       = ∙
---   ↑ⁿ (ξ , 𝒟) = ↑ⁿ ξ , ↑ 𝒟
+mutual
+  ↑ : ∀ {Δ Γ A} → Δ CML.⊢ A valid[ Γ ]
+                → Δ ⊢ A valid[ Γ ]
+  ↑ (CML.var i)      = var i
+  ↑ (CML.lam 𝒟)      = lam (↑ 𝒟)
+  ↑ (CML.app 𝒟 ℰ)    = app (↑ 𝒟) (↑ ℰ)
+  ↑ (CML.mvar i ψ)   = mvar i (↑ⁿ ψ)
+  ↑ (CML.box 𝒟)      = box (↑ 𝒟)
+  ↑ (CML.letbox 𝒟 ℰ) = letbox (↑ 𝒟) (↑ ℰ)
+
+  ↑ⁿ : ∀ {Δ Γ Ξ} → Δ CML.⊢ Ξ allvalid[ Γ ]
+                 → Δ ⊢ Ξ allvalid[ Γ ]
+  ↑ⁿ ∙       = ∙
+  ↑ⁿ (ξ , 𝒟) = ↑ⁿ ξ , ↑ 𝒟
 
 
 lem-var : ∀ {Δ Γ A} → (i : Γ ∋ A)
@@ -269,7 +268,7 @@ lem-var (suc i) = CML.wk & lem-var i
 -- lem-mvar : ∀ {Δ Γ Ψ A} → (i : Δ ∋ ⟪ Ψ ⊫ A ⟫) (ψ : Δ CML.⊢ Ψ allvalid[ Γ ])
 --                        → ↓ {Γ = Γ} (mvar i (↑ⁿ ψ)) ≡ CML.mvar i ψ
 -- lem-mvar zero    ψ = {!!} -- CML.unbox (CML.unvau CML.vz) (↓ⁿ (↑ⁿ ψ)) ≡ CML.mvar zero ψ
--- lem-mvar (suc i) ψ = {!!} -- CML.unvau (CML.wk (↓ (mvar i (?0 i (↑ⁿ ψ))))) ≡ CML.mvar (suc i) ψ
+-- lem-mvar (suc i) ψ = {!!} -- CML.unvau (↓ (mvar i (vaus (↑ⁿ ψ)))) ≡ CML.mvar (suc i) ψ
 
 
 -- id↓↑ : ∀ {Δ Γ A} → (𝒟 : Δ CML.⊢ A valid[ Γ ])
