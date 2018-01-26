@@ -31,7 +31,7 @@ data ⊢_⦂_valid[_] : ∀ {g} → Term g → Type → Types g → Set
 
 infix 3 ⊢_⦂_allvalid[_]
 ⊢_⦂_allvalid[_] : ∀ {g n} → Terms g n → Types n → Types g → Set
-⊢ x ⦂ Ξ allvalid[ Γ ] = All (\ { (M , A) → ⊢ M ⦂ A valid[ Γ ] }) (zip x Ξ)
+⊢ τ ⦂ Ξ allvalid[ Γ ] = All (\ { (M , A) → ⊢ M ⦂ A valid[ Γ ] }) (zip τ Ξ)
 
 
 --------------------------------------------------------------------------------
@@ -45,11 +45,12 @@ ren η (lam 𝒟)   = lam (ren (keep η) 𝒟)
 ren η (app 𝒟 ℰ) = app (ren η 𝒟) (ren η ℰ)
 
 
-rens : ∀ {g g′ e n} → {Γ : Types g} {Γ′ : Types g′} {x : Terms g n} {Ξ : Types n}
-                    → Γ′ ⊇⟨ e ⟩ Γ → ⊢ x ⦂ Ξ allvalid[ Γ ]
-                    → ⊢ RENS e x ⦂ Ξ allvalid[ Γ′ ]
-rens {x = ∙}     {∙}     η ∙       = ∙
-rens {x = x , M} {Ξ , A} η (ξ , 𝒟) = rens η ξ , ren η 𝒟
+rens : ∀ {g g′ e n} → {Γ : Types g} {Γ′ : Types g′}
+                       {τ : Terms g n} {Ξ : Types n}
+                    → Γ′ ⊇⟨ e ⟩ Γ → ⊢ τ ⦂ Ξ allvalid[ Γ ]
+                    → ⊢ RENS e τ ⦂ Ξ allvalid[ Γ′ ]
+rens {τ = ∙}     {∙}     η ∙       = ∙
+rens {τ = τ , M} {Ξ , A} η (ξ , 𝒟) = rens η ξ , ren η 𝒟
 
 
 --------------------------------------------------------------------------------
@@ -61,20 +62,20 @@ wk : ∀ {B g M A} → {Γ : Types g}
 wk 𝒟 = ren (drop id⊇) 𝒟
 
 
+wks : ∀ {g n A} → {Γ : Types g} {τ : Terms g n} {Ξ : Types n}
+                → ⊢ τ ⦂ Ξ allvalid[ Γ ]
+                → ⊢ WKS τ ⦂ Ξ allvalid[ Γ , A ]
+wks ξ = rens (drop id⊇) ξ
+
+
 vz : ∀ {g A} → {Γ : Types g}
              → ⊢ VZ ⦂ A valid[ Γ , A ]
 vz = var zero
 
 
-wks : ∀ {g n A} → {Γ : Types g} {x : Terms g n} {Ξ : Types n}
-                → ⊢ x ⦂ Ξ allvalid[ Γ ]
-                → ⊢ WKS x ⦂ Ξ allvalid[ Γ , A ]
-wks ξ = rens (drop id⊇) ξ
-
-
-lifts : ∀ {g n A} → {Γ : Types g} {x : Terms g n} {Ξ : Types n}
-                  → ⊢ x ⦂ Ξ allvalid[ Γ ]
-                  → ⊢ LIFTS x ⦂ Ξ , A allvalid[ Γ , A ]
+lifts : ∀ {g n A} → {Γ : Types g} {τ : Terms g n} {Ξ : Types n}
+                  → ⊢ τ ⦂ Ξ allvalid[ Γ ]
+                  → ⊢ LIFTS τ ⦂ Ξ , A allvalid[ Γ , A ]
 lifts ξ = wks ξ , vz
 
 
@@ -94,19 +95,20 @@ ids = vars id⊇
 --------------------------------------------------------------------------------
 
 
-sub : ∀ {g n M A} → {Γ : Types g} {x : Terms g n} {Ξ : Types n}
-                  → ⊢ x ⦂ Ξ allvalid[ Γ ] → ⊢ M ⦂ A valid[ Ξ ]
-                  → ⊢ SUB x M ⦂ A valid[ Γ ]
+sub : ∀ {g n M A} → {Γ : Types g} {τ : Terms g n} {Ξ : Types n}
+                  → ⊢ τ ⦂ Ξ allvalid[ Γ ] → ⊢ M ⦂ A valid[ Ξ ]
+                  → ⊢ SUB τ M ⦂ A valid[ Γ ]
 sub ξ (var i)   = get ξ (zip∋₂ i)
 sub ξ (lam 𝒟)   = lam (sub (lifts ξ) 𝒟)
 sub ξ (app 𝒟 ℰ) = app (sub ξ 𝒟) (sub ξ ℰ)
 
 
-subs : ∀ {g n m} → {Γ : Types g} {x : Terms g n} {y : Terms n m} {Ξ : Types n} {Ψ : Types m}
-                 → ⊢ x ⦂ Ξ allvalid[ Γ ] → ⊢ y ⦂ Ψ allvalid[ Ξ ]
-                 → ⊢ SUBS x y ⦂ Ψ allvalid[ Γ ]
-subs {y = ∙}     {Ψ = ∙}     ξ ∙       = ∙
-subs {y = y , M} {Ψ = Ψ , A} ξ (ψ , 𝒟) = subs ξ ψ , sub ξ 𝒟
+subs : ∀ {g n m} → {Γ : Types g} {τ : Terms g n} {Ξ : Types n}
+                    {υ : Terms n m}  {Ψ : Types m}
+                 → ⊢ τ ⦂ Ξ allvalid[ Γ ] → ⊢ υ ⦂ Ψ allvalid[ Ξ ]
+                 → ⊢ SUBS τ υ ⦂ Ψ allvalid[ Γ ]
+subs {υ = ∙}     {∙}     ξ ∙       = ∙
+subs {υ = υ , M} {Ψ , A} ξ (ψ , 𝒟) = subs ξ ψ , sub ξ 𝒟
 
 
 --------------------------------------------------------------------------------
@@ -130,11 +132,11 @@ pseudocut : ∀ {g M N A B} → {Γ : Types g}
 pseudocut 𝒟 ℰ = app (lam ℰ) 𝒟
 
 
-pseudosub : ∀ {g n M A} → {Γ : Types g} {x : Terms g n} {Ξ : Types n}
-                        → ⊢ x ⦂ Ξ allvalid[ Γ ] → ⊢ M ⦂ A valid[ Ξ ]
-                        → ⊢ PSEUDOSUB x M ⦂ A valid[ Γ ]
-pseudosub {x = ∙}     {∙}     ∙       𝒟 = ren bot⊇ 𝒟
-pseudosub {x = x , M} {Ξ , B} (ξ , 𝒞) 𝒟 = app (pseudosub ξ (lam 𝒟)) 𝒞
+pseudosub : ∀ {g n M A} → {Γ : Types g} {τ : Terms g n} {Ξ : Types n}
+                        → ⊢ τ ⦂ Ξ allvalid[ Γ ] → ⊢ M ⦂ A valid[ Ξ ]
+                        → ⊢ PSEUDOSUB τ M ⦂ A valid[ Γ ]
+pseudosub {τ = ∙}     {∙}     ∙       𝒟 = ren bot⊇ 𝒟
+pseudosub {τ = τ , M} {Ξ , B} (ξ , 𝒞) 𝒟 = app (pseudosub ξ (lam 𝒟)) 𝒞
 
 
 exch : ∀ {g M A B C} → {Γ : Types g}

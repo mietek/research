@@ -24,6 +24,21 @@ MAPS F (Ξ , A) = MAPS F Ξ , F A
 --------------------------------------------------------------------------------
 
 
+inj,₁ : ∀ {X n A₁ A₂} → {Ξ₁ Ξ₂ : Vec X n}
+                      → Ξ₁ Vec., A₁ ≡ Ξ₂ , A₂
+                      → Ξ₁ ≡ Ξ₂
+inj,₁ refl = refl
+
+
+inj,₂ : ∀ {X n A₁ A₂} → {Ξ₁ Ξ₂ : Vec X n}
+                      → Ξ₁ Vec., A₁ ≡ Ξ₂ , A₂
+                      → A₁ ≡ A₂
+inj,₂ refl = refl
+
+
+--------------------------------------------------------------------------------
+
+
 GET : ∀ {X n} → Vec X n → Fin n
               → X
 GET (Ξ , A) zero    = A
@@ -81,10 +96,10 @@ keep η₁ ∘⊇ keep η₂ = keep (η₁ ∘⊇ η₂)
 infix 4 _∋⟨_⟩_
 data _∋⟨_⟩_ {X} : ∀ {n} → Vec X n → Fin n → X → Set
   where
-    zero : ∀ {A n} → {Ξ : Vec X n}
+    zero : ∀ {n A} → {Ξ : Vec X n}
                    → Ξ , A ∋⟨ zero ⟩ A
 
-    suc : ∀ {B A n i} → {Ξ : Vec X n}
+    suc : ∀ {B n i A} → {Ξ : Vec X n}
                       → Ξ ∋⟨ i ⟩ A
                       → Ξ , B ∋⟨ suc i ⟩ A
 
@@ -131,6 +146,13 @@ zip∋₂ : ∀ {X Y n I A₂} → {Ξ₁ : Vec X n} {Ξ₂ : Vec Y n}
                        → zip Ξ₁ Ξ₂ ∋⟨ I ⟩ (GET Ξ₁ I , A₂)
 zip∋₂ {Ξ₁ = Ξ₁ , A₁} {Ξ₂ , A₂} zero    = zero
 zip∋₂ {Ξ₁ = Ξ₁ , B₁} {Ξ₂ , B₂} (suc i) = suc (zip∋₂ i)
+
+
+within : ∀ {X Y n I A} → {Ξ : Vec X n}
+                       → (Ψ : Vec Y n) → Ξ ∋⟨ I ⟩ A
+                       → Ψ ∋⟨ I ⟩ GET Ψ I
+within (Ψ , B) zero    = zero
+within (Ψ , C) (suc i) = suc (within Ψ i)
 
 
 --------------------------------------------------------------------------------

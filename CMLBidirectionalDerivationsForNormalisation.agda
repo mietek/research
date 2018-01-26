@@ -68,12 +68,12 @@ mutual
   renᵣ η (mvar i ψ) = mvar i (rensₗ η ψ)
 
 
-wkᵣ : ∀ {B A Δ Γ} → Δ ⊢ A neutral[ Γ ]
+wkᵣ : ∀ {B Δ Γ A} → Δ ⊢ A neutral[ Γ ]
                   → Δ ⊢ A neutral[ Γ , B ]
 wkᵣ 𝒟 = renᵣ (drop id⊇) 𝒟
 
 
-vzᵣ : ∀ {A Δ Γ} → Δ ⊢ A neutral[ Γ , A ]
+vzᵣ : ∀ {Δ Γ A} → Δ ⊢ A neutral[ Γ , A ]
 vzᵣ = var zero
 
 
@@ -100,7 +100,7 @@ mutual
   mrenᵣ η (mvar i ψ) = mvar (ren∋ η i) (mrensₗ η ψ)
 
 
-mwkₗ : ∀ {B A Δ Γ} → Δ ⊢ A normal[ Γ ]
+mwkₗ : ∀ {B Δ Γ A} → Δ ⊢ A normal[ Γ ]
                    → Δ , B ⊢ A normal[ Γ ]
 mwkₗ 𝒟 = mrenₗ (drop id⊇) 𝒟
 
@@ -110,17 +110,17 @@ mwksₗ : ∀ {A Δ Γ Ξ} → Δ ⊢ Ξ allnormal[ Γ ]
 mwksₗ ξ = maps mwkₗ ξ
 
 
-mwkᵣ : ∀ {B A Δ Γ} → Δ ⊢ A neutral[ Γ ]
+mwkᵣ : ∀ {B Δ Γ A} → Δ ⊢ A neutral[ Γ ]
                    → Δ , B ⊢ A neutral[ Γ ]
 mwkᵣ 𝒟 = mrenᵣ (drop id⊇) 𝒟
 
 
-mvzᵣ : ∀ {A Ψ Δ Γ} → Δ ⊢ Ψ allnormal[ Γ ]
+mvzᵣ : ∀ {Δ Γ Ψ A} → Δ ⊢ Ψ allnormal[ Γ ]
                    → Δ , ⟪ Ψ ⊫ A ⟫ ⊢ A neutral[ Γ ]
 mvzᵣ ψ = mvar zero (mwksₗ ψ)
 
 
-xmvzᵣ : ∀ {A Ψ Δ Δ′ Γ} → Δ′ ⊇ Δ , ⟪ Ψ ⊫ A ⟫ → Δ′ ⊢ Ψ allnormal[ Γ ]
+xmvzᵣ : ∀ {Δ Δ′ Γ Ψ A} → Δ′ ⊇ Δ , ⟪ Ψ ⊫ A ⟫ → Δ′ ⊢ Ψ allnormal[ Γ ]
                        → Δ′ ⊢ A neutral[ Γ ]
 xmvzᵣ η ψ = mvar (ren∋ η zero) ψ
 

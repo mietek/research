@@ -59,12 +59,12 @@ mutual
   renᵣ η (mvar i)  = mvar i
 
 
-wkᵣ : ∀ {B A Δ Γ} → Δ ⊢ A neutral[ Γ ]
+wkᵣ : ∀ {B Δ Γ A} → Δ ⊢ A neutral[ Γ ]
                   → Δ ⊢ A neutral[ Γ , B ]
 wkᵣ 𝒟 = renᵣ (drop id⊇) 𝒟
 
 
-vzᵣ : ∀ {A Δ Γ} → Δ ⊢ A neutral[ Γ , A ]
+vzᵣ : ∀ {Δ Γ A} → Δ ⊢ A neutral[ Γ , A ]
 vzᵣ = var zero
 
 
@@ -91,7 +91,7 @@ mwkᵣ : ∀ {B A Δ Γ} → Δ ⊢ A neutral[ Γ ]
 mwkᵣ 𝒟 = mrenᵣ (drop id⊇) 𝒟
 
 
-mvzᵣ : ∀ {A Δ Γ} → Δ , ⟪⊫ A ⟫ ⊢ A neutral[ Γ ]
+mvzᵣ : ∀ {Δ Γ A} → Δ , ⟪⊫ A ⟫ ⊢ A neutral[ Γ ]
 mvzᵣ = mvar zero
 
 

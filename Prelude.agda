@@ -307,35 +307,44 @@ map⊎ f g s = for⊎ s f g
 --------------------------------------------------------------------------------
 
 
-suc-inj : ∀ {n m} → suc n ≡ suc m
-                  → n ≡ m
-suc-inj refl = refl
-
-
---------------------------------------------------------------------------------
-
-
 module _
   where
     open import Agda.Builtin.Bool
     open import Agda.Builtin.TrustMe
 
-    _≟ₛ_ : (s s′ : String) → Dec (s ≡ s′)
-    s ≟ₛ s′ with primStringEquality s s′
+    _≟ₛ_ : (s₁ s₂ : String) → Dec (s₁ ≡ s₂)
+    s₁ ≟ₛ s₂ with primStringEquality s₁ s₂
     ...    | true  = yes primTrustMe
-    ...    | false = no s≢s′
+    ...    | false = no s₁≢s₂
       where
         postulate
-          s≢s′ : s ≢ s′
+          s₁≢s₂ : s₁ ≢ s₂
 
 
 instance
   stringIsString : IsString String
   stringIsString =
     record
-      { Constraint = λ s → ⊤
-      ; fromString = λ s → s
+      { Constraint = \ s → ⊤
+      ; fromString = \ s → s
       }
+
+
+--------------------------------------------------------------------------------
+
+
+inj-suc : ∀ {n m} → suc n ≡ suc m
+                  → n ≡ m
+inj-suc refl = refl
+
+
+_≟ₙ_ : (n₁ n₂ : Nat) → Dec (n₁ ≡ n₂)
+zero   ≟ₙ zero   = yes refl
+zero   ≟ₙ suc n₂ = no (\ ())
+suc n₁ ≟ₙ zero   = no (\ ())
+suc n₁ ≟ₙ suc n₂ with n₁ ≟ₙ n₂
+...              | yes refl = yes refl
+...              | no n₁≢n₂ = no (n₁≢n₂ ∘′ inj-suc)
 
 
 --------------------------------------------------------------------------------

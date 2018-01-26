@@ -5,7 +5,6 @@ open import Category
 open import Fin
 open import FinLemmas
 open import Vec
-open import STLCTypes
 
 
 --------------------------------------------------------------------------------
@@ -34,7 +33,7 @@ REN e (APP M N)  = APP (REN e M) (REN e N)
 
 RENS : ∀ {g g′ n} → g′ ≥ g → Terms g n
                   → Terms g′ n
-RENS e x = MAPS (REN e) x
+RENS e τ = MAPS (REN e) τ
 
 
 --------------------------------------------------------------------------------
@@ -45,18 +44,18 @@ WK : ∀ {g} → Term g
 WK M = REN (drop id) M
 
 
+WKS : ∀ {g n} → Terms g n
+              → Terms (suc g) n
+WKS τ = RENS (drop id) τ
+
+
 VZ : ∀ {g} → Term (suc g)
 VZ = VAR zero
 
 
-WKS : ∀ {g n} → Terms g n
-              → Terms (suc g) n
-WKS x = RENS (drop id) x
-
-
 LIFTS : ∀ {g n} → Terms g n
                 → Terms (suc g) (suc n)
-LIFTS x = WKS x , VZ
+LIFTS τ = WKS τ , VZ
 
 
 VARS : ∀ {g g′} → g′ ≥ g
@@ -75,14 +74,14 @@ IDS = VARS id
 
 SUB : ∀ {g n} → Terms g n → Term n
               → Term g
-SUB x (VAR I)    = GET x I
-SUB x (LAM M)    = LAM (SUB (LIFTS x) M)
-SUB x (APP M N)  = APP (SUB x M) (SUB x N)
+SUB τ (VAR I)    = GET τ I
+SUB τ (LAM M)    = LAM (SUB (LIFTS τ) M)
+SUB τ (APP M N)  = APP (SUB τ M) (SUB τ N)
 
 
 SUBS : ∀ {g n m} → Terms g n → Terms n m
                  → Terms g m
-SUBS x y = MAPS (SUB x) y
+SUBS τ υ = MAPS (SUB τ) υ
 
 
 --------------------------------------------------------------------------------
@@ -106,7 +105,7 @@ PSEUDOCUT M N = APP (LAM N) M
 PSEUDOSUB : ∀ {g n} → Terms g n → Term n
                     → Term g
 PSEUDOSUB ∙       M = REN bot≥ M
-PSEUDOSUB (x , L) M = APP (PSEUDOSUB x (LAM M)) L
+PSEUDOSUB (τ , L) M = APP (PSEUDOSUB τ (LAM M)) L
 
 
 EXCH : ∀ {g} → Term (suc (suc g))

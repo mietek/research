@@ -87,18 +87,18 @@ mrens* η ξ = maps (mren η) ξ
 --------------------------------------------------------------------------------
 
 
-wk : ∀ {B A Δ Γ} → Δ ⊢ A valid[ Γ ]
+wk : ∀ {B Δ Γ A} → Δ ⊢ A valid[ Γ ]
                  → Δ ⊢ A valid[ Γ , B ]
 wk 𝒟 = ren (drop id) 𝒟
-
-
-vz : ∀ {A Δ Γ} → Δ ⊢ A valid[ Γ , A ]
-vz = var zero
 
 
 wks : ∀ {A Δ Γ Ξ} → Δ ⊢ Ξ allvalid[ Γ ]
                   → Δ ⊢ Ξ allvalid[ Γ , A ]
 wks ξ = rens (drop id) ξ
+
+
+vz : ∀ {Δ Γ A} → Δ ⊢ A valid[ Γ , A ]
+vz = var zero
 
 
 lifts : ∀ {A Δ Γ Ξ} → Δ ⊢ Ξ allvalid[ Γ ]
@@ -120,13 +120,9 @@ ids = vars id
 --------------------------------------------------------------------------------
 
 
-mwk : ∀ {B A Δ Γ} → Δ ⊢ A valid[ Γ ]
+mwk : ∀ {B Δ Γ A} → Δ ⊢ A valid[ Γ ]
                   → Δ , ⟪⊫ B ⟫ ⊢ A valid[ Γ ]
 mwk 𝒟 = mren (drop id) 𝒟
-
-
-mvz : ∀ {A Δ Γ} → Δ , ⟪⊫ A ⟫ ⊢ A valid[ Γ ]
-mvz = mvar zero
 
 
 mwks : ∀ {A Δ Γ Ξ} → Δ ⊢ Ξ allvalid[ Γ ]
@@ -137,6 +133,10 @@ mwks ξ = mrens (drop id) ξ
 mwks* : ∀ {A Δ Ξ} → Δ ⊢ Ξ allvalid*
                   → Δ , ⟪⊫ A ⟫ ⊢ Ξ allvalid*
 mwks* ξ = mrens* (drop id) ξ
+
+
+mvz : ∀ {Δ Γ A} → Δ , ⟪⊫ A ⟫ ⊢ A valid[ Γ ]
+mvz = mvar zero
 
 
 mlifts* : ∀ {A Δ Ξ} → Δ ⊢ Ξ allvalid*

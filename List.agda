@@ -110,9 +110,9 @@ keep η₁ ∘⊇ keep η₂ = keep (η₁ ∘⊇ η₂)
 infix 4 _∋_
 data _∋_ {X} : List X → X → Set
   where
-    zero : ∀ {A Ξ} → Ξ , A ∋ A
+    zero : ∀ {Ξ A} → Ξ , A ∋ A
 
-    suc : ∀ {A B Ξ} → Ξ ∋ A
+    suc : ∀ {B Ξ A} → Ξ ∋ A
                     → Ξ , B ∋ A
 
 

@@ -83,25 +83,24 @@ mutual
 
 mrens* : ∀ {Δ Δ′ Ξ} → Δ′ ⊇ Δ → Δ ⊢ Ξ allvalid*
                     → Δ′ ⊢ Ξ allvalid*
-mrens* η ∙       = ∙
-mrens* η (ξ , 𝒟) = mrens* η ξ , mren η 𝒟
+mrens* η ξ = maps (mren η) ξ
 
 
 --------------------------------------------------------------------------------
 
 
-wk : ∀ {B A Δ Γ} → Δ ⊢ A valid[ Γ ]
+wk : ∀ {B Δ Γ A} → Δ ⊢ A valid[ Γ ]
                  → Δ ⊢ A valid[ Γ , B ]
 wk 𝒟 = ren (drop id) 𝒟
-
-
-vz : ∀ {A Δ Γ} → Δ ⊢ A valid[ Γ , A ]
-vz = var zero
 
 
 wks : ∀ {A Δ Γ Ξ} → Δ ⊢ Ξ allvalid[ Γ ]
                   → Δ ⊢ Ξ allvalid[ Γ , A ]
 wks ξ = rens (drop id) ξ
+
+
+vz : ∀ {Δ Γ A} → Δ ⊢ A valid[ Γ , A ]
+vz = var zero
 
 
 lifts : ∀ {A Δ Γ Ξ} → Δ ⊢ Ξ allvalid[ Γ ]
@@ -123,14 +122,9 @@ ids = vars id
 --------------------------------------------------------------------------------
 
 
-mwk : ∀ {B Ψ A Δ Γ} → Δ ⊢ A valid[ Γ ]
+mwk : ∀ {B Ψ Δ Γ A} → Δ ⊢ A valid[ Γ ]
                     → Δ , ⟪ Ψ ⊫ B ⟫ ⊢ A valid[ Γ ]
 mwk 𝒟 = mren (drop id) 𝒟
-
-
-mvz : ∀ {A Ψ Δ Γ} → Δ , ⟪ Ψ ⊫ A ⟫ ⊢ Ψ allvalid[ Γ ]
-                  → Δ , ⟪ Ψ ⊫ A ⟫ ⊢ A valid[ Γ ]
-mvz ψ = mvar zero ψ
 
 
 mwks : ∀ {A Ψ Δ Γ Ξ} → Δ ⊢ Ξ allvalid[ Γ ]
@@ -141,6 +135,11 @@ mwks ξ = mrens (drop id) ξ
 mwks* : ∀ {A Ψ Δ Ξ} → Δ ⊢ Ξ allvalid*
                     → Δ , ⟪ Ψ ⊫ A ⟫ ⊢ Ξ allvalid*
 mwks* ξ = mrens* (drop id) ξ
+
+
+mvz : ∀ {Δ Γ Ψ A} → Δ , ⟪ Ψ ⊫ A ⟫ ⊢ Ψ allvalid[ Γ ]
+                  → Δ , ⟪ Ψ ⊫ A ⟫ ⊢ A valid[ Γ ]
+mvz ψ = mvar zero ψ
 
 
 mlifts* : ∀ {A Ψ Δ Ξ} → Δ ⊢ Ξ allvalid*
@@ -199,8 +198,7 @@ mutual
 
 msubs* : ∀ {Δ Ξ Ψ} → Δ ⊢ Ξ allvalid* → Ξ ⊢ Ψ allvalid*
                    → Δ ⊢ Ψ allvalid*
-msubs* ξ ∙       = ∙
-msubs* ξ (ψ , 𝒟) = msubs* ξ ψ , msub ξ 𝒟
+msubs* ξ ψ = maps (msub ξ) ψ
 
 
 --------------------------------------------------------------------------------
@@ -255,6 +253,13 @@ unbox : ∀ {Δ Γ Ψ A} → Δ ⊢ [ Ψ ] A valid[ Γ ] → Δ ⊢ Ψ allvalid[
 unbox 𝒟 ψ = letbox 𝒟 (mvz (mwks ψ))
 
 
+-- NOTE: Local completeness of [_]
+
+rebox : ∀ {Δ Γ Ψ A} → Δ ⊢ [ Ψ ] A valid[ Γ ]
+                    → Δ ⊢ [ Ψ ] A valid[ Γ ]
+rebox 𝒟 = letbox 𝒟 (box (mvz ids))
+
+
 dupbox : ∀ {Δ Γ Ψ Φ A} → Δ ⊢ [ Ψ ] A valid[ Γ ]
                        → Δ ⊢ [ Φ ] [ Ψ ] A valid[ Γ ]
 dupbox 𝒟 = letbox 𝒟 (box (box (mvz ids)))
@@ -268,13 +273,6 @@ boxapp₀ 𝒟 ℰ = boxapp 𝒟 ℰ
 unbox₀ : ∀ {Δ Γ A} → Δ ⊢ [ ∙ ] A valid[ Γ ]
                    → Δ ⊢ A valid[ Γ ]
 unbox₀ 𝒟 = unbox 𝒟 ∙
-
-
--- NOTE: Local completeness of [_]
-
-rebox : ∀ {Δ Γ Ψ A} → Δ ⊢ [ Ψ ] A valid[ Γ ]
-                    → Δ ⊢ [ Ψ ] A valid[ Γ ]
-rebox 𝒟 = letbox 𝒟 (box (mvz ids))
 
 
 dupbox₀ : ∀ {Δ Γ A} → Δ ⊢ [ ∙ ] A valid[ Γ ]

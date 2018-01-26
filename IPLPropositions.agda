@@ -19,8 +19,8 @@ instance
   PropVar : IsString Prop
   PropVar =
     record
-      { Constraint = λ s → ⊤
-      ; fromString = λ s → ι s
+      { Constraint = \ s → ⊤
+      ; fromString = \ s → ι s
       }
 
 

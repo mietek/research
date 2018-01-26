@@ -194,4 +194,10 @@ module _
     id-from∋-to∋ (suc i) = suc & id-from∋-to∋ i
 
 
+    -- NOTE: Needed in isomorphism modules
+
+    {-# REWRITE id-to∋-from∋ #-}
+    {-# REWRITE id-from∋-to∋ #-}
+
+
 --------------------------------------------------------------------------------

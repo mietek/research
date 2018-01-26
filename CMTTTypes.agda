@@ -1,24 +1,31 @@
-module CMLPropositions where
+module CMTTTypes where
 
 open import Prelude
 open import Category
-open import List
+open import Vec
+open import AllVec
+open import CMTTScopes
 
 
 --------------------------------------------------------------------------------
 
 
-infixr 8 _⊃_
-data Prop : Set
-  where
-    ι_   : String → Prop
-    _⊃_  : Prop → Prop → Prop
-    [_]_ : List Prop → Prop → Prop
+mutual
+  infixr 8 _⊃_
+  data Type : Set
+    where
+      ι_   : String → Type
+      _⊃_  : Type → Type → Type
+      [_]_ : ∀ {g} → Types g → Type → Type
+
+
+  Types : Nat → Set
+  Types g = Vec Type g
 
 
 instance
-  PropVar : IsString Prop
-  PropVar =
+  TypeVar : IsString Type
+  TypeVar =
     record
       { Constraint = \ s → ⊤
       ; fromString = \ s → ι s
@@ -28,12 +35,16 @@ instance
 --------------------------------------------------------------------------------
 
 
-record Assert : Set
+record Assert (m : Nat) : Set
   where
     constructor ⟪_⊫_⟫
     field
-      Γ : List Prop
-      A : Prop
+      Γ : Types m
+      A : Type
+
+
+Asserts : ∀ {d} → Scopes d → Set
+Asserts σ = All Assert σ
 
 
 --------------------------------------------------------------------------------
@@ -54,18 +65,26 @@ inj⊃₂ : ∀ {A₁ A₂ B₁ B₂} → A₁ ⊃ B₁ ≡ A₂ ⊃ B₂
 inj⊃₂ refl = refl
 
 
-inj[]₁ : ∀ {Ψ₁ Ψ₂ A₁ A₂} → [ Ψ₁ ] A₁ ≡ [ Ψ₂ ] A₂
-                         → Ψ₁ ≡ Ψ₂
+inj[]₀ : ∀ {n₁ n₂ A₁ A₂} → {Ψ₁ : Types n₁} {Ψ₂ : Types n₂}
+                         → [ Ψ₁ ] A₁ ≡ [ Ψ₂ ] A₂
+                         → n₁ ≡ n₂
+inj[]₀ refl = refl
+
+
+inj[]₁ : ∀ {n A₁ A₂} → {Ψ₁ Ψ₂ : Types n}
+                     → [ Ψ₁ ] A₁ ≡ [ Ψ₂ ] A₂
+                     → Ψ₁ ≡ Ψ₂
 inj[]₁ refl = refl
 
 
-inj[]₂ : ∀ {Ψ₁ Ψ₂ A₁ A₂} → [ Ψ₁ ] A₁ ≡ [ Ψ₂ ] A₂
-                         → A₁ ≡ A₂
+inj[]₂ : ∀ {n A₁ A₂} → {Ψ₁ Ψ₂ : Types n}
+                     → [ Ψ₁ ] A₁ ≡ [ Ψ₂ ] A₂
+                     → A₁ ≡ A₂
 inj[]₂ refl = refl
 
 
 mutual
-  _≟ₚ_ : (A₁ A₂ : Prop) → Dec (A₁ ≡ A₂)
+  _≟ₚ_ : (A₁ A₂ : Type) → Dec (A₁ ≡ A₂)
   (ι P₁)      ≟ₚ (ι P₂)      with P₁ ≟ₛ P₂
   ...                        | yes refl = yes refl
   ...                        | no P₁≢P₂ = no (P₁≢P₂ ∘ injι)
@@ -79,15 +98,15 @@ mutual
   (A₁ ⊃ B₁)   ≟ₚ ([ Ψ₂ ] A₂) = no (\ ())
   ([ Ψ₁ ] A₁) ≟ₚ (ι P₂)      = no (\ ())
   ([ Ψ₁ ] A₁) ≟ₚ (A₂ ⊃ B₂)   = no (\ ())
-  ([ Ψ₁ ] A₁) ≟ₚ ([ Ψ₂ ] A₂) with Ψ₁ ≟ₚₛ Ψ₂ | A₁ ≟ₚ A₂
-  ...                        | yes refl | yes refl = yes refl
-  ...                        | yes refl | no A₁≢A₂ = no (A₁≢A₂ ∘ inj[]₂)
-  ...                        | no Ψ₁≢Ψ₂ | _        = no (Ψ₁≢Ψ₂ ∘ inj[]₁)
+  [_]_ {g₁} Ψ₁ A₁ ≟ₚ [_]_ {g₂} Ψ₂ A₂ with g₁ ≟ₙ g₂
+  [_]_ {g}  Ψ₁ A₁ ≟ₚ [_]_ {.g} Ψ₂ A₂ | yes refl with Ψ₁ ≟ₚₛ Ψ₂ | A₁ ≟ₚ A₂
+  [_]_ {g}  Ψ  A  ≟ₚ [_]_ {.g} .Ψ .A | yes refl | yes refl | yes refl = yes refl
+  [_]_ {g}  Ψ  A₁ ≟ₚ [_]_ {.g} .Ψ A₂ | yes refl | yes refl | no A₁≢A₂ = no (A₁≢A₂ ∘ inj[]₂)
+  [_]_ {g}  Ψ₁ A₁ ≟ₚ [_]_ {.g} Ψ₂ A₂ | yes refl | no Ψ₁≢Ψ₂ | _        = no (Ψ₁≢Ψ₂ ∘ inj[]₁)
+  [_]_ {g₁} Ψ₁ A₁ ≟ₚ [_]_ {g₂} Ψ₂ A₂ | no g₁≢g₂ = no (g₁≢g₂ ∘ inj[]₀)
 
-  _≟ₚₛ_ : (Ξ₁ Ξ₂ : List Prop) → Dec (Ξ₁ ≡ Ξ₂)
+  _≟ₚₛ_ : ∀ {n} → (Ξ₁ Ξ₂ : Types n) → Dec (Ξ₁ ≡ Ξ₂)
   ∙         ≟ₚₛ ∙         = yes refl
-  ∙         ≟ₚₛ (Ξ₂ , A₂) = no (\ ())
-  (Ξ₁ , A₁) ≟ₚₛ ∙         = no (\ ())
   (Ξ₁ , A₁) ≟ₚₛ (Ξ₂ , A₂) with Ξ₁ ≟ₚₛ Ξ₂ | A₁ ≟ₚ A₂
   ...                     | yes refl | yes refl = yes refl
   ...                     | yes refl | no A₁≢A₂ = no (A₁≢A₂ ∘ inj,₂)
@@ -97,7 +116,7 @@ mutual
 --------------------------------------------------------------------------------
 
 
-_⊃⋯⊃_ : List Prop → Prop → Prop
+_⊃⋯⊃_ : ∀ {n} → Types n → Type → Type
 ∙       ⊃⋯⊃ A = A
 (Ξ , B) ⊃⋯⊃ A = Ξ ⊃⋯⊃ (B ⊃ A)
 

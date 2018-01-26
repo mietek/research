@@ -85,10 +85,6 @@ mwk : ∀ {A B Δ Γ} → Δ ⊢ A valid[ Γ ]
 mwk 𝒟 = unvau (wk 𝒟)
 
 
-mvz : ∀ {A Δ Γ} → Δ , ⟪⊫ A ⟫ ⊢ A valid[ Γ ]
-mvz = unbox (unvau vz)
-
-
 mwks : ∀ {A Δ Γ Ξ} → Δ ⊢ Ξ allvalid[ Γ ]
                    → Δ , ⟪⊫ A ⟫ ⊢ Ξ allvalid[ Γ ]
 mwks ξ = maps mwk ξ
@@ -97,6 +93,10 @@ mwks ξ = maps mwk ξ
 mwks* : ∀ {A Δ Ξ} → Δ ⊢ Ξ allvalid*
                   → Δ , ⟪⊫ A ⟫ ⊢ Ξ allvalid*
 mwks* ξ = maps mwk ξ
+
+
+mvz : ∀ {A Δ Γ} → Δ , ⟪⊫ A ⟫ ⊢ A valid[ Γ ]
+mvz = unbox (unvau vz)
 
 
 mlifts* : ∀ {A Δ Ξ} → Δ ⊢ Ξ allvalid*

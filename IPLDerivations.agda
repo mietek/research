@@ -48,18 +48,18 @@ rens η ξ = maps (ren η) ξ
 --------------------------------------------------------------------------------
 
 
-wk : ∀ {B A Γ} → Γ ⊢ A true
+wk : ∀ {B Γ A} → Γ ⊢ A true
                → Γ , B ⊢ A true
 wk 𝒟 = ren (drop id) 𝒟
-
-
-vz : ∀ {A Γ} → Γ , A ⊢ A true
-vz = var zero
 
 
 wks : ∀ {A Γ Ξ} → Γ ⊢ Ξ alltrue
                 → Γ , A ⊢ Ξ alltrue
 wks ξ = rens (drop id) ξ
+
+
+vz : ∀ {Γ A} → Γ , A ⊢ A true
+vz = var zero
 
 
 lifts : ∀ {A Γ Ξ} → Γ ⊢ Ξ alltrue

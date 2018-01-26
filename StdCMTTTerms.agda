@@ -76,7 +76,7 @@ mutual
 WK : ∀ {d g} → {σ : Scopes d}
              → Term σ g
              → Term σ (suc g)
-WK M = REN (drop id≥) M
+WK M = REN (drop id) M
 
 
 VZ : ∀ {d g} → {σ : Scopes d}

@@ -85,11 +85,6 @@ mwk : ∀ {B Ψ A Δ Γ} → Δ ⊢ A valid[ Γ ]
 mwk 𝒟 = unvau (wk 𝒟)
 
 
-mvz : ∀ {A Ψ Δ Γ} → Δ , ⟪ Ψ ⊫ A ⟫ ⊢ Ψ allvalid[ Γ ]
-                  → Δ , ⟪ Ψ ⊫ A ⟫ ⊢ A valid[ Γ ]
-mvz ψ = unbox (unvau vz) ψ
-
-
 mwks : ∀ {A Ψ Δ Γ Ξ} → Δ ⊢ Ξ allvalid[ Γ ]
                      → Δ , ⟪ Ψ ⊫ A ⟫ ⊢ Ξ allvalid[ Γ ]
 mwks ξ = maps mwk ξ
@@ -98,6 +93,11 @@ mwks ξ = maps mwk ξ
 mwks* : ∀ {A Ψ Δ Ξ} → Δ ⊢ Ξ allvalid*
                     → Δ , ⟪ Ψ ⊫ A ⟫ ⊢ Ξ allvalid*
 mwks* ξ = maps mwk ξ
+
+
+mvz : ∀ {A Ψ Δ Γ} → Δ , ⟪ Ψ ⊫ A ⟫ ⊢ Ψ allvalid[ Γ ]
+                  → Δ , ⟪ Ψ ⊫ A ⟫ ⊢ A valid[ Γ ]
+mvz ψ = unbox (unvau vz) ψ
 
 
 mlifts* : ∀ {A Ψ Δ Ξ} → Δ ⊢ Ξ allvalid*
@@ -218,7 +218,6 @@ pseudomcut 𝒟 ℰ = letbox (box 𝒟) ℰ
 
 
 --------------------------------------------------------------------------------
-
 
 
 mutual

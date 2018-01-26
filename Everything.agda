@@ -86,8 +86,14 @@ import S4Normalisation
 --------------------------------------------------------------------------------
 
 
--- import StdS4TT
--- import StdS4TTTerms
+import S4TTTypes
+
+import S4TTTerms
+import S4TTDerivations          -- _⊢_⦂_valid[_] ; var/lam/app ; mvar/box/letbox
+import S4TTStandardDerivations  -- _⨾_⊢_⦂_true   ; var/lam/app ; mvar/box/letbox
+
+import S4TTIsomorphismWithS4
+
 -- import StdS4TTTermsLemmas
 
 
@@ -111,8 +117,10 @@ import CMLNormalisation
 --------------------------------------------------------------------------------
 
 
--- import StdCMTT
--- import StdCMTTTerms
+import CMTTTypes
+
+import CMTTTerms
+import CMTTDerivations -- _⊢_⦂_valid[_] ; var/lam/app ; mvar/box/letbox
 
 
 --------------------------------------------------------------------------------

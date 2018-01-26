@@ -20,8 +20,8 @@ instance
   PropVar : IsString Prop
   PropVar =
     record
-      { Constraint = λ s → ⊤
-      ; fromString = λ s → ι s
+      { Constraint = \ s → ⊤
+      ; fromString = \ s → ι s
       }
 
 
@@ -75,6 +75,14 @@ _≟ₚ_ : (A₁ A₂ : Prop) → Dec (A₁ ≡ A₂)
 (□ A₁)    ≟ₚ (□ A₂)    with A₁ ≟ₚ A₂
 ...                    | yes refl = yes refl
 ...                    | no A₁≢A₂ = no (A₁≢A₂ ∘ inj□)
+
+
+--------------------------------------------------------------------------------
+
+
+_⊃⋯⊃_ : List Prop → Prop → Prop
+∙       ⊃⋯⊃ A = A
+(Ξ , B) ⊃⋯⊃ A = Ξ ⊃⋯⊃ (B ⊃ A)
 
 
 --------------------------------------------------------------------------------

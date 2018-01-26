@@ -16,18 +16,23 @@ import IPLDerivations as IPL
 --------------------------------------------------------------------------------
 
 
-data _⌊≡⌋_ : ∀ {g Γ A} → Term g → Γ IPL.⊢ A true → Set
+infix 3 ⊢_⦂_match[_]_
+data ⊢_⦂_match[_]_ : ∀ {g} → Term g → (A : Type) (Γ : List Type)
+                            → Γ IPL.⊢ A true → Set
   where
-    var : ∀ {g Γ A} → {I : Fin g} {i : Γ ∋ A}
-                    → VAR (toFin i) ⌊≡⌋ IPL.var i
+    var : ∀ {A g Γ i} → (I : Fin g)
+                      → ⊢ VAR (toFin i) ⦂ A match[ Γ ] IPL.var i
 
-    lam : ∀ {g Γ A B} → {M : Term (suc g)} {𝒟 : Γ , A IPL.⊢ B true}
-                      → M ⌊≡⌋ 𝒟
-                      → LAM M ⌊≡⌋ IPL.lam 𝒟
+    lam : ∀ {A B g Γ 𝒟} → {M : Term (suc g)}
+                        → ⊢ M ⦂ B match[ Γ , A ] 𝒟
+                        → ⊢ LAM M ⦂ A ⊃ B match[ Γ ] IPL.lam 𝒟
 
-    app : ∀ {g Γ A B} → {M N : Term g} {𝒟 : Γ IPL.⊢ A ⊃ B true} {ℰ : Γ IPL.⊢ A true}
-                      → M ⌊≡⌋ 𝒟 → N ⌊≡⌋ ℰ
-                      → APP M N ⌊≡⌋ IPL.app 𝒟 ℰ
+    app : ∀ {A B g Γ 𝒟 ℰ} → {M N : Term g}
+                          → ⊢ M ⦂ A ⊃ B match[ Γ ] 𝒟 → ⊢ N ⦂ A match[ Γ ] ℰ
+                          → ⊢ APP M N ⦂ B match[ Γ ] IPL.app 𝒟 ℰ
+
+
+--------------------------------------------------------------------------------
 
 
 toTerm : ∀ {Γ A} → Γ IPL.⊢ A true
@@ -38,11 +43,11 @@ toTerm (IPL.app 𝒟 ℰ) = APP (toTerm 𝒟) (toTerm ℰ)
 
 
 instance
-  ⌊id⌋-toTerm : ∀ {Γ A} → (𝒟 : Γ IPL.⊢ A true)
-                        → toTerm 𝒟 ⌊≡⌋ 𝒟
-  ⌊id⌋-toTerm (IPL.var i)   = var {I = toFin i}
-  ⌊id⌋-toTerm (IPL.lam 𝒟)   = lam (⌊id⌋-toTerm 𝒟)
-  ⌊id⌋-toTerm (IPL.app 𝒟 ℰ) = app (⌊id⌋-toTerm 𝒟) (⌊id⌋-toTerm ℰ)
+  match-toTerm : ∀ {Γ A} → (𝒟 : Γ IPL.⊢ A true)
+                         → ⊢ toTerm 𝒟 ⦂ A match[ Γ ] 𝒟
+  match-toTerm (IPL.var i)   = var (toFin i)
+  match-toTerm (IPL.lam 𝒟)   = lam (match-toTerm 𝒟)
+  match-toTerm (IPL.app 𝒟 ℰ) = app (match-toTerm 𝒟) (match-toTerm ℰ)
 
 
 --------------------------------------------------------------------------------
@@ -57,17 +62,17 @@ instance
 
 
 instance
-  ⌊map⌋-↓ : ∀ {g M A} → {Γ : Types g}
-                      → (𝒟 : ⊢ M ⦂ A valid[ Γ ])
-                      → M ⌊≡⌋ ↓ 𝒟
-  ⌊map⌋-↓ (var {I = I} i) = var {I = I}
-  ⌊map⌋-↓ (lam 𝒟)         = lam (⌊map⌋-↓ 𝒟)
-  ⌊map⌋-↓ (app 𝒟 ℰ)       = app (⌊map⌋-↓ 𝒟) (⌊map⌋-↓ ℰ)
+  match↓ : ∀ {g M A} → {Γ : Types g}
+                     → (𝒟 : ⊢ M ⦂ A valid[ Γ ])
+                     → ⊢ M ⦂ A match[ toList Γ ] ↓ 𝒟
+  match↓ (var {I = I} i) = var I
+  match↓ (lam 𝒟)         = lam (match↓ 𝒟)
+  match↓ (app 𝒟 ℰ)       = app (match↓ 𝒟) (match↓ ℰ)
 
 
-↑ : ∀ {Γ M A} → (𝒟 : Γ IPL.⊢ A true) {{p : M ⌊≡⌋ 𝒟}}
+↑ : ∀ {Γ M A} → (𝒟 : Γ IPL.⊢ A true) {{p : ⊢ M ⦂ A match[ Γ ] 𝒟}}
               → ⊢ M ⦂ A valid[ fromList Γ ]
-↑ (IPL.var i)   {{var}}     = var (from∋ i)
+↑ (IPL.var i)   {{var I}}   = var (from∋ i)
 ↑ (IPL.lam 𝒟)   {{lam p}}   = lam (↑ 𝒟 {{p}})
 ↑ (IPL.app 𝒟 ℰ) {{app p q}} = app (↑ 𝒟 {{p}}) (↑ ℰ {{q}})
 
@@ -75,24 +80,22 @@ instance
 --------------------------------------------------------------------------------
 
 
-{-# REWRITE id-to∋-from∋ #-}
-gen-id↓↑ : ∀ {Γ M A} → (𝒟 : Γ IPL.⊢ A true) {{p : M ⌊≡⌋ 𝒟}}
+gen-id↓↑ : ∀ {Γ M A} → (𝒟 : Γ IPL.⊢ A true) {{p : ⊢ M ⦂ A match[ Γ ] 𝒟}}
                      → ↓ (↑ 𝒟 {{p}}) ≡ 𝒟
-gen-id↓↑ (IPL.var i)   {{var}}     = refl
+gen-id↓↑ (IPL.var i)   {{var I}}   = refl
 gen-id↓↑ (IPL.lam 𝒟)   {{lam p}}   = IPL.lam & gen-id↓↑ 𝒟 {{p}}
 gen-id↓↑ (IPL.app 𝒟 ℰ) {{app p q}} = IPL.app & gen-id↓↑ 𝒟 {{p}} ⊗ gen-id↓↑ ℰ {{q}}
 
 
 id↓↑ : ∀ {Γ A} → (𝒟 : Γ IPL.⊢ A true)
                → ↓ (↑ 𝒟) ≡ 𝒟
-id↓↑ 𝒟 = gen-id↓↑ 𝒟 {{⌊id⌋-toTerm 𝒟}}
+id↓↑ 𝒟 = gen-id↓↑ 𝒟 {{match-toTerm 𝒟}}
 
 
-{-# REWRITE id-from∋-to∋ #-}
 gen-id↑↓ : ∀ {g M A} → {Γ : Types g}
-                     → (𝒟 : ⊢ M ⦂ A valid[ Γ ]) {{p : M ⌊≡⌋ ↓ 𝒟}}
+                     → (𝒟 : ⊢ M ⦂ A valid[ Γ ]) {{p : ⊢ M ⦂ A match[ toList Γ ] ↓ 𝒟}}
                      → ↑ (↓ 𝒟) {{p}} ≡ 𝒟
-gen-id↑↓ (var i)   {{var}}     = refl
+gen-id↑↓ (var i)   {{var I}}   = refl
 gen-id↑↓ (lam 𝒟)   {{lam p}}   = lam & gen-id↑↓ 𝒟 {{p}}
 gen-id↑↓ (app 𝒟 ℰ) {{app p q}} = app & gen-id↑↓ 𝒟 {{p}} ⊗ gen-id↑↓ ℰ {{q}}
 
@@ -100,7 +103,7 @@ gen-id↑↓ (app 𝒟 ℰ) {{app p q}} = app & gen-id↑↓ 𝒟 {{p}} ⊗ gen-
 id↑↓ : ∀ {g M A} → {Γ : Types g}
                  → (𝒟 : ⊢ M ⦂ A valid[ Γ ])
                  → ↑ (↓ 𝒟) ≡ 𝒟
-id↑↓ 𝒟 = gen-id↑↓ 𝒟
+id↑↓ 𝒟 = gen-id↑↓ 𝒟 {{match↓ 𝒟}}
 
 
 --------------------------------------------------------------------------------
