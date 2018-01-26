@@ -238,12 +238,12 @@ unvau : ∀ {Δ Γ A B} → Δ ⊢ B valid[ Γ , □ A ]
 unvau 𝒟 = app (lam (mwk 𝒟)) (box mvz)
 
 
-boxapp : ∀ {A B Δ Γ} → Δ ⊢ □ (A ⊃ B) valid[ Γ ] → Δ ⊢ □ A valid[ Γ ]
+boxapp : ∀ {Δ Γ A B} → Δ ⊢ □ (A ⊃ B) valid[ Γ ] → Δ ⊢ □ A valid[ Γ ]
                      → Δ ⊢ □ B valid[ Γ ]
 boxapp 𝒟 ℰ = letbox 𝒟 (letbox (mwk ℰ) (box (app (mwk mvz) mvz)))
 
 
-unbox : ∀ {A Δ Γ} → Δ ⊢ □ A valid[ Γ ]
+unbox : ∀ {Δ Γ A} → Δ ⊢ □ A valid[ Γ ]
                   → Δ ⊢ A valid[ Γ ]
 unbox 𝒟 = letbox 𝒟 mvz
 
@@ -255,7 +255,7 @@ rebox : ∀ {Δ Γ A} → Δ ⊢ □ A valid[ Γ ]
 rebox 𝒟 = letbox 𝒟 (box mvz)
 
 
-dupbox : ∀ {A Δ Γ} → Δ ⊢ □ A valid[ Γ ]
+dupbox : ∀ {Δ Γ A} → Δ ⊢ □ A valid[ Γ ]
                    → Δ ⊢ □ □ A valid[ Γ ]
 dupbox 𝒟 = letbox 𝒟 (box (box mvz))
 

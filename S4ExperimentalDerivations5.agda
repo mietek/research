@@ -47,18 +47,18 @@ data _⊢_valid[_] : List Assert → Prop → List Prop → Set
 --------------------------------------------------------------------------------
 
 
-var : ∀ {A Δ Γ} → Γ ∋ A
+var : ∀ {Δ Γ A} → Γ ∋ A
                 → Δ ⊢ A valid[ Γ ]
 var zero    = vz
 var (suc i) = wk (var i)
 
 
-app : ∀ {A B Δ Γ} → Δ ⊢ A ⊃ B valid[ Γ ] → Δ ⊢ A valid[ Γ ]
+app : ∀ {Δ Γ A B} → Δ ⊢ A ⊃ B valid[ Γ ] → Δ ⊢ A valid[ Γ ]
                   → Δ ⊢ B valid[ Γ ]
 app 𝒟 ℰ = cut ℰ (unlam 𝒟)
 
 
-mvar : ∀ {A Δ Γ} → Δ ∋ ⟪⊫ A ⟫
+mvar : ∀ {Δ Γ A} → Δ ∋ ⟪⊫ A ⟫
                  → Δ ⊢ A valid[ Γ ]
 mvar zero    = mvz
 mvar (suc i) = mwk (mvar i)
@@ -66,7 +66,7 @@ mvar (suc i) = mwk (mvar i)
 
 -- NOTE: Problematic
 
--- letbox : ∀ {A B Δ Γ} → Δ ⊢ □ A valid[ Γ ] → Δ , ⟪⊫ A ⟫ ⊢ B valid[ Γ ]
+-- letbox : ∀ {Δ Γ A B} → Δ ⊢ □ A valid[ Γ ] → Δ , ⟪⊫ A ⟫ ⊢ B valid[ Γ ]
 --                      → Δ ⊢ B valid[ Γ ]
 -- letbox 𝒟 ℰ = {!!}
 

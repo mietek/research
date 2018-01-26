@@ -111,14 +111,14 @@ mids* = mvars* id
 --------------------------------------------------------------------------------
 
 
-vaus : ∀ {Δ Γ A Ξ} → Δ , ⟪⊫ A ⟫ ⊢ Ξ allvalid[ Γ ]
+vaus : ∀ {Δ Γ Ξ A} → Δ , ⟪⊫ A ⟫ ⊢ Ξ allvalid[ Γ ]
                    → Δ ⊢ Ξ allvalid[ Γ , □ A ]
 vaus 𝒟 = maps vau 𝒟
 
 
 -- NOTE: Interesting; similar shape to lift or cut
 
-unnamed : ∀ {Δ Γ A Ξ} → Δ , ⟪⊫ A ⟫ ⊢ Ξ allvalid[ Γ ]
+unnamed : ∀ {Δ Γ Ξ A} → Δ , ⟪⊫ A ⟫ ⊢ Ξ allvalid[ Γ ]
                       → Δ ⊢ Ξ , □ A allvalid[ Γ , □ A ]
 unnamed 𝒟 = vaus 𝒟 , vz
 
@@ -157,29 +157,29 @@ msub (ξ , 𝒞) (unvau 𝒟)  = mcut 𝒞 (unvau (msub ξ 𝒟))
 --------------------------------------------------------------------------------
 
 
-var : ∀ {A Δ Γ} → Γ ∋ A
+var : ∀ {Δ Γ A} → Γ ∋ A
                 → Δ ⊢ A valid[ Γ ]
 var zero    = vz
 var (suc i) = wk (var i)
 
 
-app : ∀ {A B Δ Γ} → Δ ⊢ A ⊃ B valid[ Γ ] → Δ ⊢ A valid[ Γ ]
+app : ∀ {Δ Γ A B} → Δ ⊢ A ⊃ B valid[ Γ ] → Δ ⊢ A valid[ Γ ]
                   → Δ ⊢ B valid[ Γ ]
 app 𝒟 ℰ = cut ℰ (unlam 𝒟)
 
 
-mvar : ∀ {A Δ Γ} → Δ ∋ ⟪⊫ A ⟫
+mvar : ∀ {Δ Γ A} → Δ ∋ ⟪⊫ A ⟫
                  → Δ ⊢ A valid[ Γ ]
 mvar zero    = mvz
 mvar (suc i) = mwk (mvar i)
 
 
-box : ∀ {A Δ Γ} → Δ ⊢ A valid[ ∙ ]
+box : ∀ {Δ Γ A} → Δ ⊢ A valid[ ∙ ]
                 → Δ ⊢ □ A valid[ Γ ]
 box 𝒟 = mcut 𝒟 (unvau vz)
 
 
-letbox : ∀ {A B Δ Γ} → Δ ⊢ □ A valid[ Γ ] → Δ , ⟪⊫ A ⟫ ⊢ B valid[ Γ ]
+letbox : ∀ {Δ Γ A B} → Δ ⊢ □ A valid[ Γ ] → Δ , ⟪⊫ A ⟫ ⊢ B valid[ Γ ]
                      → Δ ⊢ B valid[ Γ ]
 letbox 𝒟 ℰ = cut 𝒟 (vau ℰ)
 

@@ -81,7 +81,7 @@ var zero    = vz
 var (suc i) = wk (var i)
 
 
-app : ∀ {A B Γ} → Γ ⊢ A ⊃ B true → Γ ⊢ A true
+app : ∀ {Γ A B} → Γ ⊢ A ⊃ B true → Γ ⊢ A true
                 → Γ ⊢ B true
 app 𝒟 ℰ = cut ℰ (unlam 𝒟)
 

@@ -114,7 +114,7 @@ unvau : ∀ {Δ Γ A B} → Δ ⊢ B valid[ Γ , □ A ]
 unvau 𝒟 = app (lam (mwk 𝒟)) (box mvz)
 
 
-vaus : ∀ {Δ Γ A Ξ} → Δ , ⟪⊫ A ⟫ ⊢ Ξ allvalid[ Γ ]
+vaus : ∀ {Δ Γ Ξ A} → Δ , ⟪⊫ A ⟫ ⊢ Ξ allvalid[ Γ ]
                    → Δ ⊢ Ξ allvalid[ Γ , □ A ]
 vaus 𝒟 = maps vau 𝒟
 
@@ -149,13 +149,13 @@ msub ξ       (letbox 𝒟 ℰ) = letbox (msub ξ 𝒟) (msub (mlifts* ξ) ℰ)
 --------------------------------------------------------------------------------
 
 
-var : ∀ {A Δ Γ} → Γ ∋ A
+var : ∀ {Δ Γ A} → Γ ∋ A
                 → Δ ⊢ A valid[ Γ ]
 var zero    = vz
 var (suc i) = wk (var i)
 
 
-mvar : ∀ {A Δ Γ} → Δ ∋ ⟪⊫ A ⟫
+mvar : ∀ {Δ Γ A} → Δ ∋ ⟪⊫ A ⟫
                  → Δ ⊢ A valid[ Γ ]
 mvar zero    = mvz
 mvar (suc i) = mwk (mvar i)
