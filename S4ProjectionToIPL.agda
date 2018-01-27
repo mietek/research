@@ -23,12 +23,12 @@ import IPLDerivations as IPL
 ↓ₚ (□ A)   = ↓ₚ A
 
 
-↓ₐ : Assert → IPL.Prop
-↓ₐ ⟪⊫ A ⟫ = ↓ₚ A
-
-
 ↓ₚₛ : List Prop → List IPL.Prop
 ↓ₚₛ Γ = map ↓ₚ Γ
+
+
+↓ₐ : Assert → IPL.Prop
+↓ₐ ⟪⊫ A ⟫ = ↓ₚ A
 
 
 ↓ₐₛ : List Assert → List IPL.Prop

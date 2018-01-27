@@ -35,11 +35,11 @@ instance
 --------------------------------------------------------------------------------
 
 
-record Assert (m : Nat) : Set
+record Assert (g : Nat) : Set
   where
     constructor ⟪_⊫_⟫
     field
-      Γ : Types m
+      Γ : Types g
       A : Type
 
 

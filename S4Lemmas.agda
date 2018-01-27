@@ -42,10 +42,13 @@ open import S4Derivations
 
                              mren id 𝒟 ≡ 𝒟                                      id-mren
                             mrens id ξ ≡ ξ                                      id-mrens
+                           mrens* id ξ ≡ ξ                                      id-mrens*
                       mren (η₁ ∘ η₂) 𝒟 ≡ (mren η₂ ∘ mren η₁) 𝒟                  comp-mren
                      mrens (η₁ ∘ η₂) ξ ≡ (mrens η₂ ∘ mrens η₁) ξ                comp-mrens
+                    mrens* (η₁ ∘ η₂) ξ ≡ (mrens* η₂ ∘ mrens* η₁) ξ              comp-mrens*
                                                                                 𝐦𝐫𝐞𝐧
                                                                                 𝐦𝐫𝐞𝐧𝐬
+                                                                                𝐦𝐫𝐞𝐧𝐬*
 
                (mren (keep η) ∘ mwk) 𝒟 ≡ (mwk ∘ mren η) 𝒟                       comp-mwk-mren-keep
              (mrens (keep η) ∘ mwks) ξ ≡ (mwks ∘ mrens η) ξ                     comp-mwks-mrens-keep
@@ -65,9 +68,9 @@ open import S4Derivations
         (subs (mrens η ξ) ∘ mrens η) ψ ≡ (mrens η ∘ subs ξ) ψ                   comp-mrens-subs
 
                              sub ids 𝒟 ≡ 𝒟                                      id-sub
-                      sub (subs ξ ψ) 𝒟 ≡ (sub ξ ∘ sub ψ) 𝒟                      comp-sub
                             subs ids ξ ≡ ξ                                      lid-subs
                             subs ξ ids ≡ ξ                                      rid-subs
+                      sub (subs ξ ψ) 𝒟 ≡ (sub ξ ∘ sub ψ) 𝒟                      comp-sub
                      subs (subs ξ ψ) φ ≡ subs ξ (subs ψ φ)                      assoc-subs
                                                                                 𝐒𝟒
                                                                                 𝐬𝐮𝐛
@@ -93,14 +96,15 @@ open import S4Derivations
 
                           msub mids* 𝒟 ≡ 𝒟                                      id-msub
                          msubs mids* ξ ≡ ξ                                      id-msubs
-                        msubs* mids* ξ ≡ ξ                                      lid-msubs
-                        msubs* ξ mids* ≡ ξ                                      rid-msubs
+                        msubs* mids* ξ ≡ ξ                                      lid-msubs*
+                        msubs* ξ mids* ≡ ξ                                      rid-msubs*
                    msub (msubs* ξ ψ) 𝒟 ≡ (msub ξ ∘ msub ψ) 𝒟                    comp-msub
                   msubs (msubs* ξ ψ) φ ≡ (msubs ξ ∘ msubs ψ) φ                  comp-msubs
-                 msubs* (msubs* ξ ψ) φ ≡ msubs* ξ (msubs* ψ φ)                  assoc-msubs
+                 msubs* (msubs* ξ ψ) φ ≡ msubs* ξ (msubs* ψ φ)                  assoc-msubs*
                                                                                 𝐒𝟒*
                                                                                 𝐦𝐬𝐮𝐛
                                                                                 𝐦𝐬𝐮𝐛𝐬
+                                                                                𝐦𝐬𝐮𝐛𝐬*
 -}
 --------------------------------------------------------------------------------
 
@@ -295,6 +299,12 @@ id-mrens ∙       = refl
 id-mrens (ξ , 𝒟) = _,_ & id-mrens ξ ⊗ id-mren 𝒟
 
 
+id-mrens* : ∀ {Δ Ξ} → (ξ : Δ ⊢ Ξ allvalid*)
+                    → mrens* id ξ ≡ ξ
+id-mrens* ∙       = refl
+id-mrens* (ξ , 𝒟) = _,_ & id-mrens* ξ ⊗ id-mren 𝒟
+
+
 comp-mren : ∀ {Δ Δ′ Δ″ Γ A} → (η₁ : Δ′ ⊇ Δ) (η₂ : Δ″ ⊇ Δ′) (𝒟 : Δ ⊢ A valid[ Γ ])
                             → mren (η₁ ∘ η₂) 𝒟 ≡ (mren η₂ ∘ mren η₁) 𝒟
 comp-mren η₁ η₂ (var i)      = refl
@@ -311,6 +321,12 @@ comp-mrens η₁ η₂ ∙       = refl
 comp-mrens η₁ η₂ (ξ , 𝒟) = _,_ & comp-mrens η₁ η₂ ξ ⊗ comp-mren η₁ η₂ 𝒟
 
 
+comp-mrens* : ∀ {Δ Δ′ Δ″ Ξ} → (η₁ : Δ′ ⊇ Δ) (η₂ : Δ″ ⊇ Δ′) (ξ : Δ ⊢ Ξ allvalid*)
+                            → mrens* (η₁ ∘ η₂) ξ ≡ (mrens* η₂ ∘ mrens* η₁) ξ
+comp-mrens* η₁ η₂ ∙       = refl
+comp-mrens* η₁ η₂ (ξ , 𝒟) = _,_ & comp-mrens* η₁ η₂ ξ ⊗ comp-mren η₁ η₂ 𝒟
+
+
 𝐦𝐫𝐞𝐧 : ∀ {A} → Presheaf 𝐎𝐏𝐄 (\ Δ → Σ (List Prop) (\ Γ → Δ ⊢ A valid[ Γ ]))
 𝐦𝐫𝐞𝐧 = record
          { ℱ     = \ { η (Γ , 𝒟) → Γ , mren η 𝒟 }
@@ -325,6 +341,14 @@ comp-mrens η₁ η₂ (ξ , 𝒟) = _,_ & comp-mrens η₁ η₂ ξ ⊗ comp-mr
           ; idℱ   = funext! (\ { (Γ , ξ) → (Γ ,_) & id-mrens ξ })
           ; compℱ = \ η₁ η₂ → funext! (\ { (Γ , ξ) → (Γ ,_) & comp-mrens η₁ η₂ ξ })
           }
+
+
+𝐦𝐫𝐞𝐧𝐬* : ∀ {Ξ} → Presheaf 𝐎𝐏𝐄 (\ Δ → Δ ⊢ Ξ allvalid*)
+𝐦𝐫𝐞𝐧𝐬* = record
+           { ℱ     = mrens*
+           ; idℱ   = funext! id-mrens*
+           ; compℱ = \ η₁ η₂ → funext! (comp-mrens* η₁ η₂)
+           }
 
 
 --------------------------------------------------------------------------------
@@ -460,6 +484,20 @@ id-sub (letbox 𝒟 ℰ) = letbox & id-sub 𝒟 ⊗ ( (\ ξ′ → sub ξ′ ℰ
                                           )
 
 
+lid-subs : ∀ {Δ Γ Ξ} → (ξ : Δ ⊢ Ξ allvalid[ Γ ])
+                     → subs ids ξ ≡ ξ
+lid-subs ∙       = refl
+lid-subs (ξ , 𝒟) = _,_ & lid-subs ξ ⊗ id-sub 𝒟
+
+
+rid-subs : ∀ {Δ Γ Ξ} → (ξ : Δ ⊢ Ξ allvalid[ Γ ])
+                     → subs ξ ids ≡ ξ
+rid-subs ∙       = refl
+rid-subs (ξ , 𝒟) = (_, 𝒟) & ( id-cons-wks-subs ξ 𝒟 ids
+                            ⋮ rid-subs ξ
+                            )
+
+
 comp-sub : ∀ {Δ Γ Ξ Ψ A} → (ξ : Δ ⊢ Ξ allvalid[ Γ ]) (ψ : Δ ⊢ Ψ allvalid[ Ξ ]) (𝒟 : Δ ⊢ A valid[ Ψ ])
                          → sub (subs ξ ψ) 𝒟 ≡ (sub ξ ∘ sub ψ) 𝒟
 comp-sub ξ ψ (var i)      = comp-sub-get ξ ψ i
@@ -473,20 +511,6 @@ comp-sub ξ ψ (letbox 𝒟 ℰ) = letbox & comp-sub ξ ψ 𝒟
                                    ⊗ ( (\ ξ′ → sub ξ′ ℰ) & comp-mrens-subs (drop id) ξ ψ ⁻¹
                                      ⋮ comp-sub (mwks ξ) (mwks ψ) ℰ
                                      )
-
-
-lid-subs : ∀ {Δ Γ Ξ} → (ξ : Δ ⊢ Ξ allvalid[ Γ ])
-                     → subs ids ξ ≡ ξ
-lid-subs ∙       = refl
-lid-subs (ξ , 𝒟) = _,_ & lid-subs ξ ⊗ id-sub 𝒟
-
-
-rid-subs : ∀ {Δ Γ Ξ} → (ξ : Δ ⊢ Ξ allvalid[ Γ ])
-                     → subs ξ ids ≡ ξ
-rid-subs ∙       = refl
-rid-subs (ξ , 𝒟) = (_, 𝒟) & ( id-cons-wks-subs ξ 𝒟 ids
-                            ⋮ rid-subs ξ
-                            )
 
 
 assoc-subs : ∀ {Δ Γ Ξ Ψ Φ} → (ξ : Δ ⊢ Ξ allvalid[ Γ ]) (ψ : Δ ⊢ Ψ allvalid[ Ξ ]) (φ : Δ ⊢ Φ allvalid[ Ψ ])
@@ -730,6 +754,14 @@ instance
           ; idℱ   = funext! id-msubs
           ; compℱ = \ ψ ξ → funext! (comp-msubs ξ ψ)
           }
+
+
+𝐦𝐬𝐮𝐛𝐬* : ∀ {Ξ} → Presheaf 𝐒𝟒* (_⊢ Ξ allvalid*)
+𝐦𝐬𝐮𝐛𝐬* = record
+           { ℱ     = msubs*
+           ; idℱ   = funext! lid-msubs*
+           ; compℱ = \ ψ ξ → funext! (assoc-msubs* ξ ψ)
+           }
 
 
 --------------------------------------------------------------------------------

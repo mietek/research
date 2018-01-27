@@ -39,9 +39,9 @@ mutual
 
       mvar : ∀ {A m d g I} → {σ : Scopes d}
                               {Ψ : Types m} {Δ : Asserts σ} {Γ : Types g}
-                              {i : σ ∋⟨ I ⟩ m} {τ : Terms σ g m}
-                           → Δ ∋◇⟨ i ⟩ ⟪ Ψ ⊫ A ⟫ → Δ ⊢ τ ⦂ Ψ allvalid[ Γ ]
-                           → Δ ⊢ MVAR i τ ⦂ A valid[ Γ ]
+                              {i : σ ∋⟨ I ⟩ m} {υ : Terms σ g m}
+                           → Δ ∋◇⟨ i ⟩ ⟪ Ψ ⊫ A ⟫ → Δ ⊢ υ ⦂ Ψ allvalid[ Γ ]
+                           → Δ ⊢ MVAR i υ ⦂ A valid[ Γ ]
 
       box : ∀ {A m d g} → {σ : Scopes d}
                            {Ψ : Types m} {Δ : Asserts σ} {Γ : Types g}
@@ -54,7 +54,6 @@ mutual
                                 {M : Term σ g} {N : Term (σ , m) g}
                              → Δ ⊢ M ⦂ [ Ψ ] A valid[ Γ ] → Δ , ⟪ Ψ ⊫ A ⟫ ⊢ N ⦂ B valid[ Γ ]
                              → Δ ⊢ LETBOX M N ⦂ B valid[ Γ ]
-
 
   infix 3 _⊢_⦂_allvalid[_]
   _⊢_⦂_allvalid[_] : ∀ {d g n} → {σ : Scopes d}

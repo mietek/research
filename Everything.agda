@@ -94,7 +94,7 @@ import S4TTStandardDerivations  -- _⨾_⊢_⦂_true   ; var/lam/app ; mvar/box/
 
 import S4TTIsomorphismWithS4
 
--- import StdS4TTTermsLemmas
+import S4TTTermsLemmas
 
 
 --------------------------------------------------------------------------------
@@ -120,11 +120,18 @@ import CMLNormalisation
 import CMTTTypes
 
 import CMTTTerms
-import CMTTDerivations -- _⊢_⦂_valid[_] ; var/lam/app ; mvar/box/letbox
+import CMTTDerivations          -- _⊢_⦂_valid[_] ; var/lam/app ; mvar/box/letbox
+import CMTTStandardDerivations  -- _⨾_⊢_⦂_true   ; var/lam/app ; mvar/box/letbox
+
+-- import CMTTIsomorphismWithCML
 
 
 --------------------------------------------------------------------------------
 
+
+-- import LPTTTypes
+
+-- import LPTTDerivations
 
 -- import StdLPTT
 -- import StdLPTTLemmas
