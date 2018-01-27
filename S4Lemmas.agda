@@ -71,7 +71,7 @@ open import S4Derivations
                             subs ids ξ ≡ ξ                                      lid-subs
                             subs ξ ids ≡ ξ                                      rid-subs
                       sub (subs ξ ψ) 𝒟 ≡ (sub ξ ∘ sub ψ) 𝒟                      comp-sub
-                     subs (subs ξ ψ) φ ≡ subs ξ (subs ψ φ)                      assoc-subs
+                     subs (subs ξ ψ) φ ≡ (subs ξ ∘ subs ψ) φ                    assoc-subs
                                                                                 𝐒𝟒
                                                                                 𝐬𝐮𝐛
 
@@ -100,7 +100,7 @@ open import S4Derivations
                         msubs* ξ mids* ≡ ξ                                      rid-msubs*
                    msub (msubs* ξ ψ) 𝒟 ≡ (msub ξ ∘ msub ψ) 𝒟                    comp-msub
                   msubs (msubs* ξ ψ) φ ≡ (msubs ξ ∘ msubs ψ) φ                  comp-msubs
-                 msubs* (msubs* ξ ψ) φ ≡ msubs* ξ (msubs* ψ φ)                  assoc-msubs*
+                 msubs* (msubs* ξ ψ) φ ≡ (msubs* ξ ∘ msubs* ψ) φ                assoc-msubs*
                                                                                 𝐒𝟒*
                                                                                 𝐦𝐬𝐮𝐛
                                                                                 𝐦𝐬𝐮𝐛𝐬
@@ -514,7 +514,7 @@ comp-sub ξ ψ (letbox 𝒟 ℰ) = letbox & comp-sub ξ ψ 𝒟
 
 
 assoc-subs : ∀ {Δ Γ Ξ Ψ Φ} → (ξ : Δ ⊢ Ξ allvalid[ Γ ]) (ψ : Δ ⊢ Ψ allvalid[ Ξ ]) (φ : Δ ⊢ Φ allvalid[ Ψ ])
-                           → subs (subs ξ ψ) φ ≡ subs ξ (subs ψ φ)
+                           → subs (subs ξ ψ) φ ≡ (subs ξ ∘ subs ψ) φ
 assoc-subs ξ ψ ∙       = refl
 assoc-subs ξ ψ (φ , 𝒟) = _,_ & assoc-subs ξ ψ φ ⊗ comp-sub ξ ψ 𝒟
 
@@ -724,7 +724,7 @@ comp-msubs ξ ψ (φ , 𝒟) = _,_ & comp-msubs ξ ψ φ ⊗ comp-msub ξ ψ �
 
 
 assoc-msubs* : ∀ {Δ Ξ Ψ Φ} → (ξ : Δ ⊢ Ξ allvalid*) (ψ : Ξ ⊢ Ψ allvalid*) (φ : Ψ ⊢ Φ allvalid*)
-                           → msubs* (msubs* ξ ψ) φ ≡ msubs* ξ (msubs* ψ φ)
+                           → msubs* (msubs* ξ ψ) φ ≡ (msubs* ξ ∘ msubs* ψ) φ
 assoc-msubs* ξ ψ ∙       = refl
 assoc-msubs* ξ ψ (φ , 𝒟) = _,_ & assoc-msubs* ξ ψ φ ⊗ comp-msub ξ ψ 𝒟
 

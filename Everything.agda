@@ -129,9 +129,12 @@ import CMTTStandardDerivations  -- _⨾_⊢_⦂_true   ; var/lam/app ; mvar/box/
 --------------------------------------------------------------------------------
 
 
--- import LPTTTypes
+import LPTTTypes
+import LPTTTypesLemmas
 
--- import LPTTDerivations
+import LPTTAsserts
+
+import LPTTDerivations
 
 -- import StdLPTT
 -- import StdLPTTLemmas

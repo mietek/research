@@ -6,52 +6,51 @@ open import Fin
 open import Vec
 open import VecLemmas
 open import AllVec
-open import LPTTTypes
 open import S4TTTerms
+open import S4TTTermsLemmas
+open import LPTTTypes
+open import LPTTTypesLemmas
+open import LPTTAsserts
 
 
 --------------------------------------------------------------------------------
 
 
 infix 3 _⊢_⦂_valid[_]
-data _⊢_⦂_valid[_] : ∀ {d g} → Asserts d → Term d g → Type → Types g → Set
+data _⊢_⦂_valid[_] : ∀ {d g} → Asserts d → Term d g → Type d → Types d g → Set
   where
-    var : ∀ {A d g I} → {Δ : Asserts d} {Γ : Types g}
+    var : ∀ {d g I A} → {Δ : Asserts d} {Γ : Types d g}
                       → Γ ∋⟨ I ⟩ A
                       → Δ ⊢ VAR I ⦂ A valid[ Γ ]
 
-    lam : ∀ {A B d g M} → {Δ : Asserts d} {Γ : Types g}
+    lam : ∀ {d g M A B} → {Δ : Asserts d} {Γ : Types d g}
                         → Δ ⊢ M ⦂ B valid[ Γ , A ]
                         → Δ ⊢ LAM M ⦂ A ⊃ B valid[ Γ ]
 
-    app : ∀ {A B d g M N} → {Δ : Asserts d} {Γ : Types g}
+    app : ∀ {d g M N A B} → {Δ : Asserts d} {Γ : Types d g}
                           → Δ ⊢ M ⦂ A ⊃ B valid[ Γ ] → Δ ⊢ N ⦂ A valid[ Γ ]
                           → Δ ⊢ APP M N ⦂ B valid[ Γ ]
 
-    mvar : ∀ {A d g I} → {Δ : Asserts d} {Γ : Types g}
-                       → Δ ∋⟨ I ⟩ ⟪⊫ A ⟫
-                       → Δ ⊢ MVAR I ⦂ A valid[ Γ ]
+    mvar : ∀ {d g I M A} → {Δ : Asserts d} {Γ : Types d g}
+                         → Δ ∋◆⟨ I ⟩ ⟪⊫ M ⦂ A ⟫  -- NOTE: This is more than Artemov-Bonelli
+                         → Δ ⊢ MVAR I ⦂ A valid[ Γ ]
 
-    box : ∀ {A d g M} → {Δ : Asserts d} {Γ : Types g}
+    box : ∀ {d g M A} → {Δ : Asserts d} {Γ : Types d g}
                       → Δ ⊢ M ⦂ A valid[ ∙ ]
-                      → Δ ⊢ BOX M ⦂ □ A valid[ Γ ]
+                      → Δ ⊢ BOX M ⦂ [ M ] A valid[ Γ ]
 
-    letbox : ∀ {A B d g M N} → {Δ : Asserts d} {Γ : Types g}
-                             → Δ ⊢ M ⦂ □ A valid[ Γ ] → Δ , ⟪⊫ A ⟫ ⊢ N ⦂ B valid[ Γ ]
-                             → Δ ⊢ LETBOX M N ⦂ B valid[ Γ ]
-
-
--- infix 3 _⊢_⦂_allvalid[_]
--- _⊢_⦂_allvalid[_] : ∀ {d g n} → Asserts d → Terms d g n → Types n → Types g → Set
--- Δ ⊢ τ ⦂ Ξ allvalid[ Γ ] = All (\ { (M , A) → Δ ⊢ M ⦂ A valid[ Γ ] }) (zip τ Ξ)
+    letbox : ∀ {d g M N Q A B} → {Δ : Asserts d} {Γ : Types d g}
+                                  {B′ : Type d} {{p : TMCUT Q B ≡ B′}}
+                               → Δ ⊢ M ⦂ [ Q ] A valid[ Γ ] → Δ , ⟪⊫ Q ⦂ A ⟫ ⊢ N ⦂ B valid[ TMWKS Γ ]  -- NOTE
+                               → Δ ⊢ LETBOX M N ⦂ B′ valid[ Γ ]
 
 
--- infix 3 _⊢_⦂_allvalid*
--- _⊢_⦂_allvalid* : ∀ {d n} → Asserts d → Terms* d n → Asserts n → Set
--- Δ ⊢ τ ⦂ Ξ allvalid* = All (\ { (M , ⟪⊫ A ⟫) → Δ ⊢ M ⦂ A valid[ ∙ ] }) (zip τ Ξ)
+infix 3 _⊢_⦂_allvalid[_]
+_⊢_⦂_allvalid[_] : ∀ {d g n} → Asserts d → Terms d g n → Types d n → Types d g → Set
+Δ ⊢ τ ⦂ Ξ allvalid[ Γ ] = All (\ { (M , A) → Δ ⊢ M ⦂ A valid[ Γ ] }) (zip τ Ξ)
 
 
--- --------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 
 -- ren : ∀ {d g g′ e M A} → {Δ : Asserts d} {Γ : Types g} {Γ′ : Types g′}

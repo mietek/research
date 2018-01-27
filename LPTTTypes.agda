@@ -5,6 +5,7 @@ open import Category
 open import Fin
 open import FinLemmas
 open import Vec
+open import VecLemmas
 open import S4TTTerms
 open import S4TTTermsLemmas
 
@@ -36,69 +37,52 @@ Types d g = Vec (Type d) g
 --------------------------------------------------------------------------------
 
 
-MRENₚ : ∀ {d d′} → d′ ≥ d → Type d
+TMREN : ∀ {d d′} → d′ ≥ d → Type d
                  → Type d′
-MRENₚ e (ι P)     = ι P
-MRENₚ e (A ⊃ B)   = MRENₚ e A ⊃ MRENₚ e B
-MRENₚ e ([ M ] A) = [ MREN e M ] MRENₚ e A
+TMREN e (ι P)     = ι P
+TMREN e (A ⊃ B)   = TMREN e A ⊃ TMREN e B
+TMREN e ([ M ] A) = [ MREN e M ] TMREN e A
 
 
-MWKₚ : ∀ {d} → Type d
+TMRENS : ∀ {d d′ n} → d′ ≥ d → Types d n
+                    → Types d′ n
+TMRENS e Ξ = MAPS (TMREN e) Ξ
+
+
+--------------------------------------------------------------------------------
+
+
+TMWK : ∀ {d} → Type d
              → Type (suc d)
-MWKₚ A = MRENₚ (drop id≥) A
+TMWK A = TMREN (drop id) A
 
 
-MSUBₚ : ∀ {d n} → Terms* d n → Type n
+TMWKS : ∀ {d n} → Types d n
+                → Types (suc d) n
+TMWKS Ξ = TMRENS (drop id) Ξ
+
+
+--------------------------------------------------------------------------------
+
+
+TMSUB : ∀ {d n} → Terms* d n → Type n
                 → Type d
-MSUBₚ τ (ι P)     = ι P
-MSUBₚ τ (A ⊃ B)   = MSUBₚ τ A ⊃ MSUBₚ τ B
-MSUBₚ τ ([ M ] A) = [ MSUB τ M ] MSUBₚ τ A
+TMSUB τ (ι P)     = ι P
+TMSUB τ (A ⊃ B)   = TMSUB τ A ⊃ TMSUB τ B
+TMSUB τ ([ M ] A) = [ MSUB τ M ] TMSUB τ A
 
 
-MCUTₚ : ∀ {d} → Term d zero → Type (suc d)
+TMSUBS : ∀ {d n m} → Terms* d n → Types n m
+                   → Types d m
+TMSUBS τ Ξ = MAPS (TMSUB τ) Ξ
+
+
+--------------------------------------------------------------------------------
+
+
+TMCUT : ∀ {d} → Term d zero → Type (suc d)
               → Type d
-MCUTₚ M A = MSUBₚ (MIDS* , M) A
+TMCUT M A = TMSUB (MIDS* , M) A
 
 
 --------------------------------------------------------------------------------
-
-
-record Assert (d : Nat) : Set
-  where
-    constructor ⟪⊫_⦂_⟫
-    field
-      M : Term d zero
-      A : Type d
-
-
-data Asserts : Nat → Set
-  where
-    ∙ : Asserts zero
-
-    _,_ : ∀ {d} → Asserts d → Assert d
-                → Asserts (suc d)
-
-
---------------------------------------------------------------------------------
-
-
-infix 4 _⊇◆⟨_⟩_
-data _⊇◆⟨_⟩_ : ∀ {d d′} → Asserts d′ → d′ ≥ d → Asserts d → Set
-  where
-    done : ∙ ⊇◆⟨ done ⟩ ∙
-
-    drop : ∀ {d d′ e} → {Δ : Asserts d} {Δ′ : Asserts d′} {M : Term d′ zero} {A : Type d′}
-                      → Δ′ ⊇◆⟨ e ⟩ Δ
-                      → Δ′ , ⟪⊫ M ⦂ A ⟫ ⊇◆⟨ drop e ⟩ Δ
-
-    keep : ∀ {d d′ e} → {Δ : Asserts d} {Δ′ : Asserts d′} {M : Term d zero} {A : Type d}
-                         {M′ : Term d′ zero} {{p : MREN e M ≡ M′}}
-                         {A′ : Type d′} {{q : MRENₚ e A ≡ A′}}
-                      → Δ′ ⊇◆⟨ e ⟩ Δ
-                      → Δ′ , ⟪⊫ M′ ⦂ A′ ⟫ ⊇◆⟨ keep e ⟩ Δ , ⟪⊫ M ⦂ A ⟫
-
-
-id⊇◆ : ∀ {d} → {Δ : Asserts d}
-             → Δ ⊇◆⟨ id ⟩ Δ
-id⊇◆ {Δ = ∙}               = done
-id⊇◆ {Δ = Δ , ⟪⊫ M ⦂ A ⟫} = keep {{id-MREN M}} {{{!id-MRENₚ A!}}} id⊇◆

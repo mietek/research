@@ -18,7 +18,7 @@ open import S4TTTerms
 
                               REN id M ≡ M                                      id-REN
                              RENS id τ ≡ τ                                      id-RENS
-                       REN (e₁ ∘ e₂) M ≡ REN e₂ (REN e₁ M)                      comp-REN
+                       REN (e₁ ∘ e₂) M ≡ (REN e₂ ∘ REN e₁) M                    comp-REN
                       RENS (e₁ ∘ e₂) τ ≡ (RENS e₂ ∘ RENS e₁) τ                  comp-RENS
                                                                                 𝐑𝐄𝐍
                                                                                 𝐑𝐄𝐍𝐒
@@ -42,7 +42,7 @@ open import S4TTTerms
                              MREN id M ≡ M                                      id-MREN
                             MRENS id τ ≡ τ                                      id-MRENS
                            MRENS* id τ ≡ τ                                      id-MRENS*
-                      MREN (e₁ ∘ e₂) M ≡ MREN e₂ (MREN e₁ M)                    comp-MREN
+                      MREN (e₁ ∘ e₂) M ≡ (MREN e₂ ∘ MREN e₁) M                  comp-MREN
                      MRENS (e₁ ∘ e₂) τ ≡ (MRENS e₂ ∘ MRENS e₁) τ                comp-MRENS
                     MRENS* (e₁ ∘ e₂) τ ≡ (MRENS* e₂ ∘ MRENS* e₁) τ              comp-MRENS*
                                                                                 𝐌𝐑𝐄𝐍
@@ -70,7 +70,7 @@ open import S4TTTerms
                             SUBS IDS τ ≡ τ                                      lid-SUBS
                             SUBS τ IDS ≡ τ                                      rid-SUBS
                       SUB (SUBS τ υ) M ≡ (SUB τ ∘ SUB υ) M                      comp-SUB
-                     SUBS (SUBS τ υ) ν ≡ SUBS τ (SUBS υ ν)                      assoc-SUBS
+                     SUBS (SUBS τ υ) ν ≡ (SUBS τ ∘ SUBS υ) ν                    assoc-SUBS
                                                                                 𝐒𝟒𝐓𝐞𝐫𝐦𝐬
                                                                                 𝐒𝐔𝐁
 
@@ -80,7 +80,7 @@ open import S4TTTerms
                   (RENS e ∘ MSUBS τ) υ ≡ (MSUBS τ ∘ RENS e) υ                   comp-MSUBS-RENS
                    (LIFTS ∘ MSUBS τ) υ ≡ (MSUBS τ ∘ LIFTS) υ                    comp-MSUBS-LIFTS
                      MSUB (GETS τ e) M ≡ (MSUB τ ∘ MREN e) M                    comp-MSUB-MREN
-                (MSUB (τ , M) ∘ MWK) N ≡ MSUB τ N                               id-const-MWK-MSUB
+                (MSUB (τ , M) ∘ MWK) N ≡ MSUB τ N                               id-cons-MWK-MSUB
               (MSUBS (τ , M) ∘ MWKS) υ ≡ MSUBS τ υ                              id-cons-MWKS-MSUBS
             (MSUBS* (τ , M) ∘ MWKS*) υ ≡ MSUBS* τ υ                             id-cons-MWKS*-MSUBS*
 
@@ -99,7 +99,7 @@ open import S4TTTerms
                         MSUBS* τ MIDS* ≡ τ                                      rid-MSUBS*
                    MSUB (MSUBS* τ υ) M ≡ (MSUB τ ∘ MSUB υ) M                    comp-MSUB
                   MSUBS (MSUBS* τ υ) ν ≡ (MSUBS τ ∘ MSUBS υ) ν                  comp-MSUBS
-                 MSUBS* (MSUBS* τ υ) ν ≡ MSUBS* τ (MSUBS* υ ν)                  assoc-MSUBS*
+                 MSUBS* (MSUBS* τ υ) ν ≡ (MSUBS* τ ∘ MSUBS* υ) ν                assoc-MSUBS*
                                                                                 𝐒𝟒𝐓𝐞𝐫𝐦𝐬*
                                                                                 𝐌𝐒𝐔𝐁
                                                                                 𝐌𝐒𝐔𝐁𝐒
@@ -154,7 +154,7 @@ id-RENS (τ , M) = _,_ & id-RENS τ ⊗ id-REN M
 
 
 comp-REN : ∀ {d g g′ g″} → (e₁ : g′ ≥ g) (e₂ : g″ ≥ g′) (M : Term d g)
-                         → REN (e₁ ∘ e₂) M ≡ REN e₂ (REN e₁ M)
+                         → REN (e₁ ∘ e₂) M ≡ (REN e₂ ∘ REN e₁) M
 comp-REN e₁ e₂ (VAR I)      = VAR & comp-REN∋ e₁ e₂ I
 comp-REN e₁ e₂ (LAM M)      = LAM & comp-REN (keep e₁) (keep e₂) M
 comp-REN e₁ e₂ (APP M N)    = APP & comp-REN e₁ e₂ M ⊗ comp-REN e₁ e₂ N
@@ -302,7 +302,7 @@ id-MRENS* τ = id-MRENS τ
 
 
 comp-MREN : ∀ {d d′ d″ g} → (e₁ : d′ ≥ d) (e₂ : d″ ≥ d′) (M : Term d g)
-                          → MREN (e₁ ∘ e₂) M ≡ MREN e₂ (MREN e₁ M)
+                          → MREN (e₁ ∘ e₂) M ≡ (MREN e₂ ∘ MREN e₁) M
 comp-MREN e₁ e₂ (VAR I)      = refl
 comp-MREN e₁ e₂ (LAM M)      = LAM & comp-MREN e₁ e₂ M
 comp-MREN e₁ e₂ (APP M N)    = APP & comp-MREN e₁ e₂ M ⊗ comp-MREN e₁ e₂ N
@@ -347,6 +347,12 @@ comp-MRENS* e₁ e₂ τ = comp-MRENS e₁ e₂ τ
 
 
 --------------------------------------------------------------------------------
+
+
+comp-MWK-MREN-drop : ∀ {d d′ g} → (e : d′ ≥ d) (M : Term d g)
+                                → MREN (drop e) M ≡ (MWK ∘ MREN e) M
+comp-MWK-MREN-drop e M = (\ e′ → MREN (drop e′) M) & rid∘ e ⁻¹
+                       ⋮ comp-MREN e (drop id) M
 
 
 comp-MWK-MREN-keep : ∀ {d d′ g} → (e : d′ ≥ d) (M : Term d g)
@@ -509,7 +515,7 @@ comp-SUB τ υ (LETBOX M N) = LETBOX & comp-SUB τ υ M
 
 
 assoc-SUBS : ∀ {d g n m l} → (τ : Terms d g n) (υ : Terms d n m) (ν : Terms d m l)
-                           → SUBS (SUBS τ υ) ν ≡ SUBS τ (SUBS υ ν)
+                           → SUBS (SUBS τ υ) ν ≡ (SUBS τ ∘ SUBS υ) ν
 assoc-SUBS τ υ ∙       = refl
 assoc-SUBS τ υ (ν , M) = _,_ & assoc-SUBS τ υ ν ⊗ comp-SUB τ υ M
 
@@ -582,16 +588,16 @@ comp-MSUB-MREN τ e (LETBOX M N) = LETBOX & comp-MSUB-MREN τ e M
                                            )
 
 
-id-const-MWK-MSUB : ∀ {d g n} → (τ : Terms* d n) (M : Term d zero) (N : Term n g)
-                              → (MSUB (τ , M) ∘ MWK) N ≡ MSUB τ N
-id-const-MWK-MSUB τ M N = comp-MSUB-MREN (τ , M) (drop id) N ⁻¹
-                        ⋮ (\ x′ → MSUB x′ N) & id-GETS τ
+id-cons-MWK-MSUB : ∀ {d g n} → (τ : Terms* d n) (M : Term d zero) (N : Term n g)
+                             → (MSUB (τ , M) ∘ MWK) N ≡ MSUB τ N
+id-cons-MWK-MSUB τ M N = comp-MSUB-MREN (τ , M) (drop id) N ⁻¹
+                       ⋮ (\ x′ → MSUB x′ N) & id-GETS τ
 
 
 id-cons-MWKS-MSUBS : ∀ {d g n m} → (τ : Terms* d n) (M : Term d zero) (υ : Terms n g m)
                                  → (MSUBS (τ , M) ∘ MWKS) υ ≡ MSUBS τ υ
 id-cons-MWKS-MSUBS τ M ∙       = refl
-id-cons-MWKS-MSUBS τ M (υ , N) = _,_ & id-cons-MWKS-MSUBS τ M υ ⊗ id-const-MWK-MSUB τ M N
+id-cons-MWKS-MSUBS τ M (υ , N) = _,_ & id-cons-MWKS-MSUBS τ M υ ⊗ id-cons-MWK-MSUB τ M N
 
 
 id-cons-MWKS*-MSUBS* : ∀ {d n m} → (τ : Terms* d n) (M : Term d zero) (υ : Terms* n m)
@@ -717,7 +723,7 @@ comp-MSUBS τ υ (ν , M) = _,_ & comp-MSUBS τ υ ν ⊗ comp-MSUB τ υ M
 
 
 assoc-MSUBS* : ∀ {d n m l} → (τ : Terms* d n) (υ : Terms* n m) (ν : Terms* m l)
-                           → MSUBS* (MSUBS* τ υ) ν ≡ MSUBS* τ (MSUBS* υ ν)
+                           → MSUBS* (MSUBS* τ υ) ν ≡ (MSUBS* τ ∘ MSUBS* υ) ν
 assoc-MSUBS* τ υ ∙       = refl
 assoc-MSUBS* τ υ (ν , M) = _,_ & assoc-MSUBS* τ υ ν ⊗ comp-MSUB τ υ M
 

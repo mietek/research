@@ -31,18 +31,18 @@ open import IPLDerivations
                       get (subs ξ ψ) i ≡ (sub ξ ∘ get ψ) i                      comp-sub-get
                       sub (gets ξ η) 𝒟 ≡ (sub ξ ∘ ren η) 𝒟                      comp-sub-ren
 
-                    sub (ξ , 𝒟) (wk ℰ) ≡ sub ξ ℰ                                id-cons-wk-sub
-                  subs (ξ , 𝒟) (wks ψ) ≡ subs ξ ψ                               id-cons-wks-subs
+                  (sub (ξ , 𝒟) ∘ wk) ℰ ≡ sub ξ ℰ                                id-cons-wk-sub
+                (subs (ξ , 𝒟) ∘ wks) ψ ≡ subs ξ ψ                               id-cons-wks-subs
 
                       sub (rens η ξ) 𝒟 ≡ (ren η ∘ sub ξ) 𝒟                      comp-ren-sub
                      subs (rens η ξ) ψ = (rens η ∘ subs ξ) ψ                    comp-rens-subs
-              subs (lifts ξ) (lifts ψ) ≡ (lifts ∘ subs ξ) ψ                     comp-lifts-subs
+            (subs (lifts ξ) ∘ lifts) ψ ≡ (lifts ∘ subs ξ) ψ                     comp-lifts-subs
 
                              sub ids 𝒟 ≡ 𝒟                                      id-sub
                       sub (subs ξ ψ) 𝒟 ≡ (sub ξ ∘ sub ψ) 𝒟                      comp-sub
                             subs ids ξ ≡ ξ                                      lid-subs
                             subs ξ ids ≡ ξ                                      rid-subs
-                     subs (subs ξ ψ) φ ≡ subs ξ (subs ψ φ)                      assoc-subs
+                     subs (subs ξ ψ) φ ≡ (subs ξ ∘ subs ψ) φ                    assoc-subs
                                                                                 𝐈𝐏𝐋
                                                                                 𝐬𝐮𝐛
 -}
@@ -163,13 +163,13 @@ comp-sub-ren ξ η (app 𝒟 ℰ) = app & comp-sub-ren ξ η 𝒟 ⊗ comp-sub-r
 
 
 id-cons-wk-sub : ∀ {Γ Ξ A B} → (ξ : Γ ⊢ Ξ alltrue) (𝒟 : Γ ⊢ A true) (ℰ : Ξ ⊢ B true)
-                             → sub (ξ , 𝒟) (wk ℰ) ≡ sub ξ ℰ
+                             → (sub (ξ , 𝒟) ∘ wk) ℰ ≡ sub ξ ℰ
 id-cons-wk-sub ξ 𝒟 ℰ = comp-sub-ren (ξ , 𝒟) (drop id) ℰ ⁻¹
                      ⋮ (\ ξ′ → sub ξ′ ℰ) & id-gets ξ
 
 
 id-cons-wks-subs : ∀ {Γ Ξ Ψ A} → (ξ : Γ ⊢ Ξ alltrue) (𝒟 : Γ ⊢ A true) (ψ : Ξ ⊢ Ψ alltrue)
-                               → subs (ξ , 𝒟) (wks ψ) ≡ subs ξ ψ
+                               → (subs (ξ , 𝒟) ∘ wks) ψ ≡ subs ξ ψ
 id-cons-wks-subs ξ 𝒟 ∙       = refl
 id-cons-wks-subs ξ 𝒟 (ψ , ℰ) = _,_ & id-cons-wks-subs ξ 𝒟 ψ ⊗ id-cons-wk-sub ξ 𝒟 ℰ
 
@@ -193,7 +193,7 @@ comp-rens-subs η ξ (ψ , 𝒟) = _,_ & comp-rens-subs η ξ ψ ⊗ comp-ren-su
 
 
 comp-lifts-subs : ∀ {Γ Ξ Ψ A} → (ξ : Γ ⊢ Ξ alltrue) (ψ : Ξ ⊢ Ψ alltrue)
-                              → subs (lifts {A} ξ) (lifts ψ) ≡ (lifts ∘ subs ξ) ψ
+                              → (subs (lifts {A} ξ) ∘ lifts) ψ ≡ (lifts ∘ subs ξ) ψ
 comp-lifts-subs ξ ψ = (_, vz) & ( id-cons-wks-subs (wks ξ) vz ψ
                                 ⋮ comp-rens-subs (drop id) ξ ψ
                                 )
@@ -233,7 +233,7 @@ rid-subs (ξ , 𝒟) = (_, 𝒟) & ( id-cons-wks-subs ξ 𝒟 ids
 
 
 assoc-subs : ∀ {Γ Ξ Ψ Φ} → (ξ : Γ ⊢ Ξ alltrue) (ψ : Ξ ⊢ Ψ alltrue) (φ : Ψ ⊢ Φ alltrue)
-                         → subs (subs ξ ψ) φ ≡ subs ξ (subs ψ φ)
+                         → subs (subs ξ ψ) φ ≡ (subs ξ ∘ subs ψ) φ
 assoc-subs ξ ψ ∙       = refl
 assoc-subs ξ ψ (φ , 𝒟) = _,_ & assoc-subs ξ ψ φ ⊗ comp-sub ξ ψ 𝒟
 
