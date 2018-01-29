@@ -25,7 +25,7 @@ instance
   TypeVar : ∀ {d} → IsString (Type d)
   TypeVar =
     record
-      { Constraint = \ s → ⊤
+      { Constraint = \ s → 𝟙
       ; fromString = \ s → ι s
       }
 

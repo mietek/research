@@ -31,7 +31,7 @@ record Model : Set₁
       relG : ∀ {P W W′} → W′ ≥ W → Ground W P
                         → Ground W′ P
 
-open Model {{...}}
+open Model {{...}} public
 
 
 --------------------------------------------------------------------------------
@@ -82,16 +82,17 @@ _⊨_true : List Prop → Prop → Set₁
 --------------------------------------------------------------------------------
 
 
-instance
-  canon : Model
-  canon = record
-            { World  = List Prop
-            ; Ground = \ Γ P → Γ ⊢ ι P neutral
-            ; _≥_    = _⊇_
-            ; id≥    = id
-            ; _∘≥_   = _∘_
-            ; relG   = renᵣ
-            }
+private
+  instance
+    canon : Model
+    canon = record
+              { World  = List Prop
+              ; Ground = \ Γ P → Γ ⊢ ι P neutral
+              ; _≥_    = _⊇_
+              ; id≥    = id
+              ; _∘≥_   = _∘_
+              ; relG   = renᵣ
+              }
 
 
 mutual
@@ -107,11 +108,6 @@ mutual
 
 
 --------------------------------------------------------------------------------
-
-
-swk : ∀ {A B Γ} → Γ ⊩ A value
-                → Γ , B ⊩ A value
-swk {A} a = rel {A} (drop id) a
 
 
 swks : ∀ {A Γ Ξ} → Γ ⊩ Ξ allvalue

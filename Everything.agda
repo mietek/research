@@ -47,6 +47,17 @@ import IPLNormalisation
 --------------------------------------------------------------------------------
 
 
+import FullIPLPropositions
+
+import FullIPLDerivations
+
+import FullIPLBidirectionalDerivationsForNormalisation
+import FullIPLNormalisation
+
+
+--------------------------------------------------------------------------------
+
+
 import STLCTypes
 
 import STLCTerms
@@ -77,6 +88,7 @@ import S4StandardDerivations       -- _⨾_⊢_true   ; var/lam/app         ; mv
 
 import S4Lemmas
 
+import S4EmbeddingOfIPL
 import S4ProjectionToIPL
 
 import S4BidirectionalDerivationsForNormalisation

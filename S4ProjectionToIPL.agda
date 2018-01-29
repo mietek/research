@@ -7,9 +7,9 @@ open import Category
 open import List
 open import ListLemmas
 open import ListConcatenation
-open import AllList
 open import S4Propositions
 open import S4Derivations
+open import S4EmbeddingOfIPL
 import IPLPropositions as IPL
 import IPLDerivations as IPL
 
@@ -60,42 +60,17 @@ import IPLDerivations as IPL
 --------------------------------------------------------------------------------
 
 
-↑ₚ : IPL.Prop → Prop
-↑ₚ (IPL.ι P)   = ι P
-↑ₚ (A IPL.⊃ B) = ↑ₚ A ⊃ ↑ₚ B
-
-
-↑ₚₛ : List IPL.Prop → List Prop
-↑ₚₛ Γ = map ↑ₚ Γ
-
-
-↑∋ₚ : ∀ {Γ A} → Γ ∋ A
-              → ↑ₚₛ Γ ∋ ↑ₚ A
-↑∋ₚ zero    = zero
-↑∋ₚ (suc i) = suc (↑∋ₚ i)
-
-
-↑ : ∀ {Δ Γ A} → Γ IPL.⊢ A true
-              → Δ ⊢ ↑ₚ A valid[ ↑ₚₛ Γ ]
-↑ (IPL.var i)   = var (↑∋ₚ i)
-↑ (IPL.lam 𝒟)   = lam (↑ 𝒟)
-↑ (IPL.app 𝒟 ℰ) = app (↑ 𝒟) (↑ ℰ)
-
-
---------------------------------------------------------------------------------
-
-
-id↓↑ₚ : ∀ {A} → (↓ₚ ∘ ↑ₚ) A ≡ A
-id↓↑ₚ {IPL.ι P}   = refl
-id↓↑ₚ {A IPL.⊃ B} = IPL._⊃_ & id↓↑ₚ ⊗ id↓↑ₚ
+id↓↑ₚ : (A : IPL.Prop) → (↓ₚ ∘ ↑ₚ) A ≡ A
+id↓↑ₚ (IPL.ι P)   = refl
+id↓↑ₚ (A IPL.⊃ B) = IPL._⊃_ & id↓↑ₚ A ⊗ id↓↑ₚ B
 
 
 -- NOTE: Agda does not accept this type for REWRITE
 -- id↓↑ₚₛ : ∀ {Γ} → (↓ₚₛ ∘ ↑ₚₛ) Γ ≡ Γ
 
-id↓↑ₚₛ : ∀ {Γ} → map ↓ₚ (map ↑ₚ Γ) ≡ Γ
-id↓↑ₚₛ {∙}     = refl
-id↓↑ₚₛ {Γ , A} = _,_ & id↓↑ₚₛ ⊗ id↓↑ₚ
+id↓↑ₚₛ : (Γ : List IPL.Prop) → map ↓ₚ (map ↑ₚ Γ) ≡ Γ
+id↓↑ₚₛ ∙       = refl
+id↓↑ₚₛ (Γ , A) = _,_ & id↓↑ₚₛ Γ ⊗ id↓↑ₚ A
 
 
 {-# REWRITE id↓↑ₚ #-}
@@ -114,6 +89,12 @@ id↓↑ (IPL.var i)   = IPL.var & ( (\ η′ → ren∋ η′ i) & lid-ldrops i
                                )
 id↓↑ (IPL.lam 𝒟)   = IPL.lam & id↓↑ 𝒟
 id↓↑ (IPL.app 𝒟 ℰ) = IPL.app & id↓↑ 𝒟 ⊗ id↓↑ ℰ
+
+
+-- id↑↓ₚ : (A : Prop) → (↑ₚ ∘ ↓ₚ) A ≡ A
+-- id↑↓ₚ (ι P)   = refl
+-- id↑↓ₚ (A ⊃ B) = _⊃_ & id↑↓ₚ A ⊗ id↑↓ₚ B
+-- id↑↓ₚ (□ A)   = {!!}
 
 
 -- NOTE: Cannot hold

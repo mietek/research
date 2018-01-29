@@ -19,7 +19,7 @@ instance
   PropVar : IsString Prop
   PropVar =
     record
-      { Constraint = \ s → ⊤
+      { Constraint = \ s → 𝟙
       ; fromString = \ s → ι s
       }
 
@@ -35,6 +35,7 @@ injι refl = refl
 inj⊃₁ : ∀ {A₁ A₂ B₁ B₂} → A₁ ⊃ B₁ ≡ A₂ ⊃ B₂
                         → A₁ ≡ A₂
 inj⊃₁ refl = refl
+
 
 inj⊃₂ : ∀ {A₁ A₂ B₁ B₂} → A₁ ⊃ B₁ ≡ A₂ ⊃ B₂
                         → B₁ ≡ B₂

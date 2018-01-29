@@ -20,7 +20,7 @@ instance
   PropVar : IsString Prop
   PropVar =
     record
-      { Constraint = \ s → ⊤
+      { Constraint = \ s → 𝟙
       ; fromString = \ s → ι s
       }
 

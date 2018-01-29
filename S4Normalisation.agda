@@ -40,7 +40,7 @@ record Model : Set₁
       peek≥ : ∀ {W W′} → W′ ≥ W
                        → peek W′ ⊇ peek W
 
-open Model {{...}}
+open Model {{...}} public
 
 
 --------------------------------------------------------------------------------
@@ -169,19 +169,20 @@ ren² : ∀ {Δ Δ′ Γ Γ′ A} → Δ′ ⨾ Γ′ ⊇² Δ ⨾ Γ → Δ ⊢
 ren² (η₁ , η₂) 𝒟 = mrenᵣ η₁ (renᵣ η₂ 𝒟)
 
 
-instance
-  canon : Model
-  canon = record
-            { World   = List² Assert Prop
-            ; Ground  = \ { (Δ ⨾ Γ) P → Δ ⊢ ι P neutral[ Γ ] }
-            ; Explode = \ { (Δ ⨾ Γ) A → Δ ⊢ A normal[ Γ ] }
-            ; _≥_     = _⊇²_
-            ; id≥     = id
-            ; _∘≥_    = _∘_
-            ; relG    = ren²
-            ; peek    = \ { (Δ ⨾ Γ) → Δ }
-            ; peek≥   = \ { (η₁ , η₂) → η₁ }
-            }
+private
+  instance
+    canon : Model
+    canon = record
+              { World   = List² Assert Prop
+              ; Ground  = \ { (Δ ⨾ Γ) P → Δ ⊢ ι P neutral[ Γ ] }
+              ; Explode = \ { (Δ ⨾ Γ) A → Δ ⊢ A normal[ Γ ] }
+              ; _≥_     = _⊇²_
+              ; id≥     = id
+              ; _∘≥_    = _∘_
+              ; relG    = ren²
+              ; peek    = \ { (Δ ⨾ Γ) → Δ }
+              ; peek≥   = \ { (η₁ , η₂) → η₁ }
+              }
 
 
 mutual

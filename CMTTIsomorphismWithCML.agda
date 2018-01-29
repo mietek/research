@@ -111,7 +111,7 @@ mutual
   _⊢_⦂_allmatch[_]_ : ∀ {d g n} → {σ : Scopes d}
                                  → (Δ : Asserts σ) → Terms σ g n → (Ξ : Types n) (Γ : Types g)
                                  → ↓ₐₛ Δ CML.⊢ ↓ₚₛ Ξ allvalid[ ↓ₚₛ Γ ] → Set
-  Δ ⊢ ∙     ⦂ ∙       allmatch[ Γ ] ∙       = ⊤
+  Δ ⊢ ∙     ⦂ ∙       allmatch[ Γ ] ∙       = 𝟙
   Δ ⊢ τ , M ⦂ (Ξ , A) allmatch[ Γ ] (ξ , 𝒟) = Δ ⊢ τ ⦂ Ξ allmatch[ Γ ] ξ × Δ ⊢ M ⦂ A match[ Γ ] 𝒟
 
 
