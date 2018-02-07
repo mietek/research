@@ -10,7 +10,7 @@ open import VecLemmas
 open import S4TTTypes
 open import S4TTTerms
 open import S4TTDerivations
-import S4Derivations as S4
+import S4StandardDerivations as S4
 
 
 --------------------------------------------------------------------------------

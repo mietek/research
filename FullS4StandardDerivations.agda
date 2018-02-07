@@ -1,11 +1,12 @@
-module S4StandardDerivations where
+module FullS4StandardDerivations where
 
 open import Prelude
 open import Category
 open import List
 open import ListLemmas
+open import ListConcatenation
 open import AllList
-open import S4Propositions
+open import FullS4Propositions
 
 
 --------------------------------------------------------------------------------
@@ -22,6 +23,29 @@ data _⊢_valid[_] : List Assert → Prop → List Prop → Set
 
     app : ∀ {A B Δ Γ} → Δ ⊢ A ⊃ B valid[ Γ ] → Δ ⊢ A valid[ Γ ]
                       → Δ ⊢ B valid[ Γ ]
+
+    pair : ∀ {A B Δ Γ} → Δ ⊢ A valid[ Γ ] → Δ ⊢ B valid[ Γ ]
+                       → Δ ⊢ A ∧ B valid[ Γ ]
+
+    fst : ∀ {A B Δ Γ} → Δ ⊢ A ∧ B valid[ Γ ]
+                      → Δ ⊢ A valid[ Γ ]
+
+    snd : ∀ {A B Δ Γ} → Δ ⊢ A ∧ B valid[ Γ ]
+                      → Δ ⊢ B valid[ Γ ]
+
+    unit : ∀ {Δ Γ} → Δ ⊢ ⊤ valid[ Γ ]
+
+    abort : ∀ {A Δ Γ} → Δ ⊢ ⊥ valid[ Γ ]
+                      → Δ ⊢ A valid[ Γ ]
+
+    inl : ∀ {A B Δ Γ} → Δ ⊢ A valid[ Γ ]
+                      → Δ ⊢ A ∨ B valid[ Γ ]
+
+    inr : ∀ {A B Δ Γ} → Δ ⊢ B valid[ Γ ]
+                      → Δ ⊢ A ∨ B valid[ Γ ]
+
+    case : ∀ {A B C Δ Γ} → Δ ⊢ A ∨ B valid[ Γ ] → Δ ⊢ C valid[ Γ , A ] → Δ ⊢ C valid[ Γ , B ]
+                         → Δ ⊢ C valid[ Γ ]
 
     mvar : ∀ {A Δ Γ} → Δ ∋ ⟪⊫ A ⟫
                      → Δ ⊢ A valid[ Γ ]
@@ -46,11 +70,20 @@ _⊢_allvalid* : List Assert → List Assert → Set
 --------------------------------------------------------------------------------
 
 
+
 ren : ∀ {Δ Γ Γ′ A} → Γ′ ⊇ Γ → Δ ⊢ A valid[ Γ ]
                    → Δ ⊢ A valid[ Γ′ ]
 ren η (var i)      = var (ren∋ η i)
 ren η (lam 𝒟)      = lam (ren (keep η) 𝒟)
 ren η (app 𝒟 ℰ)    = app (ren η 𝒟) (ren η ℰ)
+ren η (pair 𝒟 ℰ)   = pair (ren η 𝒟) (ren η ℰ)
+ren η (fst 𝒟)      = fst (ren η 𝒟)
+ren η (snd 𝒟)      = snd (ren η 𝒟)
+ren η unit         = unit
+ren η (abort 𝒟)    = abort (ren η 𝒟)
+ren η (inl 𝒟)      = inl (ren η 𝒟)
+ren η (inr 𝒟)      = inr (ren η 𝒟)
+ren η (case 𝒟 ℰ ℱ) = case (ren η 𝒟) (ren (keep η) ℰ) (ren (keep η) ℱ)
 ren η (mvar i)     = mvar i
 ren η (box 𝒟)      = box 𝒟
 ren η (letbox 𝒟 ℰ) = letbox (ren η 𝒟) (ren η ℰ)
@@ -69,6 +102,14 @@ mren : ∀ {Δ Δ′ Γ A} → Δ′ ⊇ Δ → Δ ⊢ A valid[ Γ ]
 mren η (var i)      = var i
 mren η (lam 𝒟)      = lam (mren η 𝒟)
 mren η (app 𝒟 ℰ)    = app (mren η 𝒟) (mren η ℰ)
+mren η (pair 𝒟 ℰ)   = pair (mren η 𝒟) (mren η ℰ)
+mren η (fst 𝒟)      = fst (mren η 𝒟)
+mren η (snd 𝒟)      = snd (mren η 𝒟)
+mren η unit         = unit
+mren η (abort 𝒟)    = abort (mren η 𝒟)
+mren η (inl 𝒟)      = inl (mren η 𝒟)
+mren η (inr 𝒟)      = inr (mren η 𝒟)
+mren η (case 𝒟 ℰ ℱ) = case (mren η 𝒟) (mren η ℰ) (mren η ℱ)
 mren η (mvar i)     = mvar (ren∋ η i)
 mren η (box 𝒟)      = box (mren η 𝒟)
 mren η (letbox 𝒟 ℰ) = letbox (mren η 𝒟) (mren (keep η) ℰ)
@@ -163,6 +204,14 @@ sub : ∀ {Δ Γ Ξ A} → Δ ⊢ Ξ allvalid[ Γ ] → Δ ⊢ A valid[ Ξ ]
 sub ξ (var i)      = get ξ i
 sub ξ (lam 𝒟)      = lam (sub (lifts ξ) 𝒟)
 sub ξ (app 𝒟 ℰ)    = app (sub ξ 𝒟) (sub ξ ℰ)
+sub ξ (pair 𝒟 ℰ)   = pair (sub ξ 𝒟) (sub ξ ℰ)
+sub ξ (fst 𝒟)      = fst (sub ξ 𝒟)
+sub ξ (snd 𝒟)      = snd (sub ξ 𝒟)
+sub ξ unit         = unit
+sub ξ (abort 𝒟)    = abort (sub ξ 𝒟)
+sub ξ (inl 𝒟)      = inl (sub ξ 𝒟)
+sub ξ (inr 𝒟)      = inr (sub ξ 𝒟)
+sub ξ (case 𝒟 ℰ ℱ) = case (sub ξ 𝒟) (sub (lifts ξ) ℰ) (sub (lifts ξ) ℱ)
 sub ξ (mvar i)     = mvar i
 sub ξ (box 𝒟)      = box 𝒟
 sub ξ (letbox 𝒟 ℰ) = letbox (sub ξ 𝒟) (sub (mwks ξ) ℰ)
@@ -181,6 +230,14 @@ msub : ∀ {Δ Γ Ξ A} → Δ ⊢ Ξ allvalid* → Ξ ⊢ A valid[ Γ ]
 msub ξ (var i)      = var i
 msub ξ (lam 𝒟)      = lam (msub ξ 𝒟)
 msub ξ (app 𝒟 ℰ)    = app (msub ξ 𝒟) (msub ξ ℰ)
+msub ξ (pair 𝒟 ℰ)   = pair (msub ξ 𝒟) (msub ξ ℰ)
+msub ξ (fst 𝒟)      = fst (msub ξ 𝒟)
+msub ξ (snd 𝒟)      = snd (msub ξ 𝒟)
+msub ξ unit         = unit
+msub ξ (abort 𝒟)    = abort (msub ξ 𝒟)
+msub ξ (inl 𝒟)      = inl (msub ξ 𝒟)
+msub ξ (inr 𝒟)      = inr (msub ξ 𝒟)
+msub ξ (case 𝒟 ℰ ℱ) = case (msub ξ 𝒟) (msub ξ ℰ) (msub ξ ℱ)
 msub ξ (mvar i)     = sub ∙ (get ξ i)
 msub ξ (box 𝒟)      = box (msub ξ 𝒟)
 msub ξ (letbox 𝒟 ℰ) = letbox (msub ξ 𝒟) (msub (mlifts* ξ) ℰ)
@@ -270,13 +327,6 @@ mcut 𝒟 ℰ = msub (mids* , 𝒟) ℰ
 pseudomcut : ∀ {Δ Γ A B} → Δ ⊢ A valid[ ∙ ] → Δ , ⟪⊫ A ⟫ ⊢ B valid[ Γ ]
                          → Δ ⊢ B valid[ Γ ]
 pseudomcut 𝒟 ℰ = letbox (box 𝒟) ℰ
-
-
--- NOTE: Interesting; too limited to support local soundness?
-
-pseudomcut′ : ∀ {Δ Γ A B} → Δ ⊢ A valid[ ∙ ] → Δ , ⟪⊫ A ⟫ ⊢ B valid[ ∙ ]
-                          → Δ ⊢ B valid[ Γ ]
-pseudomcut′ 𝒟 ℰ = mcut 𝒟 (unbox (box ℰ))
 
 
 pseudomsub : ∀ {Δ Γ Ξ A} → Δ ⊢ Ξ allvalid* → Ξ ⊢ A valid[ Γ ]

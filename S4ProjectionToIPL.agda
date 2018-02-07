@@ -8,10 +8,10 @@ open import List
 open import ListLemmas
 open import ListConcatenation
 open import S4Propositions
-open import S4Derivations
+open import S4StandardDerivations
 open import S4EmbeddingOfIPL
 import IPLPropositions as IPL
-import IPLDerivations as IPL
+import IPLStandardDerivations as IPL
 
 
 --------------------------------------------------------------------------------

@@ -33,44 +33,27 @@ import AllVecLemmas
 
 import IPLPropositions
 
-import IPLDerivations               -- _⊢_true ; var/lam/app
-import IPLExperimentalDerivations1  -- _⊢_true ; vz/wk/lam/app
-import IPLExperimentalDerivations2  -- _⊢_true ; vz/wk/cut/lam/unlam ; preferred
-import IPLExperimentalDerivations3  -- _⊢_true ; var/cut/lam/unlam   ; problematic
+import IPLStandardDerivations                                                   -- _⊢_true ; var/lam/app
+import IPLStandardDerivationsLemmas
+import IPLStandardBidirectionalDerivations-NormalNeutral
+import IPLStandardNormalisation
 
-import IPLLemmas
+import IPLExperimentalDerivations-Monolithic                                    -- _⊢_true ; vz/wk/lam/app
+import IPLExperimentalDerivations-Symmetric                                     -- _⊢_true ; var/cut/lam/unlam ; problematic
 
-import IPLBidirectionalDerivationsForNormalisation
-import IPLNormalisation
-
-
---------------------------------------------------------------------------------
-
-
-import FullIPLPropositions
-
-import FullIPLDerivations
-
-import FullIPLBidirectionalDerivationsForNormalisation
-import FullIPLNormalisation
-
-
---------------------------------------------------------------------------------
+import IPLAlternativeDerivations                                                -- _⊢_true ; vz/wk/cut/lam/unlam
 
 
 import STLCTypes
 
-import STLCTerms
-import STLCDerivations          -- ⊢_⦂_valid[_] ; var/lam/app
-import STLCStandardDerivations  -- _⊢_⦂_true    ; var/lam/app
-
-import STLCIsomorphismWithIPL
-
-import STLCBidirectionalTermsForTypeChecking
-import STLCBidirectionalDerivationsForTypeChecking
-import STLCTypeChecking
-
-import STLCNameResolution
+import STLCStandardTerms
+import STLCStandardDerivations                                                  -- ⊢_⦂_valid[_] ; var/lam/app
+import STLCStandardDerivations-Traditional                                      -- _⊢_⦂_true    ; var/lam/app
+import STLCStandardIsomorphismWithIPL
+import STLCStandardBidirectionalTerms-CheckedInferred
+import STLCStandardBidirectionalDerivations-CheckedInferred
+import STLCStandardTypeChecking
+import STLCStandardNameResolution
 
 
 --------------------------------------------------------------------------------
@@ -78,24 +61,30 @@ import STLCNameResolution
 
 import S4Propositions
 
-import S4Derivations               -- _⊢_valid[_] ; var/lam/app         ; mvar/box/letbox
-import S4ExperimentalDerivations1  -- _⊢_valid[_] ; vz/wk/lam/app       ; mvz/mwk/box/letbox
-import S4ExperimentalDerivations2  -- _⊢_valid[_] ; vz/wk/cut/lam/unlam ; mvz/mwk/box/letbox
-import S4ExperimentalDerivations3  -- _⊢_valid[_] ; vz/wk/cut/lam/unlam ; mvz/mwk/mcut/vau/unvau
-import S4ExperimentalDerivations4  -- _⊢_valid[_] ; vz/wk/cut/lam/unlam ; box/unbox/vau/unvau    ; preferred
-import S4ExperimentalDerivations5  -- _⊢_valid[_] ; vz/wk/cut/lam/unlam ; mvz/mwk/mcut/box/unbox ; problematic
-import S4StandardDerivations       -- _⨾_⊢_true   ; var/lam/app         ; mvar/box/letbox
+import S4StandardDerivations                                                    -- _⊢_valid[_] ; var/lam/app/mvar/box/letbox
+import S4StandardDerivations-Traditional                                        -- _⨾_⊢_true   ; var/lam/app/mvar/box/letbox
+import S4StandardBidirectionalDerivations-NormalNeutral
+import S4StandardDerivationsLemmas
+import S4StandardNormalisation
 
-import S4Lemmas
+import S4ExperimentalDerivations-Monolithic                                     -- _⊢_valid[_] ; vz/wk/lam/app/mvz/mwk/box/letbox
+import S4ExperimentalDerivations-PartiallySymmetric                             -- _⊢_valid[_] ; vz/wk/cut/lam/unlam/mvz/mwk/box/letbox
+import S4ExperimentalDerivations-RedundantlySymmetric                           -- _⊢_valid[_] ; vz/wk/cut/lam/unlam/mvz/mwk/mcut/vau/unvau
+import S4ExperimentalDerivations-Incomplete                                     -- _⊢_valid[_] ; vz/wk/cut/lam/unlam/mvz/mwk/mcut/box/unbox ; problematic
+
+import S4AlternativeDerivations                                                 -- _⊢_valid[_] ; vz/wk/cut/lam/unlam/box/unbox/vau/unvau
+
 
 import S4EmbeddingOfIPL
 import S4ProjectionToIPL
 
-import S4BidirectionalDerivationsForNormalisation
-import S4Normalisation
+
+-- import S4NewBidirectionalDerivationsForNormalisation
+-- import S4NewNormalisation
+-- import S4NewNormalisation2
 
 
---------------------------------------------------------------------------------
+-------------------
 
 
 import S4TTTypes
@@ -114,19 +103,18 @@ import S4TTTermsLemmas
 
 import CMLPropositions
 
-import CMLDerivations              -- _⊢_valid[_] ; var/lam/app         ; mvar/box/unbox
-import CMLExperimentalDerivations  -- _⊢_valid[_] ; vz/wk/cut/lam/unlam ; box/unbox/vau/unvau
-import CMLStandardDerivations      -- _⨾_⊢_true   ; var/lam/app         ; mvar/box/unbox
+import CMLStandardDerivations                                                   -- _⊢_valid[_] ; var/lam/app/mvar/box/unbox
+import CMLStandardDerivations-Traditional                                       -- _⨾_⊢_true   ; var/lam/app/mvar/box/unbox
+import CMLStandardDerivationsLemmas
+import CMLStandardBidirectionalDerivations-NormalNeutral
+import CMLStandardNormalisation
 
-import CMLLemmas
+import CMLAlternativeDerivations                                                -- _⊢_valid[_] ; vz/wk/cut/lam/unlam/box/unbox/vau/unvau
 
 import CMLProjectionToIPL
 
-import CMLBidirectionalDerivationsForNormalisation
-import CMLNormalisation
 
-
---------------------------------------------------------------------------------
+-------------------
 
 
 import CMTTTypes
@@ -150,6 +138,31 @@ import LPTTDerivations
 
 -- import StdLPTT
 -- import StdLPTTLemmas
+
+
+--------------------------------------------------------------------------------
+
+
+import FullIPLPropositions
+
+import FullIPLDerivations
+
+import FullIPLBidirectionalDerivationsForNormalisation
+import FullIPLNormalisation
+
+
+---------------------------------------
+
+
+import FullS4Propositions
+
+import FullS4StandardDerivations
+
+import FullS4EmbeddingOfFullIPL
+import FullS4ProjectionToFullIPL
+
+import FullS4BidirectionalDerivationsForNormalisation
+-- import FullS4Normalisation
 
 
 --------------------------------------------------------------------------------

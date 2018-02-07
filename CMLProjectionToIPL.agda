@@ -9,9 +9,9 @@ open import ListLemmas
 open import ListConcatenation
 open import AllList
 open import CMLPropositions
-open import CMLDerivations
+open import CMLStandardDerivations
 import IPLPropositions as IPL
-import IPLDerivations as IPL
+import IPLStandardDerivations as IPL
 
 
 --------------------------------------------------------------------------------

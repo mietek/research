@@ -71,14 +71,6 @@ _≢_ : ∀ {ℓ} → {X : Set ℓ} → X → X → Set ℓ
 x ≢ x′ = ¬ (x ≡ x′)
 
 
-_⁻¹≡ : ∀ {ℓ} → {X : Set ℓ} {x y : X} → x ≡ y → y ≡ x
-refl ⁻¹≡ = refl
-
-
-_⋮≡_ : ∀ {ℓ} → {X : Set ℓ} {x y z : X} → x ≡ y → y ≡ z → x ≡ z
-refl ⋮≡ refl = refl
-
-
 --------------------------------------------------------------------------------
 
 
@@ -96,8 +88,8 @@ open PER {{...}} public
 instance
   per≡ : ∀ {ℓ} {X : Set ℓ} → PER X _≡_
   per≡ = record
-           { _⁻¹ = _⁻¹≡
-           ; _⋮_ = _⋮≡_
+           { _⁻¹ = \ { refl → refl }
+           ; _⋮_ = \ { refl refl → refl }
            }
 
 

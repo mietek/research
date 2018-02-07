@@ -15,6 +15,13 @@ data Prop : Set
     _⊃_ : Prop → Prop → Prop
 
 
+record Truth : Set
+  where
+    constructor _true
+    field
+      A : Prop
+
+
 instance
   PropVar : IsString Prop
   PropVar =
