@@ -4,6 +4,7 @@ open import Prelude
 open import Category
 open import List
 open import ListLemmas
+open import ListConcatenation
 open import AllList
 open import S4Propositions
 
@@ -288,6 +289,27 @@ pseudomsub (ξ , 𝒞) 𝒟 = app (pseudomsub ξ (lam (vau 𝒟))) (box 𝒞)
 mexch : ∀ {Δ Γ A B C} → Δ , ⟪⊫ A ⟫ , ⟪⊫ B ⟫ ⊢ C valid[ Γ ]
                       → Δ , ⟪⊫ B ⟫ , ⟪⊫ A ⟫ ⊢ C valid[ Γ ]
 mexch 𝒟 = unvau (unvau (exch (vau (vau 𝒟))))
+
+
+--------------------------------------------------------------------------------
+
+
+lams : ∀ {Δ Γ A} → (Ξ : List Prop) → Δ ⊢ A valid[ Γ ⧺ Ξ ]
+                → Δ ⊢ Ξ ⊃⋯⊃ A valid[ Γ ]
+lams ∙       𝒟 = 𝒟
+lams (Ξ , B) 𝒟 = lams Ξ (lam 𝒟)
+
+
+unlams : ∀ {Δ Γ A} → (Ξ : List Prop) → Δ ⊢ Ξ ⊃⋯⊃ A valid[ Γ ]
+                 → Δ ⊢ A valid[ Γ ⧺ Ξ ]
+unlams ∙       𝒟 = 𝒟
+unlams (Ξ , B) 𝒟 = unlam (unlams Ξ 𝒟)
+
+
+apps : ∀ {Δ Γ Ξ A} → Δ ⊢ Ξ ⊃⋯⊃ A valid[ Γ ] → Δ ⊢ Ξ allvalid[ Γ ]
+                   → Δ ⊢ A valid[ Γ ]
+apps 𝒟 ∙       = 𝒟
+apps 𝒟 (ξ , ℰ) = app (apps 𝒟 ξ) ℰ
 
 
 --------------------------------------------------------------------------------
