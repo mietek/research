@@ -8,10 +8,11 @@ open import List
 --------------------------------------------------------------------------------
 
 
+infixl 9 _∨_ _∧_
 infixr 8 _⊃_
 data Prop : Set
   where
-    ι   : String → Prop
+    ι_  : String → Prop
     _⊃_ : Prop → Prop → Prop
     _∧_ : Prop → Prop → Prop
     ⊤  : Prop
@@ -19,7 +20,7 @@ data Prop : Set
     _∨_ : Prop → Prop → Prop
 
 
-~ : Prop → Prop
+~_ : Prop → Prop
 ~ A = A ⊃ ⊥
 
 
