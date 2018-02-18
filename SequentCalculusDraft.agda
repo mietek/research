@@ -4,7 +4,7 @@
 
 -- NOTE: The direction of ⇑/⇓ in previous code is wrong compared to Filinski
 
-module IPLBidirectionalDerivationsForCutElimination where
+module SequentCalculusDraft where
 
 open import Prelude
 open import Category
