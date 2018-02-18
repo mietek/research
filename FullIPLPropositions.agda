@@ -11,12 +11,16 @@ open import List
 infixr 8 _⊃_
 data Prop : Set
   where
-    ι_  : String → Prop
+    ι   : String → Prop
     _⊃_ : Prop → Prop → Prop
     _∧_ : Prop → Prop → Prop
     ⊤  : Prop
     ⊥  : Prop
     _∨_ : Prop → Prop → Prop
+
+
+~ : Prop → Prop
+~ A = A ⊃ ⊥
 
 
 instance

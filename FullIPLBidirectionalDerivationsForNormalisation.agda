@@ -59,58 +59,58 @@ mutual
 
 
 mutual
-  renₗ : ∀ {Γ Γ′ A} → Γ′ ⊇ Γ → Γ ⊢ A normal
+  renᵣ : ∀ {Γ Γ′ A} → Γ′ ⊇ Γ → Γ ⊢ A normal
                     → Γ′ ⊢ A normal
-  renₗ η (lam 𝒟)      = lam (renₗ (keep η) 𝒟)
-  renₗ η (pair 𝒟 ℰ)   = pair (renₗ η 𝒟) (renₗ η ℰ)
-  renₗ η unit         = unit
-  renₗ η (abort 𝒟)    = abort (renᵣ η 𝒟)
-  renₗ η (inl 𝒟)      = inl (renₗ η 𝒟)
-  renₗ η (inr 𝒟)      = inr (renₗ η 𝒟)
-  renₗ η (case 𝒟 ℰ ℱ) = case (renᵣ η 𝒟) (renₗ (keep η) ℰ) (renₗ (keep η) ℱ)
-  renₗ η (use 𝒟)      = use (renᵣ η 𝒟)
+  renᵣ η (lam 𝒟)      = lam (renᵣ (keep η) 𝒟)
+  renᵣ η (pair 𝒟 ℰ)   = pair (renᵣ η 𝒟) (renᵣ η ℰ)
+  renᵣ η unit         = unit
+  renᵣ η (abort 𝒟)    = abort (renₗ η 𝒟)
+  renᵣ η (inl 𝒟)      = inl (renᵣ η 𝒟)
+  renᵣ η (inr 𝒟)      = inr (renᵣ η 𝒟)
+  renᵣ η (case 𝒟 ℰ ℱ) = case (renₗ η 𝒟) (renᵣ (keep η) ℰ) (renᵣ (keep η) ℱ)
+  renᵣ η (use 𝒟)      = use (renₗ η 𝒟)
 
-  renᵣ : ∀ {Γ Γ′ A} → Γ′ ⊇ Γ → Γ ⊢ A neutral
+  renₗ : ∀ {Γ Γ′ A} → Γ′ ⊇ Γ → Γ ⊢ A neutral
                     → Γ′ ⊢ A neutral
-  renᵣ η (var i)   = var (ren∋ η i)
-  renᵣ η (app 𝒟 ℰ) = app (renᵣ η 𝒟) (renₗ η ℰ)
-  renᵣ η (fst 𝒟)   = fst (renᵣ η 𝒟)
-  renᵣ η (snd 𝒟)   = snd (renᵣ η 𝒟)
+  renₗ η (var i)   = var (ren∋ η i)
+  renₗ η (app 𝒟 ℰ) = app (renₗ η 𝒟) (renᵣ η ℰ)
+  renₗ η (fst 𝒟)   = fst (renₗ η 𝒟)
+  renₗ η (snd 𝒟)   = snd (renₗ η 𝒟)
 
 
 --------------------------------------------------------------------------------
 
 
-wkᵣ : ∀ {B Γ A} → Γ ⊢ A neutral
+wkₗ : ∀ {B Γ A} → Γ ⊢ A neutral
                 → Γ , B ⊢ A neutral
-wkᵣ 𝒟 = renᵣ (drop id) 𝒟
+wkₗ 𝒟 = renₗ (drop id) 𝒟
 
 
-vzᵣ : ∀ {Γ A} → Γ , A ⊢ A neutral
-vzᵣ = var zero
+vzₗ : ∀ {Γ A} → Γ , A ⊢ A neutral
+vzₗ = var zero
 
 
 --------------------------------------------------------------------------------
 
 
 mutual
-  denmₗ : ∀ {Γ A} → Γ ⊢ A normal
+  denmᵣ : ∀ {Γ A} → Γ ⊢ A normal
                   → Γ ⊢ A true
-  denmₗ (lam 𝒟)      = lam (denmₗ 𝒟)
-  denmₗ (pair 𝒟 ℰ)   = pair (denmₗ 𝒟) (denmₗ ℰ)
-  denmₗ unit         = unit
-  denmₗ (abort 𝒟)    = abort (denmᵣ 𝒟)
-  denmₗ (inl 𝒟)      = inl (denmₗ 𝒟)
-  denmₗ (inr 𝒟)      = inr (denmₗ 𝒟)
-  denmₗ (case 𝒟 ℰ ℱ) = case (denmᵣ 𝒟) (denmₗ ℰ) (denmₗ ℱ)
-  denmₗ (use 𝒟)      = denmᵣ 𝒟
+  denmᵣ (lam 𝒟)      = lam (denmᵣ 𝒟)
+  denmᵣ (pair 𝒟 ℰ)   = pair (denmᵣ 𝒟) (denmᵣ ℰ)
+  denmᵣ unit         = unit
+  denmᵣ (abort 𝒟)    = abort (denmₗ 𝒟)
+  denmᵣ (inl 𝒟)      = inl (denmᵣ 𝒟)
+  denmᵣ (inr 𝒟)      = inr (denmᵣ 𝒟)
+  denmᵣ (case 𝒟 ℰ ℱ) = case (denmₗ 𝒟) (denmᵣ ℰ) (denmᵣ ℱ)
+  denmᵣ (use 𝒟)      = denmₗ 𝒟
 
-  denmᵣ : ∀ {Γ A} → Γ ⊢ A neutral
+  denmₗ : ∀ {Γ A} → Γ ⊢ A neutral
                   → Γ ⊢ A true
-  denmᵣ (var i)   = var i
-  denmᵣ (app 𝒟 ℰ) = app (denmᵣ 𝒟) (denmₗ ℰ)
-  denmᵣ (fst 𝒟)   = fst (denmᵣ 𝒟)
-  denmᵣ (snd 𝒟)   = snd (denmᵣ 𝒟)
+  denmₗ (var i)   = var i
+  denmₗ (app 𝒟 ℰ) = app (denmₗ 𝒟) (denmᵣ ℰ)
+  denmₗ (fst 𝒟)   = fst (denmₗ 𝒟)
+  denmₗ (snd 𝒟)   = snd (denmₗ 𝒟)
 
 
 --------------------------------------------------------------------------------
