@@ -235,9 +235,6 @@ mutual
 
 -- Theorem 3.11 (Admissibility of cut)
 
--- TODO: Weakening and exchange confuse the termination checker
-
--- {-# TERMINATING #-}
 thm311 : ∀ {Γ A C} → Γ ⟹ A → Γ [,] A ⟹ C
                    → Γ ⟹ C
 

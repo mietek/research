@@ -39,8 +39,7 @@ data _[∋]_ {X} : [List] X → X → Set
                     → Ξ [,] B [∋] A
 
 
--- TODO
-
+-- TODO: This is pretty bad
 postulate
   [∋]→∋ : ∀ {X A} → {Ξ : List X}
                    → squash Ξ [∋] A
