@@ -1,9 +1,3 @@
--- Based on http://www.cs.cmu.edu/~fp/courses/atp/handouts/ch3-seqcalc.pdf
-
--- NOTE: The direction of ₗ/ᵣ in previous code is wrong compared to Pfenning
-
--- NOTE: The direction of ⇑/⇓ in previous code is wrong compared to Filinski
-
 module SequentCalculusDrafta where
 
 open import Prelude
