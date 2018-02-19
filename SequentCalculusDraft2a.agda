@@ -173,7 +173,7 @@ data _⟹₊_ : List Prop → Prop → Set
                     → Γ ⟹₊ B
 
 
--- Theorem 3.9 (Soundness of sequent calculus with cut with respect to annotated normal deductions)
+-- Theorem 3.9 (Soundness of sequent calculus with cut with respect to annotated normal deduction)
 
 thm39 : ∀ {Γ A} → Γ ⟹₊ A
                 → Γ ⊢₊ A normal
