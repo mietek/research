@@ -43,7 +43,7 @@ data _⟹_ : [List] Prop → Prop → Set
     ∧L₂ : ∀ {A B C Γ} → Γ [,] A ∧ B [,] B ⟹ C
                       → Γ [,] A ∧ B ⟹ C
 
-    𝟎L : ∀ {A Γ} →  Γ [,] 𝟎 ⟹ A
+    𝟎L : ∀ {A Γ} → Γ [,] 𝟎 ⟹ A
 
     ∨L : ∀ {A B C Γ} → Γ [,] A ∨ B [,] A ⟹ C → Γ [,] A ∨ B [,] B ⟹ C
                      → Γ [,] A ∨ B ⟹ C
@@ -160,7 +160,7 @@ data _⟹₊_ : [List] Prop → Prop → Set
     ∧L₂ : ∀ {A B C Γ} → Γ [,] A ∧ B [,] B ⟹₊ C
                       → Γ [,] A ∧ B ⟹₊ C
 
-    𝟎L : ∀ {A Γ} →  Γ [,] 𝟎 ⟹₊ A
+    𝟎L : ∀ {A Γ} → Γ [,] 𝟎 ⟹₊ A
 
     ∨L : ∀ {A B C Γ} → Γ [,] A ∨ B [,] A ⟹₊ C → Γ [,] A ∨ B [,] B ⟹₊ C
                      → Γ [,] A ∨ B ⟹₊ C
@@ -177,18 +177,18 @@ _⟹₊_all : [List] Prop → List Prop → Set
 
 thm39 : ∀ {Γ A} → squash Γ ⟹₊ A
                 → squash Γ ⊢₊ A normal
-thm39 {Γ} (⊃R 𝒟)            = lam (thm39 {Γ} 𝒟)
-thm39 {Γ} (∧R 𝒟 ℰ)          = pair (thm39 {Γ} 𝒟) (thm39 {Γ} ℰ)
-thm39 {Γ} 𝟏R                = unit
-thm39 {Γ} (∨R₁ 𝒟)           = inl (thm39 {Γ} 𝒟)
-thm39 {Γ} (∨R₂ 𝒟)           = inr (thm39 {Γ} 𝒟)
-thm39 {Γ} vzₛ₊              = vzₙₘ₊ {squash Γ}
-thm39 {Γ} (⊃L {B = B} 𝒟 ℰ)  = cutₙₘ₊ {Γ} {B} (app (vzₙₜ₊ {squash Γ}) (thm39 {Γ} 𝒟)) (thm39 {Γ} ℰ)
-thm39 {Γ} (∧L₁ {B = B} 𝒟)   = cutₙₘ₊ {Γ} {B} (fst {B = B} (vzₙₜ₊ {squash Γ})) (thm39 {Γ} 𝒟)
-thm39 {Γ} (∧L₂ {A} 𝒟)       = cutₙₘ₊ {Γ} {A} (snd {A = A} (vzₙₜ₊ {squash Γ})) (thm39 {Γ} 𝒟)
-thm39 {Γ} 𝟎L                = abort (vzₙₜ₊ {squash Γ})
-thm39 {Γ} (∨L {A} {B} 𝒟 ℰ)  = case {A} {B} (vzₙₜ₊ {squash Γ}) (thm39 {Γ} 𝒟) (thm39 {Γ} ℰ)
-thm39 {Γ} (cut 𝒟 ℰ)         = cutₙₘ₊ {Γ = Γ} (enm (thm39 {Γ} 𝒟)) (thm39 {Γ} ℰ)
+thm39 {Γ} (⊃R 𝒟)           = lam (thm39 {Γ} 𝒟)
+thm39 {Γ} (∧R 𝒟 ℰ)         = pair (thm39 {Γ} 𝒟) (thm39 {Γ} ℰ)
+thm39 {Γ} 𝟏R               = unit
+thm39 {Γ} (∨R₁ 𝒟)          = inl (thm39 {Γ} 𝒟)
+thm39 {Γ} (∨R₂ 𝒟)          = inr (thm39 {Γ} 𝒟)
+thm39 {Γ} vzₛ₊             = vzₙₘ₊ {squash Γ}
+thm39 {Γ} (⊃L {B = B} 𝒟 ℰ) = cutₙₘ₊ {Γ} {B} (app (vzₙₜ₊ {squash Γ}) (thm39 {Γ} 𝒟)) (thm39 {Γ} ℰ)
+thm39 {Γ} (∧L₁ {B = B} 𝒟)  = cutₙₘ₊ {Γ} {B} (fst {B = B} (vzₙₜ₊ {squash Γ})) (thm39 {Γ} 𝒟)
+thm39 {Γ} (∧L₂ {A} 𝒟)      = cutₙₘ₊ {Γ} {A} (snd {A = A} (vzₙₜ₊ {squash Γ})) (thm39 {Γ} 𝒟)
+thm39 {Γ} 𝟎L               = abort (vzₙₜ₊ {squash Γ})
+thm39 {Γ} (∨L {A} {B} 𝒟 ℰ) = case {A} {B} (vzₙₜ₊ {squash Γ}) (thm39 {Γ} 𝒟) (thm39 {Γ} ℰ)
+thm39 {Γ} (cut 𝒟 ℰ)        = cutₙₘ₊ {Γ = Γ} (enm (thm39 {Γ} 𝒟)) (thm39 {Γ} ℰ)
 
 
 -- Lemma ??? (Structural properties of sequent calculus with cut)
@@ -267,7 +267,6 @@ thm311 {Γ} (∨L {A} {B} 𝒟₁ 𝒟₂) ℰ = ∨L {A} {B} {Γ = Γ} (thm311 
 -- Case: A is the principal formula of the final inference in both
 -- 𝒟 and ℰ.  There are a number of subcases to consider, based on the
 -- last inference in 𝒟 and ℰ.
-
 thm311 {Γ} 𝒟 (⊃L {B = B} ℰ₁ ℰ₂) = ⊃L {B = B} {Γ = Γ} (thm311 𝒟 ℰ₁) (thm311 𝒟 ℰ₂)
 thm311 {Γ} 𝒟 (∧L₁ {A} {B} ℰ)    = ∧L₁ {A} {B} {Γ = Γ} (thm311 𝒟 ℰ)
 thm311 {Γ} 𝒟 (∧L₂ {A} {B} ℰ)    = ∧L₂ {A} {B} {Γ = Γ} (thm311 𝒟 ℰ)
