@@ -33,9 +33,9 @@ data _⊢_true : List Prop → Prop → Set
     snd : ∀ {A B Γ} → Γ ⊢ A ∧ B true
                     → Γ ⊢ B true
 
-    unit : ∀ {Γ} → Γ ⊢ ⊤ true
+    unit : ∀ {Γ} → Γ ⊢ 𝟏 true
 
-    abort : ∀ {A Γ} → Γ ⊢ ⊥ true
+    abort : ∀ {A Γ} → Γ ⊢ 𝟎 true
                     → Γ ⊢ A true
 
     inl : ∀ {A B Γ} → Γ ⊢ A true

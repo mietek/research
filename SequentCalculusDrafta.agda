@@ -4,7 +4,7 @@
 
 -- NOTE: The direction of ⇑/⇓ in previous code is wrong compared to Filinski
 
-module SequentCalculusDraft where
+module SequentCalculusDrafta where
 
 open import Prelude
 open import Category
@@ -47,50 +47,6 @@ genct⊒ : ∀ {X A} → {Ξ : List X}
                  → Ξ ⊒ Ξ , A
 genct⊒ i zero    = i
 genct⊒ i (suc j) = j
-
-
---------------------------------------------------------------------------------
-
-
--- Unused now
-
-{-
--- McBride's context deletions
-
-_-_ : ∀ {X A} → (Ξ : List X) → Ξ ∋ A → List X
-∙       - ()
-(Ξ , A) - zero  = Ξ
-(Ξ , B) - suc i = (Ξ - i) , B
-
-del⊇ : ∀ {X A} → {Ξ : List X}
-               → (i : Ξ ∋ A)
-               → Ξ ⊇ Ξ - i
-del⊇ zero    = drop id
-del⊇ (suc i) = keep (del⊇ i)
-
-
--- McBride's deletion-based variable equality
-
-data _≡∋_ {X} : ∀ {A B} → {Ξ : List X} → Ξ ∋ A → Ξ ∋ B → Set
-  where
-    same : ∀ {A} → {Ξ : List X}
-                 → (i : Ξ ∋ A)
-                 → i ≡∋ i
-
-    diff : ∀ {A B} → {Ξ : List X}
-                   → (i : Ξ ∋ A) (j : Ξ - i ∋ B)
-                   → i ≡∋ ren∋ (del⊇ i) j
-
-_≟∋_ : ∀ {X A B} → {Ξ : List X}
-                 → (i : Ξ ∋ A) (j : Ξ ∋ B)
-                 → i ≡∋ j
-zero  ≟∋ zero   = same zero
-zero  ≟∋ suc j  rewrite id-ren∋ j ⁻¹ = diff zero j
-suc i ≟∋ zero   = diff (suc i) zero
-suc i ≟∋ suc j  with i ≟∋ j
-suc i ≟∋ suc .i | same .i = same (suc i)
-suc i ≟∋ suc ._ | diff .i j = diff (suc i) (suc j)
--}
 
 
 --------------------------------------------------------------------------------
@@ -150,36 +106,44 @@ _⊢_allnormal : List Prop → List Prop → Set
 
 
 mutual
-  renₙₘ : ∀ {Γ Γ′ A} → Γ′ ⊇ Γ → Γ ⊢ A normal
+  renₙₘ : ∀ {Γ Γ′ A} → Γ′ ⊒ Γ → Γ ⊢ A normal
                      → Γ′ ⊢ A normal
-  renₙₘ η (lam 𝒟)      = lam (renₙₘ (keep η) 𝒟)
+  renₙₘ η (lam 𝒟)      = lam (renₙₘ (keep⊒ η) 𝒟)
   renₙₘ η (pair 𝒟 ℰ)   = pair (renₙₘ η 𝒟) (renₙₘ η ℰ)
   renₙₘ η unit         = unit
   renₙₘ η (abort 𝒟)    = abort (renₙₜ η 𝒟)
   renₙₘ η (inl 𝒟)      = inl (renₙₘ η 𝒟)
   renₙₘ η (inr 𝒟)      = inr (renₙₘ η 𝒟)
-  renₙₘ η (case 𝒟 ℰ ℱ) = case (renₙₜ η 𝒟) (renₙₘ (keep η) ℰ) (renₙₘ (keep η) ℱ)
+  renₙₘ η (case 𝒟 ℰ ℱ) = case (renₙₜ η 𝒟) (renₙₘ (keep⊒ η) ℰ) (renₙₘ (keep⊒ η) ℱ)
   renₙₘ η (ent 𝒟)      = ent (renₙₜ η 𝒟)
 
-  renₙₜ : ∀ {Γ Γ′ A} → Γ′ ⊇ Γ → Γ ⊢ A neutral
+  renₙₜ : ∀ {Γ Γ′ A} → Γ′ ⊒ Γ → Γ ⊢ A neutral
                      → Γ′ ⊢ A neutral
-  renₙₜ η (var i)   = var (ren∋ η i)
+  renₙₜ η (var i)   = var (η i)
   renₙₜ η (app 𝒟 ℰ) = app (renₙₜ η 𝒟) (renₙₘ η ℰ)
   renₙₜ η (fst 𝒟)   = fst (renₙₜ η 𝒟)
   renₙₜ η (snd 𝒟)   = snd (renₙₜ η 𝒟)
 
 
-rensₙₜ : ∀ {Γ Γ′ Ξ} → Γ′ ⊇ Γ → Γ ⊢ Ξ allneutral
+rensₙₜ : ∀ {Γ Γ′ Ξ} → Γ′ ⊒ Γ → Γ ⊢ Ξ allneutral
                     → Γ′ ⊢ Ξ allneutral
 rensₙₜ η ξ = maps (renₙₜ η) ξ
 
 wkₙₜ : ∀ {B Γ A} → Γ ⊢ A neutral
                  → Γ , B ⊢ A neutral
-wkₙₜ 𝒟 = renₙₜ (drop id) 𝒟
+wkₙₜ 𝒟 = renₙₜ suc 𝒟
+
+exₙₜ : ∀ {Γ A B C} → Γ , A , B ⊢ C neutral
+                   → Γ , B , A ⊢ C neutral
+exₙₜ 𝒟 = renₙₜ ex⊒ 𝒟
+
+ctₙₜ : ∀ {Γ A C} → Γ , A , A ⊢ C neutral
+                 → Γ , A ⊢ C neutral
+ctₙₜ 𝒟 = renₙₜ ct⊒ 𝒟
 
 wksₙₜ : ∀ {A Γ Ξ} → Γ ⊢ Ξ allneutral
                   → Γ , A ⊢ Ξ allneutral
-wksₙₜ ξ = rensₙₜ (drop id) ξ
+wksₙₜ ξ = rensₙₜ suc ξ
 
 vzₙₜ : ∀ {Γ A} → Γ , A ⊢ A neutral
 vzₙₜ = var zero
@@ -188,27 +152,36 @@ liftsₙₜ : ∀ {A Γ Ξ} → Γ ⊢ Ξ allneutral
                     → Γ , A ⊢ Ξ , A allneutral
 liftsₙₜ ξ = wksₙₜ ξ , vzₙₜ
 
-varsₙₜ : ∀ {Γ Γ′} → Γ′ ⊇ Γ
-                  → Γ′ ⊢ Γ allneutral
-varsₙₜ done     = ∙
-varsₙₜ (drop η) = wksₙₜ (varsₙₜ η)
-varsₙₜ (keep η) = liftsₙₜ (varsₙₜ η)
+-- varsₙₜ : ∀ {Γ Γ′} → Γ′ ⊒ Γ
+--                   → Γ′ ⊢ Γ allneutral
+-- varsₙₜ done     = ∙
+-- varsₙₜ (drop η) = wksₙₜ (varsₙₜ η)
+-- varsₙₜ (keep η) = liftsₙₜ (varsₙₜ η)
 
 idsₙₜ : ∀ {Γ} → Γ ⊢ Γ allneutral
-idsₙₜ = varsₙₜ id
+idsₙₜ {∙}     = ∙
+idsₙₜ {Γ , A} = liftsₙₜ idsₙₜ
 
 
-rensₙₘ : ∀ {Γ Γ′ Ξ} → Γ′ ⊇ Γ → Γ ⊢ Ξ allnormal
+rensₙₘ : ∀ {Γ Γ′ Ξ} → Γ′ ⊒ Γ → Γ ⊢ Ξ allnormal
                     → Γ′ ⊢ Ξ allnormal
 rensₙₘ η ξ = maps (renₙₘ η) ξ
 
 wkₙₘ : ∀ {B Γ A} → Γ ⊢ A normal
                  → Γ , B ⊢ A normal
-wkₙₘ 𝒟 = renₙₘ (drop id) 𝒟
+wkₙₘ 𝒟 = renₙₘ suc 𝒟
+
+exₙₘ : ∀ {Γ A B C} → Γ , A , B ⊢ C normal
+                   → Γ , B , A ⊢ C normal
+exₙₘ 𝒟 = renₙₘ ex⊒ 𝒟
+
+ctₙₘ : ∀ {Γ A C} → Γ , A , A ⊢ C normal
+                 → Γ , A ⊢ C normal
+ctₙₘ 𝒟 = renₙₘ ct⊒ 𝒟
 
 wksₙₘ : ∀ {A Γ Ξ} → Γ ⊢ Ξ allnormal
                   → Γ , A ⊢ Ξ allnormal
-wksₙₘ ξ = rensₙₘ (drop id) ξ
+wksₙₘ ξ = rensₙₘ suc ξ
 
 vzₙₘ : ∀ {Γ A} → Γ , A ⊢ A normal
 vzₙₘ = ent vzₙₜ
@@ -217,14 +190,15 @@ liftsₙₘ : ∀ {A Γ Ξ} → Γ ⊢ Ξ allnormal
                     → Γ , A ⊢ Ξ , A allnormal
 liftsₙₘ ξ = wksₙₘ ξ , vzₙₘ
 
-varsₙₘ : ∀ {Γ Γ′} → Γ′ ⊇ Γ
-                  → Γ′ ⊢ Γ allnormal
-varsₙₘ done     = ∙
-varsₙₘ (drop η) = wksₙₘ (varsₙₘ η)
-varsₙₘ (keep η) = liftsₙₘ (varsₙₘ η)
+-- varsₙₘ : ∀ {Γ Γ′} → Γ′ ⊒ Γ
+--                   → Γ′ ⊢ Γ allnormal
+-- varsₙₘ done     = ∙
+-- varsₙₘ (drop η) = wksₙₘ (varsₙₘ η)
+-- varsₙₘ (keep η) = liftsₙₘ (varsₙₘ η)
 
 idsₙₘ : ∀ {Γ} → Γ ⊢ Γ allnormal
-idsₙₘ = varsₙₘ id
+idsₙₘ {∙}     = ∙
+idsₙₘ {Γ , A} = liftsₙₘ idsₙₘ
 
 
 -- Lemma 3.5 (Substitution property of normal/neutral deductions)
@@ -335,37 +309,45 @@ _⊢₊_allnormal : List Prop → List Prop → Set
 
 
 mutual
-  renₙₘ₊ : ∀ {Γ Γ′ A} → Γ′ ⊇ Γ → Γ ⊢₊ A normal
-                     → Γ′ ⊢₊ A normal
-  renₙₘ₊ η (lam 𝒟)      = lam (renₙₘ₊ (keep η) 𝒟)
+  renₙₘ₊ : ∀ {Γ Γ′ A} → Γ′ ⊒ Γ → Γ ⊢₊ A normal
+                      → Γ′ ⊢₊ A normal
+  renₙₘ₊ η (lam 𝒟)      = lam (renₙₘ₊ (keep⊒ η) 𝒟)
   renₙₘ₊ η (pair 𝒟 ℰ)   = pair (renₙₘ₊ η 𝒟) (renₙₘ₊ η ℰ)
   renₙₘ₊ η unit         = unit
   renₙₘ₊ η (abort 𝒟)    = abort (renₙₜ₊ η 𝒟)
   renₙₘ₊ η (inl 𝒟)      = inl (renₙₘ₊ η 𝒟)
   renₙₘ₊ η (inr 𝒟)      = inr (renₙₘ₊ η 𝒟)
-  renₙₘ₊ η (case 𝒟 ℰ ℱ) = case (renₙₜ₊ η 𝒟) (renₙₘ₊ (keep η) ℰ) (renₙₘ₊ (keep η) ℱ)
+  renₙₘ₊ η (case 𝒟 ℰ ℱ) = case (renₙₜ₊ η 𝒟) (renₙₘ₊ (keep⊒ η) ℰ) (renₙₘ₊ (keep⊒ η) ℱ)
   renₙₘ₊ η (ent 𝒟)      = ent (renₙₜ₊ η 𝒟)
 
-  renₙₜ₊ : ∀ {Γ Γ′ A} → Γ′ ⊇ Γ → Γ ⊢₊ A neutral
-                     → Γ′ ⊢₊ A neutral
-  renₙₜ₊ η (var i)   = var (ren∋ η i)
+  renₙₜ₊ : ∀ {Γ Γ′ A} → Γ′ ⊒ Γ → Γ ⊢₊ A neutral
+                      → Γ′ ⊢₊ A neutral
+  renₙₜ₊ η (var i)   = var (η i)
   renₙₜ₊ η (app 𝒟 ℰ) = app (renₙₜ₊ η 𝒟) (renₙₘ₊ η ℰ)
   renₙₜ₊ η (fst 𝒟)   = fst (renₙₜ₊ η 𝒟)
   renₙₜ₊ η (snd 𝒟)   = snd (renₙₜ₊ η 𝒟)
   renₙₜ₊ η (enm 𝒟)   = enm (renₙₘ₊ η 𝒟)
 
 
-rensₙₜ₊ : ∀ {Γ Γ′ Ξ} → Γ′ ⊇ Γ → Γ ⊢₊ Ξ allneutral
+rensₙₜ₊ : ∀ {Γ Γ′ Ξ} → Γ′ ⊒ Γ → Γ ⊢₊ Ξ allneutral
                      → Γ′ ⊢₊ Ξ allneutral
 rensₙₜ₊ η ξ = maps (renₙₜ₊ η) ξ
 
 wkₙₜ₊ : ∀ {B Γ A} → Γ ⊢₊ A neutral
                   → Γ , B ⊢₊ A neutral
-wkₙₜ₊ 𝒟 = renₙₜ₊ (drop id) 𝒟
+wkₙₜ₊ 𝒟 = renₙₜ₊ suc 𝒟
+
+exₙₜ₊ : ∀ {Γ A B C} → Γ , A , B ⊢₊ C neutral
+                    → Γ , B , A ⊢₊ C neutral
+exₙₜ₊ 𝒟 = renₙₜ₊ ex⊒ 𝒟
+
+ctₙₜ₊ : ∀ {Γ A C} → Γ , A , A ⊢₊ C neutral
+                  → Γ , A ⊢₊ C neutral
+ctₙₜ₊ 𝒟 = renₙₜ₊ ct⊒ 𝒟
 
 wksₙₜ₊ : ∀ {A Γ Ξ} → Γ ⊢₊ Ξ allneutral
                    → Γ , A ⊢₊ Ξ allneutral
-wksₙₜ₊ ξ = rensₙₜ₊ (drop id) ξ
+wksₙₜ₊ ξ = rensₙₜ₊ suc ξ
 
 vzₙₜ₊ : ∀ {Γ A} → Γ , A ⊢₊ A neutral
 vzₙₜ₊ = var zero
@@ -374,27 +356,36 @@ liftsₙₜ₊ : ∀ {A Γ Ξ} → Γ ⊢₊ Ξ allneutral
                      → Γ , A ⊢₊ Ξ , A allneutral
 liftsₙₜ₊ ξ = wksₙₜ₊ ξ , vzₙₜ₊
 
-varsₙₜ₊ : ∀ {Γ Γ′} → Γ′ ⊇ Γ
-                   → Γ′ ⊢₊ Γ allneutral
-varsₙₜ₊ done     = ∙
-varsₙₜ₊ (drop η) = wksₙₜ₊ (varsₙₜ₊ η)
-varsₙₜ₊ (keep η) = liftsₙₜ₊ (varsₙₜ₊ η)
+-- varsₙₜ₊ : ∀ {Γ Γ′} → Γ′ ⊒ Γ
+--                    → Γ′ ⊢₊ Γ allneutral
+-- varsₙₜ₊ done     = ∙
+-- varsₙₜ₊ (drop η) = wksₙₜ₊ (varsₙₜ₊ η)
+-- varsₙₜ₊ (keep η) = liftsₙₜ₊ (varsₙₜ₊ η)
 
 idsₙₜ₊ : ∀ {Γ} → Γ ⊢₊ Γ allneutral
-idsₙₜ₊ = varsₙₜ₊ id
+idsₙₜ₊ {∙}     = ∙
+idsₙₜ₊ {Γ , A} = liftsₙₜ₊ idsₙₜ₊
 
 
-rensₙₘ₊ : ∀ {Γ Γ′ Ξ} → Γ′ ⊇ Γ → Γ ⊢₊ Ξ allnormal
+rensₙₘ₊ : ∀ {Γ Γ′ Ξ} → Γ′ ⊒ Γ → Γ ⊢₊ Ξ allnormal
                      → Γ′ ⊢₊ Ξ allnormal
 rensₙₘ₊ η ξ = maps (renₙₘ₊ η) ξ
 
 wkₙₘ₊ : ∀ {B Γ A} → Γ ⊢₊ A normal
                   → Γ , B ⊢₊ A normal
-wkₙₘ₊ 𝒟 = renₙₘ₊ (drop id) 𝒟
+wkₙₘ₊ 𝒟 = renₙₘ₊ suc 𝒟
+
+exₙₘ₊ : ∀ {Γ A B C} → Γ , A , B ⊢₊ C normal
+                    → Γ , B , A ⊢₊ C normal
+exₙₘ₊ 𝒟 = renₙₘ₊ ex⊒ 𝒟
+
+ctₙₘ₊ : ∀ {Γ A C} → Γ , A , A ⊢₊ C normal
+                  → Γ , A ⊢₊ C normal
+ctₙₘ₊ 𝒟 = renₙₘ₊ ct⊒ 𝒟
 
 wksₙₘ₊ : ∀ {A Γ Ξ} → Γ ⊢₊ Ξ allnormal
                    → Γ , A ⊢₊ Ξ allnormal
-wksₙₘ₊ ξ = rensₙₘ₊ (drop id) ξ
+wksₙₘ₊ ξ = rensₙₘ₊ suc ξ
 
 vzₙₘ₊ : ∀ {Γ A} → Γ , A ⊢₊ A normal
 vzₙₘ₊ = ent vzₙₜ₊
@@ -403,14 +394,15 @@ liftsₙₘ₊ : ∀ {A Γ Ξ} → Γ ⊢₊ Ξ allnormal
                      → Γ , A ⊢₊ Ξ , A allnormal
 liftsₙₘ₊ ξ = wksₙₘ₊ ξ , vzₙₘ₊
 
-varsₙₘ₊ : ∀ {Γ Γ′} → Γ′ ⊇ Γ
-                   → Γ′ ⊢₊ Γ allnormal
-varsₙₘ₊ done     = ∙
-varsₙₘ₊ (drop η) = wksₙₘ₊ (varsₙₘ₊ η)
-varsₙₘ₊ (keep η) = liftsₙₘ₊ (varsₙₘ₊ η)
+-- varsₙₘ₊ : ∀ {Γ Γ′} → Γ′ ⊒ Γ
+--                    → Γ′ ⊢₊ Γ allnormal
+-- varsₙₘ₊ done     = ∙
+-- varsₙₘ₊ (drop η) = wksₙₘ₊ (varsₙₘ₊ η)
+-- varsₙₘ₊ (keep η) = liftsₙₘ₊ (varsₙₘ₊ η)
 
 idsₙₘ₊ : ∀ {Γ} → Γ ⊢₊ Γ allnormal
-idsₙₘ₊ = varsₙₘ₊ id
+idsₙₘ₊ {∙}     = ∙
+idsₙₘ₊ {Γ , A} = liftsₙₘ₊ idsₙₘ₊
 
 
 -- Lemma ??? (Substitution property of annotated normal/neutral deductions)

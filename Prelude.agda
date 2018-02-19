@@ -18,8 +18,8 @@ open import Agda.Builtin.String public
   using (String ; primStringEquality)
 
 open import Agda.Builtin.Unit public
-  using ()
-  renaming (⊤ to 𝟙 ; tt to ∙)
+  using (⊤)
+  renaming (tt to ∙)
 
 
 --------------------------------------------------------------------------------
@@ -44,20 +44,20 @@ flip f y x = f x y
 --------------------------------------------------------------------------------
 
 
-data 𝟘 : Set
+data ⊥ : Set
   where
 
 
-elim𝟘 : ∀ {ℓ} → {X : Set ℓ} → 𝟘 → X
-elim𝟘 ()
+elim⊥ : ∀ {ℓ} → {X : Set ℓ} → ⊥ → X
+elim⊥ ()
 
 
 ¬_ : ∀ {ℓ} → Set ℓ → Set ℓ
-¬ X = X → 𝟘
+¬ X = X → ⊥
 
 
 _↯_ : ∀ {ℓ ℓ′} → {X : Set ℓ} {Y : Set ℓ′} → X → ¬ X → Y
-x ↯ f = elim𝟘 (f x)
+x ↯ f = elim⊥ (f x)
 
 
 --------------------------------------------------------------------------------
@@ -273,8 +273,8 @@ map⊎ f g s = for⊎ s f g
 --
 --
 -- ⊺ : Bool → Set
--- ⊺ true  = 𝟙
--- ⊺ false = 𝟘
+-- ⊺ true  = ⊤
+-- ⊺ false = ⊥
 --
 --
 -- ⌊_⌋ : ∀ {ℓ} → {X : Set ℓ}
@@ -317,7 +317,7 @@ instance
   stringIsString : IsString String
   stringIsString =
     record
-      { Constraint = \ s → 𝟙
+      { Constraint = \ s → ⊤
       ; fromString = \ s → s
       }
 
