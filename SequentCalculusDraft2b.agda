@@ -297,7 +297,7 @@ subₛ₊ (ξ , 𝒞)     (∨L 𝒟 ℰ)  = cut 𝒞 (∨L (subₛ₊ (liftsₛ
 subₛ₊ ξ           (cut 𝒟 ℰ) = cut (subₛ₊ ξ 𝒟) (subₛ₊ (liftsₛ₊ ξ) ℰ)
 
 
--- Theorem 3.10 (Completeness of sequent calculus with respect to normal/neutral deductions)
+-- Theorem 3.10 (Completeness of sequent calculus with cut with respect to normal/neutral deductions)
 
 mutual
   thm310ₙₘ : ∀ {Γ A} → Γ ⊢ A normal
