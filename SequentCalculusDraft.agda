@@ -42,6 +42,15 @@ ct⊒ zero          = zero
 ct⊒ (suc zero)    = zero
 ct⊒ (suc (suc i)) = suc i
 
+unct⊒ : ∀ {X A} → {Ξ : List X}
+                → Ξ , A , A ⊒ Ξ , A
+unct⊒ zero    = zero
+unct⊒ (suc i) = suc (suc i)
+
+wk⊒ : ∀ {X A} → {Ξ : List X}
+              → Ξ , A ⊒ Ξ
+wk⊒ i = suc i
+
 genct⊒ : ∀ {X A} → {Ξ : List X}
                  → Ξ ∋ A
                  → Ξ ⊒ Ξ , A
@@ -52,9 +61,6 @@ genct⊒ i (suc j) = j
 --------------------------------------------------------------------------------
 
 
--- Unused now
-
-{-
 -- McBride's context deletions
 
 _-_ : ∀ {X A} → (Ξ : List X) → Ξ ∋ A → List X
@@ -90,7 +96,22 @@ suc i ≟∋ zero   = diff (suc i) zero
 suc i ≟∋ suc j  with i ≟∋ j
 suc i ≟∋ suc .i | same .i = same (suc i)
 suc i ≟∋ suc ._ | diff .i j = diff (suc i) (suc j)
--}
+
+
+-- NOTE: Interesting!
+
+delred⊒ : ∀ {X A} → {Ξ : List X}
+                  → (i : Ξ ∋ A) (j : Ξ - i ∋ A)
+                  → Ξ - i ⊒ Ξ
+delred⊒ i j k with i ≟∋ k
+delred⊒ i j k | same .k   = j
+delred⊒ i j _ | diff .i k = k
+
+del⊒ : ∀ {X A} → {Ξ : List X}
+               → (i : Ξ ∋ A)
+               → Ξ ⊒ Ξ - i
+del⊒ zero    j = suc j
+del⊒ (suc i) j = keep⊒ (del⊒ i) j
 
 
 --------------------------------------------------------------------------------

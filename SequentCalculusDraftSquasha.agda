@@ -61,12 +61,6 @@ infix 4 _[⊇]_
 _[⊇]_ : ∀ {X} → [List] X → [List] X → Set
 Ξ′ [⊇] Ξ = ∀ {A} → Ξ [∋] A → Ξ′ [∋] A
 
-drop[⊇] : ∀ {X A} → {Ξ Ξ′ : [List] X}
-                  → Ξ′ [⊇] Ξ
-                  → Ξ′ [,] A [⊇] Ξ
-drop[⊇] {A = A} {Ξ} η zero            = suc {B = A} (η (zero {Ξ = Ξ}))
-drop[⊇] {A = A}     η (suc {B = B} i) = suc {B = A} ((η ∘ drop[⊇] {A = B} id) i)
-
 keep[⊇] : ∀ {X A} → {Ξ Ξ′ : [List] X}
                   → Ξ′ [⊇] Ξ
                   → Ξ′ [,] A [⊇] Ξ [,] A

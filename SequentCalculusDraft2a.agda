@@ -1,3 +1,5 @@
+{-# OPTIONS --allow-unsolved-metas #-}
+
 module SequentCalculusDraft2a where
 
 open import Prelude
@@ -49,6 +51,10 @@ data _⟹_ : List Prop → Prop → Set
 
     ∨L : ∀ {A B C Γ} → Γ ∋ A ∨ B → Γ , A ⟹ C → Γ , B ⟹ C
                      → Γ ⟹ C
+
+infix 3 _⟹_all
+_⟹_all : List Prop → List Prop → Set
+Γ ⟹ Ξ all = All (Γ ⟹_) Ξ
 
 
 -- Theorem 3.6 (Soundness of sequent calculus with respect to normal deduction)
@@ -105,6 +111,18 @@ exₛ 𝒟 = renₛ ex⊒ 𝒟
 ctₛ : ∀ {Γ A B} → Γ , A , A ⟹ B
                 → Γ , A ⟹ B
 ctₛ 𝒟 = renₛ ct⊒ 𝒟
+
+wksₛ : ∀ {A Γ Ξ} → Γ ⟹ Ξ all
+                 → Γ , A ⟹ Ξ all
+wksₛ ξ = maps wkₛ ξ
+
+liftsₛ : ∀ {A Γ Ξ} → Γ ⟹ Ξ all
+                   → Γ , A ⟹ Ξ , A all
+liftsₛ ξ = wksₛ ξ , vzₛ
+
+idsₛ : ∀ {Γ} → Γ ⟹ Γ all
+idsₛ {∙}     = ∙
+idsₛ {Γ , A} = liftsₛ idsₛ
 
 
 -- Theorem 3.8 (Completeness of sequent calculus with respect to normal/neutral deductions)
@@ -171,6 +189,10 @@ data _⟹₊_ : List Prop → Prop → Set
 
     cut : ∀ {A B Γ} → Γ ⟹₊ A → Γ , A ⟹₊ B
                     → Γ ⟹₊ B
+
+infix 3 _⟹₊_all
+_⟹₊_all : List Prop → List Prop → Set
+Γ ⟹₊ Ξ all = All (Γ ⟹₊_) Ξ
 
 
 -- Theorem 3.9 (Soundness of sequent calculus with cut with respect to annotated normal deduction)
