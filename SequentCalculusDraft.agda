@@ -24,6 +24,11 @@ infix 4 _⊒_
 _⊒_ : ∀ {X} → List X → List X → Set
 Ξ′ ⊒ Ξ = ∀ {A} → Ξ ∋ A → Ξ′ ∋ A
 
+bot⊒ : ∀ {X} → {Ξ : List X}
+             → Ξ ⊒ ∙
+bot⊒ {Ξ = ∙}     ()
+bot⊒ {Ξ = Ξ , A} i = suc (bot⊒ i)
+
 keep⊒ : ∀ {X A} → {Ξ Ξ′ : List X}
                 → Ξ′ ⊒ Ξ
                 → Ξ′ , A ⊒ Ξ , A
