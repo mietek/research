@@ -104,7 +104,11 @@ module Impossible
     sn : ∀ {M A} → ∙ ⊢ M ⦂ A → M ⇓
     sn (var ())
     sn (lam 𝒟)    = LAM _ , eval-LAM
-    sn (app 𝒟 ℰ)  = {!!}
+    sn (app 𝒟 ℰ)  with sn 𝒟 | sn ℰ
+    sn (app 𝒟 ℰ)  | M′ , M⇓M′ | N′ , N⇓N′ with val M⇓M′ | tp⇓ M⇓M′ 𝒟
+    sn (app 𝒟 ℰ)  | LAM M′ , M⇓M′ | N′ , N⇓N′ | val-LAM   | lam 𝒟′ = {!!}
+    sn (app 𝒟 ℰ)  | TRUE   , M⇓M′ | N′ , N⇓N′ | val-TRUE  | ()
+    sn (app 𝒟 ℰ)  | FALSE  , M⇓M′ | N′ , N⇓N′ | val-FALSE | ()
     sn true       = TRUE , eval-TRUE
     sn false      = FALSE , eval-FALSE
     sn (if 𝒟 ℰ ℱ) with sn 𝒟 | sn ℰ | sn ℱ
