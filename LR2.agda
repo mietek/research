@@ -24,7 +24,7 @@ data EC (g : Nat) : Set
     ec-[]   : EC g
     ec-IF   : EC g → Term g → Term g → EC g
     ec-APP₁ : EC g → Term g → EC g
-    ec-APP₂ : (N : Term g) → EC g → EC g
+    ec-APP₂ : Term g → EC g → EC g
 
 _[_] : ∀ {g} → EC g → Term g → Term g
 ec-[]         [ M ] = M
