@@ -18,7 +18,7 @@ open import LR1
 data Val {g} : Term g → Set
   where
     instance
-      val-LAM   : ∀ {M} → Val M → Val (LAM M)
+      val-LAM   : ∀ {M} → Val (LAM M)
       val-TRUE  : Val TRUE
       val-FALSE : Val FALSE
 
@@ -48,18 +48,28 @@ data _⇓_ {g} : Term g → (M′ : Term g) → {{_ : Val M′}} → Set
   where
     eval-TRUE  : TRUE ⇓ TRUE
     eval-FALSE : FALSE ⇓ FALSE
+    eval-LAM   : ∀ {M} → LAM M ⇓ LAM M
     eval-red   : ∀ {M M′ M″} → {{_ : Val M″}} → M ↦ M′ → M′ ⇓ M″ → M ⇓ M″
 
 _⇓ : ∀ {g} → (M : Term g) → Set
 M ⇓ = Σ (Term _) (\ M′ → Σ (Val M′) (\ p → (M ⇓ M′) {{p}}))
 
-tp↦ : ∀ {g M M′ A} → {Γ : Types g}
-                    → M ↦ M′ → Γ ⊢ M ⦂ A
-                    → Γ ⊢ M′ ⦂ A
-tp↦ red-IF-TRUE      (if 𝒟 ℰ ℱ)      = ℰ
-tp↦ red-IF-FALSE     (if 𝒟 ℰ ℱ)      = ℱ
-tp↦ red-APP-LAM      (app (lam 𝒟) ℰ) = cut ℰ 𝒟
-tp↦ (red-ec E M↦M′) 𝒟               = {!!}
+mutual
+  tp↦ : ∀ {g M M′ A} → {Γ : Types g}
+                      → M ↦ M′ → Γ ⊢ M ⦂ A
+                      → Γ ⊢ M′ ⦂ A
+  tp↦ red-IF-TRUE      (if 𝒟 ℰ ℱ)      = ℰ
+  tp↦ red-IF-FALSE     (if 𝒟 ℰ ℱ)      = ℱ
+  tp↦ red-APP-LAM      (app (lam 𝒟) ℰ) = cut ℰ 𝒟
+  tp↦ (red-ec E M↦M′) 𝒟               = plug E M↦M′ 𝒟
+
+  plug : ∀ {g M M′ A} → {Γ : Types g}
+                      → (E : EC g) → M ↦ M′ → Γ ⊢ E [ M ] ⦂ A
+                      → Γ ⊢ E [ M′ ] ⦂ A
+  plug ec-[]         M↦M′ 𝒟          = tp↦ M↦M′ 𝒟
+  plug (ec-IF E N O) M↦M′ (if 𝒟 ℰ ℱ) = if (plug E M↦M′ 𝒟) ℰ ℱ
+  plug (ec-APP₁ E N) M↦M′ (app 𝒟 ℰ)  = app (plug E M↦M′ 𝒟) ℰ
+  plug (ec-APP₂ N E) M↦M′ (app 𝒟 ℰ)  = app 𝒟 (plug E M↦M′ ℰ)
 
 tp⇓ : ∀ {g M M′ A} → {{_ : Val M′}}
                    → {Γ : Types g}
@@ -67,6 +77,7 @@ tp⇓ : ∀ {g M M′ A} → {{_ : Val M′}}
                    → Γ ⊢ M′ ⦂ A
 tp⇓ eval-TRUE              𝒟 = 𝒟
 tp⇓ eval-FALSE             𝒟 = 𝒟
+tp⇓ eval-LAM               𝒟 = 𝒟
 tp⇓ (eval-red M↦M′ M′⇓M″) 𝒟 = tp⇓ M′⇓M″ (tp↦ M↦M′ 𝒟)
 
 lem-IF-TRUE : ∀ {g} → {M N N′ O : Term g} → {{_ : Val N′}}
@@ -93,6 +104,6 @@ sn true       = TRUE  , (val-TRUE  , eval-TRUE)
 sn false      = FALSE , (val-FALSE , eval-FALSE)
 sn (if 𝒟 ℰ ℱ) with sn 𝒟 | sn ℰ | sn ℱ
 sn (if 𝒟 ℰ ℱ) | M′     , (vM′         , M⇓M′)    | N′ , (vN′ , N⇓N′) | O′ , (vO′ , O⇓O′) with tp⇓ M⇓M′ 𝒟
-sn (if 𝒟 ℰ ℱ) | LAM M′ , (val-LAM vM′ , M⇓M′)    | N′ , (vN′ , N⇓N′) | O′ , (vO′ , O⇓O′) | ()
+sn (if 𝒟 ℰ ℱ) | LAM M′ , (val-LAM     , M⇓M′)    | N′ , (vN′ , N⇓N′) | O′ , (vO′ , O⇓O′) | ()
 sn (if 𝒟 ℰ ℱ) | TRUE   , (val-TRUE    , M⇓TRUE)  | N′ , (vN′ , N⇓N′) | O′ , (vO′ , O⇓O′) | true  = N′ , (vN′ , lem-IF-TRUE  M⇓TRUE  N⇓N′)
 sn (if 𝒟 ℰ ℱ) | FALSE  , (val-FALSE   , M⇓FALSE) | N′ , (vN′ , N⇓N′) | O′ , (vO′ , O⇓O′) | false = O′ , (vO′ , lem-IF-FALSE M⇓FALSE O⇓O′)
