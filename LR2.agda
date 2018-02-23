@@ -103,7 +103,7 @@ module Impossible
   where
     sn : ∀ {M A} → ∙ ⊢ M ⦂ A → M ⇓
     sn (var ())
-    sn (lam 𝒟)    = {!!}
+    sn (lam 𝒟)    = LAM _ , eval-LAM
     sn (app 𝒟 ℰ)  = {!!}
     sn true       = TRUE , eval-TRUE
     sn false      = FALSE , eval-FALSE
