@@ -4,8 +4,6 @@ open import Prelude
 open import Category
 open import Fin
 open import FinLemmas
--- open import List
--- open import ListLemmas
 open import Vec
 open import VecLemmas
 open import AllVec

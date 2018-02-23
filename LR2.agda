@@ -4,8 +4,6 @@ open import Prelude
 open import Category
 open import Fin
 open import FinLemmas
--- open import List
--- open import ListLemmas
 open import Vec
 open import VecLemmas
 open import AllVec
@@ -17,17 +15,16 @@ open import LR1
 
 data Val {g} : Term g → Set
   where
-    instance
-      val-LAM   : ∀ {M} → Val (LAM M)
-      val-TRUE  : Val TRUE
-      val-FALSE : Val FALSE
+    val-LAM   : ∀ {M} → Val (LAM M)
+    val-TRUE  : Val TRUE
+    val-FALSE : Val FALSE
 
 data EC (g : Nat) : Set
   where
     ec-[]   : EC g
     ec-IF   : EC g → Term g → Term g → EC g
     ec-APP₁ : EC g → Term g → EC g
-    ec-APP₂ : (N : Term g) → EC g → {{_ : Val N}} → EC g
+    ec-APP₂ : (N : Term g) → EC g → EC g
 
 _[_] : ∀ {g} → EC g → Term g → Term g
 ec-[]         [ M ] = M
@@ -41,25 +38,24 @@ data _↦_ {g} : Term g → Term g → Set
     red-IF-TRUE  : ∀ {M N} → IF TRUE M N ↦ M
     red-IF-FALSE : ∀ {M N} → IF FALSE M N ↦ N
     red-APP-LAM  : ∀ {M N} → APP (LAM M) N ↦ CUT N M
-    red-ec       : ∀ {M M′} → (E : EC g) → M ↦ M′ → E [ M ] ↦ E [ M′ ]
-
-infix 3 _⤅_
-data _⤅_ {g} : Term g → (M′ : Term g) → Set
-  where
-    eval-TRUE  : TRUE ⤅ TRUE
-    eval-FALSE : FALSE ⤅ FALSE
-    eval-LAM   : ∀ {M} → LAM M ⤅ LAM M
-    eval-red   : ∀ {M M′ M″} → M ↦ M′ → M′ ⤅ M″ → M ⤅ M″
-
-val : ∀ {g} → {M M′ : Term g} → M ⤅ M′ → Val M′
-val eval-TRUE               = val-TRUE
-val eval-FALSE              = val-FALSE
-val eval-LAM                = val-LAM
-val (eval-red M⤅M′ M′⤅M″) = val M′⤅M″
+    red-ec       : ∀ {M M′} → (E : EC g) → M ↦ M′
+                            → E [ M ] ↦ E [ M′ ]
 
 infix 3 _⇓_
-_⇓_ : ∀ {g} → Term g → Term g → Set
-M ⇓ M′ = M ⤅ M′
+data _⇓_ {g} : Term g → (M′ : Term g) → Set
+  where
+    eval-TRUE  : TRUE ⇓ TRUE
+    eval-FALSE : FALSE ⇓ FALSE
+    eval-LAM   : ∀ {M} → LAM M ⇓ LAM M
+    eval-red   : ∀ {M M′ M″} → M ↦ M′ → M′ ⇓ M″ → M ⇓ M″
+
+val : ∀ {g} → {M M′ : Term g}
+            → M ⇓ M′
+            → Val M′
+val eval-TRUE              = val-TRUE
+val eval-FALSE             = val-FALSE
+val eval-LAM               = val-LAM
+val (eval-red M↦M′ M′⇓M″) = val M′⇓M″
 
 _⇓ : ∀ {g} → (M : Term g) → Set
 M ⇓ = Σ (Term _) (\ M′ → M ⇓ M′)
@@ -112,3 +108,6 @@ sn (if 𝒟 ℰ ℱ) | M′ , M⇓M′ | N′ , N⇓N′ | O′ , O⇓O′ with 
 sn (if 𝒟 ℰ ℱ) | LAM M′ , M⇓M′    | N′ , N⇓N′ | O′ , O⇓O′ | val-LAM   | ()
 sn (if 𝒟 ℰ ℱ) | TRUE   , M⇓TRUE  | N′ , N⇓N′ | O′ , O⇓O′ | val-TRUE  | true  = N′ , lem-IF-TRUE M⇓TRUE N⇓N′
 sn (if 𝒟 ℰ ℱ) | FALSE  , M⇓FALSE | N′ , N⇓N′ | O′ , O⇓O′ | val-FALSE | false = O′ , lem-IF-FALSE M⇓FALSE O⇓O′
+
+
+--------------------------------------------------------------------------------
