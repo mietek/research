@@ -92,18 +92,14 @@ tp⇓ (eval-red M↦M′ M′⇓M″) 𝒟 = tp⇓ M′⇓M″ (tp↦ M↦M′ �
 lem-IF-TRUE : ∀ {g} → {M N N′ O : Term g}
                     → M ⇓ TRUE → N ⇓ N′
                     → IF M N O ⇓ N′
-lem-IF-TRUE {M = M} {N} {N′} {O} eval-TRUE N⇓N′
-  = eval-red {M = IF TRUE N O} {N} {N′} red-IF-TRUE N⇓N′
-lem-IF-TRUE {M = M} {N} {N′} {O} (eval-red {M′ = M′} M↦M′ M′⇓TRUE) N⇓N′
-  = eval-red (red-ec (ec-IF ec-[] N O) M↦M′) (lem-IF-TRUE {M = M′} {N} {N′} {O} M′⇓TRUE N⇓N′)
+lem-IF-TRUE eval-TRUE                N⇓N′ = eval-red red-IF-TRUE N⇓N′
+lem-IF-TRUE (eval-red M↦M′ M′⇓TRUE) N⇓N′ = eval-red (red-ec (ec-IF ec-[] _ _) M↦M′) (lem-IF-TRUE M′⇓TRUE N⇓N′)
 
 lem-IF-FALSE : ∀ {g} → {M N O O′ : Term g}
                      → M ⇓ FALSE → O ⇓ O′
                      → IF M N O ⇓ O′
-lem-IF-FALSE {M = M} {N} {O} {O′} eval-FALSE O⇓O′
-  = eval-red {M = IF FALSE N O} {O} {O′} red-IF-FALSE O⇓O′
-lem-IF-FALSE {M = M} {N} {O} {O′} (eval-red {M′ = M′} M↦M′ M′⇓FALSE) O⇓O′
-  = eval-red (red-ec (ec-IF ec-[] N O) M↦M′) (lem-IF-FALSE {M = M′} {N} {O} {O′} M′⇓FALSE O⇓O′)
+lem-IF-FALSE eval-FALSE                O⇓O′ = eval-red red-IF-FALSE O⇓O′
+lem-IF-FALSE (eval-red M↦M′ M′⇓FALSE) O⇓O′ = eval-red (red-ec (ec-IF ec-[] _ _) M↦M′) (lem-IF-FALSE M′⇓FALSE O⇓O′)
 
 sn : ∀ {M A} → ∙ ⊢ M ⦂ A → M ⇓
 sn (var ())
