@@ -1,3 +1,5 @@
+{-# OPTIONS --allow-unsolved-metas #-}
+
 module LR2 where
 
 open import Prelude
@@ -97,17 +99,19 @@ lem-IF-FALSE : ∀ {g} → {M N O O′ : Term g}
 lem-IF-FALSE eval-FALSE                O⇓O′ = eval-red red-IF-FALSE O⇓O′
 lem-IF-FALSE (eval-red M↦M′ M′⇓FALSE) O⇓O′ = eval-red (red-ec (ec-IF ec-[] _ _) M↦M′) (lem-IF-FALSE M′⇓FALSE O⇓O′)
 
-sn : ∀ {M A} → ∙ ⊢ M ⦂ A → M ⇓
-sn (var ())
-sn (lam 𝒟)    = {!!}
-sn (app 𝒟 ℰ)  = {!!}
-sn true       = TRUE , eval-TRUE
-sn false      = FALSE , eval-FALSE
-sn (if 𝒟 ℰ ℱ) with sn 𝒟 | sn ℰ | sn ℱ
-sn (if 𝒟 ℰ ℱ) | M′ , M⇓M′ | N′ , N⇓N′ | O′ , O⇓O′ with val M⇓M′ | tp⇓ M⇓M′ 𝒟
-sn (if 𝒟 ℰ ℱ) | LAM M′ , M⇓M′    | N′ , N⇓N′ | O′ , O⇓O′ | val-LAM   | ()
-sn (if 𝒟 ℰ ℱ) | TRUE   , M⇓TRUE  | N′ , N⇓N′ | O′ , O⇓O′ | val-TRUE  | true  = N′ , lem-IF-TRUE M⇓TRUE N⇓N′
-sn (if 𝒟 ℰ ℱ) | FALSE  , M⇓FALSE | N′ , N⇓N′ | O′ , O⇓O′ | val-FALSE | false = O′ , lem-IF-FALSE M⇓FALSE O⇓O′
+module Impossible
+  where
+    sn : ∀ {M A} → ∙ ⊢ M ⦂ A → M ⇓
+    sn (var ())
+    sn (lam 𝒟)    = {!!}
+    sn (app 𝒟 ℰ)  = {!!}
+    sn true       = TRUE , eval-TRUE
+    sn false      = FALSE , eval-FALSE
+    sn (if 𝒟 ℰ ℱ) with sn 𝒟 | sn ℰ | sn ℱ
+    sn (if 𝒟 ℰ ℱ) | M′ , M⇓M′ | N′ , N⇓N′ | O′ , O⇓O′ with val M⇓M′ | tp⇓ M⇓M′ 𝒟
+    sn (if 𝒟 ℰ ℱ) | LAM M′ , M⇓M′    | N′ , N⇓N′ | O′ , O⇓O′ | val-LAM   | ()
+    sn (if 𝒟 ℰ ℱ) | TRUE   , M⇓TRUE  | N′ , N⇓N′ | O′ , O⇓O′ | val-TRUE  | true  = N′ , lem-IF-TRUE M⇓TRUE N⇓N′
+    sn (if 𝒟 ℰ ℱ) | FALSE  , M⇓FALSE | N′ , N⇓N′ | O′ , O⇓O′ | val-FALSE | false = O′ , lem-IF-FALSE M⇓FALSE O⇓O′
 
 
 --------------------------------------------------------------------------------
