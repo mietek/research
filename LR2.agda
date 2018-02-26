@@ -9,6 +9,7 @@ open import FinLemmas
 open import Vec
 open import VecLemmas
 open import AllVec
+open import LR0
 open import LR1
 
 
@@ -33,6 +34,25 @@ record Val (g : Nat) : Set
       {{iv}} : IsVal term
 
 
+-- TODO
+data AreVals {g} : ∀ {n} → Terms g n → Set
+  where
+    instance
+      ∙   : AreVals ∙
+      _,_ : ∀ {n M} → {τ : Terms g n}
+                    → AreVals τ → IsVal M
+                    → AreVals (τ , M)
+
+
+-- TODO
+record Vals (g n : Nat) : Set
+  where
+    constructor vals
+    field
+      terms  : Terms g n
+      {{av}} : AreVals terms
+
+
 --------------------------------------------------------------------------------
 
 
@@ -49,7 +69,7 @@ data EvCx (g : Nat) : Set
 _[_] : ∀ {g} → EvCx g → Term g → Term g
 ec-[]            [ M ] = M
 ec-fun-APP E N   [ M ] = APP (E [ M ]) N
-ec-APP-arg N E   [ M ] = APP (Val.term N) (E [ M ])
+ec-APP-arg M E   [ N ] = APP (Val.term M) (E [ N ])
 ec-IF      E N O [ M ] = IF (E [ M ]) N O
 
 
@@ -116,26 +136,42 @@ steps done                M⤅M′  = M⤅M′
 steps (step M↦M‴ M‴⤅M″) M″⤅M′ = step M↦M‴ (steps M‴⤅M″ M″⤅M′)
 
 
+-- If `M` reduces to `M′`, then `APP M N` reduces to `APP M′ N`.
+red-cong-fun-APP : ∀ {g} → {M M′ N : Term g}
+                         → M ⤅ M′
+                         → APP M N ⤅ APP M′ N
+red-cong-fun-APP done               = done
+red-cong-fun-APP (step M↦M″ M⤅M′) = step (red-cong (ec-fun-APP ec-[] _) M↦M″) (red-cong-fun-APP M⤅M′)
+
+
+-- If `M` is already a value, and `N` reduces to `N′`, then `APP M N` reduces to `APP M N′`.
+red-cong-APP-arg : ∀ {g} → {M : Val g} {N N′ : Term g}
+                         → N ⤅ N′
+                         → APP (Val.term M) N ⤅ APP (Val.term M) N′
+red-cong-APP-arg         done               = done
+red-cong-APP-arg {M = M} (step N↦N″ N⤅N′) = step (red-cong (ec-APP-arg M ec-[]) N↦N″) (red-cong-APP-arg {M = M} N⤅N′)
+
+
 -- If `M` reduces to `M′`, then `IF M N O` reduces to `IF M′ N O`.
-reds-IF : ∀ {g} → {M M′ N O : Term g}
-                → M ⤅ M′
-                → IF M N O ⤅ IF M′ N O
-reds-IF done                = done
-reds-IF (step M↦M″ M″⤅M′) = step (red-cong (ec-IF ec-[] _ _) M↦M″) (reds-IF M″⤅M′)
+red-cong-IF : ∀ {g} → {M M′ N O : Term g}
+                    → M ⤅ M′
+                    → IF M N O ⤅ IF M′ N O
+red-cong-IF done                = done
+red-cong-IF (step M↦M″ M″⤅M′) = step (red-cong (ec-IF ec-[] _ _) M↦M″) (red-cong-IF M″⤅M′)
 
 
 -- If `M` reduces to `TRUE`, and `N` reduces to `N′`, then `IF M N O` reduces to `N′`.
-reds-IF-TRUE : ∀ {g} → {M N N′ O : Term g}
-                     → M ⤅ TRUE → N ⤅ N′
-                     → IF M N O ⤅ N′
-reds-IF-TRUE M⤅TRUE N⤅N′ = steps (reds-IF M⤅TRUE) (step red-IF-TRUE N⤅N′)
+red-cong-IF-TRUE : ∀ {g} → {M N N′ O : Term g}
+                         → M ⤅ TRUE → N ⤅ N′
+                         → IF M N O ⤅ N′
+red-cong-IF-TRUE M⤅TRUE N⤅N′ = steps (red-cong-IF M⤅TRUE) (step red-IF-TRUE N⤅N′)
 
 
 -- If `M` reduces to `FALSE`, and `O` reduces to `O′`, then `IF M N O` reduces to `O′`.
-reds-IF-FALSE : ∀ {g} → {M N O O′ : Term g}
-                      → M ⤅ FALSE → O ⤅ O′
-                      → IF M N O ⤅ O′
-reds-IF-FALSE M⤅FALSE O⤅O′ = steps (reds-IF M⤅FALSE) (step red-IF-FALSE O⤅O′)
+red-cong-IF-FALSE : ∀ {g} → {M N O O′ : Term g}
+                          → M ⤅ FALSE → O ⤅ O′
+                          → IF M N O ⤅ O′
+red-cong-IF-FALSE M⤅FALSE O⤅O′ = steps (red-cong-IF M⤅FALSE) (step red-IF-FALSE O⤅O′)
 
 
 --------------------------------------------------------------------------------
@@ -154,17 +190,17 @@ M ⇓ = Σ (Val _) (\ M′ → M ⇓ M′)
 
 
 -- If `M` reduces to `TRUE`, and `N` terminates, then `IF M N O` terminates.
-eval-IF-TRUE : ∀ {g} → {M N O : Term g}
+halt-IF-TRUE : ∀ {g} → {M N O : Term g}
                      → M ⤅ TRUE → N ⇓
                      → IF M N O ⇓
-eval-IF-TRUE M⤅TRUE (N′ , N⤅N′) = N′ , reds-IF-TRUE M⤅TRUE N⤅N′
+halt-IF-TRUE M⤅TRUE (N′ , N⤅N′) = N′ , red-cong-IF-TRUE M⤅TRUE N⤅N′
 
 
 -- If `M` reduces to `FALSE`, and `O` terminates, then `IF M N O` terminates.
-eval-IF-FALSE : ∀ {g} → {M N O : Term g}
+halt-IF-FALSE : ∀ {g} → {M N O : Term g}
                       → M ⤅ FALSE → O ⇓
                       → IF M N O ⇓
-eval-IF-FALSE M⤅FALSE (O′ , O⤅O′) = O′ , reds-IF-FALSE M⤅FALSE O⤅O′
+halt-IF-FALSE M⤅FALSE (O′ , O⤅O′) = O′ , red-cong-IF-FALSE M⤅FALSE O⤅O′
 
 
 --------------------------------------------------------------------------------
@@ -173,18 +209,18 @@ eval-IF-FALSE M⤅FALSE (O′ , O⤅O′) = O′ , reds-IF-FALSE M⤅FALSE O⤅O
 private
   module Impossible
     where
-      sn : ∀ {M A} → ∙ ⊢ M ⦂ A
-                   → M ⇓
-      sn (var ())
-      sn (lam 𝒟)    = val (LAM _) , done
-      sn (app 𝒟 ℰ)  = {!!}
-      sn true       = val TRUE , done
-      sn false      = val FALSE , done
-      sn (if 𝒟 ℰ ℱ) with sn 𝒟
-      sn (if 𝒟 ℰ ℱ) | M′ , M⤅M′ with tp⤅ M⤅M′ 𝒟
-      sn (if 𝒟 ℰ ℱ) | val (LAM M″) {{iv-LAM}}   , M⤅LAM-M″ | ()
-      sn (if 𝒟 ℰ ℱ) | val TRUE     {{iv-TRUE}}  , M⤅TRUE   | true  = eval-IF-TRUE M⤅TRUE (sn ℰ)
-      sn (if 𝒟 ℰ ℱ) | val FALSE    {{iv-FALSE}} , M⤅FALSE  | false = eval-IF-FALSE M⤅FALSE (sn ℱ)
+      halt : ∀ {M A} → ∙ ⊢ M ⦂ A
+                     → M ⇓
+      halt (var ())
+      halt (lam 𝒟)    = val (LAM _) , done
+      halt (app 𝒟 ℰ)  = {!!}
+      halt true       = val TRUE , done
+      halt false      = val FALSE , done
+      halt (if 𝒟 ℰ ℱ) with halt 𝒟
+      halt (if 𝒟 ℰ ℱ) | M′ , M⤅M′ with tp⤅ M⤅M′ 𝒟
+      halt (if 𝒟 ℰ ℱ) | val (LAM M″) {{iv-LAM}}   , M⤅LAM-M″ | ()
+      halt (if 𝒟 ℰ ℱ) | val TRUE     {{iv-TRUE}}  , M⤅TRUE   | true  = halt-IF-TRUE M⤅TRUE (halt ℰ)
+      halt (if 𝒟 ℰ ℱ) | val FALSE    {{iv-FALSE}} , M⤅FALSE  | false = halt-IF-FALSE M⤅FALSE (halt ℱ)
 
 
 --------------------------------------------------------------------------------
