@@ -82,9 +82,7 @@ snp↦ : ∀ {A M M′} → M ↦ M′ → ∙ ⊢ M ⦂ A → SN M′ A
                    → SN M A
 snp↦ {𝔹}     M↦M′ 𝒟 (𝒟′ , (M″ , (iv-M″ , M′⤅M″)))     = 𝒟 , (M″ , (iv-M″ , step M↦M′ M′⤅M″))
 snp↦ {A ⊃ B} M↦M′ 𝒟 (𝒟′ , (M″ , (iv-M″ , M′⤅M″)) , f) = 𝒟 , (M″ , (iv-M″ , step M↦M′ M′⤅M″)) , (\ s →
-                                                             snp↦ (red-fun-APP M↦M′)
-                                                                   (app 𝒟 (derp s))
-                                                                   (f s))
+                                                             snp↦ (red-fun-APP M↦M′) (app 𝒟 (derp s)) (f s))
 
 
 -- Big-step reduction preserves SN.
@@ -99,9 +97,7 @@ sn-IF-TRUE : ∀ {C M N O} → M ⤅ TRUE → ∙ ⊢ M ⦂ 𝔹 → SN N C → 
                          → SN (IF M N O) C
 sn-IF-TRUE {𝔹}     M⤅TRUE 𝒟 (ℰ , N⇓)     ℱ = if 𝒟 ℰ ℱ , halt-IF-TRUE M⤅TRUE N⇓
 sn-IF-TRUE {A ⊃ B} M⤅TRUE 𝒟 (ℰ , N⇓ , f) ℱ = if 𝒟 ℰ ℱ , halt-IF-TRUE M⤅TRUE N⇓ , (\ s →
-                                                snp⤅ (step-fun-APP (step-IF-TRUE M⤅TRUE done))
-                                                      (app (if 𝒟 ℰ ℱ) (derp s))
-                                                      (f s))
+                                                snp⤅ (step-fun-APP (step-IF-TRUE M⤅TRUE done)) (app (if 𝒟 ℰ ℱ) (derp s)) (f s))
 
 
 -- IF `M` reduces to `FALSE`, and `O` is SN, then `IF M N O` is SN.
@@ -109,9 +105,7 @@ sn-IF-FALSE : ∀ {C M N O} → M ⤅ FALSE → ∙ ⊢ M ⦂ 𝔹 → ∙ ⊢ N
                           → SN (IF M N O) C
 sn-IF-FALSE {𝔹}     M⤅FALSE 𝒟 ℰ (ℱ , O⇓)     = if 𝒟 ℰ ℱ , halt-IF-FALSE M⤅FALSE O⇓
 sn-IF-FALSE {A ⊃ B} M⤅FALSE 𝒟 ℰ (ℱ , O⇓ , f) = if 𝒟 ℰ ℱ , halt-IF-FALSE M⤅FALSE O⇓ , (\ s →
-                                                  snp⤅ (step-fun-APP (step-IF-FALSE M⤅FALSE done))
-                                                        (app (if 𝒟 ℰ ℱ) (derp s))
-                                                        (f s))
+                                                  snp⤅ (step-fun-APP (step-IF-FALSE M⤅FALSE done)) (app (if 𝒟 ℰ ℱ) (derp s)) (f s))
 
 
 --------------------------------------------------------------------------------
@@ -122,17 +116,15 @@ sn-IF-FALSE {A ⊃ B} M⤅FALSE 𝒟 ℰ (ℱ , O⇓ , f) = if 𝒟 ℰ ℱ , ha
 
 -- Small-step reduction preserves SN in reverse.
 rsnp↦ : ∀ {A M M′} → M ↦ M′ → ∙ ⊢ M ⦂ A → SN M A
-                   → SN M′ A
+                    → SN M′ A
 rsnp↦ {𝔹}     M↦M′ 𝒟 (_ , (M″ , (iv-M″ , M⤅M″)))     = tp↦ M↦M′ 𝒟 , (M″ , (iv-M″ , oops M↦M′ M⤅M″))
 rsnp↦ {A ⊃ B} M↦M′ 𝒟 (_ , (M″ , (iv-M″ , M⤅M″)) , f) = tp↦ M↦M′ 𝒟 , (M″ , (iv-M″ , oops M↦M′ M⤅M″)) , (\ s →
-                                                            rsnp↦ (red-fun-APP M↦M′)
-                                                                   (app 𝒟 (derp s))
-                                                                   (f s))
+                                                            rsnp↦ (red-fun-APP M↦M′) (app 𝒟 (derp s)) (f s))
 
 
 -- Big-step reduction preserves SN in reverse.
 rsnp⤅ : ∀ {A M M′} → M ⤅ M′ → ∙ ⊢ M ⦂ A → SN M A
-                   → SN M′ A
+                    → SN M′ A
 rsnp⤅ done                𝒟 s = s
 rsnp⤅ (step M↦M″ M″⤅M′) 𝒟 s = rsnp⤅ M″⤅M′ (tp↦ M↦M″ 𝒟) (rsnp↦ M↦M″ 𝒟 s)
 
@@ -176,51 +168,49 @@ halt-APP-LAM-SUB {M = M} (M′ , (iv-M′ , SUB-M⤅M′)) = M′ , (iv-M′ , s
 
 
 -- TODO
-sn-APP-LAM-SUB : ∀ {B g M N A} → {τ : Terms 0 g} {Γ : Types g} → {{_ : AreVals τ}} {{_ : IsVal N}}
+sn-APP-LAM-SUB : ∀ {B g M N A} → {τ : Terms 0 g} → {{_ : AreVals τ}} {{_ : IsVal N}}
                                → ∙ ⊢ SUB τ (LAM M) ⦂ A ⊃ B → ∙ ⊢ N ⦂ A → SN (SUB (τ , N) M) B
                                → SN (APP (LAM (SUB (LIFTS τ) M)) N) B
-sn-APP-LAM-SUB {𝔹}       {M = M} 𝒟 ℰ (𝒟′ , SUB-M⇓)     = app 𝒟 ℰ ,
-                                                         halt-APP-LAM-SUB {M = M} SUB-M⇓
-sn-APP-LAM-SUB {B₁ ⊃ B₂} {M = M} 𝒟 ℰ (𝒟′ , SUB-M⇓ , f) = app 𝒟 ℰ ,
-                                                         halt-APP-LAM-SUB {M = M} SUB-M⇓ ,
-                                                         (\ s′ →
-                                                           snp↦ (red-fun-APP (red-APP-LAM-SUB {M = M}))
-                                                                 (app (app 𝒟 ℰ) (derp s′))
-                                                                 (f s′))
+sn-APP-LAM-SUB {𝔹}       {M = M} 𝒟 ℰ (𝒟′ , SUB-M⇓)     = app 𝒟 ℰ , halt-APP-LAM-SUB {M = M} SUB-M⇓
+sn-APP-LAM-SUB {B₁ ⊃ B₂} {M = M} 𝒟 ℰ (𝒟′ , SUB-M⇓ , f) = app 𝒟 ℰ , halt-APP-LAM-SUB {M = M} SUB-M⇓ , (\ s →
+                                                           snp↦ (red-fun-APP (red-APP-LAM-SUB {M = M})) (app (app 𝒟 ℰ) (derp s)) (f s))
 
 
 -- TODO
-sn-SUB : ∀ {g M A} → {τ : Terms 0 g} {Γ : Types g} → {{_ : AreVals τ}}
-                   → SNs τ Γ → Γ ⊢ M ⦂ A
-                   → SN (SUB τ M) A
-sn-SUB σ (var i)    = get σ (zip∋₂ i)
-sn-SUB {{av-τ}} σ (lam 𝒟)    = tp-SUB σ (lam 𝒟) , (LAM _ , (iv-LAM , done)) , (\ s →
-                                 sn-APP-LAM-SUB {{av-τ}} {{{!!}}} (tp-SUB σ (lam 𝒟)) (derp s) (sn-SUB {{av-τ , {!!}}} (σ , s) 𝒟))
-sn-SUB σ (app 𝒟 ℰ)  with sn-SUB σ 𝒟
-sn-SUB σ (app 𝒟 ℰ)  | 𝒟′ , (M′ , SUB-M⤅M′) , f = f (sn-SUB σ ℰ)
-sn-SUB σ true       = true , (TRUE , (iv-TRUE , done))
-sn-SUB σ false      = false , (FALSE , (iv-FALSE , done))
-sn-SUB σ (if 𝒟 ℰ ℱ) with sn-SUB σ 𝒟
-sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , (M′     , (iv-M′    , SUB-M⤅M′))     with tp⤅ SUB-M⤅M′ 𝒟′
-sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , (LAM M″ , (iv-LAM   , SUB-M⤅LAM-M″)) | ()
-sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , (TRUE   , (iv-TRUE  , SUB-M⤅TRUE))   | true  = sn-IF-TRUE SUB-M⤅TRUE 𝒟′ (sn-SUB σ ℰ) (tp-SUB σ ℱ)
-sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , (FALSE  , (iv-FALSE , SUB-M⤅FALSE))  | false = sn-IF-FALSE SUB-M⤅FALSE 𝒟′ (tp-SUB σ ℰ) (sn-SUB σ ℱ)
+mutual
+  sn-SUB : ∀ {g M A} → {τ : Terms 0 g} {Γ : Types g} → {{_ : AreVals τ}}
+                     → SNs τ Γ → Γ ⊢ M ⦂ A
+                     → SN (SUB τ M) A
+  sn-SUB σ (var i)    = get σ (zip∋₂ i)
+  sn-SUB σ (lam  𝒟)   = tp-SUB σ (lam 𝒟) , (LAM _ , (iv-LAM , done)) , (\ s → lem₁ σ 𝒟 s)
+  sn-SUB σ (app 𝒟 ℰ)  with sn-SUB σ 𝒟
+  sn-SUB σ (app 𝒟 ℰ)  | 𝒟′ , (M′ , SUB-M⤅M′) , f = f (sn-SUB σ ℰ)
+  sn-SUB σ true       = true , (TRUE , (iv-TRUE , done))
+  sn-SUB σ false      = false , (FALSE , (iv-FALSE , done))
+  sn-SUB σ (if 𝒟 ℰ ℱ) with sn-SUB σ 𝒟
+  sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , (M′     , (iv-M′    , SUB-M⤅M′))     with tp⤅ SUB-M⤅M′ 𝒟′
+  sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , (LAM M″ , (iv-LAM   , SUB-M⤅LAM-M″)) | ()
+  sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , (TRUE   , (iv-TRUE  , SUB-M⤅TRUE))   | true  = sn-IF-TRUE SUB-M⤅TRUE 𝒟′ (sn-SUB σ ℰ) (tp-SUB σ ℱ)
+  sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , (FALSE  , (iv-FALSE , SUB-M⤅FALSE))  | false = sn-IF-FALSE SUB-M⤅FALSE 𝒟′ (tp-SUB σ ℰ) (sn-SUB σ ℱ)
 
+  -- TODO
+  lem₁ : ∀ {A B g M N} → {τ : Terms 0 g} {Γ : Types g} → {{_ : AreVals τ}}
+                       → SNs τ Γ → Γ , A ⊢ M ⦂ B → SN N A
+                       → SN (APP (LAM (SUB (LIFTS τ) M)) N) B
+  lem₁ {𝔹}       {B} {M = M} σ 𝒟 (ℰ , (N′ , (iv-N′ , N⤅N′)))     = snp⤅ (step-APP-arg N⤅N′)
+                                                                          (app (tp-SUB σ (lam 𝒟)) ℰ)
+                                                                          (lem₂ {B} {𝔹} {M = M} {{iv-N′}}
+                                                                                σ 𝒟 (rsnp⤅ N⤅N′ ℰ (ℰ , (N′ , (iv-N′ , N⤅N′)))))
+  lem₁ {A₁ ⊃ A₂} {B} {M = M} σ 𝒟 (ℰ , (N′ , (iv-N′ , N⤅N′)) , f) = snp⤅ (step-APP-arg N⤅N′)
+                                                                          (app (tp-SUB σ (lam 𝒟)) ℰ)
+                                                                          (lem₂ {B} {A₁ ⊃ A₂} {M = M} {{iv-N′}}
+                                                                                σ 𝒟 (rsnp⤅ N⤅N′ ℰ (ℰ , (N′ , (iv-N′ , N⤅N′)) , f)))
 
--- sn-SUB : ∀ {g M A} → {τ : Terms 0 g} {Γ : Types g}
---                    → SNs τ Γ → Γ ⊢ M ⦂ A
---                    → SN (SUB τ M) A
--- sn-SUB σ (var i)        = get σ (zip∋₂ i)
--- sn-SUB σ (lam 𝒟)        = tp-SUB σ (lam 𝒟) , (val (LAM _) , done) , (\ s → sn-APP-LAM σ 𝒟 s (sn-SUB (σ , s) 𝒟))
--- sn-SUB σ (app 𝒟 ℰ)      with sn-SUB σ 𝒟
--- sn-SUB σ (app 𝒟 ℰ)      | 𝒟′ , (M′ , SUB-M⤅M′) , f = f (sn-SUB σ ℰ)
--- sn-SUB σ true           = true , (val TRUE , done)
--- sn-SUB σ false          = false , (val FALSE , done)
--- sn-SUB σ (if {C} 𝒟 ℰ ℱ) with sn-SUB σ 𝒟
--- sn-SUB σ (if {C} 𝒟 ℰ ℱ) | 𝒟′ , (M′ , SUB-M⤅M′) with tp⤅ SUB-M⤅M′ 𝒟′
--- sn-SUB σ (if {C} 𝒟 ℰ ℱ) | 𝒟′ , (val (LAM M″) {{iv-LAM}}   , SUB-M⤅M′)    | ()
--- sn-SUB σ (if {C} 𝒟 ℰ ℱ) | 𝒟′ , (val TRUE     {{iv-TRUE}}  , SUB-M⤅TRUE)  | true  = sn-IF-TRUE {C} SUB-M⤅TRUE 𝒟′ (sn-SUB σ ℰ) (tp-SUB σ ℱ)
--- sn-SUB σ (if {C} 𝒟 ℰ ℱ) | 𝒟′ , (val FALSE    {{iv-FALSE}} , SUB-M⤅FALSE) | false = sn-IF-FALSE {C} SUB-M⤅FALSE 𝒟′ (tp-SUB σ ℰ) (sn-SUB σ ℱ)
+  -- TODO
+  lem₂ : ∀ {B A g M N′} → {τ : Terms 0 g} {Γ : Types g} → {{_ : IsVal N′}} {{_ : AreVals τ}}
+                        → SNs τ Γ → Γ , A ⊢ M ⦂ B → SN N′ A
+                        → SN (APP (LAM (SUB (LIFTS τ) M)) N′) B
+  lem₂ {M = M} σ 𝒟 s′ = sn-APP-LAM-SUB {M = M} (tp-SUB σ (lam 𝒟)) (derp s′) (sn-SUB (σ , s′) 𝒟)
 
 
 -- TODO

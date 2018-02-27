@@ -232,6 +232,13 @@ _⇓ : ∀ {g} → Term g → Set
 M ⇓ = Σ (Term _) (\ M′ → M ⇓ M′)
 
 
+-- If `N` terminates, then `APP M N` terminates.
+halt-APP-arg : ∀ {g} → {M N : Term g}
+                     → N ⇓ → {{_ : IsVal M}}
+                     → APP M N ⇓
+halt-APP-arg {M = M} (N′ , (iv-N′ , N⤅N′)) = APP M N′ , ({!!} , step-APP-arg N⤅N′)
+
+
 -- If `M` reduces to `TRUE`, and `N` terminates, then `IF M N O` terminates.
 halt-IF-TRUE : ∀ {g} → {M N O : Term g}
                      → M ⤅ TRUE → N ⇓

@@ -5,8 +5,6 @@ open import Category
 open import Fin
 open import FinLemmas
 open import Vec
-open import VecLemmas
-open import AllVec
 
 
 --------------------------------------------------------------------------------
