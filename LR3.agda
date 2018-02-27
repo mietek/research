@@ -108,21 +108,39 @@ halt-APP-LAM {N = N} {τ} M (M′ , SUB-M⤅M′) rewrite comp-CUT-SUB-LIFTS N �
   = M′ , step (red-APP-LAM {M = SUB (LIFTS τ) M} {N} {{refl}}) SUB-M⤅M′
 
 
+
+omg : ∀ {g N} → {τ : Terms 0 g}
+              → (M : Term (suc g))
+              →  APP (LAM (SUB (LIFTS τ) M)) N ↦ SUB (τ , N) M
+omg {N = N} {τ} M rewrite comp-CUT-SUB-LIFTS N τ M
+  = red-APP-LAM {{refl}}
+
 sn-APP-LAM : ∀ {B g M N A} → {τ : Terms 0 g} {Γ : Types g}
-                           → SNs τ Γ → Γ , A ⊢ M ⦂ B → ∙ ⊢ N ⦂ A → SN (SUB (τ , N) M) B
+                           → SNs τ Γ → Γ , A ⊢ M ⦂ B → SN N A → SN (SUB (τ , N) M) B
                            → SN (APP (LAM (SUB (LIFTS τ) M)) N) B
-sn-APP-LAM {𝔹}       {M = M} σ 𝒟 ℰ (𝒟′ , SUB-M⇓)     = app (tp-SUB σ (lam 𝒟)) ℰ ,
+sn-APP-LAM {𝔹}       {M = M} σ 𝒟 s (𝒟′ , SUB-M⇓)     = app (tp-SUB σ (lam 𝒟)) (derp s) ,
                                                        halt-APP-LAM M SUB-M⇓
-sn-APP-LAM {B₁ ⊃ B₂} {M = M} σ 𝒟 ℰ (𝒟′ , SUB-M⇓ , f) = app (tp-SUB σ (lam 𝒟)) ℰ ,
+sn-APP-LAM {B₁ ⊃ B₂} {M = M} {N} {A} {τ} σ 𝒟 s (𝒟′ , SUB-M⇓ , f) = app (tp-SUB σ (lam 𝒟)) (derp s) ,
                                                        halt-APP-LAM M SUB-M⇓ ,
-                                                       (\ s′ → {!!})
+
+   (\ {N′} s′ →
+   let bar : APP (LAM (SUB (LIFTS τ) M)) N ↦ SUB (τ , N) M
+       bar = omg M
+       foo : APP (APP (LAM (SUB (LIFTS τ) M)) N) N′ ↦ APP (SUB (τ , N) M) N′
+       foo = red-cong {M = APP (LAM (SUB (LIFTS τ) M)) N} {SUB (τ , N) M} (ec-fun-APP ec-[] N′) bar {{refl}} {{refl}}
+   in
+     sn-lem₁ {B₂} {M = APP (APP (LAM (SUB (LIFTS τ) M)) N) N′} {APP (SUB (τ , N) M) N′}
+       foo
+       (app (app (tp-SUB σ (lam 𝒟)) (derp s)) (derp s′))
+       (f s′))
+
 
 
 sn-SUB : ∀ {g M A} → {τ : Terms 0 g} {Γ : Types g}
                    → SNs τ Γ → Γ ⊢ M ⦂ A
                    → SN (SUB τ M) A
 sn-SUB σ (var i)        = get σ (zip∋₂ i)
-sn-SUB σ (lam 𝒟)        = tp-SUB σ (lam 𝒟) , (val (LAM _) , done) , (\ s → sn-APP-LAM σ 𝒟 (derp s) (sn-SUB (σ , s) 𝒟))
+sn-SUB σ (lam 𝒟)        = tp-SUB σ (lam 𝒟) , (val (LAM _) , done) , (\ s → sn-APP-LAM σ 𝒟 s (sn-SUB (σ , s) 𝒟))
 sn-SUB σ (app 𝒟 ℰ)      with sn-SUB σ 𝒟
 sn-SUB σ (app 𝒟 ℰ)      | 𝒟′ , (M′ , SUB-M⤅M′) , f = f (sn-SUB σ ℰ)
 sn-SUB σ true           = true , (val TRUE , done)
