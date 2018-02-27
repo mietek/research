@@ -101,28 +101,28 @@ tp-SUB σ 𝒟 = sub (derps σ) 𝒟
 
 
 -- TODO: Clean this up
-fnord : ∀ {g N} → {τ : Terms 0 g}
-                → (M : Term (suc g)) → SUB (τ , N) M ⇓
-                → APP (SUB τ (LAM M)) N ⇓
-fnord {N = N} {τ} M (M′ , SUB-M⤅M′) rewrite comp-CUT-SUB-LIFTS N τ M
+halt-APP-LAM : ∀ {g N} → {τ : Terms 0 g}
+                       → (M : Term (suc g)) → SUB (τ , N) M ⇓
+                       → APP (LAM (SUB (LIFTS τ) M)) N ⇓
+halt-APP-LAM {N = N} {τ} M (M′ , SUB-M⤅M′) rewrite comp-CUT-SUB-LIFTS N τ M
   = M′ , step (red-APP-LAM {M = SUB (LIFTS τ) M} {N} {{refl}}) SUB-M⤅M′
+
+
+sn-APP-LAM : ∀ {B g M N A} → {τ : Terms 0 g} {Γ : Types g}
+                           → SNs τ Γ → Γ , A ⊢ M ⦂ B → ∙ ⊢ N ⦂ A → SN (SUB (τ , N) M) B
+                           → SN (APP (LAM (SUB (LIFTS τ) M)) N) B
+sn-APP-LAM {𝔹}       {M = M} σ 𝒟 ℰ (𝒟′ , SUB-M⇓)     = app (tp-SUB σ (lam 𝒟)) ℰ ,
+                                                       halt-APP-LAM M SUB-M⇓
+sn-APP-LAM {B₁ ⊃ B₂} {M = M} σ 𝒟 ℰ (𝒟′ , SUB-M⇓ , f) = app (tp-SUB σ (lam 𝒟)) ℰ ,
+                                                       halt-APP-LAM M SUB-M⇓ ,
+                                                       (\ s′ → {!!})
 
 
 sn-SUB : ∀ {g M A} → {τ : Terms 0 g} {Γ : Types g}
                    → SNs τ Γ → Γ ⊢ M ⦂ A
                    → SN (SUB τ M) A
-sn-SUB σ (var i) = get σ (zip∋₂ i)
-
-sn-SUB {τ = τ} σ (lam {B = 𝔹} {M}     𝒟) =
-  tp-SUB σ (lam 𝒟) , (val (LAM _) , done) , (\ {N} s →
-    case (sn-SUB (σ , s) 𝒟) of (\ { (𝒟′ , SUB-M⇓) →
-      app (tp-SUB σ (lam 𝒟)) (derp s) , fnord M SUB-M⇓ }))
-
-sn-SUB {τ = τ} σ (lam {B = A ⊃ B} {M} 𝒟) =
-  tp-SUB σ (lam 𝒟) , (val (LAM _) , done) , (\ {N} s →
-    case (sn-SUB (σ , s) 𝒟) of (\ { (𝒟′ , SUB-M⇓ , f) →
-      app (tp-SUB σ (lam 𝒟)) (derp s) , fnord M SUB-M⇓ , {!!} }))
-
+sn-SUB σ (var i)        = get σ (zip∋₂ i)
+sn-SUB σ (lam 𝒟)        = tp-SUB σ (lam 𝒟) , (val (LAM _) , done) , (\ s → sn-APP-LAM σ 𝒟 (derp s) (sn-SUB (σ , s) 𝒟))
 sn-SUB σ (app 𝒟 ℰ)      with sn-SUB σ 𝒟
 sn-SUB σ (app 𝒟 ℰ)      | 𝒟′ , (M′ , SUB-M⤅M′) , f = f (sn-SUB σ ℰ)
 sn-SUB σ true           = true , (val TRUE , done)
