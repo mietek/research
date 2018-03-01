@@ -23,6 +23,16 @@ data Val {g} : Term g → Set
       VFALSE : Val FALSE
 
 
+-- `Vals τ` says that all terms `τ` are values.
+data Vals {g} : ∀ {n} → Terms g n → Set
+  where
+    instance
+      ∙   : Vals ∙
+      _,_ : ∀ {n M} → {τ : Terms g n}
+                    → Vals τ → Val M
+                    → Vals (τ , M)
+
+
 --------------------------------------------------------------------------------
 
 
@@ -105,7 +115,7 @@ det⤇ (cong-IF M⤇M′₁)      (cong-IF M⤇M′₂)      = (\ M′ → IF M�
 tp⤇ : ∀ {g M M′ A} → {Γ : Types g}
                     → M ⤇ M′ → Γ ⊢ M ⦂ A
                     → Γ ⊢ M′ ⦂ A
-tp⤇ (do M↦M′)            𝒟         = tp↦ M↦M′ 𝒟
+tp⤇ (do M↦M′)           𝒟          = tp↦ M↦M′ 𝒟
 tp⤇ (cong-APP M⤇M′)     (app 𝒟 ℰ)  = app (tp⤇ M⤇M′ 𝒟) ℰ
 tp⤇ (cong-APP-LAM M⤇M′) (app 𝒟 ℰ)  = app 𝒟 (tp⤇ M⤇M′ ℰ)
 tp⤇ (cong-IF M⤇M′)      (if 𝒟 ℰ ℱ) = if (tp⤇ M⤇M′ 𝒟) ℰ ℱ

@@ -96,6 +96,7 @@ ids : ∀ {g} → {Γ : Types g}
 ids = vars id⊇
 
 
+-- Substitution is type-preserving.
 sub : ∀ {g n M A} → {Γ : Types g} {τ : Terms g n} {Ξ : Types n}
                   → Γ ⊢ τ ⦂ Ξ all → Ξ ⊢ M ⦂ A
                   → Γ ⊢ SUB τ M ⦂ A

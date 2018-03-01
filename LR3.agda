@@ -16,19 +16,6 @@ open import LR2
 --------------------------------------------------------------------------------
 
 
--- `Vals τ` says that all terms `τ` are values.
-data Vals {g} : ∀ {n} → Terms g n → Set
-  where
-    instance
-      ∙   : Vals ∙
-      _,_ : ∀ {n M} → {τ : Terms g n}
-                    → Vals τ → Val M
-                    → Vals (τ , M)
-
-
---------------------------------------------------------------------------------
-
-
 -- `SN _ A` is the strong normalisation predicate on terms at type `A`.
 SN : Term 0 → Type → Set
 SN M 𝔹       = ∙ ⊢ M ⦂ 𝔹 × M ⇓
@@ -124,16 +111,9 @@ derps σ = maps derp σ
 --------------------------------------------------------------------------------
 
 
--- Substitution is type-preserving.
-tp-SUB : ∀ {g M A} → {τ : Terms 0 g} {Γ : Types g} → {{_ : Vals τ}}
-                   → SNs τ Γ → Γ ⊢ M ⦂ A
-                   → ∙ ⊢ SUB τ M ⦂ A
-tp-SUB σ 𝒟 = sub (derps σ) 𝒟
-
-
 -- TODO
 red-APP-LAM-SUB : ∀ {g M N} → {τ : Terms 0 g} → {{_ : Val N}}
-                         → APP (LAM (SUB (LIFTS τ) M)) N ⤇ SUB (τ , N) M
+                            → APP (LAM (SUB (LIFTS τ) M)) N ⤇ SUB (τ , N) M
 red-APP-LAM-SUB {M = M} {N} {τ} rewrite simp-CUT-SUB N τ M ⁻¹ = do red-APP-LAM
 
 
@@ -175,7 +155,7 @@ sn-SUB : ∀ {g M A} → {τ : Terms 0 g} {Γ : Types g} → {{_ : Vals τ}}
                    → SNs τ Γ → Γ ⊢ M ⦂ A
                    → SN (SUB τ M) A
 sn-SUB σ (var i)    = get σ (zip∋₂ i)
-sn-SUB {{Vτ}} σ (lam {A} {M = M} 𝒟) = let 𝒟′ = tp-SUB σ (lam 𝒟) in
+sn-SUB {{Vτ}} σ (lam {A} {M = M} 𝒟) = let 𝒟′ = sub (derps σ) (lam 𝒟) in
                                         𝒟′ , (LAM _ , done , VLAM) , (\ s →
                                           case herp {A} s of (\ { (N′ , ℰ , (N⤇*N′ , VN′) , s′) →
                                             snpr⤇* (congs-APP-LAM N⤇*N′)
@@ -190,8 +170,8 @@ sn-SUB σ false      = false , FALSE , done , VFALSE
 sn-SUB σ (if 𝒟 ℰ ℱ) with sn-SUB σ 𝒟
 sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , M′    , SUB-M⤇*M′    , VM′    with tp⤇* SUB-M⤇*M′ 𝒟′
 sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , LAM _ , _             , VLAM   | ()
-sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , TRUE  , SUB-M⤇*TRUE  , VTRUE  | true  = sn-IF-TRUE SUB-M⤇*TRUE 𝒟′ (sn-SUB σ ℰ) (tp-SUB σ ℱ)
-sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , FALSE , SUB-M⤇*FALSE , VFALSE | false = sn-IF-FALSE SUB-M⤇*FALSE 𝒟′ (tp-SUB σ ℰ) (sn-SUB σ ℱ)
+sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , TRUE  , SUB-M⤇*TRUE  , VTRUE  | true  = sn-IF-TRUE SUB-M⤇*TRUE 𝒟′ (sn-SUB σ ℰ) (sub (derps σ) ℱ)
+sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , FALSE , SUB-M⤇*FALSE , VFALSE | false = sn-IF-FALSE SUB-M⤇*FALSE 𝒟′ (sub (derps σ) ℰ) (sn-SUB σ ℱ)
 
 
 --------------------------------------------------------------------------------
