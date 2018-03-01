@@ -144,10 +144,10 @@ sn-APP-LAM-SUB {B₁ ⊃ B₂} {M = M} 𝒟 ℰ (𝒟′ , SUB-M⇓ , f) = app �
 
 
 -- TODO
-herp : ∀ {A M} → SN M A
+frob : ∀ {A M} → SN M A
                → Σ (Term 0) (\ M′ → ∙ ⊢ M ⦂ A × M ⇓ M′ × SN M′ A)
-herp {𝔹}     s@(𝒟 , (M′ , M⇓M′))     = M′ , (𝒟 , M⇓M′ , snp⇓ M⇓M′ 𝒟 s)
-herp {A ⊃ B} s@(𝒟 , (M′ , M⇓M′) , f) = M′ , (𝒟 , M⇓M′ , snp⇓ M⇓M′ 𝒟 s)
+frob {𝔹}     s@(𝒟 , (M′ , M⇓M′))     = M′ , (𝒟 , M⇓M′ , snp⇓ M⇓M′ 𝒟 s)
+frob {A ⊃ B} s@(𝒟 , (M′ , M⇓M′) , f) = M′ , (𝒟 , M⇓M′ , snp⇓ M⇓M′ 𝒟 s)
 
 
 -- TODO
@@ -157,7 +157,7 @@ sn-SUB : ∀ {g M A} → {τ : Terms 0 g} {Γ : Types g} → {{_ : Vals τ}}
 sn-SUB σ (var i)    = get σ (zip∋₂ i)
 sn-SUB {{Vτ}} σ (lam {A} {M = M} 𝒟) = let 𝒟′ = sub (derps σ) (lam 𝒟) in
                                         𝒟′ , (LAM _ , done , VLAM) , (\ s →
-                                          case herp {A} s of (\ { (N′ , ℰ , (N⤇*N′ , VN′) , s′) →
+                                          case frob {A} s of (\ { (N′ , ℰ , (N⤇*N′ , VN′) , s′) →
                                             snpr⤇* (congs-APP-LAM N⤇*N′)
                                                     (app 𝒟′ ℰ)
                                                     (sn-APP-LAM-SUB {M = M} {{Vτ}} {{VN′}} 𝒟′
@@ -184,16 +184,16 @@ sn {A} {M} 𝒟 = subst (\ M′ → SN M′ A) (id-SUB M) (sn-SUB ∙ 𝒟)
 
 
 -- Every SN term terminates.
-halt-sn : ∀ {A M} → SN M A
-                  → M ⇓
-halt-sn {𝔹}     (𝒟 , M⇓)     = M⇓
-halt-sn {A ⊃ B} (𝒟 , M⇓ , f) = M⇓
+herp : ∀ {A M} → SN M A
+               → M ⇓
+herp {𝔹}     (𝒟 , M⇓)     = M⇓
+herp {A ⊃ B} (𝒟 , M⇓ , f) = M⇓
 
 
 -- Every well-typed term terminates.
 halt : ∀ {A M} → ∙ ⊢ M ⦂ A
                → M ⇓
-halt {A} 𝒟 = halt-sn {A} (sn 𝒟)
+halt {A} 𝒟 = herp {A} (sn 𝒟)
 
 
 --------------------------------------------------------------------------------
