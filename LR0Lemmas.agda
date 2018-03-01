@@ -83,6 +83,10 @@ id-REN : ∀ {g} → (M : Term g)
 id-REN (VAR I)    = VAR & id-REN∋ I
 id-REN (LAM M)    = LAM & id-REN M
 id-REN (APP M N)  = APP & id-REN M ⊗ id-REN N
+id-REN (PAIR M N) = PAIR & id-REN M ⊗ id-REN N
+id-REN (FST M)    = FST & id-REN M
+id-REN (SND M)    = SND & id-REN M
+id-REN UNIT       = refl
 id-REN TRUE       = refl
 id-REN FALSE      = refl
 id-REN (IF M N O) = IF & id-REN M ⊗ id-REN N ⊗ id-REN O
@@ -99,6 +103,10 @@ comp-REN : ∀ {g g′ g″} → (e₁ : g′ ≥ g) (e₂ : g″ ≥ g′) (M :
 comp-REN e₁ e₂ (VAR I)    = VAR & comp-REN∋ e₁ e₂ I
 comp-REN e₁ e₂ (LAM M)    = LAM & comp-REN (keep e₁) (keep e₂) M
 comp-REN e₁ e₂ (APP M N)  = APP & comp-REN e₁ e₂ M ⊗ comp-REN e₁ e₂ N
+comp-REN e₁ e₂ (PAIR M N) = PAIR & comp-REN e₁ e₂ M ⊗ comp-REN e₁ e₂ N
+comp-REN e₁ e₂ (FST M)    = FST & comp-REN e₁ e₂ M
+comp-REN e₁ e₂ (SND M)    = SND & comp-REN e₁ e₂ M
+comp-REN e₁ e₂ UNIT       = refl
 comp-REN e₁ e₂ TRUE       = refl
 comp-REN e₁ e₂ FALSE      = refl
 comp-REN e₁ e₂ (IF M N O) = IF & comp-REN e₁ e₂ M ⊗ comp-REN e₁ e₂ N ⊗ comp-REN e₁ e₂ O
@@ -163,6 +171,10 @@ comp-SUB-REN τ e (LAM M)    = LAM & ( (\ x′ → SUB x′ M) & comp-LIFTS-GETS
                                     ⋮ comp-SUB-REN (LIFTS τ) (keep e) M
                                     )
 comp-SUB-REN τ e (APP M N)  = APP & comp-SUB-REN τ e M ⊗ comp-SUB-REN τ e N
+comp-SUB-REN τ e (PAIR M N) = PAIR & comp-SUB-REN τ e M ⊗ comp-SUB-REN τ e N
+comp-SUB-REN τ e (FST M)    = FST & comp-SUB-REN τ e M
+comp-SUB-REN τ e (SND M)    = SND & comp-SUB-REN τ e M
+comp-SUB-REN τ e UNIT       = refl
 comp-SUB-REN τ e TRUE       = refl
 comp-SUB-REN τ e FALSE      = refl
 comp-SUB-REN τ e (IF M N O) = IF & comp-SUB-REN τ e M ⊗ comp-SUB-REN τ e N ⊗ comp-SUB-REN τ e O
@@ -190,6 +202,10 @@ comp-REN-SUB e τ (LAM M)    = LAM & ( (\ x′ → SUB x′ M) & comp-LIFTS-RENS
                                     ⋮ comp-REN-SUB (keep e) (LIFTS τ) M
                                     )
 comp-REN-SUB e τ (APP M N)  = APP & comp-REN-SUB e τ M ⊗ comp-REN-SUB e τ N
+comp-REN-SUB e τ (PAIR M N) = PAIR & comp-REN-SUB e τ M ⊗ comp-REN-SUB e τ N
+comp-REN-SUB e τ (FST M)    = FST & comp-REN-SUB e τ M
+comp-REN-SUB e τ (SND M)    = SND & comp-REN-SUB e τ M
+comp-REN-SUB e τ UNIT       = refl
 comp-REN-SUB e τ TRUE       = refl
 comp-REN-SUB e τ FALSE      = refl
 comp-REN-SUB e τ (IF M N O) = IF & comp-REN-SUB e τ M ⊗ comp-REN-SUB e τ N ⊗ comp-REN-SUB e τ O
@@ -216,6 +232,10 @@ id-SUB : ∀ {g} → (M : Term g)
 id-SUB (VAR I)    = GET-VAR I
 id-SUB (LAM M)    = LAM & id-SUB M
 id-SUB (APP M N)  = APP & id-SUB M ⊗ id-SUB N
+id-SUB (PAIR M N) = PAIR & id-SUB M ⊗ id-SUB N
+id-SUB (FST M)    = FST & id-SUB M
+id-SUB (SND M)    = SND & id-SUB M
+id-SUB UNIT       = refl
 id-SUB TRUE       = refl
 id-SUB FALSE      = refl
 id-SUB (IF M N O) = IF & id-SUB M ⊗ id-SUB N ⊗ id-SUB O
@@ -242,6 +262,10 @@ comp-SUB τ υ (LAM M)    = LAM & ( (\ x′ → SUB x′ M) & comp-LIFTS-SUBS τ
                                 ⋮ comp-SUB (LIFTS τ) (LIFTS υ) M
                                 )
 comp-SUB τ υ (APP M N)  = APP & comp-SUB τ υ M ⊗ comp-SUB τ υ N
+comp-SUB τ υ (PAIR M N) = PAIR & comp-SUB τ υ M ⊗ comp-SUB τ υ N
+comp-SUB τ υ (FST M)    = FST & comp-SUB τ υ M
+comp-SUB τ υ (SND M)    = SND & comp-SUB τ υ M
+comp-SUB τ υ UNIT       = refl
 comp-SUB τ υ TRUE       = refl
 comp-SUB τ υ FALSE      = refl
 comp-SUB τ υ (IF M N O) = IF & comp-SUB τ υ M ⊗ comp-SUB τ υ N ⊗ comp-SUB τ υ O

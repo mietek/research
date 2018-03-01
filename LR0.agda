@@ -14,6 +14,8 @@ infixr 8 _⊃_
 data Type : Set
   where
     𝔹   : Type
+    𝟙   : Type
+    _∧_ : Type → Type → Type
     _⊃_ : Type → Type → Type
 
 
@@ -29,6 +31,10 @@ data Term (g : Nat) : Set
     VAR   : Fin g → Term g
     LAM   : Term (suc g) → Term g
     APP   : Term g → Term g → Term g
+    UNIT  : Term g
+    PAIR  : Term g → Term g → Term g
+    FST   : Term g → Term g
+    SND   : Term g → Term g
     TRUE  : Term g
     FALSE : Term g
     IF    : Term g → Term g → Term g → Term g
@@ -46,6 +52,10 @@ REN : ∀ {g g′} → g′ ≥ g → Term g
 REN e (VAR I)    = VAR (REN∋ e I)
 REN e (LAM M)    = LAM (REN (keep e) M)
 REN e (APP M N)  = APP (REN e M) (REN e N)
+REN e UNIT       = UNIT
+REN e (PAIR M N) = PAIR (REN e M) (REN e N)
+REN e (FST M)    = FST (REN e M)
+REN e (SND M)    = SND (REN e M)
 REN e TRUE       = TRUE
 REN e FALSE      = FALSE
 REN e (IF M N O) = IF (REN e M) (REN e N) (REN e O)
@@ -91,6 +101,10 @@ SUB : ∀ {g n} → Terms g n → Term n
 SUB τ (VAR I)    = GET τ I
 SUB τ (LAM M)    = LAM (SUB (LIFTS τ) M)
 SUB τ (APP M N)  = APP (SUB τ M) (SUB τ N)
+SUB τ UNIT       = UNIT
+SUB τ (PAIR M N) = PAIR (SUB τ M) (SUB τ N)
+SUB τ (FST M)    = FST (SUB τ M)
+SUB τ (SND M)    = SND (SUB τ M)
 SUB τ TRUE       = TRUE
 SUB τ FALSE      = FALSE
 SUB τ (IF M N O) = IF (SUB τ M) (SUB τ N) (SUB τ O)
