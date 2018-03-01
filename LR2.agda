@@ -321,7 +321,7 @@ reds-FST-PAIR M⤇*PAIR = steps (congs-FST M⤇*PAIR) (step (red FST-PAIR) done)
 
 
 -- If `M` reduces to `PAIR M′ N′`, then `SND M` reduces to `N′`.
-reds-SND-PAIR : ∀ {g} → {M M′ N′ : Term g} → {{_ : Val N′}} {{_ : Val M′}}
+reds-SND-PAIR : ∀ {g} → {M M′ N′ : Term g} → {{_ : Val M′}} {{_ : Val N′}}
                       → M ⤇* PAIR M′ N′
                       → SND M ⤇* N′
 reds-SND-PAIR M⤇*PAIR = steps (congs-SND M⤇*PAIR) (step (red SND-PAIR) done)
@@ -388,10 +388,10 @@ big-red-FST-PAIR {{VM′}} M⤇*PAIR = reds-FST-PAIR M⤇*PAIR , VM′
 
 
 -- If `M` reduces to `PAIR M′ N′`, then `SND M` reduces to `N′`.
-big-red-SND-PAIR : ∀ {g} → {M M′ N′ : Term g} → {{_ : Val N′}} {{_ : Val M′}}
+big-red-SND-PAIR : ∀ {g} → {M M′ N′ : Term g} → {{_ : Val M′}} {{_ : Val N′}}
                          → M ⤇* PAIR M′ N′
                          → SND M ⇓ N′
-big-red-SND-PAIR {{VN′}} M⤇*PAIR = reds-SND-PAIR M⤇*PAIR , VN′
+big-red-SND-PAIR {{_}} {{VN′}} M⤇*PAIR = reds-SND-PAIR M⤇*PAIR , VN′
 
 
 -- If `M` reduces to `TRUE` and `N` reduces to `N′`, then `IF M N O` reduces to `N′`.
@@ -447,7 +447,7 @@ halt-FST-PAIR {M′ = M′} M⤇*PAIR = M′ , big-red-FST-PAIR M⤇*PAIR
 
 
 -- If `M` reduces to `PAIR M′ N′`, then `SND M` terminates.
-halt-SND-PAIR : ∀ {g} → {M M′ N′ : Term g} → {{_ : Val N′}} {{_ : Val M′}}
+halt-SND-PAIR : ∀ {g} → {M M′ N′ : Term g} → {{_ : Val M′}} {{_ : Val N′}}
                       → M ⤇* PAIR M′ N′
                       → SND M ⇓
 halt-SND-PAIR {N′ = N′} M⤇*PAIR = N′ , big-red-SND-PAIR M⤇*PAIR
