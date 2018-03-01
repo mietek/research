@@ -160,7 +160,8 @@ mutual
                             → SN! (IF M N O) C
   sn!-IF-TRUE {𝔹}     M⤇*TRUE 𝒟 ℰ ℱ ∙         = ∙
   sn!-IF-TRUE {𝟙}     M⤇*TRUE 𝒟 ℰ ℱ ∙         = ∙
-  sn!-IF-TRUE {A ∧ B} M⤇*TRUE 𝒟 ℰ ℱ (s₁ , s₂) = {!!}
+  sn!-IF-TRUE {A ∧ B} M⤇*TRUE 𝒟 ℰ ℱ (s₁ , s₂) = snpr⤇* (congs-FST (reds-IF-TRUE M⤇*TRUE done)) (fst (if 𝒟 ℰ ℱ)) s₁ ,
+                                                 snpr⤇* (congs-SND (reds-IF-TRUE M⤇*TRUE done)) (snd (if 𝒟 ℰ ℱ)) s₂
   sn!-IF-TRUE {A ⊃ B} M⤇*TRUE 𝒟 ℰ ℱ f s       = snpr⤇* (congs-APP (reds-IF-TRUE M⤇*TRUE done)) (app (if 𝒟 ℰ ℱ) (derp s)) (f s)
 
 
@@ -174,7 +175,8 @@ mutual
                              → SN! (IF M N O) C
   sn!-IF-FALSE {𝔹}     M⤇*FALSE 𝒟 ℰ ℱ ∙         = ∙
   sn!-IF-FALSE {𝟙}     M⤇*FALSE 𝒟 ℰ ℱ ∙         = ∙
-  sn!-IF-FALSE {A ∧ B} M⤇*FALSE 𝒟 ℰ ℱ (s₁ , s₂) = {!!}
+  sn!-IF-FALSE {A ∧ B} M⤇*FALSE 𝒟 ℰ ℱ (s₁ , s₂) = snpr⤇* (congs-FST (reds-IF-FALSE M⤇*FALSE done)) (fst (if 𝒟 ℰ ℱ)) s₁ ,
+                                                   snpr⤇* (congs-SND (reds-IF-FALSE M⤇*FALSE done)) (snd (if 𝒟 ℰ ℱ)) s₂
   sn!-IF-FALSE {A ⊃ B} M⤇*FALSE 𝒟 ℰ ℱ f s       = snpr⤇* (congs-APP (reds-IF-FALSE M⤇*FALSE done)) (app (if 𝒟 ℰ ℱ) (derp s)) (f s)
 
 
@@ -228,7 +230,8 @@ mutual
                                   → SN! (APP (LAM (SUB (LIFTS τ) M)) N) B
   sn!-APP-LAM-SUB {𝔹}       {M = M} 𝒟 ℰ ∙         = ∙
   sn!-APP-LAM-SUB {𝟙}       {M = M} 𝒟 ℰ ∙         = ∙
-  sn!-APP-LAM-SUB {B₁ ∧ B₂} {M = M} 𝒟 ℰ (s₁ , s₂) = {!!}
+  sn!-APP-LAM-SUB {B₁ ∧ B₂} {M = M} 𝒟 ℰ (s₁ , s₂) = snpr⤇ (cong-FST (red-APP-LAM-SUB {M = M})) (fst (app 𝒟 ℰ)) s₁ ,
+                                                    snpr⤇ (cong-SND (red-APP-LAM-SUB {M = M})) (snd (app 𝒟 ℰ)) s₂
   sn!-APP-LAM-SUB {B₁ ⊃ B₂} {M = M} 𝒟 ℰ f s       = snpr⤇ (cong-APP (red-APP-LAM-SUB {M = M})) (app (app 𝒟 ℰ) (derp s)) (f s)
 
 
