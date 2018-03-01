@@ -97,12 +97,12 @@ snp⇓ (M⤇*M′ , VM′) 𝒟 s = snp⤇* M⤇*M′ 𝒟 s
 
 
 -- `SNs Γ` is the strong normalisation predicate on substitutions at all types `Γ`.
-SNs : ∀ {g} → (τ : Terms 0 g) → Types g → {{_ : Vals τ}} → Set
+SNs : ∀ {g} → (τ : Terms 0 g) → Types g → Set
 SNs τ Γ = All (\ { (M , A) → SN M A }) (zip τ Γ)
 
 
 -- Every SN substitution is well-typed.
-derps : ∀ {g} → {τ : Terms 0 g} {Γ : Types g} → {{_ : Vals τ}}
+derps : ∀ {g} → {τ : Terms 0 g} {Γ : Types g}
               → SNs τ Γ
               → ∙ ⊢ τ ⦂ Γ all
 derps σ = maps derp σ
@@ -178,9 +178,9 @@ sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , FALSE , SUB-M⤇*FALSE , VFALSE | false 
 
 
 -- Every well-typed term is SN.
-sn : ∀ {M A} → ∙ ⊢ M ⦂ A
+sn : ∀ {A M} → ∙ ⊢ M ⦂ A
              → SN M A
-sn {M} {A} 𝒟 = subst (\ M′ → SN M′ A) (id-SUB M) (sn-SUB ∙ 𝒟)
+sn {A} {M} 𝒟 = subst (\ M′ → SN M′ A) (id-SUB M) (sn-SUB ∙ 𝒟)
 
 
 -- Every SN term terminates.
