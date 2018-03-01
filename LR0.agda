@@ -38,6 +38,9 @@ Terms : Nat → Nat → Set
 Terms g n = Vec (Term g) n
 
 
+--------------------------------------------------------------------------------
+
+
 REN : ∀ {g g′} → g′ ≥ g → Term g
                → Term g′
 REN e (VAR I)    = VAR (REN∋ e I)

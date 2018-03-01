@@ -29,8 +29,8 @@ open import LR0
 
                       GET (SUBS τ υ) I ≡ (SUB τ ∘ GET υ) I                      comp-SUB-GET
                       SUB (GETS τ e) M ≡ (SUB τ ∘ REN e) M                      comp-SUB-REN
-                  (SUB (τ , M) ∘ WK) N ≡ SUB τ N                                id-cons-WK-SUB
-                (SUBS (τ , M) ∘ WKS) υ ≡ SUBS τ υ                               id-cons-WKS-SUBS
+                  (SUB (τ , M) ∘ WK) N ≡ SUB τ N                                simp-SUB
+                (SUBS (τ , M) ∘ WKS) υ ≡ SUBS τ υ                               simp-SUBS
 
                       SUB (RENS e τ) M ≡ (REN e ∘ SUB τ) M                      comp-REN-SUB
                      SUBS (RENS e τ) υ ≡ (RENS e ∘ SUBS τ) υ                    comp-RENS-SUBS
@@ -43,6 +43,8 @@ open import LR0
                      SUBS (SUBS τ υ) ν ≡ (SUBS τ ∘ SUBS υ) ν                    assoc-SUBS
                                                                                 𝐓𝐞𝐫𝐦𝐬
                                                                                 𝐒𝐔𝐁
+
+             (CUT M ∘ SUB (LIFTS τ)) N ≡ SUB (τ , M) N                          simp-CUT-SUB
 -}
 --------------------------------------------------------------------------------
 
@@ -166,16 +168,16 @@ comp-SUB-REN τ e FALSE      = refl
 comp-SUB-REN τ e (IF M N O) = IF & comp-SUB-REN τ e M ⊗ comp-SUB-REN τ e N ⊗ comp-SUB-REN τ e O
 
 
-id-cons-WK-SUB : ∀ {g n} → (τ : Terms g n) (M : Term g) (N : Term n)
-                         → (SUB (τ , M) ∘ WK) N ≡ SUB τ N
-id-cons-WK-SUB τ M N = comp-SUB-REN (τ , M) (drop id) N ⁻¹
-                     ⋮ (\ x′ → SUB x′ N) & id-GETS τ
+simp-SUB : ∀ {g n} → (τ : Terms g n) (M : Term g) (N : Term n)
+                   → (SUB (τ , M) ∘ WK) N ≡ SUB τ N
+simp-SUB τ M N = comp-SUB-REN (τ , M) (drop id) N ⁻¹
+               ⋮ (\ x′ → SUB x′ N) & id-GETS τ
 
 
-id-cons-WKS-SUBS : ∀ {g n m} → (τ : Terms g n) (M : Term g) (υ : Terms n m)
-                             → (SUBS (τ , M) ∘ WKS) υ ≡ SUBS τ υ
-id-cons-WKS-SUBS τ M ∙       = refl
-id-cons-WKS-SUBS τ M (υ , N) = _,_ & id-cons-WKS-SUBS τ M υ ⊗ id-cons-WK-SUB τ M N
+simp-SUBS : ∀ {g n m} → (τ : Terms g n) (M : Term g) (υ : Terms n m)
+                      → (SUBS (τ , M) ∘ WKS) υ ≡ SUBS τ υ
+simp-SUBS τ M ∙       = refl
+simp-SUBS τ M (υ , N) = _,_ & simp-SUBS τ M υ ⊗ simp-SUB τ M N
 
 
 --------------------------------------------------------------------------------
@@ -201,7 +203,7 @@ comp-RENS-SUBS e τ (υ , M) = _,_ & comp-RENS-SUBS e τ υ ⊗ comp-REN-SUB e �
 
 comp-LIFTS-SUBS : ∀ {g n m} → (τ : Terms g n) (υ : Terms n m)
                             → (SUBS (LIFTS τ) ∘ LIFTS) υ ≡ (LIFTS ∘ SUBS τ) υ
-comp-LIFTS-SUBS τ υ = (_, VZ) & ( id-cons-WKS-SUBS (WKS τ) VZ υ
+comp-LIFTS-SUBS τ υ = (_, VZ) & ( simp-SUBS (WKS τ) VZ υ
                                 ⋮ comp-RENS-SUBS (drop id) τ υ
                                 )
 
@@ -228,7 +230,7 @@ lid-SUBS (τ , M) = _,_ & lid-SUBS τ ⊗ id-SUB M
 rid-SUBS : ∀ {g n} → (τ : Terms g n)
                    → SUBS τ IDS ≡ τ
 rid-SUBS ∙       = refl
-rid-SUBS (τ , M) = (_, M) & ( id-cons-WKS-SUBS τ M IDS
+rid-SUBS (τ , M) = (_, M) & ( simp-SUBS τ M IDS
                             ⋮ rid-SUBS τ
                             )
 
@@ -268,6 +270,17 @@ instance
         ; idℱ   = funext! id-SUB
         ; compℱ = \ υ τ → funext! (comp-SUB τ υ)
         }
+
+
+--------------------------------------------------------------------------------
+
+
+simp-CUT-SUB : ∀ {g n} → (M : Term g) (τ : Terms g n) (N : Term (suc n))
+                       → (CUT M ∘ SUB (LIFTS τ)) N ≡ SUB (τ , M) N
+simp-CUT-SUB M τ N = comp-SUB (IDS , M) (LIFTS τ) N ⁻¹
+                   ⋮ (\ τ′ → SUB (τ′ , M) N) & ( simp-SUBS IDS M τ
+                                                ⋮ lid-SUBS τ
+                                                )
 
 
 --------------------------------------------------------------------------------
