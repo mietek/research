@@ -25,8 +25,6 @@ data _⊢_⦂_ {g} (Γ : Types g) : Term g → Type → Set
     app : ∀ {A B M N} → Γ ⊢ M ⦂ A ⊃ B → Γ ⊢ N ⦂ A
                       → Γ ⊢ APP M N ⦂ B
 
-    unit : Γ ⊢ UNIT ⦂ 𝟙
-
     pair : ∀ {A B M N} → Γ ⊢ M ⦂ A → Γ ⊢ N ⦂ B
                        → Γ ⊢ PAIR M N ⦂ A ∧ B
 
@@ -35,6 +33,11 @@ data _⊢_⦂_ {g} (Γ : Types g) : Term g → Type → Set
 
     snd : ∀ {A B M} → Γ ⊢ M ⦂ A ∧ B
                     → Γ ⊢ SND M ⦂ B
+
+    unit : Γ ⊢ UNIT ⦂ 𝟙
+
+    abort : ∀ {C M} → Γ ⊢ M ⦂ 𝟘
+                    → Γ ⊢ ABORT M ⦂ C
 
     true : Γ ⊢ TRUE ⦂ 𝔹
 
@@ -58,10 +61,11 @@ ren : ∀ {g g′ e M A} → {Γ : Types g} {Γ′ : Types g′}
 ren η (var i)    = var (ren∋ η i)
 ren η (lam 𝒟)    = lam (ren (keep η) 𝒟)
 ren η (app 𝒟 ℰ)  = app (ren η 𝒟) (ren η ℰ)
-ren η unit       = unit
 ren η (pair 𝒟 ℰ) = pair (ren η 𝒟) (ren η ℰ)
 ren η (fst 𝒟)    = fst (ren η 𝒟)
 ren η (snd 𝒟)    = snd (ren η 𝒟)
+ren η unit       = unit
+ren η (abort 𝒟)  = abort (ren η 𝒟)
 ren η true       = true
 ren η false      = false
 ren η (if 𝒟 ℰ ℱ) = if (ren η 𝒟) (ren η ℰ) (ren η ℱ)
@@ -118,10 +122,11 @@ sub : ∀ {g n M A} → {Γ : Types g} {τ : Terms g n} {Ξ : Types n}
 sub ξ (var i)    = get ξ (zip∋₂ i)
 sub ξ (lam 𝒟)    = lam (sub (lifts ξ) 𝒟)
 sub ξ (app 𝒟 ℰ)  = app (sub ξ 𝒟) (sub ξ ℰ)
-sub ξ unit       = unit
 sub ξ (pair 𝒟 ℰ) = pair (sub ξ 𝒟) (sub ξ ℰ)
 sub ξ (fst 𝒟)    = fst (sub ξ 𝒟)
 sub ξ (snd 𝒟)    = snd (sub ξ 𝒟)
+sub ξ unit       = unit
+sub ξ (abort 𝒟)  = abort (sub ξ 𝒟)
 sub ξ true       = true
 sub ξ false      = false
 sub ξ (if 𝒟 ℰ ℱ) = if (sub ξ 𝒟) (sub ξ ℰ) (sub ξ ℱ)

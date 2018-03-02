@@ -19,8 +19,8 @@ data Val {g} : Term g → Set
   where
     instance
       val-lam   : ∀ {M} → Val (LAM M)
-      val-unit  : Val UNIT
       val-pair  : ∀ {M N} → {{_ : Val M}} {{_ : Val N}} → Val (PAIR M N)
+      val-unit  : Val UNIT
       val-true  : Val TRUE
       val-false : Val FALSE
 
@@ -51,8 +51,8 @@ data _⤠_ {g} : Term g → Term g → Set
 ¬val⤠ : ∀ {g} → {M M′ : Term g} → {{_ : Val M}}
                → ¬ (M ⤠ M′)
 ¬val⤠ {{val-lam}}   ()
-¬val⤠ {{val-unit}}  ()
 ¬val⤠ {{val-pair}}  ()
+¬val⤠ {{val-unit}}  ()
 ¬val⤠ {{val-true}}  ()
 ¬val⤠ {{val-false}} ()
 
@@ -109,6 +109,9 @@ data _↦_ {g} : Term g → Term g → Set
     cong-snd : ∀ {M M′} → M ↦ M′
                         → SND M ↦ SND M′
 
+    cong-abort : ∀ {M M′} → M ↦ M′
+                          → ABORT M ↦ ABORT M′
+
     cong-if : ∀ {M M′ N O} → M ↦ M′
                            → IF M N O ↦ IF M′ N O
 
@@ -117,10 +120,10 @@ data _↦_ {g} : Term g → Term g → Set
 ¬val↦ : ∀ {g} → {M M′ : Term g} → {{_ : Val M}}
                → ¬ (M ↦ M′)
 ¬val↦ {{val-lam}}   (red ())
-¬val↦ {{val-unit}}  (red ())
 ¬val↦ {{val-pair}}  (red ())
 ¬val↦ {{val-pair}}  (cong-pair₁ M↦M′) = M↦M′ ↯ ¬val↦
 ¬val↦ {{val-pair}}  (cong-pair₂ N↦N′) = N↦N′ ↯ ¬val↦
+¬val↦ {{val-unit}}  (red ())
 ¬val↦ {{val-true}}  (red ())
 ¬val↦ {{val-false}} (red ())
 
@@ -136,6 +139,7 @@ red-det↦ fst-pair (cong-fst M↦M′₂)  = M↦M′₂ ↯ ¬val↦
 red-det↦ snd-pair (cong-snd M↦M′₂)  = M↦M′₂ ↯ ¬val↦
 red-det↦ if-true  (cong-if M↦M′₂)   = M↦M′₂ ↯ ¬val↦
 red-det↦ if-false (cong-if M↦M′₂)   = M↦M′₂ ↯ ¬val↦
+red-det↦ ()       (cong-abort _)
 red-det↦ ()       (cong-pair₁ _)
 red-det↦ ()       (cong-pair₂ _)
 
@@ -151,6 +155,7 @@ det↦ (cong-pair₁ M↦M′₁) (cong-pair₁ M↦M′₂) = (\ M′ → PAIR 
 det↦ (cong-pair₂ N↦N′₁) (cong-pair₂ N↦N′₂) = (\ N′ → PAIR _ N′) & det↦ N↦N′₁ N↦N′₂
 det↦ (cong-fst M↦M′₁)   (cong-fst M↦M′₂)   = FST & det↦ M↦M′₁ M↦M′₂
 det↦ (cong-snd M↦M′₁)   (cong-snd M↦M′₂)   = SND & det↦ M↦M′₁ M↦M′₂
+det↦ (cong-abort M↦M′₁) (cong-abort M↦M′₂) = ABORT & det↦ M↦M′₁ M↦M′₂
 det↦ (cong-if M↦M′₁)    (cong-if M↦M′₂)    = (\ M′ → IF M′ _ _) & det↦ M↦M′₁ M↦M′₂
 det↦ (cong-app₁ M↦M′₁)  (cong-app₂ _)       = M↦M′₁ ↯ ¬val↦
 det↦ (cong-app₂ _)       (cong-app₁ M↦M′₂)  = M↦M′₂ ↯ ¬val↦
@@ -170,6 +175,7 @@ tp↦ (cong-pair₁ M↦M′) (pair 𝒟 ℰ) = pair (tp↦ M↦M′ 𝒟) ℰ
 tp↦ (cong-pair₂ N↦N′) (pair 𝒟 ℰ) = pair 𝒟 (tp↦ N↦N′ ℰ)
 tp↦ (cong-fst M↦M′)   (fst 𝒟)    = fst (tp↦ M↦M′ 𝒟)
 tp↦ (cong-snd M↦M′)   (snd 𝒟)    = snd (tp↦ M↦M′ 𝒟)
+tp↦ (cong-abort M↦M′) (abort 𝒟)  = abort (tp↦ M↦M′ 𝒟)
 tp↦ (cong-if M↦M′)    (if 𝒟 ℰ ℱ) = if (tp↦ M↦M′ 𝒟) ℰ ℱ
 
 
@@ -413,6 +419,42 @@ halt-snd-pair : ∀ {g} → {M M′ N′ : Term g} → {{_ : Val M′}} {{_ : Va
 halt-snd-pair {N′ = N′} M⤅PAIR = N′ , big-red-snd-pair M⤅PAIR
 
 
+-- If `M` terminates, then `FST M` terminates.
+halt-fst : ∀ {g M A B} → {Γ : Types g}
+                       → Γ ⊢ M ⦂ A ∧ B → M ⇓
+                       → FST M ⇓
+halt-fst 𝒟 (M′ , M⤅M′ , VM′) with tp⤅ M⤅M′ 𝒟
+halt-fst 𝒟 (LAM _    , _       , val-lam)   | ()
+halt-fst 𝒟 (PAIR _ _ , M⤅PAIR , val-pair)  | pair _ _ = halt-fst-pair M⤅PAIR
+halt-fst 𝒟 (UNIT     , _       , val-unit)  | ()
+halt-fst 𝒟 (TRUE     , _       , val-true)  | ()
+halt-fst 𝒟 (FALSE    , _       , val-false) | ()
+
+
+-- If `M` terminates, then `SND M` terminates.
+halt-snd : ∀ {g M A B} → {Γ : Types g}
+                       → Γ ⊢ M ⦂ A ∧ B → M ⇓
+                       → SND M ⇓
+halt-snd 𝒟 (M′ , M⤅M′ , VM′) with tp⤅ M⤅M′ 𝒟
+halt-snd 𝒟 (LAM _    , _       , val-lam)   | ()
+halt-snd 𝒟 (PAIR _ _ , M⤅PAIR , val-pair)  | pair _ _ = halt-snd-pair M⤅PAIR
+halt-snd 𝒟 (UNIT     , _       , val-unit)  | ()
+halt-snd 𝒟 (TRUE     , _       , val-true)  | ()
+halt-snd 𝒟 (FALSE    , _       , val-false) | ()
+
+
+-- If `M` terminates, then `ABORT M` terminates.
+halt-abort : ∀ {g M} → {Γ : Types g}
+                     → Γ ⊢ M ⦂ 𝟘 → M ⇓
+                     → ABORT M ⇓
+halt-abort 𝒟 (M′ , M⤅M′ , VM′) with tp⤅ M⤅M′ 𝒟
+halt-abort 𝒟 (LAM _    , _ , val-lam)   | ()
+halt-abort 𝒟 (PAIR _ _ , _ , val-pair)  | ()
+halt-abort 𝒟 (UNIT     , _ , val-unit)  | ()
+halt-abort 𝒟 (TRUE     , _ , val-true)  | ()
+halt-abort 𝒟 (FALSE    , _ , val-false) | ()
+
+
 -- If `M` reduces to `TRUE` and `N` terminates, then `IF M N O` terminates.
 halt-if-true : ∀ {g} → {M N O : Term g}
                      → M ⤅ TRUE → N ⇓
@@ -435,29 +477,18 @@ halt : ∀ {M A} → ∙ ⊢ M ⦂ A
 halt (var ())
 halt (lam 𝒟)    = LAM _ , done , val-lam
 halt (app 𝒟 ℰ)  = {!!}
-halt unit       = UNIT  , done , val-unit
 halt (pair 𝒟 ℰ) = halt-pair (halt 𝒟) (halt ℰ)
-halt (fst 𝒟)    with halt 𝒟
-halt (fst 𝒟)    | M′       , M⤅M′   , VM′       with tp⤅ M⤅M′ 𝒟
-halt (fst 𝒟)    | LAM _    , _       , val-lam   | ()
-halt (fst 𝒟)    | UNIT     , _       , val-unit  | ()
-halt (fst 𝒟)    | PAIR _ _ , M⤅PAIR , val-pair  | pair _ _ = halt-fst-pair M⤅PAIR
-halt (fst 𝒟)    | TRUE     , _       , val-true  | ()
-halt (fst 𝒟)    | FALSE    , _       , val-false | ()
-halt (snd 𝒟)    with halt 𝒟
-halt (snd 𝒟)    | M′       , M⤅M′   , VM′       with tp⤅ M⤅M′ 𝒟
-halt (snd 𝒟)    | LAM _    , _       , val-lam   | ()
-halt (snd 𝒟)    | UNIT     , _       , val-unit  | ()
-halt (snd 𝒟)    | PAIR _ _ , M⤅PAIR , val-pair  | pair _ _ = halt-snd-pair M⤅PAIR
-halt (snd 𝒟)    | TRUE     , _       , val-true  | ()
-halt (snd 𝒟)    | FALSE    , _       , val-false | ()
+halt (fst 𝒟)    = halt-fst 𝒟 (halt 𝒟)
+halt (snd 𝒟)    = halt-snd 𝒟 (halt 𝒟)
+halt unit       = UNIT  , done , val-unit
+halt (abort 𝒟)  = halt-abort 𝒟 (halt 𝒟)
 halt true       = TRUE  , done , val-true
 halt false      = FALSE , done , val-false
 halt (if 𝒟 ℰ ℱ) with halt 𝒟
 halt (if 𝒟 ℰ ℱ) | M′       , M⤅M′    , VM′       with tp⤅ M⤅M′ 𝒟
 halt (if 𝒟 ℰ ℱ) | LAM _    , _        , val-lam   | ()
-halt (if 𝒟 ℰ ℱ) | UNIT     , _        , val-unit  | ()
 halt (if 𝒟 ℰ ℱ) | PAIR _ _ , _        , val-pair  | ()
+halt (if 𝒟 ℰ ℱ) | UNIT     , _        , val-unit  | ()
 halt (if 𝒟 ℰ ℱ) | TRUE     , M⤅TRUE  , val-true  | true  = halt-if-true M⤅TRUE (halt ℰ)
 halt (if 𝒟 ℰ ℱ) | FALSE    , M⤅FALSE , val-false | false = halt-if-false M⤅FALSE (halt ℱ)
 -}
