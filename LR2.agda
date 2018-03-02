@@ -21,6 +21,8 @@ data Val {g} : Term g → Set
       val-lam   : ∀ {M} → Val (LAM M)
       val-pair  : ∀ {M N} → {{_ : Val M}} {{_ : Val N}} → Val (PAIR M N)
       val-unit  : Val UNIT
+      val-left  : ∀ {M} → {{_ : Val M}} → Val (LEFT M)
+      val-right : ∀ {M} → {{_ : Val M}} → Val (RIGHT M)
       val-true  : Val TRUE
       val-false : Val FALSE
 
@@ -40,11 +42,13 @@ data Vals {g} : ∀ {n} → Terms g n → Set
 infix 3 _⤠_
 data _⤠_ {g} : Term g → Term g → Set
   where
-    app-lam  : ∀ {M N} → {{_ : Val N}} → APP (LAM M) N ⤠ CUT N M
-    fst-pair : ∀ {M N} → {{_ : Val M}} {{_ : Val N}} → FST (PAIR M N) ⤠ M
-    snd-pair : ∀ {M N} → {{_ : Val M}} {{_ : Val N}} → SND (PAIR M N) ⤠ N
-    if-true  : ∀ {N O} → IF TRUE N O ⤠ N
-    if-false : ∀ {N O} → IF FALSE N O ⤠ O
+    app-lam    : ∀ {M N} → {{_ : Val N}} → APP (LAM M) N ⤠ CUT N M
+    fst-pair   : ∀ {M N} → {{_ : Val M}} {{_ : Val N}} → FST (PAIR M N) ⤠ M
+    snd-pair   : ∀ {M N} → {{_ : Val M}} {{_ : Val N}} → SND (PAIR M N) ⤠ N
+    case-left  : ∀ {M N O} → {{_ : Val M}} → CASE (LEFT M) N O ⤠ CUT M N
+    case-right : ∀ {M N O} → {{_ : Val M}} → CASE (RIGHT M) N O ⤠ CUT M O
+    if-true    : ∀ {N O} → IF TRUE N O ⤠ N
+    if-false   : ∀ {N O} → IF FALSE N O ⤠ O
 
 
 -- Values do not compute.
@@ -53,6 +57,8 @@ data _⤠_ {g} : Term g → Term g → Set
 ¬val⤠ {{val-lam}}   ()
 ¬val⤠ {{val-pair}}  ()
 ¬val⤠ {{val-unit}}  ()
+¬val⤠ {{val-left}}  ()
+¬val⤠ {{val-right}} ()
 ¬val⤠ {{val-true}}  ()
 ¬val⤠ {{val-false}} ()
 
@@ -61,22 +67,26 @@ data _⤠_ {g} : Term g → Term g → Set
 det⤠ : ∀ {g} → {M M′₁ M′₂ : Term g}
               → M ⤠ M′₁ → M ⤠ M′₂
               → M′₁ ≡ M′₂
-det⤠ app-lam  app-lam  = refl
-det⤠ fst-pair fst-pair = refl
-det⤠ snd-pair snd-pair = refl
-det⤠ if-true  if-true  = refl
-det⤠ if-false if-false = refl
+det⤠ app-lam    app-lam    = refl
+det⤠ fst-pair   fst-pair   = refl
+det⤠ snd-pair   snd-pair   = refl
+det⤠ case-left  case-left  = refl
+det⤠ case-right case-right = refl
+det⤠ if-true    if-true    = refl
+det⤠ if-false   if-false   = refl
 
 
 -- Computation is type-preserving.
 tp⤠ : ∀ {g M M′ A} → {Γ : Types g}
                     → M ⤠ M′ → Γ ⊢ M ⦂ A
                     → Γ ⊢ M′ ⦂ A
-tp⤠ app-lam  (app (lam 𝒟) ℰ)  = cut ℰ 𝒟
-tp⤠ fst-pair (fst (pair 𝒟 ℰ)) = 𝒟
-tp⤠ snd-pair (snd (pair 𝒟 ℰ)) = ℰ
-tp⤠ if-true  (if 𝒟 ℰ ℱ)       = ℰ
-tp⤠ if-false (if 𝒟 ℰ ℱ)       = ℱ
+tp⤠ app-lam    (app (lam 𝒟) ℰ)      = cut ℰ 𝒟
+tp⤠ fst-pair   (fst (pair 𝒟 ℰ))     = 𝒟
+tp⤠ snd-pair   (snd (pair 𝒟 ℰ))     = ℰ
+tp⤠ case-left  (case (left 𝒟) ℰ ℱ)  = cut 𝒟 ℰ
+tp⤠ case-right (case (right 𝒟) ℰ ℱ) = cut 𝒟 ℱ
+tp⤠ if-true    (if 𝒟 ℰ ℱ)           = ℰ
+tp⤠ if-false   (if 𝒟 ℰ ℱ)           = ℱ
 
 
 --------------------------------------------------------------------------------
@@ -112,6 +122,15 @@ data _↦_ {g} : Term g → Term g → Set
     cong-abort : ∀ {M M′} → M ↦ M′
                           → ABORT M ↦ ABORT M′
 
+    cong-left : ∀ {M M′} → M ↦ M′
+                         → LEFT M ↦ LEFT M′
+
+    cong-right : ∀ {M M′} → M ↦ M′
+                          → RIGHT M ↦ RIGHT M′
+
+    cong-case : ∀ {M M′ N O} → M ↦ M′
+                             → CASE M N O ↦ CASE M′ N O
+
     cong-if : ∀ {M M′ N O} → M ↦ M′
                            → IF M N O ↦ IF M′ N O
 
@@ -124,6 +143,10 @@ data _↦_ {g} : Term g → Term g → Set
 ¬val↦ {{val-pair}}  (cong-pair₁ M↦M′) = M↦M′ ↯ ¬val↦
 ¬val↦ {{val-pair}}  (cong-pair₂ N↦N′) = N↦N′ ↯ ¬val↦
 ¬val↦ {{val-unit}}  (red ())
+¬val↦ {{val-left}}  (red ())
+¬val↦ {{val-left}}  (cong-left M↦M′)  = M↦M′ ↯ ¬val↦
+¬val↦ {{val-right}} (red ())
+¬val↦ {{val-right}} (cong-right M↦M′) = M↦M′ ↯ ¬val↦
 ¬val↦ {{val-true}}  (red ())
 ¬val↦ {{val-false}} (red ())
 
@@ -132,16 +155,20 @@ data _↦_ {g} : Term g → Term g → Set
 red-det↦ : ∀ {g} → {M M′₁ M′₂ : Term g}
                   → M ⤠ M′₁ → M ↦ M′₂
                   → M′₁ ≡ M′₂
-red-det↦ M⤠M′₁   (red M⤠M′₂)       = det⤠ M⤠M′₁ M⤠M′₂
-red-det↦ app-lam  (cong-app₁ M↦M′₂) = M↦M′₂ ↯ ¬val↦
-red-det↦ app-lam  (cong-app₂ M↦M′₂) = M↦M′₂ ↯ ¬val↦
-red-det↦ fst-pair (cong-fst M↦M′₂)  = M↦M′₂ ↯ ¬val↦
-red-det↦ snd-pair (cong-snd M↦M′₂)  = M↦M′₂ ↯ ¬val↦
-red-det↦ if-true  (cong-if M↦M′₂)   = M↦M′₂ ↯ ¬val↦
-red-det↦ if-false (cong-if M↦M′₂)   = M↦M′₂ ↯ ¬val↦
-red-det↦ ()       (cong-abort _)
-red-det↦ ()       (cong-pair₁ _)
-red-det↦ ()       (cong-pair₂ _)
+red-det↦ M⤠M′₁     (red M⤠M′₂)       = det⤠ M⤠M′₁ M⤠M′₂
+red-det↦ app-lam    (cong-app₁ M↦M′₂) = M↦M′₂ ↯ ¬val↦
+red-det↦ app-lam    (cong-app₂ M↦M′₂) = M↦M′₂ ↯ ¬val↦
+red-det↦ fst-pair   (cong-fst M↦M′₂)  = M↦M′₂ ↯ ¬val↦
+red-det↦ snd-pair   (cong-snd M↦M′₂)  = M↦M′₂ ↯ ¬val↦
+red-det↦ case-left  (cong-case M↦M′₂) = M↦M′₂ ↯ ¬val↦
+red-det↦ case-right (cong-case M↦M′₂) = M↦M′₂ ↯ ¬val↦
+red-det↦ if-true    (cong-if M↦M′₂)   = M↦M′₂ ↯ ¬val↦
+red-det↦ if-false   (cong-if M↦M′₂)   = M↦M′₂ ↯ ¬val↦
+red-det↦ ()         (cong-pair₁ _)
+red-det↦ ()         (cong-pair₂ _)
+red-det↦ ()         (cong-abort _)
+red-det↦ ()         (cong-left _)
+red-det↦ ()         (cong-right _)
 
 
 -- Small-step reduction is deterministic.
@@ -150,17 +177,20 @@ det↦ : ∀ {g} → {M M′₁ M′₂ : Term g}
               → M′₁ ≡ M′₂
 det↦ (red M⤠M′₁)        M↦M′₂              = red-det↦ M⤠M′₁ M↦M′₂
 det↦ (cong-app₁ M↦M′₁)  (cong-app₁ M↦M′₂)  = (\ M′ → APP M′ _) & det↦ M↦M′₁ M↦M′₂
+det↦ (cong-app₁ M↦M′₁)  (cong-app₂ _)       = M↦M′₁ ↯ ¬val↦
+det↦ (cong-app₂ _)       (cong-app₁ M↦M′₂)  = M↦M′₂ ↯ ¬val↦
 det↦ (cong-app₂ N↦N′₁)  (cong-app₂ N↦N′₂)  = (\ N′ → APP _ N′) & det↦ N↦N′₁ N↦N′₂
 det↦ (cong-pair₁ M↦M′₁) (cong-pair₁ M↦M′₂) = (\ M′ → PAIR M′ _) & det↦ M↦M′₁ M↦M′₂
+det↦ (cong-pair₁ M↦M′₁) (cong-pair₂ _)      = M↦M′₁ ↯ ¬val↦
+det↦ (cong-pair₂ _)      (cong-pair₁ M↦M′₂) = M↦M′₂ ↯ ¬val↦
 det↦ (cong-pair₂ N↦N′₁) (cong-pair₂ N↦N′₂) = (\ N′ → PAIR _ N′) & det↦ N↦N′₁ N↦N′₂
 det↦ (cong-fst M↦M′₁)   (cong-fst M↦M′₂)   = FST & det↦ M↦M′₁ M↦M′₂
 det↦ (cong-snd M↦M′₁)   (cong-snd M↦M′₂)   = SND & det↦ M↦M′₁ M↦M′₂
 det↦ (cong-abort M↦M′₁) (cong-abort M↦M′₂) = ABORT & det↦ M↦M′₁ M↦M′₂
+det↦ (cong-left M↦M′₁)  (cong-left M↦M′₂)  = LEFT & det↦ M↦M′₁ M↦M′₂
+det↦ (cong-right M↦M′₁) (cong-right M↦M′₂) = RIGHT & det↦ M↦M′₁ M↦M′₂
+det↦ (cong-case M↦M′₁)  (cong-case M↦M′₂)  = (\ M′ → CASE M′ _ _) & det↦ M↦M′₁ M↦M′₂
 det↦ (cong-if M↦M′₁)    (cong-if M↦M′₂)    = (\ M′ → IF M′ _ _) & det↦ M↦M′₁ M↦M′₂
-det↦ (cong-app₁ M↦M′₁)  (cong-app₂ _)       = M↦M′₁ ↯ ¬val↦
-det↦ (cong-app₂ _)       (cong-app₁ M↦M′₂)  = M↦M′₂ ↯ ¬val↦
-det↦ (cong-pair₁ M↦M′₁) (cong-pair₂ _)      = M↦M′₁ ↯ ¬val↦
-det↦ (cong-pair₂ _)      (cong-pair₁ M↦M′₂) = M↦M′₂ ↯ ¬val↦
 det↦ M↦M′₁              (red M⤠M′₂)        = red-det↦ M⤠M′₂ M↦M′₁ ⁻¹
 
 
@@ -168,15 +198,18 @@ det↦ M↦M′₁              (red M⤠M′₂)        = red-det↦ M⤠M′�
 tp↦ : ∀ {g M M′ A} → {Γ : Types g}
                     → M ↦ M′ → Γ ⊢ M ⦂ A
                     → Γ ⊢ M′ ⦂ A
-tp↦ (red M⤠M′)        𝒟          = tp⤠ M⤠M′ 𝒟
-tp↦ (cong-app₁ M↦M′)  (app 𝒟 ℰ)  = app (tp↦ M↦M′ 𝒟) ℰ
-tp↦ (cong-app₂ M↦M′)  (app 𝒟 ℰ)  = app 𝒟 (tp↦ M↦M′ ℰ)
-tp↦ (cong-pair₁ M↦M′) (pair 𝒟 ℰ) = pair (tp↦ M↦M′ 𝒟) ℰ
-tp↦ (cong-pair₂ N↦N′) (pair 𝒟 ℰ) = pair 𝒟 (tp↦ N↦N′ ℰ)
-tp↦ (cong-fst M↦M′)   (fst 𝒟)    = fst (tp↦ M↦M′ 𝒟)
-tp↦ (cong-snd M↦M′)   (snd 𝒟)    = snd (tp↦ M↦M′ 𝒟)
-tp↦ (cong-abort M↦M′) (abort 𝒟)  = abort (tp↦ M↦M′ 𝒟)
-tp↦ (cong-if M↦M′)    (if 𝒟 ℰ ℱ) = if (tp↦ M↦M′ 𝒟) ℰ ℱ
+tp↦ (red M⤠M′)        𝒟            = tp⤠ M⤠M′ 𝒟
+tp↦ (cong-app₁ M↦M′)  (app 𝒟 ℰ)    = app (tp↦ M↦M′ 𝒟) ℰ
+tp↦ (cong-app₂ M↦M′)  (app 𝒟 ℰ)    = app 𝒟 (tp↦ M↦M′ ℰ)
+tp↦ (cong-pair₁ M↦M′) (pair 𝒟 ℰ)   = pair (tp↦ M↦M′ 𝒟) ℰ
+tp↦ (cong-pair₂ N↦N′) (pair 𝒟 ℰ)   = pair 𝒟 (tp↦ N↦N′ ℰ)
+tp↦ (cong-fst M↦M′)   (fst 𝒟)      = fst (tp↦ M↦M′ 𝒟)
+tp↦ (cong-snd M↦M′)   (snd 𝒟)      = snd (tp↦ M↦M′ 𝒟)
+tp↦ (cong-abort M↦M′) (abort 𝒟)    = abort (tp↦ M↦M′ 𝒟)
+tp↦ (cong-left M↦M′)  (left 𝒟)     = left (tp↦ M↦M′ 𝒟)
+tp↦ (cong-right M↦M′) (right 𝒟)    = right (tp↦ M↦M′ 𝒟)
+tp↦ (cong-case M↦M′)  (case 𝒟 ℰ ℱ) = case (tp↦ M↦M′ 𝒟) ℰ ℱ
+tp↦ (cong-if M↦M′)    (if 𝒟 ℰ ℱ)   = if (tp↦ M↦M′ 𝒟) ℰ ℱ
 
 
 --------------------------------------------------------------------------------
@@ -271,6 +304,22 @@ congs-snd done                = done
 congs-snd (step M↦M″ M″⤅M′) = step (cong-snd M↦M″) (congs-snd M″⤅M′)
 
 
+-- If `M` reduces to `M′`, then `LEFT M` reduces to `LEFT M′`.
+congs-left : ∀ {g} → {M M′ : Term g} → {{_ : Val M′}}
+                   → M ⤅ M′
+                   → LEFT M ⤅ LEFT M′
+congs-left done                = done
+congs-left (step M↦M″ M″⤅M′) = step (cong-left M↦M″) (congs-left M″⤅M′)
+
+
+-- If `M` reduces to `M′`, then `RIGHT M` reduces to `RIGHT M′`.
+congs-right : ∀ {g} → {M M′ : Term g} → {{_ : Val M′}}
+                    → M ⤅ M′
+                    → RIGHT M ⤅ RIGHT M′
+congs-right done                = done
+congs-right (step M↦M″ M″⤅M′) = step (cong-right M↦M″) (congs-right M″⤅M′)
+
+
 -- If `M` reduces to `M′`, then `IF M N O` reduces to `IF M′ N O`.
 congs-if : ∀ {g} → {M M′ N O : Term g}
                  → M ⤅ M′
@@ -360,6 +409,20 @@ big-red-snd-pair : ∀ {g} → {M M′ N′ : Term g} → {{_ : Val M′}} {{_ :
 big-red-snd-pair {{_}} {{VN′}} M⤅PAIR = reds-snd-pair M⤅PAIR , VN′
 
 
+-- If `M` reduces to `M′`, then `LEFT M` reduces to `LEFT M′`.
+big-red-left : ∀ {g} → {M M′ : Term g}
+                     → M ⇓ M′
+                     → LEFT M ⇓ LEFT M′
+big-red-left (M⤅M′ , VM′) = congs-left {{VM′}} M⤅M′ , val-left {{VM′}}
+
+
+-- If `M` reduces to `M′`, then `RIGHT M` reduces to `RIGHT M′`.
+big-red-right : ∀ {g} → {M M′ : Term g}
+                      → M ⇓ M′
+                      → RIGHT M ⇓ RIGHT M′
+big-red-right (M⤅M′ , VM′) = congs-right {{VM′}} M⤅M′ , val-right {{VM′}}
+
+
 -- If `M` reduces to `TRUE` and `N` reduces to `N′`, then `IF M N O` reduces to `N′`.
 big-red-if-true : ∀ {g} → {M N N′ O : Term g}
                         → M ⤅ TRUE → N ⇓ N′
@@ -427,6 +490,8 @@ halt-fst 𝒟 (M′       , M⤅M′   , VM′)       with tp⤅ M⤅M′ 𝒟
 halt-fst 𝒟 (LAM _    , _       , val-lam)   | ()
 halt-fst 𝒟 (PAIR _ _ , M⤅PAIR , val-pair)  | pair _ _ = halt-fst-pair M⤅PAIR
 halt-fst 𝒟 (UNIT     , _       , val-unit)  | ()
+halt-fst 𝒟 (LEFT _   , _       , val-left)  | ()
+halt-fst 𝒟 (RIGHT _  , _       , val-right) | ()
 halt-fst 𝒟 (TRUE     , _       , val-true)  | ()
 halt-fst 𝒟 (FALSE    , _       , val-false) | ()
 
@@ -439,6 +504,8 @@ halt-snd 𝒟 (M′       , M⤅M′   , VM′)       with tp⤅ M⤅M′ 𝒟
 halt-snd 𝒟 (LAM _    , _       , val-lam)   | ()
 halt-snd 𝒟 (PAIR _ _ , M⤅PAIR , val-pair)  | pair _ _ = halt-snd-pair M⤅PAIR
 halt-snd 𝒟 (UNIT     , _       , val-unit)  | ()
+halt-snd 𝒟 (LEFT _   , _       , val-left)  | ()
+halt-snd 𝒟 (RIGHT _  , _       , val-right) | ()
 halt-snd 𝒟 (TRUE     , _       , val-true)  | ()
 halt-snd 𝒟 (FALSE    , _       , val-false) | ()
 
@@ -451,8 +518,24 @@ halt-abort 𝒟 (M′       , M⤅M′ , VM′)       with tp⤅ M⤅M′ 𝒟
 halt-abort 𝒟 (LAM _    , _     , val-lam)   | ()
 halt-abort 𝒟 (PAIR _ _ , _     , val-pair)  | ()
 halt-abort 𝒟 (UNIT     , _     , val-unit)  | ()
+halt-abort 𝒟 (LEFT _   , _     , val-left)  | ()
+halt-abort 𝒟 (RIGHT _  , _     , val-right) | ()
 halt-abort 𝒟 (TRUE     , _     , val-true)  | ()
 halt-abort 𝒟 (FALSE    , _     , val-false) | ()
+
+
+-- If `M` terminates, then `LEFT M` terminates.
+halt-left : ∀ {g} → {M : Term g}
+                  → M ⇓
+                  → LEFT M ⇓
+halt-left (M′ , M⇓M′) = LEFT M′ , big-red-left M⇓M′
+
+
+-- If `M` terminates, then `RIGHT M` terminates.
+halt-right : ∀ {g} → {M : Term g}
+                   → M ⇓
+                   → RIGHT M ⇓
+halt-right (M′ , M⇓M′) = RIGHT M′ , big-red-right M⇓M′
 
 
 -- If `M` reduces to `TRUE` and `N` terminates, then `IF M N O` terminates.
@@ -477,6 +560,8 @@ halt-if 𝒟 (M′       , M⤅M′    , VM′)       N⇓ O⇓ with tp⤅ M⤅M
 halt-if 𝒟 (LAM _    , _        , val-lam)   N⇓ O⇓ | ()
 halt-if 𝒟 (PAIR _ _ , _        , val-pair)  N⇓ O⇓ | ()
 halt-if 𝒟 (UNIT     , _        , val-unit)  N⇓ O⇓ | ()
+halt-if 𝒟 (LEFT _   , _        , val-left)  N⇓ O⇓ | ()
+halt-if 𝒟 (RIGHT _  , _        , val-right) N⇓ O⇓ | ()
 halt-if 𝒟 (TRUE     , M⤅TRUE  , val-true)  N⇓ O⇓ | true  = halt-if-true M⤅TRUE N⇓
 halt-if 𝒟 (FALSE    , M⤅FALSE , val-false) N⇓ O⇓ | false = halt-if-false M⤅FALSE O⇓
 
@@ -487,16 +572,19 @@ halt-if 𝒟 (FALSE    , M⤅FALSE , val-false) N⇓ O⇓ | false = halt-if-fals
 halt : ∀ {M A} → ∙ ⊢ M ⦂ A
                → M ⇓
 halt (var ())
-halt (lam 𝒟)    = LAM _ , done , val-lam
-halt (app 𝒟 ℰ)  = {!!}
-halt (pair 𝒟 ℰ) = halt-pair (halt 𝒟) (halt ℰ)
-halt (fst 𝒟)    = halt-fst 𝒟 (halt 𝒟)
-halt (snd 𝒟)    = halt-snd 𝒟 (halt 𝒟)
-halt unit       = UNIT  , done , val-unit
-halt (abort 𝒟)  = halt-abort 𝒟 (halt 𝒟)
-halt true       = TRUE  , done , val-true
-halt false      = FALSE , done , val-false
-halt (if 𝒟 ℰ ℱ) = halt-if 𝒟 (halt 𝒟) (halt ℰ) (halt ℱ)
+halt (lam 𝒟)      = LAM _ , done , val-lam
+halt (app 𝒟 ℰ)    = {!!}
+halt (pair 𝒟 ℰ)   = halt-pair (halt 𝒟) (halt ℰ)
+halt (fst 𝒟)      = halt-fst 𝒟 (halt 𝒟)
+halt (snd 𝒟)      = halt-snd 𝒟 (halt 𝒟)
+halt unit         = UNIT , done , val-unit
+halt (abort 𝒟)    = halt-abort 𝒟 (halt 𝒟)
+halt (left 𝒟)     = halt-left (halt 𝒟)
+halt (right 𝒟)    = halt-right (halt 𝒟)
+halt (case 𝒟 ℰ ℱ) = {!!}
+halt true         = TRUE , done , val-true
+halt false        = FALSE , done , val-false
+halt (if 𝒟 ℰ ℱ)   = halt-if 𝒟 (halt 𝒟) (halt ℰ) (halt ℱ)
 -}
 
 

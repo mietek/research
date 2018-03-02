@@ -39,6 +39,15 @@ data _⊢_⦂_ {g} (Γ : Types g) : Term g → Type → Set
     abort : ∀ {C M} → Γ ⊢ M ⦂ 𝟘
                     → Γ ⊢ ABORT M ⦂ C
 
+    left : ∀ {A B M} → Γ ⊢ M ⦂ A
+                     → Γ ⊢ LEFT M ⦂ A ∨ B
+
+    right : ∀ {A B M} → Γ ⊢ M ⦂ B
+                      → Γ ⊢ RIGHT M ⦂ A ∨ B
+
+    case : ∀ {A B C M N O} → Γ ⊢ M ⦂ A ∨ B → Γ , A ⊢ N ⦂ C → Γ , B ⊢ O ⦂ C
+                           → Γ ⊢ CASE M N O ⦂ C
+
     true : Γ ⊢ TRUE ⦂ 𝔹
 
     false : Γ ⊢ FALSE ⦂ 𝔹
@@ -58,17 +67,20 @@ _⊢_⦂_all : ∀ {g n} → Types g → Terms g n → Types n → Set
 ren : ∀ {g g′ e M A} → {Γ : Types g} {Γ′ : Types g′}
                      → Γ′ ⊇⟨ e ⟩ Γ → Γ ⊢ M ⦂ A
                      → Γ′ ⊢ REN e M ⦂ A
-ren η (var i)    = var (ren∋ η i)
-ren η (lam 𝒟)    = lam (ren (keep η) 𝒟)
-ren η (app 𝒟 ℰ)  = app (ren η 𝒟) (ren η ℰ)
-ren η (pair 𝒟 ℰ) = pair (ren η 𝒟) (ren η ℰ)
-ren η (fst 𝒟)    = fst (ren η 𝒟)
-ren η (snd 𝒟)    = snd (ren η 𝒟)
-ren η unit       = unit
-ren η (abort 𝒟)  = abort (ren η 𝒟)
-ren η true       = true
-ren η false      = false
-ren η (if 𝒟 ℰ ℱ) = if (ren η 𝒟) (ren η ℰ) (ren η ℱ)
+ren η (var i)      = var (ren∋ η i)
+ren η (lam 𝒟)      = lam (ren (keep η) 𝒟)
+ren η (app 𝒟 ℰ)    = app (ren η 𝒟) (ren η ℰ)
+ren η (pair 𝒟 ℰ)   = pair (ren η 𝒟) (ren η ℰ)
+ren η (fst 𝒟)      = fst (ren η 𝒟)
+ren η (snd 𝒟)      = snd (ren η 𝒟)
+ren η unit         = unit
+ren η (abort 𝒟)    = abort (ren η 𝒟)
+ren η (left 𝒟)     = left (ren η 𝒟)
+ren η (right 𝒟)    = right (ren η 𝒟)
+ren η (case 𝒟 ℰ ℱ) = case (ren η 𝒟) (ren (keep η) ℰ) (ren (keep η) ℱ)
+ren η true         = true
+ren η false        = false
+ren η (if 𝒟 ℰ ℱ)   = if (ren η 𝒟) (ren η ℰ) (ren η ℱ)
 
 
 rens : ∀ {g g′ e n} → {Γ : Types g} {Γ′ : Types g′}
@@ -119,17 +131,20 @@ ids = vars id⊇
 sub : ∀ {g n M A} → {Γ : Types g} {τ : Terms g n} {Ξ : Types n}
                   → Γ ⊢ τ ⦂ Ξ all → Ξ ⊢ M ⦂ A
                   → Γ ⊢ SUB τ M ⦂ A
-sub ξ (var i)    = get ξ (zip∋₂ i)
-sub ξ (lam 𝒟)    = lam (sub (lifts ξ) 𝒟)
-sub ξ (app 𝒟 ℰ)  = app (sub ξ 𝒟) (sub ξ ℰ)
-sub ξ (pair 𝒟 ℰ) = pair (sub ξ 𝒟) (sub ξ ℰ)
-sub ξ (fst 𝒟)    = fst (sub ξ 𝒟)
-sub ξ (snd 𝒟)    = snd (sub ξ 𝒟)
-sub ξ unit       = unit
-sub ξ (abort 𝒟)  = abort (sub ξ 𝒟)
-sub ξ true       = true
-sub ξ false      = false
-sub ξ (if 𝒟 ℰ ℱ) = if (sub ξ 𝒟) (sub ξ ℰ) (sub ξ ℱ)
+sub ξ (var i)      = get ξ (zip∋₂ i)
+sub ξ (lam 𝒟)      = lam (sub (lifts ξ) 𝒟)
+sub ξ (app 𝒟 ℰ)    = app (sub ξ 𝒟) (sub ξ ℰ)
+sub ξ (pair 𝒟 ℰ)   = pair (sub ξ 𝒟) (sub ξ ℰ)
+sub ξ (fst 𝒟)      = fst (sub ξ 𝒟)
+sub ξ (snd 𝒟)      = snd (sub ξ 𝒟)
+sub ξ unit         = unit
+sub ξ (abort 𝒟)    = abort (sub ξ 𝒟)
+sub ξ (left 𝒟)     = left (sub ξ 𝒟)
+sub ξ (right 𝒟)    = right (sub ξ 𝒟)
+sub ξ (case 𝒟 ℰ ℱ) = case (sub ξ 𝒟) (sub (lifts ξ) ℰ) (sub (lifts ξ) ℱ)
+sub ξ true         = true
+sub ξ false        = false
+sub ξ (if 𝒟 ℰ ℱ)   = if (sub ξ 𝒟) (sub ξ ℰ) (sub ξ ℱ)
 
 
 subs : ∀ {g n m} → {Γ : Types g} {τ : Terms g n} {Ξ : Types n}
