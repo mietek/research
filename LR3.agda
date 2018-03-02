@@ -53,8 +53,8 @@ mutual
                        → SN! M A
   sn!pr⤇ {𝔹}     M⤇M′ 𝒟 ∙           = ∙
   sn!pr⤇ {𝟙}     M⤇M′ 𝒟 ∙           = ∙
-  sn!pr⤇ {A ∧ B} M⤇M′ 𝒟 (s₁ , s₂)   = snpr⤇ (cong-FST M⤇M′) (fst 𝒟) s₁ , snpr⤇ (cong-SND M⤇M′) (snd 𝒟) s₂
-  sn!pr⤇ {A ⊃ B} M⤇M′ 𝒟 f         s = snpr⤇ (cong-APP M⤇M′) (app 𝒟 (derp s)) (f s)
+  sn!pr⤇ {A ∧ B} M⤇M′ 𝒟 (s₁ , s₂)   = snpr⤇ (cong-fst M⤇M′) (fst 𝒟) s₁ , snpr⤇ (cong-snd M⤇M′) (snd 𝒟) s₂
+  sn!pr⤇ {A ⊃ B} M⤇M′ 𝒟 f         s = snpr⤇ (cong-app₁ M⤇M′) (app 𝒟 (derp s)) (f s)
 
 
 -- Iterated small-step reduction IN REVERSE preserves SN.
@@ -83,8 +83,8 @@ mutual
                       → SN! M′ A
   sn!p⤇ {𝔹}     M⤇M′ 𝒟 ∙         = ∙
   sn!p⤇ {𝟙}     M⤇M′ 𝒟 ∙         = ∙
-  sn!p⤇ {A ∧ B} M⤇M′ 𝒟 (s₁ , s₂) = snp⤇ (cong-FST M⤇M′) (fst 𝒟) s₁ , snp⤇ (cong-SND M⤇M′) (snd 𝒟) s₂
-  sn!p⤇ {A ⊃ B} M⤇M′ 𝒟 f s       = snp⤇ (cong-APP M⤇M′) (app 𝒟 (derp s)) (f s)
+  sn!p⤇ {A ∧ B} M⤇M′ 𝒟 (s₁ , s₂) = snp⤇ (cong-fst M⤇M′) (fst 𝒟) s₁ , snp⤇ (cong-snd M⤇M′) (snd 𝒟) s₂
+  sn!p⤇ {A ⊃ B} M⤇M′ 𝒟 f s       = snp⤇ (cong-app₁ M⤇M′) (app 𝒟 (derp s)) (f s)
 
 
 -- Iterated small-step reduction preserves SN.
@@ -106,78 +106,76 @@ snp⇓ (M⤇*M′ , VM′) 𝒟 s = snp⤇* M⤇*M′ 𝒟 s
 -- TODO: Clean this up
 
 -- If `M` is SN and `N` is SN, then `PAIR M N` is SN.
-sn-PAIR : ∀ {A B M N} → SN M A → SN N B
+sn-pair : ∀ {A B M N} → SN M A → SN N B
                       → SN (PAIR M N) (A ∧ B)
-sn-PAIR s₁@(𝒟 , M⇓@(M′ , M⇓M′@(M⤇*M′ , VM′)) , s!₁) s₂@(ℰ , N⇓@(N′ , N⇓N′@(N⤇*N′ , VN′)) , s!₂)
+sn-pair s₁@(𝒟 , M⇓@(M′ , M⇓M′@(M⤇*M′ , VM′)) , s!₁) s₂@(ℰ , N⇓@(N′ , N⇓N′@(N⤇*N′ , VN′)) , s!₂)
   = pair 𝒟 ℰ ,
-    halt-PAIR M⇓ N⇓ ,
-    ( snpr⇓ (big-red-FST-PAIR {{VM′}} {{VN′}} (congs-PAIR {{VM′}} {{VN′}} M⤇*M′ N⤇*N′))
+    halt-pair M⇓ N⇓ ,
+    ( snpr⇓ (big-red-fst-pair {{VM′}} {{VN′}} (congs-pair {{VM′}} {{VN′}} M⤇*M′ N⤇*N′))
             (fst (pair 𝒟 ℰ)) (snp⤇* M⤇*M′ 𝒟 s₁)
-    , snpr⇓ (big-red-SND-PAIR {{VM′}} {{VN′}} ((congs-PAIR {{VM′}} {{VN′}} M⤇*M′ N⤇*N′)))
+    , snpr⇓ (big-red-snd-pair {{VM′}} {{VN′}} ((congs-pair {{VM′}} {{VN′}} M⤇*M′ N⤇*N′)))
             (snd (pair 𝒟 ℰ)) (snp⤇* N⤇*N′ ℰ s₂)
     )
 
 
 -- If `M` reduces to `PAIR M′ N′` and `M` is SN, then `FST M` is SN.
 mutual
-  sn-FST-PAIR : ∀ {A B M M′ N′} → {{_ : Val M′}} {{_ : Val N′}}
+  sn-fst-pair : ∀ {A B M M′ N′} → {{_ : Val M′}} {{_ : Val N′}}
                                 → M ⤇* PAIR M′ N′ → SN M (A ∧ B)
                                 → SN (FST M) A
-  sn-FST-PAIR M⤇*PAIR (𝒟 , M⇓ , s!) = fst 𝒟 , halt-FST-PAIR M⤇*PAIR , sn!-FST-PAIR M⤇*PAIR 𝒟 s!
+  sn-fst-pair M⤇*PAIR (𝒟 , M⇓ , s!) = fst 𝒟 , halt-fst-pair M⤇*PAIR , sn!-fst-pair s!
 
-  sn!-FST-PAIR : ∀ {A B M M′ N′} → {{_ : Val M′}} {{_ : Val N′}}
-                                 → M ⤇* PAIR M′ N′ → ∙ ⊢ M ⦂ A ∧ B → SN! M (A ∧ B)
-                                 → SN! (FST M) A
-  sn!-FST-PAIR {𝔹}       M⤇*PAIR 𝒟 _                      = ∙
-  sn!-FST-PAIR {𝟙}       M⤇*PAIR 𝒟 _                      = ∙
-  sn!-FST-PAIR {A₁ ∧ A₂} M⤇*PAIR 𝒟 ((ℰ , FST⇓ , s) , _)   = s
-  sn!-FST-PAIR {A₁ ⊃ A₂} M⤇*PAIR 𝒟 ((ℰ , FST⇓ , f) , _) s = f s
+  sn!-fst-pair : ∀ {A B M} → SN! M (A ∧ B)
+                           → SN! (FST M) A
+  sn!-fst-pair {𝔹}       _                      = ∙
+  sn!-fst-pair {𝟙}       _                      = ∙
+  sn!-fst-pair {A₁ ∧ A₂} ((ℰ , FST⇓ , s) , _)   = s
+  sn!-fst-pair {A₁ ⊃ A₂} ((ℰ , FST⇓ , f) , _) s = f s
 
 
 -- If `M` reduces to `PAIR M′ N′` and `M` is SN, then SND M` is SN.
 mutual
-  sn-SND-PAIR : ∀ {A B M M′ N′} → {{_ : Val M′}} {{_ : Val N′}}
+  sn-snd-pair : ∀ {A B M M′ N′} → {{_ : Val M′}} {{_ : Val N′}}
                                 → M ⤇* PAIR M′ N′ → SN M (A ∧ B)
                                 → SN (SND M) B
-  sn-SND-PAIR M⤇*PAIR (𝒟 , M⇓ , s!) = snd 𝒟 , halt-SND-PAIR M⤇*PAIR , sn!-SND-PAIR M⤇*PAIR 𝒟 s!
+  sn-snd-pair M⤇*PAIR (𝒟 , M⇓ , s!) = snd 𝒟 , halt-snd-pair M⤇*PAIR , sn!-snd-pair s!
 
-  sn!-SND-PAIR : ∀ {B A M M′ N′} → {{_ : Val M′}} {{_ : Val N′}}
-                                 → M ⤇* PAIR M′ N′ → ∙ ⊢ M ⦂ A ∧ B → SN! M (A ∧ B)
-                                 → SN! (SND M) B
-  sn!-SND-PAIR {𝔹}       M⤇*PAIR 𝒟 _                      = ∙
-  sn!-SND-PAIR {𝟙}       M⤇*PAIR 𝒟 _                      = ∙
-  sn!-SND-PAIR {B₁ ∧ B₂} M⤇*PAIR 𝒟 (_ , (ℰ , SND⇓ , s))   = s
-  sn!-SND-PAIR {B₁ ⊃ B₂} M⤇*PAIR 𝒟 (_ , (ℰ , SND⇓ , f)) s = f s
+  sn!-snd-pair : ∀ {B A M} → SN! M (A ∧ B)
+                           → SN! (SND M) B
+  sn!-snd-pair {𝔹}       _                      = ∙
+  sn!-snd-pair {𝟙}       _                      = ∙
+  sn!-snd-pair {B₁ ∧ B₂} (_ , (ℰ , SND⇓ , s))   = s
+  sn!-snd-pair {B₁ ⊃ B₂} (_ , (ℰ , SND⇓ , f)) s = f s
 
 
 -- If `M` reduces to `TRUE` and `N` is SN, then `IF M N O` is SN.
 mutual
-  sn-IF-TRUE : ∀ {C M N O} → M ⤇* TRUE → ∙ ⊢ M ⦂ 𝔹 → SN N C → ∙ ⊢ O ⦂ C
+  sn-if-true : ∀ {C M N O} → M ⤇* TRUE → ∙ ⊢ M ⦂ 𝔹 → SN N C → ∙ ⊢ O ⦂ C
                            → SN (IF M N O) C
-  sn-IF-TRUE M⤇*TRUE 𝒟 (ℰ , N⇓ , s!) ℱ = if 𝒟 ℰ ℱ , halt-IF-TRUE M⤇*TRUE N⇓ , sn!-IF-TRUE M⤇*TRUE 𝒟 ℰ ℱ s!
+  sn-if-true M⤇*TRUE 𝒟 (ℰ , N⇓ , s!) ℱ = if 𝒟 ℰ ℱ , halt-if-true M⤇*TRUE N⇓ , sn!-if-true M⤇*TRUE 𝒟 ℰ ℱ s!
 
-  sn!-IF-TRUE : ∀ {C M N O} → M ⤇* TRUE → ∙ ⊢ M ⦂ 𝔹 → ∙ ⊢ N ⦂ C → ∙ ⊢ O ⦂ C → SN! N C
+  sn!-if-true : ∀ {C M N O} → M ⤇* TRUE → ∙ ⊢ M ⦂ 𝔹 → ∙ ⊢ N ⦂ C → ∙ ⊢ O ⦂ C → SN! N C
                             → SN! (IF M N O) C
-  sn!-IF-TRUE {𝔹}     M⤇*TRUE 𝒟 ℰ ℱ ∙         = ∙
-  sn!-IF-TRUE {𝟙}     M⤇*TRUE 𝒟 ℰ ℱ ∙         = ∙
-  sn!-IF-TRUE {A ∧ B} M⤇*TRUE 𝒟 ℰ ℱ (s₁ , s₂) = snpr⤇* (congs-FST (reds-IF-TRUE M⤇*TRUE done)) (fst (if 𝒟 ℰ ℱ)) s₁ ,
-                                                 snpr⤇* (congs-SND (reds-IF-TRUE M⤇*TRUE done)) (snd (if 𝒟 ℰ ℱ)) s₂
-  sn!-IF-TRUE {A ⊃ B} M⤇*TRUE 𝒟 ℰ ℱ f s       = snpr⤇* (congs-APP (reds-IF-TRUE M⤇*TRUE done)) (app (if 𝒟 ℰ ℱ) (derp s)) (f s)
+  sn!-if-true {𝔹}     M⤇*TRUE 𝒟 ℰ ℱ ∙         = ∙
+  sn!-if-true {𝟙}     M⤇*TRUE 𝒟 ℰ ℱ ∙         = ∙
+  sn!-if-true {A ∧ B} M⤇*TRUE 𝒟 ℰ ℱ (s₁ , s₂) = snpr⤇* (congs-fst (reds-if-true M⤇*TRUE done)) (fst (if 𝒟 ℰ ℱ)) s₁ ,
+                                                 snpr⤇* (congs-snd (reds-if-true M⤇*TRUE done)) (snd (if 𝒟 ℰ ℱ)) s₂
+  sn!-if-true {A ⊃ B} M⤇*TRUE 𝒟 ℰ ℱ f s       = snpr⤇* (congs-app₁ (reds-if-true M⤇*TRUE done)) (app (if 𝒟 ℰ ℱ) (derp s)) (f s)
 
 
 -- If `M` reduces to `FALSE` and `O` is SN, then `IF M N O` is SN.
 mutual
-  sn-IF-FALSE : ∀ {C M N O} → M ⤇* FALSE → ∙ ⊢ M ⦂ 𝔹 → ∙ ⊢ N ⦂ C → SN O C
+  sn-if-false : ∀ {C M N O} → M ⤇* FALSE → ∙ ⊢ M ⦂ 𝔹 → ∙ ⊢ N ⦂ C → SN O C
                             → SN (IF M N O) C
-  sn-IF-FALSE M⤇*FALSE 𝒟 ℰ (ℱ , N⇓ , s!) = if 𝒟 ℰ ℱ , halt-IF-FALSE M⤇*FALSE N⇓ , sn!-IF-FALSE M⤇*FALSE 𝒟 ℰ ℱ s!
+  sn-if-false M⤇*FALSE 𝒟 ℰ (ℱ , N⇓ , s!) = if 𝒟 ℰ ℱ , halt-if-false M⤇*FALSE N⇓ , sn!-if-false M⤇*FALSE 𝒟 ℰ ℱ s!
 
-  sn!-IF-FALSE : ∀ {C M N O} → M ⤇* FALSE → ∙ ⊢ M ⦂ 𝔹 → ∙ ⊢ N ⦂ C → ∙ ⊢ O ⦂ C → SN! O C
+  sn!-if-false : ∀ {C M N O} → M ⤇* FALSE → ∙ ⊢ M ⦂ 𝔹 → ∙ ⊢ N ⦂ C → ∙ ⊢ O ⦂ C → SN! O C
                              → SN! (IF M N O) C
-  sn!-IF-FALSE {𝔹}     M⤇*FALSE 𝒟 ℰ ℱ ∙         = ∙
-  sn!-IF-FALSE {𝟙}     M⤇*FALSE 𝒟 ℰ ℱ ∙         = ∙
-  sn!-IF-FALSE {A ∧ B} M⤇*FALSE 𝒟 ℰ ℱ (s₁ , s₂) = snpr⤇* (congs-FST (reds-IF-FALSE M⤇*FALSE done)) (fst (if 𝒟 ℰ ℱ)) s₁ ,
-                                                   snpr⤇* (congs-SND (reds-IF-FALSE M⤇*FALSE done)) (snd (if 𝒟 ℰ ℱ)) s₂
-  sn!-IF-FALSE {A ⊃ B} M⤇*FALSE 𝒟 ℰ ℱ f s       = snpr⤇* (congs-APP (reds-IF-FALSE M⤇*FALSE done)) (app (if 𝒟 ℰ ℱ) (derp s)) (f s)
+  sn!-if-false {𝔹}     M⤇*FALSE 𝒟 ℰ ℱ ∙         = ∙
+  sn!-if-false {𝟙}     M⤇*FALSE 𝒟 ℰ ℱ ∙         = ∙
+  sn!-if-false {A ∧ B} M⤇*FALSE 𝒟 ℰ ℱ (s₁ , s₂) = snpr⤇* (congs-fst (reds-if-false M⤇*FALSE done)) (fst (if 𝒟 ℰ ℱ)) s₁ ,
+                                                   snpr⤇* (congs-snd (reds-if-false M⤇*FALSE done)) (snd (if 𝒟 ℰ ℱ)) s₂
+  sn!-if-false {A ⊃ B} M⤇*FALSE 𝒟 ℰ ℱ f s       = snpr⤇* (congs-app₁ (reds-if-false M⤇*FALSE done)) (app (if 𝒟 ℰ ℱ) (derp s)) (f s)
 
 
 --------------------------------------------------------------------------------
@@ -199,86 +197,86 @@ derps σ = maps derp σ
 
 
 -- TODO
-red-APP-LAM-SUB : ∀ {g M N} → {τ : Terms 0 g} → {{_ : Val N}}
+gen-red-app-lam : ∀ {g M N} → {τ : Terms 0 g} → {{_ : Val N}}
                             → APP (LAM (SUB (LIFTS τ) M)) N ⤇ SUB (τ , N) M
-red-APP-LAM-SUB {M = M} {N} {τ} rewrite simp-CUT-SUB N τ M ⁻¹ = red APP-LAM
+gen-red-app-lam {M = M} {N} {τ} rewrite simp-CUT-SUB N τ M ⁻¹ = red app-lam
 
 
 -- TODO
-big-red-APP-LAM-SUB : ∀ {g M M′ N} → {τ : Terms 0 g} → {{_ : Vals τ}} {{_ : Val N}}
+gen-big-red-app-lam : ∀ {g M M′ N} → {τ : Terms 0 g} → {{_ : Vals τ}} {{_ : Val N}}
                                    → SUB (τ , N) M ⇓ M′
                                    → APP (LAM (SUB (LIFTS τ) M)) N ⇓ M′
-big-red-APP-LAM-SUB {M = M} (SUB⤇*M′ , VM′) = step (red-APP-LAM-SUB {M = M}) SUB⤇*M′ , VM′
+gen-big-red-app-lam {M = M} (SUB⤇*M′ , VM′) = step (gen-red-app-lam {M = M}) SUB⤇*M′ , VM′
 
 
 -- TODO
-halt-APP-LAM-SUB : ∀ {g M N} → {τ : Terms 0 g} → {{_ : Vals τ}} {{_ : Val N}}
+gen-halt-app-lam : ∀ {g M N} → {τ : Terms 0 g} → {{_ : Vals τ}} {{_ : Val N}}
                              → SUB (τ , N) M ⇓
                              → APP (LAM (SUB (LIFTS τ) M)) N ⇓
-halt-APP-LAM-SUB {M = M} (M′ , SUB⇓M′) = M′ , big-red-APP-LAM-SUB {M = M} SUB⇓M′
+gen-halt-app-lam {M = M} (M′ , SUB⇓M′) = M′ , gen-big-red-app-lam {M = M} SUB⇓M′
 
 
 -- TODO
 mutual
-  sn-APP-LAM-SUB : ∀ {B g M N A} → {τ : Terms 0 g} → {{_ : Vals τ}} {{_ : Val N}}
+  gen-sn-app-lam : ∀ {B g M N A} → {τ : Terms 0 g} → {{_ : Vals τ}} {{_ : Val N}}
                                  → ∙ ⊢ SUB τ (LAM M) ⦂ A ⊃ B → ∙ ⊢ N ⦂ A → SN (SUB (τ , N) M) B
                                  → SN (APP (LAM (SUB (LIFTS τ) M)) N) B
-  sn-APP-LAM-SUB {M = M} 𝒟 ℰ (𝒟′ , SUB⇓ , s!) = app 𝒟 ℰ , halt-APP-LAM-SUB {M = M} SUB⇓ , sn!-APP-LAM-SUB {M = M} 𝒟 ℰ s!
+  gen-sn-app-lam {M = M} 𝒟 ℰ (𝒟′ , SUB⇓ , s!) = app 𝒟 ℰ , gen-halt-app-lam {M = M} SUB⇓ , gen-sn!-app-lam {M = M} 𝒟 ℰ s!
 
-  sn!-APP-LAM-SUB : ∀ {B g M N A} → {τ : Terms 0 g} → {{_ : Vals τ}} {{_ : Val N}}
+  gen-sn!-app-lam : ∀ {B g M N A} → {τ : Terms 0 g} → {{_ : Vals τ}} {{_ : Val N}}
                                   → ∙ ⊢ SUB τ (LAM M) ⦂ A ⊃ B → ∙ ⊢ N ⦂ A → SN! (SUB (τ , N) M) B
                                   → SN! (APP (LAM (SUB (LIFTS τ) M)) N) B
-  sn!-APP-LAM-SUB {𝔹}       {M = M} 𝒟 ℰ ∙         = ∙
-  sn!-APP-LAM-SUB {𝟙}       {M = M} 𝒟 ℰ ∙         = ∙
-  sn!-APP-LAM-SUB {B₁ ∧ B₂} {M = M} 𝒟 ℰ (s₁ , s₂) = snpr⤇ (cong-FST (red-APP-LAM-SUB {M = M})) (fst (app 𝒟 ℰ)) s₁ ,
-                                                    snpr⤇ (cong-SND (red-APP-LAM-SUB {M = M})) (snd (app 𝒟 ℰ)) s₂
-  sn!-APP-LAM-SUB {B₁ ⊃ B₂} {M = M} 𝒟 ℰ f s       = snpr⤇ (cong-APP (red-APP-LAM-SUB {M = M})) (app (app 𝒟 ℰ) (derp s)) (f s)
+  gen-sn!-app-lam {𝔹}       {M = M} 𝒟 ℰ ∙         = ∙
+  gen-sn!-app-lam {𝟙}       {M = M} 𝒟 ℰ ∙         = ∙
+  gen-sn!-app-lam {B₁ ∧ B₂} {M = M} 𝒟 ℰ (s₁ , s₂) = snpr⤇ (cong-fst (gen-red-app-lam {M = M})) (fst (app 𝒟 ℰ)) s₁ ,
+                                                    snpr⤇ (cong-snd (gen-red-app-lam {M = M})) (snd (app 𝒟 ℰ)) s₂
+  gen-sn!-app-lam {B₁ ⊃ B₂} {M = M} 𝒟 ℰ f s       = snpr⤇ (cong-app₁ (gen-red-app-lam {M = M})) (app (app 𝒟 ℰ) (derp s)) (f s)
 
 
 --------------------------------------------------------------------------------
 
 
 mutual
-  sn-SUB : ∀ {g M A} → {τ : Terms 0 g} {Γ : Types g} → {{_ : Vals τ}}
+  gen-sn : ∀ {g M A} → {τ : Terms 0 g} {Γ : Types g} → {{_ : Vals τ}}
                      → SNs τ Γ → Γ ⊢ M ⦂ A
                      → SN (SUB τ M) A
-  sn-SUB σ (var i)    = get σ (zip∋₂ i)
-  sn-SUB σ (lam 𝒟)    = let 𝒟′ = sub (derps σ) (lam 𝒟) in
-                          𝒟′ , (LAM _ , done , VLAM) , sn-SUB-LAM σ 𝒟 𝒟′
-  sn-SUB σ (app 𝒟 ℰ)  with sn-SUB σ 𝒟
-  sn-SUB σ (app 𝒟 ℰ)  | 𝒟′ , M′⇓ , f = f (sn-SUB σ ℰ)
-  sn-SUB σ (pair 𝒟 ℰ) = sn-PAIR (sn-SUB σ 𝒟) (sn-SUB σ ℰ)
-  sn-SUB σ (fst 𝒟)    with sn-SUB σ 𝒟
-  sn-SUB σ (fst 𝒟)    |    𝒟′ , (M′       , SUB⤇*M′   , VM′)    , _  with tp⤇* SUB⤇*M′ 𝒟′
-  sn-SUB σ (fst 𝒟)    |    𝒟′ , (LAM _    , _          , VLAM)   , _  | ()
-  sn-SUB σ (fst 𝒟)    |    𝒟′ , (UNIT     , _          , VUNIT)  , _  | ()
-  sn-SUB σ (fst 𝒟)    | s@(𝒟′ , (PAIR _ _ , SUB⤇*PAIR , VPAIR)  , _) | pair _ _ = sn-FST-PAIR SUB⤇*PAIR s
-  sn-SUB σ (fst 𝒟)    |    𝒟′ , (TRUE     , _          , VTRUE)  , _  | ()
-  sn-SUB σ (fst 𝒟)    |    𝒟′ , (FALSE    , _          , VFALSE) , _  | ()
-  sn-SUB σ (snd 𝒟)    with sn-SUB σ 𝒟
-  sn-SUB σ (snd 𝒟)    |    𝒟′ , (M′       , SUB⤇*M′   , VM′)    , _  with tp⤇* SUB⤇*M′ 𝒟′
-  sn-SUB σ (snd 𝒟)    |    𝒟′ , (LAM _    , _          , VLAM)   , _  | ()
-  sn-SUB σ (snd 𝒟)    |    𝒟′ , (UNIT     , _          , VUNIT)  , _  | ()
-  sn-SUB σ (snd 𝒟)    | s@(𝒟′ , (PAIR _ _ , SUB⤇*PAIR , VPAIR)  , _) | pair _ _ = sn-SND-PAIR SUB⤇*PAIR s
-  sn-SUB σ (snd 𝒟)    |    𝒟′ , (TRUE     , _          , VTRUE)  , _  | ()
-  sn-SUB σ (snd 𝒟)    |    𝒟′ , (FALSE    , _          , VFALSE) , _  | ()
-  sn-SUB σ unit       = unit  , (UNIT  , done , VUNIT)  , ∙
-  sn-SUB σ true       = true  , (TRUE  , done , VTRUE)  , ∙
-  sn-SUB σ false      = false , (FALSE , done , VFALSE) , ∙
-  sn-SUB σ (if 𝒟 ℰ ℱ) with sn-SUB σ 𝒟
-  sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , (M′       , SUB⤇*M′    , VM′)    , ∙ with tp⤇* SUB⤇*M′ 𝒟′
-  sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , (LAM _    , _           , VLAM)   , ∙ | ()
-  sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , (UNIT     , _           , VUNIT)  , ∙ | ()
-  sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , (PAIR _ _ , _           , VPAIR)  , ∙ | ()
-  sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , (TRUE     , SUB⤇*TRUE  , VTRUE)  , ∙ | true  = sn-IF-TRUE SUB⤇*TRUE 𝒟′ (sn-SUB σ ℰ) (sub (derps σ) ℱ)
-  sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , (FALSE    , SUB⤇*FALSE , VFALSE) , ∙ | false = sn-IF-FALSE SUB⤇*FALSE 𝒟′ (sub (derps σ) ℰ) (sn-SUB σ ℱ)
+  gen-sn σ (var i)    = get σ (zip∋₂ i)
+  gen-sn σ (lam 𝒟)    = let 𝒟′ = sub (derps σ) (lam 𝒟) in
+                          𝒟′ , (LAM _ , done , val-lam) , gen-sn-lam σ 𝒟 𝒟′
+  gen-sn σ (app 𝒟 ℰ)  with gen-sn σ 𝒟
+  gen-sn σ (app 𝒟 ℰ)  | 𝒟′ , M′⇓ , f = f (gen-sn σ ℰ)
+  gen-sn σ (pair 𝒟 ℰ) = sn-pair (gen-sn σ 𝒟) (gen-sn σ ℰ)
+  gen-sn σ (fst 𝒟)    with gen-sn σ 𝒟
+  gen-sn σ (fst 𝒟)    |    𝒟′ , (M′       , SUB⤇*M′   , VM′)       , _  with tp⤇* SUB⤇*M′ 𝒟′
+  gen-sn σ (fst 𝒟)    |    𝒟′ , (LAM _    , _          , val-lam)   , _  | ()
+  gen-sn σ (fst 𝒟)    |    𝒟′ , (UNIT     , _          , val-unit)  , _  | ()
+  gen-sn σ (fst 𝒟)    | s@(𝒟′ , (PAIR _ _ , SUB⤇*PAIR , val-pair)  , _) | pair _ _ = sn-fst-pair SUB⤇*PAIR s
+  gen-sn σ (fst 𝒟)    |    𝒟′ , (TRUE     , _          , val-true)  , _  | ()
+  gen-sn σ (fst 𝒟)    |    𝒟′ , (FALSE    , _          , val-false) , _  | ()
+  gen-sn σ (snd 𝒟)    with gen-sn σ 𝒟
+  gen-sn σ (snd 𝒟)    |    𝒟′ , (M′       , SUB⤇*M′   , VM′)       , _  with tp⤇* SUB⤇*M′ 𝒟′
+  gen-sn σ (snd 𝒟)    |    𝒟′ , (LAM _    , _          , val-lam)   , _  | ()
+  gen-sn σ (snd 𝒟)    |    𝒟′ , (UNIT     , _          , val-unit)  , _  | ()
+  gen-sn σ (snd 𝒟)    | s@(𝒟′ , (PAIR _ _ , SUB⤇*PAIR , val-pair)  , _) | pair _ _ = sn-snd-pair SUB⤇*PAIR s
+  gen-sn σ (snd 𝒟)    |    𝒟′ , (TRUE     , _          , val-true)  , _  | ()
+  gen-sn σ (snd 𝒟)    |    𝒟′ , (FALSE    , _          , val-false) , _  | ()
+  gen-sn σ unit       = unit  , (UNIT  , done , val-unit)  , ∙
+  gen-sn σ true       = true  , (TRUE  , done , val-true)  , ∙
+  gen-sn σ false      = false , (FALSE , done , val-false) , ∙
+  gen-sn σ (if 𝒟 ℰ ℱ) with gen-sn σ 𝒟
+  gen-sn σ (if 𝒟 ℰ ℱ) | 𝒟′ , (M′       , SUB⤇*M′    , VM′)       , ∙ with tp⤇* SUB⤇*M′ 𝒟′
+  gen-sn σ (if 𝒟 ℰ ℱ) | 𝒟′ , (LAM _    , _           , val-lam)   , ∙ | ()
+  gen-sn σ (if 𝒟 ℰ ℱ) | 𝒟′ , (UNIT     , _           , val-unit)  , ∙ | ()
+  gen-sn σ (if 𝒟 ℰ ℱ) | 𝒟′ , (PAIR _ _ , _           , val-pair)  , ∙ | ()
+  gen-sn σ (if 𝒟 ℰ ℱ) | 𝒟′ , (TRUE     , SUB⤇*TRUE  , val-true)  , ∙ | true  = sn-if-true SUB⤇*TRUE 𝒟′ (gen-sn σ ℰ) (sub (derps σ) ℱ)
+  gen-sn σ (if 𝒟 ℰ ℱ) | 𝒟′ , (FALSE    , SUB⤇*FALSE , val-false) , ∙ | false = sn-if-false SUB⤇*FALSE 𝒟′ (sub (derps σ) ℰ) (gen-sn σ ℱ)
 
-  sn-SUB-LAM : ∀ {g M N A B} → {τ : Terms 0 g} {Γ : Types g} → {{_ : Vals τ}}
+  gen-sn-lam : ∀ {g M N A B} → {τ : Terms 0 g} {Γ : Types g} → {{_ : Vals τ}}
                              → SNs τ Γ → Γ , A ⊢ M ⦂ B → ∙ ⊢ LAM (SUB (LIFTS τ) M) ⦂ A ⊃ B → SN N A
                              → SN (APP (LAM (SUB (LIFTS τ) M)) N) B
-  sn-SUB-LAM {M = M} {{Vτ}} σ 𝒟 𝒟′ s@(ℰ , (N′ , N⇓N′@(N⤇*N′ , VN′)) , s!)
+  gen-sn-lam {M = M} {{Vτ}} σ 𝒟 𝒟′ s@(ℰ , (N′ , N⇓N′@(N⤇*N′ , VN′)) , s!)
     = let s′ = snp⇓ N⇓N′ ℰ s in
-        snpr⤇* (congs-APP-LAM N⤇*N′) (app 𝒟′ ℰ) (sn-APP-LAM-SUB {M = M} {{Vτ}} {{VN′}} 𝒟′ (derp s′) (sn-SUB {{Vτ , VN′}} (σ , s′) 𝒟))
+        snpr⤇* (congs-app₂ N⤇*N′) (app 𝒟′ ℰ) (gen-sn-app-lam {M = M} {{Vτ}} {{VN′}} 𝒟′ (derp s′) (gen-sn {{Vτ , VN′}} (σ , s′) 𝒟))
 
 
 --------------------------------------------------------------------------------
@@ -287,7 +285,7 @@ mutual
 -- Every well-typed term is SN.
 sn : ∀ {A M} → ∙ ⊢ M ⦂ A
              → SN M A
-sn {A} {M} 𝒟 = subst (\ M′ → SN M′ A) (id-SUB M) (sn-SUB ∙ 𝒟)
+sn {A} {M} 𝒟 = subst (\ M′ → SN M′ A) (id-SUB M) (gen-sn ∙ 𝒟)
 
 
 -- Every well-typed term terminates.
