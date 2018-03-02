@@ -423,7 +423,7 @@ halt-snd-pair {N′ = N′} M⤅PAIR = N′ , big-red-snd-pair M⤅PAIR
 halt-fst : ∀ {g M A B} → {Γ : Types g}
                        → Γ ⊢ M ⦂ A ∧ B → M ⇓
                        → FST M ⇓
-halt-fst 𝒟 (M′ , M⤅M′ , VM′) with tp⤅ M⤅M′ 𝒟
+halt-fst 𝒟 (M′       , M⤅M′   , VM′)       with tp⤅ M⤅M′ 𝒟
 halt-fst 𝒟 (LAM _    , _       , val-lam)   | ()
 halt-fst 𝒟 (PAIR _ _ , M⤅PAIR , val-pair)  | pair _ _ = halt-fst-pair M⤅PAIR
 halt-fst 𝒟 (UNIT     , _       , val-unit)  | ()
@@ -435,7 +435,7 @@ halt-fst 𝒟 (FALSE    , _       , val-false) | ()
 halt-snd : ∀ {g M A B} → {Γ : Types g}
                        → Γ ⊢ M ⦂ A ∧ B → M ⇓
                        → SND M ⇓
-halt-snd 𝒟 (M′ , M⤅M′ , VM′) with tp⤅ M⤅M′ 𝒟
+halt-snd 𝒟 (M′       , M⤅M′   , VM′)       with tp⤅ M⤅M′ 𝒟
 halt-snd 𝒟 (LAM _    , _       , val-lam)   | ()
 halt-snd 𝒟 (PAIR _ _ , M⤅PAIR , val-pair)  | pair _ _ = halt-snd-pair M⤅PAIR
 halt-snd 𝒟 (UNIT     , _       , val-unit)  | ()
@@ -447,12 +447,12 @@ halt-snd 𝒟 (FALSE    , _       , val-false) | ()
 halt-abort : ∀ {g M} → {Γ : Types g}
                      → Γ ⊢ M ⦂ 𝟘 → M ⇓
                      → ABORT M ⇓
-halt-abort 𝒟 (M′ , M⤅M′ , VM′) with tp⤅ M⤅M′ 𝒟
-halt-abort 𝒟 (LAM _    , _ , val-lam)   | ()
-halt-abort 𝒟 (PAIR _ _ , _ , val-pair)  | ()
-halt-abort 𝒟 (UNIT     , _ , val-unit)  | ()
-halt-abort 𝒟 (TRUE     , _ , val-true)  | ()
-halt-abort 𝒟 (FALSE    , _ , val-false) | ()
+halt-abort 𝒟 (M′       , M⤅M′ , VM′)       with tp⤅ M⤅M′ 𝒟
+halt-abort 𝒟 (LAM _    , _     , val-lam)   | ()
+halt-abort 𝒟 (PAIR _ _ , _     , val-pair)  | ()
+halt-abort 𝒟 (UNIT     , _     , val-unit)  | ()
+halt-abort 𝒟 (TRUE     , _     , val-true)  | ()
+halt-abort 𝒟 (FALSE    , _     , val-false) | ()
 
 
 -- If `M` reduces to `TRUE` and `N` terminates, then `IF M N O` terminates.
@@ -467,6 +467,18 @@ halt-if-false : ∀ {g} → {M N O : Term g}
                       → M ⤅ FALSE → O ⇓
                       → IF M N O ⇓
 halt-if-false M⤅FALSE (O′ , O⇓O′) = O′ , big-red-if-false M⤅FALSE O⇓O′
+
+
+-- If `M` terminates and `N` terminates and `O` terminates, then `IF M N O` terminates.
+halt-if : ∀ {g M N O} → {Γ : Types g}
+                      → Γ ⊢ M ⦂ 𝔹 → M ⇓ → N ⇓ → O ⇓
+                      → IF M N O ⇓
+halt-if 𝒟 (M′       , M⤅M′    , VM′)       N⇓ O⇓ with tp⤅ M⤅M′ 𝒟
+halt-if 𝒟 (LAM _    , _        , val-lam)   N⇓ O⇓ | ()
+halt-if 𝒟 (PAIR _ _ , _        , val-pair)  N⇓ O⇓ | ()
+halt-if 𝒟 (UNIT     , _        , val-unit)  N⇓ O⇓ | ()
+halt-if 𝒟 (TRUE     , M⤅TRUE  , val-true)  N⇓ O⇓ | true  = halt-if-true M⤅TRUE N⇓
+halt-if 𝒟 (FALSE    , M⤅FALSE , val-false) N⇓ O⇓ | false = halt-if-false M⤅FALSE O⇓
 
 
 -- Every well-typed term terminates.
@@ -484,13 +496,7 @@ halt unit       = UNIT  , done , val-unit
 halt (abort 𝒟)  = halt-abort 𝒟 (halt 𝒟)
 halt true       = TRUE  , done , val-true
 halt false      = FALSE , done , val-false
-halt (if 𝒟 ℰ ℱ) with halt 𝒟
-halt (if 𝒟 ℰ ℱ) | M′       , M⤅M′    , VM′       with tp⤅ M⤅M′ 𝒟
-halt (if 𝒟 ℰ ℱ) | LAM _    , _        , val-lam   | ()
-halt (if 𝒟 ℰ ℱ) | PAIR _ _ , _        , val-pair  | ()
-halt (if 𝒟 ℰ ℱ) | UNIT     , _        , val-unit  | ()
-halt (if 𝒟 ℰ ℱ) | TRUE     , M⤅TRUE  , val-true  | true  = halt-if-true M⤅TRUE (halt ℰ)
-halt (if 𝒟 ℰ ℱ) | FALSE    , M⤅FALSE , val-false | false = halt-if-false M⤅FALSE (halt ℱ)
+halt (if 𝒟 ℰ ℱ) = halt-if 𝒟 (halt 𝒟) (halt ℰ) (halt ℱ)
 -}
 
 

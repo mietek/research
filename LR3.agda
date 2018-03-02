@@ -170,11 +170,16 @@ mutual
   sn!-abort {A ⊃ B} () _
 
 
--- If `M` reduces to `TRUE` and `N` is SN at type `C`, then `IF M N O` is SN at type `C`.
+-- If `M` is SN at type `𝔹` and `N` is SN at type `C` and `O` is SN at type `C`, then `IF M N O` is SN at type `C`.
 mutual
-  sn-if-true : ∀ {C M N O} → M ⤅ TRUE → ∙ ⊢ M ⦂ 𝔹 → SN N C → ∙ ⊢ O ⦂ C
-                           → SN (IF M N O) C
-  sn-if-true M⤅TRUE 𝒟 (ℰ , N⇓ , s!) ℱ = if 𝒟 ℰ ℱ , halt-if-true M⤅TRUE N⇓ , sn!-if-true M⤅TRUE 𝒟 ℰ ℱ s!
+  sn-if : ∀ {C M N O} → SN M 𝔹 → SN N C → SN O C
+                      → SN (IF M N O) C
+  sn-if (𝒟 , M⇓@(M′       , M⤅M′    , VM′)       , ∙) _              _              with tp⤅ M⤅M′ 𝒟
+  sn-if (𝒟 , M⇓@(LAM _    , _        , val-lam)   , ∙) _              _              | ()
+  sn-if (𝒟 , M⇓@(PAIR _ _ , _        , val-pair)  , ∙) _              _              | ()
+  sn-if (𝒟 , M⇓@(UNIT     , _        , val-unit)  , ∙) _              _              | ()
+  sn-if (𝒟 , M⇓@(TRUE     , M⤅TRUE  , val-true)  , ∙) (ℰ , N⇓ , s!₁) (ℱ , O⇓ , s!₂) | true  = if 𝒟 ℰ ℱ , halt-if 𝒟 M⇓ N⇓ O⇓ , sn!-if-true M⤅TRUE 𝒟 ℰ ℱ s!₁
+  sn-if (𝒟 , M⇓@(FALSE    , M⤅FALSE , val-false) , ∙) (ℰ , N⇓ , s!₁) (ℱ , O⇓ , s!₂) | false = if 𝒟 ℰ ℱ , halt-if 𝒟 M⇓ N⇓ O⇓ , sn!-if-false M⤅FALSE 𝒟 ℰ ℱ s!₂
 
   sn!-if-true : ∀ {C M N O} → M ⤅ TRUE → ∙ ⊢ M ⦂ 𝔹 → ∙ ⊢ N ⦂ C → ∙ ⊢ O ⦂ C → SN! N C
                             → SN! (IF M N O) C
@@ -184,13 +189,6 @@ mutual
   sn!-if-true {A ∧ B} M⤅TRUE 𝒟 ℰ ℱ (s₁ , s₂) = snpr⤅ (congs-fst (reds-if-true M⤅TRUE done)) (fst (if 𝒟 ℰ ℱ)) s₁ ,
                                                 snpr⤅ (congs-snd (reds-if-true M⤅TRUE done)) (snd (if 𝒟 ℰ ℱ)) s₂
   sn!-if-true {A ⊃ B} M⤅TRUE 𝒟 ℰ ℱ f s       = snpr⤅ (congs-app₁ (reds-if-true M⤅TRUE done)) (app (if 𝒟 ℰ ℱ) (derp s)) (f s)
-
-
--- If `M` reduces to `FALSE` and `O` is SN at type `C`, then `IF M N O` is SN at type `C`.
-mutual
-  sn-if-false : ∀ {C M N O} → M ⤅ FALSE → ∙ ⊢ M ⦂ 𝔹 → ∙ ⊢ N ⦂ C → SN O C
-                            → SN (IF M N O) C
-  sn-if-false M⤅FALSE 𝒟 ℰ (ℱ , N⇓ , s!) = if 𝒟 ℰ ℱ , halt-if-false M⤅FALSE N⇓ , sn!-if-false M⤅FALSE 𝒟 ℰ ℱ s!
 
   sn!-if-false : ∀ {C M N O} → M ⤅ FALSE → ∙ ⊢ M ⦂ 𝔹 → ∙ ⊢ N ⦂ C → ∙ ⊢ O ⦂ C → SN! O C
                              → SN! (IF M N O) C
@@ -259,13 +257,7 @@ mutual
   gen-sn σ (abort 𝒟)  = sn-abort (gen-sn σ 𝒟)
   gen-sn σ true       = true  , (TRUE  , done , val-true)  , ∙
   gen-sn σ false      = false , (FALSE , done , val-false) , ∙
-  gen-sn σ (if 𝒟 ℰ ℱ) with gen-sn σ 𝒟
-  gen-sn σ (if 𝒟 ℰ ℱ) | 𝒟′ , (M′       , SUB⤅M′    , VM′)       , ∙ with tp⤅ SUB⤅M′ 𝒟′
-  gen-sn σ (if 𝒟 ℰ ℱ) | 𝒟′ , (LAM _    , _          , val-lam)   , ∙ | ()
-  gen-sn σ (if 𝒟 ℰ ℱ) | 𝒟′ , (PAIR _ _ , _          , val-pair)  , ∙ | ()
-  gen-sn σ (if 𝒟 ℰ ℱ) | 𝒟′ , (UNIT     , _          , val-unit)  , ∙ | ()
-  gen-sn σ (if 𝒟 ℰ ℱ) | 𝒟′ , (TRUE     , SUB⤅TRUE  , val-true)  , ∙ | true  = sn-if-true SUB⤅TRUE 𝒟′ (gen-sn σ ℰ) (sub (derps σ) ℱ)
-  gen-sn σ (if 𝒟 ℰ ℱ) | 𝒟′ , (FALSE    , SUB⤅FALSE , val-false) , ∙ | false = sn-if-false SUB⤅FALSE 𝒟′ (sub (derps σ) ℰ) (gen-sn σ ℱ)
+  gen-sn σ (if 𝒟 ℰ ℱ) = sn-if (gen-sn σ 𝒟) (gen-sn σ ℰ) (gen-sn σ ℱ)
 
   gen-sn-lam : ∀ {g M N A B} → {τ : Terms 0 g} {Γ : Types g} → {{_ : Vals τ}}
                              → SNs τ Γ → Γ , A ⊢ M ⦂ B → ∙ ⊢ LAM (SUB (LIFTS τ) M) ⦂ A ⊃ B → SN N A
