@@ -127,11 +127,11 @@ mutual
   sn-fst : ∀ {A B M} → SN M (A ∧ B)
                      → SN (FST M) A
   sn-fst (𝒟 , (M′       , M⤅M′   , VM′)       , s!) with tp⤅ M⤅M′ 𝒟
-  sn-fst (𝒟 , (LAM _    , _        , val-lam)   , s!) | ()
-  sn-fst (𝒟 , (UNIT     , _        , val-unit)  , s!) | ()
+  sn-fst (𝒟 , (LAM _    , _       , val-lam)   , s!) | ()
+  sn-fst (𝒟 , (UNIT     , _       , val-unit)  , s!) | ()
   sn-fst (𝒟 , (PAIR _ _ , M⤅PAIR , val-pair)  , s!) | pair _ _ = fst 𝒟 , halt-fst-pair M⤅PAIR , sn!-fst s!
-  sn-fst (𝒟 , (TRUE     , _        , val-true)  , s!) | ()
-  sn-fst (𝒟 , (FALSE    , _        , val-false) , s!) | ()
+  sn-fst (𝒟 , (TRUE     , _       , val-true)  , s!) | ()
+  sn-fst (𝒟 , (FALSE    , _       , val-false) , s!) | ()
 
   sn!-fst : ∀ {A B M} → SN! M (A ∧ B)
                       → SN! (FST M) A
@@ -146,11 +146,11 @@ mutual
   sn-snd : ∀ {A B M} → SN M (A ∧ B)
                      → SN (SND M) B
   sn-snd (𝒟 , (M′       , M⤅M′   , VM′)       , s!) with tp⤅ M⤅M′ 𝒟
-  sn-snd (𝒟 , (LAM _    , _        , val-lam)   , s!) | ()
-  sn-snd (𝒟 , (UNIT     , _        , val-unit)  , s!) | ()
+  sn-snd (𝒟 , (LAM _    , _       , val-lam)   , s!) | ()
+  sn-snd (𝒟 , (UNIT     , _       , val-unit)  , s!) | ()
   sn-snd (𝒟 , (PAIR _ _ , M⤅PAIR , val-pair)  , s!) | pair _ _ = snd 𝒟 , halt-snd-pair M⤅PAIR , sn!-snd s!
-  sn-snd (𝒟 , (TRUE     , _        , val-true)  , s!) | ()
-  sn-snd (𝒟 , (FALSE    , _        , val-false) , s!) | ()
+  sn-snd (𝒟 , (TRUE     , _       , val-true)  , s!) | ()
+  sn-snd (𝒟 , (FALSE    , _       , val-false) , s!) | ()
 
   sn!-snd : ∀ {B A M} → SN! M (A ∧ B)
                       → SN! (SND M) B
@@ -171,7 +171,7 @@ mutual
   sn!-if-true {𝔹}     M⤅TRUE 𝒟 ℰ ℱ ∙         = ∙
   sn!-if-true {𝟙}     M⤅TRUE 𝒟 ℰ ℱ ∙         = ∙
   sn!-if-true {A ∧ B} M⤅TRUE 𝒟 ℰ ℱ (s₁ , s₂) = snpr⤅ (congs-fst (reds-if-true M⤅TRUE done)) (fst (if 𝒟 ℰ ℱ)) s₁ ,
-                                                 snpr⤅ (congs-snd (reds-if-true M⤅TRUE done)) (snd (if 𝒟 ℰ ℱ)) s₂
+                                                snpr⤅ (congs-snd (reds-if-true M⤅TRUE done)) (snd (if 𝒟 ℰ ℱ)) s₂
   sn!-if-true {A ⊃ B} M⤅TRUE 𝒟 ℰ ℱ f s       = snpr⤅ (congs-app₁ (reds-if-true M⤅TRUE done)) (app (if 𝒟 ℰ ℱ) (derp s)) (f s)
 
 
@@ -186,7 +186,7 @@ mutual
   sn!-if-false {𝔹}     M⤅FALSE 𝒟 ℰ ℱ ∙         = ∙
   sn!-if-false {𝟙}     M⤅FALSE 𝒟 ℰ ℱ ∙         = ∙
   sn!-if-false {A ∧ B} M⤅FALSE 𝒟 ℰ ℱ (s₁ , s₂) = snpr⤅ (congs-fst (reds-if-false M⤅FALSE done)) (fst (if 𝒟 ℰ ℱ)) s₁ ,
-                                                   snpr⤅ (congs-snd (reds-if-false M⤅FALSE done)) (snd (if 𝒟 ℰ ℱ)) s₂
+                                                  snpr⤅ (congs-snd (reds-if-false M⤅FALSE done)) (snd (if 𝒟 ℰ ℱ)) s₂
   sn!-if-false {A ⊃ B} M⤅FALSE 𝒟 ℰ ℱ f s       = snpr⤅ (congs-app₁ (reds-if-false M⤅FALSE done)) (app (if 𝒟 ℰ ℱ) (derp s)) (f s)
 
 
@@ -247,9 +247,9 @@ mutual
   gen-sn σ false      = false , (FALSE , done , val-false) , ∙
   gen-sn σ (if 𝒟 ℰ ℱ) with gen-sn σ 𝒟
   gen-sn σ (if 𝒟 ℰ ℱ) | 𝒟′ , (M′       , SUB⤅M′    , VM′)       , ∙ with tp⤅ SUB⤅M′ 𝒟′
-  gen-sn σ (if 𝒟 ℰ ℱ) | 𝒟′ , (LAM _    , _           , val-lam)   , ∙ | ()
-  gen-sn σ (if 𝒟 ℰ ℱ) | 𝒟′ , (UNIT     , _           , val-unit)  , ∙ | ()
-  gen-sn σ (if 𝒟 ℰ ℱ) | 𝒟′ , (PAIR _ _ , _           , val-pair)  , ∙ | ()
+  gen-sn σ (if 𝒟 ℰ ℱ) | 𝒟′ , (LAM _    , _          , val-lam)   , ∙ | ()
+  gen-sn σ (if 𝒟 ℰ ℱ) | 𝒟′ , (UNIT     , _          , val-unit)  , ∙ | ()
+  gen-sn σ (if 𝒟 ℰ ℱ) | 𝒟′ , (PAIR _ _ , _          , val-pair)  , ∙ | ()
   gen-sn σ (if 𝒟 ℰ ℱ) | 𝒟′ , (TRUE     , SUB⤅TRUE  , val-true)  , ∙ | true  = sn-if-true SUB⤅TRUE 𝒟′ (gen-sn σ ℰ) (sub (derps σ) ℱ)
   gen-sn σ (if 𝒟 ℰ ℱ) | 𝒟′ , (FALSE    , SUB⤅FALSE , val-false) , ∙ | false = sn-if-false SUB⤅FALSE 𝒟′ (sub (derps σ) ℰ) (gen-sn σ ℱ)
 
