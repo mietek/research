@@ -34,10 +34,19 @@ derp : ∀ {A M} → SN M A
 derp (𝒟 , M⇓ , s!) = 𝒟
 
 
--- Every SN term terminates.
-herp : ∀ {A M} → SN M A
-               → M ⇓
-herp (𝒟 , M⇓ , s!) = M⇓
+--------------------------------------------------------------------------------
+
+
+-- `SNs Γ` is the strong normalisation predicate on substitutions at all types `Γ`.
+SNs : ∀ {g} → (τ : Terms 0 g) → Types g → Set
+SNs τ Γ = All (\ { (M , A) → SN M A }) (zip τ Γ)
+
+
+-- Every SN substitution is well-typed.
+derps : ∀ {g} → {τ : Terms 0 g} {Γ : Types g}
+              → SNs τ Γ
+              → ∙ ⊢ τ ⦂ Γ all
+derps σ = maps derp σ
 
 
 --------------------------------------------------------------------------------
@@ -51,10 +60,10 @@ mutual
 
   sn!pr⤇ : ∀ {A M M′} → M ⤇ M′ → ∙ ⊢ M ⦂ A → SN! M′ A
                        → SN! M A
-  sn!pr⤇ {𝔹}     M⤇M′ 𝒟 ∙           = ∙
-  sn!pr⤇ {𝟙}     M⤇M′ 𝒟 ∙           = ∙
-  sn!pr⤇ {A ∧ B} M⤇M′ 𝒟 (s₁ , s₂)   = snpr⤇ (cong-fst M⤇M′) (fst 𝒟) s₁ , snpr⤇ (cong-snd M⤇M′) (snd 𝒟) s₂
-  sn!pr⤇ {A ⊃ B} M⤇M′ 𝒟 f         s = snpr⤇ (cong-app₁ M⤇M′) (app 𝒟 (derp s)) (f s)
+  sn!pr⤇ {𝔹}     M⤇M′ 𝒟 ∙         = ∙
+  sn!pr⤇ {𝟙}     M⤇M′ 𝒟 ∙         = ∙
+  sn!pr⤇ {A ∧ B} M⤇M′ 𝒟 (s₁ , s₂) = snpr⤇ (cong-fst M⤇M′) (fst 𝒟) s₁ , snpr⤇ (cong-snd M⤇M′) (snd 𝒟) s₂
+  sn!pr⤇ {A ⊃ B} M⤇M′ 𝒟 f s       = snpr⤇ (cong-app₁ M⤇M′) (app 𝒟 (derp s)) (f s)
 
 
 -- Iterated small-step reduction IN REVERSE preserves SN.
@@ -103,52 +112,55 @@ snp⇓ (M⤇*M′ , VM′) 𝒟 s = snp⤇* M⤇*M′ 𝒟 s
 --------------------------------------------------------------------------------
 
 
--- TODO: Clean this up
-
--- If `M` is SN and `N` is SN, then `PAIR M N` is SN.
+-- If `M` is SN at type `A` and `N` is SN at type `B`, then `PAIR M N` is SN at type `A ∧ B`.
 sn-pair : ∀ {A B M N} → SN M A → SN N B
                       → SN (PAIR M N) (A ∧ B)
 sn-pair s₁@(𝒟 , M⇓@(M′ , M⇓M′@(M⤇*M′ , VM′)) , s!₁) s₂@(ℰ , N⇓@(N′ , N⇓N′@(N⤇*N′ , VN′)) , s!₂)
   = pair 𝒟 ℰ ,
     halt-pair M⇓ N⇓ ,
-    ( snpr⇓ (big-red-fst-pair {{VM′}} {{VN′}} (congs-pair {{VM′}} {{VN′}} M⤇*M′ N⤇*N′))
-            (fst (pair 𝒟 ℰ)) (snp⤇* M⤇*M′ 𝒟 s₁)
-    , snpr⇓ (big-red-snd-pair {{VM′}} {{VN′}} ((congs-pair {{VM′}} {{VN′}} M⤇*M′ N⤇*N′)))
-            (snd (pair 𝒟 ℰ)) (snp⤇* N⤇*N′ ℰ s₂)
-    )
+    snpr⇓ (big-red-fst-pair {{VM′}} {{VN′}} (congs-pair {{VM′}} {{VN′}} M⤇*M′ N⤇*N′)) (fst (pair 𝒟 ℰ)) (snp⤇* M⤇*M′ 𝒟 s₁) ,
+    snpr⇓ (big-red-snd-pair {{VM′}} {{VN′}} ((congs-pair {{VM′}} {{VN′}} M⤇*M′ N⤇*N′))) (snd (pair 𝒟 ℰ)) (snp⤇* N⤇*N′ ℰ s₂)
 
 
--- If `M` reduces to `PAIR M′ N′` and `M` is SN, then `FST M` is SN.
+-- If `M` is SN at type `A ∧ B`, then `FST M` is SN at type `A`.
 mutual
-  sn-fst-pair : ∀ {A B M M′ N′} → {{_ : Val M′}} {{_ : Val N′}}
-                                → M ⤇* PAIR M′ N′ → SN M (A ∧ B)
-                                → SN (FST M) A
-  sn-fst-pair M⤇*PAIR (𝒟 , M⇓ , s!) = fst 𝒟 , halt-fst-pair M⤇*PAIR , sn!-fst-pair s!
+  sn-fst : ∀ {A B M} → SN M (A ∧ B)
+                     → SN (FST M) A
+  sn-fst (𝒟 , (M′       , M⤇*M′   , VM′)       , s!) with tp⤇* M⤇*M′ 𝒟
+  sn-fst (𝒟 , (LAM _    , _        , val-lam)   , s!) | ()
+  sn-fst (𝒟 , (UNIT     , _        , val-unit)  , s!) | ()
+  sn-fst (𝒟 , (PAIR _ _ , M⤇*PAIR , val-pair)  , s!) | pair _ _ = fst 𝒟 , halt-fst-pair M⤇*PAIR , sn!-fst s!
+  sn-fst (𝒟 , (TRUE     , _        , val-true)  , s!) | ()
+  sn-fst (𝒟 , (FALSE    , _        , val-false) , s!) | ()
 
-  sn!-fst-pair : ∀ {A B M} → SN! M (A ∧ B)
-                           → SN! (FST M) A
-  sn!-fst-pair {𝔹}       _                      = ∙
-  sn!-fst-pair {𝟙}       _                      = ∙
-  sn!-fst-pair {A₁ ∧ A₂} ((ℰ , FST⇓ , s) , _)   = s
-  sn!-fst-pair {A₁ ⊃ A₂} ((ℰ , FST⇓ , f) , _) s = f s
+  sn!-fst : ∀ {A B M} → SN! M (A ∧ B)
+                      → SN! (FST M) A
+  sn!-fst {𝔹}       _                      = ∙
+  sn!-fst {𝟙}       _                      = ∙
+  sn!-fst {A₁ ∧ A₂} ((ℰ , FST⇓ , s) , _)   = s
+  sn!-fst {A₁ ⊃ A₂} ((ℰ , FST⇓ , f) , _) s = f s
 
 
--- If `M` reduces to `PAIR M′ N′` and `M` is SN, then SND M` is SN.
+-- If `M` is SN at type `A ∧ B`, then `SND M` is SN at type `B`.
 mutual
-  sn-snd-pair : ∀ {A B M M′ N′} → {{_ : Val M′}} {{_ : Val N′}}
-                                → M ⤇* PAIR M′ N′ → SN M (A ∧ B)
-                                → SN (SND M) B
-  sn-snd-pair M⤇*PAIR (𝒟 , M⇓ , s!) = snd 𝒟 , halt-snd-pair M⤇*PAIR , sn!-snd-pair s!
+  sn-snd : ∀ {A B M} → SN M (A ∧ B)
+                     → SN (SND M) B
+  sn-snd (𝒟 , (M′       , M⤇*M′   , VM′)       , s!) with tp⤇* M⤇*M′ 𝒟
+  sn-snd (𝒟 , (LAM _    , _        , val-lam)   , s!) | ()
+  sn-snd (𝒟 , (UNIT     , _        , val-unit)  , s!) | ()
+  sn-snd (𝒟 , (PAIR _ _ , M⤇*PAIR , val-pair)  , s!) | pair _ _ = snd 𝒟 , halt-snd-pair M⤇*PAIR , sn!-snd s!
+  sn-snd (𝒟 , (TRUE     , _        , val-true)  , s!) | ()
+  sn-snd (𝒟 , (FALSE    , _        , val-false) , s!) | ()
 
-  sn!-snd-pair : ∀ {B A M} → SN! M (A ∧ B)
-                           → SN! (SND M) B
-  sn!-snd-pair {𝔹}       _                      = ∙
-  sn!-snd-pair {𝟙}       _                      = ∙
-  sn!-snd-pair {B₁ ∧ B₂} (_ , (ℰ , SND⇓ , s))   = s
-  sn!-snd-pair {B₁ ⊃ B₂} (_ , (ℰ , SND⇓ , f)) s = f s
+  sn!-snd : ∀ {B A M} → SN! M (A ∧ B)
+                      → SN! (SND M) B
+  sn!-snd {𝔹}       _                      = ∙
+  sn!-snd {𝟙}       _                      = ∙
+  sn!-snd {B₁ ∧ B₂} (_ , (ℰ , SND⇓ , s))   = s
+  sn!-snd {B₁ ⊃ B₂} (_ , (ℰ , SND⇓ , f)) s = f s
 
 
--- If `M` reduces to `TRUE` and `N` is SN, then `IF M N O` is SN.
+-- If `M` reduces to `TRUE` and `N` is SN at type `C`, then `IF M N O` is SN at type `C`.
 mutual
   sn-if-true : ∀ {C M N O} → M ⤇* TRUE → ∙ ⊢ M ⦂ 𝔹 → SN N C → ∙ ⊢ O ⦂ C
                            → SN (IF M N O) C
@@ -163,7 +175,7 @@ mutual
   sn!-if-true {A ⊃ B} M⤇*TRUE 𝒟 ℰ ℱ f s       = snpr⤇* (congs-app₁ (reds-if-true M⤇*TRUE done)) (app (if 𝒟 ℰ ℱ) (derp s)) (f s)
 
 
--- If `M` reduces to `FALSE` and `O` is SN, then `IF M N O` is SN.
+-- If `M` reduces to `FALSE` and `O` is SN at type `C`, then `IF M N O` is SN at type `C`.
 mutual
   sn-if-false : ∀ {C M N O} → M ⤇* FALSE → ∙ ⊢ M ⦂ 𝔹 → ∙ ⊢ N ⦂ C → SN O C
                             → SN (IF M N O) C
@@ -181,42 +193,27 @@ mutual
 --------------------------------------------------------------------------------
 
 
--- `SNs Γ` is the strong normalisation predicate on substitutions at all types `Γ`.
-SNs : ∀ {g} → (τ : Terms 0 g) → Types g → Set
-SNs τ Γ = All (\ { (M , A) → SN M A }) (zip τ Γ)
+-- The fundamental theorem and the troublecome `lam` case.
+-- TODO: Clean this up.
 
 
--- Every SN substitution is well-typed.
-derps : ∀ {g} → {τ : Terms 0 g} {Γ : Types g}
-              → SNs τ Γ
-              → ∙ ⊢ τ ⦂ Γ all
-derps σ = maps derp σ
-
-
---------------------------------------------------------------------------------
-
-
--- TODO
 gen-red-app-lam : ∀ {g M N} → {τ : Terms 0 g} → {{_ : Val N}}
                             → APP (LAM (SUB (LIFTS τ) M)) N ⤇ SUB (τ , N) M
 gen-red-app-lam {M = M} {N} {τ} rewrite simp-CUT-SUB N τ M ⁻¹ = red app-lam
 
 
--- TODO
 gen-big-red-app-lam : ∀ {g M M′ N} → {τ : Terms 0 g} → {{_ : Vals τ}} {{_ : Val N}}
                                    → SUB (τ , N) M ⇓ M′
                                    → APP (LAM (SUB (LIFTS τ) M)) N ⇓ M′
 gen-big-red-app-lam {M = M} (SUB⤇*M′ , VM′) = step (gen-red-app-lam {M = M}) SUB⤇*M′ , VM′
 
 
--- TODO
 gen-halt-app-lam : ∀ {g M N} → {τ : Terms 0 g} → {{_ : Vals τ}} {{_ : Val N}}
                              → SUB (τ , N) M ⇓
                              → APP (LAM (SUB (LIFTS τ) M)) N ⇓
 gen-halt-app-lam {M = M} (M′ , SUB⇓M′) = M′ , gen-big-red-app-lam {M = M} SUB⇓M′
 
 
--- TODO
 mutual
   gen-sn-app-lam : ∀ {B g M N A} → {τ : Terms 0 g} → {{_ : Vals τ}} {{_ : Val N}}
                                  → ∙ ⊢ SUB τ (LAM M) ⦂ A ⊃ B → ∙ ⊢ N ⦂ A → SN (SUB (τ , N) M) B
@@ -233,9 +230,6 @@ mutual
   gen-sn!-app-lam {B₁ ⊃ B₂} {M = M} 𝒟 ℰ f s       = snpr⤇ (cong-app₁ (gen-red-app-lam {M = M})) (app (app 𝒟 ℰ) (derp s)) (f s)
 
 
---------------------------------------------------------------------------------
-
-
 mutual
   gen-sn : ∀ {g M A} → {τ : Terms 0 g} {Γ : Types g} → {{_ : Vals τ}}
                      → SNs τ Γ → Γ ⊢ M ⦂ A
@@ -246,20 +240,8 @@ mutual
   gen-sn σ (app 𝒟 ℰ)  with gen-sn σ 𝒟
   gen-sn σ (app 𝒟 ℰ)  | 𝒟′ , M′⇓ , f = f (gen-sn σ ℰ)
   gen-sn σ (pair 𝒟 ℰ) = sn-pair (gen-sn σ 𝒟) (gen-sn σ ℰ)
-  gen-sn σ (fst 𝒟)    with gen-sn σ 𝒟
-  gen-sn σ (fst 𝒟)    |    𝒟′ , (M′       , SUB⤇*M′   , VM′)       , _  with tp⤇* SUB⤇*M′ 𝒟′
-  gen-sn σ (fst 𝒟)    |    𝒟′ , (LAM _    , _          , val-lam)   , _  | ()
-  gen-sn σ (fst 𝒟)    |    𝒟′ , (UNIT     , _          , val-unit)  , _  | ()
-  gen-sn σ (fst 𝒟)    | s@(𝒟′ , (PAIR _ _ , SUB⤇*PAIR , val-pair)  , _) | pair _ _ = sn-fst-pair SUB⤇*PAIR s
-  gen-sn σ (fst 𝒟)    |    𝒟′ , (TRUE     , _          , val-true)  , _  | ()
-  gen-sn σ (fst 𝒟)    |    𝒟′ , (FALSE    , _          , val-false) , _  | ()
-  gen-sn σ (snd 𝒟)    with gen-sn σ 𝒟
-  gen-sn σ (snd 𝒟)    |    𝒟′ , (M′       , SUB⤇*M′   , VM′)       , _  with tp⤇* SUB⤇*M′ 𝒟′
-  gen-sn σ (snd 𝒟)    |    𝒟′ , (LAM _    , _          , val-lam)   , _  | ()
-  gen-sn σ (snd 𝒟)    |    𝒟′ , (UNIT     , _          , val-unit)  , _  | ()
-  gen-sn σ (snd 𝒟)    | s@(𝒟′ , (PAIR _ _ , SUB⤇*PAIR , val-pair)  , _) | pair _ _ = sn-snd-pair SUB⤇*PAIR s
-  gen-sn σ (snd 𝒟)    |    𝒟′ , (TRUE     , _          , val-true)  , _  | ()
-  gen-sn σ (snd 𝒟)    |    𝒟′ , (FALSE    , _          , val-false) , _  | ()
+  gen-sn σ (fst 𝒟)    = sn-fst (gen-sn σ 𝒟)
+  gen-sn σ (snd 𝒟)    = sn-snd (gen-sn σ 𝒟)
   gen-sn σ unit       = unit  , (UNIT  , done , val-unit)  , ∙
   gen-sn σ true       = true  , (TRUE  , done , val-true)  , ∙
   gen-sn σ false      = false , (FALSE , done , val-false) , ∙
@@ -286,6 +268,12 @@ mutual
 sn : ∀ {A M} → ∙ ⊢ M ⦂ A
              → SN M A
 sn {A} {M} 𝒟 = subst (\ M′ → SN M′ A) (id-SUB M) (gen-sn ∙ 𝒟)
+
+
+-- Every SN term terminates.
+herp : ∀ {A M} → SN M A
+               → M ⇓
+herp (𝒟 , M⇓ , s!) = M⇓
 
 
 -- Every well-typed term terminates.
