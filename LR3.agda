@@ -37,7 +37,7 @@ derp (𝒟 , M⇓ , s!) = 𝒟
 --------------------------------------------------------------------------------
 
 
--- `SNs Γ` is the strong normalisation predicate on substitutions at all types `Γ`.
+-- `SNs _ Γ` is the strong normalisation predicate on substitutions at all types `Γ`.
 SNs : ∀ {g} → (τ : Terms 0 g) → Types g → Set
 SNs τ Γ = All (\ { (M , A) → SN M A }) (zip τ Γ)
 
