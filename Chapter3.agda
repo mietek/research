@@ -57,7 +57,7 @@ module SquashedUniqueList where
   -- TODO: do it like Coquand
 
 open import Data.Nat using (ℕ ; zero ; suc ; _+_ ; _⊔_ ; _≤_ ; z≤n ; s≤s ; _<_)
-open import Data.Nat.Properties using (≤-trans ; ≤-step ; +-mono-≤ ; +-monoˡ-≤)
+open import Data.Nat.Properties using (≤-trans ; ≤-step ; +-mono-≤ ; +-monoˡ-≤ ; module ≤-Reasoning)
 open import Relation.Binary.PropositionalEquality using (_≡_ ; _≢_ ; refl)
 open import Relation.Nullary using (¬_ ; Dec ; yes ; no)
 open import Relation.Nullary.Negation using () renaming (contradiction to _↯_)
@@ -202,7 +202,7 @@ lem-333 (if t₁ then t₂ else t₃) = ≤-step
       size t₁ + size t₂ + size t₃
     ∎)
   where
-    open Data.Nat.Properties.≤-Reasoning
+    open ≤-Reasoning
 
 -- 3.3.4. Theorem [Principles of induction on terms]
 
