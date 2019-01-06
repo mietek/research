@@ -47,11 +47,11 @@ module UniqueList where
       ...                                                      | yes ys∌x′ = unique-∷ x′≢z (∪-preserves-∌ xs′∌z ys∌z)
       ...                                                      | no ys∋x′  = ∪-preserves-∌ xs′∌z ys∌z
 
-    length-of-∪ : ∀ xs ys → length (xs ∪ ys) ≤ length xs + length ys
-    length-of-∪ []       ys = ≤-refl
-    length-of-∪ (x ∷ xs) ys with ys ∌? x
-    ...                     | yes ys∌x = s≤s (length-of-∪ xs ys)
-    ...                     | no ys∋x  = ≤-step (length-of-∪ xs ys)
+    ∪-length-+ : ∀ xs ys → length (xs ∪ ys) ≤ length xs + length ys -- TODO: find a better name
+    ∪-length-+ []       ys = ≤-refl
+    ∪-length-+ (x ∷ xs) ys with ys ∌? x
+    ...                    | yes ys∌x = s≤s (∪-length-+ xs ys)
+    ...                    | no ys∋x  = ≤-step (∪-length-+ xs ys)
 
 module SquashedUniqueList where
   -- TODO: do it like Coquand
@@ -194,9 +194,9 @@ lem-333 (iszero t₁)             = ≤-step (lem-333 t₁)
 lem-333 (if t₁ then t₂ else t₃) = ≤-step
     (begin
       length (consts t₁ ∪ consts t₂ ∪ consts t₃)
-    ≤⟨ length-of-∪ (consts t₁ ∪ consts t₂) (consts t₃) ⟩
+    ≤⟨ ∪-length-+ (consts t₁ ∪ consts t₂) (consts t₃) ⟩
       length (consts t₁ ∪ consts t₂) + length (consts t₃)
-    ≤⟨ +-monoˡ-≤ (length (consts t₃)) (length-of-∪ (consts t₁) (consts t₂)) ⟩
+    ≤⟨ +-monoˡ-≤ (length (consts t₃)) (∪-length-+ (consts t₁) (consts t₂)) ⟩
       length (consts t₁) + length (consts t₂) + length (consts t₃)
     ≤⟨ +-mono-≤ (+-mono-≤ (lem-333 t₁) (lem-333 t₂)) (lem-333 t₃) ⟩
       size t₁ + size t₂ + size t₃
