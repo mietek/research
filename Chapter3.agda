@@ -205,9 +205,9 @@ module UniqueListWithUnstructuredProofs where
 
 
 module Nat′ where
-  open import Data.Nat using (ℕ ; zero ; suc ; _+_ ; _≤′_ ; ≤′-refl ; ≤′-step ; _<′_)
+  open import Data.Nat using (_+_ ; _≤′_ ; _<′_ ; ℕ ; ≤′-refl ; ≤′-step ; suc ; zero)
   import Data.Nat.Properties as Nat
-  open Nat using (z≤′n ; s≤′s ; ≤′⇒≤ ; ≤⇒≤′)
+  open Nat using (≤′⇒≤ ; ≤⇒≤′ ; s≤′s ; z≤′n)
   open import Data.Sum using (inj₁ ; inj₂)
   open import Level using (0ℓ)
   import Relation.Binary as Rel
@@ -228,14 +228,14 @@ module Nat′ where
 
   ≤′-total : Rel.Total _≤′_
   ≤′-total m n with Nat.≤-total m n
-  ...          | inj₁ m≤′n = inj₁ (≤⇒≤′ m≤′n)
-  ...          | inj₂ n≤′m = inj₂ (≤⇒≤′ n≤′m)
+  ... | inj₁ m≤′n = inj₁ (≤⇒≤′ m≤′n)
+  ... | inj₂ n≤′m = inj₂ (≤⇒≤′ n≤′m)
 
   infix 4 _≤′?_
   _≤′?_ : Rel.Decidable _≤′_
   m ≤′? n with m Nat.≤? n
-  ...     | yes m≤′n = yes (≤⇒≤′ m≤′n)
-  ...     | no m≰n  = no λ { m≤′n → ≤′⇒≤ m≤′n ↯ m≰n }
+  ... | yes m≤′n = yes (≤⇒≤′ m≤′n)
+  ... | no m≰n  = no λ { m≤′n → ≤′⇒≤ m≤′n ↯ m≰n }
 
   ≤′-isPreorder : Rel.IsPreorder _≡_ _≤′_
   ≤′-isPreorder = record
@@ -535,95 +535,3 @@ module IndStructLemma333 where
     }
     where
       open ≤-Reasoning
-
-{-
-open import Level using (_⊔_)
-
-data Acc {a ℓ} {A : Set a} (_<_ : A → A → Set ℓ) (x : A) : Set (a Level.⊔ ℓ) where
-  acc : (∀ (y : A) → y < x → Acc _<_ y) → Acc _<_ x
-
-WellFounded : ∀ {a ℓ} {A : Set a} → (A → A → Set ℓ) → Set _
-WellFounded _<_ = ∀ x → Acc _<_ x
--}
-
-open import Induction.WellFounded using (Acc ; WellFounded ; acc)
-
-subterm-wf : WellFounded IsSubtermOf
-subterm-wf s = acc λ
-  { s₁ is-subterm-of-succ   → subterm-wf s₁
-  ; s₁ is-subterm-of-pred   → subterm-wf s₁
-  ; s₁ is-subterm-of-iszero → subterm-wf s₁
-  ; s₁ is-subterm-of-ifte₁  → subterm-wf s₁
-  ; s₂ is-subterm-of-ifte₂  → subterm-wf s₂
-  ; s₃ is-subterm-of-ifte₃  → subterm-wf s₃
-  }
-
-module _ where
-  open module Tmp {ℓ} = Induction.WellFounded.All subterm-wf ℓ using (wfRec)
-
-  ind-tmp : ∀ {ℓ} → (P : Term → Set ℓ)
-                 → (∀ (s : Term) → (∀ (r : Term) → IsSubtermOf r s → P r) → P s)
-                 → (∀ (s : Term) → P s)
-  ind-tmp = wfRec
-
-
-module Foo where
-  open import Data.Nat
-
-  SmallerSize : Term → Term → Set
-  SmallerSize r s = size r < size s
-
-  lem : ∀ (s : Term) → ¬ (size s < 1)
-  lem true                    = λ { (s≤s ()) }
-  lem false                   = λ { (s≤s ()) }
-  lem zero                    = λ { (s≤s ()) }
-  lem (succ s₁)               = λ { (s≤s ()) }
-  lem (pred s₁)               = λ { (s≤s ()) }
-  lem (iszero s₁)             = λ { (s≤s ()) }
-  lem (if s₁ then s₂ else s₃) = λ { (s≤s ()) }
-
-  lem′ : ∀ (s : Term) → ¬ (size s <′ 1)
-  lem′ true                    = λ { (≤′-step ()) }
-  lem′ false                   = λ { (≤′-step ()) }
-  lem′ zero                    = λ { (≤′-step ()) }
-  lem′ (succ s₁)               = λ { (≤′-step ()) }
-  lem′ (pred s₁)               = λ { (≤′-step ()) }
-  lem′ (iszero s₁)             = λ { (≤′-step ()) }
-  lem′ (if s₁ then s₂ else s₃) = λ { (≤′-step ()) }
-
-  wf-smallersize : WellFounded SmallerSize
-  wf-smallersize s = acc λ { r p → {!!} }
-
--- -- -- -- postulate -- TODO: use stdlib
-
--- -- module IndSize where
--- --   open import Data.Nat using (_≤_ ; _<_ ; z≤n ; s≤s)
--- --   open import Data.Nat.Properties using (≤-refl ; ≤-step)
-
--- --   lem : ∀ (s : Term) → ¬ (size s < 1)
--- --   lem true                    = λ { (s≤s ()) }
--- --   lem false                   = λ { (s≤s ()) }
--- --   lem zero                    = λ { (s≤s ()) }
--- --   lem (succ s₁)               = λ { (s≤s ()) }
--- --   lem (pred s₁)               = λ { (s≤s ()) }
--- --   lem (iszero s₁)             = λ { (s≤s ()) }
--- --   lem (if s₁ then s₂ else s₃) = λ { (s≤s ()) }
-
--- --   ind-size : ∀ {P : Term → Set} →
--- --                (∀ (s : Term) → (∀ (r : Term) → size r < size s → P r) → P s) →
--- --                (∀ (s : Term) → P s)
--- --   ind-size h = ind-struct λ
--- --     { s@true                    g → h s λ r p → p ↯ lem r
--- --     ; s@false                   g → h s λ r p → p ↯ lem r
--- --     ; s@zero                    g → h s λ r p → p ↯ lem r
--- --     ; s@(succ s₁)               g → h s λ { r (s≤s p) → {!!} }
--- --     ; s@(pred s₁)               g → {!!}
--- --     ; s@(iszero s₁)             g → {!!}
--- --     ; s@(if s₁ then s₂ else s₃) g → {!!}
--- --     }
-
--- -- -- -- SmallerDepth : Term → Term → Set
--- -- -- -- SmallerDepth r s = depth r < depth s
-
--- -- -- -- postulate -- TODO: use stdlib
--- -- -- --   ind-depth : ∀ (P : Term → Set) → (∀ {s} → (∀ {r} → SmallerDepth r s → P r) → P s) → (∀ s → P s)
