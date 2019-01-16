@@ -235,7 +235,7 @@ module _ where
     }
 
   subterm-ip : ∀ {ℓ} {P : Term → Set ℓ} → InductionPrinciple Subterm P
-  subterm-ip = ip subterm-wf
+  subterm-ip = inductionPrinciple subterm-wf
 
 module Lemma333-ViaSubtermIP where
   open Nat.≤-Reasoning
@@ -275,7 +275,7 @@ subsize-wf : WellFounded Subsize
 subsize-wf = InverseImage.wellFounded size <-wf
 
 subsize-ip : ∀ {ℓ} {P : Term → Set ℓ} → InductionPrinciple Subsize P
-subsize-ip = ip subsize-wf
+subsize-ip = inductionPrinciple subsize-wf
 
 module Lemma333-ViaSubsizeIP where
   open Nat.≤-Reasoning
@@ -334,7 +334,7 @@ subdepth-wf : WellFounded Subdepth
 subdepth-wf = InverseImage.wellFounded depth <-wf
 
 subdepth-ip : ∀ {ℓ} {P : Term → Set ℓ} → InductionPrinciple Subdepth P
-subdepth-ip = ip subdepth-wf
+subdepth-ip = inductionPrinciple subdepth-wf
 
 module Lemma333-ViaSubdepthIP where
   open Nat.≤-Reasoning
