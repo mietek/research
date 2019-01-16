@@ -1,9 +1,4 @@
-{-
-
-Linear space usage.  No trouble with instance resolution.
-Preferred version.
-
--}
+-- Linear space usage; no trouble with instance resolution
 
 module Prelude-UniqueList where
 
@@ -16,6 +11,7 @@ open import Relation.Nullary using (¬_ ; Dec ; no ; yes)
 open import Relation.Nullary.Decidable using (⌊_⌋)
 
 
+-- For working with propositions under T
 module _ where
   T-Decidable : ∀ {a b} {A : Set a} {B : Set b} → (A → B → Bool) → Set (a ⊔ b)
   T-Decidable _∼_ = ∀ x y → Dec (T (x ∼ y))

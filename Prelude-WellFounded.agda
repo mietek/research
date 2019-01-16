@@ -1,8 +1,4 @@
-{-
-
-More readable alternative to the stdlib.
-
--}
+-- More readable alternative to the stdlib
 
 module Prelude-WellFounded where
 
@@ -12,6 +8,7 @@ open import Relation.Binary using (Rel)
 open import Relation.Unary using (_⊆_ ; Pred)
 
 
+-- For showing that _<_ is well-founded
 module _ where
   open import Data.Nat using (_≤_ ; _<_ ; s≤s ; suc ; z≤n ; zero)
   open import Relation.Binary.PropositionalEquality using (_≢_ ; refl)

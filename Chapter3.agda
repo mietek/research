@@ -12,6 +12,7 @@ open import Prelude-UniqueList
 open import Prelude-WellFounded
 
 
+-- For induction on size and depth
 module _ where
   m≤m+n+o : ∀ m n o → m ≤ m + n + o
   m≤m+n+o m n o = Nat.≤-trans (Nat.m≤m+n m n) (Nat.m≤m+n (m + n) o)
