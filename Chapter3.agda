@@ -295,6 +295,15 @@ module Lemma333-ViaSubsizeInd where
   o≤m+n+o : ∀ m n o → o ≤ m + n + o
   o≤m+n+o m n o = Nat.n≤m+n (m + n) o
 
+  subsize-ifte₁ : ∀ s₁ s₂ s₃ → Subsize s₁ (if s₁ then s₂ else s₃)
+  subsize-ifte₁ s₁ s₂ s₃ = s≤s (m≤m+n+o (size s₁) (size s₂) (size s₃))
+
+  subsize-ifte₂ : ∀ s₁ s₂ s₃ → Subsize s₂ (if s₁ then s₂ else s₃)
+  subsize-ifte₂ s₁ s₂ s₃ = s≤s (n≤m+n+o (size s₁) (size s₂) (size s₃))
+
+  subsize-ifte₃ : ∀ s₁ s₂ s₃ → Subsize s₃ (if s₁ then s₂ else s₃)
+  subsize-ifte₃ s₁ s₂ s₃ = s≤s (o≤m+n+o (size s₁) (size s₂) (size s₃))
+
   lem-via-subsize-ind : ∀ s → length (consts s) ≤ size s
   lem-via-subsize-ind = subsize-ind λ
     { true                    h → Nat.≤-refl
@@ -305,9 +314,9 @@ module Lemma333-ViaSubsizeInd where
     ; (iszero s₁)             h → Nat.≤-step (h s₁ Nat.≤-refl)
     ; (if s₁ then s₂ else s₃) h →
       let
-        h₁ = h s₁ (s≤s (m≤m+n+o (size s₁) (size s₂) (size s₃)))
-        h₂ = h s₂ (s≤s (n≤m+n+o (size s₁) (size s₂) (size s₃)))
-        h₃ = h s₃ (s≤s (o≤m+n+o (size s₁) (size s₂) (size s₃)))
+        h₁ = h s₁ (subsize-ifte₁ s₁ s₂ s₃)
+        h₂ = h s₂ (subsize-ifte₂ s₁ s₂ s₃)
+        h₃ = h s₃ (subsize-ifte₃ s₁ s₂ s₃)
       in
         Nat.≤-step (begin
           length (consts s₁ ∪ consts s₂ ∪ consts s₃)
