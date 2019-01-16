@@ -25,20 +25,20 @@ module _ where
 
 
 -- AKA WfRec
-HoldsBelow : ∀ {a p ℓ} {A : Set a} → Rel A ℓ → Pred A p → A → Set (a ⊔ p ⊔ ℓ)
-HoldsBelow _<_ P x = ∀ y → y < x → P y
+Below : ∀ {a p ℓ} {A : Set a} → Rel A ℓ → Pred A p → A → Set (a ⊔ p ⊔ ℓ)
+Below _<_ P x = ∀ y → y < x → P y
 
 -- Not in the stdlib
-BuildsUp : ∀ {a p ℓ} {A : Set a} → Rel A ℓ → Pred A p → Set (a ⊔ p ⊔ ℓ)
-BuildsUp _<_ P = ∀ x → HoldsBelow _<_ P x → P x
+Closed : ∀ {a p ℓ} {A : Set a} → Rel A ℓ → Pred A p → Set (a ⊔ p ⊔ ℓ)
+Closed _<_ P = ∀ x → Below _<_ P x → P x
 
 -- Subtly different type
 data Accessible {a ℓ} {A : Set a} (_<_ : Rel A ℓ) : A → Set (a ⊔ ℓ) where
-  access : BuildsUp _<_ (Accessible _<_)
+  access : Closed _<_ (Accessible _<_)
 
 -- Not in the stdlib
 AccessibleBelow : ∀ {a ℓ} {A : Set a} → Rel A ℓ → A → Set (a ⊔ ℓ)
-AccessibleBelow _<_ x = HoldsBelow _<_ (Accessible _<_) x
+AccessibleBelow _<_ x = Below _<_ (Accessible _<_) x
 
 WellFounded : ∀ {a ℓ} {A : Set a} → Rel A ℓ → Set _
 WellFounded _<_ = ∀ x → Accessible _<_ x
@@ -48,17 +48,17 @@ WellFoundedBelow : ∀ {a ℓ} {A : Set a} → Rel A ℓ → Set _
 WellFoundedBelow _<_ = ∀ x → AccessibleBelow _<_ x
 
 -- Obscured by the stdlib
-ind-loop : ∀ {a p ℓ} {A : Set a} {_<_ : Rel A ℓ} {P : Pred A p} {x : A} →
-           BuildsUp _<_ P → Accessible _<_ x → HoldsBelow _<_ P x
-ind-loop h (access x g) y y<x = h y (ind-loop h (g y y<x))
+ip-loop : ∀ {a p ℓ} {A : Set a} {_<_ : Rel A ℓ} {P : Pred A p} {x : A} →
+          Closed _<_ P → Accessible _<_ x → Below _<_ P x
+ip-loop h (access x g) y y<x = h y (ip-loop h (g y y<x))
 
-Induction : ∀ {a p ℓ} {A : Set a} → Rel A ℓ → Pred A p → Set (a ⊔ p ⊔ ℓ)
-Induction _<_ P = BuildsUp _<_ P → ∀ x → P x
+InductionPrinciple : ∀ {a p ℓ} {A : Set a} → Rel A ℓ → Pred A p → Set (a ⊔ p ⊔ ℓ)
+InductionPrinciple _<_ P = Closed _<_ P → ∀ x → P x
 
 -- AKA wfRec
-ind : ∀ {a p ℓ} {A : Set a} {_<_ : Rel A ℓ} {P : Pred A p} →
-      WellFounded _<_ → Induction _<_ P
-ind wf h x = h x (ind-loop h (wf x))
+ip : ∀ {a p ℓ} {A : Set a} {_<_ : Rel A ℓ} {P : Pred A p} →
+     WellFounded _<_ → InductionPrinciple _<_ P
+ip wf h x = h x (ip-loop h (wf x))
 
 
 module _ where
@@ -75,8 +75,8 @@ module _ where
   <-wf : WellFounded _<_
   <-wf n = access n (<-wfb n)
 
-  <-ind : ∀ {ℓ} {P : ℕ → Set ℓ} → Induction _<_ P
-  <-ind = ind <-wf
+  <-ip : ∀ {ℓ} {P : ℕ → Set ℓ} → InductionPrinciple _<_ P
+  <-ip = ip <-wf
 
 
 -- Now we can see why _≤′_ is more suitable to well-founded induction!
@@ -91,8 +91,8 @@ module _ where
   <′-wf : WellFounded _<′_
   <′-wf n = access n (<′-wfb n)
 
-  <′-ind : ∀ {ℓ} {P : ℕ → Set ℓ} → Induction _<′_ P
-  <′-ind = ind <′-wf
+  <′-ip : ∀ {ℓ} {P : ℕ → Set ℓ} → InductionPrinciple _<′_ P
+  <′-ip = ip <′-wf
 
 
 module Subrelation {a ℓ₁ ℓ₂} {A : Set a} {_<₁_ : Rel A ℓ₁} {_<₂_ : Rel A ℓ₂}

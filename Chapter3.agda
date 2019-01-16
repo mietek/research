@@ -14,6 +14,10 @@ open import Prelude-WellFounded
 
 
 module _ where
+  infixl 8 _⊗_
+  _⊗_ : ∀ {a b} {A : Set a} {B : Set b} {f g : A → B} {x y : A} → f ≡ g → x ≡ y → f x ≡ g y
+  refl ⊗ refl = refl
+
   coerce : ∀ {ℓ} {A B : Set ℓ} → A → A ≡ B → B
   coerce x refl = x
 
@@ -187,21 +191,21 @@ data Subterm : Term → Term → Set where
   subterm-ifte₂  : ∀ {s₁ s₂ s₃} → Subterm s₂ (if s₁ then s₂ else s₃)
   subterm-ifte₃  : ∀ {s₁ s₂ s₃} → Subterm s₃ (if s₁ then s₂ else s₃)
 
-module SubtermInd-Direct where
-  subterm-ind : ∀ {ℓ} {P : Term → Set ℓ} → BuildsUp Subterm P → ∀ s → P s
-  subterm-ind h s@true                 = h s λ r ()
-  subterm-ind h s@false                = h s λ r ()
-  subterm-ind h s@zero                 = h s λ r ()
-  subterm-ind h s@(succ _)             = h s λ { r subterm-succ → subterm-ind h r }
-  subterm-ind h s@(pred _)             = h s λ { r subterm-pred → subterm-ind h r }
-  subterm-ind h s@(iszero _)           = h s λ { r subterm-iszero → subterm-ind h r }
-  subterm-ind h s@(if _ then _ else _) = h s λ
-    { r subterm-ifte₁ → subterm-ind h r
-    ; r subterm-ifte₂ → subterm-ind h r
-    ; r subterm-ifte₃ → subterm-ind h r
+module SubtermIP-Direct where
+  subterm-ip : ∀ {ℓ} {P : Term → Set ℓ} → InductionPrinciple Subterm P
+  subterm-ip h s@true                 = h s λ r ()
+  subterm-ip h s@false                = h s λ r ()
+  subterm-ip h s@zero                 = h s λ r ()
+  subterm-ip h s@(succ _)             = h s λ { r subterm-succ → subterm-ip h r }
+  subterm-ip h s@(pred _)             = h s λ { r subterm-pred → subterm-ip h r }
+  subterm-ip h s@(iszero _)           = h s λ { r subterm-iszero → subterm-ip h r }
+  subterm-ip h s@(if _ then _ else _) = h s λ
+    { r subterm-ifte₁ → subterm-ip h r
+    ; r subterm-ifte₂ → subterm-ip h r
+    ; r subterm-ifte₃ → subterm-ip h r
     }
 
-module SubtermInd-Stdlib where
+module SubtermIP-Stdlib where
   import Induction.WellFounded as Stdlib
 
   subterm-wf : Stdlib.WellFounded Subterm
@@ -214,10 +218,10 @@ module SubtermInd-Stdlib where
     ; s₃ subterm-ifte₃  → subterm-wf s₃
     }
 
-  open module SubtermInd {ℓ} = Stdlib.All subterm-wf ℓ using (wfRec)
+  open module SubtermIP {ℓ} = Stdlib.All subterm-wf ℓ using (wfRec)
 
-  subterm-ind : ∀ {ℓ} {P : Term → Set ℓ} → Induction Subterm P
-  subterm-ind {P = P} = wfRec P
+  subterm-ip : ∀ {ℓ} {P : Term → Set ℓ} → InductionPrinciple Subterm P
+  subterm-ip {P = P} = wfRec P
 
 module _ where
   subterm-wf : WellFounded Subterm
@@ -230,14 +234,14 @@ module _ where
     ; s₃ subterm-ifte₃  → subterm-wf s₃
     }
 
-  subterm-ind : ∀ {ℓ} {P : Term → Set ℓ} → Induction Subterm P
-  subterm-ind = ind subterm-wf
+  subterm-ip : ∀ {ℓ} {P : Term → Set ℓ} → InductionPrinciple Subterm P
+  subterm-ip = ip subterm-wf
 
-module Lemma333-ViaSubtermInd where
+module Lemma333-ViaSubtermIP where
   open Nat.≤-Reasoning
 
-  lem-via-subterm-ind : ∀ s → length (consts s) ≤ size s
-  lem-via-subterm-ind = subterm-ind λ
+  lem-via-subterm-ip : ∀ s → length (consts s) ≤ size s
+  lem-via-subterm-ip = subterm-ip λ
     { true                    h → Nat.≤-refl
     ; false                   h → Nat.≤-refl
     ; zero                    h → Nat.≤-refl
@@ -270,10 +274,10 @@ Subsize r s = size r < size s
 subsize-wf : WellFounded Subsize
 subsize-wf = InverseImage.wellFounded size <-wf
 
-subsize-ind : ∀ {ℓ} {P : Term → Set ℓ} → Induction Subsize P
-subsize-ind = ind subsize-wf
+subsize-ip : ∀ {ℓ} {P : Term → Set ℓ} → InductionPrinciple Subsize P
+subsize-ip = ip subsize-wf
 
-module Lemma333-ViaSubsizeInd where
+module Lemma333-ViaSubsizeIP where
   open Nat.≤-Reasoning
 
   module _ where
@@ -295,8 +299,8 @@ module Lemma333-ViaSubsizeInd where
   subsize-ifte₃ : ∀ s₁ s₂ s₃ → Subsize s₃ (if s₁ then s₂ else s₃)
   subsize-ifte₃ s₁ s₂ s₃ = s≤s (o≤m+n+o (size s₁) (size s₂) (size s₃))
 
-  lem-via-subsize-ind : ∀ s → length (consts s) ≤ size s
-  lem-via-subsize-ind = subsize-ind λ
+  lem-via-subsize-ip : ∀ s → length (consts s) ≤ size s
+  lem-via-subsize-ip = subsize-ip λ
     { true                    h → Nat.≤-refl
     ; false                   h → Nat.≤-refl
     ; zero                    h → Nat.≤-refl
@@ -329,10 +333,10 @@ Subdepth r s = depth r < depth s
 subdepth-wf : WellFounded Subdepth
 subdepth-wf = InverseImage.wellFounded depth <-wf
 
-subdepth-ind : ∀ {ℓ} {P : Term → Set ℓ} → Induction Subdepth P
-subdepth-ind = ind subdepth-wf
+subdepth-ip : ∀ {ℓ} {P : Term → Set ℓ} → InductionPrinciple Subdepth P
+subdepth-ip = ip subdepth-wf
 
-module Lemma333-ViaSubdepthInd where
+module Lemma333-ViaSubdepthIP where
   open Nat.≤-Reasoning
 
   module _ where
@@ -354,8 +358,8 @@ module Lemma333-ViaSubdepthInd where
   subdepth-ifte₃ : ∀ s₁ s₂ s₃ → Subdepth s₃ (if s₁ then s₂ else s₃)
   subdepth-ifte₃ s₁ s₂ s₃ = s≤s (o≤m⊔n⊔o (depth s₁) (depth s₂) (depth s₃))
 
-  lem-via-subdepth-ind : ∀ s → length (consts s) ≤ size s
-  lem-via-subdepth-ind = subdepth-ind λ
+  lem-via-subdepth-ip : ∀ s → length (consts s) ≤ size s
+  lem-via-subdepth-ip = subdepth-ip λ
     { true                    h → Nat.≤-refl
     ; false                   h → Nat.≤-refl
     ; zero                    h → Nat.≤-refl
@@ -424,7 +428,7 @@ module _ where
 ⟶-det⁻ e-iffalse (e-if q)  = q ↯ val⇒nf⁻ val-false
 ⟶-det⁻ (e-if p)  e-iftrue  = p ↯ val⇒nf⁻ val-true
 ⟶-det⁻ (e-if p)  e-iffalse = p ↯ val⇒nf⁻ val-false
-⟶-det⁻ (e-if p)  (e-if q)  = (λ t₁ → if t₁ then _ else _) & ⟶-det⁻ p q
+⟶-det⁻ (e-if p)  (e-if q)  = (λ t₁′ → if t₁′ then _ else _) & ⟶-det⁻ p q
 
 
 -- 3.5.5. Exercise (skipped)
@@ -441,7 +445,7 @@ module _ where
   one-step⁻ {false}                                      ¬v = val-false ↯ ¬v
   one-step⁻ {if true then t₂ else t₃}                    ¬v = t₂ , e-iftrue
   one-step⁻ {if false then t₂ else t₃}                   ¬v = t₃ , e-iffalse
-  one-step⁻ {if (if s₁ then s₂ else s₃) then t₂ else t₃} ¬v =
+  one-step⁻ {if (if _ then _ else _) then t₂ else t₃} ¬v =
     let
       t₁′ , e₁ = one-step⁻ λ ()
     in
@@ -457,3 +461,13 @@ nf⇒val⁻ {if t₁@(if _ then _ else _) then t₂ else t₃} nf =
     t₁′ , e₁ = one-step⁻ λ ()
   in
     e-if e₁ ↯ nf
+
+
+-- 3.5.9. Definition (skipped)
+
+-- 3.5.10. Exercise
+
+infix 3 _⟶*⁻_
+data _⟶*⁻_ : Term⁻ → Term⁻ → Set where
+  done : ∀ {t} → t ⟶*⁻ t
+  step : ∀ {t t′ t″} → t ⟶⁻ t′ → t′ ⟶*⁻ t″ → t ⟶*⁻ t″
