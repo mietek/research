@@ -281,33 +281,23 @@ module Lemma333-ViaSubtermInd where
 module Lemma333-ViaSubsizeInd where
   open Nat.≤-Reasoning
 
+  m≤m+n+o : ∀ m n o → m ≤ m + n + o
+  m≤m+n+o m n o = Nat.≤-trans (Nat.m≤m+n m n) (Nat.m≤m+n (m + n) o)
+
+  n≤m+n+o : ∀ m n o → n ≤ m + n + o
+  n≤m+n+o m n o = Nat.≤-trans (Nat.n≤m+n m n) (Nat.m≤m+n (m + n) o)
+
+  o≤m+n+o : ∀ m n o → o ≤ m + n + o
+  o≤m+n+o m n o = Nat.n≤m+n (m + n) o
+
   subsize-ifte₁ : ∀ s₁ s₂ s₃ → Subsize s₁ (if s₁ then s₂ else s₃)
-  subsize-ifte₁ s₁ s₂ s₃ = s≤s
-    (begin
-      size s₁
-    ≤⟨ Nat.m≤m+n (size s₁) (size s₂) ⟩
-      size s₁ + size s₂
-    ≤⟨ Nat.m≤m+n (size s₁ + size s₂) (size s₃) ⟩
-      size s₁ + size s₂ + size s₃
-    ∎)
+  subsize-ifte₁ s₁ s₂ s₃ = s≤s (m≤m+n+o (size s₁) (size s₂) (size s₃))
 
   subsize-ifte₂ : ∀ s₁ s₂ s₃ → Subsize s₂ (if s₁ then s₂ else s₃)
-  subsize-ifte₂ s₁ s₂ s₃ = s≤s
-    (begin
-      size s₂
-    ≤⟨ Nat.n≤m+n (size s₁) (size s₂) ⟩
-      size s₁ + size s₂
-    ≤⟨ Nat.m≤m+n (size s₁ + size s₂) (size s₃) ⟩
-      size s₁ + size s₂ + size s₃
-    ∎)
+  subsize-ifte₂ s₁ s₂ s₃ = s≤s (n≤m+n+o (size s₁) (size s₂) (size s₃))
 
   subsize-ifte₃ : ∀ s₁ s₂ s₃ → Subsize s₃ (if s₁ then s₂ else s₃)
-  subsize-ifte₃ s₁ s₂ s₃ = s≤s
-    (begin
-      size s₃
-    ≤⟨ Nat.n≤m+n (size s₁ + size s₂) (size s₃) ⟩
-      size s₁ + size s₂ + size s₃
-    ∎)
+  subsize-ifte₃ s₁ s₂ s₃ = s≤s (o≤m+n+o (size s₁) (size s₂) (size s₃))
 
   lem-via-subsize-ind : ∀ s → length (consts s) ≤ size s
   lem-via-subsize-ind = subsize-ind λ
@@ -333,33 +323,23 @@ module Lemma333-ViaSubsizeInd where
 module Lemma333-ViaSubdepthInd where
   open Nat.≤-Reasoning
 
+  m≤m⊔n⊔o : ∀ m n o → m ≤ m ⊔ n ⊔ o
+  m≤m⊔n⊔o m n o = Nat.≤-trans (Nat.m≤m⊔n m n) (Nat.m≤m⊔n (m ⊔ n) o)
+
+  n≤m⊔n⊔o : ∀ m n o → n ≤ m ⊔ n ⊔ o
+  n≤m⊔n⊔o m n o = Nat.≤-trans (Nat.n≤m⊔n m n) (Nat.m≤m⊔n (m ⊔ n) o)
+
+  o≤m⊔n⊔o : ∀ m n o → o ≤ m ⊔ n ⊔ o
+  o≤m⊔n⊔o m n o = Nat.n≤m⊔n (m ⊔ n) o
+
   subdepth-ifte₁ : ∀ s₁ s₂ s₃ → Subdepth s₁ (if s₁ then s₂ else s₃)
-  subdepth-ifte₁ s₁ s₂ s₃ = s≤s
-    (begin
-      depth s₁
-    ≤⟨ Nat.m≤m⊔n (depth s₁) (depth s₂) ⟩
-      depth s₁ ⊔ depth s₂
-    ≤⟨ Nat.m≤m⊔n (depth s₁ ⊔ depth s₂) (depth s₃) ⟩
-      depth s₁ ⊔ depth s₂ ⊔ depth s₃
-    ∎)
+  subdepth-ifte₁ s₁ s₂ s₃ = s≤s (m≤m⊔n⊔o (depth s₁) (depth s₂) (depth s₃))
 
   subdepth-ifte₂ : ∀ s₁ s₂ s₃ → Subdepth s₂ (if s₁ then s₂ else s₃)
-  subdepth-ifte₂ s₁ s₂ s₃ = s≤s
-    (begin
-      depth s₂
-    ≤⟨ Nat.n≤m⊔n (depth s₁) (depth s₂) ⟩
-      depth s₁ ⊔ depth s₂
-    ≤⟨ Nat.m≤m⊔n (depth s₁ ⊔ depth s₂) (depth s₃) ⟩
-      depth s₁ ⊔ depth s₂ ⊔ depth s₃
-    ∎)
+  subdepth-ifte₂ s₁ s₂ s₃ = s≤s (n≤m⊔n⊔o (depth s₁) (depth s₂) (depth s₃))
 
   subdepth-ifte₃ : ∀ s₁ s₂ s₃ → Subdepth s₃ (if s₁ then s₂ else s₃)
-  subdepth-ifte₃ s₁ s₂ s₃ = s≤s
-    (begin
-      depth s₃
-    ≤⟨ Nat.n≤m⊔n (depth s₁ ⊔ depth s₂) (depth s₃) ⟩
-      depth s₁ ⊔ depth s₂ ⊔ depth s₃
-    ∎)
+  subdepth-ifte₃ s₁ s₂ s₃ = s≤s (o≤m⊔n⊔o (depth s₁) (depth s₂) (depth s₃))
 
   lem-via-subdepth-ind : ∀ s → length (consts s) ≤ size s
   lem-via-subdepth-ind = subdepth-ind λ
