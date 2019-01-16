@@ -1,309 +1,15 @@
 module Chapter3 where
 
-
-------------------------------------------------------------------------------
-
-
--- NOTE: For comparison only
-module UniqueListWithStructuredProofs where
-  open import Data.Nat using (_+_ ; ℕ)
-  open import Level using (_⊔_)
-  open import Relation.Binary using (Decidable ; DecSetoid)
-  open import Relation.Nullary using (¬_ ; no ; yes)
-  open import Relation.Nullary.Negation using () renaming (contradiction to _↯_)
-
-  module MakeUniqueList {c ℓ} (DS : DecSetoid c ℓ) where
-    open DecSetoid DS using (Carrier ; _≈_ ; _≟_)
-
-    mutual
-      infixr 5 _∷_
-      data UniqueList : Set (c ⊔ ℓ) where
-        []  : UniqueList
-        _∷_ : (x : Carrier) (xs : UniqueList) {{_ : xs ∌ x}} → UniqueList
-
-      infix 4 _≉_
-      _≉_ : Carrier → Carrier → Set ℓ
-      x ≉ y = ¬ (x ≈ y)
-
-      infix 4 _∌_
-      data _∌_ : UniqueList → Carrier → Set (c ⊔ ℓ) where
-        instance
-          tt  : ∀ {x} → [] ∌ x
-          _∧_ : ∀ {x xs y} {{_ : xs ∌ x}} → x ≉ y → xs ∌ y → x ∷ xs ∌ y
-
-    [_] : Carrier → UniqueList
-    [ x ] = x ∷ []
-
-    length : UniqueList → ℕ
-    length []       = 0
-    length (x ∷ xs) = 1 + length xs
-
-    _∌?_ : Decidable _∌_
-    []       ∌? y = yes tt
-    (x ∷ xs) ∌? y with xs ∌? y | x ≟ y
-    ... | yes xs∌y | no x≉y  = yes (x≉y ∧ xs∌y)
-    ... | yes xs∌y | yes x≈y = no λ { (x≉y ∧ xs∌x) → x≈y ↯ x≉y }
-    ... | no ¬xs∌y | _       = no λ { (x≉y ∧ xs∌y) → xs∌y ↯ ¬xs∌y }
-
-    mutual
-      infixl 5 _∪_
-      _∪_ : UniqueList → UniqueList → UniqueList
-      []                  ∪ ys = ys
-      ((x ∷ xs) {{xs∌x}}) ∪ ys with ys ∌? x
-      ... | yes ys∌x = (x ∷ (xs ∪ ys)) {{∪-preserves-∌ xs∌x ys∌x}}
-      ... | no ¬ys∌x = xs ∪ ys
-
-      ∪-preserves-∌ : ∀ {xs ys z} → xs ∌ z → ys ∌ z → xs ∪ ys ∌ z
-      ∪-preserves-∌ {[]}            tt             ys∌z = ys∌z
-      ∪-preserves-∌ {x′ ∷ xs′} {ys} (x′≢z ∧ xs′∌z) ys∌z with ys ∌? x′
-      ... | yes ys∌x′ = x′≢z ∧ (∪-preserves-∌ xs′∌z ys∌z)
-      ... | no ¬ys∌x′ = ∪-preserves-∌ xs′∌z ys∌z
-
-    module _ where
-      open import Data.Nat using (_≤_ ; s≤s)
-      open import Data.Nat.Properties using (≤-refl ; ≤-step)
-
-      length-triangular : (xs ys : UniqueList) → length (xs ∪ ys) ≤ length xs + length ys
-      length-triangular []       ys = ≤-refl
-      length-triangular (x ∷ xs) ys with ys ∌? x
-      ... | yes _ = s≤s (length-triangular xs ys)
-      ... | no _  = ≤-step (length-triangular xs ys)
-
-    module _ where
-      open import Data.Nat using (_≤′_ ; ≤′-refl ; ≤′-step)
-      open import Data.Nat.Properties using (s≤′s)
-
-      length-triangular′ : (xs ys : UniqueList) → length (xs ∪ ys) ≤′ length xs + length ys
-      length-triangular′ []       ys = ≤′-refl
-      length-triangular′ (x ∷ xs) ys with ys ∌? x
-      ... | yes _ = s≤′s (length-triangular′ xs ys)
-      ... | no _  = ≤′-step (length-triangular′ xs ys)
-
-  private
-    module _ where
-      open import Relation.Binary.PropositionalEquality using (_≡_ ; refl)
-      open import Data.Nat.Properties using (≡-decSetoid)
-      open module UniqueList_Nat = MakeUniqueList (≡-decSetoid)
-
-      -- NOTE: Instance resolution has trouble here; no trouble in the version below.
-      -- test1 : (1 ∷ [ 0 ]) ∪ (1 ∷ [ 0 ]) ≡ 1 ∷ [ 0 ]
-      -- test1 = refl
-
-
-------------------------------------------------------------------------------
-
-
--- NOTE: Preferred version
-module UniqueListWithUnstructuredProofs where
-  open import Data.Bool using (_∧_ ; Bool ; T ; false ; not ; true)
-  open import Data.Nat using (_+_ ; ℕ)
-  open import Data.Unit using (tt)
-  open import Level using (_⊔_)
-  open import Relation.Binary using (DecSetoid)
-  open import Relation.Nullary using (¬_ ; Dec ; no ; yes)
-  open import Relation.Nullary.Decidable using (⌊_⌋)
-
-  module _ where
-    T-Decidable : ∀ {a b} {A : Set a} {B : Set b} → (A → B → Bool) → Set (a ⊔ b)
-    T-Decidable _∼_ = ∀ x y → Dec (T (x ∼ y))
-
-    T-decide : ∀ {p} → Dec (T p)
-    T-decide {true}  = yes tt
-    T-decide {false} = no λ ()
-
-    T-pair : ∀ {p q} → T p → T q → T (p ∧ q)
-    T-pair {true}  tt T[q] = T[q]
-    T-pair {false} () T[q]
-
-    T-fst : ∀ {p q} → T (p ∧ q) → T p
-    T-fst {true}  T[q] = tt
-    T-fst {false} ()
-
-    T-snd : ∀ {p q} → T (p ∧ q) → T q
-    T-snd {true}  T[q] = T[q]
-    T-snd {false} ()
-
-  module MakeUniqueList {c ℓ} (DS : DecSetoid c ℓ) where
-    open DecSetoid DS using (Carrier ; _≟_)
-
-    mutual
-      infixr 5 _∷_
-      data UniqueList : Set c where
-        []  : UniqueList
-        _∷_ : (x : Carrier) (xs : UniqueList) {{_ : T (xs ∌ x)}} → UniqueList
-
-      infix 4 _≠_
-      _≠_ : Carrier → Carrier → Bool
-      x ≠ y = not ⌊ x ≟ y ⌋
-
-      infix 4 _∌_
-      _∌_ : UniqueList → Carrier → Bool
-      []       ∌ y = true
-      (x ∷ xs) ∌ y = (x ≠ y) ∧ (xs ∌ y)
-
-    [_] : Carrier → UniqueList
-    [ x ] = x ∷ []
-
-    length : UniqueList → ℕ
-    length []       = 0
-    length (x ∷ xs) = 1 + length xs
-
-    _T[∌]?_ : T-Decidable _∌_
-    xs T[∌]? x = T-decide
-
-    mutual
-      infixl 5 _∪_
-      _∪_ : UniqueList → UniqueList → UniqueList
-      []                    ∪ ys = ys
-      ((x ∷ xs) {{T[xs∌x]}}) ∪ ys with ys T[∌]? x
-      ... | yes T[ys∌x] = (x ∷ (xs ∪ ys)) {{∪-preserves-∌ {xs} T[xs∌x] T[ys∌x]}}
-      ... | no ¬T[ys∌x] = xs ∪ ys
-
-      ∪-preserves-∌ : ∀ {xs ys z} → T (xs ∌ z) → T (ys ∌ z) → T (xs ∪ ys ∌ z)
-      ∪-preserves-∌ {[]}            tt            T[ys∌z] = T[ys∌z]
-      ∪-preserves-∌ {x′ ∷ xs′} {ys} T[x′≉z∧xs′∌z] T[ys∌z] with T-fst T[x′≉z∧xs′∌z] | T-snd T[x′≉z∧xs′∌z] | ys T[∌]? x′
-      ... | T[x′≉z] | T[xs′∌z] | yes T[ys∌x′] = T-pair T[x′≉z] (∪-preserves-∌ {xs′} T[xs′∌z] T[ys∌z])
-      ... | T[x′≉z] | T[xs′∌z] | no ¬T[ys∌x′] = ∪-preserves-∌ {xs′} T[xs′∌z] T[ys∌z]
-
-    module _ where
-      open import Data.Nat using (_≤_ ; s≤s)
-      open import Data.Nat.Properties using (≤-refl ; ≤-step)
-
-      length-triangular : (xs ys : UniqueList) → length (xs ∪ ys) ≤ length xs + length ys
-      length-triangular []       ys = ≤-refl
-      length-triangular (x ∷ xs) ys with ys T[∌]? x
-      ... | yes _ = s≤s (length-triangular xs ys)
-      ... | no _  = ≤-step (length-triangular xs ys)
-
-    module _ where
-      open import Data.Nat using (_≤′_ ; ≤′-refl ; ≤′-step)
-      open import Data.Nat.Properties using (s≤′s)
-
-      length-triangular′ : (xs ys : UniqueList) → length (xs ∪ ys) ≤′ length xs + length ys
-      length-triangular′ []       ys = ≤′-refl
-      length-triangular′ (x ∷ xs) ys with ys T[∌]? x
-      ... | yes _ = s≤′s (length-triangular′ xs ys)
-      ... | no _  = ≤′-step (length-triangular′ xs ys)
-
-  private
-    module _ where
-      open import Relation.Binary.PropositionalEquality using (_≡_ ; refl)
-      open import Data.Nat.Properties using (≡-decSetoid)
-      open module UniqueList_Nat = MakeUniqueList (≡-decSetoid)
-
-      test0 : (0 ∷ 1 ∷ []) ∪ [] ≡ 0 ∷ 1 ∷ []
-      test0 = refl
-
-      test1 : (0 ∷ 1 ∷ []) ∪ (0 ∷ 1 ∷ []) ≡ 0 ∷ 1 ∷ []
-      test1 = refl
-
-      test2 : (1 ∷ 0 ∷ []) ∪ (0 ∷ 1 ∷ []) ≡ 0 ∷ 1 ∷ []
-      test2 = refl
-
-
-------------------------------------------------------------------------------
-
-
-module Nat′ where
-  open import Data.Nat using (_+_ ; _≤′_ ; _<′_ ; ℕ ; ≤′-refl ; ≤′-step ; suc ; zero)
-  import Data.Nat.Properties as Nat
-  open Nat using (≤′⇒≤ ; ≤⇒≤′ ; s≤′s ; z≤′n)
-  open import Data.Sum using (inj₁ ; inj₂)
-  open import Level using (0ℓ)
-  import Relation.Binary as Rel
-  open Rel using (_⇒_)
-  import Relation.Binary.PropositionalEquality as PropEq
-  open PropEq using (_≡_ ; _≢_ ; refl)
-  open import Relation.Nullary using (¬_ ; Dec ; yes ; no)
-  open import Relation.Nullary.Negation using () renaming (contradiction to _↯_)
-
-  ≤′-reflexive : _≡_ ⇒ _≤′_
-  ≤′-reflexive refl = ≤′-refl
-
-  ≤′-antisym : Rel.Antisymmetric _≡_ _≤′_
-  ≤′-antisym m≤′n n≤′m = Nat.≤-antisym (≤′⇒≤ m≤′n) (≤′⇒≤ n≤′m)
-
-  ≤′-trans : Rel.Transitive _≤′_
-  ≤′-trans m≤′n n≤′o = ≤⇒≤′ (Nat.≤-trans (≤′⇒≤ m≤′n) (≤′⇒≤ n≤′o))
-
-  ≤′-total : Rel.Total _≤′_
-  ≤′-total m n with Nat.≤-total m n
-  ... | inj₁ m≤′n = inj₁ (≤⇒≤′ m≤′n)
-  ... | inj₂ n≤′m = inj₂ (≤⇒≤′ n≤′m)
-
-  infix 4 _≤′?_
-  _≤′?_ : Rel.Decidable _≤′_
-  m ≤′? n with m Nat.≤? n
-  ... | yes m≤′n = yes (≤⇒≤′ m≤′n)
-  ... | no m≰n  = no λ { m≤′n → ≤′⇒≤ m≤′n ↯ m≰n }
-
-  ≤′-isPreorder : Rel.IsPreorder _≡_ _≤′_
-  ≤′-isPreorder = record
-    { isEquivalence = PropEq.isEquivalence
-    ; reflexive     = ≤′-reflexive
-    ; trans         = ≤′-trans
-    }
-
-  ≤′-preorder : Rel.Preorder 0ℓ 0ℓ 0ℓ
-  ≤′-preorder = record
-    { isPreorder = ≤′-isPreorder
-    }
-
-  ≤′-isPartialOrder : Rel.IsPartialOrder _≡_ _≤′_
-  ≤′-isPartialOrder = record
-    { isPreorder = ≤′-isPreorder
-    ; antisym    = ≤′-antisym
-    }
-
-  ≤′-isTotalOrder : Rel.IsTotalOrder _≡_ _≤′_
-  ≤′-isTotalOrder = record
-    { isPartialOrder = ≤′-isPartialOrder
-    ; total          = ≤′-total
-    }
-
-  ≤′-totalOrder : Rel.TotalOrder 0ℓ 0ℓ 0ℓ
-  ≤′-totalOrder = record
-    { isTotalOrder = ≤′-isTotalOrder
-    }
-
-  ≤′-isDecTotalOrder : Rel.IsDecTotalOrder _≡_ _≤′_
-  ≤′-isDecTotalOrder = record
-    { isTotalOrder = ≤′-isTotalOrder
-    ; _≟_          = Nat._≟_
-    ; _≤?_         = _≤′?_
-    }
-
-  ≤′-decTotalOrder : Rel.DecTotalOrder 0ℓ 0ℓ 0ℓ
-  ≤′-decTotalOrder = record
-    { isDecTotalOrder = ≤′-isDecTotalOrder
-    }
-
-  module ≤′-Reasoning where
-    open import Relation.Binary.PartialOrderReasoning (Rel.DecTotalOrder.poset ≤′-decTotalOrder) public
-      using (_IsRelatedTo_ ; begin_ ; _≡⟨_⟩_ ; _∎)
-      renaming (_≤⟨_⟩_ to _≤′⟨_⟩_)
-
-    infixr 2 _<′⟨_⟩_
-    _<′⟨_⟩_ : ∀ x {y z} → x <′ y → y IsRelatedTo z → suc x IsRelatedTo z
-    x <′⟨ x<′y ⟩ y≤′z = suc x ≤′⟨ x<′y ⟩ y≤′z
-
-  +-mono-≤′ : _+_ Rel.Preserves₂ _≤′_ ⟶ _≤′_ ⟶ _≤′_
-  +-mono-≤′ x≤′y u≤′v = ≤⇒≤′ (Nat.+-mono-≤ (≤′⇒≤ x≤′y) (≤′⇒≤ u≤′v))
-
-  +-monoˡ-≤′ : ∀ n → (_+ n) Rel.Preserves _≤′_ ⟶ _≤′_
-  +-monoˡ-≤′ n m≤′o = +-mono-≤′ m≤′o (≤′-refl {n})
-
-
-------------------------------------------------------------------------------
-
-
-open import Data.Nat using (ℕ ; zero ; suc ; _+_ ; _⊔_)
+open import Data.Nat using (_≤_ ; _<_ ; _+_ ; _⊔_ ; ℕ ; s≤s ; suc ; zero)
+import Data.Nat.Properties as Nat
 import Relation.Binary.PropositionalEquality as PropEq
 open PropEq using (_≡_ ; _≢_ ; refl)
-open import Relation.Binary using (DecSetoid)
-open import Relation.Nullary using (¬_ ; Dec ; yes ; no)
+open import Relation.Binary using (DecSetoid ; Decidable)
+open import Relation.Nullary using (¬_ ; Dec ; no ; yes)
 open import Relation.Nullary.Negation using () renaming (contradiction to _↯_)
-open UniqueListWithUnstructuredProofs
+
+open import Prelude-UniqueList
+open import Prelude-WellFounded
 
 
 -- 3. Untyped arithmetic expressions
@@ -319,7 +25,7 @@ data Term : Set where
   succ pred iszero : (t₁ : Term) → Term
   if_then_else     : (t₁ t₂ t₃ : Term) → Term
 
-_≟_ : (r s : Term) → Dec (r ≡ s)
+_≟_ : Decidable {A = Term} _≡_
 true                  ≟ true                  = yes refl
 true                  ≟ false                 = no λ ()
 true                  ≟ zero                  = no λ ()
@@ -402,6 +108,7 @@ open module UniqueList-Term = MakeUniqueList (Term-decSetoid)
 
 -- 3.2.6. Proposition (skipped)
 
+
 -- 3.3. Induction on terms
 
 -- 3.3.1. Definition
@@ -415,6 +122,7 @@ consts (pred t₁)               = consts t₁
 consts (iszero t₁)             = consts t₁
 consts (if t₁ then t₂ else t₃) = consts t₁ ∪ consts t₂ ∪ consts t₃
 
+
 -- 3.3.2. Definition
 
 size : Term → ℕ
@@ -424,7 +132,7 @@ size zero                    = 1
 size (succ t₁)               = 1 + size t₁
 size (pred t₁)               = 1 + size t₁
 size (iszero t₁)             = 1 + size t₁
-size (if t₁ then t₂ else t₃) = 1 + size t₁ + size t₂ + size t₃
+size (if t₁ then t₂ else t₃) = 1 + (size t₁ + size t₂ + size t₃)
 
 depth : Term → ℕ
 depth true                    = 1
@@ -433,105 +141,234 @@ depth zero                    = 1
 depth (succ t₁)               = 1 + depth t₁
 depth (pred t₁)               = 1 + depth t₁
 depth (iszero t₁)             = 1 + depth t₁
-depth (if t₁ then t₂ else t₃) = 1 + depth t₁ ⊔ depth t₂ ⊔ depth t₃
+depth (if t₁ then t₂ else t₃) = 1 + (depth t₁ ⊔ depth t₂ ⊔ depth t₃)
+
 
 -- 3.3.3. Lemma
 
-module Lemma333 where
-  open import Data.Nat using (_≤_ ; z≤n ; s≤s)
-  open import Data.Nat.Properties using (≤-refl ; ≤-step ; +-mono-≤ ; +-monoˡ-≤ ; module ≤-Reasoning)
+module Lemma333-Direct where
+  open Nat.≤-Reasoning
 
-  lem-333 : ∀ (s : Term) → length (consts s) ≤ size s
-  lem-333 true                    = ≤-refl
-  lem-333 false                   = ≤-refl
-  lem-333 zero                    = ≤-refl
-  lem-333 (succ s₁)               = ≤-step (lem-333 s₁)
-  lem-333 (pred s₁)               = ≤-step (lem-333 s₁)
-  lem-333 (iszero s₁)             = ≤-step (lem-333 s₁)
-  lem-333 (if s₁ then s₂ else s₃) = ≤-step
+  lem : ∀ s → length (consts s) ≤ size s
+  lem true                    = Nat.≤-refl
+  lem false                   = Nat.≤-refl
+  lem zero                    = Nat.≤-refl
+  lem (succ s₁)               = Nat.≤-step (lem s₁)
+  lem (pred s₁)               = Nat.≤-step (lem s₁)
+  lem (iszero s₁)             = Nat.≤-step (lem s₁)
+  lem (if s₁ then s₂ else s₃) = Nat.≤-step
     (begin
       length (consts s₁ ∪ consts s₂ ∪ consts s₃)
     ≤⟨ length-triangular (consts s₁ ∪ consts s₂) (consts s₃) ⟩
       length (consts s₁ ∪ consts s₂) + length (consts s₃)
-    ≤⟨ +-monoˡ-≤ (length (consts s₃)) (length-triangular (consts s₁) (consts s₂)) ⟩
+    ≤⟨ Nat.+-monoˡ-≤ (length (consts s₃)) (length-triangular (consts s₁) (consts s₂)) ⟩
       length (consts s₁) + length (consts s₂) + length (consts s₃)
-    ≤⟨ +-mono-≤ (+-mono-≤ (lem-333 s₁) (lem-333 s₂)) (lem-333 s₃) ⟩
+    ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (lem s₁) (lem s₂)) (lem s₃) ⟩
       size s₁ + size s₂ + size s₃
     ∎)
-    where
-      open ≤-Reasoning
 
-module Lemma333′ where
-  open import Data.Nat using (_≤′_ ; ≤′-refl ; ≤′-step)
-  open Nat′ using (+-mono-≤′ ; +-monoˡ-≤′ ; module ≤′-Reasoning)
-
-  lem-333 : ∀ (s : Term) → length (consts s) ≤′ size s
-  lem-333 true                    = ≤′-refl
-  lem-333 false                   = ≤′-refl
-  lem-333 zero                    = ≤′-refl
-  lem-333 (succ s₁)               = ≤′-step (lem-333 s₁)
-  lem-333 (pred s₁)               = ≤′-step (lem-333 s₁)
-  lem-333 (iszero s₁)             = ≤′-step (lem-333 s₁)
-  lem-333 (if s₁ then s₂ else s₃) = ≤′-step
-    (begin
-      length (consts s₁ ∪ consts s₂ ∪ consts s₃)
-    ≤′⟨ length-triangular′ (consts s₁ ∪ consts s₂) (consts s₃) ⟩
-      length (consts s₁ ∪ consts s₂) + length (consts s₃)
-    ≤′⟨ +-monoˡ-≤′ (length (consts s₃)) (length-triangular′ (consts s₁) (consts s₂)) ⟩
-      length (consts s₁) + length (consts s₂) + length (consts s₃)
-    ≤′⟨ +-mono-≤′ (+-mono-≤′ (lem-333 s₁) (lem-333 s₂)) (lem-333 s₃) ⟩
-      size s₁ + size s₂ + size s₃
-    ∎)
-    where
-      open ≤′-Reasoning
 
 -- 3.3.4. Theorem [Principles of induction on terms]
 
-data IsSubtermOf : Term → Term → Set where
-  is-subterm-of-succ   : ∀ {s₁} → IsSubtermOf s₁ (succ s₁)
-  is-subterm-of-pred   : ∀ {s₁} → IsSubtermOf s₁ (pred s₁)
-  is-subterm-of-iszero : ∀ {s₁} → IsSubtermOf s₁ (iszero s₁)
-  is-subterm-of-ifte₁  : ∀ {s₁ s₂ s₃} → IsSubtermOf s₁ (if s₁ then s₂ else s₃)
-  is-subterm-of-ifte₂  : ∀ {s₁ s₂ s₃} → IsSubtermOf s₂ (if s₁ then s₂ else s₃)
-  is-subterm-of-ifte₃  : ∀ {s₁ s₂ s₃} → IsSubtermOf s₃ (if s₁ then s₂ else s₃)
+-- Structural induction
 
-ind-struct : ∀ {ℓ} → (P : Term → Set ℓ)
-                   → (∀ (s : Term) → (∀ (r : Term) → IsSubtermOf r s → P r) → P s)
-                   → (∀ (s : Term) → P s)
-ind-struct P h s@true                 = h s λ r ()
-ind-struct P h s@false                = h s λ r ()
-ind-struct P h s@zero                 = h s λ r ()
-ind-struct P h s@(succ _)             = h s λ { r is-subterm-of-succ → ind-struct P h r }
-ind-struct P h s@(pred _)             = h s λ { r is-subterm-of-pred → ind-struct P h r }
-ind-struct P h s@(iszero _)           = h s λ { r is-subterm-of-iszero → ind-struct P h r }
-ind-struct P h s@(if _ then _ else _) = h s λ
-  { r is-subterm-of-ifte₁ → ind-struct P h r
-  ; r is-subterm-of-ifte₂ → ind-struct P h r
-  ; r is-subterm-of-ifte₃ → ind-struct P h r
-  }
+data Subterm : Term → Term → Set where
+  subterm-succ   : ∀ {s₁} → Subterm s₁ (succ s₁)
+  subterm-pred   : ∀ {s₁} → Subterm s₁ (pred s₁)
+  subterm-iszero : ∀ {s₁} → Subterm s₁ (iszero s₁)
+  subterm-ifte₁  : ∀ {s₁ s₂ s₃} → Subterm s₁ (if s₁ then s₂ else s₃)
+  subterm-ifte₂  : ∀ {s₁ s₂ s₃} → Subterm s₂ (if s₁ then s₂ else s₃)
+  subterm-ifte₃  : ∀ {s₁ s₂ s₃} → Subterm s₃ (if s₁ then s₂ else s₃)
 
-module IndStructLemma333 where
-  open import Data.Nat using (_≤_ ; z≤n ; s≤s)
-  open import Data.Nat.Properties using (≤-refl ; ≤-step ; +-mono-≤ ; +-monoˡ-≤ ; module ≤-Reasoning)
+-- Verbose
+module SubtermInd-Direct where
+  subterm-ind : ∀ {ℓ} {P : Term → Set ℓ} → BuildsUp Subterm P → ∀ s → P s
+  subterm-ind h s@true                 = h s λ r ()
+  subterm-ind h s@false                = h s λ r ()
+  subterm-ind h s@zero                 = h s λ r ()
+  subterm-ind h s@(succ _)             = h s λ { r subterm-succ → subterm-ind h r }
+  subterm-ind h s@(pred _)             = h s λ { r subterm-pred → subterm-ind h r }
+  subterm-ind h s@(iszero _)           = h s λ { r subterm-iszero → subterm-ind h r }
+  subterm-ind h s@(if _ then _ else _) = h s λ
+    { r subterm-ifte₁ → subterm-ind h r
+    ; r subterm-ifte₂ → subterm-ind h r
+    ; r subterm-ifte₃ → subterm-ind h r
+    }
 
-  lem-333 : ∀ (s : Term) → length (consts s) ≤ size s
-  lem-333 = ind-struct (λ s → length (consts s) ≤ size s) λ
-    { true                    h → ≤-refl
-    ; false                   h → ≤-refl
-    ; zero                    h → ≤-refl
-    ; (succ s₁)               h → ≤-step (h s₁ is-subterm-of-succ)
-    ; (pred s₁)               h → ≤-step (h s₁ is-subterm-of-pred)
-    ; (iszero s₁)             h → ≤-step (h s₁ is-subterm-of-iszero)
-    ; (if s₁ then s₂ else s₃) h → ≤-step
+-- Awkward
+module SubtermInd-Stdlib where
+  import Induction.WellFounded as Stdlib
+
+  subterm-wf : Stdlib.WellFounded Subterm
+  subterm-wf s = Stdlib.acc λ
+    { s₁ subterm-succ   → subterm-wf s₁
+    ; s₁ subterm-pred   → subterm-wf s₁
+    ; s₁ subterm-iszero → subterm-wf s₁
+    ; s₁ subterm-ifte₁  → subterm-wf s₁
+    ; s₂ subterm-ifte₂  → subterm-wf s₂
+    ; s₃ subterm-ifte₃  → subterm-wf s₃
+    }
+
+  open module SubtermInd {ℓ} = Stdlib.All subterm-wf ℓ using (wfRec)
+
+  subterm-ind : ∀ {ℓ} {P : Term → Set ℓ} → Induction Subterm P
+  subterm-ind {P = P} = wfRec P
+
+-- Preferred
+module _ where
+  subterm-wf : WellFounded Subterm
+  subterm-wf s = access s λ
+    { s₁ subterm-succ   → subterm-wf s₁
+    ; s₁ subterm-pred   → subterm-wf s₁
+    ; s₁ subterm-iszero → subterm-wf s₁
+    ; s₁ subterm-ifte₁  → subterm-wf s₁
+    ; s₂ subterm-ifte₂  → subterm-wf s₂
+    ; s₃ subterm-ifte₃  → subterm-wf s₃
+    }
+
+  subterm-ind : ∀ {ℓ} {P : Term → Set ℓ} → Induction Subterm P
+  subterm-ind = ind subterm-wf
+
+
+-- Induction on size
+
+Subsize : Term → Term → Set
+Subsize r s = size r < size s
+
+subsize-wf : WellFounded Subsize
+subsize-wf = InverseImage.wellFounded size <-wf
+
+subsize-ind : ∀ {ℓ} {P : Term → Set ℓ} → Induction Subsize P
+subsize-ind = ind subsize-wf
+
+
+-- Induction on depth
+
+Subdepth : Term → Term → Set
+Subdepth r s = depth r < depth s
+
+subdepth-wf : WellFounded Subdepth
+subdepth-wf = InverseImage.wellFounded depth <-wf
+
+subdepth-ind : ∀ {ℓ} {P : Term → Set ℓ} → Induction Subdepth P
+subdepth-ind = ind subdepth-wf
+
+
+module Lemma333-Indirect where
+  open Nat.≤-Reasoning
+
+  lem-via-subterm-ind : ∀ s → length (consts s) ≤ size s
+  lem-via-subterm-ind = subterm-ind λ
+    { true                    h → Nat.≤-refl
+    ; false                   h → Nat.≤-refl
+    ; zero                    h → Nat.≤-refl
+    ; (succ s₁)               h → Nat.≤-step (h s₁ subterm-succ)
+    ; (pred s₁)               h → Nat.≤-step (h s₁ subterm-pred)
+    ; (iszero s₁)             h → Nat.≤-step (h s₁ subterm-iszero)
+    ; (if s₁ then s₂ else s₃) h → Nat.≤-step
       (begin
         length (consts s₁ ∪ consts s₂ ∪ consts s₃)
       ≤⟨ length-triangular (consts s₁ ∪ consts s₂) (consts s₃) ⟩
         length (consts s₁ ∪ consts s₂) + length (consts s₃)
-      ≤⟨ +-monoˡ-≤ (length (consts s₃)) (length-triangular (consts s₁) (consts s₂)) ⟩
+      ≤⟨ Nat.+-monoˡ-≤ (length (consts s₃)) (length-triangular (consts s₁) (consts s₂)) ⟩
         length (consts s₁) + length (consts s₂) + length (consts s₃)
-      ≤⟨ +-mono-≤ (+-mono-≤ (h s₁ is-subterm-of-ifte₁) (h s₂ is-subterm-of-ifte₂)) (h s₃ is-subterm-of-ifte₃) ⟩
+      ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (h s₁ subterm-ifte₁) (h s₂ subterm-ifte₂)) (h s₃ subterm-ifte₃) ⟩
         size s₁ + size s₂ + size s₃
       ∎)
     }
-    where
-      open ≤-Reasoning
+
+  subsize-ifte₁ : ∀ s₁ s₂ s₃ → Subsize s₁ (if s₁ then s₂ else s₃)
+  subsize-ifte₁ s₁ s₂ s₃ = s≤s
+    (begin
+      size s₁
+    ≤⟨ Nat.m≤m+n (size s₁) (size s₂) ⟩
+      size s₁ + size s₂
+    ≤⟨ Nat.m≤m+n (size s₁ + size s₂) (size s₃) ⟩
+      size s₁ + size s₂ + size s₃
+    ∎)
+
+  subsize-ifte₂ : ∀ s₁ s₂ s₃ → Subsize s₂ (if s₁ then s₂ else s₃)
+  subsize-ifte₂ s₁ s₂ s₃ = s≤s
+    (begin
+      size s₂
+    ≤⟨ Nat.n≤m+n (size s₁) (size s₂) ⟩
+      size s₁ + size s₂
+    ≤⟨ Nat.m≤m+n (size s₁ + size s₂) (size s₃) ⟩
+      size s₁ + size s₂ + size s₃
+    ∎)
+
+  subsize-ifte₃ : ∀ s₁ s₂ s₃ → Subsize s₃ (if s₁ then s₂ else s₃)
+  subsize-ifte₃ s₁ s₂ s₃ = s≤s
+    (begin
+      size s₃
+    ≤⟨ Nat.n≤m+n (size s₁ + size s₂) (size s₃) ⟩
+      size s₁ + size s₂ + size s₃
+    ∎)
+
+  lem-via-subsize-ind : ∀ s → length (consts s) ≤ size s
+  lem-via-subsize-ind = subsize-ind λ
+    { true                    h → Nat.≤-refl
+    ; false                   h → Nat.≤-refl
+    ; zero                    h → Nat.≤-refl
+    ; (succ s₁)               h → Nat.≤-step (h s₁ Nat.≤-refl)
+    ; (pred s₁)               h → Nat.≤-step (h s₁ Nat.≤-refl)
+    ; (iszero s₁)             h → Nat.≤-step (h s₁ Nat.≤-refl)
+    ; (if s₁ then s₂ else s₃) h → Nat.≤-step
+      (begin
+        length (consts s₁ ∪ consts s₂ ∪ consts s₃)
+      ≤⟨ length-triangular (consts s₁ ∪ consts s₂) (consts s₃) ⟩
+        length (consts s₁ ∪ consts s₂) + length (consts s₃)
+      ≤⟨ Nat.+-monoˡ-≤ (length (consts s₃)) (length-triangular (consts s₁) (consts s₂)) ⟩
+        length (consts s₁) + length (consts s₂) + length (consts s₃)
+      ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (h s₁ (subsize-ifte₁ s₁ s₂ s₃)) (h s₂ (subsize-ifte₂ s₁ s₂ s₃))) (h s₃ (subsize-ifte₃ s₁ s₂ s₃)) ⟩
+        size s₁ + size s₂ + size s₃
+      ∎)
+    }
+
+  subdepth-ifte₁ : ∀ s₁ s₂ s₃ → Subdepth s₁ (if s₁ then s₂ else s₃)
+  subdepth-ifte₁ s₁ s₂ s₃ = s≤s
+    (begin
+      depth s₁
+    ≤⟨ Nat.m≤m⊔n (depth s₁) (depth s₂) ⟩
+      depth s₁ ⊔ depth s₂
+    ≤⟨ Nat.m≤m⊔n (depth s₁ ⊔ depth s₂) (depth s₃) ⟩
+      depth s₁ ⊔ depth s₂ ⊔ depth s₃
+    ∎)
+
+  subdepth-ifte₂ : ∀ s₁ s₂ s₃ → Subdepth s₂ (if s₁ then s₂ else s₃)
+  subdepth-ifte₂ s₁ s₂ s₃ = s≤s
+    (begin
+      depth s₂
+    ≤⟨ Nat.n≤m⊔n (depth s₁) (depth s₂) ⟩
+      depth s₁ ⊔ depth s₂
+    ≤⟨ Nat.m≤m⊔n (depth s₁ ⊔ depth s₂) (depth s₃) ⟩
+      depth s₁ ⊔ depth s₂ ⊔ depth s₃
+    ∎)
+
+  subdepth-ifte₃ : ∀ s₁ s₂ s₃ → Subdepth s₃ (if s₁ then s₂ else s₃)
+  subdepth-ifte₃ s₁ s₂ s₃ = s≤s
+    (begin
+      depth s₃
+    ≤⟨ Nat.n≤m⊔n (depth s₁ ⊔ depth s₂) (depth s₃) ⟩
+      depth s₁ ⊔ depth s₂ ⊔ depth s₃
+    ∎)
+
+  lem-via-subdepth-ind : ∀ s → length (consts s) ≤ size s
+  lem-via-subdepth-ind = subdepth-ind λ
+    { true                    h → Nat.≤-refl
+    ; false                   h → Nat.≤-refl
+    ; zero                    h → Nat.≤-refl
+    ; (succ s₁)               h → Nat.≤-step (h s₁ Nat.≤-refl)
+    ; (pred s₁)               h → Nat.≤-step (h s₁ Nat.≤-refl)
+    ; (iszero s₁)             h → Nat.≤-step (h s₁ Nat.≤-refl)
+    ; (if s₁ then s₂ else s₃) h → Nat.≤-step
+      (begin
+        length (consts s₁ ∪ consts s₂ ∪ consts s₃)
+      ≤⟨ length-triangular (consts s₁ ∪ consts s₂) (consts s₃) ⟩
+        length (consts s₁ ∪ consts s₂) + length (consts s₃)
+      ≤⟨ Nat.+-monoˡ-≤ (length (consts s₃)) (length-triangular (consts s₁) (consts s₂)) ⟩
+        length (consts s₁) + length (consts s₂) + length (consts s₃)
+      ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (h s₁ (subdepth-ifte₁ s₁ s₂ s₃)) (h s₂ (subdepth-ifte₂ s₁ s₂ s₃))) (h s₃ (subdepth-ifte₃ s₁ s₂ s₃)) ⟩
+        size s₁ + size s₂ + size s₃
+      ∎)
+    }
