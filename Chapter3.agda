@@ -254,7 +254,7 @@ subdepth-ind : ∀ {ℓ} {P : Term → Set ℓ} → Induction Subdepth P
 subdepth-ind = ind subdepth-wf
 
 
-module Lemma333-Indirect where
+module Lemma333-ViaSubtermInd where
   open Nat.≤-Reasoning
 
   lem-via-subterm-ind : ∀ s → length (consts s) ≤ size s
@@ -276,6 +276,10 @@ module Lemma333-Indirect where
         size s₁ + size s₂ + size s₃
       ∎)
     }
+
+
+module Lemma333-ViaSubsizeInd where
+  open Nat.≤-Reasoning
 
   subsize-ifte₁ : ∀ s₁ s₂ s₃ → Subsize s₁ (if s₁ then s₂ else s₃)
   subsize-ifte₁ s₁ s₂ s₃ = s≤s
@@ -324,6 +328,10 @@ module Lemma333-Indirect where
         size s₁ + size s₂ + size s₃
       ∎)
     }
+
+
+module Lemma333-ViaSubdepthInd where
+  open Nat.≤-Reasoning
 
   subdepth-ifte₁ : ∀ s₁ s₂ s₃ → Subdepth s₁ (if s₁ then s₂ else s₃)
   subdepth-ifte₁ s₁ s₂ s₃ = s≤s
