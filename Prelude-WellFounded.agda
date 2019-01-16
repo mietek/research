@@ -12,6 +12,21 @@ open import Relation.Binary using (Rel)
 open import Relation.Unary using (_⊆_ ; Pred)
 
 
+module _ where
+  open import Data.Nat using (_≤_ ; _<_ ; s≤s ; suc ; z≤n ; zero)
+  open import Relation.Binary.PropositionalEquality using (_≢_ ; refl)
+  open import Relation.Nullary.Negation using () renaming (contradiction to _↯_)
+
+  sm≢sn⇒m≢n : ∀ {n m} → suc m ≢ suc n → m ≢ n
+  sm≢sn⇒m≢n sn≢sn refl = refl ↯ sn≢sn
+
+  m≤n∧m≢n⇒m<n : ∀ {n m} → m ≤ n → m ≢ n → m < n
+  m≤n∧m≢n⇒m<n {zero}  {zero}  z≤n       z≢z   = refl ↯ z≢z
+  m≤n∧m≢n⇒m<n {zero}  {suc m} ()        sm≢z
+  m≤n∧m≢n⇒m<n {suc n} {zero}  z≤n       z≢sn  = s≤s z≤n
+  m≤n∧m≢n⇒m<n {suc n} {suc m} (s≤s m≤n) sm≢sn = s≤s (m≤n∧m≢n⇒m<n m≤n (sm≢sn⇒m≢n sm≢sn))
+
+
 -- AKA WfRec
 HoldsBelow : ∀ {a p ℓ} {A : Set a} → Rel A ℓ → Pred A p → A → Set (a ⊔ p ⊔ ℓ)
 HoldsBelow _<_ P x = ∀ y → y < x → P y
@@ -50,19 +65,9 @@ ind wf h x = h x (ind-loop h (wf x))
 
 
 module _ where
-  open import Data.Nat using (_≤_ ; _<_ ; _≟_ ; ℕ ; s≤s ; suc ; z≤n ; zero)
-  open import Relation.Binary.PropositionalEquality using (_≡_ ; _≢_ ; refl)
+  open import Data.Nat using (_≤_ ; _<_ ; _≟_ ; ℕ ; s≤s ; suc ; zero)
+  open import Relation.Binary.PropositionalEquality using (refl)
   open import Relation.Nullary using (no ; yes)
-  open import Relation.Nullary.Negation using () renaming (contradiction to _↯_)
-
-  sm≢sn⇒m≢n : ∀ {n m} → suc m ≢ suc n → m ≢ n
-  sm≢sn⇒m≢n sn≢sn refl = refl ↯ sn≢sn
-
-  m≤n∧m≢n⇒m<n : ∀ {n m} → m ≤ n → m ≢ n → m < n
-  m≤n∧m≢n⇒m<n {zero}  {zero}  z≤n       z≢z   = refl ↯ z≢z
-  m≤n∧m≢n⇒m<n {zero}  {suc m} ()        sm≢z
-  m≤n∧m≢n⇒m<n {suc n} {zero}  z≤n       z≢sn  = s≤s z≤n
-  m≤n∧m≢n⇒m<n {suc n} {suc m} (s≤s m≤n) sm≢sn = s≤s (m≤n∧m≢n⇒m<n m≤n (sm≢sn⇒m≢n sm≢sn))
 
   <-wfb : WellFoundedBelow _<_
   <-wfb zero    m ()

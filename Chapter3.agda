@@ -12,6 +12,26 @@ open import Prelude-UniqueList
 open import Prelude-WellFounded
 
 
+module _ where
+  m≤m+n+o : ∀ m n o → m ≤ m + n + o
+  m≤m+n+o m n o = Nat.≤-trans (Nat.m≤m+n m n) (Nat.m≤m+n (m + n) o)
+
+  n≤m+n+o : ∀ m n o → n ≤ m + n + o
+  n≤m+n+o m n o = Nat.≤-trans (Nat.n≤m+n m n) (Nat.m≤m+n (m + n) o)
+
+  o≤m+n+o : ∀ m n o → o ≤ m + n + o
+  o≤m+n+o m n o = Nat.n≤m+n (m + n) o
+
+  m≤m⊔n⊔o : ∀ m n o → m ≤ m ⊔ n ⊔ o
+  m≤m⊔n⊔o m n o = Nat.≤-trans (Nat.m≤m⊔n m n) (Nat.m≤m⊔n (m ⊔ n) o)
+
+  n≤m⊔n⊔o : ∀ m n o → n ≤ m ⊔ n ⊔ o
+  n≤m⊔n⊔o m n o = Nat.≤-trans (Nat.n≤m⊔n m n) (Nat.m≤m⊔n (m ⊔ n) o)
+
+  o≤m⊔n⊔o : ∀ m n o → o ≤ m ⊔ n ⊔ o
+  o≤m⊔n⊔o m n o = Nat.n≤m⊔n (m ⊔ n) o
+
+
 -- 3. Untyped arithmetic expressions
 
 -- 3.1. Introduction
@@ -286,15 +306,6 @@ module Lemma333-ViaSubtermInd where
 module Lemma333-ViaSubsizeInd where
   open Nat.≤-Reasoning
 
-  m≤m+n+o : ∀ m n o → m ≤ m + n + o
-  m≤m+n+o m n o = Nat.≤-trans (Nat.m≤m+n m n) (Nat.m≤m+n (m + n) o)
-
-  n≤m+n+o : ∀ m n o → n ≤ m + n + o
-  n≤m+n+o m n o = Nat.≤-trans (Nat.n≤m+n m n) (Nat.m≤m+n (m + n) o)
-
-  o≤m+n+o : ∀ m n o → o ≤ m + n + o
-  o≤m+n+o m n o = Nat.n≤m+n (m + n) o
-
   subsize-ifte₁ : ∀ s₁ s₂ s₃ → Subsize s₁ (if s₁ then s₂ else s₃)
   subsize-ifte₁ s₁ s₂ s₃ = s≤s (m≤m+n+o (size s₁) (size s₂) (size s₃))
 
@@ -332,15 +343,6 @@ module Lemma333-ViaSubsizeInd where
 
 module Lemma333-ViaSubdepthInd where
   open Nat.≤-Reasoning
-
-  m≤m⊔n⊔o : ∀ m n o → m ≤ m ⊔ n ⊔ o
-  m≤m⊔n⊔o m n o = Nat.≤-trans (Nat.m≤m⊔n m n) (Nat.m≤m⊔n (m ⊔ n) o)
-
-  n≤m⊔n⊔o : ∀ m n o → n ≤ m ⊔ n ⊔ o
-  n≤m⊔n⊔o m n o = Nat.≤-trans (Nat.n≤m⊔n m n) (Nat.m≤m⊔n (m ⊔ n) o)
-
-  o≤m⊔n⊔o : ∀ m n o → o ≤ m ⊔ n ⊔ o
-  o≤m⊔n⊔o m n o = Nat.n≤m⊔n (m ⊔ n) o
 
   subdepth-ifte₁ : ∀ s₁ s₂ s₃ → Subdepth s₁ (if s₁ then s₂ else s₃)
   subdepth-ifte₁ s₁ s₂ s₃ = s≤s (m≤m⊔n⊔o (depth s₁) (depth s₂) (depth s₃))
