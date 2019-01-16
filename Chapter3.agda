@@ -32,7 +32,7 @@ module _ where
 
 data Term : Set where
   true false zero  : Term
-  succ pred iszero : (t₁ : Term) → Term
+  succ pred isZero : (t₁ : Term) → Term
   if_then_else     : (t₁ t₂ t₃ : Term) → Term
 
 
@@ -57,21 +57,21 @@ module _ where
   true                  ≟ zero                  = no λ ()
   true                  ≟ succ s₁               = no λ ()
   true                  ≟ pred s₁               = no λ ()
-  true                  ≟ iszero s₁             = no λ ()
+  true                  ≟ isZero s₁             = no λ ()
   true                  ≟ if s₁ then s₂ else s₃ = no λ ()
   false                 ≟ true                  = no λ ()
   false                 ≟ false                 = yes refl
   false                 ≟ zero                  = no λ ()
   false                 ≟ succ s₁               = no λ ()
   false                 ≟ pred s₁               = no λ ()
-  false                 ≟ iszero s₁             = no λ ()
+  false                 ≟ isZero s₁             = no λ ()
   false                 ≟ if s₁ then s₂ else s₃ = no λ ()
   zero                  ≟ true                  = no λ ()
   zero                  ≟ false                 = no λ ()
   zero                  ≟ zero                  = yes refl
   zero                  ≟ succ s₁               = no λ ()
   zero                  ≟ pred s₁               = no λ ()
-  zero                  ≟ iszero s₁             = no λ ()
+  zero                  ≟ isZero s₁             = no λ ()
   zero                  ≟ if s₁ then s₂ else s₃ = no λ ()
   succ r₁               ≟ true                  = no λ ()
   succ r₁               ≟ false                 = no λ ()
@@ -80,7 +80,7 @@ module _ where
   ... | yes refl = yes refl
   ... | no r₁≢s₁ = no λ { refl → refl ↯ r₁≢s₁ }
   succ r₁               ≟ pred s₁               = no λ ()
-  succ r₁               ≟ iszero s₁             = no λ ()
+  succ r₁               ≟ isZero s₁             = no λ ()
   succ r₁               ≟ if s₁ then s₂ else s₃ = no λ ()
   pred r₁               ≟ true                  = no λ ()
   pred r₁               ≟ false                 = no λ ()
@@ -89,23 +89,23 @@ module _ where
   pred r₁               ≟ pred s₁               with r₁ ≟ s₁
   ... | yes refl = yes refl
   ... | no r₁≢s₁ = no λ { refl → refl ↯ r₁≢s₁ }
-  pred r₁               ≟ iszero s₁             = no λ ()
+  pred r₁               ≟ isZero s₁             = no λ ()
   pred r₁               ≟ if s₁ then s₂ else s₃ = no λ ()
-  iszero r₁             ≟ true                  = no λ ()
-  iszero r₁             ≟ false                 = no λ ()
-  iszero r₁             ≟ zero                  = no λ ()
-  iszero r₁             ≟ succ s₁               = no λ ()
-  iszero r₁             ≟ pred s₁               = no λ ()
-  iszero r₁             ≟ iszero s₁             with r₁ ≟ s₁
+  isZero r₁             ≟ true                  = no λ ()
+  isZero r₁             ≟ false                 = no λ ()
+  isZero r₁             ≟ zero                  = no λ ()
+  isZero r₁             ≟ succ s₁               = no λ ()
+  isZero r₁             ≟ pred s₁               = no λ ()
+  isZero r₁             ≟ isZero s₁             with r₁ ≟ s₁
   ... | yes refl = yes refl
   ... | no r₁≢s₁ = no λ { refl → refl ↯ r₁≢s₁ }
-  iszero r₁             ≟ if s₁ then s₂ else s₃ = no λ ()
+  isZero r₁             ≟ if s₁ then s₂ else s₃ = no λ ()
   if r₁ then r₂ else r₃ ≟ true                  = no λ ()
   if r₁ then r₂ else r₃ ≟ false                 = no λ ()
   if r₁ then r₂ else r₃ ≟ zero                  = no λ ()
   if r₁ then r₂ else r₃ ≟ succ s₁               = no λ ()
   if r₁ then r₂ else r₃ ≟ pred s₁               = no λ ()
-  if r₁ then r₂ else r₃ ≟ iszero s₁             = no λ ()
+  if r₁ then r₂ else r₃ ≟ isZero s₁             = no λ ()
   if r₁ then r₂ else r₃ ≟ if s₁ then s₂ else s₃ with r₁ ≟ s₁ | r₂ ≟ s₂ | r₃ ≟ s₃
   ... | yes refl | yes refl | yes refl = yes refl
   ... | no r₁≢s₁ | _        | _        = no λ { refl → refl ↯ r₁≢s₁ }
@@ -130,7 +130,7 @@ consts false                   = [ false ]
 consts zero                    = [ zero ]
 consts (succ t₁)               = consts t₁
 consts (pred t₁)               = consts t₁
-consts (iszero t₁)             = consts t₁
+consts (isZero t₁)             = consts t₁
 consts (if t₁ then t₂ else t₃) = consts t₁ ∪ consts t₂ ∪ consts t₃
 
 
@@ -142,7 +142,7 @@ size false                   = 1
 size zero                    = 1
 size (succ t₁)               = 1 + size t₁
 size (pred t₁)               = 1 + size t₁
-size (iszero t₁)             = 1 + size t₁
+size (isZero t₁)             = 1 + size t₁
 size (if t₁ then t₂ else t₃) = 1 + (size t₁ + size t₂ + size t₃)
 
 depth : Term → ℕ
@@ -151,7 +151,7 @@ depth false                   = 1
 depth zero                    = 1
 depth (succ t₁)               = 1 + depth t₁
 depth (pred t₁)               = 1 + depth t₁
-depth (iszero t₁)             = 1 + depth t₁
+depth (isZero t₁)             = 1 + depth t₁
 depth (if t₁ then t₂ else t₃) = 1 + (depth t₁ ⊔ depth t₂ ⊔ depth t₃)
 
 
@@ -160,21 +160,21 @@ depth (if t₁ then t₂ else t₃) = 1 + (depth t₁ ⊔ depth t₂ ⊔ depth t
 module Lemma333-Direct where
   open Nat.≤-Reasoning
 
-  lem : ∀ s → length (consts s) ≤ size s
-  lem true                    = Nat.≤-refl
-  lem false                   = Nat.≤-refl
-  lem zero                    = Nat.≤-refl
-  lem (succ s₁)               = Nat.≤-step (lem s₁)
-  lem (pred s₁)               = Nat.≤-step (lem s₁)
-  lem (iszero s₁)             = Nat.≤-step (lem s₁)
-  lem (if s₁ then s₂ else s₃) = Nat.≤-step
+  lem333 : ∀ s → length (consts s) ≤ size s
+  lem333 true                    = Nat.≤-refl
+  lem333 false                   = Nat.≤-refl
+  lem333 zero                    = Nat.≤-refl
+  lem333 (succ s₁)               = Nat.≤-step (lem333 s₁)
+  lem333 (pred s₁)               = Nat.≤-step (lem333 s₁)
+  lem333 (isZero s₁)             = Nat.≤-step (lem333 s₁)
+  lem333 (if s₁ then s₂ else s₃) = Nat.≤-step
     (begin
       length (consts s₁ ∪ consts s₂ ∪ consts s₃)
     ≤⟨ length-triangular (consts s₁ ∪ consts s₂) (consts s₃) ⟩
       length (consts s₁ ∪ consts s₂) + length (consts s₃)
     ≤⟨ Nat.+-monoˡ-≤ (length (consts s₃)) (length-triangular (consts s₁) (consts s₂)) ⟩
       length (consts s₁) + length (consts s₂) + length (consts s₃)
-    ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (lem s₁) (lem s₂)) (lem s₃) ⟩
+    ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (lem333 s₁) (lem333 s₂)) (lem333 s₃) ⟩
       size s₁ + size s₂ + size s₃
     ∎)
 
@@ -186,7 +186,7 @@ module Lemma333-Direct where
 data Subterm : Term → Term → Set where
   subterm-succ   : ∀ {s₁} → Subterm s₁ (succ s₁)
   subterm-pred   : ∀ {s₁} → Subterm s₁ (pred s₁)
-  subterm-iszero : ∀ {s₁} → Subterm s₁ (iszero s₁)
+  subterm-isZero : ∀ {s₁} → Subterm s₁ (isZero s₁)
   subterm-ifte₁  : ∀ {s₁ s₂ s₃} → Subterm s₁ (if s₁ then s₂ else s₃)
   subterm-ifte₂  : ∀ {s₁ s₂ s₃} → Subterm s₂ (if s₁ then s₂ else s₃)
   subterm-ifte₃  : ∀ {s₁ s₂ s₃} → Subterm s₃ (if s₁ then s₂ else s₃)
@@ -198,7 +198,7 @@ module SubtermIP-Direct where
   subterm-ip h s@zero                 = h s λ r ()
   subterm-ip h s@(succ _)             = h s λ { r subterm-succ → subterm-ip h r }
   subterm-ip h s@(pred _)             = h s λ { r subterm-pred → subterm-ip h r }
-  subterm-ip h s@(iszero _)           = h s λ { r subterm-iszero → subterm-ip h r }
+  subterm-ip h s@(isZero _)           = h s λ { r subterm-isZero → subterm-ip h r }
   subterm-ip h s@(if _ then _ else _) = h s λ
     { r subterm-ifte₁ → subterm-ip h r
     ; r subterm-ifte₂ → subterm-ip h r
@@ -212,7 +212,7 @@ module SubtermIP-Stdlib where
   subterm-wf s = Stdlib.acc λ
     { s₁ subterm-succ   → subterm-wf s₁
     ; s₁ subterm-pred   → subterm-wf s₁
-    ; s₁ subterm-iszero → subterm-wf s₁
+    ; s₁ subterm-isZero → subterm-wf s₁
     ; s₁ subterm-ifte₁  → subterm-wf s₁
     ; s₂ subterm-ifte₂  → subterm-wf s₂
     ; s₃ subterm-ifte₃  → subterm-wf s₃
@@ -228,7 +228,7 @@ module _ where
   subterm-wf s = access s λ
     { s₁ subterm-succ   → subterm-wf s₁
     ; s₁ subterm-pred   → subterm-wf s₁
-    ; s₁ subterm-iszero → subterm-wf s₁
+    ; s₁ subterm-isZero → subterm-wf s₁
     ; s₁ subterm-ifte₁  → subterm-wf s₁
     ; s₂ subterm-ifte₂  → subterm-wf s₂
     ; s₃ subterm-ifte₃  → subterm-wf s₃
@@ -237,17 +237,17 @@ module _ where
   subterm-ip : ∀ {ℓ} {P : Term → Set ℓ} → InductionPrinciple Subterm P
   subterm-ip = inductionPrinciple subterm-wf
 
-module Lemma333-ViaSubtermIP where
+module Lemma333-ViaSubterm where
   open Nat.≤-Reasoning
 
-  lem-via-subterm-ip : ∀ s → length (consts s) ≤ size s
-  lem-via-subterm-ip = subterm-ip λ
+  lem333-viaSubterm : ∀ s → length (consts s) ≤ size s
+  lem333-viaSubterm = subterm-ip λ
     { true                    h → Nat.≤-refl
     ; false                   h → Nat.≤-refl
     ; zero                    h → Nat.≤-refl
     ; (succ s₁)               h → Nat.≤-step (h s₁ subterm-succ)
     ; (pred s₁)               h → Nat.≤-step (h s₁ subterm-pred)
-    ; (iszero s₁)             h → Nat.≤-step (h s₁ subterm-iszero)
+    ; (isZero s₁)             h → Nat.≤-step (h s₁ subterm-isZero)
     ; (if s₁ then s₂ else s₃) h →
       let
         h₁ = h s₁ subterm-ifte₁
@@ -277,7 +277,7 @@ subsize-wf = InverseImage.wellFounded size <-wf
 subsize-ip : ∀ {ℓ} {P : Term → Set ℓ} → InductionPrinciple Subsize P
 subsize-ip = inductionPrinciple subsize-wf
 
-module Lemma333-ViaSubsizeIP where
+module Lemma333-ViaSubsize where
   open Nat.≤-Reasoning
 
   module _ where
@@ -299,14 +299,14 @@ module Lemma333-ViaSubsizeIP where
   subsize-ifte₃ : ∀ s₁ s₂ s₃ → Subsize s₃ (if s₁ then s₂ else s₃)
   subsize-ifte₃ s₁ s₂ s₃ = s≤s (o≤m+n+o (size s₁) (size s₂) (size s₃))
 
-  lem-via-subsize-ip : ∀ s → length (consts s) ≤ size s
-  lem-via-subsize-ip = subsize-ip λ
+  lem333-viaSubsize : ∀ s → length (consts s) ≤ size s
+  lem333-viaSubsize = subsize-ip λ
     { true                    h → Nat.≤-refl
     ; false                   h → Nat.≤-refl
     ; zero                    h → Nat.≤-refl
     ; (succ s₁)               h → Nat.≤-step (h s₁ Nat.≤-refl)
     ; (pred s₁)               h → Nat.≤-step (h s₁ Nat.≤-refl)
-    ; (iszero s₁)             h → Nat.≤-step (h s₁ Nat.≤-refl)
+    ; (isZero s₁)             h → Nat.≤-step (h s₁ Nat.≤-refl)
     ; (if s₁ then s₂ else s₃) h →
       let
         h₁ = h s₁ (subsize-ifte₁ s₁ s₂ s₃)
@@ -336,7 +336,7 @@ subdepth-wf = InverseImage.wellFounded depth <-wf
 subdepth-ip : ∀ {ℓ} {P : Term → Set ℓ} → InductionPrinciple Subdepth P
 subdepth-ip = inductionPrinciple subdepth-wf
 
-module Lemma333-ViaSubdepthIP where
+module Lemma333-ViaSubdepth where
   open Nat.≤-Reasoning
 
   module _ where
@@ -358,14 +358,14 @@ module Lemma333-ViaSubdepthIP where
   subdepth-ifte₃ : ∀ s₁ s₂ s₃ → Subdepth s₃ (if s₁ then s₂ else s₃)
   subdepth-ifte₃ s₁ s₂ s₃ = s≤s (o≤m⊔n⊔o (depth s₁) (depth s₂) (depth s₃))
 
-  lem-via-subdepth-ip : ∀ s → length (consts s) ≤ size s
-  lem-via-subdepth-ip = subdepth-ip λ
+  lem333-viaSubdepth : ∀ s → length (consts s) ≤ size s
+  lem333-viaSubdepth = subdepth-ip λ
     { true                    h → Nat.≤-refl
     ; false                   h → Nat.≤-refl
     ; zero                    h → Nat.≤-refl
     ; (succ s₁)               h → Nat.≤-step (h s₁ Nat.≤-refl)
     ; (pred s₁)               h → Nat.≤-step (h s₁ Nat.≤-refl)
-    ; (iszero s₁)             h → Nat.≤-step (h s₁ Nat.≤-refl)
+    ; (isZero s₁)             h → Nat.≤-step (h s₁ Nat.≤-refl)
     ; (if s₁ then s₂ else s₃) h →
       let
         h₁ = h s₁ (subdepth-ifte₁ s₁ s₂ s₃)
@@ -405,8 +405,8 @@ module _ where
 
 infix 3 _⟶⁻_
 data _⟶⁻_ : Term⁻ → Term⁻ → Set where
-  e-iftrue  : ∀ {t₂ t₃} → if true then t₂ else t₃ ⟶⁻ t₂
-  e-iffalse : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟶⁻ t₃
+  e-ifTrue  : ∀ {t₂ t₃} → if true then t₂ else t₃ ⟶⁻ t₂
+  e-ifFalse : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟶⁻ t₃
   e-if      : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟶⁻ t₁′ →
               if t₁ then t₂ else t₃ ⟶⁻ if t₁′ then t₂ else t₃
 
@@ -422,12 +422,12 @@ module _ where
   val⇒nf⁻ val-false ()
 
 ⟶-det⁻ : ∀ {t t′ t″} → t ⟶⁻ t′ → t ⟶⁻ t″ → t′ ≡ t″
-⟶-det⁻ e-iftrue  e-iftrue  = refl
-⟶-det⁻ e-iftrue  (e-if q)  = q ↯ val⇒nf⁻ val-true
-⟶-det⁻ e-iffalse e-iffalse = refl
-⟶-det⁻ e-iffalse (e-if q)  = q ↯ val⇒nf⁻ val-false
-⟶-det⁻ (e-if p)  e-iftrue  = p ↯ val⇒nf⁻ val-true
-⟶-det⁻ (e-if p)  e-iffalse = p ↯ val⇒nf⁻ val-false
+⟶-det⁻ e-ifTrue  e-ifTrue  = refl
+⟶-det⁻ e-ifTrue  (e-if q)  = q ↯ val⇒nf⁻ val-true
+⟶-det⁻ e-ifFalse e-ifFalse = refl
+⟶-det⁻ e-ifFalse (e-if q)  = q ↯ val⇒nf⁻ val-false
+⟶-det⁻ (e-if p)  e-ifTrue  = p ↯ val⇒nf⁻ val-true
+⟶-det⁻ (e-if p)  e-ifFalse = p ↯ val⇒nf⁻ val-false
 ⟶-det⁻ (e-if p)  (e-if q)  = (λ t₁′ → if t₁′ then _ else _) & ⟶-det⁻ p q
 
 
@@ -440,25 +440,25 @@ module _ where
 -- 3.5.8. Theorem
 
 module _ where
-  one-step⁻ : ∀ {t} → ¬ Val⁻ t → ∃ λ t′ → t ⟶⁻ t′
-  one-step⁻ {true}                                       ¬v = val-true ↯ ¬v
-  one-step⁻ {false}                                      ¬v = val-false ↯ ¬v
-  one-step⁻ {if true then t₂ else t₃}                    ¬v = t₂ , e-iftrue
-  one-step⁻ {if false then t₂ else t₃}                   ¬v = t₃ , e-iffalse
-  one-step⁻ {if (if _ then _ else _) then t₂ else t₃} ¬v =
+  oneStep⁻ : ∀ {t} → ¬ Val⁻ t → ∃ λ t′ → t ⟶⁻ t′
+  oneStep⁻ {true}                                       ¬v = val-true ↯ ¬v
+  oneStep⁻ {false}                                      ¬v = val-false ↯ ¬v
+  oneStep⁻ {if true then t₂ else t₃}                    ¬v = t₂ , e-ifTrue
+  oneStep⁻ {if false then t₂ else t₃}                   ¬v = t₃ , e-ifFalse
+  oneStep⁻ {if (if _ then _ else _) then t₂ else t₃} ¬v =
     let
-      t₁′ , e₁ = one-step⁻ λ ()
+      t₁′ , e₁ = oneStep⁻ λ ()
     in
       if t₁′ then t₂ else t₃ , e-if e₁
 
 nf⇒val⁻ : ∀ {t} → NormalForm⁻ t → Val⁻ t
 nf⇒val⁻ {true}                                       nf = val-true
 nf⇒val⁻ {false}                                      nf = val-false
-nf⇒val⁻ {if true then t₂ else t₃}                    nf = e-iftrue ↯ nf
-nf⇒val⁻ {if false then t₂ else t₃}                   nf = e-iffalse ↯ nf
+nf⇒val⁻ {if true then t₂ else t₃}                    nf = e-ifTrue ↯ nf
+nf⇒val⁻ {if false then t₂ else t₃}                   nf = e-ifFalse ↯ nf
 nf⇒val⁻ {if t₁@(if _ then _ else _) then t₂ else t₃} nf =
   let
-    t₁′ , e₁ = one-step⁻ λ ()
+    t₁′ , e₁ = oneStep⁻ λ ()
   in
     e-if e₁ ↯ nf
 
