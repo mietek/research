@@ -265,16 +265,21 @@ module Lemma333-ViaSubtermInd where
     ; (succ s₁)               h → Nat.≤-step (h s₁ subterm-succ)
     ; (pred s₁)               h → Nat.≤-step (h s₁ subterm-pred)
     ; (iszero s₁)             h → Nat.≤-step (h s₁ subterm-iszero)
-    ; (if s₁ then s₂ else s₃) h → Nat.≤-step
-      (begin
-        length (consts s₁ ∪ consts s₂ ∪ consts s₃)
-      ≤⟨ length-triangular (consts s₁ ∪ consts s₂) (consts s₃) ⟩
-        length (consts s₁ ∪ consts s₂) + length (consts s₃)
-      ≤⟨ Nat.+-monoˡ-≤ (length (consts s₃)) (length-triangular (consts s₁) (consts s₂)) ⟩
-        length (consts s₁) + length (consts s₂) + length (consts s₃)
-      ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (h s₁ subterm-ifte₁) (h s₂ subterm-ifte₂)) (h s₃ subterm-ifte₃) ⟩
-        size s₁ + size s₂ + size s₃
-      ∎)
+    ; (if s₁ then s₂ else s₃) h →
+      let
+        h₁ = h s₁ subterm-ifte₁
+        h₂ = h s₂ subterm-ifte₂
+        h₃ = h s₃ subterm-ifte₃
+      in
+        Nat.≤-step (begin
+          length (consts s₁ ∪ consts s₂ ∪ consts s₃)
+        ≤⟨ length-triangular (consts s₁ ∪ consts s₂) (consts s₃) ⟩
+          length (consts s₁ ∪ consts s₂) + length (consts s₃)
+        ≤⟨ Nat.+-monoˡ-≤ (length (consts s₃)) (length-triangular (consts s₁) (consts s₂)) ⟩
+          length (consts s₁) + length (consts s₂) + length (consts s₃)
+        ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ h₁ h₂) h₃ ⟩
+          size s₁ + size s₂ + size s₃
+        ∎)
     }
 
 
@@ -290,15 +295,6 @@ module Lemma333-ViaSubsizeInd where
   o≤m+n+o : ∀ m n o → o ≤ m + n + o
   o≤m+n+o m n o = Nat.n≤m+n (m + n) o
 
-  subsize-ifte₁ : ∀ s₁ s₂ s₃ → Subsize s₁ (if s₁ then s₂ else s₃)
-  subsize-ifte₁ s₁ s₂ s₃ = s≤s (m≤m+n+o (size s₁) (size s₂) (size s₃))
-
-  subsize-ifte₂ : ∀ s₁ s₂ s₃ → Subsize s₂ (if s₁ then s₂ else s₃)
-  subsize-ifte₂ s₁ s₂ s₃ = s≤s (n≤m+n+o (size s₁) (size s₂) (size s₃))
-
-  subsize-ifte₃ : ∀ s₁ s₂ s₃ → Subsize s₃ (if s₁ then s₂ else s₃)
-  subsize-ifte₃ s₁ s₂ s₃ = s≤s (o≤m+n+o (size s₁) (size s₂) (size s₃))
-
   lem-via-subsize-ind : ∀ s → length (consts s) ≤ size s
   lem-via-subsize-ind = subsize-ind λ
     { true                    h → Nat.≤-refl
@@ -307,16 +303,21 @@ module Lemma333-ViaSubsizeInd where
     ; (succ s₁)               h → Nat.≤-step (h s₁ Nat.≤-refl)
     ; (pred s₁)               h → Nat.≤-step (h s₁ Nat.≤-refl)
     ; (iszero s₁)             h → Nat.≤-step (h s₁ Nat.≤-refl)
-    ; (if s₁ then s₂ else s₃) h → Nat.≤-step
-      (begin
-        length (consts s₁ ∪ consts s₂ ∪ consts s₃)
-      ≤⟨ length-triangular (consts s₁ ∪ consts s₂) (consts s₃) ⟩
-        length (consts s₁ ∪ consts s₂) + length (consts s₃)
-      ≤⟨ Nat.+-monoˡ-≤ (length (consts s₃)) (length-triangular (consts s₁) (consts s₂)) ⟩
-        length (consts s₁) + length (consts s₂) + length (consts s₃)
-      ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (h s₁ (subsize-ifte₁ s₁ s₂ s₃)) (h s₂ (subsize-ifte₂ s₁ s₂ s₃))) (h s₃ (subsize-ifte₃ s₁ s₂ s₃)) ⟩
-        size s₁ + size s₂ + size s₃
-      ∎)
+    ; (if s₁ then s₂ else s₃) h →
+      let
+        h₁ = h s₁ (s≤s (m≤m+n+o (size s₁) (size s₂) (size s₃)))
+        h₂ = h s₂ (s≤s (n≤m+n+o (size s₁) (size s₂) (size s₃)))
+        h₃ = h s₃ (s≤s (o≤m+n+o (size s₁) (size s₂) (size s₃)))
+      in
+        Nat.≤-step (begin
+          length (consts s₁ ∪ consts s₂ ∪ consts s₃)
+        ≤⟨ length-triangular (consts s₁ ∪ consts s₂) (consts s₃) ⟩
+          length (consts s₁ ∪ consts s₂) + length (consts s₃)
+        ≤⟨ Nat.+-monoˡ-≤ (length (consts s₃)) (length-triangular (consts s₁) (consts s₂)) ⟩
+          length (consts s₁) + length (consts s₂) + length (consts s₃)
+        ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ h₁ h₂) h₃ ⟩
+          size s₁ + size s₂ + size s₃
+        ∎)
     }
 
 
@@ -349,14 +350,19 @@ module Lemma333-ViaSubdepthInd where
     ; (succ s₁)               h → Nat.≤-step (h s₁ Nat.≤-refl)
     ; (pred s₁)               h → Nat.≤-step (h s₁ Nat.≤-refl)
     ; (iszero s₁)             h → Nat.≤-step (h s₁ Nat.≤-refl)
-    ; (if s₁ then s₂ else s₃) h → Nat.≤-step
-      (begin
-        length (consts s₁ ∪ consts s₂ ∪ consts s₃)
-      ≤⟨ length-triangular (consts s₁ ∪ consts s₂) (consts s₃) ⟩
-        length (consts s₁ ∪ consts s₂) + length (consts s₃)
-      ≤⟨ Nat.+-monoˡ-≤ (length (consts s₃)) (length-triangular (consts s₁) (consts s₂)) ⟩
-        length (consts s₁) + length (consts s₂) + length (consts s₃)
-      ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (h s₁ (subdepth-ifte₁ s₁ s₂ s₃)) (h s₂ (subdepth-ifte₂ s₁ s₂ s₃))) (h s₃ (subdepth-ifte₃ s₁ s₂ s₃)) ⟩
-        size s₁ + size s₂ + size s₃
-      ∎)
+    ; (if s₁ then s₂ else s₃) h →
+      let
+        h₁ = h s₁ (subdepth-ifte₁ s₁ s₂ s₃)
+        h₂ = h s₂ (subdepth-ifte₂ s₁ s₂ s₃)
+        h₃ = h s₃ (subdepth-ifte₃ s₁ s₂ s₃)
+      in
+        Nat.≤-step (begin
+          length (consts s₁ ∪ consts s₂ ∪ consts s₃)
+        ≤⟨ length-triangular (consts s₁ ∪ consts s₂) (consts s₃) ⟩
+          length (consts s₁ ∪ consts s₂) + length (consts s₃)
+        ≤⟨ Nat.+-monoˡ-≤ (length (consts s₃)) (length-triangular (consts s₁) (consts s₂)) ⟩
+          length (consts s₁) + length (consts s₂) + length (consts s₃)
+        ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ h₁ h₂) h₃ ⟩
+          size s₁ + size s₂ + size s₃
+        ∎)
     }
