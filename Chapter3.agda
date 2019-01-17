@@ -31,9 +31,9 @@ module _ where
 -- 3.2.1. Definition [Terms, inductively]
 
 data Term : Set where
-  true false zero  : Term
-  succ pred isZero : (t₁ : Term) → Term
-  if_then_else     : (t₁ t₂ t₃ : Term) → Term
+  true false zero : Term
+  suc pred isZero : (t₁ : Term) → Term
+  if_then_else    : (t₁ t₂ t₃ : Term) → Term
 
 
 -- 3.2.2. Definition [Terms, by inference rules] (redundant)
@@ -55,37 +55,37 @@ module _ where
   true                  ≟ true                  = yes refl
   true                  ≟ false                 = no λ ()
   true                  ≟ zero                  = no λ ()
-  true                  ≟ succ s₁               = no λ ()
+  true                  ≟ suc s₁                = no λ ()
   true                  ≟ pred s₁               = no λ ()
   true                  ≟ isZero s₁             = no λ ()
   true                  ≟ if s₁ then s₂ else s₃ = no λ ()
   false                 ≟ true                  = no λ ()
   false                 ≟ false                 = yes refl
   false                 ≟ zero                  = no λ ()
-  false                 ≟ succ s₁               = no λ ()
+  false                 ≟ suc s₁                = no λ ()
   false                 ≟ pred s₁               = no λ ()
   false                 ≟ isZero s₁             = no λ ()
   false                 ≟ if s₁ then s₂ else s₃ = no λ ()
   zero                  ≟ true                  = no λ ()
   zero                  ≟ false                 = no λ ()
   zero                  ≟ zero                  = yes refl
-  zero                  ≟ succ s₁               = no λ ()
+  zero                  ≟ suc s₁                = no λ ()
   zero                  ≟ pred s₁               = no λ ()
   zero                  ≟ isZero s₁             = no λ ()
   zero                  ≟ if s₁ then s₂ else s₃ = no λ ()
-  succ r₁               ≟ true                  = no λ ()
-  succ r₁               ≟ false                 = no λ ()
-  succ r₁               ≟ zero                  = no λ ()
-  succ r₁               ≟ succ s₁               with r₁ ≟ s₁
+  suc r₁                ≟ true                  = no λ ()
+  suc r₁                ≟ false                 = no λ ()
+  suc r₁                ≟ zero                  = no λ ()
+  suc r₁                ≟ suc s₁                with r₁ ≟ s₁
   ... | yes refl = yes refl
   ... | no r₁≢s₁ = no λ { refl → refl ↯ r₁≢s₁ }
-  succ r₁               ≟ pred s₁               = no λ ()
-  succ r₁               ≟ isZero s₁             = no λ ()
-  succ r₁               ≟ if s₁ then s₂ else s₃ = no λ ()
+  suc r₁                ≟ pred s₁               = no λ ()
+  suc r₁                ≟ isZero s₁             = no λ ()
+  suc r₁                ≟ if s₁ then s₂ else s₃ = no λ ()
   pred r₁               ≟ true                  = no λ ()
   pred r₁               ≟ false                 = no λ ()
   pred r₁               ≟ zero                  = no λ ()
-  pred r₁               ≟ succ s₁               = no λ ()
+  pred r₁               ≟ suc s₁                = no λ ()
   pred r₁               ≟ pred s₁               with r₁ ≟ s₁
   ... | yes refl = yes refl
   ... | no r₁≢s₁ = no λ { refl → refl ↯ r₁≢s₁ }
@@ -94,7 +94,7 @@ module _ where
   isZero r₁             ≟ true                  = no λ ()
   isZero r₁             ≟ false                 = no λ ()
   isZero r₁             ≟ zero                  = no λ ()
-  isZero r₁             ≟ succ s₁               = no λ ()
+  isZero r₁             ≟ suc s₁                = no λ ()
   isZero r₁             ≟ pred s₁               = no λ ()
   isZero r₁             ≟ isZero s₁             with r₁ ≟ s₁
   ... | yes refl = yes refl
@@ -103,7 +103,7 @@ module _ where
   if r₁ then r₂ else r₃ ≟ true                  = no λ ()
   if r₁ then r₂ else r₃ ≟ false                 = no λ ()
   if r₁ then r₂ else r₃ ≟ zero                  = no λ ()
-  if r₁ then r₂ else r₃ ≟ succ s₁               = no λ ()
+  if r₁ then r₂ else r₃ ≟ suc s₁                = no λ ()
   if r₁ then r₂ else r₃ ≟ pred s₁               = no λ ()
   if r₁ then r₂ else r₃ ≟ isZero s₁             = no λ ()
   if r₁ then r₂ else r₃ ≟ if s₁ then s₂ else s₃ with r₁ ≟ s₁ | r₂ ≟ s₂ | r₃ ≟ s₃
@@ -128,7 +128,7 @@ consts : Term → UniqueList
 consts true                    = [ true ]
 consts false                   = [ false ]
 consts zero                    = [ zero ]
-consts (succ t₁)               = consts t₁
+consts (suc t₁)                = consts t₁
 consts (pred t₁)               = consts t₁
 consts (isZero t₁)             = consts t₁
 consts (if t₁ then t₂ else t₃) = consts t₁ ∪ consts t₂ ∪ consts t₃
@@ -140,7 +140,7 @@ size : Term → ℕ
 size true                    = 1
 size false                   = 1
 size zero                    = 1
-size (succ t₁)               = 1 + size t₁
+size (suc t₁)                = 1 + size t₁
 size (pred t₁)               = 1 + size t₁
 size (isZero t₁)             = 1 + size t₁
 size (if t₁ then t₂ else t₃) = 1 + (size t₁ + size t₂ + size t₃)
@@ -149,7 +149,7 @@ depth : Term → ℕ
 depth true                    = 1
 depth false                   = 1
 depth zero                    = 1
-depth (succ t₁)               = 1 + depth t₁
+depth (suc t₁)                = 1 + depth t₁
 depth (pred t₁)               = 1 + depth t₁
 depth (isZero t₁)             = 1 + depth t₁
 depth (if t₁ then t₂ else t₃) = 1 + (depth t₁ ⊔ depth t₂ ⊔ depth t₃)
@@ -164,7 +164,7 @@ module Lemma333-Direct where
   lem333 true                    = Nat.≤-refl
   lem333 false                   = Nat.≤-refl
   lem333 zero                    = Nat.≤-refl
-  lem333 (succ s₁)               = Nat.≤-step (lem333 s₁)
+  lem333 (suc s₁)                = Nat.≤-step (lem333 s₁)
   lem333 (pred s₁)               = Nat.≤-step (lem333 s₁)
   lem333 (isZero s₁)             = Nat.≤-step (lem333 s₁)
   lem333 (if s₁ then s₂ else s₃) = Nat.≤-step
@@ -184,7 +184,7 @@ module Lemma333-Direct where
 -- 3.3.4.1. Structural induction
 
 data Subterm : Term → Term → Set where
-  subterm-succ   : ∀ {s₁} → Subterm s₁ (succ s₁)
+  subterm-suc    : ∀ {s₁} → Subterm s₁ (suc s₁)
   subterm-pred   : ∀ {s₁} → Subterm s₁ (pred s₁)
   subterm-isZero : ∀ {s₁} → Subterm s₁ (isZero s₁)
   subterm-ifte₁  : ∀ {s₁ s₂ s₃} → Subterm s₁ (if s₁ then s₂ else s₃)
@@ -196,7 +196,7 @@ module SubtermIP-Direct where
   subterm-ip h s@true                 = h s λ r ()
   subterm-ip h s@false                = h s λ r ()
   subterm-ip h s@zero                 = h s λ r ()
-  subterm-ip h s@(succ _)             = h s λ { r subterm-succ → subterm-ip h r }
+  subterm-ip h s@(suc _)              = h s λ { r subterm-suc → subterm-ip h r }
   subterm-ip h s@(pred _)             = h s λ { r subterm-pred → subterm-ip h r }
   subterm-ip h s@(isZero _)           = h s λ { r subterm-isZero → subterm-ip h r }
   subterm-ip h s@(if _ then _ else _) = h s λ
@@ -210,7 +210,7 @@ module SubtermIP-Stdlib where
 
   subterm-wf : Stdlib.WellFounded Subterm
   subterm-wf s = Stdlib.acc λ
-    { s₁ subterm-succ   → subterm-wf s₁
+    { s₁ subterm-suc    → subterm-wf s₁
     ; s₁ subterm-pred   → subterm-wf s₁
     ; s₁ subterm-isZero → subterm-wf s₁
     ; s₁ subterm-ifte₁  → subterm-wf s₁
@@ -226,7 +226,7 @@ module SubtermIP-Stdlib where
 module _ where
   subterm-wf : WellFounded Subterm
   subterm-wf s = access s λ
-    { s₁ subterm-succ   → subterm-wf s₁
+    { s₁ subterm-suc    → subterm-wf s₁
     ; s₁ subterm-pred   → subterm-wf s₁
     ; s₁ subterm-isZero → subterm-wf s₁
     ; s₁ subterm-ifte₁  → subterm-wf s₁
@@ -245,7 +245,7 @@ module Lemma333-ViaSubterm where
     { true                    h → Nat.≤-refl
     ; false                   h → Nat.≤-refl
     ; zero                    h → Nat.≤-refl
-    ; (succ s₁)               h → Nat.≤-step (h s₁ subterm-succ)
+    ; (suc s₁)                h → Nat.≤-step (h s₁ subterm-suc)
     ; (pred s₁)               h → Nat.≤-step (h s₁ subterm-pred)
     ; (isZero s₁)             h → Nat.≤-step (h s₁ subterm-isZero)
     ; (if s₁ then s₂ else s₃) h →
@@ -299,7 +299,7 @@ module Lemma333-ViaSubsize where
     { true                    h → Nat.≤-refl
     ; false                   h → Nat.≤-refl
     ; zero                    h → Nat.≤-refl
-    ; (succ s₁)               h → Nat.≤-step (h s₁ Nat.≤-refl)
+    ; (suc s₁)                h → Nat.≤-step (h s₁ Nat.≤-refl)
     ; (pred s₁)               h → Nat.≤-step (h s₁ Nat.≤-refl)
     ; (isZero s₁)             h → Nat.≤-step (h s₁ Nat.≤-refl)
     ; (if s₁ then s₂ else s₃) h →
@@ -353,7 +353,7 @@ module Lemma333-ViaSubdepth where
     { true                    h → Nat.≤-refl
     ; false                   h → Nat.≤-refl
     ; zero                    h → Nat.≤-refl
-    ; (succ s₁)               h → Nat.≤-step (h s₁ Nat.≤-refl)
+    ; (suc s₁)                h → Nat.≤-step (h s₁ Nat.≤-refl)
     ; (pred s₁)               h → Nat.≤-step (h s₁ Nat.≤-refl)
     ; (isZero s₁)             h → Nat.≤-step (h s₁ Nat.≤-refl)
     ; (if s₁ then s₂ else s₃) h →
@@ -393,8 +393,7 @@ infix 3 _⟹⁻_
 data _⟹⁻_ : Term⁻ → Term⁻ → Set where
   r-ifTrue  : ∀ {t₂ t₃} → if true then t₂ else t₃ ⟹⁻ t₂
   r-ifFalse : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟹⁻ t₃
-  r-if      : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹⁻ t₁′ →
-              if t₁ then t₂ else t₃ ⟹⁻ if t₁′ then t₂ else t₃
+  r-if      : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹⁻ t₁′ → if t₁ then t₂ else t₃ ⟹⁻ if t₁′ then t₂ else t₃
 
 
 -- 3.5.4. Theorem [Determinacy of one-step evaluation]
@@ -403,7 +402,7 @@ module _ where
   NormalForm⁻ : Term⁻ → Set
   NormalForm⁻ t = ∀ {t′} → ¬ (t ⟹⁻ t′)
 
-  v⇒nf⁻ : ∀ {t} → Value⁻ t → NormalForm⁻ t
+  v⇒nf⁻ : ∀ {u} → Value⁻ u → NormalForm⁻ u
   v⇒nf⁻ v-true  ()
   v⇒nf⁻ v-false ()
 
@@ -432,15 +431,15 @@ module _ where
   reduce⁻ (if true then t₂ else t₃)                    ¬v = t₂ , r-ifTrue
   reduce⁻ (if false then t₂ else t₃)                   ¬v = t₃ , r-ifFalse
   reduce⁻ (if t₁@(if _ then _ else _) then t₂ else t₃) ¬v with reduce⁻ t₁ λ ()
-  ... | t₁′ , r′ = if t₁′ then t₂ else t₃ , r-if r′
+  ... | t₁′ , r₁ = if t₁′ then t₂ else t₃ , r-if r₁
 
-nf⇒v⁻ : ∀ {t} → NormalForm⁻ t → Value⁻ t
-nf⇒v⁻ {true}                                       nf = v-true
-nf⇒v⁻ {false}                                      nf = v-false
-nf⇒v⁻ {if true then t₂ else t₃}                    nf = r-ifTrue ↯ nf
-nf⇒v⁻ {if false then t₂ else t₃}                   nf = r-ifFalse ↯ nf
-nf⇒v⁻ {if t₁@(if _ then _ else _) then t₂ else t₃} nf with reduce⁻ t₁ λ ()
-... | t₁′ , r′ = r-if r′ ↯ nf
+nf⇒v⁻ : ∀ {u} → NormalForm⁻ u → Value⁻ u
+nf⇒v⁻ {true}                                     nf = v-true
+nf⇒v⁻ {false}                                    nf = v-false
+nf⇒v⁻ {if true then _ else _}                    nf = r-ifTrue ↯ nf
+nf⇒v⁻ {if false then _ else _}                   nf = r-ifFalse ↯ nf
+nf⇒v⁻ {if t₁@(if _ then _ else _) then _ else _} nf with reduce⁻ t₁ λ ()
+... | t₁′ , r₁ = r-if r₁ ↯ nf
 
 
 -- 3.5.9. Definition
@@ -457,15 +456,15 @@ data _⟹*⁻_ : Term⁻ → Term⁻ → Set where
 -- 3.5.11. Theorem [Uniqueness of normal forms]
 
 module _ where
-  stepBack⁻ : ∀ {t t′ u} → Value⁻ u → t ⟹⁻ t′ → t ⟹*⁻ u → t′ ⟹*⁻ u
-  stepBack⁻ v r done = r ↯ v⇒nf⁻ v
-  stepBack⁻ v r (step r′ rs) with ⟹-det⁻ r r′
+  undoStep⁻ : ∀ {t t′ u} → Value⁻ u → t ⟹⁻ t′ → t ⟹*⁻ u → t′ ⟹*⁻ u
+  undoStep⁻ v r′ done        = r′ ↯ v⇒nf⁻ v
+  undoStep⁻ v r′ (step r rs) with ⟹-det⁻ r′ r
   ... | refl = rs
 
 ⟹*-det⁻ : ∀ {t u u′} → Value⁻ u → Value⁻ u′ → t ⟹*⁻ u → t ⟹*⁻ u′ → u ≡ u′
 ⟹*-det⁻ v v′ done        done          = refl
 ⟹*-det⁻ v v′ done        (step r′ rs′) = r′ ↯ v⇒nf⁻ v
-⟹*-det⁻ v v′ (step r rs) rs′           = ⟹*-det⁻ v v′ rs (stepBack⁻ v′ r rs′)
+⟹*-det⁻ v v′ (step r rs) rs′           = ⟹*-det⁻ v v′ rs (undoStep⁻ v′ r rs′)
 
 
 -- 3.5.12. Theorem [Termination of evaluation]
@@ -489,15 +488,6 @@ module _ where
   infix 3 _⇓⁻_
   _⇓⁻_ : Term⁻ → Term⁻ → Set
   t ⇓⁻ u = Value⁻ u × t ⟹*⁻ u
-
-  eval⁻ : ∀ {t t′ u} → t ⟹⁻ t′ → t′ ⇓⁻ u → t ⇓⁻ u
-  eval⁻ r (v , rs) = v , step r rs
-
-  evalBack⁻ : ∀ {t t′ u} → t ⟹⁻ t′ → t ⇓⁻ u → t′ ⇓⁻ u
-  evalBack⁻ r (v , rs) = v , stepBack⁻ v r rs
-
-  ⇓-det⁻ : ∀ {t u u′} → t ⇓⁻ u → t ⇓⁻ u′ → u ≡ u′
-  ⇓-det⁻ (v , rs) (v′ , rs′) = ⟹*-det⁻ v v′ rs rs′
 
   eval-ifTrue⁻ : ∀ {t₁ t₂ t₃ u₂} → t₁ ⟹*⁻ true → t₂ ⇓⁻ u₂ → if t₁ then t₂ else t₃ ⇓⁻ u₂
   eval-ifTrue⁻ rs₁ (v₂ , rs₂) = v₂ , rs-ifTrue⁻ rs₁ rs₂
@@ -524,3 +514,68 @@ halt⁻ : ∀ t → t ⇓⁻
 halt⁻ true                    = true  , v-true  , done
 halt⁻ false                   = false , v-false , done
 halt⁻ (if t₁ then t₂ else t₃) = halt-if⁻ (halt⁻ t₁) (halt⁻ t₂) (halt⁻ t₃)
+
+
+-- 3.5.13. Exercise (skipped)
+
+-- 3.5.14. Exercise
+
+module _ where
+  data NumericValue : Term → Set where
+    nv-zero : NumericValue zero
+    nv-suc  : ∀ {u} → NumericValue u → NumericValue (suc u)
+
+  data Value : Term → Set where
+    v-true  : Value true
+    v-false : Value false
+    v-nv    : ∀ {u} → NumericValue u → Value u
+
+  -- t ⟹ t′ means that t reduces to t′ in one step
+  infix 3 _⟹_
+  data _⟹_ : Term → Term → Set where
+    r-ifTrue     : ∀ {t₂ t₃} → if true then t₂ else t₃ ⟹ t₂
+    r-ifFalse    : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟹ t₃
+    r-if         : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹ t₁′ → if t₁ then t₂ else t₃ ⟹ if t₁′ then t₂ else t₃
+    r-suc        : ∀ {t₁ t₁′} → t₁ ⟹ t₁′ → suc t₁ ⟹ suc t₁′
+    r-predZero   : pred zero ⟹ zero
+    r-predSuc    : ∀ {u} → NumericValue u → pred (suc u) ⟹ u
+    r-pred       : ∀ {t₁ t₁′} → t₁ ⟹ t₁′ → pred t₁ ⟹ pred t₁′
+    r-isZeroZero : isZero zero ⟹ true
+    r-isZeroSuc  : ∀ {u} → NumericValue u → isZero (suc u) ⟹ false
+    r-isZero     : ∀ {t₁ t₁′} → t₁ ⟹ t₁′ → isZero t₁ ⟹ isZero t₁′
+
+  NormalForm : Term → Set
+  NormalForm t = ∀ {t′} → ¬ (t ⟹ t′)
+
+  nv⇒nf : ∀ {u} → NumericValue u → NormalForm u
+  nv⇒nf nv-zero     ()
+  nv⇒nf (nv-suc nv) (r-suc r) = r ↯ nv⇒nf nv
+
+  v⇒nf : ∀ {u} → Value u → NormalForm u
+  v⇒nf v-true    ()
+  v⇒nf v-false   ()
+  v⇒nf (v-nv nv) = nv⇒nf nv
+
+⟹-det : ∀ {t t′ t″} → t ⟹ t′ → t ⟹ t″ → t′ ≡ t″
+⟹-det r-ifTrue          r-ifTrue          = refl
+⟹-det r-ifTrue          (r-if r″)         = r″ ↯ v⇒nf v-true
+⟹-det r-ifFalse         r-ifFalse         = refl
+⟹-det r-ifFalse         (r-if r″)         = r″ ↯ v⇒nf v-false
+⟹-det (r-if r′)         r-ifTrue          = r′ ↯ v⇒nf v-true
+⟹-det (r-if r′)         r-ifFalse         = r′ ↯ v⇒nf v-false
+⟹-det (r-if r′)         (r-if r″)         = (λ t₁′ → if t₁′ then _ else _) & ⟹-det r′ r″
+⟹-det (r-suc r′)        (r-suc r″)        = suc & ⟹-det r′ r″
+⟹-det r-predZero        r-predZero        = refl
+⟹-det r-predZero        (r-pred r″)       = r″ ↯ nv⇒nf nv-zero
+⟹-det (r-predSuc nv′)   (r-predSuc nv″)   = refl
+⟹-det (r-predSuc nv′)   (r-pred r″)       = r″ ↯ nv⇒nf (nv-suc nv′)
+⟹-det (r-pred r′)       r-predZero        = r′ ↯ nv⇒nf nv-zero
+⟹-det (r-pred r′)       (r-predSuc nv″)   = r′ ↯ nv⇒nf (nv-suc nv″)
+⟹-det (r-pred r′)       (r-pred r″)       = pred & ⟹-det r′ r″
+⟹-det r-isZeroZero      r-isZeroZero      = refl
+⟹-det r-isZeroZero      (r-isZero r″)     = r″ ↯ nv⇒nf nv-zero
+⟹-det (r-isZeroSuc nv′) (r-isZeroSuc nv″) = refl
+⟹-det (r-isZeroSuc nv′) (r-isZero r″)     = r″ ↯ nv⇒nf (nv-suc nv′)
+⟹-det (r-isZero r′)     r-isZeroZero      = r′ ↯ nv⇒nf nv-zero
+⟹-det (r-isZero r′)     (r-isZeroSuc nv″) = r′ ↯ nv⇒nf (nv-suc nv″)
+⟹-det (r-isZero r′)     (r-isZero r″)     = isZero & ⟹-det r′ r″
