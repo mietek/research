@@ -457,15 +457,15 @@ data _⟹*⁻_ : Term⁻ → Term⁻ → Set where
 -- 3.5.11. Theorem [Uniqueness of normal forms]
 
 module _ where
-  unstep⁻ : ∀ {t t′ u} → Value⁻ u → t ⟹⁻ t′ → t ⟹*⁻ u → t′ ⟹*⁻ u
-  unstep⁻ v r (step r′ rs) with ⟹-det⁻ r r′
+  stepBack⁻ : ∀ {t t′ u} → Value⁻ u → t ⟹⁻ t′ → t ⟹*⁻ u → t′ ⟹*⁻ u
+  stepBack⁻ v r done = r ↯ v⇒nf⁻ v
+  stepBack⁻ v r (step r′ rs) with ⟹-det⁻ r r′
   ... | refl = rs
-  unstep⁻ v r done = r ↯ v⇒nf⁻ v
 
 ⟹*-det⁻ : ∀ {t u u′} → Value⁻ u → Value⁻ u′ → t ⟹*⁻ u → t ⟹*⁻ u′ → u ≡ u′
 ⟹*-det⁻ v v′ done        done          = refl
 ⟹*-det⁻ v v′ done        (step r′ rs′) = r′ ↯ v⇒nf⁻ v
-⟹*-det⁻ v v′ (step r rs) rs′           = ⟹*-det⁻ v v′ rs (unstep⁻ v′ r rs′)
+⟹*-det⁻ v v′ (step r rs) rs′           = ⟹*-det⁻ v v′ rs (stepBack⁻ v′ r rs′)
 
 
 -- 3.5.12. Theorem [Termination of evaluation]
@@ -493,8 +493,8 @@ module _ where
   eval⁻ : ∀ {t t′ u} → t ⟹⁻ t′ → t′ ⇓⁻ u → t ⇓⁻ u
   eval⁻ r (v , rs) = v , step r rs
 
-  uneval⁻ : ∀ {t t′ u} → t ⟹⁻ t′ → t ⇓⁻ u → t′ ⇓⁻ u
-  uneval⁻ r (v , rs) = v , unstep⁻ v r rs
+  evalBack⁻ : ∀ {t t′ u} → t ⟹⁻ t′ → t ⇓⁻ u → t′ ⇓⁻ u
+  evalBack⁻ r (v , rs) = v , stepBack⁻ v r rs
 
   ⇓-det⁻ : ∀ {t u u′} → t ⇓⁻ u → t ⇓⁻ u′ → u ≡ u′
   ⇓-det⁻ (v , rs) (v′ , rs′) = ⟹*-det⁻ v v′ rs rs′
