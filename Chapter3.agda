@@ -445,11 +445,11 @@ nf⇒v⁻ {if t₁@(if _ then _ else _) then t₂ else t₃} nf with reduce⁻ t
 
 -- 3.5.9. Definition
 
--- t ⟹⋆⁻ t′ means that t reduces to t′ in some number of steps
-infix 3 _⟹⋆⁻_
-data _⟹⋆⁻_ : Term⁻ → Term⁻ → Set where
-  done : ∀ {t} → t ⟹⋆⁻ t
-  step : ∀ {t t′ t″} → t ⟹⁻ t′ → t′ ⟹⋆⁻ t″ → t ⟹⋆⁻ t″
+-- t ⟹*⁻ t′ means that t reduces to t′ in some number of steps
+infix 3 _⟹*⁻_
+data _⟹*⁻_ : Term⁻ → Term⁻ → Set where
+  done : ∀ {t} → t ⟹*⁻ t
+  step : ∀ {t t′ t″} → t ⟹⁻ t′ → t′ ⟹*⁻ t″ → t ⟹*⁻ t″
 
 
 -- 3.5.10. Exercise (redundant)
@@ -457,38 +457,38 @@ data _⟹⋆⁻_ : Term⁻ → Term⁻ → Set where
 -- 3.5.11. Theorem [Uniqueness of normal forms]
 
 module _ where
-  stepBack⁻ : ∀ {t t′ u} → Value⁻ u → t ⟹⁻ t′ → t ⟹⋆⁻ u → t′ ⟹⋆⁻ u
+  stepBack⁻ : ∀ {t t′ u} → Value⁻ u → t ⟹⁻ t′ → t ⟹*⁻ u → t′ ⟹*⁻ u
   stepBack⁻ v r done = r ↯ v⇒nf⁻ v
   stepBack⁻ v r (step r′ rs) with ⟹-det⁻ r r′
   ... | refl = rs
 
-⟹⋆-det⁻ : ∀ {t u u′} → Value⁻ u → Value⁻ u′ → t ⟹⋆⁻ u → t ⟹⋆⁻ u′ → u ≡ u′
-⟹⋆-det⁻ v v′ done        done          = refl
-⟹⋆-det⁻ v v′ done        (step r′ rs′) = r′ ↯ v⇒nf⁻ v
-⟹⋆-det⁻ v v′ (step r rs) rs′           = ⟹⋆-det⁻ v v′ rs (stepBack⁻ v′ r rs′)
+⟹*-det⁻ : ∀ {t u u′} → Value⁻ u → Value⁻ u′ → t ⟹*⁻ u → t ⟹*⁻ u′ → u ≡ u′
+⟹*-det⁻ v v′ done        done          = refl
+⟹*-det⁻ v v′ done        (step r′ rs′) = r′ ↯ v⇒nf⁻ v
+⟹*-det⁻ v v′ (step r rs) rs′           = ⟹*-det⁻ v v′ rs (stepBack⁻ v′ r rs′)
 
 
 -- 3.5.12. Theorem [Termination of evaluation]
 
 module _ where
-  steps⁻ : ∀ {t t′ t″} → t ⟹⋆⁻ t′ → t′ ⟹⋆⁻ t″ → t ⟹⋆⁻ t″
+  steps⁻ : ∀ {t t′ t″} → t ⟹*⁻ t′ → t′ ⟹*⁻ t″ → t ⟹*⁻ t″
   steps⁻ done          rs″ = rs″
   steps⁻ (step r′ rs′) rs″ = step r′ (steps⁻ rs′ rs″)
 
-  rs-if⁻ : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹⋆⁻ t₁′ → if t₁ then t₂ else t₃ ⟹⋆⁻ if t₁′ then t₂ else t₃
+  rs-if⁻ : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹*⁻ t₁′ → if t₁ then t₂ else t₃ ⟹*⁻ if t₁′ then t₂ else t₃
   rs-if⁻ done        = done
   rs-if⁻ (step r rs) = step (r-if r) (rs-if⁻ rs)
 
-  rs-ifTrue⁻ : ∀ {t₁ t₂ t₂′ t₃} → t₁ ⟹⋆⁻ true → t₂ ⟹⋆⁻ t₂′ → if t₁ then t₂ else t₃ ⟹⋆⁻ t₂′
+  rs-ifTrue⁻ : ∀ {t₁ t₂ t₂′ t₃} → t₁ ⟹*⁻ true → t₂ ⟹*⁻ t₂′ → if t₁ then t₂ else t₃ ⟹*⁻ t₂′
   rs-ifTrue⁻ rs₁ rs₂ = steps⁻ (rs-if⁻ rs₁) (step r-ifTrue rs₂)
 
-  rs-ifFalse⁻ : ∀ {t₁ t₂ t₃ t₃′} → t₁ ⟹⋆⁻ false → t₃ ⟹⋆⁻ t₃′ → if t₁ then t₂ else t₃ ⟹⋆⁻ t₃′
+  rs-ifFalse⁻ : ∀ {t₁ t₂ t₃ t₃′} → t₁ ⟹*⁻ false → t₃ ⟹*⁻ t₃′ → if t₁ then t₂ else t₃ ⟹*⁻ t₃′
   rs-ifFalse⁻ rs₁ rs₃ = steps⁻ (rs-if⁻ rs₁) (step r-ifFalse rs₃)
 
   -- t ⇓⁻ u means that t evaluates to u
   infix 3 _⇓⁻_
   _⇓⁻_ : Term⁻ → Term⁻ → Set
-  t ⇓⁻ u = Value⁻ u × t ⟹⋆⁻ u
+  t ⇓⁻ u = Value⁻ u × t ⟹*⁻ u
 
   eval⁻ : ∀ {t t′ u} → t ⟹⁻ t′ → t′ ⇓⁻ u → t ⇓⁻ u
   eval⁻ r (v , rs) = v , step r rs
@@ -497,22 +497,22 @@ module _ where
   evalBack⁻ r (v , rs) = v , stepBack⁻ v r rs
 
   ⇓-det⁻ : ∀ {t u u′} → t ⇓⁻ u → t ⇓⁻ u′ → u ≡ u′
-  ⇓-det⁻ (v , rs) (v′ , rs′) = ⟹⋆-det⁻ v v′ rs rs′
+  ⇓-det⁻ (v , rs) (v′ , rs′) = ⟹*-det⁻ v v′ rs rs′
 
-  eval-ifTrue⁻ : ∀ {t₁ t₂ t₃ u₂} → t₁ ⟹⋆⁻ true → t₂ ⇓⁻ u₂ → if t₁ then t₂ else t₃ ⇓⁻ u₂
+  eval-ifTrue⁻ : ∀ {t₁ t₂ t₃ u₂} → t₁ ⟹*⁻ true → t₂ ⇓⁻ u₂ → if t₁ then t₂ else t₃ ⇓⁻ u₂
   eval-ifTrue⁻ rs₁ (v₂ , rs₂) = v₂ , rs-ifTrue⁻ rs₁ rs₂
 
-  eval-ifFalse⁻ : ∀ {t₁ t₂ t₃ u₃} → t₁ ⟹⋆⁻ false → t₃ ⇓⁻ u₃ → if t₁ then t₂ else t₃ ⇓⁻ u₃
+  eval-ifFalse⁻ : ∀ {t₁ t₂ t₃ u₃} → t₁ ⟹*⁻ false → t₃ ⇓⁻ u₃ → if t₁ then t₂ else t₃ ⇓⁻ u₃
   eval-ifFalse⁻ rs₁ (v₃ , rs₃) = v₃ , rs-ifFalse⁻ rs₁ rs₃
 
   -- t ⇓⁻ means that the evaluation of t terminates
   _⇓⁻ : Term⁻ → Set
   t ⇓⁻ = ∃ λ u → t ⇓⁻ u
 
-  halt-ifTrue⁻ : ∀ {t₁ t₂ t₃} → t₁ ⟹⋆⁻ true → t₂ ⇓⁻ → if t₁ then t₂ else t₃ ⇓⁻
+  halt-ifTrue⁻ : ∀ {t₁ t₂ t₃} → t₁ ⟹*⁻ true → t₂ ⇓⁻ → if t₁ then t₂ else t₃ ⇓⁻
   halt-ifTrue⁻ rs₁ (u₂ , e₂) = u₂ , eval-ifTrue⁻ rs₁ e₂
 
-  halt-ifFalse⁻ : ∀ {t₁ t₂ t₃} → t₁ ⟹⋆⁻ false → t₃ ⇓⁻ → if t₁ then t₂ else t₃ ⇓⁻
+  halt-ifFalse⁻ : ∀ {t₁ t₂ t₃} → t₁ ⟹*⁻ false → t₃ ⇓⁻ → if t₁ then t₂ else t₃ ⇓⁻
   halt-ifFalse⁻ rs₁ (u₃ , e₃) = u₃ , eval-ifFalse⁻ rs₁ e₃
 
   halt-if⁻ : ∀ {t₁ t₂ t₃} → t₁ ⇓⁻ → t₂ ⇓⁻ → t₃ ⇓⁻ → if t₁ then t₂ else t₃ ⇓⁻
