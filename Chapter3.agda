@@ -1,7 +1,7 @@
 module Chapter3 where
 
 open import Data.Nat using (_≤_ ; _<_ ; _+_ ; _⊔_ ; ℕ ; s≤s ; suc ; zero)
-open import Data.Product using (_,_ ; Σ ; ∃ ; proj₁ ; proj₂)
+open import Data.Product using (_×_ ; _,_ ; Σ ; ∃ ; proj₁ ; proj₂)
 import Data.Nat.Properties as Nat
 import Relation.Binary.PropositionalEquality as PropEq
 open PropEq using (_≡_ ; _≢_ ; refl ; subst) renaming (cong to _&_ ; sym to _⁻¹)
@@ -388,9 +388,9 @@ module Lemma333-ViaSubdepth where
 
 -- 3.5. Evaluation
 
--- 3.5.1. Definition (skipped)
+-- 3.5.1. Definition (redundant)
 
--- 3.5.2. Definition (skipped)
+-- 3.5.2. Definition (redundant)
 
 -- 3.5.3. Definition
 
@@ -399,36 +399,36 @@ module _ where
     true false   : Term⁻
     if_then_else : (t₁ t₂ t₃ : Term⁻) → Term⁻
 
-  data Val⁻ : Term⁻ → Set where
-    val-true  : Val⁻ true
-    val-false : Val⁻ false
+  data Value⁻ : Term⁻ → Set where
+    v-true  : Value⁻ true
+    v-false : Value⁻ false
 
-infix 3 _⟶⁻_
-data _⟶⁻_ : Term⁻ → Term⁻ → Set where
-  e-ifTrue  : ∀ {t₂ t₃} → if true then t₂ else t₃ ⟶⁻ t₂
-  e-ifFalse : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟶⁻ t₃
-  e-if      : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟶⁻ t₁′ →
-              if t₁ then t₂ else t₃ ⟶⁻ if t₁′ then t₂ else t₃
+infix 3 _⟹⁻_
+data _⟹⁻_ : Term⁻ → Term⁻ → Set where
+  r-ifTrue  : ∀ {t₂ t₃} → if true then t₂ else t₃ ⟹⁻ t₂
+  r-ifFalse : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟹⁻ t₃
+  r-if      : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹⁻ t₁′ →
+              if t₁ then t₂ else t₃ ⟹⁻ if t₁′ then t₂ else t₃
 
 
 -- 3.5.4. Theorem [Determinacy of one-step evaluation]
 
 module _ where
   NormalForm⁻ : Term⁻ → Set
-  NormalForm⁻ t = ∀ {t′} → ¬ (t ⟶⁻ t′)
+  NormalForm⁻ t = ∀ {t′} → ¬ (t ⟹⁻ t′)
 
-  val⇒nf⁻ : ∀ {t} → Val⁻ t → NormalForm⁻ t
-  val⇒nf⁻ val-true  ()
-  val⇒nf⁻ val-false ()
+  v⇒nf⁻ : ∀ {t} → Value⁻ t → NormalForm⁻ t
+  v⇒nf⁻ v-true  ()
+  v⇒nf⁻ v-false ()
 
-⟶-det⁻ : ∀ {t t′ t″} → t ⟶⁻ t′ → t ⟶⁻ t″ → t′ ≡ t″
-⟶-det⁻ e-ifTrue  e-ifTrue  = refl
-⟶-det⁻ e-ifTrue  (e-if q)  = q ↯ val⇒nf⁻ val-true
-⟶-det⁻ e-ifFalse e-ifFalse = refl
-⟶-det⁻ e-ifFalse (e-if q)  = q ↯ val⇒nf⁻ val-false
-⟶-det⁻ (e-if p)  e-ifTrue  = p ↯ val⇒nf⁻ val-true
-⟶-det⁻ (e-if p)  e-ifFalse = p ↯ val⇒nf⁻ val-false
-⟶-det⁻ (e-if p)  (e-if q)  = (λ t₁′ → if t₁′ then _ else _) & ⟶-det⁻ p q
+⟹-det⁻ : ∀ {t t′ t″} → t ⟹⁻ t′ → t ⟹⁻ t″ → t′ ≡ t″
+⟹-det⁻ r-ifTrue  r-ifTrue  = refl
+⟹-det⁻ r-ifTrue  (r-if r″) = r″ ↯ v⇒nf⁻ v-true
+⟹-det⁻ r-ifFalse r-ifFalse = refl
+⟹-det⁻ r-ifFalse (r-if r″) = r″ ↯ v⇒nf⁻ v-false
+⟹-det⁻ (r-if r′) r-ifTrue  = r′ ↯ v⇒nf⁻ v-true
+⟹-det⁻ (r-if r′) r-ifFalse = r′ ↯ v⇒nf⁻ v-false
+⟹-det⁻ (r-if r′) (r-if r″) = (λ t₁′ → if t₁′ then _ else _) & ⟹-det⁻ r′ r″
 
 
 -- 3.5.5. Exercise (skipped)
@@ -440,34 +440,104 @@ module _ where
 -- 3.5.8. Theorem
 
 module _ where
-  oneStep⁻ : ∀ {t} → ¬ Val⁻ t → ∃ λ t′ → t ⟶⁻ t′
-  oneStep⁻ {true}                                       ¬v = val-true ↯ ¬v
-  oneStep⁻ {false}                                      ¬v = val-false ↯ ¬v
-  oneStep⁻ {if true then t₂ else t₃}                    ¬v = t₂ , e-ifTrue
-  oneStep⁻ {if false then t₂ else t₃}                   ¬v = t₃ , e-ifFalse
-  oneStep⁻ {if (if _ then _ else _) then t₂ else t₃} ¬v =
+  reduce⁻ : ∀ {t} → ¬ Value⁻ t → ∃ λ t′ → t ⟹⁻ t′
+  reduce⁻ {true}                                       ¬v = v-true ↯ ¬v
+  reduce⁻ {false}                                      ¬v = v-false ↯ ¬v
+  reduce⁻ {if true then t₂ else t₃}                    ¬v = t₂ , r-ifTrue
+  reduce⁻ {if false then t₂ else t₃}                   ¬v = t₃ , r-ifFalse
+  reduce⁻ {if (if _ then _ else _) then t₂ else t₃} ¬v =
     let
-      t₁′ , e₁ = oneStep⁻ λ ()
+      t₁′ , r′ = reduce⁻ λ ()
     in
-      if t₁′ then t₂ else t₃ , e-if e₁
+      if t₁′ then t₂ else t₃ , r-if r′
 
-nf⇒val⁻ : ∀ {t} → NormalForm⁻ t → Val⁻ t
-nf⇒val⁻ {true}                                       nf = val-true
-nf⇒val⁻ {false}                                      nf = val-false
-nf⇒val⁻ {if true then t₂ else t₃}                    nf = e-ifTrue ↯ nf
-nf⇒val⁻ {if false then t₂ else t₃}                   nf = e-ifFalse ↯ nf
-nf⇒val⁻ {if t₁@(if _ then _ else _) then t₂ else t₃} nf =
+nf⇒v⁻ : ∀ {t} → NormalForm⁻ t → Value⁻ t
+nf⇒v⁻ {true}                                       nf = v-true
+nf⇒v⁻ {false}                                      nf = v-false
+nf⇒v⁻ {if true then t₂ else t₃}                    nf = r-ifTrue ↯ nf
+nf⇒v⁻ {if false then t₂ else t₃}                   nf = r-ifFalse ↯ nf
+nf⇒v⁻ {if t₁@(if _ then _ else _) then t₂ else t₃} nf =
   let
-    t₁′ , e₁ = oneStep⁻ λ ()
+    t₁′ , r′ = reduce⁻ λ ()
   in
-    e-if e₁ ↯ nf
+    r-if r′ ↯ nf
 
 
--- 3.5.9. Definition (skipped)
+-- 3.5.9. Definition (redundant)
 
 -- 3.5.10. Exercise
 
-infix 3 _⟶*⁻_
-data _⟶*⁻_ : Term⁻ → Term⁻ → Set where
-  done : ∀ {t} → t ⟶*⁻ t
-  step : ∀ {t t′ t″} → t ⟶⁻ t′ → t′ ⟶*⁻ t″ → t ⟶*⁻ t″
+infix 3 _⟹*⁻_
+data _⟹*⁻_ : Term⁻ → Term⁻ → Set where
+  done : ∀ {t} → t ⟹*⁻ t
+  step : ∀ {t t′ t″} → t ⟹⁻ t′ → t′ ⟹*⁻ t″ → t ⟹*⁻ t″
+
+
+-- 3.5.11. Theorem [Uniqueness of normal forms]
+
+module _ where
+  unstep⁻ : ∀ {t t′ u} → Value⁻ u → t ⟹⁻ t′ → t ⟹*⁻ u → t′ ⟹*⁻ u
+  unstep⁻ v r (step r′ rs) with ⟹-det⁻ r r′
+  ... | refl = rs
+  unstep⁻ v r done = r ↯ v⇒nf⁻ v
+
+⟹*-det⁻ : ∀ {t u u′} → Value⁻ u → Value⁻ u′ → t ⟹*⁻ u → t ⟹*⁻ u′ → u ≡ u′
+⟹*-det⁻ v v′ done        done          = refl
+⟹*-det⁻ v v′ done        (step r′ rs′) = r′ ↯ v⇒nf⁻ v
+⟹*-det⁻ v v′ (step r rs) rs′           = ⟹*-det⁻ v v′ rs (unstep⁻ v′ r rs′)
+
+
+-- 3.5.12. Theorem [Termination of evaluation]
+
+module _ where
+  steps⁻ : ∀ {t t′ t″} → t ⟹*⁻ t′ → t′ ⟹*⁻ t″ → t ⟹*⁻ t″
+  steps⁻ done          rs″ = rs″
+  steps⁻ (step r′ rs′) rs″ = step r′ (steps⁻ rs′ rs″)
+
+  rs-if⁻ : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹*⁻ t₁′ → if t₁ then t₂ else t₃ ⟹*⁻ if t₁′ then t₂ else t₃
+  rs-if⁻ done        = done
+  rs-if⁻ (step r rs) = step (r-if r) (rs-if⁻ rs)
+
+  rs-ifTrue⁻ : ∀ {t₁ t₂ t₂′ t₃} → t₁ ⟹*⁻ true → t₂ ⟹*⁻ t₂′ → if t₁ then t₂ else t₃ ⟹*⁻ t₂′
+  rs-ifTrue⁻ rs₁ rs₂ = steps⁻ (rs-if⁻ rs₁) (step r-ifTrue rs₂)
+
+  rs-ifFalse⁻ : ∀ {t₁ t₂ t₃ t₃′} → t₁ ⟹*⁻ false → t₃ ⟹*⁻ t₃′ → if t₁ then t₂ else t₃ ⟹*⁻ t₃′
+  rs-ifFalse⁻ rs₁ rs₃ = steps⁻ (rs-if⁻ rs₁) (step r-ifFalse rs₃)
+
+  infix 3 _⇓⁻_
+  _⇓⁻_ : Term⁻ → Term⁻ → Set
+  t ⇓⁻ u = Value⁻ u × t ⟹*⁻ u
+
+  eval⁻ : ∀ {t t′ u} → t ⟹⁻ t′ → t′ ⇓⁻ u → t ⇓⁻ u
+  eval⁻ r (v , rs) = v , step r rs
+
+  uneval⁻ : ∀ {t t′ u} → t ⟹⁻ t′ → t ⇓⁻ u → t′ ⇓⁻ u
+  uneval⁻ r (v , rs) = v , unstep⁻ v r rs
+
+  ⇓-det⁻ : ∀ {t u u′} → t ⇓⁻ u → t ⇓⁻ u′ → u ≡ u′
+  ⇓-det⁻ (v , rs) (v′ , rs′) = ⟹*-det⁻ v v′ rs rs′
+
+  eval-ifTrue⁻ : ∀ {t₁ t₂ t₃ u₂} → t₁ ⟹*⁻ true → t₂ ⇓⁻ u₂ → if t₁ then t₂ else t₃ ⇓⁻ u₂
+  eval-ifTrue⁻ rs₁ (v₂ , rs₂) = v₂ , rs-ifTrue⁻ rs₁ rs₂
+
+  eval-ifFalse⁻ : ∀ {t₁ t₂ t₃ u₃} → t₁ ⟹*⁻ false → t₃ ⇓⁻ u₃ → if t₁ then t₂ else t₃ ⇓⁻ u₃
+  eval-ifFalse⁻ rs₁ (v₃ , rs₃) = v₃ , rs-ifFalse⁻ rs₁ rs₃
+
+  _⇓⁻ : Term⁻ → Set
+  t ⇓⁻ = ∃ λ u → t ⇓⁻ u
+
+  halt-ifTrue⁻ : ∀ {t₁ t₂ t₃} → t₁ ⟹*⁻ true → t₂ ⇓⁻ → if t₁ then t₂ else t₃ ⇓⁻
+  halt-ifTrue⁻ rs₁ (u₂ , e₂) = u₂ , eval-ifTrue⁻ rs₁ e₂
+
+  halt-ifFalse⁻ : ∀ {t₁ t₂ t₃} → t₁ ⟹*⁻ false → t₃ ⇓⁻ → if t₁ then t₂ else t₃ ⇓⁻
+  halt-ifFalse⁻ rs₁ (u₃ , e₃) = u₃ , eval-ifFalse⁻ rs₁ e₃
+
+  halt-if⁻ : ∀ {t₁ t₂ t₃} → t₁ ⇓⁻ → t₂ ⇓⁻ → t₃ ⇓⁻ → if t₁ then t₂ else t₃ ⇓⁻
+  halt-if⁻ (true                  , v-true  , rs₁) h₂ h₃ = halt-ifTrue⁻ rs₁ h₂
+  halt-if⁻ (false                 , v-false , rs₁) h₂ h₃ = halt-ifFalse⁻ rs₁ h₃
+  halt-if⁻ (if u₁ then u₂ else u₃ , ()      , rs₁) h₂ h₃
+
+halt⁻ : ∀ t → t ⇓⁻
+halt⁻ true                    = true  , v-true  , done
+halt⁻ false                   = false , v-false , done
+halt⁻ (if t₁ then t₂ else t₃) = halt-if⁻ (halt⁻ t₁) (halt⁻ t₂) (halt⁻ t₃)
