@@ -249,18 +249,13 @@ module Lemma333-ViaSubterm where
     ; (pred s₁)               h → Nat.≤-step (h s₁ subterm-pred)
     ; (isZero s₁)             h → Nat.≤-step (h s₁ subterm-isZero)
     ; (if s₁ then s₂ else s₃) h →
-      let
-        h₁ = h s₁ subterm-ifte₁
-        h₂ = h s₂ subterm-ifte₂
-        h₃ = h s₃ subterm-ifte₃
-      in
         Nat.≤-step (begin
           length (consts s₁ ∪ consts s₂ ∪ consts s₃)
         ≤⟨ length-triangular (consts s₁ ∪ consts s₂) (consts s₃) ⟩
           length (consts s₁ ∪ consts s₂) + length (consts s₃)
         ≤⟨ Nat.+-monoˡ-≤ (length (consts s₃)) (length-triangular (consts s₁) (consts s₂)) ⟩
           length (consts s₁) + length (consts s₂) + length (consts s₃)
-        ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ h₁ h₂) h₃ ⟩
+        ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (h s₁ subterm-ifte₁) (h s₂ subterm-ifte₂)) (h s₃ subterm-ifte₃) ⟩
           size s₁ + size s₂ + size s₃
         ∎)
     }
@@ -308,18 +303,13 @@ module Lemma333-ViaSubsize where
     ; (pred s₁)               h → Nat.≤-step (h s₁ Nat.≤-refl)
     ; (isZero s₁)             h → Nat.≤-step (h s₁ Nat.≤-refl)
     ; (if s₁ then s₂ else s₃) h →
-      let
-        h₁ = h s₁ (subsize-ifte₁ s₁ s₂ s₃)
-        h₂ = h s₂ (subsize-ifte₂ s₁ s₂ s₃)
-        h₃ = h s₃ (subsize-ifte₃ s₁ s₂ s₃)
-      in
         Nat.≤-step (begin
           length (consts s₁ ∪ consts s₂ ∪ consts s₃)
         ≤⟨ length-triangular (consts s₁ ∪ consts s₂) (consts s₃) ⟩
           length (consts s₁ ∪ consts s₂) + length (consts s₃)
         ≤⟨ Nat.+-monoˡ-≤ (length (consts s₃)) (length-triangular (consts s₁) (consts s₂)) ⟩
           length (consts s₁) + length (consts s₂) + length (consts s₃)
-        ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ h₁ h₂) h₃ ⟩
+        ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (h s₁ (subsize-ifte₁ s₁ s₂ s₃)) (h s₂ (subsize-ifte₂ s₁ s₂ s₃))) (h s₃ (subsize-ifte₃ s₁ s₂ s₃)) ⟩
           size s₁ + size s₂ + size s₃
         ∎)
     }
@@ -367,18 +357,13 @@ module Lemma333-ViaSubdepth where
     ; (pred s₁)               h → Nat.≤-step (h s₁ Nat.≤-refl)
     ; (isZero s₁)             h → Nat.≤-step (h s₁ Nat.≤-refl)
     ; (if s₁ then s₂ else s₃) h →
-      let
-        h₁ = h s₁ (subdepth-ifte₁ s₁ s₂ s₃)
-        h₂ = h s₂ (subdepth-ifte₂ s₁ s₂ s₃)
-        h₃ = h s₃ (subdepth-ifte₃ s₁ s₂ s₃)
-      in
         Nat.≤-step (begin
           length (consts s₁ ∪ consts s₂ ∪ consts s₃)
         ≤⟨ length-triangular (consts s₁ ∪ consts s₂) (consts s₃) ⟩
           length (consts s₁ ∪ consts s₂) + length (consts s₃)
         ≤⟨ Nat.+-monoˡ-≤ (length (consts s₃)) (length-triangular (consts s₁) (consts s₂)) ⟩
           length (consts s₁) + length (consts s₂) + length (consts s₃)
-        ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ h₁ h₂) h₃ ⟩
+        ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (h s₁ (subdepth-ifte₁ s₁ s₂ s₃)) (h s₂ (subdepth-ifte₂ s₁ s₂ s₃))) (h s₃ (subdepth-ifte₃ s₁ s₂ s₃)) ⟩
           size s₁ + size s₂ + size s₃
         ∎)
     }
@@ -403,6 +388,7 @@ module _ where
     v-true  : Value⁻ true
     v-false : Value⁻ false
 
+-- t ⟹⁻ t′ means that t reduces to t′ in one step
 infix 3 _⟹⁻_
 data _⟹⁻_ : Term⁻ → Term⁻ → Set where
   r-ifTrue  : ∀ {t₂ t₃} → if true then t₂ else t₃ ⟹⁻ t₂
@@ -440,38 +426,33 @@ module _ where
 -- 3.5.8. Theorem
 
 module _ where
-  reduce⁻ : ∀ {t} → ¬ Value⁻ t → ∃ λ t′ → t ⟹⁻ t′
-  reduce⁻ {true}                                       ¬v = v-true ↯ ¬v
-  reduce⁻ {false}                                      ¬v = v-false ↯ ¬v
-  reduce⁻ {if true then t₂ else t₃}                    ¬v = t₂ , r-ifTrue
-  reduce⁻ {if false then t₂ else t₃}                   ¬v = t₃ , r-ifFalse
-  reduce⁻ {if (if _ then _ else _) then t₂ else t₃} ¬v =
-    let
-      t₁′ , r′ = reduce⁻ λ ()
-    in
-      if t₁′ then t₂ else t₃ , r-if r′
+  reduce⁻ : ∀ t → ¬ Value⁻ t → ∃ λ t′ → t ⟹⁻ t′
+  reduce⁻ true                                         ¬v = v-true ↯ ¬v
+  reduce⁻ false                                        ¬v = v-false ↯ ¬v
+  reduce⁻ (if true then t₂ else t₃)                    ¬v = t₂ , r-ifTrue
+  reduce⁻ (if false then t₂ else t₃)                   ¬v = t₃ , r-ifFalse
+  reduce⁻ (if t₁@(if _ then _ else _) then t₂ else t₃) ¬v with reduce⁻ t₁ λ ()
+  ... | t₁′ , r′ = if t₁′ then t₂ else t₃ , r-if r′
 
 nf⇒v⁻ : ∀ {t} → NormalForm⁻ t → Value⁻ t
 nf⇒v⁻ {true}                                       nf = v-true
 nf⇒v⁻ {false}                                      nf = v-false
 nf⇒v⁻ {if true then t₂ else t₃}                    nf = r-ifTrue ↯ nf
 nf⇒v⁻ {if false then t₂ else t₃}                   nf = r-ifFalse ↯ nf
-nf⇒v⁻ {if t₁@(if _ then _ else _) then t₂ else t₃} nf =
-  let
-    t₁′ , r′ = reduce⁻ λ ()
-  in
-    r-if r′ ↯ nf
+nf⇒v⁻ {if t₁@(if _ then _ else _) then t₂ else t₃} nf with reduce⁻ t₁ λ ()
+... | t₁′ , r′ = r-if r′ ↯ nf
 
 
--- 3.5.9. Definition (redundant)
+-- 3.5.9. Definition
 
--- 3.5.10. Exercise
-
+-- t ⟹*⁻ t′ means that t reduces to t′ in some number of steps
 infix 3 _⟹*⁻_
 data _⟹*⁻_ : Term⁻ → Term⁻ → Set where
   done : ∀ {t} → t ⟹*⁻ t
   step : ∀ {t t′ t″} → t ⟹⁻ t′ → t′ ⟹*⁻ t″ → t ⟹*⁻ t″
 
+
+-- 3.5.10. Exercise (redundant)
 
 -- 3.5.11. Theorem [Uniqueness of normal forms]
 
@@ -504,6 +485,7 @@ module _ where
   rs-ifFalse⁻ : ∀ {t₁ t₂ t₃ t₃′} → t₁ ⟹*⁻ false → t₃ ⟹*⁻ t₃′ → if t₁ then t₂ else t₃ ⟹*⁻ t₃′
   rs-ifFalse⁻ rs₁ rs₃ = steps⁻ (rs-if⁻ rs₁) (step r-ifFalse rs₃)
 
+  -- t ⇓⁻ u means that t evaluates to u
   infix 3 _⇓⁻_
   _⇓⁻_ : Term⁻ → Term⁻ → Set
   t ⇓⁻ u = Value⁻ u × t ⟹*⁻ u
@@ -523,6 +505,7 @@ module _ where
   eval-ifFalse⁻ : ∀ {t₁ t₂ t₃ u₃} → t₁ ⟹*⁻ false → t₃ ⇓⁻ u₃ → if t₁ then t₂ else t₃ ⇓⁻ u₃
   eval-ifFalse⁻ rs₁ (v₃ , rs₃) = v₃ , rs-ifFalse⁻ rs₁ rs₃
 
+  -- t ⇓⁻ means that the evaluation of t terminates
   _⇓⁻ : Term⁻ → Set
   t ⇓⁻ = ∃ λ u → t ⇓⁻ u
 
