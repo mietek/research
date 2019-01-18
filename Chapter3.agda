@@ -495,32 +495,20 @@ module BooleansOnly where
     rs-if done        = done
     rs-if (step r rs) = step (r-if r) (rs-if rs)
 
-    rs-ifTrue : ∀ {t₁ t₂ t₂′ t₃} → t₁ ⟹* true → t₂ ⟹* t₂′ → if t₁ then t₂ else t₃ ⟹* t₂′
-    rs-ifTrue rs₁ rs₂ = steps (rs-if rs₁) (step r-ifTrue rs₂)
-
-    rs-ifFalse : ∀ {t₁ t₂ t₃ t₃′} → t₁ ⟹* false → t₃ ⟹* t₃′ → if t₁ then t₂ else t₃ ⟹* t₃′
-    rs-ifFalse rs₁ rs₃ = steps (rs-if rs₁) (step r-ifFalse rs₃)
-
     -- t ⇓ u means that t evaluates to u
     infix 3 _⇓_
     _⇓_ : Term → Term → Set
     t ⇓ u = Value u × t ⟹* u
-
-    eval-ifTrue : ∀ {t₁ t₂ t₃ u₂} → t₁ ⟹* true → t₂ ⇓ u₂ → if t₁ then t₂ else t₃ ⇓ u₂
-    eval-ifTrue rs₁ (v₂ , rs₂) = v₂ , rs-ifTrue rs₁ rs₂
-
-    eval-ifFalse : ∀ {t₁ t₂ t₃ u₃} → t₁ ⟹* false → t₃ ⇓ u₃ → if t₁ then t₂ else t₃ ⇓ u₃
-    eval-ifFalse rs₁ (v₃ , rs₃) = v₃ , rs-ifFalse rs₁ rs₃
 
     -- t ⇓ means that the evaluation of t terminates
     _⇓ : Term → Set
     t ⇓ = ∃ λ u → t ⇓ u
 
     halt-ifTrue : ∀ {t₁ t₂ t₃} → t₁ ⟹* true → t₂ ⇓ → if t₁ then t₂ else t₃ ⇓
-    halt-ifTrue rs₁ (u₂ , e₂) = u₂ , eval-ifTrue rs₁ e₂
+    halt-ifTrue rs₁ (u₂ , v₂ , rs₂) = u₂ , v₂ , steps (rs-if rs₁) (step r-ifTrue rs₂)
 
     halt-ifFalse : ∀ {t₁ t₂ t₃} → t₁ ⟹* false → t₃ ⇓ → if t₁ then t₂ else t₃ ⇓
-    halt-ifFalse rs₁ (u₃ , e₃) = u₃ , eval-ifFalse rs₁ e₃
+    halt-ifFalse rs₁ (u₃ , v₃ , rs₃) = u₃ , v₃ , steps (rs-if rs₁) (step r-ifFalse rs₃)
 
     halt-if : ∀ {t₁ t₂ t₃} → t₁ ⇓ → t₂ ⇓ → t₃ ⇓ → if t₁ then t₂ else t₃ ⇓
     halt-if (.true  , true  , rs₁) h₂ h₃ = halt-ifTrue rs₁ h₂
@@ -540,7 +528,7 @@ module BooleansOnly where
 
 -- 3.5.14. Exercise
 
-module MoreNumbersAndBooleans where
+module NumbersAndBooleans′ where
   open NumbersAndBooleans public
 
   module _ where
@@ -607,7 +595,7 @@ module MoreNumbersAndBooleans where
 -- 3.5.15. Exercise
 
 module NumbersAndBooleansGetStuck where
-  open MoreNumbersAndBooleans public
+  open NumbersAndBooleans′ public
 
   Stuck : Term → Set
   Stuck t = ¬ Value t × NormalForm t
@@ -735,41 +723,29 @@ module NumbersAndBooleansGetStuck where
   rs-if done        = done
   rs-if (step r rs) = step (r-if r) (rs-if rs)
 
-  rs-ifTrue : ∀ {t₁ t₂ t₂′ t₃} → t₁ ⟹* true → t₂ ⟹* t₂′ → if t₁ then t₂ else t₃ ⟹* t₂′
-  rs-ifTrue rs₁ rs₂ = steps (rs-if rs₁) (step r-ifTrue rs₂)
-
-  rs-ifFalse : ∀ {t₁ t₂ t₃ t₃′} → t₁ ⟹* false → t₃ ⟹* t₃′ → if t₁ then t₂ else t₃ ⟹* t₃′
-  rs-ifFalse rs₁ rs₃ = steps (rs-if rs₁) (step r-ifFalse rs₃)
-
   -- t ⇓ u means that t evaluates to u
   infix 3 _⇓_
   _⇓_ : Term → Term → Set
   t ⇓ u = (Value u ⊎ Stuck u) × t ⟹* u
-
-  eval-ifTrue : ∀ {t₁ t₂ t₃ u₂} → t₁ ⟹* true → t₂ ⇓ u₂ → if t₁ then t₂ else t₃ ⇓ u₂
-  eval-ifTrue rs₁ (v₂ , rs₂) = v₂ , rs-ifTrue rs₁ rs₂
-
-  eval-ifFalse : ∀ {t₁ t₂ t₃ u₃} → t₁ ⟹* false → t₃ ⇓ u₃ → if t₁ then t₂ else t₃ ⇓ u₃
-  eval-ifFalse rs₁ (v₃ , rs₃) = v₃ , rs-ifFalse rs₁ rs₃
 
   -- t ⇓ means that the evaluation of t terminates
   _⇓ : Term → Set
   t ⇓ = ∃ λ u → t ⇓ u
 
   halt-ifTrue : ∀ {t₁ t₂ t₃} → t₁ ⟹* true → t₂ ⇓ → if t₁ then t₂ else t₃ ⇓
-  halt-ifTrue rs₁ (u₂ , e₂) = u₂ , eval-ifTrue rs₁ e₂
+  halt-ifTrue rs₁ (u₂ , v₂ , rs₂) = u₂ , v₂ , steps (rs-if rs₁) (step r-ifTrue rs₂)
 
   halt-ifFalse : ∀ {t₁ t₂ t₃} → t₁ ⟹* false → t₃ ⇓ → if t₁ then t₂ else t₃ ⇓
-  halt-ifFalse rs₁ (u₃ , e₃) = u₃ , eval-ifFalse rs₁ e₃
+  halt-ifFalse rs₁ (u₃ , v₃ , rs₃) = u₃ , v₃ , steps (rs-if rs₁) (step r-ifFalse rs₃)
 
   halt-ifZero : ∀ {t₁ t₂ t₃} → t₁ ⟹* zero → if t₁ then t₂ else t₃ ⇓
-  halt-ifZero rs₁ = if zero then _ else _ , inj₂ s-ifZero , rs-if rs₁
+  halt-ifZero {t₂ = t₂} {t₃} rs₁ = if zero then t₂ else t₃ , inj₂ s-ifZero , rs-if rs₁
 
   halt-ifSuc : ∀ {t₁ t₂ t₃ u₁} → NumericValue u₁ → t₁ ⟹* suc u₁ → if t₁ then t₂ else t₃ ⇓
-  halt-ifSuc nv₁ rs₁ = if (suc _) then _ else _ , inj₂ (s-ifSuc nv₁) , rs-if rs₁
+  halt-ifSuc {t₂ = t₂} {t₃} {u₁} nv₁ rs₁ = if (suc u₁) then t₂ else t₃ , inj₂ (s-ifSuc nv₁) , rs-if rs₁
 
   halt-ifStuck : ∀ {t₁ t₂ t₃ u₁} → Stuck u₁ → t₁ ⟹* u₁ → if t₁ then t₂ else t₃ ⇓
-  halt-ifStuck s₁ rs₁ = if _ then _ else _ , inj₂ (s-ifStuck s₁) , rs-if rs₁
+  halt-ifStuck {t₂ = t₂} {t₃} {u₁} s₁ rs₁ = if u₁ then t₂ else t₃ , inj₂ (s-ifStuck s₁) , rs-if rs₁
 
   halt-suc : ∀ {t₁} → t₁ ⇓ → suc t₁ ⇓
   halt-suc (.true    , inj₁ true            , rs₁) = {!!}
@@ -958,29 +934,17 @@ module NumbersAndBooleansGoWrong where
   rs-if done        = done
   rs-if (step r rs) = step (r-if r) (rs-if rs)
 
-  rs-ifTrue : ∀ {t₁ t₂ t₂′ t₃} → t₁ ⟹* true → t₂ ⟹* t₂′ → if t₁ then t₂ else t₃ ⟹* t₂′
-  rs-ifTrue rs₁ rs₂ = steps (rs-if rs₁) (step r-ifTrue rs₂)
-
-  rs-ifFalse : ∀ {t₁ t₂ t₃ t₃′} → t₁ ⟹* false → t₃ ⟹* t₃′ → if t₁ then t₂ else t₃ ⟹* t₃′
-  rs-ifFalse rs₁ rs₃ = steps (rs-if rs₁) (step r-ifFalse rs₃)
-
   -- t ⇓ u means that t evaluates to u
   infix 3 _⇓_
   _⇓_ : Term → Term → Set
   t ⇓ u = (Value u ⊎ u ≡ wrong) × t ⟹* u
-
-  eval-ifTrue : ∀ {t₁ t₂ t₃ u₂} → t₁ ⟹* true → t₂ ⇓ u₂ → if t₁ then t₂ else t₃ ⇓ u₂
-  eval-ifTrue rs₁ (v₂ , rs₂) = v₂ , rs-ifTrue rs₁ rs₂
-
-  eval-ifFalse : ∀ {t₁ t₂ t₃ u₃} → t₁ ⟹* false → t₃ ⇓ u₃ → if t₁ then t₂ else t₃ ⇓ u₃
-  eval-ifFalse rs₁ (v₃ , rs₃) = v₃ , rs-ifFalse rs₁ rs₃
 
   -- t ⇓ means that the evaluation of t terminates
   _⇓ : Term → Set
   t ⇓ = ∃ λ u → t ⇓ u
 
   halt-ifTrue : ∀ {t₁ t₂ t₃} → t₁ ⟹* true → t₂ ⇓ → if t₁ then t₂ else t₃ ⇓
-  halt-ifTrue rs₁ (u₂ , e₂) = u₂ , eval-ifTrue rs₁ e₂
+  halt-ifTrue rs₁ (u₂ , v₂ , rs₂) = u₂ , v₂ , steps (rs-if rs₁) (step r-ifTrue rs₂)
 
   halt-ifFalse : ∀ {t₁ t₂ t₃} → t₁ ⟹* false → t₃ ⇓ → if t₁ then t₂ else t₃ ⇓
-  halt-ifFalse rs₁ (u₃ , e₃) = u₃ , eval-ifFalse rs₁ e₃
+  halt-ifFalse rs₁ (u₃ , v₃ , rs₃) = u₃ , v₃ , steps (rs-if rs₁) (step r-ifFalse rs₃)
