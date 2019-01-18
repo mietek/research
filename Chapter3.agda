@@ -707,15 +707,15 @@ module NumbersAndBooleansGetStuck where
     []  : ∀ {t} → t ⟹* t
     _∷_ : ∀ {t t′ t″} → t ⟹ t′ → t′ ⟹* t″ → t ⟹* t″
 
-  undoStep : ∀ {t t′ u} → Value u → t ⟹ t′ → t ⟹* u → t′ ⟹* u
-  undoStep v r′ []       = r′ ↯ v⇒nf v
-  undoStep v r′ (r ∷ rs) with ⟹-det r′ r
+  chopHead : ∀ {t t′ u} → Value u → t ⟹ t′ → t ⟹* u → t′ ⟹* u
+  chopHead v r′ []       = r′ ↯ v⇒nf v
+  chopHead v r′ (r ∷ rs) with ⟹-det r′ r
   ... | refl             = rs
 
   ⟹*-det : ∀ {t u u′} → Value u → Value u′ → t ⟹* u → t ⟹* u′ → u ≡ u′
   ⟹*-det v v′ []       []         = refl
   ⟹*-det v v′ []       (r′ ∷ rs′) = r′ ↯ v⇒nf v
-  ⟹*-det v v′ (r ∷ rs) rs′        = ⟹*-det v v′ rs (undoStep v′ r rs′)
+  ⟹*-det v v′ (r ∷ rs) rs′        = ⟹*-det v v′ rs (chopHead v′ r rs′)
 
   _++_ : ∀ {t t′ t″} → t ⟹* t′ → t′ ⟹* t″ → t ⟹* t″
   []         ++ rs″ = rs″
@@ -959,15 +959,15 @@ module NumbersAndBooleansGoWrong where
     []  : ∀ {t} → t ⟹* t
     _∷_ : ∀ {t t′ t″} → t ⟹ t′ → t′ ⟹* t″ → t ⟹* t″
 
-  undoStep : ∀ {t t′ u} → Value u → t ⟹ t′ → t ⟹* u → t′ ⟹* u
-  undoStep v r′ []       = r′ ↯ v⇒nf v
-  undoStep v r′ (r ∷ rs) with ⟹-det r′ r
+  chopHead : ∀ {t t′ u} → Value u → t ⟹ t′ → t ⟹* u → t′ ⟹* u
+  chopHead v r′ []       = r′ ↯ v⇒nf v
+  chopHead v r′ (r ∷ rs) with ⟹-det r′ r
   ... | refl             = rs
 
   ⟹*-det : ∀ {t u u′} → Value u → Value u′ → t ⟹* u → t ⟹* u′ → u ≡ u′
   ⟹*-det v v′ []       []         = refl
   ⟹*-det v v′ []       (r′ ∷ rs′) = r′ ↯ v⇒nf v
-  ⟹*-det v v′ (r ∷ rs) rs′        = ⟹*-det v v′ rs (undoStep v′ r rs′)
+  ⟹*-det v v′ (r ∷ rs) rs′        = ⟹*-det v v′ rs (chopHead v′ r rs′)
 
   _++_ : ∀ {t t′ t″} → t ⟹* t′ → t′ ⟹* t″ → t ⟹* t″
   []         ++ rs″ = rs″
