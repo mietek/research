@@ -4,6 +4,7 @@ open import Data.Nat using (_≤_ ; _<_ ; _+_ ; _⊔_ ; ℕ ; s≤s ; suc ; zero
 import Data.Nat.Properties as Nat
 open import Data.Product using (_×_ ; _,_ ; Σ ; ∃ ; proj₁ ; proj₂)
 open import Data.Sum using (_⊎_ ; inj₁ ; inj₂)
+import Level
 import Relation.Binary.PropositionalEquality as PropEq
 open PropEq using (_≡_ ; _≢_ ; refl ; subst) renaming (cong to _&_ ; sym to _⁻¹)
 import Relation.Binary as BinRel
@@ -22,6 +23,53 @@ module _ where
 
   coerce : ∀ {ℓ} {A B : Set ℓ} → A → A ≡ B → B
   coerce x refl = x
+
+
+module ReductionKit₁ {t ℓ} {Term : Set t} (_⟹_ : Term → Term → Set ℓ) where
+  -- t ⟹* t′ means that t reduces to t′ in some number of steps
+  infix 3 _⟹*_
+  data _⟹*_ : Term → Term → Set (t Level.⊔ ℓ) where
+    []  : ∀ {t} → t ⟹* t
+    _∷_ : ∀ {t t′ t″} → t ⟹ t′ → t′ ⟹* t″ → t ⟹* t″
+
+  NormalForm : Term → Set (t Level.⊔ ℓ)
+  NormalForm t = ∀ {t′} → ¬ (t ⟹ t′)
+
+  Reducible : Term → Set (t Level.⊔ ℓ)
+  Reducible t = ∃ λ t′ → t ⟹ t′
+
+  nf⇒¬ρ : ∀ {t} → NormalForm t → ¬ Reducible t
+  nf⇒¬ρ nf (_ , r) = r ↯ nf
+
+  ¬ρ⇒nf : ∀ {t} → ¬ Reducible t → NormalForm t
+  ¬ρ⇒nf ¬ρ r = (_ , r) ↯ ¬ρ
+
+
+module ReductionKit₂ {t ℓ} {Term : Set t} (_⟹_ : Term → Term → Set ℓ)
+                                          (⟹-det : ∀ {t t′ t″} → t ⟹ t′ → t ⟹ t″ → t′ ≡ t″) where
+  open ReductionKit₁ _⟹_
+
+  chopHead : ∀ {t t′ u} → NormalForm u → t ⟹ t′ → t ⟹* u → t′ ⟹* u
+  chopHead nf r []         = r ↯ nf
+  chopHead nf r (r′ ∷ rs′) with ⟹-det r r′
+  ... | refl               = rs′
+
+  ⟹*-det : ∀ {t u u′} → NormalForm u → NormalForm u′ → t ⟹* u → t ⟹* u′ → u ≡ u′
+  ⟹*-det nf nf′ []       []         = refl
+  ⟹*-det nf nf′ []       (r′ ∷ rs′) = r′ ↯ nf
+  ⟹*-det nf nf′ (r ∷ rs) rs′        = ⟹*-det nf nf′ rs (chopHead nf′ r rs′)
+
+  _++_ : ∀ {t t′ t″} → t ⟹* t′ → t′ ⟹* t″ → t ⟹* t″
+  []         ++ rs″ = rs″
+  (r′ ∷ rs′) ++ rs″ = r′ ∷ (rs′ ++ rs″)
+
+  _∷ʳ_ : ∀ {t t′ t″} → t ⟹* t′ → t′ ⟹ t″ → t ⟹* t″
+  rs′ ∷ʳ r″ = rs′ ++ (r″ ∷ [])
+
+  map : ∀ {t t′} {R : Term → Term} (f : ∀ {u u′} → u ⟹ u′ → R u ⟹ R u′) →
+        t ⟹* t′ → R t ⟹* R t′
+  map f []       = []
+  map f (r ∷ rs) = (f r) ∷ (map f rs)
 
 
 -- 3. Untyped arithmetic expressions
@@ -271,11 +319,11 @@ module NumbersAndBooleans where
     LessSize : Term → Term → Set
     LessSize s t = size s < size t
 
-    ss-wf : WellFounded LessSize
-    ss-wf = InverseImage.wellFounded size <-wf
+    ls-wf : WellFounded LessSize
+    ls-wf = InverseImage.wellFounded size <-wf
 
   ind-size : ∀ {ℓ} {P : Term → Set ℓ} → InductionPrinciple LessSize P
-  ind-size = inductionPrinciple ss-wf
+  ind-size = inductionPrinciple ls-wf
 
   -- Proof using induction on size
   module Lemma333-IndSize where
@@ -291,14 +339,14 @@ module NumbersAndBooleans where
       o≤m+n+o : ∀ m n o → o ≤ m + n + o
       o≤m+n+o m n o = Nat.n≤m+n (m + n) o
 
-    ss-if₁ : ∀ t₁ t₂ t₃ → LessSize t₁ (if t₁ then t₂ else t₃)
-    ss-if₁ t₁ t₂ t₃ = s≤s (m≤m+n+o (size t₁) (size t₂) (size t₃))
+    ls-if₁ : ∀ t₁ t₂ t₃ → LessSize t₁ (if t₁ then t₂ else t₃)
+    ls-if₁ t₁ t₂ t₃ = s≤s (m≤m+n+o (size t₁) (size t₂) (size t₃))
 
-    ss-if₂ : ∀ t₁ t₂ t₃ → LessSize t₂ (if t₁ then t₂ else t₃)
-    ss-if₂ t₁ t₂ t₃ = s≤s (n≤m+n+o (size t₁) (size t₂) (size t₃))
+    ls-if₂ : ∀ t₁ t₂ t₃ → LessSize t₂ (if t₁ then t₂ else t₃)
+    ls-if₂ t₁ t₂ t₃ = s≤s (n≤m+n+o (size t₁) (size t₂) (size t₃))
 
-    ss-if₃ : ∀ t₁ t₂ t₃ → LessSize t₃ (if t₁ then t₂ else t₃)
-    ss-if₃ t₁ t₂ t₃ = s≤s (o≤m+n+o (size t₁) (size t₂) (size t₃))
+    ls-if₃ : ∀ t₁ t₂ t₃ → LessSize t₃ (if t₁ then t₂ else t₃)
+    ls-if₃ t₁ t₂ t₃ = s≤s (o≤m+n+o (size t₁) (size t₂) (size t₃))
 
     lem333 : ∀ s → length (consts s) ≤ size s
     lem333 = ind-size λ where
@@ -315,7 +363,7 @@ module NumbersAndBooleans where
           length (consts t₁ ∪ consts t₂) + length (consts t₃)
         ≤⟨ Nat.+-monoˡ-≤ (length (consts t₃)) (length-triangular (consts t₁) (consts t₂)) ⟩
           length (consts t₁) + length (consts t₂) + length (consts t₃)
-        ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (h t₁ (ss-if₁ t₁ t₂ t₃)) (h t₂ (ss-if₂ t₁ t₂ t₃))) (h t₃ (ss-if₃ t₁ t₂ t₃)) ⟩
+        ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (h t₁ (ls-if₁ t₁ t₂ t₃)) (h t₂ (ls-if₂ t₁ t₂ t₃))) (h t₃ (ls-if₃ t₁ t₂ t₃)) ⟩
           size t₁ + size t₂ + size t₃
         ∎)
 
@@ -402,13 +450,12 @@ module BooleansOnly where
     r-ifFalse : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟹ t₃
     r-if      : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹ t₁′ → if t₁ then t₂ else t₃ ⟹ if t₁′ then t₂ else t₃
 
+  open ReductionKit₁ _⟹_ public
+
 
 -- 3.5.4. Theorem [Determinacy of one-step reduction]
 
   module _ where
-    NormalForm : Term → Set
-    NormalForm t = ∀ {t′} → ¬ (t ⟹ t′)
-
     v⇒nf : ∀ {t} → Value t → NormalForm t
     v⇒nf true  ()
     v⇒nf false ()
@@ -422,6 +469,8 @@ module BooleansOnly where
   ⟹-det (r-if r)  r-ifFalse = r ↯ v⇒nf false
   ⟹-det (r-if r)  (r-if r′) = (λ s₁ → if s₁ then _ else _) & ⟹-det r r′
 
+  open ReductionKit₂ _⟹_ ⟹-det public
+
 
 -- 3.5.5. Exercise (skipped)
 
@@ -432,15 +481,6 @@ module BooleansOnly where
 -- 3.5.8. Theorem
 
   module _ where
-    Reducible : Term → Set
-    Reducible t = ∃ λ t′ → t ⟹ t′
-
-    nf⇒¬ρ : ∀ {t} → NormalForm t → ¬ Reducible t
-    nf⇒¬ρ nf (_ , r) = r ↯ nf
-
-    ¬ρ⇒nf : ∀ {t} → ¬ Reducible t → NormalForm t
-    ¬ρ⇒nf ¬ρ r = (_ , r) ↯ ¬ρ
-
     data Classifiable : Term → Set where
       val : ∀ {t} → Value t → Classifiable t
       red : ∀ {t} → Reducible t → Classifiable t
@@ -459,46 +499,15 @@ module BooleansOnly where
   ... | red (_ , r) = r ↯ nf
 
 
--- 3.5.9. Definition
-
-  -- t ⟹* t′ means that t reduces to t′ in some number of steps
-  infix 3 _⟹*_
-  data _⟹*_ : Term → Term → Set where
-    []  : ∀ {t} → t ⟹* t
-    _∷_ : ∀ {t t′ t″} → t ⟹ t′ → t′ ⟹* t″ → t ⟹* t″
-
+-- 3.5.9. Definition (included in ReductionKit₁)
 
 -- 3.5.10. Exercise (redundant)
 
--- 3.5.11. Theorem [Uniqueness of normal forms]
-
-  module _ where
-    chopHead : ∀ {t t′ u} → NormalForm u → t ⟹ t′ → t ⟹* u → t′ ⟹* u
-    chopHead nf r []         = r ↯ nf
-    chopHead nf r (r′ ∷ rs′) with ⟹-det r r′
-    ... | refl               = rs′
-
-  ⟹*-det : ∀ {t u u′} → NormalForm u → NormalForm u′ → t ⟹* u → t ⟹* u′ → u ≡ u′
-  ⟹*-det nf nf′ []       []         = refl
-  ⟹*-det nf nf′ []       (r′ ∷ rs′) = r′ ↯ nf
-  ⟹*-det nf nf′ (r ∷ rs) rs′        = ⟹*-det nf nf′ rs (chopHead nf′ r rs′)
-
+-- 3.5.11. Theorem [Uniqueness of normal forms] (included in ReductionKit₂)
 
 -- 3.5.12. Theorem [Termination of evaluation]
 
   module _ where
-    _++_ : ∀ {t t′ t″} → t ⟹* t′ → t′ ⟹* t″ → t ⟹* t″
-    []         ++ rs″ = rs″
-    (r′ ∷ rs′) ++ rs″ = r′ ∷ (rs′ ++ rs″)
-
-    _∷ʳ_ : ∀ {t t′ t″} → t ⟹* t′ → t′ ⟹ t″ → t ⟹* t″
-    rs′ ∷ʳ r″ = rs′ ++ (r″ ∷ [])
-
-    map : ∀ {t t′} {R : Term → Term} (f : ∀ {u u′} → u ⟹ u′ → R u ⟹ R u′) →
-          t ⟹* t′ → R t ⟹* R t′
-    map f []       = []
-    map f (r ∷ rs) = (f r) ∷ (map f rs)
-
     -- t ⇓ u means that t evaluates to u
     infix 3 _⇓_
     _⇓_ : Term → Term → Set
@@ -557,8 +566,7 @@ module NumbersAndBooleans′ where
       r-ifFalse    : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟹ t₃
       r-if         : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹ t₁′ → if t₁ then t₂ else t₃ ⟹ if t₁′ then t₂ else t₃
 
-    NormalForm : Term → Set
-    NormalForm t = ∀ {t′} → ¬ (t ⟹ t′)
+    open ReductionKit₁ _⟹_ public
 
     nv⇒nf : ∀ {t} → NumericValue t → NormalForm t
     nv⇒nf zero     ()
@@ -593,6 +601,8 @@ module NumbersAndBooleans′ where
   ⟹-det (r-if r′)         r-ifFalse         = r′ ↯ v⇒nf false
   ⟹-det (r-if r′)         (r-if r″)         = (λ t₁′ → if t₁′ then _ else _) & ⟹-det r′ r″
 
+  open ReductionKit₂ _⟹_ ⟹-det public
+
 
 -- 3.5.15. Exercise
 
@@ -601,15 +611,6 @@ module NumbersAndBooleansGetStuck where
 
   Stuck : Term → Set
   Stuck t = ¬ Value t × NormalForm t
-
-  Reducible : Term → Set
-  Reducible t = ∃ λ t′ → t ⟹ t′
-
-  nf⇒¬ρ : ∀ {t} → NormalForm t → ¬ Reducible t
-  nf⇒¬ρ nf (_ , r) = r ↯ nf
-
-  ¬ρ⇒nf : ∀ {t} → ¬ Reducible t → NormalForm t
-  ¬ρ⇒nf ¬ρ r = (_ , r) ↯ ¬ρ
 
   data Classifiable : Term → Set where
     stu : ∀ {t} → Stuck t → Classifiable t
@@ -700,34 +701,6 @@ module NumbersAndBooleansGetStuck where
   ... | red (_ , r) = r ↯ nf
   ... | val v       = inj₁ v
   ... | stu s       = inj₂ s
-
-  -- t ⟹* t′ means that t reduces to t′ in some number of steps
-  infix 3 _⟹*_
-  data _⟹*_ : Term → Term → Set where
-    []  : ∀ {t} → t ⟹* t
-    _∷_ : ∀ {t t′ t″} → t ⟹ t′ → t′ ⟹* t″ → t ⟹* t″
-
-  chopHead : ∀ {t t′ u} → Value u → t ⟹ t′ → t ⟹* u → t′ ⟹* u
-  chopHead v r′ []       = r′ ↯ v⇒nf v
-  chopHead v r′ (r ∷ rs) with ⟹-det r′ r
-  ... | refl             = rs
-
-  ⟹*-det : ∀ {t u u′} → Value u → Value u′ → t ⟹* u → t ⟹* u′ → u ≡ u′
-  ⟹*-det v v′ []       []         = refl
-  ⟹*-det v v′ []       (r′ ∷ rs′) = r′ ↯ v⇒nf v
-  ⟹*-det v v′ (r ∷ rs) rs′        = ⟹*-det v v′ rs (chopHead v′ r rs′)
-
-  _++_ : ∀ {t t′ t″} → t ⟹* t′ → t′ ⟹* t″ → t ⟹* t″
-  []         ++ rs″ = rs″
-  (r′ ∷ rs′) ++ rs″ = r′ ∷ (rs′ ++ rs″)
-
-  _∷ʳ_ : ∀ {t t′ t″} → t ⟹* t′ → t′ ⟹ t″ → t ⟹* t″
-  rs′ ∷ʳ r″ = rs′ ++ (r″ ∷ [])
-
-  map : ∀ {t t′} {R : Term → Term} (f : ∀ {u u′} → u ⟹ u′ → R u ⟹ R u′) →
-        t ⟹* t′ → R t ⟹* R t′
-  map f []       = []
-  map f (r ∷ rs) = (f r) ∷ (map f rs)
 
   -- t ⇓ u means that t evaluates to u
   infix 3 _⇓_
@@ -877,8 +850,7 @@ module NumbersAndBooleansGoWrong where
     r-ifFalse     : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟹ t₃
     r-if          : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹ t₁′ → if t₁ then t₂ else t₃ ⟹ if t₁′ then t₂ else t₃
 
-  NormalForm : Term → Set
-  NormalForm t = ∀ {t′} → ¬ (t ⟹ t′)
+  open ReductionKit₁ _⟹_
 
   bn⇒¬nv : ∀ {t} → BadNat t → ¬ NumericValue t
   bn⇒¬nv wrong = λ ()
@@ -953,33 +925,7 @@ module NumbersAndBooleansGoWrong where
   ⟹-det (r-if r′)            r-ifFalse           = r′ ↯ v⇒nf false
   ⟹-det (r-if r′)            (r-if r″)           = (λ t₁′ → if t₁′ then _ else _) & ⟹-det r′ r″
 
-  -- t ⟹* t′ means that t reduces to t′ in some number of steps
-  infix 3 _⟹*_
-  data _⟹*_ : Term → Term → Set where
-    []  : ∀ {t} → t ⟹* t
-    _∷_ : ∀ {t t′ t″} → t ⟹ t′ → t′ ⟹* t″ → t ⟹* t″
-
-  chopHead : ∀ {t t′ u} → Value u → t ⟹ t′ → t ⟹* u → t′ ⟹* u
-  chopHead v r′ []       = r′ ↯ v⇒nf v
-  chopHead v r′ (r ∷ rs) with ⟹-det r′ r
-  ... | refl             = rs
-
-  ⟹*-det : ∀ {t u u′} → Value u → Value u′ → t ⟹* u → t ⟹* u′ → u ≡ u′
-  ⟹*-det v v′ []       []         = refl
-  ⟹*-det v v′ []       (r′ ∷ rs′) = r′ ↯ v⇒nf v
-  ⟹*-det v v′ (r ∷ rs) rs′        = ⟹*-det v v′ rs (chopHead v′ r rs′)
-
-  _++_ : ∀ {t t′ t″} → t ⟹* t′ → t′ ⟹* t″ → t ⟹* t″
-  []         ++ rs″ = rs″
-  (r′ ∷ rs′) ++ rs″ = r′ ∷ (rs′ ++ rs″)
-
-  _∷ʳ_ : ∀ {t t′ t″} → t ⟹* t′ → t′ ⟹ t″ → t ⟹* t″
-  rs′ ∷ʳ r″ = rs′ ++ (r″ ∷ [])
-
-  map : ∀ {t t′} {R : Term → Term} (f : ∀ {u u′} → u ⟹ u′ → R u ⟹ R u′) →
-        t ⟹* t′ → R t ⟹* R t′
-  map f []       = []
-  map f (r ∷ rs) = (f r) ∷ (map f rs)
+  open ReductionKit₂ _⟹_ ⟹-det
 
   -- t ⇓ u means that t evaluates to u
   infix 3 _⇓_
