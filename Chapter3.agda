@@ -464,8 +464,8 @@ module BooleansOnly where
   -- t ⟹* t′ means that t reduces to t′ in some number of steps
   infix 3 _⟹*_
   data _⟹*_ : Term → Term → Set where
-    done : ∀ {t} → t ⟹* t
-    step : ∀ {t t′ t″} → t ⟹ t′ → t′ ⟹* t″ → t ⟹* t″
+    []  : ∀ {t} → t ⟹* t
+    _∷_ : ∀ {t t′ t″} → t ⟹ t′ → t′ ⟹* t″ → t ⟹* t″
 
 
 -- 3.5.10. Exercise (redundant)
@@ -473,27 +473,31 @@ module BooleansOnly where
 -- 3.5.11. Theorem [Uniqueness of normal forms]
 
   module _ where
-    unstep : ∀ {t t′ u} → NormalForm u → t ⟹ t′ → t ⟹* u → t′ ⟹* u
-    unstep nf r done          = r ↯ nf
-    unstep nf r (step r′ rs′) with ⟹-det r r′
-    ... | refl                = rs′
+    chopHead : ∀ {t t′ u} → NormalForm u → t ⟹ t′ → t ⟹* u → t′ ⟹* u
+    chopHead nf r []         = r ↯ nf
+    chopHead nf r (r′ ∷ rs′) with ⟹-det r r′
+    ... | refl               = rs′
 
   ⟹*-det : ∀ {t u u′} → NormalForm u → NormalForm u′ → t ⟹* u → t ⟹* u′ → u ≡ u′
-  ⟹*-det nf nf′ done        done          = refl
-  ⟹*-det nf nf′ done        (step r′ rs′) = r′ ↯ nf
-  ⟹*-det nf nf′ (step r rs) rs′           = ⟹*-det nf nf′ rs (unstep nf′ r rs′)
+  ⟹*-det nf nf′ []       []         = refl
+  ⟹*-det nf nf′ []       (r′ ∷ rs′) = r′ ↯ nf
+  ⟹*-det nf nf′ (r ∷ rs) rs′        = ⟹*-det nf nf′ rs (chopHead nf′ r rs′)
 
 
 -- 3.5.12. Theorem [Termination of evaluation]
 
   module _ where
-    steps : ∀ {t t′ t″} → t ⟹* t′ → t′ ⟹* t″ → t ⟹* t″
-    steps done          rs″ = rs″
-    steps (step r′ rs′) rs″ = step r′ (steps rs′ rs″)
+    _++_ : ∀ {t t′ t″} → t ⟹* t′ → t′ ⟹* t″ → t ⟹* t″
+    []         ++ rs″ = rs″
+    (r′ ∷ rs′) ++ rs″ = r′ ∷ (rs′ ++ rs″)
 
-    rs-if : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹* t₁′ → if t₁ then t₂ else t₃ ⟹* if t₁′ then t₂ else t₃
-    rs-if done        = done
-    rs-if (step r rs) = step (r-if r) (rs-if rs)
+    _∷ʳ_ : ∀ {t t′ t″} → t ⟹* t′ → t′ ⟹ t″ → t ⟹* t″
+    rs′ ∷ʳ r″ = rs′ ++ (r″ ∷ [])
+
+    map : ∀ {t t′} {R : Term → Term} (f : ∀ {u u′} → u ⟹ u′ → R u ⟹ R u′) →
+          t ⟹* t′ → R t ⟹* R t′
+    map f []       = []
+    map f (r ∷ rs) = (f r) ∷ (map f rs)
 
     -- t ⇓ u means that t evaluates to u
     infix 3 _⇓_
@@ -505,19 +509,17 @@ module BooleansOnly where
     t ⇓ = ∃ λ u → t ⇓ u
 
     halt-ifTrue : ∀ {t₁ t₂ t₃} → t₁ ⟹* true → t₂ ⇓ → if t₁ then t₂ else t₃ ⇓
-    halt-ifTrue rs₁ (u₂ , v₂ , rs₂) = u₂ , v₂ , steps (rs-if rs₁) (step r-ifTrue rs₂)
+    halt-ifTrue rs₁ (u₂ , v₂ , rs₂) = u₂ , v₂ , (map r-if rs₁) ++ (r-ifTrue ∷ rs₂)
 
     halt-ifFalse : ∀ {t₁ t₂ t₃} → t₁ ⟹* false → t₃ ⇓ → if t₁ then t₂ else t₃ ⇓
-    halt-ifFalse rs₁ (u₃ , v₃ , rs₃) = u₃ , v₃ , steps (rs-if rs₁) (step r-ifFalse rs₃)
-
-    halt-if : ∀ {t₁ t₂ t₃} → t₁ ⇓ → t₂ ⇓ → t₃ ⇓ → if t₁ then t₂ else t₃ ⇓
-    halt-if (.true  , true  , rs₁) h₂ h₃ = halt-ifTrue rs₁ h₂
-    halt-if (.false , false , rs₁) h₂ h₃ = halt-ifFalse rs₁ h₃
+    halt-ifFalse rs₁ (u₃ , v₃ , rs₃) = u₃ , v₃ , (map r-if rs₁) ++ (r-ifFalse ∷ rs₃)
 
     halt : ∀ t → t ⇓
-    halt true                    = true  , true  , done
-    halt false                   = false , false , done
-    halt (if t₁ then t₂ else t₃) = halt-if (halt t₁) (halt t₂) (halt t₃)
+    halt true                    = true  , true  , []
+    halt false                   = false , false , []
+    halt (if t₁ then t₂ else t₃) with halt t₁
+    ... | (.true  , true  , rs₁) = halt-ifTrue rs₁ (halt t₂)
+    ... | (.false , false , rs₁) = halt-ifFalse rs₁ (halt t₃)
 
   halt′ : ∀ t → ∃ λ t′ → NormalForm t′ × t ⟹* t′
   halt′ t with halt t
@@ -544,9 +546,6 @@ module NumbersAndBooleans′ where
     -- t ⟹ t′ means that t reduces to t′ in one step
     infix 3 _⟹_
     data _⟹_ : Term → Term → Set where
-      r-ifTrue     : ∀ {t₂ t₃} → if true then t₂ else t₃ ⟹ t₂
-      r-ifFalse    : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟹ t₃
-      r-if         : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹ t₁′ → if t₁ then t₂ else t₃ ⟹ if t₁′ then t₂ else t₃
       r-suc        : ∀ {t₁ t₁′} → t₁ ⟹ t₁′ → suc t₁ ⟹ suc t₁′
       r-predZero   : pred zero ⟹ zero
       r-predSuc    : ∀ {t₁} → NumericValue t₁ → pred (suc t₁) ⟹ t₁
@@ -554,6 +553,9 @@ module NumbersAndBooleans′ where
       r-iszeroZero : iszero zero ⟹ true
       r-iszeroSuc  : ∀ {t₁} → NumericValue t₁ → iszero (suc t₁) ⟹ false
       r-iszero     : ∀ {t₁ t₁′} → t₁ ⟹ t₁′ → iszero t₁ ⟹ iszero t₁′
+      r-ifTrue     : ∀ {t₂ t₃} → if true then t₂ else t₃ ⟹ t₂
+      r-ifFalse    : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟹ t₃
+      r-if         : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹ t₁′ → if t₁ then t₂ else t₃ ⟹ if t₁′ then t₂ else t₃
 
     NormalForm : Term → Set
     NormalForm t = ∀ {t′} → ¬ (t ⟹ t′)
@@ -568,13 +570,6 @@ module NumbersAndBooleans′ where
     v⇒nf (num nv) = nv⇒nf nv
 
   ⟹-det : ∀ {t t′ t″} → t ⟹ t′ → t ⟹ t″ → t′ ≡ t″
-  ⟹-det r-ifTrue          r-ifTrue          = refl
-  ⟹-det r-ifTrue          (r-if r″)         = r″ ↯ v⇒nf true
-  ⟹-det r-ifFalse         r-ifFalse         = refl
-  ⟹-det r-ifFalse         (r-if r″)         = r″ ↯ v⇒nf false
-  ⟹-det (r-if r′)         r-ifTrue          = r′ ↯ v⇒nf true
-  ⟹-det (r-if r′)         r-ifFalse         = r′ ↯ v⇒nf false
-  ⟹-det (r-if r′)         (r-if r″)         = (λ t₁′ → if t₁′ then _ else _) & ⟹-det r′ r″
   ⟹-det (r-suc r′)        (r-suc r″)        = suc & ⟹-det r′ r″
   ⟹-det r-predZero        r-predZero        = refl
   ⟹-det r-predZero        (r-pred r″)       = r″ ↯ nv⇒nf zero
@@ -590,6 +585,13 @@ module NumbersAndBooleans′ where
   ⟹-det (r-iszero r′)     r-iszeroZero      = r′ ↯ nv⇒nf zero
   ⟹-det (r-iszero r′)     (r-iszeroSuc nv″) = r′ ↯ nv⇒nf (suc nv″)
   ⟹-det (r-iszero r′)     (r-iszero r″)     = iszero & ⟹-det r′ r″
+  ⟹-det r-ifTrue          r-ifTrue          = refl
+  ⟹-det r-ifTrue          (r-if r″)         = r″ ↯ v⇒nf true
+  ⟹-det r-ifFalse         r-ifFalse         = refl
+  ⟹-det r-ifFalse         (r-if r″)         = r″ ↯ v⇒nf false
+  ⟹-det (r-if r′)         r-ifTrue          = r′ ↯ v⇒nf true
+  ⟹-det (r-if r′)         r-ifFalse         = r′ ↯ v⇒nf false
+  ⟹-det (r-if r′)         (r-if r″)         = (λ t₁′ → if t₁′ then _ else _) & ⟹-det r′ r″
 
 
 -- 3.5.15. Exercise
@@ -676,7 +678,7 @@ module NumbersAndBooleansGetStuck where
   ... | val true                   = stu s-predTrue
   ... | val false                  = stu s-predFalse
   ... | val (num zero)             = red (zero , r-predZero)
-  ... | val (num (suc {t₁′} nv₁))  = red (t₁′ , r-predSuc nv₁)
+  ... | val (num (suc nv₁))        = red (_ , r-predSuc nv₁)
   ... | red (t₁′ , r₁)             = red (pred t₁′ , r-pred r₁)
   classify (iszero t₁)             with classify t₁
   ... | stu s₁                     = stu (s-iszero s₁)
@@ -702,26 +704,30 @@ module NumbersAndBooleansGetStuck where
   -- t ⟹* t′ means that t reduces to t′ in some number of steps
   infix 3 _⟹*_
   data _⟹*_ : Term → Term → Set where
-    done : ∀ {t} → t ⟹* t
-    step : ∀ {t t′ t″} → t ⟹ t′ → t′ ⟹* t″ → t ⟹* t″
+    []  : ∀ {t} → t ⟹* t
+    _∷_ : ∀ {t t′ t″} → t ⟹ t′ → t′ ⟹* t″ → t ⟹* t″
 
-  unstep : ∀ {t t′ u} → Value u → t ⟹ t′ → t ⟹* u → t′ ⟹* u
-  unstep v r′ done        = r′ ↯ v⇒nf v
-  unstep v r′ (step r rs) with ⟹-det r′ r
-  ... | refl              = rs
+  undoStep : ∀ {t t′ u} → Value u → t ⟹ t′ → t ⟹* u → t′ ⟹* u
+  undoStep v r′ []       = r′ ↯ v⇒nf v
+  undoStep v r′ (r ∷ rs) with ⟹-det r′ r
+  ... | refl             = rs
 
   ⟹*-det : ∀ {t u u′} → Value u → Value u′ → t ⟹* u → t ⟹* u′ → u ≡ u′
-  ⟹*-det v v′ done        done          = refl
-  ⟹*-det v v′ done        (step r′ rs′) = r′ ↯ v⇒nf v
-  ⟹*-det v v′ (step r rs) rs′           = ⟹*-det v v′ rs (unstep v′ r rs′)
+  ⟹*-det v v′ []       []         = refl
+  ⟹*-det v v′ []       (r′ ∷ rs′) = r′ ↯ v⇒nf v
+  ⟹*-det v v′ (r ∷ rs) rs′        = ⟹*-det v v′ rs (undoStep v′ r rs′)
 
-  steps : ∀ {t t′ t″} → t ⟹* t′ → t′ ⟹* t″ → t ⟹* t″
-  steps done          rs″ = rs″
-  steps (step r′ rs′) rs″ = step r′ (steps rs′ rs″)
+  _++_ : ∀ {t t′ t″} → t ⟹* t′ → t′ ⟹* t″ → t ⟹* t″
+  []         ++ rs″ = rs″
+  (r′ ∷ rs′) ++ rs″ = r′ ∷ (rs′ ++ rs″)
 
-  rs-if : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹* t₁′ → if t₁ then t₂ else t₃ ⟹* if t₁′ then t₂ else t₃
-  rs-if done        = done
-  rs-if (step r rs) = step (r-if r) (rs-if rs)
+  _∷ʳ_ : ∀ {t t′ t″} → t ⟹* t′ → t′ ⟹ t″ → t ⟹* t″
+  rs′ ∷ʳ r″ = rs′ ++ (r″ ∷ [])
+
+  map : ∀ {t t′} {R : Term → Term} (f : ∀ {u u′} → u ⟹ u′ → R u ⟹ R u′) →
+        t ⟹* t′ → R t ⟹* R t′
+  map f []       = []
+  map f (r ∷ rs) = (f r) ∷ (map f rs)
 
   -- t ⇓ u means that t evaluates to u
   infix 3 _⇓_
@@ -732,57 +738,94 @@ module NumbersAndBooleansGetStuck where
   _⇓ : Term → Set
   t ⇓ = ∃ λ u → t ⇓ u
 
+  halt-sucTrue : ∀ {t₁} → t₁ ⟹* true → suc t₁ ⇓
+  halt-sucTrue rs₁ = {!!}
+
+  halt-sucFalse : ∀ {t₁} → t₁ ⟹* false → suc t₁ ⇓
+  halt-sucFalse rs₁ = {!!}
+
+  halt-sucZero : ∀ {t₁} → t₁ ⟹* zero → suc t₁ ⇓
+  halt-sucZero rs₁ = {!!}
+
+  halt-sucSuc : ∀ {t₁ u₁} → NumericValue u₁ → t₁ ⟹* suc u₁ → suc t₁ ⇓
+  halt-sucSuc nv₁ rs₁ = {!!}
+
+  halt-sucStuck : ∀ {t₁ u₁} → Stuck u₁ → t₁ ⟹* u₁ → suc t₁ ⇓
+  halt-sucStuck s₁ rs₁ = {!!}
+
+  halt-predTrue : ∀ {t₁} → t₁ ⟹* true → pred t₁ ⇓
+  halt-predTrue rs₁ = {!!}
+
+  halt-predFalse : ∀ {t₁} → t₁ ⟹* false → pred t₁ ⇓
+  halt-predFalse rs₁ = {!!}
+
+  halt-predZero : ∀ {t₁} → t₁ ⟹* zero → pred t₁ ⇓
+  halt-predZero rs₁ = {!!}
+
+  halt-predSuc : ∀ {t₁ u₁} → NumericValue u₁ → t₁ ⟹* suc u₁ → pred t₁ ⇓
+  halt-predSuc nv₁ rs₁ = {!!}
+
+  halt-predStuck : ∀ {t₁ u₁} → Stuck u₁ → t₁ ⟹* u₁ → pred t₁ ⇓
+  halt-predStuck s₁ rs₁ = {!!}
+
+  halt-iszeroTrue : ∀ {t₁} → t₁ ⟹* true → iszero t₁ ⇓
+  halt-iszeroTrue rs₁ = iszero true , inj₂ s-iszeroTrue , map r-iszero rs₁
+
+  halt-iszeroFalse : ∀ {t₁} → t₁ ⟹* false → iszero t₁ ⇓
+  halt-iszeroFalse rs₁ = iszero false , inj₂ s-iszeroFalse , map r-iszero rs₁
+
+  halt-iszeroZero : ∀ {t₁} → t₁ ⟹* zero → iszero t₁ ⇓
+  halt-iszeroZero rs₁ = true , inj₁ true , (map r-iszero rs₁) ∷ʳ r-iszeroZero
+
+  halt-iszeroSuc : ∀ {t₁ u₁} → NumericValue u₁ → t₁ ⟹* suc u₁ → iszero t₁ ⇓
+  halt-iszeroSuc nv₁ rs₁ = {!!}
+
+  halt-iszeroStuck : ∀ {t₁ u₁} → Stuck u₁ → t₁ ⟹* u₁ → iszero t₁ ⇓
+  halt-iszeroStuck s₁ rs₁ = {!!}
+
   halt-ifTrue : ∀ {t₁ t₂ t₃} → t₁ ⟹* true → t₂ ⇓ → if t₁ then t₂ else t₃ ⇓
-  halt-ifTrue rs₁ (u₂ , v₂ , rs₂) = u₂ , v₂ , steps (rs-if rs₁) (step r-ifTrue rs₂)
+  halt-ifTrue rs₁ (u₂ , v₂ , rs₂) = u₂ , v₂ , (map r-if rs₁) ++ (r-ifTrue ∷ rs₂)
 
   halt-ifFalse : ∀ {t₁ t₂ t₃} → t₁ ⟹* false → t₃ ⇓ → if t₁ then t₂ else t₃ ⇓
-  halt-ifFalse rs₁ (u₃ , v₃ , rs₃) = u₃ , v₃ , steps (rs-if rs₁) (step r-ifFalse rs₃)
+  halt-ifFalse rs₁ (u₃ , v₃ , rs₃) = u₃ , v₃ , (map r-if rs₁) ++ (r-ifFalse ∷ rs₃)
 
   halt-ifZero : ∀ {t₁ t₂ t₃} → t₁ ⟹* zero → if t₁ then t₂ else t₃ ⇓
-  halt-ifZero {t₂ = t₂} {t₃} rs₁ = if zero then t₂ else t₃ , inj₂ s-ifZero , rs-if rs₁
+  halt-ifZero rs₁ = if zero then _ else _ , inj₂ s-ifZero , map r-if rs₁
 
   halt-ifSuc : ∀ {t₁ t₂ t₃ u₁} → NumericValue u₁ → t₁ ⟹* suc u₁ → if t₁ then t₂ else t₃ ⇓
-  halt-ifSuc {t₂ = t₂} {t₃} {u₁} nv₁ rs₁ = if (suc u₁) then t₂ else t₃ , inj₂ (s-ifSuc nv₁) , rs-if rs₁
+  halt-ifSuc nv₁ rs₁ = if (suc _) then _ else _ , inj₂ (s-ifSuc nv₁) , map r-if rs₁
 
   halt-ifStuck : ∀ {t₁ t₂ t₃ u₁} → Stuck u₁ → t₁ ⟹* u₁ → if t₁ then t₂ else t₃ ⇓
-  halt-ifStuck {t₂ = t₂} {t₃} {u₁} s₁ rs₁ = if u₁ then t₂ else t₃ , inj₂ (s-ifStuck s₁) , rs-if rs₁
-
-  halt-suc : ∀ {t₁} → t₁ ⇓ → suc t₁ ⇓
-  halt-suc (.true    , inj₁ true            , rs₁) = {!!}
-  halt-suc (.false   , inj₁ false           , rs₁) = {!!}
-  halt-suc (.zero    , inj₁ (num zero)      , rs₁) = {!!}
-  halt-suc (.(suc _) , inj₁ (num (suc nv₁)) , rs₁) = {!!}
-  halt-suc (_        , inj₂ s₁              , rs₁) = {!!}
-
-  halt-pred : ∀ {t₁} → t₁ ⇓ → pred t₁ ⇓
-  halt-pred (.true    , inj₁ true            , rs₁) = {!!}
-  halt-pred (.false   , inj₁ false           , rs₁) = {!!}
-  halt-pred (.zero    , inj₁ (num zero)      , rs₁) = {!!}
-  halt-pred (.(suc _) , inj₁ (num (suc nv₁)) , rs₁) = {!!}
-  halt-pred (_        , inj₂ s₁              , rs₁) = {!!}
-
-  halt-iszero : ∀ {t₁} → t₁ ⇓ → iszero t₁ ⇓
-  halt-iszero (.true    , inj₁ true            , rs₁) = {!!}
-  halt-iszero (.false   , inj₁ false           , rs₁) = {!!}
-  halt-iszero (.zero    , inj₁ (num zero)      , rs₁) = {!!}
-  halt-iszero (.(suc _) , inj₁ (num (suc nv₁)) , rs₁) = {!!}
-  halt-iszero (_        , inj₂ s₁              , rs₁) = {!!}
-
-  halt-if : ∀ {t₁ t₂ t₃} → t₁ ⇓ → t₂ ⇓ → t₃ ⇓ → if t₁ then t₂ else t₃ ⇓
-  halt-if (.true    , inj₁ true            , rs₁) h₂ h₃ = halt-ifTrue rs₁ h₂
-  halt-if (.false   , inj₁ false           , rs₁) h₂ h₃ = halt-ifFalse rs₁ h₃
-  halt-if (.zero    , inj₁ (num zero)      , rs₁) h₂ h₃ = halt-ifZero rs₁
-  halt-if (.(suc _) , inj₁ (num (suc nv₁)) , rs₁) h₂ h₃ = halt-ifSuc nv₁ rs₁
-  halt-if (_        , inj₂ s₁              , rs₁) h₂ h₃ = halt-ifStuck s₁ rs₁
+  halt-ifStuck s₁ rs₁ = if _ then _ else _ , inj₂ (s-ifStuck s₁) , map r-if rs₁
 
   halt : ∀ t → t ⇓
-  halt true                    = true  , inj₁ true       , done
-  halt false                   = false , inj₁ false      , done
-  halt zero                    = zero  , inj₁ (num zero) , done
-  halt (suc t₁)                = halt-suc (halt t₁)
-  halt (pred t₁)               = halt-pred (halt t₁)
-  halt (iszero t₁)             = halt-iszero (halt t₁)
-  halt (if t₁ then t₂ else t₃) = halt-if (halt t₁) (halt t₂) (halt t₃)
+  halt true                                     = true  , inj₁ true       , []
+  halt false                                    = false , inj₁ false      , []
+  halt zero                                     = zero  , inj₁ (num zero) , []
+  halt (suc t₁)                                 with halt t₁
+  ... | (.true    , inj₁ true            , rs₁) = halt-sucTrue rs₁
+  ... | (.false   , inj₁ false           , rs₁) = halt-sucFalse rs₁
+  ... | (.zero    , inj₁ (num zero)      , rs₁) = halt-sucZero rs₁
+  ... | (.(suc _) , inj₁ (num (suc nv₁)) , rs₁) = halt-sucSuc nv₁ rs₁
+  ... | (_        , inj₂ s₁              , rs₁) = halt-sucStuck s₁ rs₁
+  halt (pred t₁)                                with halt t₁
+  ... | (.true    , inj₁ true            , rs₁) = halt-predTrue rs₁
+  ... | (.false   , inj₁ false           , rs₁) = halt-predFalse rs₁
+  ... | (.zero    , inj₁ (num zero)      , rs₁) = halt-predZero rs₁
+  ... | (.(suc _) , inj₁ (num (suc nv₁)) , rs₁) = halt-predSuc nv₁ rs₁
+  ... | (_        , inj₂ s₁              , rs₁) = halt-predStuck s₁ rs₁
+  halt (iszero t₁)                              with halt t₁
+  ... | (.true    , inj₁ true            , rs₁) = halt-iszeroTrue rs₁
+  ... | (.false   , inj₁ false           , rs₁) = halt-iszeroFalse rs₁
+  ... | (.zero    , inj₁ (num zero)      , rs₁) = halt-iszeroZero rs₁
+  ... | (.(suc _) , inj₁ (num (suc nv₁)) , rs₁) = halt-iszeroSuc nv₁ rs₁
+  ... | (_        , inj₂ s₁              , rs₁) = halt-iszeroStuck s₁ rs₁
+  halt (if t₁ then t₂ else t₃)                  with halt t₁
+  ... | (.true    , inj₁ true            , rs₁) = halt-ifTrue rs₁ (halt t₂)
+  ... | (.false   , inj₁ false           , rs₁) = halt-ifFalse rs₁ (halt t₃)
+  ... | (.zero    , inj₁ (num zero)      , rs₁) = halt-ifZero rs₁
+  ... | (.(suc _) , inj₁ (num (suc nv₁)) , rs₁) = halt-ifSuc nv₁ rs₁
+  ... | (_        , inj₂ s₁              , rs₁) = halt-ifStuck s₁ rs₁
 
   halt′ : ∀ t → ∃ λ t′ → NormalForm t′ × t ⟹* t′
   halt′ t with halt t
@@ -819,10 +862,6 @@ module NumbersAndBooleansGoWrong where
   -- t ⟹ t′ means that t reduces to t′ in one step
   infix 3 _⟹_
   data _⟹_ : Term → Term → Set where
-    r-ifWrong     : ∀ {t₁ t₂ t₃} → BadBool t₁ → if t₁ then t₂ else t₃ ⟹ wrong
-    r-ifTrue      : ∀ {t₂ t₃} → if true then t₂ else t₃ ⟹ t₂
-    r-ifFalse     : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟹ t₃
-    r-if          : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹ t₁′ → if t₁ then t₂ else t₃ ⟹ if t₁′ then t₂ else t₃
     r-sucWrong    : ∀ {t₁} → BadNat t₁ → suc t₁ ⟹ wrong
     r-suc         : ∀ {t₁ t₁′} → t₁ ⟹ t₁′ → suc t₁ ⟹ suc t₁′
     r-predWrong   : ∀ {t₁} → BadNat t₁ → pred t₁ ⟹ wrong
@@ -833,6 +872,10 @@ module NumbersAndBooleansGoWrong where
     r-iszeroZero  : iszero zero ⟹ true
     r-iszeroSuc   : ∀ {t₁} → NumericValue t₁ → iszero (suc t₁) ⟹ false
     r-iszero      : ∀ {t₁ t₁′} → t₁ ⟹ t₁′ → iszero t₁ ⟹ iszero t₁′
+    r-ifWrong     : ∀ {t₁ t₂ t₃} → BadBool t₁ → if t₁ then t₂ else t₃ ⟹ wrong
+    r-ifTrue      : ∀ {t₂ t₃} → if true then t₂ else t₃ ⟹ t₂
+    r-ifFalse     : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟹ t₃
+    r-if          : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹ t₁′ → if t₁ then t₂ else t₃ ⟹ if t₁′ then t₂ else t₃
 
   NormalForm : Term → Set
   NormalForm t = ∀ {t′} → ¬ (t ⟹ t′)
@@ -863,20 +906,6 @@ module NumbersAndBooleansGoWrong where
   bb⇒nf (num nv) = nv⇒nf nv
 
   ⟹-det : ∀ {t t′ t″} → t ⟹ t′ → t ⟹ t″ → t′ ≡ t″
-  ⟹-det (r-ifWrong bb′)      (r-ifWrong bb″)     = refl
-  ⟹-det (r-ifWrong (num ())) r-ifTrue
-  ⟹-det (r-ifWrong (num ())) r-ifFalse
-  ⟹-det (r-ifWrong bb′)      (r-if r″)           = r″ ↯ bb⇒nf bb′
-  ⟹-det r-ifTrue             (r-ifWrong (num ()))
-  ⟹-det r-ifTrue             r-ifTrue            = refl
-  ⟹-det r-ifTrue             (r-if r″)           = r″ ↯ v⇒nf true
-  ⟹-det r-ifFalse            (r-ifWrong (num ()))
-  ⟹-det r-ifFalse            r-ifFalse           = refl
-  ⟹-det r-ifFalse            (r-if r″)           = r″ ↯ v⇒nf false
-  ⟹-det (r-if r′)            (r-ifWrong bb″)     = r′ ↯ bb⇒nf bb″
-  ⟹-det (r-if r′)            r-ifTrue            = r′ ↯ v⇒nf true
-  ⟹-det (r-if r′)            r-ifFalse           = r′ ↯ v⇒nf false
-  ⟹-det (r-if r′)            (r-if r″)           = (λ t₁′ → if t₁′ then _ else _) & ⟹-det r′ r″
   ⟹-det (r-sucWrong bn′)     (r-sucWrong bn″)    = refl
   ⟹-det (r-sucWrong bn′)     (r-suc r″)          = r″ ↯ bn⇒nf bn′
   ⟹-det (r-suc r′)           (r-sucWrong bn″)    = r′ ↯ bn⇒nf bn″
@@ -909,30 +938,48 @@ module NumbersAndBooleansGoWrong where
   ⟹-det (r-iszero r′)        r-iszeroZero        = r′ ↯ nv⇒nf zero
   ⟹-det (r-iszero r′)        (r-iszeroSuc nv″)   = r′ ↯ nv⇒nf (suc nv″)
   ⟹-det (r-iszero r′)        (r-iszero r″)       = iszero & ⟹-det r′ r″
+  ⟹-det (r-ifWrong bb′)      (r-ifWrong bb″)     = refl
+  ⟹-det (r-ifWrong (num ())) r-ifTrue
+  ⟹-det (r-ifWrong (num ())) r-ifFalse
+  ⟹-det (r-ifWrong bb′)      (r-if r″)           = r″ ↯ bb⇒nf bb′
+  ⟹-det r-ifTrue             (r-ifWrong (num ()))
+  ⟹-det r-ifTrue             r-ifTrue            = refl
+  ⟹-det r-ifTrue             (r-if r″)           = r″ ↯ v⇒nf true
+  ⟹-det r-ifFalse            (r-ifWrong (num ()))
+  ⟹-det r-ifFalse            r-ifFalse           = refl
+  ⟹-det r-ifFalse            (r-if r″)           = r″ ↯ v⇒nf false
+  ⟹-det (r-if r′)            (r-ifWrong bb″)     = r′ ↯ bb⇒nf bb″
+  ⟹-det (r-if r′)            r-ifTrue            = r′ ↯ v⇒nf true
+  ⟹-det (r-if r′)            r-ifFalse           = r′ ↯ v⇒nf false
+  ⟹-det (r-if r′)            (r-if r″)           = (λ t₁′ → if t₁′ then _ else _) & ⟹-det r′ r″
 
   -- t ⟹* t′ means that t reduces to t′ in some number of steps
   infix 3 _⟹*_
   data _⟹*_ : Term → Term → Set where
-    done : ∀ {t} → t ⟹* t
-    step : ∀ {t t′ t″} → t ⟹ t′ → t′ ⟹* t″ → t ⟹* t″
+    []  : ∀ {t} → t ⟹* t
+    _∷_ : ∀ {t t′ t″} → t ⟹ t′ → t′ ⟹* t″ → t ⟹* t″
 
-  unstep : ∀ {t t′ u} → Value u → t ⟹ t′ → t ⟹* u → t′ ⟹* u
-  unstep v r′ done        = r′ ↯ v⇒nf v
-  unstep v r′ (step r rs) with ⟹-det r′ r
-  ... | refl              = rs
+  undoStep : ∀ {t t′ u} → Value u → t ⟹ t′ → t ⟹* u → t′ ⟹* u
+  undoStep v r′ []       = r′ ↯ v⇒nf v
+  undoStep v r′ (r ∷ rs) with ⟹-det r′ r
+  ... | refl             = rs
 
   ⟹*-det : ∀ {t u u′} → Value u → Value u′ → t ⟹* u → t ⟹* u′ → u ≡ u′
-  ⟹*-det v v′ done        done          = refl
-  ⟹*-det v v′ done        (step r′ rs′) = r′ ↯ v⇒nf v
-  ⟹*-det v v′ (step r rs) rs′           = ⟹*-det v v′ rs (unstep v′ r rs′)
+  ⟹*-det v v′ []       []         = refl
+  ⟹*-det v v′ []       (r′ ∷ rs′) = r′ ↯ v⇒nf v
+  ⟹*-det v v′ (r ∷ rs) rs′        = ⟹*-det v v′ rs (undoStep v′ r rs′)
 
-  steps : ∀ {t t′ t″} → t ⟹* t′ → t′ ⟹* t″ → t ⟹* t″
-  steps done          rs″ = rs″
-  steps (step r′ rs′) rs″ = step r′ (steps rs′ rs″)
+  _++_ : ∀ {t t′ t″} → t ⟹* t′ → t′ ⟹* t″ → t ⟹* t″
+  []         ++ rs″ = rs″
+  (r′ ∷ rs′) ++ rs″ = r′ ∷ (rs′ ++ rs″)
 
-  rs-if : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹* t₁′ → if t₁ then t₂ else t₃ ⟹* if t₁′ then t₂ else t₃
-  rs-if done        = done
-  rs-if (step r rs) = step (r-if r) (rs-if rs)
+  _∷ʳ_ : ∀ {t t′ t″} → t ⟹* t′ → t′ ⟹ t″ → t ⟹* t″
+  rs′ ∷ʳ r″ = rs′ ++ (r″ ∷ [])
+
+  map : ∀ {t t′} {R : Term → Term} (f : ∀ {u u′} → u ⟹ u′ → R u ⟹ R u′) →
+        t ⟹* t′ → R t ⟹* R t′
+  map f []       = []
+  map f (r ∷ rs) = (f r) ∷ (map f rs)
 
   -- t ⇓ u means that t evaluates to u
   infix 3 _⇓_
@@ -944,7 +991,7 @@ module NumbersAndBooleansGoWrong where
   t ⇓ = ∃ λ u → t ⇓ u
 
   halt-ifTrue : ∀ {t₁ t₂ t₃} → t₁ ⟹* true → t₂ ⇓ → if t₁ then t₂ else t₃ ⇓
-  halt-ifTrue rs₁ (u₂ , v₂ , rs₂) = u₂ , v₂ , steps (rs-if rs₁) (step r-ifTrue rs₂)
+  halt-ifTrue rs₁ (u₂ , v₂ , rs₂) = u₂ , v₂ , (map r-if rs₁) ++ (r-ifTrue ∷ rs₂)
 
   halt-ifFalse : ∀ {t₁ t₂ t₃} → t₁ ⟹* false → t₃ ⇓ → if t₁ then t₂ else t₃ ⇓
-  halt-ifFalse rs₁ (u₃ , v₃ , rs₃) = u₃ , v₃ , steps (rs-if rs₁) (step r-ifFalse rs₃)
+  halt-ifFalse rs₁ (u₃ , v₃ , rs₃) = u₃ , v₃ , (map r-if rs₁) ++ (r-ifFalse ∷ rs₃)
