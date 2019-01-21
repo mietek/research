@@ -618,11 +618,11 @@ module BooleansOnly-Part2
 -- To prove this theorem, we’re first going to show that every term is either a value, or reducible
 -- to another term.
 
-    data Value|Reducible : Pred₀ Term where
-      val : ∀ {t} → Value t → Value|Reducible t
-      red : ∀ {t} → Reducible t → Value|Reducible t
+    data Value/Reducible : Pred₀ Term where
+      val : ∀ {t} → Value t → Value/Reducible t
+      red : ∀ {t} → Reducible t → Value/Reducible t
 
-    classify : ∀ t → Value|Reducible t
+    classify : ∀ t → Value/Reducible t
     classify true                    = val true
     classify false                   = val false
     classify (if t₁ then t₂ else t₃) with classify t₁
@@ -1142,11 +1142,11 @@ module NumbersAndBooleansGoWrong
 
 -- Every term is either a value, or reducible to another term.
 
-    data Value|Reducible : Pred₀ Term where
-      val : ∀ {t} → Value t → Value|Reducible t
-      red : ∀ {t} → Reducible t → Value|Reducible t
+    data Value/Reducible : Pred₀ Term where
+      val : ∀ {t} → Value t → Value/Reducible t
+      red : ∀ {t} → Reducible t → Value/Reducible t
 
-    classify : ∀ t → Value|Reducible t
+    classify : ∀ t → Value/Reducible t
     classify wrong                   = val wrong
     classify true                    = val true
     classify false                   = val false
