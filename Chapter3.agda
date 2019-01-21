@@ -1,108 +1,123 @@
+----------------------------------------------------------------------------------------------------
+
 module Chapter3 where
 
-open import Data.Nat using (_≤_ ; _<_ ; _+_ ; _⊔_ ; ℕ ; s≤s ; suc ; zero)
+import Data.Nat as Nat
+open Nat
+  using (_≤_ ; _<_ ; _+_ ; s≤s ; suc ; zero)
+  renaming (ℕ to Nat)
+
 import Data.Nat.Properties as Nat
-open import Data.Product using (_×_ ; _,_ ; Σ ; ∃ ; proj₁ ; proj₂)
-open import Data.Sum using (_⊎_ ; inj₁ ; inj₂)
-import Level
+open Nat.≤-Reasoning
+
+open import Data.Product
+  using (_×_ ; _,_ ; Σ ; ∃ ; proj₁ ; proj₂)
+
+open import Data.Sum
+  using (_⊎_ ; inj₁ ; inj₂)
+
+open import Level
+  using (_⊔_ ; 0ℓ)
+
+open import Relation.Binary
+  using (_=[_]⇒_ ; Decidable ; DecSetoid ; Rel)
+
 import Relation.Binary.PropositionalEquality as PropEq
-open PropEq using (_≡_ ; _≢_ ; refl ; subst) renaming (cong to _&_ ; sym to _⁻¹)
-import Relation.Binary as BinRel
-open import Relation.Nullary using (¬_ ; Dec ; no ; yes)
-open import Relation.Nullary.Negation using (contraposition) renaming (contradiction to _↯_)
-import Relation.Unary as UnRel
+open PropEq
+  using (_≡_ ; _≢_ ; refl ; subst)
+  renaming (cong to _&_) -- ; sym to _⁻¹)
 
-open import Prelude-UniqueList
-open import Prelude-WellFounded
+import Relation.Binary.Construct.Closure.ReflexiveTransitive as Star
+open Star
+  using ()
+  renaming (Star to _* ; ε to [] ; _◅_ to _∷_ ; _◅◅_ to _++_)
 
+open import Relation.Nullary
+  using (¬_ ; Dec ; no ; yes)
 
-module _ where
-  infixl 8 _⊗_
-  _⊗_ : ∀ {a b} {A : Set a} {B : Set b} {f g : A → B} {x y : A} → f ≡ g → x ≡ y → f x ≡ g y
-  refl ⊗ refl = refl
+open import Relation.Nullary.Negation
+  renaming (contradiction to _↯_)
 
-  coerce : ∀ {ℓ} {A B : Set ℓ} → A → A ≡ B → B
-  coerce x refl = x
-
-
-module ReductionKit₁ {t ℓ} {Term : Set t} (_⟹_ : Term → Term → Set ℓ) where
-  -- t ⟹* t′ means that t reduces to t′ in some number of steps
-  infix 3 _⟹*_
-  data _⟹*_ : Term → Term → Set (t Level.⊔ ℓ) where
-    []  : ∀ {t} → t ⟹* t
-    _∷_ : ∀ {t t′ t″} → t ⟹ t′ → t′ ⟹* t″ → t ⟹* t″
-
-  NormalForm : Term → Set (t Level.⊔ ℓ)
-  NormalForm t = ∀ {t′} → ¬ (t ⟹ t′)
-
-  Reducible : Term → Set (t Level.⊔ ℓ)
-  Reducible t = ∃ λ t′ → t ⟹ t′
-
-  nf⇒¬ρ : ∀ {t} → NormalForm t → ¬ Reducible t
-  nf⇒¬ρ nf (_ , r) = r ↯ nf
-
-  ¬ρ⇒nf : ∀ {t} → ¬ Reducible t → NormalForm t
-  ¬ρ⇒nf ¬ρ r = (_ , r) ↯ ¬ρ
+open import Relation.Unary
+  using (Pred)
 
 
-module ReductionKit₂ {t ℓ} {Term : Set t} (_⟹_ : Term → Term → Set ℓ)
-                                          (⟹-det : ∀ {t t′ t″} → t ⟹ t′ → t ⟹ t″ → t′ ≡ t″) where
-  open ReductionKit₁ _⟹_
+----------------------------------------------------------------------------------------------------
+--
+-- TODO: Put this in a separate module
 
-  chopHead : ∀ {t t′ u} → NormalForm u → t ⟹ t′ → t ⟹* u → t′ ⟹* u
-  chopHead nf r []         = r ↯ nf
-  chopHead nf r (r′ ∷ rs′) with ⟹-det r r′
-  ... | refl               = rs′
+infixl 8 _⊗_
+_⊗_ : ∀ {a b} {A : Set a} {B : Set b} {f g : A → B} {x y : A} →
+      f ≡ g → x ≡ y → f x ≡ g y
+refl ⊗ refl = refl
 
-  ⟹*-det : ∀ {t u u′} → NormalForm u → NormalForm u′ → t ⟹* u → t ⟹* u′ → u ≡ u′
-  ⟹*-det nf nf′ []       []         = refl
-  ⟹*-det nf nf′ []       (r′ ∷ rs′) = r′ ↯ nf
-  ⟹*-det nf nf′ (r ∷ rs) rs′        = ⟹*-det nf nf′ rs (chopHead nf′ r rs′)
+coerce : ∀ {ℓ} {A B : Set ℓ} → A → A ≡ B → B
+coerce x refl = x
 
-  _++_ : ∀ {t t′ t″} → t ⟹* t′ → t′ ⟹* t″ → t ⟹* t″
-  []         ++ rs″ = rs″
-  (r′ ∷ rs′) ++ rs″ = r′ ∷ (rs′ ++ rs″)
+Pred₀ : ∀ {a} → Set a → Set _
+Pred₀ A = Pred A 0ℓ
 
-  _∷ʳ_ : ∀ {t t′ t″} → t ⟹* t′ → t′ ⟹ t″ → t ⟹* t″
-  rs′ ∷ʳ r″ = rs′ ++ (r″ ∷ [])
-
-  map : ∀ {t t′} {R : Term → Term} (f : ∀ {u u′} → u ⟹ u′ → R u ⟹ R u′) →
-        t ⟹* t′ → R t ⟹* R t′
-  map f []       = []
-  map f (r ∷ rs) = (f r) ∷ (map f rs)
+Rel₀ : ∀ {a} → Set a → Set _
+Rel₀ A = Rel A 0ℓ
 
 
+----------------------------------------------------------------------------------------------------
+--
 -- 3. Untyped arithmetic expressions
-
+--
 -- 3.1. Introduction
-
+--
 -- 3.2. Syntax
 
+
+----------------------------------------------------------------------------------------------------
+--
 -- 3.2.1. Definition [Terms, inductively]
+-- “The set of _terms_ is the smallest set `T` such that …”
 
-module NumbersAndBooleans where
-  data Term : Set where
-    true false zero : Term
-    suc pred iszero : (t₁ : Term) → Term
-    if_then_else    : (t₁ t₂ t₃ : Term) → Term
+module NumbersAndBooleans-Part1
+  where
+    data Term : Set₀ where
+      true false zero : Term
+      suc pred iszero : (t₁ : Term) → Term
+      if_then_else    : (t₁ t₂ t₃ : Term) → Term
 
 
--- 3.2.2. Definition [Terms, by inference rules] (redundant)
+----------------------------------------------------------------------------------------------------
+--
+-- 3.2.2. Definition [Terms, by inference rules]
+-- “The set of terms is defined by the following rules: …”
+-- (redundant)
+--
+-- 3.2.3. Definition [Terms, concretely]
+-- “For each natural number `i`, define a set `Sᵢ` as follows: …”
+-- (redundant)
+--
+-- 3.2.4. Exercise [⋆⋆]
+-- “How many elements does S₃ have?”
+-- (skipped)
+--
+-- 3.2.5. Exercise [⋆⋆]
+-- “Show that the sets `Sᵢ` are _cumulative_—that is, that for each `i` we have `Sᵢ ⊆ Sᵢ₊₁`.”
+-- (skipped)
+--
+-- 3.2.6. Proposition
+-- “`T = S`.”
+-- (skipped)
 
--- 3.2.3. Definition [Terms, concretely] (redundant)
 
--- 3.2.4. Exercise (skipped)
-
--- 3.2.5. Exercise (skipped)
-
--- 3.2.6. Proposition (skipped)
-
+----------------------------------------------------------------------------------------------------
+--
 -- 3.3. Induction on terms
+--
+-- Since we’re working in type theory, we’re going to need a type of containers that are not allowed
+-- to contain duplicate elements, `UniqueList`.  To put terms in such a container, we’re going to
+-- need a decidable equality on terms.  Therefore, we’re going to show that the built-in Agda
+-- equality, `_≡_`, is decidable for terms.
 
--- 3.3.1. Definition
+    open import Prelude-UniqueList public
 
-  module _ where
-    _≟_ : BinRel.Decidable {A = Term} _≡_
+    _≟_ : Decidable {A = Term} _≡_
     true                  ≟ true                  = yes refl
     true                  ≟ false                 = no λ ()
     true                  ≟ zero                  = no λ ()
@@ -163,7 +178,7 @@ module NumbersAndBooleans where
     ... | _        | no s₂≢t₂ | _                 = no λ where refl → refl ↯ s₂≢t₂
     ... | _        | _        | no s₃≢t₃          = no λ where refl → refl ↯ s₃≢t₃
 
-    Term-decSetoid : BinRel.DecSetoid _ _
+    Term-decSetoid : DecSetoid _ _
     Term-decSetoid = record
       { Carrier = Term
       ; _≈_     = _≡_
@@ -175,68 +190,92 @@ module NumbersAndBooleans where
 
     open module UniqueList-Term = MakeUniqueList (Term-decSetoid) public
 
-  consts : Term → UniqueList
-  consts true                    = [ true ]
-  consts false                   = [ false ]
-  consts zero                    = [ zero ]
-  consts (suc t₁)                = consts t₁
-  consts (pred t₁)               = consts t₁
-  consts (iszero t₁)             = consts t₁
-  consts (if t₁ then t₂ else t₃) = consts t₁ ∪ consts t₂ ∪ consts t₃
+
+----------------------------------------------------------------------------------------------------
+--
+-- 3.3.1. Definition
+-- “The set of constants appearing in a term `t`, written `consts(t)`, is defined as follows: …”
+
+    consts : Term → UniqueList
+    consts true                    = [ true ]
+    consts false                   = [ false ]
+    consts zero                    = [ zero ]
+    consts (suc t₁)                = consts t₁
+    consts (pred t₁)               = consts t₁
+    consts (iszero t₁)             = consts t₁
+    consts (if t₁ then t₂ else t₃) = consts t₁ ∪ consts t₂ ∪ consts t₃
 
 
+----------------------------------------------------------------------------------------------------
+--
 -- 3.3.2. Definition
+-- “The _size_ of a term `t`, written `size(t)`, is defined as follows: …”
+-- “Similarly, the _depth_ of a term `t`, written `depth(t)`, is defined as follows: …”
 
-  size : Term → ℕ
-  size true                    = 1
-  size false                   = 1
-  size zero                    = 1
-  size (suc t₁)                = 1 + size t₁
-  size (pred t₁)               = 1 + size t₁
-  size (iszero t₁)             = 1 + size t₁
-  size (if t₁ then t₂ else t₃) = 1 + (size t₁ + size t₂ + size t₃)
+    size : Term → Nat
+    size true                    = 1
+    size false                   = 1
+    size zero                    = 1
+    size (suc t₁)                = 1 + size t₁
+    size (pred t₁)               = 1 + size t₁
+    size (iszero t₁)             = 1 + size t₁
+    size (if t₁ then t₂ else t₃) = 1 + (size t₁ + size t₂ + size t₃)
 
-  depth : Term → ℕ
-  depth true                    = 1
-  depth false                   = 1
-  depth zero                    = 1
-  depth (suc t₁)                = 1 + depth t₁
-  depth (pred t₁)               = 1 + depth t₁
-  depth (iszero t₁)             = 1 + depth t₁
-  depth (if t₁ then t₂ else t₃) = 1 + (depth t₁ ⊔ depth t₂ ⊔ depth t₃)
+    depth : Term → Nat
+    depth true                    = 1
+    depth false                   = 1
+    depth zero                    = 1
+    depth (suc t₁)                = 1 + depth t₁
+    depth (pred t₁)               = 1 + depth t₁
+    depth (iszero t₁)             = 1 + depth t₁
+    depth (if t₁ then t₂ else t₃) = 1 + (depth t₁ Nat.⊔ depth t₂ Nat.⊔ depth t₃)
 
 
+----------------------------------------------------------------------------------------------------
+--
 -- 3.3.3. Lemma
+-- “The number of distinct constants in a term `t` is no greater than the size of `t` (i.e.,
+-- `|consts(t)| ≤ size(t)`).”
+--
+-- As an exercise, we’re going to prove Lemma 3.3.3 using four methods.  First, the most natural
+-- method to use in Agda, a direct proof using pattern matching.
 
-  -- Direct proof using pattern matching
-  module Lemma333-Direct where
-    open Nat.≤-Reasoning
+    module Lemma333-Direct
+      where
+        lem333 : ∀ t → length (consts t) ≤ size t
+        lem333 true                    = Nat.≤-refl
+        lem333 false                   = Nat.≤-refl
+        lem333 zero                    = Nat.≤-refl
+        lem333 (suc t₁)                = Nat.≤-step (lem333 t₁)
+        lem333 (pred t₁)               = Nat.≤-step (lem333 t₁)
+        lem333 (iszero t₁)             = Nat.≤-step (lem333 t₁)
+        lem333 (if t₁ then t₂ else t₃) = Nat.≤-step
+          (begin
+            length (consts t₁ ∪ consts t₂ ∪ consts t₃)
+          ≤⟨ length-triangular (consts t₁ ∪ consts t₂) (consts t₃) ⟩
+            length (consts t₁ ∪ consts t₂) + length (consts t₃)
+          ≤⟨ Nat.+-monoˡ-≤ (length (consts t₃))
+                           (length-triangular (consts t₁) (consts t₂)) ⟩
+            length (consts t₁) + length (consts t₂) + length (consts t₃)
+          ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (lem333 t₁)
+                                        (lem333 t₂))
+                          (lem333 t₃) ⟩
+            size t₁ + size t₂ + size t₃
+          ∎)
 
-    lem333 : ∀ t → length (consts t) ≤ size t
-    lem333 true                    = Nat.≤-refl
-    lem333 false                   = Nat.≤-refl
-    lem333 zero                    = Nat.≤-refl
-    lem333 (suc t₁)                = Nat.≤-step (lem333 t₁)
-    lem333 (pred t₁)               = Nat.≤-step (lem333 t₁)
-    lem333 (iszero t₁)             = Nat.≤-step (lem333 t₁)
-    lem333 (if t₁ then t₂ else t₃) = Nat.≤-step
-      (begin
-        length (consts t₁ ∪ consts t₂ ∪ consts t₃)
-      ≤⟨ length-triangular (consts t₁ ∪ consts t₂) (consts t₃) ⟩
-        length (consts t₁ ∪ consts t₂) + length (consts t₃)
-      ≤⟨ Nat.+-monoˡ-≤ (length (consts t₃)) (length-triangular (consts t₁) (consts t₂)) ⟩
-        length (consts t₁) + length (consts t₂) + length (consts t₃)
-      ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (lem333 t₁) (lem333 t₂)) (lem333 t₃) ⟩
-        size t₁ + size t₂ + size t₃
-      ∎)
 
-
+----------------------------------------------------------------------------------------------------
+--
 -- 3.3.4. Theorem [Principles of induction on terms]
+--
+-- 3.3.4.a. Structural induction
+-- “If, for each term `t`, given `P(s)` for all immediate subterms `s` of `t` we can show `P(t)`,
+-- then `P(t)` holds for all `t`.
+--
+-- We’re going to start by defining what it means for a term to be an immediate subterm of another
+-- term.
 
--- 3.3.4.1. Structural induction
-
-  module _ where
-    data Subterm : Term → Term → Set where
+    data Subterm : Rel₀ Term where
       suc    : ∀ {t₁} → Subterm t₁ (suc t₁)
       pred   : ∀ {t₁} → Subterm t₁ (pred t₁)
       iszero : ∀ {t₁} → Subterm t₁ (iszero t₁)
@@ -244,39 +283,54 @@ module NumbersAndBooleans where
       if₂    : ∀ {t₁ t₂ t₃} → Subterm t₂ (if t₁ then t₂ else t₃)
       if₃    : ∀ {t₁ t₂ t₃} → Subterm t₃ (if t₁ then t₂ else t₃)
 
-  -- Direct definition using pattern matching
-  module IndStruct-Direct where
-    ind-struct : ∀ {ℓ} {P : Term → Set ℓ} → InductionPrinciple Subterm P
-    ind-struct h t@true                 = h t λ s ()
-    ind-struct h t@false                = h t λ s ()
-    ind-struct h t@zero                 = h t λ s ()
-    ind-struct h t@(suc _)              = h t λ where s suc    → ind-struct h s
-    ind-struct h t@(pred _)             = h t λ where s pred   → ind-struct h s
-    ind-struct h t@(iszero _)           = h t λ where s iszero → ind-struct h s
-    ind-struct h t@(if _ then _ else _) = h t λ where s if₁    → ind-struct h s
-                                                      s if₂    → ind-struct h s
-                                                      s if₃    → ind-struct h s
 
-  -- Definition using combinators from the stdlib
-  module IndStruct-Stdlib where
-    import Induction.WellFounded as Stdlib
+-- As an exercise, we’re going to define structural induction using three methods.  First, a direct
+-- definition using pattern matching.
 
-    subterm-wf : Stdlib.WellFounded Subterm
-    subterm-wf s = Stdlib.acc λ where
-      t₁ suc    → subterm-wf t₁
-      t₁ pred   → subterm-wf t₁
-      t₁ iszero → subterm-wf t₁
-      t₁ if₁    → subterm-wf t₁
-      t₂ if₂    → subterm-wf t₂
-      t₃ if₃    → subterm-wf t₃
+    module IndStruct-Direct
+      where
+        ind-struct : ∀ {ℓ} {P : Pred Term ℓ} →
+                     (∀ t → (∀ s → Subterm s t → P s) → P t) → ∀ t → P t
+        ind-struct h t@true                 = h t λ s ()
+        ind-struct h t@false                = h t λ s ()
+        ind-struct h t@zero                 = h t λ s ()
+        ind-struct h t@(suc _)              = h t λ where s suc    → ind-struct h s
+        ind-struct h t@(pred _)             = h t λ where s pred   → ind-struct h s
+        ind-struct h t@(iszero _)           = h t λ where s iszero → ind-struct h s
+        ind-struct h t@(if _ then _ else _) = h t λ where s if₁    → ind-struct h s
+                                                          s if₂    → ind-struct h s
+                                                          s if₃    → ind-struct h s
 
-    module AllSubtermWF {ℓ} = Stdlib.All subterm-wf ℓ
 
-    ind-struct : ∀ {ℓ} {P : Term → Set ℓ} → InductionPrinciple Subterm P
-    ind-struct {P = P} = AllSubtermWF.wfRec P
+-- Second, a definition based on well-founded induction and accessibility, using equipment from
+-- the Agda standard library.  Some of the definitions referenced are a little difficult to
+-- understand, as acknowledged in the documentation.
 
-  -- Definition using custom combinators
-  module _ where
+    module IndStruct-Stdlib
+      where
+        import Induction.WellFounded as Stdlib
+
+        subterm-wf : Stdlib.WellFounded Subterm
+        subterm-wf s = Stdlib.acc λ where
+          t₁ suc    → subterm-wf t₁
+          t₁ pred   → subterm-wf t₁
+          t₁ iszero → subterm-wf t₁
+          t₁ if₁    → subterm-wf t₁
+          t₂ if₂    → subterm-wf t₂
+          t₃ if₃    → subterm-wf t₃
+
+        module AllSubtermWF {ℓ} = Stdlib.All subterm-wf ℓ
+
+        ind-struct : ∀ {ℓ} {P : Pred Term ℓ} →
+                     (∀ t → (∀ s → Subterm s t → P s) → P t) → ∀ t → P t
+        ind-struct {P = P} = AllSubtermWF.wfRec P
+
+
+-- Third, a definition using our own equipment.  We’d like to think that our phrasing of the
+-- concepts involved is a little easier to understand, while being no less general.
+
+    open import Prelude-WellFounded public
+
     subterm-wf : WellFounded Subterm
     subterm-wf s = access s λ where
       t₁ suc    → subterm-wf t₁
@@ -286,202 +340,288 @@ module NumbersAndBooleans where
       t₂ if₂    → subterm-wf t₂
       t₃ if₃    → subterm-wf t₃
 
-  ind-struct : ∀ {ℓ} {P : Term → Set ℓ} → InductionPrinciple Subterm P
-  ind-struct = inductionPrinciple subterm-wf
-
-  -- Proof using structural induction
-  module Lemma333-IndStruct where
-    open Nat.≤-Reasoning
-
-    lem333 : ∀ s → length (consts s) ≤ size s
-    lem333 = ind-struct λ where
-      true                    h → Nat.≤-refl
-      false                   h → Nat.≤-refl
-      zero                    h → Nat.≤-refl
-      (suc t₁)                h → Nat.≤-step (h t₁ suc)
-      (pred t₁)               h → Nat.≤-step (h t₁ pred)
-      (iszero t₁)             h → Nat.≤-step (h t₁ iszero)
-      (if t₁ then t₂ else t₃) h → Nat.≤-step
-        (begin
-          length (consts t₁ ∪ consts t₂ ∪ consts t₃)
-        ≤⟨ length-triangular (consts t₁ ∪ consts t₂) (consts t₃) ⟩
-          length (consts t₁ ∪ consts t₂) + length (consts t₃)
-        ≤⟨ Nat.+-monoˡ-≤ (length (consts t₃)) (length-triangular (consts t₁) (consts t₂)) ⟩
-          length (consts t₁) + length (consts t₂) + length (consts t₃)
-        ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (h t₁ if₁) (h t₂ if₂)) (h t₃ if₃) ⟩
-          size t₁ + size t₂ + size t₃
-        ∎)
+    ind-struct : ∀ {ℓ} {P : Pred Term ℓ} → InductionPrinciple Subterm P
+    ind-struct = inductionPrinciple subterm-wf
 
 
--- 3.3.4.2. Induction on size
+-- A proof of Lemma 3.3.3 using structural induction.
 
-  module _ where
-    LessSize : Term → Term → Set
+    module Lemma333-IndStruct
+      where
+        lem333 : ∀ s → length (consts s) ≤ size s
+        lem333 = ind-struct λ where
+          true                    h → Nat.≤-refl
+          false                   h → Nat.≤-refl
+          zero                    h → Nat.≤-refl
+          (suc t₁)                h → Nat.≤-step (h t₁ suc)
+          (pred t₁)               h → Nat.≤-step (h t₁ pred)
+          (iszero t₁)             h → Nat.≤-step (h t₁ iszero)
+          (if t₁ then t₂ else t₃) h → Nat.≤-step
+            (begin
+              length (consts t₁ ∪ consts t₂ ∪ consts t₃)
+            ≤⟨ length-triangular (consts t₁ ∪ consts t₂) (consts t₃) ⟩
+              length (consts t₁ ∪ consts t₂) + length (consts t₃)
+            ≤⟨ Nat.+-monoˡ-≤ (length (consts t₃))
+                             (length-triangular (consts t₁) (consts t₂)) ⟩
+              length (consts t₁) + length (consts t₂) + length (consts t₃)
+            ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (h t₁ if₁)
+                                          (h t₂ if₂))
+                            (h t₃ if₃) ⟩
+              size t₁ + size t₂ + size t₃
+            ∎)
+
+
+----------------------------------------------------------------------------------------------------
+--
+-- 3.3.4.b. Induction on size
+-- “If, for each term `t`, given `P(s)` for all `s` such that `size(s) < size(t)` we can show
+-- `P(t)`, then `P(t)` holds for all `t`.”
+--
+-- A definition based on well-founded induction.
+
+    LessSize : Rel₀ Term
     LessSize s t = size s < size t
 
     ls-wf : WellFounded LessSize
     ls-wf = InverseImage.wellFounded size <-wf
 
-  ind-size : ∀ {ℓ} {P : Term → Set ℓ} → InductionPrinciple LessSize P
-  ind-size = inductionPrinciple ls-wf
-
-  -- Proof using induction on size
-  module Lemma333-IndSize where
-    open Nat.≤-Reasoning
-
-    module _ where
-      m≤m+n+o : ∀ m n o → m ≤ m + n + o
-      m≤m+n+o m n o = Nat.≤-trans (Nat.m≤m+n m n) (Nat.m≤m+n (m + n) o)
-
-      n≤m+n+o : ∀ m n o → n ≤ m + n + o
-      n≤m+n+o m n o = Nat.≤-trans (Nat.n≤m+n m n) (Nat.m≤m+n (m + n) o)
-
-      o≤m+n+o : ∀ m n o → o ≤ m + n + o
-      o≤m+n+o m n o = Nat.n≤m+n (m + n) o
-
-    ls-if₁ : ∀ t₁ t₂ t₃ → LessSize t₁ (if t₁ then t₂ else t₃)
-    ls-if₁ t₁ t₂ t₃ = s≤s (m≤m+n+o (size t₁) (size t₂) (size t₃))
-
-    ls-if₂ : ∀ t₁ t₂ t₃ → LessSize t₂ (if t₁ then t₂ else t₃)
-    ls-if₂ t₁ t₂ t₃ = s≤s (n≤m+n+o (size t₁) (size t₂) (size t₃))
-
-    ls-if₃ : ∀ t₁ t₂ t₃ → LessSize t₃ (if t₁ then t₂ else t₃)
-    ls-if₃ t₁ t₂ t₃ = s≤s (o≤m+n+o (size t₁) (size t₂) (size t₃))
-
-    lem333 : ∀ s → length (consts s) ≤ size s
-    lem333 = ind-size λ where
-      true                    h → Nat.≤-refl
-      false                   h → Nat.≤-refl
-      zero                    h → Nat.≤-refl
-      (suc t₁)                h → Nat.≤-step (h t₁ Nat.≤-refl)
-      (pred t₁)               h → Nat.≤-step (h t₁ Nat.≤-refl)
-      (iszero t₁)             h → Nat.≤-step (h t₁ Nat.≤-refl)
-      (if t₁ then t₂ else t₃) h → Nat.≤-step
-        (begin
-          length (consts t₁ ∪ consts t₂ ∪ consts t₃)
-        ≤⟨ length-triangular (consts t₁ ∪ consts t₂) (consts t₃) ⟩
-          length (consts t₁ ∪ consts t₂) + length (consts t₃)
-        ≤⟨ Nat.+-monoˡ-≤ (length (consts t₃)) (length-triangular (consts t₁) (consts t₂)) ⟩
-          length (consts t₁) + length (consts t₂) + length (consts t₃)
-        ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (h t₁ (ls-if₁ t₁ t₂ t₃)) (h t₂ (ls-if₂ t₁ t₂ t₃))) (h t₃ (ls-if₃ t₁ t₂ t₃)) ⟩
-          size t₁ + size t₂ + size t₃
-        ∎)
+    ind-size : ∀ {ℓ} {P : Pred Term ℓ} → InductionPrinciple LessSize P
+    ind-size = inductionPrinciple ls-wf
 
 
--- 3.3.4.3. Induction on depth
+-- Another proof of Lemma 3.3.3 using induction on size.
 
-  module _ where
-    LessDepth : Term → Term → Set
+    module Lemma333-IndSize
+      where
+        m≤m+n+o : ∀ m n o → m ≤ m + n + o
+        m≤m+n+o m n o = Nat.≤-trans (Nat.m≤m+n m n) (Nat.m≤m+n (m + n) o)
+
+        n≤m+n+o : ∀ m n o → n ≤ m + n + o
+        n≤m+n+o m n o = Nat.≤-trans (Nat.n≤m+n m n) (Nat.m≤m+n (m + n) o)
+
+        o≤m+n+o : ∀ m n o → o ≤ m + n + o
+        o≤m+n+o m n o = Nat.n≤m+n (m + n) o
+
+        ls-if₁ : ∀ t₁ t₂ t₃ → LessSize t₁ (if t₁ then t₂ else t₃)
+        ls-if₁ t₁ t₂ t₃ = s≤s (m≤m+n+o (size t₁) (size t₂) (size t₃))
+
+        ls-if₂ : ∀ t₁ t₂ t₃ → LessSize t₂ (if t₁ then t₂ else t₃)
+        ls-if₂ t₁ t₂ t₃ = s≤s (n≤m+n+o (size t₁) (size t₂) (size t₃))
+
+        ls-if₃ : ∀ t₁ t₂ t₃ → LessSize t₃ (if t₁ then t₂ else t₃)
+        ls-if₃ t₁ t₂ t₃ = s≤s (o≤m+n+o (size t₁) (size t₂) (size t₃))
+
+        lem333 : ∀ s → length (consts s) ≤ size s
+        lem333 = ind-size λ where
+          true                    h → Nat.≤-refl
+          false                   h → Nat.≤-refl
+          zero                    h → Nat.≤-refl
+          (suc t₁)                h → Nat.≤-step (h t₁ Nat.≤-refl)
+          (pred t₁)               h → Nat.≤-step (h t₁ Nat.≤-refl)
+          (iszero t₁)             h → Nat.≤-step (h t₁ Nat.≤-refl)
+          (if t₁ then t₂ else t₃) h → Nat.≤-step
+            (begin
+              length (consts t₁ ∪ consts t₂ ∪ consts t₃)
+            ≤⟨ length-triangular (consts t₁ ∪ consts t₂) (consts t₃) ⟩
+              length (consts t₁ ∪ consts t₂) + length (consts t₃)
+            ≤⟨ Nat.+-monoˡ-≤ (length (consts t₃))
+                             (length-triangular (consts t₁) (consts t₂)) ⟩
+              length (consts t₁) + length (consts t₂) + length (consts t₃)
+            ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (h t₁ (ls-if₁ t₁ t₂ t₃))
+                                          (h t₂ (ls-if₂ t₁ t₂ t₃)))
+                            (h t₃ (ls-if₃ t₁ t₂ t₃)) ⟩
+              size t₁ + size t₂ + size t₃
+            ∎)
+
+
+----------------------------------------------------------------------------------------------------
+--
+-- 3.3.4.c. Induction on depth
+-- “If, for each term `t`, given `P(s)` for all `s` such that `depth(s) < depth(t)` we can show
+-- `P(t)`, then `P(t)` holds for all `t`.”
+--
+-- A definition based on well-founded induction.
+
+    LessDepth : Rel₀ Term
     LessDepth s t = depth s < depth t
 
     ld-wf : WellFounded LessDepth
     ld-wf = InverseImage.wellFounded depth <-wf
 
-  ind-depth : ∀ {ℓ} {P : Term → Set ℓ} → InductionPrinciple LessDepth P
-  ind-depth = inductionPrinciple ld-wf
-
-  -- Proof using induction on depth
-  module Lemma333-IndDepth where
-    open Nat.≤-Reasoning
-
-    module _ where
-      m≤m⊔n⊔o : ∀ m n o → m ≤ m ⊔ n ⊔ o
-      m≤m⊔n⊔o m n o = Nat.≤-trans (Nat.m≤m⊔n m n) (Nat.m≤m⊔n (m ⊔ n) o)
-
-      n≤m⊔n⊔o : ∀ m n o → n ≤ m ⊔ n ⊔ o
-      n≤m⊔n⊔o m n o = Nat.≤-trans (Nat.n≤m⊔n m n) (Nat.m≤m⊔n (m ⊔ n) o)
-
-      o≤m⊔n⊔o : ∀ m n o → o ≤ m ⊔ n ⊔ o
-      o≤m⊔n⊔o m n o = Nat.n≤m⊔n (m ⊔ n) o
-
-    ld-if₁ : ∀ t₁ t₂ t₃ → LessDepth t₁ (if t₁ then t₂ else t₃)
-    ld-if₁ t₁ t₂ t₃ = s≤s (m≤m⊔n⊔o (depth t₁) (depth t₂) (depth t₃))
-
-    ld-if₂ : ∀ t₁ t₂ t₃ → LessDepth t₂ (if t₁ then t₂ else t₃)
-    ld-if₂ t₁ t₂ t₃ = s≤s (n≤m⊔n⊔o (depth t₁) (depth t₂) (depth t₃))
-
-    ld-if₃ : ∀ t₁ t₂ t₃ → LessDepth t₃ (if t₁ then t₂ else t₃)
-    ld-if₃ t₁ t₂ t₃ = s≤s (o≤m⊔n⊔o (depth t₁) (depth t₂) (depth t₃))
-
-    lem333 : ∀ s → length (consts s) ≤ size s
-    lem333 = ind-depth λ where
-      true                    h → Nat.≤-refl
-      false                   h → Nat.≤-refl
-      zero                    h → Nat.≤-refl
-      (suc t₁)                h → Nat.≤-step (h t₁ Nat.≤-refl)
-      (pred t₁)               h → Nat.≤-step (h t₁ Nat.≤-refl)
-      (iszero t₁)             h → Nat.≤-step (h t₁ Nat.≤-refl)
-      (if t₁ then t₂ else t₃) h → Nat.≤-step
-        (begin
-          length (consts t₁ ∪ consts t₂ ∪ consts t₃)
-        ≤⟨ length-triangular (consts t₁ ∪ consts t₂) (consts t₃) ⟩
-          length (consts t₁ ∪ consts t₂) + length (consts t₃)
-        ≤⟨ Nat.+-monoˡ-≤ (length (consts t₃)) (length-triangular (consts t₁) (consts t₂)) ⟩
-          length (consts t₁) + length (consts t₂) + length (consts t₃)
-        ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (h t₁ (ld-if₁ t₁ t₂ t₃)) (h t₂ (ld-if₂ t₁ t₂ t₃))) (h t₃ (ld-if₃ t₁ t₂ t₃)) ⟩
-          size t₁ + size t₂ + size t₃
-        ∎)
+    ind-depth : ∀ {ℓ} {P : Pred Term ℓ} → InductionPrinciple LessDepth P
+    ind-depth = inductionPrinciple ld-wf
 
 
+-- Another proof of Lemma 3.3.3 using induction on depth.
+
+    module Lemma333-IndDepth
+      where
+        m≤m⊔n⊔o : ∀ m n o → m ≤ m Nat.⊔ n Nat.⊔ o
+        m≤m⊔n⊔o m n o = Nat.≤-trans (Nat.m≤m⊔n m n) (Nat.m≤m⊔n (m Nat.⊔ n) o)
+
+        n≤m⊔n⊔o : ∀ m n o → n ≤ m Nat.⊔ n Nat.⊔ o
+        n≤m⊔n⊔o m n o = Nat.≤-trans (Nat.n≤m⊔n m n) (Nat.m≤m⊔n (m Nat.⊔ n) o)
+
+        o≤m⊔n⊔o : ∀ m n o → o ≤ m Nat.⊔ n Nat.⊔ o
+        o≤m⊔n⊔o m n o = Nat.n≤m⊔n (m Nat.⊔ n) o
+
+        ld-if₁ : ∀ t₁ t₂ t₃ → LessDepth t₁ (if t₁ then t₂ else t₃)
+        ld-if₁ t₁ t₂ t₃ = s≤s (m≤m⊔n⊔o (depth t₁) (depth t₂) (depth t₃))
+
+        ld-if₂ : ∀ t₁ t₂ t₃ → LessDepth t₂ (if t₁ then t₂ else t₃)
+        ld-if₂ t₁ t₂ t₃ = s≤s (n≤m⊔n⊔o (depth t₁) (depth t₂) (depth t₃))
+
+        ld-if₃ : ∀ t₁ t₂ t₃ → LessDepth t₃ (if t₁ then t₂ else t₃)
+        ld-if₃ t₁ t₂ t₃ = s≤s (o≤m⊔n⊔o (depth t₁) (depth t₂) (depth t₃))
+
+        lem333 : ∀ s → length (consts s) ≤ size s
+        lem333 = ind-depth λ where
+          true                    h → Nat.≤-refl
+          false                   h → Nat.≤-refl
+          zero                    h → Nat.≤-refl
+          (suc t₁)                h → Nat.≤-step (h t₁ Nat.≤-refl)
+          (pred t₁)               h → Nat.≤-step (h t₁ Nat.≤-refl)
+          (iszero t₁)             h → Nat.≤-step (h t₁ Nat.≤-refl)
+          (if t₁ then t₂ else t₃) h → Nat.≤-step
+            (begin
+              length (consts t₁ ∪ consts t₂ ∪ consts t₃)
+            ≤⟨ length-triangular (consts t₁ ∪ consts t₂) (consts t₃) ⟩
+              length (consts t₁ ∪ consts t₂) + length (consts t₃)
+            ≤⟨ Nat.+-monoˡ-≤ (length (consts t₃))
+                             (length-triangular (consts t₁) (consts t₂)) ⟩
+              length (consts t₁) + length (consts t₂) + length (consts t₃)
+            ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (h t₁ (ld-if₁ t₁ t₂ t₃))
+                                          (h t₂ (ld-if₂ t₁ t₂ t₃)))
+                            (h t₃ (ld-if₃ t₁ t₂ t₃)) ⟩
+              size t₁ + size t₂ + size t₃
+            ∎)
+
+
+----------------------------------------------------------------------------------------------------
+--
 -- 3.4. Semantic styles
-
+--
 -- 3.5. Evaluation
+--
+-- In this section, we leave numbers aside and focus on boolean expressions.
 
--- 3.5.1. Definition (redundant)
-
--- 3.5.2. Definition (redundant)
-
--- 3.5.3. Definition
-
-module BooleansOnly where
-  module _ where
-    data Term : Set where
+module BooleansOnly-Part1
+  where
+    data Term : Set₀ where
       true false   : Term
       if_then_else : (t₁ t₂ t₃ : Term) → Term
 
-    data Value : Term → Set where
+    data Value : Pred₀ Term where
       true  : Value true
       false : Value false
 
-  -- t ⟹ t′ means that t reduces to t′ in one step
-  infix 3 _⟹_
-  data _⟹_ : Term → Term → Set where
-    r-ifTrue  : ∀ {t₂ t₃} → if true then t₂ else t₃ ⟹ t₂
-    r-ifFalse : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟹ t₃
-    r-if      : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹ t₁′ → if t₁ then t₂ else t₃ ⟹ if t₁′ then t₂ else t₃
 
-  open ReductionKit₁ _⟹_ public
+----------------------------------------------------------------------------------------------------
+--
+-- 3.5.1. Definition
+-- “An _instance_ of an inference rule is obtained by consistently replacing each metavariable by
+-- the same term in the rule’s conclusion and all its premises (if any).”
+--
+-- In Agda, we model inference rules as constructors of inductive type families.  Thus, instances of
+-- inference rules are obtained using Agda’s built-in notion of substitution.
+--
+-- 3.5.2. Definition
+-- “A rule is _satisfied_ by a relation if, for each instance of the rule, either the conclusion is
+-- in the relation or one of the premises is not.”
+--
+-- In our model, a rule is satisfied by an inductive type family if, given evidence for all of the
+-- premises, a constructor of the type family serves as evidence for the conclusion.
 
 
+----------------------------------------------------------------------------------------------------
+--
+-- 3.5.3. Definition
+-- “The _one-step reduction_ relation `⟹` is the smallest binary relation on terms satisfying the
+-- three rules in …”
+--
+-- We say `t ⟹ t′` to mean that `t` reduces to `t′` in one step.
+
+    infix 3 _⟹_
+    data _⟹_ : Rel₀ Term where
+      r-ifTrue  : ∀ {t₂ t₃} → if true then t₂ else t₃ ⟹ t₂
+      r-ifFalse : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟹ t₃
+      r-if      : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹ t₁′ → if t₁ then t₂ else t₃ ⟹ if t₁′ then t₂ else t₃
+
+
+----------------------------------------------------------------------------------------------------
+--
 -- 3.5.4. Theorem [Determinacy of one-step reduction]
+-- “If `t ⟹ t′` and `t ⟹ t″`, then `t′ = t″`.
+--
+-- Before we can prove this theorem, we need to jump ahead to Definition 3.5.6 and say what it
+-- means for a term to be in _normal form_.  In type theory, it is often more convenient to use a
+-- positive definition.  For this reason, we also define what it means for a term to be _reducible_.
+-- We give both definitions in a generic manner, parametrised by the one-step reduction relation, so
+-- that we can reuse them in later sections.
 
-  module _ where
+module NormalForms {t ℓ} {Term : Set t}
+    (_⟹_ : Rel Term ℓ)
+  where
+    NormalForm : Pred Term (t ⊔ ℓ)
+    NormalForm t = ∀ {t′} → ¬ (t ⟹ t′)
+
+    Reducible : Pred Term (t ⊔ ℓ)
+    Reducible t = ∃ λ t′ → t ⟹ t′
+
+    nf⇒¬ρ : ∀ {t} → NormalForm t → ¬ Reducible t
+    nf⇒¬ρ nf (_ , r) = r ↯ nf
+
+    ¬ρ⇒nf : ∀ {t} → ¬ Reducible t → NormalForm t
+    ¬ρ⇒nf ¬ρ r = (_ , r) ↯ ¬ρ
+
+
+-- We also need to jump ahead to Theorem 3.5.7, and show that every value is in normal form.
+
+module BooleansOnly-Part2
+  where
+    open BooleansOnly-Part1 public
+    open NormalForms _⟹_ public
+
     v⇒nf : ∀ {t} → Value t → NormalForm t
-    v⇒nf true  ()
-    v⇒nf false ()
+    v⇒nf true  = λ ()
+    v⇒nf false = λ ()
 
-  ⟹-det : ∀ {t t′ t″} → t ⟹ t′ → t ⟹ t″ → t′ ≡ t″
-  ⟹-det r-ifTrue  r-ifTrue  = refl
-  ⟹-det r-ifTrue  (r-if r′) = r′ ↯ v⇒nf true
-  ⟹-det r-ifFalse r-ifFalse = refl
-  ⟹-det r-ifFalse (r-if r′) = r′ ↯ v⇒nf false
-  ⟹-det (r-if r)  r-ifTrue  = r ↯ v⇒nf true
-  ⟹-det (r-if r)  r-ifFalse = r ↯ v⇒nf false
-  ⟹-det (r-if r)  (r-if r′) = (λ s₁ → if s₁ then _ else _) & ⟹-det r r′
-
-  open ReductionKit₂ _⟹_ ⟹-det public
+    ⟹-det : ∀ {t t′ t″} → t ⟹ t′ → t ⟹ t″ → t′ ≡ t″
+    ⟹-det r-ifTrue  r-ifTrue  = refl
+    ⟹-det r-ifTrue  (r-if r′) = r′ ↯ v⇒nf true
+    ⟹-det r-ifFalse r-ifFalse = refl
+    ⟹-det r-ifFalse (r-if r′) = r′ ↯ v⇒nf false
+    ⟹-det (r-if r)  r-ifTrue  = r ↯ v⇒nf true
+    ⟹-det (r-if r)  r-ifFalse = r ↯ v⇒nf false
+    ⟹-det (r-if r)  (r-if r′) = (λ s₁ → if s₁ then _ else _) & ⟹-det r r′
 
 
--- 3.5.5. Exercise (skipped)
+----------------------------------------------------------------------------------------------------
+--
+-- 3.5.5. Exercise [⋆]
+-- “Spell out the induction principle used in the preceding proof, in the style of Theorem 3.3.4.”
+-- (skipped)
+--
+-- 3.5.6. Definition
+-- “A term `t` is in _normal form_ if no evaluation rule applies to it—i.e., if there is no `t′`
+-- such that `t ⟹ t′`.  (We sometimes say ‘`t` is a normal form’ as shorthand for ‘`t` is a term
+-- in normal form.’)”
+-- (given above)
+--
+-- 3.5.7. Theorem
+-- “Every value is in normal form.”
+-- (given above)
 
--- 3.5.6. Definition (given above)
 
--- 3.5.7. Definition (given above)
-
+----------------------------------------------------------------------------------------------------
+--
 -- 3.5.8. Theorem
+-- “If `t` is in normal form, then `t` is a value.”
+--
+-- To prove this theorem, we’re first going to show that every term is either a value, or reducible
+-- to another term.
 
-  module _ where
-    data Classifiable : Term → Set where
+    data Classifiable : Pred₀ Term where
       val : ∀ {t} → Value t → Classifiable t
       red : ∀ {t} → Reducible t → Classifiable t
 
@@ -493,68 +633,134 @@ module BooleansOnly where
     ... | val false                  = red (t₃ , r-ifFalse)
     ... | red (t₁′ , r₁)             = red (if t₁′ then t₂ else t₃ , r-if r₁)
 
-  nf⇒v : ∀ {t} → NormalForm t → Value t
-  nf⇒v {t} nf      with classify t
-  ... | val v       = v
-  ... | red (_ , r) = r ↯ nf
+    nf⇒v : ∀ {t} → NormalForm t → Value t
+    nf⇒v {t} nf      with classify t
+    ... | val v       = v
+    ... | red (_ , r) = r ↯ nf
 
 
--- 3.5.9. Definition (included in ReductionKit₁)
+----------------------------------------------------------------------------------------------------
+--
+-- 3.5.9. Definition
+-- “The _multi-step reduction_ relation `⟹*` is the reflexive, transitive closure of one-step
+-- reduction.  That is, it is the smallest relation such that (1) if `t ⟹ t′` then `t ⟹* t′`,
+-- (2) `t ⟹* t` for all `t`, and (3) if `t ⟹* t′` and `t′ ⟹* t″`, then `t ⟹* t″`.”
+--
+-- We say `t ⟹* t′` to mean that `t` reduces to `t′` in multiple steps.  We give this definition
+-- in a generic manner, using equipment from the Agda standard library, and we include some related
+-- utilities.
 
--- 3.5.10. Exercise (redundant)
+module MultiStepReduction {t ℓ} {Term : Set t}
+    (_⟹_ : Rel Term ℓ)
+  where
+    infix 3 _⟹*_
+    _⟹*_ : Rel Term (t ⊔ ℓ)
+    _⟹*_ = _⟹_ *
 
--- 3.5.11. Theorem [Uniqueness of normal forms] (included in ReductionKit₂)
+    _∷ʳ_ : ∀ {t t′ t″} → t ⟹* t′ → t′ ⟹ t″ → t ⟹* t″
+    rs ∷ʳ r = rs ++ (r ∷ [])
 
+    map : ∀ {f : Term → Term} → (∀ {t t′} → t ⟹ t′ → f t ⟹ f t′) →
+          ∀ {t t′} → t ⟹* t′ → f t ⟹* f t′
+    map {f = f} = Star.gmap f
+
+
+----------------------------------------------------------------------------------------------------
+--
+-- 3.5.10. Exercise [*]
+-- “Rephrase Definition 3.5.9 as a set of inference rules.”
+-- (redundant)
+
+
+----------------------------------------------------------------------------------------------------
+--
+-- 3.5.11. Theorem [Uniqueness of normal forms]
+-- “If `t ⟹* u` and `t ⟹* u′`, where `u` and `u′` are both normal forms, then `u = u′`.”
+--
+-- To show this theorem, we start with a lemma that says, if `t ⟹* u` and `t ⟹ t′`, where `u`
+-- is a normal form, then `t′ ⟹* u`.  We give this lemma in a generic manner, for reuse.
+
+module UniquenessOfNormalForms {t ℓ} {Term : Set t}
+    (_⟹_ : Rel Term ℓ)
+    (⟹-det : ∀ {t t′ t″} → t ⟹ t′ → t ⟹ t″ → t′ ≡ t″)
+  where
+    open NormalForms _⟹_
+    open MultiStepReduction _⟹_
+
+    ⟹*-unf : ∀ {t u u′} → NormalForm u → NormalForm u′ → t ⟹* u → t ⟹* u′ → u ≡ u′
+    ⟹*-unf nf nf′ []       []         = refl
+    ⟹*-unf nf nf′ []       (r′ ∷ rs′) = r′ ↯ nf
+    ⟹*-unf nf nf′ (r ∷ rs) []         = r ↯ nf′
+    ⟹*-unf nf nf′ (r ∷ rs) (r′ ∷ rs′) with ⟹-det r r′
+    ... | refl                          = ⟹*-unf nf nf′ rs rs′
+
+
+----------------------------------------------------------------------------------------------------
+--
 -- 3.5.12. Theorem [Termination of evaluation]
+-- “For every term `t` there is some normal form `t′` such that `t ⟹* t′`.”
+--
+-- We first show a variant of this theorem that uses the notion of value instead of normal form.
+-- We say `t ⇓ t′` to mean that `t` evaluates to `t′`, and `t ⇓` to mean that evaluation of `t`
+-- terminates.
 
-  module _ where
-    -- t ⇓ u means that t evaluates to u
-    infix 3 _⇓_
-    _⇓_ : Term → Term → Set
-    t ⇓ u = Value u × t ⟹* u
+module BooleansOnly-Part3
+  where
+    open BooleansOnly-Part2 public
+    open MultiStepReduction _⟹_ public
+    open UniquenessOfNormalForms _⟹_ ⟹-det public
 
-    -- t ⇓ means that the evaluation of t terminates
-    _⇓ : Term → Set
-    t ⇓ = ∃ λ u → t ⇓ u
+    _⇓_ : Rel₀ Term
+    t ⇓ t′ = Value t′ × t ⟹* t′
 
-    halt-ifTrue : ∀ {t₁ t₂ t₃} → t₁ ⟹* true → t₂ ⇓ → if t₁ then t₂ else t₃ ⇓
-    halt-ifTrue rs₁ (u₂ , v₂ , rs₂) = u₂ , v₂ , (map r-if rs₁) ++ (r-ifTrue ∷ rs₂)
+    _⇓ : Pred₀ Term
+    t ⇓ = ∃ λ t′ → t ⇓ t′
 
-    halt-ifFalse : ∀ {t₁ t₂ t₃} → t₁ ⟹* false → t₃ ⇓ → if t₁ then t₂ else t₃ ⇓
-    halt-ifFalse rs₁ (u₃ , v₃ , rs₃) = u₃ , v₃ , (map r-if rs₁) ++ (r-ifFalse ∷ rs₃)
+    halt-if : ∀ {t₁ t₂ t₃ tₙ u₁} → t₁ ⟹* u₁ → if u₁ then t₂ else t₃ ⟹ tₙ →
+              tₙ ⇓ → if t₁ then t₂ else t₃ ⇓
+    halt-if rs₁ rₙ (uₙ , vₙ , rsₙ) = uₙ , vₙ , (map r-if rs₁ ++ rₙ ∷ rsₙ)
 
     halt : ∀ t → t ⇓
     halt true                    = true  , true  , []
     halt false                   = false , false , []
     halt (if t₁ then t₂ else t₃) with halt t₁
-    ... | (.true  , true  , rs₁) = halt-ifTrue rs₁ (halt t₂)
-    ... | (.false , false , rs₁) = halt-ifFalse rs₁ (halt t₃)
+    ... | .true  , true  , rs₁   = halt-if rs₁ r-ifTrue (halt t₂)
+    ... | .false , false , rs₁   = halt-if rs₁ r-ifFalse (halt t₃)
 
-  halt′ : ∀ t → ∃ λ t′ → NormalForm t′ × t ⟹* t′
-  halt′ t with halt t
-  ... | (t′ , v , rs) = t′ , v⇒nf v , rs
+    halt′ : ∀ t → ∃ λ t′ → NormalForm t′ × t ⟹* t′
+    halt′ t with halt t
+    ... | t′ , v , rs = t′ , v⇒nf v , rs
 
 
--- 3.5.13. Exercise (skipped)
+----------------------------------------------------------------------------------------------------
+--
+-- 3.5.13. Exercise [Recommended, ⋆⋆]
+-- “1. Suppose we add a new rule…”
+-- “2. Suppose instead that we add this rule…”
+-- (skipped)
 
--- 3.5.14. Exercise
 
-module NumbersAndBooleans′ where
-  open NumbersAndBooleans public
+----------------------------------------------------------------------------------------------------
+--
+-- 3.5.14. Exercise [⋆⋆]
+-- ”Show that Theorem 3.5.4 is also valid for the reduction relation on arithmetic expressions:
+-- if `t ⟹ t′` and `t ⟹ t″`, then `t′ = t″`.”
 
-  module _ where
-    data NumericValue : Term → Set where
+module NumbersAndBooleans-Part2
+  where
+    open NumbersAndBooleans-Part1 public
+
+    data NumericValue : Pred₀ Term where
       zero : NumericValue zero
-      suc  : ∀ {t₁} → NumericValue t₁ → NumericValue (suc t₁)
+      suc  : ∀ {t₁} → (nv₁ : NumericValue t₁) → NumericValue (suc t₁)
 
-    data Value : Term → Set where
+    data Value : Pred₀ Term where
       true  : Value true
       false : Value false
-      num   : ∀ {t₁} → NumericValue t₁ → Value t₁
+      num   : ∀ {t₁} → (nv₁ : NumericValue t₁) → Value t₁
 
-    -- t ⟹ t′ means that t reduces to t′ in one step
     infix 3 _⟹_
-    data _⟹_ : Term → Term → Set where
+    data _⟹_ : Rel₀ Term where
       r-suc        : ∀ {t₁ t₁′} → t₁ ⟹ t₁′ → suc t₁ ⟹ suc t₁′
       r-predZero   : pred zero ⟹ zero
       r-predSuc    : ∀ {t₁} → NumericValue t₁ → pred (suc t₁) ⟹ t₁
@@ -566,378 +772,578 @@ module NumbersAndBooleans′ where
       r-ifFalse    : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟹ t₃
       r-if         : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹ t₁′ → if t₁ then t₂ else t₃ ⟹ if t₁′ then t₂ else t₃
 
-    open ReductionKit₁ _⟹_ public
+
+-- Equivalent to Definition 3.5.6.
+
+    open NormalForms _⟹_ public
+
+
+-- Equivalent to Theorem 3.5.7.
 
     nv⇒nf : ∀ {t} → NumericValue t → NormalForm t
-    nv⇒nf zero     ()
-    nv⇒nf (suc nv) (r-suc r) = r ↯ nv⇒nf nv
+    nv⇒nf zero     = λ ()
+    nv⇒nf (suc nv) = λ where (r-suc r) → r ↯ nv⇒nf nv
 
     v⇒nf : ∀ {t} → Value t → NormalForm t
-    v⇒nf true     ()
-    v⇒nf false    ()
+    v⇒nf true     = λ ()
+    v⇒nf false    = λ ()
     v⇒nf (num nv) = nv⇒nf nv
 
-  ⟹-det : ∀ {t t′ t″} → t ⟹ t′ → t ⟹ t″ → t′ ≡ t″
-  ⟹-det (r-suc r′)        (r-suc r″)        = suc & ⟹-det r′ r″
-  ⟹-det r-predZero        r-predZero        = refl
-  ⟹-det r-predZero        (r-pred r″)       = r″ ↯ nv⇒nf zero
-  ⟹-det (r-predSuc nv′)   (r-predSuc nv″)   = refl
-  ⟹-det (r-predSuc nv′)   (r-pred r″)       = r″ ↯ nv⇒nf (suc nv′)
-  ⟹-det (r-pred r′)       r-predZero        = r′ ↯ nv⇒nf zero
-  ⟹-det (r-pred r′)       (r-predSuc nv″)   = r′ ↯ nv⇒nf (suc nv″)
-  ⟹-det (r-pred r′)       (r-pred r″)       = pred & ⟹-det r′ r″
-  ⟹-det r-iszeroZero      r-iszeroZero      = refl
-  ⟹-det r-iszeroZero      (r-iszero r″)     = r″ ↯ nv⇒nf zero
-  ⟹-det (r-iszeroSuc nv′) (r-iszeroSuc nv″) = refl
-  ⟹-det (r-iszeroSuc nv′) (r-iszero r″)     = r″ ↯ nv⇒nf (suc nv′)
-  ⟹-det (r-iszero r′)     r-iszeroZero      = r′ ↯ nv⇒nf zero
-  ⟹-det (r-iszero r′)     (r-iszeroSuc nv″) = r′ ↯ nv⇒nf (suc nv″)
-  ⟹-det (r-iszero r′)     (r-iszero r″)     = iszero & ⟹-det r′ r″
-  ⟹-det r-ifTrue          r-ifTrue          = refl
-  ⟹-det r-ifTrue          (r-if r″)         = r″ ↯ v⇒nf true
-  ⟹-det r-ifFalse         r-ifFalse         = refl
-  ⟹-det r-ifFalse         (r-if r″)         = r″ ↯ v⇒nf false
-  ⟹-det (r-if r′)         r-ifTrue          = r′ ↯ v⇒nf true
-  ⟹-det (r-if r′)         r-ifFalse         = r′ ↯ v⇒nf false
-  ⟹-det (r-if r′)         (r-if r″)         = (λ t₁′ → if t₁′ then _ else _) & ⟹-det r′ r″
-
-  open ReductionKit₂ _⟹_ ⟹-det public
-
-
--- 3.5.15. Exercise
-
-module NumbersAndBooleansGetStuck where
-  open NumbersAndBooleans′ public
-
-  Stuck : Term → Set
-  Stuck t = ¬ Value t × NormalForm t
-
-  data Classifiable : Term → Set where
-    stu : ∀ {t} → Stuck t → Classifiable t
-    val : ∀ {t} → Value t → Classifiable t
-    red : ∀ {t} → Reducible t → Classifiable t
-
-  s-sucTrue : Stuck (suc true)
-  s-sucTrue = ((λ where (num (suc ()))) , λ where (r-suc ()))
-
-  s-sucFalse : Stuck (suc false)
-  s-sucFalse = ((λ where (num (suc ()))) , λ where (r-suc ()))
-
-  s-sucStuck : ∀ {t₁} → Stuck t₁ → Stuck (suc t₁)
-  s-sucStuck (¬v₁ , nf₁) = ((λ where (num (suc nv₁)) → num nv₁ ↯ ¬v₁)
-                           , λ where (r-suc r₁) → r₁ ↯ nf₁)
-
-  s-predTrue : Stuck (pred true)
-  s-predTrue = ((λ where (num ())) , λ where (r-pred ()))
-
-  s-predFalse : Stuck (pred false)
-  s-predFalse = ((λ where (num ())) , λ where (r-pred ()))
-
-  s-predStuck : ∀ {t₁} → Stuck t₁ → Stuck (pred t₁)
-  s-predStuck (¬v₁ , nf₁) = ((λ where (num ()))
-                            , λ where r-predZero      → num zero ↯ ¬v₁
-                                      (r-predSuc nv₁) → num (suc nv₁) ↯ ¬v₁
-                                      (r-pred r₁)     → r₁ ↯ nf₁)
-
-  s-iszeroTrue : Stuck (iszero true)
-  s-iszeroTrue = ((λ where (num ())) , λ where (r-iszero ()))
-
-  s-iszeroFalse : Stuck (iszero false)
-  s-iszeroFalse = ((λ where (num ())) , λ where (r-iszero ()))
-
-  s-iszero : ∀ {t₁} → Stuck t₁ → Stuck (iszero t₁)
-  s-iszero (¬v₁ , nf₁) = ((λ where (num ()))
-                         , λ where r-iszeroZero      → num zero ↯ ¬v₁
-                                   (r-iszeroSuc nv₁) → num (suc nv₁) ↯ ¬v₁
-                                   (r-iszero r₁)     → r₁ ↯ nf₁)
-
-  s-ifZero : ∀ {t₂ t₃} → Stuck (if zero then t₂ else t₃)
-  s-ifZero = ((λ where (num ())) , λ where (r-if ()))
-
-  s-ifSuc : ∀ {nv₁ t₂ t₃} → NumericValue nv₁ → Stuck (if (suc nv₁) then t₂ else t₃)
-  s-ifSuc nv₁ = ((λ where (num ()))
-                , λ where (r-if (r-suc r₁)) → r₁ ↯ nv⇒nf nv₁)
-
-  s-ifStuck : ∀ {t₁ t₂ t₃} → Stuck t₁ → Stuck (if t₁ then t₂ else t₃)
-  s-ifStuck (¬v₁ , nf₁) = ((λ where (num ()))
-                          , λ where r-ifTrue  → true ↯ ¬v₁
-                                    r-ifFalse → false ↯ ¬v₁
-                                    (r-if r₁) → r₁ ↯ nf₁)
-
-  classify : ∀ t → Classifiable t
-  classify true                    = val true
-  classify false                   = val false
-  classify zero                    = val (num zero)
-  classify (suc t₁)                with classify t₁
-  ... | stu s₁                     = stu (s-sucStuck s₁)
-  ... | val true                   = stu s-sucTrue
-  ... | val false                  = stu s-sucFalse
-  ... | val (num nv₁)              = val (num (suc nv₁))
-  ... | red (t₁′ , r₁)             = red (suc t₁′ , r-suc r₁)
-  classify (pred t₁)               with classify t₁
-  ... | stu s₁                     = stu (s-predStuck s₁)
-  ... | val true                   = stu s-predTrue
-  ... | val false                  = stu s-predFalse
-  ... | val (num zero)             = red (zero , r-predZero)
-  ... | val (num (suc nv₁))        = red (_ , r-predSuc nv₁)
-  ... | red (t₁′ , r₁)             = red (pred t₁′ , r-pred r₁)
-  classify (iszero t₁)             with classify t₁
-  ... | stu s₁                     = stu (s-iszero s₁)
-  ... | val true                   = stu s-iszeroTrue
-  ... | val false                  = stu s-iszeroFalse
-  ... | val (num zero)             = red (true , r-iszeroZero)
-  ... | val (num (suc nv₁))        = red (false , r-iszeroSuc nv₁)
-  ... | red (t₁′ , r₁)             = red (iszero t₁′ , r-iszero r₁)
-  classify (if t₁ then t₂ else t₃) with classify t₁
-  ... | stu s₁                     = stu (s-ifStuck s₁)
-  ... | val true                   = red (t₂ , r-ifTrue)
-  ... | val false                  = red (t₃ , r-ifFalse)
-  ... | val (num zero)             = stu s-ifZero
-  ... | val (num (suc nv₁))        = stu (s-ifSuc nv₁)
-  ... | red (t₁′ , r₁)             = red (if t₁′ then t₂ else t₃ , r-if r₁)
-
-  nf⇒v⊎s : ∀ {t} → NormalForm t → Value t ⊎ Stuck t
-  nf⇒v⊎s {t} nf    with classify t
-  ... | red (_ , r) = r ↯ nf
-  ... | val v       = inj₁ v
-  ... | stu s       = inj₂ s
-
-  -- t ⇓ u means that t evaluates to u
-  infix 3 _⇓_
-  _⇓_ : Term → Term → Set
-  t ⇓ u = (Value u ⊎ Stuck u) × t ⟹* u
-
-  -- t ⇓ means that the evaluation of t terminates
-  _⇓ : Term → Set
-  t ⇓ = ∃ λ u → t ⇓ u
-
-  halt-sucTrue : ∀ {t₁} → t₁ ⟹* true → suc t₁ ⇓
-  halt-sucTrue rs₁ = {!!}
-
-  halt-sucFalse : ∀ {t₁} → t₁ ⟹* false → suc t₁ ⇓
-  halt-sucFalse rs₁ = {!!}
-
-  halt-sucZero : ∀ {t₁} → t₁ ⟹* zero → suc t₁ ⇓
-  halt-sucZero rs₁ = {!!}
-
-  halt-sucSuc : ∀ {t₁ u₁} → NumericValue u₁ → t₁ ⟹* suc u₁ → suc t₁ ⇓
-  halt-sucSuc nv₁ rs₁ = {!!}
-
-  halt-sucStuck : ∀ {t₁ u₁} → Stuck u₁ → t₁ ⟹* u₁ → suc t₁ ⇓
-  halt-sucStuck s₁ rs₁ = {!!}
-
-  halt-predTrue : ∀ {t₁} → t₁ ⟹* true → pred t₁ ⇓
-  halt-predTrue rs₁ = {!!}
-
-  halt-predFalse : ∀ {t₁} → t₁ ⟹* false → pred t₁ ⇓
-  halt-predFalse rs₁ = {!!}
-
-  halt-predZero : ∀ {t₁} → t₁ ⟹* zero → pred t₁ ⇓
-  halt-predZero rs₁ = {!!}
-
-  halt-predSuc : ∀ {t₁ u₁} → NumericValue u₁ → t₁ ⟹* suc u₁ → pred t₁ ⇓
-  halt-predSuc nv₁ rs₁ = {!!}
-
-  halt-predStuck : ∀ {t₁ u₁} → Stuck u₁ → t₁ ⟹* u₁ → pred t₁ ⇓
-  halt-predStuck s₁ rs₁ = {!!}
-
-  halt-iszeroTrue : ∀ {t₁} → t₁ ⟹* true → iszero t₁ ⇓
-  halt-iszeroTrue rs₁ = iszero true , inj₂ s-iszeroTrue , map r-iszero rs₁
-
-  halt-iszeroFalse : ∀ {t₁} → t₁ ⟹* false → iszero t₁ ⇓
-  halt-iszeroFalse rs₁ = iszero false , inj₂ s-iszeroFalse , map r-iszero rs₁
-
-  halt-iszeroZero : ∀ {t₁} → t₁ ⟹* zero → iszero t₁ ⇓
-  halt-iszeroZero rs₁ = true , inj₁ true , (map r-iszero rs₁) ∷ʳ r-iszeroZero
-
-  halt-iszeroSuc : ∀ {t₁ u₁} → NumericValue u₁ → t₁ ⟹* suc u₁ → iszero t₁ ⇓
-  halt-iszeroSuc nv₁ rs₁ = {!!}
-
-  halt-iszeroStuck : ∀ {t₁ u₁} → Stuck u₁ → t₁ ⟹* u₁ → iszero t₁ ⇓
-  halt-iszeroStuck s₁ rs₁ = {!!}
-
-  halt-ifTrue : ∀ {t₁ t₂ t₃} → t₁ ⟹* true → t₂ ⇓ → if t₁ then t₂ else t₃ ⇓
-  halt-ifTrue rs₁ (u₂ , v₂ , rs₂) = u₂ , v₂ , (map r-if rs₁) ++ (r-ifTrue ∷ rs₂)
-
-  halt-ifFalse : ∀ {t₁ t₂ t₃} → t₁ ⟹* false → t₃ ⇓ → if t₁ then t₂ else t₃ ⇓
-  halt-ifFalse rs₁ (u₃ , v₃ , rs₃) = u₃ , v₃ , (map r-if rs₁) ++ (r-ifFalse ∷ rs₃)
-
-  halt-ifZero : ∀ {t₁ t₂ t₃} → t₁ ⟹* zero → if t₁ then t₂ else t₃ ⇓
-  halt-ifZero rs₁ = if zero then _ else _ , inj₂ s-ifZero , map r-if rs₁
-
-  halt-ifSuc : ∀ {t₁ t₂ t₃ u₁} → NumericValue u₁ → t₁ ⟹* suc u₁ → if t₁ then t₂ else t₃ ⇓
-  halt-ifSuc nv₁ rs₁ = if (suc _) then _ else _ , inj₂ (s-ifSuc nv₁) , map r-if rs₁
-
-  halt-ifStuck : ∀ {t₁ t₂ t₃ u₁} → Stuck u₁ → t₁ ⟹* u₁ → if t₁ then t₂ else t₃ ⇓
-  halt-ifStuck s₁ rs₁ = if _ then _ else _ , inj₂ (s-ifStuck s₁) , map r-if rs₁
-
-  halt : ∀ t → t ⇓
-  halt true                                     = true  , inj₁ true       , []
-  halt false                                    = false , inj₁ false      , []
-  halt zero                                     = zero  , inj₁ (num zero) , []
-  halt (suc t₁)                                 with halt t₁
-  ... | (.true    , inj₁ true            , rs₁) = halt-sucTrue rs₁
-  ... | (.false   , inj₁ false           , rs₁) = halt-sucFalse rs₁
-  ... | (.zero    , inj₁ (num zero)      , rs₁) = halt-sucZero rs₁
-  ... | (.(suc _) , inj₁ (num (suc nv₁)) , rs₁) = halt-sucSuc nv₁ rs₁
-  ... | (_        , inj₂ s₁              , rs₁) = halt-sucStuck s₁ rs₁
-  halt (pred t₁)                                with halt t₁
-  ... | (.true    , inj₁ true            , rs₁) = halt-predTrue rs₁
-  ... | (.false   , inj₁ false           , rs₁) = halt-predFalse rs₁
-  ... | (.zero    , inj₁ (num zero)      , rs₁) = halt-predZero rs₁
-  ... | (.(suc _) , inj₁ (num (suc nv₁)) , rs₁) = halt-predSuc nv₁ rs₁
-  ... | (_        , inj₂ s₁              , rs₁) = halt-predStuck s₁ rs₁
-  halt (iszero t₁)                              with halt t₁
-  ... | (.true    , inj₁ true            , rs₁) = halt-iszeroTrue rs₁
-  ... | (.false   , inj₁ false           , rs₁) = halt-iszeroFalse rs₁
-  ... | (.zero    , inj₁ (num zero)      , rs₁) = halt-iszeroZero rs₁
-  ... | (.(suc _) , inj₁ (num (suc nv₁)) , rs₁) = halt-iszeroSuc nv₁ rs₁
-  ... | (_        , inj₂ s₁              , rs₁) = halt-iszeroStuck s₁ rs₁
-  halt (if t₁ then t₂ else t₃)                  with halt t₁
-  ... | (.true    , inj₁ true            , rs₁) = halt-ifTrue rs₁ (halt t₂)
-  ... | (.false   , inj₁ false           , rs₁) = halt-ifFalse rs₁ (halt t₃)
-  ... | (.zero    , inj₁ (num zero)      , rs₁) = halt-ifZero rs₁
-  ... | (.(suc _) , inj₁ (num (suc nv₁)) , rs₁) = halt-ifSuc nv₁ rs₁
-  ... | (_        , inj₂ s₁              , rs₁) = halt-ifStuck s₁ rs₁
-
-  halt′ : ∀ t → ∃ λ t′ → NormalForm t′ × t ⟹* t′
-  halt′ t with halt t
-  ... | (t′ , inj₁ v         , rs) = t′ , v⇒nf v , rs
-  ... | (t′ , inj₂ (¬v , nf) , rs) = t′ , nf      , rs
-
-
--- 3.5.16. Exercise
-
-module NumbersAndBooleansGoWrong where
-  data Term : Set where
-    wrong true false zero : Term
-    suc pred iszero       : (t₁ : Term) → Term
-    if_then_else          : (t₁ t₂ t₃ : Term) → Term
-
-  data NumericValue : Term → Set where
-    zero : NumericValue zero
-    suc  : ∀ {t₁} → NumericValue t₁ → NumericValue (suc t₁)
-
-  data Value : Term → Set where
-    true  : Value true
-    false : Value false
-    num   : ∀ {t₁} → NumericValue t₁ → Value t₁
-
-  data BadNat : Term → Set where
-    wrong : BadNat wrong
-    true  : BadNat true
-    false : BadNat false
-
-  data BadBool : Term → Set where
-    wrong : BadBool wrong
-    num   : ∀ {u} → NumericValue u → BadBool u
-
-  -- t ⟹ t′ means that t reduces to t′ in one step
-  infix 3 _⟹_
-  data _⟹_ : Term → Term → Set where
-    r-sucWrong    : ∀ {t₁} → BadNat t₁ → suc t₁ ⟹ wrong
-    r-suc         : ∀ {t₁ t₁′} → t₁ ⟹ t₁′ → suc t₁ ⟹ suc t₁′
-    r-predWrong   : ∀ {t₁} → BadNat t₁ → pred t₁ ⟹ wrong
-    r-predZero    : pred zero ⟹ zero
-    r-predSuc     : ∀ {t₁} → NumericValue t₁ → pred (suc t₁) ⟹ t₁
-    r-pred        : ∀ {t₁ t₁′} → t₁ ⟹ t₁′ → pred t₁ ⟹ pred t₁′
-    r-iszeroWrong : ∀ {t₁} → BadNat t₁ → iszero t₁ ⟹ wrong
-    r-iszeroZero  : iszero zero ⟹ true
-    r-iszeroSuc   : ∀ {t₁} → NumericValue t₁ → iszero (suc t₁) ⟹ false
-    r-iszero      : ∀ {t₁ t₁′} → t₁ ⟹ t₁′ → iszero t₁ ⟹ iszero t₁′
-    r-ifWrong     : ∀ {t₁ t₂ t₃} → BadBool t₁ → if t₁ then t₂ else t₃ ⟹ wrong
-    r-ifTrue      : ∀ {t₂ t₃} → if true then t₂ else t₃ ⟹ t₂
-    r-ifFalse     : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟹ t₃
-    r-if          : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹ t₁′ → if t₁ then t₂ else t₃ ⟹ if t₁′ then t₂ else t₃
-
-  open ReductionKit₁ _⟹_
-
-  bn⇒¬nv : ∀ {t} → BadNat t → ¬ NumericValue t
-  bn⇒¬nv wrong = λ ()
-  bn⇒¬nv true  = λ ()
-  bn⇒¬nv false = λ ()
-
-  nv⇒nf : ∀ {t} → NumericValue t → NormalForm t
-  nv⇒nf zero     = λ ()
-  nv⇒nf (suc nv) = λ where
-    (r-sucWrong bn) → nv ↯ bn⇒¬nv bn
-    (r-suc r)       → r ↯ nv⇒nf nv
-
-  v⇒nf : ∀ {t} → Value t → NormalForm t
-  v⇒nf true     = λ ()
-  v⇒nf false    = λ ()
-  v⇒nf (num nv) = nv⇒nf nv
-
-  bn⇒nf : ∀ {t} → BadNat t → NormalForm t
-  bn⇒nf wrong = λ ()
-  bn⇒nf true  = λ ()
-  bn⇒nf false = λ ()
-
-  bb⇒nf : ∀ {t} → BadBool t → NormalForm t
-  bb⇒nf wrong    = λ ()
-  bb⇒nf (num nv) = nv⇒nf nv
-
-  ⟹-det : ∀ {t t′ t″} → t ⟹ t′ → t ⟹ t″ → t′ ≡ t″
-  ⟹-det (r-sucWrong bn′)     (r-sucWrong bn″)    = refl
-  ⟹-det (r-sucWrong bn′)     (r-suc r″)          = r″ ↯ bn⇒nf bn′
-  ⟹-det (r-suc r′)           (r-sucWrong bn″)    = r′ ↯ bn⇒nf bn″
-  ⟹-det (r-suc r′)           (r-suc r″)          = suc & ⟹-det r′ r″
-  ⟹-det (r-predWrong bn′)    (r-predWrong bn″)   = refl
-  ⟹-det (r-predWrong ())     r-predZero
-  ⟹-det (r-predWrong ())     (r-predSuc nv″)
-  ⟹-det (r-predWrong bn′)    (r-pred r″)         = r″ ↯ bn⇒nf bn′
-  ⟹-det r-predZero (         r-predWrong ())
-  ⟹-det r-predZero           r-predZero          = refl
-  ⟹-det r-predZero           (r-pred r″)         = r″ ↯ nv⇒nf zero
-  ⟹-det (r-predSuc nv′)      (r-predWrong ())
-  ⟹-det (r-predSuc nv′)      (r-predSuc nv″)     = refl
-  ⟹-det (r-predSuc nv′)      (r-pred r″)         = r″ ↯ nv⇒nf (suc nv′)
-  ⟹-det (r-pred r′)          (r-predWrong bn″)   = r′ ↯ bn⇒nf bn″
-  ⟹-det (r-pred r′)          r-predZero          = r′ ↯ nv⇒nf zero
-  ⟹-det (r-pred r′)          (r-predSuc nv″)     = r′ ↯ nv⇒nf (suc nv″)
-  ⟹-det (r-pred r′)          (r-pred r″)         = pred & ⟹-det r′ r″
-  ⟹-det (r-iszeroWrong bn′)  (r-iszeroWrong bn″) = refl
-  ⟹-det (r-iszeroWrong ())   r-iszeroZero
-  ⟹-det (r-iszeroWrong ())   (r-iszeroSuc nv″)
-  ⟹-det (r-iszeroWrong bn′)  (r-iszero r″)       = r″ ↯ bn⇒nf bn′
-  ⟹-det r-iszeroZero         (r-iszeroWrong ())
-  ⟹-det r-iszeroZero         r-iszeroZero        = refl
-  ⟹-det r-iszeroZero         (r-iszero r″)       = r″ ↯ nv⇒nf zero
-  ⟹-det (r-iszeroSuc nv′)    (r-iszeroWrong ())
-  ⟹-det (r-iszeroSuc nv′)    (r-iszeroSuc nv″)   = refl
-  ⟹-det (r-iszeroSuc nv′)    (r-iszero r″)       = r″ ↯ nv⇒nf (suc nv′)
-  ⟹-det (r-iszero r′)        (r-iszeroWrong bn″) = r′ ↯ bn⇒nf bn″
-  ⟹-det (r-iszero r′)        r-iszeroZero        = r′ ↯ nv⇒nf zero
-  ⟹-det (r-iszero r′)        (r-iszeroSuc nv″)   = r′ ↯ nv⇒nf (suc nv″)
-  ⟹-det (r-iszero r′)        (r-iszero r″)       = iszero & ⟹-det r′ r″
-  ⟹-det (r-ifWrong bb′)      (r-ifWrong bb″)     = refl
-  ⟹-det (r-ifWrong (num ())) r-ifTrue
-  ⟹-det (r-ifWrong (num ())) r-ifFalse
-  ⟹-det (r-ifWrong bb′)      (r-if r″)           = r″ ↯ bb⇒nf bb′
-  ⟹-det r-ifTrue             (r-ifWrong (num ()))
-  ⟹-det r-ifTrue             r-ifTrue            = refl
-  ⟹-det r-ifTrue             (r-if r″)           = r″ ↯ v⇒nf true
-  ⟹-det r-ifFalse            (r-ifWrong (num ()))
-  ⟹-det r-ifFalse            r-ifFalse           = refl
-  ⟹-det r-ifFalse            (r-if r″)           = r″ ↯ v⇒nf false
-  ⟹-det (r-if r′)            (r-ifWrong bb″)     = r′ ↯ bb⇒nf bb″
-  ⟹-det (r-if r′)            r-ifTrue            = r′ ↯ v⇒nf true
-  ⟹-det (r-if r′)            r-ifFalse           = r′ ↯ v⇒nf false
-  ⟹-det (r-if r′)            (r-if r″)           = (λ t₁′ → if t₁′ then _ else _) & ⟹-det r′ r″
-
-  open ReductionKit₂ _⟹_ ⟹-det
-
-  -- t ⇓ u means that t evaluates to u
-  infix 3 _⇓_
-  _⇓_ : Term → Term → Set
-  t ⇓ u = (Value u ⊎ u ≡ wrong) × t ⟹* u
-
-  -- t ⇓ means that the evaluation of t terminates
-  _⇓ : Term → Set
-  t ⇓ = ∃ λ u → t ⇓ u
-
-  halt-ifTrue : ∀ {t₁ t₂ t₃} → t₁ ⟹* true → t₂ ⇓ → if t₁ then t₂ else t₃ ⇓
-  halt-ifTrue rs₁ (u₂ , v₂ , rs₂) = u₂ , v₂ , (map r-if rs₁) ++ (r-ifTrue ∷ rs₂)
-
-  halt-ifFalse : ∀ {t₁ t₂ t₃} → t₁ ⟹* false → t₃ ⇓ → if t₁ then t₂ else t₃ ⇓
-  halt-ifFalse rs₁ (u₃ , v₃ , rs₃) = u₃ , v₃ , (map r-if rs₁) ++ (r-ifFalse ∷ rs₃)
+
+-- Equivalent to Theorem 3.5.4.
+
+    ⟹-det : ∀ {t t′ t″} → t ⟹ t′ → t ⟹ t″ → t′ ≡ t″
+    ⟹-det (r-suc r′)        (r-suc r″)        = suc & ⟹-det r′ r″
+    ⟹-det r-predZero        r-predZero        = refl
+    ⟹-det r-predZero        (r-pred r″)       = r″ ↯ nv⇒nf zero
+    ⟹-det (r-predSuc nv′)   (r-predSuc nv″)   = refl
+    ⟹-det (r-predSuc nv′)   (r-pred r″)       = r″ ↯ nv⇒nf (suc nv′)
+    ⟹-det (r-pred r′)       r-predZero        = r′ ↯ nv⇒nf zero
+    ⟹-det (r-pred r′)       (r-predSuc nv″)   = r′ ↯ nv⇒nf (suc nv″)
+    ⟹-det (r-pred r′)       (r-pred r″)       = pred & ⟹-det r′ r″
+    ⟹-det r-iszeroZero      r-iszeroZero      = refl
+    ⟹-det r-iszeroZero      (r-iszero r″)     = r″ ↯ nv⇒nf zero
+    ⟹-det (r-iszeroSuc nv′) (r-iszeroSuc nv″) = refl
+    ⟹-det (r-iszeroSuc nv′) (r-iszero r″)     = r″ ↯ nv⇒nf (suc nv′)
+    ⟹-det (r-iszero r′)     r-iszeroZero      = r′ ↯ nv⇒nf zero
+    ⟹-det (r-iszero r′)     (r-iszeroSuc nv″) = r′ ↯ nv⇒nf (suc nv″)
+    ⟹-det (r-iszero r′)     (r-iszero r″)     = iszero & ⟹-det r′ r″
+    ⟹-det r-ifTrue          r-ifTrue          = refl
+    ⟹-det r-ifTrue          (r-if r″)         = r″ ↯ v⇒nf true
+    ⟹-det r-ifFalse         r-ifFalse         = refl
+    ⟹-det r-ifFalse         (r-if r″)         = r″ ↯ v⇒nf false
+    ⟹-det (r-if r′)         r-ifTrue          = r′ ↯ v⇒nf true
+    ⟹-det (r-if r′)         r-ifFalse         = r′ ↯ v⇒nf false
+    ⟹-det (r-if r′)         (r-if r″)         = (λ t₁′ → if t₁′ then _ else _) & ⟹-det r′ r″
+
+
+----------------------------------------------------------------------------------------------------
+--
+-- 3.5.15. Definition
+-- “A closed term is _stuck_ if it is in normal form but not a value.”
+--
+-- In anticipation of Exercise 3.5.16, we’re going to work towards showing that evaluation of
+-- arithmetic expressions that get stuck is terminating.
+
+module NumbersAndBooleansGetStuck
+  where
+    open NumbersAndBooleans-Part2 public
+
+    Stuck : Pred₀ Term
+    Stuck t = ¬ Value t × NormalForm t
+
+
+-- Every term is either stuck, a value, or reducible to another term.
+
+    data Classifiable : Pred₀ Term where
+      stu : ∀ {t} → Stuck t → Classifiable t
+      val : ∀ {t} → Value t → Classifiable t
+      red : ∀ {t} → Reducible t → Classifiable t
+
+    s-sucStuck : ∀ {t₁} → Stuck t₁ → Stuck (suc t₁)
+    s-sucStuck (¬v₁ , nf₁) = (λ where (num (suc nv₁)) → num nv₁ ↯ ¬v₁)
+                           , (λ where (r-suc r₁) → r₁ ↯ nf₁)
+
+    s-sucTrue : Stuck (suc true)
+    s-sucTrue = (λ where (num (suc ())))
+              , (λ where (r-suc ()))
+
+    s-sucFalse : Stuck (suc false)
+    s-sucFalse = (λ where (num (suc ())))
+               , (λ where (r-suc ()))
+
+    s-predStuck : ∀ {t₁} → Stuck t₁ → Stuck (pred t₁)
+    s-predStuck (¬v₁ , nf₁) = (λ where (num ()))
+                            , (λ where r-predZero      → num zero ↯ ¬v₁
+                                       (r-predSuc nv₁) → num (suc nv₁) ↯ ¬v₁
+                                       (r-pred r₁)     → r₁ ↯ nf₁)
+
+    s-predTrue : Stuck (pred true)
+    s-predTrue = (λ where (num ()))
+               , (λ where (r-pred ()))
+
+    s-predFalse : Stuck (pred false)
+    s-predFalse = (λ where (num ()))
+                , (λ where (r-pred ()))
+
+    s-iszeroStuck : ∀ {t₁} → Stuck t₁ → Stuck (iszero t₁)
+    s-iszeroStuck (¬v₁ , nf₁) = (λ where (num ()))
+                              , (λ where r-iszeroZero      → num zero ↯ ¬v₁
+                                         (r-iszeroSuc nv₁) → num (suc nv₁) ↯ ¬v₁
+                                         (r-iszero r₁)     → r₁ ↯ nf₁)
+
+    s-iszeroTrue : Stuck (iszero true)
+    s-iszeroTrue = (λ where (num ()))
+                 , (λ where (r-iszero ()))
+
+    s-iszeroFalse : Stuck (iszero false)
+    s-iszeroFalse = (λ where (num ()))
+                  , (λ where (r-iszero ()))
+
+    s-ifStuck : ∀ {t₁ t₂ t₃} → Stuck t₁ → Stuck (if t₁ then t₂ else t₃)
+    s-ifStuck (¬v₁ , nf₁) = (λ where (num ()))
+                          , (λ where r-ifTrue  → true ↯ ¬v₁
+                                     r-ifFalse → false ↯ ¬v₁
+                                     (r-if r₁) → r₁ ↯ nf₁)
+
+    s-ifZero : ∀ {t₂ t₃} → Stuck (if zero then t₂ else t₃)
+    s-ifZero = (λ where (num ()))
+             , (λ where (r-if ()))
+
+    s-ifSuc : ∀ {nv₁ t₂ t₃} → NumericValue nv₁ → Stuck (if (suc nv₁) then t₂ else t₃)
+    s-ifSuc nv₁ = (λ where (num ()))
+                , (λ where (r-if (r-suc r₁)) → r₁ ↯ nv⇒nf nv₁)
+
+    classify : ∀ t → Classifiable t
+    classify true                    = val true
+    classify false                   = val false
+    classify zero                    = val (num zero)
+    classify (suc t₁)                with classify t₁
+    ... | stu s₁                     = stu (s-sucStuck s₁)
+    ... | val true                   = stu s-sucTrue
+    ... | val false                  = stu s-sucFalse
+    ... | val (num nv₁)              = val (num (suc nv₁))
+    ... | red (t₁′ , r₁)             = red (suc t₁′ , r-suc r₁)
+    classify (pred t₁)               with classify t₁
+    ... | stu s₁                     = stu (s-predStuck s₁)
+    ... | val true                   = stu s-predTrue
+    ... | val false                  = stu s-predFalse
+    ... | val (num zero)             = red (zero , r-predZero)
+    ... | val (num (suc nv₁))        = red (_ , r-predSuc nv₁)
+    ... | red (t₁′ , r₁)             = red (pred t₁′ , r-pred r₁)
+    classify (iszero t₁)             with classify t₁
+    ... | stu s₁                     = stu (s-iszeroStuck s₁)
+    ... | val true                   = stu s-iszeroTrue
+    ... | val false                  = stu s-iszeroFalse
+    ... | val (num zero)             = red (true , r-iszeroZero)
+    ... | val (num (suc nv₁))        = red (false , r-iszeroSuc nv₁)
+    ... | red (t₁′ , r₁)             = red (iszero t₁′ , r-iszero r₁)
+    classify (if t₁ then t₂ else t₃) with classify t₁
+    ... | stu s₁                     = stu (s-ifStuck s₁)
+    ... | val true                   = red (t₂ , r-ifTrue)
+    ... | val false                  = red (t₃ , r-ifFalse)
+    ... | val (num zero)             = stu s-ifZero
+    ... | val (num (suc nv₁))        = stu (s-ifSuc nv₁)
+    ... | red (t₁′ , r₁)             = red (if t₁′ then t₂ else t₃ , r-if r₁)
+
+
+-- Equivalent to Theorem 3.5.8.
+
+    nf⇒s⊎v : ∀ {t} → NormalForm t → Stuck t ⊎ Value t
+    nf⇒s⊎v {t} nf    with classify t
+    ... | stu s       = inj₁ s
+    ... | val v       = inj₂ v
+    ... | red (_ , r) = r ↯ nf
+
+
+-- Equivalent to Definition 3.5.9 and Theorem 3.5.11.
+
+    open MultiStepReduction _⟹_ public
+    open UniquenessOfNormalForms _⟹_ ⟹-det public
+
+
+-- Equipment for showing termination.
+
+    _⇓_ : Rel₀ Term
+    t ⇓ t′ = (Stuck t′ ⊎ Value t′) × t ⟹* t′
+
+    _⇓ : Pred₀ Term
+    t ⇓ = ∃ λ t′ → t ⇓ t′
+
+    halt-sucStuck : ∀ {t₁ u₁} → Stuck u₁ → t₁ ⟹* u₁ → suc t₁ ⇓
+    halt-sucStuck s₁ rs₁ = (suc _) , (inj₁ (s-sucStuck s₁)) , (map r-suc rs₁)
+
+    halt-sucTrue : ∀ {t₁} → t₁ ⟹* true → suc t₁ ⇓
+    halt-sucTrue rs₁ = (suc true) , (inj₁ s-sucTrue) , (map r-suc rs₁)
+
+    halt-sucFalse : ∀ {t₁} → t₁ ⟹* false → suc t₁ ⇓
+    halt-sucFalse rs₁ = (suc false) , (inj₁ s-sucFalse) , (map r-suc rs₁)
+
+    halt-suc : ∀ {t₁ u₁} → NumericValue u₁ → t₁ ⟹* u₁ → suc t₁ ⇓
+    halt-suc nv₁ rs₁ = (suc _) , (inj₂ (num (suc nv₁))) , (map r-suc rs₁)
+
+    halt-predStuck : ∀ {t₁ u₁} → Stuck u₁ → t₁ ⟹* u₁ → pred t₁ ⇓
+    halt-predStuck s₁ rs₁ = (pred _) , (inj₁ (s-predStuck s₁)) , (map r-pred rs₁)
+
+    halt-predTrue : ∀ {t₁} → t₁ ⟹* true → pred t₁ ⇓
+    halt-predTrue rs₁ = (pred true) , (inj₁ s-predTrue) , (map r-pred rs₁)
+
+    halt-predFalse : ∀ {t₁} → t₁ ⟹* false → pred t₁ ⇓
+    halt-predFalse rs₁ = (pred false) , (inj₁ s-predFalse) , (map r-pred rs₁)
+
+    halt-predZero : ∀ {t₁} → t₁ ⟹* zero → pred t₁ ⇓
+    halt-predZero rs₁ = zero , (inj₂ (num zero)) , (map r-pred rs₁ ∷ʳ r-predZero)
+
+    halt-predSuc : ∀ {t₁ u₁} → NumericValue u₁ → t₁ ⟹* suc u₁ → pred t₁ ⇓
+    halt-predSuc nv₁ rs₁ = _ , (inj₂ (num nv₁)) , (map r-pred rs₁ ∷ʳ r-predSuc nv₁)
+
+    halt-iszeroStuck : ∀ {t₁ u₁} → Stuck u₁ → t₁ ⟹* u₁ → iszero t₁ ⇓
+    halt-iszeroStuck s₁ rs₁ = (iszero _) , (inj₁ (s-iszeroStuck s₁)) , (map r-iszero rs₁)
+
+    halt-iszeroTrue : ∀ {t₁} → t₁ ⟹* true → iszero t₁ ⇓
+    halt-iszeroTrue rs₁ = (iszero true) , (inj₁ s-iszeroTrue) , (map r-iszero rs₁)
+
+    halt-iszeroFalse : ∀ {t₁} → t₁ ⟹* false → iszero t₁ ⇓
+    halt-iszeroFalse rs₁ = (iszero false) , (inj₁ s-iszeroFalse) , (map r-iszero rs₁)
+
+    halt-iszeroZero : ∀ {t₁} → t₁ ⟹* zero → iszero t₁ ⇓
+    halt-iszeroZero rs₁ = true , (inj₂ true) , (map r-iszero rs₁ ∷ʳ r-iszeroZero)
+
+    halt-iszeroSuc : ∀ {t₁ u₁} → NumericValue u₁ → t₁ ⟹* suc u₁ → iszero t₁ ⇓
+    halt-iszeroSuc nv₁ rs₁ = false , (inj₂ false) , (map r-iszero rs₁ ∷ʳ r-iszeroSuc nv₁)
+
+    halt-ifStuck : ∀ {t₁ t₂ t₃ u₁} → Stuck u₁ → t₁ ⟹* u₁ → if t₁ then t₂ else t₃ ⇓
+    halt-ifStuck s₁ rs₁ = (if _ then _ else _) , (inj₁ (s-ifStuck s₁)) , (map r-if rs₁)
+
+    halt-if : ∀ {t₁ t₂ t₃ tₙ u₁} → t₁ ⟹* u₁ → if u₁ then t₂ else t₃ ⟹ tₙ →
+              tₙ ⇓ → if t₁ then t₂ else t₃ ⇓
+    halt-if rs₁ rₙ (uₙ , vₙ , rsₙ) = uₙ , vₙ , (map r-if rs₁ ++ rₙ ∷ rsₙ)
+
+    halt-ifZero : ∀ {t₁ t₂ t₃} → t₁ ⟹* zero → if t₁ then t₂ else t₃ ⇓
+    halt-ifZero rs₁ = (if zero then _ else _) , (inj₁ s-ifZero) , (map r-if rs₁)
+
+    halt-ifSuc : ∀ {t₁ t₂ t₃ u₁} → NumericValue u₁ → t₁ ⟹* suc u₁ → if t₁ then t₂ else t₃ ⇓
+    halt-ifSuc nv₁ rs₁ = (if (suc _) then _ else _) , (inj₁ (s-ifSuc nv₁)) , (map r-if rs₁)
+
+    halt : ∀ t → t ⇓
+    halt true                                   = true  , inj₂ true       , []
+    halt false                                  = false , inj₂ false      , []
+    halt zero                                   = zero  , inj₂ (num zero) , []
+    halt (suc t₁)                               with halt t₁
+    ... | _        , inj₁ s₁              , rs₁ = halt-sucStuck s₁ rs₁
+    ... | .true    , inj₂ true            , rs₁ = halt-sucTrue rs₁
+    ... | .false   , inj₂ false           , rs₁ = halt-sucFalse rs₁
+    ... | ._       , inj₂ (num nv₁)       , rs₁ = halt-suc nv₁ rs₁
+    halt (pred t₁)                              with halt t₁
+    ... | _        , inj₁ s₁              , rs₁ = halt-predStuck s₁ rs₁
+    ... | .true    , inj₂ true            , rs₁ = halt-predTrue rs₁
+    ... | .false   , inj₂ false           , rs₁ = halt-predFalse rs₁
+    ... | .zero    , inj₂ (num zero)      , rs₁ = halt-predZero rs₁
+    ... | .(suc _) , inj₂ (num (suc nv₁)) , rs₁ = halt-predSuc nv₁ rs₁
+    halt (iszero t₁)                            with halt t₁
+    ... | _        , inj₁ s₁              , rs₁ = halt-iszeroStuck s₁ rs₁
+    ... | .true    , inj₂ true            , rs₁ = halt-iszeroTrue rs₁
+    ... | .false   , inj₂ false           , rs₁ = halt-iszeroFalse rs₁
+    ... | .zero    , inj₂ (num zero)      , rs₁ = halt-iszeroZero rs₁
+    ... | .(suc _) , inj₂ (num (suc nv₁)) , rs₁ = halt-iszeroSuc nv₁ rs₁
+    halt (if t₁ then t₂ else t₃)                with halt t₁
+    ... | _        , inj₁ s₁              , rs₁ = halt-ifStuck s₁ rs₁
+    ... | .true    , inj₂ true            , rs₁ = halt-if rs₁ r-ifTrue (halt t₂)
+    ... | .false   , inj₂ false           , rs₁ = halt-if rs₁ r-ifFalse (halt t₃)
+    ... | .zero    , inj₂ (num zero)      , rs₁ = halt-ifZero rs₁
+    ... | .(suc _) , inj₂ (num (suc nv₁)) , rs₁ = halt-ifSuc nv₁ rs₁
+
+
+-- Equivalent to Theorem 3.5.12.
+
+    halt′ : ∀ t → ∃ λ t′ → NormalForm t′ × t ⟹* t′
+    halt′ t with halt t
+    ... | t′ , inj₁ (¬v , nf) , rs = t′ , nf      , rs
+    ... | t′ , inj₂ v         , rs = t′ , v⇒nf v , rs
+
+
+----------------------------------------------------------------------------------------------------
+--
+-- 3.5.16. Exercise [Recommended, ⋆⋆⋆]
+-- ”A different way of formalizing meaningless states of the abstract machine is to introduce a new
+-- term called `wrong` and augment the operational semantics with rules that explicitly generate
+-- `wrong` in all the situations where the present semantics gets stuck.  To do this in detail, …”
+-- “Show that these two treatments of run-time errors agree by (1) finding a precise way of stating
+-- the intuition that “the two treatments agree,” and (2) proving it.”
+--
+-- We’re going to work towards showing that evaluation of arithmetic expressions that can go wrong
+-- is terminating.  First, we redefine terms, values, and one-step reduction.
+
+module NumbersAndBooleansGoWrong
+  where
+    data Term : Set₀ where
+      wrong true false zero : Term
+      suc pred iszero       : (t₁ : Term) → Term
+      if_then_else          : (t₁ t₂ t₃ : Term) → Term
+
+    data NumericValue : Pred₀ Term where
+      zero : NumericValue zero
+      suc  : ∀ {t₁} → NumericValue t₁ → NumericValue (suc t₁)
+
+    data Value : Pred₀ Term where
+      wrong : Value wrong
+      true  : Value true
+      false : Value false
+      num   : ∀ {t₁} → NumericValue t₁ → Value t₁
+
+    data BadNat : Pred₀ Term where
+      wrong : BadNat wrong
+      true  : BadNat true
+      false : BadNat false
+
+    data BadBool : Pred₀ Term where
+      wrong : BadBool wrong
+      num   : ∀ {u} → NumericValue u → BadBool u
+
+    infix 3 _⟹_
+    data _⟹_ : Rel₀ Term where
+      r-sucWrong    : ∀ {t₁} → BadNat t₁ → suc t₁ ⟹ wrong
+      r-suc         : ∀ {t₁ t₁′} → t₁ ⟹ t₁′ → suc t₁ ⟹ suc t₁′
+      r-predWrong   : ∀ {t₁} → BadNat t₁ → pred t₁ ⟹ wrong
+      r-predZero    : pred zero ⟹ zero
+      r-predSuc     : ∀ {t₁} → NumericValue t₁ → pred (suc t₁) ⟹ t₁
+      r-pred        : ∀ {t₁ t₁′} → t₁ ⟹ t₁′ → pred t₁ ⟹ pred t₁′
+      r-iszeroWrong : ∀ {t₁} → BadNat t₁ → iszero t₁ ⟹ wrong
+      r-iszeroZero  : iszero zero ⟹ true
+      r-iszeroSuc   : ∀ {t₁} → NumericValue t₁ → iszero (suc t₁) ⟹ false
+      r-iszero      : ∀ {t₁ t₁′} → t₁ ⟹ t₁′ → iszero t₁ ⟹ iszero t₁′
+      r-ifWrong     : ∀ {t₁ t₂ t₃} → BadBool t₁ → if t₁ then t₂ else t₃ ⟹ wrong
+      r-ifTrue      : ∀ {t₂ t₃} → if true then t₂ else t₃ ⟹ t₂
+      r-ifFalse     : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟹ t₃
+      r-if          : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹ t₁′ → if t₁ then t₂ else t₃ ⟹ if t₁′ then t₂ else t₃
+
+
+-- Equivalent to Definition 3.5.6.
+
+    open NormalForms _⟹_ public
+
+
+-- Equivalent to Theorem 3.5.7.
+
+    bn⇒¬nv : ∀ {t} → BadNat t → ¬ NumericValue t
+    bn⇒¬nv wrong = λ ()
+    bn⇒¬nv true  = λ ()
+    bn⇒¬nv false = λ ()
+
+    nv⇒nf : ∀ {t} → NumericValue t → NormalForm t
+    nv⇒nf zero     = λ ()
+    nv⇒nf (suc nv) = λ where
+      (r-sucWrong bn) → nv ↯ bn⇒¬nv bn
+      (r-suc r)       → r ↯ nv⇒nf nv
+
+    v⇒nf : ∀ {t} → Value t → NormalForm t
+    v⇒nf wrong    = λ ()
+    v⇒nf true     = λ ()
+    v⇒nf false    = λ ()
+    v⇒nf (num nv) = nv⇒nf nv
+
+    bn⇒nf : ∀ {t} → BadNat t → NormalForm t
+    bn⇒nf wrong = λ ()
+    bn⇒nf true  = λ ()
+    bn⇒nf false = λ ()
+
+    bb⇒nf : ∀ {t} → BadBool t → NormalForm t
+    bb⇒nf wrong    = λ ()
+    bb⇒nf (num nv) = nv⇒nf nv
+
+
+-- Equivalent to Theorem 3.5.4.
+
+    ⟹-det : ∀ {t t′ t″} → t ⟹ t′ → t ⟹ t″ → t′ ≡ t″
+    ⟹-det (r-sucWrong bn′)     (r-sucWrong bn″)    = refl
+    ⟹-det (r-sucWrong bn′)     (r-suc r″)          = r″ ↯ bn⇒nf bn′
+    ⟹-det (r-suc r′)           (r-sucWrong bn″)    = r′ ↯ bn⇒nf bn″
+    ⟹-det (r-suc r′)           (r-suc r″)          = suc & ⟹-det r′ r″
+    ⟹-det (r-predWrong bn′)    (r-predWrong bn″)   = refl
+    ⟹-det (r-predWrong ())     r-predZero
+    ⟹-det (r-predWrong ())     (r-predSuc nv″)
+    ⟹-det (r-predWrong bn′)    (r-pred r″)         = r″ ↯ bn⇒nf bn′
+    ⟹-det r-predZero (         r-predWrong ())
+    ⟹-det r-predZero           r-predZero          = refl
+    ⟹-det r-predZero           (r-pred r″)         = r″ ↯ nv⇒nf zero
+    ⟹-det (r-predSuc nv′)      (r-predWrong ())
+    ⟹-det (r-predSuc nv′)      (r-predSuc nv″)     = refl
+    ⟹-det (r-predSuc nv′)      (r-pred r″)         = r″ ↯ nv⇒nf (suc nv′)
+    ⟹-det (r-pred r′)          (r-predWrong bn″)   = r′ ↯ bn⇒nf bn″
+    ⟹-det (r-pred r′)          r-predZero          = r′ ↯ nv⇒nf zero
+    ⟹-det (r-pred r′)          (r-predSuc nv″)     = r′ ↯ nv⇒nf (suc nv″)
+    ⟹-det (r-pred r′)          (r-pred r″)         = pred & ⟹-det r′ r″
+    ⟹-det (r-iszeroWrong bn′)  (r-iszeroWrong bn″) = refl
+    ⟹-det (r-iszeroWrong ())   r-iszeroZero
+    ⟹-det (r-iszeroWrong ())   (r-iszeroSuc nv″)
+    ⟹-det (r-iszeroWrong bn′)  (r-iszero r″)       = r″ ↯ bn⇒nf bn′
+    ⟹-det r-iszeroZero         (r-iszeroWrong ())
+    ⟹-det r-iszeroZero         r-iszeroZero        = refl
+    ⟹-det r-iszeroZero         (r-iszero r″)       = r″ ↯ nv⇒nf zero
+    ⟹-det (r-iszeroSuc nv′)    (r-iszeroWrong ())
+    ⟹-det (r-iszeroSuc nv′)    (r-iszeroSuc nv″)   = refl
+    ⟹-det (r-iszeroSuc nv′)    (r-iszero r″)       = r″ ↯ nv⇒nf (suc nv′)
+    ⟹-det (r-iszero r′)        (r-iszeroWrong bn″) = r′ ↯ bn⇒nf bn″
+    ⟹-det (r-iszero r′)        r-iszeroZero        = r′ ↯ nv⇒nf zero
+    ⟹-det (r-iszero r′)        (r-iszeroSuc nv″)   = r′ ↯ nv⇒nf (suc nv″)
+    ⟹-det (r-iszero r′)        (r-iszero r″)       = iszero & ⟹-det r′ r″
+    ⟹-det (r-ifWrong bb′)      (r-ifWrong bb″)     = refl
+    ⟹-det (r-ifWrong (num ())) r-ifTrue
+    ⟹-det (r-ifWrong (num ())) r-ifFalse
+    ⟹-det (r-ifWrong bb′)      (r-if r″)           = r″ ↯ bb⇒nf bb′
+    ⟹-det r-ifTrue             (r-ifWrong (num ()))
+    ⟹-det r-ifTrue             r-ifTrue            = refl
+    ⟹-det r-ifTrue             (r-if r″)           = r″ ↯ v⇒nf true
+    ⟹-det r-ifFalse            (r-ifWrong (num ()))
+    ⟹-det r-ifFalse            r-ifFalse           = refl
+    ⟹-det r-ifFalse            (r-if r″)           = r″ ↯ v⇒nf false
+    ⟹-det (r-if r′)            (r-ifWrong bb″)     = r′ ↯ bb⇒nf bb″
+    ⟹-det (r-if r′)            r-ifTrue            = r′ ↯ v⇒nf true
+    ⟹-det (r-if r′)            r-ifFalse           = r′ ↯ v⇒nf false
+    ⟹-det (r-if r′)            (r-if r″)           = (λ t₁′ → if t₁′ then _ else _) & ⟹-det r′ r″
+
+
+-- Every term is either a value, or reducible to another term.
+
+    data Classifiable : Pred₀ Term where
+      val : ∀ {t} → Value t → Classifiable t
+      red : ∀ {t} → Reducible t → Classifiable t
+
+    classify : ∀ t → Classifiable t
+    classify wrong                   = val wrong
+    classify true                    = val true
+    classify false                   = val false
+    classify zero                    = val (num zero)
+    classify (suc t₁)                with classify t₁
+    ... | val wrong                  = red (wrong , r-sucWrong wrong)
+    ... | val true                   = red (wrong , r-sucWrong true)
+    ... | val false                  = red (wrong , r-sucWrong false)
+    ... | val (num nv₁)              = val (num (suc nv₁))
+    ... | red (t₁′ , r₁)             = red (suc t₁′ , r-suc r₁)
+    classify (pred t₁)               with classify t₁
+    ... | val wrong                  = red (wrong , r-predWrong wrong)
+    ... | val true                   = red (wrong , r-predWrong true)
+    ... | val false                  = red (wrong , r-predWrong false)
+    ... | val (num zero)             = red (zero , r-predZero)
+    ... | val (num (suc nv₁))        = red (_ , r-predSuc nv₁)
+    ... | red (t₁′ , r₁)             = red (pred t₁′ , r-pred r₁)
+    classify (iszero t₁)             with classify t₁
+    ... | val wrong                  = red (wrong , r-iszeroWrong wrong)
+    ... | val true                   = red (wrong , r-iszeroWrong true)
+    ... | val false                  = red (wrong , r-iszeroWrong false)
+    ... | val (num zero)             = red (true , r-iszeroZero)
+    ... | val (num (suc nv₁))        = red (false , r-iszeroSuc nv₁)
+    ... | red (t₁′ , r₁)             = red (iszero t₁′ , r-iszero r₁)
+    classify (if t₁ then t₂ else t₃) with classify t₁
+    ... | val wrong                  = red (wrong , r-ifWrong wrong)
+    ... | val true                   = red (t₂ , r-ifTrue)
+    ... | val false                  = red (t₃ , r-ifFalse)
+    ... | val (num nv₁)              = red (wrong , r-ifWrong (num nv₁))
+    ... | red (t₁′ , r₁)             = red (if t₁′ then t₂ else t₃ , r-if r₁)
+
+
+-- Equivalent to Theorem 3.5.8.
+
+    nf⇒v : ∀ {t} → NormalForm t → Value t
+    nf⇒v {t} nf    with classify t
+    ... | val v       = v
+    ... | red (_ , r) = r ↯ nf
+
+
+-- Equivalent to Definition 3.5.9 and Theorem 3.5.11.
+
+    open MultiStepReduction _⟹_ public
+    open UniquenessOfNormalForms _⟹_ ⟹-det public
+
+
+-- Equipment for showing termination.
+
+    _⇓_ : Rel₀ Term
+    t ⇓ t′ = Value t′ × t ⟹* t′
+
+    _⇓ : Pred₀ Term
+    t ⇓ = ∃ λ t′ → t ⇓ t′
+
+    halt-sucWrong : ∀ {t₁ u₁} → BadNat u₁ → t₁ ⟹* u₁ → suc t₁ ⇓
+    halt-sucWrong bn₁ rs₁ = _ , wrong , (map r-suc rs₁ ∷ʳ r-sucWrong bn₁)
+
+    halt-suc : ∀ {t₁ u₁} → NumericValue u₁ → t₁ ⟹* u₁ → suc t₁ ⇓
+    halt-suc nv₁ rs₁ = (suc _) , (num (suc nv₁)) , (map r-suc rs₁)
+
+    halt-predWrong : ∀ {t₁ u₁} → BadNat u₁ → t₁ ⟹* u₁ → pred t₁ ⇓
+    halt-predWrong bn₁ rs₁ = _ , wrong , (map r-pred rs₁ ∷ʳ r-predWrong bn₁)
+
+    halt-predZero : ∀ {t₁} → t₁ ⟹* zero → pred t₁ ⇓
+    halt-predZero rs₁ = zero , (num zero) , (map r-pred rs₁ ∷ʳ r-predZero)
+
+    halt-predSuc : ∀ {t₁ u₁} → NumericValue u₁ → t₁ ⟹* suc u₁ → pred t₁ ⇓
+    halt-predSuc nv₁ rs₁ = _ , (num nv₁) , (map r-pred rs₁ ∷ʳ r-predSuc nv₁)
+
+    halt-iszeroWrong : ∀ {t₁ u₁} → BadNat u₁ → t₁ ⟹* u₁ → iszero t₁ ⇓
+    halt-iszeroWrong bn₁ rs₁ = _ , wrong , (map r-iszero rs₁ ∷ʳ r-iszeroWrong bn₁)
+
+    halt-iszeroZero : ∀ {t₁} → t₁ ⟹* zero → iszero t₁ ⇓
+    halt-iszeroZero rs₁ = true , true , (map r-iszero rs₁ ∷ʳ r-iszeroZero)
+
+    halt-iszeroSuc : ∀ {t₁ u₁} → NumericValue u₁ → t₁ ⟹* suc u₁ → iszero t₁ ⇓
+    halt-iszeroSuc nv₁ rs₁ = false , false , (map r-iszero rs₁ ∷ʳ r-iszeroSuc nv₁)
+
+    halt-ifWrong : ∀ {t₁ t₂ t₃ u₁} → BadBool u₁ → t₁ ⟹* u₁ → if t₁ then t₂ else t₃ ⇓
+    halt-ifWrong bb₁ rs₁ = _ , wrong , (map r-if rs₁ ∷ʳ r-ifWrong bb₁)
+
+    halt-if : ∀ {t₁ t₂ t₃ tₙ u₁} → t₁ ⟹* u₁ → if u₁ then t₂ else t₃ ⟹ tₙ →
+              tₙ ⇓ → if t₁ then t₂ else t₃ ⇓
+    halt-if rs₁ rₙ (uₙ , vₙ , rsₙ) = uₙ , vₙ , (map r-if rs₁ ++ rₙ ∷ rsₙ)
+
+    halt : ∀ t → t ⇓
+    halt wrong                         = wrong , wrong , []
+    halt true                          = true , true , []
+    halt false                         = false , false , []
+    halt zero                          = zero , num zero , []
+    halt (suc t₁)                      with halt t₁
+    ... | .wrong , wrong         , rs₁ = halt-sucWrong wrong rs₁
+    ... | .true  , true          , rs₁ = halt-sucWrong true rs₁
+    ... | .false , false         , rs₁ = halt-sucWrong false rs₁
+    ... | _      , num nv₁       , rs₁ = halt-suc nv₁ rs₁
+    halt (pred t₁)                     with halt t₁
+    ... | .wrong , wrong         , rs₁ = halt-predWrong wrong rs₁
+    ... | .true  , true          , rs₁ = halt-predWrong true rs₁
+    ... | .false , false         , rs₁ = halt-predWrong false rs₁
+    ... | _      , num zero      , rs₁ = halt-predZero rs₁
+    ... | _      , num (suc nv₁) , rs₁ = halt-predSuc nv₁ rs₁
+    halt (iszero t₁)                   with halt t₁
+    ... | .wrong , wrong         , rs₁ = halt-iszeroWrong wrong rs₁
+    ... | .true  , true          , rs₁ = halt-iszeroWrong true rs₁
+    ... | .false , false         , rs₁ = halt-iszeroWrong false rs₁
+    ... | _      , num zero      , rs₁ = halt-iszeroZero rs₁
+    ... | _      , num (suc nv₁) , rs₁ = halt-iszeroSuc nv₁ rs₁
+    halt (if t₁ then t₂ else t₃)       with halt t₁
+    ... | .wrong , wrong         , rs₁ = halt-ifWrong wrong rs₁
+    ... | .true  , true          , rs₁ = halt-if rs₁ r-ifTrue (halt t₂)
+    ... | .false , false         , rs₁ = halt-if rs₁ r-ifFalse (halt t₃)
+    ... | _      , num nv₁       , rs₁ = halt-ifWrong (num nv₁) rs₁
+
+
+-- Equivalent to Theorem 3.5.12.
+
+    halt′ : ∀ t → ∃ λ t′ → NormalForm t′ × t ⟹* t′
+    halt′ t with halt t
+    ... | t′ , v , rs = t′ , v⇒nf v , rs
+
+
+-- TODO
+
+
+----------------------------------------------------------------------------------------------------
+--
+-- 3.5.17. Exercise [Recommended, ***]
+-- “Two styles of operational semantics are in common use. The one used in this book is called the
+-- _small-step_ style, because the definition of the reduction relation shows how individual steps
+-- of computation are used to rewrite a term, bit by bit, until it eventually becomes a value.
+-- On top of this, we define a multi-step reduction relation that allows us to talk about terms
+-- reducing (in many steps) to values.  An alternative style, called _big-step semantics_ (or
+-- sometimes _natural semantics_), directly formulates the notion of “this term evaluates to that
+-- final value,” written `t ⇓ v`.  The big-step evaluation rules for our language of boolean and
+-- arithmetic expressions look like this: …”
+-- “Show that the small-step and big-step semantics for this language coincide, i.e.
+-- `t ⟹* v` iff `t ⇓ v`.”
+
+
+-- TODO
+
+
+----------------------------------------------------------------------------------------------------
+--
+-- 3.5.18 Exercise [⋆⋆ ↛]
+-- “Suppose we want to change the evaluation strategy of our language so that the `then` and `else`
+-- branches of an `if` expression are evaluated (in that order) _before_ the guard is evaluated.
+-- Show how the reduction rules need to change to achieve this effect.”
+-- (skipped)
+
+
+----------------------------------------------------------------------------------------------------
+--
+-- 3.6 Notes
+
+
+----------------------------------------------------------------------------------------------------
