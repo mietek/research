@@ -545,7 +545,8 @@ module BooleansOnly-Part1
     data _⟹_ : Rel₀ Term where
       r-ifTrue  : ∀ {t₂ t₃} → if true then t₂ else t₃ ⟹ t₂
       r-ifFalse : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟹ t₃
-      r-if      : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹ t₁′ → if t₁ then t₂ else t₃ ⟹ if t₁′ then t₂ else t₃
+      r-if      : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹ t₁′ →
+                  if t₁ then t₂ else t₃ ⟹ if t₁′ then t₂ else t₃
 
 
 ----------------------------------------------------------------------------------------------------
@@ -593,7 +594,8 @@ module BooleansOnly-Part2
     ⟹-det r-ifFalse (r-if r′) = r′ ↯ v⇒nf false
     ⟹-det (r-if r)  r-ifTrue  = r ↯ v⇒nf true
     ⟹-det (r-if r)  r-ifFalse = r ↯ v⇒nf false
-    ⟹-det (r-if r)  (r-if r′) = (λ s₁ → if s₁ then _ else _) & ⟹-det r r′
+    ⟹-det (r-if r)  (r-if r′) = (λ s₁ → if s₁ then _ else _) &
+                                    ⟹-det r r′
 
 
 ----------------------------------------------------------------------------------------------------
@@ -770,7 +772,8 @@ module NumbersAndBooleans-Part2
       r-iszero     : ∀ {t₁ t₁′} → t₁ ⟹ t₁′ → iszero t₁ ⟹ iszero t₁′
       r-ifTrue     : ∀ {t₂ t₃} → if true then t₂ else t₃ ⟹ t₂
       r-ifFalse    : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟹ t₃
-      r-if         : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹ t₁′ → if t₁ then t₂ else t₃ ⟹ if t₁′ then t₂ else t₃
+      r-if         : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹ t₁′ →
+                     if t₁ then t₂ else t₃ ⟹ if t₁′ then t₂ else t₃
 
 
 -- Equivalent to Definition 3.5.6.
@@ -814,7 +817,8 @@ module NumbersAndBooleans-Part2
     ⟹-det r-ifFalse         (r-if r″)         = r″ ↯ v⇒nf false
     ⟹-det (r-if r′)         r-ifTrue          = r′ ↯ v⇒nf true
     ⟹-det (r-if r′)         r-ifFalse         = r′ ↯ v⇒nf false
-    ⟹-det (r-if r′)         (r-if r″)         = (λ t₁′ → if t₁′ then _ else _) & ⟹-det r′ r″
+    ⟹-det (r-if r′)         (r-if r″)         = (λ t₁′ → if t₁′ then _ else _) &
+                                                    ⟹-det r′ r″
 
 
 ----------------------------------------------------------------------------------------------------
@@ -1095,7 +1099,8 @@ module NumbersAndBooleansGoWrong
       r-ifWrong     : ∀ {t₁ t₂ t₃} → BadBool t₁ → if t₁ then t₂ else t₃ ⟹ wrong
       r-ifTrue      : ∀ {t₂ t₃} → if true then t₂ else t₃ ⟹ t₂
       r-ifFalse     : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟹ t₃
-      r-if          : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹ t₁′ → if t₁ then t₂ else t₃ ⟹ if t₁′ then t₂ else t₃
+      r-if          : ∀ {t₁ t₁′ t₂ t₃} → t₁ ⟹ t₁′ →
+                      if t₁ then t₂ else t₃ ⟹ if t₁′ then t₂ else t₃
 
 
 -- Equivalent to Definition 3.5.6.
@@ -1180,7 +1185,8 @@ module NumbersAndBooleansGoWrong
     ⟹-det (r-if r′)            (r-ifWrong bb″)     = r′ ↯ bb⇒nf bb″
     ⟹-det (r-if r′)            r-ifTrue            = r′ ↯ v⇒nf true
     ⟹-det (r-if r′)            r-ifFalse           = r′ ↯ v⇒nf false
-    ⟹-det (r-if r′)            (r-if r″)           = (λ t₁′ → if t₁′ then _ else _) & ⟹-det r′ r″
+    ⟹-det (r-if r′)            (r-if r″)           = (λ t₁′ → if t₁′ then _ else _) &
+                                                         ⟹-det r′ r″
 
 
 -- Every term is either a value, or reducible to another term.
