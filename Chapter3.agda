@@ -833,10 +833,10 @@ module NumbersAndBooleansGetStuck
 
 -- Every term is either stuck, a value, or reducible to another term.
 
-    data Stuck|Value|Reducible : Pred₀ Term where
-      stu : ∀ {t} → Stuck t → Stuck|Value|Reducible t
-      val : ∀ {t} → Value t → Stuck|Value|Reducible t
-      red : ∀ {t} → Reducible t → Stuck|Value|Reducible t
+    data Stuck/Value/Reducible : Pred₀ Term where
+      stu : ∀ {t} → Stuck t → Stuck/Value/Reducible t
+      val : ∀ {t} → Value t → Stuck/Value/Reducible t
+      red : ∀ {t} → Reducible t → Stuck/Value/Reducible t
 
     s-sucStuck : ∀ {t₁} → Stuck t₁ → Stuck (suc t₁)
     s-sucStuck (¬v₁ , nf₁) = (λ where (num (suc nv₁)) → num nv₁ ↯ ¬v₁)
@@ -892,7 +892,7 @@ module NumbersAndBooleansGetStuck
     s-ifSuc nv₁ = (λ where (num ()))
                 , (λ where (r-if (r-suc r₁)) → r₁ ↯ nv⇒nf nv₁)
 
-    classify : ∀ t → Stuck|Value|Reducible t
+    classify : ∀ t → Stuck/Value/Reducible t
     classify true                    = val true
     classify false                   = val false
     classify zero                    = val (num zero)
@@ -927,12 +927,12 @@ module NumbersAndBooleansGetStuck
 
 -- Echo of Theorem 3.5.8.
 
-    data Stuck|Value : Pred₀ Term where
-      stu : ∀ {t} → Stuck t → Stuck|Value t
-      val : ∀ {t} → Value t → Stuck|Value t
+    data Stuck/Value : Pred₀ Term where
+      stu : ∀ {t} → Stuck t → Stuck/Value t
+      val : ∀ {t} → Value t → Stuck/Value t
 
-    nf⇒s⊎v : ∀ {t} → NormalForm t → Stuck|Value t
-    nf⇒s⊎v {t} nf    with classify t
+    nf⇒s/v : ∀ {t} → NormalForm t → Stuck/Value t
+    nf⇒s/v {t} nf    with classify t
     ... | stu s       = stu s
     ... | val v       = val v
     ... | red (_ , r) = r ↯ nf
@@ -947,7 +947,7 @@ module NumbersAndBooleansGetStuck
 -- Equipment for showing termination.
 
     _⇓_ : Rel₀ Term
-    t ⇓ u = Stuck|Value u × t ⟹* u
+    t ⇓ u = Stuck/Value u × t ⟹* u
 
     _⇓ : Pred₀ Term
     t ⇓ = ∃ λ u → t ⇓ u
