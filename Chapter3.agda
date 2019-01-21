@@ -1276,10 +1276,10 @@ module NumbersAndBooleansGoWrong
     halt-if rs₁ rₙ (uₙ , vₙ , rsₙ) = uₙ , vₙ , (map r-if rs₁ ++ rₙ ∷ rsₙ)
 
     halt : ∀ t → t ⇓
-    halt wrong                         = wrong , wrong , []
-    halt true                          = true , true , []
-    halt false                         = false , false , []
-    halt zero                          = zero , num zero , []
+    halt wrong                         = wrong , wrong    , []
+    halt true                          = true  , true     , []
+    halt false                         = false , false    , []
+    halt zero                          = zero  , num zero , []
     halt (suc t₁)                      with halt t₁
     ... | .wrong , wrong         , rs₁ = halt-sucWrong wrong rs₁
     ... | .true  , true          , rs₁ = halt-sucWrong true rs₁
