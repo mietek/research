@@ -626,9 +626,9 @@ module BooleansOnly-Part2
     classify true                    = val true
     classify false                   = val false
     classify (if t₁ then t₂ else t₃) with classify t₁
-    ... | val true                   = red (t₂ , r-ifTrue)
-    ... | val false                  = red (t₃ , r-ifFalse)
-    ... | red (t₁′ , r₁)             = red (if t₁′ then t₂ else t₃ , r-if r₁)
+    ... | val true                   = red (_ , r-ifTrue)
+    ... | val false                  = red (_ , r-ifFalse)
+    ... | red (t₁′ , r₁)             = red (_ , r-if r₁)
 
     nf⇒v : ∀ {t} → NormalForm t → Value t
     nf⇒v {t} nf      with classify t
@@ -901,28 +901,28 @@ module NumbersAndBooleansGetStuck
     ... | val true                   = stu s-sucTrue
     ... | val false                  = stu s-sucFalse
     ... | val (num nv₁)              = val (num (suc nv₁))
-    ... | red (t₁′ , r₁)             = red (suc t₁′ , r-suc r₁)
+    ... | red (t₁′ , r₁)             = red (_ , r-suc r₁)
     classify (pred t₁)               with classify t₁
     ... | stu s₁                     = stu (s-predStuck s₁)
     ... | val true                   = stu s-predTrue
     ... | val false                  = stu s-predFalse
-    ... | val (num zero)             = red (zero , r-predZero)
+    ... | val (num zero)             = red (_ , r-predZero)
     ... | val (num (suc nv₁))        = red (_ , r-predSuc nv₁)
-    ... | red (t₁′ , r₁)             = red (pred t₁′ , r-pred r₁)
+    ... | red (t₁′ , r₁)             = red (_ , r-pred r₁)
     classify (iszero t₁)             with classify t₁
     ... | stu s₁                     = stu (s-iszeroStuck s₁)
     ... | val true                   = stu s-iszeroTrue
     ... | val false                  = stu s-iszeroFalse
-    ... | val (num zero)             = red (true , r-iszeroZero)
-    ... | val (num (suc nv₁))        = red (false , r-iszeroSuc nv₁)
-    ... | red (t₁′ , r₁)             = red (iszero t₁′ , r-iszero r₁)
+    ... | val (num zero)             = red (_ , r-iszeroZero)
+    ... | val (num (suc nv₁))        = red (_ , r-iszeroSuc nv₁)
+    ... | red (t₁′ , r₁)             = red (_ , r-iszero r₁)
     classify (if t₁ then t₂ else t₃) with classify t₁
     ... | stu s₁                     = stu (s-ifStuck s₁)
-    ... | val true                   = red (t₂ , r-ifTrue)
-    ... | val false                  = red (t₃ , r-ifFalse)
+    ... | val true                   = red (_ , r-ifTrue)
+    ... | val false                  = red (_ , r-ifFalse)
     ... | val (num zero)             = stu s-ifZero
     ... | val (num (suc nv₁))        = stu (s-ifSuc nv₁)
-    ... | red (t₁′ , r₁)             = red (if t₁′ then t₂ else t₃ , r-if r₁)
+    ... | red (t₁′ , r₁)             = red (_ , r-if r₁)
 
 
 -- Echo of Theorem 3.5.8.
@@ -1152,31 +1152,31 @@ module NumbersAndBooleansGoWrong
     classify false                   = val false
     classify zero                    = val (num zero)
     classify (suc t₁)                with classify t₁
-    ... | val wrong                  = red (wrong , r-sucWrong wrong)
-    ... | val true                   = red (wrong , r-sucWrong true)
-    ... | val false                  = red (wrong , r-sucWrong false)
+    ... | val wrong                  = red (_ , r-sucWrong wrong)
+    ... | val true                   = red (_ , r-sucWrong true)
+    ... | val false                  = red (_ , r-sucWrong false)
     ... | val (num nv₁)              = val (num (suc nv₁))
-    ... | red (t₁′ , r₁)             = red (suc t₁′ , r-suc r₁)
+    ... | red (t₁′ , r₁)             = red (_ , r-suc r₁)
     classify (pred t₁)               with classify t₁
-    ... | val wrong                  = red (wrong , r-predWrong wrong)
-    ... | val true                   = red (wrong , r-predWrong true)
-    ... | val false                  = red (wrong , r-predWrong false)
-    ... | val (num zero)             = red (zero , r-predZero)
+    ... | val wrong                  = red (_ , r-predWrong wrong)
+    ... | val true                   = red (_ , r-predWrong true)
+    ... | val false                  = red (_ , r-predWrong false)
+    ... | val (num zero)             = red (_ , r-predZero)
     ... | val (num (suc nv₁))        = red (_ , r-predSuc nv₁)
     ... | red (t₁′ , r₁)             = red (pred t₁′ , r-pred r₁)
     classify (iszero t₁)             with classify t₁
-    ... | val wrong                  = red (wrong , r-iszeroWrong wrong)
-    ... | val true                   = red (wrong , r-iszeroWrong true)
-    ... | val false                  = red (wrong , r-iszeroWrong false)
-    ... | val (num zero)             = red (true , r-iszeroZero)
-    ... | val (num (suc nv₁))        = red (false , r-iszeroSuc nv₁)
-    ... | red (t₁′ , r₁)             = red (iszero t₁′ , r-iszero r₁)
+    ... | val wrong                  = red (_ , r-iszeroWrong wrong)
+    ... | val true                   = red (_ , r-iszeroWrong true)
+    ... | val false                  = red (_ , r-iszeroWrong false)
+    ... | val (num zero)             = red (_ , r-iszeroZero)
+    ... | val (num (suc nv₁))        = red (_ , r-iszeroSuc nv₁)
+    ... | red (t₁′ , r₁)             = red (_ , r-iszero r₁)
     classify (if t₁ then t₂ else t₃) with classify t₁
-    ... | val wrong                  = red (wrong , r-ifWrong wrong)
-    ... | val true                   = red (t₂ , r-ifTrue)
-    ... | val false                  = red (t₃ , r-ifFalse)
-    ... | val (num nv₁)              = red (wrong , r-ifWrong (num nv₁))
-    ... | red (t₁′ , r₁)             = red (if t₁′ then t₂ else t₃ , r-if r₁)
+    ... | val wrong                  = red (_ , r-ifWrong wrong)
+    ... | val true                   = red (_ , r-ifTrue)
+    ... | val false                  = red (_ , r-ifFalse)
+    ... | val (num nv₁)              = red (_ , r-ifWrong (num nv₁))
+    ... | red (t₁′ , r₁)             = red (_ , r-if r₁)
 
 
 -- Echo of Theorem 3.5.8.
