@@ -13,9 +13,6 @@ open Nat.≤-Reasoning
 open import Data.Product
   using (_×_ ; _,_ ; Σ ; ∃ ; proj₁ ; proj₂)
 
-open import Data.Sum
-  using (_⊎_ ; inj₁ ; inj₂)
-
 open import Level
   using (_⊔_ ; 0ℓ)
 
@@ -28,8 +25,7 @@ open PropEq
   renaming (cong to _&_) -- ; sym to _⁻¹)
 
 import Relation.Binary.Construct.Closure.ReflexiveTransitive as Star
-open Star
-  using ()
+open Star using ()
   renaming (Star to _* ; ε to [] ; _◅_ to _∷_ ; _◅◅_ to _++_)
 
 open import Relation.Nullary
@@ -174,9 +170,9 @@ module NumbersAndBooleans-Part1
     if s₁ then s₂ else s₃ ≟ iszero t₁             = no λ ()
     if s₁ then s₂ else s₃ ≟ if t₁ then t₂ else t₃ with s₁ ≟ t₁ | s₂ ≟ t₂ | s₃ ≟ t₃
     ... | yes refl | yes refl | yes refl          = yes refl
+    ... | yes refl | yes refl | no s₃≢t₃          = no λ where refl → refl ↯ s₃≢t₃
+    ... | yes refl | no s₂≢t₂ | _                 = no λ where refl → refl ↯ s₂≢t₂
     ... | no s₁≢t₁ | _        | _                 = no λ where refl → refl ↯ s₁≢t₁
-    ... | _        | no s₂≢t₂ | _                 = no λ where refl → refl ↯ s₂≢t₂
-    ... | _        | _        | no s₃≢t₃          = no λ where refl → refl ↯ s₃≢t₃
 
     Term-decSetoid : DecSetoid _ _
     Term-decSetoid = record
@@ -594,8 +590,7 @@ module BooleansOnly-Part2
     ⟹-det r-ifFalse (r-if r′) = r′ ↯ v⇒nf false
     ⟹-det (r-if r)  r-ifTrue  = r ↯ v⇒nf true
     ⟹-det (r-if r)  r-ifFalse = r ↯ v⇒nf false
-    ⟹-det (r-if r)  (r-if r′) = (λ s₁ → if s₁ then _ else _) &
-                                    ⟹-det r r′
+    ⟹-det (r-if r)  (r-if r′) = (λ s₁ → if s₁ then _ else _) & ⟹-det r r′
 
 
 ----------------------------------------------------------------------------------------------------
@@ -623,11 +618,11 @@ module BooleansOnly-Part2
 -- To prove this theorem, we’re first going to show that every term is either a value, or reducible
 -- to another term.
 
-    data Classifiable : Pred₀ Term where
-      val : ∀ {t} → Value t → Classifiable t
-      red : ∀ {t} → Reducible t → Classifiable t
+    data Value|Reducible : Pred₀ Term where
+      val : ∀ {t} → Value t → Value|Reducible t
+      red : ∀ {t} → Reducible t → Value|Reducible t
 
-    classify : ∀ t → Classifiable t
+    classify : ∀ t → Value|Reducible t
     classify true                    = val true
     classify false                   = val false
     classify (if t₁ then t₂ else t₃) with classify t₁
@@ -678,9 +673,6 @@ module MultiStepReduction {t ℓ} {Term : Set t}
 --
 -- 3.5.11. Theorem [Uniqueness of normal forms]
 -- “If `t ⟹* u` and `t ⟹* u′`, where `u` and `u′` are both normal forms, then `u = u′`.”
---
--- To show this theorem, we start with a lemma that says, if `t ⟹* u` and `t ⟹ t′`, where `u`
--- is a normal form, then `t′ ⟹* u`.  We give this lemma in a generic manner, for reuse.
 
 module UniquenessOfNormalForms {t ℓ} {Term : Set t}
     (_⟹_ : Rel Term ℓ)
@@ -700,10 +692,10 @@ module UniquenessOfNormalForms {t ℓ} {Term : Set t}
 ----------------------------------------------------------------------------------------------------
 --
 -- 3.5.12. Theorem [Termination of evaluation]
--- “For every term `t` there is some normal form `t′` such that `t ⟹* t′`.”
+-- “For every term `t` there is some normal form `u` such that `t ⟹* u`.”
 --
 -- We first show a variant of this theorem that uses the notion of value instead of normal form.
--- We say `t ⇓ t′` to mean that `t` evaluates to `t′`, and `t ⇓` to mean that evaluation of `t`
+-- We say `t ⇓ u` to mean that `t` evaluates to `u`, and `t ⇓` to mean that evaluation of `t`
 -- terminates.
 
 module BooleansOnly-Part3
@@ -713,25 +705,25 @@ module BooleansOnly-Part3
     open UniquenessOfNormalForms _⟹_ ⟹-det public
 
     _⇓_ : Rel₀ Term
-    t ⇓ t′ = Value t′ × t ⟹* t′
+    t ⇓ u = Value u × t ⟹* u
 
     _⇓ : Pred₀ Term
-    t ⇓ = ∃ λ t′ → t ⇓ t′
+    t ⇓ = ∃ λ u → t ⇓ u
 
     halt-if : ∀ {t₁ t₂ t₃ tₙ u₁} → t₁ ⟹* u₁ → if u₁ then t₂ else t₃ ⟹ tₙ →
               tₙ ⇓ → if t₁ then t₂ else t₃ ⇓
     halt-if rs₁ rₙ (uₙ , vₙ , rsₙ) = uₙ , vₙ , (map r-if rs₁ ++ rₙ ∷ rsₙ)
 
     halt : ∀ t → t ⇓
-    halt true                    = true  , true  , []
-    halt false                   = false , false , []
+    halt true                    = _ , true  , []
+    halt false                   = _ , false , []
     halt (if t₁ then t₂ else t₃) with halt t₁
     ... | .true  , true  , rs₁   = halt-if rs₁ r-ifTrue (halt t₂)
     ... | .false , false , rs₁   = halt-if rs₁ r-ifFalse (halt t₃)
 
-    halt′ : ∀ t → ∃ λ t′ → NormalForm t′ × t ⟹* t′
-    halt′ t           with halt t
-    ... | t′ , v , rs = t′ , v⇒nf v , rs
+    halt′ : ∀ t → ∃ λ u → NormalForm u × t ⟹* u
+    halt′ t          with halt t
+    ... | u , v , rs = u , v⇒nf v , rs
 
 
 ----------------------------------------------------------------------------------------------------
@@ -761,6 +753,9 @@ module NumbersAndBooleans-Part2
       false : Value false
       num   : ∀ {t₁} → (nv₁ : NumericValue t₁) → Value t₁
 
+
+-- Echo of Definition 3.5.3.
+
     infix 3 _⟹_
     data _⟹_ : Rel₀ Term where
       r-suc        : ∀ {t₁ t₁′} → t₁ ⟹ t₁′ → suc t₁ ⟹ suc t₁′
@@ -776,12 +771,12 @@ module NumbersAndBooleans-Part2
                      if t₁ then t₂ else t₃ ⟹ if t₁′ then t₂ else t₃
 
 
--- Equivalent to Definition 3.5.6.
+-- Echo of Definition 3.5.6.
 
     open NormalForms _⟹_ public
 
 
--- Equivalent to Theorem 3.5.7.
+-- Echo of Theorem 3.5.7.
 
     nv⇒nf : ∀ {t} → NumericValue t → NormalForm t
     nv⇒nf zero     = λ ()
@@ -793,7 +788,7 @@ module NumbersAndBooleans-Part2
     v⇒nf (num nv) = nv⇒nf nv
 
 
--- Equivalent to Theorem 3.5.4.
+-- Echo of Theorem 3.5.4.
 
     ⟹-det : ∀ {t t′ t″} → t ⟹ t′ → t ⟹ t″ → t′ ≡ t″
     ⟹-det (r-suc r′)        (r-suc r″)        = suc & ⟹-det r′ r″
@@ -817,8 +812,7 @@ module NumbersAndBooleans-Part2
     ⟹-det r-ifFalse         (r-if r″)         = r″ ↯ v⇒nf false
     ⟹-det (r-if r′)         r-ifTrue          = r′ ↯ v⇒nf true
     ⟹-det (r-if r′)         r-ifFalse         = r′ ↯ v⇒nf false
-    ⟹-det (r-if r′)         (r-if r″)         = (λ t₁′ → if t₁′ then _ else _) &
-                                                    ⟹-det r′ r″
+    ⟹-det (r-if r′)         (r-if r″)         = (λ t₁′ → if t₁′ then _ else _) &  ⟹-det r′ r″
 
 
 ----------------------------------------------------------------------------------------------------
@@ -827,7 +821,7 @@ module NumbersAndBooleans-Part2
 -- “A closed term is _stuck_ if it is in normal form but not a value.”
 --
 -- In anticipation of Exercise 3.5.16, we’re going to work towards showing that evaluation of
--- arithmetic expressions that get stuck is terminating.
+-- expressions-that-get-stuck is terminating.
 
 module NumbersAndBooleansGetStuck
   where
@@ -839,10 +833,10 @@ module NumbersAndBooleansGetStuck
 
 -- Every term is either stuck, a value, or reducible to another term.
 
-    data Classifiable : Pred₀ Term where
-      stu : ∀ {t} → Stuck t → Classifiable t
-      val : ∀ {t} → Value t → Classifiable t
-      red : ∀ {t} → Reducible t → Classifiable t
+    data Stuck|Value|Reducible : Pred₀ Term where
+      stu : ∀ {t} → Stuck t → Stuck|Value|Reducible t
+      val : ∀ {t} → Value t → Stuck|Value|Reducible t
+      red : ∀ {t} → Reducible t → Stuck|Value|Reducible t
 
     s-sucStuck : ∀ {t₁} → Stuck t₁ → Stuck (suc t₁)
     s-sucStuck (¬v₁ , nf₁) = (λ where (num (suc nv₁)) → num nv₁ ↯ ¬v₁)
@@ -898,7 +892,7 @@ module NumbersAndBooleansGetStuck
     s-ifSuc nv₁ = (λ where (num ()))
                 , (λ where (r-if (r-suc r₁)) → r₁ ↯ nv⇒nf nv₁)
 
-    classify : ∀ t → Classifiable t
+    classify : ∀ t → Stuck|Value|Reducible t
     classify true                    = val true
     classify false                   = val false
     classify zero                    = val (num zero)
@@ -931,16 +925,20 @@ module NumbersAndBooleansGetStuck
     ... | red (t₁′ , r₁)             = red (if t₁′ then t₂ else t₃ , r-if r₁)
 
 
--- Equivalent to Theorem 3.5.8.
+-- Echo of Theorem 3.5.8.
 
-    nf⇒s⊎v : ∀ {t} → NormalForm t → Stuck t ⊎ Value t
+    data Stuck|Value : Pred₀ Term where
+      stu : ∀ {t} → Stuck t → Stuck|Value t
+      val : ∀ {t} → Value t → Stuck|Value t
+
+    nf⇒s⊎v : ∀ {t} → NormalForm t → Stuck|Value t
     nf⇒s⊎v {t} nf    with classify t
-    ... | stu s       = inj₁ s
-    ... | val v       = inj₂ v
+    ... | stu s       = stu s
+    ... | val v       = val v
     ... | red (_ , r) = r ↯ nf
 
 
--- Equivalent to Definition 3.5.9 and Theorem 3.5.11.
+-- Echo of Definition 3.5.9 and Theorem 3.5.11.
 
     open MultiStepReduction _⟹_ public
     open UniquenessOfNormalForms _⟹_ ⟹-det public
@@ -949,101 +947,50 @@ module NumbersAndBooleansGetStuck
 -- Equipment for showing termination.
 
     _⇓_ : Rel₀ Term
-    t ⇓ t′ = (Stuck t′ ⊎ Value t′) × t ⟹* t′
+    t ⇓ u = Stuck|Value u × t ⟹* u
 
     _⇓ : Pred₀ Term
-    t ⇓ = ∃ λ t′ → t ⇓ t′
-
-    halt-sucStuck : ∀ {t₁ u₁} → Stuck u₁ → t₁ ⟹* u₁ → suc t₁ ⇓
-    halt-sucStuck s₁ rs₁ = (suc _) , (inj₁ (s-sucStuck s₁)) , (map r-suc rs₁)
-
-    halt-sucTrue : ∀ {t₁} → t₁ ⟹* true → suc t₁ ⇓
-    halt-sucTrue rs₁ = (suc true) , (inj₁ s-sucTrue) , (map r-suc rs₁)
-
-    halt-sucFalse : ∀ {t₁} → t₁ ⟹* false → suc t₁ ⇓
-    halt-sucFalse rs₁ = (suc false) , (inj₁ s-sucFalse) , (map r-suc rs₁)
-
-    halt-suc : ∀ {t₁ u₁} → NumericValue u₁ → t₁ ⟹* u₁ → suc t₁ ⇓
-    halt-suc nv₁ rs₁ = (suc _) , (inj₂ (num (suc nv₁))) , (map r-suc rs₁)
-
-    halt-predStuck : ∀ {t₁ u₁} → Stuck u₁ → t₁ ⟹* u₁ → pred t₁ ⇓
-    halt-predStuck s₁ rs₁ = (pred _) , (inj₁ (s-predStuck s₁)) , (map r-pred rs₁)
-
-    halt-predTrue : ∀ {t₁} → t₁ ⟹* true → pred t₁ ⇓
-    halt-predTrue rs₁ = (pred true) , (inj₁ s-predTrue) , (map r-pred rs₁)
-
-    halt-predFalse : ∀ {t₁} → t₁ ⟹* false → pred t₁ ⇓
-    halt-predFalse rs₁ = (pred false) , (inj₁ s-predFalse) , (map r-pred rs₁)
-
-    halt-predZero : ∀ {t₁} → t₁ ⟹* zero → pred t₁ ⇓
-    halt-predZero rs₁ = zero , (inj₂ (num zero)) , (map r-pred rs₁ ∷ʳ r-predZero)
-
-    halt-predSuc : ∀ {t₁ u₁} → NumericValue u₁ → t₁ ⟹* suc u₁ → pred t₁ ⇓
-    halt-predSuc nv₁ rs₁ = _ , (inj₂ (num nv₁)) , (map r-pred rs₁ ∷ʳ r-predSuc nv₁)
-
-    halt-iszeroStuck : ∀ {t₁ u₁} → Stuck u₁ → t₁ ⟹* u₁ → iszero t₁ ⇓
-    halt-iszeroStuck s₁ rs₁ = (iszero _) , (inj₁ (s-iszeroStuck s₁)) , (map r-iszero rs₁)
-
-    halt-iszeroTrue : ∀ {t₁} → t₁ ⟹* true → iszero t₁ ⇓
-    halt-iszeroTrue rs₁ = (iszero true) , (inj₁ s-iszeroTrue) , (map r-iszero rs₁)
-
-    halt-iszeroFalse : ∀ {t₁} → t₁ ⟹* false → iszero t₁ ⇓
-    halt-iszeroFalse rs₁ = (iszero false) , (inj₁ s-iszeroFalse) , (map r-iszero rs₁)
-
-    halt-iszeroZero : ∀ {t₁} → t₁ ⟹* zero → iszero t₁ ⇓
-    halt-iszeroZero rs₁ = true , (inj₂ true) , (map r-iszero rs₁ ∷ʳ r-iszeroZero)
-
-    halt-iszeroSuc : ∀ {t₁ u₁} → NumericValue u₁ → t₁ ⟹* suc u₁ → iszero t₁ ⇓
-    halt-iszeroSuc nv₁ rs₁ = false , (inj₂ false) , (map r-iszero rs₁ ∷ʳ r-iszeroSuc nv₁)
-
-    halt-ifStuck : ∀ {t₁ t₂ t₃ u₁} → Stuck u₁ → t₁ ⟹* u₁ → if t₁ then t₂ else t₃ ⇓
-    halt-ifStuck s₁ rs₁ = (if _ then _ else _) , (inj₁ (s-ifStuck s₁)) , (map r-if rs₁)
+    t ⇓ = ∃ λ u → t ⇓ u
 
     halt-if : ∀ {t₁ t₂ t₃ tₙ u₁} → t₁ ⟹* u₁ → if u₁ then t₂ else t₃ ⟹ tₙ →
               tₙ ⇓ → if t₁ then t₂ else t₃ ⇓
     halt-if rs₁ rₙ (uₙ , vₙ , rsₙ) = uₙ , vₙ , (map r-if rs₁ ++ rₙ ∷ rsₙ)
 
-    halt-ifZero : ∀ {t₁ t₂ t₃} → t₁ ⟹* zero → if t₁ then t₂ else t₃ ⇓
-    halt-ifZero rs₁ = (if zero then _ else _) , (inj₁ s-ifZero) , (map r-if rs₁)
-
-    halt-ifSuc : ∀ {t₁ t₂ t₃ u₁} → NumericValue u₁ → t₁ ⟹* suc u₁ → if t₁ then t₂ else t₃ ⇓
-    halt-ifSuc nv₁ rs₁ = (if (suc _) then _ else _) , (inj₁ (s-ifSuc nv₁)) , (map r-if rs₁)
-
     halt : ∀ t → t ⇓
-    halt true                                   = true  , inj₂ true       , []
-    halt false                                  = false , inj₂ false      , []
-    halt zero                                   = zero  , inj₂ (num zero) , []
-    halt (suc t₁)                               with halt t₁
-    ... | _        , inj₁ s₁              , rs₁ = halt-sucStuck s₁ rs₁
-    ... | .true    , inj₂ true            , rs₁ = halt-sucTrue rs₁
-    ... | .false   , inj₂ false           , rs₁ = halt-sucFalse rs₁
-    ... | ._       , inj₂ (num nv₁)       , rs₁ = halt-suc nv₁ rs₁
-    halt (pred t₁)                              with halt t₁
-    ... | _        , inj₁ s₁              , rs₁ = halt-predStuck s₁ rs₁
-    ... | .true    , inj₂ true            , rs₁ = halt-predTrue rs₁
-    ... | .false   , inj₂ false           , rs₁ = halt-predFalse rs₁
-    ... | .zero    , inj₂ (num zero)      , rs₁ = halt-predZero rs₁
-    ... | .(suc _) , inj₂ (num (suc nv₁)) , rs₁ = halt-predSuc nv₁ rs₁
-    halt (iszero t₁)                            with halt t₁
-    ... | _        , inj₁ s₁              , rs₁ = halt-iszeroStuck s₁ rs₁
-    ... | .true    , inj₂ true            , rs₁ = halt-iszeroTrue rs₁
-    ... | .false   , inj₂ false           , rs₁ = halt-iszeroFalse rs₁
-    ... | .zero    , inj₂ (num zero)      , rs₁ = halt-iszeroZero rs₁
-    ... | .(suc _) , inj₂ (num (suc nv₁)) , rs₁ = halt-iszeroSuc nv₁ rs₁
-    halt (if t₁ then t₂ else t₃)                with halt t₁
-    ... | _        , inj₁ s₁              , rs₁ = halt-ifStuck s₁ rs₁
-    ... | .true    , inj₂ true            , rs₁ = halt-if rs₁ r-ifTrue (halt t₂)
-    ... | .false   , inj₂ false           , rs₁ = halt-if rs₁ r-ifFalse (halt t₃)
-    ... | .zero    , inj₂ (num zero)      , rs₁ = halt-ifZero rs₁
-    ... | .(suc _) , inj₂ (num (suc nv₁)) , rs₁ = halt-ifSuc nv₁ rs₁
+    halt true                                  = _ , val true               , []
+    halt false                                 = _ , val false              , []
+    halt zero                                  = _ , val (num zero)         , []
+    halt (suc t₁)                              with halt t₁
+    ... | _        , stu s₁              , rs₁ = _ , stu (s-sucStuck s₁)    , map r-suc rs₁
+    ... | .true    , val true            , rs₁ = _ , stu s-sucTrue          , map r-suc rs₁
+    ... | .false   , val false           , rs₁ = _ , stu s-sucFalse         , map r-suc rs₁
+    ... | ._       , val (num nv₁)       , rs₁ = _ , val (num (suc nv₁))    , map r-suc rs₁
+    halt (pred t₁)                             with halt t₁
+    ... | _        , stu s₁              , rs₁ = _ , stu (s-predStuck s₁)   , map r-pred rs₁
+    ... | .true    , val true            , rs₁ = _ , stu s-predTrue         , map r-pred rs₁
+    ... | .false   , val false           , rs₁ = _ , stu s-predFalse        , map r-pred rs₁
+    ... | .zero    , val (num zero)      , rs₁ = _ , val (num zero)         , map r-pred rs₁ ∷ʳ r-predZero
+    ... | .(suc _) , val (num (suc nv₁)) , rs₁ = _ , val (num nv₁)          , map r-pred rs₁ ∷ʳ r-predSuc nv₁
+    halt (iszero t₁)                           with halt t₁
+    ... | _        , stu s₁              , rs₁ = _ , stu (s-iszeroStuck s₁) , map r-iszero rs₁
+    ... | .true    , val true            , rs₁ = _ , stu s-iszeroTrue       , map r-iszero rs₁
+    ... | .false   , val false           , rs₁ = _ , stu s-iszeroFalse      , map r-iszero rs₁
+    ... | .zero    , val (num zero)      , rs₁ = _ , val true               , map r-iszero rs₁ ∷ʳ r-iszeroZero
+    ... | .(suc _) , val (num (suc nv₁)) , rs₁ = _ , val false              , map r-iszero rs₁ ∷ʳ r-iszeroSuc nv₁
+    halt (if t₁ then t₂ else t₃)               with halt t₁
+    ... | _        , stu s₁              , rs₁ = _ , stu (s-ifStuck s₁)     , map r-if rs₁
+    ... | .true    , val true            , rs₁ = halt-if rs₁ r-ifTrue (halt t₂)
+    ... | .false   , val false           , rs₁ = halt-if rs₁ r-ifFalse (halt t₃)
+    ... | .zero    , val (num zero)      , rs₁ = _ , stu s-ifZero           , map r-if rs₁
+    ... | .(suc _) , val (num (suc nv₁)) , rs₁ = _ , stu (s-ifSuc nv₁)      , map r-if rs₁
 
 
--- Equivalent to Theorem 3.5.12.
+-- Echo of Theorem 3.5.12.
 
-    halt′ : ∀ t → ∃ λ t′ → NormalForm t′ × t ⟹* t′
-    halt′ t                        with halt t
-    ... | t′ , inj₁ (¬v , nf) , rs = t′ , nf      , rs
-    ... | t′ , inj₂ v         , rs = t′ , v⇒nf v , rs
+    halt′ : ∀ t → ∃ λ u → NormalForm u × t ⟹* u
+    halt′ t                      with halt t
+    ... | u , stu (¬v , nf) , rs = u , nf      , rs
+    ... | u , val v         , rs = u , v⇒nf v , rs
 
 
 ----------------------------------------------------------------------------------------------------
@@ -1055,8 +1002,9 @@ module NumbersAndBooleansGetStuck
 -- “Show that these two treatments of run-time errors agree by (1) finding a precise way of stating
 -- the intuition that “the two treatments agree,” and (2) proving it.”
 --
--- We’re going to work towards showing that evaluation of arithmetic expressions that can go wrong
--- is terminating.  First, we redefine terms, values, and one-step reduction.
+-- We’re going to start by showing that evaluation of expressions-that-go-wrong is terminating.
+-- Then, we’ll show that expressions-that-go-wrong go wrong exactly when expressions-that-get-stuck
+-- get stuck.  First, we echo Definition 3.2.1 and redefine terms and values.
 
 module NumbersAndBooleansGoWrong
   where
@@ -1084,6 +1032,9 @@ module NumbersAndBooleansGoWrong
       wrong : BadBool wrong
       num   : ∀ {u} → NumericValue u → BadBool u
 
+
+-- Echo of Definition 3.5.3.
+
     infix 3 _⟹_
     data _⟹_ : Rel₀ Term where
       r-sucWrong    : ∀ {t₁} → BadNat t₁ → suc t₁ ⟹ wrong
@@ -1103,12 +1054,12 @@ module NumbersAndBooleansGoWrong
                       if t₁ then t₂ else t₃ ⟹ if t₁′ then t₂ else t₃
 
 
--- Equivalent to Definition 3.5.6.
+-- Echo of Definition 3.5.6.
 
     open NormalForms _⟹_ public
 
 
--- Equivalent to Theorem 3.5.7.
+-- Echo of Theorem 3.5.7.
 
     bn⇒¬nv : ∀ {t} → BadNat t → ¬ NumericValue t
     bn⇒¬nv wrong = λ ()
@@ -1137,7 +1088,7 @@ module NumbersAndBooleansGoWrong
     bb⇒nf (num nv) = nv⇒nf nv
 
 
--- Equivalent to Theorem 3.5.4.
+-- Echo of Theorem 3.5.4.
 
     ⟹-det : ∀ {t t′ t″} → t ⟹ t′ → t ⟹ t″ → t′ ≡ t″
     ⟹-det (r-sucWrong bn′)     (r-sucWrong bn″)    = refl
@@ -1191,11 +1142,11 @@ module NumbersAndBooleansGoWrong
 
 -- Every term is either a value, or reducible to another term.
 
-    data Classifiable : Pred₀ Term where
-      val : ∀ {t} → Value t → Classifiable t
-      red : ∀ {t} → Reducible t → Classifiable t
+    data Value|Reducible : Pred₀ Term where
+      val : ∀ {t} → Value t → Value|Reducible t
+      red : ∀ {t} → Reducible t → Value|Reducible t
 
-    classify : ∀ t → Classifiable t
+    classify : ∀ t → Value|Reducible t
     classify wrong                   = val wrong
     classify true                    = val true
     classify false                   = val false
@@ -1228,7 +1179,7 @@ module NumbersAndBooleansGoWrong
     ... | red (t₁′ , r₁)             = red (if t₁′ then t₂ else t₃ , r-if r₁)
 
 
--- Equivalent to Theorem 3.5.8.
+-- Echo of Theorem 3.5.8.
 
     nf⇒v : ∀ {t} → NormalForm t → Value t
     nf⇒v {t} nf    with classify t
@@ -1236,7 +1187,7 @@ module NumbersAndBooleansGoWrong
     ... | red (_ , r) = r ↯ nf
 
 
--- Equivalent to Definition 3.5.9 and Theorem 3.5.11.
+-- Echo of Definition 3.5.9 and Theorem 3.5.11.
 
     open MultiStepReduction _⟹_ public
     open UniquenessOfNormalForms _⟹_ ⟹-det public
@@ -1245,76 +1196,49 @@ module NumbersAndBooleansGoWrong
 -- Equipment for showing termination.
 
     _⇓_ : Rel₀ Term
-    t ⇓ t′ = Value t′ × t ⟹* t′
+    t ⇓ u = Value u × t ⟹* u
 
     _⇓ : Pred₀ Term
-    t ⇓ = ∃ λ t′ → t ⇓ t′
-
-    halt-sucWrong : ∀ {t₁ u₁} → BadNat u₁ → t₁ ⟹* u₁ → suc t₁ ⇓
-    halt-sucWrong bn₁ rs₁ = _ , wrong , (map r-suc rs₁ ∷ʳ r-sucWrong bn₁)
-
-    halt-suc : ∀ {t₁ u₁} → NumericValue u₁ → t₁ ⟹* u₁ → suc t₁ ⇓
-    halt-suc nv₁ rs₁ = (suc _) , (num (suc nv₁)) , (map r-suc rs₁)
-
-    halt-predWrong : ∀ {t₁ u₁} → BadNat u₁ → t₁ ⟹* u₁ → pred t₁ ⇓
-    halt-predWrong bn₁ rs₁ = _ , wrong , (map r-pred rs₁ ∷ʳ r-predWrong bn₁)
-
-    halt-predZero : ∀ {t₁} → t₁ ⟹* zero → pred t₁ ⇓
-    halt-predZero rs₁ = zero , (num zero) , (map r-pred rs₁ ∷ʳ r-predZero)
-
-    halt-predSuc : ∀ {t₁ u₁} → NumericValue u₁ → t₁ ⟹* suc u₁ → pred t₁ ⇓
-    halt-predSuc nv₁ rs₁ = _ , (num nv₁) , (map r-pred rs₁ ∷ʳ r-predSuc nv₁)
-
-    halt-iszeroWrong : ∀ {t₁ u₁} → BadNat u₁ → t₁ ⟹* u₁ → iszero t₁ ⇓
-    halt-iszeroWrong bn₁ rs₁ = _ , wrong , (map r-iszero rs₁ ∷ʳ r-iszeroWrong bn₁)
-
-    halt-iszeroZero : ∀ {t₁} → t₁ ⟹* zero → iszero t₁ ⇓
-    halt-iszeroZero rs₁ = true , true , (map r-iszero rs₁ ∷ʳ r-iszeroZero)
-
-    halt-iszeroSuc : ∀ {t₁ u₁} → NumericValue u₁ → t₁ ⟹* suc u₁ → iszero t₁ ⇓
-    halt-iszeroSuc nv₁ rs₁ = false , false , (map r-iszero rs₁ ∷ʳ r-iszeroSuc nv₁)
-
-    halt-ifWrong : ∀ {t₁ t₂ t₃ u₁} → BadBool u₁ → t₁ ⟹* u₁ → if t₁ then t₂ else t₃ ⇓
-    halt-ifWrong bb₁ rs₁ = _ , wrong , (map r-if rs₁ ∷ʳ r-ifWrong bb₁)
+    t ⇓ = ∃ λ u → t ⇓ u
 
     halt-if : ∀ {t₁ t₂ t₃ tₙ u₁} → t₁ ⟹* u₁ → if u₁ then t₂ else t₃ ⟹ tₙ →
               tₙ ⇓ → if t₁ then t₂ else t₃ ⇓
     halt-if rs₁ rₙ (uₙ , vₙ , rsₙ) = uₙ , vₙ , (map r-if rs₁ ++ rₙ ∷ rsₙ)
 
     halt : ∀ t → t ⇓
-    halt wrong                         = wrong , wrong    , []
-    halt true                          = true  , true     , []
-    halt false                         = false , false    , []
-    halt zero                          = zero  , num zero , []
+    halt wrong                         = _ , wrong         , []
+    halt true                          = _ , true          , []
+    halt false                         = _ , false         , []
+    halt zero                          = _ , num zero      , []
     halt (suc t₁)                      with halt t₁
-    ... | .wrong , wrong         , rs₁ = halt-sucWrong wrong rs₁
-    ... | .true  , true          , rs₁ = halt-sucWrong true rs₁
-    ... | .false , false         , rs₁ = halt-sucWrong false rs₁
-    ... | _      , num nv₁       , rs₁ = halt-suc nv₁ rs₁
+    ... | .wrong , wrong         , rs₁ = _ , wrong         , map r-suc rs₁ ∷ʳ r-sucWrong wrong
+    ... | .true  , true          , rs₁ = _ , wrong         , map r-suc rs₁ ∷ʳ r-sucWrong true
+    ... | .false , false         , rs₁ = _ , wrong         , map r-suc rs₁ ∷ʳ r-sucWrong false
+    ... | _      , num nv₁       , rs₁ = _ , num (suc nv₁) , map r-suc rs₁
     halt (pred t₁)                     with halt t₁
-    ... | .wrong , wrong         , rs₁ = halt-predWrong wrong rs₁
-    ... | .true  , true          , rs₁ = halt-predWrong true rs₁
-    ... | .false , false         , rs₁ = halt-predWrong false rs₁
-    ... | _      , num zero      , rs₁ = halt-predZero rs₁
-    ... | _      , num (suc nv₁) , rs₁ = halt-predSuc nv₁ rs₁
+    ... | .wrong , wrong         , rs₁ = _ , wrong         , map r-pred rs₁ ∷ʳ r-predWrong wrong
+    ... | .true  , true          , rs₁ = _ , wrong         , map r-pred rs₁ ∷ʳ r-predWrong true
+    ... | .false , false         , rs₁ = _ , wrong         , map r-pred rs₁ ∷ʳ r-predWrong false
+    ... | _      , num zero      , rs₁ = _ , num zero      , map r-pred rs₁ ∷ʳ r-predZero
+    ... | _      , num (suc nv₁) , rs₁ = _ , num nv₁       , map r-pred rs₁ ∷ʳ r-predSuc nv₁
     halt (iszero t₁)                   with halt t₁
-    ... | .wrong , wrong         , rs₁ = halt-iszeroWrong wrong rs₁
-    ... | .true  , true          , rs₁ = halt-iszeroWrong true rs₁
-    ... | .false , false         , rs₁ = halt-iszeroWrong false rs₁
-    ... | _      , num zero      , rs₁ = halt-iszeroZero rs₁
-    ... | _      , num (suc nv₁) , rs₁ = halt-iszeroSuc nv₁ rs₁
+    ... | .wrong , wrong         , rs₁ = _ , wrong         , map r-iszero rs₁ ∷ʳ r-iszeroWrong wrong
+    ... | .true  , true          , rs₁ = _ , wrong         , map r-iszero rs₁ ∷ʳ r-iszeroWrong true
+    ... | .false , false         , rs₁ = _ , wrong         , map r-iszero rs₁ ∷ʳ r-iszeroWrong false
+    ... | _      , num zero      , rs₁ = _ , true          , map r-iszero rs₁ ∷ʳ r-iszeroZero
+    ... | _      , num (suc nv₁) , rs₁ = _ , false         , map r-iszero rs₁ ∷ʳ r-iszeroSuc nv₁
     halt (if t₁ then t₂ else t₃)       with halt t₁
-    ... | .wrong , wrong         , rs₁ = halt-ifWrong wrong rs₁
+    ... | .wrong , wrong         , rs₁ = _ , wrong         , map r-if rs₁ ∷ʳ r-ifWrong wrong
     ... | .true  , true          , rs₁ = halt-if rs₁ r-ifTrue (halt t₂)
     ... | .false , false         , rs₁ = halt-if rs₁ r-ifFalse (halt t₃)
-    ... | _      , num nv₁       , rs₁ = halt-ifWrong (num nv₁) rs₁
+    ... | _      , num nv₁       , rs₁ = _ , wrong         , map r-if rs₁ ∷ʳ r-ifWrong (num nv₁)
 
 
--- Equivalent to Theorem 3.5.12.
+-- Echo of Theorem 3.5.12.
 
-    halt′ : ∀ t → ∃ λ t′ → NormalForm t′ × t ⟹* t′
-    halt′ t           with halt t
-    ... | t′ , v , rs = t′ , v⇒nf v , rs
+    halt′ : ∀ t → ∃ λ u → NormalForm u × t ⟹* u
+    halt′ t          with halt t
+    ... | u , v , rs = u , v⇒nf v , rs
 
 
 -- TODO
