@@ -94,7 +94,7 @@ module NumbersAndBooleans-Part1
 -- (redundant)
 --
 -- 3.2.4. Exercise [⋆⋆]
--- “How many elements does S₃ have?”
+-- “How many elements does `S₃` have?”
 -- (skipped)
 --
 -- 3.2.5. Exercise [⋆⋆]
