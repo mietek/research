@@ -728,7 +728,7 @@ module BooleansOnly-Part3
     ... | .false , false , rs₁   = halt-if rs₁ r-ifFalse (halt t₃)
 
     halt′ : ∀ t → ∃ λ t′ → NormalForm t′ × t ⟹* t′
-    halt′ t with halt t
+    halt′ t           with halt t
     ... | t′ , v , rs = t′ , v⇒nf v , rs
 
 
@@ -1037,7 +1037,7 @@ module NumbersAndBooleansGetStuck
 -- Equivalent to Theorem 3.5.12.
 
     halt′ : ∀ t → ∃ λ t′ → NormalForm t′ × t ⟹* t′
-    halt′ t with halt t
+    halt′ t                        with halt t
     ... | t′ , inj₁ (¬v , nf) , rs = t′ , nf      , rs
     ... | t′ , inj₂ v         , rs = t′ , v⇒nf v , rs
 
@@ -1307,7 +1307,7 @@ module NumbersAndBooleansGoWrong
 -- Equivalent to Theorem 3.5.12.
 
     halt′ : ∀ t → ∃ λ t′ → NormalForm t′ × t ⟹* t′
-    halt′ t with halt t
+    halt′ t           with halt t
     ... | t′ , v , rs = t′ , v⇒nf v , rs
 
 
