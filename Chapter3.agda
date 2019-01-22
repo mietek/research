@@ -2,40 +2,39 @@
 
 module Chapter3 where
 
+open import Data.Empty using (⊥)
+
 import Data.Nat as Nat
-open Nat
-  using (_≤_ ; _<_ ; _+_ ; s≤s ; suc ; zero)
+open Nat using (_≤_ ; _<_ ; _+_ ; s≤s ; suc ; zero)
   renaming (ℕ to Nat)
 
 import Data.Nat.Properties as Nat
 open Nat.≤-Reasoning
 
-open import Data.Product
-  using (_×_ ; _,_ ; Σ ; ∃ ; proj₁ ; proj₂)
+open import Data.Product using (_×_ ; _,_ ; Σ ; ∃ ; proj₁ ; proj₂)
 
-open import Level
-  using (_⊔_ ; 0ℓ)
+open import Data.Unit using (⊤)
 
-open import Relation.Binary
-  using (_=[_]⇒_ ; Decidable ; DecSetoid ; Rel)
+open import Function using (case_of_)
+
+open import Level using (_⊔_ ; 0ℓ)
+
+open import Relation.Binary using (Decidable ; DecSetoid ; Rel)
 
 import Relation.Binary.PropositionalEquality as PropEq
-open PropEq
-  using (_≡_ ; _≢_ ; refl ; subst)
+open PropEq using (_≡_ ; _≢_ ; refl ; subst)
   renaming (cong to _&_) -- ; sym to _⁻¹)
 
 import Relation.Binary.Construct.Closure.ReflexiveTransitive as Star
 open Star using ()
   renaming (Star to _* ; ε to [] ; _◅_ to _∷_ ; _◅◅_ to _++_)
 
-open import Relation.Nullary
-  using (¬_ ; Dec ; no ; yes)
+open import Relation.Nullary using (¬_ ; Dec ; no ; yes)
 
-open import Relation.Nullary.Negation
+open import Relation.Nullary.Negation using ()
   renaming (contradiction to _↯_)
 
-open import Relation.Unary
-  using (Pred)
+open import Relation.Unary using (Pred)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -992,6 +991,11 @@ module NumbersAndBooleansGetStuck
     ... | u , stu (¬v , nf) , rs = u , nf      , rs
     ... | u , val v         , rs = u , v⇒nf v , rs
 
+    GetsStuck : Pred₀ Term
+    GetsStuck t with halt t
+    ... | u , stu s , rs = ⊤
+    ... | u , val v , rs = ⊥
+
 
 ----------------------------------------------------------------------------------------------------
 --
@@ -1088,7 +1092,7 @@ module NumbersAndBooleansGoWrong
     bb⇒nf (num nv) = nv⇒nf nv
 
 
--- Echo of Theorem 3.5.4.
+-- Echo of Theorem 3.5.4.  Also Lemma A.3.
 
     ⟹-det : ∀ {t t′ t″} → t ⟹ t′ → t ⟹ t″ → t′ ≡ t″
     ⟹-det (r-sucWrong bn′)     (r-sucWrong bn″)    = refl
@@ -1240,8 +1244,52 @@ module NumbersAndBooleansGoWrong
     halt′ t          with halt t
     ... | u , v , rs = u , v⇒nf v , rs
 
+    GoesWrong : Pred₀ Term
+    GoesWrong t with halt t
+    ... | wrong , v , rs = ⊤
+    ... | _     , v , rs = ⊥
+
 
 -- TODO
+
+module _ where
+  open module O = NumbersAndBooleansGetStuck
+  open module W = NumbersAndBooleansGoWrong
+
+
+  o⇒w : O.Term → W.Term
+  o⇒w true                    = true
+  o⇒w false                   = false
+  o⇒w zero                    = zero
+  o⇒w (suc t₁)                = suc (o⇒w t₁)
+  o⇒w (pred t₁)               = pred (o⇒w t₁)
+  o⇒w (iszero t₁)             = iszero (o⇒w t₁)
+  o⇒w (if t₁ then t₂ else t₃) = if (o⇒w t₁) then (o⇒w t₂) else (o⇒w t₃)
+
+
+-- Proposition A.2.
+
+  prop-a21 : ∀ {t u} → Stuck u → t O.⟹* u → o⇒w t W.⟹* wrong
+  prop-a21 s rs = {!!}
+
+  prop-a22 : ∀ {t u} → Stuck u → o⇒w t W.⟹* wrong → t O.⟹* u
+  prop-a22 s rs = {!!}
+
+
+-- Lemma A.4.
+
+  lem-a4 : ∀ t → Stuck t → o⇒w t W.⟹* wrong
+  lem-a4 true                    (¬v , nf) = true ↯ ¬v
+  lem-a4 false                   (¬v , nf) = false ↯ ¬v
+  lem-a4 zero                    (¬v , nf) = num zero ↯ ¬v
+  lem-a4 (suc t₁)                (¬v , nf) with O.classify t₁
+  ... | stu s₁ = {!!}
+  ... | val (num zero) = {!!}
+  ... | val (num (suc nv₁)) = ?
+  ... | red (u₁ , r₁) = {!!}
+  lem-a4 (pred t₁)               (¬v , nf) = {!!}
+  lem-a4 (iszero t₁)             (¬v , nf) = {!!}
+  lem-a4 (if t₁ then t₂ else t₃) (¬v , nf) = {!!}
 
 
 ----------------------------------------------------------------------------------------------------
