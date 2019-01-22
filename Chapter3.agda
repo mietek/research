@@ -715,7 +715,7 @@ module BooleansOnly-Part3
     halt-if rs₁ rₙ (uₙ , vₙ , rsₙ) = uₙ , vₙ , (map r-if rs₁ ++ rₙ ∷ rsₙ)
 
     halt : ∀ t → t ⇓
-    halt true                    = _ , true  , []
+    halt true                    = _ , true , []
     halt false                   = _ , false , []
     halt (if t₁ then t₂ else t₃) with halt t₁
     ... | .true  , true  , rs₁   = halt-if rs₁ r-ifTrue (halt t₂)
@@ -812,7 +812,7 @@ module NumbersAndBooleans-Part2
     ⟹-det r-ifFalse         (r-if r″)         = r″ ↯ v⇒nf false
     ⟹-det (r-if r′)         r-ifTrue          = r′ ↯ v⇒nf true
     ⟹-det (r-if r′)         r-ifFalse         = r′ ↯ v⇒nf false
-    ⟹-det (r-if r′)         (r-if r″)         = (λ t₁′ → if t₁′ then _ else _) &  ⟹-det r′ r″
+    ⟹-det (r-if r′)         (r-if r″)         = (λ t₁′ → if t₁′ then _ else _) & ⟹-det r′ r″
 
 
 ----------------------------------------------------------------------------------------------------
@@ -838,9 +838,9 @@ module NumbersAndBooleansGetStuck
       val : ∀ {t} → Value t → Stuck/Value/Reducible t
       red : ∀ {t} → Reducible t → Stuck/Value/Reducible t
 
-    s-sucStuck : ∀ {t₁} → Stuck t₁ → Stuck (suc t₁)
-    s-sucStuck (¬v₁ , nf₁) = (λ where (num (suc nv₁)) → num nv₁ ↯ ¬v₁)
-                           , (λ where (r-suc r₁) → r₁ ↯ nf₁)
+    s-suc : ∀ {t₁} → Stuck t₁ → Stuck (suc t₁)
+    s-suc (¬v₁ , nf₁) = (λ where (num (suc nv₁)) → num nv₁ ↯ ¬v₁)
+                      , (λ where (r-suc r₁) → r₁ ↯ nf₁)
 
     s-sucTrue : Stuck (suc true)
     s-sucTrue = (λ where (num (suc ())))
@@ -850,11 +850,11 @@ module NumbersAndBooleansGetStuck
     s-sucFalse = (λ where (num (suc ())))
                , (λ where (r-suc ()))
 
-    s-predStuck : ∀ {t₁} → Stuck t₁ → Stuck (pred t₁)
-    s-predStuck (¬v₁ , nf₁) = (λ where (num ()))
-                            , (λ where r-predZero      → num zero ↯ ¬v₁
-                                       (r-predSuc nv₁) → num (suc nv₁) ↯ ¬v₁
-                                       (r-pred r₁)     → r₁ ↯ nf₁)
+    s-pred : ∀ {t₁} → Stuck t₁ → Stuck (pred t₁)
+    s-pred (¬v₁ , nf₁) = (λ where (num ()))
+                       , (λ where r-predZero      → num zero ↯ ¬v₁
+                                  (r-predSuc nv₁) → num (suc nv₁) ↯ ¬v₁
+                                  (r-pred r₁)     → r₁ ↯ nf₁)
 
     s-predTrue : Stuck (pred true)
     s-predTrue = (λ where (num ()))
@@ -864,11 +864,11 @@ module NumbersAndBooleansGetStuck
     s-predFalse = (λ where (num ()))
                 , (λ where (r-pred ()))
 
-    s-iszeroStuck : ∀ {t₁} → Stuck t₁ → Stuck (iszero t₁)
-    s-iszeroStuck (¬v₁ , nf₁) = (λ where (num ()))
-                              , (λ where r-iszeroZero      → num zero ↯ ¬v₁
-                                         (r-iszeroSuc nv₁) → num (suc nv₁) ↯ ¬v₁
-                                         (r-iszero r₁)     → r₁ ↯ nf₁)
+    s-iszero : ∀ {t₁} → Stuck t₁ → Stuck (iszero t₁)
+    s-iszero (¬v₁ , nf₁) = (λ where (num ()))
+                         , (λ where r-iszeroZero      → num zero ↯ ¬v₁
+                                    (r-iszeroSuc nv₁) → num (suc nv₁) ↯ ¬v₁
+                                    (r-iszero r₁)     → r₁ ↯ nf₁)
 
     s-iszeroTrue : Stuck (iszero true)
     s-iszeroTrue = (λ where (num ()))
@@ -878,11 +878,11 @@ module NumbersAndBooleansGetStuck
     s-iszeroFalse = (λ where (num ()))
                   , (λ where (r-iszero ()))
 
-    s-ifStuck : ∀ {t₁ t₂ t₃} → Stuck t₁ → Stuck (if t₁ then t₂ else t₃)
-    s-ifStuck (¬v₁ , nf₁) = (λ where (num ()))
-                          , (λ where r-ifTrue  → true ↯ ¬v₁
-                                     r-ifFalse → false ↯ ¬v₁
-                                     (r-if r₁) → r₁ ↯ nf₁)
+    s-if : ∀ {t₁ t₂ t₃} → Stuck t₁ → Stuck (if t₁ then t₂ else t₃)
+    s-if (¬v₁ , nf₁) = (λ where (num ()))
+                     , (λ where r-ifTrue  → true ↯ ¬v₁
+                                r-ifFalse → false ↯ ¬v₁
+                                (r-if r₁) → r₁ ↯ nf₁)
 
     s-ifZero : ∀ {t₂ t₃} → Stuck (if zero then t₂ else t₃)
     s-ifZero = (λ where (num ()))
@@ -897,27 +897,27 @@ module NumbersAndBooleansGetStuck
     classify false                   = val false
     classify zero                    = val (num zero)
     classify (suc t₁)                with classify t₁
-    ... | stu s₁                     = stu (s-sucStuck s₁)
+    ... | stu s₁                     = stu (s-suc s₁)
     ... | val true                   = stu s-sucTrue
     ... | val false                  = stu s-sucFalse
     ... | val (num nv₁)              = val (num (suc nv₁))
     ... | red (t₁′ , r₁)             = red (_ , r-suc r₁)
     classify (pred t₁)               with classify t₁
-    ... | stu s₁                     = stu (s-predStuck s₁)
+    ... | stu s₁                     = stu (s-pred s₁)
     ... | val true                   = stu s-predTrue
     ... | val false                  = stu s-predFalse
     ... | val (num zero)             = red (_ , r-predZero)
     ... | val (num (suc nv₁))        = red (_ , r-predSuc nv₁)
     ... | red (t₁′ , r₁)             = red (_ , r-pred r₁)
     classify (iszero t₁)             with classify t₁
-    ... | stu s₁                     = stu (s-iszeroStuck s₁)
+    ... | stu s₁                     = stu (s-iszero s₁)
     ... | val true                   = stu s-iszeroTrue
     ... | val false                  = stu s-iszeroFalse
     ... | val (num zero)             = red (_ , r-iszeroZero)
     ... | val (num (suc nv₁))        = red (_ , r-iszeroSuc nv₁)
     ... | red (t₁′ , r₁)             = red (_ , r-iszero r₁)
     classify (if t₁ then t₂ else t₃) with classify t₁
-    ... | stu s₁                     = stu (s-ifStuck s₁)
+    ... | stu s₁                     = stu (s-if s₁)
     ... | val true                   = red (_ , r-ifTrue)
     ... | val false                  = red (_ , r-ifFalse)
     ... | val (num zero)             = stu s-ifZero
@@ -957,32 +957,32 @@ module NumbersAndBooleansGetStuck
     halt-if rs₁ rₙ (uₙ , vₙ , rsₙ) = uₙ , vₙ , (map r-if rs₁ ++ rₙ ∷ rsₙ)
 
     halt : ∀ t → t ⇓
-    halt true                                  = _ , val true               , []
-    halt false                                 = _ , val false              , []
-    halt zero                                  = _ , val (num zero)         , []
+    halt true                                  = _ , val true , []
+    halt false                                 = _ , val false , []
+    halt zero                                  = _ , val (num zero) , []
     halt (suc t₁)                              with halt t₁
-    ... | _        , stu s₁              , rs₁ = _ , stu (s-sucStuck s₁)    , map r-suc rs₁
-    ... | .true    , val true            , rs₁ = _ , stu s-sucTrue          , map r-suc rs₁
-    ... | .false   , val false           , rs₁ = _ , stu s-sucFalse         , map r-suc rs₁
-    ... | ._       , val (num nv₁)       , rs₁ = _ , val (num (suc nv₁))    , map r-suc rs₁
+    ... | _        , stu s₁              , rs₁ = _ , stu (s-suc s₁) , map r-suc rs₁
+    ... | .true    , val true            , rs₁ = _ , stu s-sucTrue , map r-suc rs₁
+    ... | .false   , val false           , rs₁ = _ , stu s-sucFalse , map r-suc rs₁
+    ... | ._       , val (num nv₁)       , rs₁ = _ , val (num (suc nv₁)) , map r-suc rs₁
     halt (pred t₁)                             with halt t₁
-    ... | _        , stu s₁              , rs₁ = _ , stu (s-predStuck s₁)   , map r-pred rs₁
-    ... | .true    , val true            , rs₁ = _ , stu s-predTrue         , map r-pred rs₁
-    ... | .false   , val false           , rs₁ = _ , stu s-predFalse        , map r-pred rs₁
-    ... | .zero    , val (num zero)      , rs₁ = _ , val (num zero)         , map r-pred rs₁ ∷ʳ r-predZero
-    ... | .(suc _) , val (num (suc nv₁)) , rs₁ = _ , val (num nv₁)          , map r-pred rs₁ ∷ʳ r-predSuc nv₁
+    ... | _        , stu s₁              , rs₁ = _ , stu (s-pred s₁) , map r-pred rs₁
+    ... | .true    , val true            , rs₁ = _ , stu s-predTrue , map r-pred rs₁
+    ... | .false   , val false           , rs₁ = _ , stu s-predFalse , map r-pred rs₁
+    ... | .zero    , val (num zero)      , rs₁ = _ , val (num zero) , map r-pred rs₁ ∷ʳ r-predZero
+    ... | .(suc _) , val (num (suc nv₁)) , rs₁ = _ , val (num nv₁) , map r-pred rs₁ ∷ʳ r-predSuc nv₁
     halt (iszero t₁)                           with halt t₁
-    ... | _        , stu s₁              , rs₁ = _ , stu (s-iszeroStuck s₁) , map r-iszero rs₁
-    ... | .true    , val true            , rs₁ = _ , stu s-iszeroTrue       , map r-iszero rs₁
-    ... | .false   , val false           , rs₁ = _ , stu s-iszeroFalse      , map r-iszero rs₁
-    ... | .zero    , val (num zero)      , rs₁ = _ , val true               , map r-iszero rs₁ ∷ʳ r-iszeroZero
-    ... | .(suc _) , val (num (suc nv₁)) , rs₁ = _ , val false              , map r-iszero rs₁ ∷ʳ r-iszeroSuc nv₁
+    ... | _        , stu s₁              , rs₁ = _ , stu (s-iszero s₁) , map r-iszero rs₁
+    ... | .true    , val true            , rs₁ = _ , stu s-iszeroTrue , map r-iszero rs₁
+    ... | .false   , val false           , rs₁ = _ , stu s-iszeroFalse , map r-iszero rs₁
+    ... | .zero    , val (num zero)      , rs₁ = _ , val true , map r-iszero rs₁ ∷ʳ r-iszeroZero
+    ... | .(suc _) , val (num (suc nv₁)) , rs₁ = _ , val false , map r-iszero rs₁ ∷ʳ r-iszeroSuc nv₁
     halt (if t₁ then t₂ else t₃)               with halt t₁
-    ... | _        , stu s₁              , rs₁ = _ , stu (s-ifStuck s₁)     , map r-if rs₁
+    ... | _        , stu s₁              , rs₁ = _ , stu (s-if s₁) , map r-if rs₁
     ... | .true    , val true            , rs₁ = halt-if rs₁ r-ifTrue (halt t₂)
     ... | .false   , val false           , rs₁ = halt-if rs₁ r-ifFalse (halt t₃)
-    ... | .zero    , val (num zero)      , rs₁ = _ , stu s-ifZero           , map r-if rs₁
-    ... | .(suc _) , val (num (suc nv₁)) , rs₁ = _ , stu (s-ifSuc nv₁)      , map r-if rs₁
+    ... | .zero    , val (num zero)      , rs₁ = _ , stu s-ifZero , map r-if rs₁
+    ... | .(suc _) , val (num (suc nv₁)) , rs₁ = _ , stu (s-ifSuc nv₁) , map r-if rs₁
 
 
 -- Echo of Theorem 3.5.12.
@@ -1182,7 +1182,7 @@ module NumbersAndBooleansGoWrong
 -- Echo of Theorem 3.5.8.
 
     nf⇒v : ∀ {t} → NormalForm t → Value t
-    nf⇒v {t} nf    with classify t
+    nf⇒v {t} nf      with classify t
     ... | val v       = v
     ... | red (_ , r) = r ↯ nf
 
@@ -1206,32 +1206,32 @@ module NumbersAndBooleansGoWrong
     halt-if rs₁ rₙ (uₙ , vₙ , rsₙ) = uₙ , vₙ , (map r-if rs₁ ++ rₙ ∷ rsₙ)
 
     halt : ∀ t → t ⇓
-    halt wrong                         = _ , wrong         , []
-    halt true                          = _ , true          , []
-    halt false                         = _ , false         , []
-    halt zero                          = _ , num zero      , []
+    halt wrong                         = _ , wrong , []
+    halt true                          = _ , true , []
+    halt false                         = _ , false , []
+    halt zero                          = _ , num zero , []
     halt (suc t₁)                      with halt t₁
-    ... | .wrong , wrong         , rs₁ = _ , wrong         , map r-suc rs₁ ∷ʳ r-sucWrong wrong
-    ... | .true  , true          , rs₁ = _ , wrong         , map r-suc rs₁ ∷ʳ r-sucWrong true
-    ... | .false , false         , rs₁ = _ , wrong         , map r-suc rs₁ ∷ʳ r-sucWrong false
+    ... | .wrong , wrong         , rs₁ = _ , wrong , map r-suc rs₁ ∷ʳ r-sucWrong wrong
+    ... | .true  , true          , rs₁ = _ , wrong , map r-suc rs₁ ∷ʳ r-sucWrong true
+    ... | .false , false         , rs₁ = _ , wrong , map r-suc rs₁ ∷ʳ r-sucWrong false
     ... | _      , num nv₁       , rs₁ = _ , num (suc nv₁) , map r-suc rs₁
     halt (pred t₁)                     with halt t₁
-    ... | .wrong , wrong         , rs₁ = _ , wrong         , map r-pred rs₁ ∷ʳ r-predWrong wrong
-    ... | .true  , true          , rs₁ = _ , wrong         , map r-pred rs₁ ∷ʳ r-predWrong true
-    ... | .false , false         , rs₁ = _ , wrong         , map r-pred rs₁ ∷ʳ r-predWrong false
-    ... | _      , num zero      , rs₁ = _ , num zero      , map r-pred rs₁ ∷ʳ r-predZero
-    ... | _      , num (suc nv₁) , rs₁ = _ , num nv₁       , map r-pred rs₁ ∷ʳ r-predSuc nv₁
+    ... | .wrong , wrong         , rs₁ = _ , wrong , map r-pred rs₁ ∷ʳ r-predWrong wrong
+    ... | .true  , true          , rs₁ = _ , wrong , map r-pred rs₁ ∷ʳ r-predWrong true
+    ... | .false , false         , rs₁ = _ , wrong , map r-pred rs₁ ∷ʳ r-predWrong false
+    ... | _      , num zero      , rs₁ = _ , num zero , map r-pred rs₁ ∷ʳ r-predZero
+    ... | _      , num (suc nv₁) , rs₁ = _ , num nv₁ , map r-pred rs₁ ∷ʳ r-predSuc nv₁
     halt (iszero t₁)                   with halt t₁
-    ... | .wrong , wrong         , rs₁ = _ , wrong         , map r-iszero rs₁ ∷ʳ r-iszeroWrong wrong
-    ... | .true  , true          , rs₁ = _ , wrong         , map r-iszero rs₁ ∷ʳ r-iszeroWrong true
-    ... | .false , false         , rs₁ = _ , wrong         , map r-iszero rs₁ ∷ʳ r-iszeroWrong false
-    ... | _      , num zero      , rs₁ = _ , true          , map r-iszero rs₁ ∷ʳ r-iszeroZero
-    ... | _      , num (suc nv₁) , rs₁ = _ , false         , map r-iszero rs₁ ∷ʳ r-iszeroSuc nv₁
+    ... | .wrong , wrong         , rs₁ = _ , wrong , map r-iszero rs₁ ∷ʳ r-iszeroWrong wrong
+    ... | .true  , true          , rs₁ = _ , wrong , map r-iszero rs₁ ∷ʳ r-iszeroWrong true
+    ... | .false , false         , rs₁ = _ , wrong , map r-iszero rs₁ ∷ʳ r-iszeroWrong false
+    ... | _      , num zero      , rs₁ = _ , true , map r-iszero rs₁ ∷ʳ r-iszeroZero
+    ... | _      , num (suc nv₁) , rs₁ = _ , false , map r-iszero rs₁ ∷ʳ r-iszeroSuc nv₁
     halt (if t₁ then t₂ else t₃)       with halt t₁
-    ... | .wrong , wrong         , rs₁ = _ , wrong         , map r-if rs₁ ∷ʳ r-ifWrong wrong
+    ... | .wrong , wrong         , rs₁ = _ , wrong , map r-if rs₁ ∷ʳ r-ifWrong wrong
     ... | .true  , true          , rs₁ = halt-if rs₁ r-ifTrue (halt t₂)
     ... | .false , false         , rs₁ = halt-if rs₁ r-ifFalse (halt t₃)
-    ... | _      , num nv₁       , rs₁ = _ , wrong         , map r-if rs₁ ∷ʳ r-ifWrong (num nv₁)
+    ... | _      , num nv₁       , rs₁ = _ , wrong , map r-if rs₁ ∷ʳ r-ifWrong (num nv₁)
 
 
 -- Echo of Theorem 3.5.12.
