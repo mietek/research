@@ -2,39 +2,41 @@
 
 module Chapter3 where
 
-open import Data.Empty using (⊥)
+open import Data.Empty public using (⊥)
+
+open import Data.List public using (List ; [] ; _∷_)
 
 import Data.Nat as Nat
-open Nat using (_≤_ ; _<_ ; _+_ ; s≤s ; suc ; zero)
+open Nat public using (_≤_ ; _<_ ; _+_ ; s≤s ; suc ; zero)
   renaming (ℕ to Nat)
 
 import Data.Nat.Properties as Nat
-open Nat.≤-Reasoning
+open Nat.≤-Reasoning public
 
-open import Data.Product using (_×_ ; _,_ ; Σ ; ∃ ; proj₁ ; proj₂)
+open import Data.Product public using (_×_ ; _,_ ; Σ ; ∃ ; proj₁ ; proj₂)
 
-open import Data.Unit using (⊤)
+open import Data.Unit public using (⊤)
 
-open import Function using (case_of_)
+open import Function public using (case_of_)
 
-open import Level using (_⊔_ ; 0ℓ)
+open import Level public using (_⊔_ ; 0ℓ)
 
-open import Relation.Binary using (Decidable ; DecSetoid ; Rel)
+open import Relation.Binary public using (Decidable ; DecSetoid ; Rel)
 
 import Relation.Binary.PropositionalEquality as PropEq
-open PropEq using (_≡_ ; _≢_ ; refl ; subst)
-  renaming (cong to _&_) -- ; sym to _⁻¹)
+open PropEq public using (_≡_ ; _≢_ ; refl ; subst)
+  renaming (cong to _&_ ; sym to _⁻¹)
 
 import Relation.Binary.Construct.Closure.ReflexiveTransitive as Star
-open Star using ()
+open Star public using ()
   renaming (Star to _* ; ε to [] ; _◅_ to _∷_ ; _◅◅_ to _++_)
 
-open import Relation.Nullary using (¬_ ; Dec ; no ; yes)
+open import Relation.Nullary public using (¬_ ; Dec ; no ; yes)
 
-open import Relation.Nullary.Negation using ()
+open import Relation.Nullary.Negation public using ()
   renaming (contradiction to _↯_)
 
-open import Relation.Unary using (Pred)
+open import Relation.Unary public using (Pred)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -54,6 +56,14 @@ Pred₀ A = Pred A 0ℓ
 
 Rel₀ : ∀ {a} → Set a → Set _
 Rel₀ A = Rel A 0ℓ
+
+¬¬snoc : ∀ {a ℓ} {A : Set a} {R : A → A → Set ℓ} →
+         ∀ {x y z} → (R *) x y → R y z → ¬ ¬ ((R *) x z)
+¬¬snoc R*xy Ryz ¬R*xz = (R*xy ++ (Ryz ∷ [])) ↯ ¬R*xz
+
+undo : ∀ {a ℓ} {A : Set a} {R : A → A → Set ℓ} →
+       ∀ {x y z} → R y z → ¬ ((R *) x z) → ¬ ((R *) x y)
+undo Ryz ¬R*xz R*xy = ¬¬snoc R*xy Ryz ¬R*xz
 
 
 ----------------------------------------------------------------------------------------------------
@@ -270,13 +280,56 @@ module NumbersAndBooleans-Part1
 -- We’re going to start by defining what it means for a term to be an immediate subterm of another
 -- term.
 
-    data _!∈_ : Rel₀ Term where
-      suc    : ∀ {t} → t !∈ suc t
-      pred   : ∀ {t} → t !∈ pred t
-      iszero : ∀ {t} → t !∈ iszero t
-      if₁    : ∀ {t₁ t₂ t₃} → t₁ !∈ if t₁ then t₂ else t₃
-      if₂    : ∀ {t₁ t₂ t₃} → t₂ !∈ if t₁ then t₂ else t₃
-      if₃    : ∀ {t₁ t₂ t₃} → t₃ !∈ if t₁ then t₂ else t₃
+    data _∈_ : Rel₀ Term where
+      suc    : ∀ {t} → t ∈ suc t
+      pred   : ∀ {t} → t ∈ pred t
+      iszero : ∀ {t} → t ∈ iszero t
+      if₁    : ∀ {t₁ t₂ t₃} → t₁ ∈ if t₁ then t₂ else t₃
+      if₂    : ∀ {t₁ t₂ t₃} → t₂ ∈ if t₁ then t₂ else t₃
+      if₃    : ∀ {t₁ t₂ t₃} → t₃ ∈ if t₁ then t₂ else t₃
+
+
+
+
+-- TODO
+
+{-
+    _∈?_ : Decidable _∈_
+    s ∈? true                            = no λ ()
+    s ∈? false                           = no λ ()
+    s ∈? zero                            = no λ ()
+    s ∈? suc t                           with s ≟ t
+    ... | yes refl                       = yes suc
+    ... | no s≢t                         = no λ where suc → refl ↯ s≢t
+    s ∈? pred t                          with s ≟ t
+    ... | yes refl                       = yes pred
+    ... | no s≢t                         = no λ where pred → refl ↯ s≢t
+    s ∈? iszero t                        with s ≟ t
+    ... | yes refl                       = yes iszero
+    ... | no s≢t                         = no λ where iszero → refl ↯ s≢t
+    s ∈? if t₁ then t₂ else t₃           with s ≟ t₁ | s ≟ t₂ | s ≟ t₃
+    ... | yes refl | _        | _        = yes if₁
+    ... | no s≢t₁  | yes refl | _        = yes if₂
+    ... | no s≢t₁  | no s≢t₂  | yes refl = yes if₃
+    ... | no s≢t₁  | no s≢t₂  | no s≢t₃  = no λ where if₁ → refl ↯ s≢t₁
+                                                      if₂ → refl ↯ s≢t₂
+                                                      if₃ → refl ↯ s≢t₃
+
+    _∈*?_ : Decidable (_∈_ *)
+    s ∈*? t with s ≟ t
+    ... | yes refl = yes []
+    ... | no s≢t   with s ∈? t
+    ... | yes s∈t  = yes (s∈t ∷ [])
+    ... | no s∉t   = {!!}
+
+    module _ {a ℓ} {A : Set a} {R : A → A → Set ℓ} (R? : Decidable R) where
+      R*? : Decidable (R *)
+      R*? x y with R? x y
+      ... | yes Rxy = yes (Rxy ∷ [])
+      ... | no ¬Rxy = {!!}
+-}
+
+
 
 
 -- As an exercise, we’re going to define structural induction using three methods.  First, a direct
@@ -285,7 +338,7 @@ module NumbersAndBooleans-Part1
     module Ind-Struct-Direct
       where
         ind-struct : ∀ {ℓ} {P : Pred Term ℓ} →
-                     (∀ t → (∀ s →  s !∈ t → P s) → P t) → ∀ t → P t
+                     (∀ t → (∀ s →  s ∈ t → P s) → P t) → ∀ t → P t
         ind-struct h t@true                 = h t λ s ()
         ind-struct h t@false                = h t λ s ()
         ind-struct h t@zero                 = h t λ s ()
@@ -305,20 +358,20 @@ module NumbersAndBooleans-Part1
       where
         import Induction.WellFounded as Stdlib
 
-        !∈-wf : Stdlib.WellFounded _!∈_
-        !∈-wf s = Stdlib.acc λ where
-          t suc    → !∈-wf t
-          t pred   → !∈-wf t
-          t iszero → !∈-wf t
-          t₁ if₁   → !∈-wf t₁
-          t₂ if₂   → !∈-wf t₂
-          t₃ if₃   → !∈-wf t₃
+        ∈-wf : Stdlib.WellFounded _∈_
+        ∈-wf s = Stdlib.acc λ where
+          t suc    → ∈-wf t
+          t pred   → ∈-wf t
+          t iszero → ∈-wf t
+          t₁ if₁   → ∈-wf t₁
+          t₂ if₂   → ∈-wf t₂
+          t₃ if₃   → ∈-wf t₃
 
-        module !∈-All {ℓ} = Stdlib.All !∈-wf ℓ
+        module ∈-All {ℓ} = Stdlib.All ∈-wf ℓ
 
         ind-struct : ∀ {ℓ} {P : Pred Term ℓ} →
-                     (∀ t → (∀ s → s !∈ t → P s) → P t) → ∀ t → P t
-        ind-struct {P = P} = !∈-All.wfRec P
+                     (∀ t → (∀ s → s ∈ t → P s) → P t) → ∀ t → P t
+        ind-struct {P = P} = ∈-All.wfRec P
 
 
 -- Third, a definition using our own equipment.  We’d like to think that our phrasing of the
@@ -326,17 +379,17 @@ module NumbersAndBooleans-Part1
 
     open import Prelude-WellFounded public
 
-    !∈-wf : WellFounded _!∈_
-    !∈-wf s = access s λ where
-      t suc    → !∈-wf t
-      t pred   → !∈-wf t
-      t iszero → !∈-wf t
-      t₁ if₁   → !∈-wf t₁
-      t₂ if₂   → !∈-wf t₂
-      t₃ if₃   → !∈-wf t₃
+    ∈-wf : WellFounded _∈_
+    ∈-wf s = access s λ where
+      t suc    → ∈-wf t
+      t pred   → ∈-wf t
+      t iszero → ∈-wf t
+      t₁ if₁   → ∈-wf t₁
+      t₂ if₂   → ∈-wf t₂
+      t₃ if₃   → ∈-wf t₃
 
-    ind-struct : ∀ {ℓ} {P : Pred Term ℓ} → InductionPrinciple _!∈_ P
-    ind-struct = inductionPrinciple !∈-wf
+    ind-struct : ∀ {ℓ} {P : Pred Term ℓ} → InductionPrinciple _∈_ P
+    ind-struct = inductionPrinciple ∈-wf
 
 
 -- A proof of Lemma 3.3.3 using structural induction.
@@ -1181,7 +1234,7 @@ module NumbersAndBooleansGoWrong
 -- Echo of Theorem 3.5.8.
 
     nf→v : ∀ {t} → NormalForm t → Value t
-    nf→v nf      with classify _
+    nf→v nf          with classify _
     ... | val v       = v
     ... | red (_ , r) = r ↯ nf
 
@@ -1240,97 +1293,51 @@ module NumbersAndBooleansGoWrong
     ... | u , v , rs = u , v→nf v , rs
 
 
--- TODO
-
-    data _!∈_ : Rel₀ Term where
-      suc    : ∀ {t} → t !∈ suc t
-      pred   : ∀ {t} → t !∈ pred t
-      iszero : ∀ {t} → t !∈ iszero t
-      if₁    : ∀ {t₁ t₂ t₃} → t₁ !∈ if t₁ then t₂ else t₃
-      if₂    : ∀ {t₁ t₂ t₃} → t₂ !∈ if t₁ then t₂ else t₃
-      if₃    : ∀ {t₁ t₂ t₃} → t₃ !∈ if t₁ then t₂ else t₃
-
-    _∈_ : Rel₀ Term
-    _∈_ = _!∈_ *
+----------------------------------------------------------------------------------------------------
+--
+-- Work in progress
 
 
--- TODO
+    data _∈_ : Rel₀ Term where
+      suc    : ∀ {t} → t ∈ suc t
+      pred   : ∀ {t} → t ∈ pred t
+      iszero : ∀ {t} → t ∈ iszero t
+      if₁    : ∀ {t₁ t₂ t₃} → t₁ ∈ if t₁ then t₂ else t₃
+      if₂    : ∀ {t₁ t₂ t₃} → t₂ ∈ if t₁ then t₂ else t₃
+      if₃    : ∀ {t₁ t₂ t₃} → t₃ ∈ if t₁ then t₂ else t₃
 
-module _ where
-  open module O = NumbersAndBooleansGetStuck
-    renaming (_⟹_ to O[_⟹_] ; _⟹*_ to O[_⟹*_])
+    _∈*_ : Rel₀ Term
+    _∈*_ = _∈_ *
 
-  open module W = NumbersAndBooleansGoWrong
-    renaming (_⟹_ to W[_⟹_] ; _⟹*_ to W[_⟹*_])
+    _∉*_ : Rel₀ Term
+    s ∉* t = ¬ (s ∈* t)
 
+    Wrong : Pred₀ Term
+    Wrong t = wrong ∈* t
 
-  o→w : O.Term → W.Term
-  o→w true                    = true
-  o→w false                   = false
-  o→w zero                    = zero
-  o→w (suc t)                 = suc (o→w t)
-  o→w (pred t)                = pred (o→w t)
-  o→w (iszero t)              = iszero (o→w t)
-  o→w (if t₁ then t₂ else t₃) = if (o→w t₁) then (o→w t₂) else (o→w t₃)
+    data GoodTerm : Pred₀ Term where
+      true         : GoodTerm true
+      false        : GoodTerm false
+      zero         : GoodTerm zero
+      suc          : ∀ {t} → (gt : GoodTerm t) → GoodTerm (suc t)
+      pred         : ∀ {t} → (gt : GoodTerm t) → GoodTerm (pred t)
+      iszero       : ∀ {t} → (gt : GoodTerm t) → GoodTerm (iszero t)
+      if_then_else : ∀ {t₁ t₂ t₃} → (gt₁ : GoodTerm t₁) (gt₂ : GoodTerm t₂) (gt₃ : GoodTerm t₃) →
+                     GoodTerm (if t₁ then t₂ else t₃)
 
-  onv→wnv : ∀ {t} → O.NumericValue t → W.NumericValue (o→w t)
-  onv→wnv zero     = zero
-  onv→wnv (suc nv) = suc (onv→wnv nv)
-
-  ov→wv : ∀ {t} → O.Value t → W.Value (o→w t)
-  ov→wv true     = true
-  ov→wv false    = false
-  ov→wv (num nv) = num (onv→wnv nv)
-
-
--- Lemma A.4.
-
-  lem-a4 : ∀ {t} → Stuck t → W[ o→w t ⟹* wrong ]
-  lem-a4 {true}                  (¬v , nf) = true ↯ ¬v
-  lem-a4 {false}                 (¬v , nf) = false ↯ ¬v
-  lem-a4 {zero}                  (¬v , nf) = num zero ↯ ¬v
-  lem-a4 {suc t}                 (¬v , nf) with O.classify t
-  ... | stu σ                              = W.map r-suc (lem-a4 σ) W.∷ʳ r-sucWrong wrong
-  ... | val true                           = r-sucWrong true ∷ []
-  ... | val false                          = r-sucWrong false ∷ []
-  ... | val (num nv)                       = num (suc nv) ↯ ¬v
-  ... | red (_ , r)                        = r-suc r ↯ nf
-  lem-a4 {pred t}                (¬v , nf) with O.classify t
-  ... | stu σ                              = W.map r-pred (lem-a4 σ) W.∷ʳ r-predWrong wrong
-  ... | val true                           = r-predWrong true ∷ []
-  ... | val false                          = r-predWrong false ∷ []
-  ... | val (num zero)                     = r-predZero ↯ nf
-  ... | val (num (suc nv))                 = r-predSuc nv ↯ nf
-  ... | red (_ , r)                        = r-pred r ↯ nf
-  lem-a4 {iszero t}              (¬v , nf) with O.classify t
-  ... | stu σ                              = W.map r-iszero (lem-a4 σ) W.∷ʳ r-iszeroWrong wrong
-  ... | val true                           = r-iszeroWrong true ∷ []
-  ... | val false                          = r-iszeroWrong false ∷ []
-  ... | val (num zero)                     = r-iszeroZero ↯ nf
-  ... | val (num (suc nv))                 = r-iszeroSuc nv ↯ nf
-  ... | red (_ , r)                        = r-iszero r ↯ nf
-  lem-a4 {if t₁ then t₂ else t₃} (¬v , nf) with O.classify t₁
-  ... | stu σ₁                             = W.map r-if (lem-a4 σ₁) W.∷ʳ r-ifWrong wrong
-  ... | val true                           = r-ifTrue ↯ nf
-  ... | val false                          = r-ifFalse ↯ nf
-  ... | val (num nv₁)                      = r-ifWrong (num (onv→wnv nv₁)) ∷ []
-  ... | red (_ , r₁)                       = r-if r₁ ↯ nf
-
-
--- Lemma A.5.
-
-  lem-a5 : ∀ {t u} → W[ o→w t ⟹ u ] → wrong ∈ u → Stuck t
-  lem-a5 r []       = {!!}
-  lem-a5 r (e ∷ es) = {!!}
-
-
--- Proposition A.2.
-
-  prop-a21 : ∀ {t u} → Stuck u → O[ t ⟹* u ] → W[ o→w t ⟹* wrong ]
-  prop-a21 σ@(¬v , nf) rs = {!!}
-
-  prop-a22 : ∀ {t u} → Stuck u → W[ o→w t ⟹* wrong ] → O[ t ⟹* u ]
-  prop-a22 σ@(¬v , nf) rs = {!!}
+    gt-uniq : ∀ {t} → (gt : GoodTerm t) (gt′ : GoodTerm t) → gt ≡ gt′
+    gt-uniq true                       true         = refl
+    gt-uniq false                      false        = refl
+    gt-uniq zero                       zero         = refl
+    gt-uniq (suc gt)                   (suc gt′)    with gt-uniq gt gt′
+    ... | refl                                       = refl
+    gt-uniq (pred gt)                  (pred gt′)   with gt-uniq gt gt′
+    ... | refl                                      = refl
+    gt-uniq (iszero gt)                (iszero gt′) with gt-uniq gt gt′
+    ... | refl                                      = refl
+    gt-uniq (if gt₁ then gt₂ else gt₃) (if gt₁′ then gt₂′ else gt₃′)
+      with gt-uniq gt₁ gt₁′ | gt-uniq gt₂ gt₂′ | gt-uniq gt₃ gt₃′
+    ... | refl | refl | refl                        = refl
 
 
 ----------------------------------------------------------------------------------------------------
