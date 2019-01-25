@@ -2,7 +2,7 @@
 
 module Chapter3 where
 
-open import Data.Empty public using (⊥)
+open import Data.Empty public using (⊥ ; ⊥-elim)
 
 open import Data.List public using (List ; [] ; _∷_)
 
@@ -15,25 +15,27 @@ open Nat.≤-Reasoning public
 
 open import Data.Product public using (_×_ ; _,_ ; Σ ; ∃ ; proj₁ ; proj₂)
 
-open import Data.Unit public using (⊤)
+open import Data.Sum public using (_⊎_ ; inj₁ ; inj₂)
+
+open import Data.Unit public using (⊤ ; tt)
 
 open import Function public using (case_of_)
 
 open import Level public using (_⊔_ ; 0ℓ)
 
-open import Relation.Binary public using (Decidable ; DecSetoid ; Rel)
+open import Relation.Binary public using (Decidable ; DecSetoid ; Reflexive ; Rel ; Transitive)
 
 import Relation.Binary.PropositionalEquality as PropEq
 open PropEq public using (_≡_ ; _≢_ ; refl ; subst)
   renaming (cong to _&_ ; sym to _⁻¹)
 
-import Relation.Binary.Construct.Closure.ReflexiveTransitive as Star
-open Star public using ()
-  renaming (Star to _* ; ε to [] ; _◅_ to _∷_ ; _◅◅_ to _++_)
+-- import Relation.Binary.Construct.Closure.ReflexiveTransitive as Star
+-- open Star public using ()
+--   renaming (Star to _* ; ε to [] ; _◅_ to _∷_ ; _◅◅_ to _++_)
 
 open import Relation.Nullary public using (¬_ ; Dec ; no ; yes)
 
-open import Relation.Nullary.Negation public using ()
+open import Relation.Nullary.Negation public using (contraposition)
   renaming (contradiction to _↯_)
 
 open import Relation.Unary public using (Pred)
@@ -41,7 +43,80 @@ open import Relation.Unary public using (Pred)
 
 ----------------------------------------------------------------------------------------------------
 --
--- TODO: Put this in a separate module
+-- TODO: Temporary
+
+data _* {a ℓ} {A : Set a} (R : Rel A ℓ) : Rel A (a ⊔ ℓ) where
+  []  : Reflexive (R *)
+  _∷_ : ∀ {x y z} → (r : R x y) (rs : (R *) y z) → (R *) x z
+
+_++_ : ∀ {a ℓ} {A : Set a} {R : Rel A ℓ} → Transitive (R *)
+[]         ++ rs₂ = rs₂
+(r₁ ∷ rs₁) ++ rs₂ = r₁ ∷ (rs₁ ++ rs₂)
+
+_∷ʳ_ : ∀ {a ℓ} {A : Set a} {R : Rel A ℓ} →
+       ∀ {x y z} → (R *) x y → R y z → (R *) x z
+rs ∷ʳ r = rs ++ (r ∷ [])
+
+map : ∀ {a ℓ} {A : Set a} {R : Rel A ℓ} {f : A → A} →
+      (∀ {x y} → R x y → R (f x) (f y)) →
+      ∀ {x y} → (R *) x y → (R *) (f x) (f y)
+map h []       = []
+map h (r ∷ rs) = h r ∷ map h rs
+
+¬¬snoc : ∀ {a ℓ} {A : Set a} {R : A → A → Set ℓ} →
+         ∀ {x y z} → (R *) x y → R y z → ¬ ¬ ((R *) x z)
+¬¬snoc R*xy Ryz ¬R*xz = (R*xy ++ (Ryz ∷ [])) ↯ ¬R*xz
+
+undo : ∀ {a ℓ} {A : Set a} {R : A → A → Set ℓ} →
+       ∀ {x y z} → R y z → ¬ ((R *) x z) → ¬ ((R *) x y)
+undo Ryz ¬R*xz R*xy = ¬¬snoc R*xy Ryz ¬R*xz
+
+
+data _*′ {a ℓ} {A : Set a} (R : Rel A ℓ) : Rel A (a ⊔ ℓ) where
+  []′   : Reflexive (R *′)
+  _∷ʳ′_ : ∀ {x y z} → (rs : (R *′) x y) (r : R y z) → (R *′) x z
+
+_++′_ : ∀ {a ℓ} {A : Set a} {R : Rel A ℓ} → Transitive (R *′)
+rs₁ ++′ []′          = rs₁
+rs₁ ++′ (rs₂ ∷ʳ′ r₂) = (rs₁ ++′ rs₂) ∷ʳ′ r₂
+
+_∷′_ : ∀ {a ℓ} {A : Set a} {R : Rel A ℓ} →
+       ∀ {x y z} → R x y → (R *′) y z → (R *′) x z
+r ∷′ rs = ([]′ ∷ʳ′ r) ++′ rs
+
+undo′ : ∀ {a ℓ} {A : Set a} {R : Rel A ℓ} →
+        ∀ {x y z} → R y z → ¬ ((R *′) x z) → ¬ ((R *′) x y)
+undo′ Ryz ¬R*′xz R*′xy = (R*′xy ∷ʳ′ Ryz) ↯ ¬R*′xz
+
+
+*→*′ : ∀ {a ℓ} {A : Set a} {R : Rel A ℓ} →
+        ∀ {x y} → (R *) x y → (R *′) x y
+*→*′ []       = []′
+*→*′ (r ∷ rs) = r ∷′ *→*′ rs
+
+*′→* : ∀ {a ℓ} {A : Set a} {R : Rel A ℓ} →
+        ∀ {x y} → (R *′) x y → (R *) x y
+*′→* []′        = []
+*′→* (rs ∷ʳ′ r) = *′→* rs ∷ʳ r
+
+
+data _+ {a ℓ} {A : Set a} (R : Rel A ℓ) : Rel A (a ⊔ ℓ) where
+  _∷_ : ∀ {x y z} → (r : R x y) (rs : (R *) y z) → (R +) x z
+
+_++₊_ : ∀ {a ℓ} {A : Set a} {R : Rel A ℓ} → Transitive (R +)
+(r₁ ∷ rs₁) ++₊ (r₂ ∷ rs₂) = r₁ ∷ (rs₁ ++ (r₂ ∷ rs₂))
+
+
+data _+′ {a ℓ} {A : Set a} (R : Rel A ℓ) : Rel A (a ⊔ ℓ) where
+  _∷ʳ′_ : ∀ {x y z} → (rs : (R *′) x y) (r : R y z) → (R +′) x z
+
+_++₊′_ : ∀ {a ℓ} {A : Set a} {R : Rel A ℓ} → Transitive (R +′)
+(rs₁ ∷ʳ′ r₁) ++₊′ (rs₂ ∷ʳ′ r₂) = ((rs₁ ∷ʳ′ r₁) ++′ rs₂) ∷ʳ′ r₂
+
+
+----------------------------------------------------------------------------------------------------
+--
+-- TODO: Clean this up
 
 infixl 8 _⊗_
 _⊗_ : ∀ {a b} {A : Set a} {B : Set b} {f g : A → B} {x y : A} →
@@ -56,14 +131,6 @@ Pred₀ A = Pred A 0ℓ
 
 Rel₀ : ∀ {a} → Set a → Set _
 Rel₀ A = Rel A 0ℓ
-
-¬¬snoc : ∀ {a ℓ} {A : Set a} {R : A → A → Set ℓ} →
-         ∀ {x y z} → (R *) x y → R y z → ¬ ¬ ((R *) x z)
-¬¬snoc R*xy Ryz ¬R*xz = (R*xy ++ (Ryz ∷ [])) ↯ ¬R*xz
-
-undo : ∀ {a ℓ} {A : Set a} {R : A → A → Set ℓ} →
-       ∀ {x y z} → R y z → ¬ ((R *) x z) → ¬ ((R *) x y)
-undo Ryz ¬R*xz R*xy = ¬¬snoc R*xy Ryz ¬R*xz
 
 
 ----------------------------------------------------------------------------------------------------
@@ -161,7 +228,7 @@ module NumbersAndBooleans-Part1
     ... | yes refl                                = yes refl
     ... | no s≢t                                  = no λ where refl → refl ↯ s≢t
     pred _                ≟ iszero _              = no λ ()
-    pred _                ≟ if _ then _ else _   = no λ ()
+    pred _                ≟ if _ then _ else _    = no λ ()
     iszero _              ≟ true                  = no λ ()
     iszero _              ≟ false                 = no λ ()
     iszero _              ≟ zero                  = no λ ()
@@ -287,49 +354,6 @@ module NumbersAndBooleans-Part1
       if₁    : ∀ {t₁ t₂ t₃} → t₁ ∈ if t₁ then t₂ else t₃
       if₂    : ∀ {t₁ t₂ t₃} → t₂ ∈ if t₁ then t₂ else t₃
       if₃    : ∀ {t₁ t₂ t₃} → t₃ ∈ if t₁ then t₂ else t₃
-
-
-
-
--- TODO
-
-{-
-    _∈?_ : Decidable _∈_
-    s ∈? true                            = no λ ()
-    s ∈? false                           = no λ ()
-    s ∈? zero                            = no λ ()
-    s ∈? suc t                           with s ≟ t
-    ... | yes refl                       = yes suc
-    ... | no s≢t                         = no λ where suc → refl ↯ s≢t
-    s ∈? pred t                          with s ≟ t
-    ... | yes refl                       = yes pred
-    ... | no s≢t                         = no λ where pred → refl ↯ s≢t
-    s ∈? iszero t                        with s ≟ t
-    ... | yes refl                       = yes iszero
-    ... | no s≢t                         = no λ where iszero → refl ↯ s≢t
-    s ∈? if t₁ then t₂ else t₃           with s ≟ t₁ | s ≟ t₂ | s ≟ t₃
-    ... | yes refl | _        | _        = yes if₁
-    ... | no s≢t₁  | yes refl | _        = yes if₂
-    ... | no s≢t₁  | no s≢t₂  | yes refl = yes if₃
-    ... | no s≢t₁  | no s≢t₂  | no s≢t₃  = no λ where if₁ → refl ↯ s≢t₁
-                                                      if₂ → refl ↯ s≢t₂
-                                                      if₃ → refl ↯ s≢t₃
-
-    _∈*?_ : Decidable (_∈_ *)
-    s ∈*? t with s ≟ t
-    ... | yes refl = yes []
-    ... | no s≢t   with s ∈? t
-    ... | yes s∈t  = yes (s∈t ∷ [])
-    ... | no s∉t   = {!!}
-
-    module _ {a ℓ} {A : Set a} {R : A → A → Set ℓ} (R? : Decidable R) where
-      R*? : Decidable (R *)
-      R*? x y with R? x y
-      ... | yes Rxy = yes (Rxy ∷ [])
-      ... | no ¬Rxy = {!!}
--}
-
-
 
 
 -- As an exercise, we’re going to define structural induction using three methods.  First, a direct
@@ -696,8 +720,7 @@ module BooleansOnly-Part2
 -- (2) `t ⟹* t` for all `t`, and (3) if `s ⟹* t` and `t ⟹* u`, then `s ⟹* u`.”
 --
 -- We say `t ⟹* u` to mean that `t` reduces to `u` in multiple steps.  We give this definition
--- in a generic manner, using equipment from the Agda standard library, and we include some related
--- utilities.
+-- in a generic manner, and we include an alternative definition with a dual structure.
 
 module MultiStepReduction {a ℓ} {A : Set a}
     (_⟹_ : Rel A ℓ)
@@ -706,12 +729,9 @@ module MultiStepReduction {a ℓ} {A : Set a}
     _⟹*_ : Rel A (a ⊔ ℓ)
     _⟹*_ = _⟹_ *
 
-    _∷ʳ_ : ∀ {s t u} → s ⟹* t → t ⟹ u → s ⟹* u
-    rs ∷ʳ r = rs ++ (r ∷ [])
-
-    map : ∀ {f : A → A} → (∀ {t u} → t ⟹ u → f t ⟹ f u) →
-          ∀ {t u} → t ⟹* u → f t ⟹* f u
-    map {f = f} = Star.gmap f
+    infix 3 _⟹*′_
+    _⟹*′_ : Rel A (a ⊔ ℓ)
+    _⟹*′_ = _⟹_ *′
 
 
 ----------------------------------------------------------------------------------------------------
@@ -764,7 +784,7 @@ module BooleansOnly-Part3
 
     halt-if : ∀ {s₁ t₁ t₂ t₃ tₙ} → s₁ ⟹* t₁ → if t₁ then t₂ else t₃ ⟹ tₙ → tₙ ⇓ →
               if s₁ then t₂ else t₃ ⇓
-    halt-if rs₁ rₙ (uₙ , vₙ , rsₙ) = uₙ , vₙ , map r-if rs₁ ++ rₙ ∷ rsₙ
+    halt-if rs₁ rₙ (uₙ , vₙ , rsₙ) = uₙ , vₙ , (map r-if rs₁) ++ (rₙ ∷ rsₙ)
 
     halt : ∀ t → t ⇓
     halt true                    = _ , true , []
@@ -1006,7 +1026,7 @@ module NumbersAndBooleansGetStuck
 
     halt-if : ∀ {s₁ t₁ t₂ t₃ tₙ} → s₁ ⟹* t₁ → if t₁ then t₂ else t₃ ⟹ tₙ → tₙ ⇓ →
               if s₁ then t₂ else t₃ ⇓
-    halt-if rs₁ rₙ (uₙ , vₙ , rsₙ) = uₙ , vₙ , map r-if rs₁ ++ rₙ ∷ rsₙ
+    halt-if rs₁ rₙ (uₙ , vₙ , rsₙ) = uₙ , vₙ , (map r-if rs₁) ++ (rₙ ∷ rsₙ)
 
     halt : ∀ t → t ⇓
     halt true                                  = _ , val true , []
@@ -1043,6 +1063,15 @@ module NumbersAndBooleansGetStuck
     halt′ t                     with halt t
     ... | u , stu (_ , nf) , rs = u , nf      , rs
     ... | u , val v        , rs = u , v→nf v , rs
+
+
+-- TODO
+
+    _∈*_ : Rel₀ Term
+    _∈*_ = _∈_ *
+
+    _∈*′_ : Rel₀ Term
+    _∈*′_ = _∈_ *′
 
 
 ----------------------------------------------------------------------------------------------------
@@ -1255,7 +1284,7 @@ module NumbersAndBooleansGoWrong
 
     halt-if : ∀ {s₁ t₁ t₂ t₃ tₙ} → s₁ ⟹* t₁ → if t₁ then t₂ else t₃ ⟹ tₙ → tₙ ⇓ →
               if s₁ then t₂ else t₃ ⇓
-    halt-if rs₁ rₙ (uₙ , vₙ , rsₙ) = uₙ , vₙ , map r-if rs₁ ++ rₙ ∷ rsₙ
+    halt-if rs₁ rₙ (uₙ , vₙ , rsₙ) = uₙ , vₙ , (map r-if rs₁) ++ (rₙ ∷ rsₙ)
 
     halt : ∀ t → t ⇓
     halt wrong                         = _ , wrong , []
@@ -1297,6 +1326,81 @@ module NumbersAndBooleansGoWrong
 --
 -- Work in progress
 
+    _≟_ : Decidable {A = Term} _≡_
+    wrong                 ≟ wrong                 = yes refl
+    wrong                 ≟ true                  = no λ ()
+    wrong                 ≟ false                 = no λ ()
+    wrong                 ≟ zero                  = no λ ()
+    wrong                 ≟ suc _                 = no λ ()
+    wrong                 ≟ pred _                = no λ ()
+    wrong                 ≟ iszero _              = no λ ()
+    wrong                 ≟ if _ then _ else _    = no λ ()
+    true                  ≟ wrong                 = no λ ()
+    true                  ≟ true                  = yes refl
+    true                  ≟ false                 = no λ ()
+    true                  ≟ zero                  = no λ ()
+    true                  ≟ suc _                 = no λ ()
+    true                  ≟ pred _                = no λ ()
+    true                  ≟ iszero _              = no λ ()
+    true                  ≟ if _ then _ else _    = no λ ()
+    false                 ≟ wrong                 = no λ ()
+    false                 ≟ true                  = no λ ()
+    false                 ≟ false                 = yes refl
+    false                 ≟ zero                  = no λ ()
+    false                 ≟ suc _                 = no λ ()
+    false                 ≟ pred _                = no λ ()
+    false                 ≟ iszero _              = no λ ()
+    false                 ≟ if _ then _ else _    = no λ ()
+    zero                  ≟ wrong                 = no λ ()
+    zero                  ≟ true                  = no λ ()
+    zero                  ≟ false                 = no λ ()
+    zero                  ≟ zero                  = yes refl
+    zero                  ≟ suc _                 = no λ ()
+    zero                  ≟ pred _                = no λ ()
+    zero                  ≟ iszero _              = no λ ()
+    zero                  ≟ if _ then _ else _    = no λ ()
+    suc _                 ≟ wrong                 = no λ ()
+    suc _                 ≟ true                  = no λ ()
+    suc _                 ≟ false                 = no λ ()
+    suc _                 ≟ zero                  = no λ ()
+    suc s                 ≟ suc t                 with s ≟ t
+    ... | yes refl                                = yes refl
+    ... | no s≢t                                  = no λ where refl → refl ↯ s≢t
+    suc _                 ≟ pred _                = no λ ()
+    suc _                 ≟ iszero _              = no λ ()
+    suc _                 ≟ if _ then _ else _    = no λ ()
+    pred _                ≟ wrong                 = no λ ()
+    pred _                ≟ true                  = no λ ()
+    pred _                ≟ false                 = no λ ()
+    pred _                ≟ zero                  = no λ ()
+    pred _                ≟ suc _                 = no λ ()
+    pred s                ≟ pred t                with s ≟ t
+    ... | yes refl                                = yes refl
+    ... | no s≢t                                  = no λ where refl → refl ↯ s≢t
+    pred _                ≟ iszero _              = no λ ()
+    pred _                ≟ if _ then _ else _    = no λ ()
+    iszero _              ≟ wrong                 = no λ ()
+    iszero _              ≟ true                  = no λ ()
+    iszero _              ≟ false                 = no λ ()
+    iszero _              ≟ zero                  = no λ ()
+    iszero _              ≟ suc _                 = no λ ()
+    iszero _              ≟ pred _                = no λ ()
+    iszero s              ≟ iszero t              with s ≟ t
+    ... | yes refl                                = yes refl
+    ... | no s≢t                                  = no λ where refl → refl ↯ s≢t
+    iszero _              ≟ if _ then _ else _    = no λ ()
+    if _ then _ else _    ≟ wrong                 = no λ ()
+    if _ then _ else _    ≟ true                  = no λ ()
+    if _ then _ else _    ≟ false                 = no λ ()
+    if _ then _ else _    ≟ zero                  = no λ ()
+    if _ then _ else _    ≟ suc _                 = no λ ()
+    if _ then _ else _    ≟ pred _                = no λ ()
+    if _ then _ else _    ≟ iszero _              = no λ ()
+    if s₁ then s₂ else s₃ ≟ if t₁ then t₂ else t₃ with s₁ ≟ t₁ | s₂ ≟ t₂ | s₃ ≟ t₃
+    ... | yes refl | yes refl | yes refl          = yes refl
+    ... | yes refl | yes refl | no s₃≢t₃          = no λ where refl → refl ↯ s₃≢t₃
+    ... | yes refl | no s₂≢t₂ | _                 = no λ where refl → refl ↯ s₂≢t₂
+    ... | no s₁≢t₁ | _        | _                 = no λ where refl → refl ↯ s₁≢t₁
 
     data _∈_ : Rel₀ Term where
       suc    : ∀ {t} → t ∈ suc t
@@ -1309,11 +1413,31 @@ module NumbersAndBooleansGoWrong
     _∈*_ : Rel₀ Term
     _∈*_ = _∈_ *
 
-    _∉*_ : Rel₀ Term
-    s ∉* t = ¬ (s ∈* t)
+    _∈*′_ : Rel₀ Term
+    _∈*′_ = _∈_ *′
 
-    Wrong : Pred₀ Term
-    Wrong t = wrong ∈* t
+    BadTerm : Pred₀ Term
+    BadTerm t = wrong ∈* t
+
+    BadTerm′ : Pred₀ Term
+    BadTerm′ t = wrong ∈*′ t
+
+    data BadTermI : Pred₀ Term where
+      wrong  : BadTermI wrong
+      suc    : ∀ {t} → (bt : BadTermI t) → BadTermI (suc t)
+      pred   : ∀ {t} → (bt : BadTermI t) → BadTermI (pred t)
+      iszero : ∀ {t} → (bt : BadTermI t) → BadTermI (iszero t)
+      if₁    : ∀ {t₁ t₂ t₃} → (bt₁ : BadTermI t₁) → BadTermI (if t₁ then t₂ else t₃)
+      if₂    : ∀ {t₁ t₂ t₃} → (bt₂ : BadTermI t₂) → BadTermI (if t₁ then t₂ else t₃)
+      if₃    : ∀ {t₁ t₂ t₃} → (bt₃ : BadTermI t₃) → BadTermI (if t₁ then t₂ else t₃)
+
+    undoI : ∀ {t u} → t ∈ u → ¬ BadTermI u → ¬ BadTermI t
+    undoI suc    ¬bu = λ bt → suc bt ↯ ¬bu
+    undoI pred   ¬bu = λ bt → pred bt ↯ ¬bu
+    undoI iszero ¬bu = λ bt → iszero bt ↯ ¬bu
+    undoI if₁    ¬bu = λ bt₁ → if₁ bt₁ ↯ ¬bu
+    undoI if₂    ¬bu = λ bt₂ → if₂ bt₂ ↯ ¬bu
+    undoI if₃    ¬bu = λ bt₃ → if₃ bt₃ ↯ ¬bu
 
     data GoodTerm : Pred₀ Term where
       true         : GoodTerm true
@@ -1325,19 +1449,30 @@ module NumbersAndBooleansGoWrong
       if_then_else : ∀ {t₁ t₂ t₃} → (gt₁ : GoodTerm t₁) (gt₂ : GoodTerm t₂) (gt₃ : GoodTerm t₃) →
                      GoodTerm (if t₁ then t₂ else t₃)
 
-    gt-uniq : ∀ {t} → (gt : GoodTerm t) (gt′ : GoodTerm t) → gt ≡ gt′
-    gt-uniq true                       true         = refl
-    gt-uniq false                      false        = refl
-    gt-uniq zero                       zero         = refl
-    gt-uniq (suc gt)                   (suc gt′)    with gt-uniq gt gt′
-    ... | refl                                       = refl
-    gt-uniq (pred gt)                  (pred gt′)   with gt-uniq gt gt′
-    ... | refl                                      = refl
-    gt-uniq (iszero gt)                (iszero gt′) with gt-uniq gt gt′
-    ... | refl                                      = refl
+    gt-uniq : ∀ {t} → (gt gt′ : GoodTerm t) → gt ≡ gt′
+    gt-uniq true                       true                          = refl
+    gt-uniq false                      false                         = refl
+    gt-uniq zero                       zero                          = refl
+    gt-uniq (suc gt)                   (suc gt′)                     with gt-uniq gt gt′
+    ... | refl                                                        = refl
+    gt-uniq (pred gt)                  (pred gt′)                    with gt-uniq gt gt′
+    ... | refl                                                       = refl
+    gt-uniq (iszero gt)                (iszero gt′)                  with gt-uniq gt gt′
+    ... | refl                                                       = refl
     gt-uniq (if gt₁ then gt₂ else gt₃) (if gt₁′ then gt₂′ else gt₃′)
       with gt-uniq gt₁ gt₁′ | gt-uniq gt₂ gt₂′ | gt-uniq gt₃ gt₃′
-    ... | refl | refl | refl                        = refl
+    ... | refl | refl | refl                                         = refl
+
+    gt-undo : ∀ {t u} → t ∈ u → GoodTerm u → GoodTerm t
+    gt-undo suc    (suc gu)                   = gu
+    gt-undo pred   (pred gu)                  = gu
+    gt-undo iszero (iszero gu)                = gu
+    gt-undo if₁    (if gu₁ then gu₂ else gu₃) = gu₁
+    gt-undo if₂    (if gu₁ then gu₂ else gu₃) = gu₂
+    gt-undo if₃    (if gu₁ then gu₂ else gu₃) = gu₃
+
+
+-- NOTE: Continued in Chapter3a.agda
 
 
 ----------------------------------------------------------------------------------------------------
