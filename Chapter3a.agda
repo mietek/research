@@ -593,8 +593,19 @@ data GoodReds : ∀ {t u} → Pred₀ W[ t ⟹* u ] where
         GoodRed r → GoodReds rs → GoodReds (r ∷ rs)
 
 
-find-0 : ∀ {t} → GoodTerm t → W[ t ⟹* wrong ] →
-         (∃ λ u → GoodTerm u × Σ W[ t ⟹* u ] GoodReds × ∃ λ v → ¬ GoodTerm v × W[ u ⟹ v ])
+-- NOTE: Maybe GoodReds should only store the right-hand GoodTerms?  gt′ is not needed
+wrs→ors : ∀ {t u} → (gt : GoodTerm t) (gu : GoodTerm u) (rs : W[ t ⟹* u ]) → GoodReds rs →
+           O[ w→o gt ⟹* w→o gu ]
+wrs→ors gt gu []       []                 with gt-uniq gt gu
+... | refl                                 = []
+wrs→ors gt gu (r ∷ rs) ((gt′ , gy) ∷ grs) = wr→or gt gy r ∷ wrs→ors gy gu rs grs
+
+
+
+----------------------------------------------------------------------------------------------------
+
+
+find-0 : ∀ {t} → GoodTerm t → W[ t ⟹* wrong ] → (∃ λ u → GoodTerm u × Σ W[ t ⟹* u ] GoodReds × ∃ λ v → ¬ GoodTerm v × W[ u ⟹ v ])
 find-0 {t} () []
 find-0 {t} gt (r ∷⟨ u ⟩ rs)        with good? u
 -- ... | no ¬gu                       = t , gt , ([] , tt) , u , ¬gu , r
@@ -602,6 +613,9 @@ find-0 {t} gt (r ∷⟨ u ⟩ rs)        with good? u
 ... | yes gu                       with find-0 gu rs
 -- ... | u′ , gu′ , (rs′ , grs′) , vx = u′ , gu′ , ((r ∷ rs′) , ((gt , gu) , grs′)) , vx
 ... | u′ , gu′ , (rs′ , grs′) , vx = u′ , gu′ , ((r ∷ rs′) , ((gt , gu) ∷ grs′)) , vx
+
+
+----------------------------------------------------------------------------------------------------
 
 
 help-0 : ∀ t → GoodTerm (o→w t)
@@ -614,13 +628,14 @@ help-0 (iszero t)              = iszero (help-0 t)
 help-0 (if t₁ then t₂ else t₃) = if (help-0 t₁) then (help-0 t₂) else (help-0 t₃)
 
 
-find-1 : ∀ {t} → W[ o→w t ⟹* wrong ] →
-         (∃ λ u → GoodTerm u × Σ W[ o→w t ⟹* u ] GoodReds × ∃ λ v → ¬ GoodTerm v × W[ u ⟹ v ])
+find-1 : ∀ {t} → W[ o→w t ⟹* wrong ] → (∃ λ u → GoodTerm u × Σ W[ o→w t ⟹* u ] GoodReds × ∃ λ v → ¬ GoodTerm v × W[ u ⟹ v ])
 find-1 {t} rs = find-0 (help-0 t) rs
 
 
-help-1 : ∀ {t} → (gt : GoodTerm t) →
-         o→w (w→o gt) ≡ t
+----------------------------------------------------------------------------------------------------
+
+
+help-1 : ∀ {t} → (gt : GoodTerm t) → o→w (w→o gt) ≡ t
 help-1 true                       = refl
 help-1 false                      = refl
 help-1 zero                       = refl
@@ -633,20 +648,17 @@ help-1 (if gt₁ then gt₂ else gt₃) = if_then_else & help-1 gt₁ ⊗ help-1
 {-# REWRITE help-1 #-}
 
 
-help-1a : ∀ {t u} → (gt : GoodTerm t) →
-          W[ t ⟹ u ] ≡ W[ o→w (w→o gt) ⟹ u ]
+help-1a : ∀ {t u} → (gt : GoodTerm t) → W[ t ⟹ u ] ≡ W[ o→w (w→o gt) ⟹ u ]
 -- help-1a gt = (λ t′ → W[ t′ ⟹ _ ]) & help-1 gt
 help-1a gt = refl
 
 
-help-1b : ∀ {t u} → (gu : GoodTerm u) →
-          W[ t ⟹* u ] ≡ W[ t ⟹* o→w (w→o gu) ]
+help-1b : ∀ {t u} → (gu : GoodTerm u) → W[ t ⟹* u ] ≡ W[ t ⟹* o→w (w→o gu) ]
 -- help-1b gu = (λ u′ → W[ _ ⟹* u′ ]) & help-1 gu
 help-1b gu = refl
 
 
-help-1c : ∀ {t u} {rs : W[ o→w t ⟹* u ]} → (gu : GoodTerm u) →
-          GoodReds rs ≡ GoodReds (coerce rs (help-1b gu))
+help-1c : ∀ {t u} {rs : W[ o→w t ⟹* u ]} → (gu : GoodTerm u) → GoodReds rs ≡ GoodReds (coerce rs (help-1b gu))
 -- help-1c gu = ?
 help-1c gu = refl
 
@@ -655,12 +667,15 @@ find-2 : ∀ {t} → W[ o→w t ⟹* wrong ] →
          (∃ λ u → Σ W[ o→w t ⟹* o→w u ] GoodReds × ∃ λ v → ¬ GoodTerm v × W[ o→w u ⟹ v ])
 find-2 {t} rs with find-1 {t} rs
 ... | u , gu , (rs′ , grs′) , v , ¬gv , r = w→o gu
---                                          , (coerce rs′ (help-1b gu) , coerce grs′ (help-1c gu))
-                                          , (rs′ , grs′)
+                                          , (coerce rs′ (help-1b gu) , coerce grs′ (help-1c {t} gu))
+--                                          , (rs′ , grs′)
                                           , v
                                           , ¬gv
---                                          , (coerce r (help-1a gu))
-                                          , r
+                                          , (coerce r (help-1a gu))
+--                                          , r
+
+
+----------------------------------------------------------------------------------------------------
 
 
 help-2a : ∀ t → GoodTerm (o→w t)
@@ -674,8 +689,7 @@ help-2a (if t₁ then t₂ else t₃) = if help-2a t₁ then help-2a t₂ else (
 
 
 -- NOTE: Final formulation of Lemma A.5
-help-2b : ∀ {u v} → (¬gv : ¬ GoodTerm v) → W[ o→w u ⟹ v ] →
-         Stuck u
+help-2b : ∀ {u v} → (¬gv : ¬ GoodTerm v) → W[ o→w u ⟹ v ] → Stuck u
 help-2b {u} ¬gv r with O.classify u
 help-2b {t} ¬gv r | stu σ        = σ
 help-2b {t} ¬gv r | val v        = r ↯ W.v→nf (ov→wv v)
@@ -683,57 +697,33 @@ help-2b {t} ¬gv r | red (_ , r′) with W.⟹-det r (or→wr r′)
 help-2b {t} ¬gv r | red (u , r′) | refl = help-2a u ↯ ¬gv
 
 
-find-3 : ∀ {t} → W[ o→w t ⟹* wrong ] →
-         (∃ λ u → Σ W[ o→w t ⟹* o→w u ] GoodReds × Stuck u)
+find-3 : ∀ {t} → W[ o→w t ⟹* wrong ] → (∃ λ u → Σ W[ o→w t ⟹* o→w u ] GoodReds × Stuck u)
 find-3 {t} rs with find-2 {t} rs
 ... | u , (rs′ , grs′) , v , ¬gv , r = u , (rs′ , grs′) , help-2b ¬gv r
 
 
-help-3w : ∀ {t} → (gt : GoodTerm (o→w t)) → w→o gt ≡ t
-help-3w {true}                  true                       = refl
-help-3w {false}                 false                      = refl
-help-3w {zero}                  zero                       = refl
-help-3w {suc t}                 (suc gt)                   = suc & help-3w gt
-help-3w {pred t}                (pred gt)                  = pred & help-3w gt
-help-3w {iszero t}              (iszero gt)                = iszero & help-3w gt
-help-3w {if t₁ then t₂ else t₃} (if gt₁ then gt₂ else gt₃) = if_then_else & help-3w gt₁ ⊗ help-3w gt₂ ⊗ help-3w gt₃
-
-{-# REWRITE help-3w #-}
+----------------------------------------------------------------------------------------------------
 
 
-help-3a : ∀ {t u} → (gt : GoodTerm (o→w t)) (gu : GoodTerm (o→w u)) → O[ w→o gt ⟹ w→o gu ] →
-          O[ t ⟹ u ]
--- uses rewrite rule help-3w
-help-3a gt gu r = r
+help-3a : ∀ {t} → (gt : GoodTerm (o→w t)) → w→o gt ≡ t
+help-3a {true}                  true                       = refl
+help-3a {false}                 false                      = refl
+help-3a {zero}                  zero                       = refl
+help-3a {suc t}                 (suc gt)                   = suc & help-3a gt
+help-3a {pred t}                (pred gt)                  = pred & help-3a gt
+help-3a {iszero t}              (iszero gt)                = iszero & help-3a gt
+help-3a {if t₁ then t₂ else t₃} (if gt₁ then gt₂ else gt₃) = if_then_else & help-3a gt₁ ⊗ help-3a gt₂ ⊗ help-3a gt₃
 
 
-help-3b : ∀ {t u} → W[ o→w t ⟹ o→w u ] →
-          O[ t ⟹ u ]
-help-3b {t} {u} r with help-2a t | help-2a u
-... | gt | gu = help-3a gt gu (wr→or gt gu r)
+help-3b : ∀ {t u} → (gt : GoodTerm (o→w t)) (gu : GoodTerm (o→w u)) → O[ w→o gt ⟹* w→o gu ] → O[ t ⟹* u ]
+help-3b {t} {u} gt gu rs rewrite help-3a {t} gt | help-3a {u} gu = rs
 
 
-help-3c : ∀ {t u} → (gt : GoodTerm (o→w t)) (gu : GoodTerm (o→w u)) → O[ w→o gt ⟹* w→o gu ] →
-          O[ t ⟹* u ]
--- uses rewrite rule help-3w
-help-3c gt gu rs = rs
+help-3c : ∀ {t u} → (rs : W[ o→w t ⟹* o→w u ]) → GoodReds rs → O[ t ⟹* u ]
+help-3c {t} {u} rs grs with help-2a t | help-2a u
+... | gt | gu = help-3b gt gu (wrs→ors gt gu rs grs)
 
 
--- NOTE: Maybe GoodReds should only store the right-hand GoodTerms?  gt′ is not needed
-wrs→ors : ∀ {t u} → (gt : GoodTerm t) (gu : GoodTerm u) (rs : W[ t ⟹* u ]) → GoodReds rs →
-           O[ w→o gt ⟹* w→o gu ]
-wrs→ors gt gu []       []                 with gt-uniq gt gu
-... | refl                                 = []
-wrs→ors gt gu (r ∷ rs) ((gt′ , gy) ∷ grs) = wr→or gt gy r ∷ wrs→ors gy gu rs grs
-
-
-help-3d : ∀ {t u} → (rs : W[ o→w t ⟹* o→w u ]) → GoodReds rs →
-          O[ t ⟹* u ]
-help-3d {t} {u} rs grs with help-2a t | help-2a u
-... | gt | gu = help-3c gt gu (wrs→ors gt gu rs grs)
-
-
-find-4 : ∀ {t} → W[ o→w t ⟹* wrong ] →
-         (∃ λ u → O[ t ⟹* u ] × Stuck u)
+find-4 : ∀ {t} → W[ o→w t ⟹* wrong ] → (∃ λ u → O[ t ⟹* u ] × Stuck u)
 find-4 {t} rs with find-3 {t} rs
-... | u , (rs′ , grs′) , σ = u , help-3d rs′ grs′ , σ
+... | u , (rs′ , grs′) , σ = u , help-3c rs′ grs′ , σ
