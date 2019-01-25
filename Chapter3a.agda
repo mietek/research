@@ -54,11 +54,6 @@ or→wr r-ifTrue         = r-ifTrue
 or→wr r-ifFalse        = r-ifFalse
 or→wr (r-if r)         = r-if (or→wr r)
 
--- NOTE: Not used
-ors→wrs : ∀ {t u} → O[ t ⟹* u ] → W[ o→w t ⟹* o→w u ]
-ors→wrs []       = []
-ors→wrs (r ∷ rs) = or→wr r ∷ ors→wrs rs
-
 
 -- Lemma A.4.
 
@@ -94,11 +89,11 @@ lem-a4 {if t₁ then t₂ else t₃} (¬v , nf) with O.classify t₁
 ... | red (_ , r₁)                       = r-if r₁ ↯ nf
 
 
--- Proposition A.2. (part 1)
+-- Proposition A.2. (left-to-right)
 
-prop-a21 : ∀ {t} → (∃ λ u → Stuck u × O[ t ⟹* u ]) → W[ o→w t ⟹* wrong ]
-prop-a21 (u , σ , [])     = lem-a4 σ
-prop-a21 (u , σ , r ∷ rs) = or→wr r ∷ prop-a21 (u , σ , rs)
+prop-a2-→ : ∀ {t} → (∃ λ u → Stuck u × O[ t ⟹* u ]) → W[ o→w t ⟹* wrong ]
+prop-a2-→ (u , σ , [])     = lem-a4 σ
+prop-a2-→ (u , σ , r ∷ rs) = or→wr r ∷ prop-a2-→ (u , σ , rs)
 
 
 ----------------------------------------------------------------------------------------------------
