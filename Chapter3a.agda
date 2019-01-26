@@ -292,7 +292,7 @@ rs-wow-id ρᵤ rewrite wow-id ρᵤ = refl
 ρs-wow-id ρᵤ rewrite wow-id ρᵤ = refl
 
 rs-owo-id : ∀ {t u} → (ρₜ : Wrongless (o→w t)) (ρᵤ : Wrongless (o→w u)) →
-          O[ w→o ρₜ ⟹* w→o ρᵤ ] ≡ O[ t ⟹* u ]
+            O[ w→o ρₜ ⟹* w→o ρᵤ ] ≡ O[ t ⟹* u ]
 rs-owo-id ρₜ ρᵤ rewrite owo-id ρₜ | owo-id ρᵤ = refl
 
 prop-a2-rtl : ∀ {t} → W[ o→w t ⟹* wrong ] → (∃ λ u → O.Stuck u × O[ t ⟹* u ])
