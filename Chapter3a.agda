@@ -296,10 +296,10 @@ rs-owo-id : ∀ {t u} → (ρₜ : Wrongless (o→w t)) (ρᵤ : Wrongless (o→
 rs-owo-id ρₜ ρᵤ rewrite owo-id ρₜ | owo-id ρᵤ = refl
 
 prop-a2-rtl : ∀ {t} → W[ o→w t ⟹* wrong ] → (∃ λ u → O.Stuck u × O[ t ⟹* u ])
-prop-a2-rtl {t} t⟹*wrong with prop-a2-find (ρ! t) t⟹*wrong
-... | [u] , [ρᵤ] , ([t⟹*u] , [ρᵣₛ]) , v   , ¬ρᵥ  , [u⟹v] =
-    u , σᵤ , coerce (wrs→ors ρₜ ρᵤ ρᵣₛ) (rs-owo-id ρₜ ρᵤ)
-  where
+prop-a2-rtl {t} t⟹*wrong            with prop-a2-find (ρ! t) t⟹*wrong
+... | [u] , [ρᵤ] , ([t⟹*u] , [ρᵣₛ])
+    , v   , ¬ρᵥ  , [u⟹v]            =
+  let
     u      = w→o [ρᵤ]
     t⟹*u = coerce [t⟹*u] (rs-wow-id [ρᵤ])
     ρᵣₛ    = coerce [ρᵣₛ] (ρs-wow-id [ρᵤ])
@@ -307,6 +307,8 @@ prop-a2-rtl {t} t⟹*wrong with prop-a2-find (ρ! t) t⟹*wrong
     σᵤ     = lem-a5 ¬ρᵥ u⟹v
     ρₜ     = ρ! t
     ρᵤ     = ρ! u
+  in
+    u , σᵤ , coerce (wrs→ors ρₜ ρᵤ ρᵣₛ) (rs-owo-id ρₜ ρᵤ)
 
 
 -- Finally, we conclude Exercise 3.5.16.
