@@ -8,7 +8,7 @@ open import Chapter3 public
 -- 3.5.16. Exercise [Recommended, ⋆⋆⋆]
 -- (continued)
 -- “Show that these two treatments of run-time errors agree by (1) finding a precise way of stating the
--- intuition that “the two treatments agree,” and (2) proving it.”
+-- intuition that ‘the two treatments agree,’ and (2) proving it.”
 --
 -- We’re going to show that expressions-that-go-wrong go wrong exactly when expressions-that-get-stuck get
 -- stuck.  In order to do so, we’re going to need a type of terms that are _wrongless_, i.e., that do not
@@ -272,11 +272,11 @@ prop-a2-find : ∀ {t} → Wrongless t → W[ t ⟹* wrong ] →
                ∃ λ v → ¬ Wrongless v × W[ u ⟹ v ]
 prop-a2-find {t} () []
 prop-a2-find {t} ρₜ (t⟹x ∷⟨ x ⟩ x⟹*wrong) with ρ? x
-... | no ¬ρₓ                  = t , ρₜ , ([] , []) , x , ¬ρₓ , t⟹x
-... | yes ρₓ                  with prop-a2-find ρₓ x⟹*wrong
+... | no ¬ρₓ                                  = t , ρₜ , ([] , []) , x , ¬ρₓ , t⟹x
+... | yes ρₓ                                  with prop-a2-find ρₓ x⟹*wrong
 ... | u , ρᵤ , (x⟹*u , ρᵣₛ)
-    , v , ¬ρᵥ , u⟹v         = u , ρᵤ , (t⟹x ∷ x⟹*u , ρₓ ∷ ρᵣₛ)
-                              , v , ¬ρᵥ , u⟹v
+    , v , ¬ρᵥ , u⟹v                         = u , ρᵤ , (t⟹x ∷ x⟹*u , ρₓ ∷ ρᵣₛ)
+                                              , v , ¬ρᵥ , u⟹v
 
 
 -- Then, all that remains to be done is massaging the evidence into the desired form.
