@@ -1239,7 +1239,7 @@ module NumbersAndBooleansGoWrong
     data WronglessReds : ∀ {t u} → Pred₀ (t ⟹* u) where
       []  : ∀ {t} → WronglessReds {t} {t} []
       _∷_ : ∀ {t x u} {t⟹x : t ⟹ x} {x⟹*u : x ⟹* u} →
-            (ρₓ : Wrongless x) (ρᵣₛ : WronglessReds x⟹*u) → WronglessReds (t⟹x ∷ x⟹*u)
+            (ρₓ : Wrongless x) (ρrs : WronglessReds x⟹*u) → WronglessReds (t⟹x ∷ x⟹*u)
 
 
 -- The evidence that a term is wrongless is unique.
@@ -1367,7 +1367,7 @@ wrs→ors : ∀ {t u} → (ρₜ : Wrongless t) (ρᵤ : Wrongless u) →
            {t⟹*u : W[ t ⟹* u ]} → WronglessReds t⟹*u → O[ w→o ρₜ ⟹* w→o ρᵤ ]
 wrs→ors ρₜ ρᵤ {[]}             []         with ρ-uniq ρₜ ρᵤ
 ... | refl                                 = []
-wrs→ors ρₜ ρᵤ {t⟹x ∷ x⟹*u} (ρₓ ∷ ρᵣₛ) = wr→or ρₜ ρₓ t⟹x ∷ wrs→ors ρₓ ρᵤ ρᵣₛ
+wrs→ors ρₜ ρᵤ {t⟹x ∷ x⟹*u} (ρₓ ∷ ρrs) = wr→or ρₜ ρₓ t⟹x ∷ wrs→ors ρₓ ρᵤ ρrs
 
 
 -- Translating an original term to the augmented system produces a wrongless term.
@@ -1478,8 +1478,8 @@ prop-a2-find {t} () []
 prop-a2-find {t} ρₜ (t⟹x ∷⟨ x ⟩ x⟹*wrong) with ρ? x
 ... | no ¬ρₓ                                  = t , ρₜ , ([] , []) , x , ¬ρₓ , t⟹x
 ... | yes ρₓ                                  with prop-a2-find ρₓ x⟹*wrong
-... | u , ρᵤ , (x⟹*u , ρᵣₛ)
-    , v , ¬ρᵥ , u⟹v                         = u , ρᵤ , (t⟹x ∷ x⟹*u , ρₓ ∷ ρᵣₛ)
+... | u , ρᵤ , (x⟹*u , ρrs)
+    , v , ¬ρᵥ , u⟹v                         = u , ρᵤ , (t⟹x ∷ x⟹*u , ρₓ ∷ ρrs)
                                               , v , ¬ρᵥ , u⟹v
 
 
@@ -1501,18 +1501,18 @@ rs-owo-id ρₜ ρᵤ rewrite owo-id ρₜ | owo-id ρᵤ = refl
 
 prop-a2-rtl : ∀ {t} → W[ o→w t ⟹* wrong ] → (∃ λ u → O.Stuck u × O[ t ⟹* u ])
 prop-a2-rtl {t} t⟹*wrong            with prop-a2-find (ρ! t) t⟹*wrong
-... | [u] , [ρᵤ] , ([t⟹*u] , [ρᵣₛ])
+... | [u] , [ρᵤ] , ([t⟹*u] , [ρrs])
     , v   , ¬ρᵥ  , [u⟹v]            =
   let
     u      = w→o [ρᵤ]
     t⟹*u = coerce [t⟹*u] (rs-wow-id [ρᵤ])
-    ρᵣₛ    = coerce [ρᵣₛ] (ρs-wow-id [ρᵤ])
+    ρrs    = coerce [ρrs] (ρs-wow-id [ρᵤ])
     u⟹v  = coerce [u⟹v] (r-wow-id [ρᵤ])
     σᵤ     = lem-a5 ¬ρᵥ u⟹v
     ρₜ     = ρ! t
     ρᵤ     = ρ! u
   in
-    u , σᵤ , coerce (wrs→ors ρₜ ρᵤ ρᵣₛ) (rs-owo-id ρₜ ρᵤ)
+    u , σᵤ , coerce (wrs→ors ρₜ ρᵤ ρrs) (rs-owo-id ρₜ ρᵤ)
 
 
 -- Finally, we conclude Exercise 3.5.16.
