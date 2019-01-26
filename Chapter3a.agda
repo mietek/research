@@ -3,78 +3,91 @@ module Chapter3a where
 open import Chapter3 public
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
--- TODO
+-- 3.5.16. Exercise [Recommended, ⋆⋆⋆]
+-- (continued)
+-- “Show that these two treatments of run-time errors agree by (1) finding a precise way of stating the
+-- intuition that “the two treatments agree,” and (2) proving it.”
+--
+-- We’re going to show that expressions-that-go-wrong go wrong exactly when expressions-that-get-stuck get
+-- stuck.  In order to do so, we’re going to need a type of terms that are _wrongless_, i.e., that do not
+-- contain `wrong` as a subterm.  For this purpose, we define a predicate on terms, `Wrongless`.
 
 module NumbersAndBooleansGoWrong-Part2
   where
     open NumbersAndBooleansGoWrong-Part1 public
 
-
-    data GoodTerm : Pred₀ Term where
-      true         : GoodTerm true
-      false        : GoodTerm false
-      zero         : GoodTerm zero
-      suc          : ∀ {t} → (gt : GoodTerm t) → GoodTerm (suc t)
-      pred         : ∀ {t} → (gt : GoodTerm t) → GoodTerm (pred t)
-      iszero       : ∀ {t} → (gt : GoodTerm t) → GoodTerm (iszero t)
-      if_then_else : ∀ {t₁ t₂ t₃} → (gt₁ : GoodTerm t₁) (gt₂ : GoodTerm t₂) (gt₃ : GoodTerm t₃) →
-                     GoodTerm (if t₁ then t₂ else t₃)
-
-    gt-uniq : ∀ {t} → (gt gt′ : GoodTerm t) → gt ≡ gt′
-    gt-uniq true                       true                          = refl
-    gt-uniq false                      false                         = refl
-    gt-uniq zero                       zero                          = refl
-    gt-uniq (suc gt)                   (suc gt′)                     with gt-uniq gt gt′
-    ... | refl                                                        = refl
-    gt-uniq (pred gt)                  (pred gt′)                    with gt-uniq gt gt′
-    ... | refl                                                       = refl
-    gt-uniq (iszero gt)                (iszero gt′)                  with gt-uniq gt gt′
-    ... | refl                                                       = refl
-    gt-uniq (if gt₁ then gt₂ else gt₃) (if gt₁′ then gt₂′ else gt₃′) with gt-uniq gt₁ gt₁′ | gt-uniq gt₂ gt₂′ | gt-uniq gt₃ gt₃′
-    ... | refl | refl | refl                                         = refl
-
-    good? : ∀ t → Dec (GoodTerm t)
-    good? wrong                       = no λ ()
-    good? true                        = yes true
-    good? false                       = yes false
-    good? zero                        = yes zero
-    good? (suc t)                     with good? t
-    ... | yes gₜ                      = yes (suc gₜ)
-    ... | no ¬gₜ                      = no λ where (suc gₜ) → gₜ ↯ ¬gₜ
-    good? (pred t)                    with good? t
-    ... | yes gₜ                      = yes (pred gₜ)
-    ... | no ¬gₜ                      = no λ where (pred gₜ) → gₜ ↯ ¬gₜ
-    good? (iszero t)                  with good? t
-    ... | yes gₜ                      = yes (iszero gₜ)
-    ... | no ¬gₜ                      = no λ where (iszero gₜ) → gₜ ↯ ¬gₜ
-    good? (if t₁ then t₂ else t₃)     with good? t₁ | good? t₂ | good? t₃
-    ... | no ¬gₜ₁ | _ | _             = no λ where (if gₜ₁ then gₜ₂ else gₜ₃) → gₜ₁ ↯ ¬gₜ₁
-    ... | yes gₜ₁ | no ¬gₜ₂ | _       = no λ where (if gₜ₁ then gₜ₂ else gₜ₃) → gₜ₂ ↯ ¬gₜ₂
-    ... | yes gₜ₁ | yes gₜ₂ | no ¬gₜ₃ = no λ where (if gₜ₁ then gₜ₂ else gₜ₃) → gₜ₃ ↯ ¬gₜ₃
-    ... | yes gₜ₁ | yes gₜ₂ | yes gₜ₃ = yes (if gₜ₁ then gₜ₂ else gₜ₃)
-
-    data GoodReds : ∀ {t u} → Pred₀ (t ⟹* u) where
-      []  : ∀ {t} → GoodReds {t} {t} []
-      _∷_ : ∀ {s t u} {r : s ⟹ t} {rs : t ⟹* u} →
-            GoodTerm t → GoodReds rs → GoodReds (r ∷ rs)
+    data Wrongless : Pred₀ Term where
+      true         : Wrongless true
+      false        : Wrongless false
+      zero         : Wrongless zero
+      suc          : ∀ {t} → (ρₜ : Wrongless t) → Wrongless (suc t)
+      pred         : ∀ {t} → (ρₜ : Wrongless t) → Wrongless (pred t)
+      iszero       : ∀ {t} → (ρₜ : Wrongless t) → Wrongless (iszero t)
+      if_then_else : ∀ {t₁ t₂ t₃} → (ρₜ₁ : Wrongless t₁) (ρₜ₂ : Wrongless t₂) (ρₜ₃ : Wrongless t₃) →
+                     Wrongless (if t₁ then t₂ else t₃)
 
 
-----------------------------------------------------------------------------------------------------
+-- We say that a one-step reduction from `t` to `u` is wrongless when `u` is wrongless.  A multi-step
+-- reduction is wrongless when it is composed of wrongless reductions.
+
+    data WronglessReds : ∀ {t u} → Pred₀ (t ⟹* u) where
+      []  : ∀ {t} → WronglessReds {t} {t} []
+      _∷_ : ∀ {t x u} {t⟹x : t ⟹ x} {x⟹*u : x ⟹* u} →
+            (ρₓ : Wrongless x) (ρᵣₛ : WronglessReds x⟹*u) → WronglessReds (t⟹x ∷ x⟹*u)
+
+
+-- The evidence that a term is wrongless is unique.
+
+    ρ-uniq : ∀ {t} → (ρₜ ρₜ′ : Wrongless t) → ρₜ ≡ ρₜ′
+    ρ-uniq true        true         = refl
+    ρ-uniq false       false        = refl
+    ρ-uniq zero        zero         = refl
+    ρ-uniq (suc ρₜ)    (suc ρₜ′)    with ρ-uniq ρₜ ρₜ′
+    ... | refl                      = refl
+    ρ-uniq (pred ρₜ)   (pred ρₜ′)   with ρ-uniq ρₜ ρₜ′
+    ... | refl                      = refl
+    ρ-uniq (iszero ρₜ) (iszero ρₜ′) with ρ-uniq ρₜ ρₜ′
+    ... | refl                      = refl
+    ρ-uniq (if ρₜ₁ then ρₜ₂ else ρₜ₃)
+                       (if ρₜ₁′ then ρₜ₂′ else ρₜ₃′)
+                                    with ρ-uniq ρₜ₁ ρₜ₁′ | ρ-uniq ρₜ₂ ρₜ₂′ | ρ-uniq ρₜ₃ ρₜ₃′
+    ... | refl | refl | refl        = refl
+
+
+-- We can decide whether a term is wrongless or not.
+
+    ρ? : ∀ t → Dec (Wrongless t)
+    ρ? wrong                          = no λ ()
+    ρ? true                           = yes true
+    ρ? false                          = yes false
+    ρ? zero                           = yes zero
+    ρ? (suc t)                        with ρ? t
+    ... | yes ρₜ                      = yes (suc ρₜ)
+    ... | no ¬ρₜ                      = no λ where (suc ρₜ) → ρₜ ↯ ¬ρₜ
+    ρ? (pred t)                       with ρ? t
+    ... | yes ρₜ                      = yes (pred ρₜ)
+    ... | no ¬ρₜ                      = no λ where (pred ρₜ) → ρₜ ↯ ¬ρₜ
+    ρ? (iszero t)                     with ρ? t
+    ... | yes ρₜ                      = yes (iszero ρₜ)
+    ... | no ¬ρₜ                      = no λ where (iszero ρₜ) → ρₜ ↯ ¬ρₜ
+    ρ? (if t₁ then t₂ else t₃)        with ρ? t₁ | ρ? t₂ | ρ? t₃
+    ... | no ¬ρₜ₁ | _       | _       = no λ where (if ρₜ₁ then ρₜ₂ else ρₜ₃) → ρₜ₁ ↯ ¬ρₜ₁
+    ... | yes ρₜ₁ | no ¬ρₜ₂ | _       = no λ where (if ρₜ₁ then ρₜ₂ else ρₜ₃) → ρₜ₂ ↯ ¬ρₜ₂
+    ... | yes ρₜ₁ | yes ρₜ₂ | no ¬ρₜ₃ = no λ where (if ρₜ₁ then ρₜ₂ else ρₜ₃) → ρₜ₃ ↯ ¬ρₜ₃
+    ... | yes ρₜ₁ | yes ρₜ₂ | yes ρₜ₃ = yes (if ρₜ₁ then ρₜ₂ else ρₜ₃)
+
+
+---------------------------------------------------------------------------------------------------------------
 --
--- TODO
+-- Original terms and reductions can be translated to the augmented system.
 
 open module O = NumbersAndBooleansGetStuck
-  renaming (_⟹_ to O[_⟹_] ; _⟹*_ to O[_⟹*_] ; _⟹*′_ to O[_⟹*′_])
+  renaming (_⟹_ to O[_⟹_] ; _⟹*_ to O[_⟹*_])
 
 open module W = NumbersAndBooleansGoWrong-Part2
-  renaming (_⟹_ to W[_⟹_] ; _⟹*_ to W[_⟹*_] ; _⟹*′_ to W[_⟹*′_])
-
-
-----------------------------------------------------------------------------------------------------
---
--- Conversion from the original system to the system augmented with `wrong`.
+  renaming (_⟹_ to W[_⟹_] ; _⟹*_ to W[_⟹*_])
 
 o→w : O.Term → W.Term
 o→w true                    = true
@@ -86,223 +99,220 @@ o→w (iszero t)              = iszero (o→w t)
 o→w (if t₁ then t₂ else t₃) = if (o→w t₁) then (o→w t₂) else (o→w t₃)
 
 onv→wnv : ∀ {t} → O.NumericValue t → W.NumericValue (o→w t)
-onv→wnv zero     = zero
-onv→wnv (suc nv) = suc (onv→wnv nv)
+onv→wnv zero      = zero
+onv→wnv (suc nvₜ) = suc (onv→wnv nvₜ)
 
 ov→wv : ∀ {t} → O.Value t → W.Value (o→w t)
-ov→wv true     = true
-ov→wv false    = false
-ov→wv (num nv) = num (onv→wnv nv)
+ov→wv true      = true
+ov→wv false     = false
+ov→wv (num nvₜ) = num (onv→wnv nvₜ)
 
 or→wr : ∀ {t u} → O[ t ⟹ u ] → W[ o→w t ⟹ o→w u ]
-or→wr (r-suc r)        = r-suc (or→wr r)
-or→wr r-predZero       = r-predZero
-or→wr (r-predSuc nv)   = r-predSuc (onv→wnv nv)
-or→wr (r-pred r)       = r-pred (or→wr r)
-or→wr r-iszeroZero     = r-iszeroZero
-or→wr (r-iszeroSuc nv) = r-iszeroSuc (onv→wnv nv)
-or→wr (r-iszero r)     = r-iszero (or→wr r)
-or→wr r-ifTrue         = r-ifTrue
-or→wr r-ifFalse        = r-ifFalse
-or→wr (r-if r)         = r-if (or→wr r)
+or→wr (r-suc t⟹u)     = r-suc (or→wr t⟹u)
+or→wr r-predZero        = r-predZero
+or→wr (r-predSuc nvₜ)   = r-predSuc (onv→wnv nvₜ)
+or→wr (r-pred t⟹u)    = r-pred (or→wr t⟹u)
+or→wr r-iszeroZero      = r-iszeroZero
+or→wr (r-iszeroSuc nvₜ) = r-iszeroSuc (onv→wnv nvₜ)
+or→wr (r-iszero t⟹u)  = r-iszero (or→wr t⟹u)
+or→wr r-ifTrue          = r-ifTrue
+or→wr r-ifFalse         = r-ifFalse
+or→wr (r-if t₁⟹u₁)    = r-if (or→wr t₁⟹u₁)
 
 
-----------------------------------------------------------------------------------------------------
---
--- Conversion from the system augmented with `wrong` to the original system.
+-- Augmented wrongless terms and reductions can be translated to the original system.
 
-w→o : ∀ {t} → GoodTerm t → O.Term
+w→o : ∀ {t} → Wrongless t → O.Term
 w→o true                       = true
 w→o false                      = false
 w→o zero                       = zero
-w→o (suc gt)                   = suc (w→o gt)
-w→o (pred gt)                  = pred (w→o gt)
-w→o (iszero gt)                = iszero (w→o gt)
-w→o (if gt₁ then gt₂ else gt₃) = if (w→o gt₁) then (w→o gt₂) else (w→o gt₃)
+w→o (suc ρₜ)                   = suc (w→o ρₜ)
+w→o (pred ρₜ)                  = pred (w→o ρₜ)
+w→o (iszero ρₜ)                = iszero (w→o ρₜ)
+w→o (if ρₜ₁ then ρₜ₂ else ρₜ₃) = if (w→o ρₜ₁) then (w→o ρₜ₂) else (w→o ρₜ₃)
 
-wnv→onv : ∀ {t} → (gt : GoodTerm t) → W.NumericValue t → O.NumericValue (w→o gt)
-wnv→onv zero     zero     = zero
-wnv→onv (suc gt) (suc nv) = suc (wnv→onv gt nv)
+wnv→onv : ∀ {t} → (ρₜ : Wrongless t) → W.NumericValue t → O.NumericValue (w→o ρₜ)
+wnv→onv zero     zero      = zero
+wnv→onv (suc ρₜ) (suc nvₜ) = suc (wnv→onv ρₜ nvₜ)
 
-wr→or : ∀ {t u} → (gt : GoodTerm t) (gu : GoodTerm u) → W[ t ⟹ u ] → O[ w→o gt ⟹ w→o gu ]
-wr→or _                            ()                         (r-sucWrong _)
-wr→or (suc gt)                     (suc gu)                   (r-suc r)         = r-suc (wr→or gt gu r)
-wr→or _                            ()                         (r-predWrong _)
-wr→or (pred zero)                  zero                       r-predZero        = r-predZero
-wr→or (pred (suc gt))              gu                         (r-predSuc nv)    with gt-uniq gt gu
-... | refl                                                                       = r-predSuc (wnv→onv gt nv)
-wr→or (pred gt)                    (pred gu)                  (r-pred r)        = r-pred (wr→or gt gu r)
-wr→or _                            ()                         (r-iszeroWrong _)
-wr→or (iszero zero)                true                       r-iszeroZero      = r-iszeroZero
-wr→or (iszero (suc gt))            false                      (r-iszeroSuc nv)  = r-iszeroSuc (wnv→onv gt nv)
-wr→or (iszero gt)                  (iszero gu)                (r-iszero r)      = r-iszero (wr→or gt gu r)
-wr→or _                            ()                         (r-ifWrong _)
-wr→or (if true then gt₂ else gt₃)  gu                         r-ifTrue          with gt-uniq gt₂ gu
-... | refl                                                                       = r-ifTrue
-wr→or (if false then gt₂ else gt₃) gu                         r-ifFalse         with gt-uniq gt₃ gu
-... | refl                                                                       = r-ifFalse
-wr→or (if gt₁ then gt₂ else gt₃)   (if gu₁ then gu₂ else gu₃) (r-if r)          with gt-uniq gt₂ gu₂ | gt-uniq gt₃ gu₃
-... | refl | refl                                                                = r-if (wr→or gt₁ gu₁ r)
+wr→or : ∀ {t u} → (ρₜ : Wrongless t) (ρᵤ : Wrongless u) → W[ t ⟹ u ] → O[ w→o ρₜ ⟹ w→o ρᵤ ]
+wr→or _                 ()          (r-sucWrong _)
+wr→or (suc ρₜ)          (suc ρᵤ)    (r-suc t⟹u)     = r-suc (wr→or ρₜ ρᵤ t⟹u)
+wr→or _                 ()          (r-predWrong _)
+wr→or (pred zero)       zero        r-predZero        = r-predZero
+wr→or (pred (suc ρₜ))   ρₜ′         (r-predSuc nvₜ)   with ρ-uniq ρₜ ρₜ′
+... | refl                                             = r-predSuc (wnv→onv ρₜ nvₜ)
+wr→or (pred ρₜ)         (pred ρᵤ)   (r-pred t⟹u)    = r-pred (wr→or ρₜ ρᵤ t⟹u)
+wr→or _                 ()          (r-iszeroWrong _)
+wr→or (iszero zero)     true        r-iszeroZero      = r-iszeroZero
+wr→or (iszero (suc ρₜ)) false       (r-iszeroSuc nvₜ) = r-iszeroSuc (wnv→onv ρₜ nvₜ)
+wr→or (iszero ρₜ)       (iszero ρᵤ) (r-iszero t⟹u)  = r-iszero (wr→or ρₜ ρᵤ t⟹u)
+wr→or _                 ()          (r-ifWrong _)
+wr→or (if true then ρₜ₂ else ρₜ₃)
+                         ρᵤ          r-ifTrue          with ρ-uniq ρₜ₂ ρᵤ
+... | refl                                             = r-ifTrue
+wr→or (if false then ρₜ₂ else ρₜ₃)
+                         ρᵤ          r-ifFalse         with ρ-uniq ρₜ₃ ρᵤ
+... | refl                                             = r-ifFalse
+wr→or (if ρₜ₁ then ρₜ₂ else ρₜ₃)
+                         (if ρᵤ₁ then ρₜ₂′ else ρₜ₃′)
+                                     (r-if t₁⟹u₁)    with ρ-uniq ρₜ₂ ρₜ₂′ | ρ-uniq ρₜ₃ ρₜ₃′
+... | refl | refl                                      = r-if (wr→or ρₜ₁ ρᵤ₁ t₁⟹u₁)
 
-wrs→ors : ∀ {t u} → (gt : GoodTerm t) (gu : GoodTerm u) (rs : W[ t ⟹* u ]) → GoodReds rs →
-           O[ w→o gt ⟹* w→o gu ]
-wrs→ors gt gu []       []         with gt-uniq gt gu
-... | refl                         = []
-wrs→ors gt gu (r ∷ rs) (gy ∷ grs) = wr→or gt gy r ∷ wrs→ors gy gu rs grs
+wrs→ors : ∀ {t u} → (ρₜ : Wrongless t) (ρᵤ : Wrongless u) →
+           {t⟹*u : W[ t ⟹* u ]} → WronglessReds t⟹*u → O[ w→o ρₜ ⟹* w→o ρᵤ ]
+wrs→ors ρₜ ρᵤ {[]}             []         with ρ-uniq ρₜ ρᵤ
+... | refl                                 = []
+wrs→ors ρₜ ρᵤ {t⟹x ∷ x⟹*u} (ρₓ ∷ ρᵣₛ) = wr→or ρₜ ρₓ t⟹x ∷ wrs→ors ρₓ ρᵤ ρᵣₛ
 
 
-----------------------------------------------------------------------------------------------------
+-- Translating an original term to the augmented system produces a wrongless term.
+
+ρ! : ∀ t → Wrongless (o→w t)
+ρ! true                    = true
+ρ! false                   = false
+ρ! zero                    = zero
+ρ! (suc t)                 = suc (ρ! t)
+ρ! (pred t)                = pred (ρ! t)
+ρ! (iszero t)              = iszero (ρ! t)
+ρ! (if t₁ then t₂ else t₃) = if (ρ! t₁) then (ρ! t₂) else (ρ! t₃)
+
+
+-- Translating a term forth and back produces an identical term.
+
+wow-id : ∀ {t} → (ρₜ : Wrongless t) → o→w (w→o ρₜ) ≡ t
+wow-id true                       = refl
+wow-id false                      = refl
+wow-id zero                       = refl
+wow-id (suc ρₜ)                   = suc & wow-id ρₜ
+wow-id (pred ρₜ)                  = pred & wow-id ρₜ
+wow-id (iszero ρₜ)                = iszero & wow-id ρₜ
+wow-id (if ρₜ₁ then ρₜ₂ else ρₜ₃) = if_then_else &
+                                    wow-id ρₜ₁ ⊗ wow-id ρₜ₂ ⊗ wow-id ρₜ₃
+
+owo-id : ∀ {t} → (ρₜ : Wrongless (o→w t)) → w→o ρₜ ≡ t
+owo-id {true}               true                       = refl
+owo-id {false}              false                      = refl
+owo-id {zero}               zero                       = refl
+owo-id {suc _}              (suc ρₜ)                   = suc & owo-id ρₜ
+owo-id {pred _}             (pred ρₜ)                  = pred & owo-id ρₜ
+owo-id {iszero _}           (iszero ρₜ)                = iszero & owo-id ρₜ
+owo-id {if _ then _ else _} (if ρₜ₁ then ρₜ₂ else ρₜ₃) = if_then_else &
+                                                         owo-id ρₜ₁ ⊗ owo-id ρₜ₂ ⊗ owo-id ρₜ₃
+
+
+---------------------------------------------------------------------------------------------------------------
 --
 -- Lemma A.4.
 -- “If `t` is stuck then `W[ t ⟹* wrong ]`.”
 
 lem-a4 : ∀ {t} → O.Stuck t → W[ o→w t ⟹* wrong ]
-lem-a4 {true}                  (¬v , nf) = true ↯ ¬v
-lem-a4 {false}                 (¬v , nf) = false ↯ ¬v
-lem-a4 {zero}                  (¬v , nf) = num zero ↯ ¬v
-lem-a4 {suc t}                 (¬v , nf) with O.classify t
-... | stu σ                              = map r-suc (lem-a4 σ) ∷ʳ r-sucWrong wrong
-... | val true                           = r-sucWrong true ∷ []
-... | val false                          = r-sucWrong false ∷ []
-... | val (num nv)                       = num (suc nv) ↯ ¬v
-... | red (_ , r)                        = r-suc r ↯ nf
-lem-a4 {pred t}                (¬v , nf) with O.classify t
-... | stu σ                              = map r-pred (lem-a4 σ) ∷ʳ r-predWrong wrong
-... | val true                           = r-predWrong true ∷ []
-... | val false                          = r-predWrong false ∷ []
-... | val (num zero)                     = r-predZero ↯ nf
-... | val (num (suc nv))                 = r-predSuc nv ↯ nf
-... | red (_ , r)                        = r-pred r ↯ nf
-lem-a4 {iszero t}              (¬v , nf) with O.classify t
-... | stu σ                              = map r-iszero (lem-a4 σ) ∷ʳ r-iszeroWrong wrong
-... | val true                           = r-iszeroWrong true ∷ []
-... | val false                          = r-iszeroWrong false ∷ []
-... | val (num zero)                     = r-iszeroZero ↯ nf
-... | val (num (suc nv))                 = r-iszeroSuc nv ↯ nf
-... | red (_ , r)                        = r-iszero r ↯ nf
-lem-a4 {if t₁ then t₂ else t₃} (¬v , nf) with O.classify t₁
-... | stu σ₁                             = map r-if (lem-a4 σ₁) ∷ʳ r-ifWrong wrong
-... | val true                           = r-ifTrue ↯ nf
-... | val false                          = r-ifFalse ↯ nf
-... | val (num nv₁)                      = r-ifWrong (num (onv→wnv nv₁)) ∷ []
-... | red (_ , r₁)                       = r-if r₁ ↯ nf
+lem-a4 {true}                  (¬vₜ , _)    = true ↯ ¬vₜ
+lem-a4 {false}                 (¬vₜ , _)    = false ↯ ¬vₜ
+lem-a4 {zero}                  (¬vₜ , _)    = num zero ↯ ¬vₜ
+lem-a4 {suc t}                 (¬vₜ , nfₜ)  with O.classify t
+... | stu σₜ                                = map r-suc (lem-a4 σₜ) ∷ʳ r-sucWrong wrong
+... | val true                              = r-sucWrong true ∷ []
+... | val false                             = r-sucWrong false ∷ []
+... | val (num nvₜ)                         = num (suc nvₜ) ↯ ¬vₜ
+... | red (_ , t⟹u)                       = r-suc t⟹u ↯ nfₜ
+lem-a4 {pred t}                (_   , nfₜ)  with O.classify t
+... | stu σₜ                                = map r-pred (lem-a4 σₜ) ∷ʳ r-predWrong wrong
+... | val true                              = r-predWrong true ∷ []
+... | val false                             = r-predWrong false ∷ []
+... | val (num zero)                        = r-predZero ↯ nfₜ
+... | val (num (suc nvₜ))                   = r-predSuc nvₜ ↯ nfₜ
+... | red (_ , t⟹u)                       = r-pred t⟹u ↯ nfₜ
+lem-a4 {iszero t}              (_   , nfₜ)  with O.classify t
+... | stu σₜ                                = map r-iszero (lem-a4 σₜ) ∷ʳ r-iszeroWrong wrong
+... | val true                              = r-iszeroWrong true ∷ []
+... | val false                             = r-iszeroWrong false ∷ []
+... | val (num zero)                        = r-iszeroZero ↯ nfₜ
+... | val (num (suc nvₜ))                   = r-iszeroSuc nvₜ ↯ nfₜ
+... | red (_ , t⟹u)                       = r-iszero t⟹u ↯ nfₜ
+lem-a4 {if t₁ then t₂ else t₃} (_   , nfₜ₁) with O.classify t₁
+... | stu σₜ₁                               = map r-if (lem-a4 σₜ₁) ∷ʳ r-ifWrong wrong
+... | val true                              = r-ifTrue ↯ nfₜ₁
+... | val false                             = r-ifFalse ↯ nfₜ₁
+... | val (num nvₜ₁)                        = r-ifWrong (num (onv→wnv nvₜ₁)) ∷ []
+... | red (_ , t₁⟹u₁)                     = r-if t₁⟹u₁ ↯ nfₜ₁
 
 
-----------------------------------------------------------------------------------------------------
---
--- TODO
-
-help-0 : ∀ t → GoodTerm (o→w t)
-help-0 true                    = true
-help-0 false                   = false
-help-0 zero                    = zero
-help-0 (suc t)                 = suc (help-0 t)
-help-0 (pred t)                = pred (help-0 t)
-help-0 (iszero t)              = iszero (help-0 t)
-help-0 (if t₁ then t₂ else t₃) = if (help-0 t₁) then (help-0 t₂) else (help-0 t₃)
-
-help-3a : ∀ {t} → (gt : GoodTerm (o→w t)) → w→o gt ≡ t
-help-3a {true}                  true                       = refl
-help-3a {false}                 false                      = refl
-help-3a {zero}                  zero                       = refl
-help-3a {suc t}                 (suc gt)                   = suc & help-3a gt
-help-3a {pred t}                (pred gt)                  = pred & help-3a gt
-help-3a {iszero t}              (iszero gt)                = iszero & help-3a gt
-help-3a {if t₁ then t₂ else t₃} (if gt₁ then gt₂ else gt₃) = if_then_else & help-3a gt₁ ⊗ help-3a gt₂ ⊗ help-3a gt₃
-
-help-1 : ∀ {t} → (gt : GoodTerm t) → o→w (w→o gt) ≡ t
-help-1 true                       = refl
-help-1 false                      = refl
-help-1 zero                       = refl
-help-1 (suc gt)                   = suc & help-1 gt
-help-1 (pred gt)                  = pred & help-1 gt
-help-1 (iszero gt)                = iszero & help-1 gt
-help-1 (if gt₁ then gt₂ else gt₃) = if_then_else & help-1 gt₁ ⊗ help-1 gt₂ ⊗ help-1 gt₃
-
-
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- Lemma A.5.
--- “If `W[ t ⟹ u ]` in the augmented semantics and `u` contains `wrong` as a subterm, then `t` is
--- stuck in the original semantics.”
+-- “If `W[ t ⟹ u ]` in the augmented semantics and `u` contains `wrong` as a subterm, then `t` is stuck in
+-- the original semantics.”
 
-lem-a5 : ∀ {u v} → (¬gv : ¬ GoodTerm v) → W[ o→w u ⟹ v ] → O.Stuck u
-lem-a5 {u} ¬gv r with O.classify u
-lem-a5 {t} ¬gv r | stu σ        = σ
-lem-a5 {t} ¬gv r | val v        = r ↯ W.v→nf (ov→wv v)
-lem-a5 {t} ¬gv r | red (_ , r′) with W.⟹-det r (or→wr r′)
-lem-a5 {t} ¬gv r | red (u , r′) | refl = help-0 u ↯ ¬gv
-
-
-----------------------------------------------------------------------------------------------------
---
--- Towards Proposition A.2. (right-to-left)
---
--- TODO: Clean this up
---
--- find first reduction that goes from `u` to `w` such that `w` contains `wrong`.
--- `w→o u` will be our result
--- as long as we started with a `t` that did not contain `wrong` anywhere,
--- all terms up to and including `u` will not contain `wrong` anywhere,
--- because the only rules that produce `wrong` are `*Wrong` rules;
--- therefore we can translate all reductions up to the one that involves `u`.
-
--- Step 0
-
-find-0 : ∀ {t} → GoodTerm t → W[ t ⟹* wrong ] → (∃ λ u → GoodTerm u × Σ W[ t ⟹* u ] GoodReds × ∃ λ v → ¬ GoodTerm v × W[ u ⟹ v ])
-find-0 {t} () []
-find-0 {t} gt (r ∷⟨ u ⟩ rs)        with good? u
-... | no ¬gu                       = t , gt , ([] , []) , u , ¬gu , r
-... | yes gu                       with find-0 gu rs
-... | u′ , gu′ , (rs′ , grs′) , vx = u′ , gu′ , ((r ∷ rs′) , (gu ∷ grs′)) , vx
-
--- Step 1
-
-find-1 : ∀ {t} → W[ o→w t ⟹* wrong ] → (∃ λ u → GoodTerm u × Σ W[ o→w t ⟹* u ] GoodReds × ∃ λ v → ¬ GoodTerm v × W[ u ⟹ v ])
-find-1 {t} rs = find-0 (help-0 t) rs
-
-help-1a : ∀ {t u} → (gt : GoodTerm t) → W[ t ⟹ u ] ≡ W[ o→w (w→o gt) ⟹ u ]
-help-1a gt rewrite help-1 gt = refl
-
-help-1b : ∀ {t u} → (gu : GoodTerm u) → W[ t ⟹* u ] ≡ W[ t ⟹* o→w (w→o gu) ]
-help-1b gu rewrite help-1 gu = refl
-
-help-1c : ∀ {t u} {rs : W[ o→w t ⟹* u ]} → (gu : GoodTerm u) → GoodReds rs ≡ GoodReds (coerce rs (help-1b gu))
-help-1c gu rewrite help-1 gu = refl
-
--- Step 2
-
-find-2 : ∀ {t} → W[ o→w t ⟹* wrong ] →
-         (∃ λ u → Σ W[ o→w t ⟹* o→w u ] GoodReds × ∃ λ v → ¬ GoodTerm v × W[ o→w u ⟹ v ])
-find-2 {t} rs                             with find-1 {t} rs
-... | u , gu , (rs′ , grs′) , v , ¬gv , r = w→o gu , (coerce rs′ (help-1b gu) , coerce grs′ (help-1c {t} gu)) , v , ¬gv , (coerce r (help-1a gu))
-
--- Step 3
-
-find-3 : ∀ {t} → W[ o→w t ⟹* wrong ] → (∃ λ u → O.Stuck u × Σ W[ o→w t ⟹* o→w u ] GoodReds)
-find-3 {t} rs                        with find-2 {t} rs
-... | u , (rs′ , grs′) , v , ¬gv , r = u , lem-a5 ¬gv r , (rs′ , grs′)
-
-help-3b : ∀ {t u} → (gt : GoodTerm (o→w t)) (gu : GoodTerm (o→w u)) → O[ w→o gt ⟹* w→o gu ] → O[ t ⟹* u ]
-help-3b {t} {u} gt gu rs rewrite help-3a {t} gt | help-3a {u} gu = rs
-
-help-3c : ∀ {t u} → (rs : W[ o→w t ⟹* o→w u ]) → GoodReds rs → O[ t ⟹* u ]
-help-3c {t} {u} rs grs with help-0 t | help-0 u
-... | gt | gu          = help-3b gt gu (wrs→ors gt gu rs grs)
+lem-a5 : ∀ {t u} → ¬ Wrongless u → W[ o→w t ⟹ u ] → O.Stuck t
+lem-a5 {t} ¬ρᵤ t⟹u   with O.classify t
+... | stu σₜ           = σₜ
+... | val vₜ           = t⟹u ↯ W.v→nf (ov→wv vₜ)
+... | red (u , t⟹u′) with W.⟹-det t⟹u (or→wr t⟹u′)
+... | refl             = ρ! u ↯ ¬ρᵤ
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- Proposition A.2.
 -- “For all original terms `t`, (`O[ t ⟹* u ]` where `u` is stuck) iff (`W[ t ⟹* wrong ]`).”
+--
+-- The left-to-right implication follows from Lemma A.4.
 
-prop-a2-1 : ∀ {t} → (∃ λ u → O.Stuck u × O[ t ⟹* u ]) → W[ o→w t ⟹* wrong ]
-prop-a2-1 (u , σ , [])     = lem-a4 σ
-prop-a2-1 (u , σ , r ∷ rs) = or→wr r ∷ prop-a2-1 (u , σ , rs)
+prop-a2-ltr : ∀ {t} → (∃ λ u → O.Stuck u × O[ t ⟹* u ]) → W[ o→w t ⟹* wrong ]
+prop-a2-ltr (u , σ , [])     = lem-a4 σ
+prop-a2-ltr (u , σ , r ∷ rs) = or→wr r ∷ prop-a2-ltr (u , σ , rs)
 
-prop-a2-2 : ∀ {t} → W[ o→w t ⟹* wrong ] → (∃ λ u → O.Stuck u × O[ t ⟹* u ])
-prop-a2-2 {t} rs           with find-3 {t} rs
-... | u , σᵤ , (rs′ , grs′) = u , σᵤ , help-3c rs′ grs′
+
+-- To show the right-to-left implication, we’re going to find the first wrongless term `u` in our multi-step
+-- reduction that reduces to a non-wrongless term.
+
+prop-a2-find : ∀ {t} → Wrongless t → W[ t ⟹* wrong ] →
+               ∃ λ u → Wrongless u × Σ W[ t ⟹* u ] WronglessReds ×
+               ∃ λ v → ¬ Wrongless v × W[ u ⟹ v ]
+prop-a2-find {t} () []
+prop-a2-find {t} ρₜ (t⟹x ∷⟨ x ⟩ x⟹*wrong) with ρ? x
+... | no ¬ρₓ                  = t , ρₜ , ([] , []) , x , ¬ρₓ , t⟹x
+... | yes ρₓ                  with prop-a2-find ρₓ x⟹*wrong
+... | u , ρᵤ , (x⟹*u , ρᵣₛ)
+    , v , ¬ρᵥ , u⟹v         = u , ρᵤ , (t⟹x ∷ x⟹*u , ρₓ ∷ ρᵣₛ)
+                              , v , ¬ρᵥ , u⟹v
+
+
+-- Then, all that remains to be done is to massage the evidence into the desired form.
+
+r-wow-id : ∀ {t u} → (ρₜ : Wrongless t) → W[ t ⟹ u ] ≡ W[ o→w (w→o ρₜ) ⟹ u ]
+r-wow-id ρₜ rewrite wow-id ρₜ = refl
+
+rs-wow-id : ∀ {t u} → (ρᵤ : Wrongless u) → W[ t ⟹* u ] ≡ W[ t ⟹* o→w (w→o ρᵤ) ]
+rs-wow-id ρᵤ rewrite wow-id ρᵤ = refl
+
+ρs-wow-id : ∀ {t u} {t⟹*u : W[ o→w t ⟹* u ]} → (ρᵤ : Wrongless u) →
+            WronglessReds t⟹*u ≡ WronglessReds (coerce t⟹*u (rs-wow-id ρᵤ))
+ρs-wow-id ρᵤ rewrite wow-id ρᵤ = refl
+
+rs-owo-id : ∀ {t u} → (ρₜ : Wrongless (o→w t)) (ρᵤ : Wrongless (o→w u)) →
+          O[ w→o ρₜ ⟹* w→o ρᵤ ] ≡ O[ t ⟹* u ]
+rs-owo-id ρₜ ρᵤ rewrite owo-id ρₜ | owo-id ρᵤ = refl
+
+prop-a2-rtl : ∀ {t} → W[ o→w t ⟹* wrong ] → (∃ λ u → O.Stuck u × O[ t ⟹* u ])
+prop-a2-rtl {t} t⟹*wrong with prop-a2-find (ρ! t) t⟹*wrong
+... | [u] , [ρᵤ] , ([t⟹*u] , [ρᵣₛ]) , v   , ¬ρᵥ  , [u⟹v] =
+    u , σᵤ , coerce (wrs→ors ρₜ ρᵤ ρᵣₛ) (rs-owo-id ρₜ ρᵤ)
+  where
+    u      = w→o [ρᵤ]
+    t⟹*u = coerce [t⟹*u] (rs-wow-id [ρᵤ])
+    ρᵣₛ    = coerce [ρᵣₛ] (ρs-wow-id [ρᵤ])
+    u⟹v  = coerce [u⟹v] (r-wow-id [ρᵤ])
+    σᵤ     = lem-a5 ¬ρᵥ u⟹v
+    ρₜ     = ρ! t
+    ρᵤ     = ρ! u
+
+
+-- Finally, we conclude Exercise 3.5.16.
 
 prop-a2 : ∀ {t} → (∃ λ u → O.Stuck u × O[ t ⟹* u ]) ↔ W[ o→w t ⟹* wrong ]
-prop-a2 = prop-a2-1 , prop-a2-2
+prop-a2 = prop-a2-ltr , prop-a2-rtl
+
+
+---------------------------------------------------------------------------------------------------------------

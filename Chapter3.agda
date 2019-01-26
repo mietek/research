@@ -1,4 +1,4 @@
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 
 module Chapter3 where
 
@@ -41,7 +41,7 @@ open import Relation.Nullary.Negation public using (contraposition)
 open import Relation.Unary public using (Pred)
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- TODO: Temporary
 
@@ -102,7 +102,7 @@ undo′ Ryz ¬R*′xz R*′xy = (R*′xy ∷ʳ′ Ryz) ↯ ¬R*′xz
 *′→* (rs ∷ʳ′ r) = *′→* rs ∷ʳ r
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- TODO: Clean this up
 
@@ -124,7 +124,7 @@ Rel₀ : ∀ {a} → Set a → Set _
 Rel₀ A = Rel A 0ℓ
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3. Untyped arithmetic expressions
 --
@@ -133,7 +133,7 @@ Rel₀ A = Rel A 0ℓ
 -- 3.2. Syntax
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.2.1. Definition [Terms, inductively]
 -- “The set of _terms_ is the smallest set `T` such that …”
@@ -146,7 +146,7 @@ module NumbersAndBooleans-Part1
       if_then_else    : (t₁ t₂ t₃ : Term) → Term
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.2.2. Definition [Terms, by inference rules]
 -- “The set of terms is defined by the following rules: …”
@@ -169,14 +169,14 @@ module NumbersAndBooleans-Part1
 -- (skipped)
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.3. Induction on terms
 --
--- Since we’re working in type theory, we’re going to need a type of containers that are not allowed
--- to contain duplicate elements, `UniqueList`.  To put terms in such a container, we’re going to
--- need a decidable equality on terms.  Therefore, we’re going to show that the built-in Agda
--- equality, `_≡_`, is decidable for terms.
+-- Since we’re working in type theory, we’re going to need a type of containers that are not allowed to contain
+-- duplicate elements, `UniqueList`.  To put terms in such a container, we’re going to need a decidable
+-- equality on terms.  Therefore, we’re going to show that the built-in Agda equality, `_≡_`, is decidable for
+-- terms.
 
     open import Prelude-UniqueList public
 
@@ -254,7 +254,7 @@ module NumbersAndBooleans-Part1
     open module UniqueList-Term = MakeUniqueList (Term-decSetoid) public
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.3.1. Definition
 -- “The set of constants appearing in a term `t`, written `consts(t)`, is defined as follows: …”
@@ -269,7 +269,7 @@ module NumbersAndBooleans-Part1
     consts (if t₁ then t₂ else t₃) = consts t₁ ∪ consts t₂ ∪ consts t₃
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.3.2. Definition
 -- “The _size_ of a term `t`, written `size(t)`, is defined as follows: …”
@@ -294,14 +294,14 @@ module NumbersAndBooleans-Part1
     depth (if t₁ then t₂ else t₃) = 1 + (depth t₁ Nat.⊔ depth t₂ Nat.⊔ depth t₃)
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.3.3. Lemma
 -- “The number of distinct constants in a term `t` is no greater than the size of `t` (i.e.,
 -- `|consts(t)| ≤ size(t)`).”
 --
--- As an exercise, we’re going to prove Lemma 3.3.3 using four methods.  First, the most natural
--- method to use in Agda, a direct proof using pattern matching.
+-- As an exercise, we’re going to prove Lemma 3.3.3 using four methods.  First, the most natural method to use
+-- in Agda, a direct proof using pattern matching.
 
     module Lemma333-Direct
       where
@@ -324,16 +324,15 @@ module NumbersAndBooleans-Part1
           ∎)
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.3.4. Theorem [Principles of induction on terms]
 --
 -- 3.3.4.a. Structural induction
--- “If, for each term `t`, given `P(s)` for all immediate subterms `s` of `t` we can show `P(t)`,
--- then `P(t)` holds for all `t`.
+-- “If, for each term `t`, given `P(s)` for all immediate subterms `s` of `t` we can show `P(t)`, then `P(t)`
+-- holds for all `t`.
 --
--- We’re going to start by defining what it means for a term to be an immediate subterm of another
--- term.
+-- We’re going to start by defining what it means for a term to be an immediate subterm of another term.
 
     data _∈_ : Rel₀ Term where
       suc    : ∀ {t} → t ∈ suc t
@@ -344,8 +343,8 @@ module NumbersAndBooleans-Part1
       if₃    : ∀ {t₁ t₂ t₃} → t₃ ∈ if t₁ then t₂ else t₃
 
 
--- As an exercise, we’re going to define structural induction using three methods.  First, a direct
--- definition using pattern matching.
+-- As an exercise, we’re going to define structural induction using three methods.  First, a direct definition
+-- using pattern matching.
 
     module Ind-Struct-Direct
       where
@@ -362,9 +361,9 @@ module NumbersAndBooleans-Part1
                                                           s if₃    → ind-struct h s
 
 
--- Second, a definition based on well-founded induction and accessibility, using equipment from
--- the Agda standard library.  Some of the definitions referenced are a little difficult to
--- understand, as acknowledged in the documentation.
+-- Second, a definition based on well-founded induction and accessibility, using equipment from the Agda
+-- standard library.  Some of the definitions referenced are a little difficult to understand, as acknowledged
+-- in the documentation.
 
     module Ind-Struct-Stdlib
       where
@@ -386,8 +385,8 @@ module NumbersAndBooleans-Part1
         ind-struct {P = P} = ∈-All.wfRec P
 
 
--- Third, a definition using our own equipment.  We’d like to think that our phrasing of the
--- concepts involved is a little easier to understand, while being no less general.
+-- Third, a definition using our own equipment.  We’d like to think that our phrasing of the concepts involved
+-- is a little easier to understand, while being no less general.
 
     open import Prelude-WellFounded public
 
@@ -428,11 +427,11 @@ module NumbersAndBooleans-Part1
             ∎)
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.3.4.b. Induction on size
--- “If, for each term `t`, given `P(s)` for all `s` such that `size(s) < size(t)` we can show
--- `P(t)`, then `P(t)` holds for all `t`.”
+-- “If, for each term `t`, given `P(s)` for all `s` such that `size(s) < size(t)` we can show `P(t)`, then
+-- `P(t)` holds for all `t`.”
 --
 -- A definition based on well-founded induction.
 
@@ -483,16 +482,17 @@ module NumbersAndBooleans-Part1
               length (consts t₁ ∪ consts t₂) + length (consts t₃)
             ≤⟨ Nat.+-monoˡ-≤ (length (consts t₃)) (length-triangular (consts t₁) (consts t₂)) ⟩
               length (consts t₁) + length (consts t₂) + length (consts t₃)
-            ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (h t₁ (ls-if₁ t₁ t₂ t₃)) (h t₂ (ls-if₂ t₁ t₂ t₃))) (h t₃ (ls-if₃ t₁ t₂ t₃)) ⟩
+            ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (h t₁ (ls-if₁ t₁ t₂ t₃)) (h t₂ (ls-if₂ t₁ t₂ t₃)))
+                            (h t₃ (ls-if₃ t₁ t₂ t₃)) ⟩
               size t₁ + size t₂ + size t₃
             ∎)
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.3.4.c. Induction on depth
--- “If, for each term `t`, given `P(s)` for all `s` such that `depth(s) < depth(t)` we can show
--- `P(t)`, then `P(t)` holds for all `t`.”
+-- “If, for each term `t`, given `P(s)` for all `s` such that `depth(s) < depth(t)` we can show `P(t)`, then
+-- `P(t)` holds for all `t`.”
 --
 -- A definition based on well-founded induction.
 
@@ -543,12 +543,13 @@ module NumbersAndBooleans-Part1
               length (consts t₁ ∪ consts t₂) + length (consts t₃)
             ≤⟨ Nat.+-monoˡ-≤ (length (consts t₃)) (length-triangular (consts t₁) (consts t₂)) ⟩
               length (consts t₁) + length (consts t₂) + length (consts t₃)
-            ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (h t₁ (ld-if₁ t₁ t₂ t₃)) (h t₂ (ld-if₂ t₁ t₂ t₃))) (h t₃ (ld-if₃ t₁ t₂ t₃)) ⟩
+            ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (h t₁ (ld-if₁ t₁ t₂ t₃)) (h t₂ (ld-if₂ t₁ t₂ t₃)))
+                            (h t₃ (ld-if₃ t₁ t₂ t₃)) ⟩
               size t₁ + size t₂ + size t₃
             ∎)
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.4. Semantic styles
 --
@@ -567,28 +568,28 @@ module BooleansOnly-Part1
       false : Value false
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.5.1. Definition
--- “An _instance_ of an inference rule is obtained by consistently replacing each metavariable by
--- the same term in the rule’s conclusion and all its premises (if any).”
+-- “An _instance_ of an inference rule is obtained by consistently replacing each metavariable by the same term
+-- in the rule’s conclusion and all its premises (if any).”
 --
--- In Agda, we model inference rules as constructors of inductive type families.  Thus, instances of
--- inference rules are obtained using Agda’s built-in notion of substitution.
+-- In Agda, we model inference rules as constructors of inductive type families.  Thus, instances of inference
+-- rules are obtained using Agda’s built-in notion of substitution.
 --
 -- 3.5.2. Definition
--- “A rule is _satisfied_ by a relation if, for each instance of the rule, either the conclusion is
--- in the relation or one of the premises is not.”
+-- “A rule is _satisfied_ by a relation if, for each instance of the rule, either the conclusion is in the
+-- relation or one of the premises is not.”
 --
--- In our model, a rule is satisfied by an inductive type family if, given evidence for all of the
--- premises, a constructor of the type family serves as evidence for the conclusion.
+-- In our model, a rule is satisfied by an inductive type family if, given evidence for all of the premises, a
+-- constructor of the type family serves as evidence for the conclusion.
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.5.3. Definition
--- “The _one-step reduction_ relation `⟹` is the smallest binary relation on terms satisfying the
--- three rules in …”
+-- “The _one-step reduction_ relation `⟹` is the smallest binary relation on terms satisfying the three rules
+-- in …”
 --
 -- We say `t ⟹ u` to mean that `t` reduces to `u` in one step.
 
@@ -596,19 +597,19 @@ module BooleansOnly-Part1
     data _⟹_ : Rel₀ Term where
       r-ifTrue  : ∀ {t₂ t₃} → if true then t₂ else t₃ ⟹ t₂
       r-ifFalse : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟹ t₃
-      r-if      : ∀ {t₁ t₂ t₃ u₁} → (t₁⟹u₁ : t₁ ⟹ u₁) → if t₁ then t₂ else t₃ ⟹ if u₁ then t₂ else t₃
+      r-if      : ∀ {t₁ t₂ t₃ u₁} → (t₁⟹u₁ : t₁ ⟹ u₁) →
+                  if t₁ then t₂ else t₃ ⟹ if u₁ then t₂ else t₃
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.5.4. Theorem [Determinacy of one-step reduction]
 -- “If `t ⟹ u` and `t ⟹ u′`, then `u ≡ u′`.
 --
--- Before we can prove this theorem, we need to jump ahead to Definition 3.5.6 and say what it
--- means for a term to be in _normal form_.  In type theory, it is often more convenient to use a
--- positive definition.  For this reason, we also define what it means for a term to be _reducible_.
--- We give both definitions in a generic manner, parametrised by the one-step reduction relation, so
--- that we can reuse them in later sections.
+-- Before we can prove this theorem, we need to jump ahead to Definition 3.5.6 and say what it means for a term
+-- to be in _normal form_.  In type theory, it is often more convenient to use a positive definition.  For this
+-- reason, we also define what it means for a term to be _reducible_.  We give both definitions in a generic
+-- manner, parametrised by the one-step reduction relation, so that they can be reused in later sections.
 
 module NormalForms {t ℓ} {Term : Set t}
     (_⟹_ : Rel Term ℓ)
@@ -619,11 +620,11 @@ module NormalForms {t ℓ} {Term : Set t}
     Reducible : Pred Term (t ⊔ ℓ)
     Reducible t = ∃ λ u → t ⟹ u
 
-    nf→¬ρ : ∀ {t} → NormalForm t → ¬ Reducible t
-    nf→¬ρ nfₜ (_ , t⟹u) = t⟹u ↯ nfₜ
+    nf→¬r : ∀ {t} → NormalForm t → ¬ Reducible t
+    nf→¬r nfₜ (_ , t⟹u) = t⟹u ↯ nfₜ
 
-    ¬ρ→nf : ∀ {t} → ¬ Reducible t → NormalForm t
-    ¬ρ→nf ¬ρₜ t⟹u = (_ , t⟹u) ↯ ¬ρₜ
+    ¬r→nf : ∀ {t} → ¬ Reducible t → NormalForm t
+    ¬r→nf ¬rₜ t⟹u = (_ , t⟹u) ↯ ¬rₜ
 
 
 -- We also need to jump ahead to Theorem 3.5.7, and show that every value is in normal form.
@@ -644,19 +645,19 @@ module BooleansOnly-Part2
     ⟹-det r-ifFalse         (r-if false⟹u₁′) = false⟹u₁′ ↯ v→nf false
     ⟹-det (r-if true⟹u₁)  r-ifTrue           = true⟹u₁ ↯ v→nf true
     ⟹-det (r-if false⟹u₁) r-ifFalse          = false⟹u₁ ↯ v→nf false
-    ⟹-det (r-if t₁⟹u₁)    (r-if t₁⟹u₁′)    = (λ u₁″ → if u₁″ then _ else _) & ⟹-det t₁⟹u₁ t₁⟹u₁′
+    ⟹-det (r-if t₁⟹u₁)    (r-if t₁⟹u₁′)    = (λ u₁″ → if u₁″ then _ else _) &
+                                                   ⟹-det t₁⟹u₁ t₁⟹u₁′
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.5.5. Exercise [⋆]
 -- “Spell out the induction principle used in the preceding proof, in the style of Theorem 3.3.4.”
 -- (skipped)
 --
 -- 3.5.6. Definition
--- “A term `t` is in _normal form_ if no evaluation rule applies to it—i.e., if there is no `t′`
--- such that `t ⟹ t′`.  (We sometimes say ‘`t` is a normal form’ as shorthand for ‘`t` is a term
--- in normal form.’)”
+-- “A term `t` is in _normal form_ if no evaluation rule applies to it—i.e., if there is no `t′` such that
+-- `t ⟹ t′`.  (We sometimes say ‘`t` is a normal form’ as shorthand for ‘`t` is a term in normal form.’)”
 -- (given above)
 --
 -- 3.5.7. Theorem
@@ -664,17 +665,17 @@ module BooleansOnly-Part2
 -- (given above)
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.5.8. Theorem
 -- “If `t` is in normal form, then `t` is a value.”
 --
--- To prove this theorem, we’re first going to show that every term is either a value, or reducible
--- to another term.
+-- To prove this theorem, we’re first going to show that every term is either a value, or reducible to another
+-- term.
 
     data Value/Reducible : Pred₀ Term where
       val : ∀ {t} → (vₜ : Value t) → Value/Reducible t
-      red : ∀ {t} → (ρₜ : Reducible t) → Value/Reducible t
+      red : ∀ {t} → (rₜ : Reducible t) → Value/Reducible t
 
     classify : ∀ t → Value/Reducible t
     classify true                    = val true
@@ -690,15 +691,15 @@ module BooleansOnly-Part2
     ... | red (_ , t⟹u) = t⟹u ↯ nfₜ
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.5.9. Definition
--- “The _multi-step reduction_ relation `⟹*` is the reflexive, transitive closure of one-step
--- reduction.  That is, it is the smallest relation such that (1) if `t ⟹ u` then `t ⟹* u`,
--- (2) `t ⟹* t` for all `t`, and (3) if `s ⟹* t` and `t ⟹* u`, then `s ⟹* u`.”
+-- “The _multi-step reduction_ relation `⟹*` is the reflexive, transitive closure of one-step reduction.
+-- That is, it is the smallest relation such that (1) if `t ⟹ u` then `t ⟹* u`, (2) `t ⟹* t` for all `t`,
+-- and (3) if `s ⟹* t` and `t ⟹* u`, then `s ⟹* u`.”
 --
--- We say `t ⟹* u` to mean that `t` reduces to `u` in multiple steps.  We give this definition
--- in a generic manner, and we include an alternative definition with a dual structure.
+-- We say `t ⟹* u` to mean that `t` reduces to `u` in multiple steps.  We give this definition in a generic
+-- manner.
 
 module MultiStepReduction {a ℓ} {A : Set a}
     (_⟹_ : Rel A ℓ)
@@ -708,21 +709,14 @@ module MultiStepReduction {a ℓ} {A : Set a}
     _⟹*_ = _⟹_ *
 
 
--- TODO: Is this used?
-
-    infix 3 _⟹*′_
-    _⟹*′_ : Rel A (a ⊔ ℓ)
-    _⟹*′_ = _⟹_ *′
-
-
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.5.10. Exercise [*]
 -- “Rephrase Definition 3.5.9 as a set of inference rules.”
 -- (redundant)
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.5.11. Theorem [Uniqueness of normal forms]
 -- “If `t ⟹* u` and `t ⟹* u′`, where `u` and `u′` are both normal forms, then `u ≡ u′`.”
@@ -735,24 +729,22 @@ module UniquenessOfNormalForms {a ℓ} {A : Set a}
     open MultiStepReduction _⟹_
 
     {-# DISPLAY _* _⟹_ = _⟹*_ #-}
-    {-# DISPLAY _*′ _⟹_ = _⟹*′_ #-}
 
     ⟹*-unf : ∀ {t u u′} → NormalForm u → NormalForm u′ → t ⟹* u → t ⟹* u′ → u ≡ u′
     ⟹*-unf nfₜ nfₜ′ []               []                  = refl
-    ⟹*-unf nfₜ nfᵤ′ []               (t⟹j′ ∷ j′⟹*u′) = t⟹j′ ↯ nfₜ
-    ⟹*-unf nfᵤ nfₜ  (t⟹j ∷ j⟹*u) []                  = t⟹j ↯ nfₜ
-    ⟹*-unf nfᵤ nfᵤ′ (t⟹j ∷ j⟹*u) (t⟹j′ ∷ j′⟹*u′) with ⟹-det t⟹j t⟹j′
-    ... | refl                                             = ⟹*-unf nfᵤ nfᵤ′ j⟹*u j′⟹*u′
+    ⟹*-unf nfₜ nfᵤ′ []               (t⟹x′ ∷ x′⟹*u′) = t⟹x′ ↯ nfₜ
+    ⟹*-unf nfᵤ nfₜ  (t⟹x ∷ x⟹*u) []                  = t⟹x ↯ nfₜ
+    ⟹*-unf nfᵤ nfᵤ′ (t⟹x ∷ x⟹*u) (t⟹x′ ∷ x′⟹*u′) with ⟹-det t⟹x t⟹x′
+    ... | refl                                             = ⟹*-unf nfᵤ nfᵤ′ x⟹*u x′⟹*u′
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.5.12. Theorem [Termination of evaluation]
 -- “For every term `t` there is some normal form `u` such that `t ⟹* u`.”
 --
--- We first show a variant of this theorem that uses the notion of value instead of normal form.
--- We say `t ⇓ u` to mean that `t` evaluates to `u`, and `t ⇓` to mean that evaluation of `t`
--- terminates.
+-- We first show a variant of this theorem that uses the notion of value instead of normal form.  We say
+-- `t ⇓ u` to mean that `t` evaluates to `u`, and `t ⇓` to mean that evaluation of `t` terminates.
 
 module BooleansOnly-Part3
   where
@@ -770,15 +762,17 @@ module BooleansOnly-Part3
     halt true                     = _ , true , []
     halt false                    = _ , false , []
     halt (if t₁ then t₂ else t₃)  with halt t₁ | halt t₂ | halt t₃
-    ... | _ , true  , t₁⟹*true  | _ , vᵤ₂ , t₂⟹*u₂ | _ = _ , vᵤ₂ , (map r-if t₁⟹*true) ++ (r-ifTrue ∷ t₂⟹*u₂)
-    ... | _ , false , t₁⟹*false | _ | _ , vᵤ₃ , t₃⟹*u₃ = _ , vᵤ₃ , (map r-if t₁⟹*false) ++ (r-ifFalse ∷ t₃⟹*u₃)
+    ... | _ , true  , t₁⟹*true  | _ , vᵤ₂ , t₂⟹*u₂ | _
+                                  = _ , vᵤ₂ , map r-if t₁⟹*true ++ (r-ifTrue ∷ t₂⟹*u₂)
+    ... | _ , false , t₁⟹*false | _                  | _ , vᵤ₃ , t₃⟹*u₃
+                                  = _ , vᵤ₃ , map r-if t₁⟹*false ++ (r-ifFalse ∷ t₃⟹*u₃)
 
     halt′ : ∀ t → ∃ λ u → NormalForm u × t ⟹* u
     halt′ t               with halt t
     ... | _ , vᵤ , t⟹*u = _ , v→nf vᵤ , t⟹*u
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.5.13. Exercise [Recommended, ⋆⋆]
 -- “1. Suppose we add a new rule…”
@@ -786,11 +780,11 @@ module BooleansOnly-Part3
 -- (skipped)
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.5.14. Exercise [⋆⋆]
--- ”Show that Theorem 3.5.4 is also valid for the reduction relation on arithmetic expressions:
--- if `t ⟹ u` and `t ⟹ u′`, then `u ≡ u′`.”
+-- ”Show that Theorem 3.5.4 is also valid for the reduction relation on arithmetic expressions: if `t ⟹ u`
+-- and `t ⟹ u′`, then `u ≡ u′`.”
 
 module NumbersAndBooleans-Part2
   where
@@ -819,7 +813,8 @@ module NumbersAndBooleans-Part2
       r-iszero     : ∀ {t u} → (t⟹u : t ⟹ u) → iszero t ⟹ iszero u
       r-ifTrue     : ∀ {t₂ t₃} → if true then t₂ else t₃ ⟹ t₂
       r-ifFalse    : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟹ t₃
-      r-if         : ∀ {t₁ t₂ t₃ u₁} → (t₁⟹u₁ : t₁ ⟹ u₁) → if t₁ then t₂ else t₃ ⟹ if u₁ then t₂ else t₃
+      r-if         : ∀ {t₁ t₂ t₃ u₁} → (t₁⟹u₁ : t₁ ⟹ u₁) →
+                     if t₁ then t₂ else t₃ ⟹ if u₁ then t₂ else t₃
 
 
 -- Echo of Definition 3.5.6.
@@ -863,16 +858,16 @@ module NumbersAndBooleans-Part2
     ⟹-det r-ifFalse           (r-if false⟹u₁′)   = false⟹u₁′ ↯ v→nf false
     ⟹-det (r-if true⟹u₁)    r-ifTrue             = true⟹u₁ ↯ v→nf true
     ⟹-det (r-if false⟹u₁)   r-ifFalse            = false⟹u₁ ↯ v→nf false
-    ⟹-det (r-if t₁⟹u₁)      (r-if t₁⟹u₁′)      = (λ u₁″ → if u₁″ then _ else _) & ⟹-det t₁⟹u₁ t₁⟹u₁′
+    ⟹-det (r-if t₁⟹u₁)      (r-if t₁⟹u₁′)      = (λ u₁″ → if u₁″ then _ else _) &
+                                                       ⟹-det t₁⟹u₁ t₁⟹u₁′
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.5.15. Definition
 -- “A closed term is _stuck_ if it is in normal form but not a value.”
 --
--- In anticipation of Exercise 3.5.16, we’re going to work towards showing that evaluation of
--- expressions-that-get-stuck is terminating.
+-- As an exercise, we’re going to show that evaluation of expressions-that--get-stuck is terminating.
 
 module NumbersAndBooleansGetStuck
   where
@@ -887,7 +882,7 @@ module NumbersAndBooleansGetStuck
     data Stuck/Value/Reducible : Pred₀ Term where
       stu : ∀ {t} → (σₜ : Stuck t) → Stuck/Value/Reducible t
       val : ∀ {t} → (vₜ : Value t) → Stuck/Value/Reducible t
-      red : ∀ {t} → (ρₜ : Reducible t) → Stuck/Value/Reducible t
+      red : ∀ {t} → (rₜ : Reducible t) → Stuck/Value/Reducible t
 
     σ-suc : ∀ {t} → Stuck t → Stuck (suc t)
     σ-suc (¬vₜ , nfₜ) = (λ where (num (suc nvₜ)) → num nvₜ ↯ ¬vₜ)
@@ -995,7 +990,6 @@ module NumbersAndBooleansGetStuck
     open UniquenessOfNormalForms _⟹_ ⟹-det public
 
     {-# DISPLAY _* _⟹_ = _⟹*_ #-}
-    {-# DISPLAY _*′ _⟹_ = _⟹*′_ #-}
 
 
 -- Equipment for showing termination.
@@ -1028,11 +1022,16 @@ module NumbersAndBooleansGetStuck
     ... | _ , val (num zero)       , t⟹*zero   = _ , val true , map r-iszero t⟹*zero ∷ʳ r-iszeroZero
     ... | _ , val (num (suc nvᵤ))  , t⟹*sucu   = _ , val false , map r-iszero t⟹*sucu ∷ʳ r-iszeroSuc nvᵤ
     halt (if t₁ then t₂ else t₃)                 with halt t₁ | halt t₂ | halt t₃
-    ... | _ , stu σᵤ₁              , t₁⟹*u₁    | _ | _                    = _ , stu (σ-if σᵤ₁) , map r-if t₁⟹*u₁
-    ... | _ , val true             , t₁⟹*true  | _ , σ/vᵤ₂ , t₂⟹*u₂ | _ = _ , σ/vᵤ₂ , (map r-if t₁⟹*true) ++ (r-ifTrue ∷ t₂⟹*u₂)
-    ... | _ , val false            , t₁⟹*false | _ | _ , σ/vᵤ₃ , t₃⟹*u₃ = _ , σ/vᵤ₃ , (map r-if t₁⟹*false) ++ (r-ifFalse ∷ t₃⟹*u₃)
-    ... | _ , val (num zero)       , t₁⟹*zero  | _ | _                    = _ , stu σ-ifZero , map r-if t₁⟹*zero
-    ... | _ , val (num (suc nvᵤ₁)) , t₁⟹*sucu  | _ | _                    = _ , stu (σ-ifSuc nvᵤ₁) , map r-if t₁⟹*sucu
+    ... | _ , stu σᵤ₁              , t₁⟹*u₁    | _                    | _
+                                                 = _ , stu (σ-if σᵤ₁) , map r-if t₁⟹*u₁
+    ... | _ , val true             , t₁⟹*true  | _ , σ/vᵤ₂ , t₂⟹*u₂ | _
+                                                 = _ , σ/vᵤ₂ , map r-if t₁⟹*true ++  (r-ifTrue ∷ t₂⟹*u₂)
+    ... | _ , val false            , t₁⟹*false | _                    | _ , σ/vᵤ₃ , t₃⟹*u₃
+                                                 = _ , σ/vᵤ₃  , map r-if t₁⟹*false ++ (r-ifFalse ∷ t₃⟹*u₃)
+    ... | _ , val (num zero)       , t₁⟹*zero  | _                    | _
+                                                 = _ , stu σ-ifZero , map r-if t₁⟹*zero
+    ... | _ , val (num (suc nvᵤ₁)) , t₁⟹*sucu  | _                    | _
+                                                 = _ , stu (σ-ifSuc nvᵤ₁) , map r-if t₁⟹*sucu
 
 
 -- Echo of Theorem 3.5.12.
@@ -1043,27 +1042,15 @@ module NumbersAndBooleansGetStuck
     ... | _ , val vᵤ        , t⟹*u = _ , v→nf vᵤ , t⟹*u
 
 
--- TODO: Is this used?
-
-    _∈*_ : Rel₀ Term
-    _∈*_ = _∈_ *
-
-    _∈*′_ : Rel₀ Term
-    _∈*′_ = _∈_ *′
-
-
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.5.16. Exercise [Recommended, ⋆⋆⋆]
--- ”A different way of formalizing meaningless states of the abstract machine is to introduce a new
--- term called `wrong` and augment the operational semantics with rules that explicitly generate
--- `wrong` in all the situations where the present semantics gets stuck.  To do this in detail, …”
--- “Show that these two treatments of run-time errors agree by (1) finding a precise way of stating
--- the intuition that “the two treatments agree,” and (2) proving it.”
+-- ”A different way of formalizing meaningless states of the abstract machine is to introduce a new term called
+-- `wrong` and augment the operational semantics with rules that explicitly generate `wrong` in all the
+-- situations where the present semantics gets stuck.  To do this in detail, …”
 --
--- We’re going to start by showing that evaluation of expressions-that-go-wrong is terminating.
--- Then, we’ll show that expressions-that-go-wrong go wrong exactly when expressions-that-get-stuck
--- get stuck.  First, we echo Definition 3.2.1 and redefine terms and values.
+-- We’re going to start by showing that evaluation of expressions-that-go-wrong is terminating.  First, we echo
+-- Definition 3.2.1, and define the augmented system.
 
 module NumbersAndBooleansGoWrong-Part1
   where
@@ -1109,7 +1096,8 @@ module NumbersAndBooleansGoWrong-Part1
       r-ifWrong     : ∀ {t₁ t₂ t₃} → (bbₜ₁ : BadBool t₁) → if t₁ then t₂ else t₃ ⟹ wrong
       r-ifTrue      : ∀ {t₂ t₃} → if true then t₂ else t₃ ⟹ t₂
       r-ifFalse     : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟹ t₃
-      r-if          : ∀ {t₁ t₂ t₃ u₁} → (t₁⟹u₁ : t₁ ⟹ u₁) → if t₁ then t₂ else t₃ ⟹ if u₁ then t₂ else t₃
+      r-if          : ∀ {t₁ t₂ t₃ u₁} → (t₁⟹u₁ : t₁ ⟹ u₁) →
+                      if t₁ then t₂ else t₃ ⟹ if u₁ then t₂ else t₃
 
 
 -- Echo of Definition 3.5.6.
@@ -1194,14 +1182,15 @@ module NumbersAndBooleansGoWrong-Part1
     ⟹-det (r-if t₁⟹u₁)       (r-ifWrong bbₜ₁)     = t₁⟹u₁ ↯ bb→nf bbₜ₁
     ⟹-det (r-if true⟹u₁)     r-ifTrue             = true⟹u₁ ↯ v→nf true
     ⟹-det (r-if false⟹u₁)    r-ifFalse            = false⟹u₁ ↯ v→nf false
-    ⟹-det (r-if t₁⟹u₁)       (r-if t₁⟹u₁′)      = (λ u₁″ → if u₁″ then _ else _) & ⟹-det t₁⟹u₁ t₁⟹u₁′
+    ⟹-det (r-if t₁⟹u₁)       (r-if t₁⟹u₁′)      = (λ u₁″ → if u₁″ then _ else _) &
+                                                        ⟹-det t₁⟹u₁ t₁⟹u₁′
 
 
 -- Every term is either a value, or reducible to another term.
 
     data Value/Reducible : Pred₀ Term where
       val : ∀ {t} → (v : Value t) → Value/Reducible t
-      red : ∀ {t} → (ρ : Reducible t) → Value/Reducible t
+      red : ∀ {t} → (r : Reducible t) → Value/Reducible t
 
     classify : ∀ t → Value/Reducible t
     classify wrong                   = val wrong
@@ -1250,7 +1239,6 @@ module NumbersAndBooleansGoWrong-Part1
     open UniquenessOfNormalForms _⟹_ ⟹-det public
 
     {-# DISPLAY _* _⟹_ = _⟹*_ #-}
-    {-# DISPLAY _*′ _⟹_ = _⟹*′_ #-}
 
 
 -- Equipment for showing termination.
@@ -1284,10 +1272,14 @@ module NumbersAndBooleansGoWrong-Part1
     ... | _ , num zero      , t⟹*zero   = _ , true , map r-iszero t⟹*zero ∷ʳ r-iszeroZero
     ... | _ , num (suc nvᵤ) , t⟹*sucu   = _ , false , map r-iszero t⟹*sucu ∷ʳ r-iszeroSuc nvᵤ
     halt (if t₁ then t₂ else t₃)          with halt t₁ | halt t₂ | halt t₃
-    ... | _ , wrong         , t₁⟹*wrong | _ | _                  = _ , wrong , map r-if t₁⟹*wrong ∷ʳ r-ifWrong wrong
-    ... | _ , true          , t₁⟹*true  | _ , vᵤ₂ , t₂⟹*u₂ | _ = _ , vᵤ₂ , (map r-if t₁⟹*true) ++ (r-ifTrue ∷ t₂⟹*u₂)
-    ... | _ , false         , t₁⟹*false | _ | _ , vᵤ₃ , t₃⟹*u₃ = _ , vᵤ₃ , (map r-if t₁⟹*false) ++ (r-ifFalse ∷ t₃⟹*u₃)
-    ... | _ , num nvᵤ₁      , t₁⟹*u     | _ | _                  = _ , wrong , map r-if t₁⟹*u ∷ʳ r-ifWrong (num nvᵤ₁)
+    ... | _ , wrong         , t₁⟹*wrong | _                  | _
+                                          = _ , wrong , map r-if t₁⟹*wrong ∷ʳ r-ifWrong wrong
+    ... | _ , true          , t₁⟹*true  | _ , vᵤ₂ , t₂⟹*u₂ | _
+                                          = _ , vᵤ₂ , map r-if t₁⟹*true ++ (r-ifTrue ∷ t₂⟹*u₂)
+    ... | _ , false         , t₁⟹*false | _                  | _ , vᵤ₃ , t₃⟹*u₃
+                                          = _ , vᵤ₃ , map r-if t₁⟹*false ++ (r-ifFalse ∷ t₃⟹*u₃)
+    ... | _ , num nvᵤ₁      , t₁⟹*u     | _                  | _
+                                          = _ , wrong , map r-if t₁⟹*u ∷ʳ r-ifWrong (num nvᵤ₁)
 
 
 -- Echo of Theorem 3.5.12.
@@ -1300,7 +1292,7 @@ module NumbersAndBooleansGoWrong-Part1
 -- NOTE: Continued in Chapter3a.agda
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.5.17. Exercise [Recommended, ***]
 -- “Two styles of operational semantics are in common use. The one used in this book is called the
@@ -1318,7 +1310,7 @@ module NumbersAndBooleansGoWrong-Part1
 -- TODO
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.5.18. Exercise [⋆⋆ ↛]
 -- “Suppose we want to change the evaluation strategy of our language so that the `then` and `else`
@@ -1327,9 +1319,9 @@ module NumbersAndBooleansGoWrong-Part1
 -- (skipped)
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
 --
 -- 3.6. Notes
 
 
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
