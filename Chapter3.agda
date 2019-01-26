@@ -49,6 +49,8 @@ data _* {a ℓ} {A : Set a} (R : Rel A ℓ) : Rel A (a ⊔ ℓ) where
   []  : Reflexive (R *)
   _∷_ : ∀ {x y z} → (r : R x y) (rs : (R *) y z) → (R *) x z
 
+pattern _∷⟨_⟩_ r y rs = _∷_ {_} {y} {_} r rs
+
 _++_ : ∀ {a ℓ} {A : Set a} {R : Rel A ℓ} → Transitive (R *)
 []       ++ rs′ = rs′
 (r ∷ rs) ++ rs′ = r ∷ (rs ++ rs′)
@@ -103,6 +105,9 @@ undo′ Ryz ¬R*′xz R*′xy = (R*′xy ∷ʳ′ Ryz) ↯ ¬R*′xz
 ----------------------------------------------------------------------------------------------------
 --
 -- TODO: Clean this up
+
+_↔_ : ∀ {a b} → Set a → Set b → Set (a ⊔ b)
+A ↔ B = (A → B) × (B → A)
 
 infixl 8 _⊗_
 _⊗_ : ∀ {a b} {A : Set a} {B : Set b} {f g : A → B} {x y : A} →
@@ -231,10 +236,10 @@ module NumbersAndBooleans-Part1
     if _ then _ else _    ≟ pred _                = no λ ()
     if _ then _ else _    ≟ iszero _              = no λ ()
     if s₁ then s₂ else s₃ ≟ if t₁ then t₂ else t₃ with s₁ ≟ t₁ | s₂ ≟ t₂ | s₃ ≟ t₃
-    ... | yes refl | yes refl | yes refl          = yes refl
-    ... | yes refl | yes refl | no s₃≢t₃          = no λ where refl → refl ↯ s₃≢t₃
-    ... | yes refl | no s₂≢t₂ | _                 = no λ where refl → refl ↯ s₂≢t₂
     ... | no s₁≢t₁ | _        | _                 = no λ where refl → refl ↯ s₁≢t₁
+    ... | yes refl | no s₂≢t₂ | _                 = no λ where refl → refl ↯ s₂≢t₂
+    ... | yes refl | yes refl | no s₃≢t₃          = no λ where refl → refl ↯ s₃≢t₃
+    ... | yes refl | yes refl | yes refl          = yes refl
 
     Term-decSetoid : DecSetoid _ _
     Term-decSetoid = record
@@ -1006,18 +1011,18 @@ module NumbersAndBooleansGetStuck
     halt false                                   = _ , val false , []
     halt zero                                    = _ , val (num zero) , []
     halt (suc t)                                 with halt t
-    ... | _ , stu σ                , t⟹*u      = _ , stu (σ-suc σ) , map r-suc t⟹*u
+    ... | _ , stu σᵤ               , t⟹*u      = _ , stu (σ-suc σᵤ) , map r-suc t⟹*u
     ... | _ , val true             , t⟹*true   = _ , stu σ-sucTrue , map r-suc t⟹*true
     ... | _ , val false            , t⟹*false  = _ , stu σ-sucFalse , map r-suc t⟹*false
     ... | _ , val (num nvᵤ)        , t⟹*u      = _ , val (num (suc nvᵤ)) , map r-suc t⟹*u
     halt (pred t)                                with halt t
-    ... | _ , stu σ                , t⟹*u      = _ , stu (σ-pred σ) , map r-pred t⟹*u
+    ... | _ , stu σᵤ               , t⟹*u      = _ , stu (σ-pred σᵤ) , map r-pred t⟹*u
     ... | _ , val true             , t⟹*true   = _ , stu σ-predTrue , map r-pred t⟹*true
     ... | _ , val false            , t⟹*false  = _ , stu σ-predFalse , map r-pred t⟹*false
     ... | _ , val (num zero)       , t⟹*zero   = _ , val (num zero) , map r-pred t⟹*zero ∷ʳ r-predZero
     ... | _ , val (num (suc nvᵤ))  , t⟹*sucu   = _ , val (num nvᵤ) , map r-pred t⟹*sucu ∷ʳ r-predSuc nvᵤ
     halt (iszero t)                              with halt t
-    ... | _ , stu σ                , t⟹*u      = _ , stu (σ-iszero σ) , map r-iszero t⟹*u
+    ... | _ , stu σᵤ               , t⟹*u      = _ , stu (σ-iszero σᵤ) , map r-iszero t⟹*u
     ... | _ , val true             , t⟹*true   = _ , stu σ-iszeroTrue , map r-iszero t⟹*true
     ... | _ , val false            , t⟹*false  = _ , stu σ-iszeroFalse , map r-iszero t⟹*false
     ... | _ , val (num zero)       , t⟹*zero   = _ , val true , map r-iszero t⟹*zero ∷ʳ r-iszeroZero
@@ -1060,7 +1065,7 @@ module NumbersAndBooleansGetStuck
 -- Then, we’ll show that expressions-that-go-wrong go wrong exactly when expressions-that-get-stuck
 -- get stuck.  First, we echo Definition 3.2.1 and redefine terms and values.
 
-module NumbersAndBooleansGoWrong
+module NumbersAndBooleansGoWrong-Part1
   where
     data Term : Set₀ where
       wrong true false zero : Term
@@ -1290,156 +1295,6 @@ module NumbersAndBooleansGoWrong
     halt′ : ∀ t → ∃ λ u → NormalForm u × t ⟹* u
     halt′ t               with halt t
     ... | _ , vᵤ , t⟹*u = _ , v→nf vᵤ , t⟹*u
-
-
-----------------------------------------------------------------------------------------------------
---
--- Work in progress
-
-    _≟_ : Decidable {A = Term} _≡_
-    wrong                 ≟ wrong                 = yes refl
-    wrong                 ≟ true                  = no λ ()
-    wrong                 ≟ false                 = no λ ()
-    wrong                 ≟ zero                  = no λ ()
-    wrong                 ≟ suc _                 = no λ ()
-    wrong                 ≟ pred _                = no λ ()
-    wrong                 ≟ iszero _              = no λ ()
-    wrong                 ≟ if _ then _ else _    = no λ ()
-    true                  ≟ wrong                 = no λ ()
-    true                  ≟ true                  = yes refl
-    true                  ≟ false                 = no λ ()
-    true                  ≟ zero                  = no λ ()
-    true                  ≟ suc _                 = no λ ()
-    true                  ≟ pred _                = no λ ()
-    true                  ≟ iszero _              = no λ ()
-    true                  ≟ if _ then _ else _    = no λ ()
-    false                 ≟ wrong                 = no λ ()
-    false                 ≟ true                  = no λ ()
-    false                 ≟ false                 = yes refl
-    false                 ≟ zero                  = no λ ()
-    false                 ≟ suc _                 = no λ ()
-    false                 ≟ pred _                = no λ ()
-    false                 ≟ iszero _              = no λ ()
-    false                 ≟ if _ then _ else _    = no λ ()
-    zero                  ≟ wrong                 = no λ ()
-    zero                  ≟ true                  = no λ ()
-    zero                  ≟ false                 = no λ ()
-    zero                  ≟ zero                  = yes refl
-    zero                  ≟ suc _                 = no λ ()
-    zero                  ≟ pred _                = no λ ()
-    zero                  ≟ iszero _              = no λ ()
-    zero                  ≟ if _ then _ else _    = no λ ()
-    suc _                 ≟ wrong                 = no λ ()
-    suc _                 ≟ true                  = no λ ()
-    suc _                 ≟ false                 = no λ ()
-    suc _                 ≟ zero                  = no λ ()
-    suc s                 ≟ suc t                 with s ≟ t
-    ... | yes refl                                = yes refl
-    ... | no s≢t                                  = no λ where refl → refl ↯ s≢t
-    suc _                 ≟ pred _                = no λ ()
-    suc _                 ≟ iszero _              = no λ ()
-    suc _                 ≟ if _ then _ else _    = no λ ()
-    pred _                ≟ wrong                 = no λ ()
-    pred _                ≟ true                  = no λ ()
-    pred _                ≟ false                 = no λ ()
-    pred _                ≟ zero                  = no λ ()
-    pred _                ≟ suc _                 = no λ ()
-    pred s                ≟ pred t                with s ≟ t
-    ... | yes refl                                = yes refl
-    ... | no s≢t                                  = no λ where refl → refl ↯ s≢t
-    pred _                ≟ iszero _              = no λ ()
-    pred _                ≟ if _ then _ else _    = no λ ()
-    iszero _              ≟ wrong                 = no λ ()
-    iszero _              ≟ true                  = no λ ()
-    iszero _              ≟ false                 = no λ ()
-    iszero _              ≟ zero                  = no λ ()
-    iszero _              ≟ suc _                 = no λ ()
-    iszero _              ≟ pred _                = no λ ()
-    iszero s              ≟ iszero t              with s ≟ t
-    ... | yes refl                                = yes refl
-    ... | no s≢t                                  = no λ where refl → refl ↯ s≢t
-    iszero _              ≟ if _ then _ else _    = no λ ()
-    if _ then _ else _    ≟ wrong                 = no λ ()
-    if _ then _ else _    ≟ true                  = no λ ()
-    if _ then _ else _    ≟ false                 = no λ ()
-    if _ then _ else _    ≟ zero                  = no λ ()
-    if _ then _ else _    ≟ suc _                 = no λ ()
-    if _ then _ else _    ≟ pred _                = no λ ()
-    if _ then _ else _    ≟ iszero _              = no λ ()
-    if s₁ then s₂ else s₃ ≟ if t₁ then t₂ else t₃ with s₁ ≟ t₁ | s₂ ≟ t₂ | s₃ ≟ t₃
-    ... | yes refl | yes refl | yes refl          = yes refl
-    ... | yes refl | yes refl | no s₃≢t₃          = no λ where refl → refl ↯ s₃≢t₃
-    ... | yes refl | no s₂≢t₂ | _                 = no λ where refl → refl ↯ s₂≢t₂
-    ... | no s₁≢t₁ | _        | _                 = no λ where refl → refl ↯ s₁≢t₁
-
-    data _∈_ : Rel₀ Term where
-      suc    : ∀ {t} → t ∈ suc t
-      pred   : ∀ {t} → t ∈ pred t
-      iszero : ∀ {t} → t ∈ iszero t
-      if₁    : ∀ {t₁ t₂ t₃} → t₁ ∈ if t₁ then t₂ else t₃
-      if₂    : ∀ {t₁ t₂ t₃} → t₂ ∈ if t₁ then t₂ else t₃
-      if₃    : ∀ {t₁ t₂ t₃} → t₃ ∈ if t₁ then t₂ else t₃
-
-    _∈*_ : Rel₀ Term
-    _∈*_ = _∈_ *
-
-    _∈*′_ : Rel₀ Term
-    _∈*′_ = _∈_ *′
-
-    BadTerm : Pred₀ Term
-    BadTerm t = wrong ∈* t
-
-    BadTerm′ : Pred₀ Term
-    BadTerm′ t = wrong ∈*′ t
-
-    data BadTermI : Pred₀ Term where
-      wrong  : BadTermI wrong
-      suc    : ∀ {t} → (bt : BadTermI t) → BadTermI (suc t)
-      pred   : ∀ {t} → (bt : BadTermI t) → BadTermI (pred t)
-      iszero : ∀ {t} → (bt : BadTermI t) → BadTermI (iszero t)
-      if₁    : ∀ {t₁ t₂ t₃} → (bt₁ : BadTermI t₁) → BadTermI (if t₁ then t₂ else t₃)
-      if₂    : ∀ {t₁ t₂ t₃} → (bt₂ : BadTermI t₂) → BadTermI (if t₁ then t₂ else t₃)
-      if₃    : ∀ {t₁ t₂ t₃} → (bt₃ : BadTermI t₃) → BadTermI (if t₁ then t₂ else t₃)
-
-    undoI : ∀ {t u} → t ∈ u → ¬ BadTermI u → ¬ BadTermI t
-    undoI suc    ¬bu = λ bt → suc bt ↯ ¬bu
-    undoI pred   ¬bu = λ bt → pred bt ↯ ¬bu
-    undoI iszero ¬bu = λ bt → iszero bt ↯ ¬bu
-    undoI if₁    ¬bu = λ bt₁ → if₁ bt₁ ↯ ¬bu
-    undoI if₂    ¬bu = λ bt₂ → if₂ bt₂ ↯ ¬bu
-    undoI if₃    ¬bu = λ bt₃ → if₃ bt₃ ↯ ¬bu
-
-    data GoodTerm : Pred₀ Term where
-      true         : GoodTerm true
-      false        : GoodTerm false
-      zero         : GoodTerm zero
-      suc          : ∀ {t} → (gt : GoodTerm t) → GoodTerm (suc t)
-      pred         : ∀ {t} → (gt : GoodTerm t) → GoodTerm (pred t)
-      iszero       : ∀ {t} → (gt : GoodTerm t) → GoodTerm (iszero t)
-      if_then_else : ∀ {t₁ t₂ t₃} → (gt₁ : GoodTerm t₁) (gt₂ : GoodTerm t₂) (gt₃ : GoodTerm t₃) →
-                     GoodTerm (if t₁ then t₂ else t₃)
-
-    gt-uniq : ∀ {t} → (gt gt′ : GoodTerm t) → gt ≡ gt′
-    gt-uniq true                       true                          = refl
-    gt-uniq false                      false                         = refl
-    gt-uniq zero                       zero                          = refl
-    gt-uniq (suc gt)                   (suc gt′)                     with gt-uniq gt gt′
-    ... | refl                                                        = refl
-    gt-uniq (pred gt)                  (pred gt′)                    with gt-uniq gt gt′
-    ... | refl                                                       = refl
-    gt-uniq (iszero gt)                (iszero gt′)                  with gt-uniq gt gt′
-    ... | refl                                                       = refl
-    gt-uniq (if gt₁ then gt₂ else gt₃) (if gt₁′ then gt₂′ else gt₃′)
-      with gt-uniq gt₁ gt₁′ | gt-uniq gt₂ gt₂′ | gt-uniq gt₃ gt₃′
-    ... | refl | refl | refl                                         = refl
-
-    gt-undo : ∀ {t u} → t ∈ u → GoodTerm u → GoodTerm t
-    gt-undo suc    (suc gu)                   = gu
-    gt-undo pred   (pred gu)                  = gu
-    gt-undo iszero (iszero gu)                = gu
-    gt-undo if₁    (if gu₁ then gu₂ else gu₃) = gu₁
-    gt-undo if₂    (if gu₁ then gu₂ else gu₃) = gu₂
-    gt-undo if₃    (if gu₁ then gu₂ else gu₃) = gu₃
 
 
 -- NOTE: Continued in Chapter3a.agda
