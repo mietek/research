@@ -279,7 +279,7 @@ prop-a2-find {t} ρₜ (t⟹x ∷⟨ x ⟩ x⟹*wrong) with ρ? x
                               , v , ¬ρᵥ , u⟹v
 
 
--- Then, all that remains to be done is to massage the evidence into the desired form.
+-- Then, all that remains to be done is massaging the evidence into the desired form.
 
 r-wow-id : ∀ {t u} → (ρₜ : Wrongless t) → W[ t ⟹ u ] ≡ W[ o→w (w→o ρₜ) ⟹ u ]
 r-wow-id ρₜ rewrite wow-id ρₜ = refl
