@@ -73,14 +73,6 @@ map : ∀ {a ℓ} {A : Set a} {R : Rel A ℓ} {f : A → A} →
       ∀ {x y} → (R *) x y → (R *) (f x) (f y)
 map {f = f} = Star.gmap f
 
-¬¬snoc : ∀ {a ℓ} {A : Set a} {R : A → A → Set ℓ} →
-         ∀ {x y z} → (R *) x y → R y z → ¬ ¬ ((R *) x z)
-¬¬snoc R*xy Ryz ¬R*xz = (R*xy ++ (Ryz ∷ [])) ↯ ¬R*xz
-
-undo : ∀ {a ℓ} {A : Set a} {R : A → A → Set ℓ} →
-       ∀ {x y z} → R y z → ¬ ((R *) x z) → ¬ ((R *) x y)
-undo Ryz ¬R*xz R*xy = ¬¬snoc R*xy Ryz ¬R*xz
-
 
 ---------------------------------------------------------------------------------------------------------------
 --
@@ -1559,7 +1551,7 @@ private
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- TODO: Clean this up.
+-- We’re going to need to show that certain multi-step reductions are impossible.
 
     ¬rs-numTrue : ∀ {t} → NumericValue t → ¬ (t ⇒* true)
     ¬rs-numTrue zero      (() ∷ _)
