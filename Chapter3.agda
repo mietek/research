@@ -156,8 +156,8 @@ module NumbersAndBooleans-Part1
     suc _                 ≟ false                 = no λ ()
     suc _                 ≟ zero                  = no λ ()
     suc s                 ≟ suc t                 with s ≟ t
-    ... | yes refl                                = yes refl
     ... | no s≢t                                  = no λ where refl → refl ↯ s≢t
+    ... | yes refl                                = yes refl
     suc _                 ≟ pred _                = no λ ()
     suc _                 ≟ iszero _              = no λ ()
     suc _                 ≟ if _ then _ else _    = no λ ()
@@ -166,8 +166,8 @@ module NumbersAndBooleans-Part1
     pred _                ≟ zero                  = no λ ()
     pred _                ≟ suc _                 = no λ ()
     pred s                ≟ pred t                with s ≟ t
-    ... | yes refl                                = yes refl
     ... | no s≢t                                  = no λ where refl → refl ↯ s≢t
+    ... | yes refl                                = yes refl
     pred _                ≟ iszero _              = no λ ()
     pred _                ≟ if _ then _ else _    = no λ ()
     iszero _              ≟ true                  = no λ ()
@@ -176,8 +176,8 @@ module NumbersAndBooleans-Part1
     iszero _              ≟ suc _                 = no λ ()
     iszero _              ≟ pred _                = no λ ()
     iszero s              ≟ iszero t              with s ≟ t
-    ... | yes refl                                = yes refl
     ... | no s≢t                                  = no λ where refl → refl ↯ s≢t
+    ... | yes refl                                = yes refl
     iszero _              ≟ if _ then _ else _    = no λ ()
     if _ then _ else _    ≟ true                  = no λ ()
     if _ then _ else _    ≟ false                 = no λ ()
@@ -1248,14 +1248,14 @@ module NumbersAndBooleansGoWrong
     ρ? false                          = yes false
     ρ? zero                           = yes zero
     ρ? (suc t)                        with ρ? t
-    ... | yes ρₜ                      = yes (suc ρₜ)
     ... | no ¬ρₜ                      = no λ where (suc ρₜ) → ρₜ ↯ ¬ρₜ
+    ... | yes ρₜ                      = yes (suc ρₜ)
     ρ? (pred t)                       with ρ? t
-    ... | yes ρₜ                      = yes (pred ρₜ)
     ... | no ¬ρₜ                      = no λ where (pred ρₜ) → ρₜ ↯ ¬ρₜ
+    ... | yes ρₜ                      = yes (pred ρₜ)
     ρ? (iszero t)                     with ρ? t
-    ... | yes ρₜ                      = yes (iszero ρₜ)
     ... | no ¬ρₜ                      = no λ where (iszero ρₜ) → ρₜ ↯ ¬ρₜ
+    ... | yes ρₜ                      = yes (iszero ρₜ)
     ρ? (if t₁ then t₂ else t₃)        with ρ? t₁ | ρ? t₂ | ρ? t₃
     ... | no ¬ρₜ₁ | _       | _       = no λ where (if ρₜ₁ then ρₜ₂ else ρₜ₃) → ρₜ₁ ↯ ¬ρₜ₁
     ... | yes ρₜ₁ | no ¬ρₜ₂ | _       = no λ where (if ρₜ₁ then ρₜ₂ else ρₜ₃) → ρₜ₂ ↯ ¬ρₜ₂
@@ -1594,7 +1594,7 @@ private
     ... | x⇒*u                       = t⇒x ∷ x⇒*u
 
     lem-a8-pred : ∀ {t u} → (nvᵤ : NumericValue u) → pred t ⇒* u →
-                     (t ⇒* zero × u ≡ zero) ⊎ (t ⇒* suc u)
+                  (t ⇒* zero × u ≡ zero) ⊎ (t ⇒* suc u)
     lem-a8-pred ()      []
     lem-a8-pred zero    (r-predZero ∷ z⇒*z)         = inj₁ (z⇒*z , refl)
     lem-a8-pred (suc _) (r-predZero ∷ () ∷ _)
@@ -1606,18 +1606,18 @@ private
     ... | inj₂ x⇒*su                                = inj₂ (t⇒x ∷ x⇒*su)
 
     lem-a8-iszero : ∀ {t u} → (vᵤ : Value u) → iszero t ⇒* u →
-                     (t ⇒* zero × u ≡ true) ⊎ ((∃ λ x → NumericValue x × t ⇒* suc x) × u ≡ false)
-    lem-a8-iszero vᵤ (r-iszeroZero ∷ [])        = inj₁ ([] , refl)
-    lem-a8-iszero vᵤ (r-iszeroZero ∷ () ∷ _)
-    lem-a8-iszero vᵤ (r-iszeroSuc nvₜ ∷ [])     = inj₂ ((_ , nvₜ , []) , refl)
-    lem-a8-iszero vᵤ (r-iszeroSuc nvₜ ∷ () ∷ _)
-    lem-a8-iszero vᵤ (r-iszero t⇒x ∷ izx⇒*u)  with lem-a8-iszero vᵤ izx⇒*u
-    ... | inj₁ (x⇒*z , refl)                   = inj₁ (t⇒x ∷ x⇒*z , refl)
-    ... | inj₂ ((_ , nvy , x⇒*sy) , refl)      = inj₂ ((_ , nvy , t⇒x ∷ x⇒*sy) , refl)
+                    (t ⇒* zero × u ≡ true) ⊎ ((∃ λ x → NumericValue x × t ⇒* suc x) × u ≡ false)
+    lem-a8-iszero vᵤ       (r-iszeroZero ∷ [])        = inj₁ ([] , refl)
+    lem-a8-iszero vᵤ       (r-iszeroZero ∷ () ∷ _)
+    lem-a8-iszero vᵤ       (r-iszeroSuc nvₜ ∷ [])     = inj₂ ((_ , nvₜ , []) , refl)
+    lem-a8-iszero vᵤ       (r-iszeroSuc nvₜ ∷ () ∷ _)
+    lem-a8-iszero vᵤ       (r-iszero t⇒x ∷ izx⇒*u)  with lem-a8-iszero vᵤ izx⇒*u
+    ... | inj₁ (x⇒*z , refl)                         = inj₁ (t⇒x ∷ x⇒*z , refl)
+    ... | inj₂ ((y , nvy , x⇒*sy) , refl)            = inj₂ ((y , nvy , t⇒x ∷ x⇒*sy) , refl)
     lem-a8-iszero (num ()) []
 
     lem-a8-if : ∀ {t₁ t₂ t₃ u} → (vᵤ : Value u) → if t₁ then t₂ else t₃ ⇒* u →
-                 (t₁ ⇒* true × t₂ ⇒* u) ⊎ (t₁ ⇒* false × t₃ ⇒* u)
+                (t₁ ⇒* true × t₂ ⇒* u) ⊎ (t₁ ⇒* false × t₃ ⇒* u)
     lem-a8-if vᵤ       (r-ifTrue ∷ ift₁t₂t₃⇒*u)    = inj₁ ([] , ift₁t₂t₃⇒*u)
     lem-a8-if vᵤ       (r-ifFalse ∷ ift₁t₂t₃⇒*u)   = inj₂ ([] , ift₁t₂t₃⇒*u)
     lem-a8-if vᵤ       (r-if t₁⇒x₁ ∷ ifx₁t₂t₃⇒*u) with lem-a8-if vᵤ ifx₁t₂t₃⇒*u
@@ -1630,8 +1630,6 @@ private
 --
 -- Proposition A.8.
 -- “If `t ⇒* v` then `t ⇓ v`.”
---
--- This concludes Exercise 3.5.17.
 
     prop-a8 : ∀ {t u} → (vᵤ : Value u) → t ⇒* u → t ⇓ u
     prop-a8 vₜ              []                           = e-val vₜ
@@ -1667,6 +1665,12 @@ private
                                                                        (prop-a8 vᵤ t₂⇒*u)
     ... | inj₂ (x₁⇒*f , t₃⇒*u)                         = e-ifFalse vᵤ (prop-a8 false (t₁⇒x₁ ∷ x₁⇒*f))
                                                                         (prop-a8 vᵤ t₃⇒*u)
+
+
+-- This concludes Exercise 3.5.17.
+
+    prop-a7-a8 : ∀ {t u} → (vᵤ : Value u) → (t ⇓ u) ↔ (t ⇒* u)
+    prop-a7-a8 vᵤ = prop-a7 vᵤ , prop-a8 vᵤ
 
 
 ---------------------------------------------------------------------------------------------------------------
