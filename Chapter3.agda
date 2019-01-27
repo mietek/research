@@ -66,12 +66,20 @@ pattern _∷⟨_⟩_ r y rs = _∷_ {_} {y} {_} r rs
 
 _∷ʳ_ : ∀ {a ℓ} {A : Set a} {R : Rel A ℓ} →
        ∀ {x y z} → (R *) x y → R y z → (R *) x z
-rs ∷ʳ r = rs ++ (r ∷ [])
+R*xy ∷ʳ Ryz = R*xy ++ (Ryz ∷ [])
 
 map : ∀ {a ℓ} {A : Set a} {R : Rel A ℓ} {f : A → A} →
       (∀ {x y} → R x y → R (f x) (f y)) →
       ∀ {x y} → (R *) x y → (R *) (f x) (f y)
 map {f = f} = Star.gmap f
+
+¬¬snoc : ∀ {a ℓ} {A : Set a} {R : A → A → Set ℓ} →
+         ∀ {x y z} → (R *) x y → R y z → ¬ ¬ ((R *) x z)
+¬¬snoc R*xy Ryz ¬R*xz = (R*xy ++ (Ryz ∷ [])) ↯ ¬R*xz
+
+undo : ∀ {a ℓ} {A : Set a} {R : A → A → Set ℓ} →
+       ∀ {x y z} → R y z → ¬ ((R *) x z) → ¬ ((R *) x y)
+undo Ryz ¬R*xz R*xy = ¬¬snoc R*xy Ryz ¬R*xz
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -547,8 +555,7 @@ module BooleansOnly-Part1
     data _⟹_ : Rel₀ Term where
       r-ifTrue  : ∀ {t₂ t₃} → if true then t₂ else t₃ ⟹ t₂
       r-ifFalse : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟹ t₃
-      r-if      : ∀ {t₁ t₂ t₃ u₁} → (t₁⟹u₁ : t₁ ⟹ u₁) →
-                  if t₁ then t₂ else t₃ ⟹ if u₁ then t₂ else t₃
+      r-if      : ∀ {t₁ t₂ t₃ u₁} → t₁ ⟹ u₁ → if t₁ then t₂ else t₃ ⟹ if u₁ then t₂ else t₃
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -678,8 +685,6 @@ module UniquenessOfNormalForms {a ℓ} {A : Set a}
     open NormalForms _⟹_
     open MultiStepReduction _⟹_
 
-    {-# DISPLAY _* _⟹_ = _⟹*_ #-}
-
     ⟹*-unf : ∀ {t u u′} → NormalForm u → NormalForm u′ → t ⟹* u → t ⟹* u′ → u ≡ u′
     ⟹*-unf nfₜ nfₜ′ []               []                  = refl
     ⟹*-unf nfₜ nfᵤ′ []               (t⟹x′ ∷ x′⟹*u′) = t⟹x′ ↯ nfₜ
@@ -706,9 +711,9 @@ module BooleansOnly-Part3
     halt false                    = _ , false , []
     halt (if t₁ then t₂ else t₃)  with halt t₁ | halt t₂ | halt t₃
     ... | _ , true  , t₁⟹*true  | _ , vᵤ₂ , t₂⟹*u₂ | _
-                                  = _ , vᵤ₂ , map r-if t₁⟹*true ++ (r-ifTrue ∷ t₂⟹*u₂)
+                                  = _ , vᵤ₂ , map r-if t₁⟹*true ++ r-ifTrue ∷ t₂⟹*u₂
     ... | _ , false , t₁⟹*false | _                  | _ , vᵤ₃ , t₃⟹*u₃
-                                  = _ , vᵤ₃ , map r-if t₁⟹*false ++ (r-ifFalse ∷ t₃⟹*u₃)
+                                  = _ , vᵤ₃ , map r-if t₁⟹*false ++ r-ifFalse ∷ t₃⟹*u₃
 
     halt′ : ∀ t → ∃ λ u → NormalForm u × t ⟹* u
     halt′ t               with halt t
@@ -747,17 +752,16 @@ module NumbersAndBooleans-Part2
 
     infix 3 _⟹_
     data _⟹_ : Rel₀ Term where
-      r-suc        : ∀ {t u} → (t⟹u : t ⟹ u) → suc t ⟹ suc u
+      r-suc        : ∀ {t u} → t ⟹ u → suc t ⟹ suc u
       r-predZero   : pred zero ⟹ zero
       r-predSuc    : ∀ {t} → (nvₜ : NumericValue t) → pred (suc t) ⟹ t
-      r-pred       : ∀ {t u} → (t⟹u : t ⟹ u) → pred t ⟹ pred u
+      r-pred       : ∀ {t u} → t ⟹ u → pred t ⟹ pred u
       r-iszeroZero : iszero zero ⟹ true
       r-iszeroSuc  : ∀ {t} → (nvₜ : NumericValue t) → iszero (suc t) ⟹ false
-      r-iszero     : ∀ {t u} → (t⟹u : t ⟹ u) → iszero t ⟹ iszero u
+      r-iszero     : ∀ {t u} → t ⟹ u → iszero t ⟹ iszero u
       r-ifTrue     : ∀ {t₂ t₃} → if true then t₂ else t₃ ⟹ t₂
       r-ifFalse    : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟹ t₃
-      r-if         : ∀ {t₁ t₂ t₃ u₁} → (t₁⟹u₁ : t₁ ⟹ u₁) →
-                     if t₁ then t₂ else t₃ ⟹ if u₁ then t₂ else t₃
+      r-if         : ∀ {t₁ t₂ t₃ u₁} → t₁ ⟹ u₁ → if t₁ then t₂ else t₃ ⟹ if u₁ then t₂ else t₃
 
 
 -- Echo of Definition 3.5.6.
@@ -932,8 +936,6 @@ module NumbersAndBooleansGetStuck
     open MultiStepReduction _⟹_ public
     open UniquenessOfNormalForms _⟹_ ⟹-det public
 
-    {-# DISPLAY _* _⟹_ = _⟹*_ #-}
-
 
 -- Echo of Theorem 3.5.12.
 
@@ -962,9 +964,9 @@ module NumbersAndBooleansGetStuck
     ... | _ , stu σᵤ₁              , t₁⟹*u₁    | _                    | _
                                                  = _ , stu (σ-if σᵤ₁) , map r-if t₁⟹*u₁
     ... | _ , val true             , t₁⟹*true  | _ , σ/vᵤ₂ , t₂⟹*u₂ | _
-                                                 = _ , σ/vᵤ₂ , map r-if t₁⟹*true ++  (r-ifTrue ∷ t₂⟹*u₂)
+                                                 = _ , σ/vᵤ₂ , map r-if t₁⟹*true ++ r-ifTrue ∷ t₂⟹*u₂
     ... | _ , val false            , t₁⟹*false | _                    | _ , σ/vᵤ₃ , t₃⟹*u₃
-                                                 = _ , σ/vᵤ₃  , map r-if t₁⟹*false ++ (r-ifFalse ∷ t₃⟹*u₃)
+                                                 = _ , σ/vᵤ₃  , map r-if t₁⟹*false ++ r-ifFalse ∷ t₃⟹*u₃
     ... | _ , val (num zero)       , t₁⟹*zero  | _                    | _
                                                  = _ , stu σ-ifZero , map r-if t₁⟹*zero
     ... | _ , val (num (suc nvᵤ₁)) , t₁⟹*sucu  | _                    | _
@@ -1020,20 +1022,19 @@ module NumbersAndBooleansGoWrong
     infix 3 _⟹_
     data _⟹_ : Rel₀ Term where
       r-sucWrong    : ∀ {t} → (bnₜ : BadNat t) → suc t ⟹ wrong
-      r-suc         : ∀ {t u} → (t⟹u : t ⟹ u) → suc t ⟹ suc u
+      r-suc         : ∀ {t u} → t ⟹ u → suc t ⟹ suc u
       r-predWrong   : ∀ {t} → (bnₜ : BadNat t) → pred t ⟹ wrong
       r-predZero    : pred zero ⟹ zero
       r-predSuc     : ∀ {t} → (nvₜ : NumericValue t) → pred (suc t) ⟹ t
-      r-pred        : ∀ {t u} → (t⟹u : t ⟹ u) → pred t ⟹ pred u
+      r-pred        : ∀ {t u} → t ⟹ u → pred t ⟹ pred u
       r-iszeroWrong : ∀ {t} → (bnₜ : BadNat t) → iszero t ⟹ wrong
       r-iszeroZero  : iszero zero ⟹ true
       r-iszeroSuc   : ∀ {t} → (nvₜ : NumericValue t) → iszero (suc t) ⟹ false
-      r-iszero      : ∀ {t u} → (t⟹u : t ⟹ u) → iszero t ⟹ iszero u
+      r-iszero      : ∀ {t u} → t ⟹ u → iszero t ⟹ iszero u
       r-ifWrong     : ∀ {t₁ t₂ t₃} → (bbₜ₁ : BadBool t₁) → if t₁ then t₂ else t₃ ⟹ wrong
       r-ifTrue      : ∀ {t₂ t₃} → if true then t₂ else t₃ ⟹ t₂
       r-ifFalse     : ∀ {t₂ t₃} → if false then t₂ else t₃ ⟹ t₃
-      r-if          : ∀ {t₁ t₂ t₃ u₁} → (t₁⟹u₁ : t₁ ⟹ u₁) →
-                      if t₁ then t₂ else t₃ ⟹ if u₁ then t₂ else t₃
+      r-if          : ∀ {t₁ t₂ t₃ u₁} → t₁ ⟹ u₁ → if t₁ then t₂ else t₃ ⟹ if u₁ then t₂ else t₃
 
 
 -- Echo of Definition 3.5.6.
@@ -1174,8 +1175,6 @@ module NumbersAndBooleansGoWrong
     open MultiStepReduction _⟹_ public
     open UniquenessOfNormalForms _⟹_ ⟹-det public
 
-    {-# DISPLAY _* _⟹_ = _⟹*_ #-}
-
 
 -- Echo of Theorem 3.5.12.
 
@@ -1205,9 +1204,9 @@ module NumbersAndBooleansGoWrong
     ... | _ , wrong         , t₁⟹*wrong | _                  | _
                                           = _ , wrong , map r-if t₁⟹*wrong ∷ʳ r-ifWrong wrong
     ... | _ , true          , t₁⟹*true  | _ , vᵤ₂ , t₂⟹*u₂ | _
-                                          = _ , vᵤ₂ , map r-if t₁⟹*true ++ (r-ifTrue ∷ t₂⟹*u₂)
+                                          = _ , vᵤ₂ , map r-if t₁⟹*true ++ r-ifTrue ∷ t₂⟹*u₂
     ... | _ , false         , t₁⟹*false | _                  | _ , vᵤ₃ , t₃⟹*u₃
-                                          = _ , vᵤ₃ , map r-if t₁⟹*false ++ (r-ifFalse ∷ t₃⟹*u₃)
+                                          = _ , vᵤ₃ , map r-if t₁⟹*false ++ r-ifFalse ∷ t₃⟹*u₃
     ... | _ , num nvᵤ₁      , t₁⟹*u     | _                  | _
                                           = _ , wrong , map r-if t₁⟹*u ∷ʳ r-ifWrong (num nvᵤ₁)
 
@@ -1238,8 +1237,8 @@ module NumbersAndBooleansGoWrong
 
     data WronglessReds : ∀ {t u} → Pred₀ (t ⟹* u) where
       []  : ∀ {t} → WronglessReds {t} {t} []
-      _∷_ : ∀ {t x u} {t⟹x : t ⟹ x} {x⟹*u : x ⟹* u} →
-            (ρₓ : Wrongless x) (ρrs : WronglessReds x⟹*u) → WronglessReds (t⟹x ∷ x⟹*u)
+      _∷_ : ∀ {t x u} {r : t ⟹ x} {rs : x ⟹* u} →
+            (ρₓ : Wrongless x) (ρrs : WronglessReds rs) → WronglessReds (r ∷ rs)
 
 
 -- The evidence that a term is wrongless is unique.
@@ -1287,8 +1286,8 @@ module NumbersAndBooleansGoWrong
 --
 -- Original terms and reductions can be translated to the augmented system.
 
-module Exercise-3-5-16
-  where
+private
+  module Exercise-3-5-16 where
     open module O = NumbersAndBooleansGetStuck
       renaming (_⟹_ to O[_⟹_] ; _⟹*_ to O[_⟹*_])
 
@@ -1451,7 +1450,7 @@ module Exercise-3-5-16
 -- the original semantics.”
 
     lem-a-5 : ∀ {t u} → ¬ Wrongless u → W[ o→w t ⟹ u ] → O.Stuck t
-    lem-a-5 {t} ¬ρᵤ t⟹u   with O.classify t
+    lem-a-5 {t} ¬ρᵤ t⟹u  with O.classify t
     ... | stu σₜ           = σₜ
     ... | val vₜ           = t⟹u ↯ W.v→nf (ov→wv vₜ)
     ... | red (u , t⟹u′) with W.⟹-det t⟹u (or→wr t⟹u′)
@@ -1526,16 +1525,14 @@ module Exercise-3-5-16
 ---------------------------------------------------------------------------------------------------------------
 --
 -- 3.5.17. Exercise [Recommended, ***]
--- “Two styles of operational semantics are in common use. The one used in this book is called the
--- _small-step_ style, because the definition of the reduction relation shows how individual steps
--- of computation are used to rewrite a term, bit by bit, until it eventually becomes a value.
--- On top of this, we define a multi-step reduction relation that allows us to talk about terms
--- reducing (in many steps) to values.  An alternative style, called _big-step semantics_ (or
--- sometimes _natural semantics_), directly formulates the notion of ‘this term evaluates to that
--- final value,’ written `t ⇓ v`.  The big-step evaluation rules for our language of boolean and
--- arithmetic expressions look like this: …”
--- “Show that the small-step and big-step semantics for this language coincide, i.e.
--- `t ⟹* v` iff `t ⇓ v`.”
+-- “Two styles of operational semantics are in common use. The one used in this book is called the _small-step_
+-- style, because the definition of the reduction relation shows how individual steps of computation are used
+-- to rewrite a term, bit by bit, until it eventually becomes a value.  On top of this, we define a multi-step
+-- reduction relation that allows us to talk about terms reducing (in many steps) to values.  An alternative
+-- style, called _big-step semantics_ (or sometimes _natural semantics_), directly formulates the notion of
+-- ‘this term evaluates to that final value,’ written `t ⇓ v`.  The big-step evaluation rules for our language
+-- of boolean and arithmetic expressions look like this: …”
+-- “Show that the small-step and big-step semantics for this language coincide, i.e. `t ⟹* v` iff `t ⇓ v`.”
 
 
 -- TODO
@@ -1544,9 +1541,9 @@ module Exercise-3-5-16
 ---------------------------------------------------------------------------------------------------------------
 --
 -- 3.5.18. Exercise [⋆⋆ ↛]
--- “Suppose we want to change the evaluation strategy of our language so that the `then` and `else`
--- branches of an `if` expression are evaluated (in that order) _before_ the guard is evaluated.
--- Show how the reduction rules need to change to achieve this effect.”
+-- “Suppose we want to change the evaluation strategy of our language so that the `then` and `else` branches of
+-- an `if` expression are evaluated (in that order) _before_ the guard is evaluated.  Show how the reduction
+-- rules need to change to achieve this effect.”
 -- (skipped)
 
 
