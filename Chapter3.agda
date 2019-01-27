@@ -1618,11 +1618,11 @@ private
 
     lem-a8-if : ∀ {t₁ t₂ t₃ u} → (vᵤ : Value u) → if t₁ then t₂ else t₃ ⇒* u →
                 (t₁ ⇒* true × t₂ ⇒* u) ⊎ (t₁ ⇒* false × t₃ ⇒* u)
-    lem-a8-if vᵤ       (r-ifTrue ∷ ift₁t₂t₃⇒*u)    = inj₁ ([] , ift₁t₂t₃⇒*u)
-    lem-a8-if vᵤ       (r-ifFalse ∷ ift₁t₂t₃⇒*u)   = inj₂ ([] , ift₁t₂t₃⇒*u)
-    lem-a8-if vᵤ       (r-if t₁⇒x₁ ∷ ifx₁t₂t₃⇒*u) with lem-a8-if vᵤ ifx₁t₂t₃⇒*u
-    ... | inj₁ (x₁⇒*t , t₂⇒*u)                    = inj₁ (t₁⇒x₁ ∷ x₁⇒*t , t₂⇒*u)
-    ... | inj₂ (x₁⇒*f , t₃⇒*u)                    = inj₂ (t₁⇒x₁ ∷ x₁⇒*f , t₃⇒*u)
+    lem-a8-if vᵤ       (r-ifTrue ∷ ift₁⇒*u)     = inj₁ ([] , ift₁⇒*u)
+    lem-a8-if vᵤ       (r-ifFalse ∷ ift₁⇒*u)    = inj₂ ([] , ift₁⇒*u)
+    lem-a8-if vᵤ       (r-if t₁⇒x₁ ∷ itex₁⇒*u) with lem-a8-if vᵤ itex₁⇒*u
+    ... | inj₁ (x₁⇒*t , t₂⇒*u)                 = inj₁ (t₁⇒x₁ ∷ x₁⇒*t , t₂⇒*u)
+    ... | inj₂ (x₁⇒*f , t₃⇒*u)                 = inj₂ (t₁⇒x₁ ∷ x₁⇒*f , t₃⇒*u)
     lem-a8-if (num ()) []
 
 
@@ -1632,39 +1632,38 @@ private
 -- “If `t ⇒* v` then `t ⇓ v`.”
 
     prop-a8 : ∀ {t u} → (vᵤ : Value u) → t ⇒* u → t ⇓ u
-    prop-a8 vₜ              []                           = e-val vₜ
-    prop-a8 true            (r-suc _ ∷ sx⇒*t)           = sx⇒*t ↯ ¬rs-sucTrue
-    prop-a8 false           (r-suc _ ∷ sx⇒*f)           = sx⇒*f ↯ ¬rs-sucFalse
-    prop-a8 (num zero)      (r-suc t⇒x ∷ sx⇒*z)        = sx⇒*z ↯ ¬rs-sucZero
-    prop-a8 (num (suc nvᵤ)) (r-suc t⇒x ∷ sx⇒*su)       with lem-a8-suc sx⇒*su
-    ... | x⇒*u                                          = e-suc nvᵤ (prop-a8 (num nvᵤ) (t⇒x ∷ x⇒*u))
-    prop-a8 vᵤ              (r-predZero ∷ [])            = e-predZero (e-val (num zero))
+    prop-a8 vₜ              []                        = e-val vₜ
+    prop-a8 true            (r-suc _ ∷ sx⇒*t)        = sx⇒*t ↯ ¬rs-sucTrue
+    prop-a8 false           (r-suc _ ∷ sx⇒*f)        = sx⇒*f ↯ ¬rs-sucFalse
+    prop-a8 (num zero)      (r-suc t⇒x ∷ sx⇒*z)     = sx⇒*z ↯ ¬rs-sucZero
+    prop-a8 (num (suc nvᵤ)) (r-suc t⇒x ∷ sx⇒*su)    with lem-a8-suc sx⇒*su
+    ... | x⇒*u                                       = e-suc nvᵤ (prop-a8 (num nvᵤ) (t⇒x ∷ x⇒*u))
+    prop-a8 vᵤ              (r-predZero ∷ [])         = e-predZero (e-val (num zero))
     prop-a8 vᵤ              (r-predZero ∷ () ∷ _)
-    prop-a8 true            (r-predSuc nvₜ ∷ t⇒*t)      = t⇒*t ↯ ¬rs-numTrue nvₜ
-    prop-a8 false           (r-predSuc nvₜ ∷ t⇒*f)      = t⇒*f ↯ ¬rs-numFalse nvₜ
-    prop-a8 (num nvᵤ)       (r-predSuc _ ∷ t⇒*u)        = e-predSuc nvᵤ (prop-a8 (num (suc nvᵤ))
-                                                                                  (map r-suc t⇒*u))
-    prop-a8 true            (r-pred t⇒x ∷ px⇒*t)       = px⇒*t ↯ ¬rs-predTrue
-    prop-a8 false           (r-pred t⇒x ∷ px⇒*f)       = px⇒*f ↯ ¬rs-predFalse
-    prop-a8 (num nvᵤ)       (r-pred t⇒x ∷ px⇒*u)       with lem-a8-pred nvᵤ px⇒*u
-    ... | inj₁ (x⇒*z , refl)                            = e-predZero (prop-a8 (num nvᵤ) (t⇒x ∷ x⇒*z))
-    ... | inj₂ (x⇒*su)                                  = e-predSuc nvᵤ (prop-a8 (num (suc nvᵤ))
-                                                                                  (t⇒x ∷ x⇒*su))
-    prop-a8 vᵤ              (r-iszeroZero ∷ [])          = e-iszeroZero (e-val (num zero))
+    prop-a8 true            (r-predSuc nvₜ ∷ t⇒*t)   = t⇒*t ↯ ¬rs-numTrue nvₜ
+    prop-a8 false           (r-predSuc nvₜ ∷ t⇒*f)   = t⇒*f ↯ ¬rs-numFalse nvₜ
+    prop-a8 (num nvᵤ)       (r-predSuc _ ∷ t⇒*u)     = e-predSuc nvᵤ (prop-a8 (num (suc nvᵤ))
+                                                                               (map r-suc t⇒*u))
+    prop-a8 true            (r-pred t⇒x ∷ px⇒*t)    = px⇒*t ↯ ¬rs-predTrue
+    prop-a8 false           (r-pred t⇒x ∷ px⇒*f)    = px⇒*f ↯ ¬rs-predFalse
+    prop-a8 (num nvᵤ)       (r-pred t⇒x ∷ px⇒*u)    with lem-a8-pred nvᵤ px⇒*u
+    ... | inj₁ (x⇒*z , refl)                         = e-predZero (prop-a8 (num nvᵤ) (t⇒x ∷ x⇒*z))
+    ... | inj₂ (x⇒*su)                               = e-predSuc nvᵤ (prop-a8 (num (suc nvᵤ)) (t⇒x ∷ x⇒*su))
+    prop-a8 vᵤ              (r-iszeroZero ∷ [])       = e-iszeroZero (e-val (num zero))
     prop-a8 vᵤ              (r-iszeroZero ∷ () ∷ _)
-    prop-a8 vᵤ              (r-iszeroSuc nvₜ ∷ [])       = e-iszeroSuc nvₜ (e-val (num (suc nvₜ)))
+    prop-a8 vᵤ              (r-iszeroSuc nvₜ ∷ [])    = e-iszeroSuc nvₜ (e-val (num (suc nvₜ)))
     prop-a8 vᵤ              (r-iszeroSuc _ ∷ () ∷ _)
-    prop-a8 vᵤ              (r-iszero t⇒x ∷ izx⇒*u)    with lem-a8-iszero vᵤ izx⇒*u
-    ... | inj₁ (x⇒*z , refl)                            = e-iszeroZero (prop-a8 (num zero) (t⇒x ∷ x⇒*z))
-    ... | inj₂ ((_ , nvy , x⇒*sy) , refl)               = e-iszeroSuc nvy (prop-a8 (num (suc nvy))
-                                                                                    (t⇒x ∷ x⇒*sy))
-    prop-a8 vᵤ              (r-ifTrue ∷ t₂⇒*u)          = e-ifTrue vᵤ (e-val true) (prop-a8 vᵤ t₂⇒*u)
-    prop-a8 vᵤ              (r-ifFalse ∷ t₃⇒*u)         = e-ifFalse vᵤ (e-val false) (prop-a8 vᵤ t₃⇒*u)
-    prop-a8 vᵤ              (r-if t₁⇒x₁ ∷ ifx₁t₂t₃⇒*u) with lem-a8-if vᵤ ifx₁t₂t₃⇒*u
-    ... | inj₁ (x₁⇒*t , t₂⇒*u)                         = e-ifTrue vᵤ (prop-a8 true (t₁⇒x₁ ∷ x₁⇒*t))
-                                                                       (prop-a8 vᵤ t₂⇒*u)
-    ... | inj₂ (x₁⇒*f , t₃⇒*u)                         = e-ifFalse vᵤ (prop-a8 false (t₁⇒x₁ ∷ x₁⇒*f))
-                                                                        (prop-a8 vᵤ t₃⇒*u)
+    prop-a8 vᵤ              (r-iszero t⇒x ∷ izx⇒*u) with lem-a8-iszero vᵤ izx⇒*u
+    ... | inj₁ (x⇒*z , refl)                         = e-iszeroZero (prop-a8 (num zero) (t⇒x ∷ x⇒*z))
+    ... | inj₂ ((_ , nvy , x⇒*sy) , refl)            = e-iszeroSuc nvy (prop-a8 (num (suc nvy))
+                                                                                 (t⇒x ∷ x⇒*sy))
+    prop-a8 vᵤ              (r-ifTrue ∷ t₂⇒*u)       = e-ifTrue vᵤ (e-val true) (prop-a8 vᵤ t₂⇒*u)
+    prop-a8 vᵤ              (r-ifFalse ∷ t₃⇒*u)      = e-ifFalse vᵤ (e-val false) (prop-a8 vᵤ t₃⇒*u)
+    prop-a8 vᵤ              (r-if t₁⇒x₁ ∷ itex₁⇒*u) with lem-a8-if vᵤ itex₁⇒*u
+    ... | inj₁ (x₁⇒*t , t₂⇒*u)                      = e-ifTrue vᵤ (prop-a8 true (t₁⇒x₁ ∷ x₁⇒*t))
+                                                                    (prop-a8 vᵤ t₂⇒*u)
+    ... | inj₂ (x₁⇒*f , t₃⇒*u)                      = e-ifFalse vᵤ (prop-a8 false (t₁⇒x₁ ∷ x₁⇒*f))
+                                                                     (prop-a8 vᵤ t₃⇒*u)
 
 
 -- This concludes Exercise 3.5.17.
