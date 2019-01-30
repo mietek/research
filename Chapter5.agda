@@ -5,8 +5,8 @@ module Chapter5 where
 open import Agda.Builtin.FromString public
   using (IsString ; fromString)
 
-open import Data.Bool public
-  using (Bool ; T ; false ; true)
+-- open import Data.Bool public
+--   using (Bool ; T ; false ; true)
 
 open import Data.String public
   using (String)
@@ -17,13 +17,15 @@ open import Function public
   using (_∘_ ; case_of_)
 
 open import Prelude public
+  hiding (suc ; zero)
+
 open import Prelude-UniqueList public
 open import Prelude-WellFounded public
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- TODO
+-- TODO: Comment this
 
 data Name : Set₀ where
   name : String → Name
@@ -52,6 +54,7 @@ Name-decSetoid = record
 
 module UniqueList-Name = MakeUniqueList (Name-decSetoid)
 
+
 ---------------------------------------------------------------------------------------------------------------
 --
 -- 5. The untyped lambda-calculus
@@ -62,22 +65,28 @@ module UniqueList-Name = MakeUniqueList (Name-decSetoid)
 -- 5.1. Basics
 -- “The syntax of the lambda-calculus comprises just three sorts of terms. …”
 --
--- We skip ahead to Definition 5.3.1 in order to be ready for the preliminary exercises.
+-- TODO: Comment this
 
-module LC-Part1
-  where
-    infixl 7 _$_
-    data Term : Set₀ where
-      `_   : ∀ (x : Name) → Term
-      ƛ_∙_ : ∀ (x : Name) (t : Term) → Term
-      _$_  : ∀ (t₁ t₂ : Term) → Term
+record IsLCLike (Term : Set₀) : Set₀ where
+  infixl 7 _$_
+  field
+    `_   : ∀ (x : Name) → Term
+    ƛ_∙_ : ∀ (x : Name) (t : Term) → Term
+    _$_  : ∀ (t₁ t₂ : Term) → Term
 
-    instance
-      Term-isString : IsString Term
-      Term-isString = record
-        { Constraint = λ s → ⊤
-        ; fromString = λ s → ` name s
-        }
+record LCLike : Set₁ where
+  field
+    Term     : Set₀
+    isLCLike : IsLCLike Term
+
+  open IsLCLike isLCLike public
+
+  instance
+    Term-isString : IsString Term
+    Term-isString = record
+      { Constraint = λ s → ⊤
+      ; fromString = λ s → ` name s
+      }
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -94,6 +103,10 @@ module LC-Part1
 --
 -- • Multiple arguments
 -- • Church booleans
+
+module Church-Part1 (lcLike : LCLike)
+  where
+    open LCLike lcLike
 
     tru  = ƛ "t" ∙ ƛ "f" ∙ "t"
     fls  = ƛ "t" ∙ ƛ "f" ∙ "f"
@@ -191,7 +204,9 @@ module LC-Part1
 -- 5.2.7. Exercise [⋆⋆]
 -- “Write a function `equal` that tests two numbers for equality and returns a Church boolean.”
 
-    equal = ƛ "m" ∙ ƛ "n" ∙ {!!}
+-- TODO
+
+    -- equal = ƛ "m" ∙ ƛ "n" ∙ {!!}
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -203,68 +218,55 @@ module LC-Part1
 -- functions, each taking a list parameter.  Finally, write a `tail` function for this representation of lists
 -- (this is quite a bit harder and requires a trick analogous to the one used to define `prd` for numbers).
 
-    nil   = {!!}
-    cons  = {!!}
-    isnil = {!!}
-    head  = {!!}
+-- TODO
 
-    tail = {!!}
+    -- nil   = {!!}
+    -- cons  = {!!}
+    -- isnil = {!!}
+    -- head  = {!!}
+    --
+    -- tail = {!!}
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
 -- • Enriching the calculus
+--
+-- TODO: Comment this
 
-module LCNB
+record IsLCNBLike (Term : Set₀) : Set₀ where
+  field
+    isLCLike        : IsLCLike Term
+    true false zero : Term
+    suc pred iszero : ∀ (t : Term) → Term
+    if_then_else    : ∀ (t₁ t₂ t₃ : Term) → Term
+
+  open IsLCLike isLCLike public
+
+record LCNBLike : Set₁ where
+  field
+    Term       : Set₀
+    isLCNBLike : IsLCNBLike Term
+
+  open IsLCNBLike isLCNBLike public
+
+  lcLike : LCLike
+  lcLike = record { isLCLike = isLCLike }
+
+  open LCLike lcLike public using (Term-isString)
+
+
+module Church-Part2 (lcnbLike : LCNBLike)
   where
-    infixl 7 _$_
-    data Term : Set₀ where
-      `_   : ∀ (x : Name) → Term
-      ƛ_∙_ : ∀ (x : Name) (t : Term) → Term
-      _$_  : ∀ (t₁ t₂ : Term) → Term
-      true false zero : Term
-      suc pred iszero : ∀ (t : Term) → Term
-      if_then_else    : ∀ (t₁ t₂ t₃ : Term) → Term
-
-    instance
-      Term-isString : IsString Term
-      Term-isString = record
-        { Constraint = λ s → ⊤
-        ; fromString = λ s → ` name s
-        }
-
-    tru   = ƛ "t" ∙ ƛ "f" ∙ "t"
-    fls   = ƛ "t" ∙ ƛ "f" ∙ "f"
-    test  = ƛ "l" ∙ ƛ "m" ∙ ƛ "n" ∙ "l" $ "m" $ "n"
-    and   = ƛ "b" ∙ ƛ "c" ∙ "b" $ "c" $ fls
-    or    = ƛ "b" ∙ ƛ "c" ∙ "b" $ tru $ "c"
-    not   = ƛ "b" ∙ "b" $ fls $ tru
-    pair  = ƛ "f" ∙ ƛ "s" ∙ ƛ "b" ∙ "b" $ "f" $ "s"
-    fst   = ƛ "p" ∙ "p" $ tru
-    snd   = ƛ "p" ∙ "p" $ fls
-    c₀    = ƛ "s" ∙ ƛ "z" ∙ "z"
-    c₁    = ƛ "s" ∙ ƛ "z" ∙ "s" $ "z"
-    c₂    = ƛ "s" ∙ ƛ "z" ∙ "s" $ ("s" $ "z")
-    c₃    = ƛ "s" ∙ ƛ "z" ∙ "s" $ ("s" $ ("s" $ "z"))
-    sc    = ƛ "n" ∙ ƛ "s" ∙ ƛ "z" ∙ "s" $ ("n" $ "s" $ "z")
-    plus  = ƛ "m" ∙ ƛ "n" ∙ ƛ "s" ∙ ƛ "z" ∙ "m" $ "s" $ ("n" $ "s" $ "z")
-    times = ƛ "m" ∙ ƛ "n" ∙ "m" $ (plus $ "n") $ c₀
-    pow   = ƛ "n" ∙ ƛ "k" ∙ "k" $ (times $ "n") $ c₁
-    iszro = ƛ "m" ∙ "m" $ (ƛ "x" ∙ fls) $ tru
-    zz    = pair $ c₀ $ c₀
-    ss    = ƛ "p" ∙ pair $ (snd $ "p") $ (plus $ c₁ $ (snd $ "p"))
-    prd   = ƛ "m" ∙ fst $ ("m" $ ss $ zz)
-    minus = {!!}
-    equal = {!!}
-    nil   = {!!}
-    cons  = {!!}
-    isnil = {!!}
-    head  = {!!}
-    tail  = {!!}
+    open LCNBLike lcnbLike
+    open Church-Part1 lcLike
 
     realbool   = ƛ "b" ∙ "b" $ true $ false
     churchbool = ƛ "b" ∙ if "b" then tru else fls
-    realeq     = ƛ "m" ∙ ƛ "n" ∙ (equal $ "m" $ "n") $ true $ false
+
+-- TODO
+
+    -- realeq     = ƛ "m" ∙ ƛ "n" ∙ (equal $ "m" $ "n") $ true $ false
     realnat    = ƛ "m" ∙ "m" $ (ƛ "x" ∙ suc "x") $ zero
 
 
@@ -275,8 +277,10 @@ module LCNB
     omega = (ƛ "x" ∙ "x" $ "x") $ (ƛ "x" ∙ "x" $ "x")
     fix   = ƛ "f" ∙ (ƛ "x" ∙ "f" $ (ƛ "y" ∙ "x" $ "x" $ "y")) $ (ƛ "x" ∙ "f" $ (ƛ "y" ∙ "x" $ "x" $ "y"))
 
-    g         = ƛ "fct" ∙ ƛ "n" ∙ if realeq $ "n" $ c₀ then c₁ else (times $ "n" $ ("fct" $ (prd $ "n")))
-    factorial = fix $ "g"
+-- TODO
+
+    -- g         = ƛ "fct" ∙ ƛ "n" ∙ if realeq $ "n" $ c₀ then c₁ else (times $ "n" $ ("fct" $ (prd $ "n")))
+    -- factorial = fix $ "g"
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -285,7 +289,9 @@ module LCNB
 -- “Why did we use a primitive `if` in the definition of `g`, instead of the Church-boolean `test` function on
 -- Church booleans?  Show how to define the `factorial` function in terms of `test` rather than `if`.
 
-    factorial2 = {!!}
+-- TODO
+
+    -- factorial2 = {!!}
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -294,7 +300,9 @@ module LCNB
 -- “Define a function `churchnat` that converts a primitive natural number into the corresponding Church
 -- numeral.”
 
-    churchnat = {!!}
+-- TODO
+
+    -- churchnat = {!!}
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -303,7 +311,7 @@ module LCNB
 -- “Use `fix` and the encoding of lists from Exercise 5.2.8 to write a function that sums lists of Church
 -- numbers.”
 
-    sum = {!!}
+    -- sum = {!!}
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -325,14 +333,31 @@ module LCNB
 -- (given above)
 -- “The _size_ of a term `t` can be defined exactly as we did for arithmetic expressions in Definition 3.3.2.”
 
-module LC-Part2
+module LC
   where
-    open LC-Part1 public
+    infixl 7 _$_
+    data Term : Set₀ where
+      `_   : ∀ (x : Name) → Term
+      ƛ_∙_ : ∀ (x : Name) (t : Term) → Term
+      _$_  : ∀ (t₁ t₂ : Term) → Term
 
     size : Term → Nat
     size (` x)     = 1
     size (ƛ x ∙ t) = 1 + size t
     size (t₁ $ t₂) = 1 + (size t₁ + size t₂)
+
+
+-- TODO: Will this be needed?
+
+    LC-lcLike : LCLike
+    LC-lcLike = record
+      { Term = Term
+      ; isLCLike = record
+        { `_   = `_
+        ; ƛ_∙_ = ƛ_∙_
+        ; _$_  = _$_
+        }
+      }
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -425,8 +450,9 @@ module LC-Part2
 -- Unfortunately, ‘as good as total’ is not good enough.  We’re going to need to show that we can always get a
 -- name that is not in a given set of names.
 
-        fresh : UniqueList → Name
-        fresh = {!!}
+        postulate
+          fresh : UniqueList → Name
+        -- fresh = {!!}
 
 ---------------------------------------------------------------------------------------------------------------
 --
@@ -445,11 +471,16 @@ module LC-Part2
         [ x ↦ s ] (t₁ $ t₂)          = ([ x ↦ s ] t₁) $ ([ x ↦ s ] t₂)
 -}
 
+        open import Data.Nat using (suc)
+
         LessSize : Rel₀ Term
         LessSize t u = size t < size u
 
         ls-wf : WellFounded LessSize
         ls-wf = InverseImage.wellFounded size <-wf
+
+        ind-size : ∀ {ℓ} {P : Pred Term ℓ} → InductionPrinciple LessSize P
+        ind-size = inductionPrinciple ls-wf
 
         FewerFVs : Rel₀ Term
         FewerFVs t u = length (fv t) < length (fv u)
@@ -509,24 +540,51 @@ module LC-Part2
         measure-$₂ : ∀ t₁ t₂ → t₂ ⋖ t₁ $ t₂
         measure-$₂ t₁ t₂ = Lexicographic.left (ls-$₂ t₁ t₂)
 
-        ren : ∀ (t : Term) (x : Name) (z : Name) → Σ Term λ t′ → size t ≡ size t′
+        ren : ∀ (t : Term) (x : Name) (z : Name) → ∃ λ t′ → size t ≡ size t′
         ren = ind-measure λ where
           (` y)     h x z → case x ≟ᴺ y of λ where
-            (yes refl) → ` z , refl
-            (no x≢y)   → ` y , refl
+            (yes refl)                        → ` z , refl
+            (no x≢y)                          → ` y , refl
           (ƛ y ∙ t) h x z → case x ≟ᴺ y of λ where
-            (yes refl) → ƛ y ∙ t , refl
-            (no x≢y)   → case h t (measure-ƛ t) x z of λ where
-              (t′ , s≡s′) → ƛ y ∙ t′ , suc & s≡s′
+            (yes refl)                        → ƛ y ∙ t , refl
+            (no x≢y)      → case h t (measure-ƛ t) x z of λ where
+              (t′ , s≡s′)                     → ƛ y ∙ t′ , suc & s≡s′
           (t₁ $ t₂) h x z → case (h t₁ (measure-$₁ t₁ t₂) x z , h t₂ (measure-$₂ t₁ t₂) x z) of λ where
             ((t₁′ , s₁≡s₁′) , (t₂′ , s₂≡s₂′)) → t₁′ $ t₂′ , (λ s₁ s₂ → suc (s₁ + s₂)) & s₁≡s₁′ ⊗ s₂≡s₂′
 
-        measure-ƛ′ : ∀ {x} t t′ → size t ≡ size t′ → t′ ⋖ ƛ x ∙ t
-        measure-ƛ′ t t′ s≡s′ = Lexicographic.left (begin
+        ren′ : ∀ (t : Term) (x : Name) (z : Name) → ∃ λ t′ → size t ≡ size t′
+        ren′ = ind-size λ where
+          (` y)     h x z → case x ≟ᴺ y of λ where
+            (yes refl)                        → ` z , refl
+            (no x≢y)                          → ` y , refl
+          (ƛ y ∙ t) h x z → case x ≟ᴺ y of λ where
+            (yes refl)                        → ƛ y ∙ t , refl
+            (no x≢y)      → case h t ≤-refl x z of λ where
+              (t′ , s≡s′)                     → ƛ y ∙ t′ , suc & s≡s′
+          (t₁ $ t₂) h x z → case (h t₁ (ls-$₁ t₁ t₂) x z , h t₂ (ls-$₂ t₁ t₂) x z) of λ where
+            ((t₁′ , s₁≡s₁′) , (t₂′ , s₂≡s₂′)) → t₁′ $ t₂′ , (λ s₁ s₂ → suc (s₁ + s₂)) & s₁≡s₁′ ⊗ s₂≡s₂′
+
+        ren″ : ∀ (t : Term) (x : Name) (z : Name) → ∃ λ t′ → size t ≡ size t′
+        ren″ (` y)     x z with x ≟ᴺ y
+        ... | yes refl     = ` z , refl
+        ... | no x≢y       = ` y , refl
+        ren″ (ƛ y ∙ t) x z with x ≟ᴺ y
+        ... | yes refl     = ƛ y ∙ t , refl
+        ... | no x≢y       = let (t′ , s≡s′) = ren″ t x z in
+                             ƛ y ∙ t′ , suc & s≡s′
+        ren″ (t₁ $ t₂) x z = let (t₁′ , s₁≡s₁′) = ren″ t₁ x z
+                                 (t₂′ , s₂≡s₂′) = ren″ t₂ x z in
+                             t₁′ $ t₂′ , (λ s₁ s₂ → suc (s₁ + s₂)) & s₁≡s₁′ ⊗ s₂≡s₂′
+
+        ls-ƛ′ : ∀ {x} t t′ → size t ≡ size t′ → size t′ < size (ƛ x ∙ t)
+        ls-ƛ′ t t′ s≡s′ = begin
             suc (size t′)
           ≡⟨ suc & (s≡s′ ⁻¹) ⟩
             suc (size t)
-          ∎)
+          ∎
+
+        measure-ƛ′ : ∀ {x} t t′ → size t ≡ size t′ → t′ ⋖ ƛ x ∙ t
+        measure-ƛ′ {x} t t′ s≡s′ = Lexicographic.left (ls-ƛ′ {x} t t′ s≡s′)
 
         sub : ∀ (t : Term) (x : Name) (s : Term) → Term
         sub = ind-measure λ where
@@ -536,50 +594,74 @@ module LC-Part2
           (ƛ y ∙ t) h x s → case x ≟ᴺ y , fv s T[∌]? x of λ where
             (yes refl , _)            → ƛ y ∙ t
             (no x≢y   , yes T[fvs∌x]) → ƛ y ∙ h t (measure-ƛ t) x s
-            (no x≢y   , no ¬T[fvs∌x]) → let
-                                           z = fresh (fv s ∪ fv t)
-                                         in
-                                           case ren t y z of λ where
-                                             (t′ , s≡s′) → ƛ z ∙ h t′ (measure-ƛ′ t t′ s≡s′) x s
+            (no x≢y   , no ¬T[fvs∌x]) → let z = fresh (fv s ∪ fv t)
+                                            (t′ , s≡s′) = ren t y z in
+                                         ƛ z ∙ h t′ (measure-ƛ′ t t′ s≡s′) x s
           (t₁ $ t₂) h x s             → h t₁ (measure-$₁ t₁ t₂) x s $ h t₂ (measure-$₂ t₁ t₂) x s
 
+        sub′ : ∀ (t : Term) (x : Name) (s : Term) → Term
+        sub′ = ind-size λ where
+          (` y)     h x s → case x ≟ᴺ y of λ where
+            (yes refl)                → s
+            (no x≢y)                  → ` y
+          (ƛ y ∙ t) h x s → case x ≟ᴺ y , fv s T[∌]? x of λ where
+            (yes refl , _)            → ƛ y ∙ t
+            (no x≢y   , yes T[fvs∌x]) → ƛ y ∙ h t ≤-refl x s
+            (no x≢y   , no ¬T[fvs∌x]) → let z = fresh (fv s ∪ fv t)
+                                            (t′ , s≡s′) = ren t y z in
+                                         ƛ z ∙ h t′ (ls-ƛ′ {x} t t′ s≡s′) x s
+          (t₁ $ t₂) h x s             → h t₁ (ls-$₁ t₁ t₂) x s $ h t₂ (ls-$₂ t₁ t₂) x s
+
+        -- NOTE: Still fails termination checking
+        {-
+        sub″ : ∀ (t : Term) (x : Name) (s : Term) → Term
+        sub″ (` y)     x s            with x ≟ᴺ y
+        ... | yes refl                = s
+        ... | no x≢y                  = ` y
+        sub″ (ƛ y ∙ t) x s            with x ≟ᴺ y | fv s T[∌]? x
+        ... | yes refl | _            = ƛ y ∙ t
+        ... | no x≢y   | yes T[fvs∌x] = ƛ y ∙ t
+        ... | no x≢y   | no ¬T[fvs∌x] = let z = fresh (fv s ∪ fv t)
+                                            (t′ , s≡s′) = ren t y z in
+                                         ƛ z ∙ sub″ t′ x s
+        sub″ (t₁ $ t₂) x s            = sub″ t₁ x s $ sub″ t₂ x s
+        -}
 
 
-
--- -- ---------------------------------------------------------------------------------------------------------------
--- -- --
--- -- -- • Operational semantics
--- -- --
-
-
--- -- ---------------------------------------------------------------------------------------------------------------
--- -- --
--- -- -- 5.3.6. Exercise [⋆⋆]
--- -- -- “Adapt these rules to describe the other strategies for evaluation—full beta-reduction, normal-order, and
--- -- -- lazy evaluation.”
--- -- -- TODO
+---------------------------------------------------------------------------------------------------------------
+--
+-- • Operational semantics
+--
 
 
--- -- ---------------------------------------------------------------------------------------------------------------
--- -- --
--- -- -- 5.3.7. Exercise [⋆⋆ ↛]
--- -- -- “Exercise 3.5.16 gave an alternate presentation of the operational semantics of booleans and arithmetic
--- -- -- expressions in which stuck terms are defined to evaluate to a special constant `wrong`.  Extend this
--- -- -- semantics to λNB.”
--- -- -- TODO
+---------------------------------------------------------------------------------------------------------------
+--
+-- 5.3.6. Exercise [⋆⋆]
+-- “Adapt these rules to describe the other strategies for evaluation—full beta-reduction, normal-order, and
+-- lazy evaluation.”
+-- TODO
 
 
--- -- ---------------------------------------------------------------------------------------------------------------
--- -- --
--- -- -- 5.6.8. Exercise [⋆⋆]
--- -- -- “Exercise 4.2.2 introduced a “big-step” style of evaluation for arithmetic expressions, where the basic
--- -- -- evaluation relation is ‘term `t` evaluates to final result `v`’.  Show how to formulate the evaluation rules
--- -- -- for lambda-terms in the big-step style.”
+---------------------------------------------------------------------------------------------------------------
+--
+-- 5.3.7. Exercise [⋆⋆ ↛]
+-- “Exercise 3.5.16 gave an alternate presentation of the operational semantics of booleans and arithmetic
+-- expressions in which stuck terms are defined to evaluate to a special constant `wrong`.  Extend this
+-- semantics to λNB.”
+-- TODO
 
 
--- -- ---------------------------------------------------------------------------------------------------------------
--- -- --
--- -- -- 5.4. Notes
+---------------------------------------------------------------------------------------------------------------
+--
+-- 5.6.8. Exercise [⋆⋆]
+-- “Exercise 4.2.2 introduced a “big-step” style of evaluation for arithmetic expressions, where the basic
+-- evaluation relation is ‘term `t` evaluates to final result `v`’.  Show how to formulate the evaluation rules
+-- for lambda-terms in the big-step style.”
 
 
--- -- ---------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
+--
+-- 5.4. Notes
+
+
+---------------------------------------------------------------------------------------------------------------
