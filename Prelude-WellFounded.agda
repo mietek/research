@@ -2,6 +2,8 @@
 
 module Prelude-WellFounded where
 
+open import Data.Product using (_,_ ; Σ)
+open import Data.Sum using (_⊎_ ; inj₁ ; inj₂)
 open import Function using (_on_)
 open import Level using (_⊔_)
 open import Relation.Binary using (Rel)
@@ -96,18 +98,46 @@ module _ where
 
 
 module Subrelation {a ℓ₁ ℓ₂} {A : Set a} {_<₁_ : Rel A ℓ₁} {_<₂_ : Rel A ℓ₂}
-                   (<₁⇒<₂ : ∀ {x y} → x <₁ y → x <₂ y) where
-  accessible : Accessible _<₂_ ⊆ Accessible _<₁_
-  accessible (access x rs) = access x (λ y y<x → accessible (rs y (<₁⇒<₂ y<x)))
+    (<₁⇒<₂ : ∀ {x y} → x <₁ y → x <₂ y)
+  where
+    accessible : Accessible _<₂_ ⊆ Accessible _<₁_
+    accessible (access x rs) = access x (λ y y<x → accessible (rs y (<₁⇒<₂ y<x)))
 
-  wellFounded : WellFounded _<₂_ → WellFounded _<₁_
-  wellFounded wf = λ x → accessible (wf x)
+    wellFounded : WellFounded _<₂_ → WellFounded _<₁_
+    wellFounded wf = λ x → accessible (wf x)
 
 
 module InverseImage {a b ℓ} {A : Set a} {B : Set b} {_<_ : Rel B ℓ}
-                    (f : A → B) where
-  accessible : ∀ {x} → Accessible _<_ (f x) → Accessible (_<_ on f) x
-  accessible {x} (access fx rs) = access x (λ y fy<fx → accessible (rs (f y) fy<fx))
+    (f : A → B)
+  where
+    accessible : ∀ {x} → Accessible _<_ (f x) → Accessible (_<_ on f) x
+    accessible {x} (access fx rs) = access x (λ y fy<fx → accessible (rs (f y) fy<fx))
 
-  wellFounded : WellFounded _<_ → WellFounded (_<_ on f)
-  wellFounded wf = λ x → accessible (wf (f x))
+    wellFounded : WellFounded _<_ → WellFounded (_<_ on f)
+    wellFounded wf = λ x → accessible (wf (f x))
+
+
+-- TODO: Either clean this up, or just use the stdlib
+
+module Lexicographic {a b ℓ₁ ℓ₂} {A : Set a} {B : A → Set b}
+    (R₁ : Rel A ℓ₁)
+    (R₂ : ∀ x → Rel (B x) ℓ₂)
+  where
+    data _<_ : Rel (Σ A B) (a ⊔ b ⊔ ℓ₁ ⊔ ℓ₂) where
+      left  : ∀ {x y u v} → R₁ x y → (x , u) < (y , v)
+      right : ∀ {x u v} → R₂ x u v → (x , u) < (x , v)
+
+    mutual
+      accessible : ∀ {x y} → Accessible R₁ x →
+                   (∀ {x} → WellFounded (R₂ x)) →
+                   Accessible _<_ (x , y)
+      accessible ax wf = access _ (accessibleBelow ax (wf _) wf)
+
+      accessibleBelow : ∀ {x y} → Accessible R₁ x → Accessible (R₂ x) y →
+                        (∀ {x} → WellFounded (R₂ x)) →
+                        AccessibleBelow _<_ (x , y)
+      accessibleBelow (access x abx) ay             wf (x′ , y′) (left R₁x′x)  = accessible (abx x′ R₁x′x) wf
+      accessibleBelow ax             (access y aby) wf (x′ , y′) (right R₂y′y) = access (x′ , y′) (accessibleBelow ax (aby y′ R₂y′y) wf)
+
+    wellFounded : WellFounded R₁ → (∀ {x} → WellFounded (R₂ x)) → WellFounded _<_
+    wellFounded wf₁ wf₂ = λ where (x , _) → accessible (wf₁ x) wf₂

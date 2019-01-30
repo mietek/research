@@ -66,38 +66,65 @@ module MakeUniqueList {c ℓ} (DS : DecSetoid c ℓ) where
   mutual
     infixl 5 _∪_
     _∪_ : UniqueList → UniqueList → UniqueList
-    []                    ∪ ys = ys
+    []                     ∪ ys = ys
     ((x ∷ xs) {{T[xs∌x]}}) ∪ ys with ys T[∌]? x
     ... | yes T[ys∌x] = (x ∷ (xs ∪ ys)) {{∪-preserves-∌ {xs} T[xs∌x] T[ys∌x]}}
     ... | no ¬T[ys∌x] = xs ∪ ys
 
     ∪-preserves-∌ : ∀ {xs ys z} → T (xs ∌ z) → T (ys ∌ z) → T (xs ∪ ys ∌ z)
-    ∪-preserves-∌ {[]}            tt            T[ys∌z] = T[ys∌z]
-    ∪-preserves-∌ {x′ ∷ xs′} {ys} T[x′≉z∧xs′∌z] T[ys∌z] with T-fst T[x′≉z∧xs′∌z] | T-snd T[x′≉z∧xs′∌z] | ys T[∌]? x′
-    ... | T[x′≉z] | T[xs′∌z] | yes T[ys∌x′] = T-pair T[x′≉z] (∪-preserves-∌ {xs′} T[xs′∌z] T[ys∌z])
-    ... | T[x′≉z] | T[xs′∌z] | no ¬T[ys∌x′] = ∪-preserves-∌ {xs′} T[xs′∌z] T[ys∌z]
+    ∪-preserves-∌ {[]}     {ys} tt          T[ys∌z] = T[ys∌z]
+    ∪-preserves-∌ {x ∷ xs} {ys} T[x≉z∧xs∌z] T[ys∌z] with T-fst T[x≉z∧xs∌z] | T-snd T[x≉z∧xs∌z]
+    ... | T[x≉z] | T[xs∌z]                          with ys T[∌]? x
+    ... | yes T[ys∌x]                               = T-pair T[x≉z] (∪-preserves-∌ {xs} T[xs∌z] T[ys∌z])
+    ... | no ¬T[ys∌x]                               = ∪-preserves-∌ {xs} T[xs∌z] T[ys∌z]
+
+  mutual
+    _∖_ : UniqueList → UniqueList → UniqueList
+    []                     ∖ ys = []
+    ((x ∷ xs) {{T[xs∌x]}}) ∖ ys with ys T[∌]? x
+    ... | yes T[ys∌x] = (x ∷ (xs ∖ ys)) {{∖-preserves-∌ {xs} T[xs∌x] T[ys∌x]}}
+    ... | no ¬T[ys∌x] = xs ∖ ys
+
+    ∖-preserves-∌ : ∀ {xs ys z} → T (xs ∌ z) → T (ys ∌ z) → T (xs ∖ ys ∌ z)
+    ∖-preserves-∌ {[]}     {ys} tt          T[ys∌z] = tt
+    ∖-preserves-∌ {x ∷ xs} {ys} T[x≠z∧xs∌z] T[ys∌z] with T-fst T[x≠z∧xs∌z] | T-snd T[x≠z∧xs∌z]
+    ... | T[x≠z] | T[xs∌z]                          with ys T[∌]? x
+    ... | yes T[ys∌x]                               = T-pair T[x≠z] (∖-preserves-∌ {xs} T[xs∌z] T[ys∌z])
+    ... | no ¬T[ys∌x]                               = ∖-preserves-∌ {xs} T[xs∌z] T[ys∌z]
 
 
   module _ where
     open import Data.Nat using (_≤_ ; s≤s)
     open import Data.Nat.Properties using (≤-refl ; ≤-step)
 
-    length-triangular : (xs ys : UniqueList) → length (xs ∪ ys) ≤ length xs + length ys
+    length-triangular : ∀ xs ys → length (xs ∪ ys) ≤ length xs + length ys
     length-triangular []       ys = ≤-refl
     length-triangular (x ∷ xs) ys with ys T[∌]? x
     ... | yes _ = s≤s (length-triangular xs ys)
     ... | no _  = ≤-step (length-triangular xs ys)
+
+    length-untitled : ∀ xs ys → length (xs ∖ ys) ≤ length xs
+    length-untitled []       ys = ≤-refl
+    length-untitled (x ∷ xs) ys with ys T[∌]? x
+    ... | yes _ = s≤s (length-untitled xs ys)
+    ... | no _  = ≤-step (length-untitled xs ys)
 
 
   module _ where
     open import Data.Nat using (_≤′_ ; ≤′-refl ; ≤′-step)
     open import Data.Nat.Properties using (s≤′s)
 
-    length-triangular′ : (xs ys : UniqueList) → length (xs ∪ ys) ≤′ length xs + length ys
+    length-triangular′ : ∀ xs ys → length (xs ∪ ys) ≤′ length xs + length ys
     length-triangular′ []       ys = ≤′-refl
     length-triangular′ (x ∷ xs) ys with ys T[∌]? x
     ... | yes _ = s≤′s (length-triangular′ xs ys)
     ... | no _  = ≤′-step (length-triangular′ xs ys)
+
+    length-untitled′ : ∀ xs ys → length (xs ∖ ys) ≤′ length xs
+    length-untitled′ []       ys = ≤′-refl
+    length-untitled′ (x ∷ xs) ys with ys T[∌]? x
+    ... | yes _ = s≤′s (length-untitled′ xs ys)
+    ... | no _  = ≤′-step (length-untitled′ xs ys)
 
 
 private

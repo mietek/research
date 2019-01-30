@@ -2,76 +2,8 @@
 
 module Chapter3 where
 
-open import Data.Empty public using (⊥ ; ⊥-elim)
-
-open import Data.List public using (List ; [] ; _∷_)
-
-import Data.Nat as Nat
-open Nat public using (_≤_ ; _<_ ; _+_ ; s≤s ; suc ; zero)
-  renaming (ℕ to Nat)
-
-import Data.Nat.Properties as Nat
-open Nat.≤-Reasoning public
-
-open import Data.Product public using (_×_ ; _,_ ; Σ ; ∃ ; proj₁ ; proj₂)
-
-open import Data.Sum public using (_⊎_ ; inj₁ ; inj₂)
-
-open import Data.Unit public using (⊤ ; tt)
-
-open import Function public using (case_of_)
-
-open import Level public using (_⊔_ ; 0ℓ)
-
-open import Relation.Binary public using (Decidable ; DecSetoid ; Reflexive ; Rel ; Transitive)
-
-import Relation.Binary.PropositionalEquality as PropEq
-open PropEq public using (_≡_ ; _≢_ ; refl ; subst)
-  renaming (cong to _&_ ; sym to _⁻¹)
-
-import Relation.Binary.Construct.Closure.ReflexiveTransitive as Star
-open Star public using ()
-  renaming (Star to _* ; ε to [] ; _◅_ to _∷_ ; _◅◅_ to _++_)
-
-open import Relation.Nullary public using (¬_ ; Dec ; no ; yes)
-
-open import Relation.Nullary.Negation public using (contraposition)
-  renaming (contradiction to _↯_)
-
-open import Relation.Unary public using (Pred)
-
-
----------------------------------------------------------------------------------------------------------------
---
--- TODO: Clean this up
-
-_↔_ : ∀ {a b} → Set a → Set b → Set (a ⊔ b)
-A ↔ B = (A → B) × (B → A)
-
-infixl 8 _⊗_
-_⊗_ : ∀ {a b} {A : Set a} {B : Set b} {f g : A → B} {x y : A} →
-      f ≡ g → x ≡ y → f x ≡ g y
-refl ⊗ refl = refl
-
-coerce : ∀ {ℓ} {A B : Set ℓ} → A → A ≡ B → B
-coerce x refl = x
-
-Pred₀ : ∀ {a} → Set a → Set _
-Pred₀ A = Pred A 0ℓ
-
-Rel₀ : ∀ {a} → Set a → Set _
-Rel₀ A = Rel A 0ℓ
-
-pattern _∷⟨_⟩_ r y rs = _∷_ {_} {y} {_} r rs
-
-_∷ʳ_ : ∀ {a ℓ} {A : Set a} {R : Rel A ℓ} →
-       ∀ {x y z} → (R *) x y → R y z → (R *) x z
-R*xy ∷ʳ Ryz = R*xy ++ (Ryz ∷ [])
-
-map : ∀ {a ℓ} {A : Set a} {R : Rel A ℓ} {f : A → A} →
-      (∀ {x y} → R x y → R (f x) (f y)) →
-      ∀ {x y} → (R *) x y → (R *) (f x) (f y)
-map {f = f} = Star.gmap f
+open import Prelude public
+open import Prelude-UniqueList public
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -92,8 +24,8 @@ module NumbersAndBooleans-Part1
   where
     data Term : Set₀ where
       true false zero : Term
-      suc pred iszero : (t : Term) → Term
-      if_then_else    : (t₁ t₂ t₃ : Term) → Term
+      suc pred iszero : ∀ (t : Term) → Term
+      if_then_else    : ∀ (t₁ t₂ t₃ : Term) → Term
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -128,80 +60,78 @@ module NumbersAndBooleans-Part1
 -- equality on terms.  Therefore, we’re going to show that the built-in Agda equality, `_≡_`, is decidable for
 -- terms.
 
-    open import Prelude-UniqueList public
-
-    _≟_ : Decidable {A = Term} _≡_
-    true                  ≟ true                  = yes refl
-    true                  ≟ false                 = no λ ()
-    true                  ≟ zero                  = no λ ()
-    true                  ≟ suc _                 = no λ ()
-    true                  ≟ pred _                = no λ ()
-    true                  ≟ iszero _              = no λ ()
-    true                  ≟ if _ then _ else _    = no λ ()
-    false                 ≟ true                  = no λ ()
-    false                 ≟ false                 = yes refl
-    false                 ≟ zero                  = no λ ()
-    false                 ≟ suc _                 = no λ ()
-    false                 ≟ pred _                = no λ ()
-    false                 ≟ iszero _              = no λ ()
-    false                 ≟ if _ then _ else _    = no λ ()
-    zero                  ≟ true                  = no λ ()
-    zero                  ≟ false                 = no λ ()
-    zero                  ≟ zero                  = yes refl
-    zero                  ≟ suc _                 = no λ ()
-    zero                  ≟ pred _                = no λ ()
-    zero                  ≟ iszero _              = no λ ()
-    zero                  ≟ if _ then _ else _    = no λ ()
-    suc _                 ≟ true                  = no λ ()
-    suc _                 ≟ false                 = no λ ()
-    suc _                 ≟ zero                  = no λ ()
-    suc s                 ≟ suc t                 with s ≟ t
-    ... | no s≢t                                  = no λ where refl → refl ↯ s≢t
-    ... | yes refl                                = yes refl
-    suc _                 ≟ pred _                = no λ ()
-    suc _                 ≟ iszero _              = no λ ()
-    suc _                 ≟ if _ then _ else _    = no λ ()
-    pred _                ≟ true                  = no λ ()
-    pred _                ≟ false                 = no λ ()
-    pred _                ≟ zero                  = no λ ()
-    pred _                ≟ suc _                 = no λ ()
-    pred s                ≟ pred t                with s ≟ t
-    ... | no s≢t                                  = no λ where refl → refl ↯ s≢t
-    ... | yes refl                                = yes refl
-    pred _                ≟ iszero _              = no λ ()
-    pred _                ≟ if _ then _ else _    = no λ ()
-    iszero _              ≟ true                  = no λ ()
-    iszero _              ≟ false                 = no λ ()
-    iszero _              ≟ zero                  = no λ ()
-    iszero _              ≟ suc _                 = no λ ()
-    iszero _              ≟ pred _                = no λ ()
-    iszero s              ≟ iszero t              with s ≟ t
-    ... | no s≢t                                  = no λ where refl → refl ↯ s≢t
-    ... | yes refl                                = yes refl
-    iszero _              ≟ if _ then _ else _    = no λ ()
-    if _ then _ else _    ≟ true                  = no λ ()
-    if _ then _ else _    ≟ false                 = no λ ()
-    if _ then _ else _    ≟ zero                  = no λ ()
-    if _ then _ else _    ≟ suc _                 = no λ ()
-    if _ then _ else _    ≟ pred _                = no λ ()
-    if _ then _ else _    ≟ iszero _              = no λ ()
-    if s₁ then s₂ else s₃ ≟ if t₁ then t₂ else t₃ with s₁ ≟ t₁ | s₂ ≟ t₂ | s₃ ≟ t₃
-    ... | no s₁≢t₁ | _        | _                 = no λ where refl → refl ↯ s₁≢t₁
-    ... | yes refl | no s₂≢t₂ | _                 = no λ where refl → refl ↯ s₂≢t₂
-    ... | yes refl | yes refl | no s₃≢t₃          = no λ where refl → refl ↯ s₃≢t₃
-    ... | yes refl | yes refl | yes refl          = yes refl
+    _≟ᵀ_ : Decidable {A = Term} _≡_
+    true                  ≟ᵀ true                  = yes refl
+    true                  ≟ᵀ false                 = no λ ()
+    true                  ≟ᵀ zero                  = no λ ()
+    true                  ≟ᵀ suc _                 = no λ ()
+    true                  ≟ᵀ pred _                = no λ ()
+    true                  ≟ᵀ iszero _              = no λ ()
+    true                  ≟ᵀ if _ then _ else _    = no λ ()
+    false                 ≟ᵀ true                  = no λ ()
+    false                 ≟ᵀ false                 = yes refl
+    false                 ≟ᵀ zero                  = no λ ()
+    false                 ≟ᵀ suc _                 = no λ ()
+    false                 ≟ᵀ pred _                = no λ ()
+    false                 ≟ᵀ iszero _              = no λ ()
+    false                 ≟ᵀ if _ then _ else _    = no λ ()
+    zero                  ≟ᵀ true                  = no λ ()
+    zero                  ≟ᵀ false                 = no λ ()
+    zero                  ≟ᵀ zero                  = yes refl
+    zero                  ≟ᵀ suc _                 = no λ ()
+    zero                  ≟ᵀ pred _                = no λ ()
+    zero                  ≟ᵀ iszero _              = no λ ()
+    zero                  ≟ᵀ if _ then _ else _    = no λ ()
+    suc _                 ≟ᵀ true                  = no λ ()
+    suc _                 ≟ᵀ false                 = no λ ()
+    suc _                 ≟ᵀ zero                  = no λ ()
+    suc t                 ≟ᵀ suc u                 with t ≟ᵀ u
+    ... | no t≢u                                   = no λ where refl → refl ↯ t≢u
+    ... | yes refl                                 = yes refl
+    suc _                 ≟ᵀ pred _                = no λ ()
+    suc _                 ≟ᵀ iszero _              = no λ ()
+    suc _                 ≟ᵀ if _ then _ else _    = no λ ()
+    pred _                ≟ᵀ true                  = no λ ()
+    pred _                ≟ᵀ false                 = no λ ()
+    pred _                ≟ᵀ zero                  = no λ ()
+    pred _                ≟ᵀ suc _                 = no λ ()
+    pred t                ≟ᵀ pred u                with t ≟ᵀ u
+    ... | no t≢u                                   = no λ where refl → refl ↯ t≢u
+    ... | yes refl                                 = yes refl
+    pred _                ≟ᵀ iszero _              = no λ ()
+    pred _                ≟ᵀ if _ then _ else _    = no λ ()
+    iszero _              ≟ᵀ true                  = no λ ()
+    iszero _              ≟ᵀ false                 = no λ ()
+    iszero _              ≟ᵀ zero                  = no λ ()
+    iszero _              ≟ᵀ suc _                 = no λ ()
+    iszero _              ≟ᵀ pred _                = no λ ()
+    iszero t              ≟ᵀ iszero u              with t ≟ᵀ u
+    ... | no t≢u                                   = no λ where refl → refl ↯ t≢u
+    ... | yes refl                                 = yes refl
+    iszero _              ≟ᵀ if _ then _ else _    = no λ ()
+    if _ then _ else _    ≟ᵀ true                  = no λ ()
+    if _ then _ else _    ≟ᵀ false                 = no λ ()
+    if _ then _ else _    ≟ᵀ zero                  = no λ ()
+    if _ then _ else _    ≟ᵀ suc _                 = no λ ()
+    if _ then _ else _    ≟ᵀ pred _                = no λ ()
+    if _ then _ else _    ≟ᵀ iszero _              = no λ ()
+    if t₁ then t₂ else t₃ ≟ᵀ if u₁ then u₂ else u₃ with t₁ ≟ᵀ u₁ | t₂ ≟ᵀ u₂ | t₃ ≟ᵀ u₃
+    ... | no t₁≢u₁ | _        | _                  = no λ where refl → refl ↯ t₁≢u₁
+    ... | yes refl | no t₂≢u₂ | _                  = no λ where refl → refl ↯ t₂≢u₂
+    ... | yes refl | yes refl | no t₃≢u₃           = no λ where refl → refl ↯ t₃≢u₃
+    ... | yes refl | yes refl | yes refl           = yes refl
 
     Term-decSetoid : DecSetoid _ _
     Term-decSetoid = record
       { Carrier = Term
       ; _≈_     = _≡_
       ; isDecEquivalence = record
-        { isEquivalence = PropEq.isEquivalence
-        ; _≟_           = _≟_
+        { isEquivalence = ≡-isEquivalence
+        ; _≟_           = _≟ᵀ_
         }
       }
 
-    open module UniqueList-Term = MakeUniqueList (Term-decSetoid) public
+    module UniqueList-Term = MakeUniqueList (Term-decSetoid)
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -209,14 +139,18 @@ module NumbersAndBooleans-Part1
 -- 3.3.1. Definition
 -- “The set of constants appearing in a term `t`, written `consts(t)`, is defined as follows: …”
 
-    consts : Term → UniqueList
-    consts true                    = [ true ]
-    consts false                   = [ false ]
-    consts zero                    = [ zero ]
-    consts (suc t)                 = consts t
-    consts (pred t)                = consts t
-    consts (iszero t)              = consts t
-    consts (if t₁ then t₂ else t₃) = consts t₁ ∪ consts t₂ ∪ consts t₃
+    module _
+      where
+        open UniqueList-Term
+
+        consts : Term → UniqueList
+        consts true                    = [ true ]
+        consts false                   = [ false ]
+        consts zero                    = [ zero ]
+        consts (suc t)                 = consts t
+        consts (pred t)                = consts t
+        consts (iszero t)              = consts t
+        consts (if t₁ then t₂ else t₃) = consts t₁ ∪ consts t₂ ∪ consts t₃
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -241,7 +175,7 @@ module NumbersAndBooleans-Part1
     depth (suc t)                 = 1 + depth t
     depth (pred t)                = 1 + depth t
     depth (iszero t)              = 1 + depth t
-    depth (if t₁ then t₂ else t₃) = 1 + (depth t₁ Nat.⊔ depth t₂ Nat.⊔ depth t₃)
+    depth (if t₁ then t₂ else t₃) = 1 + (depth t₁ ⊔ depth t₂ ⊔ depth t₃)
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -255,21 +189,23 @@ module NumbersAndBooleans-Part1
 
     module Lemma-333-Direct
       where
+        open UniqueList-Term
+
         lem-333 : ∀ t → length (consts t) ≤ size t
-        lem-333 true                    = Nat.≤-refl
-        lem-333 false                   = Nat.≤-refl
-        lem-333 zero                    = Nat.≤-refl
-        lem-333 (suc t)                 = Nat.≤-step (lem-333 t)
-        lem-333 (pred t)                = Nat.≤-step (lem-333 t)
-        lem-333 (iszero t)              = Nat.≤-step (lem-333 t)
-        lem-333 (if t₁ then t₂ else t₃) = Nat.≤-step
+        lem-333 true                    = ≤-refl
+        lem-333 false                   = ≤-refl
+        lem-333 zero                    = ≤-refl
+        lem-333 (suc t)                 = ≤-step (lem-333 t)
+        lem-333 (pred t)                = ≤-step (lem-333 t)
+        lem-333 (iszero t)              = ≤-step (lem-333 t)
+        lem-333 (if t₁ then t₂ else t₃) = ≤-step
           (begin
             length (consts t₁ ∪ consts t₂ ∪ consts t₃)
           ≤⟨ length-triangular (consts t₁ ∪ consts t₂) (consts t₃) ⟩
             length (consts t₁ ∪ consts t₂) + length (consts t₃)
-          ≤⟨ Nat.+-monoˡ-≤ (length (consts t₃)) (length-triangular (consts t₁) (consts t₂)) ⟩
+          ≤⟨ +-monoˡ-≤ (length (consts t₃)) (length-triangular (consts t₁) (consts t₂)) ⟩
             length (consts t₁) + length (consts t₂) + length (consts t₃)
-          ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (lem-333 t₁) (lem-333 t₂)) (lem-333 t₃) ⟩
+          ≤⟨ +-mono-≤ (+-mono-≤ (lem-333 t₁) (lem-333 t₂)) (lem-333 t₃) ⟩
             size t₁ + size t₂ + size t₃
           ∎)
 
@@ -357,22 +293,24 @@ module NumbersAndBooleans-Part1
 
     module Lemma-333-Ind-Struct
       where
+        open UniqueList-Term
+
         lem-333 : ∀ t → length (consts t) ≤ size t
         lem-333 = ind-struct λ where
-          true                    h → Nat.≤-refl
-          false                   h → Nat.≤-refl
-          zero                    h → Nat.≤-refl
-          (suc t)                 h → Nat.≤-step (h t suc)
-          (pred t)                h → Nat.≤-step (h t pred)
-          (iszero t)              h → Nat.≤-step (h t iszero)
-          (if t₁ then t₂ else t₃) h → Nat.≤-step
+          true                    h → ≤-refl
+          false                   h → ≤-refl
+          zero                    h → ≤-refl
+          (suc t)                 h → ≤-step (h t suc)
+          (pred t)                h → ≤-step (h t pred)
+          (iszero t)              h → ≤-step (h t iszero)
+          (if t₁ then t₂ else t₃) h → ≤-step
             (begin
               length (consts t₁ ∪ consts t₂ ∪ consts t₃)
             ≤⟨ length-triangular (consts t₁ ∪ consts t₂) (consts t₃) ⟩
               length (consts t₁ ∪ consts t₂) + length (consts t₃)
-            ≤⟨ Nat.+-monoˡ-≤ (length (consts t₃)) (length-triangular (consts t₁) (consts t₂)) ⟩
+            ≤⟨ +-monoˡ-≤ (length (consts t₃)) (length-triangular (consts t₁) (consts t₂)) ⟩
               length (consts t₁) + length (consts t₂) + length (consts t₃)
-            ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (h t₁ if₁) (h t₂ if₂)) (h t₃ if₃) ⟩
+            ≤⟨ +-mono-≤ (+-mono-≤ (h t₁ if₁) (h t₂ if₂)) (h t₃ if₃) ⟩
               size t₁ + size t₂ + size t₃
             ∎)
 
@@ -386,7 +324,7 @@ module NumbersAndBooleans-Part1
 -- A definition based on well-founded induction.
 
     LessSize : Rel₀ Term
-    LessSize s t = size s < size t
+    LessSize t u = size t < size u
 
     ls-wf : WellFounded LessSize
     ls-wf = InverseImage.wellFounded size <-wf
@@ -399,14 +337,16 @@ module NumbersAndBooleans-Part1
 
     module Lemma-333-Ind-Size
       where
+        open UniqueList-Term
+
         m≤m+n+o : ∀ m n o → m ≤ m + n + o
-        m≤m+n+o m n o = Nat.≤-trans (Nat.m≤m+n m n) (Nat.m≤m+n (m + n) o)
+        m≤m+n+o m n o = ≤-trans (m≤m+n m n) (m≤m+n (m + n) o)
 
         n≤m+n+o : ∀ m n o → n ≤ m + n + o
-        n≤m+n+o m n o = Nat.≤-trans (Nat.n≤m+n m n) (Nat.m≤m+n (m + n) o)
+        n≤m+n+o m n o = ≤-trans (n≤m+n m n) (m≤m+n (m + n) o)
 
         o≤m+n+o : ∀ m n o → o ≤ m + n + o
-        o≤m+n+o m n o = Nat.n≤m+n (m + n) o
+        o≤m+n+o m n o = n≤m+n (m + n) o
 
         ls-if₁ : ∀ t₁ t₂ t₃ → LessSize t₁ (if t₁ then t₂ else t₃)
         ls-if₁ t₁ t₂ t₃ = s≤s (m≤m+n+o (size t₁) (size t₂) (size t₃))
@@ -419,21 +359,21 @@ module NumbersAndBooleans-Part1
 
         lem-333 : ∀ t → length (consts t) ≤ size t
         lem-333 = ind-size λ where
-          true                    h → Nat.≤-refl
-          false                   h → Nat.≤-refl
-          zero                    h → Nat.≤-refl
-          (suc t)                 h → Nat.≤-step (h t Nat.≤-refl)
-          (pred t)                h → Nat.≤-step (h t Nat.≤-refl)
-          (iszero t)              h → Nat.≤-step (h t Nat.≤-refl)
-          (if t₁ then t₂ else t₃) h → Nat.≤-step
+          true                    h → ≤-refl
+          false                   h → ≤-refl
+          zero                    h → ≤-refl
+          (suc t)                 h → ≤-step (h t ≤-refl)
+          (pred t)                h → ≤-step (h t ≤-refl)
+          (iszero t)              h → ≤-step (h t ≤-refl)
+          (if t₁ then t₂ else t₃) h → ≤-step
             (begin
               length (consts t₁ ∪ consts t₂ ∪ consts t₃)
             ≤⟨ length-triangular (consts t₁ ∪ consts t₂) (consts t₃) ⟩
               length (consts t₁ ∪ consts t₂) + length (consts t₃)
-            ≤⟨ Nat.+-monoˡ-≤ (length (consts t₃)) (length-triangular (consts t₁) (consts t₂)) ⟩
+            ≤⟨ +-monoˡ-≤ (length (consts t₃)) (length-triangular (consts t₁) (consts t₂)) ⟩
               length (consts t₁) + length (consts t₂) + length (consts t₃)
-            ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (h t₁ (ls-if₁ t₁ t₂ t₃)) (h t₂ (ls-if₂ t₁ t₂ t₃)))
-                            (h t₃ (ls-if₃ t₁ t₂ t₃)) ⟩
+            ≤⟨ +-mono-≤ (+-mono-≤ (h t₁ (ls-if₁ t₁ t₂ t₃)) (h t₂ (ls-if₂ t₁ t₂ t₃)))
+                        (h t₃ (ls-if₃ t₁ t₂ t₃)) ⟩
               size t₁ + size t₂ + size t₃
             ∎)
 
@@ -447,7 +387,7 @@ module NumbersAndBooleans-Part1
 -- A definition based on well-founded induction.
 
     LessDepth : Rel₀ Term
-    LessDepth s t = depth s < depth t
+    LessDepth t u = depth t < depth u
 
     ld-wf : WellFounded LessDepth
     ld-wf = InverseImage.wellFounded depth <-wf
@@ -460,14 +400,16 @@ module NumbersAndBooleans-Part1
 
     module Lemma-333-Ind-Depth
       where
-        m≤m⊔n⊔o : ∀ m n o → m ≤ m Nat.⊔ n Nat.⊔ o
-        m≤m⊔n⊔o m n o = Nat.≤-trans (Nat.m≤m⊔n m n) (Nat.m≤m⊔n (m Nat.⊔ n) o)
+        open UniqueList-Term
 
-        n≤m⊔n⊔o : ∀ m n o → n ≤ m Nat.⊔ n Nat.⊔ o
-        n≤m⊔n⊔o m n o = Nat.≤-trans (Nat.n≤m⊔n m n) (Nat.m≤m⊔n (m Nat.⊔ n) o)
+        m≤m⊔n⊔o : ∀ m n o → m ≤ m ⊔ n ⊔ o
+        m≤m⊔n⊔o m n o = ≤-trans (m≤m⊔n m n) (m≤m⊔n (m ⊔ n) o)
 
-        o≤m⊔n⊔o : ∀ m n o → o ≤ m Nat.⊔ n Nat.⊔ o
-        o≤m⊔n⊔o m n o = Nat.n≤m⊔n (m Nat.⊔ n) o
+        n≤m⊔n⊔o : ∀ m n o → n ≤ m ⊔ n ⊔ o
+        n≤m⊔n⊔o m n o = ≤-trans (n≤m⊔n m n) (m≤m⊔n (m ⊔ n) o)
+
+        o≤m⊔n⊔o : ∀ m n o → o ≤ m ⊔ n ⊔ o
+        o≤m⊔n⊔o m n o = n≤m⊔n (m ⊔ n) o
 
         ld-if₁ : ∀ t₁ t₂ t₃ → LessDepth t₁ (if t₁ then t₂ else t₃)
         ld-if₁ t₁ t₂ t₃ = s≤s (m≤m⊔n⊔o (depth t₁) (depth t₂) (depth t₃))
@@ -480,21 +422,21 @@ module NumbersAndBooleans-Part1
 
         lem-333 : ∀ t → length (consts t) ≤ size t
         lem-333 = ind-depth λ where
-          true                    h → Nat.≤-refl
-          false                   h → Nat.≤-refl
-          zero                    h → Nat.≤-refl
-          (suc t)                 h → Nat.≤-step (h t Nat.≤-refl)
-          (pred t)                h → Nat.≤-step (h t Nat.≤-refl)
-          (iszero t)              h → Nat.≤-step (h t Nat.≤-refl)
-          (if t₁ then t₂ else t₃) h → Nat.≤-step
+          true                    h → ≤-refl
+          false                   h → ≤-refl
+          zero                    h → ≤-refl
+          (suc t)                 h → ≤-step (h t ≤-refl)
+          (pred t)                h → ≤-step (h t ≤-refl)
+          (iszero t)              h → ≤-step (h t ≤-refl)
+          (if t₁ then t₂ else t₃) h → ≤-step
             (begin
               length (consts t₁ ∪ consts t₂ ∪ consts t₃)
             ≤⟨ length-triangular (consts t₁ ∪ consts t₂) (consts t₃) ⟩
               length (consts t₁ ∪ consts t₂) + length (consts t₃)
-            ≤⟨ Nat.+-monoˡ-≤ (length (consts t₃)) (length-triangular (consts t₁) (consts t₂)) ⟩
+            ≤⟨ +-monoˡ-≤ (length (consts t₃)) (length-triangular (consts t₁) (consts t₂)) ⟩
               length (consts t₁) + length (consts t₂) + length (consts t₃)
-            ≤⟨ Nat.+-mono-≤ (Nat.+-mono-≤ (h t₁ (ld-if₁ t₁ t₂ t₃)) (h t₂ (ld-if₂ t₁ t₂ t₃)))
-                            (h t₃ (ld-if₃ t₁ t₂ t₃)) ⟩
+            ≤⟨ +-mono-≤ (+-mono-≤ (h t₁ (ld-if₁ t₁ t₂ t₃)) (h t₂ (ld-if₂ t₁ t₂ t₃)))
+                        (h t₃ (ld-if₃ t₁ t₂ t₃)) ⟩
               size t₁ + size t₂ + size t₃
             ∎)
 
@@ -511,7 +453,7 @@ module BooleansOnly-Part1
   where
     data Term : Set₀ where
       true false   : Term
-      if_then_else : (t₁ t₂ t₃ : Term) → Term
+      if_then_else : ∀ (t₁ t₂ t₃ : Term) → Term
 
     data Value : Pred₀ Term where
       true  : Value true
@@ -563,10 +505,10 @@ module BooleansOnly-Part1
 module NormalForms {t ℓ} {Term : Set t}
     (_⇒_ : Rel Term ℓ)
   where
-    NormalForm : Pred Term (t ⊔ ℓ)
+    NormalForm : Pred Term (t ⊔ᴸ ℓ)
     NormalForm t = ∀ {u} → ¬ (t ⇒ u)
 
-    Reducible : Pred Term (t ⊔ ℓ)
+    Reducible : Pred Term (t ⊔ᴸ ℓ)
     Reducible t = ∃ λ u → t ⇒ u
 
     nf→¬r : ∀ {t} → NormalForm t → ¬ Reducible t
@@ -653,7 +595,7 @@ module MultiStepReduction {a ℓ} {A : Set a}
     (_⇒_ : Rel A ℓ)
   where
     infix 3 _⇒*_
-    _⇒*_ : Rel A (a ⊔ ℓ)
+    _⇒*_ : Rel A (a ⊔ᴸ ℓ)
     _⇒*_ = _⇒_ *
 
 
@@ -979,8 +921,8 @@ module NumbersAndBooleansGoWrong
   where
     data Term : Set₀ where
       wrong true false zero : Term
-      suc pred iszero       : (t : Term) → Term
-      if_then_else          : (t₁ t₂ t₃ : Term) → Term
+      suc pred iszero       : ∀ (t : Term) → Term
+      if_then_else          : ∀ (t₁ t₂ t₃ : Term) → Term
 
     data NumericValue : Pred₀ Term where
       zero : NumericValue zero
