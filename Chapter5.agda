@@ -482,8 +482,8 @@ module LC-Part2
         size-positive (ƛ x ∙ t) = s≤s z≤n
         size-positive (t₁ $ t₂) = s≤s z≤n
 
-        measure-ƛ : ∀ x t → t ⋖ ƛ x ∙ t
-        measure-ƛ x t = Lexicographic.left ≤-refl
+        measure-ƛ : ∀ {x} t → t ⋖ ƛ x ∙ t
+        measure-ƛ t = Lexicographic.left ≤-refl
 
         ls-$₁ : ∀ t₁ t₂ → size t₁ < size (t₁ $ t₂)
         ls-$₁ t₁ t₂ = ≤-step
@@ -509,19 +509,41 @@ module LC-Part2
         measure-$₂ : ∀ t₁ t₂ → t₂ ⋖ t₁ $ t₂
         measure-$₂ t₁ t₂ = Lexicographic.left (ls-$₂ t₁ t₂)
 
-        sub : Term → Name → Term →  Term
+        ren : ∀ (t : Term) (x : Name) (z : Name) → Σ Term λ t′ → size t ≡ size t′
+        ren = ind-measure λ where
+          (` y)     h x z → case x ≟ᴺ y of λ where
+            (yes refl) → ` z , refl
+            (no x≢y)   → ` y , refl
+          (ƛ y ∙ t) h x z → case x ≟ᴺ y of λ where
+            (yes refl) → ƛ y ∙ t , refl
+            (no x≢y)   → case h t (measure-ƛ t) x z of λ where
+              (t′ , s≡s′) → ƛ y ∙ t′ , suc & s≡s′
+          (t₁ $ t₂) h x z → case (h t₁ (measure-$₁ t₁ t₂) x z , h t₂ (measure-$₂ t₁ t₂) x z) of λ where
+            ((t₁′ , s₁≡s₁′) , (t₂′ , s₂≡s₂′)) → t₁′ $ t₂′ , (λ s₁ s₂ → suc (s₁ + s₂)) & s₁≡s₁′ ⊗ s₂≡s₂′
+
+        measure-ƛ′ : ∀ {x} t t′ → size t ≡ size t′ → t′ ⋖ ƛ x ∙ t
+        measure-ƛ′ t t′ s≡s′ = Lexicographic.left (begin
+            suc (size t′)
+          ≡⟨ suc & (s≡s′ ⁻¹) ⟩
+            suc (size t)
+          ∎)
+
+        sub : ∀ (t : Term) (x : Name) (s : Term) → Term
         sub = ind-measure λ where
           (` y)     h x s → case x ≟ᴺ y of λ where
             (yes refl)                → s
             (no x≢y)                  → ` y
           (ƛ y ∙ t) h x s → case x ≟ᴺ y , fv s T[∌]? x of λ where
             (yes refl , _)            → ƛ y ∙ t
-            (no x≢y   , yes T[fvs∌x]) → ƛ y ∙ h t (measure-ƛ y t) x s
+            (no x≢y   , yes T[fvs∌x]) → ƛ y ∙ h t (measure-ƛ t) x s
             (no x≢y   , no ¬T[fvs∌x]) → let
                                            z = fresh (fv s ∪ fv t)
                                          in
-                                           ƛ z ∙ h (h t (measure-ƛ y t) y (` z)) {!!} x s
+                                           case ren t y z of λ where
+                                             (t′ , s≡s′) → ƛ z ∙ h t′ (measure-ƛ′ t t′ s≡s′) x s
           (t₁ $ t₂) h x s             → h t₁ (measure-$₁ t₁ t₂) x s $ h t₂ (measure-$₂ t₁ t₂) x s
+
+
 
 
 -- -- ---------------------------------------------------------------------------------------------------------------
