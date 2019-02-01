@@ -436,8 +436,9 @@ module Functions
 --
 -- Unfortunately, ‘as good as total’ is not good enough.  We’re going to need to show that we can always get a
 -- name that is not in a given set of names.
---
--- TODO: fresh
+
+
+-- TODO: Write `fresh`.
 
     postulate
       fresh : UniqueList Name → Name
@@ -722,7 +723,7 @@ private
         = _ , vₜ₂ , ε , [x↦t₂]t₁⇒*u
 
 
--- TODO: Rewrite using explicit induction.
+-- TODO: Rewrite `exe568-rtl` using explicit induction.
 
     private
       module NotGood where
