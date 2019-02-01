@@ -453,10 +453,10 @@ module Functions
         [ x ↦ s ] (` y)              with x ≟ᴺ y
         ... | yes refl                = s
         ... | no x≢y                  = ` y
-        [ x ↦ s ] (ƛ y ∙ t)          with x ≟ᴺ y | fv s T[∌]? x
+        [ x ↦ s ] (ƛ y ∙ t)          with x ≟ᴺ y | fv s T⟨∌⟩? x
         ... | yes refl | _            = ƛ y ∙ t
-        ... | no x≢y   | yes T[fvs∌x] = ƛ y ∙ [ x ↦ s ] t
-        ... | no x≢y   | no ¬T[fvs∌x] = let z = fresh (fv s ∪ fv t) in
+        ... | no x≢y   | yes T⟨fvs∌x⟩ = ƛ y ∙ [ x ↦ s ] t
+        ... | no x≢y   | no ¬T⟨fvs∌x⟩ = let z = fresh (fv s ∪ fv t) in
                                         ƛ z ∙ [ x ↦ s ] ([ y ↦ ` z ] t)
         [ x ↦ s ] (t₁ $ t₂)          = ([ x ↦ s ] t₁) $ ([ x ↦ s ] t₂)
 
@@ -478,10 +478,10 @@ module Functions
       (` y)     h x s → case x ≟ᴺ y of λ where
         (yes refl)                → s
         (no x≢y)                  → ` y
-      (ƛ y ∙ t) h x s → case x ≟ᴺ y , fv s T[∌]? x of λ where
+      (ƛ y ∙ t) h x s → case x ≟ᴺ y , fv s T⟨∌⟩? x of λ where
         (yes refl , _)            → ƛ y ∙ t
-        (no x≢y   , yes T[fvs∌x]) → ƛ y ∙ h t (<ˢ-abs x t) x s
-        (no x≢y   , no ¬T[fvs∌x]) → let z = fresh (fv s ∪ fv t) in
+        (no x≢y   , yes T⟨fvs∌x⟩) → ƛ y ∙ h t (<ˢ-abs x t) x s
+        (no x≢y   , no ¬T⟨fvs∌x⟩) → let z = fresh (fv s ∪ fv t) in
                                      let (t′ , s≡s′) = ren t y z in
                                        ƛ z ∙ h t′ (<ˢ-abs′ x t t′ s≡s′) x s
       (t₁ $ t₂) h x s             → h t₁ (<ˢ-app₁ t₁ t₂) x s $ h t₂ (<ˢ-app₂ t₁ t₂) x s
