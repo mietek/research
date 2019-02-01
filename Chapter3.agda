@@ -122,7 +122,7 @@ module NumbersAndBooleans-Part1
 
     instance
       Term-hasDecidableEquality : HasDecidableEquality Term
-      _≟_ {{Term-hasDecidableEquality}} = _≟ᵀ_
+      Term-hasDecidableEquality = record { _≟_ = _≟ᵀ_ }
 
 
 ---------------------------------------------------------------------------------------------------------------

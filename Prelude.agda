@@ -278,7 +278,7 @@ name x ≟ᴺ name y with x String.≟ y
 
 instance
   Name-hasDecidableEquality : HasDecidableEquality Name
-  _≟_ {{Name-hasDecidableEquality}} = _≟ᴺ_
+  Name-hasDecidableEquality = record { _≟_ = _≟ᴺ_ }
 
 instance
   Name-isString : IsString Name

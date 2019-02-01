@@ -385,7 +385,7 @@ module Functions
     ... | yes refl | yes refl = yes refl
 
     Term-hasDecidableEquality : HasDecidableEquality Term
-    _≟_ {{Term-hasDecidableEquality}} = _≟ᵀ_
+    Term-hasDecidableEquality = record { _≟_ = _≟ᵀ_ }
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -610,7 +610,53 @@ module FunctionsGetStuck
 -- 5.3.6. Exercise [⋆⋆]
 -- “Adapt these rules to describe the other strategies for evaluation—full beta-reduction, normal-order, and
 -- lazy evaluation.”
--- (skipped)
+
+module NonDeterministic
+  where
+    open Functions public
+
+    infix 3 _⇒_
+    data _⇒_ : Rel₀ Term where
+      r-app₁   : ∀ {t₁ t₂ u₁} → t₁ ⇒ u₁ → t₁ $ t₂ ⇒ u₁ $ t₂
+      r-app₂   : ∀ {t₁ t₂ u₂} → t₂ ⇒ u₂ → t₁ $ t₂ ⇒ t₁ $ u₂
+      r-appAbs : ∀ {x t₁ t₂} → (ƛ x ∙ t₁) $ t₂ ⇒ [ x ↦ t₂ ] t₁
+
+module NormalOrder
+  where
+    open Functions public
+
+    mutual
+      data NormalForm : Pred₀ Term where
+        ƛ_∙_ : ∀ x {t} → (nfₜ : NormalForm t) → NormalForm (ƛ x ∙ t)
+        nanf : ∀ {t} → (nanfₜ : NonAbstractionNormalForm t) → NormalForm t
+
+      data NonAbstractionNormalForm : Pred₀ Term where
+        !_  : ∀ x → NonAbstractionNormalForm (! x)
+        _$_ : ∀ {t₁ t₂} → (nanfₜ₁ : NonAbstractionNormalForm t₁) (nfₜ₂ : NormalForm t₂) →
+              NonAbstractionNormalForm (t₁ $ t₂)
+
+    data NonAbstraction : Pred₀ Term where
+      !_  : ∀ x → NonAbstraction (! x)
+      _$_ : ∀ t₁ t₂ → NonAbstraction (t₁ $ t₂)
+
+    infix 3 _⇒_
+    data _⇒_ : Rel₀ Term where
+      r-app₁   : ∀ {t₁ t₂ u₁} → (naₜ₁ : NonAbstraction t₁) (naᵤ₁ : NonAbstraction u₁) → t₁ ⇒ u₁ →
+                 t₁ $ t₂ ⇒ u₁ $ t₂
+      r-app₂   : ∀ {t₁ t₂ u₂} → (nanfₜ₁ : NonAbstractionNormalForm t₁) → t₂ ⇒ u₂ → t₁ $ t₂ ⇒ t₁ $ u₂
+      r-appAbs : ∀ {x t₁ t₂} → (ƛ x ∙ t₁) $ t₂ ⇒ [ x ↦ t₂ ] t₁
+
+module CallByName
+  where
+    open Functions public
+
+    data Value : Pred₀ Term where
+      ƛ_∙_ : ∀ (x : Name) (t : Term) → Value (ƛ x ∙ t)
+
+    infix 3 _⇒_
+    data _⇒_ : Rel₀ Term where
+      r-app₁   : ∀ {t₁ t₂ u₁} → t₁ ⇒ u₁ → t₁ $ t₂ ⇒ u₁ $ t₂
+      r-appAbs : ∀ {x t₁ t₂} → (ƛ x ∙ t₁) $ t₂ ⇒ [ x ↦ t₂ ] t₁
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -639,47 +685,64 @@ private
       e-appAbs : ∀ {x t₁ t₂ u₁ u₂ u} → (vᵤ₂ : Value u₂) → t₁ ⇓ ƛ x ∙ u₁ → t₂ ⇓ u₂ → [ x ↦ u₂ ] u₁ ⇓ u →
                  t₁ $ t₂ ⇓ u
 
+
+-- As an exercise, we show that the small-step and big-step semantics coincide.
+
     exe568-ltr : ∀ {t u} → (vᵤ : Value u) → t ⇓ u → t ⇒* u
     exe568-ltr vᵤ (e-val vₜ)
-      = ε
+        = ε
     exe568-ltr vᵤ (e-appAbs vᵤ₂ t₁⇓ƛx∙u₁ t₂⇓u₂ [x↦u₂]u₁⇓u)
-      = rs-app₁ (exe568-ltr (ƛ _ ∙ _) t₁⇓ƛx∙u₁) ◅◅
-        rs-app₂ (ƛ _ ∙ _) (exe568-ltr vᵤ₂ t₂⇓u₂) ◅◅
-        rs-appAbs vᵤ₂ ◅◅
-        (exe568-ltr vᵤ [x↦u₂]u₁⇓u)
+        = rs-app₁ (exe568-ltr (ƛ _ ∙ _) t₁⇓ƛx∙u₁) ◅◅
+          rs-app₂ (ƛ _ ∙ _) (exe568-ltr vᵤ₂ t₂⇓u₂) ◅◅
+          rs-appAbs vᵤ₂ ◅◅
+          (exe568-ltr vᵤ [x↦u₂]u₁⇓u)
 
-{-
-    lem₁ : ∀ {t₁ t₂ u} → (vᵤ : Value u) → t₁ $ t₂ ⇒* u →
-           ∃ λ x → ∃ λ u₁ → ∃ λ u₂ → Value u₂ × t₁ ⇒* ƛ x ∙ u₁ × t₂ ⇒* u₂ × [ x ↦ u₂ ] u₁ ⇒* u
-    lem₁ vᵤ t₁$t₂⇒*u = {!!}
+    lem-app₁ : ∀ {t₁ t₂ u} → (vᵤ : Value u) → t₁ $ t₂ ⇒* u →
+               ∃ λ x → ∃ λ u₁ → ∃ λ u₂ → Value u₂ × t₁ ⇒* ƛ x ∙ u₁ × t₂ ⇒* u₂ × [ x ↦ u₂ ] u₁ ⇒* u
+    lem-app₁ () ε
+    lem-app₁ vᵤ (r-app₁ t₁⇒i₁ ◅ i₁$t₂⇒*u) with lem-app₁ vᵤ i₁$t₂⇒*u
+    ... | x , u₁ , u₂ , vᵤ₂ , i₁⇒*ƛx∙u₁          , t₂⇒*u₂ , [x↦u₂]u₁⇒*u
+        = x , u₁ , u₂ , vᵤ₂ , t₁⇒i₁ ◅ i₁⇒*ƛx∙u₁ , t₂⇒*u₂ , [x↦u₂]u₁⇒*u
+    lem-app₁ vᵤ (r-app₂ vₜ₁ t₂⇒i₂ ◅ t₁$i₂⇒*u) with lem-app₁ vᵤ t₁$i₂⇒*u
+    ... | x , u₁ , u₂ , vᵤ₂ , t₁⇒*ƛx∙u₁ , i₂⇒*u₂          , [x↦u₂]u₁⇒*u
+        = x , u₁ , u₂ , vᵤ₂ , t₁⇒*ƛx∙u₁ , t₂⇒i₂ ◅ i₂⇒*u₂ , [x↦u₂]u₁⇒*u
+    lem-app₁ vᵤ (r-appAbs {x} {t₁} vₜ₂ ◅ [x↦t₂]t₁⇒*u)
+        = x , t₁ , _ , vₜ₂ , ε , ε , [x↦t₂]t₁⇒*u
 
-    lem₂ : ∀ {x t₂ u u₁} → (vᵤ : Value u) → ƛ x ∙ u₁ $ t₂ ⇒* u →
-           ∃ λ u₂ → Value u₂ × t₂ ⇒* u₂ × [ x ↦ u₂ ] u₁ ⇒* u
-    lem₂ vᵤ ƛx∙u₁$t₂⇒*u = {!!}
+    lem-app₂ : ∀ {x t₂ u u₁} → (vᵤ : Value u) → ƛ x ∙ u₁ $ t₂ ⇒* u →
+               ∃ λ u₂ → Value u₂ × t₂ ⇒* u₂ × [ x ↦ u₂ ] u₁ ⇒* u
+    lem-app₂ () ε
+    lem-app₂ vᵤ (r-app₁ () ◅ _)
+    lem-app₂ vᵤ (r-app₂ vₜ₁ t₂⇒i₂ ◅ t₁$i₂⇒*u) with lem-app₂ vᵤ t₁$i₂⇒*u
+    ... | u₂ , vᵤ₂ , i₂⇒*u₂ , [x↦u₂]t₁⇒*u
+        = u₂ , vᵤ₂ , t₂⇒i₂ ◅ i₂⇒*u₂ , [x↦u₂]t₁⇒*u
+    lem-app₂ vᵤ (r-appAbs vₜ₂ ◅ [x↦t₂]t₁⇒*u)
+        = _ , vₜ₂ , ε , [x↦t₂]t₁⇒*u
 
-    private
-      module NotGood where
---        {-# TERMINATING #-}
-        exe568-rtl : ∀ {t u} → (vᵤ : Value u) → t ⇒* u → t ⇓ u
-        exe568-rtl vᵤ ε
-          = e-val vᵤ
-        exe568-rtl vᵤ (r-app₁ t₁⇒i₁ ◅ i₁$t₂⇒*u)
-          with lem₁ vᵤ i₁$t₂⇒*u
-        ... | x , u₁ , u₂ , vᵤ₂ , i₁⇒*ƛx∙u₁ , t₂⇒*u₂ , [x↦u₂]u₁⇒*u
-          = e-appAbs vᵤ₂ (exe568-rtl (ƛ _ ∙ _) (t₁⇒i₁ ◅ i₁⇒*ƛx∙u₁))
-                         (exe568-rtl vᵤ₂ t₂⇒*u₂)
-                         {!exe568-rtl vᵤ [x↦u₂]u₁⇒*u!}
-        exe568-rtl vᵤ (r-app₂ vₜ₁@(ƛ _ ∙ _) t₂⇒i₂ ◅ t₁$i₂⇒*u)
-          with lem₂ vᵤ t₁$i₂⇒*u
-        ... | u₂ , vᵤ₂ , i₂⇒*u₂ , [x↦u₂]u₁⇒*u
-          = e-appAbs vᵤ₂ (e-val vₜ₁)
-                         (exe568-rtl vᵤ₂ (t₂⇒i₂ ◅ i₂⇒*u₂))
-                         {!exe568-rtl vᵤ [x↦u₂]u₁⇒*u!}
-        exe568-rtl vᵤ (r-appAbs vₜ₂ ◅ [x↦t₂]t₁⇒*u)
-          = e-appAbs vₜ₂ (e-val (ƛ _ ∙ _))
-                         (e-val vₜ₂)
-                         {!exe568-rtl vᵤ [x↦t₂]t₁⇒*u!}
--}
+
+-- TODO: Rewrite using explicit induction.
+
+    {-# TERMINATING #-}
+    exe568-rtl : ∀ {t u} → (vᵤ : Value u) → t ⇒* u → t ⇓ u
+    exe568-rtl vᵤ ε
+        = e-val vᵤ
+    exe568-rtl vᵤ (r-app₁ t₁⇒i₁ ◅ i₁$t₂⇒*u) with lem-app₁ vᵤ i₁$t₂⇒*u
+    ... | x , u₁ , u₂ , vᵤ₂ , i₁⇒*ƛx∙u₁ , t₂⇒*u₂ , [x↦u₂]u₁⇒*u
+        = e-appAbs vᵤ₂ (exe568-rtl (ƛ _ ∙ _) (t₁⇒i₁ ◅ i₁⇒*ƛx∙u₁))
+                       (exe568-rtl vᵤ₂ t₂⇒*u₂)
+                       (exe568-rtl vᵤ [x↦u₂]u₁⇒*u)
+    exe568-rtl vᵤ (r-app₂ vₜ₁@(ƛ _ ∙ _) t₂⇒i₂ ◅ t₁$i₂⇒*u) with lem-app₂ vᵤ t₁$i₂⇒*u
+    ... | u₂ , vᵤ₂ , i₂⇒*u₂ , [x↦u₂]u₁⇒*u
+        = e-appAbs vᵤ₂ (e-val vₜ₁)
+                       (exe568-rtl vᵤ₂ (t₂⇒i₂ ◅ i₂⇒*u₂))
+                       (exe568-rtl vᵤ [x↦u₂]u₁⇒*u)
+    exe568-rtl vᵤ (r-appAbs vₜ₂ ◅ [x↦t₂]t₁⇒*u)
+        = e-appAbs vₜ₂ (e-val (ƛ _ ∙ _))
+                       (e-val vₜ₂)
+                       (exe568-rtl vᵤ [x↦t₂]t₁⇒*u)
+
+    exe568 : ∀ {t u} → (vᵤ : Value u) → (t ⇓ u) ↔ (t ⇒* u)
+    exe568 vᵤ = exe568-ltr vᵤ , exe568-rtl vᵤ
 
 
 ---------------------------------------------------------------------------------------------------------------
