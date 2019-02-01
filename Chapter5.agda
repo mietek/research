@@ -621,6 +621,7 @@ module NonDeterministic
       r-app₂   : ∀ {t₁ t₂ u₂} → t₂ ⇒ u₂ → t₁ $ t₂ ⇒ t₁ $ u₂
       r-appAbs : ∀ {x t₁ t₂} → (ƛ x ∙ t₁) $ t₂ ⇒ [ x ↦ t₂ ] t₁
 
+
 module NormalOrder
   where
     open Functions public
@@ -645,6 +646,7 @@ module NormalOrder
                  t₁ $ t₂ ⇒ u₁ $ t₂
       r-app₂   : ∀ {t₁ t₂ u₂} → (nanfₜ₁ : NonAbstractionNormalForm t₁) → t₂ ⇒ u₂ → t₁ $ t₂ ⇒ t₁ $ u₂
       r-appAbs : ∀ {x t₁ t₂} → (ƛ x ∙ t₁) $ t₂ ⇒ [ x ↦ t₂ ] t₁
+
 
 module CallByName
   where
@@ -722,27 +724,29 @@ private
 
 -- TODO: Rewrite using explicit induction.
 
-    {-# TERMINATING #-}
-    exe568-rtl : ∀ {t u} → (vᵤ : Value u) → t ⇒* u → t ⇓ u
-    exe568-rtl vᵤ ε
-        = e-val vᵤ
-    exe568-rtl vᵤ (r-app₁ t₁⇒i₁ ◅ i₁$t₂⇒*u) with lem-app₁ vᵤ i₁$t₂⇒*u
-    ... | x , u₁ , u₂ , vᵤ₂ , i₁⇒*ƛx∙u₁ , t₂⇒*u₂ , [x↦u₂]u₁⇒*u
-        = e-appAbs vᵤ₂ (exe568-rtl (ƛ _ ∙ _) (t₁⇒i₁ ◅ i₁⇒*ƛx∙u₁))
-                       (exe568-rtl vᵤ₂ t₂⇒*u₂)
-                       (exe568-rtl vᵤ [x↦u₂]u₁⇒*u)
-    exe568-rtl vᵤ (r-app₂ vₜ₁@(ƛ _ ∙ _) t₂⇒i₂ ◅ t₁$i₂⇒*u) with lem-app₂ vᵤ t₁$i₂⇒*u
-    ... | u₂ , vᵤ₂ , i₂⇒*u₂ , [x↦u₂]u₁⇒*u
-        = e-appAbs vᵤ₂ (e-val vₜ₁)
-                       (exe568-rtl vᵤ₂ (t₂⇒i₂ ◅ i₂⇒*u₂))
-                       (exe568-rtl vᵤ [x↦u₂]u₁⇒*u)
-    exe568-rtl vᵤ (r-appAbs vₜ₂ ◅ [x↦t₂]t₁⇒*u)
-        = e-appAbs vₜ₂ (e-val (ƛ _ ∙ _))
-                       (e-val vₜ₂)
-                       (exe568-rtl vᵤ [x↦t₂]t₁⇒*u)
+    private
+      module NotGood where
+        {-# TERMINATING #-}
+        exe568-rtl : ∀ {t u} → (vᵤ : Value u) → t ⇒* u → t ⇓ u
+        exe568-rtl vᵤ ε
+            = e-val vᵤ
+        exe568-rtl vᵤ (r-app₁ t₁⇒i₁ ◅ i₁$t₂⇒*u) with lem-app₁ vᵤ i₁$t₂⇒*u
+        ... | x , u₁ , u₂ , vᵤ₂ , i₁⇒*ƛx∙u₁ , t₂⇒*u₂ , [x↦u₂]u₁⇒*u
+            = e-appAbs vᵤ₂ (exe568-rtl (ƛ _ ∙ _) (t₁⇒i₁ ◅ i₁⇒*ƛx∙u₁))
+                           (exe568-rtl vᵤ₂ t₂⇒*u₂)
+                           (exe568-rtl vᵤ [x↦u₂]u₁⇒*u)
+        exe568-rtl vᵤ (r-app₂ vₜ₁@(ƛ _ ∙ _) t₂⇒i₂ ◅ t₁$i₂⇒*u) with lem-app₂ vᵤ t₁$i₂⇒*u
+        ... | u₂ , vᵤ₂ , i₂⇒*u₂ , [x↦u₂]u₁⇒*u
+            = e-appAbs vᵤ₂ (e-val vₜ₁)
+                           (exe568-rtl vᵤ₂ (t₂⇒i₂ ◅ i₂⇒*u₂))
+                           (exe568-rtl vᵤ [x↦u₂]u₁⇒*u)
+        exe568-rtl vᵤ (r-appAbs vₜ₂ ◅ [x↦t₂]t₁⇒*u)
+            = e-appAbs vₜ₂ (e-val (ƛ _ ∙ _))
+                           (e-val vₜ₂)
+                           (exe568-rtl vᵤ [x↦t₂]t₁⇒*u)
 
-    exe568 : ∀ {t u} → (vᵤ : Value u) → (t ⇓ u) ↔ (t ⇒* u)
-    exe568 vᵤ = exe568-ltr vᵤ , exe568-rtl vᵤ
+        exe568 : ∀ {t u} → (vᵤ : Value u) → (t ⇓ u) ↔ (t ⇒* u)
+        exe568 vᵤ = exe568-ltr vᵤ , exe568-rtl vᵤ
 
 
 ---------------------------------------------------------------------------------------------------------------
