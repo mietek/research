@@ -617,8 +617,8 @@ module FunctionsGetStuck
 -- “Adapt these rules to describe the other strategies for evaluation—full beta-reduction, normal-order, and
 -- lazy evaluation.”
 --
--- It appears that the solution included in the book is missing the `r-abs` congruence rule, in the full
--- β-reduction part.
+-- In some printings, the solution included in the book is missing the `r-abs` congruence rule, both for full
+-- β-reduction and for normal order reduction.
 
 module Strategy-FullBetaReduction
   where
@@ -657,6 +657,7 @@ module Strategy-NormalOrder
       r-app₁   : ∀ {t₁ t₂ u₁} → (naₜ₁ : NonAbstraction t₁) (naᵤ₁ : NonAbstraction u₁) → t₁ ⇒ u₁ →
                  t₁ $ t₂ ⇒ u₁ $ t₂
       r-app₂   : ∀ {t₁ t₂ u₂} → (nanfₜ₁ : NonAbstractionNormalForm t₁) → t₂ ⇒ u₂ → t₁ $ t₂ ⇒ t₁ $ u₂
+      r-abs    : ∀ {x t u} → t ⇒ u → ƛ x ∙ t ⇒ ƛ x ∙ u
       r-appAbs : ∀ {x t₁ t₂} → (ƛ x ∙ t₁) $ t₂ ⇒ [ x ↦ t₂ ] t₁
 
     open Chapter3.NormalForms _⇒_ public
@@ -664,7 +665,7 @@ module Strategy-NormalOrder
 
     mutual
       nf→nnf : ∀ {t} → NormalForm t → NegativeNormalForm t
-      nf→nnf (ƛ _ ∙ _)    = λ ()
+      nf→nnf (ƛ _ ∙ nfₜ)  = λ where (r-abs t⇒u) → t⇒u ↯ nf→nnf nfₜ
       nf→nnf (nanf nanfₜ) = nanf→nnf nanfₜ
 
       nanf→nnf : ∀ {t} → NonAbstractionNormalForm t → NegativeNormalForm t
@@ -681,6 +682,7 @@ module Strategy-NormalOrder
     ⇒-det (r-app₂ nanfₜ₁ _)   (r-app₁ _ _ t₁⇒u₁′) = t₁⇒u₁′ ↯ nanf→nnf nanfₜ₁
     ⇒-det (r-app₂ _ t₂⇒u₂)   (r-app₂ _ t₂⇒u₂′)   = (_ $_) & ⇒-det t₂⇒u₂ t₂⇒u₂′
     ⇒-det (r-app₂ () _)       r-appAbs
+    ⇒-det (r-abs t⇒u)        (r-abs t⇒u′)        = (ƛ _ ∙_) & ⇒-det t⇒u t⇒u′
     ⇒-det r-appAbs            (r-app₁ () _ _)
     ⇒-det r-appAbs            (r-app₂ () _)
     ⇒-det r-appAbs            r-appAbs             = refl
