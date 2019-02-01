@@ -612,7 +612,7 @@ module FunctionsGetStuck
 -- “Adapt these rules to describe the other strategies for evaluation—full beta-reduction, normal-order, and
 -- lazy evaluation.”
 
-module NonDeterministic
+module Strategy-FullBetaReduction
   where
     open Functions public
 
@@ -623,7 +623,7 @@ module NonDeterministic
       r-appAbs : ∀ {x t₁ t₂} → (ƛ x ∙ t₁) $ t₂ ⇒ [ x ↦ t₂ ] t₁
 
 
-module NormalOrder
+module Strategy-NormalOrder
   where
     open Functions public
 
@@ -649,12 +649,9 @@ module NormalOrder
       r-appAbs : ∀ {x t₁ t₂} → (ƛ x ∙ t₁) $ t₂ ⇒ [ x ↦ t₂ ] t₁
 
 
-module CallByName
+module Strategy-Lazy
   where
     open Functions public
-
-    data Value : Pred₀ Term where
-      ƛ_∙_ : ∀ (x : Name) (t : Term) → Value (ƛ x ∙ t)
 
     infix 3 _⇒_
     data _⇒_ : Rel₀ Term where
