@@ -225,24 +225,25 @@ module _ {a} {A : Set a} {{_ : HasDecidableEquality A}}
     _T⟨∌⟩?_ : T-Decidable (_∌_ {A = A})
     xs T⟨∌⟩? x = T-decide
 
-    module OperatorWith
-        (∅○ys               : UniqueList A → UniqueList A)
-        (T⟨ys∌z⟩→T⟨∅○ys∌z⟩ : ∀ {ys z} → T (ys ∌ z) → T (∅○ys ys ∌ z))
-      where
-        mutual
-          infixl 5 _○_
-          _○_ : UniqueList A → UniqueList A → UniqueList A
-          []                     ○ ys = ∅○ys ys
-          ((x ∷ xs) {{T⟨xs∌x⟩}}) ○ ys with ys T⟨∌⟩? x
-          ... | yes T⟨ys∌x⟩ = (x ∷ (xs ○ ys)) {{○-preserves-∌ {xs} T⟨xs∌x⟩ T⟨ys∌x⟩}}
-          ... | no ¬T⟨ys∌x⟩ = xs ○ ys
+    private
+      module OperatorWith
+          (∅○ys               : UniqueList A → UniqueList A)
+          (T⟨ys∌z⟩→T⟨∅○ys∌z⟩ : ∀ {ys z} → T (ys ∌ z) → T (∅○ys ys ∌ z))
+        where
+          mutual
+            infixl 5 _○_
+            _○_ : UniqueList A → UniqueList A → UniqueList A
+            []                     ○ ys = ∅○ys ys
+            ((x ∷ xs) {{T⟨xs∌x⟩}}) ○ ys with ys T⟨∌⟩? x
+            ... | yes T⟨ys∌x⟩ = (x ∷ (xs ○ ys)) {{○-preserves-∌ {xs} T⟨xs∌x⟩ T⟨ys∌x⟩}}
+            ... | no ¬T⟨ys∌x⟩ = xs ○ ys
 
-          ○-preserves-∌ : ∀ {xs ys z} → T (xs ∌ z) → T (ys ∌ z) → T (xs ○ ys ∌ z)
-          ○-preserves-∌ {[]}     {ys} tt          T⟨ys∌z⟩ = T⟨ys∌z⟩→T⟨∅○ys∌z⟩ T⟨ys∌z⟩
-          ○-preserves-∌ {x ∷ xs} {ys} T⟨x≉z∧xs∌z⟩ T⟨ys∌z⟩ with T-fst T⟨x≉z∧xs∌z⟩ | T-snd T⟨x≉z∧xs∌z⟩
-          ... | T⟨x≉z⟩ | T⟨xs∌z⟩                          with ys T⟨∌⟩? x
-          ... | yes T⟨ys∌x⟩                               = T-pair T⟨x≉z⟩ (○-preserves-∌ {xs} T⟨xs∌z⟩ T⟨ys∌z⟩)
-          ... | no ¬T⟨ys∌x⟩                               = ○-preserves-∌ {xs} T⟨xs∌z⟩ T⟨ys∌z⟩
+            ○-preserves-∌ : ∀ {xs ys z} → T (xs ∌ z) → T (ys ∌ z) → T (xs ○ ys ∌ z)
+            ○-preserves-∌ {[]}     {ys} tt          T⟨ys∌z⟩ = T⟨ys∌z⟩→T⟨∅○ys∌z⟩ T⟨ys∌z⟩
+            ○-preserves-∌ {x ∷ xs} {ys} T⟨x≉z∧xs∌z⟩ T⟨ys∌z⟩ with T-fst T⟨x≉z∧xs∌z⟩ | T-snd T⟨x≉z∧xs∌z⟩
+            ... | T⟨x≉z⟩ | T⟨xs∌z⟩                          with ys T⟨∌⟩? x
+            ... | yes T⟨ys∌x⟩                               = T-pair T⟨x≉z⟩ (○-preserves-∌ {xs} T⟨xs∌z⟩ T⟨ys∌z⟩)
+            ... | no ¬T⟨ys∌x⟩                               = ○-preserves-∌ {xs} T⟨xs∌z⟩ T⟨ys∌z⟩
 
     open OperatorWith (λ ys → ys) (λ T⟨ys∌z⟩ → T⟨ys∌z⟩) public
       renaming (_○_ to _∪_ ; ○-preserves-∌ to ∪-preserves-∌)

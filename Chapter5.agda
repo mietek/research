@@ -17,13 +17,11 @@ import Chapter3
 --
 -- 5.1. Basics
 -- “The syntax of the lambda-calculus comprises just three sorts of terms. …”
---
--- TODO: Comment this
 
 record IsLC (Term : Set₀) : Set₀ where
   infixl 7 _$_
   field
-    `_   : ∀ (x : Name) → Term
+    !_   : ∀ (x : Name) → Term
     ƛ_∙_ : ∀ (x : Name) (t : Term) → Term
     _$_  : ∀ (t₁ t₂ : Term) → Term
 
@@ -38,7 +36,7 @@ record LC : Set₁ where
     Term-isString : IsString Term
     Term-isString = record
       { Constraint = λ s → ⊤
-      ; fromString = λ s → ` name s
+      ; fromString = λ s → ! name s
       }
 
 
@@ -125,7 +123,7 @@ module Church-Part1 (lc : LC)
 -- 5.2.4. Exercise [Recommended, ⋆⋆]
 -- “Define a term for raising one number to the power of another.”
 
-    pow = ƛ "n" ∙ ƛ "k" ∙ "k" $ (times $ "n") $ c₁
+    power = ƛ "n" ∙ ƛ "k" ∙ "k" $ (times $ "n") $ c₁
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -157,9 +155,8 @@ module Church-Part1 (lc : LC)
 -- 5.2.7. Exercise [⋆⋆]
 -- “Write a function `equal` that tests two numbers for equality and returns a Church boolean.”
 
--- TODO
-
-    -- equal = ƛ "m" ∙ ƛ "n" ∙ {!!}
+    equal = ƛ "m" ∙ ƛ "n" ∙ and $ (iszro $ ("m" $ prd $ "n"))
+                                $ (iszro $ ("n" $ prd $ "m"))
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -169,23 +166,20 @@ module Church-Part1 (lc : LC)
 -- of `nil` be?  Write a function `cons` that takes an element `h` and a list (that is, a fold function) `t`
 -- and returns a similar representation of the list formed by prepending `h` to `t`.  Write `isnil` and `head`
 -- functions, each taking a list parameter.  Finally, write a `tail` function for this representation of lists
--- (this is quite a bit harder and requires a trick analogous to the one used to define `prd` for numbers).
+-- (this is quite a bit harder and requires a trick analogous to the one used to define `prd` for numbers).”
 
--- TODO
+    nil   = ƛ "c" ∙ ƛ "n" ∙ "n"
+    cons  = ƛ "h" ∙ ƛ "t" ∙ ƛ "c" ∙ ƛ "n" ∙ "c" $ "h" $ ("t" $ "c" $ "n")
+    isnil = ƛ "l" ∙ "l" $ (ƛ "h" ∙ ƛ "t" ∙ fls) $ tru
+    head  = ƛ "l" ∙ "l" $ (ƛ "h" ∙ ƛ "t" ∙ "h") $ fls
 
-    -- nil   = {!!}
-    -- cons  = {!!}
-    -- isnil = {!!}
-    -- head  = {!!}
-    --
-    -- tail = {!!}
+    tail = ƛ "l" ∙ fst $ "l" $ (ƛ "x" ∙ ƛ "p" ∙ pair $ (snd $ "p") $ (cons $ "x" $ (snd $ "p"))) $
+                               (pair $ nil $ nil)
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
 -- • Enriching the calculus
---
--- TODO: Comment this
 
 record IsLCNB (Term : Set₀) : Set₀ where
   field
@@ -217,9 +211,7 @@ module Church-Part2 (lcnb : LCNB)
     realbool   = ƛ "b" ∙ "b" $ true $ false
     churchbool = ƛ "b" ∙ if "b" then tru else fls
 
--- TODO
-
-    -- realeq     = ƛ "m" ∙ ƛ "n" ∙ (equal $ "m" $ "n") $ true $ false
+    realeq     = ƛ "m" ∙ ƛ "n" ∙ (equal $ "m" $ "n") $ true $ false
     realnat    = ƛ "m" ∙ "m" $ (ƛ "x" ∙ suc "x") $ zero
 
 
@@ -228,12 +220,16 @@ module Church-Part2 (lcnb : LCNB)
 -- • Recursion
 
     omega = (ƛ "x" ∙ "x" $ "x") $ (ƛ "x" ∙ "x" $ "x")
-    fix   = ƛ "f" ∙ (ƛ "x" ∙ "f" $ (ƛ "y" ∙ "x" $ "x" $ "y")) $ (ƛ "x" ∙ "f" $ (ƛ "y" ∙ "x" $ "x" $ "y"))
 
--- TODO
+    fix = ƛ "f" ∙ (ƛ "x" ∙ "f" $ (ƛ "y" ∙ "x" $ "x" $ "y")) $
+                  (ƛ "x" ∙ "f" $ (ƛ "y" ∙ "x" $ "x" $ "y"))
 
-    -- g         = ƛ "fct" ∙ ƛ "n" ∙ if realeq $ "n" $ c₀ then c₁ else (times $ "n" $ ("fct" $ (prd $ "n")))
-    -- factorial = fix $ "g"
+    f-step = ƛ "f" ∙ ƛ "n" ∙
+               if realeq $ "n" $ c₀
+               then c₁
+               else (times $ "n" $ ("f" $ (prd $ "n")))
+
+    factorial = fix $ f-step
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -242,9 +238,12 @@ module Church-Part2 (lcnb : LCNB)
 -- “Why did we use a primitive `if` in the definition of `g`, instead of the Church-boolean `test` function on
 -- Church booleans?  Show how to define the `factorial` function in terms of `test` rather than `if`.
 
--- TODO
+    f-step2 = ƛ "f" ∙ ƛ "n" ∙
+                test $ (iszro $ "n") $
+                       (ƛ "x" ∙ c₁) $
+                       (ƛ "x" ∙ (times $ "n" $ ("f" $ (prd $ "n")))) $ c₀
 
-    -- factorial2 = {!!}
+    factorial2 = fix $ f-step2
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -253,9 +252,12 @@ module Church-Part2 (lcnb : LCNB)
 -- “Define a function `churchnat` that converts a primitive natural number into the corresponding Church
 -- numeral.”
 
--- TODO
+    cn-step = ƛ "f" ∙ ƛ "m" ∙
+                if iszero "m"
+                then c₀
+                else sc $ ("f" $ (pred "m"))
 
-    -- churchnat = {!!}
+    churchnat = fix $ cn-step
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -264,7 +266,12 @@ module Church-Part2 (lcnb : LCNB)
 -- “Use `fix` and the encoding of lists from Exercise 5.2.8 to write a function that sums lists of Church
 -- numbers.”
 
-    -- sum = {!!}
+    s-step = ƛ "f" ∙ ƛ "l" ∙
+               test $ (isnil $ "l") $
+                      (ƛ "x" ∙ c₀) $
+                      (ƛ "x" ∙ (plus $ (head $ "l") $ ("f" $ (tail $ "l")))) $ c₀
+
+    sum = fix $ s-step
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -283,7 +290,6 @@ module Church-Part2 (lcnb : LCNB)
 --
 -- 5.3.1. Definition [Terms]
 -- “The set of terms is the smallest set `T` such that…”
--- (given above)
 -- “The _size_ of a term `t` can be defined exactly as we did for arithmetic expressions in Definition 3.3.2.”
 
 open Prelude using (suc ; zero)
@@ -292,17 +298,27 @@ module Functions
   where
     infixl 7 _$_
     data Term : Set₀ where
-      `_   : ∀ (x : Name) → Term
+      !_   : ∀ (x : Name) → Term
       ƛ_∙_ : ∀ (x : Name) (t : Term) → Term
       _$_  : ∀ (t₁ t₂ : Term) → Term
 
+    Functions-lc : LC
+    Functions-lc = record
+      { Term = Term
+      ; isLC = record
+        { !_   = !_
+        ; ƛ_∙_ = ƛ_∙_
+        ; _$_  = _$_
+        }
+      }
+
     size : Term → Nat
-    size (` x)     = 1
+    size (! x)     = 1
     size (ƛ x ∙ t) = 1 + size t
     size (t₁ $ t₂) = 1 + (size t₁ + size t₂)
 
     size-positive : ∀ t → 1 ≤ size t
-    size-positive (` x)     = ≤-refl
+    size-positive (! x)     = ≤-refl
     size-positive (ƛ x ∙ t) = s≤s z≤n
     size-positive (t₁ $ t₂) = s≤s z≤n
 
@@ -345,36 +361,23 @@ module Functions
     indSize = indWith <ˢ-wellFounded
 
 
--- TODO: Will this be needed?
-
-    Functions-lc : LC
-    Functions-lc = record
-      { Term = Term
-      ; isLC = record
-        { `_   = `_
-        ; ƛ_∙_ = ƛ_∙_
-        ; _$_  = _$_
-        }
-      }
-
-
 ---------------------------------------------------------------------------------------------------------------
 --
--- TODO
+-- Decidable equality.
 
     _≟ᵀ_ : Decidable {A = Term} _≡_
-    (` x)     ≟ᵀ (` y)        with x ≟ᴺ y
+    (! x)     ≟ᵀ (! y)        with x ≟ᴺ y
     ... | no x≢y              = no λ where refl → refl ↯ x≢y
     ... | yes refl            = yes refl
-    (` x)     ≟ᵀ (ƛ y ∙ u)    = no λ ()
-    (` x)     ≟ᵀ (u₁ $ u₂)    = no λ ()
-    (ƛ x ∙ t) ≟ᵀ (` y)        = no λ ()
+    (! x)     ≟ᵀ (ƛ y ∙ u)    = no λ ()
+    (! x)     ≟ᵀ (u₁ $ u₂)    = no λ ()
+    (ƛ x ∙ t) ≟ᵀ (! y)        = no λ ()
     (ƛ x ∙ t) ≟ᵀ (ƛ y ∙ u)    with x ≟ᴺ y | t ≟ᵀ u
     ... | no x≢y   | _        = no λ where refl → refl ↯ x≢y
     ... | yes refl | no t≢u   = no λ where refl → refl ↯ t≢u
     ... | yes refl | yes refl = yes refl
     (ƛ x ∙ t) ≟ᵀ (u₁ $ u₂)    = no λ ()
-    (t₁ $ t₂) ≟ᵀ (` y)        = no λ ()
+    (t₁ $ t₂) ≟ᵀ (! y)        = no λ ()
     (t₁ $ t₂) ≟ᵀ (ƛ y ∙ u)    = no λ ()
     (t₁ $ t₂) ≟ᵀ (u₁ $ u₂)    with t₁ ≟ᵀ u₁ | t₂ ≟ᵀ u₂
     ... | no t₁≢u₁ | _        = no λ where refl → refl ↯ t₁≢u₁
@@ -391,7 +394,7 @@ module Functions
 -- “The set of _free variables_ of a term `t`, written `fv(t)`, is defined as follows: …”
 
     fv : Term → UniqueList Name
-    fv (` x)     = [ x ]
+    fv (! x)     = [ x ]
     fv (ƛ x ∙ t) = fv t ∖ [ x ]
     fv (t₁ $ t₂) = fv t₁ ∪ fv t₂
 
@@ -401,22 +404,22 @@ module Functions
 -- 5.3.3. Exercise [⋆⋆]
 -- “Give a careful proof that `|fv(t)| ≤ size(t)` for every term `t`.”
 
-    exe-533 : ∀ t → length (fv t) ≤ size t
-    exe-533 (` x)     = ≤-refl
-    exe-533 (ƛ x ∙ t) = ≤-step
+    exe533 : ∀ t → length (fv t) ≤ size t
+    exe533 (! x)     = ≤-refl
+    exe533 (ƛ x ∙ t) = ≤-step
       (begin
         length (fv t ∖ [ x ])
       ≤⟨ length-untitled (fv t) [ x ] ⟩
         length (fv t)
-      ≤⟨ exe-533 t ⟩
+      ≤⟨ exe533 t ⟩
         size t
       ∎)
-    exe-533 (t₁ $ t₂) = ≤-step
+    exe533 (t₁ $ t₂) = ≤-step
       (begin
         length (fv t₁ ∪ fv t₂)
       ≤⟨ length-triangular (fv t₁) (fv t₂) ⟩
         length (fv t₁) + length (fv t₂)
-      ≤⟨ +-mono-≤ (exe-533 t₁) (exe-533 t₂) ⟩
+      ≤⟨ +-mono-≤ (exe533 t₁) (exe533 t₂) ⟩
         size t₁ + size t₂
       ∎)
 
@@ -434,37 +437,42 @@ module Functions
 -- Unfortunately, ‘as good as total’ is not good enough.  We’re going to need to show that we can always get a
 -- name that is not in a given set of names.
 --
--- TODO: Write this
+-- TODO: fresh
 
     postulate
       fresh : UniqueList Name → Name
-    -- fresh = {!!}
 
 ---------------------------------------------------------------------------------------------------------------
 --
 -- 5.3.5. Definition [Substitution]
 --
--- TODO: Comment this
+-- A direct definition is not recognised by Agda as structurally recursive, because the termination checker
+-- doesn’t know that renaming `y` to `z` in `t` is size-preserving.
 
-    module NotGood
-      where
+    private
+      module NotGood where
         {-# TERMINATING #-}
         [_↦_]_ : Name → Term → Term → Term
-        [ x ↦ s ] (` y)              with x ≟ᴺ y
+        [ x ↦ s ] (! y)              with x ≟ᴺ y
         ... | yes refl                = s
-        ... | no x≢y                  = ` y
+        ... | no x≢y                  = ! y
         [ x ↦ s ] (ƛ y ∙ t)          with x ≟ᴺ y | fv s T⟨∌⟩? x
         ... | yes refl | _            = ƛ y ∙ t
         ... | no x≢y   | yes T⟨fvs∌x⟩ = ƛ y ∙ [ x ↦ s ] t
         ... | no x≢y   | no ¬T⟨fvs∌x⟩ = let z = fresh (fv s ∪ fv t) in
-                                        ƛ z ∙ [ x ↦ s ] ([ y ↦ ` z ] t)
+                                          ƛ z ∙ [ x ↦ s ] ([ y ↦ ! z ] t)
         [ x ↦ s ] (t₁ $ t₂)          = ([ x ↦ s ] t₁) $ ([ x ↦ s ] t₂)
 
-    ren : ∀ (t : Term) (x : Name) (z : Name) → ∃ λ t″ → size t ≡ size t″
+
+-- To help the termination checker, we’ll require renaming to supply evidence that size has been preserved, and
+-- use this evidence for substitution.  To highlight the similarity between renaming and substitution, we give
+-- both using explicit induction on size, even though renaming could also be given directly.
+
+    ren : ∀ (t : Term) → Name → Name → ∃ λ t′ → size t ≡ size t′
     ren = indSize λ where
-      (` y)     h x z → case x ≟ᴺ y of λ where
-        (yes refl)                → ` z , refl
-        (no x≢y)                  → ` y , refl
+      (! y)     h x z → case x ≟ᴺ y of λ where
+        (yes refl)                → ! z , refl
+        (no x≢y)                  → ! y , refl
       (ƛ y ∙ t) h x z → case x ≟ᴺ y of λ where
         (yes refl)                → ƛ y ∙ t , refl
         (no x≢y)                  → let (t′ , s≡s′) = h t (<ˢ-abs x t) x z in
@@ -473,11 +481,11 @@ module Functions
                                      let (t₂′ , s₂≡s₂′) = h t₂ (<ˢ-app₂ t₁ t₂) x z in
                                        t₁′ $ t₂′ , (λ s₁ s₂ → suc (s₁ + s₂)) & s₁≡s₁′ ⊗ s₂≡s₂′
 
-    sub : ∀ (t : Term) (x : Name) (s : Term) → Term
+    sub : ∀ (t : Term) → Name → Term → Term
     sub = indSize λ where
-      (` y)     h x s → case x ≟ᴺ y of λ where
+      (! y)     h x s → case x ≟ᴺ y of λ where
         (yes refl)                → s
-        (no x≢y)                  → ` y
+        (no x≢y)                  → ! y
       (ƛ y ∙ t) h x s → case x ≟ᴺ y , fv s T⟨∌⟩? x of λ where
         (yes refl , _)            → ƛ y ∙ t
         (no x≢y   , yes T⟨fvs∌x⟩) → ƛ y ∙ h t (<ˢ-abs x t) x s
@@ -559,7 +567,7 @@ module FunctionsGetStuck
                                              (r-appAbs vₜ₂)      → vₜ₂ ↯ ¬vₜ₂)
 
     classify : ∀ t → Stuck/Value/Reducible t
-    classify (` x)     = stu ((λ ()) , (λ ()))
+    classify (! x)     = stu ((λ ()) , (λ ()))
     classify (ƛ x ∙ t) = val (ƛ x ∙ t)
     classify (t₁ $ t₂) with classify t₁ | classify t₂
     ... | stu σₜ₁          | _                = stu (σ-appStuck₁ σₜ₁)
@@ -602,7 +610,7 @@ module FunctionsGetStuck
 -- 5.3.6. Exercise [⋆⋆]
 -- “Adapt these rules to describe the other strategies for evaluation—full beta-reduction, normal-order, and
 -- lazy evaluation.”
--- TODO
+-- (skipped)
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -611,7 +619,7 @@ module FunctionsGetStuck
 -- “Exercise 3.5.16 gave an alternate presentation of the operational semantics of booleans and arithmetic
 -- expressions in which stuck terms are defined to evaluate to a special constant `wrong`.  Extend this
 -- semantics to λNB.”
--- TODO
+-- (skipped)
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -632,19 +640,47 @@ private
                  t₁ $ t₂ ⇓ u
 
     exe568-ltr : ∀ {t u} → (vᵤ : Value u) → t ⇓ u → t ⇒* u
-    exe568-ltr vᵤ (e-val vₜ)                                = ε
-    exe568-ltr vᵤ (e-appAbs vᵤ₂ t₁⇓ƛx∙u₁ t₂⇓u₂ [x↦u₂]u₁⇓u) = rs-app₁ (exe568-ltr (ƛ _ ∙ _) t₁⇓ƛx∙u₁) ◅◅
-                                                              rs-app₂ (ƛ _ ∙ _) (exe568-ltr vᵤ₂ t₂⇓u₂) ◅◅
-                                                              rs-appAbs vᵤ₂ ◅◅
-                                                              (exe568-ltr vᵤ [x↦u₂]u₁⇓u)
+    exe568-ltr vᵤ (e-val vₜ)
+      = ε
+    exe568-ltr vᵤ (e-appAbs vᵤ₂ t₁⇓ƛx∙u₁ t₂⇓u₂ [x↦u₂]u₁⇓u)
+      = rs-app₁ (exe568-ltr (ƛ _ ∙ _) t₁⇓ƛx∙u₁) ◅◅
+        rs-app₂ (ƛ _ ∙ _) (exe568-ltr vᵤ₂ t₂⇓u₂) ◅◅
+        rs-appAbs vᵤ₂ ◅◅
+        (exe568-ltr vᵤ [x↦u₂]u₁⇓u)
 
--- TODO
+{-
+    lem₁ : ∀ {t₁ t₂ u} → (vᵤ : Value u) → t₁ $ t₂ ⇒* u →
+           ∃ λ x → ∃ λ u₁ → ∃ λ u₂ → Value u₂ × t₁ ⇒* ƛ x ∙ u₁ × t₂ ⇒* u₂ × [ x ↦ u₂ ] u₁ ⇒* u
+    lem₁ vᵤ t₁$t₂⇒*u = {!!}
 
-    -- exe568-rtl : ∀ {t u} → (vᵤ : Value u) → t ⇒* u → t ⇓ u
-    -- exe568-rtl vᵤ ε                               = e-val vᵤ
-    -- exe568-rtl vᵤ (r-app₁ t₁⇒i₁ ◅ i₁$t₂⇒*u)     = {!!}
-    -- exe568-rtl vᵤ (r-app₂ vₜ₁ t₂⇒i₂ ◅ t₁$i₂⇒*u) = {!!}
-    -- exe568-rtl vᵤ (r-appAbs vₜ₂ ◅ [x↦t₂]t₁⇒*u)  = {!!}
+    lem₂ : ∀ {x t₂ u u₁} → (vᵤ : Value u) → ƛ x ∙ u₁ $ t₂ ⇒* u →
+           ∃ λ u₂ → Value u₂ × t₂ ⇒* u₂ × [ x ↦ u₂ ] u₁ ⇒* u
+    lem₂ vᵤ ƛx∙u₁$t₂⇒*u = {!!}
+
+    private
+      module NotGood where
+--        {-# TERMINATING #-}
+        exe568-rtl : ∀ {t u} → (vᵤ : Value u) → t ⇒* u → t ⇓ u
+        exe568-rtl vᵤ ε
+          = e-val vᵤ
+        exe568-rtl vᵤ (r-app₁ t₁⇒i₁ ◅ i₁$t₂⇒*u)
+          with lem₁ vᵤ i₁$t₂⇒*u
+        ... | x , u₁ , u₂ , vᵤ₂ , i₁⇒*ƛx∙u₁ , t₂⇒*u₂ , [x↦u₂]u₁⇒*u
+          = e-appAbs vᵤ₂ (exe568-rtl (ƛ _ ∙ _) (t₁⇒i₁ ◅ i₁⇒*ƛx∙u₁))
+                         (exe568-rtl vᵤ₂ t₂⇒*u₂)
+                         {!exe568-rtl vᵤ [x↦u₂]u₁⇒*u!}
+        exe568-rtl vᵤ (r-app₂ vₜ₁@(ƛ _ ∙ _) t₂⇒i₂ ◅ t₁$i₂⇒*u)
+          with lem₂ vᵤ t₁$i₂⇒*u
+        ... | u₂ , vᵤ₂ , i₂⇒*u₂ , [x↦u₂]u₁⇒*u
+          = e-appAbs vᵤ₂ (e-val vₜ₁)
+                         (exe568-rtl vᵤ₂ (t₂⇒i₂ ◅ i₂⇒*u₂))
+                         {!exe568-rtl vᵤ [x↦u₂]u₁⇒*u!}
+        exe568-rtl vᵤ (r-appAbs vₜ₂ ◅ [x↦t₂]t₁⇒*u)
+          = e-appAbs vₜ₂ (e-val (ƛ _ ∙ _))
+                         (e-val vₜ₂)
+                         {!exe568-rtl vᵤ [x↦t₂]t₁⇒*u!}
+-}
+
 
 ---------------------------------------------------------------------------------------------------------------
 --
