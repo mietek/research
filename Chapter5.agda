@@ -21,7 +21,7 @@ import Chapter3
 record IsLC (Term : Set₀) : Set₀ where
   infixl 7 _$_
   field
-    !_   : ∀ (x : Name) → Term
+    ᵥ_   : ∀ (x : Name) → Term
     ƛ_∙_ : ∀ (x : Name) (t : Term) → Term
     _$_  : ∀ (t₁ t₂ : Term) → Term
 
@@ -36,7 +36,7 @@ record LC : Set₁ where
     Term-isString : IsString Term
     Term-isString = record
       { Constraint = λ s → ⊤
-      ; fromString = λ s → ! name s
+      ; fromString = λ s → ᵥ name s
       }
 
 
@@ -298,7 +298,7 @@ module Functions
   where
     infixl 7 _$_
     data Term : Set₀ where
-      !_   : ∀ (x : Name) → Term
+      ᵥ_   : ∀ (x : Name) → Term
       ƛ_∙_ : ∀ (x : Name) (t : Term) → Term
       _$_  : ∀ (t₁ t₂ : Term) → Term
 
@@ -306,19 +306,19 @@ module Functions
     Functions-lc = record
       { Term = Term
       ; isLC = record
-        { !_   = !_
+        { ᵥ_   = ᵥ_
         ; ƛ_∙_ = ƛ_∙_
         ; _$_  = _$_
         }
       }
 
     size : Term → Nat
-    size (! x)     = 1
+    size (ᵥ x)     = 1
     size (ƛ x ∙ t) = 1 + size t
     size (t₁ $ t₂) = 1 + (size t₁ + size t₂)
 
     size-positive : ∀ t → 1 ≤ size t
-    size-positive (! x)     = ≤-refl
+    size-positive (ᵥ x)     = ≤-refl
     size-positive (ƛ x ∙ t) = s≤s z≤n
     size-positive (t₁ $ t₂) = s≤s z≤n
 
@@ -366,18 +366,18 @@ module Functions
 -- Decidable equality.
 
     _≟ᵀ_ : Decidable {A = Term} _≡_
-    (! x)     ≟ᵀ (! y)        with x ≟ᴺ y
+    (ᵥ x)     ≟ᵀ (ᵥ y)        with x ≟ᴺ y
     ... | no x≢y              = no λ where refl → refl ↯ x≢y
     ... | yes refl            = yes refl
-    (! x)     ≟ᵀ (ƛ y ∙ u)    = no λ ()
-    (! x)     ≟ᵀ (u₁ $ u₂)    = no λ ()
-    (ƛ x ∙ t) ≟ᵀ (! y)        = no λ ()
+    (ᵥ x)     ≟ᵀ (ƛ y ∙ u)    = no λ ()
+    (ᵥ x)     ≟ᵀ (u₁ $ u₂)    = no λ ()
+    (ƛ x ∙ t) ≟ᵀ (ᵥ y)        = no λ ()
     (ƛ x ∙ t) ≟ᵀ (ƛ y ∙ u)    with x ≟ᴺ y | t ≟ᵀ u
     ... | no x≢y   | _        = no λ where refl → refl ↯ x≢y
     ... | yes refl | no t≢u   = no λ where refl → refl ↯ t≢u
     ... | yes refl | yes refl = yes refl
     (ƛ x ∙ t) ≟ᵀ (u₁ $ u₂)    = no λ ()
-    (t₁ $ t₂) ≟ᵀ (! y)        = no λ ()
+    (t₁ $ t₂) ≟ᵀ (ᵥ y)        = no λ ()
     (t₁ $ t₂) ≟ᵀ (ƛ y ∙ u)    = no λ ()
     (t₁ $ t₂) ≟ᵀ (u₁ $ u₂)    with t₁ ≟ᵀ u₁ | t₂ ≟ᵀ u₂
     ... | no t₁≢u₁ | _        = no λ where refl → refl ↯ t₁≢u₁
@@ -394,7 +394,7 @@ module Functions
 -- “The set of _free variables_ of a term `t`, written `fv(t)`, is defined as follows: …”
 
     fv : Term → UniqueList Name
-    fv (! x)     = [ x ]
+    fv (ᵥ x)     = [ x ]
     fv (ƛ x ∙ t) = fv t ∖ [ x ]
     fv (t₁ $ t₂) = fv t₁ ∪ fv t₂
 
@@ -405,7 +405,7 @@ module Functions
 -- “Give a careful proof that `|fv(t)| ≤ size(t)` for every term `t`.”
 
     exe533 : ∀ t → length (fv t) ≤ size t
-    exe533 (! x)     = ≤-refl
+    exe533 (ᵥ x)     = ≤-refl
     exe533 (ƛ x ∙ t) = ≤-step
       (begin
         length (fv t ∖ [ x ])
@@ -454,14 +454,14 @@ module Functions
       module NotGood where
         {-# TERMINATING #-}
         [_↦_]_ : Name → Term → Term → Term
-        [ x ↦ s ] (! y)              with x ≟ᴺ y
+        [ x ↦ s ] (ᵥ y)              with x ≟ᴺ y
         ... | yes refl                = s
-        ... | no x≢y                  = ! y
+        ... | no x≢y                  = ᵥ y
         [ x ↦ s ] (ƛ y ∙ t)          with x ≟ᴺ y | fv s T⟨∌⟩? x
         ... | yes refl | _            = ƛ y ∙ t
         ... | no x≢y   | yes T⟨fvs∌x⟩ = ƛ y ∙ [ x ↦ s ] t
         ... | no x≢y   | no ¬T⟨fvs∌x⟩ = let z = fresh (fv s ∪ fv t) in
-                                          ƛ z ∙ [ x ↦ s ] ([ y ↦ ! z ] t)
+                                          ƛ z ∙ [ x ↦ s ] ([ y ↦ ᵥ z ] t)
         [ x ↦ s ] (t₁ $ t₂)          = ([ x ↦ s ] t₁) $ ([ x ↦ s ] t₂)
 
 
@@ -469,35 +469,40 @@ module Functions
 -- use this evidence for substitution.  To highlight the similarity between renaming and substitution, we give
 -- both using explicit induction on size, even though renaming could also be given directly.
 
+    c-ren : Closed _<ˢ_ (λ t → Name → Name → ∃ λ t′ → size t ≡ size t′)
+    c-ren (ᵥ y)     h x z with x ≟ᴺ y
+    ... | yes refl        = ᵥ z , refl
+    ... | no x≢y          = ᵥ y , refl
+    c-ren (ƛ y ∙ t) h x z with x ≟ᴺ y
+    ... | yes refl        = ƛ y ∙ t , refl
+    ... | no x≢y          = let (t′ , s≡s′) = h t (<ˢ-abs x t) x z in
+                              ƛ y ∙ t′ , suc & s≡s′
+    c-ren (t₁ $ t₂) h x z = let (t₁′ , s₁≡s₁′) = h t₁ (<ˢ-app₁ t₁ t₂) x z
+                                (t₂′ , s₂≡s₂′) = h t₂ (<ˢ-app₂ t₁ t₂) x z in
+                              t₁′ $ t₂′ , (λ s₁ s₂ → suc (s₁ + s₂)) & s₁≡s₁′ ⊗ s₂≡s₂′
+
     ren : ∀ (t : Term) → Name → Name → ∃ λ t′ → size t ≡ size t′
-    ren = indSize λ where
-      (! y)     h x z → case x ≟ᴺ y of λ where
-        (yes refl)                → ! z , refl
-        (no x≢y)                  → ! y , refl
-      (ƛ y ∙ t) h x z → case x ≟ᴺ y of λ where
-        (yes refl)                → ƛ y ∙ t , refl
-        (no x≢y)                  → let (t′ , s≡s′) = h t (<ˢ-abs x t) x z in
-                                       ƛ y ∙ t′ , suc & s≡s′
-      (t₁ $ t₂) h x z             → let (t₁′ , s₁≡s₁′) = h t₁ (<ˢ-app₁ t₁ t₂) x z in
-                                     let (t₂′ , s₂≡s₂′) = h t₂ (<ˢ-app₂ t₁ t₂) x z in
-                                       t₁′ $ t₂′ , (λ s₁ s₂ → suc (s₁ + s₂)) & s₁≡s₁′ ⊗ s₂≡s₂′
+    ren = indSize c-ren
+
+    c-sub : Closed _<ˢ_ (λ t → Name → Term → Term)
+    c-sub (ᵥ y)     h x s         with x ≟ᴺ y
+    ... | yes refl                = s
+    ... | no x≢y                  = ᵥ y
+    c-sub (ƛ y ∙ t) h x s         with x ≟ᴺ y | fv s T⟨∌⟩? x
+    ... | yes refl | _            = ƛ y ∙ t
+    ... | no x≢y   | yes T⟨fvs∌x⟩ = ƛ y ∙ h t (<ˢ-abs x t) x s
+    ... | no x≢y   | no ¬T⟨fvs∌x⟩ = let z = fresh (fv s ∪ fv t)
+                                        (t′ , s≡s′) = ren t y z in
+                                      ƛ z ∙ h t′ (<ˢ-abs′ x t t′ s≡s′) x s
+    c-sub (t₁ $ t₂) h x s         = h t₁ (<ˢ-app₁ t₁ t₂) x s $ h t₂ (<ˢ-app₂ t₁ t₂) x s
 
     sub : ∀ (t : Term) → Name → Term → Term
-    sub = indSize λ where
-      (! y)     h x s → case x ≟ᴺ y of λ where
-        (yes refl)                → s
-        (no x≢y)                  → ! y
-      (ƛ y ∙ t) h x s → case x ≟ᴺ y , fv s T⟨∌⟩? x of λ where
-        (yes refl , _)            → ƛ y ∙ t
-        (no x≢y   , yes T⟨fvs∌x⟩) → ƛ y ∙ h t (<ˢ-abs x t) x s
-        (no x≢y   , no ¬T⟨fvs∌x⟩) → let z = fresh (fv s ∪ fv t) in
-                                     let (t′ , s≡s′) = ren t y z in
-                                       ƛ z ∙ h t′ (<ˢ-abs′ x t t′ s≡s′) x s
-      (t₁ $ t₂) h x s             → h t₁ (<ˢ-app₁ t₁ t₂) x s $ h t₂ (<ˢ-app₂ t₁ t₂) x s
+    sub = indSize c-sub
 
     [_↦_]_ : Name → Term → Term → Term
     [ x ↦ s ] t = sub t x s
 
+    {-# DISPLAY c-sub t _ x s = [ x ↦ s ] t #-}
 
 ---------------------------------------------------------------------------------------------------------------
 --
@@ -568,7 +573,7 @@ module FunctionsGetStuck
                                              (r-appAbs vₜ₂)      → vₜ₂ ↯ ¬vₜ₂)
 
     classify : ∀ t → Stuck/Value/Reducible t
-    classify (! x)     = stu ((λ ()) , (λ ()))
+    classify (ᵥ x)     = stu ((λ ()) , (λ ()))
     classify (ƛ x ∙ t) = val (ƛ x ∙ t)
     classify (t₁ $ t₂) with classify t₁ | classify t₂
     ... | stu σₜ₁          | _                = stu (σ-appStuck₁ σₜ₁)
@@ -611,6 +616,9 @@ module FunctionsGetStuck
 -- 5.3.6. Exercise [⋆⋆]
 -- “Adapt these rules to describe the other strategies for evaluation—full beta-reduction, normal-order, and
 -- lazy evaluation.”
+--
+-- It appears that the solution included in the book is missing the `r-abs` congruence rule, in the full
+-- β-reduction part.
 
 module Strategy-FullBetaReduction
   where
@@ -620,7 +628,10 @@ module Strategy-FullBetaReduction
     data _⇒_ : Rel₀ Term where
       r-app₁   : ∀ {t₁ t₂ u₁} → t₁ ⇒ u₁ → t₁ $ t₂ ⇒ u₁ $ t₂
       r-app₂   : ∀ {t₁ t₂ u₂} → t₂ ⇒ u₂ → t₁ $ t₂ ⇒ t₁ $ u₂
+      r-abs    : ∀ {x t u} → t ⇒ u → ƛ x ∙ t ⇒ ƛ x ∙ u
       r-appAbs : ∀ {x t₁ t₂} → (ƛ x ∙ t₁) $ t₂ ⇒ [ x ↦ t₂ ] t₁
+
+    open Chapter3.NormalForms _⇒_ public
 
 
 module Strategy-NormalOrder
@@ -633,12 +644,12 @@ module Strategy-NormalOrder
         nanf : ∀ {t} → (nanfₜ : NonAbstractionNormalForm t) → NormalForm t
 
       data NonAbstractionNormalForm : Pred₀ Term where
-        !_  : ∀ x → NonAbstractionNormalForm (! x)
+        ᵥ_  : ∀ x → NonAbstractionNormalForm (ᵥ x)
         _$_ : ∀ {t₁ t₂} → (nanfₜ₁ : NonAbstractionNormalForm t₁) (nfₜ₂ : NormalForm t₂) →
               NonAbstractionNormalForm (t₁ $ t₂)
 
     data NonAbstraction : Pred₀ Term where
-      !_  : ∀ x → NonAbstraction (! x)
+      ᵥ_  : ∀ x → NonAbstraction (ᵥ x)
       _$_ : ∀ t₁ t₂ → NonAbstraction (t₁ $ t₂)
 
     infix 3 _⇒_
@@ -648,8 +659,37 @@ module Strategy-NormalOrder
       r-app₂   : ∀ {t₁ t₂ u₂} → (nanfₜ₁ : NonAbstractionNormalForm t₁) → t₂ ⇒ u₂ → t₁ $ t₂ ⇒ t₁ $ u₂
       r-appAbs : ∀ {x t₁ t₂} → (ƛ x ∙ t₁) $ t₂ ⇒ [ x ↦ t₂ ] t₁
 
+    open Chapter3.NormalForms _⇒_ public
+      renaming (NormalForm to NegativeNormalForm ; nf→¬r to nnf→¬r ; ¬r→nf to ¬r→nnf)
 
-module Strategy-Lazy
+    mutual
+      nf→nnf : ∀ {t} → NormalForm t → NegativeNormalForm t
+      nf→nnf (ƛ _ ∙ _)    = λ ()
+      nf→nnf (nanf nanfₜ) = nanf→nnf nanfₜ
+
+      nanf→nnf : ∀ {t} → NonAbstractionNormalForm t → NegativeNormalForm t
+      nanf→nnf (ᵥ _)           = λ ()
+      nanf→nnf (nanfₜ₁ $ nfₜ₂) = λ where
+        (r-app₁ naₜ₁ naᵤ₁ t₁⇒u₁) → t₁⇒u₁ ↯ nanf→nnf nanfₜ₁
+        (r-app₂ nanfₜ₁ t₂⇒u₂)    → t₂⇒u₂ ↯ nf→nnf nfₜ₂
+        r-appAbs                  → case nanfₜ₁ of λ where ()
+
+    ⇒-det : ∀ {t u u′} → t ⇒ u → t ⇒ u′ → u ≡ u′
+    ⇒-det (r-app₁ _ _ t₁⇒u₁) (r-app₁ _ _ t₁⇒u₁′) = (_$ _) & ⇒-det t₁⇒u₁ t₁⇒u₁′
+    ⇒-det (r-app₁ _ _ t₁⇒u₁) (r-app₂ nanfₜ₁ _)    = t₁⇒u₁ ↯ nanf→nnf nanfₜ₁
+    ⇒-det (r-app₁ () _ _)     r-appAbs
+    ⇒-det (r-app₂ nanfₜ₁ _)   (r-app₁ _ _ t₁⇒u₁′) = t₁⇒u₁′ ↯ nanf→nnf nanfₜ₁
+    ⇒-det (r-app₂ _ t₂⇒u₂)   (r-app₂ _ t₂⇒u₂′)   = (_ $_) & ⇒-det t₂⇒u₂ t₂⇒u₂′
+    ⇒-det (r-app₂ () _)       r-appAbs
+    ⇒-det r-appAbs            (r-app₁ () _ _)
+    ⇒-det r-appAbs            (r-app₂ () _)
+    ⇒-det r-appAbs            r-appAbs             = refl
+
+    open Chapter3.MultiStepReduction _⇒_ public
+    open Chapter3.UniquenessOfNormalForms _⇒_ ⇒-det public
+
+
+module Strategy-Lazy/CallByName
   where
     open Functions public
 
@@ -657,6 +697,23 @@ module Strategy-Lazy
     data _⇒_ : Rel₀ Term where
       r-app₁   : ∀ {t₁ t₂ u₁} → t₁ ⇒ u₁ → t₁ $ t₂ ⇒ u₁ $ t₂
       r-appAbs : ∀ {x t₁ t₂} → (ƛ x ∙ t₁) $ t₂ ⇒ [ x ↦ t₂ ] t₁
+
+    data Value : Pred₀ Term where
+      ƛ_∙_ : ∀ (x : Name) (t : Term) → Value (ƛ x ∙ t)
+
+    open Chapter3.NormalForms _⇒_ public
+
+    v→nf : ∀ {t} → Value t → NormalForm t
+    v→nf (ƛ x ∙ t) = λ ()
+
+    ⇒-det : ∀ {t u u′} → t ⇒ u → t ⇒ u′ → u ≡ u′
+    ⇒-det (r-app₁ t₁⇒u₁) (r-app₁ t₁⇒u₁′) = (_$ _) & ⇒-det t₁⇒u₁ t₁⇒u₁′
+    ⇒-det (r-app₁ t₁⇒u₁) r-appAbs         = t₁⇒u₁ ↯ v→nf (ƛ _ ∙ _)
+    ⇒-det r-appAbs        (r-app₁ t₁⇒u₁′) = t₁⇒u₁′ ↯ v→nf (ƛ _ ∙ _)
+    ⇒-det r-appAbs        r-appAbs         = refl
+
+    open Chapter3.MultiStepReduction _⇒_ public
+    open Chapter3.UniquenessOfNormalForms _⇒_ ⇒-det public
 
 
 ---------------------------------------------------------------------------------------------------------------
