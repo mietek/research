@@ -2,57 +2,10 @@
 
 module Chapter5 where
 
-open import Agda.Builtin.FromString public
-  using (IsString ; fromString)
-
--- open import Data.Bool public
---   using (Bool ; T ; false ; true)
-
-open import Data.String public
-  using (String)
-
-import Data.String.Unsafe as String
-
-open import Function public
-  using (_∘_ ; case_of_)
-
 open import Prelude public
-  hiding (suc ; zero)
+  hiding (false ; not ; suc ; true ; zero)
 
-open import Prelude-UniqueList public
-open import Prelude-WellFounded public
-
-
----------------------------------------------------------------------------------------------------------------
---
--- TODO: Comment this
-
-data Name : Set₀ where
-  name : String → Name
-
-_≟ᴺ_ : Decidable {A = Name} _≡_
-name x ≟ᴺ name y with x String.≟ y
-... | yes refl = yes refl
-... | no x≢y   = no λ where refl → refl ↯ x≢y
-
-instance
-  Name-isString : IsString Name
-  Name-isString = record
-    { Constraint = λ s → ⊤
-    ; fromString = λ s → name s
-    }
-
-Name-decSetoid : DecSetoid _ _
-Name-decSetoid = record
-  { Carrier = Name
-  ; _≈_     = _≡_
-  ; isDecEquivalence = record
-    { isEquivalence = ≡-isEquivalence
-    ; _≟_           = _≟ᴺ_
-    }
-  }
-
-module UniqueList-Name = MakeUniqueList (Name-decSetoid)
+import Chapter3
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -67,19 +20,19 @@ module UniqueList-Name = MakeUniqueList (Name-decSetoid)
 --
 -- TODO: Comment this
 
-record IsLCLike (Term : Set₀) : Set₀ where
+record IsλC (Term : Set₀) : Set₀ where
   infixl 7 _$_
   field
     `_   : ∀ (x : Name) → Term
     ƛ_∙_ : ∀ (x : Name) (t : Term) → Term
     _$_  : ∀ (t₁ t₂ : Term) → Term
 
-record LCLike : Set₁ where
+record λC : Set₁ where
   field
-    Term     : Set₀
-    isLCLike : IsLCLike Term
+    Term : Set₀
+    isλC : IsλC Term
 
-  open IsLCLike isLCLike public
+  open IsλC isλC public
 
   instance
     Term-isString : IsString Term
@@ -104,9 +57,9 @@ record LCLike : Set₁ where
 -- • Multiple arguments
 -- • Church booleans
 
-module Church-Part1 (lcLike : LCLike)
+module Church-Part1 (λc : λC)
   where
-    open LCLike lcLike
+    open λC λc
 
     tru  = ƛ "t" ∙ ƛ "f" ∙ "t"
     fls  = ƛ "t" ∙ ƛ "f" ∙ "f"
@@ -234,32 +187,32 @@ module Church-Part1 (lcLike : LCLike)
 --
 -- TODO: Comment this
 
-record IsLCNBLike (Term : Set₀) : Set₀ where
+record IsλCNB (Term : Set₀) : Set₀ where
   field
-    isLCLike        : IsLCLike Term
+    isλC            : IsλC Term
     true false zero : Term
     suc pred iszero : ∀ (t : Term) → Term
     if_then_else    : ∀ (t₁ t₂ t₃ : Term) → Term
 
-  open IsLCLike isLCLike public
+  open IsλC isλC public
 
-record LCNBLike : Set₁ where
+record λCNB : Set₁ where
   field
-    Term       : Set₀
-    isLCNBLike : IsLCNBLike Term
+    Term   : Set₀
+    isλCNB : IsλCNB Term
 
-  open IsLCNBLike isLCNBLike public
+  open IsλCNB isλCNB public
 
-  lcLike : LCLike
-  lcLike = record { isLCLike = isLCLike }
+  λc : λC
+  λc = record { isλC = isλC }
 
-  open LCLike lcLike public using (Term-isString)
+  open λC λc public using (Term-isString)
 
 
-module Church-Part2 (lcnbLike : LCNBLike)
+module Church-Part2 (λcnb : λCNB)
   where
-    open LCNBLike lcnbLike
-    open Church-Part1 lcLike
+    open λCNB λcnb
+    open Church-Part1 λc
 
     realbool   = ƛ "b" ∙ "b" $ true $ false
     churchbool = ƛ "b" ∙ if "b" then tru else fls
@@ -333,7 +286,9 @@ module Church-Part2 (lcnbLike : LCNBLike)
 -- (given above)
 -- “The _size_ of a term `t` can be defined exactly as we did for arithmetic expressions in Definition 3.3.2.”
 
-module LC
+open Prelude using (suc ; zero)
+
+module Functions
   where
     infixl 7 _$_
     data Term : Set₀ where
@@ -346,13 +301,56 @@ module LC
     size (ƛ x ∙ t) = 1 + size t
     size (t₁ $ t₂) = 1 + (size t₁ + size t₂)
 
+    size-positive : ∀ t → 1 ≤ size t
+    size-positive (` x)     = ≤-refl
+    size-positive (ƛ x ∙ t) = s≤s z≤n
+    size-positive (t₁ $ t₂) = s≤s z≤n
+
+    infix 5 _<ˢ_
+    _<ˢ_ : Rel₀ Term
+    _<ˢ_ = _<_ on size
+
+    <ˢ-abs : ∀ x t → t <ˢ ƛ x ∙ t
+    <ˢ-abs x t = ≤-refl
+
+    <ˢ-abs′ : ∀ x t t′ → size t ≡ size t′ → t′ <ˢ ƛ x ∙ t
+    <ˢ-abs′ x t t′ s≡s′ = begin
+        suc (size t′)
+      ≡⟨ suc & (s≡s′ ⁻¹) ⟩
+        suc (size t)
+      ∎
+
+    <ˢ-app₁ : ∀ t₁ t₂ → t₁ <ˢ t₁ $ t₂
+    <ˢ-app₁ t₁ t₂ = ≤-step
+      (begin
+        suc (size t₁)
+      ≤⟨ +-monoˡ-≤ (size t₁) (size-positive t₂) ⟩
+        size t₂ + size t₁
+      ≡⟨ +-comm (size t₂) (size t₁) ⟩
+        size t₁ + size t₂
+      ∎)
+
+    <ˢ-app₂ : ∀ t₁ t₂ → t₂ <ˢ t₁ $ t₂
+    <ˢ-app₂ t₁ t₂ = ≤-step
+      (begin
+        suc (size t₂)
+      ≤⟨ +-monoˡ-≤ (size t₂) (size-positive t₁) ⟩
+        size t₁ + size t₂
+      ∎)
+
+    <ˢ-wellFounded : WellFounded _<ˢ_
+    <ˢ-wellFounded = InverseImage.wellFounded size <-wellFounded
+
+    indSize : ∀ {ℓ} {P : Pred Term ℓ} → InductionPrinciple _<ˢ_ P
+    indSize = indWith <ˢ-wellFounded
+
 
 -- TODO: Will this be needed?
 
-    LC-lcLike : LCLike
-    LC-lcLike = record
+    Functions-λc : λC
+    Functions-λc = record
       { Term = Term
-      ; isLCLike = record
+      ; isλC = record
         { `_   = `_
         ; ƛ_∙_ = ƛ_∙_
         ; _$_  = _$_
@@ -383,18 +381,8 @@ module LC
     ... | yes refl | no t₂≢u₂ = no λ where refl → refl ↯ t₂≢u₂
     ... | yes refl | yes refl = yes refl
 
-    Term-decSetoid : DecSetoid _ _
-    Term-decSetoid = record
-      { Carrier = Term
-      ; _≈_     = _≡_
-      ; isDecEquivalence = record
-        { isEquivalence = ≡-isEquivalence
-        ; _≟_           = _≟ᵀ_
-        }
-      }
-
--- NOTE: Module bug here
--- module UniqueList-Term = MakeUniqueList (Term-decSetoid)
+    Term-hasDecidableEquality : HasDecidableEquality Term
+    _≟_ {{Term-hasDecidableEquality}} = _≟ᵀ_
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -402,14 +390,10 @@ module LC
 -- 5.3.2. Definition
 -- “The set of _free variables_ of a term `t`, written `fv(t)`, is defined as follows: …”
 
-    module _
-      where
-        open UniqueList-Name
-
-        fv : Term → UniqueList
-        fv (` x)     = [ x ]
-        fv (ƛ x ∙ t) = fv t ∖ [ x ]
-        fv (t₁ $ t₂) = fv t₁ ∪ fv t₂
+    fv : Term → UniqueList Name
+    fv (` x)     = [ x ]
+    fv (ƛ x ∙ t) = fv t ∖ [ x ]
+    fv (t₁ $ t₂) = fv t₁ ∪ fv t₂
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -417,24 +401,24 @@ module LC
 -- 5.3.3. Exercise [⋆⋆]
 -- “Give a careful proof that `|fv(t)| ≤ size(t)` for every term `t`.”
 
-        exe-533 : ∀ t → length (fv t) ≤ size t
-        exe-533 (` x)     = ≤-refl
-        exe-533 (ƛ x ∙ t) = ≤-step
-          (begin
-            length (fv t ∖ [ x ])
-          ≤⟨ length-untitled (fv t) [ x ] ⟩
-            length (fv t)
-          ≤⟨ exe-533 t ⟩
-            size t
-          ∎)
-        exe-533 (t₁ $ t₂) = ≤-step
-          (begin
-            length (fv t₁ ∪ fv t₂)
-          ≤⟨ length-triangular (fv t₁) (fv t₂) ⟩
-            length (fv t₁) + length (fv t₂)
-          ≤⟨ +-mono-≤ (exe-533 t₁) (exe-533 t₂) ⟩
-            size t₁ + size t₂
-          ∎)
+    exe-533 : ∀ t → length (fv t) ≤ size t
+    exe-533 (` x)     = ≤-refl
+    exe-533 (ƛ x ∙ t) = ≤-step
+      (begin
+        length (fv t ∖ [ x ])
+      ≤⟨ length-untitled (fv t) [ x ] ⟩
+        length (fv t)
+      ≤⟨ exe-533 t ⟩
+        size t
+      ∎)
+    exe-533 (t₁ $ t₂) = ≤-step
+      (begin
+        length (fv t₁ ∪ fv t₂)
+      ≤⟨ length-triangular (fv t₁) (fv t₂) ⟩
+        length (fv t₁) + length (fv t₂)
+      ≤⟨ +-mono-≤ (exe-533 t₁) (exe-533 t₂) ⟩
+        size t₁ + size t₂
+      ∎)
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -449,16 +433,22 @@ module LC
 --
 -- Unfortunately, ‘as good as total’ is not good enough.  We’re going to need to show that we can always get a
 -- name that is not in a given set of names.
+--
+-- TODO: Write this
 
-        postulate
-          fresh : UniqueList → Name
-        -- fresh = {!!}
+    postulate
+      fresh : UniqueList Name → Name
+    -- fresh = {!!}
 
 ---------------------------------------------------------------------------------------------------------------
 --
 -- 5.3.5. Definition [Substitution]
+--
+-- TODO: Comment this
 
-{-
+    module NotGood
+      where
+        {-# TERMINATING #-}
         [_↦_]_ : Name → Term → Term → Term
         [ x ↦ s ] (` y)              with x ≟ᴺ y
         ... | yes refl                = s
@@ -467,171 +457,144 @@ module LC
         ... | yes refl | _            = ƛ y ∙ t
         ... | no x≢y   | yes T[fvs∌x] = ƛ y ∙ [ x ↦ s ] t
         ... | no x≢y   | no ¬T[fvs∌x] = let z = fresh (fv s ∪ fv t) in
-                                        ƛ z ∙ ([ x ↦ s ] {![ y ↦ ` z ] t!})
+                                        ƛ z ∙ [ x ↦ s ] ([ y ↦ ` z ] t)
         [ x ↦ s ] (t₁ $ t₂)          = ([ x ↦ s ] t₁) $ ([ x ↦ s ] t₂)
--}
 
-        open import Data.Nat using (suc)
+    ren : ∀ (t : Term) (x : Name) (z : Name) → ∃ λ t″ → size t ≡ size t″
+    ren = indSize λ where
+      (` y)     h x z → case x ≟ᴺ y of λ where
+        (yes refl)                → ` z , refl
+        (no x≢y)                  → ` y , refl
+      (ƛ y ∙ t) h x z → case x ≟ᴺ y of λ where
+        (yes refl)                → ƛ y ∙ t , refl
+        (no x≢y)                  → let (t′ , s≡s′) = h t (<ˢ-abs x t) x z in
+                                       ƛ y ∙ t′ , suc & s≡s′
+      (t₁ $ t₂) h x z             → let (t₁′ , s₁≡s₁′) = h t₁ (<ˢ-app₁ t₁ t₂) x z in
+                                     let (t₂′ , s₂≡s₂′) = h t₂ (<ˢ-app₂ t₁ t₂) x z in
+                                       t₁′ $ t₂′ , (λ s₁ s₂ → suc (s₁ + s₂)) & s₁≡s₁′ ⊗ s₂≡s₂′
 
-        LessSize : Rel₀ Term
-        LessSize t u = size t < size u
+    sub : ∀ (t : Term) (x : Name) (s : Term) → Term
+    sub = indSize λ where
+      (` y)     h x s → case x ≟ᴺ y of λ where
+        (yes refl)                → s
+        (no x≢y)                  → ` y
+      (ƛ y ∙ t) h x s → case x ≟ᴺ y , fv s T[∌]? x of λ where
+        (yes refl , _)            → ƛ y ∙ t
+        (no x≢y   , yes T[fvs∌x]) → ƛ y ∙ h t (<ˢ-abs x t) x s
+        (no x≢y   , no ¬T[fvs∌x]) → let z = fresh (fv s ∪ fv t) in
+                                     let (t′ , s≡s′) = ren t y z in
+                                       ƛ z ∙ h t′ (<ˢ-abs′ x t t′ s≡s′) x s
+      (t₁ $ t₂) h x s             → h t₁ (<ˢ-app₁ t₁ t₂) x s $ h t₂ (<ˢ-app₂ t₁ t₂) x s
 
-        ls-wf : WellFounded LessSize
-        ls-wf = InverseImage.wellFounded size <-wf
-
-        ind-size : ∀ {ℓ} {P : Pred Term ℓ} → InductionPrinciple LessSize P
-        ind-size = inductionPrinciple ls-wf
-
-        FewerFVs : Rel₀ Term
-        FewerFVs t u = length (fv t) < length (fv u)
-
-        ffv-wf : WellFounded FewerFVs
-        ffv-wf = InverseImage.wellFounded (length ∘ fv) <-wf
-
-
-
-        module Nat² = Lexicographic _<_ (λ _ → _<_)
-
-        <²-wf : WellFounded Nat²._<_
-        <²-wf = Nat².wellFounded <-wf <-wf
-
-        measure : Term → Nat × Nat
-        measure t = size t , length (fv t)
-
-        infix 3 _⋖_
-        _⋖_ : Rel₀ Term
-        _⋖_ = Nat²._<_ Function.on measure
-
-        measure-wf : WellFounded _⋖_
-        measure-wf = InverseImage.wellFounded measure <²-wf
-
-        ind-measure : ∀ {ℓ} {P : Pred Term ℓ} → InductionPrinciple _⋖_ P
-        ind-measure = inductionPrinciple measure-wf
-
-        size-positive : ∀ t → 1 ≤ size t
-        size-positive (` x)     = ≤-refl
-        size-positive (ƛ x ∙ t) = s≤s z≤n
-        size-positive (t₁ $ t₂) = s≤s z≤n
-
-        measure-ƛ : ∀ {x} t → t ⋖ ƛ x ∙ t
-        measure-ƛ t = Lexicographic.left ≤-refl
-
-        ls-$₁ : ∀ t₁ t₂ → size t₁ < size (t₁ $ t₂)
-        ls-$₁ t₁ t₂ = ≤-step
-          (begin
-            suc (size t₁)
-          ≤⟨ +-monoˡ-≤ (size t₁) (size-positive t₂) ⟩
-            size t₂ + size t₁
-          ≡⟨ +-comm (size t₂) (size t₁) ⟩
-            size t₁ + size t₂
-          ∎)
-
-        ls-$₂ : ∀ t₁ t₂ → size t₂ < size (t₁ $ t₂)
-        ls-$₂ t₁ t₂ = ≤-step
-          (begin
-            suc (size t₂)
-          ≤⟨ +-monoˡ-≤ (size t₂) (size-positive t₁) ⟩
-            size t₁ + size t₂
-          ∎)
-
-        measure-$₁ : ∀ t₁ t₂ → t₁ ⋖ t₁ $ t₂
-        measure-$₁ t₁ t₂ = Lexicographic.left (ls-$₁ t₁ t₂)
-
-        measure-$₂ : ∀ t₁ t₂ → t₂ ⋖ t₁ $ t₂
-        measure-$₂ t₁ t₂ = Lexicographic.left (ls-$₂ t₁ t₂)
-
-        ren : ∀ (t : Term) (x : Name) (z : Name) → ∃ λ t′ → size t ≡ size t′
-        ren = ind-measure λ where
-          (` y)     h x z → case x ≟ᴺ y of λ where
-            (yes refl)                        → ` z , refl
-            (no x≢y)                          → ` y , refl
-          (ƛ y ∙ t) h x z → case x ≟ᴺ y of λ where
-            (yes refl)                        → ƛ y ∙ t , refl
-            (no x≢y)      → case h t (measure-ƛ t) x z of λ where
-              (t′ , s≡s′)                     → ƛ y ∙ t′ , suc & s≡s′
-          (t₁ $ t₂) h x z → case (h t₁ (measure-$₁ t₁ t₂) x z , h t₂ (measure-$₂ t₁ t₂) x z) of λ where
-            ((t₁′ , s₁≡s₁′) , (t₂′ , s₂≡s₂′)) → t₁′ $ t₂′ , (λ s₁ s₂ → suc (s₁ + s₂)) & s₁≡s₁′ ⊗ s₂≡s₂′
-
-        ren′ : ∀ (t : Term) (x : Name) (z : Name) → ∃ λ t′ → size t ≡ size t′
-        ren′ = ind-size λ where
-          (` y)     h x z → case x ≟ᴺ y of λ where
-            (yes refl)                        → ` z , refl
-            (no x≢y)                          → ` y , refl
-          (ƛ y ∙ t) h x z → case x ≟ᴺ y of λ where
-            (yes refl)                        → ƛ y ∙ t , refl
-            (no x≢y)      → case h t ≤-refl x z of λ where
-              (t′ , s≡s′)                     → ƛ y ∙ t′ , suc & s≡s′
-          (t₁ $ t₂) h x z → case (h t₁ (ls-$₁ t₁ t₂) x z , h t₂ (ls-$₂ t₁ t₂) x z) of λ where
-            ((t₁′ , s₁≡s₁′) , (t₂′ , s₂≡s₂′)) → t₁′ $ t₂′ , (λ s₁ s₂ → suc (s₁ + s₂)) & s₁≡s₁′ ⊗ s₂≡s₂′
-
-        ren″ : ∀ (t : Term) (x : Name) (z : Name) → ∃ λ t′ → size t ≡ size t′
-        ren″ (` y)     x z with x ≟ᴺ y
-        ... | yes refl     = ` z , refl
-        ... | no x≢y       = ` y , refl
-        ren″ (ƛ y ∙ t) x z with x ≟ᴺ y
-        ... | yes refl     = ƛ y ∙ t , refl
-        ... | no x≢y       = let (t′ , s≡s′) = ren″ t x z in
-                             ƛ y ∙ t′ , suc & s≡s′
-        ren″ (t₁ $ t₂) x z = let (t₁′ , s₁≡s₁′) = ren″ t₁ x z
-                                 (t₂′ , s₂≡s₂′) = ren″ t₂ x z in
-                             t₁′ $ t₂′ , (λ s₁ s₂ → suc (s₁ + s₂)) & s₁≡s₁′ ⊗ s₂≡s₂′
-
-        ls-ƛ′ : ∀ {x} t t′ → size t ≡ size t′ → size t′ < size (ƛ x ∙ t)
-        ls-ƛ′ t t′ s≡s′ = begin
-            suc (size t′)
-          ≡⟨ suc & (s≡s′ ⁻¹) ⟩
-            suc (size t)
-          ∎
-
-        measure-ƛ′ : ∀ {x} t t′ → size t ≡ size t′ → t′ ⋖ ƛ x ∙ t
-        measure-ƛ′ {x} t t′ s≡s′ = Lexicographic.left (ls-ƛ′ {x} t t′ s≡s′)
-
-        sub : ∀ (t : Term) (x : Name) (s : Term) → Term
-        sub = ind-measure λ where
-          (` y)     h x s → case x ≟ᴺ y of λ where
-            (yes refl)                → s
-            (no x≢y)                  → ` y
-          (ƛ y ∙ t) h x s → case x ≟ᴺ y , fv s T[∌]? x of λ where
-            (yes refl , _)            → ƛ y ∙ t
-            (no x≢y   , yes T[fvs∌x]) → ƛ y ∙ h t (measure-ƛ t) x s
-            (no x≢y   , no ¬T[fvs∌x]) → let z = fresh (fv s ∪ fv t)
-                                            (t′ , s≡s′) = ren t y z in
-                                         ƛ z ∙ h t′ (measure-ƛ′ t t′ s≡s′) x s
-          (t₁ $ t₂) h x s             → h t₁ (measure-$₁ t₁ t₂) x s $ h t₂ (measure-$₂ t₁ t₂) x s
-
-        sub′ : ∀ (t : Term) (x : Name) (s : Term) → Term
-        sub′ = ind-size λ where
-          (` y)     h x s → case x ≟ᴺ y of λ where
-            (yes refl)                → s
-            (no x≢y)                  → ` y
-          (ƛ y ∙ t) h x s → case x ≟ᴺ y , fv s T[∌]? x of λ where
-            (yes refl , _)            → ƛ y ∙ t
-            (no x≢y   , yes T[fvs∌x]) → ƛ y ∙ h t ≤-refl x s
-            (no x≢y   , no ¬T[fvs∌x]) → let z = fresh (fv s ∪ fv t)
-                                            (t′ , s≡s′) = ren t y z in
-                                         ƛ z ∙ h t′ (ls-ƛ′ {x} t t′ s≡s′) x s
-          (t₁ $ t₂) h x s             → h t₁ (ls-$₁ t₁ t₂) x s $ h t₂ (ls-$₂ t₁ t₂) x s
-
-        -- NOTE: Still fails termination checking
-        {-
-        sub″ : ∀ (t : Term) (x : Name) (s : Term) → Term
-        sub″ (` y)     x s            with x ≟ᴺ y
-        ... | yes refl                = s
-        ... | no x≢y                  = ` y
-        sub″ (ƛ y ∙ t) x s            with x ≟ᴺ y | fv s T[∌]? x
-        ... | yes refl | _            = ƛ y ∙ t
-        ... | no x≢y   | yes T[fvs∌x] = ƛ y ∙ t
-        ... | no x≢y   | no ¬T[fvs∌x] = let z = fresh (fv s ∪ fv t)
-                                            (t′ , s≡s′) = ren t y z in
-                                         ƛ z ∙ sub″ t′ x s
-        sub″ (t₁ $ t₂) x s            = sub″ t₁ x s $ sub″ t₂ x s
-        -}
+    [_↦_]_ : Name → Term → Term → Term
+    [ x ↦ s ] t = sub t x s
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
 -- • Operational semantics
---
+
+module FunctionsGetStuck
+  where
+    open Functions public
+
+    data Value : Pred₀ Term where
+      ƛ_∙_ : ∀ (x : Name) (t : Term) → Value (ƛ x ∙ t)
+
+
+-- Echo of Definition 3.5.3.
+
+    infix 3 _⇒_
+    data _⇒_ : Rel₀ Term where
+      r-app₁   : ∀ {t₁ t₂ u₁} → t₁ ⇒ u₁ → t₁ $ t₂ ⇒ u₁ $ t₂
+      r-app₂   : ∀ {t₁ t₂ u₂} → (vₜ₁ : Value t₁) → t₂ ⇒ u₂ → t₁ $ t₂ ⇒ t₁ $ u₂
+      r-appAbs : ∀ {x t₁ t₂} → (vₜ₂ : Value t₂) → (ƛ x ∙ t₁) $ t₂ ⇒ [ x ↦ t₂ ] t₁
+
+
+-- Echo of Definition 3.5.6.
+
+    open Chapter3.NormalForms _⇒_ public
+
+
+-- Echo of Theorem 3.5.7.
+
+    v→nf : ∀ {t} → Value t → NormalForm t
+    v→nf (ƛ x ∙ t) = λ ()
+
+
+-- Echo of Theorem 3.5.4.
+
+    ⇒-det : ∀ {t u u′} → t ⇒ u → t ⇒ u′ → u ≡ u′
+    ⇒-det (r-app₁ t₁⇒u₁)     (r-app₁ t₁⇒u₁′)     = (_$ _) & ⇒-det t₁⇒u₁ t₁⇒u₁′
+    ⇒-det (r-app₁ t₁⇒u₁)     (r-app₂ vₜ₁ _)       = t₁⇒u₁ ↯ v→nf vₜ₁
+    ⇒-det (r-app₁ ())         (r-appAbs _)
+    ⇒-det (r-app₂ vₜ₁ _)      (r-app₁ t₁⇒u₁)      = t₁⇒u₁ ↯ v→nf vₜ₁
+    ⇒-det (r-app₂ vₜ₁ t₂⇒u₂) (r-app₂ vₜ₂ t₂⇒u₂′) = (_ $_) & ⇒-det t₂⇒u₂ t₂⇒u₂′
+    ⇒-det (r-app₂ _ t₂⇒u₂)   (r-appAbs vₜ₂)       = t₂⇒u₂ ↯ v→nf vₜ₂
+    ⇒-det (r-appAbs _)        (r-app₁ ())
+    ⇒-det (r-appAbs vₜ₂)      (r-app₂ _ t₂⇒u₂)    = t₂⇒u₂ ↯ v→nf vₜ₂
+    ⇒-det (r-appAbs vₜ₂)      (r-appAbs vₜ₂′)      = refl
+
+
+-- Every term is either stuck, a value, or reducible to another term.
+
+    Stuck : Pred₀ Term
+    Stuck t = ¬ Value t × NormalForm t
+
+    data Stuck/Value/Reducible : Pred₀ Term where
+      stu : ∀ {t} → (σₜ : Stuck t) → Stuck/Value/Reducible t
+      val : ∀ {t} → (vₜ : Value t) → Stuck/Value/Reducible t
+      red : ∀ {t} → (rₜ : Reducible t) → Stuck/Value/Reducible t
+
+    σ-appStuck₁ : ∀ {t₁ t₂} → Stuck t₁ → Stuck (t₁ $ t₂)
+    σ-appStuck₁ (¬vₜ₁ , nfₜ₁) = (λ ())
+                              , (λ where (r-app₁ t₁⇒u₁)     → t₁⇒u₁ ↯ nfₜ₁
+                                         (r-app₂ vₜ₁ t₂⇒u₂) → vₜ₁ ↯ ¬vₜ₁
+                                         (r-appAbs vₜ₂)      → (ƛ _ ∙ _) ↯ ¬vₜ₁)
+
+    σ-appStuck₂ : ∀ {t₁ t₂} → Value t₁ → Stuck t₂ → Stuck (t₁ $ t₂)
+    σ-appStuck₂ vₜ₁ (¬vₜ₂ , nfₜ₂) = (λ ())
+                                  , (λ where (r-app₁ t₁⇒u₁)     → t₁⇒u₁ ↯ v→nf vₜ₁
+                                             (r-app₂ vₜ₁ t₂⇒u₂) → t₂⇒u₂ ↯ nfₜ₂
+                                             (r-appAbs vₜ₂)      → vₜ₂ ↯ ¬vₜ₂)
+
+    classify : ∀ t → Stuck/Value/Reducible t
+    classify (` x)     = stu ((λ ()) , (λ ()))
+    classify (ƛ x ∙ t) = val (ƛ x ∙ t)
+    classify (t₁ $ t₂) with classify t₁ | classify t₂
+    ... | stu σₜ₁          | _                = stu (σ-appStuck₁ σₜ₁)
+    ... | val vₜ₁          | stu σₜ₂          = stu (σ-appStuck₂ vₜ₁ σₜ₂)
+    ... | val (ƛ _ ∙ _)    | val vₜ₂          = red (_ , r-appAbs vₜ₂)
+    ... | val vₜ₁          | red (_ , t₂⇒u₂) = red (_ , r-app₂ vₜ₁ t₂⇒u₂)
+    ... | red (_ , t₁⇒u₁) | _                = red (_ , r-app₁ t₁⇒u₁)
+
+
+-- Echo of Theorem 3.5.8.
+
+    data Stuck/Value : Pred₀ Term where
+      stu : ∀ {t} → (σₜ : Stuck t) → Stuck/Value t
+      val : ∀ {t} → (vₜ : Value t) → Stuck/Value t
+
+    nf→σ/v : ∀ {t} → NormalForm t → Stuck/Value t
+    nf→σ/v {t} nfₜ  with classify t
+    ... | stu σₜ         = stu σₜ
+    ... | val vₜ         = val vₜ
+    ... | red (_ , t⇒u) = t⇒u ↯ nfₜ
+
+
+-- Echo of Definition 3.5.9 and Theorem 3.5.11.
+
+    open Chapter3.MultiStepReduction _⇒_ public
+    open Chapter3.UniquenessOfNormalForms _⇒_ ⇒-det public
+
+    rs-app₁ : ∀ {t₁ t₂ u₁} → t₁ ⇒* u₁ → t₁ $ t₂ ⇒* u₁ $ t₂
+    rs-app₁ = map r-app₁
+
+    rs-app₂ : ∀ {t₁ t₂ u₂} → (vₜ₁ : Value t₁) → t₂ ⇒* u₂ → t₁ $ t₂ ⇒* t₁ $ u₂
+    rs-app₂ vₜ₁ = map (r-app₂ vₜ₁)
+
+    rs-appAbs : ∀ {x t₁ t₂} → (vₜ₂ : Value t₂) → (ƛ x ∙ t₁) $ t₂ ⇒* [ x ↦ t₂ ] t₁
+    rs-appAbs vₜ₂ = r-appAbs vₜ₂ ◅ ε
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -653,11 +616,35 @@ module LC
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- 5.6.8. Exercise [⋆⋆]
+-- 5.3.8. Exercise [⋆⋆]
 -- “Exercise 4.2.2 introduced a “big-step” style of evaluation for arithmetic expressions, where the basic
 -- evaluation relation is ‘term `t` evaluates to final result `v`’.  Show how to formulate the evaluation rules
 -- for lambda-terms in the big-step style.”
 
+private
+  module Exercise538 where
+    open FunctionsGetStuck
+
+    infix 3 _⇓_
+    data _⇓_ : Rel₀ Term where
+      e-val    : ∀ {t} → (vₜ : Value t) → t ⇓ t
+      e-appAbs : ∀ {x t₁ t₂ u₁ u₂ u} → (vᵤ₂ : Value u₂) → t₁ ⇓ ƛ x ∙ u₁ → t₂ ⇓ u₂ → [ x ↦ u₂ ] u₁ ⇓ u →
+                 t₁ $ t₂ ⇓ u
+
+    exe568-ltr : ∀ {t u} → (vᵤ : Value u) → t ⇓ u → t ⇒* u
+    exe568-ltr vᵤ (e-val vₜ)                                = ε
+    exe568-ltr vᵤ (e-appAbs vᵤ₂ t₁⇓ƛx∙u₁ t₂⇓u₂ [x↦u₂]u₁⇓u) = rs-app₁ (exe568-ltr (ƛ _ ∙ _) t₁⇓ƛx∙u₁) ◅◅
+                                                              rs-app₂ (ƛ _ ∙ _) (exe568-ltr vᵤ₂ t₂⇓u₂) ◅◅
+                                                              rs-appAbs vᵤ₂ ◅◅
+                                                              (exe568-ltr vᵤ [x↦u₂]u₁⇓u)
+
+-- TODO
+
+    -- exe568-rtl : ∀ {t u} → (vᵤ : Value u) → t ⇒* u → t ⇓ u
+    -- exe568-rtl vᵤ ε                               = e-val vᵤ
+    -- exe568-rtl vᵤ (r-app₁ t₁⇒i₁ ◅ i₁$t₂⇒*u)     = {!!}
+    -- exe568-rtl vᵤ (r-app₂ vₜ₁ t₂⇒i₂ ◅ t₁$i₂⇒*u) = {!!}
+    -- exe568-rtl vᵤ (r-appAbs vₜ₂ ◅ [x↦t₂]t₁⇒*u)  = {!!}
 
 ---------------------------------------------------------------------------------------------------------------
 --
