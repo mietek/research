@@ -20,19 +20,19 @@ import Chapter3
 --
 -- TODO: Comment this
 
-record IsλC (Term : Set₀) : Set₀ where
+record IsLC (Term : Set₀) : Set₀ where
   infixl 7 _$_
   field
     `_   : ∀ (x : Name) → Term
     ƛ_∙_ : ∀ (x : Name) (t : Term) → Term
     _$_  : ∀ (t₁ t₂ : Term) → Term
 
-record λC : Set₁ where
+record LC : Set₁ where
   field
     Term : Set₀
-    isλC : IsλC Term
+    isLC : IsLC Term
 
-  open IsλC isλC public
+  open IsLC isLC public
 
   instance
     Term-isString : IsString Term
@@ -57,9 +57,9 @@ record λC : Set₁ where
 -- • Multiple arguments
 -- • Church booleans
 
-module Church-Part1 (λc : λC)
+module Church-Part1 (lc : LC)
   where
-    open λC λc
+    open LC lc
 
     tru  = ƛ "t" ∙ ƛ "f" ∙ "t"
     fls  = ƛ "t" ∙ ƛ "f" ∙ "f"
@@ -187,32 +187,32 @@ module Church-Part1 (λc : λC)
 --
 -- TODO: Comment this
 
-record IsλCNB (Term : Set₀) : Set₀ where
+record IsLCNB (Term : Set₀) : Set₀ where
   field
-    isλC            : IsλC Term
+    isLC            : IsLC Term
     true false zero : Term
     suc pred iszero : ∀ (t : Term) → Term
     if_then_else    : ∀ (t₁ t₂ t₃ : Term) → Term
 
-  open IsλC isλC public
+  open IsLC isLC public
 
-record λCNB : Set₁ where
+record LCNB : Set₁ where
   field
     Term   : Set₀
-    isλCNB : IsλCNB Term
+    isLCNB : IsLCNB Term
 
-  open IsλCNB isλCNB public
+  open IsLCNB isLCNB public
 
-  λc : λC
-  λc = record { isλC = isλC }
+  lc : LC
+  lc = record { isLC = isLC }
 
-  open λC λc public using (Term-isString)
+  open LC lc public using (Term-isString)
 
 
-module Church-Part2 (λcnb : λCNB)
+module Church-Part2 (lcnb : LCNB)
   where
-    open λCNB λcnb
-    open Church-Part1 λc
+    open LCNB lcnb
+    open Church-Part1 lc
 
     realbool   = ƛ "b" ∙ "b" $ true $ false
     churchbool = ƛ "b" ∙ if "b" then tru else fls
@@ -347,10 +347,10 @@ module Functions
 
 -- TODO: Will this be needed?
 
-    Functions-λc : λC
-    Functions-λc = record
+    Functions-lc : LC
+    Functions-lc = record
       { Term = Term
-      ; isλC = record
+      ; isLC = record
         { `_   = `_
         ; ƛ_∙_ = ƛ_∙_
         ; _$_  = _$_
