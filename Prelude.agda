@@ -44,8 +44,8 @@ open import Induction.Nat public
   using (<-wellFounded)
 
 open import Induction.WellFounded public
-  using (module All ; WellFounded)
-  renaming (module Inverse-image to InverseImage ; Acc to Accessible ; WfRec to Below ; acc to access)
+  using (module All ; WellFounded ; acc)
+  renaming (module Inverse-image to InverseImage ; Acc to Accessible ; WfRec to Below)
 
 open import Level public
   using ()

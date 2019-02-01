@@ -233,7 +233,7 @@ module NumbersAndBooleans-Part1
 -- in the documentation.
 
     ∈-wellFounded : WellFounded _∈_
-    ∈-wellFounded s = access λ where
+    ∈-wellFounded s = acc λ where
       t suc    → ∈-wellFounded t
       t pred   → ∈-wellFounded t
       t iszero → ∈-wellFounded t
