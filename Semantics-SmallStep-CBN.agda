@@ -30,7 +30,7 @@ nrf←whnf : ∀ {n} {e : Tm n} → WHNF e → NRF e
 nrf←whnf lam      = λ { (_ , ()) }
 nrf←whnf (whnf p) = nrf←naxnf p
 
-det-⇒ : ∀ {n} {e : Tm n} {e′ e″} → e ⇒ e′ → e ⇒ e″ → e′ ≡ e″
+det-⇒ : Deterministic′ _⇒_
 det-⇒ applam    applam    = refl
 det-⇒ applam    (app₁ ())
 det-⇒ (app₁ ()) applam
@@ -42,6 +42,10 @@ det-⇒ (app₁ r)  (app₁ r′) = app & det-⇒ r r′ ⊗ refl
 open MultiStepReductions _⇒_ public
 open Confluence _⇒_ det-⇒ public
 open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
+
+{-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
+{-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
+{-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
 
 
 ---------------------------------------------------------------------------------------------------------------

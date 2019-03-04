@@ -87,7 +87,7 @@ mutual
                             ; (_ , app₂ p₁′ r₂)  → (_ , r₂) ↯ nrf←nf p₂
                             }
 
-det-⇒ : ∀ {n} {e : Tm n} {e′ e″} → e ⇒ e′ → e ⇒ e″ → e′ ≡ e″
+det-⇒ : Deterministic′ _⇒_
 det-⇒ applam         applam           = refl
 det-⇒ applam         (app₁₋ ¬p₁′ r₁′) = lam ↯ ¬p₁′
 det-⇒ applam         (app₁₊ () r₁′)
@@ -106,9 +106,16 @@ det-⇒ (app₂ p₁ r₂)   (app₁₊ p₁′ r₁′)  = (_ , r₁′) ↯ nr
 det-⇒ (app₂ p₁ r₂)   (app₂ p₁′ r₂′)   = app & refl ⊗ det-⇒ r₂ r₂′
 det-⇒ (lam r)        (lam r′)         = lam & det-⇒ r r′
 
+
+---------------------------------------------------------------------------------------------------------------
+
 open MultiStepReductions _⇒_ public
 open Confluence _⇒_ det-⇒ public
 open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
+
+{-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
+{-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
+{-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
 
 
 ---------------------------------------------------------------------------------------------------------------

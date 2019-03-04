@@ -92,9 +92,7 @@ data _*⟨_⟩ {a ℓ} {A : Set a} (R : Rel A ℓ) (i : Size) : Rel A (a ⊔ ℓ
 _* : ∀ {a ℓ} {A : Set a} (R : Rel A ℓ) → Rel A (a ⊔ ℓ)
 R * = R *⟨ ∞ ⟩
 
-Confluent : ∀ {a ℓ} {A : Set a} → Rel A ℓ → Set _
-Confluent R = ∀ {x y₁ y₂} → (R *) x y₁ → (R *) x y₂ →
-              (∃ λ z → (R *) y₁ z × (R *) y₂ z)
+{-# DISPLAY _*⟨_⟩ R ∞ = R * #-}
 
 infixr 5 _◅◅_
 _◅◅_ : ∀ {a ℓ} {A : Set a} {R : Rel A ℓ} → Transitive (R *)

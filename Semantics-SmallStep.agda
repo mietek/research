@@ -169,6 +169,17 @@ module AO where
 
 module HS where
   data _⇒_ {n} : Rel₀ (Tm n) where
+    lam    : ∀ {e e′} →
+             e ⇒ e′ →
+             lam e ⇒ lam e′
+
+    app₁   : ∀ {e₁ e₂ e₁′} →
+             e₁ ⇒ e₁′ →
+             app e₁ e₂ ⇒ app e₁′ e₂
+
+    applam : ∀ {e₁ e₂} →
+             HNF e₁ →
+             app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
 
 
 ---------------------------------------------------------------------------------------------------------------

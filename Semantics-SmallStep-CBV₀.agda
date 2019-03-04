@@ -13,7 +13,7 @@ open NonReducibleForms _⇒_ public
 nrf←v : ∀ {n} {e : Tm n} → V e → NRF e
 nrf←v lam = λ { (_ , ()) }
 
-det-⇒ : ∀ {n} {e : Tm n} {e′ e″} → e ⇒ e′ → e ⇒ e″ → e′ ≡ e″
+det-⇒ : Deterministic′ _⇒_
 det-⇒ (app₁ r₁)    (app₁ r₁′)     = app & det-⇒ r₁ r₁′ ⊗ refl
 det-⇒ (app₁ r₁)    (app₂ p₁′ r₂′) = (_ , r₁) ↯ nrf←v p₁′
 det-⇒ (app₁ ())    (applam p₂′)
@@ -24,9 +24,16 @@ det-⇒ (applam p₂)  (app₁ ())
 det-⇒ (applam p₂)  (app₂ p₁′ r₂′) = (_ , r₂′) ↯ nrf←v p₂
 det-⇒ (applam p₂)  (applam p₂′)   = refl
 
+
+---------------------------------------------------------------------------------------------------------------
+
 open MultiStepReductions _⇒_ public
 open Confluence _⇒_ det-⇒ public
 open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
+
+{-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
+{-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
+{-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
 
 
 ---------------------------------------------------------------------------------------------------------------

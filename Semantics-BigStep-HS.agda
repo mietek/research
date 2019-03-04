@@ -4,6 +4,7 @@ module Semantics-BigStep-HS where
 
 open import Semantics-BigStep
 open HS public
+import Semantics-SmallStep-HS as SS-HS
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -29,6 +30,12 @@ refl-⇓ (hnf p) = refl-⇓′ p
 
 
 ---------------------------------------------------------------------------------------------------------------
+
+ss←bs : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → e SS-HS.⇒* e′
+ss←bs var           = ε
+ss←bs (lam r)       = SS-HS.bs-lam (ss←bs r)
+ss←bs (applam r₁ r) = SS-HS.bs-applam (ss←bs r₁) (hnf-⇓ r₁) (ss←bs r)
+ss←bs (app r₁ p₁′)  = SS-HS.bs-app (ss←bs r₁)
 
 -- TODO
 --   ss↔bsx : ∀ {n} {e : Tm n} {e′} → HNF e′ → e SS.HS.⇒* e′ ↔ e BSX.HS.⇓ e′
