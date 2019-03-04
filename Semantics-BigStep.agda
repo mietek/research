@@ -9,6 +9,8 @@ open import Syntax-Predicates public
 --
 -- Big-step call-by-name reduction (Sestoft)
 -- From terms to weak head normal forms
+-- Reduces the leftmost outermost redex not inside a λ-abstraction first
+-- Treats free variables as non-strict data constructors
 
 module CBN where
   data _⇓_ {n} : Rel₀ (Tm n) where
@@ -65,6 +67,7 @@ module NO₊ where
 --
 -- Big-step normal order reduction (Sestoft)
 -- From terms to normal forms
+-- Reduces the leftmost outermost redex first
 
 module NO where
   data _⇓_ {n} : Rel₀ (Tm n) where
@@ -88,6 +91,8 @@ module NO where
 --
 -- Big-step call-by-value reduction (Sestoft)
 -- From terms to weak normal forms
+-- Reduces the leftmost innermost redex not inside a lambda abstraction first
+-- Treats free variables as strict data constructors
 
 module CBV where
   data _⇓_ {n} : Rel₀ (Tm n) where
@@ -125,6 +130,7 @@ module CBV₀ where
 --
 -- Big-step applicative order reduction (Sestoft)
 -- From terms to normal forms
+-- Reduces the leftmost innermost redex first
 
 module AO where
   data _⇓_ {n} : Rel₀ (Tm n) where

@@ -137,7 +137,25 @@ module CBV₀ where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- TODO: Small-step applicative order reduction (no reference)
+-- Small-step applicative order reduction (no reference)
+
+module AO where
+  data _⇒_ {n} : Rel₀ (Tm n) where
+    lam    : ∀ {e e′} →
+             e ⇒ e′ →
+             lam e ⇒ lam e′
+
+    app₂   : ∀ {e₁ e₂ e₂′} →
+             e₂ ⇒ e₂′ →
+             app e₁ e₂ ⇒ app e₁ e₂′
+
+    app₁   : ∀ {e₁ e₂ e₁′} →
+             NF e₂ → e₁ ⇒ e₁′ →
+             app e₁ e₂ ⇒ app e₁′ e₂
+
+    applam : ∀ {e₁ e₂} →
+             NF e₁ → NF e₂ →
+             app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
 
 
 ---------------------------------------------------------------------------------------------------------------

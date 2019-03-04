@@ -76,25 +76,6 @@ app₁* = map app₁
 
 ---------------------------------------------------------------------------------------------------------------
 
-nanf-⇒* : ∀ {n} {e : Tm n} {e′} → NANF e → e ⇒* e′ → NANF e′
-nanf-⇒* p ε        = p
-nanf-⇒* p (r ◅ rs) = nanf-⇒* (nanf-⇒ p r) rs
-
-nf-⇒* : ∀ {n} {e : Tm n} {e′} → NF e → e ⇒* e′ → NF e′
-nf-⇒* p ε        = p
-nf-⇒* p (r ◅ rs) = nf-⇒* (nf-⇒ p r) rs
-
-naxnf-⇒* : ∀ {n} {e : Tm n} {e′} → NAXNF e → e ⇒* e′ → NAXNF e′
-naxnf-⇒* p ε        = p
-naxnf-⇒* p (r ◅ rs) = naxnf-⇒* (naxnf-⇒ p r) rs
-
-whnf-⇒* : ∀ {n} {e : Tm n} {e′} → WHNF e → e ⇒* e′ → WHNF e′
-whnf-⇒* p ε        = p
-whnf-⇒* p (r ◅ rs) = whnf-⇒* (whnf-⇒ p r) rs
-
-
----------------------------------------------------------------------------------------------------------------
-
 bs-applam : ∀ {n} {e₁ e₂ : Tm n} {e₁′ e′} → e₁ ⇒* lam e₁′ → e₁′ [ e₂ ] ⇒* e′ → app e₁ e₂ ⇒* e′
 bs-applam rs₁ rs = app₁* rs₁ ◅◅ applam* ◅◅ rs
 

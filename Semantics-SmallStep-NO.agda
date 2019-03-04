@@ -178,21 +178,6 @@ lam* = map lam
 
 ---------------------------------------------------------------------------------------------------------------
 
-nf-⇒* : ∀ {n} {e : Tm n} {e′} → NF e → e ⇒* e′ → NF e′
-nf-⇒* p ε        = p
-nf-⇒* p (r ◅ rs) = nf-⇒* (nf-⇒ p r) rs
-
-nanf-⇒* : ∀ {n} {e : Tm n} {e′} → NANF e → e ⇒* e′ → NANF e′
-nanf-⇒* p ε        = p
-nanf-⇒* p (r ◅ rs) = nanf-⇒* (nanf-⇒ p r) rs
-
-naxnf-⇒* : ∀ {n} {e : Tm n} {e′} → NAXNF e → e ⇒* e′ → NAXNF e′
-naxnf-⇒* p ε        = p
-naxnf-⇒* p (r ◅ rs) = naxnf-⇒* (naxnf-⇒ p r) rs
-
-
----------------------------------------------------------------------------------------------------------------
-
 bs-lam : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
 bs-lam = lam*
 

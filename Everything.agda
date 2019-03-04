@@ -13,6 +13,11 @@ import Semantics-SmallStep-NO₊ as SS-NO₊
 import Semantics-SmallStep-NO as SS-NO
 import Semantics-SmallStep-CBV as SS-CBV
 import Semantics-SmallStep-CBV₀ as SS-CBV₀
+import Semantics-SmallStep-AO as SS-AO
+import Semantics-SmallStep-HAO as SS-HAO
+import Semantics-SmallStep-HS as SS-HS
+import Semantics-SmallStep-H as SS-H
+import Semantics-SmallStep-HNO as SS-HNO
 import Semantics-BigStep
 import Semantics-BigStep-CBN as BS-CBN
 import Semantics-BigStep-CBN₀ as BS-CBN₀
