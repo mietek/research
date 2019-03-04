@@ -51,9 +51,8 @@ mutual
   ... | inj₂ (_ , rs₁ , p₁′ , refl)              = app (bs←ss′ r₁ rs₁ (nf p₁′)) (na←nanf p₁′) (refl-⇓ p₂)
   bs←ss′ (SS-AO.applam p₁ p₂) rs p″             = applam (refl-⇓ (lam p₁)) (refl-⇓ p₂) (bs←ss rs p″)
 
--- TODO
---   ss↔bsx : ∀ {n} {e : Tm n} {e′} → NF e′ → e SS.AO.⇒* e′ ↔ e BSX.AO.⇓ e′
---   ss↔bsx = BSX.AO.ss↔bsx
+ss↔bs : ∀ {n} {e : Tm n} {e′} → NF e′ → e SS-AO.⇒* e′ ↔ e ⇓ e′
+ss↔bs p′ = (λ r → bs←ss r p′) , ss←bs
 
 
 ---------------------------------------------------------------------------------------------------------------

@@ -82,8 +82,8 @@ module CBV₀ where
 -- TODO: Applicative order reduction to normal form
 
 module AO where
---   ss↔bs : ∀ {n} {e : Tm n} {e′} → NF e′ → e SS-AO.⇒* e′ ↔ e BS-AO.⇓ e′
---   ss↔bs = BS-AO.ss↔bs
+  ss↔bs : ∀ {n} {e : Tm n} {e′} → NF e′ → e SS-AO.⇒* e′ ↔ e BS-AO.⇓ e′
+  ss↔bs = BS-AO.ss↔bs
 
 
 ---------------------------------------------------------------------------------------------------------------
