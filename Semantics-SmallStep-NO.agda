@@ -10,23 +10,84 @@ import Semantics-SmallStep-NO₊ as SS-NO₊
 
 ---------------------------------------------------------------------------------------------------------------
 
+open NonReducibleForms _⇒_ public
+
+mutual
+  nrf←nf : ∀ {n} {e : Tm n} → NF e → NRF e
+  nrf←nf (lam p) = λ { (_ , lam r) → (_ , r) ↯ nrf←nf p }
+  nrf←nf (nf p)  = nrf←nanf p
+
+  nrf←nanf : ∀ {n} {e : Tm n} → NANF e → NRF e
+  nrf←nanf var         = λ { (_ , ()) }
+  nrf←nanf (app p₁ p₂) = λ { (_ , applam)       → case p₁ of λ ()
+                            ; (_ , app₁₋ ¬p₁ r₁) → whnf←nf (nf p₁) ↯ ¬p₁
+                            ; (_ , app₁₊ p₁′ r₁) → (_ , r₁) ↯ nrf←nanf p₁
+                            ; (_ , app₂ p₁′ r₂)  → (_ , r₂) ↯ nrf←nf p₂
+                            }
+
+
+---------------------------------------------------------------------------------------------------------------
+
+det-⇒ : Deterministic′ _⇒_
+det-⇒ applam         applam           = refl
+det-⇒ applam         (app₁₋ ¬p₁′ r₁′) = lam ↯ ¬p₁′
+det-⇒ applam         (app₁₊ () r₁′)
+det-⇒ applam         (app₂ () r₂′)
+det-⇒ (app₁₋ ¬p₁ r₁) applam           = lam ↯ ¬p₁
+det-⇒ (app₁₋ ¬p₁ r₁) (app₁₋ ¬p₁′ r′)  = app & det-⇒ r₁ r′ ⊗ refl
+det-⇒ (app₁₋ ¬p₁ r₁) (app₁₊ p₁′ r′)   = whnf p₁′ ↯ ¬p₁
+det-⇒ (app₁₋ ¬p₁ r₁) (app₂ p₁′ r′)    = whnf←nf (nf p₁′) ↯ ¬p₁
+det-⇒ (app₁₊ () r₁)  applam
+det-⇒ (app₁₊ p₁ r₁)  (app₁₋ ¬p₁′ r₁′) = whnf p₁ ↯ ¬p₁′
+det-⇒ (app₁₊ p₁ r₁)  (app₁₊ p₁′ r₁′)  = app & det-⇒ r₁ r₁′ ⊗ refl
+det-⇒ (app₁₊ p₁ r₁)  (app₂ p₁′ r₂′)   = (_ , r₁) ↯ nrf←nanf p₁′
+det-⇒ (app₂ () r₂)   applam
+det-⇒ (app₂ p₁ r₂)   (app₁₋ ¬p₁′ r₁′) = whnf←nf (nf p₁) ↯ ¬p₁′
+det-⇒ (app₂ p₁ r₂)   (app₁₊ p₁′ r₁′)  = (_ , r₁′) ↯ nrf←nanf p₁
+det-⇒ (app₂ p₁ r₂)   (app₂ p₁′ r₂′)   = app & refl ⊗ det-⇒ r₂ r₂′
+det-⇒ (lam r)        (lam r′)         = lam & det-⇒ r r′
+
+
+---------------------------------------------------------------------------------------------------------------
+
+mutual
+  nf-⇒ : ∀ {n} {e : Tm n} {e′} → NF e → e ⇒ e′ → NF e′
+  nf-⇒ (lam p) (lam r) = lam (nf-⇒ p r)
+  nf-⇒ (nf p)  r       = nf (nanf-⇒ p r)
+
+  nanf-⇒ : ∀ {n} {e : Tm n} {e′} → NANF e → e ⇒ e′ → NANF e′
+  nanf-⇒ var         ()
+  nanf-⇒ (app () p₂) applam
+  nanf-⇒ (app p₁ p₂) (app₁₋ ¬p₁ r₁) = app (nanf-⇒ p₁ r₁) p₂
+  nanf-⇒ (app p₁ p₂) (app₁₊ p₁′ r₁) = app (nanf-⇒ p₁ r₁) p₂
+  nanf-⇒ (app p₁ p₂) (app₂ p₁′ r₂)  = app p₁′ (nf-⇒ p₂ r₂)
+
+naxnf-⇒ : ∀ {n} {e : Tm n} {e′} → NAXNF e → e ⇒ e′ → NAXNF e′
+naxnf-⇒ var      ()
+naxnf-⇒ (app ()) applam
+naxnf-⇒ (app p₁) (app₁₋ ¬p₁ r₁) = app (naxnf-⇒ p₁ r₁)
+naxnf-⇒ (app p₁) (app₁₊ p₁′ r₁) = app (naxnf-⇒ p₁ r₁)
+naxnf-⇒ (app p₁) (app₂ p₁′ r₂)  = app p₁
+
+
+---------------------------------------------------------------------------------------------------------------
+
+open MultiStepReductions _⇒_ public
+open Confluence _⇒_ det-⇒ public
+open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
+
+{-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
+{-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
+{-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
+
+
+---------------------------------------------------------------------------------------------------------------
+
 cbn-app₁ : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ CBN.⇒ e₁′ → app e₁ e₂ ⇒ app e₁′ e₂
 cbn-app₁ CBN.applam    = app₁₋ (λ { (whnf (app ())) }) applam
 cbn-app₁ (CBN.app₁ r₁) with naxnf? _
 ... | no ¬p₁           = app₁₋ (λ { (whnf p₁) → p₁ ↯ ¬p₁ }) (cbn-app₁ r₁)
 ... | yes p₁           = app₁₊ p₁ (cbn-app₁ r₁)
-
-
----------------------------------------------------------------------------------------------------------------
-
-app₁ : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → NA e₁ → e₁ ⇒ e₁′ → app e₁ e₂ ⇒ app e₁′ e₂
-app₁ var ()
-app₁ app r   with naxnf? _
-... | no ¬p₁ = app₁₋ (λ { (whnf p₁) → p₁ ↯ ¬p₁ }) r
-... | yes p₁ = app₁₊ p₁ r
-
-
----------------------------------------------------------------------------------------------------------------
 
 no←cbn-⇒ : ∀ {n} {e : Tm n} {e′} → e CBN.⇒ e′ → e ⇒ e′
 no←cbn-⇒ CBN.applam    = applam
@@ -72,87 +133,21 @@ cbn|no₊←no-⇒ (lam r)        with whnf? _
 
 ---------------------------------------------------------------------------------------------------------------
 
-open NonReducibleForms _⇒_ public
-
-mutual
-  nrf←nf : ∀ {n} {e : Tm n} → NF e → NRF e
-  nrf←nf (lam p) = λ { (_ , lam r) → (_ , r) ↯ nrf←nf p }
-  nrf←nf (nf p)  = nrf←nanf p
-
-  nrf←nanf : ∀ {n} {e : Tm n} → NANF e → NRF e
-  nrf←nanf var         = λ { (_ , ()) }
-  nrf←nanf (app p₁ p₂) = λ { (_ , applam)       → case p₁ of λ ()
-                            ; (_ , app₁₋ ¬p₁ r₁) → whnf←nf (nf p₁) ↯ ¬p₁
-                            ; (_ , app₁₊ p₁′ r₁) → (_ , r₁) ↯ nrf←nanf p₁
-                            ; (_ , app₂ p₁′ r₂)  → (_ , r₂) ↯ nrf←nf p₂
-                            }
-
-det-⇒ : Deterministic′ _⇒_
-det-⇒ applam         applam           = refl
-det-⇒ applam         (app₁₋ ¬p₁′ r₁′) = lam ↯ ¬p₁′
-det-⇒ applam         (app₁₊ () r₁′)
-det-⇒ applam         (app₂ () r₂′)
-det-⇒ (app₁₋ ¬p₁ r₁) applam           = lam ↯ ¬p₁
-det-⇒ (app₁₋ ¬p₁ r₁) (app₁₋ ¬p₁′ r′)  = app & det-⇒ r₁ r′ ⊗ refl
-det-⇒ (app₁₋ ¬p₁ r₁) (app₁₊ p₁′ r′)   = whnf p₁′ ↯ ¬p₁
-det-⇒ (app₁₋ ¬p₁ r₁) (app₂ p₁′ r′)    = whnf←nf (nf p₁′) ↯ ¬p₁
-det-⇒ (app₁₊ () r₁)  applam
-det-⇒ (app₁₊ p₁ r₁)  (app₁₋ ¬p₁′ r₁′) = whnf p₁ ↯ ¬p₁′
-det-⇒ (app₁₊ p₁ r₁)  (app₁₊ p₁′ r₁′)  = app & det-⇒ r₁ r₁′ ⊗ refl
-det-⇒ (app₁₊ p₁ r₁)  (app₂ p₁′ r₂′)   = (_ , r₁) ↯ nrf←nanf p₁′
-det-⇒ (app₂ () r₂)   applam
-det-⇒ (app₂ p₁ r₂)   (app₁₋ ¬p₁′ r₁′) = whnf←nf (nf p₁) ↯ ¬p₁′
-det-⇒ (app₂ p₁ r₂)   (app₁₊ p₁′ r₁′)  = (_ , r₁′) ↯ nrf←nanf p₁
-det-⇒ (app₂ p₁ r₂)   (app₂ p₁′ r₂′)   = app & refl ⊗ det-⇒ r₂ r₂′
-det-⇒ (lam r)        (lam r′)         = lam & det-⇒ r r′
-
-
----------------------------------------------------------------------------------------------------------------
-
-open MultiStepReductions _⇒_ public
-open Confluence _⇒_ det-⇒ public
-open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
-
-{-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
-{-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
-{-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
-
-
----------------------------------------------------------------------------------------------------------------
-
-mutual
-  nf-⇒ : ∀ {n} {e : Tm n} {e′} → NF e → e ⇒ e′ → NF e′
-  nf-⇒ (lam p) (lam r) = lam (nf-⇒ p r)
-  nf-⇒ (nf p)  r       = nf (nanf-⇒ p r)
-
-  nanf-⇒ : ∀ {n} {e : Tm n} {e′} → NANF e → e ⇒ e′ → NANF e′
-  nanf-⇒ var         ()
-  nanf-⇒ (app () p₂) applam
-  nanf-⇒ (app p₁ p₂) (app₁₋ ¬p₁ r₁) = app (nanf-⇒ p₁ r₁) p₂
-  nanf-⇒ (app p₁ p₂) (app₁₊ p₁′ r₁) = app (nanf-⇒ p₁ r₁) p₂
-  nanf-⇒ (app p₁ p₂) (app₂ p₁′ r₂)  = app p₁′ (nf-⇒ p₂ r₂)
-
-naxnf-⇒ : ∀ {n} {e : Tm n} {e′} → NAXNF e → e ⇒ e′ → NAXNF e′
-naxnf-⇒ var      ()
-naxnf-⇒ (app ()) applam
-naxnf-⇒ (app p₁) (app₁₋ ¬p₁ r₁) = app (naxnf-⇒ p₁ r₁)
-naxnf-⇒ (app p₁) (app₁₊ p₁′ r₁) = app (naxnf-⇒ p₁ r₁)
-naxnf-⇒ (app p₁) (app₂ p₁′ r₂)  = app p₁
-
-
----------------------------------------------------------------------------------------------------------------
+applam* : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} → app (lam e₁) e₂ ⇒* e₁ [ e₂ ]
+applam* = applam ◅ ε
 
 cbn-app₁* : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ SS-CBN.⇒* e₁′ → app e₁ e₂ ⇒* app e₁′ e₂
 cbn-app₁* = map cbn-app₁
 
+app₁₊* : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → NAXNF e₁ → e₁ ⇒* e₁′ → app e₁ e₂ ⇒* app e₁′ e₂
+app₁₊* p₁ ε          = ε
+app₁₊* p₁ (r₁ ◅ rs₁) = app₁₊ p₁ r₁ ◅ app₁₊* (naxnf-⇒ p₁ r₁) rs₁
 
----------------------------------------------------------------------------------------------------------------
+app₂* : ∀ {n} {e₁ e₂ : Tm n} {e₂′} → NANF e₁ → e₂ ⇒* e₂′ → app e₁ e₂ ⇒* app e₁ e₂′
+app₂* p₁ = map (app₂ p₁)
 
-no←cbn-⇒* : ∀ {n} {e : Tm n} {e′} → e SS-CBN.⇒* e′ → e ⇒* e′
-no←cbn-⇒* = map no←cbn-⇒
-
-no←no₊-⇒* : ∀ {n} {e : Tm n} {e′} → e SS-NO₊.⇒* e′ → e ⇒* e′
-no←no₊-⇒* = map no←no₊-⇒
+lam* : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
+lam* = map lam
 
 no₊←no-⇒* : ∀ {n} {e : Tm n} {e′} → WHNF e → e ⇒* e′ → e SS-NO₊.⇒* e′
 no₊←no-⇒* p ε        = ε
@@ -165,38 +160,6 @@ cbn|no₊←no-⇒* (r ◅ rs) p with cbn|no₊←no-⇒ r
 ... | inj₂ r′              = _ , ε , SS-NO₊.rev-whnf-⇒ r′ , r′ ◅ no₊←no-⇒* (SS-NO₊.whnf-⇒ r′) rs
 ... | inj₁ r′              with cbn|no₊←no-⇒* rs p
 ... | _ , rs′ , p′ , rs″   = _ , r′ ◅ rs′ , p′ , rs″
-
-
----------------------------------------------------------------------------------------------------------------
-
-applam* : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} → app (lam e₁) e₂ ⇒* e₁ [ e₂ ]
-applam* = applam ◅ ε
-
-app₁₊* : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → NAXNF e₁ → e₁ ⇒* e₁′ → app e₁ e₂ ⇒* app e₁′ e₂
-app₁₊* p₁ ε          = ε
-app₁₊* p₁ (r₁ ◅ rs₁) = app₁₊ p₁ r₁ ◅ app₁₊* (naxnf-⇒ p₁ r₁) rs₁
-
-app₂* : ∀ {n} {e₁ e₂ : Tm n} {e₂′} → NANF e₁ → e₂ ⇒* e₂′ → app e₁ e₂ ⇒* app e₁ e₂′
-app₂* p₁ = map (app₂ p₁)
-
-lam* : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
-lam* = map lam
-
-
----------------------------------------------------------------------------------------------------------------
-
-bs-lam : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
-bs-lam = lam*
-
-bs-applam : ∀ {n} {e₁ e₂ : Tm n} {e₁′ e′} →
-            e₁ SS-CBN.⇒* lam e₁′ → e₁′ [ e₂ ] ⇒* e′ →
-            app e₁ e₂ ⇒* e′
-bs-applam rs₁ rs = cbn-app₁* rs₁ ◅◅ applam* ◅◅ rs
-
-bs-app : ∀ {n} {e₁ e₂ : Tm n} {e₁′ e₁″ e₂′} →
-         e₁ SS-CBN.⇒* e₁′ → NAXNF e₁′ → e₁′ ⇒* e₁″ → NANF e₁″ → e₂ ⇒* e₂′ →
-         app e₁ e₂ ⇒* app e₁″ e₂′
-bs-app rs₁ p₁′ rs₁′ p₁″ rs₂ = cbn-app₁* rs₁ ◅◅ app₁₊* p₁′ rs₁′ ◅◅ app₂* p₁″ rs₂
 
 
 ---------------------------------------------------------------------------------------------------------------

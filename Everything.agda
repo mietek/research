@@ -5,121 +5,124 @@
 module Everything where
 
 open import Prelude
+
 open import Syntax-Terms
 open import Syntax-Predicates
+
 import Semantics-SmallStep
-import Semantics-SmallStep-CBN as SS-CBN
-import Semantics-SmallStep-NO₊ as SS-NO₊
-import Semantics-SmallStep-NO as SS-NO
-import Semantics-SmallStep-CBV as SS-CBV
+import Semantics-SmallStep-CBN  as SS-CBN
+import Semantics-SmallStep-NO₊  as SS-NO₊
+import Semantics-SmallStep-NO   as SS-NO
+import Semantics-SmallStep-CBV  as SS-CBV
 import Semantics-SmallStep-CBV₀ as SS-CBV₀
-import Semantics-SmallStep-AO as SS-AO
-import Semantics-SmallStep-HAO as SS-HAO
-import Semantics-SmallStep-HS as SS-HS
-import Semantics-SmallStep-H as SS-H
-import Semantics-SmallStep-HNO as SS-HNO
+import Semantics-SmallStep-AO   as SS-AO
+import Semantics-SmallStep-HAO  as SS-HAO
+import Semantics-SmallStep-HS   as SS-HS
+import Semantics-SmallStep-H    as SS-H
+import Semantics-SmallStep-HNO  as SS-HNO
+
 import Semantics-BigStep
-import Semantics-BigStep-CBN as BS-CBN
+import Semantics-BigStep-CBN  as BS-CBN
 import Semantics-BigStep-CBN₀ as BS-CBN₀
-import Semantics-BigStep-NO₊ as BS-NO₊
-import Semantics-BigStep-NO as BS-NO
-import Semantics-BigStep-CBV as BS-CBV
+import Semantics-BigStep-NO₊  as BS-NO₊
+import Semantics-BigStep-NO   as BS-NO
+import Semantics-BigStep-CBV  as BS-CBV
 import Semantics-BigStep-CBV₀ as BS-CBV₀
-import Semantics-BigStep-AO as BS-AO
-import Semantics-BigStep-HAO as BS-HAO
-import Semantics-BigStep-HS as BS-HS
-import Semantics-BigStep-H as BS-H
-import Semantics-BigStep-HNO as BS-HNO
+import Semantics-BigStep-AO   as BS-AO
+import Semantics-BigStep-HAO  as BS-HAO
+import Semantics-BigStep-HS   as BS-HS
+import Semantics-BigStep-H    as BS-H
+import Semantics-BigStep-HNO  as BS-HNO
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Call-by-name reduction to weak head normal form
+-- Call-by-name reduction to weak head normal forms
 
 module CBN where
-  ss↔bs : ∀ {n} {e : Tm n} {e′} → WHNF e′ → e SS-CBN.⇒* e′ ↔ e BS-CBN.⇓ e′
-  ss↔bs = BS-CBN.ss↔bs
+  bs↔ss : ∀ {n} {e : Tm n} {e′} → e BS-CBN.⇓ e′ ↔ (e SS-CBN.⇒* e′ × WHNF e′)
+  bs↔ss = BS-CBN.bs↔ss
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Call-by-name reduction to value
+-- Call-by-name reduction to values
 
 module CBN₀ where
-  ss↔bs : ∀ {n} {e : Tm n} {e′} → V e′ → e SS-CBN.⇒* e′ ↔ e BS-CBN₀.⇓ e′
-  ss↔bs = BS-CBN₀.ss↔bs
+  bs↔ss : ∀ {n} {e : Tm n} {e′} → e BS-CBN₀.⇓ e′ ↔ (e SS-CBN.⇒* e′ × V e′)
+  bs↔ss = BS-CBN₀.bs↔ss
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Normal order reduction to normal form
+-- Normal order reduction to normal forms
 
 module NO where
-  ss↔bs : ∀ {n} {e : Tm n} {e′} → NF e′ → e SS-NO.⇒* e′ ↔ e BS-NO.⇓ e′
-  ss↔bs = BS-NO.ss↔bs
+  bs↔ss : ∀ {n} {e : Tm n} {e′} → e BS-NO.⇓ e′ ↔ (e SS-NO.⇒* e′ × NF e′)
+  bs↔ss = BS-NO.bs↔ss
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Call-by-value reduction to weak normal form
+-- Call-by-value reduction to weak normal forms
 
 module CBV where
-  ss↔bs : ∀ {n} {e : Tm n} {e′} → WNF e′ → e SS-CBV.⇒* e′ ↔ e BS-CBV.⇓ e′
-  ss↔bs = BS-CBV.ss↔bs
+  bs↔ss : ∀ {n} {e : Tm n} {e′} → e BS-CBV.⇓ e′ ↔ (e SS-CBV.⇒* e′ × WNF e′)
+  bs↔ss = BS-CBV.bs↔ss
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Call-by-value reduction to value
+-- Call-by-value reduction to values
 
 module CBV₀ where
-  ss↔bs : ∀ {n} {e : Tm n} {e′} → V e′ → e SS-CBV₀.⇒* e′ ↔ e BS-CBV₀.⇓ e′
-  ss↔bs = BS-CBV₀.ss↔bs
+  bs↔ss : ∀ {n} {e : Tm n} {e′} → e BS-CBV₀.⇓ e′ ↔ (e SS-CBV₀.⇒* e′ × V e′)
+  bs↔ss = BS-CBV₀.bs↔ss
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- TODO: Applicative order reduction to normal form
+-- Applicative order reduction to normal forms
 
 module AO where
-  ss↔bs : ∀ {n} {e : Tm n} {e′} → NF e′ → e SS-AO.⇒* e′ ↔ e BS-AO.⇓ e′
-  ss↔bs = BS-AO.ss↔bs
+  bs↔ss : ∀ {n} {e : Tm n} {e′} → e BS-AO.⇓ e′ ↔ (e SS-AO.⇒* e′ × NF e′)
+  bs↔ss = BS-AO.bs↔ss
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- TODO: Hybrid applicative order reduction to normal form
+-- TODO: Hybrid applicative order reduction to normal forms
 
 module HAO where
---   ss↔bs : ∀ {n} {e : Tm n} {e′} → NF e′ → e SS-HAO.⇒* e′ ↔ e BS-HAO.⇓ e′
---   ss↔bs = BS-HAO.ss↔bs
+--   bs↔ss : ∀ {n} {e : Tm n} {e′} → e BS-HAO.⇓ e′ ↔ (e SS-HAO.⇒* e′ × NF e′)
+--   bs↔ss = BS-HAO.bs↔ss
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- TODO: Head spine reduction to head normal form
+-- Head spine reduction to head normal forms
 
 module HS where
---   ss↔bs : ∀ {n} {e : Tm n} {e′} → HNF e′ → e SS-HS.⇒* e′ ↔ e BS-HS.⇓ e′
---   ss↔bs = BS-HS.ss↔bs
+  bs↔ss : ∀ {n} {e : Tm n} {e′} → e BS-HS.⇓ e′ ↔ (e SS-HS.⇒* e′ × HNF e′)
+  bs↔ss = BS-HS.bs↔ss
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- TODO: Head reduction to head normal form
+-- TODO: Head reduction to head normal forms
 
 module H where
---   ss↔bs : ∀ {n} {e : Tm n} {e′} → HNF e′ → e SS-H.⇒* e′ ↔ e BS-H.⇓ e′
---   ss↔bs = BS-H.ss↔bs
+--   bs↔ss : ∀ {n} {e : Tm n} {e′} → e BS-H.⇓ e′ ↔ (e SS-H.⇒* e′ × HNF e′)
+--   bs↔ss = BS-H.bs↔ss
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- TODO: Hybrid normal order reduction to normal form
+-- TODO: Hybrid normal order reduction to normal forms
 
 module HNO where
---   ss↔bs : ∀ {n} {e : Tm n} {e′} → NF e′ → e SS-HNO.⇒* e′ ↔ e BS-HNO.⇓ e′
---   ss↔bs = BS-HNO.ss↔bs
+--   bs↔ss : ∀ {n} {e : Tm n} {e′} → e BS-HNO.⇓ e′ ↔ (e SS-HNO.⇒* e′ × NF e′)
+--   bs↔ss = BS-HNO.bs↔ss
 
 
 ---------------------------------------------------------------------------------------------------------------

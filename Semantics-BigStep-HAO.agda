@@ -8,6 +8,8 @@ import Semantics-BigStep-CBV as BS-CBV
 
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- BS-HAO goes to NF
 
 na←nawnf-⇓ : ∀ {n} {e : Tm n} {e′} → NAWNF e → e ⇓ e′ → NA e′
 na←nawnf-⇓ var         var                = var
@@ -24,6 +26,11 @@ nf-⇓ (lam r)            = lam (nf-⇓ r)
 nf-⇓ (applam r₁ r₂ r)   = nf-⇓ r
 nf-⇓ (app r₁ q₁ r₁′ r₂) = nf (app (nanf←nf (nf-⇓ r₁′) (na←wnf-⇓ (BS-CBV.wnf-⇓ r₁) q₁ r₁′)) (nf-⇓ r₂))
 
+
+---------------------------------------------------------------------------------------------------------------
+--
+-- BS-HAO is reflexive
+
 mutual
   refl-⇓ : ∀ {n} {e : Tm n} → NF e → e ⇓ e
   refl-⇓ (lam p) = lam (refl-⇓ p)
@@ -35,10 +42,11 @@ mutual
 
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- TODO: BS-HAO and SS-HAO to NF coincide
 
--- TODO
---   ss↔bsx : ∀ {n} {e : Tm n} {e′} → NF e′ → e SS.HAO.⇒* e′ ↔ e BSX.HAO.⇓ e′
---   ss↔bsx = BSX.HAO.ss↔bsx
+-- bs↔ss : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ ↔ (e ⇒* e′ × NF e′)
+-- bs↔ss = (λ r → ss←bs r , nf-⇓ r) , uncurry bs←ss
 
 
 ---------------------------------------------------------------------------------------------------------------

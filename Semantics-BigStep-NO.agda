@@ -4,12 +4,16 @@ module Semantics-BigStep-NO where
 
 open import Semantics-BigStep
 open NO public
-import Semantics-SmallStep-NO as SS-NO
+import Semantics-SmallStep-CBN as SS-CBN
+import Semantics-SmallStep-NO₊ as SS-NO₊
+open import Semantics-SmallStep-NO
 import Semantics-BigStep-CBN as BS-CBN
 import Semantics-BigStep-NO₊ as BS-NO₊
 
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- BS-NO goes to NF
 
 na←naxnf-⇓ : ∀ {n} {e : Tm n} {e′} → NAXNF e → e ⇓ e′ → NA e′
 na←naxnf-⇓ var      var                = var
@@ -28,6 +32,11 @@ nf-⇓ (app r₁ q₁ r₁′ r₂) = nf (app (nanf←nf (nf-⇓ r₁′) p₁) 
   where
     p₁ = na←whnf-⇓ (BS-CBN.whnf-⇓ r₁) q₁ r₁′
 
+
+---------------------------------------------------------------------------------------------------------------
+--
+-- BS-NO is reflexive
+
 mutual
   refl-⇓ : ∀ {n} {e : Tm n} → NF e → e ⇓ e
   refl-⇓ (lam p) = lam (refl-⇓ p)
@@ -37,6 +46,38 @@ mutual
   refl-⇓′ var         = var
   refl-⇓′ (app p₁ p₂) = app (BS-CBN.refl-⇓′ (naxnf←nanf p₁)) (na←nanf p₁) (refl-⇓′ p₁) (refl-⇓ p₂)
 
+
+---------------------------------------------------------------------------------------------------------------
+--
+-- BS-NO implies SS-NO
+
+bs-lam : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
+bs-lam = lam*
+
+bs-applam : ∀ {n} {e₁ e₂ : Tm n} {e₁′ e′} →
+            e₁ SS-CBN.⇒* lam e₁′ → e₁′ [ e₂ ] ⇒* e′ →
+            app e₁ e₂ ⇒* e′
+bs-applam rs₁ rs = cbn-app₁* rs₁ ◅◅ applam* ◅◅ rs
+
+bs-app : ∀ {n} {e₁ e₂ : Tm n} {e₁′ e₁″ e₂′} →
+         e₁ SS-CBN.⇒* e₁′ → NAXNF e₁′ → e₁′ ⇒* e₁″ → NANF e₁″ → e₂ ⇒* e₂′ →
+         app e₁ e₂ ⇒* app e₁″ e₂′
+bs-app rs₁ p₁′ rs₁′ p₁″ rs₂ = cbn-app₁* rs₁ ◅◅ app₁₊* p₁′ rs₁′ ◅◅ app₂* p₁″ rs₂
+
+ss←bs : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → e ⇒* e′
+ss←bs var                = ε
+ss←bs (lam r)            = bs-lam (ss←bs r)
+ss←bs (applam r₁ r)      = bs-applam (BS-CBN.ss←bs r₁) (ss←bs r)
+ss←bs (app r₁ q₁ r₁′ r₂) = bs-app (BS-CBN.ss←bs r₁) p₁ (ss←bs r₁′) p₁′ (ss←bs r₂)
+  where
+    p₁  = naxnf←whnf (BS-CBN.whnf-⇓ r₁) q₁
+    p₁′ = nanf←nf (nf-⇓ r₁′) (na←whnf-⇓ (BS-CBN.whnf-⇓ r₁) q₁ r₁′)
+
+
+---------------------------------------------------------------------------------------------------------------
+--
+-- SS-NO to NF implies BS-NO
+
 no←cbn|no₊-⇓ : ∀ {n} {e : Tm n} {e′ e″} → e CBN.⇓ e′ → e′ NO₊.⇓ e″ → e ⇓ e″
 no←cbn|no₊-⇓ CBN.var           NO₊.var                  = var
 no←cbn|no₊-⇓ CBN.lam           (NO₊.lam r r′)           = lam (no←cbn|no₊-⇓ r r′)
@@ -45,24 +86,17 @@ no←cbn|no₊-⇓ (CBN.app r₁ q₁)   (NO₊.app q₁′ r₁′ r₂ r₂′
   where
     r₁″ = no←cbn|no₊-⇓ (BS-CBN.refl-⇓ (BS-CBN.whnf-⇓ r₁)) r₁′
 
-
----------------------------------------------------------------------------------------------------------------
-
-ss←bs : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → e SS-NO.⇒* e′
-ss←bs var                = ε
-ss←bs (lam r)            = SS-NO.bs-lam (ss←bs r)
-ss←bs (applam r₁ r)      = SS-NO.bs-applam (BS-CBN.ss←bs r₁) (ss←bs r)
-ss←bs (app r₁ q₁ r₁′ r₂) = SS-NO.bs-app (BS-CBN.ss←bs r₁) p₁ (ss←bs r₁′) p₁′ (ss←bs r₂)
-  where
-    p₁  = naxnf←whnf (BS-CBN.whnf-⇓ r₁) q₁
-    p₁′ = nanf←nf (nf-⇓ r₁′) (na←whnf-⇓ (BS-CBN.whnf-⇓ r₁) q₁ r₁′)
-
-bs←ss : ∀ {n} {e : Tm n} {e′} → e SS-NO.⇒* e′ → NF e′ → e ⇓ e′
-bs←ss rs p′             with SS-NO.cbn|no₊←no-⇒* rs p′
+bs←ss : ∀ {n} {e : Tm n} {e′} → e ⇒* e′ → NF e′ → e ⇓ e′
+bs←ss rs p′             with cbn|no₊←no-⇒* rs p′
 ... | _ , rs′ , p″ , rs″ = no←cbn|no₊-⇓ (BS-CBN.bs←ss rs′ p″) (BS-NO₊.bs←ss rs″ p′)
 
-ss↔bs : ∀ {n} {e : Tm n} {e′} → NF e′ → e SS-NO.⇒* e′ ↔ e ⇓ e′
-ss↔bs p′ = (λ r → bs←ss r p′) , ss←bs
+
+---------------------------------------------------------------------------------------------------------------
+--
+-- BS-NO and SS-NO to NF coincide
+
+bs↔ss : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ ↔ (e ⇒* e′ × NF e′)
+bs↔ss = (λ r → ss←bs r , nf-⇓ r) , uncurry bs←ss
 
 
 ---------------------------------------------------------------------------------------------------------------

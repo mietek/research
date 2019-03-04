@@ -10,13 +10,13 @@ open import Data.Nat public
   renaming (ℕ to Nat)
 
 open import Data.Product public
-  using (Σ ; ∃ ; _×_ ; _,_ ; proj₁ ; proj₂)
+  using (Σ ; ∃ ; _×_ ; _,_ ; proj₁ ; proj₂ ; uncurry)
 
 open import Data.Sum public
   using (_⊎_ ; inj₁ ; inj₂)
 
 open import Function public
-  using (_∘_ ; case_of_ ; flip ; id)
+  using (_∘_ ; case_of_ ; id)
 
 open import Level public
   using (_⊔_)
@@ -74,7 +74,7 @@ REL₀ A B = REL A B _
 -- Data.Product extras
 
 ∃² : ∀ {a b c} {A : Set a} {B : Set b} → (A → B → Set c) → Set (a ⊔ b ⊔ c)
-∃² f = Σ (_ × _) λ { (x , y) → f x y }
+∃² f = Σ (_ × _) (uncurry f)
 
 ∃³ : ∀ {a b c d} {A : Set a} {B : Set b} {C : Set c} → (A → B → C → Set d) → Set (a ⊔ b ⊔ c ⊔ d)
 ∃³ f = Σ (_ × _ × _) λ { (x , y , z) → f x y z }
