@@ -40,12 +40,16 @@ mutual
 
   bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e SS-AO.⇒ e′ → e′ SS-AO.⇒*⟨ i ⟩ e″ → NF e″ → e ⇓ e″
   bs←ss′ (SS-AO.lam r)        rs (lam p″)       with SS-AO.rev-lam-⇒* rs p″
-  ... | rs′                                      = lam (bs←ss (r ◅ rs′) p″)
+  ... | rs′                                      = lam (bs←ss′ r rs′ p″)
   bs←ss′ (SS-AO.lam r)        rs (nf var)       = rs ↯ SS-AO.¬lam⇒*var
   bs←ss′ (SS-AO.lam r)        rs (nf (app _ _)) = rs ↯ SS-AO.¬lam⇒*app
-  bs←ss′ (SS-AO.app₂ r₂)      rs p″             = {!!}
-  bs←ss′ (SS-AO.app₁ p₂ r₂)   rs p″             = {!!}
-  bs←ss′ (SS-AO.applam p₁ p₂) rs p″             = {!!}
+  bs←ss′ (SS-AO.app₂ r₂)      rs p″             with SS-AO.rev-app₂-⇒* rs p″
+  ... | inj₁ (_ , rs₁ , p₁′ , rs₂ , p₂′ , rs′)   = applam (bs←ss rs₁ (lam p₁′)) (bs←ss′ r₂ rs₂ p₂′) (bs←ss rs′ p″)
+  ... | inj₂ (_ , rs₁ , p₁′ , rs₂ , p₂′ , refl)  = app (bs←ss rs₁ (nf p₁′)) (na←nanf p₁′) (bs←ss′ r₂ rs₂ p₂′)
+  bs←ss′ (SS-AO.app₁ p₂ r₁)   rs p″             with SS-AO.rev-app₁-⇒* p₂ rs p″
+  ... | inj₁ (_ , rs₁ , p₁′ , rs′)               = applam (bs←ss′ r₁ rs₁ (lam p₁′)) (refl-⇓ p₂) (bs←ss rs′ p″)
+  ... | inj₂ (_ , rs₁ , p₁′ , refl)              = app (bs←ss′ r₁ rs₁ (nf p₁′)) (na←nanf p₁′) (refl-⇓ p₂)
+  bs←ss′ (SS-AO.applam p₁ p₂) rs p″             = applam (refl-⇓ (lam p₁)) (refl-⇓ p₂) (bs←ss rs p″)
 
 -- TODO
 --   ss↔bsx : ∀ {n} {e : Tm n} {e′} → NF e′ → e SS.AO.⇒* e′ ↔ e BSX.AO.⇓ e′
