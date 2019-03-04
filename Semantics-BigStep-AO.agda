@@ -33,6 +33,20 @@ ss←bs (lam r)          = SS-AO.bs-lam (ss←bs r)
 ss←bs (applam r₁ r₂ r) = SS-AO.bs-applam (ss←bs r₁) (nf-⇓ r₁) (ss←bs r₂) (nf-⇓ r₂) (ss←bs r)
 ss←bs (app r₁ p₁′ r₂)  = SS-AO.bs-app (ss←bs r₁) (ss←bs r₂) (nf-⇓ r₂)
 
+mutual
+  bs←ss : ∀ {n i} {e : Tm n} {e′} → e SS-AO.⇒*⟨ i ⟩ e′ → NF e′ → e ⇓ e′
+  bs←ss ε        p′ = refl-⇓ p′
+  bs←ss (r ◅ rs) p′ = bs←ss′ r rs p′
+
+  bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e SS-AO.⇒ e′ → e′ SS-AO.⇒*⟨ i ⟩ e″ → NF e″ → e ⇓ e″
+  bs←ss′ (SS-AO.lam r)        rs (lam p″)       with SS-AO.rev-lam-⇒* rs p″
+  ... | rs′                                      = lam (bs←ss (r ◅ rs′) p″)
+  bs←ss′ (SS-AO.lam r)        rs (nf var)       = rs ↯ SS-AO.¬lam⇒*var
+  bs←ss′ (SS-AO.lam r)        rs (nf (app _ _)) = rs ↯ SS-AO.¬lam⇒*app
+  bs←ss′ (SS-AO.app₂ r₂)      rs p″             = {!!}
+  bs←ss′ (SS-AO.app₁ p₂ r₂)   rs p″             = {!!}
+  bs←ss′ (SS-AO.applam p₁ p₂) rs p″             = {!!}
+
 -- TODO
 --   ss↔bsx : ∀ {n} {e : Tm n} {e′} → NF e′ → e SS.AO.⇒* e′ ↔ e BSX.AO.⇓ e′
 --   ss↔bsx = BSX.AO.ss↔bsx

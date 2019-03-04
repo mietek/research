@@ -188,12 +188,12 @@ rev-lam₋-⇒* (lam₊ p r ◅ rs)  p′ = _ , ε , p , r ◅ rev-lam₊-⇒* (
 
 ¬lam⇒*var : ∀ {n} {e : Tm (suc n)} {x} → ¬ (lam e ⇒* var x)
 ¬lam⇒*var = λ { (lam₋ ¬p r ◅ rs) → rs ↯ ¬lam⇒*var
-               ; (lam₊ p r ◅ rs)   → rs ↯ ¬lam⇒*var
+               ; (lam₊ p r ◅ rs)  → rs ↯ ¬lam⇒*var
                }
 
 ¬lam⇒*app : ∀ {n} {e : Tm (suc n)} {e₁ e₂} → ¬ (lam e ⇒* app e₁ e₂)
 ¬lam⇒*app = λ { (lam₋ ¬p r ◅ rs) → rs ↯ ¬lam⇒*app
-               ; (lam₊ p r ◅ rs)   → rs ↯ ¬lam⇒*app
+               ; (lam₊ p r ◅ rs)  → rs ↯ ¬lam⇒*app
                }
 
 
