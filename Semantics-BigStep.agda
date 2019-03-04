@@ -7,10 +7,12 @@ open import Syntax-Predicates public
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Big-step call-by-name reduction (Sestoft)
--- From terms to weak head normal forms
--- Reduces the leftmost outermost redex not inside a λ-abstraction first
--- Treats free variables as non-strict data constructors
+-- Big-step call-by-name reduction (Sestoft’s bn)
+-- ✓ From terms to weak head normal forms
+-- ∙ “Does not reduce under λ-abstractions”
+-- ∙ “Does not reduce arguments before substitution”
+-- ∙ “Reduces the leftmost outermost redex not inside a λ-abstraction first”
+-- ∙ “Treats free variables as non-strict data constructors”
 
 module CBN where
   data _⇓_ {n} : Rel₀ (Tm n) where
@@ -32,7 +34,7 @@ module CBN where
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Big-step call-by-name reduction (no reference)
--- From terms to values
+-- ✓ From terms to values
 
 module CBN₀ where
   data _⇓_ {n} : Rel₀ (Tm n) where
@@ -47,7 +49,7 @@ module CBN₀ where
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Small-step normal order reduction, post-CBN fragment (Garcia-Perez, et al.)
--- From weak head normal forms to normal forms
+-- ✓ From weak head normal forms to normal forms
 
 module NO₊ where
   data _⇓_ {n} : Rel₀ (Tm n) where
@@ -65,9 +67,12 @@ module NO₊ where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Big-step normal order reduction (Sestoft)
--- From terms to normal forms
--- Reduces the leftmost outermost redex first
+-- Big-step normal order reduction (Sestoft’s no)
+-- ✓ From terms to normal forms
+-- ∙ “Reduces under λ-abstractions”
+-- ‽ “Reduces arguments before substitution”
+-- ∙ “Reduces the leftmost outermost redex first”
+-- ∙ Normalising
 
 module NO where
   data _⇓_ {n} : Rel₀ (Tm n) where
@@ -89,10 +94,12 @@ module NO where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Big-step call-by-value reduction (Sestoft)
--- From terms to weak normal forms
--- Reduces the leftmost innermost redex not inside a lambda abstraction first
--- Treats free variables as strict data constructors
+-- Big-step call-by-value reduction (Sestoft’s bv)
+-- ✓ From terms to weak normal forms
+-- ∙ “Does not reduce under λ-abstractions”
+-- ∙ “Reduces arguments before substitution”
+-- ∙ “Reduces the leftmost innermost redex not inside a λ-abstraction first”
+-- ∙ “Treats free variables as strict data constructors”
 
 module CBV where
   data _⇓_ {n} : Rel₀ (Tm n) where
@@ -114,7 +121,7 @@ module CBV where
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Big-step call-by-value reduction (Pierce)
--- From terms to values
+-- ✓ From terms to values
 
 module CBV₀ where
   data _⇓_ {n} : Rel₀ (Tm n) where
@@ -128,9 +135,12 @@ module CBV₀ where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Big-step applicative order reduction (Sestoft)
--- From terms to normal forms
--- Reduces the leftmost innermost redex first
+-- Big-step applicative order reduction (Sestoft’s ao)
+-- ✓ From terms to normal forms
+-- ∙ “Reduces under λ-abstractions”
+-- ∙ “Reduces arguments before substitution”
+-- ∙ “Reduces the leftmost innermost redex first”
+-- ∙ Not normalising
 
 module AO where
   data _⇓_ {n} : Rel₀ (Tm n) where
@@ -152,8 +162,12 @@ module AO where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Big-step hybrid applicative order reduction (Sestoft)
--- From terms to normal forms
+-- Big-step hybrid applicative order reduction (Sestoft’s ha)
+-- ✓ From terms to normal forms
+-- ∙ “Reduces under λ-abstractions”
+-- ∙ “Reduces arguments before substitution”
+-- ∙ “Reduces inside λ-abstractions only in argument positions”
+-- ∙ “Relates to CBV in the same way that NO relates to CBN”
 
 module HAO where
   data _⇓_ {n} : Rel₀ (Tm n) where
@@ -175,8 +189,11 @@ module HAO where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Big-step head spine reduction (Sestoft)
--- From terms to head normal forms
+-- Big-step head spine reduction (Sestoft’s he)
+-- ✓ From terms to head normal forms
+-- ∙ “Reduces under λ-abstractions”
+-- ∙ “Does not reduce arguments before substitution”
+-- ∙ “Reduces inside λ-abstractions, but only in head position”
 
 module HS where
   data _⇓_ {n} : Rel₀ (Tm n) where
@@ -198,8 +215,9 @@ module HS where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Big-step head reduction (Sestoft)
--- From terms to head normal forms
+-- Big-step head reduction (Sestoft’s modified he)
+-- ✓ From terms to head normal forms
+-- ∙ “Only head redexes are contracted”
 
 module H where
   data _⇓_ {n} : Rel₀ (Tm n) where
@@ -221,8 +239,11 @@ module H where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Big-step hybrid normal order reduction (Sestoft)
--- From terms to normal forms
+-- Big-step hybrid normal order reduction (Sestoft’s hn)
+-- ✓ From terms to normal forms
+-- ∙ “Reduces under λ-abstractions”
+-- ‽ “Reduces arguments before substitution”
+-- ∙ Normalising
 
 module HNO where
   data _⇓_ {n} : Rel₀ (Tm n) where

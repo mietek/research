@@ -75,7 +75,7 @@ module NO where
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Small-step normal order reduction, alternative (Pierce)
--- With corrected app₁ rule
+-- ∙ With corrected app₁ rule
 
 module NO′ where
   data _⇒_ {n} : Rel₀ (Tm n) where
@@ -98,7 +98,7 @@ module NO′ where
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Small-step call-by-value reduction (no reference)
--- With weak normal forms
+-- ∙ With weak normal forms
 
 module CBV where
   data _⇒_ {n} : Rel₀ (Tm n) where
@@ -118,7 +118,7 @@ module CBV where
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Small-step call-by-value reduction (Pierce)
--- With values
+-- ∙ With values
 
 module CBV₀ where
   data _⇒_ {n} : Rel₀ (Tm n) where
@@ -165,7 +165,10 @@ module AO where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- TODO: Small-step head spine reduction (no reference)
+-- Small-step head spine reduction (no reference)
+
+module HS where
+  data _⇒_ {n} : Rel₀ (Tm n) where
 
 
 ---------------------------------------------------------------------------------------------------------------

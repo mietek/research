@@ -133,6 +133,10 @@ module HNO where
 -- * J.C. Mitchell (1996)
 --   “Foundations for programming languages”
 --
+-- * L. Paulson (1996)
+--   “ML for the working programmer”
+--   https://www.cl.cam.ac.uk/~lp15/MLbook/PDF/chapter9.pdf
+--
 -- * B. Pierce (2001)
 --   “Types and programming languages”
 --
