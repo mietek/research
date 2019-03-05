@@ -25,6 +25,14 @@ module CBN where
 
 module NO₊ where
   data _⇒_ {n} : Rel₀ (Tm n) where
+    lam₋  : ∀ {e e′} →
+            ¬ WHNF e → e CBN.⇒ e′ →
+            lam e ⇒ lam e′
+
+    lam₊  : ∀ {e e′} →
+            WHNF e → e ⇒ e′ →
+            lam e ⇒ lam e′
+
     app₁₊ : ∀ {e₁ e₂ e₁′} →
             NAXNF e₁ → e₁ ⇒ e₁′ →
             app e₁ e₂ ⇒ app e₁′ e₂
@@ -37,14 +45,6 @@ module NO₊ where
             NANF e₁ → WHNF e₂ → e₂ ⇒ e₂′ →
             app e₁ e₂ ⇒ app e₁ e₂′
 
-    lam₋  : ∀ {e e′} →
-            ¬ WHNF e → e CBN.⇒ e′ →
-            lam e ⇒ lam e′
-
-    lam₊  : ∀ {e e′} →
-            WHNF e → e ⇒ e′ →
-            lam e ⇒ lam e′
-
 
 ---------------------------------------------------------------------------------------------------------------
 --
@@ -52,6 +52,10 @@ module NO₊ where
 
 module NO where
   data _⇒_ {n} : Rel₀ (Tm n) where
+    lam    : ∀ {e e′} →
+             e ⇒ e′ →
+             lam e ⇒ lam e′
+
     applam : ∀ {e₁ e₂} →
              app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
 
@@ -67,10 +71,6 @@ module NO where
              NANF e₁ → e₂ ⇒ e₂′ →
              app e₁ e₂ ⇒ app e₁ e₂′
 
-    lam    : ∀ {e e′} →
-             e ⇒ e′ →
-             lam e ⇒ lam e′
-
 
 ---------------------------------------------------------------------------------------------------------------
 --
@@ -79,6 +79,10 @@ module NO where
 
 module NO′ where
   data _⇒_ {n} : Rel₀ (Tm n) where
+    lam    : ∀ {e e′} →
+             e ⇒ e′ →
+             lam e ⇒ lam e′
+
     applam : ∀ {e₁ e₂} →
              app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
 
@@ -90,10 +94,6 @@ module NO′ where
              NANF e₁ → e₂ ⇒ e₂′ →
              app e₁ e₂ ⇒ app e₁ e₂′
 
-    lam    : ∀ {e e′} →
-             e ⇒ e′ →
-             lam e ⇒ lam e′
-
 
 ---------------------------------------------------------------------------------------------------------------
 --
@@ -102,6 +102,10 @@ module NO′ where
 
 module CBV where
   data _⇒_ {n} : Rel₀ (Tm n) where
+    applam : ∀ {e₁ e₂} →
+             WNF e₂ →
+             app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
+
     app₁   : ∀ {e₁ e₂ e₁′} →
              e₁ ⇒ e₁′ →
              app e₁ e₂ ⇒ app e₁′ e₂
@@ -109,10 +113,6 @@ module CBV where
     app₂   : ∀ {e₁ e₂ e₂′} →
              WNF e₁ → e₂ ⇒ e₂′ →
              app e₁ e₂ ⇒ app e₁ e₂′
-
-    applam : ∀ {e₁ e₂} →
-             WNF e₂ →
-             app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -122,6 +122,10 @@ module CBV where
 
 module CBV₀ where
   data _⇒_ {n} : Rel₀ (Tm n) where
+    applam : ∀ {e₁ e₂} →
+             V e₂ →
+             app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
+
     app₁   : ∀ {e₁ e₂ e₁′} →
              e₁ ⇒ e₁′ →
              app e₁ e₂ ⇒ app e₁′ e₂
@@ -129,10 +133,6 @@ module CBV₀ where
     app₂   : ∀ {e₁ e₂ e₂′} →
              V e₁ → e₂ ⇒ e₂′ →
              app e₁ e₂ ⇒ app e₁ e₂′
-
-    applam : ∀ {e₁ e₂} →
-             V e₂ →
-             app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -145,22 +145,26 @@ module AO where
              e ⇒ e′ →
              lam e ⇒ lam e′
 
-    app₂   : ∀ {e₁ e₂ e₂′} →
-             e₂ ⇒ e₂′ →
-             app e₁ e₂ ⇒ app e₁ e₂′
+    applam : ∀ {e₁ e₂} →
+             NF e₁ → NF e₂ →
+             app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
 
     app₁   : ∀ {e₁ e₂ e₁′} →
              NF e₂ → e₁ ⇒ e₁′ →
              app e₁ e₂ ⇒ app e₁′ e₂
 
-    applam : ∀ {e₁ e₂} →
-             NF e₁ → NF e₂ →
-             app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
+    app₂   : ∀ {e₁ e₂ e₂′} →
+             e₂ ⇒ e₂′ →
+             app e₁ e₂ ⇒ app e₁ e₂′
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- TODO: Small-step hybrid applicative order reduction (no reference)
+-- Small-step hybrid applicative order reduction (no reference)
+
+module HAO where
+  data _⇒_ {n} : Rel₀ (Tm n) where
+
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -173,13 +177,13 @@ module HS where
              e ⇒ e′ →
              lam e ⇒ lam e′
 
-    app₁   : ∀ {e₁ e₂ e₁′} →
-             e₁ ⇒ e₁′ →
-             app e₁ e₂ ⇒ app e₁′ e₂
-
     applam : ∀ {e₁ e₂} →
              HNF e₁ →
              app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
+
+    app₁   : ∀ {e₁ e₂ e₁′} →
+             e₁ ⇒ e₁′ →
+             app e₁ e₂ ⇒ app e₁′ e₂
 
 
 ---------------------------------------------------------------------------------------------------------------

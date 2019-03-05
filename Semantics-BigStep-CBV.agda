@@ -74,13 +74,13 @@ rev-app-⇒* : ∀ {n i} {e₁ e₂ : Tm n} {e′} →
               (∃² λ e₁′ e₂′ →
                 e₁ ⇒*⟨ i ⟩ e₁′ × NAWNF e₁′ × e₂ ⇒*⟨ i ⟩ e₂′ × WNF e₂′ × app e₁′ e₂′ ≡ e′)
 rev-app-⇒* ε                      (wnf (app p₁ p₂)) = inj₂ (_ , ε , p₁ , ε , p₂ , refl)
+rev-app-⇒* (applam p₂ ◅ rs)       p′                = inj₁ (_ , ε , ε , p₂ , rs)
 rev-app-⇒* (app₁ r₁ ◅ rs)         p′                with rev-app-⇒* rs p′
 ... | inj₁ (_ , rs₁ , rs₂ , p₂′ , rs′)               = inj₁ (_ , r₁ ◅ rs₁ , rs₂ , p₂′ , rs′)
 ... | inj₂ (_ , rs₁ , p₁′ , rs₂ , p₂′ , refl)        = inj₂ (_ , r₁ ◅ rs₁ , p₁′ , rs₂ , p₂′ , refl)
 rev-app-⇒* (app₂ p₁ r₂ ◅ rs)      p′                with rev-app-⇒* rs p′
 ... | inj₁ (_ , rs₁ , rs₂ , p₂′ , rs′)               = inj₁ (_ , rs₁ , r₂ ◅ rs₂ , p₂′ , rs′)
 ... | inj₂ (_ , rs₁ , p₁′ , rs₂ , p₂′ , refl)        = inj₂ (_ , rs₁ , p₁′ , r₂ ◅ rs₂ , p₂′ , refl)
-rev-app-⇒* (applam p₂ ◅ rs)       p′                = inj₁ (_ , ε , ε , p₂ , rs)
 
 mutual
   bs←ss : ∀ {n i} {e : Tm n} {e′} → e ⇒*⟨ i ⟩ e′ → WNF e′ → e ⇓ e′
@@ -88,6 +88,7 @@ mutual
   bs←ss (r ◅ rs) p′ = bs←ss′ r rs p′
 
   bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → WNF e″ → e ⇓ e″
+  bs←ss′ (applam p₂)  rs p″                    = applam lam (refl-⇓ p₂) (bs←ss rs p″)
   bs←ss′ (app₁ r₁)    rs p″                    with rev-app-⇒* rs p″
   ... | inj₁ (_ , rs₁ , rs₂ , p₂′ , rs′)        = applam (bs←ss′ r₁ rs₁ lam)
                                                          (bs←ss rs₂ p₂′)
@@ -102,7 +103,6 @@ mutual
   ... | inj₂ (_ , rs₁ , p₁′ , rs₂ , p₂′ , refl) = app (bs←ss rs₁ (wnf p₁′))
                                                       (na←nawnf p₁′)
                                                       (bs←ss′ r₂ rs₂ p₂′)
-  bs←ss′ (applam p₂)  rs p″                    = applam lam (refl-⇓ p₂) (bs←ss rs p″)
 
 
 ---------------------------------------------------------------------------------------------------------------

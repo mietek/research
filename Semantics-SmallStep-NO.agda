@@ -33,6 +33,7 @@ mutual
 -- SS-NO is deterministic, confluent, and has unique non-reducible forms
 
 det-⇒ : Deterministic′ _⇒_
+det-⇒ (lam r)        (lam r′)         = lam & det-⇒ r r′
 det-⇒ applam         applam           = refl
 det-⇒ applam         (app₁₋ ¬p₁′ r₁′) = lam ↯ ¬p₁′
 det-⇒ applam         (app₁₊ () r₁′)
@@ -49,7 +50,6 @@ det-⇒ (app₂ () r₂)   applam
 det-⇒ (app₂ p₁ r₂)   (app₁₋ ¬p₁′ r₁′) = whnf←nf (nf p₁) ↯ ¬p₁′
 det-⇒ (app₂ p₁ r₂)   (app₁₊ p₁′ r₁′)  = (_ , r₁′) ↯ nrf←nanf p₁
 det-⇒ (app₂ p₁ r₂)   (app₂ p₁′ r₂′)   = app & refl ⊗ det-⇒ r₂ r₂′
-det-⇒ (lam r)        (lam r′)         = lam & det-⇒ r r′
 
 open MultiStepReductions _⇒_ public
 open Confluence _⇒_ det-⇒ public
@@ -90,7 +90,7 @@ whnf-⇒ (whnf p) r       = whnf (naxnf-⇒ p r)
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Extras for BS-NO
+-- Extras for BS-NO and SS-NO′
 
 cbn-app₁ : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ CBN.⇒ e₁′ → app e₁ e₂ ⇒ app e₁′ e₂
 cbn-app₁ CBN.applam    = app₁₋ (λ { (whnf (app ())) }) applam
@@ -98,25 +98,34 @@ cbn-app₁ (CBN.app₁ r₁) with naxnf? _
 ... | no ¬p₁           = app₁₋ (λ { (whnf p₁) → p₁ ↯ ¬p₁ }) (cbn-app₁ r₁)
 ... | yes p₁           = app₁₊ p₁ (cbn-app₁ r₁)
 
+app₁ : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → NA e₁ → e₁ ⇒ e₁′ → app e₁ e₂ ⇒ app e₁′ e₂
+app₁ var ()
+app₁ app r  with naxnf? _
+... | no ¬p₁ = app₁₋ (λ { (whnf p₁) → p₁ ↯ ¬p₁ }) r
+... | yes p₁ = app₁₊ p₁ r
+
 no←cbn-⇒ : ∀ {n} {e : Tm n} {e′} → e CBN.⇒ e′ → e ⇒ e′
 no←cbn-⇒ CBN.applam    = applam
 no←cbn-⇒ (CBN.app₁ r₁) = cbn-app₁ r₁
 
 cbn←no-⇒ : ∀ {n} {e : Tm n} {e′} → ¬ WHNF e → e ⇒ e′ → e CBN.⇒ e′
+cbn←no-⇒ ¬p (lam r)        = lam ↯ ¬p
 cbn←no-⇒ ¬p applam         = CBN.applam
 cbn←no-⇒ ¬p (app₁₋ ¬p₁ r₁) = CBN.app₁ (cbn←no-⇒ ¬p₁ r₁)
 cbn←no-⇒ ¬p (app₁₊ p₁ r₁)  = whnf (app p₁) ↯ ¬p
 cbn←no-⇒ ¬p (app₂ p₁ r₂)   = whnf (app (naxnf←nanf p₁)) ↯ ¬p
-cbn←no-⇒ ¬p (lam r)        = lam ↯ ¬p
 
 no←no₊-⇒ : ∀ {n} {e : Tm n} {e′} → e NO₊.⇒ e′ → e ⇒ e′
+no←no₊-⇒ (NO₊.lam₋ ¬p r)       = lam (no←cbn-⇒ r)
+no←no₊-⇒ (NO₊.lam₊ p r)        = lam (no←no₊-⇒ r)
 no←no₊-⇒ (NO₊.app₁₊ p₁ r₁)     = app₁₊ p₁ (no←no₊-⇒ r₁)
 no←no₊-⇒ (NO₊.app₂₋ p₁ ¬p₂ r₂) = app₂ p₁ (no←cbn-⇒ r₂)
 no←no₊-⇒ (NO₊.app₂₊ p₁ p₂ r₂)  = app₂ p₁ (no←no₊-⇒ r₂)
-no←no₊-⇒ (NO₊.lam₋ ¬p r)       = lam (no←cbn-⇒ r)
-no←no₊-⇒ (NO₊.lam₊ p r)        = lam (no←no₊-⇒ r)
 
 no₊←no-⇒ : ∀ {n} {e : Tm n} {e′} → WHNF e → e ⇒ e′ → e NO₊.⇒ e′
+no₊←no-⇒ lam             (lam r)        with whnf? _
+... | no ¬p                               = NO₊.lam₋ ¬p (cbn←no-⇒ ¬p r)
+... | yes p                               = NO₊.lam₊ p (no₊←no-⇒ p r)
 no₊←no-⇒ (whnf var)      ()
 no₊←no-⇒ (whnf (app ())) applam
 no₊←no-⇒ (whnf (app p₁)) (app₁₋ ¬p₁ r₁) = whnf p₁ ↯ ¬p₁
@@ -124,25 +133,25 @@ no₊←no-⇒ (whnf (app _))  (app₁₊ p₁ r₁)  = NO₊.app₁₊ p₁ (no
 no₊←no-⇒ (whnf (app _))  (app₂ p₁ r₂)   with whnf? _
 ... | no ¬p₂                              = NO₊.app₂₋ p₁ ¬p₂ (cbn←no-⇒ ¬p₂ r₂)
 ... | yes p₂                              = NO₊.app₂₊ p₁ p₂ (no₊←no-⇒ p₂ r₂)
-no₊←no-⇒ lam             (lam r)        with whnf? _
-... | no ¬p                               = NO₊.lam₋ ¬p (cbn←no-⇒ ¬p r)
-... | yes p                               = NO₊.lam₊ p (no₊←no-⇒ p r)
 
 cbn|no₊←no-⇒ : ∀ {n} {e : Tm n} {e′} → e ⇒ e′ → (e CBN.⇒ e′) ⊎ (e NO₊.⇒ e′)
+cbn|no₊←no-⇒ (lam r)        with whnf? _
+... | no ¬p                   = inj₂ (NO₊.lam₋ ¬p (cbn←no-⇒ ¬p r))
+... | yes p                   = inj₂ (NO₊.lam₊ p (no₊←no-⇒ p r))
 cbn|no₊←no-⇒ applam         = inj₁ CBN.applam
 cbn|no₊←no-⇒ (app₁₋ ¬p₁ r₁) = inj₁ (CBN.app₁ (cbn←no-⇒ ¬p₁ r₁))
 cbn|no₊←no-⇒ (app₁₊ p₁ r₁)  = inj₂ (NO₊.app₁₊ p₁ (no₊←no-⇒ (whnf p₁) r₁))
 cbn|no₊←no-⇒ (app₂ p₁ r₂)   with whnf? _
 ... | no ¬p₂                  = inj₂ (NO₊.app₂₋ p₁ ¬p₂ (cbn←no-⇒ ¬p₂ r₂))
 ... | yes p₂                  = inj₂ (NO₊.app₂₊ p₁ p₂ (no₊←no-⇒ p₂ r₂))
-cbn|no₊←no-⇒ (lam r)        with whnf? _
-... | no ¬p                   = inj₂ (NO₊.lam₋ ¬p (cbn←no-⇒ ¬p r))
-... | yes p                   = inj₂ (NO₊.lam₊ p (no₊←no-⇒ p r))
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
 -- More extras for BS-NO
+
+lam* : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
+lam* = map lam
 
 applam* : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} → app (lam e₁) e₂ ⇒* e₁ [ e₂ ]
 applam* = applam ◅ ε
@@ -156,9 +165,6 @@ app₁₊* p₁ (r₁ ◅ rs₁) = app₁₊ p₁ r₁ ◅ app₁₊* (naxnf-⇒
 
 app₂* : ∀ {n} {e₁ e₂ : Tm n} {e₂′} → NANF e₁ → e₂ ⇒* e₂′ → app e₁ e₂ ⇒* app e₁ e₂′
 app₂* p₁ = map (app₂ p₁)
-
-lam* : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
-lam* = map lam
 
 no₊←no-⇒* : ∀ {n} {e : Tm n} {e′} → WHNF e → e ⇒* e′ → e SS-NO₊.⇒* e′
 no₊←no-⇒* p ε        = ε

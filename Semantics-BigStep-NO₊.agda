@@ -71,6 +71,29 @@ ss←bs (app q₁ r₁ r₂ r₂′) = bs-app p₁ (ss←bs r₁) p₁′ (BS-CB
 --
 -- SS-NO₊ to NF implies BS-NO₊
 
+rev-lam₊-⇒* : ∀ {n i} {e : Tm (suc n)} {e′} → WHNF e → lam e ⇒*⟨ i ⟩ lam e′ → e ⇒*⟨ i ⟩ e′
+rev-lam₊-⇒* p ε                = ε
+rev-lam₊-⇒* p (lam₋ ¬p r ◅ rs) = p ↯ ¬p
+rev-lam₊-⇒* p (lam₊ p′ r ◅ rs) = r ◅ rev-lam₊-⇒* (whnf-⇒ r) rs
+
+rev-lam₋-⇒* : ∀ {n i} {e : Tm (suc n)} {e′} →
+               lam e ⇒*⟨ i ⟩ lam e′ → NF e′ →
+               (∃ λ e″ → e SS-CBN.⇒*⟨ i ⟩ e″ × WHNF e″ × e″ ⇒* e′)
+rev-lam₋-⇒* ε                p′ = _ , ε , whnf←nf p′ , ε
+rev-lam₋-⇒* (lam₋ ¬p r ◅ rs) p′ with rev-lam₋-⇒* rs p′
+... | _ , rs′ , p″ , rs″         = _ , r ◅ rs′ , p″ , rs″
+rev-lam₋-⇒* (lam₊ p r ◅ rs)  p′ = _ , ε , p , r ◅ rev-lam₊-⇒* (whnf-⇒ r) rs
+
+¬lam⇒*var : ∀ {n} {e : Tm (suc n)} {x} → ¬ (lam e ⇒* var x)
+¬lam⇒*var = λ { (lam₋ ¬p r ◅ rs) → rs ↯ ¬lam⇒*var
+               ; (lam₊ p r ◅ rs)  → rs ↯ ¬lam⇒*var
+               }
+
+¬lam⇒*app : ∀ {n} {e : Tm (suc n)} {e₁ e₂} → ¬ (lam e ⇒* app e₁ e₂)
+¬lam⇒*app = λ { (lam₋ ¬p r ◅ rs) → rs ↯ ¬lam⇒*app
+               ; (lam₊ p r ◅ rs)  → rs ↯ ¬lam⇒*app
+               }
+
 rev-app₂₊-⇒* : ∀ {n i} {e₁ e₂ : Tm n} {e′} →
                 NANF e₁ → WHNF e₂ → app e₁ e₂ ⇒*⟨ i ⟩ e′ → NF e′ →
                 (∃ λ e₂′ → e₂ ⇒*⟨ i ⟩ e₂′ × NF e₂′ × app e₁ e₂′ ≡ e′)
@@ -103,37 +126,20 @@ rev-app₁₊-⇒* (app₂₋ p₁ ¬p₂ r₂ ◅ rs) p′                 with
 rev-app₁₊-⇒* (app₂₊ p₁ p₂ r₂ ◅ rs)  p′                 with rev-app₂₊-⇒* p₁ (whnf-⇒ r₂) rs p′
 ... | _ , rs₂ , p₂′ , refl                              = _ , ε , p₁ , ε , p₂ , r₂ ◅ rs₂ , p₂′ , refl
 
-rev-lam₊-⇒* : ∀ {n i} {e : Tm (suc n)} {e′} →
-               WHNF e →
-               lam e ⇒*⟨ i ⟩ lam e′ → e ⇒*⟨ i ⟩ e′
-rev-lam₊-⇒* p ε                = ε
-rev-lam₊-⇒* p (lam₋ ¬p r ◅ rs) = p ↯ ¬p
-rev-lam₊-⇒* p (lam₊ p′ r ◅ rs) = r ◅ rev-lam₊-⇒* (whnf-⇒ r) rs
-
-rev-lam₋-⇒* : ∀ {n i} {e : Tm (suc n)} {e′} →
-               lam e ⇒*⟨ i ⟩ lam e′ → NF e′ →
-               (∃ λ e″ → e SS-CBN.⇒*⟨ i ⟩ e″ × WHNF e″ × e″ ⇒* e′)
-rev-lam₋-⇒* ε                p′ = _ , ε , whnf←nf p′ , ε
-rev-lam₋-⇒* (lam₋ ¬p r ◅ rs) p′ with rev-lam₋-⇒* rs p′
-... | _ , rs′ , p″ , rs″         = _ , r ◅ rs′ , p″ , rs″
-rev-lam₋-⇒* (lam₊ p r ◅ rs)  p′ = _ , ε , p , r ◅ rev-lam₊-⇒* (whnf-⇒ r) rs
-
-¬lam⇒*var : ∀ {n} {e : Tm (suc n)} {x} → ¬ (lam e ⇒* var x)
-¬lam⇒*var = λ { (lam₋ ¬p r ◅ rs) → rs ↯ ¬lam⇒*var
-               ; (lam₊ p r ◅ rs)  → rs ↯ ¬lam⇒*var
-               }
-
-¬lam⇒*app : ∀ {n} {e : Tm (suc n)} {e₁ e₂} → ¬ (lam e ⇒* app e₁ e₂)
-¬lam⇒*app = λ { (lam₋ ¬p r ◅ rs) → rs ↯ ¬lam⇒*app
-               ; (lam₊ p r ◅ rs)  → rs ↯ ¬lam⇒*app
-               }
-
 mutual
   bs←ss : ∀ {n i} {e : Tm n} {e′} → e ⇒*⟨ i ⟩ e′ → NF e′ → e ⇓ e′
   bs←ss ε        p′ = refl-⇓ p′
   bs←ss (r ◅ rs) p′ = bs←ss′ r rs p′
 
   bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → NF e″ → e ⇓ e″
+  bs←ss′ (lam₋ ¬p r)       rs (lam p″)              with rev-lam₋-⇒* rs p″
+  ... | _ , rs′ , p′ , rs″                           = lam (BS-CBN.bs←ss′ r rs′ p′) (bs←ss rs″ p″)
+  bs←ss′ (lam₋ ¬p r)       rs (nf var)              = rs ↯ ¬lam⇒*var
+  bs←ss′ (lam₋ ¬p r)       rs (nf (app _ _))        = rs ↯ ¬lam⇒*app
+  bs←ss′ (lam₊ p r)        rs (lam p″)              with rev-lam₊-⇒* (whnf-⇒ r) rs
+  ... | rs′                                          = lam (BS-CBN.refl-⇓ p) (bs←ss′ r rs′ p″)
+  bs←ss′ (lam₊ p r)        rs (nf var)              = rs ↯ ¬lam⇒*var
+  bs←ss′ (lam₊ p r)        rs (nf (app _ _))        = rs ↯ ¬lam⇒*app
   bs←ss′ (app₁₊ p₁ r₁)     rs p″                    with rev-app₁₊-⇒* rs p″
   ... | _ , rs₁ , p₁′ , rs₂ , p₂ , rs₂′ , p₂′ , refl = app (na←naxnf p₁) (bs←ss′ r₁ rs₁ (nf p₁′))
                                                            (BS-CBN.bs←ss rs₂ p₂) (bs←ss rs₂′ p₂′)
@@ -143,14 +149,6 @@ mutual
   bs←ss′ (app₂₊ p₁ p₂ r₂)  rs p″                    with rev-app₂₊-⇒* p₁ (whnf-⇒ r₂) rs p″
   ... | _ , rs₂ , p₂′ , refl                         = app (na←nanf p₁) (refl-⇓ (nf p₁))
                                                            (BS-CBN.refl-⇓ p₂) (bs←ss′ r₂ rs₂ p₂′)
-  bs←ss′ (lam₋ ¬p r)       rs (lam p″)              with rev-lam₋-⇒* rs p″
-  ... | _ , rs′ , p′ , rs″                           = lam (BS-CBN.bs←ss′ r rs′ p′) (bs←ss rs″ p″)
-  bs←ss′ (lam₋ ¬p r)       rs (nf var)              = rs ↯ ¬lam⇒*var
-  bs←ss′ (lam₋ ¬p r)       rs (nf (app _ _))        = rs ↯ ¬lam⇒*app
-  bs←ss′ (lam₊ p r)        rs (lam p″)              with rev-lam₊-⇒* (whnf-⇒ r) rs
-  ... | rs′                                          = lam (BS-CBN.refl-⇓ p) (bs←ss′ r rs′ p″)
-  bs←ss′ (lam₊ p r)        rs (nf var)              = rs ↯ ¬lam⇒*var
-  bs←ss′ (lam₊ p r)        rs (nf (app _ _))        = rs ↯ ¬lam⇒*app
 
 
 ---------------------------------------------------------------------------------------------------------------

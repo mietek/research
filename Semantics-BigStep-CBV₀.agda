@@ -47,11 +47,11 @@ rev-app-⇒* : ∀ {n i} {e₁ e₂ : Tm n} {e′} →
               (∃² λ e₁′ e₂′ →
                 e₁ ⇒*⟨ i ⟩ lam e₁′ × e₂ ⇒*⟨ i ⟩ e₂′ × V e₂′ × e₁′ [ e₂′ ] ⇒*⟨ i ⟩ e′)
 rev-app-⇒* ε                 ()
+rev-app-⇒* (applam p₂ ◅ rs)  p′ = _ , ε , ε , p₂ , rs
 rev-app-⇒* (app₁ r₁ ◅ rs)    p′ with rev-app-⇒* rs p′
 ... | _ , rs₁ , rs₂ , p₂′ , rs′  = _ , r₁ ◅ rs₁ , rs₂ , p₂′ , rs′
 rev-app-⇒* (app₂ p₁ r₂ ◅ rs) p′ with rev-app-⇒* rs p′
 ... | _ , rs₁ , rs₂ , p₂′ , rs′  = _ , rs₁ , r₂ ◅ rs₂ , p₂′ , rs′
-rev-app-⇒* (applam p₂ ◅ rs)  p′ = _ , ε , ε , p₂ , rs
 
 mutual
   bs←ss : ∀ {n i} {e : Tm n} {e′} → e ⇒*⟨ i ⟩ e′ → V e′ → e ⇓ e′
@@ -59,6 +59,7 @@ mutual
   bs←ss (r ◅ rs) p′ = bs←ss′ r rs p′
 
   bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → V e″ → e ⇓ e″
+  bs←ss′ (applam p₂)  rs p″      = applam lam (refl-⇓ p₂) p₂ (bs←ss rs p″)
   bs←ss′ (app₁ r₁)    rs p″      with rev-app-⇒* rs p″
   ... | _ , rs₁ , rs₂ , p₂′ , rs′ = applam (bs←ss′ r₁ rs₁ lam)
                                            (bs←ss rs₂ p₂′) p₂′
@@ -67,7 +68,6 @@ mutual
   ... | _ , rs₁ , rs₂ , p₂′ , rs′ = applam (bs←ss rs₁ lam)
                                            (bs←ss′ r₂ rs₂ p₂′) p₂′
                                            (bs←ss rs′ p″)
-  bs←ss′ (applam p₂)  rs p″      = applam lam (refl-⇓ p₂) p₂ (bs←ss rs p″)
 
 
 ---------------------------------------------------------------------------------------------------------------
