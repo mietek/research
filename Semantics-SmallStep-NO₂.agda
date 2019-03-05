@@ -1,15 +1,15 @@
 ---------------------------------------------------------------------------------------------------------------
 
-module Semantics-SmallStep-NO₊ where
+module Semantics-SmallStep-NO₂ where
 
 open import Semantics-SmallStep
 import Semantics-SmallStep-CBN as SS-CBN
-open NO₊ public
+open NO₂ public
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- SS-NO₊ does not reduce NF
+-- SS-NO₂ does not reduce NF
 
 open NonReducibleForms _⇒_ public
 
@@ -30,7 +30,7 @@ mutual
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- SS-NO₊ is deterministic, confluent, and has unique non-reducible forms
+-- SS-NO₂ is deterministic, confluent, and has unique non-reducible forms
 
 det-⇒ : Deterministic′ _⇒_
 det-⇒ (lam₋ ¬p r)       (lam₋ ¬p′ r′)        = lam & SS-CBN.det-⇒ r r′
@@ -58,7 +58,7 @@ open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- SS-NO₊ preserves NF and WHNF, and goes from WHNF
+-- SS-NO₂ preserves NF and WHNF, and goes from WHNF
 
 nanf-⇒ : ∀ {n} {e : Tm n} {e′} → NANF e → e ⇒ e′ → NANF e′
 nanf-⇒ var         ()
@@ -94,7 +94,7 @@ rev-whnf-⇒ (app₂₊ p₁ p₂ r₂)  = whnf (app (naxnf←nanf p₁))
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Extras for BS-CBN
+-- Extras for BS-NO₂
 
 cbn-app₂ : ∀ {n} {e₁ e₂ : Tm n} {e₂′} → NANF e₁ → e₂ CBN.⇒ e₂′ → app e₁ e₂ ⇒ app e₁ e₂′
 cbn-app₂ p₁ r₂ with whnf? _
@@ -115,7 +115,7 @@ lam′ r = lam₊ (rev-whnf-⇒ r) r
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- More extras for BS-CBN
+-- More extras for BS-NO₂
 
 cbn-app₂* : ∀ {n} {e₁ e₂ : Tm n} {e₂′} → NANF e₁ → e₂ SS-CBN.⇒* e₂′ → app e₁ e₂ ⇒* app e₁ e₂′
 cbn-app₂* p₁ = map (cbn-app₂ p₁)

@@ -1,14 +1,14 @@
 ---------------------------------------------------------------------------------------------------------------
 
-module Semantics-SmallStep-CBV₀ where
+module Semantics-SmallStep-CBV-V where
 
 open import Semantics-SmallStep
-open CBV₀ public
+open CBV-V public
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- SS-CBV₀ does not reduce V
+-- SS-CBV-V does not reduce V
 
 open NonReducibleForms _⇒_ public
 
@@ -18,7 +18,7 @@ nrf←v lam = λ { (_ , ()) }
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- SS-CBV₀ is deterministic, confluent, and has unique non-reducible forms
+-- SS-CBV-V is deterministic, confluent, and has unique non-reducible forms
 
 det-⇒ : Deterministic′ _⇒_
 det-⇒ (applam p₂)  (applam p₂′)   = refl
@@ -42,7 +42,7 @@ open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- SS-CBV₀ preserves V
+-- SS-CBV-V preserves V
 
 v-⇒ : ∀ {n} {e : Tm n} {e′} → V e → e ⇒ e′ → V e′
 v-⇒ lam ()
@@ -50,7 +50,7 @@ v-⇒ lam ()
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Extras for BS-CBV₀
+-- Extras for BS-CBV-V
 
 applam* : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} → V e₂ → app (lam e₁) e₂ ⇒* e₁ [ e₂ ]
 applam* p₂ = applam p₂ ◅ ε

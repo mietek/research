@@ -1,17 +1,17 @@
 ---------------------------------------------------------------------------------------------------------------
 
-module Semantics-BigStep-NO₊ where
+module Semantics-BigStep-NO₂ where
 
 open import Semantics-BigStep
-open NO₊ public
-open import Semantics-SmallStep-NO₊
+open NO₂ public
+open import Semantics-SmallStep-NO₂
 import Semantics-SmallStep-CBN as SS-CBN
 import Semantics-BigStep-CBN as BS-CBN
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- BS-NO₊ goes from WHNF to NF
+-- BS-NO₂ goes from WHNF to NF
 
 na←naxnf-⇓ : ∀ {n} {e : Tm n} {e′} → NAXNF e → e ⇓ e′ → NA e′
 na←naxnf-⇓ var      var                = var
@@ -34,7 +34,7 @@ nf-⇓ (app q₁ r₁ r₂ r₂′) = nf (app (nanf←nf (nf-⇓ r₁) (na←whn
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- BS-NO₊ is reflexive
+-- BS-NO₂ is reflexive
 
 mutual
   refl-⇓ : ∀ {n} {e : Tm n} → NF e → e ⇓ e
@@ -48,7 +48,7 @@ mutual
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- BS-NO₊ implies SS-NO₊
+-- BS-NO₂ implies SS-NO₂
 
 bs-lam : ∀ {n} {e : Tm (suc n)} {e′ e″} → e SS-CBN.⇒* e′ → e′ ⇒* e″ → lam e ⇒* lam e″
 bs-lam rs rs′ = cbn-lam* rs ◅◅ lam* rs′
@@ -69,7 +69,7 @@ ss←bs (app q₁ r₁ r₂ r₂′) = bs-app p₁ (ss←bs r₁) p₁′ (BS-CB
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- SS-NO₊ to NF implies BS-NO₊
+-- SS-NO₂ to NF implies BS-NO₂
 
 rev-lam₊-⇒* : ∀ {n i} {e : Tm (suc n)} {e′} → WHNF e → lam e ⇒*⟨ i ⟩ lam e′ → e ⇒*⟨ i ⟩ e′
 rev-lam₊-⇒* p ε                = ε
@@ -153,7 +153,7 @@ mutual
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- BS-NO₊ and SS-NO₊ to NF coincide
+-- BS-NO₂ and SS-NO₂ to NF coincide
 
 bs↔ss : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ ↔ (e ⇒* e′ × NF e′)
 bs↔ss = (λ r → ss←bs r , nf-⇓ r) , uncurry bs←ss

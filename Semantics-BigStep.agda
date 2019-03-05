@@ -36,7 +36,7 @@ module CBN where
 -- Big-step call-by-name reduction (no reference)
 -- ✔ From terms to values
 
-module CBN₀ where
+module CBN-V where
   data _⇓_ {n} : Rel₀ (Tm n) where
     lam    : ∀ {e} →
              lam e ⇓ lam e
@@ -44,25 +44,6 @@ module CBN₀ where
     applam : ∀ {e₁ e₂ e₁′ e′} →
              e₁ ⇓ lam e₁′ → e₁′ [ e₂ ] ⇓ e′ →
              app e₁ e₂ ⇓ e′
-
-
----------------------------------------------------------------------------------------------------------------
---
--- Small-step normal order reduction, post-CBN fragment (Garcia-Perez, et al.)
--- ✔ From weak head normal forms to normal forms
-
-module NO₊ where
-  data _⇓_ {n} : Rel₀ (Tm n) where
-    var : ∀ {x} →
-          var x ⇓ var x
-
-    lam : ∀ {e e′ e″} →
-          e CBN.⇓ e′ → e′ ⇓ e″ →
-          lam e ⇓ lam e″
-
-    app : ∀ {e₁ e₂ e₁′ e₂′ e₂″} →
-          NA e₁ → e₁ ⇓ e₁′ → e₂ CBN.⇓ e₂′ → e₂′ ⇓ e₂″ →
-          app e₁ e₂ ⇓ app e₁′ e₂″
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -90,6 +71,25 @@ module NO where
     app    : ∀ {e₁ e₂ e₁′ e₁″ e₂′} →
              e₁ CBN.⇓ e₁′ → NA e₁′ → e₁′ ⇓ e₁″ → e₂ ⇓ e₂′ →
              app e₁ e₂ ⇓ app e₁″ e₂′
+
+
+---------------------------------------------------------------------------------------------------------------
+--
+-- Small-step normal order reduction, two-stage, second stage (Garcia-Perez, et al.)
+-- ✔ From weak head normal forms to normal forms
+
+module NO₂ where
+  data _⇓_ {n} : Rel₀ (Tm n) where
+    var : ∀ {x} →
+          var x ⇓ var x
+
+    lam : ∀ {e e′ e″} →
+          e CBN.⇓ e′ → e′ ⇓ e″ →
+          lam e ⇓ lam e″
+
+    app : ∀ {e₁ e₂ e₁′ e₂′ e₂″} →
+          NA e₁ → e₁ ⇓ e₁′ → e₂ CBN.⇓ e₂′ → e₂′ ⇓ e₂″ →
+          app e₁ e₂ ⇓ app e₁′ e₂″
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -123,7 +123,7 @@ module CBV where
 -- Big-step call-by-value reduction (Pierce)
 -- ✔ From terms to values
 
-module CBV₀ where
+module CBV-V where
   data _⇓_ {n} : Rel₀ (Tm n) where
     lam    : ∀ {e} →
              lam e ⇓ lam e

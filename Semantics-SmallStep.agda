@@ -21,9 +21,58 @@ module CBN where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Small-step normal order reduction, post-CBN fragment (Garcia-Perez, et al.)
+-- Small-step normal order reduction, standard (Pierce)
+-- ∙ With corrected app₁ rule
 
-module NO₊ where
+module NO where
+  data _⇒_ {n} : Rel₀ (Tm n) where
+    lam    : ∀ {e e′} →
+             e ⇒ e′ →
+             lam e ⇒ lam e′
+
+    applam : ∀ {e₁ e₂} →
+             app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
+
+    app₁   : ∀ {e₁ e₂ e₁′} →
+             NA e₁ → e₁ ⇒ e₁′ →
+             app e₁ e₂ ⇒ app e₁′ e₂
+
+    app₂   : ∀ {e₁ e₂ e₂′} →
+             NANF e₁ → e₂ ⇒ e₂′ →
+             app e₁ e₂ ⇒ app e₁ e₂′
+
+
+---------------------------------------------------------------------------------------------------------------
+--
+-- Small-step normal order reduction, single-stage (Garcia-Perez, et al.)
+
+module NO₁ where
+  data _⇒_ {n} : Rel₀ (Tm n) where
+    lam    : ∀ {e e′} →
+             e ⇒ e′ →
+             lam e ⇒ lam e′
+
+    applam : ∀ {e₁ e₂} →
+             app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
+
+    app₁₋  : ∀ {e₁ e₂ e₁′} →
+             ¬ WHNF e₁ → e₁ ⇒ e₁′ →
+             app e₁ e₂ ⇒ app e₁′ e₂
+
+    app₁₊  : ∀ {e₁ e₂ e₁′} →
+             NAXNF e₁ → e₁ ⇒ e₁′ →
+             app e₁ e₂ ⇒ app e₁′ e₂
+
+    app₂   : ∀ {e₁ e₂ e₂′} →
+             NANF e₁ → e₂ ⇒ e₂′ →
+             app e₁ e₂ ⇒ app e₁ e₂′
+
+
+---------------------------------------------------------------------------------------------------------------
+--
+-- Small-step normal order reduction, two-stage, second stage (Garcia-Perez, et al.)
+
+module NO₂ where
   data _⇒_ {n} : Rel₀ (Tm n) where
     lam₋  : ∀ {e e′} →
             ¬ WHNF e → e CBN.⇒ e′ →
@@ -48,56 +97,7 @@ module NO₊ where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Small-step normal order reduction (Garcia-Perez, et al.)
-
-module NO where
-  data _⇒_ {n} : Rel₀ (Tm n) where
-    lam    : ∀ {e e′} →
-             e ⇒ e′ →
-             lam e ⇒ lam e′
-
-    applam : ∀ {e₁ e₂} →
-             app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
-
-    app₁₋  : ∀ {e₁ e₂ e₁′} →
-             ¬ WHNF e₁ → e₁ ⇒ e₁′ →
-             app e₁ e₂ ⇒ app e₁′ e₂
-
-    app₁₊  : ∀ {e₁ e₂ e₁′} →
-             NAXNF e₁ → e₁ ⇒ e₁′ →
-             app e₁ e₂ ⇒ app e₁′ e₂
-
-    app₂   : ∀ {e₁ e₂ e₂′} →
-             NANF e₁ → e₂ ⇒ e₂′ →
-             app e₁ e₂ ⇒ app e₁ e₂′
-
-
----------------------------------------------------------------------------------------------------------------
---
--- Small-step normal order reduction, alternative (Pierce)
--- ∙ With corrected app₁ rule
-
-module NO′ where
-  data _⇒_ {n} : Rel₀ (Tm n) where
-    lam    : ∀ {e e′} →
-             e ⇒ e′ →
-             lam e ⇒ lam e′
-
-    applam : ∀ {e₁ e₂} →
-             app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
-
-    app₁   : ∀ {e₁ e₂ e₁′} →
-             NA e₁ → e₁ ⇒ e₁′ →
-             app e₁ e₂ ⇒ app e₁′ e₂
-
-    app₂   : ∀ {e₁ e₂ e₂′} →
-             NANF e₁ → e₂ ⇒ e₂′ →
-             app e₁ e₂ ⇒ app e₁ e₂′
-
-
----------------------------------------------------------------------------------------------------------------
---
--- Small-step call-by-value reduction (no reference)
+-- Small-step call-by-value reduction (Pierce, modified)
 -- ∙ With weak normal forms
 
 module CBV where
@@ -120,7 +120,7 @@ module CBV where
 -- Small-step call-by-value reduction (Pierce)
 -- ∙ With values
 
-module CBV₀ where
+module CBV-V where
   data _⇒_ {n} : Rel₀ (Tm n) where
     applam : ∀ {e₁ e₂} →
              V e₂ →
@@ -150,7 +150,7 @@ module AO where
              app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
 
     app₁   : ∀ {e₁ e₂ e₁′} →
-             NF e₂ → e₁ ⇒ e₁′ →
+             e₁ ⇒ e₁′ → NF e₂ →
              app e₁ e₂ ⇒ app e₁′ e₂
 
     app₂   : ∀ {e₁ e₂ e₂′} →
@@ -164,7 +164,21 @@ module AO where
 
 module HAO where
   data _⇒_ {n} : Rel₀ (Tm n) where
+    lam    : ∀ {e e′} →
+             e ⇒ e′ →
+             lam e ⇒ lam e′
 
+    applam : ∀ {e₁ e₂} →
+             WNF e₁ → NF e₂ →
+             app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
+
+    app₁   : ∀ {e₁ e₂ e₁′} →
+             NA e₁ → e₁ ⇒ e₁′ → NF e₂ →
+             app e₁ e₂ ⇒ app e₁′ e₂
+
+    app₂   : ∀ {e₁ e₂ e₂′} →
+             e₂ ⇒ e₂′ →
+             app e₁ e₂ ⇒ app e₁ e₂′
 
 
 ---------------------------------------------------------------------------------------------------------------

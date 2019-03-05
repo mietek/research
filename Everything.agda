@@ -10,30 +10,31 @@ open import Syntax-Terms
 open import Syntax-Predicates
 
 import Semantics-SmallStep
-import Semantics-SmallStep-CBN  as SS-CBN
-import Semantics-SmallStep-NO₊  as SS-NO₊
-import Semantics-SmallStep-NO   as SS-NO
-import Semantics-SmallStep-NO′  as SS-NO′
-import Semantics-SmallStep-CBV  as SS-CBV
-import Semantics-SmallStep-CBV₀ as SS-CBV₀
-import Semantics-SmallStep-AO   as SS-AO
-import Semantics-SmallStep-HAO  as SS-HAO
-import Semantics-SmallStep-HS   as SS-HS
-import Semantics-SmallStep-H    as SS-H
-import Semantics-SmallStep-HNO  as SS-HNO
+import Semantics-SmallStep-CBN   as SS-CBN
+import Semantics-SmallStep-NO    as SS-NO
+import Semantics-SmallStep-NO₁   as SS-NO₁
+import Semantics-SmallStep-NO₂   as SS-NO₂
+import Semantics-SmallStep-CBV   as SS-CBV
+import Semantics-SmallStep-CBV-V as SS-CBV-V
+import Semantics-SmallStep-AO    as SS-AO
+import Semantics-SmallStep-HAO   as SS-HAO
+import Semantics-SmallStep-HS    as SS-HS
+import Semantics-SmallStep-H     as SS-H
+import Semantics-SmallStep-HNO   as SS-HNO
 
 import Semantics-BigStep
-import Semantics-BigStep-CBN  as BS-CBN
-import Semantics-BigStep-CBN₀ as BS-CBN₀
-import Semantics-BigStep-NO₊  as BS-NO₊
-import Semantics-BigStep-NO   as BS-NO
-import Semantics-BigStep-CBV  as BS-CBV
-import Semantics-BigStep-CBV₀ as BS-CBV₀
-import Semantics-BigStep-AO   as BS-AO
-import Semantics-BigStep-HAO  as BS-HAO
-import Semantics-BigStep-HS   as BS-HS
-import Semantics-BigStep-H    as BS-H
-import Semantics-BigStep-HNO  as BS-HNO
+import Semantics-BigStep-CBN   as BS-CBN
+import Semantics-BigStep-CBN-V as BS-CBN-V
+import Semantics-BigStep-NO    as BS-NO
+import Semantics-BigStep-NO₁   as BS-NO₁
+import Semantics-BigStep-NO₂   as BS-NO₂
+import Semantics-BigStep-CBV   as BS-CBV
+import Semantics-BigStep-CBV-V as BS-CBV-V
+import Semantics-BigStep-AO    as BS-AO
+import Semantics-BigStep-HAO   as BS-HAO
+import Semantics-BigStep-HS    as BS-HS
+import Semantics-BigStep-H     as BS-H
+import Semantics-BigStep-HNO   as BS-HNO
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -50,13 +51,15 @@ module CBN where
 -- Call-by-name reduction to values
 
 module CBN₀ where
-  bs↔ss : ∀ {n} {e : Tm n} {e′} → e BS-CBN₀.⇓ e′ ↔ (e SS-CBN.⇒* e′ × V e′)
-  bs↔ss = BS-CBN₀.bs↔ss
+  bs↔ss : ∀ {n} {e : Tm n} {e′} → e BS-CBN-V.⇓ e′ ↔ (e SS-CBN.⇒* e′ × V e′)
+  bs↔ss = BS-CBN-V.bs↔ss
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Normal order reduction to normal forms
+
+-- TODO: Clean up
 
 module NO where
   bs↔ss : ∀ {n} {e : Tm n} {e′} → e BS-NO.⇓ e′ ↔ (e SS-NO.⇒* e′ × NF e′)
@@ -77,8 +80,8 @@ module CBV where
 -- Call-by-value reduction to values
 
 module CBV₀ where
-  bs↔ss : ∀ {n} {e : Tm n} {e′} → e BS-CBV₀.⇓ e′ ↔ (e SS-CBV₀.⇒* e′ × V e′)
-  bs↔ss = BS-CBV₀.bs↔ss
+  bs↔ss : ∀ {n} {e : Tm n} {e′} → e BS-CBV-V.⇓ e′ ↔ (e SS-CBV-V.⇒* e′ × V e′)
+  bs↔ss = BS-CBV-V.bs↔ss
 
 
 ---------------------------------------------------------------------------------------------------------------

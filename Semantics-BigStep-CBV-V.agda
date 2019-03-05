@@ -1,15 +1,15 @@
 ---------------------------------------------------------------------------------------------------------------
 
-module Semantics-BigStep-CBV₀ where
+module Semantics-BigStep-CBV-V where
 
 open import Semantics-BigStep
-open CBV₀ public
-open import Semantics-SmallStep-CBV₀
+open CBV-V public
+open import Semantics-SmallStep-CBV-V
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- BS-CBV₀ goes to V
+-- BS-CBV-V goes to V
 
 v-⇓ : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → V e′
 v-⇓ lam                = lam
@@ -18,7 +18,7 @@ v-⇓ (applam r r₁ x r₂) = v-⇓ r₂
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- BS-CBV₀ is reflexive
+-- BS-CBV-V is reflexive
 
 refl-⇓ : ∀ {n} {e : Tm n} → V e → e ⇓ e
 refl-⇓ lam = lam
@@ -26,7 +26,7 @@ refl-⇓ lam = lam
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- BS-CBV₀ implies SS-CBV₀
+-- BS-CBV-V implies SS-CBV-V
 
 bs-applam : ∀ {n} {e₁ e₂ : Tm n} {e₁′ e₂′ e′} →
             e₁ ⇒* lam e₁′ → e₂ ⇒* e₂′ → V e₂′ → e₁′ [ e₂′ ] ⇒* e′ →
@@ -40,7 +40,7 @@ ss←bs (applam r₁ r₂ p₂ r) = bs-applam (ss←bs r₁) (ss←bs r₂) p₂
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- SS-CBV₀ to V implies BS-CBV₀
+-- SS-CBV-V to V implies BS-CBV-V
 
 rev-app-⇒* : ∀ {n i} {e₁ e₂ : Tm n} {e′} →
               app e₁ e₂ ⇒*⟨ i ⟩ e′ → V e′ →
@@ -72,7 +72,7 @@ mutual
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- BS-CBV₀ and SS-CBV₀ to V coincide
+-- BS-CBV-V and SS-CBV-V to V coincide
 
 bs↔ss : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ ↔ (e ⇒* e′ × V e′)
 bs↔ss = (λ r → ss←bs r , v-⇓ r) , uncurry bs←ss

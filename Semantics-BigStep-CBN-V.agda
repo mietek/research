@@ -1,15 +1,16 @@
 ---------------------------------------------------------------------------------------------------------------
 
-module Semantics-BigStep-CBN₀ where
+module Semantics-BigStep-CBN-V where
 
 open import Semantics-BigStep
-open CBN₀ public
+open CBN-V public
 open import Semantics-SmallStep-CBN
+import Semantics-BigStep-CBN as BS-CBN
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- BS-CBN₀ goes to V
+-- BS-CBN-V goes to V
 
 v-⇓ : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → V e′
 v-⇓ lam           = lam
@@ -18,7 +19,7 @@ v-⇓ (applam r₁ r) = v-⇓ r
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- BS-CBN₀ is reflexive
+-- BS-CBN-V is reflexive
 
 refl-⇓ : ∀ {n} {e : Tm n} → V e → e ⇓ e
 refl-⇓ lam = lam
@@ -26,19 +27,16 @@ refl-⇓ lam = lam
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- BS-CBN₀ implies SS-CBN
-
-bs-applam : ∀ {n} {e₁ e₂ : Tm n} {e₁′ e′} → e₁ ⇒* lam e₁′ → e₁′ [ e₂ ] ⇒* e′ → app e₁ e₂ ⇒* e′
-bs-applam rs₁ rs = app₁* rs₁ ◅◅ applam* ◅◅ rs
+-- BS-CBN-V implies SS-CBN
 
 ss←bs : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → e ⇒* e′
 ss←bs lam           = ε
-ss←bs (applam r₁ r) = bs-applam (ss←bs r₁) (ss←bs r)
+ss←bs (applam r₁ r) = BS-CBN.bs-applam (ss←bs r₁) (ss←bs r)
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- SS-CBN to V implies BS-CBN₀
+-- SS-CBN to V implies BS-CBN-V
 
 rev-app₁-⇒* : ∀ {n i} {e₁ e₂ : Tm n} {e′} →
                app e₁ e₂ ⇒*⟨ i ⟩ e′ → V e′ →
@@ -61,7 +59,7 @@ mutual
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- BS-CBN₀ and SS-CBN to V coincide
+-- BS-CBN-V and SS-CBN to V coincide
 
 bs↔ss : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ ↔ (e ⇒* e′ × V e′)
 bs↔ss = (λ r → ss←bs r , v-⇓ r) , uncurry bs←ss
