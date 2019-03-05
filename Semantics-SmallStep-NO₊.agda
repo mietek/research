@@ -8,6 +8,8 @@ open NO₊ public
 
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- SS-NO₊ does not reduce NF
 
 open NonReducibleForms _⇒_ public
 
@@ -27,6 +29,8 @@ mutual
 
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- SS-NO₊ is deterministic, confluent, and has unique non-reducible forms
 
 det-⇒ : Deterministic′ _⇒_
 det-⇒ (app₁₊ p₁ r₁)     (app₁₊ p₁′ r₁′)      = app & det-⇒ r₁ r₁′ ⊗ refl
@@ -43,8 +47,18 @@ det-⇒ (lam₋ ¬p r)       (lam₊ p′ r′)         = p′ ↯ ¬p
 det-⇒ (lam₊ p r)        (lam₋ ¬p′ r′)        = p ↯ ¬p′
 det-⇒ (lam₊ p r)        (lam₊ p′ r′)         = lam & det-⇒ r r′
 
+open MultiStepReductions _⇒_ public
+open Confluence _⇒_ det-⇒ public
+open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
+
+{-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
+{-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
+{-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
+
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- SS-NO₊ preserves NF and WHNF, and goes from WHNF
 
 nanf-⇒ : ∀ {n} {e : Tm n} {e′} → NANF e → e ⇒ e′ → NANF e′
 nanf-⇒ var         ()
@@ -79,17 +93,8 @@ rev-whnf-⇒ (lam₊ p r)        = lam
 
 
 ---------------------------------------------------------------------------------------------------------------
-
-open MultiStepReductions _⇒_ public
-open Confluence _⇒_ det-⇒ public
-open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
-
-{-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
-{-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
-{-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
-
-
----------------------------------------------------------------------------------------------------------------
+--
+-- Extras for BS-CBN
 
 cbn-app₂ : ∀ {n} {e₁ e₂ : Tm n} {e₂′} → NANF e₁ → e₂ CBN.⇒ e₂′ → app e₁ e₂ ⇒ app e₁ e₂′
 cbn-app₂ {e₂ = e₂} p₁ r₂ with whnf? e₂
@@ -109,6 +114,8 @@ lam′ r = lam₊ (rev-whnf-⇒ r) r
 
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- More extras for BS-CBN
 
 cbn-app₂* : ∀ {n} {e₁ e₂ : Tm n} {e₂′} → NANF e₁ → e₂ SS-CBN.⇒* e₂′ → app e₁ e₂ ⇒* app e₁ e₂′
 cbn-app₂* p₁ = map (cbn-app₂ p₁)

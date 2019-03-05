@@ -7,6 +7,8 @@ open CBV public
 
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- SS-CBV does not reduce WNF
 
 open NonReducibleForms _⇒_ public
 
@@ -24,6 +26,8 @@ mutual
 
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- SS-CBV is deterministic, confluent, and has unique non-reducible forms
 
 det-⇒ : Deterministic′ _⇒_
 det-⇒ (app₁ r₁)    (app₁ r₁′)     = app & det-⇒ r₁ r₁′ ⊗ refl
@@ -36,8 +40,18 @@ det-⇒ (applam p₂)  (app₁ ())
 det-⇒ (applam p₂)  (app₂ p₁′ r₂′) = (_ , r₂′) ↯ nrf←wnf p₂
 det-⇒ (applam p₂)  (applam p₂′)   = refl
 
+open MultiStepReductions _⇒_ public
+open Confluence _⇒_ det-⇒ public
+open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
+
+{-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
+{-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
+{-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
+
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- SS-CBV preserves WNF
 
 nawnf-⇒ : ∀ {n} {e : Tm n} {e′} → NAWNF e → e ⇒ e′ → NAWNF e′
 nawnf-⇒ var       ()
@@ -51,17 +65,8 @@ wnf-⇒ (wnf p) r  = wnf (nawnf-⇒ p r)
 
 
 ---------------------------------------------------------------------------------------------------------------
-
-open MultiStepReductions _⇒_ public
-open Confluence _⇒_ det-⇒ public
-open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
-
-{-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
-{-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
-{-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
-
-
----------------------------------------------------------------------------------------------------------------
+--
+-- Extras for BS-CBV
 
 app₁* : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ ⇒* e₁′ → app e₁ e₂ ⇒* app e₁′ e₂
 app₁* = map app₁

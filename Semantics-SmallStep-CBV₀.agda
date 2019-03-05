@@ -7,6 +7,8 @@ open CBV₀ public
 
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- SS-CBV₀ does not reduce V
 
 open NonReducibleForms _⇒_ public
 
@@ -15,6 +17,8 @@ nrf←v lam = λ { (_ , ()) }
 
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- SS-CBV₀ is deterministic, confluent, and has unique non-reducible forms
 
 det-⇒ : Deterministic′ _⇒_
 det-⇒ (app₁ r₁)    (app₁ r₁′)     = app & det-⇒ r₁ r₁′ ⊗ refl
@@ -27,15 +31,6 @@ det-⇒ (applam p₂)  (app₁ ())
 det-⇒ (applam p₂)  (app₂ p₁′ r₂′) = (_ , r₂′) ↯ nrf←v p₂
 det-⇒ (applam p₂)  (applam p₂′)   = refl
 
-
----------------------------------------------------------------------------------------------------------------
-
-v-⇒ : ∀ {n} {e : Tm n} {e′} → V e → e ⇒ e′ → V e′
-v-⇒ lam ()
-
-
----------------------------------------------------------------------------------------------------------------
-
 open MultiStepReductions _⇒_ public
 open Confluence _⇒_ det-⇒ public
 open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
@@ -46,6 +41,16 @@ open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
 
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- SS-CBV₀ preserves V
+
+v-⇒ : ∀ {n} {e : Tm n} {e′} → V e → e ⇒ e′ → V e′
+v-⇒ lam ()
+
+
+---------------------------------------------------------------------------------------------------------------
+--
+-- Extras for BS-CBV₀
 
 app₁* : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ ⇒* e₁′ → app e₁ e₂ ⇒* app e₁′ e₂
 app₁* = map app₁

@@ -9,6 +9,8 @@ import Semantics-SmallStep-NO₊ as SS-NO₊
 
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- SS-NO does not reduce NF
 
 open NonReducibleForms _⇒_ public
 
@@ -27,6 +29,8 @@ mutual
 
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- SS-NO is deterministic, confluent, and has unique non-reducible forms
 
 det-⇒ : Deterministic′ _⇒_
 det-⇒ applam         applam           = refl
@@ -47,8 +51,18 @@ det-⇒ (app₂ p₁ r₂)   (app₁₊ p₁′ r₁′)  = (_ , r₁′) ↯ nr
 det-⇒ (app₂ p₁ r₂)   (app₂ p₁′ r₂′)   = app & refl ⊗ det-⇒ r₂ r₂′
 det-⇒ (lam r)        (lam r′)         = lam & det-⇒ r r′
 
+open MultiStepReductions _⇒_ public
+open Confluence _⇒_ det-⇒ public
+open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
+
+{-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
+{-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
+{-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
+
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- SS-NO preserves NF and WHNF
 
 mutual
   nf-⇒ : ∀ {n} {e : Tm n} {e′} → NF e → e ⇒ e′ → NF e′
@@ -69,19 +83,14 @@ naxnf-⇒ (app p₁) (app₁₋ ¬p₁ r₁) = app (naxnf-⇒ p₁ r₁)
 naxnf-⇒ (app p₁) (app₁₊ p₁′ r₁) = app (naxnf-⇒ p₁ r₁)
 naxnf-⇒ (app p₁) (app₂ p₁′ r₂)  = app p₁
 
-
----------------------------------------------------------------------------------------------------------------
-
-open MultiStepReductions _⇒_ public
-open Confluence _⇒_ det-⇒ public
-open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
-
-{-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
-{-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
-{-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
+whnf-⇒ : ∀ {n} {e : Tm n} {e′} → WHNF e → e ⇒ e′ → WHNF e′
+whnf-⇒ lam      (lam r) = lam
+whnf-⇒ (whnf p) r       = whnf (naxnf-⇒ p r)
 
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- Extras for BS-NO
 
 cbn-app₁ : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ CBN.⇒ e₁′ → app e₁ e₂ ⇒ app e₁′ e₂
 cbn-app₁ CBN.applam    = app₁₋ (λ { (whnf (app ())) }) applam
@@ -132,6 +141,8 @@ cbn|no₊←no-⇒ (lam r)        with whnf? _
 
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- More extras for BS-NO
 
 applam* : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} → app (lam e₁) e₂ ⇒* e₁ [ e₂ ]
 applam* = applam ◅ ε

@@ -7,6 +7,8 @@ open AO public
 
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- SS-AO does not reduce NF
 
 open NonReducibleForms _⇒_ public
 
@@ -24,6 +26,8 @@ mutual
 
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- SS-AO is deterministic, confluent, and has unique non-reducible forms
 
 det-⇒ : Deterministic′ _⇒_
 det-⇒ (lam r)            (lam r′)             = lam & det-⇒ r r′
@@ -37,8 +41,18 @@ det-⇒ (applam p₁ p₂)     (app₂ r₂′)           = (_ , r₂′) ↯ nr
 det-⇒ (applam p₁ p₂)     (app₁ p₂′ (lam r₁′)) = (_ , r₁′) ↯ nrf←nf p₁
 det-⇒ (applam p₁ p₂)     (applam p₁′ p₂′)     = refl
 
+open MultiStepReductions _⇒_ public
+open Confluence _⇒_ det-⇒ public
+open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
+
+{-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
+{-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
+{-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
+
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- SS-AO preserves NF
 
 nanf-⇒ : ∀ {n} {e : Tm n} {e′} → NANF e → e ⇒ e′ → NANF e′
 nanf-⇒ var         ()
@@ -52,17 +66,8 @@ nf-⇒ (nf p)  r       = nf (nanf-⇒ p r)
 
 
 ---------------------------------------------------------------------------------------------------------------
-
-open MultiStepReductions _⇒_ public
-open Confluence _⇒_ det-⇒ public
-open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
-
-{-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
-{-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
-{-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
-
-
----------------------------------------------------------------------------------------------------------------
+--
+-- Extras for BS-AO
 
 lam* : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
 lam* = map lam
