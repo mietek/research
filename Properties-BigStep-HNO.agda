@@ -1,19 +1,26 @@
 ---------------------------------------------------------------------------------------------------------------
+--
+-- Properties of BS-HNO
 
-module Semantics-BigStep-HNO where
+module Properties-BigStep-HNO where
 
 open import Semantics-BigStep
 open HNO public
-import Semantics-BigStep-HS as BS-HS
+import Properties-BigStep-HS as BS-HS
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
 -- BS-HNO goes to NF
 
+na←naxnf-hs-⇓ : ∀ {n} {e : Tm n} {e′} → NAXNF e → e HS.⇓ e′ → NA e′
+na←naxnf-hs-⇓ var      HS.var           = var
+na←naxnf-hs-⇓ (app p₁) (HS.applam r₁ r) = case (na←naxnf-hs-⇓ p₁ r₁) of λ ()
+na←naxnf-hs-⇓ (app p₁) (HS.app r₁ q₁)   = app
+
 na←naxnf-⇓ : ∀ {n} {e : Tm n} {e′} → NAXNF e → e ⇓ e′ → NA e′
 na←naxnf-⇓ var      var                = var
-na←naxnf-⇓ (app p₁) (applam r₁ r)      = case (BS-HS.na←naxnf-⇓ p₁ r₁) of λ ()
+na←naxnf-⇓ (app p₁) (applam r₁ r)      = case (na←naxnf-hs-⇓ p₁ r₁) of λ ()
 na←naxnf-⇓ (app p₁) (app r₁ q₁ r₁′ r₂) = app
 
 na←hnf-⇓ : ∀ {n} {e : Tm n} {e′} → HNF e → NA e → e ⇓ e′ → NA e′
@@ -24,7 +31,9 @@ nf-⇓ : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → NF e′
 nf-⇓ var                = nf var
 nf-⇓ (lam r)            = lam (nf-⇓ r)
 nf-⇓ (applam r₁ r)      = nf-⇓ r
-nf-⇓ (app r₁ q₁ r₁′ r₂) = nf (app (nanf←nf (nf-⇓ r₁′) (na←hnf-⇓ (BS-HS.hnf-⇓ r₁) q₁ r₁′)) (nf-⇓ r₂))
+nf-⇓ (app r₁ q₁ r₁′ r₂) = nf (app p₁ (nf-⇓ r₂))
+  where
+    p₁ = nanf←nf (nf-⇓ r₁′) (na←hnf-⇓ (BS-HS.hnf-⇓ r₁) q₁ r₁′)
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -39,24 +48,6 @@ mutual
   refl-⇓′ : ∀ {n} {e : Tm n} → NANF e → e ⇓ e
   refl-⇓′ (var)       = var
   refl-⇓′ (app p₁ p₂) = app (BS-HS.refl-⇓′ (naxnf←nanf p₁)) (na←nanf p₁) (refl-⇓′ p₁) (refl-⇓ p₂)
-
-
----------------------------------------------------------------------------------------------------------------
---
--- TODO: BS-HNO implies SS-HNO
-
-
----------------------------------------------------------------------------------------------------------------
---
--- TODO: SS-HNO to NF implies BS-HNO
-
-
----------------------------------------------------------------------------------------------------------------
---
--- TODO: BS-HNO and SS-HNO to NF coincide
-
--- bs↔ss : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ ↔ (e ⇒* e′ × NF e′)
--- bs↔ss = (λ r → ss←bs r , nf-⇓ r) , uncurry bs←ss
 
 
 ---------------------------------------------------------------------------------------------------------------

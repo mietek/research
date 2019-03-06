@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------------------
+--
+-- Properties of SS-HS
 
-module Semantics-SmallStep-HS where
+module Properties-SmallStep-HS where
 
 open import Semantics-SmallStep
 open HS public
@@ -34,13 +36,8 @@ det-⇒ (applam p₁)     (app₁ (lam r₁′)) = (_ , r₁′) ↯ nrf←hnf p
 det-⇒ (app₁ (lam r₁)) (applam p₁′)     = (_ , r₁) ↯ nrf←hnf p₁′
 det-⇒ (app₁ r₁)       (app₁ r₁′)       = app & det-⇒ r₁ r₁′ ⊗ refl
 
-open MultiStepReductions _⇒_ public
 open Confluence _⇒_ det-⇒ public
 open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
-
-{-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
-{-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
-{-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -55,20 +52,6 @@ naxnf-⇒ (app p₁) (app₁ r₁)    = (_ , r₁) ↯ nrf←naxnf p₁
 hnf-⇒ : ∀ {n} {e : Tm n} {e′} → HNF e → e ⇒ e′ → HNF e′
 hnf-⇒ (lam p) (lam r) = (_ , r) ↯ nrf←hnf p
 hnf-⇒ (hnf p) r       = hnf (naxnf-⇒ p r)
-
-
----------------------------------------------------------------------------------------------------------------
---
--- Extras for BS-HS
-
-lam* : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
-lam* = map lam
-
-applam* : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} → HNF e₁ → app (lam e₁) e₂ ⇒* e₁ [ e₂ ]
-applam* p₁ = applam p₁ ◅ ε
-
-app₁* : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ ⇒* e₁′ → app e₁ e₂ ⇒* app e₁′ e₂
-app₁* = map app₁
 
 
 ---------------------------------------------------------------------------------------------------------------

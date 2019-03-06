@@ -1,10 +1,12 @@
 ---------------------------------------------------------------------------------------------------------------
+--
+-- Properties of SS-NO₂
 
-module Semantics-SmallStep-NO₂ where
+module Properties-SmallStep-NO₂ where
 
 open import Semantics-SmallStep
-import Semantics-SmallStep-CBN as SS-CBN
 open NO₂ public
+import Properties-SmallStep-CBN as SS-CBN
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -47,13 +49,8 @@ det-⇒ (app₂₊ p₁ p₂ r₂)  (app₁₊ p₁′ r₁′)      = (_ , r₁
 det-⇒ (app₂₊ p₁ p₂ r₂)  (app₂₋ p₁′ ¬p₂′ r₂′) = p₂ ↯ ¬p₂′
 det-⇒ (app₂₊ p₁ p₂ r₂)  (app₂₊ p₁′ p₂′ r₂′)  = app & refl ⊗ det-⇒ r₂ r₂′
 
-open MultiStepReductions _⇒_ public
 open Confluence _⇒_ det-⇒ public
 open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
-
-{-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
-{-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
-{-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -90,48 +87,6 @@ rev-whnf-⇒ (lam₊ p r)        = lam
 rev-whnf-⇒ (app₁₊ p₁ r₁)     = whnf (app p₁)
 rev-whnf-⇒ (app₂₋ p₁ ¬p₂ r₂) = whnf (app (naxnf←nanf p₁))
 rev-whnf-⇒ (app₂₊ p₁ p₂ r₂)  = whnf (app (naxnf←nanf p₁))
-
-
----------------------------------------------------------------------------------------------------------------
---
--- Extras for BS-NO₂
-
-cbn-app₂ : ∀ {n} {e₁ e₂ : Tm n} {e₂′} → NANF e₁ → e₂ CBN.⇒ e₂′ → app e₁ e₂ ⇒ app e₁ e₂′
-cbn-app₂ p₁ r₂ with whnf? _
-... | no ¬p₂   = app₂₋ p₁ ¬p₂ r₂
-... | yes p₂   = (_ , r₂) ↯ SS-CBN.nrf←whnf p₂
-
-app₂ : ∀ {n} {e₁ e₂ : Tm n} {e₂′} → NANF e₁ → e₂ ⇒ e₂′ → app e₁ e₂ ⇒ app e₁ e₂′
-app₂ p₁ r = app₂₊ p₁ (rev-whnf-⇒ r) r
-
-cbn-lam : ∀ {n} {e : Tm (suc n)} {e′} → e CBN.⇒ e′ → lam e ⇒ lam e′
-cbn-lam r   with whnf? _
-... | no ¬p = lam₋ ¬p r
-... | yes p = (_ , r) ↯ SS-CBN.nrf←whnf p
-
-lam′ : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒ e′ → lam e ⇒ lam e′
-lam′ r = lam₊ (rev-whnf-⇒ r) r
-
-
----------------------------------------------------------------------------------------------------------------
---
--- More extras for BS-NO₂
-
-cbn-app₂* : ∀ {n} {e₁ e₂ : Tm n} {e₂′} → NANF e₁ → e₂ SS-CBN.⇒* e₂′ → app e₁ e₂ ⇒* app e₁ e₂′
-cbn-app₂* p₁ = map (cbn-app₂ p₁)
-
-app₁₊* : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → NAXNF e₁ → e₁ ⇒* e₁′ → app e₁ e₂ ⇒* app e₁′ e₂
-app₁₊* p₁ ε          = ε
-app₁₊* p₁ (r₁ ◅ rs₁) = app₁₊ p₁ r₁ ◅ app₁₊* (naxnf-⇒ p₁ r₁) rs₁
-
-app₂* : ∀ {n} {e₁ e₂ : Tm n} {e₂′} → NANF e₁ → e₂ ⇒* e₂′ → app e₁ e₂ ⇒* app e₁ e₂′
-app₂* p₁ = map (app₂ p₁)
-
-cbn-lam* : ∀ {n} {e : Tm (suc n)} {e′} → e SS-CBN.⇒* e′ → lam e ⇒* lam e′
-cbn-lam* = map cbn-lam
-
-lam* : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
-lam* = map lam′
 
 
 ---------------------------------------------------------------------------------------------------------------

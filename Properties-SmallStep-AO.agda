@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------------------
+--
+-- Properties of SS-AO
 
-module Semantics-SmallStep-AO where
+module Properties-SmallStep-AO where
 
 open import Semantics-SmallStep
 open AO public
@@ -41,13 +43,8 @@ det-⇒ (app₂ r₂)          (applam p₁′ p₂′)     = (_ , r₂) ↯ nrf
 det-⇒ (app₂ r₂)          (app₁ r₁′ p₂′)       = (_ , r₂) ↯ nrf←nf p₂′
 det-⇒ (app₂ r₂)          (app₂ r₂′)           = app & refl ⊗ det-⇒ r₂ r₂′
 
-open MultiStepReductions _⇒_ public
 open Confluence _⇒_ det-⇒ public
 open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
-
-{-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
-{-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
-{-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -63,23 +60,6 @@ nanf-⇒ (app p₁ p₂) (app₂ r₂)        = (_ , r₂) ↯ nrf←nf p₂
 nf-⇒ : ∀ {n} {e : Tm n} {e′} → NF e → e ⇒ e′ → NF e′
 nf-⇒ (lam p) (lam r) = (_ , r) ↯ nrf←nf p
 nf-⇒ (nf p)  r       = nf (nanf-⇒ p r)
-
-
----------------------------------------------------------------------------------------------------------------
---
--- Extras for BS-AO
-
-lam* : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
-lam* = map lam
-
-applam* : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} → NF e₁ → NF e₂ → app (lam e₁) e₂ ⇒* e₁ [ e₂ ]
-applam* p₁ p₂ = applam p₁ p₂ ◅ ε
-
-app₁* : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ ⇒* e₁′ → NF e₂ → app e₁ e₂ ⇒* app e₁′ e₂
-app₁* rs p₂ = map (λ r₁ → app₁ r₁ p₂) rs
-
-app₂* : ∀ {n} {e₁ e₂ : Tm n} {e₂′} → e₂ ⇒* e₂′ → app e₁ e₂ ⇒* app e₁ e₂′
-app₂* = map app₂
 
 
 ---------------------------------------------------------------------------------------------------------------

@@ -1,28 +1,25 @@
 ---------------------------------------------------------------------------------------------------------------
+--
+-- Properties of SS-H
 
-module Semantics-SmallStep-HNO where
+module Properties-SmallStep-H where
 
 open import Semantics-SmallStep
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- TODO: SS-HNO does not reduce NF
+-- TODO: SS-H does not reduce HNF
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- TODO: SS-HNO is deterministic, confluent, and has unique non-reducible forms
+-- TODO: SS-H is deterministic, confluent and has unique non-reducible forms
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- TODO: SS-HNO preserves NF
-
-
----------------------------------------------------------------------------------------------------------------
---
--- TODO: Extras for BS-HNO
+-- TODO: SS-H preserves HNF
 
 
 ---------------------------------------------------------------------------------------------------------------

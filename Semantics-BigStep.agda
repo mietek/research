@@ -33,21 +33,6 @@ module CBN where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Big-step call-by-name reduction (no reference)
--- ✔ From terms to values
-
-module CBN-V where
-  data _⇓_ {n} : Rel₀ (Tm n) where
-    lam    : ∀ {e} →
-             lam e ⇓ lam e
-
-    applam : ∀ {e₁ e₂ e₁′ e′} →
-             e₁ ⇓ lam e₁′ → e₁′ [ e₂ ] ⇓ e′ →
-             app e₁ e₂ ⇓ e′
-
-
----------------------------------------------------------------------------------------------------------------
---
 -- Big-step normal order reduction (Sestoft’s no)
 -- ✔ From terms to normal forms
 -- ∙ Reduces under λ-abstractions
@@ -116,21 +101,6 @@ module CBV where
     app    : ∀ {e₁ e₂ e₁′ e₂′} →
              e₁ ⇓ e₁′ → NA e₁′ → e₂ ⇓ e₂′ →
              app e₁ e₂ ⇓ app e₁′ e₂′
-
-
----------------------------------------------------------------------------------------------------------------
---
--- Big-step call-by-value reduction (Pierce)
--- ✔ From terms to values
-
-module CBV-V where
-  data _⇓_ {n} : Rel₀ (Tm n) where
-    lam    : ∀ {e} →
-             lam e ⇓ lam e
-
-    applam : ∀ {e₁ e₂ e₁′ e₂′ e′} →
-             e₁ ⇓ lam e₁′ → e₂ ⇓ e₂′ → V e₂′ → e₁′ [ e₂′ ] ⇓ e′ →
-             app e₁ e₂ ⇓ e′
 
 
 ---------------------------------------------------------------------------------------------------------------

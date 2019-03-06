@@ -18,6 +18,11 @@ module CBN where
              e₁ ⇒ e₁′ →
              app e₁ e₂ ⇒ app e₁′ e₂
 
+  open MultiStepReductions _⇒_ public
+  {-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
+  {-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
+  {-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
+
 
 ---------------------------------------------------------------------------------------------------------------
 --
@@ -41,31 +46,10 @@ module NO where
              NANF e₁ → e₂ ⇒ e₂′ →
              app e₁ e₂ ⇒ app e₁ e₂′
 
-
----------------------------------------------------------------------------------------------------------------
---
--- Small-step normal order reduction, single-stage (Garcia-Perez, et al.)
-
-module NO₁ where
-  data _⇒_ {n} : Rel₀ (Tm n) where
-    lam    : ∀ {e e′} →
-             e ⇒ e′ →
-             lam e ⇒ lam e′
-
-    applam : ∀ {e₁ e₂} →
-             app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
-
-    app₁₋  : ∀ {e₁ e₂ e₁′} →
-             ¬ WHNF e₁ → e₁ ⇒ e₁′ →
-             app e₁ e₂ ⇒ app e₁′ e₂
-
-    app₁₊  : ∀ {e₁ e₂ e₁′} →
-             NAXNF e₁ → e₁ ⇒ e₁′ →
-             app e₁ e₂ ⇒ app e₁′ e₂
-
-    app₂   : ∀ {e₁ e₂ e₂′} →
-             NANF e₁ → e₂ ⇒ e₂′ →
-             app e₁ e₂ ⇒ app e₁ e₂′
+  open MultiStepReductions _⇒_ public
+  {-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
+  {-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
+  {-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -94,6 +78,11 @@ module NO₂ where
             NANF e₁ → WHNF e₂ → e₂ ⇒ e₂′ →
             app e₁ e₂ ⇒ app e₁ e₂′
 
+  open MultiStepReductions _⇒_ public
+  {-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
+  {-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
+  {-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
+
 
 ---------------------------------------------------------------------------------------------------------------
 --
@@ -114,25 +103,10 @@ module CBV where
              WNF e₁ → e₂ ⇒ e₂′ →
              app e₁ e₂ ⇒ app e₁ e₂′
 
-
----------------------------------------------------------------------------------------------------------------
---
--- Small-step call-by-value reduction (Pierce)
--- ∙ With values
-
-module CBV-V where
-  data _⇒_ {n} : Rel₀ (Tm n) where
-    applam : ∀ {e₁ e₂} →
-             V e₂ →
-             app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
-
-    app₁   : ∀ {e₁ e₂ e₁′} →
-             e₁ ⇒ e₁′ →
-             app e₁ e₂ ⇒ app e₁′ e₂
-
-    app₂   : ∀ {e₁ e₂ e₂′} →
-             V e₁ → e₂ ⇒ e₂′ →
-             app e₁ e₂ ⇒ app e₁ e₂′
+  open MultiStepReductions _⇒_ public
+  {-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
+  {-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
+  {-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -157,6 +131,11 @@ module AO where
              e₂ ⇒ e₂′ →
              app e₁ e₂ ⇒ app e₁ e₂′
 
+  open MultiStepReductions _⇒_ public
+  {-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
+  {-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
+  {-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
+
 
 ---------------------------------------------------------------------------------------------------------------
 --
@@ -180,6 +159,11 @@ module HAO where
              e₂ ⇒ e₂′ →
              app e₁ e₂ ⇒ app e₁ e₂′
 
+  open MultiStepReductions _⇒_ public
+  {-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
+  {-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
+  {-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
+
 
 ---------------------------------------------------------------------------------------------------------------
 --
@@ -198,6 +182,11 @@ module HS where
     app₁   : ∀ {e₁ e₂ e₁′} →
              e₁ ⇒ e₁′ →
              app e₁ e₂ ⇒ app e₁′ e₂
+
+  open MultiStepReductions _⇒_ public
+  {-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
+  {-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
+  {-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
 
 
 ---------------------------------------------------------------------------------------------------------------

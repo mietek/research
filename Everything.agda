@@ -9,124 +9,117 @@ open import Prelude
 open import Syntax-Terms
 open import Syntax-Predicates
 
-import Semantics-SmallStep
-import Semantics-SmallStep-CBN   as SS-CBN
-import Semantics-SmallStep-NO    as SS-NO
-import Semantics-SmallStep-NO₁   as SS-NO₁
-import Semantics-SmallStep-NO₂   as SS-NO₂
-import Semantics-SmallStep-CBV   as SS-CBV
-import Semantics-SmallStep-CBV-V as SS-CBV-V
-import Semantics-SmallStep-AO    as SS-AO
-import Semantics-SmallStep-HAO   as SS-HAO
-import Semantics-SmallStep-HS    as SS-HS
-import Semantics-SmallStep-H     as SS-H
-import Semantics-SmallStep-HNO   as SS-HNO
+import Semantics-SmallStep as SS
+import Semantics-BigStep as BS
 
-import Semantics-BigStep
-import Semantics-BigStep-CBN   as BS-CBN
-import Semantics-BigStep-CBN-V as BS-CBN-V
-import Semantics-BigStep-NO    as BS-NO
-import Semantics-BigStep-NO₁   as BS-NO₁
-import Semantics-BigStep-NO₂   as BS-NO₂
-import Semantics-BigStep-CBV   as BS-CBV
-import Semantics-BigStep-CBV-V as BS-CBV-V
-import Semantics-BigStep-AO    as BS-AO
-import Semantics-BigStep-HAO   as BS-HAO
-import Semantics-BigStep-HS    as BS-HS
-import Semantics-BigStep-H     as BS-H
-import Semantics-BigStep-HNO   as BS-HNO
+import Properties-SmallStep-CBN
+import Properties-SmallStep-NO
+import Properties-SmallStep-NO₂
+import Properties-SmallStep-CBV
+import Properties-SmallStep-AO
+import Properties-SmallStep-HAO
+import Properties-SmallStep-HS
+import Properties-SmallStep-H
+import Properties-SmallStep-HNO
+
+import Properties-BigStep-CBN
+import Properties-BigStep-NO
+import Properties-BigStep-NO₂
+import Properties-BigStep-CBV
+import Properties-BigStep-AO
+import Properties-BigStep-HAO
+import Properties-BigStep-HS
+import Properties-BigStep-H
+import Properties-BigStep-HNO
+
+import Equivalence-CBN as CBN
+import Equivalence-NO  as NO
+import Equivalence-CBV as CBV
+import Equivalence-AO  as AO
+import Equivalence-HAO as HAO
+import Equivalence-HS  as HS
+import Equivalence-H   as H
+import Equivalence-HNO as HNO
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Call-by-name reduction to weak head normal forms
 
-module CBN where
-  bs↔ss : ∀ {n} {e : Tm n} {e′} → e BS-CBN.⇓ e′ ↔ (e SS-CBN.⇒* e′ × WHNF e′)
-  bs↔ss = BS-CBN.bs↔ss
+-- Theorem 1.3.  SS-CBN to WHNF and BS-CBN coincide
 
-
----------------------------------------------------------------------------------------------------------------
---
--- Call-by-name reduction to values
-
-module CBN₀ where
-  bs↔ss : ∀ {n} {e : Tm n} {e′} → e BS-CBN-V.⇓ e′ ↔ (e SS-CBN.⇒* e′ × V e′)
-  bs↔ss = BS-CBN-V.bs↔ss
+thm-1-3 : ∀ {n} {e : Tm n} {e′} → (e SS.CBN.⇒* e′ × WHNF e′) ↔ e BS.CBN.⇓ e′
+thm-1-3 = CBN.Thm-1-3.ss-cbn↔bs-cbn
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Normal order reduction to normal forms
 
--- TODO: Clean up
+-- Theorem 2.6.  SS-NO to NF and BS-NO coincide
 
-module NO where
-  bs↔ss : ∀ {n} {e : Tm n} {e′} → e BS-NO.⇓ e′ ↔ (e SS-NO.⇒* e′ × NF e′)
-  bs↔ss = BS-NO.bs↔ss
+thm-2-6 : ∀ {n} {e : Tm n} {e′} → (e SS.NO.⇒* e′ × NF e′) ↔ e BS.NO.⇓ e′
+thm-2-6 = NO.Thm-2-6.ss-no↔bs-no
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Call-by-value reduction to weak normal forms
 
-module CBV where
-  bs↔ss : ∀ {n} {e : Tm n} {e′} → e BS-CBV.⇓ e′ ↔ (e SS-CBV.⇒* e′ × WNF e′)
-  bs↔ss = BS-CBV.bs↔ss
+-- Theorem 3.3.  SS-CBV to WNF and BS-CBV coincide
 
-
----------------------------------------------------------------------------------------------------------------
---
--- Call-by-value reduction to values
-
-module CBV₀ where
-  bs↔ss : ∀ {n} {e : Tm n} {e′} → e BS-CBV-V.⇓ e′ ↔ (e SS-CBV-V.⇒* e′ × V e′)
-  bs↔ss = BS-CBV-V.bs↔ss
+thm-3-3 : ∀ {n} {e : Tm n} {e′} → (e SS.CBV.⇒* e′ × WNF e′) ↔ e BS.CBV.⇓ e′
+thm-3-3 = CBV.Thm-3-3.ss-cbv↔bs-cbv
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Applicative order reduction to normal forms
 
-module AO where
-  bs↔ss : ∀ {n} {e : Tm n} {e′} → e BS-AO.⇓ e′ ↔ (e SS-AO.⇒* e′ × NF e′)
-  bs↔ss = BS-AO.bs↔ss
+-- Theorem 4.3.  SS-AO to NF and BS-AO coincide
+
+thm-4-3 : ∀ {n} {e : Tm n} {e′} → (e SS.AO.⇒* e′ × NF e′) ↔ e BS.AO.⇓ e′
+thm-4-3 = AO.Thm-4-3.ss-ao↔bs-ao
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- TODO: Hybrid applicative order reduction to normal forms
+-- Hybrid applicative order reduction to normal forms
 
-module HAO where
---   bs↔ss : ∀ {n} {e : Tm n} {e′} → e BS-HAO.⇓ e′ ↔ (e SS-HAO.⇒* e′ × NF e′)
---   bs↔ss = BS-HAO.bs↔ss
+-- Theorem 5.6.  SS-HAO to NF and BS-HAO coincide
+
+-- thm-5-6 : ∀ {n} {e : Tm n} {e′} → (e SS.HAO.⇒* e′ × NF e′) ↔ e BS.HAO.⇓ e′
+-- thm-5-6 = HAO.Thm-5-6.ss-hao↔bs-hao
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Head spine reduction to head normal forms
 
-module HS where
-  bs↔ss : ∀ {n} {e : Tm n} {e′} → e BS-HS.⇓ e′ ↔ (e SS-HS.⇒* e′ × HNF e′)
-  bs↔ss = BS-HS.bs↔ss
+-- Theorem 6.3.  SS-HS to HNF and BS-HS coincide
+
+thm-6-3 : ∀ {n} {e : Tm n} {e′} → (e SS.HS.⇒* e′ × HNF e′) ↔ e BS.HS.⇓ e′
+thm-6-3 = HS.Thm-6-3.ss-hs↔bs-hs
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- TODO: Head reduction to head normal forms
+-- Head reduction to head normal forms
 
-module H where
---   bs↔ss : ∀ {n} {e : Tm n} {e′} → e BS-H.⇓ e′ ↔ (e SS-H.⇒* e′ × HNF e′)
---   bs↔ss = BS-H.bs↔ss
+-- Theorem 7.6.  SS-H to HNF and BS-H coincide
+
+-- thm-7-6 : ∀ {n} {e : Tm n} {e′} → (e SS.H.⇒* e′ × HNF e′) ↔ e BS.H.⇓ e′
+-- thm-7-6 = H.Thm-7-6.ss-h↔bs-h
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- TODO: Hybrid normal order reduction to normal forms
+-- Hybrid normal order reduction to normal forms
 
-module HNO where
---   bs↔ss : ∀ {n} {e : Tm n} {e′} → e BS-HNO.⇓ e′ ↔ (e SS-HNO.⇒* e′ × NF e′)
---   bs↔ss = BS-HNO.bs↔ss
+-- Theorem 8.6.  SS-HNO to NF and BS-HNO coincide
+
+-- thm-8-6 : ∀ {n} {e : Tm n} {e′} → (e SS.HNO.⇒* e′ × NF e′) ↔ e BS.HNO.⇓ e′
+-- thm-8-6 = HNO.Thm-8-6.ss-hno↔bs-hno
 
 
 ---------------------------------------------------------------------------------------------------------------
