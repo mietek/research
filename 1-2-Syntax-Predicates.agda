@@ -234,6 +234,15 @@ uniq-whnf {e = lam _}   lam       (whnf ())
 uniq-whnf {e = lam _}   (whnf ()) p′
 uniq-whnf {e = app _ _} (whnf p)  (whnf p′) = whnf & uniq-naxnf p p′
 
+-- TODO: Replace all uses of ¬ WHNF with first-order representations?
+module _ where
+  private
+    postulate
+      funext : ∀ {a b} → Extensionality a b
+
+  uniq-¬whnf : ∀ {n} {e : Tm n} (¬p ¬p′ : ¬ WHNF e) → ¬p ≡ ¬p′
+  uniq-¬whnf ¬p ¬p′ = funext λ p → abort (p ↯ ¬p)
+
 naxnf←whnf : ∀ {n} {e : Tm n} → WHNF e → NA e → NAXNF e
 naxnf←whnf lam      ()
 naxnf←whnf (whnf p) q  = p

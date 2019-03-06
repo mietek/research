@@ -29,6 +29,35 @@ mutual
 
 ---------------------------------------------------------------------------------------------------------------
 --
+-- SS-CBV is unique
+
+rev-applam : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} {e′} →
+             (p₂ : WNF e₂) (r : app (lam e₁) e₂ ⇒ e′) →
+             (Σ (e′ ≡ e₁ [ e₂ ]) λ { refl → r ≡ applam p₂ })
+rev-applam p₂ (applam p₂′) = (refl , applam & uniq-wnf p₂′ p₂)
+rev-applam p₂ (app₁ ())
+rev-applam p₂ (app₂ p₁ r₂) = (_ , r₂) ↯ nrf←wnf p₂
+
+{-
+uniq-⇒ : Unique² _⇒_
+uniq-⇒ {e = var _} () ()
+uniq-⇒ {e = lam _} () ()
+uniq-⇒ {e = app (var _) _}   (app₁ ())          r′
+uniq-⇒ {e = app (var _) _}   (app₂ p₁ r₂)       (app₁ ())
+uniq-⇒ {e = app (var _) _}   (app₂ p₁ r₂)       (app₂ p₁′ r₂′) = app₂ & uniq-wnf p₁ p₁′ ⊗ uniq-⇒ r₂ r₂′
+uniq-⇒ {e = app (lam _) _}   (applam p₂)        r′             with rev-applam p₂ r′
+... | refl , refl                                               = refl
+uniq-⇒ {e = app (lam _) _}   (app₁ ())          r′
+uniq-⇒ {e = app (lam _) _}   (app₂ lam r₂)      r′             = {!!}
+uniq-⇒ {e = app (lam _) _}   (app₂ (wnf ()) r₂) r′
+uniq-⇒ {e = app (app _ _) _} (app₁ r₁)          (app₁ r₁′)     = app₁ & uniq-⇒ r₁ r₁′
+uniq-⇒ {e = app (app _ _) _} (app₁ r₁)          (app₂ p₁′ r₂′) = (_ , r₁) ↯ nrf←wnf p₁′
+uniq-⇒ {e = app (app _ _) _} (app₂ p₁ r₂)       (app₁ r₁′)     = (_ , r₁′) ↯ nrf←wnf p₁
+uniq-⇒ {e = app (app _ _) _} (app₂ p₁ r₂)       (app₂ p₁′ r₂′) = app₂ & uniq-wnf p₁ p₁′ ⊗ uniq-⇒ r₂ r₂′
+-}
+
+---------------------------------------------------------------------------------------------------------------
+--
 -- SS-CBV is deterministic, confluent, and has unique non-reducible forms
 
 det-⇒ : Deterministic _⇒_

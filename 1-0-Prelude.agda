@@ -2,6 +2,10 @@
 
 module 1-0-Prelude where
 
+open import Data.Empty public
+  using (⊥)
+  renaming (⊥-elim to abort)
+
 open import Data.Fin public
   using (Fin ; zero ; suc)
 
@@ -26,7 +30,7 @@ open import Relation.Binary public
   using (Rel ; REL ; Reflexive ; Transitive)
 
 open import Relation.Binary.PropositionalEquality public
-  using (_≡_ ; _≢_ ; refl)
+  using (_≡_ ; _≢_ ; refl ; Extensionality)
   renaming (cong to _&_ ; sym to _⁻¹)
 
 open import Relation.Nullary public

@@ -31,14 +31,14 @@ nrf←whnf (whnf p) = nrf←naxnf p
 
 rev-applam : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} {e′} →
              (r : app (lam e₁) e₂ ⇒ e′) →
-             Σ (e′ ≡ e₁ [ e₂ ]) λ { refl → applam ≡ r }
+             (Σ (e′ ≡ e₁ [ e₂ ]) λ { refl → r ≡ applam })
 rev-applam applam    = (refl , refl)
 rev-applam (app₁ ())
 
 uniq-⇒ : Unique² _⇒_
 uniq-⇒ {e = var _}           ()        ()
 uniq-⇒ {e = lam _}           ()        ()
-uniq-⇒ {e = app (var _) _}   (app₁ r)  (app₁ r′) = app₁ & uniq-⇒ r r′
+uniq-⇒ {e = app (var _) _}   (app₁ ()) (app₁ ())
 uniq-⇒ {e = app (lam _) _}   applam    r′        with rev-applam r′
 ... | refl , refl                                 = refl
 uniq-⇒ {e = app (lam _) _}   (app₁ ()) r′
