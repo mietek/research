@@ -24,7 +24,7 @@ open import Function public
 
 open import Level public
   using (_⊔_)
-  renaming (suc to sucᴸ)
+  renaming (0ℓ to 0ᴸ ; suc to sucᴸ)
 
 open import Relation.Binary public
   using (Rel ; REL ; Reflexive ; Transitive)
