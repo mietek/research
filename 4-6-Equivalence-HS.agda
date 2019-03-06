@@ -2,9 +2,9 @@
 --
 -- Equivalence of SS-HS and BS-HS
 --
---      SS-HS     ⎫   SS-HS
---  6.1 ↓ × ↑ 6.2 ⎬ 6.3 ↕
---      BS-HS     ⎭   BS-HS
+--        SS-HS       ⎫     SS-HS
+--  4.6.1 ↓ × ↑ 4.6.2 ⎬ 4.6.3 ↕
+--        BS-HS       ⎭     BS-HS
 
 module 4-6-Equivalence-HS where
 
@@ -17,9 +17,9 @@ import 3-6-Properties-BigStep-HS as BS-HS
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Lemma 6.1.  SS-HS to HNF implies BS-HS
+-- Lemma 4.6.1.  SS-HS to HNF implies BS-HS
 
-module Lem-6-1 where
+module Lem-4-6-1 where
   open SS-HS
   open BS-HS
 
@@ -60,9 +60,9 @@ module Lem-6-1 where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Lemma 6.2.  BS-HS implies SS-HS
+-- Lemma 4.6.2.  BS-HS implies SS-HS
 
-module Lem-6-2 where
+module Lem-4-6-2 where
   open SS-HS
   open BS-HS
 
@@ -96,11 +96,11 @@ module Lem-6-2 where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Theorem 6.3.  SS-HS to HNF and BS-HS coincide
+-- Theorem 4.6.3.  SS-HS to HNF and BS-HS coincide
 
-module Thm-6-3 where
+module Thm-4-6-3 where
   ss-hs↔bs-hs : ∀ {n} {e : Tm n} {e′} → (e SS.HS.⇒* e′ × HNF e′) ↔ e BS.HS.⇓ e′
-  ss-hs↔bs-hs = uncurry Lem-6-1.bs←ss , λ r → Lem-6-2.ss←bs r , BS-HS.hnf-⇓ r
+  ss-hs↔bs-hs = uncurry Lem-4-6-1.bs←ss , λ r → Lem-4-6-2.ss←bs r , BS-HS.hnf-⇓ r
 
 
 ---------------------------------------------------------------------------------------------------------------

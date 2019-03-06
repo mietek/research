@@ -2,9 +2,9 @@
 --
 -- Equivalence of SS-CBN and BS-CBN
 --
---      SS-CBN    ⎫   SS-CBN
---  1.1 ↓ × ↑ 1.2 ⎬ 1.3 ↕
---      BS-CBN    ⎭   BS-CBN
+--        SS-CBN      ⎫     SS-CBN
+--  4.1.1 ↓ × ↑ 4.1.2 ⎬ 4.1.3 ↕
+--        BS-CBN      ⎭     BS-CBN
 
 module 4-1-Equivalence-CBN where
 
@@ -17,9 +17,9 @@ import 3-1-Properties-BigStep-CBN as BS-CBN
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Lemma 1.1.  SS-CBN to WHNF implies BS-CBN
+-- Lemma 4.1.1.  SS-CBN to WHNF implies BS-CBN
 
-module Lem-1-1 where
+module Lem-4-1-1 where
   open SS-CBN
   open BS-CBN
 
@@ -47,9 +47,9 @@ module Lem-1-1 where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Lemma 1.2.  BS-CBN implies SS-CBN
+-- Lemma 4.1.2.  BS-CBN implies SS-CBN
 
-module Lem-1-2 where
+module Lem-4-1-2 where
   open SS-CBN
   open BS-CBN
 
@@ -74,11 +74,11 @@ module Lem-1-2 where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Theorem 1.3.  SS-CBN to WHNF and BS-CBN coincide
+-- Theorem 4.1.3.  SS-CBN to WHNF and BS-CBN coincide
 
-module Thm-1-3 where
+module Thm-4-1-3 where
   ss-cbn↔bs-cbn : ∀ {n} {e : Tm n} {e′} → (e SS.CBN.⇒* e′ × WHNF e′) ↔ e BS.CBN.⇓ e′
-  ss-cbn↔bs-cbn = uncurry Lem-1-1.bs←ss , λ r → Lem-1-2.ss←bs r , BS-CBN.whnf-⇓ r
+  ss-cbn↔bs-cbn = uncurry Lem-4-1-1.bs←ss , λ r → Lem-4-1-2.ss←bs r , BS-CBN.whnf-⇓ r
 
 
 ---------------------------------------------------------------------------------------------------------------

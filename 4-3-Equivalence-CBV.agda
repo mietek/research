@@ -2,9 +2,9 @@
 --
 -- Equivalence of SS-CBV and BS-CBV
 --
---      SS-CBV    ⎫   SS-CBV
---  3.1 ↓ × ↑ 3.2 ⎬ 3.3 ↕
---      BS-CBV    ⎭   BS-CBV
+--        SS-CBV      ⎫     SS-CBV
+--  4.3.1 ↓ × ↑ 4.3.2 ⎬ 4.3.3 ↕
+--        BS-CBV      ⎭     BS-CBV
 
 module 4-3-Equivalence-CBV where
 
@@ -17,9 +17,9 @@ import 3-3-Properties-BigStep-CBV as BS-CBV
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Lemma 3.1.  SS-CBV to WHNF implies BS-CBV
+-- Lemma 4.3.1.  SS-CBV to WHNF implies BS-CBV
 
-module Lem-3-1 where
+module Lem-4-3-1 where
   open SS-CBV
   open BS-CBV
 
@@ -63,9 +63,9 @@ module Lem-3-1 where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Lemma 3.2.  BS-CBV implies SS-CBV
+-- Lemma 4.3.2.  BS-CBV implies SS-CBV
 
-module Lem-3-2 where
+module Lem-4-3-2 where
   open SS-CBV
   open BS-CBV
 
@@ -97,11 +97,11 @@ module Lem-3-2 where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Theorem 3.3.  SS-CBV to WNF and BS-CBV coincide
+-- Theorem 4.3.3.  SS-CBV to WNF and BS-CBV coincide
 
-module Thm-3-3 where
+module Thm-4-3-3 where
   ss-cbv↔bs-cbv : ∀ {n} {e : Tm n} {e′} → (e SS.CBV.⇒* e′ × WNF e′) ↔ e BS.CBV.⇓ e′
-  ss-cbv↔bs-cbv = uncurry Lem-3-1.bs←ss , λ r → Lem-3-2.ss←bs r , BS-CBV.wnf-⇓ r
+  ss-cbv↔bs-cbv = uncurry Lem-4-3-1.bs←ss , λ r → Lem-4-3-2.ss←bs r , BS-CBV.wnf-⇓ r
 
 
 ---------------------------------------------------------------------------------------------------------------

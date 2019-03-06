@@ -2,11 +2,11 @@
 --
 -- Equivalence of SS-NO and BS-NO
 --
---                  2.1
---    SS-CBN|SS-NO₂ ← SS-NO ⎫     SS-NO     ⎫   SS-NO
---  1.1 ↓      ↓ 2.2         ⎬ 2.4 ↓ × ↑ 2.5 ⎬ 2.6 ↕
---    BS-CBN|BS-NO₂ → BS-NO ⎭     BS-NO     ⎭   BS-NO
---                  2.3
+--                    4.2.1
+--      SS-CBN|SS-NO₂ ← SS-NO ⎫       SS-NO       ⎫     SS-NO
+--  4.1.1 ↓      ↓ 4.2.2       ⎬ 4.2.4 ↓ × ↑ 4.2.5 ⎬ 4.2.6 ↕
+--      BS-CBN|BS-NO₂ → BS-NO ⎭       BS-NO       ⎭     BS-NO
+--                    4.2.3
 
 module 4-2-Equivalence-NO where
 
@@ -24,9 +24,9 @@ import 4-1-Equivalence-CBN as CBN
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Lemma 2.1.  SS-NO to NF implies SS-CBN to WHNF followed by SS-NO₂ to NF
+-- Lemma 4.2.1.  SS-NO to NF implies SS-CBN to WHNF followed by SS-NO₂ to NF
 
-module Lem-2-1 where
+module Lem-4-2-1 where
   open SS
 
   cbn←no : ∀ {n} {e : Tm n} {e′} → ¬ WHNF e → e NO.⇒ e′ → e CBN.⇒ e′
@@ -75,9 +75,9 @@ module Lem-2-1 where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Lemma 2.2.  SS-NO₂ to NF implies BS-NO₂
+-- Lemma 4.2.2.  SS-NO₂ to NF implies BS-NO₂
 
-module Lem-2-2 where
+module Lem-4-2-2 where
   open SS-NO₂
   open BS-NO₂
 
@@ -143,7 +143,7 @@ module Lem-2-2 where
 
     bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → NF e″ → e ⇓ e″
     bs←ss′ (lam₋ ¬p r)       rs (lam p″)              with rev-lam₋* rs p″
-    ... | _ , rs′ , p′ , rs″                           = lam (CBN.Lem-1-1.bs←ss′ r rs′ p′) (bs←ss rs″ p″)
+    ... | _ , rs′ , p′ , rs″                           = lam (CBN.Lem-4-1-1.bs←ss′ r rs′ p′) (bs←ss rs″ p″)
     bs←ss′ (lam₋ ¬p r)       rs (nf var)              = rs ↯ ¬lam⇒*var
     bs←ss′ (lam₋ ¬p r)       rs (nf (app _ _))        = rs ↯ ¬lam⇒*app
     bs←ss′ (lam₊ p r)        rs (lam p″)              with rev-lam₊* (whnf-⇒ r) rs
@@ -152,10 +152,10 @@ module Lem-2-2 where
     bs←ss′ (lam₊ p r)        rs (nf (app _ _))        = rs ↯ ¬lam⇒*app
     bs←ss′ (app₁₊ p₁ r₁)     rs p″                    with rev-app₁₊* rs p″
     ... | _ , rs₁ , p₁′ , rs₂ , p₂ , rs₂′ , p₂′ , refl = app (na←naxnf p₁) (bs←ss′ r₁ rs₁ (nf p₁′))
-                                                             (CBN.Lem-1-1.bs←ss rs₂ p₂) (bs←ss rs₂′ p₂′)
+                                                             (CBN.Lem-4-1-1.bs←ss rs₂ p₂) (bs←ss rs₂′ p₂′)
     bs←ss′ (app₂₋ p₁ ¬p₂ r₂) rs p″                    with rev-app₂₋* p₁ rs p″
     ... | _ , rs₂ , p₂ , rs₂′ , p₂′ , refl             = app (na←nanf p₁) (refl-⇓ (nf p₁))
-                                                             (CBN.Lem-1-1.bs←ss′ r₂ rs₂ p₂) (bs←ss rs₂′ p₂′)
+                                                             (CBN.Lem-4-1-1.bs←ss′ r₂ rs₂ p₂) (bs←ss rs₂′ p₂′)
     bs←ss′ (app₂₊ p₁ p₂ r₂)  rs p″                    with rev-app₂₊* p₁ (whnf-⇒ r₂) rs p″
     ... | _ , rs₂ , p₂′ , refl                         = app (na←nanf p₁) (refl-⇓ (nf p₁))
                                                              (BS-CBN.refl-⇓ p₂) (bs←ss′ r₂ rs₂ p₂′)
@@ -163,9 +163,9 @@ module Lem-2-2 where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Lemma 2.3.  BS-CBN followed by BS-NO₂ implies BS-NO
+-- Lemma 4.2.3.  BS-CBN followed by BS-NO₂ implies BS-NO
 
-module Lem-2-3 where
+module Lem-4-2-3 where
   open BS
 
   no←cbn|no₂ : ∀ {n} {e : Tm n} {e′ e″} → e CBN.⇓ e′ → e′ NO₂.⇓ e″ → e NO.⇓ e″
@@ -179,22 +179,22 @@ module Lem-2-3 where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Corollary 2.4.  SS-NO to NF implies BS-NO
+-- Corollary 4.2.4.  SS-NO to NF implies BS-NO
 
-module Cor-2-4 where
+module Cor-4-2-4 where
   open SS-NO
   open BS-NO
 
   bs←ss : ∀ {n} {e : Tm n} {e′} → e ⇒* e′ → NF e′ → e ⇓ e′
-  bs←ss rs p′             with Lem-2-1.cbn|no₂←no* rs p′
-  ... | _ , rs′ , p″ , rs″ = Lem-2-3.no←cbn|no₂ (CBN.Lem-1-1.bs←ss rs′ p″) (Lem-2-2.bs←ss rs″ p′)
+  bs←ss rs p′             with Lem-4-2-1.cbn|no₂←no* rs p′
+  ... | _ , rs′ , p″ , rs″ = Lem-4-2-3.no←cbn|no₂ (CBN.Lem-4-1-1.bs←ss rs′ p″) (Lem-4-2-2.bs←ss rs″ p′)
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Lemma 2.5.  BS-NO implies SS-NO
+-- Lemma 4.2.5.  BS-NO implies SS-NO
 
-module Lem-2-5 where
+module Lem-4-2-5 where
   open SS-NO
   open BS-NO
 
@@ -238,8 +238,8 @@ module Lem-2-5 where
   ss←bs : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → e ⇒* e′
   ss←bs var                 = ε
   ss←bs (lam r)             = bs-lam (ss←bs r)
-  ss←bs (applam r₁ r)       = bs-applam (CBN.Lem-1-2.ss←bs r₁) (ss←bs r)
-  ss←bs (app r₁ q₁′ r₁′ r₂) = bs-app (CBN.Lem-1-2.ss←bs r₁) p₁ (ss←bs r₁′) p₁′ (ss←bs r₂)
+  ss←bs (applam r₁ r)       = bs-applam (CBN.Lem-4-1-2.ss←bs r₁) (ss←bs r)
+  ss←bs (app r₁ q₁′ r₁′ r₂) = bs-app (CBN.Lem-4-1-2.ss←bs r₁) p₁ (ss←bs r₁′) p₁′ (ss←bs r₂)
     where
       p₁  = naxnf←whnf (BS-CBN.whnf-⇓ r₁) q₁′
       p₁′ = nanf←nf (nf-⇓ r₁′) (na←whnf-⇓ (BS-CBN.whnf-⇓ r₁) q₁′ r₁′)
@@ -247,11 +247,11 @@ module Lem-2-5 where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Theorem 2.6.  SS-NO to NF and BS-NO coincide
+-- Theorem 4.2.6.  SS-NO to NF and BS-NO coincide
 
-module Thm-2-6 where
+module Thm-4-2-6 where
   ss-no↔bs-no : ∀ {n} {e : Tm n} {e′} → (e SS.NO.⇒* e′ × NF e′) ↔ e BS.NO.⇓ e′
-  ss-no↔bs-no = uncurry Cor-2-4.bs←ss , λ r → Lem-2-5.ss←bs r , BS-NO.nf-⇓ r
+  ss-no↔bs-no = uncurry Cor-4-2-4.bs←ss , λ r → Lem-4-2-5.ss←bs r , BS-NO.nf-⇓ r
 
 
 ---------------------------------------------------------------------------------------------------------------

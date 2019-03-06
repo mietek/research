@@ -2,11 +2,11 @@
 --
 -- Equivalence of SS-HAO and BS-HAO
 --
---                   5.1
---    SS-CBV|SS-HAO₂ ← SS-HAO ⎫     SS-HAO    ⎫   SS-HAO
---  3.1 ↓      ↓ 5.2           ⎬ 5.4 ↓ × ↑ 5.5 ⎬ 5.6 ↕
---    BS-CBV|BS-HAO₂ → BS-HAO ⎭     BS-HAO    ⎭   BS-HAO
---                   5.3
+--                     5.1
+--      SS-CBV|SS-HAO₂ ← SS-HAO ⎫       SS-HAO      ⎫     SS-HAO
+--  4.3.1 ↓      ↓ 4.5.2         ⎬ 4.5.4 ↓ × ↑ 4.5.5 ⎬ 4.5.6 ↕
+--      BS-CBV|BS-HAO₂ → BS-HAO ⎭       BS-HAO      ⎭     BS-HAO
+--                     5.3
 
 module 4-5-Equivalence-HAO where
 
@@ -24,43 +24,43 @@ import 4-3-Equivalence-CBV as CBV
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Lemma 5.1.  SS-HAO to NF implies SS-CBV to WNF followed by SS-HAO₂ to NF
+-- Lemma 4.5.1.  SS-HAO to NF implies SS-CBV to WNF followed by SS-HAO₂ to NF
 
-module Lem-5-1 where
+module Lem-4-5-1 where
   open SS
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Lemma 5.2.  SS-HAO₂ to NF implies BS-HAO₂
+-- Lemma 4.5.2.  SS-HAO₂ to NF implies BS-HAO₂
 
-module Lem-5-2 where
+module Lem-4-5-2 where
 --  open SS-HAO₂
 --  open BS-HAO₂
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Lemma 5.3.  BS-CBV followed by BS-HAO₂ implies BS-HAO
+-- Lemma 4.5.3.  BS-CBV followed by BS-HAO₂ implies BS-HAO
 
-module Lem-5-3 where
+module Lem-4-5-3 where
   open BS
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Corollary 5.4.  SS-HAO to NF implies BS-HAO
+-- Corollary 4.5.4.  SS-HAO to NF implies BS-HAO
 
-module Cor-5-4 where
+module Cor-4-5-4 where
   open SS-HAO
   open BS-HAO
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Lemma 5.5.  BS-HAO implies SS-HAO
+-- Lemma 4.5.5.  BS-HAO implies SS-HAO
 
-module Lem-2-5 where
+module Lem-4-5-5 where
   open SS-HAO
   open BS-HAO
 
@@ -117,11 +117,11 @@ module Lem-2-5 where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Theorem 5.6.  SS-HAO to NF and BS-HAO coincide
+-- Theorem 4.5.6.  SS-HAO to NF and BS-HAO coincide
 
-module Thm-5-6 where
+module Thm-4-5-6 where
 --  ss-hao↔bs-hao : ∀ {n} {e : Tm n} {e′} → (e SS.HAO.⇒* e′ × NF e′) ↔ e BS.HAO.⇓ e′
---  ss-hao↔bs-hao = uncurry Cor-5-4.bs←ss , λ r → Lem-5-5.ss←bs r , BS-HAO.nf-⇓ r
+--  ss-hao↔bs-hao = uncurry Cor-4-5-4.bs←ss , λ r → Lem-4-5-5.ss←bs r , BS-HAO.nf-⇓ r
 
 
 ---------------------------------------------------------------------------------------------------------------

@@ -2,9 +2,9 @@
 --
 -- Equivalence of SS-AO and BS-AO
 --
---      SS-AO     ⎫   SS-AO
---  4.1 ↓ × ↑ 4.2 ⎬ 4.3 ↕
---      BS-AO     ⎭   BS-AO
+--        SS-AO       ⎫     SS-AO
+--  4.4.1 ↓ × ↑ 4.4.2 ⎬ 4.4.3 ↕
+--        BS-AO       ⎭     BS-AO
 
 module 4-4-Equivalence-AO where
 
@@ -17,9 +17,9 @@ import 3-4-Properties-BigStep-AO as BS-AO
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Lemma 4.1.  SS-AO to NF implies BS-AO
+-- Lemma 4.4.1.  SS-AO to NF implies BS-AO
 
-module Lem-4-1 where
+module Lem-4-4-1 where
   open SS-AO
   open BS-AO
 
@@ -82,9 +82,9 @@ module Lem-4-1 where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Lemma 4.2.  BS-AO implies SS-AO
+-- Lemma 4.4.2.  BS-AO implies SS-AO
 
-module Lem-4-2 where
+module Lem-4-4-2 where
   open SS-AO
   open BS-AO
 
@@ -123,11 +123,11 @@ module Lem-4-2 where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Theorem 4.3.  SS-AO to NF and BS-AO coincide
+-- Theorem 4.4.3.  SS-AO to NF and BS-AO coincide
 
-module Thm-4-3 where
+module Thm-4-4-3 where
   ss-ao↔bs-ao : ∀ {n} {e : Tm n} {e′} → (e SS.AO.⇒* e′ × NF e′) ↔ e BS.AO.⇓ e′
-  ss-ao↔bs-ao = uncurry Lem-4-1.bs←ss , (λ r → Lem-4-2.ss←bs r , BS-AO.nf-⇓ r)
+  ss-ao↔bs-ao = uncurry Lem-4-4-1.bs←ss , λ r → Lem-4-4-2.ss←bs r , BS-AO.nf-⇓ r
 
 
 ---------------------------------------------------------------------------------------------------------------
