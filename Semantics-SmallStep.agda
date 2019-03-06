@@ -143,9 +143,9 @@ module AO where
 
 module HAO where
   data _⇒_ {n} : Rel₀ (Tm n) where
-    lam    : ∀ {e e′} →
-             e ⇒ e′ →
-             lam e ⇒ lam e′
+    lam    : ∀ {e₁ e₂ e₂′} →
+             e₂ ⇒ e₂′ →
+             lam (app e₁ e₂) ⇒ lam (app e₁ e₂′)
 
     applam : ∀ {e₁ e₂} →
              WNF e₁ → NF e₂ →

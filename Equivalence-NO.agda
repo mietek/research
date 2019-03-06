@@ -169,10 +169,10 @@ module Lem-2-3 where
   open BS
 
   no←cbn|no₂ : ∀ {n} {e : Tm n} {e′ e″} → e CBN.⇓ e′ → e′ NO₂.⇓ e″ → e NO.⇓ e″
-  no←cbn|no₂ CBN.var           NO₂.var                  = NO.var
-  no←cbn|no₂ CBN.lam           (NO₂.lam r r′)           = NO.lam (no←cbn|no₂ r r′)
-  no←cbn|no₂ (CBN.applam r₁ r) r′                       = NO.applam r₁ (no←cbn|no₂ r r′)
-  no←cbn|no₂ (CBN.app r₁ q₁)   (NO₂.app q₁′ r₁′ r₂ r₂′) = NO.app r₁ q₁ r₁″ (no←cbn|no₂ r₂ r₂′)
+  no←cbn|no₂ CBN.var           NO₂.var                 = NO.var
+  no←cbn|no₂ CBN.lam           (NO₂.lam r r′)          = NO.lam (no←cbn|no₂ r r′)
+  no←cbn|no₂ (CBN.applam r₁ r) r′                      = NO.applam r₁ (no←cbn|no₂ r r′)
+  no←cbn|no₂ (CBN.app r₁ q₁′)  (NO₂.app q₁ r₁′ r₂ r₂′) = NO.app r₁ q₁′ r₁″ (no←cbn|no₂ r₂ r₂′)
     where
       r₁″ = no←cbn|no₂ (BS-CBN.refl-⇓ (BS-CBN.whnf-⇓ r₁)) r₁′
 
@@ -198,7 +198,7 @@ module Lem-2-5 where
   open SS-NO
   open BS-NO
 
-  cbn-app₁ : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ SS-CBN.⇒ e₁′ → app e₁ e₂ ⇒ app e₁′ e₂
+  cbn-app₁ : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ SS.CBN.⇒ e₁′ → app e₁ e₂ ⇒ app e₁′ e₂
   cbn-app₁ SS-CBN.applam    = app₁ app applam
   cbn-app₁ (SS-CBN.app₁ r₁) = app₁ app (cbn-app₁ r₁)
 
@@ -236,13 +236,13 @@ module Lem-2-5 where
   bs-app rs₁ p₁′ rs₁′ p₁″ rs₂ = cbn-app₁* rs₁ ◅◅ app₁₊* p₁′ rs₁′ ◅◅ app₂* p₁″ rs₂
 
   ss←bs : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → e ⇒* e′
-  ss←bs var                = ε
-  ss←bs (lam r)            = bs-lam (ss←bs r)
-  ss←bs (applam r₁ r)      = bs-applam (CBN.Lem-1-2.ss←bs r₁) (ss←bs r)
-  ss←bs (app r₁ q₁ r₁′ r₂) = bs-app (CBN.Lem-1-2.ss←bs r₁) p₁ (ss←bs r₁′) p₁′ (ss←bs r₂)
+  ss←bs var                 = ε
+  ss←bs (lam r)             = bs-lam (ss←bs r)
+  ss←bs (applam r₁ r)       = bs-applam (CBN.Lem-1-2.ss←bs r₁) (ss←bs r)
+  ss←bs (app r₁ q₁′ r₁′ r₂) = bs-app (CBN.Lem-1-2.ss←bs r₁) p₁ (ss←bs r₁′) p₁′ (ss←bs r₂)
     where
-      p₁  = naxnf←whnf (BS-CBN.whnf-⇓ r₁) q₁
-      p₁′ = nanf←nf (nf-⇓ r₁′) (na←whnf-⇓ (BS-CBN.whnf-⇓ r₁) q₁ r₁′)
+      p₁  = naxnf←whnf (BS-CBN.whnf-⇓ r₁) q₁′
+      p₁′ = nanf←nf (nf-⇓ r₁′) (na←whnf-⇓ (BS-CBN.whnf-⇓ r₁) q₁′ r₁′)
 
 
 ---------------------------------------------------------------------------------------------------------------

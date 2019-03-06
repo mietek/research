@@ -61,23 +61,58 @@ module Cor-5-4 where
 -- Lemma 5.5.  BS-HAO implies SS-HAO
 
 module Lem-2-5 where
+  open SS-HAO
+  open BS-HAO
 
--- lam* : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
--- lam* = map lam
+{-
+  mutual
+    cbv-app₁ : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ SS.CBV.⇒ e₁′ → app e₁ e₂ ⇒ app e₁′ e₂
+    cbv-app₁ (SS-CBV.applam p₂)  = app₁ app (applam {!!} {!!}) {!!}
+    cbv-app₁ (SS-CBV.app₁ r₁)    = app₁ app (cbv-app₁ r₁) {!!}
+    cbv-app₁ (SS-CBV.app₂ p₁ r₂) = app₁ app (cbv-app₂ r₂) {!!}
 
--- applam* : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} → WNF e₁ → NF e₂ → app (lam e₁) e₂ ⇒* e₁ [ e₂ ]
--- applam* p₁ p₂ = applam p₁ p₂ ◅ ε
+    cbv-app₂ : ∀ {n} {e₁ e₂ : Tm n} {e₂′} → e₂ SS.CBV.⇒ e₂′ → app e₁ e₂ ⇒ app e₁ e₂′
+    cbv-app₂ (SS-CBV.applam p₂)  = app₂ (applam {!!} {!!})
+    cbv-app₂ (SS-CBV.app₁ r₁)    = app₂ (cbv-app₁ r₁)
+    cbv-app₂ (SS-CBV.app₂ p₁ r₂) = app₂ (cbv-app₂ r₂)
 
--- -- TODO
+  lam* : ∀ {n} {e₁ e₂ : Tm (suc n)} {e₂′} → e₂ ⇒* e₂′ → lam (app e₁ e₂) ⇒* lam (app e₁ e₂′)
+  lam* = map lam
+
+  applam* : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} → WNF e₁ → NF e₂ → app (lam e₁) e₂ ⇒* e₁ [ e₂ ]
+  applam* p₁ p₂ = applam p₁ p₂ ◅ ε
+
+  cbv-app₁* : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ SS.CBV.⇒* e₁′ → app e₁ e₂ ⇒* app e₁′ e₂
+  cbv-app₁* = map cbv-app₁
 
 -- -- app₁* : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → NA e₁ → e₁ ⇒* e₁′ → NF e₂ → app e₁ e₂ ⇒* app e₁′ e₂
 -- -- app₁* p₁ rs p₂ = map (λ r₁ → app₁ {!!} r₁ p₂) rs
 
--- app₂* : ∀ {n} {e₁ e₂ : Tm n} {e₂′} → e₂ ⇒* e₂′ → app e₁ e₂ ⇒* app e₁ e₂′
--- app₂* = map app₂
+  app₂* : ∀ {n} {e₁ e₂ : Tm n} {e₂′} → e₂ ⇒* e₂′ → app e₁ e₂ ⇒* app e₁ e₂′
+  app₂* = map app₂
 
-  open SS-HAO
-  open BS-HAO
+  bs-lam : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
+  bs-lam rs = {!!}
+
+  bs-applam : ∀ {n} {e₁ e₂ : Tm n} {e₁′ e₂′ e′} →
+              e₁ SS.CBV.⇒* lam e₁′ → e₂ ⇒* e₂′ → e₁′ [ e₂′ ] ⇒* e′ →
+              app e₁ e₂ ⇒* e′
+  bs-applam rs₁ rs₂ rs = cbv-app₁* rs₁ ◅◅ app₂* rs₂ ◅◅ applam* {!!} {!!} ◅◅ rs
+
+  bs-app : ∀ {n} {e₁ e₂ : Tm n} {e₁′ e₁″ e₂′} →
+           e₁ SS.CBV.⇒* e₁′ → NAWNF e₁′ → e₁′ ⇒* e₁″ → NANF e₁″ → e₂ ⇒* e₂′ →
+           app e₁ e₂ ⇒* app e₁″ e₂′
+  bs-app rs₁ p₁′ rs₁′ p₁″ rs₂ = cbv-app₁* rs₁ ◅◅ {!!} ◅◅ app₂* rs₂
+
+  ss←bs : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → e ⇒* e′
+  ss←bs var                 = ε
+  ss←bs (lam r)             = bs-lam (ss←bs r)
+  ss←bs (applam r₁ r₂ r)    = bs-applam (CBV.Lem-3-2.ss←bs r₁) (ss←bs r₂) (ss←bs r)
+  ss←bs (app r₁ q₁′ r₁′ r₂) = bs-app (CBV.Lem-3-2.ss←bs r₁) p₁ (ss←bs r₁′) p₁″ (ss←bs r₂)
+    where
+      p₁  = nawnf←wnf (BS-CBV.wnf-⇓ r₁) q₁′
+      p₁″ = nanf←nf (nf-⇓ r₁′) (na←wnf-⇓ (BS-CBV.wnf-⇓ r₁) q₁′ r₁′)
+-}
 
 
 ---------------------------------------------------------------------------------------------------------------
