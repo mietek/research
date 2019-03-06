@@ -198,14 +198,6 @@ module Lem-4-2-5 where
   open SS-NO
   open BS-NO
 
-  cbn-app₁ : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ SS.CBN.⇒ e₁′ → app e₁ e₂ ⇒ app e₁′ e₂
-  cbn-app₁ SS-CBN.applam    = app₁ app applam
-  cbn-app₁ (SS-CBN.app₁ r₁) = app₁ app (cbn-app₁ r₁)
-
-  app₁₊ : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → NAXNF e₁ → e₁ ⇒ e₁′ → app e₁ e₂ ⇒ app e₁′ e₂
-  app₁₊ var      r₁ = app₁ var r₁
-  app₁₊ (app p₁) r₁ = app₁ app r₁
-
   lam* : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
   lam* = map lam
 

@@ -19,9 +19,6 @@ module CBN where
              app e₁ e₂ ⇒ app e₁′ e₂
 
   open MultiStepReductions _⇒_ public
-  {-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
-  {-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
-  {-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -47,9 +44,6 @@ module NO where
              app e₁ e₂ ⇒ app e₁ e₂′
 
   open MultiStepReductions _⇒_ public
-  {-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
-  {-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
-  {-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -79,9 +73,6 @@ module NO₂ where
             app e₁ e₂ ⇒ app e₁ e₂′
 
   open MultiStepReductions _⇒_ public
-  {-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
-  {-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
-  {-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -104,9 +95,6 @@ module CBV where
              app e₁ e₂ ⇒ app e₁ e₂′
 
   open MultiStepReductions _⇒_ public
-  {-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
-  {-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
-  {-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -132,9 +120,6 @@ module AO where
              app e₁ e₂ ⇒ app e₁ e₂′
 
   open MultiStepReductions _⇒_ public
-  {-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
-  {-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
-  {-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -142,27 +127,42 @@ module AO where
 -- Small-step hybrid applicative order reduction (no reference)
 
 module HAO where
-  data _⇒_ {n} : Rel₀ (Tm n) where
-    lam    : ∀ {e₁ e₂ e₂′} →
-             e₂ ⇒ e₂′ →
-             lam (app e₁ e₂) ⇒ lam (app e₁ e₂′)
+  mutual
+    data _⇒_ {n} : Rel₀ (Tm n) where
+      lam    : ∀ {e e′} →
+               e ⇒ e′ →
+               lam e ⇒ lam e′
 
-    applam : ∀ {e₁ e₂} →
-             WNF e₁ → NF e₂ →
-             app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
+      applam : ∀ {e₁ e₂} →
+               NF e₂ →
+               app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
 
-    app₁   : ∀ {e₁ e₂ e₁′} →
-             NA e₁ → e₁ ⇒ e₁′ → NF e₂ →
-             app e₁ e₂ ⇒ app e₁′ e₂
+      app₁₋  : ∀ {e₁ e₂ e₁′} →
+               e₁ ⇒ᵥ e₁′ →
+               app e₁ e₂ ⇒ app e₁′ e₂
 
-    app₂   : ∀ {e₁ e₂ e₂′} →
-             e₂ ⇒ e₂′ →
-             app e₁ e₂ ⇒ app e₁ e₂′
+      app₁₊  : ∀ {e₁ e₂ e₁′} →
+               WNF e₁ → e₁ ⇒ e₁′ → NF e₂ →
+               app e₁ e₂ ⇒ app e₁′ e₂
+
+      app₂   : ∀ {e₁ e₂ e₂′} →
+               WNF e₁ → e₂ ⇒ e₂′ →
+               app e₁ e₂ ⇒ app e₁ e₂′
+
+    data _⇒ᵥ_ {n} : Rel₀ (Tm n) where
+      applam : ∀ {e₁ e₂} →
+               WNF e₂ →
+               app (lam e₁) e₂ ⇒ᵥ e₁ [ e₂ ]
+
+      app₁   : ∀ {e₁ e₂ e₁′} →
+               e₁ ⇒ᵥ e₁′ →
+               app e₁ e₂ ⇒ᵥ app e₁′ e₂
+
+      app₂   : ∀ {e₁ e₂ e₂′} →
+               WNF e₁ → e₂ ⇒ᵥ e₂′ →
+               app e₁ e₂ ⇒ᵥ app e₁ e₂′
 
   open MultiStepReductions _⇒_ public
-  {-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
-  {-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
-  {-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -184,9 +184,6 @@ module HS where
              app e₁ e₂ ⇒ app e₁′ e₂
 
   open MultiStepReductions _⇒_ public
-  {-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
-  {-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
-  {-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
 
 
 ---------------------------------------------------------------------------------------------------------------

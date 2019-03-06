@@ -78,6 +78,10 @@ module MultiStepReductions
     _⇒*_ : ∀ {n} → Rel₀ (Tm n)
     e ⇒* e′ = e ⇒*⟨ ∞ ⟩ e′
 
+    {-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
+    {-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
+    {-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
+
 module Confluence
     (_⇒_   : ∀ {n} → Rel₀ (Tm n))
     (det-⇒ : Deterministic′ _⇒_)
