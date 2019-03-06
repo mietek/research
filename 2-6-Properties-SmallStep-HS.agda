@@ -29,7 +29,7 @@ nrf←hnf (hnf p) = nrf←naxnf p
 --
 -- SS-HS is deterministic, confluent, and has unique non-reducible forms
 
-det-⇒ : Deterministic′ _⇒_
+det-⇒ : Deterministic _⇒_
 det-⇒ (lam r)         (lam r′)         = lam & det-⇒ r r′
 det-⇒ (applam p₁)     (applam p₁′)     = refl
 det-⇒ (applam p₁)     (app₁ (lam r₁′)) = (_ , r₁′) ↯ nrf←hnf p₁

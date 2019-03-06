@@ -50,24 +50,20 @@ t [ s ] = sub t (s /0)
 --
 -- Equipment for small-step reduction
 
-Deterministic : ∀ {a ℓ} {A : Set a} → Pred (Rel A ℓ) _
-Deterministic R = ∀ {x y₁ y₂} → R x y₁ → R x y₂ → y₁ ≡ y₂
+Unique : Pred (∀ {n} → Pred₀ (Tm n)) _
+Unique P = ∀ {n} {e : Tm n} (p p′ : P e) → p ≡ p′
 
-Confluent : ∀ {a ℓ} {A : Set a} → Pred (Rel A ℓ) _
-Confluent R = ∀ {x y₁ y₂} → (R *) x y₁ → (R *) x y₂ →
-              (∃ λ z → (R *) y₁ z × (R *) y₂ z)
-
-Deterministic′ : Pred (∀ {n} → Rel₀ (Tm n)) _
-Deterministic′ _⇒_ = ∀ {n} → Deterministic (_⇒_ {n})
-
-Confluent′ : Pred (∀ {n} → Rel₀ (Tm n)) _
-Confluent′ _⇒_ = ∀ {n} → Confluent (_⇒_ {n})
+Unique² : Pred (∀ {n} → Rel₀ (Tm n)) _
+Unique² R = ∀ {n} {e : Tm n} {e′} (r r′ : R e e′) → r ≡ r′
 
 module NonReducibleForms
     (_⇒_ : ∀ {n} → Rel₀ (Tm n))
   where
     NRF : ∀ {n} → Pred₀ (Tm n)
     NRF e = ¬ (∃ λ e′ → e ⇒ e′)
+
+Deterministic : Pred (∀ {n} → Rel₀ (Tm n)) _
+Deterministic R = ∀ {n} {e : Tm n} {e′ e″} → R e e′ → R e e″ → e′ ≡ e″
 
 module MultiStepReductions
     (_⇒_ : ∀ {n} → Rel₀ (Tm n))
@@ -84,9 +80,12 @@ module MultiStepReductions
 
 module Confluence
     (_⇒_   : ∀ {n} → Rel₀ (Tm n))
-    (det-⇒ : Deterministic′ _⇒_)
+    (det-⇒ : Deterministic _⇒_)
   where
-    conf-⇒ : Confluent′ _⇒_
+    open MultiStepReductions _⇒_
+
+    conf-⇒ : ∀ {n} {e : Tm n} {e′ e″} → e ⇒* e′ → e ⇒* e″ →
+              (∃ λ e‴ → e′ ⇒* e‴ × e″ ⇒* e‴)
     conf-⇒ ε        rs′        = _ , rs′ , ε
     conf-⇒ (r ◅ rs) ε          = _ , ε , r ◅ rs
     conf-⇒ (r ◅ rs) (r′ ◅ rs′) with det-⇒ r r′
@@ -94,7 +93,7 @@ module Confluence
 
 module UniquenessOfNonReducibleForms
     (_⇒_   : ∀ {n} → Rel₀ (Tm n))
-    (det-⇒ : Deterministic′ _⇒_)
+    (det-⇒ : Deterministic _⇒_)
   where
     open NonReducibleForms _⇒_
     open MultiStepReductions _⇒_

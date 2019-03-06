@@ -34,7 +34,7 @@ mutual
 --
 -- SS-NO₂ is deterministic, confluent, and has unique non-reducible forms
 
-det-⇒ : Deterministic′ _⇒_
+det-⇒ : Deterministic _⇒_
 det-⇒ (lam₋ ¬p r)       (lam₋ ¬p′ r′)        = lam & SS-CBN.det-⇒ r r′
 det-⇒ (lam₋ ¬p r)       (lam₊ p′ r′)         = p′ ↯ ¬p
 det-⇒ (lam₊ p r)        (lam₋ ¬p′ r′)        = p ↯ ¬p′

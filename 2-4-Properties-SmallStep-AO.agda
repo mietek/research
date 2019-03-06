@@ -31,7 +31,7 @@ mutual
 --
 -- SS-AO is deterministic, confluent, and has unique non-reducible forms
 
-det-⇒ : Deterministic′ _⇒_
+det-⇒ : Deterministic _⇒_
 det-⇒ (lam r)            (lam r′)             = lam & det-⇒ r r′
 det-⇒ (applam p₁ p₂)     (applam p₁′ p₂′)     = refl
 det-⇒ (applam p₁ p₂)     (app₁ (lam r₁′))     = (_ , r₁′) ↯ nrf←nf p₁

@@ -31,7 +31,7 @@ mutual
 --
 -- SS-CBV is deterministic, confluent, and has unique non-reducible forms
 
-det-⇒ : Deterministic′ _⇒_
+det-⇒ : Deterministic _⇒_
 det-⇒ (applam p₂)  (applam p₂′)   = refl
 det-⇒ (applam p₂)  (app₁ ())
 det-⇒ (applam p₂)  (app₂ p₁′ r₂′) = (_ , r₂′) ↯ nrf←wnf p₂

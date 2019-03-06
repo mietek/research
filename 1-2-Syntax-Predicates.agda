@@ -7,19 +7,6 @@ open import 1-1-Syntax-Terms public
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Value predicates
-
-data V {n} : Pred₀ (Tm n) where
-  lam : ∀ {e} → V (lam e)
-
-v? : ∀ {n} (e : Tm n) → Dec (V e)
-v? (var x)     = no λ ()
-v? (lam e)     = yes lam
-v? (app e₁ e₂) = no λ ()
-
-
----------------------------------------------------------------------------------------------------------------
---
 -- Non-abstraction predicates
 
 data NA {n} : Pred₀ (Tm n) where
@@ -30,6 +17,11 @@ na? : ∀ {n} (e : Tm n) → Dec (NA e)
 na? (var x)     = yes var
 na? (lam e)     = no λ ()
 na? (app e₁ e₂) = yes app
+
+uniq-na : Unique NA
+uniq-na {e = var _}   var var = refl
+uniq-na {e = lam _}   ()  ()
+uniq-na {e = app _ _} app app = refl
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -45,6 +37,19 @@ mutual
   data NANF {n} : Pred₀ (Tm n) where
     var : ∀ {x} → NANF (var x)
     app : ∀ {e₁ e₂} → NANF e₁ → NF e₂ → NANF (app e₁ e₂)
+
+mutual
+  uniq-nf : Unique NF
+  uniq-nf {e = var _}   (nf p)  (nf p′)  = nf & uniq-nanf p p′
+  uniq-nf {e = lam _}   (lam p) (lam p′) = lam & uniq-nf p p′
+  uniq-nf {e = lam _}   (lam p) (nf ())
+  uniq-nf {e = lam _}   (nf ()) p′
+  uniq-nf {e = app _ _} (nf p)  (nf p′)  = nf & uniq-nanf p p′
+
+  uniq-nanf : Unique NANF
+  uniq-nanf {e = var _}   var         var           = refl
+  uniq-nanf {e = lam _}   ()          ()
+  uniq-nanf {e = app _ _} (app p₁ p₂) (app p₁′ p₂′) = app & uniq-nanf p₁ p₁′ ⊗ uniq-nf p₂ p₂′
 
 nanf←nf : ∀ {n} {e : Tm n} → NF e → NA e → NANF e
 nanf←nf (lam p) ()
@@ -90,6 +95,19 @@ mutual
     var : ∀ {x} → NAWNF (var x)
     app : ∀ {e₁ e₂} → NAWNF e₁ → WNF e₂ → NAWNF (app e₁ e₂)
 
+mutual
+  uniq-wnf : Unique WNF
+  uniq-wnf {e = var _}   (wnf p)  (wnf p′) = wnf & uniq-nawnf p p′
+  uniq-wnf {e = lam _}   lam      lam      = refl
+  uniq-wnf {e = lam _}   lam      (wnf ())
+  uniq-wnf {e = lam _}   (wnf ()) p′
+  uniq-wnf {e = app _ _} (wnf p)  (wnf p′) = wnf & uniq-nawnf p p′
+
+  uniq-nawnf : Unique NAWNF
+  uniq-nawnf {e = var _}   var         var           = refl
+  uniq-nawnf {e = lam _}   ()          ()
+  uniq-nawnf {e = app _ _} (app p₁ p₂) (app p₁′ p₂′) = app & uniq-nawnf p₁ p₁′ ⊗ uniq-wnf p₂ p₂′
+
 nawnf←wnf : ∀ {n} {e : Tm n} → WNF e → NA e → NAWNF e
 nawnf←wnf lam     ()
 nawnf←wnf (wnf p) q  = p
@@ -97,9 +115,6 @@ nawnf←wnf (wnf p) q  = p
 na←nawnf : ∀ {n} {e : Tm n} → NAWNF e → NA e
 na←nawnf var         = var
 na←nawnf (app p₁ p₂) = app
-
-wnf←v : ∀ {n} {e : Tm n} → V e → WNF e
-wnf←v lam = lam
 
 mutual
   wnf←nf : ∀ {n} {e : Tm n} → NF e → WNF e
@@ -135,6 +150,11 @@ mutual
 data NAXNF {n} : Pred₀ (Tm n) where
   var : ∀ {x} → NAXNF (var x)
   app : ∀ {e₁ e₂} → NAXNF e₁ → NAXNF (app e₁ e₂)
+
+uniq-naxnf : Unique NAXNF
+uniq-naxnf {e = var _}   var      var       = refl
+uniq-naxnf {e = lam _}   ()       ()
+uniq-naxnf {e = app _ _} (app p₁) (app p₁′) = app & uniq-naxnf p₁ p₁′
 
 na←naxnf : ∀ {n} {e : Tm n} → NAXNF e → NA e
 na←naxnf var      = var
@@ -172,6 +192,13 @@ data HNF {n} : Pred₀ (Tm n) where
   lam : ∀ {e} → HNF e → HNF (lam e)
   hnf : ∀ {e} → NAXNF e → HNF e
 
+uniq-hnf : Unique HNF
+uniq-hnf {e = var _}   (hnf p)  (hnf p′) = hnf & uniq-naxnf p p′
+uniq-hnf {e = lam _}   (lam p)  (lam p′) = lam & uniq-hnf p p′
+uniq-hnf {e = lam _}   (lam p)  (hnf ())
+uniq-hnf {e = lam _}   (hnf ()) p′
+uniq-hnf {e = app _ _} (hnf p)  (hnf p′) = hnf & uniq-naxnf p p′
+
 naxnf←hnf : ∀ {n} {e : Tm n} → HNF e → NA e → NAXNF e
 naxnf←hnf (lam p) ()
 naxnf←hnf (hnf p) q  = p
@@ -200,12 +227,16 @@ data WHNF {n} : Pred₀ (Tm n) where
   lam  : ∀ {e} → WHNF (lam e)
   whnf : ∀ {e} → NAXNF e → WHNF e
 
+uniq-whnf : Unique WHNF
+uniq-whnf {e = var _}   (whnf p)  (whnf p′) = whnf & uniq-naxnf p p′
+uniq-whnf {e = lam _}   lam       lam       = refl
+uniq-whnf {e = lam _}   lam       (whnf ())
+uniq-whnf {e = lam _}   (whnf ()) p′
+uniq-whnf {e = app _ _} (whnf p)  (whnf p′) = whnf & uniq-naxnf p p′
+
 naxnf←whnf : ∀ {n} {e : Tm n} → WHNF e → NA e → NAXNF e
 naxnf←whnf lam      ()
 naxnf←whnf (whnf p) q  = p
-
-whnf←v : ∀ {n} {e : Tm n} → V e → WHNF e
-whnf←v lam = lam
 
 whnf←nf : ∀ {n} {e : Tm n} → NF e → WHNF e
 whnf←nf (lam p) = lam
