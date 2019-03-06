@@ -56,14 +56,14 @@ Unique P = ∀ {n} {e : Tm n} (p p′ : P e) → p ≡ p′
 Unique² : Pred (∀ {n} → Rel₀ (Tm n)) _
 Unique² R = ∀ {n} {e : Tm n} {e′} (r r′ : R e e′) → r ≡ r′
 
+Deterministic : Pred (∀ {n} → Rel₀ (Tm n)) _
+Deterministic R = ∀ {n} {e : Tm n} {e′ e″} → R e e′ → R e e″ → e′ ≡ e″
+
 module NonReducibleForms
     (_⇒_ : ∀ {n} → Rel₀ (Tm n))
   where
     NRF : ∀ {n} → Pred₀ (Tm n)
     NRF e = ¬ (∃ λ e′ → e ⇒ e′)
-
-Deterministic : Pred (∀ {n} → Rel₀ (Tm n)) _
-Deterministic R = ∀ {n} {e : Tm n} {e′ e″} → R e e′ → R e e″ → e′ ≡ e″
 
 module MultiStepReductions
     (_⇒_ : ∀ {n} → Rel₀ (Tm n))

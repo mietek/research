@@ -39,36 +39,6 @@ no←no₂ (NO₂.app₂₊ p₁ p₂ r₂)  = app₂ p₁ (no←no₂ r₂)
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- SS-NO is unique
-
-rev-applam : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} {e′} →
-             (r : app (lam e₁) e₂ ⇒ e′) →
-             Σ (e′ ≡ e₁ [ e₂ ]) λ { refl → applam ≡ r }
-rev-applam applam       = (refl , refl)
-rev-applam (app₁ () r₁)
-rev-applam (app₂ () r₂)
-
-{-
-uniq-⇒ : Unique² _⇒_
-uniq-⇒ {e = var _}           ()           ()
-uniq-⇒ {e = lam _}           (lam r)      (lam r′)       = lam & uniq-⇒ r r′
-uniq-⇒ {e = app (var _) _}   (app₁ p₁ ()) (app₁ p₁′ ())
-uniq-⇒ {e = app (var _) _}   (app₁ p₁ ()) (app₂ p₂ r₂)
-uniq-⇒ {e = app (var _) _}   (app₂ p₁ r₂) (app₁ p₁′ ())
-uniq-⇒ {e = app (var _) _}   (app₂ p₁ r₂) (app₂ p₁′ r₂′) = app₂ & uniq-nanf p₁ p₁′ ⊗ uniq-⇒ r₂ r₂′
-uniq-⇒ {e = app (lam _) _}   applam       r′             with rev-applam r′
-... | refl , refl                                         = refl
-uniq-⇒ {e = app (lam _) _}   (app₁ () r₁) r′
-uniq-⇒ {e = app (lam _) _}   (app₂ () r₂) r′
-uniq-⇒ {e = app (app _ _) _} (app₁ p₁ r₁) (app₁ p₁′ r₁′) = app₁ & uniq-na p₁ p₁′ ⊗ uniq-⇒ r₁ r₁′
-uniq-⇒ {e = app (app _ _) _} (app₁ p₁ r₁) (app₂ p₁′ r₂)  = {!r₁!}
-uniq-⇒ {e = app (app _ _) _} (app₂ p₁ r₂) (app₁ p₁′ r₁)  = {!r₁!}
-uniq-⇒ {e = app (app _ _) _} (app₂ p₁ r₂) (app₂ p₁′ r₂′) = app₂ & uniq-nanf p₁ p₁′ ⊗ uniq-⇒ r₂ r₂′
--}
-
-
----------------------------------------------------------------------------------------------------------------
---
 -- SS-NO does not reduce NF
 
 open NonReducibleForms _⇒_ public
@@ -84,6 +54,34 @@ mutual
                             ; (_ , app₁ p₁′ r₁) → (_ , r₁) ↯ nrf←nanf p₁
                             ; (_ , app₂ p₁′ r₂) → (_ , r₂) ↯ nrf←nf p₂
                             }
+
+
+---------------------------------------------------------------------------------------------------------------
+--
+-- SS-NO is unique
+
+rev-applam : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} {e′} →
+             (r : app (lam e₁) e₂ ⇒ e′) →
+             Σ (e′ ≡ e₁ [ e₂ ]) λ { refl → applam ≡ r }
+rev-applam applam       = (refl , refl)
+rev-applam (app₁ () r₁)
+rev-applam (app₂ () r₂)
+
+uniq-⇒ : Unique² _⇒_
+uniq-⇒ {e = var _}           ()           ()
+uniq-⇒ {e = lam _}           (lam r)      (lam r′)       = lam & uniq-⇒ r r′
+uniq-⇒ {e = app (var _) _}   (app₁ p₁ ()) (app₁ p₁′ ())
+uniq-⇒ {e = app (var _) _}   (app₁ p₁ ()) (app₂ p₂ r₂)
+uniq-⇒ {e = app (var _) _}   (app₂ p₁ r₂) (app₁ p₁′ ())
+uniq-⇒ {e = app (var _) _}   (app₂ p₁ r₂) (app₂ p₁′ r₂′) = app₂ & uniq-nanf p₁ p₁′ ⊗ uniq-⇒ r₂ r₂′
+uniq-⇒ {e = app (lam _) _}   applam       r′             with rev-applam r′
+... | refl , refl                                         = refl
+uniq-⇒ {e = app (lam _) _}   (app₁ () r₁) r′
+uniq-⇒ {e = app (lam _) _}   (app₂ () r₂) r′
+uniq-⇒ {e = app (app _ _) _} (app₁ p₁ r₁) (app₁ p₁′ r₁′) = app₁ & uniq-na p₁ p₁′ ⊗ uniq-⇒ r₁ r₁′
+uniq-⇒ {e = app (app _ _) _} (app₁ p₁ r₁) (app₂ p₁′ r₂)  = (_ , r₁) ↯ nrf←nanf p₁′
+uniq-⇒ {e = app (app _ _) _} (app₂ p₁ r₂) (app₁ p₁′ r₁)  = (_ , r₁) ↯ nrf←nanf p₁
+uniq-⇒ {e = app (app _ _) _} (app₂ p₁ r₂) (app₂ p₁′ r₂′) = app₂ & uniq-nanf p₁ p₁′ ⊗ uniq-⇒ r₂ r₂′
 
 
 ---------------------------------------------------------------------------------------------------------------

@@ -10,6 +10,23 @@ open CBN public
 
 ---------------------------------------------------------------------------------------------------------------
 --
+-- SS-CBN does not reduce WHNF
+
+open NonReducibleForms _⇒_ public
+
+nrf←naxnf : ∀ {n} {e : Tm n} → NAXNF e → NRF e
+nrf←naxnf var      = λ { (_ , ()) }
+nrf←naxnf (app p₁) = λ { (_ , applam)  → case p₁ of λ ()
+                        ; (_ , app₁ r₁) → (_ , r₁) ↯ nrf←naxnf p₁
+                        }
+
+nrf←whnf : ∀ {n} {e : Tm n} → WHNF e → NRF e
+nrf←whnf lam      = λ { (_ , ()) }
+nrf←whnf (whnf p) = nrf←naxnf p
+
+
+---------------------------------------------------------------------------------------------------------------
+--
 -- SS-CBN is unique
 
 rev-applam : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} {e′} →
@@ -26,23 +43,6 @@ uniq-⇒ {e = app (lam _) _}   applam    r′        with rev-applam r′
 ... | refl , refl                                 = refl
 uniq-⇒ {e = app (lam _) _}   (app₁ ()) r′
 uniq-⇒ {e = app (app _ _) _} (app₁ r)  (app₁ r′) = app₁ & uniq-⇒ r r′
-
-
----------------------------------------------------------------------------------------------------------------
---
--- SS-CBN does not reduce WHNF
-
-open NonReducibleForms _⇒_ public
-
-nrf←naxnf : ∀ {n} {e : Tm n} → NAXNF e → NRF e
-nrf←naxnf var      = λ { (_ , ()) }
-nrf←naxnf (app p₁) = λ { (_ , applam)  → case p₁ of λ ()
-                        ; (_ , app₁ r₁) → (_ , r₁) ↯ nrf←naxnf p₁
-                        }
-
-nrf←whnf : ∀ {n} {e : Tm n} → WHNF e → NRF e
-nrf←whnf lam      = λ { (_ , ()) }
-nrf←whnf (whnf p) = nrf←naxnf p
 
 
 ---------------------------------------------------------------------------------------------------------------
