@@ -23,15 +23,15 @@ module Lem-4-1-1 where
   open SS-CBN
   open BS-CBN
 
-  rev-app₁-⇒* : ∀ {n i} {e₁ e₂ : Tm n} {e′} →
-                 app e₁ e₂ ⇒*⟨ i ⟩ e′ → WHNF e′ →
-                 (∃ λ e₁′ → e₁ ⇒*⟨ i ⟩ lam e₁′ × e₁′ [ e₂ ] ⇒*⟨ i ⟩ e′) ⊎
-                 (∃ λ e₁′ → e₁ ⇒*⟨ i ⟩ e₁′ × NAXNF e₁′ × app e₁′ e₂ ≡ e′)
-  rev-app₁-⇒* ε              (whnf (app p₁′)) = inj₂ (_ , ε , p₁′ , refl)
-  rev-app₁-⇒* (applam ◅ rs)  p′               = inj₁ (_ , ε , rs)
-  rev-app₁-⇒* (app₁ r₁ ◅ rs) p′               with rev-app₁-⇒* rs p′
-  ... | inj₁ (_ , rs₁ , rs′)                   = inj₁ (_ , r₁ ◅ rs₁ , rs′)
-  ... | inj₂ (_ , rs₁ , p₁′ , refl)            = inj₂ (_ , r₁ ◅ rs₁ , p₁′ , refl)
+  rev-app₁ : ∀ {n i} {e₁ e₂ : Tm n} {e′} →
+             app e₁ e₂ ⇒*⟨ i ⟩ e′ → WHNF e′ →
+             (∃ λ e₁′ → e₁ ⇒*⟨ i ⟩ lam e₁′ × e₁′ [ e₂ ] ⇒*⟨ i ⟩ e′) ⊎
+             (∃ λ e₁′ → e₁ ⇒*⟨ i ⟩ e₁′ × NAXNF e₁′ × app e₁′ e₂ ≡ e′)
+  rev-app₁ ε              (whnf (app p₁′)) = inj₂ (_ , ε , p₁′ , refl)
+  rev-app₁ (applam ◅ rs)  p′               = inj₁ (_ , ε , rs)
+  rev-app₁ (app₁ r₁ ◅ rs) p′               with rev-app₁ rs p′
+  ... | inj₁ (_ , rs₁ , rs′)               = inj₁ (_ , r₁ ◅ rs₁ , rs′)
+  ... | inj₂ (_ , rs₁ , p₁′ , refl)        = inj₂ (_ , r₁ ◅ rs₁ , p₁′ , refl)
 
   mutual
     bs←ss : ∀ {n i} {e : Tm n} {e′} → e ⇒*⟨ i ⟩ e′ → WHNF e′ → e ⇓ e′
@@ -40,7 +40,7 @@ module Lem-4-1-1 where
 
     bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → WHNF e″ → e ⇓ e″
     bs←ss′ applam    rs p″           = applam lam (bs←ss rs p″)
-    bs←ss′ (app₁ r₁) rs p″           with rev-app₁-⇒* rs p″
+    bs←ss′ (app₁ r₁) rs p″           with rev-app₁ rs p″
     ... | inj₁ (_ , rs′ , rs″)        = applam (bs←ss′ r₁ rs′ lam) (bs←ss rs″ p″)
     ... | inj₂ (_ , rs′ , p₁′ , refl) = app (bs←ss′ r₁ rs′ (whnf p₁′)) (na←naxnf p₁′)
 

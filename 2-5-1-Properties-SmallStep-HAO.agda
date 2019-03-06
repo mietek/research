@@ -12,6 +12,7 @@ open HAO public
 --
 -- SS-HAO contains SS-CBV
 
+{-
 haoᵥ←cbv : ∀ {n} {e : Tm n} {e′} → e CBV.⇒ e′ → e ⇒ᵥ e′
 haoᵥ←cbv (CBV.applam p₂)  = applam p₂
 haoᵥ←cbv (CBV.app₁ r₁)    = app₁ (haoᵥ←cbv r₁)
@@ -26,6 +27,7 @@ hao←cbv : ∀ {n} {e : Tm n} {e′} → e CBV.⇒ e′ → e ⇒ e′
 hao←cbv (CBV.applam p₂)  = {!!}
 hao←cbv (CBV.app₁ r₁)    = {!!}
 hao←cbv (CBV.app₂ p₁ r₂) = {!!}
+-}
 
 
 -- -- ---------------------------------------------------------------------------------------------------------------

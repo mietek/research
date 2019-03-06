@@ -22,8 +22,8 @@ mutual
   nrf←nanf : ∀ {n} {e : Tm n} → NANF e → NRF e
   nrf←nanf var         = λ { (_ , ()) }
   nrf←nanf (app p₁ p₂) = λ { (_ , applam p₁′ p₂′) → case p₁ of λ ()
-                            ; (_ , app₁ r₁ p₂′)    → (_ , r₁) ↯ nrf←nanf p₁
-                            ; (_ , app₂ r₂)        → (_ , r₂) ↯ nrf←nf p₂
+                            ; (_ , app₁ r₁)        → (_ , r₁) ↯ nrf←nanf p₁
+                            ; (_ , app₂ p₁ r₂)     → (_ , r₂) ↯ nrf←nf p₂
                             }
 
 
@@ -34,14 +34,14 @@ mutual
 det-⇒ : Deterministic′ _⇒_
 det-⇒ (lam r)            (lam r′)             = lam & det-⇒ r r′
 det-⇒ (applam p₁ p₂)     (applam p₁′ p₂′)     = refl
-det-⇒ (applam p₁ p₂)     (app₁ (lam r₁′) p₂′) = (_ , r₁′) ↯ nrf←nf p₁
-det-⇒ (applam p₁ p₂)     (app₂ r₂′)           = (_ , r₂′) ↯ nrf←nf p₂
-det-⇒ (app₁ (lam r₁) p₂) (applam p₁′ p₂′)     = (_ , r₁) ↯ nrf←nf p₁′
-det-⇒ (app₁ r₁ p₂)       (app₁ r₁′ p₂′)       = app & det-⇒ r₁ r₁′ ⊗ refl
-det-⇒ (app₁ r₁ p₂)       (app₂ r₂′)           = (_ , r₂′) ↯ nrf←nf p₂
-det-⇒ (app₂ r₂)          (applam p₁′ p₂′)     = (_ , r₂) ↯ nrf←nf p₂′
-det-⇒ (app₂ r₂)          (app₁ r₁′ p₂′)       = (_ , r₂) ↯ nrf←nf p₂′
-det-⇒ (app₂ r₂)          (app₂ r₂′)           = app & refl ⊗ det-⇒ r₂ r₂′
+det-⇒ (applam p₁ p₂)     (app₁ (lam r₁′))     = (_ , r₁′) ↯ nrf←nf p₁
+det-⇒ (applam p₁ p₂)     (app₂ p₁′ r₂′)       = (_ , r₂′) ↯ nrf←nf p₂
+det-⇒ (app₁ (lam r₁))    (applam p₁′ p₂′)     = (_ , r₁) ↯ nrf←nf p₁′
+det-⇒ (app₁ r₁)          (app₁ r₁′)           = app & det-⇒ r₁ r₁′ ⊗ refl
+det-⇒ (app₁ r₁)          (app₂ p₁′ r₂′)       = (_ , r₁) ↯ nrf←nf p₁′
+det-⇒ (app₂ p₁ r₂)       (applam p₁′ p₂′)     = (_ , r₂) ↯ nrf←nf p₂′
+det-⇒ (app₂ p₁ r₂)       (app₁ r₁′)           = (_ , r₁′) ↯ nrf←nf p₁
+det-⇒ (app₂ p₁ r₂)       (app₂ p₁′ r₂′)       = app & refl ⊗ det-⇒ r₂ r₂′
 
 open Confluence _⇒_ det-⇒ public
 open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
@@ -54,8 +54,8 @@ open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
 nanf-⇒ : ∀ {n} {e : Tm n} {e′} → NANF e → e ⇒ e′ → NANF e′
 nanf-⇒ var         ()
 nanf-⇒ (app () p₂) (applam p₁′ p₂′)
-nanf-⇒ (app p₁ p₂) (app₁ r₁ p₂′)    = app (nanf-⇒ p₁ r₁) p₂′
-nanf-⇒ (app p₁ p₂) (app₂ r₂)        = (_ , r₂) ↯ nrf←nf p₂
+nanf-⇒ (app p₁ p₂) (app₁ r₁)        = app (nanf-⇒ p₁ r₁) p₂
+nanf-⇒ (app p₁ p₂) (app₂ p₁′ r₂)    = (_ , r₂) ↯ nrf←nf p₂
 
 nf-⇒ : ∀ {n} {e : Tm n} {e′} → NF e → e ⇒ e′ → NF e′
 nf-⇒ (lam p) (lam r) = (_ , r) ↯ nrf←nf p

@@ -112,11 +112,11 @@ module AO where
              app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
 
     app₁   : ∀ {e₁ e₂ e₁′} →
-             e₁ ⇒ e₁′ → NF e₂ →
+             e₁ ⇒ e₁′ →
              app e₁ e₂ ⇒ app e₁′ e₂
 
     app₂   : ∀ {e₁ e₂ e₂′} →
-             e₂ ⇒ e₂′ →
+             NF e₁ → e₂ ⇒ e₂′ →
              app e₁ e₂ ⇒ app e₁ e₂′
 
   open MultiStepReductions _⇒_ public

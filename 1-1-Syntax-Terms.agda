@@ -99,12 +99,12 @@ module UniquenessOfNonReducibleForms
     open NonReducibleForms _⇒_
     open MultiStepReductions _⇒_
 
-    uniq-nrf-⇒* : ∀ {n} {e : Tm n} {e′ e″} → e ⇒* e′ → NRF e′ → e ⇒* e″ → NRF e″ → e′ ≡ e″
-    uniq-nrf-⇒* ε        p ε          p′ = refl
-    uniq-nrf-⇒* ε        p (r′ ◅ rs′) p′ = (_ , r′) ↯ p
-    uniq-nrf-⇒* (r ◅ rs) p ε          p′ = (_ , r) ↯ p′
-    uniq-nrf-⇒* (r ◅ rs) p (r′ ◅ rs′) p′ with det-⇒ r r′
-    ... | refl                            = uniq-nrf-⇒* rs p rs′ p′
+    uniq-nrf-⇒ : ∀ {n} {e : Tm n} {e′ e″} → e ⇒* e′ → NRF e′ → e ⇒* e″ → NRF e″ → e′ ≡ e″
+    uniq-nrf-⇒ ε        p ε          p′ = refl
+    uniq-nrf-⇒ ε        p (r′ ◅ rs′) p′ = (_ , r′) ↯ p
+    uniq-nrf-⇒ (r ◅ rs) p ε          p′ = (_ , r) ↯ p′
+    uniq-nrf-⇒ (r ◅ rs) p (r′ ◅ rs′) p′ with det-⇒ r r′
+    ... | refl                           = uniq-nrf-⇒ rs p rs′ p′
 
 
 ---------------------------------------------------------------------------------------------------------------

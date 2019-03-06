@@ -75,12 +75,14 @@ module Lem-4-5-5 where
   applam* : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} → NF e₂ → app (lam e₁) e₂ ⇒* e₁ [ e₂ ]
   applam* p₂ = applam p₂ ◅ ε
 
+{-
   app₁* : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → NAWNF e₁ → e₁ ⇒* e₁′ → NF e₂ → app e₁ e₂ ⇒* app e₁′ e₂
   app₁* p₁ ε          p₂ = ε
   app₁* p₁ (r₁ ◅ rs₁) p₂ = app₁ (na←nawnf p₁) r₁ p₂ ◅ app₁* (nawnf-⇒ p₁ r₁) rs₁ p₂
 
   app₂* : ∀ {n} {e₁ e₂ : Tm n} {e₂′} → e₂ ⇒* e₂′ → app e₁ e₂ ⇒* app e₁ e₂′
   app₂* = map app₂
+-}
 
 --  cbv-app₁* : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ SS.CBV.⇒* e₁′ → NF e₂ → app e₁ e₂ ⇒* app e₁′ e₂
 --  cbv-app₁* ε                        p₂′ = ε
@@ -106,6 +108,7 @@ module Lem-4-5-5 where
 --  bs-app rs₁ p₁′ rs₁′ p₁″ rs₂ p₂′ = {!!}
 --  -- app₂* rs₂ ◅◅ cbv-app₁* rs₁ p₂′ ◅◅ app₁* p₁′ rs₁′ p₂′
 
+{-
   hao←cbv : ∀ {n} {e : Tm n} {e′} → e SS.CBV.⇒ e′ → e ⇒ e′
   hao←cbv (SS.CBV.applam p₂)  = applam {!!}
   hao←cbv (SS.CBV.app₁ r₁)    = app₁ {!!} (hao←cbv r₁) {!!}
@@ -126,7 +129,7 @@ module Lem-4-5-5 where
     where
       p₁′ = nawnf←wnf (BS-CBV.wnf-⇓ r₁) q₁′
       p₁″ = nanf←nf (nf-⇓ r₁′) (na←wnf-⇓ (BS-CBV.wnf-⇓ r₁) q₁′ r₁′)
-
+-}
 
 ---------------------------------------------------------------------------------------------------------------
 --
