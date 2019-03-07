@@ -65,7 +65,8 @@ module Lem-4-2-1 where
   no₂←no* p (r ◅ rs) = no₂←no p r ◅ no₂←no* (SS-NO₂.whnf-⇒ (no₂←no p r)) rs
 
   cbn|no₂←no* : ∀ {n} {e : Tm n} {e′} → e NO.⇒* e′ → NF e′ →
-                 (∃ λ e″ → e CBN.⇒* e″ × WHNF e″ × e″ NO₂.⇒* e′)
+                 (∃ λ e″ →
+                   e CBN.⇒* e″ × WHNF e″ × e″ NO₂.⇒* e′)
   cbn|no₂←no* ε        p′ = _ , ε , whnf←nf p′ , ε
   cbn|no₂←no* (r ◅ rs) p′ with cbn|no₂←no r
   ... | inj₂ r′             = _ , ε , SS-NO₂.rev-whnf-⇒ r′ , r′ ◅ no₂←no* (SS-NO₂.whnf-⇒ r′) rs
