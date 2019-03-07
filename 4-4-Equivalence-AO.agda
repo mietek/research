@@ -67,7 +67,7 @@ module Lem-4-4-1 where
     bs←ss (r ◅ rs) p′ = bs←ss′ r rs p′
 
     bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → NF e″ → e ⇓ e″
-    bs←ss′ (lam r)        rs (lam p″)            = lam (bs←ss′ r (rev-lam* rs ) p″)
+    bs←ss′ (lam r)        rs (lam p″)            = lam (bs←ss′ r (rev-lam* rs) p″)
     bs←ss′ (lam r)        rs (nf var)            = rs ↯ ¬lam⇒*var
     bs←ss′ (lam r)        rs (nf (app _ _))      = rs ↯ ¬lam⇒*app
     bs←ss′ (applam p₁ p₂) rs p″                  = applam (refl-⇓ (lam p₁)) (refl-⇓ p₂) (bs←ss rs p″)

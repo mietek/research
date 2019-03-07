@@ -29,6 +29,32 @@ import 4-3-Equivalence-CBV as CBV
 module Lem-4-5-1 where
   open SS
 
+  rev-¬wnf-app : ∀ {n} {e₁ e₂ : Tm n} → ¬ WNF (app e₁ e₂) →
+                 (¬ NAWNF e₁ × ¬ WNF e₂) ⊎
+                 (¬ NAWNF e₁ × WNF e₂) ⊎
+                 (NAWNF e₁ × ¬ WNF e₂)
+  rev-¬wnf-app ¬p with nawnf? _ | wnf? _
+  ... | no ¬p₁ | no ¬p₂ = inj₁ (¬p₁ , ¬p₂)
+  ... | no ¬p₁ | yes p₂ = inj₂ (inj₁ (¬p₁ , p₂))
+  ... | yes p₁ | no ¬p₂ = inj₂ (inj₂ (p₁ , ¬p₂))
+  ... | yes p₁ | yes p₂ = wnf (app p₁ p₂) ↯ ¬p
+
+  cbv←hao : ∀ {n} {e : Tm n} {e′} → ¬ WNF e → e HAO.⇒ e′ → e CBV.⇒ e′
+  cbv←hao ¬p (HAO.lam r)       = lam ↯ ¬p
+  cbv←hao ¬p (HAO.applam p₂)   = CBV.applam (wnf←nf p₂)
+  cbv←hao ¬p (HAO.cbv-app₁ r₁) = CBV.app₁ r₁
+  cbv←hao ¬p (HAO.app₁ p₁ r₁)  = wnf (app p₁ p₂) ↯ ¬p
+    where
+      postulate p₂ : WNF _
+  cbv←hao ¬p (HAO.app₂ₐ r₂)    with wnf? _
+  ... | no ¬p₂                  = CBV.app₂ lam (cbv←hao ¬p₂ r₂)
+  ... | yes p₂                  = p₂ ↯ ¬p₂
+    where
+      postulate ¬p₂ : ¬ WNF _
+  cbv←hao ¬p (HAO.app₂ p₁ r₂)  with wnf? _
+  ... | no ¬p₂                  = CBV.app₂ (wnf←nf (nf p₁)) (cbv←hao ¬p₂ r₂)
+  ... | yes p₂                  = wnf (app (nawnf←nanf p₁) p₂) ↯ ¬p
+
 
 ---------------------------------------------------------------------------------------------------------------
 --
@@ -54,6 +80,41 @@ module Lem-4-5-3 where
 module Cor-4-5-4 where
   open SS-HAO
   open BS-HAO
+
+
+---------------------------------------------------------------------------------------------------------------
+--
+-- TODO
+
+module Tmp where
+  open SS-HAO
+  open BS-HAO
+
+  rev-lam* : ∀ {n i} {e : Tm (suc n)} {e′} → lam e ⇒*⟨ i ⟩ lam e′ → e ⇒*⟨ i ⟩ e′
+  rev-lam* ε            = ε
+  rev-lam* (lam r ◅ rs) = r ◅ rev-lam* rs
+
+  ¬lam⇒*var : ∀ {n} {e : Tm (suc n)} {x} → ¬ (lam e ⇒* var x)
+  ¬lam⇒*var = λ { (lam r ◅ rs) → rs ↯ ¬lam⇒*var }
+
+  ¬lam⇒*app : ∀ {n} {e : Tm (suc n)} {e₁ e₂} → ¬ (lam e ⇒* app e₁ e₂)
+  ¬lam⇒*app = λ { (lam r ◅ rs) → rs ↯ ¬lam⇒*app }
+
+--  mutual
+--    bs←ss : ∀ {n i} {e : Tm n} {e′} → e ⇒*⟨ i ⟩ e′ → NF e′ → e ⇓ e′
+--    bs←ss ε        p′ = refl-⇓ p′
+--    bs←ss (r ◅ rs) p′ = bs←ss′ r rs p′
+--
+--    bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → NF e″ → e ⇓ e″
+--    bs←ss′ (lam r)       rs (lam p″)       = lam (bs←ss′ r (rev-lam* rs) p″)
+--    bs←ss′ (lam r)       rs (nf var)       = rs ↯ ¬lam⇒*var
+--    bs←ss′ (lam r)       rs (nf (app _ _)) = rs ↯ ¬lam⇒*app
+--    bs←ss′ (applam p₂)   rs p″ = {!!}
+--    bs←ss′ (cbv-app₁ r₁) rs p″ = {!!}
+--    bs←ss′ (app₁ p₁ r₁)  rs p″ = {!!}
+--    bs←ss′ (app₂ₐ r₂)    rs p″ = {!!}
+--    bs←ss′ (app₂ p₁ r₂)  rs p″ = {!!}
+
 
 
 ---------------------------------------------------------------------------------------------------------------
