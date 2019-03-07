@@ -10,7 +10,7 @@ open import 1-1-Syntax-Terms
 open import 1-2-Syntax-Predicates
 
 import 1-3-Semantics-SmallStep as SS
-import 1-4-Semantics-BigStep   as BS
+import 1-4-Semantics-BigStep as BS
 
 import 2-1-Properties-SmallStep-CBN
 import 2-2-1-Properties-SmallStep-NO
@@ -39,12 +39,12 @@ import 3-8-1-Properties-BigStep-HNO
 -- import 3-8-2-Properties-BigStep-HNO₂
 
 import 4-1-Equivalence-CBN as CBN
-import 4-2-Equivalence-NO  as NO
+import 4-2-Equivalence-NO as NO
 import 4-3-Equivalence-CBV as CBV
-import 4-4-Equivalence-AO  as AO
+import 4-4-Equivalence-AO as AO
 import 4-5-Equivalence-HAO as HAO
-import 4-6-Equivalence-HS  as HS
-import 4-7-Equivalence-H   as H
+import 4-6-Equivalence-HS as HS
+import 4-7-Equivalence-H as H
 import 4-8-Equivalence-HNO as HNO
 
 
