@@ -23,7 +23,7 @@ module CBN where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Small-step normal order reduction, standard (Pierce)
+-- Small-step normal order reduction (Pierce)
 -- ∙ With corrected app₁ rule
 
 module NO where
@@ -48,7 +48,7 @@ module NO where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Small-step normal order reduction, two-stage, second stage (Garcia-Perez, et al.)
+-- Small-step normal order reduction, second stage (Garcia-Perez, et al.)
 
 module NO₂ where
   data _⇒_ {n} : Rel₀ (Tm n) where

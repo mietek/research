@@ -158,30 +158,34 @@ open Confluence _⇒_ det-⇒ public
 open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
 
 
--- -- -- -- ---------------------------------------------------------------------------------------------------------------
--- -- -- -- --
--- -- -- -- -- SS-HAO preserves NF and WNF
+---------------------------------------------------------------------------------------------------------------
+--
+-- SS-HAO preserves NF and WNF
 
--- -- -- -- nanf-⇒ : ∀ {n} {e : Tm n} {e′} → NANF e → e ⇒ e′ → NANF e′
--- -- -- -- nanf-⇒ var         ()
--- -- -- -- nanf-⇒ (app () p₂) (applam p₂′)
--- -- -- -- nanf-⇒ (app p₁ p₂) (app₁ p₁′ r₁ p₂′) = app (nanf-⇒ p₁ r₁) p₂′
--- -- -- -- nanf-⇒ (app p₁ p₂) (app₂ r₂)         = (_ , r₂) ↯ nrf←nf p₂
+nanf-⇒ : ∀ {n} {e : Tm n} {e′} → NANF e → e ⇒ e′ → NANF e′
+nanf-⇒ var         ()
+nanf-⇒ (app () p₂) (applam p₂′)
+nanf-⇒ (app p₁ p₂) (app₁₋ ¬p₁′ r₁)     = app (nanf-⇒ p₁ r₁) p₂
+nanf-⇒ (app p₁ p₂) (app₁₊ p₁′ p₂′ r₁)  = app (nanf-⇒ p₁ r₁) p₂
+nanf-⇒ (app p₁ p₂) (app₂₋ p₁′ ¬p₂′ r₂) = (_ , r₂) ↯ nrf←nf p₂
+nanf-⇒ (app p₁ p₂) (app₂₊ p₁′ p₂′ r₂)  = (_ , r₂) ↯ nrf←nf p₂
 
--- -- -- -- nf-⇒ : ∀ {n} {e : Tm n} {e′} → NF e → e ⇒ e′ → NF e′
--- -- -- -- nf-⇒ (lam p) (lam r) = (_ , r) ↯ nrf←nf p
--- -- -- -- nf-⇒ (nf p)  r       = nf (nanf-⇒ p r)
+nf-⇒ : ∀ {n} {e : Tm n} {e′} → NF e → e ⇒ e′ → NF e′
+nf-⇒ (lam p) (lam r) = (_ , r) ↯ nrf←nf p
+nf-⇒ (nf p)  r       = nf (nanf-⇒ p r)
 
--- -- -- -- mutual
--- -- -- --   wnf-⇒ : ∀ {n} {e : Tm n} {e′} → WNF e → e ⇒ e′ → WNF e′
--- -- -- --   wnf-⇒ lam     (lam r) = lam
--- -- -- --   wnf-⇒ (wnf p) r       = wnf (nawnf-⇒ p r)
+mutual
+  wnf-⇒ : ∀ {n} {e : Tm n} {e′} → WNF e → e ⇒ e′ → WNF e′
+  wnf-⇒ lam     (lam r) = lam
+  wnf-⇒ (wnf p) r       = wnf (nawnf-⇒ p r)
 
--- -- -- --   nawnf-⇒ : ∀ {n} {e : Tm n} {e′} → NAWNF e → e ⇒ e′ → NAWNF e′
--- -- -- --   nawnf-⇒ var         ()
--- -- -- --   nawnf-⇒ (app () p₂) (applam p₂′)
--- -- -- --   nawnf-⇒ (app p₁ p₂) (app₁ p₁′ r₁ p₂′) = app (nawnf-⇒ p₁ r₁) p₂
--- -- -- --   nawnf-⇒ (app p₁ p₂) (app₂ r₂)         = app p₁ (wnf-⇒ p₂ r₂)
+  nawnf-⇒ : ∀ {n} {e : Tm n} {e′} → NAWNF e → e ⇒ e′ → NAWNF e′
+  nawnf-⇒ var         ()
+  nawnf-⇒ (app () p₂) (applam p₂′)
+  nawnf-⇒ (app p₁ p₂) (app₁₋ ¬p₁′ r₁)     = app (nawnf-⇒ p₁ r₁) p₂
+  nawnf-⇒ (app p₁ p₂) (app₁₊ p₁′ p₂′ r₁)  = app (nawnf-⇒ p₁′ r₁) p₂′
+  nawnf-⇒ (app p₁ p₂) (app₂₋ p₁′ ¬p₂′ r₂) = p₂ ↯ ¬p₂′
+  nawnf-⇒ (app p₁ p₂) (app₂₊ p₁′ p₂′ r₂)  = app p₁ (wnf-⇒ p₂ r₂)
 
 
--- -- -- -- ---------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
