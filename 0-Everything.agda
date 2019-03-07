@@ -10,7 +10,7 @@ open import 1-1-Syntax-Terms
 open import 1-2-Syntax-Predicates
 
 import 1-3-Semantics-SmallStep as SS
-import 1-4-Semantics-BigStep as BS
+import 1-4-Semantics-BigStep   as BS
 
 import 2-1-Properties-SmallStep-CBN
 import 2-2-1-Properties-SmallStep-NO
