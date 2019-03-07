@@ -3,7 +3,7 @@
 -- Equivalence of SS-CBV and BS-CBV
 --
 --        SS-CBV      ⎫     SS-CBV
---  4.3.1 ↓ × ↑ 4.3.2 ⎬ 4.3.3 ↕
+--  4.3.1 ↓   ↑ 4.3.2 ⎬ 4.3.3 ↕
 --        BS-CBV      ⎭     BS-CBV
 
 module 4-3-Equivalence-CBV where

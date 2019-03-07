@@ -3,7 +3,7 @@
 -- Equivalence of SS-AO and BS-AO
 --
 --        SS-AO       ⎫     SS-AO
---  4.4.1 ↓ × ↑ 4.4.2 ⎬ 4.4.3 ↕
+--  4.4.1 ↓   ↑ 4.4.2 ⎬ 4.4.3 ↕
 --        BS-AO       ⎭     BS-AO
 
 module 4-4-Equivalence-AO where

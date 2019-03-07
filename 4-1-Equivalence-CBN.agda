@@ -3,7 +3,7 @@
 -- Equivalence of SS-CBN and BS-CBN
 --
 --        SS-CBN      ⎫     SS-CBN
---  4.1.1 ↓ × ↑ 4.1.2 ⎬ 4.1.3 ↕
+--  4.1.1 ↓   ↑ 4.1.2 ⎬ 4.1.3 ↕
 --        BS-CBN      ⎭     BS-CBN
 
 module 4-1-Equivalence-CBN where

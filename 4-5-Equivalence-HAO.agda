@@ -3,7 +3,7 @@
 -- Equivalence of SS-HAO and BS-HAO
 --
 --        SS-HAO      ⎫     SS-HAO
---  4.5.1 ↓ × ↑ 4.5.2 ⎬ 4.5.3 ↕
+--  4.5.1 ↓   ↑ 4.5.2 ⎬ 4.5.3 ↕
 --        BS-HAO      ⎭     BS-HAO
 
 module 4-5-Equivalence-HAO where
@@ -13,10 +13,8 @@ import 1-3-Semantics-SmallStep as SS
 import 1-4-Semantics-BigStep as BS
 import 2-3-Properties-SmallStep-CBV as SS-CBV
 import 2-5-1-Properties-SmallStep-HAO as SS-HAO
--- import 2-5-2-Properties-SmallStep-HAO₂ as SS-HAO₂
 import 3-3-Properties-BigStep-CBV as BS-CBV
 import 3-5-1-Properties-BigStep-HAO as BS-HAO
--- import 3-5-2-Properties-BigStep-HAO₂ as BS-HAO₂
 import 4-3-Equivalence-CBV as CBV
 
 

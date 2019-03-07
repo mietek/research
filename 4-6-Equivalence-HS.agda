@@ -3,7 +3,7 @@
 -- Equivalence of SS-HS and BS-HS
 --
 --        SS-HS       ⎫     SS-HS
---  4.6.1 ↓ × ↑ 4.6.2 ⎬ 4.6.3 ↕
+--  4.6.1 ↓   ↑ 4.6.2 ⎬ 4.6.3 ↕
 --        BS-HS       ⎭     BS-HS
 
 module 4-6-Equivalence-HS where
