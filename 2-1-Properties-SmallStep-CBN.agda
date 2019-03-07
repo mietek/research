@@ -31,7 +31,8 @@ nrf←whnf (whnf p) = nrf←naxnf p
 
 rev-applam : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} {e′} →
              (r : app (lam e₁) e₂ ⇒ e′) →
-             (Σ (e′ ≡ e₁ [ e₂ ]) λ { refl → r ≡ applam })
+             (Σ (e′ ≡ e₁ [ e₂ ]) λ { refl →
+               r ≡ applam })
 rev-applam applam    = (refl , refl)
 rev-applam (app₁ ())
 

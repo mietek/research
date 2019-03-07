@@ -33,23 +33,29 @@ mutual
 
 rev-applam : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} {e′} →
              (p₂ : WNF e₂) (r : app (lam e₁) e₂ ⇒ e′) →
-             (Σ (e′ ≡ e₁ [ e₂ ]) λ { refl → r ≡ applam p₂ })
+             (Σ (e′ ≡ e₁ [ e₂ ]) λ { refl →
+               r ≡ applam p₂ })
 rev-applam p₂ (applam p₂′) = refl , applam & uniq-wnf p₂′ p₂
 rev-applam p₂ (app₁ ())
 rev-applam p₂ (app₂ p₁ r₂) = (_ , r₂) ↯ nrf←wnf p₂
 
 rev-app₂ : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} {e′} →
-          (r : app (lam e₁) e₂ ⇒ e′) →
-          (Σ (WNF e₂) λ p₂ → Σ (e′ ≡ e₁ [ e₂ ]) λ { refl → r ≡ applam p₂ }) ⊎
-          (Σ {_} {0ᴸ} (Tm n) λ e₂′ → Σ (e₂ ⇒ e₂′) λ r₂ → Σ (e′ ≡ app (lam e₁) e₂′) λ { refl → r ≡ app₂ lam r₂ })
+           (r : app (lam e₁) e₂ ⇒ e′) →
+           (∃ λ p₂ →
+             Σ (e′ ≡ e₁ [ e₂ ]) λ { refl →
+               r ≡ applam p₂ }) ⊎
+           (Σ {_} {0ᴸ} (Tm n) λ e₂′ →
+             Σ (e₂ ⇒ e₂′) λ r₂ →
+               Σ (e′ ≡ app (lam e₁) e₂′) λ { refl →
+                 r ≡ app₂ lam r₂ })
 rev-app₂ (applam p₂)        = inj₁ (p₂ , refl , refl)
 rev-app₂ (app₁ ())
 rev-app₂ (app₂ lam r₂)      = inj₂ (_ , r₂ , refl , refl)
 rev-app₂ (app₂ (wnf ()) r₂)
 
 uniq-⇒ : Unique² _⇒_
-uniq-⇒ {e = var _} () ()
-uniq-⇒ {e = lam _} () ()
+uniq-⇒ {e = var _}           ()                 ()
+uniq-⇒ {e = lam _}           ()                 ()
 uniq-⇒ {e = app (var _) _}   (app₁ ())          r′
 uniq-⇒ {e = app (var _) _}   (app₂ p₁ r₂)       (app₁ ())
 uniq-⇒ {e = app (var _) _}   (app₂ p₁ r₂)       (app₂ p₁′ r₂′) = app₂ & uniq-wnf p₁ p₁′ ⊗ uniq-⇒ r₂ r₂′
