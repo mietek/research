@@ -128,29 +128,29 @@ module AO where
 
 module HAO where
   data _⇒_ {n} : Rel₀ (Tm n) where
-    lam    : ∀ {e e′} →
-             e ⇒ e′ →
-             lam e ⇒ lam e′
+    lam      : ∀ {e e′} →
+               e ⇒ e′ →
+               lam e ⇒ lam e′
 
-    applam : ∀ {e₁ e₂} →
-             WNF e₂ →
-             app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
+    applam   : ∀ {e₁ e₂} →
+               NF e₂ →
+               app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
 
-    app₁₋  : ∀ {e₁ e₂ e₁′} →
-             ¬ WNF e₁ → e₁ ⇒ e₁′ →
-             app e₁ e₂ ⇒ app e₁′ e₂
+    cbv-app₁ : ∀ {e₁ e₂ e₁′} →
+               e₁ CBV.⇒ e₁′ →
+               app e₁ e₂ ⇒ app e₁′ e₂
 
-    app₁₊  : ∀ {e₁ e₂ e₁′} →
-             NAWNF e₁ → WNF e₂ → e₁ ⇒ e₁′ →
-             app e₁ e₂ ⇒ app e₁′ e₂
+    app₁     : ∀ {e₁ e₂ e₁′} →
+               NAWNF e₁ → e₁ ⇒ e₁′ →
+               app e₁ e₂ ⇒ app e₁′ e₂
 
-    app₂₋  : ∀ {e₁ e₂ e₂′} →
-             WNF e₁ → ¬ WNF e₂ → e₂ ⇒ e₂′ →
-             app e₁ e₂ ⇒ app e₁ e₂′
+    app₂ₐ    : ∀ {e₁ e₂ e₂′} →
+               e₂ ⇒ e₂′ →
+               app (lam e₁) e₂ ⇒ app (lam e₁) e₂′
 
-    app₂₊  : ∀ {e₁ e₂ e₂′} →
-             NANF e₁ → WNF e₂ → e₂ ⇒ e₂′ →
-             app e₁ e₂ ⇒ app e₁ e₂′
+    app₂     : ∀ {e₁ e₂ e₂′} →
+               NANF e₁ → e₂ ⇒ e₂′ →
+               app e₁ e₂ ⇒ app e₁ e₂′
 
   open MultiStepReductions _⇒_ public
 

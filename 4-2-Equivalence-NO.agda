@@ -238,10 +238,10 @@ module Lem-4-2-5 where
   ss←bs var                 = ε
   ss←bs (lam r)             = bs-lam (ss←bs r)
   ss←bs (applam r₁ r)       = bs-applam (CBN.Lem-4-1-2.ss←bs r₁) (ss←bs r)
-  ss←bs (app r₁ q₁′ r₁′ r₂) = bs-app (CBN.Lem-4-1-2.ss←bs r₁) p₁ (ss←bs r₁′) p₁′ (ss←bs r₂)
+  ss←bs (app r₁ q₁′ r₁′ r₂) = bs-app (CBN.Lem-4-1-2.ss←bs r₁) p₁′ (ss←bs r₁′) p₁″ (ss←bs r₂)
     where
-      p₁  = naxnf←whnf (BS-CBN.whnf-⇓ r₁) q₁′
-      p₁′ = nanf←nf (nf-⇓ r₁′) (na←whnf-⇓ (BS-CBN.whnf-⇓ r₁) q₁′ r₁′)
+      p₁′ = naxnf←whnf (BS-CBN.whnf-⇓ r₁) q₁′
+      p₁″ = nanf←nf (nf-⇓ r₁′) (na←whnf-⇓ (BS-CBN.whnf-⇓ r₁) q₁′ r₁′)
 
 
 ---------------------------------------------------------------------------------------------------------------
