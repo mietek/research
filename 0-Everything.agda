@@ -17,7 +17,7 @@ import 2-2-1-Properties-SmallStep-NO
 import 2-2-2-Properties-SmallStep-NO₂
 import 2-3-Properties-SmallStep-CBV
 import 2-4-Properties-SmallStep-AO
-import 2-5-1-Properties-SmallStep-HAO
+import 2-5-Properties-SmallStep-HAO
 import 2-6-Properties-SmallStep-HS
 import 2-7-1-Properties-SmallStep-H
 import 2-8-1-Properties-SmallStep-HNO

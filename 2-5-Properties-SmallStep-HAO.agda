@@ -2,7 +2,7 @@
 --
 -- Properties of SS-HAO
 
-module 2-5-1-Properties-SmallStep-HAO where
+module 2-5-Properties-SmallStep-HAO where
 
 open import 1-3-Semantics-SmallStep
 open HAO public
