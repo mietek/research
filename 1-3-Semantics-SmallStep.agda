@@ -149,7 +149,7 @@ module HAO where
              app e₁ e₂ ⇒ app e₁ e₂′
 
     app₂₊  : ∀ {e₁ e₂ e₂′} →
-             NANF e₁ → e₂ ⇒ e₂′ →
+             NANF e₁ → WNF e₂ → e₂ ⇒ e₂′ →
              app e₁ e₂ ⇒ app e₁ e₂′
 
   open MultiStepReductions _⇒_ public

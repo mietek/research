@@ -234,15 +234,6 @@ uniq-whnf {e = lam _}   lam       (whnf ())
 uniq-whnf {e = lam _}   (whnf ()) p′
 uniq-whnf {e = app _ _} (whnf p)  (whnf p′) = whnf & uniq-naxnf p p′
 
--- TODO: Replace all uses of ¬ WHNF with first-order representations?
-module _ where
-  private
-    postulate
-      funext : ∀ {a b} → Extensionality a b
-
-  uniq-¬whnf : ∀ {n} {e : Tm n} (¬p ¬p′ : ¬ WHNF e) → ¬p ≡ ¬p′
-  uniq-¬whnf ¬p ¬p′ = funext λ p → abort (p ↯ ¬p)
-
 naxnf←whnf : ∀ {n} {e : Tm n} → WHNF e → NA e → NAXNF e
 naxnf←whnf lam      ()
 naxnf←whnf (whnf p) q  = p
@@ -257,6 +248,22 @@ whnf? (lam e)     = yes lam
 whnf? (app e₁ e₂) with naxnf? e₁
 ... | no ¬p₁      = no λ { (whnf (app p₁)) → p₁ ↯ ¬p₁ }
 ... | yes p₁      = yes (whnf (app p₁))
+
+
+---------------------------------------------------------------------------------------------------------------
+--
+-- TODO: Replace all negative constraints in small-step rules with first-order representations?
+
+module _ where
+  private
+    postulate
+      funext : ∀ {a b} → Extensionality a b
+
+  uniq-¬wnf : ∀ {n} {e : Tm n} (¬p ¬p′ : ¬ WNF e) → ¬p ≡ ¬p′
+  uniq-¬wnf ¬p ¬p′ = funext λ p → abort (p ↯ ¬p)
+
+  uniq-¬whnf : ∀ {n} {e : Tm n} (¬p ¬p′ : ¬ WHNF e) → ¬p ≡ ¬p′
+  uniq-¬whnf ¬p ¬p′ = funext λ p → abort (p ↯ ¬p)
 
 
 ---------------------------------------------------------------------------------------------------------------
