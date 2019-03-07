@@ -60,7 +60,7 @@ module NO where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Small-step normal order reduction, two-stage, second stage (Garcia-Perez, et al.)
+-- Big-step normal order reduction, two-stage, second stage (Garcia-Perez, et al.)
 -- ✔ From weak head normal forms to normal forms
 
 module NO₂ where
