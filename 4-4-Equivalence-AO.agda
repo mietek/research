@@ -79,7 +79,7 @@ module Lem-4-4-1 where
     bs←ss′ (app₂ p₁ r₂)   rs p″                  with rev-app₂* p₁ rs p″
     ... | inj₁ (_ , refl , p₁′ , rs₂ , p₂′ , rs′) = applam (refl-⇓ (lam p₁′)) (bs←ss′ r₂ rs₂ p₂′)
                                                            (bs←ss rs′ p″)
-    ... | inj₂ (_ , p₁′ , rs₂ , p₂′ , refl)       = app (refl-⇓ (nf p₁′)) (na←nanf p₁′)
+    ... | inj₂ (_ , p₁′ , rs₂ , p₂′ , refl)       = app (refl-⇓′ p₁′) (na←nanf p₁′)
                                                         (bs←ss′ r₂ rs₂ p₂′)
 
 

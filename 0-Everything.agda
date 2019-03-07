@@ -92,10 +92,10 @@ thm-4-4-3 = AO.Thm-4-4-3.ss-ao↔bs-ao
 --
 -- Hybrid applicative order reduction to normal forms
 
--- Theorem 4.5.6.  SS-HAO to NF and BS-HAO coincide
+-- Theorem 4.5.3.  SS-HAO to NF and BS-HAO coincide
 
--- thm-4-5-6 : ∀ {n} {e : Tm n} {e′} → (e SS.HAO.⇒* e′ × NF e′) ↔ e BS.HAO.⇓ e′
--- thm-4-5-6 = HAO.Thm-4-5-6.ss-hao↔bs-hao
+thm-4-5-3 : ∀ {n} {e : Tm n} {e′} → (e SS.HAO.⇒* e′ × NF e′) ↔ e BS.HAO.⇓ e′
+thm-4-5-3 = HAO.Thm-4-5-3.ss-hao↔bs-hao
 
 
 ---------------------------------------------------------------------------------------------------------------

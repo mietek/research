@@ -2,11 +2,9 @@
 --
 -- Equivalence of SS-HAO and BS-HAO
 --
---                     5.1
---      SS-CBV|SS-HAO₂ ← SS-HAO ⎫       SS-HAO      ⎫     SS-HAO
---  4.3.1 ↓      ↓ 4.5.2         ⎬ 4.5.4 ↓ × ↑ 4.5.5 ⎬ 4.5.6 ↕
---      BS-CBV|BS-HAO₂ → BS-HAO ⎭       BS-HAO      ⎭     BS-HAO
---                     5.3
+--        SS-HAO      ⎫     SS-HAO
+--  4.5.1 ↓ × ↑ 4.5.2 ⎬ 4.5.3 ↕
+--        BS-HAO      ⎭     BS-HAO
 
 module 4-5-Equivalence-HAO where
 
@@ -24,69 +22,9 @@ import 4-3-Equivalence-CBV as CBV
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Lemma 4.5.1.  SS-HAO to NF implies SS-CBV to WNF followed by SS-HAO₂ to NF
+-- Lemma 4.5.1.  SS-HAO to NF implies BS-HAO
 
 module Lem-4-5-1 where
-  open SS
-
-  rev-¬wnf-app : ∀ {n} {e₁ e₂ : Tm n} → ¬ WNF (app e₁ e₂) →
-                 (¬ NAWNF e₁ × ¬ WNF e₂) ⊎
-                 (¬ NAWNF e₁ × WNF e₂) ⊎
-                 (NAWNF e₁ × ¬ WNF e₂)
-  rev-¬wnf-app ¬p with nawnf? _ | wnf? _
-  ... | no ¬p₁ | no ¬p₂ = inj₁ (¬p₁ , ¬p₂)
-  ... | no ¬p₁ | yes p₂ = inj₂ (inj₁ (¬p₁ , p₂))
-  ... | yes p₁ | no ¬p₂ = inj₂ (inj₂ (p₁ , ¬p₂))
-  ... | yes p₁ | yes p₂ = wnf (app p₁ p₂) ↯ ¬p
-
-  cbv←hao : ∀ {n} {e : Tm n} {e′} → ¬ WNF e → e HAO.⇒ e′ → e CBV.⇒ e′
-  cbv←hao ¬p (HAO.lam r)       = lam ↯ ¬p
-  cbv←hao ¬p (HAO.applam p₂)   = CBV.applam (wnf←nf p₂)
-  cbv←hao ¬p (HAO.cbv-app₁ r₁) = CBV.app₁ r₁
-  cbv←hao ¬p (HAO.app₁ p₁ r₁)  = wnf (app p₁ p₂) ↯ ¬p
-    where
-      postulate p₂ : WNF _
-  cbv←hao ¬p (HAO.app₂ₐ r₂)    with wnf? _
-  ... | no ¬p₂                  = CBV.app₂ lam (cbv←hao ¬p₂ r₂)
-  ... | yes p₂                  = p₂ ↯ ¬p₂
-    where
-      postulate ¬p₂ : ¬ WNF _
-  cbv←hao ¬p (HAO.app₂ p₁ r₂)  with wnf? _
-  ... | no ¬p₂                  = CBV.app₂ (wnf←nf (nf p₁)) (cbv←hao ¬p₂ r₂)
-  ... | yes p₂                  = wnf (app (nawnf←nanf p₁) p₂) ↯ ¬p
-
-
----------------------------------------------------------------------------------------------------------------
---
--- Lemma 4.5.2.  SS-HAO₂ to NF implies BS-HAO₂
-
-module Lem-4-5-2 where
---  open SS-HAO₂
---  open BS-HAO₂
-
-
----------------------------------------------------------------------------------------------------------------
---
--- Lemma 4.5.3.  BS-CBV followed by BS-HAO₂ implies BS-HAO
-
-module Lem-4-5-3 where
-  open BS
-
-
----------------------------------------------------------------------------------------------------------------
---
--- Corollary 4.5.4.  SS-HAO to NF implies BS-HAO
-
-module Cor-4-5-4 where
-  open SS-HAO
-  open BS-HAO
-
-
----------------------------------------------------------------------------------------------------------------
---
--- TODO
-
-module Tmp where
   open SS-HAO
   open BS-HAO
 
@@ -100,28 +38,102 @@ module Tmp where
   ¬lam⇒*app : ∀ {n} {e : Tm (suc n)} {e₁ e₂} → ¬ (lam e ⇒* app e₁ e₂)
   ¬lam⇒*app = λ { (lam r ◅ rs) → rs ↯ ¬lam⇒*app }
 
---  mutual
---    bs←ss : ∀ {n i} {e : Tm n} {e′} → e ⇒*⟨ i ⟩ e′ → NF e′ → e ⇓ e′
---    bs←ss ε        p′ = refl-⇓ p′
---    bs←ss (r ◅ rs) p′ = bs←ss′ r rs p′
---
---    bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → NF e″ → e ⇓ e″
---    bs←ss′ (lam r)       rs (lam p″)       = lam (bs←ss′ r (rev-lam* rs) p″)
---    bs←ss′ (lam r)       rs (nf var)       = rs ↯ ¬lam⇒*var
---    bs←ss′ (lam r)       rs (nf (app _ _)) = rs ↯ ¬lam⇒*app
---    bs←ss′ (applam p₂)   rs p″ = {!!}
---    bs←ss′ (cbv-app₁ r₁) rs p″ = {!!}
---    bs←ss′ (app₁ p₁ r₁)  rs p″ = {!!}
---    bs←ss′ (app₂ₐ r₂)    rs p″ = {!!}
---    bs←ss′ (app₂ p₁ r₂)  rs p″ = {!!}
+  rev-app₂* : ∀ {n i} {e₁ e₂ : Tm n} {e′} →
+              NANF e₁ → app e₁ e₂ ⇒*⟨ i ⟩ e′ → NF e′ →
+              (∃ λ e₂′ →
+                e₂ ⇒*⟨ i ⟩ e₂′ × NF e₂′ × app e₁ e₂′ ≡ e′)
+  rev-app₂* p₁ ε                  (nf (app p₁′ p₂)) = _ , ε , p₂ , refl
+  rev-app₂* () (applam p₂ ◅ rs)   p′
+  rev-app₂* p₁ (cbv-app₁ r₁ ◅ rs) p′                = (_ , r₁) ↯ SS-CBV.nrf←nawnf (nawnf←nanf p₁)
+  rev-app₂* p₁ (app₁ p₁′ r₁ ◅ rs) p′                = (_ , r₁) ↯ nrf←nanf p₁
+  rev-app₂* () (app₂ₐ r₂ ◅ rs)    p′
+  rev-app₂* p₁ (app₂ p₁′ r₂ ◅ rs) p′                with rev-app₂* p₁′ rs p′
+  ... | _ , rs₂ , p₂′ , refl                        = _ , r₂ ◅ rs₂ , p₂′ , refl
 
+  rev-app₁* : ∀ {n i} {e₁ e₂ : Tm n} {e′} →
+              NAWNF e₁ → app e₁ e₂ ⇒*⟨ i ⟩ e′ → NF e′ →
+              (∃² λ e₁′ e₂′ →
+                e₁ ⇒*⟨ i ⟩ e₁′ × NANF e₁′ × e₂ ⇒*⟨ i ⟩ e₂′ × NF e₂′ × app e₁′ e₂′ ≡ e′)
+  rev-app₁* p₁ ε                  (nf (app p₁′ p₂′)) = _ , ε , p₁′ , ε , p₂′ , refl
+  rev-app₁* () (applam p₂ ◅ rs)   p′
+  rev-app₁* p₁ (cbv-app₁ r₁ ◅ rs) p′                 = (_ , r₁) ↯ SS-CBV.nrf←nawnf p₁
+  rev-app₁* p₁ (app₁ p₁′ r₁ ◅ rs) p′                 with rev-app₁* (nawnf-⇒ p₁′ r₁) rs p′
+  ... | _ , rs₁ , p₁″ , rs₂ , p₂′ , refl             = _ , r₁ ◅ rs₁ , p₁″ , rs₂ , p₂′ , refl
+  rev-app₁* () (app₂ₐ r₂ ◅ rs)    p′
+  rev-app₁* p₁ (app₂ p₁′ r₂ ◅ rs) p′                 with rev-app₂* p₁′ rs p′
+  ... | _ , rs₂ , p₂′ , refl                         = _ , ε , p₁′ , r₂ ◅ rs₂ , p₂′ , refl
+
+  rev-app* : ∀ {n i} {e₁ e₂ : Tm n} {e′} →
+             app e₁ e₂ ⇒*⟨ i ⟩ e′ → NF e′ →
+             (∃² λ e₁′ e₂′ →
+               e₁ SS.CBV.⇒*⟨ i ⟩ lam e₁′ × e₂ ⇒*⟨ i ⟩ e₂′ × NF e₂′ × e₁′ [ e₂′ ] ⇒*⟨ i ⟩ e′) ⊎
+             (∃³ λ e₁′ e₁″ e₂′ →
+               e₁ SS.CBV.⇒*⟨ i ⟩ e₁′ × NAWNF e₁′ × e₁′ ⇒*⟨ i ⟩ e₁″ × NANF e₁″ ×
+               e₂ ⇒*⟨ i ⟩ e₂′ × NF e₂′ × app e₁″ e₂′ ≡ e′)
+  rev-app* ε                  (nf (app p₁ p₂)) = inj₂ (_ , ε , nawnf←nanf p₁ , ε , p₁ , ε , p₂ , refl)
+  rev-app* (applam p₂ ◅ rs)   p′               = inj₁ (_ , ε , ε , p₂ , rs)
+  rev-app* (cbv-app₁ r₁ ◅ rs) p′               with rev-app* rs p′
+  ... | inj₁ (_ , rs₁ , rs₂ , p₂′ , rs′)
+      = inj₁ (_ , r₁ ◅ rs₁ , rs₂ , p₂′ , rs′)
+  ... | inj₂ (_ , rs₁ , p₁′ , rs₁′ , p₁″ , rs₂ , p₂′ , refl)
+      = inj₂ (_ , r₁ ◅ rs₁ , p₁′ , rs₁′ , p₁″ , rs₂ , p₂′ , refl)
+  rev-app* (app₁ p₁ r₁ ◅ rs)  p′               with rev-app₁* (nawnf-⇒ p₁ r₁) rs p′
+  ... | _ , rs₁ , p₁″ , rs₂ , p₂′ , refl
+      = inj₂ (_ , ε , p₁ , r₁ ◅ rs₁ , p₁″ , rs₂ , p₂′ , refl)
+  rev-app* (app₂ₐ r₂ ◅ rs)    p′               with rev-app* rs p′
+  ... | inj₁ (_ , rs₁ , rs₂ , p₂′ , rs′)
+      = inj₁ (_ , rs₁ , r₂ ◅ rs₂ , p₂′ , rs′)
+  ... | inj₂ (_ , rs₁ , p₁′ , rs₁′ , p₁″ , rs₂ , p₂′ , refl)
+      = inj₂ (_ , rs₁ , p₁′ , rs₁′ , p₁″ , r₂ ◅ rs₂ , p₂′ , refl)
+  rev-app* (app₂ p₁ r₂ ◅ rs)  p′               with rev-app₂* p₁ rs p′
+  ... | _ , rs₂ , p₂′ , refl
+      = inj₂ (_ , ε , nawnf←nanf p₁ , ε , p₁ , r₂ ◅ rs₂ , p₂′ , refl)
+
+  mutual
+    bs←ss : ∀ {n i} {e : Tm n} {e′} → e ⇒*⟨ i ⟩ e′ → NF e′ → e ⇓ e′
+    bs←ss ε        p′ = refl-⇓ p′
+    bs←ss (r ◅ rs) p′ = bs←ss′ r rs p′
+
+    bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → NF e″ → e ⇓ e″
+    bs←ss′ (lam r)       rs (lam p″)                          = lam (bs←ss′ r (rev-lam* rs) p″)
+    bs←ss′ (lam r)       rs (nf var)                          = rs ↯ ¬lam⇒*var
+    bs←ss′ (lam r)       rs (nf (app _ _))                    = rs ↯ ¬lam⇒*app
+    bs←ss′ (applam p₂)   rs p″                                = applam (BS-CBV.refl-⇓ lam)
+                                                                        (refl-⇓ p₂)
+                                                                        (bs←ss rs p″)
+    bs←ss′ (cbv-app₁ r₁) rs p″                                with rev-app* rs p″
+    ... | inj₁ (_ , rs₁ , rs₂ , p₂′ , rs′)                     = applam (CBV.Lem-4-3-1.bs←ss′ r₁ rs₁ lam)
+                                                                        (bs←ss rs₂ p₂′)
+                                                                        (bs←ss rs′ p″)
+    ... | inj₂ (_ , rs₁ , p₁′ , rs₁′ , p₁″ , rs₂ , p₂′ , refl) = app (CBV.Lem-4-3-1.bs←ss′ r₁ rs₁ (wnf p₁′))
+                                                                     (na←nawnf p₁′)
+                                                                     (bs←ss rs₁′ (nf p₁″))
+                                                                     (bs←ss rs₂ p₂′)
+    bs←ss′ (app₁ p₁ r₁)  rs p″                                with rev-app₁* (nawnf-⇒ p₁ r₁) rs p″
+    ... | _ , rs₁ , p₁′ , rs₂ , p₂′ , refl                     = app (BS-CBV.refl-⇓′ p₁)
+                                                                     (na←nawnf p₁)
+                                                                     (bs←ss′ r₁ rs₁ (nf p₁′))
+                                                                     (bs←ss rs₂ p₂′)
+    bs←ss′ (app₂ₐ r₂)    rs p″                                with rev-app* rs p″
+    ... | inj₁ (_ , rs₁ , rs₂ , p₂′ , rs′)                     = applam (CBV.Lem-4-3-1.bs←ss rs₁ lam)
+                                                                        (bs←ss′ r₂ rs₂ p₂′)
+                                                                        (bs←ss rs′ p″)
+    ... | inj₂ (_ , rs₁ , p₁′ , rs₁′ , p₁″ , rs₂ , p₂′ , refl) = app (CBV.Lem-4-3-1.bs←ss rs₁ (wnf p₁′))
+                                                                     (na←nawnf p₁′)
+                                                                     (bs←ss rs₁′ (nf p₁″))
+                                                                     (bs←ss′ r₂ rs₂ p₂′)
+    bs←ss′ (app₂ p₁ r₂)  rs p″                                with rev-app₂* p₁ rs p″
+    ... | _ , rs₂ , p₂′ , refl                                 = app (BS-CBV.refl-⇓′ (nawnf←nanf p₁))
+                                                                     (na←nanf p₁)
+                                                                     (refl-⇓′ p₁)
+                                                                     (bs←ss′ r₂ rs₂ p₂′)
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Lemma 4.5.5.  BS-HAO implies SS-HAO
+-- Lemma 4.5.2.  BS-HAO implies SS-HAO
 
-module Lem-4-5-5 where
+module Lem-4-5-2 where
   open SS-HAO
   open BS-HAO
 
@@ -169,11 +181,11 @@ module Lem-4-5-5 where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Theorem 4.5.6.  SS-HAO to NF and BS-HAO coincide
+-- Theorem 4.5.3.  SS-HAO to NF and BS-HAO coincide
 
-module Thm-4-5-6 where
---  ss-hao↔bs-hao : ∀ {n} {e : Tm n} {e′} → (e SS.HAO.⇒* e′ × NF e′) ↔ e BS.HAO.⇓ e′
---  ss-hao↔bs-hao = uncurry Cor-4-5-4.bs←ss , λ r → Lem-4-5-5.ss←bs r , BS-HAO.nf-⇓ r
+module Thm-4-5-3 where
+  ss-hao↔bs-hao : ∀ {n} {e : Tm n} {e′} → (e SS.HAO.⇒* e′ × NF e′) ↔ e BS.HAO.⇓ e′
+  ss-hao↔bs-hao = uncurry Lem-4-5-1.bs←ss , λ r → Lem-4-5-2.ss←bs r , BS-HAO.nf-⇓ r
 
 
 ---------------------------------------------------------------------------------------------------------------

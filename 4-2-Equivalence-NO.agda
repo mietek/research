@@ -159,11 +159,11 @@ module Lem-4-2-2 where
                                                              (CBN.Lem-4-1-1.bs←ss rs₂ p₂)
                                                              (bs←ss rs₂′ p₂′)
     bs←ss′ (app₂₋ p₁ ¬p₂ r₂) rs p″                    with rev-app₂₋* p₁ rs p″
-    ... | _ , rs₂ , p₂ , rs₂′ , p₂′ , refl             = app (na←nanf p₁) (refl-⇓ (nf p₁))
+    ... | _ , rs₂ , p₂ , rs₂′ , p₂′ , refl             = app (na←nanf p₁) (refl-⇓′ p₁)
                                                              (CBN.Lem-4-1-1.bs←ss′ r₂ rs₂ p₂)
                                                              (bs←ss rs₂′ p₂′)
     bs←ss′ (app₂₊ p₁ p₂ r₂)  rs p″                    with rev-app₂₊* p₁ (whnf-⇒ r₂) rs p″
-    ... | _ , rs₂ , p₂′ , refl                         = app (na←nanf p₁) (refl-⇓ (nf p₁))
+    ... | _ , rs₂ , p₂′ , refl                         = app (na←nanf p₁) (refl-⇓′ p₁)
                                                              (BS-CBN.refl-⇓ p₂)
                                                              (bs←ss′ r₂ rs₂ p₂′)
 
