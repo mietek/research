@@ -2,7 +2,7 @@
 --
 -- Properties of BS-HAO
 
-module 3-5-1-Properties-BigStep-HAO where
+module 3-5-Properties-BigStep-HAO where
 
 open import 1-4-Semantics-BigStep
 open HAO public

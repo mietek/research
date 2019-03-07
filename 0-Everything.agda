@@ -27,7 +27,7 @@ import 3-2-1-Properties-BigStep-NO
 import 3-2-2-Properties-BigStep-NO₂
 import 3-3-Properties-BigStep-CBV
 import 3-4-Properties-BigStep-AO
-import 3-5-1-Properties-BigStep-HAO
+import 3-5-Properties-BigStep-HAO
 import 3-6-Properties-BigStep-HS
 import 3-7-1-Properties-BigStep-H
 import 3-8-1-Properties-BigStep-HNO
