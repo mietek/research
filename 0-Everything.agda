@@ -110,8 +110,8 @@ thm-4-6-3 = HS.Thm-4-6-3.ss-hs↔bs-hs
 
 -- Theorem 4.7.6.  SS-H to HNF and BS-H coincide
 
--- thm-4-7-6 : ∀ {n} {e : Tm n} {e′} → (e SS.H.⇒* e′ × HNF e′) ↔ e BS.H.⇓ e′
--- thm-4-7-6 = H.Thm-4-7-6.ss-h↔bs-h
+thm-4-7-6 : ∀ {n} {e : Tm n} {e′} → (e SS.H.⇒* e′ × HNF e′) ↔ e BS.H.⇓ e′
+thm-4-7-6 = H.Thm-4-7-6.ss-h↔bs-h
 
 
 ---------------------------------------------------------------------------------------------------------------

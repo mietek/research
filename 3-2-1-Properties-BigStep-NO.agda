@@ -33,9 +33,9 @@ nf-⇓ : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → NF e′
 nf-⇓ var                 = nf var
 nf-⇓ (lam r)             = lam (nf-⇓ r)
 nf-⇓ (applam r₁ r)       = nf-⇓ r
-nf-⇓ (app r₁ p₁′ r₁′ r₂) = nf (app (nanf←nf (nf-⇓ r₁′) p₁) (nf-⇓ r₂))
+nf-⇓ (app r₁ p₁′ r₁′ r₂) = nf (app (nanf←nf (nf-⇓ r₁′) p₁″) (nf-⇓ r₂))
   where
-    p₁ = na←whnf-⇓ (BS-CBN.whnf-⇓ r₁) p₁′ r₁′
+    p₁″ = na←whnf-⇓ (BS-CBN.whnf-⇓ r₁) p₁′ r₁′
 
 
 ---------------------------------------------------------------------------------------------------------------

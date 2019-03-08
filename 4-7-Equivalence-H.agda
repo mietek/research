@@ -132,14 +132,13 @@ module Lem-4-7-2 where
 module Lem-4-7-3 where
   open BS
 
-  postulate
-    h←cbn|h₂ : ∀ {n} {e : Tm n} {e′ e″} → e CBN.⇓ e′ → e′ H₂.⇓ e″ → e H.⇓ e″
---  h←cbn|h₂ CBN.var           H₂.var          = H.var
---  h←cbn|h₂ CBN.lam           (H₂.lam r r′)   = H.lam (h←cbn|h₂ r r′)
---  h←cbn|h₂ (CBN.applam r₁ r) r′              = H.applam r₁ (h←cbn|h₂ r r′)
---  h←cbn|h₂ (CBN.app r₁ p₁′)  (H₂.app p₁ r₁′) = H.app {!!} {!!}
---    where
---      r₁″ = h←cbn|h₂ (BS-CBN.refl-⇓ (BS-CBN.whnf-⇓ r₁)) r₁′
+  h←cbn|h₂ : ∀ {n} {e : Tm n} {e′ e″} → e CBN.⇓ e′ → e′ H₂.⇓ e″ → e H.⇓ e″
+  h←cbn|h₂ CBN.var           H₂.var          = H.var
+  h←cbn|h₂ CBN.lam           (H₂.lam r r′)   = H.lam (h←cbn|h₂ r r′)
+  h←cbn|h₂ (CBN.applam r₁ r) r′              = H.applam r₁ (h←cbn|h₂ r r′)
+  h←cbn|h₂ (CBN.app r₁ p₁′)  (H₂.app p₁ r₁′) = H.app r₁ p₁′ r₁″
+    where
+      r₁″ = h←cbn|h₂ (BS-CBN.refl-⇓ (BS-CBN.whnf-⇓ r₁)) r₁′
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -172,6 +171,10 @@ module Lem-4-7-5 where
   cbn-app₁* : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ SS.CBN.⇒* e₁′ → app e₁ e₂ ⇒* app e₁′ e₂
   cbn-app₁* = map cbn-app₁
 
+  app₁₊* : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → NAXNF e₁ → e₁ ⇒* e₁′ → app e₁ e₂ ⇒* app e₁′ e₂
+  app₁₊* p₁ ε          = ε
+  app₁₊* p₁ (r₁ ◅ rs₁) = app₁₊ p₁ r₁ ◅ app₁₊* (naxnf-⇒ p₁ r₁) rs₁
+
   bs-lam : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
   bs-lam = lam*
 
@@ -180,14 +183,18 @@ module Lem-4-7-5 where
               app e₁ e₂ ⇒* e′
   bs-applam rs₁ rs = cbn-app₁* rs₁ ◅◅ applam* ◅◅ rs
 
-  bs-app : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ SS.CBN.⇒* e₁′ → app e₁ e₂ ⇒* app e₁′ e₂
-  bs-app = cbn-app₁*
+  bs-app : ∀ {n} {e₁ e₂ : Tm n} {e₁′ e₁″} →
+           e₁ SS.CBN.⇒* e₁′ → NAXNF e₁′ → e₁′ ⇒* e₁″ →
+           app e₁ e₂ ⇒* app e₁″ e₂
+  bs-app rs₁ p₁′ rs₁′ = cbn-app₁* rs₁ ◅◅ app₁₊* p₁′ rs₁′
 
   ss←bs : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → e ⇒* e′
-  ss←bs var           = ε
-  ss←bs (lam r)       = bs-lam (ss←bs r)
-  ss←bs (applam r₁ r) = bs-applam (CBN.Lem-4-1-2.ss←bs r₁) (ss←bs r)
-  ss←bs (app r₁ p₁′)  = bs-app (CBN.Lem-4-1-2.ss←bs r₁)
+  ss←bs var              = ε
+  ss←bs (lam r)          = bs-lam (ss←bs r)
+  ss←bs (applam r₁ r)    = bs-applam (CBN.Lem-4-1-2.ss←bs r₁) (ss←bs r)
+  ss←bs (app r₁ p₁′ r₁′) = bs-app (CBN.Lem-4-1-2.ss←bs r₁) p₁″ (ss←bs r₁′)
+    where
+      p₁″ = naxnf←whnf (BS-CBN.whnf-⇓ r₁) p₁′
 
 
 ---------------------------------------------------------------------------------------------------------------
