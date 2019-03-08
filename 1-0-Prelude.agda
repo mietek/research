@@ -2,10 +2,6 @@
 
 module 1-0-Prelude where
 
-open import Data.Empty public
-  using (⊥)
-  renaming (⊥-elim to abort)
-
 open import Data.Fin public
   using (Fin ; zero ; suc)
 
@@ -14,27 +10,27 @@ open import Data.Nat public
   renaming (ℕ to Nat)
 
 open import Data.Product public
-  using (Σ ; ∃ ; _×_ ; _,_ ; proj₁ ; proj₂ ; uncurry)
+  using (Σ ; ∃ ; _×_ ; _,_ ; uncurry)
 
 open import Data.Sum public
   using (_⊎_ ; inj₁ ; inj₂)
 
 open import Function public
-  using (_∘_ ; case_of_ ; id)
+  using (case_of_)
 
 open import Level public
   using (_⊔_)
-  renaming (0ℓ to 0ᴸ ; suc to sucᴸ)
+  renaming (0ℓ to 0ᴸ)
 
 open import Relation.Binary public
-  using (Rel ; REL ; Reflexive ; Transitive)
+  using (Rel ; Reflexive ; Transitive)
 
 open import Relation.Binary.PropositionalEquality public
-  using (_≡_ ; _≢_ ; refl ; Extensionality)
-  renaming (cong to _&_ ; sym to _⁻¹)
+  using (_≡_ ; refl ; Extensionality)
+  renaming (cong to _&_)
 
 open import Relation.Nullary public
-  using (¬_ ; Dec ; yes ; no)
+  using (¬_ ; yes ; no)
 
 open import Relation.Nullary.Negation public
   using ()
@@ -44,7 +40,7 @@ open import Relation.Unary public
   using (Pred)
 
 open import Size public
-  using (Size ; Size<_ ; ↑_ ; ∞)
+  using (Size ; Size<_ ; ∞)
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -60,17 +56,11 @@ _⊗_ : ∀ {a b} {A : Set a} {B : Set b} {f g : A → B} {x y : A} →
       f ≡ g → x ≡ y → f x ≡ g y
 refl ⊗ refl = refl
 
-coerce : ∀ {ℓ} {A B : Set ℓ} → A → A ≡ B → B
-coerce x refl = x
-
 Pred₀ : Set₀ → Set₁
 Pred₀ A = Pred A _
 
 Rel₀ : Set₀ → Set₁
 Rel₀ A = Rel A _
-
-REL₀ : Set₀ → Set₀ → Set₁
-REL₀ A B = REL A B _
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -108,6 +98,30 @@ map : ∀ {a b ℓ₁ ℓ₂ i} {A : Set a} {B : Set b} {R₁ : Rel A ℓ₁} {R
       ∀ {x y} → (R₁ *⟨ i ⟩) x y → (R₂ *⟨ i ⟩) (f x) (f y)
 map g ε        = ε
 map g (r ◅ rs) = g r ◅ map g rs
+
+
+---------------------------------------------------------------------------------------------------------------
+--
+-- Properties of predicates and relations
+
+module Relation where
+  module Unary where
+    open Relation.Unary public
+      using (Decidable)
+
+    Unique : ∀ {a ℓ} {A : Set a} → Pred (Pred A ℓ) _
+    Unique P = ∀ {e} (p p′ : P e) → p ≡ p′
+
+  module Binary where
+    Unique : ∀ {a ℓ} {A : Set a} → Pred (Rel A ℓ) _
+    Unique R = ∀ {e e′} (r r′ : R e e′) → r ≡ r′
+
+    Deterministic : ∀ {a ℓ} {A : Set a} → Pred (Rel A ℓ) _
+    Deterministic R = ∀ {e e′ e″} → R e e′ → R e e″ → e′ ≡ e″
+
+    Confluent : ∀ {a ℓ} {A : Set a} → Pred (Rel A ℓ) _
+    Confluent R = ∀ {e e′ e″} → (R *) e e′ → (R *) e e″ →
+                  (∃ λ e‴ → (R *) e′ e‴ × (R *) e″ e‴)
 
 
 ---------------------------------------------------------------------------------------------------------------

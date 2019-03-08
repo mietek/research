@@ -3,6 +3,7 @@
 module 1-4-Semantics-SmallStep where
 
 open import 1-2-Syntax-Predicates public
+open Binary public
 
 
 ---------------------------------------------------------------------------------------------------------------

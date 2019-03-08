@@ -67,7 +67,7 @@ rev-applam applam       = refl , refl
 rev-applam (app₁ () r₁)
 rev-applam (app₂ () r₂)
 
-uniq-⇒ : Unique² _⇒_
+uniq-⇒ : Unique _⇒_
 uniq-⇒ {e = var _}           ()           ()
 uniq-⇒ {e = lam _}           (lam r)      (lam r′)       = lam & uniq-⇒ r r′
 uniq-⇒ {e = app (var _) _}   (app₁ p₁ ()) r′

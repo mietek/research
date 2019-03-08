@@ -47,7 +47,7 @@ rev-app₁ : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} {e′} →
 rev-app₁ (applam p₁)     = inj₁ (p₁ , refl , refl)
 rev-app₁ (app₁ (lam r₁)) = inj₂ (_ , r₁ , refl , refl)
 
-uniq-⇒ : Unique² _⇒_
+uniq-⇒ : Unique _⇒_
 uniq-⇒ {e = var _}           ()              ()
 uniq-⇒ {e = lam _}           (lam r)         (lam r′)   = lam & uniq-⇒ r r′
 uniq-⇒ {e = app (var _) _}   (app₁ ())       r′

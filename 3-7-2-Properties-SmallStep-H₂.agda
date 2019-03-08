@@ -30,7 +30,7 @@ mutual
 --
 -- SS-H₂ is unique
 
-uniq-⇒ : Unique² _⇒_
+uniq-⇒ : Unique _⇒_
 uniq-⇒ {e = var _}   ()            ()
 uniq-⇒ {e = lam _}   (lam₋ ¬p r)   (lam₋ ¬p′ r′)   = lam₋ & uniq-¬whnf ¬p ¬p′  ⊗ CBN.uniq-⇒ r r′
 uniq-⇒ {e = lam _}   (lam₋ ¬p r)   (lam₊ p′ r′)    = p′ ↯ ¬p

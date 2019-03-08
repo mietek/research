@@ -72,7 +72,7 @@ rev-app₁ (app₁ (lam r₁))    = inj₂ (inj₁ (_ , r₁ , refl , refl))
 rev-app₁ (app₂ (lam p₁) r₂) = inj₂ (inj₂ (_ , p₁ , r₂ , refl , refl))
 rev-app₁ (app₂ (nf ()) r₂)
 
-uniq-⇒ : Unique² _⇒_
+uniq-⇒ : Unique _⇒_
 uniq-⇒ {e = var _}           ()                 ()
 uniq-⇒ {e = lam _}           (lam r)            (lam r′)       = lam & uniq-⇒ r r′
 uniq-⇒ {e = app (var _) _}   (app₁ ())          r′

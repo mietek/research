@@ -58,7 +58,7 @@ rev-app₂ₐ (app₁ () r₁)
 rev-app₂ₐ (app₂ₐ r₂)    = inj₂ (_ , r₂ , refl , refl)
 rev-app₂ₐ (app₂ () r₂)
 
-uniq-⇒ : Unique² _⇒_
+uniq-⇒ : Unique _⇒_
 uniq-⇒ {e = var _}           ()            ()
 uniq-⇒ {e = lam _}           (lam r)       (lam r′)       = lam & uniq-⇒ r r′
 uniq-⇒ {e = app (var _) _}   (cbv-app₁ ()) r′

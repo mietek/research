@@ -52,7 +52,7 @@ rev-app₂ (app₁ ())
 rev-app₂ (app₂ lam r₂)      = inj₂ (_ , r₂ , refl , refl)
 rev-app₂ (app₂ (wnf ()) r₂)
 
-uniq-⇒ : Unique² _⇒_
+uniq-⇒ : Unique _⇒_
 uniq-⇒ {e = var _}           ()                 ()
 uniq-⇒ {e = lam _}           ()                 ()
 uniq-⇒ {e = app (var _) _}   (app₁ ())          r′

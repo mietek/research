@@ -7,7 +7,7 @@ open import 1-0-Prelude public
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Terms
+-- Well-scoped terms
 
 data Tm (n : Nat) : Set where
   var : Fin n → Tm n
@@ -45,20 +45,29 @@ t [ s ] = sub t (s /0)
 
 ---------------------------------------------------------------------------------------------------------------
 --
+-- Properties of  predicates and relations on well-scoped terms
+
+module Unary where
+  Decidable : Pred (∀ {n} → Pred₀ (Tm n)) _
+  Decidable P = ∀ {n} → Relation.Unary.Decidable (P {n})
+
+  Unique : Pred (∀ {n} → Pred₀ (Tm n)) _
+  Unique P = ∀ {n} → Relation.Unary.Unique (P {n})
+
+module Binary where
+  Unique : Pred (∀ {n} → Rel₀ (Tm n)) _
+  Unique R = ∀ {n} → Relation.Binary.Unique (R {n})
+
+  Deterministic : Pred (∀ {n} → Rel₀ (Tm n)) _
+  Deterministic R = ∀ {n} → Relation.Binary.Deterministic (R {n})
+
+  Confluent : Pred (∀ {n} → Rel₀ (Tm n)) _
+  Confluent R = ∀ {n} → Relation.Binary.Confluent (R {n})
+
+
+---------------------------------------------------------------------------------------------------------------
+--
 -- Equipment for small-step reduction
-
-Unique : Pred (∀ {n} → Pred₀ (Tm n)) _
-Unique P = ∀ {n} {e : Tm n} (p p′ : P e) → p ≡ p′
-
-Unique² : Pred (∀ {n} → Rel₀ (Tm n)) _
-Unique² R = ∀ {n} {e : Tm n} {e′} (r r′ : R e e′) → r ≡ r′
-
-Deterministic : Pred (∀ {n} → Rel₀ (Tm n)) _
-Deterministic R = ∀ {n} {e : Tm n} {e′ e″} → R e e′ → R e e″ → e′ ≡ e″
-
-Confluent : Pred (∀ {n} → Rel₀ (Tm n)) _
-Confluent R = ∀ {n} {e : Tm n} {e′ e″} → (R *) e e′ → (R *) e e″ →
-              (∃ λ e‴ → (R *) e′ e‴ × (R *) e″ e‴)
 
 module NonReducibleForms
     (_⇒_ : ∀ {n} → Rel₀ (Tm n))
@@ -81,11 +90,11 @@ module MultiStepReductions
 
 module Confluence
     (_⇒_   : ∀ {n} → Rel₀ (Tm n))
-    (det-⇒ : Deterministic _⇒_)
+    (det-⇒ : Binary.Deterministic _⇒_)
   where
     open MultiStepReductions _⇒_
 
-    conf-⇒ : Confluent _⇒_
+    conf-⇒ : Binary.Confluent _⇒_
     conf-⇒ ε        rs′        = _ , rs′ , ε
     conf-⇒ (r ◅ rs) ε          = _ , ε , r ◅ rs
     conf-⇒ (r ◅ rs) (r′ ◅ rs′) with det-⇒ r r′
@@ -93,7 +102,7 @@ module Confluence
 
 module UniquenessOfNonReducibleForms
     (_⇒_   : ∀ {n} → Rel₀ (Tm n))
-    (det-⇒ : Deterministic _⇒_)
+    (det-⇒ : Binary.Deterministic _⇒_)
   where
     open NonReducibleForms _⇒_
     open MultiStepReductions _⇒_

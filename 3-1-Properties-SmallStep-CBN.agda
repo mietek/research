@@ -35,7 +35,7 @@ rev-applam : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} {e′} →
 rev-applam applam    = refl , refl
 rev-applam (app₁ ())
 
-uniq-⇒ : Unique² _⇒_
+uniq-⇒ : Unique _⇒_
 uniq-⇒ {e = var _}           ()        ()
 uniq-⇒ {e = lam _}           ()        ()
 uniq-⇒ {e = app (var _) _}   (app₁ ()) (app₁ ())

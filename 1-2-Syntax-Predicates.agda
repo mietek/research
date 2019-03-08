@@ -3,6 +3,7 @@
 module 1-2-Syntax-Predicates where
 
 open import 1-1-Syntax-Terms public
+open Unary
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -13,7 +14,7 @@ data NA {n} : Pred₀ (Tm n) where
   var : ∀ {x} → NA (var x)
   app : ∀ {e₁ e₂} → NA (app e₁ e₂)
 
-na? : ∀ {n} (e : Tm n) → Dec (NA e)
+na? : Decidable NA
 na? (var x)     = yes var
 na? (lam e)     = no λ ()
 na? (app e₁ e₂) = yes app
@@ -60,7 +61,7 @@ na←nanf var         = var
 na←nanf (app p₁ p₂) = app
 
 mutual
-  nf? : ∀ {n} (e : Tm n) → Dec (NF e)
+  nf? : Decidable NF
   nf? (var x)     = yes (nf var)
   nf? (lam e)     with nf? e
   ... | no ¬p     = no λ { (lam p) → p ↯ ¬p
@@ -71,7 +72,7 @@ mutual
   ... | yes p₁ | no ¬p₂ = no λ { (nf (app p₁ p₂)) → p₂ ↯ ¬p₂ }
   ... | yes p₁ | yes p₂ = yes (nf (app p₁ p₂))
 
-  nanf? : ∀ {n} (e : Tm n) → Dec (NANF e)
+  nanf? : Decidable NANF
   nanf? (var x)     = yes var
   nanf? (lam e)     = no λ ()
   nanf? (app e₁ e₂) with nanf? e₁ | nf? e₂
@@ -125,7 +126,7 @@ mutual
   nawnf←nanf (app p₁ p₂) = app (nawnf←nanf p₁) (wnf←nf p₂)
 
 mutual
-  wnf? : ∀ {n} (e : Tm n) → Dec (WNF e)
+  wnf? : Decidable WNF
   wnf? (var x)     = yes (wnf var)
   wnf? (lam e)     = yes lam
   wnf? (app e₁ e₂) with nawnf? e₁ | wnf? e₂
@@ -133,7 +134,7 @@ mutual
   ... | yes p₁ | no ¬p₂ = no λ { (wnf (app p₁ p₂)) → p₂ ↯ ¬p₂ }
   ... | yes p₁ | yes p₂ = yes (wnf (app p₁ p₂))
 
-  nawnf? : ∀ {n} (e : Tm n) → Dec (NAWNF e)
+  nawnf? : Decidable NAWNF
   nawnf? (var x)     = yes var
   nawnf? (lam e)     = no λ ()
   nawnf? (app e₁ e₂) with nawnf? e₁ | wnf? e₂
@@ -175,7 +176,7 @@ naxnf←wnf : ∀ {n} {e : Tm n} → WNF e → NA e → NAXNF e
 naxnf←wnf lam     ()
 naxnf←wnf (wnf p) p′ = naxnf←nawnf p
 
-naxnf? : ∀ {n} (e : Tm n) → Dec (NAXNF e)
+naxnf? : Decidable NAXNF
 naxnf? (var x)     = yes var
 naxnf? (lam e)     = no λ ()
 naxnf? (app e₁ e₂) with naxnf? e₁
@@ -206,7 +207,7 @@ hnf←nf : ∀ {n} {e : Tm n} → NF e → HNF e
 hnf←nf (lam p) = lam (hnf←nf p)
 hnf←nf (nf p)  = hnf (naxnf←nanf p)
 
-hnf? : ∀ {n} (e : Tm n) → Dec (HNF e)
+hnf? : Decidable HNF
 hnf? (var x)     = yes (hnf var)
 hnf? (lam e)     with hnf? e
 ... | no ¬p      = no λ { (lam p) → p ↯ ¬p
@@ -244,7 +245,7 @@ whnf←hnf : ∀ {n} {e : Tm n} → HNF e → WHNF e
 whnf←hnf (lam p) = lam
 whnf←hnf (hnf p) = whnf p
 
-whnf? : ∀ {n} (e : Tm n) → Dec (WHNF e)
+whnf? : Decidable WHNF
 whnf? (var x)     = yes (whnf var)
 whnf? (lam e)     = yes lam
 whnf? (app e₁ e₂) with naxnf? e₁
@@ -262,13 +263,13 @@ module _ where
       funext : ∀ {a b} → Extensionality a b
 
   uniq-¬wnf : ∀ {n} {e : Tm n} (¬p ¬p′ : ¬ WNF e) → ¬p ≡ ¬p′
-  uniq-¬wnf ¬p ¬p′ = funext λ p → abort (p ↯ ¬p)
+  uniq-¬wnf ¬p ¬p′ = funext λ p → p ↯ ¬p
 
   uniq-¬hnf : ∀ {n} {e : Tm n} (¬p ¬p′ : ¬ HNF e) → ¬p ≡ ¬p′
-  uniq-¬hnf ¬p ¬p′ = funext λ p → abort (p ↯ ¬p)
+  uniq-¬hnf ¬p ¬p′ = funext λ p → p ↯ ¬p
 
   uniq-¬whnf : ∀ {n} {e : Tm n} (¬p ¬p′ : ¬ WHNF e) → ¬p ≡ ¬p′
-  uniq-¬whnf ¬p ¬p′ = funext λ p → abort (p ↯ ¬p)
+  uniq-¬whnf ¬p ¬p′ = funext λ p → p ↯ ¬p
 
 
 ---------------------------------------------------------------------------------------------------------------
