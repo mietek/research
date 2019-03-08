@@ -262,9 +262,6 @@ module _ where
     postulate
       funext : ∀ {a b} → Extensionality a b
 
-  uniq-¬wnf : ∀ {n} {e : Tm n} (¬p ¬p′ : ¬ WNF e) → ¬p ≡ ¬p′
-  uniq-¬wnf ¬p ¬p′ = funext λ p → p ↯ ¬p
-
   uniq-¬hnf : ∀ {n} {e : Tm n} (¬p ¬p′ : ¬ HNF e) → ¬p ≡ ¬p′
   uniq-¬hnf ¬p ¬p′ = funext λ p → p ↯ ¬p
 
