@@ -48,7 +48,7 @@ module NO where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Small-step normal order reduction, second stage (Garcia-Perez, et al.)
+-- Small-step normal order reduction, second phase (Garcia-Perez, et al.)
 -- ✓ Goes from weak head normal forms
 
 module NO₂ where
@@ -199,7 +199,7 @@ module H where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Small-step head reduction, second stage (no reference)
+-- Small-step head reduction, second phase (no reference)
 -- ✓ Goes from weak head normal forms
 
 module H₂ where
@@ -250,7 +250,7 @@ module HNO where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Small-step hybrid normal order reduction, second stage (no reference)
+-- Small-step hybrid normal order reduction, second phase (no reference)
 -- ✓ Goes from head normal forms
 
 module HNO₂ where
