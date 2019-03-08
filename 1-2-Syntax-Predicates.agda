@@ -266,6 +266,9 @@ module _ where
   uniq-¬wnf : ∀ {n} {e : Tm n} (¬p ¬p′ : ¬ WNF e) → ¬p ≡ ¬p′
   uniq-¬wnf ¬p ¬p′ = funext λ p → abort (p ↯ ¬p)
 
+  uniq-¬hnf : ∀ {n} {e : Tm n} (¬p ¬p′ : ¬ HNF e) → ¬p ≡ ¬p′
+  uniq-¬hnf ¬p ¬p′ = funext λ p → abort (p ↯ ¬p)
+
   uniq-¬whnf : ∀ {n} {e : Tm n} (¬p ¬p′ : ¬ WHNF e) → ¬p ≡ ¬p′
   uniq-¬whnf ¬p ¬p′ = funext λ p → abort (p ↯ ¬p)
 

@@ -219,7 +219,55 @@ module H₂ where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- TODO: Small-step hybrid normal order reduction (no reference)
+-- Small-step hybrid normal order reduction (no reference)
+
+module HNO where
+  data _⇒_ {n} : Rel₀ (Tm n) where
+    lam    : ∀ {e e′} →
+             e ⇒ e′ →
+             lam e ⇒ lam e′
+
+    applam : ∀ {e₁ e₂} →
+             app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
+
+    app₁   : ∀ {e₁ e₂ e₁′} →
+             NA e₁ → e₁ ⇒ e₁′ →
+             app e₁ e₂ ⇒ app e₁′ e₂
+
+    app₂   : ∀ {e₁ e₂ e₂′} →
+             NANF e₁ → e₂ ⇒ e₂′ →
+             app e₁ e₂ ⇒ app e₁ e₂′
+
+  open MultiStepReductions _⇒_ public
+
+
+---------------------------------------------------------------------------------------------------------------
+--
+-- Small-step hybrid normal order reduction, second stage (no reference)
+
+module HNO₂ where
+  data _⇒_ {n} : Rel₀ (Tm n) where
+    lam₋  : ∀ {e e′} →
+            ¬ HNF e → e HS.⇒ e′ →
+            lam e ⇒ lam e′
+
+    lam₊  : ∀ {e e′} →
+            HNF e → e ⇒ e′ →
+            lam e ⇒ lam e′
+
+    app₁₊ : ∀ {e₁ e₂ e₁′} →
+            NAXNF e₁ → e₁ ⇒ e₁′ →
+            app e₁ e₂ ⇒ app e₁′ e₂
+
+    app₂₋ : ∀ {e₁ e₂ e₂′} →
+            NANF e₁ → ¬ HNF e₂ → e₂ HS.⇒ e₂′ →
+            app e₁ e₂ ⇒ app e₁ e₂′
+
+    app₂₊ : ∀ {e₁ e₂ e₂′} →
+            NANF e₁ → HNF e₂ → e₂ ⇒ e₂′ →
+            app e₁ e₂ ⇒ app e₁ e₂′
+
+  open MultiStepReductions _⇒_ public
 
 
 ---------------------------------------------------------------------------------------------------------------

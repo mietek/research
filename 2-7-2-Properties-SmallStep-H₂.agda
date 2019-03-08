@@ -43,7 +43,7 @@ uniq-⇒ {e = app _ _} (app₁₊ p₁ r₁) (app₁₊ p₁′ r₁′) = app�
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- SS-H₂ is deterministic, confluent, and has unique hn-reducible forms
+-- SS-H₂ is deterministic, confluent, and has unique non-reducible forms
 
 det-⇒ : Deterministic _⇒_
 det-⇒ (lam₋ ¬p r)   (lam₋ ¬p′ r′)   = lam & CBN.det-⇒ r r′

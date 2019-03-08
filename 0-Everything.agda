@@ -22,6 +22,7 @@ import 2-6-Properties-SmallStep-HS
 import 2-7-1-Properties-SmallStep-H
 import 2-7-2-Properties-SmallStep-H₂
 import 2-8-1-Properties-SmallStep-HNO
+import 2-8-2-Properties-SmallStep-HNO₂
 
 import 3-1-Properties-BigStep-CBN
 import 3-2-1-Properties-BigStep-NO
