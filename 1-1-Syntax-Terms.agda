@@ -35,12 +35,11 @@ _/0 : ∀ {n} → Tm n → Fin (suc n) → Tm n
 (s /0) zero    = s
 (s /0) (suc x) = var x
 
-{-# DISPLAY _/0 e = e #-}
-
 infix 50 _[_]
 _[_] : ∀ {n} → Tm (suc n) → Tm n → Tm n
 t [ s ] = sub t (s /0)
 
+{-# DISPLAY _/0 e   = e #-}
 {-# DISPLAY sub e σ = e [ σ ] #-}
 
 
@@ -78,7 +77,7 @@ module MultiStepReductions
 
     {-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
     {-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
-    {-# DISPLAY _* _⇒_ e e′ = e ⇒* e′ #-}
+    {-# DISPLAY _* _⇒_ e e′      = e ⇒* e′ #-}
 
 module Confluence
     (_⇒_   : ∀ {n} → Rel₀ (Tm n))
