@@ -22,15 +22,13 @@ data Tm (n : Nat) : Set where
 ren : ∀ {n k} → Tm n → (Fin n → Fin k) → Tm k
 ren (var x)     ρ = var (ρ x)
 ren (lam e)     ρ = lam (ren e λ { zero    → zero
-                                 ; (suc x) → suc (ρ x)
-                                 })
+                                 ; (suc x) → suc (ρ x) })
 ren (app e₁ e₂) ρ = app (ren e₁ ρ) (ren e₂ ρ)
 
 sub : ∀ {n k} → Tm n → (Fin n → Tm k) → Tm k
 sub (var x)     σ = σ x
 sub (lam e)     σ = lam (sub e λ { zero    → var zero
-                                 ; (suc x) → ren (σ x) suc
-                                 })
+                                 ; (suc x) → ren (σ x) suc })
 sub (app e₁ e₂) σ = app (sub e₁ σ) (sub e₂ σ)
 
 _/0 : ∀ {n} → Tm n → Fin (suc n) → Tm n
