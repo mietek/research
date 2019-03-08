@@ -84,6 +84,9 @@ det-⇒ applam       (app₁ () r₁′)
 det-⇒ (app₁ () r₁) applam
 det-⇒ (app₁ p₁ r₁) (app₁ p₁′ r₁′) = app & det-⇒ r₁ r₁′ ⊗ refl
 
+open Confluence _⇒_ det-⇒ public
+open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
+
 
 ---------------------------------------------------------------------------------------------------------------
 --

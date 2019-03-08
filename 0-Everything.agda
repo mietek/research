@@ -33,6 +33,7 @@ import 3-6-Properties-BigStep-HS
 import 3-7-1-Properties-BigStep-H
 import 3-7-2-Properties-BigStep-H₂
 import 3-8-1-Properties-BigStep-HNO
+import 3-8-2-Properties-BigStep-HNO₂
 
 import 4-1-Equivalence-CBN as CBN
 import 4-2-Equivalence-NO as NO
