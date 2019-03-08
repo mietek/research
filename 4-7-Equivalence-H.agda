@@ -122,7 +122,7 @@ module Lem-4-7-2 where
     bs←ss′ (lam₊ p r)        rs (hnf var)     = rs ↯ ¬lam⇒*var
     bs←ss′ (lam₊ p r)        rs (hnf (app _)) = rs ↯ ¬lam⇒*app
     bs←ss′ (app₁₊ p₁ r₁)     rs p″            with rev-app₁₊* rs p″
-    ... | _ , rs₁ , p₁′ , refl                 = app (na←naxnf p₁) (bs←ss′ r₁ rs₁ (hnf p₁′))
+    ... | _ , rs₁ , p₁′ , refl                 = app p₁ (bs←ss′ r₁ rs₁ (hnf p₁′))
 
 
 ---------------------------------------------------------------------------------------------------------------

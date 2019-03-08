@@ -24,14 +24,14 @@ na←whnf-⇓ (whnf p) p′ r = na←naxnf-⇓ p r
 rev-whnf-⇓ : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → WHNF e
 rev-whnf-⇓ var         = whnf var
 rev-whnf-⇓ (lam r r′)  = lam
-rev-whnf-⇓ (app p₁ r₁) = whnf (app (naxnf←whnf (rev-whnf-⇓ r₁) p₁))
+rev-whnf-⇓ (app p₁ r₁) = whnf (app (naxnf←whnf (rev-whnf-⇓ r₁) (na←naxnf p₁)))
 
 hnf-⇓ : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → HNF e′
 hnf-⇓ var         = hnf var
 hnf-⇓ (lam r r′)  = lam (hnf-⇓ r′)
 hnf-⇓ (app p₁ r₁) = hnf (app p₁′)
   where
-    p₁′ = naxnf←hnf (hnf-⇓ r₁) (na←whnf-⇓ (rev-whnf-⇓ r₁) p₁ r₁)
+    p₁′ = naxnf←hnf (hnf-⇓ r₁) (na←whnf-⇓ (rev-whnf-⇓ r₁) (na←naxnf p₁) r₁)
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -45,7 +45,7 @@ mutual
 
   refl-⇓′ : ∀ {n} {e : Tm n} → NAXNF e → e ⇓ e
   refl-⇓′ var      = var
-  refl-⇓′ (app p₁) = app (na←naxnf p₁) (refl-⇓′ p₁)
+  refl-⇓′ (app p₁) = app p₁ (refl-⇓′ p₁)
 
 
 ---------------------------------------------------------------------------------------------------------------

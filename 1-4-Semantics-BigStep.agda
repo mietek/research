@@ -73,7 +73,7 @@ module NO₂ where
           lam e ⇓ lam e″
 
     app : ∀ {e₁ e₂ e₁′ e₂′ e₂″} →
-          NA e₁ → e₁ ⇓ e₁′ → e₂ CBN.⇓ e₂′ → e₂′ ⇓ e₂″ →
+          NAXNF e₁ → e₁ ⇓ e₁′ → e₂ CBN.⇓ e₂′ → e₂′ ⇓ e₂″ →
           app e₁ e₂ ⇓ app e₁′ e₂″
 
 
@@ -222,7 +222,7 @@ module H₂ where
           lam e ⇓ lam e″
 
     app : ∀ {e₁ e₂ e₁′} →
-          NA e₁ → e₁ ⇓ e₁′ →
+          NAXNF e₁ → e₁ ⇓ e₁′ →
           app e₁ e₂ ⇓ app e₁′ e₂
 
 

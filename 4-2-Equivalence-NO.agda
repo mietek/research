@@ -155,15 +155,15 @@ module Lem-4-2-2 where
     bs←ss′ (lam₊ p r)        rs (nf var)              = rs ↯ ¬lam⇒*var
     bs←ss′ (lam₊ p r)        rs (nf (app _ _))        = rs ↯ ¬lam⇒*app
     bs←ss′ (app₁₊ p₁ r₁)     rs p″                    with rev-app₁₊* rs p″
-    ... | _ , rs₁ , p₁′ , rs₂ , p₂ , rs₂′ , p₂′ , refl = app (na←naxnf p₁) (bs←ss′ r₁ rs₁ (nf p₁′))
+    ... | _ , rs₁ , p₁′ , rs₂ , p₂ , rs₂′ , p₂′ , refl = app p₁ (bs←ss′ r₁ rs₁ (nf p₁′))
                                                              (CBN.Lem-4-1-1.bs←ss rs₂ p₂)
                                                              (bs←ss rs₂′ p₂′)
     bs←ss′ (app₂₋ p₁ ¬p₂ r₂) rs p″                    with rev-app₂₋* p₁ rs p″
-    ... | _ , rs₂ , p₂ , rs₂′ , p₂′ , refl             = app (na←nanf p₁) (refl-⇓′ p₁)
+    ... | _ , rs₂ , p₂ , rs₂′ , p₂′ , refl             = app (naxnf←nanf p₁) (refl-⇓′ p₁)
                                                              (CBN.Lem-4-1-1.bs←ss′ r₂ rs₂ p₂)
                                                              (bs←ss rs₂′ p₂′)
     bs←ss′ (app₂₊ p₁ p₂ r₂)  rs p″                    with rev-app₂₊* p₁ (whnf-⇒ r₂) rs p″
-    ... | _ , rs₂ , p₂′ , refl                         = app (na←nanf p₁) (refl-⇓′ p₁)
+    ... | _ , rs₂ , p₂′ , refl                         = app (naxnf←nanf p₁) (refl-⇓′ p₁)
                                                              (BS-CBN.refl-⇓ p₂)
                                                              (bs←ss′ r₂ rs₂ p₂′)
 
