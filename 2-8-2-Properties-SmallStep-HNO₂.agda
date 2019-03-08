@@ -17,16 +17,14 @@ open NonReducibleForms _⇒_ public
 
 mutual
   nrf←nf : ∀ {n} {e : Tm n} → NF e → NRF e
-  nrf←nf (lam p) = λ { (_ , lam₊ p′ r) → (_ , r) ↯ nrf←nf p
-                      }
+  nrf←nf (lam p) = λ { (_ , lam₊ p′ r) → (_ , r) ↯ nrf←nf p }
   nrf←nf (nf p)  = nrf←nanf p
 
   nrf←nanf : ∀ {n} {e : Tm n} → NANF e → NRF e
   nrf←nanf var         = λ ()
   nrf←nanf (app p₁ p₂) = λ { (_ , app₁₊ p₁′ r₁)     → (_ , r₁) ↯ nrf←nanf p₁
                             ; (_ , app₂₋ p₁′ ¬p₂ r₂) → (_ , r₂) ↯ HS.nrf←hnf (hnf←nf p₂)
-                            ; (_ , app₂₊ p₁′ p₂′ r₂) → (_ , r₂) ↯ nrf←nf p₂
-                            }
+                            ; (_ , app₂₊ p₁′ p₂′ r₂) → (_ , r₂) ↯ nrf←nf p₂ }
 
 
 ---------------------------------------------------------------------------------------------------------------

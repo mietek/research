@@ -80,12 +80,10 @@ module Lem-4-8-2 where
   rev-lam₊* p (lam₊ p′ r ◅ rs) = r ◅ rev-lam₊* (hnf-⇒ r) rs
 
   ¬lam⇒*var : ∀ {n} {e : Tm (suc n)} {x} → ¬ (lam e ⇒* var x)
-  ¬lam⇒*var = λ { (lam₊ p r ◅ rs)  → rs ↯ ¬lam⇒*var
-                 }
+  ¬lam⇒*var = λ { (lam₊ p r ◅ rs)  → rs ↯ ¬lam⇒*var }
 
   ¬lam⇒*app : ∀ {n} {e : Tm (suc n)} {e₁ e₂} → ¬ (lam e ⇒* app e₁ e₂)
-  ¬lam⇒*app = λ { (lam₊ p r ◅ rs)  → rs ↯ ¬lam⇒*app
-                 }
+  ¬lam⇒*app = λ { (lam₊ p r ◅ rs)  → rs ↯ ¬lam⇒*app }
 
   mutual
     bs←ss : ∀ {n i} {e : Tm n} {e′} → e ⇒*⟨ i ⟩ e′ → NF e′ → e ⇓ e′
@@ -93,7 +91,7 @@ module Lem-4-8-2 where
     bs←ss (r ◅ rs) p′ = bs←ss′ r rs p′
 
     bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → NF e″ → e ⇓ e″
-    bs←ss′ (lam₊ p r)        rs (lam p″)       = {!!}
+    bs←ss′ (lam₊ p r)        rs (lam p″)       = lam p (bs←ss′ r (rev-lam₊* (hnf-⇒ r) rs) p″)
     bs←ss′ (lam₊ p r)        rs (nf var)       = rs ↯ ¬lam⇒*var
     bs←ss′ (lam₊ p r)        rs (nf (app _ _)) = rs ↯ ¬lam⇒*app
     bs←ss′ (app₁₊ p₁ r₁)     rs p″             = {!!}

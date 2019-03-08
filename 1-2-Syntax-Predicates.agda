@@ -64,8 +64,7 @@ mutual
   nf? (var x)     = yes (nf var)
   nf? (lam e)     with nf? e
   ... | no ¬p     = no λ { (lam p) → p ↯ ¬p
-                         ; (nf ())
-                         }
+                         ; (nf ()) }
   ... | yes p     = yes (lam p)
   nf? (app e₁ e₂) with nanf? e₁ | nf? e₂
   ... | no ¬p₁ | _      = no λ { (nf (app p₁ p₂)) → p₁ ↯ ¬p₁ }
@@ -211,8 +210,7 @@ hnf? : ∀ {n} (e : Tm n) → Dec (HNF e)
 hnf? (var x)     = yes (hnf var)
 hnf? (lam e)     with hnf? e
 ... | no ¬p      = no λ { (lam p) → p ↯ ¬p
-                        ; (hnf ())
-                        }
+                        ; (hnf ()) }
 ... | yes p      = yes (lam p)
 hnf? (app e₁ e₂) with naxnf? e₁
 ... | no ¬p₁     = no λ { (hnf (app p₁)) → p₁ ↯ ¬p₁ }

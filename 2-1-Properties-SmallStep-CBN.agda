@@ -17,8 +17,7 @@ open NonReducibleForms _⇒_ public
 nrf←naxnf : ∀ {n} {e : Tm n} → NAXNF e → NRF e
 nrf←naxnf var      = λ ()
 nrf←naxnf (app p₁) = λ { (_ , applam)  → case p₁ of λ ()
-                        ; (_ , app₁ r₁) → (_ , r₁) ↯ nrf←naxnf p₁
-                        }
+                        ; (_ , app₁ r₁) → (_ , r₁) ↯ nrf←naxnf p₁ }
 
 nrf←whnf : ∀ {n} {e : Tm n} → WHNF e → NRF e
 nrf←whnf lam      = λ ()

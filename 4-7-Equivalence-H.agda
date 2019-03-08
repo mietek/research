@@ -87,13 +87,11 @@ module Lem-4-7-2 where
 
   ¬lam⇒*var : ∀ {n} {e : Tm (suc n)} {x} → ¬ (lam e ⇒* var x)
   ¬lam⇒*var = λ { (lam₋ ¬p r ◅ rs) → rs ↯ ¬lam⇒*var
-                 ; (lam₊ p r ◅ rs)  → rs ↯ ¬lam⇒*var
-                 }
+                 ; (lam₊ p r ◅ rs)  → rs ↯ ¬lam⇒*var }
 
   ¬lam⇒*app : ∀ {n} {e : Tm (suc n)} {e₁ e₂} → ¬ (lam e ⇒* app e₁ e₂)
   ¬lam⇒*app = λ { (lam₋ ¬p r ◅ rs) → rs ↯ ¬lam⇒*app
-                 ; (lam₊ p r ◅ rs)  → rs ↯ ¬lam⇒*app
-                 }
+                 ; (lam₊ p r ◅ rs)  → rs ↯ ¬lam⇒*app }
 
   rev-app₁₊* : ∀ {n i} {e₁ e₂ : Tm n} {e′} →
                app e₁ e₂ ⇒*⟨ i ⟩ e′ → HNF e′ →
