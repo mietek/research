@@ -110,11 +110,12 @@ module Lem-4-7-2 where
 
     bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → HNF e″ → e ⇓ e″
     bs←ss′ (lam₋ ¬p r)       rs (lam p″)      with rev-lam₋* rs p″
-    ... | _ , rs′ , p′ , rs″                   = lam (CBN.Lem-4-1-1.bs←ss′ r rs′ p′) (bs←ss rs″ p″)
+    ... | _ , rs′ , p′ , rs″                   = lam (CBN.Lem-4-1-1.bs←ss′ r rs′ p′)
+                                                     (bs←ss rs″ p″)
     bs←ss′ (lam₋ ¬p r)       rs (hnf var)     = rs ↯ ¬lam⇒*var
     bs←ss′ (lam₋ ¬p r)       rs (hnf (app _)) = rs ↯ ¬lam⇒*app
-    bs←ss′ (lam₊ p r)        rs (lam p″)      with rev-lam₊* (whnf-⇒ r) rs
-    ... | rs′                                  = lam (BS-CBN.refl-⇓ p) (bs←ss′ r rs′ p″)
+    bs←ss′ (lam₊ p r)        rs (lam p″)      = lam (BS-CBN.refl-⇓ p)
+                                                     (bs←ss′ r (rev-lam₊* (whnf-⇒ r) rs) p″)
     bs←ss′ (lam₊ p r)        rs (hnf var)     = rs ↯ ¬lam⇒*var
     bs←ss′ (lam₊ p r)        rs (hnf (app _)) = rs ↯ ¬lam⇒*app
     bs←ss′ (app₁₊ p₁ r₁)     rs p″            with rev-app₁₊* rs p″
@@ -147,7 +148,8 @@ module Cor-4-7-4 where
 
   bs←ss : ∀ {n} {e : Tm n} {e′} → e ⇒* e′ → HNF e′ → e ⇓ e′
   bs←ss rs p′             with Lem-4-7-1.cbn|h₂←h* rs p′
-  ... | _ , rs′ , p″ , rs″ = Lem-4-7-3.h←cbn|h₂ (CBN.Lem-4-1-1.bs←ss rs′ p″) (Lem-4-7-2.bs←ss rs″ p′)
+  ... | _ , rs′ , p″ , rs″ = Lem-4-7-3.h←cbn|h₂ (CBN.Lem-4-1-1.bs←ss rs′ p″)
+                                                 (Lem-4-7-2.bs←ss rs″ p′)
 
 
 ---------------------------------------------------------------------------------------------------------------

@@ -140,11 +140,12 @@ module Lem-4-2-2 where
 
     bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → NF e″ → e ⇓ e″
     bs←ss′ (lam₋ ¬p r)       rs (lam p″)              with rev-lam₋* rs p″
-    ... | _ , rs′ , p′ , rs″                           = lam (CBN.Lem-4-1-1.bs←ss′ r rs′ p′) (bs←ss rs″ p″)
+    ... | _ , rs′ , p′ , rs″                           = lam (CBN.Lem-4-1-1.bs←ss′ r rs′ p′)
+                                                             (bs←ss rs″ p″)
     bs←ss′ (lam₋ ¬p r)       rs (nf var)              = rs ↯ ¬lam⇒*var
     bs←ss′ (lam₋ ¬p r)       rs (nf (app _ _))        = rs ↯ ¬lam⇒*app
-    bs←ss′ (lam₊ p r)        rs (lam p″)              with rev-lam₊* (whnf-⇒ r) rs
-    ... | rs′                                          = lam (BS-CBN.refl-⇓ p) (bs←ss′ r rs′ p″)
+    bs←ss′ (lam₊ p r)        rs (lam p″)              = lam (BS-CBN.refl-⇓ p)
+                                                             (bs←ss′ r (rev-lam₊* (whnf-⇒ r) rs) p″)
     bs←ss′ (lam₊ p r)        rs (nf var)              = rs ↯ ¬lam⇒*var
     bs←ss′ (lam₊ p r)        rs (nf (app _ _))        = rs ↯ ¬lam⇒*app
     bs←ss′ (app₁₊ p₁ r₁)     rs p″                    with rev-app₁₊* rs p″
@@ -187,7 +188,8 @@ module Cor-4-2-4 where
 
   bs←ss : ∀ {n} {e : Tm n} {e′} → e ⇒* e′ → NF e′ → e ⇓ e′
   bs←ss rs p′             with Lem-4-2-1.cbn|no₂←no* rs p′
-  ... | _ , rs′ , p″ , rs″ = Lem-4-2-3.no←cbn|no₂ (CBN.Lem-4-1-1.bs←ss rs′ p″) (Lem-4-2-2.bs←ss rs″ p′)
+  ... | _ , rs′ , p″ , rs″ = Lem-4-2-3.no←cbn|no₂ (CBN.Lem-4-1-1.bs←ss rs′ p″)
+                                                   (Lem-4-2-2.bs←ss rs″ p′)
 
 
 ---------------------------------------------------------------------------------------------------------------

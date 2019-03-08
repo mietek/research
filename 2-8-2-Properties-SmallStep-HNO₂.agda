@@ -17,8 +17,7 @@ open NonReducibleForms _⇒_ public
 
 mutual
   nrf←nf : ∀ {n} {e : Tm n} → NF e → NRF e
-  nrf←nf (lam p) = λ { (_ , lam₋ ¬p r) → hnf←nf p ↯ ¬p
-                      ; (_ , lam₊ p′ r) → (_ , r) ↯ nrf←nf p
+  nrf←nf (lam p) = λ { (_ , lam₊ p′ r) → (_ , r) ↯ nrf←nf p
                       }
   nrf←nf (nf p)  = nrf←nanf p
 
@@ -36,9 +35,6 @@ mutual
 
 uniq-⇒ : Unique² _⇒_
 uniq-⇒ {e = var _}   ()                ()
-uniq-⇒ {e = lam _}   (lam₋ ¬p r)       (lam₋ ¬p′ r′)        = lam₋ & uniq-¬hnf ¬p ¬p′  ⊗ HS.uniq-⇒ r r′
-uniq-⇒ {e = lam _}   (lam₋ ¬p r)       (lam₊ p′ r′)         = p′ ↯ ¬p
-uniq-⇒ {e = lam _}   (lam₊ p r)        (lam₋ ¬p′ r′)        = p ↯ ¬p′
 uniq-⇒ {e = lam _}   (lam₊ p r)        (lam₊ p′ r′)         = lam₊ & uniq-hnf p p′ ⊗ uniq-⇒ r r′
 uniq-⇒ {e = app _ _} (app₁₊ p₁ r₁)     (app₁₊ p₁′ r₁′)      = app₁₊ & uniq-naxnf p₁ p₁′ ⊗ uniq-⇒ r₁ r₁′
 uniq-⇒ {e = app _ _} (app₁₊ p₁ r₁)     (app₂₋ p₁′ ¬p₂′ r₂′) = (_ , r₁) ↯ nrf←nanf p₁′
@@ -58,9 +54,6 @@ uniq-⇒ {e = app _ _} (app₂₊ p₁ p₂ r₂)  (app₂₊ p₁′ p₂′ r�
 -- SS-HNO₂ is deterministic, confluent, and has unique non-reducible forms
 
 det-⇒ : Deterministic _⇒_
-det-⇒ (lam₋ ¬p r)       (lam₋ ¬p′ r′)        = lam & HS.det-⇒ r r′
-det-⇒ (lam₋ ¬p r)       (lam₊ p′ r′)         = p′ ↯ ¬p
-det-⇒ (lam₊ p r)        (lam₋ ¬p′ r′)        = p ↯ ¬p′
 det-⇒ (lam₊ p r)        (lam₊ p′ r′)         = lam & det-⇒ r r′
 det-⇒ (app₁₊ p₁ r₁)     (app₁₊ p₁′ r₁′)      = app & det-⇒ r₁ r₁′ ⊗ refl
 det-⇒ (app₁₊ p₁ r₁)     (app₂₋ p₁′ ¬p₂′ r₂′) = (_ , r₁) ↯ nrf←nanf p₁′
@@ -86,33 +79,13 @@ naxnf-⇒ (app _)  (app₁₊ p₁ r₁)      = app (naxnf-⇒ p₁ r₁)
 naxnf-⇒ (app p₁) (app₂₋ p₁′ ¬p₂ r₂) = app p₁
 naxnf-⇒ (app p₁) (app₂₊ p₁′ p₂ r₂)  = app p₁
 
-hnf-⇒ : ∀ {n} {e : Tm n} {e′} → HNF e → e ⇒ e′ → HNF e′
-hnf-⇒ (lam p)  (lam₋ ¬p′ r)      = p ↯ ¬p′
-hnf-⇒ (hnf ()) (lam₋ ¬p′ r)
-hnf-⇒ p        (lam₊ p′ r)       = lam (hnf-⇒ p′ r)
-hnf-⇒ p        (app₁₊ p₁ r₁)     = hnf (app (naxnf-⇒ p₁ r₁))
-hnf-⇒ p        (app₂₋ p₁ ¬p₂ r₂) = hnf (app (naxnf←nanf p₁))
-hnf-⇒ p        (app₂₊ p₁ ¬p₂ r₂) = hnf (app (naxnf←nanf p₁))
-
--- TODO!
-
--- rev-hnf-⇒ : ∀ {n} {e : Tm n} {e′} → HNF e′ → e ⇒ e′ → HNF e
--- rev-hnf-⇒ (lam p′) (lam₋ ¬p r)       = {!HS.rev-¬hnf-⇒ r!}
--- rev-hnf-⇒ (hnf ()) (lam₋ ¬p r)
--- rev-hnf-⇒ p′       (lam₊ p r)        = lam p
--- rev-hnf-⇒ p′       (app₁₊ p₁ r₁)     = hnf (app p₁)
--- rev-hnf-⇒ p′       (app₂₋ p₁ ¬p₂ r₂) = hnf (app (naxnf←nanf p₁))
--- rev-hnf-⇒ p′       (app₂₊ p₁ p₂ r₂)  = hnf (app (naxnf←nanf p₁))
-
--- hm : ∀ {n} {e : Tm n} {e′} → ¬ HNF e → e HS.⇒ e′ →
-
-hm : ∀ {n} {e : Tm (suc n)} → ¬ HNF e → ¬ HNF (lam e)
-hm ¬p = λ { (lam p) → p ↯ ¬p
-          ; (hnf ())
-          }
+hnf-⇒ : ∀ {n} {e : Tm n} {e′} → e ⇒ e′ → HNF e′
+hnf-⇒ (lam₊ p r)        = lam (hnf-⇒ r)
+hnf-⇒ (app₁₊ p₁ r₁)     = hnf (app (naxnf-⇒ p₁ r₁))
+hnf-⇒ (app₂₋ p₁ ¬p₂ r₂) = hnf (app (naxnf←nanf p₁))
+hnf-⇒ (app₂₊ p₁ ¬p₂ r₂) = hnf (app (naxnf←nanf p₁))
 
 rev-hnf-⇒ : ∀ {n} {e : Tm n} {e′} → e ⇒ e′ → HNF e
-rev-hnf-⇒ (lam₋ ¬p r)       = {!hm ¬p!}
 rev-hnf-⇒ (lam₊ p r)        = lam p
 rev-hnf-⇒ (app₁₊ p₁ r₁)     = hnf (app p₁)
 rev-hnf-⇒ (app₂₋ p₁ ¬p₂ r₂) = hnf (app (naxnf←nanf p₁))

@@ -8,7 +8,7 @@ open import 1-2-Syntax-Predicates public
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Big-step call-by-name reduction (Sestoft’s BN)
--- ✔ From terms to weak head normal forms
+-- ✔ Goes from terms to weak head normal forms
 -- ∙ Does not reduce under λ-abstractions
 -- ∙ Does not reduce arguments before substitution
 -- ∙ “Reduces the leftmost outermost redex not inside a λ-abstraction first”
@@ -34,7 +34,7 @@ module CBN where
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Big-step normal order reduction (Sestoft’s NO)
--- ✔ From terms to normal forms
+-- ✔ Goes from terms to normal forms
 -- ∙ Reduces under λ-abstractions
 -- ✘ “Reduces arguments before substitution” is imprecise;
 --   arguments are reduced to WHNF before substitution, and to NF after substitution
@@ -62,7 +62,7 @@ module NO where
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Big-step normal order reduction, second stage (Garcia-Perez, et al.)
--- ✔ From weak head normal forms to normal forms
+-- ✔ Goes from weak head normal forms to normal forms
 
 module NO₂ where
   data _⇓_ {n} : Rel₀ (Tm n) where
@@ -81,7 +81,7 @@ module NO₂ where
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Big-step call-by-value reduction (Sestoft’s BV)
--- ✔ From terms to weak normal forms
+-- ✔ Goes from terms to weak normal forms
 -- ∙ Does not reduce under λ-abstractions
 -- ∙ Reduces arguments before substitution
 -- ∙ “Reduces the leftmost innermost redex not inside a λ-abstraction first”
@@ -107,7 +107,7 @@ module CBV where
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Big-step applicative order reduction (Sestoft’s AO)
--- ✔ From terms to normal forms
+-- ✔ Goes from terms to normal forms
 -- ∙ Reduces under λ-abstractions
 -- ∙ Reduces arguments before substitution
 -- ∙ “Reduces the leftmost innermost redex first”
@@ -134,7 +134,7 @@ module AO where
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Big-step hybrid applicative order reduction (Sestoft’s HA)
--- ✔ From terms to normal forms
+-- ✔ Goes from terms to normal forms
 -- ∙ Reduces under λ-abstractions
 -- ∙ Reduces arguments before substitution
 -- ∙ “Reduces inside λ-abstractions only in argument positions”
@@ -161,7 +161,7 @@ module HAO where
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Big-step head spine reduction (Sestoft’s HE)
--- ✔ From terms to head normal forms
+-- ✔ Goes from terms to head normal forms
 -- ∙ Reduces under λ-abstractions
 -- ∙ Does not reduce arguments before substitution
 -- ∙ “Reduces inside λ-abstractions, but only in head position”
@@ -187,7 +187,7 @@ module HS where
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Big-step head reduction (Sestoft’s modified HE)
--- ✔ From terms to head normal forms
+-- ✔ Goes from terms to head normal forms
 -- ∙ “Only head redexes are contracted”
 
 module H where
@@ -211,7 +211,7 @@ module H where
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Big-step head reduction, second stage (no reference)
--- ✔ From weak head normal forms to head normal forms
+-- ✔ Goes from weak head normal forms to head normal forms
 
 module H₂ where
   data _⇓_ {n} : Rel₀ (Tm n) where
@@ -230,7 +230,7 @@ module H₂ where
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Big-step hybrid normal order reduction (Sestoft’s HN)
--- ✔ From terms to normal forms
+-- ✔ Goes from terms to normal forms
 -- ∙ Reduces under λ-abstractions
 -- ✘ “Reduces arguments before substitution” is imprecise;
 --   arguments are reduced to HNF before substitution, and to NF after substitution
@@ -257,7 +257,7 @@ module HNO where
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Big-step hybrid normal order reduction, second stage (no reference)
--- ✔ From head normal forms to normal forms
+-- ✔ Goes from head normal forms to normal forms
 
 module HNO₂ where
   data _⇓_ {n} : Rel₀ (Tm n) where
@@ -267,11 +267,6 @@ module HNO₂ where
     lam : ∀ {e e′} →
           HNF e → e ⇓ e′ →
           lam e ⇓ lam e′
-
--- TODO
---    lam : ∀ {e e′ e″} →
---          e HS.⇓ e′ → e′ ⇓ e″ →
---          lam e ⇓ lam e″
 
     app : ∀ {e₁ e₂ e₁′ e₂′ e₂″} →
           NAXNF e₁ → e₁ ⇓ e₁′ → e₂ HS.⇓ e₂′ → e₂′ ⇓ e₂″ →

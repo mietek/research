@@ -24,7 +24,7 @@ module CBN where
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Small-step normal order reduction (Pierce)
--- ∙ With corrected app₁ rule
+-- ∙ Corrected app₁ rule not to go to non-abstractions
 
 module NO where
   data _⇒_ {n} : Rel₀ (Tm n) where
@@ -49,6 +49,7 @@ module NO where
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Small-step normal order reduction, second stage (Garcia-Perez, et al.)
+-- ✔ Goes from weak head normal forms
 
 module NO₂ where
   data _⇒_ {n} : Rel₀ (Tm n) where
@@ -77,8 +78,8 @@ module NO₂ where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Small-step call-by-value reduction (Pierce, modified)
--- ∙ With weak normal forms
+-- Small-step call-by-value reduction (Pierce)
+-- ∙ Modified applam and app₂ rules to go from weak normal forms instead of values
 
 module CBV where
   data _⇒_ {n} : Rel₀ (Tm n) where
@@ -199,6 +200,7 @@ module H where
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Small-step head reduction, second stage (no reference)
+-- ✔ Goes from weak head normal forms
 
 module H₂ where
   data _⇒_ {n} : Rel₀ (Tm n) where
@@ -249,13 +251,10 @@ module HNO where
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Small-step hybrid normal order reduction, second stage (no reference)
+-- ✔ Goes from head normal forms
 
 module HNO₂ where
   data _⇒_ {n} : Rel₀ (Tm n) where
-    lam₋  : ∀ {e e′} →
-            ¬ HNF e → e HS.⇒ e′ →
-            lam e ⇒ lam e′
-
     lam₊  : ∀ {e e′} →
             HNF e → e ⇒ e′ →
             lam e ⇒ lam e′

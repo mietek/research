@@ -34,7 +34,6 @@ app₁₊ var      r₁ = app₁ var r₁
 app₁₊ (app p₁) r₁ = app₁ app r₁
 
 hno←hno₂ : ∀ {n} {e : Tm n} {e′} → e HNO₂.⇒ e′ → e ⇒ e′
-hno←hno₂ (HNO₂.lam₋ ¬p r)       = lam (hno←hs r)
 hno←hno₂ (HNO₂.lam₊ p r)        = lam (hno←hno₂ r)
 hno←hno₂ (HNO₂.app₁₊ p₁ r₁)     = app₁₊ p₁ (hno←hno₂ r₁)
 hno←hno₂ (HNO₂.app₂₋ p₁ ¬p₂ r₂) = app₂ p₁ (hno←hs r₂)

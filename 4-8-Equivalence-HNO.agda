@@ -34,8 +34,8 @@ module Lem-4-8-1 where
   hs←hno ¬p (HNO.applam p₁)    = HS.applam p₁
   hs←hno ¬p (HNO.app₁ₐ ¬p₁ r₁) = HS.app₁ (HS.lam (hs←hno ¬p₁ r₁))
   hs←hno ¬p (HNO.app₁ p₁ r₁)   with hnf? _
-  ... | no ¬p₁′                  = HS.app₁ (hs←hno ¬p₁′ r₁)
-  ... | yes p₁′                  = hnf (app (naxnf←hnf p₁′ p₁)) ↯ ¬p
+  ... | no ¬p₁′                 = HS.app₁ (hs←hno ¬p₁′ r₁)
+  ... | yes p₁′                 = hnf (app (naxnf←hnf p₁′ p₁)) ↯ ¬p
   hs←hno ¬p (HNO.app₂ p₁ r₂)   = hnf (app (naxnf←nanf p₁)) ↯ ¬p
 
   hno₂←hno : ∀ {n} {e : Tm n} {e′} → HNF e → e HNO.⇒ e′ → e HNO₂.⇒ e′
@@ -55,15 +55,14 @@ module Lem-4-8-1 where
 
   hno₂←hno* : ∀ {n} {e : Tm n} {e′} → HNF e → e HNO.⇒* e′ → e HNO₂.⇒* e′
   hno₂←hno* p ε        = ε
-  hno₂←hno* p (r ◅ rs) = hno₂←hno p r ◅ hno₂←hno* (SS-HNO₂.hnf-⇒ p (hno₂←hno p r)) rs
+  hno₂←hno* p (r ◅ rs) = hno₂←hno p r ◅ hno₂←hno* (SS-HNO₂.hnf-⇒ (hno₂←hno p r)) rs
 
   hs|hno₂←hno* : ∀ {n} {e : Tm n} {e′} → e HNO.⇒* e′ → NF e′ →
                   (∃ λ e″ →
                     e HS.⇒* e″ × HNF e″ × e″ HNO₂.⇒* e′)
   hs|hno₂←hno* ε        p′ = _ , ε , hnf←nf p′ , ε
   hs|hno₂←hno* (r ◅ rs) p′ with hs|hno₂←hno r
-  ... | inj₂ r′             = _ , ε , {!SS-HNO₂.rev-hnf-⇒ r′!}
-                                , r′ ◅ hno₂←hno* (SS-HNO₂.hnf-⇒ {!!} r′) rs
+  ... | inj₂ r′             = _ , ε , SS-HNO₂.rev-hnf-⇒ r′ , r′ ◅ hno₂←hno* (SS-HNO₂.hnf-⇒ r′) rs
   ... | inj₁ r′             with hs|hno₂←hno* rs p′
   ... | _ , rs′ , p″ , rs″  = _ , r′ ◅ rs′ , p″ , rs″
 
@@ -78,26 +77,14 @@ module Lem-4-8-2 where
 
   rev-lam₊* : ∀ {n i} {e : Tm (suc n)} {e′} → HNF e → lam e ⇒*⟨ i ⟩ lam e′ → e ⇒*⟨ i ⟩ e′
   rev-lam₊* p ε                = ε
-  rev-lam₊* p (lam₋ ¬p r ◅ rs) = p ↯ ¬p
-  rev-lam₊* p (lam₊ p′ r ◅ rs) = r ◅ rev-lam₊* (hnf-⇒ p′ r) rs
-
-  rev-lam₋* : ∀ {n i} {e : Tm (suc n)} {e′} →
-              lam e ⇒*⟨ i ⟩ lam e′ → NF e′ →
-              (∃ λ e″ →
-                e SS.HS.⇒*⟨ i ⟩ e″ × HNF e″ × e″ ⇒* e′)
-  rev-lam₋* ε                p′ = _ , ε , hnf←nf p′ , ε
-  rev-lam₋* (lam₋ ¬p r ◅ rs) p′ with rev-lam₋* rs p′
-  ... | _ , rs′ , p″ , rs″      = _ , r ◅ rs′ , p″ , rs″
-  rev-lam₋* (lam₊ p r ◅ rs)  p′ = _ , ε , p , r ◅ rev-lam₊* (hnf-⇒ p r) rs
+  rev-lam₊* p (lam₊ p′ r ◅ rs) = r ◅ rev-lam₊* (hnf-⇒ r) rs
 
   ¬lam⇒*var : ∀ {n} {e : Tm (suc n)} {x} → ¬ (lam e ⇒* var x)
-  ¬lam⇒*var = λ { (lam₋ ¬p r ◅ rs) → rs ↯ ¬lam⇒*var
-                 ; (lam₊ p r ◅ rs)  → rs ↯ ¬lam⇒*var
+  ¬lam⇒*var = λ { (lam₊ p r ◅ rs)  → rs ↯ ¬lam⇒*var
                  }
 
   ¬lam⇒*app : ∀ {n} {e : Tm (suc n)} {e₁ e₂} → ¬ (lam e ⇒* app e₁ e₂)
-  ¬lam⇒*app = λ { (lam₋ ¬p r ◅ rs) → rs ↯ ¬lam⇒*app
-                 ; (lam₊ p r ◅ rs)  → rs ↯ ¬lam⇒*app
+  ¬lam⇒*app = λ { (lam₊ p r ◅ rs)  → rs ↯ ¬lam⇒*app
                  }
 
   mutual
@@ -106,9 +93,6 @@ module Lem-4-8-2 where
     bs←ss (r ◅ rs) p′ = bs←ss′ r rs p′
 
     bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → NF e″ → e ⇓ e″
-    bs←ss′ (lam₋ ¬p r)       rs (lam p″)       = {!!}
-    bs←ss′ (lam₋ ¬p r)       rs (nf var)       = rs ↯ ¬lam⇒*var
-    bs←ss′ (lam₋ ¬p r)       rs (nf (app _ _)) = rs ↯ ¬lam⇒*app
     bs←ss′ (lam₊ p r)        rs (lam p″)       = {!!}
     bs←ss′ (lam₊ p r)        rs (nf var)       = rs ↯ ¬lam⇒*var
     bs←ss′ (lam₊ p r)        rs (nf (app _ _)) = rs ↯ ¬lam⇒*app
@@ -143,7 +127,8 @@ module Cor-4-8-4 where
 
   bs←ss : ∀ {n} {e : Tm n} {e′} → e ⇒* e′ → NF e′ → e ⇓ e′
   bs←ss rs p′             with Lem-4-8-1.hs|hno₂←hno* rs p′
-  ... | _ , rs′ , p″ , rs″ = Lem-4-8-3.hno←hs|hno₂ (HS.Lem-4-6-1.bs←ss rs′ p″) (Lem-4-8-2.bs←ss rs″ p′)
+  ... | _ , rs′ , p″ , rs″ = Lem-4-8-3.hno←hs|hno₂ (HS.Lem-4-6-1.bs←ss rs′ p″)
+                                                    (Lem-4-8-2.bs←ss rs″ p′)
 
 
 ---------------------------------------------------------------------------------------------------------------
