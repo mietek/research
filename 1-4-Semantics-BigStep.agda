@@ -253,3 +253,22 @@ module HNO where
 
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- Big-step hybrid normal order reduction, second stage (no reference)
+-- ✔ From head normal forms to normal forms
+
+module HNO₂ where
+  data _⇓_ {n} : Rel₀ (Tm n) where
+    var : ∀ {x} →
+          var x ⇓ var x
+
+    lam : ∀ {e e′ e″} →
+          e HS.⇓ e′ → e′ ⇓ e″ →
+          lam e ⇓ lam e″
+
+    app : ∀ {e₁ e₂ e₁′ e₂′ e₂″} →
+          NA e₁ → e₁ ⇓ e₁′ → e₂ HS.⇓ e₂′ → e₂′ ⇓ e₂″ →
+          app e₁ e₂ ⇓ app e₁′ e₂″
+
+
+---------------------------------------------------------------------------------------------------------------
