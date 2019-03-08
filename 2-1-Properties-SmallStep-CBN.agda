@@ -33,7 +33,7 @@ rev-applam : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} {e′} →
              (r : app (lam e₁) e₂ ⇒ e′) →
              (Σ (e′ ≡ e₁ [ e₂ ]) λ { refl →
                r ≡ applam })
-rev-applam applam    = (refl , refl)
+rev-applam applam    = refl , refl
 rev-applam (app₁ ())
 
 uniq-⇒ : Unique² _⇒_

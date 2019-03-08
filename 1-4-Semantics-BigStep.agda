@@ -36,7 +36,8 @@ module CBN where
 -- Big-step normal order reduction (Sestoft’s NO)
 -- ✔ From terms to normal forms
 -- ∙ Reduces under λ-abstractions
--- ✘ “Reduces arguments before substitution” is incorrect; arguments are reduced eventually
+-- ✘ “Reduces arguments before substitution” is imprecise;
+--   arguments are reduced to WHNF before substitution, and to NF after substitution
 -- ∙ “Reduces the leftmost outermost redex first”
 -- ∙ Normalising
 
@@ -231,7 +232,8 @@ module H₂ where
 -- Big-step hybrid normal order reduction (Sestoft’s HN)
 -- ✔ From terms to normal forms
 -- ∙ Reduces under λ-abstractions
--- ✘ “Reduces arguments before substitution” is incorrect; arguments are reduced eventually
+-- ✘ “Reduces arguments before substitution” is imprecise;
+--   arguments are reduced to HNF before substitution, and to NF after substitution
 -- ∙ Normalising
 
 module HNO where
@@ -267,7 +269,7 @@ module HNO₂ where
           lam e ⇓ lam e′
 
     app : ∀ {e₁ e₂ e₁′ e₂′ e₂″} →
-          NA e₁ → e₁ ⇓ e₁′ → e₂ HS.⇓ e₂′ → e₂′ ⇓ e₂″ →
+          NAXNF e₁ → e₁ ⇓ e₁′ → e₂ HS.⇓ e₂′ → e₂′ ⇓ e₂″ →
           app e₁ e₂ ⇓ app e₁′ e₂″
 
 

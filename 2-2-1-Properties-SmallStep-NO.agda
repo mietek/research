@@ -51,7 +51,7 @@ mutual
   nrf←nanf : ∀ {n} {e : Tm n} → NANF e → NRF e
   nrf←nanf var         = λ { (_ , ()) }
   nrf←nanf (app p₁ p₂) = λ { (_ , applam)      → case p₁ of λ ()
-                            ; (_ , app₁ q₁ r₁)  → (_ , r₁) ↯ nrf←nanf p₁
+                            ; (_ , app₁ p₁′ r₁) → (_ , r₁) ↯ nrf←nanf p₁
                             ; (_ , app₂ p₁′ r₂) → (_ , r₂) ↯ nrf←nf p₂
                             }
 
@@ -64,7 +64,7 @@ rev-applam : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} {e′} →
              (r : app (lam e₁) e₂ ⇒ e′) →
              (Σ (e′ ≡ e₁ [ e₂ ]) λ { refl →
                r ≡ applam })
-rev-applam applam       = (refl , refl)
+rev-applam applam       = refl , refl
 rev-applam (app₁ () r₁)
 rev-applam (app₂ () r₂)
 
