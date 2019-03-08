@@ -59,6 +59,10 @@ Unique² R = ∀ {n} {e : Tm n} {e′} (r r′ : R e e′) → r ≡ r′
 Deterministic : Pred (∀ {n} → Rel₀ (Tm n)) _
 Deterministic R = ∀ {n} {e : Tm n} {e′ e″} → R e e′ → R e e″ → e′ ≡ e″
 
+Confluent : Pred (∀ {n} → Rel₀ (Tm n)) _
+Confluent R = ∀ {n} {e : Tm n} {e′ e″} → (R *) e e′ → (R *) e e″ →
+              (∃ λ e‴ → (R *) e′ e‴ × (R *) e″ e‴)
+
 module NonReducibleForms
     (_⇒_ : ∀ {n} → Rel₀ (Tm n))
   where
@@ -84,8 +88,7 @@ module Confluence
   where
     open MultiStepReductions _⇒_
 
-    conf-⇒ : ∀ {n} {e : Tm n} {e′ e″} → e ⇒* e′ → e ⇒* e″ →
-              (∃ λ e‴ → e′ ⇒* e‴ × e″ ⇒* e‴)
+    conf-⇒ : Confluent _⇒_
     conf-⇒ ε        rs′        = _ , rs′ , ε
     conf-⇒ (r ◅ rs) ε          = _ , ε , r ◅ rs
     conf-⇒ (r ◅ rs) (r′ ◅ rs′) with det-⇒ r r′
