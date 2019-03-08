@@ -7,7 +7,7 @@ open import 1-2-Syntax-Predicates public
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Big-step call-by-name reduction (Sestoft’s bn)
+-- Big-step call-by-name reduction (Sestoft’s BN)
 -- ✔ From terms to weak head normal forms
 -- ∙ Does not reduce under λ-abstractions
 -- ∙ Does not reduce arguments before substitution
@@ -33,7 +33,7 @@ module CBN where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Big-step normal order reduction (Sestoft’s no)
+-- Big-step normal order reduction (Sestoft’s NO)
 -- ✔ From terms to normal forms
 -- ∙ Reduces under λ-abstractions
 -- ✘ “Reduces arguments before substitution” is incorrect; arguments are reduced eventually
@@ -79,7 +79,7 @@ module NO₂ where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Big-step call-by-value reduction (Sestoft’s bv)
+-- Big-step call-by-value reduction (Sestoft’s BV)
 -- ✔ From terms to weak normal forms
 -- ∙ Does not reduce under λ-abstractions
 -- ∙ Reduces arguments before substitution
@@ -105,7 +105,7 @@ module CBV where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Big-step applicative order reduction (Sestoft’s ao)
+-- Big-step applicative order reduction (Sestoft’s AO)
 -- ✔ From terms to normal forms
 -- ∙ Reduces under λ-abstractions
 -- ∙ Reduces arguments before substitution
@@ -132,7 +132,7 @@ module AO where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Big-step hybrid applicative order reduction (Sestoft’s ha)
+-- Big-step hybrid applicative order reduction (Sestoft’s HA)
 -- ✔ From terms to normal forms
 -- ∙ Reduces under λ-abstractions
 -- ∙ Reduces arguments before substitution
@@ -159,7 +159,7 @@ module HAO where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Big-step head spine reduction (Sestoft’s he)
+-- Big-step head spine reduction (Sestoft’s HE)
 -- ✔ From terms to head normal forms
 -- ∙ Reduces under λ-abstractions
 -- ∙ Does not reduce arguments before substitution
@@ -185,7 +185,7 @@ module HS where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Big-step head reduction (Sestoft’s modified he)
+-- Big-step head reduction (Sestoft’s modified HE)
 -- ✔ From terms to head normal forms
 -- ∙ “Only head redexes are contracted”
 
@@ -228,7 +228,7 @@ module H₂ where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Big-step hybrid normal order reduction (Sestoft’s hn)
+-- Big-step hybrid normal order reduction (Sestoft’s HN)
 -- ✔ From terms to normal forms
 -- ∙ Reduces under λ-abstractions
 -- ✘ “Reduces arguments before substitution” is incorrect; arguments are reduced eventually
