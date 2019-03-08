@@ -21,17 +21,17 @@ na←whnf-⇓ : ∀ {n} {e : Tm n} {e′} → WHNF e → NA e → e ⇓ e′ →
 na←whnf-⇓ lam      () r
 na←whnf-⇓ (whnf p) p′ r = na←naxnf-⇓ p r
 
-rev-whnf-⇓ : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → WHNF e
-rev-whnf-⇓ var         = whnf var
-rev-whnf-⇓ (lam r r′)  = lam
-rev-whnf-⇓ (app p₁ r₁) = whnf (app (naxnf←whnf (rev-whnf-⇓ r₁) (na←naxnf p₁)))
-
 hnf-⇓ : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → HNF e′
 hnf-⇓ var         = hnf var
 hnf-⇓ (lam r r′)  = lam (hnf-⇓ r′)
 hnf-⇓ (app p₁ r₁) = hnf (app p₁′)
   where
-    p₁′ = naxnf←hnf (hnf-⇓ r₁) (na←whnf-⇓ (rev-whnf-⇓ r₁) (na←naxnf p₁) r₁)
+    p₁′ = naxnf←hnf (hnf-⇓ r₁) (na←naxnf-⇓ p₁ r₁)
+
+rev-whnf-⇓ : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → WHNF e
+rev-whnf-⇓ var         = whnf var
+rev-whnf-⇓ (lam r r′)  = lam
+rev-whnf-⇓ (app p₁ r₁) = whnf (app p₁)
 
 
 ---------------------------------------------------------------------------------------------------------------

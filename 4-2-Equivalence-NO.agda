@@ -49,16 +49,9 @@ module Lem-4-2-1 where
   ... | yes p₂                             = NO₂.app₂₊ p₁ p₂ (no₂←no p₂ r₂)
 
   cbn|no₂←no : ∀ {n} {e : Tm n} {e′} → e NO.⇒ e′ → (e CBN.⇒ e′) ⊎ (e NO₂.⇒ e′)
-  cbn|no₂←no (NO.lam r)      with whnf? _
-  ... | no ¬p                 = inj₂ (NO₂.lam₋ ¬p (cbn←no ¬p r))
-  ... | yes p                 = inj₂ (NO₂.lam₊ p (no₂←no p r))
-  cbn|no₂←no NO.applam       = inj₁ CBN.applam
-  cbn|no₂←no (NO.app₁ p₁ r₁) with whnf? _
-  ... | no ¬p₁′               = inj₁ (CBN.app₁ (cbn←no ¬p₁′ r₁))
-  ... | yes p₁′               = inj₂ (NO₂.app₁₊ (naxnf←whnf p₁′ p₁) (no₂←no p₁′ r₁))
-  cbn|no₂←no (NO.app₂ p₁ r₂) with whnf? _
-  ... | no ¬p₂                = inj₂ (NO₂.app₂₋ p₁ ¬p₂ (cbn←no ¬p₂ r₂))
-  ... | yes p₂                = inj₂ (NO₂.app₂₊ p₁ p₂ (no₂←no p₂ r₂))
+  cbn|no₂←no r with whnf? _
+  ... | no ¬p = inj₁ (cbn←no ¬p r)
+  ... | yes p = inj₂ (no₂←no p r)
 
   no₂←no* : ∀ {n} {e : Tm n} {e′} → WHNF e → e NO.⇒* e′ → e NO₂.⇒* e′
   no₂←no* p ε        = ε

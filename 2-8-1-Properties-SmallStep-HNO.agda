@@ -16,7 +16,7 @@ import 2-6-Properties-SmallStep-HS as SS-HS
 mutual
   hs-app₁ : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ HS.⇒ e₁′ → app e₁ e₂ ⇒ app e₁′ e₂
   hs-app₁ (HS.applam p₁) = app₁ app (applam p₁)
-  hs-app₁ (HS.lam r)     = app₁ₐ (λ p → (_ , r) ↯ SS-HS.nrf←hnf p) (hno←hs r)
+  hs-app₁ (HS.lam r)     = app₁ₐ (SS-HS.rev-¬hnf-⇒ r) (hno←hs r)
   hs-app₁ (HS.app₁ r₁)   = app₁ app (hs-app₁ r₁)
 
   hno←hs : ∀ {n} {e : Tm n} {e′} → e HS.⇒ e′ → e ⇒ e′
@@ -53,7 +53,7 @@ mutual
   nrf←nf (nf p)  = nrf←nanf p
 
   nrf←nanf : ∀ {n} {e : Tm n} → NANF e → NRF e
-  nrf←nanf var         = λ { (_ , ()) }
+  nrf←nanf var         = λ ()
   nrf←nanf (app p₁ p₂) = λ { (_ , applam p₁′)   → case p₁ of λ ()
                             ; (_ , app₁ₐ ¬p₁ r₁) → case p₁ of λ ()
                             ; (_ , app₁ p₁′ r₁)  → (_ , r₁) ↯ nrf←nanf p₁

@@ -23,7 +23,7 @@ mutual
   nrf←hnf (hnf p) = nrf←naxnf p
 
   nrf←naxnf : ∀ {n} {e : Tm n} → NAXNF e → NRF e
-  nrf←naxnf var      = λ { (_ , ()) }
+  nrf←naxnf var      = λ ()
   nrf←naxnf (app p₁) = λ { (_ , app₁₊ p₁′ r₁) → (_ , r₁) ↯ nrf←naxnf p₁
                           }
 

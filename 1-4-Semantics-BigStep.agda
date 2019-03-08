@@ -268,6 +268,11 @@ module HNO₂ where
           HNF e → e ⇓ e′ →
           lam e ⇓ lam e′
 
+-- TODO
+--    lam : ∀ {e e′ e″} →
+--          e HS.⇓ e′ → e′ ⇓ e″ →
+--          lam e ⇓ lam e″
+
     app : ∀ {e₁ e₂ e₁′ e₂′ e₂″} →
           NAXNF e₁ → e₁ ⇓ e₁′ → e₂ HS.⇓ e₂′ → e₂′ ⇓ e₂″ →
           app e₁ e₂ ⇓ app e₁′ e₂″

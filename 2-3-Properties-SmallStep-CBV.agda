@@ -16,11 +16,11 @@ open NonReducibleForms _⇒_ public
 
 mutual
   nrf←wnf : ∀ {n} {e : Tm n} → WNF e → NRF e
-  nrf←wnf lam     = λ { (_ , ()) }
+  nrf←wnf lam     = λ ()
   nrf←wnf (wnf p) = nrf←nawnf p
 
   nrf←nawnf : ∀ {n} {e : Tm n} → NAWNF e → NRF e
-  nrf←nawnf var         = λ { (_ , ()) }
+  nrf←nawnf var         = λ ()
   nrf←nawnf (app p₁ p₂) = λ { (_ , applam p₂′)   → case p₁ of λ ()
                              ; (_ , app₁ r₁′)     → (_ , r₁′) ↯ nrf←nawnf p₁
                              ; (_ , app₂ p₁′ r₂′) → (_ , r₂′) ↯ nrf←wnf p₂

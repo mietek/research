@@ -33,9 +33,9 @@ hnf-⇓ : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → HNF e′
 hnf-⇓ var              = hnf var
 hnf-⇓ (lam r)          = lam (hnf-⇓ r)
 hnf-⇓ (applam r₁ r)    = hnf-⇓ r
-hnf-⇓ (app r₁ p₁′ r₁′) = hnf (app (naxnf←hnf (hnf-⇓ r₁′) p₁″))
+hnf-⇓ (app r₁ p₁′ r₁′) = hnf (app p₁″)
   where
-    p₁″ = na←whnf-⇓ (BS-CBN.whnf-⇓ r₁) p₁′ r₁′
+    p₁″ = naxnf←hnf (hnf-⇓ r₁′) (na←whnf-⇓ (BS-CBN.whnf-⇓ r₁) p₁′ r₁′)
 
 
 ---------------------------------------------------------------------------------------------------------------

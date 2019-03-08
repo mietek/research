@@ -16,7 +16,9 @@ nf-⇓ : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → NF e′
 nf-⇓ var              = nf var
 nf-⇓ (lam r)          = lam (nf-⇓ r)
 nf-⇓ (applam r₁ r₂ r) = nf-⇓ r
-nf-⇓ (app r₁ p₁′ r₂)  = nf (app (nanf←nf (nf-⇓ r₁) p₁′) (nf-⇓ r₂))
+nf-⇓ (app r₁ p₁′ r₂)  = nf (app p₁″ (nf-⇓ r₂))
+  where
+    p₁″ = nanf←nf (nf-⇓ r₁) p₁′
 
 
 ---------------------------------------------------------------------------------------------------------------

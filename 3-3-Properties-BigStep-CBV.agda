@@ -16,7 +16,9 @@ wnf-⇓ : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → WNF e′
 wnf-⇓ var              = wnf var
 wnf-⇓ lam              = lam
 wnf-⇓ (applam r₁ r₂ r) = wnf-⇓ r
-wnf-⇓ (app r₁ p₁′ r₂)  = wnf (app (nawnf←wnf (wnf-⇓ r₁) p₁′) (wnf-⇓ r₂))
+wnf-⇓ (app r₁ p₁′ r₂)  = wnf (app p₁″ (wnf-⇓ r₂))
+  where
+    p₁″ = nawnf←wnf (wnf-⇓ r₁) p₁′
 
 
 ---------------------------------------------------------------------------------------------------------------

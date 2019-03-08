@@ -16,7 +16,9 @@ whnf-⇓ : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → WHNF e′
 whnf-⇓ var           = whnf var
 whnf-⇓ lam           = lam
 whnf-⇓ (applam r₁ r) = whnf-⇓ r
-whnf-⇓ (app r₁ p₁′)  = whnf (app (naxnf←whnf (whnf-⇓ r₁) p₁′))
+whnf-⇓ (app r₁ p₁′)  = whnf (app p₁″)
+  where
+    p₁″ = naxnf←whnf (whnf-⇓ r₁) p₁′
 
 
 ---------------------------------------------------------------------------------------------------------------

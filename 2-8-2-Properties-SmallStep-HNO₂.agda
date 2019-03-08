@@ -23,7 +23,7 @@ mutual
   nrf←nf (nf p)  = nrf←nanf p
 
   nrf←nanf : ∀ {n} {e : Tm n} → NANF e → NRF e
-  nrf←nanf var         = λ { (_ , ()) }
+  nrf←nanf var         = λ ()
   nrf←nanf (app p₁ p₂) = λ { (_ , app₁₊ p₁′ r₁)     → (_ , r₁) ↯ nrf←nanf p₁
                             ; (_ , app₂₋ p₁′ ¬p₂ r₂) → (_ , r₂) ↯ HS.nrf←hnf (hnf←nf p₂)
                             ; (_ , app₂₊ p₁′ p₂′ r₂) → (_ , r₂) ↯ nrf←nf p₂
@@ -94,12 +94,29 @@ hnf-⇒ p        (app₁₊ p₁ r₁)     = hnf (app (naxnf-⇒ p₁ r₁))
 hnf-⇒ p        (app₂₋ p₁ ¬p₂ r₂) = hnf (app (naxnf←nanf p₁))
 hnf-⇒ p        (app₂₊ p₁ ¬p₂ r₂) = hnf (app (naxnf←nanf p₁))
 
-rev-hnf-⇒ : ∀ {n} {e : Tm n} {e′} → e ⇒ e′ → WHNF e
-rev-hnf-⇒ (lam₋ ¬p r)       = lam
-rev-hnf-⇒ (lam₊ p r)        = lam
-rev-hnf-⇒ (app₁₊ p₁ r₁)     = whnf (app p₁)
-rev-hnf-⇒ (app₂₋ p₁ ¬p₂ r₂) = whnf (app (naxnf←nanf p₁))
-rev-hnf-⇒ (app₂₊ p₁ p₂ r₂)  = whnf (app (naxnf←nanf p₁))
+-- TODO!
+
+-- rev-hnf-⇒ : ∀ {n} {e : Tm n} {e′} → HNF e′ → e ⇒ e′ → HNF e
+-- rev-hnf-⇒ (lam p′) (lam₋ ¬p r)       = {!HS.rev-¬hnf-⇒ r!}
+-- rev-hnf-⇒ (hnf ()) (lam₋ ¬p r)
+-- rev-hnf-⇒ p′       (lam₊ p r)        = lam p
+-- rev-hnf-⇒ p′       (app₁₊ p₁ r₁)     = hnf (app p₁)
+-- rev-hnf-⇒ p′       (app₂₋ p₁ ¬p₂ r₂) = hnf (app (naxnf←nanf p₁))
+-- rev-hnf-⇒ p′       (app₂₊ p₁ p₂ r₂)  = hnf (app (naxnf←nanf p₁))
+
+-- hm : ∀ {n} {e : Tm n} {e′} → ¬ HNF e → e HS.⇒ e′ →
+
+hm : ∀ {n} {e : Tm (suc n)} → ¬ HNF e → ¬ HNF (lam e)
+hm ¬p = λ { (lam p) → p ↯ ¬p
+          ; (hnf ())
+          }
+
+rev-hnf-⇒ : ∀ {n} {e : Tm n} {e′} → e ⇒ e′ → HNF e
+rev-hnf-⇒ (lam₋ ¬p r)       = {!hm ¬p!}
+rev-hnf-⇒ (lam₊ p r)        = lam p
+rev-hnf-⇒ (app₁₊ p₁ r₁)     = hnf (app p₁)
+rev-hnf-⇒ (app₂₋ p₁ ¬p₂ r₂) = hnf (app (naxnf←nanf p₁))
+rev-hnf-⇒ (app₂₊ p₁ p₂ r₂)  = hnf (app (naxnf←nanf p₁))
 
 
 ---------------------------------------------------------------------------------------------------------------

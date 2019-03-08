@@ -45,13 +45,9 @@ module Lem-4-7-1 where
   h₂←h (whnf (app p₁)) (H.app₁ p₁′ r₁) = H₂.app₁₊ p₁ (h₂←h (whnf p₁) r₁)
 
   cbn|h₂←h : ∀ {n} {e : Tm n} {e′} → e H.⇒ e′ → (e CBN.⇒ e′) ⊎ (e H₂.⇒ e′)
-  cbn|h₂←h (H.lam r)      with whnf? _
-  ... | no ¬p              = inj₂ (H₂.lam₋ ¬p (cbn←h ¬p r))
-  ... | yes p              = inj₂ (H₂.lam₊ p (h₂←h p r))
-  cbn|h₂←h H.applam       = inj₁ CBN.applam
-  cbn|h₂←h (H.app₁ p₁ r₁) with whnf? _
-  ... | no ¬p₁′            = inj₁ (CBN.app₁ (cbn←h ¬p₁′ r₁))
-  ... | yes p₁′            = inj₂ (H₂.app₁₊ (naxnf←whnf p₁′ p₁) (h₂←h p₁′ r₁))
+  cbn|h₂←h r with whnf? _
+  ... | no ¬p = inj₁ (cbn←h ¬p r)
+  ... | yes p = inj₂ (h₂←h p r)
 
   h₂←h* : ∀ {n} {e : Tm n} {e′} → WHNF e → e H.⇒* e′ → e H₂.⇒* e′
   h₂←h* p ε        = ε
