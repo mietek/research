@@ -171,10 +171,10 @@ module Lem-4-5-2 where
   ss←bs var                 = ε
   ss←bs (lam r)             = bs-lam (ss←bs r)
   ss←bs (applam r₁ r₂ r)    = bs-applam (CBV.Lem-4-3-2.ss←bs r₁) (ss←bs r₂) (nf-⇓ r₂) (ss←bs r)
-  ss←bs (app r₁ q₁′ r₁′ r₂) = bs-app (CBV.Lem-4-3-2.ss←bs r₁) p₁′ (ss←bs r₁′) p₁″ (ss←bs r₂)
+  ss←bs (app r₁ p₁′ r₁′ r₂) = bs-app (CBV.Lem-4-3-2.ss←bs r₁) p₁″ (ss←bs r₁′) p₁‴ (ss←bs r₂)
     where
-      p₁′ = nawnf←wnf (BS-CBV.wnf-⇓ r₁) q₁′
-      p₁″ = nanf←nf (nf-⇓ r₁′) (na←wnf-⇓ (BS-CBV.wnf-⇓ r₁) q₁′ r₁′)
+      p₁″ = nawnf←wnf (BS-CBV.wnf-⇓ r₁) p₁′
+      p₁‴ = nanf←nf (nf-⇓ r₁′) (na←wnf-⇓ (BS-CBV.wnf-⇓ r₁) p₁′ r₁′)
 
 
 ---------------------------------------------------------------------------------------------------------------

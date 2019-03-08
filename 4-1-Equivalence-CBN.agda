@@ -71,7 +71,7 @@ module Lem-4-1-2 where
   ss←bs var           = ε
   ss←bs lam           = ε
   ss←bs (applam r₁ r) = bs-applam (ss←bs r₁) (ss←bs r)
-  ss←bs (app r₁ q₁′)  = bs-app (ss←bs r₁)
+  ss←bs (app r₁ p₁′)  = bs-app (ss←bs r₁)
 
 
 ---------------------------------------------------------------------------------------------------------------

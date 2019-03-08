@@ -53,7 +53,7 @@ mutual
 
 nanf←nf : ∀ {n} {e : Tm n} → NF e → NA e → NANF e
 nanf←nf (lam p) ()
-nanf←nf (nf p)  q  = p
+nanf←nf (nf p)  p′ = p
 
 na←nanf : ∀ {n} {e : Tm n} → NANF e → NA e
 na←nanf var         = var
@@ -110,7 +110,7 @@ mutual
 
 nawnf←wnf : ∀ {n} {e : Tm n} → WNF e → NA e → NAWNF e
 nawnf←wnf lam     ()
-nawnf←wnf (wnf p) q  = p
+nawnf←wnf (wnf p) p′ = p
 
 na←nawnf : ∀ {n} {e : Tm n} → NAWNF e → NA e
 na←nawnf var         = var
@@ -166,7 +166,7 @@ naxnf←nanf (app p₁ p₂) = app (naxnf←nanf p₁)
 
 naxnf←nf : ∀ {n} {e : Tm n} → NF e → NA e → NAXNF e
 naxnf←nf (lam p) ()
-naxnf←nf (nf p)  q  = naxnf←nanf p
+naxnf←nf (nf p)  p′  = naxnf←nanf p
 
 naxnf←nawnf : ∀ {n} {e : Tm n} → NAWNF e → NAXNF e
 naxnf←nawnf var         = var
@@ -174,7 +174,7 @@ naxnf←nawnf (app p₁ p₂) = app (naxnf←nawnf p₁)
 
 naxnf←wnf : ∀ {n} {e : Tm n} → WNF e → NA e → NAXNF e
 naxnf←wnf lam     ()
-naxnf←wnf (wnf p) q  = naxnf←nawnf p
+naxnf←wnf (wnf p) p′ = naxnf←nawnf p
 
 naxnf? : ∀ {n} (e : Tm n) → Dec (NAXNF e)
 naxnf? (var x)     = yes var
@@ -201,7 +201,7 @@ uniq-hnf {e = app _ _} (hnf p)  (hnf p′) = hnf & uniq-naxnf p p′
 
 naxnf←hnf : ∀ {n} {e : Tm n} → HNF e → NA e → NAXNF e
 naxnf←hnf (lam p) ()
-naxnf←hnf (hnf p) q  = p
+naxnf←hnf (hnf p) p′ = p
 
 hnf←nf : ∀ {n} {e : Tm n} → NF e → HNF e
 hnf←nf (lam p) = lam (hnf←nf p)
@@ -236,11 +236,15 @@ uniq-whnf {e = app _ _} (whnf p)  (whnf p′) = whnf & uniq-naxnf p p′
 
 naxnf←whnf : ∀ {n} {e : Tm n} → WHNF e → NA e → NAXNF e
 naxnf←whnf lam      ()
-naxnf←whnf (whnf p) q  = p
+naxnf←whnf (whnf p) p′ = p
 
 whnf←nf : ∀ {n} {e : Tm n} → NF e → WHNF e
 whnf←nf (lam p) = lam
 whnf←nf (nf p)  = whnf (naxnf←nanf p)
+
+whnf←hnf : ∀ {n} {e : Tm n} → HNF e → WHNF e
+whnf←hnf (lam p) = lam
+whnf←hnf (hnf p) = whnf p
 
 whnf? : ∀ {n} (e : Tm n) → Dec (WHNF e)
 whnf? (var x)     = yes (whnf var)

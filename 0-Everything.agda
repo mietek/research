@@ -20,6 +20,7 @@ import 2-4-Properties-SmallStep-AO
 import 2-5-Properties-SmallStep-HAO
 import 2-6-Properties-SmallStep-HS
 import 2-7-1-Properties-SmallStep-H
+import 2-7-2-Properties-SmallStep-H₂
 import 2-8-1-Properties-SmallStep-HNO
 
 import 3-1-Properties-BigStep-CBN
@@ -30,6 +31,7 @@ import 3-4-Properties-BigStep-AO
 import 3-5-Properties-BigStep-HAO
 import 3-6-Properties-BigStep-HS
 import 3-7-1-Properties-BigStep-H
+import 3-7-2-Properties-BigStep-H₂
 import 3-8-1-Properties-BigStep-HNO
 
 import 4-1-Equivalence-CBN as CBN

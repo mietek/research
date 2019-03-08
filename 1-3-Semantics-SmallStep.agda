@@ -178,7 +178,43 @@ module HS where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- TODO: Small-step head reduction (no reference)
+-- Small-step head reduction (no reference)
+
+module H where
+  data _⇒_ {n} : Rel₀ (Tm n) where
+    lam    : ∀ {e e′} →
+             e ⇒ e′ →
+             lam e ⇒ lam e′
+
+    applam : ∀ {e₁ e₂} →
+             app (lam e₁) e₂ ⇒ e₁ [ e₂ ]
+
+    app₁   : ∀ {e₁ e₂ e₁′} →
+             NA e₁ → e₁ ⇒ e₁′ →
+             app e₁ e₂ ⇒ app e₁′ e₂
+
+  open MultiStepReductions _⇒_ public
+
+
+---------------------------------------------------------------------------------------------------------------
+--
+-- Small-step head reduction, second stage (no reference)
+
+module H₂ where
+  data _⇒_ {n} : Rel₀ (Tm n) where
+    lam₋   : ∀ {e e′} →
+             ¬ WHNF e → e CBN.⇒ e′ →
+             lam e ⇒ lam e′
+
+    lam₊   : ∀ {e e′} →
+             WHNF e → e ⇒ e′ →
+             lam e ⇒ lam e′
+
+    app₁₊  : ∀ {e₁ e₂ e₁′} →
+             NAXNF e₁ → e₁ ⇒ e₁′ →
+             app e₁ e₂ ⇒ app e₁′ e₂
+
+  open MultiStepReductions _⇒_ public
 
 
 ---------------------------------------------------------------------------------------------------------------

@@ -51,7 +51,7 @@ mutual
   nrf←nanf : ∀ {n} {e : Tm n} → NANF e → NRF e
   nrf←nanf var         = λ { (_ , ()) }
   nrf←nanf (app p₁ p₂) = λ { (_ , applam)      → case p₁ of λ ()
-                            ; (_ , app₁ p₁′ r₁) → (_ , r₁) ↯ nrf←nanf p₁
+                            ; (_ , app₁ q₁ r₁)  → (_ , r₁) ↯ nrf←nanf p₁
                             ; (_ , app₂ p₁′ r₂) → (_ , r₂) ↯ nrf←nf p₂
                             }
 
@@ -106,18 +106,7 @@ open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- SS-NO preserves NF and WHNF
-
-mutual
-  nf-⇒ : ∀ {n} {e : Tm n} {e′} → NF e → e ⇒ e′ → NF e′
-  nf-⇒ (lam p) (lam r) = lam (nf-⇒ p r)
-  nf-⇒ (nf p)  r       = nf (nanf-⇒ p r)
-
-  nanf-⇒ : ∀ {n} {e : Tm n} {e′} → NANF e → e ⇒ e′ → NANF e′
-  nanf-⇒ var         ()
-  nanf-⇒ (app () p₂) applam
-  nanf-⇒ (app p₁ p₂) (app₁ p₁′ r₁) = app (nanf-⇒ p₁ r₁) p₂
-  nanf-⇒ (app p₁ p₂) (app₂ p₁′ r₂) = app p₁′ (nf-⇒ p₂ r₂)
+-- SS-NO preserves WHNF
 
 naxnf-⇒ : ∀ {n} {e : Tm n} {e′} → NAXNF e → e ⇒ e′ → NAXNF e′
 naxnf-⇒ var      ()

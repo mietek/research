@@ -78,18 +78,7 @@ open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- SS-NO₂ preserves NF and WHNF, and goes from WHNF
-
-nanf-⇒ : ∀ {n} {e : Tm n} {e′} → NANF e → e ⇒ e′ → NANF e′
-nanf-⇒ var         ()
-nanf-⇒ (app p₁ p₂) (app₁₊ p₁′ r₂)     = app (nanf-⇒ p₁ r₂) p₂
-nanf-⇒ (app p₁ p₂) (app₂₋ p₁′ ¬p₂ r₂) = whnf←nf p₂ ↯ ¬p₂
-nanf-⇒ (app p₁ p₂) (app₂₊ p₁′ p₂′ r₂) = (_ , r₂) ↯ nrf←nf p₂
-
-nf-⇒ : ∀ {n} {e : Tm n} {e′} → NF e → e ⇒ e′ → NF e′
-nf-⇒ (lam p) (lam₋ ¬p r) = whnf←nf p ↯ ¬p
-nf-⇒ (lam p) (lam₊ p′ r) = (_ , r) ↯ nrf←nf p
-nf-⇒ (nf p)  r           = nf (nanf-⇒ p r)
+-- SS-NO₂ preserves WHNF and goes from WHNF
 
 naxnf-⇒ : ∀ {n} {e : Tm n} {e′} → NAXNF e → e ⇒ e′ → NAXNF e′
 naxnf-⇒ var      ()

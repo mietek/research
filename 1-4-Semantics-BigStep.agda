@@ -60,7 +60,7 @@ module NO where
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Big-step normal order reduction, two-stage, second stage (Garcia-Perez, et al.)
+-- Big-step normal order reduction, second stage (Garcia-Perez, et al.)
 -- ✔ From weak head normal forms to normal forms
 
 module NO₂ where
@@ -205,6 +205,25 @@ module H where
     app    : ∀ {e₁ e₂ e₁′} →
              e₁ CBN.⇓ e₁′ → NA e₁′ →
              app e₁ e₂ ⇓ app e₁′ e₂
+
+
+---------------------------------------------------------------------------------------------------------------
+--
+-- Big-step head reduction, second stage (no reference)
+-- ✔ From weak head normal forms to head normal forms
+
+module H₂ where
+  data _⇓_ {n} : Rel₀ (Tm n) where
+    var : ∀ {x} →
+          var x ⇓ var x
+
+    lam : ∀ {e e′ e″} →
+          e CBN.⇓ e′ → e′ ⇓ e″ →
+          lam e ⇓ lam e″
+
+    app : ∀ {e₁ e₂ e₁′} →
+          NA e₁ → e₁ ⇓ e₁′ →
+          app e₁ e₂ ⇓ app e₁′ e₂
 
 
 ---------------------------------------------------------------------------------------------------------------

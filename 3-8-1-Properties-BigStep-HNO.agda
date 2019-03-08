@@ -16,24 +16,24 @@ import 3-6-Properties-BigStep-HS as BS-HS
 na←naxnf-hs-⇓ : ∀ {n} {e : Tm n} {e′} → NAXNF e → e HS.⇓ e′ → NA e′
 na←naxnf-hs-⇓ var      HS.var           = var
 na←naxnf-hs-⇓ (app p₁) (HS.applam r₁ r) = case (na←naxnf-hs-⇓ p₁ r₁) of λ ()
-na←naxnf-hs-⇓ (app p₁) (HS.app r₁ q₁′)  = app
+na←naxnf-hs-⇓ (app p₁) (HS.app r₁ p₁′)  = app
 
 na←naxnf-⇓ : ∀ {n} {e : Tm n} {e′} → NAXNF e → e ⇓ e′ → NA e′
 na←naxnf-⇓ var      var                 = var
 na←naxnf-⇓ (app p₁) (applam r₁ r)       = case (na←naxnf-hs-⇓ p₁ r₁) of λ ()
-na←naxnf-⇓ (app p₁) (app r₁ q₁′ r₁′ r₂) = app
+na←naxnf-⇓ (app p₁) (app r₁ p₁′ r₁′ r₂) = app
 
 na←hnf-⇓ : ∀ {n} {e : Tm n} {e′} → HNF e → NA e → e ⇓ e′ → NA e′
 na←hnf-⇓ (lam p) () r
-na←hnf-⇓ (hnf p) q  r = na←naxnf-⇓ p r
+na←hnf-⇓ (hnf p) p′ r = na←naxnf-⇓ p r
 
 nf-⇓ : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → NF e′
 nf-⇓ var                 = nf var
 nf-⇓ (lam r)             = lam (nf-⇓ r)
 nf-⇓ (applam r₁ r)       = nf-⇓ r
-nf-⇓ (app r₁ q₁′ r₁′ r₂) = nf (app p₁ (nf-⇓ r₂))
+nf-⇓ (app r₁ p₁′ r₁′ r₂) = nf (app p₁ (nf-⇓ r₂))
   where
-    p₁ = nanf←nf (nf-⇓ r₁′) (na←hnf-⇓ (BS-HS.hnf-⇓ r₁) q₁′ r₁′)
+    p₁ = nanf←nf (nf-⇓ r₁′) (na←hnf-⇓ (BS-HS.hnf-⇓ r₁) p₁′ r₁′)
 
 
 ---------------------------------------------------------------------------------------------------------------

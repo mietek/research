@@ -124,19 +124,7 @@ open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- SS-HAO preserves NF and WNF
-
-nanf-⇒ : ∀ {n} {e : Tm n} {e′} → NANF e → e ⇒ e′ → NANF e′
-nanf-⇒ var         ()
-nanf-⇒ (app () p₂) (applam p₂′)
-nanf-⇒ (app p₁ p₂) (cbv-app₁ r₁) = (_ , r₁) ↯ CBV.nrf←nawnf (nawnf←nanf p₁)
-nanf-⇒ (app p₁ p₂) (app₁ p₁′ r₁) = app (nanf-⇒ p₁ r₁) p₂
-nanf-⇒ (app p₁ p₂) (app₂ₐ r₂)    = (_ , r₂) ↯ nrf←nf p₂
-nanf-⇒ (app p₁ p₂) (app₂ p₁′ r₂) = (_ , r₂) ↯ nrf←nf p₂
-
-nf-⇒ : ∀ {n} {e : Tm n} {e′} → NF e → e ⇒ e′ → NF e′
-nf-⇒ (lam p) (lam r) = (_ , r) ↯ nrf←nf p
-nf-⇒ (nf p)  r       = nf (nanf-⇒ p r)
+-- SS-HAO preserves WNF
 
 mutual
   wnf-⇒ : ∀ {n} {e : Tm n} {e′} → WNF e → e ⇒ e′ → WNF e′
