@@ -45,7 +45,7 @@ t [ s ] = sub t (s /0)
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Properties of  predicates and relations on well-scoped terms
+-- Properties of predicates and relations on well-scoped terms
 
 module Unary where
   Decidable : Pred (∀ {n} → Pred₀ (Tm n)) _
@@ -61,13 +61,16 @@ module Binary where
   Deterministic : Pred (∀ {n} → Rel₀ (Tm n)) _
   Deterministic R = ∀ {n} → Relation.Binary.Deterministic (R {n})
 
+  UniqueTo : (∀ {n} → Pred₀ (Tm n)) → Pred (∀ {n} → Rel₀ (Tm n)) _
+  UniqueTo P R = ∀ {n} → Relation.Binary.UniqueTo (P {n}) (R {n})
+
   Confluent : Pred (∀ {n} → Rel₀ (Tm n)) _
   Confluent R = ∀ {n} → Relation.Binary.Confluent (R {n})
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Equipment for small-step reduction
+-- Generic equipment for small-step reduction
 
 module NonReducibleForms
     (_⇒_ : ∀ {n} → Rel₀ (Tm n))
@@ -107,7 +110,7 @@ module UniquenessOfNonReducibleForms
     open NonReducibleForms _⇒_
     open MultiStepReductions _⇒_
 
-    uniq-nrf-⇒ : ∀ {n} {e : Tm n} {e′ e″} → e ⇒* e′ → NRF e′ → e ⇒* e″ → NRF e″ → e′ ≡ e″
+    uniq-nrf-⇒ : Binary.UniqueTo NRF _⇒*_
     uniq-nrf-⇒ ε        p ε          p′ = refl
     uniq-nrf-⇒ ε        p (r′ ◅ rs′) p′ = (_ , r′) ↯ p
     uniq-nrf-⇒ (r ◅ rs) p ε          p′ = (_ , r) ↯ p′
