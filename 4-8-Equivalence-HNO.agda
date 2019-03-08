@@ -11,14 +11,14 @@
 module 4-8-Equivalence-HNO where
 
 open import 1-2-Syntax-Predicates
-import 1-3-Semantics-SmallStep as SS
-import 1-4-Semantics-BigStep as BS
-import 2-6-Properties-SmallStep-HS as SS-HS
-import 2-8-1-Properties-SmallStep-HNO as SS-HNO
-import 2-8-2-Properties-SmallStep-HNO₂ as SS-HNO₂
-import 3-6-Properties-BigStep-HS as BS-HS
-import 3-8-1-Properties-BigStep-HNO as BS-HNO
-import 3-8-2-Properties-BigStep-HNO₂ as BS-HNO₂
+import 1-3-Semantics-BigStep as BS
+import 1-4-Semantics-SmallStep as SS
+import 2-6-Properties-BigStep-HS as BS-HS
+import 2-8-1-Properties-BigStep-HNO as BS-HNO
+import 2-8-2-Properties-BigStep-HNO₂ as BS-HNO₂
+import 3-6-Properties-SmallStep-HS as SS-HS
+import 3-8-1-Properties-SmallStep-HNO as SS-HNO
+import 3-8-2-Properties-SmallStep-HNO₂ as SS-HNO₂
 import 4-6-Equivalence-HS as HS
 
 

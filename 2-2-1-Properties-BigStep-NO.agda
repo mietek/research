@@ -2,11 +2,11 @@
 --
 -- Properties of BS-NO
 
-module 3-2-1-Properties-BigStep-NO where
+module 2-2-1-Properties-BigStep-NO where
 
-open import 1-4-Semantics-BigStep
+open import 1-3-Semantics-BigStep
 open NO public
-import 3-1-Properties-BigStep-CBN as BS-CBN
+import 2-1-Properties-BigStep-CBN as BS-CBN
 
 
 ---------------------------------------------------------------------------------------------------------------

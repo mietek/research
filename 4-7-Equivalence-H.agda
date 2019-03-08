@@ -11,14 +11,14 @@
 module 4-7-Equivalence-H where
 
 open import 1-2-Syntax-Predicates
-import 1-3-Semantics-SmallStep as SS
-import 1-4-Semantics-BigStep as BS
-import 2-1-Properties-SmallStep-CBN as SS-CBN
-import 2-7-1-Properties-SmallStep-H as SS-H
-import 2-7-2-Properties-SmallStep-H₂ as SS-H₂
-import 3-1-Properties-BigStep-CBN as BS-CBN
-import 3-7-1-Properties-BigStep-H as BS-H
-import 3-7-2-Properties-BigStep-H₂ as BS-H₂
+import 1-3-Semantics-BigStep as BS
+import 1-4-Semantics-SmallStep as SS
+import 2-1-Properties-BigStep-CBN as BS-CBN
+import 2-7-1-Properties-BigStep-H as BS-H
+import 2-7-2-Properties-BigStep-H₂ as BS-H₂
+import 3-1-Properties-SmallStep-CBN as SS-CBN
+import 3-7-1-Properties-SmallStep-H as SS-H
+import 3-7-2-Properties-SmallStep-H₂ as SS-H₂
 import 4-1-Equivalence-CBN as CBN
 
 

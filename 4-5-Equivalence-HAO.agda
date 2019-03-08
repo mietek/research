@@ -9,12 +9,12 @@
 module 4-5-Equivalence-HAO where
 
 open import 1-2-Syntax-Predicates
-import 1-3-Semantics-SmallStep as SS
-import 1-4-Semantics-BigStep as BS
-import 2-3-Properties-SmallStep-CBV as SS-CBV
-import 2-5-Properties-SmallStep-HAO as SS-HAO
-import 3-3-Properties-BigStep-CBV as BS-CBV
-import 3-5-Properties-BigStep-HAO as BS-HAO
+import 1-3-Semantics-BigStep as BS
+import 1-4-Semantics-SmallStep as SS
+import 2-3-Properties-BigStep-CBV as BS-CBV
+import 2-5-Properties-BigStep-HAO as BS-HAO
+import 3-3-Properties-SmallStep-CBV as SS-CBV
+import 3-5-Properties-SmallStep-HAO as SS-HAO
 import 4-3-Equivalence-CBV as CBV
 
 

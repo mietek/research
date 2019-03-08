@@ -9,10 +9,10 @@
 module 4-3-Equivalence-CBV where
 
 open import 1-2-Syntax-Predicates
-import 1-3-Semantics-SmallStep as SS
-import 1-4-Semantics-BigStep as BS
-import 2-3-Properties-SmallStep-CBV as SS-CBV
-import 3-3-Properties-BigStep-CBV as BS-CBV
+import 1-3-Semantics-BigStep as BS
+import 1-4-Semantics-SmallStep as SS
+import 2-3-Properties-BigStep-CBV as BS-CBV
+import 3-3-Properties-SmallStep-CBV as SS-CBV
 
 
 ---------------------------------------------------------------------------------------------------------------

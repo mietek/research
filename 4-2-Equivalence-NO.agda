@@ -11,14 +11,14 @@
 module 4-2-Equivalence-NO where
 
 open import 1-2-Syntax-Predicates
-import 1-3-Semantics-SmallStep as SS
-import 1-4-Semantics-BigStep as BS
-import 2-1-Properties-SmallStep-CBN as SS-CBN
-import 2-2-1-Properties-SmallStep-NO as SS-NO
-import 2-2-2-Properties-SmallStep-NO₂ as SS-NO₂
-import 3-1-Properties-BigStep-CBN as BS-CBN
-import 3-2-1-Properties-BigStep-NO as BS-NO
-import 3-2-2-Properties-BigStep-NO₂ as BS-NO₂
+import 1-3-Semantics-BigStep as BS
+import 1-4-Semantics-SmallStep as SS
+import 2-1-Properties-BigStep-CBN as BS-CBN
+import 2-2-1-Properties-BigStep-NO as BS-NO
+import 2-2-2-Properties-BigStep-NO₂ as BS-NO₂
+import 3-1-Properties-SmallStep-CBN as SS-CBN
+import 3-2-1-Properties-SmallStep-NO as SS-NO
+import 3-2-2-Properties-SmallStep-NO₂ as SS-NO₂
 import 4-1-Equivalence-CBN as CBN
 
 

@@ -9,10 +9,10 @@
 module 4-6-Equivalence-HS where
 
 open import 1-2-Syntax-Predicates
-import 1-3-Semantics-SmallStep as SS
-import 1-4-Semantics-BigStep as BS
-import 2-6-Properties-SmallStep-HS as SS-HS
-import 3-6-Properties-BigStep-HS as BS-HS
+import 1-3-Semantics-BigStep as BS
+import 1-4-Semantics-SmallStep as SS
+import 2-6-Properties-BigStep-HS as BS-HS
+import 3-6-Properties-SmallStep-HS as SS-HS
 
 
 ---------------------------------------------------------------------------------------------------------------

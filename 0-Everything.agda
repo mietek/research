@@ -9,32 +9,32 @@ open import 1-0-Prelude
 open import 1-1-Syntax-Terms
 open import 1-2-Syntax-Predicates
 
-import 1-4-Semantics-BigStep as BS
-import 1-3-Semantics-SmallStep as SS
+import 1-3-Semantics-BigStep as BS
+import 1-4-Semantics-SmallStep as SS
 
-import 3-1-Properties-BigStep-CBN
-import 3-2-1-Properties-BigStep-NO
-import 3-2-2-Properties-BigStep-NO₂
-import 3-3-Properties-BigStep-CBV
-import 3-4-Properties-BigStep-AO
-import 3-5-Properties-BigStep-HAO
-import 3-6-Properties-BigStep-HS
-import 3-7-1-Properties-BigStep-H
-import 3-7-2-Properties-BigStep-H₂
-import 3-8-1-Properties-BigStep-HNO
-import 3-8-2-Properties-BigStep-HNO₂
+import 2-1-Properties-BigStep-CBN
+import 2-2-1-Properties-BigStep-NO
+import 2-2-2-Properties-BigStep-NO₂
+import 2-3-Properties-BigStep-CBV
+import 2-4-Properties-BigStep-AO
+import 2-5-Properties-BigStep-HAO
+import 2-6-Properties-BigStep-HS
+import 2-7-1-Properties-BigStep-H
+import 2-7-2-Properties-BigStep-H₂
+import 2-8-1-Properties-BigStep-HNO
+import 2-8-2-Properties-BigStep-HNO₂
 
-import 2-1-Properties-SmallStep-CBN
-import 2-2-1-Properties-SmallStep-NO
-import 2-2-2-Properties-SmallStep-NO₂
-import 2-3-Properties-SmallStep-CBV
-import 2-4-Properties-SmallStep-AO
-import 2-5-Properties-SmallStep-HAO
-import 2-6-Properties-SmallStep-HS
-import 2-7-1-Properties-SmallStep-H
-import 2-7-2-Properties-SmallStep-H₂
-import 2-8-1-Properties-SmallStep-HNO
-import 2-8-2-Properties-SmallStep-HNO₂
+import 3-1-Properties-SmallStep-CBN
+import 3-2-1-Properties-SmallStep-NO
+import 3-2-2-Properties-SmallStep-NO₂
+import 3-3-Properties-SmallStep-CBV
+import 3-4-Properties-SmallStep-AO
+import 3-5-Properties-SmallStep-HAO
+import 3-6-Properties-SmallStep-HS
+import 3-7-1-Properties-SmallStep-H
+import 3-7-2-Properties-SmallStep-H₂
+import 3-8-1-Properties-SmallStep-HNO
+import 3-8-2-Properties-SmallStep-HNO₂
 
 import 4-1-Equivalence-CBN as CBN
 import 4-2-Equivalence-NO as NO

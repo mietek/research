@@ -1,37 +1,37 @@
 ---------------------------------------------------------------------------------------------------------------
 --
--- Properties of BS-HS
+-- Properties of BS-CBN
 
-module 3-6-Properties-BigStep-HS where
+module 2-1-Properties-BigStep-CBN where
 
-open import 1-4-Semantics-BigStep
-open HS public
+open import 1-3-Semantics-BigStep
+open CBN public
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- BS-HS goes to HNF
+-- BS-CBN goes to WHNF
 
-hnf-⇓ : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → HNF e′
-hnf-⇓ var           = hnf var
-hnf-⇓ (lam r)       = lam (hnf-⇓ r)
-hnf-⇓ (applam r₁ r) = hnf-⇓ r
-hnf-⇓ (app r₁ p₁′)  = hnf (app p₁″)
+whnf-⇓ : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → WHNF e′
+whnf-⇓ var           = whnf var
+whnf-⇓ lam           = lam
+whnf-⇓ (applam r₁ r) = whnf-⇓ r
+whnf-⇓ (app r₁ p₁′)  = whnf (app p₁″)
   where
-    p₁″ = naxnf←hnf (hnf-⇓ r₁) p₁′
+    p₁″ = naxnf←whnf (whnf-⇓ r₁) p₁′
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- BS-HS is reflexive
+-- BS-CBN is reflexive
 
 refl-⇓′ : ∀ {n} {e : Tm n} → NAXNF e → e ⇓ e
 refl-⇓′ var      = var
 refl-⇓′ (app p₁) = app (refl-⇓′ p₁) (na←naxnf p₁)
 
-refl-⇓ : ∀ {n} {e : Tm n} → HNF e → e ⇓ e
-refl-⇓ (lam p) = lam (refl-⇓ p)
-refl-⇓ (hnf p) = refl-⇓′ p
+refl-⇓ : ∀ {n} {e : Tm n} → WHNF e → e ⇓ e
+refl-⇓ lam      = lam
+refl-⇓ (whnf p) = refl-⇓′ p
 
 
 ---------------------------------------------------------------------------------------------------------------

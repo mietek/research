@@ -2,11 +2,11 @@
 --
 -- Properties of SS-HAO
 
-module 2-5-Properties-SmallStep-HAO where
+module 3-5-Properties-SmallStep-HAO where
 
-open import 1-3-Semantics-SmallStep
+open import 1-4-Semantics-SmallStep
 open HAO public
-import 2-3-Properties-SmallStep-CBV as CBV
+import 3-3-Properties-SmallStep-CBV as CBV
 
 
 ---------------------------------------------------------------------------------------------------------------

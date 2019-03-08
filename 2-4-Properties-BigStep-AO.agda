@@ -2,9 +2,9 @@
 --
 -- Properties of BS-AO
 
-module 3-4-Properties-BigStep-AO where
+module 2-4-Properties-BigStep-AO where
 
-open import 1-4-Semantics-BigStep
+open import 1-3-Semantics-BigStep
 open AO public
 
 

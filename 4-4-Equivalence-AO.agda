@@ -9,10 +9,10 @@
 module 4-4-Equivalence-AO where
 
 open import 1-2-Syntax-Predicates
-import 1-3-Semantics-SmallStep as SS
-import 1-4-Semantics-BigStep as BS
-import 2-4-Properties-SmallStep-AO as SS-AO
-import 3-4-Properties-BigStep-AO as BS-AO
+import 1-3-Semantics-BigStep as BS
+import 1-4-Semantics-SmallStep as SS
+import 2-4-Properties-BigStep-AO as BS-AO
+import 3-4-Properties-SmallStep-AO as SS-AO
 
 
 ---------------------------------------------------------------------------------------------------------------

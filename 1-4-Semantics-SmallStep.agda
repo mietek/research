@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------------------
 
-module 1-3-Semantics-SmallStep where
+module 1-4-Semantics-SmallStep where
 
 open import 1-2-Syntax-Predicates public
 

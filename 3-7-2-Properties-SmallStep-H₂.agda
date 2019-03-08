@@ -2,11 +2,11 @@
 --
 -- Properties of SS-H₂
 
-module 2-7-2-Properties-SmallStep-H₂ where
+module 3-7-2-Properties-SmallStep-H₂ where
 
-open import 1-3-Semantics-SmallStep
+open import 1-4-Semantics-SmallStep
 open H₂ public
-import 2-1-Properties-SmallStep-CBN as CBN
+import 3-1-Properties-SmallStep-CBN as CBN
 
 
 ---------------------------------------------------------------------------------------------------------------

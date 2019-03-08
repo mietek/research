@@ -2,11 +2,11 @@
 --
 -- Properties of BS-HAO
 
-module 3-5-Properties-BigStep-HAO where
+module 2-5-Properties-BigStep-HAO where
 
-open import 1-4-Semantics-BigStep
+open import 1-3-Semantics-BigStep
 open HAO public
-import 3-3-Properties-BigStep-CBV as BS-CBV
+import 2-3-Properties-BigStep-CBV as BS-CBV
 
 
 ---------------------------------------------------------------------------------------------------------------
