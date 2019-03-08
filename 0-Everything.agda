@@ -122,8 +122,8 @@ thm-4-7-6 = H.Thm-4-7-6.ss-h↔bs-h
 
 -- Theorem 4.8.6.  SS-HNO to NF and BS-HNO coincide
 
--- thm-4-8-6 : ∀ {n} {e : Tm n} {e′} → (e SS.HNO.⇒* e′ × NF e′) ↔ e BS.HNO.⇓ e′
--- thm-4-8-6 = HNO.Thm-4-8-6.ss-hno↔bs-hno
+thm-4-8-6 : ∀ {n} {e : Tm n} {e′} → (e SS.HNO.⇒* e′ × NF e′) ↔ e BS.HNO.⇓ e′
+thm-4-8-6 = HNO.Thm-4-8-6.ss-hno↔bs-hno
 
 
 ---------------------------------------------------------------------------------------------------------------

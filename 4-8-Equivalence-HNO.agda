@@ -85,18 +85,60 @@ module Lem-4-8-2 where
   ¬lam⇒*app : ∀ {n} {e : Tm (suc n)} {e₁ e₂} → ¬ (lam e ⇒* app e₁ e₂)
   ¬lam⇒*app = λ { (lam₊ p r ◅ rs)  → rs ↯ ¬lam⇒*app }
 
+  rev-app₂₊* : ∀ {n i} {e₁ e₂ : Tm n} {e′} →
+               NANF e₁ → HNF e₂ → app e₁ e₂ ⇒*⟨ i ⟩ e′ → NF e′ →
+               (∃ λ e₂′ →
+                 e₂ ⇒*⟨ i ⟩ e₂′ × NF e₂′ × app e₁ e₂′ ≡ e′)
+  rev-app₂₊* p₁ p₂ ε                       (nf (app p₁′ p₂′)) = _ , ε , p₂′ , refl
+  rev-app₂₊* p₁ p₂ (app₁₊ p₁′ r₁ ◅ rs)     p′                 = (_ , r₁) ↯ nrf←nanf p₁
+  rev-app₂₊* p₁ p₂ (app₂₋ p₁′ ¬p₂ r₂ ◅ rs) p′                 = p₂ ↯ ¬p₂
+  rev-app₂₊* p₁ p₂ (app₂₊ p₁′ p₂′ r₂ ◅ rs) p′                 with rev-app₂₊* p₁′ (hnf-⇒ r₂) rs p′
+  ... | _ , rs₂ , p₂″ , refl                                  = _ , r₂ ◅ rs₂ , p₂″ , refl
+
+  rev-app₂₋* : ∀ {n i} {e₁ e₂ : Tm n} {e′} →
+               NANF e₁ → app e₁ e₂ ⇒*⟨ i ⟩ e′ → NF e′ →
+               (∃² λ e₂′ e₂″ →
+                 e₂ SS.HS.⇒*⟨ i ⟩ e₂′ × HNF e₂′ × e₂′ ⇒*⟨ i ⟩ e₂″ × NF e₂″ × app e₁ e₂″ ≡ e′)
+  rev-app₂₋* p₁ ε                       (nf (app p₁′ p₂′)) = _ , ε , hnf←nf p₂′ , ε , p₂′ , refl
+  rev-app₂₋* p₁ (app₁₊ p₁′ r₁ ◅ rs)     p′                 = (_ , r₁) ↯ nrf←nanf p₁
+  rev-app₂₋* p₁ (app₂₋ p₁′ ¬p₂ r₂ ◅ rs) p′                 with rev-app₂₋* p₁′ rs p′
+  ... | _ , rs₂ , p₂ , rs₂′ , p₂′ , refl                   = _ , r₂ ◅ rs₂ , p₂ , rs₂′ , p₂′ , refl
+  rev-app₂₋* p₁ (app₂₊ p₁′ p₂ r₂ ◅ rs)  p′                 with rev-app₂₊* p₁′ (hnf-⇒ r₂) rs p′
+  ... | _ , rs₂ , p₂′ , refl                               = _ , ε , p₂ , r₂ ◅ rs₂ , p₂′ , refl
+
+  rev-app₁₊* : ∀ {n i} {e₁ e₂ : Tm n} {e′} →
+               app e₁ e₂ ⇒*⟨ i ⟩ e′ → NF e′ →
+               (∃³ λ e₁′ e₂′ e₂″ →
+                 e₁ ⇒*⟨ i ⟩ e₁′ × NANF e₁′ × e₂ SS.HS.⇒*⟨ i ⟩ e₂′ × HNF e₂′ ×
+                 e₂′ ⇒*⟨ i ⟩ e₂″ × NF e₂″ × app e₁′ e₂″ ≡ e′)
+  rev-app₁₊* ε                      (nf (app p₁′ p₂′)) = _ , ε , p₁′ , ε , hnf←nf p₂′ , ε , p₂′ , refl
+  rev-app₁₊* (app₁₊ p₁ r₁ ◅ rs)     p′                 with rev-app₁₊* rs p′
+  ... | _ , rs₁ , p₁′ , rs₂ , p₂ , rs₂′ , p₂′ , refl   = _ , r₁ ◅ rs₁ , p₁′ , rs₂ , p₂ , rs₂′ , p₂′ , refl
+  rev-app₁₊* (app₂₋ p₁ ¬p₂ r₂ ◅ rs) p′                 with rev-app₂₋* p₁ rs p′
+  ... | _ , rs₂ , p₂ , rs₂′ , p₂′ , refl               = _ , ε , p₁ , r₂ ◅ rs₂ , p₂ , rs₂′ , p₂′ , refl
+  rev-app₁₊* (app₂₊ p₁ p₂ r₂ ◅ rs)  p′                 with rev-app₂₊* p₁ (hnf-⇒ r₂) rs p′
+  ... | _ , rs₂ , p₂′ , refl                           = _ , ε , p₁ , ε , p₂ , r₂ ◅ rs₂ , p₂′ , refl
+
   mutual
     bs←ss : ∀ {n i} {e : Tm n} {e′} → e ⇒*⟨ i ⟩ e′ → NF e′ → e ⇓ e′
     bs←ss ε        p′ = refl-⇓ p′
     bs←ss (r ◅ rs) p′ = bs←ss′ r rs p′
 
     bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → NF e″ → e ⇓ e″
-    bs←ss′ (lam₊ p r)        rs (lam p″)       = lam p (bs←ss′ r (rev-lam₊* (hnf-⇒ r) rs) p″)
-    bs←ss′ (lam₊ p r)        rs (nf var)       = rs ↯ ¬lam⇒*var
-    bs←ss′ (lam₊ p r)        rs (nf (app _ _)) = rs ↯ ¬lam⇒*app
-    bs←ss′ (app₁₊ p₁ r₁)     rs p″             = {!!}
-    bs←ss′ (app₂₋ p₁ ¬p₂ r₂) rs p″             = {!!}
-    bs←ss′ (app₂₊ p₁ p₂ r₂)  rs p″             = {!!}
+    bs←ss′ (lam₊ p r)        rs (lam p″)              = lam p (bs←ss′ r (rev-lam₊* (hnf-⇒ r) rs) p″)
+    bs←ss′ (lam₊ p r)        rs (nf var)              = rs ↯ ¬lam⇒*var
+    bs←ss′ (lam₊ p r)        rs (nf (app _ _))        = rs ↯ ¬lam⇒*app
+    bs←ss′ (app₁₊ p₁ r₁)     rs p″                    with rev-app₁₊* rs p″
+    ... | _ , rs₁ , p₁′ , rs₂ , p₂ , rs₂′ , p₂′ , refl = app p₁ (bs←ss′ r₁ rs₁ (nf p₁′))
+                                                             (HS.Lem-4-6-1.bs←ss rs₂ p₂)
+                                                             (bs←ss rs₂′ p₂′)
+    bs←ss′ (app₂₋ p₁ ¬p₂ r₂) rs p″                    with rev-app₂₋* p₁ rs p″
+    ... | _ , rs₂ , p₂ , rs₂′ , p₂′ , refl             = app (naxnf←nanf p₁) (refl-⇓′ p₁)
+                                                             (HS.Lem-4-6-1.bs←ss′ r₂ rs₂ p₂)
+                                                             (bs←ss rs₂′ p₂′)
+    bs←ss′ (app₂₊ p₁ p₂ r₂)  rs p″                    with rev-app₂₊* p₁ (hnf-⇒ r₂) rs p″
+    ... | _ , rs₂ , p₂′ , refl                         = app (naxnf←nanf p₁) (refl-⇓′ p₁)
+                                                             (BS-HS.refl-⇓ p₂) (bs←ss′ r₂ rs₂ p₂′)
 
 
 ---------------------------------------------------------------------------------------------------------------
