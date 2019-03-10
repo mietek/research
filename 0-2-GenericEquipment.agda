@@ -41,7 +41,7 @@ module DerivedEquipment
     NRF e = ¬ (∃ λ e′ → e ⇒ e′)
 
     -- Iterated small-step reduction, indexed by size
-    _⇒*⟨_⟩_ : ∀ {n} → Tm n → Size → Tm n → Set₀
+    _⇒*⟨_⟩_ : ∀ {n} → Tm n → Size → Tm n → Set
     e ⇒*⟨ i ⟩ e′ = (_⇒_ *⟨ i ⟩) e e′
 
     -- Iterated small-step reduction
@@ -49,19 +49,19 @@ module DerivedEquipment
     e ⇒* e′ = e ⇒*⟨ ∞ ⟩ e′
 
     -- Evaluation, indexed by value predicate and size
-    _⇓[_]⟨_⟩_ : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Size → Tm n → Set₀
+    _⇓[_]⟨_⟩_ : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Size → Tm n → Set
     e ⇓[ P ]⟨ i ⟩ e′ = e ⇒*⟨ i ⟩ e′ × P e′
 
     -- Evaluation, indexed by value predicate
-    _⇓[_]_ : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Tm n → Set₀
+    _⇓[_]_ : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Tm n → Set
     e ⇓[ P ] e′ = e ⇓[ P ]⟨ ∞ ⟩ e′
 
     -- Termination, indexed by value predicate and size
-    _⇓[_]⟨_⟩ : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Size → Set₀
+    _⇓[_]⟨_⟩ : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Size → Set
     e ⇓[ P ]⟨ i ⟩ = ∃ λ e′ → e ⇓[ P ]⟨ i ⟩ e′
 
     -- Termination, indexed by value predicate
-    _⇓[_] : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Set₀
+    _⇓[_] : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Set
     e ⇓[ P ] = e ⇓[ P ]⟨ ∞ ⟩
 
     {-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
