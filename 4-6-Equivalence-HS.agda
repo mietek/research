@@ -46,15 +46,15 @@ module Lem-4-6-1 where
   ... | inj₂ (_ , rs₁ , p₁′ , refl)         = inj₂ (_ , r₁ ◅ rs₁ , p₁′ , refl)
 
   mutual
-    bs←ss : ∀ {n i} {e : Tm n} {e′} → e ⇒*⟨ i ⟩ e′ → HNF e′ → e ⇓ e′
-    bs←ss ε        p′ = refl-⇓ p′
+    bs←ss : ∀ {n i} {e : Tm n} {e′} → e ⇒*⟨ i ⟩ e′ → HNF e′ → e ⟱ e′
+    bs←ss ε        p′ = refl-⟱ p′
     bs←ss (r ◅ rs) p′ = bs←ss′ r rs p′
 
-    bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → HNF e″ → e ⇓ e″
+    bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → HNF e″ → e ⟱ e″
     bs←ss′ (lam r)     rs (lam p″)      = lam (bs←ss′ r (rev-lam* rs) p″)
     bs←ss′ (lam r)     rs (hnf var)     = rs ↯ ¬lam⇒*var
     bs←ss′ (lam r)     rs (hnf (app _)) = rs ↯ ¬lam⇒*app
-    bs←ss′ (applam p₁) rs p″            = applam (refl-⇓ (lam p₁)) (bs←ss rs p″)
+    bs←ss′ (applam p₁) rs p″            = applam (refl-⟱ (lam p₁)) (bs←ss rs p″)
     bs←ss′ (app₁ r₁)   rs p″            with rev-app₁* rs p″
     ... | inj₁ (_ , rs₁ , p₁′ , rs′)     = applam (bs←ss′ r₁ rs₁ (lam p₁′)) (bs←ss rs′ p″)
     ... | inj₂ (_ , rs₁ , p₁′ , refl)    = app (bs←ss′ r₁ rs₁ (hnf p₁′)) (na←naxnf p₁′)
@@ -89,10 +89,10 @@ module Lem-4-6-2 where
   bs-app : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ ⇒* e₁′ → app e₁ e₂ ⇒* app e₁′ e₂
   bs-app = app₁*
 
-  ss←bs : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → e ⇒* e′
+  ss←bs : ∀ {n} {e : Tm n} {e′} → e ⟱ e′ → e ⇒* e′
   ss←bs var           = ε
   ss←bs (lam r)       = bs-lam (ss←bs r)
-  ss←bs (applam r₁ r) = bs-applam (ss←bs r₁) (hnf-⇓ r₁) (ss←bs r)
+  ss←bs (applam r₁ r) = bs-applam (ss←bs r₁) (hnf-⟱ r₁) (ss←bs r)
   ss←bs (app r₁ p₁′)  = bs-app (ss←bs r₁)
 
 
@@ -101,8 +101,8 @@ module Lem-4-6-2 where
 -- Theorem 4.6.3.  SS-HS to HNF and BS-HS coincide
 
 module Thm-4-6-3 where
-  ss-hs↔bs-hs : ∀ {n} {e : Tm n} {e′} → (e SS.HS.⇒* e′ × HNF e′) ↔ e BS.HS.⇓ e′
-  ss-hs↔bs-hs = uncurry Lem-4-6-1.bs←ss , λ r → Lem-4-6-2.ss←bs r , BS-HS.hnf-⇓ r
+  ss-hs↔bs-hs : ∀ {n} {e : Tm n} {e′} → (e SS.HS.⇒* e′ × HNF e′) ↔ e BS.HS.⟱ e′
+  ss-hs↔bs-hs = uncurry Lem-4-6-1.bs←ss , λ r → Lem-4-6-2.ss←bs r , BS-HS.hnf-⟱ r
 
 
 ---------------------------------------------------------------------------------------------------------------

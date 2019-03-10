@@ -36,11 +36,11 @@ module Lem-4-1-1 where
   ... | inj₂ (_ , rs₁ , p₁′ , refl)         = inj₂ (_ , r₁ ◅ rs₁ , p₁′ , refl)
 
   mutual
-    bs←ss : ∀ {n i} {e : Tm n} {e′} → e ⇒*⟨ i ⟩ e′ → WHNF e′ → e ⇓ e′
-    bs←ss ε        p′ = refl-⇓ p′
+    bs←ss : ∀ {n i} {e : Tm n} {e′} → e ⇒*⟨ i ⟩ e′ → WHNF e′ → e ⟱ e′
+    bs←ss ε        p′ = refl-⟱ p′
     bs←ss (r ◅ rs) p′ = bs←ss′ r rs p′
 
-    bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → WHNF e″ → e ⇓ e″
+    bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → WHNF e″ → e ⟱ e″
     bs←ss′ applam    rs p″           = applam lam (bs←ss rs p″)
     bs←ss′ (app₁ r₁) rs p″           with rev-app₁* rs p″
     ... | inj₁ (_ , rs′ , rs″)        = applam (bs←ss′ r₁ rs′ lam) (bs←ss rs″ p″)
@@ -67,7 +67,7 @@ module Lem-4-1-2 where
   bs-app : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ ⇒* e₁′ → app e₁ e₂ ⇒* app e₁′ e₂
   bs-app = app₁*
 
-  ss←bs : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → e ⇒* e′
+  ss←bs : ∀ {n} {e : Tm n} {e′} → e ⟱ e′ → e ⇒* e′
   ss←bs var           = ε
   ss←bs lam           = ε
   ss←bs (applam r₁ r) = bs-applam (ss←bs r₁) (ss←bs r)
@@ -79,8 +79,8 @@ module Lem-4-1-2 where
 -- Theorem 4.1.3.  SS-CBN to WHNF and BS-CBN coincide
 
 module Thm-4-1-3 where
-  ss-cbn↔bs-cbn : ∀ {n} {e : Tm n} {e′} → (e SS.CBN.⇒* e′ × WHNF e′) ↔ e BS.CBN.⇓ e′
-  ss-cbn↔bs-cbn = uncurry Lem-4-1-1.bs←ss , λ r → Lem-4-1-2.ss←bs r , BS-CBN.whnf-⇓ r
+  ss-cbn↔bs-cbn : ∀ {n} {e : Tm n} {e′} → (e SS.CBN.⇒* e′ × WHNF e′) ↔ e BS.CBN.⟱ e′
+  ss-cbn↔bs-cbn = uncurry Lem-4-1-1.bs←ss , λ r → Lem-4-1-2.ss←bs r , BS-CBN.whnf-⟱ r
 
 
 ---------------------------------------------------------------------------------------------------------------

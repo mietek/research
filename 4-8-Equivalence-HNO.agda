@@ -120,11 +120,11 @@ module Lem-4-8-2 where
   ... | _ , rs₂ , p₂′ , refl                           = _ , ε , p₁ , ε , p₂ , r₂ ◅ rs₂ , p₂′ , refl
 
   mutual
-    bs←ss : ∀ {n i} {e : Tm n} {e′} → e ⇒*⟨ i ⟩ e′ → NF e′ → e ⇓ e′
-    bs←ss ε        p′ = refl-⇓ p′
+    bs←ss : ∀ {n i} {e : Tm n} {e′} → e ⇒*⟨ i ⟩ e′ → NF e′ → e ⟱ e′
+    bs←ss ε        p′ = refl-⟱ p′
     bs←ss (r ◅ rs) p′ = bs←ss′ r rs p′
 
-    bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → NF e″ → e ⇓ e″
+    bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → NF e″ → e ⟱ e″
     bs←ss′ (lam₊ p r)        rs (lam p″)              = lam p (bs←ss′ r (rev-lam₊* (hnf-⇒ r) rs) p″)
     bs←ss′ (lam₊ p r)        rs (nf var)              = rs ↯ ¬lam⇒*var
     bs←ss′ (lam₊ p r)        rs (nf (app _ _))        = rs ↯ ¬lam⇒*app
@@ -133,12 +133,12 @@ module Lem-4-8-2 where
                                                              (HS.Lem-4-6-1.bs←ss rs₂ p₂)
                                                              (bs←ss rs₂′ p₂′)
     bs←ss′ (app₂₋ p₁ ¬p₂ r₂) rs p″                    with rev-app₂₋* p₁ rs p″
-    ... | _ , rs₂ , p₂ , rs₂′ , p₂′ , refl             = app (naxnf←nanf p₁) (refl-⇓′ p₁)
+    ... | _ , rs₂ , p₂ , rs₂′ , p₂′ , refl             = app (naxnf←nanf p₁) (refl-⟱′ p₁)
                                                              (HS.Lem-4-6-1.bs←ss′ r₂ rs₂ p₂)
                                                              (bs←ss rs₂′ p₂′)
     bs←ss′ (app₂₊ p₁ p₂ r₂)  rs p″                    with rev-app₂₊* p₁ (hnf-⇒ r₂) rs p″
-    ... | _ , rs₂ , p₂′ , refl                         = app (naxnf←nanf p₁) (refl-⇓′ p₁)
-                                                             (BS-HS.refl-⇓ p₂) (bs←ss′ r₂ rs₂ p₂′)
+    ... | _ , rs₂ , p₂′ , refl                         = app (naxnf←nanf p₁) (refl-⟱′ p₁)
+                                                             (BS-HS.refl-⟱ p₂) (bs←ss′ r₂ rs₂ p₂′)
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -148,13 +148,13 @@ module Lem-4-8-2 where
 module Lem-4-8-3 where
   open BS
 
-  hno←hs|hno₂ : ∀ {n} {e : Tm n} {e′ e″} → e HS.⇓ e′ → e′ HNO₂.⇓ e″ → e HNO.⇓ e″
+  hno←hs|hno₂ : ∀ {n} {e : Tm n} {e′ e″} → e HS.⟱ e′ → e′ HNO₂.⟱ e″ → e HNO.⟱ e″
   hno←hs|hno₂ HS.var           HNO₂.var                 = HNO.var
   hno←hs|hno₂ (HS.lam r)       (HNO₂.lam p r′)          = HNO.lam (hno←hs|hno₂ r r′)
   hno←hs|hno₂ (HS.applam r₁ r) r′                       = HNO.applam r₁ (hno←hs|hno₂ r r′)
   hno←hs|hno₂ (HS.app r₁ p₁′)  (HNO₂.app p₁ r₁′ r₂ r₂′) = HNO.app r₁ p₁′ r₁″ (hno←hs|hno₂ r₂ r₂′)
     where
-      r₁″ = hno←hs|hno₂ (BS-HS.refl-⇓ (BS-HS.hnf-⇓ r₁)) r₁′
+      r₁″ = hno←hs|hno₂ (BS-HS.refl-⟱ (BS-HS.hnf-⟱ r₁)) r₁′
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -165,7 +165,7 @@ module Cor-4-8-4 where
   open SS-HNO
   open BS-HNO
 
-  bs←ss : ∀ {n} {e : Tm n} {e′} → e ⇒* e′ → NF e′ → e ⇓ e′
+  bs←ss : ∀ {n} {e : Tm n} {e′} → e ⇒* e′ → NF e′ → e ⟱ e′
   bs←ss rs p′             with Lem-4-8-1.hs|hno₂←hno* rs p′
   ... | _ , rs′ , p″ , rs″ = Lem-4-8-3.hno←hs|hno₂ (HS.Lem-4-6-1.bs←ss rs′ p″)
                                                     (Lem-4-8-2.bs←ss rs″ p′)
@@ -209,14 +209,14 @@ module Lem-4-8-5 where
            app e₁ e₂ ⇒* app e₁″ e₂′
   bs-app rs₁ p₁′ rs₁′ p₁″ rs₂ = hs-app₁* rs₁ ◅◅ app₁₊* p₁′ rs₁′ ◅◅ app₂* p₁″ rs₂
 
-  ss←bs : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → e ⇒* e′
+  ss←bs : ∀ {n} {e : Tm n} {e′} → e ⟱ e′ → e ⇒* e′
   ss←bs var                 = ε
   ss←bs (lam r)             = bs-lam (ss←bs r)
-  ss←bs (applam r₁ r)       = bs-applam (HS.Lem-4-6-2.ss←bs r₁) (BS-HS.hnf-⇓ r₁) (ss←bs r)
+  ss←bs (applam r₁ r)       = bs-applam (HS.Lem-4-6-2.ss←bs r₁) (BS-HS.hnf-⟱ r₁) (ss←bs r)
   ss←bs (app r₁ p₁′ r₁′ r₂) = bs-app (HS.Lem-4-6-2.ss←bs r₁) p₁″ (ss←bs r₁′) p₁‴ (ss←bs r₂)
     where
-      p₁″ = naxnf←hnf (BS-HS.hnf-⇓ r₁) p₁′
-      p₁‴ = nanf←nf (nf-⇓ r₁′) (na←hnf-⇓ (BS-HS.hnf-⇓ r₁) p₁′ r₁′)
+      p₁″ = naxnf←hnf (BS-HS.hnf-⟱ r₁) p₁′
+      p₁‴ = nanf←nf (nf-⟱ r₁′) (na←hnf-⟱ (BS-HS.hnf-⟱ r₁) p₁′ r₁′)
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -224,8 +224,8 @@ module Lem-4-8-5 where
 -- Theorem 4.8.6.  SS-HNO to NF and BS-HNO coincide
 
 module Thm-4-8-6 where
-  ss-hno↔bs-hno : ∀ {n} {e : Tm n} {e′} → (e SS.HNO.⇒* e′ × NF e′) ↔ e BS.HNO.⇓ e′
-  ss-hno↔bs-hno = uncurry Cor-4-8-4.bs←ss , λ r → Lem-4-8-5.ss←bs r , BS-HNO.nf-⇓ r
+  ss-hno↔bs-hno : ∀ {n} {e : Tm n} {e′} → (e SS.HNO.⇒* e′ × NF e′) ↔ e BS.HNO.⟱ e′
+  ss-hno↔bs-hno = uncurry Cor-4-8-4.bs←ss , λ r → Lem-4-8-5.ss←bs r , BS-HNO.nf-⟱ r
 
 
 ---------------------------------------------------------------------------------------------------------------

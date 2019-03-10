@@ -132,17 +132,17 @@ module Lem-4-2-2 where
   ... | _ , rs₂ , p₂′ , refl                           = _ , ε , p₁ , ε , p₂ , r₂ ◅ rs₂ , p₂′ , refl
 
   mutual
-    bs←ss : ∀ {n i} {e : Tm n} {e′} → e ⇒*⟨ i ⟩ e′ → NF e′ → e ⇓ e′
-    bs←ss ε        p′ = refl-⇓ p′
+    bs←ss : ∀ {n i} {e : Tm n} {e′} → e ⇒*⟨ i ⟩ e′ → NF e′ → e ⟱ e′
+    bs←ss ε        p′ = refl-⟱ p′
     bs←ss (r ◅ rs) p′ = bs←ss′ r rs p′
 
-    bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → NF e″ → e ⇓ e″
+    bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → NF e″ → e ⟱ e″
     bs←ss′ (lam₋ ¬p r)       rs (lam p″)              with rev-lam₋* rs p″
     ... | _ , rs′ , p′ , rs″                           = lam (CBN.Lem-4-1-1.bs←ss′ r rs′ p′)
                                                              (bs←ss rs″ p″)
     bs←ss′ (lam₋ ¬p r)       rs (nf var)              = rs ↯ ¬lam⇒*var
     bs←ss′ (lam₋ ¬p r)       rs (nf (app _ _))        = rs ↯ ¬lam⇒*app
-    bs←ss′ (lam₊ p r)        rs (lam p″)              = lam (BS-CBN.refl-⇓ p)
+    bs←ss′ (lam₊ p r)        rs (lam p″)              = lam (BS-CBN.refl-⟱ p)
                                                              (bs←ss′ r (rev-lam₊* (whnf-⇒ r) rs) p″)
     bs←ss′ (lam₊ p r)        rs (nf var)              = rs ↯ ¬lam⇒*var
     bs←ss′ (lam₊ p r)        rs (nf (app _ _))        = rs ↯ ¬lam⇒*app
@@ -151,12 +151,12 @@ module Lem-4-2-2 where
                                                              (CBN.Lem-4-1-1.bs←ss rs₂ p₂)
                                                              (bs←ss rs₂′ p₂′)
     bs←ss′ (app₂₋ p₁ ¬p₂ r₂) rs p″                    with rev-app₂₋* p₁ rs p″
-    ... | _ , rs₂ , p₂ , rs₂′ , p₂′ , refl             = app (naxnf←nanf p₁) (refl-⇓′ p₁)
+    ... | _ , rs₂ , p₂ , rs₂′ , p₂′ , refl             = app (naxnf←nanf p₁) (refl-⟱′ p₁)
                                                              (CBN.Lem-4-1-1.bs←ss′ r₂ rs₂ p₂)
                                                              (bs←ss rs₂′ p₂′)
     bs←ss′ (app₂₊ p₁ p₂ r₂)  rs p″                    with rev-app₂₊* p₁ (whnf-⇒ r₂) rs p″
-    ... | _ , rs₂ , p₂′ , refl                         = app (naxnf←nanf p₁) (refl-⇓′ p₁)
-                                                             (BS-CBN.refl-⇓ p₂)
+    ... | _ , rs₂ , p₂′ , refl                         = app (naxnf←nanf p₁) (refl-⟱′ p₁)
+                                                             (BS-CBN.refl-⟱ p₂)
                                                              (bs←ss′ r₂ rs₂ p₂′)
 
 
@@ -167,13 +167,13 @@ module Lem-4-2-2 where
 module Lem-4-2-3 where
   open BS
 
-  no←cbn|no₂ : ∀ {n} {e : Tm n} {e′ e″} → e CBN.⇓ e′ → e′ NO₂.⇓ e″ → e NO.⇓ e″
+  no←cbn|no₂ : ∀ {n} {e : Tm n} {e′ e″} → e CBN.⟱ e′ → e′ NO₂.⟱ e″ → e NO.⟱ e″
   no←cbn|no₂ CBN.var           NO₂.var                 = NO.var
   no←cbn|no₂ CBN.lam           (NO₂.lam r r′)          = NO.lam (no←cbn|no₂ r r′)
   no←cbn|no₂ (CBN.applam r₁ r) r′                      = NO.applam r₁ (no←cbn|no₂ r r′)
   no←cbn|no₂ (CBN.app r₁ p₁′)  (NO₂.app p₁ r₁′ r₂ r₂′) = NO.app r₁ p₁′ r₁″ (no←cbn|no₂ r₂ r₂′)
     where
-      r₁″ = no←cbn|no₂ (BS-CBN.refl-⇓ (BS-CBN.whnf-⇓ r₁)) r₁′
+      r₁″ = no←cbn|no₂ (BS-CBN.refl-⟱ (BS-CBN.whnf-⟱ r₁)) r₁′
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -184,7 +184,7 @@ module Cor-4-2-4 where
   open SS-NO
   open BS-NO
 
-  bs←ss : ∀ {n} {e : Tm n} {e′} → e ⇒* e′ → NF e′ → e ⇓ e′
+  bs←ss : ∀ {n} {e : Tm n} {e′} → e ⇒* e′ → NF e′ → e ⟱ e′
   bs←ss rs p′             with Lem-4-2-1.cbn|no₂←no* rs p′
   ... | _ , rs′ , p″ , rs″ = Lem-4-2-3.no←cbn|no₂ (CBN.Lem-4-1-1.bs←ss rs′ p″)
                                                    (Lem-4-2-2.bs←ss rs″ p′)
@@ -227,14 +227,14 @@ module Lem-4-2-5 where
            app e₁ e₂ ⇒* app e₁″ e₂′
   bs-app rs₁ p₁′ rs₁′ p₁″ rs₂ = cbn-app₁* rs₁ ◅◅ app₁₊* p₁′ rs₁′ ◅◅ app₂* p₁″ rs₂
 
-  ss←bs : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → e ⇒* e′
+  ss←bs : ∀ {n} {e : Tm n} {e′} → e ⟱ e′ → e ⇒* e′
   ss←bs var                 = ε
   ss←bs (lam r)             = bs-lam (ss←bs r)
   ss←bs (applam r₁ r)       = bs-applam (CBN.Lem-4-1-2.ss←bs r₁) (ss←bs r)
   ss←bs (app r₁ p₁′ r₁′ r₂) = bs-app (CBN.Lem-4-1-2.ss←bs r₁) p₁″ (ss←bs r₁′) p₁‴ (ss←bs r₂)
     where
-      p₁″ = naxnf←whnf (BS-CBN.whnf-⇓ r₁) p₁′
-      p₁‴ = nanf←nf (nf-⇓ r₁′) (na←whnf-⇓ (BS-CBN.whnf-⇓ r₁) p₁′ r₁′)
+      p₁″ = naxnf←whnf (BS-CBN.whnf-⟱ r₁) p₁′
+      p₁‴ = nanf←nf (nf-⟱ r₁′) (na←whnf-⟱ (BS-CBN.whnf-⟱ r₁) p₁′ r₁′)
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -242,8 +242,8 @@ module Lem-4-2-5 where
 -- Theorem 4.2.6.  SS-NO to NF and BS-NO coincide
 
 module Thm-4-2-6 where
-  ss-no↔bs-no : ∀ {n} {e : Tm n} {e′} → (e SS.NO.⇒* e′ × NF e′) ↔ e BS.NO.⇓ e′
-  ss-no↔bs-no = uncurry Cor-4-2-4.bs←ss , λ r → Lem-4-2-5.ss←bs r , BS-NO.nf-⇓ r
+  ss-no↔bs-no : ∀ {n} {e : Tm n} {e′} → (e SS.NO.⇒* e′ × NF e′) ↔ e BS.NO.⟱ e′
+  ss-no↔bs-no = uncurry Cor-4-2-4.bs←ss , λ r → Lem-4-2-5.ss←bs r , BS-NO.nf-⟱ r
 
 
 ---------------------------------------------------------------------------------------------------------------

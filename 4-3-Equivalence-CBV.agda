@@ -39,12 +39,12 @@ module Lem-4-3-1 where
   ... | inj₂ (_ , rs₁ , p₁′ , rs₂ , p₂′ , refl)     = inj₂ (_ , rs₁ , p₁′ , r₂ ◅ rs₂ , p₂′ , refl)
 
   mutual
-    bs←ss : ∀ {n i} {e : Tm n} {e′} → e ⇒*⟨ i ⟩ e′ → WNF e′ → e ⇓ e′
-    bs←ss ε        p′ = refl-⇓ p′
+    bs←ss : ∀ {n i} {e : Tm n} {e′} → e ⇒*⟨ i ⟩ e′ → WNF e′ → e ⟱ e′
+    bs←ss ε        p′ = refl-⟱ p′
     bs←ss (r ◅ rs) p′ = bs←ss′ r rs p′
 
-    bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → WNF e″ → e ⇓ e″
-    bs←ss′ (applam p₂)  rs p″                    = applam lam (refl-⇓ p₂) (bs←ss rs p″)
+    bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → WNF e″ → e ⟱ e″
+    bs←ss′ (applam p₂)  rs p″                    = applam lam (refl-⟱ p₂) (bs←ss rs p″)
     bs←ss′ (app₁ r₁)    rs p″                    with rev-app* rs p″
     ... | inj₁ (_ , rs₁ , rs₂ , p₂′ , rs′)        = applam (bs←ss′ r₁ rs₁ lam) (bs←ss rs₂ p₂′)
                                                            (bs←ss rs′ p″)
@@ -84,11 +84,11 @@ module Lem-4-3-2 where
            app e₁ e₂ ⇒* app e₁′ e₂′
   bs-app rs₁ p₁′ rs₂ = app₁* rs₁ ◅◅ app₂* p₁′ rs₂
 
-  ss←bs : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → e ⇒* e′
+  ss←bs : ∀ {n} {e : Tm n} {e′} → e ⟱ e′ → e ⇒* e′
   ss←bs var              = ε
   ss←bs lam              = ε
-  ss←bs (applam r₁ r₂ r) = bs-applam (ss←bs r₁) (ss←bs r₂) (wnf-⇓ r₂) (ss←bs r)
-  ss←bs (app r₁ p₁′ r₂)  = bs-app (ss←bs r₁) (wnf-⇓ r₁) (ss←bs r₂)
+  ss←bs (applam r₁ r₂ r) = bs-applam (ss←bs r₁) (ss←bs r₂) (wnf-⟱ r₂) (ss←bs r)
+  ss←bs (app r₁ p₁′ r₂)  = bs-app (ss←bs r₁) (wnf-⟱ r₁) (ss←bs r₂)
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -96,8 +96,8 @@ module Lem-4-3-2 where
 -- Theorem 4.3.3.  SS-CBV to WNF and BS-CBV coincide
 
 module Thm-4-3-3 where
-  ss-cbv↔bs-cbv : ∀ {n} {e : Tm n} {e′} → (e SS.CBV.⇒* e′ × WNF e′) ↔ e BS.CBV.⇓ e′
-  ss-cbv↔bs-cbv = uncurry Lem-4-3-1.bs←ss , λ r → Lem-4-3-2.ss←bs r , BS-CBV.wnf-⇓ r
+  ss-cbv↔bs-cbv : ∀ {n} {e : Tm n} {e′} → (e SS.CBV.⇒* e′ × WNF e′) ↔ e BS.CBV.⟱ e′
+  ss-cbv↔bs-cbv = uncurry Lem-4-3-1.bs←ss , λ r → Lem-4-3-2.ss←bs r , BS-CBV.wnf-⟱ r
 
 
 ---------------------------------------------------------------------------------------------------------------

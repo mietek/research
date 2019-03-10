@@ -62,24 +62,24 @@ module Lem-4-4-1 where
   ... | inj₂ (_ , p₁′ , rs₂ , p₂′ , refl)        = inj₂ (_ , ε , p₁′ , r₂ ◅ rs₂ , p₂′ , refl)
 
   mutual
-    bs←ss : ∀ {n i} {e : Tm n} {e′} → e ⇒*⟨ i ⟩ e′ → NF e′ → e ⇓ e′
-    bs←ss ε        p′ = refl-⇓ p′
+    bs←ss : ∀ {n i} {e : Tm n} {e′} → e ⇒*⟨ i ⟩ e′ → NF e′ → e ⟱ e′
+    bs←ss ε        p′ = refl-⟱ p′
     bs←ss (r ◅ rs) p′ = bs←ss′ r rs p′
 
-    bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → NF e″ → e ⇓ e″
+    bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → NF e″ → e ⟱ e″
     bs←ss′ (lam r)        rs (lam p″)            = lam (bs←ss′ r (rev-lam* rs) p″)
     bs←ss′ (lam r)        rs (nf var)            = rs ↯ ¬lam⇒*var
     bs←ss′ (lam r)        rs (nf (app _ _))      = rs ↯ ¬lam⇒*app
-    bs←ss′ (applam p₁ p₂) rs p″                  = applam (refl-⇓ (lam p₁)) (refl-⇓ p₂) (bs←ss rs p″)
+    bs←ss′ (applam p₁ p₂) rs p″                  = applam (refl-⟱ (lam p₁)) (refl-⟱ p₂) (bs←ss rs p″)
     bs←ss′ (app₁ r₁)      rs p″                  with rev-app₁* rs p″
     ... | inj₁ (_ , rs₁ , p₁′ , rs₂ , p₂′ , rs′)  = applam (bs←ss′ r₁ rs₁ (lam p₁′)) (bs←ss rs₂ p₂′)
                                                            (bs←ss rs′ p″)
     ... | inj₂ (_ , rs₁ , p₁′ , rs₂ , p₂′ , refl) = app (bs←ss′ r₁ rs₁ (nf p₁′)) (na←nanf p₁′)
                                                         (bs←ss rs₂ p₂′)
     bs←ss′ (app₂ p₁ r₂)   rs p″                  with rev-app₂* p₁ rs p″
-    ... | inj₁ (_ , refl , p₁′ , rs₂ , p₂′ , rs′) = applam (refl-⇓ (lam p₁′)) (bs←ss′ r₂ rs₂ p₂′)
+    ... | inj₁ (_ , refl , p₁′ , rs₂ , p₂′ , rs′) = applam (refl-⟱ (lam p₁′)) (bs←ss′ r₂ rs₂ p₂′)
                                                            (bs←ss rs′ p″)
-    ... | inj₂ (_ , p₁′ , rs₂ , p₂′ , refl)       = app (refl-⇓′ p₁′) (na←nanf p₁′)
+    ... | inj₂ (_ , p₁′ , rs₂ , p₂′ , refl)       = app (refl-⟱′ p₁′) (na←nanf p₁′)
                                                         (bs←ss′ r₂ rs₂ p₂′)
 
 
@@ -117,11 +117,11 @@ module Lem-4-4-2 where
            app e₁ e₂ ⇒* app e₁′ e₂′
   bs-app rs₁ p₁′ rs₂ = app₁* rs₁ ◅◅ app₂* p₁′ rs₂
 
-  ss←bs : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → e ⇒* e′
+  ss←bs : ∀ {n} {e : Tm n} {e′} → e ⟱ e′ → e ⇒* e′
   ss←bs var              = ε
   ss←bs (lam r)          = bs-lam (ss←bs r)
-  ss←bs (applam r₁ r₂ r) = bs-applam (ss←bs r₁) (nf-⇓ r₁) (ss←bs r₂) (nf-⇓ r₂) (ss←bs r)
-  ss←bs (app r₁ p₁′ r₂)  = bs-app (ss←bs r₁) (nf-⇓ r₁) (ss←bs r₂)
+  ss←bs (applam r₁ r₂ r) = bs-applam (ss←bs r₁) (nf-⟱ r₁) (ss←bs r₂) (nf-⟱ r₂) (ss←bs r)
+  ss←bs (app r₁ p₁′ r₂)  = bs-app (ss←bs r₁) (nf-⟱ r₁) (ss←bs r₂)
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -129,8 +129,8 @@ module Lem-4-4-2 where
 -- Theorem 4.4.3.  SS-AO to NF and BS-AO coincide
 
 module Thm-4-4-3 where
-  ss-ao↔bs-ao : ∀ {n} {e : Tm n} {e′} → (e SS.AO.⇒* e′ × NF e′) ↔ e BS.AO.⇓ e′
-  ss-ao↔bs-ao = uncurry Lem-4-4-1.bs←ss , λ r → Lem-4-4-2.ss←bs r , BS-AO.nf-⇓ r
+  ss-ao↔bs-ao : ∀ {n} {e : Tm n} {e′} → (e SS.AO.⇒* e′ × NF e′) ↔ e BS.AO.⟱ e′
+  ss-ao↔bs-ao = uncurry Lem-4-4-1.bs←ss , λ r → Lem-4-4-2.ss←bs r , BS-AO.nf-⟱ r
 
 
 ---------------------------------------------------------------------------------------------------------------

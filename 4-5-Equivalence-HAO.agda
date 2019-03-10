@@ -88,16 +88,16 @@ module Lem-4-5-1 where
       = inj₂ (_ , ε , nawnf←nanf p₁ , ε , p₁ , r₂ ◅ rs₂ , p₂′ , refl)
 
   mutual
-    bs←ss : ∀ {n i} {e : Tm n} {e′} → e ⇒*⟨ i ⟩ e′ → NF e′ → e ⇓ e′
-    bs←ss ε        p′ = refl-⇓ p′
+    bs←ss : ∀ {n i} {e : Tm n} {e′} → e ⇒*⟨ i ⟩ e′ → NF e′ → e ⟱ e′
+    bs←ss ε        p′ = refl-⟱ p′
     bs←ss (r ◅ rs) p′ = bs←ss′ r rs p′
 
-    bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → NF e″ → e ⇓ e″
+    bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → NF e″ → e ⟱ e″
     bs←ss′ (lam r)       rs (lam p″)                          = lam (bs←ss′ r (rev-lam* rs) p″)
     bs←ss′ (lam r)       rs (nf var)                          = rs ↯ ¬lam⇒*var
     bs←ss′ (lam r)       rs (nf (app _ _))                    = rs ↯ ¬lam⇒*app
-    bs←ss′ (applam p₂)   rs p″                                = applam (BS-CBV.refl-⇓ lam)
-                                                                        (refl-⇓ p₂)
+    bs←ss′ (applam p₂)   rs p″                                = applam (BS-CBV.refl-⟱ lam)
+                                                                        (refl-⟱ p₂)
                                                                         (bs←ss rs p″)
     bs←ss′ (cbv-app₁ r₁) rs p″                                with rev-app* rs p″
     ... | inj₁ (_ , rs₁ , rs₂ , p₂′ , rs′)                     = applam (CBV.Lem-4-3-1.bs←ss′ r₁ rs₁ lam)
@@ -108,7 +108,7 @@ module Lem-4-5-1 where
                                                                      (bs←ss rs₁′ (nf p₁″))
                                                                      (bs←ss rs₂ p₂′)
     bs←ss′ (app₁ p₁ r₁)  rs p″                                with rev-app₁* (nawnf-⇒ p₁ r₁) rs p″
-    ... | _ , rs₁ , p₁′ , rs₂ , p₂′ , refl                     = app (BS-CBV.refl-⇓′ p₁)
+    ... | _ , rs₁ , p₁′ , rs₂ , p₂′ , refl                     = app (BS-CBV.refl-⟱′ p₁)
                                                                      (na←nawnf p₁)
                                                                      (bs←ss′ r₁ rs₁ (nf p₁′))
                                                                      (bs←ss rs₂ p₂′)
@@ -121,9 +121,9 @@ module Lem-4-5-1 where
                                                                      (bs←ss rs₁′ (nf p₁″))
                                                                      (bs←ss′ r₂ rs₂ p₂′)
     bs←ss′ (app₂ p₁ r₂)  rs p″                                with rev-app₂* p₁ rs p″
-    ... | _ , rs₂ , p₂′ , refl                                 = app (BS-CBV.refl-⇓′ (nawnf←nanf p₁))
+    ... | _ , rs₂ , p₂′ , refl                                 = app (BS-CBV.refl-⟱′ (nawnf←nanf p₁))
                                                                      (na←nanf p₁)
-                                                                     (refl-⇓′ p₁)
+                                                                     (refl-⟱′ p₁)
                                                                      (bs←ss′ r₂ rs₂ p₂′)
 
 
@@ -167,14 +167,14 @@ module Lem-4-5-2 where
            app e₁ e₂ ⇒* app e₁″ e₂′
   bs-app rs₁ p₁′ rs₁′ p₁″ rs₂ = cbv-app₁* rs₁ ◅◅ app₁* p₁′ rs₁′ ◅◅ app₂* p₁″ rs₂
 
-  ss←bs : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → e ⇒* e′
+  ss←bs : ∀ {n} {e : Tm n} {e′} → e ⟱ e′ → e ⇒* e′
   ss←bs var                 = ε
   ss←bs (lam r)             = bs-lam (ss←bs r)
-  ss←bs (applam r₁ r₂ r)    = bs-applam (CBV.Lem-4-3-2.ss←bs r₁) (ss←bs r₂) (nf-⇓ r₂) (ss←bs r)
+  ss←bs (applam r₁ r₂ r)    = bs-applam (CBV.Lem-4-3-2.ss←bs r₁) (ss←bs r₂) (nf-⟱ r₂) (ss←bs r)
   ss←bs (app r₁ p₁′ r₁′ r₂) = bs-app (CBV.Lem-4-3-2.ss←bs r₁) p₁″ (ss←bs r₁′) p₁‴ (ss←bs r₂)
     where
-      p₁″ = nawnf←wnf (BS-CBV.wnf-⇓ r₁) p₁′
-      p₁‴ = nanf←nf (nf-⇓ r₁′) (na←wnf-⇓ (BS-CBV.wnf-⇓ r₁) p₁′ r₁′)
+      p₁″ = nawnf←wnf (BS-CBV.wnf-⟱ r₁) p₁′
+      p₁‴ = nanf←nf (nf-⟱ r₁′) (na←wnf-⟱ (BS-CBV.wnf-⟱ r₁) p₁′ r₁′)
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -182,8 +182,8 @@ module Lem-4-5-2 where
 -- Theorem 4.5.3.  SS-HAO to NF and BS-HAO coincide
 
 module Thm-4-5-3 where
-  ss-hao↔bs-hao : ∀ {n} {e : Tm n} {e′} → (e SS.HAO.⇒* e′ × NF e′) ↔ e BS.HAO.⇓ e′
-  ss-hao↔bs-hao = uncurry Lem-4-5-1.bs←ss , λ r → Lem-4-5-2.ss←bs r , BS-HAO.nf-⇓ r
+  ss-hao↔bs-hao : ∀ {n} {e : Tm n} {e′} → (e SS.HAO.⇒* e′ × NF e′) ↔ e BS.HAO.⟱ e′
+  ss-hao↔bs-hao = uncurry Lem-4-5-1.bs←ss , λ r → Lem-4-5-2.ss←bs r , BS-HAO.nf-⟱ r
 
 
 ---------------------------------------------------------------------------------------------------------------

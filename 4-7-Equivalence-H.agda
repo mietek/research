@@ -102,17 +102,17 @@ module Lem-4-7-2 where
   ... | _ , rs₁ , p₁′ , refl                    = _ , r₁ ◅ rs₁ , p₁′ , refl
 
   mutual
-    bs←ss : ∀ {n i} {e : Tm n} {e′} → e ⇒*⟨ i ⟩ e′ → HNF e′ → e ⇓ e′
-    bs←ss ε        p′ = refl-⇓ p′
+    bs←ss : ∀ {n i} {e : Tm n} {e′} → e ⇒*⟨ i ⟩ e′ → HNF e′ → e ⟱ e′
+    bs←ss ε        p′ = refl-⟱ p′
     bs←ss (r ◅ rs) p′ = bs←ss′ r rs p′
 
-    bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → HNF e″ → e ⇓ e″
+    bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → HNF e″ → e ⟱ e″
     bs←ss′ (lam₋ ¬p r)       rs (lam p″)      with rev-lam₋* rs p″
     ... | _ , rs′ , p′ , rs″                   = lam (CBN.Lem-4-1-1.bs←ss′ r rs′ p′)
                                                      (bs←ss rs″ p″)
     bs←ss′ (lam₋ ¬p r)       rs (hnf var)     = rs ↯ ¬lam⇒*var
     bs←ss′ (lam₋ ¬p r)       rs (hnf (app _)) = rs ↯ ¬lam⇒*app
-    bs←ss′ (lam₊ p r)        rs (lam p″)      = lam (BS-CBN.refl-⇓ p)
+    bs←ss′ (lam₊ p r)        rs (lam p″)      = lam (BS-CBN.refl-⟱ p)
                                                      (bs←ss′ r (rev-lam₊* (whnf-⇒ r) rs) p″)
     bs←ss′ (lam₊ p r)        rs (hnf var)     = rs ↯ ¬lam⇒*var
     bs←ss′ (lam₊ p r)        rs (hnf (app _)) = rs ↯ ¬lam⇒*app
@@ -127,13 +127,13 @@ module Lem-4-7-2 where
 module Lem-4-7-3 where
   open BS
 
-  h←cbn|h₂ : ∀ {n} {e : Tm n} {e′ e″} → e CBN.⇓ e′ → e′ H₂.⇓ e″ → e H.⇓ e″
+  h←cbn|h₂ : ∀ {n} {e : Tm n} {e′ e″} → e CBN.⟱ e′ → e′ H₂.⟱ e″ → e H.⟱ e″
   h←cbn|h₂ CBN.var           H₂.var          = H.var
   h←cbn|h₂ CBN.lam           (H₂.lam r r′)   = H.lam (h←cbn|h₂ r r′)
   h←cbn|h₂ (CBN.applam r₁ r) r′              = H.applam r₁ (h←cbn|h₂ r r′)
   h←cbn|h₂ (CBN.app r₁ p₁′)  (H₂.app p₁ r₁′) = H.app r₁ p₁′ r₁″
     where
-      r₁″ = h←cbn|h₂ (BS-CBN.refl-⇓ (BS-CBN.whnf-⇓ r₁)) r₁′
+      r₁″ = h←cbn|h₂ (BS-CBN.refl-⟱ (BS-CBN.whnf-⟱ r₁)) r₁′
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -144,7 +144,7 @@ module Cor-4-7-4 where
   open SS-H
   open BS-H
 
-  bs←ss : ∀ {n} {e : Tm n} {e′} → e ⇒* e′ → HNF e′ → e ⇓ e′
+  bs←ss : ∀ {n} {e : Tm n} {e′} → e ⇒* e′ → HNF e′ → e ⟱ e′
   bs←ss rs p′             with Lem-4-7-1.cbn|h₂←h* rs p′
   ... | _ , rs′ , p″ , rs″ = Lem-4-7-3.h←cbn|h₂ (CBN.Lem-4-1-1.bs←ss rs′ p″)
                                                  (Lem-4-7-2.bs←ss rs″ p′)
@@ -184,13 +184,13 @@ module Lem-4-7-5 where
            app e₁ e₂ ⇒* app e₁″ e₂
   bs-app rs₁ p₁′ rs₁′ = cbn-app₁* rs₁ ◅◅ app₁₊* p₁′ rs₁′
 
-  ss←bs : ∀ {n} {e : Tm n} {e′} → e ⇓ e′ → e ⇒* e′
+  ss←bs : ∀ {n} {e : Tm n} {e′} → e ⟱ e′ → e ⇒* e′
   ss←bs var              = ε
   ss←bs (lam r)          = bs-lam (ss←bs r)
   ss←bs (applam r₁ r)    = bs-applam (CBN.Lem-4-1-2.ss←bs r₁) (ss←bs r)
   ss←bs (app r₁ p₁′ r₁′) = bs-app (CBN.Lem-4-1-2.ss←bs r₁) p₁″ (ss←bs r₁′)
     where
-      p₁″ = naxnf←whnf (BS-CBN.whnf-⇓ r₁) p₁′
+      p₁″ = naxnf←whnf (BS-CBN.whnf-⟱ r₁) p₁′
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -198,8 +198,8 @@ module Lem-4-7-5 where
 -- Theorem 4.7.6.  SS-H to HNF and BS-H coincide
 
 module Thm-4-7-6 where
-  ss-h↔bs-h : ∀ {n} {e : Tm n} {e′} → (e SS.H.⇒* e′ × HNF e′) ↔ e BS.H.⇓ e′
-  ss-h↔bs-h = uncurry Cor-4-7-4.bs←ss , λ r → Lem-4-7-5.ss←bs r , BS-H.hnf-⇓ r
+  ss-h↔bs-h : ∀ {n} {e : Tm n} {e′} → (e SS.H.⇒* e′ × HNF e′) ↔ e BS.H.⟱ e′
+  ss-h↔bs-h = uncurry Cor-4-7-4.bs←ss , λ r → Lem-4-7-5.ss←bs r , BS-H.hnf-⟱ r
 
 
 ---------------------------------------------------------------------------------------------------------------

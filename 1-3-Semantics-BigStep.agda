@@ -16,20 +16,20 @@ open Binary public
 -- ∙ “Treats free variables as non-strict data constructors”
 
 module CBN where
-  data _⇓_ {n} : Rel₀ (Tm n) where
+  data _⟱_ {n} : Rel₀ (Tm n) where
     var    : ∀ {x} →
-             var x ⇓ var x
+             var x ⟱ var x
 
     lam    : ∀ {e} →
-             lam e ⇓ lam e
+             lam e ⟱ lam e
 
     applam : ∀ {e₁ e₂ e₁′ e′} →
-             e₁ ⇓ lam e₁′ → e₁′ [ e₂ ] ⇓ e′ →
-             app e₁ e₂ ⇓ e′
+             e₁ ⟱ lam e₁′ → e₁′ [ e₂ ] ⟱ e′ →
+             app e₁ e₂ ⟱ e′
 
     app    : ∀ {e₁ e₂ e₁′} →
-             e₁ ⇓ e₁′ → NA e₁′ →
-             app e₁ e₂ ⇓ app e₁′ e₂
+             e₁ ⟱ e₁′ → NA e₁′ →
+             app e₁ e₂ ⟱ app e₁′ e₂
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -43,21 +43,21 @@ module CBN where
 -- ∙ Normalising
 
 module NO where
-  data _⇓_ {n} : Rel₀ (Tm n) where
+  data _⟱_ {n} : Rel₀ (Tm n) where
     var    : ∀ {x} →
-             var x ⇓ var x
+             var x ⟱ var x
 
     lam    : ∀ {e e′} →
-             e ⇓ e′ →
-             lam e ⇓ lam e′
+             e ⟱ e′ →
+             lam e ⟱ lam e′
 
     applam : ∀ {e₁ e₂ e₁′ e′} →
-             e₁ CBN.⇓ lam e₁′ → e₁′ [ e₂ ] ⇓ e′ →
-             app e₁ e₂ ⇓ e′
+             e₁ CBN.⟱ lam e₁′ → e₁′ [ e₂ ] ⟱ e′ →
+             app e₁ e₂ ⟱ e′
 
     app    : ∀ {e₁ e₂ e₁′ e₁″ e₂′} →
-             e₁ CBN.⇓ e₁′ → NA e₁′ → e₁′ ⇓ e₁″ → e₂ ⇓ e₂′ →
-             app e₁ e₂ ⇓ app e₁″ e₂′
+             e₁ CBN.⟱ e₁′ → NA e₁′ → e₁′ ⟱ e₁″ → e₂ ⟱ e₂′ →
+             app e₁ e₂ ⟱ app e₁″ e₂′
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -66,17 +66,17 @@ module NO where
 -- ✓ Goes from weak head normal forms to normal forms
 
 module NO₂ where
-  data _⇓_ {n} : Rel₀ (Tm n) where
+  data _⟱_ {n} : Rel₀ (Tm n) where
     var : ∀ {x} →
-          var x ⇓ var x
+          var x ⟱ var x
 
     lam : ∀ {e e′ e″} →
-          e CBN.⇓ e′ → e′ ⇓ e″ →
-          lam e ⇓ lam e″
+          e CBN.⟱ e′ → e′ ⟱ e″ →
+          lam e ⟱ lam e″
 
     app : ∀ {e₁ e₂ e₁′ e₂′ e₂″} →
-          NAXNF e₁ → e₁ ⇓ e₁′ → e₂ CBN.⇓ e₂′ → e₂′ ⇓ e₂″ →
-          app e₁ e₂ ⇓ app e₁′ e₂″
+          NAXNF e₁ → e₁ ⟱ e₁′ → e₂ CBN.⟱ e₂′ → e₂′ ⟱ e₂″ →
+          app e₁ e₂ ⟱ app e₁′ e₂″
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -89,20 +89,20 @@ module NO₂ where
 -- ∙ “Treats free variables as strict data constructors”
 
 module CBV where
-  data _⇓_ {n} : Rel₀ (Tm n) where
+  data _⟱_ {n} : Rel₀ (Tm n) where
     var    : ∀ {x} →
-             var x ⇓ var x
+             var x ⟱ var x
 
     lam    : ∀ {e} →
-             lam e ⇓ lam e
+             lam e ⟱ lam e
 
     applam : ∀ {e₁ e₂ e₁′ e₂′ e′} →
-             e₁ ⇓ lam e₁′ → e₂ ⇓ e₂′ → e₁′ [ e₂′ ] ⇓ e′ →
-             app e₁ e₂ ⇓ e′
+             e₁ ⟱ lam e₁′ → e₂ ⟱ e₂′ → e₁′ [ e₂′ ] ⟱ e′ →
+             app e₁ e₂ ⟱ e′
 
     app    : ∀ {e₁ e₂ e₁′ e₂′} →
-             e₁ ⇓ e₁′ → NA e₁′ → e₂ ⇓ e₂′ →
-             app e₁ e₂ ⇓ app e₁′ e₂′
+             e₁ ⟱ e₁′ → NA e₁′ → e₂ ⟱ e₂′ →
+             app e₁ e₂ ⟱ app e₁′ e₂′
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -115,21 +115,21 @@ module CBV where
 -- ∙ Not normalising
 
 module AO where
-  data _⇓_ {n} : Rel₀ (Tm n) where
+  data _⟱_ {n} : Rel₀ (Tm n) where
     var    : ∀ {x} →
-             var x ⇓ var x
+             var x ⟱ var x
 
     lam    : ∀ {e e′} →
-             e ⇓ e′ →
-             lam e ⇓ lam e′
+             e ⟱ e′ →
+             lam e ⟱ lam e′
 
     applam : ∀ {e₁ e₂ e₁′ e₂′ e′} →
-             e₁ ⇓ lam e₁′ → e₂ ⇓ e₂′ → e₁′ [ e₂′ ] ⇓ e′ →
-             app e₁ e₂ ⇓ e′
+             e₁ ⟱ lam e₁′ → e₂ ⟱ e₂′ → e₁′ [ e₂′ ] ⟱ e′ →
+             app e₁ e₂ ⟱ e′
 
     app    : ∀ {e₁ e₂ e₁′ e₂′} →
-             e₁ ⇓ e₁′ → NA e₁′ → e₂ ⇓ e₂′ →
-             app e₁ e₂ ⇓ app e₁′ e₂′
+             e₁ ⟱ e₁′ → NA e₁′ → e₂ ⟱ e₂′ →
+             app e₁ e₂ ⟱ app e₁′ e₂′
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -144,21 +144,21 @@ module AO where
 -- ∙ “Resembles Paulson’s CBV, which works in two phases” is unclear; HAO does not work in two phases
 
 module HAO where
-  data _⇓_ {n} : Rel₀ (Tm n) where
+  data _⟱_ {n} : Rel₀ (Tm n) where
     var    : ∀ {x} →
-             var x ⇓ var x
+             var x ⟱ var x
 
     lam    : ∀ {e e′} →
-             e ⇓ e′ →
-             lam e ⇓ lam e′
+             e ⟱ e′ →
+             lam e ⟱ lam e′
 
     applam : ∀ {e₁ e₂ e₁′ e₂′ e′} →
-             e₁ CBV.⇓ lam e₁′ → e₂ ⇓ e₂′ → e₁′ [ e₂′ ] ⇓ e′ →
-             app e₁ e₂ ⇓ e′
+             e₁ CBV.⟱ lam e₁′ → e₂ ⟱ e₂′ → e₁′ [ e₂′ ] ⟱ e′ →
+             app e₁ e₂ ⟱ e′
 
     app    : ∀ {e₁ e₂ e₁′ e₁″ e₂′} →
-             e₁ CBV.⇓ e₁′ → NA e₁′ → e₁′ ⇓ e₁″ → e₂ ⇓ e₂′ →
-             app e₁ e₂ ⇓ app e₁″ e₂′
+             e₁ CBV.⟱ e₁′ → NA e₁′ → e₁′ ⟱ e₁″ → e₂ ⟱ e₂′ →
+             app e₁ e₂ ⟱ app e₁″ e₂′
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -170,21 +170,21 @@ module HAO where
 -- ∙ “Reduces inside λ-abstractions, but only in head position”
 
 module HS where
-  data _⇓_ {n} : Rel₀ (Tm n) where
+  data _⟱_ {n} : Rel₀ (Tm n) where
     var    : ∀ {x} →
-             var x ⇓ var x
+             var x ⟱ var x
 
     lam    : ∀ {e e′} →
-             e ⇓ e′ →
-             lam e ⇓ lam e′
+             e ⟱ e′ →
+             lam e ⟱ lam e′
 
     applam : ∀ {e₁ e₂ e₁′ e′} →
-             e₁ ⇓ lam e₁′ → e₁′ [ e₂ ] ⇓ e′ →
-             app e₁ e₂ ⇓ e′
+             e₁ ⟱ lam e₁′ → e₁′ [ e₂ ] ⟱ e′ →
+             app e₁ e₂ ⟱ e′
 
     app    : ∀ {e₁ e₂ e₁′} →
-             e₁ ⇓ e₁′ → NA e₁′ →
-             app e₁ e₂ ⇓ app e₁′ e₂
+             e₁ ⟱ e₁′ → NA e₁′ →
+             app e₁ e₂ ⟱ app e₁′ e₂
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -194,21 +194,21 @@ module HS where
 -- ∙ “Only head redexes are contracted”
 
 module H where
-  data _⇓_ {n} : Rel₀ (Tm n) where
+  data _⟱_ {n} : Rel₀ (Tm n) where
     var    : ∀ {x} →
-             var x ⇓ var x
+             var x ⟱ var x
 
     lam    : ∀ {e e′} →
-             e ⇓ e′ →
-             lam e ⇓ lam e′
+             e ⟱ e′ →
+             lam e ⟱ lam e′
 
     applam : ∀ {e₁ e₂ e₁′ e′} →
-             e₁ CBN.⇓ lam e₁′ → e₁′ [ e₂ ] ⇓ e′ →
-             app e₁ e₂ ⇓ e′
+             e₁ CBN.⟱ lam e₁′ → e₁′ [ e₂ ] ⟱ e′ →
+             app e₁ e₂ ⟱ e′
 
     app    : ∀ {e₁ e₂ e₁′ e₁″} →
-             e₁ CBN.⇓ e₁′ → NA e₁′ → e₁′ ⇓ e₁″ →
-             app e₁ e₂ ⇓ app e₁″ e₂
+             e₁ CBN.⟱ e₁′ → NA e₁′ → e₁′ ⟱ e₁″ →
+             app e₁ e₂ ⟱ app e₁″ e₂
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -217,17 +217,17 @@ module H where
 -- ✓ Goes from weak head normal forms to head normal forms
 
 module H₂ where
-  data _⇓_ {n} : Rel₀ (Tm n) where
+  data _⟱_ {n} : Rel₀ (Tm n) where
     var : ∀ {x} →
-          var x ⇓ var x
+          var x ⟱ var x
 
     lam : ∀ {e e′ e″} →
-          e CBN.⇓ e′ → e′ ⇓ e″ →
-          lam e ⇓ lam e″
+          e CBN.⟱ e′ → e′ ⟱ e″ →
+          lam e ⟱ lam e″
 
     app : ∀ {e₁ e₂ e₁′} →
-          NAXNF e₁ → e₁ ⇓ e₁′ →
-          app e₁ e₂ ⇓ app e₁′ e₂
+          NAXNF e₁ → e₁ ⟱ e₁′ →
+          app e₁ e₂ ⟱ app e₁′ e₂
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -240,21 +240,21 @@ module H₂ where
 -- ∙ Normalising
 
 module HNO where
-  data _⇓_ {n} : Rel₀ (Tm n) where
+  data _⟱_ {n} : Rel₀ (Tm n) where
     var    : ∀ {x} →
-             var x ⇓ var x
+             var x ⟱ var x
 
     lam    : ∀ {e e′} →
-             e ⇓ e′ →
-             lam e ⇓ lam e′
+             e ⟱ e′ →
+             lam e ⟱ lam e′
 
     applam : ∀ {e₁ e₂ e₁′ e′} →
-             e₁ HS.⇓ lam e₁′ → e₁′ [ e₂ ] ⇓ e′ →
-             app e₁ e₂ ⇓ e′
+             e₁ HS.⟱ lam e₁′ → e₁′ [ e₂ ] ⟱ e′ →
+             app e₁ e₂ ⟱ e′
 
     app    : ∀ {e₁ e₂ e₁′ e₁″ e₂′} →
-             e₁ HS.⇓ e₁′ → NA e₁′ → e₁′ ⇓ e₁″ → e₂ ⇓ e₂′ →
-             app e₁ e₂ ⇓ app e₁″ e₂′
+             e₁ HS.⟱ e₁′ → NA e₁′ → e₁′ ⟱ e₁″ → e₂ ⟱ e₂′ →
+             app e₁ e₂ ⟱ app e₁″ e₂′
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -263,17 +263,17 @@ module HNO where
 -- ✓ Goes from head normal forms to normal forms
 
 module HNO₂ where
-  data _⇓_ {n} : Rel₀ (Tm n) where
+  data _⟱_ {n} : Rel₀ (Tm n) where
     var : ∀ {x} →
-          var x ⇓ var x
+          var x ⟱ var x
 
     lam : ∀ {e e′} →
-          HNF e → e ⇓ e′ →
-          lam e ⇓ lam e′
+          HNF e → e ⟱ e′ →
+          lam e ⟱ lam e′
 
     app : ∀ {e₁ e₂ e₁′ e₂′ e₂″} →
-          NAXNF e₁ → e₁ ⇓ e₁′ → e₂ HS.⇓ e₂′ → e₂′ ⇓ e₂″ →
-          app e₁ e₂ ⇓ app e₁′ e₂″
+          NAXNF e₁ → e₁ ⟱ e₁′ → e₂ HS.⟱ e₂′ → e₂′ ⟱ e₂″ →
+          app e₁ e₂ ⟱ app e₁′ e₂″
 
 
 ---------------------------------------------------------------------------------------------------------------
