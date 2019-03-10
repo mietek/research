@@ -6,7 +6,7 @@ module 3-7-1-Properties-BigStep-H where
 
 open import 2-1-Semantics-BigStep
 open H public
-import 3-1-Properties-BigStep-CBN as BS-CBN
+import 3-1-Properties-BigStep-CBN as CBN
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -17,7 +17,7 @@ na←naxnf-cbn-⟱ : ∀ {n} {e : Tm n} {e′} → NAXNF e → e CBN.⟱ e′ �
 na←naxnf-cbn-⟱ var      CBN.var           = var
 na←naxnf-cbn-⟱ (app p₁) (CBN.applam r₁ r) = case p₁′ of λ ()
   where
-    p₁′ = naxnf←whnf (BS-CBN.whnf-⟱ r₁) (na←naxnf-cbn-⟱ p₁ r₁)
+    p₁′ = naxnf←whnf (CBN.whnf-⟱ r₁) (na←naxnf-cbn-⟱ p₁ r₁)
 na←naxnf-cbn-⟱ (app p₁) (CBN.app r₁ p₁′)  = app
 
 na←naxnf-⟱ : ∀ {n} {e : Tm n} {e′} → NAXNF e → e ⟱ e′ → NA e′
@@ -35,7 +35,7 @@ hnf-⟱ (lam r)          = lam (hnf-⟱ r)
 hnf-⟱ (applam r₁ r)    = hnf-⟱ r
 hnf-⟱ (app r₁ p₁′ r₁′) = hnf (app p₁″)
   where
-    p₁″ = naxnf←hnf (hnf-⟱ r₁′) (na←whnf-⟱ (BS-CBN.whnf-⟱ r₁) p₁′ r₁′)
+    p₁″ = naxnf←hnf (hnf-⟱ r₁′) (na←whnf-⟱ (CBN.whnf-⟱ r₁) p₁′ r₁′)
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ hnf-⟱ (app r₁ p₁′ r₁′) = hnf (app p₁″)
 
 refl-⟱′ : ∀ {n} {e : Tm n} → NAXNF e → e ⟱ e
 refl-⟱′ (var)    = var
-refl-⟱′ (app p₁) = app (BS-CBN.refl-⟱′ p₁) (na←naxnf p₁) (refl-⟱′ p₁)
+refl-⟱′ (app p₁) = app (CBN.refl-⟱′ p₁) (na←naxnf p₁) (refl-⟱′ p₁)
 
 refl-⟱ : ∀ {n} {e : Tm n} → HNF e → e ⟱ e
 refl-⟱ (lam p) = lam (refl-⟱ p)

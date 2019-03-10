@@ -6,7 +6,7 @@ module 3-8-1-Properties-BigStep-HNO where
 
 open import 2-1-Semantics-BigStep
 open HNO public
-import 3-6-Properties-BigStep-HS as BS-HS
+import 3-6-Properties-BigStep-HS as HS
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ nf-⟱ (lam r)             = lam (nf-⟱ r)
 nf-⟱ (applam r₁ r)       = nf-⟱ r
 nf-⟱ (app r₁ p₁′ r₁′ r₂) = nf (app p₁ (nf-⟱ r₂))
   where
-    p₁ = nanf←nf (nf-⟱ r₁′) (na←hnf-⟱ (BS-HS.hnf-⟱ r₁) p₁′ r₁′)
+    p₁ = nanf←nf (nf-⟱ r₁′) (na←hnf-⟱ (HS.hnf-⟱ r₁) p₁′ r₁′)
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -47,7 +47,7 @@ mutual
 
   refl-⟱′ : ∀ {n} {e : Tm n} → NANF e → e ⟱ e
   refl-⟱′ (var)       = var
-  refl-⟱′ (app p₁ p₂) = app (BS-HS.refl-⟱′ (naxnf←nanf p₁)) (na←nanf p₁) (refl-⟱′ p₁) (refl-⟱ p₂)
+  refl-⟱′ (app p₁ p₂) = app (HS.refl-⟱′ (naxnf←nanf p₁)) (na←nanf p₁) (refl-⟱′ p₁) (refl-⟱ p₂)
 
 
 ---------------------------------------------------------------------------------------------------------------

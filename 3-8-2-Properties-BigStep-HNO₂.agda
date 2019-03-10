@@ -6,7 +6,7 @@ module 3-8-2-Properties-BigStep-HNO₂ where
 
 open import 2-1-Semantics-BigStep
 open HNO₂ public
-import 3-6-Properties-BigStep-HS as BS-HS
+import 3-6-Properties-BigStep-HS as HS
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -45,7 +45,7 @@ mutual
 
   refl-⟱′ : ∀ {n} {e : Tm n} → NANF e → e ⟱ e
   refl-⟱′ var         = var
-  refl-⟱′ (app p₁ p₂) = app (naxnf←nanf p₁) (refl-⟱′ p₁) (BS-HS.refl-⟱ (hnf←nf p₂)) (refl-⟱ p₂)
+  refl-⟱′ (app p₁ p₂) = app (naxnf←nanf p₁) (refl-⟱′ p₁) (HS.refl-⟱ (hnf←nf p₂)) (refl-⟱ p₂)
 
 
 ---------------------------------------------------------------------------------------------------------------

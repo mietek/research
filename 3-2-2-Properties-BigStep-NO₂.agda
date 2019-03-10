@@ -6,7 +6,7 @@ module 3-2-2-Properties-BigStep-NO₂ where
 
 open import 2-1-Semantics-BigStep
 open NO₂ public
-import 3-1-Properties-BigStep-CBN as BS-CBN
+import 3-1-Properties-BigStep-CBN as CBN
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -40,12 +40,12 @@ rev-whnf-⟱ (app p₁ r₁ r₂ r₂′) = whnf (app p₁)
 
 mutual
   refl-⟱ : ∀ {n} {e : Tm n} → NF e → e ⟱ e
-  refl-⟱ (lam p) = lam (BS-CBN.refl-⟱ (whnf←nf p)) (refl-⟱ p)
+  refl-⟱ (lam p) = lam (CBN.refl-⟱ (whnf←nf p)) (refl-⟱ p)
   refl-⟱ (nf p)  = refl-⟱′ p
 
   refl-⟱′ : ∀ {n} {e : Tm n} → NANF e → e ⟱ e
   refl-⟱′ var         = var
-  refl-⟱′ (app p₁ p₂) = app (naxnf←nanf p₁) (refl-⟱′ p₁) (BS-CBN.refl-⟱ (whnf←nf p₂)) (refl-⟱ p₂)
+  refl-⟱′ (app p₁ p₂) = app (naxnf←nanf p₁) (refl-⟱′ p₁) (CBN.refl-⟱ (whnf←nf p₂)) (refl-⟱ p₂)
 
 
 ---------------------------------------------------------------------------------------------------------------

@@ -6,7 +6,7 @@ module 3-2-1-Properties-BigStep-NO where
 
 open import 2-1-Semantics-BigStep
 open NO public
-import 3-1-Properties-BigStep-CBN as BS-CBN
+import 3-1-Properties-BigStep-CBN as CBN
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -17,7 +17,7 @@ na←naxnf-cbn-⟱ : ∀ {n} {e : Tm n} {e′} → NAXNF e → e CBN.⟱ e′ �
 na←naxnf-cbn-⟱ var      CBN.var           = var
 na←naxnf-cbn-⟱ (app p₁) (CBN.applam r₁ r) = case p₁′ of λ ()
   where
-    p₁′ = naxnf←whnf (BS-CBN.whnf-⟱ r₁) (na←naxnf-cbn-⟱ p₁ r₁)
+    p₁′ = naxnf←whnf (CBN.whnf-⟱ r₁) (na←naxnf-cbn-⟱ p₁ r₁)
 na←naxnf-cbn-⟱ (app p₁) (CBN.app r₁ p₁′)  = app
 
 na←naxnf-⟱ : ∀ {n} {e : Tm n} {e′} → NAXNF e → e ⟱ e′ → NA e′
@@ -35,7 +35,7 @@ nf-⟱ (lam r)             = lam (nf-⟱ r)
 nf-⟱ (applam r₁ r)       = nf-⟱ r
 nf-⟱ (app r₁ p₁′ r₁′ r₂) = nf (app p₁″ (nf-⟱ r₂))
   where
-    p₁″ = nanf←nf (nf-⟱ r₁′) (na←whnf-⟱ (BS-CBN.whnf-⟱ r₁) p₁′ r₁′)
+    p₁″ = nanf←nf (nf-⟱ r₁′) (na←whnf-⟱ (CBN.whnf-⟱ r₁) p₁′ r₁′)
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -49,7 +49,7 @@ mutual
 
   refl-⟱′ : ∀ {n} {e : Tm n} → NANF e → e ⟱ e
   refl-⟱′ var         = var
-  refl-⟱′ (app p₁ p₂) = app (BS-CBN.refl-⟱′ (naxnf←nanf p₁)) (na←nanf p₁) (refl-⟱′ p₁) (refl-⟱ p₂)
+  refl-⟱′ (app p₁ p₂) = app (CBN.refl-⟱′ (naxnf←nanf p₁)) (na←nanf p₁) (refl-⟱′ p₁) (refl-⟱ p₂)
 
 
 ---------------------------------------------------------------------------------------------------------------

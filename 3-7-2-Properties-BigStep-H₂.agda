@@ -6,7 +6,7 @@ module 3-7-2-Properties-BigStep-H₂ where
 
 open import 2-1-Semantics-BigStep
 open H₂ public
-import 3-1-Properties-BigStep-CBN as BS-CBN
+import 3-1-Properties-BigStep-CBN as CBN
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ rev-whnf-⟱ (app p₁ r₁) = whnf (app p₁)
 
 mutual
   refl-⟱ : ∀ {n} {e : Tm n} → HNF e → e ⟱ e
-  refl-⟱ (lam p) = lam (BS-CBN.refl-⟱ (whnf←hnf p)) (refl-⟱ p)
+  refl-⟱ (lam p) = lam (CBN.refl-⟱ (whnf←hnf p)) (refl-⟱ p)
   refl-⟱ (hnf p) = refl-⟱′ p
 
   refl-⟱′ : ∀ {n} {e : Tm n} → NAXNF e → e ⟱ e

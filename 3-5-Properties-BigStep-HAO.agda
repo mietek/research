@@ -6,7 +6,7 @@ module 3-5-Properties-BigStep-HAO where
 
 open import 2-1-Semantics-BigStep
 open HAO public
-import 3-3-Properties-BigStep-CBV as BS-CBV
+import 3-3-Properties-BigStep-CBV as CBV
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -17,7 +17,7 @@ na←nawnf-cbv-⟱ : ∀ {n} {e : Tm n} {e′} → NAWNF e → e CBV.⟱ e′ �
 na←nawnf-cbv-⟱ var         CBV.var              = var
 na←nawnf-cbv-⟱ (app p₁ p₂) (CBV.applam r₁ r₂ r) = case p₁′ of λ ()
   where
-    p₁′ = nawnf←wnf (BS-CBV.wnf-⟱ r₁) (na←nawnf-cbv-⟱ p₁ r₁)
+    p₁′ = nawnf←wnf (CBV.wnf-⟱ r₁) (na←nawnf-cbv-⟱ p₁ r₁)
 na←nawnf-cbv-⟱ (app p₁ p₂) (CBV.app r₁ p₁′ r₂)  = app
 
 na←nawnf-⟱ : ∀ {n} {e : Tm n} {e′} → NAWNF e → e ⟱ e′ → NA e′
@@ -35,7 +35,7 @@ nf-⟱ (lam r)             = lam (nf-⟱ r)
 nf-⟱ (applam r₁ r₂ r)    = nf-⟱ r
 nf-⟱ (app r₁ p₁′ r₁′ r₂) = nf (app p₁ (nf-⟱ r₂))
   where
-    p₁ = nanf←nf (nf-⟱ r₁′) (na←wnf-⟱ (BS-CBV.wnf-⟱ r₁) p₁′ r₁′)
+    p₁ = nanf←nf (nf-⟱ r₁′) (na←wnf-⟱ (CBV.wnf-⟱ r₁) p₁′ r₁′)
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -49,7 +49,7 @@ mutual
 
   refl-⟱′ : ∀ {n} {e : Tm n} → NANF e → e ⟱ e
   refl-⟱′ (var)       = var
-  refl-⟱′ (app p₁ p₂) = app (BS-CBV.refl-⟱′ (nawnf←nanf p₁)) (na←nanf p₁) (refl-⟱′ p₁) (refl-⟱ p₂)
+  refl-⟱′ (app p₁ p₂) = app (CBV.refl-⟱′ (nawnf←nanf p₁)) (na←nanf p₁) (refl-⟱′ p₁) (refl-⟱ p₂)
 
 
 ---------------------------------------------------------------------------------------------------------------
