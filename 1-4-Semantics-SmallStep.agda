@@ -19,7 +19,7 @@ module CBN where
              e₁ ⇒ e₁′ →
              app e₁ e₂ ⇒ app e₁′ e₂
 
-  open MultiStepReductions _⇒_ public
+  open DerivedRelations _⇒_ public
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ module NO where
              NANF e₁ → e₂ ⇒ e₂′ →
              app e₁ e₂ ⇒ app e₁ e₂′
 
-  open MultiStepReductions _⇒_ public
+  open DerivedRelations _⇒_ public
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ module NO₂ where
             NANF e₁ → WHNF e₂ → e₂ ⇒ e₂′ →
             app e₁ e₂ ⇒ app e₁ e₂′
 
-  open MultiStepReductions _⇒_ public
+  open DerivedRelations _⇒_ public
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -96,7 +96,7 @@ module CBV where
              WNF e₁ → e₂ ⇒ e₂′ →
              app e₁ e₂ ⇒ app e₁ e₂′
 
-  open MultiStepReductions _⇒_ public
+  open DerivedRelations _⇒_ public
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -121,7 +121,7 @@ module AO where
              NF e₁ → e₂ ⇒ e₂′ →
              app e₁ e₂ ⇒ app e₁ e₂′
 
-  open MultiStepReductions _⇒_ public
+  open DerivedRelations _⇒_ public
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -154,7 +154,7 @@ module HAO where
                NANF e₁ → e₂ ⇒ e₂′ →
                app e₁ e₂ ⇒ app e₁ e₂′
 
-  open MultiStepReductions _⇒_ public
+  open DerivedRelations _⇒_ public
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -175,7 +175,7 @@ module HS where
              e₁ ⇒ e₁′ →
              app e₁ e₂ ⇒ app e₁′ e₂
 
-  open MultiStepReductions _⇒_ public
+  open DerivedRelations _⇒_ public
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -195,7 +195,7 @@ module H where
              NA e₁ → e₁ ⇒ e₁′ →
              app e₁ e₂ ⇒ app e₁′ e₂
 
-  open MultiStepReductions _⇒_ public
+  open DerivedRelations _⇒_ public
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -217,7 +217,7 @@ module H₂ where
              NAXNF e₁ → e₁ ⇒ e₁′ →
              app e₁ e₂ ⇒ app e₁′ e₂
 
-  open MultiStepReductions _⇒_ public
+  open DerivedRelations _⇒_ public
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -246,7 +246,7 @@ module HNO where
              NANF e₁ → e₂ ⇒ e₂′ →
              app e₁ e₂ ⇒ app e₁ e₂′
 
-  open MultiStepReductions _⇒_ public
+  open DerivedRelations _⇒_ public
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -272,7 +272,7 @@ module HNO₂ where
             NANF e₁ → HNF e₂ → e₂ ⇒ e₂′ →
             app e₁ e₂ ⇒ app e₁ e₂′
 
-  open MultiStepReductions _⇒_ public
+  open DerivedRelations _⇒_ public
 
 
 ---------------------------------------------------------------------------------------------------------------

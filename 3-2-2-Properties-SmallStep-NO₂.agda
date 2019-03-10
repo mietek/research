@@ -53,7 +53,7 @@ uniq-⇒ {e = app _ _} (app₂₊ p₁ p₂ r₂)  (app₂₊ p₁′ p₂′ r�
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- SS-NO₂ is deterministic, confluent, and has unique non-reducible forms
+-- SS-NO₂ is deterministic, confluent, and gives rise to a deterministic evaluation relation
 
 det-⇒ : Deterministic _⇒_
 det-⇒ (lam₋ ¬p r)       (lam₋ ¬p′ r′)        = lam & CBN.det-⇒ r r′
@@ -71,7 +71,7 @@ det-⇒ (app₂₊ p₁ p₂ r₂)  (app₂₋ p₁′ ¬p₂′ r₂′) = p₂
 det-⇒ (app₂₊ p₁ p₂ r₂)  (app₂₊ p₁′ p₂′ r₂′)  = app & refl ⊗ det-⇒ r₂ r₂′
 
 open Confluence _⇒_ det-⇒ public
-open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
+open DeterminismOfEvaluation _⇒_ det-⇒ public
 
 
 ---------------------------------------------------------------------------------------------------------------

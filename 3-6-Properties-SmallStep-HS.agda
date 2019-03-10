@@ -61,7 +61,7 @@ uniq-⇒ {e = app (app _ _) _} (app₁ r₁)       (app₁ r₁′) = app₁ & u
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- SS-HS is deterministic, confluent, and has unique non-reducible forms
+-- SS-HS is deterministic, confluent, and gives rise to a deterministic evaluation relation
 
 det-⇒ : Deterministic _⇒_
 det-⇒ (lam r)         (lam r′)         = lam & det-⇒ r r′
@@ -71,7 +71,7 @@ det-⇒ (app₁ (lam r₁)) (applam p₁′)     = (_ , r₁) ↯ nrf←hnf p₁
 det-⇒ (app₁ r₁)       (app₁ r₁′)       = app & det-⇒ r₁ r₁′ ⊗ refl
 
 open Confluence _⇒_ det-⇒ public
-open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
+open DeterminismOfEvaluation _⇒_ det-⇒ public
 
 
 ---------------------------------------------------------------------------------------------------------------

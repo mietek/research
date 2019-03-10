@@ -85,7 +85,7 @@ uniq-⇒ {e = app (app _ _) _} (app₂ p₁ r₂) (app₂ p₁′ r₂′) = app
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- SS-NO is deterministic, confluent, and has unique non-reducible forms
+-- SS-NO is deterministic, confluent, and gives rise to a deterministic evaluation relation
 
 det-⇒ : Deterministic _⇒_
 det-⇒ (lam r)      (lam r′)       = lam & det-⇒ r r′
@@ -100,7 +100,7 @@ det-⇒ (app₂ p₁ r₂) (app₁ p₁′ r₁′) = (_ , r₁′) ↯ nrf←na
 det-⇒ (app₂ p₁ r₂) (app₂ p₁′ r₂′) = app & refl ⊗ det-⇒ r₂ r₂′
 
 open Confluence _⇒_ det-⇒ public
-open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
+open DeterminismOfEvaluation _⇒_ det-⇒ public
 
 
 ---------------------------------------------------------------------------------------------------------------

@@ -87,7 +87,7 @@ uniq-⇒ {e = app (app _ _) _} (app₂ p₁ r₂)  (app₂ p₁′ r₂′) = ap
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- SS-HAO is deterministic, confluent, and has unique non-reducible forms
+-- SS-HAO is deterministic, confluent, and gives rise to a deterministic evaluation relation
 
 det-⇒ : Deterministic _⇒_
 det-⇒ (lam r)       (lam r′)       = lam & det-⇒ r r′
@@ -118,7 +118,7 @@ det-⇒ (app₂ₐ r₂)    (app₂ₐ r₂′)    = app & refl ⊗ det-⇒ r₂
 det-⇒ (app₂ₐ r₂)    (app₂ () r₂′)
 
 open Confluence _⇒_ det-⇒ public
-open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
+open DeterminismOfEvaluation _⇒_ det-⇒ public
 
 
 ---------------------------------------------------------------------------------------------------------------

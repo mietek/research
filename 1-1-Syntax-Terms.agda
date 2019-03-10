@@ -61,9 +61,6 @@ module Binary where
   Deterministic : Pred (∀ {n} → Rel₀ (Tm n)) _
   Deterministic R = ∀ {n} → Relation.Binary.Deterministic (R {n})
 
-  UniqueTo : (∀ {n} → Pred₀ (Tm n)) → Pred (∀ {n} → Rel₀ (Tm n)) _
-  UniqueTo P R = ∀ {n} → Relation.Binary.UniqueTo (P {n}) (R {n})
-
   Confluent : Pred (∀ {n} → Rel₀ (Tm n)) _
   Confluent R = ∀ {n} → Relation.Binary.Confluent (R {n})
 
@@ -72,13 +69,7 @@ module Binary where
 --
 -- Generic equipment for small-step reduction
 
-module NonReducibleForms
-    (_⇒_ : ∀ {n} → Rel₀ (Tm n))
-  where
-    NRF : ∀ {n} → Pred₀ (Tm n)
-    NRF e = ¬ (∃ λ e′ → e ⇒ e′)
-
-module MultiStepReductions
+module DerivedRelations
     (_⇒_ : ∀ {n} → Rel₀ (Tm n))
   where
     _⇒*⟨_⟩_ : ∀ {n} → Tm n → Size → Tm n → Set₀
@@ -87,15 +78,33 @@ module MultiStepReductions
     _⇒*_ : ∀ {n} → Rel₀ (Tm n)
     e ⇒* e′ = e ⇒*⟨ ∞ ⟩ e′
 
+    _⇓[_]⟨_⟩_ : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Size → Tm n → Set₀
+    e ⇓[ P ]⟨ i ⟩ e′ = e ⇒*⟨ i ⟩ e′ × P e′
+
+    _⇓[_]_ : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Tm n → Set₀
+    e ⇓[ P ] e′ = e ⇓[ P ]⟨ ∞ ⟩ e′
+
+    _⇓[_]⟨_⟩ : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Size → Set₀
+    e ⇓[ P ]⟨ i ⟩ = ∃ λ e′ → e ⇓[ P ]⟨ i ⟩ e′
+
+    _⇓[_] : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Set₀
+    e ⇓[ P ] = e ⇓[ P ]⟨ ∞ ⟩
+
     {-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
     {-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
     {-# DISPLAY _* _⇒_ e e′      = e ⇒* e′ #-}
+
+module NonReducibleForms
+    (_⇒_ : ∀ {n} → Rel₀ (Tm n))
+  where
+    NRF : ∀ {n} → Pred₀ (Tm n)
+    NRF e = ¬ (∃ λ e′ → e ⇒ e′)
 
 module Confluence
     (_⇒_   : ∀ {n} → Rel₀ (Tm n))
     (det-⇒ : Binary.Deterministic _⇒_)
   where
-    open MultiStepReductions _⇒_
+    open DerivedRelations _⇒_
 
     conf-⇒ : Binary.Confluent _⇒_
     conf-⇒ ε        rs′        = _ , rs′ , ε
@@ -103,19 +112,19 @@ module Confluence
     conf-⇒ (r ◅ rs) (r′ ◅ rs′) with det-⇒ r r′
     ... | refl                  = conf-⇒ rs rs′
 
-module UniquenessOfNonReducibleForms
+module DeterminismOfEvaluation
     (_⇒_   : ∀ {n} → Rel₀ (Tm n))
     (det-⇒ : Binary.Deterministic _⇒_)
   where
+    open DerivedRelations _⇒_
     open NonReducibleForms _⇒_
-    open MultiStepReductions _⇒_
 
-    uniq-nrf-⇒ : Binary.UniqueTo NRF _⇒*_
-    uniq-nrf-⇒ ε        p ε          p′ = refl
-    uniq-nrf-⇒ ε        p (r′ ◅ rs′) p′ = (_ , r′) ↯ p
-    uniq-nrf-⇒ (r ◅ rs) p ε          p′ = (_ , r) ↯ p′
-    uniq-nrf-⇒ (r ◅ rs) p (r′ ◅ rs′) p′ with det-⇒ r r′
-    ... | refl                           = uniq-nrf-⇒ rs p rs′ p′
+    det-⇓-nrf : Binary.Deterministic _⇓[ NRF ]_
+    det-⇓-nrf (ε        , p) (ε          , p′) = refl
+    det-⇓-nrf (ε        , p) ((r′ ◅ rs′) , p′) = (_ , r′) ↯ p
+    det-⇓-nrf ((r ◅ rs) , p) (ε          , p′) = (_ , r) ↯ p′
+    det-⇓-nrf ((r ◅ rs) , p) ((r′ ◅ rs′) , p′) with det-⇒ r r′
+    ... | refl                                 = det-⇓-nrf (rs , p) (rs′ , p′)
 
 
 ---------------------------------------------------------------------------------------------------------------

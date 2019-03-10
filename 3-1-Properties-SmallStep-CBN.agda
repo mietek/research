@@ -47,7 +47,7 @@ uniq-⇒ {e = app (app _ _) _} (app₁ r)  (app₁ r′) = app₁ & uniq-⇒ r r
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- SS-CBN is deterministic, confluent, and has unique non-reducible forms
+-- SS-CBN is deterministic, confluent, and gives rise to a deterministic evaluation relation
 
 det-⇒ : Deterministic _⇒_
 det-⇒ applam    applam    = refl
@@ -56,7 +56,7 @@ det-⇒ (app₁ ()) applam
 det-⇒ (app₁ r)  (app₁ r′) = app & det-⇒ r r′ ⊗ refl
 
 open Confluence _⇒_ det-⇒ public
-open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
+open DeterminismOfEvaluation _⇒_ det-⇒ public
 
 
 ---------------------------------------------------------------------------------------------------------------

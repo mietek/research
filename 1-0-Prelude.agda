@@ -119,9 +119,6 @@ module Relation where
     Deterministic : ∀ {a ℓ} {A : Set a} → Pred (Rel A ℓ) _
     Deterministic R = ∀ {e e′ e″} → R e e′ → R e e″ → e′ ≡ e″
 
-    UniqueTo : ∀ {a ℓ ℓ′} {A : Set a} → Pred A ℓ → Pred (Rel A ℓ′) _
-    UniqueTo P R = ∀ {e e′ e″} → (r : R e e′) → P e′ → (r : R e e″) → P e″ → e′ ≡ e″
-
     Confluent : ∀ {a ℓ} {A : Set a} → Pred (Rel A ℓ) _
     Confluent R = ∀ {e e′ e″} → (R *) e e′ → (R *) e e″ → (∃ λ e‴ → (R *) e′ e‴ × (R *) e″ e‴)
 

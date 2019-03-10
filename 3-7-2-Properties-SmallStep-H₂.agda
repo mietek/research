@@ -41,7 +41,7 @@ uniq-⇒ {e = app _ _} (app₁₊ p₁ r₁) (app₁₊ p₁′ r₁′) = app�
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- SS-H₂ is deterministic, confluent, and has unique non-reducible forms
+-- SS-H₂ is deterministic, confluent, and gives rise to a deterministic evaluation relation
 
 det-⇒ : Deterministic _⇒_
 det-⇒ (lam₋ ¬p r)   (lam₋ ¬p′ r′)   = lam & CBN.det-⇒ r r′
@@ -51,7 +51,7 @@ det-⇒ (lam₊ p r)    (lam₊ p′ r′)    = lam & det-⇒ r r′
 det-⇒ (app₁₊ p₁ r₁) (app₁₊ p₁′ r₁′) = app & det-⇒ r₁ r₁′ ⊗ refl
 
 open Confluence _⇒_ det-⇒ public
-open UniquenessOfNonReducibleForms _⇒_ det-⇒ public
+open DeterminismOfEvaluation _⇒_ det-⇒ public
 
 
 ---------------------------------------------------------------------------------------------------------------
