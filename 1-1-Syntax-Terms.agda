@@ -72,21 +72,27 @@ module Binary where
 module DerivedRelations
     (_⇒_ : ∀ {n} → Rel₀ (Tm n))
   where
+    -- Iterated small-step reduction, indexed by size
     _⇒*⟨_⟩_ : ∀ {n} → Tm n → Size → Tm n → Set₀
     e ⇒*⟨ i ⟩ e′ = (_⇒_ *⟨ i ⟩) e e′
 
+    -- Iterated small-step reduction
     _⇒*_ : ∀ {n} → Rel₀ (Tm n)
     e ⇒* e′ = e ⇒*⟨ ∞ ⟩ e′
 
+    -- Evaluation, indexed by normal form predicate and size
     _⇓[_]⟨_⟩_ : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Size → Tm n → Set₀
     e ⇓[ P ]⟨ i ⟩ e′ = e ⇒*⟨ i ⟩ e′ × P e′
 
+    -- Evaluation, indexed by normal form predicate
     _⇓[_]_ : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Tm n → Set₀
     e ⇓[ P ] e′ = e ⇓[ P ]⟨ ∞ ⟩ e′
 
+    -- Termination, indexed by normal form predicate and size
     _⇓[_]⟨_⟩ : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Size → Set₀
     e ⇓[ P ]⟨ i ⟩ = ∃ λ e′ → e ⇓[ P ]⟨ i ⟩ e′
 
+    -- Termination, indexed by normal form predicate
     _⇓[_] : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Set₀
     e ⇓[ P ] = e ⇓[ P ]⟨ ∞ ⟩
 
