@@ -71,7 +71,7 @@ det-⇒ (app₁ (lam r₁)) (applam p₁′)     = (_ , r₁) ↯ nrf←hnf p₁
 det-⇒ (app₁ r₁)       (app₁ r₁′)       = app & det-⇒ r₁ r₁′ ⊗ refl
 
 open Confluence _⇒_ det-⇒ public
-open DeterminismOfEvaluation _⇒_ det-⇒ public
+open DeterminismOfEvaluationToNRF _⇒_ det-⇒ public
 
 
 ---------------------------------------------------------------------------------------------------------------

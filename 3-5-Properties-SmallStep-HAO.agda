@@ -118,7 +118,7 @@ det-⇒ (app₂ₐ r₂)    (app₂ₐ r₂′)    = app & refl ⊗ det-⇒ r₂
 det-⇒ (app₂ₐ r₂)    (app₂ () r₂′)
 
 open Confluence _⇒_ det-⇒ public
-open DeterminismOfEvaluation _⇒_ det-⇒ public
+open DeterminismOfEvaluationToNRF _⇒_ det-⇒ public
 
 
 ---------------------------------------------------------------------------------------------------------------

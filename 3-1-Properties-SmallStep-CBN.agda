@@ -56,7 +56,7 @@ det-⇒ (app₁ ()) applam
 det-⇒ (app₁ r)  (app₁ r′) = app & det-⇒ r r′ ⊗ refl
 
 open Confluence _⇒_ det-⇒ public
-open DeterminismOfEvaluation _⇒_ det-⇒ public
+open DeterminismOfEvaluationToNRF _⇒_ det-⇒ public
 
 
 ---------------------------------------------------------------------------------------------------------------

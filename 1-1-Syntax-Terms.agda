@@ -80,19 +80,19 @@ module DerivedRelations
     _⇒*_ : ∀ {n} → Rel₀ (Tm n)
     e ⇒* e′ = e ⇒*⟨ ∞ ⟩ e′
 
-    -- Evaluation, indexed by normal form predicate and size
+    -- Evaluation, indexed by value predicate and size
     _⇓[_]⟨_⟩_ : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Size → Tm n → Set₀
     e ⇓[ P ]⟨ i ⟩ e′ = e ⇒*⟨ i ⟩ e′ × P e′
 
-    -- Evaluation, indexed by normal form predicate
+    -- Evaluation, indexed by value predicate
     _⇓[_]_ : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Tm n → Set₀
     e ⇓[ P ] e′ = e ⇓[ P ]⟨ ∞ ⟩ e′
 
-    -- Termination, indexed by normal form predicate and size
+    -- Termination, indexed by value predicate and size
     _⇓[_]⟨_⟩ : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Size → Set₀
     e ⇓[ P ]⟨ i ⟩ = ∃ λ e′ → e ⇓[ P ]⟨ i ⟩ e′
 
-    -- Termination, indexed by normal form predicate
+    -- Termination, indexed by value predicate
     _⇓[_] : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Set₀
     e ⇓[ P ] = e ⇓[ P ]⟨ ∞ ⟩
 
@@ -118,7 +118,7 @@ module Confluence
     conf-⇒ (r ◅ rs) (r′ ◅ rs′) with det-⇒ r r′
     ... | refl                  = conf-⇒ rs rs′
 
-module DeterminismOfEvaluation
+module DeterminismOfEvaluationToNRF
     (_⇒_   : ∀ {n} → Rel₀ (Tm n))
     (det-⇒ : Binary.Deterministic _⇒_)
   where

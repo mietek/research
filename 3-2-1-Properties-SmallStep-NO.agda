@@ -100,7 +100,7 @@ det-⇒ (app₂ p₁ r₂) (app₁ p₁′ r₁′) = (_ , r₁′) ↯ nrf←na
 det-⇒ (app₂ p₁ r₂) (app₂ p₁′ r₂′) = app & refl ⊗ det-⇒ r₂ r₂′
 
 open Confluence _⇒_ det-⇒ public
-open DeterminismOfEvaluation _⇒_ det-⇒ public
+open DeterminismOfEvaluationToNRF _⇒_ det-⇒ public
 
 
 ---------------------------------------------------------------------------------------------------------------

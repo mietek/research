@@ -64,7 +64,7 @@ det-⇒ (app₂₊ p₁ p₂ r₂)  (app₂₋ p₁′ ¬p₂′ r₂′) = p₂
 det-⇒ (app₂₊ p₁ p₂ r₂)  (app₂₊ p₁′ p₂′ r₂′)  = app & refl ⊗ det-⇒ r₂ r₂′
 
 open Confluence _⇒_ det-⇒ public
-open DeterminismOfEvaluation _⇒_ det-⇒ public
+open DeterminismOfEvaluationToNRF _⇒_ det-⇒ public
 
 
 ---------------------------------------------------------------------------------------------------------------
