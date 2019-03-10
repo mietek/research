@@ -101,8 +101,8 @@ module Lem-5-6-2 where
 -- Theorem 5.6.3.  SS-HS to HNF and BS-HS coincide
 
 module Thm-5-6-3 where
-  ss-hs↔bs-hs : ∀ {n} {e : Tm n} {e′} → (e SS.HS.⇒* e′ × HNF e′) ↔ e BS.HS.⟱ e′
-  ss-hs↔bs-hs = uncurry Lem-5-6-1.bs←ss , λ r → Lem-5-6-2.ss←bs r , BS-HS.hnf-⟱ r
+  ss↔bs : ∀ {n} {e : Tm n} {e′} → (e SS.HS.⇒* e′ × HNF e′) ↔ e BS.HS.⟱ e′
+  ss↔bs = uncurry Lem-5-6-1.bs←ss , λ r → Lem-5-6-2.ss←bs r , BS-HS.hnf-⟱ r
 
 
 ---------------------------------------------------------------------------------------------------------------

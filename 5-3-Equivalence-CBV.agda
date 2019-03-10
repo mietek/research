@@ -96,8 +96,8 @@ module Lem-5-3-2 where
 -- Theorem 5.3.3.  SS-CBV to WNF and BS-CBV coincide
 
 module Thm-5-3-3 where
-  ss-cbv↔bs-cbv : ∀ {n} {e : Tm n} {e′} → (e SS.CBV.⇒* e′ × WNF e′) ↔ e BS.CBV.⟱ e′
-  ss-cbv↔bs-cbv = uncurry Lem-5-3-1.bs←ss , λ r → Lem-5-3-2.ss←bs r , BS-CBV.wnf-⟱ r
+  ss↔bs : ∀ {n} {e : Tm n} {e′} → (e SS.CBV.⇒* e′ × WNF e′) ↔ e BS.CBV.⟱ e′
+  ss↔bs = uncurry Lem-5-3-1.bs←ss , λ r → Lem-5-3-2.ss←bs r , BS-CBV.wnf-⟱ r
 
 
 ---------------------------------------------------------------------------------------------------------------

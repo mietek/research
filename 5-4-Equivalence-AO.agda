@@ -129,8 +129,8 @@ module Lem-5-4-2 where
 -- Theorem 5.4.3.  SS-AO to NF and BS-AO coincide
 
 module Thm-5-4-3 where
-  ss-ao↔bs-ao : ∀ {n} {e : Tm n} {e′} → (e SS.AO.⇒* e′ × NF e′) ↔ e BS.AO.⟱ e′
-  ss-ao↔bs-ao = uncurry Lem-5-4-1.bs←ss , λ r → Lem-5-4-2.ss←bs r , BS-AO.nf-⟱ r
+  ss↔bs : ∀ {n} {e : Tm n} {e′} → (e SS.AO.⇒* e′ × NF e′) ↔ e BS.AO.⟱ e′
+  ss↔bs = uncurry Lem-5-4-1.bs←ss , λ r → Lem-5-4-2.ss←bs r , BS-AO.nf-⟱ r
 
 
 ---------------------------------------------------------------------------------------------------------------

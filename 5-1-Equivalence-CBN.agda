@@ -79,8 +79,8 @@ module Lem-5-1-2 where
 -- Theorem 5.1.3.  SS-CBN to WHNF and BS-CBN coincide
 
 module Thm-5-1-3 where
-  ss-cbn↔bs-cbn : ∀ {n} {e : Tm n} {e′} → (e SS.CBN.⇒* e′ × WHNF e′) ↔ e BS.CBN.⟱ e′
-  ss-cbn↔bs-cbn = uncurry Lem-5-1-1.bs←ss , λ r → Lem-5-1-2.ss←bs r , BS-CBN.whnf-⟱ r
+  ss↔bs : ∀ {n} {e : Tm n} {e′} → (e SS.CBN.⇒* e′ × WHNF e′) ↔ e BS.CBN.⟱ e′
+  ss↔bs = uncurry Lem-5-1-1.bs←ss , λ r → Lem-5-1-2.ss←bs r , BS-CBN.whnf-⟱ r
 
 
 ---------------------------------------------------------------------------------------------------------------

@@ -19,7 +19,7 @@ import 3-7-2-Properties-BigStep-H₂ as BS-H₂
 import 4-1-Properties-SmallStep-CBN as SS-CBN
 import 4-7-1-Properties-SmallStep-H as SS-H
 import 4-7-2-Properties-SmallStep-H₂ as SS-H₂
-import 5-1-Equivalence-CBN as CBN
+open import 5-1-Equivalence-CBN
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -68,8 +68,8 @@ module Lem-5-7-1 where
 -- Lemma 5.7.2.  SS-H₂ to HNF implies BS-H₂
 
 module Lem-5-7-2 where
-  open SS-H₂
   open BS-H₂
+  open SS-H₂
 
   rev-lam₊* : ∀ {n i} {e : Tm (suc n)} {e′} → WHNF e → lam e ⇒*⟨ i ⟩ lam e′ → e ⇒*⟨ i ⟩ e′
   rev-lam₊* p ε                = ε
@@ -108,7 +108,7 @@ module Lem-5-7-2 where
 
     bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → HNF e″ → e ⟱ e″
     bs←ss′ (lam₋ ¬p r)       rs (lam p″)      with rev-lam₋* rs p″
-    ... | _ , rs′ , p′ , rs″                   = lam (CBN.Lem-5-1-1.bs←ss′ r rs′ p′)
+    ... | _ , rs′ , p′ , rs″                   = lam (Lem-5-1-1.bs←ss′ r rs′ p′)
                                                      (bs←ss rs″ p″)
     bs←ss′ (lam₋ ¬p r)       rs (hnf var)     = rs ↯ ¬lam⇒*var
     bs←ss′ (lam₋ ¬p r)       rs (hnf (app _)) = rs ↯ ¬lam⇒*app
@@ -146,7 +146,7 @@ module Cor-5-7-4 where
 
   bs←ss : ∀ {n} {e : Tm n} {e′} → e ⇒* e′ → HNF e′ → e ⟱ e′
   bs←ss rs p′             with Lem-5-7-1.cbn|h₂←h* rs p′
-  ... | _ , rs′ , p″ , rs″ = Lem-5-7-3.h←cbn|h₂ (CBN.Lem-5-1-1.bs←ss rs′ p″)
+  ... | _ , rs′ , p″ , rs″ = Lem-5-7-3.h←cbn|h₂ (Lem-5-1-1.bs←ss rs′ p″)
                                                  (Lem-5-7-2.bs←ss rs″ p′)
 
 
@@ -187,8 +187,8 @@ module Lem-5-7-5 where
   ss←bs : ∀ {n} {e : Tm n} {e′} → e ⟱ e′ → e ⇒* e′
   ss←bs var              = ε
   ss←bs (lam r)          = bs-lam (ss←bs r)
-  ss←bs (applam r₁ r)    = bs-applam (CBN.Lem-5-1-2.ss←bs r₁) (ss←bs r)
-  ss←bs (app r₁ p₁′ r₁′) = bs-app (CBN.Lem-5-1-2.ss←bs r₁) p₁″ (ss←bs r₁′)
+  ss←bs (applam r₁ r)    = bs-applam (Lem-5-1-2.ss←bs r₁) (ss←bs r)
+  ss←bs (app r₁ p₁′ r₁′) = bs-app (Lem-5-1-2.ss←bs r₁) p₁″ (ss←bs r₁′)
     where
       p₁″ = naxnf←whnf (BS-CBN.whnf-⟱ r₁) p₁′
 
@@ -198,8 +198,8 @@ module Lem-5-7-5 where
 -- Theorem 5.7.6.  SS-H to HNF and BS-H coincide
 
 module Thm-5-7-6 where
-  ss-h↔bs-h : ∀ {n} {e : Tm n} {e′} → (e SS.H.⇒* e′ × HNF e′) ↔ e BS.H.⟱ e′
-  ss-h↔bs-h = uncurry Cor-5-7-4.bs←ss , λ r → Lem-5-7-5.ss←bs r , BS-H.hnf-⟱ r
+  ss↔bs : ∀ {n} {e : Tm n} {e′} → (e SS.H.⇒* e′ × HNF e′) ↔ e BS.H.⟱ e′
+  ss↔bs = uncurry Cor-5-7-4.bs←ss , λ r → Lem-5-7-5.ss←bs r , BS-H.hnf-⟱ r
 
 
 ---------------------------------------------------------------------------------------------------------------

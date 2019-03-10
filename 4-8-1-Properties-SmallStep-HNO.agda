@@ -6,7 +6,7 @@ module 4-8-1-Properties-SmallStep-HNO where
 
 open import 2-2-Semantics-SmallStep
 open HNO public
-import 4-6-Properties-SmallStep-HS as SS-HS
+import 4-6-Properties-SmallStep-HS as HS
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -16,7 +16,7 @@ import 4-6-Properties-SmallStep-HS as SS-HS
 mutual
   hs-app₁ : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ HS.⇒ e₁′ → app e₁ e₂ ⇒ app e₁′ e₂
   hs-app₁ (HS.applam p₁) = app₁ app (applam p₁)
-  hs-app₁ (HS.lam r)     = app₁ₐ (SS-HS.rev-¬hnf-⇒ r) (hno←hs r)
+  hs-app₁ (HS.lam r)     = app₁ₐ (HS.rev-¬hnf-⇒ r) (hno←hs r)
   hs-app₁ (HS.app₁ r₁)   = app₁ app (hs-app₁ r₁)
 
   hno←hs : ∀ {n} {e : Tm n} {e′} → e HS.⇒ e′ → e ⇒ e′

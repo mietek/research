@@ -19,7 +19,7 @@ import 3-2-2-Properties-BigStep-NO₂ as BS-NO₂
 import 4-1-Properties-SmallStep-CBN as SS-CBN
 import 4-2-1-Properties-SmallStep-NO as SS-NO
 import 4-2-2-Properties-SmallStep-NO₂ as SS-NO₂
-import 5-1-Equivalence-CBN as CBN
+open import 5-1-Equivalence-CBN
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -72,8 +72,8 @@ module Lem-5-2-1 where
 -- Lemma 5.2.2.  SS-NO₂ to NF implies BS-NO₂
 
 module Lem-5-2-2 where
-  open SS-NO₂
   open BS-NO₂
+  open SS-NO₂
 
   rev-lam₊* : ∀ {n i} {e : Tm (suc n)} {e′} → WHNF e → lam e ⇒*⟨ i ⟩ lam e′ → e ⇒*⟨ i ⟩ e′
   rev-lam₊* p ε                = ε
@@ -138,7 +138,7 @@ module Lem-5-2-2 where
 
     bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → NF e″ → e ⟱ e″
     bs←ss′ (lam₋ ¬p r)       rs (lam p″)              with rev-lam₋* rs p″
-    ... | _ , rs′ , p′ , rs″                           = lam (CBN.Lem-5-1-1.bs←ss′ r rs′ p′)
+    ... | _ , rs′ , p′ , rs″                           = lam (Lem-5-1-1.bs←ss′ r rs′ p′)
                                                              (bs←ss rs″ p″)
     bs←ss′ (lam₋ ¬p r)       rs (nf var)              = rs ↯ ¬lam⇒*var
     bs←ss′ (lam₋ ¬p r)       rs (nf (app _ _))        = rs ↯ ¬lam⇒*app
@@ -148,11 +148,11 @@ module Lem-5-2-2 where
     bs←ss′ (lam₊ p r)        rs (nf (app _ _))        = rs ↯ ¬lam⇒*app
     bs←ss′ (app₁₊ p₁ r₁)     rs p″                    with rev-app₁₊* rs p″
     ... | _ , rs₁ , p₁′ , rs₂ , p₂ , rs₂′ , p₂′ , refl = app p₁ (bs←ss′ r₁ rs₁ (nf p₁′))
-                                                             (CBN.Lem-5-1-1.bs←ss rs₂ p₂)
+                                                             (Lem-5-1-1.bs←ss rs₂ p₂)
                                                              (bs←ss rs₂′ p₂′)
     bs←ss′ (app₂₋ p₁ ¬p₂ r₂) rs p″                    with rev-app₂₋* p₁ rs p″
     ... | _ , rs₂ , p₂ , rs₂′ , p₂′ , refl             = app (naxnf←nanf p₁) (refl-⟱′ p₁)
-                                                             (CBN.Lem-5-1-1.bs←ss′ r₂ rs₂ p₂)
+                                                             (Lem-5-1-1.bs←ss′ r₂ rs₂ p₂)
                                                              (bs←ss rs₂′ p₂′)
     bs←ss′ (app₂₊ p₁ p₂ r₂)  rs p″                    with rev-app₂₊* p₁ (whnf-⇒ r₂) rs p″
     ... | _ , rs₂ , p₂′ , refl                         = app (naxnf←nanf p₁) (refl-⟱′ p₁)
@@ -186,7 +186,7 @@ module Cor-5-2-4 where
 
   bs←ss : ∀ {n} {e : Tm n} {e′} → e ⇒* e′ → NF e′ → e ⟱ e′
   bs←ss rs p′             with Lem-5-2-1.cbn|no₂←no* rs p′
-  ... | _ , rs′ , p″ , rs″ = Lem-5-2-3.no←cbn|no₂ (CBN.Lem-5-1-1.bs←ss rs′ p″)
+  ... | _ , rs′ , p″ , rs″ = Lem-5-2-3.no←cbn|no₂ (Lem-5-1-1.bs←ss rs′ p″)
                                                    (Lem-5-2-2.bs←ss rs″ p′)
 
 
@@ -230,8 +230,8 @@ module Lem-5-2-5 where
   ss←bs : ∀ {n} {e : Tm n} {e′} → e ⟱ e′ → e ⇒* e′
   ss←bs var                 = ε
   ss←bs (lam r)             = bs-lam (ss←bs r)
-  ss←bs (applam r₁ r)       = bs-applam (CBN.Lem-5-1-2.ss←bs r₁) (ss←bs r)
-  ss←bs (app r₁ p₁′ r₁′ r₂) = bs-app (CBN.Lem-5-1-2.ss←bs r₁) p₁″ (ss←bs r₁′) p₁‴ (ss←bs r₂)
+  ss←bs (applam r₁ r)       = bs-applam (Lem-5-1-2.ss←bs r₁) (ss←bs r)
+  ss←bs (app r₁ p₁′ r₁′ r₂) = bs-app (Lem-5-1-2.ss←bs r₁) p₁″ (ss←bs r₁′) p₁‴ (ss←bs r₂)
     where
       p₁″ = naxnf←whnf (BS-CBN.whnf-⟱ r₁) p₁′
       p₁‴ = nanf←nf (nf-⟱ r₁′) (na←whnf-⟱ (BS-CBN.whnf-⟱ r₁) p₁′ r₁′)
@@ -242,8 +242,8 @@ module Lem-5-2-5 where
 -- Theorem 5.2.6.  SS-NO to NF and BS-NO coincide
 
 module Thm-5-2-6 where
-  ss-no↔bs-no : ∀ {n} {e : Tm n} {e′} → (e SS.NO.⇒* e′ × NF e′) ↔ e BS.NO.⟱ e′
-  ss-no↔bs-no = uncurry Cor-5-2-4.bs←ss , λ r → Lem-5-2-5.ss←bs r , BS-NO.nf-⟱ r
+  ss↔bs : ∀ {n} {e : Tm n} {e′} → (e SS.NO.⇒* e′ × NF e′) ↔ e BS.NO.⟱ e′
+  ss↔bs = uncurry Cor-5-2-4.bs←ss , λ r → Lem-5-2-5.ss←bs r , BS-NO.nf-⟱ r
 
 
 ---------------------------------------------------------------------------------------------------------------

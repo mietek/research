@@ -54,7 +54,7 @@ open import 5-8-Equivalence-HNO
 -- Theorem 5.1.3.  SS-CBN to WHNF and BS-CBN coincide
 
 thm-5-1-3 : ∀ {n} {e : Tm n} {e′} → (e SS.CBN.⇒* e′ × WHNF e′) ↔ e BS.CBN.⟱ e′
-thm-5-1-3 = Thm-5-1-3.ss-cbn↔bs-cbn
+thm-5-1-3 = Thm-5-1-3.ss↔bs
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ thm-5-1-3 = Thm-5-1-3.ss-cbn↔bs-cbn
 -- Theorem 5.2.6.  SS-NO to NF and BS-NO coincide
 
 thm-5-2-6 : ∀ {n} {e : Tm n} {e′} → (e SS.NO.⇒* e′ × NF e′) ↔ e BS.NO.⟱ e′
-thm-5-2-6 = Thm-5-2-6.ss-no↔bs-no
+thm-5-2-6 = Thm-5-2-6.ss↔bs
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ thm-5-2-6 = Thm-5-2-6.ss-no↔bs-no
 -- Theorem 5.3.3.  SS-CBV to WNF and BS-CBV coincide
 
 thm-5-3-3 : ∀ {n} {e : Tm n} {e′} → (e SS.CBV.⇒* e′ × WNF e′) ↔ e BS.CBV.⟱ e′
-thm-5-3-3 = Thm-5-3-3.ss-cbv↔bs-cbv
+thm-5-3-3 = Thm-5-3-3.ss↔bs
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ thm-5-3-3 = Thm-5-3-3.ss-cbv↔bs-cbv
 -- Theorem 5.4.3.  SS-AO to NF and BS-AO coincide
 
 thm-5-4-3 : ∀ {n} {e : Tm n} {e′} → (e SS.AO.⇒* e′ × NF e′) ↔ e BS.AO.⟱ e′
-thm-5-4-3 = Thm-5-4-3.ss-ao↔bs-ao
+thm-5-4-3 = Thm-5-4-3.ss↔bs
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ thm-5-4-3 = Thm-5-4-3.ss-ao↔bs-ao
 -- Theorem 5.5.3.  SS-HAO to NF and BS-HAO coincide
 
 thm-5-5-3 : ∀ {n} {e : Tm n} {e′} → (e SS.HAO.⇒* e′ × NF e′) ↔ e BS.HAO.⟱ e′
-thm-5-5-3 = Thm-5-5-3.ss-hao↔bs-hao
+thm-5-5-3 = Thm-5-5-3.ss↔bs
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ thm-5-5-3 = Thm-5-5-3.ss-hao↔bs-hao
 -- Theorem 5.6.3.  SS-HS to HNF and BS-HS coincide
 
 thm-5-6-3 : ∀ {n} {e : Tm n} {e′} → (e SS.HS.⇒* e′ × HNF e′) ↔ e BS.HS.⟱ e′
-thm-5-6-3 = Thm-5-6-3.ss-hs↔bs-hs
+thm-5-6-3 = Thm-5-6-3.ss↔bs
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -114,7 +114,7 @@ thm-5-6-3 = Thm-5-6-3.ss-hs↔bs-hs
 -- Theorem 5.7.6.  SS-H to HNF and BS-H coincide
 
 thm-5-7-6 : ∀ {n} {e : Tm n} {e′} → (e SS.H.⇒* e′ × HNF e′) ↔ e BS.H.⟱ e′
-thm-5-7-6 = Thm-5-7-6.ss-h↔bs-h
+thm-5-7-6 = Thm-5-7-6.ss↔bs
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -124,7 +124,7 @@ thm-5-7-6 = Thm-5-7-6.ss-h↔bs-h
 -- Theorem 5.8.6.  SS-HNO to NF and BS-HNO coincide
 
 thm-5-8-6 : ∀ {n} {e : Tm n} {e′} → (e SS.HNO.⇒* e′ × NF e′) ↔ e BS.HNO.⟱ e′
-thm-5-8-6 = Thm-5-8-6.ss-hno↔bs-hno
+thm-5-8-6 = Thm-5-8-6.ss↔bs
 
 
 ---------------------------------------------------------------------------------------------------------------

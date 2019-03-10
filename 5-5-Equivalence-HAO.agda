@@ -182,8 +182,8 @@ module Lem-5-5-2 where
 -- Theorem 5.5.3.  SS-HAO to NF and BS-HAO coincide
 
 module Thm-5-5-3 where
-  ss-hao↔bs-hao : ∀ {n} {e : Tm n} {e′} → (e SS.HAO.⇒* e′ × NF e′) ↔ e BS.HAO.⟱ e′
-  ss-hao↔bs-hao = uncurry Lem-5-5-1.bs←ss , λ r → Lem-5-5-2.ss←bs r , BS-HAO.nf-⟱ r
+  ss↔bs : ∀ {n} {e : Tm n} {e′} → (e SS.HAO.⇒* e′ × NF e′) ↔ e BS.HAO.⟱ e′
+  ss↔bs = uncurry Lem-5-5-1.bs←ss , λ r → Lem-5-5-2.ss←bs r , BS-HAO.nf-⟱ r
 
 
 ---------------------------------------------------------------------------------------------------------------

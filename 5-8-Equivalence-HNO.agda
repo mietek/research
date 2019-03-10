@@ -19,7 +19,7 @@ import 3-8-2-Properties-BigStep-HNO₂ as BS-HNO₂
 import 4-6-Properties-SmallStep-HS as SS-HS
 import 4-8-1-Properties-SmallStep-HNO as SS-HNO
 import 4-8-2-Properties-SmallStep-HNO₂ as SS-HNO₂
-import 5-6-Equivalence-HS as HS
+open import 5-6-Equivalence-HS
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -130,11 +130,11 @@ module Lem-5-8-2 where
     bs←ss′ (lam₊ p r)        rs (nf (app _ _))        = rs ↯ ¬lam⇒*app
     bs←ss′ (app₁₊ p₁ r₁)     rs p″                    with rev-app₁₊* rs p″
     ... | _ , rs₁ , p₁′ , rs₂ , p₂ , rs₂′ , p₂′ , refl = app p₁ (bs←ss′ r₁ rs₁ (nf p₁′))
-                                                             (HS.Lem-5-6-1.bs←ss rs₂ p₂)
+                                                             (Lem-5-6-1.bs←ss rs₂ p₂)
                                                              (bs←ss rs₂′ p₂′)
     bs←ss′ (app₂₋ p₁ ¬p₂ r₂) rs p″                    with rev-app₂₋* p₁ rs p″
     ... | _ , rs₂ , p₂ , rs₂′ , p₂′ , refl             = app (naxnf←nanf p₁) (refl-⟱′ p₁)
-                                                             (HS.Lem-5-6-1.bs←ss′ r₂ rs₂ p₂)
+                                                             (Lem-5-6-1.bs←ss′ r₂ rs₂ p₂)
                                                              (bs←ss rs₂′ p₂′)
     bs←ss′ (app₂₊ p₁ p₂ r₂)  rs p″                    with rev-app₂₊* p₁ (hnf-⇒ r₂) rs p″
     ... | _ , rs₂ , p₂′ , refl                         = app (naxnf←nanf p₁) (refl-⟱′ p₁)
@@ -167,7 +167,7 @@ module Cor-5-8-4 where
 
   bs←ss : ∀ {n} {e : Tm n} {e′} → e ⇒* e′ → NF e′ → e ⟱ e′
   bs←ss rs p′             with Lem-5-8-1.hs|hno₂←hno* rs p′
-  ... | _ , rs′ , p″ , rs″ = Lem-5-8-3.hno←hs|hno₂ (HS.Lem-5-6-1.bs←ss rs′ p″)
+  ... | _ , rs′ , p″ , rs″ = Lem-5-8-3.hno←hs|hno₂ (Lem-5-6-1.bs←ss rs′ p″)
                                                     (Lem-5-8-2.bs←ss rs″ p′)
 
 
@@ -212,8 +212,8 @@ module Lem-5-8-5 where
   ss←bs : ∀ {n} {e : Tm n} {e′} → e ⟱ e′ → e ⇒* e′
   ss←bs var                 = ε
   ss←bs (lam r)             = bs-lam (ss←bs r)
-  ss←bs (applam r₁ r)       = bs-applam (HS.Lem-5-6-2.ss←bs r₁) (BS-HS.hnf-⟱ r₁) (ss←bs r)
-  ss←bs (app r₁ p₁′ r₁′ r₂) = bs-app (HS.Lem-5-6-2.ss←bs r₁) p₁″ (ss←bs r₁′) p₁‴ (ss←bs r₂)
+  ss←bs (applam r₁ r)       = bs-applam (Lem-5-6-2.ss←bs r₁) (BS-HS.hnf-⟱ r₁) (ss←bs r)
+  ss←bs (app r₁ p₁′ r₁′ r₂) = bs-app (Lem-5-6-2.ss←bs r₁) p₁″ (ss←bs r₁′) p₁‴ (ss←bs r₂)
     where
       p₁″ = naxnf←hnf (BS-HS.hnf-⟱ r₁) p₁′
       p₁‴ = nanf←nf (nf-⟱ r₁′) (na←hnf-⟱ (BS-HS.hnf-⟱ r₁) p₁′ r₁′)
@@ -224,8 +224,8 @@ module Lem-5-8-5 where
 -- Theorem 5.8.6.  SS-HNO to NF and BS-HNO coincide
 
 module Thm-5-8-6 where
-  ss-hno↔bs-hno : ∀ {n} {e : Tm n} {e′} → (e SS.HNO.⇒* e′ × NF e′) ↔ e BS.HNO.⟱ e′
-  ss-hno↔bs-hno = uncurry Cor-5-8-4.bs←ss , λ r → Lem-5-8-5.ss←bs r , BS-HNO.nf-⟱ r
+  ss↔bs : ∀ {n} {e : Tm n} {e′} → (e SS.HNO.⇒* e′ × NF e′) ↔ e BS.HNO.⟱ e′
+  ss↔bs = uncurry Cor-5-8-4.bs←ss , λ r → Lem-5-8-5.ss←bs r , BS-HNO.nf-⟱ r
 
 
 ---------------------------------------------------------------------------------------------------------------
