@@ -2,7 +2,7 @@
 
 module 1-1-Syntax-Terms where
 
-open import 1-0-Prelude public
+open import 0-1-Prelude public
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -13,6 +13,8 @@ data Tm (n : Nat) : Set where
   var : Fin n → Tm n
   lam : Tm (suc n) → Tm n
   app : Tm n → Tm n → Tm n
+
+open import 0-2-GenericEquipment Tm public
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -41,96 +43,6 @@ t [ s ] = sub t (s /0)
 
 {-# DISPLAY _/0 e   = e #-}
 {-# DISPLAY sub e σ = e [ σ ] #-}
-
-
----------------------------------------------------------------------------------------------------------------
---
--- Properties of predicates and relations on well-scoped terms
-
-module Unary where
-  Decidable : Pred (∀ {n} → Pred₀ (Tm n)) _
-  Decidable P = ∀ {n} → Relation.Unary.Decidable (P {n})
-
-  Unique : Pred (∀ {n} → Pred₀ (Tm n)) _
-  Unique P = ∀ {n} → Relation.Unary.Unique (P {n})
-
-module Binary where
-  Unique : Pred (∀ {n} → Rel₀ (Tm n)) _
-  Unique R = ∀ {n} → Relation.Binary.Unique (R {n})
-
-  Deterministic : Pred (∀ {n} → Rel₀ (Tm n)) _
-  Deterministic R = ∀ {n} → Relation.Binary.Deterministic (R {n})
-
-  Confluent : Pred (∀ {n} → Rel₀ (Tm n)) _
-  Confluent R = ∀ {n} → Relation.Binary.Confluent (R {n})
-
-
----------------------------------------------------------------------------------------------------------------
---
--- Generic equipment for small-step reduction
-
-module DerivedRelations
-    (_⇒_ : ∀ {n} → Rel₀ (Tm n))
-  where
-    -- Iterated small-step reduction, indexed by size
-    _⇒*⟨_⟩_ : ∀ {n} → Tm n → Size → Tm n → Set₀
-    e ⇒*⟨ i ⟩ e′ = (_⇒_ *⟨ i ⟩) e e′
-
-    -- Iterated small-step reduction
-    _⇒*_ : ∀ {n} → Rel₀ (Tm n)
-    e ⇒* e′ = e ⇒*⟨ ∞ ⟩ e′
-
-    -- Evaluation, indexed by value predicate and size
-    _⇓[_]⟨_⟩_ : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Size → Tm n → Set₀
-    e ⇓[ P ]⟨ i ⟩ e′ = e ⇒*⟨ i ⟩ e′ × P e′
-
-    -- Evaluation, indexed by value predicate
-    _⇓[_]_ : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Tm n → Set₀
-    e ⇓[ P ] e′ = e ⇓[ P ]⟨ ∞ ⟩ e′
-
-    -- Termination, indexed by value predicate and size
-    _⇓[_]⟨_⟩ : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Size → Set₀
-    e ⇓[ P ]⟨ i ⟩ = ∃ λ e′ → e ⇓[ P ]⟨ i ⟩ e′
-
-    -- Termination, indexed by value predicate
-    _⇓[_] : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Set₀
-    e ⇓[ P ] = e ⇓[ P ]⟨ ∞ ⟩
-
-    {-# DISPLAY _*⟨_⟩ _⇒_ i e e′ = e ⇒*⟨ i ⟩ e′ #-}
-    {-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′ = e ⇒* e′ #-}
-    {-# DISPLAY _* _⇒_ e e′      = e ⇒* e′ #-}
-
-module NonReducibleForms
-    (_⇒_ : ∀ {n} → Rel₀ (Tm n))
-  where
-    NRF : ∀ {n} → Pred₀ (Tm n)
-    NRF e = ¬ (∃ λ e′ → e ⇒ e′)
-
-module Confluence
-    (_⇒_   : ∀ {n} → Rel₀ (Tm n))
-    (det-⇒ : Binary.Deterministic _⇒_)
-  where
-    open DerivedRelations _⇒_
-
-    conf-⇒ : Binary.Confluent _⇒_
-    conf-⇒ ε        rs′        = _ , rs′ , ε
-    conf-⇒ (r ◅ rs) ε          = _ , ε , r ◅ rs
-    conf-⇒ (r ◅ rs) (r′ ◅ rs′) with det-⇒ r r′
-    ... | refl                  = conf-⇒ rs rs′
-
-module DeterminismOfEvaluationToNRF
-    (_⇒_   : ∀ {n} → Rel₀ (Tm n))
-    (det-⇒ : Binary.Deterministic _⇒_)
-  where
-    open DerivedRelations _⇒_
-    open NonReducibleForms _⇒_
-
-    det-⇓-nrf : Binary.Deterministic _⇓[ NRF ]_
-    det-⇓-nrf (ε        , p) (ε          , p′) = refl
-    det-⇓-nrf (ε        , p) ((r′ ◅ rs′) , p′) = (_ , r′) ↯ p
-    det-⇓-nrf ((r ◅ rs) , p) (ε          , p′) = (_ , r) ↯ p′
-    det-⇓-nrf ((r ◅ rs) , p) ((r′ ◅ rs′) , p′) with det-⇒ r r′
-    ... | refl                                 = det-⇓-nrf (rs , p) (rs′ , p′)
 
 
 ---------------------------------------------------------------------------------------------------------------
