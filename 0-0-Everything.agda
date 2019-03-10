@@ -49,7 +49,7 @@ open import 5-8-Equivalence-HNO
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Call-by-name reduction to weak head normal forms
+-- Call-by-name reduction to weak head normal form
 
 -- Theorem 5.1.3.  SS-CBN to WHNF and BS-CBN coincide
 
@@ -59,7 +59,7 @@ thm-5-1-3 = Thm-5-1-3.ss↔bs
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Normal order reduction to normal forms
+-- Normal order reduction to normal form
 
 -- Theorem 5.2.6.  SS-NO to NF and BS-NO coincide
 
@@ -69,7 +69,7 @@ thm-5-2-6 = Thm-5-2-6.ss↔bs
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Call-by-value reduction to weak normal forms
+-- Call-by-value reduction to weak normal form
 
 -- Theorem 5.3.3.  SS-CBV to WNF and BS-CBV coincide
 
@@ -79,7 +79,7 @@ thm-5-3-3 = Thm-5-3-3.ss↔bs
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Applicative order reduction to normal forms
+-- Applicative order reduction to normal form
 
 -- Theorem 5.4.3.  SS-AO to NF and BS-AO coincide
 
@@ -89,7 +89,7 @@ thm-5-4-3 = Thm-5-4-3.ss↔bs
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Hybrid applicative order reduction to normal forms
+-- Hybrid applicative order reduction to normal form
 
 -- Theorem 5.5.3.  SS-HAO to NF and BS-HAO coincide
 
@@ -99,7 +99,7 @@ thm-5-5-3 = Thm-5-5-3.ss↔bs
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Head spine reduction to head normal forms
+-- Head spine reduction to head normal form
 
 -- Theorem 5.6.3.  SS-HS to HNF and BS-HS coincide
 
@@ -109,7 +109,7 @@ thm-5-6-3 = Thm-5-6-3.ss↔bs
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Head reduction to head normal forms
+-- Head reduction to head normal form
 
 -- Theorem 5.7.6.  SS-H to HNF and BS-H coincide
 
@@ -119,7 +119,7 @@ thm-5-7-6 = Thm-5-7-6.ss↔bs
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Hybrid normal order reduction to normal forms
+-- Hybrid normal order reduction to normal form
 
 -- Theorem 5.8.6.  SS-HNO to NF and BS-HNO coincide
 
