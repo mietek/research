@@ -36,9 +36,19 @@ module Binary where
 module DerivedEquipment
     (_⇒_ : ∀ {n} → Rel₀ (Tm n))
   where
-    -- Non-reducible forms
+    -- Reducible forms
+    RF : ∀ {n} → Pred₀ (Tm n)
+    RF e = ∃ λ e′ → e ⇒ e′
+
+    -- Universal non-reducible forms
     NRF : ∀ {n} → Pred₀ (Tm n)
-    NRF e = ¬ (∃ λ e′ → e ⇒ e′)
+    NRF e = ∀ {e′} → ¬ (e ⇒ e′)
+
+    ¬rf←nrf : ∀ {n} {e : Tm n} → NRF e → ¬ RF e
+    ¬rf←nrf p = λ { (_ , r) → r ↯ p }
+
+    nrf←¬rf : ∀ {n} {e : Tm n} → ¬ RF e → NRF e
+    nrf←¬rf p = λ r → (_ , r) ↯ p
 
     -- Iterated small-step reduction, indexed by size
     _⇒*⟨_⟩_ : ∀ {n} → Tm n → Size → Tm n → Set
@@ -78,8 +88,8 @@ module DerivedEquipment
     -- Determinism of evaluation to NRF, as a corollary of determinism of small-step reduction
     cor-det-⇓-nrf : Binary.Deterministic _⇒_ → Binary.Deterministic _⇓[ NRF ]_
     cor-det-⇓-nrf det (ε        , p) (ε          , p′) = refl
-    cor-det-⇓-nrf det (ε        , p) ((r′ ◅ rs′) , p′) = (_ , r′) ↯ p
-    cor-det-⇓-nrf det ((r ◅ rs) , p) (ε          , p′) = (_ , r) ↯ p′
+    cor-det-⇓-nrf det (ε        , p) ((r′ ◅ rs′) , p′) = r′ ↯ p
+    cor-det-⇓-nrf det ((r ◅ rs) , p) (ε          , p′) = r ↯ p′
     cor-det-⇓-nrf det ((r ◅ rs) , p) ((r′ ◅ rs′) , p′) with det r r′
     ... | refl                                         = cor-det-⇓-nrf det (rs , p) (rs′ , p′)
 

@@ -15,13 +15,13 @@ import 4-1-Properties-SmallStep-CBN as CBN
 
 mutual
   nrf←hnf : ∀ {n} {e : Tm n} → HNF e → NRF e
-  nrf←hnf (lam p) = λ { (_ , lam₋ ¬p r) → whnf←hnf p ↯ ¬p
-                       ; (_ , lam₊ p′ r) → (_ , r) ↯ nrf←hnf p }
+  nrf←hnf (lam p) = λ { (lam₋ ¬p r) → whnf←hnf p ↯ ¬p
+                       ; (lam₊ p′ r) → r ↯ nrf←hnf p }
   nrf←hnf (hnf p) = nrf←naxnf p
 
   nrf←naxnf : ∀ {n} {e : Tm n} → NAXNF e → NRF e
   nrf←naxnf var      = λ ()
-  nrf←naxnf (app p₁) = λ { (_ , app₁₊ p₁′ r₁) → (_ , r₁) ↯ nrf←naxnf p₁ }
+  nrf←naxnf (app p₁) = λ { (app₁₊ p₁′ r₁) → r₁ ↯ nrf←naxnf p₁ }
 
 
 ---------------------------------------------------------------------------------------------------------------

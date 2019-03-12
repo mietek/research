@@ -90,7 +90,7 @@ module Lem-5-8-2 where
                (∃ λ e₂′ →
                  e₂ ⇒*⟨ i ⟩ e₂′ × NF e₂′ × app e₁ e₂′ ≡ e′)
   rev-app₂₊* p₁ p₂ ε                       (nf (app p₁′ p₂′)) = _ , ε , p₂′ , refl
-  rev-app₂₊* p₁ p₂ (app₁₊ p₁′ r₁ ◅ rs)     p′                 = (_ , r₁) ↯ nrf←nanf p₁
+  rev-app₂₊* p₁ p₂ (app₁₊ p₁′ r₁ ◅ rs)     p′                 = r₁ ↯ nrf←nanf p₁
   rev-app₂₊* p₁ p₂ (app₂₋ p₁′ ¬p₂ r₂ ◅ rs) p′                 = p₂ ↯ ¬p₂
   rev-app₂₊* p₁ p₂ (app₂₊ p₁′ p₂′ r₂ ◅ rs) p′                 with rev-app₂₊* p₁′ (hnf-⇒ r₂) rs p′
   ... | _ , rs₂ , p₂″ , refl                                  = _ , r₂ ◅ rs₂ , p₂″ , refl
@@ -100,7 +100,7 @@ module Lem-5-8-2 where
                (∃² λ e₂′ e₂″ →
                  e₂ SS.HS.⇒*⟨ i ⟩ e₂′ × HNF e₂′ × e₂′ ⇒*⟨ i ⟩ e₂″ × NF e₂″ × app e₁ e₂″ ≡ e′)
   rev-app₂₋* p₁ ε                       (nf (app p₁′ p₂′)) = _ , ε , hnf←nf p₂′ , ε , p₂′ , refl
-  rev-app₂₋* p₁ (app₁₊ p₁′ r₁ ◅ rs)     p′                 = (_ , r₁) ↯ nrf←nanf p₁
+  rev-app₂₋* p₁ (app₁₊ p₁′ r₁ ◅ rs)     p′                 = r₁ ↯ nrf←nanf p₁
   rev-app₂₋* p₁ (app₂₋ p₁′ ¬p₂ r₂ ◅ rs) p′                 with rev-app₂₋* p₁′ rs p′
   ... | _ , rs₂ , p₂ , rs₂′ , p₂′ , refl                   = _ , r₂ ◅ rs₂ , p₂ , rs₂′ , p₂′ , refl
   rev-app₂₋* p₁ (app₂₊ p₁′ p₂ r₂ ◅ rs)  p′                 with rev-app₂₊* p₁′ (hnf-⇒ r₂) rs p′

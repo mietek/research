@@ -41,11 +41,11 @@ h←h₂ (H₂.app₁₊ p₁ r₁) = app₁₊ p₁ (h←h₂ r₁)
 
 nrf←naxnf : ∀ {n} {e : Tm n} → NAXNF e → NRF e
 nrf←naxnf var      = λ ()
-nrf←naxnf (app p₁) = λ { (_ , applam)      → case p₁ of λ ()
-                        ; (_ , app₁ p₁′ r₁) → (_ , r₁) ↯ nrf←naxnf p₁ }
+nrf←naxnf (app p₁) = λ { (applam)      → case p₁ of λ ()
+                        ; (app₁ p₁′ r₁) → r₁ ↯ nrf←naxnf p₁ }
 
 nrf←hnf : ∀ {n} {e : Tm n} → HNF e → NRF e
-nrf←hnf (lam p) = λ { (_ , lam r) → (_ , r) ↯ nrf←hnf p }
+nrf←hnf (lam p) = λ { (lam r) → r ↯ nrf←hnf p }
 nrf←hnf (hnf p) = nrf←naxnf p
 
 
@@ -95,10 +95,10 @@ det-⇓-nrf = cor-det-⇓-nrf det-⇒
 naxnf-⇒ : ∀ {n} {e : Tm n} {e′} → NAXNF e → e ⇒ e′ → NAXNF e′
 naxnf-⇒ var      ()
 naxnf-⇒ (app ()) applam
-naxnf-⇒ (app p₁) (app₁ p₁′ r₁) = (_ , r₁) ↯ nrf←naxnf p₁
+naxnf-⇒ (app p₁) (app₁ p₁′ r₁) = r₁ ↯ nrf←naxnf p₁
 
 hnf-⇒ : ∀ {n} {e : Tm n} {e′} → HNF e → e ⇒ e′ → HNF e′
-hnf-⇒ (lam p) (lam r) = (_ , r) ↯ nrf←hnf p
+hnf-⇒ (lam p) (lam r) = r ↯ nrf←hnf p
 hnf-⇒ (hnf p) r       = hnf (naxnf-⇒ p r)
 
 

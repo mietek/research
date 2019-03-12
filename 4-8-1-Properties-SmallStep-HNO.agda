@@ -46,15 +46,15 @@ hno←hno₂ (HNO₂.app₂₊ p₁ p₂ r₂)  = app₂ p₁ (hno←hno₂ r₂
 
 mutual
   nrf←nf : ∀ {n} {e : Tm n} → NF e → NRF e
-  nrf←nf (lam p) = λ { (_ , lam r) → (_ , r) ↯ nrf←nf p }
+  nrf←nf (lam p) = λ { (lam r) → r ↯ nrf←nf p }
   nrf←nf (nf p)  = nrf←nanf p
 
   nrf←nanf : ∀ {n} {e : Tm n} → NANF e → NRF e
   nrf←nanf var         = λ ()
-  nrf←nanf (app p₁ p₂) = λ { (_ , applam p₁′)   → case p₁ of λ ()
-                            ; (_ , app₁ₐ ¬p₁ r₁) → case p₁ of λ ()
-                            ; (_ , app₁ p₁′ r₁)  → (_ , r₁) ↯ nrf←nanf p₁
-                            ; (_ , app₂ p₁′ r₂)  → (_ , r₂) ↯ nrf←nf p₂ }
+  nrf←nanf (app p₁ p₂) = λ { (applam p₁′)   → case p₁ of λ ()
+                            ; (app₁ₐ ¬p₁ r₁) → case p₁ of λ ()
+                            ; (app₁ p₁′ r₁)  → r₁ ↯ nrf←nanf p₁
+                            ; (app₂ p₁′ r₂)  → r₂ ↯ nrf←nf p₂ }
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -94,8 +94,8 @@ uniq-⇒ {e = app (lam _) _}   (app₁ₐ ¬p₁ r₁) r′             with rev
 uniq-⇒ {e = app (lam _) _}   (app₁ () r₁)   r′
 uniq-⇒ {e = app (lam _) _}   (app₂ () r₂)   r′
 uniq-⇒ {e = app (app _ _) _} (app₁ p₁ r₁)   (app₁ p₁′ r₁′) = app₁ & uniq-na p₁ p₁′ ⊗ uniq-⇒ r₁ r₁′
-uniq-⇒ {e = app (app _ _) _} (app₁ p₁ r₁)   (app₂ p₁′ r₂′) = (_ , r₁) ↯ nrf←nanf p₁′
-uniq-⇒ {e = app (app _ _) _} (app₂ p₁ r₂)   (app₁ p₁′ r₁′) = (_ , r₁′) ↯ nrf←nanf p₁
+uniq-⇒ {e = app (app _ _) _} (app₁ p₁ r₁)   (app₂ p₁′ r₂′) = r₁ ↯ nrf←nanf p₁′
+uniq-⇒ {e = app (app _ _) _} (app₂ p₁ r₂)   (app₁ p₁′ r₁′) = r₁′ ↯ nrf←nanf p₁
 uniq-⇒ {e = app (app _ _) _} (app₂ p₁ r₂)   (app₂ p₁′ r₂′) = app₂ & uniq-nanf p₁ p₁′ ⊗ uniq-⇒ r₂ r₂′
 
 
@@ -116,10 +116,10 @@ det-⇒ (app₁ₐ ¬p₁ r₁) (app₂ () r₂′)
 det-⇒ (app₁ () r₁)   (applam p₁′)
 det-⇒ (app₁ () r₁)   (app₁ₐ ¬p₁′ r₁′)
 det-⇒ (app₁ p₁ r₁)   (app₁ p₁′ r₁′)   = app & det-⇒ r₁ r₁′ ⊗ refl
-det-⇒ (app₁ p₁ r₁)   (app₂ p₁′ r₂′)   = (_ , r₁) ↯ nrf←nanf p₁′
+det-⇒ (app₁ p₁ r₁)   (app₂ p₁′ r₂′)   = r₁ ↯ nrf←nanf p₁′
 det-⇒ (app₂ () r₂)   (applam p₁′)
 det-⇒ (app₂ () r₂)   (app₁ₐ ¬p₁′ r₁′)
-det-⇒ (app₂ p₁ r₂)   (app₁ p₁′ r₁′)   = (_ , r₁′) ↯ nrf←nanf p₁
+det-⇒ (app₂ p₁ r₂)   (app₁ p₁′ r₁′)   = r₁′ ↯ nrf←nanf p₁
 det-⇒ (app₂ p₁ r₂)   (app₂ p₁′ r₂′)   = app & refl ⊗ det-⇒ r₂ r₂′
 
 conf-⇒ : Confluent _⇒_

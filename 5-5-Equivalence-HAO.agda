@@ -42,8 +42,8 @@ module Lem-5-5-1 where
                 e₂ ⇒*⟨ i ⟩ e₂′ × NF e₂′ × app e₁ e₂′ ≡ e′)
   rev-app₂* p₁ ε                  (nf (app p₁′ p₂)) = _ , ε , p₂ , refl
   rev-app₂* () (applam p₂ ◅ rs)   p′
-  rev-app₂* p₁ (cbv-app₁ r₁ ◅ rs) p′                = (_ , r₁) ↯ SS-CBV.nrf←nawnf (nawnf←nanf p₁)
-  rev-app₂* p₁ (app₁ p₁′ r₁ ◅ rs) p′                = (_ , r₁) ↯ nrf←nanf p₁
+  rev-app₂* p₁ (cbv-app₁ r₁ ◅ rs) p′                = r₁ ↯ SS-CBV.nrf←nawnf (nawnf←nanf p₁)
+  rev-app₂* p₁ (app₁ p₁′ r₁ ◅ rs) p′                = r₁ ↯ nrf←nanf p₁
   rev-app₂* () (app₂ₐ r₂ ◅ rs)    p′
   rev-app₂* p₁ (app₂ p₁′ r₂ ◅ rs) p′                with rev-app₂* p₁′ rs p′
   ... | _ , rs₂ , p₂′ , refl                        = _ , r₂ ◅ rs₂ , p₂′ , refl
@@ -54,7 +54,7 @@ module Lem-5-5-1 where
                 e₁ ⇒*⟨ i ⟩ e₁′ × NANF e₁′ × e₂ ⇒*⟨ i ⟩ e₂′ × NF e₂′ × app e₁′ e₂′ ≡ e′)
   rev-app₁* p₁ ε                  (nf (app p₁′ p₂′)) = _ , ε , p₁′ , ε , p₂′ , refl
   rev-app₁* () (applam p₂ ◅ rs)   p′
-  rev-app₁* p₁ (cbv-app₁ r₁ ◅ rs) p′                 = (_ , r₁) ↯ SS-CBV.nrf←nawnf p₁
+  rev-app₁* p₁ (cbv-app₁ r₁ ◅ rs) p′                 = r₁ ↯ SS-CBV.nrf←nawnf p₁
   rev-app₁* p₁ (app₁ p₁′ r₁ ◅ rs) p′                 with rev-app₁* (nawnf-⇒ p₁′ r₁) rs p′
   ... | _ , rs₁ , p₁″ , rs₂ , p₂′ , refl             = _ , r₁ ◅ rs₁ , p₁″ , rs₂ , p₂′ , refl
   rev-app₁* () (app₂ₐ r₂ ◅ rs)    p′

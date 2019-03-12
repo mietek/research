@@ -41,7 +41,7 @@ module Lem-5-4-1 where
                 NANF e₁ × e₂ ⇒*⟨ i ⟩ e₂′ × NF e₂′ × app e₁ e₂′ ≡ e′)
   rev-app₂* p₁ ε                    (nf (app p₁′ p₂)) = inj₂ (_ , p₁′ , ε , p₂ , refl)
   rev-app₂* p₁ (applam p₁′ p₂ ◅ rs) p′                = inj₁ (_ , refl , p₁′ , ε , p₂ , rs)
-  rev-app₂* p₁ (app₁ r₁ ◅ rs)       p′                = (_ , r₁) ↯ nrf←nf p₁
+  rev-app₂* p₁ (app₁ r₁ ◅ rs)       p′                = r₁ ↯ nrf←nf p₁
   rev-app₂* p₁ (app₂ p₁′ r₂ ◅ rs)   p′                with rev-app₂* p₁′ rs p′
   ... | inj₁ (_ , refl , p₁″ , rs₂ , p₂′ , rs′)       = inj₁ (_ , refl , p₁″ , r₂ ◅ rs₂ , p₂′ , rs′)
   ... | inj₂ (_ , p₁″ , rs₂ , p₂′ , refl)             = inj₂ (_ , p₁″ , r₂ ◅ rs₂ , p₂′ , refl)

@@ -15,14 +15,14 @@ import 4-6-Properties-SmallStep-HS as HS
 
 mutual
   nrf←nf : ∀ {n} {e : Tm n} → NF e → NRF e
-  nrf←nf (lam p) = λ { (_ , lam₊ p′ r) → (_ , r) ↯ nrf←nf p }
+  nrf←nf (lam p) = λ { (lam₊ p′ r) → r ↯ nrf←nf p }
   nrf←nf (nf p)  = nrf←nanf p
 
   nrf←nanf : ∀ {n} {e : Tm n} → NANF e → NRF e
   nrf←nanf var         = λ ()
-  nrf←nanf (app p₁ p₂) = λ { (_ , app₁₊ p₁′ r₁)     → (_ , r₁) ↯ nrf←nanf p₁
-                            ; (_ , app₂₋ p₁′ ¬p₂ r₂) → (_ , r₂) ↯ HS.nrf←hnf (hnf←nf p₂)
-                            ; (_ , app₂₊ p₁′ p₂′ r₂) → (_ , r₂) ↯ nrf←nf p₂ }
+  nrf←nanf (app p₁ p₂) = λ { (app₁₊ p₁′ r₁)     → r₁ ↯ nrf←nanf p₁
+                            ; (app₂₋ p₁′ ¬p₂ r₂) → r₂ ↯ HS.nrf←hnf (hnf←nf p₂)
+                            ; (app₂₊ p₁′ p₂′ r₂) → r₂ ↯ nrf←nf p₂ }
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -33,13 +33,13 @@ uniq-⇒ : Unique _⇒_
 uniq-⇒ {e = var _}   ()                ()
 uniq-⇒ {e = lam _}   (lam₊ p r)        (lam₊ p′ r′)         = lam₊ & uniq-hnf p p′ ⊗ uniq-⇒ r r′
 uniq-⇒ {e = app _ _} (app₁₊ p₁ r₁)     (app₁₊ p₁′ r₁′)      = app₁₊ & uniq-naxnf p₁ p₁′ ⊗ uniq-⇒ r₁ r₁′
-uniq-⇒ {e = app _ _} (app₁₊ p₁ r₁)     (app₂₋ p₁′ ¬p₂′ r₂′) = (_ , r₁) ↯ nrf←nanf p₁′
-uniq-⇒ {e = app _ _} (app₁₊ p₁ r₁)     (app₂₊ p₁′ p₂′ r₂′)  = (_ , r₁) ↯ nrf←nanf p₁′
-uniq-⇒ {e = app _ _} (app₂₋ p₁ ¬p₂ r₂) (app₁₊ p₁′ r₁′)      = (_ , r₁′) ↯ nrf←nanf p₁
+uniq-⇒ {e = app _ _} (app₁₊ p₁ r₁)     (app₂₋ p₁′ ¬p₂′ r₂′) = r₁ ↯ nrf←nanf p₁′
+uniq-⇒ {e = app _ _} (app₁₊ p₁ r₁)     (app₂₊ p₁′ p₂′ r₂′)  = r₁ ↯ nrf←nanf p₁′
+uniq-⇒ {e = app _ _} (app₂₋ p₁ ¬p₂ r₂) (app₁₊ p₁′ r₁′)      = r₁′ ↯ nrf←nanf p₁
 uniq-⇒ {e = app _ _} (app₂₋ p₁ ¬p₂ r₂) (app₂₋ p₁′ ¬p₂′ r₂′) = app₂₋ & uniq-nanf p₁ p₁′ ⊗ uniq-¬hnf ¬p₂ ¬p₂′
                                                                      ⊗ HS.uniq-⇒ r₂ r₂′
 uniq-⇒ {e = app _ _} (app₂₋ p₁ ¬p₂ r₂) (app₂₊ p₁′ p₂′ r₂′)  = p₂′ ↯ ¬p₂
-uniq-⇒ {e = app _ _} (app₂₊ p₁ p₂ r₂)  (app₁₊ p₁′ r₁′)      = (_ , r₁′) ↯ nrf←nanf p₁
+uniq-⇒ {e = app _ _} (app₂₊ p₁ p₂ r₂)  (app₁₊ p₁′ r₁′)      = r₁′ ↯ nrf←nanf p₁
 uniq-⇒ {e = app _ _} (app₂₊ p₁ p₂ r₂)  (app₂₋ p₁′ ¬p₂′ r₂′) = p₂ ↯ ¬p₂′
 uniq-⇒ {e = app _ _} (app₂₊ p₁ p₂ r₂)  (app₂₊ p₁′ p₂′ r₂′)  = app₂₊ & uniq-nanf p₁ p₁′ ⊗ uniq-hnf p₂ p₂′
                                                                      ⊗ uniq-⇒ r₂ r₂′
@@ -52,12 +52,12 @@ uniq-⇒ {e = app _ _} (app₂₊ p₁ p₂ r₂)  (app₂₊ p₁′ p₂′ r�
 det-⇒ : Deterministic _⇒_
 det-⇒ (lam₊ p r)        (lam₊ p′ r′)         = lam & det-⇒ r r′
 det-⇒ (app₁₊ p₁ r₁)     (app₁₊ p₁′ r₁′)      = app & det-⇒ r₁ r₁′ ⊗ refl
-det-⇒ (app₁₊ p₁ r₁)     (app₂₋ p₁′ ¬p₂′ r₂′) = (_ , r₁) ↯ nrf←nanf p₁′
-det-⇒ (app₁₊ p₁ r₁)     (app₂₊ p₁′ p₂′ r₂′)  = (_ , r₁) ↯ nrf←nanf p₁′
-det-⇒ (app₂₋ p₁ ¬p₂ r₂) (app₁₊ p₁′ r₁′)      = (_ , r₁′) ↯ nrf←nanf p₁
+det-⇒ (app₁₊ p₁ r₁)     (app₂₋ p₁′ ¬p₂′ r₂′) = r₁ ↯ nrf←nanf p₁′
+det-⇒ (app₁₊ p₁ r₁)     (app₂₊ p₁′ p₂′ r₂′)  = r₁ ↯ nrf←nanf p₁′
+det-⇒ (app₂₋ p₁ ¬p₂ r₂) (app₁₊ p₁′ r₁′)      = r₁′ ↯ nrf←nanf p₁
 det-⇒ (app₂₋ p₁ ¬p₂ r₂) (app₂₋ p₁′ ¬p₂′ r₂′) = app & refl ⊗ HS.det-⇒ r₂ r₂′
 det-⇒ (app₂₋ p₁ ¬p₂ r₂) (app₂₊ p₁′ p₂′ r₂′)  = p₂′ ↯ ¬p₂
-det-⇒ (app₂₊ p₁ p₂ r₂)  (app₁₊ p₁′ r₁′)      = (_ , r₁′) ↯ nrf←nanf p₁
+det-⇒ (app₂₊ p₁ p₂ r₂)  (app₁₊ p₁′ r₁′)      = r₁′ ↯ nrf←nanf p₁
 det-⇒ (app₂₊ p₁ p₂ r₂)  (app₂₋ p₁′ ¬p₂′ r₂′) = p₂ ↯ ¬p₂′
 det-⇒ (app₂₊ p₁ p₂ r₂)  (app₂₊ p₁′ p₂′ r₂′)  = app & refl ⊗ det-⇒ r₂ r₂′
 

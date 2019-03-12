@@ -2,6 +2,9 @@
 
 module 0-1-Prelude where
 
+open import Data.Empty public
+  renaming (⊥-elim to abort)
+
 open import Data.Fin public
   using (Fin ; zero ; suc)
 
@@ -16,18 +19,18 @@ open import Data.Sum public
   using (_⊎_ ; inj₁ ; inj₂)
 
 open import Function public
-  using (case_of_)
+  using (_∘_ ; case_of_ ; flip)
 
 open import Level public
   using (_⊔_)
   renaming (0ℓ to 0ᴸ)
 
 open import Relation.Binary public
-  using (Rel ; Reflexive ; Transitive)
+  using (REL ; Rel ; Reflexive ; Transitive)
 
 open import Relation.Binary.PropositionalEquality public
   using (_≡_ ; refl ; Extensionality)
-  renaming (cong to _&_)
+  renaming (cong to _&_ ; sym to _⁻¹)
 
 open import Relation.Nullary public
   using (¬_ ; Dec ; yes ; no)
@@ -58,6 +61,9 @@ refl ⊗ refl = refl
 
 Pred₀ : Set₀ → Set₁
 Pred₀ A = Pred A _
+
+REL₀ : Set₀ → Set₀ → Set₁
+REL₀ A B = REL A B _
 
 Rel₀ : Set₀ → Set₁
 Rel₀ A = Rel A _
