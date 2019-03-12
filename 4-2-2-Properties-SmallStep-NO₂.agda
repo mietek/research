@@ -72,7 +72,7 @@ mutual
                             ; (app₂₊ p₁′ p₂′ r₂) → r₂ ↯ nrf←nf p₂ }
 
 cbn-rf|nf←nrf : ∀ {n} {e : Tm n} → NRF e → CBN.RF e ⊎ NF e
-cbn-rf|nf←nrf p with form? _
+cbn-rf|nf←nrf p     with form? _
 ... | cbn-rf (_ , r) = inj₁ (_ , r)
 ... | rf p′ (_ , r)  = r ↯ p
 ... | nanf p′        = inj₂ (nf p′)
