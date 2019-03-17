@@ -10,7 +10,7 @@ open AO public
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Every term is either SS-AO reducible, NANF, or NF
+-- Every term is either SS-AO-reducible, NANF, or NF
 
 data Form : ∀ {n} → Pred₀ (Tm n) where
   rf   : ∀ {n} {e : Tm n} → RF e → Form e

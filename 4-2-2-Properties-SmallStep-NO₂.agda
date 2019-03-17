@@ -11,7 +11,7 @@ import 4-1-Properties-SmallStep-CBN as CBN
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Every term is either SS-CBN reducible, SS-NO₂ reducible, NF, or NANF
+-- Every term is either SS-CBN-reducible, SS-NO₂-reducible, NANF, or NF
 
 data Form : ∀ {n} → Pred₀ (Tm n) where
   cbn-rf : ∀ {n} {e : Tm n} → CBN.RF e → Form e
@@ -44,7 +44,7 @@ form? (app e₁ e₂)     | CBN.naxnf (app p₁)   with form? e₁ | form? e₂
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- SS-NO₂ does not reduce NF
+-- SS-NO₂ does not reduce SS-CBN-reducible terms, or NF
 
 nrf←cbn-rf : ∀ {n} {e : Tm n} → CBN.RF e → NRF e
 nrf←cbn-rf (_ , r) = λ { (lam₋ ¬p r′)      → case r of λ ()

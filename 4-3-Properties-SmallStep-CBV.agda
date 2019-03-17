@@ -10,7 +10,7 @@ open CBV public
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Every term is either SS-CBV-reducible, WNF, or NAWNF
+-- Every term is either SS-CBV-reducible, NAWNF, or WNF
 
 data Form : ∀ {n} → Pred₀ (Tm n) where
   rf    : ∀ {n} {e : Tm n} → RF e → Form e
