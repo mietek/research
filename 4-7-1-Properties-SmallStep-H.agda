@@ -37,7 +37,7 @@ h←h₂ (H₂.app₁₊ p₁ r₁) = app₁₊ p₁ (h←h₂ r₁)
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Every term is either H-reducible or HNF
+-- Every term is either SS-H-reducible or HNF
 
 data RF? {n} : Pred₀ (Tm n) where
   yes : ∀ {e} → RF e → RF? e
