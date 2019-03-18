@@ -10,18 +10,6 @@ open CBN public
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- TODO
-
-open import Codata.Colist
-open import Codata.Thunk
-
-data Trace (P : ∀ {n} → Pred₀ (Tm n)) {n} : Tm n → Size → Set where
-  done : ∀ {i e} → P e → Trace P e i
-  step : ∀ {i e e′} → e ⇒ e′ → Thunk (Trace P e′) i → Trace P e i
-
-
----------------------------------------------------------------------------------------------------------------
---
 -- Every term is either SS-CBN-reducible or WHNF
 
 data RF? {n} : Pred₀ (Tm n) where
@@ -39,12 +27,12 @@ rf? (app e₁ e₂)    with rf? e₁
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- TODO
+-- Every term has a potentially-infinite sequence of SS-CBN reductions that may terminate at a WHNF
 
-trace : ∀ {n i} (e : Tm n) → Trace WHNF e i
-trace e            with rf? e
-... | yes (e′ , r) = step r λ where .force → trace e′
-... | no p         = done p
+eval : ∀ {n i} (e : Tm n) → e ᶜᵒ⇓[ WHNF ]⟨ i ⟩
+eval e            with rf? e
+... | yes (_ , r) = r ◅ λ where .force → eval _
+... | no p        = ε p
 
 
 ---------------------------------------------------------------------------------------------------------------

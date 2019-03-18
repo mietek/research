@@ -62,6 +62,16 @@ rf? (app e₁ e₂)                           with rf? e₁ | rf? e₂
 
 ---------------------------------------------------------------------------------------------------------------
 --
+-- Every term has a potentially-infinite sequence of SS-NO reductions that may terminate at a NF
+
+eval : ∀ {n i} (e : Tm n) → e ᶜᵒ⇓[ NF ]⟨ i ⟩
+eval e            with rf? e
+... | yes (_ , r) = r ◅ λ where .force → eval _
+... | no p        = ε p
+
+
+---------------------------------------------------------------------------------------------------------------
+--
 -- SS-NO does not reduce NF
 
 nf←nrf : ∀ {n} {e : Tm n} → NRF e → NF e

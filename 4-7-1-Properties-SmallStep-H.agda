@@ -58,6 +58,16 @@ rf? (app e₁ e₂)            with rf? e₁
 
 ---------------------------------------------------------------------------------------------------------------
 --
+-- Every term has a potentially-infinite sequence of SS-H reductions that may terminate at a HNF
+
+eval : ∀ {n i} (e : Tm n) → e ᶜᵒ⇓[ HNF ]⟨ i ⟩
+eval e            with rf? e
+... | yes (_ , r) = r ◅ λ where .force → eval _
+... | no p        = ε p
+
+
+---------------------------------------------------------------------------------------------------------------
+--
 -- SS-H does not reduce HNF
 
 hnf←nrf : ∀ {n} {e : Tm n} → NRF e → HNF e

@@ -2,6 +2,12 @@
 
 module 0-1-Prelude where
 
+open import Codata.Colist public
+  using (Colist ; [] ; _∷_)
+
+open import Codata.Thunk public
+  using (Thunk ; force)
+
 open import Data.Empty public
   renaming (⊥-elim to abort)
 

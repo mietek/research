@@ -29,6 +29,16 @@ rf? (app e₁ e₂)                   with rf? e₁ | rf? e₂
 
 ---------------------------------------------------------------------------------------------------------------
 --
+-- Every term has a potentially-infinite sequence of SS-CBV reductions that may terminate at a WNF
+
+eval : ∀ {n i} (e : Tm n) → e ᶜᵒ⇓[ WNF ]⟨ i ⟩
+eval e            with rf? e
+... | yes (_ , r) = r ◅ λ where .force → eval _
+... | no p        = ε p
+
+
+---------------------------------------------------------------------------------------------------------------
+--
 -- SS-CBV does not reduce WNF
 
 wnf←nrf : ∀ {n} {e : Tm n} → NRF e → WNF e
