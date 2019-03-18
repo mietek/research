@@ -42,6 +42,13 @@ cbn-rf|hnf←nrf p      with rf? _
 ... | yes p′ (_ , r)  = r ↯ p
 ... | no p′           = inj₂ p′
 
+nrf←cbn-rf : ∀ {n} {e : Tm n} → CBN.RF e → NRF e
+nrf←cbn-rf (_ , r) = λ { (lam₋ ¬p r′)      → case r of λ ()
+                        ; (lam₊ p r′)       → case r of λ ()
+                        ; (app₁₊ p₁ r₁)     → case r of
+                            λ { CBN.applam     → case p₁ of λ ()
+                              ; (CBN.app₁ r₁′) → r₁′ ↯ CBN.nrf←naxnf p₁ } }
+
 mutual
   nrf←hnf : ∀ {n} {e : Tm n} → HNF e → NRF e
   nrf←hnf (lam p) = λ { (lam₋ ¬p r) → whnf←hnf p ↯ ¬p

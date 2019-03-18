@@ -47,6 +47,19 @@ hs-rf|nf←nrf p      with rf? _
 ... | yes p′ (_ , r) = r ↯ p
 ... | no p′          = inj₂ p′
 
+nrf←hs-rf : ∀ {n} {e : Tm n} → HS.RF e → NRF e
+nrf←hs-rf (_ , r) = λ { (lam₊ p r′)       → case r of
+                           λ { (HS.lam r″)     → r″ ↯ HS.nrf←hnf p }
+                       ; (app₁₊ p₁ r₁)     → case r of
+                           λ { (HS.applam p₁′) → case p₁ of λ ()
+                             ; (HS.app₁ r₁′)   → r₁′ ↯ HS.nrf←naxnf p₁ }
+                       ; (app₂₋ p₁ ¬p₂ r₂) → case r of
+                           λ { (HS.applam p₁′) → case p₁ of λ ()
+                             ; (HS.app₁ r₁′)   → r₁′ ↯ HS.nrf←naxnf (naxnf←nanf p₁) }
+                       ; (app₂₊ p₁ p₂ r₂)  → case r of
+                           λ { (HS.applam p₁′) → case p₁ of λ ()
+                             ; (HS.app₁ r₁′)   → r₁′ ↯ HS.nrf←naxnf (naxnf←nanf p₁) } }
+
 mutual
   nrf←nf : ∀ {n} {e : Tm n} → NF e → NRF e
   nrf←nf (lam p) = λ { (lam₊ p′ r) → r ↯ nrf←nf p }
