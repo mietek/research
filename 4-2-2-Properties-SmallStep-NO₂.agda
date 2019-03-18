@@ -22,11 +22,10 @@ rf? : ∀ {n} (e : Tm n) → RF? e
 rf? e           with CBN.rf? e
 ...             | CBN.yes (_ , r)         = cbn-yes (_ , r)
 rf? (var x)     | CBN.no _                = no (nf var)
-rf? (lam e)     | CBN.no lam              with rf? e
+rf? (lam e)     | CBN.no _                with rf? e
 ... | cbn-yes (_ , r)                     = yes lam (_ , lam₋ (λ p′ → r ↯ CBN.nrf←whnf p′) r)
 ... | yes p (_ , r)                       = yes lam (_ , lam₊ p r)
 ... | no p                                = no (lam p)
-rf? (lam e)     | CBN.no (whnf ())
 rf? (app e₁ e₂) | CBN.no (whnf (app p₁))  with rf? e₁ | rf? e₂
 ... | cbn-yes (_ , r₁) | _                = cbn-yes (_ , CBN.app₁ r₁)
 ... | yes p₁′ (_ , r₁) | _                = yes (whnf (app p₁)) (_ , app₁₊ p₁ r₁)

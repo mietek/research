@@ -37,7 +37,33 @@ h←h₂ (H₂.app₁₊ p₁ r₁) = app₁₊ p₁ (h←h₂ r₁)
 
 ---------------------------------------------------------------------------------------------------------------
 --
+-- Every term is either H-reducible or HNF
+
+data RF? {n} : Pred₀ (Tm n) where
+  yes : ∀ {e} → RF e → RF? e
+  no  : ∀ {e} → HNF e → RF? e
+
+rf? : ∀ {n} (e : Tm n) → RF? e
+rf? (var x)                = no (hnf var)
+rf? (lam e)                with rf? e
+... | yes (_ , r)          = yes (_ , lam r)
+... | no p                 = no (lam p)
+rf? (app e₁ e₂)            with rf? e₁
+... | yes (_ , lam r₁)     = yes (_ , applam)
+... | yes (_ , applam)     = yes (_ , app₁ app applam)
+... | yes (_ , app₁ p₁ r₁) = yes (_ , app₁ app (app₁ p₁ r₁))
+... | no (lam p₁)          = yes (_ , applam)
+... | no (hnf p₁)          = no (hnf (app p₁))
+
+
+---------------------------------------------------------------------------------------------------------------
+--
 -- SS-H does not reduce HNF
+
+hnf←nrf : ∀ {n} {e : Tm n} → NRF e → HNF e
+hnf←nrf p        with rf? _
+... | yes (_ , r) = r ↯ p
+... | no p′       = p′
 
 nrf←naxnf : ∀ {n} {e : Tm n} → NAXNF e → NRF e
 nrf←naxnf var      = λ ()

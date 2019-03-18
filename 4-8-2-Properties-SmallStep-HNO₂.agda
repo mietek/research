@@ -11,7 +11,41 @@ import 4-6-Properties-SmallStep-HS as HS
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- SS-HNO₂ does not reduce NF
+-- Every term is either SS-HS-reducible, SS-HNO₂-reducible, or NF
+
+data RF? {n} : Pred₀ (Tm n) where
+  hs-yes : ∀ {e} → HS.RF e → RF? e
+  yes    : ∀ {e} → WHNF e → RF e → RF? e
+  no     : ∀ {e} → NF e → RF? e
+
+rf? : ∀ {n} (e : Tm n) → RF? e
+rf? e           with HS.rf? e
+...             | HS.yes (_ , r)         = hs-yes (_ , r)
+rf? (var x)     | HS.no _                = no (nf var)
+rf? (lam e)     | HS.no (lam p)          with rf? e
+... | hs-yes (_ , r)                     = hs-yes (_ , HS.lam r)
+... | yes p′ (_ , r)                     = yes lam (_ , lam₊ p r)
+... | no p′                              = no (lam p′)
+rf? (lam e)     | HS.no (hnf ())
+rf? (app e₁ e₂) | HS.no (hnf (app p₁))   with rf? e₁ | rf? e₂
+... | hs-yes (_ , r₁)  | _               = hs-yes (_ , HS.app₁ r₁)
+... | yes p₁′ (_ , r₁) | _               = yes (whnf (app p₁)) (_ , app₁₊ p₁ r₁)
+... | no (lam p₁′)     | _               = case p₁ of λ ()
+... | no (nf p₁′)      | hs-yes (_ , r₂) = yes (whnf (app p₁))
+                                               (_ , app₂₋ p₁′ (λ p₂′ → r₂ ↯ HS.nrf←hnf p₂′) r₂)
+... | no (nf p₁′)      | yes p₂ (_ , r₂) = yes (whnf (app p₁)) (_ , app₂₊ p₁′ {!!} r₂)
+... | no (nf p₁′)      | no p₂           = no (nf (app p₁′ p₂))
+
+
+---------------------------------------------------------------------------------------------------------------
+--
+-- SS-HNO₂ does not reduce SS-HS-reducible terms, or NF
+
+hs-rf|nf←nrf : ∀ {n} {e : Tm n} → NRF e → HS.RF e ⊎ NF e
+hs-rf|nf←nrf p      with rf? _
+... | hs-yes (_ , r) = inj₁ (_ , r)
+... | yes p′ (_ , r) = r ↯ p
+... | no p′          = inj₂ p′
 
 mutual
   nrf←nf : ∀ {n} {e : Tm n} → NF e → NRF e

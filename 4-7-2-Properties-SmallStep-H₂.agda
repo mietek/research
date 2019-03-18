@@ -11,7 +11,36 @@ import 4-1-Properties-SmallStep-CBN as CBN
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- SS-H₂ does not reduce HNF
+-- Every term is either SS-CBN-reducible, SS-H₂-reducible, or HNF
+
+data RF? {n} : Pred₀ (Tm n) where
+  cbn-yes : ∀ {e} → CBN.RF e → RF? e
+  yes     : ∀ {e} → WHNF e → RF e → RF? e
+  no      : ∀ {e} → HNF e → RF? e
+
+rf? : ∀ {n} (e : Tm n) → RF? e
+rf? e           with CBN.rf? e
+...             | CBN.yes (_ , r)        = cbn-yes (_ , r)
+rf? (var x)     | CBN.no _               = no (hnf var)
+rf? (lam e)     | CBN.no _               with rf? e
+... | cbn-yes (_ , r)                    = yes lam (_ , lam₋ (λ p′ → r ↯ CBN.nrf←whnf p′) r)
+... | yes p (_ , r)                      = yes lam (_ , lam₊ p r)
+... | no p                               = no (lam p)
+rf? (app e₁ e₂) | CBN.no (whnf (app p₁)) with rf? e₁
+... | cbn-yes (_ , r₁)                   = cbn-yes (_ , CBN.app₁ r₁)
+... | yes p₁′ (_ , r₁)                   = no (hnf (app p₁))
+... | no p₁′                             = no (hnf (app p₁))
+
+
+---------------------------------------------------------------------------------------------------------------
+--
+-- SS-H₂ does not reduce SS-CBN-reducible terms, or HNF
+
+cbn-rf|hnf←nrf : ∀ {n} {e : Tm n} → NRF e → CBN.RF e ⊎ HNF e
+cbn-rf|hnf←nrf p      with rf? _
+... | cbn-yes (_ , r) = inj₁ (_ , r)
+... | yes p′ (_ , r)  = r ↯ p
+... | no p′           = inj₂ p′
 
 mutual
   nrf←hnf : ∀ {n} {e : Tm n} → HNF e → NRF e
