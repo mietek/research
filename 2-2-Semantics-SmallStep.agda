@@ -205,17 +205,17 @@ module H where
 
 module H₂ where
   data _⇒_ {n} : Rel₀ (Tm n) where
-    lam₋   : ∀ {e e′} →
-             ¬ WHNF e → e CBN.⇒ e′ →
-             lam e ⇒ lam e′
+    lam₋  : ∀ {e e′} →
+            ¬ WHNF e → e CBN.⇒ e′ →
+            lam e ⇒ lam e′
 
-    lam₊   : ∀ {e e′} →
-             WHNF e → e ⇒ e′ →
-             lam e ⇒ lam e′
+    lam₊  : ∀ {e e′} →
+            WHNF e → e ⇒ e′ →
+            lam e ⇒ lam e′
 
-    app₁₊  : ∀ {e₁ e₂ e₁′} →
-             NAXNF e₁ → e₁ ⇒ e₁′ →
-             app e₁ e₂ ⇒ app e₁′ e₂
+    app₁₊ : ∀ {e₁ e₂ e₁′} →
+            NAXNF e₁ → e₁ ⇒ e₁′ →
+            app e₁ e₂ ⇒ app e₁′ e₂
 
   open DerivedEquipment _⇒_ public
 
