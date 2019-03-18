@@ -11,30 +11,35 @@ import 4-3-Properties-SmallStep-CBV as CBV
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Every term is either SS-HAO reducible or NF
+-- Every term is either SS-HAO-reducible or NF
 
-data Form {n} : Pred₀ (Tm n) where
-  rf : ∀ {e} → RF e → Form e
-  nf : ∀ {e} → NF e → Form e
+data RF? {n} : Pred₀ (Tm n) where
+  yes : ∀ {e} → RF e → RF? e
+  no  : ∀ {e} → NF e → RF? e
 
-form? : ∀ {n} (e : Tm n) → Form e
-form? (var x)     = nf (nf var)
-form? (lam e)     with form? e
-... | rf (_ , r)  = rf (_ , lam r)
-... | nf p        = nf (lam p)
-form? (app e₁ e₂) with CBV.form? e₁ | form? e₁ | form? e₂
-... | CBV.rf (_ , r₁)  | _            | _           = rf (_ , cbv-app₁ r₁)
-... | CBV.wnf lam      | _            | rf (_ , r₂) = rf (_ , app₂ₐ r₂)
-... | CBV.wnf lam      | _            | nf p₂       = rf (_ , applam p₂)
-... | CBV.wnf (wnf p₁) | rf (_ , r₁)  | _           = rf (_ , app₁ p₁ r₁)
-... | CBV.wnf (wnf ()) | nf (lam p₁′) | _
-... | CBV.wnf (wnf p₁) | nf (nf p₁′)  | rf (_ , r₂) = rf (_ , app₂ p₁′ r₂)
-... | CBV.wnf (wnf p₁) | nf (nf p₁′)  | nf p₂       = nf (nf (app p₁′ p₂))
+rf? : ∀ {n} (e : Tm n) → RF? e
+rf? (var x)                                          = no (nf var)
+rf? (lam e)                                          with rf? e
+... | yes (_ , r)                                    = yes (_ , lam r)
+... | no p                                           = no (lam p)
+rf? (app e₁ e₂)                                      with CBV.rf? e₁ | rf? e₁ | rf? e₂
+... | CBV.yes (_ , r₁) | _            | _            = yes (_ , cbv-app₁ r₁)
+... | CBV.no lam       | _            | yes (_ , r₂) = yes (_ , app₂ₐ r₂)
+... | CBV.no lam       | _            | no p₂        = yes (_ , applam p₂)
+... | CBV.no (wnf p₁)  | yes (_ , r₁) | _            = yes (_ , app₁ p₁ r₁)
+... | CBV.no (wnf ())  | no (lam p₁′) | _
+... | CBV.no (wnf p₁)  | no (nf p₁′)  | yes (_ , r₂) = yes (_ , app₂ p₁′ r₂)
+... | CBV.no (wnf p₁)  | no (nf p₁′)  | no p₂        = no (nf (app p₁′ p₂))
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
 -- SS-HAO does not reduce NF
+
+nf←nrf : ∀ {n} {e : Tm n} → NRF e → NF e
+nf←nrf p         with rf? _
+... | yes (_ , r) = r ↯ p
+... | no p′       = p′
 
 mutual
   nrf←nf : ∀ {n} {e : Tm n} → NF e → NRF e
@@ -48,11 +53,6 @@ mutual
                             ; (app₁ p₁′ r₁) → r₁ ↯ nrf←nanf p₁
                             ; (app₂ₐ r₂)    → r₂ ↯ nrf←nf p₂
                             ; (app₂ p₁′ r₂) → r₂ ↯ nrf←nf p₂ }
-
-nf←nrf : ∀ {n} {e : Tm n} → NRF e → NF e
-nf←nrf p with form? _
-... | rf (_ , r) = r ↯ p
-... | nf p′      = p′
 
 
 ---------------------------------------------------------------------------------------------------------------

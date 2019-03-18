@@ -12,19 +12,19 @@ open CBV public
 --
 -- Every term is either SS-CBV-reducible or WNF
 
-data Form {n} : Pred₀ (Tm n) where
-  rf  : ∀ {e} → RF e → Form e
-  wnf : ∀ {e} → WNF e → Form e
+data RF? {n} : Pred₀ (Tm n) where
+  yes : ∀ {e} → RF e → RF? e
+  no  : ∀ {e} → WNF e → RF? e
 
-form? : ∀ {n} (e : Tm n) → Form e
-form? (var x)                    = wnf (wnf var)
-form? (lam e)                    = wnf lam
-form? (app e₁ e₂)                with form? e₁ | form? e₂
-... | rf (_ , r₁)  | _           = rf (_ , app₁ r₁)
-... | wnf lam      | rf (_ , r₂) = rf (_ , app₂ lam r₂)
-... | wnf lam      | wnf p₂      = rf (_ , applam p₂)
-... | wnf (wnf p₁) | rf (_ , r₂) = rf (_ , app₂ (wnf p₁) r₂)
-... | wnf (wnf p₁) | wnf p₂      = wnf (wnf (app p₁ p₂))
+rf? : ∀ {n} (e : Tm n) → RF? e
+rf? (var x)                       = no (wnf var)
+rf? (lam e)                       = no lam
+rf? (app e₁ e₂)                   with rf? e₁ | rf? e₂
+... | yes (_ , r₁) | _            = yes (_ , app₁ r₁)
+... | no lam       | yes (_ , r₂) = yes (_ , app₂ lam r₂)
+... | no lam       | no p₂        = yes (_ , applam p₂)
+... | no (wnf p₁)  | yes (_ , r₂) = yes (_ , app₂ (wnf p₁) r₂)
+... | no (wnf p₁)  | no p₂        = no (wnf (app p₁ p₂))
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -43,9 +43,9 @@ mutual
                              ; (app₂ p₁′ r₂′) → r₂′ ↯ nrf←wnf p₂ }
 
 wnf←nrf : ∀ {n} {e : Tm n} → NRF e → WNF e
-wnf←nrf p       with form? _
-... | rf (_ , r) = r ↯ p
-... | wnf p′     = p′
+wnf←nrf p        with rf? _
+... | yes (_ , r) = r ↯ p
+... | no p′       = p′
 
 
 ---------------------------------------------------------------------------------------------------------------

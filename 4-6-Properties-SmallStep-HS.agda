@@ -10,7 +10,31 @@ open HS public
 
 ---------------------------------------------------------------------------------------------------------------
 --
+-- Every term is either SS-HS-reducible or HNF
+
+data RF? {n} : Pred₀ (Tm n) where
+  yes : ∀ {e} → RF e → RF? e
+  no  : ∀ {e} → HNF e → RF? e
+
+rf? : ∀ {n} (e : Tm n) → RF? e
+rf? (var x)        = no (hnf var)
+rf? (lam e)        with rf? e
+... | yes (_ , r)  = yes (_ , lam r)
+... | no p         = no (lam p)
+rf? (app e₁ e₂)    with rf? e₁
+... | yes (_ , r₁) = yes (_ , app₁ r₁)
+... | no (lam p₁)  = yes (_ , applam p₁)
+... | no (hnf p₁)  = no (hnf (app p₁))
+
+
+---------------------------------------------------------------------------------------------------------------
+--
 -- SS-HS does not reduce HNF
+
+hnf←nrf : ∀ {n} {e : Tm n} → NRF e → HNF e
+hnf←nrf p        with rf? _
+... | yes (_ , r) = r ↯ p
+... | no p′       = p′
 
 nrf←naxnf : ∀ {n} {e : Tm n} → NAXNF e → NRF e
 nrf←naxnf var      = λ ()

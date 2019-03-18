@@ -13,33 +13,39 @@ import 4-1-Properties-SmallStep-CBN as CBN
 --
 -- Every term is either SS-CBN-reducible, SS-NO₂-reducible, or NF
 
-data Form {n} : Pred₀ (Tm n) where
-  cbn-rf : ∀ {e} → CBN.RF e → Form e
-  rf     : ∀ {e} → WHNF e → RF e → Form e
-  nf     : ∀ {e} → NF e → Form e
+data RF? {n} : Pred₀ (Tm n) where
+  cbn-yes : ∀ {e} → CBN.RF e → RF? e
+  yes     : ∀ {e} → WHNF e → RF e → RF? e
+  no      : ∀ {e} → NF e → RF? e
 
-form? : ∀ {n} (e : Tm n) → Form e
-form? e           with CBN.form? e
-...               | CBN.rf (_ , r)           = cbn-rf (_ , r)
-form? (var x)     | _                        = nf (nf var)
-form? (lam e)     | CBN.whnf lam             with form? e
-... | cbn-rf (_ , r)                         = rf lam (_ , lam₋ (λ p′ → CBN.nrf←whnf p′ r) r)
-... | rf p (_ , r)                           = rf lam (_ , lam₊ p r)
-... | nf p                                   = nf (lam p)
-form? (lam e)     | CBN.whnf (whnf ())
-form? (app e₁ e₂) | CBN.whnf (whnf (app p₁)) with form? e₁ | form? e₂
-... | cbn-rf (_ , r₁) | _                    = cbn-rf (_ , CBN.app₁ r₁)
-... | rf p₁′ (_ , r₁) | _                    = rf (whnf (app p₁)) (_ , app₁₊ p₁ r₁)
-... | nf (lam p₁′)    | _                    = cbn-rf (_ , CBN.applam)
-... | nf (nf p₁′)     | cbn-rf (_ , r₂)      = rf (whnf (app p₁))
-                                                  (_ , app₂₋ p₁′ (λ p₂′ → r₂ ↯ CBN.nrf←whnf p₂′) r₂)
-... | nf (nf p₁′)     | rf p₂ (_ , r₂)       = rf (whnf (app p₁)) (_ , app₂₊ p₁′ p₂ r₂)
-... | nf (nf p₁′)     | nf p₂                = nf (nf (app p₁′ p₂))
+rf? : ∀ {n} (e : Tm n) → RF? e
+rf? e           with CBN.rf? e
+...             | CBN.yes (_ , r)         = cbn-yes (_ , r)
+rf? (var x)     | CBN.no _                = no (nf var)
+rf? (lam e)     | CBN.no lam              with rf? e
+... | cbn-yes (_ , r)                     = yes lam (_ , lam₋ (λ p′ → r ↯ CBN.nrf←whnf p′) r)
+... | yes p (_ , r)                       = yes lam (_ , lam₊ p r)
+... | no p                                = no (lam p)
+rf? (lam e)     | CBN.no (whnf ())
+rf? (app e₁ e₂) | CBN.no (whnf (app p₁))  with rf? e₁ | rf? e₂
+... | cbn-yes (_ , r₁) | _                = cbn-yes (_ , CBN.app₁ r₁)
+... | yes p₁′ (_ , r₁) | _                = yes (whnf (app p₁)) (_ , app₁₊ p₁ r₁)
+... | no (lam p₁′)     | _                = cbn-yes (_ , CBN.applam)
+... | no (nf p₁′)      | cbn-yes (_ , r₂) = yes (whnf (app p₁))
+                                                (_ , app₂₋ p₁′ (λ p₂′ → r₂ ↯ CBN.nrf←whnf p₂′) r₂)
+... | no (nf p₁′)      | yes p₂ (_ , r₂)  = yes (whnf (app p₁)) (_ , app₂₊ p₁′ p₂ r₂)
+... | no (nf p₁′)      | no p₂            = no (nf (app p₁′ p₂))
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
 -- SS-NO₂ does not reduce SS-CBN-reducible terms, or NF
+
+cbn-rf|nf←nrf : ∀ {n} {e : Tm n} → NRF e → CBN.RF e ⊎ NF e
+cbn-rf|nf←nrf p      with rf? _
+... | cbn-yes (_ , r) = inj₁ (_ , r)
+... | yes p′ (_ , r)  = r ↯ p
+... | no p′           = inj₂ p′
 
 nrf←cbn-rf : ∀ {n} {e : Tm n} → CBN.RF e → NRF e
 nrf←cbn-rf (_ , r) = λ { (lam₋ ¬p r′)      → case r of λ ()
@@ -65,12 +71,6 @@ mutual
   nrf←nanf (app p₁ p₂) = λ { (app₁₊ p₁′ r₁)     → r₁ ↯ nrf←nanf p₁
                             ; (app₂₋ p₁′ ¬p₂ r₂) → r₂ ↯ CBN.nrf←whnf (whnf←nf p₂)
                             ; (app₂₊ p₁′ p₂′ r₂) → r₂ ↯ nrf←nf p₂ }
-
-cbn-rf|nf←nrf : ∀ {n} {e : Tm n} → NRF e → CBN.RF e ⊎ NF e
-cbn-rf|nf←nrf p     with form? _
-... | cbn-rf (_ , r) = inj₁ (_ , r)
-... | rf p′ (_ , r)  = r ↯ p
-... | nf p′          = inj₂ p′
 
 
 ---------------------------------------------------------------------------------------------------------------

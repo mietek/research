@@ -12,29 +12,34 @@ open AO public
 --
 -- Every term is either SS-AO-reducible or NF
 
-data Form {n} : Pred₀ (Tm n) where
-  rf : ∀ {e} → RF e → Form e
-  nf : ∀ {e} → NF e → Form e
+data RF? {n} : Pred₀ (Tm n) where
+  yes : ∀ {e} → RF e → RF? e
+  no  : ∀ {e} → NF e → RF? e
 
-form? : ∀ {n} (e : Tm n) → Form e
-form? (var x)                             = nf (nf var)
-form? (lam e)                             with form? e
-... | rf (_ , r)                          = rf (_ , lam r)
-... | nf p                                = nf (lam p)
-form? (app e₁ e₂)                         with form? e₁ | form? e₂
-... | rf (_ , lam r₁)       | _           = rf (_ , app₁ (lam r₁))
-... | rf (_ , applam p₁ p₂) | _           = rf (_ , app₁ (applam p₁ p₂))
-... | rf (_ , app₁ r₁)      | _           = rf (_ , app₁ (app₁ r₁))
-... | rf (_ , app₂ p₁ r₂)   | _           = rf (_ , app₁ (app₂ p₁ r₂))
-... | nf (lam p₁)           | rf (_ , r₂) = rf (_ , app₂ (lam p₁) r₂)
-... | nf (lam p₁)           | nf p₂       = rf (_ , applam p₁ p₂)
-... | nf (nf p₁)            | rf (_ , r₂) = rf (_ , app₂ (nf p₁) r₂)
-... | nf (nf p₁)            | nf p₂       = nf (nf (app p₁ p₂))
+rf? : ∀ {n} (e : Tm n) → RF? e
+rf? (var x)                                 = no (nf var)
+rf? (lam e)                                 with rf? e
+... | yes (_ , r)                           = yes (_ , lam r)
+... | no p                                  = no (lam p)
+rf? (app e₁ e₂)                             with rf? e₁ | rf? e₂
+... | yes (_ , lam r₁)       | _            = yes (_ , app₁ (lam r₁))
+... | yes (_ , applam p₁ p₂) | _            = yes (_ , app₁ (applam p₁ p₂))
+... | yes (_ , app₁ r₁)      | _            = yes (_ , app₁ (app₁ r₁))
+... | yes (_ , app₂ p₁ r₂)   | _            = yes (_ , app₁ (app₂ p₁ r₂))
+... | no (lam p₁)            | yes (_ , r₂) = yes (_ , app₂ (lam p₁) r₂)
+... | no (lam p₁)            | no p₂        = yes (_ , applam p₁ p₂)
+... | no (nf p₁)             | yes (_ , r₂) = yes (_ , app₂ (nf p₁) r₂)
+... | no (nf p₁)             | no p₂        = no (nf (app p₁ p₂))
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
 -- SS-AO does not reduce NF
+
+nf←nrf : ∀ {n} {e : Tm n} → NRF e → NF e
+nf←nrf p         with rf? _
+... | yes (_ , r) = r ↯ p
+... | no p′       = p′
 
 mutual
   nrf←nf : ∀ {n} {e : Tm n} → NF e → NRF e
@@ -46,11 +51,6 @@ mutual
   nrf←nanf (app p₁ p₂) = λ { (applam p₁′ p₂′) → case p₁ of λ ()
                             ; (app₁ r₁)        → r₁ ↯ nrf←nanf p₁
                             ; (app₂ p₁ r₂)     → r₂ ↯ nrf←nf p₂ }
-
-nf←nrf : ∀ {n} {e : Tm n} → NRF e → NF e
-nf←nrf p        with form? _
-... | rf (_ , r) = r ↯ p
-... | nf p′      = p′
 
 
 ---------------------------------------------------------------------------------------------------------------
