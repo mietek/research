@@ -85,9 +85,9 @@ module Lem-5-3-2 where
   bs-app rs₁ p₁′ rs₂ = app₁* rs₁ ◅◅ app₂* p₁′ rs₂
 
   ss←bs : ∀ {n} {e : Tm n} {e′} → e ⟱ e′ → e ⇒* e′
+  ss←bs (applam r₁ r₂ r) = bs-applam (ss←bs r₁) (ss←bs r₂) (wnf-⟱ r₂) (ss←bs r)
   ss←bs var              = ε
   ss←bs lam              = ε
-  ss←bs (applam r₁ r₂ r) = bs-applam (ss←bs r₁) (ss←bs r₂) (wnf-⟱ r₂) (ss←bs r)
   ss←bs (app r₁ p₁′ r₂)  = bs-app (ss←bs r₁) (wnf-⟱ r₁) (ss←bs r₂)
 
 

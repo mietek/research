@@ -28,9 +28,9 @@ na←hnf-⟱ (lam p) () r
 na←hnf-⟱ (hnf p) p′ r = na←naxnf-⟱ p r
 
 nf-⟱ : ∀ {n} {e : Tm n} {e′} → e ⟱ e′ → NF e′
+nf-⟱ (applam r₁ r)       = nf-⟱ r
 nf-⟱ var                 = nf var
 nf-⟱ (lam r)             = lam (nf-⟱ r)
-nf-⟱ (applam r₁ r)       = nf-⟱ r
 nf-⟱ (app r₁ p₁′ r₁′ r₂) = nf (app p₁ (nf-⟱ r₂))
   where
     p₁ = nanf←nf (nf-⟱ r₁′) (na←hnf-⟱ (HS.hnf-⟱ r₁) p₁′ r₁′)

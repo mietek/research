@@ -22,8 +22,8 @@ rf? (lam e)                                 with rf? e
 ... | yes (_ , r)                           = yes (_ , lam r)
 ... | no p                                  = no (lam p)
 rf? (app e₁ e₂)                             with rf? e₁ | rf? e₂
-... | yes (_ , lam r₁)       | _            = yes (_ , app₁ (lam r₁))
 ... | yes (_ , applam p₁ p₂) | _            = yes (_ , app₁ (applam p₁ p₂))
+... | yes (_ , lam r₁)       | _            = yes (_ , app₁ (lam r₁))
 ... | yes (_ , app₁ r₁)      | _            = yes (_ , app₁ (app₁ r₁))
 ... | yes (_ , app₂ p₁ r₂)   | _            = yes (_ , app₁ (app₂ p₁ r₂))
 ... | no (lam p₁)            | yes (_ , r₂) = yes (_ , app₂ (lam p₁) r₂)
@@ -136,10 +136,10 @@ uniq-⇒ {e = app (app _ _) _} (app₂ p₁ r₂)       (app₂ p₁′ r₂′)
 -- SS-AO is deterministic, confluent, and gives rise to deterministic evaluation to NRF
 
 det-⇒ : Deterministic _⇒_
-det-⇒ (lam r)         (lam r′)         = lam & det-⇒ r r′
 det-⇒ (applam p₁ p₂)  (applam p₁′ p₂′) = refl
 det-⇒ (applam p₁ p₂)  (app₁ (lam r₁′)) = r₁′ ↯ nrf←nf p₁
 det-⇒ (applam p₁ p₂)  (app₂ p₁′ r₂′)   = r₂′ ↯ nrf←nf p₂
+det-⇒ (lam r)         (lam r′)         = lam & det-⇒ r r′
 det-⇒ (app₁ (lam r₁)) (applam p₁′ p₂′) = r₁ ↯ nrf←nf p₁′
 det-⇒ (app₁ r₁)       (app₁ r₁′)       = app & det-⇒ r₁ r₁′ ⊗ refl
 det-⇒ (app₁ r₁)       (app₂ p₁′ r₂′)   = r₁ ↯ nrf←nf p₁′

@@ -30,8 +30,8 @@ module Lem-5-2-1 where
   open SS
 
   cbn←no : ∀ {n} {e : Tm n} {e′} → ¬ WHNF e → e NO.⇒ e′ → e CBN.⇒ e′
-  cbn←no ¬p (NO.lam r)      = lam ↯ ¬p
   cbn←no ¬p NO.applam       = CBN.applam
+  cbn←no ¬p (NO.lam r)      = lam ↯ ¬p
   cbn←no ¬p (NO.app₁ p₁ r₁) with whnf? _
   ... | no ¬p₁′              = CBN.app₁ (cbn←no ¬p₁′ r₁)
   ... | yes p₁′              = whnf (app (naxnf←whnf p₁′ p₁)) ↯ ¬p
@@ -168,9 +168,9 @@ module Lem-5-2-3 where
   open BS
 
   no←cbn|no₂ : ∀ {n} {e : Tm n} {e′ e″} → e CBN.⟱ e′ → e′ NO₂.⟱ e″ → e NO.⟱ e″
+  no←cbn|no₂ (CBN.applam r₁ r) r′                      = NO.applam r₁ (no←cbn|no₂ r r′)
   no←cbn|no₂ CBN.var           NO₂.var                 = NO.var
   no←cbn|no₂ CBN.lam           (NO₂.lam r r′)          = NO.lam (no←cbn|no₂ r r′)
-  no←cbn|no₂ (CBN.applam r₁ r) r′                      = NO.applam r₁ (no←cbn|no₂ r r′)
   no←cbn|no₂ (CBN.app r₁ p₁′)  (NO₂.app p₁ r₁′ r₂ r₂′) = NO.app r₁ p₁′ r₁″ (no←cbn|no₂ r₂ r₂′)
     where
       r₁″ = no←cbn|no₂ (BS-CBN.refl-⟱ (BS-CBN.whnf-⟱ r₁)) r₁′
@@ -198,11 +198,11 @@ module Lem-5-2-5 where
   open SS-NO
   open BS-NO
 
-  lam* : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
-  lam* = map lam
-
   applam* : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} → app (lam e₁) e₂ ⇒* e₁ [ e₂ ]
   applam* = applam ◅ ε
+
+  lam* : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
+  lam* = map lam
 
   cbn-app₁* : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ SS.CBN.⇒* e₁′ → app e₁ e₂ ⇒* app e₁′ e₂
   cbn-app₁* = map cbn-app₁
@@ -214,13 +214,13 @@ module Lem-5-2-5 where
   app₂* : ∀ {n} {e₁ e₂ : Tm n} {e₂′} → NANF e₁ → e₂ ⇒* e₂′ → app e₁ e₂ ⇒* app e₁ e₂′
   app₂* p₁ = map (app₂ p₁)
 
-  bs-lam : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
-  bs-lam = lam*
-
   bs-applam : ∀ {n} {e₁ e₂ : Tm n} {e₁′ e′} →
               e₁ SS.CBN.⇒* lam e₁′ → e₁′ [ e₂ ] ⇒* e′ →
               app e₁ e₂ ⇒* e′
   bs-applam rs₁ rs = cbn-app₁* rs₁ ◅◅ applam* ◅◅ rs
+
+  bs-lam : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
+  bs-lam = lam*
 
   bs-app : ∀ {n} {e₁ e₂ : Tm n} {e₁′ e₁″ e₂′} →
            e₁ SS.CBN.⇒* e₁′ → NAXNF e₁′ → e₁′ ⇒* e₁″ → NANF e₁″ → e₂ ⇒* e₂′ →
@@ -228,9 +228,9 @@ module Lem-5-2-5 where
   bs-app rs₁ p₁′ rs₁′ p₁″ rs₂ = cbn-app₁* rs₁ ◅◅ app₁₊* p₁′ rs₁′ ◅◅ app₂* p₁″ rs₂
 
   ss←bs : ∀ {n} {e : Tm n} {e′} → e ⟱ e′ → e ⇒* e′
+  ss←bs (applam r₁ r)       = bs-applam (Lem-5-1-2.ss←bs r₁) (ss←bs r)
   ss←bs var                 = ε
   ss←bs (lam r)             = bs-lam (ss←bs r)
-  ss←bs (applam r₁ r)       = bs-applam (Lem-5-1-2.ss←bs r₁) (ss←bs r)
   ss←bs (app r₁ p₁′ r₁′ r₂) = bs-app (Lem-5-1-2.ss←bs r₁) p₁″ (ss←bs r₁′) p₁‴ (ss←bs r₂)
     where
       p₁″ = naxnf←whnf (BS-CBN.whnf-⟱ r₁) p₁′

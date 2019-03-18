@@ -96,9 +96,9 @@ uniq-⇒ {e = app (app _ _) _} (app₁ r₁)       (app₁ r₁′) = app₁ & u
 -- SS-HS is deterministic, confluent, and gives rise to deterministic evaluation to NRF
 
 det-⇒ : Deterministic _⇒_
-det-⇒ (lam r)         (lam r′)         = lam & det-⇒ r r′
 det-⇒ (applam p₁)     (applam p₁′)     = refl
 det-⇒ (applam p₁)     (app₁ (lam r₁′)) = r₁′ ↯ nrf←hnf p₁
+det-⇒ (lam r)         (lam r′)         = lam & det-⇒ r r′
 det-⇒ (app₁ (lam r₁)) (applam p₁′)     = r₁ ↯ nrf←hnf p₁′
 det-⇒ (app₁ r₁)       (app₁ r₁′)       = app & det-⇒ r₁ r₁′ ⊗ refl
 

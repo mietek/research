@@ -49,8 +49,8 @@ rf? (lam e)                with rf? e
 ... | yes (_ , r)          = yes (_ , lam r)
 ... | no p                 = no (lam p)
 rf? (app e₁ e₂)            with rf? e₁
-... | yes (_ , lam r₁)     = yes (_ , applam)
 ... | yes (_ , applam)     = yes (_ , app₁ app applam)
+... | yes (_ , lam r₁)     = yes (_ , applam)
 ... | yes (_ , app₁ p₁ r₁) = yes (_ , app₁ app (app₁ p₁ r₁))
 ... | no (lam p₁)          = yes (_ , applam)
 ... | no (hnf p₁)          = no (hnf (app p₁))
@@ -111,9 +111,9 @@ uniq-⇒ {e = app (app _ _) _} (app₁ p₁ r₁) (app₁ p₁′ r₁′) = app
 -- SS-H is deterministic, confluent and gives rise to deterministic evaluation to NRF
 
 det-⇒ : Deterministic _⇒_
-det-⇒ (lam r)      (lam r′)       = lam & det-⇒ r r′
 det-⇒ applam       applam         = refl
 det-⇒ applam       (app₁ () r₁′)
+det-⇒ (lam r)      (lam r′)       = lam & det-⇒ r r′
 det-⇒ (app₁ () r₁) applam
 det-⇒ (app₁ p₁ r₁) (app₁ p₁′ r₁′) = app & det-⇒ r₁ r₁′ ⊗ refl
 

@@ -67,10 +67,10 @@ module Lem-5-4-1 where
     bs←ss (r ◅ rs) p′ = bs←ss′ r rs p′
 
     bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → NF e″ → e ⟱ e″
+    bs←ss′ (applam p₁ p₂) rs p″                  = applam (refl-⟱ (lam p₁)) (refl-⟱ p₂) (bs←ss rs p″)
     bs←ss′ (lam r)        rs (lam p″)            = lam (bs←ss′ r (rev-lam* rs) p″)
     bs←ss′ (lam r)        rs (nf var)            = rs ↯ ¬lam⇒*var
     bs←ss′ (lam r)        rs (nf (app _ _))      = rs ↯ ¬lam⇒*app
-    bs←ss′ (applam p₁ p₂) rs p″                  = applam (refl-⟱ (lam p₁)) (refl-⟱ p₂) (bs←ss rs p″)
     bs←ss′ (app₁ r₁)      rs p″                  with rev-app₁* rs p″
     ... | inj₁ (_ , rs₁ , p₁′ , rs₂ , p₂′ , rs′)  = applam (bs←ss′ r₁ rs₁ (lam p₁′)) (bs←ss rs₂ p₂′)
                                                            (bs←ss rs′ p″)
@@ -91,11 +91,11 @@ module Lem-5-4-2 where
   open SS-AO
   open BS-AO
 
-  lam* : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
-  lam* = map lam
-
   applam* : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} → NF e₁ → NF e₂ → app (lam e₁) e₂ ⇒* e₁ [ e₂ ]
   applam* p₁ p₂ = applam p₁ p₂ ◅ ε
+
+  lam* : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
+  lam* = map lam
 
   app₁* : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ ⇒* e₁′ → app e₁ e₂ ⇒* app e₁′ e₂
   app₁* = map app₁
@@ -103,14 +103,14 @@ module Lem-5-4-2 where
   app₂* : ∀ {n} {e₁ e₂ : Tm n} {e₂′} → NF e₁ → e₂ ⇒* e₂′ → app e₁ e₂ ⇒* app e₁ e₂′
   app₂* p₁ = map (app₂ p₁)
 
-  bs-lam : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
-  bs-lam = lam*
-
   bs-applam : ∀ {n} {e₁ e₂ : Tm n} {e₁′ e₂′ e′} →
               e₁ ⇒* lam e₁′ → NF (lam e₁′) → e₂ ⇒* e₂′ → NF e₂′ → e₁′ [ e₂′ ] ⇒* e′ →
               app e₁ e₂ ⇒* e′
   bs-applam rs₁ (lam p₁′) rs₂ p₂′ rs = app₁* rs₁ ◅◅ app₂* (lam p₁′) rs₂ ◅◅ applam* p₁′ p₂′ ◅◅ rs
   bs-applam rs₁ (nf ())   rs₂ p₂′ rs
+
+  bs-lam : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
+  bs-lam = lam*
 
   bs-app : ∀ {n} {e₁ e₂ : Tm n} {e₁′ e₂′} →
            e₁ ⇒* e₁′ → NF e₁′ → e₂ ⇒* e₂′ →
@@ -118,9 +118,9 @@ module Lem-5-4-2 where
   bs-app rs₁ p₁′ rs₂ = app₁* rs₁ ◅◅ app₂* p₁′ rs₂
 
   ss←bs : ∀ {n} {e : Tm n} {e′} → e ⟱ e′ → e ⇒* e′
+  ss←bs (applam r₁ r₂ r) = bs-applam (ss←bs r₁) (nf-⟱ r₁) (ss←bs r₂) (nf-⟱ r₂) (ss←bs r)
   ss←bs var              = ε
   ss←bs (lam r)          = bs-lam (ss←bs r)
-  ss←bs (applam r₁ r₂ r) = bs-applam (ss←bs r₁) (nf-⟱ r₁) (ss←bs r₂) (nf-⟱ r₂) (ss←bs r)
   ss←bs (app r₁ p₁′ r₂)  = bs-app (ss←bs r₁) (nf-⟱ r₁) (ss←bs r₂)
 
 

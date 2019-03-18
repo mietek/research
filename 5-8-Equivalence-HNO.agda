@@ -30,8 +30,8 @@ module Lem-5-8-1 where
   open SS
 
   hs←hno : ∀ {n} {e : Tm n} {e′} → ¬ HNF e → e HNO.⇒ e′ → e HS.⇒ e′
-  hs←hno ¬p (HNO.lam r)        = HS.lam (hs←hno (λ p → lam p ↯ ¬p) r)
   hs←hno ¬p (HNO.applam p₁)    = HS.applam p₁
+  hs←hno ¬p (HNO.lam r)        = HS.lam (hs←hno (λ p → lam p ↯ ¬p) r)
   hs←hno ¬p (HNO.app₁ₐ ¬p₁ r₁) = HS.app₁ (HS.lam (hs←hno ¬p₁ r₁))
   hs←hno ¬p (HNO.app₁ p₁ r₁)   with hnf? _
   ... | no ¬p₁′                 = HS.app₁ (hs←hno ¬p₁′ r₁)
@@ -149,9 +149,9 @@ module Lem-5-8-3 where
   open BS
 
   hno←hs|hno₂ : ∀ {n} {e : Tm n} {e′ e″} → e HS.⟱ e′ → e′ HNO₂.⟱ e″ → e HNO.⟱ e″
+  hno←hs|hno₂ (HS.applam r₁ r) r′                       = HNO.applam r₁ (hno←hs|hno₂ r r′)
   hno←hs|hno₂ HS.var           HNO₂.var                 = HNO.var
   hno←hs|hno₂ (HS.lam r)       (HNO₂.lam p r′)          = HNO.lam (hno←hs|hno₂ r r′)
-  hno←hs|hno₂ (HS.applam r₁ r) r′                       = HNO.applam r₁ (hno←hs|hno₂ r r′)
   hno←hs|hno₂ (HS.app r₁ p₁′)  (HNO₂.app p₁ r₁′ r₂ r₂′) = HNO.app r₁ p₁′ r₁″ (hno←hs|hno₂ r₂ r₂′)
     where
       r₁″ = hno←hs|hno₂ (BS-HS.refl-⟱ (BS-HS.hnf-⟱ r₁)) r₁′
@@ -179,11 +179,11 @@ module Lem-5-8-5 where
   open SS-HNO
   open BS-HNO
 
-  lam* : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
-  lam* = map lam
-
   applam* : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} → HNF e₁ → app (lam e₁) e₂ ⇒* e₁ [ e₂ ]
   applam* p₁ = applam p₁ ◅ ε
+
+  lam* : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
+  lam* = map lam
 
   hs-app₁* : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ SS.HS.⇒* e₁′ → app e₁ e₂ ⇒* app e₁′ e₂
   hs-app₁* = map hs-app₁
@@ -195,14 +195,14 @@ module Lem-5-8-5 where
   app₂* : ∀ {n} {e₁ e₂ : Tm n} {e₂′} → NANF e₁ → e₂ ⇒* e₂′ → app e₁ e₂ ⇒* app e₁ e₂′
   app₂* p₁ = map (app₂ p₁)
 
-  bs-lam : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
-  bs-lam = lam*
-
   bs-applam : ∀ {n} {e₁ e₂ : Tm n} {e₁′ e′} →
               e₁ SS.HS.⇒* lam e₁′ → HNF (lam e₁′) → e₁′ [ e₂ ] ⇒* e′ →
               app e₁ e₂ ⇒* e′
   bs-applam rs₁ (lam p₁′) rs = hs-app₁* rs₁ ◅◅ applam* p₁′ ◅◅ rs
   bs-applam rs₁ (hnf ())  rs
+
+  bs-lam : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
+  bs-lam = lam*
 
   bs-app : ∀ {n} {e₁ e₂ : Tm n} {e₁′ e₁″ e₂′} →
            e₁ SS.HS.⇒* e₁′ → NAXNF e₁′ → e₁′ ⇒* e₁″ → NANF e₁″ → e₂ ⇒* e₂′ →
@@ -210,9 +210,9 @@ module Lem-5-8-5 where
   bs-app rs₁ p₁′ rs₁′ p₁″ rs₂ = hs-app₁* rs₁ ◅◅ app₁₊* p₁′ rs₁′ ◅◅ app₂* p₁″ rs₂
 
   ss←bs : ∀ {n} {e : Tm n} {e′} → e ⟱ e′ → e ⇒* e′
+  ss←bs (applam r₁ r)       = bs-applam (Lem-5-6-2.ss←bs r₁) (BS-HS.hnf-⟱ r₁) (ss←bs r)
   ss←bs var                 = ε
   ss←bs (lam r)             = bs-lam (ss←bs r)
-  ss←bs (applam r₁ r)       = bs-applam (Lem-5-6-2.ss←bs r₁) (BS-HS.hnf-⟱ r₁) (ss←bs r)
   ss←bs (app r₁ p₁′ r₁′ r₂) = bs-app (Lem-5-6-2.ss←bs r₁) p₁″ (ss←bs r₁′) p₁‴ (ss←bs r₂)
     where
       p₁″ = naxnf←hnf (BS-HS.hnf-⟱ r₁) p₁′

@@ -30,8 +30,8 @@ module Lem-5-7-1 where
   open SS
 
   cbn←h : ∀ {n} {e : Tm n} {e′} → ¬ WHNF e → e H.⇒ e′ → e CBN.⇒ e′
-  cbn←h ¬p (H.lam r)      = lam ↯ ¬p
   cbn←h ¬p H.applam       = CBN.applam
+  cbn←h ¬p (H.lam r)      = lam ↯ ¬p
   cbn←h ¬p (H.app₁ p₁ r₁) with whnf? _
   ... | no ¬p₁′            = CBN.app₁ (cbn←h ¬p₁′ r₁)
   ... | yes p₁′            = whnf (app (naxnf←whnf p₁′ p₁)) ↯ ¬p
@@ -128,9 +128,9 @@ module Lem-5-7-3 where
   open BS
 
   h←cbn|h₂ : ∀ {n} {e : Tm n} {e′ e″} → e CBN.⟱ e′ → e′ H₂.⟱ e″ → e H.⟱ e″
+  h←cbn|h₂ (CBN.applam r₁ r) r′              = H.applam r₁ (h←cbn|h₂ r r′)
   h←cbn|h₂ CBN.var           H₂.var          = H.var
   h←cbn|h₂ CBN.lam           (H₂.lam r r′)   = H.lam (h←cbn|h₂ r r′)
-  h←cbn|h₂ (CBN.applam r₁ r) r′              = H.applam r₁ (h←cbn|h₂ r r′)
   h←cbn|h₂ (CBN.app r₁ p₁′)  (H₂.app p₁ r₁′) = H.app r₁ p₁′ r₁″
     where
       r₁″ = h←cbn|h₂ (BS-CBN.refl-⟱ (BS-CBN.whnf-⟱ r₁)) r₁′
@@ -158,11 +158,11 @@ module Lem-5-7-5 where
   open SS-H
   open BS-H
 
-  lam* : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
-  lam* = map lam
-
   applam* : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} → app (lam e₁) e₂ ⇒* e₁ [ e₂ ]
   applam* = applam ◅ ε
+
+  lam* : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
+  lam* = map lam
 
   cbn-app₁* : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ SS.CBN.⇒* e₁′ → app e₁ e₂ ⇒* app e₁′ e₂
   cbn-app₁* = map cbn-app₁
@@ -171,13 +171,13 @@ module Lem-5-7-5 where
   app₁₊* p₁ ε          = ε
   app₁₊* p₁ (r₁ ◅ rs₁) = app₁₊ p₁ r₁ ◅ app₁₊* (naxnf-⇒ p₁ r₁) rs₁
 
-  bs-lam : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
-  bs-lam = lam*
-
   bs-applam : ∀ {n} {e₁ e₂ : Tm n} {e₁′ e′} →
               e₁ SS.CBN.⇒* lam e₁′ → e₁′ [ e₂ ] ⇒* e′ →
               app e₁ e₂ ⇒* e′
   bs-applam rs₁ rs = cbn-app₁* rs₁ ◅◅ applam* ◅◅ rs
+
+  bs-lam : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
+  bs-lam = lam*
 
   bs-app : ∀ {n} {e₁ e₂ : Tm n} {e₁′ e₁″} →
            e₁ SS.CBN.⇒* e₁′ → NAXNF e₁′ → e₁′ ⇒* e₁″ →
@@ -185,9 +185,9 @@ module Lem-5-7-5 where
   bs-app rs₁ p₁′ rs₁′ = cbn-app₁* rs₁ ◅◅ app₁₊* p₁′ rs₁′
 
   ss←bs : ∀ {n} {e : Tm n} {e′} → e ⟱ e′ → e ⇒* e′
+  ss←bs (applam r₁ r)    = bs-applam (Lem-5-1-2.ss←bs r₁) (ss←bs r)
   ss←bs var              = ε
   ss←bs (lam r)          = bs-lam (ss←bs r)
-  ss←bs (applam r₁ r)    = bs-applam (Lem-5-1-2.ss←bs r₁) (ss←bs r)
   ss←bs (app r₁ p₁′ r₁′) = bs-app (Lem-5-1-2.ss←bs r₁) p₁″ (ss←bs r₁′)
     where
       p₁″ = naxnf←whnf (BS-CBN.whnf-⟱ r₁) p₁′

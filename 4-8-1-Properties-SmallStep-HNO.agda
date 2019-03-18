@@ -54,10 +54,10 @@ rf? (lam e)                                                    with rf? e
 ... | yes (_ , r)                                              = yes (_ , lam r)
 ... | no p                                                     = no (lam p)
 rf? (app e₁ e₂)                                                with rf? e₁ | rf? e₂
+rf? (app e₁ e₂) | yes (_ , applam p₁)   | _                    = yes (_ , app₁ app (applam p₁))
 rf? (app e₁ e₂) | yes (_ , lam r₁)      | _                    with hnf? _
 rf? (app e₁ e₂) | yes (_ , lam r₁)      | _            | yes p = yes (_ , applam p)
 rf? (app e₁ e₂) | yes (_ , lam r₁)      | _            | no ¬p = yes (_ , app₁ₐ ¬p r₁)
-rf? (app e₁ e₂) | yes (_ , applam p₁)   | _                    = yes (_ , app₁ app (applam p₁))
 rf? (app e₁ e₂) | yes (_ , app₁ₐ p₁ r₁) | _                    = yes (_ , app₁ app (app₁ₐ p₁ r₁))
 rf? (app e₁ e₂) | yes (_ , app₁ p₁ r₁)  | _                    = yes (_ , app₁ app (app₁ p₁ r₁))
 rf? (app e₁ e₂) | yes (_ , app₂ p₁ r₂)  | _                    = yes (_ , app₁ app (app₂ p₁ r₂))
@@ -145,11 +145,11 @@ uniq-⇒ {e = app (app _ _) _} (app₂ p₁ r₂)   (app₂ p₁′ r₂′) = a
 -- SS-HNO is deterministic, confluent, and gives rise to deterministic evaluation to NRF
 
 det-⇒ : Deterministic _⇒_
-det-⇒ (lam r)        (lam r′)         = lam & det-⇒ r r′
 det-⇒ (applam p₁)    (applam p₁′)     = refl
 det-⇒ (applam p₁)    (app₁ₐ ¬p₁′ r₁′) = p₁ ↯ ¬p₁′
 det-⇒ (applam p₁)    (app₁ () r₁′)
 det-⇒ (applam p₁)    (app₂ () r₂′)
+det-⇒ (lam r)        (lam r′)         = lam & det-⇒ r r′
 det-⇒ (app₁ₐ ¬p₁ r₁) (applam p₁′)     = p₁′ ↯ ¬p₁
 det-⇒ (app₁ₐ ¬p₁ r₁) (app₁ₐ ¬p₁′ r₁′) = app & (lam & det-⇒ r₁ r₁′) ⊗ refl
 det-⇒ (app₁ₐ ¬p₁ r₁) (app₁ () r₁′)

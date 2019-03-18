@@ -30,9 +30,9 @@ na←whnf-⟱ lam      () r
 na←whnf-⟱ (whnf p) p′ r = na←naxnf-⟱ p r
 
 hnf-⟱ : ∀ {n} {e : Tm n} {e′} → e ⟱ e′ → HNF e′
+hnf-⟱ (applam r₁ r)    = hnf-⟱ r
 hnf-⟱ var              = hnf var
 hnf-⟱ (lam r)          = lam (hnf-⟱ r)
-hnf-⟱ (applam r₁ r)    = hnf-⟱ r
 hnf-⟱ (app r₁ p₁′ r₁′) = hnf (app p₁″)
   where
     p₁″ = naxnf←hnf (hnf-⟱ r₁′) (na←whnf-⟱ (CBN.whnf-⟱ r₁) p₁′ r₁′)

@@ -13,9 +13,9 @@ open CBN public
 -- BS-CBN goes to WHNF
 
 whnf-⟱ : ∀ {n} {e : Tm n} {e′} → e ⟱ e′ → WHNF e′
+whnf-⟱ (applam r₁ r) = whnf-⟱ r
 whnf-⟱ var           = whnf var
 whnf-⟱ lam           = lam
-whnf-⟱ (applam r₁ r) = whnf-⟱ r
 whnf-⟱ (app r₁ p₁′)  = whnf (app p₁″)
   where
     p₁″ = naxnf←whnf (whnf-⟱ r₁) p₁′

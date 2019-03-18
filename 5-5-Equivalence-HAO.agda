@@ -93,12 +93,12 @@ module Lem-5-5-1 where
     bs←ss (r ◅ rs) p′ = bs←ss′ r rs p′
 
     bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → NF e″ → e ⟱ e″
-    bs←ss′ (lam r)       rs (lam p″)                          = lam (bs←ss′ r (rev-lam* rs) p″)
-    bs←ss′ (lam r)       rs (nf var)                          = rs ↯ ¬lam⇒*var
-    bs←ss′ (lam r)       rs (nf (app _ _))                    = rs ↯ ¬lam⇒*app
     bs←ss′ (applam p₂)   rs p″                                = applam (BS-CBV.refl-⟱ lam)
                                                                         (refl-⟱ p₂)
                                                                         (bs←ss rs p″)
+    bs←ss′ (lam r)       rs (lam p″)                          = lam (bs←ss′ r (rev-lam* rs) p″)
+    bs←ss′ (lam r)       rs (nf var)                          = rs ↯ ¬lam⇒*var
+    bs←ss′ (lam r)       rs (nf (app _ _))                    = rs ↯ ¬lam⇒*app
     bs←ss′ (cbv-app₁ r₁) rs p″                                with rev-app* rs p″
     ... | inj₁ (_ , rs₁ , rs₂ , p₂′ , rs′)                     = applam (CBV.Lem-5-3-1.bs←ss′ r₁ rs₁ lam)
                                                                         (bs←ss rs₂ p₂′)
@@ -135,11 +135,11 @@ module Lem-5-5-2 where
   open SS-HAO
   open BS-HAO
 
-  lam* : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
-  lam* = map lam
-
   applam* : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} → NF e₂ → app (lam e₁) e₂ ⇒* e₁ [ e₂ ]
   applam* p₂ = applam p₂ ◅ ε
+
+  lam* : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
+  lam* = map lam
 
   cbv-app₁* : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ SS.CBV.⇒* e₁′ → app e₁ e₂ ⇒* app e₁′ e₂
   cbv-app₁* = map cbv-app₁
@@ -154,13 +154,13 @@ module Lem-5-5-2 where
   app₂* : ∀ {n} {e₁ e₂ : Tm n} {e₂′} → NANF e₁ → e₂ ⇒* e₂′ → app e₁ e₂ ⇒* app e₁ e₂′
   app₂* p₁ = map (app₂ p₁)
 
-  bs-lam : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
-  bs-lam = lam*
-
   bs-applam : ∀ {n} {e₁ e₂ : Tm n} {e₁′ e₂′ e′} →
               e₁ SS.CBV.⇒* lam e₁′ → e₂ ⇒* e₂′ → NF e₂′ → e₁′ [ e₂′ ] ⇒* e′ →
               app e₁ e₂ ⇒* e′
   bs-applam rs₁ rs₂ p₂′ rs = cbv-app₁* rs₁ ◅◅ app₂ₐ* rs₂ ◅◅ applam* p₂′ ◅◅ rs
+
+  bs-lam : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
+  bs-lam = lam*
 
   bs-app : ∀ {n} {e₁ e₂ : Tm n} {e₁′ e₁″ e₂′} →
            e₁ SS.CBV.⇒* e₁′ → NAWNF e₁′ → e₁′ ⇒* e₁″ → NANF e₁″ → e₂ ⇒* e₂′ →
@@ -168,9 +168,9 @@ module Lem-5-5-2 where
   bs-app rs₁ p₁′ rs₁′ p₁″ rs₂ = cbv-app₁* rs₁ ◅◅ app₁* p₁′ rs₁′ ◅◅ app₂* p₁″ rs₂
 
   ss←bs : ∀ {n} {e : Tm n} {e′} → e ⟱ e′ → e ⇒* e′
+  ss←bs (applam r₁ r₂ r)    = bs-applam (CBV.Lem-5-3-2.ss←bs r₁) (ss←bs r₂) (nf-⟱ r₂) (ss←bs r)
   ss←bs var                 = ε
   ss←bs (lam r)             = bs-lam (ss←bs r)
-  ss←bs (applam r₁ r₂ r)    = bs-applam (CBV.Lem-5-3-2.ss←bs r₁) (ss←bs r₂) (nf-⟱ r₂) (ss←bs r)
   ss←bs (app r₁ p₁′ r₁′ r₂) = bs-app (CBV.Lem-5-3-2.ss←bs r₁) p₁″ (ss←bs r₁′) p₁‴ (ss←bs r₂)
     where
       p₁″ = nawnf←wnf (BS-CBV.wnf-⟱ r₁) p₁′

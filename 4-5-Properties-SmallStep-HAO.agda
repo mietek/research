@@ -126,12 +126,12 @@ uniq-⇒ {e = app (app _ _) _} (app₂ p₁ r₂)  (app₂ p₁′ r₂′) = ap
 -- SS-HAO is deterministic, confluent, and gives rise to deterministic evaluation to NRF
 
 det-⇒ : Deterministic _⇒_
-det-⇒ (lam r)       (lam r′)       = lam & det-⇒ r r′
 det-⇒ (applam p₂)   (applam p₂′)   = refl
 det-⇒ (applam p₂)   (cbv-app₁ ())
 det-⇒ (applam p₂)   (app₁ () r₁′)
 det-⇒ (applam p₂)   (app₂ₐ r₂′)    = r₂′ ↯ nrf←nf p₂
 det-⇒ (applam p₂)   (app₂ p₁′ r₂′) = r₂′ ↯ nrf←nf p₂
+det-⇒ (lam r)       (lam r′)       = lam & det-⇒ r r′
 det-⇒ (cbv-app₁ ()) (applam p₂′)
 det-⇒ (cbv-app₁ r₁) (cbv-app₁ r₁′) = app & CBV.det-⇒ r₁ r₁′ ⊗ refl
 det-⇒ (cbv-app₁ r₁) (app₁ p₁′ r₁′) = r₁ ↯ CBV.nrf←nawnf p₁′

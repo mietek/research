@@ -13,9 +13,9 @@ open HS public
 -- BS-HS goes to HNF
 
 hnf-⟱ : ∀ {n} {e : Tm n} {e′} → e ⟱ e′ → HNF e′
+hnf-⟱ (applam r₁ r) = hnf-⟱ r
 hnf-⟱ var           = hnf var
 hnf-⟱ (lam r)       = lam (hnf-⟱ r)
-hnf-⟱ (applam r₁ r) = hnf-⟱ r
 hnf-⟱ (app r₁ p₁′)  = hnf (app p₁″)
   where
     p₁″ = naxnf←hnf (hnf-⟱ r₁) p₁′
