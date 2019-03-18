@@ -10,21 +10,19 @@ open CBN public
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Every term is either SS-CBN-reducible, NAXNF, or WHNF
+-- Every term is either SS-CBN-reducible or WHNF
 
-data Form : ∀ {n} → Pred₀ (Tm n) where
-  rf    : ∀ {n} {e : Tm n} → RF e → Form e
-  naxnf : ∀ {n} {e : Tm n} → NAXNF e → Form e
-  whnf  : ∀ {n} {e : Tm n} → ¬ NAXNF e → WHNF e → Form e
+data Form {n} : Pred₀ (Tm n) where
+  rf   : ∀ {e} → RF e → Form e
+  whnf : ∀ {e} → WHNF e → Form e
 
 form? : ∀ {n} (e : Tm n) → Form e
-form? (var x)            = naxnf var
-form? (lam e₁)           = whnf (λ ()) lam
-form? (app e₁ e₂)        with form? e₁
-... | rf (_ , r₁)        = rf (_ , app₁ r₁)
-... | naxnf p₁           = naxnf (app p₁)
-... | whnf _ lam         = rf (_ , applam)
-... | whnf ¬p₁ (whnf p₁) = p₁ ↯ ¬p₁
+form? (var x)        = whnf (whnf var)
+form? (lam e)        = whnf lam
+form? (app e₁ e₂)    with form? e₁
+... | rf (_ , r₁)    = rf (_ , app₁ r₁)
+... | whnf lam       = rf (_ , applam)
+... | whnf (whnf p₁) = whnf (whnf (app p₁))
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -43,8 +41,7 @@ nrf←whnf (whnf p) = nrf←naxnf p
 whnf←nrf : ∀ {n} {e : Tm n} → NRF e → WHNF e
 whnf←nrf p      with form? _
 ... | rf (_ , r) = r ↯ p
-... | whnf _ p′  = p′
-... | naxnf p′   = whnf p′
+... | whnf p′    = p′
 
 
 ---------------------------------------------------------------------------------------------------------------

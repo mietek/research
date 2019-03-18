@@ -11,35 +11,30 @@ import 4-1-Properties-SmallStep-CBN as CBN
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Every term is either SS-CBN-reducible, SS-NO₂-reducible, NANF, or NF
+-- Every term is either SS-CBN-reducible, SS-NO₂-reducible, or NF
 
-data Form : ∀ {n} → Pred₀ (Tm n) where
-  cbn-rf : ∀ {n} {e : Tm n} → CBN.RF e → Form e
-  rf     : ∀ {n} {e : Tm n} → WHNF e → RF e → Form e
-  nanf   : ∀ {n} {e : Tm n} → NANF e → Form e
-  nf     : ∀ {n} {e : Tm n} → ¬ NANF e → NF e → Form e
+data Form {n} : Pred₀ (Tm n) where
+  cbn-rf : ∀ {e} → CBN.RF e → Form e
+  rf     : ∀ {e} → WHNF e → RF e → Form e
+  nf     : ∀ {e} → NF e → Form e
 
 form? : ∀ {n} (e : Tm n) → Form e
-form? e               with CBN.form? e
-...                   | CBN.rf (_ , r)       = cbn-rf (_ , r)
-form? (var x)         | _                    = nanf var
-form? (lam e)         | CBN.whnf _ lam       with form? e
+form? e           with CBN.form? e
+...               | CBN.rf (_ , r)           = cbn-rf (_ , r)
+form? (var x)     | _                        = nf (nf var)
+form? (lam e)     | CBN.whnf lam             with form? e
 ... | cbn-rf (_ , r)                         = rf lam (_ , lam₋ (λ p′ → CBN.nrf←whnf p′ r) r)
 ... | rf p (_ , r)                           = rf lam (_ , lam₊ p r)
-... | nanf p                                 = nf (λ ()) (lam (nf p))
-... | nf _ p                                 = nf (λ ()) (lam p)
-form? (lam e)         | CBN.whnf _ (whnf ())
-form? (lam e)         | CBN.naxnf ()
-form? (app e₁ e₂)     | CBN.whnf ¬p (whnf p) = p ↯ ¬p
-form? (app e₁ e₂)     | CBN.naxnf (app p₁)   with form? e₁ | form? e₂
+... | nf p                                   = nf (lam p)
+form? (lam e)     | CBN.whnf (whnf ())
+form? (app e₁ e₂) | CBN.whnf (whnf (app p₁)) with form? e₁ | form? e₂
 ... | cbn-rf (_ , r₁) | _                    = cbn-rf (_ , CBN.app₁ r₁)
 ... | rf p₁′ (_ , r₁) | _                    = rf (whnf (app p₁)) (_ , app₁₊ p₁ r₁)
-... | nanf p₁′        | cbn-rf (_ , r₂)      = rf (whnf (app p₁))
+... | nf (lam p₁′)    | _                    = cbn-rf (_ , CBN.applam)
+... | nf (nf p₁′)     | cbn-rf (_ , r₂)      = rf (whnf (app p₁))
                                                   (_ , app₂₋ p₁′ (λ p₂′ → r₂ ↯ CBN.nrf←whnf p₂′) r₂)
-... | nanf p₁′        | rf p₂ (_ , r₂)       = rf (whnf (app p₁)) (_ , app₂₊ p₁′ p₂ r₂)
-... | nanf p₁′        | nanf p₂              = nanf (app p₁′ (nf p₂))
-... | nanf p₁′        | nf _ p₂              = nanf (app p₁′ p₂)
-... | nf ¬p₁′ p₁′     | _                    = nanf←nf p₁′ (na←naxnf p₁) ↯ ¬p₁′
+... | nf (nf p₁′)     | rf p₂ (_ , r₂)       = rf (whnf (app p₁)) (_ , app₂₊ p₁′ p₂ r₂)
+... | nf (nf p₁′)     | nf p₂                = nf (nf (app p₁′ p₂))
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -75,8 +70,7 @@ cbn-rf|nf←nrf : ∀ {n} {e : Tm n} → NRF e → CBN.RF e ⊎ NF e
 cbn-rf|nf←nrf p     with form? _
 ... | cbn-rf (_ , r) = inj₁ (_ , r)
 ... | rf p′ (_ , r)  = r ↯ p
-... | nanf p′        = inj₂ (nf p′)
-... | nf _ p′        = inj₂ p′
+... | nf p′          = inj₂ p′
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -85,7 +79,7 @@ cbn-rf|nf←nrf p     with form? _
 
 uniq-⇒ : Unique _⇒_
 uniq-⇒ {e = var _}   ()                ()
-uniq-⇒ {e = lam _}   (lam₋ ¬p r)       (lam₋ ¬p′ r′)        = lam₋ & uniq-¬whnf ¬p ¬p′  ⊗ CBN.uniq-⇒ r r′
+uniq-⇒ {e = lam _}   (lam₋ ¬p r)       (lam₋ ¬p′ r′)        = lam₋ & uniq-¬whnf ¬p ¬p′ ⊗ CBN.uniq-⇒ r r′
 uniq-⇒ {e = lam _}   (lam₋ ¬p r)       (lam₊ p′ r′)         = p′ ↯ ¬p
 uniq-⇒ {e = lam _}   (lam₊ p r)        (lam₋ ¬p′ r′)        = p ↯ ¬p′
 uniq-⇒ {e = lam _}   (lam₊ p r)        (lam₊ p′ r′)         = lam₊ & uniq-whnf p p′ ⊗ uniq-⇒ r r′

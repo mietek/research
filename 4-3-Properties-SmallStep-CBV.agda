@@ -10,25 +10,21 @@ open CBV public
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Every term is either SS-CBV-reducible, NAWNF, or WNF
+-- Every term is either SS-CBV-reducible or WNF
 
-data Form : ∀ {n} → Pred₀ (Tm n) where
-  rf    : ∀ {n} {e : Tm n} → RF e → Form e
-  nawnf : ∀ {n} {e : Tm n} → NAWNF e → Form e
-  wnf   : ∀ {n} {e : Tm n} → ¬ NAWNF e → WNF e → Form e
+data Form {n} : Pred₀ (Tm n) where
+  rf  : ∀ {e} → RF e → Form e
+  wnf : ∀ {e} → WNF e → Form e
 
 form? : ∀ {n} (e : Tm n) → Form e
-form? (var x)                        = nawnf var
-form? (lam e)                        = wnf (λ ()) lam
-form? (app e₁ e₂)                    with form? e₁ | form? e₂
-... | rf (_ , r₁)      | _           = rf (_ , app₁ r₁)
-... | nawnf p₁         | rf (_ , r₂) = rf (_ , app₂ (wnf p₁) r₂)
-... | nawnf p₁         | nawnf p₂    = nawnf (app p₁ (wnf p₂))
-... | nawnf p₁         | wnf _ p₂    = nawnf (app p₁ p₂)
-... | wnf _ lam        | rf (_ , r₂) = rf (_ , app₂ lam r₂)
-... | wnf _ lam        | nawnf p₂    = rf (_ , applam (wnf p₂))
-... | wnf _ lam        | wnf _ p₂    = rf (_ , applam p₂)
-... | wnf ¬p₁ (wnf p₁) | _           = p₁ ↯ ¬p₁
+form? (var x)                    = wnf (wnf var)
+form? (lam e)                    = wnf lam
+form? (app e₁ e₂)                with form? e₁ | form? e₂
+... | rf (_ , r₁)  | _           = rf (_ , app₁ r₁)
+... | wnf lam      | rf (_ , r₂) = rf (_ , app₂ lam r₂)
+... | wnf lam      | wnf p₂      = rf (_ , applam p₂)
+... | wnf (wnf p₁) | rf (_ , r₂) = rf (_ , app₂ (wnf p₁) r₂)
+... | wnf (wnf p₁) | wnf p₂      = wnf (wnf (app p₁ p₂))
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -49,8 +45,7 @@ mutual
 wnf←nrf : ∀ {n} {e : Tm n} → NRF e → WNF e
 wnf←nrf p       with form? _
 ... | rf (_ , r) = r ↯ p
-... | nawnf p′   = wnf p′
-... | wnf _ p′   = p′
+... | wnf p′     = p′
 
 
 ---------------------------------------------------------------------------------------------------------------

@@ -39,29 +39,25 @@ no←no₂ (NO₂.app₂₊ p₁ p₂ r₂)  = app₂ p₁ (no←no₂ r₂)
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Every term is either SS-NO reducible, NANF, or NF
+-- Every term is either SS-NO reducible or NF
 
-data Form : ∀ {n} → Pred₀ (Tm n) where
-  rf   : ∀ {n} {e : Tm n} → RF e → Form e
-  nanf : ∀ {n} {e : Tm n} → NANF e → Form e
-  nf   : ∀ {n} {e : Tm n} → ¬ NANF e → NF e → Form e
+data Form {n} : Pred₀ (Tm n) where
+  rf : ∀ {e} → RF e → Form e
+  nf : ∀ {e} → NF e → Form e
 
 form? : ∀ {n} (e : Tm n) → Form e
-form? (var x)                           = nanf var
+form? (var x)                           = nf (nf var)
 form? (lam e)                           with form? e
 ... | rf (_ , r)                        = rf (_ , lam r)
-... | nanf p                            = nf (λ ()) (lam (nf p))
-... | nf _ p                            = nf (λ ()) (lam p)
+... | nf p                              = nf (lam p)
 form? (app e₁ e₂)                       with form? e₁ | form? e₂
 ... | rf (_ , lam r₁)     | _           = rf (_ , applam)
 ... | rf (_ , applam)     | _           = rf (_ , app₁ app applam)
 ... | rf (_ , app₁ p₁ r₁) | _           = rf (_ , app₁ app (app₁ p₁ r₁))
 ... | rf (_ , app₂ p₁ r₂) | _           = rf (_ , app₁ app (app₂ p₁ r₂))
-... | nanf p₁             | rf (_ , r₂) = rf (_ , app₂ p₁ r₂)
-... | nanf p₁             | nanf p₂     = nanf (app p₁ (nf p₂))
-... | nanf p₁             | nf _ p₂     = nanf (app p₁ p₂)
-... | nf _ (lam p₁)       | _           = rf (_ , applam)
-... | nf ¬p₁ (nf p₁)      | _           = p₁ ↯ ¬p₁
+... | nf (lam p₁)         | _           = rf (_ , applam)
+... | nf (nf p₁)          | rf (_ , r₂) = rf (_ , app₂ p₁ r₂)
+... | nf (nf p₁)          | nf p₂       = nf (nf (app p₁ p₂))
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -82,8 +78,7 @@ mutual
 nf←nrf : ∀ {n} {e : Tm n} → NRF e → NF e
 nf←nrf p        with form? _
 ... | rf (_ , r) = r ↯ p
-... | nanf p′    = nf p′
-... | nf _ p′    = p′
+... | nf p′      = p′
 
 
 ---------------------------------------------------------------------------------------------------------------
