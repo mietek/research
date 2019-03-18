@@ -31,6 +31,11 @@ rf? (app e₁ e₂)                   with rf? e₁ | rf? e₂
 --
 -- SS-CBV does not reduce WNF
 
+wnf←nrf : ∀ {n} {e : Tm n} → NRF e → WNF e
+wnf←nrf p        with rf? _
+... | yes (_ , r) = r ↯ p
+... | no p′       = p′
+
 mutual
   nrf←wnf : ∀ {n} {e : Tm n} → WNF e → NRF e
   nrf←wnf lam     = λ ()
@@ -41,11 +46,6 @@ mutual
   nrf←nawnf (app p₁ p₂) = λ { (applam p₂′)   → case p₁ of λ ()
                              ; (app₁ r₁′)     → r₁′ ↯ nrf←nawnf p₁
                              ; (app₂ p₁′ r₂′) → r₂′ ↯ nrf←wnf p₂ }
-
-wnf←nrf : ∀ {n} {e : Tm n} → NRF e → WNF e
-wnf←nrf p        with rf? _
-... | yes (_ , r) = r ↯ p
-... | no p′       = p′
 
 
 ---------------------------------------------------------------------------------------------------------------
