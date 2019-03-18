@@ -23,8 +23,8 @@ rf? e           with CBN.rf? e
 ...             | CBN.yes (_ , r)        = cbn-yes (_ , r)
 rf? (var x)     | CBN.no _               = no (hnf var)
 rf? (lam e)     | CBN.no _               with rf? e
-... | cbn-yes (_ , r)                    = yes lam (_ , lam₋ (λ p′ → r ↯ CBN.nrf←whnf p′) r)
-... | yes p (_ , r)                      = yes lam (_ , lam₊ p r)
+... | cbn-yes (_ , r)                    = yes lam (_ , cbn-lam (λ p′ → r ↯ CBN.nrf←whnf p′) r)
+... | yes p (_ , r)                      = yes lam (_ , lam p r)
 ... | no p                               = no (lam p)
 rf? (app e₁ e₂) | CBN.no (whnf (app p₁)) with rf? e₁
 ... | cbn-yes (_ , r₁)                   = cbn-yes (_ , CBN.app₁ r₁)
@@ -43,21 +43,21 @@ cbn-rf|hnf←nrf p      with rf? _
 ... | no p′           = inj₂ p′
 
 nrf←cbn-rf : ∀ {n} {e : Tm n} → CBN.RF e → NRF e
-nrf←cbn-rf (_ , r) = λ { (lam₋ ¬p r′)      → case r of λ ()
-                        ; (lam₊ p r′)       → case r of λ ()
-                        ; (app₁₊ p₁ r₁)     → case r of
+nrf←cbn-rf (_ , r) = λ { (cbn-lam ¬p r′) → case r of λ ()
+                        ; (lam p r′)      → case r of λ ()
+                        ; (app₁ p₁ r₁)    → case r of
                             λ { CBN.applam     → case p₁ of λ ()
                               ; (CBN.app₁ r₁′) → r₁′ ↯ CBN.nrf←naxnf p₁ } }
 
 mutual
   nrf←hnf : ∀ {n} {e : Tm n} → HNF e → NRF e
-  nrf←hnf (lam p) = λ { (lam₋ ¬p r) → whnf←hnf p ↯ ¬p
-                       ; (lam₊ p′ r) → r ↯ nrf←hnf p }
+  nrf←hnf (lam p) = λ { (cbn-lam ¬p r) → whnf←hnf p ↯ ¬p
+                       ; (lam p′ r)     → r ↯ nrf←hnf p }
   nrf←hnf (hnf p) = nrf←naxnf p
 
   nrf←naxnf : ∀ {n} {e : Tm n} → NAXNF e → NRF e
   nrf←naxnf var      = λ ()
-  nrf←naxnf (app p₁) = λ { (app₁₊ p₁′ r₁) → r₁ ↯ nrf←naxnf p₁ }
+  nrf←naxnf (app p₁) = λ { (app₁ p₁′ r₁) → r₁ ↯ nrf←naxnf p₁ }
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -65,12 +65,12 @@ mutual
 -- SS-H₂ is unique
 
 uniq-⇒ : Unique _⇒_
-uniq-⇒ {e = var _}   ()            ()
-uniq-⇒ {e = lam _}   (lam₋ ¬p r)   (lam₋ ¬p′ r′)   = lam₋ & uniq-¬whnf ¬p ¬p′  ⊗ CBN.uniq-⇒ r r′
-uniq-⇒ {e = lam _}   (lam₋ ¬p r)   (lam₊ p′ r′)    = p′ ↯ ¬p
-uniq-⇒ {e = lam _}   (lam₊ p r)    (lam₋ ¬p′ r′)   = p ↯ ¬p′
-uniq-⇒ {e = lam _}   (lam₊ p r)    (lam₊ p′ r′)    = lam₊ & uniq-whnf p p′ ⊗ uniq-⇒ r r′
-uniq-⇒ {e = app _ _} (app₁₊ p₁ r₁) (app₁₊ p₁′ r₁′) = app₁₊ & uniq-naxnf p₁ p₁′ ⊗ uniq-⇒ r₁ r₁′
+uniq-⇒ {e = var _}   ()             ()
+uniq-⇒ {e = lam _}   (cbn-lam ¬p r) (cbn-lam ¬p′ r′) = cbn-lam & uniq-¬whnf ¬p ¬p′ ⊗ CBN.uniq-⇒ r r′
+uniq-⇒ {e = lam _}   (cbn-lam ¬p r) (lam p′ r′)      = p′ ↯ ¬p
+uniq-⇒ {e = lam _}   (lam p r)      (cbn-lam ¬p′ r′) = p ↯ ¬p′
+uniq-⇒ {e = lam _}   (lam p r)      (lam p′ r′)      = lam & uniq-whnf p p′ ⊗ uniq-⇒ r r′
+uniq-⇒ {e = app _ _} (app₁ p₁ r₁)   (app₁ p₁′ r₁′)   = app₁ & uniq-naxnf p₁ p₁′ ⊗ uniq-⇒ r₁ r₁′
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -78,11 +78,11 @@ uniq-⇒ {e = app _ _} (app₁₊ p₁ r₁) (app₁₊ p₁′ r₁′) = app�
 -- SS-H₂ is deterministic, confluent, and gives rise to deterministic evaluation to NRF
 
 det-⇒ : Deterministic _⇒_
-det-⇒ (lam₋ ¬p r)   (lam₋ ¬p′ r′)   = lam & CBN.det-⇒ r r′
-det-⇒ (lam₋ ¬p r)   (lam₊ p′ r′)    = p′ ↯ ¬p
-det-⇒ (lam₊ p r)    (lam₋ ¬p′ r′)   = p ↯ ¬p′
-det-⇒ (lam₊ p r)    (lam₊ p′ r′)    = lam & det-⇒ r r′
-det-⇒ (app₁₊ p₁ r₁) (app₁₊ p₁′ r₁′) = app & det-⇒ r₁ r₁′ ⊗ refl
+det-⇒ (cbn-lam ¬p r) (cbn-lam ¬p′ r′) = lam & CBN.det-⇒ r r′
+det-⇒ (cbn-lam ¬p r) (lam p′ r′)      = p′ ↯ ¬p
+det-⇒ (lam p r)      (cbn-lam ¬p′ r′) = p ↯ ¬p′
+det-⇒ (lam p r)      (lam p′ r′)      = lam & det-⇒ r r′
+det-⇒ (app₁ p₁ r₁)   (app₁ p₁′ r₁′)   = app & det-⇒ r₁ r₁′ ⊗ refl
 
 conf-⇒ : Confluent _⇒_
 conf-⇒ = cor-conf-⇒ det-⇒
@@ -97,17 +97,17 @@ det-⇓-nrf = cor-det-⇓-nrf det-⇒
 
 naxnf-⇒ : ∀ {n} {e : Tm n} {e′} → NAXNF e → e ⇒ e′ → NAXNF e′
 naxnf-⇒ var      ()
-naxnf-⇒ (app _)  (app₁₊ p₁ r₁)      = app (naxnf-⇒ p₁ r₁)
+naxnf-⇒ (app _)  (app₁ p₁ r₁) = app (naxnf-⇒ p₁ r₁)
 
 whnf-⇒ : ∀ {n} {e : Tm n} {e′} → e ⇒ e′ → WHNF e′
-whnf-⇒ (lam₋ ¬p r)   = lam
-whnf-⇒ (lam₊ p r)    = lam
-whnf-⇒ (app₁₊ p₁ r₁) = whnf (app (naxnf-⇒ p₁ r₁))
+whnf-⇒ (cbn-lam ¬p r) = lam
+whnf-⇒ (lam p r)      = lam
+whnf-⇒ (app₁ p₁ r₁)   = whnf (app (naxnf-⇒ p₁ r₁))
 
 rev-whnf-⇒ : ∀ {n} {e : Tm n} {e′} → e ⇒ e′ → WHNF e
-rev-whnf-⇒ (lam₋ ¬p r)   = lam
-rev-whnf-⇒ (lam₊ p r)    = lam
-rev-whnf-⇒ (app₁₊ p₁ r₁) = whnf (app p₁)
+rev-whnf-⇒ (cbn-lam ¬p r) = lam
+rev-whnf-⇒ (lam p r)      = lam
+rev-whnf-⇒ (app₁ p₁ r₁)   = whnf (app p₁)
 
 
 ---------------------------------------------------------------------------------------------------------------

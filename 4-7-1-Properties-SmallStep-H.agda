@@ -25,14 +25,10 @@ h←cbn (CBN.app₁ r₁) = cbn-app₁ r₁
 --
 -- SS-H contains SS-H₂
 
-app₁₊ : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → NAXNF e₁ → e₁ ⇒ e₁′ → app e₁ e₂ ⇒ app e₁′ e₂
-app₁₊ var      r₁ = app₁ var r₁
-app₁₊ (app p₁) r₁ = app₁ app r₁
-
 h←h₂ : ∀ {n} {e : Tm n} {e′} → e H₂.⇒ e′ → e ⇒ e′
-h←h₂ (H₂.lam₋ ¬p r)   = lam (h←cbn r)
-h←h₂ (H₂.lam₊ p r)    = lam (h←h₂ r)
-h←h₂ (H₂.app₁₊ p₁ r₁) = app₁₊ p₁ (h←h₂ r₁)
+h←h₂ (H₂.cbn-lam ¬p r) = lam (h←cbn r)
+h←h₂ (H₂.lam p r)      = lam (h←h₂ r)
+h←h₂ (H₂.app₁ p₁ r₁)   = app₁ (na←naxnf p₁) (h←h₂ r₁)
 
 
 ---------------------------------------------------------------------------------------------------------------

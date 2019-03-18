@@ -54,25 +54,25 @@ module NO where
 
 module NO₂ where
   data _⇒_ {n} : Rel₀ (Tm n) where
-    lam₋  : ∀ {e e′} →
-            ¬ WHNF e → e CBN.⇒ e′ →
-            lam e ⇒ lam e′
+    cbn-lam  : ∀ {e e′} →
+               ¬ WHNF e → e CBN.⇒ e′ →
+               lam e ⇒ lam e′
 
-    lam₊  : ∀ {e e′} →
-            WHNF e → e ⇒ e′ →
-            lam e ⇒ lam e′
+    lam      : ∀ {e e′} →
+               WHNF e → e ⇒ e′ →
+               lam e ⇒ lam e′
 
-    app₁₊ : ∀ {e₁ e₂ e₁′} →
-            NAXNF e₁ → e₁ ⇒ e₁′ →
-            app e₁ e₂ ⇒ app e₁′ e₂
+    app₁     : ∀ {e₁ e₂ e₁′} →
+               NAXNF e₁ → e₁ ⇒ e₁′ →
+               app e₁ e₂ ⇒ app e₁′ e₂
 
-    app₂₋ : ∀ {e₁ e₂ e₂′} →
-            NANF e₁ → ¬ WHNF e₂ → e₂ CBN.⇒ e₂′ →
-            app e₁ e₂ ⇒ app e₁ e₂′
+    cbn-app₂ : ∀ {e₁ e₂ e₂′} →
+               NANF e₁ → ¬ WHNF e₂ → e₂ CBN.⇒ e₂′ →
+               app e₁ e₂ ⇒ app e₁ e₂′
 
-    app₂₊ : ∀ {e₁ e₂ e₂′} →
-            NANF e₁ → WHNF e₂ → e₂ ⇒ e₂′ →
-            app e₁ e₂ ⇒ app e₁ e₂′
+    app₂     : ∀ {e₁ e₂ e₂′} →
+               NANF e₁ → WHNF e₂ → e₂ ⇒ e₂′ →
+               app e₁ e₂ ⇒ app e₁ e₂′
 
   open DerivedEquipment _⇒_ public
 
@@ -205,17 +205,17 @@ module H where
 
 module H₂ where
   data _⇒_ {n} : Rel₀ (Tm n) where
-    lam₋  : ∀ {e e′} →
-            ¬ WHNF e → e CBN.⇒ e′ →
-            lam e ⇒ lam e′
+    cbn-lam : ∀ {e e′} →
+              ¬ WHNF e → e CBN.⇒ e′ →
+              lam e ⇒ lam e′
 
-    lam₊  : ∀ {e e′} →
-            WHNF e → e ⇒ e′ →
-            lam e ⇒ lam e′
+    lam     : ∀ {e e′} →
+              WHNF e → e ⇒ e′ →
+              lam e ⇒ lam e′
 
-    app₁₊ : ∀ {e₁ e₂ e₁′} →
-            NAXNF e₁ → e₁ ⇒ e₁′ →
-            app e₁ e₂ ⇒ app e₁′ e₂
+    app₁    : ∀ {e₁ e₂ e₁′} →
+              NAXNF e₁ → e₁ ⇒ e₁′ →
+              app e₁ e₂ ⇒ app e₁′ e₂
 
   open DerivedEquipment _⇒_ public
 
@@ -256,21 +256,21 @@ module HNO where
 
 module HNO₂ where
   data _⇒_ {n} : Rel₀ (Tm n) where
-    lam₊  : ∀ {e e′} →
-            HNF e → e ⇒ e′ →
-            lam e ⇒ lam e′
+    lam     : ∀ {e e′} →
+              HNF e → e ⇒ e′ →
+              lam e ⇒ lam e′
 
-    app₁₊ : ∀ {e₁ e₂ e₁′} →
-            NAXNF e₁ → e₁ ⇒ e₁′ →
-            app e₁ e₂ ⇒ app e₁′ e₂
+    app₁    : ∀ {e₁ e₂ e₁′} →
+              NAXNF e₁ → e₁ ⇒ e₁′ →
+              app e₁ e₂ ⇒ app e₁′ e₂
 
-    app₂₋ : ∀ {e₁ e₂ e₂′} →
-            NANF e₁ → ¬ HNF e₂ → e₂ HS.⇒ e₂′ →
-            app e₁ e₂ ⇒ app e₁ e₂′
+    hs-app₂ : ∀ {e₁ e₂ e₂′} →
+              NANF e₁ → ¬ HNF e₂ → e₂ HS.⇒ e₂′ →
+              app e₁ e₂ ⇒ app e₁ e₂′
 
-    app₂₊ : ∀ {e₁ e₂ e₂′} →
-            NANF e₁ → HNF e₂ → e₂ ⇒ e₂′ →
-            app e₁ e₂ ⇒ app e₁ e₂′
+    app₂    : ∀ {e₁ e₂ e₂′} →
+              NANF e₁ → HNF e₂ → e₂ ⇒ e₂′ →
+              app e₁ e₂ ⇒ app e₁ e₂′
 
   open DerivedEquipment _⇒_ public
 

@@ -25,16 +25,12 @@ no←cbn (CBN.app₁ r₁) = cbn-app₁ r₁
 --
 -- SS-NO contains SS-NO₂
 
-app₁₊ : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → NAXNF e₁ → e₁ ⇒ e₁′ → app e₁ e₂ ⇒ app e₁′ e₂
-app₁₊ var      r₁ = app₁ var r₁
-app₁₊ (app p₁) r₁ = app₁ app r₁
-
 no←no₂ : ∀ {n} {e : Tm n} {e′} → e NO₂.⇒ e′ → e ⇒ e′
-no←no₂ (NO₂.lam₋ ¬p r)       = lam (no←cbn r)
-no←no₂ (NO₂.lam₊ p r)        = lam (no←no₂ r)
-no←no₂ (NO₂.app₁₊ p₁ r₁)     = app₁₊ p₁ (no←no₂ r₁)
-no←no₂ (NO₂.app₂₋ p₁ ¬p₂ r₂) = app₂ p₁ (no←cbn r₂)
-no←no₂ (NO₂.app₂₊ p₁ p₂ r₂)  = app₂ p₁ (no←no₂ r₂)
+no←no₂ (NO₂.cbn-lam ¬p r)       = lam (no←cbn r)
+no←no₂ (NO₂.lam p r)            = lam (no←no₂ r)
+no←no₂ (NO₂.app₁ p₁ r₁)         = app₁ (na←naxnf p₁) (no←no₂ r₁)
+no←no₂ (NO₂.cbn-app₂ p₁ ¬p₂ r₂) = app₂ p₁ (no←cbn r₂)
+no←no₂ (NO₂.app₂ p₁ p₂ r₂)      = app₂ p₁ (no←no₂ r₂)
 
 
 ---------------------------------------------------------------------------------------------------------------
