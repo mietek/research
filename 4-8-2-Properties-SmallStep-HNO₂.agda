@@ -21,12 +21,12 @@ data RF? {n} : Pred₀ (Tm n) where
 rf? : ∀ {n} (e : Tm n) → RF? e
 rf? e           with HS.rf? e
 ...             | HS.yes (_ , r)         = hs-yes (_ , r)
-rf? (var x)     | HS.no _                = no (nf var)
-rf? (lam e)     | HS.no (lam p)          with rf? e
+rf? (var s x)   | HS.no _                = no (nf var)
+rf? (lam s e)   | HS.no (lam p)          with rf? e
 ... | hs-yes (_ , r)                     = hs-yes (_ , HS.lam r)
 ... | yes p′ (_ , r)                     = yes (lam p) (_ , lam p r)
 ... | no p′                              = no (lam p′)
-rf? (lam e)     | HS.no (hnf ())
+rf? (lam s e)   | HS.no (hnf ())
 rf? (app e₁ e₂) | HS.no (hnf (app p₁))   with rf? e₁ | rf? e₂
 ... | hs-yes (_ , r₁)  | _               = hs-yes (_ , HS.app₁ r₁)
 ... | yes p₁′ (_ , r₁) | _               = yes (hnf (app p₁)) (_ , app₁ p₁ r₁)
@@ -77,8 +77,8 @@ mutual
 -- SS-HNO₂ is unique
 
 uniq-⇒ : Unique _⇒_
-uniq-⇒ {e = var _}   ()                  ()
-uniq-⇒ {e = lam _}   (lam p r)           (lam p′ r′)            = lam & uniq-hnf p p′ ⊗ uniq-⇒ r r′
+uniq-⇒ {e = var _ _} ()                  ()
+uniq-⇒ {e = lam _ _} (lam p r)           (lam p′ r′)            = lam & uniq-hnf p p′ ⊗ uniq-⇒ r r′
 uniq-⇒ {e = app _ _} (app₁ p₁ r₁)        (app₁ p₁′ r₁′)         = app₁ & uniq-naxnf p₁ p₁′ ⊗ uniq-⇒ r₁ r₁′
 uniq-⇒ {e = app _ _} (app₁ p₁ r₁)        (hs-app₂ p₁′ ¬p₂′ r₂′) = r₁ ↯ nrf←nanf p₁′
 uniq-⇒ {e = app _ _} (app₁ p₁ r₁)        (app₂ p₁′ p₂′ r₂′)     = r₁ ↯ nrf←nanf p₁′
@@ -98,7 +98,7 @@ uniq-⇒ {e = app _ _} (app₂ p₁ p₂ r₂)     (app₂ p₁′ p₂′ r₂�
 -- SS-HNO₂ is deterministic, confluent, and gives rise to deterministic evaluation to NRF
 
 det-⇒ : Deterministic _⇒_
-det-⇒ (lam p r)           (lam p′ r′)            = lam & det-⇒ r r′
+det-⇒ (lam p r)           (lam p′ r′)            = lam & refl ⊗ det-⇒ r r′
 det-⇒ (app₁ p₁ r₁)        (app₁ p₁′ r₁′)         = app & det-⇒ r₁ r₁′ ⊗ refl
 det-⇒ (app₁ p₁ r₁)        (hs-app₂ p₁′ ¬p₂′ r₂′) = r₁ ↯ nrf←nanf p₁′
 det-⇒ (app₁ p₁ r₁)        (app₂ p₁′ p₂′ r₂′)     = r₁ ↯ nrf←nanf p₁′

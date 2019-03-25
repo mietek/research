@@ -18,8 +18,8 @@ data RF? {n} : Pred₀ (Tm n) where
   no  : ∀ {e} → NF e → RF? e
 
 rf? : ∀ {n} (e : Tm n) → RF? e
-rf? (var x)                                          = no (nf var)
-rf? (lam e)                                          with rf? e
+rf? (var s x)                                        = no (nf var)
+rf? (lam s e)                                        with rf? e
 ... | yes (_ , r)                                    = yes (_ , lam r)
 ... | no p                                           = no (lam p)
 rf? (app e₁ e₂)                                      with CBV.rf? e₁ | rf? e₁ | rf? e₂
@@ -69,8 +69,8 @@ mutual
 --
 -- SS-HAO is unique
 
-rev-applam : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} {e′} →
-             (p₂ : NF e₂) (r : app (lam e₁) e₂ ⇒ e′) →
+rev-applam : ∀ {n s} {e₁ : Tm (suc n)} {e₂ : Tm n} {e′} →
+             (p₂ : NF e₂) (r : app (lam s e₁) e₂ ⇒ e′) →
              (Σ (e′ ≡ e₁ [ e₂ ]) λ { refl →
                r ≡ applam p₂ })
 rev-applam p₂ (applam p₂′)  = refl , applam & uniq-nf p₂′ p₂
@@ -79,14 +79,14 @@ rev-applam p₂ (app₁ () r₁)
 rev-applam p₂ (app₂ₐ r₂)    = r₂ ↯ nrf←nf p₂
 rev-applam p₂ (app₂ p₁ r₂)  = r₂ ↯ nrf←nf p₂
 
-rev-app₂ₐ : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} {e′} →
-            (r : app (lam e₁) e₂ ⇒ e′) →
+rev-app₂ₐ : ∀ {n s} {e₁ : Tm (suc n)} {e₂ : Tm n} {e′} →
+            (r : app (lam s e₁) e₂ ⇒ e′) →
             (∃ λ p₂ →
               Σ (e′ ≡ e₁ [ e₂ ]) λ { refl →
                 r ≡ applam p₂ }) ⊎
             (Σ {_} {0ᴸ} (Tm n) λ e₂′ →
               Σ (e₂ ⇒ e₂′) λ r₂ →
-                Σ (e′ ≡ app (lam e₁) e₂′) λ { refl →
+                Σ (e′ ≡ app (lam s e₁) e₂′) λ { refl →
                   r ≡ app₂ₐ r₂ })
 rev-app₂ₐ (applam p₂)   = inj₁ (p₂ , refl , refl)
 rev-app₂ₐ (cbv-app₁ ())
@@ -95,21 +95,21 @@ rev-app₂ₐ (app₂ₐ r₂)    = inj₂ (_ , r₂ , refl , refl)
 rev-app₂ₐ (app₂ () r₂)
 
 uniq-⇒ : Unique _⇒_
-uniq-⇒ {e = var _}           ()            ()
-uniq-⇒ {e = lam _}           (lam r)       (lam r′)       = lam & uniq-⇒ r r′
-uniq-⇒ {e = app (var _) _}   (cbv-app₁ ()) r′
-uniq-⇒ {e = app (var _) _}   (app₁ p₁ ())  r′
-uniq-⇒ {e = app (var _) _}   (app₂ p₁ r₂)  (cbv-app₁ ())
-uniq-⇒ {e = app (var _) _}   (app₂ p₁ r₂)  (app₁ p₁′ ())
-uniq-⇒ {e = app (var _) _}   (app₂ p₁ r₂)  (app₂ p₁′ r₂′) = app₂ & uniq-nanf p₁ p₁′ ⊗ uniq-⇒ r₂ r₂′
-uniq-⇒ {e = app (lam _) _}   (applam p₂)   r′             with rev-applam p₂ r′
+uniq-⇒ {e = var _ _}         ()            ()
+uniq-⇒ {e = lam _ _}         (lam r)       (lam r′)       = lam & uniq-⇒ r r′
+uniq-⇒ {e = app (var _ _) _} (cbv-app₁ ()) r′
+uniq-⇒ {e = app (var _ _) _} (app₁ p₁ ())  r′
+uniq-⇒ {e = app (var _ _) _} (app₂ p₁ r₂)  (cbv-app₁ ())
+uniq-⇒ {e = app (var _ _) _} (app₂ p₁ r₂)  (app₁ p₁′ ())
+uniq-⇒ {e = app (var _ _) _} (app₂ p₁ r₂)  (app₂ p₁′ r₂′) = app₂ & uniq-nanf p₁ p₁′ ⊗ uniq-⇒ r₂ r₂′
+uniq-⇒ {e = app (lam _ _) _} (applam p₂)   r′             with rev-applam p₂ r′
 ... | refl , refl                                          = refl
-uniq-⇒ {e = app (lam _) _}   (cbv-app₁ ()) r′
-uniq-⇒ {e = app (lam _) _}   (app₁ () r₁)  r′
-uniq-⇒ {e = app (lam _) _}   (app₂ₐ r₂)    r′             with rev-app₂ₐ r′
+uniq-⇒ {e = app (lam _ _) _} (cbv-app₁ ()) r′
+uniq-⇒ {e = app (lam _ _) _} (app₁ () r₁)  r′
+uniq-⇒ {e = app (lam _ _) _} (app₂ₐ r₂)    r′             with rev-app₂ₐ r′
 ... | inj₁ (p₂ , q₁ , q₂)                                  = r₂ ↯ nrf←nf p₂
 ... | inj₂ (_ , r₂′ , refl , refl)                         = app₂ₐ & uniq-⇒ r₂ r₂′
-uniq-⇒ {e = app (lam _) _}   (app₂ () r₂) r′
+uniq-⇒ {e = app (lam _ _) _} (app₂ () r₂) r′
 uniq-⇒ {e = app (app _ _) _} (cbv-app₁ r₂) (cbv-app₁ r₂′) = cbv-app₁ & CBV.uniq-⇒ r₂ r₂′
 uniq-⇒ {e = app (app _ _) _} (cbv-app₁ r₂) (app₁ p₁′ r₁′) = r₂ ↯ CBV.nrf←nawnf p₁′
 uniq-⇒ {e = app (app _ _) _} (cbv-app₁ r₂) (app₂ p₁′ r₂′) = r₂ ↯ CBV.nrf←wnf (wnf←nf (nf p₁′))
@@ -131,7 +131,7 @@ det-⇒ (applam p₂)   (cbv-app₁ ())
 det-⇒ (applam p₂)   (app₁ () r₁′)
 det-⇒ (applam p₂)   (app₂ₐ r₂′)    = r₂′ ↯ nrf←nf p₂
 det-⇒ (applam p₂)   (app₂ p₁′ r₂′) = r₂′ ↯ nrf←nf p₂
-det-⇒ (lam r)       (lam r′)       = lam & det-⇒ r r′
+det-⇒ (lam r)       (lam r′)       = lam & refl ⊗ det-⇒ r r′
 det-⇒ (cbv-app₁ ()) (applam p₂′)
 det-⇒ (cbv-app₁ r₁) (cbv-app₁ r₁′) = app & CBV.det-⇒ r₁ r₁′ ⊗ refl
 det-⇒ (cbv-app₁ r₁) (app₁ p₁′ r₁′) = r₁ ↯ CBV.nrf←nawnf p₁′

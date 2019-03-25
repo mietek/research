@@ -17,8 +17,8 @@ data RF? {n} : Pred₀ (Tm n) where
   no  : ∀ {e} → WNF e → RF? e
 
 rf? : ∀ {n} (e : Tm n) → RF? e
-rf? (var x)                       = no (wnf var)
-rf? (lam e)                       = no lam
+rf? (var s x)                     = no (wnf var)
+rf? (lam s e)                     = no lam
 rf? (app e₁ e₂)                   with rf? e₁ | rf? e₂
 ... | yes (_ , r₁) | _            = yes (_ , app₁ r₁)
 ... | no lam       | yes (_ , r₂) = yes (_ , app₂ lam r₂)
@@ -62,22 +62,22 @@ mutual
 --
 -- SS-CBV is unique
 
-rev-applam : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} {e′} →
-             (p₂ : WNF e₂) (r : app (lam e₁) e₂ ⇒ e′) →
+rev-applam : ∀ {n s} {e₁ : Tm (suc n)} {e₂ : Tm n} {e′} →
+             (p₂ : WNF e₂) (r : app (lam s e₁) e₂ ⇒ e′) →
              (Σ (e′ ≡ e₁ [ e₂ ]) λ { refl →
                r ≡ applam p₂ })
 rev-applam p₂ (applam p₂′) = refl , applam & uniq-wnf p₂′ p₂
 rev-applam p₂ (app₁ ())
 rev-applam p₂ (app₂ p₁ r₂) = r₂ ↯ nrf←wnf p₂
 
-rev-app₂ : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} {e′} →
-           (r : app (lam e₁) e₂ ⇒ e′) →
+rev-app₂ : ∀ {n s} {e₁ : Tm (suc n)} {e₂ : Tm n} {e′} →
+           (r : app (lam s e₁) e₂ ⇒ e′) →
            (∃ λ p₂ →
              Σ (e′ ≡ e₁ [ e₂ ]) λ { refl →
                r ≡ applam p₂ }) ⊎
            (Σ {_} {0ᴸ} (Tm n) λ e₂′ →
              Σ (e₂ ⇒ e₂′) λ r₂ →
-               Σ (e′ ≡ app (lam e₁) e₂′) λ { refl →
+               Σ (e′ ≡ app (lam s e₁) e₂′) λ { refl →
                  r ≡ app₂ lam r₂ })
 rev-app₂ (applam p₂)        = inj₁ (p₂ , refl , refl)
 rev-app₂ (app₁ ())
@@ -85,18 +85,18 @@ rev-app₂ (app₂ lam r₂)      = inj₂ (_ , r₂ , refl , refl)
 rev-app₂ (app₂ (wnf ()) r₂)
 
 uniq-⇒ : Unique _⇒_
-uniq-⇒ {e = var _}           ()                 ()
-uniq-⇒ {e = lam _}           ()                 ()
-uniq-⇒ {e = app (var _) _}   (app₁ ())          r′
-uniq-⇒ {e = app (var _) _}   (app₂ p₁ r₂)       (app₁ ())
-uniq-⇒ {e = app (var _) _}   (app₂ p₁ r₂)       (app₂ p₁′ r₂′) = app₂ & uniq-wnf p₁ p₁′ ⊗ uniq-⇒ r₂ r₂′
-uniq-⇒ {e = app (lam _) _}   (applam p₂)        r′             with rev-applam p₂ r′
+uniq-⇒ {e = var _ _}         ()                 ()
+uniq-⇒ {e = lam _ _}         ()                 ()
+uniq-⇒ {e = app (var _ _) _} (app₁ ())          r′
+uniq-⇒ {e = app (var _ _) _} (app₂ p₁ r₂)       (app₁ ())
+uniq-⇒ {e = app (var _ _) _} (app₂ p₁ r₂)       (app₂ p₁′ r₂′) = app₂ & uniq-wnf p₁ p₁′ ⊗ uniq-⇒ r₂ r₂′
+uniq-⇒ {e = app (lam _ _) _} (applam p₂)        r′             with rev-applam p₂ r′
 ... | refl , refl                                               = refl
-uniq-⇒ {e = app (lam _) _}   (app₁ ())          r′
-uniq-⇒ {e = app (lam _) _}   (app₂ lam r₂)      r′             with rev-app₂ r′
+uniq-⇒ {e = app (lam _ _) _} (app₁ ())          r′
+uniq-⇒ {e = app (lam _ _) _} (app₂ lam r₂)      r′             with rev-app₂ r′
 ... | inj₁ (p₂ , q₁ , q₂)                                       = r₂ ↯ nrf←wnf p₂
 ... | inj₂ (_ , r₂′ , refl , refl)                              = app₂ & refl ⊗ uniq-⇒ r₂ r₂′
-uniq-⇒ {e = app (lam _) _}   (app₂ (wnf ()) r₂) r′
+uniq-⇒ {e = app (lam _ _) _} (app₂ (wnf ()) r₂) r′
 uniq-⇒ {e = app (app _ _) _} (app₁ r₁)          (app₁ r₁′)     = app₁ & uniq-⇒ r₁ r₁′
 uniq-⇒ {e = app (app _ _) _} (app₁ r₁)          (app₂ p₁′ r₂′) = r₁ ↯ nrf←wnf p₁′
 uniq-⇒ {e = app (app _ _) _} (app₂ p₁ r₂)       (app₁ r₁′)     = r₁′ ↯ nrf←wnf p₁

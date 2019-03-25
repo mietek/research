@@ -21,8 +21,8 @@ data RF? {n} : Pred₀ (Tm n) where
 rf? : ∀ {n} (e : Tm n) → RF? e
 rf? e           with CBN.rf? e
 ...             | CBN.yes (_ , r)         = cbn-yes (_ , r)
-rf? (var x)     | CBN.no _                = no (nf var)
-rf? (lam e)     | CBN.no _                with rf? e
+rf? (var s x)   | CBN.no _                = no (nf var)
+rf? (lam s e)   | CBN.no _                with rf? e
 ... | cbn-yes (_ , r)                     = yes lam (_ , cbn-lam (λ p′ → r ↯ CBN.nrf←whnf p′) r)
 ... | yes p (_ , r)                       = yes lam (_ , lam p r)
 ... | no p                                = no (lam p)
@@ -77,12 +77,12 @@ mutual
 -- SS-NO₂ is unique
 
 uniq-⇒ : Unique _⇒_
-uniq-⇒ {e = var _}   ()                   ()
-uniq-⇒ {e = lam _}   (cbn-lam ¬p r)       (cbn-lam ¬p′ r′)        = cbn-lam & uniq-¬whnf ¬p ¬p′
+uniq-⇒ {e = var _ _} ()                   ()
+uniq-⇒ {e = lam _ _} (cbn-lam ¬p r)       (cbn-lam ¬p′ r′)        = cbn-lam & uniq-¬whnf ¬p ¬p′
                                                                              ⊗ CBN.uniq-⇒ r r′
-uniq-⇒ {e = lam _}   (cbn-lam ¬p r)       (lam p′ r′)             = p′ ↯ ¬p
-uniq-⇒ {e = lam _}   (lam p r)            (cbn-lam ¬p′ r′)        = p ↯ ¬p′
-uniq-⇒ {e = lam _}   (lam p r)            (lam p′ r′)             = lam & uniq-whnf p p′
+uniq-⇒ {e = lam _ _} (cbn-lam ¬p r)       (lam p′ r′)             = p′ ↯ ¬p
+uniq-⇒ {e = lam _ _} (lam p r)            (cbn-lam ¬p′ r′)        = p ↯ ¬p′
+uniq-⇒ {e = lam _ _} (lam p r)            (lam p′ r′)             = lam & uniq-whnf p p′
                                                                          ⊗ uniq-⇒ r r′
 uniq-⇒ {e = app _ _} (app₁ p₁ r₁)         (app₁ p₁′ r₁′)          = app₁ & uniq-naxnf p₁ p₁′
                                                                           ⊗ uniq-⇒ r₁ r₁′
@@ -105,10 +105,10 @@ uniq-⇒ {e = app _ _} (app₂ p₁ p₂ r₂)      (app₂ p₁′ p₂′ r₂
 -- SS-NO₂ is deterministic, confluent, and gives rise to deterministic evaluation to NRF
 
 det-⇒ : Deterministic _⇒_
-det-⇒ (cbn-lam ¬p r)       (cbn-lam ¬p′ r′)        = lam & CBN.det-⇒ r r′
+det-⇒ (cbn-lam ¬p r)       (cbn-lam ¬p′ r′)        = lam & refl ⊗ CBN.det-⇒ r r′
 det-⇒ (cbn-lam ¬p r)       (lam p′ r′)             = p′ ↯ ¬p
 det-⇒ (lam p r)            (cbn-lam ¬p′ r′)        = p ↯ ¬p′
-det-⇒ (lam p r)            (lam p′ r′)             = lam & det-⇒ r r′
+det-⇒ (lam p r)            (lam p′ r′)             = lam & refl ⊗ det-⇒ r r′
 det-⇒ (app₁ p₁ r₁)         (app₁ p₁′ r₁′)          = app & det-⇒ r₁ r₁′ ⊗ refl
 det-⇒ (app₁ p₁ r₁)         (cbn-app₂ p₁′ ¬p₂′ r₂′) = r₁ ↯ nrf←nanf p₁′
 det-⇒ (app₁ p₁ r₁)         (app₂ p₁′ p₂′ r₂′)      = r₁ ↯ nrf←nanf p₁′

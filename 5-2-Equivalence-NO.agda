@@ -75,13 +75,13 @@ module Lem-5-2-2 where
   open BS-NO₂
   open SS-NO₂
 
-  rev-lam* : ∀ {n i} {e : Tm (suc n)} {e′} → WHNF e → lam e ⇒*⟨ i ⟩ lam e′ → e ⇒*⟨ i ⟩ e′
+  rev-lam* : ∀ {n i s} {e : Tm (suc n)} {e′} → WHNF e → lam s e ⇒*⟨ i ⟩ lam s e′ → e ⇒*⟨ i ⟩ e′
   rev-lam* p ε                   = ε
   rev-lam* p (cbn-lam ¬p r ◅ rs) = p ↯ ¬p
   rev-lam* p (lam p′ r ◅ rs)     = r ◅ rev-lam* (whnf-⇒ r) rs
 
-  rev-cbn-lam* : ∀ {n i} {e : Tm (suc n)} {e′} →
-                 lam e ⇒*⟨ i ⟩ lam e′ → NF e′ →
+  rev-cbn-lam* : ∀ {n i s} {e : Tm (suc n)} {e′} →
+                 lam s e ⇒*⟨ i ⟩ lam s e′ → NF e′ →
                  (∃ λ e″ →
                    e SS.CBN.⇒*⟨ i ⟩ e″ × WHNF e″ × e″ ⇒* e′)
   rev-cbn-lam* ε                   p′ = _ , ε , whnf←nf p′ , ε
@@ -89,11 +89,16 @@ module Lem-5-2-2 where
   ... | _ , rs′ , p″ , rs″            = _ , r ◅ rs′ , p″ , rs″
   rev-cbn-lam* (lam p r ◅ rs)      p′ = _ , ε , p , r ◅ rev-lam* (whnf-⇒ r) rs
 
-  ¬lam⇒*var : ∀ {n} {e : Tm (suc n)} {x} → ¬ (lam e ⇒* var x)
+  ¬lam⇒*var : ∀ {n s} {e : Tm (suc n)} {s′ x} → ¬ (lam s e ⇒* var s′ x)
   ¬lam⇒*var = λ { (cbn-lam ¬p r ◅ rs) → rs ↯ ¬lam⇒*var
                  ; (lam p r ◅ rs)      → rs ↯ ¬lam⇒*var }
 
-  ¬lam⇒*app : ∀ {n} {e : Tm (suc n)} {e₁ e₂} → ¬ (lam e ⇒* app e₁ e₂)
+  ¬lam-s⇒*lam-s′ : ∀ {n s} {e : Tm (suc n)} {s′ e′} → s ≢ s′ → ¬ (lam s e ⇒* lam s′ e′)
+  ¬lam-s⇒*lam-s′ s≢s′ = λ { ε                   → refl ↯ s≢s′
+                           ; (cbn-lam ¬p r ◅ rs) → rs ↯ ¬lam-s⇒*lam-s′ s≢s′
+                           ; (lam p r ◅ rs)      → rs ↯ ¬lam-s⇒*lam-s′ s≢s′ }
+
+  ¬lam⇒*app : ∀ {n s} {e : Tm (suc n)} {e₁ e₂} → ¬ (lam s e ⇒* app e₁ e₂)
   ¬lam⇒*app = λ { (cbn-lam ¬p r ◅ rs) → rs ↯ ¬lam⇒*app
                  ; (lam p r ◅ rs)      → rs ↯ ¬lam⇒*app }
 
@@ -137,27 +142,31 @@ module Lem-5-2-2 where
     bs←ss (r ◅ rs) p′ = bs←ss′ r rs p′
 
     bs←ss′ : ∀ {n i} {e : Tm n} {e′ e″} → e ⇒ e′ → e′ ⇒*⟨ i ⟩ e″ → NF e″ → e ⟱ e″
-    bs←ss′ (cbn-lam ¬p r)       rs (lam p″)           with rev-cbn-lam* rs p″
-    ... | _ , rs′ , p′ , rs″                           = lam (Lem-5-1-1.bs←ss′ r rs′ p′)
-                                                             (bs←ss rs″ p″)
-    bs←ss′ (cbn-lam ¬p r)       rs (nf var)           = rs ↯ ¬lam⇒*var
-    bs←ss′ (cbn-lam ¬p r)       rs (nf (app _ _))     = rs ↯ ¬lam⇒*app
-    bs←ss′ (lam p r)            rs (lam p″)           = lam (BS-CBN.refl-⟱ p)
-                                                             (bs←ss′ r (rev-lam* (whnf-⇒ r) rs) p″)
-    bs←ss′ (lam p r)            rs (nf var)           = rs ↯ ¬lam⇒*var
-    bs←ss′ (lam p r)            rs (nf (app _ _))     = rs ↯ ¬lam⇒*app
-    bs←ss′ (app₁ p₁ r₁)         rs p″                 with rev-app₁* rs p″
-    ... | _ , rs₁ , p₁′ , rs₂ , p₂ , rs₂′ , p₂′ , refl = app p₁ (bs←ss′ r₁ rs₁ (nf p₁′))
-                                                             (Lem-5-1-1.bs←ss rs₂ p₂)
-                                                             (bs←ss rs₂′ p₂′)
-    bs←ss′ (cbn-app₂ p₁ ¬p₂ r₂) rs p″                 with rev-cbn-app₂* p₁ rs p″
-    ... | _ , rs₂ , p₂ , rs₂′ , p₂′ , refl             = app (naxnf←nanf p₁) (refl-⟱′ p₁)
-                                                             (Lem-5-1-1.bs←ss′ r₂ rs₂ p₂)
-                                                             (bs←ss rs₂′ p₂′)
-    bs←ss′ (app₂ p₁ p₂ r₂)      rs p″                 with rev-app₂* p₁ (whnf-⇒ r₂) rs p″
-    ... | _ , rs₂ , p₂′ , refl                         = app (naxnf←nanf p₁) (refl-⟱′ p₁)
-                                                             (BS-CBN.refl-⟱ p₂)
-                                                             (bs←ss′ r₂ rs₂ p₂′)
+    bs←ss′ (cbn-lam {s = s} ¬p r) rs (lam {s = s′} p″) with s ≟ s′
+    ... | no s≢s′                                       = rs ↯ ¬lam-s⇒*lam-s′ s≢s′
+    ... | yes refl                                      with rev-cbn-lam* rs p″
+    ... | _ , rs′ , p′ , rs″                            = lam (Lem-5-1-1.bs←ss′ r rs′ p′)
+                                                              (bs←ss rs″ p″)
+    bs←ss′ (cbn-lam ¬p r)         rs (nf var)          = rs ↯ ¬lam⇒*var
+    bs←ss′ (cbn-lam ¬p r)         rs (nf (app _ _))    = rs ↯ ¬lam⇒*app
+    bs←ss′ (lam {s = s} p r)      rs (lam {s = s′} p″) with s ≟ s′
+    ... | no s≢s′                                       = rs ↯ ¬lam-s⇒*lam-s′ s≢s′
+    ... | yes refl                                      = lam (BS-CBN.refl-⟱ p)
+                                                              (bs←ss′ r (rev-lam* (whnf-⇒ r) rs) p″)
+    bs←ss′ (lam p r)              rs (nf var)          = rs ↯ ¬lam⇒*var
+    bs←ss′ (lam p r)              rs (nf (app _ _))    = rs ↯ ¬lam⇒*app
+    bs←ss′ (app₁ p₁ r₁)           rs p″                with rev-app₁* rs p″
+    ... | _ , rs₁ , p₁′ , rs₂ , p₂ , rs₂′ , p₂′ , refl  = app p₁ (bs←ss′ r₁ rs₁ (nf p₁′))
+                                                              (Lem-5-1-1.bs←ss rs₂ p₂)
+                                                              (bs←ss rs₂′ p₂′)
+    bs←ss′ (cbn-app₂ p₁ ¬p₂ r₂)   rs p″                with rev-cbn-app₂* p₁ rs p″
+    ... | _ , rs₂ , p₂ , rs₂′ , p₂′ , refl              = app (naxnf←nanf p₁) (refl-⟱′ p₁)
+                                                              (Lem-5-1-1.bs←ss′ r₂ rs₂ p₂)
+                                                              (bs←ss rs₂′ p₂′)
+    bs←ss′ (app₂ p₁ p₂ r₂)        rs p″                with rev-app₂* p₁ (whnf-⇒ r₂) rs p″
+    ... | _ , rs₂ , p₂′ , refl                          = app (naxnf←nanf p₁) (refl-⟱′ p₁)
+                                                              (BS-CBN.refl-⟱ p₂)
+                                                              (bs←ss′ r₂ rs₂ p₂′)
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -198,28 +207,28 @@ module Lem-5-2-5 where
   open SS-NO
   open BS-NO
 
-  applam* : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} → app (lam e₁) e₂ ⇒* e₁ [ e₂ ]
+  applam* : ∀ {n s} {e₁ : Tm (suc n)} {e₂ : Tm n} → app (lam s e₁) e₂ ⇒* e₁ [ e₂ ]
   applam* = applam ◅ ε
 
-  lam* : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
-  lam* = map lam
+  lam* : ∀ {n s} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam s e ⇒* lam s e′
+  lam* = map* lam
 
   cbn-app₁* : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ SS.CBN.⇒* e₁′ → app e₁ e₂ ⇒* app e₁′ e₂
-  cbn-app₁* = map cbn-app₁
+  cbn-app₁* = map* cbn-app₁
 
   app₁* : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → NAXNF e₁ → e₁ ⇒* e₁′ → app e₁ e₂ ⇒* app e₁′ e₂
   app₁* p₁ ε          = ε
   app₁* p₁ (r₁ ◅ rs₁) = app₁ (na←naxnf p₁) r₁ ◅ app₁* (naxnf-⇒ p₁ r₁) rs₁
 
   app₂* : ∀ {n} {e₁ e₂ : Tm n} {e₂′} → NANF e₁ → e₂ ⇒* e₂′ → app e₁ e₂ ⇒* app e₁ e₂′
-  app₂* p₁ = map (app₂ p₁)
+  app₂* p₁ = map* (app₂ p₁)
 
-  bs-applam : ∀ {n} {e₁ e₂ : Tm n} {e₁′ e′} →
-              e₁ SS.CBN.⇒* lam e₁′ → e₁′ [ e₂ ] ⇒* e′ →
+  bs-applam : ∀ {n s} {e₁ e₂ : Tm n} {e₁′ e′} →
+              e₁ SS.CBN.⇒* lam s e₁′ → e₁′ [ e₂ ] ⇒* e′ →
               app e₁ e₂ ⇒* e′
   bs-applam rs₁ rs = cbn-app₁* rs₁ ◅◅ applam* ◅◅ rs
 
-  bs-lam : ∀ {n} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam e ⇒* lam e′
+  bs-lam : ∀ {n s} {e : Tm (suc n)} {e′} → e ⇒* e′ → lam s e ⇒* lam s e′
   bs-lam = lam*
 
   bs-app : ∀ {n} {e₁ e₂ : Tm n} {e₁′ e₁″ e₂′} →

@@ -17,15 +17,15 @@ open Binary public
 
 module CBN where
   data _⟱_ {n} : Rel₀ (Tm n) where
-    applam : ∀ {e₁ e₂ e₁′ e′} →
-             e₁ ⟱ lam e₁′ → e₁′ [ e₂ ] ⟱ e′ →
+    applam : ∀ {s e₁ e₂ e₁′ e′} →
+             e₁ ⟱ lam s e₁′ → e₁′ [ e₂ ] ⟱ e′ →
              app e₁ e₂ ⟱ e′
 
-    var    : ∀ {x} →
-             var x ⟱ var x
+    var    : ∀ {s x} →
+             var s x ⟱ var s x
 
-    lam    : ∀ {e} →
-             lam e ⟱ lam e
+    lam    : ∀ {s e} →
+             lam s e ⟱ lam s e
 
     app    : ∀ {e₁ e₂ e₁′} →
              e₁ ⟱ e₁′ → NA e₁′ →
@@ -44,16 +44,16 @@ module CBN where
 
 module NO where
   data _⟱_ {n} : Rel₀ (Tm n) where
-    applam : ∀ {e₁ e₂ e₁′ e′} →
-             e₁ CBN.⟱ lam e₁′ → e₁′ [ e₂ ] ⟱ e′ →
+    applam : ∀ {s e₁ e₂ e₁′ e′} →
+             e₁ CBN.⟱ lam s e₁′ → e₁′ [ e₂ ] ⟱ e′ →
              app e₁ e₂ ⟱ e′
 
-    var    : ∀ {x} →
-             var x ⟱ var x
+    var    : ∀ {s x} →
+             var s x ⟱ var s x
 
-    lam    : ∀ {e e′} →
+    lam    : ∀ {s e e′} →
              e ⟱ e′ →
-             lam e ⟱ lam e′
+             lam s e ⟱ lam s e′
 
     app    : ∀ {e₁ e₂ e₁′ e₁″ e₂′} →
              e₁ CBN.⟱ e₁′ → NA e₁′ → e₁′ ⟱ e₁″ → e₂ ⟱ e₂′ →
@@ -67,12 +67,12 @@ module NO where
 
 module NO₂ where
   data _⟱_ {n} : Rel₀ (Tm n) where
-    var : ∀ {x} →
-          var x ⟱ var x
+    var : ∀ {s x} →
+          var s x ⟱ var s x
 
-    lam : ∀ {e e′ e″} →
+    lam : ∀ {s e e′ e″} →
           e CBN.⟱ e′ → e′ ⟱ e″ →
-          lam e ⟱ lam e″
+          lam s e ⟱ lam s e″
 
     app : ∀ {e₁ e₂ e₁′ e₂′ e₂″} →
           NAXNF e₁ → e₁ ⟱ e₁′ → e₂ CBN.⟱ e₂′ → e₂′ ⟱ e₂″ →
@@ -90,15 +90,15 @@ module NO₂ where
 
 module CBV where
   data _⟱_ {n} : Rel₀ (Tm n) where
-    applam : ∀ {e₁ e₂ e₁′ e₂′ e′} →
-             e₁ ⟱ lam e₁′ → e₂ ⟱ e₂′ → e₁′ [ e₂′ ] ⟱ e′ →
+    applam : ∀ {s e₁ e₂ e₁′ e₂′ e′} →
+             e₁ ⟱ lam s e₁′ → e₂ ⟱ e₂′ → e₁′ [ e₂′ ] ⟱ e′ →
              app e₁ e₂ ⟱ e′
 
-    var    : ∀ {x} →
-             var x ⟱ var x
+    var    : ∀ {s x} →
+             var s x ⟱ var s x
 
-    lam    : ∀ {e} →
-             lam e ⟱ lam e
+    lam    : ∀ {s e} →
+             lam s e ⟱ lam s e
 
     app    : ∀ {e₁ e₂ e₁′ e₂′} →
              e₁ ⟱ e₁′ → NA e₁′ → e₂ ⟱ e₂′ →
@@ -116,16 +116,16 @@ module CBV where
 
 module AO where
   data _⟱_ {n} : Rel₀ (Tm n) where
-    applam : ∀ {e₁ e₂ e₁′ e₂′ e′} →
-             e₁ ⟱ lam e₁′ → e₂ ⟱ e₂′ → e₁′ [ e₂′ ] ⟱ e′ →
+    applam : ∀ {s e₁ e₂ e₁′ e₂′ e′} →
+             e₁ ⟱ lam s e₁′ → e₂ ⟱ e₂′ → e₁′ [ e₂′ ] ⟱ e′ →
              app e₁ e₂ ⟱ e′
 
-    var    : ∀ {x} →
-             var x ⟱ var x
+    var    : ∀ {s x} →
+             var s x ⟱ var s x
 
-    lam    : ∀ {e e′} →
+    lam    : ∀ {s e e′} →
              e ⟱ e′ →
-             lam e ⟱ lam e′
+             lam s e ⟱ lam s e′
 
     app    : ∀ {e₁ e₂ e₁′ e₂′} →
              e₁ ⟱ e₁′ → NA e₁′ → e₂ ⟱ e₂′ →
@@ -145,16 +145,16 @@ module AO where
 
 module HAO where
   data _⟱_ {n} : Rel₀ (Tm n) where
-    applam : ∀ {e₁ e₂ e₁′ e₂′ e′} →
-             e₁ CBV.⟱ lam e₁′ → e₂ ⟱ e₂′ → e₁′ [ e₂′ ] ⟱ e′ →
+    applam : ∀ {s e₁ e₂ e₁′ e₂′ e′} →
+             e₁ CBV.⟱ lam s e₁′ → e₂ ⟱ e₂′ → e₁′ [ e₂′ ] ⟱ e′ →
              app e₁ e₂ ⟱ e′
 
-    var    : ∀ {x} →
-             var x ⟱ var x
+    var    : ∀ {s x} →
+             var s x ⟱ var s x
 
-    lam    : ∀ {e e′} →
+    lam    : ∀ {s e e′} →
              e ⟱ e′ →
-             lam e ⟱ lam e′
+             lam s e ⟱ lam s e′
 
     app    : ∀ {e₁ e₂ e₁′ e₁″ e₂′} →
              e₁ CBV.⟱ e₁′ → NA e₁′ → e₁′ ⟱ e₁″ → e₂ ⟱ e₂′ →
@@ -171,16 +171,16 @@ module HAO where
 
 module HS where
   data _⟱_ {n} : Rel₀ (Tm n) where
-    applam : ∀ {e₁ e₂ e₁′ e′} →
-             e₁ ⟱ lam e₁′ → e₁′ [ e₂ ] ⟱ e′ →
+    applam : ∀ {s e₁ e₂ e₁′ e′} →
+             e₁ ⟱ lam s e₁′ → e₁′ [ e₂ ] ⟱ e′ →
              app e₁ e₂ ⟱ e′
 
-    var    : ∀ {x} →
-             var x ⟱ var x
+    var    : ∀ {s x} →
+             var s x ⟱ var s x
 
-    lam    : ∀ {e e′} →
+    lam    : ∀ {s e e′} →
              e ⟱ e′ →
-             lam e ⟱ lam e′
+             lam s e ⟱ lam s e′
 
     app    : ∀ {e₁ e₂ e₁′} →
              e₁ ⟱ e₁′ → NA e₁′ →
@@ -195,16 +195,16 @@ module HS where
 
 module H where
   data _⟱_ {n} : Rel₀ (Tm n) where
-    applam : ∀ {e₁ e₂ e₁′ e′} →
-             e₁ CBN.⟱ lam e₁′ → e₁′ [ e₂ ] ⟱ e′ →
+    applam : ∀ {s e₁ e₂ e₁′ e′} →
+             e₁ CBN.⟱ lam s e₁′ → e₁′ [ e₂ ] ⟱ e′ →
              app e₁ e₂ ⟱ e′
 
-    var    : ∀ {x} →
-             var x ⟱ var x
+    var    : ∀ {s x} →
+             var s x ⟱ var s x
 
-    lam    : ∀ {e e′} →
+    lam    : ∀ {s e e′} →
              e ⟱ e′ →
-             lam e ⟱ lam e′
+             lam s e ⟱ lam s e′
 
     app    : ∀ {e₁ e₂ e₁′ e₁″} →
              e₁ CBN.⟱ e₁′ → NA e₁′ → e₁′ ⟱ e₁″ →
@@ -218,12 +218,12 @@ module H where
 
 module H₂ where
   data _⟱_ {n} : Rel₀ (Tm n) where
-    var : ∀ {x} →
-          var x ⟱ var x
+    var : ∀ {s x} →
+          var s x ⟱ var s x
 
-    lam : ∀ {e e′ e″} →
+    lam : ∀ {s e e′ e″} →
           e CBN.⟱ e′ → e′ ⟱ e″ →
-          lam e ⟱ lam e″
+          lam s e ⟱ lam s e″
 
     app : ∀ {e₁ e₂ e₁′} →
           NAXNF e₁ → e₁ ⟱ e₁′ →
@@ -241,16 +241,16 @@ module H₂ where
 
 module HNO where
   data _⟱_ {n} : Rel₀ (Tm n) where
-    applam : ∀ {e₁ e₂ e₁′ e′} →
-             e₁ HS.⟱ lam e₁′ → e₁′ [ e₂ ] ⟱ e′ →
+    applam : ∀ {s e₁ e₂ e₁′ e′} →
+             e₁ HS.⟱ lam s e₁′ → e₁′ [ e₂ ] ⟱ e′ →
              app e₁ e₂ ⟱ e′
 
-    var    : ∀ {x} →
-             var x ⟱ var x
+    var    : ∀ {s x} →
+             var s x ⟱ var s x
 
-    lam    : ∀ {e e′} →
+    lam    : ∀ {s e e′} →
              e ⟱ e′ →
-             lam e ⟱ lam e′
+             lam s e ⟱ lam s e′
 
     app    : ∀ {e₁ e₂ e₁′ e₁″ e₂′} →
              e₁ HS.⟱ e₁′ → NA e₁′ → e₁′ ⟱ e₁″ → e₂ ⟱ e₂′ →
@@ -264,12 +264,12 @@ module HNO where
 
 module HNO₂ where
   data _⟱_ {n} : Rel₀ (Tm n) where
-    var : ∀ {x} →
-          var x ⟱ var x
+    var : ∀ {s x} →
+          var s x ⟱ var s x
 
-    lam : ∀ {e e′} →
+    lam : ∀ {s e e′} →
           HNF e → e ⟱ e′ →
-          lam e ⟱ lam e′
+          lam s e ⟱ lam s e′
 
     app : ∀ {e₁ e₂ e₁′ e₂′ e₂″} →
           NAXNF e₁ → e₁ ⟱ e₁′ → e₂ HS.⟱ e₂′ → e₂′ ⟱ e₂″ →

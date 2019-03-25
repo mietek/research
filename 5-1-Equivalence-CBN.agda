@@ -25,8 +25,8 @@ module Lem-5-1-1 where
 
   rev-app₁* : ∀ {n i} {e₁ e₂ : Tm n} {e′} →
               app e₁ e₂ ⇒*⟨ i ⟩ e′ → WHNF e′ →
-              (∃ λ e₁′ →
-                e₁ ⇒*⟨ i ⟩ lam e₁′ × e₁′ [ e₂ ] ⇒*⟨ i ⟩ e′) ⊎
+              (∃² λ s e₁′ →
+                e₁ ⇒*⟨ i ⟩ lam s e₁′ × e₁′ [ e₂ ] ⇒*⟨ i ⟩ e′) ⊎
               (∃ λ e₁′ →
                 e₁ ⇒*⟨ i ⟩ e₁′ × NAXNF e₁′ × app e₁′ e₂ ≡ e′)
   rev-app₁* ε              (whnf (app p₁′)) = inj₂ (_ , ε , p₁′ , refl)
@@ -55,13 +55,13 @@ module Lem-5-1-2 where
   open SS-CBN
   open BS-CBN
 
-  applam* : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} → app (lam e₁) e₂ ⇒* e₁ [ e₂ ]
+  applam* : ∀ {n s} {e₁ : Tm (suc n)} {e₂ : Tm n} → app (lam s e₁) e₂ ⇒* e₁ [ e₂ ]
   applam* = applam ◅ ε
 
   app₁* : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ ⇒* e₁′ → app e₁ e₂ ⇒* app e₁′ e₂
-  app₁* = map app₁
+  app₁* = map* app₁
 
-  bs-applam : ∀ {n} {e₁ e₂ : Tm n} {e₁′ e′} → e₁ ⇒* lam e₁′ → e₁′ [ e₂ ] ⇒* e′ → app e₁ e₂ ⇒* e′
+  bs-applam : ∀ {n s} {e₁ e₂ : Tm n} {e₁′ e′} → e₁ ⇒* lam s e₁′ → e₁′ [ e₂ ] ⇒* e′ → app e₁ e₂ ⇒* e′
   bs-applam rs₁ rs = app₁* rs₁ ◅◅ applam* ◅◅ rs
 
   bs-app : ∀ {n} {e₁ e₂ : Tm n} {e₁′} → e₁ ⇒* e₁′ → app e₁ e₂ ⇒* app e₁′ e₂

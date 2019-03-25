@@ -42,8 +42,8 @@ data RF? {n} : Pred₀ (Tm n) where
   no  : ∀ {e} → NF e → RF? e
 
 rf? : ∀ {n} (e : Tm n) → RF? e
-rf? (var x)                               = no (nf var)
-rf? (lam e)                               with rf? e
+rf? (var s x)                             = no (nf var)
+rf? (lam s e)                             with rf? e
 ... | yes (_ , r)                         = yes (_ , lam r)
 ... | no p                                = no (lam p)
 rf? (app e₁ e₂)                           with rf? e₁ | rf? e₂
@@ -91,8 +91,8 @@ mutual
 --
 -- SS-NO is unique
 
-rev-applam : ∀ {n} {e₁ : Tm (suc n)} {e₂ : Tm n} {e′} →
-             (r : app (lam e₁) e₂ ⇒ e′) →
+rev-applam : ∀ {n s} {e₁ : Tm (suc n)} {e₂ : Tm n} {e′} →
+             (r : app (lam s e₁) e₂ ⇒ e′) →
              (Σ (e′ ≡ e₁ [ e₂ ]) λ { refl →
                r ≡ applam })
 rev-applam applam       = refl , refl
@@ -100,15 +100,15 @@ rev-applam (app₁ () r₁)
 rev-applam (app₂ () r₂)
 
 uniq-⇒ : Unique _⇒_
-uniq-⇒ {e = var _}           ()           ()
-uniq-⇒ {e = lam _}           (lam r)      (lam r′)       = lam & uniq-⇒ r r′
-uniq-⇒ {e = app (var _) _}   (app₁ p₁ ()) r′
-uniq-⇒ {e = app (var _) _}   (app₂ p₁ r₂) (app₁ p₁′ ())
-uniq-⇒ {e = app (var _) _}   (app₂ p₁ r₂) (app₂ p₁′ r₂′) = app₂ & uniq-nanf p₁ p₁′ ⊗ uniq-⇒ r₂ r₂′
-uniq-⇒ {e = app (lam _) _}   applam       r′             with rev-applam r′
+uniq-⇒ {e = var _ _}         ()           ()
+uniq-⇒ {e = lam _ _}         (lam r)      (lam r′)       = lam & uniq-⇒ r r′
+uniq-⇒ {e = app (var _ _) _} (app₁ p₁ ()) r′
+uniq-⇒ {e = app (var _ _) _} (app₂ p₁ r₂) (app₁ p₁′ ())
+uniq-⇒ {e = app (var _ _) _} (app₂ p₁ r₂) (app₂ p₁′ r₂′) = app₂ & uniq-nanf p₁ p₁′ ⊗ uniq-⇒ r₂ r₂′
+uniq-⇒ {e = app (lam _ _) _} applam       r′             with rev-applam r′
 ... | refl , refl                                         = refl
-uniq-⇒ {e = app (lam _) _}   (app₁ () r₁) r′
-uniq-⇒ {e = app (lam _) _}   (app₂ () r₂) r′
+uniq-⇒ {e = app (lam _ _) _} (app₁ () r₁) r′
+uniq-⇒ {e = app (lam _ _) _} (app₂ () r₂) r′
 uniq-⇒ {e = app (app _ _) _} (app₁ p₁ r₁) (app₁ p₁′ r₁′) = app₁ & uniq-na p₁ p₁′ ⊗ uniq-⇒ r₁ r₁′
 uniq-⇒ {e = app (app _ _) _} (app₁ p₁ r₁) (app₂ p₁′ r₂′) = r₁ ↯ nrf←nanf p₁′
 uniq-⇒ {e = app (app _ _) _} (app₂ p₁ r₂) (app₁ p₁′ r₁′) = r₁′ ↯ nrf←nanf p₁
@@ -123,7 +123,7 @@ det-⇒ : Deterministic _⇒_
 det-⇒ applam       applam         = refl
 det-⇒ applam       (app₁ () r₁′)
 det-⇒ applam       (app₂ () r₂′)
-det-⇒ (lam r)      (lam r′)       = lam & det-⇒ r r′
+det-⇒ (lam r)      (lam r′)       = lam & refl ⊗ det-⇒ r r′
 det-⇒ (app₁ () r₁) applam
 det-⇒ (app₁ p₁ r₁) (app₁ p₁′ r₁′) = app & det-⇒ r₁ r₁′ ⊗ refl
 det-⇒ (app₁ p₁ r₁) (app₂ p₁′ r₂′) = r₁ ↯ nrf←nanf p₁′
