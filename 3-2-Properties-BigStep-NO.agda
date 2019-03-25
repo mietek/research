@@ -1,17 +1,17 @@
 ---------------------------------------------------------------------------------------------------------------
 --
--- Properties of BS-H
+-- Properties of BS-NO
 
-module 3-7-1-Properties-BigStep-H where
+module 3-2-Properties-BigStep-NO where
 
 open import 2-1-Semantics-BigStep
-open H public
+open NO public
 import 3-1-Properties-BigStep-CBN as CBN
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- BS-H goes to HNF
+-- BS-NO goes to NF
 
 na←naxnf-cbn-⟱ : ∀ {n} {e : Tm n} {e′} → NAXNF e → e CBN.⟱ e′ → NA e′
 na←naxnf-cbn-⟱ var      CBN.var           = var
@@ -21,34 +21,35 @@ na←naxnf-cbn-⟱ (app p₁) (CBN.applam r₁ r) = case p₁′ of λ ()
 na←naxnf-cbn-⟱ (app p₁) (CBN.app r₁ p₁′)  = app
 
 na←naxnf-⟱ : ∀ {n} {e : Tm n} {e′} → NAXNF e → e ⟱ e′ → NA e′
-na←naxnf-⟱ var      var              = var
-na←naxnf-⟱ (app p₁) (applam r₁ r)    = case (na←naxnf-cbn-⟱ p₁ r₁) of λ ()
-na←naxnf-⟱ (app p₁) (app r₁ p₁′ r₁′) = app
+na←naxnf-⟱ var      var                 = var
+na←naxnf-⟱ (app p₁) (applam r₁ r)       = case (na←naxnf-cbn-⟱ p₁ r₁) of λ ()
+na←naxnf-⟱ (app p₁) (app r₁ p₁′ r₁′ r₂) = app
 
 na←whnf-⟱ : ∀ {n} {e : Tm n} {e′} → WHNF e → NA e → e ⟱ e′ → NA e′
 na←whnf-⟱ lam      () r
 na←whnf-⟱ (whnf p) p′ r = na←naxnf-⟱ p r
 
-hnf-⟱ : ∀ {n} {e : Tm n} {e′} → e ⟱ e′ → HNF e′
-hnf-⟱ (applam r₁ r)    = hnf-⟱ r
-hnf-⟱ var              = hnf var
-hnf-⟱ (lam r)          = lam (hnf-⟱ r)
-hnf-⟱ (app r₁ p₁′ r₁′) = hnf (app p₁″)
+nf-⟱ : ∀ {n} {e : Tm n} {e′} → e ⟱ e′ → NF e′
+nf-⟱ (applam r₁ r)       = nf-⟱ r
+nf-⟱ var                 = nf var
+nf-⟱ (lam r)             = lam (nf-⟱ r)
+nf-⟱ (app r₁ p₁′ r₁′ r₂) = nf (app p₁″ (nf-⟱ r₂))
   where
-    p₁″ = naxnf←hnf (hnf-⟱ r₁′) (na←whnf-⟱ (CBN.whnf-⟱ r₁) p₁′ r₁′)
+    p₁″ = nanf←nf (nf-⟱ r₁′) (na←whnf-⟱ (CBN.whnf-⟱ r₁) p₁′ r₁′)
 
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- BS-H is reflexive
+-- BS-NO is reflexive
 
-refl-⟱′ : ∀ {n} {e : Tm n} → NAXNF e → e ⟱ e
-refl-⟱′ (var)    = var
-refl-⟱′ (app p₁) = app (CBN.refl-⟱′ p₁) (na←naxnf p₁) (refl-⟱′ p₁)
+mutual
+  refl-⟱ : ∀ {n} {e : Tm n} → NF e → e ⟱ e
+  refl-⟱ (lam p) = lam (refl-⟱ p)
+  refl-⟱ (nf p)  = refl-⟱′ p
 
-refl-⟱ : ∀ {n} {e : Tm n} → HNF e → e ⟱ e
-refl-⟱ (lam p) = lam (refl-⟱ p)
-refl-⟱ (hnf p) = refl-⟱′ p
+  refl-⟱′ : ∀ {n} {e : Tm n} → NANF e → e ⟱ e
+  refl-⟱′ var         = var
+  refl-⟱′ (app p₁ p₂) = app (CBN.refl-⟱′ (naxnf←nanf p₁)) (na←nanf p₁) (refl-⟱′ p₁) (refl-⟱ p₂)
 
 
 ---------------------------------------------------------------------------------------------------------------

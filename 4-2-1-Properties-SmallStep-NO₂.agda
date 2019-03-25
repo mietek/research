@@ -2,7 +2,7 @@
 --
 -- Properties of SS-NO₂
 
-module 4-2-2-Properties-SmallStep-NO₂ where
+module 4-2-1-Properties-SmallStep-NO₂ where
 
 open import 2-2-Semantics-SmallStep
 open NO₂ public

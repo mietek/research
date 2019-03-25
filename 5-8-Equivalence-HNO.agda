@@ -14,11 +14,11 @@ open import 1-2-Syntax-Predicates
 import 2-1-Semantics-BigStep as BS
 import 2-2-Semantics-SmallStep as SS
 import 3-6-Properties-BigStep-HS as BS-HS
-import 3-8-1-Properties-BigStep-HNO as BS-HNO
-import 3-8-2-Properties-BigStep-HNO₂ as BS-HNO₂
+import 3-8-Properties-BigStep-HNO as BS-HNO
+import 3-8-1-Properties-BigStep-HNO₂ as BS-HNO₂
 import 4-6-Properties-SmallStep-HS as SS-HS
-import 4-8-1-Properties-SmallStep-HNO as SS-HNO
-import 4-8-2-Properties-SmallStep-HNO₂ as SS-HNO₂
+import 4-8-Properties-SmallStep-HNO as SS-HNO
+import 4-8-1-Properties-SmallStep-HNO₂ as SS-HNO₂
 open import 5-6-Equivalence-HS
 
 

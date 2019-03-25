@@ -14,28 +14,28 @@ import 2-1-Semantics-BigStep as BS
 import 2-2-Semantics-SmallStep as SS
 
 import 3-1-Properties-BigStep-CBN
-import 3-2-1-Properties-BigStep-NO
-import 3-2-2-Properties-BigStep-NO₂
+import 3-2-Properties-BigStep-NO
+import 3-2-1-Properties-BigStep-NO₂
 import 3-3-Properties-BigStep-CBV
 import 3-4-Properties-BigStep-AO
 import 3-5-Properties-BigStep-HAO
 import 3-6-Properties-BigStep-HS
-import 3-7-1-Properties-BigStep-H
-import 3-7-2-Properties-BigStep-H₂
-import 3-8-1-Properties-BigStep-HNO
-import 3-8-2-Properties-BigStep-HNO₂
+import 3-7-Properties-BigStep-H
+import 3-7-1-Properties-BigStep-H₂
+import 3-8-Properties-BigStep-HNO
+import 3-8-1-Properties-BigStep-HNO₂
 
 import 4-1-Properties-SmallStep-CBN
-import 4-2-1-Properties-SmallStep-NO
-import 4-2-2-Properties-SmallStep-NO₂
+import 4-2-Properties-SmallStep-NO
+import 4-2-1-Properties-SmallStep-NO₂
 import 4-3-Properties-SmallStep-CBV
 import 4-4-Properties-SmallStep-AO
 import 4-5-Properties-SmallStep-HAO
 import 4-6-Properties-SmallStep-HS
-import 4-7-1-Properties-SmallStep-H
-import 4-7-2-Properties-SmallStep-H₂
-import 4-8-1-Properties-SmallStep-HNO
-import 4-8-2-Properties-SmallStep-HNO₂
+import 4-7-Properties-SmallStep-H
+import 4-7-1-Properties-SmallStep-H₂
+import 4-8-Properties-SmallStep-HNO
+import 4-8-1-Properties-SmallStep-HNO₂
 
 open import 5-1-Equivalence-CBN
 open import 5-2-Equivalence-NO

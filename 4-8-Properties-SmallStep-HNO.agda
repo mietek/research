@@ -2,7 +2,7 @@
 --
 -- Properties of SS-HNO
 
-module 4-8-1-Properties-SmallStep-HNO where
+module 4-8-Properties-SmallStep-HNO where
 
 open import 2-2-Semantics-SmallStep
 open HNO public

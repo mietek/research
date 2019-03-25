@@ -2,7 +2,7 @@
 --
 -- Properties of SS-H
 
-module 4-7-1-Properties-SmallStep-H where
+module 4-7-Properties-SmallStep-H where
 
 open import 2-2-Semantics-SmallStep
 open H public

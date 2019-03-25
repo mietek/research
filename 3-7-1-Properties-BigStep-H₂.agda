@@ -2,7 +2,7 @@
 --
 -- Properties of BS-H₂
 
-module 3-7-2-Properties-BigStep-H₂ where
+module 3-7-1-Properties-BigStep-H₂ where
 
 open import 2-1-Semantics-BigStep
 open H₂ public

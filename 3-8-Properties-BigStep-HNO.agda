@@ -2,7 +2,7 @@
 --
 -- Properties of BS-HNO
 
-module 3-8-1-Properties-BigStep-HNO where
+module 3-8-Properties-BigStep-HNO where
 
 open import 2-1-Semantics-BigStep
 open HNO public
