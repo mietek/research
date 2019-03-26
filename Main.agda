@@ -297,16 +297,16 @@ open ScopeChecker using (showTm)
 
 module RESL where
   data Error : Set where
-    noInput            : Error
-    genericParserError : GenParser.Error → Error
-    rawParserError     : RawParser.Error → Error
-    scopeCheckerError  : ScopeChecker.Error → Error
+    noInput           : Error
+    genParserError    : GenParser.Error → Error
+    rawParserError    : RawParser.Error → Error
+    scopeCheckerError : ScopeChecker.Error → Error
 
   showError : Error → String
-  showError noInput                = "no input"
-  showError (genericParserError r) = GenParser.showError r
-  showError (rawParserError r)     = RawParser.showError r
-  showError (scopeCheckerError r)  = ScopeChecker.showError r
+  showError noInput               = "no input"
+  showError (genParserError r)    = GenParser.showError r
+  showError (rawParserError r)    = RawParser.showError r
+  showError (scopeCheckerError r) = ScopeChecker.showError r
 
   data Action : Set where
     echoNewline  : Action
@@ -332,7 +332,7 @@ module RESL where
   ... | []                  = inj₁ noInput
   ... | ts@(_ ∷ _)          with runOnce GenParser.parse ts | inspect (runOnce GenParser.parse) ts
   ... | nothing       | q ⁱ = q ↯ GenParser.productive-runOnce-parse ts λ ()
-  ... | just (inj₁ r) | _   = inj₁ (genericParserError r)
+  ... | just (inj₁ r) | _   = inj₁ (genParserError r)
   ... | just (inj₂ e) | _   with RawParser.parse e
   ... | inj₁ r              = inj₁ (rawParserError r)
   ... | inj₂ e′             with ScopeChecker.check [] e′
