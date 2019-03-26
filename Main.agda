@@ -339,7 +339,7 @@ module RESL where
   ... | inj₁ r              = inj₁ (scopeCheckerError r)
   ... | inj₂ e″             = inj₂ e″
 
-  eval : Tm 0 → Colist (Tm 0) ∞
+  eval : ∀ {n} → Tm n → Colist (Tm n) ∞
   eval = NO.trace ∘ NO.eval
 
   accString : List Char → String
