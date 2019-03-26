@@ -5,6 +5,9 @@
 module 0-0-Everything where
 
 open import 0-1-Prelude
+open import 0-1-1-Prelude-StutteringColists
+open import 0-1-2-Prelude-MealyLikeMachines
+open import 0-1-3-Prelude-ForeignHandleBuffering
 open import 0-2-GenericEquipment
 
 open import 1-1-Syntax-Terms
@@ -45,6 +48,8 @@ open import 5-5-Equivalence-HAO
 open import 5-6-Equivalence-HS
 open import 5-7-Equivalence-H
 open import 5-8-Equivalence-HNO
+
+import Main
 
 
 ---------------------------------------------------------------------------------------------------------------

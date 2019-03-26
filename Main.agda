@@ -2,134 +2,21 @@
 
 module Main where
 
-open import 1-1-Syntax-Terms public
-  hiding (lift)
-import 4-2-1-Properties-SmallStep-NO as NO
-
--- TODO
-open Cocolist using (Cocolist ; [] ; -∷_ ; _∷_)
-import Codata.Colist as Colist
-import Data.BoundedVec as BoundedVec
+import 0-1-1-Prelude-StutteringColists as Cocolist
+open import 0-1-2-Prelude-MealyLikeMachines as Machine
+import 0-1-3-Prelude-ForeignHandleBuffering as Foreign
+open import 1-1-Syntax-Terms
+import 4-2-Properties-SmallStep-NO as NO
 import Data.List as List
 import Data.String as String
 import Data.List.NonEmpty as List⁺
 import IO.Primitive as Prim
--- open Prim
---   using ()
---   renaming (_>>=_ to _>>=′_ ; return to return′)
-open import IO
-  using (IO ; _>>=_ ; _>>_ ; lift ; return)
-open List⁺ public
-  using (List⁺ ; _∷_)
-open import Relation.Binary.PropositionalEquality
-  using (inspect ; [_])
+open import IO using (IO ; _>>=_ ; _>>_)
 
 
 ---------------------------------------------------------------------------------------------------------------
-
-mutual
-  record Machine {a b} (A : Set a) (B : Set b) : Set (a ⊔ b) where
-    coinductive
-    field
-      on   : A → Results A B
-      done : Results A B
-
-  infixr 3 _▻_
-  data Results {a b} (A : Set a) (B : Set b) : Set (a ⊔ b) where
-    _▻_  : B → Results A B → Results A B
-    go   : Machine A B → Results A B
-    stop : Results A B
-
-open Machine public
-
--- lift : ∀ {a b} {A : Set a} {B : Set b} → (A → B) → Machine A B
--- lift f .on x = f x ▻ go (lift f)
--- lift f .done = stop
-
-_∙_ : ∀ {a b c} {A : Set a} {B : Set b} {C : Set c} → Machine A B → Machine B C → Machine A C
-(m₁ ∙ m₂) .on x = process₁ m₂ (m₁ .on x)
-  where process₁ : Machine _ _ → Results _ _ → Results _ _
-        process₁ m₂′ (y ▻ rs₁) = process₂ (m₂′ .on y)
-          where process₂ : Results _ _ → Results _ _
-                process₂ (z ▻ rs₂) = z ▻ process₂ rs₂
-                process₂ (go m₂″)  = process₁ m₂″ rs₁
-                process₂ stop      = process₁ m₂′ rs₁
-        process₁ m₂′ (go m₁′)  = go (m₁′ ∙ m₂′)
-        process₁ m₂′ stop      = stop
-(m₁ ∙ m₂) .done = stop
-
-run : ∀ {a b} {A : Set a} {B : Set b} → Machine A B → List A → List B
-run m []       = process (m .done)
-  where process : Results _ _ → List _
-        process (y ▻ rs) = y ∷ process rs
-        process (go m′)  = []
-        process stop     = []
-run m (x ∷ xs) = process (m .on x)
-  where process : Results _ _ → List _
-        process (y ▻ rs) = y ∷ process rs
-        process (go m′)  = run m′ xs
-        process stop     = []
-
-cocorun : ∀ {a b i} {A : Set a} {B : Set b} → Machine A B → Cocolist A i → Cocolist B i
-cocorun         m []       = process (m .done)
-  where process : Results _ _ → Cocolist _ _
-        process (y ▻ rs) = y ∷ λ where .force → process rs
-        process (go m′)  = []
-        process stop     = []
-cocorun         m (-∷ xs)  = -∷ λ where .force → cocorun m (xs .force)
-cocorun {i = i} m (x ∷ xs) = process (m .on x)
-  where process : Results _ _ → Cocolist _ i
-        process (y ▻ rs) = y ∷ λ where .force → process rs
-        process (go m′)  = -∷ λ where .force → cocorun m′ (xs .force)
-        process stop     = []
-
-cocorerun : ∀ {a b i} {A : Set a} {B : Set b} → Machine A B → Machine A B → Colist A i → Cocolist (A ⊎ B) i
-cocorerun         m₀ m []       = process (m .done)
-  where process : Results _ _ → Cocolist _ _
-        process (y ▻ rs) = inj₂ y ∷ λ where .force → process rs
-        process (go m′)  = []
-        process stop     = []
-cocorerun {i = i} m₀ m (x ∷ xs) = process (m .on x)
-  where process : Results _ _ → Cocolist _ i
-        process (y ▻ rs) = inj₂ y ∷ λ where .force → process rs
-        process (go m′)  = -∷ λ where .force → cocorerun m₀ m′ (xs .force)
-        process stop     = -∷ λ where .force → cocorerun m₀ m₀ (xs .force)
-
-get : ∀ {a b} {A : Set a} {B : Set b} → Machine A B → List A → Maybe B
-get m []       = process (m .done)
-  where process : Results _ _ → Maybe _
-        process (y ▻ rs) = just y
-        process (go m′)  = nothing
-        process stop     = nothing
-get m (x ∷ xs) = process (m .on x)
-  where process : Results _ _ → Maybe _
-        process (y ▻ rs) = just y
-        process (go m′)  = get m′ xs
-        process stop     = nothing
-
-
----------------------------------------------------------------------------------------------------------------
-
-module Chunker where
-  accString : List Char → String
-  accString = String.fromList ∘ List.reverse
-
-  Acc : Set
-  Acc = List Char
-
-  mutual
-    chunk : Acc → Machine Char String
-    chunk a .on '\n' = go (chunkNewLine a)
-    chunk a .on c    = go (chunk (c ∷ a))
-    chunk a .done    = accString a ▻ stop
-
-    chunkNewLine : Acc → Machine Char String
-    chunkNewLine a .on '\n' = accString a ▻ go (chunk [])
-    chunkNewLine a .on c    = go (chunk (c ∷ '\n' ∷ a))
-    chunkNewLine a .done    = accString ('\n' ∷ a) ▻ stop
-
-
----------------------------------------------------------------------------------------------------------------
+--
+-- Lexer for S-expressions, with C-like escape sequences
 
 module Lexer where
   data Token : Set where
@@ -203,89 +90,90 @@ module Lexer where
     lexAtom a .on c    = go (lexAtom (c ∷ a))
     lexAtom a .done    = accAtom a ▻ stop
 
-open Lexer public
-  using (Token ; beginList ; endList ; atom ; showAtom)
+open Lexer using (Token ; beginList ; endList ; atom ; showAtom ; showToken)
 
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- Parser for generic terms, or S-expressions
 
-module GenericParser where
-  data GenericTm : Set where
-    atom : String → GenericTm
-    list : List GenericTm → GenericTm
+module GenParser where
+  data GenTm : Set where
+    atom : String → GenTm
+    list : List GenTm → GenTm
 
-  accList : List GenericTm → GenericTm
+  accList : List GenTm → GenTm
   accList = list ∘ List.reverse
 
   mutual
-    showGenericTm : GenericTm → String
-    showGenericTm (atom s)  = showAtom s
-    showGenericTm (list es) = showList es
+    showGenTm : GenTm → String
+    showGenTm (atom s)  = showAtom s
+    showGenTm (list es) = "(" ++ showGenTms es ++ ")"
 
-    showList : List GenericTm → String
-    showList es = "(" ++ showGenericTms es ++ ")"
+    showGenTms : List GenTm → String
+    showGenTms []       = ""
+    showGenTms (e ∷ es) = showGenTm e ++ showGenTms′ es
 
-    showGenericTms : List GenericTm → String
-    showGenericTms []       = ""
-    showGenericTms (e ∷ es) = showGenericTm e ++ showGenericTms′ es
-
-    showGenericTms′ : List GenericTm → String
-    showGenericTms′ []       = ""
-    showGenericTms′ (e ∷ es) = " " ++ showGenericTm e ++ showGenericTms′ es
+    showGenTms′ : List GenTm → String
+    showGenTms′ []       = ""
+    showGenTms′ (e ∷ es) = " " ++ showGenTm e ++ showGenTms′ es
 
   data Error : Set where
     unexpectedEndInput : Error
     unexpectedEndList  : Error
-    unexpectedInput    : Error
+    unexpectedInput    : GenTm → Token → Error
 
   showError : Error → String
-  showError unexpectedEndInput = "unexpected end of input"
-  showError unexpectedEndList  = "unexpected end of list"
-  showError unexpectedInput    = "unexpected input"
+  showError unexpectedEndInput    = "unexpected end of input"
+  showError unexpectedEndList     = "unexpected end of list"
+  showError (unexpectedInput e t) = "after " ++ showGenTm e ++ ":\n  " ++
+                                    "unexpected input: " ++ showToken t
 
   AccStacc : Set
-  AccStacc = List⁺ (List GenericTm)
+  AccStacc = List⁺ (List GenTm)
 
   mutual
-    parse : Machine Token (Error ⊎ GenericTm)
+    parse : Machine Token (Error ⊎ GenTm)
     parse .on beginList = go (parseList ([] ∷ []))
     parse .on endList   = inj₁ unexpectedEndList ▻ stop
     parse .on (atom a)  = go (parseEndInput (atom a))
     parse .done         = stop
 
-    parseList : AccStacc → Machine Token (Error ⊎ GenericTm)
+    parseList : AccStacc → Machine Token (Error ⊎ GenTm)
     parseList as            .on beginList = go (parseList ([] ∷ List⁺.toList as))
     parseList (a ∷ [])      .on endList   = go (parseEndInput (accList a))
     parseList (es ∷ a ∷ as) .on endList   = go (parseList ((accList es ∷ a) ∷ as))
     parseList (a ∷ as)      .on (atom s)  = go (parseList ((atom s ∷ a) ∷ as))
     parseList as            .done         = inj₁ unexpectedEndInput ▻ stop
 
-    parseEndInput : GenericTm → Machine Token (Error ⊎ GenericTm)
-    parseEndInput e .on t = inj₁ unexpectedInput ▻ stop
+    parseEndInput : GenTm → Machine Token (Error ⊎ GenTm)
+    parseEndInput e .on t = inj₁ (unexpectedInput e t) ▻ stop
     parseEndInput e .done = inj₂ e ▻ stop
 
   mutual
-    productive-parse : ∀ (ts : List⁺ Token) → get parse (List⁺.toList ts) ≢ nothing
-    productive-parse (beginList ∷ ts) = productive-parseList ts
-    productive-parse (endList ∷ ts)   = λ ()
-    productive-parse (atom s ∷ ts)    = productive-parseEndInput ts
+    productive-runOnce-parse : ∀ (ts : List Token) → ts ≢ [] → runOnce parse ts ≢ nothing
+    productive-runOnce-parse (beginList ∷ ts) q = productive-runOnce-parseList ts
+    productive-runOnce-parse (endList ∷ ts)   q = λ ()
+    productive-runOnce-parse (atom s ∷ ts)    q = productive-runOnce-parseEndInput ts
+    productive-runOnce-parse []               q = refl ↯ q
 
-    productive-parseList : ∀ {a} (ts : List Token) → get (parseList a) ts ≢ nothing
-    productive-parseList               (beginList ∷ ts) = productive-parseList ts
-    productive-parseList {a ∷ []}      (endList ∷ ts)   = productive-parseEndInput ts
-    productive-parseList {es ∷ a ∷ as} (endList ∷ ts)   = productive-parseList ts
-    productive-parseList {a ∷ as}      (atom s ∷ ts)    = productive-parseList ts
-    productive-parseList               []               = λ ()
+    productive-runOnce-parseList : ∀ {a} (ts : List Token) → runOnce (parseList a) ts ≢ nothing
+    productive-runOnce-parseList               (beginList ∷ ts) = productive-runOnce-parseList ts
+    productive-runOnce-parseList {a ∷ []}      (endList ∷ ts)   = productive-runOnce-parseEndInput ts
+    productive-runOnce-parseList {es ∷ a ∷ as} (endList ∷ ts)   = productive-runOnce-parseList ts
+    productive-runOnce-parseList {a ∷ as}      (atom s ∷ ts)    = productive-runOnce-parseList ts
+    productive-runOnce-parseList               []               = λ ()
 
-    productive-parseEndInput : ∀ {e} (ts : List Token) → get (parseEndInput e) ts ≢ nothing
-    productive-parseEndInput (t ∷ ts) = λ ()
-    productive-parseEndInput []       = λ ()
+    productive-runOnce-parseEndInput : ∀ {e} (ts : List Token) → runOnce (parseEndInput e) ts ≢ nothing
+    productive-runOnce-parseEndInput (t ∷ ts) = λ ()
+    productive-runOnce-parseEndInput []       = λ ()
 
-open GenericParser public
-  using (GenericTm ; atom ; list ; showList)
+open GenParser using (GenTm ; atom ; list ; showGenTm)
 
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- Parser for raw terms, or non-well-scoped λ-calculus terms, with names
 
 module RawParser where
   data RawTm : Set where
@@ -300,54 +188,55 @@ module RawParser where
 
   data Error : Set where
     unexpectedAtom : String → Error
-    unexpectedList : List GenericTm → Error
-    malformedVar   : List GenericTm → Error
-    malformedLam   : List GenericTm → Error
-    malformedApp   : List GenericTm → Error
+    unexpectedList : List GenTm → Error
+    malformedVar   : List GenTm → Error
+    malformedLam   : List GenTm → Error
+    malformedApp   : List GenTm → Error
     withinLam      : String → Error → Error
     withinApp₁     : Error → Error
     withinApp₂     : RawTm → Error → Error
 
   showError : Error → String
-  showError (unexpectedAtom s)  = "unexpected atom: " ++ showAtom s
-  showError (unexpectedList es) = "unexpected list: " ++ showList es
-  showError (malformedVar es)   = "malformed term: " ++ showList (atom "var" ∷ es)
-  showError (malformedLam es)   = "malformed term: " ++ showList (atom "lam" ∷ es)
-  showError (malformedApp es)   = "malformed term: " ++ showList (atom "app" ∷ es)
-  showError (withinLam s r)     = "within (lam " ++ showAtom s ++ " …):\n" ++ showError r
-  showError (withinApp₁ r₁)     = "within (app … …):\n" ++ showError r₁
-  showError (withinApp₂ e₁ r₂)  = "within (app " ++ showRawTm e₁ ++ " …):\n" ++ showError r₂
+  showError (unexpectedAtom s)  = "unexpected atom: " ++ showGenTm (atom s)
+  showError (unexpectedList es) = "unexpected list: " ++ showGenTm (list es)
+  showError (malformedVar es)   = "malformed term: " ++ showGenTm (list (atom "var" ∷ es))
+  showError (malformedLam es)   = "malformed term: " ++ showGenTm (list (atom "lam" ∷ es))
+  showError (malformedApp es)   = "malformed term: " ++ showGenTm (list (atom "app" ∷ es))
+  showError (withinLam s r)     = "within (lam " ++ showAtom s ++ " #):\n  " ++ showError r
+  showError (withinApp₁ r₁)     = "within (app # …):\n  " ++ showError r₁
+  showError (withinApp₂ e₁ r₂)  = "within (app " ++ showRawTm e₁ ++ " #):\n  " ++ showError r₂
 
   mutual
-    parse : GenericTm → Error ⊎ RawTm
+    parse : GenTm → Error ⊎ RawTm
     parse (atom s)                 = inj₁ (unexpectedAtom s)
     parse (list (atom "var" ∷ es)) = parseVar es
     parse (list (atom "lam" ∷ es)) = parseLam es
     parse (list (atom "app" ∷ es)) = parseApp es
     parse (list es)                = inj₁ (unexpectedList es)
 
-    parseVar : List GenericTm → Error ⊎ RawTm
+    parseVar : List GenTm → Error ⊎ RawTm
     parseVar (atom s ∷ []) = inj₂ (var s)
     parseVar es            = inj₁ (malformedVar es)
 
-    parseLam : List GenericTm → Error ⊎ RawTm
+    parseLam : List GenTm → Error ⊎ RawTm
     parseLam (atom s ∷ e ∷ []) with parse e
     ... | inj₁ r               = inj₁ (withinLam s r)
     ... | inj₂ e′              = inj₂ (lam s e′)
     parseLam es                = inj₁ (malformedLam es)
 
-    parseApp : List GenericTm → Error ⊎ RawTm
+    parseApp : List GenTm → Error ⊎ RawTm
     parseApp (e₁ ∷ e₂ ∷ [])   with parse e₁ | parse e₂
     ... | inj₁ r₁  | _        = inj₁ (withinApp₁ r₁)
     ... | inj₂ e₁′ | inj₁ r₂  = inj₁ (withinApp₂ e₁′ r₂)
     ... | inj₂ e₁′ | inj₂ e₂′ = inj₂ (app e₁′ e₂′)
     parseApp es               = inj₁ (malformedApp es)
 
-open RawParser public
-  using (RawTm ; var ; lam ; app ; showRawTm)
+open RawParser using (RawTm ; var ; lam ; app ; showRawTm)
 
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- Scope checker for λ-calculus terms
 
 module ScopeChecker where
   toRawTm : ∀ {n} → Tm n → RawTm
@@ -366,9 +255,9 @@ module ScopeChecker where
 
   showError : Error → String
   showError (unboundVar s)     = "unbound variable: " ++ showAtom s
-  showError (withinLam s r)    = "within (lam " ++ showAtom s ++ " …):\n" ++ showError r
-  showError (withinApp₁ r₁)    = "within (app … …):\n" ++ showError r₁
-  showError (withinApp₂ e₁ r₂) = "within (app " ++ showTm e₁ ++ " …):\n" ++ showError r₂
+  showError (withinLam s r)    = "within (lam " ++ showAtom s ++ " #):\n  " ++ showError r
+  showError (withinApp₁ r₁)    = "within (app # …):\n  " ++ showError r₁
+  showError (withinApp₂ e₁ r₂) = "within (app " ++ showTm e₁ ++ " #):\n  " ++ showError r₂
 
   findVar : ∀ {n} (ν : Vec String n) (s : String) → Maybe (∃ λ x → ν [ x ]= s)
   findVar []       s = nothing
@@ -399,128 +288,159 @@ module ScopeChecker where
     ... | inj₂ e₁′ | inj₁ r₂  = inj₁ (withinApp₂ e₁′ r₂)
     ... | inj₂ e₁′ | inj₂ e₂′ = inj₂ (app e₁′ e₂′)
 
-open ScopeChecker public
-  using (showTm)
+open ScopeChecker using (showTm)
 
 
 ---------------------------------------------------------------------------------------------------------------
+--
+-- Coinductive read/eval/show loop
 
-module _ where
-  postulate Int : Set
-  {-# COMPILE GHC Int = type Int #-}
+module RESL where
+  data Error : Set where
+    noInput            : Error
+    genericParserError : GenParser.Error → Error
+    rawParserError     : RawParser.Error → Error
+    scopeCheckerError  : ScopeChecker.Error → Error
 
-  {-# FOREIGN GHC import qualified System.IO #-}
+  showError : Error → String
+  showError noInput                = "no input"
+  showError (genericParserError r) = GenParser.showError r
+  showError (rawParserError r)     = RawParser.showError r
+  showError (scopeCheckerError r)  = ScopeChecker.showError r
 
-  postulate Handle : Set
-  {-# COMPILE GHC Handle = type System.IO.Handle #-}
+  read : String → Error ⊎ Tm 0
+  read s                    with run Lexer.lex (String.toList s)
+  ... | []                  = inj₁ noInput
+  ... | ts@(_ ∷ _)          with runOnce GenParser.parse ts | inspect (runOnce GenParser.parse) ts
+  ... | nothing       | q ⁱ = q ↯ GenParser.productive-runOnce-parse ts λ ()
+  ... | just (inj₁ r) | _   = inj₁ (genericParserError r)
+  ... | just (inj₂ e) | _   with RawParser.parse e
+  ... | inj₁ r              = inj₁ (rawParserError r)
+  ... | inj₂ e′             with ScopeChecker.check [] e′
+  ... | inj₁ r              = inj₁ (scopeCheckerError r)
+  ... | inj₂ e″             = inj₂ e″
 
-  data BufferMode : Set where
-    NoBuffering    : BufferMode
-    LineBuffering  : BufferMode
-    BlockBuffering : Maybe Int → BufferMode
-  {-# COMPILE GHC BufferMode = data System.IO.BufferMode
-      (System.IO.NoBuffering | System.IO.LineBuffering | System.IO.BlockBuffering)  #-}
+  eval : Tm 0 → Colist (Tm 0) ∞
+  eval = NO.trace ∘ NO.eval
 
-  postulate hSetBuffering : Handle → BufferMode → Prim.IO ⊤
-  {-# COMPILE GHC hSetBuffering = System.IO.hSetBuffering #-}
+  accString : List Char → String
+  accString = String.fromList ∘ List.reverse
 
-  postulate stdout : Handle
-  {-# COMPILE GHC stdout = System.IO.stdout #-}
+  Acc : Set
+  Acc = List Char
 
-  postulate hFlush : Handle → Prim.IO ⊤
-  {-# COMPILE GHC hFlush = System.IO.hFlush #-}
+  mutual
+    chunk : Acc → Machine Char String
+    chunk a .on '\n' = go (chunkNewLine a)
+    chunk a .on c    = go (chunk (c ∷ a))
+    chunk a .done    = stop
+
+    chunkNewLine : Acc → Machine Char String
+    chunkNewLine a .on '\n' = accString a ▻ go (chunk [])
+    chunkNewLine a .on c    = go (chunk (c ∷ '\n' ∷ a))
+    chunkNewLine a .done    = stop
+
+  data Action : Set where
+    echoNewline  : Action
+    echoPrompt   : Action
+    echoTm       : ∀ {n} → Tm n → Action
+    echoError    : Error → Action
+    echoContinue : Action
+    echoGoodbye  : Action
+
+  showAction : Action → String
+  showAction echoNewline   = "\n"
+  showAction echoPrompt    = "\n> "
+  showAction (echoTm e)    = showTm e ++ "\n"
+  showAction (echoError r) = "error: " ++ showError r ++ "\n\n"
+  showAction echoContinue  = "continue? (y/n) > "
+  showAction echoGoodbye   = "\ngoodbye\n"
+
+  evalLimit : Nat
+  evalLimit = 10
+
+  mutual
+    loop : Acc → Machine Char Action
+    loop a .on '\n' = go (loopNewline a)
+    loop a .on c    = go (loop (c ∷ a))
+    loop a .done    = echoGoodbye ▻ stop
+
+    loopNewline : Acc → Machine Char Action
+    loopNewline a .on '\n' with read (accString a)
+    ... | inj₁ r           = echoError r ▻ echoPrompt ▻ go (loop [])
+    ... | inj₂ e           = process (splitAt evalLimit (eval e))
+    loopNewline a .on c    = go (loop (c ∷ '\n' ∷ a))
+    loopNewline a .done    = echoGoodbye ▻ stop
+
+    loopContinueEval : ∀ {n} → Colist (Tm n) ∞ → Machine Char Action
+    loopContinueEval es .on 'y'  = process (splitAt evalLimit es)
+    loopContinueEval es .on 'n'  = echoNewline ▻ echoPrompt ▻ go (loop [])
+    loopContinueEval es .on ' '  = go (loopContinueEval es)
+    loopContinueEval es .on '\t' = go (loopContinueEval es)
+    loopContinueEval es .on '\r' = go (loopContinueEval es)
+    loopContinueEval es .on '\n' = go (loopContinueEval es)
+    loopContinueEval es .on c    = echoContinue ▻ go (loopContinueEval es)
+    loopContinueEval es .done    = echoGoodbye ▻ stop
+
+    process : ∀ {n} → List (Tm n) × Colist (Tm n) ∞ → Results Char Action
+    process ((e ∷ es) , es′) = echoTm e ▻ process (es , es′)
+    process ([] , [])        = echoNewline ▻ echoPrompt ▻ go (loop [])
+    process ([] , es′)       = echoContinue ▻ go (loopContinueEval es′)
 
 
 ---------------------------------------------------------------------------------------------------------------
-
-data Error : Set where
-  noInput            : Error
-  genericParserError : GenericParser.Error → Error
-  rawParserError     : RawParser.Error → Error
-  scopeCheckerError  : ScopeChecker.Error → Error
-
-showError : Error → String
-showError noInput                = "error: no input"
-showError (genericParserError r) = "error: " ++ GenericParser.showError r
-showError (rawParserError r)     = "error: " ++ RawParser.showError r
-showError (scopeCheckerError r)  = "error: " ++ ScopeChecker.showError r
-
-read : String → Error ⊎ Tm 0
-read s                      with run Lexer.lex (String.toList s)
-... | []                    = inj₁ noInput
-... | t ∷ ts                with get GenericParser.parse (t ∷ ts) |
-                                 inspect (get GenericParser.parse) (t ∷ ts)
-... | nothing       | [ q ] = q ↯ GenericParser.productive-parse (t ∷ ts)
-... | just (inj₁ r) | _     = inj₁ (genericParserError r)
-... | just (inj₂ e) | _     with RawParser.parse e
-... | inj₁ r                = inj₁ (rawParserError r)
-... | inj₂ e′               with ScopeChecker.check [] e′
-... | inj₁ r                = inj₁ (scopeCheckerError r)
-... | inj₂ e″               = inj₂ e″
-
-fromColist : ∀ {a} {A : Set a} → Nat → Colist A ∞ → List A
-fromColist n xs = BoundedVec.toList (Colist.take n xs)
-
-eval : Error ⊎ Tm 0 → Error ⊎ List (Tm 0)
-eval (inj₁ r) = inj₁ r
-eval (inj₂ e) = inj₂ (fromColist 100 (NO.trace (NO.eval e))) -- TODO: allow resuming
-
-print : Error ⊎ List (Tm 0) → String
-print (inj₁ r)        = showError r ++ "\n\n"
-print (inj₂ [])       = "\n\n"
-print (inj₂ (e ∷ es)) = showTm e ++ "\n" ++ print (inj₂ es)
-
-Acc : Set
-Acc = List Char
-
-accString : List Char → String
-accString = String.fromList ∘ List.reverse
-
-fromColist′ : ∀ {a} {A : Set a} → Nat → Colist A ∞ → List A × Colist A ∞
-fromColist′ zero    xs       = [] , xs
-fromColist′ (suc n) []       = [] , []
-fromColist′ (suc n) (x ∷ xs) with fromColist′ n (xs .force)
-... | xs′ , xs″              = x ∷ xs′ , xs″
-
-
-mutual
-  loop : Acc → Machine Char String
-  loop a .on '\n' = go (loopNewline a)
-  loop a .on c    = go (loop (c ∷ a))
-  loop a .done    = "\nstopped\n" ▻ stop
-
-  loopNewline : Acc → Machine Char String
-  loopNewline a .on '\n' with read (accString a)
-  ... | inj₁ r           = showError r ++ "\n> " ▻ go (loop [])
-  ... | inj₂ e           = process (fromColist′ 10 (NO.trace (NO.eval e)))
-    where process : ∀ {n} → List (Tm n) × Colist (Tm n) ∞ → Results Char String
-          process ((e ∷ es) , es′) = showTm e ++ "\n" ▻ process (es , es′)
-          process ([]       , [])  = "\n> " ▻ go (loop [])
-          process ([]       , es′) = "continue? (y/n) > " ▻ go (loopContinueEval es′)
-  loopNewline a .on c    = go (loop (c ∷ '\n' ∷ a))
-  loopNewline a .done    = "\nstopped\n" ▻ stop
-
-  loopContinueEval : ∀ {n} → Colist (Tm n) ∞ → Machine Char String
-  loopContinueEval es .on 'y' = process (fromColist′ 10 es)
-    where process : ∀ {n} → List (Tm n) × Colist (Tm n) ∞ → Results Char String
-          process ((e ∷ es) , es′) = showTm e ++ "\n" ▻ process (es , es′)
-          process ([] , [])        = "\n> " ▻ go (loop [])
-          process ([] , es′)       = "continue? (y/n) > " ▻ go (loopContinueEval es′)
-  loopContinueEval es .on 'n'  = "\n> " ▻ go (loop [])
-  loopContinueEval es .on ' '  = go (loopContinueEval es)
-  loopContinueEval es .on '\t' = go (loopContinueEval es)
-  loopContinueEval es .on '\r' = go (loopContinueEval es)
-  loopContinueEval es .on '\n' = go (loopContinueEval es)
-  loopContinueEval es .on c    = "continue? (y/n) > " ▻ go (loopContinueEval es)
-  loopContinueEval es .done    = "\nstopped\n" ▻ stop
-
+--
+-- I/O handling
 
 main : Prim.IO (Lift 0ᴸ ⊤)
-main = IO.run do ♯ lift (hSetBuffering stdout NoBuffering)
+main = IO.run do ♯ Foreign.disableBuffering
                  ♯ do ♯ IO.putStr "> "
                       ♯ do s ← ♯ IO.getContents
-                           let ss = cocorun (loop []) (Cocolist.fromCostring s)
-                           ♯ Cocolist.mapM′ IO.putStr ss
+                           let ss = cocorun (RESL.loop []) (Cocolist.fromCostring s)
+                           ♯ Cocolist.mapM′ (IO.putStr ∘ RESL.showAction) ss
 
 
 ---------------------------------------------------------------------------------------------------------------
+
+
+> (app (lam x (app (var x) (var x))) (lam x (app (var x) (var x))))
+
+(app (lam x (app (var x) (var x))) (lam x (app (var x) (var x))))
+(app (lam x (app (var x) (var x))) (lam x (app (var x) (var x))))
+(app (lam x (app (var x) (var x))) (lam x (app (var x) (var x))))
+(app (lam x (app (var x) (var x))) (lam x (app (var x) (var x))))
+(app (lam x (app (var x) (var x))) (lam x (app (var x) (var x))))
+(app (lam x (app (var x) (var x))) (lam x (app (var x) (var x))))
+(app (lam x (app (var x) (var x))) (lam x (app (var x) (var x))))
+(app (lam x (app (var x) (var x))) (lam x (app (var x) (var x))))
+(app (lam x (app (var x) (var x))) (lam x (app (var x) (var x))))
+(app (lam x (app (var x) (var x))) (lam x (app (var x) (var x))))
+continue? (y/n) > y
+(app (lam x (app (var x) (var x))) (lam x (app (var x) (var x))))
+(app (lam x (app (var x) (var x))) (lam x (app (var x) (var x))))
+(app (lam x (app (var x) (var x))) (lam x (app (var x) (var x))))
+(app (lam x (app (var x) (var x))) (lam x (app (var x) (var x))))
+(app (lam x (app (var x) (var x))) (lam x (app (var x) (var x))))
+(app (lam x (app (var x) (var x))) (lam x (app (var x) (var x))))
+(app (lam x (app (var x) (var x))) (lam x (app (var x) (var x))))
+(app (lam x (app (var x) (var x))) (lam x (app (var x) (var x))))
+(app (lam x (app (var x) (var x))) (lam x (app (var x) (var x))))
+(app (lam x (app (var x) (var x))) (lam x (app (var x) (var x))))
+continue? (y/n) > n
+
+
+> (λ x . x x) (λ x . x x)
+
+(λ x . x x) (λ x . x x)
+(λ x . x x) (λ x . x x)
+(λ x . x x) (λ x . x x)
+(λ x . x x) (λ x . x x)
+(λ x . x x) (λ x . x x)
+(λ x . x x) (λ x . x x)
+(λ x . x x) (λ x . x x)
+(λ x . x x) (λ x . x x)
+(λ x . x x) (λ x . x x)
+(λ x . x x) (λ x . x x)
+(λ x . x x) (λ x . x x)
+(λ x . x x) (λ x . x x)
+continue? (y/n) >

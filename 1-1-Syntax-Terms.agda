@@ -7,7 +7,7 @@ open import 0-1-Prelude public
 
 ---------------------------------------------------------------------------------------------------------------
 --
--- Well-scoped terms with de Bruijn indices and advisory-only names
+-- Well-scoped λ-calculus terms, with de Bruijn indices and advisory-only names
 
 data Tm (n : Nat) : Set where
   var : String → Fin n → Tm n

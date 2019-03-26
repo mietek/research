@@ -5,8 +5,7 @@ module 0-1-Prelude where
 open import Category.Monad public
   using (module RawMonad)
 
-import Codata.Colist as Colist
-open Colist public
+open import Codata.Colist public
   using (Colist ; [] ; _∷_)
 
 open import Codata.Musical.Costring public
@@ -27,16 +26,14 @@ open import Data.Empty public
 open import Data.Fin public
   using (Fin ; zero ; suc)
 
-import Data.List as List
-open List public
+open import Data.List public
   using (List ; [] ; _∷_)
+
+open import Data.List.NonEmpty public
+  using (List⁺ ; _∷_)
 
 open import Data.Maybe public
   using (Maybe ; nothing ; just)
-
-open import Data.Maybe.Categorical public
-  using ()
-  renaming (monad to monad-Maybe)
 
 open import Data.Nat public
   using (zero ; suc)
@@ -45,8 +42,7 @@ open import Data.Nat public
 open import Data.Product public
   using (Σ ; ∃ ; _×_ ; _,_ ; uncurry)
 
-import Data.String as String
-open String public
+open import Data.String public
   using (String ; _++_)
 
 open import Data.Unit public
@@ -64,8 +60,6 @@ open import Data.Vec public
 open import Function public
   using (_∘_ ; case_of_ ; flip)
 
-import IO
-
 open import Level public
   using (Lift ; _⊔_)
   renaming (0ℓ to 0ᴸ)
@@ -74,8 +68,8 @@ open import Relation.Binary public
   using (REL ; Rel ; Reflexive ; Transitive)
 
 open import Relation.Binary.PropositionalEquality public
-  using (_≡_ ; _≢_ ; refl ; Extensionality)
-  renaming (cong to _&_ ; sym to _⁻¹)
+  using (_≡_ ; _≢_ ; refl ; inspect ; Extensionality)
+  renaming (cong to _&_ ; sym to _⁻¹ ; [_] to _ⁱ)
 
 open import Relation.Nullary public
   using (¬_ ; Dec ; yes ; no)
@@ -112,6 +106,17 @@ REL₀ A B = REL A B _
 
 Rel₀ : Set₀ → Set₁
 Rel₀ A = Rel A _
+
+
+---------------------------------------------------------------------------------------------------------------
+--
+-- Codata.Colist extras
+
+splitAt : ∀ {a} {A : Set a} → Nat → Colist A ∞ → List A × Colist A ∞
+splitAt zero    xs       = [] , xs
+splitAt (suc n) []       = [] , []
+splitAt (suc n) (x ∷ xs) with splitAt n (xs .force)
+... | xs′ , xs″          = x ∷ xs′ , xs″
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -172,67 +177,6 @@ module Relations where
 
     Confluent : ∀ {a ℓ} {A : Set a} → Pred (Rel A ℓ) (a ⊔ ℓ)
     Confluent R = ∀ {e e′ e″} → (R *) e e′ → (R *) e e″ → (∃ λ e‴ → (R *) e′ e‴ × (R *) e″ e‴)
-
-
----------------------------------------------------------------------------------------------------------------
---
--- Stuttering colists
-
-module Cocolist where
-  open IO using (IO ; _>>=_ ; _>>_ ; return)
-  open Size using (∞)
-
-  data Cocolist {a} (A : Set a) (i : Size) : Set a where
-    []  : Cocolist A i
-    -∷_ : Thunk (Cocolist A) i → Cocolist A i
-    _∷_ : A → Thunk (Cocolist A) i → Cocolist A i
-
-  fromColist : ∀ {a i} {A : Set a} → Colist A i → Cocolist A i
-  fromColist []       = []
-  fromColist (x ∷ xs) = x ∷ λ where .force → fromColist (xs .force)
-
-  fromCostring : Costring → Cocolist Char ∞
-  fromCostring = fromColist ∘ Colist.fromMusical
-
-  fromList : ∀ {a} {A : Set a} → List A → Cocolist A ∞
-  fromList []       = []
-  fromList (x ∷ xs) = x ∷ λ where .force → fromList xs
-
-  fromString : String → Cocolist Char ∞
-  fromString = fromList ∘ String.toList
-
-  toList : ∀ {a} {A : Set a} → Nat → Cocolist A ∞ → List A
-  toList zero    xs       = []
-  toList (suc n) []       = []
-  toList (suc n) (-∷ xs)  = toList n (xs .force)
-  toList (suc n) (x ∷ xs) = x ∷ toList n (xs .force)
-
-  map : ∀ {a b i} {A : Set a} {B : Set b} (f : A → B) → Cocolist A i → Cocolist B i
-  map f []       = []
-  map f (-∷ xs)  = -∷ λ where .force → map f (xs .force)
-  map f (x ∷ xs) = f x ∷ λ where .force → map f (xs .force)
-
-  sequence : ∀ {a} {A : Set a} → Cocolist (IO A) ∞ → IO (Cocolist A ∞)
-  sequence []       = return []
-  sequence (-∷ as)  = do xs ← ♯ sequence (as .force)
-                         ♯ return xs
-  sequence (a ∷ as) = do x ← ♯ a
-                         ♯ (do xs ← ♯ sequence (as .force)
-                               ♯ return (x ∷ λ where .force → xs))
-
-  sequence′ : ∀ {a} {A : Set a} → Cocolist (IO A) ∞ → IO (Lift a ⊤)
-  sequence′ []       = return _
-  sequence′ (-∷ as)  = do ♯ sequence (as .force)
-                          ♯ return _
-  sequence′ (a ∷ as) = do ♯ a
-                          ♯ (do ♯ sequence′ (as .force)
-                                ♯ return _)
-
-  mapM : ∀ {a b} {A : Set a} {B : Set b} → (A → IO B) → Cocolist A ∞ → IO (Cocolist B ∞)
-  mapM f = sequence ∘ map f
-
-  mapM′ : ∀ {a b} {A : Set a} {B : Set b} → (A → IO B) → Cocolist A ∞ → IO (Lift b ⊤)
-  mapM′ f = sequence′ ∘ map f
 
 
 ---------------------------------------------------------------------------------------------------------------
