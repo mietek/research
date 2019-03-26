@@ -308,6 +308,25 @@ module RESL where
   showError (rawParserError r)     = RawParser.showError r
   showError (scopeCheckerError r)  = ScopeChecker.showError r
 
+  data Action : Set where
+    echoNewline  : Action
+    echoPrompt   : Action
+    echoTm       : ∀ {n} → Tm n → Action
+    echoError    : Error → Action
+    echoContinue : Action
+    echoGoodbye  : Action
+
+  showAction : Action → String
+  showAction echoNewline   = "\n"
+  showAction echoPrompt    = "\n> "
+  showAction (echoTm e)    = showTm e ++ "\n"
+  showAction (echoError r) = "error: " ++ showError r ++ "\n\n"
+  showAction echoContinue  = "continue? (y/n) > "
+  showAction echoGoodbye   = "\ngoodbye\n"
+
+  evalLimit : Nat
+  evalLimit = 10
+
   read : String → Error ⊎ Tm 0
   read s                    with run Lexer.lex (String.toList s)
   ... | []                  = inj₁ noInput
@@ -328,36 +347,6 @@ module RESL where
 
   Acc : Set
   Acc = List Char
-
-  mutual
-    chunk : Acc → Machine Char String
-    chunk a .on '\n' = go (chunkNewLine a)
-    chunk a .on c    = go (chunk (c ∷ a))
-    chunk a .done    = stop
-
-    chunkNewLine : Acc → Machine Char String
-    chunkNewLine a .on '\n' = accString a ▻ go (chunk [])
-    chunkNewLine a .on c    = go (chunk (c ∷ '\n' ∷ a))
-    chunkNewLine a .done    = stop
-
-  data Action : Set where
-    echoNewline  : Action
-    echoPrompt   : Action
-    echoTm       : ∀ {n} → Tm n → Action
-    echoError    : Error → Action
-    echoContinue : Action
-    echoGoodbye  : Action
-
-  showAction : Action → String
-  showAction echoNewline   = "\n"
-  showAction echoPrompt    = "\n> "
-  showAction (echoTm e)    = showTm e ++ "\n"
-  showAction (echoError r) = "error: " ++ showError r ++ "\n\n"
-  showAction echoContinue  = "continue? (y/n) > "
-  showAction echoGoodbye   = "\ngoodbye\n"
-
-  evalLimit : Nat
-  evalLimit = 10
 
   mutual
     loop : Acc → Machine Char Action
