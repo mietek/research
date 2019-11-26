@@ -2,6 +2,9 @@
 
 module 0-1-Prelude where
 
+open import Axiom.Extensionality.Propositional public
+  using (Extensionality)
+
 open import Category.Monad public
   using (module RawMonad)
 
@@ -48,7 +51,7 @@ open import Data.String public
 open import Data.Unit public
   using (⊤)
 
-open import Data.String.Unsafe public
+open import Data.String.Properties public
   using (_≟_)
 
 open import Data.Sum public
@@ -68,7 +71,7 @@ open import Relation.Binary public
   using (REL ; Rel ; Reflexive ; Transitive)
 
 open import Relation.Binary.PropositionalEquality public
-  using (_≡_ ; _≢_ ; refl ; inspect ; Extensionality)
+  using (_≡_ ; _≢_ ; refl ; inspect)
   renaming (cong to _&_ ; sym to _⁻¹ ; [_] to _ⁱ)
 
 open import Relation.Nullary public
