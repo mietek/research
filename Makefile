@@ -1,5 +1,5 @@
 all:
-	agda -i src -i /usr/local/lib/agda/src --html src/Everything.agda
+	agda -i src --html src/Everything.agda
 	cp Agda.css html/Agda.css
 
 clean:
