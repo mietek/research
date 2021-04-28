@@ -8,10 +8,9 @@ open import Agda.Primitive public
 
 -- Truth.
 
-record ⊤ {ℓ} : Set ℓ where
-  instance
-    constructor ∅
-{-# BUILTIN UNIT ⊤ #-}
+open import Agda.Builtin.Unit public
+  using (⊤)
+  renaming (tt to ∅)
 
 
 -- Predicates.
@@ -55,11 +54,9 @@ _∘_ = trans→
 
 -- Built-in equality.
 
-infix 4 _≡_
-data _≡_ {ℓ} {X : Set ℓ} (A : X) : X → Set ℓ where
-  instance
-    refl : A ≡ A
-{-# BUILTIN EQUALITY _≡_ #-}
+open import Agda.Builtin.Equality public
+  using (_≡_ ; refl)
+
 {-# BUILTIN REWRITE _≡_ #-}
 
 infix 4 _≢_
@@ -265,13 +262,8 @@ it {{x}} = x
 
 -- Booleans.
 
-data Bool : Set where
-  instance
-    false : Bool
-    true  : Bool
-{-# BUILTIN BOOL  Bool  #-}
-{-# BUILTIN FALSE false #-}
-{-# BUILTIN TRUE  true  #-}
+open import Agda.Builtin.Bool public
+  using (Bool ; false ; true)
 
 elimBool : ∀ {ℓ} {X : Set ℓ} → Bool → X → X → X
 elimBool false z s = z
@@ -294,10 +286,8 @@ elimMaybe (just x) z f = f x
 
 -- Naturals.
 
-data Nat : Set where
-  zero : Nat
-  suc  : Nat → Nat
-{-# BUILTIN NATURAL Nat #-}
+open import Agda.Builtin.Nat public
+  using (Nat ; zero ; suc)
 
 injsucNat : ∀ {n n′} → Nat.suc n ≡ suc n′ → n ≡ n′
 injsucNat refl = refl
