@@ -8,9 +8,8 @@ open import Prelude public
 -- Vectors.
 
 data Vec {ℓ} (X : Set ℓ) : Nat → Set ℓ where
-  instance
-    ∅   : Vec X zero
-    _,_ : ∀ {n} → Vec X n → X → Vec X (suc n)
+  ∅   : Vec X zero
+  _,_ : ∀ {n} → Vec X n → X → Vec X (suc n)
 
 length : ∀ {ℓ} {X : Set ℓ} {n} → Vec X n → Nat
 length {n = n} L = n
@@ -28,10 +27,9 @@ map f (L , x) = map f L , f x
 -- Predicates on vectors.
 
 data All {ℓ ℓ′} {X : Set ℓ} (P : Pred X ℓ′) : ∀ {n} → Pred (Vec X n) ℓ′ where
-  instance
-    ∅   : All P ∅
-    _,_ : ∀ {n} {L : Vec X n} {x} →
-            All P L → P x → All P (L , x)
+  ∅   : All P ∅
+  _,_ : ∀ {n} {L : Vec X n} {x} →
+          All P L → P x → All P (L , x)
 
 mapAll : ∀ {ℓ ℓ′ ℓ″} {X : Set ℓ} {n} {L : Vec X n} {P : Pred X ℓ′} {Q : Pred X ℓ″} →
            (∀ {x} → P x → Q x) → All P L → All Q L
@@ -43,14 +41,13 @@ mapAll f (A , a) = mapAll f A , f a
 
 infix 3 _⊇⟨_⟩_
 data _⊇⟨_⟩_ {ℓ} {X : Set ℓ} : ∀ {n n′} → Vec X n → n ≥ n′ → Vec X n′ → Set ℓ where
-  instance
-    done : ∅ ⊇⟨ done ⟩ ∅
-    weak : ∀ {n n′ e} {L : Vec X n} {L′ : Vec X n′} {x} →
-             L′ ⊇⟨ e ⟩ L →
-             L′ , x ⊇⟨ weak e ⟩ L
-    lift : ∀ {n n′ e} {L : Vec X n} {L′ : Vec X n′} {x} →
-             L′ ⊇⟨ e ⟩ L →
-             L′ , x ⊇⟨ lift e ⟩ L , x
+  done : ∅ ⊇⟨ done ⟩ ∅
+  weak : ∀ {n n′ e} {L : Vec X n} {L′ : Vec X n′} {x} →
+           L′ ⊇⟨ e ⟩ L →
+           L′ , x ⊇⟨ weak e ⟩ L
+  lift : ∀ {n n′ e} {L : Vec X n} {L′ : Vec X n′} {x} →
+           L′ ⊇⟨ e ⟩ L →
+           L′ , x ⊇⟨ lift e ⟩ L , x
 
 unweak⊇ : ∀ {ℓ} {X : Set ℓ} {n n′ e} {L : Vec X n} {L′ : Vec X n′} {x} →
             L′ ⊇⟨ e ⟩ L , x → L′ ⊇⟨ unweak≥ e ⟩ L
@@ -109,11 +106,10 @@ assoctrans⊇ (lift η″) (lift η′) (lift η) = cong lift (assoctrans⊇ η�
 
 infix 3 _∋⟨_⟩_
 data _∋⟨_⟩_ {ℓ} {X : Set ℓ} : ∀ {n} → Vec X n → Fin n → X → Set ℓ where
-  instance
-    zero : ∀ {n} {L : Vec X n} {x} →
-             L , x ∋⟨ zero ⟩ x
-    suc  : ∀ {n} {L : Vec X n} {x y i} →
-             L ∋⟨ i ⟩ x → L , y ∋⟨ suc i ⟩ x
+  zero : ∀ {n} {L : Vec X n} {x} →
+           L , x ∋⟨ zero ⟩ x
+  suc  : ∀ {n} {L : Vec X n} {x y i} →
+           L ∋⟨ i ⟩ x → L , y ∋⟨ suc i ⟩ x
 
 lookupAll : ∀ {ℓ ℓ′} {X : Set ℓ} {n} {L : Vec X n} {P : Pred X ℓ′} {x i} →
               All P L → L ∋⟨ i ⟩ x → P x

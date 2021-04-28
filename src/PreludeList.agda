@@ -8,9 +8,8 @@ open import Prelude public
 -- Lists.
 
 data List {ℓ} (X : Set ℓ) : Set ℓ where
-  instance
-    ∅   : List X
-    _,_ : List X → X → List X
+  ∅   : List X
+  _,_ : List X → X → List X
 
 inj,₁ : ∀ {ℓ} {X : Set ℓ} {L L′ : List X} {x x′} →
           L List., x ≡ L′ , x′ → L ≡ L′
@@ -20,15 +19,14 @@ inj,₂ : ∀ {ℓ} {X : Set ℓ} {L L′ : List X} {x x′} →
           L List., x ≡ L′ , x′ → x ≡ x′
 inj,₂ refl = refl
 
-module _ {ℓ} {X : Set ℓ} {{_≟X_ : ∀ x x′ → Dec (x ≡ x′)}} where
-  _≟List_ : (L L′ : List X) → Dec (L ≡ L′)
-  ∅       ≟List ∅         = yes refl
-  ∅       ≟List (L′ , x′) = no λ ()
-  (L , x) ≟List ∅         = no λ ()
-  (L , x) ≟List (L′ , x′) with L ≟List L′ | x ≟X x′
-  (L , x) ≟List (L′ , x′) | yes refl | yes refl = yes refl
-  (L , x) ≟List (L′ , x′) | _        | no x≢x′  = no (x≢x′ ∘ inj,₂)
-  (L , x) ≟List (L′ , x′) | no L≢L′  | _        = no (L≢L′ ∘ inj,₁)
+_≟List⟨_⟩_ : ∀ {ℓ} {X : Set ℓ} (L : List X) (_≟X_ : ∀ (x x′ : X) → Dec (x ≡ x′)) (L′ : List X) → Dec (L ≡ L′)
+∅       ≟List⟨ _≟X_ ⟩ ∅         = yes refl
+∅       ≟List⟨ _≟X_ ⟩ (L′ , x′) = no λ ()
+(L , x) ≟List⟨ _≟X_ ⟩ ∅         = no λ ()
+(L , x) ≟List⟨ _≟X_ ⟩ (L′ , x′) with L ≟List⟨ _≟X_ ⟩ L′ | x ≟X x′
+(L , x) ≟List⟨ _≟X_ ⟩ (L′ , x′) | yes refl | yes refl = yes refl
+(L , x) ≟List⟨ _≟X_ ⟩ (L′ , x′) | _        | no x≢x′  = no (x≢x′ ∘ inj,₂)
+(L , x) ≟List⟨ _≟X_ ⟩ (L′ , x′) | no L≢L′  | _        = no (L≢L′ ∘ inj,₁)
 
 length : ∀ {ℓ} {X : Set ℓ} → List X → Nat
 length ∅       = zero
@@ -51,9 +49,8 @@ reduce f y (L , x) = f (reduce f y L) x
 -- Predicates on lists.
 
 data All {ℓ ℓ′} {X : Set ℓ} (P : Pred X ℓ′) : Pred (List X) ℓ′ where
-  instance
-    ∅   : All P ∅
-    _,_ : ∀ {L x} → All P L → P x → All P (L , x)
+  ∅   : All P ∅
+  _,_ : ∀ {L x} → All P L → P x → All P (L , x)
 
 mapAll : ∀ {ℓ ℓ′ ℓ″} {X : Set ℓ} {P : Pred X ℓ′} {Q : Pred X ℓ″} {L} →
            (∀ {x} → P x → Q x) → All P L → All Q L
@@ -70,10 +67,9 @@ reduceAll f y (A , a) = f (reduceAll f y A) a
 
 infix 3 _⊇_
 data _⊇_ {ℓ} {X : Set ℓ} : List X → List X → Set ℓ where
-  instance
-    done : ∅ ⊇ ∅
-    weak : ∀ {L L′ x} → L′ ⊇ L → L′ , x ⊇ L
-    lift : ∀ {L L′ x} → L′ ⊇ L → L′ , x ⊇ L , x
+  done : ∅ ⊇ ∅
+  weak : ∀ {L L′ x} → L′ ⊇ L → L′ , x ⊇ L
+  lift : ∀ {L L′ x} → L′ ⊇ L → L′ , x ⊇ L , x
 
 injweak⊇ : ∀ {ℓ} {X : Set ℓ} {L L′ : List X} {x} {η η′ : L′ ⊇ L} →
              _⊇_.weak {x = x} η ≡ weak η′ → η ≡ η′
@@ -164,9 +160,8 @@ assoctrans⊇ (lift η″) (lift η′) (lift η) = cong lift (assoctrans⊇ η�
 
 infix 3 _∋_
 data _∋_ {ℓ} {X : Set ℓ} : List X → X → Set ℓ where
-  instance
-    zero : ∀ {L x}   → L , x ∋ x
-    suc  : ∀ {L x y} → L ∋ x → L , y ∋ x
+  zero : ∀ {L x}   → L , x ∋ x
+  suc  : ∀ {L x y} → L ∋ x → L , y ∋ x
 
 injsuc∋ : ∀ {ℓ} {X : Set ℓ} {L : List X} {x y} {𝒾 𝒾′ : L ∋ x} →
             _∋_.suc {y = y} 𝒾 ≡ suc 𝒾′ → 𝒾 ≡ 𝒾′

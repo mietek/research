@@ -60,7 +60,6 @@ data _≡_ {ℓ} {X : Set ℓ} (A : X) : X → Set ℓ where
   instance
     refl : A ≡ A
 {-# BUILTIN EQUALITY _≡_ #-}
-{-# BUILTIN REFL refl #-}
 {-# BUILTIN REWRITE _≡_ #-}
 
 infix 4 _≢_
@@ -120,8 +119,7 @@ module ≡-Reasoning {ℓ} {X : Set ℓ} where
 
 infixl 5 _,_
 record Σ {ℓ ℓ′} (X : Set ℓ) (P : Pred X ℓ′) : Set (ℓ ⊔ ℓ′) where
-  instance
-    constructor _,_
+  constructor _,_
   field
     π₁ : X
     π₂ : P π₁
@@ -159,9 +157,8 @@ uncurry f (x , y) = f x y
 
 infixl 1 _∨_
 data _∨_ {ℓ ℓ′} (X : Set ℓ) (Y : Set ℓ′) : Set (ℓ ⊔ ℓ′) where
-  instance
-    ι₁ : X → X ∨ Y
-    ι₂ : Y → X ∨ Y
+  ι₁ : X → X ∨ Y
+  ι₂ : Y → X ∨ Y
 
 injι₁ : ∀ {ℓ ℓ′} {X : Set ℓ} {Y : Set ℓ′} {x x′ : X} → ι₁ {Y = Y} x ≡ ι₁ x′ → x ≡ x′
 injι₁ refl = refl
@@ -227,9 +224,8 @@ module ↔-Reasoning where
 -- Decidability.
 
 data Dec {ℓ} (X : Set ℓ) : Set ℓ where
-  instance
-    yes : X → Dec X
-    no  : ¬ X → Dec X
+  yes : X → Dec X
+  no  : ¬ X → Dec X
 
 injyesDec : ∀ {ℓ} {X : Set ℓ} {x x′ : X} → yes x ≡ yes x′ → x ≡ x′
 injyesDec refl = refl
@@ -285,9 +281,8 @@ elimBool true  z s = s
 -- Options.
 
 data Maybe {ℓ} (X : Set ℓ) : Set ℓ where
-  instance
-    nothing : Maybe X
-    just    : X → Maybe X
+  nothing : Maybe X
+  just    : X → Maybe X
 
 injjustMaybe : ∀ {ℓ} {X : Set ℓ} {x x′ : X} → just x ≡ just x′ → x ≡ x′
 injjustMaybe refl = refl
@@ -300,9 +295,8 @@ elimMaybe (just x) z f = f x
 -- Naturals.
 
 data Nat : Set where
-  instance
-    zero : Nat
-    suc  : Nat → Nat
+  zero : Nat
+  suc  : Nat → Nat
 {-# BUILTIN NATURAL Nat #-}
 
 injsucNat : ∀ {n n′} → Nat.suc n ≡ suc n′ → n ≡ n′
@@ -325,10 +319,9 @@ elimNat (suc n) z f = f n (elimNat n z f)
 
 infix 3 _≥_
 data _≥_ : Nat → Nat → Set where
-  instance
-    done : zero ≥ zero
-    weak : ∀ {n n′} → n′ ≥ n → suc n′ ≥ n
-    lift : ∀ {n n′} → n′ ≥ n → suc n′ ≥ suc n
+  done : zero ≥ zero
+  weak : ∀ {n n′} → n′ ≥ n → suc n′ ≥ n
+  lift : ∀ {n n′} → n′ ≥ n → suc n′ ≥ suc n
 
 injweak≥ : ∀ {n n′} {e e′ : n′ ≥ n} → weak e ≡ weak e′ → e ≡ e′
 injweak≥ refl = refl
@@ -391,9 +384,8 @@ assoctrans≥ (lift e″) (lift e′) (lift e) = cong lift (assoctrans≥ e″ e
 -- Finite naturals.
 
 data Fin : Nat → Set where
-  instance
-    zero : ∀ {n} → Fin (suc n)
-    suc  : ∀ {n} → Fin n → Fin (suc n)
+  zero : ∀ {n} → Fin (suc n)
+  suc  : ∀ {n} → Fin n → Fin (suc n)
 
 injsucFin : ∀ {n} {i i′ : Fin n} → Fin.suc i ≡ suc i′ → i ≡ i′
 injsucFin refl = refl

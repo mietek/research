@@ -12,17 +12,17 @@ postulate
 
 infix 3 _⊨_
 _⊨_ : Cx → Ty → Set₁
-Δ ⁏ Γ ⊨ A = ∀ {{_ : Model}} {w} →
-               (∀ {w′} → w′ Я w → w′ ⟪⊢⟫⋆ ⌈ Δ ⌉) →
-               (∀ {w′} → w′ Я w → w′ ⟪⊩⟫⋆ ⌈ Δ ⌉) →
+Δ ⁏ Γ ⊨ A = ∀ {{_ : Model}} {w : World} →
+               (∀ {w′ : World} → w′ Я w → w′ ⟪⊢⟫⋆ ⌈ Δ ⌉) →
+               (∀ {w′ : World} → w′ Я w → w′ ⟪⊩⟫⋆ ⌈ Δ ⌉) →
                w ⊩⋆ Γ →
                w ⊩ A
 
 infix 3 _⊨⋆_
 _⊨⋆_ : Cx → Ty⋆ → Set₁
-Δ ⁏ Γ ⊨⋆ Ξ = ∀ {{_ : Model}} {w} →
-                (∀ {w′} → w′ Я w → w′ ⟪⊢⟫⋆ ⌈ Δ ⌉) →
-                (∀ {w′} → w′ Я w → w′ ⟪⊩⟫⋆ ⌈ Δ ⌉) →
+Δ ⁏ Γ ⊨⋆ Ξ = ∀ {{_ : Model}} {w : World} →
+                (∀ {w′ : World} → w′ Я w → w′ ⟪⊢⟫⋆ ⌈ Δ ⌉) →
+                (∀ {w′ : World} → w′ Я w → w′ ⟪⊩⟫⋆ ⌈ Δ ⌉) →
                 w ⊩⋆ Γ →
                 w ⊩⋆ Ξ
 
@@ -110,15 +110,15 @@ mutual
 
 -- TODO: Needs a name.
 
-refl⊩⋆ : ∀ {Γ Δ} → Δ ⁏ Γ ⊩⋆ Γ
+refl⊩⋆ : ∀ {Γ Δ : Ty⋆} → Δ ⁏ Γ ⊩⋆ Γ
 refl⊩⋆ {∅}     = ∅
 refl⊩⋆ {Γ , A} = mono⊩⋆ (refl⊇ , weak refl⊇) refl⊩⋆ , ⟦ varⁿᵉ zero ⟧ᶜ
 
-mrefl⟪⊩⟫⋆ : ∀ {Γ Δ} → Δ ⁏ Γ ⟪⊩⟫⋆ ⌈ Δ ⌉
+mrefl⟪⊩⟫⋆ : ∀ {Γ Δ : Ty⋆} → Δ ⁏ Γ ⟪⊩⟫⋆ ⌈ Δ ⌉
 mrefl⟪⊩⟫⋆ {Γ} {∅}     = ∅
 mrefl⟪⊩⟫⋆ {Γ} {Δ , A} = mono⟪⊩⟫⋆ {w = _ ⁏ Γ} (weak refl⊇ , refl⊇) (mrefl⟪⊩⟫⋆ {Γ}) ,
-                         λ ζ φ →
-                           ⟦ mvarⁿᵉ (mono∋ ζ zero) ⟧ᶜ
+                           λ ζ φ →
+                             ⟦ mvarⁿᵉ (mono∋ ζ zero) ⟧ᶜ
 
 
 -- Completeness.
