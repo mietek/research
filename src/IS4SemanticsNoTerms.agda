@@ -29,8 +29,8 @@ mutual
   infix 3 _⊪_
   _⊪_ : ∀ {{_ : Model}} → World → Ty → Set
   w ⊪ •      = G w
-  w ⊪ A ⇒ B = ∀ {w′} → w′ ⊒ w → w′ ⊩ A → w′ ⊩ B
-  w ⊪ □ A    = ∀ {w′} → w′ Я w → w′ ⟪⊢⟫ □ A ∧ w′ ⟪⊩⟫ □ A
+  w ⊪ A ⇒ B = ∀ {w′ : World} → w′ ⊒ w → w′ ⊩ A → w′ ⊩ B
+  w ⊪ □ A    = ∀ {w′ : World} → w′ Я w → w′ ⟪⊢⟫ □ A ∧ w′ ⟪⊩⟫ □ A
 
   infix 3 _⟪⊢⟫_
   _⟪⊢⟫_ : ∀ {{_ : Model}} → World → BoxTy → Set
@@ -42,17 +42,17 @@ mutual
 
   infix 3 _⊩_
   _⊩_ : ∀ {{_ : Model}} → World → Ty → Set
-  w ⊩ A = ∀ {C w′} → w′ ⊒ w →
-             (∀ {w″} → w″ ⊒ w′ → w″ ⊪ A → peek w″ ⊢ⁿᶠ C) →
+  w ⊩ A = ∀ {C} {w′ : World} → w′ ⊒ w →
+             (∀ {w″ : World} → w″ ⊒ w′ → w″ ⊪ A → peek w″ ⊢ⁿᶠ C) →
              peek w′ ⊢ⁿᶠ C
 
 mutual
-  mono⊪ : ∀ {{_ : Model}} {A w w′} → w′ ⊒ w → w ⊪ A → w′ ⊪ A
+  mono⊪ : ∀ {{_ : Model}} {A} {w w′ : World} → w′ ⊒ w → w ⊪ A → w′ ⊪ A
   mono⊪ {•}      θ a = monoG θ a
   mono⊪ {A ⇒ B} θ f = λ θ′ a → f (trans⊒ θ′ θ) a
   mono⊪ {□ A}    θ q = λ ζ → q (transЯ ζ (⊒→Я θ))
 
-  mono⊩ : ∀ {{_ : Model}} {A w w′} → w′ ⊒ w → w ⊩ A → w′ ⊩ A
+  mono⊩ : ∀ {{_ : Model}} {A} {w w′ : World} → w′ ⊒ w → w ⊩ A → w′ ⊩ A
   mono⊩ θ f = λ θ′ κ → f (trans⊒ θ′ θ) κ
 
 
@@ -62,10 +62,10 @@ infix 3 _⊩⋆_
 _⊩⋆_ : ∀ {{_ : Model}} → World → Ty⋆ → Set
 w ⊩⋆ Ξ = All (w ⊩_) Ξ
 
-mono⊩⋆ : ∀ {{_ : Model}} {w w′ Ξ} → w′ ⊒ w → w ⊩⋆ Ξ → w′ ⊩⋆ Ξ
+mono⊩⋆ : ∀ {{_ : Model}} {w w′ : World} {Ξ} → w′ ⊒ w → w ⊩⋆ Ξ → w′ ⊩⋆ Ξ
 mono⊩⋆ θ ξ = mapAll (λ {A} → mono⊩ {A} θ) ξ
 
-lookup⊩ : ∀ {{_ : Model}} {w Ξ A} → w ⊩⋆ Ξ → Ξ ∋ A → w ⊩ A
+lookup⊩ : ∀ {{_ : Model}} {w : World} {Ξ A} → w ⊩⋆ Ξ → Ξ ∋ A → w ⊩ A
 lookup⊩ ξ 𝒾 = lookupAll ξ 𝒾
 
 
@@ -75,7 +75,7 @@ infix 3 _⟪⊢⟫⋆_
 _⟪⊢⟫⋆_ : ∀ {{_ : Model}} → World → BoxTy⋆ → Set
 w ⟪⊢⟫⋆ Ξ = All (w ⟪⊢⟫_) Ξ
 
-mlookup⟪⊢⟫ : ∀ {{_ : Model}} {w Ξ A} → w ⟪⊢⟫⋆ Ξ → Ξ ∋ □ A → w ⟪⊢⟫ □ A
+mlookup⟪⊢⟫ : ∀ {{_ : Model}} {w : World} {Ξ A} → w ⟪⊢⟫⋆ Ξ → Ξ ∋ □ A → w ⟪⊢⟫ □ A
 mlookup⟪⊢⟫ ξ 𝒾 = lookupAll ξ 𝒾
 
 
@@ -85,23 +85,23 @@ infix 3 _⟪⊩⟫⋆_
 _⟪⊩⟫⋆_ : ∀ {{_ : Model}} → World → BoxTy⋆ → Set
 w ⟪⊩⟫⋆ Ξ = All (w ⟪⊩⟫_) Ξ
 
-mlookup⟪⊩⟫ : ∀ {{_ : Model}} {w Ξ A} → w ⟪⊩⟫⋆ Ξ → Ξ ∋ □ A → w ⟪⊩⟫ □ A
+mlookup⟪⊩⟫ : ∀ {{_ : Model}} {w : World} {Ξ A} → w ⟪⊩⟫⋆ Ξ → Ξ ∋ □ A → w ⟪⊩⟫ □ A
 mlookup⟪⊩⟫ ξ 𝒾 = lookupAll ξ 𝒾
 
-mono⟪⊩⟫ : ∀ {{_ : Model}} {A w w′} → w′ ⊒ w → w ⟪⊩⟫ □ A → w′ ⟪⊩⟫ □ A
+mono⟪⊩⟫ : ∀ {{_ : Model}} {A} {w w′ : World} → w′ ⊒ w → w ⟪⊩⟫ □ A → w′ ⟪⊩⟫ □ A
 mono⟪⊩⟫ {A} θ q = mono⊩ {A} θ q
 
-mono⟪⊩⟫⋆ : ∀ {{_ : Model}} {Ξ w w′} → w′ ⊒ w → w ⟪⊩⟫⋆ Ξ → w′ ⟪⊩⟫⋆ Ξ
+mono⟪⊩⟫⋆ : ∀ {{_ : Model}} {Ξ} {w w′ : World} → w′ ⊒ w → w ⟪⊩⟫⋆ Ξ → w′ ⟪⊩⟫⋆ Ξ
 mono⟪⊩⟫⋆ θ ξ = mapAll (λ { {□ A} → mono⟪⊩⟫ {A} θ }) ξ
 
 
 -- Continuations.
 
-return : ∀ {{_ : Model}} {A w} → w ⊪ A → w ⊩ A
+return : ∀ {{_ : Model}} {A} {w : World} → w ⊪ A → w ⊩ A
 return {A} a = λ θ κ → κ refl⊒ (mono⊪ {A} θ a)
 
-bind : ∀ {{_ : Model}} {A B w} → w ⊩ A →
-         (∀ {w′} → w′ ⊒ w → w′ ⊪ A → w′ ⊩ B) →
+bind : ∀ {{_ : Model}} {A B} {w : World} → w ⊩ A →
+         (∀ {w′ : World} → w′ ⊒ w → w′ ⊪ A → w′ ⊩ B) →
          w ⊩ B
 bind f κ = λ θ κ′ → f θ
              λ θ′ a → κ (trans⊒ θ′ θ) a refl⊒

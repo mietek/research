@@ -7,17 +7,17 @@ open import ICMLSemanticsNoTerms public
 
 infix 3 _⊨_
 _⊨_ : Cx → Ty → Set₁
-Δ ⁏ Γ ⊨ A = ∀ {{_ : Model}} {w} →
-               (∀ {w′} → w′ Я w → w′ ⟪⊢⟫⋆ Δ) →
-               (∀ {w′} → w′ Я w → w′ ⟪⊩⟫⋆ Δ) →
+Δ ⁏ Γ ⊨ A = ∀ {{_ : Model}} {w : World} →
+               (∀ {w′ : World} → w′ Я w → w′ ⟪⊢⟫⋆ Δ) →
+               (∀ {w′ : World} → w′ Я w → w′ ⟪⊩⟫⋆ Δ) →
                w ⊩⋆ Γ →
                w ⊩ A
 
 infix 3 _⊨⋆_
 _⊨⋆_ : Cx → Ty⋆ → Set₁
-Δ ⁏ Γ ⊨⋆ Ξ = ∀ {{_ : Model}} {w} →
-                (∀ {w′} → w′ Я w → w′ ⟪⊢⟫⋆ Δ) →
-                (∀ {w′} → w′ Я w → w′ ⟪⊩⟫⋆ Δ) →
+Δ ⁏ Γ ⊨⋆ Ξ = ∀ {{_ : Model}} {w : World} →
+                (∀ {w′ : World} → w′ Я w → w′ ⟪⊢⟫⋆ Δ) →
+                (∀ {w′ : World} → w′ Я w → w′ ⟪⊩⟫⋆ Δ) →
                 w ⊩⋆ Γ →
                 w ⊩⋆ Ξ
 
@@ -105,11 +105,11 @@ mutual
 
 -- TODO: Needs a name.
 
-refl⊩⋆ : ∀ {Γ Δ} → Δ ⁏ Γ ⊩⋆ Γ
+refl⊩⋆ : ∀ {Γ : Ty⋆} {Δ : BoxTy⋆} → Δ ⁏ Γ ⊩⋆ Γ
 refl⊩⋆ {∅}     = ∅
 refl⊩⋆ {Γ , A} = mono⊩⋆ (refl⊇ , weak refl⊇) refl⊩⋆ , ⟦ varⁿᵉ zero ⟧ᶜ
 
-mrefl⟪⊩⟫⋆ : ∀ {Δ Γ} → Δ ⁏ Γ ⟪⊩⟫⋆ Δ
+mrefl⟪⊩⟫⋆ : ∀ {Δ : BoxTy⋆} {Γ : Ty⋆} → Δ ⁏ Γ ⟪⊩⟫⋆ Δ
 mrefl⟪⊩⟫⋆ {∅}           = ∅
 mrefl⟪⊩⟫⋆ {Δ , [ Ψ ] A} = mono⟪⊩⟫⋆ (weak refl⊇ , refl⊇) mrefl⟪⊩⟫⋆ ,
                            λ { (ζ , η) ψ →

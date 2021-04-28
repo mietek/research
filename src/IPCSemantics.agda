@@ -22,9 +22,9 @@ open Model {{…}} public
 infix 3 _⊩_
 _⊩_ : ∀ {{_ : Model}} → World → Ty → Set
 w ⊩ •      = G w
-w ⊩ A ⇒ B = ∀ {w′} → w′ ⊒ w → w′ ⊩ A → w′ ⊩ B
+w ⊩ A ⇒ B = ∀ {w′ : World} → w′ ⊒ w → w′ ⊩ A → w′ ⊩ B
 
-mono⊩ : ∀ {{_ : Model}} {A w w′} → w′ ⊒ w → w ⊩ A → w′ ⊩ A
+mono⊩ : ∀ {{_ : Model}} {A} {w w′ : World} → w′ ⊒ w → w ⊩ A → w′ ⊩ A
 mono⊩ {•}      η a = monoG η a
 mono⊩ {A ⇒ B} η f = λ η′ a → f (trans⊒ η′ η) a
 
@@ -38,10 +38,10 @@ module IPCSemanticsList where
   _⊩⋆_ : ∀ {{_ : Model}} → World → Ty⋆ → Set
   w ⊩⋆ Ξ = All (w ⊩_) Ξ
 
-  mono⊩⋆ : ∀ {{_ : Model}} {w w′ Ξ} → w′ ⊒ w → w ⊩⋆ Ξ → w′ ⊩⋆ Ξ
+  mono⊩⋆ : ∀ {{_ : Model}} {w w′ : World} {Ξ} → w′ ⊒ w → w ⊩⋆ Ξ → w′ ⊩⋆ Ξ
   mono⊩⋆ η ξ = mapAll (λ {A} → mono⊩ {A} η) ξ
 
-  lookup⊩ : ∀ {{_ : Model}} {w Ξ A} → w ⊩⋆ Ξ → Ξ ∋ A → w ⊩ A
+  lookup⊩ : ∀ {{_ : Model}} {w : World} {Ξ A} → w ⊩⋆ Ξ → Ξ ∋ A → w ⊩ A
   lookup⊩ ξ 𝒾 = lookupAll ξ 𝒾
 
 
@@ -54,10 +54,10 @@ module IPCSemanticsVec where
   _⊩⋆_ : ∀ {{_ : Model}} {n} → World → Ty⋆ n → Set
   w ⊩⋆ Ξ = All (w ⊩_) Ξ
 
-  mono⊩⋆ : ∀ {{_ : Model}} {w w′ n} {Ξ : Ty⋆ n} →
+  mono⊩⋆ : ∀ {{_ : Model}} {w w′ : World} {n} {Ξ : Ty⋆ n} →
               w′ ⊒ w → w ⊩⋆ Ξ → w′ ⊩⋆ Ξ
   mono⊩⋆ η ξ = mapAll (λ {A} → mono⊩ {A} η) ξ
 
-  lookup⊩ : ∀ {{_ : Model}} {w n} {Ξ : Ty⋆ n} {A i} →
+  lookup⊩ : ∀ {{_ : Model}} {w : World} {n} {Ξ : Ty⋆ n} {A i} →
                w ⊩⋆ Ξ → Ξ ∋⟨ i ⟩ A → w ⊩ A
   lookup⊩ ξ 𝒾 = lookupAll ξ 𝒾

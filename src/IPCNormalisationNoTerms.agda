@@ -9,7 +9,7 @@ open IPCSemanticsList public
 
 infix 3 _⊨_
 _⊨_ : Cx → Ty → Set₁
-Γ ⊨ A = ∀ {{_ : Model}} {w} → w ⊩⋆ Γ → w ⊩ A
+Γ ⊨ A = ∀ {{_ : Model}} {w : World} → w ⊩⋆ Γ → w ⊩ A
 
 
 -- Soundness.
