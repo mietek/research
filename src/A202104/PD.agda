@@ -98,24 +98,6 @@ module ImplicitSyntax where
   mapdia : ∀ {Δ Γ A B} → Δ ⁏ Γ ⊢ □ (A ⊃ B) true → Δ ⁏ Γ ⊢ ◇ A true → Δ ⁏ Γ ⊢ ◇ B true
   mapdia t u = app (app law-mapdia t) u
 
-  _⇒_ : Type → Type → Type
-  A ⇒ B = □ A ⊃ B
-
-  llam : ∀ {Δ Γ A B} → Δ , A valid ⁏ Γ ⊢ B true → Δ ⁏ Γ ⊢ A ⇒ B true
-  llam t = lam (letbox (var top) (monoTrue₂ (wkr idr) t))
-
-  lapp : ∀ {Δ Γ A B} → Δ ⁏ Γ ⊢ A ⇒ B true → Δ ⁏ · ⊢ A true → Δ ⁏ Γ ⊢ B true
-  lapp t₁ t₂ = app t₁ (box t₂)
-
-  ○_ : Type → Type
-  ○ A = ◇ □ A
-
-  cir : ∀ {Δ Γ A} → Δ ⁏ Γ ⊢ □ A poss → Δ ⁏ Γ ⊢ ○ A true
-  cir t = pdia t
-
-  letcir : ∀ {Δ Γ A B} → Δ ⁏ Γ ⊢ ○ A true → Δ , A valid ⁏ · ⊢ □ B poss → Δ ⁏ Γ ⊢ □ B poss
-  letcir t₁ t₂ = letdiap t₁ (letboxp (var top) (monoPoss₂ (wkr idr) t₂))
-
 -- NOTE: This syntax is a variant with explicit derivations for validity.
 -- This clarifies the connection between the syntax and the semantics.
 
