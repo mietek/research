@@ -109,79 +109,168 @@ mutual
 -- NOTE: This semantics is based on the Pfenning-Davies syntactic translation above.
 -- It would be nice to define a semantics directly.
 
-module _ {{M : Model}} where
-  infix 3 _⊩_true
-  _⊩_true : World → Type → Set
-  w ⊩ A true = w M.⊩ ⟦ A ⟧+ true
+module IndirectSemantics where
+  module _ {{M : Model}} where
+    infix 3 _⊩_true
+    _⊩_true : World → Type → Set
+    w ⊩ A true = w M.⊩ ⟦ A ⟧+ true
 
-  infix 3 _⊩_lax
-  _⊩_lax : World → Type → Set
-  w ⊩ A lax = w M.⊩ M.□ ⟦ A ⟧+ poss
+    infix 3 _⊩_lax
+    _⊩_lax : World → Type → Set
+    w ⊩ A lax = w M.⊩ M.□ ⟦ A ⟧+ poss
 
-  infix 3 _⊩*_true
-  _⊩*_true : World → List TrueAss → Set
-  w ⊩* Γ true = w M.⊩* ⟦ Γ ⟧++ valid
+    infix 3 _⊩*_true
+    _⊩*_true : World → List TrueAss → Set
+    w ⊩* Γ true = w M.⊩* ⟦ Γ ⟧++ valid
 
-  mono≤-true : ∀ {w w′ A} → w ≤ w′ → w ⊩ A true → w′ ⊩ A true
-  mono≤-true {A = A} η a = M.mono≤-true {A = ⟦ A ⟧+} η a
+    mono≤-true : ∀ {w w′ A} → w ≤ w′ → w ⊩ A true → w′ ⊩ A true
+    mono≤-true {A = A} η a = M.mono≤-true {A = ⟦ A ⟧+} η a
 
-  mono≤-lax : ∀ {w w′ A} → w ≤ w′ → w ⊩ A lax → w′ ⊩ A lax
-  mono≤-lax {A = A} η a = M.mono≤-poss {A = M.□ ⟦ A ⟧+} η a
+    mono≤-lax : ∀ {w w′ A} → w ≤ w′ → w ⊩ A lax → w′ ⊩ A lax
+    mono≤-lax {A = A} η a = M.mono≤-poss {A = M.□ ⟦ A ⟧+} η a
 
-  mono≤-true* : ∀ {w w′ Γ} → w ≤ w′ → w ⊩* Γ true → w′ ⊩* Γ true
-  mono≤-true* η γ = M.mono≤-valid* η γ
+    mono≤-true* : ∀ {w w′ Γ} → w ≤ w′ → w ⊩* Γ true → w′ ⊩* Γ true
+    mono≤-true* η γ = M.mono≤-valid* η γ
 
-  monoR-true* : ∀ {w w′ Γ} → w R w′ → w ⊩* Γ true → w′ ⊩* Γ true
-  monoR-true* ζ γ = M.monoR-valid* ζ γ
+    monoR-true* : ∀ {w w′ Γ} → w R w′ → w ⊩* Γ true → w′ ⊩* Γ true
+    monoR-true* ζ γ = M.monoR-valid* ζ γ
+
+  infix 3 _⊨_true
+  _⊨_true : TrueCtx → Type → Set₁
+  Γ ⊨ A true = ∀ {{M : Model}} {w : World} → w ⊩* Γ true → w ⊩ A true
+
+  infix 3 _⊨_lax
+  _⊨_lax : TrueCtx → Type → Set₁
+  Γ ⊨ A lax = ∀ {{M : Model}} {w : World} → w ⊩* Γ true → w ⊩ A lax
+
+  true⇒lax : ∀ {Γ A} → Γ ⊨ A true → Γ ⊨ A lax
+  true⇒lax a γ η = _ , reflR , λ η′ ζ → a (monoR-true* (transR (≤→R (trans≤ η η′)) ζ) γ)
+
+  cut-lax : ∀ {Γ A C} → Γ ⊨ A lax → Γ , A true ⊨ C lax → Γ ⊨ C lax
+  cut-lax a c γ η = let _ , ζ  , a′ = a γ η in
+                    let _ , ζ′ , c′ = c (monoR-true* (transR (≤→R η) ζ) γ , a′) refl≤ in
+                    _ , transR ζ ζ′ , c′
+
+  ⟦var⟧ : ∀ {Γ A} (x : Γ ∋ A true) → Γ ⊨ A true
+  ⟦var⟧ top     (γ , a) = a refl≤ reflR
+  ⟦var⟧ (pop x) (γ , a) = ⟦var⟧ x γ
+
+  ⟦lam⟧ : ∀ {Γ A B} → Γ , A true ⊨ B true → Γ ⊨ A ⇒ B true
+  ⟦lam⟧ f γ η a = f (mono≤-true* η γ , a)
+
+  ⟦app⟧ : ∀ {Γ A B} → Γ ⊨ A ⇒ B true → Γ ⊨ A true → Γ ⊨ B true
+  ⟦app⟧ f a γ = f γ refl≤ λ η′ ζ → a (monoR-true* (transR (≤→R η′) ζ) γ)
+
+  ⟦cir⟧ : ∀ {Γ A} → Γ ⊨ A lax → Γ ⊨ ○ A true
+  ⟦cir⟧ a γ η = a γ η
+
+  ⟦ret⟧ : ∀ {Γ A} → Γ ⊨ A true → Γ ⊨ A lax
+  ⟦ret⟧ {A = A} a = true⇒lax {A = A} a
+
+  ⟦letcir⟧ : ∀ {Γ A C} → Γ ⊨ ○ A true → Γ , A true ⊨ C lax → Γ ⊨ C lax
+  ⟦letcir⟧ {A = A} {C} a c = cut-lax {A = A} {C} a c
+
+  mutual
+    reflectTrue : ∀ {Γ A} → Γ ⊢ A true → Γ ⊨ A true
+    reflectTrue (var x)                 = ⟦var⟧ x
+    reflectTrue (lam {A = A} {B} t)     = ⟦lam⟧ {A = A} {B} (reflectTrue t)
+    reflectTrue (app {A = A} {B} t₁ t₂) = ⟦app⟧ {A = A} {B} (reflectTrue t₁) (reflectTrue t₂)
+    reflectTrue (cir {A = A} t)         = ⟦cir⟧ {A = A} (reflectLax t)
+
+    reflectLax : ∀ {Γ A} → Γ ⊢ A lax → Γ ⊨ A lax
+    reflectLax (ret {A = A} t)            = ⟦ret⟧ {A = A} (reflectTrue t)
+    reflectLax (letcir {A = A} {C} t₁ t₂) = ⟦letcir⟧ {A = A} {C} (reflectTrue t₁) (reflectLax t₂)
 
 ------------------------------------------------------------------------------
 
-infix 3 _⊨_true
-_⊨_true : TrueCtx → Type → Set₁
-Γ ⊨ A true = ∀ {{M : Model}} {w : World} → w ⊩* Γ true → w ⊩ A true
+module DirectSemantics where
+  module _ {{M : Model}} where
+    mutual
+      infix 3 _⊩_true
+      _⊩_true : World → Type → Set
+      w ⊩ α P true    = w ⊩ P atomTrue
+      w ⊩ A ⇒ B true = ∀ {w′ : World} → w ≤ w′ → w′ ⊩ A valid → w′ ⊩ B true
+      w ⊩ ○ A true    = w ⊩ A lax
 
-infix 3 _⊨_lax
-_⊨_lax : TrueCtx → Type → Set₁
-Γ ⊨ A lax = ∀ {{M : Model}} {w : World} → w ⊩* Γ true → w ⊩ A lax
+      infix 3 _⊩_lax
+      _⊩_lax : World → Type → Set
+      w ⊩ A lax = ∀ {w′ : World} → w ≤ w′ → Σ World λ w″ → w′ R w″ × w″ ⊩ A valid
 
-true⇒lax : ∀ {Γ A} → Γ ⊨ A true → Γ ⊨ A lax
-true⇒lax a γ η = _ , reflR , λ η′ ζ → a (monoR-true* (transR (≤→R (trans≤ η η′)) ζ) γ)
+      infix 3 _⊩_valid
+      _⊩_valid : World → Type → Set
+      w ⊩ A valid = ∀ {w′ : World} → w ≤ w′ → ∀ {w″} → w′ R w″ → w″ ⊩ A true
 
-cut-lax : ∀ {Γ A C} → Γ ⊨ A lax → Γ , A true ⊨ C lax → Γ ⊨ C lax
-cut-lax a c γ η = let _ , ζ  , a′ = a γ η in
-                  let _ , ζ′ , c′ = c (monoR-true* (transR (≤→R η) ζ) γ , a′) refl≤ in
-                  _ , transR ζ ζ′ , c′
+    infix 3 _⊩*_valid
+    _⊩*_valid : World → List TrueAss → Set
+    w ⊩* · valid            = 𝟙
+    w ⊩* (Γ , A true) valid = w ⊩* Γ valid × w ⊩ A valid -- TODO: Ugly
 
-⟦var⟧ : ∀ {Γ A} (x : Γ ∋ A true) → Γ ⊨ A true
-⟦var⟧ top     (γ , a) = a refl≤ reflR
-⟦var⟧ (pop x) (γ , a) = ⟦var⟧ x γ
+    mono≤-lax : ∀ {w w′ A} → w ≤ w′ → w ⊩ A lax → w′ ⊩ A lax
+    mono≤-lax η a η′ = a (trans≤ η η′)
 
-⟦lam⟧ : ∀ {Γ A B} → Γ , A true ⊨ B true → Γ ⊨ A ⇒ B true
-⟦lam⟧ f γ η a = f (mono≤-true* η γ , a)
+    mono≤-true : ∀ {w w′ A} → w ≤ w′ → w ⊩ A true → w′ ⊩ A true
+    mono≤-true {A = α P}    η a      = mono≤-atomTrue η a
+    mono≤-true {A = A ⇒ B} η f η′ a = f (trans≤ η η′) a
+    mono≤-true {A = ○ A}    η a      = mono≤-lax {A = A} η a
 
-⟦app⟧ : ∀ {Γ A B} → Γ ⊨ A ⇒ B true → Γ ⊨ A true → Γ ⊨ B true
-⟦app⟧ f a γ = f γ refl≤ λ η′ ζ → a (monoR-true* (transR (≤→R η′) ζ) γ)
+    mono≤-valid : ∀ {w w′ A} → w ≤ w′ → w ⊩ A valid → w′ ⊩ A valid
+    mono≤-valid {A = A} η a η′ = a (trans≤ η η′)
 
-⟦cir⟧ : ∀ {Γ A} → Γ ⊨ A lax → Γ ⊨ ○ A true
-⟦cir⟧ a γ η = a γ η
+    mono≤-valid* : ∀ {w w′ Γ} → w ≤ w′ → w ⊩* Γ valid → w′ ⊩* Γ valid
+    mono≤-valid* {Γ = ·}          η ·       = ·
+    mono≤-valid* {Γ = Γ , A true} η (γ , a) = mono≤-valid* η γ , mono≤-valid {A = A} η a
 
-⟦ret⟧ : ∀ {Γ A} → Γ ⊨ A true → Γ ⊨ A lax
-⟦ret⟧ {A = A} a = true⇒lax {A = A} a
+    monoR-valid : ∀ {w w′ A} → w R w′ → w ⊩ A valid → w′ ⊩ A valid
+    monoR-valid {A = A} ζ a η ζ′ = a refl≤ (transR (transR ζ (≤→R η)) ζ′)
 
-⟦letcir⟧ : ∀ {Γ A C} → Γ ⊨ ○ A true → Γ , A true ⊨ C lax → Γ ⊨ C lax
-⟦letcir⟧ {A = A} {C} a c = cut-lax {A = A} {C} a c
+    monoR-valid* : ∀ {w w′ Γ} → w R w′ → w ⊩* Γ valid → w′ ⊩* Γ valid
+    monoR-valid* {Γ = ·}          η ·       = ·
+    monoR-valid* {Γ = Γ , A true} η (γ , a) = monoR-valid* η γ , monoR-valid {A = A} η a
 
-------------------------------------------------------------------------------
+  infix 3 _⊨_true
+  _⊨_true : TrueCtx → Type → Set₁
+  Γ ⊨ A true = ∀ {{M : Model}} {w : World} → w ⊩* Γ valid → w ⊩ A true
 
-mutual
-  reflectTrue : ∀ {Γ A} → Γ ⊢ A true → Γ ⊨ A true
-  reflectTrue (var x)                 = ⟦var⟧ x
-  reflectTrue (lam {A = A} {B} t)     = ⟦lam⟧ {A = A} {B} (reflectTrue t)
-  reflectTrue (app {A = A} {B} t₁ t₂) = ⟦app⟧ {A = A} {B} (reflectTrue t₁) (reflectTrue t₂)
-  reflectTrue (cir {A = A} t)         = ⟦cir⟧ {A = A} (reflectLax t)
+  infix 3 _⊨_lax
+  _⊨_lax : TrueCtx → Type → Set₁
+  Γ ⊨ A lax = ∀ {{M : Model}} {w : World} → w ⊩* Γ valid → w ⊩ A lax
 
-  reflectLax : ∀ {Γ A} → Γ ⊢ A lax → Γ ⊨ A lax
-  reflectLax (ret {A = A} t)            = ⟦ret⟧ {A = A} (reflectTrue t)
-  reflectLax (letcir {A = A} {C} t₁ t₂) = ⟦letcir⟧ {A = A} {C} (reflectTrue t₁) (reflectLax t₂)
+  true⇒lax : ∀ {Γ A} → Γ ⊨ A true → Γ ⊨ A lax
+  true⇒lax a γ η = _ , reflR , λ η′ ζ → a (monoR-valid* (transR (≤→R (trans≤ η η′)) ζ) γ)
+
+  cut-lax : ∀ {Γ A C} → Γ ⊨ A lax → Γ , A true ⊨ C lax → Γ ⊨ C lax
+  cut-lax a c γ η = let _ , ζ  , a′ = a γ η in
+                    let _ , ζ′ , c′ = c (monoR-valid* (transR (≤→R η) ζ) γ , a′) refl≤ in
+                    _ , transR ζ ζ′ , c′
+
+  ⟦var⟧ : ∀ {Γ A} (x : Γ ∋ A true) → Γ ⊨ A true
+  ⟦var⟧ top     (γ , a) = a refl≤ reflR
+  ⟦var⟧ (pop x) (γ , a) = ⟦var⟧ x γ
+
+  ⟦lam⟧ : ∀ {Γ A B} → Γ , A true ⊨ B true → Γ ⊨ A ⇒ B true
+  ⟦lam⟧ f γ η a = f (mono≤-valid* η γ , a)
+
+  ⟦app⟧ : ∀ {Γ A B} → Γ ⊨ A ⇒ B true → Γ ⊨ A true → Γ ⊨ B true
+  ⟦app⟧ f a γ = f γ refl≤ λ η′ ζ → a (monoR-valid* (transR (≤→R η′) ζ) γ)
+
+  ⟦cir⟧ : ∀ {Γ A} → Γ ⊨ A lax → Γ ⊨ ○ A true
+  ⟦cir⟧ a γ η = a γ η
+
+  ⟦ret⟧ : ∀ {Γ A} → Γ ⊨ A true → Γ ⊨ A lax
+  ⟦ret⟧ {A = A} a = true⇒lax {A = A} a
+
+  ⟦letcir⟧ : ∀ {Γ A C} → Γ ⊨ ○ A true → Γ , A true ⊨ C lax → Γ ⊨ C lax
+  ⟦letcir⟧ {A = A} {C} a c = cut-lax {A = A} {C} a c
+
+  mutual
+    reflectTrue : ∀ {Γ A} → Γ ⊢ A true → Γ ⊨ A true
+    reflectTrue (var x)                 = ⟦var⟧ x
+    reflectTrue (lam {A = A} {B} t)     = ⟦lam⟧ {A = A} {B} (reflectTrue t)
+    reflectTrue (app {A = A} {B} t₁ t₂) = ⟦app⟧ {A = A} {B} (reflectTrue t₁) (reflectTrue t₂)
+    reflectTrue (cir {A = A} t)         = ⟦cir⟧ {A = A} (reflectLax t)
+
+    reflectLax : ∀ {Γ A} → Γ ⊢ A lax → Γ ⊨ A lax
+    reflectLax (ret {A = A} t)            = ⟦ret⟧ {A = A} (reflectTrue t)
+    reflectLax (letcir {A = A} {C} t₁ t₂) = ⟦letcir⟧ {A = A} {C} (reflectTrue t₁) (reflectLax t₂)
 
 ------------------------------------------------------------------------------
