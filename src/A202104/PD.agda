@@ -3,6 +3,7 @@ module A202104.PD where
 open import A202103.Prelude public
 open import A202103.List public
 open import A202103.GenericRenaming public
+open import A202104.Semantics public
 
 ------------------------------------------------------------------------------
 
@@ -163,32 +164,6 @@ module ExplicitSyntax where
 --   brilliance        : ∀ {w w′} → w R⨾≤ w′ → w R w′
 --   minor-persistence : ∀ {w w′} → w ≤⨾R w′ → w R⨾≤ w′
 --   minor-brilliance  : ∀ {w w′} → w R⨾≤ w′ → w ≤⨾R w′
-
-record Model : Set₁ where
-  field
-    World          : Set
-    _≤_            : World → World → Set
-    refl≤          : ∀ {w} → w ≤ w
-    trans≤         : ∀ {w w′ w″} → w ≤ w′ → w′ ≤ w″ → w ≤ w″
-    _R_            : World → World → Set
-    reflR          : ∀ {w} → w R w
-    transR         : ∀ {w w′ w″} → w R w′ → w′ R w″ → w R w″
-    _⊩_atomTrue   : World → Atom → Set
-    mono≤-atomTrue : ∀ {w w′ P} → w ≤ w′ → w ⊩ P atomTrue → w′ ⊩ P atomTrue
-    ≤→R           : ∀ {w w′} → w ≤ w′ → w R w′
-
-open Model {{...}}
-
-{-# DISPLAY Model.World M = World #-}
-{-# DISPLAY Model._≤_ M w w′ = w ≤ w′ #-}
-{-# DISPLAY Model.refl≤ M = refl≤ #-}
-{-# DISPLAY Model.trans≤ M η η′ = trans≤ η η′ #-}
-{-# DISPLAY Model._R_ M w w′ = w R w′ #-}
-{-# DISPLAY Model.reflR M = reflR #-}
-{-# DISPLAY Model.transR M η η′ = transR η η′ #-}
-{-# DISPLAY Model._⊩_atomTrue M w P = w ⊩ P atomTrue #-}
-{-# DISPLAY Model.mono≤-atomTrue M η p = mono≤-atomTrue η p #-}
-{-# DISPLAY Model.≤→R M η = ≤→R η #-}
 
 module _ {{M : Model}} where
   mutual

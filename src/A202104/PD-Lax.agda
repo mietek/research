@@ -3,6 +3,7 @@ module A202104.PD-Lax where
 open import A202103.Prelude public
 open import A202103.List public
 open import A202103.GenericRenaming public
+open import A202104.Semantics public
 
 module M where
   import A202104.PD
