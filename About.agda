@@ -5,7 +5,7 @@ import Common
 
 {- -------------------------------------------------------------------------------------------------
 
-thanks to ames, dolio, drvink, mxu, ncf, ooovi, pgiarrusso, pounce, roconnor, Tuplanolla
+thanks to:  ames, dolio, drvink, mxu, ncf, ooovi, pgiarrusso, pounce, roconnor, Tuplanolla
 
 join ##dependent on libera.chat
 
@@ -44,7 +44,7 @@ import STLC-Negative-Weak-NotEtaLong-NbE
 
 open STLC-Base-Weak-NotEtaLong-NbE
 
--- roadmap
+-- roadmap:
 postulate
   -- Abel p.8: "preservation of meaning"
   lem₁ : ∀ {ℳ : Model} {W : World ℳ} {Γ A} (d : Γ ⊢ A) → ⟦ d ⟧ {ℳ} {W} ≡ ⟦ proj₁ (nbe d) ⟧
