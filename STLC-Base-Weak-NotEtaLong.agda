@@ -51,7 +51,7 @@ data _≝_ {Γ} : ∀ {A} (d d′ : Γ ⊢ A) → Set where
 
 open ≝Kit (λ {_} {_} {d} → refl≝ {d = d}) sym≝ trans≝ public -- TODO: ugh
 
--- call-by-value conversion
+-- call-by-value reduction
 infix 4 _⟹_
 data _⟹_ {Γ} : ∀ {A} (d d′ : Γ ⊢ A) → Set where
   cong$₁ : ∀ {A B} {d₁ d₁′ : Γ ⊢ A `⊃ B} {d₂ : Γ ⊢ A} (r₁ : d₁ ⟹ d₁′) →

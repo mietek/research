@@ -33,11 +33,15 @@ references:
 import STLC-Base
 import STLC-Base-Weak-NotEtaLong
 import STLC-Base-Weak-NotEtaLong-NbE
-import STLC-Base-Weak-EtaLong
+import STLC-Base-Weak-EtaLong -- TODO: what to do about η-expansion?
 
 import STLC-Negative
 import STLC-Negative-Weak-NotEtaLong
 import STLC-Negative-Weak-NotEtaLong-NbE
+
+import STLC-Naturals
+import STLC-Naturals-Weak-NotEtaLong
+import STLC-Naturals-Weak-NotEtaLong-NbE -- TODO: interpret `ℕ per Abel p.10 §2.3
 
 
 ----------------------------------------------------------------------------------------------------

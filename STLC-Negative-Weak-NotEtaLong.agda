@@ -13,7 +13,7 @@ mutual
     `unit : NF `unit
     `nnf  : ∀ {A} {d : Γ ⊢ A} (p : NNF d) → NF d
 
-  -- d is in β-short neutral weak normal form
+  -- d is in neutral β-short weak normal form
   data NNF {Γ} : ∀ {A} (d : Γ ⊢ A) → Set where
     `v     : ∀ {A} (i : Γ ∋ A) → NNF (`v i)
     _`$_   : ∀ {A B} {d₁ : Γ ⊢ A `⊃ B} {d₂ : Γ ⊢ A} (p₁ : NNF d₁) (p₂ : NF d₂) → NNF (d₁ `$ d₂)
