@@ -9,7 +9,7 @@ mutual
   -- d is in β-short η-long weak normal form
   data NF {Γ} : ∀ {A} (d : Γ ⊢ A) → Set where
     `λ   : ∀ {A B} (d : A ∷ Γ ⊢ B) → NF (`λ d)
-    `nnf : ∀ {d : Γ ⊢ `∙} (p : NNF d) → NF d
+    `nnf : ∀ {d : Γ ⊢ `◦} (p : NNF d) → NF d
 
   -- d is in neutral β-short η-long weak normal form
   data NNF {Γ} : ∀ {A} (d : Γ ⊢ A) → Set where
@@ -61,7 +61,7 @@ data _≝_ {Γ} : ∀ {A} (d d′ : Γ ⊢ A) → Set where
   ηexp⊃  : ∀ {A B} {d : Γ ⊢ A `⊃ B} {d′ : A ∷ Γ ⊢ A `⊃ B} (eq : weak d ≡ d′) →
            d ≝ `λ (d′ `$ `v zero)
 
-open ≝Kit (λ {_} {_} {d} → refl≝ {d = d}) sym≝ trans≝ public -- TODO: ugh
+open ≝Kit (λ {_} {_} {d} → refl≝ {d = d}) sym≝ trans≝ public
 
 -- call-by-value reduction
 infix 4 _⟹_
@@ -117,7 +117,7 @@ uni⟹ (ηexp⊃ refl p q) (ηexp⊃ refl p′ q′) = ηexp⊃ refl & uniNF p p
 
 -- -- TODO: what to do about η-expansion?
 -- RF⊎NF : ∀ {Γ A} (d : Γ ⊢ A) → RF d ⊎ NF d
--- RF⊎NF {A = `∙}     (`v i)           = nf (`nnf (`v i))
+-- RF⊎NF {A = `◦}     (`v i)           = nf (`nnf (`v i))
 -- RF⊎NF {A = A `⊃ B} (`v i)           = rf (`λ (weak (`v i) `$ `v zero) , ηexp⊃ refl {!!} (`v i))
 -- RF⊎NF              (`λ d)           = nf (`λ d)
 -- RF⊎NF              (d₁ `$ d₂)       with RF⊎NF d₁ | RF⊎NF d₂

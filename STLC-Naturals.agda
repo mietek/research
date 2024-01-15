@@ -16,12 +16,12 @@ open CtxKit Ty public
 infix 3 _⊢_
 infixl 18 _`$_
 data _⊢_ (Γ : Ctx) : ∀ (A : Ty) → Set where
-  `v     : ∀ {A} (i : Γ ∋ A) → Γ ⊢ A
-  `λ     : ∀ {A B} (d : A ∷ Γ ⊢ B) → Γ ⊢ A `⊃ B
-  _`$_   : ∀ {A B} (d₁ : Γ ⊢ A `⊃ B) (d₂ : Γ ⊢ A) → Γ ⊢ B
-  `zero  : Γ ⊢ `ℕ
-  `suc   : ∀ (d : Γ ⊢ `ℕ) → Γ ⊢ `ℕ
-  `rec   : ∀ {A} (d₁ : Γ ⊢ `ℕ) (d₂ : Γ ⊢ A) (d₃ : A ∷ `ℕ ∷ Γ ⊢ A) → Γ ⊢ A
+  `v    : ∀ {A} (i : Γ ∋ A) → Γ ⊢ A
+  `λ    : ∀ {A B} (d : A ∷ Γ ⊢ B) → Γ ⊢ A `⊃ B
+  _`$_  : ∀ {A B} (d₁ : Γ ⊢ A `⊃ B) (d₂ : Γ ⊢ A) → Γ ⊢ B
+  `zero : Γ ⊢ `ℕ
+  `suc  : ∀ (d : Γ ⊢ `ℕ) → Γ ⊢ `ℕ
+  `rec  : ∀ {A} (d₁ : Γ ⊢ `ℕ) (d₂ : Γ ⊢ A) (d₃ : A ∷ `ℕ ∷ Γ ⊢ A) → Γ ⊢ A
 
 open ⊢*Kit _⊢_ public
 

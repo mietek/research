@@ -17,15 +17,16 @@ record Model : Set₁ where
 open Model public
 
 module _ {ℳ : Model} where
-  private module ℳ = Model ℳ
+  private
+    module ℳ = Model ℳ
 
   infix 3 _⊩_
   _⊩_ : ∀ (W : ℳ.World) (A : Ty) → Set
-  W ⊩ `∙     = ℳ.Base W
+  W ⊩ `◦     = ℳ.Base W
   W ⊩ A `⊃ B = ∀ {W′} (e : W ℳ.≤ W′) (o : W′ ⊩ A) → W′ ⊩ B
 
   mov : ∀ {W W′ A} (e : W ℳ.≤ W′) (o : W ⊩ A) → W′ ⊩ A
-  mov {A = `∙}     e o = ℳ.movBase e o
+  mov {A = `◦}     e o = ℳ.movBase e o
   mov {A = A `⊃ B} e f = λ e′ → f (ℳ.trans≤ e e′)
 
   infix 3 _⊩*_
@@ -35,7 +36,7 @@ module _ {ℳ : Model} where
 
   mov* : ∀ {W W′ Δ} (e : W ℳ.≤ W′) (os : W ⊩* Δ) → W′ ⊩* Δ
   mov* e []                 = []
-  mov* e (_∷_ {A = A} o os) = mov {A = A} e o ∷ mov* e os -- TODO: ugh
+  mov* e (_∷_ {A = A} o os) = mov {A = A} e o ∷ mov* e os
 
 infix 3 _∣_⊩_
 _∣_⊩_ : ∀ (ℳ : Model) (W : World ℳ) (A : Ty) → Set
@@ -65,7 +66,7 @@ _⊨_ : ∀ (Γ : Ctx) (A : Ty) → Set₁
 𝒞 : Model
 𝒞 = record
       { World   = Ctx
-      ; Base    = λ Γ → Σ (Γ ⊢ `∙) NNF
+      ; Base    = λ Γ → Σ (Γ ⊢ `◦) NNF
       ; _≤_     = _⊆_
       ; refl≤   = refl⊆
       ; trans≤  = trans⊆
@@ -74,22 +75,21 @@ _⊨_ : ∀ (Γ : Ctx) (A : Ty) → Set₁
 
 mutual
   ↓ : ∀ {Γ A} {d : Γ ⊢ A} (p : NNF d) → 𝒞 ∣ Γ ⊩ A
-  ↓ {A = `∙}     p = _ , p
+  ↓ {A = `◦}     p = _ , p
   ↓ {A = A `⊃ B} p = λ e o → ↓ (renNNF e p `$ proj₂ (↑ o))
 
   ↑ : ∀ {Γ A} (o : 𝒞 ∣ Γ ⊩ A) → Σ (Γ ⊢ A) λ d → NF d
-  ↑ {A = `∙}     (d , p) = d , `nnf p
-  ↑ {A = A `⊃ B} f       with ↑ (f wk⊆ (↓ {A = A} (`v zero))) -- TODO: ugh
+  ↑ {A = `◦}     (d , p) = d , `nnf p
+  ↑ {A = A `⊃ B} f       with ↑ (f wk⊆ (↓ {A = A} (`v zero)))
   ... | d , p              = `λ d , `λ d
 
 refl⊩* : ∀ {Γ} → 𝒞 ∣ Γ ⊩* Γ
 refl⊩* {[]}    = []
-refl⊩* {A ∷ Γ} = ↓ {A = A} (`v zero) ∷ mov* wk⊆ refl⊩* -- TODO: ugh
+refl⊩* {A ∷ Γ} = ↓ {A = A} (`v zero) ∷ mov* wk⊆ refl⊩*
 
 reify : ∀ {Γ A} (o : Γ ⊨ A) → Σ (Γ ⊢ A) λ d′ → NF d′
 reify o = ↑ (o refl⊩*)
 
--- NOTE: we don't know whether d reduces to d′
 nbe : ∀ {Γ A} (d : Γ ⊢ A) → Σ (Γ ⊢ A) λ d′ → NF d′
 nbe = reify ∘ ⟦_⟧
 

@@ -1,8 +1,8 @@
 module Common where
 
 open import Data.Empty public
-  using (⊥)
-  renaming (⊥-elim to abort)
+  using ()
+  renaming (⊥ to 𝟘 ; ⊥-elim to abort)
 
 open import Data.List public
   using (List ; [] ; _∷_)
@@ -17,8 +17,8 @@ open import Data.Sum public
   using (_⊎_ ; inj₁ ; inj₂)
 
 open import Data.Unit public
-  using (⊤)
-  renaming (tt to unit)
+  using ()
+  renaming (⊤ to 𝟙 ; tt to unit)
 
 open import Function public
   using (_∘_ ; _$_ ; flip ; id)
@@ -109,8 +109,7 @@ module _ {𝓍} {X : Set 𝓍} where
 
 ----------------------------------------------------------------------------------------------------
 
-module CtxKit (Ty : Set)
-  where
+module CtxKit (Ty : Set) where
   Ctx : Set
   Ctx = List Ty
 
@@ -118,8 +117,8 @@ module CtxKit (Ty : Set)
 ----------------------------------------------------------------------------------------------------
 
   module ⊢*Kit
-      (Tm : ∀ (Γ : Ctx) (A : Ty) → Set)
-    where
+    (Tm : ∀ (Γ : Ctx) (A : Ty) → Set)
+      where
     private
       infix 3 _⊢_
       _⊢_ = Tm
@@ -134,9 +133,9 @@ module CtxKit (Ty : Set)
 ----------------------------------------------------------------------------------------------------
 
     module RenKit
-        (`v  : ∀ {Γ A} (i : Γ ∋ A) → Γ ⊢ A)
-        (ren : ∀ {Γ Γ′ A} (e : Γ ⊆ Γ′) (d : Γ ⊢ A) → Γ′ ⊢ A)
-      where
+      (`v  : ∀ {Γ A} (i : Γ ∋ A) → Γ ⊢ A)
+      (ren : ∀ {Γ Γ′ A} (e : Γ ⊆ Γ′) (d : Γ ⊢ A) → Γ′ ⊢ A)
+        where
       weak : ∀ {Γ A B} (d : Γ ⊢ B) → A ∷ Γ ⊢ B
       weak d = ren wk⊆ d
 
@@ -163,8 +162,8 @@ module CtxKit (Ty : Set)
 ----------------------------------------------------------------------------------------------------
 
       module SubKit
-          (sub : ∀ {Γ Ξ A} (ss : Ξ ⊢* Γ) (d : Γ ⊢ A) → Ξ ⊢ A)
-        where
+        (sub : ∀ {Γ Ξ A} (ss : Ξ ⊢* Γ) (d : Γ ⊢ A) → Ξ ⊢ A)
+          where
         sub* : ∀ {Γ Ξ Δ} (ss : Ξ ⊢* Γ) (ds : Γ ⊢* Δ) → Ξ ⊢* Δ
         sub* ss []       = []
         sub* ss (d ∷ ds) = sub ss d ∷ sub* ss ds
@@ -184,11 +183,11 @@ module CtxKit (Ty : Set)
 ----------------------------------------------------------------------------------------------------
 
     module ≝Kit
-        {_≝_    : ∀ {Γ A} (d d′ : Γ ⊢ A) → Set}
-        (refl≝  : ∀ {Γ A} {d : Γ ⊢ A} → d ≝ d)
-        (sym≝   : ∀ {Γ A} {d d′ : Γ ⊢ A} (eq : d ≝ d′) → d′ ≝ d)
-        (trans≝ : ∀ {Γ A} {d d′ d″ : Γ ⊢ A} (eq : d ≝ d′) (p′ : d′ ≝ d″) → d ≝ d″)
-      where
+      {_≝_    : ∀ {Γ A} (d d′ : Γ ⊢ A) → Set}
+      (refl≝  : ∀ {Γ A} {d : Γ ⊢ A} → d ≝ d)
+      (sym≝   : ∀ {Γ A} {d d′ : Γ ⊢ A} (eq : d ≝ d′) → d′ ≝ d)
+      (trans≝ : ∀ {Γ A} {d d′ d″ : Γ ⊢ A} (eq : d ≝ d′) (p′ : d′ ≝ d″) → d ≝ d″)
+        where
       ≡→≝ : ∀ {Γ A} {d d′ : Γ ⊢ A} (eq : d ≡ d′) → d ≝ d′
       ≡→≝ refl = refl≝
 
@@ -225,17 +224,17 @@ module CtxKit (Ty : Set)
 ----------------------------------------------------------------------------------------------------
 
     module ⟹Kit
-        (Red : ∀ {Γ A} (d d′ : Γ ⊢ A) → Set)
-      where
+      (Red : ∀ {Γ A} (d d′ : Γ ⊢ A) → Set)
+        where
       private
         infix 4 _⟹_
         _⟹_ = Red
 
-      -- d is in convertible form
+      -- d is in reducible form
       RF : ∀ {Γ A} (d : Γ ⊢ A) → Set
       RF d = Σ _ λ d′ → d ⟹ d′
 
-      -- d is in inconvertible form
+      -- d is in irreducible form
       ¬R : ∀ {Γ A} (d : Γ ⊢ A) → Set
       ¬R d = ∀ {d′} → ¬ d ⟹ d′
 
@@ -252,10 +251,10 @@ module CtxKit (Ty : Set)
 ----------------------------------------------------------------------------------------------------
 
       module RF⊎NFKit
-          {NF     : ∀ {Γ A} (d : Γ ⊢ A) → Set}
-          (NF→¬R : ∀ {Γ A} {d : Γ ⊢ A} (p : NF d) → ¬R d)
-          (RF⊎NF  : ∀ {Γ A} (d : Γ ⊢ A) → RF d ⊎ NF d)
-        where
+        {NF     : ∀ {Γ A} (d : Γ ⊢ A) → Set}
+        (NF→¬R : ∀ {Γ A} {d : Γ ⊢ A} (p : NF d) → ¬R d)
+        (RF⊎NF  : ∀ {Γ A} (d : Γ ⊢ A) → RF d ⊎ NF d)
+          where
         ¬R→NF : ∀ {Γ A} {d : Γ ⊢ A} (¬r : ¬R d) → NF d
         ¬R→NF {d = d} ¬r with RF⊎NF d
         ... | rf p          = p ↯ ¬R→¬RF ¬r
@@ -266,21 +265,21 @@ module CtxKit (Ty : Set)
         ... | rf p           = p
         ... | nf p           = p ↯ ¬p
 
-        RF→¬NF : ∀ {Γ A} {d : Γ ⊢ A} (rf : RF d) → ¬ NF d
+        RF→¬NF : ∀ {Γ A} {d : Γ ⊢ A} (p : RF d) → ¬ NF d
         RF→¬NF (d′ , r) p = r ↯ NF→¬R p
 
-        ¬RF→NF : ∀ {Γ A} {d : Γ ⊢ A} (¬rf : ¬ RF d) → NF d
+        ¬RF→NF : ∀ {Γ A} {d : Γ ⊢ A} (¬p : ¬ RF d) → NF d
         ¬RF→NF = ¬R→NF ∘ ¬RF→¬R
 
-        NF→¬RF : ∀ {Γ A} {d : Γ ⊢ A} (wnf : NF d) → ¬ RF d
+        NF→¬RF : ∀ {Γ A} {d : Γ ⊢ A} (p : NF d) → ¬ RF d
         NF→¬RF = ¬R→¬RF ∘ NF→¬R
 
 
 ----------------------------------------------------------------------------------------------------
 
         module ⟹*Kit
-            (det⟹ : ∀ {Γ A} {d d′ d″ : Γ ⊢ A} (r : d ⟹ d′) (r′ : d ⟹ d″) → d′ ≡ d″)
-          where
+          (det⟹ : ∀ {Γ A} {d d′ d″ : Γ ⊢ A} (r : d ⟹ d′) (r′ : d ⟹ d″) → d′ ≡ d″)
+            where
           -- iterated reduction
           infix 4 _⟹*_
           data _⟹*_ {Γ} : ∀ {A} (d : Γ ⊢ A) (d′ : Γ ⊢ A) → Set where
@@ -343,6 +342,10 @@ module CtxKit (Ty : Set)
             infixr 2 _≡⟨_⟩_
             _≡⟨_⟩_ : ∀ {Γ A} (d : Γ ⊢ A) {d′ d″} (eq : d ≡ d′) (rs′ : d′ ⟹* d″) → d ⟹* d″
             d ≡⟨ eq ⟩ rs′ = trans⟹* (≡→⟹* eq) rs′
+
+            infixr 2 _≡˘⟨_⟩_
+            _≡˘⟨_⟩_ : ∀ {Γ A} (d : Γ ⊢ A) {d′ d″} (eq : d′ ≡ d) (rs′ : d′ ⟹* d″) → d ⟹* d″
+            d ≡˘⟨ eq ⟩ rs′ = trans⟹* (≡→⟹* (sym eq)) rs′
 
             infix 3 _∎
             _∎ : ∀ {Γ A} (d : Γ ⊢ A) → d ⟹* d

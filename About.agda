@@ -5,15 +5,17 @@ import Common
 
 {- -------------------------------------------------------------------------------------------------
 
-thanks to:  ames, dolio, drvink, mxu, ncf, ooovi, pgiarrusso, pounce, roconnor, Tuplanolla
+thanks to ames, dolio, drvink, mxu, ncf, ooovi, pgiarrusso, pounce, roconnor, tuplanolla
 
 join ##dependent on libera.chat
-
-references:
 
 - Abel (2013)
   “NbE: Dependent types and impredicativity”
   https://www.cse.chalmers.se/~abela/habil.pdf
+
+- Coquand (2002)
+  “A formalised proof of the soundness and completeness of a STLC with explicit substitutions”
+  https://github.com/dpndnt/library/blob/master/doc/pdf/coquand-2002.pdf
 
 - Jay-Ghani (1993)
   “The virtues of η-expansion”
@@ -22,10 +24,6 @@ references:
 - Kovacs (2017)
   “A machine-checked correctness proof of NbE for STLC”
   https://github.com/dpndnt/library/blob/master/doc/pdf/kovacs-2017.pdf
-
-- Coquand (2002)
-  “A formalised proof of the soundness and completeness of a STLC with explicit substitutions”
-  https://github.com/dpndnt/library/blob/master/doc/pdf/coquand-2002.pdf
 
 
 ------------------------------------------------------------------------------------------------- -}
@@ -48,7 +46,6 @@ import STLC-Naturals-Weak-NotEtaLong-NbE -- TODO: interpret `ℕ per Abel p.10 �
 
 open STLC-Base-Weak-NotEtaLong-NbE
 
--- roadmap:
 postulate
   -- Abel p.8: “preservation of meaning”
   lem₁ : ∀ {ℳ : Model} {W : World ℳ} {Γ A} (d : Γ ⊢ A) → ⟦ d ⟧ {ℳ} {W} ≡ ⟦ proj₁ (nbe d) ⟧
@@ -71,7 +68,7 @@ postulate
   cor₁ : ∀ {Γ A} (d d′ : Γ ⊢ A) (eq : Eq {A = A} (⟦ d ⟧ refl⊩*) (⟦ d′ ⟧ refl⊩*)) → nbe d ≡ nbe d′
 
   -- Abel p.10: “soundness of definitional equality”
-  -- Coquand p.74:
+  -- Coquand p.74
   -- Kovacs p.45: “completeness”
   thm₂ : ∀ {Γ A} (d : Γ ⊢ A) → d ≝ proj₁ (nbe d)
 

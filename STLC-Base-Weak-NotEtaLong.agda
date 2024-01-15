@@ -6,12 +6,12 @@ open import STLC-Base public
 ----------------------------------------------------------------------------------------------------
 
 mutual
-  -- d is in β-short weak normal form
+  -- d is in β-short not-η-long weak normal form
   data NF {Γ} : ∀ {A} (d : Γ ⊢ A) → Set where
     `λ   : ∀ {A B} (d : A ∷ Γ ⊢ B) → NF (`λ d)
     `nnf : ∀ {A} {d : Γ ⊢ A} (p : NNF d) → NF d
 
-  -- d is in neutral β-short weak normal form
+  -- d is in neutral β-short not-η-long weak normal form
   data NNF {Γ} : ∀ {A} (d : Γ ⊢ A) → Set where
     `v   : ∀ {A} (i : Γ ∋ A) → NNF (`v i)
     _`$_ : ∀ {A B} {d₁ : Γ ⊢ A `⊃ B} {d₂ : Γ ⊢ A} (p₁ : NNF d₁) (p₂ : NF d₂) → NNF (d₁ `$ d₂)
@@ -49,7 +49,7 @@ data _≝_ {Γ} : ∀ {A} (d d′ : Γ ⊢ A) → Set where
   βred⊃  : ∀ {A B} {d₁ : A ∷ Γ ⊢ B} {d₂ : Γ ⊢ A} {d′ : Γ ⊢ B} (eq : d₁ [ d₂ ] ≡ d′) →
            `λ d₁ `$ d₂ ≝ d′
 
-open ≝Kit (λ {_} {_} {d} → refl≝ {d = d}) sym≝ trans≝ public -- TODO: ugh
+open ≝Kit (λ {_} {_} {d} → refl≝ {d = d}) sym≝ trans≝ public
 
 -- call-by-value reduction
 infix 4 _⟹_

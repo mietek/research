@@ -16,7 +16,8 @@ record Model : Set₁ where
 open Model public
 
 module _ {ℳ : Model} where
-  private module ℳ = Model ℳ
+  private
+    module ℳ = Model ℳ
 
   infix 3 _⊩_
   _⊩_ : ∀ (W : ℳ.World) (A : Ty) → Set
@@ -34,7 +35,7 @@ module _ {ℳ : Model} where
 
   mov* : ∀ {W W′ Δ} (e : W ℳ.≤ W′) (vs : W ⊩* Δ) → W′ ⊩* Δ
   mov* e []                 = []
-  mov* e (_∷_ {A = A} o os) = mov {A = A} e o ∷ mov* e os -- TODO: ugh
+  mov* e (_∷_ {A = A} o os) = mov {A = A} e o ∷ mov* e os
 
 infix 3 _∣_⊩_
 _∣_⊩_ : ∀ (ℳ : Model) (W : World ℳ) (A : Ty) → Set

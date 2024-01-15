@@ -5,10 +5,9 @@ open import Common public
 
 ----------------------------------------------------------------------------------------------------
 
--- NOTE: apparently having an inaccessible base type causes many more inference failures
 infixr 18 _`⊃_
 data Ty : Set where
-  `∙   : Ty
+  `◦   : Ty
   _`⊃_ : ∀ (A B : Ty) → Ty
 
 open CtxKit Ty public
@@ -44,9 +43,9 @@ open SubKit sub public
 
 infix 4 _≟T_
 _≟T_ : ∀ (A A′ : Ty) → Dec (A ≡ A′)
-`∙     ≟T `∙              = yes refl
-`∙     ≟T A′ `⊃ B′        = no λ ()
-A `⊃ B ≟T `∙              = no λ ()
+`◦     ≟T `◦              = yes refl
+`◦     ≟T A′ `⊃ B′        = no λ ()
+A `⊃ B ≟T `◦              = no λ ()
 A `⊃ B ≟T A′ `⊃ B′        with A ≟T A′ | B ≟T B′
 ... | no ¬eq₁  | _          = no λ { refl → refl ↯ ¬eq₁ }
 ... | yes refl | no ¬eq₂    = no λ { refl → refl ↯ ¬eq₂ }

@@ -15,18 +15,19 @@ record Model : Set₁ where
 open Model public
 
 module _ {ℳ : Model} where
-  private module ℳ = Model ℳ
+  private
+    module ℳ = Model ℳ
 
   infix 3 _⊩_
   _⊩_ : ∀ (W : ℳ.World) (A : Ty) → Set
   W ⊩ A `⊃ B = ∀ {W′} (e : W ℳ.≤ W′) (o : W′ ⊩ A) → W′ ⊩ B
   W ⊩ A `∧ B = W ⊩ A × W ⊩ B
-  W ⊩ `⊤     = ⊤
+  W ⊩ `𝟙     = 𝟙
 
   mov : ∀ {W W′ A} (e : W ℳ.≤ W′) (o : W ⊩ A) → W′ ⊩ A
   mov {A = A `⊃ B} e f         = λ e′ → f (ℳ.trans≤ e e′)
   mov {A = A `∧ B} e (o₁ , o₂) = mov e o₁ , mov e o₂
-  mov {A = `⊤}    e unit      = unit
+  mov {A = `𝟙}     e unit      = unit
 
   infix 3 _⊩*_
   data _⊩*_ (W : ℳ.World) : ∀ (Δ : Ctx) → Set where
@@ -78,14 +79,14 @@ mutual
   ↓ : ∀ {Γ A} {d : Γ ⊢ A} (p : NNF d) → 𝒞 ∣ Γ ⊩ A
   ↓ {A = A `⊃ B} p = λ e o → ↓ (renNNF e p `$ proj₂ (↑ o))
   ↓ {A = A `∧ B} p = ↓ (`proj₁ p) , ↓ (`proj₂ p)
-  ↓ {A = `⊤}    p = unit
+  ↓ {A = `𝟙}     p = unit
 
   ↑ : ∀ {Γ A} (o : 𝒞 ∣ Γ ⊩ A) → Σ (Γ ⊢ A) λ d → NF d
   ↑ {A = A `⊃ B} f         with ↑ (f wk⊆ (↓ (`v zero)))
   ... | d , p                = `λ d , `λ d
   ↑ {A = A `∧ B} (o₁ , o₂) with ↑ o₁ | ↑ o₂
   ... | d₁ , p₁ | d₂ , p₂    = d₁ `, d₂ , d₁ `, d₂
-  ↑ {A = `⊤}    unit      = `unit , `unit
+  ↑ {A = `𝟙}     unit      = `unit , `unit
 
 refl⊩* : ∀ {Γ} → 𝒞 ∣ Γ ⊩* Γ
 refl⊩* {[]}    = []

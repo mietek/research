@@ -10,7 +10,7 @@ infixl 19 _`∧_
 data Ty : Set where
   _`⊃_ : ∀ (A B : Ty) → Ty
   _`∧_ : ∀ (A B : Ty) → Ty
-  `⊤  : Ty
+  `𝟙   : Ty
 
 infixr 18 _`⫗_
 _`⫗_ : ∀ (A B : Ty) → Ty
@@ -28,7 +28,7 @@ data _⊢_ (Γ : Ctx) : ∀ (A : Ty) → Set where
   _`,_   : ∀ {A B} (d₁ : Γ ⊢ A) (d₂ : Γ ⊢ B) → Γ ⊢ A `∧ B
   `proj₁ : ∀ {A B} (d : Γ ⊢ A `∧ B) → Γ ⊢ A
   `proj₂ : ∀ {A B} (d : Γ ⊢ A `∧ B) → Γ ⊢ B
-  `unit  : Γ ⊢ `⊤
+  `unit  : Γ ⊢ `𝟙
 
 open ⊢*Kit _⊢_ public
 
@@ -66,16 +66,16 @@ A `⊃ B ≟T A′ `⊃ B′        with A ≟T A′ | B ≟T B′
 ... | yes refl | no ¬eq₂    = no λ { refl → refl ↯ ¬eq₂ }
 ... | yes refl | yes refl   = yes refl
 A `⊃ B ≟T A′ `∧ B′        = no λ ()
-A `⊃ B ≟T `⊤             = no λ ()
+A `⊃ B ≟T `𝟙              = no λ ()
 A `∧ B ≟T A′ `⊃ B′        = no λ ()
 A `∧ B ≟T A′ `∧ B′        with A ≟T A′ | B ≟T B′
 ... | no ¬eq₁  | _          = no λ { refl → refl ↯ ¬eq₁ }
 ... | yes refl | no ¬eq₂    = no λ { refl → refl ↯ ¬eq₂ }
 ... | yes refl | yes refl   = yes refl
-A `∧ B ≟T `⊤             = no λ ()
-`⊤    ≟T A′ `⊃ B′        = no λ ()
-`⊤    ≟T A′ `∧ B′        = no λ ()
-`⊤    ≟T `⊤             = yes refl
+A `∧ B ≟T `𝟙              = no λ ()
+`𝟙     ≟T A′ `⊃ B′        = no λ ()
+`𝟙     ≟T A′ `∧ B′        = no λ ()
+`𝟙     ≟T `𝟙              = yes refl
 
 infix 4 _≟_
 _≟_ : ∀ {Γ A} (d d′ : Γ ⊢ A) → Dec (d ≡ d′)

@@ -6,14 +6,14 @@ open import STLC-Negative public
 ----------------------------------------------------------------------------------------------------
 
 mutual
-  -- d is in β-short weak normal form
+  -- d is in β-short not-η-long weak normal form
   data NF {Γ} : ∀ {A} (d : Γ ⊢ A) → Set where
     `λ    : ∀ {A B} (d : A ∷ Γ ⊢ B) → NF (`λ d)
     _`,_  : ∀ {A B} (d₁ : Γ ⊢ A) (d₂ : Γ ⊢ B) → NF (d₁ `, d₂)
     `unit : NF `unit
     `nnf  : ∀ {A} {d : Γ ⊢ A} (p : NNF d) → NF d
 
-  -- d is in neutral β-short weak normal form
+  -- d is in neutral β-short not-η-long weak normal form
   data NNF {Γ} : ∀ {A} (d : Γ ⊢ A) → Set where
     `v     : ∀ {A} (i : Γ ∋ A) → NNF (`v i)
     _`$_   : ∀ {A B} {d₁ : Γ ⊢ A `⊃ B} {d₂ : Γ ⊢ A} (p₁ : NNF d₁) (p₂ : NF d₂) → NNF (d₁ `$ d₂)
@@ -65,7 +65,7 @@ data _≝_ {Γ} : ∀ {A} (d d′ : Γ ⊢ A) → Set where
   βred∧₁    : ∀ {A B} {d₁ : Γ ⊢ A} {d₂ : Γ ⊢ B} → `proj₁ (d₁ `, d₂) ≝ d₁
   βred∧₂    : ∀ {A B} {d₁ : Γ ⊢ A} {d₂ : Γ ⊢ B} → `proj₂ (d₁ `, d₂) ≝ d₂
 
-open ≝Kit (λ {_} {_} {d} → refl≝ {d = d}) sym≝ trans≝ public -- TODO: ugh
+open ≝Kit (λ {_} {_} {d} → refl≝ {d = d}) sym≝ trans≝ public
 
 -- call-by-value reduction
 infix 4 _⟹_
