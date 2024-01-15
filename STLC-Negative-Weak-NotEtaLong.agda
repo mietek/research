@@ -56,10 +56,10 @@ data _≝_ {Γ} : ∀ {A} (d d′ : Γ ⊢ A) → Set where
   refl≝     : ∀ {A} {d : Γ ⊢ A} → d ≝ d
   sym≝      : ∀ {A} {d d′ : Γ ⊢ A} (eq : d ≝ d′) → d′ ≝ d
   trans≝    : ∀ {A} {d d′ d″ : Γ ⊢ A} (eq : d ≝ d′) (eq′ : d′ ≝ d″) → d ≝ d″
-  comp$     : ∀ {A B} {d₁ d₁′ : Γ ⊢ A `⊃ B} {d₂ d₂′ : Γ ⊢ A} (eq₁ : d₁ ≝ d₁′) (eq₂ : d₂ ≝ d₂′) →
+  cong$     : ∀ {A B} {d₁ d₁′ : Γ ⊢ A `⊃ B} {d₂ d₂′ : Γ ⊢ A} (eq₁ : d₁ ≝ d₁′) (eq₂ : d₂ ≝ d₂′) →
               d₁ `$ d₂ ≝ d₁′ `$ d₂′
-  compproj₁ : ∀ {A B} {d d′ : Γ ⊢ A `∧ B} (eq : d ≝ d′) → `proj₁ d ≝ `proj₁ d′
-  compproj₂ : ∀ {A B} {d d′ : Γ ⊢ A `∧ B} (eq : d ≝ d′) → `proj₂ d ≝ `proj₂ d′
+  congproj₁ : ∀ {A B} {d d′ : Γ ⊢ A `∧ B} (eq : d ≝ d′) → `proj₁ d ≝ `proj₁ d′
+  congproj₂ : ∀ {A B} {d d′ : Γ ⊢ A `∧ B} (eq : d ≝ d′) → `proj₂ d ≝ `proj₂ d′
   βred⊃     : ∀ {A B} {d₁ : A ∷ Γ ⊢ B} {d₂ : Γ ⊢ A} {d′ : Γ ⊢ B} (eq : d₁ [ d₂ ] ≡ d′) →
               `λ d₁ `$ d₂ ≝ d′
   βred∧₁    : ∀ {A B} {d₁ : Γ ⊢ A} {d₂ : Γ ⊢ B} → `proj₁ (d₁ `, d₂) ≝ d₁
@@ -67,15 +67,15 @@ data _≝_ {Γ} : ∀ {A} (d d′ : Γ ⊢ A) → Set where
 
 open ≝Kit (λ {_} {_} {d} → refl≝ {d = d}) sym≝ trans≝ public -- TODO: ugh
 
--- call-by-value conversion
+-- call-by-value reduction
 infix 4 _⟹_
 data _⟹_ {Γ} : ∀ {A} (d d′ : Γ ⊢ A) → Set where
-  comp$₁    : ∀ {A B} {d₁ d₁′ : Γ ⊢ A `⊃ B} {d₂ : Γ ⊢ A} (c₁ : d₁ ⟹ d₁′) →
+  cong$₁    : ∀ {A B} {d₁ d₁′ : Γ ⊢ A `⊃ B} {d₂ : Γ ⊢ A} (r₁ : d₁ ⟹ d₁′) →
               d₁ `$ d₂ ⟹ d₁′ `$ d₂
-  comp$₂    : ∀ {A B} {d₁ : Γ ⊢ A `⊃ B} {d₂ d₂′ : Γ ⊢ A} (p₁ : NF d₁) (c₂ : d₂ ⟹ d₂′) →
+  cong$₂    : ∀ {A B} {d₁ : Γ ⊢ A `⊃ B} {d₂ d₂′ : Γ ⊢ A} (p₁ : NF d₁) (r₂ : d₂ ⟹ d₂′) →
               d₁ `$ d₂ ⟹ d₁ `$ d₂′
-  compproj₁ : ∀ {A B} {d d′ : Γ ⊢ A `∧ B} (c : d ⟹ d′) → `proj₁ d ⟹ `proj₁ d′
-  compproj₂ : ∀ {A B} {d d′ : Γ ⊢ A `∧ B} (c : d ⟹ d′) → `proj₂ d ⟹ `proj₂ d′
+  congproj₁ : ∀ {A B} {d d′ : Γ ⊢ A `∧ B} (r : d ⟹ d′) → `proj₁ d ⟹ `proj₁ d′
+  congproj₂ : ∀ {A B} {d d′ : Γ ⊢ A `∧ B} (r : d ⟹ d′) → `proj₂ d ⟹ `proj₂ d′
   βred⊃     : ∀ {A B} {d₁ : A ∷ Γ ⊢ B} {d₂ : Γ ⊢ A} {d′ : Γ ⊢ B} (eq : d₁ [ d₂ ] ≡ d′)
                 (p₂ : NF d₂) →
               `λ d₁ `$ d₂ ⟹ d′
@@ -85,66 +85,63 @@ data _⟹_ {Γ} : ∀ {A} (d d′ : Γ ⊢ A) → Set where
 open ⟹Kit _⟹_ public
 
 mutual
-  NF→¬C : ∀ {Γ A} {d : Γ ⊢ A} (p : NF d) → ¬C d
-  NF→¬C (`nnf p) c = c ↯ NNF→¬C p
+  NF→¬R : ∀ {Γ A} {d : Γ ⊢ A} (p : NF d) → ¬R d
+  NF→¬R (`nnf p) r = r ↯ NNF→¬R p
 
-  NNF→¬C : ∀ {Γ A} {d  : Γ ⊢ A} (p : NNF d) → ¬C d
-  NNF→¬C (p₁ `$ p₂) (comp$₁ c₁)     = c₁ ↯ NNF→¬C p₁
-  NNF→¬C (p₁ `$ p₂) (comp$₂ p₁′ c₂) = c₂ ↯ NF→¬C p₂
-  NNF→¬C (`proj₁ p) (compproj₁ c)   = c ↯ NNF→¬C p
-  NNF→¬C (`proj₂ p) (compproj₂ c)   = c ↯ NNF→¬C p
+  NNF→¬R : ∀ {Γ A} {d  : Γ ⊢ A} (p : NNF d) → ¬R d
+  NNF→¬R (p₁ `$ p₂) (cong$₁ r₁)     = r₁ ↯ NNF→¬R p₁
+  NNF→¬R (p₁ `$ p₂) (cong$₂ p₁′ r₂) = r₂ ↯ NF→¬R p₂
+  NNF→¬R (`proj₁ p) (congproj₁ r)   = r ↯ NNF→¬R p
+  NNF→¬R (`proj₂ p) (congproj₂ r)   = r ↯ NNF→¬R p
 
 -- _⟹_ is deterministic
-det⟹ : ∀ {Γ A} {d d′ d″ : Γ ⊢ A} (c : d ⟹ d′) (c′ : d ⟹ d″) → d′ ≡ d″
-det⟹ (comp$₁ c₁)     (comp$₁ c₁′)     = (_`$ _) & det⟹ c₁ c₁′
-det⟹ (comp$₁ c₁)     (comp$₂ p₁′ c₂′) = c₁ ↯ NF→¬C p₁′
-det⟹ (comp$₂ p₁ c₂)  (comp$₁ c₁′)     = c₁′ ↯ NF→¬C p₁
-det⟹ (comp$₂ p₁ c₂)  (comp$₂ p₁′ c₂′) = (_ `$_) & det⟹ c₂ c₂′
-det⟹ (comp$₂ p₁ c₂)  (βred⊃ refl p₂′) = c₂ ↯ NF→¬C p₂′
-det⟹ (compproj₁ c)   (compproj₁ c′)   = `proj₁ & det⟹ c c′
-det⟹ (compproj₂ c)   (compproj₂ c′)   = `proj₂ & det⟹ c c′
-det⟹ (βred⊃ refl p₂) (comp$₂ p₁′ c₂′) = c₂′ ↯ NF→¬C p₂
+det⟹ : ∀ {Γ A} {d d′ d″ : Γ ⊢ A} (r : d ⟹ d′) (r′ : d ⟹ d″) → d′ ≡ d″
+det⟹ (cong$₁ r₁)     (cong$₁ r₁′)     = (_`$ _) & det⟹ r₁ r₁′
+det⟹ (cong$₁ r₁)     (cong$₂ p₁′ r₂′) = r₁ ↯ NF→¬R p₁′
+det⟹ (cong$₂ p₁ r₂)  (cong$₁ r₁′)     = r₁′ ↯ NF→¬R p₁
+det⟹ (cong$₂ p₁ r₂)  (cong$₂ p₁′ r₂′) = (_ `$_) & det⟹ r₂ r₂′
+det⟹ (cong$₂ p₁ r₂)  (βred⊃ refl p₂′) = r₂ ↯ NF→¬R p₂′
+det⟹ (congproj₁ r)   (congproj₁ r′)   = `proj₁ & det⟹ r r′
+det⟹ (congproj₂ r)   (congproj₂ r′)   = `proj₂ & det⟹ r r′
+det⟹ (βred⊃ refl p₂) (cong$₂ p₁′ r₂′) = r₂′ ↯ NF→¬R p₂
 det⟹ (βred⊃ refl p₂) (βred⊃ refl p₂′) = refl
 det⟹ βred∧₁          βred∧₁           = refl
 det⟹ βred∧₂          βred∧₂           = refl
 
 -- _⟹_ has unique proofs
-uni⟹ : ∀ {Γ A} {d d′ : Γ ⊢ A} (c c′ : d ⟹ d′) → c ≡ c′
-uni⟹ (comp$₁ c₁)     (comp$₁ c₁′)     = comp$₁ & uni⟹ c₁ c₁′
-uni⟹ (comp$₁ c₁)     (comp$₂ p₁′ c₂′) = c₁ ↯ NF→¬C p₁′
-uni⟹ (comp$₂ p₁ c₂)  (comp$₁ c₁′)     = c₁′ ↯ NF→¬C p₁
-uni⟹ (comp$₂ p₁ c₂)  (comp$₂ p₁′ c₂′) = comp$₂ & uniNF p₁ p₁′ ⊗ uni⟹ c₂ c₂′
-uni⟹ (comp$₂ p₁ c₂)  (βred⊃ eq′ p₂′)  = c₂ ↯ NF→¬C p₂′
-uni⟹ (compproj₁ c)   (compproj₁ c′)   = compproj₁ & uni⟹ c c′
-uni⟹ (compproj₂ c)   (compproj₂ c′)   = compproj₂ & uni⟹ c c′
-uni⟹ (βred⊃ eq p₂)   (comp$₂ p₁′ c₂′) = c₂′ ↯ NF→¬C p₂
+uni⟹ : ∀ {Γ A} {d d′ : Γ ⊢ A} (r r′ : d ⟹ d′) → r ≡ r′
+uni⟹ (cong$₁ r₁)     (cong$₁ r₁′)     = cong$₁ & uni⟹ r₁ r₁′
+uni⟹ (cong$₁ r₁)     (cong$₂ p₁′ r₂′) = r₁ ↯ NF→¬R p₁′
+uni⟹ (cong$₂ p₁ r₂)  (cong$₁ r₁′)     = r₁′ ↯ NF→¬R p₁
+uni⟹ (cong$₂ p₁ r₂)  (cong$₂ p₁′ r₂′) = cong$₂ & uniNF p₁ p₁′ ⊗ uni⟹ r₂ r₂′
+uni⟹ (cong$₂ p₁ r₂)  (βred⊃ eq′ p₂′)  = r₂ ↯ NF→¬R p₂′
+uni⟹ (congproj₁ r)   (congproj₁ r′)   = congproj₁ & uni⟹ r r′
+uni⟹ (congproj₂ r)   (congproj₂ r′)   = congproj₂ & uni⟹ r r′
+uni⟹ (βred⊃ eq p₂)   (cong$₂ p₁′ r₂′) = r₂′ ↯ NF→¬R p₂
 uni⟹ (βred⊃ refl p₂) (βred⊃ refl p₂′) = βred⊃ refl & uniNF p₂ p₂′
 uni⟹ βred∧₁          βred∧₁           = refl
 uni⟹ βred∧₂          βred∧₂           = refl
 
-pattern cf p = inj₁ p
-pattern nf p = inj₂ p
-
-CF⊎NF : ∀ {Γ A} (d : Γ ⊢ A) → CF d ⊎ NF d
-CF⊎NF (`v i)                        = nf (`nnf (`v i))
-CF⊎NF (`λ d)                        = nf (`λ d)
-CF⊎NF (d₁ `$ d₂)                    with CF⊎NF d₁ | CF⊎NF d₂
-... | cf (d₁′ , c₁) | _               = cf (d₁′ `$ d₂ , comp$₁ c₁)
-... | nf p₁         | cf (d₂′ , c₂)   = cf (d₁ `$ d₂′ , comp$₂ p₁ c₂)
-... | nf (`λ d₁′)   | nf p₂           = cf (d₁′ [ d₂ ] , βred⊃ refl p₂)
+RF⊎NF : ∀ {Γ A} (d : Γ ⊢ A) → RF d ⊎ NF d
+RF⊎NF (`v i)                        = nf (`nnf (`v i))
+RF⊎NF (`λ d)                        = nf (`λ d)
+RF⊎NF (d₁ `$ d₂)                    with RF⊎NF d₁ | RF⊎NF d₂
+... | rf (d₁′ , r₁) | _               = rf (d₁′ `$ d₂ , cong$₁ r₁)
+... | nf p₁         | rf (d₂′ , r₂)   = rf (d₁ `$ d₂′ , cong$₂ p₁ r₂)
+... | nf (`λ d₁′)   | nf p₂           = rf (d₁′ [ d₂ ] , βred⊃ refl p₂)
 ... | nf (`nnf p₁)  | nf p₂           = nf (`nnf (p₁ `$ p₂))
-CF⊎NF (d₁ `, d₂)                      = nf (d₁ `, d₂)
-CF⊎NF (`proj₁ d)                    with CF⊎NF d
-... | cf (d′ , c)                     = cf (`proj₁ d′ , compproj₁ c)
-... | nf (d₁ `, d₂)                   = cf (d₁ , βred∧₁)
+RF⊎NF (d₁ `, d₂)                      = nf (d₁ `, d₂)
+RF⊎NF (`proj₁ d)                    with RF⊎NF d
+... | rf (d′ , r)                     = rf (`proj₁ d′ , congproj₁ r)
+... | nf (d₁ `, d₂)                   = rf (d₁ , βred∧₁)
 ... | nf (`nnf p)                     = nf (`nnf (`proj₁ p))
-CF⊎NF (`proj₂ d)                    with CF⊎NF d
-... | cf (d′ , c)                     = cf (`proj₂ d′ , compproj₂ c)
-... | nf (d₁ `, d₂)                   = cf (d₂ , βred∧₂)
+RF⊎NF (`proj₂ d)                    with RF⊎NF d
+... | rf (d′ , r)                     = rf (`proj₂ d′ , congproj₂ r)
+... | nf (d₁ `, d₂)                   = rf (d₂ , βred∧₂)
 ... | nf (`nnf p)                   = nf (`nnf (`proj₂ p))
-CF⊎NF `unit                         = nf `unit
+RF⊎NF `unit                         = nf `unit
 
-open CF⊎NFKit NF→¬C CF⊎NF public
+open RF⊎NFKit NF→¬R RF⊎NF public
 
 open ⟹*Kit det⟹ public
 

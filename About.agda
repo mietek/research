@@ -15,6 +15,10 @@ references:
   “NbE: Dependent types and impredicativity”
   https://www.cse.chalmers.se/~abela/habil.pdf
 
+- Jay-Ghani (1993)
+  “The virtues of η-expansion”
+  https://math.ucr.edu/home/baez/qg-winter2007/virtues.pdf
+
 - Kovacs (2017)
   “A machine-checked correctness proof of NbE for STLC”
   https://github.com/dpndnt/library/blob/master/doc/pdf/kovacs-2017.pdf

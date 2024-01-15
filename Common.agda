@@ -225,121 +225,124 @@ module CtxKit (Ty : Set)
 ----------------------------------------------------------------------------------------------------
 
     module ⟹Kit
-        (Conv : ∀ {Γ A} (d d′ : Γ ⊢ A) → Set)
+        (Red : ∀ {Γ A} (d d′ : Γ ⊢ A) → Set)
       where
       private
         infix 4 _⟹_
-        _⟹_ = Conv
+        _⟹_ = Red
 
       -- d is in convertible form
-      CF : ∀ {Γ A} (d : Γ ⊢ A) → Set
-      CF d = Σ _ λ d′ → d ⟹ d′
+      RF : ∀ {Γ A} (d : Γ ⊢ A) → Set
+      RF d = Σ _ λ d′ → d ⟹ d′
 
       -- d is in inconvertible form
-      ¬C : ∀ {Γ A} (d : Γ ⊢ A) → Set
-      ¬C d = ∀ {d′} → ¬ d ⟹ d′
+      ¬R : ∀ {Γ A} (d : Γ ⊢ A) → Set
+      ¬R d = ∀ {d′} → ¬ d ⟹ d′
 
-      ¬CF→¬C : ∀ {Γ A} {d : Γ ⊢ A} (¬cf : ¬ CF d) → ¬C d
-      ¬CF→¬C ¬p c = (_ , c) ↯ ¬p
+      ¬RF→¬R : ∀ {Γ A} {d : Γ ⊢ A} (¬rf : ¬ RF d) → ¬R d
+      ¬RF→¬R ¬p r = (_ , r) ↯ ¬p
 
-      ¬C→¬CF : ∀ {Γ A} {d : Γ ⊢ A} (¬c : ¬C d) → ¬ CF d
-      ¬C→¬CF ¬c (_ , c) = c ↯ ¬c
+      ¬R→¬RF : ∀ {Γ A} {d : Γ ⊢ A} (¬r : ¬R d) → ¬ RF d
+      ¬R→¬RF ¬r (_ , r) = r ↯ ¬r
+
+      pattern rf p = inj₁ p
+      pattern nf p = inj₂ p
 
 
 ----------------------------------------------------------------------------------------------------
 
-      module CF⊎NFKit
+      module RF⊎NFKit
           {NF     : ∀ {Γ A} (d : Γ ⊢ A) → Set}
-          (NF→¬C : ∀ {Γ A} {d : Γ ⊢ A} (p : NF d) → ¬C d)
-          (CF⊎NF  : ∀ {Γ A} (d : Γ ⊢ A) → CF d ⊎ NF d)
+          (NF→¬R : ∀ {Γ A} {d : Γ ⊢ A} (p : NF d) → ¬R d)
+          (RF⊎NF  : ∀ {Γ A} (d : Γ ⊢ A) → RF d ⊎ NF d)
         where
-        ¬C→NF : ∀ {Γ A} {d : Γ ⊢ A} (¬c : ¬C d) → NF d
-        ¬C→NF {d = d} ¬c with CF⊎NF d
-        ... | inj₁ p        = p ↯ ¬C→¬CF ¬c
-        ... | inj₂ p        = p
+        ¬R→NF : ∀ {Γ A} {d : Γ ⊢ A} (¬r : ¬R d) → NF d
+        ¬R→NF {d = d} ¬r with RF⊎NF d
+        ... | rf p          = p ↯ ¬R→¬RF ¬r
+        ... | nf p          = p
 
-        ¬NF→CF : ∀ {Γ A} {d : Γ ⊢ A} (¬p : ¬ NF d) → CF d
-        ¬NF→CF {d = d} ¬p with CF⊎NF d
-        ... | inj₁ p         = p
-        ... | inj₂ p         = p ↯ ¬p
+        ¬NF→RF : ∀ {Γ A} {d : Γ ⊢ A} (¬p : ¬ NF d) → RF d
+        ¬NF→RF {d = d} ¬p with RF⊎NF d
+        ... | rf p           = p
+        ... | nf p           = p ↯ ¬p
 
-        CF→¬NF : ∀ {Γ A} {d : Γ ⊢ A} (cf : CF d) → ¬ NF d
-        CF→¬NF (d′ , c) p = c ↯ NF→¬C p
+        RF→¬NF : ∀ {Γ A} {d : Γ ⊢ A} (rf : RF d) → ¬ NF d
+        RF→¬NF (d′ , r) p = r ↯ NF→¬R p
 
-        ¬CF→NF : ∀ {Γ A} {d : Γ ⊢ A} (¬cf : ¬ CF d) → NF d
-        ¬CF→NF = ¬C→NF ∘ ¬CF→¬C
+        ¬RF→NF : ∀ {Γ A} {d : Γ ⊢ A} (¬rf : ¬ RF d) → NF d
+        ¬RF→NF = ¬R→NF ∘ ¬RF→¬R
 
-        NF→¬CF : ∀ {Γ A} {d : Γ ⊢ A} (wnf : NF d) → ¬ CF d
-        NF→¬CF = ¬C→¬CF ∘ NF→¬C
+        NF→¬RF : ∀ {Γ A} {d : Γ ⊢ A} (wnf : NF d) → ¬ RF d
+        NF→¬RF = ¬R→¬RF ∘ NF→¬R
 
 
 ----------------------------------------------------------------------------------------------------
 
         module ⟹*Kit
-            (det⟹ : ∀ {Γ A} {d d′ d″ : Γ ⊢ A} (c : d ⟹ d′) (c′ : d ⟹ d″) → d′ ≡ d″)
+            (det⟹ : ∀ {Γ A} {d d′ d″ : Γ ⊢ A} (r : d ⟹ d′) (r′ : d ⟹ d″) → d′ ≡ d″)
           where
-          -- iterated conversion
+          -- iterated reduction
           infix 4 _⟹*_
           data _⟹*_ {Γ} : ∀ {A} (d : Γ ⊢ A) (d′ : Γ ⊢ A) → Set where
             done : ∀ {A} {d : Γ ⊢ A} → d ⟹* d
-            step : ∀ {A} {d d′ d″ : Γ ⊢ A} (c : d ⟹ d′) (cs : d′ ⟹* d″) → d ⟹* d″
+            step : ∀ {A} {d d′ d″ : Γ ⊢ A} (r : d ⟹ d′) (rs : d′ ⟹* d″) → d ⟹* d″
 
-          trans⟹* : ∀ {Γ A} {d d′ d″ : Γ ⊢ A} (cs : d ⟹* d′) (cs′ : d′ ⟹* d″) → d ⟹* d″
-          trans⟹* done        cs′ = cs′
-          trans⟹* (step c cs) cs′ = step c (trans⟹* cs cs′)
+          trans⟹* : ∀ {Γ A} {d d′ d″ : Γ ⊢ A} (rs : d ⟹* d′) (rs′ : d′ ⟹* d″) → d ⟹* d″
+          trans⟹* done        rs′ = rs′
+          trans⟹* (step r rs) rs′ = step r (trans⟹* rs rs′)
 
           -- _⟹_ has the diamond property
-          dia⟹ : ∀ {Γ A} {d d′ d″ : Γ ⊢ A} (c : d ⟹ d′) (r′ : d ⟹ d″) →
+          dia⟹ : ∀ {Γ A} {d d′ d″ : Γ ⊢ A} (r : d ⟹ d′) (r′ : d ⟹ d″) →
                    Σ (Γ ⊢ A) λ d‴ → d′ ⟹* d‴ × d″ ⟹* d‴
-          dia⟹ c c′ with det⟹ c c′
+          dia⟹ r r′ with det⟹ r r′
           ... | refl    = _ , done , done
 
           -- _⟹_ is confluent
-          conf⟹ : ∀ {Γ A} {d d′ d″ : Γ ⊢ A} (cs : d ⟹* d′) (cs′ : d ⟹* d″) →
+          conf⟹ : ∀ {Γ A} {d d′ d″ : Γ ⊢ A} (rs : d ⟹* d′) (rs′ : d ⟹* d″) →
                     Σ (Γ ⊢ A) λ d‴ → d′ ⟹* d‴ × d″ ⟹* d‴
-          conf⟹ done        cs′           = _ , cs′ , done
-          conf⟹ (step c cs) done          = _ , done , step c cs
-          conf⟹ (step c cs) (step c′ cs′) with det⟹ c c′
-          ... | refl                          = conf⟹ cs cs′
+          conf⟹ done        rs′           = _ , rs′ , done
+          conf⟹ (step r rs) done          = _ , done , step r rs
+          conf⟹ (step r rs) (step r′ rs′) with det⟹ r r′
+          ... | refl                          = conf⟹ rs rs′
 
-          skip⟹ : ∀ {Γ A} {d d′ d″ : Γ ⊢ A} (p″ : NF d″) (c : d ⟹ d′) (cs′ : d ⟹* d″) →
+          skip⟹ : ∀ {Γ A} {d d′ d″ : Γ ⊢ A} (p″ : NF d″) (r : d ⟹ d′) (rs′ : d ⟹* d″) →
                     d′ ⟹* d″
-          skip⟹ p″ c done          = c ↯ NF→¬C p″
-          skip⟹ p″ c (step c′ cs′) with det⟹ c c′
-          ... | refl                   = cs′
+          skip⟹ p″ r done          = r ↯ NF→¬R p″
+          skip⟹ p″ r (step r′ rs′) with det⟹ r r′
+          ... | refl                   = rs′
 
           -- _⟹*_ is deterministic
-          det⟹* : ∀ {Γ A} {d d′ d″ : Γ ⊢ A} (p′ : NF d′) (p″ : NF d″) (cs : d ⟹* d′)
-                      (cs′ : d ⟹* d″) →
+          det⟹* : ∀ {Γ A} {d d′ d″ : Γ ⊢ A} (p′ : NF d′) (p″ : NF d″) (rs : d ⟹* d′)
+                      (rs′ : d ⟹* d″) →
                     d′ ≡ d″
           det⟹* p′ p″ done        done          = refl
-          det⟹* p′ p″ done        (step c′ cs′) = c′ ↯ NF→¬C p′
-          det⟹* p′ p″ (step c cs) cs′           = det⟹* p′ p″ cs (skip⟹ p″ c cs′)
+          det⟹* p′ p″ done        (step r′ rs′) = r′ ↯ NF→¬R p′
+          det⟹* p′ p″ (step r rs) rs′           = det⟹* p′ p″ rs (skip⟹ p″ r rs′)
 
           ≡→⟹* : ∀ {Γ A} {d d′ : Γ ⊢ A} (eq : d ≡ d′) → d ⟹* d′
           ≡→⟹* refl = done
 
           module ⟹-Reasoning where
             infix 1 begin_
-            begin_ : ∀ {Γ A} {d d′ : Γ ⊢ A} (cs : d ⟹* d′) → d ⟹* d′
-            begin_ cs = cs
+            begin_ : ∀ {Γ A} {d d′ : Γ ⊢ A} (rs : d ⟹* d′) → d ⟹* d′
+            begin_ rs = rs
 
             infixr 2 _⟹⟨_⟩_
-            _⟹⟨_⟩_ : ∀ {Γ A} (d : Γ ⊢ A) {d′ d″} (c : d ⟹ d′) (cs : d′ ⟹* d″) → d ⟹* d″
-            d ⟹⟨ c ⟩ cs = step c cs
+            _⟹⟨_⟩_ : ∀ {Γ A} (d : Γ ⊢ A) {d′ d″} (r : d ⟹ d′) (rs : d′ ⟹* d″) → d ⟹* d″
+            d ⟹⟨ r ⟩ rs = step r rs
 
             infixr 2 _⟹*⟨⟩_
-            _⟹*⟨⟩_ : ∀ {Γ A} (d : Γ ⊢ A) {d′} (cs : d ⟹* d′) → d ⟹* d′
-            d ⟹*⟨⟩ cs = cs
+            _⟹*⟨⟩_ : ∀ {Γ A} (d : Γ ⊢ A) {d′} (rs : d ⟹* d′) → d ⟹* d′
+            d ⟹*⟨⟩ rs = rs
 
             infixr 2 _⟹*⟨_⟩_
-            _⟹*⟨_⟩_ : ∀ {Γ A} (d : Γ ⊢ A) {d′ d″} (cs : d ⟹* d′) (cs′ : d′ ⟹* d″) →
+            _⟹*⟨_⟩_ : ∀ {Γ A} (d : Γ ⊢ A) {d′ d″} (rs : d ⟹* d′) (rs′ : d′ ⟹* d″) →
                           d ⟹* d″
-            d ⟹*⟨ cs ⟩ cs′ = trans⟹* cs cs′
+            d ⟹*⟨ rs ⟩ rs′ = trans⟹* rs rs′
 
             infixr 2 _≡⟨_⟩_
-            _≡⟨_⟩_ : ∀ {Γ A} (d : Γ ⊢ A) {d′ d″} (eq : d ≡ d′) (cs′ : d′ ⟹* d″) → d ⟹* d″
-            d ≡⟨ eq ⟩ cs′ = trans⟹* (≡→⟹* eq) cs′
+            _≡⟨_⟩_ : ∀ {Γ A} (d : Γ ⊢ A) {d′ d″} (eq : d ≡ d′) (rs′ : d′ ⟹* d″) → d ⟹* d″
+            d ≡⟨ eq ⟩ rs′ = trans⟹* (≡→⟹* eq) rs′
 
             infix 3 _∎
             _∎ : ∀ {Γ A} (d : Γ ⊢ A) → d ⟹* d
