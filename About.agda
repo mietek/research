@@ -95,10 +95,10 @@ module _ where
   t ≝? t′      with proj₁ (nbe t) ≟ proj₁ (nbe t′)
   ... | no ¬eq   = no λ eq → (proj₁ & thm₆ eq) ↯ ¬eq
   ... | yes eq   = yes $ begin
-      t              ≝⟨ thm₂ t ⟩
-      proj₁ (nbe t)  ≡⟨ eq ⟩
-      proj₁ (nbe t′) ≝˘⟨ thm₂ t′ ⟩
-      t′             ∎
+    t              ≝⟨ thm₂ t ⟩
+    proj₁ (nbe t)  ≡⟨ eq ⟩
+    proj₁ (nbe t′) ≝˘⟨ thm₂ t′ ⟩
+    t′             ∎
 
 
 ----------------------------------------------------------------------------------------------------
