@@ -59,10 +59,10 @@ postulate
          nbe t ≡ nbe t′
 
   -- Coquand p.68: “extensional equality on semantic objects”
-  Eq : ∀ {ℳ : Model} {W : World ℳ} {A} → ℳ ∣ W ⊩ A → ℳ ∣ W ⊩ A → Set
+  Eq : ∀ {ℳ : Model} {W : World ℳ} {A} → ℳ / W ⊩ A → ℳ / W ⊩ A → Set
 
   -- Coquand p.73
-  thm₁ : ∀ {Γ A} {o o′ : 𝒞 ∣ Γ ⊩ A} → Eq {A = A} o o′ → ↑ {A = A} o ≡ ↑ o′
+  thm₁ : ∀ {Γ A} {o o′ : 𝒞 / Γ ⊩ A} → Eq {A = A} o o′ → ↑ {A = A} o ≡ ↑ o′
 
   -- Coquand p.73
   cor₁ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Eq {A = A} (⟦ t ⟧ refl⊩*) (⟦ t′ ⟧ refl⊩*) → nbe t ≡ nbe t′
@@ -76,7 +76,7 @@ postulate
   thm₃ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Eq {A = A} (⟦ t ⟧ refl⊩*) (⟦ t′ ⟧ refl⊩*) → t ≝ t′
 
   -- Coquand p.76: “soundness of conversion rules”
-  thm₄ : ∀ {ℳ : Model} {W : World ℳ} {Γ A} (t t′ : Γ ⊢ A) (os : ℳ ∣ W ⊩* Γ) → t ≝ t′ →
+  thm₄ : ∀ {ℳ : Model} {W : World ℳ} {Γ A} (t t′ : Γ ⊢ A) (os : ℳ / W ⊩* Γ) → t ≝ t′ →
          Eq {A = A} (⟦ t ⟧ os) (⟦ t′ ⟧ os)
 
   -- Coquand p.76: “correctness [soundness?] of decision algorithm for conversion”
