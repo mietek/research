@@ -28,7 +28,7 @@ module _ {ℳ : Model} where
   mov {A = A `⊃ B} e f = λ e′ → f (ℳ.trans≤ e e′)
   mov {A = `ℕ}     e n = n
 
-open SemKit S⟨ (λ {ℳ} → _⊩_ {ℳ}) , (λ {_} {_} {_} {A} → mov {_} {_} {_} {A}) ⟩ public
+open SemKit (λ {ℳ} → _⊩_ {ℳ}) (λ {_} {_} {_} {A} → mov {_} {_} {_} {A}) public
 
 ⟦_⟧∋ : ∀ {Γ A} → Γ ∋ A → Γ ⊨ A
 ⟦ zero  ⟧∋ (o ∷ os) = o

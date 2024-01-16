@@ -29,7 +29,7 @@ module _ {ℳ : Model} where
   mov {A = A `∧ B} e (o₁ , o₂) = mov e o₁ , mov e o₂
   mov {A = `𝟙}     e unit      = unit
 
-open SemKit S⟨ (λ {ℳ} → _⊩_ {ℳ}) , (λ {_} {_} {_} {A} → mov {_} {_} {_} {A}) ⟩ public
+open SemKit (λ {ℳ} → _⊩_ {ℳ}) (λ {_} {_} {_} {A} → mov {_} {_} {_} {A}) public
 
 ⟦_⟧∋ : ∀ {Γ A} → Γ ∋ A → Γ ⊨ A
 ⟦ zero  ⟧∋ (o ∷ os) = o

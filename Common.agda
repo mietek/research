@@ -357,18 +357,13 @@ module CtxKit (Ty : Set) where
 
 ----------------------------------------------------------------------------------------------------
 
-  record SemSpec : Set₂ where
-    constructor S⟨_,_⟩
-    field
-      {Model} : Set₁
-      {World} : Model → Set
-      {_≤_}   : ∀ (ℳ : Model) → World ℳ → World ℳ → Set
-      _⊩_    : ∀ {ℳ} → World ℳ → Ty → Set
-      mov     : ∀ {ℳ W W′ A} → _≤_ ℳ W W′ → W ⊩ A → W′ ⊩ A
-
-  module SemKit (S : SemSpec) where
-    open SemSpec S
-
+  module SemKit
+    {Model : Set₁}
+    {World : Model → Set}
+    {_≤_   : ∀ (ℳ : Model) → World ℳ → World ℳ → Set}
+    (_⊩_  : ∀ {ℳ} → World ℳ → Ty → Set)
+    (mov   : ∀ {ℳ W W′ A} → _≤_ ℳ W W′ → W ⊩ A → W′ ⊩ A)
+      where
     module _ {ℳ : Model} where
       infix 3 _⊩*_
       data _⊩*_ (W : World ℳ) : Ctx → Set where
