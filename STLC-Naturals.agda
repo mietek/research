@@ -5,6 +5,7 @@ open import Common public
 
 ----------------------------------------------------------------------------------------------------
 
+-- types
 infixr 18 _`⊃_
 data Ty : Set where
   _`⊃_ : ∀ (A B : Ty) → Ty
@@ -15,35 +16,35 @@ open CtxKit Ty public
 -- intrinsically well-typed terms
 infix 3 _⊢_
 infixl 18 _`$_
-data _⊢_ (Γ : Ctx) : ∀ (A : Ty) → Set where
+data _⊢_ (Γ : Ctx) : Ty → Set where
   `v    : ∀ {A} (i : Γ ∋ A) → Γ ⊢ A
-  `λ    : ∀ {A B} (d : A ∷ Γ ⊢ B) → Γ ⊢ A `⊃ B
-  _`$_  : ∀ {A B} (d₁ : Γ ⊢ A `⊃ B) (d₂ : Γ ⊢ A) → Γ ⊢ B
+  `λ    : ∀ {A B} (t : A ∷ Γ ⊢ B) → Γ ⊢ A `⊃ B
+  _`$_  : ∀ {A B} (t₁ : Γ ⊢ A `⊃ B) (t₂ : Γ ⊢ A) → Γ ⊢ B
   `zero : Γ ⊢ `ℕ
-  `suc  : ∀ (d : Γ ⊢ `ℕ) → Γ ⊢ `ℕ
-  `rec  : ∀ {A} (d₁ : Γ ⊢ `ℕ) (d₂ : Γ ⊢ A) (d₃ : A ∷ `ℕ ∷ Γ ⊢ A) → Γ ⊢ A
+  `suc  : ∀ (t : Γ ⊢ `ℕ) → Γ ⊢ `ℕ
+  `rec  : ∀ {A} (t₁ : Γ ⊢ `ℕ) (t₂ : Γ ⊢ A) (t₃ : A ∷ `ℕ ∷ Γ ⊢ A) → Γ ⊢ A
 
 open ⊢*Kit _⊢_ public
 
 -- renaming
-ren : ∀ {Γ Γ′ A} (e : Γ ⊆ Γ′) (d : Γ ⊢ A) → Γ′ ⊢ A
+ren : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
 ren e (`v i)          = `v (ren∋ e i)
-ren e (`λ d)          = `λ (ren (keep e) d)
-ren e (d₁ `$ d₂)      = ren e d₁ `$ ren e d₂
+ren e (`λ t)          = `λ (ren (keep e) t)
+ren e (t₁ `$ t₂)      = ren e t₁ `$ ren e t₂
 ren e `zero           = `zero
-ren e (`suc d)        = `suc (ren e d)
-ren e (`rec d₁ d₂ d₃) = `rec (ren e d₁) (ren e d₂) (ren (keep (keep e)) d₃)
+ren e (`suc t)        = `suc (ren e t)
+ren e (`rec t₁ t₂ t₃) = `rec (ren e t₁) (ren e t₂) (ren (keep (keep e)) t₃)
 
 open RenKit `v ren public
 
 -- substitution
-sub : ∀ {Γ Ξ A} (ss : Ξ ⊢* Γ) (d : Γ ⊢ A) → Ξ ⊢ A
+sub : ∀ {Γ Ξ A} → Ξ ⊢* Γ → Γ ⊢ A → Ξ ⊢ A
 sub ss (`v i)          = sub∋ ss i
-sub ss (`λ d)          = `λ (sub (lift* ss) d)
-sub ss (d₁ `$ d₂)      = sub ss d₁ `$ sub ss d₂
+sub ss (`λ t)          = `λ (sub (lift* ss) t)
+sub ss (t₁ `$ t₂)      = sub ss t₁ `$ sub ss t₂
 sub ss `zero           = `zero
-sub ss (`suc d)        = `suc (sub ss d)
-sub ss (`rec d₁ d₂ d₃) = `rec (sub ss d₁) (sub ss d₂) (sub (lift* (lift* ss)) d₃)
+sub ss (`suc t)        = `suc (sub ss t)
+sub ss (`rec t₁ t₂ t₃) = `rec (sub ss t₁) (sub ss t₂) (sub (lift* (lift* ss)) t₃)
 
 open SubKit sub public
 
@@ -61,54 +62,54 @@ A `⊃ B ≟T `ℕ              = no λ ()
 `ℕ     ≟T `ℕ              = yes refl
 
 infix 4 _≟_
-_≟_ : ∀ {Γ A} (d d′ : Γ ⊢ A) → Dec (d ≡ d′)
-`v i               ≟ `v i′                 with i ≟∋ i′
-... | no ¬eq                                 = no λ { refl → refl ↯ ¬eq }
-... | yes refl                               = yes refl
-`v i               ≟ `λ d′                 = no λ ()
-`v i               ≟ d₁′ `$ d₂′            = no λ ()
-`v i               ≟ `zero                 = no λ ()
-`v i               ≟ `suc d′               = no λ ()
-`v i               ≟ `rec d₁′ d₂′ d₃′      = no λ ()
-`λ d               ≟ `v i′                 = no λ ()
-`λ d               ≟ `λ d′                 with d ≟ d′
-... | no ¬eq                                 = no λ { refl → refl ↯ ¬eq }
-... | yes refl                               = yes refl
-`λ d               ≟ d₁′ `$ d₂′            = no λ ()
-`λ d               ≟ `rec d₁′ d₂′ d₃′      = no λ ()
-d₁ `$ d₂           ≟ `v i′                 = no λ ()
-d₁ `$ d₂           ≟ `λ d′                 = no λ ()
-_`$_ {A = A} d₁ d₂ ≟ _`$_ {A = A′} d₁′ d₂′ with A ≟T A′
-... | no ¬eq                                 = no λ { refl → refl ↯ ¬eq }
-... | yes refl                               with d₁ ≟ d₁′ | d₂ ≟ d₂′
-...   | no ¬eq₁  | _                           = no λ { refl → refl ↯ ¬eq₁ }
-...   | yes refl | no ¬eq₂                     = no λ { refl → refl ↯ ¬eq₂ }
-...   | yes refl | yes refl                    = yes refl
-d₁ `$ d₂           ≟ `zero                 = no λ ()
-d₁ `$ d₂           ≟ `suc d′               = no λ ()
-d₁ `$ d₂           ≟ `rec d₁′ d₂′ d₃′      = no λ ()
-`zero              ≟ `v i                  = no λ ()
-`zero              ≟ d₁′ `$ d₂′            = no λ ()
-`zero              ≟ `zero                 = yes refl
-`zero              ≟ `suc d′               = no λ ()
-`zero              ≟ `rec d₁′ d₂′ d₃′      = no λ ()
-`suc d             ≟ `v i                  = no λ ()
-`suc d             ≟ d₁′ `$ d₂′            = no λ ()
-`suc d             ≟ `zero                 = no λ ()
-`suc d             ≟ `suc d′               with d ≟ d′
-... | no ¬eq                                 = no λ { refl → refl ↯ ¬eq }
-... | yes refl                               = yes refl
-`suc d             ≟ `rec d₁′ d₂′ d₃′      = no λ ()
-`rec d₁ d₂ d₃      ≟ `v i                  = no λ ()
-`rec d₁ d₂ d₃      ≟ `λ d′                 = no λ ()
-`rec d₁ d₂ d₃      ≟ d₁′ `$ d₂′            = no λ ()
-`rec d₁ d₂ d₃      ≟ `zero                 = no λ ()
-`rec d₁ d₂ d₃      ≟ `suc d′               = no λ ()
-`rec d₁ d₂ d₃      ≟ `rec d₁′ d₂′ d₃′      with d₁ ≟ d₁′ | d₂ ≟ d₂′ | d₃ ≟ d₃′
-... | no ¬eq₁  | _        | _                = no λ { refl → refl ↯ ¬eq₁ }
-... | yes refl | no ¬eq₂  | _                = no λ { refl → refl ↯ ¬eq₂ }
-... | yes refl | yes refl | no ¬eq₃          = no λ { refl → refl ↯ ¬eq₃ }
-... | yes refl | yes refl | yes refl         = yes refl
+_≟_ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Dec (t ≡ t′)
+`v i          ≟ `v i′                with i ≟∋ i′
+... | no ¬eq                           = no λ { refl → refl ↯ ¬eq }
+... | yes refl                         = yes refl
+`v i          ≟ `λ t′                = no λ ()
+`v i          ≟ t₁′ `$ t₂′           = no λ ()
+`v i          ≟ `zero                = no λ ()
+`v i          ≟ `suc t′              = no λ ()
+`v i          ≟ `rec t₁′ t₂′ t₃′     = no λ ()
+`λ t          ≟ `v i′                = no λ ()
+`λ t          ≟ `λ t′                with t ≟ t′
+... | no ¬eq                           = no λ { refl → refl ↯ ¬eq }
+... | yes refl                         = yes refl
+`λ t          ≟ t₁′ `$ t₂′           = no λ ()
+`λ t          ≟ `rec t₁′ t₂′ t₃′     = no λ ()
+t₁ `$ t₂      ≟ `v i′                = no λ ()
+t₁ `$ t₂      ≟ `λ t′                = no λ ()
+t₁ `$ t₂      ≟ t₁′ `$ t₂′           with ty t₁ ≟T ty t₁′
+... | no ¬eq                           = no λ { refl → refl ↯ ¬eq }
+... | yes refl                         with t₁ ≟ t₁′ | t₂ ≟ t₂′
+...   | no ¬eq₁  | _                     = no λ { refl → refl ↯ ¬eq₁ }
+...   | yes refl | no ¬eq₂               = no λ { refl → refl ↯ ¬eq₂ }
+...   | yes refl | yes refl              = yes refl
+t₁ `$ t₂      ≟ `zero                = no λ ()
+t₁ `$ t₂      ≟ `suc t′              = no λ ()
+t₁ `$ t₂      ≟ `rec t₁′ t₂′ t₃′     = no λ ()
+`zero         ≟ `v i                 = no λ ()
+`zero         ≟ t₁′ `$ t₂′           = no λ ()
+`zero         ≟ `zero                = yes refl
+`zero         ≟ `suc t′              = no λ ()
+`zero         ≟ `rec t₁′ t₂′ t₃′     = no λ ()
+`suc t        ≟ `v i                 = no λ ()
+`suc t        ≟ t₁′ `$ t₂′           = no λ ()
+`suc t        ≟ `zero                = no λ ()
+`suc t        ≟ `suc t′              with t ≟ t′
+... | no ¬eq                           = no λ { refl → refl ↯ ¬eq }
+... | yes refl                         = yes refl
+`suc t        ≟ `rec t₁′ t₂′ t₃′     = no λ ()
+`rec t₁ t₂ t₃ ≟ `v i                 = no λ ()
+`rec t₁ t₂ t₃ ≟ `λ t′                = no λ ()
+`rec t₁ t₂ t₃ ≟ t₁′ `$ t₂′           = no λ ()
+`rec t₁ t₂ t₃ ≟ `zero                = no λ ()
+`rec t₁ t₂ t₃ ≟ `suc t′              = no λ ()
+`rec t₁ t₂ t₃ ≟ `rec t₁′ t₂′ t₃′     with t₁ ≟ t₁′ | t₂ ≟ t₂′ | t₃ ≟ t₃′
+... | no ¬eq₁  | _        | _          = no λ { refl → refl ↯ ¬eq₁ }
+... | yes refl | no ¬eq₂  | _          = no λ { refl → refl ↯ ¬eq₂ }
+... | yes refl | yes refl | no ¬eq₃    = no λ { refl → refl ↯ ¬eq₃ }
+... | yes refl | yes refl | yes refl   = yes refl
 
 
 ----------------------------------------------------------------------------------------------------

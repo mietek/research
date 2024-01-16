@@ -5,129 +5,222 @@ open import STLC-Base public
 
 ----------------------------------------------------------------------------------------------------
 
+-- β-short η-long expanded weak normal forms
 mutual
-  -- d is in β-short η-long weak normal form
-  data NF {Γ} : ∀ {A} (d : Γ ⊢ A) → Set where
-    `λ   : ∀ {A B} (d : A ∷ Γ ⊢ B) → NF (`λ d)
-    `nnf : ∀ {d : Γ ⊢ `◦} (p : NNF d) → NF d
+  data ENF {Γ} : ∀ {A} → Γ ⊢ A → Set where
+    `λ   : ∀ {A B} {t : A ∷ Γ ⊢ B} → ENF (`λ t)
+    `nnf : ∀ {t : Γ ⊢ `◦} (p : ENNF t) → ENF t
 
-  -- d is in neutral β-short η-long weak normal form
-  data NNF {Γ} : ∀ {A} (d : Γ ⊢ A) → Set where
-    `v   : ∀ {A} (i : Γ ∋ A) → NNF (`v i)
-    _`$_ : ∀ {A B} {d₁ : Γ ⊢ A `⊃ B} {d₂ : Γ ⊢ A} (p₁ : NNF d₁) (p₂ : NF d₂) → NNF (d₁ `$ d₂)
+  -- neutrals
+  data ENNF {Γ} : ∀ {A} → Γ ⊢ A → Set where
+    `v   : ∀ {A} {i : Γ ∋ A} → ENNF (`v i)
+    _`$_ : ∀ {A B} {t₁ : Γ ⊢ A `⊃ B} {t₂ : Γ ⊢ A} (p₁ : ENNF t₁) (p₂ : ENF t₂) → ENNF (t₁ `$ t₂)
 
--- d is in non-abstraction form (not `λ)
-data NAF {Γ} : ∀ {A} (d : Γ ⊢ A) → Set where
-  `v   : ∀ {A} (i : Γ ∋ A) → NAF (`v i)
-  _`$_ : ∀ {A B} (d₁ : Γ ⊢ A `⊃ B) (d₂ : Γ ⊢ A) → NAF (d₁ `$ d₂)
-
--- NF and NNF have unique proofs
+-- renaming
 mutual
-  uniNF : ∀ {Γ A} {d : Γ ⊢ A} (p p′ : NF d) → p ≡ p′
-  uniNF (`λ d)   (`λ .d)   = refl
-  uniNF (`nnf p) (`nnf p′) = `nnf & uniNNF p p′
+  renENF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → ENF t → ENF (ren e t)
+  renENF e `λ       = `λ
+  renENF e (`nnf p) = `nnf (renENNF e p)
 
-  uniNNF : ∀ {Γ A} {d : Γ ⊢ A} (p p′ : NNF d) → p ≡ p′
-  uniNNF (`v i)     (`v .i)      = refl
-  uniNNF (p₁ `$ p₂) (p₁′ `$ p₂′) = _`$_ & uniNNF p₁ p₁′ ⊗ uniNF p₂ p₂′
+  renENNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → ENNF t → ENNF (ren e t)
+  renENNF e `v         = `v
+  renENNF e (p₁ `$ p₂) = renENNF e p₁ `$ renENF e p₂
 
--- NAF has unique proofs
-uniNAF : ∀ {Γ A} {d : Γ ⊢ A} (p p′ : NAF d) → p ≡ p′
-uniNAF (`v i)     (`v .i)      = refl
-uniNAF (d₁ `$ d₂) (.d₁ `$ .d₂) = refl
-
+-- uniqueness of proofs
 mutual
-  renNF : ∀ {Γ Γ′ A} {d : Γ ⊢ A} (e : Γ ⊆ Γ′) (p : NF d) → NF (ren e d)
-  renNF e (`λ d)   = `λ (ren (keep e) d)
-  renNF e (`nnf p) = `nnf (renNNF e p)
+  uniENF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : ENF t) → p ≡ p′
+  uniENF `λ       `λ        = refl
+  uniENF (`nnf p) (`nnf p′) = `nnf & uniENNF p p′
 
-  renNNF : ∀ {Γ Γ′ A} {d : Γ ⊢ A} (e : Γ ⊆ Γ′) (p : NNF d) → NNF (ren e d)
-  renNNF e (`v i)     = `v (ren∋ e i)
-  renNNF e (p₁ `$ p₂) = renNNF e p₁ `$ renNF e p₂
+  uniENNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : ENNF t) → p ≡ p′
+  uniENNF `v         `v           = refl
+  uniENNF (p₁ `$ p₂) (p₁′ `$ p₂′) = _`$_ & uniENNF p₁ p₁′ ⊗ uniENF p₂ p₂′
+
+-- expandability
+data Exp {Γ} : ∀ {A} → Γ ⊢ A → Set where
+  `v   : ∀ {A B} {i : Γ ∋ A `⊃ B} → Exp (`v i)
+  _`$_ : ∀ {A B C} {t₁ : Γ ⊢ A `⊃ B `⊃ C} {t₂ : Γ ⊢ A} → Exp (t₁ `$ t₂)
+
+ENF→¬Exp : ∀ {Γ A} {t : Γ ⊢ A} → ENF t → ¬ Exp t
+ENF→¬Exp `λ       ()
+ENF→¬Exp (`nnf p) ()
+
+uniExp : ∀ {Γ A} {t : Γ ⊢ A} (x x′ : Exp t) → x ≡ x′
+uniExp `v  `v    = refl
+uniExp _`$_ _`$_ = refl
 
 
 ----------------------------------------------------------------------------------------------------
 
 -- definitional equality
 infix 4 _≝_
-data _≝_ {Γ} : ∀ {A} (d d′ : Γ ⊢ A) → Set where
-  refl≝  : ∀ {A} {d : Γ ⊢ A} → d ≝ d
-  sym≝   : ∀ {A} {d d′ : Γ ⊢ A} (eq : d ≝ d′) → d′ ≝ d
-  trans≝ : ∀ {A} {d d′ d″ : Γ ⊢ A} (eq : d ≝ d′) (eq′ : d′ ≝ d″) → d ≝ d″
-  cong$  : ∀ {A B} {d₁ d₁′ : Γ ⊢ A `⊃ B} {d₂ d₂′ : Γ ⊢ A} (eq₁ : d₁ ≝ d₁′) (eq₂ : d₂ ≝ d₂′) →
-           d₁ `$ d₂ ≝ d₁′ `$ d₂′
-  βred⊃  : ∀ {A B} {d₁ : A ∷ Γ ⊢ B} {d₂ : Γ ⊢ A} {d′ : Γ ⊢ B} (eq : d₁ [ d₂ ] ≡ d′) →
-           `λ d₁ `$ d₂ ≝ d′
-  ηexp⊃  : ∀ {A B} {d : Γ ⊢ A `⊃ B} {d′ : A ∷ Γ ⊢ A `⊃ B} (eq : weak d ≡ d′) →
-           d ≝ `λ (d′ `$ `v zero)
+data _≝_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
+  refl≝  : ∀ {A} {t : Γ ⊢ A} → t ≝ t
+  sym≝   : ∀ {A} {t t′ : Γ ⊢ A} (eq : t ≝ t′) → t′ ≝ t
+  trans≝ : ∀ {A} {t t′ t″ : Γ ⊢ A} (eq : t ≝ t′) (eq′ : t′ ≝ t″) → t ≝ t″
+  cong$  : ∀ {A B} {t₁ t₁′ : Γ ⊢ A `⊃ B} {t₂ t₂′ : Γ ⊢ A} (eq₁ : t₁ ≝ t₁′) (eq₂ : t₂ ≝ t₂′) →
+           t₁ `$ t₂ ≝ t₁′ `$ t₂′
+  βred⊃  : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′ : Γ ⊢ B} (eq : t′ ≡ t₁ [ t₂ ]) →
+           `λ t₁ `$ t₂ ≝ t′
+  ηexp⊃  : ∀ {A B} {t t′ : Γ ⊢ A `⊃ B} (eq : t′ ≡ `λ (weak t `$ `v zero)) → t ≝ t′
 
-open ≝Kit (λ {_} {_} {d} → refl≝ {d = d}) sym≝ trans≝ public
+open ≝Kit (λ {_} {_} {t} → refl≝ {t = t}) sym≝ trans≝ public
 
--- call-by-value reduction
-infix 4 _⟹_
-data _⟹_ {Γ} : ∀ {A} (d d′ : Γ ⊢ A) → Set where
-  cong$₁ : ∀ {A B} {d₁ d₁′ : Γ ⊢ A `⊃ B} {d₂ : Γ ⊢ A} (q₁ : NAF d₁) (r₁ : d₁ ⟹ d₁′) →
-           d₁ `$ d₂ ⟹ d₁′ `$ d₂
-  cong$₂ : ∀ {A B} {d₁ : Γ ⊢ A `⊃ B} {d₂ d₂′ : Γ ⊢ A} (p₁ : NF d₁) (r₂ : d₂ ⟹ d₂′) →
-           d₁ `$ d₂ ⟹ d₁ `$ d₂′
-  βred⊃  : ∀ {A B} {d₁ : A ∷ Γ ⊢ B} {d₂ : Γ ⊢ A} {d′ : Γ ⊢ B} (eq : d₁ [ d₂ ] ≡ d′)
-             (p₂ : NF d₂) →
-           `λ d₁ `$ d₂ ⟹ d′
-  ηexp⊃  : ∀ {A B} {d : Γ ⊢ A `⊃ B} {d′ : A ∷ Γ ⊢ A `⊃ B} (eq : weak d ≡ d′) (p : NF d)
-             (q : NAF d) →
-           d ⟹ `λ (d′ `$ `v zero)
 
-open ⟹Kit _⟹_ public
+----------------------------------------------------------------------------------------------------
+
+-- call-by-value restricted expansionary reduction; Ghani p.51, table 3-4
+mutual
+  infix 4 _⇒F_
+  data _⇒F_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
+    embI  : ∀ {A} {t t′ : Γ ⊢ A} (r : t ⇒I t′) → t ⇒F t′
+    ηexp⊃ : ∀ {A B} {t t′ : Γ ⊢ A `⊃ B} (eq : t′ ≡ `λ (weak t `$ `v zero)) (x : Exp t) → t ⇒F t′
+
+  infix 4 _⇒I_
+  data _⇒I_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
+    cong$₁  : ∀ {A B} {t₁ t₁′ : Γ ⊢ A `⊃ B} {t₂ : Γ ⊢ A} (r : t₁ ⇒I t₁′) →
+              t₁ `$ t₂ ⇒I t₁′ `$ t₂
+    congI$₂ : ∀ {A B} {t₁ : Γ ⊢ A `⊃ B} {t₂ t₂′ : Γ ⊢ A} (p₁ : ENF t₁) (r₂ : t₂ ⇒I t₂′) →
+              t₁ `$ t₂ ⇒I t₁ `$ t₂′
+    congF$₂ : ∀ {A B} {t₁ : Γ ⊢ A `⊃ B} {t₂ t₂′ : Γ ⊢ A} (p₁ : ENF t₁) (r₂ : t₂ ⇒F t₂′) →
+              t₁ `$ t₂ ⇒I t₁ `$ t₂′
+    βred⊃   : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′ : Γ ⊢ B} (eq : t′ ≡ t₁ [ t₂ ])
+                (p₂ : ENF t₂) →
+              `λ t₁ `$ t₂ ⇒I t′
+
+module F = ⇒Kit _⇒F_
+module I = ⇒Kit _⇒I_
 
 mutual
-  NF→¬R : ∀ {Γ A} {d : Γ ⊢ A} (p : NF d) → ¬R d
-  NF→¬R (`λ d)   (ηexp⊃ refl p ())
-  NF→¬R (`nnf p) r                 = r ↯ NNF→¬R p
+  ENF→¬FR : ∀ {Γ A} {t : Γ ⊢ A} → ENF t → F.¬R t
+  ENF→¬FR `λ       (ηexp⊃ refl ())
+  ENF→¬FR (`nnf p) r               = r ↯ ENNF→¬FR p
 
-  NNF→¬R : ∀ {Γ A} {d  : Γ ⊢ A} (p : NNF d) → ¬R d
-  NNF→¬R (`v i)     (ηexp⊃ refl () q)
-  NNF→¬R (p₁ `$ p₂) (cong$₁ q₁ r₁)    = r₁ ↯ NNF→¬R p₁
-  NNF→¬R (p₁ `$ p₂) (cong$₂ p₁′ r₂)   = r₂ ↯ NF→¬R p₂
-  NNF→¬R (() `$ p₂) (βred⊃ refl p₂′)
-  NNF→¬R (p₁ `$ p₂) (ηexp⊃ refl () q)
+  ENNF→¬FR : ∀ {Γ} {t : Γ ⊢ `◦} → ENNF t → F.¬R t
+  ENNF→¬FR p (embI r) = r ↯ ENNF→¬IR p
 
--- _⟹_ is deterministic
-det⟹ : ∀ {Γ A} {d d′ d″ : Γ ⊢ A} (r : d ⟹ d′) (r′ : d ⟹ d″) → d′ ≡ d″
-det⟹ (cong$₁ q₁ r₁)   (cong$₁ q₁′ r₁′)   = (_`$ _) & det⟹ r₁ r₁′
-det⟹ (cong$₁ q₁ r₁)   (cong$₂ p₁′ r₂′)   = r₁ ↯ NF→¬R p₁′
-det⟹ (cong$₁ () r₁)   (βred⊃ refl p₂′)
-det⟹ (cong$₂ p₁ r₂)   (cong$₁ q₁′ r₁′)   = r₁′ ↯ NF→¬R p₁
-det⟹ (cong$₂ p₁ r₂)   (cong$₂ p₁′ r₂′)   = (_ `$_) & det⟹ r₂ r₂′
-det⟹ (cong$₂ p₁ r₂)   (βred⊃ refl p₂′)   = r₂ ↯ NF→¬R p₂′
-det⟹ (βred⊃ refl p₂)  (cong$₂ p₁′ r₂′)   = r₂′ ↯ NF→¬R p₂
-det⟹ (βred⊃ refl p₂)  (βred⊃ refl p₂′)   = refl
-det⟹ (βred⊃ refl p₂)  (cong$₁ () r₁′)
-det⟹ (ηexp⊃ refl p q) (ηexp⊃ refl p′ q′) = refl
+  ENF→¬IR : ∀ {Γ A} {t : Γ ⊢ A} → ENF t → I.¬R t
+  ENF→¬IR (`nnf p) r = r ↯ ENNF→¬IR p
 
--- _⟹_ has unique proofs
-uni⟹ : ∀ {Γ A} {d d′ : Γ ⊢ A} (r r′ : d ⟹ d′) → r ≡ r′
-uni⟹ (cong$₁ q₁ r₁)   (cong$₁ q₁′ r₁′)   = cong$₁ & uniNAF q₁ q₁′ ⊗ uni⟹ r₁ r₁′
-uni⟹ (cong$₁ q₁ r₁)   (cong$₂ p₁′ r₂′)   = r₁ ↯ NF→¬R p₁′
-uni⟹ (cong$₂ p₁ r₂)   (cong$₁ q₁′ r₁′)   = r₁′ ↯ NF→¬R p₁
-uni⟹ (cong$₂ p₁ r₂)   (cong$₂ p₁′ r₂′)   = cong$₂ & uniNF p₁ p₁′ ⊗ uni⟹ r₂ r₂′
-uni⟹ (cong$₂ p₁ r₂)   (βred⊃ eq′ p₂′)    = r₂ ↯ NF→¬R p₂′
-uni⟹ (βred⊃ eq p₂)    (cong$₂ p₁′ r₂′)   = r₂′ ↯ NF→¬R p₂
-uni⟹ (βred⊃ refl p₂)  (βred⊃ refl p₂′)   = βred⊃ refl & uniNF p₂ p₂′
-uni⟹ (ηexp⊃ refl p q) (ηexp⊃ refl p′ q′) = ηexp⊃ refl & uniNF p p′ ⊗ uniNAF q q′
+  ENNF→¬IR : ∀ {Γ A} {t : Γ ⊢ A} → ENNF t → I.¬R t
+  ENNF→¬IR `v         ()
+  ENNF→¬IR (p₁ `$ p₂) (cong$₁ r₁)      = r₁ ↯ ENNF→¬IR p₁
+  ENNF→¬IR (p₁ `$ p₂) (congI$₂ p₁′ r₂) = r₂ ↯ ENF→¬IR p₂
+  ENNF→¬IR (p₁ `$ p₂) (congF$₂ p₁′ r₂) = r₂ ↯ ENF→¬FR p₂
 
--- -- TODO: what to do about η-expansion?
--- RF⊎NF : ∀ {Γ A} (d : Γ ⊢ A) → RF d ⊎ NF d
--- RF⊎NF {A = `◦}     (`v i)           = nf (`nnf (`v i))
--- RF⊎NF {A = A `⊃ B} (`v i)           = rf (`λ (weak (`v i) `$ `v zero) , ηexp⊃ refl {!!} (`v i))
--- RF⊎NF              (`λ d)           = nf (`λ d)
--- RF⊎NF              (d₁ `$ d₂)       with RF⊎NF d₁ | RF⊎NF d₂
--- ... | rf (d₁′ , r₁) | _               = rf (d₁′ `$ d₂ , cong$₁ {!!} r₁)
--- ... | nf p₁         | rf (d₂′ , r₂)   = rf (d₁ `$ d₂′ , cong$₂ p₁ r₂)
--- ... | nf (`λ d₁′)   | nf p₂           = rf (d₁′ [ d₂ ] , βred⊃ refl p₂)
+-- progress?
+-- TODO: how to define a notion of normal form that corresponds to ⇒I-irreducibility?
+mutual
+  postulate
+    WTFNF      : ∀ {Γ A} → Γ ⊢ A → Set
+    WTFNF→¬FR : ∀ {Γ A} {t : Γ ⊢ A} → WTFNF t → F.¬R t
+    prog⇒I    : ∀ {Γ A} (t : Γ ⊢ A) → I.Prog WTFNF t
+
+  prog⇒F : ∀ {Γ A} (t : Γ ⊢ A) → F.Prog ENF t
+  prog⇒F {A = A `⊃ B} (`v i)     = F.step (ηexp⊃ refl `v)
+  prog⇒F {A = `◦}     (`v i)     = F.done (`nnf `v)
+  prog⇒F              (`λ t)     = F.done `λ
+  prog⇒F {A = A `⊃ B} (t₁ `$ t₂) = F.step (ηexp⊃ refl _`$_)
+  prog⇒F {A = `◦}     (t₁ `$ t₂) with prog⇒I t₁ | prog⇒F t₁ | prog⇒F t₂
+  ... | I.step r₁ | _         | _         = F.step (embI (cong$₁ r₁))
+  ... | I.done p₁ | F.step r₁ | _         = r₁ ↯ WTFNF→¬FR p₁
+  ... | I.done _  | F.done p₁ | F.step r₂ = F.step (embI (congF$₂ p₁ r₂))
+  ... | I.done _  | F.done `λ | F.done p₂ = F.step (embI (βred⊃ refl p₂))
+
+-- determinism?
+-- TODO: looks unprovable
+-- mutual
+--   det⇒I : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} (r : t ⇒I t′) (r′ : t ⇒I t″) → t′ ≡ t″
+--   det⇒I (cong$₁ r₁)     (cong$₁ r₁′)      = (_`$ _) & det⇒I r₁ r₁′
+--   det⇒I (cong$₁ r₁)     (congI$₂ p₁′ r₂′) = r₁ ↯ ENF→¬IR p₁′
+--   det⇒I (cong$₁ r₁)     (congF$₂ p₁′ r₂′) = r₁ ↯ ENF→¬IR p₁′
+--   det⇒I (congI$₂ p₁ r₂) (cong$₁ r₁′)      = r₁′ ↯ ENF→¬IR p₁
+--   det⇒I (congI$₂ p₁ r₂) (congI$₂ p₁′ r₂′) = (_ `$_) & det⇒I r₂ r₂′
+--   det⇒I (congI$₂ p₁ r₂) (congF$₂ p₁′ r₂′) = (_ `$_) & det⇒ r₂ r₂′
+--   det⇒I (congI$₂ p₁ r₂) (βred⊃ refl p₂′)  = r₂ ↯ ENF→¬IR p₂′
+--   det⇒I (congF$₂ p₁ r₂) (cong$₁ r₁′)      = r₁′ ↯ ENF→¬IR p₁
+--   det⇒I (congF$₂ p₁ r₂) (congI$₂ p₁′ r₂′) = (_ `$_) & sym (det⇒ r₂′ r₂)
+--   det⇒I (congF$₂ p₁ r₂) (congF$₂ p₁′ r₂′) = (_ `$_) & det⇒F r₂ r₂′
+--   det⇒I (congF$₂ p₁ r₂) (βred⊃ refl p₂′)  = r₂ ↯ ENF→¬FR p₂′
+--   det⇒I (βred⊃ refl p₂) (congI$₂ p₁′ r₂′) = r₂′ ↯ ENF→¬IR p₂
+--   det⇒I (βred⊃ refl p₂) (congF$₂ p₁′ r₂′) = r₂′ ↯ ENF→¬FR p₂
+--   det⇒I (βred⊃ refl p₂) (βred⊃ refl p₂′)  = refl
 --
--- open RF⊎NFKit NF→¬R RF⊎NF public
+--   det⇒F : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} (r : t ⇒F t′) (r′ : t ⇒F t″) → t′ ≡ t″
+--   det⇒F (embI r)       r′              = det⇒ r r′
+--   det⇒F (ηexp⊃ refl x) (embI r′)       = {!!}
+--   det⇒F (ηexp⊃ refl x) (ηexp⊃ refl x′) = refl
 --
--- open ⟹*Kit det⟹ public
+--   det⇒ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} (r : t ⇒I t′) (r′ : t ⇒F t″) → t′ ≡ t″
+--   det⇒ r (embI r′)      = det⇒I r r′
+--   det⇒ r (ηexp⊃ eq′ x′) = {!!}
+
+-- uniqueness of proofs?
+-- TODO: looks unprovable
+-- mutual
+--   uni⇒I : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒I t′) → r ≡ r′
+--   uni⇒I (cong$₁ r₁)     (cong$₁ r₁′)      = cong$₁ & uni⇒I r₁ r₁′
+--   uni⇒I (cong$₁ r₁)     (congI$₂ p₁′ r₂′) = r₁ ↯ ENF→¬IR p₁′
+--   uni⇒I (cong$₁ r₁)     (congF$₂ p₁′ r₂′) = r₁ ↯ ENF→¬IR p₁′
+--   uni⇒I (congI$₂ p₁ r₂) (cong$₁ r₁′)      = r₁′ ↯ ENF→¬IR p₁
+--   uni⇒I (congI$₂ p₁ r₂) (congI$₂ p₁′ r₂′) = congI$₂ & uniENF p₁ p₁′ ⊗ uni⇒I r₂ r₂′
+--   uni⇒I (congI$₂ p₁ r₂) (congF$₂ p₁′ r₂′) = {!!}
+--   uni⇒I (congI$₂ p₁ r₂) (βred⊃ eq′ p₂′)   = r₂ ↯ ENF→¬IR p₂′
+--   uni⇒I (congF$₂ p₁ r₂) (cong$₁ r₁′)      = r₁′ ↯ ENF→¬IR p₁
+--   uni⇒I (congF$₂ p₁ r₂) (congI$₂ p₁′ r₂′) = {!!}
+--   uni⇒I (congF$₂ p₁ r₂) (congF$₂ p₁′ r₂′) = congF$₂ & uniENF p₁ p₁′ ⊗ uni⇒F r₂ r₂′
+--   uni⇒I (congF$₂ p₁ r₂) (βred⊃ eq′ p₂′)   = r₂ ↯ ENF→¬FR p₂′
+--   uni⇒I (βred⊃ eq p₂)   (congI$₂ p₁′ r₂′) = r₂′ ↯ ENF→¬IR p₂
+--   uni⇒I (βred⊃ eq p₂)   (congF$₂ p₁′ r₂′) = r₂′ ↯ ENF→¬FR p₂
+--   uni⇒I (βred⊃ refl p₂) (βred⊃ refl p₂′)  = βred⊃ refl & uniENF p₂ p₂′
+--
+--   uni⇒F : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒F t′) → r ≡ r′
+--   uni⇒F (embI r)       (embI r′)       = embI & uni⇒I r r′
+--   uni⇒F (embI r)       (ηexp⊃ eq′ x′)  = {!!}
+--   uni⇒F (ηexp⊃ eq x)   (embI r′)       = {!!}
+--   uni⇒F (ηexp⊃ refl x) (ηexp⊃ refl x′) = ηexp⊃ refl & uniExp x x′
+
+
+----------------------------------------------------------------------------------------------------
+
+embI* : ∀ {Γ A} {t t′ : Γ ⊢ A} → t I.⇒* t′ → t F.⇒* t′
+embI* I.done        = F.done
+embI* (I.step r rs) = F.step (embI r) (embI* rs)
+
+-- Ghani p.51, lemma 3.3.0 (unnumbered)
+Lem330 : ∀ {Γ A} → Γ ⊢ A → Γ ⊢ A → Set
+Lem330 {A = A} t t′ = t ⇒I t′
+                    ⊎ Σ (Ty × Ty) λ { (A′ , B′) →
+                        Σ (A ≡ A′ `⊃ B′) λ { refl →
+                          t′ ≡ `λ (weak t `$ `v zero) × Exp t } }
+
+FR→lem330 : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒F t′ → Lem330 t t′
+FR→lem330 (embI (cong$₁ r₁))     = inj₁ (cong$₁ r₁)
+FR→lem330 (embI (congI$₂ p₁ r₂)) = inj₁ (congI$₂ p₁ r₂)
+FR→lem330 (embI (congF$₂ p₁ r₂)) = inj₁ (congF$₂ p₁ r₂)
+FR→lem330 (embI (βred⊃ eq p₂))   = inj₁ (βred⊃ eq p₂)
+FR→lem330 (ηexp⊃ refl x)         = inj₂ (_ , refl , refl , x)
+
+lem330→FR : ∀ {Γ A} {t t′ : Γ ⊢ A} → Lem330 t t′ → t ⇒F t′
+lem330→FR (inj₁ r)                     = embI r
+lem330→FR (inj₂ (_ , refl , refl , x)) = ηexp⊃ refl x
+
+-- local confluence; Ghani p.53, lemma 3.3.3
+-- TODO: needs lemma 3.3.2
+-- mutual
+--   lconf⇒F : ∀ {Γ A} {t t₁ t₂ : Γ ⊢ A} → t ⇒F t₁ → t ⇒F t₂ →
+--              Σ _ λ t′ → t₁ F.⇒* t′ × t₂ F.⇒* t′
+--   lconf⇒F {t = `v i}     (ηexp⊃ refl x) (ηexp⊃ refl x′) = _ , F.done , F.done
+--   lconf⇒F {t = `λ t}     (embI r)       (embI r′)       with lem333⇒I r r′
+--   ... | t′ , inj₁ rs , inj₁ rs′                            = t′ , embI* rs , embI* rs′
+--   ... | t′ , inj₁ rs , inj₂ rs′                            = t′ , embI* rs , rs′
+--   ... | t′ , inj₂ rs , inj₁ rs′                            = t′ , rs , embI* rs′
+--   ... | t′ , inj₂ rs , inj₂ rs′                            = t′ , rs , rs′
+--   lconf⇒F {t = t₁ `$ t₂} r r′ = {!!}
+--
+--   lem333⇒I : ∀ {Γ A} {t t₁ t₂ : Γ ⊢ A} → t ⇒I t₁ → t ⇒I t₂ →
+--               Σ _ λ t′ → (t₁ I.⇒* t′ ⊎ t₁ F.⇒* t′) × (t₂ I.⇒* t′ ⊎ t₂ F.⇒* t′)
+--   lem333⇒I {t = t₁ `$ t₂} r r′ = {!!}
 
 
 ----------------------------------------------------------------------------------------------------

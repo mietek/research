@@ -5,105 +5,129 @@ open import STLC-Base public
 
 ----------------------------------------------------------------------------------------------------
 
+-- β-short not-η-long weak normal forms
 mutual
-  -- d is in β-short not-η-long weak normal form
-  data NF {Γ} : ∀ {A} (d : Γ ⊢ A) → Set where
-    `λ   : ∀ {A B} (d : A ∷ Γ ⊢ B) → NF (`λ d)
-    `nnf : ∀ {A} {d : Γ ⊢ A} (p : NNF d) → NF d
+  data NF {Γ} : ∀ {A} → Γ ⊢ A → Set where
+    `λ   : ∀ {A B} {t : A ∷ Γ ⊢ B} → NF (`λ t)
+    `nnf : ∀ {A} {t : Γ ⊢ A} (p : NNF t) → NF t
 
-  -- d is in neutral β-short not-η-long weak normal form
-  data NNF {Γ} : ∀ {A} (d : Γ ⊢ A) → Set where
-    `v   : ∀ {A} (i : Γ ∋ A) → NNF (`v i)
-    _`$_ : ∀ {A B} {d₁ : Γ ⊢ A `⊃ B} {d₂ : Γ ⊢ A} (p₁ : NNF d₁) (p₂ : NF d₂) → NNF (d₁ `$ d₂)
+  -- neutrals
+  data NNF {Γ} : ∀ {A} → Γ ⊢ A → Set where
+    `v   : ∀ {A} {i : Γ ∋ A} → NNF (`v i)
+    _`$_ : ∀ {A B} {t₁ : Γ ⊢ A `⊃ B} {t₂ : Γ ⊢ A} (p₁ : NNF t₁) (p₂ : NF t₂) → NNF (t₁ `$ t₂)
 
--- NF and NNF have unique proofs
+-- TODO: delete?
+-- -- decidability
+-- mutual
+--   NF? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (NF t)
+--   NF? (`v i)            = yes (`nnf `v)
+--   NF? (`λ t)            = yes `λ
+--   NF? (t₁ `$ t₂)        with NNF? t₁ | NF? t₂
+--   ... | no ¬p₁ | _        = no λ { (`nnf (p₁ `$ p₂)) → p₁ ↯ ¬p₁ }
+--   ... | yes p₁ | no ¬p₂   = no λ { (`nnf (p₁ `$ p₂)) → p₂ ↯ ¬p₂ }
+--   ... | yes p₁ | yes p₂   = yes (`nnf (p₁ `$ p₂))
+--
+--   NNF? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (NNF t)
+--   NNF? (`v i)           = yes `v
+--   NNF? (`λ t)           = no λ ()
+--   NNF? (t₁ `$ t₂)       with NNF? t₁ | NF? t₂
+--   ... | no ¬p₁ | _        = no λ { (p₁ `$ p₂) → p₁ ↯ ¬p₁ }
+--   ... | yes p₁ | no ¬p₂   = no λ { (p₁ `$ p₂) → p₂ ↯ ¬p₂ }
+--   ... | yes p₁ | yes p₂   = yes (p₁ `$ p₂)
+
+-- renaming
 mutual
-  uniNF : ∀ {Γ A} {d : Γ ⊢ A} (p p′ : NF d) → p ≡ p′
-  uniNF (`λ d)   (`λ .d)   = refl
-  uniNF (`nnf p) (`nnf p′) = `nnf & uniNNF p p′
-
-  uniNNF : ∀ {Γ A} {d : Γ ⊢ A} (p p′ : NNF d) → p ≡ p′
-  uniNNF (`v i)     (`v .i)      = refl
-  uniNNF (p₁ `$ p₂) (p₁′ `$ p₂′) = _`$_ & uniNNF p₁ p₁′ ⊗ uniNF p₂ p₂′
-
-mutual
-  renNF : ∀ {Γ Γ′ A} {d : Γ ⊢ A} (e : Γ ⊆ Γ′) (p : NF d) → NF (ren e d)
-  renNF e (`λ d)   = `λ (ren (keep e) d)
+  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren e t)
+  renNF e `λ       = `λ
   renNF e (`nnf p) = `nnf (renNNF e p)
 
-  renNNF : ∀ {Γ Γ′ A} {d : Γ ⊢ A} (e : Γ ⊆ Γ′) (p : NNF d) → NNF (ren e d)
-  renNNF e (`v i)     = `v (ren∋ e i)
+  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren e t)
+  renNNF e `v         = `v
   renNNF e (p₁ `$ p₂) = renNNF e p₁ `$ renNF e p₂
+
+-- uniqueness of proofs
+mutual
+  uniNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
+  uniNF `λ       `λ        = refl
+  uniNF (`nnf p) (`nnf p′) = `nnf & uniNNF p p′
+
+  uniNNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NNF t) → p ≡ p′
+  uniNNF `v         `v           = refl
+  uniNNF (p₁ `$ p₂) (p₁′ `$ p₂′) = _`$_ & uniNNF p₁ p₁′ ⊗ uniNF p₂ p₂′
 
 
 ----------------------------------------------------------------------------------------------------
 
 -- definitional equality
 infix 4 _≝_
-data _≝_ {Γ} : ∀ {A} (d d′ : Γ ⊢ A) → Set where
-  refl≝  : ∀ {A} {d : Γ ⊢ A} → d ≝ d
-  sym≝   : ∀ {A} {d d′ : Γ ⊢ A} (eq : d ≝ d′) → d′ ≝ d
-  trans≝ : ∀ {A} {d d′ d″ : Γ ⊢ A} (eq : d ≝ d′) (eq′ : d′ ≝ d″) → d ≝ d″
-  cong$  : ∀ {A B} {d₁ d₁′ : Γ ⊢ A `⊃ B} {d₂ d₂′ : Γ ⊢ A} (eq₁ : d₁ ≝ d₁′) (eq₂ : d₂ ≝ d₂′) →
-           d₁ `$ d₂ ≝ d₁′ `$ d₂′
-  βred⊃  : ∀ {A B} {d₁ : A ∷ Γ ⊢ B} {d₂ : Γ ⊢ A} {d′ : Γ ⊢ B} (eq : d₁ [ d₂ ] ≡ d′) →
-           `λ d₁ `$ d₂ ≝ d′
+data _≝_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
+  refl≝  : ∀ {A} {t : Γ ⊢ A} → t ≝ t
+  sym≝   : ∀ {A} {t t′ : Γ ⊢ A} (eq : t ≝ t′) → t′ ≝ t
+  trans≝ : ∀ {A} {t t′ t″ : Γ ⊢ A} (eq : t ≝ t′) (eq′ : t′ ≝ t″) → t ≝ t″
+  cong$  : ∀ {A B} {t₁ t₁′ : Γ ⊢ A `⊃ B} {t₂ t₂′ : Γ ⊢ A} (eq₁ : t₁ ≝ t₁′) (eq₂ : t₂ ≝ t₂′) →
+           t₁ `$ t₂ ≝ t₁′ `$ t₂′
+  βred⊃  : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′ : Γ ⊢ B} (eq : t′ ≡ t₁ [ t₂ ]) →
+           `λ t₁ `$ t₂ ≝ t′
 
-open ≝Kit (λ {_} {_} {d} → refl≝ {d = d}) sym≝ trans≝ public
+open ≝Kit (λ {_} {_} {t} → refl≝ {t = t}) sym≝ trans≝ public
+
+
+----------------------------------------------------------------------------------------------------
 
 -- call-by-value reduction
-infix 4 _⟹_
-data _⟹_ {Γ} : ∀ {A} (d d′ : Γ ⊢ A) → Set where
-  cong$₁ : ∀ {A B} {d₁ d₁′ : Γ ⊢ A `⊃ B} {d₂ : Γ ⊢ A} (r₁ : d₁ ⟹ d₁′) →
-           d₁ `$ d₂ ⟹ d₁′ `$ d₂
-  cong$₂ : ∀ {A B} {d₁ : Γ ⊢ A `⊃ B} {d₂ d₂′ : Γ ⊢ A} (p₁ : NF d₁) (r₂ : d₂ ⟹ d₂′) →
-           d₁ `$ d₂ ⟹ d₁ `$ d₂′
-  βred⊃  : ∀ {A B} {d₁ : A ∷ Γ ⊢ B} {d₂ : Γ ⊢ A} {d′ : Γ ⊢ B} (eq : d₁ [ d₂ ] ≡ d′)
-             (p₂ : NF d₂) →
-           `λ d₁ `$ d₂ ⟹ d′
+infix 4 _⇒_
+data _⇒_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
+  cong$₁ : ∀ {A B} {t₁ t₁′ : Γ ⊢ A `⊃ B} {t₂ : Γ ⊢ A} (r : t₁ ⇒ t₁′) →
+           t₁ `$ t₂ ⇒ t₁′ `$ t₂
+  cong$₂ : ∀ {A B} {t₁ : Γ ⊢ A `⊃ B} {t₂ t₂′ : Γ ⊢ A} (p₁ : NF t₁) (r₂ : t₂ ⇒ t₂′) →
+           t₁ `$ t₂ ⇒ t₁ `$ t₂′
+  βred⊃  : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′ : Γ ⊢ B} (eq : t′ ≡ t₁ [ t₂ ])
+             (p₂ : NF t₂) →
+           `λ t₁ `$ t₂ ⇒ t′
 
-open ⟹Kit _⟹_ public
+open ⇒Kit _⇒_ public
 
 mutual
-  NF→¬R : ∀ {Γ A} {d : Γ ⊢ A} (p : NF d) → ¬R d
+  NF→¬R : ∀ {Γ A} {t : Γ ⊢ A} → NF t → ¬R t
   NF→¬R (`nnf p) r = r ↯ NNF→¬R p
 
-  NNF→¬R : ∀ {Γ A} {d  : Γ ⊢ A} (p : NNF d) → ¬R d
+  NNF→¬R : ∀ {Γ A} {t  : Γ ⊢ A} → NNF t → ¬R t
   NNF→¬R (p₁ `$ p₂) (cong$₁ r₁)     = r₁ ↯ NNF→¬R p₁
   NNF→¬R (p₁ `$ p₂) (cong$₂ p₁′ r₂) = r₂ ↯ NF→¬R p₂
 
--- _⟹_ is deterministic
-det⟹ : ∀ {Γ A} {d d′ d″ : Γ ⊢ A} (r : d ⟹ d′) (r′ : d ⟹ d″) → d′ ≡ d″
-det⟹ (cong$₁ r₁)     (cong$₁ r₁′)     = (_`$ _) & det⟹ r₁ r₁′
-det⟹ (cong$₁ r₁)     (cong$₂ p₁′ r₂′) = r₁ ↯ NF→¬R p₁′
-det⟹ (cong$₂ p₁ r₂)  (cong$₁ r₁′)     = r₁′ ↯ NF→¬R p₁
-det⟹ (cong$₂ p₁ r₂)  (cong$₂ p₁′ r₂′) = (_ `$_) & det⟹ r₂ r₂′
-det⟹ (cong$₂ p₁ r₂)  (βred⊃ refl p₂′) = r₂ ↯ NF→¬R p₂′
-det⟹ (βred⊃ refl p₂) (cong$₂ p₁′ r₂′) = r₂′ ↯ NF→¬R p₂
-det⟹ (βred⊃ refl p₂) (βred⊃ refl p₂′) = refl
+-- progress
+prog⇒ : ∀ {Γ A} (t : Γ ⊢ A) → Prog NF t
+prog⇒ (`v i)                  = done (`nnf `v)
+prog⇒ (`λ t)                  = done `λ
+prog⇒ (t₁ `$ t₂)              with prog⇒ t₁ | prog⇒ t₂
+... | step r₁        | _         = step (cong$₁ r₁)
+... | done p₁        | step r₂   = step (cong$₂ p₁ r₂)
+... | done `λ        | done p₂   = step (βred⊃ refl p₂)
+... | done (`nnf p₁) | done p₂   = done (`nnf (p₁ `$ p₂))
 
--- _⟹_ has unique proofs
-uni⟹ : ∀ {Γ A} {d d′ : Γ ⊢ A} (r r′ : d ⟹ d′) → r ≡ r′
-uni⟹ (cong$₁ r₁)     (cong$₁ r₁′)     = cong$₁ & uni⟹ r₁ r₁′
-uni⟹ (cong$₁ r₁)     (cong$₂ p₁′ r₂′) = r₁ ↯ NF→¬R p₁′
-uni⟹ (cong$₂ p₁ r₂)  (cong$₁ r₁′)     = r₁′ ↯ NF→¬R p₁
-uni⟹ (cong$₂ p₁ r₂)  (cong$₂ p₁′ r₂′) = cong$₂ & uniNF p₁ p₁′ ⊗ uni⟹ r₂ r₂′
-uni⟹ (cong$₂ p₁ r₂)  (βred⊃ eq′ p₂′)  = r₂ ↯ NF→¬R p₂′
-uni⟹ (βred⊃ eq p₂)   (cong$₂ p₁′ r₂′) = r₂′ ↯ NF→¬R p₂
-uni⟹ (βred⊃ refl p₂) (βred⊃ refl p₂′) = βred⊃ refl & uniNF p₂ p₂′
+open ProgKit NF→¬R prog⇒ public
 
-RF⊎NF : ∀ {Γ A} (d : Γ ⊢ A) → RF d ⊎ NF d
-RF⊎NF (`v i)                        = nf (`nnf (`v i))
-RF⊎NF (`λ d)                        = nf (`λ d)
-RF⊎NF (d₁ `$ d₂)                    with RF⊎NF d₁ | RF⊎NF d₂
-... | rf (d₁′ , r₁) | _               = rf (d₁′ `$ d₂ , cong$₁ r₁)
-... | nf p₁         | rf (d₂′ , r₂)   = rf (d₁ `$ d₂′ , cong$₂ p₁ r₂)
-... | nf (`λ d₁′)   | nf p₂           = rf (d₁′ [ d₂ ] , βred⊃ refl p₂)
-... | nf (`nnf p₁)  | nf p₂           = nf (`nnf (p₁ `$ p₂))
+-- determinism
+det⇒ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t ⇒ t″ → t′ ≡ t″
+det⇒ (cong$₁ r₁)     (cong$₁ r₁′)     = (_`$ _) & det⇒ r₁ r₁′
+det⇒ (cong$₁ r₁)     (cong$₂ p₁′ r₂′) = r₁ ↯ NF→¬R p₁′
+det⇒ (cong$₂ p₁ r₂)  (cong$₁ r₁′)     = r₁′ ↯ NF→¬R p₁
+det⇒ (cong$₂ p₁ r₂)  (cong$₂ p₁′ r₂′) = (_ `$_) & det⇒ r₂ r₂′
+det⇒ (cong$₂ p₁ r₂)  (βred⊃ refl p₂′) = r₂ ↯ NF→¬R p₂′
+det⇒ (βred⊃ refl p₂) (cong$₂ p₁′ r₂′) = r₂′ ↯ NF→¬R p₂
+det⇒ (βred⊃ refl p₂) (βred⊃ refl p₂′) = refl
 
-open RF⊎NFKit NF→¬R RF⊎NF public
+open DetKit NF→¬R det⇒ public
 
-open ⟹*Kit det⟹ public
+-- uniqueness of proofs
+uni⇒ : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒ t′) → r ≡ r′
+uni⇒ (cong$₁ r₁)     (cong$₁ r₁′)     = cong$₁ & uni⇒ r₁ r₁′
+uni⇒ (cong$₁ r₁)     (cong$₂ p₁′ r₂′) = r₁ ↯ NF→¬R p₁′
+uni⇒ (cong$₂ p₁ r₂)  (cong$₁ r₁′)     = r₁′ ↯ NF→¬R p₁
+uni⇒ (cong$₂ p₁ r₂)  (cong$₂ p₁′ r₂′) = cong$₂ & uniNF p₁ p₁′ ⊗ uni⇒ r₂ r₂′
+uni⇒ (cong$₂ p₁ r₂)  (βred⊃ eq′ p₂′)  = r₂ ↯ NF→¬R p₂′
+uni⇒ (βred⊃ eq p₂)   (cong$₂ p₁′ r₂′) = r₂′ ↯ NF→¬R p₂
+uni⇒ (βred⊃ refl p₂) (βred⊃ refl p₂′) = βred⊃ refl & uniNF p₂ p₂′
 
 
 ----------------------------------------------------------------------------------------------------
