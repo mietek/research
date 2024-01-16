@@ -100,10 +100,10 @@ data _⇒_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
 open ⇒Kit _⇒_ public
 
 mutual
-  NF→¬R : ∀ {Γ A} {t : Γ ⊢ A} (p : NF t) → ¬R t
+  NF→¬R : ∀ {Γ A} {t : Γ ⊢ A} → NF t → ¬R t
   NF→¬R (`nnf p) r = r ↯ NNF→¬R p
 
-  NNF→¬R : ∀ {Γ A} {t  : Γ ⊢ A} (p : NNF t) → ¬R t
+  NNF→¬R : ∀ {Γ A} {t  : Γ ⊢ A} → NNF t → ¬R t
   NNF→¬R (p₁ `$ p₂)      (cong$₁ r₁)           = r₁ ↯ NNF→¬R p₁
   NNF→¬R (p₁ `$ p₂)      (cong$₂ p₁′ r₂)       = r₂ ↯ NF→¬R p₂
   NNF→¬R (() `$ p₂)      (βred⊃ eq p₂′)
@@ -133,7 +133,7 @@ prog⇒ (`rec t₁ t₂ t₃)                    with prog⇒ t₁ | prog⇒ t�
 open ProgKit NF→¬R prog⇒ public
 
 -- determinism
-det⇒ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} (r : t ⇒ t′) (r′ : t ⇒ t″) → t′ ≡ t″
+det⇒ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t ⇒ t″ → t′ ≡ t″
 det⇒ (cong$₁ r₁)         (cong$₁ r₁′)           = (_`$ _) & det⇒ r₁ r₁′
 det⇒ (cong$₁ r₁)         (cong$₂ p₁′ r₂′)       = r₁ ↯ NF→¬R p₁′
 det⇒ (cong$₂ p₁ r₂)      (cong$₁ r₁′)           = r₁′ ↯ NF→¬R p₁

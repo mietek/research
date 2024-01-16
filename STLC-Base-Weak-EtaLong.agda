@@ -130,7 +130,7 @@ mutual
 -- determinism?
 -- TODO: looks unprovable
 -- mutual
---   det⇒I : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} (r : t ⇒I t′) (r′ : t ⇒I t″) → t′ ≡ t″
+--   det⇒I : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒I t′ → t ⇒I t″ → t′ ≡ t″
 --   det⇒I (cong$₁ r₁)     (cong$₁ r₁′)      = (_`$ _) & det⇒I r₁ r₁′
 --   det⇒I (cong$₁ r₁)     (congI$₂ p₁′ r₂′) = r₁ ↯ ENF→¬IR p₁′
 --   det⇒I (cong$₁ r₁)     (congF$₂ p₁′ r₂′) = r₁ ↯ ENF→¬IR p₁′
@@ -146,12 +146,12 @@ mutual
 --   det⇒I (βred⊃ refl p₂) (congF$₂ p₁′ r₂′) = r₂′ ↯ ENF→¬FR p₂
 --   det⇒I (βred⊃ refl p₂) (βred⊃ refl p₂′)  = refl
 --
---   det⇒F : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} (r : t ⇒F t′) (r′ : t ⇒F t″) → t′ ≡ t″
+--   det⇒F : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒F t′ → t ⇒F t″ → t′ ≡ t″
 --   det⇒F (embI r)       r′              = det⇒ r r′
 --   det⇒F (ηexp⊃ refl x) (embI r′)       = {!!}
 --   det⇒F (ηexp⊃ refl x) (ηexp⊃ refl x′) = refl
 --
---   det⇒ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} (r : t ⇒I t′) (r′ : t ⇒F t″) → t′ ≡ t″
+--   det⇒ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒I t′ → t ⇒F t″ → t′ ≡ t″
 --   det⇒ r (embI r′)      = det⇒I r r′
 --   det⇒ r (ηexp⊃ eq′ x′) = {!!}
 
