@@ -45,6 +45,7 @@ import STLC-Naturals-Weak-NotEtaLong-ConcreteNbE -- TODO
 import STLC-Naturals-Weak-NotEtaLong-AbstractNbE -- TODO
 import STLC-Naturals2
 import STLC-Naturals2-Strong-EtaLong
+import STLC-Naturals2-Strong-EtaLong-ConcreteNBE
 
 
 ----------------------------------------------------------------------------------------------------
