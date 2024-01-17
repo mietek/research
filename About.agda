@@ -58,6 +58,21 @@ postulate
   lem₃ : ∀ {ℳ : Model} {W : World ℳ} {Γ A} (t t′ : Γ ⊢ A) → ⟦ t ⟧ {ℳ} {W} ≡ ⟦ t′ ⟧ →
          nbe t ≡ nbe t′
 
+-- Abel p.8: “βη-equivalence”; “definitional equality”
+_≝′_ : ∀ {Γ A} → Γ ⊢ A → Γ ⊢ A → Set
+_≝′_ = _≝_
+
+postulate
+  -- Abel p.8: “substitution is meaning-preserving”
+  thmᵢ : ∀ {ℳ : Model} {W : World ℳ} {Γ A B} (t : A ∷ Γ ⊢ B) (s : Γ ⊢ A) (os : ℳ / W ⊩* Γ)  →
+         ⟦ t ⟧ (⟦ s ⟧ os ∷ os) ≡ ⟦ t [ s ] ⟧ os
+
+  -- completeness of definitional equality?
+  thmⱼ : ∀ {ℳ : Model} {W : World ℳ} {Γ A} {t t′ : Γ ⊢ A} → ⟦ t ⟧ {ℳ} {W} ≡ ⟦ t′ ⟧ → t ≝ t′
+
+  -- Abel p.10: “soundness of definitional equality”
+  thmₖ : ∀ {ℳ : Model} {W : World ℳ} {Γ A} {t t′ : Γ ⊢ A} → t ≝ t′ → ⟦ t ⟧ {ℳ} {W} ≡ ⟦ t′ ⟧
+
   -- Coquand p.68: “extensional equality on semantic objects”
   Eq : ∀ {ℳ : Model} {W : World ℳ} {A} → ℳ / W ⊩ A → ℳ / W ⊩ A → Set
 
@@ -67,7 +82,7 @@ postulate
   -- Coquand p.73
   cor₁ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Eq {A = A} (⟦ t ⟧ refl⊩*) (⟦ t′ ⟧ refl⊩*) → nbe t ≡ nbe t′
 
-  -- Abel p.10: “soundness of definitional equality”
+  -- Abel p.10: “soundness”, “normalization is compatible with definitional equality”
   -- Coquand p.74
   -- Kovacs p.45: “completeness”
   thm₂ : ∀ {Γ A} (t : Γ ⊢ A) → t ≝ proj₁ (nbe t)
@@ -82,10 +97,40 @@ postulate
   -- Coquand p.76: “correctness [soundness?] of decision algorithm for conversion”
   thm₅ : ∀ {Γ A} (t t′ : Γ ⊢ A) → nbe t ≡ nbe t′ → t ≝ t′
 
-  -- Abel p.10: “completeness of definitional equality”
-  -- Coquand p.76: “completeness of decision algorithm for conversion”
-  -- Kovacs p.52: “soundness”
+  lemᵢ : ∀ {Γ} → refl⊩* {Γ = Γ} ≡ mov* (refl≤ 𝒞) refl⊩*
+
+-- Abel p.10: “completeness”, “definitionally equal terms have identical normal forms”
+-- Coquand p.76: “completeness of decision algorithm for conversion”
+-- Kovacs p.52: “soundness”
+module _ where
+  open ≡-Reasoning
+
   thm₆ : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ≝ t′ → nbe t ≡ nbe t′
+  thm₆     refl≝                       = refl
+  thm₆ {Γ} (sym≝ deq)                  with thmₖ {ℳ = 𝒞} {W = Γ} deq
+  ... | eq                               = cong (λ o → ↑ (o refl⊩*)) (sym eq)
+  thm₆ {Γ} (trans≝ deq deq′)           with thmₖ {ℳ = 𝒞} {W = Γ} deq | thmₖ {ℳ = 𝒞} {W = Γ} deq′
+  ... | eq | eq′                         = cong (λ o → ↑ (o refl⊩*)) (trans eq eq′)
+  thm₆ {Γ} (cong$ {t₁ = t₁} {t₁′} {t₂} {t₂′} deq₁ deq₂)
+    with thmₖ {ℳ = 𝒞} {W = Γ} deq₁ | thmₖ {ℳ = 𝒞} {W = Γ} deq₂
+  ... | eq | eq′ = cong ↑ $
+    begin
+      ⟦ t₁ ⟧ refl⊩* refl⊆ (⟦ t₂ ⟧ refl⊩*)
+    ≡⟨ cong (⟦ t₁ ⟧ refl⊩* refl⊆) (cong-app eq′ refl⊩*) ⟩
+      ⟦ t₁ ⟧ refl⊩* refl⊆ (⟦ t₂′ ⟧ refl⊩*)
+    ≡⟨ cong-app (cong-app (cong-app′ (cong-app eq refl⊩*) {Γ}) refl⊆) (⟦ t₂′ ⟧ refl⊩*) ⟩
+      ⟦ t₁′ ⟧ refl⊩* refl⊆ (⟦ t₂′ ⟧ refl⊩*)
+    ∎
+  thm₆ {Γ} (βred⊃ {t₁ = t₁} {t₂} refl) = cong ↑ $
+    begin
+      ⟦ `λ t₁ `$ t₂ ⟧ refl⊩*
+    ≡⟨⟩
+      ⟦ t₁ ⟧ (⟦ t₂ ⟧ refl⊩* ∷ mov* refl⊆ refl⊩*)
+    ≡⟨ cong (λ os → ⟦ t₁ ⟧ (⟦ t₂ ⟧ refl⊩* ∷ os)) (sym (lemᵢ {Γ})) ⟩
+      ⟦ t₁ ⟧ (⟦ t₂ ⟧ refl⊩* ∷ refl⊩*)
+    ≡⟨ thmᵢ {ℳ = 𝒞} {W = Γ} t₁ t₂ refl⊩* ⟩
+      ⟦ t₁ [ t₂ ] ⟧ refl⊩*
+    ∎
 
 -- Kovacs p.59: “decision procedure for conversion”
 module _ where
@@ -93,12 +138,17 @@ module _ where
 
   _≝?_ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Dec (t ≝ t′)
   t ≝? t′      with proj₁ (nbe t) ≟ proj₁ (nbe t′)
-  ... | no ¬eq   = no λ eq → (proj₁ & thm₆ eq) ↯ ¬eq
-  ... | yes eq   = yes $ begin
-    t              ≝⟨ thm₂ t ⟩
-    proj₁ (nbe t)  ≡⟨ eq ⟩
-    proj₁ (nbe t′) ≝˘⟨ thm₂ t′ ⟩
-    t′             ∎
+  ... | no ¬eq   = no λ eq → cong proj₁ (thm₆ eq) ↯ ¬eq
+  ... | yes eq   = yes $
+    begin
+      t
+    ≝⟨ thm₂ t ⟩
+      proj₁ (nbe t)
+    ≡⟨ eq ⟩
+      proj₁ (nbe t′)
+    ≝˘⟨ thm₂ t′ ⟩
+      t′
+    ∎
 
 
 ----------------------------------------------------------------------------------------------------

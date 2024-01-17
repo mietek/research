@@ -23,8 +23,12 @@ open import Data.Unit public
 open import Function public
   using (_∘_ ; _$_ ; flip ; id)
 
+open import Level public
+  using ()
+  renaming (zero to ℓ₀)
+
 open import Relation.Binary.PropositionalEquality public
-  using (_≡_ ; refl ; cong ; subst ; sym ; trans ; module ≡-Reasoning)
+  using (_≡_ ; refl ; cong ; cong-app ; subst ; sym ; trans ; module ≡-Reasoning)
 
 open import Relation.Nullary public
   using (¬_ ; Dec ; yes ; no)
@@ -55,6 +59,10 @@ infixl 8 _⊗_
 _⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {f g : X → Y} {x y : X} → f ≡ g → x ≡ y →
       f x ≡ g y
 refl ⊗ refl = refl
+
+cong-app′ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x : X} → Y x} →
+            (λ {x : X} → f {x}) ≡ (λ {x : X} → g {x}) → (∀ {x : X} → f {x} ≡ g {x})
+cong-app′ refl {x} = refl
 
 recℕ : ∀ {𝓍} {X : Set 𝓍} → ℕ → X → (ℕ → X → X) → X
 recℕ zero    z s = z
