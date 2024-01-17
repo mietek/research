@@ -365,22 +365,48 @@ module CtxKit (Ty : Set) where
 
 ----------------------------------------------------------------------------------------------------
 
-  module SemKit
+  module ConcreteKit
+    (_⊩_  : Ctx → Ty → Set)
+    (ren⊩ : ∀ {W W′ A} → W ⊆ W′ → W ⊩ A → W′ ⊩ A)
+      where
+    -- semantic environments
+    infix 3 _⊩*_
+    data _⊩*_ (W : Ctx) : Ctx → Set where
+      []  : W ⊩* []
+      _∷_ : ∀ {Δ A} (o : W ⊩ A) (os : W ⊩* Δ) → W ⊩* A ∷ Δ
+
+    ren⊩* : ∀ {W W′ Δ} → W ⊆ W′ → W ⊩* Δ → W′ ⊩* Δ
+    ren⊩* e []       = []
+    ren⊩* e (o ∷ os) = ren⊩ e o ∷ ren⊩* e os
+
+    infix 3 _⊨_
+    _⊨_ : Ctx → Ty → Set
+    Γ ⊨ A = ∀ {W : Ctx} → W ⊩* Γ → W ⊩ A
+
+    ⟦_⟧∋ : ∀ {Γ A} → Γ ∋ A → Γ ⊨ A
+    ⟦ zero  ⟧∋ (o ∷ os) = o
+    ⟦ suc i ⟧∋ (o ∷ os) = ⟦ i ⟧∋ os
+
+
+----------------------------------------------------------------------------------------------------
+
+  module AbstractKit
     {Model : Set₁}
     {World : Model → Set}
     {_≤_   : ∀ (ℳ : Model) → World ℳ → World ℳ → Set}
     (_⊩_  : ∀ {ℳ} → World ℳ → Ty → Set)
-    (mov   : ∀ {ℳ W W′ A} → _≤_ ℳ W W′ → W ⊩ A → W′ ⊩ A)
+    (ren⊩ : ∀ {ℳ W W′ A} → _≤_ ℳ W W′ → W ⊩ A → W′ ⊩ A)
       where
     module _ {ℳ : Model} where
+      -- semantic environments
       infix 3 _⊩*_
       data _⊩*_ (W : World ℳ) : Ctx → Set where
         []  : W ⊩* []
         _∷_ : ∀ {Δ A} (o : W ⊩ A) (os : W ⊩* Δ) → W ⊩* A ∷ Δ
 
-      mov* : ∀ {W W′ Δ} → _≤_ _ W W′ → W ⊩* Δ → W′ ⊩* Δ
-      mov* e []       = []
-      mov* e (o ∷ os) = mov e o ∷ mov* e os
+      ren⊩* : ∀ {W W′ Δ} → _≤_ _ W W′ → W ⊩* Δ → W′ ⊩* Δ
+      ren⊩* e []       = []
+      ren⊩* e (o ∷ os) = ren⊩ e o ∷ ren⊩* e os
 
     infix 3 _/_⊩_
     _/_⊩_ : ∀ (ℳ : Model) (W : World ℳ) → Ty → Set
@@ -393,6 +419,10 @@ module CtxKit (Ty : Set) where
     infix 3 _⊨_
     _⊨_ : Ctx → Ty → Set₁
     Γ ⊨ A = ∀ {ℳ : Model} {W : World ℳ} → ℳ / W ⊩* Γ → ℳ / W ⊩ A
+
+    ⟦_⟧∋ : ∀ {Γ A} → Γ ∋ A → Γ ⊨ A
+    ⟦ zero  ⟧∋ (o ∷ os) = o
+    ⟦ suc i ⟧∋ (o ∷ os) = ⟦ i ⟧∋ os
 
 
 ----------------------------------------------------------------------------------------------------

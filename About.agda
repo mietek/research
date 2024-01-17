@@ -30,21 +30,26 @@ join ##dependent on libera.chat
 
 import STLC-Base
 import STLC-Base-Weak-NotEtaLong
-import STLC-Base-Weak-NotEtaLong-NbE
+import STLC-Base-Weak-NotEtaLong-ConcreteNbE
+import STLC-Base-Weak-NotEtaLong-AbstractNbE
 import STLC-Base-Weak-EtaLong -- TODO
 
 import STLC-Negative
 import STLC-Negative-Weak-NotEtaLong
-import STLC-Negative-Weak-NotEtaLong-NbE
+import STLC-Negative-Weak-NotEtaLong-ConcreteNbE
+import STLC-Negative-Weak-NotEtaLong-AbstractNbE
 
 import STLC-Naturals
 import STLC-Naturals-Weak-NotEtaLong
-import STLC-Naturals-Weak-NotEtaLong-NbE -- TODO
+import STLC-Naturals-Weak-NotEtaLong-ConcreteNbE -- TODO
+import STLC-Naturals-Weak-NotEtaLong-AbstractNbE -- TODO
+import STLC-Naturals2
+import STLC-Naturals2-Strong-EtaLong
 
 
 ----------------------------------------------------------------------------------------------------
 
-open STLC-Base-Weak-NotEtaLong-NbE
+open STLC-Base-Weak-NotEtaLong-AbstractNbE
 
 postulate
   -- Abel p.8: “preservation of meaning”
@@ -77,7 +82,7 @@ postulate
   Eq : ∀ {ℳ : Model} {W : World ℳ} {A} → ℳ / W ⊩ A → ℳ / W ⊩ A → Set
 
   -- Coquand p.73
-  thm₁ : ∀ {Γ A} {o o′ : 𝒞 / Γ ⊩ A} → Eq {A = A} o o′ → ↑ {A = A} o ≡ ↑ o′
+  thm₁ : ∀ {Γ A} {o o′ : 𝒞 / Γ ⊩ A} → Eq {A = A} o o′ → ↓ {A = A} o ≡ ↓ o′
 
   -- Coquand p.73
   cor₁ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Eq {A = A} (⟦ t ⟧ refl⊩*) (⟦ t′ ⟧ refl⊩*) → nbe t ≡ nbe t′
@@ -97,7 +102,7 @@ postulate
   -- Coquand p.76: “correctness [soundness?] of decision algorithm for conversion”
   thm₅ : ∀ {Γ A} (t t′ : Γ ⊢ A) → nbe t ≡ nbe t′ → t ≝ t′
 
-  lemᵢ : ∀ {Γ} → refl⊩* {Γ = Γ} ≡ mov* (refl≤ 𝒞) refl⊩*
+  lemᵢ : ∀ {Γ} → refl⊩* {Γ = Γ} ≡ ren⊩* (refl≤ 𝒞) refl⊩*
 
 -- Abel p.10: “completeness”, “definitionally equal terms have identical normal forms”
 -- Coquand p.76: “completeness of decision algorithm for conversion”
@@ -108,12 +113,12 @@ module _ where
   thm₆ : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ≝ t′ → nbe t ≡ nbe t′
   thm₆     refl≝                       = refl
   thm₆ {Γ} (sym≝ deq)                  with thmₖ {ℳ = 𝒞} {W = Γ} deq
-  ... | eq                               = cong (λ o → ↑ (o refl⊩*)) (sym eq)
+  ... | eq                               = cong (λ o → ↓ (o refl⊩*)) (sym eq)
   thm₆ {Γ} (trans≝ deq deq′)           with thmₖ {ℳ = 𝒞} {W = Γ} deq | thmₖ {ℳ = 𝒞} {W = Γ} deq′
-  ... | eq | eq′                         = cong (λ o → ↑ (o refl⊩*)) (trans eq eq′)
+  ... | eq | eq′                         = cong (λ o → ↓ (o refl⊩*)) (trans eq eq′)
   thm₆ {Γ} (cong$ {t₁ = t₁} {t₁′} {t₂} {t₂′} deq₁ deq₂)
     with thmₖ {ℳ = 𝒞} {W = Γ} deq₁ | thmₖ {ℳ = 𝒞} {W = Γ} deq₂
-  ... | eq | eq′ = cong ↑ $
+  ... | eq | eq′ = cong ↓ $
     begin
       ⟦ t₁ ⟧ refl⊩* refl⊆ (⟦ t₂ ⟧ refl⊩*)
     ≡⟨ cong (⟦ t₁ ⟧ refl⊩* refl⊆) (cong-app eq′ refl⊩*) ⟩
@@ -121,11 +126,11 @@ module _ where
     ≡⟨ cong-app (cong-app (cong-app′ (cong-app eq refl⊩*) {Γ}) refl⊆) (⟦ t₂′ ⟧ refl⊩*) ⟩
       ⟦ t₁′ ⟧ refl⊩* refl⊆ (⟦ t₂′ ⟧ refl⊩*)
     ∎
-  thm₆ {Γ} (βred⊃ {t₁ = t₁} {t₂} refl) = cong ↑ $
+  thm₆ {Γ} (βred⊃ {t₁ = t₁} {t₂} refl) = cong ↓ $
     begin
       ⟦ `λ t₁ `$ t₂ ⟧ refl⊩*
     ≡⟨⟩
-      ⟦ t₁ ⟧ (⟦ t₂ ⟧ refl⊩* ∷ mov* refl⊆ refl⊩*)
+      ⟦ t₁ ⟧ (⟦ t₂ ⟧ refl⊩* ∷ ren⊩* refl⊆ refl⊩*)
     ≡⟨ cong (λ os → ⟦ t₁ ⟧ (⟦ t₂ ⟧ refl⊩* ∷ os)) (sym (lemᵢ {Γ})) ⟩
       ⟦ t₁ ⟧ (⟦ t₂ ⟧ refl⊩* ∷ refl⊩*)
     ≡⟨ thmᵢ {ℳ = 𝒞} {W = Γ} t₁ t₂ refl⊩* ⟩
