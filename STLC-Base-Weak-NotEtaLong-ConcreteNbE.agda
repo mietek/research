@@ -5,7 +5,7 @@ open import STLC-Base-Weak-NotEtaLong public
 
 ----------------------------------------------------------------------------------------------------
 
--- semantic objects
+-- semantic values
 infix 3 _⊩_
 _⊩_ : Ctx → Ty → Set
 W ⊩ `◦     = Σ (W ⊢ `◦) NNF
@@ -19,32 +19,32 @@ open ConcreteKit _⊩_ (λ {_} {_} {A} → ren⊩ {_} {_} {A}) public
 
 -- reflection
 ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
-⟦ `v i     ⟧ os = ⟦ i ⟧∋ os
-⟦ `λ t     ⟧ os = λ e o → ⟦ t ⟧ (o ∷ ren⊩* e os)
-⟦ t₁ `$ t₂ ⟧ os = ⟦ t₁ ⟧ os refl⊆ $ ⟦ t₂ ⟧ os
+⟦ `v i     ⟧ vs = ⟦ i ⟧∋ vs
+⟦ `λ t     ⟧ vs = λ e v → ⟦ t ⟧ (v ∷ ren⊩* e vs)
+⟦ t₁ `$ t₂ ⟧ vs = ⟦ t₁ ⟧ vs refl⊆ $ ⟦ t₂ ⟧ vs
 
 
 ----------------------------------------------------------------------------------------------------
 
 mutual
-  ↑ : ∀ {Γ A} {t : Γ ⊢ A} → NNF t → Γ ⊩ A
-  ↑ {A = `◦}     p = _ , p
-  ↑ {A = A `⊃ B} p = λ e o → ↑ (renNNF e p `$ proj₂ (↓ o))
+  ↑ : ∀ {Γ A} → Σ (Γ ⊢ A) NNF → Γ ⊩ A
+  ↑ {A = `◦}     (t , p) = t , p
+  ↑ {A = A `⊃ B} (t , p) = λ e v → ↑ (_ , renNNF e p `$ proj₂ (↓ v))
 
-  ↓ : ∀ {Γ A} → Γ ⊩ A → Σ (Γ ⊢ A) λ t → NF t
+  ↓ : ∀ {Γ A} → Γ ⊩ A → Σ (Γ ⊢ A) NF
   ↓ {A = `◦}     (t , p) = t , `nnf p
-  ↓ {A = A `⊃ B} f       with ↓ (f wk⊆ (↑ {A = A} (`v {i = zero})))
+  ↓ {A = A `⊃ B} f       with ↓ (f wk⊆ (↑ (`v zero , `v)))
   ... | t , p              = `λ t , `λ
 
 refl⊩* : ∀ {Γ} → Γ ⊩* Γ
 refl⊩* {[]}    = []
-refl⊩* {A ∷ Γ} = ↑ {A = A} (`v {i = zero}) ∷ ren⊩* wk⊆ refl⊩*
+refl⊩* {A ∷ Γ} = ↑ (`v zero , `v) ∷ ren⊩* wk⊆ refl⊩*
 
 -- reification
-⟦_⟧⁻¹ : ∀ {Γ A} → Γ ⊨ A → Σ (Γ ⊢ A) λ t′ → NF t′
-⟦ o ⟧⁻¹ = ↓ (o refl⊩*)
+⟦_⟧⁻¹ : ∀ {Γ A} → Γ ⊨ A → Σ (Γ ⊢ A) NF
+⟦ v ⟧⁻¹ = ↓ (v refl⊩*)
 
-nbe : ∀ {Γ A} → Γ ⊢ A → Σ (Γ ⊢ A) λ t′ → NF t′
+nbe : ∀ {Γ A} → Γ ⊢ A → Σ (Γ ⊢ A) NF
 nbe = ⟦_⟧⁻¹ ∘ ⟦_⟧
 
 

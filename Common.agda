@@ -1,5 +1,7 @@
 module Common where
 
+import Axiom.Extensionality.Propositional as A
+
 open import Data.Empty public
   using ()
   renaming (⊥ to 𝟘 ; ⊥-elim to abort)
@@ -24,11 +26,15 @@ open import Function public
   using (_∘_ ; _$_ ; flip ; id)
 
 open import Level public
-  using ()
+  using (_⊔_ ; Setω)
   renaming (zero to ℓ₀)
 
 open import Relation.Binary.PropositionalEquality public
-  using (_≡_ ; refl ; cong ; cong-app ; subst ; sym ; trans ; module ≡-Reasoning)
+  using (_≡_ ; refl ; cong ; cong₂ ; cong-app ; subst ; sym ; trans ; module ≡-Reasoning)
+
+open import Relation.Binary.HeterogeneousEquality public
+  using (_≅_)
+  renaming (≡-to-≅ to ≡→≅ ; ≅-to-≡ to ≅→≡ ; cong to cong≅ ; cong₂ to cong₂≅)
 
 open import Relation.Nullary public
   using (¬_ ; Dec ; yes ; no)
@@ -37,8 +43,20 @@ open import Relation.Nullary.Decidable public
   using (True ; fromWitness ; toWitness)
 
 open import Relation.Nullary.Negation public
-  using ()
+  using (contraposition)
   renaming (contradiction to _↯_)
+
+
+----------------------------------------------------------------------------------------------------
+
+Extensionality : Setω
+Extensionality = ∀ {𝓍 𝓎} → A.Extensionality 𝓍 𝓎
+
+Extensionality′ : Setω
+Extensionality′ = ∀ {𝓍 𝓎} → A.ExtensionalityImplicit 𝓍 𝓎
+
+implify : Extensionality → Extensionality′
+implify ⚠ = A.implicit-extensionality ⚠
 
 
 ----------------------------------------------------------------------------------------------------
@@ -60,13 +78,17 @@ _⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {f g : X → Y} {x y : X} 
       f x ≡ g y
 refl ⊗ refl = refl
 
+cong-app″ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ (x : X) → Y x} →
+            (λ (x : X) → f x) ≡ (λ (x : X) → g x) → (∀ (x : X) → f x ≡ g x)
+cong-app″ refl x = refl
+
 cong-app′ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x : X} → Y x} →
             (λ {x : X} → f {x}) ≡ (λ {x : X} → g {x}) → (∀ {x : X} → f {x} ≡ g {x})
 cong-app′ refl {x} = refl
 
-recℕ : ∀ {𝓍} {X : Set 𝓍} → ℕ → X → (ℕ → X → X) → X
-recℕ zero    z s = z
-recℕ (suc n) z s = s n (recℕ n z s)
+rec : ∀ {𝓍} {X : Set 𝓍} → X → (ℕ → X → X) → ℕ → X
+rec z s zero    = z
+rec z s (suc n) = s n (rec z s n)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -205,27 +227,27 @@ module CtxKit (Ty : Set) where
       module ≝-Reasoning where
         infix 1 begin_
         begin_ : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ≝ t′ → t ≝ t′
-        begin_ eq = eq
-
-        infixr 2 _≝⟨⟩_
-        _≝⟨⟩_ : ∀ {Γ A} (t : Γ ⊢ A) {t′} → t ≝ t′ → t ≝ t′
-        t ≝⟨⟩ eq = eq
+        begin_ deq = deq
 
         infixr 2 _≝⟨_⟩_
         _≝⟨_⟩_ : ∀ {Γ A} (t : Γ ⊢ A) {t′ t″} → t ≝ t′ → t′ ≝ t″ → t ≝ t″
-        t ≝⟨ eq ⟩ eq′ = trans≝ eq eq′
+        t ≝⟨ deq ⟩ deq′ = trans≝ deq deq′
 
         infixr 2 _≝˘⟨_⟩_
         _≝˘⟨_⟩_ : ∀ {Γ A} (t : Γ ⊢ A) {t′ t″} → t′ ≝ t → t′ ≝ t″ → t ≝ t″
-        t ≝˘⟨ eq ⟩ eq′ = trans≝ (sym≝ eq) eq′
+        t ≝˘⟨ deq ⟩ deq′ = trans≝ (sym≝ deq) deq′
+
+        infixr 2 _≡⟨⟩_
+        _≡⟨⟩_ : ∀ {Γ A} (t : Γ ⊢ A) {t′} → t ≝ t′ → t ≝ t′
+        t ≡⟨⟩ deq = deq
 
         infixr 2 _≡⟨_⟩_
         _≡⟨_⟩_ : ∀ {Γ A} (t : Γ ⊢ A) {t′ t″} → t ≡ t′ → t′ ≝ t″ → t ≝ t″
-        t ≡⟨ eq ⟩ eq′ = trans≝ (≡→≝ eq) eq′
+        t ≡⟨ eq ⟩ deq′ = trans≝ (≡→≝ eq) deq′
 
         infixr 2 _≡˘⟨_⟩_
         _≡˘⟨_⟩_ : ∀ {Γ A} (t : Γ ⊢ A) {t′ t″} → t′ ≡ t → t′ ≝ t″ → t ≝ t″
-        t ≡˘⟨ eq ⟩ eq′ = trans≝ (≡→≝ (sym eq)) eq′
+        t ≡˘⟨ eq ⟩ deq′ = trans≝ (≡→≝ (sym eq)) deq′
 
         infix 3 _∎
         _∎ : ∀ {Γ A} (t : Γ ⊢ A) → t ≝ t
@@ -249,16 +271,6 @@ module CtxKit (Ty : Set) where
       ¬R : ∀ {Γ A} → Γ ⊢ A → Set
       ¬R t = ∀ {t′} → ¬ t ⇒ t′
 
-      ¬RF→¬R : ∀ {Γ A} {t : Γ ⊢ A} → ¬ RF t → ¬R t
-      ¬RF→¬R ¬p r = (_ , r) ↯ ¬p
-
-      ¬R→¬RF : ∀ {Γ A} {t : Γ ⊢ A} → ¬R t → ¬ RF t
-      ¬R→¬RF ¬r (_ , r) = r ↯ ¬r
-
-      data Prog {Γ A} (NF : ∀ {Γ A} → Γ ⊢ A → Set) (t : Γ ⊢ A) : Set where
-        step : ∀ {t′} (r : t ⇒ t′) → Prog NF t
-        done : ∀ (p : NF t) → Prog NF t
-
       -- iterated reduction
       infix 4 _⇒*_
       data _⇒*_ {Γ A} : Γ ⊢ A → Γ ⊢ A → Set where
@@ -277,17 +289,17 @@ module CtxKit (Ty : Set) where
         begin_ : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒* t′ → t ⇒* t′
         begin_ rs = rs
 
+        infixr 2 _⇒*⟨_⟩_
+        _⇒*⟨_⟩_ : ∀ {Γ A} (t : Γ ⊢ A) {t′ t″} → t ⇒* t′ → t′ ⇒* t″ → t ⇒* t″
+        t ⇒*⟨ rs ⟩ rs′ = trans⇒* rs rs′
+
         infixr 2 _⇒⟨_⟩_
         _⇒⟨_⟩_ : ∀ {Γ A} (t : Γ ⊢ A) {t′ t″} → t ⇒ t′ → t′ ⇒* t″ → t ⇒* t″
         t ⇒⟨ r ⟩ rs = step r rs
 
-        infixr 2 _⇒*⟨⟩_
-        _⇒*⟨⟩_ : ∀ {Γ A} (t : Γ ⊢ A) {t′} → t ⇒* t′ → t ⇒* t′
-        t ⇒*⟨⟩ rs = rs
-
-        infixr 2 _⇒*⟨_⟩_
-        _⇒*⟨_⟩_ : ∀ {Γ A} (t : Γ ⊢ A) {t′ t″} → t ⇒* t′ → t′ ⇒* t″ → t ⇒* t″
-        t ⇒*⟨ rs ⟩ rs′ = trans⇒* rs rs′
+        infixr 2 _≡⟨⟩_
+        _≡⟨⟩_ : ∀ {Γ A} (t : Γ ⊢ A) {t′} → t ⇒* t′ → t ⇒* t′
+        t ≡⟨⟩ rs = rs
 
         infixr 2 _≡⟨_⟩_
         _≡⟨_⟩_ : ∀ {Γ A} (t : Γ ⊢ A) {t′ t″} → t ≡ t′ → t′ ⇒* t″ → t ⇒* t″
@@ -304,30 +316,84 @@ module CtxKit (Ty : Set) where
 
 ----------------------------------------------------------------------------------------------------
 
-      -- TODO: delete?
-      module ProgKit
-        {NF     : ∀ {Γ A} → Γ ⊢ A → Set}
-        (NF→¬R : ∀ {Γ A} {t : Γ ⊢ A} → NF t → ¬R t)
-        (prog⇒ : ∀ {Γ A} (t : Γ ⊢ A) → Prog NF t)
+      module ¬RKit
+        {NF      : ∀ {Γ A} → Γ ⊢ A → Set}
+        {NNF     : ∀ {Γ A} → Γ ⊢ A → Set}
+        (NF→¬R  : ∀ {Γ A} {t : Γ ⊢ A} → NF t → ¬R t)
+        (NNF→¬R : ∀ {Γ A} {t : Γ ⊢ A} → NNF t → ¬R t)
           where
-        ¬R→NF : ∀ {Γ A} {t : Γ ⊢ A} → ¬R t → NF t
-        ¬R→NF {t = t} ¬r with prog⇒ t
-        ... | step r        = r ↯ ¬r
-        ... | done p        = p
+        ¬RF→¬R : ∀ {Γ A} {t : Γ ⊢ A} → ¬ RF t → ¬R t
+        ¬RF→¬R ¬p r = (_ , r) ↯ ¬p
 
-        ¬NF→RF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ NF t → RF t
-        ¬NF→RF {t = t} ¬p with prog⇒ t
-        ... | step r         = (_ , r)
-        ... | done p         = p ↯ ¬p
+        ¬R→¬RF : ∀ {Γ A} {t : Γ ⊢ A} → ¬R t → ¬ RF t
+        ¬R→¬RF ¬r (_ , r) = r ↯ ¬r
 
         RF→¬NF : ∀ {Γ A} {t : Γ ⊢ A} → RF t → ¬ NF t
         RF→¬NF (_ , r) p = r ↯ NF→¬R p
 
-        ¬RF→NF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ RF t → NF t
-        ¬RF→NF = ¬R→NF ∘ ¬RF→¬R
-
         NF→¬RF : ∀ {Γ A} {t : Γ ⊢ A} → NF t → ¬ RF t
         NF→¬RF = ¬R→¬RF ∘ NF→¬R
+
+        NNF→¬RF : ∀ {Γ A} {t : Γ ⊢ A} → NNF t → ¬ RF t
+        NNF→¬RF = ¬R→¬RF ∘ NNF→¬R
+
+        -- progress
+        data Prog {Γ A} (t : Γ ⊢ A) : Set where
+          done : ∀ (p : NF t) → Prog t
+          step : ∀ {t′} (r : t ⇒ t′) → Prog t
+
+        enprog : ∀ {Γ A} {t : Γ ⊢ A} → NF t ⊎ RF t → Prog t
+        enprog (inj₁ p)       = done p
+        enprog (inj₂ (_ , r)) = step r
+
+        deprog : ∀ {𝓍} {X : Set 𝓍} {Γ A} {t : Γ ⊢ A} → Prog t → (NF t → X) → (RF t → X) → X
+        deprog (done p) f₁ f₂ = f₁ p
+        deprog (step r) f₁ f₂ = f₂ (_ , r)
+
+
+----------------------------------------------------------------------------------------------------
+
+        module ProgKit
+          (prog⇒ : ∀ {Γ A} (t : Γ ⊢ A) → Prog t)
+            where
+          NF? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (NF t)
+          NF? t = deprog (prog⇒ t) yes (no ∘ RF→¬NF)
+
+          RF? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (RF t)
+          RF? t = deprog (prog⇒ t) (no ∘ NF→¬RF) yes
+
+          ¬NF→RF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ NF t → RF t
+          ¬NF→RF ¬p = deprog (prog⇒ _) (_↯ ¬p) id
+
+          ¬RF→NF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ RF t → NF t
+          ¬RF→NF ¬p = deprog (prog⇒ _) id (_↯ ¬p)
+
+          ¬R→NF : ∀ {Γ A} {t : Γ ⊢ A} → ¬R t → NF t
+          ¬R→NF = ¬RF→NF ∘ ¬R→¬RF
+
+        module NF?Kit
+          (NF?     : ∀ {Γ A} (t : Γ ⊢ A) → Dec (NF t))
+          (¬NF→RF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ NF t → RF t)
+            where
+          prog⇒ : ∀ {Γ A} (t : Γ ⊢ A) → Prog t
+          prog⇒ t    with NF? t
+          ... | yes p   = done p
+          ... | no ¬p   = step (proj₂ (¬NF→RF ¬p))
+
+          open ProgKit prog⇒ public
+            hiding (NF? ; ¬NF→RF)
+
+        module RF?Kit
+          (RF?     : ∀ {Γ A} (t : Γ ⊢ A) → Dec (RF t))
+          (¬RF→NF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ RF t → NF t)
+            where
+          prog⇒ : ∀ {Γ A} (t : Γ ⊢ A) → Prog t
+          prog⇒ t           with RF? t
+          ... | yes (t′ , r)   = step r
+          ... | no ¬p          = done (¬RF→NF ¬p)
+
+          open ProgKit prog⇒ public
+            hiding (RF? ; ¬RF→NF)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -373,19 +439,19 @@ module CtxKit (Ty : Set) where
     infix 3 _⊩*_
     data _⊩*_ (W : Ctx) : Ctx → Set where
       []  : W ⊩* []
-      _∷_ : ∀ {Δ A} (o : W ⊩ A) (os : W ⊩* Δ) → W ⊩* A ∷ Δ
+      _∷_ : ∀ {Δ A} (v : W ⊩ A) (vs : W ⊩* Δ) → W ⊩* A ∷ Δ
 
     ren⊩* : ∀ {W W′ Δ} → W ⊆ W′ → W ⊩* Δ → W′ ⊩* Δ
     ren⊩* e []       = []
-    ren⊩* e (o ∷ os) = ren⊩ e o ∷ ren⊩* e os
+    ren⊩* e (v ∷ vs) = ren⊩ e v ∷ ren⊩* e vs
 
     infix 3 _⊨_
     _⊨_ : Ctx → Ty → Set
     Γ ⊨ A = ∀ {W : Ctx} → W ⊩* Γ → W ⊩ A
 
     ⟦_⟧∋ : ∀ {Γ A} → Γ ∋ A → Γ ⊨ A
-    ⟦ zero  ⟧∋ (o ∷ os) = o
-    ⟦ suc i ⟧∋ (o ∷ os) = ⟦ i ⟧∋ os
+    ⟦ zero  ⟧∋ (v ∷ vs) = v
+    ⟦ suc i ⟧∋ (v ∷ vs) = ⟦ i ⟧∋ vs
 
 
 ----------------------------------------------------------------------------------------------------
@@ -402,11 +468,11 @@ module CtxKit (Ty : Set) where
       infix 3 _⊩*_
       data _⊩*_ (W : World ℳ) : Ctx → Set where
         []  : W ⊩* []
-        _∷_ : ∀ {Δ A} (o : W ⊩ A) (os : W ⊩* Δ) → W ⊩* A ∷ Δ
+        _∷_ : ∀ {Δ A} (v : W ⊩ A) (vs : W ⊩* Δ) → W ⊩* A ∷ Δ
 
       ren⊩* : ∀ {W W′ Δ} → _≤_ _ W W′ → W ⊩* Δ → W′ ⊩* Δ
       ren⊩* e []       = []
-      ren⊩* e (o ∷ os) = ren⊩ e o ∷ ren⊩* e os
+      ren⊩* e (v ∷ vs) = ren⊩ e v ∷ ren⊩* e vs
 
     infix 3 _/_⊩_
     _/_⊩_ : ∀ (ℳ : Model) (W : World ℳ) → Ty → Set
@@ -421,8 +487,8 @@ module CtxKit (Ty : Set) where
     Γ ⊨ A = ∀ {ℳ : Model} {W : World ℳ} → ℳ / W ⊩* Γ → ℳ / W ⊩ A
 
     ⟦_⟧∋ : ∀ {Γ A} → Γ ∋ A → Γ ⊨ A
-    ⟦ zero  ⟧∋ (o ∷ os) = o
-    ⟦ suc i ⟧∋ (o ∷ os) = ⟦ i ⟧∋ os
+    ⟦ zero  ⟧∋ (v ∷ vs) = v
+    ⟦ suc i ⟧∋ (v ∷ vs) = ⟦ i ⟧∋ vs
 
 
 ----------------------------------------------------------------------------------------------------

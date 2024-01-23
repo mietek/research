@@ -1,11 +1,9 @@
 module About where
 
-import Common
-
 
 {- -------------------------------------------------------------------------------------------------
 
-thanks to ames, dolio, drvink, mxu, ncf, ooovi, pgiarrusso, pounce, roconnor, tuplanolla
+thanks to ames, dolio, drvink, mxu, ncf, ooovi, pgiarrusso, pounce, rak, roconnor, tuplanolla
 
 join ##dependent on libera.chat
 
@@ -28,6 +26,9 @@ join ##dependent on libera.chat
 
 ------------------------------------------------------------------------------------------------- -}
 
+import Common
+import Isomorphism
+
 import STLC-Base
 import STLC-Base-Weak-NotEtaLong
 import STLC-Base-Weak-NotEtaLong-ConcreteNbE
@@ -45,7 +46,7 @@ import STLC-Naturals-Weak-NotEtaLong-ConcreteNbE -- TODO
 import STLC-Naturals-Weak-NotEtaLong-AbstractNbE -- TODO
 import STLC-Naturals2
 import STLC-Naturals2-Strong-EtaLong
-import STLC-Naturals2-Strong-EtaLong-ConcreteNBE
+import STLC-Naturals2-Strong-EtaLong-ConcreteNBE -- TODO
 
 
 ----------------------------------------------------------------------------------------------------
