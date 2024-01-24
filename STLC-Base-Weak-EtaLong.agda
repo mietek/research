@@ -205,15 +205,15 @@ module ProgAlt1C where
   open ProgAlt1 using () renaming (NF? to CNF? ; NNF? to CNNF?)
 
   ¬CNF→CRF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ CNF t → C.RF t
-  ¬CNF→CRF {t = ⌜v⌝ i}         ¬p                   = nnf ⌜v⌝ ↯ ¬p
-  ¬CNF→CRF {t = ⌜λ⌝ t}         ¬p                   = ⌜λ⌝ ↯ ¬p
-  ¬CNF→CRF {t = t₁ ⌜$⌝ t₂}     ¬p                   with CNNF? t₁ | CNF? t₂
-  ¬CNF→CRF {t = _ ⌜$⌝ _}       ¬p | yes p₁ | yes p₂   = nnf (p₁ ⌜$⌝ p₂) ↯ ¬p
-  ¬CNF→CRF {t = _ ⌜$⌝ _}       ¬p | yes p₁ | no ¬p₂   = let _ , r₂ = ¬CNF→CRF ¬p₂ in _ , Ccong$₂ (nnf p₁) r₂
-  ¬CNF→CRF {t = ⌜v⌝ _ ⌜$⌝ _}   ¬p | no ¬p₁ | _        = ⌜v⌝ ↯ ¬p₁
-  ¬CNF→CRF {t = ⌜λ⌝ _ ⌜$⌝ _}   ¬p | no ¬p₁ | yes p₂   = _ , βred⊃ refl p₂
-  ¬CNF→CRF {t = ⌜λ⌝ _ ⌜$⌝ _}   ¬p | no ¬p₁ | no ¬p₂   = let _ , r₂ = ¬CNF→CRF ¬p₂ in _ , Ccong$₂ ⌜λ⌝ r₂
-  ¬CNF→CRF {t = _ ⌜$⌝ _ ⌜$⌝ _} ¬p | no ¬p₁ | _        = let _ , r₁ = ¬CNF→CRF λ { (nnf p₁) → p₁ ↯ ¬p₁ } in _ , cong$₁ r₁
+  ¬CNF→CRF {t = ⌜v⌝ i}               ¬p                   = nnf ⌜v⌝ ↯ ¬p
+  ¬CNF→CRF {t = ⌜λ⌝ t}               ¬p                   = ⌜λ⌝ ↯ ¬p
+  ¬CNF→CRF {t = t₁ ⌜$⌝ t₂}           ¬p                   with CNNF? t₁ | CNF? t₂
+  ¬CNF→CRF {t = t₁ ⌜$⌝ t₂}           ¬p | yes p₁ | yes p₂   = nnf (p₁ ⌜$⌝ p₂) ↯ ¬p
+  ¬CNF→CRF {t = t₁ ⌜$⌝ t₂}           ¬p | yes p₁ | no ¬p₂   = let _ , r₂ = ¬CNF→CRF ¬p₂ in _ , Ccong$₂ (nnf p₁) r₂
+  ¬CNF→CRF {t = ⌜v⌝ i ⌜$⌝ t₂}        ¬p | no ¬p₁ | _        = ⌜v⌝ ↯ ¬p₁
+  ¬CNF→CRF {t = ⌜λ⌝ t₁ ⌜$⌝ t₂}       ¬p | no ¬p₁ | yes p₂   = _ , βred⊃ refl p₂
+  ¬CNF→CRF {t = ⌜λ⌝ t₁ ⌜$⌝ t₂}       ¬p | no ¬p₁ | no ¬p₂   = let _ , r₂ = ¬CNF→CRF ¬p₂ in _ , Ccong$₂ ⌜λ⌝ r₂
+  ¬CNF→CRF {t = t₁@(_ ⌜$⌝ _) ⌜$⌝ t₂} ¬p | no ¬p₁ | _        = let _ , r₁ = ¬CNF→CRF λ { (nnf p₁) → p₁ ↯ ¬p₁ } in _ , cong$₁ r₁
 
   open C′.NF?Kit CNF? ¬CNF→CRF using () renaming (prog⇒ to prog⇒C)
 
@@ -270,6 +270,8 @@ module _ (⚠ : Extensionality) where
 ----------------------------------------------------------------------------------------------------
 
 module ProgAlt1E where
+  open ProgAlt1 using () renaming (NF? to CNF? ; NNF? to CNNF?)
+
   mutual
     ENF? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (ENF t)
     ENF? {A = ⌜◦⌝}     (⌜v⌝ i)     = yes (nnf ⌜v⌝)
@@ -289,49 +291,74 @@ module ProgAlt1E where
     ... | yes p₁ | no ¬p₂   = no λ { (p₁ ⌜$⌝ p₂) → p₂ ↯ ¬p₂ }
     ... | no ¬p₁ | _        = no λ { (p₁ ⌜$⌝ p₂) → p₁ ↯ ¬p₁ }
 
---  ¬ENF→ERF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ ENF t → E.RF t
---  ¬ENF→ERF {A = ⌜◦⌝}     {⌜v⌝ i}               ¬p                                        = nnf ⌜v⌝ ↯ ¬p
---  ¬ENF→ERF {A = ⌜◦⌝}     {t₁ ⌜$⌝ t₂}           ¬p                                        with ENNF? t₁ | ENF? t₂
---  ¬ENF→ERF {A = ⌜◦⌝}     {t₁ ⌜$⌝ t₂}           ¬p | yes p₁ | yes p₂                        = nnf (p₁ ⌜$⌝ p₂) ↯ ¬p
---  ¬ENF→ERF {A = ⌜◦⌝}     {t₁ ⌜$⌝ t₂}           ¬p | yes p₁ | no ¬p₂                        = let _ , r₂ = ¬ENF→ERF {t = t₂} ¬p₂ in _ , Cred (Econg$₂ {!nnf p₁!} r₂)
---  ¬ENF→ERF {A = ⌜◦⌝}     {⌜v⌝ i ⌜$⌝ t₂}        ¬p | no ¬p₁ | _                             = ⌜v⌝ ↯ ¬p₁
---  ¬ENF→ERF {A = ⌜◦⌝}     {⌜λ⌝ t₁ ⌜$⌝ t₂}       ¬p | no ¬p₁ | yes p₂                        = _ , Cred (βred⊃ refl (ENF→CNF p₂))
---  ¬ENF→ERF {A = ⌜◦⌝}     {⌜λ⌝ t₁ ⌜$⌝ t₂}       ¬p | no ¬p₁ | no ¬p₂                        = let _ , r₂ = ¬ENF→ERF ¬p₂ in _ , Cred (Econg$₂ ⌜λ⌝ r₂)
---  ¬ENF→ERF {A = ⌜◦⌝}     {t₁@(_ ⌜$⌝ _) ⌜$⌝ t₂} ¬p | no ¬p₁ | _                             with ¬ENF→ERF {t = t₁} λ ()
---  ¬ENF→ERF {A = ⌜◦⌝}     {t₁@(_ ⌜$⌝ _) ⌜$⌝ t₂} ¬p | no ¬p₁ | _      | t₁′ , Cred r₁          = _ , Cred (cong$₁ r₁)
---  ¬ENF→ERF {A = ⌜◦⌝}     {t₁@(_ ⌜$⌝ _) ⌜$⌝ t₂} ¬p | no ¬p₁ | _      | t₁′ , ηexp⊃ refl x     = {!!}
---  ¬ENF→ERF {A = _ ⌜⊃⌝ _} {⌜v⌝ i}               ¬p                                        = _ , ηexp⊃ refl ⌜v⌝
---  ¬ENF→ERF {A = _ ⌜⊃⌝ _} {⌜λ⌝ t}               ¬p                                        = ⌜λ⌝ ↯ ¬p
---  ¬ENF→ERF {A = _ ⌜⊃⌝ _} {t₁ ⌜$⌝ t₂}           ¬p                                        = _ , ηexp⊃ refl _⌜$⌝_
---
---  open E′.NF?Kit ENF? ¬ENF→ERF using () renaming (prog⇒ to prog⇒E)
+  ¬ENF→ERF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ ENF t → E.RF t
+  ¬ENF→ERF {A = ⌜◦⌝}     {⌜v⌝ i}               ¬p                                                = nnf ⌜v⌝ ↯ ¬p
+  ¬ENF→ERF {A = ⌜◦⌝}     {t₁ ⌜$⌝ t₂}           ¬p                                                with ENNF? t₁ | ENF? t₂
+  ¬ENF→ERF {A = ⌜◦⌝}     {t₁ ⌜$⌝ t₂}           ¬p | yes p₁ | yes p₂                                = nnf (p₁ ⌜$⌝ p₂) ↯ ¬p
+  ¬ENF→ERF {A = ⌜◦⌝}     {t₁ ⌜$⌝ t₂}           ¬p | yes p₁ | no ¬p₂                                with CNNF? t₁ | ¬ENF→ERF ¬p₂
+  ¬ENF→ERF {A = ⌜◦⌝}     {t₁ ⌜$⌝ t₂}           ¬p | yes p₁ | no ¬p₂ | yes p₁′ | _ , Cred r₂          = _ , Cred (Ccong$₂ (nnf p₁′) r₂)
+  ¬ENF→ERF {A = ⌜◦⌝}     {t₁ ⌜$⌝ t₂}           ¬p | yes p₁ | no ¬p₂ | yes p₁′ | _ , ηexp⊃ refl x     = {!!}
+  ¬ENF→ERF {A = ⌜◦⌝}     {t₁ ⌜$⌝ t₂}           ¬p | yes p₁ | no ¬p₂ | no ¬p₁′ | _                  = ENNF→CNNF p₁ ↯ ¬p₁′
+  ¬ENF→ERF {A = ⌜◦⌝}     {⌜v⌝ i ⌜$⌝ t₂}        ¬p | no ¬p₁ | _                                   = ⌜v⌝ ↯ ¬p₁
+  ¬ENF→ERF {A = ⌜◦⌝}     {⌜λ⌝ t₁ ⌜$⌝ t₂}       ¬p | no ¬p₁ | yes p₂                              = _ , Cred (βred⊃ refl (ENF→CNF p₂))
+  ¬ENF→ERF {A = ⌜◦⌝}     {⌜λ⌝ t₁ ⌜$⌝ t₂}       ¬p | no ¬p₁ | no ¬p₂                              = let _ , r₂ = ¬ENF→ERF ¬p₂ in _ , Cred (Econg$₂ ⌜λ⌝ r₂)
+  ¬ENF→ERF {A = ⌜◦⌝}     {t₁@(_ ⌜$⌝ _) ⌜$⌝ t₂} ¬p | no ¬p₁ | _                                   with ¬ENF→ERF {t = t₁} λ ()
+  ¬ENF→ERF {A = ⌜◦⌝}     {t₁@(_ ⌜$⌝ _) ⌜$⌝ t₂} ¬p | no ¬p₁ | _      | t₁′ , Cred r₁                = _ , Cred (cong$₁ r₁)
+  ¬ENF→ERF {A = ⌜◦⌝}     {t₁@(_ ⌜$⌝ _) ⌜$⌝ t₂} ¬p | no ¬p₁ | _      | t₁′ , ηexp⊃ refl x           = {!!}
+  ¬ENF→ERF {A = _ ⌜⊃⌝ _} {⌜v⌝ i}               ¬p                                                = _ , ηexp⊃ refl ⌜v⌝
+  ¬ENF→ERF {A = _ ⌜⊃⌝ _} {⌜λ⌝ t}               ¬p                                                = ⌜λ⌝ ↯ ¬p
+  ¬ENF→ERF {A = _ ⌜⊃⌝ _} {t₁ ⌜$⌝ t₂}           ¬p                                                = _ , ηexp⊃ refl _⌜$⌝_
 
---module ProgAlt2E where
---  ¬ER→ENF : ∀ {Γ A} {t : Γ ⊢ A} → E.¬R t → ENF t
---  ¬ER→ENF {A = ⌜◦⌝}     {⌜v⌝ i}               ¬r = nnf ⌜v⌝
---  ¬ER→ENF {A = ⌜◦⌝}     {⌜v⌝ _ ⌜$⌝ t₂}        ¬r with ¬ER→ENF {t = t₂} λ r₂ → Cred (Econg$₂ {!nnf ⌜v⌝!} r₂) ↯ ¬r
---  ... | p₂                                          = nnf (⌜v⌝ ⌜$⌝ p₂)
---  ¬ER→ENF {A = ⌜◦⌝}     {⌜λ⌝ _ ⌜$⌝ t₂}        ¬r with ¬ER→ENF {t = t₂} λ r₂ → Cred (Econg$₂ ⌜λ⌝ r₂) ↯ ¬r
---  ... | p₂                                          = Cred (βred⊃ refl (ENF→CNF p₂)) ↯ ¬r
---  ¬ER→ENF {A = ⌜◦⌝}     {t₁@(_ ⌜$⌝ _) ⌜$⌝ t₂} ¬r with ¬ER→ENF {t = t₁} λ { (Cred r) → Cred (cong$₁ r) ↯ ¬r
---                                                                           ; (ηexp⊃ refl x) → {!!} ↯ ¬r
---                                                                           }
---  ¬ER→ENF {A = ⌜◦⌝}     {t₁@(_ ⌜$⌝ _) ⌜$⌝ t₂} ¬r | ()
---  ¬ER→ENF {A = _ ⌜⊃⌝ _} {⌜v⌝ i}               ¬r = ηexp⊃ refl ⌜v⌝ ↯ ¬r
---  ¬ER→ENF {A = _ ⌜⊃⌝ _} {⌜λ⌝ t}               ¬r = ⌜λ⌝
---  ¬ER→ENF {A = _ ⌜⊃⌝ _} {⌜v⌝ _ ⌜$⌝ t₂}        ¬r with ¬ER→ENF {t = t₂} λ r₂ → Cred (Econg$₂ {!nnf ⌜v⌝!} r₂) ↯ ¬r
---  ... | p₂                                          = {!nnf (⌜v⌝ ⌜$⌝ p₂)!}
---  ¬ER→ENF {A = _ ⌜⊃⌝ _} {⌜λ⌝ _ ⌜$⌝ t₂}        ¬r with ¬ER→ENF {t = t₂} λ r₂ → Cred (Econg$₂ ⌜λ⌝ r₂) ↯ ¬r
---  ... | p₂                                          = Cred (βred⊃ refl (ENF→CNF p₂)) ↯ ¬r
---  ¬ER→ENF {A = _ ⌜⊃⌝ _} {t₁@(_ ⌜$⌝ _) ⌜$⌝ t₂} ¬r with ¬ER→ENF {t = t₁} λ { (Cred r) → Cred (cong$₁ r) ↯ ¬r
---                                                                           ; (ηexp⊃ refl x) → {!!} ↯ ¬r
---                                                                           }
---  ¬ER→ENF {A = _ ⌜⊃⌝ _} {t₁@(_ ⌜$⌝ _) ⌜$⌝ t₂} ¬r | ()
+  open E′.NF?Kit ENF? ¬ENF→ERF using () renaming (prog⇒ to prog⇒E)
+
+-- module ProgAlt2E where
+--   ¬ER→ENF : ∀ {Γ A} {t : Γ ⊢ A} → E.¬R t → ENF t
+--   ¬ER→ENF {A = ⌜◦⌝}     {⌜v⌝ i}               ¬r = nnf ⌜v⌝
+--   ¬ER→ENF {A = ⌜◦⌝}     {⌜v⌝ _ ⌜$⌝ t₂}        ¬r with ¬ER→ENF {t = t₂} λ r₂ → Cred (Econg$₂ {!nnf ⌜v⌝!} r₂) ↯ ¬r
+--   ... | p₂                                          = nnf (⌜v⌝ ⌜$⌝ p₂)
+--   ¬ER→ENF {A = ⌜◦⌝}     {⌜λ⌝ _ ⌜$⌝ t₂}        ¬r with ¬ER→ENF {t = t₂} λ r₂ → Cred (Econg$₂ ⌜λ⌝ r₂) ↯ ¬r
+--   ... | p₂                                          = Cred (βred⊃ refl (ENF→CNF p₂)) ↯ ¬r
+--   ¬ER→ENF {A = ⌜◦⌝}     {t₁@(_ ⌜$⌝ _) ⌜$⌝ t₂} ¬r with ¬ER→ENF {t = t₁} λ { (Cred r) → Cred (cong$₁ r) ↯ ¬r
+--                                                                            ; (ηexp⊃ refl x) → {!!} ↯ ¬r
+--                                                                            }
+--   ¬ER→ENF {A = ⌜◦⌝}     {t₁@(_ ⌜$⌝ _) ⌜$⌝ t₂} ¬r | ()
+--   ¬ER→ENF {A = _ ⌜⊃⌝ _} {⌜v⌝ i}               ¬r = ηexp⊃ refl ⌜v⌝ ↯ ¬r
+--   ¬ER→ENF {A = _ ⌜⊃⌝ _} {⌜λ⌝ t}               ¬r = ⌜λ⌝
+--   ¬ER→ENF {A = _ ⌜⊃⌝ _} {⌜v⌝ _ ⌜$⌝ t₂}        ¬r with ¬ER→ENF {t = t₂} λ r₂ → Cred (Econg$₂ {!nnf ⌜v⌝!} r₂) ↯ ¬r
+--   ... | p₂                                          = {!nnf (⌜v⌝ ⌜$⌝ p₂)!}
+--   ¬ER→ENF {A = _ ⌜⊃⌝ _} {⌜λ⌝ _ ⌜$⌝ t₂}        ¬r with ¬ER→ENF {t = t₂} λ r₂ → Cred (Econg$₂ ⌜λ⌝ r₂) ↯ ¬r
+--   ... | p₂                                          = Cred (βred⊃ refl (ENF→CNF p₂)) ↯ ¬r
+--   ¬ER→ENF {A = _ ⌜⊃⌝ _} {t₁@(_ ⌜$⌝ _) ⌜$⌝ t₂} ¬r with ¬ER→ENF {t = t₁} λ { (Cred r) → Cred (cong$₁ r) ↯ ¬r
+--                                                                            ; (ηexp⊃ refl x) → {!!} ↯ ¬r
+--                                                                            }
+--   ¬ER→ENF {A = _ ⌜⊃⌝ _} {t₁@(_ ⌜$⌝ _) ⌜$⌝ t₂} ¬r | ()
 --
---  ¬ERF→ENF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ E.RF t → ENF t
---  ¬ERF→ENF = ¬ER→ENF ∘ E′.¬RF→¬R
+--   ¬ERF→ENF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ E.RF t → ENF t
+--   ¬ERF→ENF = ¬ER→ENF ∘ E′.¬RF→¬R
 --
---  open E′.RF?Kit {!!} ¬ERF→ENF using () renaming (prog⇒ to prog⇒E)
+--   open E′.RF?Kit {!!} ¬ERF→ENF using () renaming (prog⇒ to prog⇒E)
+
+
+
+
+postulate
+  Γ  : Ctx
+  A  : Ty
+  t₁ : Γ ⊢ A ⌜⊃⌝ ⌜◦⌝
+  p₁ : CNNF t₁
+  x  : Exp t₁
+  t₂ : Γ ⊢ A
+  p₂ : ENF t₂
+
+r₁ : t₁ ⇒E ⌜λ⌝ (weak t₁ ⌜$⌝ ⌜v⌝ zero)
+r₁ = ηexp⊃ refl x
+
+¬r : E.¬R (t₁ ⌜$⌝ t₂)
+¬r (Cred r) = r ↯ CNNF→¬CR (p₁ ⌜$⌝ ENF→CNF p₂)
+-- ¬r (ηexp⊃ eq x) -- this is impossible, which is good:
+-- The case for the constructor ηexp⊃ is impossible
+-- because unification ended with a conflicting equation
+--   A₁ ⌜⊃⌝ B ≟ ⌜◦⌝
 
 
 prog⇒E : ∀ {Γ A} (t : Γ ⊢ A) → E′.Prog t
@@ -345,9 +372,10 @@ prog⇒E {A = ⌜◦⌝}     (t₁ ⌜$⌝ t₂)                               w
 ... | C′.done p₁       | E′.done p₁′               | E′.step r₂   = E′.step (Cred (Econg$₂ p₁′ r₂))
 ... | C′.done ⌜λ⌝      | _                         | E′.done p₂   = E′.step (Cred (βred⊃ refl (ENF→CNF p₂)))
 ... | C′.done (nnf p₁) | E′.step (Cred r₁)         | E′.done p₂   = r₁ ↯ CNNF→¬CR p₁
-... | C′.done (nnf p₁) | E′.step r₁@(ηexp⊃ refl x) | E′.done p₂   = {!!}
+... | C′.done (nnf p₁) | E′.step r₁@(ηexp⊃ refl x) | E′.done p₂   = {!!} -- this is the hole that corresponds to the counterexample
 ... | C′.done (nnf p₁) | E′.done ⌜λ⌝               | E′.done p₂   = E′.step (Cred (βred⊃ refl (ENF→CNF p₂)))
 prog⇒E {A = A ⌜⊃⌝ B} (t₁ ⌜$⌝ t₂)                               = E′.step (ηexp⊃ refl _⌜$⌝_)
+
 
 
 
