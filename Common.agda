@@ -61,9 +61,22 @@ implify ⚠ = A.implicit-extensionality ⚠
 
 ----------------------------------------------------------------------------------------------------
 
+-- uniqueness of proofs for empty
+uni𝟘 : ∀ (z z′ : 𝟘) → z ≡ z′
+uni𝟘 () ()
+
 -- uniqueness of proofs for propositional equality
 uni≡ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} (eq eq′ : x ≡ x′) → eq ≡ eq′
 uni≡ refl refl = refl
+
+-- uniqueness of proofs for functions
+module _ (⚠ : Extensionality) where
+  uni→ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (uniY : ∀ (y y′ : Y) → y ≡ y′) →
+          (∀ (f f′ : X → Y) → f ≡ f′)
+  uni→ uniY f f′ = ⚠ λ x → uniY (f x) (f′ x)
+
+
+----------------------------------------------------------------------------------------------------
 
 coe : ∀ {𝓍} {X Y : Set 𝓍} → X ≡ Y → X → Y
 coe = subst id
@@ -78,13 +91,12 @@ _⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {f g : X → Y} {x y : X} 
       f x ≡ g y
 refl ⊗ refl = refl
 
-cong-app″ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ (x : X) → Y x} →
-            (λ (x : X) → f x) ≡ (λ (x : X) → g x) → (∀ (x : X) → f x ≡ g x)
-cong-app″ refl x = refl
-
 cong-app′ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x : X} → Y x} →
             (λ {x : X} → f {x}) ≡ (λ {x : X} → g {x}) → (∀ {x : X} → f {x} ≡ g {x})
 cong-app′ refl {x} = refl
+
+
+----------------------------------------------------------------------------------------------------
 
 rec : ∀ {𝓍} {X : Set 𝓍} → X → (ℕ → X → X) → ℕ → X
 rec z s zero    = z
@@ -318,9 +330,7 @@ module CtxKit (Ty : Set) where
 
       module ¬RKit
         {NF      : ∀ {Γ A} → Γ ⊢ A → Set}
-        {NNF     : ∀ {Γ A} → Γ ⊢ A → Set}
         (NF→¬R  : ∀ {Γ A} {t : Γ ⊢ A} → NF t → ¬R t)
-        (NNF→¬R : ∀ {Γ A} {t : Γ ⊢ A} → NNF t → ¬R t)
           where
         ¬RF→¬R : ∀ {Γ A} {t : Γ ⊢ A} → ¬ RF t → ¬R t
         ¬RF→¬R ¬p r = (_ , r) ↯ ¬p
@@ -333,9 +343,6 @@ module CtxKit (Ty : Set) where
 
         NF→¬RF : ∀ {Γ A} {t : Γ ⊢ A} → NF t → ¬ RF t
         NF→¬RF = ¬R→¬RF ∘ NF→¬R
-
-        NNF→¬RF : ∀ {Γ A} {t : Γ ⊢ A} → NNF t → ¬ RF t
-        NNF→¬RF = ¬R→¬RF ∘ NNF→¬R
 
         -- progress
         data Prog {Γ A} (t : Γ ⊢ A) : Set where
@@ -380,8 +387,7 @@ module CtxKit (Ty : Set) where
           ... | yes p   = done p
           ... | no ¬p   = step (proj₂ (¬NF→RF ¬p))
 
-          open ProgKit prog⇒ public
-            hiding (NF? ; ¬NF→RF)
+          open ProgKit prog⇒ public hiding (NF? ; ¬NF→RF)
 
         module RF?Kit
           (RF?     : ∀ {Γ A} (t : Γ ⊢ A) → Dec (RF t))
@@ -392,8 +398,7 @@ module CtxKit (Ty : Set) where
           ... | yes (t′ , r)   = step r
           ... | no ¬p          = done (¬RF→NF ¬p)
 
-          open ProgKit prog⇒ public
-            hiding (RF? ; ¬RF→NF)
+          open ProgKit prog⇒ public hiding (RF? ; ¬RF→NF)
 
 
 ----------------------------------------------------------------------------------------------------

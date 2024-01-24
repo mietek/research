@@ -5,7 +5,7 @@ open import STLC-Naturals2 public
 
 ----------------------------------------------------------------------------------------------------
 
--- β-short η-long strong normal forms (inductive)
+-- β-short η-long strong normal forms (intrinsic)
 mutual
   infix 3 _⇇_
   data _⇇_ (Γ : Ctx) : Ty → Set where

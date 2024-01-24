@@ -114,95 +114,95 @@ mutual
   NNF→¬R (`rec p₁ p₂ p₃) (congrec₂ p₁′ r₂)     = r₂ ↯ NF→¬R p₂
   NNF→¬R (`rec p₁ p₂ p₃) (congrec₃ p₁′ p₂′ r₃) = r₃ ↯ NF→¬R p₃
 
--- progress
-prog⇒ : ∀ {Γ A} (t : Γ ⊢ A) → Prog NF t
-prog⇒ (`v i)                             = done (`nnf `v)
-prog⇒ (`λ t)                             = done `λ
-prog⇒ (t₁ `$ t₂)                         with prog⇒ t₁ | prog⇒ t₂
-... | step r₁        | _                     = step (cong$₁ r₁)
-... | done p₁        | step r₂               = step (cong$₂ p₁ r₂)
-... | done `λ        | done p₂               = step (βred⊃ refl p₂)
-... | done (`nnf p₁) | done p₂               = done (`nnf (p₁ `$ p₂))
-prog⇒ `zero                              = done `zero
-prog⇒ (`suc t)                           with prog⇒ t
-... | step r                                = step (congsuc r)
-... | done p                                = done (`suc p)
-prog⇒ (`rec t₁ t₂ t₃)                    with prog⇒ t₁ | prog⇒ t₂ | prog⇒ t₃
-... | step r₁         | _       | _         = step (congrec₁ r₁)
-... | done p₁         | step r₂ | _         = step (congrec₂ p₁ r₂)
-... | done p₁         | done p₂ | step r₃   = step (congrec₃ p₁ p₂ r₃)
-... | done `zero      | done p₂ | done p₃   = step (βredℕ₁ p₂ p₃)
-... | done (`suc p₁)  | done p₂ | done p₃   = step (βredℕ₂ refl (`suc p₁) p₂ p₃)
-... | done (`nnf p₁)  | done p₂ | done p₃   = done (`nnf (`rec p₁ p₂ p₃))
+-- -- progress
+-- prog⇒ : ∀ {Γ A} (t : Γ ⊢ A) → Prog NF t
+-- prog⇒ (`v i)                             = done (`nnf `v)
+-- prog⇒ (`λ t)                             = done `λ
+-- prog⇒ (t₁ `$ t₂)                         with prog⇒ t₁ | prog⇒ t₂
+-- ... | step r₁        | _                     = step (cong$₁ r₁)
+-- ... | done p₁        | step r₂               = step (cong$₂ p₁ r₂)
+-- ... | done `λ        | done p₂               = step (βred⊃ refl p₂)
+-- ... | done (`nnf p₁) | done p₂               = done (`nnf (p₁ `$ p₂))
+-- prog⇒ `zero                              = done `zero
+-- prog⇒ (`suc t)                           with prog⇒ t
+-- ... | step r                                = step (congsuc r)
+-- ... | done p                                = done (`suc p)
+-- prog⇒ (`rec t₁ t₂ t₃)                    with prog⇒ t₁ | prog⇒ t₂ | prog⇒ t₃
+-- ... | step r₁         | _       | _         = step (congrec₁ r₁)
+-- ... | done p₁         | step r₂ | _         = step (congrec₂ p₁ r₂)
+-- ... | done p₁         | done p₂ | step r₃   = step (congrec₃ p₁ p₂ r₃)
+-- ... | done `zero      | done p₂ | done p₃   = step (βredℕ₁ p₂ p₃)
+-- ... | done (`suc p₁)  | done p₂ | done p₃   = step (βredℕ₂ refl (`suc p₁) p₂ p₃)
+-- ... | done (`nnf p₁)  | done p₂ | done p₃   = done (`nnf (`rec p₁ p₂ p₃))
 
-open ProgKit NF→¬R prog⇒ public
+-- open ProgKit NF→¬R prog⇒ public
 
--- determinism
-det⇒ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t ⇒ t″ → t′ ≡ t″
-det⇒ (cong$₁ r₁)            (cong$₁ r₁′)              = (_`$ _) & det⇒ r₁ r₁′
-det⇒ (cong$₁ r₁)            (cong$₂ p₁′ r₂′)          = r₁ ↯ NF→¬R p₁′
-det⇒ (cong$₂ p₁ r₂)         (cong$₁ r₁′)              = r₁′ ↯ NF→¬R p₁
-det⇒ (cong$₂ p₁ r₂)         (cong$₂ p₁′ r₂′)          = (_ `$_) & det⇒ r₂ r₂′
-det⇒ (cong$₂ p₁ r₂)         (βred⊃ refl p₂′)          = r₂ ↯ NF→¬R p₂′
-det⇒ (congsuc r)            (congsuc r′)              = `suc & det⇒ r r′
-det⇒ (congrec₁ r₁)          (congrec₁ r₁′)            = _ & det⇒ r₁ r₁′
-det⇒ (congrec₁ r₁)          (congrec₂ p₁′ r₂′)        = r₁ ↯ NF→¬R p₁′
-det⇒ (congrec₁ r₁)          (congrec₃ p₁′ p₂′ r₃′)    = r₁ ↯ NF→¬R p₁′
-det⇒ (congrec₁ r₁)          (βredℕ₂ refl p₁′ p₂′ p₃′) = r₁ ↯ NF→¬R p₁′
-det⇒ (congrec₂ p₁ r₂)       (congrec₁ r₁′)            = r₁′ ↯ NF→¬R p₁
-det⇒ (congrec₂ p₁ r₂)       (congrec₂ p₁′ r₂′)        = _ & uniNF p₁ p₁′ ⊗ det⇒ r₂ r₂′
-det⇒ (congrec₂ p₁ r₂)       (congrec₃ p₁′ p₂′ r₃′)    = r₂ ↯ NF→¬R p₂′
-det⇒ (congrec₂ p₁ r₂)       (βredℕ₁ p₂′ p₃′)          = r₂ ↯ NF→¬R p₂′
-det⇒ (congrec₂ p₁ r₂)       (βredℕ₂ refl p₁′ p₂′ p₃′) = r₂ ↯ NF→¬R p₂′
-det⇒ (congrec₃ p₁ p₂ r₃)    (congrec₁ r₁′)            = r₁′ ↯ NF→¬R p₁
-det⇒ (congrec₃ p₁ p₂ r₃)    (congrec₂ p₁′ r₂′)        = r₂′ ↯ NF→¬R p₂
-det⇒ (congrec₃ p₁ p₂ r₃)    (congrec₃ p₁′ p₂′ r₃′)    = _ & uniNF p₁ p₁′ ⊗ uniNF p₂ p₂′
-                                                                          ⊗ det⇒ r₃ r₃′
-det⇒ (congrec₃ p₁ p₂ r₃)    (βredℕ₁ p₂′ p₃′)          = r₃ ↯ NF→¬R p₃′
-det⇒ (congrec₃ p₁ p₂ r₃)    (βredℕ₂ refl p₁′ p₂′ p₃′) = r₃ ↯ NF→¬R p₃′
-det⇒ (βred⊃ refl p₂)        (cong$₂ p₁′ r₂′)          = r₂′ ↯ NF→¬R p₂
-det⇒ (βred⊃ refl p₂)        (βred⊃ refl p₂′)          = refl
-det⇒ (βredℕ₁ p₂ p₃)         (congrec₂ p₁′ r₂′)        = r₂′ ↯ NF→¬R p₂
-det⇒ (βredℕ₁ p₂ p₃)         (congrec₃ p₁′ p₂′ r₃′)    = r₃′ ↯ NF→¬R p₃
-det⇒ (βredℕ₁ p₂ p₃)         (βredℕ₁ p₂′ p₃′)          = refl
-det⇒ (βredℕ₂ refl p₁ p₂ p₃) (congrec₁ r₁′)            = r₁′ ↯ NF→¬R p₁
-det⇒ (βredℕ₂ refl p₁ p₂ p₃) (congrec₂ p₁′ r₂′)        = r₂′ ↯ NF→¬R p₂
-det⇒ (βredℕ₂ refl p₁ p₂ p₃) (congrec₃ p₁′ p₂′ r₃′)    = r₃′ ↯ NF→¬R p₃
-det⇒ (βredℕ₂ refl p₁ p₂ p₃) (βredℕ₂ refl p₁′ p₂′ p₃′) = refl
+-- -- determinism
+-- det⇒ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t ⇒ t″ → t′ ≡ t″
+-- det⇒ (cong$₁ r₁)            (cong$₁ r₁′)              = (_`$ _) & det⇒ r₁ r₁′
+-- det⇒ (cong$₁ r₁)            (cong$₂ p₁′ r₂′)          = r₁ ↯ NF→¬R p₁′
+-- det⇒ (cong$₂ p₁ r₂)         (cong$₁ r₁′)              = r₁′ ↯ NF→¬R p₁
+-- det⇒ (cong$₂ p₁ r₂)         (cong$₂ p₁′ r₂′)          = (_ `$_) & det⇒ r₂ r₂′
+-- det⇒ (cong$₂ p₁ r₂)         (βred⊃ refl p₂′)          = r₂ ↯ NF→¬R p₂′
+-- det⇒ (congsuc r)            (congsuc r′)              = `suc & det⇒ r r′
+-- det⇒ (congrec₁ r₁)          (congrec₁ r₁′)            = _ & det⇒ r₁ r₁′
+-- det⇒ (congrec₁ r₁)          (congrec₂ p₁′ r₂′)        = r₁ ↯ NF→¬R p₁′
+-- det⇒ (congrec₁ r₁)          (congrec₃ p₁′ p₂′ r₃′)    = r₁ ↯ NF→¬R p₁′
+-- det⇒ (congrec₁ r₁)          (βredℕ₂ refl p₁′ p₂′ p₃′) = r₁ ↯ NF→¬R p₁′
+-- det⇒ (congrec₂ p₁ r₂)       (congrec₁ r₁′)            = r₁′ ↯ NF→¬R p₁
+-- det⇒ (congrec₂ p₁ r₂)       (congrec₂ p₁′ r₂′)        = _ & uniNF p₁ p₁′ ⊗ det⇒ r₂ r₂′
+-- det⇒ (congrec₂ p₁ r₂)       (congrec₃ p₁′ p₂′ r₃′)    = r₂ ↯ NF→¬R p₂′
+-- det⇒ (congrec₂ p₁ r₂)       (βredℕ₁ p₂′ p₃′)          = r₂ ↯ NF→¬R p₂′
+-- det⇒ (congrec₂ p₁ r₂)       (βredℕ₂ refl p₁′ p₂′ p₃′) = r₂ ↯ NF→¬R p₂′
+-- det⇒ (congrec₃ p₁ p₂ r₃)    (congrec₁ r₁′)            = r₁′ ↯ NF→¬R p₁
+-- det⇒ (congrec₃ p₁ p₂ r₃)    (congrec₂ p₁′ r₂′)        = r₂′ ↯ NF→¬R p₂
+-- det⇒ (congrec₃ p₁ p₂ r₃)    (congrec₃ p₁′ p₂′ r₃′)    = _ & uniNF p₁ p₁′ ⊗ uniNF p₂ p₂′
+--                                                                           ⊗ det⇒ r₃ r₃′
+-- det⇒ (congrec₃ p₁ p₂ r₃)    (βredℕ₁ p₂′ p₃′)          = r₃ ↯ NF→¬R p₃′
+-- det⇒ (congrec₃ p₁ p₂ r₃)    (βredℕ₂ refl p₁′ p₂′ p₃′) = r₃ ↯ NF→¬R p₃′
+-- det⇒ (βred⊃ refl p₂)        (cong$₂ p₁′ r₂′)          = r₂′ ↯ NF→¬R p₂
+-- det⇒ (βred⊃ refl p₂)        (βred⊃ refl p₂′)          = refl
+-- det⇒ (βredℕ₁ p₂ p₃)         (congrec₂ p₁′ r₂′)        = r₂′ ↯ NF→¬R p₂
+-- det⇒ (βredℕ₁ p₂ p₃)         (congrec₃ p₁′ p₂′ r₃′)    = r₃′ ↯ NF→¬R p₃
+-- det⇒ (βredℕ₁ p₂ p₃)         (βredℕ₁ p₂′ p₃′)          = refl
+-- det⇒ (βredℕ₂ refl p₁ p₂ p₃) (congrec₁ r₁′)            = r₁′ ↯ NF→¬R p₁
+-- det⇒ (βredℕ₂ refl p₁ p₂ p₃) (congrec₂ p₁′ r₂′)        = r₂′ ↯ NF→¬R p₂
+-- det⇒ (βredℕ₂ refl p₁ p₂ p₃) (congrec₃ p₁′ p₂′ r₃′)    = r₃′ ↯ NF→¬R p₃
+-- det⇒ (βredℕ₂ refl p₁ p₂ p₃) (βredℕ₂ refl p₁′ p₂′ p₃′) = refl
 
-open DetKit NF→¬R det⇒ public
+-- open DetKit NF→¬R det⇒ public
 
--- uniqueness of proofs
-uni⇒ : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒ t′) → r ≡ r′
-uni⇒ (cong$₁ r₁)            (cong$₁ r₁′)              = cong$₁ & uni⇒ r₁ r₁′
-uni⇒ (cong$₁ r₁)            (cong$₂ p₁′ r₂′)          = r₁ ↯ NF→¬R p₁′
-uni⇒ (cong$₂ p₁ r₂)         (cong$₁ r₁′)              = r₁′ ↯ NF→¬R p₁
-uni⇒ (cong$₂ p₁ r₂)         (cong$₂ p₁′ r₂′)          = cong$₂ & uniNF p₁ p₁′ ⊗ uni⇒ r₂ r₂′
-uni⇒ (cong$₂ p₁ r₂)         (βred⊃ eq′ p₂)            = r₂ ↯ NF→¬R p₂
-uni⇒ (congsuc r)            (congsuc r′)              = congsuc & uni⇒ r r′
-uni⇒ (congrec₁ r₁)          (congrec₁ r₁′)            = congrec₁ & uni⇒ r₁ r₁′
-uni⇒ (congrec₁ r₁)          (congrec₂ p₁′ r₂′)        = r₁ ↯ NF→¬R p₁′
-uni⇒ (congrec₁ r₁)          (congrec₃ p₁′ p₂′ r₃′)    = r₁ ↯ NF→¬R p₁′
-uni⇒ (congrec₁ r₁)          (βredℕ₂ eq′ p₁′ p₂′ p₃′)  = r₁ ↯ NF→¬R p₁′
-uni⇒ (congrec₂ p₁ r₂)       (congrec₁ r₁′)            = r₁′ ↯ NF→¬R p₁
-uni⇒ (congrec₂ p₁ r₂)       (congrec₂ p₁′ r₂′)        = congrec₂ & uniNF p₁ p₁′ ⊗ uni⇒ r₂ r₂′
-uni⇒ (congrec₂ p₁ r₂)       (congrec₃ p₁′ p₂′ r₃′)    = r₂ ↯ NF→¬R p₂′
-uni⇒ (congrec₂ p₁ r₂)       (βredℕ₁ p₂′ p₃′)          = r₂ ↯ NF→¬R p₂′
-uni⇒ (congrec₂ p₁ r₂)       (βredℕ₂ eq′ p₁′ p₂′ p₃′)  = r₂ ↯ NF→¬R p₂′
-uni⇒ (congrec₃ p₁ p₂ r₃)    (congrec₁ r₁′)            = r₁′ ↯ NF→¬R p₁
-uni⇒ (congrec₃ p₁ p₂ r₃)    (congrec₂ p₁′ r₂′)        = r₂′ ↯ NF→¬R p₂
-uni⇒ (congrec₃ p₁ p₂ r₃)    (congrec₃ p₁′ p₂′ r₃′)    = _ & uniNF p₁ p₁′ ⊗ uniNF p₂ p₂′
-                                                                          ⊗ uni⇒ r₃ r₃′
-uni⇒ (congrec₃ p₁ p₂ r₃)    (βredℕ₂ eq′ p₁′ p₂′ p₃′)  = r₃ ↯ NF→¬R p₃′
-uni⇒ (βred⊃ eq p₂)          (cong$₂ p₁′ r₂′)          = r₂′ ↯ NF→¬R p₂
-uni⇒ (βred⊃ refl p₂)        (βred⊃ refl p₂′)          = βred⊃ refl & uniNF p₂ p₂′
-uni⇒ (βredℕ₁ p₂ p₃)         (congrec₂ p₁′ r₂′)        = r₂′ ↯ NF→¬R p₂
-uni⇒ (βredℕ₁ p₂ p₃)         (βredℕ₁ p₂′ p₃′)          = βredℕ₁ & uniNF p₂ p₂′ ⊗ uniNF p₃ p₃′
-uni⇒ (βredℕ₂ eq p₁ p₂ p₃)   (congrec₁ r₁′)            = r₁′ ↯ NF→¬R p₁
-uni⇒ (βredℕ₂ eq p₁ p₂ p₃)   (congrec₂ p₁′ r₂′)        = r₂′ ↯ NF→¬R p₂
-uni⇒ (βredℕ₂ eq p₁ p₂ p₃)   (congrec₃ p₁′ p₂′ r₃′)    = r₃′ ↯ NF→¬R p₃
-uni⇒ (βredℕ₂ refl p₁ p₂ p₃) (βredℕ₂ refl p₁′ p₂′ p₃′) = βredℕ₂ refl & uniNF p₁ p₁′ ⊗ uniNF p₂ p₂′
-                                                                                    ⊗ uniNF p₃ p₃′
+-- -- uniqueness of proofs
+-- uni⇒ : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒ t′) → r ≡ r′
+-- uni⇒ (cong$₁ r₁)            (cong$₁ r₁′)              = cong$₁ & uni⇒ r₁ r₁′
+-- uni⇒ (cong$₁ r₁)            (cong$₂ p₁′ r₂′)          = r₁ ↯ NF→¬R p₁′
+-- uni⇒ (cong$₂ p₁ r₂)         (cong$₁ r₁′)              = r₁′ ↯ NF→¬R p₁
+-- uni⇒ (cong$₂ p₁ r₂)         (cong$₂ p₁′ r₂′)          = cong$₂ & uniNF p₁ p₁′ ⊗ uni⇒ r₂ r₂′
+-- uni⇒ (cong$₂ p₁ r₂)         (βred⊃ eq′ p₂)            = r₂ ↯ NF→¬R p₂
+-- uni⇒ (congsuc r)            (congsuc r′)              = congsuc & uni⇒ r r′
+-- uni⇒ (congrec₁ r₁)          (congrec₁ r₁′)            = congrec₁ & uni⇒ r₁ r₁′
+-- uni⇒ (congrec₁ r₁)          (congrec₂ p₁′ r₂′)        = r₁ ↯ NF→¬R p₁′
+-- uni⇒ (congrec₁ r₁)          (congrec₃ p₁′ p₂′ r₃′)    = r₁ ↯ NF→¬R p₁′
+-- uni⇒ (congrec₁ r₁)          (βredℕ₂ eq′ p₁′ p₂′ p₃′)  = r₁ ↯ NF→¬R p₁′
+-- uni⇒ (congrec₂ p₁ r₂)       (congrec₁ r₁′)            = r₁′ ↯ NF→¬R p₁
+-- uni⇒ (congrec₂ p₁ r₂)       (congrec₂ p₁′ r₂′)        = congrec₂ & uniNF p₁ p₁′ ⊗ uni⇒ r₂ r₂′
+-- uni⇒ (congrec₂ p₁ r₂)       (congrec₃ p₁′ p₂′ r₃′)    = r₂ ↯ NF→¬R p₂′
+-- uni⇒ (congrec₂ p₁ r₂)       (βredℕ₁ p₂′ p₃′)          = r₂ ↯ NF→¬R p₂′
+-- uni⇒ (congrec₂ p₁ r₂)       (βredℕ₂ eq′ p₁′ p₂′ p₃′)  = r₂ ↯ NF→¬R p₂′
+-- uni⇒ (congrec₃ p₁ p₂ r₃)    (congrec₁ r₁′)            = r₁′ ↯ NF→¬R p₁
+-- uni⇒ (congrec₃ p₁ p₂ r₃)    (congrec₂ p₁′ r₂′)        = r₂′ ↯ NF→¬R p₂
+-- uni⇒ (congrec₃ p₁ p₂ r₃)    (congrec₃ p₁′ p₂′ r₃′)    = _ & uniNF p₁ p₁′ ⊗ uniNF p₂ p₂′
+--                                                                           ⊗ uni⇒ r₃ r₃′
+-- uni⇒ (congrec₃ p₁ p₂ r₃)    (βredℕ₂ eq′ p₁′ p₂′ p₃′)  = r₃ ↯ NF→¬R p₃′
+-- uni⇒ (βred⊃ eq p₂)          (cong$₂ p₁′ r₂′)          = r₂′ ↯ NF→¬R p₂
+-- uni⇒ (βred⊃ refl p₂)        (βred⊃ refl p₂′)          = βred⊃ refl & uniNF p₂ p₂′
+-- uni⇒ (βredℕ₁ p₂ p₃)         (congrec₂ p₁′ r₂′)        = r₂′ ↯ NF→¬R p₂
+-- uni⇒ (βredℕ₁ p₂ p₃)         (βredℕ₁ p₂′ p₃′)          = βredℕ₁ & uniNF p₂ p₂′ ⊗ uniNF p₃ p₃′
+-- uni⇒ (βredℕ₂ eq p₁ p₂ p₃)   (congrec₁ r₁′)            = r₁′ ↯ NF→¬R p₁
+-- uni⇒ (βredℕ₂ eq p₁ p₂ p₃)   (congrec₂ p₁′ r₂′)        = r₂′ ↯ NF→¬R p₂
+-- uni⇒ (βredℕ₂ eq p₁ p₂ p₃)   (congrec₃ p₁′ p₂′ r₃′)    = r₃′ ↯ NF→¬R p₃
+-- uni⇒ (βredℕ₂ refl p₁ p₂ p₃) (βredℕ₂ refl p₁′ p₂′ p₃′) = βredℕ₂ refl & uniNF p₁ p₁′ ⊗ uniNF p₂ p₂′
+--                                                                                     ⊗ uniNF p₃ p₃′
 
 
-----------------------------------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------------------------------

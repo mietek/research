@@ -34,6 +34,7 @@ import STLC-Base-Weak-NotEtaLong
 import STLC-Base-Weak-NotEtaLong-ConcreteNbE
 import STLC-Base-Weak-NotEtaLong-AbstractNbE
 import STLC-Base-Weak-EtaLong -- TODO
+import STLC-Base-Strong-EtaLong -- TODO
 
 import STLC-Negative
 import STLC-Negative-Weak-NotEtaLong
