@@ -44,7 +44,7 @@ refl⊩* {A ∷ Γ} = ↑ (⌜v⌝ zero) ∷ ren⊩* wk⊆ refl⊩*
 ⟦zero⟧ e = ⌜zero⌝
 
 ⟦suc⟧ : ∀ {Γ} → Γ ⊩ ⌜ℕ⌝ ⌜⊃⌝ ⌜ℕ⌝
-⟦suc⟧ e v e′ = v e′
+⟦suc⟧ e v e′ = ⌜suc⌝ (v e′)
 
 -- TODO: typo in Abel p.11?
 -- TODO: isn't there a better way?

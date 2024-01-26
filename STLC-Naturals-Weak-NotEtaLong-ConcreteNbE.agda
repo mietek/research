@@ -41,37 +41,71 @@ refl⊩* {A ∷ Γ} = ↑ (⌜v⌝ zero , ⌜v⌝-) ∷ ren⊩* wk⊆ refl⊩*
 
 ----------------------------------------------------------------------------------------------------
 
-⟦zero⟧ : ∀ {Γ} → Γ ⊨ ⌜ℕ⌝
-⟦zero⟧ vs e = ⌜zero⌝ , ⌜zero⌝
-
-⟦suc⟧ : ∀ {Γ} → Γ ⊨ ⌜ℕ⌝ → Γ ⊨ ⌜ℕ⌝
-⟦suc⟧ v vs e = let t′ , p′ = v vs e in ⌜suc⌝ t′ , ⌜suc⌝ p′
-
 -- TODO: what?!
-{-# TERMINATING #-}
-⟦rec⟧ : ∀ {Γ A} → Γ ⊨ ⌜ℕ⌝ → Γ ⊨ A → A ∷ ⌜ℕ⌝ ∷ Γ ⊨ A → Γ ⊨ A
-⟦rec⟧ vₙ v₀ vₛ vs         with vₙ vs refl⊆
-... | ⌜zero⌝ , ⌜zero⌝       = v₀ vs
-... | ⌜suc⌝ tₙ , ⌜suc⌝ pₙ   = vₛ (⟦rec⟧ {!!} v₀ vₛ vs ∷ (λ e → ren e tₙ , renNF e pₙ) ∷ vs)
-... | tₙ , nnf pₙ           =
-  let t₀ , p₀ = ↓ (v₀ vs)
-      tₛ , pₛ = ↓ (vₛ (aux vs))
-  in  ↑ (⌜rec⌝ tₙ t₀ tₛ , ⌜rec⌝ pₙ p₀ pₛ)
-  where
-    aux : ∀ {W Γ A B} → W ⊩* Γ → A ∷ B ∷ W ⊩* A ∷ B ∷ Γ
-    aux vs = ↑ (⌜v⌝ zero , ⌜v⌝-) ∷ (↑ (⌜v⌝ (suc zero) , ⌜v⌝-) ∷ ren⊩* (drop wk⊆) vs)
+module Attempt1 where
+  ⟦zero⟧ : ∀ {Γ} → Γ ⊩ ⌜ℕ⌝
+  ⟦zero⟧ e = ⌜zero⌝ , ⌜zero⌝
 
--- reflection
-⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
-⟦ ⌜v⌝ i          ⟧ vs = ⟦ i ⟧∋ vs
-⟦ ⌜λ⌝ t          ⟧ vs = λ e v → ⟦ t ⟧ (v ∷ ren⊩* e vs)
-⟦ t₁ ⌜$⌝ t₂      ⟧ vs = ⟦ t₁ ⟧ vs refl⊆ $ ⟦ t₂ ⟧ vs
-⟦ ⌜zero⌝         ⟧ vs = ⟦zero⟧ vs
-⟦ ⌜suc⌝ t        ⟧ vs = ⟦suc⟧ ⟦ t ⟧ vs
-⟦ ⌜rec⌝ tₙ t₀ tₛ ⟧ vs = ⟦rec⟧ ⟦ tₙ ⟧ ⟦ t₀ ⟧ ⟦ tₛ ⟧ vs
+  ⟦suc⟧ : ∀ {Γ} → Γ ⊩ ⌜ℕ⌝ → Γ ⊩ ⌜ℕ⌝
+  ⟦suc⟧ v e = let t′ , p′ = v e in ⌜suc⌝ t′ , ⌜suc⌝ p′
 
-nbe : ∀ {Γ A} → Γ ⊢ A → Σ (Γ ⊢ A) NF
-nbe = ⟦_⟧⁻¹ ∘ ⟦_⟧
+  ⟦rec⟧ : ∀ {Γ A} → Γ ⊩ ⌜ℕ⌝ → Γ ⊩ A → A ∷ ⌜ℕ⌝ ∷ Γ ⊩ A → Γ ⊩ A
+  ⟦rec⟧ vₙ v₀ vₛ with vₙ refl⊆
+  ... | ⌜zero⌝ ,   ⌜zero⌝   = v₀
+  ... | ⌜suc⌝ tₙ , ⌜suc⌝ pₙ = {!!}
+  ... | tₙ ,       nnf pₙ   =
+    let t₀ , p₀ = ↓ v₀
+        tₛ , pₛ = ↓ vₛ
+    in  ↑ ((⌜rec⌝ tₙ t₀ tₛ) , ⌜rec⌝ pₙ p₀ pₛ)
+
+  -- reflection
+  ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
+  ⟦ ⌜v⌝ i          ⟧ vs = ⟦ i ⟧∋ vs
+  ⟦ ⌜λ⌝ t          ⟧ vs = λ e v → ⟦ t ⟧ (v ∷ ren⊩* e vs)
+  ⟦ t₁ ⌜$⌝ t₂      ⟧ vs = ⟦ t₁ ⟧ vs refl⊆ $ ⟦ t₂ ⟧ vs
+  ⟦ ⌜zero⌝         ⟧ vs = ⟦zero⟧
+  ⟦ ⌜suc⌝ t        ⟧ vs = ⟦suc⟧ (⟦ t ⟧ vs)
+  ⟦ ⌜rec⌝ tₙ t₀ tₛ ⟧ vs = ⟦rec⟧ (⟦ tₙ ⟧ vs) (⟦ t₀ ⟧ vs)
+                            (⟦ tₛ ⟧ ({!!} ∷ (λ e → {!!}) ∷ ren⊩* (drop wk⊆) vs))
 
 
 ----------------------------------------------------------------------------------------------------
+
+-- TODO: what?!
+module Attempt2 where
+  ⟦zero⟧ : ∀ {Γ} → Γ ⊨ ⌜ℕ⌝
+  ⟦zero⟧ vs e = ⌜zero⌝ , ⌜zero⌝
+
+  ⟦suc⟧ : ∀ {Γ} → Γ ⊨ ⌜ℕ⌝ → Γ ⊨ ⌜ℕ⌝
+  ⟦suc⟧ v vs e = let t′ , p′ = v vs e in ⌜suc⌝ t′ , ⌜suc⌝ p′
+
+  {-# TERMINATING #-}
+  ⟦rec⟧ : ∀ {Γ A} → Γ ⊨ ⌜ℕ⌝ → Γ ⊨ A → A ∷ ⌜ℕ⌝ ∷ Γ ⊨ A → Γ ⊨ A
+  ⟦rec⟧ vₙ v₀ vₛ vs         with vₙ vs refl⊆
+  ... | ⌜zero⌝ , ⌜zero⌝       = v₀ vs
+  ... | ⌜suc⌝ tₙ , ⌜suc⌝ pₙ   = vₛ (⟦rec⟧ (λ vs′ e → {!!} ) v₀ vₛ vs ∷ (λ e → ren e tₙ , renNF e pₙ) ∷ vs)
+  ... | tₙ , nnf pₙ           =
+    let t₀ , p₀ = ↓ (v₀ vs)
+        tₛ , pₛ = ↓ (vₛ (aux vs))
+    in  ↑ (⌜rec⌝ tₙ t₀ tₛ , ⌜rec⌝ pₙ p₀ pₛ)
+    where
+      aux : ∀ {W Γ A B} → W ⊩* Γ → A ∷ B ∷ W ⊩* A ∷ B ∷ Γ
+      aux vs = ↑ (⌜v⌝ zero , ⌜v⌝-) ∷ (↑ (⌜v⌝ (suc zero) , ⌜v⌝-) ∷ ren⊩* (drop wk⊆) vs)
+
+  -- reflection
+  ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
+  ⟦ ⌜v⌝ i          ⟧ vs = ⟦ i ⟧∋ vs
+  ⟦ ⌜λ⌝ t          ⟧ vs = λ e v → ⟦ t ⟧ (v ∷ ren⊩* e vs)
+  ⟦ t₁ ⌜$⌝ t₂      ⟧ vs = ⟦ t₁ ⟧ vs refl⊆ $ ⟦ t₂ ⟧ vs
+  ⟦ ⌜zero⌝         ⟧ vs = ⟦zero⟧ vs
+  ⟦ ⌜suc⌝ t        ⟧ vs = ⟦suc⟧ ⟦ t ⟧ vs
+  ⟦ ⌜rec⌝ tₙ t₀ tₛ ⟧ vs = ⟦rec⟧ ⟦ tₙ ⟧ ⟦ t₀ ⟧ ⟦ tₛ ⟧ vs
+
+
+----------------------------------------------------------------------------------------------------
+
+-- nbe : ∀ {Γ A} → Γ ⊢ A → Σ (Γ ⊢ A) NF
+-- nbe = ⟦_⟧⁻¹ ∘ ⟦_⟧
+
+
+-- ----------------------------------------------------------------------------------------------------
