@@ -50,10 +50,10 @@ refl⊩* {A ∷ Γ} = ↑ (⌜v⌝ zero) ∷ ren⊩* wk⊆ refl⊩*
 -- TODO: isn't there a better way?
 {-# TERMINATING #-}
 ⟦rec⟧ : ∀ {Γ A} → Γ ⊩ ⌜ℕ⌝ ⌜⊃⌝ A ⌜⊃⌝ (⌜ℕ⌝ ⌜⊃⌝ A ⌜⊃⌝ A) ⌜⊃⌝ A
-⟦rec⟧ {Γ} {A} {W} e vₙ {W′} e′ v₀ {W″} e″ vₛ with vₙ e′
+⟦rec⟧ e vₙ e′ v₀ e″ vₛ with vₙ e′
 ... | ⌜zero⌝             = ren⊩ e″ v₀
-... | ⌜suc⌝ pₙ           = vₛ refl⊆ (λ {W‴} e‴ → ren⋘ (trans⊆ e″ e‴) pₙ) refl⊆
-                             (⟦rec⟧ e′ (λ {W‴} e‴ → ren⋘ e‴ pₙ) refl⊆ v₀ e″ vₛ)
+... | ⌜suc⌝ pₙ           = vₛ refl⊆ (λ e‴ → ren⋘ (trans⊆ e″ e‴) pₙ) refl⊆
+                             (⟦rec⟧ e′ (λ e‴ → ren⋘ e‴ pₙ) refl⊆ v₀ e″ vₛ)
 ... | nnf pₙ             = ↑ (⌜rec⌝ (ren⋙ e″ pₙ) (ren⋘ e″ (↓ v₀)) (↓ vₛ))
 
 ⟦_⟧C : ∀ {Γ A} → Con A → Γ ⊨ A
