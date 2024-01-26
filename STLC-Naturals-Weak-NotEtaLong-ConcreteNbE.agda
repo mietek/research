@@ -41,12 +41,18 @@ refl⊩* {A ∷ Γ} = ↑ (⌜v⌝ zero , ⌜v⌝-) ∷ ren⊩* wk⊆ refl⊩*
 
 ----------------------------------------------------------------------------------------------------
 
--- TODO: isn't there a better way?
+⟦zero⟧ : ∀ {Γ} → Γ ⊨ ⌜ℕ⌝
+⟦zero⟧ vs e = ⌜zero⌝ , ⌜zero⌝
+
+⟦suc⟧ : ∀ {Γ} → Γ ⊨ ⌜ℕ⌝ → Γ ⊨ ⌜ℕ⌝
+⟦suc⟧ v vs e = let t′ , p′ = v vs e in ⌜suc⌝ t′ , ⌜suc⌝ p′
+
+-- TODO: what?!
 {-# TERMINATING #-}
 ⟦rec⟧ : ∀ {Γ A} → Γ ⊨ ⌜ℕ⌝ → Γ ⊨ A → A ∷ ⌜ℕ⌝ ∷ Γ ⊨ A → Γ ⊨ A
 ⟦rec⟧ vₙ v₀ vₛ vs         with vₙ vs refl⊆
 ... | ⌜zero⌝ , ⌜zero⌝       = v₀ vs
-... | ⌜suc⌝ tₙ , ⌜suc⌝ pₙ   = vₛ (⟦rec⟧ vₙ v₀ vₛ vs ∷ (λ e → ren e tₙ , renNF e pₙ) ∷ vs)
+... | ⌜suc⌝ tₙ , ⌜suc⌝ pₙ   = vₛ (⟦rec⟧ {!!} v₀ vₛ vs ∷ (λ e → ren e tₙ , renNF e pₙ) ∷ vs)
 ... | tₙ , nnf pₙ           =
   let t₀ , p₀ = ↓ (v₀ vs)
       tₛ , pₛ = ↓ (vₛ (aux vs))
@@ -60,8 +66,8 @@ refl⊩* {A ∷ Γ} = ↑ (⌜v⌝ zero , ⌜v⌝-) ∷ ren⊩* wk⊆ refl⊩*
 ⟦ ⌜v⌝ i          ⟧ vs = ⟦ i ⟧∋ vs
 ⟦ ⌜λ⌝ t          ⟧ vs = λ e v → ⟦ t ⟧ (v ∷ ren⊩* e vs)
 ⟦ t₁ ⌜$⌝ t₂      ⟧ vs = ⟦ t₁ ⟧ vs refl⊆ $ ⟦ t₂ ⟧ vs
-⟦ ⌜zero⌝         ⟧ vs = λ e → ⌜zero⌝ , ⌜zero⌝
-⟦ ⌜suc⌝ t        ⟧ vs = λ e → let t′ , p′ = ⟦ t ⟧ vs e in ⌜suc⌝ t′ , ⌜suc⌝ p′
+⟦ ⌜zero⌝         ⟧ vs = ⟦zero⟧ vs
+⟦ ⌜suc⌝ t        ⟧ vs = ⟦suc⟧ ⟦ t ⟧ vs
 ⟦ ⌜rec⌝ tₙ t₀ tₛ ⟧ vs = ⟦rec⟧ ⟦ tₙ ⟧ ⟦ t₀ ⟧ ⟦ tₛ ⟧ vs
 
 nbe : ∀ {Γ A} → Γ ⊢ A → Σ (Γ ⊢ A) NF

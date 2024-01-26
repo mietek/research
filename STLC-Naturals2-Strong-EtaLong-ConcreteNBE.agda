@@ -8,12 +8,12 @@ open import STLC-Naturals2-Strong-EtaLong public
 -- semantic values
 infix 3 _⊩_
 _⊩_ : Ctx → Ty → Set
-W ⊩ ⌜ℕ⌝     = ∀ {W′} → W ⊆ W′ → W′ ⋘ ⌜ℕ⌝
 W ⊩ A ⌜⊃⌝ B = ∀ {W′} → W ⊆ W′ → W′ ⊩ A → W′ ⊩ B
+W ⊩ ⌜ℕ⌝     = ∀ {W′} → W ⊆ W′ → W′ ⋘ ⌜ℕ⌝
 
 ren⊩ : ∀ {W W′ A} → W ⊆ W′ → W ⊩ A → W′ ⊩ A
-ren⊩ {A = ⌜ℕ⌝}     e v = λ e′ → v (trans⊆ e e′)
 ren⊩ {A = A ⌜⊃⌝ B} e v = λ e′ → v (trans⊆ e e′)
+ren⊩ {A = ⌜ℕ⌝}     e v = λ e′ → v (trans⊆ e e′)
 
 open ConcreteKit _⊩_ (λ {_} {_} {A} → ren⊩ {_} {_} {A}) public
 
@@ -22,12 +22,12 @@ open ConcreteKit _⊩_ (λ {_} {_} {A} → ren⊩ {_} {_} {A}) public
 
 mutual
   ↑ : ∀ {Γ A} → Γ ⋙ A → Γ ⊩ A
-  ↑ {A = ⌜ℕ⌝}     t = λ e → nnf (ren⋙ e t)
   ↑ {A = A ⌜⊃⌝ B} t = λ e v → ↑ (ren⋙ e t ⌜$⌝ ↓ v)
+  ↑ {A = ⌜ℕ⌝}     t = λ e → nnf (ren⋙ e t)
 
   ↓ : ∀ {Γ A} → Γ ⊩ A → Γ ⋘ A
-  ↓ {A = ⌜ℕ⌝}     v = v refl⊆
   ↓ {A = A ⌜⊃⌝ B} v = ⌜λ⌝ (↓ (v wk⊆ (↑ (⌜v⌝ zero))))
+  ↓ {A = ⌜ℕ⌝}     v = v refl⊆
 
 refl⊩* : ∀ {Γ} → Γ ⊩* Γ
 refl⊩* {[]}    = []
@@ -52,9 +52,9 @@ refl⊩* {A ∷ Γ} = ↑ (⌜v⌝ zero) ∷ ren⊩* wk⊆ refl⊩*
 ⟦rec⟧ : ∀ {Γ A} → Γ ⊩ ⌜ℕ⌝ ⌜⊃⌝ A ⌜⊃⌝ (⌜ℕ⌝ ⌜⊃⌝ A ⌜⊃⌝ A) ⌜⊃⌝ A
 ⟦rec⟧ e vₙ e′ v₀ e″ vₛ with vₙ e′
 ... | ⌜zero⌝             = ren⊩ e″ v₀
-... | ⌜suc⌝ pₙ           = vₛ refl⊆ (λ e‴ → ren⋘ (trans⊆ e″ e‴) pₙ) refl⊆
-                             (⟦rec⟧ e′ (λ e‴ → ren⋘ e‴ pₙ) refl⊆ v₀ e″ vₛ)
-... | nnf pₙ             = ↑ (⌜rec⌝ (ren⋙ e″ pₙ) (ren⋘ e″ (↓ v₀)) (↓ vₛ))
+... | ⌜suc⌝ tₙ           = vₛ refl⊆ (λ e‴ → ren⋘ (trans⊆ e″ e‴) tₙ) refl⊆
+                             (⟦rec⟧ e′ (λ e‴ → ren⋘ e‴ tₙ) refl⊆ v₀ e″ vₛ)
+... | nnf tₙ             = ↑ (⌜rec⌝ (ren⋙ e″ tₙ) (ren⋘ e″ (↓ v₀)) (↓ vₛ))
 
 ⟦_⟧C : ∀ {Γ A} → Con A → Γ ⊨ A
 ⟦ ⌜zero⌝ ⟧C vs = ⟦zero⟧
