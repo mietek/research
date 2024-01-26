@@ -42,28 +42,27 @@ refl⊩* {A ∷ Γ} = ↑ (⌜v⌝ zero , ⌜v⌝-) ∷ ren⊩* wk⊆ refl⊩*
 ----------------------------------------------------------------------------------------------------
 
 -- TODO: isn't there a better way?
-mutual
-  {-# TERMINATING #-}
-  ⟦rec⟧ : ∀ {Γ A} → Γ ⊨ ⌜ℕ⌝ → Γ ⊨ A → A ∷ ⌜ℕ⌝ ∷ Γ ⊨ A → Γ ⊨ A
-  ⟦rec⟧ vₙ v₀ vₛ vs         with vₙ vs refl⊆
-  ... | ⌜zero⌝ , ⌜zero⌝       = v₀ vs
-  ... | ⌜suc⌝ tₙ , ⌜suc⌝ pₙ   = vₛ (⟦rec⟧ vₙ v₀ vₛ vs ∷ (λ e → ren e tₙ , renNF e pₙ) ∷ vs)
-  ... | tₙ , nnf pₙ           =
-    let t₀ , p₀ = ↓ (v₀ vs)
-        tₛ , pₛ = ↓ (vₛ (aux vs))
-    in  ↑ (⌜rec⌝ tₙ t₀ tₛ , ⌜rec⌝ pₙ p₀ pₛ)
-    where
-      aux : ∀ {W Γ A B} → W ⊩* Γ → A ∷ B ∷ W ⊩* A ∷ B ∷ Γ
-      aux vs = ↑ (⌜v⌝ zero , ⌜v⌝-) ∷ (↑ (⌜v⌝ (suc zero) , ⌜v⌝-) ∷ ren⊩* (drop wk⊆) vs)
+{-# TERMINATING #-}
+⟦rec⟧ : ∀ {Γ A} → Γ ⊨ ⌜ℕ⌝ → Γ ⊨ A → A ∷ ⌜ℕ⌝ ∷ Γ ⊨ A → Γ ⊨ A
+⟦rec⟧ vₙ v₀ vₛ vs         with vₙ vs refl⊆
+... | ⌜zero⌝ , ⌜zero⌝       = v₀ vs
+... | ⌜suc⌝ tₙ , ⌜suc⌝ pₙ   = vₛ (⟦rec⟧ vₙ v₀ vₛ vs ∷ (λ e → ren e tₙ , renNF e pₙ) ∷ vs)
+... | tₙ , nnf pₙ           =
+  let t₀ , p₀ = ↓ (v₀ vs)
+      tₛ , pₛ = ↓ (vₛ (aux vs))
+  in  ↑ (⌜rec⌝ tₙ t₀ tₛ , ⌜rec⌝ pₙ p₀ pₛ)
+  where
+    aux : ∀ {W Γ A B} → W ⊩* Γ → A ∷ B ∷ W ⊩* A ∷ B ∷ Γ
+    aux vs = ↑ (⌜v⌝ zero , ⌜v⌝-) ∷ (↑ (⌜v⌝ (suc zero) , ⌜v⌝-) ∷ ren⊩* (drop wk⊆) vs)
 
-  -- reflection
-  ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
-  ⟦ ⌜v⌝ i          ⟧ vs = ⟦ i ⟧∋ vs
-  ⟦ ⌜λ⌝ t          ⟧ vs = λ e v → ⟦ t ⟧ (v ∷ ren⊩* e vs)
-  ⟦ t₁ ⌜$⌝ t₂      ⟧ vs = ⟦ t₁ ⟧ vs refl⊆ $ ⟦ t₂ ⟧ vs
-  ⟦ ⌜zero⌝         ⟧ vs = λ e → ⌜zero⌝ , ⌜zero⌝
-  ⟦ ⌜suc⌝ t        ⟧ vs = λ e → let t′ , p′ = ⟦ t ⟧ vs e in ⌜suc⌝ t′ , ⌜suc⌝ p′
-  ⟦ ⌜rec⌝ tₙ t₀ tₛ ⟧ vs = ⟦rec⟧ ⟦ tₙ ⟧ ⟦ t₀ ⟧ ⟦ tₛ ⟧ vs
+-- reflection
+⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
+⟦ ⌜v⌝ i          ⟧ vs = ⟦ i ⟧∋ vs
+⟦ ⌜λ⌝ t          ⟧ vs = λ e v → ⟦ t ⟧ (v ∷ ren⊩* e vs)
+⟦ t₁ ⌜$⌝ t₂      ⟧ vs = ⟦ t₁ ⟧ vs refl⊆ $ ⟦ t₂ ⟧ vs
+⟦ ⌜zero⌝         ⟧ vs = λ e → ⌜zero⌝ , ⌜zero⌝
+⟦ ⌜suc⌝ t        ⟧ vs = λ e → let t′ , p′ = ⟦ t ⟧ vs e in ⌜suc⌝ t′ , ⌜suc⌝ p′
+⟦ ⌜rec⌝ tₙ t₀ tₛ ⟧ vs = ⟦rec⟧ ⟦ tₙ ⟧ ⟦ t₀ ⟧ ⟦ tₛ ⟧ vs
 
 nbe : ∀ {Γ A} → Γ ⊢ A → Σ (Γ ⊢ A) NF
 nbe = ⟦_⟧⁻¹ ∘ ⟦_⟧
