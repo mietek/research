@@ -13,7 +13,7 @@ W ⊩ A ⌜⊃⌝ B = ∀ {W′} → W ⊆ W′ → W′ ⊩ A → W′ ⊩ B
 
 ren⊩ : ∀ {W W′ A} → W ⊆ W′ → W ⊩ A → W′ ⊩ A
 ren⊩ {A = ⌜◦⌝}     e (t , p) = ren e t , renNNF e p
-ren⊩ {A = A ⌜⊃⌝ B} e f       = λ e′ → f (trans⊆ e e′)
+ren⊩ {A = A ⌜⊃⌝ B} e v       = λ e′ → v (trans⊆ e e′)
 
 open ConcreteKit _⊩_ (λ {_} {_} {A} → ren⊩ {_} {_} {A}) public
 
@@ -33,12 +33,12 @@ mutual
 
   ↓ : ∀ {Γ A} → Γ ⊩ A → Σ (Γ ⊢ A) NF
   ↓ {A = ⌜◦⌝}     (t , p) = t , nnf p
-  ↓ {A = A ⌜⊃⌝ B} f       with ↓ (f wk⊆ (↑ (⌜v⌝ zero , ⌜v⌝)))
-  ... | t , p               = ⌜λ⌝ t , ⌜λ⌝
+  ↓ {A = A ⌜⊃⌝ B} v       with ↓ (v wk⊆ (↑ (⌜v⌝ zero , ⌜v⌝-)))
+  ... | t , p               = ⌜λ⌝ t , ⌜λ⌝-
 
 refl⊩* : ∀ {Γ} → Γ ⊩* Γ
 refl⊩* {[]}    = []
-refl⊩* {A ∷ Γ} = ↑ (⌜v⌝ zero , ⌜v⌝) ∷ ren⊩* wk⊆ refl⊩*
+refl⊩* {A ∷ Γ} = ↑ (⌜v⌝ zero , ⌜v⌝-) ∷ ren⊩* wk⊆ refl⊩*
 
 -- reification
 ⟦_⟧⁻¹ : ∀ {Γ A} → Γ ⊨ A → Σ (Γ ⊢ A) NF

@@ -2,101 +2,130 @@ module STLC-Base-Weak-EtaLong where
 
 open import STLC-Base public
 open import Isomorphism public
-open import STLC-Base-Weak-NotEtaLong
-  using (⌜λ⌝ ; nnf ; ⌜v⌝ ; _⌜$⌝_ ; module ProgAlt1)
-  renaming
-    ( NF to CNF
-    ; NNF to CNNF
-    ; renNF to renCNF
-    ; renNNF to renCNNF
-    ; uniNF to uniCNF
-    ; uniNNF to uniCNNF
-    )
-
--- TODO: how to define a notion of normal form that corresponds to ⇒C-irreducibility?
--- ⟹C is "guaranteed not to be a top-level eta-expansion"
--- so the notion is going to be some thing like, beta-short eta-long *except* at the very top?
 
 
 ----------------------------------------------------------------------------------------------------
 
--- -- β-short not-η-long weak normal forms (extrinsic)
--- mutual
---   data NF {Γ} : ∀ {A} → Γ ⊢ A → Set where
---     ⌜λ⌝ : ∀ {A B} {t : A ∷ Γ ⊢ B} → NF (⌜λ⌝ t)
---     nnf : ∀ {A} {t : Γ ⊢ A} (p : NNF t) → NF t
---
---   -- neutrals
---   data NNF {Γ} : ∀ {A} → Γ ⊢ A → Set where
---     ⌜v⌝   : ∀ {A} {i : Γ ∋ A} → NNF (⌜v⌝ i)
---     _⌜$⌝_ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (p₁ : NNF t₁) (p₂ : NF t₂) → NNF (t₁ ⌜$⌝ t₂)
---
--- -- renaming
--- mutual
---   renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren e t)
---   renNF e ⌜λ⌝     = ⌜λ⌝
---   renNF e (nnf p) = nnf (renNNF e p)
---
---   renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren e t)
---   renNNF e ⌜v⌝         = ⌜v⌝
---   renNNF e (p₁ ⌜$⌝ p₂) = renNNF e p₁ ⌜$⌝ renNF e p₂
---
--- -- uniqueness of proofs
--- mutual
---   uniNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
---   uniNF ⌜λ⌝     ⌜λ⌝      = refl
---   uniNF (nnf p) (nnf p′) = nnf & uniNNF p p′
---
---   uniNNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NNF t) → p ≡ p′
---   uniNNF ⌜v⌝         ⌜v⌝           = refl
---   uniNNF (p₁ ⌜$⌝ p₂) (p₁′ ⌜$⌝ p₂′) = _⌜$⌝_ & uniNNF p₁ p₁′ ⊗ uniNF p₂ p₂′
-
-
-----------------------------------------------------------------------------------------------------
-
--- β-short η-long (expanded; “E-irreducible”) weak normal forms (extrinsic)
+-- β-short η-long weak normal forms (F-irreducible)
 mutual
-  data ENF {Γ} : ∀ {A} → Γ ⊢ A → Set where
-    ⌜λ⌝ : ∀ {A B} {t : A ∷ Γ ⊢ B} → ENF (⌜λ⌝ t)
-    nnf : ∀ {t : Γ ⊢ ⌜◦⌝} (p : ENNF t) → ENF t
+  data FNF {Γ} : ∀ {A} → Γ ⊢ A → Set where
+    ⌜λ⌝- : ∀ {A B} {t : A ∷ Γ ⊢ B} → FNF (⌜λ⌝ t)
+    nnf  : ∀ {t : Γ ⊢ ⌜◦⌝} (p : FNNF t) → FNF t
 
   -- neutrals
-  data ENNF {Γ} : ∀ {A} → Γ ⊢ A → Set where
-    ⌜v⌝   : ∀ {A} {i : Γ ∋ A} → ENNF (⌜v⌝ i)
-    _⌜$⌝_ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (p₁ : ENNF t₁) (p₂ : ENF t₂) → ENNF (t₁ ⌜$⌝ t₂)
-
--- expandability
-data Exp {Γ} : ∀ {A} → Γ ⊢ A → Set where
-  ⌜v⌝   : ∀ {A B} {i : Γ ∋ A ⌜⊃⌝ B} → Exp (⌜v⌝ i)
-  _⌜$⌝_ : ∀ {A B C} {t₁ : Γ ⊢ A ⌜⊃⌝ B ⌜⊃⌝ C} {t₂ : Γ ⊢ A} → Exp (t₁ ⌜$⌝ t₂)
-
-ENF→¬Exp : ∀ {Γ A} {t : Γ ⊢ A} → ENF t → ¬ Exp t
-ENF→¬Exp ⌜λ⌝     ()
-ENF→¬Exp (nnf p) ()
+  data FNNF {Γ} : ∀ {A} → Γ ⊢ A → Set where
+    ⌜v⌝-  : ∀ {A} {i : Γ ∋ A} → FNNF (⌜v⌝ i)
+    _⌜$⌝_ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (p₁ : FNNF t₁) (p₂ : FNF t₂) →
+            FNNF (t₁ ⌜$⌝ t₂)
 
 -- renaming
 mutual
-  renENF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → ENF t → ENF (ren e t)
-  renENF e ⌜λ⌝     = ⌜λ⌝
-  renENF e (nnf p) = nnf (renENNF e p)
+  renFNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → FNF t → FNF (ren e t)
+  renFNF e ⌜λ⌝-    = ⌜λ⌝-
+  renFNF e (nnf p) = nnf (renFNNF e p)
 
-  renENNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → ENNF t → ENNF (ren e t)
-  renENNF e ⌜v⌝         = ⌜v⌝
-  renENNF e (p₁ ⌜$⌝ p₂) = renENNF e p₁ ⌜$⌝ renENF e p₂
+  renFNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → FNNF t → FNNF (ren e t)
+  renFNNF e ⌜v⌝-        = ⌜v⌝-
+  renFNNF e (p₁ ⌜$⌝ p₂) = renFNNF e p₁ ⌜$⌝ renFNF e p₂
 
 -- uniqueness of proofs
 mutual
-  uniENF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : ENF t) → p ≡ p′
-  uniENF ⌜λ⌝     ⌜λ⌝      = refl
-  uniENF (nnf p) (nnf p′) = nnf & uniENNF p p′
+  uniFNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : FNF t) → p ≡ p′
+  uniFNF ⌜λ⌝-    ⌜λ⌝-     = refl
+  uniFNF (nnf p) (nnf p′) = nnf & uniFNNF p p′
 
-  uniENNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : ENNF t) → p ≡ p′
-  uniENNF ⌜v⌝         ⌜v⌝           = refl
-  uniENNF (p₁ ⌜$⌝ p₂) (p₁′ ⌜$⌝ p₂′) = _⌜$⌝_ & uniENNF p₁ p₁′ ⊗ uniENF p₂ p₂′
+  uniFNNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : FNNF t) → p ≡ p′
+  uniFNNF ⌜v⌝-        ⌜v⌝-          = refl
+  uniFNNF (p₁ ⌜$⌝ p₂) (p₁′ ⌜$⌝ p₂′) = _⌜$⌝_ & uniFNNF p₁ p₁′ ⊗ uniFNF p₂ p₂′
 
-uniExp : ∀ {Γ A} {t : Γ ⊢ A} (x x′ : Exp t) → x ≡ x′
-uniExp ⌜v⌝   ⌜v⌝   = refl
-uniExp _⌜$⌝_ _⌜$⌝_ = refl
+mutual
+  FNF? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (FNF t)
+  FNF? {A = ⌜◦⌝}     (⌜v⌝ i)     = yes (nnf ⌜v⌝-)
+  FNF? {A = ⌜◦⌝}     (t₁ ⌜$⌝ t₂) with FNNF? t₁ | FNF? t₂
+  ... | yes p₁ | yes p₂            = yes (nnf (p₁ ⌜$⌝ p₂))
+  ... | yes p₁ | no ¬p₂            = no λ { (nnf (p₁ ⌜$⌝ p₂)) → p₂ ↯ ¬p₂ }
+  ... | no ¬p₁ | _                 = no λ { (nnf (p₁ ⌜$⌝ p₂)) → p₁ ↯ ¬p₁ }
+  FNF? {A = _ ⌜⊃⌝ _} (⌜v⌝ i)     = no λ ()
+  FNF? {A = _ ⌜⊃⌝ _} (⌜λ⌝ t)     = yes ⌜λ⌝-
+  FNF? {A = _ ⌜⊃⌝ _} (t₁ ⌜$⌝ t₂) = no λ ()
+
+  FNNF? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (FNNF t)
+  FNNF? (⌜v⌝ i)         = yes ⌜v⌝-
+  FNNF? (⌜λ⌝ t)         = no λ ()
+  FNNF? (t₁ ⌜$⌝ t₂)     with FNNF? t₁ | FNF? t₂
+  ... | yes p₁ | yes p₂   = yes (p₁ ⌜$⌝ p₂)
+  ... | yes p₁ | no ¬p₂   = no λ { (p₁ ⌜$⌝ p₂) → p₂ ↯ ¬p₂ }
+  ... | no ¬p₁ | _        = no λ { (p₁ ⌜$⌝ p₂) → p₁ ↯ ¬p₁ }
+
+
+----------------------------------------------------------------------------------------------------
+
+-- expandability, or neutrals at function type
+data Expandable {Γ} : ∀ {A} → Γ ⊢ A → Set where
+  ⌜v⌝-  : ∀ {A B} {i : Γ ∋ A ⌜⊃⌝ B} → Expandable (⌜v⌝ i)
+  _⌜$⌝_ : ∀ {A B C} {t₁ : Γ ⊢ A ⌜⊃⌝ B ⌜⊃⌝ C} {t₂ : Γ ⊢ A} → FNNF t₁ → FNF t₂ →
+          Expandable (t₁ ⌜$⌝ t₂)
+
+FNNF→Expandable : ∀ {Γ A B} {t : Γ ⊢ A ⌜⊃⌝ B} → FNNF t → Expandable t
+FNNF→Expandable ⌜v⌝-        = ⌜v⌝-
+FNNF→Expandable (p₁ ⌜$⌝ p₂) = p₁ ⌜$⌝ p₂
+
+Expandable→FNNF : ∀ {Γ A B} {t : Γ ⊢ A ⌜⊃⌝ B} → Expandable t → FNNF t
+Expandable→FNNF ⌜v⌝-        = ⌜v⌝-
+Expandable→FNNF (p₁ ⌜$⌝ p₂) = p₁ ⌜$⌝ p₂
+
+-- TODO: delete?
+-- FNF→¬Expandable : ∀ {Γ A} {t : Γ ⊢ A} → FNF t → ¬ Expandable t
+-- FNF→¬Expandable ⌜λ⌝-    ()
+-- FNF→¬Expandable (nnf p) ()
+
+Expandable→¬FNF : ∀ {Γ A} {t : Γ ⊢ A} → Expandable t → ¬ FNF t
+Expandable→¬FNF ⌜v⌝-        ()
+Expandable→¬FNF (p₁ ⌜$⌝ p₂) ()
+
+uniExpandable : ∀ {Γ A} {t : Γ ⊢ A} (x x′ : Expandable t) → x ≡ x′
+uniExpandable ⌜v⌝-        ⌜v⌝-          = refl
+uniExpandable (p₁ ⌜$⌝ p₂) (p₁′ ⌜$⌝ p₂′) = _⌜$⌝_ & uniFNNF p₁ p₁′ ⊗ uniFNF p₂ p₂′
+
+-- TODO: define NotExpandable directly and get rid of extensionality
+module _ (⚠ : Extensionality) where
+  uni¬Expandable : ∀ {Γ A} {t : Γ ⊢ A} (¬x ¬x′ : ¬ Expandable t) → ¬x ≡ ¬x′
+  uni¬Expandable = uni→ ⚠ uni𝟘
+
+
+----------------------------------------------------------------------------------------------------
+
+data _ExpandsTo_ {Γ} : ∀ {A} (t t′ : Γ ⊢ A) → Set where
+  ηexp⊃ : ∀ {A B} {t t′ : Γ ⊢ A ⌜⊃⌝ B} (eq : t′ ≡ ⌜λ⌝ (weak t ⌜$⌝ ⌜v⌝ zero))
+            (x : Expandable t) →
+          t ExpandsTo t′
+
+-- TODO: delete?
+-- data Expanded {Γ} : ∀ {A} (t′ : Γ ⊢ A) → Set where
+--   ηexp⊃ : ∀ {A B} {t : Γ ⊢ A ⌜⊃⌝ B} {t′ : Γ ⊢ A ⌜⊃⌝ B} (x : Expandable t)
+--             (eq : t′ ≡ ⌜λ⌝ (weak t ⌜$⌝ ⌜v⌝ zero)) →
+--           Expanded t′
+
+Expanded : ∀ {Γ A} (t′ : Γ ⊢ A) → Set
+Expanded t′ = Σ _ λ t → t ExpandsTo t′
+
+
+----------------------------------------------------------------------------------------------------
+
+-- β-short η-long weak normal forms guaranteed not to be a top-level η-expansion (I-irreducible)
+-- TODO: how to define this directly?
+INF : ∀ {Γ A} → Γ ⊢ A → Set
+INF t = FNF t × ¬ Expanded t
+
+INNF : ∀ {Γ A} → Γ ⊢ A → Set
+INNF t = FNNF t × ¬ Expanded t
+
+INF→FNF : ∀ {Γ A} {t : Γ ⊢ A} → INF t → FNF t
+INF→FNF (p , _) = p
+
+-- TODO: delete?
+-- INNF→FNNF : ∀ {Γ A} {t : Γ ⊢ A} → INNF t → FNNF t
+-- INNF→FNNF (p , _) = p
 
 
 ----------------------------------------------------------------------------------------------------
@@ -119,402 +148,307 @@ open ≝Kit (λ {_} {_} {t} → refl≝ {t = t}) sym≝ trans≝ public
 ----------------------------------------------------------------------------------------------------
 
 -- call-by-value restricted expansionary reduction (Ghani p.51, table 3-4)
--- NOTE: _⇒F_ renamed to _⇒E_ for expansion; _⇒I_ renamed to _⇒C_ for contraction
--- there were too many Fs already; also C goes before E!
+
+-- NOTE: modified by removing duplicate rules from ⇒F and replacing them with Ired,
+--       and by adding FNF constraints to Icong$₂, Fcong$₂, and βred⊃
+-- mutual
+--   infix 4 _⇒F_
+--   data _⇒F_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
+--     Ired  : ∀ {A} {t t′ : Γ ⊢ A} (r : t ⇒I t′) → t ⇒F t′
+--     ηexp⊃ : ∀ {A B} {t t′ : Γ ⊢ A ⌜⊃⌝ B} (eq : t′ ≡ ⌜λ⌝ (weak t ⌜$⌝ ⌜v⌝ zero))
+--               (x : Expandable t) →
+--             t ⇒F t′
+--
+--   infix 4 _⇒I_
+--   data _⇒I_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
+--     cong$₁  : ∀ {A B} {t₁ t₁′ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (r : t₁ ⇒I t₁′) →
+--               t₁ ⌜$⌝ t₂ ⇒I t₁′ ⌜$⌝ t₂
+--     Icong$₂ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢ A} (p₁ : FNF t₁) (r₂ : t₂ ⇒I t₂′) →
+--               t₁ ⌜$⌝ t₂ ⇒I t₁ ⌜$⌝ t₂′
+--     Fcong$₂ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢ A} (p₁ : FNF t₁) (r₂ : t₂ ⇒F t₂′) →
+--               t₁ ⌜$⌝ t₂ ⇒I t₁ ⌜$⌝ t₂′
+--     βred⊃   : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′ : Γ ⊢ B} (eq : t′ ≡ t₁ [ t₂ ])
+--                 (p₂ : FNF t₂) →
+--               ⌜λ⌝ t₁ ⌜$⌝ t₂ ⇒I t′
+
 mutual
-  infix 4 _⇒C_
-  data _⇒C_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
-    cong$₁  : ∀ {A B} {t₁ t₁′ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (r : t₁ ⇒C t₁′) →
-              t₁ ⌜$⌝ t₂ ⇒C t₁′ ⌜$⌝ t₂
-    Ccong$₂ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢ A} (p₁ : CNF t₁) (r₂ : t₂ ⇒C t₂′) →
-              t₁ ⌜$⌝ t₂ ⇒C t₁ ⌜$⌝ t₂′
-    Econg$₂ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢ A} (p₁ : ENF t₁) (r₂ : t₂ ⇒E t₂′) →
-              t₁ ⌜$⌝ t₂ ⇒C t₁ ⌜$⌝ t₂′
+  -- NOTE: further modified by adding constraint to Ired
+  infix 4 _⇒F_
+  data _⇒F_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
+    Ired  : ∀ {A} {t t′ : Γ ⊢ A} (¬x : ¬ Expandable t) (r : t ⇒I t′) → t ⇒F t′
+    ηexp⊃ : ∀ {A B} {t t′ : Γ ⊢ A ⌜⊃⌝ B} (eq : t′ ≡ ⌜λ⌝ (weak t ⌜$⌝ ⌜v⌝ zero))
+              (x : Expandable t) →
+            t ⇒F t′
+
+  -- NOTE: further modified by removing Icong$₂ and adding Xcong$₂
+  infix 4 _⇒I_
+  data _⇒I_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
+    cong$₁  : ∀ {A B} {t₁ t₁′ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (r : t₁ ⇒I t₁′) →
+              t₁ ⌜$⌝ t₂ ⇒I t₁′ ⌜$⌝ t₂
+    Fcong$₂ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢ A} (p₁ : FNF t₁) (r₂ : t₂ ⇒F t₂′) →
+              t₁ ⌜$⌝ t₂ ⇒I t₁ ⌜$⌝ t₂′
+    Xcong$₂ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢ A} (x₁ : Expandable t₁) (r₂ : t₂ ⇒F t₂′) →
+              t₁ ⌜$⌝ t₂ ⇒I t₁ ⌜$⌝ t₂′
     βred⊃   : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′ : Γ ⊢ B} (eq : t′ ≡ t₁ [ t₂ ])
-                (p₂ : CNF t₂) →
-              ⌜λ⌝ t₁ ⌜$⌝ t₂ ⇒C t′
+                (p₂ : FNF t₂) →
+              ⌜λ⌝ t₁ ⌜$⌝ t₂ ⇒I t′
 
-  infix 4 _⇒E_
-  data _⇒E_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
-    Cred  : ∀ {A} {t t′ : Γ ⊢ A} (r : t ⇒C t′) → t ⇒E t′
-    ηexp⊃ : ∀ {A B} {t t′ : Γ ⊢ A ⌜⊃⌝ B} (eq : t′ ≡ ⌜λ⌝ (weak t ⌜$⌝ ⌜v⌝ zero)) (x : Exp t) →
-            t ⇒E t′
-
-module C = ⇒Kit _⇒C_
-module E = ⇒Kit _⇒E_
+module F = ⇒Kit _⇒F_
+module I = ⇒Kit _⇒I_
 
 mutual
-  CNF→¬CR : ∀ {Γ A} {t : Γ ⊢ A} → CNF t → C.¬R t
-  CNF→¬CR (nnf p) r = r ↯ CNNF→¬CR p
+  FNF→¬FR : ∀ {Γ A} {t : Γ ⊢ A} → FNF t → F.¬R t
+  FNF→¬FR ⌜λ⌝-    (ηexp⊃ refl ())
+  FNF→¬FR (nnf p) r               = r ↯ FNNF→¬FR p
 
-  CNNF→¬CR : ∀ {Γ A} {t : Γ ⊢ A} → CNNF t → C.¬R t
-  CNNF→¬CR (p₁ ⌜$⌝ p₂) (cong$₁ r₁)                  = r₁ ↯ CNNF→¬CR p₁
-  CNNF→¬CR (p₁ ⌜$⌝ p₂) (Ccong$₂ p₁′ r₂)             = r₂ ↯ CNF→¬CR p₂
-  CNNF→¬CR (p₁ ⌜$⌝ p₂) (Econg$₂ p₁′ (Cred r₂))      = r₂ ↯ CNF→¬CR p₂
-  CNNF→¬CR (() ⌜$⌝ p₂) (Econg$₂ ⌜λ⌝ (ηexp⊃ refl x))
+  FNNF→¬FR : ∀ {Γ} {t : Γ ⊢ ⌜◦⌝} → FNNF t → F.¬R t
+  FNNF→¬FR p (Ired ¬x r) = r ↯ FNNF→¬IR p
 
+  FNF→¬IR : ∀ {Γ A} {t : Γ ⊢ A} → FNF t → I.¬R t
+  FNF→¬IR (nnf p) r = r ↯ FNNF→¬IR p
+
+  FNNF→¬IR : ∀ {Γ A} {t : Γ ⊢ A} → FNNF t → I.¬R t
+  FNNF→¬IR (p₁ ⌜$⌝ p₂) (cong$₁ r₁)      = r₁ ↯ FNNF→¬IR p₁
+  FNNF→¬IR (p₁ ⌜$⌝ p₂) (Fcong$₂ p₁′ r₂) = r₂ ↯ FNF→¬FR p₂
+  FNNF→¬IR (p₁ ⌜$⌝ p₂) (Xcong$₂ x₁ r₂)  = r₂ ↯ FNF→¬FR p₂
+
+-- TODO: delete?
+-- INF→¬FR : ∀ {Γ A} {t : Γ ⊢ A} → INF t → F.¬R t
+-- INF→¬FR = FNF→¬FR ∘ INF→FNF
+
+-- INNF→¬FR : ∀ {Γ} {t : Γ ⊢ ⌜◦⌝} → INNF t → F.¬R t
+-- INNF→¬FR = FNNF→¬FR ∘ INNF→FNNF
+
+INF→¬IR : ∀ {Γ A} {t : Γ ⊢ A} → INF t → I.¬R t
+INF→¬IR = FNF→¬IR ∘ INF→FNF
+
+-- INNF→¬IR : ∀ {Γ A} {t : Γ ⊢ A} → INNF t → I.¬R t
+-- INNF→¬IR = FNNF→¬IR ∘ INNF→FNNF
+
+module F′ = F.¬RKit FNF→¬FR
+module I′ = I.¬RKit INF→¬IR
+
+
+----------------------------------------------------------------------------------------------------
+
+Expandable→¬IR : ∀ {Γ A B} {t : Γ ⊢ A ⌜⊃⌝ B} → Expandable t → I.¬R t
+Expandable→¬IR = FNNF→¬IR ∘ Expandable→FNNF
+
+-- TODO: delete?
+-- ¬FR→¬Expandable : ∀ {Γ A} {t : Γ ⊢ A} → F.¬R t → ¬ Expandable t
+-- -- ¬FR→¬Expandable = ¬η→¬Expandable ∘ ¬FR→¬η
+-- ¬FR→¬Expandable {A = A ⌜⊃⌝ B} {t = ⌜v⌝ i}     ¬r x = ηexp⊃ refl x ↯ ¬r
+-- ¬FR→¬Expandable {A = A ⌜⊃⌝ B} {t = t₁ ⌜$⌝ t₂} ¬r x = ηexp⊃ refl x ↯ ¬r
+
+-- ¬FR→¬IR : ∀ {Γ A} {t : Γ ⊢ A} → F.¬R t → I.¬R t
+-- ¬FR→¬IR ¬r r = Ired (¬FR→¬Expandable ¬r) r ↯ ¬r
+
+-- ¬FRF→¬IRF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ F.RF t → ¬ I.RF t
+-- ¬FRF→¬IRF = I′.¬R→¬RF ∘ ¬FR→¬IR ∘ F′.¬RF→¬R
+
+
+----------------------------------------------------------------------------------------------------
+
+-- progress
+prog⇒F : ∀ {Γ A} (t : Γ ⊢ A) → F′.Prog t
+prog⇒F {A = ⌜◦⌝}     (⌜v⌝ i)            = F′.done (nnf ⌜v⌝-)
+prog⇒F {A = ⌜◦⌝}     (t₁ ⌜$⌝ t₂)        with prog⇒F t₁ | prog⇒F t₂
+... | F′.step (Ired ¬x₁ r₁) | _            = F′.step (Ired (λ ()) (cong$₁ r₁))
+... | F′.step (ηexp⊃ eq x₁) | F′.step r₂   = F′.step (Ired (λ ()) (Xcong$₂ x₁ r₂))
+... | F′.step (ηexp⊃ eq x₁) | F′.done p₂   = F′.done (nnf (Expandable→FNNF x₁ ⌜$⌝ p₂))
+... | F′.done p₁            | F′.step r₂   = F′.step (Ired (λ ()) (Fcong$₂ p₁ r₂))
+... | F′.done ⌜λ⌝-          | F′.done p₂   = F′.step (Ired (λ ()) (βred⊃ refl p₂))
+prog⇒F {A = A ⌜⊃⌝ B} (⌜v⌝ i)              = F′.step (ηexp⊃ refl ⌜v⌝-)
+prog⇒F {A = A ⌜⊃⌝ B} (⌜λ⌝ t)              = F′.done ⌜λ⌝-
+prog⇒F {A = A ⌜⊃⌝ B} (t₁ ⌜$⌝ t₂)        with prog⇒F t₁ | prog⇒F t₂
+... | F′.step (Ired ¬x₁ r₁) | _            = F′.step (Ired (λ { (p₁ ⌜$⌝ p₂) →
+                                               FNNF→Expandable p₁ ↯ ¬x₁ }) (cong$₁ r₁))
+... | F′.step (ηexp⊃ eq x₁) | F′.step r₂   = F′.step (Ired (λ { (p₁ ⌜$⌝ p₂) →
+                                               r₂ ↯ FNF→¬FR p₂ }) (Xcong$₂ x₁ r₂))
+... | F′.step (ηexp⊃ eq x₁) | F′.done p₂   = F′.step (ηexp⊃ refl (Expandable→FNNF x₁ ⌜$⌝ p₂))
+... | F′.done ⌜λ⌝-          | F′.step r₂   = F′.step (Ired (λ { (() ⌜$⌝ p₂′) }) (Fcong$₂ ⌜λ⌝- r₂))
+... | F′.done ⌜λ⌝-          | F′.done p₂   = F′.step (Ired (λ { (() ⌜$⌝ p₂′) }) (βred⊃ refl p₂))
+
+module F″ = F′.ProgKit prog⇒F
+
+module _ (⚠ : Extensionality) where
+  uni¬FRF : ∀ {Γ A} {t : Γ ⊢ A} (¬p ¬p′ : ¬ F.RF t) → ¬p ≡ ¬p′
+  uni¬FRF = uni→ ⚠ uni𝟘
+
+  uni¬IRF : ∀ {Γ A} {t : Γ ⊢ A} (¬p ¬p′ : ¬ I.RF t) → ¬p ≡ ¬p′
+  uni¬IRF = uni→ ⚠ uni𝟘
+
+  FNF≃¬FRF : ∀ {Γ A} {t : Γ ⊢ A} → FNF t ≃ (¬ F.RF t)
+  FNF≃¬FRF = record
+    { to      = F′.NF→¬RF
+    ; from    = F″.¬RF→NF
+    ; from∘to = λ p → uniFNF _ p
+    ; to∘from = λ p → uni¬FRF _ p
+    }
+
+-- TODO: this doesn’t seem provable, but maybe that’s okay?
+-- prog⇒I : ∀ {Γ A} (t : Γ ⊢ A) → I′.Prog t
+-- prog⇒I t = ?
+
+
+----------------------------------------------------------------------------------------------------
+
+-- determinism
 mutual
-  ENF→¬CR : ∀ {Γ A} {t : Γ ⊢ A} → ENF t → C.¬R t
-  ENF→¬CR (nnf p) r = r ↯ ENNF→¬CR p
+  det⇒F : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒F t′ → t ⇒F t″ → t′ ≡ t″
+  det⇒F (Ired ¬x r)    (Ired ¬x′ r′)   = det⇒I r r′
+  det⇒F (Ired ¬x r)    (ηexp⊃ refl x′) = x′ ↯ ¬x
+  det⇒F (ηexp⊃ refl x) (Ired ¬x′ r′)   = x ↯ ¬x′
+  det⇒F (ηexp⊃ refl x) (ηexp⊃ refl x′) = refl
 
-  ENNF→¬CR : ∀ {Γ A} {t : Γ ⊢ A} → ENNF t → C.¬R t
-  ENNF→¬CR (p₁ ⌜$⌝ p₂) (cong$₁ r₁)      = r₁ ↯ ENNF→¬CR p₁
-  ENNF→¬CR (p₁ ⌜$⌝ p₂) (Ccong$₂ p₁′ r₂) = r₂ ↯ ENF→¬CR p₂
-  ENNF→¬CR (p₁ ⌜$⌝ p₂) (Econg$₂ p₁′ r₂) = r₂ ↯ ENF→¬ER p₂
+  det⇒I : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒I t′ → t ⇒I t″ → t′ ≡ t″
+  det⇒I (cong$₁ r₁)     (cong$₁ r₁′)      = (_⌜$⌝ _) & det⇒I r₁ r₁′
+  det⇒I (cong$₁ r₁)     (Fcong$₂ p₁′ r₂′) = r₁ ↯ FNF→¬IR p₁′
+  det⇒I (cong$₁ r₁)     (Xcong$₂ x₁′ r₂′) = r₁ ↯ Expandable→¬IR x₁′
+  det⇒I (Fcong$₂ p₁ r₂) (cong$₁ r₁′)      = r₁′ ↯ FNF→¬IR p₁
+  det⇒I (Fcong$₂ p₁ r₂) (Fcong$₂ p₁′ r₂′) = (_ ⌜$⌝_) & det⇒F r₂ r₂′
+  det⇒I (Fcong$₂ p₁ r₂) (Xcong$₂ x₁′ r₂′) = p₁ ↯ Expandable→¬FNF x₁′
+  det⇒I (Fcong$₂ p₁ r₂) (βred⊃ refl p₂′)  = r₂ ↯ FNF→¬FR p₂′
+  det⇒I (Xcong$₂ x₁ r₂) (cong$₁ r₁′)      = r₁′ ↯ Expandable→¬IR x₁
+  det⇒I (Xcong$₂ x₁ r₂) (Fcong$₂ p₁′ r₂′) = p₁′ ↯ Expandable→¬FNF x₁
+  det⇒I (Xcong$₂ x₁ r₂) (Xcong$₂ x₁′ r₂′) = (_ ⌜$⌝_) & det⇒F r₂ r₂′
+  det⇒I (βred⊃ refl p₂) (Fcong$₂ p₁′ r₂′) = r₂′ ↯ FNF→¬FR p₂
+  det⇒I (βred⊃ refl p₂) (βred⊃ refl p₂′)  = refl
 
-  ENF→¬ER : ∀ {Γ A} {t : Γ ⊢ A} → ENF t → E.¬R t
-  ENF→¬ER ⌜λ⌝     (ηexp⊃ refl ())
-  ENF→¬ER (nnf p) r               = r ↯ ENNF→¬ER p
-
-  ENNF→¬ER : ∀ {Γ} {t : Γ ⊢ ⌜◦⌝} → ENNF t → E.¬R t
-  ENNF→¬ER p (Cred r) = r ↯ ENNF→¬CR p
-
-module C′ = C.¬RKit CNF→¬CR
-module E′ = E.¬RKit ENF→¬ER
+module F‴ = F.DetKit FNF→¬FR det⇒F
+module I‴ = I.DetKit INF→¬IR det⇒I
 
 -- uniqueness of proofs
 module _ (⚠ : Extensionality) where
-  uni¬CRF : ∀ {Γ A} {t : Γ ⊢ A} (¬p ¬p′ : ¬ C.RF t) → ¬p ≡ ¬p′
-  uni¬CRF = uni→ ⚠ uni𝟘
-
-  uni¬ERF : ∀ {Γ A} {t : Γ ⊢ A} (¬p ¬p′ : ¬ E.RF t) → ¬p ≡ ¬p′
-  uni¬ERF = uni→ ⚠ uni𝟘
-
-
-----------------------------------------------------------------------------------------------------
-
-mutual
-  ENF→CNF : ∀ {Γ A} {t : Γ ⊢ A} → ENF t → CNF t
-  ENF→CNF ⌜λ⌝     = ⌜λ⌝
-  ENF→CNF (nnf p) = nnf (ENNF→CNNF p)
-
-  ENNF→CNNF : ∀ {Γ A} {t : Γ ⊢ A} → ENNF t → CNNF t
-  ENNF→CNNF ⌜v⌝         = ⌜v⌝
-  ENNF→CNNF (p₁ ⌜$⌝ p₂) = ENNF→CNNF p₁ ⌜$⌝ ENF→CNF p₂
-
-¬ER→¬CR : ∀ {Γ A} {t : Γ ⊢ A} → E.¬R t → C.¬R t
-¬ER→¬CR ¬r r = Cred r ↯ ¬r
-
-¬ERF→¬CRF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ E.RF t → ¬ C.RF t
-¬ERF→¬CRF ¬p (t′ , r) = (t′ , Cred r) ↯ ¬p
-
-
-----------------------------------------------------------------------------------------------------
-
-module ProgAlt1C where
-  open ProgAlt1 using () renaming (NF? to CNF? ; NNF? to CNNF?)
-
-  ¬CNF→CRF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ CNF t → C.RF t
-  ¬CNF→CRF {t = ⌜v⌝ i}               ¬p                   = nnf ⌜v⌝ ↯ ¬p
-  ¬CNF→CRF {t = ⌜λ⌝ t}               ¬p                   = ⌜λ⌝ ↯ ¬p
-  ¬CNF→CRF {t = t₁ ⌜$⌝ t₂}           ¬p                   with CNNF? t₁ | CNF? t₂
-  ¬CNF→CRF {t = t₁ ⌜$⌝ t₂}           ¬p | yes p₁ | yes p₂   = nnf (p₁ ⌜$⌝ p₂) ↯ ¬p
-  ¬CNF→CRF {t = t₁ ⌜$⌝ t₂}           ¬p | yes p₁ | no ¬p₂   = let _ , r₂ = ¬CNF→CRF ¬p₂ in _ , Ccong$₂ (nnf p₁) r₂
-  ¬CNF→CRF {t = ⌜v⌝ i ⌜$⌝ t₂}        ¬p | no ¬p₁ | _        = ⌜v⌝ ↯ ¬p₁
-  ¬CNF→CRF {t = ⌜λ⌝ t₁ ⌜$⌝ t₂}       ¬p | no ¬p₁ | yes p₂   = _ , βred⊃ refl p₂
-  ¬CNF→CRF {t = ⌜λ⌝ t₁ ⌜$⌝ t₂}       ¬p | no ¬p₁ | no ¬p₂   = let _ , r₂ = ¬CNF→CRF ¬p₂ in _ , Ccong$₂ ⌜λ⌝ r₂
-  ¬CNF→CRF {t = t₁@(_ ⌜$⌝ _) ⌜$⌝ t₂} ¬p | no ¬p₁ | _        = let _ , r₁ = ¬CNF→CRF λ { (nnf p₁) → p₁ ↯ ¬p₁ } in _ , cong$₁ r₁
-
-  open C′.NF?Kit CNF? ¬CNF→CRF using () renaming (prog⇒ to prog⇒C)
-
-module ProgAlt2C where
-  ¬CR→CNF : ∀ {Γ A} {t : Γ ⊢ A} → C.¬R t → CNF t
-  ¬CR→CNF {t = ⌜v⌝ i}         ¬r               = nnf ⌜v⌝
-  ¬CR→CNF {t = ⌜λ⌝ t}         ¬r               = ⌜λ⌝
-  ¬CR→CNF {t = ⌜v⌝ _ ⌜$⌝ _}   ¬r               with ¬CR→CNF λ r₂ → Ccong$₂ (nnf ⌜v⌝) r₂ ↯ ¬r
-  ¬CR→CNF {t = ⌜v⌝ _ ⌜$⌝ _}   ¬r | p₂            = nnf (⌜v⌝ ⌜$⌝ p₂)
-  ¬CR→CNF {t = ⌜λ⌝ _ ⌜$⌝ _}   ¬r               with ¬CR→CNF λ r₂ → Ccong$₂ ⌜λ⌝ r₂ ↯ ¬r
-  ¬CR→CNF {t = ⌜λ⌝ _ ⌜$⌝ _}   ¬r | p₂            = βred⊃ refl p₂ ↯ ¬r
-  ¬CR→CNF {t = _ ⌜$⌝ _ ⌜$⌝ _} ¬r               with ¬CR→CNF λ r₁ → cong$₁ r₁ ↯ ¬r
-  ¬CR→CNF {t = _ ⌜$⌝ _ ⌜$⌝ _} ¬r | nnf p₁        with ¬CR→CNF λ r₁ → Ccong$₂ (nnf p₁) r₁ ↯ ¬r
-  ¬CR→CNF {t = _ ⌜$⌝ _ ⌜$⌝ _} ¬r | nnf p₁ | p₂     = nnf (p₁ ⌜$⌝ p₂)
-
-  ¬CRF→CNF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ C.RF t → CNF t
-  ¬CRF→CNF = ¬CR→CNF ∘ C′.¬RF→¬R
-
-  CRF? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (C.RF t)
-  CRF? (⌜v⌝ i)                                       = no λ ()
-  CRF? (⌜λ⌝ t)                                       = no λ ()
-  CRF? (t₁ ⌜$⌝ t₂)                                   with CRF? t₁ | CRF? t₂
-  CRF? (_ ⌜$⌝ _)       | no ¬p₁       | yes (_ , r₂)   = yes (_ , Ccong$₂ (¬CRF→CNF ¬p₁) r₂)
-  CRF? (⌜v⌝ _ ⌜$⌝ _)   | no ¬p₁       | no ¬p₂         = no λ { (_ , Ccong$₂ p₁ r₂) → r₂ ↯ C′.¬RF→¬R ¬p₂ }
-  CRF? (⌜λ⌝ _ ⌜$⌝ _)   | no ¬p₁       | no ¬p₂         = yes (_ , βred⊃ refl (¬CRF→CNF ¬p₂))
-  CRF? (_ ⌜$⌝ _ ⌜$⌝ _) | no ¬p₁       | no ¬p₂         = no λ { (_ , cong$₁ r₁) → r₁ ↯ C′.¬RF→¬R ¬p₁
-                                                            ; (_ , Ccong$₂ p₁ r₂) → r₂ ↯ C′.¬RF→¬R ¬p₂
-                                                            }
-  CRF? (_ ⌜$⌝ _ ⌜$⌝ _) | yes (_ , r₁) | _              = yes (_ , cong$₁ r₁)
-
-  open C′.RF?Kit CRF? ¬CRF→CNF using () renaming (prog⇒ to prog⇒C)
-
-prog⇒C : ∀ {Γ A} (t : Γ ⊢ A) → C′.Prog t
-prog⇒C (⌜v⌝ i)                     = C′.done (nnf ⌜v⌝)
-prog⇒C (⌜λ⌝ t)                     = C′.done ⌜λ⌝
-prog⇒C (t₁ ⌜$⌝ t₂)                 with prog⇒C t₁ | prog⇒C t₂
-... | C′.step r₁       | _            = C′.step (cong$₁ r₁)
-... | C′.done p₁       | C′.step r₂   = C′.step (Ccong$₂ p₁ r₂)
-... | C′.done ⌜λ⌝      | C′.done p₂   = C′.step (βred⊃ refl p₂)
-... | C′.done (nnf p₁) | C′.done p₂   = C′.done (nnf (p₁ ⌜$⌝ p₂))
-
-module C″ = C′.ProgKit prog⇒C
-
-module _ (⚠ : Extensionality) where
-  CNF≃¬CRF : ∀ {Γ A} {t : Γ ⊢ A} → CNF t ≃ (¬ C.RF t)
-  CNF≃¬CRF = record
-    { to      = C′.NF→¬RF
-    ; from    = C″.¬RF→NF
-    ; from∘to = λ p → uniCNF _ p
-    ; to∘from = λ p → uni¬CRF ⚠ _ p
-    }
-
-
-----------------------------------------------------------------------------------------------------
-
-module ProgAlt1E where
-  open ProgAlt1 using () renaming (NF? to CNF? ; NNF? to CNNF?)
-
   mutual
-    ENF? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (ENF t)
-    ENF? {A = ⌜◦⌝}     (⌜v⌝ i)     = yes (nnf ⌜v⌝)
-    ENF? {A = ⌜◦⌝}     (t₁ ⌜$⌝ t₂) with ENNF? t₁ | ENF? t₂
-    ... | yes p₁ | yes p₂            = yes (nnf (p₁ ⌜$⌝ p₂))
-    ... | yes p₁ | no ¬p₂            = no λ { (nnf (p₁ ⌜$⌝ p₂)) → p₂ ↯ ¬p₂ }
-    ... | no ¬p₁ | _                 = no λ { (nnf (p₁ ⌜$⌝ p₂)) → p₁ ↯ ¬p₁ }
-    ENF? {A = _ ⌜⊃⌝ _} (⌜v⌝ i)     = no λ ()
-    ENF? {A = _ ⌜⊃⌝ _} (⌜λ⌝ t)     = yes ⌜λ⌝
-    ENF? {A = _ ⌜⊃⌝ _} (t₁ ⌜$⌝ t₂) = no λ ()
+    uni⇒F : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒F t′) → r ≡ r′
+    uni⇒F (Ired ¬x r)    (Ired ¬x′ r′)   = Ired & uni¬Expandable ⚠ ¬x ¬x′ ⊗ uni⇒I r r′
+    uni⇒F (Ired ¬x r)    (ηexp⊃ eq′ x′)  = x′ ↯ ¬x
+    uni⇒F (ηexp⊃ eq x)   (Ired ¬x′ r′)   = x ↯ ¬x′
+    uni⇒F (ηexp⊃ refl x) (ηexp⊃ refl x′) = ηexp⊃ refl & uniExpandable x x′
 
-    ENNF? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (ENNF t)
-    ENNF? (⌜v⌝ i)         = yes ⌜v⌝
-    ENNF? (⌜λ⌝ t)         = no λ ()
-    ENNF? (t₁ ⌜$⌝ t₂)     with ENNF? t₁ | ENF? t₂
-    ... | yes p₁ | yes p₂   = yes (p₁ ⌜$⌝ p₂)
-    ... | yes p₁ | no ¬p₂   = no λ { (p₁ ⌜$⌝ p₂) → p₂ ↯ ¬p₂ }
-    ... | no ¬p₁ | _        = no λ { (p₁ ⌜$⌝ p₂) → p₁ ↯ ¬p₁ }
-
-  ¬ENF→ERF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ ENF t → E.RF t
-  ¬ENF→ERF {A = ⌜◦⌝}     {⌜v⌝ i}               ¬p                                                = nnf ⌜v⌝ ↯ ¬p
-  ¬ENF→ERF {A = ⌜◦⌝}     {t₁ ⌜$⌝ t₂}           ¬p                                                with ENNF? t₁ | ENF? t₂
-  ¬ENF→ERF {A = ⌜◦⌝}     {t₁ ⌜$⌝ t₂}           ¬p | yes p₁ | yes p₂                                = nnf (p₁ ⌜$⌝ p₂) ↯ ¬p
-  ¬ENF→ERF {A = ⌜◦⌝}     {t₁ ⌜$⌝ t₂}           ¬p | yes p₁ | no ¬p₂                                with CNNF? t₁ | ¬ENF→ERF ¬p₂
-  ¬ENF→ERF {A = ⌜◦⌝}     {t₁ ⌜$⌝ t₂}           ¬p | yes p₁ | no ¬p₂ | yes p₁′ | _ , Cred r₂          = _ , Cred (Ccong$₂ (nnf p₁′) r₂)
-  ¬ENF→ERF {A = ⌜◦⌝}     {t₁ ⌜$⌝ t₂}           ¬p | yes p₁ | no ¬p₂ | yes p₁′ | _ , ηexp⊃ refl x     = {!!}
-  ¬ENF→ERF {A = ⌜◦⌝}     {t₁ ⌜$⌝ t₂}           ¬p | yes p₁ | no ¬p₂ | no ¬p₁′ | _                  = ENNF→CNNF p₁ ↯ ¬p₁′
-  ¬ENF→ERF {A = ⌜◦⌝}     {⌜v⌝ i ⌜$⌝ t₂}        ¬p | no ¬p₁ | _                                   = ⌜v⌝ ↯ ¬p₁
-  ¬ENF→ERF {A = ⌜◦⌝}     {⌜λ⌝ t₁ ⌜$⌝ t₂}       ¬p | no ¬p₁ | yes p₂                              = _ , Cred (βred⊃ refl (ENF→CNF p₂))
-  ¬ENF→ERF {A = ⌜◦⌝}     {⌜λ⌝ t₁ ⌜$⌝ t₂}       ¬p | no ¬p₁ | no ¬p₂                              = let _ , r₂ = ¬ENF→ERF ¬p₂ in _ , Cred (Econg$₂ ⌜λ⌝ r₂)
-  ¬ENF→ERF {A = ⌜◦⌝}     {t₁@(_ ⌜$⌝ _) ⌜$⌝ t₂} ¬p | no ¬p₁ | _                                   with ¬ENF→ERF {t = t₁} λ ()
-  ¬ENF→ERF {A = ⌜◦⌝}     {t₁@(_ ⌜$⌝ _) ⌜$⌝ t₂} ¬p | no ¬p₁ | _      | t₁′ , Cred r₁                = _ , Cred (cong$₁ r₁)
-  ¬ENF→ERF {A = ⌜◦⌝}     {t₁@(_ ⌜$⌝ _) ⌜$⌝ t₂} ¬p | no ¬p₁ | _      | t₁′ , ηexp⊃ refl x           = {!!}
-  ¬ENF→ERF {A = _ ⌜⊃⌝ _} {⌜v⌝ i}               ¬p                                                = _ , ηexp⊃ refl ⌜v⌝
-  ¬ENF→ERF {A = _ ⌜⊃⌝ _} {⌜λ⌝ t}               ¬p                                                = ⌜λ⌝ ↯ ¬p
-  ¬ENF→ERF {A = _ ⌜⊃⌝ _} {t₁ ⌜$⌝ t₂}           ¬p                                                = _ , ηexp⊃ refl _⌜$⌝_
-
-  open E′.NF?Kit ENF? ¬ENF→ERF using () renaming (prog⇒ to prog⇒E)
-
--- module ProgAlt2E where
---   ¬ER→ENF : ∀ {Γ A} {t : Γ ⊢ A} → E.¬R t → ENF t
---   ¬ER→ENF {A = ⌜◦⌝}     {⌜v⌝ i}               ¬r = nnf ⌜v⌝
---   ¬ER→ENF {A = ⌜◦⌝}     {⌜v⌝ _ ⌜$⌝ t₂}        ¬r with ¬ER→ENF {t = t₂} λ r₂ → Cred (Econg$₂ {!nnf ⌜v⌝!} r₂) ↯ ¬r
---   ... | p₂                                          = nnf (⌜v⌝ ⌜$⌝ p₂)
---   ¬ER→ENF {A = ⌜◦⌝}     {⌜λ⌝ _ ⌜$⌝ t₂}        ¬r with ¬ER→ENF {t = t₂} λ r₂ → Cred (Econg$₂ ⌜λ⌝ r₂) ↯ ¬r
---   ... | p₂                                          = Cred (βred⊃ refl (ENF→CNF p₂)) ↯ ¬r
---   ¬ER→ENF {A = ⌜◦⌝}     {t₁@(_ ⌜$⌝ _) ⌜$⌝ t₂} ¬r with ¬ER→ENF {t = t₁} λ { (Cred r) → Cred (cong$₁ r) ↯ ¬r
---                                                                            ; (ηexp⊃ refl x) → {!!} ↯ ¬r
---                                                                            }
---   ¬ER→ENF {A = ⌜◦⌝}     {t₁@(_ ⌜$⌝ _) ⌜$⌝ t₂} ¬r | ()
---   ¬ER→ENF {A = _ ⌜⊃⌝ _} {⌜v⌝ i}               ¬r = ηexp⊃ refl ⌜v⌝ ↯ ¬r
---   ¬ER→ENF {A = _ ⌜⊃⌝ _} {⌜λ⌝ t}               ¬r = ⌜λ⌝
---   ¬ER→ENF {A = _ ⌜⊃⌝ _} {⌜v⌝ _ ⌜$⌝ t₂}        ¬r with ¬ER→ENF {t = t₂} λ r₂ → Cred (Econg$₂ {!nnf ⌜v⌝!} r₂) ↯ ¬r
---   ... | p₂                                          = {!nnf (⌜v⌝ ⌜$⌝ p₂)!}
---   ¬ER→ENF {A = _ ⌜⊃⌝ _} {⌜λ⌝ _ ⌜$⌝ t₂}        ¬r with ¬ER→ENF {t = t₂} λ r₂ → Cred (Econg$₂ ⌜λ⌝ r₂) ↯ ¬r
---   ... | p₂                                          = Cred (βred⊃ refl (ENF→CNF p₂)) ↯ ¬r
---   ¬ER→ENF {A = _ ⌜⊃⌝ _} {t₁@(_ ⌜$⌝ _) ⌜$⌝ t₂} ¬r with ¬ER→ENF {t = t₁} λ { (Cred r) → Cred (cong$₁ r) ↯ ¬r
---                                                                            ; (ηexp⊃ refl x) → {!!} ↯ ¬r
---                                                                            }
---   ¬ER→ENF {A = _ ⌜⊃⌝ _} {t₁@(_ ⌜$⌝ _) ⌜$⌝ t₂} ¬r | ()
---
---   ¬ERF→ENF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ E.RF t → ENF t
---   ¬ERF→ENF = ¬ER→ENF ∘ E′.¬RF→¬R
---
---   open E′.RF?Kit {!!} ¬ERF→ENF using () renaming (prog⇒ to prog⇒E)
+    uni⇒I : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒I t′) → r ≡ r′
+    uni⇒I (cong$₁ r₁)     (cong$₁ r₁′)      = cong$₁ & uni⇒I r₁ r₁′
+    uni⇒I (cong$₁ r₁)     (Fcong$₂ p₁′ r₂′) = r₁ ↯ FNF→¬IR p₁′
+    uni⇒I (cong$₁ r₁)     (Xcong$₂ x₁′ r₂′) = r₁ ↯ Expandable→¬IR x₁′
+    uni⇒I (Fcong$₂ p₁ r₂) (cong$₁ r₁′)      = r₁′ ↯ FNF→¬IR p₁
+    uni⇒I (Fcong$₂ p₁ r₂) (Fcong$₂ p₁′ r₂′) = Fcong$₂ & uniFNF p₁ p₁′ ⊗ uni⇒F r₂ r₂′
+    uni⇒I (Fcong$₂ p₁ r₂) (Xcong$₂ x₁′ r₂′) = p₁ ↯ Expandable→¬FNF x₁′
+    uni⇒I (Fcong$₂ p₁ r₂) (βred⊃ eq′ p₂′)   = r₂ ↯ FNF→¬FR p₂′
+    uni⇒I (Xcong$₂ x₁ r₂) (cong$₁ r₁′)      = r₁′ ↯ Expandable→¬IR x₁
+    uni⇒I (Xcong$₂ x₁ r₂) (Fcong$₂ p₁′ r₂′) = p₁′ ↯ Expandable→¬FNF x₁
+    uni⇒I (Xcong$₂ x₁ r₂) (Xcong$₂ x₁′ r₂′) = Xcong$₂ & uniExpandable x₁ x₁′ ⊗ uni⇒F r₂ r₂′
+    uni⇒I (βred⊃ eq p₂)   (Fcong$₂ p₁′ r₂′) = r₂′ ↯ FNF→¬FR p₂
+    uni⇒I (βred⊃ refl p₂) (βred⊃ refl p₂′)  = βred⊃ refl & uniFNF p₂ p₂′
 
 
+----------------------------------------------------------------------------------------------------
+
+-- TODO: delete?
+Expandable? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (Expandable t)
+Expandable? {A = ⌜◦⌝}     t           = no λ ()
+Expandable? {A = A ⌜⊃⌝ B} (⌜v⌝ i)     = yes ⌜v⌝-
+Expandable? {A = A ⌜⊃⌝ B} (⌜λ⌝ t)     = no λ ()
+Expandable? {A = A ⌜⊃⌝ B} (t₁ ⌜$⌝ t₂) with FNNF? t₁ | FNF? t₂
+... | no ¬p₁ | _                        = no λ { (p₁ ⌜$⌝ p₂) → p₁ ↯ ¬p₁ }
+... | yes p₁ | no ¬p₂                   = no λ { (p₁ ⌜$⌝ p₂) → p₂ ↯ ¬p₂ }
+... | yes p₁ | yes p₂                   = yes (p₁ ⌜$⌝ p₂)
+
+-- (Ghani p.51, unnumbered lemma)
+FR→IR⊎η : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒F t′ → t ⇒I t′ ⊎ t ExpandsTo t′
+FR→IR⊎η (Ired ¬x (cong$₁ r₁))     = inj₁ (cong$₁ r₁)
+FR→IR⊎η (Ired ¬x (Fcong$₂ p₁ r₂)) = inj₁ (Fcong$₂ p₁ r₂)
+FR→IR⊎η (Ired ¬x (Xcong$₂ x₁ r₂)) = inj₁ (Xcong$₂ x₁ r₂)
+FR→IR⊎η (Ired ¬x (βred⊃ eq p₂))   = inj₁ (βred⊃ eq p₂)
+FR→IR⊎η (ηexp⊃ refl x)            = inj₂ (ηexp⊃ refl x)
+
+IR⊎η→FR : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒I t′ ⊎ t ExpandsTo t′ → t ⇒F t′
+IR⊎η→FR {A = ⌜◦⌝}     {t} (inj₁ r)              = Ired (λ ()) r
+IR⊎η→FR {A = A ⌜⊃⌝ B} {t} (inj₁ r)              with Expandable? t
+... | yes x                                        = r ↯ Expandable→¬IR x
+... | no ¬x                                        = Ired ¬x r
+IR⊎η→FR                   (inj₂ (ηexp⊃ refl x)) = ηexp⊃ refl x
 
 
-postulate
-  Γ  : Ctx
-  A  : Ty
-  t₁ : Γ ⊢ A ⌜⊃⌝ ⌜◦⌝
-  p₁ : CNNF t₁
-  x  : Exp t₁
-  t₂ : Γ ⊢ A
-  p₂ : ENF t₂
+----------------------------------------------------------------------------------------------------
 
-r₁ : t₁ ⇒E ⌜λ⌝ (weak t₁ ⌜$⌝ ⌜v⌝ zero)
-r₁ = ηexp⊃ refl x
+-- -- TODO: delete?
+-- _ExpandsTo?_ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Dec (t ExpandsTo t′)
+-- ⌜v⌝ i       ExpandsTo? ⌜v⌝ i′                            = no λ { (ηexp⊃ () x) }
+-- ⌜v⌝ i       ExpandsTo? ⌜λ⌝ (⌜v⌝ i′)                      = no λ { (ηexp⊃ () x) }
+-- ⌜v⌝ i       ExpandsTo? ⌜λ⌝ (⌜λ⌝ t′)                      = no λ { (ηexp⊃ () x) }
+-- ⌜v⌝ i       ExpandsTo? ⌜λ⌝ (⌜v⌝ i′ ⌜$⌝ ⌜v⌝ zero)         with weak∋ i ≟∋ i′
+-- ... | no ¬eq                                               = no λ { (ηexp⊃ refl x) → refl ↯ ¬eq }
+-- ... | yes refl                                             = yes (ηexp⊃ refl ⌜v⌝-)
+-- ⌜v⌝ i       ExpandsTo? ⌜λ⌝ (⌜v⌝ i′ ⌜$⌝ ⌜v⌝ (suc _))      = no λ { (ηexp⊃ () x) }
+-- ⌜v⌝ i       ExpandsTo? ⌜λ⌝ (⌜v⌝ i′ ⌜$⌝ ⌜λ⌝ t₂′)          = no λ { (ηexp⊃ () x) }
+-- ⌜v⌝ i       ExpandsTo? ⌜λ⌝ (⌜v⌝ i′ ⌜$⌝ t₂′@(_ ⌜$⌝ _))    = no λ { (ηexp⊃ () x) }
+-- ⌜v⌝ i       ExpandsTo? ⌜λ⌝ (⌜λ⌝ t₁′ ⌜$⌝ t₂′)             = no λ { (ηexp⊃ () x) }
+-- ⌜v⌝ i       ExpandsTo? ⌜λ⌝ (t₁′@(_ ⌜$⌝ _) ⌜$⌝ t₂′)       = no λ { (ηexp⊃ () x) }
+-- ⌜v⌝ i       ExpandsTo? (t₁′ ⌜$⌝ t₂′)                     = no λ { (ηexp⊃ () x) }
+-- ⌜λ⌝ t       ExpandsTo? t′                                = no λ { (ηexp⊃ eq ()) }
+-- (t₁ ⌜$⌝ t₂) ExpandsTo? ⌜v⌝ i′                            = no λ { (ηexp⊃ () x) }
+-- (t₁ ⌜$⌝ t₂) ExpandsTo? ⌜λ⌝ (⌜v⌝ i′)                      = no λ { (ηexp⊃ () x) }
+-- (t₁ ⌜$⌝ t₂) ExpandsTo? ⌜λ⌝ (⌜λ⌝ t′)                      = no λ { (ηexp⊃ () x) }
+-- (t₁ ⌜$⌝ t₂) ExpandsTo? ⌜λ⌝ (⌜v⌝ i′ ⌜$⌝ t₂′)              = no λ { (ηexp⊃ () x) }
+-- (t₁ ⌜$⌝ t₂) ExpandsTo? ⌜λ⌝ (⌜λ⌝ t₁′ ⌜$⌝ t₂′)             = no λ { (ηexp⊃ () x) }
+-- (t₁ ⌜$⌝ t₂) ExpandsTo? ⌜λ⌝ (t₁′ ⌜$⌝ t₂′ ⌜$⌝ ⌜v⌝ zero)    with weak (t₁ ⌜$⌝ t₂) ≟ t₁′ ⌜$⌝ t₂′
+-- ... | no ¬eq                                               = no λ { (ηexp⊃ refl x) → refl ↯ ¬eq }
+-- ... | yes refl                                             with FNNF? t₁ | FNF? t₂
+-- ...   | no ¬p₁ | _                                           = no λ { (ηexp⊃ refl (p₁ ⌜$⌝ p₂)) →
+--                                                                  p₁ ↯ ¬p₁ }
+-- ...   | yes p₁ | no ¬p₂                                      = no λ { (ηexp⊃ refl (p₁′ ⌜$⌝ p₂)) →
+--                                                                  p₂ ↯ ¬p₂ }
+-- ...   | yes p₁ | yes p₂                                      = yes (ηexp⊃ refl (p₁ ⌜$⌝ p₂))
+-- (t₁ ⌜$⌝ t₂) ExpandsTo? ⌜λ⌝ (t₁′ ⌜$⌝ t₂′ ⌜$⌝ ⌜v⌝ (suc _)) = no λ { (ηexp⊃ () x) }
+-- (t₁ ⌜$⌝ t₂) ExpandsTo? ⌜λ⌝ (t₁′ ⌜$⌝ t₂′ ⌜$⌝ ⌜λ⌝ _)       = no λ { (ηexp⊃ () x) }
+-- (t₁ ⌜$⌝ t₂) ExpandsTo? ⌜λ⌝ (t₁′ ⌜$⌝ t₂′ ⌜$⌝ (_ ⌜$⌝ _))   = no λ { (ηexp⊃ () x) }
+-- (t₁ ⌜$⌝ t₂) ExpandsTo? (t₁′ ⌜$⌝ t₂′)                     = no λ { (ηexp⊃ () x) }
 
-¬r : E.¬R (t₁ ⌜$⌝ t₂)
-¬r (Cred r) = r ↯ CNNF→¬CR (p₁ ⌜$⌝ ENF→CNF p₂)
--- ¬r (ηexp⊃ eq x) -- this is impossible, which is good:
--- The case for the constructor ηexp⊃ is impossible
--- because unification ended with a conflicting equation
---   A₁ ⌜⊃⌝ B ≟ ⌜◦⌝
+-- private
+--   lem₀ : ∀ {Γ A A′ B C} {t₁ : Γ ⊢ A ⌜⊃⌝ B ⌜⊃⌝ C} {t₁′ : Γ ⊢ A′ ⌜⊃⌝ B ⌜⊃⌝ C}
+--            {t₂ : Γ ⊢ A} {t₂′ : Γ ⊢ A′} →
+--            ⌜λ⌝ ((weak t₁ ⌜$⌝ weak t₂) ⌜$⌝ ⌜v⌝ zero) ≡ ⌜λ⌝ ((weak t₁′ ⌜$⌝ weak t₂′) ⌜$⌝ ⌜v⌝ zero) →
+--          Σ (A ≡ A′) λ { refl → t₁ ≡ t₁′ × t₂ ≡ t₂′ }
+--   lem₀ {A = A} {A′} eq with inj$₁′ (inj$₁ (injλ eq))
+--   ... | refl , eq₁ = refl , injren eq₁ , injren (inj$₂ (inj$₁ (injλ eq)))
 
+--   lem₁ : ∀ {Γ A A′ B C} {t₁ : Γ ⊢ A ⌜⊃⌝ B ⌜⊃⌝ C} {t₁′ : Γ ⊢ A′ ⌜⊃⌝ B ⌜⊃⌝ C}
+--            {t₂ : Γ ⊢ A} {t₂′ : Γ ⊢ A′} →
+--            ⌜λ⌝ ((weak t₁ ⌜$⌝ weak t₂) ⌜$⌝ ⌜v⌝ zero) ≡ ⌜λ⌝ ((weak t₁′ ⌜$⌝ weak t₂′) ⌜$⌝ ⌜v⌝ zero) →
+--          ¬ FNNF t₁ → ¬ FNNF t₁′
+--   lem₁ eq ¬p₁ p₁ with lem₀ eq
+--   ... | refl , refl , refl = p₁ ↯ ¬p₁
 
-prog⇒E : ∀ {Γ A} (t : Γ ⊢ A) → E′.Prog t
-prog⇒E {A = ⌜◦⌝}     (⌜v⌝ i)                                   = E′.done (nnf ⌜v⌝)
-prog⇒E {A = A ⌜⊃⌝ B} (⌜v⌝ i)                                   = E′.step (ηexp⊃ refl ⌜v⌝)
-prog⇒E {A = A ⌜⊃⌝ B} (⌜λ⌝ t)                                   = E′.done ⌜λ⌝
-prog⇒E {A = ⌜◦⌝}     (t₁ ⌜$⌝ t₂)                               with prog⇒C t₁ | prog⇒E t₁ | prog⇒E t₂
-... | C′.step r₁       | _                         | _            = E′.step (Cred (cong$₁ r₁))
-... | C′.done p₁       | E′.step (Cred r₁)         | E′.step r₂   = r₁ ↯ CNF→¬CR p₁
-... | C′.done (nnf p₁) | E′.step r₁@(ηexp⊃ refl x) | E′.step r₂   = {!!}
-... | C′.done p₁       | E′.done p₁′               | E′.step r₂   = E′.step (Cred (Econg$₂ p₁′ r₂))
-... | C′.done ⌜λ⌝      | _                         | E′.done p₂   = E′.step (Cred (βred⊃ refl (ENF→CNF p₂)))
-... | C′.done (nnf p₁) | E′.step (Cred r₁)         | E′.done p₂   = r₁ ↯ CNNF→¬CR p₁
-... | C′.done (nnf p₁) | E′.step r₁@(ηexp⊃ refl x) | E′.done p₂   = {!!} -- this is the hole that corresponds to the counterexample
-... | C′.done (nnf p₁) | E′.done ⌜λ⌝               | E′.done p₂   = E′.step (Cred (βred⊃ refl (ENF→CNF p₂)))
-prog⇒E {A = A ⌜⊃⌝ B} (t₁ ⌜$⌝ t₂)                               = E′.step (ηexp⊃ refl _⌜$⌝_)
+--   lem₂ : ∀ {Γ A A′ B C} {t₁ : Γ ⊢ A ⌜⊃⌝ B ⌜⊃⌝ C} {t₁′ : Γ ⊢ A′ ⌜⊃⌝ B ⌜⊃⌝ C}
+--            {t₂ : Γ ⊢ A} {t₂′ : Γ ⊢ A′} →
+--            ⌜λ⌝ ((weak t₁ ⌜$⌝ weak t₂) ⌜$⌝ ⌜v⌝ zero) ≡ ⌜λ⌝ ((weak t₁′ ⌜$⌝ weak t₂′) ⌜$⌝ ⌜v⌝ zero) →
+--          ¬ FNF t₂ → ¬ FNF t₂′
+--   lem₂ eq ¬p₂ p₂ with lem₀ eq
+--   ... | refl , refl , refl = p₂ ↯ ¬p₂
 
-
-
-
-
--- -- t₁ : ⌜◦⌝ ⌜⊃⌝ ⌜◦⌝ ∷ ⌜◦⌝ ∷ [] ⊢ ⌜◦⌝ ⌜⊃⌝ ⌜◦⌝
--- -- t₁ = ⌜v⌝ zero
-
--- -- p₁ : ENNF t₁
--- -- p₁ = ⌜v⌝
-
--- -- t₂ : ⌜◦⌝ ⌜⊃⌝ ⌜◦⌝ ∷ ⌜◦⌝ ∷ [] ⊢ ⌜◦⌝
--- -- t₂ = ⌜λ⌝ (⌜v⌝ zero) ⌜$⌝ (⌜v⌝ (suc zero))
-
--- -- ¬p₂ : ¬ ENF t₂
--- -- ¬p₂ (nnf (() ⌜$⌝ nnf ⌜v⌝))
-
--- -- t₂′ : ⌜◦⌝ ⌜⊃⌝ ⌜◦⌝ ∷ ⌜◦⌝ ∷ [] ⊢ ⌜◦⌝
--- -- t₂′ = ⌜v⌝ (suc zero)
-
--- -- p₂ : ENF t₂′
--- -- p₂ = nnf ⌜v⌝
-
--- -- r₂ : t₂ ⇒E t₂′
--- -- r₂ = Cred (βred⊃ refl (nnf ⌜v⌝))
-
--- -- t : ⌜◦⌝ ⌜⊃⌝ ⌜◦⌝ ∷ ⌜◦⌝ ∷ [] ⊢ ⌜◦⌝
--- -- t = t₁ ⌜$⌝ t₂
-
--- -- ¬p : ¬ ENF t
--- -- ¬p (nnf (p₁′ ⌜$⌝ p₂′)) = p₂′ ↯ ¬p₂
-
--- -- t′ : ⌜◦⌝ ⌜⊃⌝ ⌜◦⌝ ∷ ⌜◦⌝ ∷ [] ⊢ ⌜◦⌝
--- -- t′ = t₁ ⌜$⌝ t₂′
-
--- -- p′ : ENF t′
--- -- p′ = nnf (p₁ ⌜$⌝ p₂)
-
--- -- r : t ⇒E t′
--- -- r = Cred (Econg$₂ {!nnf p₁!} r₂)
-
-
-
-
-
-
--- -- -- -- -- -- -- -- determinism?
--- -- -- -- -- -- -- -- TODO: looks unprovable
--- -- -- -- -- -- -- -- mutual
--- -- -- -- -- -- -- --   det⇒C : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒C t′ → t ⇒C t″ → t′ ≡ t″
--- -- -- -- -- -- -- --   det⇒C (cong$₁ r₁)     (cong$₁ r₁′)      = (_⌜$⌝ _) & det⇒C r₁ r₁′
--- -- -- -- -- -- -- --   det⇒C (cong$₁ r₁)     (Ccong$₂ p₁′ r₂′) = r₁ ↯ ENF→¬CR p₁′
--- -- -- -- -- -- -- --   det⇒C (cong$₁ r₁)     (Econg$₂ p₁′ r₂′) = r₁ ↯ ENF→¬CR p₁′
--- -- -- -- -- -- -- --   det⇒C (Ccong$₂ p₁ r₂) (cong$₁ r₁′)      = r₁′ ↯ ENF→¬CR p₁
--- -- -- -- -- -- -- --   det⇒C (Ccong$₂ p₁ r₂) (Ccong$₂ p₁′ r₂′) = (_ ⌜$⌝_) & det⇒C r₂ r₂′
--- -- -- -- -- -- -- --   det⇒C (Ccong$₂ p₁ r₂) (Econg$₂ p₁′ r₂′) = (_ ⌜$⌝_) & det⇒ r₂ r₂′
--- -- -- -- -- -- -- --   det⇒C (Ccong$₂ p₁ r₂) (βred⊃ refl p₂′)  = r₂ ↯ ENF→¬CR p₂′
--- -- -- -- -- -- -- --   det⇒C (Econg$₂ p₁ r₂) (cong$₁ r₁′)      = r₁′ ↯ ENF→¬CR p₁
--- -- -- -- -- -- -- --   det⇒C (Econg$₂ p₁ r₂) (Ccong$₂ p₁′ r₂′) = (_ ⌜$⌝_) & sym (det⇒ r₂′ r₂)
--- -- -- -- -- -- -- --   det⇒C (Econg$₂ p₁ r₂) (Econg$₂ p₁′ r₂′) = (_ ⌜$⌝_) & det⇒E r₂ r₂′
--- -- -- -- -- -- -- --   det⇒C (Econg$₂ p₁ r₂) (βred⊃ refl p₂′)  = r₂ ↯ ENF→¬ER p₂′
--- -- -- -- -- -- -- --   det⇒C (βred⊃ refl p₂) (Ccong$₂ p₁′ r₂′) = r₂′ ↯ ENF→¬CR p₂
--- -- -- -- -- -- -- --   det⇒C (βred⊃ refl p₂) (Econg$₂ p₁′ r₂′) = r₂′ ↯ ENF→¬ER p₂
--- -- -- -- -- -- -- --   det⇒C (βred⊃ refl p₂) (βred⊃ refl p₂′)  = refl
--- -- -- -- -- -- -- --
--- -- -- -- -- -- -- --   det⇒E : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒E t′ → t ⇒E t″ → t′ ≡ t″
--- -- -- -- -- -- -- --   det⇒E (Cred r)       r′              = det⇒ r r′
--- -- -- -- -- -- -- --   det⇒E (ηexp⊃ refl x) (Cred r′)       = {!!}
--- -- -- -- -- -- -- --   det⇒E (ηexp⊃ refl x) (ηexp⊃ refl x′) = refl
--- -- -- -- -- -- -- --
--- -- -- -- -- -- -- --   det⇒ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒C t′ → t ⇒E t″ → t′ ≡ t″
--- -- -- -- -- -- -- --   det⇒ r (Cred r′)      = det⇒C r r′
--- -- -- -- -- -- -- --   det⇒ r (ηexp⊃ eq′ x′) = {!!}
-
--- -- -- -- -- -- -- -- uniqueness of proofs?
--- -- -- -- -- -- -- -- TODO: looks unprovable
--- -- -- -- -- -- -- -- mutual
--- -- -- -- -- -- -- --   uni⇒C : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒C t′) → r ≡ r′
--- -- -- -- -- -- -- --   uni⇒C (cong$₁ r₁)     (cong$₁ r₁′)      = cong$₁ & uni⇒C r₁ r₁′
--- -- -- -- -- -- -- --   uni⇒C (cong$₁ r₁)     (Ccong$₂ p₁′ r₂′) = r₁ ↯ ENF→¬CR p₁′
--- -- -- -- -- -- -- --   uni⇒C (cong$₁ r₁)     (Econg$₂ p₁′ r₂′) = r₁ ↯ ENF→¬CR p₁′
--- -- -- -- -- -- -- --   uni⇒C (Ccong$₂ p₁ r₂) (cong$₁ r₁′)      = r₁′ ↯ ENF→¬CR p₁
--- -- -- -- -- -- -- --   uni⇒C (Ccong$₂ p₁ r₂) (Ccong$₂ p₁′ r₂′) = Ccong$₂ & uniENF p₁ p₁′ ⊗ uni⇒C r₂ r₂′
--- -- -- -- -- -- -- --   uni⇒C (Ccong$₂ p₁ r₂) (Econg$₂ p₁′ r₂′) = {!!}
--- -- -- -- -- -- -- --   uni⇒C (Ccong$₂ p₁ r₂) (βred⊃ eq′ p₂′)   = r₂ ↯ ENF→¬CR p₂′
--- -- -- -- -- -- -- --   uni⇒C (Econg$₂ p₁ r₂) (cong$₁ r₁′)      = r₁′ ↯ ENF→¬CR p₁
--- -- -- -- -- -- -- --   uni⇒C (Econg$₂ p₁ r₂) (Ccong$₂ p₁′ r₂′) = {!!}
--- -- -- -- -- -- -- --   uni⇒C (Econg$₂ p₁ r₂) (Econg$₂ p₁′ r₂′) = Econg$₂ & uniENF p₁ p₁′ ⊗ uni⇒E r₂ r₂′
--- -- -- -- -- -- -- --   uni⇒C (Econg$₂ p₁ r₂) (βred⊃ eq′ p₂′)   = r₂ ↯ ENF→¬ER p₂′
--- -- -- -- -- -- -- --   uni⇒C (βred⊃ eq p₂)   (Ccong$₂ p₁′ r₂′) = r₂′ ↯ ENF→¬CR p₂
--- -- -- -- -- -- -- --   uni⇒C (βred⊃ eq p₂)   (Econg$₂ p₁′ r₂′) = r₂′ ↯ ENF→¬ER p₂
--- -- -- -- -- -- -- --   uni⇒C (βred⊃ refl p₂) (βred⊃ refl p₂′)  = βred⊃ refl & uniENF p₂ p₂′
--- -- -- -- -- -- -- --
--- -- -- -- -- -- -- --   uni⇒E : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒E t′) → r ≡ r′
--- -- -- -- -- -- -- --   uni⇒E (Cred r)       (Cred r′)       = Cred & uni⇒C r r′
--- -- -- -- -- -- -- --   uni⇒E (Cred r)       (ηexp⊃ eq′ x′)  = {!!}
--- -- -- -- -- -- -- --   uni⇒E (ηexp⊃ eq x)   (Cred r′)       = {!!}
--- -- -- -- -- -- -- --   uni⇒E (ηexp⊃ refl x) (ηexp⊃ refl x′) = ηexp⊃ refl & uniExp x x′
+-- -- TODO: delete?
+-- Expanded? : ∀ {Γ A} (t′ : Γ ⊢ A) → Dec (Expanded t′)
+-- Expanded? (⌜v⌝ i′)                      = no λ { (_ , ηexp⊃ () x) }
+-- Expanded? (⌜λ⌝ (⌜v⌝ i′))                = no λ { (_ , ηexp⊃ () x) }
+-- Expanded? (⌜λ⌝ (⌜λ⌝ t′))                = no λ { (_ , ηexp⊃ () x) }
+-- Expanded? (⌜λ⌝ (t′ ⌜$⌝ ⌜v⌝ zero))       with unren wk⊆ t′
+-- ... | no ¬p                               = no λ { (_ , ηexp⊃ refl x) → (_ , refl) ↯ ¬p }
+-- ... | yes (⌜v⌝ i , refl)                  = yes (_ , ηexp⊃ refl ⌜v⌝-)
+-- ... | yes (⌜λ⌝ t , refl)                  = no λ { (⌜v⌝ _ , ηexp⊃ () x)
+--                                                  ; (⌜λ⌝ _ , ηexp⊃ eq ())
+--                                                  ; (_ ⌜$⌝ _ , ηexp⊃ () x)
+--                                                  }
+-- ... | yes (t₁ ⌜$⌝ t₂ , refl)              with FNNF? t₁ | FNF? t₂
+-- ...   | no ¬p₁ | _                          = no λ { (_ , ηexp⊃ eq (p₁ ⌜$⌝ p₂)) →
+--                                                 p₁ ↯ lem₁ eq ¬p₁ }
+-- ...   | yes p₁ | no ¬p₂                     = no λ { (_ , ηexp⊃ eq (p₁′ ⌜$⌝ p₂)) →
+--                                                 p₂ ↯ lem₂ eq ¬p₂ }
+-- ...   | yes p₁ | yes p₂                     = yes (_ , ηexp⊃ refl (p₁ ⌜$⌝ p₂))
+-- Expanded? (⌜λ⌝ (t′ ⌜$⌝ ⌜v⌝ (suc i′)))   = no λ { (_ , ηexp⊃ () x) }
+-- Expanded? (⌜λ⌝ (t₁′ ⌜$⌝ ⌜λ⌝ t₂′))       = no λ { (_ , ηexp⊃ () x) }
+-- Expanded? (⌜λ⌝ (t₁′ ⌜$⌝ t₂′@(_ ⌜$⌝ _))) = no λ { (_ , ηexp⊃ () x) }
+-- Expanded? (t₁′ ⌜$⌝ t₂′)                 = no λ { (_ , ηexp⊃ () x) }
 
 
--- -- -- -- -- -- -- ----------------------------------------------------------------------------------------------------
-
--- -- -- -- -- -- -- Cred* : ∀ {Γ A} {t t′ : Γ ⊢ A} → t C.⇒* t′ → t E.⇒* t′
--- -- -- -- -- -- -- Cred* C.done        = E.done
--- -- -- -- -- -- -- Cred* (C.step r rs) = E.step (Cred r) (Cred* rs)
-
--- -- -- -- -- -- -- -- Ghani p.51, lemma 3.3.0 (unnumbered)
--- -- -- -- -- -- -- Lem330 : ∀ {Γ A} → Γ ⊢ A → Γ ⊢ A → Set
--- -- -- -- -- -- -- Lem330 {A = A} t t′ = t ⇒C t′
--- -- -- -- -- -- --                     ⊎ Σ (Ty × Ty) λ { (A′ , B′) →
--- -- -- -- -- -- --                         Σ (A ≡ A′ ⌜⊃⌝ B′) λ { refl →
--- -- -- -- -- -- --                           t′ ≡ ⌜λ⌝ (weak t ⌜$⌝ ⌜v⌝ zero) × Exp t } }
-
--- -- -- -- -- -- -- ER→lem330 : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒E t′ → Lem330 t t′
--- -- -- -- -- -- -- ER→lem330 (Cred (cong$₁ r₁))     = inj₁ (cong$₁ r₁)
--- -- -- -- -- -- -- ER→lem330 (Cred (Ccong$₂ p₁ r₂)) = inj₁ (Ccong$₂ p₁ r₂)
--- -- -- -- -- -- -- ER→lem330 (Cred (Econg$₂ p₁ r₂)) = inj₁ (Econg$₂ p₁ r₂)
--- -- -- -- -- -- -- ER→lem330 (Cred (βred⊃ eq p₂))   = inj₁ (βred⊃ eq p₂)
--- -- -- -- -- -- -- ER→lem330 (ηexp⊃ refl x)         = inj₂ (_ , refl , refl , x)
-
--- -- -- -- -- -- -- lem330→ER : ∀ {Γ A} {t t′ : Γ ⊢ A} → Lem330 t t′ → t ⇒E t′
--- -- -- -- -- -- -- lem330→ER (inj₁ r)                     = Cred r
--- -- -- -- -- -- -- lem330→ER (inj₂ (_ , refl , refl , x)) = ηexp⊃ refl x
-
--- -- -- -- -- -- -- -- local confluence; Ghani p.53, lemma 3.3.3
--- -- -- -- -- -- -- -- TODO: needs lemma 3.3.2
--- -- -- -- -- -- -- -- mutual
--- -- -- -- -- -- -- --   lconf⇒E : ∀ {Γ A} {t t₁ t₂ : Γ ⊢ A} → t ⇒E t₁ → t ⇒E t₂ →
--- -- -- -- -- -- -- --              Σ _ λ t′ → t₁ E.⇒* t′ × t₂ E.⇒* t′
--- -- -- -- -- -- -- --   lconf⇒E {t = ⌜v⌝ i}     (ηexp⊃ refl x) (ηexp⊃ refl x′) = _ , E.done , E.done
--- -- -- -- -- -- -- --   lconf⇒E {t = ⌜λ⌝ t}     (Cred r)       (Cred r′)       with lem333⇒C r r′
--- -- -- -- -- -- -- --   ... | t′ , inj₁ rs , inj₁ rs′                            = t′ , Cred* rs , Cred* rs′
--- -- -- -- -- -- -- --   ... | t′ , inj₁ rs , inj₂ rs′                            = t′ , Cred* rs , rs′
--- -- -- -- -- -- -- --   ... | t′ , inj₂ rs , inj₁ rs′                            = t′ , rs , Cred* rs′
--- -- -- -- -- -- -- --   ... | t′ , inj₂ rs , inj₂ rs′                            = t′ , rs , rs′
--- -- -- -- -- -- -- --   lconf⇒E {t = t₁ ⌜$⌝ t₂} r r′ = {!!}
--- -- -- -- -- -- -- --
--- -- -- -- -- -- -- --   lem333⇒C : ∀ {Γ A} {t t₁ t₂ : Γ ⊢ A} → t ⇒C t₁ → t ⇒C t₂ →
--- -- -- -- -- -- -- --               Σ _ λ t′ → (t₁ C.⇒* t′ ⊎ t₁ E.⇒* t′) × (t₂ C.⇒* t′ ⊎ t₂ E.⇒* t′)
--- -- -- -- -- -- -- --   lem333⇒C {t = t₁ ⌜$⌝ t₂} r r′ = {!!}
-
-
--- -- -- -- -- -- -- ----------------------------------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------------------------------

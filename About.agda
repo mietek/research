@@ -33,7 +33,7 @@ import STLC-Base
 import STLC-Base-Weak-NotEtaLong
 import STLC-Base-Weak-NotEtaLong-ConcreteNbE
 import STLC-Base-Weak-NotEtaLong-AbstractNbE
-import STLC-Base-Weak-EtaLong -- TODO
+import STLC-Base-Weak-EtaLong
 import STLC-Base-Strong-EtaLong -- TODO
 
 import STLC-Negative
@@ -131,7 +131,7 @@ module _ where
     ∎
   thm₆ {Γ} (βred⊃ {t₁ = t₁} {t₂} refl) = cong ↓ $
     begin
-      ⟦ `λ t₁ `$ t₂ ⟧ refl⊩*
+      ⟦ ⌜λ⌝ t₁ ⌜$⌝ t₂ ⟧ refl⊩*
     ≡⟨⟩
       ⟦ t₁ ⟧ (⟦ t₂ ⟧ refl⊩* ∷ ren⊩* refl⊆ refl⊩*)
     ≡⟨ cong (λ os → ⟦ t₁ ⟧ (⟦ t₂ ⟧ refl⊩* ∷ os)) (sym (lemᵢ {Γ})) ⟩

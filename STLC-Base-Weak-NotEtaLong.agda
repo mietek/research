@@ -6,41 +6,58 @@ open import Isomorphism public
 
 ----------------------------------------------------------------------------------------------------
 
--- β-short not-η-long weak normal forms (extrinsic)
+-- β-short not-η-long weak normal forms
 mutual
   data NF {Γ} : ∀ {A} → Γ ⊢ A → Set where
-    ⌜λ⌝ : ∀ {A B} {t : A ∷ Γ ⊢ B} → NF (⌜λ⌝ t)
-    nnf : ∀ {A} {t : Γ ⊢ A} (p : NNF t) → NF t
+    ⌜λ⌝- : ∀ {A B} {t : A ∷ Γ ⊢ B} → NF (⌜λ⌝ t)
+    nnf  : ∀ {A} {t : Γ ⊢ A} (p : NNF t) → NF t
 
   -- neutrals
   data NNF {Γ} : ∀ {A} → Γ ⊢ A → Set where
-    ⌜v⌝   : ∀ {A} {i : Γ ∋ A} → NNF (⌜v⌝ i)
+    ⌜v⌝-  : ∀ {A} {i : Γ ∋ A} → NNF (⌜v⌝ i)
     _⌜$⌝_ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (p₁ : NNF t₁) (p₂ : NF t₂) → NNF (t₁ ⌜$⌝ t₂)
 
 -- renaming
 mutual
   renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren e t)
-  renNF e ⌜λ⌝     = ⌜λ⌝
+  renNF e ⌜λ⌝-    = ⌜λ⌝-
   renNF e (nnf p) = nnf (renNNF e p)
 
   renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren e t)
-  renNNF e ⌜v⌝         = ⌜v⌝
+  renNNF e ⌜v⌝-        = ⌜v⌝-
   renNNF e (p₁ ⌜$⌝ p₂) = renNNF e p₁ ⌜$⌝ renNF e p₂
 
 -- uniqueness of proofs
 mutual
   uniNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
-  uniNF ⌜λ⌝     ⌜λ⌝      = refl
+  uniNF ⌜λ⌝-    ⌜λ⌝-     = refl
   uniNF (nnf p) (nnf p′) = nnf & uniNNF p p′
 
   uniNNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NNF t) → p ≡ p′
-  uniNNF ⌜v⌝         ⌜v⌝           = refl
+  uniNNF ⌜v⌝-        ⌜v⌝-          = refl
   uniNNF (p₁ ⌜$⌝ p₂) (p₁′ ⌜$⌝ p₂′) = _⌜$⌝_ & uniNNF p₁ p₁′ ⊗ uniNF p₂ p₂′
+
+mutual
+  NF? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (NF t)
+  NF? (⌜v⌝ i)           = yes (nnf ⌜v⌝-)
+  NF? (⌜λ⌝ t)           = yes ⌜λ⌝-
+  NF? (t₁ ⌜$⌝ t₂)       with NNF? t₁ | NF? t₂
+  ... | yes p₁ | yes p₂   = yes (nnf (p₁ ⌜$⌝ p₂))
+  ... | yes p₁ | no ¬p₂   = no λ { (nnf (p₁ ⌜$⌝ p₂)) → p₂ ↯ ¬p₂ }
+  ... | no ¬p₁ | _        = no λ { (nnf (p₁ ⌜$⌝ p₂)) → p₁ ↯ ¬p₁ }
+
+  NNF? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (NNF t)
+  NNF? (⌜v⌝ i)          = yes ⌜v⌝-
+  NNF? (⌜λ⌝ t)          = no λ ()
+  NNF? (t₁ ⌜$⌝ t₂)      with NNF? t₁ | NF? t₂
+  ... | yes p₁ | yes p₂   = yes (p₁ ⌜$⌝ p₂)
+  ... | yes p₁ | no ¬p₂   = no λ { (p₁ ⌜$⌝ p₂) → p₂ ↯ ¬p₂ }
+  ... | no ¬p₁ | _        = no λ { (p₁ ⌜$⌝ p₂) → p₁ ↯ ¬p₁ }
 
 
 ----------------------------------------------------------------------------------------------------
 
--- β-short not-η-long weak normal forms (intrinsic)
+-- β-short not-η-long weak normal forms (direct)
 mutual
   infix 3 _⋘_
   data _⋘_ (Γ : Ctx) : Ty → Set where
@@ -54,22 +71,22 @@ mutual
 
 mutual
   ⋘→NF : ∀ {Γ A} → Γ ⋘ A → Σ (Γ ⊢ A) NF
-  ⋘→NF (⌜λ⌝ t) = ⌜λ⌝ t , ⌜λ⌝
+  ⋘→NF (⌜λ⌝ t) = ⌜λ⌝ t , ⌜λ⌝-
   ⋘→NF (ne t)  with ⋙→NNF t
   ... | t′ , p′    = t′ , nnf p′
 
   ⋙→NNF : ∀ {Γ A} → Γ ⋙ A → Σ (Γ ⊢ A) NNF
-  ⋙→NNF (⌜v⌝ i)             = ⌜v⌝ i , ⌜v⌝
+  ⋙→NNF (⌜v⌝ i)             = ⌜v⌝ i , ⌜v⌝-
   ⋙→NNF (t₁ ⌜$⌝ t₂)         with ⋙→NNF t₁ | ⋘→NF t₂
   ... | t₁′ , p₁′ | t₂′ , p₂′   = t₁′ ⌜$⌝ t₂′ , p₁′ ⌜$⌝ p₂′
 
 mutual
   NF→⋘ : ∀ {Γ A} → Σ (Γ ⊢ A) NF → Γ ⋘ A
-  NF→⋘ (.(⌜λ⌝ t) , ⌜λ⌝ {t = t}) = ⌜λ⌝ t
-  NF→⋘ (t , nnf p)              = ne (NNF→⋙ (t , p))
+  NF→⋘ (.(⌜λ⌝ t) , ⌜λ⌝- {t = t}) = ⌜λ⌝ t
+  NF→⋘ (t , nnf p)               = ne (NNF→⋙ (t , p))
 
   NNF→⋙ : ∀ {Γ A} → Σ (Γ ⊢ A) NNF → Γ ⋙ A
-  NNF→⋙ (⌜v⌝ i , ⌜v⌝)           = ⌜v⌝ i
+  NNF→⋙ (⌜v⌝ i , ⌜v⌝-)          = ⌜v⌝ i
   NNF→⋙ (t₁ ⌜$⌝ t₂ , p₁ ⌜$⌝ p₂) = NNF→⋙ (t₁ , p₁) ⌜$⌝ NF→⋘ (t₂ , p₂)
 
 mutual
@@ -86,8 +103,8 @@ module _ where
 
   mutual
     idNF⇄⋘ : ∀ {Γ A} (tp : Σ (Γ ⊢ A) NF) → (⋘→NF ∘ NF→⋘) tp ≡ tp
-    idNF⇄⋘ (.(⌜λ⌝ t) , ⌜λ⌝ {t = t}) = refl
-    idNF⇄⋘ (t , nnf p)              =
+    idNF⇄⋘ (.(⌜λ⌝ t) , ⌜λ⌝- {t = t}) = refl
+    idNF⇄⋘ (t , nnf p)               =
       let
         eqₜ : proj₁ (⋙→NNF (NNF→⋙ (t , p))) ≡ t
         eqₜ = cong proj₁ (idNNF⇄⋙ (t , p))
@@ -102,7 +119,7 @@ module _ where
         ∎
 
     idNNF⇄⋙ : ∀ {Γ A} (tp : Σ (Γ ⊢ A) NNF) → (⋙→NNF ∘ NNF→⋙) tp ≡ tp
-    idNNF⇄⋙ (⌜v⌝ i , ⌜v⌝)           = refl
+    idNNF⇄⋙ (⌜v⌝ i , ⌜v⌝-)          = refl
     idNNF⇄⋙ (t₁ ⌜$⌝ t₂ , p₁ ⌜$⌝ p₂) =
       let
         eqₜ : proj₁ (⋙→NNF (NNF→⋙ (t₁ , p₁))) ⌜$⌝ proj₁ (⋘→NF (NF→⋘ (t₂ , p₂))) ≡ t₁ ⌜$⌝ t₂
@@ -177,42 +194,20 @@ mutual
 
 open ¬RKit NF→¬R public
 
--- uniqueness of proofs
-module _ (⚠ : Extensionality) where
-  uni¬RF : ∀ {Γ A} {t : Γ ⊢ A} (¬p ¬p′ : ¬ RF t) → ¬p ≡ ¬p′
-  uni¬RF = uni→ ⚠ uni𝟘
-
 
 ----------------------------------------------------------------------------------------------------
 
 -- alternative progress from decidability of NF
 module ProgAlt1 where
-  mutual
-    NF? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (NF t)
-    NF? (⌜v⌝ i)           = yes (nnf ⌜v⌝)
-    NF? (⌜λ⌝ t)           = yes ⌜λ⌝
-    NF? (t₁ ⌜$⌝ t₂)       with NNF? t₁ | NF? t₂
-    ... | yes p₁ | yes p₂   = yes (nnf (p₁ ⌜$⌝ p₂))
-    ... | yes p₁ | no ¬p₂   = no λ { (nnf (p₁ ⌜$⌝ p₂)) → p₂ ↯ ¬p₂ }
-    ... | no ¬p₁ | _        = no λ { (nnf (p₁ ⌜$⌝ p₂)) → p₁ ↯ ¬p₁ }
-
-    NNF? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (NNF t)
-    NNF? (⌜v⌝ i)          = yes ⌜v⌝
-    NNF? (⌜λ⌝ t)          = no λ ()
-    NNF? (t₁ ⌜$⌝ t₂)      with NNF? t₁ | NF? t₂
-    ... | yes p₁ | yes p₂   = yes (p₁ ⌜$⌝ p₂)
-    ... | yes p₁ | no ¬p₂   = no λ { (p₁ ⌜$⌝ p₂) → p₂ ↯ ¬p₂ }
-    ... | no ¬p₁ | _        = no λ { (p₁ ⌜$⌝ p₂) → p₁ ↯ ¬p₁ }
-
   ¬NF→RF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ NF t → RF t
-  ¬NF→RF {t = ⌜v⌝ i}         ¬p                   = nnf ⌜v⌝ ↯ ¬p
-  ¬NF→RF {t = ⌜λ⌝ t}         ¬p                   = ⌜λ⌝ ↯ ¬p
+  ¬NF→RF {t = ⌜v⌝ i}         ¬p                   = nnf ⌜v⌝- ↯ ¬p
+  ¬NF→RF {t = ⌜λ⌝ t}         ¬p                   = ⌜λ⌝- ↯ ¬p
   ¬NF→RF {t = t₁ ⌜$⌝ t₂}     ¬p                   with NNF? t₁ | NF? t₂
   ¬NF→RF {t = _ ⌜$⌝ _}       ¬p | yes p₁ | yes p₂   = nnf (p₁ ⌜$⌝ p₂) ↯ ¬p
   ¬NF→RF {t = _ ⌜$⌝ _}       ¬p | yes p₁ | no ¬p₂   = let _ , r₂ = ¬NF→RF ¬p₂ in _ , cong$₂ (nnf p₁) r₂
-  ¬NF→RF {t = ⌜v⌝ _ ⌜$⌝ _}   ¬p | no ¬p₁ | _        = ⌜v⌝ ↯ ¬p₁
+  ¬NF→RF {t = ⌜v⌝ _ ⌜$⌝ _}   ¬p | no ¬p₁ | _        = ⌜v⌝- ↯ ¬p₁
   ¬NF→RF {t = ⌜λ⌝ _ ⌜$⌝ _}   ¬p | no ¬p₁ | yes p₂   = _ , βred⊃ refl p₂
-  ¬NF→RF {t = ⌜λ⌝ _ ⌜$⌝ _}   ¬p | no ¬p₁ | no ¬p₂   = let _ , r₂ = ¬NF→RF ¬p₂ in _ , cong$₂ ⌜λ⌝ r₂
+  ¬NF→RF {t = ⌜λ⌝ _ ⌜$⌝ _}   ¬p | no ¬p₁ | no ¬p₂   = let _ , r₂ = ¬NF→RF ¬p₂ in _ , cong$₂ ⌜λ⌝- r₂
   ¬NF→RF {t = _ ⌜$⌝ _ ⌜$⌝ _} ¬p | no ¬p₁ | _        = let _ , r₁ = ¬NF→RF λ { (nnf p₁) → p₁ ↯ ¬p₁ } in _ , cong$₁ r₁
 
   open NF?Kit NF? ¬NF→RF
@@ -220,11 +215,11 @@ module ProgAlt1 where
 -- alternative progress from decidability of RF
 module ProgAlt2 where
   ¬R→NF : ∀ {Γ A} {t : Γ ⊢ A} → ¬R t → NF t
-  ¬R→NF {t = ⌜v⌝ i}         ¬r               = nnf ⌜v⌝
-  ¬R→NF {t = ⌜λ⌝ t}         ¬r               = ⌜λ⌝
-  ¬R→NF {t = ⌜v⌝ _ ⌜$⌝ _}   ¬r               with ¬R→NF λ r₂ → cong$₂ (nnf ⌜v⌝) r₂ ↯ ¬r
-  ¬R→NF {t = ⌜v⌝ _ ⌜$⌝ _}   ¬r | p₂            = nnf (⌜v⌝ ⌜$⌝ p₂)
-  ¬R→NF {t = ⌜λ⌝ _ ⌜$⌝ _}   ¬r               with ¬R→NF λ r₂ → cong$₂ ⌜λ⌝ r₂ ↯ ¬r
+  ¬R→NF {t = ⌜v⌝ i}         ¬r               = nnf ⌜v⌝-
+  ¬R→NF {t = ⌜λ⌝ t}         ¬r               = ⌜λ⌝-
+  ¬R→NF {t = ⌜v⌝ _ ⌜$⌝ _}   ¬r               with ¬R→NF λ r₂ → cong$₂ (nnf ⌜v⌝-) r₂ ↯ ¬r
+  ¬R→NF {t = ⌜v⌝ _ ⌜$⌝ _}   ¬r | p₂            = nnf (⌜v⌝- ⌜$⌝ p₂)
+  ¬R→NF {t = ⌜λ⌝ _ ⌜$⌝ _}   ¬r               with ¬R→NF λ r₂ → cong$₂ ⌜λ⌝- r₂ ↯ ¬r
   ¬R→NF {t = ⌜λ⌝ _ ⌜$⌝ _}   ¬r | p₂            = βred⊃ refl p₂ ↯ ¬r
   ¬R→NF {t = _ ⌜$⌝ _ ⌜$⌝ _} ¬r               with ¬R→NF λ r₁ → cong$₁ r₁ ↯ ¬r
   ¬R→NF {t = _ ⌜$⌝ _ ⌜$⌝ _} ¬r | nnf p₁        with ¬R→NF λ r₁ → cong$₂ (nnf p₁) r₁ ↯ ¬r
@@ -247,25 +242,28 @@ module ProgAlt2 where
 
   open RF?Kit RF? ¬RF→NF hiding (¬R→NF)
 
--- progress, with decidability of NF and RF as corollaries!
+-- progress, with decidability of NF and RF as corollaries
 prog⇒ : ∀ {Γ A} (t : Γ ⊢ A) → Prog t
-prog⇒ (⌜v⌝ i)                = done (nnf ⌜v⌝)
-prog⇒ (⌜λ⌝ t)                = done ⌜λ⌝
+prog⇒ (⌜v⌝ i)                = done (nnf ⌜v⌝-)
+prog⇒ (⌜λ⌝ t)                = done ⌜λ⌝-
 prog⇒ (t₁ ⌜$⌝ t₂)            with prog⇒ t₁ | prog⇒ t₂
 ... | step r₁       | _         = step (cong$₁ r₁)
 ... | done p₁       | step r₂   = step (cong$₂ p₁ r₂)
-... | done ⌜λ⌝      | done p₂   = step (βred⊃ refl p₂)
+... | done ⌜λ⌝-     | done p₂   = step (βred⊃ refl p₂)
 ... | done (nnf p₁) | done p₂   = done (nnf (p₁ ⌜$⌝ p₂))
 
-open ProgKit prog⇒ public
+open ProgKit prog⇒ public hiding (NF?)
 
 module _ (⚠ : Extensionality) where
+  uni¬RF : ∀ {Γ A} {t : Γ ⊢ A} (¬p ¬p′ : ¬ RF t) → ¬p ≡ ¬p′
+  uni¬RF = uni→ ⚠ uni𝟘
+
   NF≃¬RF : ∀ {Γ A} {t : Γ ⊢ A} → NF t ≃ (¬ RF t)
   NF≃¬RF = record
     { to      = NF→¬RF
     ; from    = ¬RF→NF
     ; from∘to = λ p → uniNF _ p
-    ; to∘from = λ p → uni¬RF ⚠ _ p
+    ; to∘from = λ p → uni¬RF _ p
     }
 
 
@@ -295,58 +293,3 @@ uni⇒ (βred⊃ refl p₂) (βred⊃ refl p₂′) = βred⊃ refl & uniNF p₂
 
 
 ----------------------------------------------------------------------------------------------------
-
-
--- f : ◦ ⊃ ◦ , x : ◦ ⊢ f : ◦ ⊃ ◦
-
-t₁ : ⌜◦⌝ ⌜⊃⌝ ⌜◦⌝ ∷ ⌜◦⌝ ∷ [] ⊢ ⌜◦⌝ ⌜⊃⌝ ⌜◦⌝
-t₁ = ⌜v⌝ zero
-
-p₁ : NNF t₁
-p₁ = ⌜v⌝
-
--- f : ◦ ⊃ ◦ , x : ◦ ⊢ (λ y : ◦ . y) x : ◦
-
-t₂ : ⌜◦⌝ ⌜⊃⌝ ⌜◦⌝ ∷ ⌜◦⌝ ∷ [] ⊢ ⌜◦⌝
-t₂ = ⌜λ⌝ (⌜v⌝ zero) ⌜$⌝ (⌜v⌝ (suc zero))
-
-¬p₂ : ¬ NF t₂
-¬p₂ (nnf (() ⌜$⌝ nnf ⌜v⌝))
-
--- f : ◦ ⊃ ◦ , x : ◦ ⊢ x : ◦
-
-t₂′ : ⌜◦⌝ ⌜⊃⌝ ⌜◦⌝ ∷ ⌜◦⌝ ∷ [] ⊢ ⌜◦⌝
-t₂′ = ⌜v⌝ (suc zero)
-
-p₂ : NF t₂′
-p₂ = nnf ⌜v⌝
-
--- f : ◦ ⊃ ◦ , x : ◦ ⊢ (λ y : ◦ . y) x : ◦
--- ----------------------------------------
---        f : ◦ ⊃ ◦ , x : ◦ ⊢ x : ◦
-
-r₂ : t₂ ⇒ t₂′
-r₂ = βred⊃ refl (nnf ⌜v⌝)
-
--- f : ◦ ⊃ ◦ , x : ◦ ⊢ f ((λ y : ◦ . y) x) : ◦
-
-t : ⌜◦⌝ ⌜⊃⌝ ⌜◦⌝ ∷ ⌜◦⌝ ∷ [] ⊢ ⌜◦⌝
-t = t₁ ⌜$⌝ t₂
-
-¬p : ¬ NF t
-¬p (nnf (p₁′ ⌜$⌝ p₂′)) = p₂′ ↯ ¬p₂
-
--- f : ◦ ⊃ ◦ , x : ◦ ⊢ f x : ◦
-
-t′ : ⌜◦⌝ ⌜⊃⌝ ⌜◦⌝ ∷ ⌜◦⌝ ∷ [] ⊢ ⌜◦⌝
-t′ = t₁ ⌜$⌝ t₂′
-
-p′ : NF t′
-p′ = nnf (p₁ ⌜$⌝ p₂)
-
--- f : ◦ ⊃ ◦ , x : ◦ ⊢ f ((λ y : ◦ . y) x) : ◦
--- --------------------------------------------
---        f : ◦ ⊃ ◦ , x : ◦ ⊢ f x : ◦
-
-r : t ⇒ t′
-r = cong$₂ (nnf p₁) r₂

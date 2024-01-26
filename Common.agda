@@ -40,7 +40,7 @@ open import Relation.Nullary public
   using (¬_ ; Dec ; yes ; no)
 
 open import Relation.Nullary.Decidable public
-  using (True ; fromWitness ; toWitness)
+  using (True ; False ; fromWitness ; toWitness)
 
 open import Relation.Nullary.Negation public
   using (contraposition)
@@ -98,9 +98,9 @@ cong-app′ refl {x} = refl
 
 ----------------------------------------------------------------------------------------------------
 
-rec : ∀ {𝓍} {X : Set 𝓍} → X → (ℕ → X → X) → ℕ → X
-rec z s zero    = z
-rec z s (suc n) = s n (rec z s n)
+rec : ∀ {𝓍} {X : Set 𝓍} → ℕ → X → (ℕ → X → X) → X
+rec zero    z s = z
+rec (suc n) z s = s n (rec n z s)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -111,6 +111,9 @@ module _ {𝓍} {X : Set 𝓍} where
   data _∋_ : List X → X → Set 𝓍 where
     zero : ∀ {Γ A} → A ∷ Γ ∋ A
     suc  : ∀ {Γ A B} (i : Γ ∋ A) → B ∷ Γ ∋ A
+
+  injsuc : ∀ {Γ} {A B : X} {i i′ : Γ ∋ A} → _∋_.suc {B = B} i ≡ suc i′ → i ≡ i′
+  injsuc refl = refl
 
   -- order-preserving embeddings
   infix 4 _⊆_
@@ -138,6 +141,27 @@ module _ {𝓍} {X : Set 𝓍} where
   ren∋ (drop e) i       = suc (ren∋ e i)
   ren∋ (keep e) zero    = zero
   ren∋ (keep e) (suc i) = suc (ren∋ e i)
+
+  weak∋ : ∀ {Γ} {A B : X} → Γ ∋ B → A ∷ Γ ∋ B
+  weak∋ i = ren∋ wk⊆ i
+
+  injren∋ : ∀ {Γ Γ′} {A : X} {e : Γ ⊆ Γ′} {i i′ : Γ ∋ A} → ren∋ e i ≡ ren∋ e i′ → i ≡ i′
+  injren∋ {e = stop}   {i}     {i′}     eq   = eq
+  injren∋ {e = drop e} {i}     {i′}     eq   = injren∋ (injsuc eq)
+  injren∋ {e = keep e} {zero}  {zero}   refl = refl
+  injren∋ {e = keep e} {suc i} {suc i′} eq   = suc & (injren∋ (injsuc eq))
+
+  -- TODO: delete?
+  unren∋ : ∀ {Γ Γ′} {A : X} (e : Γ ⊆ Γ′) (i′ : Γ′ ∋ A) → Dec (Σ (Γ ∋ A) λ i → i′ ≡ ren∋ e i)
+  unren∋ stop     i′       = yes (i′ , refl)
+  unren∋ (drop e) zero     = no λ ()
+  unren∋ (drop e) (suc i′) with unren∋ e i′
+  ... | no ¬p                = no λ { (i , refl) → (i , refl) ↯ ¬p }
+  ... | yes (i , refl)       = yes (i , refl)
+  unren∋ (keep e) zero     = yes (zero , refl)
+  unren∋ (keep e) (suc i′) with unren∋ e i′
+  ... | no ¬p                = no λ { (suc i , refl) → (i , refl) ↯ ¬p }
+  ... | yes (i , refl)       = yes (suc i , refl)
 
   infix 4 _≟∋_
   _≟∋_ : ∀ {Γ A} (i i′ : Γ ∋ A) → Dec (i ≡ i′)
@@ -348,6 +372,10 @@ module CtxKit (Ty : Set) where
         data Prog {Γ A} (t : Γ ⊢ A) : Set where
           done : ∀ (p : NF t) → Prog t
           step : ∀ {t′} (r : t ⇒ t′) → Prog t
+
+        data Prog′ {Γ A} (t : Γ ⊢ A) : Set where
+          done : ∀ (p : NF t) → Prog′ t
+          step : ∀ (p : RF t) → Prog′ t
 
         enprog : ∀ {Γ A} {t : Γ ⊢ A} → NF t ⊎ RF t → Prog t
         enprog (inj₁ p)       = done p
