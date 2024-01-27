@@ -15,19 +15,20 @@ ren⊩ : ∀ {W W′ A} → W ⊆ W′ → W ⊩ A → W′ ⊩ A
 ren⊩ {A = A ⌜⊃⌝ B} e v       = λ e′ → v (trans⊆ e e′)
 ren⊩ {A = ⌜ℕ⌝}     e (_ , p) = _ , renNF e p
 
-open ConcreteKit _⊩_ (λ {_} {_} {A} → ren⊩ {_} {_} {A}) public
+open ⊩Kit _⊩_ (λ {W} {W′} {A} → ren⊩ {A = A}) public
 
 
 ----------------------------------------------------------------------------------------------------
 
 mutual
   ↑ : ∀ {Γ A} → Σ (Γ ⊢ A) NNF → Γ ⊩ A
-  ↑ {A = A ⌜⊃⌝ B} (_ , p) = λ e v → ↑ (_ , renNNF e p ⌜$⌝ proj₂ (↓ v))
-  ↑ {A = ⌜ℕ⌝}     (_ , p) = _ , nnf p
+  ↑ {A = A ⌜⊃⌝ B} (_ , p₁) = λ e v₂ → let _ , p₂ = ↓ v₂ in
+                               ↑ (_ , renNNF e p₁ ⌜$⌝ p₂)
+  ↑ {A = ⌜ℕ⌝}     (_ , p)  = _ , nnf p
 
   ↓ : ∀ {Γ A} → Γ ⊩ A → Σ (Γ ⊢ A) λ t → NF t
-  ↓ {A = A ⌜⊃⌝ B} v with ↓ (v wk⊆ (↑ (⌜v⌝ zero , ⌜v⌝-)))
-  ... | t , p         = ⌜λ⌝ t , ⌜λ⌝-
+  ↓ {A = A ⌜⊃⌝ B} v = let t , p = ↓ (v wk⊆ (↑ (⌜v⌝ zero , ⌜v⌝-))) in
+                        ⌜λ⌝ t , ⌜λ⌝-
   ↓ {A = ⌜ℕ⌝}     v = v
 
 refl⊩* : ∀ {Γ} → Γ ⊩* Γ
@@ -49,10 +50,11 @@ refl⊩* {A ∷ Γ} = ↑ (⌜v⌝ zero , ⌜v⌝-) ∷ ren⊩* wk⊆ refl⊩*
 
 ⟦rec⟧ : ∀ {Γ A} → Γ ⊩ ⌜ℕ⌝ → Γ ⊩ A → Γ ⊩ ⌜ℕ⌝ ⌜⊃⌝ A ⌜⊃⌝ A → Γ ⊩ A
 ⟦rec⟧ (_ , ⌜zero⌝)   v₀ vₛ = v₀
-⟦rec⟧ (_ , ⌜suc⌝ pₙ) v₀ vₛ = vₛ  refl⊆ (_ , pₙ) refl⊆ v₀
-⟦rec⟧ (_ , nnf pₙ)   v₀ vₛ with ↓ v₀ | ↓ (vₛ (drop (drop refl⊆)) (↑ (⌜v⌝ (suc zero) , ⌜v⌝-))
-                                         refl⊆ (↑ (⌜v⌝ zero , ⌜v⌝-)))
-... | _ , p₀ | _ , pₛ      = ↑ (_ , ⌜rec⌝ pₙ p₀ pₛ)
+⟦rec⟧ (_ , ⌜suc⌝ pₙ) v₀ vₛ = vₛ refl⊆ (_ , pₙ) refl⊆ v₀
+⟦rec⟧ (_ , nnf pₙ)   v₀ vₛ = let _ , p₀ = ↓ v₀
+                                 _ , pₛ = ↓ (vₛ (drop (drop refl⊆)) (↑ (⌜v⌝ (suc zero) , ⌜v⌝-))
+                                            refl⊆ (↑ (⌜v⌝ zero , ⌜v⌝-))) in
+                               ↑ (_ , ⌜rec⌝ pₙ p₀ pₛ)
 
 -- reflection
 ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A

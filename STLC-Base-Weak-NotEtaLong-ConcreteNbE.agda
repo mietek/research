@@ -12,10 +12,10 @@ W ⊩ ⌜◦⌝     = Σ (W ⊢ ⌜◦⌝) NNF
 W ⊩ A ⌜⊃⌝ B = ∀ {W′} → W ⊆ W′ → W′ ⊩ A → W′ ⊩ B
 
 ren⊩ : ∀ {W W′ A} → W ⊆ W′ → W ⊩ A → W′ ⊩ A
-ren⊩ {A = ⌜◦⌝}     e (t , p) = ren e t , renNNF e p
+ren⊩ {A = ⌜◦⌝}     e (_ , p) = _ , renNNF e p
 ren⊩ {A = A ⌜⊃⌝ B} e v       = λ e′ → v (trans⊆ e e′)
 
-open ConcreteKit _⊩_ (λ {_} {_} {A} → ren⊩ {_} {_} {A}) public
+open ⊩Kit _⊩_ (λ {W} {W′} {A} → ren⊩ {A = A}) public
 
 -- reflection
 ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
@@ -28,13 +28,14 @@ open ConcreteKit _⊩_ (λ {_} {_} {A} → ren⊩ {_} {_} {A}) public
 
 mutual
   ↑ : ∀ {Γ A} → Σ (Γ ⊢ A) NNF → Γ ⊩ A
-  ↑ {A = ⌜◦⌝}     (t , p) = t , p
-  ↑ {A = A ⌜⊃⌝ B} (t , p) = λ e v → ↑ (_ , renNNF e p ⌜$⌝ proj₂ (↓ v))
+  ↑ {A = ⌜◦⌝}     (_ , p)  = _ , p
+  ↑ {A = A ⌜⊃⌝ B} (_ , p₁) = λ e v₂ → let _ , p₂ = ↓ v₂ in
+                               ↑ (_ , renNNF e p₁ ⌜$⌝ p₂)
 
   ↓ : ∀ {Γ A} → Γ ⊩ A → Σ (Γ ⊢ A) NF
-  ↓ {A = ⌜◦⌝}     (t , p) = t , nnf p
-  ↓ {A = A ⌜⊃⌝ B} v       with ↓ (v wk⊆ (↑ (⌜v⌝ zero , ⌜v⌝-)))
-  ... | t , p               = ⌜λ⌝ t , ⌜λ⌝-
+  ↓ {A = ⌜◦⌝}     (_ , p) = _ , nnf p
+  ↓ {A = A ⌜⊃⌝ B} v       = let t , p = ↓ (v wk⊆ (↑ (⌜v⌝ zero , ⌜v⌝-))) in
+                              ⌜λ⌝ t , ⌜λ⌝-
 
 refl⊩* : ∀ {Γ} → Γ ⊩* Γ
 refl⊩* {[]}    = []

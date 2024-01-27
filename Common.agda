@@ -464,7 +464,7 @@ module CtxKit (Ty : Set) where
 
 ----------------------------------------------------------------------------------------------------
 
-  module ConcreteKit
+  module ⊩Kit
     (_⊩_  : Ctx → Ty → Set)
     (ren⊩ : ∀ {W W′ A} → W ⊆ W′ → W ⊩ A → W′ ⊩ A)
       where
@@ -489,7 +489,7 @@ module CtxKit (Ty : Set) where
 
 ----------------------------------------------------------------------------------------------------
 
-  module AbstractKit
+  module ModelKit
     {Model : Set₁}
     {World : Model → Set}
     {_≤_   : ∀ (ℳ : Model) → World ℳ → World ℳ → Set}
@@ -522,6 +522,45 @@ module CtxKit (Ty : Set) where
     ⟦_⟧∋ : ∀ {Γ A} → Γ ∋ A → Γ ⊨ A
     ⟦ zero  ⟧∋ (v ∷ vs) = v
     ⟦ suc i ⟧∋ (v ∷ vs) = ⟦ i ⟧∋ vs
+
+
+----------------------------------------------------------------------------------------------------
+
+  module SplitModelKit
+    {BaseModel : Set₁}
+    {Model     : BaseModel → Set₁}
+    {World     : ∀ {ℬ} → Model ℬ → Set}
+    {_≤_       : ∀ {ℬ} (ℳ : Model ℬ) → World ℳ → World ℳ → Set}
+    (_⊩_      : ∀ {ℬ} (ℳ : Model ℬ) → World ℳ → Ty → Set)
+    (ren⊩     : ∀ {ℬ} {ℳ : Model ℬ} {W W′ A} → _≤_ ℳ W W′ → _⊩_ ℳ W A → _⊩_ ℳ W′ A)
+      where
+    module _ {ℬ} {ℳ : Model ℬ} where
+      -- semantic environments
+      infix 3 _⊩*_
+      data _⊩*_ (W : World ℳ) : Ctx → Set where
+        []  : W ⊩* []
+        _∷_ : ∀ {Δ A} (v : _⊩_ ℳ W A) (vs : W ⊩* Δ) → W ⊩* A ∷ Δ
+
+      ren⊩* : ∀ {W W′ Δ} → _≤_ _ W W′ → W ⊩* Δ → W′ ⊩* Δ
+      ren⊩* e []       = []
+      ren⊩* e (v ∷ vs) = ren⊩ e v ∷ ren⊩* e vs
+
+    infix 3 _/_⊩_
+    _/_⊩_ : ∀ {ℬ} (ℳ : Model ℬ) (W : World ℳ) → Ty → Set
+    ℳ / W ⊩ A = _⊩_ ℳ W A
+
+    infix 3 _/_⊩*_
+    _/_⊩*_ : ∀ {ℬ} (ℳ : Model ℬ) (W : World ℳ) → Ctx → Set
+    ℳ / W ⊩* Δ = _⊩*_ {ℳ = ℳ} W Δ
+
+    infix 3 _⊨_
+    _⊨_ : Ctx → Ty → Set₁
+    Γ ⊨ A = ∀ {ℬ} {ℳ : Model ℬ} {W : World ℳ} → ℳ / W ⊩* Γ → ℳ / W ⊩ A
+
+    ⟦_⟧∋ : ∀ {Γ A} → Γ ∋ A → Γ ⊨ A
+    ⟦ zero  ⟧∋ (v ∷ vs) = v
+    ⟦ suc i ⟧∋ (v ∷ vs) = ⟦ i ⟧∋ vs
+
 
 
 ----------------------------------------------------------------------------------------------------

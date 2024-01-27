@@ -15,7 +15,7 @@ ren⊩ : ∀ {W W′ A} → W ⊆ W′ → W ⊩ A → W′ ⊩ A
 ren⊩ {A = A ⌜⊃⌝ B} e v = λ e′ → v (trans⊆ e e′)
 ren⊩ {A = ⌜ℕ⌝}     e v = ren⋘ e v
 
-open ConcreteKit _⊩_ (λ {_} {_} {A} → ren⊩ {_} {_} {A}) public
+open ⊩Kit _⊩_ (λ {W} {W′} {A} → ren⊩ {A = A}) public
 
 
 ----------------------------------------------------------------------------------------------------
