@@ -13,7 +13,7 @@ W ⊩ ⌜ℕ⌝     = Σ (W ⊢ ⌜ℕ⌝) NF
 
 ren⊩ : ∀ {W W′ A} → W ⊆ W′ → W ⊩ A → W′ ⊩ A
 ren⊩ {A = A ⌜⊃⌝ B} e v       = λ e′ → v (trans⊆ e e′)
-ren⊩ {A = ⌜ℕ⌝}     e (t , p) = ren e t , renNF e p
+ren⊩ {A = ⌜ℕ⌝}     e (_ , p) = _ , renNF e p
 
 open ConcreteKit _⊩_ (λ {_} {_} {A} → ren⊩ {_} {_} {A}) public
 
@@ -22,8 +22,8 @@ open ConcreteKit _⊩_ (λ {_} {_} {A} → ren⊩ {_} {_} {A}) public
 
 mutual
   ↑ : ∀ {Γ A} → Σ (Γ ⊢ A) NNF → Γ ⊩ A
-  ↑ {A = A ⌜⊃⌝ B} (t , p) = λ e v → ↑ (_ , renNNF e p ⌜$⌝ proj₂ (↓ v))
-  ↑ {A = ⌜ℕ⌝}     (t , p) = t , nnf p
+  ↑ {A = A ⌜⊃⌝ B} (_ , p) = λ e v → ↑ (_ , renNNF e p ⌜$⌝ proj₂ (↓ v))
+  ↑ {A = ⌜ℕ⌝}     (_ , p) = _ , nnf p
 
   ↓ : ∀ {Γ A} → Γ ⊩ A → Σ (Γ ⊢ A) λ t → NF t
   ↓ {A = A ⌜⊃⌝ B} v with ↓ (v wk⊆ (↑ (⌜v⌝ zero , ⌜v⌝-)))
@@ -42,15 +42,17 @@ refl⊩* {A ∷ Γ} = ↑ (⌜v⌝ zero , ⌜v⌝-) ∷ ren⊩* wk⊆ refl⊩*
 ----------------------------------------------------------------------------------------------------
 
 ⟦zero⟧ : ∀ {Γ} → Γ ⊩ ⌜ℕ⌝
-⟦zero⟧ = ⌜zero⌝ , ⌜zero⌝
+⟦zero⟧ = _ , ⌜zero⌝
 
 ⟦suc⟧ : ∀ {Γ} → Γ ⊩ ⌜ℕ⌝ → Γ ⊩ ⌜ℕ⌝
-⟦suc⟧ (t′ , p′) = ⌜suc⌝ t′ , ⌜suc⌝ p′
+⟦suc⟧ (_ , p′) = _ , ⌜suc⌝ p′
 
-⟦rec⟧ : ∀ {Γ A} → Γ ⊩ ⌜ℕ⌝ → Γ ⊩ A → A ∷ ⌜ℕ⌝ ∷ Γ ⊩ A → Γ ⊩ A
-⟦rec⟧ (_ , ⌜zero⌝)    v₀ vₛ = v₀
-⟦rec⟧ (_ , ⌜suc⌝ snd) v₀ vₛ = {!!}
-⟦rec⟧ (_ , nnf pₙ)    v₀ vₛ = ↑ (_ , ⌜rec⌝ pₙ (proj₂ (↓ v₀)) (proj₂ (↓ vₛ)))
+⟦rec⟧ : ∀ {Γ A} → Γ ⊩ ⌜ℕ⌝ → Γ ⊩ A → Γ ⊩ ⌜ℕ⌝ ⌜⊃⌝ A ⌜⊃⌝ A → Γ ⊩ A
+⟦rec⟧ (_ , ⌜zero⌝)   v₀ vₛ = v₀
+⟦rec⟧ (_ , ⌜suc⌝ pₙ) v₀ vₛ = vₛ  refl⊆ (_ , pₙ) refl⊆ v₀
+⟦rec⟧ (_ , nnf pₙ)   v₀ vₛ with ↓ v₀ | ↓ (vₛ (drop (drop refl⊆)) (↑ (⌜v⌝ (suc zero) , ⌜v⌝-))
+                                         refl⊆ (↑ (⌜v⌝ zero , ⌜v⌝-)))
+... | _ , p₀ | _ , pₛ      = ↑ (_ , ⌜rec⌝ pₙ p₀ pₛ)
 
 -- reflection
 ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
@@ -59,7 +61,8 @@ refl⊩* {A ∷ Γ} = ↑ (⌜v⌝ zero , ⌜v⌝-) ∷ ren⊩* wk⊆ refl⊩*
 ⟦ t₁ ⌜$⌝ t₂      ⟧ vs = ⟦ t₁ ⟧ vs refl⊆ $ ⟦ t₂ ⟧ vs
 ⟦ ⌜zero⌝         ⟧ vs = ⟦zero⟧
 ⟦ ⌜suc⌝ t        ⟧ vs = ⟦suc⟧ (⟦ t ⟧ vs)
-⟦ ⌜rec⌝ tₙ t₀ tₛ ⟧ vs = ⟦rec⟧ (⟦ tₙ ⟧ vs) (⟦ t₀ ⟧ vs) (⟦ tₛ ⟧ {!!})
+⟦ ⌜rec⌝ tₙ t₀ tₛ ⟧ vs = ⟦rec⟧ (⟦ tₙ ⟧ vs) (⟦ t₀ ⟧ vs) λ { e (tₙ′ , pₙ′) e′ vₐ →
+                          ⟦ tₛ ⟧ (vₐ ∷ (_ , renNF e′ pₙ′) ∷ ren⊩* (trans⊆ e e′) vs) }
 
 nbe : ∀ {Γ A} → Γ ⊢ A → Σ (Γ ⊢ A) NF
 nbe = ⟦_⟧⁻¹ ∘ ⟦_⟧
