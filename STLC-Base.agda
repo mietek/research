@@ -85,12 +85,12 @@ open SubKit sub public
 ----------------------------------------------------------------------------------------------------
 
 -- decidable equality
-infix 4 _≟T_
-_≟T_ : ∀ (A A′ : Ty) → Dec (A ≡ A′)
-⌜◦⌝     ≟T ⌜◦⌝            = yes refl
-⌜◦⌝     ≟T A′ ⌜⊃⌝ B′      = no λ ()
-A ⌜⊃⌝ B ≟T ⌜◦⌝            = no λ ()
-A ⌜⊃⌝ B ≟T A′ ⌜⊃⌝ B′      with A ≟T A′ | B ≟T B′
+infix 4 _≟Ty_
+_≟Ty_ : ∀ (A A′ : Ty) → Dec (A ≡ A′)
+⌜◦⌝     ≟Ty ⌜◦⌝           = yes refl
+⌜◦⌝     ≟Ty A′ ⌜⊃⌝ B′     = no λ ()
+A ⌜⊃⌝ B ≟Ty ⌜◦⌝           = no λ ()
+A ⌜⊃⌝ B ≟Ty A′ ⌜⊃⌝ B′     with A ≟Ty A′ | B ≟Ty B′
 ... | no ¬eq₁  | _          = no λ { refl → refl ↯ ¬eq₁ }
 ... | yes refl | no ¬eq₂    = no λ { refl → refl ↯ ¬eq₂ }
 ... | yes refl | yes refl   = yes refl
@@ -109,7 +109,7 @@ _≟_ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Dec (t ≡ t′)
 ⌜λ⌝ t     ≟ t₁′ ⌜$⌝ t₂′     = no λ ()
 t₁ ⌜$⌝ t₂ ≟ ⌜v⌝ i′          = no λ ()
 t₁ ⌜$⌝ t₂ ≟ ⌜λ⌝ t′          = no λ ()
-t₁ ⌜$⌝ t₂ ≟ t₁′ ⌜$⌝ t₂′     with ty t₁ ≟T ty t₁′
+t₁ ⌜$⌝ t₂ ≟ t₁′ ⌜$⌝ t₂′     with ty t₁ ≟Ty ty t₁′
 ... | no ¬eq                  = no λ { refl → refl ↯ ¬eq }
 ... | yes refl                with t₁ ≟ t₁′ | t₂ ≟ t₂′
 ...   | no ¬eq₁  | _            = no λ { refl → refl ↯ ¬eq₁ }

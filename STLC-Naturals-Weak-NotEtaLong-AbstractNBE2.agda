@@ -1,11 +1,11 @@
-module STLC-Naturals-Weak-NotEtaLong-AbstractNbE where
+module STLC-Naturals-Weak-NotEtaLong-AbstractNbE2 where
 
 open import STLC-Naturals-Weak-NotEtaLong public
 
 
 ----------------------------------------------------------------------------------------------------
 
-record BaseModel : Set₁ where
+record Model : Set₁ where
   infix 4 _≤_
   field
     World  : Set
@@ -27,15 +27,12 @@ record BaseModel : Set₁ where
              (λ W → ⟦ℕ⟧ W)
              W
 
-record Model (ℬ : BaseModel) : Set₁ where
-  open BaseModel ℬ public
-
   field
     ⟦rec⟧ : ∀ {W A} → W ⊩ ⌜ℕ⌝ → W ⊩ A → W ⊩ ⌜ℕ⌝ ⌜⊃⌝ A ⌜⊃⌝ A → W ⊩ A
 
 open Model public
 
-module _ {ℬ} {ℳ : Model ℬ} where
+module _ {ℳ : Model} where
   private
     module ℳ = Model ℳ
 
@@ -43,7 +40,7 @@ module _ {ℬ} {ℳ : Model ℬ} where
   ren⊩ {A = A ⌜⊃⌝ B} e v = λ e′ → v (ℳ.trans≤ e e′)
   ren⊩ {A = ⌜ℕ⌝}     e v = ℳ.⟦renℕ⟧ e v
 
-open SplitModelKit _⊩_ (λ {ℬ} {ℳ} {W} {W′} {A} → ren⊩ {ℬ} {ℳ} {A = A}) public
+open ModelKit (λ {ℳ} → _⊩_ ℳ) (λ {ℳ} {W} {W′} {A} → ren⊩ {ℳ} {A = A}) public
 
 -- reflection
 ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
@@ -58,38 +55,34 @@ open SplitModelKit _⊩_ (λ {ℬ} {ℳ} {W} {W′} {A} → ren⊩ {ℬ} {ℳ} {
 
 ----------------------------------------------------------------------------------------------------
 
-ℬ : BaseModel
-ℬ = record
-      { World  = Ctx
-      ; _≤_    = _⊆_
-      ; refl≤  = refl⊆
-      ; trans≤ = trans⊆
-      ; ⟦ℕ⟧    = λ Γ → Σ (Γ ⊢ ⌜ℕ⌝) NF
-      ; ⟦renℕ⟧ = λ { e (_ , p) → _ , renNF e p }
-      ; ⟦zero⟧ = _ , ⌜zero⌝
-      ; ⟦suc⟧  = λ { (_ , p′) → _ , ⌜suc⌝ p′ }
-      }
-
 -- canonical model
 mutual
-  𝒞 : Model ℬ
+  𝒞 : Model
   𝒞 = record
-        { ⟦rec⟧ = λ { {A = A} (_ , ⌜zero⌝)   v₀ vₛ → v₀
-                    ; {A = A} (_ , ⌜suc⌝ pₙ) v₀ vₛ → vₛ refl⊆ (_ , pₙ) refl⊆ v₀
-                    ; {A = A} (_ , nnf pₙ)   v₀ vₛ →
-                        let _ , p₀ = ↓ {A = A} v₀
-                            _ , pₛ = ↓ (vₛ (drop (drop refl⊆)) (↑ (⌜v⌝ {A = ⌜ℕ⌝} (suc zero) , ⌜v⌝-))
-                                       refl⊆ (↑ (⌜v⌝ {A = A} zero , ⌜v⌝-))) in
-                          ↑ (_ , ⌜rec⌝ pₙ p₀ pₛ)
-                    }
+        { World  = Ctx
+        ; _≤_    = _⊆_
+        ; refl≤  = refl⊆
+        ; trans≤ = trans⊆
+        ; ⟦ℕ⟧    = λ Γ → Σ (Γ ⊢ ⌜ℕ⌝) NF
+        ; ⟦renℕ⟧ = λ { e (_ , p) → _ , renNF e p }
+        ; ⟦zero⟧ = _ , ⌜zero⌝
+        ; ⟦suc⟧  = λ { (_ , p′) → _ , ⌜suc⌝ p′ }
+        ; ⟦rec⟧  = λ { {A = A} (_ , ⌜zero⌝)   v₀ vₛ → v₀
+                       ; {A = A} (_ , ⌜suc⌝ pₙ) v₀ vₛ → vₛ refl⊆ (_ , pₙ) refl⊆ v₀
+                       ; {A = A} (_ , nnf pₙ)   v₀ vₛ → {!!}
+--                           let _ , p₀ = ↓ {A = A} v₀
+--                               _ , pₛ = ↓ (vₛ (drop (drop refl⊆)) (↑ (⌜v⌝ {A = ⌜ℕ⌝} (suc zero) , ⌜v⌝-))
+--                                          refl⊆ (↑ (⌜v⌝ {A = A} zero , ⌜v⌝-))) in
+--                             ↑ (_ , ⌜rec⌝ pₙ p₀ pₛ)
+                       }
         }
 
-  ↑ : ∀ {Γ A} → Σ (Γ ⊢ A) NNF → 𝒞 / Γ ⊩ A
+  ↑ : ∀ {Γ A} → Σ (Γ ⊢ A) NNF → 𝒞 / {!Γ!} ⊩ A
   ↑ {A = A ⌜⊃⌝ B} (_ , p₁) = λ e v₂ → let _ , p₂ = ↓ v₂ in
                                ↑ (_ , renNNF e p₁ ⌜$⌝ p₂)
   ↑ {A = ⌜ℕ⌝}     (_ , p)  = _ , nnf p
 
-  ↓ : ∀ {Γ A} → 𝒞 / Γ ⊩ A → Σ (Γ ⊢ A) λ t → NF t
+  ↓ : ∀ {Γ A} → 𝒞 / Γ ⊩ A → Σ ({!Γ!} ⊢ A) λ t → NF t
   ↓ {A = A ⌜⊃⌝ B} v = let t , p = ↓ (v wk⊆ (↑ (⌜v⌝ {A = A} zero , ⌜v⌝-))) in
                         ⌜λ⌝ t , ⌜λ⌝-
   ↓ {A = ⌜ℕ⌝}     v = v

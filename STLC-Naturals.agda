@@ -11,6 +11,12 @@ data Ty : Set where
   _⌜⊃⌝_ : ∀ (A B : Ty) → Ty
   ⌜ℕ⌝   : Ty
 
+recTy : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} → Ty → (Ty → (X → Y) → Ty → (X → Y) → (X → Y)) →
+          (X → Y) →
+        (X → Y)
+recTy (A ⌜⊃⌝ B) f⊃ fℕ = f⊃ A (recTy A f⊃ fℕ) B (recTy B f⊃ fℕ)
+recTy ⌜ℕ⌝       f⊃ fℕ = fℕ
+
 open CtxKit Ty public
 
 -- intrinsically well-typed terms
@@ -54,15 +60,15 @@ open SubKit sub public
 
 ----------------------------------------------------------------------------------------------------
 
-infix 4 _≟T_
-_≟T_ : ∀ (A A′ : Ty) → Dec (A ≡ A′)
-A ⌜⊃⌝ B ≟T A′ ⌜⊃⌝ B′        with A ≟T A′ | B ≟T B′
+infix 4 _≟Ty_
+_≟Ty_ : ∀ (A A′ : Ty) → Dec (A ≡ A′)
+A ⌜⊃⌝ B ≟Ty A′ ⌜⊃⌝ B′     with A ≟Ty A′ | B ≟Ty B′
 ... | no ¬eq₁  | _          = no λ { refl → refl ↯ ¬eq₁ }
 ... | yes refl | no ¬eq₂    = no λ { refl → refl ↯ ¬eq₂ }
 ... | yes refl | yes refl   = yes refl
-A ⌜⊃⌝ B ≟T ⌜ℕ⌝              = no λ ()
-⌜ℕ⌝     ≟T A′ ⌜⊃⌝ B         = no λ ()
-⌜ℕ⌝     ≟T ⌜ℕ⌝              = yes refl
+A ⌜⊃⌝ B ≟Ty ⌜ℕ⌝           = no λ ()
+⌜ℕ⌝     ≟Ty A′ ⌜⊃⌝ B      = no λ ()
+⌜ℕ⌝     ≟Ty ⌜ℕ⌝           = yes refl
 
 infix 4 _≟_
 _≟_ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Dec (t ≡ t′)
@@ -82,7 +88,7 @@ _≟_ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Dec (t ≡ t′)
 ⌜λ⌝ t          ≟ ⌜rec⌝ tₙ′ t₀′ tₛ′     = no λ ()
 t₁ ⌜$⌝ t₂      ≟ ⌜v⌝ i′                = no λ ()
 t₁ ⌜$⌝ t₂      ≟ ⌜λ⌝ t′                = no λ ()
-t₁ ⌜$⌝ t₂      ≟ t₁′ ⌜$⌝ t₂′         with ty t₁ ≟T ty t₁′
+t₁ ⌜$⌝ t₂      ≟ t₁′ ⌜$⌝ t₂′         with ty t₁ ≟Ty ty t₁′
 ... | no ¬eq                           = no λ { refl → refl ↯ ¬eq }
 ... | yes refl                         with t₁ ≟ t₁′ | t₂ ≟ t₂′
 ...   | no ¬eq₁  | _                     = no λ { refl → refl ↯ ¬eq₁ }

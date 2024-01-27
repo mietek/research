@@ -52,14 +52,14 @@ refl⊩* {A ∷ Γ} = ↑ (⌜v⌝ zero) ∷ ren⊩* wk⊆ refl⊩*
 ⟦rec⟧ e (⌜suc⌝ vₙ) e′ v₀ e″ vₛ = vₛ refl⊆ (ren⋘ (trans⊆ e′ e″) vₙ) refl⊆ (⟦rec⟧ e vₙ e′ v₀ e″ vₛ)
 ⟦rec⟧ e (nnf tₙ)   e′ v₀ e″ vₛ = ↑ (⌜rec⌝ (ren⋙ (trans⊆ e′ e″) tₙ) (ren⋘ e″ (↓ v₀)) (↓ vₛ))
 
-⟦_⟧C : ∀ {Γ A} → Con A → Γ ⊨ A
-⟦ ⌜zero⌝ ⟧C vs = ⟦zero⟧
-⟦ ⌜suc⌝  ⟧C vs = ⟦suc⟧
-⟦ ⌜rec⌝  ⟧C vs = ⟦rec⟧
+⟦_⟧Con : ∀ {Γ A} → Con A → Γ ⊨ A
+⟦ ⌜zero⌝ ⟧Con vs = ⟦zero⟧
+⟦ ⌜suc⌝  ⟧Con vs = ⟦suc⟧
+⟦ ⌜rec⌝  ⟧Con vs = ⟦rec⟧
 
 -- reflection
 ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
-⟦ ⌜c⌝ k     ⟧ vs = ⟦ k ⟧C vs
+⟦ ⌜c⌝ k     ⟧ vs = ⟦ k ⟧Con vs
 ⟦ ⌜v⌝ i     ⟧ vs = ⟦ i ⟧∋ vs
 ⟦ ⌜λ⌝ t     ⟧ vs = λ e v → ⟦ t ⟧ (v ∷ ren⊩* e vs)
 ⟦ t₁ ⌜$⌝ t₂ ⟧ vs = ⟦ t₁ ⟧ vs refl⊆ $ ⟦ t₂ ⟧ vs

@@ -54,25 +54,25 @@ open SubKit sub public
 
 ----------------------------------------------------------------------------------------------------
 
-infix 4 _≟T_
-_≟T_ : ∀ (A A′ : Ty) → Dec (A ≡ A′)
-⌜ℕ⌝     ≟T A′ ⌜⊃⌝ B         = no λ ()
-⌜ℕ⌝     ≟T ⌜ℕ⌝              = yes refl
-A ⌜⊃⌝ B ≟T ⌜ℕ⌝              = no λ ()
-A ⌜⊃⌝ B ≟T A′ ⌜⊃⌝ B′      with A ≟T A′ | B ≟T B′
+infix 4 _≟Ty_
+_≟Ty_ : ∀ (A A′ : Ty) → Dec (A ≡ A′)
+⌜ℕ⌝     ≟Ty A′ ⌜⊃⌝ B      = no λ ()
+⌜ℕ⌝     ≟Ty ⌜ℕ⌝           = yes refl
+A ⌜⊃⌝ B ≟Ty ⌜ℕ⌝           = no λ ()
+A ⌜⊃⌝ B ≟Ty A′ ⌜⊃⌝ B′     with A ≟Ty A′ | B ≟Ty B′
 ... | no ¬eq₁  | _          = no λ { refl → refl ↯ ¬eq₁ }
 ... | yes refl | no ¬eq₂    = no λ { refl → refl ↯ ¬eq₂ }
 ... | yes refl | yes refl   = yes refl
 
-infix 4 _≟C_
-_≟C_ : ∀ {A} (k k′ : Con A) → Dec (k ≡ k′)
-⌜zero⌝ ≟C ⌜zero⌝ = yes refl
-⌜suc⌝  ≟C ⌜suc⌝  = yes refl
-⌜rec⌝  ≟C ⌜rec⌝  = yes refl
+infix 4 _≟Con_
+_≟Con_ : ∀ {A} (k k′ : Con A) → Dec (k ≡ k′)
+⌜zero⌝ ≟Con ⌜zero⌝ = yes refl
+⌜suc⌝  ≟Con ⌜suc⌝  = yes refl
+⌜rec⌝  ≟Con ⌜rec⌝  = yes refl
 
 infix 4 _≟_
 _≟_ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Dec (t ≡ t′)
-⌜c⌝ k     ≟ ⌜c⌝ k′          with k ≟C k′
+⌜c⌝ k     ≟ ⌜c⌝ k′          with k ≟Con k′
 ... | no ¬eq                  = no λ { refl → refl ↯ ¬eq }
 ... | yes refl                = yes refl
 ⌜c⌝ k     ≟ ⌜v⌝ i             = no λ ()
@@ -93,7 +93,7 @@ _≟_ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Dec (t ≡ t′)
 t₁ ⌜$⌝ t₂ ≟ ⌜c⌝ k             = no λ ()
 t₁ ⌜$⌝ t₂ ≟ ⌜v⌝ i′            = no λ ()
 t₁ ⌜$⌝ t₂ ≟ ⌜λ⌝ t′            = no λ ()
-t₁ ⌜$⌝ t₂ ≟ t₁′ ⌜$⌝ t₂′     with ty t₁ ≟T ty t₁′
+t₁ ⌜$⌝ t₂ ≟ t₁′ ⌜$⌝ t₂′     with ty t₁ ≟Ty ty t₁′
 ... | no ¬eq                  = no λ { refl → refl ↯ ¬eq }
 ... | yes refl                with t₁ ≟ t₁′ | t₂ ≟ t₂′
 ...   | no ¬eq₁  | _            = no λ { refl → refl ↯ ¬eq₁ }

@@ -64,23 +64,23 @@ open SubKit sub public
 ----------------------------------------------------------------------------------------------------
 
 -- decidable equality
-infix 4 _≟T_
-_≟T_ : ∀ (A A′ : Ty) → Dec (A ≡ A′)
-A ⌜⊃⌝ B ≟T A′ ⌜⊃⌝ B′      with A ≟T A′ | B ≟T B′
+infix 4 _≟Ty_
+_≟Ty_ : ∀ (A A′ : Ty) → Dec (A ≡ A′)
+A ⌜⊃⌝ B ≟Ty A′ ⌜⊃⌝ B′     with A ≟Ty A′ | B ≟Ty B′
 ... | no ¬eq₁  | _          = no λ { refl → refl ↯ ¬eq₁ }
 ... | yes refl | no ¬eq₂    = no λ { refl → refl ↯ ¬eq₂ }
 ... | yes refl | yes refl   = yes refl
-A ⌜⊃⌝ B ≟T A′ ⌜∧⌝ B′        = no λ ()
-A ⌜⊃⌝ B ≟T ⌜𝟙⌝              = no λ ()
-A ⌜∧⌝ B ≟T A′ ⌜⊃⌝ B′        = no λ ()
-A ⌜∧⌝ B ≟T A′ ⌜∧⌝ B′      with A ≟T A′ | B ≟T B′
+A ⌜⊃⌝ B ≟Ty A′ ⌜∧⌝ B′     = no λ ()
+A ⌜⊃⌝ B ≟Ty ⌜𝟙⌝           = no λ ()
+A ⌜∧⌝ B ≟Ty A′ ⌜⊃⌝ B′     = no λ ()
+A ⌜∧⌝ B ≟Ty A′ ⌜∧⌝ B′     with A ≟Ty A′ | B ≟Ty B′
 ... | no ¬eq₁  | _          = no λ { refl → refl ↯ ¬eq₁ }
 ... | yes refl | no ¬eq₂    = no λ { refl → refl ↯ ¬eq₂ }
 ... | yes refl | yes refl   = yes refl
-A ⌜∧⌝ B ≟T ⌜𝟙⌝              = no λ ()
-⌜𝟙⌝     ≟T A′ ⌜⊃⌝ B′        = no λ ()
-⌜𝟙⌝     ≟T A′ ⌜∧⌝ B′        = no λ ()
-⌜𝟙⌝     ≟T ⌜𝟙⌝              = yes refl
+A ⌜∧⌝ B ≟Ty ⌜𝟙⌝           = no λ ()
+⌜𝟙⌝     ≟Ty A′ ⌜⊃⌝ B′     = no λ ()
+⌜𝟙⌝     ≟Ty A′ ⌜∧⌝ B′     = no λ ()
+⌜𝟙⌝     ≟Ty ⌜𝟙⌝           = yes refl
 
 infix 4 _≟_
 _≟_ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Dec (t ≡ t′)
@@ -102,7 +102,7 @@ _≟_ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Dec (t ≡ t′)
 ⌜λ⌝ t     ≟ ⌜proj₂⌝ t′        = no λ ()
 t₁ ⌜$⌝ t₂ ≟ ⌜v⌝ i′            = no λ ()
 t₁ ⌜$⌝ t₂ ≟ ⌜λ⌝ t′            = no λ ()
-t₁ ⌜$⌝ t₂ ≟ t₁′ ⌜$⌝ t₂′     with ty t₁ ≟T ty t₁′
+t₁ ⌜$⌝ t₂ ≟ t₁′ ⌜$⌝ t₂′     with ty t₁ ≟Ty ty t₁′
 ... | no ¬eq                  = no λ { refl → refl ↯ ¬eq }
 ... | yes refl                with t₁ ≟ t₁′ | t₂ ≟ t₂′
 ...   | no ¬eq₁  | _            = no λ { refl → refl ↯ ¬eq₁ }
@@ -124,7 +124,7 @@ t₁ ⌜,⌝ t₂ ≟ ⌜proj₂⌝ t′        = no λ ()
 ⌜proj₁⌝ t ≟ ⌜λ⌝ t′            = no λ ()
 ⌜proj₁⌝ t ≟ t₁′ ⌜$⌝ t₂′       = no λ ()
 ⌜proj₁⌝ t ≟ t₁′ ⌜,⌝ t₂′       = no λ ()
-⌜proj₁⌝ t ≟ ⌜proj₁⌝ t′      with ty t ≟T ty t′
+⌜proj₁⌝ t ≟ ⌜proj₁⌝ t′      with ty t ≟Ty ty t′
 ... | no ¬eq                  = no λ { refl → refl ↯ ¬eq }
 ... | yes refl                with t ≟ t′
 ...   | no ¬eq                  = no λ { refl → refl ↯ ¬eq }
@@ -136,7 +136,7 @@ t₁ ⌜,⌝ t₂ ≟ ⌜proj₂⌝ t′        = no λ ()
 ⌜proj₂⌝ t ≟ t₁′ ⌜$⌝ t₂′       = no λ ()
 ⌜proj₂⌝ t ≟ t₁′ ⌜,⌝ t₂′       = no λ ()
 ⌜proj₂⌝ t ≟ ⌜proj₁⌝ t′        = no λ ()
-⌜proj₂⌝ t ≟ ⌜proj₂⌝ t′      with ty t ≟T ty t′
+⌜proj₂⌝ t ≟ ⌜proj₂⌝ t′      with ty t ≟Ty ty t′
 ... | no ¬eq                  = no λ { refl → refl ↯ ¬eq }
 ... | yes refl                with t ≟ t′
 ...   | no ¬eq                  = no λ { refl → refl ↯ ¬eq }
