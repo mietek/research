@@ -71,7 +71,7 @@ mutual
   𝒞 : Model ℬ
   𝒞 = record
         { ⟦rec⟧ = λ { {A = A} (_ , ⌜zero⌝)   v₀ vₛ → v₀
-                    ; {A = A} (_ , ⌜suc⌝ pₙ) v₀ vₛ → vₛ  refl⊆ (_ , pₙ) refl⊆ v₀
+                    ; {A = A} (_ , ⌜suc⌝ pₙ) v₀ vₛ → vₛ refl⊆ (_ , pₙ) refl⊆ v₀
                     ; {A = A} (_ , nnf pₙ)   v₀ vₛ →
                         let _ , p₀ = ↓ {A = A} v₀
                             _ , pₛ = ↓ (vₛ (drop (drop refl⊆)) (↑ (⌜v⌝ (suc zero) , ⌜v⌝-))
