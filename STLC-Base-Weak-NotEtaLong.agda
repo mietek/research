@@ -279,8 +279,6 @@ det⇒ (cong$₂ p₁ r₂)  (βred⊃ refl p₂′) = r₂ ↯ NF→¬R p₂′
 det⇒ (βred⊃ refl p₂) (cong$₂ p₁′ r₂′) = r₂′ ↯ NF→¬R p₂
 det⇒ (βred⊃ refl p₂) (βred⊃ refl p₂′) = refl
 
-open DetKit NF→¬R det⇒ public
-
 -- uniqueness of proofs
 uni⇒ : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒ t′) → r ≡ r′
 uni⇒ (cong$₁ r₁)     (cong$₁ r₁′)     = cong$₁ & uni⇒ r₁ r₁′
@@ -290,6 +288,30 @@ uni⇒ (cong$₂ p₁ r₂)  (cong$₂ p₁′ r₂′) = cong$₂ & uniNF p₁ 
 uni⇒ (cong$₂ p₁ r₂)  (βred⊃ eq′ p₂′)  = r₂ ↯ NF→¬R p₂′
 uni⇒ (βred⊃ eq p₂)   (cong$₂ p₁′ r₂′) = r₂′ ↯ NF→¬R p₂
 uni⇒ (βred⊃ refl p₂) (βred⊃ refl p₂′) = βred⊃ refl & uniNF p₂ p₂′
+
+open ⇒*Kit NF→¬R det⇒ uni⇒ public
+
+
+----------------------------------------------------------------------------------------------------
+
+-- iterated reduction to NF, or normalization
+infix 4 _⇓_
+_⇓_ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Set
+t ⇓ t′ = t ⇒* t′ × NF t′
+
+step⇓ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t′ ⇓ t″ → t ⇓ t″
+step⇓ r (rs′ , p″) = step r rs′ , p″
+
+skip⇓ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t ⇓ t″ → t′ ⇓ t″
+skip⇓ r (rs′ , p″) = skip⇒ r rs′ p″ , p″
+
+-- determinism
+det⇓ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇓ t′ → t ⇓ t″ → t′ ≡ t″
+det⇓ (rs , p′) (rs′ , p″) = det⇒* rs p′ rs′ p″
+
+-- uniqueness of proofs
+uni⇓ : ∀ {Γ A} {t t′ : Γ ⊢ A} (n n′ : t ⇓ t′) → n ≡ n′
+uni⇓ (rs , p′) (rs′ , p″) = _,_ & uni⇒* rs rs′ p′ ⊗ uniNF p′ p″
 
 
 ----------------------------------------------------------------------------------------------------

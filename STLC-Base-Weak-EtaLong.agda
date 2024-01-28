@@ -87,10 +87,8 @@ uniExpandable : ∀ {Γ A} {t : Γ ⊢ A} (x x′ : Expandable t) → x ≡ x′
 uniExpandable ⌜v⌝-        ⌜v⌝-          = refl
 uniExpandable (p₁ ⌜$⌝ p₂) (p₁′ ⌜$⌝ p₂′) = _⌜$⌝_ & uniFNNF p₁ p₁′ ⊗ uniFNF p₂ p₂′
 
--- TODO: define NotExpandable directly and get rid of extensionality
-module _ (⚠ : Extensionality) where
-  uni¬Expandable : ∀ {Γ A} {t : Γ ⊢ A} (¬x ¬x′ : ¬ Expandable t) → ¬x ≡ ¬x′
-  uni¬Expandable = uni→ ⚠ uni𝟘
+uni¬Expandable : ∀ {Γ A} {t : Γ ⊢ A} (¬x ¬x′ : ¬ Expandable t) → ¬x ≡ ¬x′
+uni¬Expandable = uni¬
 
 
 ----------------------------------------------------------------------------------------------------
@@ -315,31 +313,30 @@ mutual
   det⇒I (βred⊃ refl p₂) (Fcong$₂ p₁′ r₂′) = r₂′ ↯ FNF→¬FR p₂
   det⇒I (βred⊃ refl p₂) (βred⊃ refl p₂′)  = refl
 
-module F‴ = F.DetKit FNF→¬FR det⇒F
-module I‴ = I.DetKit INF→¬IR det⇒I
-
 -- uniqueness of proofs
-module _ (⚠ : Extensionality) where
-  mutual
-    uni⇒F : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒F t′) → r ≡ r′
-    uni⇒F (Ired ¬x r)    (Ired ¬x′ r′)   = Ired & uni¬Expandable ⚠ ¬x ¬x′ ⊗ uni⇒I r r′
-    uni⇒F (Ired ¬x r)    (ηexp⊃ eq′ x′)  = x′ ↯ ¬x
-    uni⇒F (ηexp⊃ eq x)   (Ired ¬x′ r′)   = x ↯ ¬x′
-    uni⇒F (ηexp⊃ refl x) (ηexp⊃ refl x′) = ηexp⊃ refl & uniExpandable x x′
+mutual
+  uni⇒F : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒F t′) → r ≡ r′
+  uni⇒F (Ired ¬x r)    (Ired ¬x′ r′)   = Ired & uni¬Expandable ¬x ¬x′ ⊗ uni⇒I r r′
+  uni⇒F (Ired ¬x r)    (ηexp⊃ eq′ x′)  = x′ ↯ ¬x
+  uni⇒F (ηexp⊃ eq x)   (Ired ¬x′ r′)   = x ↯ ¬x′
+  uni⇒F (ηexp⊃ refl x) (ηexp⊃ refl x′) = ηexp⊃ refl & uniExpandable x x′
 
-    uni⇒I : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒I t′) → r ≡ r′
-    uni⇒I (cong$₁ r₁)     (cong$₁ r₁′)      = cong$₁ & uni⇒I r₁ r₁′
-    uni⇒I (cong$₁ r₁)     (Fcong$₂ p₁′ r₂′) = r₁ ↯ FNF→¬IR p₁′
-    uni⇒I (cong$₁ r₁)     (Xcong$₂ x₁′ r₂′) = r₁ ↯ Expandable→¬IR x₁′
-    uni⇒I (Fcong$₂ p₁ r₂) (cong$₁ r₁′)      = r₁′ ↯ FNF→¬IR p₁
-    uni⇒I (Fcong$₂ p₁ r₂) (Fcong$₂ p₁′ r₂′) = Fcong$₂ & uniFNF p₁ p₁′ ⊗ uni⇒F r₂ r₂′
-    uni⇒I (Fcong$₂ p₁ r₂) (Xcong$₂ x₁′ r₂′) = p₁ ↯ Expandable→¬FNF x₁′
-    uni⇒I (Fcong$₂ p₁ r₂) (βred⊃ eq′ p₂′)   = r₂ ↯ FNF→¬FR p₂′
-    uni⇒I (Xcong$₂ x₁ r₂) (cong$₁ r₁′)      = r₁′ ↯ Expandable→¬IR x₁
-    uni⇒I (Xcong$₂ x₁ r₂) (Fcong$₂ p₁′ r₂′) = p₁′ ↯ Expandable→¬FNF x₁
-    uni⇒I (Xcong$₂ x₁ r₂) (Xcong$₂ x₁′ r₂′) = Xcong$₂ & uniExpandable x₁ x₁′ ⊗ uni⇒F r₂ r₂′
-    uni⇒I (βred⊃ eq p₂)   (Fcong$₂ p₁′ r₂′) = r₂′ ↯ FNF→¬FR p₂
-    uni⇒I (βred⊃ refl p₂) (βred⊃ refl p₂′)  = βred⊃ refl & uniFNF p₂ p₂′
+  uni⇒I : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒I t′) → r ≡ r′
+  uni⇒I (cong$₁ r₁)     (cong$₁ r₁′)      = cong$₁ & uni⇒I r₁ r₁′
+  uni⇒I (cong$₁ r₁)     (Fcong$₂ p₁′ r₂′) = r₁ ↯ FNF→¬IR p₁′
+  uni⇒I (cong$₁ r₁)     (Xcong$₂ x₁′ r₂′) = r₁ ↯ Expandable→¬IR x₁′
+  uni⇒I (Fcong$₂ p₁ r₂) (cong$₁ r₁′)      = r₁′ ↯ FNF→¬IR p₁
+  uni⇒I (Fcong$₂ p₁ r₂) (Fcong$₂ p₁′ r₂′) = Fcong$₂ & uniFNF p₁ p₁′ ⊗ uni⇒F r₂ r₂′
+  uni⇒I (Fcong$₂ p₁ r₂) (Xcong$₂ x₁′ r₂′) = p₁ ↯ Expandable→¬FNF x₁′
+  uni⇒I (Fcong$₂ p₁ r₂) (βred⊃ eq′ p₂′)   = r₂ ↯ FNF→¬FR p₂′
+  uni⇒I (Xcong$₂ x₁ r₂) (cong$₁ r₁′)      = r₁′ ↯ Expandable→¬IR x₁
+  uni⇒I (Xcong$₂ x₁ r₂) (Fcong$₂ p₁′ r₂′) = p₁′ ↯ Expandable→¬FNF x₁
+  uni⇒I (Xcong$₂ x₁ r₂) (Xcong$₂ x₁′ r₂′) = Xcong$₂ & uniExpandable x₁ x₁′ ⊗ uni⇒F r₂ r₂′
+  uni⇒I (βred⊃ eq p₂)   (Fcong$₂ p₁′ r₂′) = r₂′ ↯ FNF→¬FR p₂
+  uni⇒I (βred⊃ refl p₂) (βred⊃ refl p₂′)  = βred⊃ refl & uniFNF p₂ p₂′
+
+module F‴ = F.⇒*Kit FNF→¬FR det⇒F uni⇒F
+module I‴ = I.⇒*Kit INF→¬IR det⇒I uni⇒I
 
 
 ----------------------------------------------------------------------------------------------------

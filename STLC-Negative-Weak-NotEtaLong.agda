@@ -155,8 +155,6 @@ det⇒ (βred⊃ refl p₂) (βred⊃ refl p₂′) = refl
 det⇒ βred∧₁          βred∧₁           = refl
 det⇒ βred∧₂          βred∧₂           = refl
 
-open DetKit NF→¬R det⇒ public
-
 -- uniqueness of proofs
 uni⇒ : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒ t′) → r ≡ r′
 uni⇒ (cong$₁ r₁)     (cong$₁ r₁′)     = cong$₁ & uni⇒ r₁ r₁′
@@ -170,6 +168,8 @@ uni⇒ (βred⊃ eq p₂)   (cong$₂ p₁′ r₂′) = r₂′ ↯ NF→¬R p�
 uni⇒ (βred⊃ refl p₂) (βred⊃ refl p₂′) = βred⊃ refl & uniNF p₂ p₂′
 uni⇒ βred∧₁          βred∧₁           = refl
 uni⇒ βred∧₂          βred∧₂           = refl
+
+open ⇒*Kit NF→¬R det⇒ uni⇒ public
 
 
 ----------------------------------------------------------------------------------------------------

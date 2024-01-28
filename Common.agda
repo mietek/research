@@ -2,10 +2,6 @@ module Common where
 
 import Axiom.Extensionality.Propositional as A
 
-open import Data.Empty public
-  using ()
-  renaming (⊥ to 𝟘 ; ⊥-elim to abort)
-
 open import Data.List public
   using (List ; [] ; _∷_)
 
@@ -36,16 +32,6 @@ open import Relation.Binary.HeterogeneousEquality public
   using (_≅_)
   renaming (≡-to-≅ to ≡→≅ ; ≅-to-≡ to ≅→≡ ; cong to cong≅ ; cong₂ to cong₂≅)
 
-open import Relation.Nullary public
-  using (¬_ ; Dec ; yes ; no)
-
-open import Relation.Nullary.Decidable public
-  using (True ; False ; fromWitness ; toWitness)
-
-open import Relation.Nullary.Negation public
-  using (contraposition)
-  renaming (contradiction to _↯_)
-
 
 ----------------------------------------------------------------------------------------------------
 
@@ -61,19 +47,52 @@ implify ⚠ = A.implicit-extensionality ⚠
 
 ----------------------------------------------------------------------------------------------------
 
+record Irrelevant {𝓍} (X : Set 𝓍) : Set 𝓍 where
+  field .irrelevant : X
+
+open Irrelevant public
+
+private
+  data Empty : Set where
+
+𝟘 : Set
+𝟘 = Irrelevant Empty
+
+{-# DISPLAY Irrelevant Empty = 𝟘 #-}
+
+abort : ∀ {𝓍} {X : Set 𝓍} → 𝟘 → X
+abort ()
+
+infix 3 ¬_
+¬_ : ∀ {𝓍} → Set 𝓍 → Set 𝓍
+¬ X = X → 𝟘
+
+_↯_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} → X → ¬ X → Y
+x ↯ ¬x = abort (¬x x)
+
+data Dec {𝓍} (X : Set 𝓍) : Set 𝓍 where
+  yes : X → Dec X
+  no  : ¬ X → Dec X
+
+
+----------------------------------------------------------------------------------------------------
+
 -- uniqueness of proofs for empty
 uni𝟘 : ∀ (z z′ : 𝟘) → z ≡ z′
 uni𝟘 () ()
 
--- uniqueness of proofs for propositional equality
-uni≡ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} (eq eq′ : x ≡ x′) → eq ≡ eq′
-uni≡ refl refl = refl
+-- uniqueness of proofs for negations
+uni¬ : ∀ {𝓍} {X : Set 𝓍} → ∀ (f f′ : ¬ X) → f ≡ f′
+uni¬ f f′ = refl
 
 -- uniqueness of proofs for functions
 module _ (⚠ : Extensionality) where
-  uni→ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (uniY : ∀ (y y′ : Y) → y ≡ y′) →
-          (∀ (f f′ : X → Y) → f ≡ f′)
+  uni→ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} → (∀ (y y′ : Y) → y ≡ y′) → ∀ (f f′ : X → Y) → f ≡ f′
   uni→ uniY f f′ = ⚠ λ x → uniY (f x) (f′ x)
+
+-- uniqueness of proofs for propositional equality
+uni≡ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} (eq eq′ : x ≡ x′) → eq ≡ eq′
+uni≡ refl refl = refl
 
 
 ----------------------------------------------------------------------------------------------------
@@ -82,13 +101,11 @@ coe : ∀ {𝓍} {X Y : Set 𝓍} → X ≡ Y → X → Y
 coe = subst id
 
 infixl 9 _&_
-_&_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (f : X → Y) {x x′ : X} → x ≡ x′ →
-      f x ≡ f x′
+_&_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (f : X → Y) {x x′ : X} → x ≡ x′ → f x ≡ f x′
 _&_ = cong
 
 infixl 8 _⊗_
-_⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {f g : X → Y} {x y : X} → f ≡ g → x ≡ y →
-      f x ≡ g y
+_⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {f g : X → Y} {x y : X} → f ≡ g → x ≡ y → f x ≡ g y
 refl ⊗ refl = refl
 
 cong-app′ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x : X} → Y x} →
@@ -431,21 +448,30 @@ module CtxKit (Ty : Set) where
 
 ----------------------------------------------------------------------------------------------------
 
-      module DetKit
+      module ⇒*Kit
         {NF     : ∀ {Γ A} → Γ ⊢ A → Set}
         (NF→¬R : ∀ {Γ A} {t : Γ ⊢ A} → NF t → ¬R t)
         (det⇒  : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t ⇒ t″ → t′ ≡ t″)
+        (uni⇒  : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒ t′) → r ≡ r′)
           where
-        skip⇒ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → NF t″ → t ⇒ t′ → t ⇒* t″ → t′ ⇒* t″
-        skip⇒ p″ r done          = r ↯ NF→¬R p″
-        skip⇒ p″ r (step r′ rs′) with det⇒ r r′
+        skip⇒ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t ⇒* t″ → NF t″ → t′ ⇒* t″
+        skip⇒ r done          p″ = r ↯ NF→¬R p″
+        skip⇒ r (step r′ rs′) p″ with det⇒ r r′
         ... | refl                  = rs′
 
         -- determinism
-        det⇒* : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → NF t′ → NF t″ → t ⇒* t′ → t ⇒* t″ → t′ ≡ t″
-        det⇒* p′ p″ done        done          = refl
-        det⇒* p′ p″ done        (step r′ rs′) = r′ ↯ NF→¬R p′
-        det⇒* p′ p″ (step r rs) rs′           = det⇒* p′ p″ rs (skip⇒ p″ r rs′)
+        det⇒* : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒* t′ → NF t′ → t ⇒* t″ → NF t″ → t′ ≡ t″
+        det⇒* done        p′ done          p″ = refl
+        det⇒* done        p′ (step r′ rs′) p″ = r′ ↯ NF→¬R p′
+        det⇒* (step r rs) p′ rs′           p″ = det⇒* rs p′ (skip⇒ r rs′ p″) p″
+
+        -- uniqueness of proofs
+        uni⇒* : ∀ {Γ A} {t t′ : Γ ⊢ A} (rs rs′ : t ⇒* t′) → NF t′ → rs ≡ rs′
+        uni⇒* done        done          p′ = refl
+        uni⇒* done        (step r′ rs′) p′ = r′ ↯ NF→¬R p′
+        uni⇒* (step r rs) done          p′ = r ↯ NF→¬R p′
+        uni⇒* (step r rs) (step r′ rs′) p′ with det⇒ r r′
+        ... | refl                            = step & uni⇒ r r′ ⊗ uni⇒* rs rs′ p′
 
         -- local confluence
         lconf⇒ : ∀ {Γ A} {t t₁ t₂ : Γ ⊢ A} → t ⇒ t₁ → t ⇒ t₂ →
