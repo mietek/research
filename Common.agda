@@ -526,51 +526,15 @@ module CtxKit (Ty : Set) where
 
 ----------------------------------------------------------------------------------------------------
 
-  module ModelKit2
-    {Model : Set → Set₁}
-    {_≤_   : ∀ {World : Set} (ℳ : Model World) → World → World → Set}
-    (_⊩_  : ∀ {World : Set} {ℳ : Model World} → World → Ty → Set)
-    (ren⊩ : ∀ {World : Set} {ℳ : Model World} {W W′ A} → _≤_ ℳ W W′ → _⊩_ {ℳ = ℳ} W A → _⊩_ {ℳ = ℳ} W′ A)
-      where
-    module _ {World : Set} {ℳ : Model World} where
-      -- semantic environments
-      infix 3 _⊩*_
-      data _⊩*_ (W : World) : Ctx → Set where
-        []  : W ⊩* []
-        _∷_ : ∀ {Δ A} (v : _⊩_ {ℳ = ℳ} W A) (vs : W ⊩* Δ) → W ⊩* A ∷ Δ
-
-      ren⊩* : ∀ {W W′ Δ} → _≤_ ℳ W W′ → W ⊩* Δ → W′ ⊩* Δ
-      ren⊩* e []       = []
-      ren⊩* e (v ∷ vs) = ren⊩ e v ∷ ren⊩* e vs
-
-    infix 3 _/_⊩_
-    _/_⊩_ : ∀ {World : Set} (ℳ : Model World) (W : World) → Ty → Set
-    ℳ / W ⊩ A = _⊩_ {ℳ = ℳ} W A
-
-    infix 3 _/_⊩*_
-    _/_⊩*_ : ∀ {World : Set} (ℳ : Model World) (W : World) → Ctx → Set
-    ℳ / W ⊩* Δ = _⊩*_ {ℳ = ℳ} W Δ
-
-    infix 3 _⊨_
-    _⊨_ : Ctx → Ty → Set₁
-    Γ ⊨ A = ∀ {World : Set} {ℳ : Model World} {W : World} → ℳ / W ⊩* Γ → ℳ / W ⊩ A
-
-    ⟦_⟧∋ : ∀ {Γ A} → Γ ∋ A → Γ ⊨ A
-    ⟦ zero  ⟧∋ (v ∷ vs) = v
-    ⟦ suc i ⟧∋ (v ∷ vs) = ⟦ i ⟧∋ vs
-
-
-----------------------------------------------------------------------------------------------------
-
   module SplitModelKit
-    {BaseModel : Set₁}
-    {Model     : BaseModel → Set₁}
-    {World     : ∀ {ℬ} → Model ℬ → Set}
-    {_≤_       : ∀ {ℬ} (ℳ : Model ℬ) → World ℳ → World ℳ → Set}
-    (_⊩_      : ∀ {ℬ} (ℳ : Model ℬ) → World ℳ → Ty → Set)
-    (ren⊩     : ∀ {ℬ} {ℳ : Model ℬ} {W W′ A} → _≤_ ℳ W W′ → _⊩_ ℳ W A → _⊩_ ℳ W′ A)
+    {BaseModel  : Set₁}
+    {SplitModel : BaseModel → Set₁}
+    {World      : ∀ {ℳ◦} → SplitModel ℳ◦ → Set}
+    {_≤_        : ∀ {ℳ◦} (ℳ : SplitModel ℳ◦) → World ℳ → World ℳ → Set}
+    (_⊩_       : ∀ {ℳ◦} (ℳ : SplitModel ℳ◦) → World ℳ → Ty → Set)
+    (ren⊩      : ∀ {ℳ◦} {ℳ : SplitModel ℳ◦} {W W′ A} → _≤_ ℳ W W′ → _⊩_ ℳ W A → _⊩_ ℳ W′ A)
       where
-    module _ {ℬ} {ℳ : Model ℬ} where
+    module _ {ℳ◦} {ℳ : SplitModel ℳ◦} where
       -- semantic environments
       infix 3 _⊩*_
       data _⊩*_ (W : World ℳ) : Ctx → Set where
@@ -582,16 +546,16 @@ module CtxKit (Ty : Set) where
       ren⊩* e (v ∷ vs) = ren⊩ e v ∷ ren⊩* e vs
 
     infix 3 _/_⊩_
-    _/_⊩_ : ∀ {ℬ} (ℳ : Model ℬ) (W : World ℳ) → Ty → Set
+    _/_⊩_ : ∀ {ℳ◦} (ℳ : SplitModel ℳ◦) (W : World ℳ) → Ty → Set
     ℳ / W ⊩ A = _⊩_ ℳ W A
 
     infix 3 _/_⊩*_
-    _/_⊩*_ : ∀ {ℬ} (ℳ : Model ℬ) (W : World ℳ) → Ctx → Set
+    _/_⊩*_ : ∀ {ℳ◦} (ℳ : SplitModel ℳ◦) (W : World ℳ) → Ctx → Set
     ℳ / W ⊩* Δ = _⊩*_ {ℳ = ℳ} W Δ
 
     infix 3 _⊨_
     _⊨_ : Ctx → Ty → Set₁
-    Γ ⊨ A = ∀ {ℬ} {ℳ : Model ℬ} {W : World ℳ} → ℳ / W ⊩* Γ → ℳ / W ⊩ A
+    Γ ⊨ A = ∀ {ℳ◦} {ℳ : SplitModel ℳ◦} {W : World ℳ} → ℳ / W ⊩* Γ → ℳ / W ⊩ A
 
     ⟦_⟧∋ : ∀ {Γ A} → Γ ∋ A → Γ ⊨ A
     ⟦ zero  ⟧∋ (v ∷ vs) = v

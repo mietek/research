@@ -13,7 +13,7 @@ record BaseModel : Set₁ where
     refl≤  : ∀ {W} → W ≤ W
     trans≤ : ∀ {W W′ W″} → W ≤ W′ → W′ ≤ W″ → W ≤ W″
     ⟦ℕ⟧    : World → Set
-    ⟦renℕ⟧ : ∀ {W W′} → W ≤ W′ → ⟦ℕ⟧ W → ⟦ℕ⟧ W′
+    ren⟦ℕ⟧ : ∀ {W W′} → W ≤ W′ → ⟦ℕ⟧ W → ⟦ℕ⟧ W′
     ⟦zero⟧ : ∀ {W} → ⟦ℕ⟧ W
     ⟦suc⟧  : ∀ {W} → ⟦ℕ⟧ W → ⟦ℕ⟧ W
 
@@ -27,23 +27,23 @@ record BaseModel : Set₁ where
              (λ W → ⟦ℕ⟧ W)
              W
 
-record Model (ℬ : BaseModel) : Set₁ where
-  open BaseModel ℬ public
+record SplitModel (ℳ◦ : BaseModel) : Set₁ where
+  open BaseModel ℳ◦ public
 
   field
     ⟦rec⟧ : ∀ {W A} → W ⊩ ⌜ℕ⌝ → W ⊩ A → W ⊩ ⌜ℕ⌝ ⌜⊃⌝ A ⌜⊃⌝ A → W ⊩ A
 
-open Model public
+open SplitModel public
 
-module _ {ℬ} {ℳ : Model ℬ} where
+module _ {ℳ◦} {ℳ : SplitModel ℳ◦} where
   private
-    module ℳ = Model ℳ
+    module ℳ = SplitModel ℳ
 
   ren⊩ : ∀ {W W′ A} → W ℳ.≤ W′ → W ℳ.⊩ A → W′ ℳ.⊩ A
   ren⊩ {A = A ⌜⊃⌝ B} e v = λ e′ → v (ℳ.trans≤ e e′)
-  ren⊩ {A = ⌜ℕ⌝}     e v = ℳ.⟦renℕ⟧ e v
+  ren⊩ {A = ⌜ℕ⌝}     e v = ℳ.ren⟦ℕ⟧ e v
 
-open SplitModelKit _⊩_ (λ {ℬ} {ℳ} {W} {W′} {A} → ren⊩ {ℬ} {ℳ} {A = A}) public
+open SplitModelKit _⊩_ (λ {ℳ◦} {ℳ} {W} {W′} {A} → ren⊩ {ℳ◦} {ℳ} {A = A}) public
 
 -- reflection
 ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
@@ -53,35 +53,36 @@ open SplitModelKit _⊩_ (λ {ℬ} {ℳ} {W} {W′} {A} → ren⊩ {ℬ} {ℳ} {
 ⟦ ⌜zero⌝                 ⟧ {ℳ = ℳ} vs = ⟦zero⟧ ℳ
 ⟦ ⌜suc⌝ t                ⟧ {ℳ = ℳ} vs = ⟦suc⟧ ℳ (⟦ t ⟧ vs)
 ⟦ ⌜rec⌝ {A = A} tₙ t₀ tₛ ⟧ {ℳ = ℳ} vs = ⟦rec⟧ ℳ {A = A} (⟦ tₙ ⟧ vs) (⟦ t₀ ⟧ vs) λ e vₙ e′ vₐ →
-                                          ⟦ tₛ ⟧ (vₐ ∷ ⟦renℕ⟧ ℳ e′ vₙ ∷ ren⊩* (trans≤ ℳ e e′) vs)
+                                          ⟦ tₛ ⟧ (vₐ ∷ ren⟦ℕ⟧ ℳ e′ vₙ ∷ ren⊩* (trans≤ ℳ e e′) vs)
 
 
 ----------------------------------------------------------------------------------------------------
 
-ℬ : BaseModel
-ℬ = record
-      { World  = Ctx
-      ; _≤_    = _⊆_
-      ; refl≤  = refl⊆
-      ; trans≤ = trans⊆
-      ; ⟦ℕ⟧    = λ Γ → Σ (Γ ⊢ ⌜ℕ⌝) NF
-      ; ⟦renℕ⟧ = λ { e (_ , p) → _ , renNF e p }
-      ; ⟦zero⟧ = _ , ⌜zero⌝
-      ; ⟦suc⟧  = λ { (_ , p′) → _ , ⌜suc⌝ p′ }
-      }
+𝒞◦ : BaseModel
+𝒞◦ = record
+       { World  = Ctx
+       ; _≤_    = _⊆_
+       ; refl≤  = refl⊆
+       ; trans≤ = trans⊆
+       ; ⟦ℕ⟧    = λ Γ → Σ (Γ ⊢ ⌜ℕ⌝) NF
+       ; ren⟦ℕ⟧ = λ { e (_ , p) → _ , renNF e p }
+       ; ⟦zero⟧ = _ , ⌜zero⌝
+       ; ⟦suc⟧  = λ { (_ , p′) → _ , ⌜suc⌝ p′ }
+       }
 
 -- canonical model
 mutual
-  𝒞 : Model ℬ
+  𝒞 : SplitModel 𝒞◦
   𝒞 = record
-        { ⟦rec⟧ = λ { {A = A} (_ , ⌜zero⌝)   v₀ vₛ → v₀
-                    ; {A = A} (_ , ⌜suc⌝ pₙ) v₀ vₛ → vₛ refl⊆ (_ , pₙ) refl⊆ v₀
-                    ; {A = A} (_ , nnf pₙ)   v₀ vₛ →
-                        let _ , p₀ = ↓ {A = A} v₀
-                            _ , pₛ = ↓ (vₛ (drop (drop refl⊆)) (↑ (⌜v⌝ {A = ⌜ℕ⌝} (suc zero) , ⌜v⌝-))
-                                       refl⊆ (↑ (⌜v⌝ {A = A} zero , ⌜v⌝-))) in
-                          ↑ (_ , ⌜rec⌝ pₙ p₀ pₛ)
-                    }
+        { ⟦rec⟧ =
+            λ { {A = A} (_ , ⌜zero⌝)   v₀ vₛ → v₀
+              ; {A = A} (_ , ⌜suc⌝ pₙ) v₀ vₛ → vₛ refl⊆ (_ , pₙ) refl⊆ v₀
+              ; {A = A} (_ , nnf pₙ)   v₀ vₛ →
+                  let _ , p₀ = ↓ {A = A} v₀
+                      _ , pₛ = ↓ (vₛ (drop (drop refl⊆)) (↑ (⌜v⌝ {A = ⌜ℕ⌝} (suc zero) , ⌜v⌝-))
+                                 refl⊆ (↑ (⌜v⌝ {A = A} zero , ⌜v⌝-))) in
+                    ↑ (_ , ⌜rec⌝ pₙ p₀ pₛ)
+              }
         }
 
   ↑ : ∀ {Γ A} → Σ (Γ ⊢ A) NNF → 𝒞 / Γ ⊩ A
@@ -103,7 +104,7 @@ refl⊩* {A ∷ Γ} = ↑ (⌜v⌝ {A = A} zero , ⌜v⌝-) ∷ ren⊩* wk⊆ re
 ⟦ v ⟧⁻¹ = ↓ (v refl⊩*)
 
 nbe : ∀ {Γ A} → Γ ⊢ A → Σ (Γ ⊢ A) NF
-nbe = ⟦_⟧⁻¹ ∘ ⟦_⟧
+nbe t = ⟦ ⟦ t ⟧ ⟧⁻¹
 
 
 ----------------------------------------------------------------------------------------------------

@@ -62,7 +62,7 @@ mutual
   infix 3 _⋘_
   data _⋘_ (Γ : Ctx) : Ty → Set where
     ⌜λ⌝ : ∀ {A B} (t : A ∷ Γ ⊢ B) → Γ ⋘ A ⌜⊃⌝ B
-    ne  : ∀ {A} (t : Γ ⋙ A) → Γ ⋘ A
+    nnf : ∀ {A} (t : Γ ⋙ A) → Γ ⋘ A
 
   infix 3 _⋙_
   data _⋙_ (Γ : Ctx) : Ty → Set where
@@ -72,7 +72,7 @@ mutual
 mutual
   ⋘→NF : ∀ {Γ A} → Γ ⋘ A → Σ (Γ ⊢ A) NF
   ⋘→NF (⌜λ⌝ t) = ⌜λ⌝ t , ⌜λ⌝-
-  ⋘→NF (ne t)  with ⋙→NNF t
+  ⋘→NF (nnf t) with ⋙→NNF t
   ... | t′ , p′    = t′ , nnf p′
 
   ⋙→NNF : ∀ {Γ A} → Γ ⋙ A → Σ (Γ ⊢ A) NNF
@@ -83,7 +83,7 @@ mutual
 mutual
   NF→⋘ : ∀ {Γ A} → Σ (Γ ⊢ A) NF → Γ ⋘ A
   NF→⋘ (.(⌜λ⌝ t) , ⌜λ⌝- {t = t}) = ⌜λ⌝ t
-  NF→⋘ (t , nnf p)               = ne (NNF→⋙ (t , p))
+  NF→⋘ (t , nnf p)               = nnf (NNF→⋙ (t , p))
 
   NNF→⋙ : ∀ {Γ A} → Σ (Γ ⊢ A) NNF → Γ ⋙ A
   NNF→⋙ (⌜v⌝ i , ⌜v⌝-)          = ⌜v⌝ i
@@ -92,7 +92,7 @@ mutual
 mutual
   id⋘⇄NF : ∀ {Γ A} (t : Γ ⋘ A) → (NF→⋘ ∘ ⋘→NF) t ≡ t
   id⋘⇄NF (⌜λ⌝ t) = refl
-  id⋘⇄NF (ne t)  = ne & id⋙⇄NNF t
+  id⋘⇄NF (nnf t) = nnf & id⋙⇄NNF t
 
   id⋙⇄NNF : ∀ {Γ A} (t : Γ ⋙ A) → (NNF→⋙ ∘ ⋙→NNF) t ≡ t
   id⋙⇄NNF (⌜v⌝ i)     = refl

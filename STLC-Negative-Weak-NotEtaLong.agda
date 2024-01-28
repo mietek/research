@@ -24,9 +24,9 @@ mutual
 -- renaming
 mutual
   renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren e t)
-  renNF e ⌜λ⌝-      = ⌜λ⌝-
-  renNF e -⌜,⌝-     = -⌜,⌝-
-  renNF e ⌜unit⌝    = ⌜unit⌝
+  renNF e ⌜λ⌝-    = ⌜λ⌝-
+  renNF e -⌜,⌝-   = -⌜,⌝-
+  renNF e ⌜unit⌝  = ⌜unit⌝
   renNF e (nnf p) = nnf (renNNF e p)
 
   renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren e t)

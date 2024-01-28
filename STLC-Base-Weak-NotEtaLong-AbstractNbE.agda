@@ -7,12 +7,12 @@ open import STLC-Base-Weak-NotEtaLong public
 
 record Model : Set₁ where
   field
-    World   : Set
-    Base    : World → Set
-    _≤_     : World → World → Set
-    refl≤   : ∀ {W} → W ≤ W
-    trans≤  : ∀ {W W′ W″} → W ≤ W′ → W′ ≤ W″ → W ≤ W″
-    renBase : ∀ {W W′} → W ≤ W′ → Base W → Base W′
+    World  : Set
+    _≤_    : World → World → Set
+    refl≤  : ∀ {W} → W ≤ W
+    trans≤ : ∀ {W W′ W″} → W ≤ W′ → W′ ≤ W″ → W ≤ W″
+    ⟦◦⟧    : World → Set
+    ren⟦◦⟧ : ∀ {W W′} → W ≤ W′ → ⟦◦⟧ W → ⟦◦⟧ W′
 
 open Model public
 
@@ -23,11 +23,11 @@ module _ {ℳ : Model} where
   -- semantic values
   infix 3 _⊩_
   _⊩_ : ℳ.World → Ty → Set
-  W ⊩ ⌜◦⌝     = ℳ.Base W
+  W ⊩ ⌜◦⌝     = ℳ.⟦◦⟧ W
   W ⊩ A ⌜⊃⌝ B = ∀ {W′} → W ℳ.≤ W′ → W′ ⊩ A → W′ ⊩ B
 
   ren⊩ : ∀ {W W′ A} → W ℳ.≤ W′ → W ⊩ A → W′ ⊩ A
-  ren⊩ {A = ⌜◦⌝}     e v = ℳ.renBase e v
+  ren⊩ {A = ⌜◦⌝}     e v = ℳ.ren⟦◦⟧ e v
   ren⊩ {A = A ⌜⊃⌝ B} e v = λ e′ → v (ℳ.trans≤ e e′)
 
 open ModelKit (λ {ℳ} → _⊩_ {ℳ}) (λ {ℳ} {W} {W′} {A} → ren⊩ {A = A}) public
@@ -44,12 +44,12 @@ open ModelKit (λ {ℳ} → _⊩_ {ℳ}) (λ {ℳ} {W} {W′} {A} → ren⊩ {A 
 -- canonical model
 𝒞 : Model
 𝒞 = record
-      { World   = Ctx
-      ; Base    = λ Γ → Σ (Γ ⊢ ⌜◦⌝) NNF
-      ; _≤_     = _⊆_
-      ; refl≤   = refl⊆
-      ; trans≤  = trans⊆
-      ; renBase = λ { e (_ , p) → _ , renNNF e p }
+      { World  = Ctx
+      ; _≤_    = _⊆_
+      ; refl≤  = refl⊆
+      ; trans≤ = trans⊆
+      ; ⟦◦⟧    = λ Γ → Σ (Γ ⊢ ⌜◦⌝) NNF
+      ; ren⟦◦⟧ = λ { e (_ , p) → _ , renNNF e p }
       }
 
 mutual
@@ -72,7 +72,7 @@ refl⊩* {A ∷ Γ} = ↑ (⌜v⌝ {A = A} zero , ⌜v⌝-) ∷ ren⊩* wk⊆ re
 ⟦ v ⟧⁻¹ = ↓ (v refl⊩*)
 
 nbe : ∀ {Γ A} → Γ ⊢ A → Σ (Γ ⊢ A) NF
-nbe = ⟦_⟧⁻¹ ∘ ⟦_⟧
+nbe t = ⟦ ⟦ t ⟧ ⟧⁻¹
 
 
 ----------------------------------------------------------------------------------------------------

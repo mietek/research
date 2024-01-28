@@ -28,20 +28,20 @@ mutual
   renNF e ⌜λ⌝-      = ⌜λ⌝-
   renNF e ⌜zero⌝    = ⌜zero⌝
   renNF e (⌜suc⌝ p) = ⌜suc⌝ (renNF e p)
-  renNF e (nnf p) = nnf (renNNF e p)
+  renNF e (nnf p)   = nnf (renNNF e p)
 
   renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren e t)
   renNNF e ⌜v⌝-             = ⌜v⌝-
   renNNF e (p₁ ⌜$⌝ p₂)      = renNNF e p₁ ⌜$⌝ renNF e p₂
   renNNF e (⌜rec⌝ pₙ p₀ pₛ) = ⌜rec⌝ (renNNF e pₙ) (renNF e p₀) (renNF (keep (keep e)) pₛ)
 
--- NF and NNF have unique proofs
+-- uniqueness of proofs
 mutual
   uniNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
   uniNF ⌜λ⌝-      ⌜λ⌝-       = refl
   uniNF ⌜zero⌝    ⌜zero⌝     = refl
   uniNF (⌜suc⌝ p) (⌜suc⌝ p′) = ⌜suc⌝ & uniNF p p′
-  uniNF (nnf p) (nnf p′) = nnf & uniNNF p p′
+  uniNF (nnf p)   (nnf p′) = nnf & uniNNF p p′
 
   uniNNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NNF t) → p ≡ p′
   uniNNF ⌜v⌝-             ⌜v⌝-                = refl
