@@ -202,7 +202,7 @@ module CtxKit (Ty : Set) where
 ----------------------------------------------------------------------------------------------------
 
     module RenKit
-      (`v  : ∀ {Γ A} → Γ ∋ A → Γ ⊢ A)
+      (⌜v⌝ : ∀ {Γ A} → Γ ∋ A → Γ ⊢ A)
       (ren : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A)
         where
       weak : ∀ {Γ A B} → Γ ⊢ B → A ∷ Γ ⊢ B
@@ -216,7 +216,7 @@ module CtxKit (Ty : Set) where
       weak* ts = ren* wk⊆ ts
 
       lift* : ∀ {Γ Δ A} → Γ ⊢* Δ → A ∷ Γ ⊢* A ∷ Δ
-      lift* ts = `v zero ∷ weak* ts
+      lift* ts = ⌜v⌝ zero ∷ weak* ts
 
       refl* : ∀ {Γ} → Γ ⊢* Γ
       refl* {[]}    = []
@@ -503,7 +503,7 @@ module CtxKit (Ty : Set) where
         []  : W ⊩* []
         _∷_ : ∀ {Δ A} (v : W ⊩ A) (vs : W ⊩* Δ) → W ⊩* A ∷ Δ
 
-      ren⊩* : ∀ {W W′ Δ} → _≤_ _ W W′ → W ⊩* Δ → W′ ⊩* Δ
+      ren⊩* : ∀ {W W′ Δ} → _≤_ ℳ W W′ → W ⊩* Δ → W′ ⊩* Δ
       ren⊩* e []       = []
       ren⊩* e (v ∷ vs) = ren⊩ e v ∷ ren⊩* e vs
 
@@ -518,6 +518,42 @@ module CtxKit (Ty : Set) where
     infix 3 _⊨_
     _⊨_ : Ctx → Ty → Set₁
     Γ ⊨ A = ∀ {ℳ : Model} {W : World ℳ} → ℳ / W ⊩* Γ → ℳ / W ⊩ A
+
+    ⟦_⟧∋ : ∀ {Γ A} → Γ ∋ A → Γ ⊨ A
+    ⟦ zero  ⟧∋ (v ∷ vs) = v
+    ⟦ suc i ⟧∋ (v ∷ vs) = ⟦ i ⟧∋ vs
+
+
+----------------------------------------------------------------------------------------------------
+
+  module ModelKit2
+    {Model : Set → Set₁}
+    {_≤_   : ∀ {World : Set} (ℳ : Model World) → World → World → Set}
+    (_⊩_  : ∀ {World : Set} {ℳ : Model World} → World → Ty → Set)
+    (ren⊩ : ∀ {World : Set} {ℳ : Model World} {W W′ A} → _≤_ ℳ W W′ → _⊩_ {ℳ = ℳ} W A → _⊩_ {ℳ = ℳ} W′ A)
+      where
+    module _ {World : Set} {ℳ : Model World} where
+      -- semantic environments
+      infix 3 _⊩*_
+      data _⊩*_ (W : World) : Ctx → Set where
+        []  : W ⊩* []
+        _∷_ : ∀ {Δ A} (v : _⊩_ {ℳ = ℳ} W A) (vs : W ⊩* Δ) → W ⊩* A ∷ Δ
+
+      ren⊩* : ∀ {W W′ Δ} → _≤_ ℳ W W′ → W ⊩* Δ → W′ ⊩* Δ
+      ren⊩* e []       = []
+      ren⊩* e (v ∷ vs) = ren⊩ e v ∷ ren⊩* e vs
+
+    infix 3 _/_⊩_
+    _/_⊩_ : ∀ {World : Set} (ℳ : Model World) (W : World) → Ty → Set
+    ℳ / W ⊩ A = _⊩_ {ℳ = ℳ} W A
+
+    infix 3 _/_⊩*_
+    _/_⊩*_ : ∀ {World : Set} (ℳ : Model World) (W : World) → Ctx → Set
+    ℳ / W ⊩* Δ = _⊩*_ {ℳ = ℳ} W Δ
+
+    infix 3 _⊨_
+    _⊨_ : Ctx → Ty → Set₁
+    Γ ⊨ A = ∀ {World : Set} {ℳ : Model World} {W : World} → ℳ / W ⊩* Γ → ℳ / W ⊩ A
 
     ⟦_⟧∋ : ∀ {Γ A} → Γ ∋ A → Γ ⊨ A
     ⟦ zero  ⟧∋ (v ∷ vs) = v
@@ -541,7 +577,7 @@ module CtxKit (Ty : Set) where
         []  : W ⊩* []
         _∷_ : ∀ {Δ A} (v : _⊩_ ℳ W A) (vs : W ⊩* Δ) → W ⊩* A ∷ Δ
 
-      ren⊩* : ∀ {W W′ Δ} → _≤_ _ W W′ → W ⊩* Δ → W′ ⊩* Δ
+      ren⊩* : ∀ {W W′ Δ} → _≤_ ℳ W W′ → W ⊩* Δ → W′ ⊩* Δ
       ren⊩* e []       = []
       ren⊩* e (v ∷ vs) = ren⊩ e v ∷ ren⊩* e vs
 

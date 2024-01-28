@@ -82,7 +82,7 @@ mutual
                                ↑ (_ , renNNF e p₁ ⌜$⌝ p₂)
   ↑ {A = ⌜ℕ⌝}     (_ , p)  = _ , nnf p
 
-  ↓ : ∀ {Γ A} → 𝒞 / Γ ⊩ A → Σ ({!Γ!} ⊢ A) λ t → NF t
+  ↓ : ∀ {Γ A} → 𝒞 / Γ ⊩ A → Σ ({!Γ!} ⊢ A) NF
   ↓ {A = A ⌜⊃⌝ B} v = let t , p = ↓ (v wk⊆ (↑ (⌜v⌝ {A = A} zero , ⌜v⌝-))) in
                         ⌜λ⌝ t , ⌜λ⌝-
   ↓ {A = ⌜ℕ⌝}     v = v

@@ -26,7 +26,7 @@ mutual
                                ↑ (_ , renNNF e p₁ ⌜$⌝ p₂)
   ↑ {A = ⌜ℕ⌝}     (_ , p)  = _ , nnf p
 
-  ↓ : ∀ {Γ A} → Γ ⊩ A → Σ (Γ ⊢ A) λ t → NF t
+  ↓ : ∀ {Γ A} → Γ ⊩ A → Σ (Γ ⊢ A) NF
   ↓ {A = A ⌜⊃⌝ B} v = let t , p = ↓ (v wk⊆ (↑ (⌜v⌝ zero , ⌜v⌝-))) in
                         ⌜λ⌝ t , ⌜λ⌝-
   ↓ {A = ⌜ℕ⌝}     v = v
