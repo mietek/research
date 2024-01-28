@@ -24,13 +24,13 @@ mutual
 
 -- renaming
 mutual
-  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren e t)
+  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren⊢ e t)
   renNF e ⌜λ⌝-      = ⌜λ⌝-
   renNF e ⌜zero⌝    = ⌜zero⌝
   renNF e (⌜suc⌝ p) = ⌜suc⌝ (renNF e p)
   renNF e (nnf p)   = nnf (renNNF e p)
 
-  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren e t)
+  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren⊢ e t)
   renNNF e ⌜v⌝-             = ⌜v⌝-
   renNNF e (p₁ ⌜$⌝ p₂)      = renNNF e p₁ ⌜$⌝ renNF e p₂
   renNNF e (⌜rec⌝ pₙ p₀ pₛ) = ⌜rec⌝ (renNNF e pₙ) (renNF e p₀) (renNF (keep (keep e)) pₛ)
@@ -41,7 +41,7 @@ mutual
   uniNF ⌜λ⌝-      ⌜λ⌝-       = refl
   uniNF ⌜zero⌝    ⌜zero⌝     = refl
   uniNF (⌜suc⌝ p) (⌜suc⌝ p′) = ⌜suc⌝ & uniNF p p′
-  uniNF (nnf p)   (nnf p′) = nnf & uniNNF p p′
+  uniNF (nnf p)   (nnf p′)   = nnf & uniNNF p p′
 
   uniNNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NNF t) → p ≡ p′
   uniNNF ⌜v⌝-             ⌜v⌝-                = refl
@@ -69,7 +69,7 @@ data _≝_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
               (eq : t′ ≡ tₛ [ tₙ ∣ ⌜rec⌝ tₙ t₀ tₛ ]) →
             ⌜rec⌝ (⌜suc⌝ tₙ) t₀ tₛ ≝ t′
 
-open ≝Kit (λ {_} {_} {t} → refl≝ {t = t}) sym≝ trans≝ public
+open ≝Kit (λ {Γ} {A} {t} → refl≝ {t = t}) sym≝ trans≝ public
 
 
 ----------------------------------------------------------------------------------------------------

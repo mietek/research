@@ -20,11 +20,11 @@ mutual
 
 -- renaming
 mutual
-  renFNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → FNF t → FNF (ren e t)
+  renFNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → FNF t → FNF (ren⊢ e t)
   renFNF e (⌜λ⌝ p) = ⌜λ⌝ (renFNF (keep e) p)
   renFNF e (nnf p) = nnf (renFNNF e p)
 
-  renFNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → FNNF t → FNNF (ren e t)
+  renFNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → FNNF t → FNNF (ren⊢ e t)
   renFNNF e ⌜v⌝-        = ⌜v⌝-
   renFNNF e (p₁ ⌜$⌝ p₂) = renFNNF e p₁ ⌜$⌝ renFNF e p₂
 
@@ -73,9 +73,9 @@ data _≝_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
            t₁ ⌜$⌝ t₂ ≝ t₁′ ⌜$⌝ t₂′
   βred⊃  : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′ : Γ ⊢ B} (eq : t′ ≡ t₁ [ t₂ ]) →
            ⌜λ⌝ t₁ ⌜$⌝ t₂ ≝ t′
-  ηexp⊃  : ∀ {A B} {t t′ : Γ ⊢ A ⌜⊃⌝ B} (eq : t′ ≡ ⌜λ⌝ (weak t ⌜$⌝ ⌜v⌝ zero)) → t ≝ t′
+  ηexp⊃  : ∀ {A B} {t t′ : Γ ⊢ A ⌜⊃⌝ B} (eq : t′ ≡ ⌜λ⌝ (weak⊢ t ⌜$⌝ ⌜v⌝ zero)) → t ≝ t′
 
-open ≝Kit (λ {_} {_} {t} → refl≝ {t = t}) sym≝ trans≝ public
+open ≝Kit (λ {Γ} {A} {t} → refl≝ {t = t}) sym≝ trans≝ public
 
 
 ----------------------------------------------------------------------------------------------------

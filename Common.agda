@@ -203,24 +203,24 @@ module CtxKit (Ty : Set) where
 
     module RenKit
       (⌜v⌝ : ∀ {Γ A} → Γ ∋ A → Γ ⊢ A)
-      (ren : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A)
+      (ren⊢ : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A)
         where
-      weak : ∀ {Γ A B} → Γ ⊢ B → A ∷ Γ ⊢ B
-      weak t = ren wk⊆ t
+      weak⊢ : ∀ {Γ A B} → Γ ⊢ B → A ∷ Γ ⊢ B
+      weak⊢ t = ren⊢ wk⊆ t
 
-      ren* : ∀ {Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⊢* Δ → Γ′ ⊢* Δ
-      ren* e []       = []
-      ren* e (t ∷ ts) = ren e t ∷ ren* e ts
+      ren⊢* : ∀ {Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⊢* Δ → Γ′ ⊢* Δ
+      ren⊢* e []       = []
+      ren⊢* e (t ∷ ts) = ren⊢ e t ∷ ren⊢* e ts
 
-      weak* : ∀ {Γ Δ A} → Γ ⊢* Δ → A ∷ Γ ⊢* Δ
-      weak* ts = ren* wk⊆ ts
+      weak⊢* : ∀ {Γ Δ A} → Γ ⊢* Δ → A ∷ Γ ⊢* Δ
+      weak⊢* ts = ren⊢* wk⊆ ts
 
-      lift* : ∀ {Γ Δ A} → Γ ⊢* Δ → A ∷ Γ ⊢* A ∷ Δ
-      lift* ts = ⌜v⌝ zero ∷ weak* ts
+      lift⊢* : ∀ {Γ Δ A} → Γ ⊢* Δ → A ∷ Γ ⊢* A ∷ Δ
+      lift⊢* ts = ⌜v⌝ zero ∷ weak⊢* ts
 
-      refl* : ∀ {Γ} → Γ ⊢* Γ
-      refl* {[]}    = []
-      refl* {A ∷ Γ} = lift* refl*
+      refl⊢* : ∀ {Γ} → Γ ⊢* Γ
+      refl⊢* {[]}    = []
+      refl⊢* {A ∷ Γ} = lift⊢* refl⊢*
 
       -- substitution of indices
       sub∋ : ∀ {Γ Ξ A} → Ξ ⊢* Γ → Γ ∋ A → Ξ ⊢ A
@@ -231,22 +231,22 @@ module CtxKit (Ty : Set) where
 ----------------------------------------------------------------------------------------------------
 
       module SubKit
-        (sub : ∀ {Γ Ξ A} → Ξ ⊢* Γ → Γ ⊢ A → Ξ ⊢ A)
+        (sub⊢ : ∀ {Γ Ξ A} → Ξ ⊢* Γ → Γ ⊢ A → Ξ ⊢ A)
           where
-        sub* : ∀ {Γ Ξ Δ} → Ξ ⊢* Γ → Γ ⊢* Δ → Ξ ⊢* Δ
-        sub* ss []       = []
-        sub* ss (t ∷ ts) = sub ss t ∷ sub* ss ts
+        sub⊢* : ∀ {Γ Ξ Δ} → Ξ ⊢* Γ → Γ ⊢* Δ → Ξ ⊢* Δ
+        sub⊢* ss []       = []
+        sub⊢* ss (t ∷ ts) = sub⊢ ss t ∷ sub⊢* ss ts
 
         _[_] : ∀ {Γ A B} → A ∷ Γ ⊢ B → Γ ⊢ A → Γ ⊢ B
-        t [ s ] = sub (s ∷ refl*) t
+        t [ s ] = sub⊢ (s ∷ refl⊢*) t
 
         _[_∣_] : ∀ {Γ A B C} → B ∷ A ∷ Γ ⊢ C → Γ ⊢ A → Γ ⊢ B → Γ ⊢ C
-        t [ s₁ ∣ s₂ ] = sub (s₂ ∷ s₁ ∷ refl*) t
+        t [ s₁ ∣ s₂ ] = sub⊢ (s₂ ∷ s₁ ∷ refl⊢*) t
 
-        get* : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⊢* Δ′ → Γ ⊢* Δ
-        get* stop     ts       = ts
-        get* (drop e) (t ∷ ts) = get* e ts
-        get* (keep e) (t ∷ ts) = t ∷ get* e ts
+        get⊢* : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⊢* Δ′ → Γ ⊢* Δ
+        get⊢* stop     ts       = ts
+        get⊢* (drop e) (t ∷ ts) = get⊢* e ts
+        get⊢* (keep e) (t ∷ ts) = t ∷ get⊢* e ts
 
 
 ----------------------------------------------------------------------------------------------------
