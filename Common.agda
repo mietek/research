@@ -387,20 +387,15 @@ module CtxKit (Ty : Set) where
 
         -- progress
         data Prog {Γ A} (t : Γ ⊢ A) : Set where
-          done : ∀ (p : NF t) → Prog t
-          step : ∀ {t′} (r : t ⇒ t′) → Prog t
+          done : NF t → Prog t
+          step : ∀ {t′ : Γ ⊢ A} → t ⇒ t′ → Prog t
 
-        data Prog′ {Γ A} (t : Γ ⊢ A) : Set where
-          done : ∀ (p : NF t) → Prog′ t
-          step : ∀ (p : RF t) → Prog′ t
+        -- NOTE: the above is slightly more convenient than the equivalent below
+        -- step : Σ (Γ ⊢ A) (λ t′ → t ⇒ t′) → Prog t
 
-        enprog : ∀ {Γ A} {t : Γ ⊢ A} → NF t ⊎ RF t → Prog t
-        enprog (inj₁ p)       = done p
-        enprog (inj₂ (_ , r)) = step r
-
-        deprog : ∀ {𝓍} {X : Set 𝓍} {Γ A} {t : Γ ⊢ A} → Prog t → (NF t → X) → (RF t → X) → X
-        deprog (done p) f₁ f₂ = f₁ p
-        deprog (step r) f₁ f₂ = f₂ (_ , r)
+        recProg : ∀ {𝓍} {X : Set 𝓍} {Γ A} {t : Γ ⊢ A} → Prog t → (NF t → X) → (RF t → X) → X
+        recProg (done p) f₁ f₂ = f₁ p
+        recProg (step r) f₁ f₂ = f₂ (_ , r)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -409,16 +404,16 @@ module CtxKit (Ty : Set) where
           (prog⇒ : ∀ {Γ A} (t : Γ ⊢ A) → Prog t)
             where
           NF? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (NF t)
-          NF? t = deprog (prog⇒ t) yes (no ∘ RF→¬NF)
+          NF? t = recProg (prog⇒ t) yes (no ∘ RF→¬NF)
 
           RF? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (RF t)
-          RF? t = deprog (prog⇒ t) (no ∘ NF→¬RF) yes
+          RF? t = recProg (prog⇒ t) (no ∘ NF→¬RF) yes
 
           ¬NF→RF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ NF t → RF t
-          ¬NF→RF ¬p = deprog (prog⇒ _) (_↯ ¬p) id
+          ¬NF→RF ¬p = recProg (prog⇒ _) (_↯ ¬p) id
 
           ¬RF→NF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ RF t → NF t
-          ¬RF→NF ¬p = deprog (prog⇒ _) id (_↯ ¬p)
+          ¬RF→NF ¬p = recProg (prog⇒ _) id (_↯ ¬p)
 
           ¬R→NF : ∀ {Γ A} {t : Γ ⊢ A} → ¬R t → NF t
           ¬R→NF = ¬RF→NF ∘ ¬R→¬RF
@@ -430,7 +425,7 @@ module CtxKit (Ty : Set) where
           prog⇒ : ∀ {Γ A} (t : Γ ⊢ A) → Prog t
           prog⇒ t    with NF? t
           ... | yes p   = done p
-          ... | no ¬p   = step (proj₂ (¬NF→RF ¬p))
+          ... | no ¬p   = let _ , r = ¬NF→RF ¬p in step r
 
           open ProgKit prog⇒ public hiding (NF? ; ¬NF→RF)
 
@@ -439,9 +434,9 @@ module CtxKit (Ty : Set) where
           (¬RF→NF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ RF t → NF t)
             where
           prog⇒ : ∀ {Γ A} (t : Γ ⊢ A) → Prog t
-          prog⇒ t           with RF? t
-          ... | yes (t′ , r)   = step r
-          ... | no ¬p          = done (¬RF→NF ¬p)
+          prog⇒ t          with RF? t
+          ... | yes (_ , r)   = step r
+          ... | no ¬p         = done (¬RF→NF ¬p)
 
           open ProgKit prog⇒ public hiding (RF? ; ¬RF→NF)
 
@@ -454,16 +449,16 @@ module CtxKit (Ty : Set) where
         (det⇒  : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t ⇒ t″ → t′ ≡ t″)
         (uni⇒  : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒ t′) → r ≡ r′)
           where
-        skip⇒ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t ⇒* t″ → NF t″ → t′ ⇒* t″
-        skip⇒ r done          p″ = r ↯ NF→¬R p″
-        skip⇒ r (step r′ rs′) p″ with det⇒ r r′
+        skip⇒* : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t ⇒* t″ → NF t″ → t′ ⇒* t″
+        skip⇒* r done          p″ = r ↯ NF→¬R p″
+        skip⇒* r (step r′ rs′) p″ with det⇒ r r′
         ... | refl                  = rs′
 
         -- determinism
         det⇒* : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒* t′ → NF t′ → t ⇒* t″ → NF t″ → t′ ≡ t″
         det⇒* done        p′ done          p″ = refl
         det⇒* done        p′ (step r′ rs′) p″ = r′ ↯ NF→¬R p′
-        det⇒* (step r rs) p′ rs′           p″ = det⇒* rs p′ (skip⇒ r rs′ p″) p″
+        det⇒* (step r rs) p′ rs′           p″ = det⇒* rs p′ (skip⇒* r rs′ p″) p″
 
         -- uniqueness of proofs
         uni⇒* : ∀ {Γ A} {t t′ : Γ ⊢ A} (rs rs′ : t ⇒* t′) → NF t′ → rs ≡ rs′

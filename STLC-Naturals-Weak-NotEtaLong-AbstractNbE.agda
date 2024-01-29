@@ -22,7 +22,7 @@ record BaseModel : Set₁ where
   _⊩_ : World → Ty → Set
   -- W ⊩ A ⌜⊃⌝ B = ∀ {W′} → W ≤ W′ → W′ ⊩ A → W′ ⊩ B
   -- W ⊩ ⌜ℕ⌝     = ⟦ℕ⟧ W
-  W ⊩ A = recTy A
+  W ⊩ A = recTy {X = World → Set} A
              (λ A recA B recB W → ∀ {W′} → W ≤ W′ → recA W′ → recB W′)
              (λ W → ⟦ℕ⟧ W)
              W
@@ -75,8 +75,8 @@ mutual
   𝒞 : SplitModel 𝒞◦
   𝒞 = record
         { ⟦rec⟧ =
-            λ { {A = A} (_ , ⌜zero⌝)   v₀ vₛ → v₀
-              ; {A = A} (_ , ⌜suc⌝ pₙ) v₀ vₛ → vₛ refl⊆ (_ , pₙ) refl⊆ v₀
+            λ {         (_ , ⌜zero⌝)   v₀ vₛ → v₀
+              ;         (_ , ⌜suc⌝ pₙ) v₀ vₛ → vₛ refl⊆ (_ , pₙ) refl⊆ v₀
               ; {A = A} (_ , nnf pₙ)   v₀ vₛ →
                   let _ , p₀ = ↓ {A = A} v₀
                       _ , pₛ = ↓ (vₛ (drop (drop refl⊆)) (↑ (⌜v⌝ {A = ⌜ℕ⌝} (suc zero) , ⌜v⌝-))

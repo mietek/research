@@ -11,9 +11,7 @@ data Ty : Set where
   _⌜⊃⌝_ : ∀ (A B : Ty) → Ty
   ⌜ℕ⌝   : Ty
 
-recTy : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} → Ty → (Ty → (X → Y) → Ty → (X → Y) → (X → Y)) →
-          (X → Y) →
-        (X → Y)
+recTy : ∀ {𝓍} {X : Set 𝓍} → Ty → (Ty → X → Ty → X → X) → X → X
 recTy (A ⌜⊃⌝ B) f⊃ fℕ = f⊃ A (recTy A f⊃ fℕ) B (recTy B f⊃ fℕ)
 recTy ⌜ℕ⌝       f⊃ fℕ = fℕ
 
