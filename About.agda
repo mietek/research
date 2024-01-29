@@ -27,10 +27,14 @@ join ##dependent on libera.chat
 ------------------------------------------------------------------------------------------------- -}
 
 import Common
+import Common-Properties
+import Category
 import Isomorphism
 
 import STLC-Base
+import STLC-Base-Properties
 import STLC-Base-Weak-NotEtaLong
+import STLC-Base-Weak-NotEtaLong-ClosedSN
 import STLC-Base-Weak-NotEtaLong-ConcreteNbE
 import STLC-Base-Weak-NotEtaLong-AbstractNbE
 import STLC-Base-Weak-EtaLong

@@ -22,8 +22,8 @@ open import Function public
   using (_∘_ ; _$_ ; flip ; id)
 
 open import Level public
-  using (_⊔_ ; Setω)
-  renaming (zero to ℓ₀)
+  using (Level ; _⊔_ ; Setω)
+  renaming (zero to ℓzero ; suc to ℓsuc)
 
 open import Relation.Binary.PropositionalEquality public
   using (_≡_ ; refl ; cong ; cong₂ ; cong-app ; subst ; sym ; trans ; module ≡-Reasoning)
@@ -108,6 +108,14 @@ infixl 8 _⊗_
 _⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {f g : X → Y} {x y : X} → f ≡ g → x ≡ y → f x ≡ g y
 refl ⊗ refl = refl
 
+infix 9 _⁻¹
+_⁻¹ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≡ x′ → x′ ≡ x
+_⁻¹ = sym
+
+infixr 4 _⋮_
+_⋮_ : ∀ {𝓍} {X : Set 𝓍} {x x′ x″ : X} → x ≡ x′ → x′ ≡ x″ → x ≡ x″
+_⋮_ = trans
+
 cong-app′ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x : X} → Y x} →
             (λ {x : X} → f {x}) ≡ (λ {x : X} → g {x}) → (∀ {x : X} → f {x} ≡ g {x})
 cong-app′ refl {x} = refl
@@ -143,11 +151,17 @@ module _ {𝓍} {X : Set 𝓍} where
   refl⊆ {[]}    = stop
   refl⊆ {A ∷ Γ} = keep refl⊆
 
+  id⊆ : ∀ {Γ : List X} → Γ ⊆ Γ
+  id⊆ = refl⊆
+
   trans⊆ : ∀ {Γ Γ′ Γ″} → Γ ⊆ Γ′ → Γ′ ⊆ Γ″ → Γ ⊆ Γ″
   trans⊆ e        stop      = e
   trans⊆ e        (drop e′) = drop (trans⊆ e e′)
   trans⊆ (drop e) (keep e′) = drop (trans⊆ e e′)
   trans⊆ (keep e) (keep e′) = keep (trans⊆ e e′)
+
+  _∘⊆_ : ∀ {Γ Γ′ Γ″ : List X} → Γ′ ⊆ Γ″ → Γ ⊆ Γ′ → Γ ⊆ Γ″
+  _∘⊆_ = flip trans⊆
 
   wk⊆ : ∀ {Γ A} → Γ ⊆ A ∷ Γ
   wk⊆ = drop refl⊆
@@ -225,6 +239,7 @@ module CtxKit (Ty : Set) where
       weak⊢ : ∀ {Γ A B} → Γ ⊢ B → A ∷ Γ ⊢ B
       weak⊢ t = ren⊢ wk⊆ t
 
+      -- Kovacs: flip _ₛ∘ₑ_
       ren⊢* : ∀ {Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⊢* Δ → Γ′ ⊢* Δ
       ren⊢* e []       = []
       ren⊢* e (t ∷ ts) = ren⊢ e t ∷ ren⊢* e ts
@@ -235,9 +250,20 @@ module CtxKit (Ty : Set) where
       lift⊢* : ∀ {Γ Δ A} → Γ ⊢* Δ → A ∷ Γ ⊢* A ∷ Δ
       lift⊢* ts = ⌜v⌝ zero ∷ weak⊢* ts
 
+      -- Kovacs: ⌜_⌝ᵒᵖᵉ
+      ⊆→⊢* : ∀ {Γ Γ′} → Γ ⊆ Γ′ → Γ′ ⊢* Γ
+      ⊆→⊢* stop     = []
+      ⊆→⊢* (drop e) = weak⊢* (⊆→⊢* e)
+      ⊆→⊢* (keep e) = lift⊢* (⊆→⊢* e)
+
+      -- TODO: check if varying this affects anything
       refl⊢* : ∀ {Γ} → Γ ⊢* Γ
-      refl⊢* {[]}    = []
-      refl⊢* {A ∷ Γ} = lift⊢* refl⊢*
+      -- refl⊢* {[]}    = []
+      -- refl⊢* {A ∷ Γ} = lift⊢* refl⊢*
+      refl⊢* = ⊆→⊢* refl⊆
+
+      id⊢* : ∀ {Γ} → Γ ⊢* Γ
+      id⊢* = refl⊢*
 
       -- substitution of indices
       sub∋ : ∀ {Γ Ξ A} → Ξ ⊢* Γ → Γ ∋ A → Ξ ⊢ A
@@ -250,9 +276,16 @@ module CtxKit (Ty : Set) where
       module SubKit
         (sub⊢ : ∀ {Γ Ξ A} → Ξ ⊢* Γ → Γ ⊢ A → Ξ ⊢ A)
           where
+        -- Kovacs: flip _∘ₛ_
         sub⊢* : ∀ {Γ Ξ Δ} → Ξ ⊢* Γ → Γ ⊢* Δ → Ξ ⊢* Δ
         sub⊢* ss []       = []
         sub⊢* ss (t ∷ ts) = sub⊢ ss t ∷ sub⊢* ss ts
+
+        trans⊢* : ∀ {Γ Ξ Δ} → Ξ ⊢* Γ → Γ ⊢* Δ → Ξ ⊢* Δ
+        trans⊢* = sub⊢*
+
+        _∘⊢*_ : ∀ {Γ Ξ Δ} → Γ ⊢* Δ → Ξ ⊢* Γ → Ξ ⊢* Δ
+        _∘⊢*_ = flip trans⊢*
 
         _[_] : ∀ {Γ A B} → A ∷ Γ ⊢ B → Γ ⊢ A → Γ ⊢ B
         t [ s ] = sub⊢ (s ∷ refl⊢*) t
@@ -260,6 +293,7 @@ module CtxKit (Ty : Set) where
         _[_∣_] : ∀ {Γ A B C} → B ∷ A ∷ Γ ⊢ C → Γ ⊢ A → Γ ⊢ B → Γ ⊢ C
         t [ s₁ ∣ s₂ ] = sub⊢ (s₂ ∷ s₁ ∷ refl⊢*) t
 
+        -- Kovacs: _ₑ∘ₛ_; flip?
         get⊢* : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⊢* Δ′ → Γ ⊢* Δ
         get⊢* stop     ts       = ts
         get⊢* (drop e) (t ∷ ts) = get⊢* e ts
