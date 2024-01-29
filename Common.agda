@@ -258,9 +258,9 @@ module CtxKit (Ty : Set) where
 
       -- TODO: check if varying this affects anything
       refl⊢* : ∀ {Γ} → Γ ⊢* Γ
-      -- refl⊢* {[]}    = []
-      -- refl⊢* {A ∷ Γ} = lift⊢* refl⊢*
-      refl⊢* = ⊆→⊢* refl⊆
+      refl⊢* {[]}    = []
+      refl⊢* {A ∷ Γ} = lift⊢* refl⊢*
+      -- refl⊢* = ⊆→⊢* refl⊆
 
       id⊢* : ∀ {Γ} → Γ ⊢* Γ
       id⊢* = refl⊢*

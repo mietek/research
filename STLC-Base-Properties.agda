@@ -1,7 +1,7 @@
 module STLC-Base-Properties where
 
 open import Common-Properties public
-open import STLC-Base public
+open import STLC-Base
 
 
 ----------------------------------------------------------------------------------------------------
@@ -30,7 +30,9 @@ compren⊢* e′ e (t ∷ ts) = _∷_ & compren⊢ e′ e t ⊗ compren⊢* e′
 eqweakren⊢ : ∀ {Γ Γ′ A B} (e : Γ ⊆ Γ′) (t : Γ ⊢ A) →
               (ren⊢ (keep {A = B} e) ∘ weak⊢) t ≡ (weak⊢ ∘ ren⊢ e) t
 eqweakren⊢ e t = compren⊢ (keep e) wk⊆ t ⁻¹
-                ⋮ (flip ren⊢ t ∘ drop) & (rid⊆ e ⋮ lid⊆ e ⁻¹)
+                ⋮ (flip ren⊢ t ∘ drop) & ( rid⊆ e
+                                          ⋮ lid⊆ e ⁻¹
+                                          )
                 ⋮ compren⊢ wk⊆ e t
 
 eqweakren⊢* : ∀ {Γ Γ′ Δ B} (e : Γ ⊆ Γ′) (ts : Γ ⊢* Δ) →
@@ -187,7 +189,9 @@ lidsub⊢* (t ∷ ts) = _∷_ & idsub⊢ t ⊗ lidsub⊢* ts
 eqweaksub⊢ : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t : Γ ⊢ A) →
               (sub⊢ (lift⊢* {A = B} ss) ∘ weak⊢) t ≡ (weak⊢ ∘ sub⊢ ss) t
 eqweaksub⊢ ss t = eqsubren⊢ (lift⊢* ss) wk⊆ t ⁻¹
-                 ⋮ (flip sub⊢ t) & (eqrenget⊢* wk⊆ refl⊆ ss ⋮ (ren⊢* wk⊆) & lidget⊢* ss)
+                 ⋮ (flip sub⊢ t) & ( eqrenget⊢* wk⊆ refl⊆ ss
+                                    ⋮ (ren⊢* wk⊆) & lidget⊢* ss
+                                    )
                  ⋮ eqrensub⊢ wk⊆ ss t
 
 eqweaksub⊢* : ∀ {Γ Ξ Δ B} (ss : Ξ ⊢* Γ) (ts : Γ ⊢* Δ) →

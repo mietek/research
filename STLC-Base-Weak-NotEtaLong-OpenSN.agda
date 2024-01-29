@@ -1,6 +1,7 @@
 module STLC-Base-Weak-NotEtaLong-OpenSN where
 
 open import STLC-Base-Weak-NotEtaLong public
+open import STLC-Base-Properties public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -162,9 +163,12 @@ refl⊢*HWN* {A ∷ Γ} = hmm ∷ {!refl⊢*HWN* {A ∷ Γ}!}
 
 ----------------------------------------------------------------------------------------------------
 
-postulate
-  lem₀ : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : A ∷ Γ ⊢ B) (t₂ : Ξ ⊢ A) →
-         (_[ t₂ ] ∘ sub⊢ (lift⊢* ss)) t₁ ≡ sub⊢ (t₂ ∷ ss) t₁
+lem₀ : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : A ∷ Γ ⊢ B) (t₂ : Ξ ⊢ A) →
+       (_[ t₂ ] ∘ sub⊢ (lift⊢* ss)) t₁ ≡ sub⊢ (t₂ ∷ ss) t₁
+lem₀ ss t₁ t₂ = compsub⊢ (t₂ ∷ id⊢*) (lift⊢* ss) t₁ ⁻¹
+              ⋮ (flip sub⊢ t₁ ∘ (t₂ ∷_)) & ( eqsub⊢* t₂ id⊢* ss
+                                            ⋮ lidsub⊢* ss
+                                            )
 
 lem₁ : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : A ∷ Γ ⊢ B) {t₂ : Ξ ⊢ A} (p₂ : NF t₂) →
        ⌜λ⌝ (sub⊢ (lift⊢* ss) t₁) ⌜$⌝ t₂ ⇒ sub⊢ (t₂ ∷ ss) t₁
@@ -210,11 +214,8 @@ mutual
   sub⊢HWN ss hwns (t₁ ⌜$⌝ t₂) = let wn , hwn! = sub⊢HWN ss hwns t₁
                                  in  hwn! (sub⊢HWN ss hwns t₂)
 
-postulate
-  idsub : ∀ {Γ A} (t : Γ ⊢ A) → sub⊢ refl⊢* t ≡ t
-
 hwn : ∀ {Γ A} (t : Γ ⊢ A) → HWN t
-hwn t = subst HWN (idsub t) (sub⊢HWN refl⊢* refl⊢*HWN* t)
+hwn t = subst HWN (idsub⊢ t) (sub⊢HWN refl⊢* refl⊢*HWN* t)
 
 wn : ∀ {Γ A} (t : Γ ⊢ A) → WN t
 wn = proj₁ ∘ hwn

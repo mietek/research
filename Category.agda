@@ -83,7 +83,7 @@ Presheaf C 𝓍 = Functor (C ᵒᵖ) (⟪Set⟫ 𝓍)
 
 ----------------------------------------------------------------------------------------------------
 
-record _⇒_ {ℴ₁ ℴ₂ 𝓇₁ 𝓇₂} {C : Category ℴ₁ 𝓇₁} {D : Category ℴ₂ 𝓇₂} (F G : Functor C D) :
+record NatTrans {ℴ₁ ℴ₂ 𝓇₁ 𝓇₂} {C : Category ℴ₁ 𝓇₁} {D : Category ℴ₂ 𝓇₂} (F G : Functor C D) :
     Set (ℴ₁ ⊔ ℴ₂ ⊔ 𝓇₁ ⊔ 𝓇₂) where
   private
     module C = Category C
@@ -96,7 +96,7 @@ record _⇒_ {ℴ₁ ℴ₂ 𝓇₁ 𝓇₂} {C : Category ℴ₁ 𝓇₁} {D : 
     natη : ∀ (x y : C.Obj) (p : x C.▻ y) →
            η y D.∘ F.ƒ p ≡ G.ƒ p D.∘ η x
 
-  op : G.op ⇒ F.op
+  op : NatTrans G.op F.op
   op = record
          { η    = η
          ; natη = λ x y f → sym (natη y x f)
