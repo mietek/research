@@ -156,7 +156,7 @@ idsub∋ (suc i) = eqrensub∋ wk⊆ id⊢* i
 
 -- Kovacs: ∈-∘ₛ; not really composition!
 compsub∋ : ∀ {Γ Ξ Ξ′ A} (ss′ : Ξ′ ⊢* Ξ) (ss : Ξ ⊢* Γ) (i : Γ ∋ A) →
-            sub∋ (sub⊢* ss′ ss) i ≡ (sub⊢ ss′ ∘ sub∋ ss) i
+           sub∋ (sub⊢* ss′ ss) i ≡ (sub⊢ ss′ ∘ sub∋ ss) i
 compsub∋ ss′ (s ∷ ss) zero    = refl
 compsub∋ ss′ (s ∷ ss) (suc i) = compsub∋ ss′ ss i
 
@@ -223,7 +223,7 @@ eqsub⊢ s ss t = eqsubren⊢ (s ∷ ss) (drop id⊆) t ⁻¹
                ⋮ (flip sub⊢ t) & lidget⊢* ss
 
 eqsub⊢* : ∀ {Γ Ξ Δ B} (s : Ξ ⊢ B) (ss : Ξ ⊢* Γ) (ts : Γ ⊢* Δ) →
-          (sub⊢* (s ∷ ss) ∘ weak⊢*) ts ≡ sub⊢* ss ts
+           (sub⊢* (s ∷ ss) ∘ weak⊢*) ts ≡ sub⊢* ss ts
 eqsub⊢* s ss []       = refl
 eqsub⊢* s ss (t ∷ ts) = _∷_ & eqsub⊢ s ss t ⊗ eqsub⊢* s ss ts
 
