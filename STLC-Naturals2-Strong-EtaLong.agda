@@ -21,37 +21,7 @@ mutual
               (p₁ : NF t₁) →
             NNF (⌜c⌝ ⌜rec⌝ ⌜$⌝ tₙ ⌜$⌝ t₀ ⌜$⌝ t₁)
 
--- renaming
-mutual
-  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren⊢ e t)
-  renNF e (⌜λ⌝ p)   = ⌜λ⌝ (renNF (keep e) p)
-  renNF e ⌜zero⌝    = ⌜zero⌝
-  renNF e (⌜suc⌝ p) = ⌜suc⌝ (renNF e p)
-  renNF e (nnf p)   = nnf (renNNF e p)
-
-  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren⊢ e t)
-  renNNF e ⌜v⌝-             = ⌜v⌝-
-  renNNF e (p₁ ⌜$⌝ p₂)      = renNNF e p₁ ⌜$⌝ renNF e p₂
-  renNNF e (⌜rec⌝ pₙ p₀ pₛ) = ⌜rec⌝ (renNNF e pₙ) (renNF e p₀) (renNF e pₛ)
-
--- uniqueness of proofs
-mutual
-  uniNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
-  uniNF (⌜λ⌝ p)           (⌜λ⌝ p′)           = ⌜λ⌝ & uniNF p p′
-  uniNF ⌜zero⌝            ⌜zero⌝             = refl
-  uniNF (⌜suc⌝ p)         (⌜suc⌝ p′)         = ⌜suc⌝ & uniNF p p′
-  uniNF (⌜suc⌝ p)         (nnf (() ⌜$⌝ p₂′))
-  uniNF (nnf (() ⌜$⌝ p₂)) (⌜suc⌝ p′)
-  uniNF (nnf p)           (nnf p′)           = nnf & uniNNF p p′
-
-  uniNNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NNF t) → p ≡ p′
-  uniNNF ⌜v⌝-                        ⌜v⌝-                         = refl
-  uniNNF (p₁ ⌜$⌝ p₂)                 (p₁′ ⌜$⌝ p₂′)                = _⌜$⌝_ & uniNNF p₁ p₁′
-                                                                      ⊗ uniNF p₂ p₂′
-  uniNNF (((() ⌜$⌝ _) ⌜$⌝ _) ⌜$⌝ p₂) (⌜rec⌝ pₙ′ p₀′ pₛ′)
-  uniNNF (⌜rec⌝ pₙ p₀ pₛ)            (((() ⌜$⌝ _) ⌜$⌝ _) ⌜$⌝ p₂′)
-  uniNNF (⌜rec⌝ pₙ p₀ pₛ)            (⌜rec⌝ pₙ′ p₀′ pₛ′)          = ⌜rec⌝ & uniNNF pₙ pₙ′
-                                                                      ⊗ uniNF p₀ p₀′ ⊗ uniNF pₛ pₛ′
+open NFKit NF NNF public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -107,6 +77,44 @@ data _≝_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
   ηexp⊃  : ∀ {A B} {t t′ : Γ ⊢ A ⌜⊃⌝ B} (eq : t′ ≡ ⌜λ⌝ (weak⊢ t ⌜$⌝ ⌜v⌝ zero)) → t ≝ t′
 
 open ≝Kit (λ {Γ} {A} {t} → refl≝ {t = t}) sym≝ trans≝ public
+
+
+----------------------------------------------------------------------------------------------------
+
+-- uniqueness of proofs
+mutual
+  uniNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
+  uniNF (⌜λ⌝ p)           (⌜λ⌝ p′)           = ⌜λ⌝ & uniNF p p′
+  uniNF ⌜zero⌝            ⌜zero⌝             = refl
+  uniNF (⌜suc⌝ p)         (⌜suc⌝ p′)         = ⌜suc⌝ & uniNF p p′
+  uniNF (⌜suc⌝ p)         (nnf (() ⌜$⌝ p₂′))
+  uniNF (nnf (() ⌜$⌝ p₂)) (⌜suc⌝ p′)
+  uniNF (nnf p)           (nnf p′)           = nnf & uniNNF p p′
+
+  uniNNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NNF t) → p ≡ p′
+  uniNNF ⌜v⌝-                        ⌜v⌝-                         = refl
+  uniNNF (p₁ ⌜$⌝ p₂)                 (p₁′ ⌜$⌝ p₂′)                = _⌜$⌝_ & uniNNF p₁ p₁′
+                                                                      ⊗ uniNF p₂ p₂′
+  uniNNF (((() ⌜$⌝ _) ⌜$⌝ _) ⌜$⌝ p₂) (⌜rec⌝ pₙ′ p₀′ pₛ′)
+  uniNNF (⌜rec⌝ pₙ p₀ pₛ)            (((() ⌜$⌝ _) ⌜$⌝ _) ⌜$⌝ p₂′)
+  uniNNF (⌜rec⌝ pₙ p₀ pₛ)            (⌜rec⌝ pₙ′ p₀′ pₛ′)          = ⌜rec⌝ & uniNNF pₙ pₙ′
+                                                                      ⊗ uniNF p₀ p₀′ ⊗ uniNF pₛ pₛ′
+
+
+----------------------------------------------------------------------------------------------------
+
+-- stability under renaming
+mutual
+  ren⊢NF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren⊢ e t)
+  ren⊢NF e (⌜λ⌝ p)   = ⌜λ⌝ (ren⊢NF (keep e) p)
+  ren⊢NF e ⌜zero⌝    = ⌜zero⌝
+  ren⊢NF e (⌜suc⌝ p) = ⌜suc⌝ (ren⊢NF e p)
+  ren⊢NF e (nnf p)   = nnf (ren⊢NNF e p)
+
+  ren⊢NNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren⊢ e t)
+  ren⊢NNF e ⌜v⌝-             = ⌜v⌝-
+  ren⊢NNF e (p₁ ⌜$⌝ p₂)      = ren⊢NNF e p₁ ⌜$⌝ ren⊢NF e p₂
+  ren⊢NNF e (⌜rec⌝ pₙ p₀ pₛ) = ⌜rec⌝ (ren⊢NNF e pₙ) (ren⊢NF e p₀) (ren⊢NF e pₛ)
 
 
 ----------------------------------------------------------------------------------------------------

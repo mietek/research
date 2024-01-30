@@ -57,7 +57,7 @@ open ModelKit (λ {ℳ} → _⊩_ {ℳ}) (λ {ℳ} {W} {W′} {A} → ren⊩ {A 
 mutual
   ↑ : ∀ {Γ A} → Σ (Γ ⊢ A) NNF → 𝒞 / Γ ⊩ A
   ↑ {A = A ⌜⊃⌝ B} (_ , p₁) = λ e v₂ → let _ , p₂ = ↓ v₂ in
-                               ↑ (_ , renNNF e p₁ ⌜$⌝ p₂)
+                               ↑ (_ , ren⊢NNF e p₁ ⌜$⌝ p₂)
   ↑ {A = A ⌜∧⌝ B} (_ , p)  = ↑ (_ , ⌜proj₁⌝ p) , ↑ (_ , ⌜proj₂⌝ p)
   ↑ {A = ⌜𝟙⌝}     (_ , p)  = unit
 

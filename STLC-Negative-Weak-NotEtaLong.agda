@@ -21,33 +21,7 @@ mutual
     ⌜proj₁⌝ : ∀ {A B} {t : Γ ⊢ A ⌜∧⌝ B} (p : NNF t) → NNF (⌜proj₁⌝ t)
     ⌜proj₂⌝ : ∀ {A B} {t : Γ ⊢ A ⌜∧⌝ B} (p : NNF t) → NNF (⌜proj₂⌝ t)
 
--- renaming
-mutual
-  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren⊢ e t)
-  renNF e ⌜λ⌝-    = ⌜λ⌝-
-  renNF e -⌜,⌝-   = -⌜,⌝-
-  renNF e ⌜unit⌝  = ⌜unit⌝
-  renNF e (nnf p) = nnf (renNNF e p)
-
-  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren⊢ e t)
-  renNNF e ⌜v⌝-        = ⌜v⌝-
-  renNNF e (p₁ ⌜$⌝ p₂) = renNNF e p₁ ⌜$⌝ renNF e p₂
-  renNNF e (⌜proj₁⌝ p) = ⌜proj₁⌝ (renNNF e p)
-  renNNF e (⌜proj₂⌝ p) = ⌜proj₂⌝ (renNNF e p)
-
--- uniqueness of proofs
-mutual
-  uniNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
-  uniNF ⌜λ⌝-    ⌜λ⌝-     = refl
-  uniNF -⌜,⌝-   -⌜,⌝-    = refl
-  uniNF ⌜unit⌝  ⌜unit⌝   = refl
-  uniNF (nnf p) (nnf p′) = nnf & uniNNF p p′
-
-  uniNNF : ∀ {Γ A} {d : Γ ⊢ A} (p p′ : NNF d) → p ≡ p′
-  uniNNF ⌜v⌝-        ⌜v⌝-          = refl
-  uniNNF (p₁ ⌜$⌝ p₂) (p₁′ ⌜$⌝ p₂′) = _⌜$⌝_ & uniNNF p₁ p₁′ ⊗ uniNF p₂ p₂′
-  uniNNF (⌜proj₁⌝ p) (⌜proj₁⌝ p′)  = ⌜proj₁⌝ & uniNNF p p′
-  uniNNF (⌜proj₂⌝ p) (⌜proj₂⌝ p′)  = ⌜proj₂⌝ & uniNNF p p′
+open NFKit NF NNF public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -104,6 +78,55 @@ open ¬RKit NF→¬R public
 
 ----------------------------------------------------------------------------------------------------
 
+-- uniqueness of proofs
+mutual
+  uniNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
+  uniNF ⌜λ⌝-    ⌜λ⌝-     = refl
+  uniNF -⌜,⌝-   -⌜,⌝-    = refl
+  uniNF ⌜unit⌝  ⌜unit⌝   = refl
+  uniNF (nnf p) (nnf p′) = nnf & uniNNF p p′
+
+  uniNNF : ∀ {Γ A} {d : Γ ⊢ A} (p p′ : NNF d) → p ≡ p′
+  uniNNF ⌜v⌝-        ⌜v⌝-          = refl
+  uniNNF (p₁ ⌜$⌝ p₂) (p₁′ ⌜$⌝ p₂′) = _⌜$⌝_ & uniNNF p₁ p₁′ ⊗ uniNF p₂ p₂′
+  uniNNF (⌜proj₁⌝ p) (⌜proj₁⌝ p′)  = ⌜proj₁⌝ & uniNNF p p′
+  uniNNF (⌜proj₂⌝ p) (⌜proj₂⌝ p′)  = ⌜proj₂⌝ & uniNNF p p′
+
+uni⇒ : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒ t′) → r ≡ r′
+uni⇒ (cong$₁ r₁)     (cong$₁ r₁′)     = cong$₁ & uni⇒ r₁ r₁′
+uni⇒ (cong$₁ r₁)     (cong$₂ p₁′ r₂′) = r₁ ↯ NF→¬R p₁′
+uni⇒ (cong$₂ p₁ r₂)  (cong$₁ r₁′)     = r₁′ ↯ NF→¬R p₁
+uni⇒ (cong$₂ p₁ r₂)  (cong$₂ p₁′ r₂′) = cong$₂ & uniNF p₁ p₁′ ⊗ uni⇒ r₂ r₂′
+uni⇒ (cong$₂ p₁ r₂)  (βred⊃ eq′ p₂′)  = r₂ ↯ NF→¬R p₂′
+uni⇒ (congproj₁ r)   (congproj₁ r′)   = congproj₁ & uni⇒ r r′
+uni⇒ (congproj₂ r)   (congproj₂ r′)   = congproj₂ & uni⇒ r r′
+uni⇒ (βred⊃ eq p₂)   (cong$₂ p₁′ r₂′) = r₂′ ↯ NF→¬R p₂
+uni⇒ (βred⊃ refl p₂) (βred⊃ refl p₂′) = βred⊃ refl & uniNF p₂ p₂′
+uni⇒ βred∧₁          βred∧₁           = refl
+uni⇒ βred∧₂          βred∧₂           = refl
+
+
+----------------------------------------------------------------------------------------------------
+
+-- determinism
+det⇒ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t ⇒ t″ → t′ ≡ t″
+det⇒ (cong$₁ r₁)     (cong$₁ r₁′)     = (_⌜$⌝ _) & det⇒ r₁ r₁′
+det⇒ (cong$₁ r₁)     (cong$₂ p₁′ r₂′) = r₁ ↯ NF→¬R p₁′
+det⇒ (cong$₂ p₁ r₂)  (cong$₁ r₁′)     = r₁′ ↯ NF→¬R p₁
+det⇒ (cong$₂ p₁ r₂)  (cong$₂ p₁′ r₂′) = (_ ⌜$⌝_) & det⇒ r₂ r₂′
+det⇒ (cong$₂ p₁ r₂)  (βred⊃ refl p₂′) = r₂ ↯ NF→¬R p₂′
+det⇒ (congproj₁ r)   (congproj₁ r′)   = ⌜proj₁⌝ & det⇒ r r′
+det⇒ (congproj₂ r)   (congproj₂ r′)   = ⌜proj₂⌝ & det⇒ r r′
+det⇒ (βred⊃ refl p₂) (cong$₂ p₁′ r₂′) = r₂′ ↯ NF→¬R p₂
+det⇒ (βred⊃ refl p₂) (βred⊃ refl p₂′) = refl
+det⇒ βred∧₁          βred∧₁           = refl
+det⇒ βred∧₂          βred∧₂           = refl
+
+open ⇒*Kit NF→¬R det⇒ uni⇒ public
+
+
+----------------------------------------------------------------------------------------------------
+
 -- progress
 prog⇒ : ∀ {Γ A} (t : Γ ⊢ A) → Prog t
 prog⇒ (⌜v⌝ i)                = done (nnf ⌜v⌝-)
@@ -127,49 +150,30 @@ prog⇒ ⌜unit⌝                   = done ⌜unit⌝
 open ProgKit prog⇒ public
 
 module _ (⚠ : Extensionality) where
-  uni¬RF : ∀ {Γ A} {t : Γ ⊢ A} (¬p ¬p′ : ¬ RF t) → ¬p ≡ ¬p′
-  uni¬RF = uni→ ⚠ uni𝟘
-
   NF≃¬RF : ∀ {Γ A} {t : Γ ⊢ A} → NF t ≃ (¬ RF t)
   NF≃¬RF = record
     { to      = NF→¬RF
     ; from    = ¬RF→NF
     ; from∘to = λ p → uniNF _ p
-    ; to∘from = λ p → uni¬RF _ p
+    ; to∘from = λ p → uni¬RF ⚠ _ p
     }
 
 
 ----------------------------------------------------------------------------------------------------
 
--- determinism
-det⇒ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t ⇒ t″ → t′ ≡ t″
-det⇒ (cong$₁ r₁)     (cong$₁ r₁′)     = (_⌜$⌝ _) & det⇒ r₁ r₁′
-det⇒ (cong$₁ r₁)     (cong$₂ p₁′ r₂′) = r₁ ↯ NF→¬R p₁′
-det⇒ (cong$₂ p₁ r₂)  (cong$₁ r₁′)     = r₁′ ↯ NF→¬R p₁
-det⇒ (cong$₂ p₁ r₂)  (cong$₂ p₁′ r₂′) = (_ ⌜$⌝_) & det⇒ r₂ r₂′
-det⇒ (cong$₂ p₁ r₂)  (βred⊃ refl p₂′) = r₂ ↯ NF→¬R p₂′
-det⇒ (congproj₁ r)   (congproj₁ r′)   = ⌜proj₁⌝ & det⇒ r r′
-det⇒ (congproj₂ r)   (congproj₂ r′)   = ⌜proj₂⌝ & det⇒ r r′
-det⇒ (βred⊃ refl p₂) (cong$₂ p₁′ r₂′) = r₂′ ↯ NF→¬R p₂
-det⇒ (βred⊃ refl p₂) (βred⊃ refl p₂′) = refl
-det⇒ βred∧₁          βred∧₁           = refl
-det⇒ βred∧₂          βred∧₂           = refl
+-- stability under renaming
+mutual
+  ren⊢NF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren⊢ e t)
+  ren⊢NF e ⌜λ⌝-    = ⌜λ⌝-
+  ren⊢NF e -⌜,⌝-   = -⌜,⌝-
+  ren⊢NF e ⌜unit⌝  = ⌜unit⌝
+  ren⊢NF e (nnf p) = nnf (ren⊢NNF e p)
 
--- uniqueness of proofs
-uni⇒ : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒ t′) → r ≡ r′
-uni⇒ (cong$₁ r₁)     (cong$₁ r₁′)     = cong$₁ & uni⇒ r₁ r₁′
-uni⇒ (cong$₁ r₁)     (cong$₂ p₁′ r₂′) = r₁ ↯ NF→¬R p₁′
-uni⇒ (cong$₂ p₁ r₂)  (cong$₁ r₁′)     = r₁′ ↯ NF→¬R p₁
-uni⇒ (cong$₂ p₁ r₂)  (cong$₂ p₁′ r₂′) = cong$₂ & uniNF p₁ p₁′ ⊗ uni⇒ r₂ r₂′
-uni⇒ (cong$₂ p₁ r₂)  (βred⊃ eq′ p₂′)  = r₂ ↯ NF→¬R p₂′
-uni⇒ (congproj₁ r)   (congproj₁ r′)   = congproj₁ & uni⇒ r r′
-uni⇒ (congproj₂ r)   (congproj₂ r′)   = congproj₂ & uni⇒ r r′
-uni⇒ (βred⊃ eq p₂)   (cong$₂ p₁′ r₂′) = r₂′ ↯ NF→¬R p₂
-uni⇒ (βred⊃ refl p₂) (βred⊃ refl p₂′) = βred⊃ refl & uniNF p₂ p₂′
-uni⇒ βred∧₁          βred∧₁           = refl
-uni⇒ βred∧₂          βred∧₂           = refl
-
-open ⇒*Kit NF→¬R det⇒ uni⇒ public
+  ren⊢NNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren⊢ e t)
+  ren⊢NNF e ⌜v⌝-        = ⌜v⌝-
+  ren⊢NNF e (p₁ ⌜$⌝ p₂) = ren⊢NNF e p₁ ⌜$⌝ ren⊢NF e p₂
+  ren⊢NNF e (⌜proj₁⌝ p) = ⌜proj₁⌝ (ren⊢NNF e p)
+  ren⊢NNF e (⌜proj₂⌝ p) = ⌜proj₂⌝ (ren⊢NNF e p)
 
 
 ----------------------------------------------------------------------------------------------------

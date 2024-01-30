@@ -12,7 +12,7 @@ W ⊩ ⌜◦⌝     = Σ (W ⊢ ⌜◦⌝) NNF
 W ⊩ A ⌜⊃⌝ B = ∀ {W′} → W ⊆ W′ → W′ ⊩ A → W′ ⊩ B
 
 ren⊩ : ∀ {W W′ A} → W ⊆ W′ → W ⊩ A → W′ ⊩ A
-ren⊩ {A = ⌜◦⌝}     e (_ , p) = _ , renNNF e p
+ren⊩ {A = ⌜◦⌝}     e (_ , p) = _ , ren⊢NNF e p
 ren⊩ {A = A ⌜⊃⌝ B} e v       = λ e′ → v (trans⊆ e e′)
 
 open ⊩Kit _⊩_ (λ {W} {W′} {A} → ren⊩ {A = A}) public
@@ -30,7 +30,7 @@ mutual
   ↑ : ∀ {Γ A} → Σ (Γ ⊢ A) NNF → Γ ⊩ A
   ↑ {A = ⌜◦⌝}     (_ , p)  = _ , p
   ↑ {A = A ⌜⊃⌝ B} (_ , p₁) = λ e v₂ → let _ , p₂ = ↓ v₂ in
-                               ↑ (_ , renNNF e p₁ ⌜$⌝ p₂)
+                               ↑ (_ , ren⊢NNF e p₁ ⌜$⌝ p₂)
 
   ↓ : ∀ {Γ A} → Γ ⊩ A → Σ (Γ ⊢ A) NF
   ↓ {A = ⌜◦⌝}     (_ , p) = _ , nnf p

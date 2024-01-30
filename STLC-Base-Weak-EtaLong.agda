@@ -18,26 +18,7 @@ mutual
     _⌜$⌝_ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (p₁ : FNNF t₁) (p₂ : FNF t₂) →
             FNNF (t₁ ⌜$⌝ t₂)
 
--- renaming
-mutual
-  renFNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → FNF t → FNF (ren⊢ e t)
-  renFNF e ⌜λ⌝-    = ⌜λ⌝-
-  renFNF e (nnf p) = nnf (renFNNF e p)
-
-  renFNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → FNNF t → FNNF (ren⊢ e t)
-  renFNNF e ⌜v⌝-        = ⌜v⌝-
-  renFNNF e (p₁ ⌜$⌝ p₂) = renFNNF e p₁ ⌜$⌝ renFNF e p₂
-
--- uniqueness of proofs
-mutual
-  uniFNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : FNF t) → p ≡ p′
-  uniFNF ⌜λ⌝-    ⌜λ⌝-     = refl
-  uniFNF (nnf p) (nnf p′) = nnf & uniFNNF p p′
-
-  uniFNNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : FNNF t) → p ≡ p′
-  uniFNNF ⌜v⌝-        ⌜v⌝-          = refl
-  uniFNNF (p₁ ⌜$⌝ p₂) (p₁′ ⌜$⌝ p₂′) = _⌜$⌝_ & uniFNNF p₁ p₁′ ⊗ uniFNF p₂ p₂′
-
+-- decidability
 mutual
   FNF? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (FNF t)
   FNF? {A = ⌜◦⌝}     (⌜v⌝ i)     = yes (nnf ⌜v⌝-)
@@ -82,13 +63,6 @@ Expandable→FNNF (p₁ ⌜$⌝ p₂) = p₁ ⌜$⌝ p₂
 Expandable→¬FNF : ∀ {Γ A} {t : Γ ⊢ A} → Expandable t → ¬ FNF t
 Expandable→¬FNF ⌜v⌝-        ()
 Expandable→¬FNF (p₁ ⌜$⌝ p₂) ()
-
-uniExpandable : ∀ {Γ A} {t : Γ ⊢ A} (x x′ : Expandable t) → x ≡ x′
-uniExpandable ⌜v⌝-        ⌜v⌝-          = refl
-uniExpandable (p₁ ⌜$⌝ p₂) (p₁′ ⌜$⌝ p₂′) = _⌜$⌝_ & uniFNNF p₁ p₁′ ⊗ uniFNF p₂ p₂′
-
-uni¬Expandable : ∀ {Γ A} {t : Γ ⊢ A} (¬x ¬x′ : ¬ Expandable t) → ¬x ≡ ¬x′
-uni¬Expandable = uni¬
 
 
 ----------------------------------------------------------------------------------------------------
@@ -247,50 +221,6 @@ Expandable→¬IR = FNNF→¬IR ∘ Expandable→FNNF
 
 ----------------------------------------------------------------------------------------------------
 
--- progress
-prog⇒F : ∀ {Γ A} (t : Γ ⊢ A) → F′.Prog t
-prog⇒F {A = ⌜◦⌝}     (⌜v⌝ i)            = F′.done (nnf ⌜v⌝-)
-prog⇒F {A = ⌜◦⌝}     (t₁ ⌜$⌝ t₂)        with prog⇒F t₁ | prog⇒F t₂
-... | F′.step (Ired ¬x₁ r₁) | _            = F′.step (Ired (λ ()) (cong$₁ r₁))
-... | F′.step (ηexp⊃ eq x₁) | F′.step r₂   = F′.step (Ired (λ ()) (Xcong$₂ x₁ r₂))
-... | F′.step (ηexp⊃ eq x₁) | F′.done p₂   = F′.done (nnf (Expandable→FNNF x₁ ⌜$⌝ p₂))
-... | F′.done p₁            | F′.step r₂   = F′.step (Ired (λ ()) (Fcong$₂ p₁ r₂))
-... | F′.done ⌜λ⌝-          | F′.done p₂   = F′.step (Ired (λ ()) (βred⊃ refl p₂))
-prog⇒F {A = A ⌜⊃⌝ B} (⌜v⌝ i)              = F′.step (ηexp⊃ refl ⌜v⌝-)
-prog⇒F {A = A ⌜⊃⌝ B} (⌜λ⌝ t)              = F′.done ⌜λ⌝-
-prog⇒F {A = A ⌜⊃⌝ B} (t₁ ⌜$⌝ t₂)        with prog⇒F t₁ | prog⇒F t₂
-... | F′.step (Ired ¬x₁ r₁) | _            = F′.step (Ired (λ { (p₁ ⌜$⌝ p₂) →
-                                               FNNF→Expandable p₁ ↯ ¬x₁ }) (cong$₁ r₁))
-... | F′.step (ηexp⊃ eq x₁) | F′.step r₂   = F′.step (Ired (λ { (p₁ ⌜$⌝ p₂) →
-                                               r₂ ↯ FNF→¬FR p₂ }) (Xcong$₂ x₁ r₂))
-... | F′.step (ηexp⊃ eq x₁) | F′.done p₂   = F′.step (ηexp⊃ refl (Expandable→FNNF x₁ ⌜$⌝ p₂))
-... | F′.done ⌜λ⌝-          | F′.step r₂   = F′.step (Ired (λ { (() ⌜$⌝ p₂′) }) (Fcong$₂ ⌜λ⌝- r₂))
-... | F′.done ⌜λ⌝-          | F′.done p₂   = F′.step (Ired (λ { (() ⌜$⌝ p₂′) }) (βred⊃ refl p₂))
-
-module F″ = F′.ProgKit prog⇒F
-
-module _ (⚠ : Extensionality) where
-  uni¬FRF : ∀ {Γ A} {t : Γ ⊢ A} (¬p ¬p′ : ¬ F.RF t) → ¬p ≡ ¬p′
-  uni¬FRF = uni→ ⚠ uni𝟘
-
-  uni¬IRF : ∀ {Γ A} {t : Γ ⊢ A} (¬p ¬p′ : ¬ I.RF t) → ¬p ≡ ¬p′
-  uni¬IRF = uni→ ⚠ uni𝟘
-
-  FNF≃¬FRF : ∀ {Γ A} {t : Γ ⊢ A} → FNF t ≃ (¬ F.RF t)
-  FNF≃¬FRF = record
-    { to      = F′.NF→¬RF
-    ; from    = F″.¬RF→NF
-    ; from∘to = λ p → uniFNF _ p
-    ; to∘from = λ p → uni¬FRF _ p
-    }
-
--- TODO: this doesn’t seem provable, but maybe that’s okay?
--- prog⇒I : ∀ {Γ A} (t : Γ ⊢ A) → I′.Prog t
--- prog⇒I t = ?
-
-
-----------------------------------------------------------------------------------------------------
-
 -- determinism
 mutual
   det⇒F : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒F t′ → t ⇒F t″ → t′ ≡ t″
@@ -313,7 +243,26 @@ mutual
   det⇒I (βred⊃ refl p₂) (Fcong$₂ p₁′ r₂′) = r₂′ ↯ FNF→¬FR p₂
   det⇒I (βred⊃ refl p₂) (βred⊃ refl p₂′)  = refl
 
+
+----------------------------------------------------------------------------------------------------
+
 -- uniqueness of proofs
+mutual
+  uniFNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : FNF t) → p ≡ p′
+  uniFNF ⌜λ⌝-    ⌜λ⌝-     = refl
+  uniFNF (nnf p) (nnf p′) = nnf & uniFNNF p p′
+
+  uniFNNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : FNNF t) → p ≡ p′
+  uniFNNF ⌜v⌝-        ⌜v⌝-          = refl
+  uniFNNF (p₁ ⌜$⌝ p₂) (p₁′ ⌜$⌝ p₂′) = _⌜$⌝_ & uniFNNF p₁ p₁′ ⊗ uniFNF p₂ p₂′
+
+uniExpandable : ∀ {Γ A} {t : Γ ⊢ A} (x x′ : Expandable t) → x ≡ x′
+uniExpandable ⌜v⌝-        ⌜v⌝-          = refl
+uniExpandable (p₁ ⌜$⌝ p₂) (p₁′ ⌜$⌝ p₂′) = _⌜$⌝_ & uniFNNF p₁ p₁′ ⊗ uniFNF p₂ p₂′
+
+uni¬Expandable : ∀ {Γ A} {t : Γ ⊢ A} (¬x ¬x′ : ¬ Expandable t) → ¬x ≡ ¬x′
+uni¬Expandable = uni¬
+
 mutual
   uni⇒F : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒F t′) → r ≡ r′
   uni⇒F (Ired ¬x r)    (Ired ¬x′ r′)   = Ired & uni¬Expandable ¬x ¬x′ ⊗ uni⇒I r r′
@@ -337,6 +286,44 @@ mutual
 
 module F‴ = F.⇒*Kit FNF→¬FR det⇒F uni⇒F
 module I‴ = I.⇒*Kit INF→¬IR det⇒I uni⇒I
+
+
+----------------------------------------------------------------------------------------------------
+
+-- progress
+prog⇒F : ∀ {Γ A} (t : Γ ⊢ A) → F′.Prog t
+prog⇒F {A = ⌜◦⌝}     (⌜v⌝ i)            = F′.done (nnf ⌜v⌝-)
+prog⇒F {A = ⌜◦⌝}     (t₁ ⌜$⌝ t₂)        with prog⇒F t₁ | prog⇒F t₂
+... | F′.step (Ired ¬x₁ r₁) | _            = F′.step (Ired (λ ()) (cong$₁ r₁))
+... | F′.step (ηexp⊃ eq x₁) | F′.step r₂   = F′.step (Ired (λ ()) (Xcong$₂ x₁ r₂))
+... | F′.step (ηexp⊃ eq x₁) | F′.done p₂   = F′.done (nnf (Expandable→FNNF x₁ ⌜$⌝ p₂))
+... | F′.done p₁            | F′.step r₂   = F′.step (Ired (λ ()) (Fcong$₂ p₁ r₂))
+... | F′.done ⌜λ⌝-          | F′.done p₂   = F′.step (Ired (λ ()) (βred⊃ refl p₂))
+prog⇒F {A = A ⌜⊃⌝ B} (⌜v⌝ i)              = F′.step (ηexp⊃ refl ⌜v⌝-)
+prog⇒F {A = A ⌜⊃⌝ B} (⌜λ⌝ t)              = F′.done ⌜λ⌝-
+prog⇒F {A = A ⌜⊃⌝ B} (t₁ ⌜$⌝ t₂)        with prog⇒F t₁ | prog⇒F t₂
+... | F′.step (Ired ¬x₁ r₁) | _            = F′.step (Ired (λ { (p₁ ⌜$⌝ p₂) →
+                                               FNNF→Expandable p₁ ↯ ¬x₁ }) (cong$₁ r₁))
+... | F′.step (ηexp⊃ eq x₁) | F′.step r₂   = F′.step (Ired (λ { (p₁ ⌜$⌝ p₂) →
+                                               r₂ ↯ FNF→¬FR p₂ }) (Xcong$₂ x₁ r₂))
+... | F′.step (ηexp⊃ eq x₁) | F′.done p₂   = F′.step (ηexp⊃ refl (Expandable→FNNF x₁ ⌜$⌝ p₂))
+... | F′.done ⌜λ⌝-          | F′.step r₂   = F′.step (Ired (λ { (() ⌜$⌝ p₂′) }) (Fcong$₂ ⌜λ⌝- r₂))
+... | F′.done ⌜λ⌝-          | F′.done p₂   = F′.step (Ired (λ { (() ⌜$⌝ p₂′) }) (βred⊃ refl p₂))
+
+module F″ = F′.ProgKit prog⇒F
+
+module _ (⚠ : Extensionality) where
+  FNF≃¬FRF : ∀ {Γ A} {t : Γ ⊢ A} → FNF t ≃ (¬ F.RF t)
+  FNF≃¬FRF = record
+    { to      = F′.NF→¬RF
+    ; from    = F″.¬RF→NF
+    ; from∘to = λ p → uniFNF _ p
+    ; to∘from = λ p → F.uni¬RF ⚠ _ p
+    }
+
+-- TODO: this doesn’t seem provable, but maybe that’s okay?
+-- prog⇒I : ∀ {Γ A} (t : Γ ⊢ A) → I′.Prog t
+-- prog⇒I t = ?
 
 
 ----------------------------------------------------------------------------------------------------
@@ -365,6 +352,19 @@ IR⊎η→FR {A = A ⌜⊃⌝ B} {t} (inj₁ r)              with Expandable? t
 ... | yes x                                        = r ↯ Expandable→¬IR x
 ... | no ¬x                                        = Ired ¬x r
 IR⊎η→FR                   (inj₂ (ηexp⊃ refl x)) = ηexp⊃ refl x
+
+
+----------------------------------------------------------------------------------------------------
+
+-- stability under renaming
+mutual
+  renFNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → FNF t → FNF (ren⊢ e t)
+  renFNF e ⌜λ⌝-    = ⌜λ⌝-
+  renFNF e (nnf p) = nnf (renFNNF e p)
+
+  renFNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → FNNF t → FNNF (ren⊢ e t)
+  renFNNF e ⌜v⌝-        = ⌜v⌝-
+  renFNNF e (p₁ ⌜$⌝ p₂) = renFNNF e p₁ ⌜$⌝ renFNF e p₂
 
 
 ----------------------------------------------------------------------------------------------------

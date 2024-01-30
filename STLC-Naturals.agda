@@ -17,6 +17,9 @@ recTy ⌜ℕ⌝       f⊃ fℕ = fℕ
 
 open CtxKit Ty public
 
+
+----------------------------------------------------------------------------------------------------
+
 -- intrinsically well-typed terms
 infix 3 _⊢_
 infixl 18 _⌜$⌝_
@@ -43,6 +46,9 @@ ren⊢ e (⌜suc⌝ t)        = ⌜suc⌝ (ren⊢ e t)
 ren⊢ e (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ (ren⊢ e tₙ) (ren⊢ e t₀) (ren⊢ (keep (keep e)) tₛ)
 
 open RenKit ⌜v⌝ ren⊢ public
+
+
+----------------------------------------------------------------------------------------------------
 
 -- substitution
 sub⊢ : ∀ {Γ Ξ A} → Ξ ⊢* Γ → Γ ⊢ A → Ξ ⊢ A

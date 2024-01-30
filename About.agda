@@ -43,11 +43,11 @@ import STLC-Base
 import STLC-Base-Properties
 import STLC-Base-Weak-NotEtaLong
 import STLC-Base-Weak-NotEtaLong-ClosedSN
--- import STLC-Base-Weak-NotEtaLong-OpenSN -- TODO
+import STLC-Base-Weak-NotEtaLong-OpenSN -- TODO
 import STLC-Base-Weak-NotEtaLong-ConcreteNbE
 import STLC-Base-Weak-NotEtaLong-AbstractNbE
 import STLC-Base-Weak-EtaLong
-import STLC-Base-Strong-EtaLong -- TODO
+import STLC-Base-Strong-EtaLong
 
 import STLC-Negative
 import STLC-Negative-Weak-NotEtaLong
@@ -57,7 +57,7 @@ import STLC-Negative-Weak-NotEtaLong-AbstractNbE
 import STLC-Naturals
 import STLC-Naturals-Weak-NotEtaLong
 import STLC-Naturals-Weak-NotEtaLong-ConcreteNbE
-import STLC-Naturals-Weak-NotEtaLong-AbstractNbE -- TODO
+import STLC-Naturals-Weak-NotEtaLong-AbstractNbE
 import STLC-Naturals-Weak-NotEtaLong-AbstractNbE2 -- TODO
 import STLC-Naturals2
 import STLC-Naturals2-Strong-EtaLong

@@ -13,7 +13,7 @@ W ⊩ ⌜ℕ⌝     = Σ (W ⊢ ⌜ℕ⌝) NF
 
 ren⊩ : ∀ {W W′ A} → W ⊆ W′ → W ⊩ A → W′ ⊩ A
 ren⊩ {A = A ⌜⊃⌝ B} e v       = λ e′ → v (trans⊆ e e′)
-ren⊩ {A = ⌜ℕ⌝}     e (_ , p) = _ , renNF e p
+ren⊩ {A = ⌜ℕ⌝}     e (_ , p) = _ , ren⊢NF e p
 
 open ⊩Kit _⊩_ (λ {W} {W′} {A} → ren⊩ {A = A}) public
 
@@ -23,7 +23,7 @@ open ⊩Kit _⊩_ (λ {W} {W′} {A} → ren⊩ {A = A}) public
 mutual
   ↑ : ∀ {Γ A} → Σ (Γ ⊢ A) NNF → Γ ⊩ A
   ↑ {A = A ⌜⊃⌝ B} (_ , p₁) = λ e v₂ → let _ , p₂ = ↓ v₂ in
-                               ↑ (_ , renNNF e p₁ ⌜$⌝ p₂)
+                               ↑ (_ , ren⊢NNF e p₁ ⌜$⌝ p₂)
   ↑ {A = ⌜ℕ⌝}     (_ , p)  = _ , nnf p
 
   ↓ : ∀ {Γ A} → Γ ⊩ A → Σ (Γ ⊢ A) NF
@@ -64,7 +64,7 @@ refl⊩* {A ∷ Γ} = ↑ (⌜v⌝ zero , ⌜v⌝-) ∷ ren⊩* wk⊆ refl⊩*
 ⟦ ⌜zero⌝         ⟧ vs = ⟦zero⟧
 ⟦ ⌜suc⌝ t        ⟧ vs = ⟦suc⟧ (⟦ t ⟧ vs)
 ⟦ ⌜rec⌝ tₙ t₀ tₛ ⟧ vs = ⟦rec⟧ (⟦ tₙ ⟧ vs) (⟦ t₀ ⟧ vs) λ { e (tₙ′ , pₙ′) e′ vₐ →
-                          ⟦ tₛ ⟧ (vₐ ∷ (_ , renNF e′ pₙ′) ∷ ren⊩* (trans⊆ e e′) vs) }
+                          ⟦ tₛ ⟧ (vₐ ∷ (_ , ren⊢NF e′ pₙ′) ∷ ren⊩* (trans⊆ e e′) vs) }
 
 nbe : ∀ {Γ A} → Γ ⊢ A → Σ (Γ ⊢ A) NF
 nbe t = ⟦ ⟦ t ⟧ ⟧⁻¹
