@@ -1,55 +1,6 @@
 module STLC-Base-Weak-NotEtaLong-ClosedSN where
 
 open import STLC-Base-Weak-NotEtaLong public
-open import STLC-Base-Properties public
-
-
-----------------------------------------------------------------------------------------------------
-
-cong$₁⇒* : ∀ {Γ A B} {t₁ t₁′ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} → t₁ ⇒* t₁′ →
-            t₁ ⌜$⌝ t₂ ⇒* t₁′ ⌜$⌝ t₂
-cong$₁⇒* done        = done
-cong$₁⇒* (step r rs) = step (cong$₁ r) (cong$₁⇒* rs)
-
-cong$₂⇒* : ∀ {Γ A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢ A} → NF t₁ → t₂ ⇒* t₂′ →
-            t₁ ⌜$⌝ t₂ ⇒* t₁ ⌜$⌝ t₂′
-cong$₂⇒* p₁ done        = done
-cong$₂⇒* p₁ (step r rs) = step (cong$₂ p₁ r) (cong$₂⇒* p₁ rs)
-
-
-----------------------------------------------------------------------------------------------------
-
--- iterated reduction to NF
-infix 4 _⇓_
-_⇓_ : ∀ {Γ A} → Γ ⊢ A → Γ ⊢ A → Set
-t ⇓ t′ = t ⇒* t′ × NF t′
-
-step⇓ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t′ ⇓ t″ → t ⇓ t″
-step⇓ r (rs′ , p″) = step r rs′ , p″
-
-skip⇓ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t ⇓ t″ → t′ ⇓ t″
-skip⇓ r (rs′ , p″) = skip⇒* r rs′ p″ , p″
-
--- determinism
-det⇓ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇓ t′ → t ⇓ t″ → t′ ≡ t″
-det⇓ (rs , p′) (rs′ , p″) = det⇒* rs p′ rs′ p″
-
--- uniqueness of proofs
-uni⇓ : ∀ {Γ A} {t t′ : Γ ⊢ A} (n n′ : t ⇓ t′) → n ≡ n′
-uni⇓ (rs , p′) (rs′ , p″) = _,_ & uni⇒* rs rs′ p′ ⊗ uniNF p′ p″
-
-
-----------------------------------------------------------------------------------------------------
-
--- weak normalization
-WN : ∀ {Γ A} → Γ ⊢ A → Set
-WN t = Σ _ λ t′ → t ⇓ t′
-
-stepWN : ∀ {Γ A} {t t′ :  Γ ⊢ A} → t ⇒ t′ → WN t′ → WN t
-stepWN r (t″ , n′) = t″ , step⇓ r n′
-
-skipWN : ∀ {Γ A} {t t′ :  Γ ⊢ A} → t ⇒ t′ → WN t → WN t′
-skipWN r (t″ , n′) = t″ , skip⇓ r n′
 
 
 ----------------------------------------------------------------------------------------------------

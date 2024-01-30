@@ -1,142 +1,6 @@
 module STLC-Base-Weak-NotEtaLong-OpenSN where
 
 open import STLC-Base-Weak-NotEtaLong public
-open import STLC-Base-Properties public
-
-
-----------------------------------------------------------------------------------------------------
-
-cong$₁⇒* : ∀ {Γ A B} {t₁ t₁′ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} → t₁ ⇒* t₁′ →
-            t₁ ⌜$⌝ t₂ ⇒* t₁′ ⌜$⌝ t₂
-cong$₁⇒* done        = done
-cong$₁⇒* (step r rs) = step (cong$₁ r) (cong$₁⇒* rs)
-
-cong$₂⇒* : ∀ {Γ A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢ A} → NF t₁ → t₂ ⇒* t₂′ →
-            t₁ ⌜$⌝ t₂ ⇒* t₁ ⌜$⌝ t₂′
-cong$₂⇒* p₁ done        = done
-cong$₂⇒* p₁ (step r rs) = step (cong$₂ p₁ r) (cong$₂⇒* p₁ rs)
-
-
-----------------------------------------------------------------------------------------------------
-
--- iterated reduction to NF
-infix 4 _⇓_
-_⇓_ : ∀ {Γ A} → Γ ⊢ A → Γ ⊢ A → Set
-t ⇓ t′ = t ⇒* t′ × NF t′
-
-step⇓ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t′ ⇓ t″ → t ⇓ t″
-step⇓ r (rs′ , p″) = step r rs′ , p″
-
-skip⇓ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t ⇓ t″ → t′ ⇓ t″
-skip⇓ r (rs′ , p″) = skip⇒* r rs′ p″ , p″
-
--- determinism
-det⇓ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇓ t′ → t ⇓ t″ → t′ ≡ t″
-det⇓ (rs , p′) (rs′ , p″) = det⇒* rs p′ rs′ p″
-
--- uniqueness of proofs
-uni⇓ : ∀ {Γ A} {t t′ : Γ ⊢ A} (n n′ : t ⇓ t′) → n ≡ n′
-uni⇓ (rs , p′) (rs′ , p″) = _,_ & uni⇒* rs rs′ p′ ⊗ uniNF p′ p″
-
-
-----------------------------------------------------------------------------------------------------
-
--- weak normalization
-WN : ∀ {Γ A} → Γ ⊢ A → Set
-WN t = Σ _ λ t′ → t ⇓ t′
-
-stepWN : ∀ {Γ A} {t t′ :  Γ ⊢ A} → t ⇒ t′ → WN t′ → WN t
-stepWN r (t″ , n′) = t″ , step⇓ r n′
-
-skipWN : ∀ {Γ A} {t t′ :  Γ ⊢ A} → t ⇒ t′ → WN t → WN t′
-skipWN r (t″ , n′) = t″ , skip⇓ r n′
-
-
-----------------------------------------------------------------------------------------------------
-
-lemren⇒ : ∀ {Γ Γ′ A B} (e : Γ ⊆ Γ′) (t₁ : A ∷ Γ ⊢ B) (t₂ : Γ ⊢ A) →
-           (_[ ren⊢ e t₂ ] ∘ ren⊢ (keep e)) t₁ ≡ (ren⊢ e ∘ _[ t₂ ]) t₁
-lemren⇒ e t₁ t₂ = eqsubren⊢ (ren⊢ e t₂ ∷ refl⊢*) (keep e) t₁ ⁻¹
-                 ⋮ (flip sub⊢ t₁ ∘ (ren⊢ e t₂ ∷_)) & ( ridget⊢* e
-                                                       ⋮ ridren⊢* e ⁻¹
-                                                       )
-                 ⋮ eqrensub⊢ e (t₂ ∷ refl⊢*) t₁
-
-ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇒ t′ → ren⊢ e t ⇒ ren⊢ e t′
-ren⇒ e (cong$₁ r₁)               = cong$₁ (ren⇒ e r₁)
-ren⇒ e (cong$₂ p₁ r₂)            = cong$₂ (renNF e p₁) (ren⇒ e r₂)
-ren⇒ e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (lemren⇒ e t₁ _ ⁻¹) (renNF e p₂)
-
-ren⇒* : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇒* t′ → ren⊢ e t ⇒* ren⊢ e t′
-ren⇒* e done        = done
-ren⇒* e (step r rs) = step (ren⇒ e r) (ren⇒* e rs)
-
-ren⇓ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇓ t′ → ren⊢ e t ⇓ ren⊢ e t′
-ren⇓ e (rs , p′) = ren⇒* e rs , renNF e p′
-
-renWN : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → WN t → WN (ren⊢ e t)
-renWN e (t′ , n) = ren⊢ e t′ , ren⇓ e n
-
-
-----------------------------------------------------------------------------------------------------
-
--- data NF* {Γ} : ∀ {Δ} → Γ ⊢* Δ → Set where
---   [] : NF* []
---   _∷_ : ∀ {A Δ} {t : Γ ⊢ A} {ts : Γ ⊢* Δ} → NF t → NF* ts → NF* (t ∷ ts)
-
--- TODO
-open ≡-Reasoning
-
-data NNF* {Γ} : ∀ {Δ} → Γ ⊢* Δ → Set where
-  [] : NNF* []
-  _∷_ : ∀ {A Δ} {t : Γ ⊢ A} {ts : Γ ⊢* Δ} → NNF t → NNF* ts → NNF* (t ∷ ts)
-
--- TODO
-sub∋NNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {i : Γ ∋ A} → NNF* ss → NNF (sub∋ ss i)
-sub∋NNF {i = zero}  (p ∷ ps) = p
-sub∋NNF {i = suc i} (p ∷ ps) = sub∋NNF ps
-
--- substitution
-mutual
-  subNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NF t → NF (sub⊢ ss t)
-  subNF ps ⌜λ⌝-    = ⌜λ⌝-
-  subNF ps (nnf p) = nnf (subNNF ps p)
-
-  subNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NNF t → NNF (sub⊢ ss t)
-  subNNF ps ⌜v⌝-        = sub∋NNF ps
-  subNNF ps (p₁ ⌜$⌝ p₂) = subNNF ps p₁ ⌜$⌝ subNF ps p₂
-
-lemsub⇒ : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : A ∷ Γ ⊢ B) (t₂ : Γ ⊢ A) →
-           (_[ sub⊢ ss t₂ ] ∘ sub⊢ (lift⊢* ss)) t₁ ≡ (sub⊢ ss ∘ _[ t₂ ]) t₁
-lemsub⇒ ss t₁ t₂ =
-    begin
-      (sub⊢ (sub⊢ ss t₂ ∷ id⊢*) ∘ sub⊢ (lift⊢* ss)) t₁
-    ≡˘⟨ compsub⊢ (sub⊢ ss t₂ ∷ id⊢*) (lift⊢* ss) t₁ ⟩
-      sub⊢ (sub⊢* (sub⊢ ss t₂ ∷ id⊢*) (lift⊢* ss)) t₁
-    ≡⟨ (flip sub⊢ t₁ ∘ (sub⊢ ss t₂ ∷_)) & (
-        begin
-          (sub⊢* (sub⊢ ss t₂ ∷ id⊢*) ∘ weak⊢*) ss
-        ≡˘⟨ eqsubren⊢* (sub⊢ ss t₂ ∷ id⊢*) (drop id⊆) ss ⟩
-          sub⊢* (get⊢* (drop id⊆) (sub⊢ ss t₂ ∷ id⊢*)) ss
-        ≡⟨⟩
-          sub⊢* (get⊢* id⊆ id⊢*) ss
-        ≡⟨ flip sub⊢* ss & lidget⊢* id⊢* ⟩
-          sub⊢* id⊢* ss
-        ≡⟨ lidsub⊢* ss ⟩
-          ss
-        ≡˘⟨ ridsub⊢* ss ⟩
-          sub⊢* ss id⊢*
-        ∎) ⟩
-      sub⊢ (sub⊢* ss (t₂ ∷ id⊢*)) t₁
-    ≡⟨ compsub⊢ ss (t₂ ∷ id⊢*) t₁ ⟩
-      (sub⊢ ss ∘ sub⊢ (t₂ ∷ id⊢*)) t₁
-    ∎
-
--- substitutivity
-sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → NNF* ss → t ⇒ t′ → sub⊢ ss t ⇒ sub⊢ ss t′
-sub⇒ ps (cong$₁ r₁)               = cong$₁ (sub⇒ ps r₁)
-sub⇒ ps (cong$₂ p₁ r₂)            = cong$₂ (subNF ps p₁) (sub⇒ ps r₂)
-sub⇒ ps (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (lemsub⇒ _ t₁ _ ⁻¹) (subNF ps p₂)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -148,15 +12,15 @@ mutual
 
   HWN! : ∀ {Γ A} → Γ ⊢ A → Set
   HWN!     {A = ⌜◦⌝}     t  = 𝟙
-  HWN! {Γ} {A = A ⌜⊃⌝ B} t₁ = ∀ {Γ′ t₂} (e : Γ ⊆ Γ′) → HWN (ren⊢ e t₂) → HWN (ren⊢ e (t₁ ⌜$⌝ t₂))
+  HWN! {Γ} {A = A ⌜⊃⌝ B} t₁ = ∀ {t₂} → HWN t₂ → HWN (t₁ ⌜$⌝ t₂)
 
 mutual
   stepHWN : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒ t′ → HWN t′ → HWN t
   stepHWN r (wn′ , hwn!′) = stepWN r wn′ , stepHWN! r hwn!′
 
   stepHWN! : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒ t′ → HWN! t′ → HWN! t
-  stepHWN! {A = ⌜◦⌝}          r unit         = unit
-  stepHWN! {A = A ⌜⊃⌝ B} {t₁} r f    e hwn₂′ = stepHWN (cong$₁ (ren⇒ e r)) (f e hwn₂′)
+  stepHWN! {A = ⌜◦⌝}          r unit       = unit
+  stepHWN! {A = A ⌜⊃⌝ B} {t₁} r f    hwn₂′ = stepHWN (cong$₁ r) (f hwn₂′)
 
 step⇒*HWN : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒* t′ → HWN t′ → HWN t
 step⇒*HWN done        hwn′ = hwn′
@@ -170,8 +34,8 @@ mutual
   skipHWN r (wn , hwn!) = skipWN r wn , skipHWN! r hwn!
 
   skipHWN! : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒ t′ → HWN! t → HWN! t′
-  skipHWN! {A = ⌜◦⌝}     r unit        = unit
-  skipHWN! {A = A ⌜⊃⌝ B} r f    e hwn₂ = skipHWN (cong$₁ (ren⇒ e r)) (f e hwn₂)
+  skipHWN! {A = ⌜◦⌝}     r unit      = unit
+  skipHWN! {A = A ⌜⊃⌝ B} r f    hwn₂ = skipHWN (cong$₁ r) (f hwn₂)
 
 skip⇒*HWN : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒* t′ → HWN t → HWN t′
 skip⇒*HWN done        hwn = hwn

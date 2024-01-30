@@ -13,6 +13,9 @@ data Ty : Set where
 
 open CtxKit Ty public
 
+
+----------------------------------------------------------------------------------------------------
+
 -- intrinsically well-typed terms
 infix 3 _⊢_
 infixl 18 _⌜$⌝_
@@ -72,6 +75,9 @@ unren⊢ e (t₁′ ⌜$⌝ t₂′)                 with unren⊢ e t₁′ | u
 ... | no ¬p₁          | _                 = no λ { (t₁ ⌜$⌝ t₂ , refl) → (t₁ , refl) ↯ ¬p₁ }
 ... | yes (t₁ , eq₁)  | no ¬p₂            = no λ { (t₁ ⌜$⌝ t₂ , refl) → (t₂ , refl) ↯ ¬p₂ }
 ... | yes (t₁ , refl) | yes (t₂ , refl)   = yes (t₁ ⌜$⌝ t₂ , refl)
+
+
+----------------------------------------------------------------------------------------------------
 
 -- substitution
 sub⊢ : ∀ {Γ Ξ A} → Ξ ⊢* Γ → Γ ⊢ A → Ξ ⊢ A
