@@ -11,6 +11,10 @@ join ##dependent on libera.chat
   “NbE: Dependent types and impredicativity”
   https://www.cse.chalmers.se/~abela/habil.pdf
 
+- Altenkirch (1993)
+  “Constructions, inductive types, and strong normalization”
+  http://www.cs.nott.ac.uk/~psztxa/publ/phd93.pdf
+
 - Coquand (2002)
   “A formalised proof of the soundness and completeness of a STLC with explicit substitutions”
   https://github.com/dpndnt/library/blob/master/doc/pdf/coquand-2002.pdf
@@ -22,6 +26,10 @@ join ##dependent on libera.chat
 - Kovacs (2017)
   “A machine-checked correctness proof of NbE for STLC”
   https://github.com/dpndnt/library/blob/master/doc/pdf/kovacs-2017.pdf
+
+- Schäfer (2019)
+  “Engineering formal systems in constructive type theory”
+  https://www.ps.uni-saarland.de/~schaefer/thesis/draft-screen.pdf
 
 
 ------------------------------------------------------------------------------------------------- -}
@@ -35,6 +43,7 @@ import STLC-Base
 import STLC-Base-Properties
 import STLC-Base-Weak-NotEtaLong
 import STLC-Base-Weak-NotEtaLong-ClosedSN
+-- import STLC-Base-Weak-NotEtaLong-OpenSN -- TODO
 import STLC-Base-Weak-NotEtaLong-ConcreteNbE
 import STLC-Base-Weak-NotEtaLong-AbstractNbE
 import STLC-Base-Weak-EtaLong

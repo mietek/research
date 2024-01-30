@@ -163,7 +163,7 @@ wn = proj₁ ∘ hwn
 
 ----------------------------------------------------------------------------------------------------
 
--- strong normalization
+-- strong normalization (Altenkirch)
 data SN {Γ A} (t : Γ ⊢ A) : Set where
   make : (∀ {t′} → t ⇒ t′ → SN t′) → SN t
 
