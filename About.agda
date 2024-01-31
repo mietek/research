@@ -86,8 +86,8 @@ _≝′_ = _≝_
 
 postulate
   -- Abel p.8: “substitution is meaning-preserving”
-  thmᵢ : ∀ {ℳ : Model} {W : World ℳ} {Γ A B} (t : A ∷ Γ ⊢ B) (s : Γ ⊢ A) (os : ℳ / W ⊩* Γ)  →
-         ⟦ t ⟧ (⟦ s ⟧ os ∷ os) ≡ ⟦ t [ s ] ⟧ os
+  thmᵢ : ∀ {ℳ : Model} {W : World ℳ} {Γ A B} (t : A ∷ Γ ⊢ B) (s : Γ ⊢ A) (vs : ℳ / W ⊩* Γ)  →
+         ⟦ t ⟧ (⟦ s ⟧ vs ∷ vs) ≡ ⟦ t [ s ] ⟧ vs
 
   -- completeness of definitional equality?
   thmⱼ : ∀ {ℳ : Model} {W : World ℳ} {Γ A} {t t′ : Γ ⊢ A} → ⟦ t ⟧ {ℳ} {W} ≡ ⟦ t′ ⟧ → t ≝ t′
@@ -99,7 +99,7 @@ postulate
   Eq : ∀ {ℳ : Model} {W : World ℳ} {A} → ℳ / W ⊩ A → ℳ / W ⊩ A → Set
 
   -- Coquand p.73
-  thm₁ : ∀ {Γ A} {o o′ : 𝒞 / Γ ⊩ A} → Eq {A = A} o o′ → ↓ {A = A} o ≡ ↓ o′
+  thm₁ : ∀ {Γ A} {v v′ : 𝒞 / Γ ⊩ A} → Eq {A = A} v v′ → ↓ {A = A} v ≡ ↓ v′
 
   -- Coquand p.73
   cor₁ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Eq {A = A} (⟦ t ⟧ vids) (⟦ t′ ⟧ vids) → nbe t ≡ nbe t′
@@ -113,8 +113,8 @@ postulate
   thm₃ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Eq {A = A} (⟦ t ⟧ vids) (⟦ t′ ⟧ vids) → t ≝ t′
 
   -- Coquand p.76: “soundness of conversion rules”
-  thm₄ : ∀ {ℳ : Model} {W : World ℳ} {Γ A} (t t′ : Γ ⊢ A) (os : ℳ / W ⊩* Γ) → t ≝ t′ →
-         Eq {A = A} (⟦ t ⟧ os) (⟦ t′ ⟧ os)
+  thm₄ : ∀ {ℳ : Model} {W : World ℳ} {Γ A} (t t′ : Γ ⊢ A) (vs : ℳ / W ⊩* Γ) → t ≝ t′ →
+         Eq {A = A} (⟦ t ⟧ vs) (⟦ t′ ⟧ vs)
 
   -- Coquand p.76: “correctness [soundness?] of decision algorithm for conversion”
   thm₅ : ∀ {Γ A} (t t′ : Γ ⊢ A) → nbe t ≡ nbe t′ → t ≝ t′
@@ -130,9 +130,9 @@ module _ where
   thm₆ : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ≝ t′ → nbe t ≡ nbe t′
   thm₆     refl≝                       = refl
   thm₆ {Γ} (sym≝ deq)                  with thmₖ {ℳ = 𝒞} {W = Γ} deq
-  ... | eq                               = cong (λ o → ↓ (o vids)) (sym eq)
+  ... | eq                               = cong (λ v → ↓ (v vids)) (sym eq)
   thm₆ {Γ} (trans≝ deq deq′)           with thmₖ {ℳ = 𝒞} {W = Γ} deq | thmₖ {ℳ = 𝒞} {W = Γ} deq′
-  ... | eq | eq′                         = cong (λ o → ↓ (o vids)) (trans eq eq′)
+  ... | eq | eq′                         = cong (λ v → ↓ (v vids)) (trans eq eq′)
   thm₆ {Γ} (cong$ {t₁ = t₁} {t₁′} {t₂} {t₂′} deq₁ deq₂)
     with thmₖ {ℳ = 𝒞} {W = Γ} deq₁ | thmₖ {ℳ = 𝒞} {W = Γ} deq₂
   ... | eq | eq′ = cong ↓ $
@@ -148,7 +148,7 @@ module _ where
       ⟦ ⌜λ⌝ t₁ ⌜$⌝ t₂ ⟧ vids
     ≡⟨⟩
       ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vrens id⊆ vids)
-    ≡⟨ cong (λ os → ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ os)) (sym (lemᵢ {Γ})) ⟩
+    ≡⟨ cong (λ vs → ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vs)) (sym (lemᵢ {Γ})) ⟩
       ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vids)
     ≡⟨ thmᵢ {ℳ = 𝒞} {W = Γ} t₁ t₂ vids ⟩
       ⟦ t₁ [ t₂ ] ⟧ vids
