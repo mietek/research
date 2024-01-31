@@ -71,8 +71,7 @@ data _≝_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
   congλ  : ∀ {A B} {t t′ : A ∷ Γ ⊢ B} (eq : t ≝ t′) → ⌜λ⌝ t ≝ ⌜λ⌝ t′
   cong$  : ∀ {A B} {t₁ t₁′ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢ A} (eq₁ : t₁ ≝ t₁′) (eq₂ : t₂ ≝ t₂′) →
            t₁ ⌜$⌝ t₂ ≝ t₁′ ⌜$⌝ t₂′
-  βred⊃  : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′ : Γ ⊢ B} (eq : t′ ≡ t₁ [ t₂ ]) →
-           ⌜λ⌝ t₁ ⌜$⌝ t₂ ≝ t′
+  βred⊃  : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) → ⌜λ⌝ t₁ ⌜$⌝ t₂ ≝ t′
   ηexp⊃  : ∀ {A B} {t t′ : Γ ⊢ A ⌜⊃⌝ B} (eq : t′ ≡ ⌜λ⌝ (weak t ⌜$⌝ ⌜v⌝ zero)) → t ≝ t′
 
 open ≝Kit (λ {Γ} {A} {t} → refl≝ {t = t}) sym≝ trans≝ public

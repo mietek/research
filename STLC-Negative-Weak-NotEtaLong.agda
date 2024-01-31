@@ -36,8 +36,7 @@ data _≝_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
               t₁ ⌜$⌝ t₂ ≝ t₁′ ⌜$⌝ t₂′
   congproj₁ : ∀ {A B} {t t′ : Γ ⊢ A ⌜∧⌝ B} (eq : t ≝ t′) → ⌜proj₁⌝ t ≝ ⌜proj₁⌝ t′
   congproj₂ : ∀ {A B} {t t′ : Γ ⊢ A ⌜∧⌝ B} (eq : t ≝ t′) → ⌜proj₂⌝ t ≝ ⌜proj₂⌝ t′
-  βred⊃     : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′ : Γ ⊢ B} (eq : t′ ≡ t₁ [ t₂ ]) →
-              ⌜λ⌝ t₁ ⌜$⌝ t₂ ≝ t′
+  βred⊃     : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) → ⌜λ⌝ t₁ ⌜$⌝ t₂ ≝ t′
   βred∧₁    : ∀ {A B} {t₁ : Γ ⊢ A} {t₂ : Γ ⊢ B} → ⌜proj₁⌝ (t₁ ⌜,⌝ t₂) ≝ t₁
   βred∧₂    : ∀ {A B} {t₁ : Γ ⊢ A} {t₂ : Γ ⊢ B} → ⌜proj₂⌝ (t₁ ⌜,⌝ t₂) ≝ t₂
 
@@ -55,8 +54,7 @@ data _⇒_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
               t₁ ⌜$⌝ t₂ ⇒ t₁ ⌜$⌝ t₂′
   congproj₁ : ∀ {A B} {t t′ : Γ ⊢ A ⌜∧⌝ B} (r : t ⇒ t′) → ⌜proj₁⌝ t ⇒ ⌜proj₁⌝ t′
   congproj₂ : ∀ {A B} {t t′ : Γ ⊢ A ⌜∧⌝ B} (r : t ⇒ t′) → ⌜proj₂⌝ t ⇒ ⌜proj₂⌝ t′
-  βred⊃     : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′ : Γ ⊢ B} (eq : t′ ≡ t₁ [ t₂ ])
-                (p₂ : NF t₂) →
+  βred⊃     : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) (p₂ : NF t₂) →
               ⌜λ⌝ t₁ ⌜$⌝ t₂ ⇒ t′
   βred∧₁    : ∀ {A B} {t₁ : Γ ⊢ A} {t₂ : Γ ⊢ B} → ⌜proj₁⌝ (t₁ ⌜,⌝ t₂) ⇒ t₁
   βred∧₂    : ∀ {A B} {t₁ : Γ ⊢ A} {t₂ : Γ ⊢ B} → ⌜proj₂⌝ (t₁ ⌜,⌝ t₂) ⇒ t₂

@@ -49,8 +49,7 @@ data _≝_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
   trans≝ : ∀ {A} {t t′ t″ : Γ ⊢ A} (eq : t ≝ t′) (eq′ : t′ ≝ t″) → t ≝ t″
   cong$  : ∀ {A B} {t₁ t₁′ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢ A} (eq₁ : t₁ ≝ t₁′) (eq₂ : t₂ ≝ t₂′) →
            t₁ ⌜$⌝ t₂ ≝ t₁′ ⌜$⌝ t₂′
-  βred⊃  : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′ : Γ ⊢ B} (eq : t′ ≡ t₁ [ t₂ ]) →
-           ⌜λ⌝ t₁ ⌜$⌝ t₂ ≝ t′
+  βred⊃  : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) → ⌜λ⌝ t₁ ⌜$⌝ t₂ ≝ t′
 
 open ≝Kit (λ {Γ} {A} {t} → refl≝ {t = t}) sym≝ trans≝ public
 
@@ -202,29 +201,6 @@ mutual
   renNNF e ⌜v⌝-        = ⌜v⌝-
   renNNF e (p₁ ⌜$⌝ p₂) = renNNF e p₁ ⌜$⌝ renNF e p₂
 
-module _ where
-  open ≡-Reasoning
-
-  renβred⊃ : ∀ {Γ Γ′ A B} (e : Γ ⊆ Γ′) (t₁ : A ∷ Γ ⊢ B) (t₂ : Γ ⊢ A) →
-             (_[ ren e t₂ ] ∘ ren (keep e)) t₁ ≡ (ren e ∘ _[ t₂ ]) t₁
-  renβred⊃ e t₁ t₂ =
-      begin
-        (sub (ren e t₂ ∷ ids) ∘ ren (keep e)) t₁
-      ≡⟨ eqsubren (ren e t₂ ∷ ids) (keep e) t₁ ⁻¹ ⟩
-        sub (gets (keep e) (ren e t₂ ∷ ids)) t₁
-      ≡⟨ (flip sub t₁ ∘ (ren e t₂ ∷_)) & (
-          begin
-            gets e ids
-          ≡⟨ ridgets e ⟩
-            vars e
-          ≡⟨ ridrens e ⁻¹ ⟩
-            rens e ids
-          ∎) ⟩
-        sub (ren e t₂ ∷ rens e ids) t₁
-      ≡⟨ eqrensub e (t₂ ∷ ids) t₁ ⟩
-        (ren e ∘ sub (t₂ ∷ ids)) t₁
-      ∎
-
 ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇒ t′ → ren e t ⇒ ren e t′
 ren⇒ e (cong$₁ r₁)               = cong$₁ (ren⇒ e r₁)
 ren⇒ e (cong$₂ p₁ r₂)            = cong$₂ (renNF e p₁) (ren⇒ e r₂)
@@ -246,35 +222,6 @@ mutual
   subNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NNF t → NNF (sub ss t)
   subNNF ps ⌜v⌝-        = sub∋NNF ps
   subNNF ps (p₁ ⌜$⌝ p₂) = subNNF ps p₁ ⌜$⌝ subNF ps p₂
-
-module _ where
-  open ≡-Reasoning
-
-  subβred⊃ : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : A ∷ Γ ⊢ B) (t₂ : Γ ⊢ A) →
-             (_[ sub ss t₂ ] ∘ sub (lifts ss)) t₁ ≡ (sub ss ∘ _[ t₂ ]) t₁
-  subβred⊃ ss t₁ t₂ =
-      begin
-        (sub (sub ss t₂ ∷ ids) ∘ sub (lifts ss)) t₁
-      ≡˘⟨ compsub (sub ss t₂ ∷ ids) (lifts ss) t₁ ⟩
-        sub (subs (sub ss t₂ ∷ ids) (lifts ss)) t₁
-      ≡⟨ (flip sub t₁ ∘ (sub ss t₂ ∷_)) & (
-          begin
-            (subs (sub ss t₂ ∷ ids) ∘ weaks) ss
-          ≡˘⟨ eqsubrens (sub ss t₂ ∷ ids) (drop id⊆) ss ⟩
-            subs (gets (drop id⊆) (sub ss t₂ ∷ ids)) ss
-          ≡⟨⟩
-            subs (gets id⊆ ids) ss
-          ≡⟨ flip subs ss & lidgets ids ⟩
-            subs ids ss
-          ≡⟨ lidsubs ss ⟩
-            ss
-          ≡˘⟨ ridsubs ss ⟩
-            subs ss ids
-          ∎) ⟩
-        sub (subs ss (t₂ ∷ ids)) t₁
-      ≡⟨ compsub ss (t₂ ∷ ids) t₁ ⟩
-        (sub ss ∘ sub (t₂ ∷ ids)) t₁
-      ∎
 
 sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → NNF* ss → t ⇒ t′ →
         sub ss t ⇒ sub ss t′

@@ -1,7 +1,7 @@
 module STLC-Base-Properties where
 
 open import Common-Properties public
-open import STLC-Base
+open import STLC-Base public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -31,8 +31,8 @@ eqweakren : ∀ {Γ Γ′ A B} (e : Γ ⊆ Γ′) (t : Γ ⊢ A) →
             (ren (keep {A = B} e) ∘ weak) t ≡ (weak ∘ ren e) t
 eqweakren e t = compren (keep e) wk⊆ t ⁻¹
               ⋮ (flip ren t ∘ drop) & ( rid⊆ e
-                                        ⋮ lid⊆ e ⁻¹
-                                        )
+                                      ⋮ lid⊆ e ⁻¹
+                                      )
               ⋮ compren wk⊆ e t
 
 eqweakrens : ∀ {Γ Γ′ Δ B} (e : Γ ⊆ Γ′) (ts : Γ ⊢* Δ) →
@@ -259,6 +259,66 @@ module _ (⚠ : Extensionality) where
               ; idƒ  = ⚠ idsub
               ; _∘ƒ_ = λ ss′ ss → ⚠ (compsub ss′ ss)
               }
+
+
+----------------------------------------------------------------------------------------------------
+
+-- stability under renaming
+module _ where
+  open ≡-Reasoning
+
+  renβred⊃ : ∀ {Γ Γ′ A B} (e : Γ ⊆ Γ′) (t₁ : A ∷ Γ ⊢ B) (t₂ : Γ ⊢ A) →
+             (_[ ren e t₂ ] ∘ ren (keep e)) t₁ ≡ (ren e ∘ _[ t₂ ]) t₁
+  renβred⊃ e t₁ t₂ =
+      begin
+        (sub (ren e t₂ ∷ ids) ∘ ren (keep e)) t₁
+      ≡⟨ eqsubren (ren e t₂ ∷ ids) (keep e) t₁ ⁻¹ ⟩
+        sub (gets (keep e) (ren e t₂ ∷ ids)) t₁
+      ≡⟨ (flip sub t₁ ∘ (ren e t₂ ∷_)) & (
+          begin
+            gets e ids
+          ≡⟨ ridgets e ⟩
+            vars e
+          ≡⟨ ridrens e ⁻¹ ⟩
+            rens e ids
+          ∎) ⟩
+        sub (ren e t₂ ∷ rens e ids) t₁
+      ≡⟨ eqrensub e (t₂ ∷ ids) t₁ ⟩
+        (ren e ∘ sub (t₂ ∷ ids)) t₁
+      ∎
+
+
+----------------------------------------------------------------------------------------------------
+
+-- stability under substitution
+module _ where
+  open ≡-Reasoning
+
+  subβred⊃ : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : A ∷ Γ ⊢ B) (t₂ : Γ ⊢ A) →
+             (_[ sub ss t₂ ] ∘ sub (lifts ss)) t₁ ≡ (sub ss ∘ _[ t₂ ]) t₁
+  subβred⊃ ss t₁ t₂ =
+      begin
+        (sub (sub ss t₂ ∷ ids) ∘ sub (lifts ss)) t₁
+      ≡˘⟨ compsub (sub ss t₂ ∷ ids) (lifts ss) t₁ ⟩
+        sub (subs (sub ss t₂ ∷ ids) (lifts ss)) t₁
+      ≡⟨ (flip sub t₁ ∘ (sub ss t₂ ∷_)) & (
+          begin
+            (subs (sub ss t₂ ∷ ids) ∘ weaks) ss
+          ≡˘⟨ eqsubrens (sub ss t₂ ∷ ids) (drop id⊆) ss ⟩
+            subs (gets (drop id⊆) (sub ss t₂ ∷ ids)) ss
+          ≡⟨⟩
+            subs (gets id⊆ ids) ss
+          ≡⟨ flip subs ss & lidgets ids ⟩
+            subs ids ss
+          ≡⟨ lidsubs ss ⟩
+            ss
+          ≡˘⟨ ridsubs ss ⟩
+            subs ss ids
+          ∎) ⟩
+        sub (subs ss (t₂ ∷ ids)) t₁
+      ≡⟨ compsub ss (t₂ ∷ ids) t₁ ⟩
+        (sub ss ∘ sub (t₂ ∷ ids)) t₁
+      ∎
 
 
 ----------------------------------------------------------------------------------------------------

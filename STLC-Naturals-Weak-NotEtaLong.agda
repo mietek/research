@@ -38,10 +38,9 @@ data _≝_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
   congrec : ∀ {A} {tₙ tₙ′ : Γ ⊢ ⌜ℕ⌝} {t₀ t₀′ : Γ ⊢ A} {tₛ tₛ′ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A}
               (eqₙ : tₙ ≝ tₙ′) (eq₀ : t₀ ≝ t₀′) (eqₛ : tₛ ≝ tₛ′) →
             ⌜rec⌝ tₙ t₀ tₛ ≝ ⌜rec⌝ tₙ′ t₀′ tₛ′
-  βred⊃   : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′ : Γ ⊢ B} (eq : t′ ≡ t₁ [ t₂ ]) →
-            ⌜λ⌝ t₁ ⌜$⌝ t₂ ≝ t′
+  βred⊃   : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) → ⌜λ⌝ t₁ ⌜$⌝ t₂ ≝ t′
   βredℕ₀  : ∀ {A} {t₀ : Γ ⊢ A} {tₛ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A} → ⌜rec⌝ ⌜zero⌝ t₀ tₛ ≝ t₀
-  βredℕₛ  : ∀ {A} {tₙ : Γ ⊢ ⌜ℕ⌝} {t₀ : Γ ⊢ A} {tₛ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A} {t′ : Γ ⊢ A}
+  βredℕₛ  : ∀ {A} {tₙ : Γ ⊢ ⌜ℕ⌝} {t₀ : Γ ⊢ A} {tₛ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A} {t′}
               (eq : t′ ≡ tₛ [ tₙ ∣ ⌜rec⌝ tₙ t₀ tₛ ]) →
             ⌜rec⌝ (⌜suc⌝ tₙ) t₀ tₛ ≝ t′
 
@@ -66,12 +65,11 @@ data _⇒_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
   congrecₛ : ∀ {A} {tₙ : Γ ⊢ ⌜ℕ⌝} {t₀ : Γ ⊢ A} {tₛ tₛ′ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A} (pₙ : NF tₙ)
                (p₀ : NF t₀) (rₛ : tₛ ⇒ tₛ′) →
              ⌜rec⌝ tₙ t₀ tₛ ⇒ ⌜rec⌝ tₙ t₀ tₛ′
-  βred⊃    : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′ : Γ ⊢ B} (eq : t′ ≡ t₁ [ t₂ ])
-               (p₂ : NF t₂) →
+  βred⊃    : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) (p₂ : NF t₂) →
              ⌜λ⌝ t₁ ⌜$⌝ t₂ ⇒ t′
   βredℕ₀   : ∀ {A} {t₀ : Γ ⊢ A} {tₛ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A} (p₀ : NF t₀) (pₛ : NF tₛ) →
              ⌜rec⌝ ⌜zero⌝ t₀ tₛ ⇒ t₀
-  βredℕₛ   : ∀ {A} {tₙ : Γ ⊢ ⌜ℕ⌝} {t₀ : Γ ⊢ A} {tₛ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A} {t′ : Γ ⊢ A}
+  βredℕₛ   : ∀ {A} {tₙ : Γ ⊢ ⌜ℕ⌝} {t₀ : Γ ⊢ A} {tₛ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A} {t′}
                (eq : t′ ≡ tₛ [ tₙ ∣ ⌜rec⌝ tₙ t₀ tₛ ]) (pₙ : NF (⌜suc⌝ tₙ)) (p₀ : NF t₀)
                (pₛ : NF tₛ) →
              ⌜rec⌝ (⌜suc⌝ tₙ) t₀ tₛ ⇒ t′

@@ -157,14 +157,14 @@ module _ {𝓍} {X : Set 𝓍} where
   wk⊆ : ∀ {Γ A} → Γ ⊆ A ∷ Γ
   wk⊆ = drop id⊆
 
-  trans⊆ : ∀ {Γ Γ′ Γ″} → Γ ⊆ Γ′ → Γ′ ⊆ Γ″ → Γ ⊆ Γ″
-  trans⊆ e        stop      = e
-  trans⊆ e        (drop e′) = drop (trans⊆ e e′)
-  trans⊆ (drop e) (keep e′) = drop (trans⊆ e e′)
-  trans⊆ (keep e) (keep e′) = keep (trans⊆ e e′)
-
   _∘⊆_ : ∀ {Γ Γ′ Γ″} → Γ′ ⊆ Γ″ → Γ ⊆ Γ′ → Γ ⊆ Γ″
-  _∘⊆_ = flip trans⊆
+  stop      ∘⊆ e        = e
+  (drop e′) ∘⊆ e        = drop (e′ ∘⊆ e)
+  (keep e′) ∘⊆ (drop e) = drop (e′ ∘⊆ e)
+  (keep e′) ∘⊆ (keep e) = keep (e′ ∘⊆ e)
+
+  trans⊆ : ∀ {Γ Γ′ Γ″} → Γ ⊆ Γ′ → Γ′ ⊆ Γ″ → Γ ⊆ Γ″
+  trans⊆ = flip _∘⊆_
 
   -- renaming of indices
   ren∋ : ∀ {Γ Γ′} {A : X} → Γ ⊆ Γ′ → Γ ∋ A → Γ′ ∋ A
