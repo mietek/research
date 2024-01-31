@@ -39,21 +39,21 @@ module _ where
     { to      = to eq′ ∘ to eq
     ; from    = from eq ∘ from eq′
     ; from∘to = λ x →
-        begin
-          from eq (from eq′ (to eq′ (to eq x)))
-        ≡⟨ from eq & from∘to eq′ (to eq x) ⟩
-          from eq (to eq x)
-        ≡⟨ from∘to eq x ⟩
-          x
-        ∎
+          begin
+            from eq (from eq′ (to eq′ (to eq x)))
+          ≡⟨ from eq & from∘to eq′ (to eq x) ⟩
+            from eq (to eq x)
+          ≡⟨ from∘to eq x ⟩
+            x
+          ∎
     ; to∘from = λ y →
-        begin
-          to eq′ (to eq (from eq (from eq′ y)))
-        ≡⟨ to eq′ & to∘from eq (from eq′ y) ⟩
-          to eq′ (from eq′ y)
-        ≡⟨ to∘from eq′ y ⟩
-          y
-        ∎
+          begin
+            to eq′ (to eq (from eq (from eq′ y)))
+          ≡⟨ to eq′ & to∘from eq (from eq′ y) ⟩
+            to eq′ (from eq′ y)
+          ≡⟨ to∘from eq′ y ⟩
+            y
+          ∎
     }
 
 ≡→≃ : ∀ {𝓍} {X X′ : Set 𝓍} → X ≡ X′ → X ≃ X′
@@ -116,12 +116,12 @@ module _ where
     ; from    = from leq ∘ from leq′
     ; from∘to = λ x →
         begin
-          from leq (from leq′ (to leq′ (to leq x)))
-        ≡⟨ from leq & from∘to leq′ (to leq x) ⟩
-          from leq (to leq x)
-        ≡⟨ from∘to leq x ⟩
-          x
-        ∎
+            from leq (from leq′ (to leq′ (to leq x)))
+          ≡⟨ from leq & from∘to leq′ (to leq x) ⟩
+            from leq (to leq x)
+          ≡⟨ from∘to leq x ⟩
+            x
+          ∎
     }
 
   antisym≲ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (leq : X ≲ Y) (leq′ : Y ≲ X) →
@@ -131,15 +131,15 @@ module _ where
     ; from    = from leq
     ; from∘to = from∘to leq
     ; to∘from = λ y →
-        begin
-          to leq (from leq y)
-        ≡⟨ to leq & cong-app eq′ y ⟩
-          to leq (to leq′ y)
-        ≡⟨ cong-app eq (to leq′ y) ⟩
-          from leq′ (to leq′ y)
-        ≡⟨ from∘to leq′ y ⟩
-          y
-        ∎
+          begin
+            to leq (from leq y)
+          ≡⟨ to leq & cong-app eq′ y ⟩
+            to leq (to leq′ y)
+          ≡⟨ cong-app eq (to leq′ y) ⟩
+            from leq′ (to leq′ y)
+          ≡⟨ from∘to leq′ y ⟩
+            y
+          ∎
     }
 
 ≃→≲ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} → X ≃ Y → X ≲ Y

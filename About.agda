@@ -136,23 +136,23 @@ module _ where
   thm₆ {Γ} (cong$ {t₁ = t₁} {t₁′} {t₂} {t₂′} deq₁ deq₂)
     with thmₖ {ℳ = 𝒞} {W = Γ} deq₁ | thmₖ {ℳ = 𝒞} {W = Γ} deq₂
   ... | eq | eq′ = cong ↓ $
-    begin
-      ⟦ t₁ ⟧ vids id⊆ (⟦ t₂ ⟧ vids)
-    ≡⟨ cong (⟦ t₁ ⟧ vids id⊆) (cong-app eq′ vids) ⟩
-      ⟦ t₁ ⟧ vids id⊆ (⟦ t₂′ ⟧ vids)
-    ≡⟨ cong-app (cong-app (cong-app′ (cong-app eq vids) {Γ}) id⊆) (⟦ t₂′ ⟧ vids) ⟩
-      ⟦ t₁′ ⟧ vids id⊆ (⟦ t₂′ ⟧ vids)
-    ∎
+      begin
+        ⟦ t₁ ⟧ vids id⊆ (⟦ t₂ ⟧ vids)
+      ≡⟨ cong (⟦ t₁ ⟧ vids id⊆) (cong-app eq′ vids) ⟩
+        ⟦ t₁ ⟧ vids id⊆ (⟦ t₂′ ⟧ vids)
+      ≡⟨ cong-app (cong-app (cong-app′ (cong-app eq vids) {Γ}) id⊆) (⟦ t₂′ ⟧ vids) ⟩
+        ⟦ t₁′ ⟧ vids id⊆ (⟦ t₂′ ⟧ vids)
+      ∎
   thm₆ {Γ} (βred⊃ {t₁ = t₁} {t₂} refl) = cong ↓ $
-    begin
-      ⟦ ⌜λ⌝ t₁ ⌜$⌝ t₂ ⟧ vids
-    ≡⟨⟩
-      ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vrens id⊆ vids)
-    ≡⟨ cong (λ vs → ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vs)) (sym (lemᵢ {Γ})) ⟩
-      ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vids)
-    ≡⟨ thmᵢ {ℳ = 𝒞} {W = Γ} t₁ t₂ vids ⟩
-      ⟦ t₁ [ t₂ ] ⟧ vids
-    ∎
+      begin
+        ⟦ ⌜λ⌝ t₁ ⌜$⌝ t₂ ⟧ vids
+      ≡⟨⟩
+        ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vrens id⊆ vids)
+      ≡⟨ cong (λ vs → ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vs)) (sym (lemᵢ {Γ})) ⟩
+        ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vids)
+      ≡⟨ thmᵢ {ℳ = 𝒞} {W = Γ} t₁ t₂ vids ⟩
+        ⟦ t₁ [ t₂ ] ⟧ vids
+      ∎
 
 -- Kovacs p.59: “decision procedure for conversion”
 module _ where
@@ -162,15 +162,15 @@ module _ where
   t ≝? t′      with proj₁ (nbe t) ≟ proj₁ (nbe t′)
   ... | no ¬eq   = no λ eq → cong proj₁ (thm₆ eq) ↯ ¬eq
   ... | yes eq   = yes $
-    begin
-      t
-    ≝⟨ thm₂ t ⟩
-      proj₁ (nbe t)
-    ≡⟨ eq ⟩
-      proj₁ (nbe t′)
-    ≝˘⟨ thm₂ t′ ⟩
-      t′
-    ∎
+      begin
+        t
+      ≝⟨ thm₂ t ⟩
+        proj₁ (nbe t)
+      ≡⟨ eq ⟩
+        proj₁ (nbe t′)
+      ≝˘⟨ thm₂ t′ ⟩
+        t′
+      ∎
 
 
 ----------------------------------------------------------------------------------------------------
