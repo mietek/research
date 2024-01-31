@@ -130,13 +130,13 @@ ridgets (keep e) = (⌜v⌝ zero ∷_) & ( eqrengets wk⊆ e ids
                                    )
 
 module _ (⚠ : Extensionality) where
-  ⟪getTms⟫ : ∀ (Γ : Ctx) → Presheaf ⟪⊆⟫ ℓzero
-  ⟪getTms⟫ Γ = record
-                 { ƒObj = Γ ⊢*_
-                 ; ƒ    = gets
-                 ; idƒ  = ⚠ lidgets
-                 ; _∘ƒ_ = λ e e′ → ⚠ (compgets e e′)
-                 }
+  ⟪gets⟫ : ∀ (Γ : Ctx) → Presheaf ⟪⊆⟫ ℓzero
+  ⟪gets⟫ Γ = record
+               { ƒObj = Γ ⊢*_
+               ; ƒ    = gets
+               ; idƒ  = ⚠ lidgets
+               ; _∘ƒ_ = λ e e′ → ⚠ (compgets e e′)
+               }
 
 
 ----------------------------------------------------------------------------------------------------
@@ -240,19 +240,19 @@ asssubs : ∀ {Γ Ξ Ξ′ Δ} (ss′ : Ξ′ ⊢* Ξ) (ss : Ξ ⊢* Γ) (ts : �
 asssubs ss′ ss []       = refl
 asssubs ss′ ss (t ∷ ts) = _∷_ & compsub ss′ ss t ⊗ asssubs ss′ ss ts
 
-⟪⊢*⟫ : Category ℓzero ℓzero
-⟪⊢*⟫ = record
-          { Obj  = Ctx
-          ; _▻_  = _⊢*_
-          ; id   = ids
-          ; _∘_  = flip subs
-          ; lid▻ = ridsubs
-          ; rid▻ = lidsubs
-          ; ass▻ = λ ss′ ss ts → asssubs ts ss ss′
-          }
+⟪subs⟫ : Category ℓzero ℓzero
+⟪subs⟫ = record
+           { Obj  = Ctx
+           ; _▻_  = _⊢*_
+           ; id   = ids
+           ; _∘_  = flip subs
+           ; lid▻ = ridsubs
+           ; rid▻ = lidsubs
+           ; ass▻ = λ ss′ ss ts → asssubs ts ss ss′
+           }
 
 module _ (⚠ : Extensionality) where
-  ⟪sub⟫ : ∀ (A : Ty) → Presheaf ⟪⊢*⟫ ℓzero
+  ⟪sub⟫ : ∀ (A : Ty) → Presheaf ⟪subs⟫ ℓzero
   ⟪sub⟫ A = record
               { ƒObj = _⊢ A
               ; ƒ    = sub
