@@ -229,6 +229,10 @@ module CtxKit (Ty : Set) where
       []  : Γ ⊢* []
       _∷_ : ∀ {A Δ} (t : Γ ⊢ A) (ts : Γ ⊢* Δ) → Γ ⊢* A ∷ Δ
 
+    -- TODO: consider using Data.List.Relation.Unary.All
+    -- _⊢*_ : Ctx → Ctx → Set
+    -- Γ ⊢* Δ = All (Γ ⊢_) Δ
+
 
 ----------------------------------------------------------------------------------------------------
 

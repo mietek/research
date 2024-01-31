@@ -173,5 +173,10 @@ mutual
   renNNF e (⌜proj₁⌝ p) = ⌜proj₁⌝ (renNNF e p)
   renNNF e (⌜proj₂⌝ p) = ⌜proj₂⌝ (renNNF e p)
 
+-- ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇒ t′ → ren e t ⇒ ren e t′
+-- ren⇒ e (cong$₁ r₁)               = cong$₁ (ren⇒ e r₁)
+-- ren⇒ e (cong$₂ p₁ r₂)            = cong$₂ (renNF e p₁) (ren⇒ e r₂)
+-- ren⇒ e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (renβred⊃ e t₁ _ ⁻¹) (renNF e p₂)
+
 
 ----------------------------------------------------------------------------------------------------
