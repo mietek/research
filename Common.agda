@@ -147,15 +147,15 @@ module _ {𝓍} {X : Set 𝓍} where
     drop : ∀ {Γ Γ′ A} (e : Γ ⊆ Γ′) → Γ ⊆ A ∷ Γ′
     keep : ∀ {Γ Γ′ A} (e : Γ ⊆ Γ′) → A ∷ Γ ⊆ A ∷ Γ′
 
-  refl⊆ : ∀ {Γ} → Γ ⊆ Γ
-  refl⊆ {[]}    = stop
-  refl⊆ {A ∷ Γ} = keep refl⊆
-
   id⊆ : ∀ {Γ} → Γ ⊆ Γ
-  id⊆ = refl⊆
+  id⊆ {[]}    = stop
+  id⊆ {A ∷ Γ} = keep id⊆
+
+  refl⊆ : ∀ {Γ} → Γ ⊆ Γ
+  refl⊆ = id⊆
 
   wk⊆ : ∀ {Γ A} → Γ ⊆ A ∷ Γ
-  wk⊆ = drop refl⊆
+  wk⊆ = drop id⊆
 
   trans⊆ : ∀ {Γ Γ′ Γ″} → Γ ⊆ Γ′ → Γ′ ⊆ Γ″ → Γ ⊆ Γ″
   trans⊆ e        stop      = e
@@ -234,36 +234,36 @@ module CtxKit (Ty : Set) where
 
     module RenKit
       (⌜v⌝ : ∀ {Γ A} → Γ ∋ A → Γ ⊢ A)
-      (ren⊢ : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A)
+      (ren : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A)
         where
-      weak⊢ : ∀ {Γ A B} → Γ ⊢ B → A ∷ Γ ⊢ B
-      weak⊢ t = ren⊢ wk⊆ t
+      weak : ∀ {Γ A B} → Γ ⊢ B → A ∷ Γ ⊢ B
+      weak t = ren wk⊆ t
 
       -- Kovacs: flip _ₛ∘ₑ_
-      ren⊢* : ∀ {Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⊢* Δ → Γ′ ⊢* Δ
-      ren⊢* e []       = []
-      ren⊢* e (t ∷ ts) = ren⊢ e t ∷ ren⊢* e ts
+      rens : ∀ {Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⊢* Δ → Γ′ ⊢* Δ
+      rens e []       = []
+      rens e (t ∷ ts) = ren e t ∷ rens e ts
 
-      weak⊢* : ∀ {Γ Δ A} → Γ ⊢* Δ → A ∷ Γ ⊢* Δ
-      weak⊢* ts = ren⊢* wk⊆ ts
+      weaks : ∀ {Γ Δ A} → Γ ⊢* Δ → A ∷ Γ ⊢* Δ
+      weaks ts = rens wk⊆ ts
 
-      lift⊢* : ∀ {Γ Δ A} → Γ ⊢* Δ → A ∷ Γ ⊢* A ∷ Δ
-      lift⊢* ts = ⌜v⌝ zero ∷ weak⊢* ts
+      lifts : ∀ {Γ Δ A} → Γ ⊢* Δ → A ∷ Γ ⊢* A ∷ Δ
+      lifts ts = ⌜v⌝ zero ∷ weaks ts
 
       -- Kovacs: ⌜_⌝ᵒᵖᵉ
-      ⊆→⊢* : ∀ {Γ Γ′} → Γ ⊆ Γ′ → Γ′ ⊢* Γ
-      ⊆→⊢* stop     = []
-      ⊆→⊢* (drop e) = weak⊢* (⊆→⊢* e)
-      ⊆→⊢* (keep e) = lift⊢* (⊆→⊢* e)
+      vars : ∀ {Γ Γ′} → Γ ⊆ Γ′ → Γ′ ⊢* Γ
+      vars stop     = []
+      vars (drop e) = weaks (vars e)
+      vars (keep e) = lifts (vars e)
 
       -- TODO: check if varying this affects anything
-      refl⊢* : ∀ {Γ} → Γ ⊢* Γ
-      refl⊢* {[]}    = []
-      refl⊢* {A ∷ Γ} = lift⊢* refl⊢*
-      -- refl⊢* = ⊆→⊢* refl⊆
+      ids : ∀ {Γ} → Γ ⊢* Γ
+      ids {[]}    = []
+      ids {A ∷ Γ} = lifts ids
+      -- ids = vars id⊆
 
-      id⊢* : ∀ {Γ} → Γ ⊢* Γ
-      id⊢* = refl⊢*
+      refls : ∀ {Γ} → Γ ⊢* Γ
+      refls = ids
 
       -- substitution of indices
       sub∋ : ∀ {Γ Ξ A} → Ξ ⊢* Γ → Γ ∋ A → Ξ ⊢ A
@@ -274,30 +274,30 @@ module CtxKit (Ty : Set) where
 ----------------------------------------------------------------------------------------------------
 
       module SubKit
-        (sub⊢ : ∀ {Γ Ξ A} → Ξ ⊢* Γ → Γ ⊢ A → Ξ ⊢ A)
+        (sub : ∀ {Γ Ξ A} → Ξ ⊢* Γ → Γ ⊢ A → Ξ ⊢ A)
           where
         -- Kovacs: flip _∘ₛ_
-        sub⊢* : ∀ {Γ Ξ Δ} → Ξ ⊢* Γ → Γ ⊢* Δ → Ξ ⊢* Δ
-        sub⊢* ss []       = []
-        sub⊢* ss (t ∷ ts) = sub⊢ ss t ∷ sub⊢* ss ts
+        subs : ∀ {Γ Ξ Δ} → Ξ ⊢* Γ → Γ ⊢* Δ → Ξ ⊢* Δ
+        subs ss []       = []
+        subs ss (t ∷ ts) = sub ss t ∷ subs ss ts
 
-        trans⊢* : ∀ {Γ Ξ Δ} → Ξ ⊢* Γ → Γ ⊢* Δ → Ξ ⊢* Δ
-        trans⊢* = sub⊢*
+        transs : ∀ {Γ Ξ Δ} → Ξ ⊢* Γ → Γ ⊢* Δ → Ξ ⊢* Δ
+        transs = subs
 
-        _∘⊢*_ : ∀ {Γ Ξ Δ} → Γ ⊢* Δ → Ξ ⊢* Γ → Ξ ⊢* Δ
-        _∘⊢*_ = flip trans⊢*
+        _∘s_ : ∀ {Γ Ξ Δ} → Γ ⊢* Δ → Ξ ⊢* Γ → Ξ ⊢* Δ
+        _∘s_ = flip transs
 
         _[_] : ∀ {Γ A B} → A ∷ Γ ⊢ B → Γ ⊢ A → Γ ⊢ B
-        t [ s ] = sub⊢ (s ∷ refl⊢*) t
+        t [ s ] = sub (s ∷ ids) t
 
         _[_∣_] : ∀ {Γ A B C} → B ∷ A ∷ Γ ⊢ C → Γ ⊢ A → Γ ⊢ B → Γ ⊢ C
-        t [ s₁ ∣ s₂ ] = sub⊢ (s₂ ∷ s₁ ∷ refl⊢*) t
+        t [ s₁ ∣ s₂ ] = sub (s₂ ∷ s₁ ∷ ids) t
 
         -- Kovacs: _ₑ∘ₛ_; flip?
-        get⊢* : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⊢* Δ′ → Γ ⊢* Δ
-        get⊢* stop     ts       = ts
-        get⊢* (drop e) (t ∷ ts) = get⊢* e ts
-        get⊢* (keep e) (t ∷ ts) = t ∷ get⊢* e ts
+        gets : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⊢* Δ′ → Γ ⊢* Δ
+        gets stop     ts       = ts
+        gets (drop e) (t ∷ ts) = gets e ts
+        gets (keep e) (t ∷ ts) = t ∷ gets e ts
 
 
 ----------------------------------------------------------------------------------------------------
@@ -307,11 +307,11 @@ module CtxKit (Ty : Set) where
       (NNF : ∀ {Γ A} → Γ ⊢ A → Set)
         where
       data NF* {Γ} : ∀ {Δ} → Γ ⊢* Δ → Set where
-        [] : NF* []
+        []  : NF* []
         _∷_ : ∀ {A Δ} {t : Γ ⊢ A} {ts : Γ ⊢* Δ} → NF t → NF* ts → NF* (t ∷ ts)
 
       data NNF* {Γ} : ∀ {Δ} → Γ ⊢* Δ → Set where
-        [] : NNF* []
+        []  : NNF* []
         _∷_ : ∀ {A Δ} {t : Γ ⊢ A} {ts : Γ ⊢* Δ} → NNF t → NNF* ts → NNF* (t ∷ ts)
 
 
@@ -478,7 +478,8 @@ module CtxKit (Ty : Set) where
           prog⇒ : ∀ {Γ A} (t : Γ ⊢ A) → Prog t
           prog⇒ t    with NF? t
           ... | yes p   = done p
-          ... | no ¬p   = let _ , r = ¬NF→RF ¬p in step r
+          ... | no ¬p   = let _ , r = ¬NF→RF ¬p
+                            in step r
 
           open ProgKit prog⇒ public hiding (NF? ; ¬NF→RF)
 
@@ -497,10 +498,10 @@ module CtxKit (Ty : Set) where
 ----------------------------------------------------------------------------------------------------
 
       module ⇒*Kit
-        {NF      : ∀ {Γ A} → Γ ⊢ A → Set}
-        (NF→¬R  : ∀ {Γ A} {t : Γ ⊢ A} → NF t → ¬R t)
-        (det⇒   : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t ⇒ t″ → t′ ≡ t″)
-        (uni⇒   : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒ t′) → r ≡ r′)
+        {NF     : ∀ {Γ A} → Γ ⊢ A → Set}
+        (NF→¬R : ∀ {Γ A} {t : Γ ⊢ A} → NF t → ¬R t)
+        (det⇒  : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t ⇒ t″ → t′ ≡ t″)
+        (uni⇒  : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒ t′) → r ≡ r′)
           where
         skip⇒* : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t ⇒* t″ → NF t″ → t′ ⇒* t″
         skip⇒* r done          p″ = r ↯ NF→¬R p″
@@ -539,8 +540,8 @@ module CtxKit (Ty : Set) where
 ----------------------------------------------------------------------------------------------------
 
   module ⊩Kit
-    (_⊩_  : Ctx → Ty → Set)
-    (ren⊩ : ∀ {W W′ A} → W ⊆ W′ → W ⊩ A → W′ ⊩ A)
+    (_⊩_ : Ctx → Ty → Set)
+    (vren : ∀ {W W′ A} → W ⊆ W′ → W ⊩ A → W′ ⊩ A)
       where
     -- semantic environments
     infix 3 _⊩*_
@@ -548,9 +549,9 @@ module CtxKit (Ty : Set) where
       []  : W ⊩* []
       _∷_ : ∀ {Δ A} (v : W ⊩ A) (vs : W ⊩* Δ) → W ⊩* A ∷ Δ
 
-    ren⊩* : ∀ {W W′ Δ} → W ⊆ W′ → W ⊩* Δ → W′ ⊩* Δ
-    ren⊩* e []       = []
-    ren⊩* e (v ∷ vs) = ren⊩ e v ∷ ren⊩* e vs
+    vrens : ∀ {W W′ Δ} → W ⊆ W′ → W ⊩* Δ → W′ ⊩* Δ
+    vrens e []       = []
+    vrens e (v ∷ vs) = vren e v ∷ vrens e vs
 
     infix 3 _⊨_
     _⊨_ : Ctx → Ty → Set
@@ -568,7 +569,7 @@ module CtxKit (Ty : Set) where
     {World : Model → Set}
     {_≤_   : ∀ (ℳ : Model) → World ℳ → World ℳ → Set}
     (_⊩_  : ∀ {ℳ} → World ℳ → Ty → Set)
-    (ren⊩ : ∀ {ℳ W W′ A} → _≤_ ℳ W W′ → W ⊩ A → W′ ⊩ A)
+    (vren : ∀ {ℳ W W′ A} → _≤_ ℳ W W′ → W ⊩ A → W′ ⊩ A)
       where
     module _ {ℳ : Model} where
       -- semantic environments
@@ -577,9 +578,9 @@ module CtxKit (Ty : Set) where
         []  : W ⊩* []
         _∷_ : ∀ {Δ A} (v : W ⊩ A) (vs : W ⊩* Δ) → W ⊩* A ∷ Δ
 
-      ren⊩* : ∀ {W W′ Δ} → _≤_ ℳ W W′ → W ⊩* Δ → W′ ⊩* Δ
-      ren⊩* e []       = []
-      ren⊩* e (v ∷ vs) = ren⊩ e v ∷ ren⊩* e vs
+      vrens : ∀ {W W′ Δ} → _≤_ ℳ W W′ → W ⊩* Δ → W′ ⊩* Δ
+      vrens e []       = []
+      vrens e (v ∷ vs) = vren e v ∷ vrens e vs
 
     infix 3 _/_⊩_
     _/_⊩_ : ∀ (ℳ : Model) (W : World ℳ) → Ty → Set
@@ -606,7 +607,7 @@ module CtxKit (Ty : Set) where
     {World      : ∀ {ℳ◦} → SplitModel ℳ◦ → Set}
     {_≤_        : ∀ {ℳ◦} (ℳ : SplitModel ℳ◦) → World ℳ → World ℳ → Set}
     (_⊩_       : ∀ {ℳ◦} (ℳ : SplitModel ℳ◦) → World ℳ → Ty → Set)
-    (ren⊩      : ∀ {ℳ◦} {ℳ : SplitModel ℳ◦} {W W′ A} → _≤_ ℳ W W′ → _⊩_ ℳ W A → _⊩_ ℳ W′ A)
+    (vren       : ∀ {ℳ◦} {ℳ : SplitModel ℳ◦} {W W′ A} → _≤_ ℳ W W′ → _⊩_ ℳ W A → _⊩_ ℳ W′ A)
       where
     module _ {ℳ◦} {ℳ : SplitModel ℳ◦} where
       -- semantic environments
@@ -615,9 +616,9 @@ module CtxKit (Ty : Set) where
         []  : W ⊩* []
         _∷_ : ∀ {Δ A} (v : _⊩_ ℳ W A) (vs : W ⊩* Δ) → W ⊩* A ∷ Δ
 
-      ren⊩* : ∀ {W W′ Δ} → _≤_ ℳ W W′ → W ⊩* Δ → W′ ⊩* Δ
-      ren⊩* e []       = []
-      ren⊩* e (v ∷ vs) = ren⊩ e v ∷ ren⊩* e vs
+      vrens : ∀ {W W′ Δ} → _≤_ ℳ W W′ → W ⊩* Δ → W′ ⊩* Δ
+      vrens e []       = []
+      vrens e (v ∷ vs) = vren e v ∷ vrens e vs
 
     infix 3 _/_⊩_
     _/_⊩_ : ∀ {ℳ◦} (ℳ : SplitModel ℳ◦) (W : World ℳ) → Ty → Set

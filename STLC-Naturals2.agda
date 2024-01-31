@@ -40,25 +40,25 @@ open ⊢*Kit _⊢_ public
 ----------------------------------------------------------------------------------------------------
 
 -- renaming
-ren⊢ : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
-ren⊢ e (⌜c⌝ k)     = ⌜c⌝ k
-ren⊢ e (⌜v⌝ i)     = ⌜v⌝ (ren∋ e i)
-ren⊢ e (⌜λ⌝ t)     = ⌜λ⌝ (ren⊢ (keep e) t)
-ren⊢ e (t₁ ⌜$⌝ t₂) = ren⊢ e t₁ ⌜$⌝ ren⊢ e t₂
+ren : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
+ren e (⌜c⌝ k)     = ⌜c⌝ k
+ren e (⌜v⌝ i)     = ⌜v⌝ (ren∋ e i)
+ren e (⌜λ⌝ t)     = ⌜λ⌝ (ren (keep e) t)
+ren e (t₁ ⌜$⌝ t₂) = ren e t₁ ⌜$⌝ ren e t₂
 
-open RenKit ⌜v⌝ ren⊢ public
+open RenKit ⌜v⌝ ren public
 
 
 ----------------------------------------------------------------------------------------------------
 
 -- substitution
-sub⊢ : ∀ {Γ Ξ A} → Ξ ⊢* Γ → Γ ⊢ A → Ξ ⊢ A
-sub⊢ ss (⌜c⌝ k)     = ⌜c⌝ k
-sub⊢ ss (⌜v⌝ i)     = sub∋ ss i
-sub⊢ ss (⌜λ⌝ t)     = ⌜λ⌝ (sub⊢ (lift⊢* ss) t)
-sub⊢ ss (t₁ ⌜$⌝ t₂) = sub⊢ ss t₁ ⌜$⌝ sub⊢ ss t₂
+sub : ∀ {Γ Ξ A} → Ξ ⊢* Γ → Γ ⊢ A → Ξ ⊢ A
+sub ss (⌜c⌝ k)     = ⌜c⌝ k
+sub ss (⌜v⌝ i)     = sub∋ ss i
+sub ss (⌜λ⌝ t)     = ⌜λ⌝ (sub (lifts ss) t)
+sub ss (t₁ ⌜$⌝ t₂) = sub ss t₁ ⌜$⌝ sub ss t₂
 
-open SubKit sub⊢ public
+open SubKit sub public
 
 
 ----------------------------------------------------------------------------------------------------

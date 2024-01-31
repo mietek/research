@@ -163,17 +163,17 @@ module _ (⚠ : Extensionality) where
 
 -- stability under renaming
 mutual
-  ren⊢NF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren⊢ e t)
-  ren⊢NF e ⌜λ⌝-    = ⌜λ⌝-
-  ren⊢NF e -⌜,⌝-   = -⌜,⌝-
-  ren⊢NF e ⌜unit⌝  = ⌜unit⌝
-  ren⊢NF e (nnf p) = nnf (ren⊢NNF e p)
+  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren e t)
+  renNF e ⌜λ⌝-    = ⌜λ⌝-
+  renNF e -⌜,⌝-   = -⌜,⌝-
+  renNF e ⌜unit⌝  = ⌜unit⌝
+  renNF e (nnf p) = nnf (renNNF e p)
 
-  ren⊢NNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren⊢ e t)
-  ren⊢NNF e ⌜v⌝-        = ⌜v⌝-
-  ren⊢NNF e (p₁ ⌜$⌝ p₂) = ren⊢NNF e p₁ ⌜$⌝ ren⊢NF e p₂
-  ren⊢NNF e (⌜proj₁⌝ p) = ⌜proj₁⌝ (ren⊢NNF e p)
-  ren⊢NNF e (⌜proj₂⌝ p) = ⌜proj₂⌝ (ren⊢NNF e p)
+  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren e t)
+  renNNF e ⌜v⌝-        = ⌜v⌝-
+  renNNF e (p₁ ⌜$⌝ p₂) = renNNF e p₁ ⌜$⌝ renNF e p₂
+  renNNF e (⌜proj₁⌝ p) = ⌜proj₁⌝ (renNNF e p)
+  renNNF e (⌜proj₂⌝ p) = ⌜proj₂⌝ (renNNF e p)
 
 
 ----------------------------------------------------------------------------------------------------

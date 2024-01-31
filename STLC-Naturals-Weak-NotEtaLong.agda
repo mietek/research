@@ -218,16 +218,16 @@ module _ (⚠ : Extensionality) where
 
 -- stability under renaming
 mutual
-  ren⊢NF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren⊢ e t)
-  ren⊢NF e ⌜λ⌝-      = ⌜λ⌝-
-  ren⊢NF e ⌜zero⌝    = ⌜zero⌝
-  ren⊢NF e (⌜suc⌝ p) = ⌜suc⌝ (ren⊢NF e p)
-  ren⊢NF e (nnf p)   = nnf (ren⊢NNF e p)
+  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren e t)
+  renNF e ⌜λ⌝-      = ⌜λ⌝-
+  renNF e ⌜zero⌝    = ⌜zero⌝
+  renNF e (⌜suc⌝ p) = ⌜suc⌝ (renNF e p)
+  renNF e (nnf p)   = nnf (renNNF e p)
 
-  ren⊢NNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren⊢ e t)
-  ren⊢NNF e ⌜v⌝-             = ⌜v⌝-
-  ren⊢NNF e (p₁ ⌜$⌝ p₂)      = ren⊢NNF e p₁ ⌜$⌝ ren⊢NF e p₂
-  ren⊢NNF e (⌜rec⌝ pₙ p₀ pₛ) = ⌜rec⌝ (ren⊢NNF e pₙ) (ren⊢NF e p₀) (ren⊢NF (keep (keep e)) pₛ)
+  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren e t)
+  renNNF e ⌜v⌝-             = ⌜v⌝-
+  renNNF e (p₁ ⌜$⌝ p₂)      = renNNF e p₁ ⌜$⌝ renNF e p₂
+  renNNF e (⌜rec⌝ pₙ p₀ pₛ) = ⌜rec⌝ (renNNF e pₙ) (renNF e p₀) (renNF (keep (keep e)) pₛ)
 
 
 ----------------------------------------------------------------------------------------------------

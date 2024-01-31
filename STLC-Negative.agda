@@ -19,6 +19,9 @@ A `⫗ B = (A ⌜⊃⌝ B) ⌜∧⌝ (B ⌜⊃⌝ A)
 
 open CtxKit Ty public
 
+
+----------------------------------------------------------------------------------------------------
+
 -- intrinsically well-typed terms
 infix 3 _⊢_
 infixl 18 _⌜$⌝_
@@ -37,28 +40,31 @@ open ⊢*Kit _⊢_ public
 ----------------------------------------------------------------------------------------------------
 
 -- renaming
-ren⊢ : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
-ren⊢ e (⌜v⌝ i)     = ⌜v⌝ (ren∋ e i)
-ren⊢ e (⌜λ⌝ t)     = ⌜λ⌝ (ren⊢ (keep e) t)
-ren⊢ e (t₁ ⌜$⌝ t₂) = ren⊢ e t₁ ⌜$⌝ ren⊢ e t₂
-ren⊢ e (t₁ ⌜,⌝ t₂) = ren⊢ e t₁ ⌜,⌝ ren⊢ e t₂
-ren⊢ e (⌜proj₁⌝ t) = ⌜proj₁⌝ (ren⊢ e t)
-ren⊢ e (⌜proj₂⌝ t) = ⌜proj₂⌝ (ren⊢ e t)
-ren⊢ e ⌜unit⌝      = ⌜unit⌝
+ren : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
+ren e (⌜v⌝ i)     = ⌜v⌝ (ren∋ e i)
+ren e (⌜λ⌝ t)     = ⌜λ⌝ (ren (keep e) t)
+ren e (t₁ ⌜$⌝ t₂) = ren e t₁ ⌜$⌝ ren e t₂
+ren e (t₁ ⌜,⌝ t₂) = ren e t₁ ⌜,⌝ ren e t₂
+ren e (⌜proj₁⌝ t) = ⌜proj₁⌝ (ren e t)
+ren e (⌜proj₂⌝ t) = ⌜proj₂⌝ (ren e t)
+ren e ⌜unit⌝      = ⌜unit⌝
 
-open RenKit ⌜v⌝ ren⊢ public
+open RenKit ⌜v⌝ ren public
+
+
+----------------------------------------------------------------------------------------------------
 
 -- substitution
-sub⊢ : ∀ {Γ Ξ A} → Ξ ⊢* Γ → Γ ⊢ A → Ξ ⊢ A
-sub⊢ ss (⌜v⌝ i)     = sub∋ ss i
-sub⊢ ss (⌜λ⌝ t)     = ⌜λ⌝ (sub⊢ (lift⊢* ss) t)
-sub⊢ ss (t₁ ⌜$⌝ t₂) = sub⊢ ss t₁ ⌜$⌝ sub⊢ ss t₂
-sub⊢ ss (t₁ ⌜,⌝ t₂) = sub⊢ ss t₁ ⌜,⌝ sub⊢ ss t₂
-sub⊢ ss (⌜proj₁⌝ t) = ⌜proj₁⌝ (sub⊢ ss t)
-sub⊢ ss (⌜proj₂⌝ t) = ⌜proj₂⌝ (sub⊢ ss t)
-sub⊢ ss ⌜unit⌝      = ⌜unit⌝
+sub : ∀ {Γ Ξ A} → Ξ ⊢* Γ → Γ ⊢ A → Ξ ⊢ A
+sub ss (⌜v⌝ i)     = sub∋ ss i
+sub ss (⌜λ⌝ t)     = ⌜λ⌝ (sub (lifts ss) t)
+sub ss (t₁ ⌜$⌝ t₂) = sub ss t₁ ⌜$⌝ sub ss t₂
+sub ss (t₁ ⌜,⌝ t₂) = sub ss t₁ ⌜,⌝ sub ss t₂
+sub ss (⌜proj₁⌝ t) = ⌜proj₁⌝ (sub ss t)
+sub ss (⌜proj₂⌝ t) = ⌜proj₂⌝ (sub ss t)
+sub ss ⌜unit⌝      = ⌜unit⌝
 
-open SubKit sub⊢ public
+open SubKit sub public
 
 
 ----------------------------------------------------------------------------------------------------

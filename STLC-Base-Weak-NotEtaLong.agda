@@ -128,13 +128,13 @@ module ProgAlt1 where
   ¬NF→RF {t = t₁ ⌜$⌝ t₂}     ¬p                   with NNF? t₁ | NF? t₂
   ¬NF→RF {t = _ ⌜$⌝ _}       ¬p | yes p₁ | yes p₂   = nnf (p₁ ⌜$⌝ p₂) ↯ ¬p
   ¬NF→RF {t = _ ⌜$⌝ _}       ¬p | yes p₁ | no ¬p₂   = let _ , r₂ = ¬NF→RF ¬p₂
-                                                       in  _ , cong$₂ (nnf p₁) r₂
+                                                         in  _ , cong$₂ (nnf p₁) r₂
   ¬NF→RF {t = ⌜v⌝ _ ⌜$⌝ _}   ¬p | no ¬p₁ | _        = ⌜v⌝- ↯ ¬p₁
   ¬NF→RF {t = ⌜λ⌝ _ ⌜$⌝ _}   ¬p | no ¬p₁ | yes p₂   = _ , βred⊃ refl p₂
   ¬NF→RF {t = ⌜λ⌝ _ ⌜$⌝ _}   ¬p | no ¬p₁ | no ¬p₂   = let _ , r₂ = ¬NF→RF ¬p₂
-                                                       in  _ , cong$₂ ⌜λ⌝- r₂
+                                                         in  _ , cong$₂ ⌜λ⌝- r₂
   ¬NF→RF {t = _ ⌜$⌝ _ ⌜$⌝ _} ¬p | no ¬p₁ | _        = let _ , r₁ = ¬NF→RF λ { (nnf p₁) → p₁ ↯ ¬p₁ }
-                                                       in  _ , cong$₁ r₁
+                                                         in  _ , cong$₁ r₁
 
   open NF?Kit NF? ¬NF→RF
 
@@ -194,41 +194,41 @@ module _ (⚠ : Extensionality) where
 
 -- stability under renaming
 mutual
-  ren⊢NF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren⊢ e t)
-  ren⊢NF e ⌜λ⌝-    = ⌜λ⌝-
-  ren⊢NF e (nnf p) = nnf (ren⊢NNF e p)
+  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren e t)
+  renNF e ⌜λ⌝-    = ⌜λ⌝-
+  renNF e (nnf p) = nnf (renNNF e p)
 
-  ren⊢NNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren⊢ e t)
-  ren⊢NNF e ⌜v⌝-        = ⌜v⌝-
-  ren⊢NNF e (p₁ ⌜$⌝ p₂) = ren⊢NNF e p₁ ⌜$⌝ ren⊢NF e p₂
+  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren e t)
+  renNNF e ⌜v⌝-        = ⌜v⌝-
+  renNNF e (p₁ ⌜$⌝ p₂) = renNNF e p₁ ⌜$⌝ renNF e p₂
 
 module _ where
   open ≡-Reasoning
 
-  ren⊢βred⊃ : ∀ {Γ Γ′ A B} (e : Γ ⊆ Γ′) (t₁ : A ∷ Γ ⊢ B) (t₂ : Γ ⊢ A) →
-               (_[ ren⊢ e t₂ ] ∘ ren⊢ (keep e)) t₁ ≡ (ren⊢ e ∘ _[ t₂ ]) t₁
-  ren⊢βred⊃ e t₁ t₂ =
+  renβred⊃ : ∀ {Γ Γ′ A B} (e : Γ ⊆ Γ′) (t₁ : A ∷ Γ ⊢ B) (t₂ : Γ ⊢ A) →
+             (_[ ren e t₂ ] ∘ ren (keep e)) t₁ ≡ (ren e ∘ _[ t₂ ]) t₁
+  renβred⊃ e t₁ t₂ =
       begin
-        (sub⊢ (ren⊢ e t₂ ∷ id⊢*) ∘ ren⊢ (keep e)) t₁
-      ≡⟨ eqsubren⊢ (ren⊢ e t₂ ∷ id⊢*) (keep e) t₁ ⁻¹ ⟩
-        sub⊢ (get⊢* (keep e) (ren⊢ e t₂ ∷ id⊢*)) t₁
-      ≡⟨ (flip sub⊢ t₁ ∘ (ren⊢ e t₂ ∷_)) & (
+        (sub (ren e t₂ ∷ ids) ∘ ren (keep e)) t₁
+      ≡⟨ eqsubren (ren e t₂ ∷ ids) (keep e) t₁ ⁻¹ ⟩
+        sub (gets (keep e) (ren e t₂ ∷ ids)) t₁
+      ≡⟨ (flip sub t₁ ∘ (ren e t₂ ∷_)) & (
           begin
-            get⊢* e id⊢*
-          ≡⟨ ridget⊢* e ⟩
-            ⊆→⊢* e
-          ≡⟨ ridren⊢* e ⁻¹ ⟩
-            ren⊢* e id⊢*
+            gets e ids
+          ≡⟨ ridgets e ⟩
+            vars e
+          ≡⟨ ridrens e ⁻¹ ⟩
+            rens e ids
           ∎) ⟩
-        sub⊢ (ren⊢ e t₂ ∷ ren⊢* e id⊢*) t₁
-      ≡⟨ eqrensub⊢ e (t₂ ∷ id⊢*) t₁ ⟩
-        (ren⊢ e ∘ sub⊢ (t₂ ∷ id⊢*)) t₁
+        sub (ren e t₂ ∷ rens e ids) t₁
+      ≡⟨ eqrensub e (t₂ ∷ ids) t₁ ⟩
+        (ren e ∘ sub (t₂ ∷ ids)) t₁
       ∎
 
-ren⊢⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇒ t′ → ren⊢ e t ⇒ ren⊢ e t′
-ren⊢⇒ e (cong$₁ r₁)               = cong$₁ (ren⊢⇒ e r₁)
-ren⊢⇒ e (cong$₂ p₁ r₂)            = cong$₂ (ren⊢NF e p₁) (ren⊢⇒ e r₂)
-ren⊢⇒ e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (ren⊢βred⊃ e t₁ _ ⁻¹) (ren⊢NF e p₂)
+ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇒ t′ → ren e t ⇒ ren e t′
+ren⇒ e (cong$₁ r₁)               = cong$₁ (ren⇒ e r₁)
+ren⇒ e (cong$₂ p₁ r₂)            = cong$₂ (renNF e p₁) (ren⇒ e r₂)
+ren⇒ e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (renβred⊃ e t₁ _ ⁻¹) (renNF e p₂)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -239,147 +239,141 @@ sub∋NNF {i = zero}  (p ∷ ps) = p
 sub∋NNF {i = suc i} (p ∷ ps) = sub∋NNF ps
 
 mutual
-  sub⊢NF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NF t → NF (sub⊢ ss t)
-  sub⊢NF ps ⌜λ⌝-    = ⌜λ⌝-
-  sub⊢NF ps (nnf p) = nnf (sub⊢NNF ps p)
+  subNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NF t → NF (sub ss t)
+  subNF ps ⌜λ⌝-    = ⌜λ⌝-
+  subNF ps (nnf p) = nnf (subNNF ps p)
 
-  sub⊢NNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NNF t → NNF (sub⊢ ss t)
-  sub⊢NNF ps ⌜v⌝-        = sub∋NNF ps
-  sub⊢NNF ps (p₁ ⌜$⌝ p₂) = sub⊢NNF ps p₁ ⌜$⌝ sub⊢NF ps p₂
+  subNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NNF t → NNF (sub ss t)
+  subNNF ps ⌜v⌝-        = sub∋NNF ps
+  subNNF ps (p₁ ⌜$⌝ p₂) = subNNF ps p₁ ⌜$⌝ subNF ps p₂
 
 module _ where
   open ≡-Reasoning
 
-  sub⊢βred⊃ : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : A ∷ Γ ⊢ B) (t₂ : Γ ⊢ A) →
-               (_[ sub⊢ ss t₂ ] ∘ sub⊢ (lift⊢* ss)) t₁ ≡ (sub⊢ ss ∘ _[ t₂ ]) t₁
-  sub⊢βred⊃ ss t₁ t₂ =
+  subβred⊃ : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : A ∷ Γ ⊢ B) (t₂ : Γ ⊢ A) →
+             (_[ sub ss t₂ ] ∘ sub (lifts ss)) t₁ ≡ (sub ss ∘ _[ t₂ ]) t₁
+  subβred⊃ ss t₁ t₂ =
       begin
-        (sub⊢ (sub⊢ ss t₂ ∷ id⊢*) ∘ sub⊢ (lift⊢* ss)) t₁
-      ≡˘⟨ compsub⊢ (sub⊢ ss t₂ ∷ id⊢*) (lift⊢* ss) t₁ ⟩
-        sub⊢ (sub⊢* (sub⊢ ss t₂ ∷ id⊢*) (lift⊢* ss)) t₁
-      ≡⟨ (flip sub⊢ t₁ ∘ (sub⊢ ss t₂ ∷_)) & (
+        (sub (sub ss t₂ ∷ ids) ∘ sub (lifts ss)) t₁
+      ≡˘⟨ compsub (sub ss t₂ ∷ ids) (lifts ss) t₁ ⟩
+        sub (subs (sub ss t₂ ∷ ids) (lifts ss)) t₁
+      ≡⟨ (flip sub t₁ ∘ (sub ss t₂ ∷_)) & (
           begin
-            (sub⊢* (sub⊢ ss t₂ ∷ id⊢*) ∘ weak⊢*) ss
-          ≡˘⟨ eqsubren⊢* (sub⊢ ss t₂ ∷ id⊢*) (drop id⊆) ss ⟩
-            sub⊢* (get⊢* (drop id⊆) (sub⊢ ss t₂ ∷ id⊢*)) ss
+            (subs (sub ss t₂ ∷ ids) ∘ weaks) ss
+          ≡˘⟨ eqsubrens (sub ss t₂ ∷ ids) (drop id⊆) ss ⟩
+            subs (gets (drop id⊆) (sub ss t₂ ∷ ids)) ss
           ≡⟨⟩
-            sub⊢* (get⊢* id⊆ id⊢*) ss
-          ≡⟨ flip sub⊢* ss & lidget⊢* id⊢* ⟩
-            sub⊢* id⊢* ss
-          ≡⟨ lidsub⊢* ss ⟩
+            subs (gets id⊆ ids) ss
+          ≡⟨ flip subs ss & lidgets ids ⟩
+            subs ids ss
+          ≡⟨ lidsubs ss ⟩
             ss
-          ≡˘⟨ ridsub⊢* ss ⟩
-            sub⊢* ss id⊢*
+          ≡˘⟨ ridsubs ss ⟩
+            subs ss ids
           ∎) ⟩
-        sub⊢ (sub⊢* ss (t₂ ∷ id⊢*)) t₁
-      ≡⟨ compsub⊢ ss (t₂ ∷ id⊢*) t₁ ⟩
-        (sub⊢ ss ∘ sub⊢ (t₂ ∷ id⊢*)) t₁
+        sub (subs ss (t₂ ∷ ids)) t₁
+      ≡⟨ compsub ss (t₂ ∷ ids) t₁ ⟩
+        (sub ss ∘ sub (t₂ ∷ ids)) t₁
       ∎
 
-sub⊢⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → NNF* ss → t ⇒ t′ →
-          sub⊢ ss t ⇒ sub⊢ ss t′
-sub⊢⇒ ps (cong$₁ r₁)               = cong$₁ (sub⊢⇒ ps r₁)
-sub⊢⇒ ps (cong$₂ p₁ r₂)            = cong$₂ (sub⊢NF ps p₁) (sub⊢⇒ ps r₂)
-sub⊢⇒ ps (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (sub⊢βred⊃ _ t₁ _ ⁻¹) (sub⊢NF ps p₂)
+sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → NNF* ss → t ⇒ t′ →
+        sub ss t ⇒ sub ss t′
+sub⇒ ps (cong$₁ r₁)               = cong$₁ (sub⇒ ps r₁)
+sub⇒ ps (cong$₂ p₁ r₂)            = cong$₂ (subNF ps p₁) (sub⇒ ps r₂)
+sub⇒ ps (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (subβred⊃ _ t₁ _ ⁻¹) (subNF ps p₂)
 
 
 ----------------------------------------------------------------------------------------------------
 
 -- β-short not-η-long weak normal forms (direct)
 mutual
-  infix 3 _⋘_
-  data _⋘_ (Γ : Ctx) : Ty → Set where
-    ⌜λ⌝ : ∀ {A B} (t : A ∷ Γ ⊢ B) → Γ ⋘ A ⌜⊃⌝ B
-    nnf : ∀ {A} (t : Γ ⋙ A) → Γ ⋘ A
+  infix 3 _⊢≪_
+  data _⊢≪_ (Γ : Ctx) : Ty → Set where
+    ⌜λ⌝ : ∀ {A B} (t : A ∷ Γ ⊢ B) → Γ ⊢≪ A ⌜⊃⌝ B
+    nnf : ∀ {A} (t : Γ ⊢≫ A) → Γ ⊢≪ A
 
-  infix 3 _⋙_
-  data _⋙_ (Γ : Ctx) : Ty → Set where
-    ⌜v⌝   : ∀ {A} (i : Γ ∋ A) → Γ ⋙ A
-    _⌜$⌝_ : ∀ {A B} (t₁ : Γ ⋙ A ⌜⊃⌝ B) (t₂ : Γ ⋘ A) → Γ ⋙ B
+  infix 3 _⊢≫_
+  data _⊢≫_ (Γ : Ctx) : Ty → Set where
+    ⌜v⌝   : ∀ {A} (i : Γ ∋ A) → Γ ⊢≫ A
+    _⌜$⌝_ : ∀ {A B} (t₁ : Γ ⊢≫ A ⌜⊃⌝ B) (t₂ : Γ ⊢≪ A) → Γ ⊢≫ B
 
 -- equivalence
 mutual
-  ⋘→NF : ∀ {Γ A} → Γ ⋘ A → Σ (Γ ⊢ A) NF
-  ⋘→NF (⌜λ⌝ t) = ⌜λ⌝ t , ⌜λ⌝-
-  ⋘→NF (nnf t) with ⋙→NNF t
+  ⊢≪→NF : ∀ {Γ A} → Γ ⊢≪ A → Σ (Γ ⊢ A) NF
+  ⊢≪→NF (⌜λ⌝ t) = ⌜λ⌝ t , ⌜λ⌝-
+  ⊢≪→NF (nnf t) with ⊢≫→NNF t
   ... | t′ , p′    = t′ , nnf p′
 
-  ⋙→NNF : ∀ {Γ A} → Γ ⋙ A → Σ (Γ ⊢ A) NNF
-  ⋙→NNF (⌜v⌝ i)             = ⌜v⌝ i , ⌜v⌝-
-  ⋙→NNF (t₁ ⌜$⌝ t₂)         with ⋙→NNF t₁ | ⋘→NF t₂
+  ⊢≫→NNF : ∀ {Γ A} → Γ ⊢≫ A → Σ (Γ ⊢ A) NNF
+  ⊢≫→NNF (⌜v⌝ i)             = ⌜v⌝ i , ⌜v⌝-
+  ⊢≫→NNF (t₁ ⌜$⌝ t₂)         with ⊢≫→NNF t₁ | ⊢≪→NF t₂
   ... | t₁′ , p₁′ | t₂′ , p₂′   = t₁′ ⌜$⌝ t₂′ , p₁′ ⌜$⌝ p₂′
 
 mutual
-  NF→⋘ : ∀ {Γ A} → Σ (Γ ⊢ A) NF → Γ ⋘ A
-  NF→⋘ (.(⌜λ⌝ t) , ⌜λ⌝- {t = t}) = ⌜λ⌝ t
-  NF→⋘ (t , nnf p)               = nnf (NNF→⋙ (t , p))
+  NF→⊢≪ : ∀ {Γ A} → Σ (Γ ⊢ A) NF → Γ ⊢≪ A
+  NF→⊢≪ (.(⌜λ⌝ t) , ⌜λ⌝- {t = t}) = ⌜λ⌝ t
+  NF→⊢≪ (t , nnf p)               = nnf (NNF→⊢≫ (t , p))
 
-  NNF→⋙ : ∀ {Γ A} → Σ (Γ ⊢ A) NNF → Γ ⋙ A
-  NNF→⋙ (⌜v⌝ i , ⌜v⌝-)          = ⌜v⌝ i
-  NNF→⋙ (t₁ ⌜$⌝ t₂ , p₁ ⌜$⌝ p₂) = NNF→⋙ (t₁ , p₁) ⌜$⌝ NF→⋘ (t₂ , p₂)
+  NNF→⊢≫ : ∀ {Γ A} → Σ (Γ ⊢ A) NNF → Γ ⊢≫ A
+  NNF→⊢≫ (⌜v⌝ i , ⌜v⌝-)          = ⌜v⌝ i
+  NNF→⊢≫ (t₁ ⌜$⌝ t₂ , p₁ ⌜$⌝ p₂) = NNF→⊢≫ (t₁ , p₁) ⌜$⌝ NF→⊢≪ (t₂ , p₂)
 
 -- isomorphism
 mutual
-  id⋘⇄NF : ∀ {Γ A} (t : Γ ⋘ A) → (NF→⋘ ∘ ⋘→NF) t ≡ t
-  id⋘⇄NF (⌜λ⌝ t) = refl
-  id⋘⇄NF (nnf t) = nnf & id⋙⇄NNF t
+  id⊢≪⇄NF : ∀ {Γ A} (t : Γ ⊢≪ A) → (NF→⊢≪ ∘ ⊢≪→NF) t ≡ t
+  id⊢≪⇄NF (⌜λ⌝ t) = refl
+  id⊢≪⇄NF (nnf t) = nnf & id⊢≫⇄NNF t
 
-  id⋙⇄NNF : ∀ {Γ A} (t : Γ ⋙ A) → (NNF→⋙ ∘ ⋙→NNF) t ≡ t
-  id⋙⇄NNF (⌜v⌝ i)     = refl
-  id⋙⇄NNF (t₁ ⌜$⌝ t₂) = _⌜$⌝_ & id⋙⇄NNF t₁ ⊗ id⋘⇄NF t₂
+  id⊢≫⇄NNF : ∀ {Γ A} (t : Γ ⊢≫ A) → (NNF→⊢≫ ∘ ⊢≫→NNF) t ≡ t
+  id⊢≫⇄NNF (⌜v⌝ i)     = refl
+  id⊢≫⇄NNF (t₁ ⌜$⌝ t₂) = _⌜$⌝_ & id⊢≫⇄NNF t₁ ⊗ id⊢≪⇄NF t₂
 
 module _ where
   open ≡-Reasoning
 
   mutual
-    idNF⇄⋘ : ∀ {Γ A} (tp : Σ (Γ ⊢ A) NF) → (⋘→NF ∘ NF→⋘) tp ≡ tp
-    idNF⇄⋘ (.(⌜λ⌝ t) , ⌜λ⌝- {t = t}) = refl
-    idNF⇄⋘ (t , nnf p)               =
-      let
-        eqₜ : proj₁ (⋙→NNF (NNF→⋙ (t , p))) ≡ t
-        eqₜ = cong proj₁ (idNNF⇄⋙ (t , p))
+    idNF⇄⊢≪ : ∀ {Γ A} (tp : Σ (Γ ⊢ A) NF) → (⊢≪→NF ∘ NF→⊢≪) tp ≡ tp
+    idNF⇄⊢≪ (.(⌜λ⌝ t) , ⌜λ⌝- {t = t}) = refl
+    idNF⇄⊢≪ (t , nnf p)               =
+      let eqₜ : proj₁ (⊢≫→NNF (NNF→⊢≫ (t , p))) ≡ t
+          eqₜ = cong proj₁ (idNNF⇄⊢≫ (t , p))
+          eqₚ : nnf (proj₂ (⊢≫→NNF (NNF→⊢≫ (t , p)))) ≅ nnf p
+          eqₚ = cong≅ (NF.nnf ∘ proj₂) (≡→≅ (idNNF⇄⊢≫ (t , p)))
+        in begin
+             proj₁ (⊢≫→NNF (NNF→⊢≫ (t , p))) , nnf (proj₂ (⊢≫→NNF (NNF→⊢≫ (t , p))))
+           ≡⟨ ≅→≡ (cong₂≅ _,_ (≡→≅ eqₜ) eqₚ) ⟩
+             t , nnf p
+           ∎
 
-        eqₚ : nnf (proj₂ (⋙→NNF (NNF→⋙ (t , p)))) ≅ nnf p
-        eqₚ = cong≅ (NF.nnf ∘ proj₂) (≡→≅ (idNNF⇄⋙ (t , p)))
-      in
-        begin
-          proj₁ (⋙→NNF (NNF→⋙ (t , p))) , nnf (proj₂ (⋙→NNF (NNF→⋙ (t , p))))
-        ≡⟨ ≅→≡ (cong₂≅ _,_ (≡→≅ eqₜ) eqₚ) ⟩
-          t , nnf p
-        ∎
+    idNNF⇄⊢≫ : ∀ {Γ A} (tp : Σ (Γ ⊢ A) NNF) → (⊢≫→NNF ∘ NNF→⊢≫) tp ≡ tp
+    idNNF⇄⊢≫ (⌜v⌝ i , ⌜v⌝-)          = refl
+    idNNF⇄⊢≫ (t₁ ⌜$⌝ t₂ , p₁ ⌜$⌝ p₂) =
+      let eqₜ : proj₁ (⊢≫→NNF (NNF→⊢≫ (t₁ , p₁))) ⌜$⌝ proj₁ (⊢≪→NF (NF→⊢≪ (t₂ , p₂))) ≡ t₁ ⌜$⌝ t₂
+          eqₜ = cong₂ _⌜$⌝_ (cong proj₁ (idNNF⇄⊢≫ (t₁ , p₁))) (cong proj₁ (idNF⇄⊢≪ (t₂ , p₂)))
+          eqₚ : proj₂ (⊢≫→NNF (NNF→⊢≫ (t₁ , p₁))) ⌜$⌝ proj₂ (⊢≪→NF (NF→⊢≪ (t₂ , p₂))) ≅ p₁ ⌜$⌝ p₂
+          eqₚ = cong₂≅ (λ t₁′ t₂′ → proj₂ t₁′ NNF.⌜$⌝ proj₂ t₂′)
+                  (≡→≅ (idNNF⇄⊢≫ (t₁ , p₁))) (≡→≅ (idNF⇄⊢≪ (t₂ , p₂)))
+        in begin
+             proj₁ (⊢≫→NNF (NNF→⊢≫ (t₁ , p₁))) ⌜$⌝ proj₁ (⊢≪→NF (NF→⊢≪ (t₂ , p₂))) ,
+             proj₂ (⊢≫→NNF (NNF→⊢≫ (t₁ , p₁))) ⌜$⌝ proj₂ (⊢≪→NF (NF→⊢≪ (t₂ , p₂)))
+           ≡⟨ ≅→≡ (cong₂≅ _,_ (≡→≅ eqₜ) eqₚ) ⟩
+             t₁ ⌜$⌝ t₂ , p₁ ⌜$⌝ p₂
+           ∎
 
-    idNNF⇄⋙ : ∀ {Γ A} (tp : Σ (Γ ⊢ A) NNF) → (⋙→NNF ∘ NNF→⋙) tp ≡ tp
-    idNNF⇄⋙ (⌜v⌝ i , ⌜v⌝-)          = refl
-    idNNF⇄⋙ (t₁ ⌜$⌝ t₂ , p₁ ⌜$⌝ p₂) =
-      let
-        eqₜ : proj₁ (⋙→NNF (NNF→⋙ (t₁ , p₁))) ⌜$⌝ proj₁ (⋘→NF (NF→⋘ (t₂ , p₂))) ≡ t₁ ⌜$⌝ t₂
-        eqₜ = cong₂ _⌜$⌝_ (cong proj₁ (idNNF⇄⋙ (t₁ , p₁))) (cong proj₁ (idNF⇄⋘ (t₂ , p₂)))
-
-        eqₚ : proj₂ (⋙→NNF (NNF→⋙ (t₁ , p₁))) ⌜$⌝ proj₂ (⋘→NF (NF→⋘ (t₂ , p₂))) ≅ p₁ ⌜$⌝ p₂
-        eqₚ = cong₂≅ (λ t₁′ t₂′ → proj₂ t₁′ NNF.⌜$⌝ proj₂ t₂′)
-                (≡→≅ (idNNF⇄⋙ (t₁ , p₁))) (≡→≅ (idNF⇄⋘ (t₂ , p₂)))
-      in
-        begin
-          proj₁ (⋙→NNF (NNF→⋙ (t₁ , p₁))) ⌜$⌝ proj₁ (⋘→NF (NF→⋘ (t₂ , p₂))) ,
-          proj₂ (⋙→NNF (NNF→⋙ (t₁ , p₁))) ⌜$⌝ proj₂ (⋘→NF (NF→⋘ (t₂ , p₂)))
-        ≡⟨ ≅→≡ (cong₂≅ _,_ (≡→≅ eqₜ) eqₚ) ⟩
-          t₁ ⌜$⌝ t₂ , p₁ ⌜$⌝ p₂
-        ∎
-
-⋘≃NF : ∀ {Γ A} → (Γ ⋘ A) ≃ (Σ (Γ ⊢ A) NF)
-⋘≃NF = record
-  { to      = ⋘→NF
-  ; from    = NF→⋘
-  ; from∘to = id⋘⇄NF
-  ; to∘from = idNF⇄⋘
+⊢≪≃NF : ∀ {Γ A} → (Γ ⊢≪ A) ≃ (Σ (Γ ⊢ A) NF)
+⊢≪≃NF = record
+  { to      = ⊢≪→NF
+  ; from    = NF→⊢≪
+  ; from∘to = id⊢≪⇄NF
+  ; to∘from = idNF⇄⊢≪
   }
 
-⋙≃NNF : ∀ {Γ A} → (Γ ⋙ A) ≃ (Σ (Γ ⊢ A) NNF)
-⋙≃NNF = record
-  { to      = ⋙→NNF
-  ; from    = NNF→⋙
-  ; from∘to = id⋙⇄NNF
-  ; to∘from = idNNF⇄⋙
+⊢≫≃NNF : ∀ {Γ A} → (Γ ⊢≫ A) ≃ (Σ (Γ ⊢ A) NNF)
+⊢≫≃NNF = record
+  { to      = ⊢≫→NNF
+  ; from    = NNF→⊢≫
+  ; from∘to = id⊢≫⇄NNF
+  ; to∘from = idNNF⇄⊢≫
   }
 
 
@@ -396,14 +390,14 @@ cong$₂⇒* : ∀ {Γ A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢
 cong$₂⇒* p₁ done        = done
 cong$₂⇒* p₁ (step r rs) = step (cong$₂ p₁ r) (cong$₂⇒* p₁ rs)
 
-ren⊢⇒* : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇒* t′ → ren⊢ e t ⇒* ren⊢ e t′
-ren⊢⇒* e done        = done
-ren⊢⇒* e (step r rs) = step (ren⊢⇒ e r) (ren⊢⇒* e rs)
+ren⇒* : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇒* t′ → ren e t ⇒* ren e t′
+ren⇒* e done        = done
+ren⇒* e (step r rs) = step (ren⇒ e r) (ren⇒* e rs)
 
-sub⊢⇒* : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} (ps : NNF* ss) → t ⇒* t′ →
-           sub⊢ ss t ⇒* sub⊢ ss t′
-sub⊢⇒* ps done        = done
-sub⊢⇒* ps (step r rs) = step (sub⊢⇒ ps r) (sub⊢⇒* ps rs)
+sub⇒* : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} (ps : NNF* ss) → t ⇒* t′ →
+         sub ss t ⇒* sub ss t′
+sub⇒* ps done        = done
+sub⇒* ps (step r rs) = step (sub⇒ ps r) (sub⇒* ps rs)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -425,12 +419,11 @@ det⇓ (rs , p′) (rs′ , p″) = det⇒* rs p′ rs′ p″
 uni⇓ : ∀ {Γ A} {t t′ : Γ ⊢ A} (n n′ : t ⇓ t′) → n ≡ n′
 uni⇓ (rs , p′) (rs′ , p″) = _,_ & uni⇒* rs rs′ p′ ⊗ uniNF p′ p″
 
-ren⊢⇓ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇓ t′ → ren⊢ e t ⇓ ren⊢ e t′
-ren⊢⇓ e (rs , p′) = ren⊢⇒* e rs , ren⊢NF e p′
+ren⇓ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇓ t′ → ren e t ⇓ ren e t′
+ren⇓ e (rs , p′) = ren⇒* e rs , renNF e p′
 
-sub⊢⇓ : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} (ps : NNF* ss) → t ⇓ t′ →
-         sub⊢ ss t ⇓ sub⊢ ss t′
-sub⊢⇓ ps (rs , p′) = sub⊢⇒* ps rs , sub⊢NF ps p′
+sub⇓ : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} (ps : NNF* ss) → t ⇓ t′ → sub ss t ⇓ sub ss t′
+sub⇓ ps (rs , p′) = sub⇒* ps rs , subNF ps p′
 
 
 ----------------------------------------------------------------------------------------------------
@@ -449,11 +442,11 @@ uniWN : ∀ {Γ A} {t : Γ ⊢ A} (wn wn′ : WN t) → wn ≡ wn′
 uniWN (t′ , n) (t″ , n′) with det⇓ n n′
 ... | refl                 = (_ ,_) & uni⇓ n n′
 
-ren⊢WN : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → WN t → WN (ren⊢ e t)
-ren⊢WN e (t′ , n) = ren⊢ e t′ , ren⊢⇓ e n
+renWN : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → WN t → WN (ren e t)
+renWN e (t′ , n) = ren e t′ , ren⇓ e n
 
-sub⊢WN : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} (ps : NNF* ss) → WN t → WN (sub⊢ ss t)
-sub⊢WN ps (t′ , n) = sub⊢ _ t′ , sub⊢⇓ ps n
+subWN : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} (ps : NNF* ss) → WN t → WN (sub ss t)
+subWN ps (t′ , n) = sub _ t′ , sub⇓ ps n
 
 
 ----------------------------------------------------------------------------------------------------

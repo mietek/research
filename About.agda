@@ -102,7 +102,7 @@ postulate
   thm₁ : ∀ {Γ A} {o o′ : 𝒞 / Γ ⊩ A} → Eq {A = A} o o′ → ↓ {A = A} o ≡ ↓ o′
 
   -- Coquand p.73
-  cor₁ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Eq {A = A} (⟦ t ⟧ refl⊩*) (⟦ t′ ⟧ refl⊩*) → nbe t ≡ nbe t′
+  cor₁ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Eq {A = A} (⟦ t ⟧ vids) (⟦ t′ ⟧ vids) → nbe t ≡ nbe t′
 
   -- Abel p.10: “soundness”, “normalization is compatible with definitional equality”
   -- Coquand p.74
@@ -110,7 +110,7 @@ postulate
   thm₂ : ∀ {Γ A} (t : Γ ⊢ A) → t ≝ proj₁ (nbe t)
 
   -- Coquand p.75: “completeness of conversion rules”
-  thm₃ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Eq {A = A} (⟦ t ⟧ refl⊩*) (⟦ t′ ⟧ refl⊩*) → t ≝ t′
+  thm₃ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Eq {A = A} (⟦ t ⟧ vids) (⟦ t′ ⟧ vids) → t ≝ t′
 
   -- Coquand p.76: “soundness of conversion rules”
   thm₄ : ∀ {ℳ : Model} {W : World ℳ} {Γ A} (t t′ : Γ ⊢ A) (os : ℳ / W ⊩* Γ) → t ≝ t′ →
@@ -119,7 +119,7 @@ postulate
   -- Coquand p.76: “correctness [soundness?] of decision algorithm for conversion”
   thm₅ : ∀ {Γ A} (t t′ : Γ ⊢ A) → nbe t ≡ nbe t′ → t ≝ t′
 
-  lemᵢ : ∀ {Γ} → refl⊩* {Γ = Γ} ≡ ren⊩* (refl≤ 𝒞) refl⊩*
+  lemᵢ : ∀ {Γ} → vids {Γ = Γ} ≡ vrens (refl≤ 𝒞) vids
 
 -- Abel p.10: “completeness”, “definitionally equal terms have identical normal forms”
 -- Coquand p.76: “completeness of decision algorithm for conversion”
@@ -130,28 +130,28 @@ module _ where
   thm₆ : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ≝ t′ → nbe t ≡ nbe t′
   thm₆     refl≝                       = refl
   thm₆ {Γ} (sym≝ deq)                  with thmₖ {ℳ = 𝒞} {W = Γ} deq
-  ... | eq                               = cong (λ o → ↓ (o refl⊩*)) (sym eq)
+  ... | eq                               = cong (λ o → ↓ (o vids)) (sym eq)
   thm₆ {Γ} (trans≝ deq deq′)           with thmₖ {ℳ = 𝒞} {W = Γ} deq | thmₖ {ℳ = 𝒞} {W = Γ} deq′
-  ... | eq | eq′                         = cong (λ o → ↓ (o refl⊩*)) (trans eq eq′)
+  ... | eq | eq′                         = cong (λ o → ↓ (o vids)) (trans eq eq′)
   thm₆ {Γ} (cong$ {t₁ = t₁} {t₁′} {t₂} {t₂′} deq₁ deq₂)
     with thmₖ {ℳ = 𝒞} {W = Γ} deq₁ | thmₖ {ℳ = 𝒞} {W = Γ} deq₂
   ... | eq | eq′ = cong ↓ $
     begin
-      ⟦ t₁ ⟧ refl⊩* refl⊆ (⟦ t₂ ⟧ refl⊩*)
-    ≡⟨ cong (⟦ t₁ ⟧ refl⊩* refl⊆) (cong-app eq′ refl⊩*) ⟩
-      ⟦ t₁ ⟧ refl⊩* refl⊆ (⟦ t₂′ ⟧ refl⊩*)
-    ≡⟨ cong-app (cong-app (cong-app′ (cong-app eq refl⊩*) {Γ}) refl⊆) (⟦ t₂′ ⟧ refl⊩*) ⟩
-      ⟦ t₁′ ⟧ refl⊩* refl⊆ (⟦ t₂′ ⟧ refl⊩*)
+      ⟦ t₁ ⟧ vids id⊆ (⟦ t₂ ⟧ vids)
+    ≡⟨ cong (⟦ t₁ ⟧ vids id⊆) (cong-app eq′ vids) ⟩
+      ⟦ t₁ ⟧ vids id⊆ (⟦ t₂′ ⟧ vids)
+    ≡⟨ cong-app (cong-app (cong-app′ (cong-app eq vids) {Γ}) id⊆) (⟦ t₂′ ⟧ vids) ⟩
+      ⟦ t₁′ ⟧ vids id⊆ (⟦ t₂′ ⟧ vids)
     ∎
   thm₆ {Γ} (βred⊃ {t₁ = t₁} {t₂} refl) = cong ↓ $
     begin
-      ⟦ ⌜λ⌝ t₁ ⌜$⌝ t₂ ⟧ refl⊩*
+      ⟦ ⌜λ⌝ t₁ ⌜$⌝ t₂ ⟧ vids
     ≡⟨⟩
-      ⟦ t₁ ⟧ (⟦ t₂ ⟧ refl⊩* ∷ ren⊩* refl⊆ refl⊩*)
-    ≡⟨ cong (λ os → ⟦ t₁ ⟧ (⟦ t₂ ⟧ refl⊩* ∷ os)) (sym (lemᵢ {Γ})) ⟩
-      ⟦ t₁ ⟧ (⟦ t₂ ⟧ refl⊩* ∷ refl⊩*)
-    ≡⟨ thmᵢ {ℳ = 𝒞} {W = Γ} t₁ t₂ refl⊩* ⟩
-      ⟦ t₁ [ t₂ ] ⟧ refl⊩*
+      ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vrens id⊆ vids)
+    ≡⟨ cong (λ os → ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ os)) (sym (lemᵢ {Γ})) ⟩
+      ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vids)
+    ≡⟨ thmᵢ {ℳ = 𝒞} {W = Γ} t₁ t₂ vids ⟩
+      ⟦ t₁ [ t₂ ] ⟧ vids
     ∎
 
 -- Kovacs p.59: “decision procedure for conversion”

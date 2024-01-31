@@ -37,29 +37,29 @@ open ⊢*Kit _⊢_ public
 ----------------------------------------------------------------------------------------------------
 
 -- renaming
-ren⊢ : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
-ren⊢ e (⌜v⌝ i)          = ⌜v⌝ (ren∋ e i)
-ren⊢ e (⌜λ⌝ t)          = ⌜λ⌝ (ren⊢ (keep e) t)
-ren⊢ e (t₁ ⌜$⌝ t₂)      = ren⊢ e t₁ ⌜$⌝ ren⊢ e t₂
-ren⊢ e ⌜zero⌝           = ⌜zero⌝
-ren⊢ e (⌜suc⌝ t)        = ⌜suc⌝ (ren⊢ e t)
-ren⊢ e (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ (ren⊢ e tₙ) (ren⊢ e t₀) (ren⊢ (keep (keep e)) tₛ)
+ren : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
+ren e (⌜v⌝ i)          = ⌜v⌝ (ren∋ e i)
+ren e (⌜λ⌝ t)          = ⌜λ⌝ (ren (keep e) t)
+ren e (t₁ ⌜$⌝ t₂)      = ren e t₁ ⌜$⌝ ren e t₂
+ren e ⌜zero⌝           = ⌜zero⌝
+ren e (⌜suc⌝ t)        = ⌜suc⌝ (ren e t)
+ren e (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ (ren e tₙ) (ren e t₀) (ren (keep (keep e)) tₛ)
 
-open RenKit ⌜v⌝ ren⊢ public
+open RenKit ⌜v⌝ ren public
 
 
 ----------------------------------------------------------------------------------------------------
 
 -- substitution
-sub⊢ : ∀ {Γ Ξ A} → Ξ ⊢* Γ → Γ ⊢ A → Ξ ⊢ A
-sub⊢ ss (⌜v⌝ i)          = sub∋ ss i
-sub⊢ ss (⌜λ⌝ t)          = ⌜λ⌝ (sub⊢ (lift⊢* ss) t)
-sub⊢ ss (t₁ ⌜$⌝ t₂)      = sub⊢ ss t₁ ⌜$⌝ sub⊢ ss t₂
-sub⊢ ss ⌜zero⌝           = ⌜zero⌝
-sub⊢ ss (⌜suc⌝ t)        = ⌜suc⌝ (sub⊢ ss t)
-sub⊢ ss (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ (sub⊢ ss tₙ) (sub⊢ ss t₀) (sub⊢ (lift⊢* (lift⊢* ss)) tₛ)
+sub : ∀ {Γ Ξ A} → Ξ ⊢* Γ → Γ ⊢ A → Ξ ⊢ A
+sub ss (⌜v⌝ i)          = sub∋ ss i
+sub ss (⌜λ⌝ t)          = ⌜λ⌝ (sub (lifts ss) t)
+sub ss (t₁ ⌜$⌝ t₂)      = sub ss t₁ ⌜$⌝ sub ss t₂
+sub ss ⌜zero⌝           = ⌜zero⌝
+sub ss (⌜suc⌝ t)        = ⌜suc⌝ (sub ss t)
+sub ss (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ (sub ss tₙ) (sub ss t₀) (sub (lifts (lifts ss)) tₛ)
 
-open SubKit sub⊢ public
+open SubKit sub public
 
 
 ----------------------------------------------------------------------------------------------------
