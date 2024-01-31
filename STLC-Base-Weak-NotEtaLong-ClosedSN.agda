@@ -106,7 +106,7 @@ mutual
                                  in hwn! (subHWN ss hwns t₂)
 
 hwn : ∀ {A} (t : [] ⊢ A) → HWN t
-hwn t = subst HWN (idsub t) (subHWN [] [] t)
+hwn t = subst HWN (lidsub t) (subHWN [] [] t)
 
 wn : ∀ {A} (t : [] ⊢ A) → WN t
 wn = proj₁ ∘ hwn

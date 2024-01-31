@@ -1,6 +1,6 @@
 module STLC-Negative where
 
-open import Common public
+open import Kit public
 
 
 ----------------------------------------------------------------------------------------------------

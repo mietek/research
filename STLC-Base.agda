@@ -1,6 +1,7 @@
 module STLC-Base where
 
 open import Common public
+open import Kit public
 
 
 ----------------------------------------------------------------------------------------------------

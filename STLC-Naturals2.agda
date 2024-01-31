@@ -1,6 +1,6 @@
 module STLC-Naturals2 where
 
-open import Common public
+open import Kit public
 
 
 ----------------------------------------------------------------------------------------------------
