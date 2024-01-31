@@ -334,7 +334,6 @@ module _ (⚠ : Extensionality) where
 
 ----------------------------------------------------------------------------------------------------
 
--- TODO: delete?
 Expandable? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (Expandable t)
 Expandable? {A = ⌜◦⌝}     t           = no λ ()
 Expandable? {A = A ⌜⊃⌝ B} (⌜v⌝ i)     = yes ⌜v⌝-
@@ -345,19 +344,19 @@ Expandable? {A = A ⌜⊃⌝ B} (t₁ ⌜$⌝ t₂) with FNNF? t₁ | FNF? t₂
 ... | yes p₁ | yes p₂                   = yes (p₁ ⌜$⌝ p₂)
 
 -- (Ghani p.51, unnumbered lemma)
-FR→IR⊎η : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒F t′ → t ⇒I t′ ⊎ t ExpandsTo t′
-FR→IR⊎η (Ired ¬x (cong$₁ r₁))     = inj₁ (cong$₁ r₁)
-FR→IR⊎η (Ired ¬x (Fcong$₂ p₁ r₂)) = inj₁ (Fcong$₂ p₁ r₂)
-FR→IR⊎η (Ired ¬x (Xcong$₂ x₁ r₂)) = inj₁ (Xcong$₂ x₁ r₂)
-FR→IR⊎η (Ired ¬x (βred⊃ eq p₂))   = inj₁ (βred⊃ eq p₂)
-FR→IR⊎η (ηexp⊃ refl x)            = inj₂ (ηexp⊃ refl x)
+FR→IR⊎ExpandsTo : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒F t′ → t ⇒I t′ ⊎ t ExpandsTo t′
+FR→IR⊎ExpandsTo (Ired ¬x (cong$₁ r₁))     = inj₁ (cong$₁ r₁)
+FR→IR⊎ExpandsTo (Ired ¬x (Fcong$₂ p₁ r₂)) = inj₁ (Fcong$₂ p₁ r₂)
+FR→IR⊎ExpandsTo (Ired ¬x (Xcong$₂ x₁ r₂)) = inj₁ (Xcong$₂ x₁ r₂)
+FR→IR⊎ExpandsTo (Ired ¬x (βred⊃ eq p₂))   = inj₁ (βred⊃ eq p₂)
+FR→IR⊎ExpandsTo (ηexp⊃ refl x)            = inj₂ (ηexp⊃ refl x)
 
-IR⊎η→FR : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒I t′ ⊎ t ExpandsTo t′ → t ⇒F t′
-IR⊎η→FR {A = ⌜◦⌝}     {t} (inj₁ r)              = Ired (λ ()) r
-IR⊎η→FR {A = A ⌜⊃⌝ B} {t} (inj₁ r)              with Expandable? t
-... | yes x                                        = r ↯ Expandable→¬IR x
-... | no ¬x                                        = Ired ¬x r
-IR⊎η→FR                   (inj₂ (ηexp⊃ refl x)) = ηexp⊃ refl x
+IR⊎ExpandsTo→FR : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒I t′ ⊎ t ExpandsTo t′ → t ⇒F t′
+IR⊎ExpandsTo→FR {A = ⌜◦⌝}     {t} (inj₁ r)              = Ired (λ ()) r
+IR⊎ExpandsTo→FR {A = A ⌜⊃⌝ B} {t} (inj₁ r)              with Expandable? t
+... | yes x                                                = r ↯ Expandable→¬IR x
+... | no ¬x                                                = Ired ¬x r
+IR⊎ExpandsTo→FR                   (inj₂ (ηexp⊃ refl x)) = ηexp⊃ refl x
 
 
 ----------------------------------------------------------------------------------------------------
