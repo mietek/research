@@ -1,11 +1,12 @@
 module STLC-Naturals-Weak-NotEtaLong where
 
-open import STLC-Naturals public
-open import Isomorphism public
+open import STLC-Naturals-Properties public
+open import Kit3 public
 
 
 ----------------------------------------------------------------------------------------------------
 
+-- TODO: try making ⌜suc⌝ weak
 -- β-short not-η-long semi-weak normal forms
 mutual
   data NF {Γ} : ∀ {A} → Γ ⊢ A → Set where
@@ -14,37 +15,29 @@ mutual
     ⌜suc⌝  : ∀ {t : Γ ⊢ ⌜ℕ⌝} (p : NF t) → NF (⌜suc⌝ t)
     nnf    : ∀ {A} {t : Γ ⊢ A} (p : NNF t) → NF t
 
-  -- neutrals
   data NNF {Γ} : ∀ {A} → Γ ⊢ A → Set where
-    ⌜v⌝-  : ∀ {A} {i : Γ ∋ A} → NNF (⌜v⌝ i)
+    var-  : ∀ {A} {i : Γ ∋ A} → NNF (var i)
     _⌜$⌝_ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (p₁ : NNF t₁) (p₂ : NF t₂) → NNF (t₁ ⌜$⌝ t₂)
     ⌜rec⌝ : ∀ {A} {tₙ : Γ ⊢ ⌜ℕ⌝} {t₀ : Γ ⊢ A} {t₁ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A} (pₙ : NNF tₙ) (p₀ : NF t₀)
               (p₁ : NF t₁) →
             NNF (⌜rec⌝ tₙ t₀ t₁)
 
-open NFKit NF NNF public
+data NNF* {Γ} : ∀ {Δ} → Γ ⊢* Δ → Set where
+  []  : NNF* []
+  _∷_ : ∀ {A Δ} {t : Γ ⊢ A} {ts : Γ ⊢* Δ} → NNF t → NNF* ts → NNF* (t ∷ ts)
 
+-- uniqueness of proofs
+mutual
+  uniNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
+  uniNF ⌜λ⌝-      ⌜λ⌝-       = refl
+  uniNF ⌜zero⌝    ⌜zero⌝     = refl
+  uniNF (⌜suc⌝ p) (⌜suc⌝ p′) = ⌜suc⌝ & uniNF p p′
+  uniNF (nnf p)   (nnf p′)   = nnf & uniNNF p p′
 
-----------------------------------------------------------------------------------------------------
-
--- definitional equality
-infix 4 _≝_
-data _≝_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
-  refl≝   : ∀ {A} {t : Γ ⊢ A} → t ≝ t
-  sym≝    : ∀ {A} {t t′ : Γ ⊢ A} (eq : t ≝ t′) → t′ ≝ t
-  trans≝  : ∀ {A} {t t′ t″ : Γ ⊢ A} (eq : t ≝ t′) (eq′ : t′ ≝ t″) → t ≝ t″
-  cong$   : ∀ {A B} {t₁ t₁′ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢ A} (eq₁ : t₁ ≝ t₁′) (eq₂ : t₂ ≝ t₂′) →
-            t₁ ⌜$⌝ t₂ ≝ t₁′ ⌜$⌝ t₂′
-  congrec : ∀ {A} {tₙ tₙ′ : Γ ⊢ ⌜ℕ⌝} {t₀ t₀′ : Γ ⊢ A} {tₛ tₛ′ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A}
-              (eqₙ : tₙ ≝ tₙ′) (eq₀ : t₀ ≝ t₀′) (eqₛ : tₛ ≝ tₛ′) →
-            ⌜rec⌝ tₙ t₀ tₛ ≝ ⌜rec⌝ tₙ′ t₀′ tₛ′
-  βred⊃   : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) → ⌜λ⌝ t₁ ⌜$⌝ t₂ ≝ t′
-  βredℕ₀  : ∀ {A} {t₀ : Γ ⊢ A} {tₛ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A} → ⌜rec⌝ ⌜zero⌝ t₀ tₛ ≝ t₀
-  βredℕₛ  : ∀ {A} {tₙ : Γ ⊢ ⌜ℕ⌝} {t₀ : Γ ⊢ A} {tₛ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A} {t′}
-              (eq : t′ ≡ tₛ [ tₙ ∣ ⌜rec⌝ tₙ t₀ tₛ ]) →
-            ⌜rec⌝ (⌜suc⌝ tₙ) t₀ tₛ ≝ t′
-
-open ≝Kit (λ {Γ} {A} {t} → refl≝ {t = t}) sym≝ trans≝ public
+  uniNNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NNF t) → p ≡ p′
+  uniNNF var-             var-                = refl
+  uniNNF (p₁ ⌜$⌝ p₂)      (p₁′ ⌜$⌝ p₂′)       = _⌜$⌝_ & uniNNF p₁ p₁′ ⊗ uniNF p₂ p₂′
+  uniNNF (⌜rec⌝ pₙ p₀ pₛ) (⌜rec⌝ pₙ′ p₀′ pₛ′) = ⌜rec⌝ & uniNNF pₙ pₙ′ ⊗ uniNF p₀ p₀′ ⊗ uniNF pₛ pₛ′
 
 
 ----------------------------------------------------------------------------------------------------
@@ -74,7 +67,8 @@ data _⇒_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
                (pₛ : NF tₛ) →
              ⌜rec⌝ (⌜suc⌝ tₙ) t₀ tₛ ⇒ t′
 
-open ⇒Kit _⇒_ public
+rk1! = redkit1 tk! _⇒_
+open RedKit1 rk1! public
 
 mutual
   NF→¬R : ∀ {Γ A} {t : Γ ⊢ A} → NF t → ¬R t
@@ -89,59 +83,12 @@ mutual
   NNF→¬R (⌜rec⌝ pₙ p₀ pₛ) (congrec₀ pₙ′ r₀)     = r₀ ↯ NF→¬R p₀
   NNF→¬R (⌜rec⌝ pₙ p₀ pₛ) (congrecₛ pₙ′ p₀′ rₛ) = rₛ ↯ NF→¬R pₛ
 
-open ¬RKit NF→¬R public
+rk2! = redkit2 rk1! uniNF NF→¬R
+open RedKit2 rk2! public
 
 
 ----------------------------------------------------------------------------------------------------
 
--- uniqueness of proofs
-mutual
-  uniNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
-  uniNF ⌜λ⌝-      ⌜λ⌝-       = refl
-  uniNF ⌜zero⌝    ⌜zero⌝     = refl
-  uniNF (⌜suc⌝ p) (⌜suc⌝ p′) = ⌜suc⌝ & uniNF p p′
-  uniNF (nnf p)   (nnf p′)   = nnf & uniNNF p p′
-
-  uniNNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NNF t) → p ≡ p′
-  uniNNF ⌜v⌝-             ⌜v⌝-                = refl
-  uniNNF (p₁ ⌜$⌝ p₂)      (p₁′ ⌜$⌝ p₂′)       = _⌜$⌝_ & uniNNF p₁ p₁′ ⊗ uniNF p₂ p₂′
-  uniNNF (⌜rec⌝ pₙ p₀ pₛ) (⌜rec⌝ pₙ′ p₀′ pₛ′) = ⌜rec⌝ & uniNNF pₙ pₙ′ ⊗ uniNF p₀ p₀′ ⊗ uniNF pₛ pₛ′
-
-uni⇒ : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒ t′) → r ≡ r′
-uni⇒ (cong$₁ r₁)            (cong$₁ r₁′)              = cong$₁ & uni⇒ r₁ r₁′
-uni⇒ (cong$₁ r₁)            (cong$₂ p₁′ r₂′)          = r₁ ↯ NF→¬R p₁′
-uni⇒ (cong$₂ p₁ r₂)         (cong$₁ r₁′)              = r₁′ ↯ NF→¬R p₁
-uni⇒ (cong$₂ p₁ r₂)         (cong$₂ p₁′ r₂′)          = cong$₂ & uniNF p₁ p₁′ ⊗ uni⇒ r₂ r₂′
-uni⇒ (cong$₂ p₁ r₂)         (βred⊃ eq′ p₂)            = r₂ ↯ NF→¬R p₂
-uni⇒ (congsuc r)            (congsuc r′)              = congsuc & uni⇒ r r′
-uni⇒ (congrecₙ rₙ)          (congrecₙ rₙ′)            = congrecₙ & uni⇒ rₙ rₙ′
-uni⇒ (congrecₙ rₙ)          (congrec₀ pₙ′ r₀′)        = rₙ ↯ NF→¬R pₙ′
-uni⇒ (congrecₙ rₙ)          (congrecₛ pₙ′ p₀′ rₛ′)    = rₙ ↯ NF→¬R pₙ′
-uni⇒ (congrecₙ rₙ)          (βredℕₛ eq′ pₙ′ p₀′ pₛ′)  = rₙ ↯ NF→¬R pₙ′
-uni⇒ (congrec₀ pₙ r₀)       (congrecₙ rₙ′)            = rₙ′ ↯ NF→¬R pₙ
-uni⇒ (congrec₀ pₙ r₀)       (congrec₀ pₙ′ r₀′)        = congrec₀ & uniNF pₙ pₙ′ ⊗ uni⇒ r₀ r₀′
-uni⇒ (congrec₀ pₙ r₀)       (congrecₛ pₙ′ p₀′ rₛ′)    = r₀ ↯ NF→¬R p₀′
-uni⇒ (congrec₀ pₙ r₀)       (βredℕ₀ p₀′ pₛ′)          = r₀ ↯ NF→¬R p₀′
-uni⇒ (congrec₀ pₙ r₀)       (βredℕₛ eq′ pₙ′ p₀′ pₛ′)  = r₀ ↯ NF→¬R p₀′
-uni⇒ (congrecₛ pₙ p₀ rₛ)    (congrecₙ rₙ′)            = rₙ′ ↯ NF→¬R pₙ
-uni⇒ (congrecₛ pₙ p₀ rₛ)    (congrec₀ pₙ′ r₀′)        = r₀′ ↯ NF→¬R p₀
-uni⇒ (congrecₛ pₙ p₀ rₛ)    (congrecₛ pₙ′ p₀′ rₛ′)    = _ & uniNF pₙ pₙ′ ⊗ uniNF p₀ p₀′
-                                                           ⊗ uni⇒ rₛ rₛ′
-uni⇒ (congrecₛ pₙ p₀ rₛ)    (βredℕₛ eq′ pₙ′ p₀′ pₛ′)  = rₛ ↯ NF→¬R pₛ′
-uni⇒ (βred⊃ eq p₂)          (cong$₂ p₁′ r₂′)          = r₂′ ↯ NF→¬R p₂
-uni⇒ (βred⊃ refl p₂)        (βred⊃ refl p₂′)          = βred⊃ refl & uniNF p₂ p₂′
-uni⇒ (βredℕ₀ p₀ pₛ)         (congrec₀ pₙ′ r₀′)        = r₀′ ↯ NF→¬R p₀
-uni⇒ (βredℕ₀ p₀ pₛ)         (βredℕ₀ p₀′ pₛ′)          = βredℕ₀ & uniNF p₀ p₀′ ⊗ uniNF pₛ pₛ′
-uni⇒ (βredℕₛ eq pₙ p₀ pₛ)   (congrecₙ rₙ′)            = rₙ′ ↯ NF→¬R pₙ
-uni⇒ (βredℕₛ eq pₙ p₀ pₛ)   (congrec₀ pₙ′ r₀′)        = r₀′ ↯ NF→¬R p₀
-uni⇒ (βredℕₛ eq pₙ p₀ pₛ)   (congrecₛ pₙ′ p₀′ rₛ′)    = rₛ′ ↯ NF→¬R pₛ
-uni⇒ (βredℕₛ refl pₙ p₀ pₛ) (βredℕₛ refl pₙ′ p₀′ pₛ′) = βredℕₛ refl & uniNF pₙ pₙ′ ⊗ uniNF p₀ p₀′
-                                                           ⊗ uniNF pₛ pₛ′
-
-
-----------------------------------------------------------------------------------------------------
-
--- determinism
 det⇒ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t ⇒ t″ → t′ ≡ t″
 det⇒ (cong$₁ r₁)            (cong$₁ r₁′)              = (_⌜$⌝ _) & det⇒ r₁ r₁′
 det⇒ (cong$₁ r₁)            (cong$₂ p₁′ r₂′)          = r₁ ↯ NF→¬R p₁′
@@ -174,14 +121,45 @@ det⇒ (βredℕₛ refl pₙ p₀ pₛ) (congrec₀ pₙ′ r₀′)        = r
 det⇒ (βredℕₛ refl pₙ p₀ pₛ) (congrecₛ pₙ′ p₀′ rₛ′)    = rₛ′ ↯ NF→¬R pₛ
 det⇒ (βredℕₛ refl pₙ p₀ pₛ) (βredℕₛ refl pₙ′ p₀′ pₛ′) = refl
 
-open ⇒*Kit NF→¬R det⇒ uni⇒ public
+uni⇒ : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒ t′) → r ≡ r′
+uni⇒ (cong$₁ r₁)            (cong$₁ r₁′)              = cong$₁ & uni⇒ r₁ r₁′
+uni⇒ (cong$₁ r₁)            (cong$₂ p₁′ r₂′)          = r₁ ↯ NF→¬R p₁′
+uni⇒ (cong$₂ p₁ r₂)         (cong$₁ r₁′)              = r₁′ ↯ NF→¬R p₁
+uni⇒ (cong$₂ p₁ r₂)         (cong$₂ p₁′ r₂′)          = cong$₂ & uniNF p₁ p₁′ ⊗ uni⇒ r₂ r₂′
+uni⇒ (cong$₂ p₁ r₂)         (βred⊃ eq′ p₂)            = r₂ ↯ NF→¬R p₂
+uni⇒ (congsuc r)            (congsuc r′)              = congsuc & uni⇒ r r′
+uni⇒ (congrecₙ rₙ)          (congrecₙ rₙ′)            = congrecₙ & uni⇒ rₙ rₙ′
+uni⇒ (congrecₙ rₙ)          (congrec₀ pₙ′ r₀′)        = rₙ ↯ NF→¬R pₙ′
+uni⇒ (congrecₙ rₙ)          (congrecₛ pₙ′ p₀′ rₛ′)    = rₙ ↯ NF→¬R pₙ′
+uni⇒ (congrecₙ rₙ)          (βredℕₛ eq′ pₙ′ p₀′ pₛ′)  = rₙ ↯ NF→¬R pₙ′
+uni⇒ (congrec₀ pₙ r₀)       (congrecₙ rₙ′)            = rₙ′ ↯ NF→¬R pₙ
+uni⇒ (congrec₀ pₙ r₀)       (congrec₀ pₙ′ r₀′)        = congrec₀ & uniNF pₙ pₙ′ ⊗ uni⇒ r₀ r₀′
+uni⇒ (congrec₀ pₙ r₀)       (congrecₛ pₙ′ p₀′ rₛ′)    = r₀ ↯ NF→¬R p₀′
+uni⇒ (congrec₀ pₙ r₀)       (βredℕ₀ p₀′ pₛ′)          = r₀ ↯ NF→¬R p₀′
+uni⇒ (congrec₀ pₙ r₀)       (βredℕₛ eq′ pₙ′ p₀′ pₛ′)  = r₀ ↯ NF→¬R p₀′
+uni⇒ (congrecₛ pₙ p₀ rₛ)    (congrecₙ rₙ′)            = rₙ′ ↯ NF→¬R pₙ
+uni⇒ (congrecₛ pₙ p₀ rₛ)    (congrec₀ pₙ′ r₀′)        = r₀′ ↯ NF→¬R p₀
+uni⇒ (congrecₛ pₙ p₀ rₛ)    (congrecₛ pₙ′ p₀′ rₛ′)    = _ & uniNF pₙ pₙ′ ⊗ uniNF p₀ p₀′
+                                                           ⊗ uni⇒ rₛ rₛ′
+uni⇒ (congrecₛ pₙ p₀ rₛ)    (βredℕₛ eq′ pₙ′ p₀′ pₛ′)  = rₛ ↯ NF→¬R pₛ′
+uni⇒ (βred⊃ eq p₂)          (cong$₂ p₁′ r₂′)          = r₂′ ↯ NF→¬R p₂
+uni⇒ (βred⊃ refl p₂)        (βred⊃ refl p₂′)          = βred⊃ refl & uniNF p₂ p₂′
+uni⇒ (βredℕ₀ p₀ pₛ)         (congrec₀ pₙ′ r₀′)        = r₀′ ↯ NF→¬R p₀
+uni⇒ (βredℕ₀ p₀ pₛ)         (βredℕ₀ p₀′ pₛ′)          = βredℕ₀ & uniNF p₀ p₀′ ⊗ uniNF pₛ pₛ′
+uni⇒ (βredℕₛ eq pₙ p₀ pₛ)   (congrecₙ rₙ′)            = rₙ′ ↯ NF→¬R pₙ
+uni⇒ (βredℕₛ eq pₙ p₀ pₛ)   (congrec₀ pₙ′ r₀′)        = r₀′ ↯ NF→¬R p₀
+uni⇒ (βredℕₛ eq pₙ p₀ pₛ)   (congrecₛ pₙ′ p₀′ rₛ′)    = rₛ′ ↯ NF→¬R pₛ
+uni⇒ (βredℕₛ refl pₙ p₀ pₛ) (βredℕₛ refl pₙ′ p₀′ pₛ′) = βredℕₛ refl & uniNF pₙ pₙ′ ⊗ uniNF p₀ p₀′
+                                                           ⊗ uniNF pₛ pₛ′
+
+dk! = detkit rk2! det⇒ uni⇒
+open DetKit dk! public
 
 
 ----------------------------------------------------------------------------------------------------
 
--- progress
 prog⇒ : ∀ {Γ A} (t : Γ ⊢ A) → Prog t
-prog⇒ (⌜v⌝ i)                            = done (nnf ⌜v⌝-)
+prog⇒ (var i)                            = done (nnf var-)
 prog⇒ (⌜λ⌝ t)                            = done ⌜λ⌝-
 prog⇒ (t₁ ⌜$⌝ t₂)                        with prog⇒ t₁ | prog⇒ t₂
 ... | step r₁       | _                     = step (cong$₁ r₁)
@@ -200,16 +178,8 @@ prog⇒ (⌜rec⌝ tₙ t₀ tₛ)                   with prog⇒ tₙ | prog⇒
 ... | done (⌜suc⌝ pₙ) | done p₀ | done pₛ   = step (βredℕₛ refl (⌜suc⌝ pₙ) p₀ pₛ)
 ... | done (nnf pₙ)   | done p₀ | done pₛ   = done (nnf (⌜rec⌝ pₙ p₀ pₛ))
 
-open ProgKit prog⇒ public hiding (NF?)
-
-module _ (⚠ : Extensionality) where
-  NF≃¬RF : ∀ {Γ A} {t : Γ ⊢ A} → NF t ≃ (¬ RF t)
-  NF≃¬RF = record
-    { to      = NF→¬RF
-    ; from    = ¬RF→NF
-    ; from∘to = λ p → uniNF _ p
-    ; to∘from = λ p → uni¬RF ⚠ _ p
-    }
+pk! = progkit rk2! prog⇒
+open ProgKit pk! public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -223,9 +193,20 @@ mutual
   renNF e (nnf p)   = nnf (renNNF e p)
 
   renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren e t)
-  renNNF e ⌜v⌝-             = ⌜v⌝-
+  renNNF e var-             = var-
   renNNF e (p₁ ⌜$⌝ p₂)      = renNNF e p₁ ⌜$⌝ renNF e p₂
   renNNF e (⌜rec⌝ pₙ p₀ pₛ) = ⌜rec⌝ (renNNF e pₙ) (renNF e p₀) (renNF (keep (keep e)) pₛ)
+
+ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇒ t′ → ren e t ⇒ ren e t′
+ren⇒ e (cong$₁ r₁)               = cong$₁ (ren⇒ e r₁)
+ren⇒ e (cong$₂ p₁ r₂)            = cong$₂ (renNF e p₁) (ren⇒ e r₂)
+ren⇒ e (congsuc r)               = congsuc (ren⇒ e r)
+ren⇒ e (congrecₙ rₙ)             = congrecₙ (ren⇒ e rₙ)
+ren⇒ e (congrec₀ pₙ r₀)          = congrec₀ (renNF e pₙ) (ren⇒ e r₀)
+ren⇒ e (congrecₛ pₙ p₀ rₛ)       = congrecₛ (renNF e pₙ) (renNF e p₀) (ren⇒ (keep (keep e)) rₛ)
+ren⇒ e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (renβred⊃ e t₁ _ ⁻¹) (renNF e p₂)
+ren⇒ e (βredℕ₀ p₀ pₛ)            = βredℕ₀ (renNF e p₀) (renNF (keep (keep e)) pₛ)
+ren⇒ e (βredℕₛ refl pₙ p₀ pₛ)    = βredℕₛ {!renβred⊃!} (renNF e pₙ) (renNF e p₀) (renNF (keep (keep e)) pₛ)
 
 
 ----------------------------------------------------------------------------------------------------

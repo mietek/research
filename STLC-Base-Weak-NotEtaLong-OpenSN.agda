@@ -5,7 +5,6 @@ open import STLC-Base-Weak-NotEtaLong public
 
 ----------------------------------------------------------------------------------------------------
 
--- hereditary weak normalization
 mutual
   HWN : ∀ {Γ A} → Γ ⊢ A → Set
   HWN t = WN t × HWN! t
@@ -84,13 +83,13 @@ skip⇓HWN = skip⇒*HWN ∘ proj₁
 -- -- --   lem₋₁ : ∀ {Γ A} → weak⊢* {Γ} {Γ} {A} (refl⊢* {Γ = Γ}) ≡ {!refl⊢* {Γ = A ∷ Γ}!}
 
 -- -- -- mutual
--- -- --   hmm : ∀ {Γ A} → HWN {A ∷ Γ} {A} (⌜v⌝ zero)
--- -- --   hmm = (⌜v⌝ zero , done , nnf ⌜v⌝-) , hmm!
+-- -- --   hmm : ∀ {Γ A} → HWN {A ∷ Γ} {A} (var zero)
+-- -- --   hmm = (var zero , done , nnf var-) , hmm!
 
--- -- --   hmm! : ∀ {Γ A} → HWN! {A ∷ Γ} {A} (⌜v⌝ zero)
+-- -- --   hmm! : ∀ {Γ A} → HWN! {A ∷ Γ} {A} (var zero)
 -- -- --   hmm! {A = ⌜◦⌝}                                = unit
 -- -- --   hmm! {A = A ⌜⊃⌝ B} ((t₂′ , rs , p₂′) , hwn!₂) =
--- -- --     (⌜v⌝ zero ⌜$⌝ t₂′ , cong$₂⇒* (nnf ⌜v⌝-) rs , nnf (⌜v⌝- ⌜$⌝ p₂′)) ,
+-- -- --     (var zero ⌜$⌝ t₂′ , cong$₂⇒* (nnf var-) rs , nnf (var- ⌜$⌝ p₂′)) ,
 -- -- --     {!!}
 
 
@@ -146,7 +145,7 @@ skip⇓HWN = skip⇒*HWN ∘ proj₁
 -- -- --     in  step⇒*HWN (cong$₂⇒* ⌜λ⌝- rs₂) (lem₄ ss t₁ p₂′ (sub⊢HWN (t₂′ ∷ ss) (hwn₂′ ∷ hwns) t₁))
 
 -- -- --   sub⊢HWN : ∀ {Γ Ξ A} (ss : Ξ ⊢* Γ) (hwns : HWN* ss) (t : Γ ⊢ A) → HWN (sub⊢ ss t)
--- -- --   sub⊢HWN ss hwns (⌜v⌝ i)     = sub∋HWN hwns i
+-- -- --   sub⊢HWN ss hwns (var i)     = sub∋HWN hwns i
 -- -- --   sub⊢HWN ss hwns (⌜λ⌝ t)     = let t′ = sub⊢ ss (⌜λ⌝ t)
 -- -- --                                  in (t′ , done , ⌜λ⌝-) , λ {t₂} → lem₅ ss hwns t t′ {t₂}
 -- -- --   sub⊢HWN ss hwns (t₁ ⌜$⌝ t₂) = let wn , hwn! = sub⊢HWN ss hwns t₁
@@ -161,7 +160,6 @@ skip⇓HWN = skip⇒*HWN ∘ proj₁
 
 -- -- -- ----------------------------------------------------------------------------------------------------
 
--- -- -- -- strong normalization
 -- -- -- data SN {Γ A} (t : Γ ⊢ A) : Set where
 -- -- --   make : (∀ {t′} → t ⇒ t′ → SN t′) → SN t
 

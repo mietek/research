@@ -1,7 +1,7 @@
 module STLC-Negative-Weak-NotEtaLong where
 
-open import STLC-Negative public
-open import Isomorphism public
+open import STLC-Negative-Properties public
+open import Kit3 public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -16,31 +16,27 @@ mutual
 
   -- neutrals
   data NNF {Γ} : ∀ {A} → Γ ⊢ A → Set where
-    ⌜v⌝-    : ∀ {A} {i : Γ ∋ A} → NNF (⌜v⌝ i)
+    var-    : ∀ {A} {i : Γ ∋ A} → NNF (var i)
     _⌜$⌝_   : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (p₁ : NNF t₁) (p₂ : NF t₂) → NNF (t₁ ⌜$⌝ t₂)
     ⌜proj₁⌝ : ∀ {A B} {t : Γ ⊢ A ⌜∧⌝ B} (p : NNF t) → NNF (⌜proj₁⌝ t)
     ⌜proj₂⌝ : ∀ {A B} {t : Γ ⊢ A ⌜∧⌝ B} (p : NNF t) → NNF (⌜proj₂⌝ t)
 
-open NFKit NF NNF public
+data NNF* {Γ} : ∀ {Δ} → Γ ⊢* Δ → Set where
+  []  : NNF* []
+  _∷_ : ∀ {A Δ} {t : Γ ⊢ A} {ts : Γ ⊢* Δ} → NNF t → NNF* ts → NNF* (t ∷ ts)
 
+mutual
+  uniNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
+  uniNF ⌜λ⌝-    ⌜λ⌝-     = refl
+  uniNF -⌜,⌝-   -⌜,⌝-    = refl
+  uniNF ⌜unit⌝  ⌜unit⌝   = refl
+  uniNF (nnf p) (nnf p′) = nnf & uniNNF p p′
 
-----------------------------------------------------------------------------------------------------
-
--- definitional equality
-infix 4 _≝_
-data _≝_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
-  refl≝     : ∀ {A} {t : Γ ⊢ A} → t ≝ t
-  sym≝      : ∀ {A} {t t′ : Γ ⊢ A} (eq : t ≝ t′) → t′ ≝ t
-  trans≝    : ∀ {A} {t t′ t″ : Γ ⊢ A} (eq : t ≝ t′) (eq′ : t′ ≝ t″) → t ≝ t″
-  cong$     : ∀ {A B} {t₁ t₁′ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢ A} (eq₁ : t₁ ≝ t₁′) (eq₂ : t₂ ≝ t₂′) →
-              t₁ ⌜$⌝ t₂ ≝ t₁′ ⌜$⌝ t₂′
-  congproj₁ : ∀ {A B} {t t′ : Γ ⊢ A ⌜∧⌝ B} (eq : t ≝ t′) → ⌜proj₁⌝ t ≝ ⌜proj₁⌝ t′
-  congproj₂ : ∀ {A B} {t t′ : Γ ⊢ A ⌜∧⌝ B} (eq : t ≝ t′) → ⌜proj₂⌝ t ≝ ⌜proj₂⌝ t′
-  βred⊃     : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) → ⌜λ⌝ t₁ ⌜$⌝ t₂ ≝ t′
-  βred∧₁    : ∀ {A B} {t₁ : Γ ⊢ A} {t₂ : Γ ⊢ B} → ⌜proj₁⌝ (t₁ ⌜,⌝ t₂) ≝ t₁
-  βred∧₂    : ∀ {A B} {t₁ : Γ ⊢ A} {t₂ : Γ ⊢ B} → ⌜proj₂⌝ (t₁ ⌜,⌝ t₂) ≝ t₂
-
-open ≝Kit (λ {Γ} {A} {t} → refl≝ {t = t}) sym≝ trans≝ public
+  uniNNF : ∀ {Γ A} {d : Γ ⊢ A} (p p′ : NNF d) → p ≡ p′
+  uniNNF var-        var-          = refl
+  uniNNF (p₁ ⌜$⌝ p₂) (p₁′ ⌜$⌝ p₂′) = _⌜$⌝_ & uniNNF p₁ p₁′ ⊗ uniNF p₂ p₂′
+  uniNNF (⌜proj₁⌝ p) (⌜proj₁⌝ p′)  = ⌜proj₁⌝ & uniNNF p p′
+  uniNNF (⌜proj₂⌝ p) (⌜proj₂⌝ p′)  = ⌜proj₂⌝ & uniNNF p p′
 
 
 ----------------------------------------------------------------------------------------------------
@@ -59,7 +55,8 @@ data _⇒_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
   βred∧₁    : ∀ {A B} {t₁ : Γ ⊢ A} {t₂ : Γ ⊢ B} → ⌜proj₁⌝ (t₁ ⌜,⌝ t₂) ⇒ t₁
   βred∧₂    : ∀ {A B} {t₁ : Γ ⊢ A} {t₂ : Γ ⊢ B} → ⌜proj₂⌝ (t₁ ⌜,⌝ t₂) ⇒ t₂
 
-open ⇒Kit _⇒_ public
+rk1! = redkit1 tk! _⇒_
+open RedKit1 rk1! public
 
 mutual
   NF→¬R : ∀ {Γ A} {t : Γ ⊢ A} → NF t → ¬R t
@@ -71,24 +68,24 @@ mutual
   NNF→¬R (⌜proj₁⌝ p) (congproj₁ r)   = r ↯ NNF→¬R p
   NNF→¬R (⌜proj₂⌝ p) (congproj₂ r)   = r ↯ NNF→¬R p
 
-open ¬RKit NF→¬R public
+rk2! = redkit2 rk1! uniNF NF→¬R
+open RedKit2 rk2! public
 
 
 ----------------------------------------------------------------------------------------------------
 
--- uniqueness of proofs
-mutual
-  uniNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
-  uniNF ⌜λ⌝-    ⌜λ⌝-     = refl
-  uniNF -⌜,⌝-   -⌜,⌝-    = refl
-  uniNF ⌜unit⌝  ⌜unit⌝   = refl
-  uniNF (nnf p) (nnf p′) = nnf & uniNNF p p′
-
-  uniNNF : ∀ {Γ A} {d : Γ ⊢ A} (p p′ : NNF d) → p ≡ p′
-  uniNNF ⌜v⌝-        ⌜v⌝-          = refl
-  uniNNF (p₁ ⌜$⌝ p₂) (p₁′ ⌜$⌝ p₂′) = _⌜$⌝_ & uniNNF p₁ p₁′ ⊗ uniNF p₂ p₂′
-  uniNNF (⌜proj₁⌝ p) (⌜proj₁⌝ p′)  = ⌜proj₁⌝ & uniNNF p p′
-  uniNNF (⌜proj₂⌝ p) (⌜proj₂⌝ p′)  = ⌜proj₂⌝ & uniNNF p p′
+det⇒ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t ⇒ t″ → t′ ≡ t″
+det⇒ (cong$₁ r₁)     (cong$₁ r₁′)     = (_⌜$⌝ _) & det⇒ r₁ r₁′
+det⇒ (cong$₁ r₁)     (cong$₂ p₁′ r₂′) = r₁ ↯ NF→¬R p₁′
+det⇒ (cong$₂ p₁ r₂)  (cong$₁ r₁′)     = r₁′ ↯ NF→¬R p₁
+det⇒ (cong$₂ p₁ r₂)  (cong$₂ p₁′ r₂′) = (_ ⌜$⌝_) & det⇒ r₂ r₂′
+det⇒ (cong$₂ p₁ r₂)  (βred⊃ refl p₂′) = r₂ ↯ NF→¬R p₂′
+det⇒ (congproj₁ r)   (congproj₁ r′)   = ⌜proj₁⌝ & det⇒ r r′
+det⇒ (congproj₂ r)   (congproj₂ r′)   = ⌜proj₂⌝ & det⇒ r r′
+det⇒ (βred⊃ refl p₂) (cong$₂ p₁′ r₂′) = r₂′ ↯ NF→¬R p₂
+det⇒ (βred⊃ refl p₂) (βred⊃ refl p₂′) = refl
+det⇒ βred∧₁          βred∧₁           = refl
+det⇒ βred∧₂          βred∧₂           = refl
 
 uni⇒ : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒ t′) → r ≡ r′
 uni⇒ (cong$₁ r₁)     (cong$₁ r₁′)     = cong$₁ & uni⇒ r₁ r₁′
@@ -103,31 +100,14 @@ uni⇒ (βred⊃ refl p₂) (βred⊃ refl p₂′) = βred⊃ refl & uniNF p₂
 uni⇒ βred∧₁          βred∧₁           = refl
 uni⇒ βred∧₂          βred∧₂           = refl
 
-
-----------------------------------------------------------------------------------------------------
-
--- determinism
-det⇒ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t ⇒ t″ → t′ ≡ t″
-det⇒ (cong$₁ r₁)     (cong$₁ r₁′)     = (_⌜$⌝ _) & det⇒ r₁ r₁′
-det⇒ (cong$₁ r₁)     (cong$₂ p₁′ r₂′) = r₁ ↯ NF→¬R p₁′
-det⇒ (cong$₂ p₁ r₂)  (cong$₁ r₁′)     = r₁′ ↯ NF→¬R p₁
-det⇒ (cong$₂ p₁ r₂)  (cong$₂ p₁′ r₂′) = (_ ⌜$⌝_) & det⇒ r₂ r₂′
-det⇒ (cong$₂ p₁ r₂)  (βred⊃ refl p₂′) = r₂ ↯ NF→¬R p₂′
-det⇒ (congproj₁ r)   (congproj₁ r′)   = ⌜proj₁⌝ & det⇒ r r′
-det⇒ (congproj₂ r)   (congproj₂ r′)   = ⌜proj₂⌝ & det⇒ r r′
-det⇒ (βred⊃ refl p₂) (cong$₂ p₁′ r₂′) = r₂′ ↯ NF→¬R p₂
-det⇒ (βred⊃ refl p₂) (βred⊃ refl p₂′) = refl
-det⇒ βred∧₁          βred∧₁           = refl
-det⇒ βred∧₂          βred∧₂           = refl
-
-open ⇒*Kit NF→¬R det⇒ uni⇒ public
+dk! = detkit rk2! det⇒ uni⇒
+open DetKit dk! public
 
 
 ----------------------------------------------------------------------------------------------------
 
--- progress
 prog⇒ : ∀ {Γ A} (t : Γ ⊢ A) → Prog t
-prog⇒ (⌜v⌝ i)                = done (nnf ⌜v⌝-)
+prog⇒ (var i)                = done (nnf var-)
 prog⇒ (⌜λ⌝ t)                = done ⌜λ⌝-
 prog⇒ (t₁ ⌜$⌝ t₂)            with prog⇒ t₁ | prog⇒ t₂
 ... | step r₁       | _         = step (cong$₁ r₁)
@@ -145,16 +125,8 @@ prog⇒ (⌜proj₂⌝ t)            with prog⇒ t
 ... | done (nnf p)              = done (nnf (⌜proj₂⌝ p))
 prog⇒ ⌜unit⌝                   = done ⌜unit⌝
 
-open ProgKit prog⇒ public
-
-module _ (⚠ : Extensionality) where
-  NF≃¬RF : ∀ {Γ A} {t : Γ ⊢ A} → NF t ≃ (¬ RF t)
-  NF≃¬RF = record
-    { to      = NF→¬RF
-    ; from    = ¬RF→NF
-    ; from∘to = λ p → uniNF _ p
-    ; to∘from = λ p → uni¬RF ⚠ _ p
-    }
+pk! = progkit rk2! prog⇒
+open ProgKit pk! public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -168,15 +140,50 @@ mutual
   renNF e (nnf p) = nnf (renNNF e p)
 
   renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren e t)
-  renNNF e ⌜v⌝-        = ⌜v⌝-
+  renNNF e var-        = var-
   renNNF e (p₁ ⌜$⌝ p₂) = renNNF e p₁ ⌜$⌝ renNF e p₂
   renNNF e (⌜proj₁⌝ p) = ⌜proj₁⌝ (renNNF e p)
   renNNF e (⌜proj₂⌝ p) = ⌜proj₂⌝ (renNNF e p)
 
--- ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇒ t′ → ren e t ⇒ ren e t′
--- ren⇒ e (cong$₁ r₁)               = cong$₁ (ren⇒ e r₁)
--- ren⇒ e (cong$₂ p₁ r₂)            = cong$₂ (renNF e p₁) (ren⇒ e r₂)
--- ren⇒ e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (renβred⊃ e t₁ _ ⁻¹) (renNF e p₂)
+ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇒ t′ → ren e t ⇒ ren e t′
+ren⇒ e (cong$₁ r₁)               = cong$₁ (ren⇒ e r₁)
+ren⇒ e (cong$₂ p₁ r₂)            = cong$₂ (renNF e p₁) (ren⇒ e r₂)
+ren⇒ e (congproj₁ r)             = congproj₁ (ren⇒ e r)
+ren⇒ e (congproj₂ r)             = congproj₂ (ren⇒ e r)
+ren⇒ e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (renβred⊃ e t₁ _ ⁻¹) (renNF e p₂)
+ren⇒ e βred∧₁                    = βred∧₁
+ren⇒ e βred∧₂                    = βred∧₂
+
+
+----------------------------------------------------------------------------------------------------
+
+-- stability under substitution
+sub∋NNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {i : Γ ∋ A} → NNF* ss → NNF (sub∋ ss i)
+sub∋NNF {i = zero}  (p ∷ ps) = p
+sub∋NNF {i = suc i} (p ∷ ps) = sub∋NNF ps
+
+mutual
+  subNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NF t → NF (sub ss t)
+  subNF ps ⌜λ⌝-    = ⌜λ⌝-
+  subNF ps -⌜,⌝-   = -⌜,⌝-
+  subNF ps ⌜unit⌝  = ⌜unit⌝
+  subNF ps (nnf p) = nnf (subNNF ps p)
+
+  subNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NNF t → NNF (sub ss t)
+  subNNF ps var-        = sub∋NNF ps
+  subNNF ps (p₁ ⌜$⌝ p₂) = subNNF ps p₁ ⌜$⌝ subNF ps p₂
+  subNNF ps (⌜proj₁⌝ p) = ⌜proj₁⌝ (subNNF ps p)
+  subNNF ps (⌜proj₂⌝ p) = ⌜proj₂⌝ (subNNF ps p)
+
+sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → NNF* ss → t ⇒ t′ →
+        sub ss t ⇒ sub ss t′
+sub⇒ ps (cong$₁ r₁)               = cong$₁ (sub⇒ ps r₁)
+sub⇒ ps (cong$₂ p₁ r₂)            = cong$₂ (subNF ps p₁) (sub⇒ ps r₂)
+sub⇒ ps (congproj₁ r)             = congproj₁ (sub⇒ ps r)
+sub⇒ ps (congproj₂ r)             = congproj₂ (sub⇒ ps r)
+sub⇒ ps (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (subβred⊃ _ t₁ _ ⁻¹) (subNF ps p₂)
+sub⇒ ps βred∧₁                    = βred∧₁
+sub⇒ ps βred∧₂                    = βred∧₂
 
 
 ----------------------------------------------------------------------------------------------------

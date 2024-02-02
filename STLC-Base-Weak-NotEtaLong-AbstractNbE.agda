@@ -1,6 +1,7 @@
 module STLC-Base-Weak-NotEtaLong-AbstractNbE where
 
 open import STLC-Base-Weak-NotEtaLong public
+open import Kit4 public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -20,7 +21,6 @@ module _ {ℳ : Model} where
   private
     module ℳ = Model ℳ
 
-  -- semantic values
   infix 3 _⊩_
   _⊩_ : ℳ.World → Ty → Set
   W ⊩ ⌜◦⌝     = ℳ.⟦◦⟧ W
@@ -30,18 +30,18 @@ module _ {ℳ : Model} where
   vren {A = ⌜◦⌝}     e v = ℳ.ren⟦◦⟧ e v
   vren {A = A ⌜⊃⌝ B} e v = λ e′ → v (ℳ.trans≤ e e′)
 
-open ModelKit (λ {ℳ} → _⊩_ {ℳ}) (λ {ℳ} {W} {W′} {A} → vren {A = A}) public
+mk! = modelkit (λ {ℳ} → _⊩_ {ℳ}) (λ {ℳ} {W} {W′} {A} → vren {A = A})
+open ModelKit mk! public
 
 -- reflection
 ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
-⟦ ⌜v⌝ i     ⟧     vs = ⟦ i ⟧∋ vs
+⟦ var i     ⟧     vs = ⟦ i ⟧∋ vs
 ⟦ ⌜λ⌝ t     ⟧     vs = λ e v → ⟦ t ⟧ (v ∷ vrens e vs)
 ⟦ t₁ ⌜$⌝ t₂ ⟧ {ℳ} vs = ⟦ t₁ ⟧ vs (refl≤ ℳ) $ ⟦ t₂ ⟧ vs
 
 
 ----------------------------------------------------------------------------------------------------
 
--- canonical model
 𝒞 : Model
 𝒞 = record
       { World  = Ctx
@@ -60,14 +60,13 @@ mutual
 
   ↓ : ∀ {Γ A} → 𝒞 / Γ ⊩ A → Σ (Γ ⊢ A) NF
   ↓ {A = ⌜◦⌝}     (_ , p) = _ , nnf p
-  ↓ {A = A ⌜⊃⌝ B} v       = let t , p = ↓ (v wk⊆ (↑ (⌜v⌝ {A = A} zero , ⌜v⌝-)))
+  ↓ {A = A ⌜⊃⌝ B} v       = let t , p = ↓ (v wk⊆ (↑ (var {A = A} zero , var-)))
                               in ⌜λ⌝ t , ⌜λ⌝-
 
 vids : ∀ {Γ} → 𝒞 / Γ ⊩* Γ
 vids {[]}    = []
-vids {A ∷ Γ} = ↑ (⌜v⌝ {A = A} zero , ⌜v⌝-) ∷ vrens wk⊆ vids
+vids {A ∷ Γ} = ↑ (var {A = A} zero , var-) ∷ vrens wk⊆ vids
 
--- reification
 ⟦_⟧⁻¹ : ∀ {Γ A} → Γ ⊨ A → Σ (Γ ⊢ A) NF
 ⟦ v ⟧⁻¹ = ↓ (v vids)
 

@@ -25,7 +25,7 @@ data Con : Ty → Set where
 
 ----------------------------------------------------------------------------------------------------
 
--- intrinsically well-typed terms
+-- well-typed terms
 infix 3 _⊢_
 infixl 18 _⌜$⌝_
 data _⊢_ (Γ : Ctx) : Ty → Set where

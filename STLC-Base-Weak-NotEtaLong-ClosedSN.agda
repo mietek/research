@@ -5,7 +5,6 @@ open import STLC-Base-Weak-NotEtaLong public
 
 ----------------------------------------------------------------------------------------------------
 
--- hereditary weak normalization
 mutual
   HWN : ∀ {Γ A} → Γ ⊢ A → Set
   HWN t = WN t × HWN! t
@@ -99,7 +98,7 @@ mutual
       in step⇒*HWN (cong$₂⇒* ⌜λ⌝- rs₂) (lem₄ ss t₁ p₂′ (subHWN (t₂′ ∷ ss) (hwn₂′ ∷ hwns) t₁))
 
   subHWN : ∀ {Γ Ξ A} (ss : Ξ ⊢* Γ) (hwns : HWN* ss) (t : Γ ⊢ A) → HWN (sub ss t)
-  subHWN ss hwns (⌜v⌝ i)     = sub∋HWN hwns i
+  subHWN ss hwns (var i)     = sub∋HWN hwns i
   subHWN ss hwns (⌜λ⌝ t)     = let t′ = sub ss (⌜λ⌝ t)
                                  in (t′ , done , ⌜λ⌝-) , λ {t₂} → lem₅ ss hwns t t′ {t₂}
   subHWN ss hwns (t₁ ⌜$⌝ t₂) = let wn , hwn! = subHWN ss hwns t₁
@@ -114,7 +113,7 @@ wn = proj₁ ∘ hwn
 
 ----------------------------------------------------------------------------------------------------
 
--- strong normalization (Altenkirch)
+-- Altenkirch
 data SN {Γ A} (t : Γ ⊢ A) : Set where
   make : (∀ {t′} → t ⇒ t′ → SN t′) → SN t
 

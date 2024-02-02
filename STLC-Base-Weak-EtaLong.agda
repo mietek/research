@@ -1,8 +1,7 @@
 module STLC-Base-Weak-EtaLong where
 
-open import STLC-Base public
 open import STLC-Base-Properties public
-open import Isomorphism public
+open import Kit3 public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -15,26 +14,36 @@ mutual
 
   -- neutrals
   data FNNF {Γ} : ∀ {A} → Γ ⊢ A → Set where
-    ⌜v⌝-  : ∀ {A} {i : Γ ∋ A} → FNNF (⌜v⌝ i)
+    var-  : ∀ {A} {i : Γ ∋ A} → FNNF (var i)
     _⌜$⌝_ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (p₁ : FNNF t₁) (p₂ : FNF t₂) →
             FNNF (t₁ ⌜$⌝ t₂)
 
-open NFKit FNF FNNF public renaming (NF* to FNF* ; NNF* to FNNF*)
+data FNNF* {Γ} : ∀ {Δ} → Γ ⊢* Δ → Set where
+  []  : FNNF* []
+  _∷_ : ∀ {A Δ} {t : Γ ⊢ A} {ts : Γ ⊢* Δ} → FNNF t → FNNF* ts → FNNF* (t ∷ ts)
 
--- decidability
+mutual
+  uniFNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : FNF t) → p ≡ p′
+  uniFNF ⌜λ⌝-    ⌜λ⌝-     = refl
+  uniFNF (nnf p) (nnf p′) = nnf & uniFNNF p p′
+
+  uniFNNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : FNNF t) → p ≡ p′
+  uniFNNF var-        var-          = refl
+  uniFNNF (p₁ ⌜$⌝ p₂) (p₁′ ⌜$⌝ p₂′) = _⌜$⌝_ & uniFNNF p₁ p₁′ ⊗ uniFNF p₂ p₂′
+
 mutual
   FNF? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (FNF t)
-  FNF? {A = ⌜◦⌝}     (⌜v⌝ i)     = yes (nnf ⌜v⌝-)
+  FNF? {A = ⌜◦⌝}     (var i)     = yes (nnf var-)
   FNF? {A = ⌜◦⌝}     (t₁ ⌜$⌝ t₂) with FNNF? t₁ | FNF? t₂
   ... | yes p₁ | yes p₂            = yes (nnf (p₁ ⌜$⌝ p₂))
   ... | yes p₁ | no ¬p₂            = no λ { (nnf (p₁ ⌜$⌝ p₂)) → p₂ ↯ ¬p₂ }
   ... | no ¬p₁ | _                 = no λ { (nnf (p₁ ⌜$⌝ p₂)) → p₁ ↯ ¬p₁ }
-  FNF? {A = _ ⌜⊃⌝ _} (⌜v⌝ i)     = no λ ()
+  FNF? {A = _ ⌜⊃⌝ _} (var i)     = no λ ()
   FNF? {A = _ ⌜⊃⌝ _} (⌜λ⌝ t)     = yes ⌜λ⌝-
   FNF? {A = _ ⌜⊃⌝ _} (t₁ ⌜$⌝ t₂) = no λ ()
 
   FNNF? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (FNNF t)
-  FNNF? (⌜v⌝ i)         = yes ⌜v⌝-
+  FNNF? (var i)         = yes var-
   FNNF? (⌜λ⌝ t)         = no λ ()
   FNNF? (t₁ ⌜$⌝ t₂)     with FNNF? t₁ | FNF? t₂
   ... | yes p₁ | yes p₂   = yes (p₁ ⌜$⌝ p₂)
@@ -46,9 +55,13 @@ mutual
 
 -- expandability, or neutrals at function type
 data Expandable {Γ} : ∀ {A} → Γ ⊢ A → Set where
-  ⌜v⌝-  : ∀ {A B} {i : Γ ∋ A ⌜⊃⌝ B} → Expandable (⌜v⌝ i)
+  var-  : ∀ {A B} {i : Γ ∋ A ⌜⊃⌝ B} → Expandable (var i)
   _⌜$⌝_ : ∀ {A B C} {t₁ : Γ ⊢ A ⌜⊃⌝ B ⌜⊃⌝ C} {t₂ : Γ ⊢ A} → FNNF t₁ → FNF t₂ →
           Expandable (t₁ ⌜$⌝ t₂)
+
+uniExpandable : ∀ {Γ A} {t : Γ ⊢ A} (x x′ : Expandable t) → x ≡ x′
+uniExpandable var-        var-          = refl
+uniExpandable (p₁ ⌜$⌝ p₂) (p₁′ ⌜$⌝ p₂′) = _⌜$⌝_ & uniFNNF p₁ p₁′ ⊗ uniFNF p₂ p₂′
 
 -- TODO: genericize?
 data Expandable* {Γ} : ∀ {Δ} → Γ ⊢* Δ → Set where
@@ -56,11 +69,11 @@ data Expandable* {Γ} : ∀ {Δ} → Γ ⊢* Δ → Set where
   _∷_ : ∀ {A Δ} {t : Γ ⊢ A} {ts : Γ ⊢* Δ} → Expandable t → Expandable* ts → Expandable* (t ∷ ts)
 
 FNNF→Expandable : ∀ {Γ A B} {t : Γ ⊢ A ⌜⊃⌝ B} → FNNF t → Expandable t
-FNNF→Expandable ⌜v⌝-        = ⌜v⌝-
+FNNF→Expandable var-        = var-
 FNNF→Expandable (p₁ ⌜$⌝ p₂) = p₁ ⌜$⌝ p₂
 
 Expandable→FNNF : ∀ {Γ A B} {t : Γ ⊢ A ⌜⊃⌝ B} → Expandable t → FNNF t
-Expandable→FNNF ⌜v⌝-        = ⌜v⌝-
+Expandable→FNNF var-        = var-
 Expandable→FNNF (p₁ ⌜$⌝ p₂) = p₁ ⌜$⌝ p₂
 
 -- TODO: delete?
@@ -69,25 +82,31 @@ Expandable→FNNF (p₁ ⌜$⌝ p₂) = p₁ ⌜$⌝ p₂
 -- FNF→¬Expandable (nnf p) ()
 
 Expandable→¬FNF : ∀ {Γ A} {t : Γ ⊢ A} → Expandable t → ¬ FNF t
-Expandable→¬FNF ⌜v⌝-        ()
+Expandable→¬FNF var-        ()
 Expandable→¬FNF (p₁ ⌜$⌝ p₂) ()
+
+uni¬Expandable : ∀ {Γ A} {t : Γ ⊢ A} (¬x ¬x′ : ¬ Expandable t) → ¬x ≡ ¬x′
+uni¬Expandable = uni¬
 
 
 ----------------------------------------------------------------------------------------------------
 
 data _ExpandsTo_ {Γ} : ∀ {A} (t t′ : Γ ⊢ A) → Set where
-  ηexp⊃ : ∀ {A B} {t t′ : Γ ⊢ A ⌜⊃⌝ B} (eq : t′ ≡ ⌜λ⌝ (weak t ⌜$⌝ ⌜v⌝ zero))
+  ηexp⊃ : ∀ {A B} {t t′ : Γ ⊢ A ⌜⊃⌝ B} (eq : t′ ≡ ⌜λ⌝ (wk t ⌜$⌝ var zero))
             (x : Expandable t) →
           t ExpandsTo t′
 
 -- TODO: delete?
 -- data Expanded {Γ} : ∀ {A} (t′ : Γ ⊢ A) → Set where
 --   ηexp⊃ : ∀ {A B} {t : Γ ⊢ A ⌜⊃⌝ B} {t′ : Γ ⊢ A ⌜⊃⌝ B} (x : Expandable t)
---             (eq : t′ ≡ ⌜λ⌝ (weak t ⌜$⌝ ⌜v⌝ zero)) →
+--             (eq : t′ ≡ ⌜λ⌝ (wk t ⌜$⌝ var zero)) →
 --           Expanded t′
 
 Expanded : ∀ {Γ A} (t′ : Γ ⊢ A) → Set
 Expanded t′ = Σ _ λ t → t ExpandsTo t′
+
+uni¬Expanded : ∀ {Γ A} {t : Γ ⊢ A} (¬x ¬x′ : ¬ Expanded t) → ¬x ≡ ¬x′
+uni¬Expanded = uni¬
 
 
 ----------------------------------------------------------------------------------------------------
@@ -97,8 +116,9 @@ Expanded t′ = Σ _ λ t → t ExpandsTo t′
 INF : ∀ {Γ A} → Γ ⊢ A → Set
 INF t = FNF t × ¬ Expanded t
 
-INNF : ∀ {Γ A} → Γ ⊢ A → Set
-INNF t = FNNF t × ¬ Expanded t
+-- TODO: delete?
+-- INNF : ∀ {Γ A} → Γ ⊢ A → Set
+-- INNF t = FNNF t × ¬ Expanded t
 
 INF→FNF : ∀ {Γ A} {t : Γ ⊢ A} → INF t → FNF t
 INF→FNF (p , _) = p
@@ -107,22 +127,8 @@ INF→FNF (p , _) = p
 -- INNF→FNNF : ∀ {Γ A} {t : Γ ⊢ A} → INNF t → FNNF t
 -- INNF→FNNF (p , _) = p
 
-
-----------------------------------------------------------------------------------------------------
-
--- definitional equality
-infix 4 _≝_
-data _≝_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
-  refl≝  : ∀ {A} {t : Γ ⊢ A} → t ≝ t
-  sym≝   : ∀ {A} {t t′ : Γ ⊢ A} (eq : t ≝ t′) → t′ ≝ t
-  trans≝ : ∀ {A} {t t′ t″ : Γ ⊢ A} (eq : t ≝ t′) (eq′ : t′ ≝ t″) → t ≝ t″
-  cong$  : ∀ {A B} {t₁ t₁′ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢ A} (eq₁ : t₁ ≝ t₁′) (eq₂ : t₂ ≝ t₂′) →
-           t₁ ⌜$⌝ t₂ ≝ t₁′ ⌜$⌝ t₂′
-  βred⊃  : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′ : Γ ⊢ B} (eq : t′ ≡ t₁ [ t₂ ]) →
-           ⌜λ⌝ t₁ ⌜$⌝ t₂ ≝ t′
-  ηexp⊃  : ∀ {A B} {t t′ : Γ ⊢ A ⌜⊃⌝ B} (eq : t′ ≡ ⌜λ⌝ (weak t ⌜$⌝ ⌜v⌝ zero)) → t ≝ t′
-
-open ≝Kit (λ {Γ} {A} {t} → refl≝ {t = t}) sym≝ trans≝ public
+uniINF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : INF t) → p ≡ p′
+uniINF (p , ¬x) (p′ , ¬x′) = _,_ & uniFNF p p′ ⊗ uni¬Expanded ¬x ¬x′
 
 
 ----------------------------------------------------------------------------------------------------
@@ -135,7 +141,7 @@ open ≝Kit (λ {Γ} {A} {t} → refl≝ {t = t}) sym≝ trans≝ public
 --   infix 4 _⇒F_
 --   data _⇒F_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
 --     Ired  : ∀ {A} {t t′ : Γ ⊢ A} (r : t ⇒I t′) → t ⇒F t′
---     ηexp⊃ : ∀ {A B} {t t′ : Γ ⊢ A ⌜⊃⌝ B} (eq : t′ ≡ ⌜λ⌝ (weak t ⌜$⌝ ⌜v⌝ zero))
+--     ηexp⊃ : ∀ {A B} {t t′ : Γ ⊢ A ⌜⊃⌝ B} (eq : t′ ≡ ⌜λ⌝ (weak t ⌜$⌝ var zero))
 --               (x : Expandable t) →
 --             t ⇒F t′
 --
@@ -156,8 +162,8 @@ mutual
   infix 4 _⇒F_
   data _⇒F_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
     Ired  : ∀ {A} {t t′ : Γ ⊢ A} (¬x : ¬ Expandable t) (r : t ⇒I t′) → t ⇒F t′
-    ηexp⊃ : ∀ {A B} {t : Γ ⊢ A ⌜⊃⌝ B} {t′} (eq : t′ ≡ weak t) (x : Expandable t) →
-            t ⇒F ⌜λ⌝ (t′ ⌜$⌝ ⌜v⌝ zero)
+    ηexp⊃ : ∀ {A B} {t : Γ ⊢ A ⌜⊃⌝ B} {t′} (eq : t′ ≡ wk t) (x : Expandable t) →
+            t ⇒F ⌜λ⌝ (t′ ⌜$⌝ var zero)
 
   -- NOTE: further modified by removing Icong$₂ and adding Xcong$₂
   infix 4 _⇒I_
@@ -171,63 +177,65 @@ mutual
     βred⊃   : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) (p₂ : FNF t₂) →
               ⌜λ⌝ t₁ ⌜$⌝ t₂ ⇒I t′
 
-module F = ⇒Kit _⇒F_
-module I = ⇒Kit _⇒I_
+rk1!F = redkit1 tk! _⇒F_
+rk1!I = redkit1 tk! _⇒I_
+module RK1F = RedKit1 rk1!F
+module RK1I = RedKit1 rk1!I
 
 mutual
-  FNF→¬FR : ∀ {Γ A} {t : Γ ⊢ A} → FNF t → F.¬R t
+  FNF→¬FR : ∀ {Γ A} {t : Γ ⊢ A} → FNF t → RK1F.¬R t
   FNF→¬FR ⌜λ⌝-    (ηexp⊃ refl ())
   FNF→¬FR (nnf p) r               = r ↯ FNNF→¬FR p
 
-  FNNF→¬FR : ∀ {Γ} {t : Γ ⊢ ⌜◦⌝} → FNNF t → F.¬R t
+  FNNF→¬FR : ∀ {Γ} {t : Γ ⊢ ⌜◦⌝} → FNNF t → RK1F.¬R t
   FNNF→¬FR p (Ired ¬x r) = r ↯ FNNF→¬IR p
 
-  FNF→¬IR : ∀ {Γ A} {t : Γ ⊢ A} → FNF t → I.¬R t
+  FNF→¬IR : ∀ {Γ A} {t : Γ ⊢ A} → FNF t → RK1I.¬R t
   FNF→¬IR (nnf p) r = r ↯ FNNF→¬IR p
 
-  FNNF→¬IR : ∀ {Γ A} {t : Γ ⊢ A} → FNNF t → I.¬R t
+  FNNF→¬IR : ∀ {Γ A} {t : Γ ⊢ A} → FNNF t → RK1I.¬R t
   FNNF→¬IR (p₁ ⌜$⌝ p₂) (cong$₁ r₁)      = r₁ ↯ FNNF→¬IR p₁
   FNNF→¬IR (p₁ ⌜$⌝ p₂) (Fcong$₂ p₁′ r₂) = r₂ ↯ FNF→¬FR p₂
   FNNF→¬IR (p₁ ⌜$⌝ p₂) (Xcong$₂ x₁ r₂)  = r₂ ↯ FNF→¬FR p₂
 
 -- TODO: delete?
--- INF→¬FR : ∀ {Γ A} {t : Γ ⊢ A} → INF t → F.¬R t
+-- INF→¬FR : ∀ {Γ A} {t : Γ ⊢ A} → INF t → RK1F.¬R t
 -- INF→¬FR = FNF→¬FR ∘ INF→FNF
 
--- INNF→¬FR : ∀ {Γ} {t : Γ ⊢ ⌜◦⌝} → INNF t → F.¬R t
+-- INNF→¬FR : ∀ {Γ} {t : Γ ⊢ ⌜◦⌝} → INNF t → RK1F.¬R t
 -- INNF→¬FR = FNNF→¬FR ∘ INNF→FNNF
 
-INF→¬IR : ∀ {Γ A} {t : Γ ⊢ A} → INF t → I.¬R t
+INF→¬IR : ∀ {Γ A} {t : Γ ⊢ A} → INF t → RK1I.¬R t
 INF→¬IR = FNF→¬IR ∘ INF→FNF
 
--- INNF→¬IR : ∀ {Γ A} {t : Γ ⊢ A} → INNF t → I.¬R t
+-- INNF→¬IR : ∀ {Γ A} {t : Γ ⊢ A} → INNF t → RK1I.¬R t
 -- INNF→¬IR = FNNF→¬IR ∘ INNF→FNNF
 
-module F′ = F.¬RKit FNF→¬FR
-module I′ = I.¬RKit INF→¬IR
+rk2!F = redkit2 rk1!F uniFNF FNF→¬FR
+rk2!I = redkit2 rk1!I uniINF INF→¬IR
+module RK2F = RedKit2 rk2!F
+module RK2I = RedKit2 rk2!I
 
 
 ----------------------------------------------------------------------------------------------------
 
-Expandable→¬IR : ∀ {Γ A B} {t : Γ ⊢ A ⌜⊃⌝ B} → Expandable t → I.¬R t
+Expandable→¬IR : ∀ {Γ A B} {t : Γ ⊢ A ⌜⊃⌝ B} → Expandable t → RK1I.¬R t
 Expandable→¬IR = FNNF→¬IR ∘ Expandable→FNNF
 
 -- TODO: delete?
--- ¬FR→¬Expandable : ∀ {Γ A} {t : Γ ⊢ A} → F.¬R t → ¬ Expandable t
--- -- ¬FR→¬Expandable = ¬η→¬Expandable ∘ ¬FR→¬η
--- ¬FR→¬Expandable {A = A ⌜⊃⌝ B} {t = ⌜v⌝ i}     ¬r x = ηexp⊃ refl x ↯ ¬r
+-- ¬FR→¬Expandable : ∀ {Γ A} {t : Γ ⊢ A} → RK1F.¬R t → ¬ Expandable t
+-- ¬FR→¬Expandable {A = A ⌜⊃⌝ B} {t = var i}     ¬r x = ηexp⊃ refl x ↯ ¬r
 -- ¬FR→¬Expandable {A = A ⌜⊃⌝ B} {t = t₁ ⌜$⌝ t₂} ¬r x = ηexp⊃ refl x ↯ ¬r
-
--- ¬FR→¬IR : ∀ {Γ A} {t : Γ ⊢ A} → F.¬R t → I.¬R t
+--
+-- ¬FR→¬IR : ∀ {Γ A} {t : Γ ⊢ A} → RK1F.¬R t → RK1I.¬R t
 -- ¬FR→¬IR ¬r r = Ired (¬FR→¬Expandable ¬r) r ↯ ¬r
-
--- ¬FRF→¬IRF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ F.RF t → ¬ I.RF t
--- ¬FRF→¬IRF = I′.¬R→¬RF ∘ ¬FR→¬IR ∘ F′.¬RF→¬R
+--
+-- ¬FRF→¬IRF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ RK1F.RF t → ¬ RK1I.RF t
+-- ¬FRF→¬IRF = RK2I.¬R→¬RF ∘ ¬FR→¬IR ∘ RK2F.¬RF→¬R
 
 
 ----------------------------------------------------------------------------------------------------
 
--- determinism
 mutual
   det⇒F : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒F t′ → t ⇒F t″ → t′ ≡ t″
   det⇒F (Ired ¬x r)    (Ired ¬x′ r′)   = det⇒I r r′
@@ -248,26 +256,6 @@ mutual
   det⇒I (Xcong$₂ x₁ r₂) (Xcong$₂ x₁′ r₂′) = (_ ⌜$⌝_) & det⇒F r₂ r₂′
   det⇒I (βred⊃ refl p₂) (Fcong$₂ p₁′ r₂′) = r₂′ ↯ FNF→¬FR p₂
   det⇒I (βred⊃ refl p₂) (βred⊃ refl p₂′)  = refl
-
-
-----------------------------------------------------------------------------------------------------
-
--- uniqueness of proofs
-mutual
-  uniFNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : FNF t) → p ≡ p′
-  uniFNF ⌜λ⌝-    ⌜λ⌝-     = refl
-  uniFNF (nnf p) (nnf p′) = nnf & uniFNNF p p′
-
-  uniFNNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : FNNF t) → p ≡ p′
-  uniFNNF ⌜v⌝-        ⌜v⌝-          = refl
-  uniFNNF (p₁ ⌜$⌝ p₂) (p₁′ ⌜$⌝ p₂′) = _⌜$⌝_ & uniFNNF p₁ p₁′ ⊗ uniFNF p₂ p₂′
-
-uniExpandable : ∀ {Γ A} {t : Γ ⊢ A} (x x′ : Expandable t) → x ≡ x′
-uniExpandable ⌜v⌝-        ⌜v⌝-          = refl
-uniExpandable (p₁ ⌜$⌝ p₂) (p₁′ ⌜$⌝ p₂′) = _⌜$⌝_ & uniFNNF p₁ p₁′ ⊗ uniFNF p₂ p₂′
-
-uni¬Expandable : ∀ {Γ A} {t : Γ ⊢ A} (¬x ¬x′ : ¬ Expandable t) → ¬x ≡ ¬x′
-uni¬Expandable = uni¬
 
 mutual
   uni⇒F : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒F t′) → r ≡ r′
@@ -290,53 +278,151 @@ mutual
   uni⇒I (βred⊃ eq p₂)   (Fcong$₂ p₁′ r₂′) = r₂′ ↯ FNF→¬FR p₂
   uni⇒I (βred⊃ refl p₂) (βred⊃ refl p₂′)  = βred⊃ refl & uniFNF p₂ p₂′
 
-module F‴ = F.⇒*Kit FNF→¬FR det⇒F uni⇒F
-module I‴ = I.⇒*Kit INF→¬IR det⇒I uni⇒I
+dk!F = detkit rk2!F det⇒F uni⇒F
+dk!I = detkit rk2!I det⇒I uni⇒I
+module DKF = DetKit dk!F
+module DKI = DetKit dk!I
 
 
 ----------------------------------------------------------------------------------------------------
 
--- progress
-prog⇒F : ∀ {Γ A} (t : Γ ⊢ A) → F′.Prog t
-prog⇒F {A = ⌜◦⌝}     (⌜v⌝ i)            = F′.done (nnf ⌜v⌝-)
-prog⇒F {A = ⌜◦⌝}     (t₁ ⌜$⌝ t₂)        with prog⇒F t₁ | prog⇒F t₂
-... | F′.step (Ired ¬x₁ r₁) | _            = F′.step (Ired (λ ()) (cong$₁ r₁))
-... | F′.step (ηexp⊃ eq x₁) | F′.step r₂   = F′.step (Ired (λ ()) (Xcong$₂ x₁ r₂))
-... | F′.step (ηexp⊃ eq x₁) | F′.done p₂   = F′.done (nnf (Expandable→FNNF x₁ ⌜$⌝ p₂))
-... | F′.done p₁            | F′.step r₂   = F′.step (Ired (λ ()) (Fcong$₂ p₁ r₂))
-... | F′.done ⌜λ⌝-          | F′.done p₂   = F′.step (Ired (λ ()) (βred⊃ refl p₂))
-prog⇒F {A = A ⌜⊃⌝ B} (⌜v⌝ i)              = F′.step (ηexp⊃ refl ⌜v⌝-)
-prog⇒F {A = A ⌜⊃⌝ B} (⌜λ⌝ t)              = F′.done ⌜λ⌝-
-prog⇒F {A = A ⌜⊃⌝ B} (t₁ ⌜$⌝ t₂)        with prog⇒F t₁ | prog⇒F t₂
-... | F′.step (Ired ¬x₁ r₁) | _            = F′.step (Ired (λ { (p₁ ⌜$⌝ p₂) →
-                                               FNNF→Expandable p₁ ↯ ¬x₁ }) (cong$₁ r₁))
-... | F′.step (ηexp⊃ eq x₁) | F′.step r₂   = F′.step (Ired (λ { (p₁ ⌜$⌝ p₂) →
-                                               r₂ ↯ FNF→¬FR p₂ }) (Xcong$₂ x₁ r₂))
-... | F′.step (ηexp⊃ eq x₁) | F′.done p₂   = F′.step (ηexp⊃ refl (Expandable→FNNF x₁ ⌜$⌝ p₂))
-... | F′.done ⌜λ⌝-          | F′.step r₂   = F′.step (Ired (λ { (() ⌜$⌝ p₂′) }) (Fcong$₂ ⌜λ⌝- r₂))
-... | F′.done ⌜λ⌝-          | F′.done p₂   = F′.step (Ired (λ { (() ⌜$⌝ p₂′) }) (βred⊃ refl p₂))
+prog⇒F : ∀ {Γ A} (t : Γ ⊢ A) → RK2F.Prog t
+prog⇒F {A = ⌜◦⌝}     (var i)                = RK2F.done (nnf var-)
+prog⇒F {A = ⌜◦⌝}     (t₁ ⌜$⌝ t₂)            with prog⇒F t₁ | prog⇒F t₂
+... | RK2F.step (Ired ¬x₁ r₁) | _                = RK2F.step (Ired (λ ()) (cong$₁ r₁))
+... | RK2F.step (ηexp⊃ eq x₁) | RK2F.step r₂       = RK2F.step (Ired (λ ()) (Xcong$₂ x₁ r₂))
+... | RK2F.step (ηexp⊃ eq x₁) | RK2F.done p₂       = RK2F.done (nnf (Expandable→FNNF x₁ ⌜$⌝ p₂))
+... | RK2F.done p₁            | RK2F.step r₂       = RK2F.step (Ired (λ ()) (Fcong$₂ p₁ r₂))
+... | RK2F.done ⌜λ⌝-          | RK2F.done p₂       = RK2F.step (Ired (λ ()) (βred⊃ refl p₂))
+prog⇒F {A = A ⌜⊃⌝ B} (var i)                  = RK2F.step (ηexp⊃ refl var-)
+prog⇒F {A = A ⌜⊃⌝ B} (⌜λ⌝ t)                  = RK2F.done ⌜λ⌝-
+prog⇒F {A = A ⌜⊃⌝ B} (t₁ ⌜$⌝ t₂)            with prog⇒F t₁ | prog⇒F t₂
+... | RK2F.step (Ired ¬x₁ r₁) | _                = RK2F.step (Ired (λ { (p₁ ⌜$⌝ p₂) →
+                                                   FNNF→Expandable p₁ ↯ ¬x₁ }) (cong$₁ r₁))
+... | RK2F.step (ηexp⊃ eq x₁) | RK2F.step r₂       = RK2F.step (Ired (λ { (p₁ ⌜$⌝ p₂) →
+                                                   r₂ ↯ FNF→¬FR p₂ }) (Xcong$₂ x₁ r₂))
+... | RK2F.step (ηexp⊃ eq x₁) | RK2F.done p₂       = RK2F.step (ηexp⊃ refl (Expandable→FNNF x₁ ⌜$⌝ p₂))
+... | RK2F.done ⌜λ⌝-          | RK2F.step r₂       = RK2F.step (Ired (λ { (() ⌜$⌝ p₂′) }) (Fcong$₂ ⌜λ⌝- r₂))
+... | RK2F.done ⌜λ⌝-          | RK2F.done p₂       = RK2F.step (Ired (λ { (() ⌜$⌝ p₂′) }) (βred⊃ refl p₂))
 
-module F″ = F′.ProgKit prog⇒F
+-- TODO: progress doesn’t seem provable for _⇒I_, but maybe that’s okay?
+-- prog⇒I : ∀ {Γ A} (t : Γ ⊢ A) → RK2I.Prog t
+-- prog⇒I t = {!!}
 
-module _ (⚠ : Extensionality) where
-  FNF≃¬FRF : ∀ {Γ A} {t : Γ ⊢ A} → FNF t ≃ (¬ F.RF t)
-  FNF≃¬FRF = record
-    { to      = F′.NF→¬RF
-    ; from    = F″.¬RF→NF
-    ; from∘to = λ p → uniFNF _ p
-    ; to∘from = λ p → F.uni¬RF ⚠ _ p
-    }
+pk!F = progkit rk2!F prog⇒F
+module PKF = ProgKit pk!F
 
--- TODO: this doesn’t seem provable, but maybe that’s okay?
--- prog⇒I : ∀ {Γ A} (t : Γ ⊢ A) → I′.Prog t
--- prog⇒I t = ?
+
+----------------------------------------------------------------------------------------------------
+
+-- stability under renaming
+mutual
+  renFNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → FNF t → FNF (ren e t)
+  renFNF e ⌜λ⌝-    = ⌜λ⌝-
+  renFNF e (nnf p) = nnf (renFNNF e p)
+
+  renFNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → FNNF t → FNNF (ren e t)
+  renFNNF e var-        = var-
+  renFNNF e (p₁ ⌜$⌝ p₂) = renFNNF e p₁ ⌜$⌝ renFNF e p₂
+
+mutual
+  nerFNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → FNF (ren e t) → FNF t
+  nerFNF {t = var i}     e (nnf p) = nnf (nerFNNF e p)
+  nerFNF {t = ⌜λ⌝ t}     e ⌜λ⌝-    = ⌜λ⌝-
+  nerFNF {t = t₁ ⌜$⌝ t₂} e (nnf p) = nnf (nerFNNF e p)
+
+  nerFNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → FNNF (ren e t) → FNNF t
+  nerFNNF {t = var i}     e var-        = var-
+  nerFNNF {t = t₁ ⌜$⌝ t₂} e (p₁ ⌜$⌝ p₂) = nerFNNF e p₁ ⌜$⌝ nerFNF e p₂
+
+renExpandable : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → Expandable t → Expandable (ren e t)
+renExpandable e var-        = var-
+renExpandable e (p₁ ⌜$⌝ p₂) = renFNNF e p₁ ⌜$⌝ renFNF e p₂
+
+ren¬Expandable : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → ¬ Expandable t → ¬ Expandable (ren e t)
+ren¬Expandable {t = var i}     e ¬x var-        = var- ↯ ¬x
+ren¬Expandable {t = t₁ ⌜$⌝ t₂} e ¬x (p₁ ⌜$⌝ p₂) = (nerFNNF e p₁ ⌜$⌝ nerFNF e p₂) ↯ ¬x
+
+mutual
+  ren⇒F : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇒F t′ → ren e t ⇒F ren e t′
+  ren⇒F e (Ired ¬x r)    = Ired (ren¬Expandable e ¬x) (ren⇒I e r)
+  ren⇒F e (ηexp⊃ refl x) = ηexp⊃ (eqwkren e _) (renExpandable e x)
+
+  ren⇒I : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇒I t′ → ren e t ⇒I ren e t′
+  ren⇒I e (cong$₁ r₁)               = cong$₁ (ren⇒I e r₁)
+  ren⇒I e (Fcong$₂ p₁ r₂)           = Fcong$₂ (renFNF e p₁) (ren⇒F e r₂)
+  ren⇒I e (Xcong$₂ x₁ r₂)           = Xcong$₂ (renExpandable e x₁) (ren⇒F e r₂)
+  ren⇒I e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (renβred⊃ e t₁ _ ⁻¹) (renFNF e p₂)
+
+
+----------------------------------------------------------------------------------------------------
+
+-- stability under substitution
+sub∋FNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {i : Γ ∋ A} → FNNF* ss → FNNF (sub∋ ss i)
+sub∋FNNF {i = zero}  (p ∷ ps) = p
+sub∋FNNF {i = suc i} (p ∷ ps) = sub∋FNNF ps
+
+mutual
+  subFNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → FNNF* ss → FNF t → FNF (sub ss t)
+  subFNF ps ⌜λ⌝-    = ⌜λ⌝-
+  subFNF ps (nnf p) = nnf (subFNNF ps p)
+
+  subFNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → FNNF* ss → FNNF t → FNNF (sub ss t)
+  subFNNF ps var-        = sub∋FNNF ps
+  subFNNF ps (p₁ ⌜$⌝ p₂) = subFNNF ps p₁ ⌜$⌝ subFNF ps p₂
+
+-- TODO: what?
+hmmFNF : ∀ {Γ A B} {i : Γ ∋ A} → FNF (var i) → FNF (var (suc {B = B} i))
+hmmFNF (nnf var-) = nnf var-
+
+bus∋FNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {i : Γ ∋ A} → FNNF* ss → FNF (sub∋ ss i) → FNF (var i)
+bus∋FNNF {A = ⌜◦⌝}     {i = i}     ps        p′   = nnf var-
+bus∋FNNF {A = A ⌜⊃⌝ B} {i = zero}  (() ∷ ps) ⌜λ⌝-
+bus∋FNNF {A = A ⌜⊃⌝ B} {i = suc i} (p ∷ ps)  p′   = hmmFNF (bus∋FNNF {i = i} ps p′)
+
+mutual
+  busFNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → FNNF* ss → FNF (sub ss t) → FNF t
+  busFNF {t = var i}     ps p       = bus∋FNNF ps p
+  busFNF {t = ⌜λ⌝ t}     ps ⌜λ⌝-    = ⌜λ⌝-
+  busFNF {t = t₁ ⌜$⌝ t₂} ps (nnf p) = nnf (busFNNF ps p)
+
+  busFNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → FNNF* ss → FNNF (sub ss t) → FNNF t
+  busFNNF {t = var i}     ps p           = var-
+  busFNNF {t = t₁ ⌜$⌝ t₂} ps (p₁ ⌜$⌝ p₂) = busFNNF ps p₁ ⌜$⌝ busFNF ps p₂
+
+sub∋Expandable : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {i : Γ ∋ A} → Expandable* ss → Expandable (sub∋ ss i)
+sub∋Expandable {i = zero}  (x ∷ xs) = x
+sub∋Expandable {i = suc i} (x ∷ xs) = sub∋Expandable xs
+
+subExpandable : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → FNNF* ss → Expandable* ss → Expandable t →
+                Expandable (sub ss t)
+subExpandable ps xs var-        = sub∋Expandable xs
+subExpandable ps xs (p₁ ⌜$⌝ p₂) = subFNNF ps p₁ ⌜$⌝ subFNF ps p₂
+
+sub¬Expandable : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → FNNF* ss → ¬ Expandable t →
+                 ¬ Expandable (sub ss t)
+sub¬Expandable {A = A ⌜⊃⌝ B} {t = var i}     ps ¬x x           = var- ↯ ¬x
+sub¬Expandable {A = A ⌜⊃⌝ B} {t = t₁ ⌜$⌝ t₂} ps ¬x (p₁ ⌜$⌝ p₂) = (busFNNF ps p₁ ⌜$⌝ busFNF ps p₂) ↯ ¬x
+
+mutual
+  sub⇒I : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → FNNF* ss → Expandable* ss → t ⇒I t′ →
+           sub ss t ⇒I sub ss t′
+  sub⇒I ps xs (cong$₁ r₁)               = cong$₁ (sub⇒I ps xs r₁)
+  sub⇒I ps xs (Fcong$₂ p₁ r₂)           = Fcong$₂ (subFNF ps p₁) (sub⇒F ps xs r₂)
+  sub⇒I ps xs (Xcong$₂ x₁ r₂)           = Xcong$₂ (subExpandable ps xs x₁) (sub⇒F ps xs r₂)
+  sub⇒I ps xs (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (subβred⊃ _ t₁ _ ⁻¹) (subFNF ps p₂)
+
+  sub⇒F : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → FNNF* ss → Expandable* ss → t ⇒F t′ →
+           sub ss t ⇒F sub ss t′
+  sub⇒F ps xs (Ired ¬x r)            = Ired (sub¬Expandable ps ¬x) (sub⇒I ps xs r)
+  sub⇒F ps xs (ηexp⊃ {t = t} refl x) = ηexp⊃ (eqwksub _ t) (subExpandable ps xs x)
 
 
 ----------------------------------------------------------------------------------------------------
 
 Expandable? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (Expandable t)
 Expandable? {A = ⌜◦⌝}     t           = no λ ()
-Expandable? {A = A ⌜⊃⌝ B} (⌜v⌝ i)     = yes ⌜v⌝-
+Expandable? {A = A ⌜⊃⌝ B} (var i)     = yes var-
 Expandable? {A = A ⌜⊃⌝ B} (⌜λ⌝ t)     = no λ ()
 Expandable? {A = A ⌜⊃⌝ B} (t₁ ⌜$⌝ t₂) with FNNF? t₁ | FNF? t₂
 ... | no ¬p₁ | _                        = no λ { (p₁ ⌜$⌝ p₂) → p₁ ↯ ¬p₁ }
@@ -361,132 +447,27 @@ IR⊎ExpandsTo→FR                   (inj₂ (ηexp⊃ refl x)) = ηexp⊃ refl
 
 ----------------------------------------------------------------------------------------------------
 
--- stability under renaming
-mutual
-  renFNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → FNF t → FNF (ren e t)
-  renFNF e ⌜λ⌝-    = ⌜λ⌝-
-  renFNF e (nnf p) = nnf (renFNNF e p)
-
-  renFNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → FNNF t → FNNF (ren e t)
-  renFNNF e ⌜v⌝-        = ⌜v⌝-
-  renFNNF e (p₁ ⌜$⌝ p₂) = renFNNF e p₁ ⌜$⌝ renFNF e p₂
-
-mutual
-  nerFNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → FNF (ren e t) → FNF t
-  nerFNF {t = ⌜v⌝ i}     e (nnf p) = nnf (nerFNNF e p)
-  nerFNF {t = ⌜λ⌝ t}     e ⌜λ⌝-    = ⌜λ⌝-
-  nerFNF {t = t₁ ⌜$⌝ t₂} e (nnf p) = nnf (nerFNNF e p)
-
-  nerFNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → FNNF (ren e t) → FNNF t
-  nerFNNF {t = ⌜v⌝ i}     e ⌜v⌝-        = ⌜v⌝-
-  nerFNNF {t = t₁ ⌜$⌝ t₂} e (p₁ ⌜$⌝ p₂) = nerFNNF e p₁ ⌜$⌝ nerFNF e p₂
-
-renExpandable : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → Expandable t → Expandable (ren e t)
-renExpandable e ⌜v⌝-        = ⌜v⌝-
-renExpandable e (p₁ ⌜$⌝ p₂) = renFNNF e p₁ ⌜$⌝ renFNF e p₂
-
-ren¬Expandable : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → ¬ Expandable t → ¬ Expandable (ren e t)
-ren¬Expandable {t = ⌜v⌝ i}     e ¬x ⌜v⌝-        = ⌜v⌝- ↯ ¬x
-ren¬Expandable {t = t₁ ⌜$⌝ t₂} e ¬x (p₁ ⌜$⌝ p₂) = (nerFNNF e p₁ ⌜$⌝ nerFNF e p₂) ↯ ¬x
-
-mutual
-  ren⇒F : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇒F t′ → ren e t ⇒F ren e t′
-  ren⇒F e (Ired ¬x r)    = Ired (ren¬Expandable e ¬x) (ren⇒I e r)
-  ren⇒F e (ηexp⊃ refl x) = ηexp⊃ (eqweakren e _) (renExpandable e x)
-
-  ren⇒I : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇒I t′ → ren e t ⇒I ren e t′
-  ren⇒I e (cong$₁ r₁)               = cong$₁ (ren⇒I e r₁)
-  ren⇒I e (Fcong$₂ p₁ r₂)           = Fcong$₂ (renFNF e p₁) (ren⇒F e r₂)
-  ren⇒I e (Xcong$₂ x₁ r₂)           = Xcong$₂ (renExpandable e x₁) (ren⇒F e r₂)
-  ren⇒I e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (renβred⊃ e t₁ _ ⁻¹) (renFNF e p₂)
-
-
-----------------------------------------------------------------------------------------------------
-
--- stability under substitution
-sub∋FNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {i : Γ ∋ A} → FNNF* ss → FNNF (sub∋ ss i)
-sub∋FNNF {i = zero}  (p ∷ ps) = p
-sub∋FNNF {i = suc i} (p ∷ ps) = sub∋FNNF ps
-
-mutual
-  subFNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → FNNF* ss → FNF t → FNF (sub ss t)
-  subFNF ps ⌜λ⌝-    = ⌜λ⌝-
-  subFNF ps (nnf p) = nnf (subFNNF ps p)
-
-  subFNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → FNNF* ss → FNNF t → FNNF (sub ss t)
-  subFNNF ps ⌜v⌝-        = sub∋FNNF ps
-  subFNNF ps (p₁ ⌜$⌝ p₂) = subFNNF ps p₁ ⌜$⌝ subFNF ps p₂
-
--- TODO: what?
-hmmFNF : ∀ {Γ A B} {i : Γ ∋ A} → FNF (⌜v⌝ i) → FNF (⌜v⌝ (suc {B = B} i))
-hmmFNF (nnf ⌜v⌝-) = nnf ⌜v⌝-
-
-bus∋FNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {i : Γ ∋ A} → FNNF* ss → FNF (sub∋ ss i) → FNF (⌜v⌝ i)
-bus∋FNNF {A = ⌜◦⌝}     {i = i}     ps        p′   = nnf ⌜v⌝-
-bus∋FNNF {A = A ⌜⊃⌝ B} {i = zero}  (() ∷ ps) ⌜λ⌝-
-bus∋FNNF {A = A ⌜⊃⌝ B} {i = suc i} (p ∷ ps)  p′   = hmmFNF (bus∋FNNF {i = i} ps p′)
-
-mutual
-  busFNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → FNNF* ss → FNF (sub ss t) → FNF t
-  busFNF {t = ⌜v⌝ i}     ps p       = bus∋FNNF ps p
-  busFNF {t = ⌜λ⌝ t}     ps ⌜λ⌝-    = ⌜λ⌝-
-  busFNF {t = t₁ ⌜$⌝ t₂} ps (nnf p) = nnf (busFNNF ps p)
-
-  busFNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → FNNF* ss → FNNF (sub ss t) → FNNF t
-  busFNNF {t = ⌜v⌝ i}     ps p           = ⌜v⌝-
-  busFNNF {t = t₁ ⌜$⌝ t₂} ps (p₁ ⌜$⌝ p₂) = busFNNF ps p₁ ⌜$⌝ busFNF ps p₂
-
-sub∋Expandable : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {i : Γ ∋ A} → Expandable* ss → Expandable (sub∋ ss i)
-sub∋Expandable {i = zero}  (x ∷ xs) = x
-sub∋Expandable {i = suc i} (x ∷ xs) = sub∋Expandable xs
-
-subExpandable : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → FNNF* ss → Expandable* ss → Expandable t →
-                Expandable (sub ss t)
-subExpandable ps xs ⌜v⌝-        = sub∋Expandable xs
-subExpandable ps xs (p₁ ⌜$⌝ p₂) = subFNNF ps p₁ ⌜$⌝ subFNF ps p₂
-
-sub¬Expandable : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → FNNF* ss → ¬ Expandable t →
-                 ¬ Expandable (sub ss t)
-sub¬Expandable {A = A ⌜⊃⌝ B} {t = ⌜v⌝ i}     ps ¬x x           = ⌜v⌝- ↯ ¬x
-sub¬Expandable {A = A ⌜⊃⌝ B} {t = t₁ ⌜$⌝ t₂} ps ¬x (p₁ ⌜$⌝ p₂) = (busFNNF ps p₁ ⌜$⌝ busFNF ps p₂) ↯ ¬x
-
-mutual
-  sub⇒I : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → FNNF* ss → Expandable* ss → t ⇒I t′ →
-           sub ss t ⇒I sub ss t′
-  sub⇒I ps xs (cong$₁ r₁)               = cong$₁ (sub⇒I ps xs r₁)
-  sub⇒I ps xs (Fcong$₂ p₁ r₂)           = Fcong$₂ (subFNF ps p₁) (sub⇒F ps xs r₂)
-  sub⇒I ps xs (Xcong$₂ x₁ r₂)           = Xcong$₂ (subExpandable ps xs x₁) (sub⇒F ps xs r₂)
-  sub⇒I ps xs (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (subβred⊃ _ t₁ _ ⁻¹) (subFNF ps p₂)
-
-  sub⇒F : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → FNNF* ss → Expandable* ss → t ⇒F t′ →
-           sub ss t ⇒F sub ss t′
-  sub⇒F ps xs (Ired ¬x r)            = Ired (sub¬Expandable ps ¬x) (sub⇒I ps xs r)
-  sub⇒F ps xs (ηexp⊃ {t = t} refl x) = ηexp⊃ (eqweaksub _ t) (subExpandable ps xs x)
-
-
-----------------------------------------------------------------------------------------------------
-
 -- -- TODO: delete?
 -- _ExpandsTo?_ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Dec (t ExpandsTo t′)
--- ⌜v⌝ i       ExpandsTo? ⌜v⌝ i′                            = no λ { (ηexp⊃ () x) }
--- ⌜v⌝ i       ExpandsTo? ⌜λ⌝ (⌜v⌝ i′)                      = no λ { (ηexp⊃ () x) }
--- ⌜v⌝ i       ExpandsTo? ⌜λ⌝ (⌜λ⌝ t′)                      = no λ { (ηexp⊃ () x) }
--- ⌜v⌝ i       ExpandsTo? ⌜λ⌝ (⌜v⌝ i′ ⌜$⌝ ⌜v⌝ zero)         with weak∋ i ≟∋ i′
+-- var i       ExpandsTo? var i′                            = no λ { (ηexp⊃ () x) }
+-- var i       ExpandsTo? ⌜λ⌝ (var i′)                      = no λ { (ηexp⊃ () x) }
+-- var i       ExpandsTo? ⌜λ⌝ (⌜λ⌝ t′)                      = no λ { (ηexp⊃ () x) }
+-- var i       ExpandsTo? ⌜λ⌝ (var i′ ⌜$⌝ var zero)         with wk∋ i ≟∋ i′
 -- ... | no ¬eq                                               = no λ { (ηexp⊃ refl x) → refl ↯ ¬eq }
--- ... | yes refl                                             = yes (ηexp⊃ refl ⌜v⌝-)
--- ⌜v⌝ i       ExpandsTo? ⌜λ⌝ (⌜v⌝ i′ ⌜$⌝ ⌜v⌝ (suc _))      = no λ { (ηexp⊃ () x) }
--- ⌜v⌝ i       ExpandsTo? ⌜λ⌝ (⌜v⌝ i′ ⌜$⌝ ⌜λ⌝ t₂′)          = no λ { (ηexp⊃ () x) }
--- ⌜v⌝ i       ExpandsTo? ⌜λ⌝ (⌜v⌝ i′ ⌜$⌝ t₂′@(_ ⌜$⌝ _))    = no λ { (ηexp⊃ () x) }
--- ⌜v⌝ i       ExpandsTo? ⌜λ⌝ (⌜λ⌝ t₁′ ⌜$⌝ t₂′)             = no λ { (ηexp⊃ () x) }
--- ⌜v⌝ i       ExpandsTo? ⌜λ⌝ (t₁′@(_ ⌜$⌝ _) ⌜$⌝ t₂′)       = no λ { (ηexp⊃ () x) }
--- ⌜v⌝ i       ExpandsTo? (t₁′ ⌜$⌝ t₂′)                     = no λ { (ηexp⊃ () x) }
+-- ... | yes refl                                             = yes (ηexp⊃ refl var-)
+-- var i       ExpandsTo? ⌜λ⌝ (var i′ ⌜$⌝ var (suc _))      = no λ { (ηexp⊃ () x) }
+-- var i       ExpandsTo? ⌜λ⌝ (var i′ ⌜$⌝ ⌜λ⌝ t₂′)          = no λ { (ηexp⊃ () x) }
+-- var i       ExpandsTo? ⌜λ⌝ (var i′ ⌜$⌝ t₂′@(_ ⌜$⌝ _))    = no λ { (ηexp⊃ () x) }
+-- var i       ExpandsTo? ⌜λ⌝ (⌜λ⌝ t₁′ ⌜$⌝ t₂′)             = no λ { (ηexp⊃ () x) }
+-- var i       ExpandsTo? ⌜λ⌝ (t₁′@(_ ⌜$⌝ _) ⌜$⌝ t₂′)       = no λ { (ηexp⊃ () x) }
+-- var i       ExpandsTo? (t₁′ ⌜$⌝ t₂′)                     = no λ { (ηexp⊃ () x) }
 -- ⌜λ⌝ t       ExpandsTo? t′                                = no λ { (ηexp⊃ eq ()) }
--- (t₁ ⌜$⌝ t₂) ExpandsTo? ⌜v⌝ i′                            = no λ { (ηexp⊃ () x) }
--- (t₁ ⌜$⌝ t₂) ExpandsTo? ⌜λ⌝ (⌜v⌝ i′)                      = no λ { (ηexp⊃ () x) }
+-- (t₁ ⌜$⌝ t₂) ExpandsTo? var i′                            = no λ { (ηexp⊃ () x) }
+-- (t₁ ⌜$⌝ t₂) ExpandsTo? ⌜λ⌝ (var i′)                      = no λ { (ηexp⊃ () x) }
 -- (t₁ ⌜$⌝ t₂) ExpandsTo? ⌜λ⌝ (⌜λ⌝ t′)                      = no λ { (ηexp⊃ () x) }
--- (t₁ ⌜$⌝ t₂) ExpandsTo? ⌜λ⌝ (⌜v⌝ i′ ⌜$⌝ t₂′)              = no λ { (ηexp⊃ () x) }
+-- (t₁ ⌜$⌝ t₂) ExpandsTo? ⌜λ⌝ (var i′ ⌜$⌝ t₂′)              = no λ { (ηexp⊃ () x) }
 -- (t₁ ⌜$⌝ t₂) ExpandsTo? ⌜λ⌝ (⌜λ⌝ t₁′ ⌜$⌝ t₂′)             = no λ { (ηexp⊃ () x) }
--- (t₁ ⌜$⌝ t₂) ExpandsTo? ⌜λ⌝ (t₁′ ⌜$⌝ t₂′ ⌜$⌝ ⌜v⌝ zero)    with weak (t₁ ⌜$⌝ t₂) ≟ t₁′ ⌜$⌝ t₂′
+-- (t₁ ⌜$⌝ t₂) ExpandsTo? ⌜λ⌝ (t₁′ ⌜$⌝ t₂′ ⌜$⌝ var zero)    with wk (t₁ ⌜$⌝ t₂) ≟ t₁′ ⌜$⌝ t₂′
 -- ... | no ¬eq                                               = no λ { (ηexp⊃ refl x) → refl ↯ ¬eq }
 -- ... | yes refl                                             with FNNF? t₁ | FNF? t₂
 -- ...   | no ¬p₁ | _                                           = no λ { (ηexp⊃ refl (p₁ ⌜$⌝ p₂)) →
@@ -494,7 +475,7 @@ mutual
 -- ...   | yes p₁ | no ¬p₂                                      = no λ { (ηexp⊃ refl (p₁′ ⌜$⌝ p₂)) →
 --                                                                  p₂ ↯ ¬p₂ }
 -- ...   | yes p₁ | yes p₂                                      = yes (ηexp⊃ refl (p₁ ⌜$⌝ p₂))
--- (t₁ ⌜$⌝ t₂) ExpandsTo? ⌜λ⌝ (t₁′ ⌜$⌝ t₂′ ⌜$⌝ ⌜v⌝ (suc _)) = no λ { (ηexp⊃ () x) }
+-- (t₁ ⌜$⌝ t₂) ExpandsTo? ⌜λ⌝ (t₁′ ⌜$⌝ t₂′ ⌜$⌝ var (suc _)) = no λ { (ηexp⊃ () x) }
 -- (t₁ ⌜$⌝ t₂) ExpandsTo? ⌜λ⌝ (t₁′ ⌜$⌝ t₂′ ⌜$⌝ ⌜λ⌝ _)       = no λ { (ηexp⊃ () x) }
 -- (t₁ ⌜$⌝ t₂) ExpandsTo? ⌜λ⌝ (t₁′ ⌜$⌝ t₂′ ⌜$⌝ (_ ⌜$⌝ _))   = no λ { (ηexp⊃ () x) }
 -- (t₁ ⌜$⌝ t₂) ExpandsTo? (t₁′ ⌜$⌝ t₂′)                     = no λ { (ηexp⊃ () x) }
@@ -502,34 +483,33 @@ mutual
 -- private
 --   lem₀ : ∀ {Γ A A′ B C} {t₁ : Γ ⊢ A ⌜⊃⌝ B ⌜⊃⌝ C} {t₁′ : Γ ⊢ A′ ⌜⊃⌝ B ⌜⊃⌝ C}
 --            {t₂ : Γ ⊢ A} {t₂′ : Γ ⊢ A′} →
---            ⌜λ⌝ ((weak t₁ ⌜$⌝ weak t₂) ⌜$⌝ ⌜v⌝ zero) ≡ ⌜λ⌝ ((weak t₁′ ⌜$⌝ weak t₂′) ⌜$⌝ ⌜v⌝ zero) →
+--            ⌜λ⌝ ((wk t₁ ⌜$⌝ wk t₂) ⌜$⌝ var zero) ≡ ⌜λ⌝ ((wk t₁′ ⌜$⌝ wk t₂′) ⌜$⌝ var zero) →
 --          Σ (A ≡ A′) λ { refl → t₁ ≡ t₁′ × t₂ ≡ t₂′ }
 --   lem₀ {A = A} {A′} eq with inj$₁′ (inj$₁ (injλ eq))
 --   ... | refl , eq₁ = refl , injren eq₁ , injren (inj$₂ (inj$₁ (injλ eq)))
 
 --   lem₁ : ∀ {Γ A A′ B C} {t₁ : Γ ⊢ A ⌜⊃⌝ B ⌜⊃⌝ C} {t₁′ : Γ ⊢ A′ ⌜⊃⌝ B ⌜⊃⌝ C}
 --            {t₂ : Γ ⊢ A} {t₂′ : Γ ⊢ A′} →
---            ⌜λ⌝ ((weak t₁ ⌜$⌝ weak t₂) ⌜$⌝ ⌜v⌝ zero) ≡ ⌜λ⌝ ((weak t₁′ ⌜$⌝ weak t₂′) ⌜$⌝ ⌜v⌝ zero) →
+--            ⌜λ⌝ ((wk t₁ ⌜$⌝ wk t₂) ⌜$⌝ var zero) ≡ ⌜λ⌝ ((wk t₁′ ⌜$⌝ wk t₂′) ⌜$⌝ var zero) →
 --          ¬ FNNF t₁ → ¬ FNNF t₁′
 --   lem₁ eq ¬p₁ p₁ with lem₀ eq
 --   ... | refl , refl , refl = p₁ ↯ ¬p₁
 
 --   lem₂ : ∀ {Γ A A′ B C} {t₁ : Γ ⊢ A ⌜⊃⌝ B ⌜⊃⌝ C} {t₁′ : Γ ⊢ A′ ⌜⊃⌝ B ⌜⊃⌝ C}
 --            {t₂ : Γ ⊢ A} {t₂′ : Γ ⊢ A′} →
---            ⌜λ⌝ ((weak t₁ ⌜$⌝ weak t₂) ⌜$⌝ ⌜v⌝ zero) ≡ ⌜λ⌝ ((weak t₁′ ⌜$⌝ weak t₂′) ⌜$⌝ ⌜v⌝ zero) →
+--            ⌜λ⌝ ((wk t₁ ⌜$⌝ wk t₂) ⌜$⌝ var zero) ≡ ⌜λ⌝ ((wk t₁′ ⌜$⌝ wk t₂′) ⌜$⌝ var zero) →
 --          ¬ FNF t₂ → ¬ FNF t₂′
 --   lem₂ eq ¬p₂ p₂ with lem₀ eq
 --   ... | refl , refl , refl = p₂ ↯ ¬p₂
 
--- -- TODO: delete?
 -- Expanded? : ∀ {Γ A} (t′ : Γ ⊢ A) → Dec (Expanded t′)
--- Expanded? (⌜v⌝ i′)                      = no λ { (_ , ηexp⊃ () x) }
--- Expanded? (⌜λ⌝ (⌜v⌝ i′))                = no λ { (_ , ηexp⊃ () x) }
+-- Expanded? (var i′)                      = no λ { (_ , ηexp⊃ () x) }
+-- Expanded? (⌜λ⌝ (var i′))                = no λ { (_ , ηexp⊃ () x) }
 -- Expanded? (⌜λ⌝ (⌜λ⌝ t′))                = no λ { (_ , ηexp⊃ () x) }
--- Expanded? (⌜λ⌝ (t′ ⌜$⌝ ⌜v⌝ zero))       with unren wk⊆ t′
+-- Expanded? (⌜λ⌝ (t′ ⌜$⌝ var zero))       with unren wk⊆ t′
 -- ... | no ¬p                               = no λ { (_ , ηexp⊃ refl x) → (_ , refl) ↯ ¬p }
--- ... | yes (⌜v⌝ i , refl)                  = yes (_ , ηexp⊃ refl ⌜v⌝-)
--- ... | yes (⌜λ⌝ t , refl)                  = no λ { (⌜v⌝ _ , ηexp⊃ () x)
+-- ... | yes (var i , refl)                  = yes (_ , ηexp⊃ refl var-)
+-- ... | yes (⌜λ⌝ t , refl)                  = no λ { (var _ , ηexp⊃ () x)
 --                                                  ; (⌜λ⌝ _ , ηexp⊃ eq ())
 --                                                  ; (_ ⌜$⌝ _ , ηexp⊃ () x)
 --                                                  }
@@ -539,7 +519,7 @@ mutual
 -- ...   | yes p₁ | no ¬p₂                     = no λ { (_ , ηexp⊃ eq (p₁′ ⌜$⌝ p₂)) →
 --                                                 p₂ ↯ lem₂ eq ¬p₂ }
 -- ...   | yes p₁ | yes p₂                     = yes (_ , ηexp⊃ refl (p₁ ⌜$⌝ p₂))
--- Expanded? (⌜λ⌝ (t′ ⌜$⌝ ⌜v⌝ (suc i′)))   = no λ { (_ , ηexp⊃ () x) }
+-- Expanded? (⌜λ⌝ (t′ ⌜$⌝ var (suc i′)))   = no λ { (_ , ηexp⊃ () x) }
 -- Expanded? (⌜λ⌝ (t₁′ ⌜$⌝ ⌜λ⌝ t₂′))       = no λ { (_ , ηexp⊃ () x) }
 -- Expanded? (⌜λ⌝ (t₁′ ⌜$⌝ t₂′@(_ ⌜$⌝ _))) = no λ { (_ , ηexp⊃ () x) }
 -- Expanded? (t₁′ ⌜$⌝ t₂′)                 = no λ { (_ , ηexp⊃ () x) }
