@@ -5,19 +5,22 @@ open import Kit1 public
 
 ----------------------------------------------------------------------------------------------------
 
-record RenSubKit1! : Set₁ where
-  constructor rensubkit1
+record RenSubKit1Params : Set₁ where
+  constructor kit
   field
-    sk! : SubKit!
-  open SubKit! sk! public
-  open SubKit sk! public
+    subkit : SubKitParams
+  open SubKitParams subkit public
+  open SubKit subkit public hiding (subkit)
   field
     lidren  : ∀ {Γ A} (t : Γ ⊢ A) → ren id⊆ t ≡ t
     ridren  : ∀ {Γ Γ′ A} (e : Γ ⊆ Γ′) (i : Γ ∋ A) → ren e (var i) ≡ var (ren∋ e i)
     compren : ∀ {Γ Γ′ Γ″ A} (e′ : Γ′ ⊆ Γ″) (e : Γ ⊆ Γ′) (t : Γ ⊢ A) →
                 ren (e′ ∘⊆ e) t ≡ (ren e′ ∘ ren e) t
 
-module RenSubKit1 (rsk! : RenSubKit1!) (open RenSubKit1! rsk!) where
+module RenSubKit1 (κ : RenSubKit1Params) where
+  open RenSubKit1Params κ
+  rensubkit1 = κ
+
   lidrens : ∀ {Γ Δ} (ts : Γ ⊢* Δ) → rens id⊆ ts ≡ ts
   lidrens []       = refl
   lidrens (t ∷ ts) = _∷_ & lidren t ⊗ lidrens ts
@@ -53,8 +56,8 @@ module RenSubKit1 (rsk! : RenSubKit1!) (open RenSubKit1! rsk!) where
   ridrens (keep e) = (_∷ (rens (keep e) ∘ wks) ids) & ridren (keep e) zero
                    ⋮ (var zero ∷_) & (eqwkrens e ids ⋮ wks & ridrens e)
 
-  module _ (⚠ : Extensionality) where
-    ⟪ren⟫ : ∀ (A : Ty) → Presheaf (⟪⊆⟫ ᵒᵖ) ℓzero
+  module _ (⚠ : Funext) where
+    ⟪ren⟫ : ∀ (A : Ty) → Presheaf (⟪⊆⟫ ᵒᵖ) lzero
     ⟪ren⟫ A = record
                 { ƒObj = _⊢ A
                 ; ƒ    = ren
@@ -62,7 +65,7 @@ module RenSubKit1 (rsk! : RenSubKit1!) (open RenSubKit1! rsk!) where
                 ; _∘ƒ_ = λ e′ e → ⚠ (compren e′ e)
                 }
 
-    ⟪rens⟫ : ∀ (Δ : Ctx) → Presheaf (⟪⊆⟫ ᵒᵖ) ℓzero
+    ⟪rens⟫ : ∀ (Δ : Ctx) → Presheaf (⟪⊆⟫ ᵒᵖ) lzero
     ⟪rens⟫ Δ = record
                  { ƒObj = _⊢* Δ
                  ; ƒ    = rens
@@ -107,8 +110,8 @@ module RenSubKit1 (rsk! : RenSubKit1!) (open RenSubKit1! rsk!) where
   ridgets (drop e) = eqrengets wk⊆ e ids ⋮ wks & ridgets e
   ridgets (keep e) = (var zero ∷_) & (eqrengets wk⊆ e ids ⋮ wks & ridgets e)
 
-  module _ (⚠ : Extensionality) where
-    ⟪gets⟫ : ∀ (Γ : Ctx) → Presheaf ⟪⊆⟫ ℓzero
+  module _ (⚠ : Funext) where
+    ⟪gets⟫ : ∀ (Γ : Ctx) → Presheaf ⟪⊆⟫ lzero
     ⟪gets⟫ Γ = record
                  { ƒObj = Γ ⊢*_
                  ; ƒ    = gets
@@ -139,12 +142,12 @@ module RenSubKit1 (rsk! : RenSubKit1!) (open RenSubKit1! rsk!) where
 
 ----------------------------------------------------------------------------------------------------
 
-record RenSubKit2! : Set₁ where
-  constructor rensubkit2
+record RenSubKit2Params : Set₁ where
+  constructor kit
   field
-    rsk1! : RenSubKit1!
-  open RenSubKit1! rsk1! public
-  open RenSubKit1 rsk1! public
+    rensubkit1 : RenSubKit1Params
+  open RenSubKit1Params rensubkit1 public
+  open RenSubKit1 rensubkit1 public hiding (rensubkit1)
   field
     eqsubren : ∀ {Γ Γ′ Ξ A} (ss : Ξ ⊢* Γ′) (e : Γ ⊆ Γ′) (t : Γ ⊢ A) →
                sub (gets e ss) t ≡ (sub ss ∘ ren e) t
@@ -153,7 +156,10 @@ record RenSubKit2! : Set₁ where
     lidsub   : ∀ {Γ A} (t : Γ ⊢ A) → sub ids t ≡ t
     ridsub   : ∀ {Γ Ξ A} (ss : Ξ ⊢* Γ) (i : Γ ∋ A) → sub ss (var i) ≡ sub∋ ss i
 
-module RenSubKit2 (rsk2! : RenSubKit2!) (open RenSubKit2! rsk2!) where
+module RenSubKit2 (κ : RenSubKit2Params) where
+  open RenSubKit2Params κ
+  rensubkit2 = κ
+
   -- Kovacs: assₛₑₛ
   eqsubrens : ∀ {Γ Γ′ Ξ Δ} (ss : Ξ ⊢* Γ′) (e : Γ ⊆ Γ′) (ts : Γ ⊢* Δ) →
               subs (gets e ss) ts ≡ (subs ss ∘ rens e) ts
@@ -190,17 +196,20 @@ module RenSubKit2 (rsk2! : RenSubKit2!) (open RenSubKit2! rsk2!) where
 
 ----------------------------------------------------------------------------------------------------
 
-record RenSubKit3! : Set₁ where
-  constructor rensubkit3
+record RenSubKit3Params : Set₁ where
+  constructor kit
   field
-    rsk2! : RenSubKit2!
-  open RenSubKit2! rsk2! public
-  open RenSubKit2 rsk2! public
+    rensubkit2 : RenSubKit2Params
+  open RenSubKit2Params rensubkit2 public
+  open RenSubKit2 rensubkit2 public hiding (rensubkit2)
   field
     compsub : ∀ {Γ Ξ Ξ′ A} (ss′ : Ξ′ ⊢* Ξ) (ss : Ξ ⊢* Γ) (t : Γ ⊢ A) →
               sub (subs ss′ ss) t ≡ (sub ss′ ∘ sub ss) t
 
-module RenSubKit3 (rsk3! : RenSubKit3!) (open RenSubKit3! rsk3!) where
+module RenSubKit3 (κ : RenSubKit3Params) where
+  open RenSubKit3Params κ
+  rensubkit3 = κ
+
   compsubs : ∀ {Γ Ξ Ξ′ Δ} (ss′ : Ξ′ ⊢* Ξ) (ss : Ξ ⊢* Γ) (ts : Γ ⊢* Δ) →
              subs (subs ss′ ss) ts ≡ (subs ss′ ∘ subs ss) ts
   compsubs ss′ ss []       = refl
@@ -228,7 +237,7 @@ module RenSubKit3 (rsk3! : RenSubKit3!) (open RenSubKit3! rsk3!) where
   asssubs ss′ ss []       = refl
   asssubs ss′ ss (t ∷ ts) = _∷_ & compsub ss′ ss t ⊗ asssubs ss′ ss ts
 
-  ⟪subs⟫ : Category ℓzero ℓzero
+  ⟪subs⟫ : Category lzero lzero
   ⟪subs⟫ = record
              { Obj  = Ctx
              ; _▻_  = _⊢*_
@@ -239,8 +248,8 @@ module RenSubKit3 (rsk3! : RenSubKit3!) (open RenSubKit3! rsk3!) where
              ; ass▻ = λ ss′ ss ts → asssubs ts ss ss′
              }
 
-  module _ (⚠ : Extensionality) where
-    ⟪sub⟫ : ∀ (A : Ty) → Presheaf ⟪subs⟫ ℓzero
+  module _ (⚠ : Funext) where
+    ⟪sub⟫ : ∀ (A : Ty) → Presheaf ⟪subs⟫ lzero
     ⟪sub⟫ A = record
                 { ƒObj = _⊢ A
                 ; ƒ    = sub

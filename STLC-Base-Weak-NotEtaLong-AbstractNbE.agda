@@ -30,8 +30,7 @@ module _ {ℳ : Model} where
   vren {A = ⌜◦⌝}     e v = ℳ.ren⟦◦⟧ e v
   vren {A = A ⌜⊃⌝ B} e v = λ e′ → v (ℳ.trans≤ e e′)
 
-mk! = modelkit (λ {ℳ} → _⊩_ {ℳ}) (λ {ℳ} {W} {W′} {A} → vren {A = A})
-open ModelKit mk! public
+open ModelKit (kit (λ {ℳ} → _⊩_ {ℳ}) (λ {ℳ} {W} {W′} {A} → vren {A = A})) public
 
 -- reflection
 ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A

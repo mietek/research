@@ -1,51 +1,56 @@
 module Common where
 
-import Axiom.Extensionality.Propositional as A
+open import Agda.Builtin.Equality public
+  using (_≡_ ; refl)
 
-open import Data.List public
+open import Agda.Builtin.List public
   using (List ; [] ; _∷_)
 
-open import Data.Nat public
-  using (ℕ ; zero ; suc)
+open import Agda.Builtin.Nat public
+  using (zero ; suc) renaming (Nat to ℕ)
 
-open import Data.Product public
-  using (Σ ; _×_ ; _,_ ; proj₁ ; proj₂)
+open import Agda.Builtin.Sigma public
+  using (Σ ; _,_ ; fst ; snd)
 
-open import Data.Sum public
-  using (_⊎_ ; inj₁ ; inj₂)
-
-open import Data.Unit public
+open import Agda.Builtin.Unit public
   using ()
   renaming (⊤ to 𝟙 ; tt to unit)
 
-open import Function public
-  using (_∘_ ; _$_ ; flip ; id)
-
-open import Level public
-  using (Level ; _⊔_ ; Setω)
-  renaming (zero to ℓzero ; suc to ℓsuc)
-
-open import Relation.Binary.PropositionalEquality public
-  using (_≡_ ; refl ; cong ; cong₂ ; cong-app ; subst ; sym ; trans ; module ≡-Reasoning)
-
-open import Relation.Binary.HeterogeneousEquality public
-  using (_≅_)
-  renaming (≡-to-≅ to ≡→≅ ; ≅-to-≡ to ≅→≡ ; cong to cong≅ ; cong₂ to cong₂≅)
+open import Agda.Primitive public
+  using (Level ; _⊔_ ; lzero ; lsuc ; Setω)
 
 
 ----------------------------------------------------------------------------------------------------
 
-Extensionality : Setω
-Extensionality = ∀ {𝓍 𝓎} → A.Extensionality 𝓍 𝓎
+id : ∀ {𝓍} {X : Set 𝓍} → X → X
+id x = x
 
-Extensionality′ : Setω
-Extensionality′ = ∀ {𝓍 𝓎} → A.ExtensionalityImplicit 𝓍 𝓎
+infixr -1 _$_
+_$_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} → (∀ x → Y x) → (∀ x → Y x)
+f $ x = f x
 
-implify : Extensionality → Extensionality′
-implify ⚠ = A.implicit-extensionality ⚠
+flip : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : X → Y → Set 𝓏} → (∀ x y → Z x y) →
+       (∀ y x → Z x y)
+(flip f) y x = f x y
 
+infixr 9 _∘_
+_∘_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : X → Set 𝓎} {Z : ∀ {x} → Y x → Set 𝓏} →
+        (∀ {x} (y : Y x) → Z y) → (g : ∀ x → Y x) →
+      (∀ x → Z (g x))
+(f ∘ g) x = f (g x)
 
-----------------------------------------------------------------------------------------------------
+infixr 2 _×_
+_×_ : ∀ {𝓍 𝓎} (X : Set 𝓍) (Y : Set 𝓎) → Set (𝓍 ⊔ 𝓎)
+X × Y = Σ X λ _ → Y
+
+infixr 1 _⊎_
+data _⊎_ {𝓍 𝓎} (X : Set 𝓍) (Y : Set 𝓎) : Set (𝓍 ⊔ 𝓎) where
+  left  : ∀ (x : X) → X ⊎ Y
+  right : ∀ (y : Y) → X ⊎ Y
+
+recℕ : ∀ {𝓍} {X : Set 𝓍} → ℕ → X → (ℕ → X → X) → X
+recℕ zero    z s = z
+recℕ (suc n) z s = s n (recℕ n z s)
 
 record Irrelevant {𝓍} (X : Set 𝓍) : Set 𝓍 where
   field .irrelevant : X
@@ -77,38 +82,59 @@ data Dec {𝓍} (X : Set 𝓍) : Set 𝓍 where
 
 ----------------------------------------------------------------------------------------------------
 
-coe : ∀ {𝓍} {X Y : Set 𝓍} → X ≡ Y → X → Y
-coe = subst id
-
-infixl 9 _&_
-_&_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (f : X → Y) {x x′ : X} → x ≡ x′ → f x ≡ f x′
-_&_ = cong
-
-infixl 8 _⊗_
-_⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {f g : X → Y} {x y : X} → f ≡ g → x ≡ y → f x ≡ g y
-refl ⊗ refl = refl
+sym : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≡ x′ → x′ ≡ x
+sym refl = refl
 
 infix 9 _⁻¹
 _⁻¹ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≡ x′ → x′ ≡ x
 _⁻¹ = sym
 
+trans : ∀ {𝓍} {X : Set 𝓍} {x x′ x″ : X} → x ≡ x′ → x′ ≡ x″ → x ≡ x″
+trans refl eq = eq
+
 infixr 4 _⋮_
 _⋮_ : ∀ {𝓍} {X : Set 𝓍} {x x′ x″ : X} → x ≡ x′ → x′ ≡ x″ → x ≡ x″
 _⋮_ = trans
 
-cong-app′ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x : X} → Y x} →
-            (λ {x : X} → f {x}) ≡ (λ {x : X} → g {x}) → (∀ {x : X} → f {x} ≡ g {x})
-cong-app′ refl {x} = refl
+subst : ∀ {𝓍 𝓎} {X : Set 𝓍} (Y : X → Set 𝓎) {x x′} → x ≡ x′ → Y x → Y x′
+subst Y refl y = y
 
+coe : ∀ {𝓍} {X Y : Set 𝓍} → X ≡ Y → X → Y
+coe = subst id
 
-----------------------------------------------------------------------------------------------------
+cong : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (f : X → Y) {x x′} → x ≡ x′ → f x ≡ f x′
+cong f refl = refl
 
-recℕ : ∀ {𝓍} {X : Set 𝓍} → ℕ → X → (ℕ → X → X) → X
-recℕ zero    z s = z
-recℕ (suc n) z s = s n (recℕ n z s)
+infixl 9 _&_
+_&_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (f : X → Y) {x x′} → x ≡ x′ → f x ≡ f x′
+_&_ = cong
 
+cong₂ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : Set 𝓏} (f : X → Y → Z) {x x′ y y′} → x ≡ x′ →
+          y ≡ y′ →
+        f x y ≡ f x′ y′
+cong₂ f refl refl = refl
 
-----------------------------------------------------------------------------------------------------
+infixl 8 _⊗_
+_⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {f g : X → Y} {x x′} → f ≡ g → x ≡ x′ → f x ≡ g x′
+refl ⊗ refl = refl
+
+congapp : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ x → Y x} → f ≡ g → (∀ x → f x ≡ g x)
+congapp refl x = refl
+
+congapp′ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x : X} → Y x} →
+             (λ {x : X} → f {x}) ≡ (λ {x : X} → g {x}) →
+           (∀ {x} → f {x} ≡ g {x})
+congapp′ refl {x} = refl
+
+Funext : Setω
+Funext = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ (x : X) → Y x} →
+           (∀ (x : X) → f x ≡ g x) →
+         f ≡ g
+
+Funext′ : Setω
+Funext′ = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x : X} → Y x} →
+            (∀ {x : X} → f {x} ≡ g {x}) →
+          (λ {x : X} → f {x}) ≡ (λ {x : X} → g {x})
 
 uni≡ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} (eq eq′ : x ≡ x′) → eq ≡ eq′
 uni≡ refl refl = refl
@@ -119,9 +145,65 @@ uni𝟘 () ()
 uni¬ : ∀ {𝓍} {X : Set 𝓍} → ∀ (f f′ : ¬ X) → f ≡ f′
 uni¬ f f′ = refl
 
-module _ (⚠ : Extensionality) where
+module _ (⚠ : Funext) where
+  implify : Funext′
+  implify eq = (λ f {x} → f x) & ⚠ (λ _ → eq)
+
   uni→ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} → (∀ (y y′ : Y) → y ≡ y′) → ∀ (f f′ : X → Y) → f ≡ f′
   uni→ uniY f f′ = ⚠ λ x → uniY (f x) (f′ x)
+
+module ≡-Reasoning {𝓍} {X : Set 𝓍} where
+  infix 1 begin_
+  begin_ : ∀ {x x′ : X} → x ≡ x′ → x ≡ x′
+  begin_ eq = eq
+
+  infixr 2 _≡⟨⟩_
+  _≡⟨⟩_ : ∀ (x {x′} : X) → x ≡ x′ → x ≡ x′
+  x ≡⟨⟩ eq = eq
+
+  infixr 2 _≡⟨_⟩_
+  _≡⟨_⟩_ : ∀ (x {x′ x″} : X) → x ≡ x′ → x′ ≡ x″ → x ≡ x″
+  x ≡⟨ eq ⟩ eq′ = trans eq eq′
+
+  infixr 2 _≡˘⟨_⟩_
+  _≡˘⟨_⟩_ : ∀ (x {x′ x″} : X) → x′ ≡ x → x′ ≡ x″ → x ≡ x″
+  x ≡˘⟨ eq ⟩ eq′ = trans (sym eq) eq′
+
+  infix  3 _∎
+  _∎ : ∀ (x : X) → x ≡ x
+  _∎ _ = refl
+
+
+----------------------------------------------------------------------------------------------------
+
+infix 4 _≅_
+data _≅_ {𝓍} {X : Set 𝓍} (x : X) : ∀ {𝓎} {Y : Set 𝓎} → Y → Set 𝓍 where
+   refl : x ≅ x
+
+≅→≡ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≅ x′ → x ≡ x′
+≅→≡ refl = refl
+
+≡→≅ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≡ x′ → x ≅ x′
+≡→≅ refl = refl
+
+cong≅ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {x x′ : X} (f : ∀ (x : X) → Y x) → x ≅ x′ →
+        f x ≅ f x′
+cong≅ f refl = refl
+
+cong₂≅ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : X → Set 𝓎} {Z : ∀ (x : X) → Y x → Set 𝓏} {x x′ y y′}
+           (f : ∀ x → (y : Y x) → Z x y) → x ≅ x′ → y ≅ y′ →
+         f x y ≅ f x′ y′
+cong₂≅ f refl refl = refl
+
+infixl 9 _&≅_
+_&≅_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {x x′ : X} (f : ∀ x → Y x) → x ≅ x′ → f x ≅ f x′
+_&≅_ = cong≅
+
+-- TODO: why doesn’t this work?!
+infixl 8 _⊗≅_
+_⊗≅_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {x x′ : X} {f g : ∀ x → Y x} → f ≅ g → x ≅ x′ →
+       f x ≅ g x′
+refl ⊗≅ refl = refl
 
 
 ----------------------------------------------------------------------------------------------------

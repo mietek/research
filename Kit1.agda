@@ -62,7 +62,7 @@ module TyKit (Ty : Set) where
   ass⊆ (keep e″) (keep e′) (drop e) = drop & ass⊆ e″ e′ e
   ass⊆ (keep e″) (keep e′) (keep e) = keep & ass⊆ e″ e′ e
 
-  ⟪⊆⟫ : Category ℓzero ℓzero
+  ⟪⊆⟫ : Category lzero lzero
   ⟪⊆⟫ = record
           { Obj  = Ctx
           ; _▻_  = _⊆_
@@ -94,8 +94,8 @@ module TyKit (Ty : Set) where
   compren∋ (keep e′) (keep e) zero    = refl
   compren∋ (keep e′) (keep e) (suc i) = suc & compren∋ e′ e i
 
-  module _ (⚠ : Extensionality) where
-    ⟪ren∋⟫ : ∀ (A : Ty) → Presheaf (⟪⊆⟫ ᵒᵖ) ℓzero
+  module _ (⚠ : Funext) where
+    ⟪ren∋⟫ : ∀ (A : Ty) → Presheaf (⟪⊆⟫ ᵒᵖ) lzero
     ⟪ren∋⟫ A = record
                  { ƒObj = _∋ A
                  ; ƒ    = ren∋
@@ -133,15 +133,18 @@ module TyKit (Ty : Set) where
 
 ----------------------------------------------------------------------------------------------------
 
-record TmKit! : Set₁ where
-  constructor tmkit
+record TmKitParams : Set₁ where
+  constructor kit
   field
     {Ty} : Set
   open TyKit Ty public
   field
     _⊢_ : Ctx → Ty → Set
 
-module TmKit (tk! : TmKit!) (open TmKit! tk!) where
+module TmKit (κ : TmKitParams) where
+  open TmKitParams κ
+  tmkit = κ
+
   ty : ∀ {Γ A} → Γ ⊢ A → Ty
   ty {A = A} t = A
 
@@ -157,17 +160,20 @@ module TmKit (tk! : TmKit!) (open TmKit! tk!) where
 
 ----------------------------------------------------------------------------------------------------
 
-record RenKit! : Set₁ where
-  constructor renkit
+record RenKitParams : Set₁ where
+  constructor kit
   field
-    {tk!} : TmKit!
-  open TmKit! tk! public
-  open TmKit tk! public
+    {tmkit} : TmKitParams
+  open TmKitParams tmkit public
+  open TmKit tmkit public hiding (tmkit)
   field
     var : ∀ {Γ A} → Γ ∋ A → Γ ⊢ A
     ren : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
 
-module RenKit (rk! : RenKit!) (open RenKit! rk!) where
+module RenKit (κ : RenKitParams) where
+  open RenKitParams κ
+  renkit = κ
+
   wk : ∀ {Γ A B} → Γ ⊢ B → (A ∷ Γ) ⊢ B
   wk t = ren wk⊆ t
 
@@ -204,16 +210,19 @@ module RenKit (rk! : RenKit!) (open RenKit! rk!) where
 
 ----------------------------------------------------------------------------------------------------
 
-record SubKit! : Set₁ where
-  constructor subkit
+record SubKitParams : Set₁ where
+  constructor kit
   field
-    rk! : RenKit!
-  open RenKit! rk! public
-  open RenKit rk! public
+    renkit : RenKitParams
+  open RenKitParams renkit public
+  open RenKit renkit public hiding (renkit)
   field
     sub : ∀ {Γ Ξ A} → Ξ ⊢* Γ → Γ ⊢ A → Ξ ⊢ A
 
-module SubKit (sk! : SubKit!) (open SubKit! sk!) where
+module SubKit (κ : SubKitParams) where
+  open SubKitParams κ
+  subkit = κ
+
   subs : ∀ {Γ Ξ Δ} → Ξ ⊢* Γ → Γ ⊢* Δ → Ξ ⊢* Δ
   subs ss []       = []
   subs ss (t ∷ ts) = sub ss t ∷ subs ss ts
@@ -227,9 +236,6 @@ module SubKit (sk! : SubKit!) (open SubKit! sk!) where
   _[_] : ∀ {Γ A B} → (A ∷ Γ) ⊢ B → Γ ⊢ A → Γ ⊢ B
   t [ s ] = sub (s ∷ ids) t
 
-  _[_∣_] : ∀ {Γ A B C} → (B ∷ A ∷ Γ) ⊢ C → Γ ⊢ A → Γ ⊢ B → Γ ⊢ C
-  t [ s₁ ∣ s₂ ] = t [ wk s₂ ] [ s₁ ]
-
   -- Kovacs: _ₑ∘ₛ_; flip?
   gets : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⊢* Δ′ → Γ ⊢* Δ
   gets stop     ts       = ts
@@ -239,19 +245,22 @@ module SubKit (sk! : SubKit!) (open SubKit! sk!) where
 
 ----------------------------------------------------------------------------------------------------
 
-record DefEqKit! : Set₁ where
-  constructor defeqkit
+record DefEqKitParams : Set₁ where
+  constructor kit
   field
-    tk! : TmKit!
-  open TmKit! tk! public
-  open TmKit tk! public
+    tmkit : TmKitParams
+  open TmKitParams tmkit public
+  open TmKit tmkit public hiding (tmkit)
   field
     {_≝_}  : ∀ {Γ A} → Γ ⊢ A → Γ ⊢ A → Set
     refl≝  : ∀ {Γ A} {t : Γ ⊢ A} → t ≝ t
     sym≝   : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ≝ t′ → t′ ≝ t
     trans≝ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ≝ t′ → t′ ≝ t″ → t ≝ t″
 
-module DefEqKit (dek! : DefEqKit!) (open DefEqKit! dek!) where
+module DefEqKit (κ : DefEqKitParams) where
+  open DefEqKitParams κ
+  defeqkit = κ
+
   ≡→≝ : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ≡ t′ → t ≝ t′
   ≡→≝ refl = refl≝
 

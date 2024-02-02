@@ -26,7 +26,7 @@ step⇒*HWN done        hwn′ = hwn′
 step⇒*HWN (step r rs) hwn′ = stepHWN r (step⇒*HWN rs hwn′)
 
 step⇓HWN : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇓ t′ → HWN t′ → HWN t
-step⇓HWN = step⇒*HWN ∘ proj₁
+step⇓HWN = step⇒*HWN ∘ fst
 
 mutual
   skipHWN : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒ t′ → HWN t → HWN t′
@@ -41,7 +41,7 @@ skip⇒*HWN done        hwn = hwn
 skip⇒*HWN (step r rs) hwn = skip⇒*HWN rs (skipHWN r hwn)
 
 skip⇓HWN : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇓ t′ → HWN t → HWN t′
-skip⇓HWN = skip⇒*HWN ∘ proj₁
+skip⇓HWN = skip⇒*HWN ∘ fst
 
 
 ----------------------------------------------------------------------------------------------------
@@ -108,7 +108,7 @@ hwn : ∀ {A} (t : [] ⊢ A) → HWN t
 hwn t = subst HWN (lidsub t) (subHWN [] [] t)
 
 wn : ∀ {A} (t : [] ⊢ A) → WN t
-wn = proj₁ ∘ hwn
+wn = fst ∘ hwn
 
 
 ----------------------------------------------------------------------------------------------------

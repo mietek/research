@@ -6,7 +6,7 @@ import Function
 
 ----------------------------------------------------------------------------------------------------
 
-record Category (ℴ 𝓇 : Level) : Set (ℓsuc (ℴ ⊔ 𝓇)) where
+record Category (ℴ 𝓇 : Level) : Set (lsuc (ℴ ⊔ 𝓇)) where
   field
     Obj  : Set ℴ
     _▻_  : ∀ (x y : Obj) → Set 𝓇
@@ -31,7 +31,7 @@ _ᵒᵖ C = record
           private
             module C = Category C
 
-⟪Set⟫ : ∀ (𝓍 : Level) → Category (ℓsuc 𝓍) 𝓍
+⟪Set⟫ : ∀ (𝓍 : Level) → Category (lsuc 𝓍) 𝓍
 ⟪Set⟫ 𝓍 = record
             { Obj  = Set 𝓍
             ; _▻_  = λ X Y → X → Y
@@ -42,8 +42,8 @@ _ᵒᵖ C = record
             ; ass▻ = λ r q p → refl
             }
 
-⟪Set₀⟫ : Category (ℓsuc ℓzero) ℓzero
-⟪Set₀⟫ = ⟪Set⟫ ℓzero
+⟪Set₀⟫ : Category (lsuc lzero) lzero
+⟪Set₀⟫ = ⟪Set⟫ lzero
 
 
 ----------------------------------------------------------------------------------------------------
@@ -77,7 +77,7 @@ record Functor {ℴ₁ ℴ₂ 𝓇₁ 𝓇₂} (C : Category ℴ₁ 𝓇₁) (D 
            ; _∘ƒ_ = λ q p → refl
            }
 
-Presheaf : ∀ {ℴ 𝓇} (C : Category ℴ 𝓇) (𝓍 : Level) → Set (ℴ ⊔ 𝓇 ⊔ ℓsuc 𝓍)
+Presheaf : ∀ {ℴ 𝓇} (C : Category ℴ 𝓇) (𝓍 : Level) → Set (ℴ ⊔ 𝓇 ⊔ lsuc 𝓍)
 Presheaf C 𝓍 = Functor (C ᵒᵖ) (⟪Set⟫ 𝓍)
 
 

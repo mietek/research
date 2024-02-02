@@ -19,8 +19,7 @@ data _⊢_ (Γ : Ctx) : Ty → Set where
   ⌜λ⌝   : ∀ {A B} (t : A ∷ Γ ⊢ B) → Γ ⊢ A ⌜⊃⌝ B
   _⌜$⌝_ : ∀ {A B} (t₁ : Γ ⊢ A ⌜⊃⌝ B) (t₂ : Γ ⊢ A) → Γ ⊢ B
 
-tk! = tmkit _⊢_
-open TmKit tk! public
+open TmKit (kit _⊢_) public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -30,16 +29,14 @@ ren e (var i)     = var (ren∋ e i)
 ren e (⌜λ⌝ t)     = ⌜λ⌝ (ren (keep e) t)
 ren e (t₁ ⌜$⌝ t₂) = ren e t₁ ⌜$⌝ ren e t₂
 
-rk! = renkit var ren
-open RenKit rk! public
+open RenKit (kit var ren) public
 
 sub : ∀ {Γ Ξ A} → Ξ ⊢* Γ → Γ ⊢ A → Ξ ⊢ A
 sub ss (var i)     = sub∋ ss i
 sub ss (⌜λ⌝ t)     = ⌜λ⌝ (sub (lifts ss) t)
 sub ss (t₁ ⌜$⌝ t₂) = sub ss t₁ ⌜$⌝ sub ss t₂
 
-sk! = subkit rk! sub
-open SubKit sk! public
+open SubKit (kit renkit sub) public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -57,8 +54,7 @@ module BetaShort where
     βred⊃  : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) →
              ⌜λ⌝ t₁ ⌜$⌝ t₂ ≝ t′
 
-  dek! = defeqkit tk! (λ {Γ} {A} {t} → refl≝ {t = t}) sym≝ trans≝
-  open DefEqKit dek! public
+  open DefEqKit (kit tmkit (λ {Γ} {A} {t} → refl≝ {t = t}) sym≝ trans≝) public
 
 module BetaShortEtaLong where
   infix 4 _≝_
@@ -73,8 +69,7 @@ module BetaShortEtaLong where
              ⌜λ⌝ t₁ ⌜$⌝ t₂ ≝ t′
     ηexp⊃  : ∀ {A B} {t : Γ ⊢ A ⌜⊃⌝ B} {t′} (eq : t′ ≡ wk t) → t ≝ ⌜λ⌝ (t′ ⌜$⌝ var zero)
 
-  dek! = defeqkit tk! (λ {Γ} {A} {t} → refl≝ {t = t}) sym≝ trans≝
-  open DefEqKit dek! public
+  open DefEqKit (kit tmkit (λ {Γ} {A} {t} → refl≝ {t = t}) sym≝ trans≝) public
 
 
 ----------------------------------------------------------------------------------------------------

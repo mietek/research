@@ -6,16 +6,19 @@ open import Kit1 public
 
 ----------------------------------------------------------------------------------------------------
 
-record RedKit1! : Set₁ where
-  constructor redkit1
+record RedKit1Params : Set₁ where
+  constructor kit
   field
-    tk! : TmKit!
-  open TmKit! tk! public
-  open TmKit tk! public
+    tmkit : TmKitParams
+  open TmKitParams tmkit public
+  open TmKit tmkit public hiding (tmkit)
   field
     _⇒_ : ∀ {Γ A} → Γ ⊢ A → Γ ⊢ A → Set
 
-module RedKit1 (rk1! : RedKit1!) (open RedKit1! rk1!) where
+module RedKit1 (κ : RedKit1Params) where
+  open RedKit1Params κ
+  redkit1 = κ
+
   -- reducible forms
   RF : ∀ {Γ A} → Γ ⊢ A → Set
   RF t = Σ _ λ t′ → t ⇒ t′
@@ -66,25 +69,28 @@ module RedKit1 (rk1! : RedKit1!) (open RedKit1! rk1!) where
     _∎ : ∀ {Γ A} (t : Γ ⊢ A) → t ⇒* t
     t ∎ = done
 
-  module _ (⚠ : Extensionality) where
+  module _ (⚠ : Funext) where
     uni¬RF : ∀ {Γ A} {t : Γ ⊢ A} (¬p ¬p′ : ¬ RF t) → ¬p ≡ ¬p′
     uni¬RF = uni→ ⚠ uni𝟘
 
 
 ----------------------------------------------------------------------------------------------------
 
-record RedKit2! : Set₁ where
-  constructor redkit2
+record RedKit2Params : Set₁ where
+  constructor kit
   field
-    rk1! : RedKit1!
-  open RedKit1! rk1! public
-  open RedKit1 rk1! public
+    redkit1 : RedKit1Params
+  open RedKit1Params redkit1 public
+  open RedKit1 redkit1 public hiding (redkit1)
   field
     {NF}   : ∀ {Γ A} → Γ ⊢ A → Set
     uniNF  : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
     NF→¬R : ∀ {Γ A} {t : Γ ⊢ A} → NF t → ¬R t
 
-module RedKit2 (rk2! : RedKit2!) (open RedKit2! rk2!) where
+module RedKit2 (κ : RedKit2Params) where
+  open RedKit2Params κ
+  redkit2 = κ
+
   ¬RF→¬R : ∀ {Γ A} {t : Γ ⊢ A} → ¬ RF t → ¬R t
   ¬RF→¬R ¬p r = (_ , r) ↯ ¬p
 
@@ -110,17 +116,20 @@ module RedKit2 (rk2! : RedKit2!) (open RedKit2! rk2!) where
 
 ----------------------------------------------------------------------------------------------------
 
-record DetKit! : Set₁ where
-  constructor detkit
+record DetKitParams : Set₁ where
+  constructor kit
   field
-    rk2! : RedKit2!
-  open RedKit2! rk2! public
-  open RedKit2 rk2! public
+    redkit2 : RedKit2Params
+  open RedKit2Params redkit2 public
+  open RedKit2 redkit2 public hiding (redkit2)
   field
     det⇒ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t ⇒ t″ → t′ ≡ t″
     uni⇒ : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒ t′) → r ≡ r′
 
-module DetKit (dk! : DetKit!) (open DetKit! dk!) where
+module DetKit (κ : DetKitParams) where
+  open DetKitParams κ
+  detkit = κ
+
   skip⇒* : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t ⇒* t″ → NF t″ → t′ ⇒* t″
   skip⇒* r done          p″ = r ↯ NF→¬R p″
   skip⇒* r (step r′ rs′) p″ with det⇒ r r′
@@ -155,16 +164,19 @@ module DetKit (dk! : DetKit!) (open DetKit! dk!) where
 
 ----------------------------------------------------------------------------------------------------
 
-record ProgKit! : Set₁ where
-  constructor progkit
+record ProgKitParams : Set₁ where
+  constructor kit
   field
-    rk2! : RedKit2!
-  open RedKit2! rk2! public
-  open RedKit2 rk2! public
+    redkit2 : RedKit2Params
+  open RedKit2Params redkit2 public
+  open RedKit2 redkit2 public hiding (redkit2)
   field
     prog⇒ : ∀ {Γ A} (t : Γ ⊢ A) → Prog t
 
-module ProgKit (pk! : ProgKit!) (open ProgKit! pk!) where
+module ProgKit (κ : ProgKitParams) where
+  open ProgKitParams κ
+  progkit = κ
+
   NF? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (NF t)
   NF? t = recProg (prog⇒ t) yes (no ∘ RF→¬NF)
 
@@ -180,7 +192,7 @@ module ProgKit (pk! : ProgKit!) (open ProgKit! pk!) where
   ¬R→NF : ∀ {Γ A} {t : Γ ⊢ A} → ¬R t → NF t
   ¬R→NF = ¬RF→NF ∘ ¬R→¬RF
 
-  module _ (⚠ : Extensionality) where
+  module _ (⚠ : Funext) where
     NF≃¬RF : ∀ {Γ A} {t : Γ ⊢ A} → NF t ≃ (¬ RF t)
     NF≃¬RF = record
       { to      = NF→¬RF
@@ -192,47 +204,51 @@ module ProgKit (pk! : ProgKit!) (open ProgKit! pk!) where
 
 ----------------------------------------------------------------------------------------------------
 
-record NF?→ProgKit! : Set₁ where
-  constructor nf?→progkit
+record NF?→ProgKitParams : Set₁ where
+  constructor kit
   field
-    rk2! : RedKit2!
-  open RedKit2! rk2! public
-  open RedKit2 rk2! public
+    redkit2 : RedKit2Params
+  open RedKit2Params redkit2 public
+  open RedKit2 redkit2 public hiding (redkit2)
   field
     NF?     : ∀ {Γ A} (t : Γ ⊢ A) → Dec (NF t)
     ¬NF→RF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ NF t → RF t
 
-module NF?→ProgKit (nfpk! : NF?→ProgKit!) (open NF?→ProgKit! nfpk!) where
+module NF?→ProgKit (κ : NF?→ProgKitParams) where
+  open NF?→ProgKitParams κ
+  nf?→progkit = κ
+
   prog⇒ : ∀ {Γ A} (t : Γ ⊢ A) → Prog t
   prog⇒ t    with NF? t
   ... | yes p   = done p
   ... | no ¬p   = let _ , r = ¬NF→RF ¬p
                     in step r
 
-  pk! = progkit rk2! prog⇒
-  open ProgKit pk! public hiding (NF? ; ¬NF→RF)
+  open ProgKit (kit redkit2 prog⇒) public hiding (NF? ; ¬NF→RF)
 
 
 ----------------------------------------------------------------------------------------------------
 
-record RF?→ProgKit! : Set₁ where
-  constructor rf?→progkit
+record RF?→ProgKitParams : Set₁ where
+  constructor kit
   field
-    rk2! : RedKit2!
-  open RedKit2! rk2! public
-  open RedKit2 rk2! public
+    redkit2 : RedKit2Params
+  open RedKit2Params redkit2 public
+  open RedKit2 redkit2 public hiding (redkit2)
   field
     RF?     : ∀ {Γ A} (t : Γ ⊢ A) → Dec (RF t)
     ¬RF→NF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ RF t → NF t
 
-module RF?→ProgKit (rfpk! : RF?→ProgKit!) (open RF?→ProgKit! rfpk!) where
+module RF?→ProgKit (κ : RF?→ProgKitParams) where
+  open RF?→ProgKitParams κ
+  rf?→progkit = κ
+
   prog⇒ : ∀ {Γ A} (t : Γ ⊢ A) → Prog t
   prog⇒ t          with RF? t
   ... | yes (_ , r)   = step r
   ... | no ¬p         = done (¬RF→NF ¬p)
 
-  pk! = progkit rk2! prog⇒
-  open ProgKit pk! public hiding (RF? ; ¬RF→NF)
+  open ProgKit (kit redkit2 prog⇒) public hiding (RF? ; ¬RF→NF)
 
 
 ----------------------------------------------------------------------------------------------------

@@ -16,7 +16,6 @@ recTy ⌜ℕ⌝       f⊃ fℕ = fℕ
 
 open TyKit Ty public
 
--- well-typed terms
 infix 3 _⊢_
 infixl 18 _⌜$⌝_
 data _⊢_ (Γ : Ctx) : Ty → Set where
@@ -27,8 +26,7 @@ data _⊢_ (Γ : Ctx) : Ty → Set where
   ⌜suc⌝  : ∀ (t : Γ ⊢ ⌜ℕ⌝) → Γ ⊢ ⌜ℕ⌝
   ⌜rec⌝  : ∀ {A} (tₙ : Γ ⊢ ⌜ℕ⌝) (t₀ : Γ ⊢ A) (tₛ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A) → Γ ⊢ A
 
-tk! = tmkit _⊢_
-open TmKit tk! public
+open TmKit (kit _⊢_) public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -41,8 +39,7 @@ ren e ⌜zero⌝           = ⌜zero⌝
 ren e (⌜suc⌝ t)        = ⌜suc⌝ (ren e t)
 ren e (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ (ren e tₙ) (ren e t₀) (ren (keep (keep e)) tₛ)
 
-rk! = renkit var ren
-open RenKit rk! public
+open RenKit (kit var ren) public
 
 sub : ∀ {Γ Ξ A} → Ξ ⊢* Γ → Γ ⊢ A → Ξ ⊢ A
 sub ss (var i)          = sub∋ ss i
@@ -52,8 +49,7 @@ sub ss ⌜zero⌝           = ⌜zero⌝
 sub ss (⌜suc⌝ t)        = ⌜suc⌝ (sub ss t)
 sub ss (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ (sub ss tₙ) (sub ss t₀) (sub (lifts (lifts ss)) tₛ)
 
-sk! = subkit rk! sub
-open SubKit sk! public
+open SubKit (kit renkit sub) public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -76,11 +72,10 @@ module BetaShort where
               ⌜λ⌝ t₁ ⌜$⌝ t₂ ≝ t′
     βredℕ₀  : ∀ {A} {t₀ : Γ ⊢ A} {tₛ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A} → ⌜rec⌝ ⌜zero⌝ t₀ tₛ ≝ t₀
     βredℕₛ  : ∀ {A} {tₙ : Γ ⊢ ⌜ℕ⌝} {t₀ : Γ ⊢ A} {tₛ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A} {t′}
-                (eq : t′ ≡ tₛ [ tₙ ∣ ⌜rec⌝ tₙ t₀ tₛ ]) →
+                (eq : t′ ≡ tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ] [ tₙ ]) →
               ⌜rec⌝ (⌜suc⌝ tₙ) t₀ tₛ ≝ t′
 
-  dek! = defeqkit tk! (λ {Γ} {A} {t} → refl≝ {t = t}) sym≝ trans≝
-  open DefEqKit dek! public
+  open DefEqKit (kit tmkit (λ {Γ} {A} {t} → refl≝ {t = t}) sym≝ trans≝) public
 
 module BetaShortEtaLong where
   infix 4 _≝_
@@ -99,13 +94,12 @@ module BetaShortEtaLong where
               ⌜λ⌝ t₁ ⌜$⌝ t₂ ≝ t′
     βredℕ₀  : ∀ {A} {t₀ : Γ ⊢ A} {tₛ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A} → ⌜rec⌝ ⌜zero⌝ t₀ tₛ ≝ t₀
     βredℕₛ  : ∀ {A} {tₙ : Γ ⊢ ⌜ℕ⌝} {t₀ : Γ ⊢ A} {tₛ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A} {t′}
-                (eq : t′ ≡ tₛ [ tₙ ∣ ⌜rec⌝ tₙ t₀ tₛ ]) →
+                (eq : t′ ≡ tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ] [ tₙ ]) →
               ⌜rec⌝ (⌜suc⌝ tₙ) t₀ tₛ ≝ t′
     ηexp⊃   : ∀ {A B} {t : Γ ⊢ A ⌜⊃⌝ B} {t′} (eq : t′ ≡ wk t) → t ≝ ⌜λ⌝ (t′ ⌜$⌝ var zero)
     ηexpℕ   : ∀ {tₙ : Γ ⊢ ⌜ℕ⌝} → tₙ ≝ ⌜rec⌝ tₙ ⌜zero⌝ (⌜suc⌝ (var (suc zero)))
 
-  dek! = defeqkit tk! (λ {Γ} {A} {t} → refl≝ {t = t}) sym≝ trans≝
-  open DefEqKit dek! public
+  open DefEqKit (kit tmkit (λ {Γ} {A} {t} → refl≝ {t = t}) sym≝ trans≝) public
 
 
 ----------------------------------------------------------------------------------------------------

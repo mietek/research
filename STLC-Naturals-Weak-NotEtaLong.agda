@@ -6,8 +6,8 @@ open import Kit3 public
 
 ----------------------------------------------------------------------------------------------------
 
--- TODO: try making ⌜suc⌝ weak
 -- β-short not-η-long semi-weak normal forms
+-- TODO: try making ⌜suc⌝ weak
 mutual
   data NF {Γ} : ∀ {A} → Γ ⊢ A → Set where
     ⌜λ⌝-   : ∀ {A B} {t : A ∷ Γ ⊢ B} → NF (⌜λ⌝ t)
@@ -26,7 +26,6 @@ data NNF* {Γ} : ∀ {Δ} → Γ ⊢* Δ → Set where
   []  : NNF* []
   _∷_ : ∀ {A Δ} {t : Γ ⊢ A} {ts : Γ ⊢* Δ} → NNF t → NNF* ts → NNF* (t ∷ ts)
 
--- uniqueness of proofs
 mutual
   uniNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
   uniNF ⌜λ⌝-      ⌜λ⌝-       = refl
@@ -63,12 +62,11 @@ data _⇒_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
   βredℕ₀   : ∀ {A} {t₀ : Γ ⊢ A} {tₛ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A} (p₀ : NF t₀) (pₛ : NF tₛ) →
              ⌜rec⌝ ⌜zero⌝ t₀ tₛ ⇒ t₀
   βredℕₛ   : ∀ {A} {tₙ : Γ ⊢ ⌜ℕ⌝} {t₀ : Γ ⊢ A} {tₛ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A} {t′}
-               (eq : t′ ≡ tₛ [ tₙ ∣ ⌜rec⌝ tₙ t₀ tₛ ]) (pₙ : NF (⌜suc⌝ tₙ)) (p₀ : NF t₀)
+               (eq : t′ ≡ tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ] [ tₙ ]) → (pₙ : NF (⌜suc⌝ tₙ)) (p₀ : NF t₀)
                (pₛ : NF tₛ) →
              ⌜rec⌝ (⌜suc⌝ tₙ) t₀ tₛ ⇒ t′
 
-rk1! = redkit1 tk! _⇒_
-open RedKit1 rk1! public
+open RedKit1 (kit tmkit _⇒_) public
 
 mutual
   NF→¬R : ∀ {Γ A} {t : Γ ⊢ A} → NF t → ¬R t
@@ -83,8 +81,7 @@ mutual
   NNF→¬R (⌜rec⌝ pₙ p₀ pₛ) (congrec₀ pₙ′ r₀)     = r₀ ↯ NF→¬R p₀
   NNF→¬R (⌜rec⌝ pₙ p₀ pₛ) (congrecₛ pₙ′ p₀′ rₛ) = rₛ ↯ NF→¬R pₛ
 
-rk2! = redkit2 rk1! uniNF NF→¬R
-open RedKit2 rk2! public
+open RedKit2 (kit redkit1 uniNF NF→¬R) public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -152,8 +149,7 @@ uni⇒ (βredℕₛ eq pₙ p₀ pₛ)   (congrecₛ pₙ′ p₀′ rₛ′)   
 uni⇒ (βredℕₛ refl pₙ p₀ pₛ) (βredℕₛ refl pₙ′ p₀′ pₛ′) = βredℕₛ refl & uniNF pₙ pₙ′ ⊗ uniNF p₀ p₀′
                                                            ⊗ uniNF pₛ pₛ′
 
-dk! = detkit rk2! det⇒ uni⇒
-open DetKit dk! public
+open DetKit (kit redkit2 det⇒ uni⇒) public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -178,11 +174,17 @@ prog⇒ (⌜rec⌝ tₙ t₀ tₛ)                   with prog⇒ tₙ | prog⇒
 ... | done (⌜suc⌝ pₙ) | done p₀ | done pₛ   = step (βredℕₛ refl (⌜suc⌝ pₙ) p₀ pₛ)
 ... | done (nnf pₙ)   | done p₀ | done pₛ   = done (nnf (⌜rec⌝ pₙ p₀ pₛ))
 
-pk! = progkit rk2! prog⇒
-open ProgKit pk! public
+open ProgKit (kit redkit2 prog⇒) public
 
 
 ----------------------------------------------------------------------------------------------------
+
+{-# DISPLAY TyKit.Ctx _ = Ctx #-}
+{-# DISPLAY TmKitParams.Ty _ = Ty #-}
+{-# DISPLAY RenSubKit3Params._⊆_ _ = _⊆_ #-}
+{-# DISPLAY RenSubKit3Params._⊢_ _ = _⊢_ #-}
+{-# DISPLAY RenSubKit3Params._[_] _ = _[_] #-}
+{-# DISPLAY RenSubKit3Params.ren _ = ren #-}
 
 -- stability under renaming
 mutual

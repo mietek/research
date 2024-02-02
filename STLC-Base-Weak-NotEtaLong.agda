@@ -60,8 +60,7 @@ data _⇒_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
              (p₂ : NF t₂) →
            ⌜λ⌝ t₁ ⌜$⌝ t₂ ⇒ t′
 
-rk1! = redkit1 tk! _⇒_
-open RedKit1 rk1! public
+open RedKit1 (kit tmkit _⇒_) public
 
 mutual
   NF→¬R : ∀ {Γ A} {t : Γ ⊢ A} → NF t → ¬R t
@@ -71,8 +70,7 @@ mutual
   NNF→¬R (p₁ ⌜$⌝ p₂) (cong$₁ r₁)     = r₁ ↯ NNF→¬R p₁
   NNF→¬R (p₁ ⌜$⌝ p₂) (cong$₂ p₁′ r₂) = r₂ ↯ NF→¬R p₂
 
-rk2! = redkit2 rk1! uniNF NF→¬R
-open RedKit2 rk2! public
+open RedKit2 (kit redkit1 uniNF NF→¬R) public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -95,8 +93,7 @@ uni⇒ (cong$₂ p₁ r₂)  (βred⊃ eq′ p₂′)  = r₂ ↯ NF→¬R p₂�
 uni⇒ (βred⊃ eq p₂)   (cong$₂ p₁′ r₂′) = r₂′ ↯ NF→¬R p₂
 uni⇒ (βred⊃ refl p₂) (βred⊃ refl p₂′) = βred⊃ refl & uniNF p₂ p₂′
 
-dk! = detkit rk2! det⇒ uni⇒
-open DetKit dk! public
+open DetKit (kit redkit2 det⇒ uni⇒) public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -111,8 +108,7 @@ module Progress where
   ... | done ⌜λ⌝-     | done p₂   = step (βred⊃ refl p₂)
   ... | done (nnf p₁) | done p₂   = done (nnf (p₁ ⌜$⌝ p₂))
 
-  pk! = progkit rk2! prog⇒
-  open ProgKit pk! public hiding (NF?)
+  open ProgKit (kit redkit2 prog⇒) public hiding (NF?)
 
 module ProgressAlt1 where
   ¬NF→RF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ NF t → RF t
@@ -129,23 +125,20 @@ module ProgressAlt1 where
   ¬NF→RF {t = _ ⌜$⌝ _ ⌜$⌝ _} ¬p | no ¬p₁ | _        = let _ , r₁ = ¬NF→RF λ { (nnf p₁) → p₁ ↯ ¬p₁ }
                                                          in  _ , cong$₁ r₁
 
-  nfpk! = nf?→progkit rk2! NF? ¬NF→RF
-  open NF?→ProgKit nfpk! public
+  open NF?→ProgKit (kit redkit2 NF? ¬NF→RF) public
 
 module ProgressAlt2 where
-  ¬R→NF : ∀ {Γ A} {t : Γ ⊢ A} → ¬R t → NF t
-  ¬R→NF {t = var i}         ¬r               = nnf var-
-  ¬R→NF {t = ⌜λ⌝ t}         ¬r               = ⌜λ⌝-
-  ¬R→NF {t = var _ ⌜$⌝ _}   ¬r               with ¬R→NF λ r₂ → cong$₂ (nnf var-) r₂ ↯ ¬r
-  ¬R→NF {t = var _ ⌜$⌝ _}   ¬r | p₂            = nnf (var- ⌜$⌝ p₂)
-  ¬R→NF {t = ⌜λ⌝ _ ⌜$⌝ _}   ¬r               with ¬R→NF λ r₂ → cong$₂ ⌜λ⌝- r₂ ↯ ¬r
-  ¬R→NF {t = ⌜λ⌝ _ ⌜$⌝ _}   ¬r | p₂            = βred⊃ refl p₂ ↯ ¬r
-  ¬R→NF {t = _ ⌜$⌝ _ ⌜$⌝ _} ¬r               with ¬R→NF λ r₁ → cong$₁ r₁ ↯ ¬r
-  ¬R→NF {t = _ ⌜$⌝ _ ⌜$⌝ _} ¬r | nnf p₁        with ¬R→NF λ r₁ → cong$₂ (nnf p₁) r₁ ↯ ¬r
-  ¬R→NF {t = _ ⌜$⌝ _ ⌜$⌝ _} ¬r | nnf p₁ | p₂     = nnf (p₁ ⌜$⌝ p₂)
 
   ¬RF→NF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ RF t → NF t
-  ¬RF→NF = ¬R→NF ∘ ¬RF→¬R
+  ¬RF→NF {t = var i}         ¬p               = nnf var-
+  ¬RF→NF {t = ⌜λ⌝ t}         ¬p               = ⌜λ⌝-
+  ¬RF→NF {t = var _ ⌜$⌝ _}   ¬p               with ¬RF→NF λ { (_ , r₂) → (_ , cong$₂ (nnf var-) r₂) ↯ ¬p }
+  ¬RF→NF {t = var _ ⌜$⌝ _}   ¬p | p₂            = nnf (var- ⌜$⌝ p₂)
+  ¬RF→NF {t = ⌜λ⌝ _ ⌜$⌝ _}   ¬p               with ¬RF→NF λ { (_ , r₂) → (_ , cong$₂ ⌜λ⌝- r₂) ↯ ¬p }
+  ¬RF→NF {t = ⌜λ⌝ _ ⌜$⌝ _}   ¬p | p₂            = (_ , βred⊃ refl p₂) ↯ ¬p
+  ¬RF→NF {t = _ ⌜$⌝ _ ⌜$⌝ _} ¬p               with ¬RF→NF λ { (_ , r₁) → (_ , cong$₁ r₁) ↯ ¬p }
+  ¬RF→NF {t = _ ⌜$⌝ _ ⌜$⌝ _} ¬p | nnf p₁        with ¬RF→NF λ { (_ , r₁) → (_ , cong$₂ (nnf p₁) r₁) ↯ ¬p }
+  ¬RF→NF {t = _ ⌜$⌝ _ ⌜$⌝ _} ¬p | nnf p₁ | p₂     = nnf (p₁ ⌜$⌝ p₂)
 
   RF? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (RF t)
   RF? (var i)                                       = no λ ()
@@ -159,8 +152,7 @@ module ProgressAlt2 where
                                                              }
   RF? (_ ⌜$⌝ _ ⌜$⌝ _) | yes (_ , r₁) | _              = yes (_ , cong$₁ r₁)
 
-  rfpk! = rf?→progkit rk2! RF? ¬RF→NF
-  open RF?→ProgKit rfpk! public hiding (¬R→NF)
+  open RF?→ProgKit (kit redkit2 RF? ¬RF→NF) public
 
 open Progress public
 
@@ -258,12 +250,12 @@ module _ where
     idNF⇄⊢≪ : ∀ {Γ A} (tp : Σ (Γ ⊢ A) NF) → (⊢≪→NF ∘ NF→⊢≪) tp ≡ tp
     idNF⇄⊢≪ (.(⌜λ⌝ t) , ⌜λ⌝- {t = t}) = refl
     idNF⇄⊢≪ (t , nnf p)               =
-      let eqₜ : proj₁ (⊢≫→NNF (NNF→⊢≫ (t , p))) ≡ t
-          eqₜ = cong proj₁ (idNNF⇄⊢≫ (t , p))
-          eqₚ : nnf (proj₂ (⊢≫→NNF (NNF→⊢≫ (t , p)))) ≅ nnf p
-          eqₚ = cong≅ (NF.nnf ∘ proj₂) (≡→≅ (idNNF⇄⊢≫ (t , p)))
+      let eqₜ : fst (⊢≫→NNF (NNF→⊢≫ (t , p))) ≡ t
+          eqₜ = fst & idNNF⇄⊢≫ (t , p)
+          eqₚ : NF.nnf (snd (⊢≫→NNF (NNF→⊢≫ (t , p)))) ≅ NF.nnf p
+          eqₚ = (NF.nnf ∘ snd) &≅ ≡→≅ (idNNF⇄⊢≫ (t , p))
         in begin
-             proj₁ (⊢≫→NNF (NNF→⊢≫ (t , p))) , nnf (proj₂ (⊢≫→NNF (NNF→⊢≫ (t , p))))
+             fst (⊢≫→NNF (NNF→⊢≫ (t , p))) , nnf (snd (⊢≫→NNF (NNF→⊢≫ (t , p))))
            ≡⟨ ≅→≡ (cong₂≅ _,_ (≡→≅ eqₜ) eqₚ) ⟩
              t , nnf p
            ∎
@@ -271,14 +263,14 @@ module _ where
     idNNF⇄⊢≫ : ∀ {Γ A} (tp : Σ (Γ ⊢ A) NNF) → (⊢≫→NNF ∘ NNF→⊢≫) tp ≡ tp
     idNNF⇄⊢≫ (var i , var-)          = refl
     idNNF⇄⊢≫ (t₁ ⌜$⌝ t₂ , p₁ ⌜$⌝ p₂) =
-      let eqₜ : proj₁ (⊢≫→NNF (NNF→⊢≫ (t₁ , p₁))) ⌜$⌝ proj₁ (⊢≪→NF (NF→⊢≪ (t₂ , p₂))) ≡ t₁ ⌜$⌝ t₂
-          eqₜ = cong₂ _⌜$⌝_ (cong proj₁ (idNNF⇄⊢≫ (t₁ , p₁))) (cong proj₁ (idNF⇄⊢≪ (t₂ , p₂)))
-          eqₚ : proj₂ (⊢≫→NNF (NNF→⊢≫ (t₁ , p₁))) ⌜$⌝ proj₂ (⊢≪→NF (NF→⊢≪ (t₂ , p₂))) ≅ p₁ ⌜$⌝ p₂
-          eqₚ = cong₂≅ (λ t₁′ t₂′ → proj₂ t₁′ NNF.⌜$⌝ proj₂ t₂′)
+      let eqₜ : fst (⊢≫→NNF (NNF→⊢≫ (t₁ , p₁))) _⊢_.⌜$⌝ fst (⊢≪→NF (NF→⊢≪ (t₂ , p₂))) ≡ t₁ _⊢_.⌜$⌝ t₂
+          eqₜ = (λ x₁ x₂ → fst x₁ ⌜$⌝ fst x₂) & idNNF⇄⊢≫ (t₁ , p₁) ⊗ idNF⇄⊢≪ (t₂ , p₂)
+          eqₚ : snd (⊢≫→NNF (NNF→⊢≫ (t₁ , p₁))) NNF.⌜$⌝ snd (⊢≪→NF (NF→⊢≪ (t₂ , p₂))) ≅ p₁ NNF.⌜$⌝ p₂
+          eqₚ = cong₂≅ (λ x₁ x₂ → snd x₁ NNF.⌜$⌝ snd x₂)
                   (≡→≅ (idNNF⇄⊢≫ (t₁ , p₁))) (≡→≅ (idNF⇄⊢≪ (t₂ , p₂)))
         in begin
-             proj₁ (⊢≫→NNF (NNF→⊢≫ (t₁ , p₁))) ⌜$⌝ proj₁ (⊢≪→NF (NF→⊢≪ (t₂ , p₂))) ,
-             proj₂ (⊢≫→NNF (NNF→⊢≫ (t₁ , p₁))) ⌜$⌝ proj₂ (⊢≪→NF (NF→⊢≪ (t₂ , p₂)))
+             fst (⊢≫→NNF (NNF→⊢≫ (t₁ , p₁))) ⌜$⌝ fst (⊢≪→NF (NF→⊢≪ (t₂ , p₂))) ,
+             snd (⊢≫→NNF (NNF→⊢≫ (t₁ , p₁))) ⌜$⌝ snd (⊢≪→NF (NF→⊢≪ (t₂ , p₂)))
            ≡⟨ ≅→≡ (cong₂≅ _,_ (≡→≅ eqₜ) eqₚ) ⟩
              t₁ ⌜$⌝ t₂ , p₁ ⌜$⌝ p₂
            ∎

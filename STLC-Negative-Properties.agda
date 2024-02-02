@@ -11,8 +11,8 @@ lidren (var i)     = var & idren∋ i
 lidren (⌜λ⌝ t)     = ⌜λ⌝ & lidren t
 lidren (t₁ ⌜$⌝ t₂) = _⌜$⌝_ & lidren t₁ ⊗ lidren t₂
 lidren (t₁ ⌜,⌝ t₂) = _⌜,⌝_ & lidren t₁ ⊗ lidren t₂
-lidren (⌜proj₁⌝ t) = ⌜proj₁⌝ & lidren t
-lidren (⌜proj₂⌝ t) = ⌜proj₂⌝ & lidren t
+lidren (⌜fst⌝ t)   = ⌜fst⌝ & lidren t
+lidren (⌜snd⌝ t)   = ⌜snd⌝ & lidren t
 lidren ⌜unit⌝      = refl
 
 -- not really identity
@@ -25,12 +25,11 @@ compren e′ e (var i)     = var & compren∋ e′ e i
 compren e′ e (⌜λ⌝ t)     = ⌜λ⌝ & compren (keep e′) (keep e) t
 compren e′ e (t₁ ⌜$⌝ t₂) = _⌜$⌝_ & compren e′ e t₁ ⊗ compren e′ e t₂
 compren e′ e (t₁ ⌜,⌝ t₂) = _⌜,⌝_ & compren e′ e t₁ ⊗ compren e′ e t₂
-compren e′ e (⌜proj₁⌝ t) = ⌜proj₁⌝ & compren e′ e t
-compren e′ e (⌜proj₂⌝ t) = ⌜proj₂⌝ & compren e′ e t
+compren e′ e (⌜fst⌝ t)   = ⌜fst⌝ & compren e′ e t
+compren e′ e (⌜snd⌝ t)   = ⌜snd⌝ & compren e′ e t
 compren e′ e ⌜unit⌝      = refl
 
-rsk1! = rensubkit1 sk! lidren ridren compren
-open RenSubKit1 rsk1! public
+open RenSubKit1 (kit subkit lidren ridren compren) public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -44,8 +43,8 @@ eqsubren ss e (⌜λ⌝ t)     = ⌜λ⌝ & ( flip sub t & eqliftgets e ss ⁻¹
                                   )
 eqsubren ss e (t₁ ⌜$⌝ t₂) = _⌜$⌝_ & eqsubren ss e t₁ ⊗ eqsubren ss e t₂
 eqsubren ss e (t₁ ⌜,⌝ t₂) = _⌜,⌝_ & eqsubren ss e t₁ ⊗ eqsubren ss e t₂
-eqsubren ss e (⌜proj₁⌝ t) = ⌜proj₁⌝ & eqsubren ss e t
-eqsubren ss e (⌜proj₂⌝ t) = ⌜proj₂⌝ & eqsubren ss e t
+eqsubren ss e (⌜fst⌝ t)   = ⌜fst⌝ & eqsubren ss e t
+eqsubren ss e (⌜snd⌝ t)   = ⌜snd⌝ & eqsubren ss e t
 eqsubren ss e ⌜unit⌝      = refl
 
 -- Kovacs: Tm-ₛ∘ₑ
@@ -57,8 +56,8 @@ eqrensub e ss (⌜λ⌝ t)     = ⌜λ⌝ & ( flip sub t & eqliftrens e ss ⁻¹
                                   )
 eqrensub e ss (t₁ ⌜$⌝ t₂) = _⌜$⌝_ & eqrensub e ss t₁ ⊗ eqrensub e ss t₂
 eqrensub e ss (t₁ ⌜,⌝ t₂) = _⌜,⌝_ & eqrensub e ss t₁ ⊗ eqrensub e ss t₂
-eqrensub e ss (⌜proj₁⌝ t) = ⌜proj₁⌝ & eqrensub e ss t
-eqrensub e ss (⌜proj₂⌝ t) = ⌜proj₂⌝ & eqrensub e ss t
+eqrensub e ss (⌜fst⌝ t)   = ⌜fst⌝ & eqrensub e ss t
+eqrensub e ss (⌜snd⌝ t)   = ⌜snd⌝ & eqrensub e ss t
 eqrensub e ss ⌜unit⌝      = refl
 
 -- Kovacs: Tm-idₛ
@@ -67,16 +66,15 @@ lidsub (var i)     = idsub∋ i
 lidsub (⌜λ⌝ t)     = ⌜λ⌝ & lidsub t
 lidsub (t₁ ⌜$⌝ t₂) = _⌜$⌝_ & lidsub t₁ ⊗ lidsub t₂
 lidsub (t₁ ⌜,⌝ t₂) = _⌜,⌝_ & lidsub t₁ ⊗ lidsub t₂
-lidsub (⌜proj₁⌝ t) = ⌜proj₁⌝ & lidsub t
-lidsub (⌜proj₂⌝ t) = ⌜proj₂⌝ & lidsub t
+lidsub (⌜fst⌝ t)   = ⌜fst⌝ & lidsub t
+lidsub (⌜snd⌝ t)   = ⌜snd⌝ & lidsub t
 lidsub ⌜unit⌝      = refl
 
 -- not really identity
 ridsub : ∀ {Γ Ξ A} (ss : Ξ ⊢* Γ) (i : Γ ∋ A) → sub ss (var i) ≡ sub∋ ss i
 ridsub ss i = refl
 
-rsk2! = rensubkit2 rsk1! eqsubren eqrensub lidsub ridsub
-open RenSubKit2 rsk2! public
+open RenSubKit2 (kit rensubkit1 eqsubren eqrensub lidsub ridsub) public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -90,12 +88,11 @@ compsub ss′ ss (⌜λ⌝ t)     = ⌜λ⌝ & ( flip sub t & eqliftsubs ss′ s
                                    )
 compsub ss′ ss (t₁ ⌜$⌝ t₂) = _⌜$⌝_ & compsub ss′ ss t₁ ⊗ compsub ss′ ss t₂
 compsub ss′ ss (t₁ ⌜,⌝ t₂) = _⌜,⌝_ & compsub ss′ ss t₁ ⊗ compsub ss′ ss t₂
-compsub ss′ ss (⌜proj₁⌝ t) = ⌜proj₁⌝ & compsub ss′ ss t
-compsub ss′ ss (⌜proj₂⌝ t) = ⌜proj₂⌝ & compsub ss′ ss t
+compsub ss′ ss (⌜fst⌝ t)   = ⌜fst⌝ & compsub ss′ ss t
+compsub ss′ ss (⌜snd⌝ t)   = ⌜snd⌝ & compsub ss′ ss t
 compsub ss′ ss ⌜unit⌝      = refl
 
-rsk3! = rensubkit3 rsk2! compsub
-open RenSubKit3 rsk3! public
+open RenSubKit3 (kit rensubkit2 compsub) public
 
 
 ----------------------------------------------------------------------------------------------------

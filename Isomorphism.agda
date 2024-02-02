@@ -133,9 +133,9 @@ module _ where
     ; to∘from = λ y →
           begin
             to leq (from leq y)
-          ≡⟨ to leq & cong-app eq′ y ⟩
+          ≡⟨ to leq & congapp eq′ y ⟩
             to leq (to leq′ y)
-          ≡⟨ cong-app eq (to leq′ y) ⟩
+          ≡⟨ congapp eq (to leq′ y) ⟩
             from leq′ (to leq′ y)
           ≡⟨ from∘to leq′ y ⟩
             y

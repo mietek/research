@@ -177,10 +177,8 @@ mutual
     βred⊃   : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) (p₂ : FNF t₂) →
               ⌜λ⌝ t₁ ⌜$⌝ t₂ ⇒I t′
 
-rk1!F = redkit1 tk! _⇒F_
-rk1!I = redkit1 tk! _⇒I_
-module RK1F = RedKit1 rk1!F
-module RK1I = RedKit1 rk1!I
+module RK1F = RedKit1 (kit tmkit _⇒F_)
+module RK1I = RedKit1 (kit tmkit _⇒I_)
 
 mutual
   FNF→¬FR : ∀ {Γ A} {t : Γ ⊢ A} → FNF t → RK1F.¬R t
@@ -211,10 +209,8 @@ INF→¬IR = FNF→¬IR ∘ INF→FNF
 -- INNF→¬IR : ∀ {Γ A} {t : Γ ⊢ A} → INNF t → RK1I.¬R t
 -- INNF→¬IR = FNNF→¬IR ∘ INNF→FNNF
 
-rk2!F = redkit2 rk1!F uniFNF FNF→¬FR
-rk2!I = redkit2 rk1!I uniINF INF→¬IR
-module RK2F = RedKit2 rk2!F
-module RK2I = RedKit2 rk2!I
+module RK2F = RedKit2 (kit RK1F.redkit1 uniFNF FNF→¬FR)
+module RK2I = RedKit2 (kit RK1I.redkit1 uniINF INF→¬IR)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -278,10 +274,8 @@ mutual
   uni⇒I (βred⊃ eq p₂)   (Fcong$₂ p₁′ r₂′) = r₂′ ↯ FNF→¬FR p₂
   uni⇒I (βred⊃ refl p₂) (βred⊃ refl p₂′)  = βred⊃ refl & uniFNF p₂ p₂′
 
-dk!F = detkit rk2!F det⇒F uni⇒F
-dk!I = detkit rk2!I det⇒I uni⇒I
-module DKF = DetKit dk!F
-module DKI = DetKit dk!I
+module DKF = DetKit (kit RK2F.redkit2 det⇒F uni⇒F)
+module DKI = DetKit (kit RK2I.redkit2 det⇒I uni⇒I)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -307,10 +301,9 @@ prog⇒F {A = A ⌜⊃⌝ B} (t₁ ⌜$⌝ t₂)            with prog⇒F t₁ |
 
 -- TODO: progress doesn’t seem provable for _⇒I_, but maybe that’s okay?
 -- prog⇒I : ∀ {Γ A} (t : Γ ⊢ A) → RK2I.Prog t
--- prog⇒I t = {!!}
+-- prog⇒I t = {pp}
 
-pk!F = progkit rk2!F prog⇒F
-module PKF = ProgKit pk!F
+module PKF = ProgKit (kit RK2F.redkit2 prog⇒F)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -371,14 +364,11 @@ mutual
   subFNNF ps var-        = sub∋FNNF ps
   subFNNF ps (p₁ ⌜$⌝ p₂) = subFNNF ps p₁ ⌜$⌝ subFNF ps p₂
 
--- TODO: what?
-hmmFNF : ∀ {Γ A B} {i : Γ ∋ A} → FNF (var i) → FNF (var (suc {B = B} i))
-hmmFNF (nnf var-) = nnf var-
-
 bus∋FNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {i : Γ ∋ A} → FNNF* ss → FNF (sub∋ ss i) → FNF (var i)
 bus∋FNNF {A = ⌜◦⌝}     {i = i}     ps        p′   = nnf var-
 bus∋FNNF {A = A ⌜⊃⌝ B} {i = zero}  (() ∷ ps) ⌜λ⌝-
-bus∋FNNF {A = A ⌜⊃⌝ B} {i = suc i} (p ∷ ps)  p′   = hmmFNF (bus∋FNNF {i = i} ps p′)
+bus∋FNNF {A = A ⌜⊃⌝ B} {i = suc i} (p ∷ ps)  p′   with bus∋FNNF ps p′
+... | ()
 
 mutual
   busFNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → FNNF* ss → FNF (sub ss t) → FNF t
@@ -431,18 +421,18 @@ Expandable? {A = A ⌜⊃⌝ B} (t₁ ⌜$⌝ t₂) with FNNF? t₁ | FNF? t₂
 
 -- (Ghani p.51, unnumbered lemma)
 FR→IR⊎ExpandsTo : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒F t′ → t ⇒I t′ ⊎ t ExpandsTo t′
-FR→IR⊎ExpandsTo (Ired ¬x (cong$₁ r₁))     = inj₁ (cong$₁ r₁)
-FR→IR⊎ExpandsTo (Ired ¬x (Fcong$₂ p₁ r₂)) = inj₁ (Fcong$₂ p₁ r₂)
-FR→IR⊎ExpandsTo (Ired ¬x (Xcong$₂ x₁ r₂)) = inj₁ (Xcong$₂ x₁ r₂)
-FR→IR⊎ExpandsTo (Ired ¬x (βred⊃ eq p₂))   = inj₁ (βred⊃ eq p₂)
-FR→IR⊎ExpandsTo (ηexp⊃ refl x)            = inj₂ (ηexp⊃ refl x)
+FR→IR⊎ExpandsTo (Ired ¬x (cong$₁ r₁))     = left (cong$₁ r₁)
+FR→IR⊎ExpandsTo (Ired ¬x (Fcong$₂ p₁ r₂)) = left (Fcong$₂ p₁ r₂)
+FR→IR⊎ExpandsTo (Ired ¬x (Xcong$₂ x₁ r₂)) = left (Xcong$₂ x₁ r₂)
+FR→IR⊎ExpandsTo (Ired ¬x (βred⊃ eq p₂))   = left (βred⊃ eq p₂)
+FR→IR⊎ExpandsTo (ηexp⊃ refl x)            = right (ηexp⊃ refl x)
 
 IR⊎ExpandsTo→FR : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒I t′ ⊎ t ExpandsTo t′ → t ⇒F t′
-IR⊎ExpandsTo→FR {A = ⌜◦⌝}     {t} (inj₁ r)              = Ired (λ ()) r
-IR⊎ExpandsTo→FR {A = A ⌜⊃⌝ B} {t} (inj₁ r)              with Expandable? t
-... | yes x                                                = r ↯ Expandable→¬IR x
-... | no ¬x                                                = Ired ¬x r
-IR⊎ExpandsTo→FR                   (inj₂ (ηexp⊃ refl x)) = ηexp⊃ refl x
+IR⊎ExpandsTo→FR {A = ⌜◦⌝}     {t} (left r)               = Ired (λ ()) r
+IR⊎ExpandsTo→FR {A = A ⌜⊃⌝ B} {t} (left r)               with Expandable? t
+... | yes x                                                 = r ↯ Expandable→¬IR x
+... | no ¬x                                                 = Ired ¬x r
+IR⊎ExpandsTo→FR                   (right (ηexp⊃ refl x)) = ηexp⊃ refl x
 
 
 ----------------------------------------------------------------------------------------------------

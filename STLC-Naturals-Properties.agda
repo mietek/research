@@ -28,8 +28,7 @@ compren e′ e (⌜suc⌝ t)        = ⌜suc⌝ & compren e′ e t
 compren e′ e (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ & compren e′ e tₙ ⊗ compren e′ e t₀
                                   ⊗ compren (keep (keep e′)) (keep (keep e)) tₛ
 
-rsk1! = rensubkit1 sk! lidren ridren compren
-open RenSubKit1 rsk1! public
+open RenSubKit1 (kit subkit lidren ridren compren) public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -81,8 +80,7 @@ lidsub (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ & lidsub tₙ ⊗ lidsub t₀ ⊗ 
 ridsub : ∀ {Γ Ξ A} (ss : Ξ ⊢* Γ) (i : Γ ∋ A) → sub ss (var i) ≡ sub∋ ss i
 ridsub ss i = refl
 
-rsk2! = rensubkit2 rsk1! eqsubren eqrensub lidsub ridsub
-open RenSubKit2 rsk2! public
+open RenSubKit2 (kit rensubkit1 eqsubren eqrensub lidsub ridsub) public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -104,8 +102,7 @@ compsub ss′ ss (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ & compsub ss′ ss tₙ 
                                       ⋮ compsub (lifts (lifts ss′)) (lifts (lifts ss)) tₛ
                                       )
 
-rsk3! = rensubkit3 rsk2! compsub
-open RenSubKit3 rsk3! public
+open RenSubKit3 (kit rensubkit2 compsub) public
 
 
 ----------------------------------------------------------------------------------------------------

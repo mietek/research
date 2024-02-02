@@ -15,8 +15,7 @@ vren : ∀ {W W′ A} → W ⊆ W′ → W ⊩ A → W′ ⊩ A
 vren {A = ⌜◦⌝}     e (_ , p) = _ , renNNF e p
 vren {A = A ⌜⊃⌝ B} e v       = λ e′ → v (trans⊆ e e′)
 
-vk! = valkit _⊩_ (λ {W} {W′} {A} → vren {A = A})
-open ValKit vk! public
+open ValKit (kit _⊩_ (λ {W} {W′} {A} → vren {A = A})) public
 
 ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
 ⟦ var i     ⟧ vs = ⟦ i ⟧∋ vs
