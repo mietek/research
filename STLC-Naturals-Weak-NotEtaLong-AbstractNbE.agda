@@ -1,6 +1,7 @@
 module STLC-Naturals-Weak-NotEtaLong-AbstractNbE where
 
 open import STLC-Naturals-Weak-NotEtaLong public
+open import Kit4 public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -43,11 +44,11 @@ module _ {ℳ◦} {ℳ : SplitModel ℳ◦} where
   vren {A = A ⌜⊃⌝ B} e v = λ e′ → v (ℳ.trans≤ e e′)
   vren {A = ⌜ℕ⌝}     e v = ℳ.ren⟦ℕ⟧ e v
 
-open SplitModelKit _⊩_ (λ {ℳ◦} {ℳ} {W} {W′} {A} → vren {ℳ◦} {ℳ} {A = A}) public
+open SplitModelKit (kit _⊩_ (λ {ℳ◦} {ℳ} {W} {W′} {A} → vren {ℳ◦} {ℳ} {A = A})) public
 
 -- reflection
 ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
-⟦ ⌜v⌝ i                  ⟧         vs = ⟦ i ⟧∋ vs
+⟦ var i                  ⟧         vs = ⟦ i ⟧∋ vs
 ⟦ ⌜λ⌝ t                  ⟧         vs = λ e v → ⟦ t ⟧ (v ∷ vrens e vs)
 ⟦ t₁ ⌜$⌝ t₂              ⟧ {ℳ = ℳ} vs = ⟦ t₁ ⟧ vs (refl≤ ℳ) $ ⟦ t₂ ⟧ vs
 ⟦ ⌜zero⌝                 ⟧ {ℳ = ℳ} vs = ⟦zero⟧ ℳ
@@ -77,8 +78,8 @@ mutual
   𝒞 .⟦rec⟧         (_ , ⌜suc⌝ pₙ) v₀ vₛ = vₛ id⊆ (_ , pₙ) id⊆ v₀
   𝒞 .⟦rec⟧ {A = A} (_ , nnf pₙ)   v₀ vₛ =
     let _ , p₀ = ↓ {A = A} v₀
-        _ , pₛ = ↓ (vₛ (drop (drop id⊆)) (↑ (⌜v⌝ {A = ⌜ℕ⌝} (suc zero) , ⌜v⌝-))
-                   id⊆ (↑ (⌜v⌝ {A = A} zero , ⌜v⌝-)))
+        _ , pₛ = ↓ (vₛ (drop (drop id⊆)) (↑ (var {A = ⌜ℕ⌝} (suc zero) , var-))
+                   id⊆ (↑ (var {A = A} zero , var-)))
       in ↑ (_ , ⌜rec⌝ pₙ p₀ pₛ)
 
   ↑ : ∀ {Γ A} → Σ (Γ ⊢ A) NNF → 𝒞 / Γ ⊩ A
@@ -87,13 +88,13 @@ mutual
   ↑ {A = ⌜ℕ⌝}     (_ , p)  = _ , nnf p
 
   ↓ : ∀ {Γ A} → 𝒞 / Γ ⊩ A → Σ (Γ ⊢ A) NF
-  ↓ {A = A ⌜⊃⌝ B} v = let t , p = ↓ (v wk⊆ (↑ (⌜v⌝ {A = A} zero , ⌜v⌝-)))
+  ↓ {A = A ⌜⊃⌝ B} v = let t , p = ↓ (v wk⊆ (↑ (var {A = A} zero , var-)))
                         in ⌜λ⌝ t , ⌜λ⌝-
   ↓ {A = ⌜ℕ⌝}     v = v
 
 vids : ∀ {Γ} → 𝒞 / Γ ⊩* Γ
 vids {[]}    = []
-vids {A ∷ Γ} = ↑ (⌜v⌝ {A = A} zero , ⌜v⌝-) ∷ vrens wk⊆ vids
+vids {A ∷ Γ} = ↑ (var {A = A} zero , var-) ∷ vrens wk⊆ vids
 
 -- reification
 ⟦_⟧⁻¹ : ∀ {Γ A} → Γ ⊨ A → Σ (Γ ⊢ A) NF

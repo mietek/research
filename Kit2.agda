@@ -260,10 +260,12 @@ module RenSubKit3 (κ : RenSubKit3Params) where
   module _ where
     open ≡-Reasoning
 
-    renβred⊃ : ∀ {Γ Γ′ A B} (e : Γ ⊆ Γ′) (t₁ : (A ∷ Γ) ⊢ B) (t₂ : Γ ⊢ A) →
-               (_[ ren e t₂ ] ∘ ren (keep e)) t₁ ≡ (ren e ∘ _[ t₂ ]) t₁
-    renβred⊃ e t₁ t₂ =
+    rencut : ∀ {Γ Γ′ A B} (e : Γ ⊆ Γ′) (t₁ : (A ∷ Γ) ⊢ B) (t₂ : Γ ⊢ A) →
+             ren (keep e) t₁ [ ren e t₂ ] ≡ ren e (t₁ [ t₂ ])
+    rencut e t₁ t₂ =
         begin
+          ren (keep e) t₁ [ ren e t₂ ]
+        ≡⟨⟩
           (sub (ren e t₂ ∷ ids) ∘ ren (keep e)) t₁
         ≡˘⟨ eqsubren (ren e t₂ ∷ ids) (keep e) t₁ ⟩
           sub (gets (keep e) (ren e t₂ ∷ ids)) t₁
@@ -278,12 +280,16 @@ module RenSubKit3 (κ : RenSubKit3Params) where
           sub (ren e t₂ ∷ rens e ids) t₁
         ≡⟨ eqrensub e (t₂ ∷ ids) t₁ ⟩
           (ren e ∘ sub (t₂ ∷ ids)) t₁
+        ≡⟨⟩
+          ren e (t₁ [ t₂ ])
         ∎
 
-    subβred⊃ : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : (A ∷ Γ) ⊢ B) (t₂ : Γ ⊢ A) →
-               (_[ sub ss t₂ ] ∘ sub (lifts ss)) t₁ ≡ (sub ss ∘ _[ t₂ ]) t₁
-    subβred⊃ ss t₁ t₂ =
+    subcut : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : (A ∷ Γ) ⊢ B) (t₂ : Γ ⊢ A) →
+             sub (lifts ss) t₁ [ sub ss t₂ ] ≡ sub ss (t₁ [ t₂ ])
+    subcut ss t₁ t₂ =
         begin
+          sub (lifts ss) t₁ [ sub ss t₂ ]
+        ≡⟨⟩
           (sub (sub ss t₂ ∷ ids) ∘ sub (lifts ss)) t₁
         ≡˘⟨ compsub (sub ss t₂ ∷ ids) (lifts ss) t₁ ⟩
           sub (subs (sub ss t₂ ∷ ids) (lifts ss)) t₁
@@ -306,6 +312,8 @@ module RenSubKit3 (κ : RenSubKit3Params) where
           sub (subs ss (t₂ ∷ ids)) t₁
         ≡⟨ compsub ss (t₂ ∷ ids) t₁ ⟩
           (sub ss ∘ sub (t₂ ∷ ids)) t₁
+        ≡⟨⟩
+          sub ss (t₁ [ t₂ ])
         ∎
 
 

@@ -1,11 +1,11 @@
 module STLC-Naturals-Weak-NotEtaLong-ConcreteNbE where
 
 open import STLC-Naturals-Weak-NotEtaLong public
+open import Kit4 public
 
 
 ----------------------------------------------------------------------------------------------------
 
--- semantic values
 infix 3 _⊩_
 _⊩_ : Ctx → Ty → Set
 W ⊩ A ⌜⊃⌝ B = ∀ {W′} → W ⊆ W′ → W′ ⊩ A → W′ ⊩ B
@@ -15,7 +15,7 @@ vren : ∀ {W W′ A} → W ⊆ W′ → W ⊩ A → W′ ⊩ A
 vren {A = A ⌜⊃⌝ B} e v       = λ e′ → v (trans⊆ e e′)
 vren {A = ⌜ℕ⌝}     e (_ , p) = _ , renNF e p
 
-open ⊩Kit _⊩_ (λ {W} {W′} {A} → vren {A = A}) public
+open ValKit (kit _⊩_ (λ {W} {W′} {A} → vren {A = A})) public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -27,15 +27,14 @@ mutual
   ↑ {A = ⌜ℕ⌝}     (_ , p)  = _ , nnf p
 
   ↓ : ∀ {Γ A} → Γ ⊩ A → Σ (Γ ⊢ A) NF
-  ↓ {A = A ⌜⊃⌝ B} v = let t , p = ↓ (v wk⊆ (↑ (⌜v⌝ zero , ⌜v⌝-)))
+  ↓ {A = A ⌜⊃⌝ B} v = let t , p = ↓ (v wk⊆ (↑ (var zero , var-)))
                         in ⌜λ⌝ t , ⌜λ⌝-
   ↓ {A = ⌜ℕ⌝}     v = v
 
 vids : ∀ {Γ} → Γ ⊩* Γ
 vids {[]}    = []
-vids {A ∷ Γ} = ↑ (⌜v⌝ zero , ⌜v⌝-) ∷ vrens wk⊆ vids
+vids {A ∷ Γ} = ↑ (var zero , var-) ∷ vrens wk⊆ vids
 
--- reification
 ⟦_⟧⁻¹ : ∀ {Γ A} → Γ ⊨ A → Σ (Γ ⊢ A) NF
 ⟦ v ⟧⁻¹ = ↓ (v vids)
 
@@ -52,13 +51,12 @@ vids {A ∷ Γ} = ↑ (⌜v⌝ zero , ⌜v⌝-) ∷ vrens wk⊆ vids
 ⟦rec⟧ (_ , ⌜zero⌝)   v₀ vₛ = v₀
 ⟦rec⟧ (_ , ⌜suc⌝ pₙ) v₀ vₛ = vₛ id⊆ (_ , pₙ) id⊆ v₀
 ⟦rec⟧ (_ , nnf pₙ)   v₀ vₛ = let _ , p₀ = ↓ v₀
-                                 _ , pₛ = ↓ (vₛ (drop (drop id⊆)) (↑ (⌜v⌝ (suc zero) , ⌜v⌝-))
-                                            id⊆ (↑ (⌜v⌝ zero , ⌜v⌝-)))
+                                 _ , pₛ = ↓ (vₛ (drop (drop id⊆)) (↑ (var (suc zero) , var-))
+                                            id⊆ (↑ (var zero , var-)))
                                in ↑ (_ , ⌜rec⌝ pₙ p₀ pₛ)
 
--- reflection
 ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
-⟦ ⌜v⌝ i          ⟧ vs = ⟦ i ⟧∋ vs
+⟦ var i          ⟧ vs = ⟦ i ⟧∋ vs
 ⟦ ⌜λ⌝ t          ⟧ vs = λ e v → ⟦ t ⟧ (v ∷ vrens e vs)
 ⟦ t₁ ⌜$⌝ t₂      ⟧ vs = ⟦ t₁ ⟧ vs id⊆ $ ⟦ t₂ ⟧ vs
 ⟦ ⌜zero⌝         ⟧ vs = ⟦zero⟧

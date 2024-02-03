@@ -1,11 +1,11 @@
 module STLC-Naturals2-Strong-EtaLong-ConcreteNBE where
 
 open import STLC-Naturals2-Strong-EtaLong public
+open import Kit4 public
 
 
 ----------------------------------------------------------------------------------------------------
 
--- semantic values
 infix 3 _⊩_
 _⊩_ : Ctx → Ty → Set
 W ⊩ A ⌜⊃⌝ B = ∀ {W′} → W ⊆ W′ → W′ ⊩ A → W′ ⊩ B
@@ -15,7 +15,7 @@ vren : ∀ {W W′ A} → W ⊆ W′ → W ⊩ A → W′ ⊩ A
 vren {A = A ⌜⊃⌝ B} e v = λ e′ → v (trans⊆ e e′)
 vren {A = ⌜ℕ⌝}     e v = ren≪ e v
 
-open ⊩Kit _⊩_ (λ {W} {W′} {A} → vren {A = A}) public
+open ValKit (kit _⊩_ (λ {W} {W′} {A} → vren {A = A})) public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -26,14 +26,13 @@ mutual
   ↑ {A = ⌜ℕ⌝}     t = nnf t
 
   ↓ : ∀ {Γ A} → Γ ⊩ A → Γ ⊢≪ A
-  ↓ {A = A ⌜⊃⌝ B} v = ⌜λ⌝ (↓ (v wk⊆ (↑ (⌜v⌝ zero))))
+  ↓ {A = A ⌜⊃⌝ B} v = ⌜λ⌝ (↓ (v wk⊆ (↑ (var zero))))
   ↓ {A = ⌜ℕ⌝}     v = v
 
 vids : ∀ {Γ} → Γ ⊩* Γ
 vids {[]}    = []
-vids {A ∷ Γ} = ↑ (⌜v⌝ zero) ∷ vrens wk⊆ vids
+vids {A ∷ Γ} = ↑ (var zero) ∷ vrens wk⊆ vids
 
--- reification
 ⟦_⟧⁻¹ : ∀ {Γ A} → Γ ⊨ A → Γ ⊢≪ A
 ⟦ v ⟧⁻¹ = ↓ (v vids)
 
@@ -57,10 +56,9 @@ vids {A ∷ Γ} = ↑ (⌜v⌝ zero) ∷ vrens wk⊆ vids
 ⟦ ⌜suc⌝  ⟧Con vs = ⟦suc⟧
 ⟦ ⌜rec⌝  ⟧Con vs = ⟦rec⟧
 
--- reflection
 ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
-⟦ ⌜c⌝ k     ⟧ vs = ⟦ k ⟧Con vs
-⟦ ⌜v⌝ i     ⟧ vs = ⟦ i ⟧∋ vs
+⟦ con k     ⟧ vs = ⟦ k ⟧Con vs
+⟦ var i     ⟧ vs = ⟦ i ⟧∋ vs
 ⟦ ⌜λ⌝ t     ⟧ vs = λ e v → ⟦ t ⟧ (v ∷ vrens e vs)
 ⟦ t₁ ⌜$⌝ t₂ ⟧ vs = ⟦ t₁ ⟧ vs id⊆ $ ⟦ t₂ ⟧ vs
 

@@ -59,13 +59,13 @@ import STLC-Negative-Weak-NotEtaLong-AbstractNbE
 
 import STLC-Naturals
 import STLC-Naturals-Properties
--- import STLC-Naturals-Weak-NotEtaLong
--- import STLC-Naturals-Weak-NotEtaLong-ConcreteNbE
--- import STLC-Naturals-Weak-NotEtaLong-AbstractNbE
--- import STLC-Naturals-Weak-NotEtaLong-AbstractNbE2 -- TODO
--- import STLC-Naturals2
--- import STLC-Naturals2-Strong-EtaLong
--- import STLC-Naturals2-Strong-EtaLong-ConcreteNBE
+import STLC-Naturals-Weak-NotEtaLong -- TODO
+import STLC-Naturals-Weak-NotEtaLong-ConcreteNbE
+import STLC-Naturals-Weak-NotEtaLong-AbstractNbE
+import STLC-Naturals-Weak-NotEtaLong-AbstractNbE2 -- TODO
+import STLC-Naturals2
+import STLC-Naturals2-Strong-EtaLong
+import STLC-Naturals2-Strong-EtaLong-ConcreteNBE
 
 
 ----------------------------------------------------------------------------------------------------

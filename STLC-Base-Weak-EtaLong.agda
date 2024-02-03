@@ -345,7 +345,7 @@ mutual
   ren⇒I e (cong$₁ r₁)               = cong$₁ (ren⇒I e r₁)
   ren⇒I e (Fcong$₂ p₁ r₂)           = Fcong$₂ (renFNF e p₁) (ren⇒F e r₂)
   ren⇒I e (Xcong$₂ x₁ r₂)           = Xcong$₂ (renExpandable e x₁) (ren⇒F e r₂)
-  ren⇒I e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (renβred⊃ e t₁ _ ⁻¹) (renFNF e p₂)
+  ren⇒I e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut e t₁ _ ⁻¹) (renFNF e p₂)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -400,7 +400,7 @@ mutual
   sub⇒I ps xs (cong$₁ r₁)               = cong$₁ (sub⇒I ps xs r₁)
   sub⇒I ps xs (Fcong$₂ p₁ r₂)           = Fcong$₂ (subFNF ps p₁) (sub⇒F ps xs r₂)
   sub⇒I ps xs (Xcong$₂ x₁ r₂)           = Xcong$₂ (subExpandable ps xs x₁) (sub⇒F ps xs r₂)
-  sub⇒I ps xs (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (subβred⊃ _ t₁ _ ⁻¹) (subFNF ps p₂)
+  sub⇒I ps xs (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (subcut _ t₁ _ ⁻¹) (subFNF ps p₂)
 
   sub⇒F : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → FNNF* ss → Expandable* ss → t ⇒F t′ →
            sub ss t ⇒F sub ss t′

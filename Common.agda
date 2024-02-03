@@ -7,7 +7,8 @@ open import Agda.Builtin.List public
   using (List ; [] ; _∷_)
 
 open import Agda.Builtin.Nat public
-  using (zero ; suc) renaming (Nat to ℕ)
+  using (zero ; suc)
+  renaming (Nat to ℕ)
 
 open import Agda.Builtin.Sigma public
   using (Σ ; _,_ ; fst ; snd)
@@ -186,22 +187,22 @@ data _≅_ {𝓍} {X : Set 𝓍} (x : X) : ∀ {𝓎} {Y : Set 𝓎} → Y → S
 ≡→≅ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≡ x′ → x ≅ x′
 ≡→≅ refl = refl
 
-cong≅ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {x x′ : X} (f : ∀ (x : X) → Y x) → x ≅ x′ →
+cong≅ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {x x′} (f : ∀ x → Y x) → x ≅ x′ →
         f x ≅ f x′
 cong≅ f refl = refl
 
-cong₂≅ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : X → Set 𝓎} {Z : ∀ (x : X) → Y x → Set 𝓏} {x x′ y y′}
+cong₂≅ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : X → Set 𝓎} {Z : ∀ x → Y x → Set 𝓏} {x x′ y y′}
            (f : ∀ x → (y : Y x) → Z x y) → x ≅ x′ → y ≅ y′ →
          f x y ≅ f x′ y′
 cong₂≅ f refl refl = refl
 
 infixl 9 _&≅_
-_&≅_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {x x′ : X} (f : ∀ x → Y x) → x ≅ x′ → f x ≅ f x′
+_&≅_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {x x′} (f : ∀ x → Y x) → x ≅ x′ → f x ≅ f x′
 _&≅_ = cong≅
 
 -- TODO: why doesn’t this work?!
 infixl 8 _⊗≅_
-_⊗≅_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {x x′ : X} {f g : ∀ x → Y x} → f ≅ g → x ≅ x′ →
+_⊗≅_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {x x′} {f g : ∀ x → Y x} → f ≅ g → x ≅ x′ →
        f x ≅ g x′
 refl ⊗≅ refl = refl
 

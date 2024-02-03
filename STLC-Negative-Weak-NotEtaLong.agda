@@ -145,7 +145,7 @@ ren⇒ e (cong$₁ r₁)               = cong$₁ (ren⇒ e r₁)
 ren⇒ e (cong$₂ p₁ r₂)            = cong$₂ (renNF e p₁) (ren⇒ e r₂)
 ren⇒ e (congfst r)               = congfst (ren⇒ e r)
 ren⇒ e (congsnd r)               = congsnd (ren⇒ e r)
-ren⇒ e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (renβred⊃ e t₁ _ ⁻¹) (renNF e p₂)
+ren⇒ e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut e t₁ _ ⁻¹) (renNF e p₂)
 ren⇒ e βred∧₁                    = βred∧₁
 ren⇒ e βred∧₂                    = βred∧₂
 
@@ -176,7 +176,7 @@ sub⇒ ps (cong$₁ r₁)               = cong$₁ (sub⇒ ps r₁)
 sub⇒ ps (cong$₂ p₁ r₂)            = cong$₂ (subNF ps p₁) (sub⇒ ps r₂)
 sub⇒ ps (congfst r)               = congfst (sub⇒ ps r)
 sub⇒ ps (congsnd r)               = congsnd (sub⇒ ps r)
-sub⇒ ps (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (subβred⊃ _ t₁ _ ⁻¹) (subNF ps p₂)
+sub⇒ ps (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (subcut _ t₁ _ ⁻¹) (subNF ps p₂)
 sub⇒ ps βred∧₁                    = βred∧₁
 sub⇒ ps βred∧₂                    = βred∧₂
 

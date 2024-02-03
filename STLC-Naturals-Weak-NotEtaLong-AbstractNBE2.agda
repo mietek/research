@@ -1,6 +1,7 @@
 module STLC-Naturals-Weak-NotEtaLong-AbstractNbE2 where
 
 open import STLC-Naturals-Weak-NotEtaLong public
+open import Kit4 public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -40,11 +41,11 @@ module _ {ℳ : Model} where
   vren {A = A ⌜⊃⌝ B} e v = λ e′ → v (ℳ.trans≤ e e′)
   vren {A = ⌜ℕ⌝}     e v = ℳ.ren⟦ℕ⟧ e v
 
-open ModelKit (λ {ℳ} → _⊩_ ℳ) (λ {ℳ} {W} {W′} {A} → vren {ℳ} {A = A}) public
+open ModelKit (kit (λ {ℳ} → _⊩_ ℳ) (λ {ℳ} {W} {W′} {A} → vren {ℳ} {A = A})) public
 
 -- reflection
 ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
-⟦ ⌜v⌝ i                  ⟧         vs = ⟦ i ⟧∋ vs
+⟦ var i                  ⟧         vs = ⟦ i ⟧∋ vs
 ⟦ ⌜λ⌝ t                  ⟧         vs = λ e v → ⟦ t ⟧ (v ∷ vrens e vs)
 ⟦ t₁ ⌜$⌝ t₂              ⟧ {ℳ = ℳ} vs = ⟦ t₁ ⟧ vs (refl≤ ℳ) $ ⟦ t₂ ⟧ vs
 ⟦ ⌜zero⌝                 ⟧ {ℳ = ℳ} vs = ⟦zero⟧ ℳ
@@ -72,8 +73,8 @@ open ModelKit (λ {ℳ} → _⊩_ ℳ) (λ {ℳ} {W} {W′} {A} → vren {ℳ} {
 --               ;         (_ , ⌜suc⌝ pₙ) v₀ vₛ → vₛ refl⊆ (_ , pₙ) refl⊆ v₀
 --               ; {A = A} (_ , nnf pₙ)   v₀ vₛ → {!!}
 -- --                  let _ , p₀ = ↓ {A = A} v₀
--- --                      _ , pₛ = ↓ (vₛ (drop (drop refl⊆)) (↑ (⌜v⌝ {A = ⌜ℕ⌝} (suc zero) , ⌜v⌝-))
--- --                                 refl⊆ (↑ (⌜v⌝ {A = A} zero , ⌜v⌝-))) in
+-- --                      _ , pₛ = ↓ (vₛ (drop (drop refl⊆)) (↑ (var {A = ⌜ℕ⌝} (suc zero) , var-))
+-- --                                 refl⊆ (↑ (var {A = A} zero , var-))) in
 -- --                    ↑ (_ , ⌜rec⌝ pₙ p₀ pₛ)
 --               }
 --         }
@@ -84,13 +85,13 @@ open ModelKit (λ {ℳ} → _⊩_ ℳ) (λ {ℳ} {W} {W′} {A} → vren {ℳ} {
 --   ↑ {A = ⌜ℕ⌝}     (_ , p)  = _ , nnf p
 
 --   ↓ : ∀ {Γ A} → 𝒞 / Γ ⊩ A → Σ ({!Γ!} ⊢ A) NF
---   ↓ {A = A ⌜⊃⌝ B} v = let t , p = ↓ (v wk⊆ (↑ (⌜v⌝ {A = A} zero , ⌜v⌝-))) in
+--   ↓ {A = A ⌜⊃⌝ B} v = let t , p = ↓ (v wk⊆ (↑ (var {A = A} zero , var-))) in
 --                         ⌜λ⌝ t , ⌜λ⌝-
 --   ↓ {A = ⌜ℕ⌝}     v = v
 
 -- vids : ∀ {Γ} → 𝒞 / Γ ⊩* Γ
 -- vids {[]}    = []
--- vids {A ∷ Γ} = ↑ (⌜v⌝ {A = A} zero , ⌜v⌝-) ∷ vrens wk⊆ vids
+-- vids {A ∷ Γ} = ↑ (var {A = A} zero , var-) ∷ vrens wk⊆ vids
 
 -- -- reification
 -- ⟦_⟧⁻¹ : ∀ {Γ A} → Γ ⊨ A → Σ (Γ ⊢ A) NF
