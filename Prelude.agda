@@ -40,6 +40,12 @@ _∘_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : X → Set 𝓎} {Z : ∀ {x} �
       (∀ x → Z (g x))
 (f ∘ g) x = f (g x)
 
+infixr 9 _⨾_
+_⨾_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : X → Set 𝓎} {Z : ∀ {x} → Y x → Set 𝓏} (g : ∀ x → Y x) →
+        (∀ {x} (y : Y x) → Z y) →
+      (∀ x → Z (g x))
+(g ⨾ f) x = f (g x)
+
 infixr 2 _×_
 _×_ : ∀ {𝓍 𝓎} (X : Set 𝓍) (Y : Set 𝓎) → Set (𝓍 ⊔ 𝓎)
 X × Y = Σ X λ _ → Y
@@ -83,6 +89,12 @@ data Dec {𝓍} (X : Set 𝓍) : Set 𝓍 where
 
 ----------------------------------------------------------------------------------------------------
 
+infix 4 ≡-syntax
+≡-syntax : ∀ {𝓍} (X : Set 𝓍) → X → X → Set 𝓍
+≡-syntax X = _≡_
+
+syntax ≡-syntax X x x′ = x ≡ x′ :> X
+
 sym : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≡ x′ → x′ ≡ x
 sym refl = refl
 
@@ -119,28 +131,32 @@ infixl 8 _⊗_
 _⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {f g : X → Y} {x x′} → f ≡ g → x ≡ x′ → f x ≡ g x′
 refl ⊗ refl = refl
 
-_≐_ :  ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} (f g : ∀ x → Y x) → Set (𝓍 ⊔ 𝓎)
-f ≐ g = ∀ x → f x ≡ g x
+_≐_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} → (∀ x → Y x) → (∀ x → Y x) → Set (𝓍 ⊔ 𝓎)
+f ≐ f′ = ∀ x → f x ≡ f′ x
 
--- TODO: unusable due to Agda’s implicit insertion heuristics
-_≐′_ :  ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} (f g : ∀ {x} → Y x) → Set (𝓍 ⊔ 𝓎)
-f ≐′ g = ∀ {x} → f {x} ≡ g {x}
+_≐′_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} → (∀ {x} → Y x) → (∀ {x} → Y x) → Set (𝓍 ⊔ 𝓎)
+f ≐′ f′ = ∀ {x} → f {x} ≡ f′ {x}
 
-congapp : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ x → Y x} → f ≡ g → f ≐ g
+infix 4 ≐′-syntax
+≐′-syntax : ∀ {𝓍 𝓎} {X : Set 𝓍} (Y : X → Set 𝓎) → (∀ {x} → Y x) → (∀ {x} → Y x) → Set (𝓍 ⊔ 𝓎)
+≐′-syntax Y = _≐′_
+
+syntax ≐′-syntax Y f f′ = f ≐′ f′ :> Y
+
+congapp : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f f′ : ∀ x → Y x} → f ≡ f′ → f ≐ f′
 congapp refl x = refl
 
-congapp′ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x : X} → Y x} →
-             (λ {x : X} → f {x}) ≡ (λ {x : X} → g {x}) →
-           (∀ {x} → f {x} ≡ g {x})
+congapp′ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f f′ : ∀ {x} → Y x} →
+             f ≡ f′ :> (∀ {x} → Y x) →
+           f ≐′ f′ :> Y
 congapp′ refl {x} = refl
 
 FunExt : Setω
-FunExt = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ (x : X) → Y x} → f ≐ g → f ≡ g
+FunExt = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f f′ : ∀ x → Y x} → f ≐ f′ → f ≡ f′
 
 FunExt′ : Setω
-FunExt′ = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x : X} → Y x} →
-            (∀ {x : X} → f {x} ≡ g {x}) →
-          (λ {x : X} → f {x}) ≡ (λ {x : X} → g {x})
+FunExt′ = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f f′ : ∀ {x} → Y x} → f ≐′ f′ :> Y →
+          f ≡ f′ :> (∀ {x} → Y x)
 
 uni≡ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} (eq eq′ : x ≡ x′) → eq ≡ eq′
 uni≡ refl refl = refl
@@ -153,9 +169,9 @@ uni¬ f f′ = refl
 
 module _ (⚠ : FunExt) where
   implify : FunExt′
-  implify eq = (λ f {x} → f x) & ⚠ (λ _ → eq)
+  implify eq = (λ f {x} → f x) & ⚠ (λ x → eq {x})
 
-  uni→ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} → (∀ (y y′ : Y) → y ≡ y′) → ∀ (f f′ : X → Y) → f ≡ f′
+  uni→ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} → (∀ y y′ → y ≡ y′) → ∀ (f f′ : X → Y) → f ≡ f′
   uni→ uniY f f′ = ⚠ λ x → uniY (f x) (f′ x)
 
 module ≡-Reasoning {𝓍} {X : Set 𝓍} where

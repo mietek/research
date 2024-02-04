@@ -32,7 +32,6 @@ module _ {ℳ : Model} where
 
 open ModelKit (kit (λ {ℳ} → _⊩_ {ℳ}) (λ {ℳ} {W} {W′} {A} → vren {A = A})) public
 
--- reflection
 ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
 ⟦ var i     ⟧     vs = ⟦ i ⟧∋ vs
 ⟦ ⌜λ⌝ t     ⟧     vs = λ e v → ⟦ t ⟧ (v ∷ vrens e vs)

@@ -3,7 +3,7 @@ module About where
 
 {- -------------------------------------------------------------------------------------------------
 
-thanks to ames, dolio, drvink, mxu, ncf, ooovi, pgiarrusso, pounce, rak, roconnor, tuplanolla
+thanks to ames, dolio, drvink, mxu, ncf, ovi, pgiarrusso, pounce, rak, roconnor, tuplanolla
 
 join ##dependent on libera.chat
 
@@ -42,6 +42,8 @@ import Kit1
 import Kit2
 import Kit3
 import Kit4
+import Kit1-Renamings
+-- import Kit2-Renamings
 
 import STLC-Base
 import STLC-Base-Properties
