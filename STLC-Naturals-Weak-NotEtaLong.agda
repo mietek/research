@@ -267,7 +267,7 @@ ren⇒ e (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ) =
               begin
                 ren (lift⊆ e) (wk (⌜rec⌝ tₙ t₀ tₛ))
               ≡⟨ compren (lift⊆ e) (wk⊆ id⊆) (⌜rec⌝ tₙ t₀ tₛ) ⁻¹ ⟩
-                ren (wk⊆ (id⊆ ○ e)) (⌜rec⌝ tₙ t₀ tₛ)
+                ren (wk⊆ (id⊆ ∘⊆ e)) (⌜rec⌝ tₙ t₀ tₛ)
               ≡⟨ (flip ren (⌜rec⌝ tₙ t₀ tₛ) ∘ wk⊆) & lid⊆ e ⟩
                 ren (wk⊆ e) (⌜rec⌝ tₙ t₀ tₛ)
               ≡⟨⟩

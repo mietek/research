@@ -15,29 +15,23 @@ record RenSubKit1Params : Set₁ where
   field
     ridren  : ∀ {Γ A} (t : Γ ⊢ A) → ren id⊆ t ≡ t
     lidren  : ∀ {Γ Γ′ A} (e : Γ ⊆ Γ′) (i : Γ ∋ A) → ren e (var i) ≡ var (ren∋ e i)
-
-    -- -- like compsub
-    -- compsub : ∀ {Γ Ξ Ξ′ A} (ss′ : Ξ′ ⊢* Ξ) (ss : Ξ ⊢* Γ) (t : Γ ⊢ A) →
-    -- --        sub (sub* ss′ ss) t ≡ (sub ss′ ∘ sub ss) t
-    --           sub (ss ● ss′) t ≡ (sub ss ⨾ sub ss′) t
     compren : ∀ {Γ Γ′ Γ″ A} (e′ : Γ′ ⊆ Γ″) (e : Γ ⊆ Γ′) (t : Γ ⊢ A) →
-    --        ren (e′ ∘⊆ e) t ≡ (ren e′ ∘ ren e) t
-              ren (e ○ e′) t ≡ (ren e ⨾ ren e′) t
+              ren (e ∘⊆ e′) t ≡ (ren e′ ∘ ren e) t
 
 module RenSubKit1 (¶ : RenSubKit1Params) where
   open RenSubKit1Params ¶
   rensubkit1 = ¶
 
   ridren* : ∀ {Γ Δ} (ts : Γ ⊢* Δ) →
-  --        ren* id⊆ ts ≡ ts
-            ts ◐ id⊆ ≡ ts
+            ren* id⊆ ts ≡ ts
+  --        ts ◐ id⊆ ≡ ts
   ridren* []       = refl
   ridren* (t ∷ ts) = _∷_ & ridren t ⊗ ridren* ts
 
   -- Kovacs: assₛₑₑ
   compren* : ∀ {Γ Γ′ Γ″ Δ} (e′ : Γ′ ⊆ Γ″) (e : Γ ⊆ Γ′) (ts : Γ ⊢* Δ) →
-  --         ren* (e′ ∘⊆ e) ts ≡ (ren* e′ ∘ ren* e) ts
-             ts ◐ (e ○ e′) ≡ (ts ◐ e) ◐ e′
+             ren* (e ∘⊆ e′) ts ≡ (ren* e′ ∘ ren* e) ts
+  --         ts ◐ (e ○ e′) ≡ (ts ◐ e) ◐ e′
   compren* e′ e []       = refl
   compren* e′ e (t ∷ ts) = _∷_ & compren e′ e t ⊗ compren* e′ e ts
 
@@ -105,8 +99,8 @@ module RenSubKit1 (¶ : RenSubKit1Params) where
   lidget* (t ∷ ts) = (t ∷_) & lidget* ts
 
   compget* : ∀ {Γ Δ Δ′ Δ″} (e : Δ ⊆ Δ′) (e′ : Δ′ ⊆ Δ″) (ts : Γ ⊢* Δ″) →
-  --           get* (e′ ∘⊆ e) ts ≡ (get* e ∘ get* e′) ts
-             (e ○ e′) ◑ ts ≡ e ◑ (e′ ◑ ts)
+             get* (e ∘⊆ e′) ts ≡ (get* e ∘ get* e′) ts
+  --         (e ○ e′) ◑ ts ≡ e ◑ (e′ ◑ ts)
   compget* e         stop⊆      []       = refl
   compget* e         (wk⊆ e′)   (t ∷ ts) = compget* e e′ ts
   compget* (wk⊆ e)   (lift⊆ e′) (t ∷ ts) = compget* e e′ ts
