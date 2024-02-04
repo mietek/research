@@ -13,8 +13,8 @@ record RenSubKit1Params : Set₁ where
   open SubKitParams subkit public
   open SubKit subkit public hiding (subkit)
   field
-    lidren  : ∀ {Γ A} (t : Γ ⊢ A) → ren id⊆ t ≡ t
-    ridren  : ∀ {Γ Γ′ A} (e : Γ ⊆ Γ′) (i : Γ ∋ A) → ren e (var i) ≡ var (ren∋ e i)
+    ridren  : ∀ {Γ A} (t : Γ ⊢ A) → ren id⊆ t ≡ t
+    lidren  : ∀ {Γ Γ′ A} (e : Γ ⊆ Γ′) (i : Γ ∋ A) → ren e (var i) ≡ var (ren∋ e i)
 
     -- -- like compsub
     -- compsub : ∀ {Γ Ξ Ξ′ A} (ss′ : Ξ′ ⊢* Ξ) (ss : Ξ ⊢* Γ) (t : Γ ⊢ A) →
@@ -28,11 +28,11 @@ module RenSubKit1 (¶ : RenSubKit1Params) where
   open RenSubKit1Params ¶
   rensubkit1 = ¶
 
-  lidren* : ∀ {Γ Δ} (ts : Γ ⊢* Δ) →
+  ridren* : ∀ {Γ Δ} (ts : Γ ⊢* Δ) →
   --        ren* id⊆ ts ≡ ts
             ts ◐ id⊆ ≡ ts
-  lidren* []       = refl
-  lidren* (t ∷ ts) = _∷_ & lidren t ⊗ lidren* ts
+  ridren* []       = refl
+  ridren* (t ∷ ts) = _∷_ & ridren t ⊗ ridren* ts
 
   -- Kovacs: assₛₑₑ
   compren* : ∀ {Γ Γ′ Γ″ Δ} (e′ : Γ′ ⊆ Γ″) (e : Γ ⊆ Γ′) (ts : Γ ⊢* Δ) →
@@ -56,26 +56,26 @@ module RenSubKit1 (¶ : RenSubKit1Params) where
   eqliftren* : ∀ {Γ Γ′ Δ B} (e : Γ ⊆ Γ′) (ts : Γ ⊢* Δ) →
   --           (ren* (lift⊆ {A = B} e) ∘ lift*) ts ≡ (lift* ∘ ren* e) ts
                (lift* ts) ◐ (lift⊆ {A = B} e) ≡ lift* (ts ◐ e)
-  eqliftren* e ts = (_∷ (ren* (lift⊆ e) ∘ wk*) ts) & ridren (lift⊆ e) zero
+  eqliftren* e ts = (_∷ (ren* (lift⊆ e) ∘ wk*) ts) & lidren (lift⊆ e) zero
                   ⋮ (var zero ∷_) & eqwkren* e ts
 
   -- Kovacs: idlₛₑ; not really identity
-  ridren* : ∀ {Γ Γ′} (e : Γ ⊆ Γ′) →
+  lidren* : ∀ {Γ Γ′} (e : Γ ⊆ Γ′) →
   --        ren* e id* ≡ var* e
             id* ◐ e ≡ var* e
-  ridren* stop⊆     = refl
-  ridren* (wk⊆ e)   = (flip ren* id* ∘ wk⊆) & rid⊆ e ⁻¹
+  lidren* stop⊆     = refl
+  lidren* (wk⊆ e)   = (flip ren* id* ∘ wk⊆) & rid⊆ e ⁻¹
                     ⋮ compren* (wk⊆ id⊆) e id*
-                    ⋮ wk* & ridren* e
-  ridren* (lift⊆ e) = (_∷ (ren* (lift⊆ e) ∘ wk*) id*) & ridren (lift⊆ e) zero
-                    ⋮ (var zero ∷_) & (eqwkren* e id* ⋮ wk* & ridren* e)
+                    ⋮ wk* & lidren* e
+  lidren* (lift⊆ e) = (_∷ (ren* (lift⊆ e) ∘ wk*) id*) & lidren (lift⊆ e) zero
+                    ⋮ (var zero ∷_) & (eqwkren* e id* ⋮ wk* & lidren* e)
 
   module _ (⚠ : FunExt) where
     ⟪ren⟫ : ∀ (A : Ty) → Presheaf ⟪⊇⟫ lzero
     ⟪ren⟫ A = record
                 { ƒObj = _⊢ A
                 ; ƒ    = ren
-                ; idƒ  = ⚠ lidren
+                ; idƒ  = ⚠ ridren
                 ; _∘ƒ_ = λ e′ e → ⚠ (compren e′ e)
                 }
 
@@ -84,7 +84,7 @@ module RenSubKit1 (¶ : RenSubKit1Params) where
     ⟪ren*⟫ Δ = record
                  { ƒObj = _⊢* Δ
                  ; ƒ    = flip _◐_ -- ren*
-                 ; idƒ  = ⚠ lidren*
+                 ; idƒ  = ⚠ ridren*
                  ; _∘ƒ_ = λ e′ e → ⚠ (compren* e′ e)
                  }
 
@@ -155,7 +155,7 @@ module RenSubKit1 (¶ : RenSubKit1Params) where
   idsub∋ zero    = refl
   idsub∋ (suc i) = eqrensub∋ (wk⊆ id⊆) id* i
                  ⋮ wk & idsub∋ i
-                 ⋮ ridren (wk⊆ id⊆) i
+                 ⋮ lidren (wk⊆ id⊆) i
                  ⋮ (var ∘ suc) & idren∋ i
 
   -- Kovacs: ∈-∘ₛ; not really composition
@@ -181,8 +181,8 @@ record RenSubKit2Params : Set₁ where
     eqrensub : ∀ {Γ Ξ Ξ′ A} (e : Ξ ⊆ Ξ′) (ss : Ξ ⊢* Γ) (t : Γ ⊢ A) →
     --         sub (ren* e ss) t ≡ (ren e ∘ sub ss) t
                sub (ss ◐ e) t ≡ (sub ss ⨾ ren e) t
-    lidsub   : ∀ {Γ A} (t : Γ ⊢ A) → sub id* t ≡ t
-    ridsub   : ∀ {Γ Ξ A} (ss : Ξ ⊢* Γ) (i : Γ ∋ A) → sub ss (var i) ≡ sub∋ ss i
+    ridsub   : ∀ {Γ A} (t : Γ ⊢ A) → sub id* t ≡ t
+    lidsub   : ∀ {Γ Ξ A} (ss : Ξ ⊢* Γ) (i : Γ ∋ A) → sub ss (var i) ≡ sub∋ ss i
 
 module RenSubKit2 (¶ : RenSubKit2Params) where
   open RenSubKit2Params ¶
@@ -203,11 +203,11 @@ module RenSubKit2 (¶ : RenSubKit2Params) where
   eqrensub* e ss (t ∷ ts) = _∷_ & eqrensub e ss t ⊗ eqrensub* e ss ts
 
   -- Kovacs: idrₛ
-  lidsub* : ∀ {Γ Δ} (ts : Γ ⊢* Δ) →
+  ridsub* : ∀ {Γ Δ} (ts : Γ ⊢* Δ) →
   --        sub* id* ts ≡ ts
             ts ● id* ≡ ts
-  lidsub* []       = refl
-  lidsub* (t ∷ ts) = _∷_ & lidsub t ⊗ lidsub* ts
+  ridsub* []       = refl
+  ridsub* (t ∷ ts) = _∷_ & ridsub t ⊗ ridsub* ts
 
   eqwksub : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t : Γ ⊢ A) →
             (sub (lift* {A = B} ss) ∘ wk) t ≡ (wk ∘ sub ss) t
@@ -224,7 +224,7 @@ module RenSubKit2 (¶ : RenSubKit2Params) where
   eqliftsub* : ∀ {Γ Ξ Δ B} (ss : Ξ ⊢* Γ) (ts : Γ ⊢* Δ) →
   --           (sub* (lift* {A = B} ss) ∘ lift*) ts ≡ (lift* ∘ sub* ss) ts
                (lift* ts) ● (lift* {A = B} ss) ≡ lift* (ts ● ss)
-  eqliftsub* ss ts = (_∷ (sub* (lift* ss) ∘ wk*) ts) & ridsub (lift* ss) zero
+  eqliftsub* ss ts = (_∷ (sub* (lift* ss) ∘ wk*) ts) & lidsub (lift* ss) zero
                    ⋮ (var zero ∷_) & eqwksub* ss ts
 
 
@@ -257,12 +257,12 @@ module RenSubKit3 (¶ : RenSubKit3Params) where
   eqsub* s ss (t ∷ ts) = _∷_ & eqsub s ss t ⊗ eqsub* s ss ts
 
   -- Kovacs: idlₛ
-  ridsub* : ∀ {Γ Ξ} (ss : Ξ ⊢* Γ) →
+  lidsub* : ∀ {Γ Ξ} (ss : Ξ ⊢* Γ) →
   --        sub* ss id* ≡ ss
             id* ● ss ≡ ss
-  ridsub* []       = refl
-  ridsub* (s ∷ ss) = (_∷ (sub* (s ∷ ss) ∘ wk*) id*) & ridsub (s ∷ ss) zero
-                   ⋮ (s ∷_) & (eqsub* s ss id* ⋮ ridsub* ss)
+  lidsub* []       = refl
+  lidsub* (s ∷ ss) = (_∷ (sub* (s ∷ ss) ∘ wk*) id*) & lidsub (s ∷ ss) zero
+                   ⋮ (s ∷_) & (eqsub* s ss id* ⋮ lidsub* ss)
 
   -- Kovacs: assₛ
   asssub* : ∀ {Γ Ξ Ξ′ Δ} (ss′ : Ξ′ ⊢* Ξ) (ss : Ξ ⊢* Γ) (ts : Γ ⊢* Δ) →
@@ -277,8 +277,8 @@ module RenSubKit3 (¶ : RenSubKit3Params) where
              ; _▻_  = _⊢*_
              ; id   = id*
              ; _∘_  = _●_ -- flip sub*
-             ; lid▻ = ridsub*
-             ; rid▻ = lidsub*
+             ; lid▻ = lidsub*
+             ; rid▻ = ridsub*
              ; ass▻ = λ ss′ ss ts → asssub* ts ss ss′
              }
 
@@ -287,7 +287,7 @@ module RenSubKit3 (¶ : RenSubKit3Params) where
     ⟪sub⟫ A = record
                 { ƒObj = _⊢ A
                 ; ƒ    = sub
-                ; idƒ  = ⚠ lidsub
+                ; idƒ  = ⚠ ridsub
                 ; _∘ƒ_ = λ ss′ ss → ⚠ (compsub ss′ ss)
                 }
 
@@ -305,7 +305,7 @@ module RenSubKit3 (¶ : RenSubKit3Params) where
             get* e id*
           ≡⟨ ridget* e ⟩
             var* e
-          ≡˘⟨ ridren* e ⟩
+          ≡˘⟨ lidren* e ⟩
             ren* e id*
           ∎) ⟩
         sub (ren e t₂ ∷ ren* e id*) t₁
@@ -324,7 +324,7 @@ module RenSubKit3 (¶ : RenSubKit3Params) where
         (sub (sub ss t₂ ∷ id*) ∘ sub (lift* ss)) t₁
       ≡˘⟨ compsub (sub ss t₂ ∷ id*) (lift* ss) t₁ ⟩
         sub (sub* (sub ss t₂ ∷ id*) (lift* ss)) t₁
-      ≡⟨ (flip sub t₁ ∘ (_∷ (sub* (sub ss t₂ ∷ id*) ∘ wk*) ss)) & ridsub (sub ss t₂ ∷ id*) zero ⟩
+      ≡⟨ (flip sub t₁ ∘ (_∷ (sub* (sub ss t₂ ∷ id*) ∘ wk*) ss)) & lidsub (sub ss t₂ ∷ id*) zero ⟩
         sub (sub ss t₂ ∷ sub* (sub ss t₂ ∷ id*) (wk* ss)) t₁
       ≡⟨ (flip sub t₁ ∘ (sub ss t₂ ∷_)) & (
           begin
@@ -335,9 +335,9 @@ module RenSubKit3 (¶ : RenSubKit3Params) where
             sub* (get* id⊆ id*) ss
           ≡⟨ flip sub* ss & lidget* id* ⟩
             sub* id* ss
-          ≡⟨ lidsub* ss ⟩
+          ≡⟨ ridsub* ss ⟩
             ss
-          ≡˘⟨ ridsub* ss ⟩
+          ≡˘⟨ lidsub* ss ⟩
             sub* ss id*
           ∎) ⟩
         sub (sub* ss (t₂ ∷ id*)) t₁

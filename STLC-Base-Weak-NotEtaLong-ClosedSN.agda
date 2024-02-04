@@ -53,7 +53,7 @@ lem₀ : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : A ∷ Γ ⊢ B) (t₂ : Ξ �
        (_[ t₂ ] ∘ sub (lift* ss)) t₁ ≡ sub (t₂ ∷ ss) t₁
 lem₀ ss t₁ t₂ = compsub (t₂ ∷ id*) (lift* ss) t₁ ⁻¹
               ⋮ (flip sub t₁ ∘ (t₂ ∷_)) & ( eqsub* t₂ id* ss
-                                          ⋮ lidsub* ss
+                                          ⋮ ridsub* ss
                                           )
 
 lem₁ : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : A ∷ Γ ⊢ B) {t₂ : Ξ ⊢ A} (p₂ : NF t₂) →
@@ -108,7 +108,7 @@ mutual
                                  in hwn! (subHWN ss hwns t₂)
 
 hwn : ∀ {A} (t : [] ⊢ A) → HWN t
-hwn t = subst HWN (lidsub t) (subHWN [] [] t)
+hwn t = subst HWN (ridsub t) (subHWN [] [] t)
 
 wn : ∀ {A} (t : [] ⊢ A) → WN t
 wn = fst ∘ hwn

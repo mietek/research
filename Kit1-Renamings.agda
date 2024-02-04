@@ -64,6 +64,9 @@ module RenKit (¶ : RenKitParams) where
   ren* js []       = []
   ren* js (t ∷ ts) = ren js t ∷ ren* js ts
 
+  _◐_ : ∀ {Γ Γ′ Δ} → Γ ⊢* Δ → Γ ⊆ Γ′ → Γ′ ⊢* Δ
+  _◐_ = flip ren*
+
   wk* : ∀ {Γ Δ A} → Γ ⊢* Δ → A ∷ Γ ⊢* Δ
   wk* ts = ren* (wk⊆ id⊆) ts
 
@@ -111,8 +114,8 @@ module SubKit (¶ : SubKitParams) where
   trans* : ∀ {Γ Ξ Δ} → Ξ ⊢* Γ → Γ ⊢* Δ → Ξ ⊢* Δ
   trans* = sub*
 
-  _∘*_ : ∀ {Γ Ξ Δ} → Γ ⊢* Δ → Ξ ⊢* Γ → Ξ ⊢* Δ
-  _∘*_ = flip trans*
+  _●_ : ∀ {Γ Ξ Δ} → Γ ⊢* Δ → Ξ ⊢* Γ → Ξ ⊢* Δ
+  _●_ = flip trans*
 
   _[_] : ∀ {Γ A B} → A ∷ Γ ⊢ B → Γ ⊢ A → Γ ⊢ B
   t [ s ] = sub (s ∷ id*) t
@@ -121,6 +124,9 @@ module SubKit (¶ : SubKitParams) where
   get* : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⊢* Δ′ → Γ ⊢* Δ
   get* []       ts = []
   get* (i ∷ is) ts = sub ts (var i) ∷ get* is ts
+
+  _◑_ : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⊢* Δ′ → Γ ⊢* Δ
+  _◑_ = get*
 
 
 ----------------------------------------------------------------------------------------------------
