@@ -14,9 +14,9 @@ record ValKitParams : Set₁ where
     _⊩_ : Ctx → Ty → Set
     vren : ∀ {W W′ A} → W ⊆ W′ → W ⊩ A → W′ ⊩ A
 
-module ValKit (κ : ValKitParams) where
-  open ValKitParams κ
-  valkit = κ
+module ValKit (¶ : ValKitParams) where
+  open ValKitParams ¶
+  valkit = ¶
 
   infix 3 _⊩*_
   data _⊩*_ (W : Ctx) : Ctx → Set where
@@ -50,9 +50,9 @@ record ModelKitParams : Set₂ where
     _⊩_    : ∀ {ℳ} → World ℳ → Ty → Set
     vren    : ∀ {ℳ W W′ A} → _≤_ ℳ W W′ → W ⊩ A → W′ ⊩ A
 
-module ModelKit (κ : ModelKitParams) where
-  open ModelKitParams κ
-  modelkit = κ
+module ModelKit (¶ : ModelKitParams) where
+  open ModelKitParams ¶
+  modelkit = ¶
 
   module _ {ℳ : Model} where
     infix 3 _⊩*_
@@ -96,9 +96,9 @@ record SplitModelKitParams : Set₂ where
     _⊩_         : ∀ {ℬ} (ℳ : SplitModel ℬ) → World ℳ → Ty → Set
     vren         : ∀ {ℬ} {ℳ : SplitModel ℬ} {W W′ A} → _≤_ ℳ W W′ → _⊩_ ℳ W A → _⊩_ ℳ W′ A
 
-module SplitModelKit (κ : SplitModelKitParams) where
-  open SplitModelKitParams κ
-  splitmodelkit = κ
+module SplitModelKit (¶ : SplitModelKitParams) where
+  open SplitModelKitParams ¶
+  splitmodelkit = ¶
 
   module _ {ℬ} {ℳ : SplitModel ℬ} where
     -- semantic environments

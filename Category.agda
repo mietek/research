@@ -1,6 +1,6 @@
 module Category where
 
-open import Common hiding (_∘_ ; id)
+open import Prelude hiding (_∘_ ; id)
 import Function
 
 

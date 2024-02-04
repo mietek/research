@@ -27,13 +27,13 @@ mutual
   ↑ {A = ⌜ℕ⌝}     (_ , p)  = _ , nnf p
 
   ↓ : ∀ {Γ A} → Γ ⊩ A → Σ (Γ ⊢ A) NF
-  ↓ {A = A ⌜⊃⌝ B} v = let t , p = ↓ (v wk⊆ (↑ (var zero , var-)))
+  ↓ {A = A ⌜⊃⌝ B} v = let t , p = ↓ (v (wk⊆ id⊆) (↑ (var zero , var-)))
                         in ⌜λ⌝ t , ⌜λ⌝-
   ↓ {A = ⌜ℕ⌝}     v = v
 
 vids : ∀ {Γ} → Γ ⊩* Γ
 vids {[]}    = []
-vids {A ∷ Γ} = ↑ (var zero , var-) ∷ vrens wk⊆ vids
+vids {A ∷ Γ} = ↑ (var zero , var-) ∷ vrens (wk⊆ id⊆) vids
 
 ⟦_⟧⁻¹ : ∀ {Γ A} → Γ ⊨ A → Σ (Γ ⊢ A) NF
 ⟦ v ⟧⁻¹ = ↓ (v vids)
@@ -51,7 +51,7 @@ vids {A ∷ Γ} = ↑ (var zero , var-) ∷ vrens wk⊆ vids
 ⟦rec⟧ (_ , ⌜zero⌝)   v₀ vₛ = v₀
 ⟦rec⟧ (_ , ⌜suc⌝ pₙ) v₀ vₛ = vₛ id⊆ (_ , pₙ) id⊆ v₀
 ⟦rec⟧ (_ , nnf pₙ)   v₀ vₛ = let _ , p₀ = ↓ v₀
-                                 _ , pₛ = ↓ (vₛ (drop (drop id⊆)) (↑ (var (suc zero) , var-))
+                                 _ , pₛ = ↓ (vₛ (wk⊆ (wk⊆ id⊆)) (↑ (var (suc zero) , var-))
                                             id⊆ (↑ (var zero , var-)))
                                in ↑ (_ , ⌜rec⌝ pₙ p₀ pₛ)
 

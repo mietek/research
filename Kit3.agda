@@ -15,9 +15,9 @@ record RedKit1Params : Set₁ where
   field
     _⇒_ : ∀ {Γ A} → Γ ⊢ A → Γ ⊢ A → Set
 
-module RedKit1 (κ : RedKit1Params) where
-  open RedKit1Params κ
-  redkit1 = κ
+module RedKit1 (¶ : RedKit1Params) where
+  open RedKit1Params ¶
+  redkit1 = ¶
 
   -- reducible forms
   RF : ∀ {Γ A} → Γ ⊢ A → Set
@@ -69,7 +69,7 @@ module RedKit1 (κ : RedKit1Params) where
     _∎ : ∀ {Γ A} (t : Γ ⊢ A) → t ⇒* t
     t ∎ = done
 
-  module _ (⚠ : Funext) where
+  module _ (⚠ : FunExt) where
     uni¬RF : ∀ {Γ A} {t : Γ ⊢ A} (¬p ¬p′ : ¬ RF t) → ¬p ≡ ¬p′
     uni¬RF = uni→ ⚠ uni𝟘
 
@@ -87,9 +87,9 @@ record RedKit2Params : Set₁ where
     uniNF  : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
     NF→¬R : ∀ {Γ A} {t : Γ ⊢ A} → NF t → ¬R t
 
-module RedKit2 (κ : RedKit2Params) where
-  open RedKit2Params κ
-  redkit2 = κ
+module RedKit2 (¶ : RedKit2Params) where
+  open RedKit2Params ¶
+  redkit2 = ¶
 
   ¬RF→¬R : ∀ {Γ A} {t : Γ ⊢ A} → ¬ RF t → ¬R t
   ¬RF→¬R ¬p r = (_ , r) ↯ ¬p
@@ -126,9 +126,9 @@ record DetKitParams : Set₁ where
     det⇒ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t ⇒ t″ → t′ ≡ t″
     uni⇒ : ∀ {Γ A} {t t′ : Γ ⊢ A} (r r′ : t ⇒ t′) → r ≡ r′
 
-module DetKit (κ : DetKitParams) where
-  open DetKitParams κ
-  detkit = κ
+module DetKit (¶ : DetKitParams) where
+  open DetKitParams ¶
+  detkit = ¶
 
   skip⇒* : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t ⇒* t″ → NF t″ → t′ ⇒* t″
   skip⇒* r done          p″ = r ↯ NF→¬R p″
@@ -147,6 +147,7 @@ module DetKit (κ : DetKitParams) where
   det⇒* done        p′ (step r′ rs′) p″ = r′ ↯ NF→¬R p′
   det⇒* (step r rs) p′ rs′           p″ = det⇒* rs p′ (skip⇒* r rs′ p″) p″
 
+  -- TODO: sort this out using Schäfer
   -- local confluence
   lconf⇒ : ∀ {Γ A} {t t₁ t₂ : Γ ⊢ A} → t ⇒ t₁ → t ⇒ t₂ →
             Σ _ λ t′ → t₁ ⇒* t′ × t₂ ⇒* t′
@@ -173,9 +174,9 @@ record ProgKitParams : Set₁ where
   field
     prog⇒ : ∀ {Γ A} (t : Γ ⊢ A) → Prog t
 
-module ProgKit (κ : ProgKitParams) where
-  open ProgKitParams κ
-  progkit = κ
+module ProgKit (¶ : ProgKitParams) where
+  open ProgKitParams ¶
+  progkit = ¶
 
   NF? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (NF t)
   NF? t = recProg (prog⇒ t) yes (no ∘ RF→¬NF)
@@ -192,7 +193,7 @@ module ProgKit (κ : ProgKitParams) where
   ¬R→NF : ∀ {Γ A} {t : Γ ⊢ A} → ¬R t → NF t
   ¬R→NF = ¬RF→NF ∘ ¬R→¬RF
 
-  module _ (⚠ : Funext) where
+  module _ (⚠ : FunExt) where
     NF≃¬RF : ∀ {Γ A} {t : Γ ⊢ A} → NF t ≃ (¬ RF t)
     NF≃¬RF = record
       { to      = NF→¬RF
@@ -214,9 +215,9 @@ record NF?→ProgKitParams : Set₁ where
     NF?     : ∀ {Γ A} (t : Γ ⊢ A) → Dec (NF t)
     ¬NF→RF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ NF t → RF t
 
-module NF?→ProgKit (κ : NF?→ProgKitParams) where
-  open NF?→ProgKitParams κ
-  nf?→progkit = κ
+module NF?→ProgKit (¶ : NF?→ProgKitParams) where
+  open NF?→ProgKitParams ¶
+  nf?→progkit = ¶
 
   prog⇒ : ∀ {Γ A} (t : Γ ⊢ A) → Prog t
   prog⇒ t    with NF? t
@@ -239,9 +240,9 @@ record RF?→ProgKitParams : Set₁ where
     RF?     : ∀ {Γ A} (t : Γ ⊢ A) → Dec (RF t)
     ¬RF→NF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ RF t → NF t
 
-module RF?→ProgKit (κ : RF?→ProgKitParams) where
-  open RF?→ProgKitParams κ
-  rf?→progkit = κ
+module RF?→ProgKit (¶ : RF?→ProgKitParams) where
+  open RF?→ProgKitParams ¶
+  rf?→progkit = ¶
 
   prog⇒ : ∀ {Γ A} (t : Γ ⊢ A) → Prog t
   prog⇒ t          with RF? t

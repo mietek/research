@@ -46,36 +46,39 @@ skip⇓HWN = skip⇒*HWN ∘ fst
 
 ----------------------------------------------------------------------------------------------------
 
+-- looks almost like half of subcut, but the contexts don’t match
+-- subcut : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : (A ∷ Γ) ⊢ B) (t₂ : Γ ⊢ A) →
+--          sub (lifts ss) t₁ [ sub ss t₂ ] ≡ sub ss (t₁ [ t₂ ])
 lem₀ : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : A ∷ Γ ⊢ B) (t₂ : Ξ ⊢ A) →
-       (_[ t₂ ] ∘ sub (lifts ss)) t₁ ≡ sub (t₂ ∷ ss) t₁
-lem₀ ss t₁ t₂ = compsub (t₂ ∷ ids) (lifts ss) t₁ ⁻¹
-              ⋮ (flip sub t₁ ∘ (t₂ ∷_)) & ( eqsubs t₂ ids ss
-                                          ⋮ lidsubs ss
+       (_[ t₂ ] ∘ sub (lift* ss)) t₁ ≡ sub (t₂ ∷ ss) t₁
+lem₀ ss t₁ t₂ = compsub (t₂ ∷ id*) (lift* ss) t₁ ⁻¹
+              ⋮ (flip sub t₁ ∘ (t₂ ∷_)) & ( eqsub* t₂ id* ss
+                                          ⋮ lidsub* ss
                                           )
 
 lem₁ : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : A ∷ Γ ⊢ B) {t₂ : Ξ ⊢ A} (p₂ : NF t₂) →
-       ⌜λ⌝ (sub (lifts ss) t₁) ⌜$⌝ t₂ ⇒ sub (t₂ ∷ ss) t₁
+       ⌜λ⌝ (sub (lift* ss) t₁) ⌜$⌝ t₂ ⇒ sub (t₂ ∷ ss) t₁
 lem₁ ss t₁ p₂ = βred⊃ (lem₀ ss t₁ _ ⁻¹) p₂
 
 lem₂ : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : A ∷ Γ ⊢ B) {t₂ : Ξ ⊢ A} (p₂ : NF t₂) {t′ : Ξ ⊢ B} →
        sub (t₂ ∷ ss) t₁ ⇓ t′ →
-       ⌜λ⌝ (sub (lifts ss) t₁) ⌜$⌝ t₂ ⇓ t′
+       ⌜λ⌝ (sub (lift* ss) t₁) ⌜$⌝ t₂ ⇓ t′
 lem₂ ss t₁ p₂ (rs , p′) = (step (lem₁ ss t₁ p₂) rs) , p′
 
 lem₃ : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : A ∷ Γ ⊢ B) {t₂ : Ξ ⊢ A} (p₂ : NF t₂) →
        WN (sub (t₂ ∷ ss) t₁) →
-       WN (⌜λ⌝ (sub (lifts ss) t₁) ⌜$⌝ t₂)
+       WN (⌜λ⌝ (sub (lift* ss) t₁) ⌜$⌝ t₂)
 lem₃ ss t₁ p₂ (t′ , n) = t′ , lem₂ ss t₁ p₂ n
 
 mutual
   lem₄ : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : A ∷ Γ ⊢ B) {t₂ : Ξ ⊢ A} (p₂ : NF t₂) →
          HWN (sub (t₂ ∷ ss) t₁) →
-         HWN (⌜λ⌝ (sub (lifts ss) t₁) ⌜$⌝ t₂)
+         HWN (⌜λ⌝ (sub (lift* ss) t₁) ⌜$⌝ t₂)
   lem₄ ss t₁ p₂ (wn , hwn!) = lem₃ ss t₁ p₂ wn , lem₄! ss t₁ p₂ hwn!
 
   lem₄! : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : A ∷ Γ ⊢ B) {t₂ : Ξ ⊢ A} (p₂ : NF t₂) →
           HWN! (sub (t₂ ∷ ss) t₁) →
-          HWN! (⌜λ⌝ (sub (lifts ss) t₁) ⌜$⌝ t₂)
+          HWN! (⌜λ⌝ (sub (lift* ss) t₁) ⌜$⌝ t₂)
   lem₄! {B = ⌜◦⌝}       ss t₁ p₂ unit      = unit
   lem₄! {B = B₁ ⌜⊃⌝ B₂} ss t₁ p₂ f    hwn₂ = stepHWN (cong$₁ (lem₁ ss t₁ p₂)) (f hwn₂)
 
@@ -92,7 +95,7 @@ sub∋HWN (hwn ∷ hwns) (suc i) = sub∋HWN hwns i
 
 mutual
   lem₅ : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (hwns : HWN* ss) (t₁ : A ∷ Γ ⊢ B) (t₁′ : Ξ ⊢ A ⌜⊃⌝ B) {t₂ : Ξ ⊢ A} →
-         HWN t₂ → HWN (⌜λ⌝ (sub (lifts ss) t₁) ⌜$⌝ t₂)
+         HWN t₂ → HWN (⌜λ⌝ (sub (lift* ss) t₁) ⌜$⌝ t₂)
   lem₅ ss hwns t₁ t₁′ hwn₂@((t₂′ , n₂@(rs₂ , p₂′)) , hwn!₂) =
     let hwn₂′ = skip⇓HWN n₂ hwn₂
       in step⇒*HWN (cong$₂⇒* ⌜λ⌝- rs₂) (lem₄ ss t₁ p₂′ (subHWN (t₂′ ∷ ss) (hwn₂′ ∷ hwns) t₁))

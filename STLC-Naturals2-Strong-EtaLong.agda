@@ -50,7 +50,7 @@ mutual
 -- stability under renaming
 mutual
   renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren e t)
-  renNF e (⌜λ⌝ p)   = ⌜λ⌝ (renNF (keep e) p)
+  renNF e (⌜λ⌝ p)   = ⌜λ⌝ (renNF (lift⊆ e) p)
   renNF e ⌜zero⌝    = ⌜zero⌝
   renNF e (⌜suc⌝ p) = ⌜suc⌝ (renNF e p)
   renNF e (nnf p)   = nnf (renNNF e p)
@@ -80,7 +80,7 @@ mutual
 
 mutual
   ren≪ : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ⊢≪ A → Γ′ ⊢≪ A
-  ren≪ e (⌜λ⌝ t)   = ⌜λ⌝ (ren≪ (keep e) t)
+  ren≪ e (⌜λ⌝ t)   = ⌜λ⌝ (ren≪ (lift⊆ e) t)
   ren≪ e ⌜zero⌝    = ⌜zero⌝
   ren≪ e (⌜suc⌝ t) = ren≪ e t
   ren≪ e (nnf t)   = nnf (ren≫ e t)

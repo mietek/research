@@ -78,7 +78,7 @@ mutual
   𝒞 .⟦rec⟧         (_ , ⌜suc⌝ pₙ) v₀ vₛ = vₛ id⊆ (_ , pₙ) id⊆ v₀
   𝒞 .⟦rec⟧ {A = A} (_ , nnf pₙ)   v₀ vₛ =
     let _ , p₀ = ↓ {A = A} v₀
-        _ , pₛ = ↓ (vₛ (drop (drop id⊆)) (↑ (var {A = ⌜ℕ⌝} (suc zero) , var-))
+        _ , pₛ = ↓ (vₛ (wk⊆ (wk⊆ id⊆)) (↑ (var {A = ⌜ℕ⌝} (suc zero) , var-))
                    id⊆ (↑ (var {A = A} zero , var-)))
       in ↑ (_ , ⌜rec⌝ pₙ p₀ pₛ)
 
@@ -88,13 +88,13 @@ mutual
   ↑ {A = ⌜ℕ⌝}     (_ , p)  = _ , nnf p
 
   ↓ : ∀ {Γ A} → 𝒞 / Γ ⊩ A → Σ (Γ ⊢ A) NF
-  ↓ {A = A ⌜⊃⌝ B} v = let t , p = ↓ (v wk⊆ (↑ (var {A = A} zero , var-)))
+  ↓ {A = A ⌜⊃⌝ B} v = let t , p = ↓ (v (wk⊆ id⊆) (↑ (var {A = A} zero , var-)))
                         in ⌜λ⌝ t , ⌜λ⌝-
   ↓ {A = ⌜ℕ⌝}     v = v
 
 vids : ∀ {Γ} → 𝒞 / Γ ⊩* Γ
 vids {[]}    = []
-vids {A ∷ Γ} = ↑ (var {A = A} zero , var-) ∷ vrens wk⊆ vids
+vids {A ∷ Γ} = ↑ (var {A = A} zero , var-) ∷ vrens (wk⊆ id⊆) vids
 
 -- reification
 ⟦_⟧⁻¹ : ∀ {Γ A} → Γ ⊨ A → Σ (Γ ⊢ A) NF

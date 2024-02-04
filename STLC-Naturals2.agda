@@ -33,7 +33,7 @@ open TmKit (kit _⊢_) public
 ren : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
 ren e (con k)     = con k
 ren e (var i)     = var (ren∋ e i)
-ren e (⌜λ⌝ t)     = ⌜λ⌝ (ren (keep e) t)
+ren e (⌜λ⌝ t)     = ⌜λ⌝ (ren (lift⊆ e) t)
 ren e (t₁ ⌜$⌝ t₂) = ren e t₁ ⌜$⌝ ren e t₂
 
 open RenKit (kit var ren) public
@@ -41,7 +41,7 @@ open RenKit (kit var ren) public
 sub : ∀ {Γ Ξ A} → Ξ ⊢* Γ → Γ ⊢ A → Ξ ⊢ A
 sub ss (con k)     = con k
 sub ss (var i)     = sub∋ ss i
-sub ss (⌜λ⌝ t)     = ⌜λ⌝ (sub (lifts ss) t)
+sub ss (⌜λ⌝ t)     = ⌜λ⌝ (sub (lift* ss) t)
 sub ss (t₁ ⌜$⌝ t₂) = sub ss t₁ ⌜$⌝ sub ss t₂
 
 open SubKit (kit renkit sub) public

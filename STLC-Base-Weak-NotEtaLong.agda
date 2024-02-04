@@ -178,9 +178,9 @@ ren⇒ e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut e t₁ _ ⁻¹) (
 ----------------------------------------------------------------------------------------------------
 
 -- stability under substitution
-sub∋NNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {i : Γ ∋ A} → NNF* ss → NNF (sub∋ ss i)
-sub∋NNF {i = zero}  (p ∷ ps) = p
-sub∋NNF {i = suc i} (p ∷ ps) = sub∋NNF ps
+sub∋NNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} → NNF* ss → ∀ (i : Γ ∋ A) → NNF (sub∋ ss i)
+sub∋NNF (p ∷ ps) zero    = p
+sub∋NNF (p ∷ ps) (suc i) = sub∋NNF ps i
 
 mutual
   subNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NF t → NF (sub ss t)
@@ -188,8 +188,8 @@ mutual
   subNF ps (nnf p) = nnf (subNNF ps p)
 
   subNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NNF t → NNF (sub ss t)
-  subNNF ps var-        = sub∋NNF ps
-  subNNF ps (p₁ ⌜$⌝ p₂) = subNNF ps p₁ ⌜$⌝ subNF ps p₂
+  subNNF ps (var- {i = i}) = sub∋NNF ps i
+  subNNF ps (p₁ ⌜$⌝ p₂)    = subNNF ps p₁ ⌜$⌝ subNF ps p₂
 
 sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → NNF* ss → t ⇒ t′ →
         sub ss t ⇒ sub ss t′

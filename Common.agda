@@ -1,210 +1,267 @@
 module Common where
 
-open import Agda.Builtin.Equality public
-  using (_≡_ ; refl)
-
-open import Agda.Builtin.List public
-  using (List ; [] ; _∷_)
-
-open import Agda.Builtin.Nat public
-  using (zero ; suc)
-  renaming (Nat to ℕ)
-
-open import Agda.Builtin.Sigma public
-  using (Σ ; _,_ ; fst ; snd)
-
-open import Agda.Builtin.Unit public
-  using ()
-  renaming (⊤ to 𝟙 ; tt to unit)
-
-open import Agda.Primitive public
-  using (Level ; _⊔_ ; lzero ; lsuc ; Setω)
+open import Prelude public
+open import Category public
+open import Isomorphism
 
 
 ----------------------------------------------------------------------------------------------------
 
-id : ∀ {𝓍} {X : Set 𝓍} → X → X
-id x = x
+module _ {𝓍} {X : Set 𝓍} where
+  infix 4 _∋_
+  data _∋_ : List X → X → Set where
+    zero : ∀ {Γ A} → A ∷ Γ ∋ A
+    suc  : ∀ {Γ A B} (i : Γ ∋ A) → B ∷ Γ ∋ A
 
-infixr -1 _$_
-_$_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} → (∀ x → Y x) → (∀ x → Y x)
-f $ x = f x
+  injsuc : ∀ {Γ A B} {i i′ : Γ ∋ A} → _∋_.suc {B = B} i ≡ suc i′ → i ≡ i′
+  injsuc refl = refl
 
-flip : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : X → Y → Set 𝓏} → (∀ x y → Z x y) →
-       (∀ y x → Z x y)
-(flip f) y x = f x y
+  infix 4 _≟∋_
+  _≟∋_ : ∀ {Γ A} (i i′ : Γ ∋ A) → Dec (i ≡ i′)
+  zero  ≟∋ zero   = yes refl
+  zero  ≟∋ suc i′ = no λ ()
+  suc i ≟∋ zero   = no λ ()
+  suc i ≟∋ suc i′ with i ≟∋ i′
+  ... | yes refl    = yes refl
+  ... | no ¬eq      = no λ { refl → refl ↯ ¬eq }
 
-infixr 9 _∘_
-_∘_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : X → Set 𝓎} {Z : ∀ {x} → Y x → Set 𝓏} →
-        (∀ {x} (y : Y x) → Z y) → (g : ∀ x → Y x) →
-      (∀ x → Z (g x))
-(f ∘ g) x = f (g x)
 
-infixr 2 _×_
-_×_ : ∀ {𝓍 𝓎} (X : Set 𝓍) (Y : Set 𝓎) → Set (𝓍 ⊔ 𝓎)
-X × Y = Σ X λ _ → Y
+----------------------------------------------------------------------------------------------------
 
-infixr 1 _⊎_
-data _⊎_ {𝓍 𝓎} (X : Set 𝓍) (Y : Set 𝓎) : Set (𝓍 ⊔ 𝓎) where
-  left  : ∀ (x : X) → X ⊎ Y
-  right : ∀ (y : Y) → X ⊎ Y
+module OrderPreservingEmbeddings {𝓍} {X : Set 𝓍} where
+  infix 4 _⊆_
+  data _⊆_ : List X → List X → Set 𝓍 where
+    stop⊆ : [] ⊆ []
+    wk⊆   : ∀ {Γ Γ′ A} (e : Γ ⊆ Γ′) → Γ ⊆ A ∷ Γ′
+    lift⊆ : ∀ {Γ Γ′ A} (e : Γ ⊆ Γ′) → A ∷ Γ ⊆ A ∷ Γ′
 
-recℕ : ∀ {𝓍} {X : Set 𝓍} → ℕ → X → (ℕ → X → X) → X
-recℕ zero    z s = z
-recℕ (suc n) z s = s n (recℕ n z s)
+  id⊆ : ∀ {Γ} → Γ ⊆ Γ
+  id⊆ {[]}    = stop⊆
+  id⊆ {A ∷ Γ} = lift⊆ id⊆
 
-record Irrelevant {𝓍} (X : Set 𝓍) : Set 𝓍 where
-  field .irrelevant : X
+  refl⊆ : ∀ {Γ} → Γ ⊆ Γ
+  refl⊆ = id⊆
 
-open Irrelevant public
+  _∘⊆_ : ∀ {Γ Γ′ Γ″} → Γ′ ⊆ Γ″ → Γ ⊆ Γ′ → Γ ⊆ Γ″
+  stop⊆    ∘⊆ e       = e
+  wk⊆ e′   ∘⊆ e       = wk⊆ (e′ ∘⊆ e)
+  lift⊆ e′ ∘⊆ wk⊆ e   = wk⊆ (e′ ∘⊆ e)
+  lift⊆ e′ ∘⊆ lift⊆ e = lift⊆ (e′ ∘⊆ e)
 
+  trans⊆ : ∀ {Γ Γ′ Γ″} → Γ ⊆ Γ′ → Γ′ ⊆ Γ″ → Γ ⊆ Γ″
+  trans⊆ = flip _∘⊆_
+
+  ren∋ : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ∋ A → Γ′ ∋ A
+  ren∋ stop⊆     i       = i
+  ren∋ (wk⊆ e)   i       = suc (ren∋ e i)
+  ren∋ (lift⊆ e) zero    = zero
+  ren∋ (lift⊆ e) (suc i) = suc (ren∋ e i)
+
+  wk∋ : ∀ {Γ A B} → Γ ∋ B → A ∷ Γ ∋ B
+  wk∋ i = ren∋ (wk⊆ id⊆) i
+
+  lid⊆ : ∀ {Γ Γ′} (e : Γ ⊆ Γ′) → id⊆ ∘⊆ e ≡ e
+  lid⊆ stop⊆     = refl
+  lid⊆ (wk⊆ e)   = wk⊆ & lid⊆ e
+  lid⊆ (lift⊆ e) = lift⊆ & lid⊆ e
+
+  rid⊆ : ∀ {Γ Γ′} (e : Γ ⊆ Γ′) → e ∘⊆ id⊆ ≡ e
+  rid⊆ stop⊆     = refl
+  rid⊆ (wk⊆ e)   = wk⊆ & rid⊆ e
+  rid⊆ (lift⊆ e) = lift⊆ & rid⊆ e
+
+  ass⊆ : ∀ {Γ Γ′ Γ″ Γ‴} (e″ : Γ″ ⊆ Γ‴) (e′ : Γ′ ⊆ Γ″) (e : Γ ⊆ Γ′) →
+         e″ ∘⊆ (e′ ∘⊆ e) ≡ (e″ ∘⊆ e′) ∘⊆ e
+  ass⊆ stop⊆      e′         e         = refl
+  ass⊆ (wk⊆ e″)   e′         e         = wk⊆ & ass⊆ e″ e′ e
+  ass⊆ (lift⊆ e″) (wk⊆ e′)   e         = wk⊆ & ass⊆ e″ e′ e
+  ass⊆ (lift⊆ e″) (lift⊆ e′) (wk⊆ e)   = wk⊆ & ass⊆ e″ e′ e
+  ass⊆ (lift⊆ e″) (lift⊆ e′) (lift⊆ e) = lift⊆ & ass⊆ e″ e′ e
+
+  ⟪⊆⟫ : Category 𝓍 𝓍
+  ⟪⊆⟫ = record
+          { Obj  = List X
+          ; _▻_  = _⊆_
+          ; id   = id⊆
+          ; _∘_  = _∘⊆_
+          ; lid▻ = lid⊆
+          ; rid▻ = rid⊆
+          ; ass▻ = ass⊆
+          }
+
+  idren∋ : ∀ {Γ A} (i : Γ ∋ A) → ren∋ id⊆ i ≡ i
+  idren∋ zero    = refl
+  idren∋ (suc i) = suc & idren∋ i
+
+  compren∋ : ∀ {Γ Γ′ Γ″ A} (e′ : Γ′ ⊆ Γ″) (e : Γ ⊆ Γ′) (i : Γ ∋ A) →
+             ren∋ (e′ ∘⊆ e) i ≡ (ren∋ e′ ∘ ren∋ e) i
+  compren∋ stop⊆      e         i       = refl
+  compren∋ (wk⊆ e′)   e         i       = suc & compren∋ e′ e i
+  compren∋ (lift⊆ e′) (wk⊆ e)   i       = suc & compren∋ e′ e i
+  compren∋ (lift⊆ e′) (lift⊆ e) zero    = refl
+  compren∋ (lift⊆ e′) (lift⊆ e) (suc i) = suc & compren∋ e′ e i
+
+  module _ (⚠ : FunExt) where
+    ⟪ren∋⟫ : ∀ (A : X) → Presheaf (⟪⊆⟫ ᵒᵖ) lzero
+    ⟪ren∋⟫ A = record
+                 { ƒObj = _∋ A
+                 ; ƒ    = ren∋
+                 ; idƒ  = ⚠ idren∋
+                 ; _∘ƒ_ = λ e′ e → ⚠ (compren∋ e′ e)
+                 }
+
+  injren∋ : ∀ {Γ Γ′ A} {e : Γ ⊆ Γ′} {i i′ : Γ ∋ A} → ren∋ e i ≡ ren∋ e i′ → i ≡ i′
+  injren∋ {e = stop⊆}   {i}     {i′}     eq   = eq
+  injren∋ {e = wk⊆ e}   {i}     {i′}     eq   = injren∋ (injsuc eq)
+  injren∋ {e = lift⊆ e} {zero}  {zero}   refl = refl
+  injren∋ {e = lift⊆ e} {suc i} {suc i′} eq   = suc & (injren∋ (injsuc eq))
+
+  -- TODO: delete?
+  unren∋ : ∀ {Γ Γ′ A} (e : Γ ⊆ Γ′) (i′ : Γ′ ∋ A) → Dec (Σ (Γ ∋ A) λ i → i′ ≡ ren∋ e i)
+  unren∋ stop⊆     i′       = yes (i′ , refl)
+  unren∋ (wk⊆ e)   zero     = no λ ()
+  unren∋ (wk⊆ e)   (suc i′) with unren∋ e i′
+  ... | no ¬p                 = no λ { (i , refl) → (i , refl) ↯ ¬p }
+  ... | yes (i , refl)        = yes (i , refl)
+  unren∋ (lift⊆ e) zero     = yes (zero , refl)
+  unren∋ (lift⊆ e) (suc i′) with unren∋ e i′
+  ... | no ¬p                 = no λ { (suc i , refl) → (i , refl) ↯ ¬p }
+  ... | yes (i , refl)        = yes (suc i , refl)
+
+
+----------------------------------------------------------------------------------------------------
+
+module Renamings {𝓍} {X : Set 𝓍} where
+  infix 4 _⊆_
+  data _⊆_ : List X → List X → Set 𝓍 where
+    []  : ∀ {Γ} → [] ⊆ Γ
+    _∷_ : ∀ {Γ Γ′ A} (i : Γ′ ∋ A) (is : Γ ⊆ Γ′) → A ∷ Γ ⊆ Γ′
+
+  stop⊆ : [] ⊆ []
+  stop⊆ = []
+
+  wk⊆ : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ⊆ A ∷ Γ′
+  wk⊆ []       = []
+  wk⊆ (i ∷ is) = suc i ∷ wk⊆ is
+
+  lift⊆ : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → A ∷ Γ ⊆ A ∷ Γ′
+  lift⊆ is = zero ∷ wk⊆ is
+
+  id⊆ : ∀ {Γ} → Γ ⊆ Γ
+  id⊆ {[]}    = []
+  id⊆ {A ∷ Γ} = lift⊆ id⊆
+
+  refl⊆ : ∀ {Γ} → Γ ⊆ Γ
+  refl⊆ = id⊆
+
+  ren∋ : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ∋ A → Γ′ ∋ A
+  ren∋ (j ∷ js) zero    = j
+  ren∋ (j ∷ js) (suc i) = ren∋ js i
+
+  wk∋ : ∀ {Γ A B} → Γ ∋ B → A ∷ Γ ∋ B
+  wk∋ i = ren∋ (wk⊆ id⊆) i
+
+  eqsucren∋ : ∀ {Γ Γ′ A B} (js : Γ ⊆ Γ′) (i : Γ ∋ A) →
+              ren∋ (wk⊆ {A = B} js) i ≡ (suc ∘ ren∋ js) i
+  eqsucren∋ (j ∷ js) zero    = refl
+  eqsucren∋ (j ∷ js) (suc i) = eqsucren∋ js i
+
+  idren∋ : ∀ {Γ A} (i : Γ ∋ A) → ren∋ id⊆ i ≡ i
+  idren∋ zero    = refl
+  idren∋ (suc i) = eqsucren∋ id⊆ i ⋮ suc & idren∋ i
+
+  _∘⊆_ : ∀ {Γ Γ′ Γ″} → Γ′ ⊆ Γ″ → Γ ⊆ Γ′ → Γ ⊆ Γ″
+  is′ ∘⊆ []       = []
+  is′ ∘⊆ (i ∷ is) = ren∋ is′ i ∷ (is′ ∘⊆ is)
+
+  trans⊆ : ∀ {Γ Γ′ Γ″} → Γ ⊆ Γ′ → Γ′ ⊆ Γ″ → Γ ⊆ Γ″
+  trans⊆ = flip _∘⊆_
+
+  compren∋ : ∀ {Γ Γ′ Γ″ A} (js′ : Γ′ ⊆ Γ″) (js : Γ ⊆ Γ′) (i : Γ ∋ A) →
+             ren∋ (js′ ∘⊆ js) i ≡ (ren∋ js′ ∘ ren∋ js) i
+  compren∋ (j′ ∷ js′) (j ∷ js) zero    = refl
+  compren∋ (j′ ∷ js′) (j ∷ js) (suc i) = compren∋ (j′ ∷ js′) js i
+
+  lid⊆ : ∀ {Γ Γ′} (is : Γ ⊆ Γ′) → id⊆ ∘⊆ is ≡ is
+  lid⊆ []       = refl
+  lid⊆ (i ∷ is) = _∷_ & idren∋ i ⊗ lid⊆ is
+
+  -- TODO: better names for eq∘⊆ and eqsub/eqsub*
+  eq∘⊆ : ∀ {Γ Γ′ Γ″ A} (j : Γ″ ∋ A) (js : Γ′ ⊆ Γ″) (is : Γ ⊆ Γ′) →
+         (j ∷ js) ∘⊆ wk⊆ is ≡ js ∘⊆ is
+  eq∘⊆ j js []       = refl
+  eq∘⊆ j js (i ∷ is) = (ren∋ js i ∷_) & eq∘⊆ j js is
+
+  rid⊆ : ∀ {Γ Γ′} (is : Γ ⊆ Γ′) → is ∘⊆ id⊆ ≡ is
+  rid⊆ []       = refl
+  rid⊆ (i ∷ is) = (i ∷_) & (eq∘⊆ i is id⊆ ⋮ rid⊆ is)
+
+  ass⊆ : ∀ {Γ Γ′ Γ″ Γ‴} (is″ : Γ″ ⊆ Γ‴) (is′ : Γ′ ⊆ Γ″) (is : Γ ⊆ Γ′) →
+         is″ ∘⊆ (is′ ∘⊆ is) ≡ (is″ ∘⊆ is′) ∘⊆ is
+  ass⊆ is″ is′        []       = refl
+  ass⊆ is″ (i′ ∷ is′) (i ∷ is) = _∷_ & compren∋ is″ (i′ ∷ is′) i ⁻¹ ⊗ ass⊆ is″ (i′ ∷ is′) is
+
+  ⟪⊆⟫ : Category 𝓍 𝓍
+  ⟪⊆⟫ = record
+          { Obj  = List X
+          ; _▻_  = _⊆_
+          ; id   = id⊆
+          ; _∘_  = _∘⊆_
+          ; lid▻ = lid⊆
+          ; rid▻ = rid⊆
+          ; ass▻ = ass⊆
+          }
+
+  module _ (⚠ : FunExt) where
+    ⟪ren∋⟫ : ∀ (A : X) → Presheaf (⟪⊆⟫ ᵒᵖ) lzero
+    ⟪ren∋⟫ A = record
+                 { ƒObj = _∋ A
+                 ; ƒ    = ren∋
+                 ; idƒ  = ⚠ idren∋
+                 ; _∘ƒ_ = λ e′ e → ⚠ (compren∋ e′ e)
+                 }
+
+
+----------------------------------------------------------------------------------------------------
+
+-- list-based renamings are isomorphic to function-based renamings
 private
-  data Empty : Set where
+  module _ {𝓍} {X : Set 𝓍} where
+    open Renamings
 
-𝟘 : Set
-𝟘 = Irrelevant Empty
+    infix 4 _⊑_
+    _⊑_ : List X → List X → Set 𝓍
+    Γ ⊑ Γ′ = ∀ {A : X} → Γ ∋ A → Γ′ ∋ A
 
-{-# DISPLAY Irrelevant Empty = 𝟘 #-}
+    to : ∀ {Γ Γ′} → Γ ⊆ Γ′ → Γ ⊑ Γ′
+    to (j ∷ js) zero    = j
+    to (j ∷ js) (suc i) = to js i
 
-abort : ∀ {𝓍} {X : Set 𝓍} → 𝟘 → X
-abort ()
+    from : ∀ {Γ Γ′} → Γ ⊑ Γ′ → Γ ⊆ Γ′
+    from {[]}    ρ = []
+    from {A ∷ Γ} ρ = ρ zero ∷ from (ρ ∘ suc)
 
-infix 3 ¬_
-¬_ : ∀ {𝓍} → Set 𝓍 → Set 𝓍
-¬ X = X → 𝟘
+    from∘to : ∀ {Γ Γ′} (is : Γ ⊆ Γ′) → (from ∘ to) is ≡ is
+    from∘to []       = refl
+    from∘to (i ∷ is) = (i ∷_) & from∘to is
 
-_↯_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} → X → ¬ X → Y
-x ↯ ¬x = abort (¬x x)
+    module _ (⚠ : FunExt) where
+      ⚠′ = implify ⚠
 
-data Dec {𝓍} (X : Set 𝓍) : Set 𝓍 where
-  yes : X → Dec X
-  no  : ¬ X → Dec X
+      -- quantification spills out of the equality due to Agda’s implicit insertion heuristics
+      to∘from : ∀ {Γ Γ′} (ρ : Γ ⊑ Γ′) → (∀ {A : X} → (to ∘ from) ρ {A} ≡ ρ)
+      to∘from {[]}    ρ = ⚠ λ { () }
+      to∘from {A ∷ Γ} ρ = ⚠ λ { zero → refl
+                               ; (suc i) → congapp (to∘from (ρ ∘ suc)) i
+                               }
 
-
-----------------------------------------------------------------------------------------------------
-
-sym : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≡ x′ → x′ ≡ x
-sym refl = refl
-
-infix 9 _⁻¹
-_⁻¹ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≡ x′ → x′ ≡ x
-_⁻¹ = sym
-
-trans : ∀ {𝓍} {X : Set 𝓍} {x x′ x″ : X} → x ≡ x′ → x′ ≡ x″ → x ≡ x″
-trans refl eq = eq
-
-infixr 4 _⋮_
-_⋮_ : ∀ {𝓍} {X : Set 𝓍} {x x′ x″ : X} → x ≡ x′ → x′ ≡ x″ → x ≡ x″
-_⋮_ = trans
-
-subst : ∀ {𝓍 𝓎} {X : Set 𝓍} (Y : X → Set 𝓎) {x x′} → x ≡ x′ → Y x → Y x′
-subst Y refl y = y
-
-coe : ∀ {𝓍} {X Y : Set 𝓍} → X ≡ Y → X → Y
-coe = subst id
-
-cong : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (f : X → Y) {x x′} → x ≡ x′ → f x ≡ f x′
-cong f refl = refl
-
-infixl 9 _&_
-_&_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (f : X → Y) {x x′} → x ≡ x′ → f x ≡ f x′
-_&_ = cong
-
-cong₂ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : Set 𝓏} (f : X → Y → Z) {x x′ y y′} → x ≡ x′ →
-          y ≡ y′ →
-        f x y ≡ f x′ y′
-cong₂ f refl refl = refl
-
-infixl 8 _⊗_
-_⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {f g : X → Y} {x x′} → f ≡ g → x ≡ x′ → f x ≡ g x′
-refl ⊗ refl = refl
-
-congapp : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ x → Y x} → f ≡ g → (∀ x → f x ≡ g x)
-congapp refl x = refl
-
-congapp′ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x : X} → Y x} →
-             (λ {x : X} → f {x}) ≡ (λ {x : X} → g {x}) →
-           (∀ {x} → f {x} ≡ g {x})
-congapp′ refl {x} = refl
-
-Funext : Setω
-Funext = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ (x : X) → Y x} →
-           (∀ (x : X) → f x ≡ g x) →
-         f ≡ g
-
-Funext′ : Setω
-Funext′ = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x : X} → Y x} →
-            (∀ {x : X} → f {x} ≡ g {x}) →
-          (λ {x : X} → f {x}) ≡ (λ {x : X} → g {x})
-
-uni≡ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} (eq eq′ : x ≡ x′) → eq ≡ eq′
-uni≡ refl refl = refl
-
-uni𝟘 : ∀ (z z′ : 𝟘) → z ≡ z′
-uni𝟘 () ()
-
-uni¬ : ∀ {𝓍} {X : Set 𝓍} → ∀ (f f′ : ¬ X) → f ≡ f′
-uni¬ f f′ = refl
-
-module _ (⚠ : Funext) where
-  implify : Funext′
-  implify eq = (λ f {x} → f x) & ⚠ (λ _ → eq)
-
-  uni→ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} → (∀ (y y′ : Y) → y ≡ y′) → ∀ (f f′ : X → Y) → f ≡ f′
-  uni→ uniY f f′ = ⚠ λ x → uniY (f x) (f′ x)
-
-module ≡-Reasoning {𝓍} {X : Set 𝓍} where
-  infix 1 begin_
-  begin_ : ∀ {x x′ : X} → x ≡ x′ → x ≡ x′
-  begin_ eq = eq
-
-  infixr 2 _≡⟨⟩_
-  _≡⟨⟩_ : ∀ (x {x′} : X) → x ≡ x′ → x ≡ x′
-  x ≡⟨⟩ eq = eq
-
-  infixr 2 _≡⟨_⟩_
-  _≡⟨_⟩_ : ∀ (x {x′ x″} : X) → x ≡ x′ → x′ ≡ x″ → x ≡ x″
-  x ≡⟨ eq ⟩ eq′ = trans eq eq′
-
-  infixr 2 _≡˘⟨_⟩_
-  _≡˘⟨_⟩_ : ∀ (x {x′ x″} : X) → x′ ≡ x → x′ ≡ x″ → x ≡ x″
-  x ≡˘⟨ eq ⟩ eq′ = trans (sym eq) eq′
-
-  infix  3 _∎
-  _∎ : ∀ (x : X) → x ≡ x
-  _∎ _ = refl
-
-
-----------------------------------------------------------------------------------------------------
-
-infix 4 _≅_
-data _≅_ {𝓍} {X : Set 𝓍} (x : X) : ∀ {𝓎} {Y : Set 𝓎} → Y → Set 𝓍 where
-   refl : x ≅ x
-
-≅→≡ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≅ x′ → x ≡ x′
-≅→≡ refl = refl
-
-≡→≅ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≡ x′ → x ≅ x′
-≡→≅ refl = refl
-
-cong≅ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {x x′} (f : ∀ x → Y x) → x ≅ x′ →
-        f x ≅ f x′
-cong≅ f refl = refl
-
-cong₂≅ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : X → Set 𝓎} {Z : ∀ x → Y x → Set 𝓏} {x x′ y y′}
-           (f : ∀ x → (y : Y x) → Z x y) → x ≅ x′ → y ≅ y′ →
-         f x y ≅ f x′ y′
-cong₂≅ f refl refl = refl
-
-infixl 9 _&≅_
-_&≅_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {x x′} (f : ∀ x → Y x) → x ≅ x′ → f x ≅ f x′
-_&≅_ = cong≅
-
--- TODO: why doesn’t this work?!
-infixl 8 _⊗≅_
-_⊗≅_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {x x′} {f g : ∀ x → Y x} → f ≅ g → x ≅ x′ →
-       f x ≅ g x′
-refl ⊗≅ refl = refl
+      ⊆≃⊑ : ∀ {Γ Γ′} → (Γ ⊆ Γ′) ≃ (Γ ⊑ Γ′)
+      ⊆≃⊑ = record
+              { to      = to
+              ; from    = from
+              ; from∘to = from∘to
+              ; to∘from = λ e → ⚠′ (to∘from e)
+              }
 
 
 ----------------------------------------------------------------------------------------------------

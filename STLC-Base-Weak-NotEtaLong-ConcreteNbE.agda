@@ -33,12 +33,12 @@ mutual
 
   ↓ : ∀ {Γ A} → Γ ⊩ A → Σ (Γ ⊢ A) NF
   ↓ {A = ⌜◦⌝}     (_ , p) = _ , nnf p
-  ↓ {A = A ⌜⊃⌝ B} v       = let t , p = ↓ (v wk⊆ (↑ (var zero , var-)))
+  ↓ {A = A ⌜⊃⌝ B} v       = let t , p = ↓ (v (wk⊆ id⊆) (↑ (var zero , var-)))
                               in ⌜λ⌝ t , ⌜λ⌝-
 
 vids : ∀ {Γ} → Γ ⊩* Γ
 vids {[]}    = []
-vids {A ∷ Γ} = ↑ (var zero , var-) ∷ vrens wk⊆ vids
+vids {A ∷ Γ} = ↑ (var zero , var-) ∷ vrens (wk⊆ id⊆) vids
 
 ⟦_⟧⁻¹ : ∀ {Γ A} → Γ ⊨ A → Σ (Γ ⊢ A) NF
 ⟦ v ⟧⁻¹ = ↓ (v vids)

@@ -1,6 +1,6 @@
 module Isomorphism where
 
-open import Common
+open import Prelude
 
 
 ----------------------------------------------------------------------------------------------------

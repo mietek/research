@@ -34,9 +34,10 @@ join ##dependent on libera.chat
 
 ------------------------------------------------------------------------------------------------- -}
 
-import Common
+import Prelude
 import Category
 import Isomorphism
+import Common
 import Kit1
 import Kit2
 import Kit3

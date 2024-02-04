@@ -26,12 +26,12 @@ mutual
   ↑ {A = ⌜ℕ⌝}     t = nnf t
 
   ↓ : ∀ {Γ A} → Γ ⊩ A → Γ ⊢≪ A
-  ↓ {A = A ⌜⊃⌝ B} v = ⌜λ⌝ (↓ (v wk⊆ (↑ (var zero))))
+  ↓ {A = A ⌜⊃⌝ B} v = ⌜λ⌝ (↓ (v (wk⊆ id⊆) (↑ (var zero))))
   ↓ {A = ⌜ℕ⌝}     v = v
 
 vids : ∀ {Γ} → Γ ⊩* Γ
 vids {[]}    = []
-vids {A ∷ Γ} = ↑ (var zero) ∷ vrens wk⊆ vids
+vids {A ∷ Γ} = ↑ (var zero) ∷ vrens (wk⊆ id⊆) vids
 
 ⟦_⟧⁻¹ : ∀ {Γ A} → Γ ⊨ A → Γ ⊢≪ A
 ⟦ v ⟧⁻¹ = ↓ (v vids)
