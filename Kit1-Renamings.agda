@@ -78,11 +78,11 @@ module RenKit (¶ : RenKitParams) where
   var* []       = []
   var* (i ∷ is) = var i ∷ var* is
 
-  -- TODO: check if changing this affects anything
+  -- defining id* using var* breaks lidren*
   id* : ∀ {Γ} → Γ ⊢* Γ
-  -- id* {[]}    = []
-  -- id* {A ∷ Γ} = lift* id*
-  id* = var* id⊆
+  id* {[]}    = []
+  id* {A ∷ Γ} = lift* id*
+  -- id* = var* id⊆
 
   refl* : ∀ {Γ} → Γ ⊢* Γ
   refl* = id*

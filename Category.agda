@@ -12,8 +12,8 @@ record Category (ℴ 𝓇 : Level) : Set (lsuc (ℴ ⊔ 𝓇)) where
     _▻_  : ∀ (x y : Obj) → Set 𝓇
     id   : ∀ {x} → x ▻ x
     _∘_  : ∀ {x y z} (q : y ▻ z) (p : x ▻ y) → x ▻ z
-    lid▻ : ∀ {x y} (p : y ▻ x) → id ∘ p ≡ p
     rid▻ : ∀ {x y} (p : y ▻ x) → p ∘ id ≡ p
+    lid▻ : ∀ {x y} (p : y ▻ x) → id ∘ p ≡ p
     ass▻ : ∀ {w x y z} (r : y ▻ z) (q : x ▻ y) (p : w ▻ x) → r ∘ (q ∘ p) ≡ (r ∘ q) ∘ p
 
 _ᵒᵖ : ∀ {ℴ 𝓇} (C : Category ℴ 𝓇) → Category ℴ 𝓇
@@ -22,8 +22,8 @@ _ᵒᵖ C = record
           ; _▻_  = flip C._▻_
           ; id   = C.id
           ; _∘_  = flip C._∘_
-          ; lid▻ = C.rid▻
           ; rid▻ = C.lid▻
+          ; lid▻ = C.rid▻
           ; ass▻ = λ r q p → sym (C.ass▻ p q r)
           }
         where
@@ -36,8 +36,8 @@ _ᵒᵖ C = record
             ; _▻_  = λ X Y → X → Y
             ; id   = Prelude.id
             ; _∘_  = λ q p → q Prelude.∘ p
-            ; lid▻ = λ p → refl
             ; rid▻ = λ p → refl
+            ; lid▻ = λ p → refl
             ; ass▻ = λ r q p → refl
             }
 

@@ -42,21 +42,21 @@ module RenSubKit1 (¶ : RenSubKit1Params) where
               ⋮ compren (wk⊆ id⊆) e t
 
   eqwkren* : ∀ {Γ Γ′ Δ B} (e : Γ ⊆ Γ′) (ts : Γ ⊢* Δ) →
-  --         (ren* (lift⊆ {A = B} e) ∘ wk*) ts ≡ (wk* ∘ ren* e) ts
-             (wk* ts) ◐ (lift⊆ e) ≡ wk* (ts ◐ e) :> (B ∷ Γ′ ⊢* Δ)
+             (ren* (lift⊆ {A = B} e) ∘ wk*) ts ≡ (wk* ∘ ren* e) ts
+  --         (wk* ts) ◐ (lift⊆ e) ≡ wk* (ts ◐ e) :> (B ∷ Γ′ ⊢* Δ)
   eqwkren* e []       = refl
   eqwkren* e (t ∷ ts) = _∷_ & eqwkren e t ⊗ eqwkren* e ts
 
   eqliftren* : ∀ {Γ Γ′ Δ B} (e : Γ ⊆ Γ′) (ts : Γ ⊢* Δ) →
-  --           (ren* (lift⊆ {A = B} e) ∘ lift*) ts ≡ (lift* ∘ ren* e) ts
-               (lift* ts) ◐ (lift⊆ {A = B} e) ≡ lift* (ts ◐ e)
+               (ren* (lift⊆ e) ∘ lift*) ts ≡ (lift* ∘ ren* e) ts :> (B ∷ Γ′ ⊢* B ∷ Δ)
+  --           (lift* ts) ◐ (lift⊆ e) ≡ lift* (ts ◐ e) :> (B ∷ Γ′ ⊢* B ∷ Δ)
   eqliftren* e ts = (_∷ (ren* (lift⊆ e) ∘ wk*) ts) & lidren (lift⊆ e) zero
                   ⋮ (var zero ∷_) & eqwkren* e ts
 
   -- Kovacs: idlₛₑ; not really identity
   lidren* : ∀ {Γ Γ′} (e : Γ ⊆ Γ′) →
-  --        ren* e id* ≡ var* e
-            id* ◐ e ≡ var* e
+            ren* e id* ≡ var* e
+  --        id* ◐ e ≡ var* e
   lidren* stop⊆     = refl
   lidren* (wk⊆ e)   = (flip ren* id* ∘ wk⊆) & rid⊆ e ⁻¹
                     ⋮ compren* (wk⊆ id⊆) e id*
@@ -271,8 +271,8 @@ module RenSubKit3 (¶ : RenSubKit3Params) where
              ; _▻_  = _⊢*_
              ; id   = id*
              ; _∘_  = _●_ -- flip sub*
-             ; lid▻ = lidsub*
              ; rid▻ = ridsub*
+             ; lid▻ = lidsub*
              ; ass▻ = λ ss′ ss ts → asssub* ts ss ss′
              }
 
