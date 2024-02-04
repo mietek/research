@@ -43,17 +43,43 @@ module OrderPreservingEmbeddings {𝓍} {X : Set 𝓍} where
   refl⊆ : ∀ {Γ} → Γ ⊆ Γ
   refl⊆ = id⊆
 
-  _∘⊆_ : ∀ {Γ Γ′ Γ″} → Γ′ ⊆ Γ″ → Γ ⊆ Γ′ → Γ ⊆ Γ″
-  stop⊆    ∘⊆ e       = e
-  wk⊆ e′   ∘⊆ e       = wk⊆ (e′ ∘⊆ e)
-  lift⊆ e′ ∘⊆ wk⊆ e   = wk⊆ (e′ ∘⊆ e)
-  lift⊆ e′ ∘⊆ lift⊆ e = lift⊆ (e′ ∘⊆ e)
-
   _○_ : ∀ {Γ Γ′ Γ″} → Γ ⊆ Γ′ → Γ′ ⊆ Γ″ → Γ ⊆ Γ″
-  _○_ = flip _∘⊆_
+  e       ○ stop⊆    = e
+  e       ○ wk⊆ e′   = wk⊆ (e ○ e′)
+  wk⊆ e   ○ lift⊆ e′ = wk⊆ (e ○ e′)
+  lift⊆ e ○ lift⊆ e′ = lift⊆ (e ○ e′)
 
   trans⊆ : ∀ {Γ Γ′ Γ″} → Γ ⊆ Γ′ → Γ′ ⊆ Γ″ → Γ ⊆ Γ″
-  trans⊆ = flip _∘⊆_
+  trans⊆ = _○_
+
+  lid⊆ : ∀ {Γ Γ′} (e : Γ ⊆ Γ′) → id⊆ ○ e ≡ e
+  lid⊆ stop⊆     = refl
+  lid⊆ (wk⊆ e)   = wk⊆ & lid⊆ e
+  lid⊆ (lift⊆ e) = lift⊆ & lid⊆ e
+
+  rid⊆ : ∀ {Γ Γ′} (e : Γ ⊆ Γ′) → e ○ id⊆ ≡ e
+  rid⊆ stop⊆     = refl
+  rid⊆ (wk⊆ e)   = wk⊆ & rid⊆ e
+  rid⊆ (lift⊆ e) = lift⊆ & rid⊆ e
+
+  ass⊆ : ∀ {Γ Γ′ Γ″ Γ‴} (e : Γ ⊆ Γ′) (e′ : Γ′ ⊆ Γ″) (e″ : Γ″ ⊆ Γ‴) →
+         e ○ (e′ ○ e″) ≡ (e ○ e′) ○ e″
+  ass⊆ e         e′         stop⊆      = refl
+  ass⊆ e         e′         (wk⊆ e″)   = wk⊆ & ass⊆ e e′ e″
+  ass⊆ e         (wk⊆ e′)   (lift⊆ e″) = wk⊆ & ass⊆ e e′ e″
+  ass⊆ (wk⊆ e)   (lift⊆ e′) (lift⊆ e″) = wk⊆ & ass⊆ e e′ e″
+  ass⊆ (lift⊆ e) (lift⊆ e′) (lift⊆ e″) = lift⊆ & ass⊆ e e′ e″
+
+  ⟪⊇⟫ : Category 𝓍 𝓍
+  ⟪⊇⟫ = record
+          { Obj  = List X
+          ; _▻_  = flip _⊆_
+          ; id   = id⊆
+          ; _∘_  = _○_
+          ; lid▻ = lid⊆
+          ; rid▻ = rid⊆
+          ; ass▻ = ass⊆
+          }
 
   ren∋ : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ∋ A → Γ′ ∋ A
   ren∋ stop⊆     i       = i
@@ -64,41 +90,12 @@ module OrderPreservingEmbeddings {𝓍} {X : Set 𝓍} where
   wk∋ : ∀ {Γ A B} → Γ ∋ B → A ∷ Γ ∋ B
   wk∋ i = ren∋ (wk⊆ id⊆) i
 
-  lid⊆ : ∀ {Γ Γ′} (e : Γ ⊆ Γ′) → id⊆ ∘⊆ e ≡ e
-  lid⊆ stop⊆     = refl
-  lid⊆ (wk⊆ e)   = wk⊆ & lid⊆ e
-  lid⊆ (lift⊆ e) = lift⊆ & lid⊆ e
-
-  rid⊆ : ∀ {Γ Γ′} (e : Γ ⊆ Γ′) → e ∘⊆ id⊆ ≡ e
-  rid⊆ stop⊆     = refl
-  rid⊆ (wk⊆ e)   = wk⊆ & rid⊆ e
-  rid⊆ (lift⊆ e) = lift⊆ & rid⊆ e
-
-  ass⊆ : ∀ {Γ Γ′ Γ″ Γ‴} (e″ : Γ″ ⊆ Γ‴) (e′ : Γ′ ⊆ Γ″) (e : Γ ⊆ Γ′) →
-         e″ ∘⊆ (e′ ∘⊆ e) ≡ (e″ ∘⊆ e′) ∘⊆ e
-  ass⊆ stop⊆      e′         e         = refl
-  ass⊆ (wk⊆ e″)   e′         e         = wk⊆ & ass⊆ e″ e′ e
-  ass⊆ (lift⊆ e″) (wk⊆ e′)   e         = wk⊆ & ass⊆ e″ e′ e
-  ass⊆ (lift⊆ e″) (lift⊆ e′) (wk⊆ e)   = wk⊆ & ass⊆ e″ e′ e
-  ass⊆ (lift⊆ e″) (lift⊆ e′) (lift⊆ e) = lift⊆ & ass⊆ e″ e′ e
-
-  ⟪⊇⟫ : Category 𝓍 𝓍
-  ⟪⊇⟫ = record
-          { Obj  = List X
-          ; _▻_  = flip _⊆_
-          ; id   = id⊆
-          ; _∘_  = _○_
-          ; lid∘ = rid⊆
-          ; rid∘ = lid⊆
-          ; ass∘ = λ is is′ is″ → sym (ass⊆ is″ is′ is)
-          }
-
   idren∋ : ∀ {Γ A} (i : Γ ∋ A) → ren∋ id⊆ i ≡ i
   idren∋ zero    = refl
   idren∋ (suc i) = suc & idren∋ i
 
   compren∋ : ∀ {Γ Γ′ Γ″ A} (e′ : Γ′ ⊆ Γ″) (e : Γ ⊆ Γ′) (i : Γ ∋ A) →
-             ren∋ (e′ ∘⊆ e) i ≡ (ren∋ e′ ∘ ren∋ e) i
+             ren∋ (e ○ e′) i ≡ (ren∋ e′ ∘ ren∋ e) i
   compren∋ stop⊆      e         i       = refl
   compren∋ (wk⊆ e′)   e         i       = suc & compren∋ e′ e i
   compren∋ (lift⊆ e′) (wk⊆ e)   i       = suc & compren∋ e′ e i
@@ -166,7 +163,7 @@ module Renamings {𝓍} {X : Set 𝓍} where
   wk∋ i = ren∋ (wk⊆ id⊆) i
 
   eqsucren∋ : ∀ {Γ Γ′ A B} (js : Γ ⊆ Γ′) (i : Γ ∋ A) →
-              ren∋ (wk⊆ {A = B} js) i ≡ (suc ∘ ren∋ js) i
+              ren∋ (wk⊆ js) i ≡ (suc ∘ ren∋ js) i :> (B ∷ Γ′ ∋ A)
   eqsucren∋ (j ∷ js) zero    = refl
   eqsucren∋ (j ∷ js) (suc i) = eqsucren∋ js i
 
@@ -174,85 +171,45 @@ module Renamings {𝓍} {X : Set 𝓍} where
   idren∋ zero    = refl
   idren∋ (suc i) = eqsucren∋ id⊆ i ⋮ suc & idren∋ i
 
-  _∘⊆_ : ∀ {Γ Γ′ Γ″} → Γ′ ⊆ Γ″ → Γ ⊆ Γ′ → Γ ⊆ Γ″
-  is′ ∘⊆ []       = []
-  is′ ∘⊆ (i ∷ is) = ren∋ is′ i ∷ (is′ ∘⊆ is)
-
   _○_ : ∀ {Γ Γ′ Γ″} → Γ ⊆ Γ′ → Γ′ ⊆ Γ″ → Γ ⊆ Γ″
-  _○_ = flip _∘⊆_
+  []       ○ is′ = []
+  (i ∷ is) ○ is′ = ren∋ is′ i ∷ (is ○ is′)
 
   trans⊆ : ∀ {Γ Γ′ Γ″} → Γ ⊆ Γ′ → Γ′ ⊆ Γ″ → Γ ⊆ Γ″
-  trans⊆ = flip _∘⊆_
+  trans⊆ = _○_
 
-  -- like compsub∋
-  -- compsub∋ : ∀ {Γ Ξ Ξ′ A} (ss′ : Ξ′ ⊢* Ξ) (ss : Ξ ⊢* Γ) (i : Γ ∋ A) →
-  -- --         sub∋ (sub* ss′ ss) i ≡ (sub ss′ ∘ sub∋ ss) i
-  --            sub∋ (ss ● ss′) i ≡ (sub∋ ss ⨾ sub ss′) i
   compren∋ : ∀ {Γ Γ′ Γ″ A} (js′ : Γ′ ⊆ Γ″) (js : Γ ⊆ Γ′) (i : Γ ∋ A) →
-  --         ren∋ (js′ ∘⊆ js) i ≡ (ren∋ js′ ∘ ren∋ js) i
-             ren∋ (js ○ js′) i ≡ (ren∋ js ⨾ ren∋ js′) i
+             ren∋ (js ○ js′) i ≡ (ren∋ js′ ∘ ren∋ js) i
   compren∋ (j′ ∷ js′) (j ∷ js) zero    = refl
   compren∋ (j′ ∷ js′) (j ∷ js) (suc i) = compren∋ (j′ ∷ js′) js i
 
-  -- -- like lidsub*
-  -- lidsub* : ∀ {Γ Δ} (ts : Γ ⊢* Δ) →
-  -- --        sub* id* ts ≡ ts
-  --           ts ● id* ≡ ts
-  lid⊆ : ∀ {Γ Γ′} (is : Γ ⊆ Γ′) →
-  --     id⊆ ∘⊆ is ≡ is
-         is ○ id⊆ ≡ is
+  eqwk⊆ : ∀ {Γ Γ′ Γ″ B} (is : Γ ⊆ Γ′) (is′ : Γ′ ⊆ Γ″) →
+          (wk⊆ is) ○ (lift⊆ is′) ≡ wk⊆ (is ○ is′) :> (Γ ⊆ B ∷ Γ″)
+  eqwk⊆ []       is′ = refl
+  eqwk⊆ (i ∷ is) is′ = _∷_ & eqsucren∋ is′ i ⊗ eqwk⊆ is is′
+
+  eqlift⊆ : ∀ {Γ Γ′ Γ″ B} (is : Γ ⊆ Γ′) (is′ : Γ′ ⊆ Γ″)  →
+            (lift⊆ is) ○ (lift⊆ is′) ≡ lift⊆ (is ○ is′) :> (B ∷ Γ ⊆ B ∷ Γ″)
+  eqlift⊆ []       is′ = refl
+  eqlift⊆ (i ∷ is) is′ = (zero ∷_) & eqwk⊆ (i ∷ is) is′
+
+  eq⊆ : ∀ {Γ Γ′ Γ″ A} (is : Γ ⊆ Γ′) (i′ : Γ″ ∋ A) (is′ : Γ′ ⊆ Γ″)  →
+        (wk⊆ is) ○ (i′ ∷ is′) ≡ is ○ is′
+  eq⊆ []       i′ is′ = refl
+  eq⊆ (i ∷ is) i′ is′ = (ren∋ is′ i ∷_) & eq⊆ is i′ is′
+
+  lid⊆ : ∀ {Γ Γ′} (is : Γ ⊆ Γ′) → id⊆ ○ is ≡ is
   lid⊆ []       = refl
-  lid⊆ (i ∷ is) = _∷_ & idren∋ i ⊗ lid⊆ is
+  lid⊆ (i ∷ is) = (i ∷_) & (eq⊆ id⊆ i is ⋮ lid⊆ is)
 
-  -- -- like eqwksub*
-  -- eqwksub* : ∀ {Γ Ξ Δ B} (ss : Ξ ⊢* Γ) (ts : Γ ⊢* Δ) →
-  -- --         (sub* (lift* {A = B} ss) ∘ wk*) ts ≡ (wk* ∘ sub* ss) ts
-  --            (wk* ts) ● (lift* {A = B} ss) ≡ wk* (ts ● ss)
-  eqwk⊆ : ∀ {Γ Γ′ Γ″ B} (js : Γ′ ⊆ Γ″) (is : Γ ⊆ Γ′) →
-  --      lift⊆ {A = B} js ∘⊆ wk⊆ is ≡ wk⊆ (js ∘⊆ is)
-          (wk⊆ is) ○ (lift⊆ {A = B} js) ≡ wk⊆ (is ○ js)
-  eqwk⊆ js []       = refl
-  eqwk⊆ js (i ∷ is) = _∷_ & eqsucren∋ js i ⊗ eqwk⊆ js is
-
-  -- -- like eqliftsub*
-  -- eqliftsub* : ∀ {Γ Ξ Δ B} (ss : Ξ ⊢* Γ) (ts : Γ ⊢* Δ) →
-  -- --           (sub* (lift* {A = B} ss) ∘ lift*) ts ≡ (lift* ∘ sub* ss) ts
-  --              (lift* ts) ● (lift* {A = B} ss) ≡ lift* (ts ● ss)
-  eqlift⊆ : ∀ {Γ Γ′ Γ″ B} (js : Γ′ ⊆ Γ″) (is : Γ ⊆ Γ′) →
-  --        lift⊆ {A = B} js ∘⊆ (lift⊆ is) ≡ lift⊆ (js ∘⊆ is)
-            (lift⊆ is) ○ (lift⊆ {A = B} js) ≡ lift⊆ (is ○ js)
-  eqlift⊆ js []       = refl
-  eqlift⊆ js (i ∷ is) = (zero ∷_) & eqwk⊆ js (i ∷ is)
-
-  -- like eqsub*
-  -- eqsub* : ∀ {Γ Ξ Δ B} (s : Ξ ⊢ B) (ss : Ξ ⊢* Γ) (ts : Γ ⊢* Δ) →
-  -- --       (sub* (s ∷ ss) ∘ wk*) ts ≡ sub* ss ts
-  --          (wk* ts) ● (s ∷ ss) ≡ ts ● ss
-  eq⊆ : ∀ {Γ Γ′ Γ″ A} (j : Γ″ ∋ A) (js : Γ′ ⊆ Γ″) (is : Γ ⊆ Γ′) →
-  --    (j ∷ js) ∘⊆ wk⊆ is ≡ js ∘⊆ is
-        (wk⊆ is) ○ (j ∷ js) ≡ is ○ js
-  eq⊆ j js []       = refl
-  eq⊆ j js (i ∷ is) = (ren∋ js i ∷_) & eq⊆ j js is
-
-  -- like sidsub*
-  -- ridsub* : ∀ {Γ Ξ} (ss : Ξ ⊢* Γ) →
-  -- --        sub* ss id* ≡ ss
-  --           id* ● ss ≡ ss
-  rid⊆ : ∀ {Γ Γ′} (is : Γ ⊆ Γ′) →
-  --     is ∘⊆ id⊆ ≡ is
-         id⊆ ○ is ≡ is
+  rid⊆ : ∀ {Γ Γ′} (is : Γ ⊆ Γ′) → is ○ id⊆ ≡ is
   rid⊆ []       = refl
-  rid⊆ (i ∷ is) = (i ∷_) & (eq⊆ i is id⊆ ⋮ rid⊆ is)
+  rid⊆ (i ∷ is) = _∷_ & idren∋ i ⊗ rid⊆ is
 
-  -- like asssub*
-  -- asssub* : ∀ {Γ Ξ Ξ′ Δ} (ss′ : Ξ′ ⊢* Ξ) (ss : Ξ ⊢* Γ) (ts : Γ ⊢* Δ) →
-  -- --        sub* (sub* ss′ ss) ts ≡ (sub* ss′ ∘ sub* ss) ts
-  --           ts ● (ss ● ss′) ≡ (ts ● ss) ● ss′
-  ass⊆ : ∀ {Γ Γ′ Γ″ Γ‴} (is″ : Γ″ ⊆ Γ‴) (is′ : Γ′ ⊆ Γ″) (is : Γ ⊆ Γ′) →
-  --       is″ ∘⊆ (is′ ∘⊆ is) ≡ (is″ ∘⊆ is′) ∘⊆ is
-         (is ○ is′) ○ is″ ≡ is ○ (is′ ○ is″)
-  ass⊆ is″ is′        []       = refl
-  ass⊆ is″ (i′ ∷ is′) (i ∷ is) = _∷_ & compren∋ is″ (i′ ∷ is′) i ⁻¹ ⊗ ass⊆ is″ (i′ ∷ is′) is
+  ass⊆ : ∀ {Γ Γ′ Γ″ Γ‴} (is : Γ ⊆ Γ′) (is′ : Γ′ ⊆ Γ″) (is″ : Γ″ ⊆ Γ‴) →
+         is ○ (is′ ○ is″) ≡ (is ○ is′) ○ is″
+  ass⊆ []       is′        is″ = refl
+  ass⊆ (i ∷ is) (i′ ∷ is′) is″ = _∷_ & compren∋ is″ (i′ ∷ is′) i ⊗ ass⊆ is (i′ ∷ is′) is″
 
   ⟪⊇⟫ : Category 𝓍 𝓍
   ⟪⊇⟫ = record
@@ -260,9 +217,9 @@ module Renamings {𝓍} {X : Set 𝓍} where
           ; _▻_  = flip _⊆_
           ; id   = id⊆
           ; _∘_  = _○_
-          ; lid∘ = rid⊆
-          ; rid∘ = lid⊆
-          ; ass∘ = λ is is′ is″ → sym (ass⊆ is″ is′ is)
+          ; lid▻ = lid⊆
+          ; rid▻ = rid⊆
+          ; ass▻ = ass⊆
           }
 
   module _ (⚠ : FunExt) where
@@ -294,23 +251,23 @@ private
     from {[]}    ρ = []
     from {A ∷ Γ} ρ = ρ zero ∷ from (ρ ∘ suc)
 
-    lemfrom : ∀ {Γ Γ′} (ρ ρ′ : Γ ⊑ Γ′) → (∀ {A : X} (i : Γ ∋ A) → ρ i ≡ ρ′ i) → from ρ ≡ from ρ′
-    lemfrom {[]}    ρ ρ′ eqf = refl
-    lemfrom {A ∷ Γ} ρ ρ′ eqf = _∷_ & eqf zero ⊗ lemfrom (ρ ∘ suc) (ρ′ ∘ suc) (eqf ∘ suc)
+    ∙from : ∀ {Γ Γ′} (ρ ρ′ : Γ ⊑ Γ′) → (∀ {A : X} (i : Γ ∋ A) → ρ i ≡ ρ′ i) → from ρ ≡ from ρ′
+    ∙from {[]}    ρ ρ′ peq = refl
+    ∙from {A ∷ Γ} ρ ρ′ peq = _∷_ & peq zero ⊗ ∙from (ρ ∘ suc) (ρ′ ∘ suc) (peq ∘ suc)
 
     from∘to : ∀ {Γ Γ′} (is : Γ ⊆ Γ′) → (from ∘ to) is ≡ is
     from∘to []       = refl
     from∘to (i ∷ is) = (i ∷_) & from∘to is
 
-    to⊙from : ∀ {Γ Γ′} (ρ : Γ ⊑ Γ′) → (∀ {A : X} (i : Γ ∋ A) → (to ∘ from) ρ i ≡ ρ i)
-    to⊙from {A ∷ Γ} ρ zero    = refl
-    to⊙from {A ∷ Γ} ρ (suc i) = to⊙from (ρ ∘ suc) i
+    ∙to∘from : ∀ {Γ Γ′} (ρ : Γ ⊑ Γ′) → (∀ {A : X} (i : Γ ∋ A) → (to ∘ from) ρ i ≡ ρ i)
+    ∙to∘from {A ∷ Γ} ρ zero    = refl
+    ∙to∘from {A ∷ Γ} ρ (suc i) = ∙to∘from (ρ ∘ suc) i
 
     module _ (⚠ : FunExt) where
       ⚠′ = implify ⚠
 
       to∘from : ∀ {Γ Γ′} (ρ : Γ ⊑ Γ′) → (to ∘ from) ρ ≡ ρ :> (Γ ⊑ Γ′)
-      to∘from ρ = ⚠′ (⚠ (to⊙from ρ))
+      to∘from ρ = ⚠′ (⚠ (∙to∘from ρ))
 
       ⊆≃⊑ : ∀ {Γ Γ′} → (Γ ⊆ Γ′) ≃ (Γ ⊑ Γ′)
       ⊆≃⊑ = record

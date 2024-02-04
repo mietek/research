@@ -18,7 +18,6 @@ record BaseModel : Set₁ where
     ⟦zero⟧ : ∀ {W} → ⟦ℕ⟧ W
     ⟦suc⟧  : ∀ {W} → ⟦ℕ⟧ W → ⟦ℕ⟧ W
 
-  -- semantic values
   infix 3 _⊩_
   _⊩_ : World → Ty → Set
   -- W ⊩ A ⌜⊃⌝ B = ∀ {W′} → W ≤ W′ → W′ ⊩ A → W′ ⊩ B
@@ -28,25 +27,24 @@ record BaseModel : Set₁ where
              (λ W → ⟦ℕ⟧ W)
              W
 
-record SplitModel (ℳ◦ : BaseModel) : Set₁ where
-  open BaseModel ℳ◦ public
+record SplitModel (ℬ : BaseModel) : Set₁ where
+  open BaseModel ℬ public
 
   field
     ⟦rec⟧ : ∀ {W A} → W ⊩ ⌜ℕ⌝ → W ⊩ A → W ⊩ ⌜ℕ⌝ ⌜⊃⌝ A ⌜⊃⌝ A → W ⊩ A
 
 open SplitModel public
 
-module _ {ℳ◦} {ℳ : SplitModel ℳ◦} where
+module _ {ℬ} {ℳ : SplitModel ℬ} where
   private
     module ℳ = SplitModel ℳ
 
-  vren : ∀ {W W′ A} → W ℳ.≤ W′ → W ℳ.⊩ A → W′ ℳ.⊩ A
-  vren {A = A ⌜⊃⌝ B} e v = λ e′ → v (ℳ.trans≤ e e′)
-  vren {A = ⌜ℕ⌝}     e v = ℳ.ren⟦ℕ⟧ e v
+  vren : ∀ {A W W′} → W ℳ.≤ W′ → W ℳ.⊩ A → W′ ℳ.⊩ A
+  vren {A ⌜⊃⌝ B} e v = λ e′ → v (ℳ.trans≤ e e′)
+  vren {⌜ℕ⌝}     e v = ℳ.ren⟦ℕ⟧ e v
 
-open SplitModelKit (kit _⊩_ (λ {ℳ◦} {ℳ} {W} {W′} {A} → vren {ℳ◦} {ℳ} {A = A})) public
+open SplitModelKit (kit _⊩_ (λ {ℬ} {ℳ} {A} → vren {ℬ} {ℳ} {A})) public
 
--- reflection
 ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
 ⟦ var i                  ⟧         vs = ⟦ i ⟧∋ vs
 ⟦ ⌜λ⌝ t                  ⟧         vs = λ e v → ⟦ t ⟧ (v ∷ vrens e vs)
@@ -59,8 +57,8 @@ open SplitModelKit (kit _⊩_ (λ {ℳ◦} {ℳ} {W} {W′} {A} → vren {ℳ◦
 
 ----------------------------------------------------------------------------------------------------
 
-𝒞◦ : BaseModel
-𝒞◦ = record
+ℬ : BaseModel
+ℬ = record
        { World  = Ctx
        ; _≤_    = _⊆_
        ; refl≤  = refl⊆
@@ -73,30 +71,29 @@ open SplitModelKit (kit _⊩_ (λ {ℳ◦} {ℳ} {W} {W′} {A} → vren {ℳ◦
 
 -- canonical model
 mutual
-  𝒞 : SplitModel 𝒞◦
+  𝒞 : SplitModel ℬ
   𝒞 .⟦rec⟧         (_ , ⌜zero⌝)   v₀ vₛ = v₀
   𝒞 .⟦rec⟧         (_ , ⌜suc⌝ pₙ) v₀ vₛ = vₛ id⊆ (_ , pₙ) id⊆ v₀
   𝒞 .⟦rec⟧ {A = A} (_ , nnf pₙ)   v₀ vₛ =
     let _ , p₀ = ↓ {A = A} v₀
-        _ , pₛ = ↓ (vₛ (wk⊆ (wk⊆ id⊆)) (↑ (var {A = ⌜ℕ⌝} (suc zero) , var-))
-                   id⊆ (↑ (var {A = A} zero , var-)))
+        _ , pₛ = ↓ (vₛ (wk⊆ (wk⊆ id⊆)) (↑ {⌜ℕ⌝} (var (suc zero) , var-))
+                   id⊆ (↑ {A} (var zero , var-)))
       in ↑ (_ , ⌜rec⌝ pₙ p₀ pₛ)
 
-  ↑ : ∀ {Γ A} → Σ (Γ ⊢ A) NNF → 𝒞 / Γ ⊩ A
-  ↑ {A = A ⌜⊃⌝ B} (_ , p₁) = λ e v₂ → let _ , p₂ = ↓ v₂
-                                         in ↑ (_ , renNNF e p₁ ⌜$⌝ p₂)
-  ↑ {A = ⌜ℕ⌝}     (_ , p)  = _ , nnf p
+  ↑ : ∀ {A Γ} → Σ (Γ ⊢ A) NNF → 𝒞 / Γ ⊩ A
+  ↑ {A ⌜⊃⌝ B} (_ , p₁) = λ e v₂ → let _ , p₂ = ↓ v₂
+                                     in ↑ (_ , renNNF e p₁ ⌜$⌝ p₂)
+  ↑ {⌜ℕ⌝}     (_ , p)  = _ , nnf p
 
-  ↓ : ∀ {Γ A} → 𝒞 / Γ ⊩ A → Σ (Γ ⊢ A) NF
-  ↓ {A = A ⌜⊃⌝ B} v = let t , p = ↓ (v (wk⊆ id⊆) (↑ (var {A = A} zero , var-)))
-                        in ⌜λ⌝ t , ⌜λ⌝-
-  ↓ {A = ⌜ℕ⌝}     v = v
+  ↓ : ∀ {A Γ} → 𝒞 / Γ ⊩ A → Σ (Γ ⊢ A) NF
+  ↓ {A ⌜⊃⌝ B} v = let t , p = ↓ (v (wk⊆ id⊆) (↑ {A} (var zero , var-)))
+                    in ⌜λ⌝ t , ⌜λ⌝-
+  ↓ {⌜ℕ⌝}     v = v
 
 vids : ∀ {Γ} → 𝒞 / Γ ⊩* Γ
 vids {[]}    = []
-vids {A ∷ Γ} = ↑ (var {A = A} zero , var-) ∷ vrens (wk⊆ id⊆) vids
+vids {A ∷ Γ} = ↑ {A} (var zero , var-) ∷ vrens (wk⊆ id⊆) vids
 
--- reification
 ⟦_⟧⁻¹ : ∀ {Γ A} → Γ ⊨ A → Σ (Γ ⊢ A) NF
 ⟦ v ⟧⁻¹ = ↓ (v vids)
 

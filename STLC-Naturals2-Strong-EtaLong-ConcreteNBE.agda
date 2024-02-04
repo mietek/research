@@ -11,23 +11,23 @@ _⊩_ : Ctx → Ty → Set
 W ⊩ A ⌜⊃⌝ B = ∀ {W′} → W ⊆ W′ → W′ ⊩ A → W′ ⊩ B
 W ⊩ ⌜ℕ⌝     = W ⊢≪ ⌜ℕ⌝
 
-vren : ∀ {W W′ A} → W ⊆ W′ → W ⊩ A → W′ ⊩ A
-vren {A = A ⌜⊃⌝ B} e v = λ e′ → v (trans⊆ e e′)
-vren {A = ⌜ℕ⌝}     e v = ren≪ e v
+vren : ∀ {A W W′} → W ⊆ W′ → W ⊩ A → W′ ⊩ A
+vren {A ⌜⊃⌝ B} e v = λ e′ → v (trans⊆ e e′)
+vren {⌜ℕ⌝}     e v = ren≪ e v
 
-open ValKit (kit _⊩_ (λ {W} {W′} {A} → vren {A = A})) public
+open ValKit (kit _⊩_ vren) public
 
 
 ----------------------------------------------------------------------------------------------------
 
 mutual
-  ↑ : ∀ {Γ A} → Γ ⊢≫ A → Γ ⊩ A
-  ↑ {A = A ⌜⊃⌝ B} t = λ e v → ↑ (ren≫ e t ⌜$⌝ ↓ v)
-  ↑ {A = ⌜ℕ⌝}     t = nnf t
+  ↑ : ∀ {A Γ} → Γ ⊢≫ A → Γ ⊩ A
+  ↑ {A ⌜⊃⌝ B} t = λ e v → ↑ (ren≫ e t ⌜$⌝ ↓ v)
+  ↑ {⌜ℕ⌝}     t = nnf t
 
-  ↓ : ∀ {Γ A} → Γ ⊩ A → Γ ⊢≪ A
-  ↓ {A = A ⌜⊃⌝ B} v = ⌜λ⌝ (↓ (v (wk⊆ id⊆) (↑ (var zero))))
-  ↓ {A = ⌜ℕ⌝}     v = v
+  ↓ : ∀ {A Γ} → Γ ⊩ A → Γ ⊢≪ A
+  ↓ {A ⌜⊃⌝ B} v = ⌜λ⌝ (↓ (v (wk⊆ id⊆) (↑ (var zero))))
+  ↓ {⌜ℕ⌝}     v = v
 
 vids : ∀ {Γ} → Γ ⊩* Γ
 vids {[]}    = []

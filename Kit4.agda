@@ -12,7 +12,7 @@ record ValKitParams : Set₁ where
   open TyKit Ty public
   field
     _⊩_ : Ctx → Ty → Set
-    vren : ∀ {W W′ A} → W ⊆ W′ → W ⊩ A → W′ ⊩ A
+    vren : ∀ {A W W′} → W ⊆ W′ → W ⊩ A → W′ ⊩ A
 
 module ValKit (¶ : ValKitParams) where
   open ValKitParams ¶
@@ -23,7 +23,7 @@ module ValKit (¶ : ValKitParams) where
     []  : W ⊩* []
     _∷_ : ∀ {Δ A} (v : W ⊩ A) (vs : W ⊩* Δ) → W ⊩* A ∷ Δ
 
-  vrens : ∀ {W W′ Δ} → W ⊆ W′ → W ⊩* Δ → W′ ⊩* Δ
+  vrens : ∀ {Δ W W′} → W ⊆ W′ → W ⊩* Δ → W′ ⊩* Δ
   vrens e []       = []
   vrens e (v ∷ vs) = vren e v ∷ vrens e vs
 
@@ -48,7 +48,7 @@ record ModelKitParams : Set₂ where
     {World} : Model → Set
     {_≤_}   : ∀ (ℳ : Model) → World ℳ → World ℳ → Set
     _⊩_    : ∀ {ℳ} → World ℳ → Ty → Set
-    vren    : ∀ {ℳ W W′ A} → _≤_ ℳ W W′ → W ⊩ A → W′ ⊩ A
+    vren    : ∀ {ℳ A W W′} → _≤_ ℳ W W′ → W ⊩ A → W′ ⊩ A
 
 module ModelKit (¶ : ModelKitParams) where
   open ModelKitParams ¶
@@ -60,7 +60,7 @@ module ModelKit (¶ : ModelKitParams) where
       []  : W ⊩* []
       _∷_ : ∀ {Δ A} (v : W ⊩ A) (vs : W ⊩* Δ) → W ⊩* A ∷ Δ
 
-    vrens : ∀ {W W′ Δ} → _≤_ ℳ W W′ → W ⊩* Δ → W′ ⊩* Δ
+    vrens : ∀ {Δ W W′} → _≤_ ℳ W W′ → W ⊩* Δ → W′ ⊩* Δ
     vrens e []       = []
     vrens e (v ∷ vs) = vren e v ∷ vrens e vs
 
@@ -94,7 +94,7 @@ record SplitModelKitParams : Set₂ where
     {World}      : ∀ {ℬ} → SplitModel ℬ → Set
     {_≤_}        : ∀ {ℬ} (ℳ : SplitModel ℬ) → World ℳ → World ℳ → Set
     _⊩_         : ∀ {ℬ} (ℳ : SplitModel ℬ) → World ℳ → Ty → Set
-    vren         : ∀ {ℬ} {ℳ : SplitModel ℬ} {W W′ A} → _≤_ ℳ W W′ → _⊩_ ℳ W A → _⊩_ ℳ W′ A
+    vren         : ∀ {ℬ} {ℳ : SplitModel ℬ} {A W W′} → _≤_ ℳ W W′ → _⊩_ ℳ W A → _⊩_ ℳ W′ A
 
 module SplitModelKit (¶ : SplitModelKitParams) where
   open SplitModelKitParams ¶
@@ -107,7 +107,7 @@ module SplitModelKit (¶ : SplitModelKitParams) where
       []  : W ⊩* []
       _∷_ : ∀ {Δ A} (v : _⊩_ ℳ W A) (vs : W ⊩* Δ) → W ⊩* A ∷ Δ
 
-    vrens : ∀ {W W′ Δ} → _≤_ ℳ W W′ → W ⊩* Δ → W′ ⊩* Δ
+    vrens : ∀ {Δ W W′} → _≤_ ℳ W W′ → W ⊩* Δ → W′ ⊩* Δ
     vrens e []       = []
     vrens e (v ∷ vs) = vren e v ∷ vrens e vs
 

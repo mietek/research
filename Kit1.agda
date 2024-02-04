@@ -19,6 +19,7 @@ record TmKitParams : Set₁ where
   field
     {Ty} : Set
   open TyKit Ty public
+  infix 3 _⊢_
   field
     _⊢_ : Ctx → Ty → Set
 
@@ -55,7 +56,7 @@ module RenKit (¶ : RenKitParams) where
   open RenKitParams ¶
   renkit = ¶
 
-  wk : ∀ {Γ A B} → Γ ⊢ B → (A ∷ Γ) ⊢ B
+  wk : ∀ {Γ A B} → Γ ⊢ B → A ∷ Γ ⊢ B
   wk t = ren (wk⊆ id⊆) t
 
   -- Kovacs: flip _ₛ∘ₑ_
@@ -117,7 +118,7 @@ module SubKit (¶ : SubKitParams) where
   _●_ : ∀ {Γ Ξ Δ} → Γ ⊢* Δ → Ξ ⊢* Γ → Ξ ⊢* Δ
   _●_ = flip trans*
 
-  _[_] : ∀ {Γ A B} → (A ∷ Γ) ⊢ B → Γ ⊢ A → Γ ⊢ B
+  _[_] : ∀ {Γ A B} → A ∷ Γ ⊢ B → Γ ⊢ A → Γ ⊢ B
   t [ s ] = sub (s ∷ id*) t
 
   -- Kovacs: _ₑ∘ₛ_

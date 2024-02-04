@@ -11,11 +11,11 @@ _⊩_ : Ctx → Ty → Set
 W ⊩ ⌜◦⌝     = Σ (W ⊢ ⌜◦⌝) NNF
 W ⊩ A ⌜⊃⌝ B = ∀ {W′} → W ⊆ W′ → W′ ⊩ A → W′ ⊩ B
 
-vren : ∀ {W W′ A} → W ⊆ W′ → W ⊩ A → W′ ⊩ A
-vren {A = ⌜◦⌝}     e (_ , p) = _ , renNNF e p
-vren {A = A ⌜⊃⌝ B} e v       = λ e′ → v (trans⊆ e e′)
+vren : ∀ {A W W′} → W ⊆ W′ → W ⊩ A → W′ ⊩ A
+vren {⌜◦⌝}     e (_ , p) = _ , renNNF e p
+vren {A ⌜⊃⌝ B} e v       = λ e′ → v (trans⊆ e e′)
 
-open ValKit (kit _⊩_ (λ {W} {W′} {A} → vren {A = A})) public
+open ValKit (kit _⊩_ vren) public
 
 ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
 ⟦ var i     ⟧ vs = ⟦ i ⟧∋ vs
@@ -26,15 +26,15 @@ open ValKit (kit _⊩_ (λ {W} {W′} {A} → vren {A = A})) public
 ----------------------------------------------------------------------------------------------------
 
 mutual
-  ↑ : ∀ {Γ A} → Σ (Γ ⊢ A) NNF → Γ ⊩ A
-  ↑ {A = ⌜◦⌝}     (_ , p)  = _ , p
-  ↑ {A = A ⌜⊃⌝ B} (_ , p₁) = λ e v₂ → let _ , p₂ = ↓ v₂
-                                         in ↑ (_ , renNNF e p₁ ⌜$⌝ p₂)
+  ↑ : ∀ {A Γ} → Σ (Γ ⊢ A) NNF → Γ ⊩ A
+  ↑ {⌜◦⌝}     (_ , p)  = _ , p
+  ↑ {A ⌜⊃⌝ B} (_ , p₁) = λ e v₂ → let _ , p₂ = ↓ v₂
+                                     in ↑ (_ , renNNF e p₁ ⌜$⌝ p₂)
 
-  ↓ : ∀ {Γ A} → Γ ⊩ A → Σ (Γ ⊢ A) NF
-  ↓ {A = ⌜◦⌝}     (_ , p) = _ , nnf p
-  ↓ {A = A ⌜⊃⌝ B} v       = let t , p = ↓ (v (wk⊆ id⊆) (↑ (var zero , var-)))
-                              in ⌜λ⌝ t , ⌜λ⌝-
+  ↓ : ∀ {A Γ} → Γ ⊩ A → Σ (Γ ⊢ A) NF
+  ↓ {⌜◦⌝}     (_ , p) = _ , nnf p
+  ↓ {A ⌜⊃⌝ B} v       = let t , p = ↓ (v (wk⊆ id⊆) (↑ (var zero , var-)))
+                          in ⌜λ⌝ t , ⌜λ⌝-
 
 vids : ∀ {Γ} → Γ ⊩* Γ
 vids {[]}    = []

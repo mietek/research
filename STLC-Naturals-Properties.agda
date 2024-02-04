@@ -19,7 +19,7 @@ ridren : ∀ {Γ Γ′ A} (e : Γ ⊆ Γ′) (i : Γ ∋ A) → ren e (var i) �
 ridren e i = refl
 
 compren : ∀ {Γ Γ′ Γ″ A} (e′ : Γ′ ⊆ Γ″) (e : Γ ⊆ Γ′) (t : Γ ⊢ A) →
-          ren (e′ ∘⊆ e) t ≡ (ren e′ ∘ ren e) t
+          ren (e ○ e′) t ≡ (ren e′ ∘ ren e) t
 compren e′ e (var i)          = var & compren∋ e′ e i
 compren e′ e (⌜λ⌝ t)          = ⌜λ⌝ & compren (lift⊆ e′) (lift⊆ e) t
 compren e′ e (t₁ ⌜$⌝ t₂)      = _⌜$⌝_ & compren e′ e t₁ ⊗ compren e′ e t₂

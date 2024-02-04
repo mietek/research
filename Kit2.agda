@@ -42,14 +42,14 @@ module RenSubKit1 (¶ : RenSubKit1Params) where
   compren* e′ e (t ∷ ts) = _∷_ & compren e′ e t ⊗ compren* e′ e ts
 
   eqwkren : ∀ {Γ Γ′ A B} (e : Γ ⊆ Γ′) (t : Γ ⊢ A) →
-            (ren (lift⊆ {A = B} e) ∘ wk) t ≡ (wk ∘ ren e) t
+            (ren (lift⊆ e) ∘ wk) t ≡ (wk ∘ ren e) t :> (B ∷ Γ′ ⊢ A)
   eqwkren e t = compren (lift⊆ e) (wk⊆ id⊆) t ⁻¹
-              ⋮ (flip ren t ∘ wk⊆) & (rid⊆ e ⋮ lid⊆ e ⁻¹)
+              ⋮ (flip ren t ∘ wk⊆) & (lid⊆ e ⋮ rid⊆ e ⁻¹)
               ⋮ compren (wk⊆ id⊆) e t
 
   eqwkren* : ∀ {Γ Γ′ Δ B} (e : Γ ⊆ Γ′) (ts : Γ ⊢* Δ) →
   --         (ren* (lift⊆ {A = B} e) ∘ wk*) ts ≡ (wk* ∘ ren* e) ts
-             (wk* ts) ◐ (lift⊆ {A = B} e) ≡ wk* (ts ◐ e)
+             (wk* ts) ◐ (lift⊆ e) ≡ wk* (ts ◐ e) :> (B ∷ Γ′ ⊢* Δ)
   eqwkren* e []       = refl
   eqwkren* e (t ∷ ts) = _∷_ & eqwkren e t ⊗ eqwkren* e ts
 
@@ -64,7 +64,7 @@ module RenSubKit1 (¶ : RenSubKit1Params) where
   --        ren* e id* ≡ var* e
             id* ◐ e ≡ var* e
   ridren* stop⊆     = refl
-  ridren* (wk⊆ e)   = (flip ren* id* ∘ wk⊆) & lid⊆ e ⁻¹
+  ridren* (wk⊆ e)   = (flip ren* id* ∘ wk⊆) & rid⊆ e ⁻¹
                     ⋮ compren* (wk⊆ id⊆) e id*
                     ⋮ wk* & ridren* e
   ridren* (lift⊆ e) = (_∷ (ren* (lift⊆ e) ∘ wk*) id*) & ridren (lift⊆ e) zero
@@ -277,9 +277,9 @@ module RenSubKit3 (¶ : RenSubKit3Params) where
              ; _▻_  = _⊢*_
              ; id   = id*
              ; _∘_  = _●_ -- flip sub*
-             ; lid∘ = ridsub*
-             ; rid∘ = lidsub*
-             ; ass∘ = λ ss′ ss ts → asssub* ts ss ss′
+             ; lid▻ = ridsub*
+             ; rid▻ = lidsub*
+             ; ass▻ = λ ss′ ss ts → asssub* ts ss ss′
              }
 
   module _ (⚠ : FunExt) where
@@ -291,7 +291,7 @@ module RenSubKit3 (¶ : RenSubKit3Params) where
                 ; _∘ƒ_ = λ ss′ ss → ⚠ (compsub ss′ ss)
                 }
 
-  rencut : ∀ {Γ Γ′ A B} (e : Γ ⊆ Γ′) (t₁ : (A ∷ Γ) ⊢ B) (t₂ : Γ ⊢ A) →
+  rencut : ∀ {Γ Γ′ A B} (e : Γ ⊆ Γ′) (t₁ : A ∷ Γ ⊢ B) (t₂ : Γ ⊢ A) →
            ren (lift⊆ e) t₁ [ ren e t₂ ] ≡ ren e (t₁ [ t₂ ])
   rencut e t₁ t₂ =
       begin
@@ -315,7 +315,7 @@ module RenSubKit3 (¶ : RenSubKit3Params) where
         ren e (t₁ [ t₂ ])
       ∎
 
-  subcut : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : (A ∷ Γ) ⊢ B) (t₂ : Γ ⊢ A) →
+  subcut : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : A ∷ Γ ⊢ B) (t₂ : Γ ⊢ A) →
            sub (lift* ss) t₁ [ sub ss t₂ ] ≡ sub ss (t₁ [ t₂ ])
   subcut ss t₁ t₂ =
       begin

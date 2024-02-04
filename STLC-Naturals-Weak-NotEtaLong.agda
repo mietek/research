@@ -267,20 +267,20 @@ ren⇒ e (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ) =
               begin
                 ren (lift⊆ e) (wk (⌜rec⌝ tₙ t₀ tₛ))
               ≡⟨ compren (lift⊆ e) (wk⊆ id⊆) (⌜rec⌝ tₙ t₀ tₛ) ⁻¹ ⟩
-                ren (wk⊆ (e ∘⊆ id⊆)) (⌜rec⌝ tₙ t₀ tₛ)
-              ≡⟨ (flip ren (⌜rec⌝ tₙ t₀ tₛ) ∘ wk⊆) & rid⊆ e ⟩
+                ren (wk⊆ (id⊆ ○ e)) (⌜rec⌝ tₙ t₀ tₛ)
+              ≡⟨ (flip ren (⌜rec⌝ tₙ t₀ tₛ) ∘ wk⊆) & lid⊆ e ⟩
                 ren (wk⊆ e) (⌜rec⌝ tₙ t₀ tₛ)
               ≡⟨⟩
                 ⌜rec⌝ (ren (wk⊆ e) tₙ)
                       (ren (wk⊆ e) t₀)
                       (ren (lift⊆ (lift⊆ (wk⊆ e))) tₛ)
-              ≡⟨ ⌜rec⌝ & ( (flip ren tₙ ∘ wk⊆) & lid⊆ e ⁻¹
+              ≡⟨ ⌜rec⌝ & ( (flip ren tₙ ∘ wk⊆) & rid⊆ e ⁻¹
                          ⋮ compren (wk⊆ id⊆) e tₙ
                          )
-                       ⊗ ( (flip ren t₀ ∘ wk⊆) & lid⊆ e ⁻¹
+                       ⊗ ( (flip ren t₀ ∘ wk⊆) & rid⊆ e ⁻¹
                          ⋮ compren (wk⊆ id⊆) e t₀
                          )
-                       ⊗ ( (flip ren tₛ ∘ lift⊆ ∘ lift⊆ ∘ wk⊆) & lid⊆ e ⁻¹
+                       ⊗ ( (flip ren tₛ ∘ lift⊆ ∘ lift⊆ ∘ wk⊆) & rid⊆ e ⁻¹
                          ⋮ compren (lift⊆ (lift⊆ (wk⊆ id⊆))) (lift⊆ (lift⊆ e)) tₛ
                          ) ⟩
                 ⌜rec⌝ (wk (ren e tₙ))

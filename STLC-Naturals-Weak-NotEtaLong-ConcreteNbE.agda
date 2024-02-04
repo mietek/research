@@ -11,25 +11,25 @@ _⊩_ : Ctx → Ty → Set
 W ⊩ A ⌜⊃⌝ B = ∀ {W′} → W ⊆ W′ → W′ ⊩ A → W′ ⊩ B
 W ⊩ ⌜ℕ⌝     = Σ (W ⊢ ⌜ℕ⌝) NF
 
-vren : ∀ {W W′ A} → W ⊆ W′ → W ⊩ A → W′ ⊩ A
-vren {A = A ⌜⊃⌝ B} e v       = λ e′ → v (trans⊆ e e′)
-vren {A = ⌜ℕ⌝}     e (_ , p) = _ , renNF e p
+vren : ∀ {A W W′} → W ⊆ W′ → W ⊩ A → W′ ⊩ A
+vren {A ⌜⊃⌝ B} e v       = λ e′ → v (trans⊆ e e′)
+vren {⌜ℕ⌝}     e (_ , p) = _ , renNF e p
 
-open ValKit (kit _⊩_ (λ {W} {W′} {A} → vren {A = A})) public
+open ValKit (kit _⊩_ vren) public
 
 
 ----------------------------------------------------------------------------------------------------
 
 mutual
-  ↑ : ∀ {Γ A} → Σ (Γ ⊢ A) NNF → Γ ⊩ A
-  ↑ {A = A ⌜⊃⌝ B} (_ , p₁) = λ e v₂ → let _ , p₂ = ↓ v₂
-                                         in ↑ (_ , renNNF e p₁ ⌜$⌝ p₂)
-  ↑ {A = ⌜ℕ⌝}     (_ , p)  = _ , nnf p
+  ↑ : ∀ {A Γ} → Σ (Γ ⊢ A) NNF → Γ ⊩ A
+  ↑ {A ⌜⊃⌝ B} (_ , p₁) = λ e v₂ → let _ , p₂ = ↓ v₂
+                                     in ↑ (_ , renNNF e p₁ ⌜$⌝ p₂)
+  ↑ {⌜ℕ⌝}     (_ , p)  = _ , nnf p
 
-  ↓ : ∀ {Γ A} → Γ ⊩ A → Σ (Γ ⊢ A) NF
-  ↓ {A = A ⌜⊃⌝ B} v = let t , p = ↓ (v (wk⊆ id⊆) (↑ (var zero , var-)))
-                        in ⌜λ⌝ t , ⌜λ⌝-
-  ↓ {A = ⌜ℕ⌝}     v = v
+  ↓ : ∀ {A Γ} → Γ ⊩ A → Σ (Γ ⊢ A) NF
+  ↓ {A ⌜⊃⌝ B} v = let t , p = ↓ (v (wk⊆ id⊆) (↑ (var zero , var-)))
+                    in ⌜λ⌝ t , ⌜λ⌝-
+  ↓ {⌜ℕ⌝}     v = v
 
 vids : ∀ {Γ} → Γ ⊩* Γ
 vids {[]}    = []

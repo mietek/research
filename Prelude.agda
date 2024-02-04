@@ -90,7 +90,7 @@ data Dec {𝓍} (X : Set 𝓍) : Set 𝓍 where
 ----------------------------------------------------------------------------------------------------
 
 infix 4 ≡-syntax
-≡-syntax : ∀ {𝓍} (X : Set 𝓍) → X → X → Set 𝓍
+≡-syntax : ∀ {𝓍} (X : Set 𝓍) (x x′ : X) → Set 𝓍
 ≡-syntax X = _≡_
 
 syntax ≡-syntax X x x′ = x ≡ x′ :> X
@@ -131,31 +131,20 @@ infixl 8 _⊗_
 _⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {f g : X → Y} {x x′} → f ≡ g → x ≡ x′ → f x ≡ g x′
 refl ⊗ refl = refl
 
-_≐_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} → (∀ x → Y x) → (∀ x → Y x) → Set (𝓍 ⊔ 𝓎)
-f ≐ f′ = ∀ x → f x ≡ f′ x
-
-_≐′_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} → (∀ {x} → Y x) → (∀ {x} → Y x) → Set (𝓍 ⊔ 𝓎)
-f ≐′ f′ = ∀ {x} → f {x} ≡ f′ {x}
-
-infix 4 ≐′-syntax
-≐′-syntax : ∀ {𝓍 𝓎} {X : Set 𝓍} (Y : X → Set 𝓎) → (∀ {x} → Y x) → (∀ {x} → Y x) → Set (𝓍 ⊔ 𝓎)
-≐′-syntax Y = _≐′_
-
-syntax ≐′-syntax Y f f′ = f ≐′ f′ :> Y
-
-congapp : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f f′ : ∀ x → Y x} → f ≡ f′ → f ≐ f′
+congapp : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f f′ : ∀ x → Y x} → f ≡ f′ → (∀ x → f x ≡ f′ x)
 congapp refl x = refl
 
 congapp′ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f f′ : ∀ {x} → Y x} →
              f ≡ f′ :> (∀ {x} → Y x) →
-           f ≐′ f′ :> Y
+           (∀ {x} → f {x} ≡ f′ {x})
 congapp′ refl {x} = refl
 
 FunExt : Setω
-FunExt = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f f′ : ∀ x → Y x} → f ≐ f′ → f ≡ f′
+FunExt = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f f′ : ∀ x → Y x} → (∀ x → f x ≡ f′ x) → f ≡ f′
 
 FunExt′ : Setω
-FunExt′ = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f f′ : ∀ {x} → Y x} → f ≐′ f′ :> Y →
+FunExt′ = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f f′ : ∀ {x} → Y x} →
+            (∀ {x} → f {x} ≡ f′ {x}) →
           f ≡ f′ :> (∀ {x} → Y x)
 
 uni≡ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} (eq eq′ : x ≡ x′) → eq ≡ eq′
@@ -164,14 +153,14 @@ uni≡ refl refl = refl
 uni𝟘 : ∀ (z z′ : 𝟘) → z ≡ z′
 uni𝟘 () ()
 
-uni¬ : ∀ {𝓍} {X : Set 𝓍} → ∀ (f f′ : ¬ X) → f ≡ f′
+uni¬ : ∀ {𝓍} {X : Set 𝓍} (f f′ : ¬ X) → f ≡ f′
 uni¬ f f′ = refl
 
 module _ (⚠ : FunExt) where
   implify : FunExt′
   implify eq = (λ f {x} → f x) & ⚠ (λ x → eq {x})
 
-  uni→ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} → (∀ y y′ → y ≡ y′) → ∀ (f f′ : X → Y) → f ≡ f′
+  uni→ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (uniY : ∀ y y′ → y ≡ y′) (f f′ : X → Y) → f ≡ f′
   uni→ uniY f f′ = ⚠ λ x → uniY (f x) (f′ x)
 
 module ≡-Reasoning {𝓍} {X : Set 𝓍} where
