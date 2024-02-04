@@ -2,7 +2,7 @@ module Common where
 
 open import Prelude public
 open import Category public
-open import Isomorphism
+open import Isomorphism public
 
 
 ----------------------------------------------------------------------------------------------------

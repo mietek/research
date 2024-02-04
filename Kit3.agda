@@ -1,6 +1,5 @@
 module Kit3 where
 
-open import Isomorphism public
 open import Kit1 public
 
 
