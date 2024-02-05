@@ -475,7 +475,7 @@ IR⊎ExpandsTo→FR                   (right (ηexp⊃ refl x)) = ηexp⊃ refl 
 --            {t₂ : Γ ⊢ A} {t₂′ : Γ ⊢ A′} →
 --            ⌜λ⌝ ((wk t₁ ⌜$⌝ wk t₂) ⌜$⌝ var zero) ≡ ⌜λ⌝ ((wk t₁′ ⌜$⌝ wk t₂′) ⌜$⌝ var zero) →
 --          Σ (A ≡ A′) λ { refl → t₁ ≡ t₁′ × t₂ ≡ t₂′ }
---   lem₀ {A = A} {A′} eq with inj$₁′ (inj$₁ (injλ eq))
+--   lem₀ eq with inj$₁′ (inj$₁ (injλ eq))
 --   ... | refl , eq₁ = refl , injren eq₁ , injren (inj$₂ (inj$₁ (injλ eq)))
 
 --   lem₁ : ∀ {Γ A A′ B C} {t₁ : Γ ⊢ A ⌜⊃⌝ B ⌜⊃⌝ C} {t₁′ : Γ ⊢ A′ ⌜⊃⌝ B ⌜⊃⌝ C}

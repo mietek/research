@@ -104,13 +104,13 @@ postulate
   thmₖ : ∀ {ℳ : Model} {W : World ℳ} {Γ A} {t t′ : Γ ⊢ A} → t ≝ t′ → ⟦ t ⟧ {ℳ} {W} ≡ ⟦ t′ ⟧
 
   -- Coquand p.68: “extensional equality on semantic objects”
-  Eq : ∀ {ℳ : Model} {W : World ℳ} {A} → ℳ / W ⊩ A → ℳ / W ⊩ A → Set
+  Eq : ∀ {ℳ : Model} {W : World ℳ} A → ℳ / W ⊩ A → ℳ / W ⊩ A → Set
 
   -- Coquand p.73
-  thm₁ : ∀ {Γ A} {v v′ : 𝒞 / Γ ⊩ A} → Eq {A = A} v v′ → ↓ {A = A} v ≡ ↓ v′
+  thm₁ : ∀ {Γ A} {v v′ : 𝒞 / Γ ⊩ A} → Eq A v v′ → ↓ {A} v ≡ ↓ v′
 
   -- Coquand p.73
-  cor₁ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Eq {A = A} (⟦ t ⟧ vids) (⟦ t′ ⟧ vids) → nbe t ≡ nbe t′
+  cor₁ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Eq A (⟦ t ⟧ vids) (⟦ t′ ⟧ vids) → nbe t ≡ nbe t′
 
   -- Abel p.10: “soundness”, “normalization is compatible with definitional equality”
   -- Coquand p.74
@@ -118,11 +118,11 @@ postulate
   thm₂ : ∀ {Γ A} (t : Γ ⊢ A) → t ≝ fst (nbe t)
 
   -- Coquand p.75: “completeness of conversion rules”
-  thm₃ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Eq {A = A} (⟦ t ⟧ vids) (⟦ t′ ⟧ vids) → t ≝ t′
+  thm₃ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Eq A (⟦ t ⟧ vids) (⟦ t′ ⟧ vids) → t ≝ t′
 
   -- Coquand p.76: “soundness of conversion rules”
   thm₄ : ∀ {ℳ : Model} {W : World ℳ} {Γ A} (t t′ : Γ ⊢ A) (vs : ℳ / W ⊩* Γ) → t ≝ t′ →
-         Eq {A = A} (⟦ t ⟧ vs) (⟦ t′ ⟧ vs)
+         Eq A (⟦ t ⟧ vs) (⟦ t′ ⟧ vs)
 
   -- Coquand p.76: “correctness [soundness?] of decision algorithm for conversion”
   thm₅ : ∀ {Γ A} (t t′ : Γ ⊢ A) → nbe t ≡ nbe t′ → t ≝ t′

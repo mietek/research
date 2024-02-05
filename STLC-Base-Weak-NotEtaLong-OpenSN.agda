@@ -9,17 +9,17 @@ mutual
   HWN : ∀ {Γ A} → Γ ⊢ A → Set
   HWN t = WN t × HWN! t
 
-  HWN! : ∀ {Γ A} → Γ ⊢ A → Set
-  HWN!     {A = ⌜◦⌝}     t  = 𝟙
-  HWN! {Γ} {A = A ⌜⊃⌝ B} t₁ = ∀ {t₂} → HWN t₂ → HWN (t₁ ⌜$⌝ t₂)
+  HWN! : ∀ {A Γ} → Γ ⊢ A → Set
+  HWN! {⌜◦⌝}     t  = 𝟙
+  HWN! {A ⌜⊃⌝ B} t₁ = ∀ {t₂} → HWN t₂ → HWN (t₁ ⌜$⌝ t₂)
 
 mutual
   stepHWN : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒ t′ → HWN t′ → HWN t
   stepHWN r (wn′ , hwn!′) = stepWN r wn′ , stepHWN! r hwn!′
 
-  stepHWN! : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒ t′ → HWN! t′ → HWN! t
-  stepHWN! {A = ⌜◦⌝}          r unit       = unit
-  stepHWN! {A = A ⌜⊃⌝ B} {t₁} r f    hwn₂′ = stepHWN (cong$₁ r) (f hwn₂′)
+  stepHWN! : ∀ {A Γ} {t t′ : Γ ⊢ A} → t ⇒ t′ → HWN! t′ → HWN! t
+  stepHWN! {⌜◦⌝}          r unit       = unit
+  stepHWN! {A ⌜⊃⌝ B} {t₁} r f    hwn₂′ = stepHWN (cong$₁ r) (f hwn₂′)
 
 step⇒*HWN : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒* t′ → HWN t′ → HWN t
 step⇒*HWN done        hwn′ = hwn′
@@ -32,9 +32,9 @@ mutual
   skipHWN : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒ t′ → HWN t → HWN t′
   skipHWN r (wn , hwn!) = skipWN r wn , skipHWN! r hwn!
 
-  skipHWN! : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒ t′ → HWN! t → HWN! t′
-  skipHWN! {A = ⌜◦⌝}     r unit      = unit
-  skipHWN! {A = A ⌜⊃⌝ B} r f    hwn₂ = skipHWN (cong$₁ r) (f hwn₂)
+  skipHWN! : ∀ {A Γ} {t t′ : Γ ⊢ A} → t ⇒ t′ → HWN! t → HWN! t′
+  skipHWN! {⌜◦⌝}     r unit      = unit
+  skipHWN! {A ⌜⊃⌝ B} r f    hwn₂ = skipHWN (cong$₁ r) (f hwn₂)
 
 skip⇒*HWN : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒* t′ → HWN t → HWN t′
 skip⇒*HWN done        hwn = hwn
@@ -51,9 +51,9 @@ skip⇓HWN = skip⇒*HWN ∘ fst
 --   renHWN : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → HWN t → HWN (ren⊢ e t)
 --   renHWN e (wn@(t′ , rs , p′) , hwn!) = renWN e wn , renHWN! e hwn!
 
---   renHWN! : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → HWN! t → HWN! (ren⊢ e t)
---   renHWN! {A = ⌜◦⌝}          e unit           = unit
---   renHWN! {A = A ⌜⊃⌝ B} {t₁} e f {t₂} e′ hwn₂@(wn₂@(t₂′ , n₂@(rs₂ , p₂′)) , hwn!₂) =
+--   renHWN! : ∀ {A Γ Γ′} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → HWN! t → HWN! (ren⊢ e t)
+--   renHWN! {⌜◦⌝}          e unit           = unit
+--   renHWN! {A ⌜⊃⌝ B} {t₁} e f {t₂} e′ hwn₂@(wn₂@(t₂′ , n₂@(rs₂ , p₂′)) , hwn!₂) =
 --     {!!}
 
 -- -- --     let z : HWN (ren⊢ e t₁ ⌜$⌝ t₂)
@@ -86,9 +86,9 @@ skip⇓HWN = skip⇒*HWN ∘ fst
 -- -- --   hmm : ∀ {Γ A} → HWN {A ∷ Γ} {A} (var zero)
 -- -- --   hmm = (var zero , done , nnf var-) , hmm!
 
--- -- --   hmm! : ∀ {Γ A} → HWN! {A ∷ Γ} {A} (var zero)
--- -- --   hmm! {A = ⌜◦⌝}                                = unit
--- -- --   hmm! {A = A ⌜⊃⌝ B} ((t₂′ , rs , p₂′) , hwn!₂) =
+-- -- --   hmm! : ∀ {Γ} → HWN! {A ∷ Γ} {A} (var zero)
+-- -- --   hmm! {⌜◦⌝}                                = unit
+-- -- --   hmm! {A ⌜⊃⌝ B} ((t₂′ , rs , p₂′) , hwn!₂) =
 -- -- --     (var zero ⌜$⌝ t₂′ , cong$₂⇒* (nnf var-) rs , nnf (var- ⌜$⌝ p₂′)) ,
 -- -- --     {!!}
 

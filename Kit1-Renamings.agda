@@ -27,8 +27,8 @@ module TmKit (¶ : TmKitParams) where
   open TmKitParams ¶
   tmkit = ¶
 
-  ty : ∀ {Γ A} → Γ ⊢ A → Ty
-  ty {A = A} t = A
+  ty : ∀ {A Γ} → Γ ⊢ A → Ty
+  ty {A} t = A
 
   infix 3 _⊢*_
   data _⊢*_ (Γ : Ctx) : Ctx → Set where
@@ -121,12 +121,16 @@ module SubKit (¶ : SubKitParams) where
   t [ s ] = sub (s ∷ id*) t
 
   -- Kovacs: _ₑ∘ₛ_
-  get* : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⊢* Δ′ → Γ ⊢* Δ
-  get* []       ts = []
-  get* (i ∷ is) ts = sub ts (var i) ∷ get* is ts
+--  get* : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⊢* Δ′ → Γ ⊢* Δ
+--  get* []       ts = []
+--  get* (i ∷ is) ts = sub ts (var i) ∷ get* is ts
+--
+--  _◑_ : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⊢* Δ′ → Γ ⊢* Δ
+--  _◑_ = get*
 
   _◑_ : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⊢* Δ′ → Γ ⊢* Δ
-  _◑_ = get*
+  _◑_ []       ts = []
+  _◑_ (i ∷ is) ts = sub ts (var i) ∷ _◑_ is ts
 
 
 ----------------------------------------------------------------------------------------------------

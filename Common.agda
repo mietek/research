@@ -14,7 +14,7 @@ module _ {𝓍} {X : Set 𝓍} where
     zero : ∀ {Γ A} → A ∷ Γ ∋ A
     suc  : ∀ {Γ A B} (i : Γ ∋ A) → B ∷ Γ ∋ A
 
-  injsuc : ∀ {Γ A B} {i i′ : Γ ∋ A} → suc i ≡ suc i′ :> (B ∷ Γ ∋ A) → i ≡ i′
+  injsuc : ∀ {Γ A B} {i i′ : Γ ∋ A} → suc i ≡ _∋_.suc {B = B} i′ → i ≡ i′
   injsuc refl = refl
 
   infix 4 _≟∋_
@@ -33,8 +33,8 @@ module OrderPreservingEmbeddings {𝓍} {X : Set 𝓍} where
   infix 4 _⊆_
   data _⊆_ : List X → List X → Set 𝓍 where
     stop⊆ : [] ⊆ []
-    wk⊆   : ∀ {Γ Γ′ A} (e : Γ ⊆ Γ′) → Γ ⊆ A ∷ Γ′
-    lift⊆ : ∀ {Γ Γ′ A} (e : Γ ⊆ Γ′) → A ∷ Γ ⊆ A ∷ Γ′
+    wk⊆   : ∀ {Γ Γ′ B} (e : Γ ⊆ Γ′) → Γ ⊆ B ∷ Γ′
+    lift⊆ : ∀ {Γ Γ′ B} (e : Γ ⊆ Γ′) → B ∷ Γ ⊆ B ∷ Γ′
 
   id⊆ : ∀ {Γ} → Γ ⊆ Γ
   id⊆ {[]}    = stop⊆
@@ -90,7 +90,7 @@ module OrderPreservingEmbeddings {𝓍} {X : Set 𝓍} where
   ren∋ (lift⊆ e) zero    = zero
   ren∋ (lift⊆ e) (suc i) = suc (ren∋ e i)
 
-  wk∋ : ∀ {Γ A B} → Γ ∋ B → A ∷ Γ ∋ B
+  wk∋ : ∀ {Γ A B} → Γ ∋ A → B ∷ Γ ∋ A
   wk∋ i = ren∋ (wk⊆ id⊆) i
 
   idren∋ : ∀ {Γ A} (i : Γ ∋ A) → ren∋ id⊆ i ≡ i
@@ -144,11 +144,11 @@ module Renamings {𝓍} {X : Set 𝓍} where
   stop⊆ : [] ⊆ []
   stop⊆ = []
 
-  wk⊆ : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ⊆ A ∷ Γ′
+  wk⊆ : ∀ {Γ Γ′ B} → Γ ⊆ Γ′ → Γ ⊆ B ∷ Γ′
   wk⊆ []       = []
   wk⊆ (i ∷ is) = suc i ∷ wk⊆ is
 
-  lift⊆ : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → A ∷ Γ ⊆ A ∷ Γ′
+  lift⊆ : ∀ {Γ Γ′ B} → Γ ⊆ Γ′ → B ∷ Γ ⊆ B ∷ Γ′
   lift⊆ is = zero ∷ wk⊆ is
 
   id⊆ : ∀ {Γ} → Γ ⊆ Γ
@@ -166,7 +166,7 @@ module Renamings {𝓍} {X : Set 𝓍} where
   wk∋ i = ren∋ (wk⊆ id⊆) i
 
   eqsucren∋ : ∀ {Γ Γ′ A B} (js : Γ ⊆ Γ′) (i : Γ ∋ A) →
-              ren∋ (wk⊆ js) i ≡ (suc ∘ ren∋ js) i :> (B ∷ Γ′ ∋ A)
+              ren∋ (wk⊆ js) i ≡ (_∋_.suc {B = B} ∘ ren∋ js) i
   eqsucren∋ (j ∷ js) zero    = refl
   eqsucren∋ (j ∷ js) (suc i) = eqsucren∋ js i
 
@@ -189,20 +189,20 @@ module Renamings {𝓍} {X : Set 𝓍} where
   compren∋ (j′ ∷ js′) (j ∷ js) zero    = refl
   compren∋ (j′ ∷ js′) (j ∷ js) (suc i) = compren∋ (j′ ∷ js′) js i
 
-  eqwk⊆ : ∀ {Γ Γ′ Γ″ B} (is : Γ ⊆ Γ′) (is′ : Γ′ ⊆ Γ″) →
-          (wk⊆ is) ∘⊆ (lift⊆ is′) ≡ wk⊆ (is ∘⊆ is′) :> (Γ ⊆ B ∷ Γ″)
-  eqwk⊆ []       is′ = refl
-  eqwk⊆ (i ∷ is) is′ = _∷_ & eqsucren∋ is′ i ⊗ eqwk⊆ is is′
+  eqwk⊆ : ∀ {Γ Γ′ Γ″ B} (is′ : Γ′ ⊆ Γ″) (is : Γ ⊆ Γ′) →
+          (wk⊆ is) ∘⊆ (lift⊆ is′) ≡ wk⊆ {B = B} (is ∘⊆ is′)
+  eqwk⊆ is′ []       = refl
+  eqwk⊆ is′ (i ∷ is) = _∷_ & eqsucren∋ is′ i ⊗ eqwk⊆ is′ is
 
-  eqlift⊆ : ∀ {Γ Γ′ Γ″ B} (is : Γ ⊆ Γ′) (is′ : Γ′ ⊆ Γ″)  →
-            (lift⊆ is) ∘⊆ (lift⊆ is′) ≡ lift⊆ (is ∘⊆ is′) :> (B ∷ Γ ⊆ B ∷ Γ″)
-  eqlift⊆ []       is′ = refl
-  eqlift⊆ (i ∷ is) is′ = (zero ∷_) & eqwk⊆ (i ∷ is) is′
+  eqlift⊆ : ∀ {Γ Γ′ Γ″ B} (is′ : Γ′ ⊆ Γ″) (is : Γ ⊆ Γ′) →
+            (lift⊆ is) ∘⊆ (lift⊆ is′) ≡ lift⊆ {B = B} (is ∘⊆ is′)
+  eqlift⊆ is′ []       = refl
+  eqlift⊆ is′ (i ∷ is) = (zero ∷_) & eqwk⊆ is′ (i ∷ is)
 
-  eq⊆ : ∀ {Γ Γ′ Γ″ A} (is : Γ ⊆ Γ′) (i′ : Γ″ ∋ A) (is′ : Γ′ ⊆ Γ″)  →
+  eq⊆ : ∀ {Γ Γ′ Γ″ A} (i′ : Γ″ ∋ A) (is′ : Γ′ ⊆ Γ″) (is : Γ ⊆ Γ′) →
         (wk⊆ is) ∘⊆ (i′ ∷ is′) ≡ is ∘⊆ is′
-  eq⊆ []       i′ is′ = refl
-  eq⊆ (i ∷ is) i′ is′ = (ren∋ is′ i ∷_) & eq⊆ is i′ is′
+  eq⊆ i′ is′ []       = refl
+  eq⊆ i′ is′ (i ∷ is) = (ren∋ is′ i ∷_) & eq⊆ i′ is′ is
 
   rid⊆ : ∀ {Γ Γ′} (is : Γ ⊆ Γ′) → is ∘⊆ id⊆ ≡ is
   rid⊆ []       = refl
@@ -210,7 +210,7 @@ module Renamings {𝓍} {X : Set 𝓍} where
 
   lid⊆ : ∀ {Γ Γ′} (is : Γ ⊆ Γ′) → id⊆ ∘⊆ is ≡ is
   lid⊆ []       = refl
-  lid⊆ (i ∷ is) = (i ∷_) & (eq⊆ id⊆ i is ⋮ lid⊆ is)
+  lid⊆ (i ∷ is) = (i ∷_) & (eq⊆ i is id⊆ ⋮ lid⊆ is)
 
   ass⊆ : ∀ {Γ Γ′ Γ″ Γ‴} (is : Γ ⊆ Γ′) (is′ : Γ′ ⊆ Γ″) (is″ : Γ″ ⊆ Γ‴) →
          is ∘⊆ (is′ ∘⊆ is″) ≡ (is ∘⊆ is′) ∘⊆ is″

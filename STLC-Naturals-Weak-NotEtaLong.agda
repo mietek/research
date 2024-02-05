@@ -219,10 +219,10 @@ rensNNF : ∀ {Γ Γ′ Δ} {ss : Γ ⊢* Δ} (e : Γ ⊆ Γ′) → NNF* ss →
 rensNNF e []       = []
 rensNNF e (p ∷ ps) = renNNF e p ∷ rensNNF e ps
 
-wksNNF : ∀ {Γ Δ A} {ss : Γ ⊢* Δ} → NNF* ss → NNF* (wk* {A = A} ss)
+wksNNF : ∀ {Γ Δ B} {ss : Γ ⊢* Δ} → NNF* ss → NNF* (wk* {B = B} ss)
 wksNNF ps = rensNNF (wk⊆ id⊆) ps
 
-liftsNNF : ∀ {Γ Δ A} {ss : Γ ⊢* Δ} → NNF* ss → NNF* (lift* {A = A} ss)
+liftsNNF : ∀ {Γ Δ B} {ss : Γ ⊢* Δ} → NNF* ss → NNF* (lift* {B = B} ss)
 liftsNNF ps = var- ∷ wksNNF ps
 
 mutual

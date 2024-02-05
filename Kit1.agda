@@ -27,8 +27,8 @@ module TmKit (¶ : TmKitParams) where
   open TmKitParams ¶
   tmkit = ¶
 
-  ty : ∀ {Γ A} → Γ ⊢ A → Ty
-  ty {A = A} t = A
+  ty : ∀ {A Γ} → Γ ⊢ A → Ty
+  ty {A} t = A
 
   infix 3 _⊢*_
   data _⊢*_ (Γ : Ctx) : Ctx → Set where
@@ -56,7 +56,7 @@ module RenKit (¶ : RenKitParams) where
   open RenKitParams ¶
   renkit = ¶
 
-  wk : ∀ {Γ A B} → Γ ⊢ B → A ∷ Γ ⊢ B
+  wk : ∀ {Γ A B} → Γ ⊢ A → B ∷ Γ ⊢ A
   wk t = ren (wk⊆ id⊆) t
 
   -- Kovacs: flip _ₛ∘ₑ_
@@ -67,10 +67,10 @@ module RenKit (¶ : RenKitParams) where
   _◐_ : ∀ {Γ Γ′ Δ} → Γ ⊢* Δ → Γ ⊆ Γ′ → Γ′ ⊢* Δ
   _◐_ = flip ren*
 
-  wk* : ∀ {Γ Δ A} → Γ ⊢* Δ → A ∷ Γ ⊢* Δ
+  wk* : ∀ {Γ Δ B} → Γ ⊢* Δ → B ∷ Γ ⊢* Δ
   wk* ts = ren* (wk⊆ id⊆) ts
 
-  lift* : ∀ {Γ Δ A} → Γ ⊢* Δ → A ∷ Γ ⊢* A ∷ Δ
+  lift* : ∀ {Γ Δ B} → Γ ⊢* Δ → B ∷ Γ ⊢* B ∷ Δ
   lift* ts = var zero ∷ wk* ts
 
   -- Kovacs: ⌜_⌝ᵒᵖᵉ

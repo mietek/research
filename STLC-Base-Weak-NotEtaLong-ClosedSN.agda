@@ -9,17 +9,17 @@ mutual
   HWN : ∀ {Γ A} → Γ ⊢ A → Set
   HWN t = WN t × HWN! t
 
-  HWN! : ∀ {Γ A} → Γ ⊢ A → Set
-  HWN! {A = ⌜◦⌝}     t  = 𝟙
-  HWN! {A = A ⌜⊃⌝ B} t₁ = ∀ {t₂} → HWN t₂ → HWN (t₁ ⌜$⌝ t₂)
+  HWN! : ∀ {A Γ} → Γ ⊢ A → Set
+  HWN! {⌜◦⌝}     t  = 𝟙
+  HWN! {A ⌜⊃⌝ B} t₁ = ∀ {t₂} → HWN t₂ → HWN (t₁ ⌜$⌝ t₂)
 
 mutual
   stepHWN : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒ t′ → HWN t′ → HWN t
   stepHWN r (wn′ , hwn!′) = stepWN r wn′ , stepHWN! r hwn!′
 
-  stepHWN! : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒ t′ → HWN! t′ → HWN! t
-  stepHWN! {A = ⌜◦⌝}     r unit       = unit
-  stepHWN! {A = A ⌜⊃⌝ B} r f    hwn₂′ = stepHWN (cong$₁ r) (f hwn₂′)
+  stepHWN! : ∀ {A Γ} {t t′ : Γ ⊢ A} → t ⇒ t′ → HWN! t′ → HWN! t
+  stepHWN! {⌜◦⌝}     r unit       = unit
+  stepHWN! {A ⌜⊃⌝ B} r f    hwn₂′ = stepHWN (cong$₁ r) (f hwn₂′)
 
 step⇒*HWN : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒* t′ → HWN t′ → HWN t
 step⇒*HWN done        hwn′ = hwn′
@@ -32,9 +32,9 @@ mutual
   skipHWN : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒ t′ → HWN t → HWN t′
   skipHWN r (wn , hwn!) = skipWN r wn , skipHWN! r hwn!
 
-  skipHWN! : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒ t′ → HWN! t → HWN! t′
-  skipHWN! {A = ⌜◦⌝}     r unit      = unit
-  skipHWN! {A = A ⌜⊃⌝ B} r f    hwn₂ = skipHWN (cong$₁ r) (f hwn₂)
+  skipHWN! : ∀ {A Γ} {t t′ : Γ ⊢ A} → t ⇒ t′ → HWN! t → HWN! t′
+  skipHWN! {⌜◦⌝}     r unit      = unit
+  skipHWN! {A ⌜⊃⌝ B} r f    hwn₂ = skipHWN (cong$₁ r) (f hwn₂)
 
 skip⇒*HWN : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒* t′ → HWN t → HWN t′
 skip⇒*HWN done        hwn = hwn
