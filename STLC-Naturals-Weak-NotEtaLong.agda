@@ -267,20 +267,20 @@ ren⇒ e (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ) =
               begin
                 ren (lift⊆ e) (wk (⌜rec⌝ tₙ t₀ tₛ))
               ≡⟨ compren (lift⊆ e) (wk⊆ id⊆) (⌜rec⌝ tₙ t₀ tₛ) ⁻¹ ⟩
-                ren (wk⊆ (id⊆ ∘⊆ e)) (⌜rec⌝ tₙ t₀ tₛ)
-              ≡⟨ (flip ren (⌜rec⌝ tₙ t₀ tₛ) ∘ wk⊆) & lid⊆ e ⟩
+                ren (wk⊆ (e ∘⊆ id⊆)) (⌜rec⌝ tₙ t₀ tₛ)
+              ≡⟨ (flip ren (⌜rec⌝ tₙ t₀ tₛ) ∘ wk⊆) & rid⊆ e ⟩
                 ren (wk⊆ e) (⌜rec⌝ tₙ t₀ tₛ)
               ≡⟨⟩
                 ⌜rec⌝ (ren (wk⊆ e) tₙ)
                       (ren (wk⊆ e) t₀)
                       (ren (lift⊆ (lift⊆ (wk⊆ e))) tₛ)
-              ≡⟨ ⌜rec⌝ & ( (flip ren tₙ ∘ wk⊆) & rid⊆ e ⁻¹
+              ≡⟨ ⌜rec⌝ & ( (flip ren tₙ ∘ wk⊆) & lid⊆ e ⁻¹
                          ⋮ compren (wk⊆ id⊆) e tₙ
                          )
-                       ⊗ ( (flip ren t₀ ∘ wk⊆) & rid⊆ e ⁻¹
+                       ⊗ ( (flip ren t₀ ∘ wk⊆) & lid⊆ e ⁻¹
                          ⋮ compren (wk⊆ id⊆) e t₀
                          )
-                       ⊗ ( (flip ren tₛ ∘ lift⊆ ∘ lift⊆ ∘ wk⊆) & rid⊆ e ⁻¹
+                       ⊗ ( (flip ren tₛ ∘ lift⊆ ∘ lift⊆ ∘ wk⊆) & lid⊆ e ⁻¹
                          ⋮ compren (lift⊆ (lift⊆ (wk⊆ id⊆))) (lift⊆ (lift⊆ e)) tₛ
                          ) ⟩
                 ⌜rec⌝ (wk (ren e tₙ))
@@ -296,9 +296,9 @@ ren⇒ e (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ) =
           [ ren e tₙ ]
       ∎
 
--- oops : ∀ {Γ Ξ A B C} (ss : Ξ ⊢* Γ) →
---        rens (wk⊆ {A = A} (lift⊆ {A = B} (lift⊆ {A = C} id⊆))) (rens (wk⊆ (lift⊆ id⊆)) (rens (wk⊆ id⊆) ss)) ≡
---        rens (lift⊆ (lift⊆ (wk⊆ id⊆))) (rens (wk⊆ (lift⊆ id⊆)) (rens (wk⊆ id⊆) ss))
+-- oops : ∀ {Γ Ξ B₁ B₂ B₃} (ss : Ξ ⊢* Γ) →
+--        ren* (wk⊆ {B = B₁} (lift⊆ {B = B₂} (lift⊆ {B = B₃} id⊆))) (ren* (wk⊆ (lift⊆ id⊆)) (ren* (wk⊆ id⊆) ss)) ≡
+--        ren* (lift⊆ (lift⊆ (wk⊆ id⊆))) (ren* (wk⊆ (lift⊆ id⊆)) (ren* (wk⊆ id⊆) ss))
 -- oops ss = {!!}
 
 -- sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → NNF* ss → t ⇒ t′ →
@@ -319,61 +319,61 @@ ren⇒ e (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ) =
 --       begin
 --         sub ss (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ] [ tₙ ])
 --       ≡⟨ subcut ss (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ]) tₙ ⁻¹ ⟩
---         sub (lifts ss) (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ]) [ sub ss tₙ ]
+--         sub (lift* ss) (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ]) [ sub ss tₙ ]
 --       ≡⟨ (_[ sub ss tₙ ]) & (
 --           begin
---             sub (lifts ss) (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ])
---           ≡⟨ subcut (lifts ss) tₛ (wk (⌜rec⌝ tₙ t₀ tₛ)) ⁻¹ ⟩
---             sub (lifts (lifts ss)) tₛ [ sub (lifts ss) (wk (⌜rec⌝ tₙ t₀ tₛ)) ]
---           ≡⟨ (sub (lifts (lifts ss)) tₛ [_]) & (
+--             sub (lift* ss) (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ])
+--           ≡⟨ subcut (lift* ss) tₛ (wk (⌜rec⌝ tₙ t₀ tₛ)) ⁻¹ ⟩
+--             sub (lift* (lift* ss)) tₛ [ sub (lift* ss) (wk (⌜rec⌝ tₙ t₀ tₛ)) ]
+--           ≡⟨ (sub (lift* (lift* ss)) tₛ [_]) & (
 --               begin
---                 sub (lifts ss) (wk (⌜rec⌝ tₙ t₀ tₛ))
---               ≡⟨ eqsubren (lifts ss) (wk⊆ id⊆) (⌜rec⌝ tₙ t₀ tₛ) ⁻¹ ⟩
---                 sub (gets (wk⊆ id⊆) (lifts ss)) (⌜rec⌝ tₙ t₀ tₛ)
+--                 sub (lift* ss) (wk (⌜rec⌝ tₙ t₀ tₛ))
+--               ≡⟨ eqsubren (lift* ss) (wk⊆ id⊆) (⌜rec⌝ tₙ t₀ tₛ) ⁻¹ ⟩
+--                 sub (get* (wk⊆ id⊆) (lift* ss)) (⌜rec⌝ tₙ t₀ tₛ)
 --               ≡⟨⟩
---                 sub (gets id⊆ (wks ss)) (⌜rec⌝ tₙ t₀ tₛ)
---               ≡⟨ flip sub (⌜rec⌝ tₙ t₀ tₛ) & lidgets (wks ss) ⟩
---                 sub (wks ss) (⌜rec⌝ tₙ t₀ tₛ)
+--                 sub (get* id⊆ (wk* ss)) (⌜rec⌝ tₙ t₀ tₛ)
+--               ≡⟨ flip sub (⌜rec⌝ tₙ t₀ tₛ) & lidget* (wk* ss) ⟩
+--                 sub (wk* ss) (⌜rec⌝ tₙ t₀ tₛ)
 --               ≡⟨⟩
---                 ⌜rec⌝ (sub (wks ss) tₙ)
---                       (sub (wks ss) t₀)
---                       (sub (lifts (lifts (wks ss))) tₛ)
+--                 ⌜rec⌝ (sub (wk* ss) tₙ)
+--                       (sub (wk* ss) t₀)
+--                       (sub (lift* (lift* (wk* ss))) tₛ)
 --               ≡⟨ ⌜rec⌝ & eqrensub (wk⊆ id⊆) ss tₙ
 --                        ⊗ eqrensub (wk⊆ id⊆) ss t₀
 --                        ⊗ (
 --                            begin
---                              sub (lifts (lifts (wks ss))) tₛ
+--                              sub (lift* (lift* (wk* ss))) tₛ
 --                            ≡⟨ flip sub tₛ & (
 --                                begin
---                                  lifts (lifts (wks ss))
+--                                  lift* (lift* (wk* ss))
 --                                ≡⟨⟩
 --                                  var zero ∷
 --                                    (var (suc zero) ∷
---                                      rens (wk⊆ (lift⊆ (lift⊆ id⊆)))
---                                        (rens (wk⊆ (lift⊆ id⊆)) (rens (wk⊆ id⊆) ss)))
+--                                      ren* (wk⊆ (lift⊆ (lift⊆ id⊆)))
+--                                        (ren* (wk⊆ (lift⊆ id⊆)) (ren* (wk⊆ id⊆) ss)))
 --                                ≡⟨ (var zero ∷_) & ((var (suc zero) ∷_) & oops ss) ⟩
 --                                  var zero ∷
 --                                    (var (suc zero) ∷
---                                      rens (lift⊆ (lift⊆ (wk⊆ id⊆)))
---                                        (rens (wk⊆ (lift⊆ id⊆)) (rens (wk⊆ id⊆) ss)))
+--                                      ren* (lift⊆ (lift⊆ (wk⊆ id⊆)))
+--                                        (ren* (wk⊆ (lift⊆ id⊆)) (ren* (wk⊆ id⊆) ss)))
 --                                ≡⟨⟩
---                                  rens (lift⊆ (lift⊆ (wk⊆ id⊆))) (lifts (lifts ss))
+--                                  ren* (lift⊆ (lift⊆ (wk⊆ id⊆))) (lift* (lift* ss))
 --                                ∎) ⟩
---                              sub (rens (lift⊆ (lift⊆ (wk⊆ id⊆))) (lifts (lifts ss))) tₛ
---                            ≡⟨ eqrensub (lift⊆ (lift⊆ (wk⊆ id⊆))) (lifts (lifts ss)) tₛ ⟩
---                              ren (lift⊆ (lift⊆ (wk⊆ id⊆))) (sub (lifts (lifts ss)) tₛ)
+--                              sub (ren* (lift⊆ (lift⊆ (wk⊆ id⊆))) (lift* (lift* ss))) tₛ
+--                            ≡⟨ eqrensub (lift⊆ (lift⊆ (wk⊆ id⊆))) (lift* (lift* ss)) tₛ ⟩
+--                              ren (lift⊆ (lift⊆ (wk⊆ id⊆))) (sub (lift* (lift* ss)) tₛ)
 --                            ∎) ⟩
 --                 ⌜rec⌝ (wk (sub ss tₙ))
 --                       (wk (sub ss t₀))
---                       (ren (lift⊆ (lift⊆ (wk⊆ id⊆))) (sub (lifts (lifts ss)) tₛ))
+--                       (ren (lift⊆ (lift⊆ (wk⊆ id⊆))) (sub (lift* (lift* ss)) tₛ))
 --               ≡⟨⟩
---                 wk (⌜rec⌝ (sub ss tₙ) (sub ss t₀) (sub (lifts (lifts ss)) tₛ))
+--                 wk (⌜rec⌝ (sub ss tₙ) (sub ss t₀) (sub (lift* (lift* ss)) tₛ))
 --               ∎) ⟩
---             sub (lifts (lifts ss)) tₛ
---               [ wk (⌜rec⌝ (sub ss tₙ) (sub ss t₀) (sub (lifts (lifts ss)) tₛ)) ]
+--             sub (lift* (lift* ss)) tₛ
+--               [ wk (⌜rec⌝ (sub ss tₙ) (sub ss t₀) (sub (lift* (lift* ss)) tₛ)) ]
 --           ∎) ⟩
---         sub (lifts (lifts ss)) tₛ
---           [ wk (⌜rec⌝ (sub ss tₙ) (sub ss t₀) (sub (lifts (lifts ss)) tₛ)) ]
+--         sub (lift* (lift* ss)) tₛ
+--           [ wk (⌜rec⌝ (sub ss tₙ) (sub ss t₀) (sub (lift* (lift* ss)) tₛ)) ]
 --           [ sub ss tₙ ]
 --       ∎
 
@@ -411,35 +411,35 @@ ren⇒ e (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ) =
 -- --                       (sub (lifts ss) (wk t₀))
 -- --                       (sub (lifts (lifts (lifts ss))) (ren (lift⊆ (lift⊆ (wk⊆ id⊆))) tₛ))
 -- --               ≡⟨ ⌜rec⌝ & ( eqsubren (lifts ss) (wk⊆ id⊆) tₙ ⁻¹
--- --                          ⋮ flip sub tₙ & lidgets (wks ss)
+-- --                          ⋮ flip sub tₙ & lidget* (wk* ss)
 -- --                          ⋮ eqrensub (wk⊆ id⊆) ss tₙ
 -- --                          )
 -- --                        ⊗ ( eqsubren (lifts ss) (wk⊆ id⊆) t₀ ⁻¹
--- --                          ⋮ flip sub t₀ & lidgets (wks ss)
+-- --                          ⋮ flip sub t₀ & lidget* (wk* ss)
 -- --                          ⋮ eqrensub (wk⊆ id⊆) ss t₀
 -- --                          )
 -- --                        ⊗ (
 -- --                            begin
 -- --                              sub (lifts (lifts (lifts ss))) (ren (lift⊆ (lift⊆ (wk⊆ id⊆))) tₛ)
 -- --                            ≡⟨ eqsubren (lifts (lifts (lifts ss))) (lift⊆ (lift⊆ (wk⊆ id⊆))) tₛ ⁻¹ ⟩
--- --                              sub (gets (lift⊆ (lift⊆ (wk⊆ id⊆))) (lifts (lifts (lifts ss)))) tₛ
+-- --                              sub (get* (lift⊆ (lift⊆ (wk⊆ id⊆))) (lifts (lifts (lifts ss)))) tₛ
 -- --                            ≡⟨⟩
 -- --                              sub (var zero ∷ (var (suc zero) ∷
--- --                                gets id⊆ (rens (wk⊆ (lift⊆ (lift⊆ id⊆))) (rens (wk⊆ (lift⊆ id⊆)) (wks ss)))))
+-- --                                get* id⊆ (ren* (wk⊆ (lift⊆ (lift⊆ id⊆))) (ren* (wk⊆ (lift⊆ id⊆)) (wk* ss)))))
 -- --                                tₛ
 -- --                            ≡⟨ (flip sub tₛ ∘ (var zero ∷_)) & ((var (suc zero) ∷_) & (
 -- --                                begin
--- --                                  gets id⊆ (rens (wk⊆ (lift⊆ (lift⊆ id⊆))) (rens (wk⊆ (lift⊆ id⊆)) (wks ss)))
--- --                                ≡⟨ lidgets (rens (wk⊆ (lift⊆ (lift⊆ id⊆))) (rens (wk⊆ (lift⊆ id⊆)) (wks ss))) ⟩
--- --                                  rens (wk⊆ (lift⊆ (lift⊆ id⊆))) (rens (wk⊆ (lift⊆ id⊆)) (wks ss))
+-- --                                  get* id⊆ (ren* (wk⊆ (lift⊆ (lift⊆ id⊆))) (ren* (wk⊆ (lift⊆ id⊆)) (wk* ss)))
+-- --                                ≡⟨ lidget* (ren* (wk⊆ (lift⊆ (lift⊆ id⊆))) (ren* (wk⊆ (lift⊆ id⊆)) (wk* ss))) ⟩
+-- --                                  ren* (wk⊆ (lift⊆ (lift⊆ id⊆))) (ren* (wk⊆ (lift⊆ id⊆)) (wk* ss))
 -- --                                ≡⟨ {!!} ⟩
--- --                                  rens (lift⊆ (lift⊆ (wk⊆ id⊆))) (rens (wk⊆ (lift⊆ id⊆)) (wks ss))
+-- --                                  ren* (lift⊆ (lift⊆ (wk⊆ id⊆))) (ren* (wk⊆ (lift⊆ id⊆)) (wk* ss))
 -- --                                ∎)) ⟩
 -- --                              sub (var zero ∷ (var (suc zero) ∷
--- --                                rens (lift⊆ (lift⊆ (wk⊆ id⊆))) (rens (wk⊆ (lift⊆ id⊆)) (wks ss))))
+-- --                                ren* (lift⊆ (lift⊆ (wk⊆ id⊆))) (ren* (wk⊆ (lift⊆ id⊆)) (wk* ss))))
 -- --                                tₛ
 -- --                            ≡⟨⟩
--- --                              sub (rens (lift⊆ (lift⊆ (wk⊆ id⊆))) (lifts (lifts ss))) tₛ
+-- --                              sub (ren* (lift⊆ (lift⊆ (wk⊆ id⊆))) (lifts (lifts ss))) tₛ
 -- --                            ≡⟨ eqrensub (lift⊆ (lift⊆ (wk⊆ id⊆))) (lifts (lifts ss)) tₛ ⟩
 -- --                              ren (lift⊆ (lift⊆ (wk⊆ id⊆))) (sub (lifts (lifts ss)) tₛ)
 -- --                            ∎

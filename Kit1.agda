@@ -116,7 +116,7 @@ module SubKit (¶ : SubKitParams) where
   trans* = sub*
 
   _●_ : ∀ {Γ Ξ Δ} → Γ ⊢* Δ → Ξ ⊢* Γ → Ξ ⊢* Δ
-  _●_ = flip trans*
+  _●_ = flip sub*
 
   _[_] : ∀ {Γ A B} → A ∷ Γ ⊢ B → Γ ⊢ A → Γ ⊢ B
   t [ s ] = sub (s ∷ id*) t

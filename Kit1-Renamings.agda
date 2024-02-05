@@ -56,7 +56,7 @@ module RenKit (¶ : RenKitParams) where
   open RenKitParams ¶
   renkit = ¶
 
-  wk : ∀ {Γ A B} → Γ ⊢ B → A ∷ Γ ⊢ B
+  wk : ∀ {Γ A B} → Γ ⊢ A → B ∷ Γ ⊢ A
   wk t = ren (wk⊆ id⊆) t
 
   -- Kovacs: flip _ₛ∘ₑ_
@@ -67,10 +67,10 @@ module RenKit (¶ : RenKitParams) where
   _◐_ : ∀ {Γ Γ′ Δ} → Γ ⊢* Δ → Γ ⊆ Γ′ → Γ′ ⊢* Δ
   _◐_ = flip ren*
 
-  wk* : ∀ {Γ Δ A} → Γ ⊢* Δ → A ∷ Γ ⊢* Δ
+  wk* : ∀ {Γ Δ B} → Γ ⊢* Δ → B ∷ Γ ⊢* Δ
   wk* ts = ren* (wk⊆ id⊆) ts
 
-  lift* : ∀ {Γ Δ A} → Γ ⊢* Δ → A ∷ Γ ⊢* A ∷ Δ
+  lift* : ∀ {Γ Δ B} → Γ ⊢* Δ → B ∷ Γ ⊢* B ∷ Δ
   lift* ts = var zero ∷ wk* ts
 
   -- Kovacs: ⌜_⌝ᵒᵖᵉ
@@ -115,22 +115,18 @@ module SubKit (¶ : SubKitParams) where
   trans* = sub*
 
   _●_ : ∀ {Γ Ξ Δ} → Γ ⊢* Δ → Ξ ⊢* Γ → Ξ ⊢* Δ
-  _●_ = flip trans*
+  _●_ = flip sub*
 
   _[_] : ∀ {Γ A B} → A ∷ Γ ⊢ B → Γ ⊢ A → Γ ⊢ B
   t [ s ] = sub (s ∷ id*) t
 
   -- Kovacs: _ₑ∘ₛ_
---  get* : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⊢* Δ′ → Γ ⊢* Δ
---  get* []       ts = []
---  get* (i ∷ is) ts = sub ts (var i) ∷ get* is ts
---
---  _◑_ : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⊢* Δ′ → Γ ⊢* Δ
---  _◑_ = get*
+  get* : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⊢* Δ′ → Γ ⊢* Δ
+  get* []       ts = []
+  get* (i ∷ is) ts = sub ts (var i) ∷ get* is ts
 
   _◑_ : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⊢* Δ′ → Γ ⊢* Δ
-  _◑_ []       ts = []
-  _◑_ (i ∷ is) ts = sub ts (var i) ∷ _◑_ is ts
+  _◑_ = get*
 
 
 ----------------------------------------------------------------------------------------------------
