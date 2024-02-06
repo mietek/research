@@ -45,10 +45,7 @@ module RenSubKit1 (¶ : RenSubKit1Params) where
   eqwkren : ∀ {Γ Γ′ A B} (js : Γ ⊆ Γ′) (t : Γ ⊢ A) →
             (ren (lift⊆ js) ∘ wk) t ≡ (wk {B = B} ∘ ren js) t
   eqwkren js t = eqren zero (wk⊆ js) t
-               ⋮ flip ren t & ( wk⊆ & (lid⊆ js ⁻¹)
-                              ⋮ eqwk⊆ id⊆ js ⁻¹
-                              ⋮ eq⊆ zero (wk⊆ id⊆) js
-                              )
+               ⋮ flip ren t & eqwk⊆′ js ⁻¹
                ⋮ compren (wk⊆ id⊆) js t
 
   eqren* : ∀ {Γ Γ′ Δ B} (j : Γ′ ∋ B) (js : Γ ⊆ Γ′) (ts : Γ ⊢* Δ) →
@@ -170,10 +167,6 @@ record RenSubKit2Params : Set₁ where
     eqrensub : ∀ {Γ Ξ Ξ′ A} (js : Ξ ⊆ Ξ′) (ss : Ξ ⊢* Γ) (t : Γ ⊢ A) →
                sub (ren* js ss) t ≡ (ren js ∘ sub ss) t
     --         sub (ss ◐ js) t ≡ (sub ss ⨾ ren js) t
-    eqsubren : ∀ {Γ Γ′ Ξ A} (ss : Ξ ⊢* Γ′) (js : Γ ⊆ Γ′) (t : Γ ⊢ A) →
-               sub (get* js ss) t ≡ (sub ss ∘ ren js) t
-    --         sub (js ◑ ss) t ≡ (ren js ⨾ sub ss) t
-    lidsub   : ∀ {Γ A} (t : Γ ⊢ A) → sub id* t ≡ t
 
 module RenSubKit2 (¶ : RenSubKit2Params) where
   open RenSubKit2Params ¶
@@ -193,13 +186,6 @@ module RenSubKit2 (¶ : RenSubKit2Params) where
   eqrenget* js []         ts = refl
   eqrenget* js (j′ ∷ js′) ts = _∷_ & eqrensub js ts (var j′) ⊗ eqrenget* js js′ ts
 
-  -- Kovacs: assₛₑₛ
-  eqsubren* : ∀ {Γ Γ′ Ξ Δ} (ss : Ξ ⊢* Γ′) (js : Γ ⊆ Γ′) (ts : Γ ⊢* Δ) →
-              sub* (get* js ss) ts ≡ (sub* ss ∘ ren* js) ts
-  --          ts ● (js ◑ ss) ≡ (ts ◐ js) ● ss
-  eqsubren* ss js []       = refl
-  eqsubren* ss js (t ∷ ts) = _∷_ & eqsubren ss js t ⊗ eqsubren* ss js ts
-
   eqwkget* : ∀ {Γ Δ Δ′ B} (js : Δ ⊆ Δ′) (ts : Γ ⊢* Δ′) →
              (get* (wk⊆ js) ∘ lift*) ts ≡ (wk* {B = B} ∘ get* js) ts
   --         (wk⊆ js) ◑ (lift* ts) ≡ wk* {B = B} (js ◑ ts)
@@ -217,6 +203,32 @@ module RenSubKit2 (¶ : RenSubKit2Params) where
   ridget* []       = refl
   ridget* (i ∷ is) = _∷_ & (ridsub id* i ⋮ idsub∋ i)
                          ⊗ ridget* is
+
+
+----------------------------------------------------------------------------------------------------
+
+record RenSubKit3Params : Set₁ where
+  constructor kit
+  field
+    rensubkit2 : RenSubKit2Params
+  open RenSubKit2Params rensubkit2 public
+  open RenSubKit2 rensubkit2 public hiding (rensubkit2)
+  field
+    eqsubren : ∀ {Γ Γ′ Ξ A} (ss : Ξ ⊢* Γ′) (js : Γ ⊆ Γ′) (t : Γ ⊢ A) →
+               sub (get* js ss) t ≡ (sub ss ∘ ren js) t
+    --         sub (js ◑ ss) t ≡ (ren js ⨾ sub ss) t
+    lidsub   : ∀ {Γ A} (t : Γ ⊢ A) → sub id* t ≡ t
+
+module RenSubKit3 (¶ : RenSubKit3Params) where
+  open RenSubKit3Params ¶
+  rensubkit3 = ¶
+
+  -- Kovacs: assₛₑₛ
+  eqsubren* : ∀ {Γ Γ′ Ξ Δ} (ss : Ξ ⊢* Γ′) (js : Γ ⊆ Γ′) (ts : Γ ⊢* Δ) →
+              sub* (get* js ss) ts ≡ (sub* ss ∘ ren* js) ts
+  --          ts ● (js ◑ ss) ≡ (ts ◐ js) ● ss
+  eqsubren* ss js []       = refl
+  eqsubren* ss js (t ∷ ts) = _∷_ & eqsubren ss js t ⊗ eqsubren* ss js ts
 
   -- Kovacs: idrₛ
   lidsub* : ∀ {Γ Δ} (ts : Γ ⊢* Δ) → sub* id* ts ≡ ts
@@ -263,20 +275,20 @@ module RenSubKit2 (¶ : RenSubKit2Params) where
 
 ----------------------------------------------------------------------------------------------------
 
-record RenSubKit3Params : Set₁ where
+record RenSubKit4Params : Set₁ where
   constructor kit
   field
-    rensubkit2 : RenSubKit2Params
-  open RenSubKit2Params rensubkit2 public
-  open RenSubKit2 rensubkit2 public hiding (rensubkit2)
+    rensubkit3 : RenSubKit3Params
+  open RenSubKit3Params rensubkit3 public
+  open RenSubKit3 rensubkit3 public hiding (rensubkit3)
   field
     compsub : ∀ {Γ Ξ Ξ′ A} (ss′ : Ξ′ ⊢* Ξ) (ss : Ξ ⊢* Γ) (t : Γ ⊢ A) →
               sub (sub* ss′ ss) t ≡ (sub ss′ ∘ sub ss) t
     --        sub (ss ● ss′) t ≡ (sub ss ⨾ sub ss′) t
 
-module RenSubKit3 (¶ : RenSubKit3Params) where
-  open RenSubKit3Params ¶
-  rensubkit3 = ¶
+module RenSubKit4 (¶ : RenSubKit4Params) where
+  open RenSubKit4Params ¶
+  rensubkit4 = ¶
 
   -- Kovacs: assₛ
   asssub* : ∀ {Γ Ξ Ξ′ Δ} (ss′ : Ξ′ ⊢* Ξ) (ss : Ξ ⊢* Γ) (ts : Γ ⊢* Δ) →

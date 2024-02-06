@@ -192,6 +192,10 @@ module Renamings {𝓍} {X : Set 𝓍} where
   compren∋ (j′ ∷ js′) (j ∷ js) zero    = refl
   compren∋ (j′ ∷ js′) (j ∷ js) (suc i) = compren∋ (j′ ∷ js′) js i
 
+  lid⊆ : ∀ {Γ Γ′} (is : Γ ⊆ Γ′) → id⊆ ∘⊆ is ≡ is
+  lid⊆ []       = refl
+  lid⊆ (i ∷ is) = _∷_ & idren∋ i ⊗ lid⊆ is
+
   eq⊆ : ∀ {Γ Γ′ Γ″ B} (i′ : Γ″ ∋ B) (is′ : Γ′ ⊆ Γ″) (is : Γ ⊆ Γ′) →
         (i′ ∷ is′) ∘⊆ (wk⊆ is) ≡ is′ ∘⊆ is
   eq⊆ i′ is′ []       = refl
@@ -202,14 +206,17 @@ module Renamings {𝓍} {X : Set 𝓍} where
   eqwk⊆ is′ []       = refl
   eqwk⊆ is′ (i ∷ is) = _∷_ & eqwkren∋ is′ i ⊗ eqwk⊆ is′ is
 
+  -- TODO: name? friends?
+  eqwk⊆′ : ∀ {Γ Γ′ B} (is : Γ ⊆ Γ′) →
+           wk⊆ id⊆ ∘⊆ is ≡ wk⊆ {B = B} is
+  eqwk⊆′ is = eq⊆ zero (wk⊆ id⊆) is ⁻¹
+            ⋮ eqwk⊆ id⊆ is
+            ⋮ wk⊆ & (lid⊆ is)
+
   eqlift⊆ : ∀ {Γ Γ′ Γ″ B} (is′ : Γ′ ⊆ Γ″) (is : Γ ⊆ Γ′) →
             (lift⊆ is′) ∘⊆ (lift⊆ is) ≡ lift⊆ {B = B} (is′ ∘⊆ is)
   eqlift⊆ is′ []       = refl
   eqlift⊆ is′ (i ∷ is) = (zero ∷_) & eqwk⊆ is′ (i ∷ is)
-
-  lid⊆ : ∀ {Γ Γ′} (is : Γ ⊆ Γ′) → id⊆ ∘⊆ is ≡ is
-  lid⊆ []       = refl
-  lid⊆ (i ∷ is) = _∷_ & idren∋ i ⊗ lid⊆ is
 
   rid⊆ : ∀ {Γ Γ′} (is : Γ ⊆ Γ′) → is ∘⊆ id⊆ ≡ is
   rid⊆ []       = refl

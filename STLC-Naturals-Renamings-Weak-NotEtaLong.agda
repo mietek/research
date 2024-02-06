@@ -1,7 +1,7 @@
-module STLC-Naturals-Weak-NotEtaLong where
+module STLC-Naturals-Renamings-Weak-NotEtaLong where
 
-open import STLC-Naturals-Properties public
-open import Kit3 public
+open import STLC-Naturals-Renamings-Properties public
+open import Kit3-Renamings public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -267,20 +267,27 @@ ren⇒ e (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ) =
               begin
                 ren (lift⊆ e) (wk (⌜rec⌝ tₙ t₀ tₛ))
               ≡⟨ compren (lift⊆ e) (wk⊆ id⊆) (⌜rec⌝ tₙ t₀ tₛ) ⁻¹ ⟩
-                ren (wk⊆ (e ∘⊆ id⊆)) (⌜rec⌝ tₙ t₀ tₛ)
-              ≡⟨ (flip ren (⌜rec⌝ tₙ t₀ tₛ) ∘ wk⊆) & rid⊆ e ⟩
+                ren (lift⊆ e ∘⊆ wk⊆ id⊆) (⌜rec⌝ tₙ t₀ tₛ)
+              ≡⟨ flip ren (⌜rec⌝ tₙ t₀ tₛ) & (eqwk⊆ e id⊆ ⋮ wk⊆ & rid⊆ e) ⟩
                 ren (wk⊆ e) (⌜rec⌝ tₙ t₀ tₛ)
               ≡⟨⟩
                 ⌜rec⌝ (ren (wk⊆ e) tₙ)
                       (ren (wk⊆ e) t₀)
                       (ren (lift⊆ (lift⊆ (wk⊆ e))) tₛ)
-              ≡⟨ ⌜rec⌝ & ( (flip ren tₙ ∘ wk⊆) & lid⊆ e ⁻¹
+              ≡⟨ ⌜rec⌝ & ( flip ren tₙ & eqwk⊆′ e ⁻¹
                          ⋮ compren (wk⊆ id⊆) e tₙ
                          )
-                       ⊗ ( (flip ren t₀ ∘ wk⊆) & lid⊆ e ⁻¹
+                       ⊗ ( flip ren t₀ & eqwk⊆′ e ⁻¹
                          ⋮ compren (wk⊆ id⊆) e t₀
                          )
-                       ⊗ ( (flip ren tₛ ∘ lift⊆ ∘ lift⊆ ∘ wk⊆) & lid⊆ e ⁻¹
+                       ⊗ ( flip ren tₛ & (lift⊆ & (
+              begin
+                lift⊆ (wk⊆ e)
+              ≡⟨ lift⊆ & eqwk⊆′ e ⁻¹ ⟩
+                lift⊆ (wk⊆ id⊆ ∘⊆ e)
+              ≡⟨ (zero ∷_) & (eqwk⊆ (wk⊆ id⊆) e ⁻¹) ⟩
+                zero ∷ (lift⊆ (wk⊆ id⊆) ∘⊆ wk⊆ e)
+              ∎) ⋮ eqlift⊆ (lift⊆ (wk⊆ id⊆)) (lift⊆ e) ⁻¹)
                          ⋮ compren (lift⊆ (lift⊆ (wk⊆ id⊆))) (lift⊆ (lift⊆ e)) tₛ
                          ) ⟩
                 ⌜rec⌝ (wk (ren e tₙ))
@@ -331,9 +338,7 @@ sub⇒ {ss = ss} ps (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ
                 sub (lift* ss) (wk (⌜rec⌝ tₙ t₀ tₛ))
               ≡⟨ eqsubren (lift* ss) (wk⊆ id⊆) (⌜rec⌝ tₙ t₀ tₛ) ⁻¹ ⟩
                 sub (get* (wk⊆ id⊆) (lift* ss)) (⌜rec⌝ tₙ t₀ tₛ)
-              ≡⟨⟩
-                sub (get* id⊆ (wk* ss)) (⌜rec⌝ tₙ t₀ tₛ)
-              ≡⟨ flip sub (⌜rec⌝ tₙ t₀ tₛ) & lidget* (wk* ss) ⟩
+              ≡⟨ flip sub (⌜rec⌝ tₙ t₀ tₛ) & (eqwkget* id⊆ ss ⋮ wk* & lidget* ss) ⟩
                 sub (wk* ss) (⌜rec⌝ tₙ t₀ tₛ)
               ≡⟨⟩
                 ⌜rec⌝ (sub (wk* ss) tₙ)

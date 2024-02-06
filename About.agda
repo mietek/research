@@ -70,6 +70,10 @@ import STLC-Naturals2
 import STLC-Naturals2-Strong-EtaLong
 import STLC-Naturals2-Strong-EtaLong-ConcreteNBE
 
+import STLC-Naturals-Renamings
+import STLC-Naturals-Renamings-Properties
+import STLC-Naturals-Renamings-Weak-NotEtaLong -- TODO
+
 
 ----------------------------------------------------------------------------------------------------
 
