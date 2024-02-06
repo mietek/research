@@ -37,21 +37,21 @@ module RenSubKit1 (¶ : RenSubKit1Params) where
   compren* e′ e []       = refl
   compren* e′ e (t ∷ ts) = _∷_ & compren e′ e t ⊗ compren* e′ e ts
 
-  eqwkren : ∀ {Γ Γ′ A B} (e : Γ ⊆ Γ′) (t : Γ ⊢ A) →
-            (ren (lift⊆ e) ∘ wk) t ≡ (wk {B = B} ∘ ren e) t
+  eqwkren : ∀ {B Γ Γ′ A} (e : Γ ⊆ Γ′) (t : Γ ⊢ A) →
+            (ren (lift⊆ e) ∘ wk) t ≡ (wk {B} ∘ ren e) t
   eqwkren e t = compren (lift⊆ e) (wk⊆ id⊆) t ⁻¹
               ⋮ (flip ren t ∘ wk⊆) & (rid⊆ e ⋮ lid⊆ e ⁻¹)
               ⋮ compren (wk⊆ id⊆) e t
 
-  eqwkren* : ∀ {Γ Γ′ Δ B} (e : Γ ⊆ Γ′) (ts : Γ ⊢* Δ) →
-             (ren* (lift⊆ e) ∘ wk*) ts ≡ (wk* {B = B} ∘ ren* e) ts
-  --         (wk* ts) ◐ (lift⊆ e) ≡ wk* {B = B} (ts ◐ e)
+  eqwkren* : ∀ {B Γ Γ′ Δ} (e : Γ ⊆ Γ′) (ts : Γ ⊢* Δ) →
+             (ren* (lift⊆ e) ∘ wk*) ts ≡ (wk* {B} ∘ ren* e) ts
+  --         (wk* ts) ◐ (lift⊆ e) ≡ wk* {B} (ts ◐ e)
   eqwkren* e []       = refl
   eqwkren* e (t ∷ ts) = _∷_ & eqwkren e t ⊗ eqwkren* e ts
 
-  eqliftren* : ∀ {Γ Γ′ Δ B} (e : Γ ⊆ Γ′) (ts : Γ ⊢* Δ) →
-               (ren* (lift⊆ e) ∘ lift*) ts ≡ (lift* {B = B} ∘ ren* e) ts
-  --           (lift* ts) ◐ (lift⊆ e) ≡ lift* {B = B} (ts ◐ e)
+  eqliftren* : ∀ {B Γ Γ′ Δ} (e : Γ ⊆ Γ′) (ts : Γ ⊢* Δ) →
+               (ren* (lift⊆ e) ∘ lift*) ts ≡ (lift* {B} ∘ ren* e) ts
+  --           (lift* ts) ◐ (lift⊆ e) ≡ lift* {B} (ts ◐ e)
   eqliftren* e ts = (_∷ (ren* (lift⊆ e) ∘ wk*) ts) & ridren (lift⊆ e) zero
                   ⋮ (var zero ∷_) & eqwkren* e ts
 
@@ -146,14 +146,14 @@ module RenSubKit1 (¶ : RenSubKit1Params) where
   eqrenget* e (wk⊆ e′)   (t ∷ ts) = eqrenget* e e′ ts
   eqrenget* e (lift⊆ e′) (t ∷ ts) = (ren e t ∷_) & eqrenget* e e′ ts
 
-  eqwkget* : ∀ {Γ Δ Δ′ B} (e : Δ ⊆ Δ′) (ts : Γ ⊢* Δ′) →
-             (get* (wk⊆ e) ∘ lift*) ts ≡ (wk* {B = B} ∘ get* e) ts
-  --         (wk⊆ e) ◑ (lift* ts) ≡ wk* {B = B} (e ◑ ts)
+  eqwkget* : ∀ {B Γ Δ Δ′} (e : Δ ⊆ Δ′) (ts : Γ ⊢* Δ′) →
+             (get* (wk⊆ e) ∘ lift*) ts ≡ (wk* {B} ∘ get* e) ts
+  --         (wk⊆ e) ◑ (lift* ts) ≡ wk* {B} (e ◑ ts)
   eqwkget* e ts = eqrenget* (wk⊆ id⊆) e ts
 
-  eqliftget* : ∀ {Γ Δ Δ′ B} (e : Δ ⊆ Δ′) (ts : Γ ⊢* Δ′) →
-               (get* (lift⊆ e) ∘ lift*) ts ≡ (lift* {B = B} ∘ get* e) ts
-  --           (lift⊆ e) ◑ (lift* ts) ≡ lift* {B = B} (e ◑ ts)
+  eqliftget* : ∀ {B Γ Δ Δ′} (e : Δ ⊆ Δ′) (ts : Γ ⊢* Δ′) →
+               (get* (lift⊆ e) ∘ lift*) ts ≡ (lift* {B} ∘ get* e) ts
+  --           (lift⊆ e) ◑ (lift* ts) ≡ lift* {B} (e ◑ ts)
   eqliftget* e ts = (var zero ∷_) & eqwkget* e ts
 
   -- Kovacs: idrₑₛ; not really identity
@@ -207,32 +207,32 @@ module RenSubKit2 (¶ : RenSubKit2Params) where
   lidsub* []       = refl
   lidsub* (t ∷ ts) = _∷_ & lidsub t ⊗ lidsub* ts
 
-  eqsub : ∀ {Γ Ξ A B} (s : Ξ ⊢ B) (ss : Ξ ⊢* Γ) (t : Γ ⊢ A) →
+  eqsub : ∀ {B Γ Ξ A} (s : Ξ ⊢ B) (ss : Ξ ⊢* Γ) (t : Γ ⊢ A) →
           (sub (s ∷ ss) ∘ wk) t ≡ sub ss t
   eqsub s ss t = eqsubren (s ∷ ss) (wk⊆ id⊆) t ⁻¹
                ⋮ flip sub t & lidget* ss
 
-  eqwksub : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t : Γ ⊢ A) →
-            (sub (lift* ss) ∘ wk) t ≡ (wk {B = B} ∘ sub ss) t
+  eqwksub : ∀ {B Γ Ξ A} (ss : Ξ ⊢* Γ) (t : Γ ⊢ A) →
+            (sub (lift* ss) ∘ wk) t ≡ (wk {B} ∘ sub ss) t
   eqwksub ss t = eqsubren (lift* ss) (wk⊆ id⊆) t ⁻¹
                ⋮ flip sub t & (eqwkget* id⊆ ss ⋮ wk* & lidget* ss)
                ⋮ eqrensub (wk⊆ id⊆) ss t
 
-  eqsub* : ∀ {Γ Ξ Δ B} (s : Ξ ⊢ B) (ss : Ξ ⊢* Γ) (ts : Γ ⊢* Δ) →
+  eqsub* : ∀ {B Γ Ξ Δ} (s : Ξ ⊢ B) (ss : Ξ ⊢* Γ) (ts : Γ ⊢* Δ) →
            (sub* (s ∷ ss) ∘ wk*) ts ≡ sub* ss ts
   --       (wk* ts) ● (s ∷ ss) ≡ ts ● ss
   eqsub* s ss []       = refl
   eqsub* s ss (t ∷ ts) = _∷_ & eqsub s ss t ⊗ eqsub* s ss ts
 
-  eqwksub* : ∀ {Γ Ξ Δ B} (ss : Ξ ⊢* Γ) (ts : Γ ⊢* Δ) →
-             (sub* (lift* ss) ∘ wk*) ts ≡ (wk* {B = B} ∘ sub* ss) ts
-  --         (wk* ts) ● (lift* ss) ≡ wk* {B = B} (ts ● ss)
+  eqwksub* : ∀ {B Γ Ξ Δ} (ss : Ξ ⊢* Γ) (ts : Γ ⊢* Δ) →
+             (sub* (lift* ss) ∘ wk*) ts ≡ (wk* {B} ∘ sub* ss) ts
+  --         (wk* ts) ● (lift* ss) ≡ wk* {B} (ts ● ss)
   eqwksub* ss []       = refl
   eqwksub* ss (t ∷ ts) = _∷_ & eqwksub ss t ⊗ eqwksub* ss ts
 
-  eqliftsub* : ∀ {Γ Ξ Δ B} (ss : Ξ ⊢* Γ) (ts : Γ ⊢* Δ) →
-               (sub* (lift* ss) ∘ lift*) ts ≡ (lift* {B = B} ∘ sub* ss) ts
-  --           (lift* ts) ● (lift* ss) ≡ lift* {B = B} (ts ● ss)
+  eqliftsub* : ∀ {B Γ Ξ Δ} (ss : Ξ ⊢* Γ) (ts : Γ ⊢* Δ) →
+               (sub* (lift* ss) ∘ lift*) ts ≡ (lift* {B} ∘ sub* ss) ts
+  --           (lift* ts) ● (lift* ss) ≡ lift* {B} (ts ● ss)
   eqliftsub* ss ts = (_∷ (sub* (lift* ss) ∘ wk*) ts) & ridsub (lift* ss) zero
                    ⋮ (var zero ∷_) & eqwksub* ss ts
 

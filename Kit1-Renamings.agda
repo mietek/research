@@ -56,7 +56,7 @@ module RenKit (¶ : RenKitParams) where
   open RenKitParams ¶
   renkit = ¶
 
-  wk : ∀ {Γ A B} → Γ ⊢ A → B ∷ Γ ⊢ A
+  wk : ∀ {B Γ A} → Γ ⊢ A → B ∷ Γ ⊢ A
   wk t = ren (wk⊆ id⊆) t
 
   -- Kovacs: flip _ₛ∘ₑ_
@@ -67,13 +67,13 @@ module RenKit (¶ : RenKitParams) where
   _◐_ : ∀ {Γ Γ′ Δ} → Γ ⊢* Δ → Γ ⊆ Γ′ → Γ′ ⊢* Δ
   _◐_ = flip ren*
 
-  wk* : ∀ {Γ Δ B} → Γ ⊢* Δ → B ∷ Γ ⊢* Δ
+  wk* : ∀ {B Γ Δ} → Γ ⊢* Δ → B ∷ Γ ⊢* Δ
   wk* ts = ren* (wk⊆ id⊆) ts
 
-  lift* : ∀ {Γ Δ B} → Γ ⊢* Δ → B ∷ Γ ⊢* B ∷ Δ
+  lift* : ∀ {B Γ Δ} → Γ ⊢* Δ → B ∷ Γ ⊢* B ∷ Δ
   lift* ts = var zero ∷ wk* ts
 
-  lift*² : ∀ {Γ Δ B C} → Γ ⊢* Δ → C ∷ B ∷ Γ ⊢* C ∷ B ∷ Δ
+  lift*² : ∀ {B C Γ Δ} → Γ ⊢* Δ → C ∷ B ∷ Γ ⊢* C ∷ B ∷ Δ
   lift*² = lift* ∘ lift*
 
   -- Kovacs: ⌜_⌝ᵒᵖᵉ

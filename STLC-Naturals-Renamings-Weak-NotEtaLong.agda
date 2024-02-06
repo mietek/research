@@ -219,13 +219,13 @@ rensNNF : ∀ {Γ Γ′ Δ} {ss : Γ ⊢* Δ} (e : Γ ⊆ Γ′) → NNF* ss →
 rensNNF e []       = []
 rensNNF e (p ∷ ps) = renNNF e p ∷ rensNNF e ps
 
-wksNNF : ∀ {Γ Δ B} {ss : Γ ⊢* Δ} → NNF* ss → NNF* (wk* {B = B} ss)
+wksNNF : ∀ {B Γ Δ} {ss : Γ ⊢* Δ} → NNF* ss → NNF* (wk* {B} ss)
 wksNNF ps = rensNNF (wk⊆ id⊆) ps
 
-liftsNNF : ∀ {Γ Δ B} {ss : Γ ⊢* Δ} → NNF* ss → NNF* (lift* {B = B} ss)
+liftsNNF : ∀ {B Γ Δ} {ss : Γ ⊢* Δ} → NNF* ss → NNF* (lift* {B} ss)
 liftsNNF ps = var- ∷ wksNNF ps
 
-liftsNNF² : ∀ {Γ Δ B C} {ss : Γ ⊢* Δ} → NNF* ss → NNF* (lift*² {B = B} {C = C} ss)
+liftsNNF² : ∀ {B C Γ Δ} {ss : Γ ⊢* Δ} → NNF* ss → NNF* (lift*² {B} {C} ss)
 liftsNNF² = liftsNNF ∘ liftsNNF
 
 mutual
@@ -304,9 +304,9 @@ ren⇒ e (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ) =
 
 -- TODO: !!!
 postulate
-  oops : ∀ {Γ Ξ B₁ B₂ B₃} (ss : Ξ ⊢* Γ) →
-         ren* (wk⊆ {B = B₁} (lift⊆ {B = B₂} (lift⊆ {B = B₃} id⊆))) (ren* (wk⊆ (lift⊆ id⊆)) (ren* (wk⊆ id⊆) ss)) ≡
-         ren* (lift⊆ (lift⊆ (wk⊆ id⊆))) (ren* (wk⊆ (lift⊆ id⊆)) (ren* (wk⊆ id⊆) ss))
+  oops : ∀ {Γ Ξ 𝙓 𝙔 𝙕} (ss : Ξ ⊢* Γ) →
+         ren* (wk⊆   {B = 𝙓} (lift⊆ {B = 𝙔} (lift⊆ {B = 𝙕} id⊆))) (ren* (wk⊆ {B = 𝙔} (lift⊆ {B = 𝙕} id⊆)) (wk* {B = 𝙕} ss)) ≡
+         ren* (lift⊆ {B = 𝙓} (lift⊆ {B = 𝙔} (wk⊆   {B = 𝙕} id⊆))) (ren* (wk⊆ {B = 𝙓} (lift⊆ {B = 𝙔} id⊆)) (wk* {B = 𝙔} ss))
 
 sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → NNF* ss → t ⇒ t′ →
         sub ss t ⇒ sub ss t′
