@@ -44,6 +44,7 @@ import Kit3
 import Kit4
 import Kit1-Renamings
 import Kit2-Renamings
+import Kit3-Renamings
 
 import STLC-Base
 import STLC-Base-Properties
