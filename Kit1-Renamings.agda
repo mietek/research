@@ -73,6 +73,9 @@ module RenKit (¶ : RenKitParams) where
   lift* : ∀ {Γ Δ B} → Γ ⊢* Δ → B ∷ Γ ⊢* B ∷ Δ
   lift* ts = var zero ∷ wk* ts
 
+  lift*² : ∀ {Γ Δ B C} → Γ ⊢* Δ → C ∷ B ∷ Γ ⊢* C ∷ B ∷ Δ
+  lift*² = lift* ∘ lift*
+
   -- Kovacs: ⌜_⌝ᵒᵖᵉ
   var* : ∀ {Γ Γ′} → Γ ⊆ Γ′ → Γ′ ⊢* Γ
   var* []       = []

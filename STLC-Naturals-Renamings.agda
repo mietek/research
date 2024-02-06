@@ -37,7 +37,7 @@ ren e (⌜λ⌝ t)          = ⌜λ⌝ (ren (lift⊆ e) t)
 ren e (t₁ ⌜$⌝ t₂)      = ren e t₁ ⌜$⌝ ren e t₂
 ren e ⌜zero⌝           = ⌜zero⌝
 ren e (⌜suc⌝ t)        = ⌜suc⌝ (ren e t)
-ren e (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ (ren e tₙ) (ren e t₀) (ren (lift⊆ (lift⊆ e)) tₛ)
+ren e (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ (ren e tₙ) (ren e t₀) (ren (lift⊆² e) tₛ)
 
 open RenKit (kit var ren) public
 
@@ -47,7 +47,7 @@ sub ss (⌜λ⌝ t)          = ⌜λ⌝ (sub (lift* ss) t)
 sub ss (t₁ ⌜$⌝ t₂)      = sub ss t₁ ⌜$⌝ sub ss t₂
 sub ss ⌜zero⌝           = ⌜zero⌝
 sub ss (⌜suc⌝ t)        = ⌜suc⌝ (sub ss t)
-sub ss (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ (sub ss tₙ) (sub ss t₀) (sub (lift* (lift* ss)) tₛ)
+sub ss (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ (sub ss tₙ) (sub ss t₀) (sub (lift*² ss) tₛ)
 
 open SubKit (kit renkit sub) public
 

@@ -22,7 +22,7 @@ compren e′ e (t₁ ⌜$⌝ t₂)      = _⌜$⌝_ & compren e′ e t₁ ⊗ co
 compren e′ e ⌜zero⌝           = refl
 compren e′ e (⌜suc⌝ t)        = ⌜suc⌝ & compren e′ e t
 compren e′ e (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ & compren e′ e tₙ ⊗ compren e′ e t₀
-                                  ⊗ compren (lift⊆ (lift⊆ e′)) (lift⊆ (lift⊆ e)) tₛ
+                                  ⊗ compren (lift⊆² e′) (lift⊆² e) tₛ
 
 -- not really identity
 ridren : ∀ {Γ Γ′ A} (e : Γ ⊆ Γ′) (i : Γ ∋ A) → ren e (var i) ≡ var (ren∋ e i)
@@ -51,7 +51,7 @@ eqrensub e ss (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ & eqrensub e ss tₙ ⊗ eq
                                    ⊗ ( flip sub tₛ & ( lift* & eqliftren* e ss ⁻¹
                                                      ⋮ eqliftren* (lift⊆ e) (lift* ss) ⁻¹
                                                      )
-                                     ⋮ eqrensub (lift⊆ (lift⊆ e)) (lift* (lift* ss)) tₛ
+                                     ⋮ eqrensub (lift⊆² e) (lift*² ss) tₛ
                                      )
 
 -- Kovacs: Tm-ₑ∘ₛ
@@ -68,7 +68,7 @@ eqsubren ss e (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ & eqsubren ss e tₙ ⊗ eq
                                    ⊗ ( flip sub tₛ & ( lift* & eqliftget* e ss ⁻¹
                                                      ⋮ eqliftget* (lift⊆ e) (lift* ss) ⁻¹
                                                      )
-                                     ⋮ eqsubren (lift* (lift* ss)) (lift⊆ (lift⊆ e)) tₛ
+                                     ⋮ eqsubren (lift*² ss) (lift⊆² e) tₛ
                                      )
 
 -- Kovacs: Tm-idₛ
@@ -99,7 +99,7 @@ compsub ss′ ss (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ & compsub ss′ ss tₙ 
                                     ⊗ ( flip sub tₛ & ( lift* & eqliftsub* ss′ ss ⁻¹
                                                       ⋮ eqliftsub* (lift* ss′) (lift* ss) ⁻¹
                                                       )
-                                      ⋮ compsub (lift* (lift* ss′)) (lift* (lift* ss)) tₛ
+                                      ⋮ compsub (lift*² ss′) (lift*² ss) tₛ
                                       )
 
 open RenSubKit3 (kit rensubkit2 compsub) public
