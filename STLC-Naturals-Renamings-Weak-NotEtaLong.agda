@@ -315,12 +315,11 @@ sub⇒ ps (cong$₂ p₁ r₂)            = cong$₂ (subNF ps p₁) (sub⇒ ps 
 sub⇒ ps (congsuc r)               = congsuc (sub⇒ ps r)
 sub⇒ ps (congrecₙ rₙ)             = congrecₙ (sub⇒ ps rₙ)
 sub⇒ ps (congrec₀ pₙ r₀)          = congrec₀ (subNF ps pₙ) (sub⇒ ps r₀)
-sub⇒ ps (congrecₛ pₙ p₀ rₛ)       = congrecₛ (subNF ps pₙ) (subNF ps p₀)
-                                       (sub⇒ (liftsNNF (liftsNNF ps)) rₛ)
+sub⇒ ps (congrecₛ pₙ p₀ rₛ)       = congrecₛ (subNF ps pₙ) (subNF ps p₀) (sub⇒ (liftsNNF² ps) rₛ)
 sub⇒ ps (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (subcut _ t₁ _ ⁻¹) (subNF ps p₂)
-sub⇒ ps (βredℕ₀ p₀ pₛ)            = βredℕ₀ (subNF ps p₀) (subNF (liftsNNF (liftsNNF ps)) pₛ)
+sub⇒ ps (βredℕ₀ p₀ pₛ)            = βredℕ₀ (subNF ps p₀) (subNF (liftsNNF² ps) pₛ)
 sub⇒ {ss = ss} ps (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ) =
-    βredℕₛ eq (subNF ps pₙ) (subNF ps p₀) (subNF (liftsNNF (liftsNNF ps)) pₛ)
+    βredℕₛ eq (subNF ps pₙ) (subNF ps p₀) (subNF (liftsNNF² ps) pₛ)
   where
     eq =
       begin
