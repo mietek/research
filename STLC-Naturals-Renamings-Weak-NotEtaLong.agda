@@ -280,14 +280,11 @@ ren⇒ e (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ) =
                        ⊗ ( flip ren t₀ & eqwk⊆′ e ⁻¹
                          ⋮ compren (wk⊆ id⊆) e t₀
                          )
-                       ⊗ ( flip ren tₛ & (lift⊆ & (
-              begin
-                lift⊆ (wk⊆ e)
-              ≡⟨ lift⊆ & eqwk⊆′ e ⁻¹ ⟩
-                lift⊆ (wk⊆ id⊆ ∘⊆ e)
-              ≡⟨ (zero ∷_) & (eqwk⊆ (wk⊆ id⊆) e ⁻¹) ⟩
-                zero ∷ (lift⊆ (wk⊆ id⊆) ∘⊆ wk⊆ e)
-              ∎) ⋮ eqlift⊆ (lift⊆ (wk⊆ id⊆)) (lift⊆ e) ⁻¹)
+                       ⊗ ( flip ren tₛ & ( lift⊆ & ( lift⊆ & eqwk⊆′ e ⁻¹
+                                                   ⋮ (zero ∷_) & (eqwk⊆ (wk⊆ id⊆) e ⁻¹)
+                                                   )
+                                         ⋮ eqlift⊆ (lift⊆ (wk⊆ id⊆)) (lift⊆ e) ⁻¹
+                                         )
                          ⋮ compren (lift⊆ (lift⊆ (wk⊆ id⊆))) (lift⊆ (lift⊆ e)) tₛ
                          ) ⟩
                 ⌜rec⌝ (wk (ren e tₙ))
