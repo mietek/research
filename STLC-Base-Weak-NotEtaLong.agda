@@ -1,50 +1,8 @@
 module STLC-Base-Weak-NotEtaLong where
 
 open import STLC-Base-Properties public
+open import STLC-Base-BetaShortWeakNormalForm public
 open import Kit3 public
-
-
-----------------------------------------------------------------------------------------------------
-
--- β-short not-η-long weak normal forms
-mutual
-  data NF {Γ} : ∀ {A} → Γ ⊢ A → Set where
-    ⌜λ⌝- : ∀ {A B} {t : A ∷ Γ ⊢ B} → NF (⌜λ⌝ t)
-    nnf  : ∀ {A} {t : Γ ⊢ A} (p : NNF t) → NF t
-
-  data NNF {Γ} : ∀ {A} → Γ ⊢ A → Set where
-    var-  : ∀ {A} {i : Γ ∋ A} → NNF (var i)
-    _⌜$⌝_ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (p₁ : NNF t₁) (p₂ : NF t₂) → NNF (t₁ ⌜$⌝ t₂)
-
-data NNF* {Γ} : ∀ {Δ} → Γ ⊢* Δ → Set where
-  []  : NNF* []
-  _∷_ : ∀ {A Δ} {t : Γ ⊢ A} {ts : Γ ⊢* Δ} → NNF t → NNF* ts → NNF* (t ∷ ts)
-
-mutual
-  uniNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
-  uniNF ⌜λ⌝-    ⌜λ⌝-     = refl
-  uniNF (nnf p) (nnf p′) = nnf & uniNNF p p′
-
-  uniNNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NNF t) → p ≡ p′
-  uniNNF var-        var-          = refl
-  uniNNF (p₁ ⌜$⌝ p₂) (p₁′ ⌜$⌝ p₂′) = _⌜$⌝_ & uniNNF p₁ p₁′ ⊗ uniNF p₂ p₂′
-
-mutual
-  NF? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (NF t)
-  NF? (var i)           = yes (nnf var-)
-  NF? (⌜λ⌝ t)           = yes ⌜λ⌝-
-  NF? (t₁ ⌜$⌝ t₂)       with NNF? t₁ | NF? t₂
-  ... | yes p₁ | yes p₂   = yes (nnf (p₁ ⌜$⌝ p₂))
-  ... | yes p₁ | no ¬p₂   = no λ { (nnf (p₁ ⌜$⌝ p₂)) → p₂ ↯ ¬p₂ }
-  ... | no ¬p₁ | _        = no λ { (nnf (p₁ ⌜$⌝ p₂)) → p₁ ↯ ¬p₁ }
-
-  NNF? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (NNF t)
-  NNF? (var i)          = yes var-
-  NNF? (⌜λ⌝ t)          = no λ ()
-  NNF? (t₁ ⌜$⌝ t₂)      with NNF? t₁ | NF? t₂
-  ... | yes p₁ | yes p₂   = yes (p₁ ⌜$⌝ p₂)
-  ... | yes p₁ | no ¬p₂   = no λ { (p₁ ⌜$⌝ p₂) → p₂ ↯ ¬p₂ }
-  ... | no ¬p₁ | _        = no λ { (p₁ ⌜$⌝ p₂) → p₁ ↯ ¬p₁ }
 
 
 ----------------------------------------------------------------------------------------------------
@@ -177,9 +135,9 @@ ren⇒ e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut e t₁ _ ⁻¹) (
 ----------------------------------------------------------------------------------------------------
 
 -- stability under substitution
-sub∋NNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} → NNF* ss → ∀ (i : Γ ∋ A) → NNF (sub∋ ss i)
-sub∋NNF (p ∷ ps) zero    = p
-sub∋NNF (p ∷ ps) (suc i) = sub∋NNF ps i
+sub∋NNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {i : Γ ∋ A} → NNF* ss → NNF (sub∋ ss i)
+sub∋NNF {i = zero}  (p ∷ ps) = p
+sub∋NNF {i = suc i} (p ∷ ps) = sub∋NNF ps
 
 mutual
   subNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NF t → NF (sub ss t)
@@ -187,11 +145,10 @@ mutual
   subNF ps (nnf p) = nnf (subNNF ps p)
 
   subNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NNF t → NNF (sub ss t)
-  subNNF ps (var- {i = i}) = sub∋NNF ps i
-  subNNF ps (p₁ ⌜$⌝ p₂)    = subNNF ps p₁ ⌜$⌝ subNF ps p₂
+  subNNF ps var-        = sub∋NNF ps
+  subNNF ps (p₁ ⌜$⌝ p₂) = subNNF ps p₁ ⌜$⌝ subNF ps p₂
 
-sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → NNF* ss → t ⇒ t′ →
-        sub ss t ⇒ sub ss t′
+sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → NNF* ss → t ⇒ t′ → sub ss t ⇒ sub ss t′
 sub⇒ ps (cong$₁ r₁)               = cong$₁ (sub⇒ ps r₁)
 sub⇒ ps (cong$₂ p₁ r₂)            = cong$₂ (subNF ps p₁) (sub⇒ ps r₂)
 sub⇒ ps (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (subcut _ t₁ _ ⁻¹) (subNF ps p₂)
@@ -199,100 +156,7 @@ sub⇒ ps (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (subcut _ t₁ _ ⁻¹) 
 
 ----------------------------------------------------------------------------------------------------
 
--- β-short not-η-long weak normal forms (direct)
-mutual
-  infix 3 _⊢≪_
-  data _⊢≪_ (Γ : Ctx) : Ty → Set where
-    ⌜λ⌝ : ∀ {A B} (t : A ∷ Γ ⊢ B) → Γ ⊢≪ A ⌜⊃⌝ B
-    nnf : ∀ {A} (t : Γ ⊢≫ A) → Γ ⊢≪ A
-
-  infix 3 _⊢≫_
-  data _⊢≫_ (Γ : Ctx) : Ty → Set where
-    var   : ∀ {A} (i : Γ ∋ A) → Γ ⊢≫ A
-    _⌜$⌝_ : ∀ {A B} (t₁ : Γ ⊢≫ A ⌜⊃⌝ B) (t₂ : Γ ⊢≪ A) → Γ ⊢≫ B
-
--- equivalence
-mutual
-  ⊢≪→NF : ∀ {Γ A} → Γ ⊢≪ A → Σ (Γ ⊢ A) NF
-  ⊢≪→NF (⌜λ⌝ t) = ⌜λ⌝ t , ⌜λ⌝-
-  ⊢≪→NF (nnf t) with ⊢≫→NNF t
-  ... | t′ , p′     = t′ , nnf p′
-
-  ⊢≫→NNF : ∀ {Γ A} → Γ ⊢≫ A → Σ (Γ ⊢ A) NNF
-  ⊢≫→NNF (var i)             = var i , var-
-  ⊢≫→NNF (t₁ ⌜$⌝ t₂)         with ⊢≫→NNF t₁ | ⊢≪→NF t₂
-  ... | t₁′ , p₁′ | t₂′ , p₂′    = t₁′ ⌜$⌝ t₂′ , p₁′ ⌜$⌝ p₂′
-
-mutual
-  NF→⊢≪ : ∀ {Γ A} → Σ (Γ ⊢ A) NF → Γ ⊢≪ A
-  NF→⊢≪ (.(⌜λ⌝ t) , ⌜λ⌝- {t = t}) = ⌜λ⌝ t
-  NF→⊢≪ (t , nnf p)               = nnf (NNF→⊢≫ (t , p))
-
-  NNF→⊢≫ : ∀ {Γ A} → Σ (Γ ⊢ A) NNF → Γ ⊢≫ A
-  NNF→⊢≫ (var i , var-)          = var i
-  NNF→⊢≫ (t₁ ⌜$⌝ t₂ , p₁ ⌜$⌝ p₂) = NNF→⊢≫ (t₁ , p₁) ⌜$⌝ NF→⊢≪ (t₂ , p₂)
-
--- isomorphism
-mutual
-  id⊢≪⇄NF : ∀ {Γ A} (t : Γ ⊢≪ A) → (NF→⊢≪ ∘ ⊢≪→NF) t ≡ t
-  id⊢≪⇄NF (⌜λ⌝ t) = refl
-  id⊢≪⇄NF (nnf t) = nnf & id⊢≫⇄NNF t
-
-  id⊢≫⇄NNF : ∀ {Γ A} (t : Γ ⊢≫ A) → (NNF→⊢≫ ∘ ⊢≫→NNF) t ≡ t
-  id⊢≫⇄NNF (var i)     = refl
-  id⊢≫⇄NNF (t₁ ⌜$⌝ t₂) = _⌜$⌝_ & id⊢≫⇄NNF t₁ ⊗ id⊢≪⇄NF t₂
-
-module _ where
-  open ≡-Reasoning
-
-  mutual
-    idNF⇄⊢≪ : ∀ {Γ A} (tp : Σ (Γ ⊢ A) NF) → (⊢≪→NF ∘ NF→⊢≪) tp ≡ tp
-    idNF⇄⊢≪ (.(⌜λ⌝ t) , ⌜λ⌝- {t = t}) = refl
-    idNF⇄⊢≪ (t , nnf p)               =
-      let eqₜ : fst (⊢≫→NNF (NNF→⊢≫ (t , p))) ≡ t
-          eqₜ = fst & idNNF⇄⊢≫ (t , p)
-          eqₚ : NF.nnf (snd (⊢≫→NNF (NNF→⊢≫ (t , p)))) ≅ NF.nnf p
-          eqₚ = (NF.nnf ∘ snd) &≅ ≡→≅ (idNNF⇄⊢≫ (t , p))
-        in begin
-             fst (⊢≫→NNF (NNF→⊢≫ (t , p))) , nnf (snd (⊢≫→NNF (NNF→⊢≫ (t , p))))
-           ≡⟨ ≅→≡ (cong₂≅ _,_ (≡→≅ eqₜ) eqₚ) ⟩
-             t , nnf p
-           ∎
-
-    idNNF⇄⊢≫ : ∀ {Γ A} (tp : Σ (Γ ⊢ A) NNF) → (⊢≫→NNF ∘ NNF→⊢≫) tp ≡ tp
-    idNNF⇄⊢≫ (var i , var-)          = refl
-    idNNF⇄⊢≫ (t₁ ⌜$⌝ t₂ , p₁ ⌜$⌝ p₂) =
-      let eqₜ : fst (⊢≫→NNF (NNF→⊢≫ (t₁ , p₁))) _⊢_.⌜$⌝ fst (⊢≪→NF (NF→⊢≪ (t₂ , p₂))) ≡ t₁ _⊢_.⌜$⌝ t₂
-          eqₜ = (λ x₁ x₂ → fst x₁ ⌜$⌝ fst x₂) & idNNF⇄⊢≫ (t₁ , p₁) ⊗ idNF⇄⊢≪ (t₂ , p₂)
-          eqₚ : snd (⊢≫→NNF (NNF→⊢≫ (t₁ , p₁))) NNF.⌜$⌝ snd (⊢≪→NF (NF→⊢≪ (t₂ , p₂))) ≅ p₁ NNF.⌜$⌝ p₂
-          eqₚ = cong₂≅ (λ x₁ x₂ → snd x₁ NNF.⌜$⌝ snd x₂)
-                  (≡→≅ (idNNF⇄⊢≫ (t₁ , p₁))) (≡→≅ (idNF⇄⊢≪ (t₂ , p₂)))
-        in begin
-             fst (⊢≫→NNF (NNF→⊢≫ (t₁ , p₁))) ⌜$⌝ fst (⊢≪→NF (NF→⊢≪ (t₂ , p₂))) ,
-             snd (⊢≫→NNF (NNF→⊢≫ (t₁ , p₁))) ⌜$⌝ snd (⊢≪→NF (NF→⊢≪ (t₂ , p₂)))
-           ≡⟨ ≅→≡ (cong₂≅ _,_ (≡→≅ eqₜ) eqₚ) ⟩
-             t₁ ⌜$⌝ t₂ , p₁ ⌜$⌝ p₂
-           ∎
-
-⊢≪≃NF : ∀ {Γ A} → (Γ ⊢≪ A) ≃ (Σ (Γ ⊢ A) NF)
-⊢≪≃NF = record
-  { to      = ⊢≪→NF
-  ; from    = NF→⊢≪
-  ; from∘to = id⊢≪⇄NF
-  ; to∘from = idNF⇄⊢≪
-  }
-
-⊢≫≃NNF : ∀ {Γ A} → (Γ ⊢≫ A) ≃ (Σ (Γ ⊢ A) NNF)
-⊢≫≃NNF = record
-  { to      = ⊢≫→NNF
-  ; from    = NNF→⊢≫
-  ; from∘to = id⊢≫⇄NNF
-  ; to∘from = idNNF⇄⊢≫
-  }
-
-
-----------------------------------------------------------------------------------------------------
-
+-- TODO: SN
 cong$₁⇒* : ∀ {Γ A B} {t₁ t₁′ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} → t₁ ⇒* t₁′ →
             t₁ ⌜$⌝ t₂ ⇒* t₁′ ⌜$⌝ t₂
 cong$₁⇒* done        = done

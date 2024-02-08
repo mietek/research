@@ -1,7 +1,7 @@
 module Category where
 
 import Prelude
-open Prelude hiding (_∘_ ; id)
+open Prelude hiding (_∘_ ; _⨾_ ; id)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -16,6 +16,16 @@ record Category (ℴ 𝓇 : Level) : Set (lsuc (ℴ ⊔ 𝓇)) where
     rid▻ : ∀ {x y} (p : y ▻ x) → p ∘ id ≡ p
     ass▻ : ∀ {w x y z} (r : y ▻ z) (q : x ▻ y) (p : w ▻ x) → r ∘ (q ∘ p) ≡ (r ∘ q) ∘ p
 
+  _◅_ : ∀ (y x : Obj) → Set 𝓇
+  y ◅ x = x ▻ y
+
+  _⨾_ : ∀ {x y z} (p : x ▻ y) (q : y ▻ z) → x ▻ z
+  p ⨾ q = q ∘ p
+
+  field
+    ◅ssa : ∀ {w x y z} (r : y ◅ z) (q : x ◅ y) (p : w ◅ x) → r ⨾ (q ⨾ p) ≡ (r ⨾ q) ⨾ p
+
+-- opposite
 _ᵒᵖ : ∀ {ℴ 𝓇} (C : Category ℴ 𝓇) → Category ℴ 𝓇
 _ᵒᵖ C = record
           { Obj  = C.Obj
@@ -24,7 +34,8 @@ _ᵒᵖ C = record
           ; _∘_  = flip C._∘_
           ; lid▻ = C.rid▻
           ; rid▻ = C.lid▻
-          ; ass▻ = λ r q p → sym (C.ass▻ p q r)
+          ; ass▻ = C.◅ssa
+          ; ◅ssa = C.ass▻
           }
         where
           private
@@ -39,6 +50,7 @@ _ᵒᵖ C = record
             ; lid▻ = λ p → refl
             ; rid▻ = λ p → refl
             ; ass▻ = λ r q p → refl
+            ; ◅ssa = λ r q p → refl
             }
 
 ⟪Set₀⟫ : Category (lsuc lzero) lzero
@@ -81,6 +93,7 @@ Presheaf C 𝓍 = Functor (C ᵒᵖ) (⟪Set⟫ 𝓍)
 
 ----------------------------------------------------------------------------------------------------
 
+-- natural transformation
 record NatTrans {ℴ₁ ℴ₂ 𝓇₁ 𝓇₂} {C : Category ℴ₁ 𝓇₁} {D : Category ℴ₂ 𝓇₂} (F G : Functor C D) :
     Set (ℴ₁ ⊔ ℴ₂ ⊔ 𝓇₁ ⊔ 𝓇₂) where
   private

@@ -306,6 +306,7 @@ module RenSubKit4 (¶ : RenSubKit4Params) where
             ; lid▻ = lidsub*
             ; rid▻ = ridsub*
             ; ass▻ = asssub*
+            ; ◅ssa = λ ts ss ss′ → asssub* ss′ ss ts ⁻¹
             }
 
   ⟪⊢*⟫ : Category lzero lzero

@@ -70,6 +70,9 @@ module RenKit (¶ : RenKitParams) where
   wk* : ∀ {B Γ Δ} → Γ ⊢* Δ → B ∷ Γ ⊢* Δ
   wk* ts = ren* (wk⊆ id⊆) ts
 
+  wk*² : ∀ {B C Γ Δ} → Γ ⊢* Δ → C ∷ B ∷ Γ ⊢* Δ
+  wk*² = wk* ∘ wk*
+
   lift* : ∀ {B Γ Δ} → Γ ⊢* Δ → B ∷ Γ ⊢* B ∷ Δ
   lift* ts = var zero ∷ wk* ts
 

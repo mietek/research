@@ -36,6 +36,9 @@ module OrderPreservingEmbeddings {𝓍} {X : Set 𝓍} where
     wk⊆   : ∀ {B Γ Γ′} (e : Γ ⊆ Γ′) → Γ ⊆ B ∷ Γ′
     lift⊆ : ∀ {B Γ Γ′} (e : Γ ⊆ Γ′) → B ∷ Γ ⊆ B ∷ Γ′
 
+  wk⊆² : ∀ {B C Γ Γ′} → Γ ⊆ Γ′ → Γ ⊆ C ∷ B ∷ Γ′
+  wk⊆² = wk⊆ ∘ wk⊆
+
   lift⊆² : ∀ {B C Γ Γ′} → Γ ⊆ Γ′ → C ∷ B ∷ Γ ⊆ C ∷ B ∷ Γ′
   lift⊆² = lift⊆ ∘ lift⊆
 
@@ -68,8 +71,8 @@ module OrderPreservingEmbeddings {𝓍} {X : Set 𝓍} where
   rid⊆ (wk⊆ e)   = wk⊆ & rid⊆ e
   rid⊆ (lift⊆ e) = lift⊆ & rid⊆ e
 
-  ass⊆ : ∀ {Γ Γ′ Γ″ Γ‴} (is″ : Γ″ ⊆ Γ‴) (is′ : Γ′ ⊆ Γ″) (is : Γ ⊆ Γ′) →
-         is″ ∘⊆ (is′ ∘⊆ is) ≡ (is″ ∘⊆ is′) ∘⊆ is
+  ass⊆ : ∀ {Γ Γ′ Γ″ Γ‴} (e″ : Γ″ ⊆ Γ‴) (e′ : Γ′ ⊆ Γ″) (e : Γ ⊆ Γ′) →
+         e″ ∘⊆ (e′ ∘⊆ e) ≡ (e″ ∘⊆ e′) ∘⊆ e
   ass⊆ stop⊆      e′         e         = refl
   ass⊆ (wk⊆ e″)   e′         e         = wk⊆ & ass⊆ e″ e′ e
   ass⊆ (lift⊆ e″) (wk⊆ e′)   e         = wk⊆ & ass⊆ e″ e′ e
@@ -85,6 +88,7 @@ module OrderPreservingEmbeddings {𝓍} {X : Set 𝓍} where
           ; lid▻ = lid⊆
           ; rid▻ = rid⊆
           ; ass▻ = ass⊆
+          ; ◅ssa = λ e e′ e″ → ass⊆ e″ e′ e ⁻¹
           }
 
   ⟪⊇⟫ : Category 𝓍 𝓍
@@ -120,6 +124,20 @@ module OrderPreservingEmbeddings {𝓍} {X : Set 𝓍} where
                  ; _∘ƒ_ = λ e′ e → ⚠ (compren∋ e′ e)
                  }
 
+  ⟪lift⊆⟫ : ∀ (B : X) → Functor ⟪⊆⟫ ⟪⊆⟫
+  ⟪lift⊆⟫ B = record
+                { ƒObj = B ∷_
+                ; ƒ    = lift⊆
+                ; idƒ  = refl
+                ; _∘ƒ_ = λ e′ e → refl
+                }
+
+  ⟪wk⊆⟫ : ∀ (B : X) → NatTrans (⟪Id⟫ ⟪⊆⟫) (⟪lift⊆⟫ B)
+  ⟪wk⊆⟫ B = record
+              { η    = λ Γ → wk⊆ id⊆
+              ; natη = λ Γ Δ e → wk⊆ & (lid⊆ e ⋮ rid⊆ e ⁻¹)
+              }
+
   injren∋ : ∀ {Γ Γ′ A} {e : Γ ⊆ Γ′} {i i′ : Γ ∋ A} → ren∋ e i ≡ ren∋ e i′ → i ≡ i′
   injren∋ {e = stop⊆}   {i}     {i′}     eq   = eq
   injren∋ {e = wk⊆ e}   {i}     {i′}     eq   = injren∋ (injsuc eq)
@@ -141,7 +159,7 @@ module OrderPreservingEmbeddings {𝓍} {X : Set 𝓍} where
 
 ----------------------------------------------------------------------------------------------------
 
-module Renamings {𝓍} {X : Set 𝓍} where
+module FirstOrderRenamings {𝓍} {X : Set 𝓍} where
   infix 4 _⊆_
   data _⊆_ : List X → List X → Set 𝓍 where
     []  : ∀ {Γ} → [] ⊆ Γ
@@ -153,6 +171,9 @@ module Renamings {𝓍} {X : Set 𝓍} where
   wk⊆ : ∀ {B Γ Γ′} → Γ ⊆ Γ′ → Γ ⊆ B ∷ Γ′
   wk⊆ []       = []
   wk⊆ (i ∷ is) = suc i ∷ wk⊆ is
+
+  wk⊆² : ∀ {B C Γ Γ′} → Γ ⊆ Γ′ → Γ ⊆ C ∷ B ∷ Γ′
+  wk⊆² = wk⊆ ∘ wk⊆
 
   lift⊆ : ∀ {B Γ Γ′} → Γ ⊆ Γ′ → B ∷ Γ ⊆ B ∷ Γ′
   lift⊆ is = zero ∷ wk⊆ is
@@ -212,7 +233,7 @@ module Renamings {𝓍} {X : Set 𝓍} where
   eqwk⊆ is′ []       = refl
   eqwk⊆ is′ (i ∷ is) = _∷_ & eqwkren∋ is′ i ⊗ eqwk⊆ is′ is
 
-  -- TODO: name? friends?
+  -- TODO: name? friends? delete
   eqwk⊆′ : ∀ {B Γ Γ′} (is : Γ ⊆ Γ′) →
            wk⊆ id⊆ ∘⊆ is ≡ wk⊆ {B} is
   eqwk⊆′ is = eq⊆ zero (wk⊆ id⊆) is ⁻¹
@@ -242,6 +263,7 @@ module Renamings {𝓍} {X : Set 𝓍} where
           ; lid▻ = lid⊆
           ; rid▻ = rid⊆
           ; ass▻ = ass⊆
+          ; ◅ssa = λ is″ is′ is → ass⊆ is is′ is″ ⁻¹
           }
 
   ⟪⊇⟫ : Category 𝓍 𝓍
@@ -259,10 +281,10 @@ module Renamings {𝓍} {X : Set 𝓍} where
 
 ----------------------------------------------------------------------------------------------------
 
--- list-based renamings are isomorphic to function-based renamings
+-- first-order renamings are isomorphic to higher-order renamings
 private
   module _ {𝓍} {X : Set 𝓍} where
-    open Renamings
+    open FirstOrderRenamings
 
     infix 4 _≤_
     _≤_ : List X → List X → Set 𝓍
@@ -276,23 +298,19 @@ private
     from {[]}    ρ = []
     from {A ∷ Γ} ρ = ρ zero ∷ from (ρ ∘ suc)
 
-    ∙from : ∀ {Γ Γ′} (ρ ρ′ : Γ ≤ Γ′) → (∀ {A : X} (i : Γ ∋ A) → ρ i ≡ ρ′ i) → from ρ ≡ from ρ′
-    ∙from {[]}    ρ ρ′ peq = refl
-    ∙from {A ∷ Γ} ρ ρ′ peq = _∷_ & peq zero ⊗ ∙from (ρ ∘ suc) (ρ′ ∘ suc) (peq ∘ suc)
-
     from∘to : ∀ {Γ Γ′} (is : Γ ⊆ Γ′) → (from ∘ to) is ≡ is
     from∘to []       = refl
     from∘to (i ∷ is) = (i ∷_) & from∘to is
 
-    ∙to∘from : ∀ {Γ Γ′} (ρ : Γ ≤ Γ′) → (∀ {A : X} (i : Γ ∋ A) → (to ∘ from) ρ i ≡ ρ i)
-    ∙to∘from {A ∷ Γ} ρ zero    = refl
-    ∙to∘from {A ∷ Γ} ρ (suc i) = ∙to∘from (ρ ∘ suc) i
+    to∘from∙ : ∀ {Γ Γ′} (ρ : Γ ≤ Γ′) → (∀ {A : X} (i : Γ ∋ A) → (to ∘ from) ρ i ≡ ρ i)
+    to∘from∙ {A ∷ Γ} ρ zero    = refl
+    to∘from∙ {A ∷ Γ} ρ (suc i) = to∘from∙ (ρ ∘ suc) i
 
     module _ (⚠ : FunExt) where
       ⚠′ = implify ⚠
 
       to∘from : ∀ {Γ Γ′} (ρ : Γ ≤ Γ′) → (to ∘ from) ρ ≡ ρ :> (Γ ≤ Γ′)
-      to∘from ρ = ⚠′ (⚠ (∙to∘from ρ))
+      to∘from ρ = ⚠′ (⚠ (to∘from∙ ρ))
 
       ⊆≃≤ : ∀ {Γ Γ′} → (Γ ⊆ Γ′) ≃ (Γ ≤ Γ′)
       ⊆≃≤ = record
@@ -301,6 +319,10 @@ private
               ; from∘to = from∘to
               ; to∘from = to∘from
               }
+
+    extfrom : ∀ {Γ Γ′} (ρ ρ′ : Γ ≤ Γ′) → (∀ {A : X} (i : Γ ∋ A) → ρ i ≡ ρ′ i) → from ρ ≡ from ρ′
+    extfrom {[]}    ρ ρ′ peq = refl
+    extfrom {A ∷ Γ} ρ ρ′ peq = _∷_ & peq zero ⊗ extfrom (ρ ∘ suc) (ρ′ ∘ suc) (peq ∘ suc)
 
 
 ----------------------------------------------------------------------------------------------------

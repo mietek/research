@@ -131,21 +131,21 @@ infixl 8 _⊗_
 _⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {f g : X → Y} {x x′} → f ≡ g → x ≡ x′ → f x ≡ g x′
 refl ⊗ refl = refl
 
-congapp : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f f′ : ∀ x → Y x} → f ≡ f′ → (∀ x → f x ≡ f′ x)
+congapp : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ x → Y x} → f ≡ g → (∀ x → f x ≡ g x)
 congapp refl x = refl
 
-congapp′ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f f′ : ∀ {x} → Y x} →
-             f ≡ f′ :> (∀ {x} → Y x) →
-           (∀ {x} → f {x} ≡ f′ {x})
+congapp′ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x} → Y x} →
+             f ≡ g :> (∀ {x} → Y x) →
+           (∀ {x} → f {x} ≡ g {x})
 congapp′ refl {x} = refl
 
 FunExt : Setω
-FunExt = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f f′ : ∀ x → Y x} → (∀ x → f x ≡ f′ x) → f ≡ f′
+FunExt = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ x → Y x} → (∀ x → f x ≡ g x) → f ≡ g
 
 FunExt′ : Setω
-FunExt′ = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f f′ : ∀ {x} → Y x} →
-            (∀ {x} → f {x} ≡ f′ {x}) →
-          f ≡ f′ :> (∀ {x} → Y x)
+FunExt′ = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x} → Y x} →
+            (∀ {x} → f {x} ≡ g {x}) →
+          f ≡ g :> (∀ {x} → Y x)
 
 uni≡ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} (eq eq′ : x ≡ x′) → eq ≡ eq′
 uni≡ refl refl = refl
@@ -153,15 +153,15 @@ uni≡ refl refl = refl
 uni𝟘 : ∀ (z z′ : 𝟘) → z ≡ z′
 uni𝟘 () ()
 
-uni¬ : ∀ {𝓍} {X : Set 𝓍} (f f′ : ¬ X) → f ≡ f′
-uni¬ f f′ = refl
+uni¬ : ∀ {𝓍} {X : Set 𝓍} (f g : ¬ X) → f ≡ g
+uni¬ f g = refl
 
 module _ (⚠ : FunExt) where
   implify : FunExt′
   implify eq = (λ f {x} → f x) & ⚠ (λ x → eq {x})
 
-  uni→ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (uniY : ∀ y y′ → y ≡ y′) (f f′ : X → Y) → f ≡ f′
-  uni→ uniY f f′ = ⚠ λ x → uniY (f x) (f′ x)
+  uni→ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (uniY : ∀ y y′ → y ≡ y′) (f g : X → Y) → f ≡ g
+  uni→ uniY f g = ⚠ λ x → uniY (f x) (g x)
 
 module ≡-Reasoning {𝓍} {X : Set 𝓍} where
   infix 1 begin_
@@ -197,24 +197,13 @@ data _≅_ {𝓍} {X : Set 𝓍} (x : X) : ∀ {𝓎} {Y : Set 𝓎} → Y → S
 ≡→≅ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≡ x′ → x ≅ x′
 ≡→≅ refl = refl
 
-cong≅ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {x x′} (f : ∀ x → Y x) → x ≅ x′ →
-        f x ≅ f x′
+cong≅ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} (f : ∀ x → Y x) {x x′} → x ≅ x′ → f x ≅ f x′
 cong≅ f refl = refl
 
-cong₂≅ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : X → Set 𝓎} {Z : ∀ x → Y x → Set 𝓏} {x x′ y y′}
-           (f : ∀ x → (y : Y x) → Z x y) → x ≅ x′ → y ≅ y′ →
+cong₂≅ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : X → Set 𝓎} {Z : ∀ x → Y x → Set 𝓏}
+           (f : ∀ x → (y : Y x) → Z x y) {x x′ y y′} → x ≅ x′ → y ≅ y′ →
          f x y ≅ f x′ y′
 cong₂≅ f refl refl = refl
-
-infixl 9 _&≅_
-_&≅_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {x x′} (f : ∀ x → Y x) → x ≅ x′ → f x ≅ f x′
-_&≅_ = cong≅
-
--- TODO: why doesn’t this work?!
-infixl 8 _⊗≅_
-_⊗≅_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {x x′} {f g : ∀ x → Y x} → f ≅ g → x ≅ x′ →
-       f x ≅ g x′
-refl ⊗≅ refl = refl
 
 
 ----------------------------------------------------------------------------------------------------

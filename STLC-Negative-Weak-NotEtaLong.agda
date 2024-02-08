@@ -1,41 +1,8 @@
 module STLC-Negative-Weak-NotEtaLong where
 
 open import STLC-Negative-Properties public
+open import STLC-Negative-BetaShortWeakNormalForm public
 open import Kit3 public
-
-
-----------------------------------------------------------------------------------------------------
-
--- β-short not-η-long weak normal forms
-mutual
-  data NF {Γ} : ∀ {A} → Γ ⊢ A → Set where
-    ⌜λ⌝-   : ∀ {A B} {t : A ∷ Γ ⊢ B} → NF (⌜λ⌝ t)
-    -⌜,⌝-  : ∀ {A B} {t₁ : Γ ⊢ A} {t₂ : Γ ⊢ B} → NF (t₁ ⌜,⌝ t₂)
-    ⌜unit⌝ : NF ⌜unit⌝
-    nnf    : ∀ {A} {t : Γ ⊢ A} (p : NNF t) → NF t
-
-  data NNF {Γ} : ∀ {A} → Γ ⊢ A → Set where
-    var-  : ∀ {A} {i : Γ ∋ A} → NNF (var i)
-    _⌜$⌝_ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (p₁ : NNF t₁) (p₂ : NF t₂) → NNF (t₁ ⌜$⌝ t₂)
-    ⌜fst⌝ : ∀ {A B} {t : Γ ⊢ A ⌜∧⌝ B} (p : NNF t) → NNF (⌜fst⌝ t)
-    ⌜snd⌝ : ∀ {A B} {t : Γ ⊢ A ⌜∧⌝ B} (p : NNF t) → NNF (⌜snd⌝ t)
-
-data NNF* {Γ} : ∀ {Δ} → Γ ⊢* Δ → Set where
-  []  : NNF* []
-  _∷_ : ∀ {A Δ} {t : Γ ⊢ A} {ts : Γ ⊢* Δ} → NNF t → NNF* ts → NNF* (t ∷ ts)
-
-mutual
-  uniNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
-  uniNF ⌜λ⌝-    ⌜λ⌝-     = refl
-  uniNF -⌜,⌝-   -⌜,⌝-    = refl
-  uniNF ⌜unit⌝  ⌜unit⌝   = refl
-  uniNF (nnf p) (nnf p′) = nnf & uniNNF p p′
-
-  uniNNF : ∀ {Γ A} {d : Γ ⊢ A} (p p′ : NNF d) → p ≡ p′
-  uniNNF var-        var-          = refl
-  uniNNF (p₁ ⌜$⌝ p₂) (p₁′ ⌜$⌝ p₂′) = _⌜$⌝_ & uniNNF p₁ p₁′ ⊗ uniNF p₂ p₂′
-  uniNNF (⌜fst⌝ p)   (⌜fst⌝ p′)    = ⌜fst⌝ & uniNNF p p′
-  uniNNF (⌜snd⌝ p)   (⌜snd⌝ p′)    = ⌜snd⌝ & uniNNF p p′
 
 
 ----------------------------------------------------------------------------------------------------
@@ -170,8 +137,7 @@ mutual
   subNNF ps (⌜fst⌝ p)   = ⌜fst⌝ (subNNF ps p)
   subNNF ps (⌜snd⌝ p)   = ⌜snd⌝ (subNNF ps p)
 
-sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → NNF* ss → t ⇒ t′ →
-        sub ss t ⇒ sub ss t′
+sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → NNF* ss → t ⇒ t′ → sub ss t ⇒ sub ss t′
 sub⇒ ps (cong$₁ r₁)               = cong$₁ (sub⇒ ps r₁)
 sub⇒ ps (cong$₂ p₁ r₂)            = cong$₂ (subNF ps p₁) (sub⇒ ps r₂)
 sub⇒ ps (congfst r)               = congfst (sub⇒ ps r)

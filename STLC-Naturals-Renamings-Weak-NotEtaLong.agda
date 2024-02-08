@@ -303,10 +303,10 @@ ren⇒ e (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ) =
       ∎
 
 -- TODO: !!!
-postulate
-  oops : ∀ {Γ Ξ 𝙓 𝙔 𝙕} (ss : Ξ ⊢* Γ) →
-         ren* (wk⊆   {B = 𝙓} (lift⊆ {B = 𝙔} (lift⊆ {B = 𝙕} id⊆))) (ren* (wk⊆ {B = 𝙔} (lift⊆ {B = 𝙕} id⊆)) (wk* {B = 𝙕} ss)) ≡
-         ren* (lift⊆ {B = 𝙓} (lift⊆ {B = 𝙔} (wk⊆   {B = 𝙕} id⊆))) (ren* (wk⊆ {B = 𝙓} (lift⊆ {B = 𝙔} id⊆)) (wk* {B = 𝙔} ss))
+oops : ∀ {Γ Ξ X Y Z} (ss : Ξ ⊢* Γ) →
+       ren* (wk⊆   {B = X} (lift⊆ {B = Y} (lift⊆ {B = Z} id⊆))) (ren* (wk⊆ {B = Y} (lift⊆ {B = Z} id⊆)) (wk* {B = Z} ss)) ≡
+       ren* (lift⊆ {B = X} (lift⊆ {B = Y} (wk⊆   {B = Z} id⊆))) (ren* (wk⊆ {B = X} (lift⊆ {B = Y} id⊆)) (wk* {B = Y} ss))
+oops ss = compren* _ _ (wk* ss) ⁻¹ ⋮ compren* _ _ ss ⁻¹ ⋮ compren* _ _ ss ⋮ ? ⋮ compren* _ _ (wk* ss)
 
 sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → NNF* ss → t ⇒ t′ →
         sub ss t ⇒ sub ss t′

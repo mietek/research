@@ -5,6 +5,7 @@ open import Prelude
 
 ----------------------------------------------------------------------------------------------------
 
+-- isomorphism
 infix 4 _≃_
 record _≃_ {𝓍 𝓎} (X : Set 𝓍) (Y : Set 𝓎) : Set (𝓍 ⊔ 𝓎) where
   field
@@ -17,19 +18,19 @@ open _≃_
 
 refl≃ : ∀ {𝓍} {X : Set 𝓍} → X ≃ X
 refl≃ = record
-  { to      = id
-  ; from    = id
-  ; from∘to = λ x → refl
-  ; to∘from = λ y → refl
-  }
+          { to      = id
+          ; from    = id
+          ; from∘to = λ x → refl
+          ; to∘from = λ y → refl
+          }
 
 sym≃ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} → X ≃ Y → Y ≃ X
 sym≃ eq = record
-  { to      = from eq
-  ; from    = to eq
-  ; from∘to = to∘from eq
-  ; to∘from = from∘to eq
-  }
+            { to      = from eq
+            ; from    = to eq
+            ; from∘to = to∘from eq
+            ; to∘from = from∘to eq
+            }
 
 module _ where
   open ≡-Reasoning
@@ -39,21 +40,21 @@ module _ where
     { to      = to eq′ ∘ to eq
     ; from    = from eq ∘ from eq′
     ; from∘to = λ x →
-          begin
-            from eq (from eq′ (to eq′ (to eq x)))
-          ≡⟨ from eq & from∘to eq′ (to eq x) ⟩
-            from eq (to eq x)
-          ≡⟨ from∘to eq x ⟩
-            x
-          ∎
+        begin
+          from eq (from eq′ (to eq′ (to eq x)))
+        ≡⟨ from eq & from∘to eq′ (to eq x) ⟩
+          from eq (to eq x)
+        ≡⟨ from∘to eq x ⟩
+          x
+        ∎
     ; to∘from = λ y →
-          begin
-            to eq′ (to eq (from eq (from eq′ y)))
-          ≡⟨ to eq′ & to∘from eq (from eq′ y) ⟩
-            to eq′ (from eq′ y)
-          ≡⟨ to∘from eq′ y ⟩
-            y
-          ∎
+        begin
+          to eq′ (to eq (from eq (from eq′ y)))
+        ≡⟨ to eq′ & to∘from eq (from eq′ y) ⟩
+          to eq′ (from eq′ y)
+        ≡⟨ to∘from eq′ y ⟩
+          y
+        ∎
     }
 
 ≡→≃ : ∀ {𝓍} {X X′ : Set 𝓍} → X ≡ X′ → X ≃ X′
@@ -91,6 +92,7 @@ module ≃-Reasoning where
 
 ----------------------------------------------------------------------------------------------------
 
+-- embedding
 infix 4 _≲_
 record _≲_ {𝓍 𝓎} (X : Set 𝓍) (Y : Set 𝓎) : Set (𝓍 ⊔ 𝓎) where
   field
@@ -102,10 +104,10 @@ open _≲_
 
 refl≲ : ∀ {𝓍} {X : Set 𝓍} → X ≲ X
 refl≲ = record
-  { to      = id
-  ; from    = id
-  ; from∘to = λ x → refl
-  }
+          { to      = id
+          ; from    = id
+          ; from∘to = λ x → refl
+          }
 
 module _ where
   open ≡-Reasoning
@@ -131,23 +133,23 @@ module _ where
     ; from    = from leq
     ; from∘to = from∘to leq
     ; to∘from = λ y →
-          begin
-            to leq (from leq y)
-          ≡⟨ to leq & congapp eq′ y ⟩
-            to leq (to leq′ y)
-          ≡⟨ congapp eq (to leq′ y) ⟩
-            from leq′ (to leq′ y)
-          ≡⟨ from∘to leq′ y ⟩
-            y
-          ∎
+        begin
+          to leq (from leq y)
+        ≡⟨ to leq & congapp eq′ y ⟩
+          to leq (to leq′ y)
+        ≡⟨ congapp eq (to leq′ y) ⟩
+          from leq′ (to leq′ y)
+        ≡⟨ from∘to leq′ y ⟩
+          y
+        ∎
     }
 
 ≃→≲ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} → X ≃ Y → X ≲ Y
 ≃→≲ X≃Y = record
-  { to      = to X≃Y
-  ; from    = from X≃Y
-  ; from∘to = from∘to X≃Y
-  }
+             { to      = to X≃Y
+             ; from    = from X≃Y
+             ; from∘to = from∘to X≃Y
+             }
 
 ≡→≲ : ∀ {𝓍} {X X′ : Set 𝓍} → X ≡ X′ → X ≲ X′
 ≡→≲ = ≃→≲ ∘ ≡→≃

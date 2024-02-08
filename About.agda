@@ -48,6 +48,8 @@ import Kit3-Renamings
 
 import STLC-Base
 import STLC-Base-Properties
+import STLC-Base-BetaShortWeakNormalForm
+import STLC-Base-BetaShortEtaLongWeakNormalForm
 import STLC-Base-Weak-NotEtaLong
 import STLC-Base-Weak-NotEtaLong-ClosedSN
 import STLC-Base-Weak-NotEtaLong-OpenSN -- TODO
@@ -57,6 +59,7 @@ import STLC-Base-Weak-EtaLong
 
 import STLC-Negative
 import STLC-Negative-Properties
+import STLC-Negative-BetaShortWeakNormalForm
 import STLC-Negative-Weak-NotEtaLong
 import STLC-Negative-Weak-NotEtaLong-ConcreteNbE
 import STLC-Negative-Weak-NotEtaLong-AbstractNbE
@@ -73,7 +76,7 @@ import STLC-Naturals2-Strong-EtaLong-ConcreteNBE
 
 import STLC-Naturals-Renamings
 import STLC-Naturals-Renamings-Properties
-import STLC-Naturals-Renamings-Weak-NotEtaLong -- TODO
+-- import STLC-Naturals-Renamings-Weak-NotEtaLong -- TODO
 
 
 ----------------------------------------------------------------------------------------------------

@@ -9,7 +9,7 @@ module TyKit (Ty : Set) where
   Ctx : Set
   Ctx = List Ty
 
-  open Renamings public
+  open FirstOrderRenamings public
 
 
 ----------------------------------------------------------------------------------------------------

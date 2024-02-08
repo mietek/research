@@ -49,6 +49,11 @@ module RenSubKit1 (¶ : RenSubKit1Params) where
   eqwkren* e []       = refl
   eqwkren* e (t ∷ ts) = _∷_ & eqwkren e t ⊗ eqwkren* e ts
 
+  -- TODO: inline?
+  eqwk²ren* : ∀ {B₁ B₂ Γ Γ′ Δ} (e : Γ ⊆ Γ′) (ts : Γ ⊢* Δ) →
+              (ren* (lift⊆² e) ∘ (wk* ∘ wk*)) ts ≡ ((wk* {B₁} ∘ wk* {B₂}) ∘ ren* e) ts
+  eqwk²ren* e ts = eqwkren* (lift⊆ e) (wk* ts) ⋮ wk* & eqwkren* e ts
+
   eqliftren* : ∀ {B Γ Γ′ Δ} (e : Γ ⊆ Γ′) (ts : Γ ⊢* Δ) →
                (ren* (lift⊆ e) ∘ lift*) ts ≡ (lift* {B} ∘ ren* e) ts
   --           (lift* ts) ◐ (lift⊆ e) ≡ lift* {B} (ts ◐ e)
@@ -82,6 +87,34 @@ module RenSubKit1 (¶ : RenSubKit1Params) where
                  ; idƒ  = ⚠ lidren*
                  ; _∘ƒ_ = λ e′ e → ⚠ (compren* e′ e)
                  }
+
+    ⟪ren∘lift⊆⟫ : ∀ (A B : Ty) → Presheaf ⟪⊇⟫ lzero
+    ⟪ren∘lift⊆⟫ A B = record
+                        { ƒObj = (_⊢ A) ∘ (B ∷_)
+                        ; ƒ    = ren ∘ lift⊆
+                        ; idƒ  = ⚠ lidren
+                        ; _∘ƒ_ = λ e′ e → ⚠ (compren (lift⊆ e′) (lift⊆ e))
+                        }
+
+    ⟪wk⟫ : ∀ (A B : Ty) → NatTrans (⟪ren⟫ A) (⟪ren∘lift⊆⟫ A B)
+    ⟪wk⟫ A B = record
+                 { η    = λ Γ → wk
+                 ; natη = λ Γ Δ e → ⚠ λ t → eqwkren e t ⁻¹
+                 }
+
+    ⟪ren*∘lift⊆⟫ : ∀ (Δ : Ctx) (B : Ty) → Presheaf ⟪⊇⟫ lzero
+    ⟪ren*∘lift⊆⟫ Δ B = record
+                         { ƒObj = (_⊢* Δ) ∘ (B ∷_)
+                         ; ƒ    = ren* ∘ lift⊆
+                         ; idƒ  = ⚠ lidren*
+                         ; _∘ƒ_ = λ e′ e → ⚠ (compren* (lift⊆ e′) (lift⊆ e))
+                         }
+
+    ⟪wk*⟫ : ∀ (Δ : Ctx) (B : Ty) → NatTrans (⟪ren*⟫ Δ) (⟪ren*∘lift⊆⟫ Δ B)
+    ⟪wk*⟫ Δ B = record
+                  { η    = λ Γ → wk*
+                  ; natη = λ Γ Δ e → ⚠ λ ts → eqwkren* e ts ⁻¹
+                  }
 
   -- Kovacs: ∈-ₛ∘ₑa
   eqrensub∋ : ∀ {Γ Ξ Ξ′ A} (e : Ξ ⊆ Ξ′) (ss : Ξ ⊢* Γ) (i : Γ ∋ A) →
@@ -278,6 +311,7 @@ module RenSubKit3 (¶ : RenSubKit3Params) where
             ; lid▻ = lidsub*
             ; rid▻ = ridsub*
             ; ass▻ = asssub*
+            ; ◅ssa = λ ts ss ss′ → asssub* ss′ ss ts ⁻¹
             }
 
   ⟪⊢*⟫ : Category lzero lzero
