@@ -37,25 +37,22 @@ join ##dependent on libera.chat
 import Prelude
 import Category
 import Isomorphism
-import Common
-import Kit1
-import Kit2
-import Kit3
+import Common -- TODO: clean up
+import Kit1 -- TODO!
+import Kit2 -- TODO: less²
+import Kit3 -- TODO: more Schäfer
 import Kit4
-import Kit1-Renamings
-import Kit2-Renamings
-import Kit3-Renamings
 
-import STLC-Base
+import STLC-Base -- TODO: clean up
 import STLC-Base-Properties
 import STLC-Base-WNF
-import STLC-Base-WNF-CBV -- TODO
-import STLC-Base-WNF-CBV-SN -- TODO
-import STLC-Base-WNF-CBV-SN2 -- TODO
+import STLC-Base-WNF-CBV -- TODO: SN
+import STLC-Base-WNF-CBV-SN -- TODO!
+import STLC-Base-WNF-CBV-SN2 -- TODO!
 import STLC-Base-WNF-NbE
 import STLC-Base-WNF-NbE2
-import STLC-Base-EWNF
-import STLC-Base-EWNF-CBV
+import STLC-Base-EWNF -- TODO: rename
+import STLC-Base-EWNF-CBV -- TODO: clean up; write up
 
 import STLC-Negative
 import STLC-Negative-Properties
@@ -66,18 +63,22 @@ import STLC-Negative-WNF-NbE2
 
 import STLC-Naturals
 import STLC-Naturals-Properties
-import STLC-Naturals-SWNF
+import STLC-Naturals-SWNF -- TODO: weaken
 import STLC-Naturals-SWNF-CBV
 import STLC-Naturals-SWNF-NbE
 import STLC-Naturals-SWNF-NbE2
-import STLC-Naturals-SWNF-NbE3 -- TODO
+import STLC-Naturals-SWNF-NbE3 -- TODO: icebox
 import STLC-Naturals2
 import STLC-Naturals2-NF
 import STLC-Naturals2-NF-NbE
 
+-- TODO: use renamings for a STLC-Base alternative only
+import Kit1-Renamings
+import Kit2-Renamings
+import Kit3-Renamings
 import STLC-Naturals-Renamings
 import STLC-Naturals-Renamings-Properties
--- import STLC-Naturals-Renamings-Weak-NotEtaLong -- TODO
+-- import STLC-Naturals-Renamings-Weak-NotEtaLong
 
 
 ----------------------------------------------------------------------------------------------------

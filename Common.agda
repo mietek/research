@@ -233,7 +233,7 @@ module FirstOrderRenamings {𝓍} {X : Set 𝓍} where
   eqwk⊆ is′ []       = refl
   eqwk⊆ is′ (i ∷ is) = _∷_ & eqwkren∋ is′ i ⊗ eqwk⊆ is′ is
 
-  -- TODO: name? friends? delete
+  -- TODO: name? friends? delete?
   eqwk⊆′ : ∀ {B Γ Γ′} (is : Γ ⊆ Γ′) →
            wk⊆ id⊆ ∘⊆ is ≡ wk⊆ {B} is
   eqwk⊆′ is = eq⊆ zero (wk⊆ id⊆) is ⁻¹
