@@ -1,6 +1,11 @@
+----------------------------------------------------------------------------------------------------
+
+-- call by value reduction to β-short η-long weak normal form
+-- TODO: clean up; write up
+
 module STLC-Base-EWNF-CBV where
 
-open import STLC-Base-Properties public
+open import STLC-Base-RenSub public
 open import STLC-Base-EWNF public
 open import Kit3 public
 

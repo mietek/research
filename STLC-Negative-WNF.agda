@@ -1,3 +1,7 @@
+----------------------------------------------------------------------------------------------------
+
+-- β-short weak normal forms
+
 module STLC-Negative-WNF where
 
 open import STLC-Negative public
@@ -5,7 +9,6 @@ open import STLC-Negative public
 
 ----------------------------------------------------------------------------------------------------
 
--- β-short weak normal forms
 mutual
   data NF {Γ} : ∀ {A} → Γ ⊢ A → Set where
     ⌜λ⌝-   : ∀ {A B} {t : A ∷ Γ ⊢ B} → NF (⌜λ⌝ t)
@@ -35,6 +38,9 @@ mutual
   uniNNF (p₁ ⌜$⌝ p₂) (p₁′ ⌜$⌝ p₂′) = _⌜$⌝_ & uniNNF p₁ p₁′ ⊗ uniNF p₂ p₂′
   uniNNF (⌜fst⌝ p)   (⌜fst⌝ p′)    = ⌜fst⌝ & uniNNF p p′
   uniNNF (⌜snd⌝ p)   (⌜snd⌝ p′)    = ⌜snd⌝ & uniNNF p p′
+
+
+----------------------------------------------------------------------------------------------------
 
 mutual
   renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren e t)

@@ -1,8 +1,8 @@
 ----------------------------------------------------------------------------------------------------
 
--- β-short semi-weak normal forms
+-- β-short weak normal forms
 
-module STLC-Naturals-SWNF where
+module STLC-Naturals-WNF where
 
 open import STLC-Naturals public
 
@@ -13,7 +13,7 @@ mutual
   data NF {Γ} : ∀ {A} → Γ ⊢ A → Set where
     ⌜λ⌝-   : ∀ {A B} {t : A ∷ Γ ⊢ B} → NF (⌜λ⌝ t)
     ⌜zero⌝ : NF ⌜zero⌝
-    ⌜suc⌝  : ∀ {t : Γ ⊢ ⌜ℕ⌝} (p : NF t) → NF (⌜suc⌝ t)
+    ⌜suc⌝- : ∀ {t : Γ ⊢ ⌜ℕ⌝} → NF (⌜suc⌝ t)
     nnf    : ∀ {A} {t : Γ ⊢ A} (p : NNF t) → NF t
 
   data NNF {Γ} : ∀ {A} → Γ ⊢ A → Set where
@@ -31,7 +31,7 @@ mutual
   uniNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
   uniNF ⌜λ⌝-      ⌜λ⌝-       = refl
   uniNF ⌜zero⌝    ⌜zero⌝     = refl
-  uniNF (⌜suc⌝ p) (⌜suc⌝ p′) = ⌜suc⌝ & uniNF p p′
+  uniNF ⌜suc⌝-    ⌜suc⌝-     = refl
   uniNF (nnf p)   (nnf p′)   = nnf & uniNNF p p′
 
   uniNNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NNF t) → p ≡ p′
@@ -46,7 +46,7 @@ mutual
   renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren e t)
   renNF e ⌜λ⌝-      = ⌜λ⌝-
   renNF e ⌜zero⌝    = ⌜zero⌝
-  renNF e (⌜suc⌝ p) = ⌜suc⌝ (renNF e p)
+  renNF e ⌜suc⌝-    = ⌜suc⌝-
   renNF e (nnf p)   = nnf (renNNF e p)
 
   renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren e t)
@@ -78,7 +78,7 @@ mutual
   subNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NF t → NF (sub ss t)
   subNF ps ⌜λ⌝-      = ⌜λ⌝-
   subNF ps ⌜zero⌝    = ⌜zero⌝
-  subNF ps (⌜suc⌝ p) = ⌜suc⌝ (subNF ps p)
+  subNF ps ⌜suc⌝-    = ⌜suc⌝-
   subNF ps (nnf p)   = nnf (subNNF ps p)
 
   subNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NNF t → NNF (sub ss t)

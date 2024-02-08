@@ -1,3 +1,9 @@
+----------------------------------------------------------------------------------------------------
+
+-- strong normalization for closed terms
+-- after Ahmed
+-- TODO: needs a lot of work
+
 module STLC-Base-WNF-CBV-SN where
 
 open import STLC-Base-WNF-CBV public
@@ -116,7 +122,8 @@ wn = fst ∘ hwn
 
 ----------------------------------------------------------------------------------------------------
 
--- Altenkirch
+-- general shape of the definition due to Altenkirch
+-- TODO: this specific definition is probably wrong, as it uses the CBV reduction strategy
 data SN {Γ A} (t : Γ ⊢ A) : Set where
   make : (∀ {t′} → t ⇒ t′ → SN t′) → SN t
 

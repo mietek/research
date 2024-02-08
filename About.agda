@@ -43,31 +43,33 @@ import Kit2 -- TODO: less²
 import Kit3 -- TODO: more Schäfer
 import Kit4
 
-import STLC-Base -- TODO: clean up
-import STLC-Base-Properties
+import STLC-Base -- TODO
+import STLC-Base-RenSub
 import STLC-Base-WNF
-import STLC-Base-WNF-CBV -- TODO: SN
-import STLC-Base-WNF-CBV-SN -- TODO!
-import STLC-Base-WNF-CBV-SN2 -- TODO!
+import STLC-Base-WNF-CBV -- TODO
+import STLC-Base-WNF-CBV-SN -- TODO
+import STLC-Base-WNF-CBV-SN2 -- TODO
 import STLC-Base-WNF-NbE
 import STLC-Base-WNF-NbE2
-import STLC-Base-EWNF -- TODO: rename
-import STLC-Base-EWNF-CBV -- TODO: clean up; write up
+import STLC-Base-EWNF -- TODO
+import STLC-Base-EWNF-CBV -- TODO
 
 import STLC-Negative
-import STLC-Negative-Properties
+import STLC-Negative-RenSub
 import STLC-Negative-WNF
 import STLC-Negative-WNF-CBV
 import STLC-Negative-WNF-NbE
 import STLC-Negative-WNF-NbE2
 
 import STLC-Naturals
-import STLC-Naturals-Properties
-import STLC-Naturals-SWNF -- TODO: weaken
+import STLC-Naturals-RenSub
+import STLC-Naturals-SWNF
 import STLC-Naturals-SWNF-CBV
 import STLC-Naturals-SWNF-NbE
 import STLC-Naturals-SWNF-NbE2
 import STLC-Naturals-SWNF-NbE3 -- TODO: icebox
+import STLC-Naturals-WNF
+-- import STLC-Naturals-WNF-CBV
 import STLC-Naturals2
 import STLC-Naturals2-NF
 import STLC-Naturals2-NF-NbE
@@ -84,7 +86,7 @@ import STLC-Naturals-Renamings-Properties
 ----------------------------------------------------------------------------------------------------
 
 open STLC-Base-WNF-NbE2
-open BetaShortEtaLong
+open BetaShortEtaLongDefEq
 
 postulate
   -- Abel p.8: “preservation of meaning”

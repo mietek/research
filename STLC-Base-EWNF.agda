@@ -1,3 +1,8 @@
+----------------------------------------------------------------------------------------------------
+
+-- β-short η-long weak normal forms
+-- TODO: rename FNF to ENF
+
 module STLC-Base-EWNF where
 
 open import STLC-Base public
@@ -5,7 +10,6 @@ open import STLC-Base public
 
 ----------------------------------------------------------------------------------------------------
 
--- β-short η-long weak normal forms
 mutual
   data FNF {Γ} : ∀ {A} → Γ ⊢ A → Set where
     ⌜λ⌝- : ∀ {A B} {t : A ∷ Γ ⊢ B} → FNF (⌜λ⌝ t)

@@ -1,3 +1,7 @@
+----------------------------------------------------------------------------------------------------
+
+-- β-short weak normal forms
+
 module STLC-Base-WNF where
 
 open import STLC-Base public
@@ -5,7 +9,6 @@ open import STLC-Base public
 
 ----------------------------------------------------------------------------------------------------
 
--- β-short weak normal forms
 mutual
   data NF {Γ} : ∀ {A} → Γ ⊢ A → Set where
     ⌜λ⌝- : ∀ {A B} {t : A ∷ Γ ⊢ B} → NF (⌜λ⌝ t)
@@ -88,6 +91,7 @@ mutual
 ----------------------------------------------------------------------------------------------------
 
 -- direct normal forms are isomorphic to predicate normal forms
+
 private
   open ≡-Reasoning
 

@@ -1,16 +1,13 @@
-----------------------------------------------------------------------------------------------------
-
--- call by value reduction to β-short semi-weak normal forms
-
-module STLC-Naturals-SWNF-CBV where
+module STLC-Naturals-WNF-CBV where
 
 open import STLC-Naturals-RenSub public
-open import STLC-Naturals-SWNF public
+open import STLC-Naturals-WNF public
 open import Kit3 public
 
 
 ----------------------------------------------------------------------------------------------------
 
+-- call-by-value reduction
 infix 4 _⇒_
 data _⇒_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
   cong$₁   : ∀ {A B} {t₁ t₁′ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (r₁ : t₁ ⇒ t₁′) →
@@ -39,7 +36,7 @@ open RedKit1 (kit tmkit _⇒_) public
 
 mutual
   NF→¬R : ∀ {Γ A} {t : Γ ⊢ A} → NF t → ¬R t
-  NF→¬R (⌜suc⌝ p) (congsuc r) = r ↯ NF→¬R p
+  NF→¬R ⌜suc⌝-    (congsuc r) = r ↯ NF→¬R p
   NF→¬R (nnf p)   r           = r ↯ NNF→¬R p
 
   NNF→¬R : ∀ {Γ A} {t  : Γ ⊢ A} → NNF t → ¬R t

@@ -1,3 +1,11 @@
+----------------------------------------------------------------------------------------------------
+
+-- normalization by evaluation to β-short semi-weak normal forms
+-- with an explicit model construction
+
+-- unfortunately, the model needs to be split into two records in order to include a `⟦rec⟧` field
+-- after the definition of `_⊩_`
+
 module STLC-Naturals-SWNF-NbE2 where
 
 open import STLC-Naturals-SWNF public

@@ -1,3 +1,7 @@
+----------------------------------------------------------------------------------------------------
+
+-- normalization by evaluation to β-short semi-weak normal forms
+
 module STLC-Naturals-SWNF-NbE where
 
 open import STLC-Naturals-SWNF public

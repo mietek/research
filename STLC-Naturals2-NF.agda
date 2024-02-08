@@ -1,3 +1,8 @@
+----------------------------------------------------------------------------------------------------
+
+-- β-short η-long normal forms
+-- after Abel
+
 module STLC-Naturals2-NF where
 
 open import STLC-Naturals2 public
@@ -5,7 +10,6 @@ open import STLC-Naturals2 public
 
 ----------------------------------------------------------------------------------------------------
 
--- β-short η-long normal forms
 mutual
   data NF {Γ} : ∀ {A} → Γ ⊢ A → Set where
     ⌜λ⌝    : ∀ {A B} {t : A ∷ Γ ⊢ B} (p : NF t) → NF (⌜λ⌝ t)

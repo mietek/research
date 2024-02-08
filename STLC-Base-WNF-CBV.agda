@@ -1,13 +1,17 @@
+----------------------------------------------------------------------------------------------------
+
+-- call by value reduction to β-short weak normal form
+-- TODO: do SN and organize things related to SN
+
 module STLC-Base-WNF-CBV where
 
-open import STLC-Base-Properties public
+open import STLC-Base-RenSub public
 open import STLC-Base-WNF public
 open import Kit3 public
 
 
 ----------------------------------------------------------------------------------------------------
 
--- call-by-value reduction to β-short weak normal form
 infix 4 _⇒_
 data _⇒_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
   cong$₁ : ∀ {A B} {t₁ t₁′ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (r : t₁ ⇒ t₁′) →

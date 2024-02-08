@@ -1,3 +1,8 @@
+----------------------------------------------------------------------------------------------------
+
+-- normalization by evaluation to β-short weak normal form
+-- with an explicit model construction
+
 module STLC-Base-WNF-NbE2 where
 
 open import STLC-Base-WNF public

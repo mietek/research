@@ -1,12 +1,18 @@
+----------------------------------------------------------------------------------------------------
+
+-- normalization by evaluation to β-short semi-weak normal forms
+-- with an explicit model construction
+
+-- using an explicit recursion principle on types allows defining the model as a single record that
+-- includes a `⟦rec⟧` field after the definition of `_⊩_`
+
+-- unfortunately, defining the canonical model seems impossible
+
 module STLC-Naturals-SWNF-NbE3 where
 
 open import STLC-Naturals-SWNF public
 open import Kit4 public
 
--- an experiment using an explicit recursion principle on types to define a non-split model:
--- a single record that includes a `⟦rec⟧` field after the definition of `_⊩_`
-
--- unfortunately, defining the canonical model seems impossible
 
 ----------------------------------------------------------------------------------------------------
 
@@ -28,8 +34,6 @@ record Model : Set₁ where
 
   infix 3 _⊩_
   _⊩_ : World → Ty → Set
-  -- W ⊩ A ⌜⊃⌝ B = ∀ {W′} → W ≤ W′ → W′ ⊩ A → W′ ⊩ B
-  -- W ⊩ ⌜ℕ⌝     = ⟦ℕ⟧ W
   W ⊩ A = recTy {X = World → Set} A
              (λ A recA B recB W → ∀ {W′} → W ≤ W′ → recA W′ → recB W′)
              (λ W → ⟦ℕ⟧ W)

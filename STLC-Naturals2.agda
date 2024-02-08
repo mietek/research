@@ -1,3 +1,9 @@
+----------------------------------------------------------------------------------------------------
+
+-- simply typed lambda calculus with natural numbers
+-- with a separate syntactic category of constants
+-- after Abel
+
 module STLC-Naturals2 where
 
 open import Kit1 public

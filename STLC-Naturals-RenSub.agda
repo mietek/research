@@ -1,4 +1,8 @@
-module STLC-Naturals-Properties where
+----------------------------------------------------------------------------------------------------
+
+-- categorical laws for renaming and substitution
+
+module STLC-Naturals-RenSub where
 
 open import STLC-Naturals public
 open import Kit2 public
