@@ -1,10 +1,11 @@
-module STLC-Negative-BetaShortWeakNormalForm where
+module STLC-Negative-WNF where
 
 open import STLC-Negative public
 
 
 ----------------------------------------------------------------------------------------------------
 
+-- β-short weak normal forms
 mutual
   data NF {Γ} : ∀ {A} → Γ ⊢ A → Set where
     ⌜λ⌝-   : ∀ {A B} {t : A ∷ Γ ⊢ B} → NF (⌜λ⌝ t)
@@ -34,6 +35,36 @@ mutual
   uniNNF (p₁ ⌜$⌝ p₂) (p₁′ ⌜$⌝ p₂′) = _⌜$⌝_ & uniNNF p₁ p₁′ ⊗ uniNF p₂ p₂′
   uniNNF (⌜fst⌝ p)   (⌜fst⌝ p′)    = ⌜fst⌝ & uniNNF p p′
   uniNNF (⌜snd⌝ p)   (⌜snd⌝ p′)    = ⌜snd⌝ & uniNNF p p′
+
+mutual
+  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren e t)
+  renNF e ⌜λ⌝-    = ⌜λ⌝-
+  renNF e -⌜,⌝-   = -⌜,⌝-
+  renNF e ⌜unit⌝  = ⌜unit⌝
+  renNF e (nnf p) = nnf (renNNF e p)
+
+  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren e t)
+  renNNF e var-        = var-
+  renNNF e (p₁ ⌜$⌝ p₂) = renNNF e p₁ ⌜$⌝ renNF e p₂
+  renNNF e (⌜fst⌝ p)   = ⌜fst⌝ (renNNF e p)
+  renNNF e (⌜snd⌝ p)   = ⌜snd⌝ (renNNF e p)
+
+sub∋NNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {i : Γ ∋ A} → NNF* ss → NNF (sub∋ ss i)
+sub∋NNF {i = zero}  (p ∷ ps) = p
+sub∋NNF {i = suc i} (p ∷ ps) = sub∋NNF ps
+
+mutual
+  subNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NF t → NF (sub ss t)
+  subNF ps ⌜λ⌝-    = ⌜λ⌝-
+  subNF ps -⌜,⌝-   = -⌜,⌝-
+  subNF ps ⌜unit⌝  = ⌜unit⌝
+  subNF ps (nnf p) = nnf (subNNF ps p)
+
+  subNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NNF t → NNF (sub ss t)
+  subNNF ps var-        = sub∋NNF ps
+  subNNF ps (p₁ ⌜$⌝ p₂) = subNNF ps p₁ ⌜$⌝ subNF ps p₂
+  subNNF ps (⌜fst⌝ p)   = ⌜fst⌝ (subNNF ps p)
+  subNNF ps (⌜snd⌝ p)   = ⌜snd⌝ (subNNF ps p)
 
 
 ----------------------------------------------------------------------------------------------------

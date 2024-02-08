@@ -1,12 +1,11 @@
-module STLC-Naturals2-Strong-EtaLong where
+module STLC-Naturals2-NF where
 
 open import STLC-Naturals2 public
-open import Kit3 public
 
 
 ----------------------------------------------------------------------------------------------------
 
--- β-short η-long strong normal forms
+-- β-short η-long normal forms
 mutual
   data NF {Γ} : ∀ {A} → Γ ⊢ A → Set where
     ⌜λ⌝    : ∀ {A B} {t : A ∷ Γ ⊢ B} (p : NF t) → NF (⌜λ⌝ t)
@@ -47,7 +46,6 @@ mutual
 
 ----------------------------------------------------------------------------------------------------
 
--- stability under renaming
 mutual
   renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren e t)
   renNF e (⌜λ⌝ p)   = ⌜λ⌝ (renNF (lift⊆ e) p)
@@ -63,7 +61,6 @@ mutual
 
 ----------------------------------------------------------------------------------------------------
 
--- β-short η-long strong normal forms (direct)
 mutual
   infix 3 _⊢≪_
   data _⊢≪_ (Γ : Ctx) : Ty → Set where
@@ -77,6 +74,9 @@ mutual
     var   : ∀ {A} (i : Γ ∋ A) → Γ ⊢≫ A
     _⌜$⌝_ : ∀ {A B} (t₁ : Γ ⊢≫ A ⌜⊃⌝ B) (t₂ : Γ ⊢≪ A) → Γ ⊢≫ B
     ⌜rec⌝ : ∀ {A} (tₙ : Γ ⊢≫ ⌜ℕ⌝) (t₀ : Γ ⊢≪ A) (tₛ : Γ ⊢≪ ⌜ℕ⌝ ⌜⊃⌝ A ⌜⊃⌝ A)  → Γ ⊢≫ A
+
+
+----------------------------------------------------------------------------------------------------
 
 mutual
   ren≪ : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ⊢≪ A → Γ′ ⊢≪ A

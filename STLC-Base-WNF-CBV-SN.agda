@@ -1,6 +1,6 @@
-module STLC-Base-Weak-NotEtaLong-ClosedSN where
+module STLC-Base-WNF-CBV-SN where
 
-open import STLC-Base-Weak-NotEtaLong public
+open import STLC-Base-WNF-CBV public
 
 
 ----------------------------------------------------------------------------------------------------

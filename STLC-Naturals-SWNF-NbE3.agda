@@ -1,10 +1,18 @@
-module STLC-Naturals-Weak-NotEtaLong-AbstractNbE2 where
+module STLC-Naturals-SWNF-NbE3 where
 
-open import STLC-Naturals-Weak-NotEtaLong public
+open import STLC-Naturals-SWNF public
 open import Kit4 public
 
+-- an experiment using an explicit recursion principle on types to define a non-split model:
+-- a single record that includes a `⟦rec⟧` field after the definition of `_⊩_`
+
+-- unfortunately, defining the canonical model seems impossible
 
 ----------------------------------------------------------------------------------------------------
+
+recTy : ∀ {𝓍} {X : Set 𝓍} → Ty → (Ty → X → Ty → X → X) → X → X
+recTy (A ⌜⊃⌝ B) f⊃ fℕ = f⊃ A (recTy A f⊃ fℕ) B (recTy B f⊃ fℕ)
+recTy ⌜ℕ⌝       f⊃ fℕ = fℕ
 
 record Model : Set₁ where
   infix 4 _≤_
@@ -69,7 +77,7 @@ open ModelKit (kit (λ {ℳ} → _⊩_ ℳ) (λ {ℳ} {A} → vren {ℳ} {A})) p
 --         ; ⟦rec⟧  =
 --             λ {         (_ , ⌜zero⌝)   v₀ vₛ → v₀
 --               ;         (_ , ⌜suc⌝ pₙ) v₀ vₛ → vₛ id⊆ (_ , pₙ) id⊆ v₀
---               ; {A = A} (_ , nnf pₙ)   v₀ vₛ → {!!}
+--               ; {A = A} (_ , nnf pₙ)   v₀ vₛ → {!!}                                   -- hole #1
 -- --                  let _ , p₀ = ↓ {A} v₀
 -- --                      _ , pₛ = ↓ (vₛ (wk⊆ (wk⊆ id⊆)) (↑ {⌜ℕ⌝} (var (suc zero) , var-))
 -- --                                 id⊆ (↑ {A} (var zero , var-))) in
@@ -77,12 +85,12 @@ open ModelKit (kit (λ {ℳ} → _⊩_ ℳ) (λ {ℳ} {A} → vren {ℳ} {A})) p
 --               }
 --         }
 
---   ↑ : ∀ {A Γ} → Σ (Γ ⊢ A) NNF → 𝒞 / {!Γ!} ⊩ A
+--   ↑ : ∀ {A Γ} → Σ (Γ ⊢ A) NNF → 𝒞 / {!Γ!} ⊩ A                                      -- hole #2
 --   ↑ {A ⌜⊃⌝ B} (_ , p₁) = λ e v₂ → let _ , p₂ = ↓ v₂ in
 --                            ↑ (_ , renNNF e p₁ ⌜$⌝ p₂)
 --   ↑ {⌜ℕ⌝}     (_ , p)  = _ , nnf p
 
---   ↓ : ∀ {A Γ} → 𝒞 / Γ ⊩ A → Σ ({!Γ!} ⊢ A) NF
+--   ↓ : ∀ {A Γ} → 𝒞 / Γ ⊩ A → Σ ({!Γ!} ⊢ A) NF                                       -- hole #3
 --   ↓ {A ⌜⊃⌝ B} v = let t , p = ↓ (v (wk⊆ id⊆) (↑ {A} (var zero , var-))) in
 --                     ⌜λ⌝ t , ⌜λ⌝-
 --   ↓ {⌜ℕ⌝}     v = v

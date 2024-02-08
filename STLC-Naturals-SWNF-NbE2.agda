@@ -1,6 +1,6 @@
-module STLC-Naturals-Weak-NotEtaLong-AbstractNbE where
+module STLC-Naturals-SWNF-NbE2 where
 
-open import STLC-Naturals-Weak-NotEtaLong public
+open import STLC-Naturals-SWNF public
 open import Kit4 public
 
 
@@ -20,12 +20,8 @@ record BaseModel : Set₁ where
 
   infix 3 _⊩_
   _⊩_ : World → Ty → Set
-  -- W ⊩ A ⌜⊃⌝ B = ∀ {W′} → W ≤ W′ → W′ ⊩ A → W′ ⊩ B
-  -- W ⊩ ⌜ℕ⌝     = ⟦ℕ⟧ W
-  W ⊩ A = recTy {X = World → Set} A
-             (λ A recA B recB W → ∀ {W′} → W ≤ W′ → recA W′ → recB W′)
-             (λ W → ⟦ℕ⟧ W)
-             W
+  W ⊩ A ⌜⊃⌝ B = ∀ {W′} → W ≤ W′ → W′ ⊩ A → W′ ⊩ B
+  W ⊩ ⌜ℕ⌝     = ⟦ℕ⟧ W
 
 record SplitModel (ℬ : BaseModel) : Set₁ where
   open BaseModel ℬ public

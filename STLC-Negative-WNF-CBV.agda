@@ -1,7 +1,7 @@
-module STLC-Negative-Weak-NotEtaLong where
+module STLC-Negative-WNF-CBV where
 
 open import STLC-Negative-Properties public
-open import STLC-Negative-BetaShortWeakNormalForm public
+open import STLC-Negative-WNF public
 open import Kit3 public
 
 
@@ -93,20 +93,6 @@ open ProgKit (kit redkit2 prog⇒) public
 
 ----------------------------------------------------------------------------------------------------
 
--- stability under renaming
-mutual
-  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren e t)
-  renNF e ⌜λ⌝-    = ⌜λ⌝-
-  renNF e -⌜,⌝-   = -⌜,⌝-
-  renNF e ⌜unit⌝  = ⌜unit⌝
-  renNF e (nnf p) = nnf (renNNF e p)
-
-  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren e t)
-  renNNF e var-        = var-
-  renNNF e (p₁ ⌜$⌝ p₂) = renNNF e p₁ ⌜$⌝ renNF e p₂
-  renNNF e (⌜fst⌝ p)   = ⌜fst⌝ (renNNF e p)
-  renNNF e (⌜snd⌝ p)   = ⌜snd⌝ (renNNF e p)
-
 ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇒ t′ → ren e t ⇒ ren e t′
 ren⇒ e (cong$₁ r₁)               = cong$₁ (ren⇒ e r₁)
 ren⇒ e (cong$₂ p₁ r₂)            = cong$₂ (renNF e p₁) (ren⇒ e r₂)
@@ -115,27 +101,6 @@ ren⇒ e (congsnd r)               = congsnd (ren⇒ e r)
 ren⇒ e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut e t₁ _ ⁻¹) (renNF e p₂)
 ren⇒ e βred∧₁                    = βred∧₁
 ren⇒ e βred∧₂                    = βred∧₂
-
-
-----------------------------------------------------------------------------------------------------
-
--- stability under substitution
-sub∋NNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {i : Γ ∋ A} → NNF* ss → NNF (sub∋ ss i)
-sub∋NNF {i = zero}  (p ∷ ps) = p
-sub∋NNF {i = suc i} (p ∷ ps) = sub∋NNF ps
-
-mutual
-  subNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NF t → NF (sub ss t)
-  subNF ps ⌜λ⌝-    = ⌜λ⌝-
-  subNF ps -⌜,⌝-   = -⌜,⌝-
-  subNF ps ⌜unit⌝  = ⌜unit⌝
-  subNF ps (nnf p) = nnf (subNNF ps p)
-
-  subNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NNF t → NNF (sub ss t)
-  subNNF ps var-        = sub∋NNF ps
-  subNNF ps (p₁ ⌜$⌝ p₂) = subNNF ps p₁ ⌜$⌝ subNF ps p₂
-  subNNF ps (⌜fst⌝ p)   = ⌜fst⌝ (subNNF ps p)
-  subNNF ps (⌜snd⌝ p)   = ⌜snd⌝ (subNNF ps p)
 
 sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → NNF* ss → t ⇒ t′ → sub ss t ⇒ sub ss t′
 sub⇒ ps (cong$₁ r₁)               = cong$₁ (sub⇒ ps r₁)

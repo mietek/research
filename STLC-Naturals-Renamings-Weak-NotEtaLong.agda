@@ -306,7 +306,7 @@ ren⇒ e (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ) =
 oops : ∀ {Γ Ξ X Y Z} (ss : Ξ ⊢* Γ) →
        ren* (wk⊆   {B = X} (lift⊆ {B = Y} (lift⊆ {B = Z} id⊆))) (ren* (wk⊆ {B = Y} (lift⊆ {B = Z} id⊆)) (wk* {B = Z} ss)) ≡
        ren* (lift⊆ {B = X} (lift⊆ {B = Y} (wk⊆   {B = Z} id⊆))) (ren* (wk⊆ {B = X} (lift⊆ {B = Y} id⊆)) (wk* {B = Y} ss))
-oops ss = compren* _ _ (wk* ss) ⁻¹ ⋮ compren* _ _ ss ⁻¹ ⋮ compren* _ _ ss ⋮ ? ⋮ compren* _ _ (wk* ss)
+oops ss = compren* _ _ (wk* ss) ⁻¹ ⋮ compren* _ _ ss ⁻¹ ⋮ compren* _ _ ss ⋮ {!!} ⋮ compren* _ _ (wk* ss)
 
 sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → NNF* ss → t ⇒ t′ →
         sub ss t ⇒ sub ss t′

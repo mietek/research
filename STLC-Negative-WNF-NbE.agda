@@ -1,6 +1,6 @@
-module STLC-Negative-Weak-NotEtaLong-ConcreteNbE where
+module STLC-Negative-WNF-NbE where
 
-open import STLC-Negative-Weak-NotEtaLong public
+open import STLC-Negative-WNF public
 open import Kit4 public
 
 

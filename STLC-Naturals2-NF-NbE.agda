@@ -1,6 +1,6 @@
-module STLC-Naturals2-Strong-EtaLong-ConcreteNBE where
+module STLC-Naturals2-NF-NbE where
 
-open import STLC-Naturals2-Strong-EtaLong public
+open import STLC-Naturals2-NF public
 open import Kit4 public
 
 

@@ -89,37 +89,31 @@ data Dec {𝓍} (X : Set 𝓍) : Set 𝓍 where
 
 ----------------------------------------------------------------------------------------------------
 
-infix 4 ≡-syntax
 ≡-syntax : ∀ {𝓍} (X : Set 𝓍) (x x′ : X) → Set 𝓍
 ≡-syntax X = _≡_
 
+infix 4 ≡-syntax
 syntax ≡-syntax X x x′ = x ≡ x′ :> X
 
-sym : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≡ x′ → x′ ≡ x
-sym refl = refl
-
 infix 9 _⁻¹
-_⁻¹ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≡ x′ → x′ ≡ x
+sym _⁻¹ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≡ x′ → x′ ≡ x
+sym refl = refl
 _⁻¹ = sym
 
-trans : ∀ {𝓍} {X : Set 𝓍} {x x′ x″ : X} → x ≡ x′ → x′ ≡ x″ → x ≡ x″
-trans refl eq = eq
-
 infixr 4 _⋮_
-_⋮_ : ∀ {𝓍} {X : Set 𝓍} {x x′ x″ : X} → x ≡ x′ → x′ ≡ x″ → x ≡ x″
+trans _⋮_ : ∀ {𝓍} {X : Set 𝓍} {x x′ x″ : X} → x ≡ x′ → x′ ≡ x″ → x ≡ x″
+trans refl eq = eq
 _⋮_ = trans
 
 subst : ∀ {𝓍 𝓎} {X : Set 𝓍} (Y : X → Set 𝓎) {x x′} → x ≡ x′ → Y x → Y x′
 subst Y refl y = y
 
-coe : ∀ {𝓍} {X Y : Set 𝓍} → X ≡ Y → X → Y
-coe = subst id
-
-cong : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (f : X → Y) {x x′} → x ≡ x′ → f x ≡ f x′
-cong f refl = refl
+transport : ∀ {𝓍} {X Y : Set 𝓍} → X ≡ Y → X → Y
+transport = subst id
 
 infixl 9 _&_
-_&_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (f : X → Y) {x x′} → x ≡ x′ → f x ≡ f x′
+cong _&_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (f : X → Y) {x x′} → x ≡ x′ → f x ≡ f x′
+cong f refl = refl
 _&_ = cong
 
 cong₂ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : Set 𝓏} (f : X → Y → Z) {x x′ y y′} → x ≡ x′ →
@@ -131,13 +125,16 @@ infixl 8 _⊗_
 _⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {f g : X → Y} {x x′} → f ≡ g → x ≡ x′ → f x ≡ g x′
 refl ⊗ refl = refl
 
-congapp : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ x → Y x} → f ≡ g → (∀ x → f x ≡ g x)
+congapp : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {f g : X → Y} → f ≡ g → (∀ x → f x ≡ g x)
 congapp refl x = refl
 
-congapp′ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x} → Y x} →
-             f ≡ g :> (∀ {x} → Y x) →
-           (∀ {x} → f {x} ≡ g {x})
-congapp′ refl {x} = refl
+dcongapp : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ x → Y x} → f ≡ g → (∀ x → f x ≡ g x)
+dcongapp refl x = refl
+
+dcongapp′ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x} → Y x} →
+              f ≡ g :> (∀ {x} → Y x) →
+            (∀ {x} → f {x} ≡ g {x})
+dcongapp′ refl {x} = refl
 
 FunExt : Setω
 FunExt = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ x → Y x} → (∀ x → f x ≡ g x) → f ≡ g
@@ -197,13 +194,13 @@ data _≅_ {𝓍} {X : Set 𝓍} (x : X) : ∀ {𝓎} {Y : Set 𝓎} → Y → S
 ≡→≅ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≡ x′ → x ≅ x′
 ≡→≅ refl = refl
 
-cong≅ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} (f : ∀ x → Y x) {x x′} → x ≅ x′ → f x ≅ f x′
-cong≅ f refl = refl
+hcong : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} (f : ∀ x → Y x) {x x′} → x ≅ x′ → f x ≅ f x′
+hcong f refl = refl
 
-cong₂≅ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : X → Set 𝓎} {Z : ∀ x → Y x → Set 𝓏}
+hcong₂ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : X → Set 𝓎} {Z : ∀ x → Y x → Set 𝓏}
            (f : ∀ x → (y : Y x) → Z x y) {x x′ y y′} → x ≅ x′ → y ≅ y′ →
          f x y ≅ f x′ y′
-cong₂≅ f refl refl = refl
+hcong₂ f refl refl = refl
 
 
 ----------------------------------------------------------------------------------------------------

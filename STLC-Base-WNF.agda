@@ -1,10 +1,11 @@
-module STLC-Base-BetaShortWeakNormalForm where
+module STLC-Base-WNF where
 
 open import STLC-Base public
 
 
 ----------------------------------------------------------------------------------------------------
 
+-- β-short weak normal forms
 mutual
   data NF {Γ} : ∀ {A} → Γ ⊢ A → Set where
     ⌜λ⌝- : ∀ {A B} {t : A ∷ Γ ⊢ B} → NF (⌜λ⌝ t)
@@ -47,20 +48,48 @@ mutual
 
 ----------------------------------------------------------------------------------------------------
 
+mutual
+  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren e t)
+  renNF e ⌜λ⌝-    = ⌜λ⌝-
+  renNF e (nnf p) = nnf (renNNF e p)
+
+  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren e t)
+  renNNF e var-        = var-
+  renNNF e (p₁ ⌜$⌝ p₂) = renNNF e p₁ ⌜$⌝ renNF e p₂
+
+sub∋NNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {i : Γ ∋ A} → NNF* ss → NNF (sub∋ ss i)
+sub∋NNF {i = zero}  (p ∷ ps) = p
+sub∋NNF {i = suc i} (p ∷ ps) = sub∋NNF ps
+
+mutual
+  subNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NF t → NF (sub ss t)
+  subNF ps ⌜λ⌝-    = ⌜λ⌝-
+  subNF ps (nnf p) = nnf (subNNF ps p)
+
+  subNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NNF t → NNF (sub ss t)
+  subNNF ps var-        = sub∋NNF ps
+  subNNF ps (p₁ ⌜$⌝ p₂) = subNNF ps p₁ ⌜$⌝ subNF ps p₂
+
+
+----------------------------------------------------------------------------------------------------
+
+mutual
+  infix 3 _⊢≪_
+  data _⊢≪_ (Γ : Ctx) : Ty → Set where
+    ⌜λ⌝ : ∀ {A B} (t : A ∷ Γ ⊢ B) → Γ ⊢≪ A ⌜⊃⌝ B
+    nnf : ∀ {A} (t : Γ ⊢≫ A) → Γ ⊢≪ A
+
+  infix 3 _⊢≫_
+  data _⊢≫_ (Γ : Ctx) : Ty → Set where
+    var   : ∀ {A} (i : Γ ∋ A) → Γ ⊢≫ A
+    _⌜$⌝_ : ∀ {A B} (t₁ : Γ ⊢≫ A ⌜⊃⌝ B) (t₂ : Γ ⊢≪ A) → Γ ⊢≫ B
+
+
+----------------------------------------------------------------------------------------------------
+
 -- direct normal forms are isomorphic to predicate normal forms
 private
   open ≡-Reasoning
-
-  mutual
-    infix 3 _⊢≪_
-    data _⊢≪_ (Γ : Ctx) : Ty → Set where
-      ⌜λ⌝ : ∀ {A B} (t : A ∷ Γ ⊢ B) → Γ ⊢≪ A ⌜⊃⌝ B
-      nnf : ∀ {A} (t : Γ ⊢≫ A) → Γ ⊢≪ A
-
-    infix 3 _⊢≫_
-    data _⊢≫_ (Γ : Ctx) : Ty → Set where
-      var   : ∀ {A} (i : Γ ∋ A) → Γ ⊢≫ A
-      _⌜$⌝_ : ∀ {A B} (t₁ : Γ ⊢≫ A ⌜⊃⌝ B) (t₂ : Γ ⊢≪ A) → Γ ⊢≫ B
 
   mutual
     toNF : ∀ {Γ A} → Γ ⊢≪ A → Σ (Γ ⊢ A) NF
@@ -94,17 +123,17 @@ private
   mutual
     to∘fromNF : ∀ {Γ A} (tp : Σ (Γ ⊢ A) NF) → (toNF ∘ fromNF) tp ≡ tp
     to∘fromNF (.(⌜λ⌝ t) , ⌜λ⌝- {t = t}) = refl
-    to∘fromNF (t , nnf p)               = ≅→≡ (cong₂≅ _,_
+    to∘fromNF (t , nnf p)               = ≅→≡ (hcong₂ _,_
                                             (≡→≅ (cong fst (to∘fromNNF (t , p))))
-                                            (cong≅ (NF.nnf ∘ snd) (≡→≅ (to∘fromNNF (t , p)))))
+                                            (hcong (NF.nnf ∘ snd) (≡→≅ (to∘fromNNF (t , p)))))
 
     to∘fromNNF : ∀ {Γ A} (tp : Σ (Γ ⊢ A) NNF) → (toNNF ∘ fromNNF) tp ≡ tp
     to∘fromNNF (var i , var-)          = refl
-    to∘fromNNF (t₁ ⌜$⌝ t₂ , p₁ ⌜$⌝ p₂) = ≅→≡ (cong₂≅ _,_
+    to∘fromNNF (t₁ ⌜$⌝ t₂ , p₁ ⌜$⌝ p₂) = ≅→≡ (hcong₂ _,_
                                            (≡→≅ (cong₂ (λ x₁ x₂ → fst x₁ ⌜$⌝ fst x₂)
                                              (to∘fromNNF (t₁ , p₁))
                                              (to∘fromNF (t₂ , p₂))))
-                                           (cong₂≅ (λ x₁ x₂ → snd x₁ NNF.⌜$⌝ snd x₂)
+                                           (hcong₂ (λ x₁ x₂ → snd x₁ NNF.⌜$⌝ snd x₂)
                                              (≡→≅ (to∘fromNNF (t₁ , p₁)))
                                              (≡→≅ (to∘fromNF (t₂ , p₂)))))
 

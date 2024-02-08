@@ -1,7 +1,7 @@
-module STLC-Base-Weak-EtaLong where
+module STLC-Base-EWNF-CBV where
 
 open import STLC-Base-Properties public
-open import STLC-Base-BetaShortEtaLongWeakNormalForm public
+open import STLC-Base-EWNF public
 open import Kit3 public
 
 
@@ -87,7 +87,7 @@ uniINF (p , ¬x) (p′ , ¬x′) = _,_ & uniFNF p p′ ⊗ uni¬Expanded ¬x ¬x
 
 ----------------------------------------------------------------------------------------------------
 
--- call-by-value restricted expansionary reduction (Ghani p.51, table 3-4)
+-- call-by-value restricted expansionary reduction (derived from Ghani p.51, table 3-4)
 
 -- NOTE: modified by removing duplicate rules from ⇒F and replacing them with Ired,
 --       and by adding FNF constraints to Icong$₂, Fcong$₂, and βred⊃
@@ -262,26 +262,6 @@ module PKF = ProgKit (kit RK2F.redkit2 prog⇒F)
 
 ----------------------------------------------------------------------------------------------------
 
--- stability under renaming
-mutual
-  renFNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → FNF t → FNF (ren e t)
-  renFNF e ⌜λ⌝-    = ⌜λ⌝-
-  renFNF e (nnf p) = nnf (renFNNF e p)
-
-  renFNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → FNNF t → FNNF (ren e t)
-  renFNNF e var-        = var-
-  renFNNF e (p₁ ⌜$⌝ p₂) = renFNNF e p₁ ⌜$⌝ renFNF e p₂
-
-mutual
-  nerFNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → FNF (ren e t) → FNF t
-  nerFNF {t = var i}     e (nnf p) = nnf (nerFNNF e p)
-  nerFNF {t = ⌜λ⌝ t}     e ⌜λ⌝-    = ⌜λ⌝-
-  nerFNF {t = t₁ ⌜$⌝ t₂} e (nnf p) = nnf (nerFNNF e p)
-
-  nerFNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → FNNF (ren e t) → FNNF t
-  nerFNNF {t = var i}     e var-        = var-
-  nerFNNF {t = t₁ ⌜$⌝ t₂} e (p₁ ⌜$⌝ p₂) = nerFNNF e p₁ ⌜$⌝ nerFNF e p₂
-
 renExpandable : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → Expandable t → Expandable (ren e t)
 renExpandable e var-        = var-
 renExpandable e (p₁ ⌜$⌝ p₂) = renFNNF e p₁ ⌜$⌝ renFNF e p₂
@@ -300,39 +280,6 @@ mutual
   ren⇒I e (Fcong$₂ p₁ r₂)           = Fcong$₂ (renFNF e p₁) (ren⇒F e r₂)
   ren⇒I e (Xcong$₂ x₁ r₂)           = Xcong$₂ (renExpandable e x₁) (ren⇒F e r₂)
   ren⇒I e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut e t₁ _ ⁻¹) (renFNF e p₂)
-
-
-----------------------------------------------------------------------------------------------------
-
--- stability under substitution
-sub∋FNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {i : Γ ∋ A} → FNNF* ss → FNNF (sub∋ ss i)
-sub∋FNNF {i = zero}  (p ∷ ps) = p
-sub∋FNNF {i = suc i} (p ∷ ps) = sub∋FNNF ps
-
-mutual
-  subFNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → FNNF* ss → FNF t → FNF (sub ss t)
-  subFNF ps ⌜λ⌝-    = ⌜λ⌝-
-  subFNF ps (nnf p) = nnf (subFNNF ps p)
-
-  subFNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → FNNF* ss → FNNF t → FNNF (sub ss t)
-  subFNNF ps var-        = sub∋FNNF ps
-  subFNNF ps (p₁ ⌜$⌝ p₂) = subFNNF ps p₁ ⌜$⌝ subFNF ps p₂
-
-bus∋FNNF : ∀ {A Γ Ξ} {ss : Ξ ⊢* Γ} {i : Γ ∋ A} → FNNF* ss → FNF (sub∋ ss i) → FNF (var i)
-bus∋FNNF {⌜◦⌝}     {i = i}     ps        p′   = nnf var-
-bus∋FNNF {A ⌜⊃⌝ B} {i = zero}  (() ∷ ps) ⌜λ⌝-
-bus∋FNNF {A ⌜⊃⌝ B} {i = suc i} (p ∷ ps)  p′   with bus∋FNNF ps p′
-... | ()
-
-mutual
-  busFNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → FNNF* ss → FNF (sub ss t) → FNF t
-  busFNF {t = var i}     ps p       = bus∋FNNF ps p
-  busFNF {t = ⌜λ⌝ t}     ps ⌜λ⌝-    = ⌜λ⌝-
-  busFNF {t = t₁ ⌜$⌝ t₂} ps (nnf p) = nnf (busFNNF ps p)
-
-  busFNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → FNNF* ss → FNNF (sub ss t) → FNNF t
-  busFNNF {t = var i}     ps p           = var-
-  busFNNF {t = t₁ ⌜$⌝ t₂} ps (p₁ ⌜$⌝ p₂) = busFNNF ps p₁ ⌜$⌝ busFNF ps p₂
 
 sub∋Expandable : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {i : Γ ∋ A} → Expandable* ss → Expandable (sub∋ ss i)
 sub∋Expandable {i = zero}  (x ∷ xs) = x

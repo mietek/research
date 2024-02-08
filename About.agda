@@ -48,31 +48,32 @@ import Kit3-Renamings
 
 import STLC-Base
 import STLC-Base-Properties
-import STLC-Base-BetaShortWeakNormalForm
-import STLC-Base-BetaShortEtaLongWeakNormalForm
-import STLC-Base-Weak-NotEtaLong
-import STLC-Base-Weak-NotEtaLong-ClosedSN
-import STLC-Base-Weak-NotEtaLong-OpenSN -- TODO
-import STLC-Base-Weak-NotEtaLong-ConcreteNbE
-import STLC-Base-Weak-NotEtaLong-AbstractNbE
-import STLC-Base-Weak-EtaLong
+import STLC-Base-WNF
+import STLC-Base-WNF-CBV -- TODO
+import STLC-Base-WNF-CBV-SN -- TODO
+import STLC-Base-WNF-CBV-SN2 -- TODO
+import STLC-Base-WNF-NbE
+import STLC-Base-WNF-NbE2
+import STLC-Base-EWNF
+import STLC-Base-EWNF-CBV
 
 import STLC-Negative
 import STLC-Negative-Properties
-import STLC-Negative-BetaShortWeakNormalForm
-import STLC-Negative-Weak-NotEtaLong
-import STLC-Negative-Weak-NotEtaLong-ConcreteNbE
-import STLC-Negative-Weak-NotEtaLong-AbstractNbE
+import STLC-Negative-WNF
+import STLC-Negative-WNF-CBV
+import STLC-Negative-WNF-NbE
+import STLC-Negative-WNF-NbE2
 
 import STLC-Naturals
 import STLC-Naturals-Properties
-import STLC-Naturals-Weak-NotEtaLong -- TODO
-import STLC-Naturals-Weak-NotEtaLong-ConcreteNbE
-import STLC-Naturals-Weak-NotEtaLong-AbstractNbE
-import STLC-Naturals-Weak-NotEtaLong-AbstractNbE2 -- TODO
+import STLC-Naturals-SWNF
+import STLC-Naturals-SWNF-CBV
+import STLC-Naturals-SWNF-NbE
+import STLC-Naturals-SWNF-NbE2
+import STLC-Naturals-SWNF-NbE3 -- TODO
 import STLC-Naturals2
-import STLC-Naturals2-Strong-EtaLong
-import STLC-Naturals2-Strong-EtaLong-ConcreteNBE
+import STLC-Naturals2-NF
+import STLC-Naturals2-NF-NbE
 
 import STLC-Naturals-Renamings
 import STLC-Naturals-Renamings-Properties
@@ -81,7 +82,7 @@ import STLC-Naturals-Renamings-Properties
 
 ----------------------------------------------------------------------------------------------------
 
-open STLC-Base-Weak-NotEtaLong-AbstractNbE
+open STLC-Base-WNF-NbE2
 open BetaShortEtaLong
 
 postulate
