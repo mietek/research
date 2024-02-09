@@ -250,50 +250,22 @@ module RenSubKit3 (¶ : RenSubKit3Params) where
 
   rencut : ∀ {Γ Γ′ A B} (e : Γ ⊆ Γ′) (t₁ : A ∷ Γ ⊢ B) (t₂ : Γ ⊢ A) →
            ren (lift⊆ e) t₁ [ ren e t₂ ] ≡ ren e (t₁ [ t₂ ])
-  rencut e t₁ t₂ =
-      begin
-        ren (lift⊆ e) t₁ [ ren e t₂ ]
-      ≡⟨⟩
-        (sub (ren e t₂ ∷ id*) ∘ ren (lift⊆ e)) t₁
-      ≡⟨ eqsubren (ren e t₂ ∷ id*) (lift⊆ e) t₁ ⁻¹ ⟩
-        sub (get* (lift⊆ e) (ren e t₂ ∷ id*)) t₁
-      ≡⟨ (flip sub t₁ ∘ (ren e t₂ ∷_)) & (ridget* e ⋮ ridren* e ⁻¹) ⟩
-        sub (ren e t₂ ∷ ren* e id*) t₁
-      ≡⟨ eqrensub e (t₂ ∷ id*) t₁ ⟩
-        (ren e ∘ sub (t₂ ∷ id*)) t₁
-      ≡⟨⟩
-        ren e (t₁ [ t₂ ])
-      ∎
+  rencut e t₁ t₂ = eqsubren (ren e t₂ ∷ id*) (lift⊆ e) t₁ ⁻¹
+                 ⋮ (flip sub t₁ ∘ (ren e t₂ ∷_)) & (ridget* e ⋮ ridren* e ⁻¹)
+                 ⋮ eqrensub e (t₂ ∷ id*) t₁
 
   subcut : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : A ∷ Γ ⊢ B) (t₂ : Γ ⊢ A) →
            sub (lift* ss) t₁ [ sub ss t₂ ] ≡ sub ss (t₁ [ t₂ ])
-  subcut ss t₁ t₂ =
-      begin
-        sub (lift* ss) t₁ [ sub ss t₂ ]
-      ≡⟨⟩
-        (sub (sub ss t₂ ∷ id*) ∘ sub (lift* ss)) t₁
-      ≡⟨ compsub (sub ss t₂ ∷ id*) (lift* ss) t₁ ⁻¹ ⟩
-        sub (sub* (sub ss t₂ ∷ id*) (lift* ss)) t₁
-      ≡⟨ (flip sub t₁ ∘ (_∷ (sub* (sub ss t₂ ∷ id*) ∘ wk*) ss)) & ridsub (sub ss t₂ ∷ id*) zero ⟩
-        sub (sub ss t₂ ∷ sub* (sub ss t₂ ∷ id*) (wk* ss)) t₁
-      ≡⟨ (flip sub t₁ ∘ (sub ss t₂ ∷_)) & (
-          begin
-            (sub* (sub ss t₂ ∷ id*) ∘ wk*) ss
-          ≡⟨ eqsubren* (sub ss t₂ ∷ id*) (wk⊆ id⊆) ss ⁻¹ ⟩
-            sub* (get* (wk⊆ id⊆) (sub ss t₂ ∷ id*)) ss
-          ≡⟨⟩
-            sub* (get* id⊆ id*) ss
-          ≡⟨ flip sub* ss & lidget* id* ⟩
-            sub* id* ss
-          ≡⟨ lidsub* ss ⋮ ridsub* ss ⁻¹ ⟩
-            sub* ss id*
-          ∎) ⟩
-        sub (sub* ss (t₂ ∷ id*)) t₁
-      ≡⟨ compsub ss (t₂ ∷ id*) t₁ ⟩
-        (sub ss ∘ sub (t₂ ∷ id*)) t₁
-      ≡⟨⟩
-        sub ss (t₁ [ t₂ ])
-      ∎
+  subcut ss t₁ t₂ = compsub (sub ss t₂ ∷ id*) (lift* ss) t₁ ⁻¹
+                  ⋮ (flip sub t₁ ∘ (_∷ (sub* (sub ss t₂ ∷ id*) ∘ wk*) ss)) &
+                      ridsub (sub ss t₂ ∷ id*) zero
+                  ⋮ (flip sub t₁ ∘ (sub ss t₂ ∷_)) &
+                      ( eqsubren* (sub ss t₂ ∷ id*) (wk⊆ id⊆) ss ⁻¹
+                      ⋮ flip sub* ss & lidget* id*
+                      ⋮ lidsub* ss
+                      ⋮ ridsub* ss ⁻¹
+                      )
+                  ⋮ compsub ss (t₂ ∷ id*) t₁
 
 
 ----------------------------------------------------------------------------------------------------
