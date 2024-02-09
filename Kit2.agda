@@ -257,13 +257,14 @@ module RenSubKit3 (¶ : RenSubKit3Params) where
   subcut : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : A ∷ Γ ⊢ B) (t₂ : Γ ⊢ A) →
            sub (lift* ss) t₁ [ sub ss t₂ ] ≡ sub ss (t₁ [ t₂ ])
   subcut ss t₁ t₂ = compsub (sub ss t₂ ∷ id*) (lift* ss) t₁ ⁻¹
-                  ⋮ (flip sub t₁ ∘ (_∷ (sub* (sub ss t₂ ∷ id*) ∘ wk*) ss)) &
-                      ridsub (sub ss t₂ ∷ id*) zero
-                  ⋮ (flip sub t₁ ∘ (sub ss t₂ ∷_)) &
-                      ( eqsubren* (sub ss t₂ ∷ id*) (wk⊆ id⊆) ss ⁻¹
-                      ⋮ flip sub* ss & lidget* id*
-                      ⋮ lidsub* ss
-                      ⋮ ridsub* ss ⁻¹
+                  ⋮ flip sub t₁ &
+                      ( (_∷ (sub* (sub ss t₂ ∷ id*) ∘ wk*) ss) & ridsub (sub ss t₂ ∷ id*) zero
+                      ⋮ (sub ss t₂ ∷_) &
+                          ( eqsubren* (sub ss t₂ ∷ id*) (wk⊆ id⊆) ss ⁻¹
+                          ⋮ flip sub* ss & lidget* id*
+                          ⋮ lidsub* ss
+                          ⋮ ridsub* ss ⁻¹
+                          )
                       )
                   ⋮ compsub ss (t₂ ∷ id*) t₁
 
