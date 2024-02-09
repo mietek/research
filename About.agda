@@ -39,6 +39,7 @@ import Isomorphism
 import Common -- TODO: clean up
 import Kit1 -- TODO!
 import Kit2 -- TODO: less²
+import Kit2-GAN -- TODO!
 import Kit3 -- TODO: more Schäfer
 import Kit4
 

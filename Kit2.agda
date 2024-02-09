@@ -71,51 +71,6 @@ module RenSubKit1 (¶ : RenSubKit1Params) where
   ridren* (lift⊆ e) = (_∷ (ren* (lift⊆ e) ∘ wk*) id*) & ridren (lift⊆ e) zero
                     ⋮ (var zero ∷_) & (eqwkren* e id* ⋮ wk* & ridren* e)
 
-  module _ (⚠ : FunExt) where
-    ⟪ren⟫ : ∀ (A : Ty) → Presheaf ⟪⊇⟫ lzero
-    ⟪ren⟫ A = record
-                { ƒObj = _⊢ A
-                ; ƒ    = ren
-                ; idƒ  = ⚠ lidren
-                ; _∘ƒ_ = λ e′ e → ⚠ (compren e′ e)
-                }
-
-    ⟪ren*⟫ : ∀ (Δ : Ctx) → Presheaf ⟪⊇⟫ lzero
-    ⟪ren*⟫ Δ = record
-                 { ƒObj = _⊢* Δ
-                 ; ƒ    = ren* -- flip _◐_
-                 ; idƒ  = ⚠ lidren*
-                 ; _∘ƒ_ = λ e′ e → ⚠ (compren* e′ e)
-                 }
-
-    ⟪ren∘lift⊆⟫ : ∀ (A B : Ty) → Presheaf ⟪⊇⟫ lzero
-    ⟪ren∘lift⊆⟫ A B = record
-                        { ƒObj = (_⊢ A) ∘ (B ∷_)
-                        ; ƒ    = ren ∘ lift⊆
-                        ; idƒ  = ⚠ lidren
-                        ; _∘ƒ_ = λ e′ e → ⚠ (compren (lift⊆ e′) (lift⊆ e))
-                        }
-
-    ⟪wk⟫ : ∀ (A B : Ty) → NatTrans (⟪ren⟫ A) (⟪ren∘lift⊆⟫ A B)
-    ⟪wk⟫ A B = record
-                 { η    = λ Γ → wk
-                 ; natη = λ Γ Δ e → ⚠ λ t → eqwkren e t ⁻¹
-                 }
-
-    ⟪ren*∘lift⊆⟫ : ∀ (Δ : Ctx) (B : Ty) → Presheaf ⟪⊇⟫ lzero
-    ⟪ren*∘lift⊆⟫ Δ B = record
-                         { ƒObj = (_⊢* Δ) ∘ (B ∷_)
-                         ; ƒ    = ren* ∘ lift⊆
-                         ; idƒ  = ⚠ lidren*
-                         ; _∘ƒ_ = λ e′ e → ⚠ (compren* (lift⊆ e′) (lift⊆ e))
-                         }
-
-    ⟪wk*⟫ : ∀ (Δ : Ctx) (B : Ty) → NatTrans (⟪ren*⟫ Δ) (⟪ren*∘lift⊆⟫ Δ B)
-    ⟪wk*⟫ Δ B = record
-                  { η    = λ Γ → wk*
-                  ; natη = λ Γ Δ e → ⚠ λ ts → eqwkren* e ts ⁻¹
-                  }
-
   -- Kovacs: ∈-ₛ∘ₑa
   eqrensub∋ : ∀ {Γ Ξ Ξ′ A} (e : Ξ ⊆ Ξ′) (ss : Ξ ⊢* Γ) (i : Γ ∋ A) →
               sub∋ (ren* e ss) i ≡ (ren e ∘ sub∋ ss) i
@@ -161,15 +116,6 @@ module RenSubKit1 (¶ : RenSubKit1Params) where
   compget* e         (wk⊆ e′)   (t ∷ ts) = compget* e e′ ts
   compget* (wk⊆ e)   (lift⊆ e′) (t ∷ ts) = compget* e e′ ts
   compget* (lift⊆ e) (lift⊆ e′) (t ∷ ts) = (t ∷_) & compget* e e′ ts
-
-  module _ (⚠ : FunExt) where
-    ⟪get*⟫ : ∀ (Γ : Ctx) → Presheaf ⟪⊆⟫ lzero
-    ⟪get*⟫ Γ = record
-                 { ƒObj = Γ ⊢*_
-                 ; ƒ    = get* -- _◑_
-                 ; idƒ  = ⚠ lidget*
-                 ; _∘ƒ_ = λ e e′ → ⚠ (compget* e e′)
-                 }
 
   -- Kovacs: assₑₛₑ
   eqrenget* : ∀ {Γ Γ′ Δ Δ′} (e : Γ ⊆ Γ′) (e′ : Δ ⊆ Δ′) (ts : Γ ⊢* Δ′) →
@@ -301,30 +247,6 @@ module RenSubKit3 (¶ : RenSubKit3Params) where
   --        (ts ● ss) ● ss′ ≡ ts ● (ss ● ss′)
   asssub* ss′ ss []       = refl
   asssub* ss′ ss (t ∷ ts) = _∷_ & compsub ss′ ss t ⁻¹ ⊗ asssub* ss′ ss ts
-
-  ⟪*⊣⟫ : Category lzero lzero
-  ⟪*⊣⟫ = record
-            { Obj  = Ctx
-            ; _▻_  = flip _⊢*_
-            ; id   = id*
-            ; _∘_  = sub* -- flip _●_
-            ; lid▻ = lidsub*
-            ; rid▻ = ridsub*
-            ; ass▻ = asssub*
-            ; ◅ssa = λ ts ss ss′ → asssub* ss′ ss ts ⁻¹
-            }
-
-  ⟪⊢*⟫ : Category lzero lzero
-  ⟪⊢*⟫ = ⟪*⊣⟫ ᵒᵖ
-
-  module _ (⚠ : FunExt) where
-    ⟪sub⟫ : ∀ (A : Ty) → Presheaf ⟪⊢*⟫ lzero
-    ⟪sub⟫ A = record
-                { ƒObj = _⊢ A
-                ; ƒ    = sub
-                ; idƒ  = ⚠ lidsub
-                ; _∘ƒ_ = λ ss′ ss → ⚠ (compsub ss′ ss)
-                }
 
   rencut : ∀ {Γ Γ′ A B} (e : Γ ⊆ Γ′) (t₁ : A ∷ Γ ⊢ B) (t₂ : Γ ⊢ A) →
            ren (lift⊆ e) t₁ [ ren e t₂ ] ≡ ren e (t₁ [ t₂ ])
