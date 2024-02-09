@@ -1,6 +1,3 @@
-module About where
-
-
 {- -------------------------------------------------------------------------------------------------
 
 thanks to ames, dolio, drvink, mxu, ncf, ovi, pgiarrusso, pounce, rak, roconnor, tuplanolla
@@ -33,6 +30,8 @@ join ##dependent on libera.chat
 
 
 ------------------------------------------------------------------------------------------------- -}
+
+module About where
 
 import Prelude
 import Category
