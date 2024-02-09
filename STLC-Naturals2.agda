@@ -56,7 +56,7 @@ open SubKit (kit renkit sub) public
 ----------------------------------------------------------------------------------------------------
 
 -- definitional equality
-module BetaShort where
+module BetaShortDefEq where
   infix 4 _≝_
   data _≝_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
     refl≝   : ∀ {A} {t : Γ ⊢ A} → t ≝ t
@@ -79,7 +79,7 @@ module BetaShort where
 
   open DefEqKit (kit tmkit (λ {Γ} {A} {t} → refl≝ {t = t}) sym≝ trans≝) public
 
-module BetaShortEtaLong where
+module BetaShortEtaLongDefEq where
   infix 4 _≝_
   data _≝_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
     refl≝   : ∀ {A} {t : Γ ⊢ A} → t ≝ t
