@@ -3,7 +3,7 @@
 -- normalization by evaluation to β-short η-long normal forms
 -- after Abel
 
-module STLC-Naturals2-NF-NbE where
+module STLC-Naturals2-NF-NBE where
 
 open import STLC-Naturals2-NF public
 open import Kit4 public

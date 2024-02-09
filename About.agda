@@ -49,8 +49,8 @@ import STLC-Base-WNF
 import STLC-Base-WNF-CBV -- TODO
 import STLC-Base-WNF-CBV-SN -- TODO
 import STLC-Base-WNF-CBV-SN2 -- TODO
-import STLC-Base-WNF-NbE
-import STLC-Base-WNF-NbE2
+import STLC-Base-WNF-NBE
+import STLC-Base-WNF-NBE2
 import STLC-Base-EWNF
 import STLC-Base-EWNF-CBV -- TODO
 
@@ -58,22 +58,22 @@ import STLC-Negative
 import STLC-Negative-RenSub
 import STLC-Negative-WNF
 import STLC-Negative-WNF-CBV
-import STLC-Negative-WNF-NbE
-import STLC-Negative-WNF-NbE2
+import STLC-Negative-WNF-NBE
+import STLC-Negative-WNF-NBE2
 
 import STLC-Naturals
 import STLC-Naturals-RenSub
 import STLC-Naturals-SWNF
 import STLC-Naturals-SWNF-CBV
-import STLC-Naturals-SWNF-NbE
-import STLC-Naturals-SWNF-NbE2
-import STLC-Naturals-SWNF-NbE3
+import STLC-Naturals-SWNF-NBE
+import STLC-Naturals-SWNF-NBE2
+import STLC-Naturals-SWNF-NBE3
 import STLC-Naturals-WNF
 import STLC-Naturals-WNF-CBV
-import STLC-Naturals-WNF-NbE
+import STLC-Naturals-WNF-NBE
 import STLC-Naturals2
 import STLC-Naturals2-NF
-import STLC-Naturals2-NF-NbE
+import STLC-Naturals2-NF-NBE
 
 -- TODO: use renamings for a STLC-Base alternative only
 import Kit1-Renamings
@@ -86,7 +86,7 @@ import STLC-Naturals-Renamings-Properties
 
 ----------------------------------------------------------------------------------------------------
 
-open STLC-Base-WNF-NbE2
+open STLC-Base-WNF-NBE2
 open BetaShortEtaLongDefEq
 
 postulate

@@ -6,7 +6,7 @@
 -- unfortunately, the model needs to be split into two records in order to include a `⟦rec⟧` field
 -- after the definition of `_⊩_`
 
-module STLC-Naturals-SWNF-NbE2 where
+module STLC-Naturals-SWNF-NBE2 where
 
 open import STLC-Naturals-SWNF public
 open import Kit4 public

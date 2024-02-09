@@ -3,7 +3,7 @@
 -- normalization by evaluation to β-short weak normal form
 -- with an explicit model construction
 
-module STLC-Negative-WNF-NbE2 where
+module STLC-Negative-WNF-NBE2 where
 
 open import STLC-Negative-WNF public
 open import Kit4 public

@@ -8,7 +8,7 @@
 
 -- unfortunately, defining the canonical model seems impossible
 
-module STLC-Naturals-SWNF-NbE3 where
+module STLC-Naturals-SWNF-NBE3 where
 
 open import STLC-Naturals-SWNF public
 open import Kit4 public
