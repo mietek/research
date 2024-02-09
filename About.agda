@@ -51,7 +51,7 @@ import STLC-Base-WNF-CBV-SN -- TODO
 import STLC-Base-WNF-CBV-SN2 -- TODO
 import STLC-Base-WNF-NbE
 import STLC-Base-WNF-NbE2
-import STLC-Base-EWNF -- TODO
+import STLC-Base-EWNF
 import STLC-Base-EWNF-CBV -- TODO
 
 import STLC-Negative
@@ -67,9 +67,10 @@ import STLC-Naturals-SWNF
 import STLC-Naturals-SWNF-CBV
 import STLC-Naturals-SWNF-NbE
 import STLC-Naturals-SWNF-NbE2
-import STLC-Naturals-SWNF-NbE3 -- TODO: icebox
+import STLC-Naturals-SWNF-NbE3
 import STLC-Naturals-WNF
--- import STLC-Naturals-WNF-CBV
+import STLC-Naturals-WNF-CBV
+import STLC-Naturals-WNF-NbE
 import STLC-Naturals2
 import STLC-Naturals2-NF
 import STLC-Naturals2-NF-NbE

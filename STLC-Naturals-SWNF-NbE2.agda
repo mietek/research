@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 
--- normalization by evaluation to β-short semi-weak normal forms
+-- normalization by evaluation to β-short semi-weak normal form
 -- with an explicit model construction
 
 -- unfortunately, the model needs to be split into two records in order to include a `⟦rec⟧` field
@@ -70,7 +70,7 @@ open SplitModelKit (kit _⊩_ (λ {ℬ} {ℳ} {A} → vren {ℬ} {ℳ} {A})) pub
        ; ⟦ℕ⟧    = λ Γ → Σ (Γ ⊢ ⌜ℕ⌝) NF
        ; ren⟦ℕ⟧ = λ { e (_ , p) → _ , renNF e p }
        ; ⟦zero⟧ = _ , ⌜zero⌝
-       ; ⟦suc⟧  = λ { (_ , p′) → _ , ⌜suc⌝ p′ }
+       ; ⟦suc⟧  = λ { (_ , p) → _ , ⌜suc⌝ p }
        }
 
 -- canonical model

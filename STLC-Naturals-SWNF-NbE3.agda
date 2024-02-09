@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 
--- normalization by evaluation to β-short semi-weak normal forms
+-- normalization by evaluation to β-short semi-weak normal form
 -- with an explicit model construction
 
 -- using an explicit recursion principle on types allows defining the model as a single record that
@@ -77,7 +77,7 @@ open ModelKit (kit (λ {ℳ} → _⊩_ ℳ) (λ {ℳ} {A} → vren {ℳ} {A})) p
 --         ; ⟦ℕ⟧    = λ Γ → Σ (Γ ⊢ ⌜ℕ⌝) NF
 --         ; ren⟦ℕ⟧ = λ { e (_ , p) → _ , renNF e p }
 --         ; ⟦zero⟧ = _ , ⌜zero⌝
---         ; ⟦suc⟧  = λ { (_ , p′) → _ , ⌜suc⌝ p′ }
+--         ; ⟦suc⟧  = λ { (_ , p) → _ , ⌜suc⌝ p }
 --         ; ⟦rec⟧  =
 --             λ {         (_ , ⌜zero⌝)   v₀ vₛ → v₀
 --               ;         (_ , ⌜suc⌝ pₙ) v₀ vₛ → vₛ id⊆ (_ , pₙ) id⊆ v₀

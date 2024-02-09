@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 
--- β-short weak normal forms
+-- β-short weak normal form
 
 module STLC-Base-WNF where
 

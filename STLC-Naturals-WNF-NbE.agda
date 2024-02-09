@@ -1,10 +1,10 @@
 ----------------------------------------------------------------------------------------------------
 
--- normalization by evaluation to β-short semi-weak normal form
+-- normalization by evaluation to β-short weak normal form
 
-module STLC-Naturals-SWNF-NbE where
+module STLC-Naturals-WNF-NbE where
 
-open import STLC-Naturals-SWNF public
+open import STLC-Naturals-WNF public
 open import Kit4 public
 
 
@@ -49,11 +49,11 @@ vids {A ∷ Γ} = ↑ (var zero , var-) ∷ vrens (wk⊆ id⊆) vids
 ⟦zero⟧ = _ , ⌜zero⌝
 
 ⟦suc⟧ : ∀ {Γ} → Γ ⊩ ⌜ℕ⌝ → Γ ⊩ ⌜ℕ⌝
-⟦suc⟧ (_ , p) = _ , ⌜suc⌝ p
+⟦suc⟧ (t , p) = ⌜suc⌝ t , ⌜suc⌝-
 
 ⟦rec⟧ : ∀ {Γ A} → Γ ⊩ ⌜ℕ⌝ → Γ ⊩ A → Γ ⊩ ⌜ℕ⌝ ⌜⊃⌝ A ⌜⊃⌝ A → Γ ⊩ A
 ⟦rec⟧ (_ , ⌜zero⌝)   v₀ vₛ = v₀
-⟦rec⟧ (_ , ⌜suc⌝ pₙ) v₀ vₛ = vₛ id⊆ (_ , pₙ) id⊆ v₀
+⟦rec⟧ (tₙ , ⌜suc⌝-)  v₀ vₛ = vₛ id⊆ (tₙ , ⌜suc⌝-) id⊆ v₀
 ⟦rec⟧ (_ , nnf pₙ)   v₀ vₛ = let _ , p₀ = ↓ v₀
                                  _ , pₛ = ↓ (vₛ (wk⊆ (wk⊆ id⊆)) (↑ (var (suc zero) , var-))
                                             id⊆ (↑ (var zero , var-)))

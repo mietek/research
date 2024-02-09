@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 
--- β-short semi-weak normal forms
+-- β-short semi-weak normal form
 
 module STLC-Naturals-SWNF where
 

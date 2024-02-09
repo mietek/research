@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 
--- call by value reduction to β-short semi-weak normal forms
+-- call by value reduction to β-short semi-weak normal form
 
 module STLC-Naturals-SWNF-CBV where
 
@@ -42,7 +42,7 @@ mutual
   NF→¬R (⌜suc⌝ p) (congsuc r) = r ↯ NF→¬R p
   NF→¬R (nnf p)   r           = r ↯ NNF→¬R p
 
-  NNF→¬R : ∀ {Γ A} {t  : Γ ⊢ A} → NNF t → ¬R t
+  NNF→¬R : ∀ {Γ A} {t : Γ ⊢ A} → NNF t → ¬R t
   NNF→¬R (p₁ ⌜$⌝ p₂)      (cong$₁ r₁)           = r₁ ↯ NNF→¬R p₁
   NNF→¬R (p₁ ⌜$⌝ p₂)      (cong$₂ p₁′ r₂)       = r₂ ↯ NF→¬R p₂
   NNF→¬R (() ⌜$⌝ p₂)      (βred⊃ eq p₂′)

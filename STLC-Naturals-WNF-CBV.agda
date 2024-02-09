@@ -1,3 +1,7 @@
+----------------------------------------------------------------------------------------------------
+
+-- call by value reduction to β-short weak normal form
+
 module STLC-Naturals-WNF-CBV where
 
 open import STLC-Naturals-RenSub public
@@ -7,14 +11,12 @@ open import Kit3 public
 
 ----------------------------------------------------------------------------------------------------
 
--- call-by-value reduction
 infix 4 _⇒_
 data _⇒_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
   cong$₁   : ∀ {A B} {t₁ t₁′ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (r₁ : t₁ ⇒ t₁′) →
              t₁ ⌜$⌝ t₂ ⇒ t₁′ ⌜$⌝ t₂
   cong$₂   : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢ A} (p₁ : NF t₁) (r₂ : t₂ ⇒ t₂′) →
              t₁ ⌜$⌝ t₂ ⇒ t₁ ⌜$⌝ t₂′
-  congsuc  : ∀ {t t′ : Γ ⊢ ⌜ℕ⌝} (r : t ⇒ t′) → ⌜suc⌝ t ⇒ ⌜suc⌝ t′
   congrecₙ : ∀ {A} {tₙ tₙ′ : Γ ⊢ ⌜ℕ⌝} {t₀ : Γ ⊢ A} {tₛ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A} (rₙ : tₙ ⇒ tₙ′) →
              ⌜rec⌝ tₙ t₀ tₛ ⇒ ⌜rec⌝ tₙ′ t₀ tₛ
   congrec₀ : ∀ {A} {tₙ : Γ ⊢ ⌜ℕ⌝} {t₀ t₀′ : Γ ⊢ A} {tₛ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A} (pₙ : NF tₙ)
@@ -36,10 +38,9 @@ open RedKit1 (kit tmkit _⇒_) public
 
 mutual
   NF→¬R : ∀ {Γ A} {t : Γ ⊢ A} → NF t → ¬R t
-  NF→¬R ⌜suc⌝-    (congsuc r) = r ↯ NF→¬R p
-  NF→¬R (nnf p)   r           = r ↯ NNF→¬R p
+  NF→¬R (nnf p) r = r ↯ NNF→¬R p
 
-  NNF→¬R : ∀ {Γ A} {t  : Γ ⊢ A} → NNF t → ¬R t
+  NNF→¬R : ∀ {Γ A} {t : Γ ⊢ A} → NNF t → ¬R t
   NNF→¬R (p₁ ⌜$⌝ p₂)      (cong$₁ r₁)           = r₁ ↯ NNF→¬R p₁
   NNF→¬R (p₁ ⌜$⌝ p₂)      (cong$₂ p₁′ r₂)       = r₂ ↯ NF→¬R p₂
   NNF→¬R (() ⌜$⌝ p₂)      (βred⊃ eq p₂′)
@@ -58,7 +59,6 @@ det⇒ (cong$₁ r₁)            (cong$₂ p₁′ r₂′)          = r₁ ↯
 det⇒ (cong$₂ p₁ r₂)         (cong$₁ r₁′)              = r₁′ ↯ NF→¬R p₁
 det⇒ (cong$₂ p₁ r₂)         (cong$₂ p₁′ r₂′)          = (_ ⌜$⌝_) & det⇒ r₂ r₂′
 det⇒ (cong$₂ p₁ r₂)         (βred⊃ refl p₂′)          = r₂ ↯ NF→¬R p₂′
-det⇒ (congsuc r)            (congsuc r′)              = ⌜suc⌝ & det⇒ r r′
 det⇒ (congrecₙ rₙ)          (congrecₙ rₙ′)            = _ & det⇒ rₙ rₙ′
 det⇒ (congrecₙ rₙ)          (congrec₀ pₙ′ r₀′)        = rₙ ↯ NF→¬R pₙ′
 det⇒ (congrecₙ rₙ)          (congrecₛ pₙ′ p₀′ rₛ′)    = rₙ ↯ NF→¬R pₙ′
@@ -90,7 +90,6 @@ uni⇒ (cong$₁ r₁)            (cong$₂ p₁′ r₂′)          = r₁ ↯
 uni⇒ (cong$₂ p₁ r₂)         (cong$₁ r₁′)              = r₁′ ↯ NF→¬R p₁
 uni⇒ (cong$₂ p₁ r₂)         (cong$₂ p₁′ r₂′)          = cong$₂ & uniNF p₁ p₁′ ⊗ uni⇒ r₂ r₂′
 uni⇒ (cong$₂ p₁ r₂)         (βred⊃ eq′ p₂)            = r₂ ↯ NF→¬R p₂
-uni⇒ (congsuc r)            (congsuc r′)              = congsuc & uni⇒ r r′
 uni⇒ (congrecₙ rₙ)          (congrecₙ rₙ′)            = congrecₙ & uni⇒ rₙ rₙ′
 uni⇒ (congrecₙ rₙ)          (congrec₀ pₙ′ r₀′)        = rₙ ↯ NF→¬R pₙ′
 uni⇒ (congrecₙ rₙ)          (congrecₛ pₙ′ p₀′ rₛ′)    = rₙ ↯ NF→¬R pₙ′
@@ -129,15 +128,13 @@ prog⇒ (t₁ ⌜$⌝ t₂)                        with prog⇒ t₁ | prog⇒ t
 ... | done ⌜λ⌝-     | done p₂               = step (βred⊃ refl p₂)
 ... | done (nnf p₁) | done p₂               = done (nnf (p₁ ⌜$⌝ p₂))
 prog⇒ ⌜zero⌝                             = done ⌜zero⌝
-prog⇒ (⌜suc⌝ t)                          with prog⇒ t
-... | step r                                = step (congsuc r)
-... | done p                                = done (⌜suc⌝ p)
+prog⇒ (⌜suc⌝ t)                          = done ⌜suc⌝-
 prog⇒ (⌜rec⌝ tₙ t₀ tₛ)                   with prog⇒ tₙ | prog⇒ t₀ | prog⇒ tₛ
 ... | step rₙ         | _       | _         = step (congrecₙ rₙ)
 ... | done pₙ         | step r₀ | _         = step (congrec₀ pₙ r₀)
 ... | done pₙ         | done p₀ | step rₛ   = step (congrecₛ pₙ p₀ rₛ)
 ... | done ⌜zero⌝     | done p₀ | done pₛ   = step (βredℕ₀ p₀ pₛ)
-... | done (⌜suc⌝ pₙ) | done p₀ | done pₛ   = step (βredℕₛ refl (⌜suc⌝ pₙ) p₀ pₛ)
+... | done ⌜suc⌝-     | done p₀ | done pₛ   = step (βredℕₛ refl ⌜suc⌝- p₀ pₛ)
 ... | done (nnf pₙ)   | done p₀ | done pₛ   = done (nnf (⌜rec⌝ pₙ p₀ pₛ))
 
 open ProgKit (kit redkit2 prog⇒) public
@@ -148,7 +145,6 @@ open ProgKit (kit redkit2 prog⇒) public
 ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇒ t′ → ren e t ⇒ ren e t′
 ren⇒ e (cong$₁ r₁)               = cong$₁ (ren⇒ e r₁)
 ren⇒ e (cong$₂ p₁ r₂)            = cong$₂ (renNF e p₁) (ren⇒ e r₂)
-ren⇒ e (congsuc r)               = congsuc (ren⇒ e r)
 ren⇒ e (congrecₙ rₙ)             = congrecₙ (ren⇒ e rₙ)
 ren⇒ e (congrec₀ pₙ r₀)          = congrec₀ (renNF e pₙ) (ren⇒ e r₀)
 ren⇒ e (congrecₛ pₙ p₀ rₛ)       = congrecₛ (renNF e pₙ) (renNF e p₀) (ren⇒ (lift⊆² e) rₛ)
@@ -174,7 +170,6 @@ ren⇒ e (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ) =
 sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → NNF* ss → t ⇒ t′ → sub ss t ⇒ sub ss t′
 sub⇒ ps (cong$₁ r₁)               = cong$₁ (sub⇒ ps r₁)
 sub⇒ ps (cong$₂ p₁ r₂)            = cong$₂ (subNF ps p₁) (sub⇒ ps r₂)
-sub⇒ ps (congsuc r)               = congsuc (sub⇒ ps r)
 sub⇒ ps (congrecₙ rₙ)             = congrecₙ (sub⇒ ps rₙ)
 sub⇒ ps (congrec₀ pₙ r₀)          = congrec₀ (subNF ps pₙ) (sub⇒ ps r₀)
 sub⇒ ps (congrecₛ pₙ p₀ rₛ)       = congrecₛ (subNF ps pₙ) (subNF ps p₀) (sub⇒ (liftNNF*² ps) rₛ)
