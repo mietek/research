@@ -32,30 +32,15 @@ sym≃ eq = record
             ; to∘from = from∘to eq
             }
 
-module _ where
-  open ≡-Reasoning
-
-  trans≃ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : Set 𝓏} → X ≃ Y → Y ≃ Z → X ≃ Z
-  trans≃ eq eq′ = record
-    { to      = to eq′ ∘ to eq
-    ; from    = from eq ∘ from eq′
-    ; from∘to = λ x →
-        begin
-          from eq (from eq′ (to eq′ (to eq x)))
-        ≡⟨ from eq & from∘to eq′ (to eq x) ⟩
-          from eq (to eq x)
-        ≡⟨ from∘to eq x ⟩
-          x
-        ∎
-    ; to∘from = λ y →
-        begin
-          to eq′ (to eq (from eq (from eq′ y)))
-        ≡⟨ to eq′ & to∘from eq (from eq′ y) ⟩
-          to eq′ (from eq′ y)
-        ≡⟨ to∘from eq′ y ⟩
-          y
-        ∎
-    }
+trans≃ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : Set 𝓏} → X ≃ Y → Y ≃ Z → X ≃ Z
+trans≃ eq eq′ = record
+                  { to      = to eq′ ∘ to eq
+                  ; from    = from eq ∘ from eq′
+                  ; from∘to = λ x → from eq & from∘to eq′ (to eq x)
+                                   ⋮ from∘to eq x
+                  ; to∘from = λ y → to eq′ & to∘from eq (from eq′ y)
+                                   ⋮ to∘from eq′ y
+                  }
 
 ≡→≃ : ∀ {𝓍} {X X′ : Set 𝓍} → X ≡ X′ → X ≃ X′
 ≡→≃ refl = refl≃
@@ -109,40 +94,24 @@ refl≲ = record
           ; from∘to = λ x → refl
           }
 
-module _ where
-  open ≡-Reasoning
+trans≲ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : Set 𝓏} → X ≲ Y → Y ≲ Z → X ≲ Z
+trans≲ leq leq′ = record
+                    { to      = to leq′ ∘ to leq
+                    ; from    = from leq ∘ from leq′
+                    ; from∘to = λ x → from leq & from∘to leq′ (to leq x)
+                                     ⋮ from∘to leq x
+                    }
 
-  trans≲ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : Set 𝓏} → X ≲ Y → Y ≲ Z → X ≲ Z
-  trans≲ leq leq′ = record
-    { to      = to leq′ ∘ to leq
-    ; from    = from leq ∘ from leq′
-    ; from∘to = λ x →
-        begin
-            from leq (from leq′ (to leq′ (to leq x)))
-          ≡⟨ from leq & from∘to leq′ (to leq x) ⟩
-            from leq (to leq x)
-          ≡⟨ from∘to leq x ⟩
-            x
-          ∎
-    }
-
-  antisym≲ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (leq : X ≲ Y) (leq′ : Y ≲ X) →
-             to leq ≡ from leq′ → from leq ≡ to leq′ → X ≃ Y
-  antisym≲ leq leq′ eq eq′ = record
-    { to      = to leq
-    ; from    = from leq
-    ; from∘to = from∘to leq
-    ; to∘from = λ y →
-        begin
-          to leq (from leq y)
-        ≡⟨ to leq & congapp eq′ y ⟩
-          to leq (to leq′ y)
-        ≡⟨ congapp eq (to leq′ y) ⟩
-          from leq′ (to leq′ y)
-        ≡⟨ from∘to leq′ y ⟩
-          y
-        ∎
-    }
+antisym≲ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (leq : X ≲ Y) (leq′ : Y ≲ X) →
+           to leq ≡ from leq′ → from leq ≡ to leq′ → X ≃ Y
+antisym≲ leq leq′ eq eq′ = record
+                             { to      = to leq
+                             ; from    = from leq
+                             ; from∘to = from∘to leq
+                             ; to∘from = λ y → to leq & congapp eq′ y
+                                              ⋮ congapp eq (to leq′ y)
+                                              ⋮ from∘to leq′ y
+                             }
 
 ≃→≲ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} → X ≃ Y → X ≲ Y
 ≃→≲ X≃Y = record

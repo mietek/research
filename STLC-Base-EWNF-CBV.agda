@@ -107,7 +107,7 @@ uniINF (p , ¬x) (p′ , ¬x′) = _,_ & F.uniNF p p′ ⊗ uni¬Expanded ¬x ¬
 --
 --   infix 4 _⇒I_
 --   data _⇒I_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
---     cong$₁  : ∀ {A B} {t₁ t₁′ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (r : t₁ ⇒I t₁′) →
+--     cong$₁  : ∀ {A B} {t₁ t₁′ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (r₁ : t₁ ⇒I t₁′) →
 --               t₁ ⌜$⌝ t₂ ⇒I t₁′ ⌜$⌝ t₂
 --     Icong$₂ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢ A} (p₁ : FNF t₁) (r₂ : t₂ ⇒I t₂′) →
 --               t₁ ⌜$⌝ t₂ ⇒I t₁ ⌜$⌝ t₂′
@@ -128,7 +128,7 @@ mutual
   -- NOTE: further modified by removing Icong$₂ and adding Xcong$₂
   infix 4 _⇒I_
   data _⇒I_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
-    cong$₁  : ∀ {A B} {t₁ t₁′ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (r : t₁ ⇒I t₁′) →
+    cong$₁  : ∀ {A B} {t₁ t₁′ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (r₁ : t₁ ⇒I t₁′) →
               t₁ ⌜$⌝ t₂ ⇒I t₁′ ⌜$⌝ t₂
     Fcong$₂ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢ A} (p₁ : F.NF t₁) (r₂ : t₂ ⇒F t₂′) →
               t₁ ⌜$⌝ t₂ ⇒I t₁ ⌜$⌝ t₂′

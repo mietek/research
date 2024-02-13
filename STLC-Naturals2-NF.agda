@@ -17,7 +17,6 @@ mutual
     ⌜suc⌝  : ∀ {t : Γ ⊢ ⌜ℕ⌝} (p : NF t) → NF (con ⌜suc⌝ ⌜$⌝ t)
     nnf    : ∀ {A} {t : Γ ⊢ A} (p : NNF t) → NF t
 
-  -- neutrals
   data NNF {Γ} : ∀ {A} → Γ ⊢ A → Set where
     var-  : ∀ {A} {i : Γ ∋ A} → NNF (var i)
     _⌜$⌝_ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (p₁ : NNF t₁) (p₂ : NF t₂) → NNF (t₁ ⌜$⌝ t₂)
@@ -25,6 +24,7 @@ mutual
               (p₁ : NF t₁) →
             NNF (con ⌜rec⌝ ⌜$⌝ tₙ ⌜$⌝ t₀ ⌜$⌝ t₁)
 
+-- TODO: kit
 data NNF* {Γ} : ∀ {Δ} → Γ ⊢* Δ → Set where
   []  : NNF* []
   _∷_ : ∀ {A Δ} {t : Γ ⊢ A} {ts : Γ ⊢* Δ} → NNF t → NNF* ts → NNF* (t ∷ ts)

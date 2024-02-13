@@ -106,7 +106,7 @@ module RedKit2 (¶ : RedKit2Params) where
     done : NF t → Prog t
     step : ∀ {t′ : Γ ⊢ A} → t ⇒ t′ → Prog t
   -- NOTE: the above `step` is slightly more convenient than but equivalent to the below `step`
-  -- step : Σ (Γ ⊢ A) (λ t′ → t ⇒ t′) → Prog t
+  -- step : RF t → Prog t
 
   recProg : ∀ {𝓍} {X : Set 𝓍} {Γ A} {t : Γ ⊢ A} → Prog t → (NF t → X) → (RF t → X) → X
   recProg (done p) f₁ f₂ = f₁ p

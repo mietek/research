@@ -23,6 +23,8 @@ open import Agda.Primitive public
 
 ----------------------------------------------------------------------------------------------------
 
+-- function
+
 id : ∀ {𝓍} {X : Set 𝓍} → X → X
 id x = x
 
@@ -45,6 +47,11 @@ _⨾_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : X → Set 𝓎} {Z : ∀ {x} �
         (∀ {x} (y : Y x) → Z y) →
       (∀ x → Z (g x))
 (g ⨾ f) x = f (g x)
+
+
+----------------------------------------------------------------------------------------------------
+
+-- data
 
 infixr 2 _×_
 _×_ : ∀ {𝓍 𝓎} (X : Set 𝓍) (Y : Set 𝓎) → Set (𝓍 ⊔ 𝓎)
@@ -89,6 +96,8 @@ data Dec {𝓍} (X : Set 𝓍) : Set 𝓍 where
 
 ----------------------------------------------------------------------------------------------------
 
+-- propositional equality
+
 ≡-syntax : ∀ {𝓍} (X : Set 𝓍) (x x′ : X) → Set 𝓍
 ≡-syntax X = _≡_
 
@@ -128,8 +137,7 @@ refl ⊗ refl = refl
 congapp : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ x → Y x} → f ≡ g → (∀ x → f x ≡ g x)
 congapp refl x = refl
 
-congapp′ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x} → Y x} →
-             f ≡ g :> (∀ {x} → Y x) →
+congapp′ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x} → Y x} → f ≡ g :> (∀ {x} → Y x) →
            (∀ {x} → f {x} ≡ g {x})
 congapp′ refl {x} = refl
 
@@ -137,9 +145,11 @@ FunExt : Setω
 FunExt = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ x → Y x} → (∀ x → f x ≡ g x) → f ≡ g
 
 FunExt′ : Setω
-FunExt′ = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x} → Y x} →
-            (∀ {x} → f {x} ≡ g {x}) →
+FunExt′ = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x} → Y x} → (∀ {x} → f {x} ≡ g {x}) →
           f ≡ g :> (∀ {x} → Y x)
+
+implify : FunExt → FunExt′
+implify ⚠ eq = (λ f {x} → f x) & ⚠ (λ x → eq {x})
 
 uni≡ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} (eq eq′ : x ≡ x′) → eq ≡ eq′
 uni≡ refl refl = refl
@@ -151,9 +161,6 @@ uni¬ : ∀ {𝓍} {X : Set 𝓍} (f g : ¬ X) → f ≡ g
 uni¬ f g = refl
 
 module _ (⚠ : FunExt) where
-  implify : FunExt′
-  implify eq = (λ f {x} → f x) & ⚠ (λ x → eq {x})
-
   uni→ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (uniY : ∀ y y′ → y ≡ y′) (f g : X → Y) → f ≡ g
   uni→ uniY f g = ⚠ λ x → uniY (f x) (g x)
 
@@ -180,6 +187,8 @@ module ≡-Reasoning {𝓍} {X : Set 𝓍} where
 
 
 ----------------------------------------------------------------------------------------------------
+
+-- heterogeneous equality
 
 infix 4 _≅_
 data _≅_ {𝓍} {X : Set 𝓍} (x : X) : ∀ {𝓎} {Y : Set 𝓎} → Y → Set 𝓍 where

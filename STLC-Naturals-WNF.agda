@@ -23,6 +23,7 @@ mutual
               (p₁ : NF t₁) →
             NNF (⌜rec⌝ tₙ t₀ t₁)
 
+-- TODO: kit
 data NNF* {Γ} : ∀ {Δ} → Γ ⊢* Δ → Set where
   []  : NNF* []
   _∷_ : ∀ {A Δ} {t : Γ ⊢ A} {ts : Γ ⊢* Δ} → NNF t → NNF* ts → NNF* (t ∷ ts)
@@ -54,6 +55,7 @@ mutual
   renNNF e (p₁ ⌜$⌝ p₂)      = renNNF e p₁ ⌜$⌝ renNF e p₂
   renNNF e (⌜rec⌝ pₙ p₀ pₛ) = ⌜rec⌝ (renNNF e pₙ) (renNF e p₀) (renNF (lift⊆² e) pₛ)
 
+-- TODO: kit
 renNNF* : ∀ {Γ Γ′ Δ} {ss : Γ ⊢* Δ} (e : Γ ⊆ Γ′) → NNF* ss → NNF* (ren* e ss)
 renNNF* e []       = []
 renNNF* e (p ∷ ps) = renNNF e p ∷ renNNF* e ps

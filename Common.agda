@@ -3,7 +3,6 @@ module Common where
 open import Prelude public
 open import Category public
 open import Isomorphism public
-open ≡-Reasoning
 
 
 ----------------------------------------------------------------------------------------------------

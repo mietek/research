@@ -36,23 +36,27 @@ module About where
 import Prelude
 import Category
 import Isomorphism
-import Common -- TODO: clean up
-import Kit1 -- TODO!
-import Kit2 -- TODO: less²
-import Kit2-GAN -- TODO!
-import Kit3 -- TODO: more Schäfer
+import Common
+import Kit1
+import Kit2
+import Kit2-GAN
+import Kit3
 import Kit4
 
-import STLC-Base -- TODO
+-- TODO: define conversion as closure of reduction?
+import STLC-Base
 import STLC-Base-RenSub
 import STLC-Base-WNF
-import STLC-Base-WNF-CBV -- TODO
-import STLC-Base-WNF-CBV-SN -- TODO
-import STLC-Base-WNF-CBV-SN2 -- TODO
+import STLC-Base-WNF-CBV
+import STLC-Base-WNF-CBV-SN
+import STLC-Base-WNF-CBV-SN2
 import STLC-Base-WNF-NBE
 import STLC-Base-WNF-NBE2
 import STLC-Base-EWNF
-import STLC-Base-EWNF-CBV -- TODO
+import STLC-Base-EWNF-CBV
+import STLC-Base-NF
+import STLC-Base-NF-AO
+import STLC-Base-NF-NDR
 
 import STLC-Negative
 import STLC-Negative-RenSub

@@ -19,6 +19,7 @@ mutual
     _⌜$⌝_ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (p₁ : NNF t₁) (p₂ : NF t₂) →
             NNF (t₁ ⌜$⌝ t₂)
 
+-- TODO: kit
 data NNF* {Γ} : ∀ {Δ} → Γ ⊢* Δ → Set where
   []  : NNF* []
   _∷_ : ∀ {A Δ} {t : Γ ⊢ A} {ts : Γ ⊢* Δ} → NNF t → NNF* ts → NNF* (t ∷ ts)
