@@ -1,3 +1,7 @@
+----------------------------------------------------------------------------------------------------
+
+-- tiny standard library
+
 module Prelude where
 
 open import Agda.Builtin.Equality public
