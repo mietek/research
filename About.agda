@@ -170,7 +170,7 @@ postulate
   -- Coquand p.76: “correctness [soundness?] of decision algorithm for conversion”
   thm-5 : ∀ {Γ A} (t t′ : Γ ⊢ A) → nbe t ≡ nbe t′ → t ≝ t′
 
-  lem-i : ∀ {Γ} → vids {Γ = Γ} ≡ vrens (refl≤ 𝒞) vids
+  lem-t : ∀ {Γ} → vids {Γ = Γ} ≡ vrens (refl≤ 𝒞) vids
 
 -- -- Abel p.10: “completeness”, “definitionally equal terms have identical normal forms”
 -- -- Coquand p.76: “completeness of decision algorithm for conversion”
@@ -178,15 +178,15 @@ postulate
 -- module _ where
 --   open ≡-Reasoning
 
---   thm₆ : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ≝ t′ → nbe t ≡ nbe t′
---   thm₆ refl≝             = refl
---   thm₆ (sym≝ deq)        with thm-k deq
---   ... | eq                 = (λ v → ↓ (v vids)) & eq ⁻¹
---   thm₆ (trans≝ deq deq′) with thm-k deq | thm-k deq′
---   ... | eq | eq′           = (λ v → ↓ (v vids)) & (eq ⋮ eq′)
---   thm₆ {Γ} (congλ deq)   with thm-k {ℳ = 𝒞} {W = Γ} deq -- TODO
---   ... | eq                 = {!!}
---   thm₆ (cong$ {t₁ = t₁} {t₁′} {t₂} {t₂′} deq₁ deq₂) with thm-k deq₁ | thm-k deq₂
+--   thm-6 : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ≝ t′ → nbe t ≡ nbe t′
+--   thm-6 refl≝             = refl
+--   thm-6 (sym≝ deq)        with thm-k deq
+--   ... | eq                  = (λ v → ↓ (v vids)) & eq ⁻¹
+--   thm-6 (trans≝ deq deq′) with thm-k deq | thm-k deq′
+--   ... | eq | eq′            = (λ v → ↓ (v vids)) & (eq ⋮ eq′)
+--   thm-6 {Γ} (congλ deq)   with thm-k {ℳ = 𝒞} {W = Γ} deq -- TODO
+--   ... | eq                  = {!!}
+--   thm-6 (cong$ {t₁ = t₁} {t₁′} {t₂} {t₂′} deq₁ deq₂) with thm-k deq₁ | thm-k deq₂
 --   ... | eq | eq′ = ↓ & (
 --       begin
 --         ⟦ t₁ ⟧ vids id⊆ (⟦ t₂ ⟧ vids)
@@ -195,17 +195,17 @@ postulate
 --       ≡⟨ congapp (congapp (congapp′ (congapp eq vids)) id⊆) (⟦ t₂′ ⟧ vids) ⟩
 --         ⟦ t₁′ ⟧ vids id⊆ (⟦ t₂′ ⟧ vids)
 --       ∎)
---   thm₆ (βred⊃ {t₁ = t₁} {t₂} refl) = ↓ & (
+--   thm-6 (βred⊃ {t₁ = t₁} {t₂} refl) = ↓ & (
 --       begin
 --         ⟦ ⌜λ⌝ t₁ ⌜$⌝ t₂ ⟧ vids
 --       ≡⟨⟩
 --         ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vrens id⊆ vids)
---       ≡⟨ (λ vs → ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vs)) & lem-i ⁻¹ ⟩
+--       ≡⟨ (λ vs → ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vs)) & lem-t ⁻¹ ⟩
 --         ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vids)
 --       ≡⟨ thm-i t₁ t₂ vids ⟩
 --         ⟦ t₁ [ t₂ ] ⟧ vids
 --       ∎)
---   thm₆ {Γ} (ηexp⊃ refl) = {!!} -- TODO
+--   thm-6 {Γ} (ηexp⊃ refl) = {!!} -- TODO
 
 -- -- Kovacs p.59: “decision procedure for conversion”
 -- module _ where
@@ -213,7 +213,7 @@ postulate
 
 --   _≝?_ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Dec (t ≝ t′)
 --   t ≝? t′      with fst (nbe t) ≟ fst (nbe t′)
---   ... | no ¬eq   = no λ eq → (fst & thm₆ eq) ↯ ¬eq
+--   ... | no ¬eq   = no λ eq → (fst & thm-6 eq) ↯ ¬eq
 --   ... | yes eq   = yes (
 --       begin
 --         t
