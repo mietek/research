@@ -39,11 +39,11 @@ refl▻▻ {t = var i}     = var-
 refl▻▻ {t = ⌜λ⌝ t}     = congλ refl▻▻
 refl▻▻ {t = t₁ ⌜$⌝ t₂} = cong$ refl▻▻ refl▻▻
 
-ren▻▻ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ▻▻ t′ → ren e t ▻▻ ren e t′
+ren▻▻ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊑ Γ′) → t ▻▻ t′ → ren e t ▻▻ ren e t′
 ren▻▻ e var-                           = var-
-ren▻▻ e (congλ r)                      = congλ (ren▻▻ (lift⊆ e) r)
+ren▻▻ e (congλ r)                      = congλ (ren▻▻ (lift⊑ e) r)
 ren▻▻ e (cong$ r₁ r₂)                  = cong$ (ren▻▻ e r₁) (ren▻▻ e r₂)
-ren▻▻ e (βred⊃ {t₁′ = t₁′} refl r₁ r₂) = βred⊃ (rencut e t₁′ _ ⁻¹) (ren▻▻ (lift⊆ e) r₁)
+ren▻▻ e (βred⊃ {t₁′ = t₁′} refl r₁ r₂) = βred⊃ (rencut e t₁′ _ ⁻¹) (ren▻▻ (lift⊑ e) r₁)
                                            (ren▻▻ e r₂)
 
 -- Schäfer: lemma 4.6
@@ -69,21 +69,21 @@ data _▻▻§_ {Γ} : ∀ {Δ} → Γ ⊢§ Δ → Γ ⊢§ Δ → Set where
         t ∷ ts ▻▻§ t′ ∷ ts′
 
 -- TODO: kit?
-ren▻▻§ : ∀ {Γ Γ′ Δ} {ts ts′ : Γ ⊢§ Δ} (e : Γ ⊆ Γ′) → ts ▻▻§ ts′ → ren§ e ts ▻▻§ ren§ e ts′
+ren▻▻§ : ∀ {Γ Γ′ Δ} {ts ts′ : Γ ⊢§ Δ} (e : Γ ⊑ Γ′) → ts ▻▻§ ts′ → ren§ e ts ▻▻§ ren§ e ts′
 ren▻▻§ e []       = []
 ren▻▻§ e (r ∷ rs) = ren▻▻ e r ∷ ren▻▻§ e rs
 
 wk▻▻§ : ∀ {Γ Δ B} {ts ts′ : Γ ⊢§ Δ} → ts ▻▻§ ts′ → wk§ ts ▻▻§ wk§ {B} ts′
-wk▻▻§ rs = ren▻▻§ (wk⊆ id⊆) rs
+wk▻▻§ rs = ren▻▻§ (wk⊑ id⊑) rs
 
 -- Schäfer: corollary 4.7
 lift▻▻§ : ∀ {Γ Δ B} {ts ts′ : Γ ⊢§ Δ} → ts ▻▻§ ts′ → lift§ ts ▻▻§ lift§ {B} ts′
 lift▻▻§ rs = var- ∷ wk▻▻§ rs
 
-var▻▻§ : ∀ {Γ Γ′} (e : Γ ⊆ Γ′) → var§ e ▻▻§ var§ e
-var▻▻§ stop⊆     = []
-var▻▻§ (wk⊆ e)   = wk▻▻§ (var▻▻§ e)
-var▻▻§ (lift⊆ e) = lift▻▻§ (var▻▻§ e)
+var▻▻§ : ∀ {Γ Γ′} (e : Γ ⊑ Γ′) → var§ e ▻▻§ var§ e
+var▻▻§ stop⊑     = []
+var▻▻§ (wk⊑ e)   = wk▻▻§ (var▻▻§ e)
+var▻▻§ (lift⊑ e) = lift▻▻§ (var▻▻§ e)
 
 id▻▻§ : ∀ {Γ} → id§ ▻▻§ id§ {Γ}
 id▻▻§ {[]}    = []

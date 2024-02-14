@@ -119,7 +119,7 @@ open Progress public
 
 ----------------------------------------------------------------------------------------------------
 
-ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇒ t′ → ren e t ⇒ ren e t′
+ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊑ Γ′) → t ⇒ t′ → ren e t ⇒ ren e t′
 ren⇒ e (cong$₁ r₁)               = cong$₁ (ren⇒ e r₁)
 ren⇒ e (cong$₂ p₁ r₂)            = cong$₂ (renNF e p₁) (ren⇒ e r₂)
 ren⇒ e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut e t₁ _ ⁻¹) (renNF e p₂)
@@ -143,7 +143,7 @@ cong$₂⇒* : ∀ {Γ A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢
 cong$₂⇒* p₁ done        = done
 cong$₂⇒* p₁ (step r rs) = step (cong$₂ p₁ r) (cong$₂⇒* p₁ rs)
 
-ren⇒* : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇒* t′ → ren e t ⇒* ren e t′
+ren⇒* : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊑ Γ′) → t ⇒* t′ → ren e t ⇒* ren e t′
 ren⇒* e done        = done
 ren⇒* e (step r rs) = step (ren⇒ e r) (ren⇒* e rs)
 
@@ -171,7 +171,7 @@ det⇓ (rs , p′) (rs′ , p″) = det⇒* rs p′ rs′ p″
 uni⇓ : ∀ {Γ A} {t t′ : Γ ⊢ A} (n n′ : t ⇓ t′) → n ≡ n′
 uni⇓ (rs , p′) (rs′ , p″) = _,_ & uni⇒* rs rs′ p′ ⊗ uniNF p′ p″
 
-ren⇓ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇓ t′ → ren e t ⇓ ren e t′
+ren⇓ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊑ Γ′) → t ⇓ t′ → ren e t ⇓ ren e t′
 ren⇓ e (rs , p′) = ren⇒* e rs , renNF e p′
 
 sub⇓ : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} (ps : NNF§ ss) → t ⇓ t′ → sub ss t ⇓ sub ss t′
@@ -193,7 +193,7 @@ uniWN : ∀ {Γ A} {t : Γ ⊢ A} (wn wn′ : WN t) → wn ≡ wn′
 uniWN (t′ , n) (t″ , n′) with det⇓ n n′
 ... | refl                 = (_ ,_) & uni⇓ n n′
 
-renWN : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → WN t → WN (ren e t)
+renWN : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊑ Γ′) → WN t → WN (ren e t)
 renWN e (t′ , n) = ren e t′ , ren⇓ e n
 
 subWN : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t : Γ ⊢ A} (ps : NNF§ ss) → WN t → WN (sub ss t)

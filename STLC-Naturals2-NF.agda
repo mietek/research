@@ -50,13 +50,13 @@ mutual
 ----------------------------------------------------------------------------------------------------
 
 mutual
-  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren e t)
-  renNF e (⌜λ⌝ p)   = ⌜λ⌝ (renNF (lift⊆ e) p)
+  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊑ Γ′) → NF t → NF (ren e t)
+  renNF e (⌜λ⌝ p)   = ⌜λ⌝ (renNF (lift⊑ e) p)
   renNF e ⌜zero⌝    = ⌜zero⌝
   renNF e (⌜suc⌝ p) = ⌜suc⌝ (renNF e p)
   renNF e (nnf p)   = nnf (renNNF e p)
 
-  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren e t)
+  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊑ Γ′) → NNF t → NNF (ren e t)
   renNNF e var-             = var-
   renNNF e (p₁ ⌜$⌝ p₂)      = renNNF e p₁ ⌜$⌝ renNF e p₂
   renNNF e (⌜rec⌝ pₙ p₀ pₛ) = ⌜rec⌝ (renNNF e pₙ) (renNF e p₀) (renNF e pₛ)
@@ -82,13 +82,13 @@ mutual
 ----------------------------------------------------------------------------------------------------
 
 mutual
-  ren≪ : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ⊢≪ A → Γ′ ⊢≪ A
-  ren≪ e (⌜λ⌝ t)   = ⌜λ⌝ (ren≪ (lift⊆ e) t)
+  ren≪ : ∀ {Γ Γ′ A} → Γ ⊑ Γ′ → Γ ⊢≪ A → Γ′ ⊢≪ A
+  ren≪ e (⌜λ⌝ t)   = ⌜λ⌝ (ren≪ (lift⊑ e) t)
   ren≪ e ⌜zero⌝    = ⌜zero⌝
   ren≪ e (⌜suc⌝ t) = ren≪ e t
   ren≪ e (nnf t)   = nnf (ren≫ e t)
 
-  ren≫ : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ⊢≫ A → Γ′ ⊢≫ A
+  ren≫ : ∀ {Γ Γ′ A} → Γ ⊑ Γ′ → Γ ⊢≫ A → Γ′ ⊢≫ A
   ren≫ e (var i)          = var (ren∋ e i)
   ren≫ e (t₁ ⌜$⌝ t₂)      = ren≫ e t₁ ⌜$⌝ ren≪ e t₂
   ren≫ e (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ (ren≫ e tₙ) (ren≪ e t₀) (ren≪ e tₛ)

@@ -28,9 +28,9 @@ open TmKit (kit _⊢_) public
 
 ----------------------------------------------------------------------------------------------------
 
-ren : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
+ren : ∀ {Γ Γ′ A} → Γ ⊑ Γ′ → Γ ⊢ A → Γ′ ⊢ A
 ren e (var i)     = var (ren∋ e i)
-ren e (⌜λ⌝ t)     = ⌜λ⌝ (ren (lift⊆ e) t)
+ren e (⌜λ⌝ t)     = ⌜λ⌝ (ren (lift⊑ e) t)
 ren e (t₁ ⌜$⌝ t₂) = ren e t₁ ⌜$⌝ ren e t₂
 
 open RenKit (kit var ren) public
@@ -133,17 +133,17 @@ inj$₂′ : ∀ {Γ A A′ B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} {
          t₁ ⌜$⌝ t₂ ≡ t₁′ ⌜$⌝ t₂′ → Σ (A ≡ A′) λ { refl → t₂ ≡ t₂′ }
 inj$₂′ refl = refl , refl
 
-injren : ∀ {Γ Γ′ A} {e : Γ ⊆ Γ′} {t t′ : Γ ⊢ A} → ren e t ≡ ren e t′ → t ≡ t′
+injren : ∀ {Γ Γ′ A} {e : Γ ⊑ Γ′} {t t′ : Γ ⊢ A} → ren e t ≡ ren e t′ → t ≡ t′
 injren {t = var i}     {var i′}      eq = var & injren∋ (injv eq)
 injren {t = ⌜λ⌝ t}     {⌜λ⌝ t′}      eq = ⌜λ⌝ & injren (injλ eq)
 injren {t = t₁ ⌜$⌝ t₂} {t₁′ ⌜$⌝ t₂′} eq with inj$₁′ eq
 ... | refl , eq₁                          = _⌜$⌝_ & injren eq₁ ⊗ injren (inj$₂ eq)
 
-unren : ∀ {Γ Γ′ A} (e : Γ ⊆ Γ′) (t′ : Γ′ ⊢ A) → Dec (Σ (Γ ⊢ A) λ t → t′ ≡ ren e t)
+unren : ∀ {Γ Γ′ A} (e : Γ ⊑ Γ′) (t′ : Γ′ ⊢ A) → Dec (Σ (Γ ⊢ A) λ t → t′ ≡ ren e t)
 unren e (var i′)                        with unren∋ e i′
 ... | no ¬p                               = no λ { (var i , refl) → (i , refl) ↯ ¬p }
 ... | yes (i , refl)                      = yes (var i , refl)
-unren e (⌜λ⌝ t′)                        with unren (lift⊆ e) t′
+unren e (⌜λ⌝ t′)                        with unren (lift⊑ e) t′
 ... | no ¬p                               = no λ { (⌜λ⌝ t , refl) → (t , refl) ↯ ¬p }
 ... | yes (t , refl)                      = yes (⌜λ⌝ t , refl)
 unren e (t₁′ ⌜$⌝ t₂′)                   with unren e t₁′ | unren e t₂′

@@ -12,11 +12,11 @@ open import Kit4 public
 
 infix 3 _⊩_
 _⊩_ : Ctx → Ty → Set
-W ⊩ A ⌜⊃⌝ B = ∀ {W′} → W ⊆ W′ → W′ ⊩ A → W′ ⊩ B
+W ⊩ A ⌜⊃⌝ B = ∀ {W′} → W ⊑ W′ → W′ ⊩ A → W′ ⊩ B
 W ⊩ ⌜ℕ⌝     = Σ (W ⊢ ⌜ℕ⌝) NF
 
-vren : ∀ {A W W′} → W ⊆ W′ → W ⊩ A → W′ ⊩ A
-vren {A ⌜⊃⌝ B} e v       = λ e′ → v (trans⊆ e e′)
+vren : ∀ {A W W′} → W ⊑ W′ → W ⊩ A → W′ ⊩ A
+vren {A ⌜⊃⌝ B} e v       = λ e′ → v (trans⊑ e e′)
 vren {⌜ℕ⌝}     e (_ , p) = _ , renNF e p
 
 open ValKit (kit _⊩_ vren) public
@@ -31,13 +31,13 @@ mutual
   ↑ {⌜ℕ⌝}     (_ , p)  = _ , nnf p
 
   ↓ : ∀ {A Γ} → Γ ⊩ A → Σ (Γ ⊢ A) NF
-  ↓ {A ⌜⊃⌝ B} v = let t , p = ↓ (v (wk⊆ id⊆) (↑ (var zero , var-)))
+  ↓ {A ⌜⊃⌝ B} v = let t , p = ↓ (v (wk⊑ id⊑) (↑ (var zero , var-)))
                     in ⌜λ⌝ t , ⌜λ⌝-
   ↓ {⌜ℕ⌝}     v = v
 
 vids : ∀ {Γ} → Γ ⊩§ Γ
 vids {[]}    = []
-vids {A ∷ Γ} = ↑ (var zero , var-) ∷ vrens (wk⊆ id⊆) vids
+vids {A ∷ Γ} = ↑ (var zero , var-) ∷ vrens (wk⊑ id⊑) vids
 
 ⟦_⟧⁻¹ : ∀ {Γ A} → Γ ⊨ A → Σ (Γ ⊢ A) NF
 ⟦ v ⟧⁻¹ = ↓ (v vids)
@@ -53,20 +53,20 @@ vids {A ∷ Γ} = ↑ (var zero , var-) ∷ vrens (wk⊆ id⊆) vids
 
 ⟦rec⟧ : ∀ {Γ A} → Γ ⊩ ⌜ℕ⌝ → Γ ⊩ A → Γ ⊩ ⌜ℕ⌝ ⌜⊃⌝ A ⌜⊃⌝ A → Γ ⊩ A
 ⟦rec⟧ (_ , ⌜zero⌝)   v₀ vₛ = v₀
-⟦rec⟧ (_ , ⌜suc⌝ pₙ) v₀ vₛ = vₛ id⊆ (_ , pₙ) id⊆ v₀
+⟦rec⟧ (_ , ⌜suc⌝ pₙ) v₀ vₛ = vₛ id⊑ (_ , pₙ) id⊑ v₀
 ⟦rec⟧ (_ , nnf pₙ)   v₀ vₛ = let _ , p₀ = ↓ v₀
-                                 _ , pₛ = ↓ (vₛ (wk⊆ (wk⊆ id⊆)) (↑ (var (suc zero) , var-))
-                                            id⊆ (↑ (var zero , var-)))
+                                 _ , pₛ = ↓ (vₛ (wk⊑ (wk⊑ id⊑)) (↑ (var (suc zero) , var-))
+                                            id⊑ (↑ (var zero , var-)))
                                in ↑ (_ , ⌜rec⌝ pₙ p₀ pₛ)
 
 ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
 ⟦ var i          ⟧ vs = ⟦ i ⟧∋ vs
 ⟦ ⌜λ⌝ t          ⟧ vs = λ e v → ⟦ t ⟧ (v ∷ vrens e vs)
-⟦ t₁ ⌜$⌝ t₂      ⟧ vs = ⟦ t₁ ⟧ vs id⊆ $ ⟦ t₂ ⟧ vs
+⟦ t₁ ⌜$⌝ t₂      ⟧ vs = ⟦ t₁ ⟧ vs id⊑ $ ⟦ t₂ ⟧ vs
 ⟦ ⌜zero⌝         ⟧ vs = ⟦zero⟧
 ⟦ ⌜suc⌝ t        ⟧ vs = ⟦suc⟧ (⟦ t ⟧ vs)
 ⟦ ⌜rec⌝ tₙ t₀ tₛ ⟧ vs = ⟦rec⟧ (⟦ tₙ ⟧ vs) (⟦ t₀ ⟧ vs) λ { e (tₙ′ , pₙ′) e′ vₐ →
-                          ⟦ tₛ ⟧ (vₐ ∷ (_ , renNF e′ pₙ′) ∷ vrens (trans⊆ e e′) vs) }
+                          ⟦ tₛ ⟧ (vₐ ∷ (_ , renNF e′ pₙ′) ∷ vrens (trans⊑ e e′) vs) }
 
 nbe : ∀ {Γ A} → Γ ⊢ A → Σ (Γ ⊢ A) NF
 nbe t = ⟦ ⟦ t ⟧ ⟧⁻¹

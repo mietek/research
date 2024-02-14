@@ -21,7 +21,7 @@ join ##dependent on libera.chat
   https://www.cs.le.ac.uk/people/ng13/papers/yellowthesis.ps.gz
 
 - Kovacs (2017)
-  “A machine-checked correctness proof of NbE for STLC”
+  “A machine-checked correctness proof of NBE for STLC”
   https://github.com/dpndnt/library/blob/master/doc/pdf/kovacs-2017.pdf
 
 - Schäfer (2019)
@@ -97,7 +97,9 @@ import FOR-GAN
 
 import FOR-Kit1
 import FOR-Kit2
+import FOR-Kit2-GAN
 import FOR-Kit3
+import FOR-Kit3-GAN
 
 import FOR-STLC-Base
 import FOR-STLC-Base-RenSub
@@ -189,17 +191,17 @@ postulate
 --   thm-6 (cong$ {t₁ = t₁} {t₁′} {t₂} {t₂′} deq₁ deq₂) with thm-k deq₁ | thm-k deq₂
 --   ... | eq | eq′ = ↓ & (
 --       begin
---         ⟦ t₁ ⟧ vids id⊆ (⟦ t₂ ⟧ vids)
---       ≡⟨ ⟦ t₁ ⟧ vids id⊆ & congapp eq′ vids ⟩
---         ⟦ t₁ ⟧ vids id⊆ (⟦ t₂′ ⟧ vids)
---       ≡⟨ congapp (congapp (congapp′ (congapp eq vids)) id⊆) (⟦ t₂′ ⟧ vids) ⟩
---         ⟦ t₁′ ⟧ vids id⊆ (⟦ t₂′ ⟧ vids)
+--         ⟦ t₁ ⟧ vids id⊑ (⟦ t₂ ⟧ vids)
+--       ≡⟨ ⟦ t₁ ⟧ vids id⊑ & congapp eq′ vids ⟩
+--         ⟦ t₁ ⟧ vids id⊑ (⟦ t₂′ ⟧ vids)
+--       ≡⟨ congapp (congapp (congapp′ (congapp eq vids)) id⊑) (⟦ t₂′ ⟧ vids) ⟩
+--         ⟦ t₁′ ⟧ vids id⊑ (⟦ t₂′ ⟧ vids)
 --       ∎)
 --   thm-6 (βred⊃ {t₁ = t₁} {t₂} refl) = ↓ & (
 --       begin
 --         ⟦ ⌜λ⌝ t₁ ⌜$⌝ t₂ ⟧ vids
 --       ≡⟨⟩
---         ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vrens id⊆ vids)
+--         ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vrens id⊑ vids)
 --       ≡⟨ (λ vs → ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vs)) & lem-t ⁻¹ ⟩
 --         ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vids)
 --       ≡⟨ thm-i t₁ t₂ vids ⟩

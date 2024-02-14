@@ -56,21 +56,21 @@ mutual
 ----------------------------------------------------------------------------------------------------
 
 mutual
-  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren e t)
+  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊑ Γ′) → NF t → NF (ren e t)
   renNF e ⌜λ⌝-    = ⌜λ⌝-
   renNF e (nnf p) = nnf (renNNF e p)
 
-  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren e t)
+  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊑ Γ′) → NNF t → NNF (ren e t)
   renNNF e var-        = var-
   renNNF e (p₁ ⌜$⌝ p₂) = renNNF e p₁ ⌜$⌝ renNF e p₂
 
 mutual
-  nerNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF (ren e t) → NF t
+  nerNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊑ Γ′) → NF (ren e t) → NF t
   nerNF {t = var i}     e (nnf p) = nnf (nerNNF e p)
   nerNF {t = ⌜λ⌝ t}     e ⌜λ⌝-    = ⌜λ⌝-
   nerNF {t = t₁ ⌜$⌝ t₂} e (nnf p) = nnf (nerNNF e p)
 
-  nerNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF (ren e t) → NNF t
+  nerNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊑ Γ′) → NNF (ren e t) → NNF t
   nerNNF {t = var i}     e var-        = var-
   nerNNF {t = t₁ ⌜$⌝ t₂} e (p₁ ⌜$⌝ p₂) = nerNNF e p₁ ⌜$⌝ nerNF e p₂
 

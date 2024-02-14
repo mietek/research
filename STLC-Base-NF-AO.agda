@@ -83,11 +83,11 @@ open ProgKit (kit redkit2 prog⇒) public
 
 ----------------------------------------------------------------------------------------------------
 
-ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇒ t′ → ren e t ⇒ ren e t′
-ren⇒ e (congλ r)                    = congλ (ren⇒ (lift⊆ e) r)
+ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊑ Γ′) → t ⇒ t′ → ren e t ⇒ ren e t′
+ren⇒ e (congλ r)                    = congλ (ren⇒ (lift⊑ e) r)
 ren⇒ e (cong$₁ r₁)                  = cong$₁ (ren⇒ e r₁)
 ren⇒ e (cong$₂ p₁ r₂)               = cong$₂ (renNF e p₁) (ren⇒ e r₂)
-ren⇒ e (βred⊃ {t₁ = t₁} refl p₁ p₂) = βred⊃ (rencut e t₁ _ ⁻¹) (renNF (lift⊆ e) p₁) (renNF e p₂)
+ren⇒ e (βred⊃ {t₁ = t₁} refl p₁ p₂) = βred⊃ (rencut e t₁ _ ⁻¹) (renNF (lift⊑ e) p₁) (renNF e p₂)
 
 sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} → NNF§ ss → t ⇒ t′ → sub ss t ⇒ sub ss t′
 sub⇒ ps (congλ r)                    = congλ (sub⇒ (liftNNF§ ps) r)

@@ -11,7 +11,7 @@ module RenSubKit1-GAN (¶ : RenSubKit1Params) where
   open RenSubKit1 ¶
 
   module _ (⚠ : FunExt) where
-    ⟪ren⟫ : ∀ (A : Ty) → Presheaf ⟪⊇⟫ lzero
+    ⟪ren⟫ : ∀ (A : Ty) → Presheaf ⟪⊒⟫ lzero
     ⟪ren⟫ A = record
                 { ƒObj = _⊢ A
                 ; ƒ    = ren
@@ -19,7 +19,7 @@ module RenSubKit1-GAN (¶ : RenSubKit1Params) where
                 ; _∘ƒ_ = λ js′ js → ⚠ (compren js′ js)
                 }
 
-    ⟪ren§⟫ : ∀ (Δ : Ctx) → Presheaf ⟪⊇⟫ lzero
+    ⟪ren§⟫ : ∀ (Δ : Ctx) → Presheaf ⟪⊒⟫ lzero
     ⟪ren§⟫ Δ = record
                  { ƒObj = _⊢§ Δ
                  ; ƒ    = ren§ -- flip _◐_
@@ -27,7 +27,7 @@ module RenSubKit1-GAN (¶ : RenSubKit1Params) where
                  ; _∘ƒ_ = λ js′ js → ⚠ (compren§ js′ js)
                  }
 
-    ⟪get§⟫ : ∀ (Γ : Ctx) → Presheaf ⟪⊆⟫ lzero
+    ⟪get§⟫ : ∀ (Γ : Ctx) → Presheaf ⟪⊑⟫ lzero
     ⟪get§⟫ Γ = record
                  { ƒObj = Γ ⊢§_
                  ; ƒ    = get§ -- _◑_

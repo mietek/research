@@ -48,40 +48,40 @@ record RenKitParams : Set₁ where
   open TmKit tmkit public hiding (tmkit)
   field
     var : ∀ {Γ A} → Γ ∋ A → Γ ⊢ A
-    ren : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
+    ren : ∀ {Γ Γ′ A} → Γ ⊑ Γ′ → Γ ⊢ A → Γ′ ⊢ A
 
 module RenKit (¶ : RenKitParams) where
   open RenKitParams ¶
   renkit = ¶
 
   wk : ∀ {B Γ A} → Γ ⊢ A → B ∷ Γ ⊢ A
-  wk t = ren (wk⊆ id⊆) t
+  wk t = ren (wk⊑ id⊑) t
 
   -- Kovacs: flip _ₛ∘ₑ_
-  ren§ : ∀ {Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⊢§ Δ → Γ′ ⊢§ Δ
+  ren§ : ∀ {Γ Γ′ Δ} → Γ ⊑ Γ′ → Γ ⊢§ Δ → Γ′ ⊢§ Δ
   ren§ e []       = []
   ren§ e (t ∷ ts) = ren e t ∷ ren§ e ts
 
-  _◐_ : ∀ {Γ Γ′ Δ} → Γ ⊢§ Δ → Γ ⊆ Γ′ → Γ′ ⊢§ Δ
+  _◐_ : ∀ {Γ Γ′ Δ} → Γ ⊢§ Δ → Γ ⊑ Γ′ → Γ′ ⊢§ Δ
   _◐_ = flip ren§
 
   wk§ : ∀ {B Γ Δ} → Γ ⊢§ Δ → B ∷ Γ ⊢§ Δ
-  wk§ ts = ren§ (wk⊆ id⊆) ts
+  wk§ ts = ren§ (wk⊑ id⊑) ts
 
   lift§ : ∀ {B Γ Δ} → Γ ⊢§ Δ → B ∷ Γ ⊢§ B ∷ Δ
   lift§ ts = var zero ∷ wk§ ts
 
   -- Kovacs: ⌜_⌝ᵒᵖᵉ
-  var§ : ∀ {Γ Γ′} → Γ ⊆ Γ′ → Γ′ ⊢§ Γ
-  var§ stop⊆     = []
-  var§ (wk⊆ e)   = wk§ (var§ e)
-  var§ (lift⊆ e) = lift§ (var§ e)
+  var§ : ∀ {Γ Γ′} → Γ ⊑ Γ′ → Γ′ ⊢§ Γ
+  var§ stop⊑     = []
+  var§ (wk⊑ e)   = wk§ (var§ e)
+  var§ (lift⊑ e) = lift§ (var§ e)
 
   -- TODO: check if changing this affects anything
   id§ refl§ : ∀ {Γ} → Γ ⊢§ Γ
   id§ {[]}    = []
   id§ {A ∷ Γ} = lift§ id§
-  -- id§ = var§ id⊆
+  -- id§ = var§ id⊑
   refl§ = id§
 
   sub∋ : ∀ {Γ Ξ A} → Ξ ⊢§ Γ → Γ ∋ A → Ξ ⊢ A
@@ -117,10 +117,10 @@ module SubKit (¶ : SubKitParams) where
   t [ s ] = sub (s ∷ id§) t
 
   -- Kovacs: _ₑ∘ₛ_
-  get§ _◑_ : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⊢§ Δ′ → Γ ⊢§ Δ
-  get§ stop⊆     ts       = ts
-  get§ (wk⊆ e)   (t ∷ ts) = get§ e ts
-  get§ (lift⊆ e) (t ∷ ts) = t ∷ get§ e ts
+  get§ _◑_ : ∀ {Γ Δ Δ′} → Δ ⊑ Δ′ → Γ ⊢§ Δ′ → Γ ⊢§ Δ
+  get§ stop⊑     ts       = ts
+  get§ (wk⊑ e)   (t ∷ ts) = get§ e ts
+  get§ (lift⊑ e) (t ∷ ts) = t ∷ get§ e ts
   _◑_ = get§
 
 

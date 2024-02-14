@@ -36,21 +36,21 @@ mutual
 ----------------------------------------------------------------------------------------------------
 
 mutual
-  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren e t)
-  renNF e (⌜λ⌝ p) = ⌜λ⌝ (renNF (lift⊆ e) p)
+  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊑ Γ′) → NF t → NF (ren e t)
+  renNF e (⌜λ⌝ p) = ⌜λ⌝ (renNF (lift⊑ e) p)
   renNF e (nnf p) = nnf (renNNF e p)
 
-  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren e t)
+  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊑ Γ′) → NNF t → NNF (ren e t)
   renNNF e var-        = var-
   renNNF e (p₁ ⌜$⌝ p₂) = renNNF e p₁ ⌜$⌝ renNF e p₂
 
 -- TODO: kit
-renNNF§ : ∀ {Γ Γ′ Δ} {ss : Γ ⊢§ Δ} (e : Γ ⊆ Γ′) → NNF§ ss → NNF§ (ren§ e ss)
+renNNF§ : ∀ {Γ Γ′ Δ} {ss : Γ ⊢§ Δ} (e : Γ ⊑ Γ′) → NNF§ ss → NNF§ (ren§ e ss)
 renNNF§ e []       = []
 renNNF§ e (p ∷ ps) = renNNF e p ∷ renNNF§ e ps
 
 wkNNF§ : ∀ {B Γ Δ} {ss : Γ ⊢§ Δ} → NNF§ ss → NNF§ (wk§ {B} ss)
-wkNNF§ ps = renNNF§ (wk⊆ id⊆) ps
+wkNNF§ ps = renNNF§ (wk⊑ id⊑) ps
 
 liftNNF§ : ∀ {B Γ Δ} {ss : Γ ⊢§ Δ} → NNF§ ss → NNF§ (lift§ {B} ss)
 liftNNF§ ps = var- ∷ wkNNF§ ps

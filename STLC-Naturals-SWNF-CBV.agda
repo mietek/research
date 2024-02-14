@@ -148,31 +148,31 @@ open ProgKit (kit redkit2 prog⇒) public
 
 ----------------------------------------------------------------------------------------------------
 
-ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇒ t′ → ren e t ⇒ ren e t′
+ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊑ Γ′) → t ⇒ t′ → ren e t ⇒ ren e t′
 ren⇒ e (cong$₁ r₁)               = cong$₁ (ren⇒ e r₁)
 ren⇒ e (cong$₂ p₁ r₂)            = cong$₂ (renNF e p₁) (ren⇒ e r₂)
 ren⇒ e (congsuc r)               = congsuc (ren⇒ e r)
 ren⇒ e (congrecₙ rₙ)             = congrecₙ (ren⇒ e rₙ)
 ren⇒ e (congrec₀ pₙ r₀)          = congrec₀ (renNF e pₙ) (ren⇒ e r₀)
 ren⇒ e (congrecₛ pₙ p₀ rₛ)       = congrecₛ (renNF e pₙ) (renNF e p₀)
-                                      (ren⇒ (lift⊆ (lift⊆ e)) rₛ)
+                                      (ren⇒ (lift⊑ (lift⊑ e)) rₛ)
 ren⇒ e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut e t₁ _ ⁻¹) (renNF e p₂)
-ren⇒ e (βredℕ₀ p₀ pₛ)            = βredℕ₀ (renNF e p₀) (renNF (lift⊆ (lift⊆ e)) pₛ)
+ren⇒ e (βredℕ₀ p₀ pₛ)            = βredℕ₀ (renNF e p₀) (renNF (lift⊑ (lift⊑ e)) pₛ)
 ren⇒ e (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ) =
-    βredℕₛ eq (renNF e pₙ) (renNF e p₀) (renNF (lift⊆ (lift⊆ e)) pₛ)
+    βredℕₛ eq (renNF e pₙ) (renNF e p₀) (renNF (lift⊑ (lift⊑ e)) pₛ)
       where
   eq : ren e (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ] [ tₙ ]) ≡
-       ren (lift⊆ (lift⊆ e)) tₛ
-         [ wk (⌜rec⌝ (ren e tₙ) (ren e t₀) (ren (lift⊆ (lift⊆ e)) tₛ)) ] [ ren e tₙ ]
+       ren (lift⊑ (lift⊑ e)) tₛ
+         [ wk (⌜rec⌝ (ren e tₙ) (ren e t₀) (ren (lift⊑ (lift⊑ e)) tₛ)) ] [ ren e tₙ ]
   eq = rencut e (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ]) tₙ ⁻¹
      ⋮ (_[ ren e tₙ ]) &
-         ( rencut (lift⊆ e) tₛ (wk (⌜rec⌝ tₙ t₀ tₛ)) ⁻¹
-         ⋮ (ren (lift⊆ (lift⊆ e)) tₛ [_]) &
-             ( compren (lift⊆ e) (wk⊆ id⊆) (⌜rec⌝ tₙ t₀ tₛ) ⁻¹
-             ⋮ (flip ren (⌜rec⌝ tₙ t₀ tₛ) ∘ wk⊆) & (rid⊆ e ⋮ lid⊆ e ⁻¹)
-             ⋮ ⌜rec⌝ & compren (wk⊆ id⊆) e tₙ
-                     ⊗ compren (wk⊆ id⊆) e t₀
-                     ⊗ compren (lift⊆ (lift⊆ (wk⊆ id⊆))) (lift⊆ (lift⊆ e)) tₛ
+         ( rencut (lift⊑ e) tₛ (wk (⌜rec⌝ tₙ t₀ tₛ)) ⁻¹
+         ⋮ (ren (lift⊑ (lift⊑ e)) tₛ [_]) &
+             ( compren (lift⊑ e) (wk⊑ id⊑) (⌜rec⌝ tₙ t₀ tₛ) ⁻¹
+             ⋮ (flip ren (⌜rec⌝ tₙ t₀ tₛ) ∘ wk⊑) & (rid⊑ e ⋮ lid⊑ e ⁻¹)
+             ⋮ ⌜rec⌝ & compren (wk⊑ id⊑) e tₙ
+                     ⊗ compren (wk⊑ id⊑) e t₀
+                     ⊗ compren (lift⊑ (lift⊑ (wk⊑ id⊑))) (lift⊑ (lift⊑ e)) tₛ
              )
          )
 
@@ -196,15 +196,15 @@ sub⇒ {ss = ss} ps (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ
      ⋮ (_[ sub ss tₙ ]) &
          ( subcut (lift§ ss) tₛ (wk (⌜rec⌝ tₙ t₀ tₛ)) ⁻¹
          ⋮ (sub (lift§ (lift§ ss)) tₛ [_]) &
-             ( eqsubren (lift§ ss) (wk⊆ id⊆) (⌜rec⌝ tₙ t₀ tₛ) ⁻¹
+             ( eqsubren (lift§ ss) (wk⊑ id⊑) (⌜rec⌝ tₙ t₀ tₛ) ⁻¹
              ⋮ flip sub (⌜rec⌝ tₙ t₀ tₛ) & lidget§ (wk§ ss)
-             ⋮ ⌜rec⌝ & eqrensub (wk⊆ id⊆) ss tₙ
-                     ⊗ eqrensub (wk⊆ id⊆) ss t₀
+             ⋮ ⌜rec⌝ & eqrensub (wk⊑ id⊑) ss tₙ
+                     ⊗ eqrensub (wk⊑ id⊑) ss t₀
                      ⊗ ( ((flip sub tₛ ∘ (var zero ∷_)) ∘ (var (suc zero) ∷_)) & -- TODO: should _∘_ be infixl?
-                             ( wk§ & eqwkren§ (wk⊆ id⊆) ss ⁻¹
-                             ⋮ eqwkren§ (lift⊆ (wk⊆ id⊆)) (wk§ ss) ⁻¹
+                             ( wk§ & eqwkren§ (wk⊑ id⊑) ss ⁻¹
+                             ⋮ eqwkren§ (lift⊑ (wk⊑ id⊑)) (wk§ ss) ⁻¹
                              )
-                       ⋮ eqrensub (lift⊆ (lift⊆ (wk⊆ id⊆))) (lift§ (lift§ ss)) tₛ
+                       ⋮ eqrensub (lift⊑ (lift⊑ (wk⊑ id⊑))) (lift§ (lift§ ss)) tₛ
                        )
              )
         )

@@ -63,9 +63,9 @@ open SplitModelKit (kit _⊩_ (λ {ℬ} {ℳ} {A} → vren {ℬ} {ℳ} {A})) pub
 ℬ : BaseModel
 ℬ = record
        { World  = Ctx
-       ; _≤_    = _⊆_
-       ; refl≤  = refl⊆
-       ; trans≤ = trans⊆
+       ; _≤_    = _⊑_
+       ; refl≤  = refl⊑
+       ; trans≤ = trans⊑
        ; ⟦ℕ⟧    = λ Γ → Σ (Γ ⊢ ⌜ℕ⌝) NF
        ; ren⟦ℕ⟧ = λ { e (_ , p) → _ , renNF e p }
        ; ⟦zero⟧ = _ , ⌜zero⌝
@@ -76,11 +76,11 @@ open SplitModelKit (kit _⊩_ (λ {ℬ} {ℳ} {A} → vren {ℬ} {ℳ} {A})) pub
 mutual
   𝒞 : SplitModel ℬ
   𝒞 .⟦rec⟧         (_ , ⌜zero⌝)   v₀ vₛ = v₀
-  𝒞 .⟦rec⟧         (_ , ⌜suc⌝ pₙ) v₀ vₛ = vₛ id⊆ (_ , pₙ) id⊆ v₀
+  𝒞 .⟦rec⟧         (_ , ⌜suc⌝ pₙ) v₀ vₛ = vₛ id⊑ (_ , pₙ) id⊑ v₀
   𝒞 .⟦rec⟧ {A = A} (_ , nnf pₙ)   v₀ vₛ =
     let _ , p₀ = ↓ {A} v₀
-        _ , pₛ = ↓ (vₛ (wk⊆ (wk⊆ id⊆)) (↑ {⌜ℕ⌝} (var (suc zero) , var-))
-                   id⊆ (↑ {A} (var zero , var-)))
+        _ , pₛ = ↓ (vₛ (wk⊑ (wk⊑ id⊑)) (↑ {⌜ℕ⌝} (var (suc zero) , var-))
+                   id⊑ (↑ {A} (var zero , var-)))
       in ↑ (_ , ⌜rec⌝ pₙ p₀ pₛ)
 
   ↑ : ∀ {A Γ} → Σ (Γ ⊢ A) NNF → 𝒞 / Γ ⊩ A
@@ -89,13 +89,13 @@ mutual
   ↑ {⌜ℕ⌝}     (_ , p)  = _ , nnf p
 
   ↓ : ∀ {A Γ} → 𝒞 / Γ ⊩ A → Σ (Γ ⊢ A) NF
-  ↓ {A ⌜⊃⌝ B} v = let t , p = ↓ (v (wk⊆ id⊆) (↑ {A} (var zero , var-)))
+  ↓ {A ⌜⊃⌝ B} v = let t , p = ↓ (v (wk⊑ id⊑) (↑ {A} (var zero , var-)))
                     in ⌜λ⌝ t , ⌜λ⌝-
   ↓ {⌜ℕ⌝}     v = v
 
 vids : ∀ {Γ} → 𝒞 / Γ ⊩§ Γ
 vids {[]}    = []
-vids {A ∷ Γ} = ↑ {A} (var zero , var-) ∷ vrens (wk⊆ id⊆) vids
+vids {A ∷ Γ} = ↑ {A} (var zero , var-) ∷ vrens (wk⊑ id⊑) vids
 
 ⟦_⟧⁻¹ : ∀ {Γ A} → Γ ⊨ A → Σ (Γ ⊢ A) NF
 ⟦ v ⟧⁻¹ = ↓ (v vids)

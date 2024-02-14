@@ -268,20 +268,20 @@ module PKF = ProgKit (kit RK2F.redkit2 prog⇒F)
 
 ----------------------------------------------------------------------------------------------------
 
-renExpandable : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → Expandable t → Expandable (ren e t)
+renExpandable : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊑ Γ′) → Expandable t → Expandable (ren e t)
 renExpandable e var-        = var-
 renExpandable e (p₁ ⌜$⌝ p₂) = F.renNNF e p₁ ⌜$⌝ F.renNF e p₂
 
-ren¬Expandable : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → ¬ Expandable t → ¬ Expandable (ren e t)
+ren¬Expandable : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊑ Γ′) → ¬ Expandable t → ¬ Expandable (ren e t)
 ren¬Expandable {t = var i}     e ¬x var-        = var- ↯ ¬x
 ren¬Expandable {t = t₁ ⌜$⌝ t₂} e ¬x (p₁ ⌜$⌝ p₂) = (F.nerNNF e p₁ ⌜$⌝ F.nerNF e p₂) ↯ ¬x
 
 mutual
-  ren⇒F : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇒F t′ → ren e t ⇒F ren e t′
+  ren⇒F : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊑ Γ′) → t ⇒F t′ → ren e t ⇒F ren e t′
   ren⇒F e (Ired ¬x r)    = Ired (ren¬Expandable e ¬x) (ren⇒I e r)
   ren⇒F e (ηexp⊃ refl x) = ηexp⊃ (eqwkren e _) (renExpandable e x)
 
-  ren⇒I : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇒I t′ → ren e t ⇒I ren e t′
+  ren⇒I : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊑ Γ′) → t ⇒I t′ → ren e t ⇒I ren e t′
   ren⇒I e (cong$₁ r₁)               = cong$₁ (ren⇒I e r₁)
   ren⇒I e (Fcong$₂ p₁ r₂)           = Fcong$₂ (F.renNF e p₁) (ren⇒F e r₂)
   ren⇒I e (Xcong$₂ x₁ r₂)           = Xcong$₂ (renExpandable e x₁) (ren⇒F e r₂)
@@ -403,7 +403,7 @@ IR⊎ExpandsTo→FR                   (right (ηexp⊃ refl x)) = ηexp⊃ refl 
 -- Expanded? (var i′)                      = no λ { (_ , ηexp⊃ () x) }
 -- Expanded? (⌜λ⌝ (var i′))                = no λ { (_ , ηexp⊃ () x) }
 -- Expanded? (⌜λ⌝ (⌜λ⌝ t′))                = no λ { (_ , ηexp⊃ () x) }
--- Expanded? (⌜λ⌝ (t′ ⌜$⌝ var zero))       with unren wk⊆ t′
+-- Expanded? (⌜λ⌝ (t′ ⌜$⌝ var zero))       with unren wk⊑ t′
 -- ... | no ¬p                               = no λ { (_ , ηexp⊃ refl x) → (_ , refl) ↯ ¬p }
 -- ... | yes (var i , refl)                  = yes (_ , ηexp⊃ refl var-)
 -- ... | yes (⌜λ⌝ t , refl)                  = no λ { (var _ , ηexp⊃ () x)

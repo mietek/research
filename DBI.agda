@@ -1,7 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 
--- de Bruijn index
--- TODO: custom list?
+-- de Bruijn indices
 
 module DBI {𝓍} {X : Set 𝓍} where
 

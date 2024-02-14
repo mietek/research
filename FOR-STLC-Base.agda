@@ -28,9 +28,9 @@ open TmKit (kit _⊢_) public
 
 ----------------------------------------------------------------------------------------------------
 
-ren : ∀ {Γ Γ′ A} → Γ ⊆ Γ′ → Γ ⊢ A → Γ′ ⊢ A
+ren : ∀ {Γ Γ′ A} → Γ ⊑ Γ′ → Γ ⊢ A → Γ′ ⊢ A
 ren e (var i)          = var (ren∋ e i)
-ren e (⌜λ⌝ t)          = ⌜λ⌝ (ren (lift⊆ e) t)
+ren e (⌜λ⌝ t)          = ⌜λ⌝ (ren (lift⊑ e) t)
 ren e (t₁ ⌜$⌝ t₂)      = ren e t₁ ⌜$⌝ ren e t₂
 
 open RenKit (kit var ren) public

@@ -51,9 +51,9 @@ open ModelKit (kit (λ {ℳ} → _⊩_ {ℳ}) (λ {ℳ} {A} → vren {ℳ} {A}))
 𝒞 : Model
 𝒞 = record
       { World  = Ctx
-      ; _≤_    = _⊆_
-      ; refl≤  = refl⊆
-      ; trans≤ = trans⊆
+      ; _≤_    = _⊑_
+      ; refl≤  = refl⊑
+      ; trans≤ = trans⊑
       }
 
 mutual
@@ -64,7 +64,7 @@ mutual
   ↑ {⌜𝟙⌝}     (_ , p)  = unit
 
   ↓ : ∀ {A Γ} → 𝒞 / Γ ⊩ A → Σ (Γ ⊢ A) NF
-  ↓ {A ⌜⊃⌝ B} v         = let t , p = ↓ (v (wk⊆ id⊆) (↑ (var zero , var-)))
+  ↓ {A ⌜⊃⌝ B} v         = let t , p = ↓ (v (wk⊑ id⊑) (↑ (var zero , var-)))
                             in ⌜λ⌝ t , ⌜λ⌝-
   ↓ {A ⌜∧⌝ B} (v₁ , v₂) = let t₁ , p₁ = ↓ v₁
                               t₂ , p₂ = ↓ v₂
@@ -73,7 +73,7 @@ mutual
 
 vids : ∀ {Γ} → 𝒞 / Γ ⊩§ Γ
 vids {[]}    = []
-vids {A ∷ Γ} = ↑ (var zero , var-) ∷ vrens (wk⊆ id⊆) vids
+vids {A ∷ Γ} = ↑ (var zero , var-) ∷ vrens (wk⊑ id⊑) vids
 
 ⟦_⟧⁻¹ : ∀ {Γ A} → Γ ⊨ A → Σ (Γ ⊢ A) NF
 ⟦ v ⟧⁻¹ = ↓ (v vids)

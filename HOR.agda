@@ -21,15 +21,15 @@ _⊑_ : List X → List X → Set 𝓍
 -- first-order renamings are isomorphic to higher-order renamings
 
 private
-  to : ∀ {Γ Γ′} → Γ FOR.⊆ Γ′ → Γ ⊑ Γ′
+  to : ∀ {Γ Γ′} → Γ FOR.⊑ Γ′ → Γ ⊑ Γ′
   to (j FOR.∷ js) zero    = j
   to (j FOR.∷ js) (suc i) = to js i
 
-  from : ∀ {Γ Γ′} → Γ ⊑ Γ′ → Γ FOR.⊆ Γ′
+  from : ∀ {Γ Γ′} → Γ ⊑ Γ′ → Γ FOR.⊑ Γ′
   from {[]}    ρ = FOR.[]
   from {A ∷ Γ} ρ = ρ zero FOR.∷ from (ρ ∘ suc)
 
-  from∘to : ∀ {Γ Γ′} (is : Γ FOR.⊆ Γ′) → (from ∘ to) is ≡ is
+  from∘to : ∀ {Γ Γ′} (is : Γ FOR.⊑ Γ′) → (from ∘ to) is ≡ is
   from∘to FOR.[]       = refl
   from∘to (i FOR.∷ is) = (i FOR.∷_) & from∘to is
 
@@ -43,7 +43,7 @@ private
     to∘from : ∀ {Γ Γ′} (ρ : Γ ⊑ Γ′) → (to ∘ from) ρ ≡ ρ :> (Γ ⊑ Γ′)
     to∘from ρ = ⚠′ (⚠ (pointwise-to∘from ρ))
 
-    FOR≃HOR : ∀ {Γ Γ′} → (Γ FOR.⊆ Γ′) ≃ (Γ ⊑ Γ′)
+    FOR≃HOR : ∀ {Γ Γ′} → (Γ FOR.⊑ Γ′) ≃ (Γ ⊑ Γ′)
     FOR≃HOR = record
                 { to      = to
                 ; from    = from

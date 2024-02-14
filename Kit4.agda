@@ -12,7 +12,7 @@ record ValKitParams : Set₁ where
   open TyKit Ty public
   field
     _⊩_ : Ctx → Ty → Set
-    vren : ∀ {A W W′} → W ⊆ W′ → W ⊩ A → W′ ⊩ A
+    vren : ∀ {A W W′} → W ⊑ W′ → W ⊩ A → W′ ⊩ A
 
 module ValKit (¶ : ValKitParams) where
   open ValKitParams ¶
@@ -23,7 +23,7 @@ module ValKit (¶ : ValKitParams) where
     []  : W ⊩§ []
     _∷_ : ∀ {Δ A} (v : W ⊩ A) (vs : W ⊩§ Δ) → W ⊩§ A ∷ Δ
 
-  vrens : ∀ {Δ W W′} → W ⊆ W′ → W ⊩§ Δ → W′ ⊩§ Δ
+  vrens : ∀ {Δ W W′} → W ⊑ W′ → W ⊩§ Δ → W′ ⊩§ Δ
   vrens e []       = []
   vrens e (v ∷ vs) = vren e v ∷ vrens e vs
 

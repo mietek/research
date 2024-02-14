@@ -12,12 +12,12 @@ open import Kit4 public
 
 infix 3 _⊩_
 _⊩_ : Ctx → Ty → Set
-W ⊩ A ⌜⊃⌝ B = ∀ {W′} → W ⊆ W′ → W′ ⊩ A → W′ ⊩ B
+W ⊩ A ⌜⊃⌝ B = ∀ {W′} → W ⊑ W′ → W′ ⊩ A → W′ ⊩ B
 W ⊩ A ⌜∧⌝ B = W ⊩ A × W ⊩ B
 W ⊩ ⌜𝟙⌝     = 𝟙
 
-vren : ∀ {A W W′} → W ⊆ W′ → W ⊩ A → W′ ⊩ A
-vren {A ⌜⊃⌝ B} e v         = λ e′ → v (trans⊆ e e′)
+vren : ∀ {A W W′} → W ⊑ W′ → W ⊩ A → W′ ⊩ A
+vren {A ⌜⊃⌝ B} e v         = λ e′ → v (trans⊑ e e′)
 vren {A ⌜∧⌝ B} e (v₁ , v₂) = vren e v₁ , vren e v₂
 vren {⌜𝟙⌝}     e unit      = unit
 
@@ -26,7 +26,7 @@ open ValKit (kit _⊩_ vren) public
 ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
 ⟦ var i     ⟧ vs = ⟦ i ⟧∋ vs
 ⟦ ⌜λ⌝ t     ⟧ vs = λ e v → ⟦ t ⟧ (v ∷ vrens e vs)
-⟦ t₁ ⌜$⌝ t₂ ⟧ vs = ⟦ t₁ ⟧ vs id⊆ $ ⟦ t₂ ⟧ vs
+⟦ t₁ ⌜$⌝ t₂ ⟧ vs = ⟦ t₁ ⟧ vs id⊑ $ ⟦ t₂ ⟧ vs
 ⟦ t₁ ⌜,⌝ t₂ ⟧ vs = ⟦ t₁ ⟧ vs , ⟦ t₂ ⟧ vs
 ⟦ ⌜fst⌝ t   ⟧ vs = fst (⟦ t ⟧ vs)
 ⟦ ⌜snd⌝ t   ⟧ vs = snd (⟦ t ⟧ vs)
@@ -43,7 +43,7 @@ mutual
   ↑ {⌜𝟙⌝}     (_ , p)  = unit
 
   ↓ : ∀ {A Γ} → Γ ⊩ A → Σ (Γ ⊢ A) NF
-  ↓ {A ⌜⊃⌝ B} v         = let t , p = ↓ (v (wk⊆ id⊆) (↑ (var zero , var-)))
+  ↓ {A ⌜⊃⌝ B} v         = let t , p = ↓ (v (wk⊑ id⊑) (↑ (var zero , var-)))
                             in ⌜λ⌝ t , ⌜λ⌝-
   ↓ {A ⌜∧⌝ B} (v₁ , v₂) = let t₁ , p₁ = ↓ v₁
                               t₂ , p₂ = ↓ v₂
@@ -52,7 +52,7 @@ mutual
 
 vids : ∀ {Γ} → Γ ⊩§ Γ
 vids {[]}    = []
-vids {A ∷ Γ} = ↑ (var zero , var-) ∷ vrens (wk⊆ id⊆) vids
+vids {A ∷ Γ} = ↑ (var zero , var-) ∷ vrens (wk⊑ id⊑) vids
 
 ⟦_⟧⁻¹ : ∀ {Γ A} → Γ ⊨ A → Σ (Γ ⊢ A) NF
 ⟦ v ⟧⁻¹ = ↓ (v vids)

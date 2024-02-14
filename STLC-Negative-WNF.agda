@@ -44,13 +44,13 @@ mutual
 ----------------------------------------------------------------------------------------------------
 
 mutual
-  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NF t → NF (ren e t)
+  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊑ Γ′) → NF t → NF (ren e t)
   renNF e ⌜λ⌝-    = ⌜λ⌝-
   renNF e -⌜,⌝-   = -⌜,⌝-
   renNF e ⌜unit⌝  = ⌜unit⌝
   renNF e (nnf p) = nnf (renNNF e p)
 
-  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren e t)
+  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊑ Γ′) → NNF t → NNF (ren e t)
   renNNF e var-        = var-
   renNNF e (p₁ ⌜$⌝ p₂) = renNNF e p₁ ⌜$⌝ renNF e p₂
   renNNF e (⌜fst⌝ p)   = ⌜fst⌝ (renNNF e p)
