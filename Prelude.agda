@@ -36,6 +36,7 @@ flip : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : X → Y → Set �
        (∀ y x → Z x y)
 (flip f) y x = f x y
 
+-- TODO: should _∘_ be infixl?
 infixr 9 _∘_
 _∘_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : X → Set 𝓎} {Z : ∀ {x} → Y x → Set 𝓏} →
         (∀ {x} (y : Y x) → Z y) → (g : ∀ x → Y x) →

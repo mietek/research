@@ -24,9 +24,9 @@ uniExpandable var-        var-          = refl
 uniExpandable (p₁ ⌜$⌝ p₂) (p₁′ ⌜$⌝ p₂′) = _⌜$⌝_ & F.uniNNF p₁ p₁′ ⊗ F.uniNF p₂ p₂′
 
 -- TODO: genericize?
-data Expandable* {Γ} : ∀ {Δ} → Γ ⊢* Δ → Set where
+data Expandable* {Γ} : ∀ {Δ} → Γ ⊢§ Δ → Set where
   []  : Expandable* []
-  _∷_ : ∀ {Δ A} {t : Γ ⊢ A} {ts : Γ ⊢* Δ} → Expandable t → Expandable* ts → Expandable* (t ∷ ts)
+  _∷_ : ∀ {Δ A} {t : Γ ⊢ A} {ts : Γ ⊢§ Δ} → Expandable t → Expandable* ts → Expandable* (t ∷ ts)
 
 FNNF→Expandable : ∀ {Γ A B} {t : Γ ⊢ A ⌜⊃⌝ B} → F.NNF t → Expandable t
 FNNF→Expandable var-        = var-
@@ -287,29 +287,29 @@ mutual
   ren⇒I e (Xcong$₂ x₁ r₂)           = Xcong$₂ (renExpandable e x₁) (ren⇒F e r₂)
   ren⇒I e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut e t₁ _ ⁻¹) (F.renNF e p₂)
 
-sub∋Expandable : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {i : Γ ∋ A} → Expandable* ss → Expandable (sub∋ ss i)
+sub∋Expandable : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {i : Γ ∋ A} → Expandable* ss → Expandable (sub∋ ss i)
 sub∋Expandable {i = zero}  (x ∷ xs) = x
 sub∋Expandable {i = suc i} (x ∷ xs) = sub∋Expandable xs
 
-subExpandable : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → F.NNF* ss → Expandable* ss → Expandable t →
+subExpandable : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t : Γ ⊢ A} → F.NNF§ ss → Expandable* ss → Expandable t →
                 Expandable (sub ss t)
 subExpandable ps xs var-        = sub∋Expandable xs
 subExpandable ps xs (p₁ ⌜$⌝ p₂) = F.subNNF ps p₁ ⌜$⌝ F.subNF ps p₂
 
-sub¬Expandable : ∀ {A Γ Ξ} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → F.NNF* ss → ¬ Expandable t →
+sub¬Expandable : ∀ {A Γ Ξ} {ss : Ξ ⊢§ Γ} {t : Γ ⊢ A} → F.NNF§ ss → ¬ Expandable t →
                  ¬ Expandable (sub ss t)
 sub¬Expandable {A ⌜⊃⌝ B} {t = var i}     ps ¬x x           = var- ↯ ¬x
 sub¬Expandable {A ⌜⊃⌝ B} {t = t₁ ⌜$⌝ t₂} ps ¬x (p₁ ⌜$⌝ p₂) = (F.busNNF ps p₁ ⌜$⌝ F.busNF ps p₂) ↯ ¬x
 
 mutual
-  sub⇒I : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → F.NNF* ss → Expandable* ss → t ⇒I t′ →
+  sub⇒I : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} → F.NNF§ ss → Expandable* ss → t ⇒I t′ →
            sub ss t ⇒I sub ss t′
   sub⇒I ps xs (cong$₁ r₁)               = cong$₁ (sub⇒I ps xs r₁)
   sub⇒I ps xs (Fcong$₂ p₁ r₂)           = Fcong$₂ (F.subNF ps p₁) (sub⇒F ps xs r₂)
   sub⇒I ps xs (Xcong$₂ x₁ r₂)           = Xcong$₂ (subExpandable ps xs x₁) (sub⇒F ps xs r₂)
   sub⇒I ps xs (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (subcut _ t₁ _ ⁻¹) (F.subNF ps p₂)
 
-  sub⇒F : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → F.NNF* ss → Expandable* ss → t ⇒F t′ →
+  sub⇒F : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} → F.NNF§ ss → Expandable* ss → t ⇒F t′ →
            sub ss t ⇒F sub ss t′
   sub⇒F ps xs (Ired ¬x r)            = Ired (sub¬Expandable ps ¬x) (sub⇒I ps xs r)
   sub⇒F ps xs (ηexp⊃ {t = t} refl x) = ηexp⊃ (eqwksub _ t) (subExpandable ps xs x)

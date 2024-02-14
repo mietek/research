@@ -59,8 +59,8 @@ ren⇒ e (cong$₁ r₁)            = cong$₁ (ren⇒ e r₁)
 ren⇒ e (cong$₂ r₂)            = cong$₂ (ren⇒ e r₂)
 ren⇒ e (βred⊃ {t₁ = t₁} refl) = βred⊃ (rencut e t₁ _ ⁻¹)
 
-sub⇒ : ∀ {Γ Ξ A} (ss : Ξ ⊢* Γ) {t t′ : Γ ⊢ A} → t ⇒ t′ → sub ss t ⇒ sub ss t′
-sub⇒ ss (congλ r)              = congλ (sub⇒ (lift* ss) r)
+sub⇒ : ∀ {Γ Ξ A} (ss : Ξ ⊢§ Γ) {t t′ : Γ ⊢ A} → t ⇒ t′ → sub ss t ⇒ sub ss t′
+sub⇒ ss (congλ r)              = congλ (sub⇒ (lift§ ss) r)
 sub⇒ ss (cong$₁ r₁)            = cong$₁ (sub⇒ ss r₁)
 sub⇒ ss (cong$₂ r₂)            = cong$₂ (sub⇒ ss r₂)
 sub⇒ ss (βred⊃ {t₁ = t₁} refl) = βred⊃ (subcut ss t₁ _ ⁻¹)

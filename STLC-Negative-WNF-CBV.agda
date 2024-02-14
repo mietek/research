@@ -105,7 +105,7 @@ ren⇒ e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut e t₁ _ ⁻¹) (
 ren⇒ e βred∧₁                    = βred∧₁
 ren⇒ e βred∧₂                    = βred∧₂
 
-sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → NNF* ss → t ⇒ t′ → sub ss t ⇒ sub ss t′
+sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} → NNF§ ss → t ⇒ t′ → sub ss t ⇒ sub ss t′
 sub⇒ ps (cong$₁ r₁)               = cong$₁ (sub⇒ ps r₁)
 sub⇒ ps (cong$₂ p₁ r₂)            = cong$₂ (subNF ps p₁) (sub⇒ ps r₂)
 sub⇒ ps (congfst r)               = congfst (sub⇒ ps r)

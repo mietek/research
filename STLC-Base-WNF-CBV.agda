@@ -125,7 +125,7 @@ ren⇒ e (cong$₁ r₁)               = cong$₁ (ren⇒ e r₁)
 ren⇒ e (cong$₂ p₁ r₂)            = cong$₂ (renNF e p₁) (ren⇒ e r₂)
 ren⇒ e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut e t₁ _ ⁻¹) (renNF e p₂)
 
-sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → NNF* ss → t ⇒ t′ → sub ss t ⇒ sub ss t′
+sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} → NNF§ ss → t ⇒ t′ → sub ss t ⇒ sub ss t′
 sub⇒ ps (cong$₁ r₁)               = cong$₁ (sub⇒ ps r₁)
 sub⇒ ps (cong$₂ p₁ r₂)            = cong$₂ (subNF ps p₁) (sub⇒ ps r₂)
 sub⇒ ps (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (subcut _ t₁ _ ⁻¹) (subNF ps p₂)
@@ -148,7 +148,7 @@ ren⇒* : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇒* t�
 ren⇒* e done        = done
 ren⇒* e (step r rs) = step (ren⇒ e r) (ren⇒* e rs)
 
-sub⇒* : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} (ps : NNF* ss) → t ⇒* t′ →
+sub⇒* : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} (ps : NNF§ ss) → t ⇒* t′ →
          sub ss t ⇒* sub ss t′
 sub⇒* ps done        = done
 sub⇒* ps (step r rs) = step (sub⇒ ps r) (sub⇒* ps rs)
@@ -175,7 +175,7 @@ uni⇓ (rs , p′) (rs′ , p″) = _,_ & uni⇒* rs rs′ p′ ⊗ uniNF p′ p
 ren⇓ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊆ Γ′) → t ⇓ t′ → ren e t ⇓ ren e t′
 ren⇓ e (rs , p′) = ren⇒* e rs , renNF e p′
 
-sub⇓ : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} (ps : NNF* ss) → t ⇓ t′ → sub ss t ⇓ sub ss t′
+sub⇓ : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} (ps : NNF§ ss) → t ⇓ t′ → sub ss t ⇓ sub ss t′
 sub⇓ ps (rs , p′) = sub⇒* ps rs , subNF ps p′
 
 
@@ -197,7 +197,7 @@ uniWN (t′ , n) (t″ , n′) with det⇓ n n′
 renWN : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → WN t → WN (ren e t)
 renWN e (t′ , n) = ren e t′ , ren⇓ e n
 
-subWN : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} (ps : NNF* ss) → WN t → WN (sub ss t)
+subWN : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t : Γ ⊢ A} (ps : NNF§ ss) → WN t → WN (sub ss t)
 subWN ps (t′ , n) = sub _ t′ , sub⇓ ps n
 
 

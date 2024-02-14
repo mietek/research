@@ -40,7 +40,7 @@ mutual
   ↓ {A ⌜⊃⌝ B} v       = let t , p = ↓ (v (wk⊆ id⊆) (↑ (var zero , var-)))
                           in ⌜λ⌝ t , ⌜λ⌝-
 
-vids : ∀ {Γ} → Γ ⊩* Γ
+vids : ∀ {Γ} → Γ ⊩§ Γ
 vids {[]}    = []
 vids {A ∷ Γ} = ↑ (var zero , var-) ∷ vrens (wk⊆ id⊆) vids
 

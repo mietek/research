@@ -37,13 +37,13 @@ ren e (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ (ren e tₙ) (ren e t₀) (ren (lif
 
 open RenKit (kit var ren) public
 
-sub : ∀ {Γ Ξ A} → Ξ ⊢* Γ → Γ ⊢ A → Ξ ⊢ A
+sub : ∀ {Γ Ξ A} → Ξ ⊢§ Γ → Γ ⊢ A → Ξ ⊢ A
 sub ss (var i)          = sub∋ ss i
-sub ss (⌜λ⌝ t)          = ⌜λ⌝ (sub (lift* ss) t)
+sub ss (⌜λ⌝ t)          = ⌜λ⌝ (sub (lift§ ss) t)
 sub ss (t₁ ⌜$⌝ t₂)      = sub ss t₁ ⌜$⌝ sub ss t₂
 sub ss ⌜zero⌝           = ⌜zero⌝
 sub ss (⌜suc⌝ t)        = ⌜suc⌝ (sub ss t)
-sub ss (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ (sub ss tₙ) (sub ss t₀) (sub (lift*² ss) tₛ)
+sub ss (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ (sub ss tₙ) (sub ss t₀) (sub (lift§² ss) tₛ)
 
 open SubKit (kit renkit sub) public
 

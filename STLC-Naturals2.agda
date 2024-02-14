@@ -44,10 +44,10 @@ ren e (t₁ ⌜$⌝ t₂) = ren e t₁ ⌜$⌝ ren e t₂
 
 open RenKit (kit var ren) public
 
-sub : ∀ {Γ Ξ A} → Ξ ⊢* Γ → Γ ⊢ A → Ξ ⊢ A
+sub : ∀ {Γ Ξ A} → Ξ ⊢§ Γ → Γ ⊢ A → Ξ ⊢ A
 sub ss (con k)     = con k
 sub ss (var i)     = sub∋ ss i
-sub ss (⌜λ⌝ t)     = ⌜λ⌝ (sub (lift* ss) t)
+sub ss (⌜λ⌝ t)     = ⌜λ⌝ (sub (lift§ ss) t)
 sub ss (t₁ ⌜$⌝ t₂) = sub ss t₁ ⌜$⌝ sub ss t₂
 
 open SubKit (kit renkit sub) public

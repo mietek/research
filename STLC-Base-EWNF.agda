@@ -20,9 +20,9 @@ mutual
             NNF (t₁ ⌜$⌝ t₂)
 
 -- TODO: kit
-data NNF* {Γ} : ∀ {Δ} → Γ ⊢* Δ → Set where
-  []  : NNF* []
-  _∷_ : ∀ {A Δ} {t : Γ ⊢ A} {ts : Γ ⊢* Δ} → NNF t → NNF* ts → NNF* (t ∷ ts)
+data NNF§ {Γ} : ∀ {Δ} → Γ ⊢§ Δ → Set where
+  []  : NNF§ []
+  _∷_ : ∀ {A Δ} {t : Γ ⊢ A} {ts : Γ ⊢§ Δ} → NNF t → NNF§ ts → NNF§ (t ∷ ts)
 
 mutual
   uniNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
@@ -74,32 +74,32 @@ mutual
   nerNNF {t = var i}     e var-        = var-
   nerNNF {t = t₁ ⌜$⌝ t₂} e (p₁ ⌜$⌝ p₂) = nerNNF e p₁ ⌜$⌝ nerNF e p₂
 
-sub∋NNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {i : Γ ∋ A} → NNF* ss → NNF (sub∋ ss i)
+sub∋NNF : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {i : Γ ∋ A} → NNF§ ss → NNF (sub∋ ss i)
 sub∋NNF {i = zero}  (p ∷ ps) = p
 sub∋NNF {i = suc i} (p ∷ ps) = sub∋NNF ps
 
 mutual
-  subNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NF t → NF (sub ss t)
+  subNF : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t : Γ ⊢ A} → NNF§ ss → NF t → NF (sub ss t)
   subNF ps ⌜λ⌝-    = ⌜λ⌝-
   subNF ps (nnf p) = nnf (subNNF ps p)
 
-  subNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NNF t → NNF (sub ss t)
+  subNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t : Γ ⊢ A} → NNF§ ss → NNF t → NNF (sub ss t)
   subNNF ps var-        = sub∋NNF ps
   subNNF ps (p₁ ⌜$⌝ p₂) = subNNF ps p₁ ⌜$⌝ subNF ps p₂
 
-bus∋NNF : ∀ {A Γ Ξ} {ss : Ξ ⊢* Γ} {i : Γ ∋ A} → NNF* ss → NF (sub∋ ss i) → NF (var i)
+bus∋NNF : ∀ {A Γ Ξ} {ss : Ξ ⊢§ Γ} {i : Γ ∋ A} → NNF§ ss → NF (sub∋ ss i) → NF (var i)
 bus∋NNF {⌜◦⌝}     {i = i}     ps        p′   = nnf var-
 bus∋NNF {A ⌜⊃⌝ B} {i = zero}  (() ∷ ps) ⌜λ⌝-
 bus∋NNF {A ⌜⊃⌝ B} {i = suc i} (p ∷ ps)  p′   with bus∋NNF ps p′
 ... | ()
 
 mutual
-  busNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NF (sub ss t) → NF t
+  busNF : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t : Γ ⊢ A} → NNF§ ss → NF (sub ss t) → NF t
   busNF {t = var i}     ps p       = bus∋NNF ps p
   busNF {t = ⌜λ⌝ t}     ps ⌜λ⌝-    = ⌜λ⌝-
   busNF {t = t₁ ⌜$⌝ t₂} ps (nnf p) = nnf (busNNF ps p)
 
-  busNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NNF (sub ss t) → NNF t
+  busNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t : Γ ⊢ A} → NNF§ ss → NNF (sub ss t) → NNF t
   busNNF {t = var i}     ps p           = var-
   busNNF {t = t₁ ⌜$⌝ t₂} ps (p₁ ⌜$⌝ p₂) = busNNF ps p₁ ⌜$⌝ busNF ps p₂
 

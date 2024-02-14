@@ -23,9 +23,9 @@ mutual
     ⌜snd⌝ : ∀ {A B} {t : Γ ⊢ A ⌜∧⌝ B} (p : NNF t) → NNF (⌜snd⌝ t)
 
 -- TODO: kit
-data NNF* {Γ} : ∀ {Δ} → Γ ⊢* Δ → Set where
-  []  : NNF* []
-  _∷_ : ∀ {A Δ} {t : Γ ⊢ A} {ts : Γ ⊢* Δ} → NNF t → NNF* ts → NNF* (t ∷ ts)
+data NNF§ {Γ} : ∀ {Δ} → Γ ⊢§ Δ → Set where
+  []  : NNF§ []
+  _∷_ : ∀ {A Δ} {t : Γ ⊢ A} {ts : Γ ⊢§ Δ} → NNF t → NNF§ ts → NNF§ (t ∷ ts)
 
 mutual
   uniNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
@@ -56,18 +56,18 @@ mutual
   renNNF e (⌜fst⌝ p)   = ⌜fst⌝ (renNNF e p)
   renNNF e (⌜snd⌝ p)   = ⌜snd⌝ (renNNF e p)
 
-sub∋NNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {i : Γ ∋ A} → NNF* ss → NNF (sub∋ ss i)
+sub∋NNF : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {i : Γ ∋ A} → NNF§ ss → NNF (sub∋ ss i)
 sub∋NNF {i = zero}  (p ∷ ps) = p
 sub∋NNF {i = suc i} (p ∷ ps) = sub∋NNF ps
 
 mutual
-  subNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NF t → NF (sub ss t)
+  subNF : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t : Γ ⊢ A} → NNF§ ss → NF t → NF (sub ss t)
   subNF ps ⌜λ⌝-    = ⌜λ⌝-
   subNF ps -⌜,⌝-   = -⌜,⌝-
   subNF ps ⌜unit⌝  = ⌜unit⌝
   subNF ps (nnf p) = nnf (subNNF ps p)
 
-  subNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NNF t → NNF (sub ss t)
+  subNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t : Γ ⊢ A} → NNF§ ss → NNF t → NNF (sub ss t)
   subNNF ps var-        = sub∋NNF ps
   subNNF ps (p₁ ⌜$⌝ p₂) = subNNF ps p₁ ⌜$⌝ subNF ps p₂
   subNNF ps (⌜fst⌝ p)   = ⌜fst⌝ (subNNF ps p)

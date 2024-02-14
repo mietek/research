@@ -35,7 +35,7 @@ mutual
                     in ⌜λ⌝ t , ⌜λ⌝-
   ↓ {⌜ℕ⌝}     v = v
 
-vids : ∀ {Γ} → Γ ⊩* Γ
+vids : ∀ {Γ} → Γ ⊩§ Γ
 vids {[]}    = []
 vids {A ∷ Γ} = ↑ (var zero , var-) ∷ vrens (wk⊆ id⊆) vids
 

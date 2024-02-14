@@ -167,30 +167,30 @@ ren⇒ e (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ) =
              )
          )
 
-sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → NNF* ss → t ⇒ t′ → sub ss t ⇒ sub ss t′
+sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} → NNF§ ss → t ⇒ t′ → sub ss t ⇒ sub ss t′
 sub⇒ ps (cong$₁ r₁)               = cong$₁ (sub⇒ ps r₁)
 sub⇒ ps (cong$₂ p₁ r₂)            = cong$₂ (subNF ps p₁) (sub⇒ ps r₂)
 sub⇒ ps (congrecₙ rₙ)             = congrecₙ (sub⇒ ps rₙ)
 sub⇒ ps (congrec₀ pₙ r₀)          = congrec₀ (subNF ps pₙ) (sub⇒ ps r₀)
-sub⇒ ps (congrecₛ pₙ p₀ rₛ)       = congrecₛ (subNF ps pₙ) (subNF ps p₀) (sub⇒ (liftNNF*² ps) rₛ)
+sub⇒ ps (congrecₛ pₙ p₀ rₛ)       = congrecₛ (subNF ps pₙ) (subNF ps p₀) (sub⇒ (liftNNF§² ps) rₛ)
 sub⇒ ps (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (subcut _ t₁ _ ⁻¹) (subNF ps p₂)
-sub⇒ ps (βredℕ₀ p₀ pₛ)            = βredℕ₀ (subNF ps p₀) (subNF (liftNNF*² ps) pₛ)
+sub⇒ ps (βredℕ₀ p₀ pₛ)            = βredℕ₀ (subNF ps p₀) (subNF (liftNNF§² ps) pₛ)
 sub⇒ {ss = ss} ps (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ) =
-    βredℕₛ eq (subNF ps pₙ) (subNF ps p₀) (subNF (liftNNF*² ps) pₛ)
+    βredℕₛ eq (subNF ps pₙ) (subNF ps p₀) (subNF (liftNNF§² ps) pₛ)
       where
   eq : sub ss (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ] [ tₙ ]) ≡
-       sub (lift*² ss) tₛ [ wk (⌜rec⌝ (sub ss tₙ) (sub ss t₀) (sub (lift*² ss) tₛ)) ] [ sub ss tₙ ]
+       sub (lift§² ss) tₛ [ wk (⌜rec⌝ (sub ss tₙ) (sub ss t₀) (sub (lift§² ss) tₛ)) ] [ sub ss tₙ ]
   eq = subcut ss (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ]) tₙ ⁻¹
      ⋮ (_[ sub ss tₙ ]) &
-         ( subcut (lift* ss) tₛ (wk (⌜rec⌝ tₙ t₀ tₛ)) ⁻¹
-         ⋮ (sub (lift*² ss) tₛ [_]) &
-             ( eqsubren (lift* ss) (wk⊆ id⊆) (⌜rec⌝ tₙ t₀ tₛ) ⁻¹
-             ⋮ flip sub (⌜rec⌝ tₙ t₀ tₛ) & lidget* (wk* ss)
+         ( subcut (lift§ ss) tₛ (wk (⌜rec⌝ tₙ t₀ tₛ)) ⁻¹
+         ⋮ (sub (lift§² ss) tₛ [_]) &
+             ( eqsubren (lift§ ss) (wk⊆ id⊆) (⌜rec⌝ tₙ t₀ tₛ) ⁻¹
+             ⋮ flip sub (⌜rec⌝ tₙ t₀ tₛ) & lidget§ (wk§ ss)
              ⋮ ⌜rec⌝ & eqrensub (wk⊆ id⊆) ss tₙ
                      ⊗ eqrensub (wk⊆ id⊆) ss t₀
-                     ⊗ ( ((flip sub tₛ ∘ (var zero ∷_)) ∘ (var (suc zero) ∷_)) &
-                             eqwk²ren* (wk⊆ id⊆) ss ⁻¹
-                       ⋮ eqrensub (lift⊆² (wk⊆ id⊆)) (lift*² ss) tₛ
+                     ⊗ ( ((flip sub tₛ ∘ (var zero ∷_)) ∘ (var (suc zero) ∷_)) & -- TODO: should _∘_ be infixl?
+                             eqwk²ren§ (wk⊆ id⊆) ss ⁻¹
+                       ⋮ eqrensub (lift⊆² (wk⊆ id⊆)) (lift§² ss) tₛ
                        )
              )
         )

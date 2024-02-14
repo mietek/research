@@ -24,9 +24,9 @@ mutual
             NNF (⌜rec⌝ tₙ t₀ t₁)
 
 -- TODO: kit
-data NNF* {Γ} : ∀ {Δ} → Γ ⊢* Δ → Set where
-  []  : NNF* []
-  _∷_ : ∀ {A Δ} {t : Γ ⊢ A} {ts : Γ ⊢* Δ} → NNF t → NNF* ts → NNF* (t ∷ ts)
+data NNF§ {Γ} : ∀ {Δ} → Γ ⊢§ Δ → Set where
+  []  : NNF§ []
+  _∷_ : ∀ {A Δ} {t : Γ ⊢ A} {ts : Γ ⊢§ Δ} → NNF t → NNF§ ts → NNF§ (t ∷ ts)
 
 mutual
   uniNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
@@ -56,37 +56,37 @@ mutual
   renNNF e (⌜rec⌝ pₙ p₀ pₛ) = ⌜rec⌝ (renNNF e pₙ) (renNF e p₀) (renNF (lift⊆² e) pₛ)
 
 -- TODO: kit
-renNNF* : ∀ {Γ Γ′ Δ} {ss : Γ ⊢* Δ} (e : Γ ⊆ Γ′) → NNF* ss → NNF* (ren* e ss)
-renNNF* e []       = []
-renNNF* e (p ∷ ps) = renNNF e p ∷ renNNF* e ps
+renNNF§ : ∀ {Γ Γ′ Δ} {ss : Γ ⊢§ Δ} (e : Γ ⊆ Γ′) → NNF§ ss → NNF§ (ren§ e ss)
+renNNF§ e []       = []
+renNNF§ e (p ∷ ps) = renNNF e p ∷ renNNF§ e ps
 
-wkNNF* : ∀ {B Γ Δ} {ss : Γ ⊢* Δ} → NNF* ss → NNF* (wk* {B} ss)
-wkNNF* ps = renNNF* (wk⊆ id⊆) ps
+wkNNF§ : ∀ {B Γ Δ} {ss : Γ ⊢§ Δ} → NNF§ ss → NNF§ (wk§ {B} ss)
+wkNNF§ ps = renNNF§ (wk⊆ id⊆) ps
 
-wkNNF*² : ∀ {B C Γ Δ} {ss : Γ ⊢* Δ} → NNF* ss → NNF* (wk*² {B} {C} ss)
-wkNNF*² = wkNNF* ∘ wkNNF*
+wkNNF§² : ∀ {B C Γ Δ} {ss : Γ ⊢§ Δ} → NNF§ ss → NNF§ (wk§² {B} {C} ss)
+wkNNF§² = wkNNF§ ∘ wkNNF§
 
-liftNNF* : ∀ {B Γ Δ} {ss : Γ ⊢* Δ} → NNF* ss → NNF* (lift* {B} ss)
-liftNNF* ps = var- ∷ wkNNF* ps
+liftNNF§ : ∀ {B Γ Δ} {ss : Γ ⊢§ Δ} → NNF§ ss → NNF§ (lift§ {B} ss)
+liftNNF§ ps = var- ∷ wkNNF§ ps
 
-liftNNF*² : ∀ {B C Γ Δ} {ss : Γ ⊢* Δ} → NNF* ss → NNF* (lift*² {B} {C} ss)
-liftNNF*² = liftNNF* ∘ liftNNF*
+liftNNF§² : ∀ {B C Γ Δ} {ss : Γ ⊢§ Δ} → NNF§ ss → NNF§ (lift§² {B} {C} ss)
+liftNNF§² = liftNNF§ ∘ liftNNF§
 
-sub∋NNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {i : Γ ∋ A} → NNF* ss → NNF (sub∋ ss i)
+sub∋NNF : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {i : Γ ∋ A} → NNF§ ss → NNF (sub∋ ss i)
 sub∋NNF {i = zero}  (p ∷ ps) = p
 sub∋NNF {i = suc i} (p ∷ ps) = sub∋NNF ps
 
 mutual
-  subNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NF t → NF (sub ss t)
+  subNF : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t : Γ ⊢ A} → NNF§ ss → NF t → NF (sub ss t)
   subNF ps ⌜λ⌝-      = ⌜λ⌝-
   subNF ps ⌜zero⌝    = ⌜zero⌝
   subNF ps (⌜suc⌝ p) = ⌜suc⌝ (subNF ps p)
   subNF ps (nnf p)   = nnf (subNNF ps p)
 
-  subNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} {t : Γ ⊢ A} → NNF* ss → NNF t → NNF (sub ss t)
+  subNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t : Γ ⊢ A} → NNF§ ss → NNF t → NNF (sub ss t)
   subNNF ps var-             = sub∋NNF ps
   subNNF ps (p₁ ⌜$⌝ p₂)      = subNNF ps p₁ ⌜$⌝ subNF ps p₂
-  subNNF ps (⌜rec⌝ pₙ p₀ pₛ) = ⌜rec⌝ (subNNF ps pₙ) (subNF ps p₀) (subNF (liftNNF*² ps) pₛ)
+  subNNF ps (⌜rec⌝ pₙ p₀ pₛ) = ⌜rec⌝ (subNNF ps pₙ) (subNF ps p₀) (subNF (liftNNF§² ps) pₛ)
 
 
 ----------------------------------------------------------------------------------------------------

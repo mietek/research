@@ -57,6 +57,7 @@ import STLC-Base-EWNF-CBV
 import STLC-Base-NF
 import STLC-Base-NF-AO
 import STLC-Base-NF-NDR
+import STLC-Base-NF-NDPR
 
 import STLC-Negative
 import STLC-Negative-RenSub
@@ -85,7 +86,7 @@ import Kit2-Renamings
 import Kit3-Renamings
 import STLC-Naturals-Renamings
 import STLC-Naturals-Renamings-Properties
--- import STLC-Naturals-Renamings-Weak-NotEtaLong
+import STLC-Naturals-Renamings-Weak-NotEtaLong
 
 
 ----------------------------------------------------------------------------------------------------
@@ -111,7 +112,7 @@ _≝′_ = _≝_
 
 postulate
   -- Abel p.8: “substitution is meaning-preserving”
-  thmᵢ : ∀ {ℳ : Model} {W : World ℳ} {Γ A B} (t : A ∷ Γ ⊢ B) (s : Γ ⊢ A) (vs : ℳ / W ⊩* Γ)  →
+  thmᵢ : ∀ {ℳ : Model} {W : World ℳ} {Γ A B} (t : A ∷ Γ ⊢ B) (s : Γ ⊢ A) (vs : ℳ / W ⊩§ Γ)  →
          ⟦ t ⟧ (⟦ s ⟧ vs ∷ vs) ≡ ⟦ t [ s ] ⟧ vs
 
   -- completeness of definitional equality?
@@ -138,7 +139,7 @@ postulate
   thm₃ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Eq A (⟦ t ⟧ vids) (⟦ t′ ⟧ vids) → t ≝ t′
 
   -- Coquand p.76: “soundness of conversion rules”
-  thm₄ : ∀ {ℳ : Model} {W : World ℳ} {Γ A} (t t′ : Γ ⊢ A) (vs : ℳ / W ⊩* Γ) → t ≝ t′ →
+  thm₄ : ∀ {ℳ : Model} {W : World ℳ} {Γ A} (t t′ : Γ ⊢ A) (vs : ℳ / W ⊩§ Γ) → t ≝ t′ →
          Eq A (⟦ t ⟧ vs) (⟦ t′ ⟧ vs)
 
   -- Coquand p.76: “correctness [soundness?] of decision algorithm for conversion”

@@ -50,7 +50,7 @@ mutual
                             in t₁ ⌜,⌝ t₂ , -⌜,⌝-
   ↓ {⌜𝟙⌝}     unit        = _ , ⌜unit⌝
 
-vids : ∀ {Γ} → Γ ⊩* Γ
+vids : ∀ {Γ} → Γ ⊩§ Γ
 vids {[]}    = []
 vids {A ∷ Γ} = ↑ (var zero , var-) ∷ vrens (wk⊆ id⊆) vids
 

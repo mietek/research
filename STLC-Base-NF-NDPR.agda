@@ -47,63 +47,63 @@ ren▻▻ e (βred⊃ {t₁′ = t₁′} refl r₁ r₂) = βred⊃ (rencut e t
                                            (ren▻▻ e r₂)
 
 -- Schäfer: lemma 4.6
-sub▻▻ : ∀ {Γ Ξ A} (ss : Ξ ⊢* Γ) {t t′ : Γ ⊢ A} → t ▻▻ t′ → sub ss t ▻▻ sub ss t′
+sub▻▻ : ∀ {Γ Ξ A} (ss : Ξ ⊢§ Γ) {t t′ : Γ ⊢ A} → t ▻▻ t′ → sub ss t ▻▻ sub ss t′
 sub▻▻ ss var-                           = refl▻▻
-sub▻▻ ss (congλ r)                      = congλ (sub▻▻ (lift* ss) r)
+sub▻▻ ss (congλ r)                      = congλ (sub▻▻ (lift§ ss) r)
 sub▻▻ ss (cong$ r₁ r₂)                  = cong$ (sub▻▻ ss r₁) (sub▻▻ ss r₂)
-sub▻▻ ss (βred⊃ {t₁′ = t₁′} refl r₁ r₂) = βred⊃ (subcut ss t₁′ _ ⁻¹) (sub▻▻ (lift* ss) r₁)
+sub▻▻ ss (βred⊃ {t₁′ = t₁′} refl r₁ r₂) = βred⊃ (subcut ss t₁′ _ ⁻¹) (sub▻▻ (lift§ ss) r₁)
                                             (sub▻▻ ss r₂)
 
 
 ----------------------------------------------------------------------------------------------------
 
 -- TODO: prove these definitions equivalent
--- infix 4 _▻▻*_
--- _▻▻*_ : ∀ {Ξ Γ} → Ξ ⊢* Γ → Ξ ⊢* Γ → Set
--- ss ▻▻* ss′ = ∀ {A} (t : _ ⊢ A) → sub ss t ▻▻ sub ss′ t
+-- infix 4 _▻▻§_
+-- _▻▻§_ : ∀ {Ξ Γ} → Ξ ⊢§ Γ → Ξ ⊢§ Γ → Set
+-- ss ▻▻§ ss′ = ∀ {A} (t : _ ⊢ A) → sub ss t ▻▻ sub ss′ t
 
-infix 4 _▻▻*_
-data _▻▻*_ {Γ} : ∀ {Δ} → Γ ⊢* Δ → Γ ⊢* Δ → Set where
-  []  : [] ▻▻* []
-  _∷_ : ∀ {Δ A} {t t′ : Γ ⊢ A} {ts ts′ : Γ ⊢* Δ} (r : t ▻▻ t′) (rs : ts ▻▻* ts′) →
-        t ∷ ts ▻▻* t′ ∷ ts′
+infix 4 _▻▻§_
+data _▻▻§_ {Γ} : ∀ {Δ} → Γ ⊢§ Δ → Γ ⊢§ Δ → Set where
+  []  : [] ▻▻§ []
+  _∷_ : ∀ {Δ A} {t t′ : Γ ⊢ A} {ts ts′ : Γ ⊢§ Δ} (r : t ▻▻ t′) (rs : ts ▻▻§ ts′) →
+        t ∷ ts ▻▻§ t′ ∷ ts′
 
 -- TODO: kit?
-ren▻▻* : ∀ {Γ Γ′ Δ} {ts ts′ : Γ ⊢* Δ} (e : Γ ⊆ Γ′) → ts ▻▻* ts′ → ren* e ts ▻▻* ren* e ts′
-ren▻▻* e []       = []
-ren▻▻* e (r ∷ rs) = ren▻▻ e r ∷ ren▻▻* e rs
+ren▻▻§ : ∀ {Γ Γ′ Δ} {ts ts′ : Γ ⊢§ Δ} (e : Γ ⊆ Γ′) → ts ▻▻§ ts′ → ren§ e ts ▻▻§ ren§ e ts′
+ren▻▻§ e []       = []
+ren▻▻§ e (r ∷ rs) = ren▻▻ e r ∷ ren▻▻§ e rs
 
-wk▻▻* : ∀ {Γ Δ B} {ts ts′ : Γ ⊢* Δ} → ts ▻▻* ts′ → wk* ts ▻▻* wk* {B} ts′
-wk▻▻* rs = ren▻▻* (wk⊆ id⊆) rs
+wk▻▻§ : ∀ {Γ Δ B} {ts ts′ : Γ ⊢§ Δ} → ts ▻▻§ ts′ → wk§ ts ▻▻§ wk§ {B} ts′
+wk▻▻§ rs = ren▻▻§ (wk⊆ id⊆) rs
 
 -- Schäfer: corollary 4.7
-lift▻▻* : ∀ {Γ Δ B} {ts ts′ : Γ ⊢* Δ} → ts ▻▻* ts′ → lift* ts ▻▻* lift* {B} ts′
-lift▻▻* rs = var- ∷ wk▻▻* rs
+lift▻▻§ : ∀ {Γ Δ B} {ts ts′ : Γ ⊢§ Δ} → ts ▻▻§ ts′ → lift§ ts ▻▻§ lift§ {B} ts′
+lift▻▻§ rs = var- ∷ wk▻▻§ rs
 
-var▻▻* : ∀ {Γ Γ′} (e : Γ ⊆ Γ′) → var* e ▻▻* var* e
-var▻▻* stop⊆     = []
-var▻▻* (wk⊆ e)   = wk▻▻* (var▻▻* e)
-var▻▻* (lift⊆ e) = lift▻▻* (var▻▻* e)
+var▻▻§ : ∀ {Γ Γ′} (e : Γ ⊆ Γ′) → var§ e ▻▻§ var§ e
+var▻▻§ stop⊆     = []
+var▻▻§ (wk⊆ e)   = wk▻▻§ (var▻▻§ e)
+var▻▻§ (lift⊆ e) = lift▻▻§ (var▻▻§ e)
 
-id▻▻* : ∀ {Γ} → id* ▻▻* id* {Γ}
-id▻▻* {[]}    = []
-id▻▻* {A ∷ Γ} = lift▻▻* id▻▻*
+id▻▻§ : ∀ {Γ} → id§ ▻▻§ id§ {Γ}
+id▻▻§ {[]}    = []
+id▻▻§ {A ∷ Γ} = lift▻▻§ id▻▻§
 
-sub▻▻* : ∀ {Γ Δ Ξ} {ts ts′ : Γ ⊢* Δ} (ss : Ξ ⊢* Γ) → ts ▻▻* ts′ → sub* ss ts ▻▻* sub* ss ts′
-sub▻▻* ss []       = []
-sub▻▻* ss (r ∷ rs) = sub▻▻ ss r ∷ sub▻▻* ss rs
+sub▻▻§ : ∀ {Γ Δ Ξ} {ts ts′ : Γ ⊢§ Δ} (ss : Ξ ⊢§ Γ) → ts ▻▻§ ts′ → sub§ ss ts ▻▻§ sub§ ss ts′
+sub▻▻§ ss []       = []
+sub▻▻§ ss (r ∷ rs) = sub▻▻ ss r ∷ sub▻▻§ ss rs
 
-lem-4-8-∋ : ∀ {Γ Ξ A} {ss ss′ : Ξ ⊢* Γ} {i : Γ ∋ A} → ss ▻▻* ss′ → sub∋ ss i ▻▻ sub∋ ss′ i
+lem-4-8-∋ : ∀ {Γ Ξ A} {ss ss′ : Ξ ⊢§ Γ} {i : Γ ∋ A} → ss ▻▻§ ss′ → sub∋ ss i ▻▻ sub∋ ss′ i
 lem-4-8-∋ {i = zero}  (r ∷ rs) = r
 lem-4-8-∋ {i = suc i} (r ∷ rs) = lem-4-8-∋ rs
 
 -- Schäfer: lemma 4.8
-lem-4-8 : ∀ {Γ Ξ A} {ss ss′ : Ξ ⊢* Γ} {t t′ : Γ ⊢ A} → ss ▻▻* ss′ → t ▻▻ t′ →
+lem-4-8 : ∀ {Γ Ξ A} {ss ss′ : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} → ss ▻▻§ ss′ → t ▻▻ t′ →
           sub ss t ▻▻ sub ss′ t′
 lem-4-8 rs var-                           = lem-4-8-∋ rs
-lem-4-8 rs (congλ r)                      = congλ (lem-4-8 (lift▻▻* rs) r)
+lem-4-8 rs (congλ r)                      = congλ (lem-4-8 (lift▻▻§ rs) r)
 lem-4-8 rs (cong$ r₁ r₂)                  = cong$ (lem-4-8 rs r₁) (lem-4-8 rs r₂)
-lem-4-8 rs (βred⊃ {t₁′ = t₁′} refl r₁ r₂) = βred⊃ (subcut _ t₁′ _ ⁻¹) (lem-4-8 (lift▻▻* rs) r₁)
+lem-4-8 rs (βred⊃ {t₁′ = t₁′} refl r₁ r₂) = βred⊃ (subcut _ t₁′ _ ⁻¹) (lem-4-8 (lift▻▻§ rs) r₁)
                                               (lem-4-8 rs r₂)
 
 -- Schäfer: lemma 4.9
@@ -113,7 +113,7 @@ lem-4-9 (congλ r)                           = congλ (lem-4-9 r)
 lem-4-9 (cong$ {t₁ = t₁@(var _)} r₁ r₂)     = cong$ (lem-4-9 r₁) (lem-4-9 r₂)
 lem-4-9 (cong$ {t₁ = ⌜λ⌝ t₁} (congλ r₁) r₂) = βred⊃ refl (lem-4-9 r₁) (lem-4-9 r₂)
 lem-4-9 (cong$ {t₁ = t₁@(_ ⌜$⌝ _)} r₁ r₂)   = cong$ (lem-4-9 r₁) (lem-4-9 r₂)
-lem-4-9 (βred⊃ {t₁ = t₁} refl r₁ r₂)        = lem-4-8 (lem-4-9 r₂ ∷ id▻▻*) (lem-4-9 r₁)
+lem-4-9 (βred⊃ {t₁ = t₁} refl r₁ r₂)        = lem-4-8 (lem-4-9 r₂ ∷ id▻▻§) (lem-4-9 r₁)
 
 -- Schäfer: lemma 4.10; TODO
 -- "From lemma 49 we conclude that parallel reduction has the diamond property and hence by

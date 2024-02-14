@@ -66,7 +66,7 @@ mutual
   ↓ {A ⌜⊃⌝ B} v       = let t , p = ↓ (v (wk⊆ id⊆) (↑ {A} (var zero , var-)))
                           in ⌜λ⌝ t , ⌜λ⌝-
 
-vids : ∀ {Γ} → 𝒞 / Γ ⊩* Γ
+vids : ∀ {Γ} → 𝒞 / Γ ⊩§ Γ
 vids {[]}    = []
 vids {A ∷ Γ} = ↑ {A} (var zero , var-) ∷ vrens (wk⊆ id⊆) vids
 
