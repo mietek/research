@@ -1,7 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 
--- strong normalization for open terms
--- hopefully after Schäfer
+-- strong normalization for open terms, hopefully after Schäfer
 -- TODO: needs doing
 
 module STLC-Base-WNF-CBV-SN2 where

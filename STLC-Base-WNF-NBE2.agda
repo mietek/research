@@ -1,7 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 
--- normalization by evaluation to β-short weak normal form
--- with an explicit model construction
+-- normalization-by-evaluation to β-short weak normal form, with explicit model
 
 module STLC-Base-WNF-NBE2 where
 

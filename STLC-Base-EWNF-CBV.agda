@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 
--- call by value reduction to β-short η-long expanded weak normal form
+-- call-by-value reduction to β-short η-long expanded weak normal form, derived from Ghani
 -- TODO: clean up; write up
 
 module STLC-Base-EWNF-CBV where

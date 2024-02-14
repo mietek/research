@@ -1,12 +1,11 @@
 ----------------------------------------------------------------------------------------------------
 
--- normalization by evaluation to β-short semi-weak normal form
--- with an explicit model construction
+-- normalization-by-evaluation to β-short semi-weak normal form, with explicit model
 
 -- using an explicit recursion principle on types allows defining the model as a single record that
 -- includes a `⟦rec⟧` field after the definition of `_⊩_`
 
--- unfortunately, defining the canonical model seems impossible
+-- TODO: unfortunately, defining the canonical model seems impossible
 
 module STLC-Naturals-SWNF-NBE3 where
 

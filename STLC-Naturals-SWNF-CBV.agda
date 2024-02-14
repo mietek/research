@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 
--- call by value reduction to β-short semi-weak normal form
+-- call-by-value reduction to β-short semi-weak normal form
 
 module STLC-Naturals-SWNF-CBV where
 
@@ -154,23 +154,25 @@ ren⇒ e (cong$₂ p₁ r₂)            = cong$₂ (renNF e p₁) (ren⇒ e r�
 ren⇒ e (congsuc r)               = congsuc (ren⇒ e r)
 ren⇒ e (congrecₙ rₙ)             = congrecₙ (ren⇒ e rₙ)
 ren⇒ e (congrec₀ pₙ r₀)          = congrec₀ (renNF e pₙ) (ren⇒ e r₀)
-ren⇒ e (congrecₛ pₙ p₀ rₛ)       = congrecₛ (renNF e pₙ) (renNF e p₀) (ren⇒ (lift⊆² e) rₛ)
+ren⇒ e (congrecₛ pₙ p₀ rₛ)       = congrecₛ (renNF e pₙ) (renNF e p₀)
+                                      (ren⇒ (lift⊆ (lift⊆ e)) rₛ)
 ren⇒ e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut e t₁ _ ⁻¹) (renNF e p₂)
-ren⇒ e (βredℕ₀ p₀ pₛ)            = βredℕ₀ (renNF e p₀) (renNF (lift⊆² e) pₛ)
+ren⇒ e (βredℕ₀ p₀ pₛ)            = βredℕ₀ (renNF e p₀) (renNF (lift⊆ (lift⊆ e)) pₛ)
 ren⇒ e (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ) =
-    βredℕₛ eq (renNF e pₙ) (renNF e p₀) (renNF (lift⊆² e) pₛ)
+    βredℕₛ eq (renNF e pₙ) (renNF e p₀) (renNF (lift⊆ (lift⊆ e)) pₛ)
       where
   eq : ren e (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ] [ tₙ ]) ≡
-       ren (lift⊆² e) tₛ [ wk (⌜rec⌝ (ren e tₙ) (ren e t₀) (ren (lift⊆² e) tₛ)) ] [ ren e tₙ ]
+       ren (lift⊆ (lift⊆ e)) tₛ
+         [ wk (⌜rec⌝ (ren e tₙ) (ren e t₀) (ren (lift⊆ (lift⊆ e)) tₛ)) ] [ ren e tₙ ]
   eq = rencut e (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ]) tₙ ⁻¹
      ⋮ (_[ ren e tₙ ]) &
          ( rencut (lift⊆ e) tₛ (wk (⌜rec⌝ tₙ t₀ tₛ)) ⁻¹
-         ⋮ (ren (lift⊆² e) tₛ [_]) &
+         ⋮ (ren (lift⊆ (lift⊆ e)) tₛ [_]) &
              ( compren (lift⊆ e) (wk⊆ id⊆) (⌜rec⌝ tₙ t₀ tₛ) ⁻¹
              ⋮ (flip ren (⌜rec⌝ tₙ t₀ tₛ) ∘ wk⊆) & (rid⊆ e ⋮ lid⊆ e ⁻¹)
              ⋮ ⌜rec⌝ & compren (wk⊆ id⊆) e tₙ
                      ⊗ compren (wk⊆ id⊆) e t₀
-                     ⊗ compren (lift⊆² (wk⊆ id⊆)) (lift⊆² e) tₛ
+                     ⊗ compren (lift⊆ (lift⊆ (wk⊆ id⊆))) (lift⊆ (lift⊆ e)) tₛ
              )
          )
 
@@ -180,25 +182,29 @@ sub⇒ ps (cong$₂ p₁ r₂)            = cong$₂ (subNF ps p₁) (sub⇒ ps 
 sub⇒ ps (congsuc r)               = congsuc (sub⇒ ps r)
 sub⇒ ps (congrecₙ rₙ)             = congrecₙ (sub⇒ ps rₙ)
 sub⇒ ps (congrec₀ pₙ r₀)          = congrec₀ (subNF ps pₙ) (sub⇒ ps r₀)
-sub⇒ ps (congrecₛ pₙ p₀ rₛ)       = congrecₛ (subNF ps pₙ) (subNF ps p₀) (sub⇒ (liftNNF§² ps) rₛ)
+sub⇒ ps (congrecₛ pₙ p₀ rₛ)       = congrecₛ (subNF ps pₙ) (subNF ps p₀)
+                                       (sub⇒ (liftNNF§ (liftNNF§ ps)) rₛ)
 sub⇒ ps (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (subcut _ t₁ _ ⁻¹) (subNF ps p₂)
-sub⇒ ps (βredℕ₀ p₀ pₛ)            = βredℕ₀ (subNF ps p₀) (subNF (liftNNF§² ps) pₛ)
+sub⇒ ps (βredℕ₀ p₀ pₛ)            = βredℕ₀ (subNF ps p₀) (subNF (liftNNF§ (liftNNF§ ps)) pₛ)
 sub⇒ {ss = ss} ps (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ) =
-    βredℕₛ eq (subNF ps pₙ) (subNF ps p₀) (subNF (liftNNF§² ps) pₛ)
+    βredℕₛ eq (subNF ps pₙ) (subNF ps p₀) (subNF (liftNNF§ (liftNNF§ ps)) pₛ)
       where
   eq : sub ss (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ] [ tₙ ]) ≡
-       sub (lift§² ss) tₛ [ wk (⌜rec⌝ (sub ss tₙ) (sub ss t₀) (sub (lift§² ss) tₛ)) ] [ sub ss tₙ ]
+       sub (lift§ (lift§ ss)) tₛ
+         [ wk (⌜rec⌝ (sub ss tₙ) (sub ss t₀) (sub (lift§ (lift§ ss)) tₛ)) ] [ sub ss tₙ ]
   eq = subcut ss (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ]) tₙ ⁻¹
      ⋮ (_[ sub ss tₙ ]) &
          ( subcut (lift§ ss) tₛ (wk (⌜rec⌝ tₙ t₀ tₛ)) ⁻¹
-         ⋮ (sub (lift§² ss) tₛ [_]) &
+         ⋮ (sub (lift§ (lift§ ss)) tₛ [_]) &
              ( eqsubren (lift§ ss) (wk⊆ id⊆) (⌜rec⌝ tₙ t₀ tₛ) ⁻¹
              ⋮ flip sub (⌜rec⌝ tₙ t₀ tₛ) & lidget§ (wk§ ss)
              ⋮ ⌜rec⌝ & eqrensub (wk⊆ id⊆) ss tₙ
                      ⊗ eqrensub (wk⊆ id⊆) ss t₀
                      ⊗ ( ((flip sub tₛ ∘ (var zero ∷_)) ∘ (var (suc zero) ∷_)) & -- TODO: should _∘_ be infixl?
-                             eqwk²ren§ (wk⊆ id⊆) ss ⁻¹
-                       ⋮ eqrensub (lift⊆² (wk⊆ id⊆)) (lift§² ss) tₛ
+                             ( wk§ & eqwkren§ (wk⊆ id⊆) ss ⁻¹
+                             ⋮ eqwkren§ (lift⊆ (wk⊆ id⊆)) (wk§ ss) ⁻¹
+                             )
+                       ⋮ eqrensub (lift⊆ (lift⊆ (wk⊆ id⊆))) (lift§ (lift§ ss)) tₛ
                        )
              )
         )

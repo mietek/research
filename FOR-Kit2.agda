@@ -1,6 +1,6 @@
-module Kit2-Renamings where
+module FOR-Kit2 where
 
-open import Kit1-Renamings public
+open import FOR-Kit1 public
 open ≡-Reasoning
 
 
@@ -42,10 +42,17 @@ module RenSubKit1 (¶ : RenSubKit1Params) where
   eqren j js t = compren (j ∷ js) (wk⊆ id⊆) t ⁻¹
                ⋮ flip ren t & (eq⊆ j js id⊆ ⋮ rid⊆ js)
 
+  -- TODO: delete
+  eqwk⊆′ : ∀ {B : Ty} {Γ Γ′} (is : Γ ⊆ Γ′) →
+           wk⊆ id⊆ ∘⊆ is ≡ wk⊆ {B = B} is
+  eqwk⊆′ is = eq⊆ zero (wk⊆ id⊆) is ⁻¹
+            ⋮ eqwk⊆ id⊆ is
+            ⋮ wk⊆ & (lid⊆ is)
+
   eqwkren : ∀ {B Γ Γ′ A} (js : Γ ⊆ Γ′) (t : Γ ⊢ A) →
             (ren (lift⊆ js) ∘ wk) t ≡ (wk {B} ∘ ren js) t
   eqwkren js t = eqren zero (wk⊆ js) t
-               ⋮ flip ren t & eqwk⊆′ js ⁻¹
+               ⋮ flip ren t & (eqwk⊆′ js ⁻¹)
                ⋮ compren (wk⊆ id⊆) js t
 
   eqren§ : ∀ {B Γ Γ′ Δ} (j : Γ′ ∋ B) (js : Γ ⊆ Γ′) (ts : Γ ⊢§ Δ) →
@@ -73,23 +80,6 @@ module RenSubKit1 (¶ : RenSubKit1Params) where
   ridren§ []       = refl
   ridren§ (i ∷ is) = _∷_ & ridren (i ∷ is) zero
                          ⊗ (eqren§ i is id§ ⋮ ridren§ is)
-
-  module _ (⚠ : FunExt) where
-    ⟪ren⟫ : ∀ (A : Ty) → Presheaf ⟪⊇⟫ lzero
-    ⟪ren⟫ A = record
-                { ƒObj = _⊢ A
-                ; ƒ    = ren
-                ; idƒ  = ⚠ lidren
-                ; _∘ƒ_ = λ js′ js → ⚠ (compren js′ js)
-                }
-
-    ⟪ren§⟫ : ∀ (Δ : Ctx) → Presheaf ⟪⊇⟫ lzero
-    ⟪ren§⟫ Δ = record
-                 { ƒObj = _⊢§ Δ
-                 ; ƒ    = ren§ -- flip _◐_
-                 ; idƒ  = ⚠ lidren§
-                 ; _∘ƒ_ = λ js′ js → ⚠ (compren§ js′ js)
-                 }
 
   -- Kovacs: ∈-ₛ∘ₑa
   eqrensub∋ : ∀ {Γ Ξ Ξ′ A} (js : Ξ ⊆ Ξ′) (ss : Ξ ⊢§ Γ) (i : Γ ∋ A) →
@@ -144,15 +134,6 @@ module RenSubKit1 (¶ : RenSubKit1Params) where
                                    ⋮ ridsub (get§ js′ ts) j ⁻¹
                                    )
                                  ⊗ compget§ js js′ ts
-
-  module _ (⚠ : FunExt) where
-    ⟪get§⟫ : ∀ (Γ : Ctx) → Presheaf ⟪⊆⟫ lzero
-    ⟪get§⟫ Γ = record
-                 { ƒObj = Γ ⊢§_
-                 ; ƒ    = get§ -- _◑_
-                 ; idƒ  = ⚠ lidget§
-                 ; _∘ƒ_ = λ e e′ → ⚠ (compget§ e e′)
-                 }
 
 
 ----------------------------------------------------------------------------------------------------
@@ -297,30 +278,7 @@ module RenSubKit4 (¶ : RenSubKit4Params) where
   asssub§ ss′ ss []       = refl
   asssub§ ss′ ss (t ∷ ts) = _∷_ & compsub ss′ ss t ⁻¹ ⊗ asssub§ ss′ ss ts
 
-  ⟪§⊣⟫ : Category lzero lzero
-  ⟪§⊣⟫ = record
-            { Obj  = Ctx
-            ; _▻_  = flip _⊢§_
-            ; id   = id§
-            ; _∘_  = sub§ -- flip _●_
-            ; lid▻ = lidsub§
-            ; rid▻ = ridsub§
-            ; ass▻ = asssub§
-            ; ◅ssa = λ ts ss ss′ → asssub§ ss′ ss ts ⁻¹
-            }
-
-  ⟪⊢§⟫ : Category lzero lzero
-  ⟪⊢§⟫ = ⟪§⊣⟫ ᵒᵖ
-
-  module _ (⚠ : FunExt) where
-    ⟪sub⟫ : ∀ (A : Ty) → Presheaf ⟪⊢§⟫ lzero
-    ⟪sub⟫ A = record
-                { ƒObj = _⊢ A
-                ; ƒ    = sub
-                ; idƒ  = ⚠ lidsub
-                ; _∘ƒ_ = λ ss′ ss → ⚠ (compsub ss′ ss)
-                }
-
+  -- TODO: compress
   rencut : ∀ {Γ Γ′ A B} (js : Γ ⊆ Γ′) (t₁ : (A ∷ Γ) ⊢ B) (t₂ : Γ ⊢ A) →
            ren (lift⊆ js) t₁ [ ren js t₂ ] ≡ ren js (t₁ [ t₂ ])
   rencut js t₁ t₂ =
@@ -347,6 +305,7 @@ module RenSubKit4 (¶ : RenSubKit4Params) where
         ren js (t₁ [ t₂ ])
       ∎
 
+  -- TODO: compress
   subcut : ∀ {Γ Ξ A B} (ss : Ξ ⊢§ Γ) (t₁ : (A ∷ Γ) ⊢ B) (t₂ : Γ ⊢ A) →
            sub (lift§ ss) t₁ [ sub ss t₂ ] ≡ sub ss (t₁ [ t₂ ])
   subcut ss t₁ t₂ =

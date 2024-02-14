@@ -1,6 +1,6 @@
 module Kit1 where
 
-open import Common public
+open import OPE public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -8,8 +8,6 @@ open import Common public
 module TyKit (Ty : Set) where
   Ctx : Set
   Ctx = List Ty
-
-  open OrderPreservingEmbeddings public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -70,14 +68,8 @@ module RenKit (¶ : RenKitParams) where
   wk§ : ∀ {B Γ Δ} → Γ ⊢§ Δ → B ∷ Γ ⊢§ Δ
   wk§ ts = ren§ (wk⊆ id⊆) ts
 
-  wk§² : ∀ {B C Γ Δ} → Γ ⊢§ Δ → C ∷ B ∷ Γ ⊢§ Δ
-  wk§² = wk§ ∘ wk§
-
   lift§ : ∀ {B Γ Δ} → Γ ⊢§ Δ → B ∷ Γ ⊢§ B ∷ Δ
   lift§ ts = var zero ∷ wk§ ts
-
-  lift§² : ∀ {B C Γ Δ} → Γ ⊢§ Δ → C ∷ B ∷ Γ ⊢§ C ∷ B ∷ Δ
-  lift§² = lift§ ∘ lift§
 
   -- Kovacs: ⌜_⌝ᵒᵖᵉ
   var§ : ∀ {Γ Γ′} → Γ ⊆ Γ′ → Γ′ ⊢§ Γ
@@ -86,12 +78,10 @@ module RenKit (¶ : RenKitParams) where
   var§ (lift⊆ e) = lift§ (var§ e)
 
   -- TODO: check if changing this affects anything
-  id§ : ∀ {Γ} → Γ ⊢§ Γ
+  id§ refl§ : ∀ {Γ} → Γ ⊢§ Γ
   id§ {[]}    = []
   id§ {A ∷ Γ} = lift§ id§
   -- id§ = var§ id⊆
-
-  refl§ : ∀ {Γ} → Γ ⊢§ Γ
   refl§ = id§
 
   sub∋ : ∀ {Γ Ξ A} → Ξ ⊢§ Γ → Γ ∋ A → Ξ ⊢ A
@@ -114,11 +104,10 @@ module SubKit (¶ : SubKitParams) where
   open SubKitParams ¶
   subkit = ¶
 
-  sub§ : ∀ {Γ Ξ Δ} → Ξ ⊢§ Γ → Γ ⊢§ Δ → Ξ ⊢§ Δ
+  -- Kovacs: _∘ₛ_
+  sub§ trans§ : ∀ {Γ Ξ Δ} → Ξ ⊢§ Γ → Γ ⊢§ Δ → Ξ ⊢§ Δ
   sub§ ss []       = []
   sub§ ss (t ∷ ts) = sub ss t ∷ sub§ ss ts
-
-  trans§ : ∀ {Γ Ξ Δ} → Ξ ⊢§ Γ → Γ ⊢§ Δ → Ξ ⊢§ Δ
   trans§ = sub§
 
   _●_ : ∀ {Γ Ξ Δ} → Γ ⊢§ Δ → Ξ ⊢§ Γ → Ξ ⊢§ Δ
@@ -128,18 +117,16 @@ module SubKit (¶ : SubKitParams) where
   t [ s ] = sub (s ∷ id§) t
 
   -- Kovacs: _ₑ∘ₛ_
-  get§ : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⊢§ Δ′ → Γ ⊢§ Δ
+  get§ _◑_ : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⊢§ Δ′ → Γ ⊢§ Δ
   get§ stop⊆     ts       = ts
   get§ (wk⊆ e)   (t ∷ ts) = get§ e ts
   get§ (lift⊆ e) (t ∷ ts) = t ∷ get§ e ts
-
-  _◑_ : ∀ {Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⊢§ Δ′ → Γ ⊢§ Δ
   _◑_ = get§
 
 
 ----------------------------------------------------------------------------------------------------
 
--- TODO: only needs _⊢_; refactor?
+-- TODO: refactor
 record DefEqKitParams : Set₁ where
   constructor kit
   field

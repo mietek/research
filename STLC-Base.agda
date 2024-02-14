@@ -1,7 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 
 -- simply typed lambda calculus with base type only
--- TODO: not sure whether to keep "unrenaming"
 
 module STLC-Base where
 
@@ -112,6 +111,8 @@ t₁ ⌜$⌝ t₂ ≟ t₁′ ⌜$⌝ t₂′     with ty t₁ ≟Ty ty t₁′
 
 ----------------------------------------------------------------------------------------------------
 
+-- TODO: delete?
+
 injv : ∀ {Γ A} {i i′ : Γ ∋ A} → var i ≡ var i′ → i ≡ i′
 injv refl = refl
 
@@ -138,10 +139,6 @@ injren {t = ⌜λ⌝ t}     {⌜λ⌝ t′}      eq = ⌜λ⌝ & injren (injλ e
 injren {t = t₁ ⌜$⌝ t₂} {t₁′ ⌜$⌝ t₂′} eq with inj$₁′ eq
 ... | refl , eq₁                          = _⌜$⌝_ & injren eq₁ ⊗ injren (inj$₂ eq)
 
-
-----------------------------------------------------------------------------------------------------
-
--- TODO: delete?
 unren : ∀ {Γ Γ′ A} (e : Γ ⊆ Γ′) (t′ : Γ′ ⊢ A) → Dec (Σ (Γ ⊢ A) λ t → t′ ≡ ren e t)
 unren e (var i′)                        with unren∋ e i′
 ... | no ¬p                               = no λ { (var i , refl) → (i , refl) ↯ ¬p }

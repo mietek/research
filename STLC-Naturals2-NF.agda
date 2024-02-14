@@ -1,7 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 
--- β-short η-long normal forms
--- after Abel
+-- β-short η-long normal forms, after Abel
 
 module STLC-Naturals2-NF where
 

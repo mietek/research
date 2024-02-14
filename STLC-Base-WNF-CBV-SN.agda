@@ -1,7 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 
--- strong normalization for closed terms
--- after Ahmed
+-- strong normalization for closed terms, after Ahmed
 -- TODO: needs a lot of work
 
 module STLC-Base-WNF-CBV-SN where

@@ -18,15 +18,15 @@ module RedKit1 (¶ : RedKit1Params) where
   open RedKit1Params ¶
   redkit1 = ¶
 
-  -- reducible forms
+  -- reducible form
   RF : ∀ {Γ A} → Γ ⊢ A → Set
   RF t = Σ _ λ t′ → t ⇒ t′
 
-  -- irreducible forms
+  -- irreducible form
   ¬R : ∀ {Γ A} → Γ ⊢ A → Set
   ¬R t = ∀ {t′} → ¬ t ⇒ t′
 
-  -- iterated reduction
+  -- multi-step reduction
   infix 4 _⇒*_
   data _⇒*_ {Γ A} : Γ ⊢ A → Γ ⊢ A → Set where
     done : ∀ {t} → t ⇒* t
@@ -67,10 +67,6 @@ module RedKit1 (¶ : RedKit1Params) where
     infix 3 _∎
     _∎ : ∀ {Γ A} (t : Γ ⊢ A) → t ⇒* t
     t ∎ = done
-
-  module _ (⚠ : FunExt) where
-    uni¬RF : ∀ {Γ A} {t : Γ ⊢ A} (¬p ¬p′ : ¬ RF t) → ¬p ≡ ¬p′
-    uni¬RF = uni→ ⚠ uni𝟘
 
 
 ----------------------------------------------------------------------------------------------------
@@ -191,15 +187,6 @@ module ProgKit (¶ : ProgKitParams) where
 
   ¬R→NF : ∀ {Γ A} {t : Γ ⊢ A} → ¬R t → NF t
   ¬R→NF = ¬RF→NF ∘ ¬R→¬RF
-
-  module _ (⚠ : FunExt) where
-    NF≃¬RF : ∀ {Γ A} {t : Γ ⊢ A} → NF t ≃ (¬ RF t)
-    NF≃¬RF = record
-      { to      = NF→¬RF
-      ; from    = ¬RF→NF
-      ; from∘to = λ p → uniNF ((¬RF→NF ∘ NF→¬RF) p) p
-      ; to∘from = λ p → uni¬RF ⚠ ((NF→¬RF ∘ ¬RF→NF) p) p
-      }
 
 
 ----------------------------------------------------------------------------------------------------

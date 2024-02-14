@@ -1,7 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 
--- normalization by evaluation to β-short semi-weak normal form
--- with an explicit model construction
+-- normalization-by-evaluation to β-short semi-weak normal form, with explicit model
 
 -- unfortunately, the model needs to be split into two records in order to include a `⟦rec⟧` field
 -- after the definition of `_⊩_`

@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 
--- categorical laws for renaming and substitution
+-- laws of renaming and substitution
 
 module STLC-Naturals-RenSub where
 
@@ -26,7 +26,7 @@ compren e′ e (t₁ ⌜$⌝ t₂)      = _⌜$⌝_ & compren e′ e t₁ ⊗ co
 compren e′ e ⌜zero⌝           = refl
 compren e′ e (⌜suc⌝ t)        = ⌜suc⌝ & compren e′ e t
 compren e′ e (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ & compren e′ e tₙ ⊗ compren e′ e t₀
-                                  ⊗ compren (lift⊆² e′) (lift⊆² e) tₛ
+                                  ⊗ compren (lift⊆ (lift⊆ e′)) (lift⊆ (lift⊆ e)) tₛ
 
 -- not really identity
 ridren : ∀ {Γ Γ′ A} (e : Γ ⊆ Γ′) (i : Γ ∋ A) → ren e (var i) ≡ var (ren∋ e i)
@@ -55,7 +55,7 @@ eqrensub e ss (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ & eqrensub e ss tₙ ⊗ eq
                                    ⊗ ( flip sub tₛ & ( lift§ & eqliftren§ e ss ⁻¹
                                                      ⋮ eqliftren§ (lift⊆ e) (lift§ ss) ⁻¹
                                                      )
-                                     ⋮ eqrensub (lift⊆² e) (lift§² ss) tₛ
+                                     ⋮ eqrensub (lift⊆ (lift⊆ e)) (lift§ (lift§ ss)) tₛ
                                      )
 
 -- Kovacs: Tm-ₑ∘ₛ
@@ -72,7 +72,7 @@ eqsubren ss e (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ & eqsubren ss e tₙ ⊗ eq
                                    ⊗ ( flip sub tₛ & ( lift§ & eqliftget§ e ss ⁻¹
                                                      ⋮ eqliftget§ (lift⊆ e) (lift§ ss) ⁻¹
                                                      )
-                                     ⋮ eqsubren (lift§² ss) (lift⊆² e) tₛ
+                                     ⋮ eqsubren (lift§ (lift§ ss)) (lift⊆ (lift⊆ e)) tₛ
                                      )
 
 -- Kovacs: Tm-idₛ
@@ -103,7 +103,7 @@ compsub ss′ ss (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ & compsub ss′ ss tₙ 
                                     ⊗ ( flip sub tₛ & ( lift§ & eqliftsub§ ss′ ss ⁻¹
                                                       ⋮ eqliftsub§ (lift§ ss′) (lift§ ss) ⁻¹
                                                       )
-                                      ⋮ compsub (lift§² ss′) (lift§² ss) tₛ
+                                      ⋮ compsub (lift§ (lift§ ss′)) (lift§ (lift§ ss)) tₛ
                                       )
 
 open RenSubKit3 (kit rensubkit2 compsub) public

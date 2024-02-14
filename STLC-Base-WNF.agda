@@ -1,10 +1,11 @@
 ----------------------------------------------------------------------------------------------------
 
--- β-short weak normal form
+-- β-short weak normal forms
 
 module STLC-Base-WNF where
 
 open import STLC-Base public
+open import GAN
 
 
 ----------------------------------------------------------------------------------------------------
@@ -94,8 +95,6 @@ mutual
 -- direct normal forms are isomorphic to predicate normal forms
 
 private
-  open ≡-Reasoning
-
   mutual
     toNF : ∀ {Γ A} → Γ ⊢≪ A → Σ (Γ ⊢ A) NF
     toNF (⌜λ⌝ t) = ⌜λ⌝ t , ⌜λ⌝-

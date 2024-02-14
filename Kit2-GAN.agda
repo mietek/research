@@ -1,6 +1,7 @@
 module Kit2-GAN where
 
 open import Kit2 public
+open import OPE-GAN public
 
 
 ----------------------------------------------------------------------------------------------------
@@ -90,8 +91,6 @@ module RenSubKit2-GAN (¶ : RenSubKit2Params) where
   open RenSubKit2Params ¶
   open RenSubKit2 ¶
 
-  -- TODO: more GAN
-
 
 ----------------------------------------------------------------------------------------------------
 
@@ -122,8 +121,6 @@ module RenSubKit3-GAN (¶ : RenSubKit3Params) where
                  ; idƒ  = ⚠ lidsub
                  ; _∘ƒ_ = λ ss′ ss → ⚠ (compsub ss′ ss)
                  }
-
-    -- TODO: more GAN
 
 
 ----------------------------------------------------------------------------------------------------

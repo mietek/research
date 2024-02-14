@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 
--- β-short weak normal form
+-- β-short weak normal forms
 
 module STLC-Negative-WNF where
 

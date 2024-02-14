@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 
--- categorical laws for renaming and substitution
+-- laws of renaming and substitution
 
 module STLC-Base-RenSub where
 

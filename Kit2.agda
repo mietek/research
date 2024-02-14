@@ -1,7 +1,6 @@
 module Kit2 where
 
 open import Kit1 public
-open ≡-Reasoning
 
 
 ----------------------------------------------------------------------------------------------------
@@ -48,11 +47,6 @@ module RenSubKit1 (¶ : RenSubKit1Params) where
   --         (wk§ ts) ◐ (lift⊆ e) ≡ wk§ {B} (ts ◐ e)
   eqwkren§ e []       = refl
   eqwkren§ e (t ∷ ts) = _∷_ & eqwkren e t ⊗ eqwkren§ e ts
-
-  -- TODO: inline?
-  eqwk²ren§ : ∀ {B₁ B₂ Γ Γ′ Δ} (e : Γ ⊆ Γ′) (ts : Γ ⊢§ Δ) →
-              (ren§ (lift⊆² e) ∘ (wk§ ∘ wk§)) ts ≡ ((wk§ {B₁} ∘ wk§ {B₂}) ∘ ren§ e) ts
-  eqwk²ren§ e ts = eqwkren§ (lift⊆ e) (wk§ ts) ⋮ wk§ & eqwkren§ e ts
 
   eqliftren§ : ∀ {B Γ Γ′ Δ} (e : Γ ⊆ Γ′) (ts : Γ ⊢§ Δ) →
                (ren§ (lift⊆ e) ∘ lift§) ts ≡ (lift§ {B} ∘ ren§ e) ts

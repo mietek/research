@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 
--- β-short semi-weak normal form
+-- β-short semi-weak normal forms
 
 module STLC-Naturals-SWNF where
 
@@ -53,7 +53,7 @@ mutual
   renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → NNF t → NNF (ren e t)
   renNNF e var-             = var-
   renNNF e (p₁ ⌜$⌝ p₂)      = renNNF e p₁ ⌜$⌝ renNF e p₂
-  renNNF e (⌜rec⌝ pₙ p₀ pₛ) = ⌜rec⌝ (renNNF e pₙ) (renNF e p₀) (renNF (lift⊆² e) pₛ)
+  renNNF e (⌜rec⌝ pₙ p₀ pₛ) = ⌜rec⌝ (renNNF e pₙ) (renNF e p₀) (renNF (lift⊆ (lift⊆ e)) pₛ)
 
 -- TODO: kit
 renNNF§ : ∀ {Γ Γ′ Δ} {ss : Γ ⊢§ Δ} (e : Γ ⊆ Γ′) → NNF§ ss → NNF§ (ren§ e ss)
@@ -63,14 +63,8 @@ renNNF§ e (p ∷ ps) = renNNF e p ∷ renNNF§ e ps
 wkNNF§ : ∀ {B Γ Δ} {ss : Γ ⊢§ Δ} → NNF§ ss → NNF§ (wk§ {B} ss)
 wkNNF§ ps = renNNF§ (wk⊆ id⊆) ps
 
-wkNNF§² : ∀ {B C Γ Δ} {ss : Γ ⊢§ Δ} → NNF§ ss → NNF§ (wk§² {B} {C} ss)
-wkNNF§² = wkNNF§ ∘ wkNNF§
-
 liftNNF§ : ∀ {B Γ Δ} {ss : Γ ⊢§ Δ} → NNF§ ss → NNF§ (lift§ {B} ss)
 liftNNF§ ps = var- ∷ wkNNF§ ps
-
-liftNNF§² : ∀ {B C Γ Δ} {ss : Γ ⊢§ Δ} → NNF§ ss → NNF§ (lift§² {B} {C} ss)
-liftNNF§² = liftNNF§ ∘ liftNNF§
 
 sub∋NNF : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {i : Γ ∋ A} → NNF§ ss → NNF (sub∋ ss i)
 sub∋NNF {i = zero}  (p ∷ ps) = p
@@ -86,7 +80,8 @@ mutual
   subNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t : Γ ⊢ A} → NNF§ ss → NNF t → NNF (sub ss t)
   subNNF ps var-             = sub∋NNF ps
   subNNF ps (p₁ ⌜$⌝ p₂)      = subNNF ps p₁ ⌜$⌝ subNF ps p₂
-  subNNF ps (⌜rec⌝ pₙ p₀ pₛ) = ⌜rec⌝ (subNNF ps pₙ) (subNF ps p₀) (subNF (liftNNF§² ps) pₛ)
+  subNNF ps (⌜rec⌝ pₙ p₀ pₛ) = ⌜rec⌝ (subNNF ps pₙ) (subNF ps p₀)
+                                 (subNF (liftNNF§ (liftNNF§ ps)) pₛ)
 
 
 ----------------------------------------------------------------------------------------------------

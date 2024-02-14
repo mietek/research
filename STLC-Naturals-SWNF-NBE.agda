@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 
--- normalization by evaluation to β-short semi-weak normal form
+-- normalization-by-evaluation to β-short semi-weak normal form
 
 module STLC-Naturals-SWNF-NBE where
 

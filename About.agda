@@ -34,16 +34,24 @@ join ##dependent on libera.chat
 module About where
 
 import Prelude
-import Category
-import Isomorphism
-import Common
+import GAN
+import DBI
+
+
+----------------------------------------------------------------------------------------------------
+
+-- main version, with order-preserving embeddings
+
+import OPE
+import OPE-GAN
+
 import Kit1
 import Kit2
 import Kit2-GAN
 import Kit3
+import Kit3-GAN
 import Kit4
 
--- TODO: define conversion as closure of reduction?
 import STLC-Base
 import STLC-Base-RenSub
 import STLC-Base-WNF
@@ -68,11 +76,11 @@ import STLC-Negative-WNF-NBE2
 
 import STLC-Naturals
 import STLC-Naturals-RenSub
-import STLC-Naturals-SWNF
-import STLC-Naturals-SWNF-CBV
-import STLC-Naturals-SWNF-NBE
-import STLC-Naturals-SWNF-NBE2
-import STLC-Naturals-SWNF-NBE3
+import STLC-Naturals-SWNF      -- TODO: delete
+import STLC-Naturals-SWNF-CBV  -- TODO: delete
+import STLC-Naturals-SWNF-NBE  -- TODO: delete
+import STLC-Naturals-SWNF-NBE2 -- TODO: delete
+import STLC-Naturals-SWNF-NBE3 -- TODO: delete
 import STLC-Naturals-WNF
 import STLC-Naturals-WNF-CBV
 import STLC-Naturals-WNF-NBE
@@ -80,31 +88,48 @@ import STLC-Naturals2
 import STLC-Naturals2-NF
 import STLC-Naturals2-NF-NBE
 
--- TODO: use renamings for a STLC-Base alternative only
-import Kit1-Renamings
-import Kit2-Renamings
-import Kit3-Renamings
-import STLC-Naturals-Renamings
-import STLC-Naturals-Renamings-Properties
-import STLC-Naturals-Renamings-Weak-NotEtaLong
+----------------------------------------------------------------------------------------------------
+
+-- alternative version, with first-order renamings
+
+import FOR
+import FOR-GAN
+
+import FOR-Kit1
+import FOR-Kit2
+import FOR-Kit3
+
+import FOR-STLC-Base
+import FOR-STLC-Base-RenSub
+import FOR-STLC-Base-WNF
+import FOR-STLC-Base-WNF-CBV
 
 
 ----------------------------------------------------------------------------------------------------
+
+-- alternative version, with higher-order renamings
+
+import HOR
+
+
+----------------------------------------------------------------------------------------------------
+
+-- roadmap towards correctness of NBE
 
 open STLC-Base-WNF-NBE2
 open BetaShortEtaLongDefEq
 
 postulate
   -- Abel p.8: “preservation of meaning”
-  lem₁ : ∀ {ℳ : Model} {W : World ℳ} {Γ A} (t : Γ ⊢ A) → ⟦ t ⟧ {ℳ} {W} ≡ ⟦ fst (nbe t) ⟧
+  lem-1 : ∀ {ℳ : Model} {W : World ℳ} {Γ A} (t : Γ ⊢ A) → ⟦ t ⟧ {ℳ} {W} ≡ ⟦ fst (nbe t) ⟧
 
   -- Abel p.8: “idempotency”
   -- Kovacs p.59: “stability”
-  lem₂ : ∀ {Γ A} (t : Γ ⊢ A) → NF t → t ≡ fst (nbe t)
+  lem-2 : ∀ {Γ A} (t : Γ ⊢ A) → NF t → t ≡ fst (nbe t)
 
   -- Abel p.8: “semantic equality”
-  lem₃ : ∀ {ℳ : Model} {W : World ℳ} {Γ A} (t t′ : Γ ⊢ A) → ⟦ t ⟧ {ℳ} {W} ≡ ⟦ t′ ⟧ →
-         nbe t ≡ nbe t′
+  lem-3 : ∀ {ℳ : Model} {W : World ℳ} {Γ A} (t t′ : Γ ⊢ A) → ⟦ t ⟧ {ℳ} {W} ≡ ⟦ t′ ⟧ →
+          nbe t ≡ nbe t′
 
 -- Abel p.8: “βη-equivalence”; “definitional equality”
 _≝′_ : ∀ {Γ A} → Γ ⊢ A → Γ ⊢ A → Set
@@ -112,40 +137,40 @@ _≝′_ = _≝_
 
 postulate
   -- Abel p.8: “substitution is meaning-preserving”
-  thmᵢ : ∀ {ℳ : Model} {W : World ℳ} {Γ A B} (t : A ∷ Γ ⊢ B) (s : Γ ⊢ A) (vs : ℳ / W ⊩§ Γ)  →
-         ⟦ t ⟧ (⟦ s ⟧ vs ∷ vs) ≡ ⟦ t [ s ] ⟧ vs
+  thm-i : ∀ {ℳ : Model} {W : World ℳ} {Γ A B} (t : A ∷ Γ ⊢ B) (s : Γ ⊢ A) (vs : ℳ / W ⊩§ Γ) →
+          ⟦ t ⟧ (⟦ s ⟧ vs ∷ vs) ≡ ⟦ t [ s ] ⟧ vs
 
   -- completeness of definitional equality?
-  thmⱼ : ∀ {ℳ : Model} {W : World ℳ} {Γ A} {t t′ : Γ ⊢ A} → ⟦ t ⟧ {ℳ} {W} ≡ ⟦ t′ ⟧ → t ≝ t′
+  thm-j : ∀ {ℳ : Model} {W : World ℳ} {Γ A} {t t′ : Γ ⊢ A} → ⟦ t ⟧ {ℳ} {W} ≡ ⟦ t′ ⟧ → t ≝ t′
 
   -- Abel p.10: “soundness of definitional equality”
-  thmₖ : ∀ {ℳ : Model} {W : World ℳ} {Γ A} {t t′ : Γ ⊢ A} → t ≝ t′ → ⟦ t ⟧ {ℳ} {W} ≡ ⟦ t′ ⟧
+  thm-k : ∀ {ℳ : Model} {W : World ℳ} {Γ A} {t t′ : Γ ⊢ A} → t ≝ t′ → ⟦ t ⟧ {ℳ} {W} ≡ ⟦ t′ ⟧
 
   -- Coquand p.68: “extensional equality on semantic objects”
   Eq : ∀ {ℳ : Model} {W : World ℳ} A → ℳ / W ⊩ A → ℳ / W ⊩ A → Set
 
   -- Coquand p.73
-  thm₁ : ∀ {Γ A} {v v′ : 𝒞 / Γ ⊩ A} → Eq A v v′ → ↓ {A} v ≡ ↓ v′
+  thm-1 : ∀ {Γ A} {v v′ : 𝒞 / Γ ⊩ A} → Eq A v v′ → ↓ {A} v ≡ ↓ v′
 
   -- Coquand p.73
-  cor₁ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Eq A (⟦ t ⟧ vids) (⟦ t′ ⟧ vids) → nbe t ≡ nbe t′
+  cor-1 : ∀ {Γ A} (t t′ : Γ ⊢ A) → Eq A (⟦ t ⟧ vids) (⟦ t′ ⟧ vids) → nbe t ≡ nbe t′
 
   -- Abel p.10: “soundness”, “normalization is compatible with definitional equality”
   -- Coquand p.74
   -- Kovacs p.45: “completeness”
-  thm₂ : ∀ {Γ A} (t : Γ ⊢ A) → t ≝ fst (nbe t)
+  thm-2 : ∀ {Γ A} (t : Γ ⊢ A) → t ≝ fst (nbe t)
 
   -- Coquand p.75: “completeness of conversion rules”
-  thm₃ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Eq A (⟦ t ⟧ vids) (⟦ t′ ⟧ vids) → t ≝ t′
+  thm-3 : ∀ {Γ A} (t t′ : Γ ⊢ A) → Eq A (⟦ t ⟧ vids) (⟦ t′ ⟧ vids) → t ≝ t′
 
   -- Coquand p.76: “soundness of conversion rules”
-  thm₄ : ∀ {ℳ : Model} {W : World ℳ} {Γ A} (t t′ : Γ ⊢ A) (vs : ℳ / W ⊩§ Γ) → t ≝ t′ →
+  thm-4 : ∀ {ℳ : Model} {W : World ℳ} {Γ A} (t t′ : Γ ⊢ A) (vs : ℳ / W ⊩§ Γ) → t ≝ t′ →
          Eq A (⟦ t ⟧ vs) (⟦ t′ ⟧ vs)
 
   -- Coquand p.76: “correctness [soundness?] of decision algorithm for conversion”
-  thm₅ : ∀ {Γ A} (t t′ : Γ ⊢ A) → nbe t ≡ nbe t′ → t ≝ t′
+  thm-5 : ∀ {Γ A} (t t′ : Γ ⊢ A) → nbe t ≡ nbe t′ → t ≝ t′
 
-  lemᵢ : ∀ {Γ} → vids {Γ = Γ} ≡ vrens (refl≤ 𝒞) vids
+  lem-i : ∀ {Γ} → vids {Γ = Γ} ≡ vrens (refl≤ 𝒞) vids
 
 -- -- Abel p.10: “completeness”, “definitionally equal terms have identical normal forms”
 -- -- Coquand p.76: “completeness of decision algorithm for conversion”
@@ -154,34 +179,33 @@ postulate
 --   open ≡-Reasoning
 
 --   thm₆ : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ≝ t′ → nbe t ≡ nbe t′
---   thm₆     refl≝                       = refl
---   thm₆ {Γ} (sym≝ deq)                  with thmₖ {ℳ = 𝒞} {W = Γ} deq
---   ... | eq                               = cong (λ v → ↓ (v vids)) (sym eq)
---   thm₆ {Γ} (trans≝ deq deq′)           with thmₖ {ℳ = 𝒞} {W = Γ} deq | thmₖ {ℳ = 𝒞} {W = Γ} deq′
---   ... | eq | eq′                         = cong (λ v → ↓ (v vids)) (trans eq eq′)
---   thm₆ {Γ} (congλ deq)                 with thmₖ {ℳ = 𝒞} {W = Γ} deq
---   ... | eq                               = {!!}
---   thm₆ {Γ} (cong$ {t₁ = t₁} {t₁′} {t₂} {t₂′} deq₁ deq₂)
---     with thmₖ {ℳ = 𝒞} {W = Γ} deq₁ | thmₖ {ℳ = 𝒞} {W = Γ} deq₂
---   ... | eq | eq′ = cong ↓ $
+--   thm₆ refl≝             = refl
+--   thm₆ (sym≝ deq)        with thm-k deq
+--   ... | eq                 = (λ v → ↓ (v vids)) & eq ⁻¹
+--   thm₆ (trans≝ deq deq′) with thm-k deq | thm-k deq′
+--   ... | eq | eq′           = (λ v → ↓ (v vids)) & (eq ⋮ eq′)
+--   thm₆ {Γ} (congλ deq)   with thm-k {ℳ = 𝒞} {W = Γ} deq -- TODO
+--   ... | eq                 = {!!}
+--   thm₆ (cong$ {t₁ = t₁} {t₁′} {t₂} {t₂′} deq₁ deq₂) with thm-k deq₁ | thm-k deq₂
+--   ... | eq | eq′ = ↓ & (
 --       begin
 --         ⟦ t₁ ⟧ vids id⊆ (⟦ t₂ ⟧ vids)
---       ≡⟨ cong (⟦ t₁ ⟧ vids id⊆) (congapp eq′ vids) ⟩
+--       ≡⟨ ⟦ t₁ ⟧ vids id⊆ & congapp eq′ vids ⟩
 --         ⟦ t₁ ⟧ vids id⊆ (⟦ t₂′ ⟧ vids)
---       ≡⟨ congapp (congapp (congapp′ (congapp eq vids) {Γ}) id⊆) (⟦ t₂′ ⟧ vids) ⟩
+--       ≡⟨ congapp (congapp (congapp′ (congapp eq vids)) id⊆) (⟦ t₂′ ⟧ vids) ⟩
 --         ⟦ t₁′ ⟧ vids id⊆ (⟦ t₂′ ⟧ vids)
---       ∎
---   thm₆ {Γ} (βred⊃ {t₁ = t₁} {t₂} refl) = cong ↓ $
+--       ∎)
+--   thm₆ (βred⊃ {t₁ = t₁} {t₂} refl) = ↓ & (
 --       begin
 --         ⟦ ⌜λ⌝ t₁ ⌜$⌝ t₂ ⟧ vids
 --       ≡⟨⟩
 --         ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vrens id⊆ vids)
---       ≡⟨ cong (λ vs → ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vs)) (sym (lemᵢ {Γ})) ⟩
+--       ≡⟨ (λ vs → ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vs)) & lem-i ⁻¹ ⟩
 --         ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vids)
---       ≡⟨ thmᵢ {ℳ = 𝒞} {W = Γ} t₁ t₂ vids ⟩
+--       ≡⟨ thm-i t₁ t₂ vids ⟩
 --         ⟦ t₁ [ t₂ ] ⟧ vids
---       ∎
---   thm₆ {Γ} (ηexp⊃ refl) = {!!}
+--       ∎)
+--   thm₆ {Γ} (ηexp⊃ refl) = {!!} -- TODO
 
 -- -- Kovacs p.59: “decision procedure for conversion”
 -- module _ where
@@ -189,17 +213,17 @@ postulate
 
 --   _≝?_ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Dec (t ≝ t′)
 --   t ≝? t′      with fst (nbe t) ≟ fst (nbe t′)
---   ... | no ¬eq   = no λ eq → cong fst (thm₆ eq) ↯ ¬eq
---   ... | yes eq   = yes $
+--   ... | no ¬eq   = no λ eq → (fst & thm₆ eq) ↯ ¬eq
+--   ... | yes eq   = yes (
 --       begin
 --         t
---       ≝⟨ thm₂ t ⟩
+--       ≝⟨ thm-2 t ⟩
 --         fst (nbe t)
 --       ≡⟨ eq ⟩
 --         fst (nbe t′)
---       ≝˘⟨ thm₂ t′ ⟩
+--       ≝˘⟨ thm-2 t′ ⟩
 --         t′
---       ∎
+--       ∎)
 
 
 -- ----------------------------------------------------------------------------------------------------

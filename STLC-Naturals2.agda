@@ -1,8 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 
--- simply typed lambda calculus with natural numbers
--- with a separate syntactic category of constants
--- after Abel
+-- simply typed lambda calculus with natural numbers, with separate constants, after Abel
 
 module STLC-Naturals2 where
 

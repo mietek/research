@@ -1,7 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 
--- call by value reduction to β-short weak normal form
--- TODO: do SN and organize things related to SN
+-- call-by-value reduction to β-short weak normal form
 
 module STLC-Base-WNF-CBV where
 

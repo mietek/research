@@ -1,7 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 
--- normalization by evaluation to β-short η-long normal forms
--- after Abel
+-- normalization-by-evaluation to β-short η-long normal forms, after Abel
 
 module STLC-Naturals2-NF-NBE where
 
