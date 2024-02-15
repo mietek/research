@@ -56,6 +56,41 @@ _⨾_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : X → Set 𝓎} {Z : ∀ {x} �
 
 ----------------------------------------------------------------------------------------------------
 
+-- relation
+
+StdREL : ∀ {𝓍 𝓎} → Set 𝓍 → Set 𝓎 → (𝓏 : Level) → Set (𝓍 ⊔ 𝓎 ⊔ lsuc 𝓏)
+StdREL X Y 𝓏 = ∀ (x : X) (y : Y) → Set 𝓏
+
+StdRel : ∀ {𝓍} → Set 𝓍 → (𝓎 : Level) → Set (𝓍 ⊔ lsuc 𝓎)
+StdRel X 𝓎 = ∀ (x x′ : X) → Set 𝓎
+
+StdPred : ∀ {𝓍} → Set 𝓍 → (𝓎 : Level) → Set (𝓍 ⊔ lsuc 𝓎)
+StdPred X 𝓎 = ∀ (x : X) → Set 𝓎
+
+REL : ∀ {𝓍 𝓎} → Set 𝓍 → Set 𝓎 → Set (lsuc (𝓍 ⊔ 𝓎))
+REL {𝓍} {𝓎} X Y = StdREL X Y (𝓍 ⊔ 𝓎)
+
+Rel : ∀ {𝓍} → Set 𝓍 → Set (lsuc 𝓍)
+Rel {𝓍} X = StdRel X 𝓍
+
+Pred : ∀ {𝓍} → Set 𝓍 → Set (lsuc 𝓍)
+Pred {𝓍} X = StdPred X 𝓍
+
+REL₀ : Set₀ → Set₀ → Set₁
+REL₀ X Y = REL X Y
+
+Rel₀ : Set₀ → Set₁
+Rel₀ X = Rel X
+
+Pred₀ : Set₀ → Set₁
+Pred₀ X = Pred X
+
+_⊆_ : ∀ {𝓍} {X : Set 𝓍} → StdRel (StdRel X 𝓍) 𝓍
+R ⊆ S = ∀ {x x′} → R x x′ → S x x′
+
+
+----------------------------------------------------------------------------------------------------
+
 -- data
 
 infixr 2 _×_
@@ -103,7 +138,7 @@ data Dec {𝓍} (X : Set 𝓍) : Set 𝓍 where
 
 -- propositional equality
 
-≡-syntax : ∀ {𝓍} (X : Set 𝓍) (x x′ : X) → Set 𝓍
+≡-syntax : ∀ {𝓍} (X : Set 𝓍) → Rel X
 ≡-syntax X = _≡_
 
 infix 4 ≡-syntax

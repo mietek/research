@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 
--- structured properties of first-order renamings
+-- properties of first-order renamings
 
 module FOR-GAN {𝓍} {X : Set 𝓍} where
 

@@ -35,6 +35,7 @@ module About where
 
 import Prelude
 import GAN
+import ARS
 import DBI
 
 
@@ -76,17 +77,18 @@ import STLC-Negative-WNF-NBE2
 
 import STLC-Naturals
 import STLC-Naturals-RenSub
-import STLC-Naturals-SWNF      -- TODO: delete
-import STLC-Naturals-SWNF-CBV  -- TODO: delete
-import STLC-Naturals-SWNF-NBE  -- TODO: delete
-import STLC-Naturals-SWNF-NBE2 -- TODO: delete
-import STLC-Naturals-SWNF-NBE3 -- TODO: delete
+import STLC-Naturals-SWNF
+import STLC-Naturals-SWNF-CBV
+import STLC-Naturals-SWNF-NBE
+import STLC-Naturals-SWNF-NBE2
+import STLC-Naturals-SWNF-NBE3
 import STLC-Naturals-WNF
 import STLC-Naturals-WNF-CBV
 import STLC-Naturals-WNF-NBE
 import STLC-Naturals2
 import STLC-Naturals2-NF
 import STLC-Naturals2-NF-NBE
+
 
 ----------------------------------------------------------------------------------------------------
 

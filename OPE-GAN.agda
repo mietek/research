@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 
--- structured properties of order-preserving embeddings
+-- properties of order-preserving embeddings
 
 module OPE-GAN {𝓍} {X : Set 𝓍} where
 

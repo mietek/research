@@ -52,12 +52,12 @@ vids {A ∷ Γ} = ↑ (var zero , var-) ∷ vrens (wk⊑ id⊑) vids
 ⟦suc⟧ (t , p) = ⌜suc⌝ t , ⌜suc⌝-
 
 ⟦rec⟧ : ∀ {Γ A} → Γ ⊩ ⌜ℕ⌝ → Γ ⊩ A → Γ ⊩ ⌜ℕ⌝ ⌜⊃⌝ A ⌜⊃⌝ A → Γ ⊩ A
-⟦rec⟧ (_ , ⌜zero⌝)   v₀ vₛ = v₀
-⟦rec⟧ (tₙ , ⌜suc⌝-)  v₀ vₛ = vₛ id⊑ (tₙ , ⌜suc⌝-) id⊑ v₀
-⟦rec⟧ (_ , nnf pₙ)   v₀ vₛ = let _ , p₀ = ↓ v₀
-                                 _ , pₛ = ↓ (vₛ (wk⊑ (wk⊑ id⊑)) (↑ (var (suc zero) , var-))
-                                            id⊑ (↑ (var zero , var-)))
-                               in ↑ (_ , ⌜rec⌝ pₙ p₀ pₛ)
+⟦rec⟧ (_ , ⌜zero⌝)  v₀ vₛ = v₀
+⟦rec⟧ (tₙ , ⌜suc⌝-) v₀ vₛ = vₛ id⊑ (tₙ , ⌜suc⌝-) id⊑ v₀
+⟦rec⟧ (_ , nnf pₙ)  v₀ vₛ = let _ , p₀ = ↓ v₀
+                                _ , pₛ = ↓ (vₛ (wk⊑ (wk⊑ id⊑)) (↑ (var (suc zero) , var-))
+                                           id⊑ (↑ (var zero , var-)))
+                              in ↑ (_ , ⌜rec⌝ pₙ p₀ pₛ)
 
 ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
 ⟦ var i          ⟧ vs = ⟦ i ⟧∋ vs
