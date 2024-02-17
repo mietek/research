@@ -14,126 +14,121 @@ record RenSubKit1Params : Set₁ where
   open SubKit subkit public hiding (subkit)
   field
     lidren  : ∀ {Γ A} (t : Γ ⊢ A) → ren id⊑ t ≡ t
-    compren : ∀ {Γ Γ′ Γ″ A} (js′ : Γ′ ⊑ Γ″) (js : Γ ⊑ Γ′) (t : Γ ⊢ A) →
-              ren (js′ ∘⊑ js) t ≡ (ren js′ ∘ ren js) t
-    --        ren (js ○ js′) t ≡ (ren js′ ∘ ren js) t
-    ridren  : ∀ {Γ Γ′ A} (js : Γ ⊑ Γ′) (i : Γ ∋ A) → ren js (var i) ≡ var (ren∋ js i)
-    ridsub  : ∀ {Γ Ξ A} (ss : Ξ ⊢§ Γ) (i : Γ ∋ A) → sub ss (var i) ≡ sub∋ ss i
+    compren : ∀ {Γ Γ′ Γ″ A} (ρ′ : Γ′ ⊑ Γ″) (ρ : Γ ⊑ Γ′) (t : Γ ⊢ A) →
+              ren (ρ′ ∘⊑ ρ) t ≡ (ren ρ′ ∘ ren ρ) t
+    --        ren (ρ ○ ρ′) t ≡ (ren ρ′ ∘ ren ρ) t
+    ridren  : ∀ {Γ Γ′ A} (ρ : Γ ⊑ Γ′) (i : Γ ∋ A) → ren ρ (var i) ≡ var (ren∋ ρ i)
+    ridsub  : ∀ {Γ Ξ A} (σ : Ξ ⊢§ Γ) (i : Γ ∋ A) → sub σ (var i) ≡ sub∋ σ i
 
 module RenSubKit1 (¶ : RenSubKit1Params) where
   open RenSubKit1Params ¶
   rensubkit1 = ¶
 
-  lidren§ : ∀ {Γ Δ} (ts : Γ ⊢§ Δ) →
-            ren§ id⊑ ts ≡ ts
-  --        ts ◐ id⊑ ≡ ts
-  lidren§ []       = refl
-  lidren§ (t ∷ ts) = _∷_ & lidren t ⊗ lidren§ ts
+  lidren§ : ∀ {Γ Δ} (τ : Γ ⊢§ Δ) →
+            ren§ id⊑ τ ≡ τ
+  --        τ ◐ id⊑ ≡ τ
+  lidren§ ∙       = refl
+  lidren§ (τ , t) = _,_ & lidren§ τ ⊗ lidren t
 
   -- Kovacs: assₛₑₑ
-  compren§ : ∀ {Γ Γ′ Γ″ Δ} (js′ : Γ′ ⊑ Γ″) (js : Γ ⊑ Γ′) (ts : Γ ⊢§ Δ) →
-             ren§ (js′ ∘⊑ js) ts ≡ (ren§ js′ ∘ ren§ js) ts
-  --         ts ◐ (js ○ js′) ≡ (ts ◐ js) ◐ js′
-  compren§ js′ js []       = refl
-  compren§ js′ js (t ∷ ts) = _∷_ & compren js′ js t ⊗ compren§ js′ js ts
+  compren§ : ∀ {Γ Γ′ Γ″ Δ} (ρ′ : Γ′ ⊑ Γ″) (ρ : Γ ⊑ Γ′) (τ : Γ ⊢§ Δ) →
+             ren§ (ρ′ ∘⊑ ρ) τ ≡ (ren§ ρ′ ∘ ren§ ρ) τ
+  --         τ ◐ (ρ ○ ρ′) ≡ (τ ◐ ρ) ◐ ρ′
+  compren§ ρ′ ρ ∙       = refl
+  compren§ ρ′ ρ (τ , t) = _,_ & compren§ ρ′ ρ τ ⊗ compren ρ′ ρ t
 
-  eqren : ∀ {B Γ Γ′ A} (j : Γ′ ∋ B) (js : Γ ⊑ Γ′) (t : Γ ⊢ A) →
-          (ren (j ∷ js) ∘ wk) t ≡ ren js t
-  eqren j js t = compren (j ∷ js) (wk⊑ id⊑) t ⁻¹
-               ⋮ flip ren t & (eq⊑ j js id⊑ ⋮ rid⊑ js)
+  eqren : ∀ {B Γ Γ′ A} (ρ : Γ ⊑ Γ′) (j : Γ′ ∋ B) (t : Γ ⊢ A) →
+          (ren (ρ , j) ∘ wk) t ≡ ren ρ t
+  eqren ρ j t = compren (ρ , j) (wk⊑ id⊑) t ⁻¹
+              ⋮ flip ren t & (eq⊑ ρ j id⊑ ⋮ rid⊑ ρ)
 
-  -- TODO: delete
-  eqwk⊑′ : ∀ {B : Ty} {Γ Γ′} (is : Γ ⊑ Γ′) →
-           wk⊑ id⊑ ∘⊑ is ≡ wk⊑ {B = B} is
-  eqwk⊑′ is = eq⊑ zero (wk⊑ id⊑) is ⁻¹
-            ⋮ eqwk⊑ id⊑ is
-            ⋮ wk⊑ & (lid⊑ is)
+  eqwkren : ∀ {B Γ Γ′ A} (ρ : Γ ⊑ Γ′) (t : Γ ⊢ A) →
+            (ren (lift⊑ ρ) ∘ wk) t ≡ (wk {B} ∘ ren ρ) t
+  eqwkren ρ t = eqren (wk⊑ ρ) zero t
+              ⋮ flip ren t &
+                  ( wk⊑ & (lid⊑ ρ ⁻¹)
+                  ⋮ eqwk⊑ id⊑ ρ ⁻¹
+                  ⋮ eq⊑ (wk⊑ id⊑) zero ρ
+                  )
+              ⋮ compren (wk⊑ id⊑) ρ t
 
-  eqwkren : ∀ {B Γ Γ′ A} (js : Γ ⊑ Γ′) (t : Γ ⊢ A) →
-            (ren (lift⊑ js) ∘ wk) t ≡ (wk {B} ∘ ren js) t
-  eqwkren js t = eqren zero (wk⊑ js) t
-               ⋮ flip ren t & (eqwk⊑′ js ⁻¹)
-               ⋮ compren (wk⊑ id⊑) js t
+  eqren§ : ∀ {B Γ Γ′ Δ} (ρ : Γ ⊑ Γ′) (j : Γ′ ∋ B) (τ : Γ ⊢§ Δ) →
+           (ren§ (ρ , j) ∘ wk§) τ ≡ ren§ ρ τ
+  --       (wk§ τ) ◐ (ρ , j ) ≡ τ ◐ ρ
+  eqren§ ρ j ∙       = refl
+  eqren§ ρ j (τ , t) = _,_ & eqren§ ρ j τ ⊗ eqren ρ j t
 
-  eqren§ : ∀ {B Γ Γ′ Δ} (j : Γ′ ∋ B) (js : Γ ⊑ Γ′) (ts : Γ ⊢§ Δ) →
-           (ren§ (j ∷ js) ∘ wk§) ts ≡ ren§ js ts
-  --       (wk§ ts) ◐ (j ∷ js) ≡ ts ◐ js
-  eqren§ j js []       = refl
-  eqren§ j js (t ∷ ts) = _∷_ & eqren j js t ⊗ eqren§ j js ts
+  eqwkren§ : ∀ {B Γ Γ′ Δ} (ρ : Γ ⊑ Γ′) (τ : Γ ⊢§ Δ) →
+             (ren§ (lift⊑ ρ) ∘ wk§) τ ≡ (wk§ {B} ∘ ren§ ρ) τ
+  --         (wk§ τ) ◐ (lift⊑ ρ) ≡ wk§ {B} (τ ◐ ρ)
+  eqwkren§ ρ ∙       = refl
+  eqwkren§ ρ (τ , t) = _,_ & eqwkren§ ρ τ ⊗ eqwkren ρ t
 
-  eqwkren§ : ∀ {B Γ Γ′ Δ} (js : Γ ⊑ Γ′) (ts : Γ ⊢§ Δ) →
-             (ren§ (lift⊑ js) ∘ wk§) ts ≡ (wk§ {B} ∘ ren§ js) ts
-  --         (wk§ ts) ◐ (lift⊑ js) ≡ wk§ {B} (ts ◐ js)
-  eqwkren§ js []       = refl
-  eqwkren§ js (t ∷ ts) = _∷_ & eqwkren js t ⊗ eqwkren§ js ts
-
-  eqliftren§ : ∀ {B Γ Γ′ Δ} (js : Γ ⊑ Γ′) (ts : Γ ⊢§ Δ) →
-               (ren§ (lift⊑ js) ∘ lift§) ts ≡ (lift§ {B} ∘ ren§ js) ts
-  --           (lift§ ts) ◐ (lift⊑ js) ≡ lift§ {B} (ts ◐ js)
-  eqliftren§ js ts = (_∷ (ren§ (lift⊑ js) ∘ wk§) ts) & ridren (lift⊑ js) zero
-                   ⋮ (var zero ∷_) & eqwkren§ js ts
+  eqliftren§ : ∀ {B Γ Γ′ Δ} (ρ : Γ ⊑ Γ′) (τ : Γ ⊢§ Δ) →
+               (ren§ (lift⊑ ρ) ∘ lift§) τ ≡ (lift§ {B} ∘ ren§ ρ) τ
+  --           (lift§ τ) ◐ (lift⊑ ρ) ≡ lift§ {B} (τ ◐ ρ)
+  eqliftren§ ρ τ = ((ren§ (lift⊑ ρ) ∘ wk§) τ ,_) & ridren (lift⊑ ρ) zero
+                 ⋮ (_, var zero) & eqwkren§ ρ τ
 
   -- Kovacs: idlₛₑ; not really identity
-  ridren§ : ∀ {Γ Γ′} (is : Γ ⊑ Γ′) →
-            ren§ is id§ ≡ var§ is
-  --        id§ ◐ is ≡ var§ is
-  ridren§ []       = refl
-  ridren§ (i ∷ is) = _∷_ & ridren (i ∷ is) zero
-                         ⊗ (eqren§ i is id§ ⋮ ridren§ is)
+  ridren§ : ∀ {Γ Γ′} (ρ : Γ ⊑ Γ′) →
+            ren§ ρ id§ ≡ var§ ρ
+  --        id§ ◐ ρ ≡ var§ ρ
+  ridren§ ∙       = refl
+  ridren§ (ρ , i) = _,_ & (eqren§ ρ i id§ ⋮ ridren§ ρ) ⊗ ridren (ρ , i) zero
 
   -- Kovacs: ∈-ₛ∘ₑa
-  eqrensub∋ : ∀ {Γ Ξ Ξ′ A} (js : Ξ ⊑ Ξ′) (ss : Ξ ⊢§ Γ) (i : Γ ∋ A) →
-              sub∋ (ren§ js ss) i ≡ (ren js ∘ sub∋ ss) i
-  --          sub∋ (ss ◐ js) i ≡ (sub∋ ss ⨾ ren js) i
-  eqrensub∋ js (s ∷ ss) zero    = refl
-  eqrensub∋ js (s ∷ ss) (suc i) = eqrensub∋ js ss i
+  eqrensub∋ : ∀ {Γ Ξ Ξ′ A} (ρ : Ξ ⊑ Ξ′) (σ : Ξ ⊢§ Γ) (i : Γ ∋ A) →
+              sub∋ (ren§ ρ σ) i ≡ (ren ρ ∘ sub∋ σ) i
+  --          sub∋ (σ ◐ ρ) i ≡ (sub∋ σ ⨾ ren ρ) i
+  eqrensub∋ ρ (σ , s) zero    = refl
+  eqrensub∋ ρ (σ , s) (wk∋ i) = eqrensub∋ ρ σ i
 
   -- Kovacs: ∈-ₑ∘ₛ
-  eqsubren∋ : ∀ {Γ Γ′ Ξ A} (ss : Ξ ⊢§ Γ′) (js : Γ ⊑ Γ′) (i : Γ ∋ A) →
-              sub∋ (get§ js ss) i ≡ (sub∋ ss ∘ ren∋ js) i
-  --          sub∋ (js ◑ ss) i ≡ (ren∋ js ⨾ sub∋ ss) i
-  eqsubren∋ ss (j ∷ js) zero    = ridsub ss j
-  eqsubren∋ ss (j ∷ js) (suc i) = eqsubren∋ ss js i
+  eqsubren∋ : ∀ {Γ Γ′ Ξ A} (σ : Ξ ⊢§ Γ′) (ρ : Γ ⊑ Γ′) (i : Γ ∋ A) →
+              sub∋ (get§ ρ σ) i ≡ (sub∋ σ ∘ ren∋ ρ) i
+  --          sub∋ (ρ ◑ σ) i ≡ (ren∋ ρ ⨾ sub∋ σ) i
+  eqsubren∋ σ (ρ , j) zero    = ridsub σ j
+  eqsubren∋ σ (ρ , j) (wk∋ i) = eqsubren∋ σ ρ i
 
   -- Kovacs: ∈-idₛ; not really identity
   idsub∋ : ∀ {Γ A} (i : Γ ∋ A) → sub∋ id§ i ≡ var i
   idsub∋ zero    = refl
-  idsub∋ (suc i) = eqrensub∋ (wk⊑ id⊑) id§ i
+  idsub∋ (wk∋ i) = eqrensub∋ (wk⊑ id⊑) id§ i
                  ⋮ wk & idsub∋ i
                  ⋮ ridren (wk⊑ id⊑) i
-                 ⋮ var & (eqwkren∋ id⊑ i ⋮ suc & idren∋ i)
+                 ⋮ var & (eqwkren∋ id⊑ i ⋮ wk∋ & idren∋ i)
 
   -- Kovacs: ∈-∘ₛ; not really composition
-  compsub∋ : ∀ {Γ Ξ Ξ′ A} (ss′ : Ξ′ ⊢§ Ξ) (ss : Ξ ⊢§ Γ) (i : Γ ∋ A) →
-             sub∋ (sub§ ss′ ss) i ≡ (sub ss′ ∘ sub∋ ss) i
-  --         sub∋ (ss ● ss′) i ≡ (sub∋ ss ⨾ sub ss′) i
-  compsub∋ ss′ (s ∷ ss) zero    = refl
-  compsub∋ ss′ (s ∷ ss) (suc i) = compsub∋ ss′ ss i
+  compsub∋ : ∀ {Γ Ξ Ξ′ A} (σ′ : Ξ′ ⊢§ Ξ) (σ : Ξ ⊢§ Γ) (i : Γ ∋ A) →
+             sub∋ (sub§ σ′ σ) i ≡ (sub σ′ ∘ sub∋ σ) i
+  --         sub∋ (σ ● σ′) i ≡ (sub∋ σ ⨾ sub σ′) i
+  compsub∋ σ′ (σ , s) zero    = refl
+  compsub∋ σ′ (σ , s) (wk∋ i) = compsub∋ σ′ σ i
 
-  eqget§ : ∀ {Γ Γ′ Ξ A} (is : Γ ⊑ Γ′) (s : Ξ ⊢ A) (ss : Ξ ⊢§ Γ′) →
-           get§ (wk⊑ is) (s ∷ ss) ≡ get§ is ss
-  --       (wk⊑ is) ◑ (s ∷ ss) ≡ is ◑ ss
-  eqget§ []       s ss = refl
-  eqget§ (i ∷ is) s ss = _∷_ & (ridsub (s ∷ ss) (suc i) ⋮ ridsub ss i ⁻¹)
-                             ⊗ eqget§ is s ss
+  eqget§ : ∀ {Γ Γ′ Ξ A} (ρ : Γ ⊑ Γ′) (σ : Ξ ⊢§ Γ′) (s : Ξ ⊢ A) →
+           get§ (wk⊑ ρ) (σ , s) ≡ get§ ρ σ
+  --       (wk⊑ ρ) ◑ (σ , s) ≡ ρ ◑ σ
+  eqget§ ∙       σ s = refl
+  eqget§ (ρ , i) σ s = _,_ & eqget§ ρ σ s ⊗ (ridsub (σ , s) (wk∋ i) ⋮ ridsub σ i ⁻¹)
+
 
   -- Kovacs: idlₑₛ
-  lidget§ : ∀ {Γ Δ} (ts : Γ ⊢§ Δ) →
-            get§ id⊑ ts ≡ ts
-  --        id⊑ ◑ ts ≡ ts
-  lidget§ []       = refl
-  lidget§ (t ∷ ts) = _∷_ & ridsub (t ∷ ts) zero
-                         ⊗ (eqget§ id⊑ t ts ⋮ lidget§ ts)
+  lidget§ : ∀ {Γ Δ} (τ : Γ ⊢§ Δ) →
+            get§ id⊑ τ ≡ τ
+  --        id⊑ ◑ τ ≡ τ
+  lidget§ ∙       = refl
+  lidget§ (τ , t) = _,_ & (eqget§ id⊑ τ t ⋮ lidget§ τ) ⊗ ridsub (τ , t) zero
 
-  compget§ : ∀ {Γ Δ Δ′ Δ″} (js : Δ ⊑ Δ′) (js′ : Δ′ ⊑ Δ″) (ts : Γ ⊢§ Δ″) →
-             get§ (js′ ∘⊑ js) ts ≡ (get§ js ∘ get§ js′) ts
-  --         (js ○ js′) ◑ ts ≡ js ◑ (js′ ◑ ts)
-  compget§ []       js′ ts = refl
-  compget§ (j ∷ js) js′ ts = _∷_ & ( ridsub ts (ren∋ js′ j)
-                                   ⋮ eqsubren∋ ts js′ j ⁻¹
-                                   ⋮ ridsub (get§ js′ ts) j ⁻¹
-                                   )
-                                 ⊗ compget§ js js′ ts
+  compget§ : ∀ {Γ Δ Δ′ Δ″} (ρ : Δ ⊑ Δ′) (ρ′ : Δ′ ⊑ Δ″) (τ : Γ ⊢§ Δ″) →
+             get§ (ρ′ ∘⊑ ρ) τ ≡ (get§ ρ ∘ get§ ρ′) τ
+  --         (ρ ○ ρ′) ◑ τ ≡ ρ ◑ (ρ′ ◑ τ)
+  compget§ ∙       ρ′ τ = refl
+  compget§ (ρ , j) ρ′ τ = _,_ & compget§ ρ ρ′ τ ⊗
+                            ( ridsub τ (ren∋ ρ′ j)
+                            ⋮ eqsubren∋ τ ρ′ j ⁻¹
+                            ⋮ ridsub (get§ ρ′ τ) j ⁻¹
+                            )
 
 
 ----------------------------------------------------------------------------------------------------
@@ -145,45 +140,44 @@ record RenSubKit2Params : Set₁ where
   open RenSubKit1Params rensubkit1 public
   open RenSubKit1 rensubkit1 public hiding (rensubkit1)
   field
-    eqrensub : ∀ {Γ Ξ Ξ′ A} (js : Ξ ⊑ Ξ′) (ss : Ξ ⊢§ Γ) (t : Γ ⊢ A) →
-               sub (ren§ js ss) t ≡ (ren js ∘ sub ss) t
-    --         sub (ss ◐ js) t ≡ (sub ss ⨾ ren js) t
+    eqrensub : ∀ {Γ Ξ Ξ′ A} (ρ : Ξ ⊑ Ξ′) (σ : Ξ ⊢§ Γ) (t : Γ ⊢ A) →
+               sub (ren§ ρ σ) t ≡ (ren ρ ∘ sub σ) t
+    --         sub (σ ◐ ρ) t ≡ (sub σ ⨾ ren ρ) t
 
 module RenSubKit2 (¶ : RenSubKit2Params) where
   open RenSubKit2Params ¶
   rensubkit2 = ¶
 
   -- Kovacs: assₛₛₑ
-  eqrensub§ : ∀ {Γ Ξ Ξ′ Δ} (js : Ξ ⊑ Ξ′) (ss : Ξ ⊢§ Γ) (ts : Γ ⊢§ Δ) →
-              sub§ (ren§ js ss) ts ≡ (ren§ js ∘ sub§ ss) ts
-  --          ts ● (ss ◐ js) ≡ (ts ● ss) ◐ js
-  eqrensub§ js ss []       = refl
-  eqrensub§ js ss (t ∷ ts) = _∷_ & eqrensub js ss t ⊗ eqrensub§ js ss ts
+  eqrensub§ : ∀ {Γ Ξ Ξ′ Δ} (ρ : Ξ ⊑ Ξ′) (σ : Ξ ⊢§ Γ) (τ : Γ ⊢§ Δ) →
+              sub§ (ren§ ρ σ) τ ≡ (ren§ ρ ∘ sub§ σ) τ
+  --          τ ● (σ ◐ ρ) ≡ (τ ● σ) ◐ ρ
+  eqrensub§ ρ σ ∙       = refl
+  eqrensub§ ρ σ (τ , t) = _,_ & eqrensub§ ρ σ τ ⊗ eqrensub ρ σ t
 
   -- Kovacs: assₑₛₑ
-  eqrenget§ : ∀ {Γ Γ′ Δ Δ′} (js : Γ ⊑ Γ′) (js′ : Δ ⊑ Δ′) (ts : Γ ⊢§ Δ′) →
-              (get§ js′ ∘ ren§ js) ts ≡ (ren§ js ∘ get§ js′) ts
-  --          js′ ◑ (ts ◐ js) ≡ (js′ ◑ ts) ◐ js
-  eqrenget§ js []         ts = refl
-  eqrenget§ js (j′ ∷ js′) ts = _∷_ & eqrensub js ts (var j′) ⊗ eqrenget§ js js′ ts
+  eqrenget§ : ∀ {Γ Γ′ Δ Δ′} (ρ : Γ ⊑ Γ′) (ρ′ : Δ ⊑ Δ′) (τ : Γ ⊢§ Δ′) →
+              (get§ ρ′ ∘ ren§ ρ) τ ≡ (ren§ ρ ∘ get§ ρ′) τ
+  --          ρ′ ◑ (τ ◐ ρ) ≡ (ρ′ ◑ τ) ◐ ρ
+  eqrenget§ ρ ∙         τ = refl
+  eqrenget§ ρ (ρ′ , j′) τ = _,_ & eqrenget§ ρ ρ′ τ ⊗ eqrensub ρ τ (var j′)
 
-  eqwkget§ : ∀ {B Γ Δ Δ′} (js : Δ ⊑ Δ′) (ts : Γ ⊢§ Δ′) →
-             (get§ (wk⊑ js) ∘ lift§) ts ≡ (wk§ {B} ∘ get§ js) ts
-  --         (wk⊑ js) ◑ (lift§ ts) ≡ wk§ {B} (js ◑ ts)
-  eqwkget§ js ts = eqget§ js (var zero) (wk§ ts) ⋮ eqrenget§ (wk⊑ id⊑) js ts
+  eqwkget§ : ∀ {B Γ Δ Δ′} (ρ : Δ ⊑ Δ′) (τ : Γ ⊢§ Δ′) →
+             (get§ (wk⊑ ρ) ∘ lift§) τ ≡ (wk§ {B} ∘ get§ ρ) τ
+  --         (wk⊑ ρ) ◑ (lift§ τ) ≡ wk§ {B} (ρ ◑ τ)
+  eqwkget§ ρ τ = eqget§ ρ (wk§ τ) (var zero) ⋮ eqrenget§ (wk⊑ id⊑) ρ τ
 
-  eqliftget§ : ∀ {B Γ Δ Δ′} (js : Δ ⊑ Δ′) (ts : Γ ⊢§ Δ′) →
-               (get§ (lift⊑ js) ∘ lift§) ts ≡ (lift§ {B} ∘ get§ js) ts
-  --           (lift⊑ js) ◑ (lift§ ts) ≡ lift§ {B} (js ◑ ts)
-  eqliftget§ js ts = _∷_ & ridsub (lift§ ts) zero ⊗ eqwkget§ js ts
+  eqliftget§ : ∀ {B Γ Δ Δ′} (ρ : Δ ⊑ Δ′) (τ : Γ ⊢§ Δ′) →
+               (get§ (lift⊑ ρ) ∘ lift§) τ ≡ (lift§ {B} ∘ get§ ρ) τ
+  --           (lift⊑ ρ) ◑ (lift§ τ) ≡ lift§ {B} (ρ ◑ τ)
+  eqliftget§ ρ τ = _,_ & eqwkget§ ρ τ ⊗ ridsub (lift§ τ) zero
 
   -- Kovacs: idrₑₛ; not really identity
-  ridget§ : ∀ {Γ Γ′} (is : Γ ⊑ Γ′) →
-            get§ is id§ ≡ var§ is
-  --        is ◑ id§ ≡ var§ is
-  ridget§ []       = refl
-  ridget§ (i ∷ is) = _∷_ & (ridsub id§ i ⋮ idsub∋ i)
-                         ⊗ ridget§ is
+  ridget§ : ∀ {Γ Γ′} (ρ : Γ ⊑ Γ′) →
+            get§ ρ id§ ≡ var§ ρ
+  --        ρ ◑ id§ ≡ var§ ρ
+  ridget§ ∙       = refl
+  ridget§ (ρ , i) = _,_ & ridget§ ρ ⊗ (ridsub id§ i ⋮ idsub∋ i)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -195,9 +189,9 @@ record RenSubKit3Params : Set₁ where
   open RenSubKit2Params rensubkit2 public
   open RenSubKit2 rensubkit2 public hiding (rensubkit2)
   field
-    eqsubren : ∀ {Γ Γ′ Ξ A} (ss : Ξ ⊢§ Γ′) (js : Γ ⊑ Γ′) (t : Γ ⊢ A) →
-               sub (get§ js ss) t ≡ (sub ss ∘ ren js) t
-    --         sub (js ◑ ss) t ≡ (ren js ⨾ sub ss) t
+    eqsubren : ∀ {Γ Γ′ Ξ A} (σ : Ξ ⊢§ Γ′) (ρ : Γ ⊑ Γ′) (t : Γ ⊢ A) →
+               sub (get§ ρ σ) t ≡ (sub σ ∘ ren ρ) t
+    --         sub (ρ ◑ σ) t ≡ (ren ρ ⨾ sub σ) t
     lidsub   : ∀ {Γ A} (t : Γ ⊢ A) → sub id§ t ≡ t
 
 module RenSubKit3 (¶ : RenSubKit3Params) where
@@ -205,53 +199,53 @@ module RenSubKit3 (¶ : RenSubKit3Params) where
   rensubkit3 = ¶
 
   -- Kovacs: assₛₑₛ
-  eqsubren§ : ∀ {Γ Γ′ Ξ Δ} (ss : Ξ ⊢§ Γ′) (js : Γ ⊑ Γ′) (ts : Γ ⊢§ Δ) →
-              sub§ (get§ js ss) ts ≡ (sub§ ss ∘ ren§ js) ts
-  --          ts ● (js ◑ ss) ≡ (ts ◐ js) ● ss
-  eqsubren§ ss js []       = refl
-  eqsubren§ ss js (t ∷ ts) = _∷_ & eqsubren ss js t ⊗ eqsubren§ ss js ts
+  eqsubren§ : ∀ {Γ Γ′ Ξ Δ} (σ : Ξ ⊢§ Γ′) (ρ : Γ ⊑ Γ′) (τ : Γ ⊢§ Δ) →
+              sub§ (get§ ρ σ) τ ≡ (sub§ σ ∘ ren§ ρ) τ
+  --          τ ● (ρ ◑ σ) ≡ (τ ◐ ρ) ● σ
+  eqsubren§ σ ρ ∙       = refl
+  eqsubren§ σ ρ (τ , t) = _,_ & eqsubren§ σ ρ τ  ⊗ eqsubren σ ρ t
 
   -- Kovacs: idrₛ
-  lidsub§ : ∀ {Γ Δ} (ts : Γ ⊢§ Δ) → sub§ id§ ts ≡ ts
-  lidsub§ []       = refl
-  lidsub§ (t ∷ ts) = _∷_ & lidsub t ⊗ lidsub§ ts
+  lidsub§ : ∀ {Γ Δ} (τ : Γ ⊢§ Δ) → sub§ id§ τ ≡ τ
+  lidsub§ ∙       = refl
+  lidsub§ (τ , t) = _,_ & lidsub§ τ ⊗ lidsub t
 
-  eqsub : ∀ {B Γ Ξ A} (s : Ξ ⊢ B) (ss : Ξ ⊢§ Γ) (t : Γ ⊢ A) →
-          (sub (s ∷ ss) ∘ wk) t ≡ sub ss t
-  eqsub s ss t = eqsubren (s ∷ ss) (wk⊑ id⊑) t ⁻¹
-               ⋮ flip sub t & (eqget§ id⊑ s ss ⋮ lidget§ ss)
+  eqsub : ∀ {B Γ Ξ A} (σ : Ξ ⊢§ Γ) (s : Ξ ⊢ B) (t : Γ ⊢ A) →
+          (sub (σ , s) ∘ wk) t ≡ sub σ t
+  eqsub σ s t = eqsubren (σ , s) (wk⊑ id⊑) t ⁻¹
+              ⋮ flip sub t & (eqget§ id⊑ σ s ⋮ lidget§ σ)
 
-  eqsub§ : ∀ {B Γ Ξ Δ} (s : Ξ ⊢ B) (ss : Ξ ⊢§ Γ) (ts : Γ ⊢§ Δ) →
-           (sub§ (s ∷ ss) ∘ wk§) ts ≡ sub§ ss ts
-  --       (wk§ ts) ● (s ∷ ss) ≡ ts ● ss
-  eqsub§ s ss []       = refl
-  eqsub§ s ss (t ∷ ts) = _∷_ & eqsub s ss t ⊗ eqsub§ s ss ts
+  eqsub§ : ∀ {B Γ Ξ Δ} (σ : Ξ ⊢§ Γ) (s : Ξ ⊢ B) (τ : Γ ⊢§ Δ) →
+           (sub§ (σ , s) ∘ wk§) τ ≡ sub§ σ τ
+  --       (wk§ τ) ● (σ , s) ≡ τ ● σ
+  eqsub§ σ s ∙       = refl
+  eqsub§ σ s (τ , t) = _,_ & eqsub§ σ s τ  ⊗ eqsub σ s t
 
-  eqwksub : ∀ {B Γ Ξ A} (ss : Ξ ⊢§ Γ) (t : Γ ⊢ A) →
-            (sub (lift§ ss) ∘ wk) t ≡ (wk {B} ∘ sub ss) t
-  eqwksub ss t = eqsubren (lift§ ss) (wk⊑ id⊑) t ⁻¹
-               ⋮ flip sub t & (eqwkget§ id⊑ ss ⋮ wk§ & lidget§ ss)
-               ⋮ eqrensub (wk⊑ id⊑) ss t
+  eqwksub : ∀ {B Γ Ξ A} (σ : Ξ ⊢§ Γ) (t : Γ ⊢ A) →
+            (sub (lift§ σ) ∘ wk) t ≡ (wk {B} ∘ sub σ) t
+  eqwksub σ t = eqsubren (lift§ σ) (wk⊑ id⊑) t ⁻¹
+              ⋮ flip sub t & (eqwkget§ id⊑ σ ⋮ wk§ & lidget§ σ)
+              ⋮ eqrensub (wk⊑ id⊑) σ t
 
-  eqwksub§ : ∀ {B Γ Ξ Δ} (ss : Ξ ⊢§ Γ) (ts : Γ ⊢§ Δ) →
-             (sub§ (lift§ ss) ∘ wk§) ts ≡ (wk§ {B} ∘ sub§ ss) ts
-  --         (wk§ ts) ● (lift§ ss) ≡ wk§ {B} (ts ● ss)
-  eqwksub§ ss []       = refl
-  eqwksub§ ss (t ∷ ts) = _∷_ & eqwksub ss t ⊗ eqwksub§ ss ts
+  eqwksub§ : ∀ {B Γ Ξ Δ} (σ : Ξ ⊢§ Γ) (τ : Γ ⊢§ Δ) →
+             (sub§ (lift§ σ) ∘ wk§) τ ≡ (wk§ {B} ∘ sub§ σ) τ
+  --         (wk§ τ) ● (lift§ σ) ≡ wk§ {B} (τ ● σ)
+  eqwksub§ σ ∙       = refl
+  eqwksub§ σ (τ , t) = _,_ & eqwksub§ σ τ ⊗ eqwksub σ t
 
-  eqliftsub§ : ∀ {B Γ Ξ Δ} (ss : Ξ ⊢§ Γ) (ts : Γ ⊢§ Δ) →
-               (sub§ (lift§ ss) ∘ lift§) ts ≡ (lift§ {B} ∘ sub§ ss) ts
-  --           (lift§ ts) ● (lift§ ss) ≡ lift§ {B} (ts ● ss)
-  eqliftsub§ ss ts = (_∷ (sub§ (lift§ ss) ∘ wk§) ts) & ridsub (lift§ ss) zero
-                   ⋮ (var zero ∷_) & eqwksub§ ss ts
+  eqliftsub§ : ∀ {B Γ Ξ Δ} (σ : Ξ ⊢§ Γ) (τ : Γ ⊢§ Δ) →
+               (sub§ (lift§ σ) ∘ lift§) τ ≡ (lift§ {B} ∘ sub§ σ) τ
+  --           (lift§ τ) ● (lift§ σ) ≡ lift§ {B} (τ ● σ)
+  eqliftsub§ σ τ = ((sub§ (lift§ σ) ∘ wk§) τ ,_) & ridsub (lift§ σ) zero
+                 ⋮ (_, var zero) & eqwksub§ σ τ
 
   -- Kovacs: idlₛ
-  ridsub§ : ∀ {Γ Ξ} (ss : Ξ ⊢§ Γ) →
-            sub§ ss id§ ≡ ss
-  --        id§ ● ss ≡ ss
-  ridsub§ []       = refl
-  ridsub§ (s ∷ ss) = (_∷ (sub§ (s ∷ ss) ∘ wk§) id§) & ridsub (s ∷ ss) zero
-                   ⋮ (s ∷_) & (eqsub§ s ss id§ ⋮ ridsub§ ss)
+  ridsub§ : ∀ {Γ Ξ} (σ : Ξ ⊢§ Γ) →
+            sub§ σ id§ ≡ σ
+  --        id§ ● σ ≡ σ
+  ridsub§ ∙       = refl
+  ridsub§ (σ , s) = ((sub§ (σ , s) ∘ wk§) id§ ,_) & ridsub (σ , s) zero
+                  ⋮ (_, s) & (eqsub§ σ s id§ ⋮ ridsub§ σ)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -263,76 +257,45 @@ record RenSubKit4Params : Set₁ where
   open RenSubKit3Params rensubkit3 public
   open RenSubKit3 rensubkit3 public hiding (rensubkit3)
   field
-    compsub : ∀ {Γ Ξ Ξ′ A} (ss′ : Ξ′ ⊢§ Ξ) (ss : Ξ ⊢§ Γ) (t : Γ ⊢ A) →
-              sub (sub§ ss′ ss) t ≡ (sub ss′ ∘ sub ss) t
-    --        sub (ss ● ss′) t ≡ (sub ss ⨾ sub ss′) t
+    compsub : ∀ {Γ Ξ Ξ′ A} (σ′ : Ξ′ ⊢§ Ξ) (σ : Ξ ⊢§ Γ) (t : Γ ⊢ A) →
+              sub (sub§ σ′ σ) t ≡ (sub σ′ ∘ sub σ) t
+    --        sub (σ ● σ′) t ≡ (sub σ ⨾ sub σ′) t
 
 module RenSubKit4 (¶ : RenSubKit4Params) where
   open RenSubKit4Params ¶
   rensubkit4 = ¶
 
   -- Kovacs: assₛ
-  asssub§ : ∀ {Γ Ξ Ξ′ Δ} (ss′ : Ξ′ ⊢§ Ξ) (ss : Ξ ⊢§ Γ) (ts : Γ ⊢§ Δ) →
-            (sub§ ss′ ∘ sub§ ss) ts ≡ sub§ (sub§ ss′ ss) ts
-  --        (ts ● ss) ● ss′ ≡ ts ● (ss ● ss′)
-  asssub§ ss′ ss []       = refl
-  asssub§ ss′ ss (t ∷ ts) = _∷_ & compsub ss′ ss t ⁻¹ ⊗ asssub§ ss′ ss ts
+  asssub§ : ∀ {Γ Ξ Ξ′ Δ} (σ′ : Ξ′ ⊢§ Ξ) (σ : Ξ ⊢§ Γ) (τ : Γ ⊢§ Δ) →
+            (sub§ σ′ ∘ sub§ σ) τ ≡ sub§ (sub§ σ′ σ) τ
+  --        (τ ● σ) ● σ′ ≡ τ ● (σ ● σ′)
+  asssub§ σ′ σ ∙       = refl
+  asssub§ σ′ σ (τ , t) = _,_ & asssub§ σ′ σ τ ⊗ compsub σ′ σ t ⁻¹
 
-  -- TODO: compress
-  rencut : ∀ {Γ Γ′ A B} (js : Γ ⊑ Γ′) (t₁ : (A ∷ Γ) ⊢ B) (t₂ : Γ ⊢ A) →
-           ren (lift⊑ js) t₁ [ ren js t₂ ] ≡ ren js (t₁ [ t₂ ])
-  rencut js t₁ t₂ =
-      begin
-        ren (lift⊑ js) t₁ [ ren js t₂ ]
-      ≡⟨⟩
-        (sub (ren js t₂ ∷ id§) ∘ ren (lift⊑ js)) t₁
-      ≡⟨ eqsubren (ren js t₂ ∷ id§) (lift⊑ js) t₁ ⁻¹ ⟩
-        sub (get§ (lift⊑ js) (ren js t₂ ∷ id§)) t₁
-      ≡⟨ flip sub t₁ & (
-          begin
-            get§ (lift⊑ js) (ren js t₂ ∷ id§)
-          ≡⟨⟩
-            sub (ren js t₂ ∷ id§) (var zero) ∷ get§ (wk⊑ js) (ren js t₂ ∷ id§)
-          ≡⟨ _∷_ & ridsub (ren js t₂ ∷ id§) zero ⊗ eqget§ js (ren js t₂) id§ ⟩
-            ren js t₂ ∷ get§ js id§
-          ≡⟨ (ren js t₂ ∷_) & (ridget§ js ⋮ ridren§ js ⁻¹) ⟩
-            ren js t₂ ∷ ren§ js id§
-          ∎) ⟩
-        sub (ren js t₂ ∷ ren§ js id§) t₁
-      ≡⟨ eqrensub js (t₂ ∷ id§) t₁ ⟩
-        (ren js ∘ sub (t₂ ∷ id§)) t₁
-      ≡⟨⟩
-        ren js (t₁ [ t₂ ])
-      ∎
+  rencut : ∀ {Γ Γ′ A B} (ρ : Γ ⊑ Γ′) (t₁ : Γ , A ⊢ B) (t₂ : Γ ⊢ A) →
+           ren (lift⊑ ρ) t₁ [ ren ρ t₂ ] ≡ ren ρ (t₁ [ t₂ ])
+  rencut ρ t₁ t₂ = eqsubren (id§ , ren ρ t₂) (lift⊑ ρ) t₁ ⁻¹
+                 ⋮ flip sub t₁ &
+                     ( _,_ & ( eqget§ ρ id§ (ren ρ t₂)
+                             ⋮ ridget§ ρ
+                             ⋮ ridren§ ρ ⁻¹
+                             )
+                           ⊗ ridsub (id§ , ren ρ t₂) zero
+                     )
+                 ⋮ eqrensub ρ (id§ , t₂) t₁
 
-  -- TODO: compress
-  subcut : ∀ {Γ Ξ A B} (ss : Ξ ⊢§ Γ) (t₁ : (A ∷ Γ) ⊢ B) (t₂ : Γ ⊢ A) →
-           sub (lift§ ss) t₁ [ sub ss t₂ ] ≡ sub ss (t₁ [ t₂ ])
-  subcut ss t₁ t₂ =
-      begin
-        sub (lift§ ss) t₁ [ sub ss t₂ ]
-      ≡⟨⟩
-        (sub (sub ss t₂ ∷ id§) ∘ sub (lift§ ss)) t₁
-      ≡⟨ compsub (sub ss t₂ ∷ id§) (lift§ ss) t₁ ⁻¹ ⟩
-        sub (sub§ (sub ss t₂ ∷ id§) (lift§ ss)) t₁
-      ≡⟨ (flip sub t₁ ∘ (_∷ (sub§ (sub ss t₂ ∷ id§) ∘ wk§) ss)) & ridsub (sub ss t₂ ∷ id§) zero ⟩
-        sub (sub ss t₂ ∷ sub§ (sub ss t₂ ∷ id§) (wk§ ss)) t₁
-      ≡⟨ (flip sub t₁ ∘ (sub ss t₂ ∷_)) & (
-          begin
-            (sub§ (sub ss t₂ ∷ id§) ∘ wk§) ss
-          ≡⟨ eqsubren§ (sub ss t₂ ∷ id§) (wk⊑ id⊑) ss ⁻¹ ⟩
-            sub§ (get§ (wk⊑ id⊑) (sub ss t₂ ∷ id§)) ss
-          ≡⟨ flip sub§ ss & (eqget§ id⊑ (sub ss t₂) id§ ⋮ lidget§ id§) ⟩
-            sub§ id§ ss
-          ≡⟨ lidsub§ ss ⋮ ridsub§ ss ⁻¹ ⟩
-            sub§ ss id§
-          ∎) ⟩
-        sub (sub§ ss (t₂ ∷ id§)) t₁
-      ≡⟨ compsub ss (t₂ ∷ id§) t₁ ⟩
-        (sub ss ∘ sub (t₂ ∷ id§)) t₁
-      ≡⟨⟩
-        sub ss (t₁ [ t₂ ])
-      ∎
+  subcut : ∀ {Γ Ξ A B} (σ : Ξ ⊢§ Γ) (t₁ : Γ , A ⊢ B) (t₂ : Γ ⊢ A) →
+           sub (lift§ σ) t₁ [ sub σ t₂ ] ≡ sub σ (t₁ [ t₂ ])
+  subcut σ t₁ t₂ = compsub (id§ , sub σ t₂) (lift§ σ) t₁ ⁻¹
+                 ⋮ flip sub t₁ &
+                     ( _,_ & ( eqsubren§ (id§ , sub σ t₂) (wk⊑ id⊑) σ ⁻¹
+                             ⋮ flip sub§ σ & (eqget§ id⊑ id§ (sub σ t₂) ⋮ lidget§ id§)
+                             ⋮ lidsub§ σ
+                             ⋮ ridsub§ σ ⁻¹
+                             )
+                           ⊗ ridsub (id§ , sub σ t₂) zero
+                     )
+                 ⋮ compsub σ (id§ , t₂) t₁
 
 
 ----------------------------------------------------------------------------------------------------

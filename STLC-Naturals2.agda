@@ -26,7 +26,7 @@ infixl 18 _⌜$⌝_
 data _⊢_ (Γ : Ctx) : Ty → Set where
   con   : ∀ {A} (k : Con A) → Γ ⊢ A
   var   : ∀ {A} (i : Γ ∋ A) → Γ ⊢ A
-  ⌜λ⌝   : ∀ {A B} (t : A ∷ Γ ⊢ B) → Γ ⊢ A ⌜⊃⌝ B
+  ⌜λ⌝   : ∀ {A B} (t : Γ , A ⊢ B) → Γ ⊢ A ⌜⊃⌝ B
   _⌜$⌝_ : ∀ {A B} (t₁ : Γ ⊢ A ⌜⊃⌝ B) (t₂ : Γ ⊢ A) → Γ ⊢ B
 
 open TmKit (kit _⊢_) public
@@ -35,18 +35,18 @@ open TmKit (kit _⊢_) public
 ----------------------------------------------------------------------------------------------------
 
 ren : ∀ {Γ Γ′ A} → Γ ⊑ Γ′ → Γ ⊢ A → Γ′ ⊢ A
-ren e (con k)     = con k
-ren e (var i)     = var (ren∋ e i)
-ren e (⌜λ⌝ t)     = ⌜λ⌝ (ren (lift⊑ e) t)
-ren e (t₁ ⌜$⌝ t₂) = ren e t₁ ⌜$⌝ ren e t₂
+ren ρ (con k)     = con k
+ren ρ (var i)     = var (ren∋ ρ i)
+ren ρ (⌜λ⌝ t)     = ⌜λ⌝ (ren (lift⊑ ρ) t)
+ren ρ (t₁ ⌜$⌝ t₂) = ren ρ t₁ ⌜$⌝ ren ρ t₂
 
 open RenKit (kit var ren) public
 
 sub : ∀ {Γ Ξ A} → Ξ ⊢§ Γ → Γ ⊢ A → Ξ ⊢ A
-sub ss (con k)     = con k
-sub ss (var i)     = sub∋ ss i
-sub ss (⌜λ⌝ t)     = ⌜λ⌝ (sub (lift§ ss) t)
-sub ss (t₁ ⌜$⌝ t₂) = sub ss t₁ ⌜$⌝ sub ss t₂
+sub σ (con k)     = con k
+sub σ (var i)     = sub∋ σ i
+sub σ (⌜λ⌝ t)     = ⌜λ⌝ (sub (lift§ σ) t)
+sub σ (t₁ ⌜$⌝ t₂) = sub σ t₁ ⌜$⌝ sub σ t₂
 
 open SubKit (kit renkit sub) public
 
@@ -60,14 +60,14 @@ module BetaShortDefEq where
     refl≝   : ∀ {A} {t : Γ ⊢ A} → t ≝ t
     sym≝    : ∀ {A} {t t′ : Γ ⊢ A} (eq : t ≝ t′) → t′ ≝ t
     trans≝  : ∀ {A} {t t′ t″ : Γ ⊢ A} (eq : t ≝ t′) (eq′ : t′ ≝ t″) → t ≝ t″
-    congλ   : ∀ {A B} {t t′ : A ∷ Γ ⊢ B} (eq : t ≝ t′) → ⌜λ⌝ t ≝ ⌜λ⌝ t′
+    congλ   : ∀ {A B} {t t′ : Γ , A ⊢ B} (eq : t ≝ t′) → ⌜λ⌝ t ≝ ⌜λ⌝ t′
     cong$   : ∀ {A B} {t₁ t₁′ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢ A} (eq₁ : t₁ ≝ t₁′) (eq₂ : t₂ ≝ t₂′) →
               t₁ ⌜$⌝ t₂ ≝ t₁′ ⌜$⌝ t₂′
     congsuc : ∀ {t t′ : Γ ⊢ ⌜ℕ⌝} (eq : t ≝ t′) → con ⌜suc⌝ ⌜$⌝ t ≝ con ⌜suc⌝ ⌜$⌝ t′
     congrec : ∀ {A} {tₙ tₙ′ : Γ ⊢ ⌜ℕ⌝} {t₀ t₀′ : Γ ⊢ A} {tₛ tₛ′ : Γ ⊢ ⌜ℕ⌝ ⌜⊃⌝ A ⌜⊃⌝ A}
                 (eqₙ : tₙ ≝ tₙ′) (eq₀ : t₀ ≝ t₀′) (eqₛ : tₛ ≝ tₛ′) →
               con ⌜rec⌝ ⌜$⌝ tₙ ⌜$⌝ t₀ ⌜$⌝ tₛ ≝ con ⌜rec⌝ ⌜$⌝ tₙ′ ⌜$⌝ t₀′ ⌜$⌝ tₛ′
-    βred⊃   : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) →
+    βred⊃   : ∀ {A B} {t₁ : Γ , A ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) →
               ⌜λ⌝ t₁ ⌜$⌝ t₂ ≝ t′
     βredℕ₀  : ∀ {A} {t₀ : Γ ⊢ A} {tₛ : Γ ⊢ ⌜ℕ⌝ ⌜⊃⌝ A ⌜⊃⌝ A} →
               con ⌜rec⌝ ⌜$⌝ con ⌜zero⌝ ⌜$⌝ t₀ ⌜$⌝ tₛ ≝ t₀
@@ -83,14 +83,14 @@ module BetaShortEtaLongDefEq where
     refl≝   : ∀ {A} {t : Γ ⊢ A} → t ≝ t
     sym≝    : ∀ {A} {t t′ : Γ ⊢ A} (eq : t ≝ t′) → t′ ≝ t
     trans≝  : ∀ {A} {t t′ t″ : Γ ⊢ A} (eq : t ≝ t′) (eq′ : t′ ≝ t″) → t ≝ t″
-    congλ   : ∀ {A B} {t t′ : A ∷ Γ ⊢ B} (eq : t ≝ t′) → ⌜λ⌝ t ≝ ⌜λ⌝ t′
+    congλ   : ∀ {A B} {t t′ : Γ , A ⊢ B} (eq : t ≝ t′) → ⌜λ⌝ t ≝ ⌜λ⌝ t′
     cong$   : ∀ {A B} {t₁ t₁′ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢ A} (eq₁ : t₁ ≝ t₁′) (eq₂ : t₂ ≝ t₂′) →
               t₁ ⌜$⌝ t₂ ≝ t₁′ ⌜$⌝ t₂′
     congsuc : ∀ {t t′ : Γ ⊢ ⌜ℕ⌝} (eq : t ≝ t′) → con ⌜suc⌝ ⌜$⌝ t ≝ con ⌜suc⌝ ⌜$⌝ t′
     congrec : ∀ {A} {tₙ tₙ′ : Γ ⊢ ⌜ℕ⌝} {t₀ t₀′ : Γ ⊢ A} {tₛ tₛ′ : Γ ⊢ ⌜ℕ⌝ ⌜⊃⌝ A ⌜⊃⌝ A}
                 (eqₙ : tₙ ≝ tₙ′) (eq₀ : t₀ ≝ t₀′) (eqₛ : tₛ ≝ tₛ′) →
               con ⌜rec⌝ ⌜$⌝ tₙ ⌜$⌝ t₀ ⌜$⌝ tₛ ≝ con ⌜rec⌝ ⌜$⌝ tₙ′ ⌜$⌝ t₀′ ⌜$⌝ tₛ′
-    βred⊃   : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) →
+    βred⊃   : ∀ {A B} {t₁ : Γ , A ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) →
               ⌜λ⌝ t₁ ⌜$⌝ t₂ ≝ t′
     βredℕ₀  : ∀ {A} {t₀ : Γ ⊢ A} {tₛ : Γ ⊢ ⌜ℕ⌝ ⌜⊃⌝ A ⌜⊃⌝ A} →
               con ⌜rec⌝ ⌜$⌝ con ⌜zero⌝ ⌜$⌝ t₀ ⌜$⌝ tₛ ≝ t₀
@@ -99,7 +99,7 @@ module BetaShortEtaLongDefEq where
                 tₛ ⌜$⌝ tₙ ⌜$⌝ (con ⌜rec⌝ ⌜$⌝ tₙ ⌜$⌝ t₀ ⌜$⌝ tₛ)
     ηexp⊃   : ∀ {A B} {t : Γ ⊢ A ⌜⊃⌝ B} {t′} (eq : t′ ≡ wk t) → t ≝ ⌜λ⌝ (t′ ⌜$⌝ var zero)
     ηexpℕ   : ∀ {tₙ : Γ ⊢ ⌜ℕ⌝} →
-              tₙ ≝ con ⌜rec⌝ ⌜$⌝ tₙ ⌜$⌝ con ⌜zero⌝ ⌜$⌝ ⌜λ⌝ (⌜λ⌝ (con ⌜suc⌝ ⌜$⌝ var (suc zero)))
+              tₙ ≝ con ⌜rec⌝ ⌜$⌝ tₙ ⌜$⌝ con ⌜zero⌝ ⌜$⌝ ⌜λ⌝ (⌜λ⌝ (con ⌜suc⌝ ⌜$⌝ var (wk∋ zero)))
 
   open DefEqKit (kit tmkit (λ {Γ} {A} {t} → refl≝ {t = t}) sym≝ trans≝) public
 

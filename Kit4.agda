@@ -20,20 +20,20 @@ module ValKit (¶ : ValKitParams) where
 
   infix 3 _⊩§_
   data _⊩§_ (W : Ctx) : Ctx → Set where
-    []  : W ⊩§ []
-    _∷_ : ∀ {Δ A} (v : W ⊩ A) (vs : W ⊩§ Δ) → W ⊩§ A ∷ Δ
+    ∙   : W ⊩§ ∙
+    _,_ : ∀ {Δ A} (δ : W ⊩§ Δ) (v : W ⊩ A) → W ⊩§ Δ , A
 
-  vrens : ∀ {Δ W W′} → W ⊑ W′ → W ⊩§ Δ → W′ ⊩§ Δ
-  vrens e []       = []
-  vrens e (v ∷ vs) = vren e v ∷ vrens e vs
+  vren§ : ∀ {Δ W W′} → W ⊑ W′ → W ⊩§ Δ → W′ ⊩§ Δ
+  vren§ ρ ∙       = ∙
+  vren§ ρ (δ , v) = vren§ ρ δ , vren ρ v
 
   infix 3 _⊨_
   _⊨_ : Ctx → Ty → Set
   Γ ⊨ A = ∀ {W : Ctx} → W ⊩§ Γ → W ⊩ A
 
   ⟦_⟧∋ : ∀ {Γ A} → Γ ∋ A → Γ ⊨ A
-  ⟦ zero  ⟧∋ (v ∷ vs) = v
-  ⟦ suc i ⟧∋ (v ∷ vs) = ⟦ i ⟧∋ vs
+  ⟦ zero  ⟧∋ (γ , v) = v
+  ⟦ wk∋ i ⟧∋ (γ , v) = ⟦ i ⟧∋ γ
 
 
 ----------------------------------------------------------------------------------------------------
@@ -57,12 +57,12 @@ module ModelKit (¶ : ModelKitParams) where
   module _ {ℳ : Model} where
     infix 3 _⊩§_
     data _⊩§_ (W : World ℳ) : Ctx → Set where
-      []  : W ⊩§ []
-      _∷_ : ∀ {Δ A} (v : W ⊩ A) (vs : W ⊩§ Δ) → W ⊩§ A ∷ Δ
+      ∙   : W ⊩§ ∙
+      _,_ : ∀ {Δ A} (δ : W ⊩§ Δ) (v : W ⊩ A) → W ⊩§ Δ , A
 
-    vrens : ∀ {Δ W W′} → _≤_ ℳ W W′ → W ⊩§ Δ → W′ ⊩§ Δ
-    vrens e []       = []
-    vrens e (v ∷ vs) = vren e v ∷ vrens e vs
+    vren§ : ∀ {Δ W W′} → _≤_ ℳ W W′ → W ⊩§ Δ → W′ ⊩§ Δ
+    vren§ ρ ∙       = ∙
+    vren§ ρ (δ , v) = vren§ ρ δ , vren ρ v
 
   infix 3 _/_⊩_
   _/_⊩_ : ∀ (ℳ : Model) (W : World ℳ) → Ty → Set
@@ -77,8 +77,8 @@ module ModelKit (¶ : ModelKitParams) where
   Γ ⊨ A = ∀ {ℳ : Model} {W : World ℳ} → ℳ / W ⊩§ Γ → ℳ / W ⊩ A
 
   ⟦_⟧∋ : ∀ {Γ A} → Γ ∋ A → Γ ⊨ A
-  ⟦ zero  ⟧∋ (v ∷ vs) = v
-  ⟦ suc i ⟧∋ (v ∷ vs) = ⟦ i ⟧∋ vs
+  ⟦ zero  ⟧∋ (γ , v) = v
+  ⟦ wk∋ i ⟧∋ (γ , v) = ⟦ i ⟧∋ γ
 
 
 ----------------------------------------------------------------------------------------------------
@@ -101,15 +101,14 @@ module SplitModelKit (¶ : SplitModelKitParams) where
   splitmodelkit = ¶
 
   module _ {ℬ} {ℳ : SplitModel ℬ} where
-    -- semantic environments
     infix 3 _⊩§_
     data _⊩§_ (W : World ℳ) : Ctx → Set where
-      []  : W ⊩§ []
-      _∷_ : ∀ {Δ A} (v : _⊩_ ℳ W A) (vs : W ⊩§ Δ) → W ⊩§ A ∷ Δ
+      ∙   : W ⊩§ ∙
+      _,_ : ∀ {Δ A} (δ : W ⊩§ Δ) (v : _⊩_ ℳ W A) → W ⊩§ Δ , A
 
-    vrens : ∀ {Δ W W′} → _≤_ ℳ W W′ → W ⊩§ Δ → W′ ⊩§ Δ
-    vrens e []       = []
-    vrens e (v ∷ vs) = vren e v ∷ vrens e vs
+    vren§ : ∀ {Δ W W′} → _≤_ ℳ W W′ → W ⊩§ Δ → W′ ⊩§ Δ
+    vren§ ρ ∙       = ∙
+    vren§ ρ (δ , v) = vren§ ρ δ , vren ρ v
 
   infix 3 _/_⊩_
   _/_⊩_ : ∀ {ℬ} (ℳ : SplitModel ℬ) (W : World ℳ) → Ty → Set
@@ -124,8 +123,8 @@ module SplitModelKit (¶ : SplitModelKitParams) where
   Γ ⊨ A = ∀ {ℬ} {ℳ : SplitModel ℬ} {W : World ℳ} → ℳ / W ⊩§ Γ → ℳ / W ⊩ A
 
   ⟦_⟧∋ : ∀ {Γ A} → Γ ∋ A → Γ ⊨ A
-  ⟦ zero  ⟧∋ (v ∷ vs) = v
-  ⟦ suc i ⟧∋ (v ∷ vs) = ⟦ i ⟧∋ vs
+  ⟦ zero  ⟧∋ (γ , v) = v
+  ⟦ wk∋ i ⟧∋ (γ , v) = ⟦ i ⟧∋ γ
 
 
 ----------------------------------------------------------------------------------------------------

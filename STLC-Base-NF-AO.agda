@@ -13,12 +13,12 @@ open import Kit3 public
 
 infix 4 _⇒_
 data _⇒_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
-  congλ  : ∀ {A B} {t t′ : A ∷ Γ ⊢ B} (r : t ⇒ t′) → ⌜λ⌝ t ⇒ ⌜λ⌝ t′
+  congλ  : ∀ {A B} {t t′ : Γ , A ⊢ B} (r : t ⇒ t′) → ⌜λ⌝ t ⇒ ⌜λ⌝ t′
   cong$₁ : ∀ {A B} {t₁ t₁′ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (r₁ : t₁ ⇒ t₁′) →
            t₁ ⌜$⌝ t₂ ⇒ t₁′ ⌜$⌝ t₂
   cong$₂ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢ A} (p₁ : NF t₁) (r₂ : t₂ ⇒ t₂′) →
            t₁ ⌜$⌝ t₂ ⇒ t₁ ⌜$⌝ t₂′
-  βred⊃  : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) (p₁ : NF t₁)
+  βred⊃  : ∀ {A B} {t₁ : Γ , A ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) (p₁ : NF t₁)
              (p₂ : NF t₂) →
            ⌜λ⌝ t₁ ⌜$⌝ t₂ ⇒ t′
 
@@ -83,18 +83,17 @@ open ProgKit (kit redkit2 prog⇒) public
 
 ----------------------------------------------------------------------------------------------------
 
-ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊑ Γ′) → t ⇒ t′ → ren e t ⇒ ren e t′
-ren⇒ e (congλ r)                    = congλ (ren⇒ (lift⊑ e) r)
-ren⇒ e (cong$₁ r₁)                  = cong$₁ (ren⇒ e r₁)
-ren⇒ e (cong$₂ p₁ r₂)               = cong$₂ (renNF e p₁) (ren⇒ e r₂)
-ren⇒ e (βred⊃ {t₁ = t₁} refl p₁ p₂) = βred⊃ (rencut e t₁ _ ⁻¹) (renNF (lift⊑ e) p₁) (renNF e p₂)
+ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → t ⇒ t′ → ren ρ t ⇒ ren ρ t′
+ren⇒ ρ (congλ r)                    = congλ (ren⇒ (lift⊑ ρ) r)
+ren⇒ ρ (cong$₁ r₁)                  = cong$₁ (ren⇒ ρ r₁)
+ren⇒ ρ (cong$₂ p₁ r₂)               = cong$₂ (renNF ρ p₁) (ren⇒ ρ r₂)
+ren⇒ ρ (βred⊃ {t₁ = t₁} refl p₁ p₂) = βred⊃ (rencut ρ t₁ _ ⁻¹) (renNF (lift⊑ ρ) p₁) (renNF ρ p₂)
 
-sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} → NNF§ ss → t ⇒ t′ → sub ss t ⇒ sub ss t′
-sub⇒ ps (congλ r)                    = congλ (sub⇒ (liftNNF§ ps) r)
-sub⇒ ps (cong$₁ r₁)                  = cong$₁ (sub⇒ ps r₁)
-sub⇒ ps (cong$₂ p₁ r₂)               = cong$₂ (subNF ps p₁) (sub⇒ ps r₂)
-sub⇒ ps (βred⊃ {t₁ = t₁} refl p₁ p₂) = βred⊃ (subcut _ t₁ _ ⁻¹) (subNF (liftNNF§ ps) p₁)
-                                          (subNF ps p₂)
+sub⇒ : ∀ {Γ Ξ A} {σ : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} → NNF§ σ → t ⇒ t′ → sub σ t ⇒ sub σ t′
+sub⇒ ψ (congλ r)                    = congλ (sub⇒ (liftNNF§ ψ) r)
+sub⇒ ψ (cong$₁ r₁)                  = cong$₁ (sub⇒ ψ r₁)
+sub⇒ ψ (cong$₂ p₁ r₂)               = cong$₂ (subNF ψ p₁) (sub⇒ ψ r₂)
+sub⇒ ψ (βred⊃ {t₁ = t₁} refl p₁ p₂) = βred⊃ (subcut _ t₁ _ ⁻¹) (subNF (liftNNF§ ψ) p₁) (subNF ψ p₂)
 
 
 ----------------------------------------------------------------------------------------------------

@@ -9,25 +9,25 @@ open import Prelude public
 
 ----------------------------------------------------------------------------------------------------
 
-infix 4 _∋_
-data _∋_ : List X → X → Set where
-  zero : ∀ {Γ A} → A ∷ Γ ∋ A
-  suc  : ∀ {B Γ A} (i : Γ ∋ A) → B ∷ Γ ∋ A
+infix 3 _∋_
+data _∋_ : Tsil X → X → Set 𝓍 where
+  zero : ∀ {Γ A} → Γ , A ∋ A
+  wk∋  : ∀ {B Γ A} (i : Γ ∋ A) → Γ , B ∋ A
 
 
 ----------------------------------------------------------------------------------------------------
 
 -- TODO: delete?
 
-injsuc : ∀ {Γ A B} {i i′ : Γ ∋ A} → suc i ≡ _∋_.suc {B} i′ → i ≡ i′
-injsuc refl = refl
+injwk∋ : ∀ {Γ A B} {i i′ : Γ ∋ A} → wk∋ i ≡ wk∋ {B} i′ → i ≡ i′
+injwk∋ refl = refl
 
 infix 4 _≟∋_
 _≟∋_ : ∀ {Γ A} (i i′ : Γ ∋ A) → Dec (i ≡ i′)
 zero  ≟∋ zero   = yes refl
-zero  ≟∋ suc i′ = no λ ()
-suc i ≟∋ zero   = no λ ()
-suc i ≟∋ suc i′ with i ≟∋ i′
+zero  ≟∋ wk∋ i′ = no λ ()
+wk∋ i ≟∋ zero   = no λ ()
+wk∋ i ≟∋ wk∋ i′ with i ≟∋ i′
 ... | yes refl    = yes refl
 ... | no ¬eq      = no λ { refl → refl ↯ ¬eq }
 

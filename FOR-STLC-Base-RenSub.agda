@@ -15,21 +15,21 @@ lidren (var i)          = var & idren∋ i
 lidren (⌜λ⌝ t)          = ⌜λ⌝ & lidren t
 lidren (t₁ ⌜$⌝ t₂)      = _⌜$⌝_ & lidren t₁ ⊗ lidren t₂
 
-compren : ∀ {Γ Γ′ Γ″ A} (e′ : Γ′ ⊑ Γ″) (e : Γ ⊑ Γ′) (t : Γ ⊢ A) →
-          ren (e′ ∘⊑ e) t ≡ (ren e′ ∘ ren e) t
-compren e′ e (var i)     = var & compren∋ e′ e i
-compren e′ e (⌜λ⌝ t)     = ⌜λ⌝ & ( flip ren t & (eqlift⊑ e′ e ⁻¹)
-                                 ⋮ compren (lift⊑ e′) (lift⊑ e) t
+compren : ∀ {Γ Γ′ Γ″ A} (ρ′ : Γ′ ⊑ Γ″) (ρ : Γ ⊑ Γ′) (t : Γ ⊢ A) →
+          ren (ρ′ ∘⊑ ρ) t ≡ (ren ρ′ ∘ ren ρ) t
+compren ρ′ ρ (var i)     = var & compren∋ ρ′ ρ i
+compren ρ′ ρ (⌜λ⌝ t)     = ⌜λ⌝ & ( flip ren t & (eqlift⊑ ρ′ ρ ⁻¹)
+                                 ⋮ compren (lift⊑ ρ′) (lift⊑ ρ) t
                                  )
-compren e′ e (t₁ ⌜$⌝ t₂) = _⌜$⌝_ & compren e′ e t₁ ⊗ compren e′ e t₂
+compren ρ′ ρ (t₁ ⌜$⌝ t₂) = _⌜$⌝_ & compren ρ′ ρ t₁ ⊗ compren ρ′ ρ t₂
 
 -- not really identity
-ridren : ∀ {Γ Γ′ A} (e : Γ ⊑ Γ′) (i : Γ ∋ A) → ren e (var i) ≡ var (ren∋ e i)
-ridren e i = refl
+ridren : ∀ {Γ Γ′ A} (ρ : Γ ⊑ Γ′) (i : Γ ∋ A) → ren ρ (var i) ≡ var (ren∋ ρ i)
+ridren ρ i = refl
 
 -- not really identity
-ridsub : ∀ {Γ Ξ A} (ss : Ξ ⊢§ Γ) (i : Γ ∋ A) → sub ss (var i) ≡ sub∋ ss i
-ridsub ss i = refl
+ridsub : ∀ {Γ Ξ A} (σ : Ξ ⊢§ Γ) (i : Γ ∋ A) → sub σ (var i) ≡ sub∋ σ i
+ridsub σ i = refl
 
 open RenSubKit1 (kit subkit lidren compren ridren ridsub) public
 
@@ -37,13 +37,13 @@ open RenSubKit1 (kit subkit lidren compren ridren ridsub) public
 ----------------------------------------------------------------------------------------------------
 
 -- Kovacs: Tm-ₛ∘ₑ
-eqrensub : ∀ {Γ Ξ Ξ′ A} (e : Ξ ⊑ Ξ′) (ss : Ξ ⊢§ Γ) (t : Γ ⊢ A) →
-           sub (ren§ e ss) t ≡ (ren e ∘ sub ss) t
-eqrensub e ss (var i)     = eqrensub∋ e ss i
-eqrensub e ss (⌜λ⌝ t)     = ⌜λ⌝ & ( flip sub t & eqliftren§ e ss ⁻¹
-                                  ⋮ eqrensub (lift⊑ e) (lift§ ss) t
-                                  )
-eqrensub e ss (t₁ ⌜$⌝ t₂) = _⌜$⌝_ & eqrensub e ss t₁ ⊗ eqrensub e ss t₂
+eqrensub : ∀ {Γ Ξ Ξ′ A} (ρ : Ξ ⊑ Ξ′) (σ : Ξ ⊢§ Γ) (t : Γ ⊢ A) →
+           sub (ren§ ρ σ) t ≡ (ren ρ ∘ sub σ) t
+eqrensub ρ σ (var i)     = eqrensub∋ ρ σ i
+eqrensub ρ σ (⌜λ⌝ t)     = ⌜λ⌝ & ( flip sub t & eqliftren§ ρ σ ⁻¹
+                                 ⋮ eqrensub (lift⊑ ρ) (lift§ σ) t
+                                 )
+eqrensub ρ σ (t₁ ⌜$⌝ t₂) = _⌜$⌝_ & eqrensub ρ σ t₁ ⊗ eqrensub ρ σ t₂
 
 open RenSubKit2 (kit rensubkit1 eqrensub) public
 
@@ -51,13 +51,13 @@ open RenSubKit2 (kit rensubkit1 eqrensub) public
 ----------------------------------------------------------------------------------------------------
 
 -- Kovacs: Tm-ₑ∘ₛ
-eqsubren : ∀ {Γ Γ′ Ξ A} (ss : Ξ ⊢§ Γ′) (e : Γ ⊑ Γ′) (t : Γ ⊢ A) →
-           sub (get§ e ss) t ≡ (sub ss ∘ ren e) t
-eqsubren ss e (var i)     = eqsubren∋ ss e i
-eqsubren ss e (⌜λ⌝ t)     = ⌜λ⌝ & ( flip sub t & (eqliftget§ e ss ⁻¹)
-                                  ⋮ eqsubren (lift§ ss) (lift⊑ e) t
-                                  )
-eqsubren ss e (t₁ ⌜$⌝ t₂) = _⌜$⌝_ & eqsubren ss e t₁ ⊗ eqsubren ss e t₂
+eqsubren : ∀ {Γ Γ′ Ξ A} (σ : Ξ ⊢§ Γ′) (ρ : Γ ⊑ Γ′) (t : Γ ⊢ A) →
+           sub (get§ ρ σ) t ≡ (sub σ ∘ ren ρ) t
+eqsubren σ ρ (var i)     = eqsubren∋ σ ρ i
+eqsubren σ ρ (⌜λ⌝ t)     = ⌜λ⌝ & ( flip sub t & (eqliftget§ ρ σ ⁻¹)
+                                 ⋮ eqsubren (lift§ σ) (lift⊑ ρ) t
+                                 )
+eqsubren σ ρ (t₁ ⌜$⌝ t₂) = _⌜$⌝_ & eqsubren σ ρ t₁ ⊗ eqsubren σ ρ t₂
 
 -- Kovacs: Tm-idₛ
 lidsub : ∀ {Γ A} (t : Γ ⊢ A) → sub id§ t ≡ t
@@ -71,13 +71,13 @@ open RenSubKit3 (kit rensubkit2 eqsubren lidsub) public
 ----------------------------------------------------------------------------------------------------
 
 -- Kovacs: Tm-∘ₛ
-compsub : ∀ {Γ Ξ Ξ′ A} (ss′ : Ξ′ ⊢§ Ξ) (ss : Ξ ⊢§ Γ) (t : Γ ⊢ A) →
-          sub (sub§ ss′ ss) t ≡ (sub ss′ ∘ sub ss) t
-compsub ss′ ss (var i)     = compsub∋ ss′ ss i
-compsub ss′ ss (⌜λ⌝ t)     = ⌜λ⌝ & ( flip sub t & eqliftsub§ ss′ ss ⁻¹
-                                   ⋮ compsub (lift§ ss′) (lift§ ss) t
-                                   )
-compsub ss′ ss (t₁ ⌜$⌝ t₂) = _⌜$⌝_ & compsub ss′ ss t₁ ⊗ compsub ss′ ss t₂
+compsub : ∀ {Γ Ξ Ξ′ A} (σ′ : Ξ′ ⊢§ Ξ) (σ : Ξ ⊢§ Γ) (t : Γ ⊢ A) →
+          sub (sub§ σ′ σ) t ≡ (sub σ′ ∘ sub σ) t
+compsub σ′ σ (var i)     = compsub∋ σ′ σ i
+compsub σ′ σ (⌜λ⌝ t)     = ⌜λ⌝ & ( flip sub t & eqliftsub§ σ′ σ ⁻¹
+                                 ⋮ compsub (lift§ σ′) (lift§ σ) t
+                                 )
+compsub σ′ σ (t₁ ⌜$⌝ t₂) = _⌜$⌝_ & compsub σ′ σ t₁ ⊗ compsub σ′ σ t₂
 
 open RenSubKit4 (kit rensubkit3 compsub) public
 

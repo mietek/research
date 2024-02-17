@@ -6,6 +6,8 @@ open import GAN public
 
 ----------------------------------------------------------------------------------------------------
 
+-- normal forms are isomorphic to not-reducible forms
+
 module ProgKit-GAN (¶ : ProgKitParams) where
   open ProgKitParams ¶
   open ProgKit ¶
@@ -16,11 +18,11 @@ module ProgKit-GAN (¶ : ProgKitParams) where
 
     NF≃¬RF : ∀ {Γ A} {t : Γ ⊢ A} → NF t ≃ (¬ RF t)
     NF≃¬RF = record
-      { to      = NF→¬RF
-      ; from    = ¬RF→NF
-      ; from∘to = λ p → uniNF ((¬RF→NF ∘ NF→¬RF) p) p
-      ; to∘from = λ p → uni¬RF ((NF→¬RF ∘ ¬RF→NF) p) p
-      }
+               { to      = NF→¬RF
+               ; from    = ¬RF→NF
+               ; from∘to = λ p → uniNF ((¬RF→NF ∘ NF→¬RF) p) p
+               ; to∘from = λ p → uni¬RF ((NF→¬RF ∘ ¬RF→NF) p) p
+               }
 
 
 ----------------------------------------------------------------------------------------------------

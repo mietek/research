@@ -17,7 +17,7 @@ data _⇒_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
            t₁ ⌜$⌝ t₂ ⇒ t₁′ ⌜$⌝ t₂
   cong$₂ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢ A} (p₁ : NF t₁) (r₂ : t₂ ⇒ t₂′) →
            t₁ ⌜$⌝ t₂ ⇒ t₁ ⌜$⌝ t₂′
-  βred⊃  : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) (p₂ : NF t₂) →
+  βred⊃  : ∀ {A B} {t₁ : Γ , A ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) (p₂ : NF t₂) →
            ⌜λ⌝ t₁ ⌜$⌝ t₂ ⇒ t′
 
 open RedKit1 (kit tmkit _⇒_) public
@@ -72,15 +72,15 @@ open ProgKit (kit redkit2 prog⇒) public hiding (NF?)
 
 ----------------------------------------------------------------------------------------------------
 
-ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊑ Γ′) → t ⇒ t′ → ren e t ⇒ ren e t′
-ren⇒ e (cong$₁ r₁)               = cong$₁ (ren⇒ e r₁)
-ren⇒ e (cong$₂ p₁ r₂)            = cong$₂ (renNF e p₁) (ren⇒ e r₂)
-ren⇒ e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut e t₁ _ ⁻¹) (renNF e p₂)
+ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → t ⇒ t′ → ren ρ t ⇒ ren ρ t′
+ren⇒ ρ (cong$₁ r₁)               = cong$₁ (ren⇒ ρ r₁)
+ren⇒ ρ (cong$₂ p₁ r₂)            = cong$₂ (renNF ρ p₁) (ren⇒ ρ r₂)
+ren⇒ ρ (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut ρ t₁ _ ⁻¹) (renNF ρ p₂)
 
-sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} → NNF§ ss → t ⇒ t′ → sub ss t ⇒ sub ss t′
-sub⇒ ps (cong$₁ r₁)               = cong$₁ (sub⇒ ps r₁)
-sub⇒ ps (cong$₂ p₁ r₂)            = cong$₂ (subNF ps p₁) (sub⇒ ps r₂)
-sub⇒ ps (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (subcut _ t₁ _ ⁻¹) (subNF ps p₂)
+sub⇒ : ∀ {Γ Ξ A} {σ : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} → NNF§ σ → t ⇒ t′ → sub σ t ⇒ sub σ t′
+sub⇒ ψ (cong$₁ r₁)               = cong$₁ (sub⇒ ψ r₁)
+sub⇒ ψ (cong$₂ p₁ r₂)            = cong$₂ (subNF ψ p₁) (sub⇒ ψ r₂)
+sub⇒ ψ (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (subcut _ t₁ _ ⁻¹) (subNF ψ p₂)
 
 
 ----------------------------------------------------------------------------------------------------

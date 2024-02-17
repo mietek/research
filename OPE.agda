@@ -9,91 +9,88 @@ open import DBI public
 
 ----------------------------------------------------------------------------------------------------
 
-infix 4 _⊑_
-data _⊑_ : List X → List X → Set 𝓍 where
-  stop⊑ : [] ⊑ []
-  wk⊑   : ∀ {B Γ Γ′} (e : Γ ⊑ Γ′) → Γ ⊑ B ∷ Γ′
-  lift⊑ : ∀ {B Γ Γ′} (e : Γ ⊑ Γ′) → B ∷ Γ ⊑ B ∷ Γ′
+infix 3 _⊑_
+data _⊑_ : Tsil X → Tsil X → Set 𝓍 where
+  stop  : ∙ ⊑ ∙
+  wk⊑   : ∀ {B Γ Γ′} (ρ : Γ ⊑ Γ′) → Γ ⊑ Γ′ , B
+  lift⊑ : ∀ {B Γ Γ′} (ρ : Γ ⊑ Γ′) → Γ , B ⊑ Γ′ , B
 
 id⊑ refl⊑ : ∀ {Γ} → Γ ⊑ Γ
-id⊑ {[]}    = stop⊑
-id⊑ {A ∷ Γ} = lift⊑ id⊑
+id⊑ {∙}     = stop
+id⊑ {Γ , A} = lift⊑ id⊑
 refl⊑ = id⊑
 
 -- Kovacs: flip _∘ₑ_
 _∘⊑_ : ∀ {Γ Γ′ Γ″} → Γ′ ⊑ Γ″ → Γ ⊑ Γ′ → Γ ⊑ Γ″
-stop⊑    ∘⊑ e       = e
-wk⊑ e′   ∘⊑ e       = wk⊑ (e′ ∘⊑ e)
-lift⊑ e′ ∘⊑ wk⊑ e   = wk⊑ (e′ ∘⊑ e)
-lift⊑ e′ ∘⊑ lift⊑ e = lift⊑ (e′ ∘⊑ e)
+stop     ∘⊑ ρ       = ρ
+wk⊑ ρ′   ∘⊑ ρ       = wk⊑ (ρ′ ∘⊑ ρ)
+lift⊑ ρ′ ∘⊑ wk⊑ ρ   = wk⊑ (ρ′ ∘⊑ ρ)
+lift⊑ ρ′ ∘⊑ lift⊑ ρ = lift⊑ (ρ′ ∘⊑ ρ)
 
 trans⊑ _○_ : ∀ {Γ Γ′ Γ″} → Γ ⊑ Γ′ → Γ′ ⊑ Γ″ → Γ ⊑ Γ″
 trans⊑ = flip _∘⊑_
 _○_ = trans⊑
 
-lid⊑ : ∀ {Γ Γ′} (e : Γ ⊑ Γ′) → id⊑ ∘⊑ e ≡ e
-lid⊑ stop⊑     = refl
-lid⊑ (wk⊑ e)   = wk⊑ & lid⊑ e
-lid⊑ (lift⊑ e) = lift⊑ & lid⊑ e
+lid⊑ : ∀ {Γ Γ′} (ρ : Γ ⊑ Γ′) → id⊑ ∘⊑ ρ ≡ ρ
+lid⊑ stop      = refl
+lid⊑ (wk⊑ ρ)   = wk⊑ & lid⊑ ρ
+lid⊑ (lift⊑ ρ) = lift⊑ & lid⊑ ρ
 
-rid⊑ : ∀ {Γ Γ′} (e : Γ ⊑ Γ′) → e ∘⊑ id⊑ ≡ e
-rid⊑ stop⊑     = refl
-rid⊑ (wk⊑ e)   = wk⊑ & rid⊑ e
-rid⊑ (lift⊑ e) = lift⊑ & rid⊑ e
+rid⊑ : ∀ {Γ Γ′} (ρ : Γ ⊑ Γ′) → ρ ∘⊑ id⊑ ≡ ρ
+rid⊑ stop      = refl
+rid⊑ (wk⊑ ρ)   = wk⊑ & rid⊑ ρ
+rid⊑ (lift⊑ ρ) = lift⊑ & rid⊑ ρ
 
-ass⊑ : ∀ {Γ Γ′ Γ″ Γ‴} (e″ : Γ″ ⊑ Γ‴) (e′ : Γ′ ⊑ Γ″) (e : Γ ⊑ Γ′) →
-       e″ ∘⊑ (e′ ∘⊑ e) ≡ (e″ ∘⊑ e′) ∘⊑ e
-ass⊑ stop⊑      e′         e         = refl
-ass⊑ (wk⊑ e″)   e′         e         = wk⊑ & ass⊑ e″ e′ e
-ass⊑ (lift⊑ e″) (wk⊑ e′)   e         = wk⊑ & ass⊑ e″ e′ e
-ass⊑ (lift⊑ e″) (lift⊑ e′) (wk⊑ e)   = wk⊑ & ass⊑ e″ e′ e
-ass⊑ (lift⊑ e″) (lift⊑ e′) (lift⊑ e) = lift⊑ & ass⊑ e″ e′ e
+ass⊑ : ∀ {Γ Γ′ Γ″ Γ‴} (ρ″ : Γ″ ⊑ Γ‴) (ρ′ : Γ′ ⊑ Γ″) (ρ : Γ ⊑ Γ′) →
+       ρ″ ∘⊑ (ρ′ ∘⊑ ρ) ≡ (ρ″ ∘⊑ ρ′) ∘⊑ ρ
+ass⊑ stop       ρ′         ρ         = refl
+ass⊑ (wk⊑ ρ″)   ρ′         ρ         = wk⊑ & ass⊑ ρ″ ρ′ ρ
+ass⊑ (lift⊑ ρ″) (wk⊑ ρ′)   ρ         = wk⊑ & ass⊑ ρ″ ρ′ ρ
+ass⊑ (lift⊑ ρ″) (lift⊑ ρ′) (wk⊑ ρ)   = wk⊑ & ass⊑ ρ″ ρ′ ρ
+ass⊑ (lift⊑ ρ″) (lift⊑ ρ′) (lift⊑ ρ) = lift⊑ & ass⊑ ρ″ ρ′ ρ
 
 
 ----------------------------------------------------------------------------------------------------
 
 ren∋ : ∀ {Γ Γ′ A} → Γ ⊑ Γ′ → Γ ∋ A → Γ′ ∋ A
-ren∋ stop⊑     i       = i
-ren∋ (wk⊑ e)   i       = suc (ren∋ e i)
-ren∋ (lift⊑ e) zero    = zero
-ren∋ (lift⊑ e) (suc i) = suc (ren∋ e i)
-
-wk∋ : ∀ {B Γ A} → Γ ∋ A → B ∷ Γ ∋ A
-wk∋ i = ren∋ (wk⊑ id⊑) i
+ren∋ stop      i       = i
+ren∋ (wk⊑ ρ)   i       = wk∋ (ren∋ ρ i)
+ren∋ (lift⊑ ρ) zero    = zero
+ren∋ (lift⊑ ρ) (wk∋ i) = wk∋ (ren∋ ρ i)
 
 idren∋ : ∀ {Γ A} (i : Γ ∋ A) → ren∋ id⊑ i ≡ i
 idren∋ zero    = refl
-idren∋ (suc i) = suc & idren∋ i
+idren∋ (wk∋ i) = wk∋ & idren∋ i
 
-compren∋ : ∀ {Γ Γ′ Γ″ A} (e′ : Γ′ ⊑ Γ″) (e : Γ ⊑ Γ′) (i : Γ ∋ A) →
-           ren∋ (e′ ∘⊑ e) i ≡ (ren∋ e′ ∘ ren∋ e) i
-compren∋ stop⊑      e         i       = refl
-compren∋ (wk⊑ e′)   e         i       = suc & compren∋ e′ e i
-compren∋ (lift⊑ e′) (wk⊑ e)   i       = suc & compren∋ e′ e i
-compren∋ (lift⊑ e′) (lift⊑ e) zero    = refl
-compren∋ (lift⊑ e′) (lift⊑ e) (suc i) = suc & compren∋ e′ e i
+compren∋ : ∀ {Γ Γ′ Γ″ A} (ρ′ : Γ′ ⊑ Γ″) (ρ : Γ ⊑ Γ′) (i : Γ ∋ A) →
+           ren∋ (ρ′ ∘⊑ ρ) i ≡ (ren∋ ρ′ ∘ ren∋ ρ) i
+compren∋ stop       ρ         i       = refl
+compren∋ (wk⊑ ρ′)   ρ         i       = wk∋ & compren∋ ρ′ ρ i
+compren∋ (lift⊑ ρ′) (wk⊑ ρ)   i       = wk∋ & compren∋ ρ′ ρ i
+compren∋ (lift⊑ ρ′) (lift⊑ ρ) zero    = refl
+compren∋ (lift⊑ ρ′) (lift⊑ ρ) (wk∋ i) = wk∋ & compren∋ ρ′ ρ i
 
 
 ----------------------------------------------------------------------------------------------------
 
 -- TODO: delete?
 
-injren∋ : ∀ {Γ Γ′ A} {e : Γ ⊑ Γ′} {i i′ : Γ ∋ A} → ren∋ e i ≡ ren∋ e i′ → i ≡ i′
-injren∋ {e = stop⊑}   {i}     {i′}     eq   = eq
-injren∋ {e = wk⊑ e}   {i}     {i′}     eq   = injren∋ (injsuc eq)
-injren∋ {e = lift⊑ e} {zero}  {zero}   refl = refl
-injren∋ {e = lift⊑ e} {suc i} {suc i′} eq   = suc & (injren∋ (injsuc eq))
+injren∋ : ∀ {Γ Γ′ A} {ρ : Γ ⊑ Γ′} {i i′ : Γ ∋ A} → ren∋ ρ i ≡ ren∋ ρ i′ → i ≡ i′
+injren∋ {ρ = stop}    {i}     {i′}     eq   = eq
+injren∋ {ρ = wk⊑ ρ}   {i}     {i′}     eq   = injren∋ (injwk∋ eq)
+injren∋ {ρ = lift⊑ ρ} {zero}  {zero}   refl = refl
+injren∋ {ρ = lift⊑ ρ} {wk∋ i} {wk∋ i′} eq   = wk∋ & (injren∋ (injwk∋ eq))
 
-unren∋ : ∀ {Γ Γ′ A} (e : Γ ⊑ Γ′) (i′ : Γ′ ∋ A) → Dec (Σ (Γ ∋ A) λ i → i′ ≡ ren∋ e i)
-unren∋ stop⊑     i′       = yes (i′ , refl)
-unren∋ (wk⊑ e)   zero     = no λ ()
-unren∋ (wk⊑ e)   (suc i′) with unren∋ e i′
+unren∋ : ∀ {Γ Γ′ A} (ρ : Γ ⊑ Γ′) (i′ : Γ′ ∋ A) → Dec (Σ (Γ ∋ A) λ i → i′ ≡ ren∋ ρ i)
+unren∋ stop      i′       = yes (i′ , refl)
+unren∋ (wk⊑ ρ)   zero     = no λ ()
+unren∋ (wk⊑ ρ)   (wk∋ i′) with unren∋ ρ i′
 ... | no ¬p                 = no λ { (i , refl) → (i , refl) ↯ ¬p }
 ... | yes (i , refl)        = yes (i , refl)
-unren∋ (lift⊑ e) zero     = yes (zero , refl)
-unren∋ (lift⊑ e) (suc i′) with unren∋ e i′
-... | no ¬p                 = no λ { (suc i , refl) → (i , refl) ↯ ¬p }
-... | yes (i , refl)        = yes (suc i , refl)
+unren∋ (lift⊑ ρ) zero     = yes (zero , refl)
+unren∋ (lift⊑ ρ) (wk∋ i′) with unren∋ ρ i′
+... | no ¬p                 = no λ { (wk∋ i , refl) → (i , refl) ↯ ¬p }
+... | yes (i , refl)        = yes (wk∋ i , refl)
 
 
 ----------------------------------------------------------------------------------------------------

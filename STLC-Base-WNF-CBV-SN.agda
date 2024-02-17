@@ -52,70 +52,70 @@ skip⇓HWN = skip⇒*HWN ∘ fst
 ----------------------------------------------------------------------------------------------------
 
 -- looks almost like half of subcut, but the contexts don’t match
--- subcut : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : (A ∷ Γ) ⊢ B) (t₂ : Γ ⊢ A) →
---          sub (lifts ss) t₁ [ sub ss t₂ ] ≡ sub ss (t₁ [ t₂ ])
-lem₀ : ∀ {Γ Ξ A B} (ss : Ξ ⊢§ Γ) (t₁ : A ∷ Γ ⊢ B) (t₂ : Ξ ⊢ A) →
-       (_[ t₂ ] ∘ sub (lift§ ss)) t₁ ≡ sub (t₂ ∷ ss) t₁
-lem₀ ss t₁ t₂ = compsub (t₂ ∷ id§) (lift§ ss) t₁ ⁻¹
-              ⋮ (flip sub t₁ ∘ (t₂ ∷_)) & ( eqsub§ t₂ id§ ss
-                                          ⋮ lidsub§ ss
-                                          )
+-- subcut : ∀ {Γ Ξ A B} (σ : Ξ ⊢* Γ) (t₁ : (A ∷ Γ) ⊢ B) (t₂ : Γ ⊢ A) →
+--          sub (lift§ σ) t₁ [ sub σ t₂ ] ≡ sub σ (t₁ [ t₂ ])
+lem₀ : ∀ {Γ Ξ A B} (σ : Ξ ⊢§ Γ) (t₁ : Γ , A ⊢ B) (t₂ : Ξ ⊢ A) →
+       (_[ t₂ ] ∘ sub (lift§ σ)) t₁ ≡ sub (σ , t₂) t₁
+lem₀ σ t₁ t₂ = compsub (id§ , t₂) (lift§ σ) t₁ ⁻¹
+             ⋮ (flip sub t₁ ∘ (_, t₂)) & ( eqsub§ id§ t₂ σ
+                                         ⋮ lidsub§ σ
+                                         )
 
-lem₁ : ∀ {Γ Ξ A B} (ss : Ξ ⊢§ Γ) (t₁ : A ∷ Γ ⊢ B) {t₂ : Ξ ⊢ A} (p₂ : NF t₂) →
-       ⌜λ⌝ (sub (lift§ ss) t₁) ⌜$⌝ t₂ ⇒ sub (t₂ ∷ ss) t₁
-lem₁ ss t₁ p₂ = βred⊃ (lem₀ ss t₁ _ ⁻¹) p₂
+lem₁ : ∀ {Γ Ξ A B} (σ : Ξ ⊢§ Γ) (t₁ : Γ , A ⊢ B) {t₂ : Ξ ⊢ A} (p₂ : NF t₂) →
+       ⌜λ⌝ (sub (lift§ σ) t₁) ⌜$⌝ t₂ ⇒ sub (σ , t₂) t₁
+lem₁ σ t₁ p₂ = βred⊃ (lem₀ σ t₁ _ ⁻¹) p₂
 
-lem₂ : ∀ {Γ Ξ A B} (ss : Ξ ⊢§ Γ) (t₁ : A ∷ Γ ⊢ B) {t₂ : Ξ ⊢ A} (p₂ : NF t₂) {t′ : Ξ ⊢ B} →
-       sub (t₂ ∷ ss) t₁ ⇓ t′ →
-       ⌜λ⌝ (sub (lift§ ss) t₁) ⌜$⌝ t₂ ⇓ t′
-lem₂ ss t₁ p₂ (rs , p′) = (step (lem₁ ss t₁ p₂) rs) , p′
+lem₂ : ∀ {Γ Ξ A B} (σ : Ξ ⊢§ Γ) (t₁ : Γ , A ⊢ B) {t₂ : Ξ ⊢ A} (p₂ : NF t₂) {t′ : Ξ ⊢ B} →
+       sub (σ , t₂) t₁ ⇓ t′ →
+       ⌜λ⌝ (sub (lift§ σ) t₁) ⌜$⌝ t₂ ⇓ t′
+lem₂ σ t₁ p₂ (rs , p′) = (step (lem₁ σ t₁ p₂) rs) , p′
 
-lem₃ : ∀ {Γ Ξ A B} (ss : Ξ ⊢§ Γ) (t₁ : A ∷ Γ ⊢ B) {t₂ : Ξ ⊢ A} (p₂ : NF t₂) →
-       WN (sub (t₂ ∷ ss) t₁) →
-       WN (⌜λ⌝ (sub (lift§ ss) t₁) ⌜$⌝ t₂)
-lem₃ ss t₁ p₂ (t′ , n) = t′ , lem₂ ss t₁ p₂ n
+lem₃ : ∀ {Γ Ξ A B} (σ : Ξ ⊢§ Γ) (t₁ : Γ , A ⊢ B) {t₂ : Ξ ⊢ A} (p₂ : NF t₂) →
+       WN (sub (σ , t₂) t₁) →
+       WN (⌜λ⌝ (sub (lift§ σ) t₁) ⌜$⌝ t₂)
+lem₃ σ t₁ p₂ (t′ , n) = t′ , lem₂ σ t₁ p₂ n
 
 mutual
-  lem₄ : ∀ {Γ Ξ A B} (ss : Ξ ⊢§ Γ) (t₁ : A ∷ Γ ⊢ B) {t₂ : Ξ ⊢ A} (p₂ : NF t₂) →
-         HWN (sub (t₂ ∷ ss) t₁) →
-         HWN (⌜λ⌝ (sub (lift§ ss) t₁) ⌜$⌝ t₂)
-  lem₄ ss t₁ p₂ (wn , hwn!) = lem₃ ss t₁ p₂ wn , lem₄! ss t₁ p₂ hwn!
+  lem₄ : ∀ {Γ Ξ A B} (σ : Ξ ⊢§ Γ) (t₁ : Γ , A ⊢ B) {t₂ : Ξ ⊢ A} (p₂ : NF t₂) →
+         HWN (sub (σ , t₂) t₁) →
+         HWN (⌜λ⌝ (sub (lift§ σ) t₁) ⌜$⌝ t₂)
+  lem₄ σ t₁ p₂ (wn , hwn!) = lem₃ σ t₁ p₂ wn , lem₄! σ t₁ p₂ hwn!
 
-  lem₄! : ∀ {Γ Ξ A B} (ss : Ξ ⊢§ Γ) (t₁ : A ∷ Γ ⊢ B) {t₂ : Ξ ⊢ A} (p₂ : NF t₂) →
-          HWN! (sub (t₂ ∷ ss) t₁) →
-          HWN! (⌜λ⌝ (sub (lift§ ss) t₁) ⌜$⌝ t₂)
-  lem₄! {B = ⌜◦⌝}       ss t₁ p₂ unit      = unit
-  lem₄! {B = B₁ ⌜⊃⌝ B₂} ss t₁ p₂ f    hwn₂ = stepHWN (cong$₁ (lem₁ ss t₁ p₂)) (f hwn₂)
+  lem₄! : ∀ {B Γ Ξ A} (σ : Ξ ⊢§ Γ) (t₁ : Γ , A ⊢ B) {t₂ : Ξ ⊢ A} (p₂ : NF t₂) →
+          HWN! (sub (σ , t₂) t₁) →
+          HWN! (⌜λ⌝ (sub (lift§ σ) t₁) ⌜$⌝ t₂)
+  lem₄! {⌜◦⌝}       σ t₁ p₂ unit      = unit
+  lem₄! {B₁ ⌜⊃⌝ B₂} σ t₁ p₂ f    hwn₂ = stepHWN (cong$₁ (lem₁ σ t₁ p₂)) (f hwn₂)
 
 
 ----------------------------------------------------------------------------------------------------
 
 data HWN§ {Γ} : ∀ {Δ} → Γ ⊢§ Δ → Set where
-  []  : HWN§ []
-  _∷_ : ∀ {A Δ} {t : Γ ⊢ A} {ts : Γ ⊢§ Δ} → HWN t → HWN§ ts → HWN§ (t ∷ ts)
+  ∙   : HWN§ ∙
+  _,_ : ∀ {Δ A} {τ : Γ ⊢§ Δ} {t : Γ ⊢ A} (θ : HWN§ τ) (hwn : HWN t) → HWN§ (τ , t)
 
-sub∋HWN : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} (hwns : HWN§ ss) (i : Γ ∋ A) → HWN (sub∋ ss i)
-sub∋HWN (hwn ∷ hwns) zero    = hwn
-sub∋HWN (hwn ∷ hwns) (suc i) = sub∋HWN hwns i
+sub∋HWN : ∀ {Γ Ξ A} {σ : Ξ ⊢§ Γ} (θ : HWN§ σ) (i : Γ ∋ A) → HWN (sub∋ σ i)
+sub∋HWN (θ , hwn) zero    = hwn
+sub∋HWN (θ , hwn) (wk∋ i) = sub∋HWN θ i
 
 mutual
-  lem₅ : ∀ {Γ Ξ A B} (ss : Ξ ⊢§ Γ) (hwns : HWN§ ss) (t₁ : A ∷ Γ ⊢ B) (t₁′ : Ξ ⊢ A ⌜⊃⌝ B) {t₂ : Ξ ⊢ A} →
-         HWN t₂ → HWN (⌜λ⌝ (sub (lift§ ss) t₁) ⌜$⌝ t₂)
-  lem₅ ss hwns t₁ t₁′ hwn₂@((t₂′ , n₂@(rs₂ , p₂′)) , hwn!₂) =
+  lem₅ : ∀ {Γ Ξ A B} (σ : Ξ ⊢§ Γ) (θ : HWN§ σ) (t₁ : Γ , A ⊢ B) (t₁′ : Ξ ⊢ A ⌜⊃⌝ B) {t₂ : Ξ ⊢ A} →
+         HWN t₂ → HWN (⌜λ⌝ (sub (lift§ σ) t₁) ⌜$⌝ t₂)
+  lem₅ σ θ t₁ t₁′ hwn₂@((t₂′ , n₂@(rs₂ , p₂′)) , hwn!₂) =
     let hwn₂′ = skip⇓HWN n₂ hwn₂
-      in step⇒*HWN (cong$₂⇒* ⌜λ⌝- rs₂) (lem₄ ss t₁ p₂′ (subHWN (t₂′ ∷ ss) (hwn₂′ ∷ hwns) t₁))
+      in step⇒*HWN (cong$₂⇒* ⌜λ⌝- rs₂) (lem₄ σ t₁ p₂′ (subHWN (σ , t₂′) (θ , hwn₂′) t₁))
 
-  subHWN : ∀ {Γ Ξ A} (ss : Ξ ⊢§ Γ) (hwns : HWN§ ss) (t : Γ ⊢ A) → HWN (sub ss t)
-  subHWN ss hwns (var i)     = sub∋HWN hwns i
-  subHWN ss hwns (⌜λ⌝ t)     = let t′ = sub ss (⌜λ⌝ t)
-                                 in (t′ , done , ⌜λ⌝-) , λ {t₂} → lem₅ ss hwns t t′ {t₂}
-  subHWN ss hwns (t₁ ⌜$⌝ t₂) = let wn , hwn! = subHWN ss hwns t₁
-                                 in hwn! (subHWN ss hwns t₂)
+  subHWN : ∀ {Γ Ξ A} (σ : Ξ ⊢§ Γ) (θ : HWN§ σ) (t : Γ ⊢ A) → HWN (sub σ t)
+  subHWN σ θ (var i)     = sub∋HWN θ i
+  subHWN σ θ (⌜λ⌝ t)     = let t′ = sub σ (⌜λ⌝ t)
+                             in (t′ , done , ⌜λ⌝-) , λ {t₂} → lem₅ σ θ t t′ {t₂}
+  subHWN σ θ (t₁ ⌜$⌝ t₂) = let wn , hwn! = subHWN σ θ t₁
+                             in hwn! (subHWN σ θ t₂)
 
-hwn : ∀ {A} (t : [] ⊢ A) → HWN t
-hwn t = subst HWN (lidsub t) (subHWN [] [] t)
+hwn : ∀ {A} (t : ∙ ⊢ A) → HWN t
+hwn t = subst HWN (lidsub t) (subHWN ∙ ∙ t)
 
-wn : ∀ {A} (t : [] ⊢ A) → WN t
+wn : ∀ {A} (t : ∙ ⊢ A) → WN t
 wn = fst ∘ hwn
 
 
@@ -124,7 +124,7 @@ wn = fst ∘ hwn
 -- general shape of the definition due to Altenkirch
 -- TODO: this specific definition is probably wrong, as it uses the CBV reduction strategy
 data SN {Γ A} (t : Γ ⊢ A) : Set where
-  make : (∀ {t′} → t ⇒ t′ → SN t′) → SN t
+  make : ∀ (h : ∀ {t′} → t ⇒ t′ → SN t′) → SN t
 
 recSN : ∀ {𝓍} (X : ∀ {Γ A} → Γ ⊢ A → Set 𝓍) {Γ A} {t : Γ ⊢ A} → SN t →
           (∀ {t} → (∀ {t′} → t ⇒ t′ → X t′) → X t) →
@@ -144,7 +144,7 @@ WN→SN : ∀ {Γ A} {t : Γ ⊢ A} → WN t → SN t
 WN→SN (t′ , done , p′)      = make λ r → r ↯ NF→¬R p′
 WN→SN (t′ , step r rs , p′) = make λ r′ → subst SN (det⇒ r r′) (WN→SN (t′ , rs , p′))
 
-sn : ∀ {A} (t : [] ⊢ A) → SN t
+sn : ∀ {A} (t : ∙ ⊢ A) → SN t
 sn = WN→SN ∘ wn
 
 

@@ -12,41 +12,41 @@ open import GAN public
 
 ⟪⊑⟫ : Category 𝓍 𝓍
 ⟪⊑⟫ = record
-        { Obj  = List X
+        { Obj  = Tsil X
         ; _▻_  = _⊑_
         ; id   = id⊑
-        ; _∘_  = _∘⊑_ -- flip _○_
+        ; _∘_  = _∘⊑_
         ; lid▻ = lid⊑
         ; rid▻ = rid⊑
         ; ass▻ = ass⊑
-        ; ◅ssa = λ e e′ e″ → ass⊑ e″ e′ e ⁻¹
+        ; ◅ssa = λ ρ ρ′ ρ″ → ass⊑ ρ″ ρ′ ρ ⁻¹
         }
 
 ⟪⊒⟫ : Category 𝓍 𝓍
 ⟪⊒⟫ = ⟪⊑⟫ ᵒᵖ
 
-⟪lift⊑⟫ : ∀ (B : X) → Functor ⟪⊑⟫ ⟪⊑⟫
-⟪lift⊑⟫ B = record
-              { ƒObj = B ∷_
-              ; ƒ    = lift⊑
-              ; idƒ  = refl
-              ; _∘ƒ_ = λ e′ e → refl
-              }
-
-⟪wk⊑⟫ : ∀ (B : X) → NatTrans (⟪Id⟫ ⟪⊑⟫) (⟪lift⊑⟫ B)
-⟪wk⊑⟫ B = record
-            { η    = λ Γ → wk⊑ id⊑
-            ; natη = λ Γ Δ e → wk⊑ & (lid⊑ e ⋮ rid⊑ e ⁻¹)
+ƒlift⊑ : X → Functor ⟪⊑⟫ ⟪⊑⟫
+ƒlift⊑ B = record
+            { ƒObj = _, B
+            ; ƒ    = lift⊑
+            ; idƒ  = refl
+            ; _∘ƒ_ = λ ρ′ ρ → refl
             }
 
+ηwk⊑ : ∀ (B : X) → NatTrans (ƒId ⟪⊑⟫) (ƒlift⊑ B)
+ηwk⊑ B = record
+           { η    = λ Γ → wk⊑ id⊑
+           ; natη = λ Γ Δ ρ → wk⊑ & (lid⊑ ρ ⋮ rid⊑ ρ ⁻¹)
+           }
+
 module _ (⚠ : FunExt) where
-  ⟪ren∋⟫ : ∀ (A : X) → Presheaf ⟪⊒⟫ lzero
-  ⟪ren∋⟫ A = record
-               { ƒObj = _∋ A
-               ; ƒ    = ren∋
-               ; idƒ  = ⚠ idren∋
-               ; _∘ƒ_ = λ e′ e → ⚠ (compren∋ e′ e)
-               }
+  ψren∋ : X → Presheaf ⟪⊒⟫ 𝓍
+  ψren∋ A = record
+              { ƒObj = _∋ A
+              ; ƒ    = ren∋
+              ; idƒ  = ⚠ idren∋
+              ; _∘ƒ_ = λ ρ′ ρ → ⚠ (compren∋ ρ′ ρ)
+              }
 
 
 ----------------------------------------------------------------------------------------------------

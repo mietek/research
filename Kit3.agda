@@ -11,6 +11,7 @@ record RedKit1Params : Set₁ where
     tmkit : TmKitParams
   open TmKitParams tmkit public
   open TmKit tmkit public hiding (tmkit)
+  infix 4 _⇒_
   field
     _⇒_ : ∀ {Γ A} → Γ ⊢ A → Γ ⊢ A → Set
 
@@ -18,15 +19,16 @@ module RedKit1 (¶ : RedKit1Params) where
   open RedKit1Params ¶
   redkit1 = ¶
 
-  -- reducible form
+  -- reducible forms
   RF : ∀ {Γ A} → Γ ⊢ A → Set
   RF t = Σ _ λ t′ → t ⇒ t′
 
-  -- irreducible form
+  -- irreducible forms
   ¬R : ∀ {Γ A} → Γ ⊢ A → Set
   ¬R t = ∀ {t′} → ¬ t ⇒ t′
 
   -- multi-step reduction
+  -- TODO: switch direction
   infix 4 _⇒*_
   data _⇒*_ {Γ A} : Γ ⊢ A → Γ ⊢ A → Set where
     done : ∀ {t} → t ⇒* t
@@ -42,7 +44,7 @@ module RedKit1 (¶ : RedKit1Params) where
   module ⇒*-Reasoning where
     infix 1 begin_
     begin_ : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒* t′ → t ⇒* t′
-    begin_ rs = rs
+    begin rs = rs
 
     infixr 2 _⇒*⟨_⟩_
     _⇒*⟨_⟩_ : ∀ {Γ A} (t : Γ ⊢ A) {t′ t″} → t ⇒* t′ → t′ ⇒* t″ → t ⇒* t″
@@ -98,11 +100,10 @@ module RedKit2 (¶ : RedKit2Params) where
   NF→¬RF : ∀ {Γ A} {t : Γ ⊢ A} → NF t → ¬ RF t
   NF→¬RF = ¬R→¬RF ∘ NF→¬R
 
+  -- TODO: prove equivalent to `Prog` with `step : RF t → Prog t`
   data Prog {Γ A} (t : Γ ⊢ A) : Set where
-    done : NF t → Prog t
-    step : ∀ {t′ : Γ ⊢ A} → t ⇒ t′ → Prog t
-  -- NOTE: the above `step` is slightly more convenient than but equivalent to the below `step`
-  -- step : RF t → Prog t
+    done : ∀ (p : NF t) → Prog t
+    step : ∀ {t′ : Γ ⊢ A} (r : t ⇒ t′) → Prog t
 
   recProg : ∀ {𝓍} {X : Set 𝓍} {Γ A} {t : Γ ⊢ A} → Prog t → (NF t → X) → (RF t → X) → X
   recProg (done p) f₁ f₂ = f₁ p

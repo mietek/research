@@ -18,19 +18,19 @@ data _⇒_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
   cong$₂   : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢ A} (p₁ : NF t₁) (r₂ : t₂ ⇒ t₂′) →
              t₁ ⌜$⌝ t₂ ⇒ t₁ ⌜$⌝ t₂′
   congsuc  : ∀ {t t′ : Γ ⊢ ⌜ℕ⌝} (r : t ⇒ t′) → ⌜suc⌝ t ⇒ ⌜suc⌝ t′
-  congrecₙ : ∀ {A} {tₙ tₙ′ : Γ ⊢ ⌜ℕ⌝} {t₀ : Γ ⊢ A} {tₛ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A} (rₙ : tₙ ⇒ tₙ′) →
+  congrecₙ : ∀ {A} {tₙ tₙ′ : Γ ⊢ ⌜ℕ⌝} {t₀ : Γ ⊢ A} {tₛ : (Γ , ⌜ℕ⌝) , A ⊢ A} (rₙ : tₙ ⇒ tₙ′) →
              ⌜rec⌝ tₙ t₀ tₛ ⇒ ⌜rec⌝ tₙ′ t₀ tₛ
-  congrec₀ : ∀ {A} {tₙ : Γ ⊢ ⌜ℕ⌝} {t₀ t₀′ : Γ ⊢ A} {tₛ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A} (pₙ : NF tₙ)
+  congrec₀ : ∀ {A} {tₙ : Γ ⊢ ⌜ℕ⌝} {t₀ t₀′ : Γ ⊢ A} {tₛ : (Γ , ⌜ℕ⌝) , A ⊢ A} (pₙ : NF tₙ)
                (r₀ : t₀ ⇒ t₀′) →
              ⌜rec⌝ tₙ t₀ tₛ ⇒ ⌜rec⌝ tₙ t₀′ tₛ
-  congrecₛ : ∀ {A} {tₙ : Γ ⊢ ⌜ℕ⌝} {t₀ : Γ ⊢ A} {tₛ tₛ′ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A} (pₙ : NF tₙ)
+  congrecₛ : ∀ {A} {tₙ : Γ ⊢ ⌜ℕ⌝} {t₀ : Γ ⊢ A} {tₛ tₛ′ : (Γ , ⌜ℕ⌝) , A ⊢ A} (pₙ : NF tₙ)
                (p₀ : NF t₀) (rₛ : tₛ ⇒ tₛ′) →
              ⌜rec⌝ tₙ t₀ tₛ ⇒ ⌜rec⌝ tₙ t₀ tₛ′
-  βred⊃    : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) (p₂ : NF t₂) →
+  βred⊃    : ∀ {A B} {t₁ : Γ , A ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) (p₂ : NF t₂) →
              ⌜λ⌝ t₁ ⌜$⌝ t₂ ⇒ t′
-  βredℕ₀   : ∀ {A} {t₀ : Γ ⊢ A} {tₛ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A} (p₀ : NF t₀) (pₛ : NF tₛ) →
+  βredℕ₀   : ∀ {A} {t₀ : Γ ⊢ A} {tₛ : (Γ , ⌜ℕ⌝) , A ⊢ A} (p₀ : NF t₀) (pₛ : NF tₛ) →
              ⌜rec⌝ ⌜zero⌝ t₀ tₛ ⇒ t₀
-  βredℕₛ   : ∀ {A} {tₙ : Γ ⊢ ⌜ℕ⌝} {t₀ : Γ ⊢ A} {tₛ : A ∷ ⌜ℕ⌝ ∷ Γ ⊢ A} {t′}
+  βredℕₛ   : ∀ {A} {tₙ : Γ ⊢ ⌜ℕ⌝} {t₀ : Γ ⊢ A} {tₛ : (Γ , ⌜ℕ⌝) , A ⊢ A} {t′}
                (eq : t′ ≡ tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ] [ tₙ ]) → (pₙ : NF (⌜suc⌝ tₙ)) (p₀ : NF t₀)
                (pₛ : NF tₛ) →
              ⌜rec⌝ (⌜suc⌝ tₙ) t₀ tₛ ⇒ t′
@@ -148,63 +148,63 @@ open ProgKit (kit redkit2 prog⇒) public
 
 ----------------------------------------------------------------------------------------------------
 
-ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊑ Γ′) → t ⇒ t′ → ren e t ⇒ ren e t′
-ren⇒ e (cong$₁ r₁)               = cong$₁ (ren⇒ e r₁)
-ren⇒ e (cong$₂ p₁ r₂)            = cong$₂ (renNF e p₁) (ren⇒ e r₂)
-ren⇒ e (congsuc r)               = congsuc (ren⇒ e r)
-ren⇒ e (congrecₙ rₙ)             = congrecₙ (ren⇒ e rₙ)
-ren⇒ e (congrec₀ pₙ r₀)          = congrec₀ (renNF e pₙ) (ren⇒ e r₀)
-ren⇒ e (congrecₛ pₙ p₀ rₛ)       = congrecₛ (renNF e pₙ) (renNF e p₀)
-                                      (ren⇒ (lift⊑ (lift⊑ e)) rₛ)
-ren⇒ e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut e t₁ _ ⁻¹) (renNF e p₂)
-ren⇒ e (βredℕ₀ p₀ pₛ)            = βredℕ₀ (renNF e p₀) (renNF (lift⊑ (lift⊑ e)) pₛ)
-ren⇒ e (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ) =
-    βredℕₛ eq (renNF e pₙ) (renNF e p₀) (renNF (lift⊑ (lift⊑ e)) pₛ)
+ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → t ⇒ t′ → ren ρ t ⇒ ren ρ t′
+ren⇒ ρ (cong$₁ r₁)               = cong$₁ (ren⇒ ρ r₁)
+ren⇒ ρ (cong$₂ p₁ r₂)            = cong$₂ (renNF ρ p₁) (ren⇒ ρ r₂)
+ren⇒ ρ (congsuc r)               = congsuc (ren⇒ ρ r)
+ren⇒ ρ (congrecₙ rₙ)             = congrecₙ (ren⇒ ρ rₙ)
+ren⇒ ρ (congrec₀ pₙ r₀)          = congrec₀ (renNF ρ pₙ) (ren⇒ ρ r₀)
+ren⇒ ρ (congrecₛ pₙ p₀ rₛ)       = congrecₛ (renNF ρ pₙ) (renNF ρ p₀)
+                                      (ren⇒ (lift⊑ (lift⊑ ρ)) rₛ)
+ren⇒ ρ (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut ρ t₁ _ ⁻¹) (renNF ρ p₂)
+ren⇒ ρ (βredℕ₀ p₀ pₛ)            = βredℕ₀ (renNF ρ p₀) (renNF (lift⊑ (lift⊑ ρ)) pₛ)
+ren⇒ ρ (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ) =
+    βredℕₛ eq (renNF ρ pₙ) (renNF ρ p₀) (renNF (lift⊑ (lift⊑ ρ)) pₛ)
       where
-  eq : ren e (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ] [ tₙ ]) ≡
-       ren (lift⊑ (lift⊑ e)) tₛ
-         [ wk (⌜rec⌝ (ren e tₙ) (ren e t₀) (ren (lift⊑ (lift⊑ e)) tₛ)) ] [ ren e tₙ ]
-  eq = rencut e (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ]) tₙ ⁻¹
-     ⋮ (_[ ren e tₙ ]) &
-         ( rencut (lift⊑ e) tₛ (wk (⌜rec⌝ tₙ t₀ tₛ)) ⁻¹
-         ⋮ (ren (lift⊑ (lift⊑ e)) tₛ [_]) &
-             ( compren (lift⊑ e) (wk⊑ id⊑) (⌜rec⌝ tₙ t₀ tₛ) ⁻¹
-             ⋮ (flip ren (⌜rec⌝ tₙ t₀ tₛ) ∘ wk⊑) & (rid⊑ e ⋮ lid⊑ e ⁻¹)
-             ⋮ ⌜rec⌝ & compren (wk⊑ id⊑) e tₙ
-                     ⊗ compren (wk⊑ id⊑) e t₀
-                     ⊗ compren (lift⊑ (lift⊑ (wk⊑ id⊑))) (lift⊑ (lift⊑ e)) tₛ
+  eq : ren ρ (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ] [ tₙ ]) ≡
+       ren (lift⊑ (lift⊑ ρ)) tₛ
+         [ wk (⌜rec⌝ (ren ρ tₙ) (ren ρ t₀) (ren (lift⊑ (lift⊑ ρ)) tₛ)) ] [ ren ρ tₙ ]
+  eq = rencut ρ (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ]) tₙ ⁻¹
+     ⋮ (_[ ren ρ tₙ ]) &
+         ( rencut (lift⊑ ρ) tₛ (wk (⌜rec⌝ tₙ t₀ tₛ)) ⁻¹
+         ⋮ (ren (lift⊑ (lift⊑ ρ)) tₛ [_]) &
+             ( compren (lift⊑ ρ) (wk⊑ id⊑) (⌜rec⌝ tₙ t₀ tₛ) ⁻¹
+             ⋮ (flip ren (⌜rec⌝ tₙ t₀ tₛ) ∘ wk⊑) & (rid⊑ ρ ⋮ lid⊑ ρ ⁻¹)
+             ⋮ ⌜rec⌝ & compren (wk⊑ id⊑) ρ tₙ
+                     ⊗ compren (wk⊑ id⊑) ρ t₀
+                     ⊗ compren (lift⊑ (lift⊑ (wk⊑ id⊑))) (lift⊑ (lift⊑ ρ)) tₛ
              )
          )
 
-sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} → NNF§ ss → t ⇒ t′ → sub ss t ⇒ sub ss t′
-sub⇒ ps (cong$₁ r₁)               = cong$₁ (sub⇒ ps r₁)
-sub⇒ ps (cong$₂ p₁ r₂)            = cong$₂ (subNF ps p₁) (sub⇒ ps r₂)
-sub⇒ ps (congsuc r)               = congsuc (sub⇒ ps r)
-sub⇒ ps (congrecₙ rₙ)             = congrecₙ (sub⇒ ps rₙ)
-sub⇒ ps (congrec₀ pₙ r₀)          = congrec₀ (subNF ps pₙ) (sub⇒ ps r₀)
-sub⇒ ps (congrecₛ pₙ p₀ rₛ)       = congrecₛ (subNF ps pₙ) (subNF ps p₀)
-                                       (sub⇒ (liftNNF§ (liftNNF§ ps)) rₛ)
-sub⇒ ps (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (subcut _ t₁ _ ⁻¹) (subNF ps p₂)
-sub⇒ ps (βredℕ₀ p₀ pₛ)            = βredℕ₀ (subNF ps p₀) (subNF (liftNNF§ (liftNNF§ ps)) pₛ)
-sub⇒ {ss = ss} ps (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ) =
-    βredℕₛ eq (subNF ps pₙ) (subNF ps p₀) (subNF (liftNNF§ (liftNNF§ ps)) pₛ)
+sub⇒ : ∀ {Γ Ξ A} {σ : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} → NNF§ σ → t ⇒ t′ → sub σ t ⇒ sub σ t′
+sub⇒ ψ (cong$₁ r₁)               = cong$₁ (sub⇒ ψ r₁)
+sub⇒ ψ (cong$₂ p₁ r₂)            = cong$₂ (subNF ψ p₁) (sub⇒ ψ r₂)
+sub⇒ ψ (congsuc r)               = congsuc (sub⇒ ψ r)
+sub⇒ ψ (congrecₙ rₙ)             = congrecₙ (sub⇒ ψ rₙ)
+sub⇒ ψ (congrec₀ pₙ r₀)          = congrec₀ (subNF ψ pₙ) (sub⇒ ψ r₀)
+sub⇒ ψ (congrecₛ pₙ p₀ rₛ)       = congrecₛ (subNF ψ pₙ) (subNF ψ p₀)
+                                      (sub⇒ (liftNNF§ (liftNNF§ ψ)) rₛ)
+sub⇒ ψ (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (subcut _ t₁ _ ⁻¹) (subNF ψ p₂)
+sub⇒ ψ (βredℕ₀ p₀ pₛ)            = βredℕ₀ (subNF ψ p₀) (subNF (liftNNF§ (liftNNF§ ψ)) pₛ)
+sub⇒ {σ = σ} ψ (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ) =
+    βredℕₛ eq (subNF ψ pₙ) (subNF ψ p₀) (subNF (liftNNF§ (liftNNF§ ψ)) pₛ)
       where
-  eq : sub ss (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ] [ tₙ ]) ≡
-       sub (lift§ (lift§ ss)) tₛ
-         [ wk (⌜rec⌝ (sub ss tₙ) (sub ss t₀) (sub (lift§ (lift§ ss)) tₛ)) ] [ sub ss tₙ ]
-  eq = subcut ss (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ]) tₙ ⁻¹
-     ⋮ (_[ sub ss tₙ ]) &
-         ( subcut (lift§ ss) tₛ (wk (⌜rec⌝ tₙ t₀ tₛ)) ⁻¹
-         ⋮ (sub (lift§ (lift§ ss)) tₛ [_]) &
-             ( eqsubren (lift§ ss) (wk⊑ id⊑) (⌜rec⌝ tₙ t₀ tₛ) ⁻¹
-             ⋮ flip sub (⌜rec⌝ tₙ t₀ tₛ) & lidget§ (wk§ ss)
-             ⋮ ⌜rec⌝ & eqrensub (wk⊑ id⊑) ss tₙ
-                     ⊗ eqrensub (wk⊑ id⊑) ss t₀
-                     ⊗ ( ((flip sub tₛ ∘ (var zero ∷_)) ∘ (var (suc zero) ∷_)) & -- TODO: should _∘_ be infixl?
-                             ( wk§ & eqwkren§ (wk⊑ id⊑) ss ⁻¹
-                             ⋮ eqwkren§ (lift⊑ (wk⊑ id⊑)) (wk§ ss) ⁻¹
+  eq : sub σ (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ] [ tₙ ]) ≡
+       sub (lift§ (lift§ σ)) tₛ
+         [ wk (⌜rec⌝ (sub σ tₙ) (sub σ t₀) (sub (lift§ (lift§ σ)) tₛ)) ] [ sub σ tₙ ]
+  eq = subcut σ (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ]) tₙ ⁻¹
+     ⋮ (_[ sub σ tₙ ]) &
+         ( subcut (lift§ σ) tₛ (wk (⌜rec⌝ tₙ t₀ tₛ)) ⁻¹
+         ⋮ (sub (lift§ (lift§ σ)) tₛ [_]) &
+             ( eqsubren (lift§ σ) (wk⊑ id⊑) (⌜rec⌝ tₙ t₀ tₛ) ⁻¹
+             ⋮ flip sub (⌜rec⌝ tₙ t₀ tₛ) & lidget§ (wk§ σ)
+             ⋮ ⌜rec⌝ & eqrensub (wk⊑ id⊑) σ tₙ
+                     ⊗ eqrensub (wk⊑ id⊑) σ t₀
+                     ⊗ ( ((flip sub tₛ ∘ (_, var zero)) ∘ (_, var (wk∋ zero))) & -- TODO: should _∘_ be infixl?
+                             ( wk§ & eqwkren§ (wk⊑ id⊑) σ ⁻¹
+                             ⋮ eqwkren§ (lift⊑ (wk⊑ id⊑)) (wk§ σ) ⁻¹
                              )
-                       ⋮ eqrensub (lift⊑ (lift⊑ (wk⊑ id⊑))) (lift§ (lift§ ss)) tₛ
+                       ⋮ eqrensub (lift⊑ (lift⊑ (wk⊑ id⊑))) (lift§ (lift§ σ)) tₛ
                        )
              )
         )

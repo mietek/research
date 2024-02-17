@@ -13,12 +13,12 @@ open import Kit3 public
 
 infix 4 _⇒_
 data _⇒_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
-  congλ  : ∀ {A B} {t t′ : A ∷ Γ ⊢ B} (r : t ⇒ t′) → ⌜λ⌝ t ⇒ ⌜λ⌝ t′
+  congλ  : ∀ {A B} {t t′ : Γ , A ⊢ B} (r : t ⇒ t′) → ⌜λ⌝ t ⇒ ⌜λ⌝ t′
   cong$₁ : ∀ {A B} {t₁ t₁′ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (r₁ : t₁ ⇒ t₁′) →
            t₁ ⌜$⌝ t₂ ⇒ t₁′ ⌜$⌝ t₂
   cong$₂ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢ A} (r₂ : t₂ ⇒ t₂′) →
            t₁ ⌜$⌝ t₂ ⇒ t₁ ⌜$⌝ t₂′
-  βred⊃  : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) →
+  βred⊃  : ∀ {A B} {t₁ : Γ , A ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) →
            ⌜λ⌝ t₁ ⌜$⌝ t₂ ⇒ t′
 
 open RedKit1 (kit tmkit _⇒_) public
@@ -53,17 +53,17 @@ open ProgKit (kit redkit2 prog⇒) public
 
 ----------------------------------------------------------------------------------------------------
 
-ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊑ Γ′) → t ⇒ t′ → ren e t ⇒ ren e t′
-ren⇒ e (congλ r)              = congλ (ren⇒ (lift⊑ e) r)
-ren⇒ e (cong$₁ r₁)            = cong$₁ (ren⇒ e r₁)
-ren⇒ e (cong$₂ r₂)            = cong$₂ (ren⇒ e r₂)
-ren⇒ e (βred⊃ {t₁ = t₁} refl) = βred⊃ (rencut e t₁ _ ⁻¹)
+ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → t ⇒ t′ → ren ρ t ⇒ ren ρ t′
+ren⇒ ρ (congλ r)              = congλ (ren⇒ (lift⊑ ρ) r)
+ren⇒ ρ (cong$₁ r₁)            = cong$₁ (ren⇒ ρ r₁)
+ren⇒ ρ (cong$₂ r₂)            = cong$₂ (ren⇒ ρ r₂)
+ren⇒ ρ (βred⊃ {t₁ = t₁} refl) = βred⊃ (rencut ρ t₁ _ ⁻¹)
 
-sub⇒ : ∀ {Γ Ξ A} (ss : Ξ ⊢§ Γ) {t t′ : Γ ⊢ A} → t ⇒ t′ → sub ss t ⇒ sub ss t′
-sub⇒ ss (congλ r)              = congλ (sub⇒ (lift§ ss) r)
-sub⇒ ss (cong$₁ r₁)            = cong$₁ (sub⇒ ss r₁)
-sub⇒ ss (cong$₂ r₂)            = cong$₂ (sub⇒ ss r₂)
-sub⇒ ss (βred⊃ {t₁ = t₁} refl) = βred⊃ (subcut ss t₁ _ ⁻¹)
+sub⇒ : ∀ {Γ Ξ A} (σ : Ξ ⊢§ Γ) {t t′ : Γ ⊢ A} → t ⇒ t′ → sub σ t ⇒ sub σ t′
+sub⇒ σ (congλ r)              = congλ (sub⇒ (lift§ σ) r)
+sub⇒ σ (cong$₁ r₁)            = cong$₁ (sub⇒ σ r₁)
+sub⇒ σ (cong$₂ r₂)            = cong$₂ (sub⇒ σ r₂)
+sub⇒ σ (βred⊃ {t₁ = t₁} refl) = βred⊃ (subcut σ t₁ _ ⁻¹)
 
 
 ----------------------------------------------------------------------------------------------------

@@ -84,13 +84,13 @@ record Functor {ℴ₁ ℴ₂ 𝓂₁ 𝓂₂} (C : Category ℴ₁ 𝓂₁) (D 
          ; _∘ƒ_ = flip _∘ƒ_
          }
 
-⟪Id⟫ : ∀ {ℴ 𝓂} (C : Category ℴ 𝓂) → Functor C C
-⟪Id⟫ C = record
-           { ƒObj = Prelude.id
-           ; ƒ    = Prelude.id
-           ; idƒ  = refl
-           ; _∘ƒ_ = λ q p → refl
-           }
+ƒId : ∀ {ℴ 𝓂} (C : Category ℴ 𝓂) → Functor C C
+ƒId C = record
+          { ƒObj = Prelude.id
+          ; ƒ    = Prelude.id
+          ; idƒ  = refl
+          ; _∘ƒ_ = λ q p → refl
+          }
 
 Presheaf : ∀ {ℴ 𝓂} (C : Category ℴ 𝓂) (𝓍 : Level) → Set (ℴ ⊔ 𝓂 ⊔ lsuc 𝓍)
 Presheaf C 𝓍 = Functor (C ᵒᵖ) (⟪Set⟫ 𝓍)
@@ -164,7 +164,7 @@ trans≃ eq eq′ = record
 module ≃-Reasoning where
   infix 1 begin_
   begin_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} → X ≃ Y → X ≃ Y
-  begin_ eq = eq
+  begin eq = eq
 
   infixr 2 _≃⟨_⟩_
   _≃⟨_⟩_ : ∀ {𝓍 𝓎 𝓏} (X : Set 𝓍) {Y : Set 𝓎} {Z : Set 𝓏} → X ≃ Y → Y ≃ Z → X ≃ Z
@@ -242,7 +242,7 @@ antisym≲ leq leq′ eq eq′ = record
 module ≲-Reasoning where
   infix 1 begin_
   begin_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} → X ≲ Y → X ≲ Y
-  begin_ leq = leq
+  begin leq = leq
 
   infixr 2 _≲⟨_⟩_
   _≲⟨_⟩_ : ∀ {𝓍 𝓎 𝓏} (X : Set 𝓍) {Y : Set 𝓎} {Z : Set 𝓏} → X ≲ Y → Y ≲ Z → X ≲ Z

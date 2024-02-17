@@ -12,7 +12,7 @@ open import GAN
 
 mutual
   data NF {Γ} : ∀ {A} → Γ ⊢ A → Set where
-    ⌜λ⌝- : ∀ {A B} {t : A ∷ Γ ⊢ B} → NF (⌜λ⌝ t)
+    ⌜λ⌝- : ∀ {A B} {t : Γ , A ⊢ B} → NF (⌜λ⌝ t)
     nnf  : ∀ {A} {t : Γ ⊢ A} (p : NNF t) → NF t
 
   data NNF {Γ} : ∀ {A} → Γ ⊢ A → Set where
@@ -21,8 +21,8 @@ mutual
 
 -- TODO: kit
 data NNF§ {Γ} : ∀ {Δ} → Γ ⊢§ Δ → Set where
-  []  : NNF§ []
-  _∷_ : ∀ {A Δ} {t : Γ ⊢ A} {ts : Γ ⊢§ Δ} → NNF t → NNF§ ts → NNF§ (t ∷ ts)
+  ∙   : NNF§ ∙
+  _,_ : ∀ {Δ A} {τ : Γ ⊢§ Δ} {t : Γ ⊢ A} (ψ : NNF§ τ) (p : NNF t) → NNF§ (τ , t)
 
 mutual
   uniNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
@@ -54,26 +54,26 @@ mutual
 ----------------------------------------------------------------------------------------------------
 
 mutual
-  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊑ Γ′) → NF t → NF (ren e t)
-  renNF e ⌜λ⌝-    = ⌜λ⌝-
-  renNF e (nnf p) = nnf (renNNF e p)
+  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → NF t → NF (ren ρ t)
+  renNF ρ ⌜λ⌝-    = ⌜λ⌝-
+  renNF ρ (nnf p) = nnf (renNNF ρ p)
 
-  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊑ Γ′) → NNF t → NNF (ren e t)
-  renNNF e var-        = var-
-  renNNF e (p₁ ⌜$⌝ p₂) = renNNF e p₁ ⌜$⌝ renNF e p₂
+  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → NNF t → NNF (ren ρ t)
+  renNNF ρ var-        = var-
+  renNNF ρ (p₁ ⌜$⌝ p₂) = renNNF ρ p₁ ⌜$⌝ renNF ρ p₂
 
-sub∋NNF : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {i : Γ ∋ A} → NNF§ ss → NNF (sub∋ ss i)
-sub∋NNF {i = zero}  (p ∷ ps) = p
-sub∋NNF {i = suc i} (p ∷ ps) = sub∋NNF ps
+sub∋NNF : ∀ {Γ Ξ A} {σ : Ξ ⊢§ Γ} {i : Γ ∋ A} → NNF§ σ → NNF (sub∋ σ i)
+sub∋NNF {i = zero}  (ψ , p) = p
+sub∋NNF {i = wk∋ i} (ψ , p) = sub∋NNF ψ
 
 mutual
-  subNF : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t : Γ ⊢ A} → NNF§ ss → NF t → NF (sub ss t)
-  subNF ps ⌜λ⌝-    = ⌜λ⌝-
-  subNF ps (nnf p) = nnf (subNNF ps p)
+  subNF : ∀ {Γ Ξ A} {σ : Ξ ⊢§ Γ} {t : Γ ⊢ A} → NNF§ σ → NF t → NF (sub σ t)
+  subNF ψ ⌜λ⌝-    = ⌜λ⌝-
+  subNF ψ (nnf p) = nnf (subNNF ψ p)
 
   subNNF : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t : Γ ⊢ A} → NNF§ ss → NNF t → NNF (sub ss t)
-  subNNF ps var-        = sub∋NNF ps
-  subNNF ps (p₁ ⌜$⌝ p₂) = subNNF ps p₁ ⌜$⌝ subNF ps p₂
+  subNNF ψ var-        = sub∋NNF ψ
+  subNNF ψ (p₁ ⌜$⌝ p₂) = subNNF ψ p₁ ⌜$⌝ subNF ψ p₂
 
 
 ----------------------------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ mutual
 mutual
   infix 3 _⊢≪_
   data _⊢≪_ (Γ : Ctx) : Ty → Set where
-    ⌜λ⌝ : ∀ {A B} (t : A ∷ Γ ⊢ B) → Γ ⊢≪ A ⌜⊃⌝ B
+    ⌜λ⌝ : ∀ {A B} (t : Γ , A ⊢ B) → Γ ⊢≪ A ⌜⊃⌝ B
     nnf : ∀ {A} (t : Γ ⊢≫ A) → Γ ⊢≪ A
 
   infix 3 _⊢≫_
@@ -127,13 +127,13 @@ private
   mutual
     to∘fromNF : ∀ {Γ A} (tp : Σ (Γ ⊢ A) NF) → (toNF ∘ fromNF) tp ≡ tp
     to∘fromNF (.(⌜λ⌝ t) , ⌜λ⌝- {t = t}) = refl
-    to∘fromNF (t , nnf p)               = ≅→≡ (hcong₂ _,_
+    to∘fromNF (t , nnf p)               = ≅→≡ (hcong₂ Σ._,_
                                             (≡→≅ (cong fst (to∘fromNNF (t , p))))
                                             (hcong (NF.nnf ∘ snd) (≡→≅ (to∘fromNNF (t , p)))))
 
     to∘fromNNF : ∀ {Γ A} (tp : Σ (Γ ⊢ A) NNF) → (toNNF ∘ fromNNF) tp ≡ tp
     to∘fromNNF (var i , var-)          = refl
-    to∘fromNNF (t₁ ⌜$⌝ t₂ , p₁ ⌜$⌝ p₂) = ≅→≡ (hcong₂ _,_
+    to∘fromNNF (t₁ ⌜$⌝ t₂ , p₁ ⌜$⌝ p₂) = ≅→≡ (hcong₂ Σ._,_
                                            (≡→≅ (cong₂ (λ x₁ x₂ → fst x₁ ⌜$⌝ fst x₂)
                                              (to∘fromNNF (t₁ , p₁))
                                              (to∘fromNF (t₂ , p₂))))
@@ -141,7 +141,7 @@ private
                                              (≡→≅ (to∘fromNNF (t₁ , p₁)))
                                              (≡→≅ (to∘fromNF (t₂ , p₂)))))
 
-  ⊢≪≃NF : ∀ {Γ A} → (Γ ⊢≪ A) ≃ (Σ (Γ ⊢ A) NF)
+  ⊢≪≃NF : ∀ {Γ A} → (Γ ⊢≪ A) ≃ Σ (Γ ⊢ A) NF
   ⊢≪≃NF = record
              { to      = toNF
              ; from    = fromNF
@@ -149,7 +149,7 @@ private
              ; to∘from = to∘fromNF
              }
 
-  ⊢≫≃NNF : ∀ {Γ A} → (Γ ⊢≫ A) ≃ (Σ (Γ ⊢ A) NNF)
+  ⊢≫≃NNF : ∀ {Γ A} → (Γ ⊢≫ A) ≃ Σ (Γ ⊢ A) NNF
   ⊢≫≃NNF = record
               { to      = toNNF
               ; from    = fromNNF

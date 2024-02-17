@@ -7,7 +7,7 @@ open import OPE public
 
 module TyKit (Ty : Set) where
   Ctx : Set
-  Ctx = List Ty
+  Ctx = Tsil Ty
 
 
 ----------------------------------------------------------------------------------------------------
@@ -30,8 +30,8 @@ module TmKit (¶ : TmKitParams) where
 
   infix 3 _⊢§_
   data _⊢§_ (Γ : Ctx) : Ctx → Set where
-    []  : Γ ⊢§ []
-    _∷_ : ∀ {A Δ} (t : Γ ⊢ A) (ts : Γ ⊢§ Δ) → Γ ⊢§ A ∷ Δ
+    ∙   : Γ ⊢§ ∙
+    _,_ : ∀ {Δ A} (τ : Γ ⊢§ Δ) (t : Γ ⊢ A) → Γ ⊢§ Δ , A
 
   -- TODO: consider using Data.List.Relation.Unary.All
   -- _⊢§_ : Ctx → Ctx → Set
@@ -54,39 +54,39 @@ module RenKit (¶ : RenKitParams) where
   open RenKitParams ¶
   renkit = ¶
 
-  wk : ∀ {B Γ A} → Γ ⊢ A → B ∷ Γ ⊢ A
+  wk : ∀ {B Γ A} → Γ ⊢ A → Γ , B ⊢ A
   wk t = ren (wk⊑ id⊑) t
 
   -- Kovacs: flip _ₛ∘ₑ_
   ren§ : ∀ {Γ Γ′ Δ} → Γ ⊑ Γ′ → Γ ⊢§ Δ → Γ′ ⊢§ Δ
-  ren§ e []       = []
-  ren§ e (t ∷ ts) = ren e t ∷ ren§ e ts
+  ren§ ρ ∙       = ∙
+  ren§ ρ (τ , t) = ren§ ρ τ , ren ρ t
 
   _◐_ : ∀ {Γ Γ′ Δ} → Γ ⊢§ Δ → Γ ⊑ Γ′ → Γ′ ⊢§ Δ
   _◐_ = flip ren§
 
-  wk§ : ∀ {B Γ Δ} → Γ ⊢§ Δ → B ∷ Γ ⊢§ Δ
-  wk§ ts = ren§ (wk⊑ id⊑) ts
+  wk§ : ∀ {B Γ Δ} → Γ ⊢§ Δ → Γ , B ⊢§ Δ
+  wk§ τ = ren§ (wk⊑ id⊑) τ
 
-  lift§ : ∀ {B Γ Δ} → Γ ⊢§ Δ → B ∷ Γ ⊢§ B ∷ Δ
-  lift§ ts = var zero ∷ wk§ ts
+  lift§ : ∀ {B Γ Δ} → Γ ⊢§ Δ → Γ , B ⊢§ Δ , B
+  lift§ τ = wk§ τ , var zero
 
   -- Kovacs: ⌜_⌝ᵒᵖᵉ
   var§ : ∀ {Γ Γ′} → Γ ⊑ Γ′ → Γ′ ⊢§ Γ
-  var§ stop⊑     = []
-  var§ (wk⊑ e)   = wk§ (var§ e)
-  var§ (lift⊑ e) = lift§ (var§ e)
+  var§ stop      = ∙
+  var§ (wk⊑ ρ)   = wk§ (var§ ρ)
+  var§ (lift⊑ ρ) = lift§ (var§ ρ)
 
   -- TODO: check if changing this affects anything
   id§ refl§ : ∀ {Γ} → Γ ⊢§ Γ
-  id§ {[]}    = []
-  id§ {A ∷ Γ} = lift§ id§
+  id§ {∙}     = ∙
+  id§ {Γ , A} = lift§ id§
   -- id§ = var§ id⊑
   refl§ = id§
 
   sub∋ : ∀ {Γ Ξ A} → Ξ ⊢§ Γ → Γ ∋ A → Ξ ⊢ A
-  sub∋ (s ∷ ss) zero    = s
-  sub∋ (s ∷ ss) (suc i) = sub∋ ss i
+  sub∋ (σ , s) zero    = s
+  sub∋ (σ , s) (wk∋ i) = sub∋ σ i
 
 
 ----------------------------------------------------------------------------------------------------
@@ -106,21 +106,21 @@ module SubKit (¶ : SubKitParams) where
 
   -- Kovacs: _∘ₛ_
   sub§ trans§ : ∀ {Γ Ξ Δ} → Ξ ⊢§ Γ → Γ ⊢§ Δ → Ξ ⊢§ Δ
-  sub§ ss []       = []
-  sub§ ss (t ∷ ts) = sub ss t ∷ sub§ ss ts
+  sub§ σ ∙       = ∙
+  sub§ σ (τ , t) = sub§ σ τ , sub σ t
   trans§ = sub§
 
   _●_ : ∀ {Γ Ξ Δ} → Γ ⊢§ Δ → Ξ ⊢§ Γ → Ξ ⊢§ Δ
   _●_ = flip sub§
 
-  _[_] : ∀ {Γ A B} → A ∷ Γ ⊢ B → Γ ⊢ A → Γ ⊢ B
-  t [ s ] = sub (s ∷ id§) t
+  _[_] : ∀ {Γ A B} → Γ , A ⊢ B → Γ ⊢ A → Γ ⊢ B
+  t [ s ] = sub (id§ , s) t
 
   -- Kovacs: _ₑ∘ₛ_
   get§ _◑_ : ∀ {Γ Δ Δ′} → Δ ⊑ Δ′ → Γ ⊢§ Δ′ → Γ ⊢§ Δ
-  get§ stop⊑     ts       = ts
-  get§ (wk⊑ e)   (t ∷ ts) = get§ e ts
-  get§ (lift⊑ e) (t ∷ ts) = t ∷ get§ e ts
+  get§ stop      τ       = τ
+  get§ (wk⊑ ρ)   (τ , t) = get§ ρ τ
+  get§ (lift⊑ ρ) (τ , t) = get§ ρ τ , t
   _◑_ = get§
 
 
@@ -133,6 +133,7 @@ record DefEqKitParams : Set₁ where
     tmkit : TmKitParams
   open TmKitParams tmkit public
   open TmKit tmkit public hiding (tmkit)
+  infix 4 _≝_
   field
     {_≝_}  : ∀ {Γ A} → Γ ⊢ A → Γ ⊢ A → Set
     refl≝  : ∀ {Γ A} {t : Γ ⊢ A} → t ≝ t
@@ -149,7 +150,7 @@ module DefEqKit (¶ : DefEqKitParams) where
   module ≝-Reasoning where
     infix 1 begin_
     begin_ : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ≝ t′ → t ≝ t′
-    begin_ deq = deq
+    begin deq = deq
 
     infixr 2 _≝⟨_⟩_
     _≝⟨_⟩_ : ∀ {Γ A} (t : Γ ⊢ A) {t′ t″} → t ≝ t′ → t′ ≝ t″ → t ≝ t″

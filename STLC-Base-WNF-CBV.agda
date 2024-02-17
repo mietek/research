@@ -17,7 +17,7 @@ data _⇒_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
            t₁ ⌜$⌝ t₂ ⇒ t₁′ ⌜$⌝ t₂
   cong$₂ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢ A} (p₁ : NF t₁) (r₂ : t₂ ⇒ t₂′) →
            t₁ ⌜$⌝ t₂ ⇒ t₁ ⌜$⌝ t₂′
-  βred⊃  : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) (p₂ : NF t₂) →
+  βred⊃  : ∀ {A B} {t₁ : Γ , A ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) (p₂ : NF t₂) →
            ⌜λ⌝ t₁ ⌜$⌝ t₂ ⇒ t′
 
 open RedKit1 (kit tmkit _⇒_) public
@@ -119,15 +119,15 @@ open Progress public
 
 ----------------------------------------------------------------------------------------------------
 
-ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊑ Γ′) → t ⇒ t′ → ren e t ⇒ ren e t′
-ren⇒ e (cong$₁ r₁)               = cong$₁ (ren⇒ e r₁)
-ren⇒ e (cong$₂ p₁ r₂)            = cong$₂ (renNF e p₁) (ren⇒ e r₂)
-ren⇒ e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut e t₁ _ ⁻¹) (renNF e p₂)
+ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → t ⇒ t′ → ren ρ t ⇒ ren ρ t′
+ren⇒ ρ (cong$₁ r₁)               = cong$₁ (ren⇒ ρ r₁)
+ren⇒ ρ (cong$₂ p₁ r₂)            = cong$₂ (renNF ρ p₁) (ren⇒ ρ r₂)
+ren⇒ ρ (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut ρ t₁ _ ⁻¹) (renNF ρ p₂)
 
-sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} → NNF§ ss → t ⇒ t′ → sub ss t ⇒ sub ss t′
-sub⇒ ps (cong$₁ r₁)               = cong$₁ (sub⇒ ps r₁)
-sub⇒ ps (cong$₂ p₁ r₂)            = cong$₂ (subNF ps p₁) (sub⇒ ps r₂)
-sub⇒ ps (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (subcut _ t₁ _ ⁻¹) (subNF ps p₂)
+sub⇒ : ∀ {Γ Ξ A} {σ : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} → NNF§ σ → t ⇒ t′ → sub σ t ⇒ sub σ t′
+sub⇒ ψ (cong$₁ r₁)               = cong$₁ (sub⇒ ψ r₁)
+sub⇒ ψ (cong$₂ p₁ r₂)            = cong$₂ (subNF ψ p₁) (sub⇒ ψ r₂)
+sub⇒ ψ (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (subcut _ t₁ _ ⁻¹) (subNF ψ p₂)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -143,18 +143,19 @@ cong$₂⇒* : ∀ {Γ A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢
 cong$₂⇒* p₁ done        = done
 cong$₂⇒* p₁ (step r rs) = step (cong$₂ p₁ r) (cong$₂⇒* p₁ rs)
 
-ren⇒* : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊑ Γ′) → t ⇒* t′ → ren e t ⇒* ren e t′
-ren⇒* e done        = done
-ren⇒* e (step r rs) = step (ren⇒ e r) (ren⇒* e rs)
+ren⇒* : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → t ⇒* t′ → ren ρ t ⇒* ren ρ t′
+ren⇒* ρ done        = done
+ren⇒* ρ (step r rs) = step (ren⇒ ρ r) (ren⇒* ρ rs)
 
-sub⇒* : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} (ps : NNF§ ss) → t ⇒* t′ →
-         sub ss t ⇒* sub ss t′
-sub⇒* ps done        = done
-sub⇒* ps (step r rs) = step (sub⇒ ps r) (sub⇒* ps rs)
+sub⇒* : ∀ {Γ Ξ A} {σ : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} (ψ : NNF§ σ) → t ⇒* t′ →
+         sub σ t ⇒* sub σ t′
+sub⇒* ψ done        = done
+sub⇒* ψ (step r rs) = step (sub⇒ ψ r) (sub⇒* ψ rs)
 
 
 ----------------------------------------------------------------------------------------------------
 
+-- TODO: rename `rp`
 infix 4 _⇓_
 _⇓_ : ∀ {Γ A} → Γ ⊢ A → Γ ⊢ A → Set
 t ⇓ t′ = t ⇒* t′ × NF t′
@@ -168,14 +169,14 @@ skip⇓ r (rs′ , p″) = skip⇒* r rs′ p″ , p″
 det⇓ : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇓ t′ → t ⇓ t″ → t′ ≡ t″
 det⇓ (rs , p′) (rs′ , p″) = det⇒* rs p′ rs′ p″
 
-uni⇓ : ∀ {Γ A} {t t′ : Γ ⊢ A} (n n′ : t ⇓ t′) → n ≡ n′
+uni⇓ : ∀ {Γ A} {t t′ : Γ ⊢ A} (rp rp′ : t ⇓ t′) → rp ≡ rp′
 uni⇓ (rs , p′) (rs′ , p″) = _,_ & uni⇒* rs rs′ p′ ⊗ uniNF p′ p″
 
-ren⇓ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊑ Γ′) → t ⇓ t′ → ren e t ⇓ ren e t′
-ren⇓ e (rs , p′) = ren⇒* e rs , renNF e p′
+ren⇓ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → t ⇓ t′ → ren ρ t ⇓ ren ρ t′
+ren⇓ ρ (rs , p′) = ren⇒* ρ rs , renNF ρ p′
 
-sub⇓ : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} (ps : NNF§ ss) → t ⇓ t′ → sub ss t ⇓ sub ss t′
-sub⇓ ps (rs , p′) = sub⇒* ps rs , subNF ps p′
+sub⇓ : ∀ {Γ Ξ A} {σ : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} (ψ : NNF§ σ) → t ⇓ t′ → sub σ t ⇓ sub σ t′
+sub⇓ ψ (rs , p′) = sub⇒* ψ rs , subNF ψ p′
 
 
 ----------------------------------------------------------------------------------------------------
@@ -184,20 +185,20 @@ WN : ∀ {Γ A} → Γ ⊢ A → Set
 WN t = Σ _ λ t′ → t ⇓ t′
 
 stepWN : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒ t′ → WN t′ → WN t
-stepWN r (t″ , n′) = t″ , step⇓ r n′
+stepWN r (t″ , rp′) = t″ , step⇓ r rp′
 
 skipWN : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ⇒ t′ → WN t → WN t′
-skipWN r (t″ , n′) = t″ , skip⇓ r n′
+skipWN r (t″ , rp′) = t″ , skip⇓ r rp′
 
 uniWN : ∀ {Γ A} {t : Γ ⊢ A} (wn wn′ : WN t) → wn ≡ wn′
-uniWN (t′ , n) (t″ , n′) with det⇓ n n′
-... | refl                 = (_ ,_) & uni⇓ n n′
+uniWN (t′ , rp) (t″ , rp′) with det⇓ rp rp′
+... | refl                   = (_ ,_) & uni⇓ rp rp′
 
-renWN : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊑ Γ′) → WN t → WN (ren e t)
-renWN e (t′ , n) = ren e t′ , ren⇓ e n
+renWN : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → WN t → WN (ren ρ t)
+renWN ρ (t′ , rp) = ren ρ t′ , ren⇓ ρ rp
 
-subWN : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t : Γ ⊢ A} (ps : NNF§ ss) → WN t → WN (sub ss t)
-subWN ps (t′ , n) = sub _ t′ , sub⇓ ps n
+subWN : ∀ {Γ Ξ A} {σ : Ξ ⊢§ Γ} {t : Γ ⊢ A} (ψ : NNF§ σ) → WN t → WN (sub σ t)
+subWN ψ (t′ , rp) = sub _ t′ , sub⇓ ψ rp
 
 
 ----------------------------------------------------------------------------------------------------

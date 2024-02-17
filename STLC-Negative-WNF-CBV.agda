@@ -19,7 +19,7 @@ data _⇒_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
             t₁ ⌜$⌝ t₂ ⇒ t₁ ⌜$⌝ t₂′
   congfst : ∀ {A B} {t t′ : Γ ⊢ A ⌜∧⌝ B} (r : t ⇒ t′) → ⌜fst⌝ t ⇒ ⌜fst⌝ t′
   congsnd : ∀ {A B} {t t′ : Γ ⊢ A ⌜∧⌝ B} (r : t ⇒ t′) → ⌜snd⌝ t ⇒ ⌜snd⌝ t′
-  βred⊃   : ∀ {A B} {t₁ : A ∷ Γ ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) (p₂ : NF t₂) →
+  βred⊃   : ∀ {A B} {t₁ : Γ , A ⊢ B} {t₂ : Γ ⊢ A} {t′} (eq : t′ ≡ t₁ [ t₂ ]) (p₂ : NF t₂) →
             ⌜λ⌝ t₁ ⌜$⌝ t₂ ⇒ t′
   βred∧₁  : ∀ {A B} {t₁ : Γ ⊢ A} {t₂ : Γ ⊢ B} → ⌜fst⌝ (t₁ ⌜,⌝ t₂) ⇒ t₁
   βred∧₂  : ∀ {A B} {t₁ : Γ ⊢ A} {t₂ : Γ ⊢ B} → ⌜snd⌝ (t₁ ⌜,⌝ t₂) ⇒ t₂
@@ -96,23 +96,23 @@ open ProgKit (kit redkit2 prog⇒) public
 
 ----------------------------------------------------------------------------------------------------
 
-ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (e : Γ ⊑ Γ′) → t ⇒ t′ → ren e t ⇒ ren e t′
-ren⇒ e (cong$₁ r₁)               = cong$₁ (ren⇒ e r₁)
-ren⇒ e (cong$₂ p₁ r₂)            = cong$₂ (renNF e p₁) (ren⇒ e r₂)
-ren⇒ e (congfst r)               = congfst (ren⇒ e r)
-ren⇒ e (congsnd r)               = congsnd (ren⇒ e r)
-ren⇒ e (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut e t₁ _ ⁻¹) (renNF e p₂)
-ren⇒ e βred∧₁                    = βred∧₁
-ren⇒ e βred∧₂                    = βred∧₂
+ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → t ⇒ t′ → ren ρ t ⇒ ren ρ t′
+ren⇒ ρ (cong$₁ r₁)               = cong$₁ (ren⇒ ρ r₁)
+ren⇒ ρ (cong$₂ p₁ r₂)            = cong$₂ (renNF ρ p₁) (ren⇒ ρ r₂)
+ren⇒ ρ (congfst r)               = congfst (ren⇒ ρ r)
+ren⇒ ρ (congsnd r)               = congsnd (ren⇒ ρ r)
+ren⇒ ρ (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut ρ t₁ _ ⁻¹) (renNF ρ p₂)
+ren⇒ ρ βred∧₁                    = βred∧₁
+ren⇒ ρ βred∧₂                    = βred∧₂
 
-sub⇒ : ∀ {Γ Ξ A} {ss : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} → NNF§ ss → t ⇒ t′ → sub ss t ⇒ sub ss t′
-sub⇒ ps (cong$₁ r₁)               = cong$₁ (sub⇒ ps r₁)
-sub⇒ ps (cong$₂ p₁ r₂)            = cong$₂ (subNF ps p₁) (sub⇒ ps r₂)
-sub⇒ ps (congfst r)               = congfst (sub⇒ ps r)
-sub⇒ ps (congsnd r)               = congsnd (sub⇒ ps r)
-sub⇒ ps (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (subcut _ t₁ _ ⁻¹) (subNF ps p₂)
-sub⇒ ps βred∧₁                    = βred∧₁
-sub⇒ ps βred∧₂                    = βred∧₂
+sub⇒ : ∀ {Γ Ξ A} {σ : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} → NNF§ σ → t ⇒ t′ → sub σ t ⇒ sub σ t′
+sub⇒ ψ (cong$₁ r₁)               = cong$₁ (sub⇒ ψ r₁)
+sub⇒ ψ (cong$₂ p₁ r₂)            = cong$₂ (subNF ψ p₁) (sub⇒ ψ r₂)
+sub⇒ ψ (congfst r)               = congfst (sub⇒ ψ r)
+sub⇒ ψ (congsnd r)               = congsnd (sub⇒ ψ r)
+sub⇒ ψ (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (subcut _ t₁ _ ⁻¹) (subNF ψ p₂)
+sub⇒ ψ βred∧₁                    = βred∧₁
+sub⇒ ψ βred∧₂                    = βred∧₂
 
 
 ----------------------------------------------------------------------------------------------------

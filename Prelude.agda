@@ -7,9 +7,6 @@ module Prelude where
 open import Agda.Builtin.Equality public
   using (_≡_ ; refl)
 
-open import Agda.Builtin.List public
-  using (List ; [] ; _∷_)
-
 open import Agda.Builtin.Nat public
   using (zero ; suc)
   renaming (Nat to ℕ)
@@ -93,6 +90,10 @@ R ⊆ S = ∀ {x x′} → R x x′ → S x x′
 
 -- data
 
+data Tsil {𝓍} (X : Set 𝓍) : Set 𝓍 where
+  ∙   : Tsil X
+  _,_ : ∀ (ξ : Tsil X) (x : X) → Tsil X
+
 infixr 2 _×_
 _×_ : ∀ {𝓍 𝓎} (X : Set 𝓍) (Y : Set 𝓎) → Set (𝓍 ⊔ 𝓎)
 X × Y = Σ X λ _ → Y
@@ -130,15 +131,15 @@ _↯_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} → X → ¬ X → Y
 x ↯ ¬x = abort (¬x x)
 
 data Dec {𝓍} (X : Set 𝓍) : Set 𝓍 where
-  yes : X → Dec X
-  no  : ¬ X → Dec X
+  yes : ∀ (x : X) → Dec X
+  no  : ∀ (¬x : ¬ X) → Dec X
 
 
 ----------------------------------------------------------------------------------------------------
 
 -- propositional equality
 
-≡-syntax : ∀ {𝓍} (X : Set 𝓍) → Rel X
+≡-syntax : ∀ {𝓍} (X : Set 𝓍) → X → X → Set 𝓍
 ≡-syntax X = _≡_
 
 infix 4 ≡-syntax

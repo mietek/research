@@ -141,8 +141,8 @@ _≝′_ = _≝_
 
 postulate
   -- Abel p.8: “substitution is meaning-preserving”
-  thm-i : ∀ {ℳ : Model} {W : World ℳ} {Γ A B} (t : A ∷ Γ ⊢ B) (s : Γ ⊢ A) (vs : ℳ / W ⊩§ Γ) →
-          ⟦ t ⟧ (⟦ s ⟧ vs ∷ vs) ≡ ⟦ t [ s ] ⟧ vs
+  thm-i : ∀ {ℳ : Model} {W : World ℳ} {Γ A B} (t : Γ , A ⊢ B) (s : Γ ⊢ A) (γ : ℳ / W ⊩§ Γ) →
+          ⟦ t ⟧ (γ , ⟦ s ⟧ γ) ≡ ⟦ t [ s ] ⟧ γ
 
   -- completeness of definitional equality?
   thm-j : ∀ {ℳ : Model} {W : World ℳ} {Γ A} {t t′ : Γ ⊢ A} → ⟦ t ⟧ {ℳ} {W} ≡ ⟦ t′ ⟧ → t ≝ t′
@@ -157,7 +157,7 @@ postulate
   thm-1 : ∀ {Γ A} {v v′ : 𝒞 / Γ ⊩ A} → Eq A v v′ → ↓ {A} v ≡ ↓ v′
 
   -- Coquand p.73
-  cor-1 : ∀ {Γ A} (t t′ : Γ ⊢ A) → Eq A (⟦ t ⟧ vids) (⟦ t′ ⟧ vids) → nbe t ≡ nbe t′
+  cor-1 : ∀ {Γ A} (t t′ : Γ ⊢ A) → Eq A (⟦ t ⟧ vid§) (⟦ t′ ⟧ vid§) → nbe t ≡ nbe t′
 
   -- Abel p.10: “soundness”, “normalization is compatible with definitional equality”
   -- Coquand p.74
@@ -165,16 +165,16 @@ postulate
   thm-2 : ∀ {Γ A} (t : Γ ⊢ A) → t ≝ fst (nbe t)
 
   -- Coquand p.75: “completeness of conversion rules”
-  thm-3 : ∀ {Γ A} (t t′ : Γ ⊢ A) → Eq A (⟦ t ⟧ vids) (⟦ t′ ⟧ vids) → t ≝ t′
+  thm-3 : ∀ {Γ A} (t t′ : Γ ⊢ A) → Eq A (⟦ t ⟧ vid§) (⟦ t′ ⟧ vid§) → t ≝ t′
 
   -- Coquand p.76: “soundness of conversion rules”
-  thm-4 : ∀ {ℳ : Model} {W : World ℳ} {Γ A} (t t′ : Γ ⊢ A) (vs : ℳ / W ⊩§ Γ) → t ≝ t′ →
-         Eq A (⟦ t ⟧ vs) (⟦ t′ ⟧ vs)
+  thm-4 : ∀ {ℳ : Model} {W : World ℳ} {Γ A} (t t′ : Γ ⊢ A) (γ : ℳ / W ⊩§ Γ) → t ≝ t′ →
+         Eq A (⟦ t ⟧ γ) (⟦ t′ ⟧ γ)
 
   -- Coquand p.76: “correctness [soundness?] of decision algorithm for conversion”
   thm-5 : ∀ {Γ A} (t t′ : Γ ⊢ A) → nbe t ≡ nbe t′ → t ≝ t′
 
-  lem-t : ∀ {Γ} → vids {Γ = Γ} ≡ vrens (refl≤ 𝒞) vids
+  lem-t : ∀ {Γ} → vid§ {Γ = Γ} ≡ vren§ (refl≤ 𝒞) vid§
 
 -- -- Abel p.10: “completeness”, “definitionally equal terms have identical normal forms”
 -- -- Coquand p.76: “completeness of decision algorithm for conversion”
@@ -185,29 +185,29 @@ postulate
 --   thm-6 : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ≝ t′ → nbe t ≡ nbe t′
 --   thm-6 refl≝             = refl
 --   thm-6 (sym≝ deq)        with thm-k deq
---   ... | eq                  = (λ v → ↓ (v vids)) & eq ⁻¹
+--   ... | eq                  = (λ v → ↓ (v vid§)) & eq ⁻¹
 --   thm-6 (trans≝ deq deq′) with thm-k deq | thm-k deq′
---   ... | eq | eq′            = (λ v → ↓ (v vids)) & (eq ⋮ eq′)
+--   ... | eq | eq′            = (λ v → ↓ (v vid§)) & (eq ⋮ eq′)
 --   thm-6 {Γ} (congλ deq)   with thm-k {ℳ = 𝒞} {W = Γ} deq -- TODO
 --   ... | eq                  = {!!}
 --   thm-6 (cong$ {t₁ = t₁} {t₁′} {t₂} {t₂′} deq₁ deq₂) with thm-k deq₁ | thm-k deq₂
 --   ... | eq | eq′ = ↓ & (
 --       begin
---         ⟦ t₁ ⟧ vids id⊑ (⟦ t₂ ⟧ vids)
---       ≡⟨ ⟦ t₁ ⟧ vids id⊑ & congapp eq′ vids ⟩
---         ⟦ t₁ ⟧ vids id⊑ (⟦ t₂′ ⟧ vids)
---       ≡⟨ congapp (congapp (congapp′ (congapp eq vids)) id⊑) (⟦ t₂′ ⟧ vids) ⟩
---         ⟦ t₁′ ⟧ vids id⊑ (⟦ t₂′ ⟧ vids)
+--         ⟦ t₁ ⟧ vid§ id⊑ (⟦ t₂ ⟧ vid§)
+--       ≡⟨ ⟦ t₁ ⟧ vid§ id⊑ & congapp eq′ vid§ ⟩
+--         ⟦ t₁ ⟧ vid§ id⊑ (⟦ t₂′ ⟧ vid§)
+--       ≡⟨ congapp (congapp (congapp′ (congapp eq vid§)) id⊑) (⟦ t₂′ ⟧ vid§) ⟩
+--         ⟦ t₁′ ⟧ vid§ id⊑ (⟦ t₂′ ⟧ vid§)
 --       ∎)
 --   thm-6 (βred⊃ {t₁ = t₁} {t₂} refl) = ↓ & (
 --       begin
---         ⟦ ⌜λ⌝ t₁ ⌜$⌝ t₂ ⟧ vids
+--         ⟦ ⌜λ⌝ t₁ ⌜$⌝ t₂ ⟧ vid§
 --       ≡⟨⟩
---         ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vrens id⊑ vids)
---       ≡⟨ (λ vs → ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vs)) & lem-t ⁻¹ ⟩
---         ⟦ t₁ ⟧ (⟦ t₂ ⟧ vids ∷ vids)
---       ≡⟨ thm-i t₁ t₂ vids ⟩
---         ⟦ t₁ [ t₂ ] ⟧ vids
+--         ⟦ t₁ ⟧ (vren§ id⊑ vid§ , ⟦ t₂ ⟧ vid§)
+--       ≡⟨ (λ γ → ⟦ t₁ ⟧ (γ , ⟦ t₂ ⟧ vid§)) & lem-t ⁻¹ ⟩
+--         ⟦ t₁ ⟧ (vid§ , ⟦ t₂ ⟧ vid§)
+--       ≡⟨ thm-i t₁ t₂ vid§ ⟩
+--         ⟦ t₁ [ t₂ ] ⟧ vid§
 --       ∎)
 --   thm-6 {Γ} (ηexp⊃ refl) = {!!} -- TODO
 
