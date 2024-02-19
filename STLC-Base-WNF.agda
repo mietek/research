@@ -97,14 +97,14 @@ mutual
 private
   mutual
     toNF : ∀ {Γ A} → Γ ⊢≪ A → Σ (Γ ⊢ A) NF
-    toNF (⌜λ⌝ t) = ⌜λ⌝ t , ⌜λ⌝-
-    toNF (nnf t) with toNNF t
-    ... | t′ , p′     = t′ , nnf p′
+    toNF (⌜λ⌝ t)  = ⌜λ⌝ t , ⌜λ⌝-
+    toNF (nnf t)  with toNNF t
+    ... | t′ , p′   = t′ , nnf p′
 
     toNNF : ∀ {Γ A} → Γ ⊢≫ A → Σ (Γ ⊢ A) NNF
-    toNNF (var i)             = var i , var-
-    toNNF (t₁ ⌜$⌝ t₂)         with toNNF t₁ | toNF t₂
-    ... | t₁′ , p₁′ | t₂′ , p₂′    = t₁′ ⌜$⌝ t₂′ , p₁′ ⌜$⌝ p₂′
+    toNNF (var i)               = var i , var-
+    toNNF (t₁ ⌜$⌝ t₂)           with toNNF t₁ | toNF t₂
+    ... | t₁′ , p₁′ | t₂′ , p₂′   = t₁′ ⌜$⌝ t₂′ , p₁′ ⌜$⌝ p₂′
 
   mutual
     fromNF : ∀ {Γ A} → Σ (Γ ⊢ A) NF → Γ ⊢≪ A

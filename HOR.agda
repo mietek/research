@@ -7,6 +7,7 @@ module HOR {𝓍} {X : Set 𝓍} where
 open import DBI public
 open import GAN
 import FOR
+open FOR using (∙ ; _,_)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -22,26 +23,26 @@ _⊑_ : Tsil X → Tsil X → Set 𝓍
 
 private
   to : ∀ {Γ Γ′} → Γ FOR.⊑ Γ′ → Γ ⊑ Γ′
-  to (ρ FOR., j) zero    = j
-  to (ρ FOR., j) (wk∋ i) = to ρ i
+  to (ϱ , j) zero    = j
+  to (ϱ , j) (wk∋ i) = to ϱ i
 
   from : ∀ {Γ Γ′} → Γ ⊑ Γ′ → Γ FOR.⊑ Γ′
-  from {∙}     ρ = FOR.∙
-  from {Γ , A} ρ = from (ρ ∘ wk∋) FOR., ρ zero
+  from {∙}     ϱ = ∙
+  from {Γ , A} ϱ = from (ϱ ∘ wk∋) , ϱ zero
 
   from∘to : ∀ {Γ Γ′} (is : Γ FOR.⊑ Γ′) → (from ∘ to) is ≡ is
-  from∘to FOR.∙       = refl
-  from∘to (ρ FOR., i) = (FOR._, i) & from∘to ρ
+  from∘to ∙       = refl
+  from∘to (ϱ , i) = (_, i) & from∘to ϱ
 
-  pointwise-to∘from : ∀ {Γ Γ′} (ρ : Γ ⊑ Γ′) → (∀ {A : X} (i : Γ ∋ A) → (to ∘ from) ρ i ≡ ρ i)
-  pointwise-to∘from ρ zero    = refl
-  pointwise-to∘from ρ (wk∋ i) = pointwise-to∘from (ρ ∘ wk∋) i
+  pointwise-to∘from : ∀ {Γ Γ′} (ϱ : Γ ⊑ Γ′) → (∀ {A : X} (i : Γ ∋ A) → (to ∘ from) ϱ i ≡ ϱ i)
+  pointwise-to∘from ϱ zero    = refl
+  pointwise-to∘from ϱ (wk∋ i) = pointwise-to∘from (ϱ ∘ wk∋) i
 
   module _ (⚠ : FunExt) where
     ⚠′ = implify ⚠
 
-    to∘from : ∀ {Γ Γ′} (ρ : Γ ⊑ Γ′) → (to ∘ from) ρ ≡ ρ :> (Γ ⊑ Γ′)
-    to∘from ρ = ⚠′ (⚠ (pointwise-to∘from ρ))
+    to∘from : ∀ {Γ Γ′} (ϱ : Γ ⊑ Γ′) → (to ∘ from) ϱ ≡ ϱ :> (Γ ⊑ Γ′)
+    to∘from ϱ = ⚠′ (⚠ (pointwise-to∘from ϱ))
 
     FOR≃HOR : ∀ {Γ Γ′} → (Γ FOR.⊑ Γ′) ≃ (Γ ⊑ Γ′)
     FOR≃HOR = record
@@ -52,9 +53,9 @@ private
                 }
 
   -- TODO: name?
-  extfrom : ∀ {Γ Γ′} (ρ ρ′ : Γ ⊑ Γ′) → (∀ {A : X} (i : Γ ∋ A) → ρ i ≡ ρ′ i) → from ρ ≡ from ρ′
-  extfrom {∙}     ρ ρ′ peq = refl
-  extfrom {Γ , A} ρ ρ′ peq = FOR._,_ & extfrom (ρ ∘ wk∋) (ρ′ ∘ wk∋) (peq ∘ wk∋) ⊗ peq zero
+  extfrom : ∀ {Γ Γ′} (ϱ ϱ′ : Γ ⊑ Γ′) → (∀ {A : X} (i : Γ ∋ A) → ϱ i ≡ ϱ′ i) → from ϱ ≡ from ϱ′
+  extfrom {∙}     ϱ ϱ′ peq = refl
+  extfrom {Γ , A} ϱ ϱ′ peq = _,_ & extfrom (ϱ ∘ wk∋) (ϱ′ ∘ wk∋) (peq ∘ wk∋) ⊗ peq zero
 
 
 ----------------------------------------------------------------------------------------------------

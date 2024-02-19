@@ -115,7 +115,7 @@ record NatTrans {ℴ₁ ℴ₂ 𝓂₁ 𝓂₂} {C : Category ℴ₁ 𝓂₁} {D
   op : NatTrans G.op F.op
   op = record
          { η    = η
-         ; natη = λ x y f → sym (natη y x f)
+         ; natη = λ x y f → natη y x f ⁻¹
          }
 
 
