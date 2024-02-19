@@ -29,9 +29,9 @@ open TmKit (kit _⊢_) public
 ----------------------------------------------------------------------------------------------------
 
 ren : ∀ {Γ Γ′ A} → Γ ⊑ Γ′ → Γ ⊢ A → Γ′ ⊢ A
-ren ρ (var i)     = var (ren∋ ρ i)
-ren ρ (⌜λ⌝ t)     = ⌜λ⌝ (ren (lift⊑ ρ) t)
-ren ρ (t₁ ⌜$⌝ t₂) = ren ρ t₁ ⌜$⌝ ren ρ t₂
+ren ϱ (var i)     = var (ren∋ ϱ i)
+ren ϱ (⌜λ⌝ t)     = ⌜λ⌝ (ren (lift⊑ ϱ) t)
+ren ϱ (t₁ ⌜$⌝ t₂) = ren ϱ t₁ ⌜$⌝ ren ϱ t₂
 
 open RenKit (kit var ren) public
 
@@ -133,20 +133,20 @@ inj$₂′ : ∀ {Γ A A′ B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} {
          t₁ ⌜$⌝ t₂ ≡ t₁′ ⌜$⌝ t₂′ → Σ (A ≡ A′) λ { refl → t₂ ≡ t₂′ }
 inj$₂′ refl = refl , refl
 
-injren : ∀ {Γ Γ′ A} {ρ : Γ ⊑ Γ′} {t t′ : Γ ⊢ A} → ren ρ t ≡ ren ρ t′ → t ≡ t′
+injren : ∀ {Γ Γ′ A} {ϱ : Γ ⊑ Γ′} {t t′ : Γ ⊢ A} → ren ϱ t ≡ ren ϱ t′ → t ≡ t′
 injren {t = var i}     {var i′}      eq = var & injren∋ (injv eq)
 injren {t = ⌜λ⌝ t}     {⌜λ⌝ t′}      eq = ⌜λ⌝ & injren (injλ eq)
 injren {t = t₁ ⌜$⌝ t₂} {t₁′ ⌜$⌝ t₂′} eq with inj$₁′ eq
 ... | refl , eq₁                          = _⌜$⌝_ & injren eq₁ ⊗ injren (inj$₂ eq)
 
-unren : ∀ {Γ Γ′ A} (ρ : Γ ⊑ Γ′) (t′ : Γ′ ⊢ A) → Dec (Σ (Γ ⊢ A) λ t → t′ ≡ ren ρ t)
-unren ρ (var i′)                        with unren∋ ρ i′
+unren : ∀ {Γ Γ′ A} (ϱ : Γ ⊑ Γ′) (t′ : Γ′ ⊢ A) → Dec (Σ (Γ ⊢ A) λ t → t′ ≡ ren ϱ t)
+unren ϱ (var i′)                        with unren∋ ϱ i′
 ... | no ¬p                               = no λ { (var i , refl) → (i , refl) ↯ ¬p }
 ... | yes (i , refl)                      = yes (var i , refl)
-unren ρ (⌜λ⌝ t′)                        with unren (lift⊑ ρ) t′
+unren ϱ (⌜λ⌝ t′)                        with unren (lift⊑ ϱ) t′
 ... | no ¬p                               = no λ { (⌜λ⌝ t , refl) → (t , refl) ↯ ¬p }
 ... | yes (t , refl)                      = yes (⌜λ⌝ t , refl)
-unren ρ (t₁′ ⌜$⌝ t₂′)                   with unren ρ t₁′ | unren ρ t₂′
+unren ϱ (t₁′ ⌜$⌝ t₂′)                   with unren ϱ t₁′ | unren ϱ t₂′
 ... | no ¬p₁          | _                 = no λ { (t₁ ⌜$⌝ t₂ , refl) → (t₁ , refl) ↯ ¬p₁ }
 ... | yes (t₁ , eq₁)  | no ¬p₂            = no λ { (t₁ ⌜$⌝ t₂ , refl) → (t₂ , refl) ↯ ¬p₂ }
 ... | yes (t₁ , refl) | yes (t₂ , refl)   = yes (t₁ ⌜$⌝ t₂ , refl)

@@ -32,12 +32,12 @@ open TmKit (kit _⊢_) public
 ----------------------------------------------------------------------------------------------------
 
 ren : ∀ {Γ Γ′ A} → Γ ⊑ Γ′ → Γ ⊢ A → Γ′ ⊢ A
-ren ρ (var i)          = var (ren∋ ρ i)
-ren ρ (⌜λ⌝ t)          = ⌜λ⌝ (ren (lift⊑ ρ) t)
-ren ρ (t₁ ⌜$⌝ t₂)      = ren ρ t₁ ⌜$⌝ ren ρ t₂
-ren ρ ⌜zero⌝           = ⌜zero⌝
-ren ρ (⌜suc⌝ t)        = ⌜suc⌝ (ren ρ t)
-ren ρ (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ (ren ρ tₙ) (ren ρ t₀) (ren (lift⊑ (lift⊑ ρ)) tₛ)
+ren ϱ (var i)          = var (ren∋ ϱ i)
+ren ϱ (⌜λ⌝ t)          = ⌜λ⌝ (ren (lift⊑ ϱ) t)
+ren ϱ (t₁ ⌜$⌝ t₂)      = ren ϱ t₁ ⌜$⌝ ren ϱ t₂
+ren ϱ ⌜zero⌝           = ⌜zero⌝
+ren ϱ (⌜suc⌝ t)        = ⌜suc⌝ (ren ϱ t)
+ren ϱ (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ (ren ϱ tₙ) (ren ϱ t₀) (ren (lift⊑ (lift⊑ ϱ)) tₛ)
 
 open RenKit (kit var ren) public
 

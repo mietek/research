@@ -24,8 +24,8 @@ module ValKit (¶ : ValKitParams) where
     _,_ : ∀ {Δ A} (δ : W ⊩§ Δ) (v : W ⊩ A) → W ⊩§ Δ , A
 
   vren§ : ∀ {Δ W W′} → W ⊑ W′ → W ⊩§ Δ → W′ ⊩§ Δ
-  vren§ ρ ∙       = ∙
-  vren§ ρ (δ , v) = vren§ ρ δ , vren ρ v
+  vren§ ϱ ∙       = ∙
+  vren§ ϱ (δ , v) = vren§ ϱ δ , vren ϱ v
 
   infix 3 _⊨_
   _⊨_ : Ctx → Ty → Set
@@ -61,8 +61,8 @@ module ModelKit (¶ : ModelKitParams) where
       _,_ : ∀ {Δ A} (δ : W ⊩§ Δ) (v : W ⊩ A) → W ⊩§ Δ , A
 
     vren§ : ∀ {Δ W W′} → _≤_ ℳ W W′ → W ⊩§ Δ → W′ ⊩§ Δ
-    vren§ ρ ∙       = ∙
-    vren§ ρ (δ , v) = vren§ ρ δ , vren ρ v
+    vren§ ϱ ∙       = ∙
+    vren§ ϱ (δ , v) = vren§ ϱ δ , vren ϱ v
 
   infix 3 _/_⊩_
   _/_⊩_ : ∀ (ℳ : Model) (W : World ℳ) → Ty → Set
@@ -107,8 +107,8 @@ module SplitModelKit (¶ : SplitModelKitParams) where
       _,_ : ∀ {Δ A} (δ : W ⊩§ Δ) (v : _⊩_ ℳ W A) → W ⊩§ Δ , A
 
     vren§ : ∀ {Δ W W′} → _≤_ ℳ W W′ → W ⊩§ Δ → W′ ⊩§ Δ
-    vren§ ρ ∙       = ∙
-    vren§ ρ (δ , v) = vren§ ρ δ , vren ρ v
+    vren§ ϱ ∙       = ∙
+    vren§ ϱ (δ , v) = vren§ ϱ δ , vren ϱ v
 
   infix 3 _/_⊩_
   _/_⊩_ : ∀ {ℬ} (ℳ : SplitModel ℬ) (W : World ℳ) → Ty → Set

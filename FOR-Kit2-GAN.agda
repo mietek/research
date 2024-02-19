@@ -11,24 +11,24 @@ module RenSubKit1-GAN (¶ : RenSubKit1Params) where
   open RenSubKit1 ¶
 
   module _ (⚠ : FunExt) where
-    ψren : Ty → Presheaf ⟪⊒⟫ lzero
-    ψren A = record
+    ϖren : Ty → Presheaf ⟪⊒⟫ lzero
+    ϖren A = record
                { ƒObj = _⊢ A
                ; ƒ    = ren
                ; idƒ  = ⚠ lidren
-               ; _∘ƒ_ = λ ρ′ ρ → ⚠ (compren ρ′ ρ)
+               ; _∘ƒ_ = λ ϱ′ ϱ → ⚠ (compren ϱ′ ϱ)
                }
 
-    ψren§ : Ctx → Presheaf ⟪⊒⟫ lzero
-    ψren§ Δ = record
+    ϖren§ : Ctx → Presheaf ⟪⊒⟫ lzero
+    ϖren§ Δ = record
                 { ƒObj = _⊢§ Δ
                 ; ƒ    = ren§
                 ; idƒ  = ⚠ lidren§
-                ; _∘ƒ_ = λ ρ′ ρ → ⚠ (compren§ ρ′ ρ)
+                ; _∘ƒ_ = λ ϱ′ ϱ → ⚠ (compren§ ϱ′ ϱ)
                 }
 
-    ψget§ : Ctx → Presheaf ⟪⊑⟫ lzero
-    ψget§ Γ = record
+    ϖget§ : Ctx → Presheaf ⟪⊑⟫ lzero
+    ϖget§ Γ = record
                 { ƒObj = Γ ⊢§_
                 ; ƒ    = get§
                 ; idƒ  = ⚠ lidget§

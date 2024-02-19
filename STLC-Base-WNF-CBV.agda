@@ -119,10 +119,10 @@ open Progress public
 
 ----------------------------------------------------------------------------------------------------
 
-ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → t ⇒ t′ → ren ρ t ⇒ ren ρ t′
-ren⇒ ρ (cong$₁ r₁)               = cong$₁ (ren⇒ ρ r₁)
-ren⇒ ρ (cong$₂ p₁ r₂)            = cong$₂ (renNF ρ p₁) (ren⇒ ρ r₂)
-ren⇒ ρ (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut ρ t₁ _ ⁻¹) (renNF ρ p₂)
+ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (ϱ : Γ ⊑ Γ′) → t ⇒ t′ → ren ϱ t ⇒ ren ϱ t′
+ren⇒ ϱ (cong$₁ r₁)               = cong$₁ (ren⇒ ϱ r₁)
+ren⇒ ϱ (cong$₂ p₁ r₂)            = cong$₂ (renNF ϱ p₁) (ren⇒ ϱ r₂)
+ren⇒ ϱ (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut ϱ t₁ _ ⁻¹) (renNF ϱ p₂)
 
 sub⇒ : ∀ {Γ Ξ A} {σ : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} → NNF§ σ → t ⇒ t′ → sub σ t ⇒ sub σ t′
 sub⇒ ψ (cong$₁ r₁)               = cong$₁ (sub⇒ ψ r₁)
@@ -143,9 +143,9 @@ cong$₂⇒* : ∀ {Γ A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢
 cong$₂⇒* p₁ done        = done
 cong$₂⇒* p₁ (step r rs) = step (cong$₂ p₁ r) (cong$₂⇒* p₁ rs)
 
-ren⇒* : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → t ⇒* t′ → ren ρ t ⇒* ren ρ t′
-ren⇒* ρ done        = done
-ren⇒* ρ (step r rs) = step (ren⇒ ρ r) (ren⇒* ρ rs)
+ren⇒* : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (ϱ : Γ ⊑ Γ′) → t ⇒* t′ → ren ϱ t ⇒* ren ϱ t′
+ren⇒* ϱ done        = done
+ren⇒* ϱ (step r rs) = step (ren⇒ ϱ r) (ren⇒* ϱ rs)
 
 sub⇒* : ∀ {Γ Ξ A} {σ : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} (ψ : NNF§ σ) → t ⇒* t′ →
          sub σ t ⇒* sub σ t′
@@ -172,8 +172,8 @@ det⇓ (rs , p′) (rs′ , p″) = det⇒* rs p′ rs′ p″
 uni⇓ : ∀ {Γ A} {t t′ : Γ ⊢ A} (rp rp′ : t ⇓ t′) → rp ≡ rp′
 uni⇓ (rs , p′) (rs′ , p″) = _,_ & uni⇒* rs rs′ p′ ⊗ uniNF p′ p″
 
-ren⇓ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → t ⇓ t′ → ren ρ t ⇓ ren ρ t′
-ren⇓ ρ (rs , p′) = ren⇒* ρ rs , renNF ρ p′
+ren⇓ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (ϱ : Γ ⊑ Γ′) → t ⇓ t′ → ren ϱ t ⇓ ren ϱ t′
+ren⇓ ϱ (rs , p′) = ren⇒* ϱ rs , renNF ϱ p′
 
 sub⇓ : ∀ {Γ Ξ A} {σ : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} (ψ : NNF§ σ) → t ⇓ t′ → sub σ t ⇓ sub σ t′
 sub⇓ ψ (rs , p′) = sub⇒* ψ rs , subNF ψ p′
@@ -194,8 +194,8 @@ uniWN : ∀ {Γ A} {t : Γ ⊢ A} (wn wn′ : WN t) → wn ≡ wn′
 uniWN (t′ , rp) (t″ , rp′) with det⇓ rp rp′
 ... | refl                   = (_ ,_) & uni⇓ rp rp′
 
-renWN : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → WN t → WN (ren ρ t)
-renWN ρ (t′ , rp) = ren ρ t′ , ren⇓ ρ rp
+renWN : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ϱ : Γ ⊑ Γ′) → WN t → WN (ren ϱ t)
+renWN ϱ (t′ , rp) = ren ϱ t′ , ren⇓ ϱ rp
 
 subWN : ∀ {Γ Ξ A} {σ : Ξ ⊢§ Γ} {t : Γ ⊢ A} (ψ : NNF§ σ) → WN t → WN (sub σ t)
 subWN ψ (t′ , rp) = sub _ t′ , sub⇓ ψ rp

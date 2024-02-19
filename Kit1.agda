@@ -59,8 +59,8 @@ module RenKit (¶ : RenKitParams) where
 
   -- Kovacs: flip _ₛ∘ₑ_
   ren§ : ∀ {Γ Γ′ Δ} → Γ ⊑ Γ′ → Γ ⊢§ Δ → Γ′ ⊢§ Δ
-  ren§ ρ ∙       = ∙
-  ren§ ρ (τ , t) = ren§ ρ τ , ren ρ t
+  ren§ ϱ ∙       = ∙
+  ren§ ϱ (τ , t) = ren§ ϱ τ , ren ϱ t
 
   _◐_ : ∀ {Γ Γ′ Δ} → Γ ⊢§ Δ → Γ ⊑ Γ′ → Γ′ ⊢§ Δ
   _◐_ = flip ren§
@@ -74,8 +74,8 @@ module RenKit (¶ : RenKitParams) where
   -- Kovacs: ⌜_⌝ᵒᵖᵉ
   var§ : ∀ {Γ Γ′} → Γ ⊑ Γ′ → Γ′ ⊢§ Γ
   var§ stop      = ∙
-  var§ (wk⊑ ρ)   = wk§ (var§ ρ)
-  var§ (lift⊑ ρ) = lift§ (var§ ρ)
+  var§ (wk⊑ ϱ)   = wk§ (var§ ϱ)
+  var§ (lift⊑ ϱ) = lift§ (var§ ϱ)
 
   -- TODO: check if changing this affects anything
   id§ refl§ : ∀ {Γ} → Γ ⊢§ Γ
@@ -119,8 +119,8 @@ module SubKit (¶ : SubKitParams) where
   -- Kovacs: _ₑ∘ₛ_
   get§ _◑_ : ∀ {Γ Δ Δ′} → Δ ⊑ Δ′ → Γ ⊢§ Δ′ → Γ ⊢§ Δ
   get§ stop      τ       = τ
-  get§ (wk⊑ ρ)   (τ , t) = get§ ρ τ
-  get§ (lift⊑ ρ) (τ , t) = get§ ρ τ , t
+  get§ (wk⊑ ϱ)   (τ , t) = get§ ϱ τ
+  get§ (lift⊑ ϱ) (τ , t) = get§ ϱ τ , t
   _◑_ = get§
 
 

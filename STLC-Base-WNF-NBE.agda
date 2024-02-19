@@ -16,14 +16,14 @@ W ⊩ ⌜◦⌝     = Σ (W ⊢ ⌜◦⌝) NNF
 W ⊩ A ⌜⊃⌝ B = ∀ {W′} → W ⊑ W′ → W′ ⊩ A → W′ ⊩ B
 
 vren : ∀ {A W W′} → W ⊑ W′ → W ⊩ A → W′ ⊩ A
-vren {⌜◦⌝}     ρ (_ , p) = _ , renNNF ρ p
-vren {A ⌜⊃⌝ B} ρ v       = λ ρ′ → v (trans⊑ ρ ρ′)
+vren {⌜◦⌝}     ϱ (_ , p) = _ , renNNF ϱ p
+vren {A ⌜⊃⌝ B} ϱ v       = λ ϱ′ → v (trans⊑ ϱ ϱ′)
 
 open ValKit (kit _⊩_ vren) public
 
 ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
 ⟦ var i     ⟧ γ = ⟦ i ⟧∋ γ
-⟦ ⌜λ⌝ t     ⟧ γ = λ ρ v → ⟦ t ⟧ (vren§ ρ γ , v)
+⟦ ⌜λ⌝ t     ⟧ γ = λ ϱ v → ⟦ t ⟧ (vren§ ϱ γ , v)
 ⟦ t₁ ⌜$⌝ t₂ ⟧ γ = ⟦ t₁ ⟧ γ id⊑ $ ⟦ t₂ ⟧ γ
 
 
@@ -32,8 +32,8 @@ open ValKit (kit _⊩_ vren) public
 mutual
   ↑ : ∀ {A Γ} → Σ (Γ ⊢ A) NNF → Γ ⊩ A
   ↑ {⌜◦⌝}     (_ , p)  = _ , p
-  ↑ {A ⌜⊃⌝ B} (_ , p₁) = λ ρ v₂ → let _ , p₂ = ↓ v₂
-                                     in ↑ (_ , renNNF ρ p₁ ⌜$⌝ p₂)
+  ↑ {A ⌜⊃⌝ B} (_ , p₁) = λ ϱ v₂ → let _ , p₂ = ↓ v₂
+                                     in ↑ (_ , renNNF ϱ p₁ ⌜$⌝ p₂)
 
   ↓ : ∀ {A Γ} → Γ ⊩ A → Σ (Γ ⊢ A) NF
   ↓ {⌜◦⌝}     (_ , p) = _ , nnf p

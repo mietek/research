@@ -35,10 +35,10 @@ open TmKit (kit _⊢_) public
 ----------------------------------------------------------------------------------------------------
 
 ren : ∀ {Γ Γ′ A} → Γ ⊑ Γ′ → Γ ⊢ A → Γ′ ⊢ A
-ren ρ (con k)     = con k
-ren ρ (var i)     = var (ren∋ ρ i)
-ren ρ (⌜λ⌝ t)     = ⌜λ⌝ (ren (lift⊑ ρ) t)
-ren ρ (t₁ ⌜$⌝ t₂) = ren ρ t₁ ⌜$⌝ ren ρ t₂
+ren ϱ (con k)     = con k
+ren ϱ (var i)     = var (ren∋ ϱ i)
+ren ϱ (⌜λ⌝ t)     = ⌜λ⌝ (ren (lift⊑ ϱ) t)
+ren ϱ (t₁ ⌜$⌝ t₂) = ren ϱ t₁ ⌜$⌝ ren ϱ t₂
 
 open RenKit (kit var ren) public
 

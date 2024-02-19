@@ -48,19 +48,19 @@ module _ {ℳ : Model} where
     module ℳ = Model ℳ
 
   vren : ∀ {A W W′} → W ℳ.≤ W′ → W ℳ.⊩ A → W′ ℳ.⊩ A
-  vren {A ⌜⊃⌝ B} ρ v = λ ρ′ → v (ℳ.trans≤ ρ ρ′)
-  vren {⌜ℕ⌝}     ρ v = ℳ.ren⟦ℕ⟧ ρ v
+  vren {A ⌜⊃⌝ B} ϱ v = λ ϱ′ → v (ℳ.trans≤ ϱ ϱ′)
+  vren {⌜ℕ⌝}     ϱ v = ℳ.ren⟦ℕ⟧ ϱ v
 
 open ModelKit (kit (λ {ℳ} → _⊩_ ℳ) (λ {ℳ} {A} → vren {ℳ} {A})) public
 
 ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
 ⟦ var i                  ⟧         γ = ⟦ i ⟧∋ γ
-⟦ ⌜λ⌝ t                  ⟧         γ = λ ρ v → ⟦ t ⟧ (vren§ ρ γ , v)
+⟦ ⌜λ⌝ t                  ⟧         γ = λ ϱ v → ⟦ t ⟧ (vren§ ϱ γ , v)
 ⟦ t₁ ⌜$⌝ t₂              ⟧ {ℳ = ℳ} γ = ⟦ t₁ ⟧ γ (refl≤ ℳ) $ ⟦ t₂ ⟧ γ
 ⟦ ⌜zero⌝                 ⟧ {ℳ = ℳ} γ = ⟦zero⟧ ℳ
 ⟦ ⌜suc⌝ t                ⟧ {ℳ = ℳ} γ = ⟦suc⟧ ℳ (⟦ t ⟧ γ)
-⟦ ⌜rec⌝ {A = A} tₙ t₀ tₛ ⟧ {ℳ = ℳ} γ = ⟦rec⟧ ℳ {A = A} (⟦ tₙ ⟧ γ) (⟦ t₀ ⟧ γ) λ ρ vₙ ρ′ vₐ →
-                                          ⟦ tₛ ⟧ ((vren§ (trans≤ ℳ ρ ρ′) γ , ren⟦ℕ⟧ ℳ ρ′ vₙ) , vₐ)
+⟦ ⌜rec⌝ {A = A} tₙ t₀ tₛ ⟧ {ℳ = ℳ} γ = ⟦rec⟧ ℳ {A = A} (⟦ tₙ ⟧ γ) (⟦ t₀ ⟧ γ) λ ϱ vₙ ϱ′ vₐ →
+                                          ⟦ tₛ ⟧ ((vren§ (trans≤ ℳ ϱ ϱ′) γ , ren⟦ℕ⟧ ℳ ϱ′ vₙ) , vₐ)
 
 
 ----------------------------------------------------------------------------------------------------

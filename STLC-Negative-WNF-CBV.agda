@@ -96,14 +96,14 @@ open ProgKit (kit redkit2 prog⇒) public
 
 ----------------------------------------------------------------------------------------------------
 
-ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → t ⇒ t′ → ren ρ t ⇒ ren ρ t′
-ren⇒ ρ (cong$₁ r₁)               = cong$₁ (ren⇒ ρ r₁)
-ren⇒ ρ (cong$₂ p₁ r₂)            = cong$₂ (renNF ρ p₁) (ren⇒ ρ r₂)
-ren⇒ ρ (congfst r)               = congfst (ren⇒ ρ r)
-ren⇒ ρ (congsnd r)               = congsnd (ren⇒ ρ r)
-ren⇒ ρ (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut ρ t₁ _ ⁻¹) (renNF ρ p₂)
-ren⇒ ρ βred∧₁                    = βred∧₁
-ren⇒ ρ βred∧₂                    = βred∧₂
+ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (ϱ : Γ ⊑ Γ′) → t ⇒ t′ → ren ϱ t ⇒ ren ϱ t′
+ren⇒ ϱ (cong$₁ r₁)               = cong$₁ (ren⇒ ϱ r₁)
+ren⇒ ϱ (cong$₂ p₁ r₂)            = cong$₂ (renNF ϱ p₁) (ren⇒ ϱ r₂)
+ren⇒ ϱ (congfst r)               = congfst (ren⇒ ϱ r)
+ren⇒ ϱ (congsnd r)               = congsnd (ren⇒ ϱ r)
+ren⇒ ϱ (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut ϱ t₁ _ ⁻¹) (renNF ϱ p₂)
+ren⇒ ϱ βred∧₁                    = βred∧₁
+ren⇒ ϱ βred∧₂                    = βred∧₂
 
 sub⇒ : ∀ {Γ Ξ A} {σ : Ξ ⊢§ Γ} {t t′ : Γ ⊢ A} → NNF§ σ → t ⇒ t′ → sub σ t ⇒ sub σ t′
 sub⇒ ψ (cong$₁ r₁)               = cong$₁ (sub⇒ ψ r₁)

@@ -19,19 +19,19 @@ open import GAN public
         ; lid▻ = lid⊑
         ; rid▻ = rid⊑
         ; ass▻ = ass⊑
-        ; ◅ssa = λ ρ″ ρ′ ρ → ass⊑ ρ ρ′ ρ″ ⁻¹
+        ; ◅ssa = λ ϱ″ ϱ′ ϱ → ass⊑ ϱ ϱ′ ϱ″ ⁻¹
         }
 
 ⟪⊒⟫ : Category 𝓍 𝓍
 ⟪⊒⟫ = ⟪⊑⟫ ᵒᵖ
 
 module _ (⚠ : FunExt) where
-  ψren∋ : X → Presheaf ⟪⊒⟫ 𝓍
-  ψren∋ A = record
+  ϖren∋ : X → Presheaf ⟪⊒⟫ 𝓍
+  ϖren∋ A = record
               { ƒObj = _∋ A
               ; ƒ    = ren∋
               ; idƒ  = ⚠ idren∋
-              ; _∘ƒ_ = λ ρ′ ρ → ⚠ (compren∋ ρ′ ρ)
+              ; _∘ƒ_ = λ ϱ′ ϱ → ⚠ (compren∋ ϱ′ ϱ)
               }
 
 

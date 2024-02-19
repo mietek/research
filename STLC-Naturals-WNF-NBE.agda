@@ -16,8 +16,8 @@ W ⊩ A ⌜⊃⌝ B = ∀ {W′} → W ⊑ W′ → W′ ⊩ A → W′ ⊩ B
 W ⊩ ⌜ℕ⌝     = Σ (W ⊢ ⌜ℕ⌝) NF
 
 vren : ∀ {A W W′} → W ⊑ W′ → W ⊩ A → W′ ⊩ A
-vren {A ⌜⊃⌝ B} ρ v       = λ ρ′ → v (trans⊑ ρ ρ′)
-vren {⌜ℕ⌝}     ρ (_ , p) = _ , renNF ρ p
+vren {A ⌜⊃⌝ B} ϱ v       = λ ϱ′ → v (trans⊑ ϱ ϱ′)
+vren {⌜ℕ⌝}     ϱ (_ , p) = _ , renNF ϱ p
 
 open ValKit (kit _⊩_ vren) public
 
@@ -26,8 +26,8 @@ open ValKit (kit _⊩_ vren) public
 
 mutual
   ↑ : ∀ {A Γ} → Σ (Γ ⊢ A) NNF → Γ ⊩ A
-  ↑ {A ⌜⊃⌝ B} (_ , p₁) = λ ρ v₂ → let _ , p₂ = ↓ v₂
-                                     in ↑ (_ , renNNF ρ p₁ ⌜$⌝ p₂)
+  ↑ {A ⌜⊃⌝ B} (_ , p₁) = λ ϱ v₂ → let _ , p₂ = ↓ v₂
+                                     in ↑ (_ , renNNF ϱ p₁ ⌜$⌝ p₂)
   ↑ {⌜ℕ⌝}     (_ , p)  = _ , nnf p
 
   ↓ : ∀ {A Γ} → Γ ⊩ A → Σ (Γ ⊢ A) NF
@@ -61,12 +61,12 @@ vid§ {Γ , A} = vren§ (wk⊑ id⊑) vid§ , ↑ (var zero , var-)
 
 ⟦_⟧ : ∀ {Γ A} → Γ ⊢ A → Γ ⊨ A
 ⟦ var i          ⟧ γ = ⟦ i ⟧∋ γ
-⟦ ⌜λ⌝ t          ⟧ γ = λ ρ v → ⟦ t ⟧ (vren§ ρ γ , v)
+⟦ ⌜λ⌝ t          ⟧ γ = λ ϱ v → ⟦ t ⟧ (vren§ ϱ γ , v)
 ⟦ t₁ ⌜$⌝ t₂      ⟧ γ = ⟦ t₁ ⟧ γ id⊑ $ ⟦ t₂ ⟧ γ
 ⟦ ⌜zero⌝         ⟧ γ = ⟦zero⟧
 ⟦ ⌜suc⌝ t        ⟧ γ = ⟦suc⟧ (⟦ t ⟧ γ)
-⟦ ⌜rec⌝ tₙ t₀ tₛ ⟧ γ = ⟦rec⟧ (⟦ tₙ ⟧ γ) (⟦ t₀ ⟧ γ) λ { ρ (tₙ′ , pₙ′) ρ′ vₐ →
-                         ⟦ tₛ ⟧ ((vren§ (trans⊑ ρ ρ′) γ , (_ , renNF ρ′ pₙ′)) , vₐ) }
+⟦ ⌜rec⌝ tₙ t₀ tₛ ⟧ γ = ⟦rec⟧ (⟦ tₙ ⟧ γ) (⟦ t₀ ⟧ γ) λ { ϱ (tₙ′ , pₙ′) ϱ′ vₐ →
+                         ⟦ tₛ ⟧ ((vren§ (trans⊑ ϱ ϱ′) γ , (_ , renNF ϱ′ pₙ′)) , vₐ) }
 
 nbe : ∀ {Γ A} → Γ ⊢ A → Σ (Γ ⊢ A) NF
 nbe t = ⟦ ⟦ t ⟧ ⟧⁻¹

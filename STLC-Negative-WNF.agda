@@ -44,17 +44,17 @@ mutual
 ----------------------------------------------------------------------------------------------------
 
 mutual
-  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → NF t → NF (ren ρ t)
-  renNF ρ ⌜λ⌝-    = ⌜λ⌝-
-  renNF ρ -⌜,⌝-   = -⌜,⌝-
-  renNF ρ ⌜unit⌝  = ⌜unit⌝
-  renNF ρ (nnf p) = nnf (renNNF ρ p)
+  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ϱ : Γ ⊑ Γ′) → NF t → NF (ren ϱ t)
+  renNF ϱ ⌜λ⌝-    = ⌜λ⌝-
+  renNF ϱ -⌜,⌝-   = -⌜,⌝-
+  renNF ϱ ⌜unit⌝  = ⌜unit⌝
+  renNF ϱ (nnf p) = nnf (renNNF ϱ p)
 
-  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → NNF t → NNF (ren ρ t)
-  renNNF ρ var-        = var-
-  renNNF ρ (p₁ ⌜$⌝ p₂) = renNNF ρ p₁ ⌜$⌝ renNF ρ p₂
-  renNNF ρ (⌜fst⌝ p)   = ⌜fst⌝ (renNNF ρ p)
-  renNNF ρ (⌜snd⌝ p)   = ⌜snd⌝ (renNNF ρ p)
+  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ϱ : Γ ⊑ Γ′) → NNF t → NNF (ren ϱ t)
+  renNNF ϱ var-        = var-
+  renNNF ϱ (p₁ ⌜$⌝ p₂) = renNNF ϱ p₁ ⌜$⌝ renNF ϱ p₂
+  renNNF ϱ (⌜fst⌝ p)   = ⌜fst⌝ (renNNF ϱ p)
+  renNNF ϱ (⌜snd⌝ p)   = ⌜snd⌝ (renNNF ϱ p)
 
 sub∋NNF : ∀ {Γ Ξ A} {σ : Ξ ⊢§ Γ} {i : Γ ∋ A} → NNF§ σ → NNF (sub∋ σ i)
 sub∋NNF {i = zero}  (ψ , p) = p

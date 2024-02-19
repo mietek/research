@@ -148,31 +148,31 @@ open ProgKit (kit redkit2 prog⇒) public
 
 ----------------------------------------------------------------------------------------------------
 
-ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → t ⇒ t′ → ren ρ t ⇒ ren ρ t′
-ren⇒ ρ (cong$₁ r₁)               = cong$₁ (ren⇒ ρ r₁)
-ren⇒ ρ (cong$₂ p₁ r₂)            = cong$₂ (renNF ρ p₁) (ren⇒ ρ r₂)
-ren⇒ ρ (congsuc r)               = congsuc (ren⇒ ρ r)
-ren⇒ ρ (congrecₙ rₙ)             = congrecₙ (ren⇒ ρ rₙ)
-ren⇒ ρ (congrec₀ pₙ r₀)          = congrec₀ (renNF ρ pₙ) (ren⇒ ρ r₀)
-ren⇒ ρ (congrecₛ pₙ p₀ rₛ)       = congrecₛ (renNF ρ pₙ) (renNF ρ p₀)
-                                      (ren⇒ (lift⊑ (lift⊑ ρ)) rₛ)
-ren⇒ ρ (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut ρ t₁ _ ⁻¹) (renNF ρ p₂)
-ren⇒ ρ (βredℕ₀ p₀ pₛ)            = βredℕ₀ (renNF ρ p₀) (renNF (lift⊑ (lift⊑ ρ)) pₛ)
-ren⇒ ρ (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ) =
-    βredℕₛ eq (renNF ρ pₙ) (renNF ρ p₀) (renNF (lift⊑ (lift⊑ ρ)) pₛ)
+ren⇒ : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (ϱ : Γ ⊑ Γ′) → t ⇒ t′ → ren ϱ t ⇒ ren ϱ t′
+ren⇒ ϱ (cong$₁ r₁)               = cong$₁ (ren⇒ ϱ r₁)
+ren⇒ ϱ (cong$₂ p₁ r₂)            = cong$₂ (renNF ϱ p₁) (ren⇒ ϱ r₂)
+ren⇒ ϱ (congsuc r)               = congsuc (ren⇒ ϱ r)
+ren⇒ ϱ (congrecₙ rₙ)             = congrecₙ (ren⇒ ϱ rₙ)
+ren⇒ ϱ (congrec₀ pₙ r₀)          = congrec₀ (renNF ϱ pₙ) (ren⇒ ϱ r₀)
+ren⇒ ϱ (congrecₛ pₙ p₀ rₛ)       = congrecₛ (renNF ϱ pₙ) (renNF ϱ p₀)
+                                      (ren⇒ (lift⊑ (lift⊑ ϱ)) rₛ)
+ren⇒ ϱ (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut ϱ t₁ _ ⁻¹) (renNF ϱ p₂)
+ren⇒ ϱ (βredℕ₀ p₀ pₛ)            = βredℕ₀ (renNF ϱ p₀) (renNF (lift⊑ (lift⊑ ϱ)) pₛ)
+ren⇒ ϱ (βredℕₛ {tₙ = tₙ} {t₀} {tₛ} refl pₙ p₀ pₛ) =
+    βredℕₛ eq (renNF ϱ pₙ) (renNF ϱ p₀) (renNF (lift⊑ (lift⊑ ϱ)) pₛ)
       where
-  eq : ren ρ (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ] [ tₙ ]) ≡
-       ren (lift⊑ (lift⊑ ρ)) tₛ
-         [ wk (⌜rec⌝ (ren ρ tₙ) (ren ρ t₀) (ren (lift⊑ (lift⊑ ρ)) tₛ)) ] [ ren ρ tₙ ]
-  eq = rencut ρ (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ]) tₙ ⁻¹
-     ⋮ (_[ ren ρ tₙ ]) &
-         ( rencut (lift⊑ ρ) tₛ (wk (⌜rec⌝ tₙ t₀ tₛ)) ⁻¹
-         ⋮ (ren (lift⊑ (lift⊑ ρ)) tₛ [_]) &
-             ( compren (lift⊑ ρ) (wk⊑ id⊑) (⌜rec⌝ tₙ t₀ tₛ) ⁻¹
-             ⋮ (flip ren (⌜rec⌝ tₙ t₀ tₛ) ∘ wk⊑) & (rid⊑ ρ ⋮ lid⊑ ρ ⁻¹)
-             ⋮ ⌜rec⌝ & compren (wk⊑ id⊑) ρ tₙ
-                     ⊗ compren (wk⊑ id⊑) ρ t₀
-                     ⊗ compren (lift⊑ (lift⊑ (wk⊑ id⊑))) (lift⊑ (lift⊑ ρ)) tₛ
+  eq : ren ϱ (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ] [ tₙ ]) ≡
+       ren (lift⊑ (lift⊑ ϱ)) tₛ
+         [ wk (⌜rec⌝ (ren ϱ tₙ) (ren ϱ t₀) (ren (lift⊑ (lift⊑ ϱ)) tₛ)) ] [ ren ϱ tₙ ]
+  eq = rencut ϱ (tₛ [ wk (⌜rec⌝ tₙ t₀ tₛ) ]) tₙ ⁻¹
+     ⋮ (_[ ren ϱ tₙ ]) &
+         ( rencut (lift⊑ ϱ) tₛ (wk (⌜rec⌝ tₙ t₀ tₛ)) ⁻¹
+         ⋮ (ren (lift⊑ (lift⊑ ϱ)) tₛ [_]) &
+             ( compren (lift⊑ ϱ) (wk⊑ id⊑) (⌜rec⌝ tₙ t₀ tₛ) ⁻¹
+             ⋮ (flip ren (⌜rec⌝ tₙ t₀ tₛ) ∘ wk⊑) & (rid⊑ ϱ ⋮ lid⊑ ϱ ⁻¹)
+             ⋮ ⌜rec⌝ & compren (wk⊑ id⊑) ϱ tₙ
+                     ⊗ compren (wk⊑ id⊑) ϱ t₀
+                     ⊗ compren (lift⊑ (lift⊑ (wk⊑ id⊑))) (lift⊑ (lift⊑ ϱ)) tₛ
              )
          )
 

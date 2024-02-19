@@ -44,21 +44,21 @@ mutual
 ----------------------------------------------------------------------------------------------------
 
 mutual
-  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → NF t → NF (ren ρ t)
-  renNF ρ ⌜λ⌝-      = ⌜λ⌝-
-  renNF ρ ⌜zero⌝    = ⌜zero⌝
-  renNF ρ (⌜suc⌝ p) = ⌜suc⌝ (renNF ρ p)
-  renNF ρ (nnf p)   = nnf (renNNF ρ p)
+  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ϱ : Γ ⊑ Γ′) → NF t → NF (ren ϱ t)
+  renNF ϱ ⌜λ⌝-      = ⌜λ⌝-
+  renNF ϱ ⌜zero⌝    = ⌜zero⌝
+  renNF ϱ (⌜suc⌝ p) = ⌜suc⌝ (renNF ϱ p)
+  renNF ϱ (nnf p)   = nnf (renNNF ϱ p)
 
-  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → NNF t → NNF (ren ρ t)
-  renNNF ρ var-             = var-
-  renNNF ρ (p₁ ⌜$⌝ p₂)      = renNNF ρ p₁ ⌜$⌝ renNF ρ p₂
-  renNNF ρ (⌜rec⌝ pₙ p₀ pₛ) = ⌜rec⌝ (renNNF ρ pₙ) (renNF ρ p₀) (renNF (lift⊑ (lift⊑ ρ)) pₛ)
+  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ϱ : Γ ⊑ Γ′) → NNF t → NNF (ren ϱ t)
+  renNNF ϱ var-             = var-
+  renNNF ϱ (p₁ ⌜$⌝ p₂)      = renNNF ϱ p₁ ⌜$⌝ renNF ϱ p₂
+  renNNF ϱ (⌜rec⌝ pₙ p₀ pₛ) = ⌜rec⌝ (renNNF ϱ pₙ) (renNF ϱ p₀) (renNF (lift⊑ (lift⊑ ϱ)) pₛ)
 
 -- TODO: kit
-renNNF§ : ∀ {Γ Γ′ Δ} {τ : Γ ⊢§ Δ} (ρ : Γ ⊑ Γ′) → NNF§ τ → NNF§ (ren§ ρ τ)
-renNNF§ ρ ∙       = ∙
-renNNF§ ρ (ψ , p) = renNNF§ ρ ψ , renNNF ρ p
+renNNF§ : ∀ {Γ Γ′ Δ} {τ : Γ ⊢§ Δ} (ϱ : Γ ⊑ Γ′) → NNF§ τ → NNF§ (ren§ ϱ τ)
+renNNF§ ϱ ∙       = ∙
+renNNF§ ϱ (ψ , p) = renNNF§ ϱ ψ , renNNF ϱ p
 
 wkNNF§ : ∀ {B Γ Δ} {τ : Γ ⊢§ Δ} → NNF§ τ → NNF§ (wk§ {B} τ)
 wkNNF§ ψ = renNNF§ (wk⊑ id⊑) ψ

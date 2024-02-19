@@ -25,7 +25,7 @@ data _▻▻_ {Γ} : ∀ {A} → Γ ⊢ A → Γ ⊢ A → Set where
 -- TODO: rename all substitution-related things to disambiguate from reflexive-transitive closure
 -- open RedKit1 (kit tmkit _▻▻_) public
 
--- maximum parallel reduction; Schäfer: ρ
+-- maximum parallel reduction; Schäfer: ϱ
 max▻▻ : ∀ {Γ A} → Γ ⊢ A → Γ ⊢ A
 max▻▻ (var i)               = var i
 max▻▻ (⌜λ⌝ t)               = ⌜λ⌝ (max▻▻ t)
@@ -69,9 +69,9 @@ data _▻▻§_ {Γ} : ∀ {Δ} → Γ ⊢§ Δ → Γ ⊢§ Δ → Set where
         τ , t ▻▻§ τ′ , t′
 
 -- TODO: kit?
-ren▻▻§ : ∀ {Γ Γ′ Δ} {τ τ′ : Γ ⊢§ Δ} (ρ : Γ ⊑ Γ′) → τ ▻▻§ τ′ → ren§ ρ τ ▻▻§ ren§ ρ τ′
-ren▻▻§ ρ ∙        = ∙
-ren▻▻§ ρ (rs , r) = ren▻▻§ ρ rs , ren▻▻ ρ r
+ren▻▻§ : ∀ {Γ Γ′ Δ} {τ τ′ : Γ ⊢§ Δ} (ϱ : Γ ⊑ Γ′) → τ ▻▻§ τ′ → ren§ ϱ τ ▻▻§ ren§ ϱ τ′
+ren▻▻§ ϱ ∙        = ∙
+ren▻▻§ ϱ (rs , r) = ren▻▻§ ϱ rs , ren▻▻ ϱ r
 
 wk▻▻§ : ∀ {Γ Δ B} {τ τ′ : Γ ⊢§ Δ} → τ ▻▻§ τ′ → wk§ τ ▻▻§ wk§ {B} τ′
 wk▻▻§ rs = ren▻▻§ (wk⊑ id⊑) rs
@@ -80,10 +80,10 @@ wk▻▻§ rs = ren▻▻§ (wk⊑ id⊑) rs
 lift▻▻§ : ∀ {Γ Δ B} {τ τ′ : Γ ⊢§ Δ} → τ ▻▻§ τ′ → lift§ τ ▻▻§ lift§ {B} τ′
 lift▻▻§ rs = wk▻▻§ rs , var-
 
-var▻▻§ : ∀ {Γ Γ′} (ρ : Γ ⊑ Γ′) → var§ ρ ▻▻§ var§ ρ
+var▻▻§ : ∀ {Γ Γ′} (ϱ : Γ ⊑ Γ′) → var§ ϱ ▻▻§ var§ ϱ
 var▻▻§ stop      = ∙
-var▻▻§ (wk⊑ ρ)   = wk▻▻§ (var▻▻§ ρ)
-var▻▻§ (lift⊑ ρ) = lift▻▻§ (var▻▻§ ρ)
+var▻▻§ (wk⊑ ϱ)   = wk▻▻§ (var▻▻§ ϱ)
+var▻▻§ (lift⊑ ϱ) = lift▻▻§ (var▻▻§ ϱ)
 
 id▻▻§ : ∀ {Γ} → id§ ▻▻§ id§ {Γ}
 id▻▻§ {∙}     = ∙

@@ -39,13 +39,13 @@ open TmKit (kit _⊢_) public
 ----------------------------------------------------------------------------------------------------
 
 ren : ∀ {Γ Γ′ A} → Γ ⊑ Γ′ → Γ ⊢ A → Γ′ ⊢ A
-ren ρ (var i)     = var (ren∋ ρ i)
-ren ρ (⌜λ⌝ t)     = ⌜λ⌝ (ren (lift⊑ ρ) t)
-ren ρ (t₁ ⌜$⌝ t₂) = ren ρ t₁ ⌜$⌝ ren ρ t₂
-ren ρ (t₁ ⌜,⌝ t₂) = ren ρ t₁ ⌜,⌝ ren ρ t₂
-ren ρ (⌜fst⌝ t)   = ⌜fst⌝ (ren ρ t)
-ren ρ (⌜snd⌝ t)   = ⌜snd⌝ (ren ρ t)
-ren ρ ⌜unit⌝      = ⌜unit⌝
+ren ϱ (var i)     = var (ren∋ ϱ i)
+ren ϱ (⌜λ⌝ t)     = ⌜λ⌝ (ren (lift⊑ ϱ) t)
+ren ϱ (t₁ ⌜$⌝ t₂) = ren ϱ t₁ ⌜$⌝ ren ϱ t₂
+ren ϱ (t₁ ⌜,⌝ t₂) = ren ϱ t₁ ⌜,⌝ ren ϱ t₂
+ren ϱ (⌜fst⌝ t)   = ⌜fst⌝ (ren ϱ t)
+ren ϱ (⌜snd⌝ t)   = ⌜snd⌝ (ren ϱ t)
+ren ϱ ⌜unit⌝      = ⌜unit⌝
 
 open RenKit (kit var ren) public
 

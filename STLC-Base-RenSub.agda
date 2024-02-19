@@ -15,15 +15,15 @@ lidren (var i)     = var & idren∋ i
 lidren (⌜λ⌝ t)     = ⌜λ⌝ & lidren t
 lidren (t₁ ⌜$⌝ t₂) = _⌜$⌝_ & lidren t₁ ⊗ lidren t₂
 
-compren : ∀ {Γ Γ′ Γ″ A} (ρ′ : Γ′ ⊑ Γ″) (ρ : Γ ⊑ Γ′) (t : Γ ⊢ A) →
-          ren (ρ′ ∘⊑ ρ) t ≡ (ren ρ′ ∘ ren ρ) t
-compren ρ′ ρ (var i)     = var & compren∋ ρ′ ρ i
-compren ρ′ ρ (⌜λ⌝ t)     = ⌜λ⌝ & compren (lift⊑ ρ′) (lift⊑ ρ) t
-compren ρ′ ρ (t₁ ⌜$⌝ t₂) = _⌜$⌝_ & compren ρ′ ρ t₁ ⊗ compren ρ′ ρ t₂
+compren : ∀ {Γ Γ′ Γ″ A} (ϱ′ : Γ′ ⊑ Γ″) (ϱ : Γ ⊑ Γ′) (t : Γ ⊢ A) →
+          ren (ϱ′ ∘⊑ ϱ) t ≡ (ren ϱ′ ∘ ren ϱ) t
+compren ϱ′ ϱ (var i)     = var & compren∋ ϱ′ ϱ i
+compren ϱ′ ϱ (⌜λ⌝ t)     = ⌜λ⌝ & compren (lift⊑ ϱ′) (lift⊑ ϱ) t
+compren ϱ′ ϱ (t₁ ⌜$⌝ t₂) = _⌜$⌝_ & compren ϱ′ ϱ t₁ ⊗ compren ϱ′ ϱ t₂
 
 -- not really identity
-ridren : ∀ {Γ Γ′ A} (ρ : Γ ⊑ Γ′) (i : Γ ∋ A) → ren ρ (var i) ≡ var (ren∋ ρ i)
-ridren ρ i = refl
+ridren : ∀ {Γ Γ′ A} (ϱ : Γ ⊑ Γ′) (i : Γ ∋ A) → ren ϱ (var i) ≡ var (ren∋ ϱ i)
+ridren ϱ i = refl
 
 -- not really identity
 ridsub : ∀ {Γ Ξ A} (σ : Ξ ⊢§ Γ) (i : Γ ∋ A) → sub σ (var i) ≡ sub∋ σ i
@@ -35,22 +35,22 @@ open RenSubKit1 (kit subkit lidren compren ridren ridsub) public
 ----------------------------------------------------------------------------------------------------
 
 -- Kovacs: Tm-ₛ∘ₑ
-eqrensub : ∀ {Γ Ξ Ξ′ A} (ρ : Ξ ⊑ Ξ′) (σ : Ξ ⊢§ Γ) (t : Γ ⊢ A) →
-           sub (ren§ ρ σ) t ≡ (ren ρ ∘ sub σ) t
-eqrensub ρ σ (var i)     = eqrensub∋ ρ σ i
-eqrensub ρ σ (⌜λ⌝ t)     = ⌜λ⌝ & ( flip sub t & eqliftren§ ρ σ ⁻¹
-                                 ⋮ eqrensub (lift⊑ ρ) (lift§ σ) t
+eqrensub : ∀ {Γ Ξ Ξ′ A} (ϱ : Ξ ⊑ Ξ′) (σ : Ξ ⊢§ Γ) (t : Γ ⊢ A) →
+           sub (ren§ ϱ σ) t ≡ (ren ϱ ∘ sub σ) t
+eqrensub ϱ σ (var i)     = eqrensub∋ ϱ σ i
+eqrensub ϱ σ (⌜λ⌝ t)     = ⌜λ⌝ & ( flip sub t & eqliftren§ ϱ σ ⁻¹
+                                 ⋮ eqrensub (lift⊑ ϱ) (lift§ σ) t
                                  )
-eqrensub ρ σ (t₁ ⌜$⌝ t₂) = _⌜$⌝_ & eqrensub ρ σ t₁ ⊗ eqrensub ρ σ t₂
+eqrensub ϱ σ (t₁ ⌜$⌝ t₂) = _⌜$⌝_ & eqrensub ϱ σ t₁ ⊗ eqrensub ϱ σ t₂
 
 -- Kovacs: Tm-ₑ∘ₛ
-eqsubren : ∀ {Γ Γ′ Ξ A} (σ : Ξ ⊢§ Γ′) (ρ : Γ ⊑ Γ′) (t : Γ ⊢ A) →
-           sub (get§ ρ σ) t ≡ (sub σ ∘ ren ρ) t
-eqsubren σ ρ (var i)     = eqsubren∋ σ ρ i
-eqsubren σ ρ (⌜λ⌝ t)     = ⌜λ⌝ & ( flip sub t & eqliftget§ ρ σ ⁻¹
-                                 ⋮ eqsubren (lift§ σ) (lift⊑ ρ) t
+eqsubren : ∀ {Γ Γ′ Ξ A} (σ : Ξ ⊢§ Γ′) (ϱ : Γ ⊑ Γ′) (t : Γ ⊢ A) →
+           sub (get§ ϱ σ) t ≡ (sub σ ∘ ren ϱ) t
+eqsubren σ ϱ (var i)     = eqsubren∋ σ ϱ i
+eqsubren σ ϱ (⌜λ⌝ t)     = ⌜λ⌝ & ( flip sub t & eqliftget§ ϱ σ ⁻¹
+                                 ⋮ eqsubren (lift§ σ) (lift⊑ ϱ) t
                                  )
-eqsubren σ ρ (t₁ ⌜$⌝ t₂) = _⌜$⌝_ & eqsubren σ ρ t₁ ⊗ eqsubren σ ρ t₂
+eqsubren σ ϱ (t₁ ⌜$⌝ t₂) = _⌜$⌝_ & eqsubren σ ϱ t₁ ⊗ eqsubren σ ϱ t₂
 
 -- Kovacs: Tm-idₛ
 lidsub : ∀ {Γ A} (t : Γ ⊢ A) → sub id§ t ≡ t

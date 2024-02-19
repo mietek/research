@@ -36,18 +36,18 @@ mutual
 ----------------------------------------------------------------------------------------------------
 
 mutual
-  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → NF t → NF (ren ρ t)
-  renNF ρ (⌜λ⌝ p) = ⌜λ⌝ (renNF (lift⊑ ρ) p)
-  renNF ρ (nnf p) = nnf (renNNF ρ p)
+  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ϱ : Γ ⊑ Γ′) → NF t → NF (ren ϱ t)
+  renNF ϱ (⌜λ⌝ p) = ⌜λ⌝ (renNF (lift⊑ ϱ) p)
+  renNF ϱ (nnf p) = nnf (renNNF ϱ p)
 
-  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → NNF t → NNF (ren ρ t)
-  renNNF ρ var-        = var-
-  renNNF ρ (p₁ ⌜$⌝ p₂) = renNNF ρ p₁ ⌜$⌝ renNF ρ p₂
+  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ϱ : Γ ⊑ Γ′) → NNF t → NNF (ren ϱ t)
+  renNNF ϱ var-        = var-
+  renNNF ϱ (p₁ ⌜$⌝ p₂) = renNNF ϱ p₁ ⌜$⌝ renNF ϱ p₂
 
 -- TODO: kit
-renNNF§ : ∀ {Γ Γ′ Δ} {σ : Γ ⊢§ Δ} (ρ : Γ ⊑ Γ′) → NNF§ σ → NNF§ (ren§ ρ σ)
-renNNF§ ρ ∙       = ∙
-renNNF§ ρ (ψ , p) = renNNF§ ρ ψ , renNNF ρ p
+renNNF§ : ∀ {Γ Γ′ Δ} {σ : Γ ⊢§ Δ} (ϱ : Γ ⊑ Γ′) → NNF§ σ → NNF§ (ren§ ϱ σ)
+renNNF§ ϱ ∙       = ∙
+renNNF§ ϱ (ψ , p) = renNNF§ ϱ ψ , renNNF ϱ p
 
 wkNNF§ : ∀ {B Γ Δ} {σ : Γ ⊢§ Δ} → NNF§ σ → NNF§ (wk§ {B} σ)
 wkNNF§ ψ = renNNF§ (wk⊑ id⊑) ψ

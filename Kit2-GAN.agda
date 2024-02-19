@@ -11,76 +11,76 @@ module RenSubKit1-GAN (¶ : RenSubKit1Params) where
   open RenSubKit1 ¶
 
   module _ (⚠ : FunExt) where
-    ψren : Ty → Presheaf ⟪⊒⟫ lzero
-    ψren A = record
+    ϖren : Ty → Presheaf ⟪⊒⟫ lzero
+    ϖren A = record
                { ƒObj = _⊢ A
                ; ƒ    = ren
                ; idƒ  = ⚠ lidren
-               ; _∘ƒ_ = λ ρ′ ρ → ⚠ (compren ρ′ ρ)
+               ; _∘ƒ_ = λ ϱ′ ϱ → ⚠ (compren ϱ′ ϱ)
                }
 
-    ψren§ : Ctx → Presheaf ⟪⊒⟫ lzero
-    ψren§ Δ = record
+    ϖren§ : Ctx → Presheaf ⟪⊒⟫ lzero
+    ϖren§ Δ = record
                 { ƒObj = _⊢§ Δ
                 ; ƒ    = ren§
                 ; idƒ  = ⚠ lidren§
-                ; _∘ƒ_ = λ ρ′ ρ → ⚠ (compren§ ρ′ ρ)
+                ; _∘ƒ_ = λ ϱ′ ϱ → ⚠ (compren§ ϱ′ ϱ)
                 }
 
-    ψren∘lift⊑ : Ty → Ty → Presheaf ⟪⊒⟫ lzero
-    ψren∘lift⊑ A B = record
+    ϖren∘lift⊑ : Ty → Ty → Presheaf ⟪⊒⟫ lzero
+    ϖren∘lift⊑ A B = record
                        { ƒObj = λ Γ → Γ , B ⊢ A
                        ; ƒ    = ren ∘ lift⊑
                        ; idƒ  = ⚠ lidren
-                       ; _∘ƒ_ = λ ρ′ ρ → ⚠ (compren (lift⊑ ρ′) (lift⊑ ρ))
+                       ; _∘ƒ_ = λ ϱ′ ϱ → ⚠ (compren (lift⊑ ϱ′) (lift⊑ ϱ))
                        }
 
-    ηwk : ∀ (A B : Ty) → NatTrans (ψren A) (ψren∘lift⊑ A B)
-    ηwk A B = record
-                { η    = λ Γ → wk
-                ; natη = λ Γ Γ′ ρ → ⚠ λ t → eqwkren ρ t ⁻¹
+    νwk : ∀ (A B : Ty) → NatTrans (ϖren A) (ϖren∘lift⊑ A B)
+    νwk A B = record
+                { ν    = λ Γ → wk
+                ; natν = λ Γ Γ′ ϱ → ⚠ λ t → eqwkren ϱ t ⁻¹
                 }
 
-    ψren§∘lift⊑ : Ctx → Ty → Presheaf ⟪⊒⟫ lzero
-    ψren§∘lift⊑ Δ B = record
+    ϖren§∘lift⊑ : Ctx → Ty → Presheaf ⟪⊒⟫ lzero
+    ϖren§∘lift⊑ Δ B = record
                         { ƒObj = λ Γ → Γ , B ⊢§ Δ
                         ; ƒ    = ren§ ∘ lift⊑
                         ; idƒ  = ⚠ lidren§
-                        ; _∘ƒ_ = λ ρ′ ρ → ⚠ (compren§ (lift⊑ ρ′) (lift⊑ ρ))
+                        ; _∘ƒ_ = λ ϱ′ ϱ → ⚠ (compren§ (lift⊑ ϱ′) (lift⊑ ϱ))
                         }
 
-    ηwk§ : ∀ (Δ : Ctx) (B : Ty) → NatTrans (ψren§ Δ) (ψren§∘lift⊑ Δ B)
-    ηwk§ Δ B = record
-                 { η    = λ Γ → wk§
-                 ; natη = λ Γ Γ′ ρ → ⚠ λ ts → eqwkren§ ρ ts ⁻¹
+    νwk§ : ∀ (Δ : Ctx) (B : Ty) → NatTrans (ϖren§ Δ) (ϖren§∘lift⊑ Δ B)
+    νwk§ Δ B = record
+                 { ν    = λ Γ → wk§
+                 ; natν = λ Γ Γ′ ϱ → ⚠ λ ts → eqwkren§ ϱ ts ⁻¹
                  }
 
-    ψren§∘lift⊑′ : Ctx → Ty → Presheaf ⟪⊒⟫ lzero
-    ψren§∘lift⊑′ Δ B = record
+    ϖren§∘lift⊑′ : Ctx → Ty → Presheaf ⟪⊒⟫ lzero
+    ϖren§∘lift⊑′ Δ B = record
                          { ƒObj = λ Γ → Γ , B ⊢§ Δ , B
                          ; ƒ    = ren§ ∘ lift⊑
                          ; idƒ  = ⚠ lidren§
-                         ; _∘ƒ_ = λ ρ′ ρ → ⚠ (compren§ (lift⊑ ρ′) (lift⊑ ρ))
+                         ; _∘ƒ_ = λ ϱ′ ϱ → ⚠ (compren§ (lift⊑ ϱ′) (lift⊑ ϱ))
                          }
 
-    ηlift§ : ∀ (Δ : Ctx) (B : Ty) → NatTrans (ψren§ Δ) (ψren§∘lift⊑′ Δ B)
-    ηlift§ Δ B = record
-                   { η    = λ Γ → lift§
-                   ; natη = λ Γ Δ ρ → ⚠ λ ts → eqliftren§ ρ ts ⁻¹
+    νlift§ : ∀ (Δ : Ctx) (B : Ty) → NatTrans (ϖren§ Δ) (ϖren§∘lift⊑′ Δ B)
+    νlift§ Δ B = record
+                   { ν    = λ Γ → lift§
+                   ; natν = λ Γ Δ ϱ → ⚠ λ ts → eqliftren§ ϱ ts ⁻¹
                    }
 
-    ψget§ : Ctx → Presheaf ⟪⊑⟫ lzero
-    ψget§ Γ = record
+    ϖget§ : Ctx → Presheaf ⟪⊑⟫ lzero
+    ϖget§ Γ = record
                 { ƒObj = Γ ⊢§_
                 ; ƒ    = get§
                 ; idƒ  = ⚠ lidget§
-                ; _∘ƒ_ = λ ρ ρ′ → ⚠ (compget§ ρ ρ′)
+                ; _∘ƒ_ = λ ϱ ϱ′ → ⚠ (compget§ ϱ ϱ′)
                 }
 
-    ηren§ : ∀ (Γ Γ′ : Ctx) → Γ ⊑ Γ′ → NatTrans (ψget§ Γ) (ψget§ Γ′)
-    ηren§ Γ Γ′ ρ = record
-                     { η    = λ Δ → ren§ ρ
-                     ; natη = λ Γ Δ ρ′ → ⚠ λ ts → eqrenget§ ρ ρ′ ts ⁻¹
+    νren§ : ∀ (Γ Γ′ : Ctx) → Γ ⊑ Γ′ → NatTrans (ϖget§ Γ) (ϖget§ Γ′)
+    νren§ Γ Γ′ ϱ = record
+                     { ν    = λ Δ → ren§ ϱ
+                     ; natν = λ Γ Δ ϱ′ → ⚠ λ ts → eqrenget§ ϱ ϱ′ ts ⁻¹
                      }
 
 
@@ -115,8 +115,8 @@ module RenSubKit3-GAN (¶ : RenSubKit3Params) where
   ⟪⊢§⟫ = ⟪§⊣⟫ ᵒᵖ
 
   module _ (⚠ : FunExt) where
-    ψsub : Ty → Presheaf ⟪⊢§⟫ lzero
-    ψsub A = record
+    ϖsub : Ty → Presheaf ⟪⊢§⟫ lzero
+    ϖsub A = record
                { ƒObj = _⊢ A
                ; ƒ    = sub
                ; idƒ  = ⚠ lidsub

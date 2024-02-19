@@ -267,24 +267,24 @@ module PKF = ProgKit (kit RK2F.redkit2 prog⇒F)
 
 ----------------------------------------------------------------------------------------------------
 
-renExpandable : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → Expandable t → Expandable (ren ρ t)
-renExpandable ρ var-        = var-
-renExpandable ρ (p₁ ⌜$⌝ p₂) = F.renNNF ρ p₁ ⌜$⌝ F.renNF ρ p₂
+renExpandable : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ϱ : Γ ⊑ Γ′) → Expandable t → Expandable (ren ϱ t)
+renExpandable ϱ var-        = var-
+renExpandable ϱ (p₁ ⌜$⌝ p₂) = F.renNNF ϱ p₁ ⌜$⌝ F.renNF ϱ p₂
 
-ren¬Expandable : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → ¬ Expandable t → ¬ Expandable (ren ρ t)
-ren¬Expandable {t = var i}     ρ ¬x var-        = var- ↯ ¬x
-ren¬Expandable {t = t₁ ⌜$⌝ t₂} ρ ¬x (p₁ ⌜$⌝ p₂) = (F.nerNNF ρ p₁ ⌜$⌝ F.nerNF ρ p₂) ↯ ¬x
+ren¬Expandable : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ϱ : Γ ⊑ Γ′) → ¬ Expandable t → ¬ Expandable (ren ϱ t)
+ren¬Expandable {t = var i}     ϱ ¬x var-        = var- ↯ ¬x
+ren¬Expandable {t = t₁ ⌜$⌝ t₂} ϱ ¬x (p₁ ⌜$⌝ p₂) = (F.nerNNF ϱ p₁ ⌜$⌝ F.nerNF ϱ p₂) ↯ ¬x
 
 mutual
-  ren⇒F : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → t ⇒F t′ → ren ρ t ⇒F ren ρ t′
-  ren⇒F ρ (Ired ¬x r)    = Ired (ren¬Expandable ρ ¬x) (ren⇒I ρ r)
-  ren⇒F ρ (ηexp⊃ refl x) = ηexp⊃ (eqwkren ρ _) (renExpandable ρ x)
+  ren⇒F : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (ϱ : Γ ⊑ Γ′) → t ⇒F t′ → ren ϱ t ⇒F ren ϱ t′
+  ren⇒F ϱ (Ired ¬x r)    = Ired (ren¬Expandable ϱ ¬x) (ren⇒I ϱ r)
+  ren⇒F ϱ (ηexp⊃ refl x) = ηexp⊃ (eqwkren ϱ _) (renExpandable ϱ x)
 
-  ren⇒I : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → t ⇒I t′ → ren ρ t ⇒I ren ρ t′
-  ren⇒I ρ (cong$₁ r₁)               = cong$₁ (ren⇒I ρ r₁)
-  ren⇒I ρ (Fcong$₂ p₁ r₂)           = Fcong$₂ (F.renNF ρ p₁) (ren⇒F ρ r₂)
-  ren⇒I ρ (Xcong$₂ x₁ r₂)           = Xcong$₂ (renExpandable ρ x₁) (ren⇒F ρ r₂)
-  ren⇒I ρ (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut ρ t₁ _ ⁻¹) (F.renNF ρ p₂)
+  ren⇒I : ∀ {Γ Γ′ A} {t t′ : Γ ⊢ A} (ϱ : Γ ⊑ Γ′) → t ⇒I t′ → ren ϱ t ⇒I ren ϱ t′
+  ren⇒I ϱ (cong$₁ r₁)               = cong$₁ (ren⇒I ϱ r₁)
+  ren⇒I ϱ (Fcong$₂ p₁ r₂)           = Fcong$₂ (F.renNF ϱ p₁) (ren⇒F ϱ r₂)
+  ren⇒I ϱ (Xcong$₂ x₁ r₂)           = Xcong$₂ (renExpandable ϱ x₁) (ren⇒F ϱ r₂)
+  ren⇒I ϱ (βred⊃ {t₁ = t₁} refl p₂) = βred⊃ (rencut ϱ t₁ _ ⁻¹) (F.renNF ϱ p₂)
 
 sub∋Expandable : ∀ {Γ Ξ A} {σ : Ξ ⊢§ Γ} {i : Γ ∋ A} → Expandable* σ → Expandable (sub∋ σ i)
 sub∋Expandable {i = zero}  (ξ , x) = x

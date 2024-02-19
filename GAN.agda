@@ -108,14 +108,14 @@ record NatTrans {ℴ₁ ℴ₂ 𝓂₁ 𝓂₂} {C : Category ℴ₁ 𝓂₁} {D
     module G = Functor G
 
   field
-    η    : ∀ (x : C.Obj) → (F.ƒObj x) D.▻ (G.ƒObj x)
-    natη : ∀ (x y : C.Obj) (p : x C.▻ y) → η y D.∘ F.ƒ p ≡ G.ƒ p D.∘ η x
+    ν    : ∀ (x : C.Obj) → (F.ƒObj x) D.▻ (G.ƒObj x)
+    natν : ∀ (x y : C.Obj) (p : x C.▻ y) → ν y D.∘ F.ƒ p ≡ G.ƒ p D.∘ ν x
 
   -- opposite
   op : NatTrans G.op F.op
   op = record
-         { η    = η
-         ; natη = λ x y f → natη y x f ⁻¹
+         { ν    = ν
+         ; natν = λ x y f → natν y x f ⁻¹
          }
 
 

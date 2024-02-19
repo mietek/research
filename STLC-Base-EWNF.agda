@@ -56,23 +56,23 @@ mutual
 ----------------------------------------------------------------------------------------------------
 
 mutual
-  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → NF t → NF (ren ρ t)
-  renNF ρ ⌜λ⌝-    = ⌜λ⌝-
-  renNF ρ (nnf p) = nnf (renNNF ρ p)
+  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ϱ : Γ ⊑ Γ′) → NF t → NF (ren ϱ t)
+  renNF ϱ ⌜λ⌝-    = ⌜λ⌝-
+  renNF ϱ (nnf p) = nnf (renNNF ϱ p)
 
-  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → NNF t → NNF (ren ρ t)
-  renNNF ρ var-        = var-
-  renNNF ρ (p₁ ⌜$⌝ p₂) = renNNF ρ p₁ ⌜$⌝ renNF ρ p₂
+  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ϱ : Γ ⊑ Γ′) → NNF t → NNF (ren ϱ t)
+  renNNF ϱ var-        = var-
+  renNNF ϱ (p₁ ⌜$⌝ p₂) = renNNF ϱ p₁ ⌜$⌝ renNF ϱ p₂
 
 mutual
-  nerNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → NF (ren ρ t) → NF t
-  nerNF {t = var i}     ρ (nnf p) = nnf (nerNNF ρ p)
-  nerNF {t = ⌜λ⌝ t}     ρ ⌜λ⌝-    = ⌜λ⌝-
-  nerNF {t = t₁ ⌜$⌝ t₂} ρ (nnf p) = nnf (nerNNF ρ p)
+  nerNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ϱ : Γ ⊑ Γ′) → NF (ren ϱ t) → NF t
+  nerNF {t = var i}     ϱ (nnf p) = nnf (nerNNF ϱ p)
+  nerNF {t = ⌜λ⌝ t}     ϱ ⌜λ⌝-    = ⌜λ⌝-
+  nerNF {t = t₁ ⌜$⌝ t₂} ϱ (nnf p) = nnf (nerNNF ϱ p)
 
-  nerNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → NNF (ren ρ t) → NNF t
-  nerNNF {t = var i}     ρ var-        = var-
-  nerNNF {t = t₁ ⌜$⌝ t₂} ρ (p₁ ⌜$⌝ p₂) = nerNNF ρ p₁ ⌜$⌝ nerNF ρ p₂
+  nerNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ϱ : Γ ⊑ Γ′) → NNF (ren ϱ t) → NNF t
+  nerNNF {t = var i}     ϱ var-        = var-
+  nerNNF {t = t₁ ⌜$⌝ t₂} ϱ (p₁ ⌜$⌝ p₂) = nerNNF ϱ p₁ ⌜$⌝ nerNF ϱ p₂
 
 sub∋NNF : ∀ {Γ Ξ A} {σ : Ξ ⊢§ Γ} {i : Γ ∋ A} → NNF§ σ → NNF (sub∋ σ i)
 sub∋NNF {i = zero}  (ψ , p) = p

@@ -50,16 +50,16 @@ mutual
 ----------------------------------------------------------------------------------------------------
 
 mutual
-  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → NF t → NF (ren ρ t)
-  renNF ρ (⌜λ⌝ p)   = ⌜λ⌝ (renNF (lift⊑ ρ) p)
-  renNF ρ ⌜zero⌝    = ⌜zero⌝
-  renNF ρ (⌜suc⌝ p) = ⌜suc⌝ (renNF ρ p)
-  renNF ρ (nnf p)   = nnf (renNNF ρ p)
+  renNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ϱ : Γ ⊑ Γ′) → NF t → NF (ren ϱ t)
+  renNF ϱ (⌜λ⌝ p)   = ⌜λ⌝ (renNF (lift⊑ ϱ) p)
+  renNF ϱ ⌜zero⌝    = ⌜zero⌝
+  renNF ϱ (⌜suc⌝ p) = ⌜suc⌝ (renNF ϱ p)
+  renNF ϱ (nnf p)   = nnf (renNNF ϱ p)
 
-  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ρ : Γ ⊑ Γ′) → NNF t → NNF (ren ρ t)
-  renNNF ρ var-             = var-
-  renNNF ρ (p₁ ⌜$⌝ p₂)      = renNNF ρ p₁ ⌜$⌝ renNF ρ p₂
-  renNNF ρ (⌜rec⌝ pₙ p₀ pₛ) = ⌜rec⌝ (renNNF ρ pₙ) (renNF ρ p₀) (renNF ρ pₛ)
+  renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ϱ : Γ ⊑ Γ′) → NNF t → NNF (ren ϱ t)
+  renNNF ϱ var-             = var-
+  renNNF ϱ (p₁ ⌜$⌝ p₂)      = renNNF ϱ p₁ ⌜$⌝ renNF ϱ p₂
+  renNNF ϱ (⌜rec⌝ pₙ p₀ pₛ) = ⌜rec⌝ (renNNF ϱ pₙ) (renNF ϱ p₀) (renNF ϱ pₛ)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -83,15 +83,15 @@ mutual
 
 mutual
   ren≪ : ∀ {Γ Γ′ A} → Γ ⊑ Γ′ → Γ ⊢≪ A → Γ′ ⊢≪ A
-  ren≪ ρ (⌜λ⌝ t)   = ⌜λ⌝ (ren≪ (lift⊑ ρ) t)
-  ren≪ ρ ⌜zero⌝    = ⌜zero⌝
-  ren≪ ρ (⌜suc⌝ t) = ren≪ ρ t
-  ren≪ ρ (nnf t)   = nnf (ren≫ ρ t)
+  ren≪ ϱ (⌜λ⌝ t)   = ⌜λ⌝ (ren≪ (lift⊑ ϱ) t)
+  ren≪ ϱ ⌜zero⌝    = ⌜zero⌝
+  ren≪ ϱ (⌜suc⌝ t) = ren≪ ϱ t
+  ren≪ ϱ (nnf t)   = nnf (ren≫ ϱ t)
 
   ren≫ : ∀ {Γ Γ′ A} → Γ ⊑ Γ′ → Γ ⊢≫ A → Γ′ ⊢≫ A
-  ren≫ ρ (var i)          = var (ren∋ ρ i)
-  ren≫ ρ (t₁ ⌜$⌝ t₂)      = ren≫ ρ t₁ ⌜$⌝ ren≪ ρ t₂
-  ren≫ ρ (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ (ren≫ ρ tₙ) (ren≪ ρ t₀) (ren≪ ρ tₛ)
+  ren≫ ϱ (var i)          = var (ren∋ ϱ i)
+  ren≫ ϱ (t₁ ⌜$⌝ t₂)      = ren≫ ϱ t₁ ⌜$⌝ ren≪ ϱ t₂
+  ren≫ ϱ (⌜rec⌝ tₙ t₀ tₛ) = ⌜rec⌝ (ren≫ ϱ tₙ) (ren≪ ϱ t₀) (ren≪ ϱ tₛ)
 
 
 ----------------------------------------------------------------------------------------------------
