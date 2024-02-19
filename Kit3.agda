@@ -129,7 +129,7 @@ module DetKit (¶ : DetKitParams) where
   skip⇒* : ∀ {Γ A} {t t′ t″ : Γ ⊢ A} → t ⇒ t′ → t ⇒* t″ → NF t″ → t′ ⇒* t″
   skip⇒* r done          p″ = r ↯ NF→¬R p″
   skip⇒* r (step r′ rs′) p″ with det⇒ r r′
-  ... | refl                  = rs′
+  ... | refl                   = rs′
 
   uni⇒* : ∀ {Γ A} {t t′ : Γ ⊢ A} (rs rs′ : t ⇒* t′) → NF t′ → rs ≡ rs′
   uni⇒* done        done          p′ = refl
