@@ -55,9 +55,9 @@ _⨾_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : X → Set 𝓎} {Z : ∀ {x} �
 
 -- data
 
-data Tsil {𝓍} (X : Set 𝓍) : Set 𝓍 where
-  ∙   : Tsil X
-  _,_ : ∀ (ξ : Tsil X) (x : X) → Tsil X
+data Rist {𝓍} (X : Set 𝓍) : Set 𝓍 where
+  ∙   : Rist X
+  _,_ : ∀ (ξ : Rist X) (x : X) → Rist X
 
 infixr 2 _×_
 _×_ : ∀ {𝓍 𝓎} (X : Set 𝓍) (Y : Set 𝓎) → Set (𝓍 ⊔ 𝓎)

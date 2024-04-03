@@ -7,7 +7,7 @@ open import FOR public
 
 module TyKit (Ty : Set) where
   Ctx : Set
-  Ctx = Tsil Ty
+  Ctx = Rist Ty
 
 
 ----------------------------------------------------------------------------------------------------

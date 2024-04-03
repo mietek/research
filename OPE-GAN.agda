@@ -12,7 +12,7 @@ open import GAN public
 
 ⟪⊑⟫ : Category 𝓍 𝓍
 ⟪⊑⟫ = record
-        { Obj  = Tsil X
+        { Obj  = Rist X
         ; _▻_  = _⊑_
         ; id   = id⊑
         ; _∘_  = _∘⊑_
