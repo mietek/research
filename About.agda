@@ -35,7 +35,6 @@ module About where
 
 import Prelude
 import GAN
-import ARS
 import DBI
 
 
