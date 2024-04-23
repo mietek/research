@@ -4,6 +4,9 @@ module README where
 
 -- TODO: Import more attempts
 
+-- Attempt 2024-01
+import A202401.About
+
 -- Attempt 2021-04
 import A202104.README
 
