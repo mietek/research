@@ -22,6 +22,9 @@ import A201901.Everything
 -- Attempt 2018-02: Logical relations
 import A201802.Everything
 
+-- Attempt 2018-01
+import A201801.Everything
+
 -- Attempt 2017-06
 import A201706.Everything
 
