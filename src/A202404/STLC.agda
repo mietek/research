@@ -62,11 +62,11 @@ get : ∀ (Γ : Ctx) (k : Fin (len Γ)) → Σ Ty λ A → Σ (Γ ∋ A) λ i �
 get (Γ , A) zero    = A , zero , refl
 get (Γ , B) (suc k) = let A , i , eq = get Γ k in A , wk∋ i , suc & eq
 
-uni∋ : ∀ {Γ A A′ k} (i : Γ ∋ A) (i′ : Γ ∋ A′) → k ≡ fin i → k ≡ fin i′ → A ≡ A′
-uni∋ zero    zero     refl eq′ = refl
-uni∋ zero    (wk∋ i′) refl ()
-uni∋ (wk∋ i) zero     refl ()
-uni∋ (wk∋ i) (wk∋ i′) refl eq′ = uni∋ i i′ refl (injsuc eq′)
+uniTy∋ : ∀ {Γ A A′ k} (i : Γ ∋ A) (i′ : Γ ∋ A′) → k ≡ fin i → k ≡ fin i′ → A ≡ A′
+uniTy∋ zero    zero     refl eq′ = refl
+uniTy∋ zero    (wk∋ i′) refl ()
+uniTy∋ (wk∋ i) zero     refl ()
+uniTy∋ (wk∋ i) (wk∋ i′) refl eq′ = uniTy∋ i i′ refl (injsuc eq′)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -168,10 +168,10 @@ module WorksButIsKindaWeird where
       _⌜$⌝_ : ∀ {A B M₁ M₂} (t₁ : Γ ⊢ M₁ ≫ A ⌜⊃⌝ B) (t₂ : Γ ⊢ M₂ ≪ A) → Γ ⊢ M₁ ⌜$⌝ M₂ ≫ B
       chk   : ∀ {A M} (t : Γ ⊢ M ≪ A) → Γ ⊢ chk A M ≫ A
 
-  uni≫ : ∀ {Γ M A A′} → Γ ⊢ M ≫ A → Γ ⊢ M ≫ A′ → A ≡ A′
-  uni≫ (var i eq)  (var i′ eq′)  = uni∋ i i′ eq eq′
-  uni≫ (t₁ ⌜$⌝ t₂) (t₁′ ⌜$⌝ t₂′) = inj⊃₂ (uni≫ t₁ t₁′)
-  uni≫ (chk t)     (chk t′)      = refl
+  uniTy≫ : ∀ {Γ M A A′} → Γ ⊢ M ≫ A → Γ ⊢ M ≫ A′ → A ≡ A′
+  uniTy≫ (var i eq)  (var i′ eq′)  = uniTy∋ i i′ eq eq′
+  uniTy≫ (t₁ ⌜$⌝ t₂) (t₁′ ⌜$⌝ t₂′) = inj⊃₂ (uniTy≫ t₁ t₁′)
+  uniTy≫ (chk t)     (chk t′)      = refl
 
   mutual
     check : ∀ (Γ : Ctx) (M : Tm≪ (len Γ)) (A : Ty) → Dec (Γ ⊢ M ≪ A)
@@ -182,7 +182,7 @@ module WorksButIsKindaWeird where
     check Γ (inf M)   A         with infer Γ M
     ... | no ¬p                   = no λ { (inf t) → (A , t) ↯ ¬p }
     ... | yes (A′ , t′)           with A ≟Ty A′
-    ...   | no ¬eq                  = no λ { (inf t) → uni≫ t t′ ↯ ¬eq }
+    ...   | no ¬eq                  = no λ { (inf t) → uniTy≫ t t′ ↯ ¬eq }
     ...   | yes refl                = yes (inf t′)
 
     infer : ∀ (Γ : Ctx) (M : Tm≫ (len Γ)) → Dec (Σ Ty λ A → Γ ⊢ M ≫ A)
@@ -190,10 +190,10 @@ module WorksButIsKindaWeird where
     ... | (A , i , eq)         = yes (A , var i eq)
     infer Γ (M₁ ⌜$⌝ M₂)      with infer Γ M₁
     ... | no ¬p                = no λ { (B , t₁ ⌜$⌝ t₂) → (_ ⌜⊃⌝ B , t₁) ↯ ¬p }
-    ... | yes (⌜◦⌝ , t₁)       = no λ { (B , t₁′ ⌜$⌝ t₂) → uni≫ t₁ t₁′ ↯ λ () }
+    ... | yes (⌜◦⌝ , t₁)       = no λ { (B , t₁′ ⌜$⌝ t₂) → uniTy≫ t₁ t₁′ ↯ λ () }
     ... | yes (A ⌜⊃⌝ B , t₁)   with check Γ M₂ A
     ...   | no ¬t₂               = no λ { (B′ , t₁′ ⌜$⌝ t₂) →
-                                     transport ((Γ ⊢ M₂ ≪_) & (inj⊃₁ (uni≫ t₁′ t₁))) t₂ ↯ ¬t₂ }
+                                     transport ((Γ ⊢ M₂ ≪_) & (inj⊃₁ (uniTy≫ t₁′ t₁))) t₂ ↯ ¬t₂ }
     ...   | yes t₂               = yes (B , t₁ ⌜$⌝ t₂)
     infer Γ (chk A M)        with check Γ M A
     ... | no ¬t                = no λ { (.A , chk t) → t ↯ ¬t }
@@ -217,10 +217,10 @@ module ShouldWorkButDoesNot where
       _⌜$⌝_ : ∀ {A B M₁ M₂} (t₁ : Γ ⊢ M₁ ≫ A ⌜⊃⌝ B) (t₂ : Γ ⊢ M₂ ≪ A) → Γ ⊢ M₁ ⌜$⌝ M₂ ≫ B
       chk   : ∀ {A M} (t : Γ ⊢ M ≪ A) → Γ ⊢ chk A M ≫ A
 
-  uni≫ : ∀ {Γ M A A′} → Γ ⊢ M ≫ A → Γ ⊢ M ≫ A′ → A ≡ A′
-  uni≫ (var i eq)  (var i′ eq′)  = uni∋ i i′ eq eq′
-  uni≫ (t₁ ⌜$⌝ t₂) (t₁′ ⌜$⌝ t₂′) = inj⊃₂ (uni≫ t₁ t₁′)
-  uni≫ (chk t)     (chk t′)      = refl
+  uniTy≫ : ∀ {Γ M A A′} → Γ ⊢ M ≫ A → Γ ⊢ M ≫ A′ → A ≡ A′
+  uniTy≫ (var i eq)  (var i′ eq′)  = uniTy∋ i i′ eq eq′
+  uniTy≫ (t₁ ⌜$⌝ t₂) (t₁′ ⌜$⌝ t₂′) = inj⊃₂ (uniTy≫ t₁ t₁′)
+  uniTy≫ (chk t)     (chk t′)      = refl
 
   mutual
     check : ∀ (Γ : Ctx) (M : Tm (len Γ)) (A : Ty) → Dec (Γ ⊢ M ≪ A)
@@ -233,7 +233,7 @@ module ShouldWorkButDoesNot where
                                          ; (inf t) → (A , t) ↯ ¬p
                                          }
     ... | yes (A′ , t′)           with A ≟Ty A′
-    ...   | no ¬eq                  = no λ { (inf t) → uni≫ t t′ ↯ ¬eq }
+    ...   | no ¬eq                  = no λ { (inf t) → uniTy≫ t t′ ↯ ¬eq }
     ...   | yes refl                = yes (inf t′)
 
     infer : ∀ (Γ : Ctx) (M : Tm (len Γ)) → Dec (Σ Ty λ A → Γ ⊢ M ≫ A)
@@ -242,10 +242,10 @@ module ShouldWorkButDoesNot where
     infer Γ (⌜λ⌝ x M)        = no λ ()
     infer Γ (M₁ ⌜$⌝ M₂)      with infer Γ M₁
     ... | no ¬p                = no λ { (B , t₁ ⌜$⌝ t₂) → (_ ⌜⊃⌝ B , t₁) ↯ ¬p }
-    ... | yes (⌜◦⌝ , t₁)       = no λ { (B , t₁′ ⌜$⌝ t₂) → uni≫ t₁ t₁′ ↯ λ () }
+    ... | yes (⌜◦⌝ , t₁)       = no λ { (B , t₁′ ⌜$⌝ t₂) → uniTy≫ t₁ t₁′ ↯ λ () }
     ... | yes (A ⌜⊃⌝ B , t₁)   with check Γ M₂ A
     ...   | no ¬t₂               = no λ { (B′ , t₁′ ⌜$⌝ t₂) →
-                                     transport ((Γ ⊢ M₂ ≪_) & (inj⊃₁ (uni≫ t₁′ t₁))) t₂ ↯ ¬t₂ }
+                                     transport ((Γ ⊢ M₂ ≪_) & (inj⊃₁ (uniTy≫ t₁′ t₁))) t₂ ↯ ¬t₂ }
     ...   | yes t₂               = yes (B , t₁ ⌜$⌝ t₂)
     infer Γ (chk A M)        with check Γ M A
     ... | no ¬t                = no λ { (.A , chk t) → t ↯ ¬t }
