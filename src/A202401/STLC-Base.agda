@@ -134,7 +134,7 @@ inj$₂′ : ∀ {Γ A A′ B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} {
 inj$₂′ refl = refl , refl
 
 injren : ∀ {Γ Γ′ A} {ϱ : Γ ⊑ Γ′} {t t′ : Γ ⊢ A} → ren ϱ t ≡ ren ϱ t′ → t ≡ t′
-injren {t = var i}     {var i′}      eq = var & injren∋ (injv eq)
+injren {t = var i}     {var i′}      eq = var & injren∋ (injvar eq)
 injren {t = ⌜λ⌝ t}     {⌜λ⌝ t′}      eq = ⌜λ⌝ & injren (injλ eq)
 injren {t = t₁ ⌜$⌝ t₂} {t₁′ ⌜$⌝ t₂′} eq with inj$₁′ eq
 ... | refl , eq₁                          = _⌜$⌝_ & injren eq₁ ⊗ injren (inj$₂ eq)
