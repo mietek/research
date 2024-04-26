@@ -111,10 +111,14 @@ t₁ ⌜$⌝ t₂ ≟ t₁′ ⌜$⌝ t₂′     with ty t₁ ≟Ty ty t₁′
 
 ----------------------------------------------------------------------------------------------------
 
--- TODO: delete?
+inj⊃₁ : ∀ {A A′ B B′} → A ⌜⊃⌝ B ≡ A′ ⌜⊃⌝ B′ → A ≡ A′
+inj⊃₁ refl = refl
 
-injv : ∀ {Γ A} {i i′ : Γ ∋ A} → var i ≡ var i′ → i ≡ i′
-injv refl = refl
+inj⊃₂ : ∀ {A A′ B B′} → A ⌜⊃⌝ B ≡ A′ ⌜⊃⌝ B′ → B ≡ B′
+inj⊃₂ refl = refl
+
+injvar : ∀ {Γ A} {i i′ : Γ ∋ A} → var i ≡ var i′ → i ≡ i′
+injvar refl = refl
 
 injλ : ∀ {Γ A B} {t t′ : Γ , A ⊢ B} → ⌜λ⌝ t ≡ ⌜λ⌝ t′ → t ≡ t′
 injλ refl = refl
@@ -124,6 +128,11 @@ inj$₁ refl = refl
 
 inj$₂ : ∀ {Γ A B} {t₁ t₁′ : Γ ⊢ A ⌜⊃⌝ B} {t₂ t₂′ : Γ ⊢ A} → t₁ ⌜$⌝ t₂ ≡ t₁′ ⌜$⌝ t₂′ → t₂ ≡ t₂′
 inj$₂ refl = refl
+
+
+----------------------------------------------------------------------------------------------------
+
+-- TODO: delete?
 
 inj$₁′ : ∀ {Γ A A′ B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} {t₁′ : Γ ⊢ A′ ⌜⊃⌝ B} {t₂′ : Γ ⊢ A′} →
          t₁ ⌜$⌝ t₂ ≡ t₁′ ⌜$⌝ t₂′ → Σ (A ≡ A′) λ { refl → t₁ ≡ t₁′ }
