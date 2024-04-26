@@ -9,7 +9,6 @@ postulate
 ----------------------------------------------------------------------------------------------------
 
 -- types
-
 infixr 18 _⌜⊃⌝_
 data Ty : Set where
   ⌜◦⌝   : Ty
@@ -35,7 +34,6 @@ inj⊃₂ refl = refl
 ----------------------------------------------------------------------------------------------------
 
 -- contexts
-
 data Ctx : Set where
   ∙   : Ctx
   _,_ : ∀ (Γ : Ctx) (A : Ty) → Ctx
@@ -48,7 +46,6 @@ len (Γ , A) = suc (len Γ)
 ----------------------------------------------------------------------------------------------------
 
 -- variables (de Bruijn indices)
-
 infix 3 _∋_
 data _∋_ : Ctx → Ty → Set where
   zero : ∀ {Γ A} → Γ , A ∋ A
@@ -222,19 +219,62 @@ module ShouldWorkButDoesNot where
   uniTy≫ (t₁ ⌜$⌝ t₂) (t₁′ ⌜$⌝ t₂′) = inj⊃₂ (uniTy≫ t₁ t₁′)
   uniTy≫ (chk t)     (chk t′)      = refl
 
+
   mutual
-    check : ∀ (Γ : Ctx) (M : Tm (len Γ)) (A : Ty) → Dec (Γ ⊢ M ≪ A)
-    check Γ (⌜λ⌝ x M) ⌜◦⌝       = no λ { (inf ()) }
-    check Γ (⌜λ⌝ x M) (A ⌜⊃⌝ B) with check (Γ , A) M B
-    ... | no ¬t                   = no λ { (⌜λ⌝ t) → t ↯ ¬t }
-    ... | yes t                   = yes (⌜λ⌝ t)
-    check Γ M         A         with infer Γ M
-    ... | no ¬p                   = no λ { (⌜λ⌝ t) → oops         -- TODO: oops!
-                                         ; (inf t) → (A , t) ↯ ¬p
-                                         }
-    ... | yes (A′ , t′)           with A ≟Ty A′
-    ...   | no ¬eq                  = no λ { (inf t) → uniTy≫ t t′ ↯ ¬eq }
-    ...   | yes refl                = yes (inf t′)
+    -- check₀ is what i wanted to write, but the way it is written obscures
+    -- that there is a pattern that needs to be handled again
+    check₀ : ∀ (Γ : Ctx) (M : Tm (len Γ)) (A : Ty) → Dec (Γ ⊢ M ≪ A)
+    check₀ Γ (⌜λ⌝ x M) ⌜◦⌝       = no λ { (inf ()) }
+    check₀ Γ (⌜λ⌝ x M) (A ⌜⊃⌝ B) with check₀ (Γ , A) M B
+    check₀ Γ (⌜λ⌝ x M) (A ⌜⊃⌝ B) | no ¬t = no λ { (⌜λ⌝ t) → t ↯ ¬t }
+    check₀ Γ (⌜λ⌝ x M) (A ⌜⊃⌝ B) | yes t = yes (⌜λ⌝ t)
+    check₀ Γ M         A         with infer Γ M
+    check₀ Γ M         A         | no ¬p = no λ { (⌜λ⌝ t) → oops         -- TODO: oops!
+                                                ; (inf t) → (A , t) ↯ ¬p
+                                                }
+    check₀ Γ M         A         | yes (A′ , t′) with A ≟Ty A′
+    check₀ Γ M         A         | yes (A′ , t′) | no ¬eq   = no λ { (inf t) → uniTy≫ t t′ ↯ ¬eq }
+    check₀ Γ M         A         | yes (A′ , t′) | yes refl = yes (inf t′)
+
+    -- check₁ reveals the pattern that needs to be handled again
+    check₁ : ∀ (Γ : Ctx) (M : Tm (len Γ)) (A : Ty) → Dec (Γ ⊢ M ≪ A)
+    check₁ Γ (⌜λ⌝ x M)   ⌜◦⌝       = no λ { (inf ()) }
+    check₁ Γ (⌜λ⌝ x M)   (A ⌜⊃⌝ B) with check₁ (Γ , A) M B                              -- i am handling
+    check₁ Γ (⌜λ⌝ x M)   (A ⌜⊃⌝ B) | no ¬t = no λ { (⌜λ⌝ t) → t ↯ ¬t }                 -- this pattern
+    check₁ Γ (⌜λ⌝ x M)   (A ⌜⊃⌝ B) | yes t = yes (⌜λ⌝ t)                                -- here
+    check₁ Γ M           A         with infer Γ M                                       -- already
+    check₁ Γ (var k)     A         | no ¬p         = no λ { (inf t) → (A , t) ↯ ¬p }
+    check₁ Γ (⌜λ⌝ x M)   ⌜◦⌝       | _             = no λ { (inf ()) }                  -- somehow, i am handling
+    check₁ Γ (⌜λ⌝ x M)   (A ⌜⊃⌝ B) | _             with check₁ (Γ , A) M B              -- this pattern
+    check₁ Γ (⌜λ⌝ x M)   (A ⌜⊃⌝ B) | _             | no ¬t = no λ { (⌜λ⌝ t) → t ↯ ¬t } -- here
+    check₁ Γ (⌜λ⌝ x M)   (A ⌜⊃⌝ B) | _             | yes t = yes (⌜λ⌝ t)                -- again
+    check₁ Γ (M₁ ⌜$⌝ M₂) A         | no ¬p         = no λ { (inf t) → (A , t) ↯ ¬p }
+    check₁ Γ (chk A′ M)  A         | no ¬p         = no λ { (inf t) → (A , t) ↯ ¬p }
+    check₁ Γ M           A         | yes (A′ , t′) with A ≟Ty A′
+    check₁ Γ M           A         | yes (A′ , t′) | no ¬eq   = no λ { (inf t) → uniTy≫ t t′ ↯ ¬eq }
+    check₁ Γ M           A         | yes (A′ , t′) | yes refl = yes (inf t′)
+
+    -- check₂ is what Agda wants me to write, but i don't like it
+    check₂ : ∀ (Γ : Ctx) (M : Tm (len Γ)) (A : Ty) → Dec (Γ ⊢ M ≪ A)
+    check₂ Γ (⌜λ⌝ x M)   ⌜◦⌝       = no λ { (inf ()) }
+    check₂ Γ (⌜λ⌝ x M)   (A ⌜⊃⌝ B) with check₂ (Γ , A) M B
+    check₂ Γ (⌜λ⌝ x M)   (A ⌜⊃⌝ B) | no ¬t = no λ { (⌜λ⌝ t) → t ↯ ¬t }
+    check₂ Γ (⌜λ⌝ x M)   (A ⌜⊃⌝ B) | yes t = yes (⌜λ⌝ t)
+    check₂ Γ (var x)     A         with infer Γ (var x)
+    check₂ Γ (var x)     A         | no ¬p         = no λ { (inf t) → (A , t) ↯ ¬p }
+    check₂ Γ (var x)     A         | yes (A′ , t′) with A ≟Ty A′
+    check₂ Γ (var x)     A         | yes (A′ , t′) | no ¬eq   = no λ { (inf t) → uniTy≫ t t′ ↯ ¬eq }
+    check₂ Γ (var x)     A         | yes (.A , t′) | yes refl = yes (inf t′)
+    check₂ Γ (M₁ ⌜$⌝ M₂) A         with infer Γ (M₁ ⌜$⌝ M₂)
+    check₂ Γ (M₁ ⌜$⌝ M₂) A         | no ¬p         = no λ { (inf t) → (A , t) ↯ ¬p }
+    check₂ Γ (M₁ ⌜$⌝ M₂) A         | yes (A′ , t′) with A ≟Ty A′
+    check₂ Γ (M₁ ⌜$⌝ M₂) A         | yes (A′ , t′) | no ¬eq   = no λ { (inf t) → uniTy≫ t t′ ↯ ¬eq }
+    check₂ Γ (M₁ ⌜$⌝ M₂) A         | yes (A′ , t′) | yes refl = yes (inf t′)
+    check₂ Γ (chk x M)   A         with infer Γ (chk x M)
+    check₂ Γ (chk x M)   A         | no ¬p         = no λ { (inf t) → (A , t) ↯ ¬p }
+    check₂ Γ (chk x M)   A         | yes (A′ , t′) with A ≟Ty A′
+    check₂ Γ (chk x M)   A         | yes (A′ , t′) | no ¬eq   = no λ { (inf t) → uniTy≫ t t′ ↯ ¬eq }
+    check₂ Γ (chk x M)   A         | yes (A′ , t′) | yes refl = yes (inf t′)
 
     infer : ∀ (Γ : Ctx) (M : Tm (len Γ)) → Dec (Σ Ty λ A → Γ ⊢ M ≫ A)
     infer Γ (var k)          with get Γ k
@@ -243,11 +283,11 @@ module ShouldWorkButDoesNot where
     infer Γ (M₁ ⌜$⌝ M₂)      with infer Γ M₁
     ... | no ¬p                = no λ { (B , t₁ ⌜$⌝ t₂) → (_ ⌜⊃⌝ B , t₁) ↯ ¬p }
     ... | yes (⌜◦⌝ , t₁)       = no λ { (B , t₁′ ⌜$⌝ t₂) → uniTy≫ t₁ t₁′ ↯ λ () }
-    ... | yes (A ⌜⊃⌝ B , t₁)   with check Γ M₂ A
+    ... | yes (A ⌜⊃⌝ B , t₁)   with check₂ Γ M₂ A
     ...   | no ¬t₂               = no λ { (B′ , t₁′ ⌜$⌝ t₂) →
                                      transport ((Γ ⊢ M₂ ≪_) & (inj⊃₁ (uniTy≫ t₁′ t₁))) t₂ ↯ ¬t₂ }
     ...   | yes t₂               = yes (B , t₁ ⌜$⌝ t₂)
-    infer Γ (chk A M)        with check Γ M A
+    infer Γ (chk A M)        with check₂ Γ M A
     ... | no ¬t                = no λ { (.A , chk t) → t ↯ ¬t }
     ... | yes t                = yes (A , chk t)
 
