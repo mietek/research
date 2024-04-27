@@ -1,0 +1,198 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>A201801.Everything</title><link rel="stylesheet" href="AgdaPP.css"></head><body><pre class="Agda"><a id="1" class="Keyword">module</a> <a id="8" href="A201801.Everything.html" class="Module">A201801.Everything</a> <a id="27" class="Keyword">where</a>
+
+
+<a id="35" class="Comment">--------------------------------------------------------------------------------</a>
+
+
+<a id="118" class="Keyword">import</a> <a id="125" href="A201801.Prelude.html" class="Module">A201801.Prelude</a>
+
+<a id="142" class="Keyword">import</a> <a id="149" href="A201801.Names.html" class="Module">A201801.Names</a>
+
+<a id="164" class="Keyword">import</a> <a id="171" href="A201801.Category.html" class="Module">A201801.Category</a>
+<a id="188" class="Keyword">import</a> <a id="195" href="A201801.Category2.html" class="Module">A201801.Category2</a> <a id="213" class="Comment">-- NOTE: unsafe!</a>
+
+<a id="231" class="Keyword">import</a> <a id="238" href="A201801.Fin.html" class="Module">A201801.Fin</a>
+<a id="250" class="Keyword">import</a> <a id="257" href="A201801.FinLemmas.html" class="Module">A201801.FinLemmas</a>
+
+<a id="276" class="Keyword">import</a> <a id="283" href="A201801.List.html" class="Module">A201801.List</a>
+<a id="296" class="Keyword">import</a> <a id="303" href="A201801.ListLemmas.html" class="Module">A201801.ListLemmas</a>
+
+<a id="323" class="Keyword">import</a> <a id="330" href="A201801.ListConcatenation.html" class="Module">A201801.ListConcatenation</a>
+
+<a id="357" class="Keyword">import</a> <a id="364" href="A201801.AllList.html" class="Module">A201801.AllList</a>
+<a id="380" class="Keyword">import</a> <a id="387" href="A201801.AllListLemmas.html" class="Module">A201801.AllListLemmas</a>
+
+<a id="410" class="Keyword">import</a> <a id="417" href="A201801.Vec.html" class="Module">A201801.Vec</a>
+<a id="429" class="Keyword">import</a> <a id="436" href="A201801.VecLemmas.html" class="Module">A201801.VecLemmas</a>
+
+<a id="455" class="Keyword">import</a> <a id="462" href="A201801.AllVec.html" class="Module">A201801.AllVec</a>
+<a id="477" class="Keyword">import</a> <a id="484" href="A201801.AllVecLemmas.html" class="Module">A201801.AllVecLemmas</a>
+
+<a id="506" class="Keyword">import</a> <a id="513" href="A201801.Subset.html" class="Module">A201801.Subset</a> <a id="528" class="Comment">-- TODO: check this!</a>
+
+
+<a id="551" class="Comment">--------------------------------------------------------------------------------</a>
+
+
+<a id="634" class="Keyword">import</a> <a id="641" href="A201801.IPLPropositions.html" class="Module">A201801.IPLPropositions</a>
+
+<a id="666" class="Keyword">import</a> <a id="673" href="A201801.IPLStandardDerivations.html" class="Module">A201801.IPLStandardDerivations</a>                                           <a id="746" class="Comment">-- _⊢_true ; var/lam/app</a>
+<a id="771" class="Keyword">import</a> <a id="778" href="A201801.IPLStandardDerivationsWithAFriendlyFish.html" class="Module">A201801.IPLStandardDerivationsWithAFriendlyFish</a> <a id="826" class="Comment">-- TODO: unfinished</a>
+<a id="846" class="Keyword">import</a> <a id="853" href="A201801.IPLStandardDerivationsLemmas.html" class="Module">A201801.IPLStandardDerivationsLemmas</a>
+<a id="890" class="Keyword">import</a> <a id="897" href="A201801.IPLStandardBidirectionalDerivations-NormalNeutral.html" class="Module">A201801.IPLStandardBidirectionalDerivations-NormalNeutral</a>
+<a id="955" class="Keyword">import</a> <a id="962" href="A201801.IPLStandardNormalisation.html" class="Module">A201801.IPLStandardNormalisation</a>
+
+<a id="996" class="Keyword">import</a> <a id="1003" href="A201801.IPLExperimentalDerivations-Monolithic.html" class="Module">A201801.IPLExperimentalDerivations-Monolithic</a>                            <a id="1076" class="Comment">-- _⊢_true ; vz/wk/lam/app</a>
+<a id="1103" class="Keyword">import</a> <a id="1110" href="A201801.IPLExperimentalDerivations-Symmetric.html" class="Module">A201801.IPLExperimentalDerivations-Symmetric</a>                             <a id="1183" class="Comment">-- _⊢_true ; var/cut/lam/unlam ; problematic</a>
+
+<a id="1229" class="Keyword">import</a> <a id="1236" href="A201801.IPLAlternativeDerivations.html" class="Module">A201801.IPLAlternativeDerivations</a>                                        <a id="1309" class="Comment">-- _⊢_true ; vz/wk/cut/lam/unlam</a>
+
+
+<a id="1344" class="Keyword">import</a> <a id="1351" href="A201801.STLCTypes.html" class="Module">A201801.STLCTypes</a>
+
+<a id="1370" class="Keyword">import</a> <a id="1377" href="A201801.STLCStandardTerms.html" class="Module">A201801.STLCStandardTerms</a>
+<a id="1403" class="Keyword">import</a> <a id="1410" href="A201801.STLCStandardDerivations.html" class="Module">A201801.STLCStandardDerivations</a>                                          <a id="1483" class="Comment">-- ⊢_⦂_valid[_] ; var/lam/app</a>
+<a id="1513" class="Keyword">import</a> <a id="1520" href="A201801.STLCStandardDerivations-Traditional.html" class="Module">A201801.STLCStandardDerivations-Traditional</a>                              <a id="1593" class="Comment">-- _⊢_⦂_true    ; var/lam/app</a>
+<a id="1623" class="Keyword">import</a> <a id="1630" href="A201801.STLCStandardIsomorphismWithIPL.html" class="Module">A201801.STLCStandardIsomorphismWithIPL</a>
+<a id="1669" class="Keyword">import</a> <a id="1676" href="A201801.STLCStandardBidirectionalTerms-CheckedInferred.html" class="Module">A201801.STLCStandardBidirectionalTerms-CheckedInferred</a>
+<a id="1731" class="Keyword">import</a> <a id="1738" href="A201801.STLCStandardBidirectionalDerivations-CheckedInferred.html" class="Module">A201801.STLCStandardBidirectionalDerivations-CheckedInferred</a>
+<a id="1799" class="Keyword">import</a> <a id="1806" href="A201801.STLCStandardTypeChecking.html" class="Module">A201801.STLCStandardTypeChecking</a>
+<a id="1839" class="Keyword">import</a> <a id="1846" href="A201801.STLCStandardNameResolution.html" class="Module">A201801.STLCStandardNameResolution</a>
+
+
+<a id="1883" class="Comment">--------------------------------------------------------------------------------</a>
+
+
+<a id="1966" class="Keyword">import</a> <a id="1973" href="A201801.S4Propositions.html" class="Module">A201801.S4Propositions</a>
+
+<a id="1997" class="Keyword">import</a> <a id="2004" href="A201801.S4StandardDerivations.html" class="Module">A201801.S4StandardDerivations</a>                                            <a id="2077" class="Comment">-- _⊢_valid[_] ; var/lam/app/mvar/box/letbox</a>
+<a id="2122" class="Keyword">import</a> <a id="2129" href="A201801.S4StandardDerivations-Traditional.html" class="Module">A201801.S4StandardDerivations-Traditional</a>                                <a id="2202" class="Comment">-- _⨾_⊢_true   ; var/lam/app/mvar/box/letbox</a>
+<a id="2247" class="Keyword">import</a> <a id="2254" href="A201801.S4StandardBidirectionalDerivations-NormalNeutral.html" class="Module">A201801.S4StandardBidirectionalDerivations-NormalNeutral</a>
+<a id="2311" class="Keyword">import</a> <a id="2318" href="A201801.S4StandardDerivationsLemmas.html" class="Module">A201801.S4StandardDerivationsLemmas</a>
+<a id="2354" class="Keyword">import</a> <a id="2361" href="A201801.S4StandardNormalisation.html" class="Module">A201801.S4StandardNormalisation</a>
+
+<a id="2394" class="Keyword">import</a> <a id="2401" href="A201801.S4ExperimentalDerivations-Monolithic.html" class="Module">A201801.S4ExperimentalDerivations-Monolithic</a>                             <a id="2474" class="Comment">-- _⊢_valid[_] ; vz/wk/lam/app/mvz/mwk/box/letbox</a>
+<a id="2524" class="Keyword">import</a> <a id="2531" href="A201801.S4ExperimentalDerivations-PartiallySymmetric.html" class="Module">A201801.S4ExperimentalDerivations-PartiallySymmetric</a>                     <a id="2604" class="Comment">-- _⊢_valid[_] ; vz/wk/cut/lam/unlam/mvz/mwk/box/letbox</a>
+<a id="2660" class="Keyword">import</a> <a id="2667" href="A201801.S4ExperimentalDerivations-RedundantlySymmetric.html" class="Module">A201801.S4ExperimentalDerivations-RedundantlySymmetric</a>                   <a id="2740" class="Comment">-- _⊢_valid[_] ; vz/wk/cut/lam/unlam/mvz/mwk/mcut/vau/unvau</a>
+<a id="2800" class="Keyword">import</a> <a id="2807" href="A201801.S4ExperimentalDerivations-Incomplete.html" class="Module">A201801.S4ExperimentalDerivations-Incomplete</a>                             <a id="2880" class="Comment">-- _⊢_valid[_] ; vz/wk/cut/lam/unlam/mvz/mwk/mcut/box/unbox ; problematic</a>
+
+<a id="2955" class="Keyword">import</a> <a id="2962" href="A201801.S4AlternativeDerivations.html" class="Module">A201801.S4AlternativeDerivations</a>                                         <a id="3035" class="Comment">-- _⊢_valid[_] ; vz/wk/cut/lam/unlam/box/unbox/vau/unvau</a>
+
+
+<a id="3094" class="Keyword">import</a> <a id="3101" href="A201801.S4EmbeddingOfIPL.html" class="Module">A201801.S4EmbeddingOfIPL</a>
+<a id="3126" class="Keyword">import</a> <a id="3133" href="A201801.S4ProjectionToIPL.html" class="Module">A201801.S4ProjectionToIPL</a>
+
+
+<a id="3161" class="Keyword">import</a> <a id="3168" href="A201801.S4NewBidirectionalDerivationsForNormalisation.html" class="Module">A201801.S4NewBidirectionalDerivationsForNormalisation</a>
+<a id="3222" class="Keyword">import</a> <a id="3229" href="A201801.S4NewNormalisation.html" class="Module">A201801.S4NewNormalisation</a> <a id="3256" class="Comment">-- TODO: unfinished</a>
+<a id="3276" class="Keyword">import</a> <a id="3283" href="A201801.S4NewNormalisation2.html" class="Module">A201801.S4NewNormalisation2</a> <a id="3311" class="Comment">-- TODO: unfinished</a>
+
+<a id="3332" class="Comment">--</a>
+
+<a id="3336" class="Keyword">import</a> <a id="3343" href="A201801.S4AndCMLScratch.html" class="Module">A201801.S4AndCMLScratch</a> <a id="3367" class="Comment">-- TODO: check these!</a>
+<a id="3389" class="Keyword">import</a> <a id="3396" href="A201801.S4ExperimentalDerivations3x.html" class="Module">A201801.S4ExperimentalDerivations3x</a>
+
+
+<a id="3434" class="Comment">-------------------</a>
+
+
+<a id="3456" class="Keyword">import</a> <a id="3463" href="A201801.S4TTTypes.html" class="Module">A201801.S4TTTypes</a>
+
+<a id="3482" class="Keyword">import</a> <a id="3489" href="A201801.S4TTTerms.html" class="Module">A201801.S4TTTerms</a>
+<a id="3507" class="Keyword">import</a> <a id="3514" href="A201801.S4TTDerivations.html" class="Module">A201801.S4TTDerivations</a>                                                  <a id="3587" class="Comment">-- _⊢_⦂_valid[_] ; var/lam/app ; mvar/box/letbox</a>
+<a id="3636" class="Keyword">import</a> <a id="3643" href="A201801.S4TTStandardDerivations.html" class="Module">A201801.S4TTStandardDerivations</a>                                          <a id="3716" class="Comment">-- _⨾_⊢_⦂_true   ; var/lam/app ; mvar/box/letbox</a>
+
+<a id="3766" class="Keyword">import</a> <a id="3773" href="A201801.S4TTIsomorphismWithS4.html" class="Module">A201801.S4TTIsomorphismWithS4</a>
+
+<a id="3804" class="Keyword">import</a> <a id="3811" href="A201801.S4TTTermsLemmas.html" class="Module">A201801.S4TTTermsLemmas</a>
+
+
+<a id="3837" class="Comment">--------------------------------------------------------------------------------</a>
+
+
+<a id="3920" class="Keyword">import</a> <a id="3927" href="A201801.CMLPropositions.html" class="Module">A201801.CMLPropositions</a>
+
+<a id="3952" class="Keyword">import</a> <a id="3959" href="A201801.CMLStandardDerivations.html" class="Module">A201801.CMLStandardDerivations</a>                                           <a id="4032" class="Comment">-- _⊢_valid[_] ; var/lam/app/mvar/box/unbox</a>
+<a id="4076" class="Keyword">import</a> <a id="4083" href="A201801.CMLStandardDerivations-Traditional.html" class="Module">A201801.CMLStandardDerivations-Traditional</a>                               <a id="4156" class="Comment">-- _⨾_⊢_true   ; var/lam/app/mvar/box/unbox</a>
+<a id="4200" class="Keyword">import</a> <a id="4207" href="A201801.CMLStandardDerivationsLemmas.html" class="Module">A201801.CMLStandardDerivationsLemmas</a>
+<a id="4244" class="Keyword">import</a> <a id="4251" href="A201801.CMLStandardBidirectionalDerivations-NormalNeutral.html" class="Module">A201801.CMLStandardBidirectionalDerivations-NormalNeutral</a>
+<a id="4309" class="Keyword">import</a> <a id="4316" href="A201801.CMLStandardNormalisation.html" class="Module">A201801.CMLStandardNormalisation</a>
+
+<a id="4350" class="Keyword">import</a> <a id="4357" href="A201801.CMLAlternativeDerivations.html" class="Module">A201801.CMLAlternativeDerivations</a>                                        <a id="4430" class="Comment">-- _⊢_valid[_] ; vz/wk/cut/lam/unlam/box/unbox/vau/unvau</a>
+
+<a id="4488" class="Keyword">import</a> <a id="4495" href="A201801.CMLProjectionToIPL.html" class="Module">A201801.CMLProjectionToIPL</a>
+<a id="4522" class="Keyword">import</a> <a id="4529" href="A201801.CMLProjectionToS4.html" class="Module">A201801.CMLProjectionToS4</a> <a id="4555" class="Comment">-- TODO: unfinished</a>
+
+<a id="4576" class="Comment">--</a>
+
+<a id="4580" class="Keyword">import</a> <a id="4587" href="A201801.CMLAndS4Scratch.html" class="Module">A201801.CMLAndS4Scratch</a> <a id="4611" class="Comment">-- TODO: check these!</a>
+<a id="4633" class="Keyword">import</a> <a id="4640" href="A201801.CMLEnlightenment.html" class="Module">A201801.CMLEnlightenment</a>
+
+
+<a id="4667" class="Comment">-------------------</a>
+
+
+<a id="4689" class="Keyword">import</a> <a id="4696" href="A201801.CMTTTypes.html" class="Module">A201801.CMTTTypes</a>
+
+<a id="4715" class="Keyword">import</a> <a id="4722" href="A201801.CMTTScopes.html" class="Module">A201801.CMTTScopes</a>
+<a id="4741" class="Keyword">import</a> <a id="4748" href="A201801.CMTTTerms.html" class="Module">A201801.CMTTTerms</a>
+<a id="4766" class="Keyword">import</a> <a id="4773" href="A201801.CMTTDerivations.html" class="Module">A201801.CMTTDerivations</a>                                                  <a id="4846" class="Comment">-- _⊢_⦂_valid[_] ; var/lam/app ; mvar/box/letbox</a>
+<a id="4895" class="Keyword">import</a> <a id="4902" href="A201801.CMTTStandardDerivations.html" class="Module">A201801.CMTTStandardDerivations</a>                                          <a id="4975" class="Comment">-- _⨾_⊢_⦂_true   ; var/lam/app ; mvar/box/letbox</a>
+
+<a id="5025" class="Keyword">import</a> <a id="5032" href="A201801.CMTTIsomorphismWithCML.html" class="Module">A201801.CMTTIsomorphismWithCML</a> <a id="5063" class="Comment">-- TODO: unfinished</a>
+
+<a id="5084" class="Comment">--</a>
+
+<a id="5088" class="Keyword">import</a> <a id="5095" href="A201801.StdCMTTTerms.html" class="Module">A201801.StdCMTTTerms</a> <a id="5116" class="Comment">-- TODO: check these!</a>
+
+
+<a id="5140" class="Comment">--------------------------------------------------------------------------------</a>
+
+
+<a id="5223" class="Keyword">import</a> <a id="5230" href="A201801.LPTTTypes.html" class="Module">A201801.LPTTTypes</a>
+<a id="5248" class="Keyword">import</a> <a id="5255" href="A201801.LPTTTypesLemmas.html" class="Module">A201801.LPTTTypesLemmas</a>
+
+<a id="5280" class="Keyword">import</a> <a id="5287" href="A201801.LPTTAsserts.html" class="Module">A201801.LPTTAsserts</a>
+
+<a id="5308" class="Keyword">import</a> <a id="5315" href="A201801.LPTTDerivations.html" class="Module">A201801.LPTTDerivations</a>
+
+<a id="5340" class="Keyword">import</a> <a id="5347" href="A201801.StdLPTT.html" class="Module">A201801.StdLPTT</a> <a id="5363" class="Comment">-- TODO: unfinished</a>
+<a id="5383" class="Keyword">import</a> <a id="5390" href="A201801.StdLPTTLemmas.html" class="Module">A201801.StdLPTTLemmas</a> <a id="5412" class="Comment">-- TODO: unfinished</a>
+
+
+<a id="5434" class="Comment">--------------------------------------------------------------------------------</a>
+
+
+<a id="5517" class="Keyword">import</a> <a id="5524" href="A201801.FullIPLPropositions.html" class="Module">A201801.FullIPLPropositions</a>
+
+<a id="5553" class="Keyword">import</a> <a id="5560" href="A201801.FullIPLDerivations.html" class="Module">A201801.FullIPLDerivations</a>
+
+<a id="5588" class="Keyword">import</a> <a id="5595" href="A201801.FullIPLBidirectionalDerivationsForNormalisation.html" class="Module">A201801.FullIPLBidirectionalDerivationsForNormalisation</a>
+<a id="5651" class="Keyword">import</a> <a id="5658" href="A201801.FullIPLNormalisation.html" class="Module">A201801.FullIPLNormalisation</a>
+
+
+<a id="5689" class="Comment">---------------------------------------</a>
+
+
+<a id="5731" class="Keyword">import</a> <a id="5738" href="A201801.FullS4Propositions.html" class="Module">A201801.FullS4Propositions</a>
+
+<a id="5766" class="Keyword">import</a> <a id="5773" href="A201801.FullS4StandardDerivations.html" class="Module">A201801.FullS4StandardDerivations</a>
+
+<a id="5808" class="Keyword">import</a> <a id="5815" href="A201801.FullS4EmbeddingOfFullIPL.html" class="Module">A201801.FullS4EmbeddingOfFullIPL</a>
+<a id="5848" class="Keyword">import</a> <a id="5855" href="A201801.FullS4ProjectionToFullIPL.html" class="Module">A201801.FullS4ProjectionToFullIPL</a>
+
+<a id="5890" class="Keyword">import</a> <a id="5897" href="A201801.FullS4BidirectionalDerivationsForNormalisation.html" class="Module">A201801.FullS4BidirectionalDerivationsForNormalisation</a>
+<a id="5952" class="Keyword">import</a> <a id="5959" href="A201801.FullS4Normalisation.html" class="Module">A201801.FullS4Normalisation</a> <a id="5987" class="Comment">-- TODO: unfinished</a>
+
+
+<a id="6009" class="Comment">--------------------------------------------------------------------------------</a>
+
+<a id="6091" class="Keyword">import</a> <a id="6098" href="A201801.Scratch.html" class="Module">A201801.Scratch</a> <a id="6114" class="Comment">-- TODO: check these!</a>
+<a id="6136" class="Keyword">import</a> <a id="6143" href="A201801.SequentCalculusDraft.html" class="Module">A201801.SequentCalculusDraft</a>
+<a id="6172" class="Keyword">import</a> <a id="6179" href="A201801.SequentCalculusDrafta.html" class="Module">A201801.SequentCalculusDrafta</a>
+<a id="6209" class="Keyword">import</a> <a id="6216" href="A201801.SequentCalculusDraft2a.html" class="Module">A201801.SequentCalculusDraft2a</a>
+<a id="6247" class="Keyword">import</a> <a id="6254" href="A201801.SequentCalculusDraft2b.html" class="Module">A201801.SequentCalculusDraft2b</a>
+<a id="6285" class="Keyword">import</a> <a id="6292" href="A201801.SequentCalculusDraft2c.html" class="Module">A201801.SequentCalculusDraft2c</a>
+<a id="6323" class="Keyword">import</a> <a id="6330" href="A201801.SequentCalculusDraftSquasha.html" class="Module">A201801.SequentCalculusDraftSquasha</a> <a id="6366" class="Comment">-- TODO: unsafe!</a>
+</pre></body></html>

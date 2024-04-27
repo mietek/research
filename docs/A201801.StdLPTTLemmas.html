@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>A201801.StdLPTTLemmas</title><link rel="stylesheet" href="AgdaPP.css"></head><body><pre class="Agda"><a id="1" class="Keyword">module</a> <a id="8" href="A201801.StdLPTTLemmas.html" class="Module">A201801.StdLPTTLemmas</a> <a id="30" class="Keyword">where</a>
+
+<a id="37" class="Keyword">open</a> <a id="42" class="Keyword">import</a> <a id="49" href="A201801.Prelude.html" class="Module">A201801.Prelude</a>
+<a id="65" class="Keyword">open</a> <a id="70" class="Keyword">import</a> <a id="77" href="A201801.Fin.html" class="Module">A201801.Fin</a>
+<a id="89" class="Keyword">open</a> <a id="94" class="Keyword">import</a> <a id="101" href="A201801.FinLemmas.html" class="Module">A201801.FinLemmas</a>
+<a id="119" class="Keyword">open</a> <a id="124" class="Keyword">import</a> <a id="131" href="A201801.Vec.html" class="Module">A201801.Vec</a>
+<a id="143" class="Comment">-- open import A201801.StdS4TTTerms</a>
+<a id="179" class="Comment">-- open import A201801.StdS4TTTermsLemmas</a>
+<a id="221" class="Keyword">open</a> <a id="226" class="Keyword">import</a> <a id="233" href="A201801.StdLPTT.html" class="Module">A201801.StdLPTT</a>
+
+
+<a id="251" class="Comment">--------------------------------------------------------------------------------</a>
+
+
+<a id="334" class="Comment">-- TODO: unfinished</a>
+<a id="354" class="Comment">-- {-</a>
+<a id="360" class="Comment">--     box : ∀ {d g M} → {Δ : Validities d} {Γ : Truths d g}</a>
+<a id="421" class="Comment">--                        {A : Prop d}</a>
+<a id="460" class="Comment">--                     → Δ ⋙ [ ∙ ⊢ M ⦂ A true ]</a>
+<a id="508" class="Comment">--                     → Δ ⋙ [ Γ ⊢ BOX M ⦂ [ M ] A true ]</a>
+
+<a id="567" class="Comment">--     letbox : ∀ {d g M N O} → {Δ : Validities d} {Γ : Truths d g}</a>
+<a id="635" class="Comment">--                               {A : Prop d} {B : Prop (suc d)}</a>
+<a id="700" class="Comment">--                               {Γ° : Truths (suc d) g} {{_ : Γ° ≡ MWKSₜ Γ}}</a>
+<a id="778" class="Comment">--                               {B° : Prop d} {{_ : B° ≡ MCUTₚ O B}}</a>
+<a id="848" class="Comment">--                            → Δ ⋙ [ Γ ⊢ M ⦂ [ O ] A true ] → Δ , A valid ⋙ [ Γ° ⊢ N ⦂ B true ]</a>
+<a id="945" class="Comment">--                            → Δ ⋙ [ Γ ⊢ LETBOX M N ⦂ B° true ]</a>
+<a id="1010" class="Comment">-- -}</a>
+
+
+
+<a id="1019" class="Comment">-- id-MSUBₚ : ∀ {d} → (A : Prop d)</a>
+<a id="1054" class="Comment">--                  → MSUBₚ MIDS₁ A ≡ A</a>
+<a id="1094" class="Comment">-- id-MSUBₚ BASE      = refl</a>
+<a id="1123" class="Comment">-- id-MSUBₚ (A ⊃ B)   = _⊃_ &amp; id-MSUBₚ A ⊗ id-MSUBₚ B</a>
+<a id="1177" class="Comment">-- id-MSUBₚ ([ M ] A) = [_]_ &amp; id-MSUB M ⊗ id-MSUBₚ A</a>
+
+
+<a id="1233" class="Comment">-- expand-MSUBₚ : ∀ {d n} → (x : Terms₁ d n) (M : Term₁ d) (A : Prop n)</a>
+<a id="1305" class="Comment">--                        → MSUBₚ (x , M) (MWKₚ A) ≡ MSUBₚ x A</a>
+<a id="1368" class="Comment">-- expand-MSUBₚ x M BASE      = refl</a>
+<a id="1405" class="Comment">-- expand-MSUBₚ x M (A ⊃ B)   = _⊃_ &amp; expand-MSUBₚ x M A ⊗ expand-MSUBₚ x M B</a>
+<a id="1483" class="Comment">-- expand-MSUBₚ x M ([ N ] A) = [_]_ &amp; expand-MSUB x M N ⊗ expand-MSUBₚ x M A</a>
+
+
+<a id="1563" class="Comment">-- unbox : ∀ {d g M N} → {Δ : Validities d} {Γ : Truths d g}</a>
+<a id="1624" class="Comment">--                        {A : Prop d}</a>
+<a id="1663" class="Comment">--                     → Δ ⋙ [ Γ ⊢ M ⦂ [ N ] A true ]</a>
+<a id="1717" class="Comment">--                     → Δ ⋙ [ Γ ⊢ LETBOX M MVZ ⦂ A true ]</a>
+<a id="1776" class="Comment">-- unbox {N = N} {A = A} 𝒟 = letbox {{refl}} {{lem}} 𝒟 mvz</a>
+<a id="1835" class="Comment">--   where</a>
+<a id="1846" class="Comment">--     lem : A ≡ MCUTₚ N (MWKₚ A)</a>
+<a id="1880" class="Comment">--     lem = id-MSUBₚ A ⁻¹ ⋮ expand-MSUBₚ MIDS₁ N A ⁻¹</a>
+
+
+<a id="1937" class="Comment">-- ex1 : ∀ {d g} → {Δ : Validities (suc d)} {Γ : Truths (suc d) g}</a>
+<a id="2004" class="Comment">--                  {A : Prop (suc d)}</a>
+<a id="2043" class="Comment">--               → Δ ⋙ [ Γ ⊢ BOX (LAM (LETBOX VZ (BOX MVZ)))</a>
+<a id="2104" class="Comment">--                                ⦂ [ LAM (LETBOX VZ (BOX MVZ)) ] ([ MVZ ] A ⊃ A) true ]</a>
+<a id="2193" class="Comment">-- ex1 {A = A} = box (lam (letbox {{refl}} {{lem}} vz (box mvz)))</a>
+<a id="2259" class="Comment">--   where</a>
+<a id="2270" class="Comment">--     lem : A ≡ MCUTₚ MVZ ([ MVZ ] MWKₚ A)</a>
+<a id="2314" class="Comment">--     lem = {!!}</a>
+
+
+<a id="2334" class="Comment">-- --------------------------------------------------------------------------------</a>
+</pre></body></html>

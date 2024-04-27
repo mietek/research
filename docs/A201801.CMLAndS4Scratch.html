@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>A201801.CMLAndS4Scratch</title><link rel="stylesheet" href="AgdaPP.css"></head><body><pre class="Agda"><a id="1" class="Symbol">{-#</a> <a id="5" class="Keyword">OPTIONS</a> <a id="13" class="Pragma">--rewriting</a> <a id="25" class="Symbol">#-}</a>
+
+<a id="30" class="Keyword">module</a> <a id="37" href="A201801.CMLAndS4Scratch.html" class="Module">A201801.CMLAndS4Scratch</a> <a id="61" class="Keyword">where</a>
+
+<a id="68" class="Keyword">open</a> <a id="73" class="Keyword">import</a> <a id="80" href="A201801.Prelude.html" class="Module">A201801.Prelude</a>
+<a id="96" class="Keyword">open</a> <a id="101" class="Keyword">import</a> <a id="108" href="A201801.Category.html" class="Module">A201801.Category</a>
+<a id="125" class="Keyword">open</a> <a id="130" class="Keyword">import</a> <a id="137" href="A201801.List.html" class="Module">A201801.List</a>
+<a id="150" class="Keyword">open</a> <a id="155" class="Keyword">import</a> <a id="162" href="A201801.ListLemmas.html" class="Module">A201801.ListLemmas</a>
+<a id="181" class="Keyword">open</a> <a id="186" class="Keyword">import</a> <a id="193" href="A201801.ListConcatenation.html" class="Module">A201801.ListConcatenation</a>
+<a id="219" class="Keyword">open</a> <a id="224" class="Keyword">import</a> <a id="231" href="A201801.AllList.html" class="Module">A201801.AllList</a>
+<a id="247" class="Keyword">open</a> <a id="252" class="Keyword">import</a> <a id="259" href="A201801.CMLPropositions.html" class="Module">A201801.CMLPropositions</a>
+<a id="283" class="Comment">-- open import CMLDerivations</a>
+<a id="313" class="Keyword">import</a> <a id="320" href="A201801.S4Propositions.html" class="Module">A201801.S4Propositions</a> <a id="343" class="Symbol">as</a> <a id="346" class="Module">S4</a>
+<a id="349" class="Comment">-- import S4Derivations as S4</a>
+
+
+<a id="381" class="Comment">--------------------------------------------------------------------------------</a>
+
+
+<a id="464" class="Comment">-- lams : ∀ {Δ Γ A} → (Ξ : List Prop) → Δ ⊢ A valid[ Γ ⧺ Ξ ]</a>
+<a id="525" class="Comment">--                  → Δ ⊢ Ξ ⊃⋯⊃ A valid[ Γ ]</a>
+<a id="570" class="Comment">-- lams ∙       𝒟 = 𝒟</a>
+<a id="592" class="Comment">-- lams (Ξ , B) 𝒟 = lams Ξ (lam 𝒟)</a>
+
+
+<a id="629" class="Comment">-- unlams : ∀ {Δ Γ A} → (Ξ : List Prop) → Δ ⊢ Ξ ⊃⋯⊃ A valid[ Γ ]</a>
+<a id="694" class="Comment">--                    → Δ ⊢ A valid[ Γ ⧺ Ξ ]</a>
+<a id="739" class="Comment">-- unlams ∙       𝒟 = 𝒟</a>
+<a id="763" class="Comment">-- unlams (Ξ , B) 𝒟 = unlam (unlams Ξ 𝒟)</a>
+
+
+<a id="806" class="Comment">-- apps : ∀ {Δ Γ Ξ A} → Δ ⊢ Ξ ⊃⋯⊃ A valid[ Γ ] → Δ ⊢ Ξ allvalid[ Γ ]</a>
+<a id="875" class="Comment">--                    → Δ ⊢ A valid[ Γ ]</a>
+<a id="916" class="Comment">-- apps 𝒟 ∙       = 𝒟</a>
+<a id="938" class="Comment">-- apps 𝒟 (ξ , ℰ) = app (apps 𝒟 ξ) ℰ</a>
+
+
+<a id="977" class="Comment">-- blam : ∀ {Δ Γ Ψ A B} → Δ ⊢ [ Ψ , A ] B valid[ Γ ]</a>
+<a id="1030" class="Comment">--                      → Δ ⊢ [ Ψ ] (A ⊃ B) valid[ Γ ]</a>
+<a id="1085" class="Comment">-- blam 𝒟 = letbox 𝒟 (box (lam (mvz ids)))</a>
+
+
+<a id="1130" class="Comment">-- unblam : ∀ {Δ Γ Ψ A B} → Δ ⊢ [ Ψ ] (A ⊃ B) valid[ Γ ]</a>
+<a id="1187" class="Comment">--                        → Δ ⊢ [ Ψ , A ] B valid[ Γ ]</a>
+<a id="1242" class="Comment">-- unblam 𝒟 = letbox 𝒟 (box (unlam (mvz ids)))</a>
+
+
+<a id="1291" class="Comment">-- blams : ∀ {Δ Γ Ψ A} → (Ξ : List Prop) → Δ ⊢ [ Ψ ⧺ Ξ ] A valid[ Γ ]</a>
+<a id="1361" class="Comment">--                     → Δ ⊢ [ Ψ ] (Ξ ⊃⋯⊃ A) valid[ Γ ]</a>
+<a id="1417" class="Comment">-- blams ∙       𝒟 = 𝒟</a>
+<a id="1440" class="Comment">-- blams (Ξ , B) 𝒟 = blams Ξ (blam 𝒟)</a>
+
+
+<a id="1480" class="Comment">-- unblams : ∀ {Δ Γ Ψ A} → (Ξ : List Prop) → Δ ⊢ [ Ψ ] (Ξ ⊃⋯⊃ A) valid[ Γ ]</a>
+<a id="1556" class="Comment">--                       → Δ ⊢ [ Ψ ⧺ Ξ ] A valid[ Γ ]</a>
+<a id="1610" class="Comment">-- unblams ∙       𝒟 = 𝒟</a>
+<a id="1635" class="Comment">-- unblams (Ξ , B) 𝒟 = unblam (unblams Ξ 𝒟)</a>
+</pre></body></html>

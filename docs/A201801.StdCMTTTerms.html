@@ -1,0 +1,298 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>A201801.StdCMTTTerms</title><link rel="stylesheet" href="AgdaPP.css"></head><body><pre class="Agda"><a id="1" class="Keyword">module</a> <a id="8" href="A201801.StdCMTTTerms.html" class="Module">A201801.StdCMTTTerms</a> <a id="29" class="Keyword">where</a>
+
+<a id="36" class="Keyword">open</a> <a id="41" class="Keyword">import</a> <a id="48" href="A201801.Prelude.html" class="Module">A201801.Prelude</a>
+<a id="64" class="Keyword">open</a> <a id="69" class="Keyword">import</a> <a id="76" href="A201801.Fin.html" class="Module">A201801.Fin</a>
+<a id="88" class="Keyword">open</a> <a id="93" class="Keyword">import</a> <a id="100" href="A201801.Vec.html" class="Module">A201801.Vec</a>
+<a id="112" class="Keyword">open</a> <a id="117" class="Keyword">import</a> <a id="124" href="A201801.AllVec.html" class="Module">A201801.AllVec</a>
+
+
+<a id="141" class="Comment">--------------------------------------------------------------------------------</a>
+
+
+<a id="Scopes"></a><a id="224" href="A201801.StdCMTTTerms.html#224" class="Function">Scopes</a> <a id="231" class="Symbol">:</a> <a id="233" href="Agda.Builtin.Nat.html#165" class="Datatype">Nat</a> <a id="237" class="Symbol">→</a> <a id="239" class="PrimitiveType">Set</a>
+<a id="243" href="A201801.StdCMTTTerms.html#224" class="Function">Scopes</a> <a id="250" href="A201801.StdCMTTTerms.html#250" class="Bound">d</a> <a id="252" class="Symbol">=</a> <a id="254" href="A201801.Vec.html#228" class="Datatype">Vec</a> <a id="258" href="Agda.Builtin.Nat.html#165" class="Datatype">Nat</a> <a id="262" href="A201801.StdCMTTTerms.html#250" class="Bound">d</a>
+
+
+<a id="266" class="Comment">--------------------------------------------------------------------------------</a>
+
+
+<a id="349" class="Keyword">mutual</a>
+  <a id="358" class="Keyword">data</a> <a id="Term"></a><a id="363" href="A201801.StdCMTTTerms.html#363" class="Datatype">Term</a> <a id="368" class="Symbol">:</a> <a id="370" class="Symbol">∀</a> <a id="372" class="Symbol">{</a><a id="373" href="A201801.StdCMTTTerms.html#373" class="Bound">d</a><a id="374" class="Symbol">}</a> <a id="376" class="Symbol">→</a> <a id="378" href="A201801.StdCMTTTerms.html#224" class="Function">Scopes</a> <a id="385" href="A201801.StdCMTTTerms.html#373" class="Bound">d</a> <a id="387" class="Symbol">→</a> <a id="389" href="Agda.Builtin.Nat.html#165" class="Datatype">Nat</a> <a id="393" class="Symbol">→</a> <a id="395" class="PrimitiveType">Set</a>
+    <a id="403" class="Keyword">where</a>
+      <a id="Term.VAR"></a><a id="415" href="A201801.StdCMTTTerms.html#415" class="InductiveConstructor">VAR</a> <a id="419" class="Symbol">:</a> <a id="421" class="Symbol">∀</a> <a id="423" class="Symbol">{</a><a id="424" href="A201801.StdCMTTTerms.html#424" class="Bound">d</a> <a id="426" href="A201801.StdCMTTTerms.html#426" class="Bound">g</a><a id="427" class="Symbol">}</a> <a id="429" class="Symbol">→</a> <a id="431" class="Symbol">{</a><a id="432" href="A201801.StdCMTTTerms.html#432" class="Bound">σ</a> <a id="434" class="Symbol">:</a> <a id="436" href="A201801.StdCMTTTerms.html#224" class="Function">Scopes</a> <a id="443" href="A201801.StdCMTTTerms.html#424" class="Bound">d</a><a id="444" class="Symbol">}</a>
+                    <a id="466" class="Symbol">→</a> <a id="468" href="A201801.Fin.html#768" class="Datatype">Fin</a> <a id="472" href="A201801.StdCMTTTerms.html#426" class="Bound">g</a>
+                    <a id="494" class="Symbol">→</a> <a id="496" href="A201801.StdCMTTTerms.html#363" class="Datatype">Term</a> <a id="501" href="A201801.StdCMTTTerms.html#432" class="Bound">σ</a> <a id="503" href="A201801.StdCMTTTerms.html#426" class="Bound">g</a>
+
+      <a id="Term.LAM"></a><a id="512" href="A201801.StdCMTTTerms.html#512" class="InductiveConstructor">LAM</a> <a id="516" class="Symbol">:</a> <a id="518" class="Symbol">∀</a> <a id="520" class="Symbol">{</a><a id="521" href="A201801.StdCMTTTerms.html#521" class="Bound">d</a> <a id="523" href="A201801.StdCMTTTerms.html#523" class="Bound">g</a><a id="524" class="Symbol">}</a> <a id="526" class="Symbol">→</a> <a id="528" class="Symbol">{</a><a id="529" href="A201801.StdCMTTTerms.html#529" class="Bound">σ</a> <a id="531" class="Symbol">:</a> <a id="533" href="A201801.StdCMTTTerms.html#224" class="Function">Scopes</a> <a id="540" href="A201801.StdCMTTTerms.html#521" class="Bound">d</a><a id="541" class="Symbol">}</a>
+                    <a id="563" class="Symbol">→</a> <a id="565" href="A201801.StdCMTTTerms.html#363" class="Datatype">Term</a> <a id="570" href="A201801.StdCMTTTerms.html#529" class="Bound">σ</a> <a id="572" class="Symbol">(</a><a id="573" href="Agda.Builtin.Nat.html#196" class="InductiveConstructor">suc</a> <a id="577" href="A201801.StdCMTTTerms.html#523" class="Bound">g</a><a id="578" class="Symbol">)</a>
+                    <a id="600" class="Symbol">→</a> <a id="602" href="A201801.StdCMTTTerms.html#363" class="Datatype">Term</a> <a id="607" href="A201801.StdCMTTTerms.html#529" class="Bound">σ</a> <a id="609" href="A201801.StdCMTTTerms.html#523" class="Bound">g</a>
+
+      <a id="Term.APP"></a><a id="618" href="A201801.StdCMTTTerms.html#618" class="InductiveConstructor">APP</a> <a id="622" class="Symbol">:</a> <a id="624" class="Symbol">∀</a> <a id="626" class="Symbol">{</a><a id="627" href="A201801.StdCMTTTerms.html#627" class="Bound">d</a> <a id="629" href="A201801.StdCMTTTerms.html#629" class="Bound">g</a><a id="630" class="Symbol">}</a> <a id="632" class="Symbol">→</a> <a id="634" class="Symbol">{</a><a id="635" href="A201801.StdCMTTTerms.html#635" class="Bound">σ</a> <a id="637" class="Symbol">:</a> <a id="639" href="A201801.StdCMTTTerms.html#224" class="Function">Scopes</a> <a id="646" href="A201801.StdCMTTTerms.html#627" class="Bound">d</a><a id="647" class="Symbol">}</a>
+                    <a id="669" class="Symbol">→</a> <a id="671" href="A201801.StdCMTTTerms.html#363" class="Datatype">Term</a> <a id="676" href="A201801.StdCMTTTerms.html#635" class="Bound">σ</a> <a id="678" href="A201801.StdCMTTTerms.html#629" class="Bound">g</a> <a id="680" class="Symbol">→</a> <a id="682" href="A201801.StdCMTTTerms.html#363" class="Datatype">Term</a> <a id="687" href="A201801.StdCMTTTerms.html#635" class="Bound">σ</a> <a id="689" href="A201801.StdCMTTTerms.html#629" class="Bound">g</a>
+                    <a id="711" class="Symbol">→</a> <a id="713" href="A201801.StdCMTTTerms.html#363" class="Datatype">Term</a> <a id="718" href="A201801.StdCMTTTerms.html#635" class="Bound">σ</a> <a id="720" href="A201801.StdCMTTTerms.html#629" class="Bound">g</a>
+
+      <a id="Term.MVAR"></a><a id="729" href="A201801.StdCMTTTerms.html#729" class="InductiveConstructor">MVAR</a> <a id="734" class="Symbol">:</a> <a id="736" class="Symbol">∀</a> <a id="738" class="Symbol">{</a><a id="739" href="A201801.StdCMTTTerms.html#739" class="Bound">m</a> <a id="741" href="A201801.StdCMTTTerms.html#741" class="Bound">d</a> <a id="743" href="A201801.StdCMTTTerms.html#743" class="Bound">g</a> <a id="745" href="A201801.StdCMTTTerms.html#745" class="Bound">i</a><a id="746" class="Symbol">}</a> <a id="748" class="Symbol">→</a> <a id="750" class="Symbol">{</a><a id="751" href="A201801.StdCMTTTerms.html#751" class="Bound">σ</a> <a id="753" class="Symbol">:</a> <a id="755" href="A201801.StdCMTTTerms.html#224" class="Function">Scopes</a> <a id="762" href="A201801.StdCMTTTerms.html#741" class="Bound">d</a><a id="763" class="Symbol">}</a>
+                         <a id="790" class="Symbol">→</a> <a id="792" href="A201801.StdCMTTTerms.html#751" class="Bound">σ</a> <a id="794" href="A201801.Vec.html#2295" class="Datatype Operator">∋⟨</a> <a id="797" href="A201801.StdCMTTTerms.html#745" class="Bound">i</a> <a id="799" href="A201801.Vec.html#2295" class="Datatype Operator">⟩</a> <a id="801" href="A201801.StdCMTTTerms.html#739" class="Bound">m</a> <a id="803" class="Symbol">→</a> <a id="805" href="A201801.StdCMTTTerms.html#1094" class="Function">Terms</a> <a id="811" href="A201801.StdCMTTTerms.html#751" class="Bound">σ</a> <a id="813" href="A201801.StdCMTTTerms.html#743" class="Bound">g</a> <a id="815" href="A201801.StdCMTTTerms.html#739" class="Bound">m</a>
+                         <a id="842" class="Symbol">→</a> <a id="844" href="A201801.StdCMTTTerms.html#363" class="Datatype">Term</a> <a id="849" href="A201801.StdCMTTTerms.html#751" class="Bound">σ</a> <a id="851" href="A201801.StdCMTTTerms.html#743" class="Bound">g</a>
+
+      <a id="Term.BOX"></a><a id="860" href="A201801.StdCMTTTerms.html#860" class="InductiveConstructor">BOX</a> <a id="864" class="Symbol">:</a> <a id="866" class="Symbol">∀</a> <a id="868" class="Symbol">{</a><a id="869" href="A201801.StdCMTTTerms.html#869" class="Bound">m</a> <a id="871" href="A201801.StdCMTTTerms.html#871" class="Bound">d</a> <a id="873" href="A201801.StdCMTTTerms.html#873" class="Bound">g</a><a id="874" class="Symbol">}</a> <a id="876" class="Symbol">→</a> <a id="878" class="Symbol">{</a><a id="879" href="A201801.StdCMTTTerms.html#879" class="Bound">σ</a> <a id="881" class="Symbol">:</a> <a id="883" href="A201801.StdCMTTTerms.html#224" class="Function">Scopes</a> <a id="890" href="A201801.StdCMTTTerms.html#871" class="Bound">d</a><a id="891" class="Symbol">}</a>
+                      <a id="915" class="Symbol">→</a> <a id="917" href="A201801.StdCMTTTerms.html#363" class="Datatype">Term</a> <a id="922" href="A201801.StdCMTTTerms.html#879" class="Bound">σ</a> <a id="924" href="A201801.StdCMTTTerms.html#869" class="Bound">m</a>
+                      <a id="948" class="Symbol">→</a> <a id="950" href="A201801.StdCMTTTerms.html#363" class="Datatype">Term</a> <a id="955" href="A201801.StdCMTTTerms.html#879" class="Bound">σ</a> <a id="957" href="A201801.StdCMTTTerms.html#873" class="Bound">g</a>
+
+      <a id="Term.LETBOX"></a><a id="966" href="A201801.StdCMTTTerms.html#966" class="InductiveConstructor">LETBOX</a> <a id="973" class="Symbol">:</a> <a id="975" class="Symbol">∀</a> <a id="977" class="Symbol">{</a><a id="978" href="A201801.StdCMTTTerms.html#978" class="Bound">m</a> <a id="980" href="A201801.StdCMTTTerms.html#980" class="Bound">d</a> <a id="982" href="A201801.StdCMTTTerms.html#982" class="Bound">g</a><a id="983" class="Symbol">}</a> <a id="985" class="Symbol">→</a> <a id="987" class="Symbol">{</a><a id="988" href="A201801.StdCMTTTerms.html#988" class="Bound">σ</a> <a id="990" class="Symbol">:</a> <a id="992" href="A201801.StdCMTTTerms.html#224" class="Function">Scopes</a> <a id="999" href="A201801.StdCMTTTerms.html#980" class="Bound">d</a><a id="1000" class="Symbol">}</a>
+                         <a id="1027" class="Symbol">→</a> <a id="1029" href="A201801.StdCMTTTerms.html#363" class="Datatype">Term</a> <a id="1034" href="A201801.StdCMTTTerms.html#988" class="Bound">σ</a> <a id="1036" href="A201801.StdCMTTTerms.html#982" class="Bound">g</a> <a id="1038" class="Symbol">→</a> <a id="1040" href="A201801.StdCMTTTerms.html#363" class="Datatype">Term</a> <a id="1045" class="Symbol">(</a><a id="1046" href="A201801.StdCMTTTerms.html#988" class="Bound">σ</a> <a id="1048" href="A201801.Vec.html#287" class="InductiveConstructor Operator">,</a> <a id="1050" href="A201801.StdCMTTTerms.html#978" class="Bound">m</a><a id="1051" class="Symbol">)</a> <a id="1053" href="A201801.StdCMTTTerms.html#982" class="Bound">g</a>
+                         <a id="1080" class="Symbol">→</a> <a id="1082" href="A201801.StdCMTTTerms.html#363" class="Datatype">Term</a> <a id="1087" href="A201801.StdCMTTTerms.html#988" class="Bound">σ</a> <a id="1089" href="A201801.StdCMTTTerms.html#982" class="Bound">g</a>
+
+  <a id="Terms"></a><a id="1094" href="A201801.StdCMTTTerms.html#1094" class="Function">Terms</a> <a id="1100" class="Symbol">:</a> <a id="1102" class="Symbol">∀</a> <a id="1104" class="Symbol">{</a><a id="1105" href="A201801.StdCMTTTerms.html#1105" class="Bound">d</a><a id="1106" class="Symbol">}</a> <a id="1108" class="Symbol">→</a> <a id="1110" href="A201801.StdCMTTTerms.html#224" class="Function">Scopes</a> <a id="1117" href="A201801.StdCMTTTerms.html#1105" class="Bound">d</a> <a id="1119" class="Symbol">→</a> <a id="1121" href="Agda.Builtin.Nat.html#165" class="Datatype">Nat</a> <a id="1125" class="Symbol">→</a> <a id="1127" href="Agda.Builtin.Nat.html#165" class="Datatype">Nat</a> <a id="1131" class="Symbol">→</a> <a id="1133" class="PrimitiveType">Set</a>
+  <a id="1139" href="A201801.StdCMTTTerms.html#1094" class="Function">Terms</a> <a id="1145" href="A201801.StdCMTTTerms.html#1145" class="Bound">σ</a> <a id="1147" href="A201801.StdCMTTTerms.html#1147" class="Bound">g</a> <a id="1149" href="A201801.StdCMTTTerms.html#1149" class="Bound">n</a> <a id="1151" class="Symbol">=</a> <a id="1153" href="A201801.Vec.html#228" class="Datatype">Vec</a> <a id="1157" class="Symbol">(</a><a id="1158" href="A201801.StdCMTTTerms.html#363" class="Datatype">Term</a> <a id="1163" href="A201801.StdCMTTTerms.html#1145" class="Bound">σ</a> <a id="1165" href="A201801.StdCMTTTerms.html#1147" class="Bound">g</a><a id="1166" class="Symbol">)</a> <a id="1168" href="A201801.StdCMTTTerms.html#1149" class="Bound">n</a>
+
+
+<a id="1172" class="Comment">--------------------------------------------------------------------------------</a>
+
+
+<a id="1255" class="Keyword">mutual</a>
+  <a id="REN"></a><a id="1264" href="A201801.StdCMTTTerms.html#1264" class="Function">REN</a> <a id="1268" class="Symbol">:</a> <a id="1270" class="Symbol">∀</a> <a id="1272" class="Symbol">{</a><a id="1273" href="A201801.StdCMTTTerms.html#1273" class="Bound">d</a> <a id="1275" href="A201801.StdCMTTTerms.html#1275" class="Bound">g</a> <a id="1277" href="A201801.StdCMTTTerms.html#1277" class="Bound">g′</a><a id="1279" class="Symbol">}</a> <a id="1281" class="Symbol">→</a> <a id="1283" class="Symbol">{</a><a id="1284" href="A201801.StdCMTTTerms.html#1284" class="Bound">σ</a> <a id="1286" class="Symbol">:</a> <a id="1288" href="A201801.StdCMTTTerms.html#224" class="Function">Scopes</a> <a id="1295" href="A201801.StdCMTTTerms.html#1273" class="Bound">d</a><a id="1296" class="Symbol">}</a>
+                   <a id="1317" class="Symbol">→</a> <a id="1319" href="A201801.StdCMTTTerms.html#1277" class="Bound">g′</a> <a id="1322" href="A201801.Fin.html#157" class="Datatype Operator">≥</a> <a id="1324" href="A201801.StdCMTTTerms.html#1275" class="Bound">g</a> <a id="1326" class="Symbol">→</a> <a id="1328" href="A201801.StdCMTTTerms.html#363" class="Datatype">Term</a> <a id="1333" href="A201801.StdCMTTTerms.html#1284" class="Bound">σ</a> <a id="1335" href="A201801.StdCMTTTerms.html#1275" class="Bound">g</a>
+                   <a id="1356" class="Symbol">→</a> <a id="1358" href="A201801.StdCMTTTerms.html#363" class="Datatype">Term</a> <a id="1363" href="A201801.StdCMTTTerms.html#1284" class="Bound">σ</a> <a id="1365" href="A201801.StdCMTTTerms.html#1277" class="Bound">g′</a>
+  <a id="1370" href="A201801.StdCMTTTerms.html#1264" class="Function">REN</a> <a id="1374" href="A201801.StdCMTTTerms.html#1374" class="Bound">e</a> <a id="1376" class="Symbol">(</a><a id="1377" href="A201801.StdCMTTTerms.html#415" class="InductiveConstructor">VAR</a> <a id="1381" href="A201801.StdCMTTTerms.html#1381" class="Bound">i</a><a id="1382" class="Symbol">)</a>      <a id="1389" class="Symbol">=</a> <a id="1391" href="A201801.StdCMTTTerms.html#415" class="InductiveConstructor">VAR</a> <a id="1395" class="Symbol">(</a><a id="1396" href="A201801.Fin.html#880" class="Function">REN∋</a> <a id="1401" href="A201801.StdCMTTTerms.html#1374" class="Bound">e</a> <a id="1403" href="A201801.StdCMTTTerms.html#1381" class="Bound">i</a><a id="1404" class="Symbol">)</a>
+  <a id="1408" href="A201801.StdCMTTTerms.html#1264" class="Function">REN</a> <a id="1412" href="A201801.StdCMTTTerms.html#1412" class="Bound">e</a> <a id="1414" class="Symbol">(</a><a id="1415" href="A201801.StdCMTTTerms.html#512" class="InductiveConstructor">LAM</a> <a id="1419" href="A201801.StdCMTTTerms.html#1419" class="Bound">M</a><a id="1420" class="Symbol">)</a>      <a id="1427" class="Symbol">=</a> <a id="1429" href="A201801.StdCMTTTerms.html#512" class="InductiveConstructor">LAM</a> <a id="1433" class="Symbol">(</a><a id="1434" href="A201801.StdCMTTTerms.html#1264" class="Function">REN</a> <a id="1438" class="Symbol">(</a><a id="1439" href="A201801.Fin.html#278" class="InductiveConstructor">keep</a> <a id="1444" href="A201801.StdCMTTTerms.html#1412" class="Bound">e</a><a id="1445" class="Symbol">)</a> <a id="1447" href="A201801.StdCMTTTerms.html#1419" class="Bound">M</a><a id="1448" class="Symbol">)</a>
+  <a id="1452" href="A201801.StdCMTTTerms.html#1264" class="Function">REN</a> <a id="1456" href="A201801.StdCMTTTerms.html#1456" class="Bound">e</a> <a id="1458" class="Symbol">(</a><a id="1459" href="A201801.StdCMTTTerms.html#618" class="InductiveConstructor">APP</a> <a id="1463" href="A201801.StdCMTTTerms.html#1463" class="Bound">M</a> <a id="1465" href="A201801.StdCMTTTerms.html#1465" class="Bound">N</a><a id="1466" class="Symbol">)</a>    <a id="1471" class="Symbol">=</a> <a id="1473" href="A201801.StdCMTTTerms.html#618" class="InductiveConstructor">APP</a> <a id="1477" class="Symbol">(</a><a id="1478" href="A201801.StdCMTTTerms.html#1264" class="Function">REN</a> <a id="1482" href="A201801.StdCMTTTerms.html#1456" class="Bound">e</a> <a id="1484" href="A201801.StdCMTTTerms.html#1463" class="Bound">M</a><a id="1485" class="Symbol">)</a> <a id="1487" class="Symbol">(</a><a id="1488" href="A201801.StdCMTTTerms.html#1264" class="Function">REN</a> <a id="1492" href="A201801.StdCMTTTerms.html#1456" class="Bound">e</a> <a id="1494" href="A201801.StdCMTTTerms.html#1465" class="Bound">N</a><a id="1495" class="Symbol">)</a>
+  <a id="1499" href="A201801.StdCMTTTerms.html#1264" class="Function">REN</a> <a id="1503" href="A201801.StdCMTTTerms.html#1503" class="Bound">e</a> <a id="1505" class="Symbol">(</a><a id="1506" href="A201801.StdCMTTTerms.html#729" class="InductiveConstructor">MVAR</a> <a id="1511" href="A201801.StdCMTTTerms.html#1511" class="Bound">𝒾</a> <a id="1513" href="A201801.StdCMTTTerms.html#1513" class="Bound">y</a><a id="1514" class="Symbol">)</a>   <a id="1518" class="Symbol">=</a> <a id="1520" href="A201801.StdCMTTTerms.html#729" class="InductiveConstructor">MVAR</a> <a id="1525" href="A201801.StdCMTTTerms.html#1511" class="Bound">𝒾</a> <a id="1527" class="Symbol">(</a><a id="1528" href="A201801.StdCMTTTerms.html#1620" class="Function">RENS</a> <a id="1533" href="A201801.StdCMTTTerms.html#1503" class="Bound">e</a> <a id="1535" href="A201801.StdCMTTTerms.html#1513" class="Bound">y</a><a id="1536" class="Symbol">)</a>
+  <a id="1540" href="A201801.StdCMTTTerms.html#1264" class="Function">REN</a> <a id="1544" href="A201801.StdCMTTTerms.html#1544" class="Bound">e</a> <a id="1546" class="Symbol">(</a><a id="1547" href="A201801.StdCMTTTerms.html#860" class="InductiveConstructor">BOX</a> <a id="1551" href="A201801.StdCMTTTerms.html#1551" class="Bound">M</a><a id="1552" class="Symbol">)</a>      <a id="1559" class="Symbol">=</a> <a id="1561" href="A201801.StdCMTTTerms.html#860" class="InductiveConstructor">BOX</a> <a id="1565" href="A201801.StdCMTTTerms.html#1551" class="Bound">M</a>
+  <a id="1569" href="A201801.StdCMTTTerms.html#1264" class="Function">REN</a> <a id="1573" href="A201801.StdCMTTTerms.html#1573" class="Bound">e</a> <a id="1575" class="Symbol">(</a><a id="1576" href="A201801.StdCMTTTerms.html#966" class="InductiveConstructor">LETBOX</a> <a id="1583" href="A201801.StdCMTTTerms.html#1583" class="Bound">M</a> <a id="1585" href="A201801.StdCMTTTerms.html#1585" class="Bound">N</a><a id="1586" class="Symbol">)</a> <a id="1588" class="Symbol">=</a> <a id="1590" href="A201801.StdCMTTTerms.html#966" class="InductiveConstructor">LETBOX</a> <a id="1597" class="Symbol">(</a><a id="1598" href="A201801.StdCMTTTerms.html#1264" class="Function">REN</a> <a id="1602" href="A201801.StdCMTTTerms.html#1573" class="Bound">e</a> <a id="1604" href="A201801.StdCMTTTerms.html#1583" class="Bound">M</a><a id="1605" class="Symbol">)</a> <a id="1607" class="Symbol">(</a><a id="1608" href="A201801.StdCMTTTerms.html#1264" class="Function">REN</a> <a id="1612" href="A201801.StdCMTTTerms.html#1573" class="Bound">e</a> <a id="1614" href="A201801.StdCMTTTerms.html#1585" class="Bound">N</a><a id="1615" class="Symbol">)</a>
+
+  <a id="RENS"></a><a id="1620" href="A201801.StdCMTTTerms.html#1620" class="Function">RENS</a> <a id="1625" class="Symbol">:</a> <a id="1627" class="Symbol">∀</a> <a id="1629" class="Symbol">{</a><a id="1630" href="A201801.StdCMTTTerms.html#1630" class="Bound">d</a> <a id="1632" href="A201801.StdCMTTTerms.html#1632" class="Bound">g</a> <a id="1634" href="A201801.StdCMTTTerms.html#1634" class="Bound">g′</a> <a id="1637" href="A201801.StdCMTTTerms.html#1637" class="Bound">n</a><a id="1638" class="Symbol">}</a> <a id="1640" class="Symbol">→</a> <a id="1642" class="Symbol">{</a><a id="1643" href="A201801.StdCMTTTerms.html#1643" class="Bound">σ</a> <a id="1645" class="Symbol">:</a> <a id="1647" href="A201801.StdCMTTTerms.html#224" class="Function">Scopes</a> <a id="1654" href="A201801.StdCMTTTerms.html#1630" class="Bound">d</a><a id="1655" class="Symbol">}</a>
+                      <a id="1679" class="Symbol">→</a> <a id="1681" href="A201801.StdCMTTTerms.html#1634" class="Bound">g′</a> <a id="1684" href="A201801.Fin.html#157" class="Datatype Operator">≥</a> <a id="1686" href="A201801.StdCMTTTerms.html#1632" class="Bound">g</a> <a id="1688" class="Symbol">→</a> <a id="1690" href="A201801.StdCMTTTerms.html#1094" class="Function">Terms</a> <a id="1696" href="A201801.StdCMTTTerms.html#1643" class="Bound">σ</a> <a id="1698" href="A201801.StdCMTTTerms.html#1632" class="Bound">g</a> <a id="1700" href="A201801.StdCMTTTerms.html#1637" class="Bound">n</a>
+                      <a id="1724" class="Symbol">→</a> <a id="1726" href="A201801.StdCMTTTerms.html#1094" class="Function">Terms</a> <a id="1732" href="A201801.StdCMTTTerms.html#1643" class="Bound">σ</a> <a id="1734" href="A201801.StdCMTTTerms.html#1634" class="Bound">g′</a> <a id="1737" href="A201801.StdCMTTTerms.html#1637" class="Bound">n</a>
+  <a id="1741" href="A201801.StdCMTTTerms.html#1620" class="Function">RENS</a> <a id="1746" href="A201801.StdCMTTTerms.html#1746" class="Bound">e</a> <a id="1748" href="A201801.Vec.html#266" class="InductiveConstructor">∙</a>       <a id="1756" class="Symbol">=</a> <a id="1758" href="A201801.Vec.html#266" class="InductiveConstructor">∙</a>
+  <a id="1762" href="A201801.StdCMTTTerms.html#1620" class="Function">RENS</a> <a id="1767" href="A201801.StdCMTTTerms.html#1767" class="Bound">e</a> <a id="1769" class="Symbol">(</a><a id="1770" href="A201801.StdCMTTTerms.html#1770" class="Bound">x</a> <a id="1772" href="A201801.Vec.html#287" class="InductiveConstructor Operator">,</a> <a id="1774" href="A201801.StdCMTTTerms.html#1774" class="Bound">M</a><a id="1775" class="Symbol">)</a> <a id="1777" class="Symbol">=</a> <a id="1779" href="A201801.StdCMTTTerms.html#1620" class="Function">RENS</a> <a id="1784" href="A201801.StdCMTTTerms.html#1767" class="Bound">e</a> <a id="1786" href="A201801.StdCMTTTerms.html#1770" class="Bound">x</a> <a id="1788" href="A201801.Vec.html#287" class="InductiveConstructor Operator">,</a> <a id="1790" href="A201801.StdCMTTTerms.html#1264" class="Function">REN</a> <a id="1794" href="A201801.StdCMTTTerms.html#1767" class="Bound">e</a> <a id="1796" href="A201801.StdCMTTTerms.html#1774" class="Bound">M</a>
+  <a id="1800" class="Comment">-- NOTE: Equivalent to</a>
+  <a id="1825" class="Comment">-- RENS e x = maps (REN e) x</a>
+
+
+<a id="1856" class="Comment">--------------------------------------------------------------------------------</a>
+
+
+<a id="1939" class="Comment">-- TODO: unfinished</a>
+<a id="1959" class="Comment">-- WK : ∀ {d g} → {σ : Scopes d}</a>
+<a id="1992" class="Comment">--              → Term σ g</a>
+<a id="2019" class="Comment">--              → Term σ (suc g)</a>
+<a id="2052" class="Comment">-- WK M = REN (drop id) M</a>
+
+
+<a id="2080" class="Comment">-- VZ : ∀ {d g} → {σ : Scopes d}</a>
+<a id="2113" class="Comment">--              → Term σ (suc g)</a>
+<a id="2146" class="Comment">-- VZ = VAR zero</a>
+
+
+<a id="2165" class="Comment">-- WKS : ∀ {d g n} → {σ : Scopes d}</a>
+<a id="2201" class="Comment">--                 → Terms σ g n</a>
+<a id="2234" class="Comment">--                 → Terms σ (suc g) n</a>
+<a id="2273" class="Comment">-- WKS x = RENS (drop id≥) x</a>
+
+
+<a id="2304" class="Comment">-- LIFTS : ∀ {d g n} → {σ : Scopes d}</a>
+<a id="2342" class="Comment">--                   → Terms σ g n</a>
+<a id="2377" class="Comment">--                   → Terms σ (suc g) (suc n)</a>
+<a id="2424" class="Comment">-- LIFTS x = WKS x , VZ</a>
+
+
+<a id="2450" class="Comment">-- VARS : ∀ {d g g′} → {σ : Scopes d}</a>
+<a id="2488" class="Comment">--                   → g′ ≥ g</a>
+<a id="2518" class="Comment">--                   → Terms σ g′ g</a>
+<a id="2554" class="Comment">-- VARS done     = ∙</a>
+<a id="2575" class="Comment">-- VARS (drop e) = WKS (VARS e)</a>
+<a id="2607" class="Comment">-- VARS (keep e) = LIFTS (VARS e)</a>
+
+
+<a id="2643" class="Comment">-- IDS : ∀ {d g} → {σ : Scopes d}</a>
+<a id="2677" class="Comment">--               → Terms σ g g</a>
+<a id="2708" class="Comment">-- IDS = VARS id≥</a>
+
+
+<a id="2728" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="2814" class="Comment">-- mutual</a>
+<a id="2824" class="Comment">--   MREN : ∀ {d d′ e g} → {σ : Scopes d} {σ′ : Scopes d′}</a>
+<a id="2883" class="Comment">--                       → σ′ ⊇⟨ e ⟩ σ → Term σ g</a>
+<a id="2933" class="Comment">--                       → Term σ′ g</a>
+<a id="2970" class="Comment">--   MREN η (VAR i)      = VAR i</a>
+<a id="3003" class="Comment">--   MREN η (LAM M)      = LAM (MREN η M)</a>
+<a id="3045" class="Comment">--   MREN η (APP M N)    = APP (MREN η M) (MREN η N)</a>
+<a id="3098" class="Comment">--   MREN η (MVAR 𝒾 y)   = MVAR (ren∋ η 𝒾) (MRENS η y)</a>
+<a id="3153" class="Comment">--   MREN η (BOX M)      = BOX (MREN η M)</a>
+<a id="3195" class="Comment">--   MREN η (LETBOX M N) = LETBOX (MREN η M) (MREN (keep η) N)</a>
+
+<a id="3259" class="Comment">--   MRENS : ∀ {d d′ e g n} → {σ : Scopes d} {σ′ : Scopes d′}</a>
+<a id="3321" class="Comment">--                          → σ′ ⊇⟨ e ⟩ σ → Terms σ g n</a>
+<a id="3377" class="Comment">--                          → Terms σ′ g n</a>
+<a id="3420" class="Comment">--   MRENS η ∙       = ∙</a>
+<a id="3445" class="Comment">--   MRENS η (x , M) = MRENS η x , MREN η M</a>
+<a id="3489" class="Comment">--   -- NOTE: Equivalent to</a>
+<a id="3517" class="Comment">--   -- MRENS η x = maps (MREN η) x</a>
+
+
+<a id="3555" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="3641" class="Comment">-- MWK : ∀ {m d g} → {σ : Scopes d}</a>
+<a id="3677" class="Comment">--                 → Term σ g</a>
+<a id="3707" class="Comment">--                 → Term (σ , m) g</a>
+<a id="3743" class="Comment">-- MWK M = MREN (drop id⊇) M</a>
+
+
+<a id="3774" class="Comment">-- MWKS : ∀ {m d g n} → {σ : Scopes d}</a>
+<a id="3813" class="Comment">--                    → Terms σ g n</a>
+<a id="3849" class="Comment">--                    → Terms (σ , m) g n</a>
+<a id="3891" class="Comment">-- MWKS x = MRENS (drop id⊇) x</a>
+
+
+<a id="3924" class="Comment">-- MVZ : ∀ {m d g} → {σ : Scopes d}</a>
+<a id="3960" class="Comment">--                 → Terms σ g m</a>
+<a id="3993" class="Comment">--                 → Term (σ , m) g</a>
+<a id="4029" class="Comment">-- MVZ y = MVAR zero (MWKS y)</a>
+
+
+<a id="4061" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="4147" class="Comment">-- mutual</a>
+<a id="4157" class="Comment">--   SUB : ∀ {d g n} → {σ : Scopes d}</a>
+<a id="4195" class="Comment">--                   → Terms σ g n → Term σ n</a>
+<a id="4241" class="Comment">--                   → Term σ g</a>
+<a id="4273" class="Comment">--   SUB x (VAR i)      = GET x i</a>
+<a id="4307" class="Comment">--   SUB x (LAM M)      = LAM (SUB (LIFTS x) M)</a>
+<a id="4355" class="Comment">--   SUB x (APP M N)    = APP (SUB x M) (SUB x N)</a>
+<a id="4405" class="Comment">--   SUB x (MVAR 𝒾 y)   = MVAR 𝒾 (SUBS x y)</a>
+<a id="4449" class="Comment">--   SUB x (BOX M)      = BOX M</a>
+<a id="4481" class="Comment">--   SUB x (LETBOX M N) = LETBOX (SUB x M) (SUB (MWKS x) N)</a>
+
+<a id="4542" class="Comment">--   SUBS : ∀ {d g n m} → {σ : Scopes d}</a>
+<a id="4583" class="Comment">--                      → Terms σ g n → Terms σ n m</a>
+<a id="4635" class="Comment">--                      → Terms σ g m</a>
+<a id="4673" class="Comment">--   SUBS x ∙       = ∙</a>
+<a id="4697" class="Comment">--   SUBS x (y , M) = SUBS x y , SUB x M</a>
+<a id="4738" class="Comment">--   -- NOTE: Equivalent to</a>
+<a id="4766" class="Comment">--   -- SUBS x y = maps (SUB x) y</a>
+
+
+<a id="4802" class="Comment">-- CUT : ∀ {d g} → {σ : Scopes d}</a>
+<a id="4836" class="Comment">--               → Term σ g → Term σ (suc g)</a>
+<a id="4881" class="Comment">--               → Term σ g</a>
+<a id="4909" class="Comment">-- CUT M N = SUB (IDS , M) N</a>
+
+
+<a id="4940" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="5026" class="Comment">-- Term₁ : ∀ {d} → Scopes d → Nat → Set</a>
+<a id="5066" class="Comment">-- Term₁ σ m = Term σ m</a>
+
+
+<a id="5092" class="Comment">-- Terms₁ : ∀ {d n} → Scopes d → Scopes n → Set</a>
+<a id="5140" class="Comment">-- Terms₁ σ τ = All (Term₁ σ) τ</a>
+
+
+<a id="5174" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="5260" class="Comment">-- MRENS₁ : ∀ {d d′ e n} → {σ : Scopes d} {σ′ : Scopes d′} {τ : Scopes n}</a>
+<a id="5334" class="Comment">--                       → σ′ ⊇⟨ e ⟩ σ → Terms₁ σ τ</a>
+<a id="5386" class="Comment">--                       → Terms₁ σ′ τ</a>
+<a id="5425" class="Comment">-- MRENS₁ e x = maps (MREN e) x</a>
+
+
+<a id="5459" class="Comment">-- MWKS₁ : ∀ {m d n} → {σ : Scopes d} {τ : Scopes n}</a>
+<a id="5512" class="Comment">--                   → Terms₁ σ τ</a>
+<a id="5546" class="Comment">--                   → Terms₁ (σ , m) τ</a>
+<a id="5586" class="Comment">-- MWKS₁ x = MRENS₁ (drop id⊇) x</a>
+
+
+<a id="5621" class="Comment">-- MLIFTS₁ : ∀ {m d n} → {σ : Scopes d} {τ : Scopes n}</a>
+<a id="5676" class="Comment">--                     → Terms₁ σ τ</a>
+<a id="5712" class="Comment">--                     → Terms₁ (σ , m) (τ , m)</a>
+<a id="5760" class="Comment">-- MLIFTS₁ x = MWKS₁ x , MVZ IDS</a>
+
+
+<a id="5795" class="Comment">-- MVARS₁ : ∀ {d d′ e} → {σ : Scopes d} {σ′ : Scopes d′}</a>
+<a id="5852" class="Comment">--                     → σ′ ⊇⟨ e ⟩ σ</a>
+<a id="5889" class="Comment">--                     → Terms₁ σ′ σ</a>
+<a id="5926" class="Comment">-- MVARS₁ done     = ∙</a>
+<a id="5949" class="Comment">-- MVARS₁ (drop η) = MWKS₁ (MVARS₁ η)</a>
+<a id="5987" class="Comment">-- MVARS₁ (keep η) = MLIFTS₁ (MVARS₁ η)</a>
+
+
+<a id="6029" class="Comment">-- MIDS₁ : ∀ {d} → {σ : Scopes d}</a>
+<a id="6063" class="Comment">--               → Terms₁ σ σ</a>
+<a id="6093" class="Comment">-- MIDS₁ = MVARS₁ id⊇</a>
+
+
+<a id="6117" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="6203" class="Comment">-- mutual</a>
+<a id="6213" class="Comment">--   MSUB : ∀ {d g n} → {σ : Scopes d} {τ : Scopes n}</a>
+<a id="6267" class="Comment">--                    → Terms₁ σ τ → Term τ g</a>
+<a id="6313" class="Comment">--                    → Term σ g</a>
+<a id="6346" class="Comment">--   MSUB x (VAR i)      = VAR i</a>
+<a id="6379" class="Comment">--   MSUB x (LAM M)      = LAM (MSUB x M)</a>
+<a id="6421" class="Comment">--   MSUB x (APP M N)    = APP (MSUB x M) (MSUB x N)</a>
+<a id="6474" class="Comment">--   MSUB x (MVAR 𝒾 y)   = SUB (MSUBS x y) (get x 𝒾)</a>
+<a id="6527" class="Comment">--   MSUB x (BOX M)      = BOX (MSUB x M)</a>
+<a id="6569" class="Comment">--   MSUB x (LETBOX M N) = LETBOX (MSUB x M) (MSUB (MLIFTS₁ x) N)</a>
+
+<a id="6636" class="Comment">--   MSUBS : ∀ {d g n m} → {σ : Scopes d} {τ : Scopes n}</a>
+<a id="6693" class="Comment">--                       → Terms₁ σ τ → Terms τ g m</a>
+<a id="6745" class="Comment">--                       → Terms σ g m</a>
+<a id="6784" class="Comment">--   MSUBS x ∙       = ∙</a>
+<a id="6809" class="Comment">--   MSUBS x (y , M) = MSUBS x y , MSUB x M</a>
+<a id="6853" class="Comment">--   -- NOTE: Equivalent to</a>
+<a id="6881" class="Comment">--   -- MSUBS x y = maps (MSUB x) y</a>
+
+
+<a id="6919" class="Comment">-- MCUT : ∀ {m d g} → {σ : Scopes d}</a>
+<a id="6956" class="Comment">--                  → Term₁ σ m → Term (σ , m) g</a>
+<a id="7005" class="Comment">--                  → Term σ g</a>
+<a id="7036" class="Comment">-- MCUT M N = MSUB (MIDS₁ , M) N</a>
+
+
+<a id="7071" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="7157" class="Comment">-- UNLAM : ∀ {d g} → {σ : Scopes d}</a>
+<a id="7193" class="Comment">--                 → Term σ g</a>
+<a id="7223" class="Comment">--                 → Term σ (suc g)</a>
+<a id="7259" class="Comment">-- UNLAM M = APP (WK M) VZ</a>
+
+
+<a id="7288" class="Comment">-- EX : ∀ {d g} → {σ : Scopes d}</a>
+<a id="7321" class="Comment">--              → Term σ (suc (suc g))</a>
+<a id="7360" class="Comment">--              → Term σ (suc (suc g))</a>
+<a id="7399" class="Comment">-- EX M = APP (APP (WK (WK (LAM (LAM M)))) VZ) (WK VZ)</a>
+
+
+<a id="7456" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="7542" class="Comment">-- UP : ∀ {m d g} → {σ : Scopes d}</a>
+<a id="7577" class="Comment">--                → Term σ (suc g)</a>
+<a id="7612" class="Comment">--                → Term (σ , m) g</a>
+<a id="7647" class="Comment">-- UP M = APP (LAM (MWK M)) (BOX (MVZ IDS))</a>
+
+
+<a id="7693" class="Comment">-- DOWN : ∀ {m d g} → {σ : Scopes d}</a>
+<a id="7730" class="Comment">--                  → Term (σ , m) g</a>
+<a id="7767" class="Comment">--                  → Term σ (suc g)</a>
+<a id="7804" class="Comment">-- DOWN M = LETBOX VZ (WK M)</a>
+
+
+<a id="7835" class="Comment">-- MEX : ∀ {m o d g} → {σ : Scopes d}</a>
+<a id="7873" class="Comment">--                   → Term (σ , m , o) g</a>
+<a id="7915" class="Comment">--                   → Term (σ , o , m) g</a>
+<a id="7957" class="Comment">-- MEX M = UP (UP (EX (DOWN (DOWN M))))</a>
+
+
+<a id="7999" class="Comment">-- --------------------------------------------------------------------------------</a>
+</pre></body></html>

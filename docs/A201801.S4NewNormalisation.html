@@ -1,0 +1,269 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>A201801.S4NewNormalisation</title><link rel="stylesheet" href="AgdaPP.css"></head><body><pre class="Agda"><a id="1" class="Keyword">module</a> <a id="8" href="A201801.S4NewNormalisation.html" class="Module">A201801.S4NewNormalisation</a> <a id="35" class="Keyword">where</a>
+
+<a id="42" class="Keyword">open</a> <a id="47" class="Keyword">import</a> <a id="54" href="A201801.Prelude.html" class="Module">A201801.Prelude</a>
+<a id="70" class="Keyword">open</a> <a id="75" class="Keyword">import</a> <a id="82" href="A201801.Category.html" class="Module">A201801.Category</a>
+<a id="99" class="Keyword">open</a> <a id="104" class="Keyword">import</a> <a id="111" href="A201801.List.html" class="Module">A201801.List</a>
+<a id="124" class="Keyword">open</a> <a id="129" href="A201801.List.html#2994" class="Module">List²</a>
+<a id="135" class="Keyword">open</a> <a id="140" class="Keyword">import</a> <a id="147" href="A201801.ListLemmas.html" class="Module">A201801.ListLemmas</a>
+<a id="166" class="Keyword">open</a> <a id="171" class="Keyword">import</a> <a id="178" href="A201801.AllList.html" class="Module">A201801.AllList</a>
+<a id="194" class="Keyword">open</a> <a id="199" class="Keyword">import</a> <a id="206" href="A201801.S4Propositions.html" class="Module">A201801.S4Propositions</a>
+<a id="229" class="Keyword">open</a> <a id="234" class="Keyword">import</a> <a id="241" href="A201801.S4StandardDerivations.html" class="Module">A201801.S4StandardDerivations</a>
+<a id="271" class="Keyword">open</a> <a id="276" class="Keyword">import</a> <a id="283" href="A201801.S4NewBidirectionalDerivationsForNormalisation.html" class="Module">A201801.S4NewBidirectionalDerivationsForNormalisation</a>
+<a id="337" class="Keyword">import</a> <a id="344" href="A201801.S4EmbeddingOfIPL.html" class="Module">A201801.S4EmbeddingOfIPL</a> <a id="369" class="Symbol">as</a> <a id="372" class="Module">OfIPL</a>
+<a id="378" class="Keyword">import</a> <a id="385" href="A201801.S4ProjectionToIPL.html" class="Module">A201801.S4ProjectionToIPL</a> <a id="411" class="Symbol">as</a> <a id="414" class="Module">ToIPL</a>
+<a id="420" class="Keyword">import</a> <a id="427" href="A201801.IPLPropositions.html" class="Module">A201801.IPLPropositions</a> <a id="451" class="Symbol">as</a> <a id="454" class="Module">IPL</a>
+<a id="458" class="Comment">-- import IPLDerivations as IPL</a>
+
+
+<a id="492" class="Comment">--------------------------------------------------------------------------------</a>
+
+
+<a id="575" class="Keyword">record</a> <a id="Model"></a><a id="582" href="A201801.S4NewNormalisation.html#582" class="Record">Model</a> <a id="588" class="Symbol">:</a> <a id="590" class="PrimitiveType">Set₁</a>
+  <a id="597" class="Keyword">where</a>
+    <a id="607" class="Keyword">field</a>
+      <a id="Model.World"></a><a id="619" href="A201801.S4NewNormalisation.html#619" class="Field">World</a> <a id="625" class="Symbol">:</a> <a id="627" class="PrimitiveType">Set</a>
+
+      <a id="638" class="Comment">-- TODO: Better name</a>
+      <a id="Model.Ground"></a><a id="665" href="A201801.S4NewNormalisation.html#665" class="Field">Ground</a> <a id="672" class="Symbol">:</a> <a id="674" href="A201801.S4NewNormalisation.html#619" class="Field">World</a> <a id="680" class="Symbol">→</a> <a id="682" href="Agda.Builtin.String.html#206" class="Postulate">String</a> <a id="689" class="Symbol">→</a> <a id="691" class="PrimitiveType">Set</a>
+
+      <a id="702" class="Comment">-- TODO: Better name</a>
+      <a id="Model.Explode"></a><a id="729" href="A201801.S4NewNormalisation.html#729" class="Field">Explode</a> <a id="737" class="Symbol">:</a> <a id="739" href="A201801.S4NewNormalisation.html#619" class="Field">World</a> <a id="745" class="Symbol">→</a> <a id="747" href="A201801.S4Propositions.html#223" class="Datatype">Form</a> <a id="752" class="Symbol">→</a> <a id="754" class="PrimitiveType">Set</a>
+
+      <a id="Model._≥_"></a><a id="765" href="A201801.S4NewNormalisation.html#765" class="Field Operator">_≥_</a> <a id="769" class="Symbol">:</a> <a id="771" href="A201801.S4NewNormalisation.html#619" class="Field">World</a> <a id="777" class="Symbol">→</a> <a id="779" href="A201801.S4NewNormalisation.html#619" class="Field">World</a> <a id="785" class="Symbol">→</a> <a id="787" class="PrimitiveType">Set</a>
+
+      <a id="Model.id≥"></a><a id="798" href="A201801.S4NewNormalisation.html#798" class="Field">id≥</a> <a id="802" class="Symbol">:</a> <a id="804" class="Symbol">∀</a> <a id="806" class="Symbol">{</a><a id="807" href="A201801.S4NewNormalisation.html#807" class="Bound">W</a><a id="808" class="Symbol">}</a> <a id="810" class="Symbol">→</a> <a id="812" href="A201801.S4NewNormalisation.html#807" class="Bound">W</a> <a id="814" href="A201801.S4NewNormalisation.html#765" class="Field Operator">≥</a> <a id="816" href="A201801.S4NewNormalisation.html#807" class="Bound">W</a>
+
+      <a id="Model._∘≥_"></a><a id="825" href="A201801.S4NewNormalisation.html#825" class="Field Operator">_∘≥_</a> <a id="830" class="Symbol">:</a> <a id="832" class="Symbol">∀</a> <a id="834" class="Symbol">{</a><a id="835" href="A201801.S4NewNormalisation.html#835" class="Bound">W</a> <a id="837" href="A201801.S4NewNormalisation.html#837" class="Bound">W′</a> <a id="840" href="A201801.S4NewNormalisation.html#840" class="Bound">W″</a><a id="842" class="Symbol">}</a> <a id="844" class="Symbol">→</a> <a id="846" href="A201801.S4NewNormalisation.html#837" class="Bound">W′</a> <a id="849" href="A201801.S4NewNormalisation.html#765" class="Field Operator">≥</a> <a id="851" href="A201801.S4NewNormalisation.html#835" class="Bound">W</a> <a id="853" class="Symbol">→</a> <a id="855" href="A201801.S4NewNormalisation.html#840" class="Bound">W″</a> <a id="858" href="A201801.S4NewNormalisation.html#765" class="Field Operator">≥</a> <a id="860" href="A201801.S4NewNormalisation.html#837" class="Bound">W′</a>
+                         <a id="888" class="Symbol">→</a> <a id="890" href="A201801.S4NewNormalisation.html#840" class="Bound">W″</a> <a id="893" href="A201801.S4NewNormalisation.html#765" class="Field Operator">≥</a> <a id="895" href="A201801.S4NewNormalisation.html#835" class="Bound">W</a>
+
+      <a id="Model.relG"></a><a id="904" href="A201801.S4NewNormalisation.html#904" class="Field">relG</a> <a id="909" class="Symbol">:</a> <a id="911" class="Symbol">∀</a> <a id="913" class="Symbol">{</a><a id="914" href="A201801.S4NewNormalisation.html#914" class="Bound">P</a> <a id="916" href="A201801.S4NewNormalisation.html#916" class="Bound">W</a> <a id="918" href="A201801.S4NewNormalisation.html#918" class="Bound">W′</a><a id="920" class="Symbol">}</a> <a id="922" class="Symbol">→</a> <a id="924" href="A201801.S4NewNormalisation.html#918" class="Bound">W′</a> <a id="927" href="A201801.S4NewNormalisation.html#765" class="Field Operator">≥</a> <a id="929" href="A201801.S4NewNormalisation.html#916" class="Bound">W</a> <a id="931" class="Symbol">→</a> <a id="933" href="A201801.S4NewNormalisation.html#665" class="Field">Ground</a> <a id="940" href="A201801.S4NewNormalisation.html#916" class="Bound">W</a> <a id="942" href="A201801.S4NewNormalisation.html#914" class="Bound">P</a>
+                        <a id="968" class="Symbol">→</a> <a id="970" href="A201801.S4NewNormalisation.html#665" class="Field">Ground</a> <a id="977" href="A201801.S4NewNormalisation.html#918" class="Bound">W′</a> <a id="980" href="A201801.S4NewNormalisation.html#914" class="Bound">P</a>
+
+<a id="983" class="Comment">--      peek : World → List Assert</a>
+<a id="1018" class="Comment">--</a>
+<a id="1021" class="Comment">--      peek≥ : ∀ {W W′} → W′ ≥ W</a>
+<a id="1055" class="Comment">--                       → peek W′ ⊇ peek W</a>
+
+<a id="1100" class="Keyword">open</a> <a id="1105" href="A201801.S4NewNormalisation.html#582" class="Module">Model</a> <a id="1111" class="Symbol">{{...}}</a>
+
+
+<a id="1121" class="Comment">--------------------------------------------------------------------------------</a>
+
+
+<a id="1204" class="Comment">-- TODO: unfinished</a>
+<a id="1224" class="Comment">-- mutual</a>
+<a id="1234" class="Comment">--   infix 3 _⊩_value</a>
+<a id="1256" class="Comment">--   _⊩_value : ∀ {{_ : Model}} → World → Form → Set</a>
+<a id="1309" class="Comment">--   W ⊩ ι P value   = Ground W P</a>
+<a id="1343" class="Comment">--   W ⊩ A ⊃ B value = ∀ {W′} → W′ ≥ W → W′ ⊩ A thunk</a>
+<a id="1397" class="Comment">--                             → W′ ⊩ B thunk</a>
+<a id="1443" class="Comment">--   W ⊩ □ A value   = W ⊩ ⟪⊫ A ⟫ chunk</a>
+
+<a id="1484" class="Comment">--   infix 3 _⊩_thunk</a>
+<a id="1506" class="Comment">--   _⊩_thunk : ∀ {{_ : Model}} → World → Form → Set</a>
+<a id="1559" class="Comment">--   W ⊩ A thunk = ∀ {B W′} → W′ ≥ W → (∀ {W″} → W″ ≥ W′ → W″ ⊩ A value</a>
+<a id="1631" class="Comment">--                                                → Explode W″ B)</a>
+<a id="1697" class="Comment">--                           → Explode W′ B</a>
+
+<a id="1742" class="Comment">--   infix 3 _⊩_chunk</a>
+<a id="1764" class="Comment">--   _⊩_chunk : ∀ {{_ : Model}} → World → Assert → Set</a>
+<a id="1819" class="Comment">--   W ⊩ ⟪⊫ A ⟫ chunk = ∙ IPL.⊢ ToIPL.↓ₚ A true × W ⊩ A thunk</a>
+
+
+<a id="1883" class="Comment">-- infix 3 _⊩_allthunk</a>
+<a id="1906" class="Comment">-- _⊩_allthunk : ∀ {{_ : Model}} → World → List Form → Set</a>
+<a id="1965" class="Comment">-- W ⊩ Γ allthunk = All (W ⊩_thunk) Γ</a>
+
+
+<a id="2005" class="Comment">-- infix 3 _⊩_allchunk</a>
+<a id="2028" class="Comment">-- _⊩_allchunk : ∀ {{_ : Model}} → World → List Assert → Set</a>
+<a id="2089" class="Comment">-- W ⊩ Δ allchunk = All (W ⊩_chunk) Δ</a>
+
+
+<a id="2129" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="2215" class="Comment">-- syn : ∀ {{_ : Model}} {A W} → W ⊩ ⟪⊫ A ⟫ chunk</a>
+<a id="2265" class="Comment">--                             → ∙ IPL.⊢ ToIPL.↓ₚ A true</a>
+<a id="2322" class="Comment">-- syn (𝒟 , k) = 𝒟</a>
+
+
+<a id="2343" class="Comment">-- syns : ∀ {{_ : Model}} {Δ W} → W ⊩ Δ allchunk</a>
+<a id="2392" class="Comment">--                              → ∙ IPL.⊢ ToIPL.↓ₐₛ Δ alltrue</a>
+<a id="2454" class="Comment">-- syns ∙                       = ∙</a>
+<a id="2490" class="Comment">-- syns (_,_ {A = ⟪⊫ A ⟫} δ c) = syns δ , syn {A} c</a>
+
+
+<a id="2544" class="Comment">-- sem : ∀ {{_ : Model}} {A W} → W ⊩ ⟪⊫ A ⟫ chunk</a>
+<a id="2594" class="Comment">--                             → W ⊩ A thunk</a>
+<a id="2639" class="Comment">-- sem (𝒟 , k) = k</a>
+
+
+<a id="2660" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="2746" class="Comment">-- mutual</a>
+<a id="2756" class="Comment">--   rel : ∀ {{_ : Model}} {A W W′} → W′ ≥ W → W ⊩ A value</a>
+<a id="2815" class="Comment">--                                  → W′ ⊩ A value</a>
+<a id="2866" class="Comment">--   rel {ι P}   η 𝒟 = relG η 𝒟</a>
+<a id="2898" class="Comment">--   rel {A ⊃ B} η f = \ η′ k → f (η ∘≥ η′) k</a>
+<a id="2944" class="Comment">--   rel {□ A}   η c = chrel {⟪⊫ A ⟫} η c</a>
+
+<a id="2987" class="Comment">--   threl : ∀ {{_ : Model}} {A W W′} → W′ ≥ W → W ⊩ A thunk</a>
+<a id="3048" class="Comment">--                                    → W′ ⊩ A thunk</a>
+<a id="3101" class="Comment">--   threl η k = \ η′ f → k (η ∘≥ η′) f</a>
+
+<a id="3142" class="Comment">--   chrel : ∀ {{_ : Model}} {A W W′} → W′ ≥ W → W ⊩ A chunk</a>
+<a id="3203" class="Comment">--                                    → W′ ⊩ A chunk</a>
+<a id="3256" class="Comment">--   chrel {⟪⊫ A ⟫} η c = syn {A} c , threl {A} η (sem {A} c)</a>
+
+
+<a id="3320" class="Comment">-- threls : ∀ {{_ : Model}} {Γ W W′} → W′ ≥ W → W ⊩ Γ allthunk</a>
+<a id="3383" class="Comment">--                                   → W′ ⊩ Γ allthunk</a>
+<a id="3438" class="Comment">-- threls η γ = maps (\ {A} k {B} {W′} → threl {A} η (\ {C} {W″} → k {C} {W″})) γ  -- NOTE: Annoying</a>
+
+
+<a id="3541" class="Comment">-- chrels : ∀ {{_ : Model}} {Δ W W′} → W′ ≥ W → W ⊩ Δ allchunk</a>
+<a id="3604" class="Comment">--                                   → W′ ⊩ Δ allchunk</a>
+<a id="3659" class="Comment">-- chrels η δ = maps (\ { {⟪⊫ A ⟫} c → chrel {⟪⊫ A ⟫} η c }) δ</a>
+
+
+<a id="3724" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="3810" class="Comment">-- return : ∀ {{_ : Model}} {A W} → W ⊩ A value</a>
+<a id="3858" class="Comment">--                                → W ⊩ A thunk</a>
+<a id="3906" class="Comment">-- return {A} a = \ η f → f id≥ (rel {A} η a)</a>
+
+
+<a id="3954" class="Comment">-- bind : ∀ {{_ : Model}} {A B W} → W ⊩ A thunk → (∀ {W′} → W′ ≥ W → W′ ⊩ A value</a>
+<a id="4036" class="Comment">--                                                           → W′ ⊩ B thunk)</a>
+<a id="4113" class="Comment">--                                → W ⊩ B thunk</a>
+<a id="4161" class="Comment">-- bind k f = \ η f′ →</a>
+<a id="4184" class="Comment">--              k η (\ η′ a →</a>
+<a id="4214" class="Comment">--                f (η ∘≥ η′) a id≥ (\ η″ b →</a>
+<a id="4260" class="Comment">--                  f′ (η′ ∘≥ η″) b))</a>
+
+
+<a id="4300" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="4386" class="Comment">-- infix 3 _⊨_valid[_]</a>
+<a id="4409" class="Comment">-- _⊨_valid[_] : List Assert → Form → List Form → Set₁</a>
+<a id="4464" class="Comment">-- Δ ⊨ A valid[ Γ ] = ∀ {{_ : Model}} {W} → W ⊩ Δ allchunk → W ⊩ Γ allthunk</a>
+<a id="4540" class="Comment">--                                         → W ⊩ A thunk</a>
+
+
+<a id="4599" class="Comment">-- ↓ : ∀ {Δ Γ A} → Δ ⊢ A valid[ Γ ]</a>
+<a id="4635" class="Comment">--               → Δ ⊨ A valid[ Γ ]</a>
+<a id="4671" class="Comment">-- ↓ (var i)              δ γ = get γ i</a>
+<a id="4711" class="Comment">-- ↓ (lam {A} {B} 𝒟)      δ γ = return {A ⊃ B} (\ η k →</a>
+<a id="4767" class="Comment">--                                ↓ 𝒟 (chrels η δ) (threls η γ , k))</a>
+<a id="4836" class="Comment">-- ↓ (app {A} {B} 𝒟 ℰ)    δ γ = bind {A ⊃ B} {B} (↓ 𝒟 δ γ) (\ η f →</a>
+<a id="4904" class="Comment">--                                f id≥ (↓ ℰ (chrels η δ) (threls η γ)))</a>
+<a id="4977" class="Comment">-- ↓ (mvar {A} i)         δ γ = sem {A} (get δ i)</a>
+<a id="5027" class="Comment">-- ↓ (box {A} 𝒟)          δ γ = return {□ A} (IPL.sub (syns δ) (ToIPL.↓ 𝒟) , ↓ 𝒟 δ ∙)</a>
+<a id="5113" class="Comment">-- ↓ (letbox {A} {B} 𝒟 ℰ) δ γ = bind {□ A} {B} (↓ 𝒟 δ γ) (\ η c →</a>
+<a id="5179" class="Comment">--                                ↓ ℰ (chrels η δ , c) (threls η γ))</a>
+
+
+<a id="5250" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="5336" class="Comment">-- ren² : ∀ {Δ Δ′ Γ Γ′ A} → Δ′ ⨾ Γ′ ⊇² Δ ⨾ Γ → Δ ⊢ A neutral[ Γ ]</a>
+<a id="5402" class="Comment">--                        → Δ′ ⊢ A neutral[ Γ′ ]</a>
+<a id="5451" class="Comment">-- ren² (η₁ , η₂) 𝒟 = mrenᵣ η₁ (renᵣ η₂ 𝒟)</a>
+
+
+<a id="5496" class="Comment">-- instance</a>
+<a id="5508" class="Comment">--   canon : Model</a>
+<a id="5527" class="Comment">--   canon = record</a>
+<a id="5547" class="Comment">--             { World   = List² Assert Form</a>
+<a id="5592" class="Comment">--             ; Ground  = \ { (Δ ⨾ Γ) P → Δ ⊢ ι P neutral[ Γ ] }</a>
+<a id="5658" class="Comment">--             ; Explode = \ { (Δ ⨾ Γ) A → Δ ⊢ A normal[ Γ ] }</a>
+<a id="5721" class="Comment">--             ; _≥_     = _⊇²_</a>
+<a id="5753" class="Comment">--             ; id≥     = id</a>
+<a id="5783" class="Comment">--             ; _∘≥_    = _∘_</a>
+<a id="5814" class="Comment">--             ; relG    = ren²</a>
+<a id="5846" class="Comment">--             }</a>
+
+
+<a id="5865" class="Comment">-- mutual</a>
+<a id="5875" class="Comment">--   ⇓ : ∀ {A Δ Γ} → Δ ⊢ A neutral[ Γ ]</a>
+<a id="5915" class="Comment">--                 → Δ ⨾ Γ ⊩ A thunk</a>
+<a id="5952" class="Comment">--   ⇓ {ι P}   𝒟 = return {ι P} 𝒟</a>
+<a id="5986" class="Comment">--   ⇓ {A ⊃ B} 𝒟 = return {A ⊃ B} (\ η k → ⇓ (app (ren² η 𝒟) (⇑ k)))</a>
+<a id="6055" class="Comment">--   ⇓ {□ A}   𝒟 = \ η f → {!!}</a>
+<a id="6087" class="Comment">--   -- letbox (ren² η 𝒟) (f (drop₁ id) (mvz , ⇓ mvzᵣ))</a>
+
+<a id="6144" class="Comment">--   ⇑ : ∀ {A Δ Γ} → Δ ⨾ Γ ⊩ A thunk</a>
+<a id="6181" class="Comment">--                 → Δ ⊢ A normal[ Γ ]</a>
+<a id="6220" class="Comment">--   ⇑ {ι P}   k = k id (\ η 𝒟 → use 𝒟)</a>
+<a id="6260" class="Comment">--   ⇑ {A ⊃ B} k = k id (\ η f → lam (⇑ (f (drop₂ id) (⇓ vzᵣ))))</a>
+<a id="6325" class="Comment">--   ⇑ {□ A}   k = k id (\ η c → {!box (syn {A} c)!})  -- OfIPL.↑ₚ (ToIPL.↓ₚ A) != A</a>
+
+
+<a id="6412" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="6498" class="Comment">-- swks : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ allthunk</a>
+<a id="6541" class="Comment">--                    → Δ ⨾ Γ , A ⊩ Ξ allthunk</a>
+<a id="6588" class="Comment">-- swks ξ = threls (drop₂ id) ξ</a>
+
+
+<a id="6622" class="Comment">-- slifts : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ allthunk</a>
+<a id="6667" class="Comment">--                      → Δ ⨾ Γ , A ⊩ Ξ , A allthunk</a>
+<a id="6720" class="Comment">-- slifts ξ = swks ξ , ⇓ vzᵣ</a>
+
+
+<a id="6751" class="Comment">-- svars : ∀ {Δ Γ Γ′} → Γ′ ⊇ Γ</a>
+<a id="6782" class="Comment">--                    → Δ ⨾ Γ′ ⊩ Γ allthunk</a>
+<a id="6826" class="Comment">-- svars done     = ∙</a>
+<a id="6848" class="Comment">-- svars (drop η) = swks (svars η)</a>
+<a id="6883" class="Comment">-- svars (keep η) = slifts (svars η)</a>
+
+
+<a id="6922" class="Comment">-- sids : ∀ {Δ Γ} → Δ ⨾ Γ ⊩ Γ allthunk</a>
+<a id="6961" class="Comment">-- sids = svars id</a>
+
+
+<a id="6982" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="7068" class="Comment">-- smwks : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ allchunk</a>
+<a id="7112" class="Comment">--                     → Δ , A ⨾ Γ ⊩ Ξ allchunk</a>
+<a id="7160" class="Comment">-- smwks ξ = chrels (drop₁ id) ξ</a>
+
+
+<a id="7195" class="Comment">-- smlifts : ∀ {A Δ Γ Ξ} → Δ ⨾ Γ ⊩ Ξ allchunk</a>
+<a id="7241" class="Comment">--                       → Δ , A ⨾ Γ ⊩ Ξ , A allchunk</a>
+<a id="7295" class="Comment">-- smlifts ξ = {!!} -- smwks ξ , (mvz , ⇓ mvzᵣ)</a>
+
+
+<a id="7345" class="Comment">-- smvars : ∀ {Δ Δ′ Γ} → Δ′ ⊇ Δ</a>
+<a id="7377" class="Comment">--                     → Δ′ ⨾ Γ ⊩ Δ allchunk</a>
+<a id="7422" class="Comment">-- smvars done     = ∙</a>
+<a id="7445" class="Comment">-- smvars (drop η) = smwks (smvars η)</a>
+<a id="7483" class="Comment">-- smvars (keep η) = smlifts (smvars η)</a>
+
+
+<a id="7525" class="Comment">-- smids : ∀ {Δ Γ} → Δ ⨾ Γ ⊩ Δ allchunk</a>
+<a id="7565" class="Comment">-- smids = smvars id</a>
+
+
+<a id="7588" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="7674" class="Comment">-- ↑ : ∀ {Δ Γ A} → Δ ⊨ A valid[ Γ ]</a>
+<a id="7710" class="Comment">--               → Δ ⊢ A normal[ Γ ]</a>
+<a id="7747" class="Comment">-- ↑ f = ⇑ (f smids sids)</a>
+
+
+<a id="7775" class="Comment">-- nm : ∀ {Δ Γ A} → Δ ⊢ A valid[ Γ ]</a>
+<a id="7812" class="Comment">--                → Δ ⊢ A normal[ Γ ]</a>
+<a id="7850" class="Comment">-- nm 𝒟 = ↑ (↓ 𝒟)</a>
+
+
+<a id="7870" class="Comment">-- --------------------------------------------------------------------------------</a>
+</pre></body></html>

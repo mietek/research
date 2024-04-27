@@ -1,0 +1,241 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>A201801.CMTTIsomorphismWithCML</title><link rel="stylesheet" href="AgdaPP.css"></head><body><pre class="Agda"><a id="1" class="Symbol">{-#</a> <a id="5" class="Keyword">OPTIONS</a> <a id="13" class="Pragma">--rewriting</a> <a id="25" class="Symbol">#-}</a>
+
+<a id="30" class="Keyword">module</a> <a id="37" href="A201801.CMTTIsomorphismWithCML.html" class="Module">A201801.CMTTIsomorphismWithCML</a> <a id="68" class="Keyword">where</a>
+
+<a id="75" class="Keyword">open</a> <a id="80" class="Keyword">import</a> <a id="87" href="A201801.Prelude.html" class="Module">A201801.Prelude</a>
+<a id="103" class="Keyword">open</a> <a id="108" class="Keyword">import</a> <a id="115" href="A201801.Fin.html" class="Module">A201801.Fin</a>
+<a id="127" class="Keyword">open</a> <a id="132" class="Keyword">import</a> <a id="139" href="A201801.List.html" class="Module">A201801.List</a>
+<a id="152" class="Keyword">open</a> <a id="157" class="Keyword">import</a> <a id="164" href="A201801.AllList.html" class="Module">A201801.AllList</a>
+<a id="180" class="Keyword">open</a> <a id="185" class="Keyword">import</a> <a id="192" href="A201801.Vec.html" class="Module">A201801.Vec</a>
+<a id="204" class="Keyword">open</a> <a id="209" class="Keyword">import</a> <a id="216" href="A201801.VecLemmas.html" class="Module">A201801.VecLemmas</a>
+<a id="234" class="Keyword">open</a> <a id="239" class="Keyword">import</a> <a id="246" href="A201801.AllVec.html" class="Module">A201801.AllVec</a>
+<a id="261" class="Keyword">open</a> <a id="266" class="Keyword">import</a> <a id="273" href="A201801.AllVecLemmas.html" class="Module">A201801.AllVecLemmas</a>
+<a id="294" class="Keyword">open</a> <a id="299" class="Keyword">import</a> <a id="306" href="A201801.CMTTScopes.html" class="Module">A201801.CMTTScopes</a>
+<a id="325" class="Keyword">open</a> <a id="330" class="Keyword">import</a> <a id="337" href="A201801.CMTTTypes.html" class="Module">A201801.CMTTTypes</a>
+<a id="355" class="Keyword">open</a> <a id="360" class="Keyword">import</a> <a id="367" href="A201801.CMTTTerms.html" class="Module">A201801.CMTTTerms</a>
+<a id="385" class="Keyword">open</a> <a id="390" class="Keyword">import</a> <a id="397" href="A201801.CMTTDerivations.html" class="Module">A201801.CMTTDerivations</a>
+<a id="421" class="Keyword">import</a> <a id="428" href="A201801.CMLPropositions.html" class="Module">A201801.CMLPropositions</a> <a id="452" class="Symbol">as</a> <a id="455" class="Module">CML</a>
+<a id="459" class="Comment">-- import CMLDerivations as CML</a>
+
+
+<a id="493" class="Comment">--------------------------------------------------------------------------------</a>
+
+
+<a id="576" class="Keyword">mutual</a>
+  <a id="↓ₚ"></a><a id="585" href="A201801.CMTTIsomorphismWithCML.html#585" class="Function">↓ₚ</a> <a id="588" class="Symbol">:</a> <a id="590" href="A201801.CMTTTypes.html#286" class="Datatype">Type</a> <a id="595" class="Symbol">→</a> <a id="597" href="A201801.CMLPropositions.html#224" class="Datatype">CML.Form</a>
+  <a id="608" href="A201801.CMTTIsomorphismWithCML.html#585" class="Function">↓ₚ</a> <a id="611" class="Symbol">(</a><a id="612" href="A201801.CMTTTypes.html#313" class="InductiveConstructor Operator">ι</a> <a id="614" href="A201801.CMTTIsomorphismWithCML.html#614" class="Bound">P</a><a id="615" class="Symbol">)</a>     <a id="621" class="Symbol">=</a> <a id="623" href="A201801.CMLPropositions.html#247" class="InductiveConstructor Operator">CML.ι</a> <a id="629" href="A201801.CMTTIsomorphismWithCML.html#614" class="Bound">P</a>
+  <a id="633" href="A201801.CMTTIsomorphismWithCML.html#585" class="Function">↓ₚ</a> <a id="636" class="Symbol">(</a><a id="637" href="A201801.CMTTIsomorphismWithCML.html#637" class="Bound">A</a> <a id="639" href="A201801.CMTTTypes.html#340" class="InductiveConstructor Operator">⊃</a> <a id="641" href="A201801.CMTTIsomorphismWithCML.html#641" class="Bound">B</a><a id="642" class="Symbol">)</a>   <a id="646" class="Symbol">=</a> <a id="648" href="A201801.CMTTIsomorphismWithCML.html#585" class="Function">↓ₚ</a> <a id="651" href="A201801.CMTTIsomorphismWithCML.html#637" class="Bound">A</a> <a id="653" href="A201801.CMLPropositions.html#272" class="InductiveConstructor Operator">CML.⊃</a> <a id="659" href="A201801.CMTTIsomorphismWithCML.html#585" class="Function">↓ₚ</a> <a id="662" href="A201801.CMTTIsomorphismWithCML.html#641" class="Bound">B</a>
+  <a id="666" href="A201801.CMTTIsomorphismWithCML.html#585" class="Function">↓ₚ</a> <a id="669" class="Symbol">(</a><a id="670" href="A201801.CMTTTypes.html#372" class="InductiveConstructor Operator">[</a> <a id="672" href="A201801.CMTTIsomorphismWithCML.html#672" class="Bound">Ψ</a> <a id="674" href="A201801.CMTTTypes.html#372" class="InductiveConstructor Operator">]</a> <a id="676" href="A201801.CMTTIsomorphismWithCML.html#676" class="Bound">A</a><a id="677" class="Symbol">)</a> <a id="679" class="Symbol">=</a> <a id="681" href="A201801.CMLPropositions.html#302" class="InductiveConstructor Operator">CML.[</a> <a id="687" href="A201801.CMTTIsomorphismWithCML.html#703" class="Function">↓ₚₛ</a> <a id="691" href="A201801.CMTTIsomorphismWithCML.html#672" class="Bound">Ψ</a> <a id="693" href="A201801.CMLPropositions.html#302" class="InductiveConstructor Operator">]</a> <a id="695" href="A201801.CMTTIsomorphismWithCML.html#585" class="Function">↓ₚ</a> <a id="698" href="A201801.CMTTIsomorphismWithCML.html#676" class="Bound">A</a>
+
+  <a id="↓ₚₛ"></a><a id="703" href="A201801.CMTTIsomorphismWithCML.html#703" class="Function">↓ₚₛ</a> <a id="707" class="Symbol">:</a> <a id="709" class="Symbol">∀</a> <a id="711" class="Symbol">{</a><a id="712" href="A201801.CMTTIsomorphismWithCML.html#712" class="Bound">n</a><a id="713" class="Symbol">}</a> <a id="715" class="Symbol">→</a> <a id="717" href="A201801.CMTTTypes.html#413" class="Function">Types</a> <a id="723" href="A201801.CMTTIsomorphismWithCML.html#712" class="Bound">n</a> <a id="725" class="Symbol">→</a> <a id="727" href="A201801.List.html#199" class="Datatype">List</a> <a id="732" href="A201801.CMLPropositions.html#224" class="Datatype">CML.Form</a>
+  <a id="743" href="A201801.CMTTIsomorphismWithCML.html#703" class="Function">↓ₚₛ</a> <a id="747" href="A201801.Vec.html#266" class="InductiveConstructor">∙</a>       <a id="755" class="Symbol">=</a> <a id="757" href="A201801.List.html#232" class="InductiveConstructor">∙</a>
+  <a id="761" href="A201801.CMTTIsomorphismWithCML.html#703" class="Function">↓ₚₛ</a> <a id="765" class="Symbol">(</a><a id="766" href="A201801.CMTTIsomorphismWithCML.html#766" class="Bound">Ξ</a> <a id="768" href="A201801.Vec.html#287" class="InductiveConstructor Operator">,</a> <a id="770" href="A201801.CMTTIsomorphismWithCML.html#770" class="Bound">A</a><a id="771" class="Symbol">)</a> <a id="773" class="Symbol">=</a> <a id="775" href="A201801.CMTTIsomorphismWithCML.html#703" class="Function">↓ₚₛ</a> <a id="779" href="A201801.CMTTIsomorphismWithCML.html#766" class="Bound">Ξ</a> <a id="781" href="A201801.List.html#249" class="InductiveConstructor Operator">,</a> <a id="783" href="A201801.CMTTIsomorphismWithCML.html#585" class="Function">↓ₚ</a> <a id="786" href="A201801.CMTTIsomorphismWithCML.html#770" class="Bound">A</a>
+
+
+<a id="↓ₐ"></a><a id="790" href="A201801.CMTTIsomorphismWithCML.html#790" class="Function">↓ₐ</a> <a id="793" class="Symbol">:</a> <a id="795" class="Symbol">∀</a> <a id="797" class="Symbol">{</a><a id="798" href="A201801.CMTTIsomorphismWithCML.html#798" class="Bound">g</a><a id="799" class="Symbol">}</a> <a id="801" class="Symbol">→</a> <a id="803" href="A201801.CMTTTypes.html#674" class="Record">Assert</a> <a id="810" href="A201801.CMTTIsomorphismWithCML.html#798" class="Bound">g</a>
+           <a id="823" class="Symbol">→</a> <a id="825" href="A201801.CMLPropositions.html#553" class="Record">CML.Assert</a>
+<a id="836" href="A201801.CMTTIsomorphismWithCML.html#790" class="Function">↓ₐ</a> <a id="839" href="A201801.CMTTTypes.html#721" class="InductiveConstructor Operator">⟪</a> <a id="841" href="A201801.CMTTIsomorphismWithCML.html#841" class="Bound">Γ</a> <a id="843" href="A201801.CMTTTypes.html#721" class="InductiveConstructor Operator">⊫</a> <a id="845" href="A201801.CMTTIsomorphismWithCML.html#845" class="Bound">A</a> <a id="847" href="A201801.CMTTTypes.html#721" class="InductiveConstructor Operator">⟫</a> <a id="849" class="Symbol">=</a> <a id="851" href="A201801.CMLPropositions.html#590" class="InductiveConstructor Operator">CML.⟪</a> <a id="857" href="A201801.CMTTIsomorphismWithCML.html#703" class="Function">↓ₚₛ</a> <a id="861" href="A201801.CMTTIsomorphismWithCML.html#841" class="Bound">Γ</a> <a id="863" href="A201801.CMLPropositions.html#590" class="InductiveConstructor Operator">⊫</a> <a id="865" href="A201801.CMTTIsomorphismWithCML.html#585" class="Function">↓ₚ</a> <a id="868" href="A201801.CMTTIsomorphismWithCML.html#845" class="Bound">A</a> <a id="870" href="A201801.CMLPropositions.html#590" class="InductiveConstructor Operator">⟫</a>
+
+
+<a id="↓ₐₛ"></a><a id="874" href="A201801.CMTTIsomorphismWithCML.html#874" class="Function">↓ₐₛ</a> <a id="878" class="Symbol">:</a> <a id="880" class="Symbol">∀</a> <a id="882" class="Symbol">{</a><a id="883" href="A201801.CMTTIsomorphismWithCML.html#883" class="Bound">d</a><a id="884" class="Symbol">}</a> <a id="886" class="Symbol">→</a> <a id="888" class="Symbol">{</a><a id="889" href="A201801.CMTTIsomorphismWithCML.html#889" class="Bound">σ</a> <a id="891" class="Symbol">:</a> <a id="893" href="A201801.CMTTScopes.html#171" class="Function">Scopes</a> <a id="900" href="A201801.CMTTIsomorphismWithCML.html#883" class="Bound">d</a><a id="901" class="Symbol">}</a>
+            <a id="915" class="Symbol">→</a> <a id="917" href="A201801.CMTTTypes.html#772" class="Function">Asserts</a> <a id="925" href="A201801.CMTTIsomorphismWithCML.html#889" class="Bound">σ</a>
+            <a id="939" class="Symbol">→</a> <a id="941" href="A201801.List.html#199" class="Datatype">List</a> <a id="946" href="A201801.CMLPropositions.html#553" class="Record">CML.Assert</a>
+<a id="957" href="A201801.CMTTIsomorphismWithCML.html#874" class="Function">↓ₐₛ</a> <a id="961" href="A201801.AllVec.html#230" class="InductiveConstructor">∙</a>                <a id="978" class="Symbol">=</a> <a id="980" href="A201801.List.html#232" class="InductiveConstructor">∙</a>
+<a id="982" href="A201801.CMTTIsomorphismWithCML.html#874" class="Function">↓ₐₛ</a> <a id="986" class="Symbol">(</a><a id="987" href="A201801.CMTTIsomorphismWithCML.html#987" class="Bound">Δ</a> <a id="989" href="A201801.AllVec.html#248" class="InductiveConstructor Operator">,</a> <a id="991" href="A201801.CMTTTypes.html#721" class="InductiveConstructor Operator">⟪</a> <a id="993" href="A201801.CMTTIsomorphismWithCML.html#993" class="Bound">Γ</a> <a id="995" href="A201801.CMTTTypes.html#721" class="InductiveConstructor Operator">⊫</a> <a id="997" href="A201801.CMTTIsomorphismWithCML.html#997" class="Bound">A</a> <a id="999" href="A201801.CMTTTypes.html#721" class="InductiveConstructor Operator">⟫</a><a id="1000" class="Symbol">)</a> <a id="1002" class="Symbol">=</a> <a id="1004" href="A201801.CMTTIsomorphismWithCML.html#874" class="Function">↓ₐₛ</a> <a id="1008" href="A201801.CMTTIsomorphismWithCML.html#987" class="Bound">Δ</a> <a id="1010" href="A201801.List.html#249" class="InductiveConstructor Operator">,</a> <a id="1012" href="A201801.CMTTIsomorphismWithCML.html#790" class="Function">↓ₐ</a> <a id="1015" href="A201801.CMTTTypes.html#721" class="InductiveConstructor Operator">⟪</a> <a id="1017" href="A201801.CMTTIsomorphismWithCML.html#993" class="Bound">Γ</a> <a id="1019" href="A201801.CMTTTypes.html#721" class="InductiveConstructor Operator">⊫</a> <a id="1021" href="A201801.CMTTIsomorphismWithCML.html#997" class="Bound">A</a> <a id="1023" href="A201801.CMTTTypes.html#721" class="InductiveConstructor Operator">⟫</a>
+
+
+<a id="↓∋ₚ"></a><a id="1027" href="A201801.CMTTIsomorphismWithCML.html#1027" class="Function">↓∋ₚ</a> <a id="1031" class="Symbol">:</a> <a id="1033" class="Symbol">∀</a> <a id="1035" class="Symbol">{</a><a id="1036" href="A201801.CMTTIsomorphismWithCML.html#1036" class="Bound">g</a> <a id="1038" href="A201801.CMTTIsomorphismWithCML.html#1038" class="Bound">I</a> <a id="1040" href="A201801.CMTTIsomorphismWithCML.html#1040" class="Bound">A</a><a id="1041" class="Symbol">}</a> <a id="1043" class="Symbol">→</a> <a id="1045" class="Symbol">{</a><a id="1046" href="A201801.CMTTIsomorphismWithCML.html#1046" class="Bound">Γ</a> <a id="1048" class="Symbol">:</a> <a id="1050" href="A201801.CMTTTypes.html#413" class="Function">Types</a> <a id="1056" href="A201801.CMTTIsomorphismWithCML.html#1036" class="Bound">g</a><a id="1057" class="Symbol">}</a>
+                <a id="1075" class="Symbol">→</a> <a id="1077" href="A201801.CMTTIsomorphismWithCML.html#1046" class="Bound">Γ</a> <a id="1079" href="A201801.Vec.html#2295" class="Datatype Operator">∋⟨</a> <a id="1082" href="A201801.CMTTIsomorphismWithCML.html#1038" class="Bound">I</a> <a id="1084" href="A201801.Vec.html#2295" class="Datatype Operator">⟩</a> <a id="1086" href="A201801.CMTTIsomorphismWithCML.html#1040" class="Bound">A</a>
+                <a id="1104" class="Symbol">→</a> <a id="1106" href="A201801.CMTTIsomorphismWithCML.html#703" class="Function">↓ₚₛ</a> <a id="1110" href="A201801.CMTTIsomorphismWithCML.html#1046" class="Bound">Γ</a> <a id="1112" href="A201801.List.html#2340" class="Datatype Operator">∋</a> <a id="1114" href="A201801.CMTTIsomorphismWithCML.html#585" class="Function">↓ₚ</a> <a id="1117" href="A201801.CMTTIsomorphismWithCML.html#1040" class="Bound">A</a>
+<a id="1119" href="A201801.CMTTIsomorphismWithCML.html#1027" class="Function">↓∋ₚ</a> <a id="1123" href="A201801.Vec.html#2354" class="InductiveConstructor">zero</a>    <a id="1131" class="Symbol">=</a> <a id="1133" href="A201801.List.html#2379" class="InductiveConstructor">zero</a>
+<a id="1138" href="A201801.CMTTIsomorphismWithCML.html#1027" class="Function">↓∋ₚ</a> <a id="1142" class="Symbol">(</a><a id="1143" href="A201801.Vec.html#2429" class="InductiveConstructor">suc</a> <a id="1147" href="A201801.CMTTIsomorphismWithCML.html#1147" class="Bound">i</a><a id="1148" class="Symbol">)</a> <a id="1150" class="Symbol">=</a> <a id="1152" href="A201801.List.html#2411" class="InductiveConstructor">suc</a> <a id="1156" class="Symbol">(</a><a id="1157" href="A201801.CMTTIsomorphismWithCML.html#1027" class="Function">↓∋ₚ</a> <a id="1161" href="A201801.CMTTIsomorphismWithCML.html#1147" class="Bound">i</a><a id="1162" class="Symbol">)</a>
+
+
+<a id="1166" class="Comment">-- TODO: something broke</a>
+<a id="1191" class="Comment">-- ↓∋ₐ : ∀ {d m I A} → {σ : Scopes d} {i : σ ∋⟨ I ⟩ m}</a>
+<a id="1246" class="Comment">--                      {Δ : Asserts σ} {Ψ : Types m}</a>
+<a id="1300" class="Comment">--                   → Δ AllVec.∋◇⟨ i ⟩ ⟪ Ψ ⊫ A ⟫</a>
+<a id="1350" class="Comment">--                   → ↓ₐₛ Δ ∋ ↓ₐ ⟪ Ψ ⊫ A ⟫</a>
+<a id="1394" class="Comment">-- ↓∋ₐ zero    = zero</a>
+<a id="1416" class="Comment">-- ↓∋ₐ (suc i) = suc (↓∋ₐ i)</a>
+
+
+<a id="1447" class="Comment">--------------------------------------------------------------------------------</a>
+
+<a id="1529" class="Comment">-- TODO: unfinished</a>
+<a id="1549" class="Comment">-- mutual</a>
+<a id="1559" class="Comment">--   infix 3 _⊢_⦂_match[_]_</a>
+<a id="1587" class="Comment">--   data _⊢_⦂_match[_]_ : ∀ {d g} → {σ : Scopes d}</a>
+<a id="1639" class="Comment">--                                  → (Δ : Asserts σ) → Term σ g → (A : Type) (Γ : Types g)</a>
+<a id="1731" class="Comment">--                                  → ↓ₐₛ Δ CML.⊢ ↓ₚ A valid[ ↓ₚₛ Γ ] → Set</a>
+<a id="1807" class="Comment">--     where</a>
+<a id="1820" class="Comment">--       var : ∀ {A d g I} → {σ : Scopes d}</a>
+<a id="1864" class="Comment">--                            {Δ : Asserts σ} {Γ : Types g}</a>
+<a id="1924" class="Comment">--                         → (i : Γ ∋⟨ I ⟩ A)</a>
+<a id="1970" class="Comment">--                         → Δ ⊢ VAR I ⦂ A match[ Γ ] CML.var (↓∋ₚ i)</a>
+
+<a id="2041" class="Comment">--       lam : ∀ {A B d g} → {σ : Scopes d}</a>
+<a id="2085" class="Comment">--                            {Δ : Asserts σ} {Γ : Types g}</a>
+<a id="2145" class="Comment">--                            {M : Term σ (suc g)}</a>
+<a id="2196" class="Comment">--                            {𝒟 : _}</a>
+<a id="2234" class="Comment">--                         → Δ ⊢ M ⦂ B match[ Γ , A ] 𝒟</a>
+<a id="2290" class="Comment">--                         → Δ ⊢ LAM M ⦂ A ⊃ B match[ Γ ] CML.lam 𝒟</a>
+
+<a id="2359" class="Comment">--       app : ∀ {A B d g} → {σ : Scopes d}</a>
+<a id="2403" class="Comment">--                            {Δ : Asserts σ} {Γ : Types g}</a>
+<a id="2463" class="Comment">--                            {M N : Term σ g}</a>
+<a id="2510" class="Comment">--                            {𝒟 : _} {ℰ : _}</a>
+<a id="2556" class="Comment">--                         → Δ ⊢ M ⦂ A ⊃ B match[ Γ ] 𝒟 → Δ ⊢ N ⦂ A match[ Γ ] ℰ</a>
+<a id="2637" class="Comment">--                         → Δ ⊢ APP M N ⦂ B match[ Γ ] CML.app 𝒟 ℰ</a>
+
+<a id="2706" class="Comment">--       mvar : ∀ {A m d g I} → {σ : Scopes d}</a>
+<a id="2753" class="Comment">--                               {Ψ : Types m} {Δ : Asserts σ} {Γ : Types g}</a>
+<a id="2830" class="Comment">--                               {i : σ ∋⟨ I ⟩ m} {υ : Terms σ g m}</a>
+<a id="2898" class="Comment">--                            → Δ AllVec.∋◇⟨ i ⟩ ⟪ Ψ ⊫ A ⟫ → Δ ⊢ υ ⦂ Ψ allmatch[ Γ ] {!!}</a>
+<a id="2988" class="Comment">--                            → Δ ⊢ MVAR i υ ⦂ A match[ Γ ] CML.mvar {!i!} {!!}</a>
+
+<a id="3069" class="Comment">--       box : ∀ {A m d g} → {σ : Scopes d}</a>
+<a id="3113" class="Comment">--                            {Ψ : Types m} {Δ : Asserts σ} {Γ : Types g}</a>
+<a id="3187" class="Comment">--                            {M : Term σ m}</a>
+<a id="3232" class="Comment">--                            {𝒟 : _}</a>
+<a id="3270" class="Comment">--                         → Δ ⊢ M ⦂ A match[ Ψ ] 𝒟</a>
+<a id="3322" class="Comment">--                         → Δ ⊢ BOX M ⦂ [ Ψ ] A match[ Γ ] CML.box 𝒟</a>
+
+<a id="3393" class="Comment">--       letbox : ∀ {A B m d g} → {σ : Scopes d}</a>
+<a id="3442" class="Comment">--                                 {Ψ : Types m} {Δ : Asserts σ} {Γ : Types g}</a>
+<a id="3521" class="Comment">--                                 {M : Term σ g} {N : Term (σ , m) g}</a>
+<a id="3592" class="Comment">--                                 {𝒟 : _} {ℰ : _}</a>
+<a id="3643" class="Comment">--                              → Δ ⊢ M ⦂ [ Ψ ] A match[ Γ ] 𝒟 → Δ , ⟪ Ψ ⊫ A ⟫ ⊢ N ⦂ B match[ Γ ] ℰ</a>
+<a id="3743" class="Comment">--                              → Δ ⊢ LETBOX M N ⦂ B match[ Γ ] CML.letbox 𝒟 ℰ</a>
+
+<a id="3823" class="Comment">--   infix 3 _⊢_⦂_allmatch[_]_</a>
+<a id="3854" class="Comment">--   _⊢_⦂_allmatch[_]_ : ∀ {d g n} → {σ : Scopes d}</a>
+<a id="3906" class="Comment">--                                  → (Δ : Asserts σ) → Terms σ g n → (Ξ : Types n) (Γ : Types g)</a>
+<a id="4004" class="Comment">--                                  → ↓ₐₛ Δ CML.⊢ ↓ₚₛ Ξ allvalid[ ↓ₚₛ Γ ] → Set</a>
+<a id="4084" class="Comment">--   Δ ⊢ ∙     ⦂ ∙       allmatch[ Γ ] ∙       = 𝟙</a>
+<a id="4135" class="Comment">--   Δ ⊢ τ , M ⦂ (Ξ , A) allmatch[ Γ ] (ξ , 𝒟) = Δ ⊢ τ ⦂ Ξ allmatch[ Γ ] ξ × Δ ⊢ M ⦂ A match[ Γ ] 𝒟</a>
+
+
+
+
+<a id="4239" class="Comment">-- --     var : ∀ {A d g Δ Γ i} → (I : Fin g)</a>
+<a id="4285" class="Comment">-- --                           → Δ ⊢ VAR {d} (toFin i) ⦂ A match[ Γ ] CML.var i</a>
+
+<a id="4367" class="Comment">-- --     lam : ∀ {A B d g Δ Γ 𝒟} → {M : Term d (suc g)}</a>
+<a id="4424" class="Comment">-- --                             → Δ ⊢ M ⦂ B match[ Γ , A ] 𝒟</a>
+<a id="4487" class="Comment">-- --                             → Δ ⊢ LAM M ⦂ A ⊃ B match[ Γ ] CML.lam 𝒟</a>
+
+<a id="4563" class="Comment">-- --     app : ∀ {A B d g Δ Γ 𝒟 ℰ} → {M N : Term d g}</a>
+<a id="4618" class="Comment">-- --                               → Δ ⊢ M ⦂ A ⊃ B match[ Γ ] 𝒟 → Δ ⊢ N ⦂ A match[ Γ ] ℰ</a>
+<a id="4708" class="Comment">-- --                               → Δ ⊢ APP M N ⦂ B match[ Γ ] CML.app 𝒟 ℰ</a>
+
+<a id="4786" class="Comment">-- --     mvar : ∀ {A d g Δ Γ i} → (I : Fin d)</a>
+<a id="4833" class="Comment">-- --                            → Δ ⊢ MVAR {g = g} (toFin i) ⦂ A match[ Γ ] CML.mvar i</a>
+
+<a id="4922" class="Comment">-- -- --     box : ∀ {A d g Δ Γ 𝒟} → {M : Term d zero}</a>
+<a id="4977" class="Comment">-- -- --                           → Δ ⊢ M ⦂ A match[ ∙ ] 𝒟</a>
+<a id="5037" class="Comment">-- -- --                           → Δ ⊢ BOX {g = g} M ⦂ □ A match[ Γ ] CML.box 𝒟</a>
+
+<a id="5120" class="Comment">-- -- --     letbox : ∀ {A B d g Δ Γ 𝒟 ℰ} → {M : Term d g} {N : Term (suc d) g}</a>
+<a id="5200" class="Comment">-- -- --                                  → Δ ⊢ M ⦂ □ A match[ Γ ] 𝒟 → Δ , ⟪⊫ A ⟫ ⊢ N ⦂ B match[ Γ ] ℰ</a>
+<a id="5303" class="Comment">-- -- --                                  → Δ ⊢ LETBOX M N ⦂ B match[ Γ ] CML.letbox 𝒟 ℰ</a>
+
+
+<a id="5394" class="Comment">-- -- -- -- --------------------------------------------------------------------------------</a>
+
+
+<a id="5489" class="Comment">-- -- -- -- toTerm : ∀ {Δ Γ A} → Δ CML.⊢ A valid[ Γ ]</a>
+<a id="5543" class="Comment">-- -- -- --                    → Term (len Δ) (len Γ)</a>
+<a id="5597" class="Comment">-- -- -- -- toTerm (CML.var i)      = VAR (toFin i)</a>
+<a id="5649" class="Comment">-- -- -- -- toTerm (CML.lam 𝒟)      = LAM (toTerm 𝒟)</a>
+<a id="5702" class="Comment">-- -- -- -- toTerm (CML.app 𝒟 ℰ)    = APP (toTerm 𝒟) (toTerm ℰ)</a>
+<a id="5766" class="Comment">-- -- -- -- toTerm (CML.mvar i)     = MVAR (toFin i)</a>
+<a id="5819" class="Comment">-- -- -- -- toTerm (CML.box 𝒟)      = BOX (toTerm 𝒟)</a>
+<a id="5872" class="Comment">-- -- -- -- toTerm (CML.letbox 𝒟 ℰ) = LETBOX (toTerm 𝒟) (toTerm ℰ)</a>
+
+
+<a id="5941" class="Comment">-- -- -- -- instance</a>
+<a id="5962" class="Comment">-- -- -- --   match-toTerm : ∀ {Δ Γ A} → (𝒟 : Δ CML.⊢ A valid[ Γ ])</a>
+<a id="6030" class="Comment">-- -- -- --                            → Δ ⊢ toTerm 𝒟 ⦂ A match[ Γ ] 𝒟</a>
+<a id="6101" class="Comment">-- -- -- --   match-toTerm (CML.var i)      = var (toFin i)</a>
+<a id="6161" class="Comment">-- -- -- --   match-toTerm (CML.lam 𝒟)      = lam (match-toTerm 𝒟)</a>
+<a id="6228" class="Comment">-- -- -- --   match-toTerm (CML.app 𝒟 ℰ)    = app (match-toTerm 𝒟) (match-toTerm ℰ)</a>
+<a id="6312" class="Comment">-- -- -- --   match-toTerm (CML.mvar i)     = mvar (toFin i)</a>
+<a id="6373" class="Comment">-- -- -- --   match-toTerm (CML.box 𝒟)      = box (match-toTerm 𝒟)</a>
+<a id="6440" class="Comment">-- -- -- --   match-toTerm (CML.letbox 𝒟 ℰ) = letbox (match-toTerm 𝒟) (match-toTerm ℰ)</a>
+
+
+<a id="6529" class="Comment">-- -- -- -- --------------------------------------------------------------------------------</a>
+
+
+<a id="6624" class="Comment">-- -- -- -- ↓ : ∀ {d g M A} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="6684" class="Comment">-- -- -- --                 → Δ ⊢ M ⦂ A valid[ Γ ]</a>
+<a id="6735" class="Comment">-- -- -- --                 → toList Δ CML.⊢ A valid[ toList Γ ]</a>
+<a id="6800" class="Comment">-- -- -- -- ↓ (var i)      = CML.var (to∋ i)</a>
+<a id="6845" class="Comment">-- -- -- -- ↓ (lam 𝒟)      = CML.lam (↓ 𝒟)</a>
+<a id="6888" class="Comment">-- -- -- -- ↓ (app 𝒟 ℰ)    = CML.app (↓ 𝒟) (↓ ℰ)</a>
+<a id="6937" class="Comment">-- -- -- -- ↓ (mvar i)     = CML.mvar (to∋ i)</a>
+<a id="6983" class="Comment">-- -- -- -- ↓ (box 𝒟)      = CML.box (↓ 𝒟)</a>
+<a id="7026" class="Comment">-- -- -- -- ↓ (letbox 𝒟 ℰ) = CML.letbox (↓ 𝒟) (↓ ℰ)</a>
+
+
+<a id="7080" class="Comment">-- -- -- -- instance</a>
+<a id="7101" class="Comment">-- -- -- --   match↓ : ∀ {d g M A} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="7168" class="Comment">-- -- -- --                        → (𝒟 : Δ ⊢ M ⦂ A valid[ Γ ])</a>
+<a id="7232" class="Comment">-- -- -- --                        → toList Δ ⊢ M ⦂ A match[ toList Γ ] ↓ 𝒟</a>
+<a id="7308" class="Comment">-- -- -- --   match↓ (var {I = I} i)  = var I</a>
+<a id="7354" class="Comment">-- -- -- --   match↓ (lam 𝒟)          = lam (match↓ 𝒟)</a>
+<a id="7409" class="Comment">-- -- -- --   match↓ (app 𝒟 ℰ)        = app (match↓ 𝒟) (match↓ ℰ)</a>
+<a id="7475" class="Comment">-- -- -- --   match↓ (mvar {I = I} i) = mvar I</a>
+<a id="7522" class="Comment">-- -- -- --   match↓ (box 𝒟)          = box (match↓ 𝒟)</a>
+<a id="7577" class="Comment">-- -- -- --   match↓ (letbox 𝒟 ℰ)     = letbox (match↓ 𝒟) (match↓ ℰ)</a>
+
+
+<a id="7648" class="Comment">-- -- -- -- ↑ : ∀ {Δ Γ M A} → (𝒟 : Δ CML.⊢ A valid[ Γ ]) {{p : Δ ⊢ M ⦂ A match[ Γ ] 𝒟}}</a>
+<a id="7736" class="Comment">-- -- -- --                 → fromList Δ ⊢ M ⦂ A valid[ fromList Γ ]</a>
+<a id="7805" class="Comment">-- -- -- -- ↑ (CML.var i)      {{var I}}      = var (from∋ i)</a>
+<a id="7867" class="Comment">-- -- -- -- ↑ (CML.lam 𝒟)      {{lam p}}      = lam (↑ 𝒟 {{p}})</a>
+<a id="7931" class="Comment">-- -- -- -- ↑ (CML.app 𝒟 ℰ)    {{app p q}}    = app (↑ 𝒟 {{p}}) (↑ ℰ {{q}})</a>
+<a id="8007" class="Comment">-- -- -- -- ↑ (CML.mvar i)     {{mvar I}}     = mvar (from∋ i)</a>
+<a id="8070" class="Comment">-- -- -- -- ↑ (CML.box 𝒟)      {{box p}}      = box (↑ 𝒟 {{p}})</a>
+<a id="8134" class="Comment">-- -- -- -- ↑ (CML.letbox 𝒟 ℰ) {{letbox p q}} = letbox (↑ 𝒟 {{p}}) (↑ ℰ {{q}})</a>
+
+
+<a id="8215" class="Comment">-- -- -- -- --------------------------------------------------------------------------------</a>
+
+
+<a id="8310" class="Comment">-- -- -- -- gen-id↓↑ : ∀ {Δ Γ M A} → (𝒟 : Δ CML.⊢ A valid[ Γ ]) {{p : Δ ⊢ M ⦂ A match[ Γ ] 𝒟}}</a>
+<a id="8405" class="Comment">-- -- -- --                        → ↓ (↑ 𝒟 {{p}}) ≡ 𝒟</a>
+<a id="8460" class="Comment">-- -- -- -- gen-id↓↑ (CML.var i)      {{var I}}      = refl</a>
+<a id="8520" class="Comment">-- -- -- -- gen-id↓↑ (CML.lam 𝒟)      {{lam p}}      = CML.lam &amp; gen-id↓↑ 𝒟 {{p}}</a>
+<a id="8602" class="Comment">-- -- -- -- gen-id↓↑ (CML.app 𝒟 ℰ)    {{app p q}}    = CML.app &amp; gen-id↓↑ 𝒟 {{p}} ⊗ gen-id↓↑ ℰ {{q}}</a>
+<a id="8703" class="Comment">-- -- -- -- gen-id↓↑ (CML.mvar i)     {{mvar I}}     = refl</a>
+<a id="8763" class="Comment">-- -- -- -- gen-id↓↑ (CML.box 𝒟)      {{box p}}      = CML.box &amp; gen-id↓↑ 𝒟 {{p}}</a>
+<a id="8845" class="Comment">-- -- -- -- gen-id↓↑ (CML.letbox 𝒟 ℰ) {{letbox p q}} = CML.letbox &amp; gen-id↓↑ 𝒟 {{p}} ⊗ gen-id↓↑ ℰ {{q}}</a>
+
+
+<a id="8951" class="Comment">-- -- -- -- id↓↑ : ∀ {Δ Γ A} → (𝒟 : Δ CML.⊢ A valid[ Γ ])</a>
+<a id="9009" class="Comment">-- -- -- --                  → ↓ (↑ 𝒟) ≡ 𝒟</a>
+<a id="9052" class="Comment">-- -- -- -- id↓↑ 𝒟 = gen-id↓↑ 𝒟 {{match-toTerm 𝒟}}</a>
+
+
+<a id="9105" class="Comment">-- -- -- -- gen-id↑↓ : ∀ {d g M A} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="9172" class="Comment">-- -- -- --                        → (𝒟 : Δ ⊢ M ⦂ A valid[ Γ ]) {{p : toList Δ ⊢ M ⦂ A match[ toList Γ ] ↓ 𝒟}}</a>
+<a id="9283" class="Comment">-- -- -- --                        → ↑ (↓ 𝒟) {{p}} ≡ 𝒟</a>
+<a id="9338" class="Comment">-- -- -- -- gen-id↑↓ (var i)      {{var I}}      = refl</a>
+<a id="9394" class="Comment">-- -- -- -- gen-id↑↓ (lam 𝒟)      {{lam p}}      = lam &amp; gen-id↑↓ 𝒟 {{p}}</a>
+<a id="9468" class="Comment">-- -- -- -- gen-id↑↓ (app 𝒟 ℰ)    {{app p q}}    = app &amp; gen-id↑↓ 𝒟 {{p}} ⊗ gen-id↑↓ ℰ {{q}}</a>
+<a id="9561" class="Comment">-- -- -- -- gen-id↑↓ (mvar i)     {{mvar I}}     = refl</a>
+<a id="9617" class="Comment">-- -- -- -- gen-id↑↓ (box 𝒟)      {{box p}}      = box &amp; gen-id↑↓ 𝒟 {{p}}</a>
+<a id="9691" class="Comment">-- -- -- -- gen-id↑↓ (letbox 𝒟 ℰ) {{letbox p q}} = letbox &amp; gen-id↑↓ 𝒟 {{p}} ⊗ gen-id↑↓ ℰ {{q}}</a>
+
+
+<a id="9789" class="Comment">-- -- -- -- id↑↓ : ∀ {d g M A} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="9852" class="Comment">-- -- -- --                    → (𝒟 : Δ ⊢ M ⦂ A valid[ Γ ])</a>
+<a id="9912" class="Comment">-- -- -- --                    → ↑ (↓ 𝒟) ≡ 𝒟</a>
+<a id="9957" class="Comment">-- -- -- -- id↑↓ 𝒟 = gen-id↑↓ 𝒟 {{match↓ 𝒟}}</a>
+
+
+<a id="10004" class="Comment">-- -- -- -- --------------------------------------------------------------------------------</a>
+</pre></body></html>

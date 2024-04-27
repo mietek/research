@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>A201801.S4AndCMLScratch</title><link rel="stylesheet" href="AgdaPP.css"></head><body><pre class="Agda"><a id="1" class="Symbol">{-#</a> <a id="5" class="Keyword">OPTIONS</a> <a id="13" class="Pragma">--rewriting</a> <a id="25" class="Symbol">#-}</a>
+
+<a id="30" class="Keyword">module</a> <a id="37" href="A201801.S4AndCMLScratch.html" class="Module">A201801.S4AndCMLScratch</a> <a id="61" class="Keyword">where</a>
+
+<a id="68" class="Keyword">open</a> <a id="73" class="Keyword">import</a> <a id="80" href="A201801.Prelude.html" class="Module">A201801.Prelude</a>
+<a id="96" class="Keyword">open</a> <a id="101" class="Keyword">import</a> <a id="108" href="A201801.Category.html" class="Module">A201801.Category</a>
+<a id="125" class="Keyword">open</a> <a id="130" class="Keyword">import</a> <a id="137" href="A201801.List.html" class="Module">A201801.List</a>
+<a id="150" class="Keyword">open</a> <a id="155" class="Keyword">import</a> <a id="162" href="A201801.ListLemmas.html" class="Module">A201801.ListLemmas</a>
+<a id="181" class="Keyword">open</a> <a id="186" class="Keyword">import</a> <a id="193" href="A201801.ListConcatenation.html" class="Module">A201801.ListConcatenation</a>
+<a id="219" class="Keyword">open</a> <a id="224" class="Keyword">import</a> <a id="231" href="A201801.AllList.html" class="Module">A201801.AllList</a>
+<a id="247" class="Keyword">open</a> <a id="252" class="Keyword">import</a> <a id="259" href="A201801.S4Propositions.html" class="Module">A201801.S4Propositions</a>
+<a id="282" class="Comment">-- open import S4Derivations</a>
+<a id="311" class="Keyword">import</a> <a id="318" href="A201801.CMLPropositions.html" class="Module">A201801.CMLPropositions</a> <a id="342" class="Symbol">as</a> <a id="345" class="Module">CML</a>
+<a id="349" class="Comment">-- import CMLDerivations as CML</a>
+
+
+<a id="383" class="Comment">--------------------------------------------------------------------------------</a>
+
+
+<a id="[_]_"></a><a id="466" href="A201801.S4AndCMLScratch.html#466" class="Function Operator">[_]_</a> <a id="471" class="Symbol">:</a> <a id="473" href="A201801.List.html#199" class="Datatype">List</a> <a id="478" href="A201801.S4Propositions.html#223" class="Datatype">Form</a> <a id="483" class="Symbol">→</a> <a id="485" href="A201801.S4Propositions.html#223" class="Datatype">Form</a> <a id="490" class="Symbol">→</a> <a id="492" href="A201801.S4Propositions.html#223" class="Datatype">Form</a>
+<a id="497" href="A201801.S4AndCMLScratch.html#466" class="Function Operator">[</a> <a id="499" href="A201801.S4AndCMLScratch.html#499" class="Bound">Γ</a> <a id="501" href="A201801.S4AndCMLScratch.html#466" class="Function Operator">]</a> <a id="503" href="A201801.S4AndCMLScratch.html#503" class="Bound">A</a> <a id="505" class="Symbol">=</a> <a id="507" href="A201801.S4Propositions.html#299" class="InductiveConstructor Operator">□</a> <a id="509" class="Symbol">(</a><a id="510" href="A201801.S4AndCMLScratch.html#499" class="Bound">Γ</a> <a id="512" href="A201801.S4Propositions.html#1880" class="Function Operator">⊃⋯⊃</a> <a id="516" href="A201801.S4AndCMLScratch.html#503" class="Bound">A</a><a id="517" class="Symbol">)</a>
+
+
+<a id="⟪_⊫_⟫"></a><a id="521" href="A201801.S4AndCMLScratch.html#521" class="Function Operator">⟪_⊫_⟫</a> <a id="527" class="Symbol">:</a> <a id="529" href="A201801.List.html#199" class="Datatype">List</a> <a id="534" href="A201801.S4Propositions.html#223" class="Datatype">Form</a> <a id="539" class="Symbol">→</a> <a id="541" href="A201801.S4Propositions.html#223" class="Datatype">Form</a> <a id="546" class="Symbol">→</a> <a id="548" href="A201801.S4Propositions.html#537" class="Record">Assert</a>
+<a id="555" href="A201801.S4AndCMLScratch.html#521" class="Function Operator">⟪</a> <a id="557" href="A201801.S4AndCMLScratch.html#557" class="Bound">Γ</a> <a id="559" href="A201801.S4AndCMLScratch.html#521" class="Function Operator">⊫</a> <a id="561" href="A201801.S4AndCMLScratch.html#561" class="Bound">A</a> <a id="563" href="A201801.S4AndCMLScratch.html#521" class="Function Operator">⟫</a> <a id="565" class="Symbol">=</a> <a id="567" href="A201801.S4Propositions.html#574" class="InductiveConstructor Operator">⟪⊫</a> <a id="570" href="A201801.S4AndCMLScratch.html#557" class="Bound">Γ</a> <a id="572" href="A201801.S4Propositions.html#1880" class="Function Operator">⊃⋯⊃</a> <a id="576" href="A201801.S4AndCMLScratch.html#561" class="Bound">A</a> <a id="578" href="A201801.S4Propositions.html#574" class="InductiveConstructor Operator">⟫</a>
+
+
+<a id="582" class="Comment">-- mvar₊ : ∀ {A Ψ Δ Γ} → Δ ∋ ⟪ Ψ ⊫ A ⟫ → Δ ⊢ Ψ allvalid[ Γ ]</a>
+<a id="643" class="Comment">--                     → Δ ⊢ A valid[ Γ ]</a>
+<a id="685" class="Comment">-- mvar₊ i ψ = apps (mvar i) ψ</a>
+
+
+<a id="718" class="Comment">-- box₊ : ∀ {A Ψ Δ Γ} → Δ ⊢ A valid[ Ψ ]</a>
+<a id="759" class="Comment">--                    → Δ ⊢ [ Ψ ] A valid[ Γ ]</a>
+<a id="806" class="Comment">-- box₊ {Ψ = Ψ} 𝒟 = box (lams Ψ 𝒟)</a>
+
+
+<a id="843" class="Comment">-- blam : ∀ {Δ Γ Ψ A B} → Δ ⊢ [ Ψ , A ] B valid[ Γ ]</a>
+<a id="896" class="Comment">--                      → Δ ⊢ [ Ψ ] (A ⊃ B) valid[ Γ ]</a>
+<a id="951" class="Comment">-- blam 𝒟 = 𝒟</a>
+
+
+<a id="967" class="Comment">-- unblam : ∀ {Δ Γ Ψ A B} → Δ ⊢ [ Ψ ] (A ⊃ B) valid[ Γ ]</a>
+<a id="1024" class="Comment">--                        → Δ ⊢ [ Ψ , A ] B valid[ Γ ]</a>
+<a id="1079" class="Comment">-- unblam 𝒟 = 𝒟</a>
+</pre></body></html>

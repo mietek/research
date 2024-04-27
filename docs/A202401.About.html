@@ -1,0 +1,234 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>A202401.About</title><link rel="stylesheet" href="AgdaPP.css"></head><body><pre class="Agda"><a id="1" class="Comment">{- -------------------------------------------------------------------------------------------------
+
+thanks to ames, dolio, drvink, mxu, ncf, ovi, pgiarrusso, pounce, rak, roconnor, tuplanolla
+
+join ##dependent on libera.chat
+
+- Abel (2013)
+  “NbE: Dependent types and impredicativity”
+  https://www.cse.chalmers.se/~abela/habil.pdf
+
+- Altenkirch (1993)
+  “Constructions, inductive types, and strong normalization”
+  http://www.cs.nott.ac.uk/~psztxa/publ/phd93.pdf
+
+- Coquand (2002)
+  “A formalised proof of the soundness and completeness of a STLC with explicit substitutions”
+  https://github.com/dpndnt/library/blob/master/doc/pdf/coquand-2002.pdf
+
+- Ghani (1995)
+  “Adjoint rewriting”
+  https://www.cs.le.ac.uk/people/ng13/papers/yellowthesis.ps.gz
+
+- Kovacs (2017)
+  “A machine-checked correctness proof of NBE for STLC”
+  https://github.com/dpndnt/library/blob/master/doc/pdf/kovacs-2017.pdf
+
+- Schäfer (2019)
+  “Engineering formal systems in constructive type theory”
+  https://www.ps.uni-saarland.de/~schaefer/thesis/draft-screen.pdf
+
+
+------------------------------------------------------------------------------------------------- -}</a>
+
+<a id="1148" class="Keyword">module</a> <a id="1155" href="A202401.About.html" class="Module">A202401.About</a> <a id="1169" class="Keyword">where</a>
+
+<a id="1176" class="Keyword">import</a> <a id="1183" href="A202401.Prelude.html" class="Module">A202401.Prelude</a>
+<a id="1199" class="Keyword">import</a> <a id="1206" href="A202401.GAN.html" class="Module">A202401.GAN</a>
+<a id="1218" class="Keyword">import</a> <a id="1225" href="A202401.DBI.html" class="Module">A202401.DBI</a>
+
+
+<a id="1239" class="Comment">----------------------------------------------------------------------------------------------------</a>
+
+<a id="1341" class="Comment">-- main version, with order-preserving embeddings</a>
+
+<a id="1392" class="Keyword">import</a> <a id="1399" href="A202401.OPE.html" class="Module">A202401.OPE</a>
+<a id="1411" class="Keyword">import</a> <a id="1418" href="A202401.OPE-GAN.html" class="Module">A202401.OPE-GAN</a>
+
+<a id="1435" class="Keyword">import</a> <a id="1442" href="A202401.Kit1.html" class="Module">A202401.Kit1</a>
+<a id="1455" class="Keyword">import</a> <a id="1462" href="A202401.Kit2.html" class="Module">A202401.Kit2</a>
+<a id="1475" class="Keyword">import</a> <a id="1482" href="A202401.Kit2-GAN.html" class="Module">A202401.Kit2-GAN</a>
+<a id="1499" class="Keyword">import</a> <a id="1506" href="A202401.Kit3.html" class="Module">A202401.Kit3</a>
+<a id="1519" class="Keyword">import</a> <a id="1526" href="A202401.Kit3-GAN.html" class="Module">A202401.Kit3-GAN</a>
+<a id="1543" class="Keyword">import</a> <a id="1550" href="A202401.Kit4.html" class="Module">A202401.Kit4</a>
+
+<a id="1564" class="Keyword">import</a> <a id="1571" href="A202401.STLC-Base.html" class="Module">A202401.STLC-Base</a>
+<a id="1589" class="Keyword">import</a> <a id="1596" href="A202401.STLC-Base-RenSub.html" class="Module">A202401.STLC-Base-RenSub</a>
+<a id="1621" class="Keyword">import</a> <a id="1628" href="A202401.STLC-Base-WNF.html" class="Module">A202401.STLC-Base-WNF</a>
+<a id="1650" class="Keyword">import</a> <a id="1657" href="A202401.STLC-Base-WNF-CBV.html" class="Module">A202401.STLC-Base-WNF-CBV</a>
+<a id="1683" class="Keyword">import</a> <a id="1690" href="A202401.STLC-Base-WNF-CBV-SN.html" class="Module">A202401.STLC-Base-WNF-CBV-SN</a>
+<a id="1719" class="Keyword">import</a> <a id="1726" href="A202401.STLC-Base-WNF-CBV-SN2.html" class="Module">A202401.STLC-Base-WNF-CBV-SN2</a>
+<a id="1756" class="Keyword">import</a> <a id="1763" href="A202401.STLC-Base-WNF-NBE.html" class="Module">A202401.STLC-Base-WNF-NBE</a>
+<a id="1789" class="Keyword">import</a> <a id="1796" href="A202401.STLC-Base-WNF-NBE2.html" class="Module">A202401.STLC-Base-WNF-NBE2</a>
+<a id="1823" class="Keyword">import</a> <a id="1830" href="A202401.STLC-Base-EWNF.html" class="Module">A202401.STLC-Base-EWNF</a>
+<a id="1853" class="Keyword">import</a> <a id="1860" href="A202401.STLC-Base-EWNF-CBV.html" class="Module">A202401.STLC-Base-EWNF-CBV</a>
+<a id="1887" class="Keyword">import</a> <a id="1894" href="A202401.STLC-Base-NF.html" class="Module">A202401.STLC-Base-NF</a>
+<a id="1915" class="Keyword">import</a> <a id="1922" href="A202401.STLC-Base-NF-AO.html" class="Module">A202401.STLC-Base-NF-AO</a>
+<a id="1946" class="Keyword">import</a> <a id="1953" href="A202401.STLC-Base-NF-NDR.html" class="Module">A202401.STLC-Base-NF-NDR</a>
+<a id="1978" class="Keyword">import</a> <a id="1985" href="A202401.STLC-Base-NF-NDPR.html" class="Module">A202401.STLC-Base-NF-NDPR</a>
+
+<a id="2012" class="Keyword">import</a> <a id="2019" href="A202401.STLC-Negative.html" class="Module">A202401.STLC-Negative</a>
+<a id="2041" class="Keyword">import</a> <a id="2048" href="A202401.STLC-Negative-RenSub.html" class="Module">A202401.STLC-Negative-RenSub</a>
+<a id="2077" class="Keyword">import</a> <a id="2084" href="A202401.STLC-Negative-WNF.html" class="Module">A202401.STLC-Negative-WNF</a>
+<a id="2110" class="Keyword">import</a> <a id="2117" href="A202401.STLC-Negative-WNF-CBV.html" class="Module">A202401.STLC-Negative-WNF-CBV</a>
+<a id="2147" class="Keyword">import</a> <a id="2154" href="A202401.STLC-Negative-WNF-NBE.html" class="Module">A202401.STLC-Negative-WNF-NBE</a>
+<a id="2184" class="Keyword">import</a> <a id="2191" href="A202401.STLC-Negative-WNF-NBE2.html" class="Module">A202401.STLC-Negative-WNF-NBE2</a>
+
+<a id="2223" class="Keyword">import</a> <a id="2230" href="A202401.STLC-Naturals.html" class="Module">A202401.STLC-Naturals</a>
+<a id="2252" class="Keyword">import</a> <a id="2259" href="A202401.STLC-Naturals-RenSub.html" class="Module">A202401.STLC-Naturals-RenSub</a>
+<a id="2288" class="Keyword">import</a> <a id="2295" href="A202401.STLC-Naturals-SWNF.html" class="Module">A202401.STLC-Naturals-SWNF</a>
+<a id="2322" class="Keyword">import</a> <a id="2329" href="A202401.STLC-Naturals-SWNF-CBV.html" class="Module">A202401.STLC-Naturals-SWNF-CBV</a>
+<a id="2360" class="Keyword">import</a> <a id="2367" href="A202401.STLC-Naturals-SWNF-NBE.html" class="Module">A202401.STLC-Naturals-SWNF-NBE</a>
+<a id="2398" class="Keyword">import</a> <a id="2405" href="A202401.STLC-Naturals-SWNF-NBE2.html" class="Module">A202401.STLC-Naturals-SWNF-NBE2</a>
+<a id="2437" class="Keyword">import</a> <a id="2444" href="A202401.STLC-Naturals-SWNF-NBE3.html" class="Module">A202401.STLC-Naturals-SWNF-NBE3</a>
+<a id="2476" class="Keyword">import</a> <a id="2483" href="A202401.STLC-Naturals-WNF.html" class="Module">A202401.STLC-Naturals-WNF</a>
+<a id="2509" class="Keyword">import</a> <a id="2516" href="A202401.STLC-Naturals-WNF-CBV.html" class="Module">A202401.STLC-Naturals-WNF-CBV</a>
+<a id="2546" class="Keyword">import</a> <a id="2553" href="A202401.STLC-Naturals-WNF-NBE.html" class="Module">A202401.STLC-Naturals-WNF-NBE</a>
+<a id="2583" class="Keyword">import</a> <a id="2590" href="A202401.STLC-Naturals2.html" class="Module">A202401.STLC-Naturals2</a>
+<a id="2613" class="Keyword">import</a> <a id="2620" href="A202401.STLC-Naturals2-NF.html" class="Module">A202401.STLC-Naturals2-NF</a>
+<a id="2646" class="Keyword">import</a> <a id="2653" href="A202401.STLC-Naturals2-NF-NBE.html" class="Module">A202401.STLC-Naturals2-NF-NBE</a>
+
+
+<a id="2685" class="Comment">----------------------------------------------------------------------------------------------------</a>
+
+<a id="2787" class="Comment">-- alternative version, with first-order renamings</a>
+
+<a id="2839" class="Keyword">import</a> <a id="2846" href="A202401.FOR.html" class="Module">A202401.FOR</a>
+<a id="2858" class="Keyword">import</a> <a id="2865" href="A202401.FOR-GAN.html" class="Module">A202401.FOR-GAN</a>
+
+<a id="2882" class="Keyword">import</a> <a id="2889" href="A202401.FOR-Kit1.html" class="Module">A202401.FOR-Kit1</a>
+<a id="2906" class="Keyword">import</a> <a id="2913" href="A202401.FOR-Kit2.html" class="Module">A202401.FOR-Kit2</a>
+<a id="2930" class="Keyword">import</a> <a id="2937" href="A202401.FOR-Kit2-GAN.html" class="Module">A202401.FOR-Kit2-GAN</a>
+<a id="2958" class="Keyword">import</a> <a id="2965" href="A202401.FOR-Kit3.html" class="Module">A202401.FOR-Kit3</a>
+<a id="2982" class="Keyword">import</a> <a id="2989" href="A202401.FOR-Kit3-GAN.html" class="Module">A202401.FOR-Kit3-GAN</a>
+
+<a id="3011" class="Keyword">import</a> <a id="3018" href="A202401.FOR-STLC-Base.html" class="Module">A202401.FOR-STLC-Base</a>
+<a id="3040" class="Keyword">import</a> <a id="3047" href="A202401.FOR-STLC-Base-RenSub.html" class="Module">A202401.FOR-STLC-Base-RenSub</a>
+<a id="3076" class="Keyword">import</a> <a id="3083" href="A202401.FOR-STLC-Base-WNF.html" class="Module">A202401.FOR-STLC-Base-WNF</a>
+<a id="3109" class="Keyword">import</a> <a id="3116" href="A202401.FOR-STLC-Base-WNF-CBV.html" class="Module">A202401.FOR-STLC-Base-WNF-CBV</a>
+
+
+<a id="3148" class="Comment">----------------------------------------------------------------------------------------------------</a>
+
+<a id="3250" class="Comment">-- alternative version, with higher-order renamings</a>
+
+<a id="3303" class="Keyword">import</a> <a id="3310" href="A202401.HOR.html" class="Module">A202401.HOR</a>
+
+
+<a id="3324" class="Comment">----------------------------------------------------------------------------------------------------</a>
+
+<a id="3426" class="Comment">-- roadmap towards correctness of NBE</a>
+
+<a id="3465" class="Keyword">open</a> <a id="3470" href="A202401.STLC-Base-WNF-NBE2.html" class="Module">A202401.STLC-Base-WNF-NBE2</a>
+<a id="3497" class="Keyword">open</a> <a id="3502" href="A202401.STLC-Base.html#1925" class="Module">BetaShortEtaLongDefEq</a>
+
+<a id="3525" class="Keyword">postulate</a>
+  <a id="3537" class="Comment">-- Abel p.8: “preservation of meaning”</a>
+  <a id="lem-1"></a><a id="3578" href="A202401.About.html#3578" class="Postulate">lem-1</a> <a id="3584" class="Symbol">:</a> <a id="3586" class="Symbol">∀</a> <a id="3588" class="Symbol">{</a><a id="3589" href="A202401.About.html#3589" class="Bound">ℳ</a> <a id="3591" class="Symbol">:</a> <a id="3593" href="A202401.STLC-Base-WNF-NBE2.html#409" class="Record">Model</a><a id="3598" class="Symbol">}</a> <a id="3600" class="Symbol">{</a><a id="3601" href="A202401.About.html#3601" class="Bound">W</a> <a id="3603" class="Symbol">:</a> <a id="3605" href="A202401.STLC-Base-WNF-NBE2.html#440" class="Field">World</a> <a id="3611" href="A202401.About.html#3589" class="Bound">ℳ</a><a id="3612" class="Symbol">}</a> <a id="3614" class="Symbol">{</a><a id="3615" href="A202401.About.html#3615" class="Bound">Γ</a> <a id="3617" href="A202401.About.html#3617" class="Bound">A</a><a id="3618" class="Symbol">}</a> <a id="3620" class="Symbol">(</a><a id="3621" href="A202401.About.html#3621" class="Bound">t</a> <a id="3623" class="Symbol">:</a> <a id="3625" href="A202401.About.html#3615" class="Bound">Γ</a> <a id="3627" href="A202401.STLC-Base.html#457" class="Datatype Operator">⊢</a> <a id="3629" href="A202401.About.html#3617" class="Bound">A</a><a id="3630" class="Symbol">)</a> <a id="3632" class="Symbol">→</a> <a id="3634" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟦</a> <a id="3636" href="A202401.About.html#3621" class="Bound">t</a> <a id="3638" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟧</a> <a id="3640" class="Symbol">{</a><a id="3641" href="A202401.About.html#3589" class="Bound">ℳ</a><a id="3642" class="Symbol">}</a> <a id="3644" class="Symbol">{</a><a id="3645" href="A202401.About.html#3601" class="Bound">W</a><a id="3646" class="Symbol">}</a> <a id="3648" href="Agda.Builtin.Equality.html#125" class="Datatype Operator">≡</a> <a id="3650" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟦</a> <a id="3652" href="Agda.Builtin.Sigma.html#225" class="Field">fst</a> <a id="3656" class="Symbol">(</a><a id="3657" href="A202401.STLC-Base-WNF-NBE2.html#2084" class="Function">nbe</a> <a id="3661" href="A202401.About.html#3621" class="Bound">t</a><a id="3662" class="Symbol">)</a> <a id="3664" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟧</a>
+
+  <a id="3669" class="Comment">-- Abel p.8: “idempotency”</a>
+  <a id="3698" class="Comment">-- Kovacs p.59: “stability”</a>
+  <a id="lem-2"></a><a id="3728" href="A202401.About.html#3728" class="Postulate">lem-2</a> <a id="3734" class="Symbol">:</a> <a id="3736" class="Symbol">∀</a> <a id="3738" class="Symbol">{</a><a id="3739" href="A202401.About.html#3739" class="Bound">Γ</a> <a id="3741" href="A202401.About.html#3741" class="Bound">A</a><a id="3742" class="Symbol">}</a> <a id="3744" class="Symbol">(</a><a id="3745" href="A202401.About.html#3745" class="Bound">t</a> <a id="3747" class="Symbol">:</a> <a id="3749" href="A202401.About.html#3739" class="Bound">Γ</a> <a id="3751" href="A202401.STLC-Base.html#457" class="Datatype Operator">⊢</a> <a id="3753" href="A202401.About.html#3741" class="Bound">A</a><a id="3754" class="Symbol">)</a> <a id="3756" class="Symbol">→</a> <a id="3758" href="A202401.STLC-Base-WNF.html#348" class="Datatype">NF</a> <a id="3761" href="A202401.About.html#3745" class="Bound">t</a> <a id="3763" class="Symbol">→</a> <a id="3765" href="A202401.About.html#3745" class="Bound">t</a> <a id="3767" href="Agda.Builtin.Equality.html#125" class="Datatype Operator">≡</a> <a id="3769" href="Agda.Builtin.Sigma.html#225" class="Field">fst</a> <a id="3773" class="Symbol">(</a><a id="3774" href="A202401.STLC-Base-WNF-NBE2.html#2084" class="Function">nbe</a> <a id="3778" href="A202401.About.html#3745" class="Bound">t</a><a id="3779" class="Symbol">)</a>
+
+  <a id="3784" class="Comment">-- Abel p.8: “semantic equality”</a>
+  <a id="lem-3"></a><a id="3819" href="A202401.About.html#3819" class="Postulate">lem-3</a> <a id="3825" class="Symbol">:</a> <a id="3827" class="Symbol">∀</a> <a id="3829" class="Symbol">{</a><a id="3830" href="A202401.About.html#3830" class="Bound">ℳ</a> <a id="3832" class="Symbol">:</a> <a id="3834" href="A202401.STLC-Base-WNF-NBE2.html#409" class="Record">Model</a><a id="3839" class="Symbol">}</a> <a id="3841" class="Symbol">{</a><a id="3842" href="A202401.About.html#3842" class="Bound">W</a> <a id="3844" class="Symbol">:</a> <a id="3846" href="A202401.STLC-Base-WNF-NBE2.html#440" class="Field">World</a> <a id="3852" href="A202401.About.html#3830" class="Bound">ℳ</a><a id="3853" class="Symbol">}</a> <a id="3855" class="Symbol">{</a><a id="3856" href="A202401.About.html#3856" class="Bound">Γ</a> <a id="3858" href="A202401.About.html#3858" class="Bound">A</a><a id="3859" class="Symbol">}</a> <a id="3861" class="Symbol">(</a><a id="3862" href="A202401.About.html#3862" class="Bound">t</a> <a id="3864" href="A202401.About.html#3864" class="Bound">t′</a> <a id="3867" class="Symbol">:</a> <a id="3869" href="A202401.About.html#3856" class="Bound">Γ</a> <a id="3871" href="A202401.STLC-Base.html#457" class="Datatype Operator">⊢</a> <a id="3873" href="A202401.About.html#3858" class="Bound">A</a><a id="3874" class="Symbol">)</a> <a id="3876" class="Symbol">→</a> <a id="3878" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟦</a> <a id="3880" href="A202401.About.html#3862" class="Bound">t</a> <a id="3882" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟧</a> <a id="3884" class="Symbol">{</a><a id="3885" href="A202401.About.html#3830" class="Bound">ℳ</a><a id="3886" class="Symbol">}</a> <a id="3888" class="Symbol">{</a><a id="3889" href="A202401.About.html#3842" class="Bound">W</a><a id="3890" class="Symbol">}</a> <a id="3892" href="Agda.Builtin.Equality.html#125" class="Datatype Operator">≡</a> <a id="3894" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟦</a> <a id="3896" href="A202401.About.html#3864" class="Bound">t′</a> <a id="3899" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟧</a> <a id="3901" class="Symbol">→</a>
+          <a id="3913" href="A202401.STLC-Base-WNF-NBE2.html#2084" class="Function">nbe</a> <a id="3917" href="A202401.About.html#3862" class="Bound">t</a> <a id="3919" href="Agda.Builtin.Equality.html#125" class="Datatype Operator">≡</a> <a id="3921" href="A202401.STLC-Base-WNF-NBE2.html#2084" class="Function">nbe</a> <a id="3925" href="A202401.About.html#3864" class="Bound">t′</a>
+
+<a id="3929" class="Comment">-- Abel p.8: “βη-equivalence”; “definitional equality”</a>
+<a id="_≝′_"></a><a id="3984" href="A202401.About.html#3984" class="Function Operator">_≝′_</a> <a id="3989" class="Symbol">:</a> <a id="3991" class="Symbol">∀</a> <a id="3993" class="Symbol">{</a><a id="3994" href="A202401.About.html#3994" class="Bound">Γ</a> <a id="3996" href="A202401.About.html#3996" class="Bound">A</a><a id="3997" class="Symbol">}</a> <a id="3999" class="Symbol">→</a> <a id="4001" href="A202401.About.html#3994" class="Bound">Γ</a> <a id="4003" href="A202401.STLC-Base.html#457" class="Datatype Operator">⊢</a> <a id="4005" href="A202401.About.html#3996" class="Bound">A</a> <a id="4007" class="Symbol">→</a> <a id="4009" href="A202401.About.html#3994" class="Bound">Γ</a> <a id="4011" href="A202401.STLC-Base.html#457" class="Datatype Operator">⊢</a> <a id="4013" href="A202401.About.html#3996" class="Bound">A</a> <a id="4015" class="Symbol">→</a> <a id="4017" class="PrimitiveType">Set</a>
+<a id="4021" href="A202401.About.html#3984" class="Function Operator">_≝′_</a> <a id="4026" class="Symbol">=</a> <a id="4028" href="A202401.STLC-Base.html#1974" class="Datatype Operator">_≝_</a>
+
+<a id="4033" class="Keyword">postulate</a>
+  <a id="4045" class="Comment">-- Abel p.8: “substitution is meaning-preserving”</a>
+  <a id="thm-i"></a><a id="4097" href="A202401.About.html#4097" class="Postulate">thm-i</a> <a id="4103" class="Symbol">:</a> <a id="4105" class="Symbol">∀</a> <a id="4107" class="Symbol">{</a><a id="4108" href="A202401.About.html#4108" class="Bound">ℳ</a> <a id="4110" class="Symbol">:</a> <a id="4112" href="A202401.STLC-Base-WNF-NBE2.html#409" class="Record">Model</a><a id="4117" class="Symbol">}</a> <a id="4119" class="Symbol">{</a><a id="4120" href="A202401.About.html#4120" class="Bound">W</a> <a id="4122" class="Symbol">:</a> <a id="4124" href="A202401.STLC-Base-WNF-NBE2.html#440" class="Field">World</a> <a id="4130" href="A202401.About.html#4108" class="Bound">ℳ</a><a id="4131" class="Symbol">}</a> <a id="4133" class="Symbol">{</a><a id="4134" href="A202401.About.html#4134" class="Bound">Γ</a> <a id="4136" href="A202401.About.html#4136" class="Bound">A</a> <a id="4138" href="A202401.About.html#4138" class="Bound">B</a><a id="4139" class="Symbol">}</a> <a id="4141" class="Symbol">(</a><a id="4142" href="A202401.About.html#4142" class="Bound">t</a> <a id="4144" class="Symbol">:</a> <a id="4146" href="A202401.About.html#4134" class="Bound">Γ</a> <a id="4148" href="A202401.Prelude.html#1470" class="InductiveConstructor Operator">,</a> <a id="4150" href="A202401.About.html#4136" class="Bound">A</a> <a id="4152" href="A202401.STLC-Base.html#457" class="Datatype Operator">⊢</a> <a id="4154" href="A202401.About.html#4138" class="Bound">B</a><a id="4155" class="Symbol">)</a> <a id="4157" class="Symbol">(</a><a id="4158" href="A202401.About.html#4158" class="Bound">s</a> <a id="4160" class="Symbol">:</a> <a id="4162" href="A202401.About.html#4134" class="Bound">Γ</a> <a id="4164" href="A202401.STLC-Base.html#457" class="Datatype Operator">⊢</a> <a id="4166" href="A202401.About.html#4136" class="Bound">A</a><a id="4167" class="Symbol">)</a> <a id="4169" class="Symbol">(</a><a id="4170" href="A202401.About.html#4170" class="Bound">γ</a> <a id="4172" class="Symbol">:</a> <a id="4174" href="A202401.About.html#4108" class="Bound">ℳ</a> <a id="4176" href="A202401.Kit4.html#1740" class="Function Operator">/</a> <a id="4178" href="A202401.About.html#4120" class="Bound">W</a> <a id="4180" href="A202401.Kit4.html#1740" class="Function Operator">⊩§</a> <a id="4183" href="A202401.About.html#4134" class="Bound">Γ</a><a id="4184" class="Symbol">)</a> <a id="4186" class="Symbol">→</a>
+          <a id="4198" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟦</a> <a id="4200" href="A202401.About.html#4142" class="Bound">t</a> <a id="4202" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟧</a> <a id="4204" class="Symbol">(</a><a id="4205" href="A202401.About.html#4170" class="Bound">γ</a> <a id="4207" href="A202401.Kit4.html#1453" class="InductiveConstructor Operator">,</a> <a id="4209" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟦</a> <a id="4211" href="A202401.About.html#4158" class="Bound">s</a> <a id="4213" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟧</a> <a id="4215" href="A202401.About.html#4170" class="Bound">γ</a><a id="4216" class="Symbol">)</a> <a id="4218" href="Agda.Builtin.Equality.html#125" class="Datatype Operator">≡</a> <a id="4220" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟦</a> <a id="4222" href="A202401.About.html#4142" class="Bound">t</a> <a id="4224" href="A202401.Kit1.html#2673" class="Function Operator">[</a> <a id="4226" href="A202401.About.html#4158" class="Bound">s</a> <a id="4228" href="A202401.Kit1.html#2673" class="Function Operator">]</a> <a id="4230" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟧</a> <a id="4232" href="A202401.About.html#4170" class="Bound">γ</a>
+
+  <a id="4237" class="Comment">-- completeness of definitional equality?</a>
+  <a id="thm-j"></a><a id="4281" href="A202401.About.html#4281" class="Postulate">thm-j</a> <a id="4287" class="Symbol">:</a> <a id="4289" class="Symbol">∀</a> <a id="4291" class="Symbol">{</a><a id="4292" href="A202401.About.html#4292" class="Bound">ℳ</a> <a id="4294" class="Symbol">:</a> <a id="4296" href="A202401.STLC-Base-WNF-NBE2.html#409" class="Record">Model</a><a id="4301" class="Symbol">}</a> <a id="4303" class="Symbol">{</a><a id="4304" href="A202401.About.html#4304" class="Bound">W</a> <a id="4306" class="Symbol">:</a> <a id="4308" href="A202401.STLC-Base-WNF-NBE2.html#440" class="Field">World</a> <a id="4314" href="A202401.About.html#4292" class="Bound">ℳ</a><a id="4315" class="Symbol">}</a> <a id="4317" class="Symbol">{</a><a id="4318" href="A202401.About.html#4318" class="Bound">Γ</a> <a id="4320" href="A202401.About.html#4320" class="Bound">A</a><a id="4321" class="Symbol">}</a> <a id="4323" class="Symbol">{</a><a id="4324" href="A202401.About.html#4324" class="Bound">t</a> <a id="4326" href="A202401.About.html#4326" class="Bound">t′</a> <a id="4329" class="Symbol">:</a> <a id="4331" href="A202401.About.html#4318" class="Bound">Γ</a> <a id="4333" href="A202401.STLC-Base.html#457" class="Datatype Operator">⊢</a> <a id="4335" href="A202401.About.html#4320" class="Bound">A</a><a id="4336" class="Symbol">}</a> <a id="4338" class="Symbol">→</a> <a id="4340" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟦</a> <a id="4342" href="A202401.About.html#4324" class="Bound">t</a> <a id="4344" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟧</a> <a id="4346" class="Symbol">{</a><a id="4347" href="A202401.About.html#4292" class="Bound">ℳ</a><a id="4348" class="Symbol">}</a> <a id="4350" class="Symbol">{</a><a id="4351" href="A202401.About.html#4304" class="Bound">W</a><a id="4352" class="Symbol">}</a> <a id="4354" href="Agda.Builtin.Equality.html#125" class="Datatype Operator">≡</a> <a id="4356" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟦</a> <a id="4358" href="A202401.About.html#4326" class="Bound">t′</a> <a id="4361" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟧</a> <a id="4363" class="Symbol">→</a> <a id="4365" href="A202401.About.html#4324" class="Bound">t</a> <a id="4367" href="A202401.STLC-Base.html#1974" class="Datatype Operator">≝</a> <a id="4369" href="A202401.About.html#4326" class="Bound">t′</a>
+
+  <a id="4375" class="Comment">-- Abel p.10: “soundness of definitional equality”</a>
+  <a id="thm-k"></a><a id="4428" href="A202401.About.html#4428" class="Postulate">thm-k</a> <a id="4434" class="Symbol">:</a> <a id="4436" class="Symbol">∀</a> <a id="4438" class="Symbol">{</a><a id="4439" href="A202401.About.html#4439" class="Bound">ℳ</a> <a id="4441" class="Symbol">:</a> <a id="4443" href="A202401.STLC-Base-WNF-NBE2.html#409" class="Record">Model</a><a id="4448" class="Symbol">}</a> <a id="4450" class="Symbol">{</a><a id="4451" href="A202401.About.html#4451" class="Bound">W</a> <a id="4453" class="Symbol">:</a> <a id="4455" href="A202401.STLC-Base-WNF-NBE2.html#440" class="Field">World</a> <a id="4461" href="A202401.About.html#4439" class="Bound">ℳ</a><a id="4462" class="Symbol">}</a> <a id="4464" class="Symbol">{</a><a id="4465" href="A202401.About.html#4465" class="Bound">Γ</a> <a id="4467" href="A202401.About.html#4467" class="Bound">A</a><a id="4468" class="Symbol">}</a> <a id="4470" class="Symbol">{</a><a id="4471" href="A202401.About.html#4471" class="Bound">t</a> <a id="4473" href="A202401.About.html#4473" class="Bound">t′</a> <a id="4476" class="Symbol">:</a> <a id="4478" href="A202401.About.html#4465" class="Bound">Γ</a> <a id="4480" href="A202401.STLC-Base.html#457" class="Datatype Operator">⊢</a> <a id="4482" href="A202401.About.html#4467" class="Bound">A</a><a id="4483" class="Symbol">}</a> <a id="4485" class="Symbol">→</a> <a id="4487" href="A202401.About.html#4471" class="Bound">t</a> <a id="4489" href="A202401.STLC-Base.html#1974" class="Datatype Operator">≝</a> <a id="4491" href="A202401.About.html#4473" class="Bound">t′</a> <a id="4494" class="Symbol">→</a> <a id="4496" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟦</a> <a id="4498" href="A202401.About.html#4471" class="Bound">t</a> <a id="4500" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟧</a> <a id="4502" class="Symbol">{</a><a id="4503" href="A202401.About.html#4439" class="Bound">ℳ</a><a id="4504" class="Symbol">}</a> <a id="4506" class="Symbol">{</a><a id="4507" href="A202401.About.html#4451" class="Bound">W</a><a id="4508" class="Symbol">}</a> <a id="4510" href="Agda.Builtin.Equality.html#125" class="Datatype Operator">≡</a> <a id="4512" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟦</a> <a id="4514" href="A202401.About.html#4473" class="Bound">t′</a> <a id="4517" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟧</a>
+
+  <a id="4522" class="Comment">-- Coquand p.68: “extensional equality on semantic objects”</a>
+  <a id="Eq"></a><a id="4584" href="A202401.About.html#4584" class="Postulate">Eq</a> <a id="4587" class="Symbol">:</a> <a id="4589" class="Symbol">∀</a> <a id="4591" class="Symbol">{</a><a id="4592" href="A202401.About.html#4592" class="Bound">ℳ</a> <a id="4594" class="Symbol">:</a> <a id="4596" href="A202401.STLC-Base-WNF-NBE2.html#409" class="Record">Model</a><a id="4601" class="Symbol">}</a> <a id="4603" class="Symbol">{</a><a id="4604" href="A202401.About.html#4604" class="Bound">W</a> <a id="4606" class="Symbol">:</a> <a id="4608" href="A202401.STLC-Base-WNF-NBE2.html#440" class="Field">World</a> <a id="4614" href="A202401.About.html#4592" class="Bound">ℳ</a><a id="4615" class="Symbol">}</a> <a id="4617" href="A202401.About.html#4617" class="Bound">A</a> <a id="4619" class="Symbol">→</a> <a id="4621" href="A202401.About.html#4592" class="Bound">ℳ</a> <a id="4623" href="A202401.Kit4.html#1647" class="Function Operator">/</a> <a id="4625" href="A202401.About.html#4604" class="Bound">W</a> <a id="4627" href="A202401.Kit4.html#1647" class="Function Operator">⊩</a> <a id="4629" href="A202401.About.html#4617" class="Bound">A</a> <a id="4631" class="Symbol">→</a> <a id="4633" href="A202401.About.html#4592" class="Bound">ℳ</a> <a id="4635" href="A202401.Kit4.html#1647" class="Function Operator">/</a> <a id="4637" href="A202401.About.html#4604" class="Bound">W</a> <a id="4639" href="A202401.Kit4.html#1647" class="Function Operator">⊩</a> <a id="4641" href="A202401.About.html#4617" class="Bound">A</a> <a id="4643" class="Symbol">→</a> <a id="4645" class="PrimitiveType">Set</a>
+
+  <a id="4652" class="Comment">-- Coquand p.73</a>
+  <a id="thm-1"></a><a id="4670" href="A202401.About.html#4670" class="Postulate">thm-1</a> <a id="4676" class="Symbol">:</a> <a id="4678" class="Symbol">∀</a> <a id="4680" class="Symbol">{</a><a id="4681" href="A202401.About.html#4681" class="Bound">Γ</a> <a id="4683" href="A202401.About.html#4683" class="Bound">A</a><a id="4684" class="Symbol">}</a> <a id="4686" class="Symbol">{</a><a id="4687" href="A202401.About.html#4687" class="Bound">v</a> <a id="4689" href="A202401.About.html#4689" class="Bound">v′</a> <a id="4692" class="Symbol">:</a> <a id="4694" href="A202401.STLC-Base-WNF-NBE2.html#1313" class="Function">𝒞</a> <a id="4696" href="A202401.Kit4.html#1647" class="Function Operator">/</a> <a id="4698" href="A202401.About.html#4681" class="Bound">Γ</a> <a id="4700" href="A202401.Kit4.html#1647" class="Function Operator">⊩</a> <a id="4702" href="A202401.About.html#4683" class="Bound">A</a><a id="4703" class="Symbol">}</a> <a id="4705" class="Symbol">→</a> <a id="4707" href="A202401.About.html#4584" class="Postulate">Eq</a> <a id="4710" href="A202401.About.html#4683" class="Bound">A</a> <a id="4712" href="A202401.About.html#4687" class="Bound">v</a> <a id="4714" href="A202401.About.html#4689" class="Bound">v′</a> <a id="4717" class="Symbol">→</a> <a id="4719" href="A202401.STLC-Base-WNF-NBE2.html#1723" class="Function">↓</a> <a id="4721" class="Symbol">{</a><a id="4722" href="A202401.About.html#4683" class="Bound">A</a><a id="4723" class="Symbol">}</a> <a id="4725" href="A202401.About.html#4687" class="Bound">v</a> <a id="4727" href="Agda.Builtin.Equality.html#125" class="Datatype Operator">≡</a> <a id="4729" href="A202401.STLC-Base-WNF-NBE2.html#1723" class="Function">↓</a> <a id="4731" href="A202401.About.html#4689" class="Bound">v′</a>
+
+  <a id="4737" class="Comment">-- Coquand p.73</a>
+  <a id="cor-1"></a><a id="4755" href="A202401.About.html#4755" class="Postulate">cor-1</a> <a id="4761" class="Symbol">:</a> <a id="4763" class="Symbol">∀</a> <a id="4765" class="Symbol">{</a><a id="4766" href="A202401.About.html#4766" class="Bound">Γ</a> <a id="4768" href="A202401.About.html#4768" class="Bound">A</a><a id="4769" class="Symbol">}</a> <a id="4771" class="Symbol">(</a><a id="4772" href="A202401.About.html#4772" class="Bound">t</a> <a id="4774" href="A202401.About.html#4774" class="Bound">t′</a> <a id="4777" class="Symbol">:</a> <a id="4779" href="A202401.About.html#4766" class="Bound">Γ</a> <a id="4781" href="A202401.STLC-Base.html#457" class="Datatype Operator">⊢</a> <a id="4783" href="A202401.About.html#4768" class="Bound">A</a><a id="4784" class="Symbol">)</a> <a id="4786" class="Symbol">→</a> <a id="4788" href="A202401.About.html#4584" class="Postulate">Eq</a> <a id="4791" href="A202401.About.html#4768" class="Bound">A</a> <a id="4793" class="Symbol">(</a><a id="4794" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟦</a> <a id="4796" href="A202401.About.html#4772" class="Bound">t</a> <a id="4798" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟧</a> <a id="4800" href="A202401.STLC-Base-WNF-NBE2.html#1917" class="Function">vid§</a><a id="4804" class="Symbol">)</a> <a id="4806" class="Symbol">(</a><a id="4807" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟦</a> <a id="4809" href="A202401.About.html#4774" class="Bound">t′</a> <a id="4812" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟧</a> <a id="4814" href="A202401.STLC-Base-WNF-NBE2.html#1917" class="Function">vid§</a><a id="4818" class="Symbol">)</a> <a id="4820" class="Symbol">→</a> <a id="4822" href="A202401.STLC-Base-WNF-NBE2.html#2084" class="Function">nbe</a> <a id="4826" href="A202401.About.html#4772" class="Bound">t</a> <a id="4828" href="Agda.Builtin.Equality.html#125" class="Datatype Operator">≡</a> <a id="4830" href="A202401.STLC-Base-WNF-NBE2.html#2084" class="Function">nbe</a> <a id="4834" href="A202401.About.html#4774" class="Bound">t′</a>
+
+  <a id="4840" class="Comment">-- Abel p.10: “soundness”, “normalization is compatible with definitional equality”</a>
+  <a id="4926" class="Comment">-- Coquand p.74</a>
+  <a id="4944" class="Comment">-- Kovacs p.45: “completeness”</a>
+  <a id="thm-2"></a><a id="4977" href="A202401.About.html#4977" class="Postulate">thm-2</a> <a id="4983" class="Symbol">:</a> <a id="4985" class="Symbol">∀</a> <a id="4987" class="Symbol">{</a><a id="4988" href="A202401.About.html#4988" class="Bound">Γ</a> <a id="4990" href="A202401.About.html#4990" class="Bound">A</a><a id="4991" class="Symbol">}</a> <a id="4993" class="Symbol">(</a><a id="4994" href="A202401.About.html#4994" class="Bound">t</a> <a id="4996" class="Symbol">:</a> <a id="4998" href="A202401.About.html#4988" class="Bound">Γ</a> <a id="5000" href="A202401.STLC-Base.html#457" class="Datatype Operator">⊢</a> <a id="5002" href="A202401.About.html#4990" class="Bound">A</a><a id="5003" class="Symbol">)</a> <a id="5005" class="Symbol">→</a> <a id="5007" href="A202401.About.html#4994" class="Bound">t</a> <a id="5009" href="A202401.STLC-Base.html#1974" class="Datatype Operator">≝</a> <a id="5011" href="Agda.Builtin.Sigma.html#225" class="Field">fst</a> <a id="5015" class="Symbol">(</a><a id="5016" href="A202401.STLC-Base-WNF-NBE2.html#2084" class="Function">nbe</a> <a id="5020" href="A202401.About.html#4994" class="Bound">t</a><a id="5021" class="Symbol">)</a>
+
+  <a id="5026" class="Comment">-- Coquand p.75: “completeness of conversion rules”</a>
+  <a id="thm-3"></a><a id="5080" href="A202401.About.html#5080" class="Postulate">thm-3</a> <a id="5086" class="Symbol">:</a> <a id="5088" class="Symbol">∀</a> <a id="5090" class="Symbol">{</a><a id="5091" href="A202401.About.html#5091" class="Bound">Γ</a> <a id="5093" href="A202401.About.html#5093" class="Bound">A</a><a id="5094" class="Symbol">}</a> <a id="5096" class="Symbol">(</a><a id="5097" href="A202401.About.html#5097" class="Bound">t</a> <a id="5099" href="A202401.About.html#5099" class="Bound">t′</a> <a id="5102" class="Symbol">:</a> <a id="5104" href="A202401.About.html#5091" class="Bound">Γ</a> <a id="5106" href="A202401.STLC-Base.html#457" class="Datatype Operator">⊢</a> <a id="5108" href="A202401.About.html#5093" class="Bound">A</a><a id="5109" class="Symbol">)</a> <a id="5111" class="Symbol">→</a> <a id="5113" href="A202401.About.html#4584" class="Postulate">Eq</a> <a id="5116" href="A202401.About.html#5093" class="Bound">A</a> <a id="5118" class="Symbol">(</a><a id="5119" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟦</a> <a id="5121" href="A202401.About.html#5097" class="Bound">t</a> <a id="5123" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟧</a> <a id="5125" href="A202401.STLC-Base-WNF-NBE2.html#1917" class="Function">vid§</a><a id="5129" class="Symbol">)</a> <a id="5131" class="Symbol">(</a><a id="5132" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟦</a> <a id="5134" href="A202401.About.html#5099" class="Bound">t′</a> <a id="5137" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟧</a> <a id="5139" href="A202401.STLC-Base-WNF-NBE2.html#1917" class="Function">vid§</a><a id="5143" class="Symbol">)</a> <a id="5145" class="Symbol">→</a> <a id="5147" href="A202401.About.html#5097" class="Bound">t</a> <a id="5149" href="A202401.STLC-Base.html#1974" class="Datatype Operator">≝</a> <a id="5151" href="A202401.About.html#5099" class="Bound">t′</a>
+
+  <a id="5157" class="Comment">-- Coquand p.76: “soundness of conversion rules”</a>
+  <a id="thm-4"></a><a id="5208" href="A202401.About.html#5208" class="Postulate">thm-4</a> <a id="5214" class="Symbol">:</a> <a id="5216" class="Symbol">∀</a> <a id="5218" class="Symbol">{</a><a id="5219" href="A202401.About.html#5219" class="Bound">ℳ</a> <a id="5221" class="Symbol">:</a> <a id="5223" href="A202401.STLC-Base-WNF-NBE2.html#409" class="Record">Model</a><a id="5228" class="Symbol">}</a> <a id="5230" class="Symbol">{</a><a id="5231" href="A202401.About.html#5231" class="Bound">W</a> <a id="5233" class="Symbol">:</a> <a id="5235" href="A202401.STLC-Base-WNF-NBE2.html#440" class="Field">World</a> <a id="5241" href="A202401.About.html#5219" class="Bound">ℳ</a><a id="5242" class="Symbol">}</a> <a id="5244" class="Symbol">{</a><a id="5245" href="A202401.About.html#5245" class="Bound">Γ</a> <a id="5247" href="A202401.About.html#5247" class="Bound">A</a><a id="5248" class="Symbol">}</a> <a id="5250" class="Symbol">(</a><a id="5251" href="A202401.About.html#5251" class="Bound">t</a> <a id="5253" href="A202401.About.html#5253" class="Bound">t′</a> <a id="5256" class="Symbol">:</a> <a id="5258" href="A202401.About.html#5245" class="Bound">Γ</a> <a id="5260" href="A202401.STLC-Base.html#457" class="Datatype Operator">⊢</a> <a id="5262" href="A202401.About.html#5247" class="Bound">A</a><a id="5263" class="Symbol">)</a> <a id="5265" class="Symbol">(</a><a id="5266" href="A202401.About.html#5266" class="Bound">γ</a> <a id="5268" class="Symbol">:</a> <a id="5270" href="A202401.About.html#5219" class="Bound">ℳ</a> <a id="5272" href="A202401.Kit4.html#1740" class="Function Operator">/</a> <a id="5274" href="A202401.About.html#5231" class="Bound">W</a> <a id="5276" href="A202401.Kit4.html#1740" class="Function Operator">⊩§</a> <a id="5279" href="A202401.About.html#5245" class="Bound">Γ</a><a id="5280" class="Symbol">)</a> <a id="5282" class="Symbol">→</a> <a id="5284" href="A202401.About.html#5251" class="Bound">t</a> <a id="5286" href="A202401.STLC-Base.html#1974" class="Datatype Operator">≝</a> <a id="5288" href="A202401.About.html#5253" class="Bound">t′</a> <a id="5291" class="Symbol">→</a>
+         <a id="5302" href="A202401.About.html#4584" class="Postulate">Eq</a> <a id="5305" href="A202401.About.html#5247" class="Bound">A</a> <a id="5307" class="Symbol">(</a><a id="5308" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟦</a> <a id="5310" href="A202401.About.html#5251" class="Bound">t</a> <a id="5312" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟧</a> <a id="5314" href="A202401.About.html#5266" class="Bound">γ</a><a id="5315" class="Symbol">)</a> <a id="5317" class="Symbol">(</a><a id="5318" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟦</a> <a id="5320" href="A202401.About.html#5253" class="Bound">t′</a> <a id="5323" href="A202401.STLC-Base-WNF-NBE2.html#1044" class="Function Operator">⟧</a> <a id="5325" href="A202401.About.html#5266" class="Bound">γ</a><a id="5326" class="Symbol">)</a>
+
+  <a id="5331" class="Comment">-- Coquand p.76: “correctness [soundness?] of decision algorithm for conversion”</a>
+  <a id="thm-5"></a><a id="5414" href="A202401.About.html#5414" class="Postulate">thm-5</a> <a id="5420" class="Symbol">:</a> <a id="5422" class="Symbol">∀</a> <a id="5424" class="Symbol">{</a><a id="5425" href="A202401.About.html#5425" class="Bound">Γ</a> <a id="5427" href="A202401.About.html#5427" class="Bound">A</a><a id="5428" class="Symbol">}</a> <a id="5430" class="Symbol">(</a><a id="5431" href="A202401.About.html#5431" class="Bound">t</a> <a id="5433" href="A202401.About.html#5433" class="Bound">t′</a> <a id="5436" class="Symbol">:</a> <a id="5438" href="A202401.About.html#5425" class="Bound">Γ</a> <a id="5440" href="A202401.STLC-Base.html#457" class="Datatype Operator">⊢</a> <a id="5442" href="A202401.About.html#5427" class="Bound">A</a><a id="5443" class="Symbol">)</a> <a id="5445" class="Symbol">→</a> <a id="5447" href="A202401.STLC-Base-WNF-NBE2.html#2084" class="Function">nbe</a> <a id="5451" href="A202401.About.html#5431" class="Bound">t</a> <a id="5453" href="Agda.Builtin.Equality.html#125" class="Datatype Operator">≡</a> <a id="5455" href="A202401.STLC-Base-WNF-NBE2.html#2084" class="Function">nbe</a> <a id="5459" href="A202401.About.html#5433" class="Bound">t′</a> <a id="5462" class="Symbol">→</a> <a id="5464" href="A202401.About.html#5431" class="Bound">t</a> <a id="5466" href="A202401.STLC-Base.html#1974" class="Datatype Operator">≝</a> <a id="5468" href="A202401.About.html#5433" class="Bound">t′</a>
+
+  <a id="lem-t"></a><a id="5474" href="A202401.About.html#5474" class="Postulate">lem-t</a> <a id="5480" class="Symbol">:</a> <a id="5482" class="Symbol">∀</a> <a id="5484" class="Symbol">{</a><a id="5485" href="A202401.About.html#5485" class="Bound">Γ</a><a id="5486" class="Symbol">}</a> <a id="5488" class="Symbol">→</a> <a id="5490" href="A202401.STLC-Base-WNF-NBE2.html#1917" class="Function">vid§</a> <a id="5495" class="Symbol">{</a><a id="5496" class="Argument">Γ</a> <a id="5498" class="Symbol">=</a> <a id="5500" href="A202401.About.html#5485" class="Bound">Γ</a><a id="5501" class="Symbol">}</a> <a id="5503" href="Agda.Builtin.Equality.html#125" class="Datatype Operator">≡</a> <a id="5505" href="A202401.Kit4.html#1510" class="Function">vren§</a> <a id="5511" class="Symbol">(</a><a id="5512" href="A202401.STLC-Base-WNF-NBE2.html#490" class="Field">refl≤</a> <a id="5518" href="A202401.STLC-Base-WNF-NBE2.html#1313" class="Function">𝒞</a><a id="5519" class="Symbol">)</a> <a id="5521" href="A202401.STLC-Base-WNF-NBE2.html#1917" class="Function">vid§</a>
+
+<a id="5527" class="Comment">-- -- Abel p.10: “completeness”, “definitionally equal terms have identical normal forms”</a>
+<a id="5617" class="Comment">-- -- Coquand p.76: “completeness of decision algorithm for conversion”</a>
+<a id="5689" class="Comment">-- -- Kovacs p.52: “soundness”</a>
+<a id="5720" class="Comment">-- module _ where</a>
+<a id="5738" class="Comment">--   open ≡-Reasoning</a>
+
+<a id="5761" class="Comment">--   thm-6 : ∀ {Γ A} {t t′ : Γ ⊢ A} → t ≝ t′ → nbe t ≡ nbe t′</a>
+<a id="5823" class="Comment">--   thm-6 refl≝             = refl</a>
+<a id="5859" class="Comment">--   thm-6 (sym≝ deq)        with thm-k deq</a>
+<a id="5903" class="Comment">--   ... | eq                  = (λ v → ↓ (v vid§)) &amp; eq ⁻¹</a>
+<a id="5963" class="Comment">--   thm-6 (trans≝ deq deq′) with thm-k deq | thm-k deq′</a>
+<a id="6020" class="Comment">--   ... | eq | eq′            = (λ v → ↓ (v vid§)) &amp; (eq ⋮ eq′)</a>
+<a id="6085" class="Comment">--   thm-6 {Γ} (congλ deq)   with thm-k {ℳ = 𝒞} {W = Γ} deq -- TODO</a>
+<a id="6153" class="Comment">--   ... | eq                  = {!!}</a>
+<a id="6191" class="Comment">--   thm-6 (cong$ {t₁ = t₁} {t₁′} {t₂} {t₂′} deq₁ deq₂) with thm-k deq₁ | thm-k deq₂</a>
+<a id="6276" class="Comment">--   ... | eq | eq′ = ↓ &amp; (</a>
+<a id="6304" class="Comment">--       begin</a>
+<a id="6319" class="Comment">--         ⟦ t₁ ⟧ vid§ id⊑ (⟦ t₂ ⟧ vid§)</a>
+<a id="6360" class="Comment">--       ≡⟨ ⟦ t₁ ⟧ vid§ id⊑ &amp; congapp eq′ vid§ ⟩</a>
+<a id="6409" class="Comment">--         ⟦ t₁ ⟧ vid§ id⊑ (⟦ t₂′ ⟧ vid§)</a>
+<a id="6451" class="Comment">--       ≡⟨ congapp (congapp (congapp′ (congapp eq vid§)) id⊑) (⟦ t₂′ ⟧ vid§) ⟩</a>
+<a id="6531" class="Comment">--         ⟦ t₁′ ⟧ vid§ id⊑ (⟦ t₂′ ⟧ vid§)</a>
+<a id="6574" class="Comment">--       ∎)</a>
+<a id="6586" class="Comment">--   thm-6 (βred⊃ {t₁ = t₁} {t₂} refl) = ↓ &amp; (</a>
+<a id="6633" class="Comment">--       begin</a>
+<a id="6648" class="Comment">--         ⟦ ⌜λ⌝ t₁ ⌜$⌝ t₂ ⟧ vid§</a>
+<a id="6682" class="Comment">--       ≡⟨⟩</a>
+<a id="6695" class="Comment">--         ⟦ t₁ ⟧ (vren§ id⊑ vid§ , ⟦ t₂ ⟧ vid§)</a>
+<a id="6744" class="Comment">--       ≡⟨ (λ γ → ⟦ t₁ ⟧ (γ , ⟦ t₂ ⟧ vid§)) &amp; lem-t ⁻¹ ⟩</a>
+<a id="6802" class="Comment">--         ⟦ t₁ ⟧ (vid§ , ⟦ t₂ ⟧ vid§)</a>
+<a id="6841" class="Comment">--       ≡⟨ thm-i t₁ t₂ vid§ ⟩</a>
+<a id="6872" class="Comment">--         ⟦ t₁ [ t₂ ] ⟧ vid§</a>
+<a id="6902" class="Comment">--       ∎)</a>
+<a id="6914" class="Comment">--   thm-6 {Γ} (ηexp⊃ refl) = {!!} -- TODO</a>
+
+<a id="6958" class="Comment">-- -- Kovacs p.59: “decision procedure for conversion”</a>
+<a id="7013" class="Comment">-- module _ where</a>
+<a id="7031" class="Comment">--   open ≝-Reasoning</a>
+
+<a id="7054" class="Comment">--   _≝?_ : ∀ {Γ A} (t t′ : Γ ⊢ A) → Dec (t ≝ t′)</a>
+<a id="7104" class="Comment">--   t ≝? t′      with fst (nbe t) ≟ fst (nbe t′)</a>
+<a id="7154" class="Comment">--   ... | no ¬eq   = no λ eq → (fst &amp; thm-6 eq) ↯ ¬eq</a>
+<a id="7209" class="Comment">--   ... | yes eq   = yes (</a>
+<a id="7237" class="Comment">--       begin</a>
+<a id="7252" class="Comment">--         t</a>
+<a id="7265" class="Comment">--       ≝⟨ thm-2 t ⟩</a>
+<a id="7287" class="Comment">--         fst (nbe t)</a>
+<a id="7310" class="Comment">--       ≡⟨ eq ⟩</a>
+<a id="7327" class="Comment">--         fst (nbe t′)</a>
+<a id="7351" class="Comment">--       ≝˘⟨ thm-2 t′ ⟩</a>
+<a id="7375" class="Comment">--         t′</a>
+<a id="7389" class="Comment">--       ∎)</a>
+
+
+<a id="7403" class="Comment">-- ----------------------------------------------------------------------------------------------------</a>
+</pre></body></html>

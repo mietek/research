@@ -1,0 +1,107 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>A201801.SequentCalculusDraft2c</title><link rel="stylesheet" href="AgdaPP.css"></head><body><pre class="Agda"><a id="1" class="Symbol">{-#</a> <a id="5" class="Keyword">OPTIONS</a> <a id="13" class="Pragma">--allow-unsolved-metas</a> <a id="36" class="Symbol">#-}</a>
+
+<a id="41" class="Keyword">module</a> <a id="48" href="A201801.SequentCalculusDraft2c.html" class="Module">A201801.SequentCalculusDraft2c</a> <a id="79" class="Keyword">where</a>
+
+<a id="86" class="Keyword">open</a> <a id="91" class="Keyword">import</a> <a id="98" href="A201801.Prelude.html" class="Module">A201801.Prelude</a>
+<a id="114" class="Keyword">open</a> <a id="119" class="Keyword">import</a> <a id="126" href="A201801.Category.html" class="Module">A201801.Category</a>
+<a id="143" class="Keyword">open</a> <a id="148" class="Keyword">import</a> <a id="155" href="A201801.List.html" class="Module">A201801.List</a>
+<a id="168" class="Keyword">open</a> <a id="173" class="Keyword">import</a> <a id="180" href="A201801.ListLemmas.html" class="Module">A201801.ListLemmas</a>
+<a id="199" class="Keyword">open</a> <a id="204" class="Keyword">import</a> <a id="211" href="A201801.AllList.html" class="Module">A201801.AllList</a>
+<a id="227" class="Keyword">open</a> <a id="232" class="Keyword">import</a> <a id="239" href="A201801.FullIPLPropositions.html" class="Module">A201801.FullIPLPropositions</a>
+<a id="267" class="Keyword">open</a> <a id="272" class="Keyword">import</a> <a id="279" href="A201801.FullIPLDerivations.html" class="Module">A201801.FullIPLDerivations</a> <a id="306" class="Keyword">hiding</a> <a id="313" class="Symbol">(</a><a id="314" href="A201801.FullIPLDerivations.html#3575" class="Function">cut</a><a id="317" class="Symbol">)</a>
+<a id="319" class="Keyword">open</a> <a id="324" class="Keyword">import</a> <a id="331" href="A201801.SequentCalculusDraft.html" class="Module">A201801.SequentCalculusDraft</a>
+<a id="360" class="Keyword">open</a> <a id="365" class="Keyword">import</a> <a id="372" href="A201801.SequentCalculusDraft2a.html" class="Module">A201801.SequentCalculusDraft2a</a>
+
+
+<a id="405" class="Comment">--------------------------------------------------------------------------------</a>
+
+
+<a id="488" class="Comment">-- TODO: unfinished</a>
+<a id="508" class="Comment">-- -- {-# TERMINATING #-}</a>
+<a id="534" class="Comment">-- wub : ∀ {Γ Ξ A} → Γ ⟹ Ξ all → Ξ ⟹ A</a>
+<a id="573" class="Comment">--                 → Γ ⟹ A</a>
+<a id="600" class="Comment">-- wub ξ (⊃R ℰ)       = ⊃R (wub (liftsₛ ξ) ℰ)</a>
+<a id="646" class="Comment">-- wub ξ (∧R ℰ₁ ℰ₂)   = ∧R (wub ξ ℰ₁) (wub ξ ℰ₂)</a>
+<a id="695" class="Comment">-- wub ξ 𝟙R           = 𝟙R</a>
+<a id="722" class="Comment">-- wub ξ (∨R₁ ℰ)      = ∨R₁ (wub ξ ℰ)</a>
+<a id="760" class="Comment">-- wub ξ (∨R₂ ℰ)      = ∨R₂ (wub ξ ℰ)</a>
+<a id="798" class="Comment">-- wub ξ (var j)      = get ξ j</a>
+
+<a id="831" class="Comment">-- wub ∙ ℰ = renₛ bot⊒ ℰ</a>
+
+<a id="857" class="Comment">-- wub (ξ , ⊃R 𝒟)     ℰ = {!!}</a>
+<a id="888" class="Comment">-- wub (ξ , ∧R 𝒟₁ 𝒟₂) ℰ = {!!}</a>
+
+<a id="920" class="Comment">-- wub (ξ , 𝟙R) (⊃L j ℰ₁ ℰ₂) = {!!}</a>
+<a id="956" class="Comment">-- wub (ξ , 𝟙R) (∧L₁ j ℰ)    = {!!}</a>
+<a id="992" class="Comment">-- wub (ξ , 𝟙R) (∧L₂ j ℰ)    = {!!}</a>
+<a id="1028" class="Comment">-- wub (ξ , 𝟙R) (𝟘L j)       = 𝟘L {!j!}</a>
+<a id="1068" class="Comment">-- wub (ξ , 𝟙R) (∨L j ℰ₁ ℰ₂) = {!!}</a>
+
+<a id="1105" class="Comment">-- wub (ξ , ∨R₁ 𝒟)    ℰ = {!!}</a>
+<a id="1136" class="Comment">-- wub (ξ , ∨R₂ 𝒟)    ℰ = {!!}</a>
+
+<a id="1168" class="Comment">-- wub (ξ , var i) ℰ = {!!}</a>
+
+<a id="1197" class="Comment">-- wub (ξ , ⊃L i 𝒟₁ 𝒟₂) ℰ = {!!}</a>
+<a id="1230" class="Comment">-- wub (ξ , ∧L₁ i 𝒟) ℰ = {!!}</a>
+<a id="1260" class="Comment">-- wub (ξ , ∧L₂ i 𝒟) ℰ = {!!}</a>
+<a id="1290" class="Comment">-- wub (ξ , 𝟘L i) ℰ = {!!}</a>
+<a id="1317" class="Comment">-- wub (ξ , ∨L i 𝒟₁ 𝒟₂) ℰ = {!!}</a>
+<a id="1350" class="Comment">-- -- wub ξ (⊃L j ℰ₁ ℰ₂) = {!!}</a>
+<a id="1382" class="Comment">-- -- wub ξ (∧L₁ j ℰ)    = {!!}</a>
+<a id="1414" class="Comment">-- -- wub ξ (∧L₂ j ℰ)    = {!!}</a>
+<a id="1446" class="Comment">-- -- wub ξ (𝟘L j)       = {!!}</a>
+<a id="1478" class="Comment">-- -- wub ξ (∨L j ℰ₁ ℰ₂) = {!!}</a>
+
+
+<a id="1512" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="1598" class="Comment">-- -- TODO: unfinished</a>
+<a id="1621" class="Comment">-- -- {-# TERMINATING #-}</a>
+<a id="1647" class="Comment">-- -- wut : ∀ {A C Γ} → (i : Γ ∋ A) → Γ - i ⟹ A → Γ ⟹ C</a>
+<a id="1703" class="Comment">-- --                 → Γ - i ⟹ C</a>
+
+<a id="1738" class="Comment">-- -- wut i 𝒟 (⊃R ℰ)     = ⊃R (wut (suc i) (wkₛ 𝒟) ℰ)</a>
+<a id="1792" class="Comment">-- -- wut i 𝒟 (∧R ℰ₁ ℰ₂) = ∧R (wut i 𝒟 ℰ₁) (wut i 𝒟 ℰ₂)</a>
+<a id="1848" class="Comment">-- -- wut i 𝒟 𝟙R         = 𝟙R</a>
+<a id="1878" class="Comment">-- -- wut i 𝒟 (∨R₁ ℰ)    = ∨R₁ (wut i 𝒟 ℰ)</a>
+<a id="1921" class="Comment">-- -- wut i 𝒟 (∨R₂ ℰ)    = ∨R₂ (wut i 𝒟 ℰ)</a>
+
+<a id="1965" class="Comment">-- -- wut i 𝒟 (var  k) with i ≟∋ k</a>
+<a id="2000" class="Comment">-- -- wut i 𝒟 (var .i) | same .i   = 𝒟</a>
+<a id="2039" class="Comment">-- -- wut i 𝒟 (var ._) | diff .i k = var k</a>
+
+<a id="2083" class="Comment">-- -- wut i (var j) ℰ = renₛ (delred⊒ i j) ℰ</a>
+
+<a id="2129" class="Comment">-- -- wut i (⊃L j 𝒟₁ 𝒟₂) ℰ = ⊃L j 𝒟₁ (wut (suc i) 𝒟₂ (wkₛ ℰ))</a>
+<a id="2191" class="Comment">-- -- wut i (∧L₁ j 𝒟)    ℰ = ∧L₁ j (wut (suc i) 𝒟 (wkₛ ℰ))</a>
+<a id="2250" class="Comment">-- -- wut i (∧L₂ j 𝒟)    ℰ = ∧L₂ j (wut (suc i) 𝒟 (wkₛ ℰ))</a>
+<a id="2309" class="Comment">-- -- wut i (𝟘L j)       ℰ = 𝟘L j</a>
+<a id="2343" class="Comment">-- -- wut i (∨L j 𝒟₁ 𝒟₂) ℰ = ∨L j (wut (suc i) 𝒟₁ (wkₛ ℰ)) (wut (suc i) 𝒟₂ (wkₛ ℰ))</a>
+
+<a id="2428" class="Comment">-- -- wut i 𝒟 (⊃L  k ℰ₁ ℰ₂) with i ≟∋ k</a>
+<a id="2468" class="Comment">-- -- wut i 𝒟 (⊃L .i ℰ₁ ℰ₂) | same .i   = {!!}</a>
+<a id="2515" class="Comment">-- -- wut i 𝒟 (⊃L ._ ℰ₁ ℰ₂) | diff .i k = ⊃L k (wut i 𝒟 ℰ₁) (wut (suc i) (wkₛ 𝒟) ℰ₂)</a>
+
+<a id="2601" class="Comment">-- -- wut i 𝒟 (∧L₁  k ℰ) with i ≟∋ k</a>
+<a id="2638" class="Comment">-- -- wut i 𝒟 (∧L₁ .i ℰ) | same .i   = {!!}</a>
+<a id="2682" class="Comment">-- -- wut i 𝒟 (∧L₁ ._ ℰ) | diff .i k = ∧L₁ k (wut (suc i) (wkₛ 𝒟) ℰ)</a>
+
+<a id="2752" class="Comment">-- -- wut i 𝒟 (∧L₂  k ℰ) with i ≟∋ k</a>
+<a id="2789" class="Comment">-- -- wut i 𝒟 (∧L₂ .i ℰ) | same .i = {!!}</a>
+<a id="2831" class="Comment">-- -- wut i 𝒟 (∧L₂ ._ ℰ) | diff .i k = ∧L₂ k (wut (suc i) (wkₛ 𝒟) ℰ)</a>
+
+<a id="2901" class="Comment">-- -- wut     i 𝒟 (𝟘L  k) with i ≟∋ k</a>
+<a id="2939" class="Comment">-- -- wut {A} i 𝒟 (𝟘L .i) | same .i   = {!!}</a>
+<a id="2984" class="Comment">-- -- wut     i 𝒟 (𝟘L ._) | diff .i k = 𝟘L k</a>
+
+<a id="3030" class="Comment">-- -- wut i 𝒟 (∨L  k ℰ₁ ℰ₂) with i ≟∋ k</a>
+<a id="3070" class="Comment">-- -- wut i 𝒟 (∨L .i ℰ₁ ℰ₂) | same .i   = {!!}</a>
+<a id="3117" class="Comment">-- -- wut i 𝒟 (∨L ._ ℰ₁ ℰ₂) | diff .i k = ∨L k (wut (suc i) (wkₛ 𝒟) ℰ₁) (wut (suc i) (wkₛ 𝒟) ℰ₂)</a>
+
+
+<a id="3216" class="Comment">-- -- --------------------------------------------------------------------------------</a>
+</pre></body></html>

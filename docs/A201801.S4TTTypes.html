@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>A201801.S4TTTypes</title><link rel="stylesheet" href="AgdaPP.css"></head><body><pre class="Agda"><a id="1" class="Keyword">module</a> <a id="8" href="A201801.S4TTTypes.html" class="Module">A201801.S4TTTypes</a> <a id="26" class="Keyword">where</a>
+
+<a id="33" class="Keyword">open</a> <a id="38" class="Keyword">import</a> <a id="45" href="A201801.Prelude.html" class="Module">A201801.Prelude</a>
+<a id="61" class="Keyword">open</a> <a id="66" class="Keyword">import</a> <a id="73" href="A201801.Vec.html" class="Module">A201801.Vec</a>
+
+
+<a id="87" class="Comment">--------------------------------------------------------------------------------</a>
+
+
+<a id="170" class="Keyword">open</a> <a id="175" class="Keyword">import</a> <a id="182" href="A201801.S4Propositions.html" class="Module">A201801.S4Propositions</a> <a id="205" class="Keyword">public</a>
+  <a id="214" class="Keyword">renaming</a> <a id="223" class="Symbol">(</a><a id="224" href="A201801.S4Propositions.html#223" class="Datatype">Form</a> <a id="229" class="Symbol">to</a> <a id="232" href="A201801.S4Propositions.html#223" class="Datatype">Type</a> <a id="237" class="Symbol">;</a> <a id="239" href="A201801.S4Propositions.html#1039" class="Function Operator">_≟ₚ_</a> <a id="244" class="Symbol">to</a> <a id="247" href="A201801.S4Propositions.html#1039" class="Function Operator">_≟ₜ_</a><a id="251" class="Symbol">)</a>
+
+
+<a id="Types"></a><a id="255" href="A201801.S4TTTypes.html#255" class="Function">Types</a> <a id="261" class="Symbol">:</a> <a id="263" href="Agda.Builtin.Nat.html#165" class="Datatype">Nat</a> <a id="267" class="Symbol">→</a> <a id="269" class="PrimitiveType">Set</a>
+<a id="273" href="A201801.S4TTTypes.html#255" class="Function">Types</a> <a id="279" href="A201801.S4TTTypes.html#279" class="Bound">g</a> <a id="281" class="Symbol">=</a> <a id="283" href="A201801.Vec.html#228" class="Datatype">Vec</a> <a id="287" href="A201801.S4Propositions.html#223" class="Datatype">Type</a> <a id="292" href="A201801.S4TTTypes.html#279" class="Bound">g</a>
+
+
+<a id="Asserts"></a><a id="296" href="A201801.S4TTTypes.html#296" class="Function">Asserts</a> <a id="304" class="Symbol">:</a> <a id="306" href="Agda.Builtin.Nat.html#165" class="Datatype">Nat</a> <a id="310" class="Symbol">→</a> <a id="312" class="PrimitiveType">Set</a>
+<a id="316" href="A201801.S4TTTypes.html#296" class="Function">Asserts</a> <a id="324" href="A201801.S4TTTypes.html#324" class="Bound">d</a> <a id="326" class="Symbol">=</a> <a id="328" href="A201801.Vec.html#228" class="Datatype">Vec</a> <a id="332" href="A201801.S4Propositions.html#537" class="Record">Assert</a> <a id="339" href="A201801.S4TTTypes.html#324" class="Bound">d</a>
+
+
+<a id="343" class="Comment">--------------------------------------------------------------------------------</a>
+</pre></body></html>
