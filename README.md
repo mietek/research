@@ -3,7 +3,7 @@ _research_
 
 Work in progress.
 
-[Hyperlinked source](https://mietek.github.io/research/)
+[Hyperlinked source](https://research.mietek.io/)
 
 
 About
