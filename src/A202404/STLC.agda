@@ -137,7 +137,7 @@ uniTy≫ (t₁ ⌜$⌝ t₂) (t₁′ ⌜$⌝ t₂′) = inj⊃₂ (uniTy≫ t�
 uniTy≫ (chk t)     (chk t′)      = refl
 
 mutual
-  -- NOTE: we repeat ourselves here  because Agda doesn't know how to catch-all properly
+  -- NOTE: we repeat ourselves here because Agda doesn't know how to catch-all properly
   check : ∀ (Γ : Ctx) (M : Tm (len Γ)) (A : Ty) → Dec (Γ ⊢ M ≪ A)
   check Γ (⌜λ⌝ x M)   ⌜◦⌝       = no λ { (inf ()) }
   check Γ (⌜λ⌝ x M)   (A ⌜⊃⌝ B) with check (Γ , A) M B
