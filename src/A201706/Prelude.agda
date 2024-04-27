@@ -57,8 +57,6 @@ _∘_ = trans→
 open import Agda.Builtin.Equality public
   using (_≡_ ; refl)
 
-{-# BUILTIN REWRITE _≡_ #-}
-
 infix 4 _≢_
 _≢_ : ∀ {ℓ} {X : Set ℓ} → X → X → Set ℓ
 x ≢ x′ = ¬ (x ≡ x′)
