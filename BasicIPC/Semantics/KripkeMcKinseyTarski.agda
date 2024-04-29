@@ -2,9 +2,9 @@
 -- Kripke-style semantics with abstract worlds.
 -- McKinsey-Tarski embedding.
 
-module BasicIPC.Semantics.KripkeMcKinseyTarski where
+module A201607.BasicIPC.Semantics.KripkeMcKinseyTarski where
 
-open import BasicIPC.Syntax.Common public
+open import A201607.BasicIPC.Syntax.Common public
 
 
 -- Intuitionistic Kripke models.

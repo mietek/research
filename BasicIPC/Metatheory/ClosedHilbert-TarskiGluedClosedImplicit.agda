@@ -1,7 +1,7 @@
-module BasicIPC.Metatheory.ClosedHilbert-TarskiGluedClosedImplicit where
+module A201607.BasicIPC.Metatheory.ClosedHilbert-TarskiGluedClosedImplicit where
 
-open import BasicIPC.Syntax.ClosedHilbert public
-open import BasicIPC.Semantics.TarskiGluedClosedImplicit public
+open import A201607.BasicIPC.Syntax.ClosedHilbert public
+open import A201607.BasicIPC.Semantics.TarskiGluedClosedImplicit public
 
 open ImplicitSyntax (⊢_) public
 

@@ -1,7 +1,7 @@
-module BasicIPC.Metatheory.Gentzen-TarskiConcreteGluedImplicit where
+module A201607.BasicIPC.Metatheory.Gentzen-TarskiConcreteGluedImplicit where
 
-open import BasicIPC.Syntax.Gentzen public
-open import BasicIPC.Semantics.TarskiConcreteGluedImplicit public
+open import A201607.BasicIPC.Syntax.Gentzen public
+open import A201607.BasicIPC.Semantics.TarskiConcreteGluedImplicit public
 
 open ImplicitSyntax (_⊢_) public
 

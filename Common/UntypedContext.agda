@@ -1,6 +1,6 @@
-module Common.UntypedContext where
+module A201607.Common.UntypedContext where
 
-open import Common.Context public
+open import A201607.Common.Context public
 
 
 -- Naturals, as a projection of contexts.

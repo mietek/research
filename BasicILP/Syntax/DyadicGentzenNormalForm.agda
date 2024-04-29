@@ -2,9 +2,9 @@
 -- Gentzen-style formalisation of syntax with context pairs.
 -- Normal forms and neutrals.
 
-module BasicILP.Syntax.DyadicGentzenNormalForm where
+module A201607.BasicILP.Syntax.DyadicGentzenNormalForm where
 
-open import BasicILP.Syntax.DyadicGentzen public
+open import A201607.BasicILP.Syntax.DyadicGentzen public
 
 
 -- Derivations.

@@ -1,7 +1,7 @@
-module BasicIS4.Metatheory.Gentzen-TarskiOvergluedImplicit where
+module A201607.BasicIS4.Metatheory.Gentzen-TarskiOvergluedImplicit where
 
-open import BasicIS4.Syntax.Gentzen public
-open import BasicIS4.Semantics.TarskiOvergluedImplicit public
+open import A201607.BasicIS4.Syntax.Gentzen public
+open import A201607.BasicIS4.Semantics.TarskiOvergluedImplicit public
 
 open ImplicitSyntax (_⊢_) (mono⊢) public
 

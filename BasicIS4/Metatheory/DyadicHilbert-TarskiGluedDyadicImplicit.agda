@@ -1,7 +1,7 @@
-module BasicIS4.Metatheory.DyadicHilbert-TarskiGluedDyadicImplicit where
+module A201607.BasicIS4.Metatheory.DyadicHilbert-TarskiGluedDyadicImplicit where
 
-open import BasicIS4.Syntax.DyadicHilbert public
-open import BasicIS4.Semantics.TarskiGluedDyadicImplicit public
+open import A201607.BasicIS4.Syntax.DyadicHilbert public
+open import A201607.BasicIS4.Semantics.TarskiGluedDyadicImplicit public
 
 open ImplicitSyntax (_⊢_) public
 

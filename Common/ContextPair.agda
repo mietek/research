@@ -1,6 +1,6 @@
-module Common.ContextPair where
+module A201607.Common.ContextPair where
 
-open import Common.Context public
+open import A201607.Common.Context public
 
 
 -- Context pairs.

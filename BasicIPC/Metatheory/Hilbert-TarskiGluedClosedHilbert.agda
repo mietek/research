@@ -1,7 +1,7 @@
-module BasicIPC.Metatheory.Hilbert-TarskiGluedClosedHilbert where
+module A201607.BasicIPC.Metatheory.Hilbert-TarskiGluedClosedHilbert where
 
-open import BasicIPC.Syntax.Hilbert public
-open import BasicIPC.Semantics.TarskiGluedClosedHilbert public
+open import A201607.BasicIPC.Syntax.Hilbert public
+open import A201607.BasicIPC.Semantics.TarskiGluedClosedHilbert public
 
 
 -- Internalisation of syntax as syntax representation in a particular model, for closed terms only.

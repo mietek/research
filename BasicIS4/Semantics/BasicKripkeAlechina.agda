@@ -2,9 +2,9 @@
 -- Basic Kripke-style semantics with abstract worlds, for soundness only.
 -- Alechina-style conditions.
 
-module BasicIS4.Semantics.BasicKripkeAlechina where
+module A201607.BasicIS4.Semantics.BasicKripkeAlechina where
 
-open import BasicIS4.Syntax.Common public
+open import A201607.BasicIS4.Syntax.Common public
 
 
 -- Intuitionistic modal Kripke models, with Alechina-Mendler-de Paiva-Ritter frame conditions.

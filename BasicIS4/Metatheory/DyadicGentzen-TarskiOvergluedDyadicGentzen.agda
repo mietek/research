@@ -1,7 +1,7 @@
-module BasicIS4.Metatheory.DyadicGentzen-TarskiOvergluedDyadicGentzen where
+module A201607.BasicIS4.Metatheory.DyadicGentzen-TarskiOvergluedDyadicGentzen where
 
-open import BasicIS4.Syntax.DyadicGentzen public
-open import BasicIS4.Semantics.TarskiOvergluedDyadicGentzen public
+open import A201607.BasicIS4.Syntax.DyadicGentzen public
+open import A201607.BasicIS4.Semantics.TarskiOvergluedDyadicGentzen public
 
 
 

@@ -1,7 +1,7 @@
-module BasicIS4.Metatheory.Hilbert-TarskiGluedHilbert where
+module A201607.BasicIS4.Metatheory.Hilbert-TarskiGluedHilbert where
 
-open import BasicIS4.Syntax.Hilbert public
-open import BasicIS4.Semantics.TarskiGluedHilbert public
+open import A201607.BasicIS4.Syntax.Hilbert public
+open import A201607.BasicIS4.Semantics.TarskiGluedHilbert public
 
 
 -- Internalisation of syntax as syntax representation in a particular model.

@@ -2,9 +2,9 @@
 -- Gentzen-style formalisation of syntax.
 -- Simple terms.
 
-module BasicT.Syntax.Gentzen where
+module A201607.BasicT.Syntax.Gentzen where
 
-open import BasicT.Syntax.Common public
+open import A201607.BasicT.Syntax.Common public
 
 
 -- Derivations.

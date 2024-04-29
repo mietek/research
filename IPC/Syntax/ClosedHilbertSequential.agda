@@ -2,9 +2,9 @@
 -- Hilbert-style formalisation of closed syntax.
 -- Sequences of terms.
 
-module IPC.Syntax.ClosedHilbertSequential where
+module A201607.IPC.Syntax.ClosedHilbertSequential where
 
-open import IPC.Syntax.Common public
+open import A201607.IPC.Syntax.Common public
 
 
 -- Derivations.

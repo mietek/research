@@ -1,6 +1,6 @@
-module OlderBasicILP.Indirect where
+module A201607.OlderBasicILP.Indirect where
 
-open import Common.Context public
+open import A201607.Common.Context public
 
 
 -- Propositions of intuitionistic logic of proofs, without ∨, ⊥, or +.

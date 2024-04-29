@@ -2,9 +2,9 @@
 -- Gentzen-style formalisation of syntax.
 -- Normal forms, neutrals, and spines.
 
-module IPC.Syntax.GentzenSpinalNormalForm where
+module A201607.IPC.Syntax.GentzenSpinalNormalForm where
 
-open import IPC.Syntax.Gentzen public
+open import A201607.IPC.Syntax.Gentzen public
 
 
 -- Commuting propositions for neutrals.

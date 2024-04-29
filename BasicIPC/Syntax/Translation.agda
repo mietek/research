@@ -1,15 +1,15 @@
 -- Basic intuitionistic propositional calculus, without ∨ or ⊥.
 -- Translation between different formalisations of syntax.
 
-module BasicIPC.Syntax.Translation where
+module A201607.BasicIPC.Syntax.Translation where
 
-open import BasicIPC.Syntax.Common public
+open import A201607.BasicIPC.Syntax.Common public
 
-import BasicIPC.Syntax.ClosedHilbertSequential as CHS
-import BasicIPC.Syntax.ClosedHilbert as CH
-import BasicIPC.Syntax.HilbertSequential as HS
-import BasicIPC.Syntax.Hilbert as H
-import BasicIPC.Syntax.Gentzen as G
+import A201607.BasicIPC.Syntax.ClosedHilbertSequential as CHS
+import A201607.BasicIPC.Syntax.ClosedHilbert as CH
+import A201607.BasicIPC.Syntax.HilbertSequential as HS
+import A201607.BasicIPC.Syntax.Hilbert as H
+import A201607.BasicIPC.Syntax.Gentzen as G
 
 open HS using () renaming (_⊦⊢_ to HS⟨_⊦⊢_⟩ ; _⊢_ to HS⟨_⊢_⟩) public
 open H using () renaming (_⊢_ to H⟨_⊢_⟩) public

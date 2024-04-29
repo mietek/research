@@ -1,15 +1,15 @@
 -- Intuitionistic propositional calculus.
 -- Translation between different formalisations of syntax.
 
-module IPC.Syntax.Translation where
+module A201607.IPC.Syntax.Translation where
 
-open import IPC.Syntax.Common public
+open import A201607.IPC.Syntax.Common public
 
-import IPC.Syntax.ClosedHilbertSequential as CHS
-import IPC.Syntax.ClosedHilbert as CH
-import IPC.Syntax.HilbertSequential as HS
-import IPC.Syntax.Hilbert as H
-import IPC.Syntax.Gentzen as G
+import A201607.IPC.Syntax.ClosedHilbertSequential as CHS
+import A201607.IPC.Syntax.ClosedHilbert as CH
+import A201607.IPC.Syntax.HilbertSequential as HS
+import A201607.IPC.Syntax.Hilbert as H
+import A201607.IPC.Syntax.Gentzen as G
 
 open HS using () renaming (_⊦⊢_ to HS⟨_⊦⊢_⟩ ; _⊢_ to HS⟨_⊢_⟩) public
 open H using () renaming (_⊢_ to H⟨_⊢_⟩) public

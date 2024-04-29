@@ -1,7 +1,7 @@
-module IPC.Metatheory.Gentzen-KripkeExploding where
+module A201607.IPC.Metatheory.Gentzen-KripkeExploding where
 
-open import IPC.Syntax.Gentzen public
-open import IPC.Semantics.KripkeExploding public
+open import A201607.IPC.Syntax.Gentzen public
+open import A201607.IPC.Semantics.KripkeExploding public
 
 
 -- Soundness with respect to all models, or evaluation.

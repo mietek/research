@@ -2,10 +2,10 @@
 -- Tarski-style semantics with glueing for α, ▻, and □, after Coquand-Dybjer and Gabbay-Nanevski.
 -- Hilbert-style closed syntax.
 
-module BasicIS4.Semantics.TarskiClosedOvergluedHilbert where
+module A201607.BasicIS4.Semantics.TarskiClosedOvergluedHilbert where
 
-open import BasicIS4.Syntax.Common public
-open import Common.Semantics public
+open import A201607.BasicIS4.Syntax.Common public
+open import A201607.Common.Semantics public
 
 
 -- Tarski models.

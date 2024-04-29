@@ -1,9 +1,9 @@
 -- Basic intuitionistic modal logic S4, without ∨, ⊥, or ◇.
 -- Canonical model equipment for Kripke-style semantics.
 
-module BasicIS4.Equipment.KripkeDyadicCanonical where
+module A201607.BasicIS4.Equipment.KripkeDyadicCanonical where
 
-open import BasicIS4.Syntax.Common public
+open import A201607.BasicIS4.Syntax.Common public
 
 
 

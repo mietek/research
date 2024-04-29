@@ -2,10 +2,10 @@
 -- Kripke-style semantics with contexts as concrete worlds, and glueing for α and ▻.
 -- Implicit syntax.
 
-module BasicIPC.Semantics.KripkeConcreteGluedImplicit where
+module A201607.BasicIPC.Semantics.KripkeConcreteGluedImplicit where
 
-open import BasicIPC.Syntax.Common public
-open import Common.Semantics public
+open import A201607.BasicIPC.Syntax.Common public
+open import A201607.Common.Semantics public
 
 open ConcreteWorlds (Ty) public
 

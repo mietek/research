@@ -1,8 +1,8 @@
-module Common.Predicate where
+module A201607.Common.Predicate where
 
-open import Common public
+open import A201607.Common public
 
-open import Common.Context public
+open import A201607.Common.Context public
   using (Cx ; VCx ; ∅ ; _,_)
 
 

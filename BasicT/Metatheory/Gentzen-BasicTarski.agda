@@ -1,7 +1,7 @@
-module BasicT.Metatheory.Gentzen-BasicTarski where
+module A201607.BasicT.Metatheory.Gentzen-BasicTarski where
 
-open import BasicT.Syntax.Gentzen public
-open import BasicT.Semantics.BasicTarski public
+open import A201607.BasicT.Syntax.Gentzen public
+open import A201607.BasicT.Semantics.BasicTarski public
 
 
 -- Soundness with respect to all models, or evaluation.

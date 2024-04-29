@@ -1,7 +1,7 @@
-module BasicIS4.Metatheory.ClosedHilbert-TarskiClosedOvergluedImplicit where
+module A201607.BasicIS4.Metatheory.ClosedHilbert-TarskiClosedOvergluedImplicit where
 
-open import BasicIS4.Syntax.ClosedHilbert public
-open import BasicIS4.Semantics.TarskiClosedOvergluedImplicit public
+open import A201607.BasicIS4.Syntax.ClosedHilbert public
+open import A201607.BasicIS4.Semantics.TarskiClosedOvergluedImplicit public
 
 open ImplicitSyntax (⊢_) public
 

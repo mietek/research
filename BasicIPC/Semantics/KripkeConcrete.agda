@@ -1,10 +1,10 @@
 -- Basic intuitionistic propositional calculus, without ∨ or ⊥.
 -- Kripke-style semantics with contexts as concrete worlds.
 
-module BasicIPC.Semantics.KripkeConcrete where
+module A201607.BasicIPC.Semantics.KripkeConcrete where
 
-open import BasicIPC.Syntax.Common public
-open import Common.Semantics public
+open import A201607.BasicIPC.Syntax.Common public
+open import A201607.Common.Semantics public
 
 open ConcreteWorlds (Ty) public
 

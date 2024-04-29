@@ -1,9 +1,9 @@
 -- Intuitionistic propositional calculus.
 -- Basic Tarski-style semantics, for soundness only.
 
-module IPC.Semantics.BasicTarski where
+module A201607.IPC.Semantics.BasicTarski where
 
-open import IPC.Syntax.Common public
+open import A201607.IPC.Syntax.Common public
 
 
 -- Tarski models.

@@ -2,10 +2,10 @@
 -- Tarski-style semantics with glueing for α, ▻, and □, after Gabbay-Nanevski.
 -- Implicit closed syntax.
 
-module BasicIS4.Semantics.TarskiClosedOvergluedImplicit where
+module A201607.BasicIS4.Semantics.TarskiClosedOvergluedImplicit where
 
-open import BasicIS4.Syntax.Common public
-open import Common.Semantics public
+open import A201607.BasicIS4.Syntax.Common public
+open import A201607.Common.Semantics public
 
 
 -- Tarski models.

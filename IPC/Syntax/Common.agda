@@ -1,9 +1,9 @@
 -- Intuitionistic propositional calculus.
 -- Common syntax.
 
-module IPC.Syntax.Common where
+module A201607.IPC.Syntax.Common where
 
-open import Common.Context public
+open import A201607.Common.Context public
 
 
 -- Types, or propositions.

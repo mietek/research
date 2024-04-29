@@ -1,9 +1,9 @@
 -- Basic intuitionistic modal logic S4, without ∨, ⊥, or ◇.
 -- Common syntax.
 
-module BasicIS4.Syntax.Common where
+module A201607.BasicIS4.Syntax.Common where
 
-open import Common.ContextPair public
+open import A201607.Common.ContextPair public
 
 
 -- Types, or propositions.

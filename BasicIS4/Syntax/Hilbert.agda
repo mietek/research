@@ -2,9 +2,9 @@
 -- Hilbert-style formalisation of syntax.
 -- Nested terms.
 
-module BasicIS4.Syntax.Hilbert where
+module A201607.BasicIS4.Syntax.Hilbert where
 
-open import BasicIS4.Syntax.Common public
+open import A201607.BasicIS4.Syntax.Common public
 
 
 -- Derivations.

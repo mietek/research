@@ -1,7 +1,7 @@
-module BasicIPC.Metatheory.Hilbert-KripkeConcreteGluedHilbert where
+module A201607.BasicIPC.Metatheory.Hilbert-KripkeConcreteGluedHilbert where
 
-open import BasicIPC.Syntax.Hilbert public
-open import BasicIPC.Semantics.KripkeConcreteGluedHilbert public
+open import A201607.BasicIPC.Syntax.Hilbert public
+open import A201607.BasicIPC.Semantics.KripkeConcreteGluedHilbert public
 
 
 -- Internalisation of syntax as syntax representation in a particular model.

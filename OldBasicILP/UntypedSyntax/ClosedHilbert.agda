@@ -1,9 +1,9 @@
 -- Hilbert-style formalisation of closed syntax.
 -- Nested terms.
 
-module OldBasicILP.UntypedSyntax.ClosedHilbert where
+module A201607.OldBasicILP.UntypedSyntax.ClosedHilbert where
 
-open import OldBasicILP.UntypedSyntax.Common public
+open import A201607.OldBasicILP.UntypedSyntax.Common public
 
 
 -- Closed, untyped representations.

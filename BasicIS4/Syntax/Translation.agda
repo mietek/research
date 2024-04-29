@@ -1,19 +1,19 @@
 -- Basic intuitionistic modal logic S4, without ∨, ⊥, or ◇.
 -- Translation between different formalisations of syntax.
 
-module BasicIS4.Syntax.Translation where
+module A201607.BasicIS4.Syntax.Translation where
 
-open import BasicIS4.Syntax.Common public
+open import A201607.BasicIS4.Syntax.Common public
 
-import BasicIS4.Syntax.ClosedHilbertSequential as CHS
-import BasicIS4.Syntax.ClosedHilbert as CH
-import BasicIS4.Syntax.HilbertSequential as HS
-import BasicIS4.Syntax.Hilbert as H
-import BasicIS4.Syntax.Gentzen as G
-import BasicIS4.Syntax.DyadicHilbertSequential as DHS
-import BasicIS4.Syntax.DyadicHilbert as DH
-import BasicIS4.Syntax.DyadicGentzen as DG
-import BasicIS4.Syntax.LabelledGentzen as LG
+import A201607.BasicIS4.Syntax.ClosedHilbertSequential as CHS
+import A201607.BasicIS4.Syntax.ClosedHilbert as CH
+import A201607.BasicIS4.Syntax.HilbertSequential as HS
+import A201607.BasicIS4.Syntax.Hilbert as H
+import A201607.BasicIS4.Syntax.Gentzen as G
+import A201607.BasicIS4.Syntax.DyadicHilbertSequential as DHS
+import A201607.BasicIS4.Syntax.DyadicHilbert as DH
+import A201607.BasicIS4.Syntax.DyadicGentzen as DG
+import A201607.BasicIS4.Syntax.LabelledGentzen as LG
 
 open HS using () renaming (_⊦⊢_ to HS⟨_⊦⊢_⟩ ; _⊢_ to HS⟨_⊢_⟩) public
 open H using () renaming (_⊢_ to H⟨_⊢_⟩ ; _⊢⋆_ to H⟨_⊢⋆_⟩) public

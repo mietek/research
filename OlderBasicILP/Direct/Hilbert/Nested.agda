@@ -1,6 +1,6 @@
-module OlderBasicILP.Direct.Hilbert.Nested where
+module A201607.OlderBasicILP.Direct.Hilbert.Nested where
 
-open import Common.Context public
+open import A201607.Common.Context public
 
 
 -- Propositions of intuitionistic logic of proofs, without ∨, ⊥, or +.

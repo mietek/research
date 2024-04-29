@@ -2,9 +2,9 @@
 -- Kripke-style semantics with abstract worlds.
 -- Gödel embedding.
 
-module BasicIPC.Semantics.KripkeGodel where
+module A201607.BasicIPC.Semantics.KripkeGodel where
 
-open import BasicIPC.Syntax.Common public
+open import A201607.BasicIPC.Syntax.Common public
 
 
 -- Kripke models.

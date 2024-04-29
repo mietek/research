@@ -1,7 +1,7 @@
-module BasicIS4.Metatheory.Gentzen-BasicKripkeEwald where
+module A201607.BasicIS4.Metatheory.Gentzen-BasicKripkeEwald where
 
-open import BasicIS4.Syntax.Gentzen public
-open import BasicIS4.Semantics.BasicKripkeEwald public
+open import A201607.BasicIS4.Syntax.Gentzen public
+open import A201607.BasicIS4.Semantics.BasicKripkeEwald public
 
 
 -- Soundness with respect to all models, or evaluation.

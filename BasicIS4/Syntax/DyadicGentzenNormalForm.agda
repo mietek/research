@@ -2,9 +2,9 @@
 -- Gentzen-style formalisation of syntax with context pairs, after Pfenning-Davies.
 -- Normal forms and neutrals.
 
-module BasicIS4.Syntax.DyadicGentzenNormalForm where
+module A201607.BasicIS4.Syntax.DyadicGentzenNormalForm where
 
-open import BasicIS4.Syntax.DyadicGentzen public
+open import A201607.BasicIS4.Syntax.DyadicGentzen public
 
 
 -- Derivations.

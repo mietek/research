@@ -1,7 +1,7 @@
-module BasicIPC.Metatheory.Hilbert-KripkeConcreteGluedImplicit where
+module A201607.BasicIPC.Metatheory.Hilbert-KripkeConcreteGluedImplicit where
 
-open import BasicIPC.Syntax.Hilbert public
-open import BasicIPC.Semantics.KripkeConcreteGluedImplicit public
+open import A201607.BasicIPC.Syntax.Hilbert public
+open import A201607.BasicIPC.Semantics.KripkeConcreteGluedImplicit public
 
 open ImplicitSyntax (_⊢_) (mono⊢) public
 

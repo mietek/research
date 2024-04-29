@@ -2,10 +2,10 @@
 -- Tarski-style semantics with glueing for α and ▻, after Coquand-Dybjer.
 -- Implicit closed syntax.
 
-module BasicIPC.Semantics.TarskiGluedClosedImplicit where
+module A201607.BasicIPC.Semantics.TarskiGluedClosedImplicit where
 
-open import BasicIPC.Syntax.Common public
-open import Common.Semantics public
+open import A201607.BasicIPC.Syntax.Common public
+open import A201607.Common.Semantics public
 
 
 -- Tarski models.

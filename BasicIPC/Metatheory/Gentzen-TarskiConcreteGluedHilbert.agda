@@ -1,7 +1,7 @@
-module BasicIPC.Metatheory.Gentzen-TarskiConcreteGluedHilbert where
+module A201607.BasicIPC.Metatheory.Gentzen-TarskiConcreteGluedHilbert where
 
-open import BasicIPC.Syntax.Gentzen public
-open import BasicIPC.Semantics.TarskiConcreteGluedHilbert public
+open import A201607.BasicIPC.Syntax.Gentzen public
+open import A201607.BasicIPC.Semantics.TarskiConcreteGluedHilbert public
 
 
 -- Internalisation of syntax as syntax representation in a particular model.

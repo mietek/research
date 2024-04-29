@@ -1,9 +1,9 @@
 -- Intuitionistic propositional calculus.
 -- Kripke-style semantics with exploding abstract worlds.
 
-module IPC.Semantics.KripkeExploding where
+module A201607.IPC.Semantics.KripkeExploding where
 
-open import IPC.Syntax.Common public
+open import A201607.IPC.Syntax.Common public
 
 
 -- Intuitionistic Kripke-CPS models, with exploding worlds.

@@ -1,9 +1,9 @@
 -- TODO
 -- Basic Tarski-style semantics, for soundness only.
 
-module BasicT.Semantics.BasicTarski where
+module A201607.BasicT.Semantics.BasicTarski where
 
-open import BasicT.Syntax.Common public
+open import A201607.BasicT.Syntax.Common public
 
 
 -- Tarski models.

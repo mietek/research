@@ -1,7 +1,7 @@
-module BasicIS4.Metatheory.DyadicGentzen-TarskiGluedDyadicGentzen where
+module A201607.BasicIS4.Metatheory.DyadicGentzen-TarskiGluedDyadicGentzen where
 
-open import BasicIS4.Syntax.DyadicGentzen public
-open import BasicIS4.Semantics.TarskiGluedDyadicGentzen public
+open import A201607.BasicIS4.Syntax.DyadicGentzen public
+open import A201607.BasicIS4.Semantics.TarskiGluedDyadicGentzen public
 
 
 -- Internalisation of syntax as syntax representation in a particular model.

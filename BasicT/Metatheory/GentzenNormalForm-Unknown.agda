@@ -1,6 +1,6 @@
-module BasicT.Metatheory.GentzenNormalForm-Unknown where
+module A201607.BasicT.Metatheory.GentzenNormalForm-Unknown where
 
-open import BasicT.Syntax.GentzenNormalForm public
+open import A201607.BasicT.Syntax.GentzenNormalForm public
 
 
 -- Forcing.  (In a particular model?)

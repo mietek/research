@@ -1,7 +1,7 @@
-module BasicIPC.Metatheory.Gentzen-KripkeConcrete where
+module A201607.BasicIPC.Metatheory.Gentzen-KripkeConcrete where
 
-open import BasicIPC.Syntax.Gentzen public
-open import BasicIPC.Semantics.KripkeConcrete public
+open import A201607.BasicIPC.Syntax.Gentzen public
+open import A201607.BasicIPC.Semantics.KripkeConcrete public
 
 
 -- Soundness with respect to all models, or evaluation.

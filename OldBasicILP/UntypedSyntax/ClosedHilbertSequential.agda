@@ -1,9 +1,9 @@
 -- Hilbert-style formalisation of closed syntax.
 -- Sequences of terms.
 
-module OldBasicILP.UntypedSyntax.ClosedHilbertSequential where
+module A201607.OldBasicILP.UntypedSyntax.ClosedHilbertSequential where
 
-open import OldBasicILP.UntypedSyntax.Common public
+open import A201607.OldBasicILP.UntypedSyntax.Common public
 
 
 -- Closed, untyped representations.

@@ -2,9 +2,9 @@
 -- Basic Kripke-style semantics with abstract worlds, for soundness only.
 -- Božić-Došen-style conditions.
 
-module BasicIS4.Semantics.BasicKripkeBozicDosen where
+module A201607.BasicIS4.Semantics.BasicKripkeBozicDosen where
 
-open import BasicIS4.Syntax.Common public
+open import A201607.BasicIS4.Syntax.Common public
 
 
 -- Intuitionistic modal Kripke models, with frame conditions given by Božić-Došen.

@@ -2,10 +2,10 @@
 -- Tarski-style semantics with context pairs as concrete worlds, and glueing for □ only.
 -- Hilbert-style syntax.
 
-module BasicIS4.Semantics.TarskiGluedDyadicHilbert where
+module A201607.BasicIS4.Semantics.TarskiGluedDyadicHilbert where
 
-open import BasicIS4.Syntax.Common public
-open import Common.Semantics public
+open import A201607.BasicIS4.Syntax.Common public
+open import A201607.Common.Semantics public
 
 
 -- Intuitionistic Tarski models.

@@ -1,6 +1,6 @@
-module Common.PredicateBasedContext where
+module A201607.Common.PredicateBasedContext where
 
-open import Common.Predicate public
+open import A201607.Common.Predicate public
 
 
 -- Predicate-based context membership.

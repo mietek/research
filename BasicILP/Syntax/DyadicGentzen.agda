@@ -2,9 +2,9 @@
 -- Gentzen-style formalisation of syntax with context pairs.
 -- Simple terms.
 
-module BasicILP.Syntax.DyadicGentzen where
+module A201607.BasicILP.Syntax.DyadicGentzen where
 
-open import BasicILP.Syntax.Common public
+open import A201607.BasicILP.Syntax.Common public
 
 
 -- Types, or propositions.

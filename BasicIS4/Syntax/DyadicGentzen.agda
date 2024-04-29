@@ -1,9 +1,9 @@
 -- Basic intuitionistic modal logic S4, without ∨, ⊥, or ◇.
 -- Gentzen-style formalisation of syntax with context pairs, after Pfenning-Davies.
 
-module BasicIS4.Syntax.DyadicGentzen where
+module A201607.BasicIS4.Syntax.DyadicGentzen where
 
-open import BasicIS4.Syntax.Common public
+open import A201607.BasicIS4.Syntax.Common public
 
 
 -- Derivations.

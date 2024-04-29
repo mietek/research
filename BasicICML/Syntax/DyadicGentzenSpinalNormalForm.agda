@@ -2,9 +2,9 @@
 -- Gentzen-style formalisation of syntax with context pairs, after Nanevski-Pfenning-Pientka.
 -- Normal forms, neutrals, and spines.
 
-module BasicICML.Syntax.DyadicGentzenSpinalNormalForm where
+module A201607.BasicICML.Syntax.DyadicGentzenSpinalNormalForm where
 
-open import BasicICML.Syntax.DyadicGentzen public
+open import A201607.BasicICML.Syntax.DyadicGentzen public
 
 
 -- Commuting propositions for neutrals.

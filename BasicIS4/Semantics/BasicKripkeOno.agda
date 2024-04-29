@@ -2,9 +2,9 @@
 -- Basic Kripke-style semantics with abstract worlds, for soundness only.
 -- Ono-style conditions.
 
-module BasicIS4.Semantics.BasicKripkeOno where
+module A201607.BasicIS4.Semantics.BasicKripkeOno where
 
-open import BasicIS4.Syntax.Common public
+open import A201607.BasicIS4.Syntax.Common public
 
 
 -- Intuitionistic modal Kripke models, with frame conditions given by Ono.

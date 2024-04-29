@@ -1,6 +1,6 @@
-module IPC.Metatheory.GentzenSpinalNormalForm-HereditarySubstitution where
+module A201607.IPC.Metatheory.GentzenSpinalNormalForm-HereditarySubstitution where
 
-open import IPC.Syntax.GentzenSpinalNormalForm public
+open import A201607.IPC.Syntax.GentzenSpinalNormalForm public
 
 
 -- Hereditary substitution and reduction.

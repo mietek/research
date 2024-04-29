@@ -1,7 +1,7 @@
-module BasicIS4.Metatheory.DyadicHilbert-BasicKripkeBozicDosen where
+module A201607.BasicIS4.Metatheory.DyadicHilbert-BasicKripkeBozicDosen where
 
-open import BasicIS4.Syntax.DyadicHilbert public
-open import BasicIS4.Semantics.BasicKripkeBozicDosen public hiding (_⊨_) -- TODO
+open import A201607.BasicIS4.Syntax.DyadicHilbert public
+open import A201607.BasicIS4.Semantics.BasicKripkeBozicDosen public hiding (_⊨_) -- TODO
 
 
 -- Soundness with respect to all models, or evaluation.

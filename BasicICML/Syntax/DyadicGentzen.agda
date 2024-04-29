@@ -2,9 +2,9 @@
 -- Gentzen-style formalisation of syntax with context pairs, after Nanevski-Pfenning-Pientka.
 -- Simple terms.
 
-module BasicICML.Syntax.DyadicGentzen where
+module A201607.BasicICML.Syntax.DyadicGentzen where
 
-open import BasicICML.Syntax.Common public
+open import A201607.BasicICML.Syntax.Common public
 
 
 -- Derivations.

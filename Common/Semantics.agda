@@ -1,6 +1,6 @@
-module Common.Semantics where
+module A201607.Common.Semantics where
 
-open import Common.Context public
+open import A201607.Common.Context public
 
 
 -- Special products for glueing.

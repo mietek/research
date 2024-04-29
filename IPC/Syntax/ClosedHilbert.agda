@@ -2,9 +2,9 @@
 -- Hilbert-style formalisation of closed syntax.
 -- Nested terms.
 
-module IPC.Syntax.ClosedHilbert where
+module A201607.IPC.Syntax.ClosedHilbert where
 
-open import IPC.Syntax.Common public
+open import A201607.IPC.Syntax.Common public
 
 
 -- Derivations.

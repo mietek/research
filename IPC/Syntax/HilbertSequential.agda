@@ -2,9 +2,9 @@
 -- Hilbert-style formalisation of syntax.
 -- Sequences of terms.
 
-module IPC.Syntax.HilbertSequential where
+module A201607.IPC.Syntax.HilbertSequential where
 
-open import IPC.Syntax.Common public
+open import A201607.IPC.Syntax.Common public
 
 
 -- Derivations.

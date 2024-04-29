@@ -1,7 +1,7 @@
-module BasicIS4.Metatheory.DyadicGentzen-BasicKripkeEwald where
+module A201607.BasicIS4.Metatheory.DyadicGentzen-BasicKripkeEwald where
 
-open import BasicIS4.Syntax.DyadicGentzen public
-open import BasicIS4.Semantics.BasicKripkeEwald public hiding (_⊨_) -- TODO
+open import A201607.BasicIS4.Syntax.DyadicGentzen public
+open import A201607.BasicIS4.Semantics.BasicKripkeEwald public hiding (_⊨_) -- TODO
 
 
 -- Soundness with respect to all models, or evaluation.

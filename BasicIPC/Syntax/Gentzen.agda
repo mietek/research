@@ -2,9 +2,9 @@
 -- Gentzen-style formalisation of syntax.
 -- Simple terms.
 
-module BasicIPC.Syntax.Gentzen where
+module A201607.BasicIPC.Syntax.Gentzen where
 
-open import BasicIPC.Syntax.Common public
+open import A201607.BasicIPC.Syntax.Common public
 
 
 -- Derivations.

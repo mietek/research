@@ -2,10 +2,10 @@
 -- Tarski-style semantics with contexts as concrete worlds, and glueing for □ only.
 -- Implicit syntax.
 
-module BasicIS4.Semantics.TarskiGluedImplicit where
+module A201607.BasicIS4.Semantics.TarskiGluedImplicit where
 
-open import BasicIS4.Syntax.Common public
-open import Common.Semantics public
+open import A201607.BasicIS4.Syntax.Common public
+open import A201607.Common.Semantics public
 
 
 -- Intuitionistic Tarski models.

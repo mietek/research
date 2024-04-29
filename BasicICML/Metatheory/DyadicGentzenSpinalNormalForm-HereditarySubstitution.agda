@@ -1,6 +1,6 @@
-module BasicICML.Metatheory.DyadicGentzenSpinalNormalForm-HereditarySubstitution where
+module A201607.BasicICML.Metatheory.DyadicGentzenSpinalNormalForm-HereditarySubstitution where
 
-open import BasicICML.Syntax.DyadicGentzenSpinalNormalForm public
+open import A201607.BasicICML.Syntax.DyadicGentzenSpinalNormalForm public
 
 
 -- Hereditary substitution and reduction.

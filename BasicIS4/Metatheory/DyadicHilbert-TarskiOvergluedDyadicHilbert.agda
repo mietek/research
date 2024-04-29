@@ -1,7 +1,7 @@
-module BasicIS4.Metatheory.DyadicHilbert-TarskiOvergluedDyadicHilbert where
+module A201607.BasicIS4.Metatheory.DyadicHilbert-TarskiOvergluedDyadicHilbert where
 
-open import BasicIS4.Syntax.DyadicHilbert public
-open import BasicIS4.Semantics.TarskiOvergluedDyadicHilbert public
+open import A201607.BasicIS4.Syntax.DyadicHilbert public
+open import A201607.BasicIS4.Semantics.TarskiOvergluedDyadicHilbert public
 
 
 -- Internalisation of syntax as syntax representation in a particular model.

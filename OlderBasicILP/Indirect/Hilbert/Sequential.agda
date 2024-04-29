@@ -1,6 +1,6 @@
-module OlderBasicILP.Indirect.Hilbert.Sequential where
+module A201607.OlderBasicILP.Indirect.Hilbert.Sequential where
 
-open import OlderBasicILP.Indirect public
+open import A201607.OlderBasicILP.Indirect public
 
 
 -- Derivations, as Hilbert-style combinator sequences.

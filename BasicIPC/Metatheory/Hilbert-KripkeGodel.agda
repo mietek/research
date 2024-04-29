@@ -1,7 +1,7 @@
-module BasicIPC.Metatheory.Hilbert-KripkeGodel where
+module A201607.BasicIPC.Metatheory.Hilbert-KripkeGodel where
 
-open import BasicIPC.Syntax.Hilbert public
-open import BasicIPC.Semantics.KripkeGodel public
+open import A201607.BasicIPC.Syntax.Hilbert public
+open import A201607.BasicIPC.Semantics.KripkeGodel public
 
 
 -- Soundness with respect to all models, or evaluation.

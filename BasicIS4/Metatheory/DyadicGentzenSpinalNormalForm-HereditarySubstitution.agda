@@ -1,6 +1,6 @@
-module BasicIS4.Metatheory.DyadicGentzenSpinalNormalForm-HereditarySubstitution where
+module A201607.BasicIS4.Metatheory.DyadicGentzenSpinalNormalForm-HereditarySubstitution where
 
-open import BasicIS4.Syntax.DyadicGentzenSpinalNormalForm public
+open import A201607.BasicIS4.Syntax.DyadicGentzenSpinalNormalForm public
 
 
 -- Hereditary substitution and reduction.

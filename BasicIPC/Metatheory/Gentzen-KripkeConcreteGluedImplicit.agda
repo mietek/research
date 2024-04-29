@@ -1,7 +1,7 @@
-module BasicIPC.Metatheory.Gentzen-KripkeConcreteGluedImplicit where
+module A201607.BasicIPC.Metatheory.Gentzen-KripkeConcreteGluedImplicit where
 
-open import BasicIPC.Syntax.Gentzen public
-open import BasicIPC.Semantics.KripkeConcreteGluedImplicit public
+open import A201607.BasicIPC.Syntax.Gentzen public
+open import A201607.BasicIPC.Semantics.KripkeConcreteGluedImplicit public
 
 open ImplicitSyntax (_⊢_) (mono⊢) public
 

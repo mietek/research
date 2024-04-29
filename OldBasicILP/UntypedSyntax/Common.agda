@@ -1,6 +1,6 @@
-module OldBasicILP.UntypedSyntax.Common where
+module A201607.OldBasicILP.UntypedSyntax.Common where
 
-open import Common.UntypedContext public
+open import A201607.Common.UntypedContext public
 
 
 -- Types parametrised by closed, untyped representations.

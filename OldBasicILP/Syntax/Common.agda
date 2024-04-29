@@ -1,3 +1,3 @@
-module OldBasicILP.Syntax.Common where
+module A201607.OldBasicILP.Syntax.Common where
 
-open import Common.ContextPair public
+open import A201607.Common.ContextPair public

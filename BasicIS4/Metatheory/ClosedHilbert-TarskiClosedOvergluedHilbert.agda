@@ -1,7 +1,7 @@
-module BasicIS4.Metatheory.ClosedHilbert-TarskiClosedOvergluedHilbert where
+module A201607.BasicIS4.Metatheory.ClosedHilbert-TarskiClosedOvergluedHilbert where
 
-open import BasicIS4.Syntax.ClosedHilbert public
-open import BasicIS4.Semantics.TarskiClosedOvergluedHilbert public
+open import A201607.BasicIS4.Syntax.ClosedHilbert public
+open import A201607.BasicIS4.Semantics.TarskiClosedOvergluedHilbert public
 
 
 -- Internalisation of syntax as syntax representation in a particular model.

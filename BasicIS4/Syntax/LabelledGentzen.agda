@@ -1,9 +1,9 @@
 -- Basic intuitionistic modal logic S4, without ∨, ⊥, or ◇.
 -- Gentzen-style formalisation of labelled syntax, after Basin-Matthews-Viganò.
 
-module BasicIS4.Syntax.LabelledGentzen where
+module A201607.BasicIS4.Syntax.LabelledGentzen where
 
-open import BasicIS4.Syntax.Common public
+open import A201607.BasicIS4.Syntax.Common public
 
 
 -- Labels, as in Gabbay’s labelled deductive systems.
