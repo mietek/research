@@ -4,7 +4,7 @@ https://github.com/mietek/hilbert-gentzen
 
 An Agda formalisation of IPC, IS4, ICML, and ILP.  Work in progress.
 
-Made by Miëtek Bak.  Published under the MIT X11 license.
+Made by Miëtek Bak.  Licensed under CC BY-SA 4.0.
 
 -}
 
