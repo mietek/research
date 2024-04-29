@@ -1,7 +1,5 @@
 all:
-	agda -i . -i /usr/local/lib/agda/src --html Everything.agda
-	cp Agda.css html/Agda.css
+	agda -i src --html --html-dir=docs --css=AgdaPP.css src/index.agda
 
 clean:
-	find . -type f -name '*.agdai' -delete
-	rm -rf html
+	find src -type f -name '*.agdai' -delete
