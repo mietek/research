@@ -24,7 +24,7 @@ mutual
   data _⊢ⁿᵉ_ : Cx² Ty Box → Ty → Set where
     varⁿᵉ   : ∀ {A Γ Δ}     → A ∈ Γ → Γ ⁏ Δ ⊢ⁿᵉ A
     appⁿᵉ   : ∀ {A B Γ Δ}   → Γ ⁏ Δ ⊢ⁿᵉ A ▻ B → Γ ⁏ Δ ⊢ⁿᶠ A → Γ ⁏ Δ ⊢ⁿᵉ B
-    mvarⁿᵉ  : ∀ {Ψ A Γ Δ}   → [ Ψ ] A ∈ Δ → {{_ : Γ ⁏ Δ ⊢⋆ⁿᶠ Ψ}} → Γ ⁏ Δ ⊢ⁿᵉ A
+    mvarⁿᵉ  : ∀ {Ψ A Γ Δ}   → [ Ψ ] A ∈ Δ → Γ ⁏ Δ ⊢⋆ⁿᶠ Ψ → Γ ⁏ Δ ⊢ⁿᵉ A
     unboxⁿᵉ : ∀ {Ψ A C Γ Δ} → Γ ⁏ Δ ⊢ⁿᵉ [ Ψ ] A → Γ ⁏ Δ , [ Ψ ] A ⊢ⁿᶠ C → Γ ⁏ Δ ⊢ⁿᵉ C
     fstⁿᵉ   : ∀ {A B Γ Δ}   → Γ ⁏ Δ ⊢ⁿᵉ A ∧ B → Γ ⁏ Δ ⊢ⁿᵉ A
     sndⁿᵉ   : ∀ {A B Γ Δ}   → Γ ⁏ Δ ⊢ⁿᵉ A ∧ B → Γ ⁏ Δ ⊢ⁿᵉ B
@@ -53,7 +53,7 @@ mutual
   ne→tm : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ⁿᵉ A → Γ ⁏ Δ ⊢ A
   ne→tm (varⁿᵉ i)         = var i
   ne→tm (appⁿᵉ t u)       = app (ne→tm t) (nf→tm u)
-  ne→tm (mvarⁿᵉ i {{ts}}) = mvar i {{nf→tm⋆ ts}}
+  ne→tm (mvarⁿᵉ i ts)     = mvar i (nf→tm⋆ ts)
   ne→tm (unboxⁿᵉ t u)     = unbox (ne→tm t) (nf→tm u)
   ne→tm (fstⁿᵉ t)         = fst (ne→tm t)
   ne→tm (sndⁿᵉ t)         = snd (ne→tm t)
@@ -80,7 +80,7 @@ mutual
   mono⊢ⁿᵉ : ∀ {A Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊢ⁿᵉ A → Γ′ ⁏ Δ ⊢ⁿᵉ A
   mono⊢ⁿᵉ η (varⁿᵉ i)         = varⁿᵉ (mono∈ η i)
   mono⊢ⁿᵉ η (appⁿᵉ t u)       = appⁿᵉ (mono⊢ⁿᵉ η t) (mono⊢ⁿᶠ η u)
-  mono⊢ⁿᵉ η (mvarⁿᵉ i {{ts}}) = mvarⁿᵉ i {{mono⊢⋆ⁿᶠ η ts}}
+  mono⊢ⁿᵉ η (mvarⁿᵉ i ts)     = mvarⁿᵉ i (mono⊢⋆ⁿᶠ η ts)
   mono⊢ⁿᵉ η (unboxⁿᵉ t u)     = unboxⁿᵉ (mono⊢ⁿᵉ η t) (mono⊢ⁿᶠ η u)
   mono⊢ⁿᵉ η (fstⁿᵉ t)         = fstⁿᵉ (mono⊢ⁿᵉ η t)
   mono⊢ⁿᵉ η (sndⁿᵉ t)         = sndⁿᵉ (mono⊢ⁿᵉ η t)
@@ -107,7 +107,7 @@ mutual
   mmono⊢ⁿᵉ : ∀ {A Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊢ⁿᵉ A → Γ ⁏ Δ′ ⊢ⁿᵉ A
   mmono⊢ⁿᵉ θ (varⁿᵉ i)         = varⁿᵉ i
   mmono⊢ⁿᵉ θ (appⁿᵉ t u)       = appⁿᵉ (mmono⊢ⁿᵉ θ t) (mmono⊢ⁿᶠ θ u)
-  mmono⊢ⁿᵉ θ (mvarⁿᵉ i {{ts}}) = mvarⁿᵉ (mono∈ θ i) {{mmono⊢⋆ⁿᶠ θ ts}}
+  mmono⊢ⁿᵉ θ (mvarⁿᵉ i ts)     = mvarⁿᵉ (mono∈ θ i) (mmono⊢⋆ⁿᶠ θ ts)
   mmono⊢ⁿᵉ θ (unboxⁿᵉ t u)     = unboxⁿᵉ (mmono⊢ⁿᵉ θ t) (mmono⊢ⁿᶠ (keep θ) u)
   mmono⊢ⁿᵉ θ (fstⁿᵉ t)         = fstⁿᵉ (mmono⊢ⁿᵉ θ t)
   mmono⊢ⁿᵉ θ (sndⁿᵉ t)         = sndⁿᵉ (mmono⊢ⁿᵉ θ t)
@@ -132,7 +132,7 @@ mono²⊢ⁿᵉ (η , θ) = mono⊢ⁿᵉ η ∘ mmono⊢ⁿᵉ θ
 
 -- Generalised reflexivity.
 
-refl⊢⋆ⁿᵉ : ∀ {Γ Ψ Δ} → {{_ : Ψ ⊆ Γ}} → Γ ⁏ Δ ⊢⋆ⁿᵉ Ψ
-refl⊢⋆ⁿᵉ {∅}     {{done}}   = ∙
-refl⊢⋆ⁿᵉ {Γ , A} {{skip η}} = mono⊢⋆ⁿᵉ weak⊆ (refl⊢⋆ⁿᵉ {{η}})
-refl⊢⋆ⁿᵉ {Γ , A} {{keep η}} = mono⊢⋆ⁿᵉ weak⊆ (refl⊢⋆ⁿᵉ {{η}}) , varⁿᵉ top
+grefl⊢⋆ⁿᵉ : ∀ {Γ Ψ Δ} → Ψ ⊆ Γ → Γ ⁏ Δ ⊢⋆ⁿᵉ Ψ
+grefl⊢⋆ⁿᵉ {∅}     done     = ∙
+grefl⊢⋆ⁿᵉ {Γ , A} (skip η) = mono⊢⋆ⁿᵉ weak⊆ (grefl⊢⋆ⁿᵉ η)
+grefl⊢⋆ⁿᵉ {Γ , A} (keep η) = mono⊢⋆ⁿᵉ weak⊆ (grefl⊢⋆ⁿᵉ η) , varⁿᵉ top

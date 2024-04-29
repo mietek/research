@@ -20,7 +20,7 @@ mutual
 
   -- TODO: What is this?
   thing : ∀ {{_ : Model}} {Δ Γ} {w : World}
-          → Γ ⊢⋆ □⋆ Δ → w ⊩⋆ Γ → ∀ {v′} → w R v′ → v′ ⊩⋆ □⋆ Δ
+          → Γ ⊢⋆ □⋆ Δ → w ⊩⋆ Γ → ∀ {v′ : World} → w R v′ → v′ ⊩⋆ □⋆ Δ
   thing {∅}     ∙        γ ζ = ∙
   thing {Δ , B} (ts , t) γ ζ = thing ts γ ζ , λ ζ′ → eval t γ (transR ζ ζ′)
 

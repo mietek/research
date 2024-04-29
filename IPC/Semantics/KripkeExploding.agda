@@ -43,7 +43,7 @@ module _ {{_ : Model}} where
 
     infix 3 _⊩_
     _⊩_ : World → Ty → Set
-    w ⊩ A = ∀ {C w′} → w ≤ w′ → (∀ {w″} → w′ ≤ w″ → w″ ⊪ A → w″ ‼ C) → w′ ‼ C
+    w ⊩ A = ∀ {C} {w′ : World} → w ≤ w′ → (∀ {w″ : World} → w′ ≤ w″ → w″ ⊪ A → w″ ‼ C) → w′ ‼ C
 
   infix 3 _⊩⋆_
   _⊩⋆_ : World → Cx Ty → Set
@@ -55,7 +55,7 @@ module _ {{_ : Model}} where
 
 module _ {{_ : Model}} where
   mutual
-    mono⊪ : ∀ {A w w′} → w ≤ w′ → w ⊪ A → w′ ⊪ A
+    mono⊪ : ∀ {A} {w w′ : World} → w ≤ w′ → w ⊪ A → w′ ⊪ A
     mono⊪ {α P}   ξ s       = mono⊪ᵅ ξ s
     mono⊪ {A ▻ B} ξ f       = λ ξ′ a → f (trans≤ ξ ξ′) a
     mono⊪ {A ∧ B} ξ (a , b) = mono⊩ {A} ξ a , mono⊩ {B} ξ b
@@ -64,10 +64,10 @@ module _ {{_ : Model}} where
     mono⊪ {A ∨ B} ξ (ι₁ a)  = ι₁ (mono⊩ {A} ξ a)
     mono⊪ {A ∨ B} ξ (ι₂ b)  = ι₂ (mono⊩ {B} ξ b)
 
-    mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
+    mono⊩ : ∀ {A} {w w′ : World} → w ≤ w′ → w ⊩ A → w′ ⊩ A
     mono⊩ ξ a = λ ξ′ k′ → a (trans≤ ξ ξ′) k′
 
-  mono⊩⋆ : ∀ {Ξ w w′} → w ≤ w′ → w ⊩⋆ Ξ → w′ ⊩⋆ Ξ
+  mono⊩⋆ : ∀ {Ξ} {w w′ : World} → w ≤ w′ → w ⊩⋆ Ξ → w′ ⊩⋆ Ξ
   mono⊩⋆ {∅}     ξ ∙       = ∙
   mono⊩⋆ {Ξ , A} ξ (γ , a) = mono⊩⋆ {Ξ} ξ γ , mono⊩ {A} ξ a
 
@@ -75,13 +75,13 @@ module _ {{_ : Model}} where
 -- Additional useful equipment.
 
 module _ {{_ : Model}} where
-  _⟪$⟫_ : ∀ {A B w} → w ⊪ A ▻ B → w ⊩ A → w ⊩ B
+  _⟪$⟫_ : ∀ {A B} {w : World} → w ⊪ A ▻ B → w ⊩ A → w ⊩ B
   s ⟪$⟫ a = s refl≤ a
 
-  return : ∀ {A w} → w ⊪ A → w ⊩ A
+  return : ∀ {A} {w : World} → w ⊪ A → w ⊩ A
   return {A} a = λ ξ k → k refl≤ (mono⊪ {A} ξ a)
 
-  bind : ∀ {A B w} → w ⊩ A → (∀ {w′} → w ≤ w′ → w′ ⊪ A → w′ ⊩ B) → w ⊩ B
+  bind : ∀ {A B} {w : World} → w ⊩ A → (∀ {w′ : World} → w ≤ w′ → w′ ⊪ A → w′ ⊩ B) → w ⊩ B
   bind a k = λ ξ k′ → a ξ (λ ξ′ a′ → k (trans≤ ξ ξ′) a′ refl≤ (λ ξ″ a″ → k′ (trans≤ ξ′ ξ″) a″))
 
 
@@ -111,6 +111,6 @@ _⊨⋆_ : Cx Ty → Cx Ty → Set₁
 -- Additional useful equipment, for sequents.
 
 module _ {{_ : Model}} where
-  lookup : ∀ {A Γ w} → A ∈ Γ → w ⊩ Γ ⇒ A
+  lookup : ∀ {A Γ} {w : World} → A ∈ Γ → w ⊩ Γ ⇒ A
   lookup top     (γ , a) = a
   lookup (pop i) (γ , b) = lookup i γ

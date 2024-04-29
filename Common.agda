@@ -1,8 +1,7 @@
 module Common where
 
 open import Agda.Builtin.Size public
-  using (Size ; Size<_)
-  renaming (ω to ∞)
+  using (Size ; Size<_ ; ∞)
 
 open import Agda.Primitive public
   using ()

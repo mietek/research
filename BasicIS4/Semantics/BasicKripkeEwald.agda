@@ -99,8 +99,8 @@ module _ {{_ : Model}} where
   infix 3 _⊩_
   _⊩_ : World → Ty → Set
   w ⊩ α P   = w ⊩ᵅ P
-  w ⊩ A ▻ B = ∀ {w′} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
-  w ⊩ □ A   = ∀ {w′} → w ≤ w′ → ∀ {v′} → w′ R v′ → v′ ⊩ A
+  w ⊩ A ▻ B = ∀ {w′ : World} → w ≤ w′ → w′ ⊩ A → w′ ⊩ B
+  w ⊩ □ A   = ∀ {w′ : World} → w ≤ w′ → ∀ {v′} → w′ R v′ → v′ ⊩ A
   w ⊩ A ∧ B = w ⊩ A × w ⊩ B
   w ⊩ ⊤    = 𝟙
 
@@ -113,14 +113,14 @@ module _ {{_ : Model}} where
 -- Monotonicity with respect to intuitionistic accessibility.
 
 module _ {{_ : Model}} where
-  mono⊩ : ∀ {A w w′} → w ≤ w′ → w ⊩ A → w′ ⊩ A
+  mono⊩ : ∀ {A} {w w′ : World} → w ≤ w′ → w ⊩ A → w′ ⊩ A
   mono⊩ {α P}   ξ s = mono⊩ᵅ ξ s
   mono⊩ {A ▻ B} ξ s = λ ξ′ a → s (trans≤ ξ ξ′) a
   mono⊩ {□ A}   ξ s = λ ξ′ ζ → s (trans≤ ξ ξ′) ζ
   mono⊩ {A ∧ B} ξ s = mono⊩ {A} ξ (π₁ s) , mono⊩ {B} ξ (π₂ s)
   mono⊩ {⊤}    ξ s = ∙
 
-  mono⊩⋆ : ∀ {Γ w w′} → w ≤ w′ → w ⊩⋆ Γ → w′ ⊩⋆ Γ
+  mono⊩⋆ : ∀ {Γ} {w w′ : World} → w ≤ w′ → w ⊩⋆ Γ → w′ ⊩⋆ Γ
   mono⊩⋆ {∅}     ξ ∙       = ∙
   mono⊩⋆ {Γ , A} ξ (γ , a) = mono⊩⋆ {Γ} ξ γ , mono⊩ {A} ξ a
 
@@ -128,36 +128,36 @@ module _ {{_ : Model}} where
 -- Additional useful equipment.
 
 module _ {{_ : Model}} where
-  _⟪$⟫_ : ∀ {A B w} → w ⊩ A ▻ B → w ⊩ A → w ⊩ B
+  _⟪$⟫_ : ∀ {A B} {w : World} → w ⊩ A ▻ B → w ⊩ A → w ⊩ B
   s ⟪$⟫ a = s refl≤ a
 
-  ⟪K⟫ : ∀ {A B w} → w ⊩ A → w ⊩ B ▻ A
+  ⟪K⟫ : ∀ {A B} {w : World} → w ⊩ A → w ⊩ B ▻ A
   ⟪K⟫ {A} a ξ = K (mono⊩ {A} ξ a)
 
-  ⟪S⟫ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C → w ⊩ A ▻ B → w ⊩ A → w ⊩ C
+  ⟪S⟫ : ∀ {A B C} {w : World} → w ⊩ A ▻ B ▻ C → w ⊩ A ▻ B → w ⊩ A → w ⊩ C
   ⟪S⟫ {A} {B} {C} s₁ s₂ a = _⟪$⟫_ {B} {C} (_⟪$⟫_ {A} {B ▻ C} s₁ a) (_⟪$⟫_ {A} {B} s₂ a)
 
-  ⟪S⟫′ : ∀ {A B C w} → w ⊩ A ▻ B ▻ C → w ⊩ (A ▻ B) ▻ A ▻ C
+  ⟪S⟫′ : ∀ {A B C} {w : World} → w ⊩ A ▻ B ▻ C → w ⊩ (A ▻ B) ▻ A ▻ C
   ⟪S⟫′ {A} {B} {C} s₁ ξ s₂ ξ′ a = let s₁′ = mono⊩ {A ▻ B ▻ C} (trans≤ ξ ξ′) s₁
                                       s₂′ = mono⊩ {A ▻ B} ξ′ s₂
                                   in  ⟪S⟫ {A} {B} {C} s₁′ s₂′ a
 
-  _⟪D⟫_ : ∀ {A B w} → w ⊩ □ (A ▻ B) → w ⊩ □ A → w ⊩ □ B
+  _⟪D⟫_ : ∀ {A B} {w : World} → w ⊩ □ (A ▻ B) → w ⊩ □ A → w ⊩ □ B
   _⟪D⟫_ {A} {B} s₁ s₂ ξ ζ = let s₁′ = s₁ ξ ζ
                                 s₂′ = s₂ ξ ζ
                             in  _⟪$⟫_ {A} {B} s₁′ s₂′
 
-  _⟪D⟫′_ : ∀ {A B w} → w ⊩ □ (A ▻ B) → w ⊩ □ A ▻ □ B
+  _⟪D⟫′_ : ∀ {A B} {w : World} → w ⊩ □ (A ▻ B) → w ⊩ □ A ▻ □ B
   _⟪D⟫′_ {A} {B} s₁ ξ = _⟪D⟫_ {A} {B} (mono⊩ {□ (A ▻ B)} ξ s₁)
 
-  ⟪↑⟫ : ∀ {A w} → w ⊩ □ A → w ⊩ □ □ A
+  ⟪↑⟫ : ∀ {A} {w : World} → w ⊩ □ A → w ⊩ □ □ A
   ⟪↑⟫ s ξ ζ ξ′ ζ′ = let _ , (ξ″ , ζ″) = trans≤⨾R (_ , (ξ , ζ)) (_ , (ξ′ , ζ′))
                     in  s ξ″ ζ″
 
-  ⟪↓⟫ : ∀ {A w} → w ⊩ □ A → w ⊩ A
+  ⟪↓⟫ : ∀ {A} {w : World} → w ⊩ □ A → w ⊩ A
   ⟪↓⟫ s = s refl≤ reflR
 
-  _⟪,⟫′_ : ∀ {A B w} → w ⊩ A → w ⊩ B ▻ A ∧ B
+  _⟪,⟫′_ : ∀ {A B} {w : World} → w ⊩ A → w ⊩ B ▻ A ∧ B
   _⟪,⟫′_ {A} {B} a ξ = _,_ (mono⊩ {A} ξ a)
 
 
@@ -186,12 +186,12 @@ _⊨⋆_ : Cx Ty → Cx Ty → Set₁
 infix 3 _⁏_⊨_
 _⁏_⊨_ : Cx Ty → Cx Ty → Ty → Set₁
 Γ ⁏ Δ ⊨ A = ∀ {{_ : Model}} {w : World}
-             → w ⊩⋆ Γ → (∀ {w′} → w ≤ w′ → ∀ {v′} → w′ R v′ → v′ ⊩⋆ Δ) → w ⊩ A
+             → w ⊩⋆ Γ → (∀ {w′ : World} → w ≤ w′ → ∀ {v′ : World} → w′ R v′ → v′ ⊩⋆ Δ) → w ⊩ A
 
 
 -- Additional useful equipment, for sequents.
 
 module _ {{_ : Model}} where
-  lookup : ∀ {A Γ w} → A ∈ Γ → w ⊩ Γ ⇒ A
+  lookup : ∀ {A Γ} {w : World} → A ∈ Γ → w ⊩ Γ ⇒ A
   lookup top     (γ , a) = a
   lookup (pop i) (γ , b) = lookup i γ

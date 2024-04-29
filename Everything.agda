@@ -443,11 +443,11 @@ import OldBasicILP.UntypedSyntax.Translation -- FIXME
 import OldBasicILP.Syntax.Common
 
 -- Hilbert-style formalisation of closed syntax.
-import OldBasicILP.Syntax.ClosedHilbertSequential  -- Sequences of terms.
-import OldBasicILP.Syntax.ClosedHilbert            -- Nested terms.
+-- import OldBasicILP.Syntax.ClosedHilbertSequential -- FIXME
+-- import OldBasicILP.Syntax.ClosedHilbert -- FIXME
 
 -- Translation between different formalisations of syntax.
-import OldBasicILP.Syntax.Translation -- FIXME
+-- import OldBasicILP.Syntax.Translation -- FIXME
 -- import OldBasicILP.Syntax.Projection -- FIXME
 
 

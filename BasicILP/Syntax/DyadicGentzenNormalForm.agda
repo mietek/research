@@ -29,8 +29,8 @@ mutual
     appⁿᵉ   : ∀ {A B Γ Δ}       → Γ ⁏ Δ ⊢ⁿᵉ A ▻ B → Γ ⁏ Δ ⊢ⁿᶠ A → Γ ⁏ Δ ⊢ⁿᵉ B
 
     mvarⁿᵉ  : ∀ {Ψ Ω A x Γ Δ}   → [ Ψ ⁏ Ω ⊢ x ] A ∈ Δ
-                                → {{_ : Γ ⁏ Δ ⊢⋆ⁿᶠ Ψ}}
-                                → {{_ : Γ ⁏ Δ ⊢⍟ⁿᶠ Ω}}
+                                → Γ ⁏ Δ ⊢⋆ⁿᶠ Ψ
+                                → Γ ⁏ Δ ⊢⍟ⁿᶠ Ω
                                 → Γ ⁏ Δ ⊢ⁿᵉ A
 
     unboxⁿᵉ : ∀ {Ψ Ω A C x Γ Δ} → Γ ⁏ Δ ⊢ⁿᵉ [ Ψ ⁏ Ω ⊢ x ] A
@@ -74,7 +74,7 @@ mutual
   ne→tm : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ⁿᵉ A → Γ ⁏ Δ ⊢ A
   ne→tm (varⁿᵉ i)                = var i
   ne→tm (appⁿᵉ t u)              = app (ne→tm t) (nf→tm u)
-  ne→tm (mvarⁿᵉ i {{ts}} {{us}}) = mvar i {{nf→tm⋆ ts}} {{nf→tm⍟ us}}
+  ne→tm (mvarⁿᵉ i ts us)         = mvar i (nf→tm⋆ ts) (nf→tm⍟ us)
   ne→tm (unboxⁿᵉ t u)            = unbox (ne→tm t) (nf→tm u)
   ne→tm (fstⁿᵉ t)                = fst (ne→tm t)
   ne→tm (sndⁿᵉ t)                = snd (ne→tm t)
@@ -109,7 +109,7 @@ mutual
   mono⊢ⁿᵉ : ∀ {A Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊢ⁿᵉ A → Γ′ ⁏ Δ ⊢ⁿᵉ A
   mono⊢ⁿᵉ η (varⁿᵉ i)                = varⁿᵉ (mono∈ η i)
   mono⊢ⁿᵉ η (appⁿᵉ t u)              = appⁿᵉ (mono⊢ⁿᵉ η t) (mono⊢ⁿᶠ η u)
-  mono⊢ⁿᵉ η (mvarⁿᵉ i {{ts}} {{us}}) = mvarⁿᵉ i {{mono⊢⋆ⁿᶠ η ts}} {{mono⊢⍟ⁿᶠ η us}}
+  mono⊢ⁿᵉ η (mvarⁿᵉ i ts us)         = mvarⁿᵉ i (mono⊢⋆ⁿᶠ η ts) (mono⊢⍟ⁿᶠ η us)
   mono⊢ⁿᵉ η (unboxⁿᵉ t u)            = unboxⁿᵉ (mono⊢ⁿᵉ η t) (mono⊢ⁿᶠ η u)
   mono⊢ⁿᵉ η (fstⁿᵉ t)                = fstⁿᵉ (mono⊢ⁿᵉ η t)
   mono⊢ⁿᵉ η (sndⁿᵉ t)                = sndⁿᵉ (mono⊢ⁿᵉ η t)
@@ -144,7 +144,7 @@ mutual
   mmono⊢ⁿᵉ : ∀ {A Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊢ⁿᵉ A → Γ ⁏ Δ′ ⊢ⁿᵉ A
   mmono⊢ⁿᵉ θ (varⁿᵉ i)                = varⁿᵉ i
   mmono⊢ⁿᵉ θ (appⁿᵉ t u)              = appⁿᵉ (mmono⊢ⁿᵉ θ t) (mmono⊢ⁿᶠ θ u)
-  mmono⊢ⁿᵉ θ (mvarⁿᵉ i {{ts}} {{us}}) = mvarⁿᵉ (mono∈ θ i) {{mmono⊢⋆ⁿᶠ θ ts}} {{mmono⊢⍟ⁿᶠ θ us}}
+  mmono⊢ⁿᵉ θ (mvarⁿᵉ i ts us)         = mvarⁿᵉ (mono∈ θ i) (mmono⊢⋆ⁿᶠ θ ts) (mmono⊢⍟ⁿᶠ θ us)
   mmono⊢ⁿᵉ θ (unboxⁿᵉ t u)            = unboxⁿᵉ (mmono⊢ⁿᵉ θ t) (mmono⊢ⁿᶠ (keep θ) u)
   mmono⊢ⁿᵉ θ (fstⁿᵉ t)                = fstⁿᵉ (mmono⊢ⁿᵉ θ t)
   mmono⊢ⁿᵉ θ (sndⁿᵉ t)                = sndⁿᵉ (mmono⊢ⁿᵉ θ t)

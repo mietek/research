@@ -10,7 +10,7 @@ mutual
   [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ j  xs y)        with i ≟∈ j
   [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ .i xs y)        | same   = reduce s ([ i ≔ s ]ˢᵖ xs) ([ i ≔ s ]ᵗᵖ y)
   [ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ ._ xs y)        | diff j = neⁿᶠ (spⁿᵉ j ([ i ≔ s ]ˢᵖ xs) ([ i ≔ s ]ᵗᵖ y))
-  [ i ≔ s ]ⁿᶠ neⁿᶠ (mspⁿᵉ j {{ts}} xs y) = neⁿᶠ (mspⁿᵉ j {{[ i ≔ s ]⋆ⁿᶠ ts}} ([ i ≔ s ]ˢᵖ xs) ([ i ≔ s ]ᵗᵖ y))
+  [ i ≔ s ]ⁿᶠ neⁿᶠ (mspⁿᵉ j ts xs y)     = neⁿᶠ (mspⁿᵉ j ([ i ≔ s ]⋆ⁿᶠ ts) ([ i ≔ s ]ˢᵖ xs) ([ i ≔ s ]ᵗᵖ y))
   [ i ≔ s ]ⁿᶠ lamⁿᶠ t                    = lamⁿᶠ ([ pop i ≔ mono⊢ⁿᶠ weak⊆ s ]ⁿᶠ t)
   [ i ≔ s ]ⁿᶠ boxⁿᶠ t                    = boxⁿᶠ t
   [ i ≔ s ]ⁿᶠ pairⁿᶠ t u                 = pairⁿᶠ ([ i ≔ s ]ⁿᶠ t) ([ i ≔ s ]ⁿᶠ u)
@@ -33,9 +33,9 @@ mutual
 
   m[_≔_]ⁿᶠ_ : ∀ {Ψ A B Γ Δ} → (i : [ Ψ ] A ∈ Δ) → Ψ ⁏ Δ ∖ i ⊢ⁿᶠ A → Γ ⁏ Δ ⊢ⁿᶠ B → Γ ⁏ Δ ∖ i ⊢ⁿᶠ B
   m[ i ≔ s ]ⁿᶠ neⁿᶠ (spⁿᵉ j xs y)          = neⁿᶠ (spⁿᵉ j (m[ i ≔ s ]ˢᵖ xs) (m[ i ≔ s ]ᵗᵖ y))
-  m[ i ≔ s ]ⁿᶠ neⁿᶠ (mspⁿᵉ j xs y)         with i ≟∈ j
-  m[ i ≔ s ]ⁿᶠ neⁿᶠ (mspⁿᵉ .i {{ts}} xs y) | same   = reduce (multicutⁿᶠ (m[ i ≔ s ]⋆ⁿᶠ ts) s) (m[ i ≔ s ]ˢᵖ xs) (m[ i ≔ s ]ᵗᵖ y)
-  m[ i ≔ s ]ⁿᶠ neⁿᶠ (mspⁿᵉ ._ {{ts}} xs y) | diff j = neⁿᶠ (mspⁿᵉ j {{m[ i ≔ s ]⋆ⁿᶠ ts}} (m[ i ≔ s ]ˢᵖ xs) (m[ i ≔ s ]ᵗᵖ y))
+  m[ i ≔ s ]ⁿᶠ neⁿᶠ (mspⁿᵉ j ts xs y)      with i ≟∈ j
+  m[ i ≔ s ]ⁿᶠ neⁿᶠ (mspⁿᵉ .i ts xs y)     | same   = reduce (multicutⁿᶠ (m[ i ≔ s ]⋆ⁿᶠ ts) s) (m[ i ≔ s ]ˢᵖ xs) (m[ i ≔ s ]ᵗᵖ y)
+  m[ i ≔ s ]ⁿᶠ neⁿᶠ (mspⁿᵉ ._ ts xs y)     | diff j = neⁿᶠ (mspⁿᵉ j (m[ i ≔ s ]⋆ⁿᶠ ts) (m[ i ≔ s ]ˢᵖ xs) (m[ i ≔ s ]ᵗᵖ y))
   m[ i ≔ s ]ⁿᶠ lamⁿᶠ t                     = lamⁿᶠ (m[ i ≔ s ]ⁿᶠ t)
   m[ i ≔ s ]ⁿᶠ boxⁿᶠ t                     = boxⁿᶠ (m[ i ≔ s ]ⁿᶠ t)
   m[ i ≔ s ]ⁿᶠ pairⁿᶠ t u                  = pairⁿᶠ (m[ i ≔ s ]ⁿᶠ t) (m[ i ≔ s ]ⁿᶠ u)
@@ -61,8 +61,8 @@ mutual
   reduce (neⁿᶠ (spⁿᵉ i xs nilᵗᵖ))        nilˢᵖ        y           = neⁿᶠ (spⁿᵉ i xs y)
   reduce (neⁿᶠ (spⁿᵉ i xs (unboxᵗᵖ u)))  nilˢᵖ        y           = neⁿᶠ (spⁿᵉ i xs (unboxᵗᵖ u′))
     where u′ = reduce u nilˢᵖ (mmono⊢ᵗᵖ weak⊆ y)
-  reduce (neⁿᶠ (mspⁿᵉ i xs nilᵗᵖ))       nilˢᵖ        y           = neⁿᶠ (mspⁿᵉ i xs y)
-  reduce (neⁿᶠ (mspⁿᵉ i xs (unboxᵗᵖ u))) nilˢᵖ        y           = neⁿᶠ (mspⁿᵉ i xs (unboxᵗᵖ u′))
+  reduce (neⁿᶠ (mspⁿᵉ i ts xs nilᵗᵖ))    nilˢᵖ        y           = neⁿᶠ (mspⁿᵉ i ts xs y)
+  reduce (neⁿᶠ (mspⁿᵉ i ts xs (unboxᵗᵖ u))) nilˢᵖ     y           = neⁿᶠ (mspⁿᵉ i ts xs (unboxᵗᵖ u′))
     where u′ = reduce u nilˢᵖ (mmono⊢ᵗᵖ weak⊆ y)
   reduce (neⁿᶠ t {{()}})                 (appˢᵖ xs u) y
   reduce (neⁿᶠ t {{()}})                 (fstˢᵖ xs)   y
@@ -122,24 +122,24 @@ appⁿᵉ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ⁿᵉ A ▻ B → Γ ⁏ Δ ⊢ⁿ
 appⁿᵉ (spⁿᵉ i xs nilᵗᵖ)        t = spⁿᵉ i (≪appˢᵖ xs t) nilᵗᵖ
 appⁿᵉ (spⁿᵉ i xs (unboxᵗᵖ u))  t = spⁿᵉ i xs (unboxᵗᵖ u′)
   where u′ = appⁿᶠ u (mmono⊢ⁿᶠ weak⊆ t)
-appⁿᵉ (mspⁿᵉ i xs nilᵗᵖ)       t = mspⁿᵉ i (≪appˢᵖ xs t) nilᵗᵖ
-appⁿᵉ (mspⁿᵉ i xs (unboxᵗᵖ u)) t = mspⁿᵉ i xs (unboxᵗᵖ u′)
+appⁿᵉ (mspⁿᵉ i ts xs nilᵗᵖ)    t = mspⁿᵉ i ts (≪appˢᵖ xs t) nilᵗᵖ
+appⁿᵉ (mspⁿᵉ i ts xs (unboxᵗᵖ u)) t = mspⁿᵉ i ts xs (unboxᵗᵖ u′)
   where u′ = appⁿᶠ u (mmono⊢ⁿᶠ weak⊆ t)
 
-mvarⁿᵉ : ∀ {Ψ A Γ Δ} → [ Ψ ] A ∈ Δ → {{_ : Γ ⁏ Δ ⊢⋆ⁿᶠ Ψ}} → Γ ⁏ Δ ⊢ⁿᵉ A
-mvarⁿᵉ i = mspⁿᵉ i nilˢᵖ nilᵗᵖ
+mvarⁿᵉ : ∀ {Ψ A Γ Δ} → [ Ψ ] A ∈ Δ → Γ ⁏ Δ ⊢⋆ⁿᶠ Ψ → Γ ⁏ Δ ⊢ⁿᵉ A
+mvarⁿᵉ i ts = mspⁿᵉ i ts nilˢᵖ nilᵗᵖ
 
 fstⁿᵉ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ⁿᵉ A ∧ B → Γ ⁏ Δ ⊢ⁿᵉ A
 fstⁿᵉ (spⁿᵉ i xs nilᵗᵖ)        = spⁿᵉ i (≪fstˢᵖ xs) nilᵗᵖ
 fstⁿᵉ (spⁿᵉ i xs (unboxᵗᵖ u))  = spⁿᵉ i xs (unboxᵗᵖ (fstⁿᶠ u))
-fstⁿᵉ (mspⁿᵉ i xs nilᵗᵖ)       = mspⁿᵉ i (≪fstˢᵖ xs) nilᵗᵖ
-fstⁿᵉ (mspⁿᵉ i xs (unboxᵗᵖ u)) = mspⁿᵉ i xs (unboxᵗᵖ (fstⁿᶠ u))
+fstⁿᵉ (mspⁿᵉ i ts xs nilᵗᵖ)    = mspⁿᵉ i ts (≪fstˢᵖ xs) nilᵗᵖ
+fstⁿᵉ (mspⁿᵉ i ts xs (unboxᵗᵖ u)) = mspⁿᵉ i ts xs (unboxᵗᵖ (fstⁿᶠ u))
 
 sndⁿᵉ : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ⁿᵉ A ∧ B → Γ ⁏ Δ ⊢ⁿᵉ B
 sndⁿᵉ (spⁿᵉ i xs nilᵗᵖ)        = spⁿᵉ i (≪sndˢᵖ xs) nilᵗᵖ
 sndⁿᵉ (spⁿᵉ i xs (unboxᵗᵖ u))  = spⁿᵉ i xs (unboxᵗᵖ (sndⁿᶠ u))
-sndⁿᵉ (mspⁿᵉ i xs nilᵗᵖ)       = mspⁿᵉ i (≪sndˢᵖ xs) nilᵗᵖ
-sndⁿᵉ (mspⁿᵉ i xs (unboxᵗᵖ u)) = mspⁿᵉ i xs (unboxᵗᵖ (sndⁿᶠ u))
+sndⁿᵉ (mspⁿᵉ i ts xs nilᵗᵖ)    = mspⁿᵉ i ts (≪sndˢᵖ xs) nilᵗᵖ
+sndⁿᵉ (mspⁿᵉ i ts xs (unboxᵗᵖ u)) = mspⁿᵉ i ts xs (unboxᵗᵖ (sndⁿᶠ u))
 
 
 -- Iterated expansion.
@@ -157,8 +157,8 @@ expand {⊤}      t = unitⁿᶠ
 varⁿᶠ : ∀ {A Γ Δ} → A ∈ Γ → Γ ⁏ Δ ⊢ⁿᶠ A
 varⁿᶠ i = expand (varⁿᵉ i)
 
-mvarⁿᶠ : ∀ {Ψ A Γ Δ} → [ Ψ ] A ∈ Δ → {{_ : Γ ⁏ Δ ⊢⋆ⁿᶠ Ψ}} → Γ ⁏ Δ ⊢ⁿᶠ A
-mvarⁿᶠ i = expand (mvarⁿᵉ i)
+mvarⁿᶠ : ∀ {Ψ A Γ Δ} → [ Ψ ] A ∈ Δ → Γ ⁏ Δ ⊢⋆ⁿᶠ Ψ → Γ ⁏ Δ ⊢ⁿᶠ A
+mvarⁿᶠ i ts = expand (mvarⁿᵉ i ts)
 
 mutual
   unboxⁿᶠ : ∀ {Ψ A C Γ Δ} → Γ ⁏ Δ ⊢ⁿᶠ [ Ψ ] A → Γ ⁏ Δ , [ Ψ ] A ⊢ⁿᶠ C → Γ ⁏ Δ ⊢ⁿᶠ C
@@ -169,8 +169,8 @@ mutual
   unboxⁿᵉ (spⁿᵉ i xs nilᵗᵖ)        u = spⁿᵉ i xs (unboxᵗᵖ u)
   unboxⁿᵉ (spⁿᵉ i xs (unboxᵗᵖ t))  u = spⁿᵉ i xs (unboxᵗᵖ u′)
     where u′ = unboxⁿᶠ t (mmono⊢ⁿᶠ (keep (weak⊆)) u)
-  unboxⁿᵉ (mspⁿᵉ i xs nilᵗᵖ)       u = mspⁿᵉ i xs (unboxᵗᵖ u)
-  unboxⁿᵉ (mspⁿᵉ i xs (unboxᵗᵖ t)) u = mspⁿᵉ i xs (unboxᵗᵖ u′)
+  unboxⁿᵉ (mspⁿᵉ i ts xs nilᵗᵖ)    u = mspⁿᵉ i ts xs (unboxᵗᵖ u)
+  unboxⁿᵉ (mspⁿᵉ i ts xs (unboxᵗᵖ t)) u = mspⁿᵉ i ts xs (unboxᵗᵖ u′)
     where u′ = unboxⁿᶠ t (mmono⊢ⁿᶠ (keep (weak⊆)) u)
 
 
@@ -181,7 +181,7 @@ mutual
   tm→nf (var i)         = varⁿᶠ i
   tm→nf (lam t)         = lamⁿᶠ (tm→nf t)
   tm→nf (app t u)       = appⁿᶠ (tm→nf t) (tm→nf u)
-  tm→nf (mvar i {{ts}}) = mvarⁿᶠ i {{tm→nf⋆ ts}}
+  tm→nf (mvar i ts)     = mvarⁿᶠ i (tm→nf⋆ ts)
   tm→nf (box t)         = boxⁿᶠ (tm→nf t)
   tm→nf (unbox t u)     = unboxⁿᶠ (tm→nf t) (tm→nf u)
   tm→nf (pair t u)      = pairⁿᶠ (tm→nf t) (tm→nf u)

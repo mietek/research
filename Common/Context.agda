@@ -45,9 +45,8 @@ module ContextEquality {U : Set} (_≟ᵁ_ : (A A′ : U) → Dec (A ≡ A′)) 
 module _ {U : Set} where
   infix 3 _∈_
   data _∈_ (A : U) : Cx U → Set where
-    instance
-      top : ∀ {Γ} → A ∈ Γ , A
-      pop : ∀ {B Γ} → A ∈ Γ → A ∈ Γ , B
+    top : ∀ {Γ} → A ∈ Γ , A
+    pop : ∀ {B Γ} → A ∈ Γ → A ∈ Γ , B
 
   pop² : ∀ {A B C Γ} → A ∈ Γ → A ∈ Γ , B , C
   pop² = pop ∘ pop
@@ -71,10 +70,9 @@ module _ {U : Set} where
 module _ {U : Set} where
   infix 3 _⊆_
   data _⊆_ : Cx U → Cx U → Set where
-    instance
-      done : ∅ ⊆ ∅
-      skip : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊆ Γ′ , A
-      keep : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ , A ⊆ Γ′ , A
+    done : ∅ ⊆ ∅
+    skip : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ ⊆ Γ′ , A
+    keep : ∀ {A Γ Γ′} → Γ ⊆ Γ′ → Γ , A ⊆ Γ′ , A
 
   skip² : ∀ {A B Γ Γ′} → Γ ⊆ Γ′ → Γ ⊆ Γ′ , B , A
   skip² = skip ∘ skip
@@ -82,10 +80,9 @@ module _ {U : Set} where
   keep² : ∀ {A B Γ Γ′} → Γ ⊆ Γ′ → Γ , B , A ⊆ Γ′ , B , A
   keep² = keep ∘ keep
 
-  instance
-    refl⊆ : ∀ {Γ} → Γ ⊆ Γ
-    refl⊆ {∅}     = done
-    refl⊆ {Γ , A} = keep refl⊆
+  refl⊆ : ∀ {Γ} → Γ ⊆ Γ
+  refl⊆ {∅}     = done
+  refl⊆ {Γ , A} = keep refl⊆
 
   trans⊆ : ∀ {Γ Γ′ Γ″} → Γ ⊆ Γ′ → Γ′ ⊆ Γ″ → Γ ⊆ Γ″
   trans⊆ η        done      = η

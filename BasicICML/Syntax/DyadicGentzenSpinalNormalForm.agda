@@ -30,7 +30,7 @@ mutual
   infix 3 _⊢ⁿᵉ_
   data _⊢ⁿᵉ_ : Cx² Ty Box → Ty → Set where
     spⁿᵉ  : ∀ {A B C Γ Δ}   → A ∈ Γ → Γ ⁏ Δ ⊢ˢᵖ A ⦙ B → Γ ⁏ Δ ⊢ᵗᵖ B ⦙ C → Γ ⁏ Δ ⊢ⁿᵉ C
-    mspⁿᵉ : ∀ {Ψ A B C Γ Δ} → [ Ψ ] A ∈ Δ → {{_ : Γ ⁏ Δ ⊢⋆ⁿᶠ Ψ}} → Γ ⁏ Δ ⊢ˢᵖ A ⦙ B → Γ ⁏ Δ ⊢ᵗᵖ B ⦙ C → Γ ⁏ Δ ⊢ⁿᵉ C
+    mspⁿᵉ : ∀ {Ψ A B C Γ Δ} → [ Ψ ] A ∈ Δ → Γ ⁏ Δ ⊢⋆ⁿᶠ Ψ → Γ ⁏ Δ ⊢ˢᵖ A ⦙ B → Γ ⁏ Δ ⊢ᵗᵖ B ⦙ C → Γ ⁏ Δ ⊢ⁿᵉ C
 
   -- Spines.
   infix 3 _⊢ˢᵖ_⦙_
@@ -64,7 +64,7 @@ mutual
 
   ne→tm : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ⁿᵉ A → Γ ⁏ Δ ⊢ A
   ne→tm (spⁿᵉ i xs y)         = tp→tm (var i) xs y
-  ne→tm (mspⁿᵉ i {{ts}} xs y) = tp→tm (mvar i {{nf→tm⋆ ts}}) xs y
+  ne→tm (mspⁿᵉ i ts xs y)     = tp→tm (mvar i (nf→tm⋆ ts)) xs y
 
   sp→tm : ∀ {A C Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ˢᵖ A ⦙ C → Γ ⁏ Δ ⊢ C
   sp→tm t nilˢᵖ        = t
@@ -93,7 +93,7 @@ mutual
 
   mono⊢ⁿᵉ : ∀ {A Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊢ⁿᵉ A → Γ′ ⁏ Δ ⊢ⁿᵉ A
   mono⊢ⁿᵉ η (spⁿᵉ i xs y)         = spⁿᵉ (mono∈ η i) (mono⊢ˢᵖ η xs) (mono⊢ᵗᵖ η y)
-  mono⊢ⁿᵉ η (mspⁿᵉ i {{ts}} xs y) = mspⁿᵉ i {{mono⊢⋆ⁿᶠ η ts}} (mono⊢ˢᵖ η xs) (mono⊢ᵗᵖ η y)
+  mono⊢ⁿᵉ η (mspⁿᵉ i ts xs y)     = mspⁿᵉ i (mono⊢⋆ⁿᶠ η ts) (mono⊢ˢᵖ η xs) (mono⊢ᵗᵖ η y)
 
   mono⊢ˢᵖ : ∀ {A C Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊢ˢᵖ A ⦙ C → Γ′ ⁏ Δ ⊢ˢᵖ A ⦙ C
   mono⊢ˢᵖ η nilˢᵖ        = nilˢᵖ
@@ -122,7 +122,7 @@ mutual
 
   mmono⊢ⁿᵉ : ∀ {A Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊢ⁿᵉ A → Γ ⁏ Δ′ ⊢ⁿᵉ A
   mmono⊢ⁿᵉ θ (spⁿᵉ i xs y)         = spⁿᵉ i (mmono⊢ˢᵖ θ xs) (mmono⊢ᵗᵖ θ y)
-  mmono⊢ⁿᵉ θ (mspⁿᵉ i {{ts}} xs y) = mspⁿᵉ (mono∈ θ i) {{mmono⊢⋆ⁿᶠ θ ts}} (mmono⊢ˢᵖ θ xs) (mmono⊢ᵗᵖ θ y)
+  mmono⊢ⁿᵉ θ (mspⁿᵉ i ts xs y)     = mspⁿᵉ (mono∈ θ i) (mmono⊢⋆ⁿᶠ θ ts) (mmono⊢ˢᵖ θ xs) (mmono⊢ᵗᵖ θ y)
 
   mmono⊢ˢᵖ : ∀ {A C Γ Δ Δ′} → Δ ⊆ Δ′ → Γ ⁏ Δ ⊢ˢᵖ A ⦙ C → Γ ⁏ Δ′ ⊢ˢᵖ A ⦙ C
   mmono⊢ˢᵖ θ nilˢᵖ        = nilˢᵖ

@@ -9,16 +9,13 @@ open import BasicICML.Syntax.Common public
 
 -- Derivations.
 
--- NOTE: Only var is an instance constructor, which allows the instance argument for mvar to be automatically inferred, in many cases.
-
 mutual
   infix 3 _⊢_
   data _⊢_ : Cx² Ty Box → Ty → Set where
-    instance
-      var : ∀ {A Γ Δ}     → A ∈ Γ → Γ ⁏ Δ ⊢ A
+    var : ∀ {A Γ Δ}       → A ∈ Γ → Γ ⁏ Δ ⊢ A
     lam   : ∀ {A B Γ Δ}   → Γ , A ⁏ Δ ⊢ B → Γ ⁏ Δ ⊢ A ▻ B
     app   : ∀ {A B Γ Δ}   → Γ ⁏ Δ ⊢ A ▻ B → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ B
-    mvar  : ∀ {Ψ A Γ Δ}   → [ Ψ ] A ∈ Δ → {{_ : Γ ⁏ Δ ⊢⋆ Ψ}} → Γ ⁏ Δ ⊢ A
+    mvar  : ∀ {Ψ A Γ Δ}   → [ Ψ ] A ∈ Δ → Γ ⁏ Δ ⊢⋆ Ψ → Γ ⁏ Δ ⊢ A
     box   : ∀ {Ψ A Γ Δ}   → Ψ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ [ Ψ ] A
     unbox : ∀ {Ψ A C Γ Δ} → Γ ⁏ Δ ⊢ [ Ψ ] A → Γ ⁏ Δ , [ Ψ ] A ⊢ C → Γ ⁏ Δ ⊢ C
     pair  : ∀ {A B Γ Δ}   → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ B → Γ ⁏ Δ ⊢ A ∧ B
@@ -28,9 +25,8 @@ mutual
 
   infix 3 _⊢⋆_
   data _⊢⋆_ : Cx² Ty Box → Cx Ty → Set where
-    instance
-      ∙   : ∀ {Γ Δ}     → Γ ⁏ Δ ⊢⋆ ∅
-      _,_ : ∀ {Ξ A Γ Δ} → Γ ⁏ Δ ⊢⋆ Ξ → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢⋆ Ξ , A
+    ∙   : ∀ {Γ Δ}     → Γ ⁏ Δ ⊢⋆ ∅
+    _,_ : ∀ {Ξ A Γ Δ} → Γ ⁏ Δ ⊢⋆ Ξ → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢⋆ Ξ , A
 
 
 -- Monotonicity with respect to context inclusion.
@@ -40,7 +36,7 @@ mutual
   mono⊢ η (var i)         = var (mono∈ η i)
   mono⊢ η (lam t)         = lam (mono⊢ (keep η) t)
   mono⊢ η (app t u)       = app (mono⊢ η t) (mono⊢ η u)
-  mono⊢ η (mvar i {{ts}}) = mvar i {{mono⊢⋆ η ts}}
+  mono⊢ η (mvar i ts)     = mvar i (mono⊢⋆ η ts)
   mono⊢ η (box t)         = box t
   mono⊢ η (unbox t u)     = unbox (mono⊢ η t) (mono⊢ η u)
   mono⊢ η (pair t u)      = pair (mono⊢ η t) (mono⊢ η u)
@@ -60,7 +56,7 @@ mutual
   mmono⊢ θ (var i)         = var i
   mmono⊢ θ (lam t)         = lam (mmono⊢ θ t)
   mmono⊢ θ (app t u)       = app (mmono⊢ θ t) (mmono⊢ θ u)
-  mmono⊢ θ (mvar i {{ts}}) = mvar (mono∈ θ i) {{mmono⊢⋆ θ ts}}
+  mmono⊢ θ (mvar i ts)     = mvar (mono∈ θ i) (mmono⊢⋆ θ ts)
   mmono⊢ θ (box t)         = box (mmono⊢ θ t)
   mmono⊢ θ (unbox t u)     = unbox (mmono⊢ θ t) (mmono⊢ (keep θ) u)
   mmono⊢ θ (pair t u)      = pair (mmono⊢ θ t) (mmono⊢ θ u)
@@ -91,28 +87,30 @@ v₂ : ∀ {A B C Γ Δ} → Γ , A , B , C ⁏ Δ ⊢ A
 v₂ = var i₂
 
 mv₀ : ∀ {Ψ A Γ Δ}
-      → {{_ : Γ ⁏ Δ , [ Ψ ] A ⊢⋆ Ψ}}
+      → Γ ⁏ Δ , [ Ψ ] A ⊢⋆ Ψ
       → Γ ⁏ Δ , [ Ψ ] A ⊢ A
 mv₀ = mvar i₀
 
 mv₁ : ∀ {Ψ Ψ′ A B Γ Δ}
-      → {{_ : Γ ⁏ Δ , [ Ψ ] A , [ Ψ′ ] B ⊢⋆ Ψ}}
+      → Γ ⁏ Δ , [ Ψ ] A , [ Ψ′ ] B ⊢⋆ Ψ
       → Γ ⁏ Δ , [ Ψ ] A , [ Ψ′ ] B ⊢ A
 mv₁ = mvar i₁
 
 mv₂ : ∀ {Ψ Ψ′ Ψ″ A B C Γ Δ}
-      → {{_ : Γ ⁏ Δ , [ Ψ ] A , [ Ψ′ ] B , [ Ψ″ ] C ⊢⋆ Ψ}}
+      → Γ ⁏ Δ , [ Ψ ] A , [ Ψ′ ] B , [ Ψ″ ] C ⊢⋆ Ψ
       → Γ ⁏ Δ , [ Ψ ] A , [ Ψ′ ] B , [ Ψ″ ] C ⊢ A
 mv₂ = mvar i₂
 
 
 -- Generalised reflexivity.
 
-instance
-  refl⊢⋆ : ∀ {Γ Ψ Δ} → {{_ : Ψ ⊆ Γ}} → Γ ⁏ Δ ⊢⋆ Ψ
-  refl⊢⋆ {∅}     {{done}}   = ∙
-  refl⊢⋆ {Γ , A} {{skip η}} = mono⊢⋆ weak⊆ (refl⊢⋆ {{η}})
-  refl⊢⋆ {Γ , A} {{keep η}} = mono⊢⋆ weak⊆ (refl⊢⋆ {{η}}) , v₀
+grefl⊢⋆ : ∀ {Γ Ψ Δ} → Ψ ⊆ Γ → Γ ⁏ Δ ⊢⋆ Ψ
+grefl⊢⋆ {∅}     done     = ∙
+grefl⊢⋆ {Γ , A} (skip η) = mono⊢⋆ weak⊆ (grefl⊢⋆ η)
+grefl⊢⋆ {Γ , A} (keep η) = mono⊢⋆ weak⊆ (grefl⊢⋆ η) , v₀
+
+refl⊢⋆ : ∀ {Γ Δ} → Γ ⁏ Δ ⊢⋆ Γ
+refl⊢⋆ = grefl⊢⋆ refl⊆
 
 
 -- Deduction theorem is built-in.
@@ -133,7 +131,7 @@ det t = app (mono⊢ weak⊆ t) v₀
 mdet : ∀ {Ψ A B Γ Δ}
       → Γ ⁏ Δ ⊢ [ Ψ ] A ▻ B
       → Γ ⁏ Δ , [ Ψ ] A ⊢ B
-mdet t = app (mmono⊢ weak⊆ t) (box mv₀)
+mdet t = app (mmono⊢ weak⊆ t) (box (mv₀ refl⊢⋆))
 
 
 -- Cut and multicut.
@@ -199,18 +197,18 @@ dist : ∀ {Ψ A B Γ Δ}
       → Γ ⁏ Δ ⊢ [ Ψ ] (A ▻ B)
       → Γ ⁏ Δ ⊢ [ Ψ ] A
       → Γ ⁏ Δ ⊢ [ Ψ ] B
-dist t u = unbox t (unbox (mmono⊢ weak⊆ u) (box (app mv₁ mv₀)))
+dist t u = unbox t (unbox (mmono⊢ weak⊆ u) (box (app (mv₁ refl⊢⋆) (mv₀ refl⊢⋆))))
 
 up : ∀ {Ψ A Γ Δ}
       → Γ ⁏ Δ ⊢ [ Ψ ] A
       → Γ ⁏ Δ ⊢ [ Ψ ] [ Ψ ] A
-up t = unbox t (box (box mv₀))
+up t = unbox t (box (box (mv₀ refl⊢⋆)))
 
 down : ∀ {Ψ A Γ Δ}
       → Γ ⁏ Δ ⊢ [ Ψ ] A
-      → {{_ : Γ ⁏ Δ , [ Ψ ] A ⊢⋆ Ψ}}
+      → Γ ⁏ Δ , [ Ψ ] A ⊢⋆ Ψ
       → Γ ⁏ Δ ⊢ A
-down t = unbox t mv₀
+down t us = unbox t (mv₀ us)
 
 distup : ∀ {Ψ A B Γ Δ}
       → Γ ⁏ Δ ⊢ [ Ψ ] ([ Ψ ] A ▻ B)
@@ -280,7 +278,7 @@ mutual
   [ i ≔ s ] var ._        | diff j = var j
   [ i ≔ s ] lam t         = lam ([ pop i ≔ mono⊢ weak⊆ s ] t)
   [ i ≔ s ] app t u       = app ([ i ≔ s ] t) ([ i ≔ s ] u)
-  [ i ≔ s ] mvar j {{ts}} = mvar j {{[ i ≔ s ]⋆ ts}}
+  [ i ≔ s ] mvar j ts     = mvar j ([ i ≔ s ]⋆ ts)
   [ i ≔ s ] box t         = box t
   [ i ≔ s ] unbox t u     = unbox ([ i ≔ s ] t) ([ i ≔ mmono⊢ weak⊆ s ] u)
   [ i ≔ s ] pair t u      = pair ([ i ≔ s ] t) ([ i ≔ s ] u)
@@ -300,9 +298,9 @@ mutual
   m[ i ≔ s ] var j          = var j
   m[ i ≔ s ] lam t          = lam (m[ i ≔ s ] t)
   m[ i ≔ s ] app t u        = app (m[ i ≔ s ] t) (m[ i ≔ s ] u)
-  m[ i ≔ s ] mvar j  {{ts}} with i ≟∈ j
-  m[ i ≔ s ] mvar .i {{ts}} | same   = multicut (m[ i ≔ s ]⋆ ts) s
-  m[ i ≔ s ] mvar ._ {{ts}} | diff j = mvar j {{m[ i ≔ s ]⋆ ts}}
+  m[ i ≔ s ] mvar j  ts     with i ≟∈ j
+  m[ i ≔ s ] mvar .i ts     | same   = multicut (m[ i ≔ s ]⋆ ts) s
+  m[ i ≔ s ] mvar ._ ts     | diff j = mvar j (m[ i ≔ s ]⋆ ts)
   m[ i ≔ s ] box t          = box (m[ i ≔ s ] t)
   m[ i ≔ s ] unbox t u      = unbox (m[ i ≔ s ] t) (m[ pop i ≔ mmono⊢ weak⊆ s ] u)
   m[ i ≔ s ] pair t u       = pair (m[ i ≔ s ] t) (m[ i ≔ s ] u)
@@ -368,7 +366,7 @@ data _⋙_ {Δ : Cx Box} {Γ : Cx Ty} : ∀ {A} → Γ ⁏ Δ ⊢ A → Γ ⁏ �
                           → unbox (box t) u ⋙ (m[ top ≔ t ] u)
 
   eta□⋙      : ∀ {Ψ A} → {t : Γ ⁏ Δ ⊢ [ Ψ ] A}
-                        → t ⋙ unbox t (box mv₀)
+                        → t ⋙ unbox t (box (mv₀ refl⊢⋆))
 
   -- TODO: What about commuting conversions for □?
 
@@ -386,18 +384,16 @@ data _⋙_ {Δ : Cx Box} {Γ : Cx Ty} : ∀ {A} → Γ ⁏ Δ ⊢ A → Γ ⁏ �
 
 -- Examples from the Nanevski-Pfenning-Pientka paper.
 
--- NOTE: In many cases, the instance argument for mvar can be automatically inferred, but not always.
-
 module Examples where
   e₁ : ∀ {A C D Γ Δ}
         → Γ ⁏ Δ ⊢ [ ∅ , C ] A ▻
                     [ ∅ , C , D ] A
-  e₁ = lam (unbox v₀ (box mv₀))
+  e₁ = lam (unbox v₀ (box (mv₀ (∙ , var (pop top)))))
 
   e₂ : ∀ {A C Γ Δ}
         → Γ ⁏ Δ ⊢ [ ∅ , C , C ] A ▻
                     [ ∅ , C ] A
-  e₂ = lam (unbox v₀ (box mv₀))
+  e₂ = lam (unbox v₀ (box (mv₀ (refl⊢⋆ , var top))))
 
   e₃ : ∀ {A Γ Δ}
         → Γ ⁏ Δ ⊢ [ ∅ , A ] A
@@ -408,27 +404,27 @@ module Examples where
                     [ ∅ , A ] [ ∅ , B ] C ▻
                     [ ∅ , A ] C
   e₄ = lam (lam (unbox v₁ (unbox v₀ (box
-         (unbox mv₀ (mv₀ {{∙ , mv₂}}))))))
+         (unbox (mv₀ refl⊢⋆) (mv₀ (∙ , mv₂ refl⊢⋆)))))))
 
   e₅ : ∀ {A Γ Δ}
         → Γ ⁏ Δ ⊢ [ ∅ ] A ▻ A
-  e₅ = lam (unbox v₀ mv₀)
+  e₅ = lam (unbox v₀ (mv₀ ∙))
 
   e₆ : ∀ {A C D Γ Δ}
         → Γ ⁏ Δ ⊢ [ ∅ , C ] A ▻
                     [ ∅ , D ] [ ∅ , C ] A
-  e₆ = lam (unbox v₀ (box (box mv₀)))
+  e₆ = lam (unbox v₀ (box (box (mv₀ refl⊢⋆))))
 
   e₇ : ∀ {A B C D Γ Δ}
         → Γ ⁏ Δ ⊢ [ ∅ , C ] (A ▻ B) ▻
                     [ ∅ , D ] A ▻
                     [ ∅ , C , D ] B
   e₇ = lam (lam (unbox v₁ (unbox v₀ (box
-         (app mv₁ mv₀)))))
+         (app (mv₁ (∙ , var (pop top))) (mv₀ (∙ , var top)))))))
 
   e₈ : ∀ {A B C Γ Δ}
         → Γ ⁏ Δ ⊢ [ ∅ , A ] (A ▻ B) ▻
                     [ ∅ , B ] C ▻
                     [ ∅ , A ] C
   e₈ = lam (lam (unbox v₁ (unbox v₀ (box
-         (mv₀ {{∙ , app mv₁ v₀}})))))
+         (mv₀ (∙ , app (mv₁ refl⊢⋆) v₀))))))
