@@ -1,8 +1,8 @@
 {-# OPTIONS --rewriting #-}
 
-module ICMLSyntaxNoTerms where
+module A201706.ICMLSyntaxNoTerms where
 
-open import ICML public
+open import A201706.ICML public
 open ICMLList public
 
 

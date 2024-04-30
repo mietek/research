@@ -1,6 +1,6 @@
-module IMCLP where
+module A201706.IMCLP where
 
-open import PreludeVec public
+open import A201706.PreludeVec public
 
 
 -- Terms.

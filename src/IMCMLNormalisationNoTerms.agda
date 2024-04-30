@@ -1,6 +1,6 @@
-module IMCMLNormalisationNoTerms where
+module A201706.IMCMLNormalisationNoTerms where
 
-open import IMCMLSemanticsNoTerms public
+open import A201706.IMCMLSemanticsNoTerms public
 
 
 -- TODO

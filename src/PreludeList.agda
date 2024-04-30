@@ -1,8 +1,8 @@
 {-# OPTIONS --rewriting #-}
 
-module PreludeList where
+module A201706.PreludeList where
 
-open import Prelude public
+open import A201706.Prelude public
 
 
 -- Lists.

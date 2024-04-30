@@ -1,6 +1,6 @@
-module IS4SemanticsNoTerms where
+module A201706.IS4SemanticsNoTerms where
 
-open import IS4SyntaxNoTerms public
+open import A201706.IS4SyntaxNoTerms public
 
 
 -- Introspective Kripke models.

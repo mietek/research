@@ -1,8 +1,8 @@
 {-# OPTIONS --rewriting #-}
 
-module IMCMLSyntaxNoTerms where
+module A201706.IMCMLSyntaxNoTerms where
 
-open import IMCML public
+open import A201706.IMCML public
 open IMCMLList public
 
 

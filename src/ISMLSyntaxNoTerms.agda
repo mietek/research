@@ -1,8 +1,8 @@
 {-# OPTIONS --rewriting #-}
 
-module ISMLSyntaxNoTerms where
+module A201706.ISMLSyntaxNoTerms where
 
-open import ISML public
+open import A201706.ISML public
 open ISMLList public
 
 

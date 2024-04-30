@@ -1,8 +1,8 @@
 {-# OPTIONS --rewriting #-}
 
-module IMCLPSyntaxTerms where
+module A201706.IMCLPSyntaxTerms where
 
-open import IMCLP public
+open import A201706.IMCLP public
 
 
 -- Contexts.

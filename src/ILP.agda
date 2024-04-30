@@ -1,6 +1,6 @@
-module ILP where
+module A201706.ILP where
 
-open import PreludeVec public
+open import A201706.PreludeVec public
 
 
 -- Terms.

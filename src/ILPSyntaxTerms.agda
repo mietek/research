@@ -1,8 +1,8 @@
 {-# OPTIONS --rewriting #-}
 
-module ILPSyntaxTerms where
+module A201706.ILPSyntaxTerms where
 
-open import ILP public
+open import A201706.ILP public
 
 
 -- Contexts.

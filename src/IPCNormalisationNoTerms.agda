@@ -1,7 +1,7 @@
-module IPCNormalisationNoTerms where
+module A201706.IPCNormalisationNoTerms where
 
-open import IPCSyntaxNoTerms public
-open import IPCSemantics public
+open import A201706.IPCSyntaxNoTerms public
+open import A201706.IPCSemantics public
 open IPCSemanticsList public
 
 

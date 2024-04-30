@@ -1,6 +1,6 @@
-module IPCSemantics where
+module A201706.IPCSemantics where
 
-open import IPC public
+open import A201706.IPC public
 
 
 -- Intuitionistic Kripke models.

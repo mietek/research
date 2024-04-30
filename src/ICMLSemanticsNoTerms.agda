@@ -1,6 +1,6 @@
-module ICMLSemanticsNoTerms where
+module A201706.ICMLSemanticsNoTerms where
 
-open import ICMLSyntaxNoTerms public
+open import A201706.ICMLSyntaxNoTerms public
 
 
 -- Introspective Kripke models.

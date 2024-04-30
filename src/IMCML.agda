@@ -1,12 +1,12 @@
-module IMCML where
+module A201706.IMCML where
 
-open import Prelude public
+open import A201706.Prelude public
 
 
 -- Types and lists of types.
 
 module IMCMLList where
-  open import PreludeList public
+  open import A201706.PreludeList public
 
   mutual
     infixr 7 _⇒_
@@ -31,7 +31,7 @@ module IMCMLList where
 -- Types and vectors of types.
 
 module IMCMLVec where
-  open import PreludeVec public
+  open import A201706.PreludeVec public
 
   mutual
     infixr 7 _⇒_

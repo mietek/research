@@ -1,6 +1,6 @@
-module ICMLNormalisationNoTerms where
+module A201706.ICMLNormalisationNoTerms where
 
-open import ICMLSemanticsNoTerms public
+open import A201706.ICMLSemanticsNoTerms public
 
 
 -- Absolute values.

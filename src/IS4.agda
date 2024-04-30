@@ -1,6 +1,6 @@
-module IS4 where
+module A201706.IS4 where
 
-open import Prelude public
+open import A201706.Prelude public
 
 
 -- Types.
@@ -20,7 +20,7 @@ record BoxTy : Set where
 -- Lists of types.
 
 module IS4List where
-  open import PreludeList public
+  open import A201706.PreludeList public
 
   Ty⋆ : Set
   Ty⋆ = List Ty
@@ -32,7 +32,7 @@ module IS4List where
 -- Vectors of types.
 
 module IS4Vec where
-  open import PreludeVec public
+  open import A201706.PreludeVec public
 
   Ty⋆ : Nat → Set
   Ty⋆ g = Vec Ty g

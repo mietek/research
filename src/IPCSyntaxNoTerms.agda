@@ -1,6 +1,6 @@
-module IPCSyntaxNoTerms where
+module A201706.IPCSyntaxNoTerms where
 
-open import IPC public
+open import A201706.IPC public
 open IPCList public
 
 

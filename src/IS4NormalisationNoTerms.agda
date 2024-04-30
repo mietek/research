@@ -1,6 +1,6 @@
-module IS4NormalisationNoTerms where
+module A201706.IS4NormalisationNoTerms where
 
-open import IS4SemanticsNoTerms public
+open import A201706.IS4SemanticsNoTerms public
 
 
 -- Absolute values.

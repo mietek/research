@@ -1,6 +1,6 @@
-module IPC where
+module A201706.IPC where
 
-open import Prelude public
+open import A201706.Prelude public
 
 
 -- Types.
@@ -14,7 +14,7 @@ data Ty : Set where
 -- Lists of types.
 
 module IPCList where
-  open import PreludeList public
+  open import A201706.PreludeList public
 
   Ty⋆ : Set
   Ty⋆ = List Ty
@@ -23,7 +23,7 @@ module IPCList where
 -- Vectors of types.
 
 module IPCVec where
-  open import PreludeVec public
+  open import A201706.PreludeVec public
 
   Ty⋆ : Nat → Set
   Ty⋆ g = Vec Ty g

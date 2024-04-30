@@ -1,6 +1,6 @@
-module IS4SyntaxNoTerms where
+module A201706.IS4SyntaxNoTerms where
 
-open import IS4 public
+open import A201706.IS4 public
 open IS4List public
 
 
