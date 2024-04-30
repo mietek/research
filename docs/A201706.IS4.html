@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>A201706.IS4</title><link rel="stylesheet" href="AgdaPP.css"></head><body><pre class="Agda"><a id="1" class="Keyword">module</a> <a id="8" href="A201706.IS4.html" class="Module">A201706.IS4</a> <a id="20" class="Keyword">where</a>
+
+<a id="27" class="Keyword">open</a> <a id="32" class="Keyword">import</a> <a id="39" href="A201706.Prelude.html" class="Module">A201706.Prelude</a> <a id="55" class="Keyword">public</a>
+
+
+<a id="64" class="Comment">-- Types.</a>
+
+<a id="75" class="Keyword">infixr</a> <a id="82" class="Number">7</a> <a id="84" href="A201706.IS4.html#122" class="InductiveConstructor Operator">_⇒_</a>
+<a id="88" class="Keyword">data</a> <a id="Ty"></a><a id="93" href="A201706.IS4.html#93" class="Datatype">Ty</a> <a id="96" class="Symbol">:</a> <a id="98" class="PrimitiveType">Set</a> <a id="102" class="Keyword">where</a>
+  <a id="Ty.•"></a><a id="110" href="A201706.IS4.html#110" class="InductiveConstructor">•</a>    <a id="115" class="Symbol">:</a> <a id="117" href="A201706.IS4.html#93" class="Datatype">Ty</a>
+  <a id="Ty._⇒_"></a><a id="122" href="A201706.IS4.html#122" class="InductiveConstructor Operator">_⇒_</a> <a id="126" class="Symbol">:</a> <a id="128" href="A201706.IS4.html#93" class="Datatype">Ty</a> <a id="131" class="Symbol">→</a> <a id="133" href="A201706.IS4.html#93" class="Datatype">Ty</a> <a id="136" class="Symbol">→</a> <a id="138" href="A201706.IS4.html#93" class="Datatype">Ty</a>
+  <a id="Ty.□_"></a><a id="143" href="A201706.IS4.html#143" class="InductiveConstructor Operator">□_</a>   <a id="148" class="Symbol">:</a> <a id="150" href="A201706.IS4.html#93" class="Datatype">Ty</a> <a id="153" class="Symbol">→</a> <a id="155" href="A201706.IS4.html#93" class="Datatype">Ty</a>
+
+<a id="159" class="Keyword">record</a> <a id="BoxTy"></a><a id="166" href="A201706.IS4.html#166" class="Record">BoxTy</a> <a id="172" class="Symbol">:</a> <a id="174" class="PrimitiveType">Set</a> <a id="178" class="Keyword">where</a>
+  <a id="186" class="Keyword">constructor</a> <a id="BoxTy.□_"></a><a id="198" href="A201706.IS4.html#198" class="InductiveConstructor Operator">□_</a>
+  <a id="203" class="Keyword">field</a>
+    <a id="BoxTy.A"></a><a id="213" href="A201706.IS4.html#213" class="Field">A</a> <a id="215" class="Symbol">:</a> <a id="217" href="A201706.IS4.html#93" class="Datatype">Ty</a>
+
+
+<a id="222" class="Comment">-- Lists of types.</a>
+
+<a id="242" class="Keyword">module</a> <a id="IS4List"></a><a id="249" href="A201706.IS4.html#249" class="Module">IS4List</a> <a id="257" class="Keyword">where</a>
+  <a id="265" class="Keyword">open</a> <a id="270" class="Keyword">import</a> <a id="277" href="A201706.PreludeList.html" class="Module">A201706.PreludeList</a> <a id="297" class="Keyword">public</a>
+
+  <a id="IS4List.Ty⋆"></a><a id="307" href="A201706.IS4.html#307" class="Function">Ty⋆</a> <a id="311" class="Symbol">:</a> <a id="313" class="PrimitiveType">Set</a>
+  <a id="319" href="A201706.IS4.html#307" class="Function">Ty⋆</a> <a id="323" class="Symbol">=</a> <a id="325" href="A201706.PreludeList.html#117" class="Datatype">List</a> <a id="330" href="A201706.IS4.html#93" class="Datatype">Ty</a>
+
+  <a id="IS4List.BoxTy⋆"></a><a id="336" href="A201706.IS4.html#336" class="Function">BoxTy⋆</a> <a id="343" class="Symbol">:</a> <a id="345" class="PrimitiveType">Set</a>
+  <a id="351" href="A201706.IS4.html#336" class="Function">BoxTy⋆</a> <a id="358" class="Symbol">=</a> <a id="360" href="A201706.PreludeList.html#117" class="Datatype">List</a> <a id="365" href="A201706.IS4.html#166" class="Record">BoxTy</a>
+
+
+<a id="373" class="Comment">-- Vectors of types.</a>
+
+<a id="395" class="Keyword">module</a> <a id="IS4Vec"></a><a id="402" href="A201706.IS4.html#402" class="Module">IS4Vec</a> <a id="409" class="Keyword">where</a>
+  <a id="417" class="Keyword">open</a> <a id="422" class="Keyword">import</a> <a id="429" href="A201706.PreludeVec.html" class="Module">A201706.PreludeVec</a> <a id="448" class="Keyword">public</a>
+
+  <a id="IS4Vec.Ty⋆"></a><a id="458" href="A201706.IS4.html#458" class="Function">Ty⋆</a> <a id="462" class="Symbol">:</a> <a id="464" href="Agda.Builtin.Nat.html#165" class="Datatype">Nat</a> <a id="468" class="Symbol">→</a> <a id="470" class="PrimitiveType">Set</a>
+  <a id="476" href="A201706.IS4.html#458" class="Function">Ty⋆</a> <a id="480" href="A201706.IS4.html#480" class="Bound">g</a> <a id="482" class="Symbol">=</a> <a id="484" href="A201706.PreludeVec.html#118" class="Datatype">Vec</a> <a id="488" href="A201706.IS4.html#93" class="Datatype">Ty</a> <a id="491" href="A201706.IS4.html#480" class="Bound">g</a>
+
+  <a id="IS4Vec.BoxTy⋆"></a><a id="496" href="A201706.IS4.html#496" class="Function">BoxTy⋆</a> <a id="503" class="Symbol">:</a> <a id="505" href="Agda.Builtin.Nat.html#165" class="Datatype">Nat</a> <a id="509" class="Symbol">→</a> <a id="511" class="PrimitiveType">Set</a>
+  <a id="517" href="A201706.IS4.html#496" class="Function">BoxTy⋆</a> <a id="524" href="A201706.IS4.html#524" class="Bound">d</a> <a id="526" class="Symbol">=</a> <a id="528" href="A201706.PreludeVec.html#118" class="Datatype">Vec</a> <a id="532" href="A201706.IS4.html#166" class="Record">BoxTy</a> <a id="538" href="A201706.IS4.html#524" class="Bound">d</a>
+</pre></body></html>
