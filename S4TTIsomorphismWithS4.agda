@@ -56,15 +56,14 @@ toTerm (S4.box 𝒟)      = BOX (toTerm 𝒟)
 toTerm (S4.letbox 𝒟 ℰ) = LETBOX (toTerm 𝒟) (toTerm ℰ)
 
 
-instance
-  match-toTerm : ∀ {Δ Γ A} → (𝒟 : Δ S4.⊢ A valid[ Γ ])
-                           → Δ ⊢ toTerm 𝒟 ⦂ A match[ Γ ] 𝒟
-  match-toTerm (S4.var i)      = var (toFin i)
-  match-toTerm (S4.lam 𝒟)      = lam (match-toTerm 𝒟)
-  match-toTerm (S4.app 𝒟 ℰ)    = app (match-toTerm 𝒟) (match-toTerm ℰ)
-  match-toTerm (S4.mvar i)     = mvar (toFin i)
-  match-toTerm (S4.box 𝒟)      = box (match-toTerm 𝒟)
-  match-toTerm (S4.letbox 𝒟 ℰ) = letbox (match-toTerm 𝒟) (match-toTerm ℰ)
+match-toTerm : ∀ {Δ Γ A} → (𝒟 : Δ S4.⊢ A valid[ Γ ])
+                         → Δ ⊢ toTerm 𝒟 ⦂ A match[ Γ ] 𝒟
+match-toTerm (S4.var i)      = var (toFin i)
+match-toTerm (S4.lam 𝒟)      = lam (match-toTerm 𝒟)
+match-toTerm (S4.app 𝒟 ℰ)    = app (match-toTerm 𝒟) (match-toTerm ℰ)
+match-toTerm (S4.mvar i)     = mvar (toFin i)
+match-toTerm (S4.box 𝒟)      = box (match-toTerm 𝒟)
+match-toTerm (S4.letbox 𝒟 ℰ) = letbox (match-toTerm 𝒟) (match-toTerm ℰ)
 
 
 --------------------------------------------------------------------------------
@@ -81,16 +80,16 @@ instance
 ↓ (letbox 𝒟 ℰ) = S4.letbox (↓ 𝒟) (↓ ℰ)
 
 
-instance
-  match↓ : ∀ {d g M A} → {Δ : Asserts d} {Γ : Types g}
-                       → (𝒟 : Δ ⊢ M ⦂ A valid[ Γ ])
-                       → toList Δ ⊢ M ⦂ A match[ toList Γ ] ↓ 𝒟
-  match↓ (var {I = I} i)  = var I
-  match↓ (lam 𝒟)          = lam (match↓ 𝒟)
-  match↓ (app 𝒟 ℰ)        = app (match↓ 𝒟) (match↓ ℰ)
-  match↓ (mvar {I = I} i) = mvar I
-  match↓ (box 𝒟)          = box (match↓ 𝒟)
-  match↓ (letbox 𝒟 ℰ)     = letbox (match↓ 𝒟) (match↓ ℰ)
+-- TODO: broken
+-- match↓ : ∀ {d g M A} → {Δ : Asserts d} {Γ : Types g}
+--                      → (𝒟 : Δ ⊢ M ⦂ A valid[ Γ ])
+--                      → toList Δ ⊢ M ⦂ A match[ toList Γ ] ↓ 𝒟
+-- match↓ (var {I = I} i)  = {!var I!}
+-- match↓ (lam 𝒟)          = lam (match↓ 𝒟)
+-- match↓ (app 𝒟 ℰ)        = app (match↓ 𝒟) (match↓ ℰ)
+-- match↓ (mvar {I = I} i) = {!mvar I!}
+-- match↓ (box 𝒟)          = box (match↓ 𝒟)
+-- match↓ (letbox 𝒟 ℰ)     = letbox (match↓ 𝒟) (match↓ ℰ)
 
 
 ↑ : ∀ {Δ Γ M A} → (𝒟 : Δ S4.⊢ A valid[ Γ ]) {{p : Δ ⊢ M ⦂ A match[ Γ ] 𝒟}}
@@ -116,9 +115,10 @@ gen-id↓↑ (S4.box 𝒟)      {{box p}}      = S4.box & gen-id↓↑ 𝒟 {{p}
 gen-id↓↑ (S4.letbox 𝒟 ℰ) {{letbox p q}} = S4.letbox & gen-id↓↑ 𝒟 {{p}} ⊗ gen-id↓↑ ℰ {{q}}
 
 
-id↓↑ : ∀ {Δ Γ A} → (𝒟 : Δ S4.⊢ A valid[ Γ ])
-                 → ↓ (↑ 𝒟) ≡ 𝒟
-id↓↑ 𝒟 = gen-id↓↑ 𝒟 {{match-toTerm 𝒟}}
+-- TODO: broken
+-- id↓↑ : ∀ {Δ Γ A} → (𝒟 : Δ S4.⊢ A valid[ Γ ])
+--                  → {!↓ (↑ 𝒟)!} ≡ 𝒟
+-- id↓↑ 𝒟 = gen-id↓↑ 𝒟 {{match-toTerm 𝒟}}
 
 
 gen-id↑↓ : ∀ {d g M A} → {Δ : Asserts d} {Γ : Types g}
@@ -132,10 +132,11 @@ gen-id↑↓ (box 𝒟)      {{box p}}      = box & gen-id↑↓ 𝒟 {{p}}
 gen-id↑↓ (letbox 𝒟 ℰ) {{letbox p q}} = letbox & gen-id↑↓ 𝒟 {{p}} ⊗ gen-id↑↓ ℰ {{q}}
 
 
-id↑↓ : ∀ {d g M A} → {Δ : Asserts d} {Γ : Types g}
-                   → (𝒟 : Δ ⊢ M ⦂ A valid[ Γ ])
-                   → ↑ (↓ 𝒟) ≡ 𝒟
-id↑↓ 𝒟 = gen-id↑↓ 𝒟 {{match↓ 𝒟}}
+-- TODO: broken
+-- id↑↓ : ∀ {d g M A} → {Δ : Asserts d} {Γ : Types g}
+--                    → (𝒟 : Δ ⊢ M ⦂ A valid[ Γ ])
+--                    → {!↑ (↓ 𝒟)!} ≡ 𝒟
+-- id↑↓ 𝒟 = gen-id↑↓ 𝒟 {{match↓ 𝒟}}
 
 
 --------------------------------------------------------------------------------

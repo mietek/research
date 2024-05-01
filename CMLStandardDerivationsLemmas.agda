@@ -330,7 +330,7 @@ comp-mrens* η₁ η₂ ∙       = refl
 comp-mrens* η₁ η₂ (ξ , 𝒟) = _,_ & comp-mrens* η₁ η₂ ξ ⊗ comp-mren η₁ η₂ 𝒟
 
 
-𝐦𝐫𝐞𝐧 : ∀ {A} → Presheaf 𝐎𝐏𝐄 (\ Δ → Σ (List Prop) (\ Γ → Δ ⊢ A valid[ Γ ]))
+𝐦𝐫𝐞𝐧 : ∀ {A} → Presheaf 𝐎𝐏𝐄 (\ Δ → Σ (List Form) (\ Γ → Δ ⊢ A valid[ Γ ]))
 𝐦𝐫𝐞𝐧 = record
          { ℱ     = \ { η (Γ , 𝒟) → Γ , mren η 𝒟 }
          ; idℱ   = funext! (\ { (Γ , 𝒟) → (Γ ,_) & id-mren 𝒟 })
@@ -338,7 +338,7 @@ comp-mrens* η₁ η₂ (ξ , 𝒟) = _,_ & comp-mrens* η₁ η₂ ξ ⊗ comp-
          }
 
 
-𝐦𝐫𝐞𝐧𝐬 : ∀ {Ξ} → Presheaf 𝐎𝐏𝐄 (\ Δ → Σ (List Prop) (\ Γ → Δ ⊢ Ξ allvalid[ Γ ]))
+𝐦𝐫𝐞𝐧𝐬 : ∀ {Ξ} → Presheaf 𝐎𝐏𝐄 (\ Δ → Σ (List Form) (\ Γ → Δ ⊢ Ξ allvalid[ Γ ]))
 𝐦𝐫𝐞𝐧𝐬 = record
           { ℱ     = \ { η (Γ , ξ) → Γ , mrens η ξ}
           ; idℱ   = funext! (\ { (Γ , ξ) → (Γ ,_) & id-mrens ξ })
@@ -530,7 +530,7 @@ mutual
 
 
 instance
-  𝐂𝐌𝐋 : ∀ {Δ} → Category (List Prop) (\ Γ Ξ → Δ ⊢ Ξ allvalid[ Γ ])
+  𝐂𝐌𝐋 : ∀ {Δ} → Category (List Form) (\ Γ Ξ → Δ ⊢ Ξ allvalid[ Γ ])
   𝐂𝐌𝐋 = record
           { id     = ids
           ; _∘_    = flip subs

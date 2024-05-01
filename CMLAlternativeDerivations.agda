@@ -15,7 +15,7 @@ import CMLStandardDerivationsLemmas as CML
 
 mutual
   infix 3 _⊢_valid[_]
-  data _⊢_valid[_] : List Assert → Prop → List Prop → Set
+  data _⊢_valid[_] : List Assert → Form → List Form → Set
     where
       vz : ∀ {A Δ Γ} → Δ ⊢ A valid[ Γ , A ]
 
@@ -44,7 +44,7 @@ mutual
                             → Δ , ⟪ Ψ ⊫ A ⟫ ⊢ B valid[ Γ ]
 
   infix 3 _⊢_allvalid[_]
-  _⊢_allvalid[_] : List Assert → List Prop → List Prop → Set
+  _⊢_allvalid[_] : List Assert → List Form → List Form → Set
   Δ ⊢ Ξ allvalid[ Γ ] = All (\ A → Δ ⊢ A valid[ Γ ]) Ξ
 
 

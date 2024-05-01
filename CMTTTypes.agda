@@ -27,7 +27,7 @@ instance
   TypeVar : IsString Type
   TypeVar =
     record
-      { Constraint = \ s → 𝟙
+      { Constraint = \ s → ⊤
       ; fromString = \ s → ι s
       }
 

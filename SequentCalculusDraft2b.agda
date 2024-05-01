@@ -16,7 +16,7 @@ open import SequentCalculusDraftSquasha
 -- Sequent calculus
 
 infix 3 _⟹_
-data _⟹_ : [List] Prop → Prop → Set
+data _⟹_ : [List] Form → Form → Set
   where
     ⊃R : ∀ {A B Γ} → Γ [,] A ⟹ B
                    → Γ ⟹ A ⊃ B
@@ -49,7 +49,7 @@ data _⟹_ : [List] Prop → Prop → Set
                      → Γ [,] A ∨ B ⟹ C
 
 infix 3 _⟹_all
-_⟹_all : [List] Prop → List Prop → Set
+_⟹_all : [List] Form → List Form → Set
 Γ ⟹ Ξ all = All (Γ ⟹_) Ξ
 
 
@@ -133,7 +133,7 @@ mutual
 -- Sequent calculus with cut
 
 infix 3 _⟹₊_
-data _⟹₊_ : [List] Prop → Prop → Set
+data _⟹₊_ : [List] Form → Form → Set
   where
     ⊃R : ∀ {A B Γ} → Γ [,] A ⟹₊ B
                    → Γ ⟹₊ A ⊃ B
@@ -169,7 +169,7 @@ data _⟹₊_ : [List] Prop → Prop → Set
                     → Γ ⟹₊ B
 
 infix 3 _⟹₊_all
-_⟹₊_all : [List] Prop → List Prop → Set
+_⟹₊_all : [List] Form → List Form → Set
 Γ ⟹₊ Ξ all = All (Γ ⟹₊_) Ξ
 
 
@@ -233,153 +233,154 @@ mutual
 --------------------------------------------------------------------------------
 
 
--- Theorem 3.11 (Admissibility of cut)
+-- TODO: unfinished
+-- -- Theorem 3.11 (Admissibility of cut)
 
-thm311 : ∀ {Γ A C} → Γ ⟹ A → Γ [,] A ⟹ C
-                   → Γ ⟹ C
+-- thm311 : ∀ {Γ A C} → Γ ⟹ A → Γ [,] A ⟹ C
+--                    → Γ ⟹ C
 
--- Case: A is not the principal formula of the last inference in ℰ.
--- In this case, we appeal to the induction hypothesis on the
--- subderivations of ℰ and directly infer the conclusion from the results.
-thm311 𝒟 (⊃R ℰ)     = ⊃R (thm311 𝒟 ℰ)
-thm311 𝒟 (∧R ℰ₁ ℰ₂) = ∧R (thm311 𝒟 ℰ₁) (thm311 𝒟 ℰ₂)
-thm311 𝒟 𝟏R         = 𝟏R
-thm311 𝒟 (∨R₁ ℰ)    = ∨R₁ (thm311 𝒟 ℰ)
-thm311 𝒟 (∨R₂ ℰ)    = ∨R₂ (thm311 𝒟 ℰ)
+-- -- Case: A is not the principal formula of the last inference in ℰ.
+-- -- In this case, we appeal to the induction hypothesis on the
+-- -- subderivations of ℰ and directly infer the conclusion from the results.
+-- thm311 𝒟 (⊃R ℰ)     = ⊃R (thm311 𝒟 ℰ)
+-- thm311 𝒟 (∧R ℰ₁ ℰ₂) = ∧R (thm311 𝒟 ℰ₁) (thm311 𝒟 ℰ₂)
+-- thm311 𝒟 𝟏R         = 𝟏R
+-- thm311 𝒟 (∨R₁ ℰ)    = ∨R₁ (thm311 𝒟 ℰ)
+-- thm311 𝒟 (∨R₂ ℰ)    = ∨R₂ (thm311 𝒟 ℰ)
 
--- Case: ℰ is an initial sequent using the cut formula
--- Case: ℰ is an initial sequent not using the cut formula
--- TODO: ???
-thm311 𝒟 vzₛ = {!𝒟!}
+-- -- Case: ℰ is an initial sequent using the cut formula
+-- -- Case: ℰ is an initial sequent not using the cut formula
+-- -- TODO: ???
+-- thm311 𝒟 vzₛ = {!𝒟!}
 
--- Case: 𝒟 is an initial sequent
-thm311 vzₛ ℰ = ℰ
+-- -- Case: 𝒟 is an initial sequent
+-- thm311 vzₛ ℰ = ℰ
 
--- Case: A is not the principal formula of the last inference in 𝒟.
--- In that case 𝒟 must end in a left rule and we can appeal to the
--- induction hypothesis on one of its premises.
-thm311 {Γ} (⊃L {B = B} 𝒟₁ 𝒟₂) ℰ = ⊃L {B = B} {Γ = Γ} 𝒟₁ (thm311 𝒟₂ ℰ)
-thm311 {Γ} (∧L₁ {A} {B} 𝒟)    ℰ = ∧L₁ {A} {B} {Γ = Γ} (thm311 𝒟 ℰ)
-thm311 {Γ} (∧L₂ {A} {B} 𝒟)    ℰ = ∧L₂ {A} {B} {Γ = Γ} (thm311 𝒟 ℰ)
-thm311 {Γ} 𝟎L                 ℰ = 𝟎L {Γ = Γ}
-thm311 {Γ} (∨L {A} {B} 𝒟₁ 𝒟₂) ℰ = ∨L {A} {B} {Γ = Γ} (thm311 𝒟₁ ℰ) (thm311 𝒟₂ ℰ)
+-- -- Case: A is not the principal formula of the last inference in 𝒟.
+-- -- In that case 𝒟 must end in a left rule and we can appeal to the
+-- -- induction hypothesis on one of its premises.
+-- thm311 {Γ} (⊃L {B = B} 𝒟₁ 𝒟₂) ℰ = ⊃L {B = B} {Γ = Γ} 𝒟₁ (thm311 𝒟₂ ℰ)
+-- thm311 {Γ} (∧L₁ {A} {B} 𝒟)    ℰ = ∧L₁ {A} {B} {Γ = Γ} (thm311 𝒟 ℰ)
+-- thm311 {Γ} (∧L₂ {A} {B} 𝒟)    ℰ = ∧L₂ {A} {B} {Γ = Γ} (thm311 𝒟 ℰ)
+-- thm311 {Γ} 𝟎L                 ℰ = 𝟎L {Γ = Γ}
+-- thm311 {Γ} (∨L {A} {B} 𝒟₁ 𝒟₂) ℰ = ∨L {A} {B} {Γ = Γ} (thm311 𝒟₁ ℰ) (thm311 𝒟₂ ℰ)
 
--- Case: A is the principal formula of the final inference in both
--- 𝒟 and ℰ.  There are a number of subcases to consider, based on the
--- last inference in 𝒟 and ℰ.
-thm311 {Γ} 𝒟 (⊃L {B = B} ℰ₁ ℰ₂) = ⊃L {B = B} {Γ = Γ} (thm311 𝒟 ℰ₁) (thm311 𝒟 ℰ₂)
-thm311 {Γ} 𝒟 (∧L₁ {A} {B} ℰ)    = ∧L₁ {A} {B} {Γ = Γ} (thm311 𝒟 ℰ)
-thm311 {Γ} 𝒟 (∧L₂ {A} {B} ℰ)    = ∧L₂ {A} {B} {Γ = Γ} (thm311 𝒟 ℰ)
-thm311 {Γ} 𝒟 𝟎L                 = 𝟎L {Γ = Γ}
-thm311 {Γ} 𝒟 (∨L {A} {B} ℰ₁ ℰ₂) = ∨L {A} {B} {Γ = Γ} (thm311 𝒟 ℰ₁) (thm311 𝒟 ℰ₂)
-
-
---------------------------------------------------------------------------------
+-- -- Case: A is the principal formula of the final inference in both
+-- -- 𝒟 and ℰ.  There are a number of subcases to consider, based on the
+-- -- last inference in 𝒟 and ℰ.
+-- thm311 {Γ} 𝒟 (⊃L {B = B} ℰ₁ ℰ₂) = ⊃L {B = B} {Γ = Γ} (thm311 𝒟 ℰ₁) (thm311 𝒟 ℰ₂)
+-- thm311 {Γ} 𝒟 (∧L₁ {A} {B} ℰ)    = ∧L₁ {A} {B} {Γ = Γ} (thm311 𝒟 ℰ)
+-- thm311 {Γ} 𝒟 (∧L₂ {A} {B} ℰ)    = ∧L₂ {A} {B} {Γ = Γ} (thm311 𝒟 ℰ)
+-- thm311 {Γ} 𝒟 𝟎L                 = 𝟎L {Γ = Γ}
+-- thm311 {Γ} 𝒟 (∨L {A} {B} ℰ₁ ℰ₂) = ∨L {A} {B} {Γ = Γ} (thm311 𝒟 ℰ₁) (thm311 𝒟 ℰ₂)
 
 
--- Theorem 3.12 (Cut elimination)
-
-thm312 : ∀ {Γ A} → Γ ⟹₊ A
-                 → Γ ⟹ A
-thm312     (⊃R 𝒟)           = ⊃R (thm312 𝒟)
-thm312     (∧R 𝒟 ℰ)         = ∧R (thm312 𝒟) (thm312 ℰ)
-thm312     𝟏R               = 𝟏R
-thm312     (∨R₁ 𝒟)          = ∨R₁ (thm312 𝒟)
-thm312     (∨R₂ 𝒟)          = ∨R₂ (thm312 𝒟)
-thm312 {Γ} vzₛ₊             = vzₛ {Γ = Γ}
-thm312 {Γ} (⊃L {B = B} 𝒟 ℰ) = ⊃L {B = B} {Γ = Γ} (thm312 𝒟) (thm312 ℰ)
-thm312 {Γ} (∧L₁ {A} {B} 𝒟)  = ∧L₁ {A} {B} {Γ = Γ}(thm312 𝒟)
-thm312 {Γ} (∧L₂ {A} {B} 𝒟)  = ∧L₂ {A} {B} {Γ = Γ}(thm312 𝒟)
-thm312 {Γ} 𝟎L               = 𝟎L {Γ = Γ}
-thm312 {Γ} (∨L {A} {B} 𝒟 ℰ) = ∨L {A} {B} {Γ = Γ} (thm312 𝒟) (thm312 ℰ)
-thm312     (cut 𝒟 ℰ)        = thm311 (thm312 𝒟) (thm312 ℰ)
+-- --------------------------------------------------------------------------------
 
 
--- Corollary ??? (Completeness of sequent calculus with respect to natural deduction)
+-- -- Theorem 3.12 (Cut elimination)
 
-cor312′ : ∀ {Γ A} → Γ ⊢ A true
-                  → squash Γ ⟹ A
-cor312′ 𝒟 = thm312 (thm310ₙₘ (thm33ₙₘ 𝒟))
-
-
--- Theorem 3.13 (Normalisation of natural deduction)
-
-thm313 : ∀ {Γ A} → Γ ⊢ A true
-                 → squash Γ ⊢ A normal
-thm313 {Γ} 𝒟 = thm36 {Γ} (cor312′ 𝒟)
-
-
--- Corollary 3.14 (Consistency of natural deduction)
-
--- TODO: ???
-
-postulate
-  cor314 : ¬ (∙ ⊢ 𝟎 true)
--- cor314 𝒟 with cor312′ 𝒟
--- cor314 𝒟 | vzₛ      = {!!}
--- cor314 𝒟 | ⊃L 𝒟′ ℰ′ = {!!}
--- cor314 𝒟 | ∧L₁ 𝒟′   = {!!}
--- cor314 𝒟 | ∧L₂ 𝒟′   = {!!}
--- cor314 𝒟 | 𝟎L       = {!!}
--- cor314 𝒟 | ∨L 𝒟′ ℰ′ = {!!}
+-- thm312 : ∀ {Γ A} → Γ ⟹₊ A
+--                  → Γ ⟹ A
+-- thm312     (⊃R 𝒟)           = ⊃R (thm312 𝒟)
+-- thm312     (∧R 𝒟 ℰ)         = ∧R (thm312 𝒟) (thm312 ℰ)
+-- thm312     𝟏R               = 𝟏R
+-- thm312     (∨R₁ 𝒟)          = ∨R₁ (thm312 𝒟)
+-- thm312     (∨R₂ 𝒟)          = ∨R₂ (thm312 𝒟)
+-- thm312 {Γ} vzₛ₊             = vzₛ {Γ = Γ}
+-- thm312 {Γ} (⊃L {B = B} 𝒟 ℰ) = ⊃L {B = B} {Γ = Γ} (thm312 𝒟) (thm312 ℰ)
+-- thm312 {Γ} (∧L₁ {A} {B} 𝒟)  = ∧L₁ {A} {B} {Γ = Γ}(thm312 𝒟)
+-- thm312 {Γ} (∧L₂ {A} {B} 𝒟)  = ∧L₂ {A} {B} {Γ = Γ}(thm312 𝒟)
+-- thm312 {Γ} 𝟎L               = 𝟎L {Γ = Γ}
+-- thm312 {Γ} (∨L {A} {B} 𝒟 ℰ) = ∨L {A} {B} {Γ = Γ} (thm312 𝒟) (thm312 ℰ)
+-- thm312     (cut 𝒟 ℰ)        = thm311 (thm312 𝒟) (thm312 ℰ)
 
 
--- Corollary 3.15 (Disjunction property of natural deduction)
+-- -- Corollary ??? (Completeness of sequent calculus with respect to natural deduction)
 
--- TODO: Existentials for the existential property! Skulls for the skull throne!
-
--- TODO: ???
-
-postulate
-  cor315ₛ : ∀ {A B} → squash ∙ ⟹ A ∨ B
-                    → squash ∙ ⟹ A ⊎ squash ∙ ⟹ B
--- cor315ₛ 𝒟 with cor312′ {∙} (cor36′ 𝒟)
--- cor315ₛ 𝒟 | ∨R₁ 𝒟′   = inj₁ 𝒟′
--- cor315ₛ 𝒟 | ∨R₂ 𝒟′   = inj₂ 𝒟′
--- cor315ₛ 𝒟 | vzₛ      = {!!}
--- cor315ₛ 𝒟 | ⊃L 𝒟′ ℰ′ = {!!}
--- cor315ₛ 𝒟 | ∧L₁ 𝒟′   = {!!}
--- cor315ₛ 𝒟 | ∧L₂ 𝒟′   = {!!}
--- cor315ₛ 𝒟 | 𝟎L       = {!!}
--- cor315ₛ 𝒟 | ∨L 𝒟′ ℰ′ = {!!}
-
-cor315 : ∀ {A B} → ∙ ⊢ A ∨ B true
-                 → ∙ ⊢ A true ⊎ ∙ ⊢ B true
-cor315 𝒟 with cor315ₛ (cor312′ 𝒟)
-cor315 𝒟 | inj₁ ℰ = inj₁ (cor36′ ℰ)
-cor315 𝒟 | inj₂ ℰ = inj₂ (cor36′ ℰ)
+-- cor312′ : ∀ {Γ A} → Γ ⊢ A true
+--                   → squash Γ ⟹ A
+-- cor312′ 𝒟 = thm312 (thm310ₙₘ (thm33ₙₘ 𝒟))
 
 
--- Corollary 3.16 (Independence of excluded middle from natural deduction)
+-- -- Theorem 3.13 (Normalisation of natural deduction)
 
--- NOTE: Cannot use a schematic metavariable here
-
--- TODO: ???
-
-postulate
-  cor316ₛ : ¬ (squash ∙ ⟹ "A" ∨ ~ "A")
--- cor316ₛ 𝒟 with cor315ₛ 𝒟
--- cor316ₛ 𝒟 | inj₁ vzₛ             = {!!}
--- cor316ₛ 𝒟 | inj₁ (⊃L 𝒟′ ℰ′)      = {!!}
--- cor316ₛ 𝒟 | inj₁ (∧L₁ 𝒟′)        = {!!}
--- cor316ₛ 𝒟 | inj₁ (∧L₂ 𝒟′)        = {!!}
--- cor316ₛ 𝒟 | inj₁ 𝟎L              = {!!}
--- cor316ₛ 𝒟 | inj₁ (∨L 𝒟′ ℰ′)      = {!!}
--- cor316ₛ 𝒟 | inj₂ (⊃R vzₛ)        = {!!}
--- cor316ₛ 𝒟 | inj₂ (⊃R (⊃L 𝒟′ ℰ′)) = {!!}
--- cor316ₛ 𝒟 | inj₂ (⊃R (∧L₁ 𝒟′))   = {!!}
--- cor316ₛ 𝒟 | inj₂ (⊃R (∧L₂ 𝒟′))   = {!!}
--- cor316ₛ 𝒟 | inj₂ (⊃R 𝟎L)         = {!!}
--- cor316ₛ 𝒟 | inj₂ (⊃R (∨L 𝒟′ ℰ′)) = {!!}
--- cor316ₛ 𝒟 | inj₂ vzₛ             = {!!}
--- cor316ₛ 𝒟 | inj₂ (⊃L 𝒟′ ℰ′)      = {!!}
--- cor316ₛ 𝒟 | inj₂ (∧L₁ 𝒟′)        = {!!}
--- cor316ₛ 𝒟 | inj₂ (∧L₂ 𝒟′)        = {!!}
--- cor316ₛ 𝒟 | inj₂ 𝟎L              = {!!}
--- cor316ₛ 𝒟 | inj₂ (∨L 𝒟′ ℰ′)      = {!!}
-
-cor316 : ¬ (∙ ⊢ "A" ∨ ~ "A" true)
-cor316 𝒟 = cor316ₛ (cor312′ 𝒟)
+-- thm313 : ∀ {Γ A} → Γ ⊢ A true
+--                  → squash Γ ⊢ A normal
+-- thm313 {Γ} 𝒟 = thm36 {Γ} (cor312′ 𝒟)
 
 
---------------------------------------------------------------------------------
+-- -- Corollary 3.14 (Consistency of natural deduction)
+
+-- -- TODO: ???
+
+-- postulate
+--   cor314 : ¬ (∙ ⊢ 𝟎 true)
+-- -- cor314 𝒟 with cor312′ 𝒟
+-- -- cor314 𝒟 | vzₛ      = {!!}
+-- -- cor314 𝒟 | ⊃L 𝒟′ ℰ′ = {!!}
+-- -- cor314 𝒟 | ∧L₁ 𝒟′   = {!!}
+-- -- cor314 𝒟 | ∧L₂ 𝒟′   = {!!}
+-- -- cor314 𝒟 | 𝟎L       = {!!}
+-- -- cor314 𝒟 | ∨L 𝒟′ ℰ′ = {!!}
+
+
+-- -- Corollary 3.15 (Disjunction property of natural deduction)
+
+-- -- TODO: Existentials for the existential property! Skulls for the skull throne!
+
+-- -- TODO: ???
+
+-- postulate
+--   cor315ₛ : ∀ {A B} → squash ∙ ⟹ A ∨ B
+--                     → squash ∙ ⟹ A ⊎ squash ∙ ⟹ B
+-- -- cor315ₛ 𝒟 with cor312′ {∙} (cor36′ 𝒟)
+-- -- cor315ₛ 𝒟 | ∨R₁ 𝒟′   = inj₁ 𝒟′
+-- -- cor315ₛ 𝒟 | ∨R₂ 𝒟′   = inj₂ 𝒟′
+-- -- cor315ₛ 𝒟 | vzₛ      = {!!}
+-- -- cor315ₛ 𝒟 | ⊃L 𝒟′ ℰ′ = {!!}
+-- -- cor315ₛ 𝒟 | ∧L₁ 𝒟′   = {!!}
+-- -- cor315ₛ 𝒟 | ∧L₂ 𝒟′   = {!!}
+-- -- cor315ₛ 𝒟 | 𝟎L       = {!!}
+-- -- cor315ₛ 𝒟 | ∨L 𝒟′ ℰ′ = {!!}
+
+-- cor315 : ∀ {A B} → ∙ ⊢ A ∨ B true
+--                  → ∙ ⊢ A true ⊎ ∙ ⊢ B true
+-- cor315 𝒟 with cor315ₛ (cor312′ 𝒟)
+-- cor315 𝒟 | inj₁ ℰ = inj₁ (cor36′ ℰ)
+-- cor315 𝒟 | inj₂ ℰ = inj₂ (cor36′ ℰ)
+
+
+-- -- Corollary 3.16 (Independence of excluded middle from natural deduction)
+
+-- -- NOTE: Cannot use a schematic metavariable here
+
+-- -- TODO: ???
+
+-- postulate
+--   cor316ₛ : ¬ (squash ∙ ⟹ "A" ∨ ~ "A")
+-- -- cor316ₛ 𝒟 with cor315ₛ 𝒟
+-- -- cor316ₛ 𝒟 | inj₁ vzₛ             = {!!}
+-- -- cor316ₛ 𝒟 | inj₁ (⊃L 𝒟′ ℰ′)      = {!!}
+-- -- cor316ₛ 𝒟 | inj₁ (∧L₁ 𝒟′)        = {!!}
+-- -- cor316ₛ 𝒟 | inj₁ (∧L₂ 𝒟′)        = {!!}
+-- -- cor316ₛ 𝒟 | inj₁ 𝟎L              = {!!}
+-- -- cor316ₛ 𝒟 | inj₁ (∨L 𝒟′ ℰ′)      = {!!}
+-- -- cor316ₛ 𝒟 | inj₂ (⊃R vzₛ)        = {!!}
+-- -- cor316ₛ 𝒟 | inj₂ (⊃R (⊃L 𝒟′ ℰ′)) = {!!}
+-- -- cor316ₛ 𝒟 | inj₂ (⊃R (∧L₁ 𝒟′))   = {!!}
+-- -- cor316ₛ 𝒟 | inj₂ (⊃R (∧L₂ 𝒟′))   = {!!}
+-- -- cor316ₛ 𝒟 | inj₂ (⊃R 𝟎L)         = {!!}
+-- -- cor316ₛ 𝒟 | inj₂ (⊃R (∨L 𝒟′ ℰ′)) = {!!}
+-- -- cor316ₛ 𝒟 | inj₂ vzₛ             = {!!}
+-- -- cor316ₛ 𝒟 | inj₂ (⊃L 𝒟′ ℰ′)      = {!!}
+-- -- cor316ₛ 𝒟 | inj₂ (∧L₁ 𝒟′)        = {!!}
+-- -- cor316ₛ 𝒟 | inj₂ (∧L₂ 𝒟′)        = {!!}
+-- -- cor316ₛ 𝒟 | inj₂ 𝟎L              = {!!}
+-- -- cor316ₛ 𝒟 | inj₂ (∨L 𝒟′ ℰ′)      = {!!}
+
+-- cor316 : ¬ (∙ ⊢ "A" ∨ ~ "A" true)
+-- cor316 𝒟 = cor316ₛ (cor312′ 𝒟)
+
+
+-- --------------------------------------------------------------------------------

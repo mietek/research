@@ -64,7 +64,7 @@ mutual
 infix 3 _⊢_⦂_allvalid*
 _⊢_⦂_allvalid* : ∀ {d n} → {σ : Scopes d} {ρ : Scopes n}
                           → Asserts σ → Terms* σ ρ → Asserts ρ → Set
-Δ ⊢ ∙     ⦂ ∙                allvalid* = 𝟙
+Δ ⊢ ∙     ⦂ ∙                allvalid* = ⊤
 Δ ⊢ τ , M ⦂ (Ξ , ⟪ Ψ ⊫ A ⟫) allvalid* = Δ ⊢ τ ⦂ Ξ allvalid* × Δ ⊢ M ⦂ A valid[ Ψ ]
 
 

@@ -18,21 +18,21 @@ import IPLStandardDerivations as IPL
 
 
 mutual
-  ↓ₚ : Prop → IPL.Prop
+  ↓ₚ : Form → IPL.Form
   ↓ₚ (ι P)     = IPL.ι P
   ↓ₚ (A ⊃ B)   = ↓ₚ A IPL.⊃ ↓ₚ B
   ↓ₚ ([ Ψ ] A) = ↓ₚₛ Ψ IPL.⊃⋯⊃ ↓ₚ A
 
-  ↓ₚₛ : List Prop → List IPL.Prop
+  ↓ₚₛ : List Form → List IPL.Form
   ↓ₚₛ ∙       = ∙
   ↓ₚₛ (Ξ , A) = ↓ₚₛ Ξ , ↓ₚ A
 
 
-↓ₐ : Assert → IPL.Prop
+↓ₐ : Assert → IPL.Form
 ↓ₐ ⟪ Γ ⊫ A ⟫ = ↓ₚₛ Γ IPL.⊃⋯⊃ ↓ₚ A
 
 
-↓ₐₛ : List Assert → List IPL.Prop
+↓ₐₛ : List Assert → List IPL.Form
 ↓ₐₛ Δ = map ↓ₐ Δ
 
 
@@ -67,12 +67,12 @@ mutual
 --------------------------------------------------------------------------------
 
 
-↑ₚ : IPL.Prop → Prop
+↑ₚ : IPL.Form → Form
 ↑ₚ (IPL.ι P)   = ι P
 ↑ₚ (A IPL.⊃ B) = ↑ₚ A ⊃ ↑ₚ B
 
 
-↑ₚₛ : List IPL.Prop → List Prop
+↑ₚₛ : List IPL.Form → List Form
 ↑ₚₛ Γ = map ↑ₚ Γ
 
 
@@ -92,7 +92,7 @@ mutual
 --------------------------------------------------------------------------------
 
 
-id↓↑ₚ : ∀ {A} → (↓ₚ ∘ ↑ₚ) A ≡ A
+id↓↑ₚ : ∀ {A : IPL.Form} → ↓ₚ (↑ₚ A) ≡ A
 id↓↑ₚ {IPL.ι P}   = refl
 id↓↑ₚ {A IPL.⊃ B} = IPL._⊃_ & id↓↑ₚ ⊗ id↓↑ₚ
 
@@ -107,8 +107,8 @@ id↓↑ₚₛ {Γ , A} = _,_ & id↓↑ₚₛ ⊗ id↓↑ₚ
 
 {-# REWRITE id↓↑ₚ #-}
 {-# REWRITE id↓↑ₚₛ #-}
-id↓↑∋ₚ : ∀ {Γ A} → (i : Γ ∋ A)
-                 → (↓∋ₚ ∘ ↑∋ₚ) i ≡ i
+id↓↑∋ₚ : ∀ {Γ} {A : IPL.Form} → (i : Γ ∋ A)
+                              → ↓∋ₚ (↑∋ₚ i) ≡ i
 id↓↑∋ₚ zero    = refl
 id↓↑∋ₚ (suc i) = suc & id↓↑∋ₚ i
 

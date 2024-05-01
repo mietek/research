@@ -12,7 +12,7 @@ open import IPLPropositions
 
 
 infix 3 _⊢_true
-data _⊢_true : List Prop → Prop → Set
+data _⊢_true : List Form → Form → Set
   where
     var : ∀ {A Γ} → Γ ∋ A
                   → Γ ⊢ A true

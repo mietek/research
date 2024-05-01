@@ -18,7 +18,7 @@ import FullIPLDerivations as IPL
 
 mutual
   infix 3 _⊢_normal[_]
-  data _⊢_normal[_] : List Assert → Prop → List Prop → Set
+  data _⊢_normal[_] : List Assert → Form → List Form → Set
     where
       lam : ∀ {A B Δ Γ} → Δ ⊢ B normal[ Γ , A ]
                         → Δ ⊢ A ⊃ B normal[ Γ ]
@@ -26,9 +26,9 @@ mutual
       pair : ∀ {A B Δ Γ} → Δ ⊢ A normal[ Γ ] → Δ ⊢ B normal[ Γ ]
                          → Δ ⊢ A ∧ B normal[ Γ ]
 
-      unit : ∀ {Δ Γ} → Δ ⊢ ⊤ normal[ Γ ]
+      unit : ∀ {Δ Γ} → Δ ⊢ 𝟏 normal[ Γ ]
 
-      abort : ∀ {A Δ Γ} → Δ ⊢ ⊥ neutral[ Γ ]
+      abort : ∀ {A Δ Γ} → Δ ⊢ 𝟎 neutral[ Γ ]
                         → Δ ⊢ A normal[ Γ ]
 
       inl : ∀ {A B Δ Γ} → Δ ⊢ A normal[ Γ ]
@@ -50,7 +50,7 @@ mutual
                       → Δ ⊢ ι P normal[ Γ ]
 
   infix 3 _⊢_neutral[_]
-  data _⊢_neutral[_] : List Assert → Prop → List Prop → Set
+  data _⊢_neutral[_] : List Assert → Form → List Form → Set
     where
       var : ∀ {A Δ Γ} → Γ ∋ A
                       → Δ ⊢ A neutral[ Γ ]

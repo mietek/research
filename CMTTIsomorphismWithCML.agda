@@ -15,19 +15,19 @@ open import CMTTTypes
 open import CMTTTerms
 open import CMTTDerivations
 import CMLPropositions as CML
-import CMLDerivations as CML
+import CMLStandardDerivations as CML
 
 
 --------------------------------------------------------------------------------
 
 
 mutual
-  ↓ₚ : Type → CML.Prop
+  ↓ₚ : Type → CML.Form
   ↓ₚ (ι P)     = CML.ι P
   ↓ₚ (A ⊃ B)   = ↓ₚ A CML.⊃ ↓ₚ B
   ↓ₚ ([ Ψ ] A) = CML.[ ↓ₚₛ Ψ ] ↓ₚ A
 
-  ↓ₚₛ : ∀ {n} → Types n → List CML.Prop
+  ↓ₚₛ : ∀ {n} → Types n → List CML.Form
   ↓ₚₛ ∙       = ∙
   ↓ₚₛ (Ξ , A) = ↓ₚₛ Ξ , ↓ₚ A
 
@@ -87,11 +87,12 @@ mutual
                         → Δ ⊢ M ⦂ A ⊃ B match[ Γ ] 𝒟 → Δ ⊢ N ⦂ A match[ Γ ] ℰ
                         → Δ ⊢ APP M N ⦂ B match[ Γ ] CML.app 𝒟 ℰ
 
-      mvar : ∀ {A m d g I} → {σ : Scopes d}
-                              {Ψ : Types m} {Δ : Asserts σ} {Γ : Types g}
-                              {i : σ ∋⟨ I ⟩ m} {υ : Terms σ g m}
-                           → Δ AllVec.∋◇⟨ i ⟩ ⟪ Ψ ⊫ A ⟫ → Δ ⊢ υ ⦂ Ψ allmatch[ Γ ] {!!}
-                           → Δ ⊢ MVAR i υ ⦂ A match[ Γ ] CML.mvar {!i!} {!!}
+      -- TODO: unfinished
+      -- mvar : ∀ {A m d g I} → {σ : Scopes d}
+      --                         {Ψ : Types m} {Δ : Asserts σ} {Γ : Types g}
+      --                         {i : σ ∋⟨ I ⟩ m} {υ : Terms σ g m}
+      --                      → Δ AllVec.∋◇⟨ i ⟩ ⟪ Ψ ⊫ A ⟫ → Δ ⊢ υ ⦂ Ψ allmatch[ Γ ] {!!}
+      --                      → Δ ⊢ MVAR i υ ⦂ A match[ Γ ] CML.mvar {!i!} {!!}
 
       box : ∀ {A m d g} → {σ : Scopes d}
                            {Ψ : Types m} {Δ : Asserts σ} {Γ : Types g}
@@ -111,7 +112,7 @@ mutual
   _⊢_⦂_allmatch[_]_ : ∀ {d g n} → {σ : Scopes d}
                                  → (Δ : Asserts σ) → Terms σ g n → (Ξ : Types n) (Γ : Types g)
                                  → ↓ₐₛ Δ CML.⊢ ↓ₚₛ Ξ allvalid[ ↓ₚₛ Γ ] → Set
-  Δ ⊢ ∙     ⦂ ∙       allmatch[ Γ ] ∙       = 𝟙
+  Δ ⊢ ∙     ⦂ ∙       allmatch[ Γ ] ∙       = ⊤
   Δ ⊢ τ , M ⦂ (Ξ , A) allmatch[ Γ ] (ξ , 𝒟) = Δ ⊢ τ ⦂ Ξ allmatch[ Γ ] ξ × Δ ⊢ M ⦂ A match[ Γ ] 𝒟
 
 

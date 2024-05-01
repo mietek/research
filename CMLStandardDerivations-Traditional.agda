@@ -15,7 +15,7 @@ import CMLStandardDerivations as CML
 
 mutual
   infix 3 _⨾_⊢_true
-  data _⨾_⊢_true : List Assert → List Prop → Prop → Set
+  data _⨾_⊢_true : List Assert → List Form → Form → Set
     where
       var : ∀ {A Δ Γ} → Γ ∋ A
                       → Δ ⨾ Γ ⊢ A true
@@ -36,7 +36,7 @@ mutual
                              → Δ ⨾ Γ ⊢ B true
 
   infix 3 _⨾_⊢_alltrue
-  _⨾_⊢_alltrue : List Assert → List Prop → List Prop → Set
+  _⨾_⊢_alltrue : List Assert → List Form → List Form → Set
   Δ ⨾ Γ ⊢ Ξ alltrue = All (\ A → Δ ⨾ Γ ⊢ A true) Ξ
 
 

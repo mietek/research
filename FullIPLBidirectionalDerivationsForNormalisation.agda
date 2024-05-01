@@ -14,7 +14,7 @@ open import FullIPLDerivations
 
 mutual
   infix 3 _⊢_normal
-  data _⊢_normal : List Prop → Prop → Set
+  data _⊢_normal : List Form → Form → Set
     where
       lam : ∀ {A B Γ} → Γ , A ⊢ B normal
                       → Γ ⊢ A ⊃ B normal
@@ -22,9 +22,9 @@ mutual
       pair : ∀ {A B Γ} → Γ ⊢ A normal → Γ ⊢ B normal
                        → Γ ⊢ A ∧ B normal
 
-      unit : ∀ {Γ} → Γ ⊢ ⊤ normal
+      unit : ∀ {Γ} → Γ ⊢ 𝟏 normal
 
-      abort : ∀ {A Γ} → Γ ⊢ ⊥ neutral
+      abort : ∀ {A Γ} → Γ ⊢ 𝟎 neutral
                       → Γ ⊢ A normal
 
       inl : ∀ {A B Γ} → Γ ⊢ A normal
@@ -40,7 +40,7 @@ mutual
                     → Γ ⊢ ι P normal
 
   infix 3 _⊢_neutral
-  data _⊢_neutral : List Prop → Prop → Set
+  data _⊢_neutral : List Form → Form → Set
     where
       var : ∀ {A Γ} → Γ ∋ A
                     → Γ ⊢ A neutral

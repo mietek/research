@@ -13,7 +13,7 @@ open import FullS4Propositions
 
 
 infix 3 _⊢_valid[_]
-data _⊢_valid[_] : List Assert → Prop → List Prop → Set
+data _⊢_valid[_] : List Assert → Form → List Form → Set
   where
     var : ∀ {A Δ Γ} → Γ ∋ A
                     → Δ ⊢ A valid[ Γ ]
@@ -33,9 +33,9 @@ data _⊢_valid[_] : List Assert → Prop → List Prop → Set
     snd : ∀ {A B Δ Γ} → Δ ⊢ A ∧ B valid[ Γ ]
                       → Δ ⊢ B valid[ Γ ]
 
-    unit : ∀ {Δ Γ} → Δ ⊢ ⊤ valid[ Γ ]
+    unit : ∀ {Δ Γ} → Δ ⊢ 𝟏 valid[ Γ ]
 
-    abort : ∀ {A Δ Γ} → Δ ⊢ ⊥ valid[ Γ ]
+    abort : ∀ {A Δ Γ} → Δ ⊢ 𝟎 valid[ Γ ]
                       → Δ ⊢ A valid[ Γ ]
 
     inl : ∀ {A B Δ Γ} → Δ ⊢ A valid[ Γ ]
@@ -58,7 +58,7 @@ data _⊢_valid[_] : List Assert → Prop → List Prop → Set
 
 
 infix 3 _⊢_allvalid[_]
-_⊢_allvalid[_] : List Assert → List Prop → List Prop → Set
+_⊢_allvalid[_] : List Assert → List Form → List Form → Set
 Δ ⊢ Ξ allvalid[ Γ ] = All (\ A → Δ ⊢ A valid[ Γ ]) Ξ
 
 
@@ -343,13 +343,13 @@ mexch 𝒟 = unvau (unvau (exch (vau (vau 𝒟))))
 --------------------------------------------------------------------------------
 
 
-lams : ∀ {Δ Γ A} → (Ξ : List Prop) → Δ ⊢ A valid[ Γ ⧺ Ξ ]
+lams : ∀ {Δ Γ A} → (Ξ : List Form) → Δ ⊢ A valid[ Γ ⧺ Ξ ]
                 → Δ ⊢ Ξ ⊃⋯⊃ A valid[ Γ ]
 lams ∙       𝒟 = 𝒟
 lams (Ξ , B) 𝒟 = lams Ξ (lam 𝒟)
 
 
-unlams : ∀ {Δ Γ A} → (Ξ : List Prop) → Δ ⊢ Ξ ⊃⋯⊃ A valid[ Γ ]
+unlams : ∀ {Δ Γ A} → (Ξ : List Form) → Δ ⊢ Ξ ⊃⋯⊃ A valid[ Γ ]
                  → Δ ⊢ A valid[ Γ ⧺ Ξ ]
 unlams ∙       𝒟 = 𝒟
 unlams (Ξ , B) 𝒟 = unlam (unlams Ξ 𝒟)

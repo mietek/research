@@ -10,23 +10,23 @@ open import List
 
 infixl 9 _∨_ _∧_
 infixr 8 _⊃_
-data Prop : Set
+data Form : Set
   where
-    ι_  : String → Prop
-    _⊃_ : Prop → Prop → Prop
-    _∧_ : Prop → Prop → Prop
-    𝟏   : Prop
-    𝟎   : Prop
-    _∨_ : Prop → Prop → Prop
+    ι_  : String → Form
+    _⊃_ : Form → Form → Form
+    _∧_ : Form → Form → Form
+    𝟏   : Form
+    𝟎   : Form
+    _∨_ : Form → Form → Form
 
 
-~_ : Prop → Prop
+~_ : Form → Form
 ~ A = A ⊃ 𝟎
 
 
 instance
-  PropVar : IsString Prop
-  PropVar =
+  FormVar : IsString Form
+  FormVar =
     record
       { Constraint = \ s → ⊤
       ; fromString = \ s → ι s
@@ -71,7 +71,7 @@ inj∨₂ : ∀ {A₁ A₂ B₁ B₂} → A₁ ∨ B₁ ≡ A₂ ∨ B₂
 inj∨₂ refl = refl
 
 
-_≟ₚ_ : (A₁ A₂ : Prop) → Dec (A₁ ≡ A₂)
+_≟ₚ_ : (A₁ A₂ : Form) → Dec (A₁ ≡ A₂)
 (ι P₁)    ≟ₚ (ι P₂)    with P₁ ≟ₛ P₂
 ...                    | yes refl = yes refl
 ...                    | no P₁≢P₂ = no (P₁≢P₂ ∘ injι)
@@ -124,7 +124,7 @@ _≟ₚ_ : (A₁ A₂ : Prop) → Dec (A₁ ≡ A₂)
 --------------------------------------------------------------------------------
 
 
-_⊃⋯⊃_ : List Prop → Prop → Prop
+_⊃⋯⊃_ : List Form → Form → Form
 ∙       ⊃⋯⊃ A = A
 (Ξ , B) ⊃⋯⊃ A = Ξ ⊃⋯⊃ (B ⊃ A)
 

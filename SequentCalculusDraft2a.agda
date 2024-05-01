@@ -18,7 +18,7 @@ open import SequentCalculusDraft
 -- Sequent calculus
 
 infix 3 _⟹_
-data _⟹_ : List Prop → Prop → Set
+data _⟹_ : List Form → Form → Set
   where
     ⊃R : ∀ {A B Γ} → Γ , A ⟹ B
                    → Γ ⟹ A ⊃ B
@@ -53,7 +53,7 @@ data _⟹_ : List Prop → Prop → Set
                      → Γ ⟹ C
 
 infix 3 _⟹_all
-_⟹_all : List Prop → List Prop → Set
+_⟹_all : List Form → List Form → Set
 Γ ⟹ Ξ all = All (Γ ⟹_) Ξ
 
 
@@ -153,7 +153,7 @@ mutual
 -- Sequent calculus with cut
 
 infix 3 _⟹₊_
-data _⟹₊_ : List Prop → Prop → Set
+data _⟹₊_ : List Form → Form → Set
   where
     ⊃R : ∀ {A B Γ} → Γ , A ⟹₊ B
                    → Γ ⟹₊ A ⊃ B
@@ -191,7 +191,7 @@ data _⟹₊_ : List Prop → Prop → Set
                     → Γ ⟹₊ B
 
 infix 3 _⟹₊_all
-_⟹₊_all : List Prop → List Prop → Set
+_⟹₊_all : List Form → List Form → Set
 Γ ⟹₊ Ξ all = All (Γ ⟹₊_) Ξ
 
 

@@ -135,11 +135,9 @@ comp-ren∋ (keep η₁) (keep η₂) (suc i) = suc & comp-ren∋ η₁ η₂ i
                              Σ (Fin n) (\ I → Ξ ∋⟨ I ⟩ A) })
 𝐫𝐞𝐧∋ = record
          { ℱ     = \ { (e , η) (I , i) → REN∋ e I , ren∋ η i }
-         ; idℱ   = funext! (\ { (I , i) →
-                     (REN∋ id I ,_) & id-ren∋ i })
+         ; idℱ   = funext! (\ { (I , i) → (_ ,_) & id-ren∋ i })
          ; compℱ = \ { (e₁ , η₁) (e₂ , η₂) →
-                     funext! (\ { (I , i) →
-                       (REN∋ (e₁ ∘ e₂) I ,_) & comp-ren∋ η₁ η₂ i }) }
+                     funext! (\ { (I , i) → (_ ,_) & comp-ren∋ η₁ η₂ i }) }
          }
 
 

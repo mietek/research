@@ -13,7 +13,7 @@ import S4StandardDerivations as S4
 
 
 infix 3 _⊢_valid[_]
-data _⊢_valid[_] : List Assert → Prop → List Prop → Set
+data _⊢_valid[_] : List Assert → Form → List Form → Set
   where
     vz : ∀ {A Δ Γ} → Δ ⊢ A valid[ Γ , A ]
 

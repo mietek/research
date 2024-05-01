@@ -12,20 +12,20 @@ import IPLStandardDerivations as IPL
 --------------------------------------------------------------------------------
 
 
-↑ₚ : IPL.Prop → Prop
+↑ₚ : IPL.Form → Form
 ↑ₚ (IPL.ι P)   = ι P
 ↑ₚ (A IPL.⊃ B) = ↑ₚ A ⊃ ↑ₚ B
 
 
-↑ₐ : IPL.Prop → Assert
+↑ₐ : IPL.Form → Assert
 ↑ₐ A = ⟪⊫ ↑ₚ A ⟫
 
 
-↑ₚₛ : List IPL.Prop → List Prop
+↑ₚₛ : List IPL.Form → List Form
 ↑ₚₛ Γ = map ↑ₚ Γ
 
 
-↑ₐₛ : List IPL.Prop → List Assert
+↑ₐₛ : List IPL.Form → List Assert
 ↑ₐₛ Γ = map ↑ₐ Γ
 
 

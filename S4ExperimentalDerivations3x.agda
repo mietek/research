@@ -14,7 +14,7 @@ import S4StandardDerivations as S4
 
 mutual
   infix 3 _⨾_⊢_true
-  data _⨾_⊢_true : List Assert → List Prop → Prop → Set
+  data _⨾_⊢_true : List Assert → List Form → Form → Set
     where
       vz : ∀ {A Δ Γ} → Δ ⨾ Γ , A ⊢ A true
 
@@ -40,7 +40,7 @@ mutual
                        → Δ ⨾ Γ ⊢ A true
 
   infix 3 _⊢_valid
-  data _⊢_valid : List Assert → Prop → Set
+  data _⊢_valid : List Assert → Form → Set
     where
       mvz : ∀ {A Δ} → Δ , ⟪⊫ A ⟫ ⊢ A valid
 
@@ -55,7 +55,7 @@ mutual
 
 
 infix 3 _⨾_⊢_alltrue
-_⨾_⊢_alltrue : List Assert → List Prop → List Prop → Set
+_⨾_⊢_alltrue : List Assert → List Form → List Form → Set
 Δ ⨾ Γ ⊢ Ξ alltrue = All (Δ ⨾ Γ ⊢_true) Ξ
 
 
@@ -219,7 +219,7 @@ mvar (suc i) = mwk′ (mvar i)
 
 module S4′
   where
-    _⨾_⊢_true′ : List Assert → List Prop → Prop → Set
+    _⨾_⊢_true′ : List Assert → List Form → Form → Set
     Δ ⨾ Γ ⊢ A true′ = Δ S4.⊢ A valid[ Γ ]
 
     _⊢_valid′ : List Assert → Assert → Set

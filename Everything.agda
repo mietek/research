@@ -9,6 +9,8 @@ import Prelude
 import Names
 
 import Category
+import Category2
+import Subset
 
 import Fin
 import FinLemmas
@@ -36,6 +38,7 @@ import IPLPropositions
 import IPLStandardDerivations                                                   -- _⊢_true ; var/lam/app
 import IPLStandardDerivationsLemmas
 import IPLStandardBidirectionalDerivations-NormalNeutral
+import IPLStandardDerivationsWithAFriendlyFish
 import IPLStandardNormalisation
 
 import IPLExperimentalDerivations-Monolithic                                    -- _⊢_true ; vz/wk/lam/app
@@ -79,9 +82,12 @@ import S4EmbeddingOfIPL
 import S4ProjectionToIPL
 
 
--- import S4NewBidirectionalDerivationsForNormalisation
--- import S4NewNormalisation
--- import S4NewNormalisation2
+-- TODO: unfinished
+import S4AndCMLScratch
+import S4ExperimentalDerivations3x
+import S4NewBidirectionalDerivationsForNormalisation
+import S4NewNormalisation
+import S4NewNormalisation2
 
 
 -------------------
@@ -113,6 +119,11 @@ import CMLAlternativeDerivations                                                
 
 import CMLProjectionToIPL
 
+-- TODO: unfinished
+import CMLAndS4Scratch
+import CMLEnlightenment
+import CMLProjectionToS4
+
 
 -------------------
 
@@ -123,7 +134,9 @@ import CMTTTerms
 import CMTTDerivations          -- _⊢_⦂_valid[_] ; var/lam/app ; mvar/box/letbox
 import CMTTStandardDerivations  -- _⨾_⊢_⦂_true   ; var/lam/app ; mvar/box/letbox
 
--- import CMTTIsomorphismWithCML
+-- TODO: unfinished
+import CMTTIsomorphismWithCML
+import StdCMTTTerms
 
 
 --------------------------------------------------------------------------------
@@ -136,8 +149,9 @@ import LPTTAsserts
 
 import LPTTDerivations
 
--- import StdLPTT
--- import StdLPTTLemmas
+-- TODO: unfinished
+import StdLPTT
+import StdLPTTLemmas
 
 
 --------------------------------------------------------------------------------
@@ -162,7 +176,22 @@ import FullS4EmbeddingOfFullIPL
 import FullS4ProjectionToFullIPL
 
 import FullS4BidirectionalDerivationsForNormalisation
--- import FullS4Normalisation
+
+-- TODO: unfinished
+import FullS4Normalisation
+
+
+--------------------------------------------------------------------------------
+
+
+-- TODO: unfinished
+import Scratch
+import SequentCalculusDraft
+import SequentCalculusDrafta
+import SequentCalculusDraftSquasha
+import SequentCalculusDraft2a
+import SequentCalculusDraft2b
+import SequentCalculusDraft2c
 
 
 --------------------------------------------------------------------------------

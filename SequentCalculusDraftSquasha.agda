@@ -1,3 +1,5 @@
+{-# OPTIONS --irrelevant-projections #-}
+
 module SequentCalculusDraftSquasha where
 
 open import Prelude
@@ -94,7 +96,7 @@ genct[⊇]         i       (suc j) = j
 
 mutual
   infix 3 _⊢_normal
-  data _⊢_normal : Squash (List Prop) → Prop → Set
+  data _⊢_normal : Squash (List Form) → Form → Set
     where
       lam : ∀ {A B Γ} → Γ [,] A ⊢ B normal
                       → Γ ⊢ A ⊃ B normal
@@ -120,7 +122,7 @@ mutual
                     → Γ ⊢ A normal
 
   infix 3 _⊢_neutral
-  data _⊢_neutral : Squash (List Prop) → Prop → Set
+  data _⊢_neutral : Squash (List Form) → Form → Set
     where
       var : ∀ {A Γ} → Γ [∋] A
                     → Γ ⊢ A neutral
@@ -135,11 +137,11 @@ mutual
                       → Γ ⊢ B neutral
 
 infix 3 _⊢_allneutral
-_⊢_allneutral : Squash (List Prop) → List Prop → Set
+_⊢_allneutral : Squash (List Form) → List Form → Set
 Γ ⊢ Ξ allneutral = All (Γ ⊢_neutral) Ξ
 
 infix 3 _⊢_allnormal
-_⊢_allnormal : Squash (List Prop) → List Prop → Set
+_⊢_allnormal : Squash (List Form) → List Form → Set
 Γ ⊢ Ξ allnormal = All (Γ ⊢_normal) Ξ
 
 
@@ -282,7 +284,7 @@ mutual
 
 mutual
   infix 3 _⊢₊_normal
-  data _⊢₊_normal : [List] Prop → Prop → Set
+  data _⊢₊_normal : [List] Form → Form → Set
     where
       lam : ∀ {A B Γ} → Γ [,] A ⊢₊ B normal
                       → Γ ⊢₊ A ⊃ B normal
@@ -308,7 +310,7 @@ mutual
                     → Γ ⊢₊ A normal
 
   infix 3 _⊢₊_neutral
-  data _⊢₊_neutral : [List] Prop → Prop → Set
+  data _⊢₊_neutral : [List] Form → Form → Set
     where
       var : ∀ {A Γ} → Γ [∋] A
                     → Γ ⊢₊ A neutral
@@ -326,11 +328,11 @@ mutual
                     → Γ ⊢₊ A neutral
 
 infix 3 _⊢₊_allneutral
-_⊢₊_allneutral : [List] Prop → List Prop → Set
+_⊢₊_allneutral : [List] Form → List Form → Set
 Γ ⊢₊ Ξ allneutral = All (Γ ⊢₊_neutral) Ξ
 
 infix 3 _⊢₊_allnormal
-_⊢₊_allnormal : [List] Prop → List Prop → Set
+_⊢₊_allnormal : [List] Form → List Form → Set
 Γ ⊢₊ Ξ allnormal = All (Γ ⊢₊_normal) Ξ
 
 

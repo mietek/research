@@ -13,7 +13,7 @@ open import FullIPLPropositions
 
 
 infix 3 _⊢_true
-data _⊢_true : List Prop → Prop → Set
+data _⊢_true : List Form → Form → Set
   where
     var : ∀ {A Γ} → Γ ∋ A
                   → Γ ⊢ A true
@@ -49,7 +49,7 @@ data _⊢_true : List Prop → Prop → Set
 
 
 infix 3 _⊢_alltrue
-_⊢_alltrue : List Prop → List Prop → Set
+_⊢_alltrue : List Form → List Form → Set
 Γ ⊢ Ξ alltrue = All (Γ ⊢_true) Ξ
 
 
@@ -169,7 +169,7 @@ exch 𝒟 = app (app (wk (wk (lam (lam 𝒟)))) vz) (wk vz)
 --------------------------------------------------------------------------------
 
 
-pull : ∀ {Δ A B} → (Γ : List Prop) → (Δ , A) ⧺ Γ ⊢ B true
+pull : ∀ {Δ A B} → (Γ : List Form) → (Δ , A) ⧺ Γ ⊢ B true
                  → Δ ⧺ (Γ , A) ⊢ B true
 pull Γ (var i)      = var (pull∋ Γ i)
 pull Γ (lam 𝒟)      = lam (exch (pull (Γ , _) 𝒟))
@@ -184,13 +184,13 @@ pull Γ (inr 𝒟)      = inr (pull Γ 𝒟)
 pull Γ (case 𝒟 ℰ ℱ) = case (pull Γ 𝒟) (exch (pull (Γ , _) ℰ)) (exch (pull (Γ , _) ℱ))
 
 
-lams : ∀ {Γ A} → (Ξ : List Prop) → Γ ⧺ Ξ ⊢ A true
+lams : ∀ {Γ A} → (Ξ : List Form) → Γ ⧺ Ξ ⊢ A true
                → Γ ⊢ Ξ ⊃⋯⊃ A true
 lams ∙       𝒟 = 𝒟
 lams (Ξ , B) 𝒟 = lams Ξ (lam 𝒟)
 
 
-unlams : ∀ {Γ A} → (Ξ : List Prop) → Γ ⊢ Ξ ⊃⋯⊃ A true
+unlams : ∀ {Γ A} → (Ξ : List Form) → Γ ⊢ Ξ ⊃⋯⊃ A true
                  → Γ ⧺ Ξ ⊢ A true
 unlams ∙       𝒟 = 𝒟
 unlams (Ξ , B) 𝒟 = unlam (unlams Ξ 𝒟)

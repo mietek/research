@@ -12,7 +12,7 @@ open import S4Propositions
 
 
 infix 3 _⊢_valid[_]
-data _⊢_valid[_] : List Assert → Prop → List Prop → Set
+data _⊢_valid[_] : List Assert → Form → List Form → Set
   where
     var : ∀ {A Δ Γ} → Γ ∋ A
                     → Δ ⊢ A valid[ Γ ]
@@ -34,7 +34,7 @@ data _⊢_valid[_] : List Assert → Prop → List Prop → Set
 
 
 infix 3 _⊢_allvalid[_]
-_⊢_allvalid[_] : List Assert → List Prop → List Prop → Set
+_⊢_allvalid[_] : List Assert → List Form → List Form → Set
 Δ ⊢ Ξ allvalid[ Γ ] = All (\ A → Δ ⊢ A valid[ Γ ]) Ξ
 
 

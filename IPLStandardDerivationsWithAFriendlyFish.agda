@@ -30,7 +30,7 @@ data _∈_ {X} : X → Lost X → Set
 
 
 infix 3 _⊢_true
-data _⊢_true : Lost Prop → Prop → Set
+data _⊢_true : Lost Form → Form → Set
   where
     var : ∀ {A Γ} → A ∈ Γ
                   → Γ ⊢ A true
@@ -43,7 +43,7 @@ data _⊢_true : Lost Prop → Prop → Set
 
 
 -- infix 3 _⊢_alltrue
--- _⊢_alltrue : Lost Prop → Lost Prop → Set
+-- _⊢_alltrue : Lost Form → Lost Form → Set
 -- Γ ⊢ Ξ alltrue = All (Γ ⊢_true) Ξ
 
 
@@ -65,13 +65,13 @@ _+_ : ∀ {X} → Lost X → Lost X
 Ξ + ∙       = Ξ
 Ξ + (A , Ψ) = (A , Ξ) + Ψ
 
-Ren : Lost Prop → Lost Prop → Set
+Ren : Lost Form → Lost Form → Set
 Ren Γ Γ′ = ∀ {A} → A ∈ Γ → A ∈ Γ′
 
-Sub : Lost Prop → Lost Prop → Set
+Sub : Lost Form → Lost Form → Set
 Sub Ξ Γ = ∀ {A} → A ∈ Ξ → Γ ⊢ A true
 
-Shub : Lost Prop → Lost Prop → Set
+Shub : Lost Form → Lost Form → Set
 Shub Ξ Γ = ∀ Ψ → Sub (Ξ + Ψ) (Γ + Ψ)
 
 lift : ∀ {A Γ Ξ} → Shub Ξ Γ → Shub (A , Ξ) (A , Γ)

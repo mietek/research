@@ -14,7 +14,7 @@ import S4StandardDerivations as S4
 
 
 infix 3 _⨾_⊢_true
-data _⨾_⊢_true : List Assert → List Prop → Prop → Set
+data _⨾_⊢_true : List Assert → List Form → Form → Set
   where
     var : ∀ {A Δ Γ} → Γ ∋ A
                     → Δ ⨾ Γ ⊢ A true

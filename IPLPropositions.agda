@@ -9,24 +9,24 @@ open import List
 
 
 infixr 8 _⊃_
-data Prop : Set
+data Form : Set
   where
-    ι_  : String → Prop
-    _⊃_ : Prop → Prop → Prop
+    ι_  : String → Form
+    _⊃_ : Form → Form → Form
 
 
 record Truth : Set
   where
     constructor _true
     field
-      A : Prop
+      A : Form
 
 
 instance
-  PropVar : IsString Prop
-  PropVar =
+  FormVar : IsString Form
+  FormVar =
     record
-      { Constraint = \ s → 𝟙
+      { Constraint = \ s → ⊤
       ; fromString = \ s → ι s
       }
 
@@ -49,7 +49,7 @@ inj⊃₂ : ∀ {A₁ A₂ B₁ B₂} → A₁ ⊃ B₁ ≡ A₂ ⊃ B₂
 inj⊃₂ refl = refl
 
 
-_≟ₚ_ : (A₁ A₂ : Prop) → Dec (A₁ ≡ A₂)
+_≟ₚ_ : (A₁ A₂ : Form) → Dec (A₁ ≡ A₂)
 (ι P₁)    ≟ₚ (ι P₂)    with P₁ ≟ₛ P₂
 ...                    | yes refl = yes refl
 ...                    | no P₁≢P₂ = no (P₁≢P₂ ∘ injι)
@@ -64,7 +64,7 @@ _≟ₚ_ : (A₁ A₂ : Prop) → Dec (A₁ ≡ A₂)
 --------------------------------------------------------------------------------
 
 
-_⊃⋯⊃_ : List Prop → Prop → Prop
+_⊃⋯⊃_ : List Form → Form → Form
 ∙       ⊃⋯⊃ A = A
 (Ξ , B) ⊃⋯⊃ A = Ξ ⊃⋯⊃ (B ⊃ A)
 

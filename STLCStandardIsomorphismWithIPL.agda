@@ -42,12 +42,11 @@ toTerm (IPL.lam 𝒟)   = LAM (toTerm 𝒟)
 toTerm (IPL.app 𝒟 ℰ) = APP (toTerm 𝒟) (toTerm ℰ)
 
 
-instance
-  match-toTerm : ∀ {Γ A} → (𝒟 : Γ IPL.⊢ A true)
-                         → ⊢ toTerm 𝒟 ⦂ A match[ Γ ] 𝒟
-  match-toTerm (IPL.var i)   = var (toFin i)
-  match-toTerm (IPL.lam 𝒟)   = lam (match-toTerm 𝒟)
-  match-toTerm (IPL.app 𝒟 ℰ) = app (match-toTerm 𝒟) (match-toTerm ℰ)
+match-toTerm : ∀ {Γ A} → (𝒟 : Γ IPL.⊢ A true)
+                       → ⊢ toTerm 𝒟 ⦂ A match[ Γ ] 𝒟
+match-toTerm (IPL.var i)   = var (toFin i)
+match-toTerm (IPL.lam 𝒟)   = lam (match-toTerm 𝒟)
+match-toTerm (IPL.app 𝒟 ℰ) = app (match-toTerm 𝒟) (match-toTerm ℰ)
 
 
 --------------------------------------------------------------------------------
@@ -61,13 +60,13 @@ instance
 ↓ (app 𝒟 ℰ) = IPL.app (↓ 𝒟) (↓ ℰ)
 
 
-instance
-  match↓ : ∀ {g M A} → {Γ : Types g}
-                     → (𝒟 : ⊢ M ⦂ A valid[ Γ ])
-                     → ⊢ M ⦂ A match[ toList Γ ] ↓ 𝒟
-  match↓ (var {I = I} i) = var I
-  match↓ (lam 𝒟)         = lam (match↓ 𝒟)
-  match↓ (app 𝒟 ℰ)       = app (match↓ 𝒟) (match↓ ℰ)
+-- TODO: broken
+-- match↓ : ∀ {g M A} → {Γ : Types g}
+--                    → (𝒟 : ⊢ M ⦂ A valid[ Γ ])
+--                    → ⊢ M ⦂ A match[ toList Γ ] ↓ 𝒟
+-- match↓ (var {I = I} i) = {!var I!}
+-- match↓ (lam 𝒟)         = lam (match↓ 𝒟)
+-- match↓ (app 𝒟 ℰ)       = app (match↓ 𝒟) (match↓ ℰ)
 
 
 ↑ : ∀ {Γ M A} → (𝒟 : Γ IPL.⊢ A true) {{p : ⊢ M ⦂ A match[ Γ ] 𝒟}}
@@ -98,15 +97,16 @@ gen-id↑↓ (app 𝒟 ℰ) {{app p q}} = app & gen-id↑↓ 𝒟 {{p}} ⊗ gen-
 --------------------------------------------------------------------------------
 
 
-id↓↑ : ∀ {Γ A} → (𝒟 : Γ IPL.⊢ A true)
-               → ↓ (↑ 𝒟) ≡ 𝒟
-id↓↑ 𝒟 = gen-id↓↑ 𝒟 {{match-toTerm 𝒟}}
+-- TODO: broken
+-- id↓↑ : ∀ {Γ A} → (𝒟 : Γ IPL.⊢ A true)
+--                → {!↓ (↑ 𝒟!} ≡ 𝒟
+-- id↓↑ 𝒟 = gen-id↓↑ 𝒟 {{match-toTerm 𝒟}}
 
 
-id↑↓ : ∀ {g M A} → {Γ : Types g}
-                 → (𝒟 : ⊢ M ⦂ A valid[ Γ ])
-                 → ↑ (↓ 𝒟) ≡ 𝒟
-id↑↓ 𝒟 = gen-id↑↓ 𝒟 {{match↓ 𝒟}}
+-- id↑↓ : ∀ {g M A} → {Γ : Types g}
+--                  → (𝒟 : ⊢ M ⦂ A valid[ Γ ])
+--                  → {!↑ (↓ 𝒟)!} ≡ 𝒟
+-- id↑↓ 𝒟 = gen-id↑↓ 𝒟 {{match↓ 𝒟}}
 
 
---------------------------------------------------------------------------------
+-- --------------------------------------------------------------------------------

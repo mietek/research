@@ -14,7 +14,7 @@ open import CMLStandardDerivations
 
 mutual
   infix 3 _⊢_normal[_]
-  data _⊢_normal[_] : List Assert → Prop → List Prop → Set
+  data _⊢_normal[_] : List Assert → Form → List Form → Set
     where
       lam : ∀ {A B Δ Γ} → Δ ⊢ B normal[ Γ , A ]
                         → Δ ⊢ A ⊃ B normal[ Γ ]
@@ -29,7 +29,7 @@ mutual
                       → Δ ⊢ ι P normal[ Γ ]
 
   infix 3 _⊢_neutral[_]
-  data _⊢_neutral[_] : List Assert → Prop → List Prop → Set
+  data _⊢_neutral[_] : List Assert → Form → List Form → Set
     where
       var : ∀ {A Δ Γ} → Γ ∋ A
                       → Δ ⊢ A neutral[ Γ ]
@@ -41,7 +41,7 @@ mutual
                          → Δ ⊢ A neutral[ Γ ]
 
   infix 3 _⊢_allnormal[_]
-  _⊢_allnormal[_] : List Assert → List Prop → List Prop → Set
+  _⊢_allnormal[_] : List Assert → List Form → List Form → Set
   Δ ⊢ Ξ allnormal[ Γ ] = All (\ A → Δ ⊢ A normal[ Γ ]) Ξ
 
 

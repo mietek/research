@@ -38,28 +38,28 @@ open Model {{...}} public
 
 
 infix 3 _⊩_value
-_⊩_value : ∀ {{_ : Model}} → World → Prop → Set
+_⊩_value : ∀ {{_ : Model}} → World → Form → Set
 W ⊩ ι P value   = Ground W P
-W ⊩ A ⊃ B value = ∀ {W′} → W′ ≥ W → W′ ⊩ A value
-                          → W′ ⊩ B value
+W ⊩ A ⊃ B value = ∀ {W′ : World} → W′ ≥ W → W′ ⊩ A value
+                                  → W′ ⊩ B value
 
 
 infix 3 _⊩_allvalue
-_⊩_allvalue : ∀ {{_ : Model}} → World → List Prop → Set
+_⊩_allvalue : ∀ {{_ : Model}} → World → List Form → Set
 W ⊩ Γ allvalue = All (W ⊩_value) Γ
 
 
 --------------------------------------------------------------------------------
 
 
-rel : ∀ {{_ : Model}} {A W W′} → W′ ≥ W → W ⊩ A value
-                               → W′ ⊩ A value
+rel : ∀ {{_ : Model}} {A} {W W′ : World} → W′ ≥ W → W ⊩ A value
+                                         → W′ ⊩ A value
 rel {ι P}   η 𝒟 = relG η 𝒟
 rel {A ⊃ B} η f = \ η′ a → f (η ∘≥ η′) a
 
 
-rels : ∀ {{_ : Model}} {Γ W W′} → W′ ≥ W → W ⊩ Γ allvalue
-                                → W′ ⊩ Γ allvalue
+rels : ∀ {{_ : Model}} {Γ} {W W′ : World} → W′ ≥ W → W ⊩ Γ allvalue
+                                          → W′ ⊩ Γ allvalue
 rels η γ = maps (\ { {A} a → rel {A} η a }) γ
 
 
@@ -67,9 +67,9 @@ rels η γ = maps (\ { {A} a → rel {A} η a }) γ
 
 
 infix 3 _⊨_true
-_⊨_true : List Prop → Prop → Set₁
-Γ ⊨ A true = ∀ {{_ : Model}} {W} → W ⊩ Γ allvalue
-                                  → W ⊩ A value
+_⊨_true : List Form → Form → Set₁
+Γ ⊨ A true = ∀ {{_ : Model}} {W : World} → W ⊩ Γ allvalue
+                                          → W ⊩ A value
 
 
 ↓ : ∀ {Γ A} → Γ ⊢ A true
@@ -86,7 +86,7 @@ private
   instance
     canon : Model
     canon = record
-              { World  = List Prop
+              { World  = List Form
               ; Ground = \ Γ P → Γ ⊢ ι P neutral
               ; _≥_    = _⊇_
               ; id≥    = id
@@ -110,8 +110,8 @@ mutual
 --------------------------------------------------------------------------------
 
 
-swks : ∀ {A Γ Ξ} → Γ ⊩ Ξ allvalue
-                 → Γ , A ⊩ Ξ allvalue
+swks : ∀ {A : Form} {Γ Ξ : List Form} → Γ ⊩ Ξ allvalue
+                                      → Γ , A ⊩ Ξ allvalue
 swks ξ = rels (drop id) ξ
 
 

@@ -185,9 +185,8 @@ module Inspect
 
 data Dec {ℓ} (X : Set ℓ) : Set ℓ
   where
-    instance
-      yes : X → Dec X
-      no  : ¬ X → Dec X
+    yes : X → Dec X
+    no  : ¬ X → Dec X
 
 
 forD : ∀ {ℓ ℓ′} → {X : Set ℓ} {Y : Set ℓ′}
@@ -209,8 +208,7 @@ mapD f g x = forD x f g
 infixl 6 _,_
 record Σ {ℓ ℓ′} (X : Set ℓ) (P : X → Set ℓ′) : Set (ℓ ⊔ ℓ′)
   where
-    instance
-      constructor _,_
+    constructor _,_
     field
       proj₁ : X
       proj₂ : P proj₁

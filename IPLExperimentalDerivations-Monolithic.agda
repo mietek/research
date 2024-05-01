@@ -13,7 +13,7 @@ import IPLStandardDerivations as IPL
 
 
 infix 3 _⊢_true
-data _⊢_true : List Prop → Prop → Set
+data _⊢_true : List Form → Form → Set
   where
     vz : ∀ {A Γ} → Γ , A ⊢ A true
 
@@ -28,7 +28,7 @@ data _⊢_true : List Prop → Prop → Set
 
 
 infix 3 _⊢_alltrue
-_⊢_alltrue : List Prop → List Prop → Set
+_⊢_alltrue : List Form → List Form → Set
 Γ ⊢ Ξ alltrue = All (Γ ⊢_true) Ξ
 
 

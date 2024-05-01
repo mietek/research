@@ -239,7 +239,7 @@ assoc-subs ξ ψ (φ , 𝒟) = _,_ & assoc-subs ξ ψ φ ⊗ comp-sub ξ ψ 𝒟
 
 
 instance
-  𝐈𝐏𝐋 : Category (List Prop) _⊢_alltrue
+  𝐈𝐏𝐋 : Category (List Form) _⊢_alltrue
   𝐈𝐏𝐋 = record
           { id     = ids
           ; _∘_    = flip subs
