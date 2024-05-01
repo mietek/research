@@ -1,6 +1,6 @@
 {-# OPTIONS --rewriting #-}
 
-module Prelude where
+module A201802.Prelude where
 
 open import Agda.Primitive public
   using (Level ; lzero ; lsuc ; _⊔_)

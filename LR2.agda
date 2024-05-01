@@ -1,14 +1,14 @@
-module LR2 where
+module A201802.LR2 where
 
-open import Prelude
-open import Category
-open import Fin
-open import FinLemmas
-open import Vec
-open import VecLemmas
-open import AllVec
-open import LR0
-open import LR1
+open import A201802.Prelude
+open import A201802.Category
+open import A201802.Fin
+open import A201802.FinLemmas
+open import A201802.Vec
+open import A201802.VecLemmas
+open import A201802.AllVec
+open import A201802.LR0
+open import A201802.LR1
 
 
 --------------------------------------------------------------------------------

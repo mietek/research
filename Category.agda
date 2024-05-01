@@ -1,6 +1,6 @@
-module Category where
+module A201802.Category where
 
-open import Prelude
+open import A201802.Prelude
 
 
 --------------------------------------------------------------------------------

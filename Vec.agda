@@ -1,9 +1,9 @@
-module Vec where
+module A201802.Vec where
 
-open import Prelude
-open import Category
-open import Fin
-open import FinLemmas
+open import A201802.Prelude
+open import A201802.Category
+open import A201802.Fin
+open import A201802.FinLemmas
 
 
 --------------------------------------------------------------------------------

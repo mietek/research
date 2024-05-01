@@ -1,24 +1,24 @@
-module Everything where
+module A201802.Everything where
 
 
 --------------------------------------------------------------------------------
 
-import Prelude
+import A201802.Prelude
 
-import Category
+import A201802.Category
 
-import Fin
-import FinLemmas
+import A201802.Fin
+import A201802.FinLemmas
 
-import Vec
-import VecLemmas
-import AllVec
+import A201802.Vec
+import A201802.VecLemmas
+import A201802.AllVec
 
-import LR0
-import LR0Lemmas
-import LR1
-import LR2
-import LR3
+import A201802.LR0
+import A201802.LR0Lemmas
+import A201802.LR1
+import A201802.LR2
+import A201802.LR3
 
 
 --------------------------------------------------------------------------------

@@ -1,8 +1,8 @@
-module FinLemmas where
+module A201802.FinLemmas where
 
-open import Prelude
-open import Category
-open import Fin
+open import A201802.Prelude
+open import A201802.Category
+open import A201802.Fin
 
 
 --------------------------------------------------------------------------------

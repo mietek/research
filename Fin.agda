@@ -1,6 +1,6 @@
-module Fin where
+module A201802.Fin where
 
-open import Prelude
+open import A201802.Prelude
 
 
 --------------------------------------------------------------------------------
