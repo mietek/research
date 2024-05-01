@@ -1,20 +1,20 @@
-module FullS4Normalisation where
+module A201801.FullS4Normalisation where
 
 
-open import Prelude
-open import Category
-open import List
+open import A201801.Prelude
+open import A201801.Category
+open import A201801.List
 open List²
-open import ListLemmas
-open import AllList
-open import FullS4Propositions
-open import FullS4StandardDerivations
-open import FullS4BidirectionalDerivationsForNormalisation
-import FullS4EmbeddingOfFullIPL as OfIPL
-import FullS4ProjectionToFullIPL as ToIPL
-import FullIPLPropositions as IPL
-import FullIPLDerivations as IPL
-import FullIPLNormalisation as IPL
+open import A201801.ListLemmas
+open import A201801.AllList
+open import A201801.FullS4Propositions
+open import A201801.FullS4StandardDerivations
+open import A201801.FullS4BidirectionalDerivationsForNormalisation
+import A201801.FullS4EmbeddingOfFullIPL as OfIPL
+import A201801.FullS4ProjectionToFullIPL as ToIPL
+import A201801.FullIPLPropositions as IPL
+import A201801.FullIPLDerivations as IPL
+import A201801.FullIPLNormalisation as IPL
 
 
 --------------------------------------------------------------------------------

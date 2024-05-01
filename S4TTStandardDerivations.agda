@@ -1,13 +1,13 @@
-module S4TTStandardDerivations where
+module A201801.S4TTStandardDerivations where
 
-open import Prelude
-open import Category
-open import Fin
-open import Vec
-open import AllVec
-open import S4TTTypes
-open import S4TTTerms
-import S4TTDerivations as S4TT
+open import A201801.Prelude
+open import A201801.Category
+open import A201801.Fin
+open import A201801.Vec
+open import A201801.AllVec
+open import A201801.S4TTTypes
+open import A201801.S4TTTerms
+import A201801.S4TTDerivations as S4TT
 
 
 --------------------------------------------------------------------------------

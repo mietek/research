@@ -1,11 +1,11 @@
-module STLCStandardNameResolution where
+module A201801.STLCStandardNameResolution where
 
-open import Prelude
-open import Names
-open import Fin
-open import Vec
-open import STLCTypes
-open import STLCStandardBidirectionalTerms-CheckedInferred
+open import A201801.Prelude
+open import A201801.Names
+open import A201801.Fin
+open import A201801.Vec
+open import A201801.STLCTypes
+open import A201801.STLCStandardBidirectionalTerms-CheckedInferred
 
 
 --------------------------------------------------------------------------------

@@ -1,7 +1,7 @@
-module Subset where
+module A201801.Subset where
 
-open import Prelude
-open import Category
+open import A201801.Prelude
+open import A201801.Category
 
 
 Pred : ∀ {ℓ} → Set ℓ → Set (lsuc ℓ)
@@ -45,7 +45,7 @@ module One {X : Set}
 
 module Two {X : Set}
   where
-    open import List
+    open import A201801.List
 
     data All (P : Pred X) : Pred (List X) where
       ∙   : All P ∙

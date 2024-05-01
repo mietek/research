@@ -1,13 +1,13 @@
-module STLCStandardDerivations where
+module A201801.STLCStandardDerivations where
 
-open import Prelude
-open import Category
-open import Fin
-open import Vec
-open import VecLemmas
-open import AllVec
-open import STLCTypes
-open import STLCStandardTerms
+open import A201801.Prelude
+open import A201801.Category
+open import A201801.Fin
+open import A201801.Vec
+open import A201801.VecLemmas
+open import A201801.AllVec
+open import A201801.STLCTypes
+open import A201801.STLCStandardTerms
 
 
 --------------------------------------------------------------------------------

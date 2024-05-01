@@ -1,16 +1,16 @@
 {-# OPTIONS --rewriting #-}
 
-module S4TTIsomorphismWithS4 where
+module A201801.S4TTIsomorphismWithS4 where
 
-open import Prelude
-open import Fin
-open import List
-open import Vec
-open import VecLemmas
-open import S4TTTypes
-open import S4TTTerms
-open import S4TTDerivations
-import S4StandardDerivations as S4
+open import A201801.Prelude
+open import A201801.Fin
+open import A201801.List
+open import A201801.Vec
+open import A201801.VecLemmas
+open import A201801.S4TTTypes
+open import A201801.S4TTTerms
+open import A201801.S4TTDerivations
+import A201801.S4StandardDerivations as S4
 
 
 --------------------------------------------------------------------------------

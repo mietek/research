@@ -1,6 +1,6 @@
 {-# OPTIONS --irrelevant-projections #-}
 
-module Category2 where
+module A201801.Category2 where
 
 open import Agda.Primitive public
   using (_⊔_)

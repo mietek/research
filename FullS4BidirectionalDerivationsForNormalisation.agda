@@ -1,16 +1,16 @@
-module FullS4BidirectionalDerivationsForNormalisation where
+module A201801.FullS4BidirectionalDerivationsForNormalisation where
 
-open import Prelude
-open import Category
-open import List
-open import ListLemmas
-open import AllList
-open import FullS4Propositions
-open import FullS4StandardDerivations
-open import FullS4EmbeddingOfFullIPL
-open import FullS4ProjectionToFullIPL
-import FullIPLPropositions as IPL
-import FullIPLDerivations as IPL
+open import A201801.Prelude
+open import A201801.Category
+open import A201801.List
+open import A201801.ListLemmas
+open import A201801.AllList
+open import A201801.FullS4Propositions
+open import A201801.FullS4StandardDerivations
+open import A201801.FullS4EmbeddingOfFullIPL
+open import A201801.FullS4ProjectionToFullIPL
+import A201801.FullIPLPropositions as IPL
+import A201801.FullIPLDerivations as IPL
 
 
 --------------------------------------------------------------------------------

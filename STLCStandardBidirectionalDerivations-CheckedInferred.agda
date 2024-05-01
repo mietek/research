@@ -1,10 +1,10 @@
-module STLCStandardBidirectionalDerivations-CheckedInferred where
+module A201801.STLCStandardBidirectionalDerivations-CheckedInferred where
 
-open import Prelude
-open import Vec
-open import STLCTypes
-open import STLCStandardDerivations
-open import STLCStandardBidirectionalTerms-CheckedInferred
+open import A201801.Prelude
+open import A201801.Vec
+open import A201801.STLCTypes
+open import A201801.STLCStandardDerivations
+open import A201801.STLCStandardBidirectionalTerms-CheckedInferred
 
 
 --------------------------------------------------------------------------------

@@ -1,13 +1,13 @@
-module IPLAlternativeDerivations where
+module A201801.IPLAlternativeDerivations where
 
-open import Prelude
-open import Category
-open import List
-open import ListLemmas
-open import AllList
-open import IPLPropositions
-import IPLStandardDerivations as IPL
-import IPLStandardDerivationsLemmas as IPL
+open import A201801.Prelude
+open import A201801.Category
+open import A201801.List
+open import A201801.ListLemmas
+open import A201801.AllList
+open import A201801.IPLPropositions
+import A201801.IPLStandardDerivations as IPL
+import A201801.IPLStandardDerivationsLemmas as IPL
 
 
 --------------------------------------------------------------------------------

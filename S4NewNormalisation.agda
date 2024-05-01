@@ -1,18 +1,18 @@
-module S4NewNormalisation where
+module A201801.S4NewNormalisation where
 
-open import Prelude
-open import Category
-open import List
+open import A201801.Prelude
+open import A201801.Category
+open import A201801.List
 open List²
-open import ListLemmas
-open import AllList
-open import S4Propositions
-open import S4StandardDerivations
-open import S4NewBidirectionalDerivationsForNormalisation
-import S4EmbeddingOfIPL as OfIPL
-import S4ProjectionToIPL as ToIPL
-import IPLPropositions as IPL
-import IPLStandardDerivations as IPL
+open import A201801.ListLemmas
+open import A201801.AllList
+open import A201801.S4Propositions
+open import A201801.S4StandardDerivations
+open import A201801.S4NewBidirectionalDerivationsForNormalisation
+import A201801.S4EmbeddingOfIPL as OfIPL
+import A201801.S4ProjectionToIPL as ToIPL
+import A201801.IPLPropositions as IPL
+import A201801.IPLStandardDerivations as IPL
 
 
 --------------------------------------------------------------------------------

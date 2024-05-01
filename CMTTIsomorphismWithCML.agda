@@ -1,21 +1,21 @@
 {-# OPTIONS --rewriting #-}
 
-module CMTTIsomorphismWithCML where
+module A201801.CMTTIsomorphismWithCML where
 
-open import Prelude
-open import Fin
-open import List
-open import AllList
-open import Vec
-open import VecLemmas
-open import AllVec
-open import AllVecLemmas
-open import CMTTScopes
-open import CMTTTypes
-open import CMTTTerms
-open import CMTTDerivations
-import CMLPropositions as CML
-import CMLStandardDerivations as CML
+open import A201801.Prelude
+open import A201801.Fin
+open import A201801.List
+open import A201801.AllList
+open import A201801.Vec
+open import A201801.VecLemmas
+open import A201801.AllVec
+open import A201801.AllVecLemmas
+open import A201801.CMTTScopes
+open import A201801.CMTTTypes
+open import A201801.CMTTTerms
+open import A201801.CMTTDerivations
+import A201801.CMLPropositions as CML
+import A201801.CMLStandardDerivations as CML
 
 
 --------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ mutual
 
 ↓∋ₐ : ∀ {d m I A} → {σ : Scopes d} {i : σ ∋⟨ I ⟩ m}
                      {Δ : Asserts σ} {Ψ : Types m}
-                  → Δ AllVec.∋◇⟨ i ⟩ ⟪ Ψ ⊫ A ⟫
+                  → Δ A201801.AllVec.∋◇⟨ i ⟩ ⟪ Ψ ⊫ A ⟫
                   → ↓ₐₛ Δ ∋ ↓ₐ ⟪ Ψ ⊫ A ⟫
 ↓∋ₐ zero    = zero
 ↓∋ₐ (suc i) = suc (↓∋ₐ i)

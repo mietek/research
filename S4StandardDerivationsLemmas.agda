@@ -1,13 +1,13 @@
-module S4StandardDerivationsLemmas where
+module A201801.S4StandardDerivationsLemmas where
 
-open import Prelude
-open import Category
-open import List
-open import ListLemmas
-open import AllList
-open import AllListLemmas
-open import S4Propositions
-open import S4StandardDerivations
+open import A201801.Prelude
+open import A201801.Category
+open import A201801.List
+open import A201801.ListLemmas
+open import A201801.AllList
+open import A201801.AllListLemmas
+open import A201801.S4Propositions
+open import A201801.S4StandardDerivations
 
 
 --------------------------------------------------------------------------------

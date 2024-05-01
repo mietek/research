@@ -1,7 +1,7 @@
-module AllVec where
+module A201801.AllVec where
 
-open import Prelude
-open import Vec
+open import A201801.Prelude
+open import A201801.Vec
 
 
 --------------------------------------------------------------------------------

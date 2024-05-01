@@ -1,7 +1,7 @@
-module CMTTScopes where
+module A201801.CMTTScopes where
 
-open import Prelude
-open import Vec
+open import A201801.Prelude
+open import A201801.Vec
 
 
 --------------------------------------------------------------------------------

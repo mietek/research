@@ -1,9 +1,9 @@
-module Vec where
+module A201801.Vec where
 
-open import Prelude
-open import Category
-open import Fin
-open import FinLemmas
+open import A201801.Prelude
+open import A201801.Category
+open import A201801.Fin
+open import A201801.FinLemmas
 
 
 --------------------------------------------------------------------------------
@@ -160,7 +160,7 @@ within (Ψ , C) (suc i) = suc (within Ψ i)
 
 module _
   where
-    open import List using (List ; ∙ ; _,_ ; len ; _∋_ ; zero ; suc)
+    open import A201801.List using (List ; ∙ ; _,_ ; len ; _∋_ ; zero ; suc)
 
     fromList : ∀ {X} → (Ξ : List X)
                      → Vec X (len Ξ)

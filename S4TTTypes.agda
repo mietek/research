@@ -1,13 +1,13 @@
-module S4TTTypes where
+module A201801.S4TTTypes where
 
-open import Prelude
-open import Vec
+open import A201801.Prelude
+open import A201801.Vec
 
 
 --------------------------------------------------------------------------------
 
 
-open import S4Propositions public
+open import A201801.S4Propositions public
   renaming (Form to Type ; _≟ₚ_ to _≟ₜ_)
 
 

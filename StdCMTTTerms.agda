@@ -1,9 +1,9 @@
-module StdCMTTTerms where
+module A201801.StdCMTTTerms where
 
-open import Prelude
-open import Fin
-open import Vec
-open import AllVec
+open import A201801.Prelude
+open import A201801.Fin
+open import A201801.Vec
+open import A201801.AllVec
 
 
 --------------------------------------------------------------------------------

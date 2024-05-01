@@ -1,7 +1,7 @@
-module Names where
+module A201801.Names where
 
-open import Prelude
-open import Vec
+open import A201801.Prelude
+open import A201801.Vec
 
 
 --------------------------------------------------------------------------------

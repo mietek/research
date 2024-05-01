@@ -1,12 +1,12 @@
 {-# OPTIONS --rewriting #-}
 
-module VecLemmas where
+module A201801.VecLemmas where
 
-open import Prelude
-open import Category
-open import Fin
-open import FinLemmas
-open import Vec
+open import A201801.Prelude
+open import A201801.Category
+open import A201801.Fin
+open import A201801.FinLemmas
+open import A201801.Vec
 
 
 --------------------------------------------------------------------------------
@@ -146,7 +146,7 @@ comp-ren∋ (keep η₁) (keep η₂) (suc i) = suc & comp-ren∋ η₁ η₂ i
 
 module _
   where
-    open import List
+    open import A201801.List
 
 
     id-len-toList : ∀ {X n} → (Ξ : Vec X n)

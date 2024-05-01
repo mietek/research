@@ -1,16 +1,16 @@
 {-# OPTIONS --rewriting #-}
 
-module STLCStandardIsomorphismWithIPL where
+module A201801.STLCStandardIsomorphismWithIPL where
 
-open import Prelude
-open import Fin
-open import List
-open import Vec
-open import VecLemmas
-open import STLCTypes
-open import STLCStandardTerms
-open import STLCStandardDerivations
-import IPLStandardDerivations as IPL
+open import A201801.Prelude
+open import A201801.Fin
+open import A201801.List
+open import A201801.Vec
+open import A201801.VecLemmas
+open import A201801.STLCTypes
+open import A201801.STLCStandardTerms
+open import A201801.STLCStandardDerivations
+import A201801.IPLStandardDerivations as IPL
 
 
 --------------------------------------------------------------------------------

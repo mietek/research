@@ -1,14 +1,14 @@
-module CMLStandardNormalisation where
+module A201801.CMLStandardNormalisation where
 
-open import Prelude
-open import Category
-open import List
+open import A201801.Prelude
+open import A201801.Category
+open import A201801.List
 open List²
-open import ListLemmas
-open import AllList
-open import CMLPropositions
-open import CMLStandardDerivations
-open import CMLStandardBidirectionalDerivations-NormalNeutral
+open import A201801.ListLemmas
+open import A201801.AllList
+open import A201801.CMLPropositions
+open import A201801.CMLStandardDerivations
+open import A201801.CMLStandardBidirectionalDerivations-NormalNeutral
 
 
 --------------------------------------------------------------------------------

@@ -1,15 +1,15 @@
 {-# OPTIONS --rewriting #-}
 
-module StdLPTT where
+module A201801.StdLPTT where
 
-open import Prelude
-open import Category
-open import Fin
-open import FinLemmas
-open import Vec
-open import VecLemmas
-open import S4TTTerms
-open import S4TTTermsLemmas
+open import A201801.Prelude
+open import A201801.Category
+open import A201801.Fin
+open import A201801.FinLemmas
+open import A201801.Vec
+open import A201801.VecLemmas
+open import A201801.S4TTTerms
+open import A201801.S4TTTermsLemmas
 
 
 --------------------------------------------------------------------------------

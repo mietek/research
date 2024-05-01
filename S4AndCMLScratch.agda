@@ -1,17 +1,17 @@
 {-# OPTIONS --rewriting #-}
 
-module S4AndCMLScratch where
+module A201801.S4AndCMLScratch where
 
-open import Prelude
-open import Category
-open import List
-open import ListLemmas
-open import ListConcatenation
-open import AllList
-open import S4Propositions
-open import S4StandardDerivations
-import CMLPropositions as CML
-import CMLStandardDerivations as CML
+open import A201801.Prelude
+open import A201801.Category
+open import A201801.List
+open import A201801.ListLemmas
+open import A201801.ListConcatenation
+open import A201801.AllList
+open import A201801.S4Propositions
+open import A201801.S4StandardDerivations
+import A201801.CMLPropositions as CML
+import A201801.CMLStandardDerivations as CML
 
 
 --------------------------------------------------------------------------------

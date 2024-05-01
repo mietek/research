@@ -1,9 +1,9 @@
-module AllList where
+module A201801.AllList where
 
-open import Prelude
-open import Category
-open import List
-open import ListLemmas
+open import A201801.Prelude
+open import A201801.Category
+open import A201801.List
+open import A201801.ListLemmas
 
 
 --------------------------------------------------------------------------------

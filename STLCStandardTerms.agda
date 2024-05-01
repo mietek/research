@@ -1,10 +1,10 @@
-module STLCStandardTerms where
+module A201801.STLCStandardTerms where
 
-open import Prelude
-open import Category
-open import Fin
-open import FinLemmas
-open import Vec
+open import A201801.Prelude
+open import A201801.Category
+open import A201801.Fin
+open import A201801.FinLemmas
+open import A201801.Vec
 
 
 --------------------------------------------------------------------------------

@@ -1,12 +1,12 @@
-module StdLPTTLemmas where
+module A201801.StdLPTTLemmas where
 
-open import Prelude
-open import Fin
-open import FinLemmas
-open import Vec
-open import S4TTTerms
-open import S4TTTermsLemmas
-open import StdLPTT
+open import A201801.Prelude
+open import A201801.Fin
+open import A201801.FinLemmas
+open import A201801.Vec
+open import A201801.S4TTTerms
+open import A201801.S4TTTermsLemmas
+open import A201801.StdLPTT
 
 
 --------------------------------------------------------------------------------

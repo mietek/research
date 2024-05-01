@@ -1,11 +1,11 @@
-module FullS4EmbeddingOfFullIPL where
+module A201801.FullS4EmbeddingOfFullIPL where
 
-open import Prelude
-open import List
-open import FullS4Propositions
-open import FullS4StandardDerivations
-import FullIPLPropositions as IPL
-import FullIPLDerivations as IPL
+open import A201801.Prelude
+open import A201801.List
+open import A201801.FullS4Propositions
+open import A201801.FullS4StandardDerivations
+import A201801.FullIPLPropositions as IPL
+import A201801.FullIPLDerivations as IPL
 
 
 --------------------------------------------------------------------------------

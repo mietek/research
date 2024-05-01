@@ -1,12 +1,12 @@
 {-# OPTIONS --rewriting #-}
 
-module ListLemmas where
+module A201801.ListLemmas where
 
-open import Prelude
-open import Category
-open import Fin
-open import FinLemmas
-open import List
+open import A201801.Prelude
+open import A201801.Category
+open import A201801.Fin
+open import A201801.FinLemmas
+open import A201801.List
 open List²
 
 

@@ -1,14 +1,14 @@
-module CMTTStandardDerivations where
+module A201801.CMTTStandardDerivations where
 
-open import Prelude
-open import Category
-open import Fin
-open import Vec
-open import AllVec
-open import CMTTScopes
-open import CMTTTypes
-open import CMTTTerms
-import CMTTDerivations as CMTT
+open import A201801.Prelude
+open import A201801.Category
+open import A201801.Fin
+open import A201801.Vec
+open import A201801.AllVec
+open import A201801.CMTTScopes
+open import A201801.CMTTTypes
+open import A201801.CMTTTerms
+import A201801.CMTTDerivations as CMTT
 
 
 --------------------------------------------------------------------------------

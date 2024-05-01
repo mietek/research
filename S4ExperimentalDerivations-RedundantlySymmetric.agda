@@ -1,12 +1,12 @@
-module S4ExperimentalDerivations-RedundantlySymmetric where
+module A201801.S4ExperimentalDerivations-RedundantlySymmetric where
 
-open import Prelude
-open import Category
-open import List
-open import ListLemmas
-open import AllList
-open import S4Propositions
-import S4StandardDerivations as S4
+open import A201801.Prelude
+open import A201801.Category
+open import A201801.List
+open import A201801.ListLemmas
+open import A201801.AllList
+open import A201801.S4Propositions
+import A201801.S4StandardDerivations as S4
 
 
 --------------------------------------------------------------------------------

@@ -1,8 +1,8 @@
-module CMLPropositions where
+module A201801.CMLPropositions where
 
-open import Prelude
-open import Category
-open import List
+open import A201801.Prelude
+open import A201801.Category
+open import A201801.List
 
 
 --------------------------------------------------------------------------------

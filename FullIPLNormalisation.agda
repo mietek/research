@@ -1,13 +1,13 @@
-module FullIPLNormalisation where
+module A201801.FullIPLNormalisation where
 
-open import Prelude
-open import Category
-open import List
-open import ListLemmas
-open import AllList
-open import FullIPLPropositions
-open import FullIPLDerivations
-open import FullIPLBidirectionalDerivationsForNormalisation
+open import A201801.Prelude
+open import A201801.Category
+open import A201801.List
+open import A201801.ListLemmas
+open import A201801.AllList
+open import A201801.FullIPLPropositions
+open import A201801.FullIPLDerivations
+open import A201801.FullIPLBidirectionalDerivationsForNormalisation
 
 
 --------------------------------------------------------------------------------

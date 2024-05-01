@@ -1,12 +1,12 @@
-module S4EmbeddingOfIPL where
+module A201801.S4EmbeddingOfIPL where
 
-open import Prelude
-open import List
-open import ListConcatenation
-open import S4Propositions
-open import S4StandardDerivations
-import IPLPropositions as IPL
-import IPLStandardDerivations as IPL
+open import A201801.Prelude
+open import A201801.List
+open import A201801.ListConcatenation
+open import A201801.S4Propositions
+open import A201801.S4StandardDerivations
+import A201801.IPLPropositions as IPL
+import A201801.IPLStandardDerivations as IPL
 
 
 --------------------------------------------------------------------------------

@@ -1,17 +1,17 @@
 {-# OPTIONS --rewriting #-}
 
-module S4ProjectionToIPL where
+module A201801.S4ProjectionToIPL where
 
-open import Prelude
-open import Category
-open import List
-open import ListLemmas
-open import ListConcatenation
-open import S4Propositions
-open import S4StandardDerivations
-open import S4EmbeddingOfIPL
-import IPLPropositions as IPL
-import IPLStandardDerivations as IPL
+open import A201801.Prelude
+open import A201801.Category
+open import A201801.List
+open import A201801.ListLemmas
+open import A201801.ListConcatenation
+open import A201801.S4Propositions
+open import A201801.S4StandardDerivations
+open import A201801.S4EmbeddingOfIPL
+import A201801.IPLPropositions as IPL
+import A201801.IPLStandardDerivations as IPL
 
 
 --------------------------------------------------------------------------------
