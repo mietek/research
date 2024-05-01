@@ -1,0 +1,460 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>A201801.StdLPTT</title><link rel="stylesheet" href="AgdaPP.css"></head><body><pre class="Agda"><a id="1" class="Symbol">{-#</a> <a id="5" class="Keyword">OPTIONS</a> <a id="13" class="Pragma">--rewriting</a> <a id="25" class="Symbol">#-}</a>
+
+<a id="30" class="Keyword">module</a> <a id="37" href="A201801.StdLPTT.html" class="Module">A201801.StdLPTT</a> <a id="53" class="Keyword">where</a>
+
+<a id="60" class="Keyword">open</a> <a id="65" class="Keyword">import</a> <a id="72" href="A201801.Prelude.html" class="Module">A201801.Prelude</a>
+<a id="88" class="Keyword">open</a> <a id="93" class="Keyword">import</a> <a id="100" href="A201801.Category.html" class="Module">A201801.Category</a>
+<a id="117" class="Keyword">open</a> <a id="122" class="Keyword">import</a> <a id="129" href="A201801.Fin.html" class="Module">A201801.Fin</a>
+<a id="141" class="Keyword">open</a> <a id="146" class="Keyword">import</a> <a id="153" href="A201801.FinLemmas.html" class="Module">A201801.FinLemmas</a>
+<a id="171" class="Keyword">open</a> <a id="176" class="Keyword">import</a> <a id="183" href="A201801.Vec.html" class="Module">A201801.Vec</a>
+<a id="195" class="Keyword">open</a> <a id="200" class="Keyword">import</a> <a id="207" href="A201801.VecLemmas.html" class="Module">A201801.VecLemmas</a>
+<a id="225" class="Keyword">open</a> <a id="230" class="Keyword">import</a> <a id="237" href="A201801.S4TTTerms.html" class="Module">A201801.S4TTTerms</a>
+<a id="255" class="Keyword">open</a> <a id="260" class="Keyword">import</a> <a id="267" href="A201801.S4TTTermsLemmas.html" class="Module">A201801.S4TTTermsLemmas</a>
+
+
+<a id="293" class="Comment">--------------------------------------------------------------------------------</a>
+
+
+<a id="376" class="Comment">-- TODO: unfinished</a>
+<a id="396" class="Comment">-- infixr 8 _⊃_</a>
+<a id="412" class="Comment">-- data Form : Nat → Set</a>
+<a id="437" class="Comment">--   where</a>
+<a id="448" class="Comment">--     BASE : ∀ {d} → Form d</a>
+<a id="477" class="Comment">--     _⊃_  : ∀ {d} → Form d → Form d → Form d</a>
+<a id="524" class="Comment">--     [_]_ : ∀ {d} → Term₁ d → Form d → Form d</a>
+
+
+<a id="574" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="660" class="Comment">-- MRENₚ : ∀ {d d′} → d′ ≥ d → Form d</a>
+<a id="698" class="Comment">--                  → Form d′</a>
+<a id="728" class="Comment">-- MRENₚ e BASE      = BASE</a>
+<a id="756" class="Comment">-- MRENₚ e (A ⊃ B)   = MRENₚ e A ⊃ MRENₚ e B</a>
+<a id="801" class="Comment">-- MRENₚ e ([ M ] A) = [ MREN e M ] MRENₚ e A</a>
+
+
+<a id="849" class="Comment">-- MWKₚ : ∀ {d} → Form d</a>
+<a id="874" class="Comment">--              → Form (suc d)</a>
+<a id="905" class="Comment">-- MWKₚ A = MRENₚ (drop id≥) A</a>
+
+
+<a id="938" class="Comment">-- MSUBₚ : ∀ {d n} → Terms₁ d n → Form n</a>
+<a id="979" class="Comment">--                 → Form d</a>
+<a id="1007" class="Comment">-- MSUBₚ x BASE      = BASE</a>
+<a id="1035" class="Comment">-- MSUBₚ x (A ⊃ B)   = MSUBₚ x A ⊃ MSUBₚ x B</a>
+<a id="1080" class="Comment">-- MSUBₚ x ([ M ] A) = [ MSUB x M ] MSUBₚ x A</a>
+
+
+<a id="1128" class="Comment">-- MCUTₚ : ∀ {d} → Term₁ d → Form (suc d)</a>
+<a id="1170" class="Comment">--               → Form d</a>
+<a id="1196" class="Comment">-- MCUTₚ M A = MSUBₚ (MIDS₁ , M) A</a>
+
+
+<a id="1233" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="1319" class="Comment">-- id-MRENₚ : ∀ {d} → (A : Form d)</a>
+<a id="1354" class="Comment">--                  → MRENₚ id≥ A ≡ A</a>
+<a id="1392" class="Comment">-- id-MRENₚ BASE      = refl</a>
+<a id="1421" class="Comment">-- id-MRENₚ (A ⊃ B)   = _⊃_ &amp; id-MRENₚ A ⊗ id-MRENₚ B</a>
+<a id="1475" class="Comment">-- id-MRENₚ ([ M ] A) = [_]_ &amp; id-MREN M ⊗ id-MRENₚ A</a>
+
+
+<a id="1531" class="Comment">-- comp-MRENₚ : ∀ {d d′ d″} → (e₁ : d′ ≥ d) (e₂ : d″ ≥ d′) (A : Form d)</a>
+<a id="1603" class="Comment">--                          → MRENₚ (e₁ ∘≥ e₂) A ≡ MRENₚ e₂ (MRENₚ e₁ A)</a>
+<a id="1676" class="Comment">-- comp-MRENₚ e₁ e₂ BASE      = refl</a>
+<a id="1713" class="Comment">-- comp-MRENₚ e₁ e₂ (A ⊃ B)   = _⊃_ &amp; comp-MRENₚ e₁ e₂ A ⊗ comp-MRENₚ e₁ e₂ B</a>
+<a id="1791" class="Comment">-- comp-MRENₚ e₁ e₂ ([ M ] A) = [_]_ &amp; comp-MREN e₁ e₂ M ⊗ comp-MRENₚ e₁ e₂ A</a>
+
+
+<a id="1871" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="1957" class="Comment">-- infix 7 _true</a>
+<a id="1974" class="Comment">-- record Truth (d : Nat) : Set</a>
+<a id="2006" class="Comment">--   where</a>
+<a id="2017" class="Comment">--     constructor _true</a>
+<a id="2042" class="Comment">--     field</a>
+<a id="2055" class="Comment">--       A : Form d</a>
+
+
+<a id="2077" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="2163" class="Comment">-- MRENₜ : ∀ {d d′} → d′ ≥ d → Truth d</a>
+<a id="2202" class="Comment">--                  → Truth d′</a>
+<a id="2233" class="Comment">-- MRENₜ e (A true) = MRENₚ e A true</a>
+
+
+<a id="2272" class="Comment">-- MWKₜ : ∀ {d} → Truth d</a>
+<a id="2298" class="Comment">--              → Truth (suc d)</a>
+<a id="2330" class="Comment">-- MWKₜ (A true) = MWKₚ A true</a>
+
+
+<a id="2363" class="Comment">-- MSUBₜ : ∀ {d n} → Terms₁ d n → Truth n</a>
+<a id="2405" class="Comment">--                 → Truth d</a>
+<a id="2434" class="Comment">-- MSUBₜ x (A true) = MSUBₚ x A true</a>
+
+
+<a id="2473" class="Comment">-- MCUTₜ : ∀ {d} → Term₁ d → Truth (suc d)</a>
+<a id="2516" class="Comment">--               → Truth d</a>
+<a id="2543" class="Comment">-- MCUTₜ M (A true) = MCUTₚ M A true</a>
+
+
+<a id="2582" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="2668" class="Comment">-- id-MRENₜ : ∀ {d} → (Aₜ : Truth d)</a>
+<a id="2705" class="Comment">--                  → MRENₜ id≥ Aₜ ≡ Aₜ</a>
+<a id="2745" class="Comment">-- id-MRENₜ (A true) = _true &amp; id-MRENₚ A</a>
+
+
+<a id="2789" class="Comment">-- comp-MRENₜ : ∀ {d d′ d″} → (e₁ : d′ ≥ d) (e₂ : d″ ≥ d′) (Aₜ : Truth d)</a>
+<a id="2863" class="Comment">--                          → MRENₜ (e₁ ∘≥ e₂) Aₜ ≡ MRENₜ e₂ (MRENₜ e₁ Aₜ)</a>
+<a id="2938" class="Comment">-- comp-MRENₜ e₁ e₂ (A true) = _true &amp; comp-MRENₚ e₁ e₂ A</a>
+
+
+<a id="2998" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="3084" class="Comment">-- Truths : Nat → Nat → Set</a>
+<a id="3112" class="Comment">-- Truths d g = Vec (Truth d) g</a>
+
+
+<a id="3146" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="3232" class="Comment">-- MRENSₜ : ∀ {d d′ g} → d′ ≥ d → Truths d g</a>
+<a id="3277" class="Comment">--                     → Truths d′ g</a>
+<a id="3314" class="Comment">-- MRENSₜ e Γ = MAPS (MRENₜ e) Γ</a>
+
+
+<a id="3349" class="Comment">-- MWKSₜ : ∀ {d g} → Truths d g</a>
+<a id="3381" class="Comment">--                 → Truths (suc d) g</a>
+<a id="3419" class="Comment">-- MWKSₜ Γ = MAPS MWKₜ Γ</a>
+
+
+<a id="3446" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="3532" class="Comment">-- id-MRENSₜ : ∀ {d g} → (Γ : Truths d g)</a>
+<a id="3574" class="Comment">--                     → MRENSₜ id≥ Γ ≡ Γ</a>
+<a id="3616" class="Comment">-- id-MRENSₜ ∙        = refl</a>
+<a id="3645" class="Comment">-- id-MRENSₜ (Γ , Aₜ) = _,_ &amp; id-MRENSₜ Γ ⊗ id-MRENₜ Aₜ</a>
+
+
+<a id="3703" class="Comment">-- comp-MRENSₜ : ∀ {d d′ d″ g} → (e₁ : d′ ≥ d) (e₂ : d″ ≥ d′) (Γ : Truths d g)</a>
+<a id="3782" class="Comment">--                             → MRENSₜ (e₁ ∘≥ e₂) Γ ≡ MRENSₜ e₂ (MRENSₜ e₁ Γ)</a>
+<a id="3861" class="Comment">-- comp-MRENSₜ e₁ e₂ ∙        = refl</a>
+<a id="3898" class="Comment">-- comp-MRENSₜ e₁ e₂ (Γ , Aₜ) = _,_ &amp; comp-MRENSₜ e₁ e₂ Γ ⊗ comp-MRENₜ e₁ e₂ Aₜ</a>
+
+
+<a id="3980" class="Comment">-- resp-MRENSₜ-⊇ : ∀ {d d′ g g′ e₂} → {Γ : Truths d g} {Γ′ : Truths d g′}</a>
+<a id="4054" class="Comment">--                                  → (e₁ : d′ ≥ d) → Γ′ ⊇⟨ e₂ ⟩ Γ</a>
+<a id="4121" class="Comment">--                                  → MRENSₜ e₁ Γ′ ⊇⟨ e₂ ⟩ MRENSₜ e₁ Γ</a>
+<a id="4192" class="Comment">-- resp-MRENSₜ-⊇ e₁ done     = done</a>
+<a id="4228" class="Comment">-- resp-MRENSₜ-⊇ e₁ (drop η) = resp-MRENSₜ-⊇ e₁ η ∘⊇ drop id⊇</a>
+<a id="4290" class="Comment">-- resp-MRENSₜ-⊇ e₁ (keep η) = keep (resp-MRENSₜ-⊇ e₁ η)</a>
+
+
+<a id="4349" class="Comment">-- resp-MWKSₜ-⊇ : ∀ {d g g′ e} → {Γ : Truths d g} {Γ′ : Truths d g′}</a>
+<a id="4418" class="Comment">--                             → Γ′ ⊇⟨ e ⟩ Γ</a>
+<a id="4463" class="Comment">--                             → MWKSₜ Γ′ ⊇⟨ e ⟩ MWKSₜ Γ</a>
+<a id="4520" class="Comment">-- resp-MWKSₜ-⊇ η = resp-MRENSₜ-⊇ (drop id≥) η</a>
+
+
+<a id="4569" class="Comment">-- resp-MRENSₜ-∋ : ∀ {d d′ g i} → {Γ : Truths d g} {A : Form d}</a>
+<a id="4633" class="Comment">--                              → (e : d′ ≥ d) → Γ ∋⟨ i ⟩ A true</a>
+<a id="4698" class="Comment">--                              → MRENSₜ e Γ ∋⟨ i ⟩ MRENₚ e A true</a>
+<a id="4765" class="Comment">-- resp-MRENSₜ-∋ e zero    = zero</a>
+<a id="4799" class="Comment">-- resp-MRENSₜ-∋ e (suc 𝒾) = suc (resp-MRENSₜ-∋ e 𝒾)</a>
+
+
+<a id="4854" class="Comment">-- resp-MWKSₜ-∋ : ∀ {d g i} → {Γ : Truths d g} {A : Form d}</a>
+<a id="4914" class="Comment">--                          → Γ ∋⟨ i ⟩ A true</a>
+<a id="4960" class="Comment">--                          → MWKSₜ Γ ∋⟨ i ⟩ MWKₚ A true</a>
+<a id="5017" class="Comment">-- resp-MWKSₜ-∋ 𝒾 = resp-MRENSₜ-∋ (drop id≥) 𝒾</a>
+
+
+<a id="5066" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="5152" class="Comment">-- infix 7 _valid</a>
+<a id="5170" class="Comment">-- record Validity (d : Nat) : Set</a>
+<a id="5205" class="Comment">--   where</a>
+<a id="5216" class="Comment">--     constructor _valid</a>
+<a id="5242" class="Comment">--     field</a>
+<a id="5255" class="Comment">--       A : Form d</a>
+
+
+<a id="5277" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="5363" class="Comment">-- MRENᵥ : ∀ {d d′} → d′ ≥ d → Validity d</a>
+<a id="5405" class="Comment">--                  → Validity d′</a>
+<a id="5439" class="Comment">-- MRENᵥ e (A valid) = MRENₚ e A valid</a>
+
+
+<a id="5480" class="Comment">-- MWKᵥ : ∀ {d} → Validity d</a>
+<a id="5509" class="Comment">--              → Validity (suc d)</a>
+<a id="5544" class="Comment">-- MWKᵥ (A valid) = MWKₚ A valid</a>
+
+
+<a id="5579" class="Comment">-- MSUBᵥ : ∀ {d n} → Terms₁ d n → Validity n</a>
+<a id="5624" class="Comment">--                 → Validity d</a>
+<a id="5656" class="Comment">-- MSUBᵥ x (A valid) = MSUBₚ x A valid</a>
+
+
+<a id="5697" class="Comment">-- MCUTᵥ : ∀ {d} → Term₁ d → Validity (suc d)</a>
+<a id="5743" class="Comment">--               → Validity d</a>
+<a id="5773" class="Comment">-- MCUTᵥ M (A valid) = MCUTₚ M A valid</a>
+
+
+<a id="5814" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="5900" class="Comment">-- id-MRENᵥ : ∀ {d} → (Aᵥ : Validity d)</a>
+<a id="5940" class="Comment">--                  → MRENᵥ id≥ Aᵥ ≡ Aᵥ</a>
+<a id="5980" class="Comment">-- id-MRENᵥ (A valid) = _valid &amp; id-MRENₚ A</a>
+
+
+<a id="6026" class="Comment">-- comp-MRENᵥ : ∀ {d d′ d″} → (e₁ : d′ ≥ d) (e₂ : d″ ≥ d′) (Aᵥ : Validity d)</a>
+<a id="6103" class="Comment">--                          → MRENᵥ (e₁ ∘≥ e₂) Aᵥ ≡ MRENᵥ e₂ (MRENᵥ e₁ Aᵥ)</a>
+<a id="6178" class="Comment">-- comp-MRENᵥ e₁ e₂ (A valid) = _valid &amp; comp-MRENₚ e₁ e₂ A</a>
+
+
+<a id="6240" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="6326" class="Comment">-- data Validities : Nat → Set</a>
+<a id="6357" class="Comment">--   where</a>
+<a id="6368" class="Comment">--     ∙ : Validities zero</a>
+
+<a id="6396" class="Comment">--     _,_ : ∀ {d} → Validities d → Validity d</a>
+<a id="6443" class="Comment">--                 → Validities (suc d)</a>
+
+
+<a id="6485" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="6571" class="Comment">-- infix 4 _⊇⟪_⟫_</a>
+<a id="6589" class="Comment">-- data _⊇⟪_⟫_ : ∀ {d d′} → Validities d′ → d′ ≥ d → Validities d → Set</a>
+<a id="6661" class="Comment">--   where</a>
+<a id="6672" class="Comment">--     done : ∙ ⊇⟪ done ⟫ ∙</a>
+
+<a id="6701" class="Comment">--     drop : ∀ {d d′ e} → {Δ : Validities d} {Δ′ : Validities d′} {Aᵥ : Validity d′}</a>
+<a id="6787" class="Comment">--                       → Δ′ ⊇⟪ e ⟫ Δ</a>
+<a id="6826" class="Comment">--                       → Δ′ , Aᵥ ⊇⟪ drop e ⟫ Δ</a>
+
+<a id="6876" class="Comment">--     keep : ∀ {d d′ e} → {Δ : Validities d} {Δ′ : Validities d′} {Aᵥ : Validity d}</a>
+<a id="6961" class="Comment">--                          {Aᵥ° : Validity d′} {{_ : MRENᵥ e Aᵥ ≡ Aᵥ°}}</a>
+<a id="7034" class="Comment">--                       → Δ′ ⊇⟪ e ⟫ Δ</a>
+<a id="7073" class="Comment">--                       → Δ′ , Aᵥ° ⊇⟪ keep e ⟫ Δ , Aᵥ</a>
+
+
+<a id="7130" class="Comment">-- id⊇◈ : ∀ {d} → {Δ : Validities d}</a>
+<a id="7167" class="Comment">--              → Δ ⊇⟪ id≥ ⟫ Δ</a>
+<a id="7198" class="Comment">-- id⊇◈ {Δ = ∙}      = done</a>
+<a id="7226" class="Comment">-- id⊇◈ {Δ = Δ , Aᵥ} = keep {{id-MRENᵥ Aᵥ}} id⊇◈</a>
+
+
+<a id="7277" class="Comment">-- _∘⊇◈_ : ∀ {d d′ d″ e₁ e₂} → {Δ : Validities d} {Δ′ : Validities d′} {Δ″ : Validities d″}</a>
+<a id="7369" class="Comment">--                           → Δ′ ⊇⟪ e₁ ⟫ Δ → Δ″ ⊇⟪ e₂ ⟫ Δ′</a>
+<a id="7429" class="Comment">--                           → Δ″ ⊇⟪ e₁ ∘≥ e₂ ⟫ Δ</a>
+<a id="7479" class="Comment">-- η₁      ∘⊇◈ done    = η₁</a>
+<a id="7507" class="Comment">-- η₁      ∘⊇◈ drop η₂ = drop (η₁ ∘⊇◈ η₂)</a>
+<a id="7549" class="Comment">-- drop η₁ ∘⊇◈ keep η₂ = drop (η₁ ∘⊇◈ η₂)</a>
+<a id="7591" class="Comment">-- keep {e = e₁} {Aᵥ = Aᵥ} {{refl}} η₁ ∘⊇◈ keep {e = e₂} {{refl}} η₂</a>
+<a id="7660" class="Comment">--   = keep {{comp-MRENᵥ e₁ e₂ Aᵥ}} (η₁ ∘⊇◈ η₂)</a>
+
+
+<a id="7710" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="7796" class="Comment">-- infix 4 _∋⟪_⟫_</a>
+<a id="7814" class="Comment">-- data _∋⟪_⟫_ : ∀ {d} → Validities d → Fin d → Validity d → Set</a>
+<a id="7879" class="Comment">--   where</a>
+<a id="7890" class="Comment">--     zero : ∀ {d} → {Δ : Validities d} {Aᵥ : Validity d}</a>
+<a id="7949" class="Comment">--                     {Aᵥ° : Validity (suc d)} {{_ : MWKᵥ Aᵥ ≡ Aᵥ°}}</a>
+<a id="8019" class="Comment">--                  → Δ , Aᵥ ∋⟪ zero ⟫ Aᵥ°</a>
+
+<a id="8063" class="Comment">--     suc : ∀ {d i} → {Δ : Validities d} {Aᵥ : Validity d} {Bᵥ : Validity d}</a>
+<a id="8141" class="Comment">--                      {Aᵥ° : Validity (suc d)} {{_ : MWKᵥ Aᵥ ≡ Aᵥ°}}</a>
+<a id="8212" class="Comment">--                   → Δ ∋⟪ i ⟫ Aᵥ</a>
+<a id="8247" class="Comment">--                   → Δ , Bᵥ ∋⟪ suc i ⟫ Aᵥ°</a>
+
+
+<a id="8294" class="Comment">-- ren∋◈ : ∀ {d d′ e i} → {Δ : Validities d} {Δ′ : Validities d′} {Aᵥ : Validity d}</a>
+<a id="8378" class="Comment">--                      → Δ′ ⊇⟪ e ⟫ Δ → Δ ∋⟪ i ⟫ Aᵥ</a>
+<a id="8430" class="Comment">--                      → Δ′ ∋⟪ REN∋ e i ⟫ MRENᵥ e Aᵥ</a>
+<a id="8484" class="Comment">-- ren∋◈ {i = i} {Aᵥ = Aᵥ} done 𝒾             = coerce 𝒾 ((\ Aᵥ′ → ∙ ∋⟪ i ⟫ Aᵥ′) &amp; id-MRENᵥ Aᵥ ⁻¹)</a>
+<a id="8583" class="Comment">-- ren∋◈         {Aᵥ = Aᵥ} (drop {e = e} η) 𝒾 = suc {{comp-MRENᵥ e (drop id≥) Aᵥ ⁻¹}} (ren∋◈ η 𝒾)</a>
+<a id="8681" class="Comment">-- ren∋◈                   (keep {e = e} {Aᵥ = Aᵥ} {{refl}} η) (zero {{refl}})</a>
+<a id="8760" class="Comment">--   = zero {{ comp-MRENᵥ e (drop id≥) Aᵥ ⁻¹</a>
+<a id="8805" class="Comment">--           ⋮ comp-MRENᵥ (drop id≥) (keep e) Aᵥ</a>
+<a id="8854" class="Comment">--          }}</a>
+<a id="8869" class="Comment">-- ren∋◈                   (keep {e = e} {{refl}} η) (suc {Aᵥ = Aᵥ} {{refl}} 𝒾)</a>
+<a id="8949" class="Comment">--   = suc {{ comp-MRENᵥ e (drop id≥) Aᵥ ⁻¹</a>
+<a id="8993" class="Comment">--          ⋮ comp-MRENᵥ (drop id≥) (keep e) Aᵥ</a>
+<a id="9041" class="Comment">--         }} (ren∋◈ η 𝒾)</a>
+
+
+<a id="9069" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="9155" class="Comment">-- infix 4 _⊢_⦂_</a>
+<a id="9172" class="Comment">-- record Derivation (d : Nat) : Set</a>
+<a id="9209" class="Comment">--   where</a>
+<a id="9220" class="Comment">--     constructor _⊢_⦂_</a>
+<a id="9245" class="Comment">--     field</a>
+<a id="9258" class="Comment">--       {g} : Nat</a>
+<a id="9277" class="Comment">--       Γ   : Truths d g</a>
+<a id="9303" class="Comment">--       M   : Term d g</a>
+<a id="9327" class="Comment">--       Aₜ  : Truth d</a>
+
+
+<a id="9352" class="Comment">-- infix 3 _⨾_</a>
+<a id="9367" class="Comment">-- data _⨾_ : ∀ {d} → Validities d → Derivation d → Set</a>
+<a id="9423" class="Comment">--   where</a>
+<a id="9434" class="Comment">--     var : ∀ {d g i} → {Δ : Validities d} {Γ : Truths d g}</a>
+<a id="9495" class="Comment">--                        {A : Form d}</a>
+<a id="9534" class="Comment">--                     → Γ ∋⟨ i ⟩ A true</a>
+<a id="9575" class="Comment">--                     → Δ ⨾ Γ ⊢ VAR i ⦂ A true</a>
+
+<a id="9624" class="Comment">--     lam : ∀ {d g M} → {Δ : Validities d} {Γ : Truths d g}</a>
+<a id="9685" class="Comment">--                        {A B : Form d}</a>
+<a id="9726" class="Comment">--                     → Δ ⨾ Γ , A true ⊢ M ⦂ B true</a>
+<a id="9779" class="Comment">--                     → Δ ⨾ Γ ⊢ LAM M ⦂ A ⊃ B true</a>
+
+<a id="9832" class="Comment">--     app : ∀ {d g M N} → {Δ : Validities d} {Γ : Truths d g}</a>
+<a id="9895" class="Comment">--                          {A B : Form d}</a>
+<a id="9938" class="Comment">--                       → Δ ⨾ Γ ⊢ M ⦂ A ⊃ B true → Δ ⨾ Γ ⊢ N ⦂ A true</a>
+<a id="10009" class="Comment">--                       → Δ ⨾ Γ ⊢ APP M N ⦂ B true</a>
+
+<a id="10062" class="Comment">--     mvar : ∀ {d g i} → {Δ : Validities d} {Γ : Truths d g}</a>
+<a id="10124" class="Comment">--                         {A : Form d}</a>
+<a id="10164" class="Comment">--                      → Δ ∋⟪ i ⟫ A valid</a>
+<a id="10207" class="Comment">--                      → Δ ⨾ Γ ⊢ MVAR i ⦂ A true</a>
+
+<a id="10258" class="Comment">--     box : ∀ {d g M} → {Δ : Validities d} {Γ : Truths d g}</a>
+<a id="10319" class="Comment">--                        {A : Form d}</a>
+<a id="10358" class="Comment">--                     → Δ ⨾ ∙ ⊢ M ⦂ A true</a>
+<a id="10402" class="Comment">--                     → Δ ⨾ Γ ⊢ BOX M ⦂ [ M ] A true</a>
+
+<a id="10457" class="Comment">--     letbox : ∀ {d g M N O} → {Δ : Validities d} {Γ : Truths d g}</a>
+<a id="10525" class="Comment">--                               {A : Form d} {B : Form (suc d)}</a>
+<a id="10590" class="Comment">--                               {Γ° : Truths (suc d) g} {{_ : Γ° ≡ MWKSₜ Γ}}</a>
+<a id="10668" class="Comment">--                               {B° : Form d} {{_ : B° ≡ MCUTₚ O B}}</a>
+<a id="10738" class="Comment">--                            → Δ ⨾ Γ ⊢ M ⦂ [ O ] A true → Δ , A valid ⨾ Γ° ⊢ N ⦂ B true</a>
+<a id="10827" class="Comment">--                            → Δ ⨾ Γ ⊢ LETBOX M N ⦂ B° true</a>
+
+
+<a id="10890" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="10976" class="Comment">-- ren : ∀ {d g g′ e M} → {Δ : Validities d} {Γ : Truths d g} {Γ′ : Truths d g′}</a>
+<a id="11057" class="Comment">--                         {A : Form d}</a>
+<a id="11097" class="Comment">--                      → Γ′ ⊇⟨ e ⟩ Γ → Δ ⨾ Γ ⊢ M ⦂ A true</a>
+<a id="11156" class="Comment">--                      → Δ ⨾ Γ′ ⊢ REN e M ⦂ A true</a>
+<a id="11208" class="Comment">-- ren η (var 𝒾)   = var (ren∋ η 𝒾)</a>
+<a id="11244" class="Comment">-- ren η (lam 𝒟)   = lam (ren (keep η) 𝒟)</a>
+<a id="11286" class="Comment">-- ren η (app 𝒟 ℰ) = app (ren η 𝒟) (ren η ℰ)</a>
+<a id="11331" class="Comment">-- ren η (mvar 𝒾)  = mvar 𝒾</a>
+<a id="11359" class="Comment">-- ren η (box 𝒟)   = box 𝒟</a>
+<a id="11386" class="Comment">-- ren η (letbox {{refl}} {{refl}} 𝒟 ℰ)</a>
+<a id="11426" class="Comment">--   = letbox {{refl}} {{refl}} (ren η 𝒟) (ren (resp-MWKSₜ-⊇ η) ℰ)</a>
+
+
+<a id="11495" class="Comment">-- wk : ∀ {d g M} → {Δ : Validities d} {Γ : Truths d g}</a>
+<a id="11551" class="Comment">--                   {A B : Form d}</a>
+<a id="11587" class="Comment">--                → Δ ⨾ Γ ⊢ M ⦂ A true</a>
+<a id="11626" class="Comment">--                → Δ ⨾ Γ , B true ⊢ WK M ⦂ A true</a>
+<a id="11677" class="Comment">-- wk 𝒟 = ren (drop id⊇) 𝒟</a>
+
+
+<a id="11706" class="Comment">-- vz : ∀ {d g} → {Δ : Validities d} {Γ : Truths d g}</a>
+<a id="11760" class="Comment">--                 {A : Form d}</a>
+<a id="11792" class="Comment">--              → Δ ⨾ Γ , A true ⊢ VZ ⦂ A true</a>
+<a id="11839" class="Comment">-- vz = var zero</a>
+
+
+<a id="11858" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="11944" class="Comment">-- comp-MWKₚ-MRENₚ-keep : ∀ {d d′} → (e : d′ ≥ d) (A : Form d)</a>
+<a id="12007" class="Comment">--                                 → (MRENₚ (keep e) ∘ MWKₚ) A ≡ (MWKₚ ∘ MRENₚ e) A</a>
+<a id="12091" class="Comment">-- comp-MWKₚ-MRENₚ-keep e A = comp-MRENₚ (drop id≥) (keep e) A ⁻¹</a>
+<a id="12157" class="Comment">--                          ⋮ (\ e′ → MRENₚ (drop e′) A) &amp; (lid∘ e ⋮ rid∘ e ⁻¹)</a>
+<a id="12237" class="Comment">--                          ⋮ comp-MRENₚ e (drop id≥) A</a>
+
+
+<a id="12295" class="Comment">-- comp-MWKSₜ-MRENSₜ-keep : ∀ {d d′ g} → (e : d′ ≥ d) (Γ : Truths d g)</a>
+<a id="12366" class="Comment">--                                     → (MRENSₜ (keep e) ∘ MWKSₜ) Γ ≡ (MWKSₜ ∘ MRENSₜ e) Γ</a>
+<a id="12458" class="Comment">-- comp-MWKSₜ-MRENSₜ-keep e ∙            = refl</a>
+<a id="12506" class="Comment">-- comp-MWKSₜ-MRENSₜ-keep e (Γ , A true) = _,_ &amp; comp-MWKSₜ-MRENSₜ-keep e Γ</a>
+<a id="12582" class="Comment">--                                             ⊗ _true &amp; comp-MWKₚ-MRENₚ-keep e A</a>
+
+
+<a id="12666" class="Comment">-- comp-MRENₚ-MSUBₚ : ∀ {d d′ n} → (e : d′ ≥ d) (x : Terms₁ d n) (A : Form n)</a>
+<a id="12744" class="Comment">--                               → MSUBₚ (MRENS₁ e x) A ≡ (MRENₚ e ∘ MSUBₚ x) A</a>
+<a id="12824" class="Comment">-- comp-MRENₚ-MSUBₚ e x BASE      = refl</a>
+<a id="12865" class="Comment">-- comp-MRENₚ-MSUBₚ e x (A ⊃ B)   = _⊃_ &amp; comp-MRENₚ-MSUBₚ e x A ⊗ comp-MRENₚ-MSUBₚ e x B</a>
+<a id="12955" class="Comment">-- comp-MRENₚ-MSUBₚ e x ([ M ] A) = [_]_ &amp; comp-MREN-MSUB e x M ⊗ comp-MRENₚ-MSUBₚ e x A</a>
+
+
+<a id="13046" class="Comment">-- comp-MSUBₚ-MRENₚ : ∀ {d n n′} → (x : Terms₁ d n′) (e : n′ ≥ n) (A : Form n)</a>
+<a id="13125" class="Comment">--                               → MSUBₚ (GETS x e) A ≡ (MSUBₚ x ∘ MRENₚ e) A</a>
+<a id="13203" class="Comment">-- comp-MSUBₚ-MRENₚ x e BASE      = refl</a>
+<a id="13244" class="Comment">-- comp-MSUBₚ-MRENₚ x e (A ⊃ B)   = _⊃_ &amp; comp-MSUBₚ-MRENₚ x e A ⊗ comp-MSUBₚ-MRENₚ x e B</a>
+<a id="13334" class="Comment">-- comp-MSUBₚ-MRENₚ x e ([ M ] A) = [_]_ &amp; comp-MSUB-MREN x e M ⊗ comp-MSUBₚ-MRENₚ x e A</a>
+
+
+<a id="13425" class="Comment">-- oops : ∀ {d d′} → (e : d′ ≥ d)</a>
+<a id="13459" class="Comment">--                 → MRENS e MIDS₁ ≡ GETS MIDS₁ e</a>
+<a id="13509" class="Comment">-- oops done     = refl</a>
+<a id="13533" class="Comment">-- oops (drop e) = comp-MRENS e (drop id≥) MIDS₁</a>
+<a id="13582" class="Comment">--               ⋮ MWKS &amp; oops e</a>
+<a id="13615" class="Comment">--               ⋮ comp-MRENS-GETS (drop id≥) MIDS₁ e ⁻¹</a>
+<a id="13672" class="Comment">-- oops (keep e) = (_, MVZ) &amp; ( comp-MWKS-MRENS-keep e MIDS₁</a>
+<a id="13733" class="Comment">--                            ⋮ MWKS &amp; oops e</a>
+<a id="13779" class="Comment">--                            ⋮ comp-MRENS-GETS (drop id≥) MIDS₁ e ⁻¹</a>
+<a id="13849" class="Comment">--                            )</a>
+
+
+<a id="13883" class="Comment">-- mren : ∀ {d d′ g e M} → {Δ : Validities d} {Δ′ : Validities d′} {Γ : Truths d g}</a>
+<a id="13967" class="Comment">--                          {A : Form d}</a>
+<a id="14008" class="Comment">--                       → Δ′ ⊇⟪ e ⟫ Δ → Δ ⨾ Γ ⊢ M ⦂ A true</a>
+<a id="14068" class="Comment">--                       → Δ′ ⨾ MRENSₜ e Γ ⊢ MREN e M ⦂ MRENₚ e A true</a>
+<a id="14139" class="Comment">-- mren η (var 𝒾)   = var (resp-MRENSₜ-∋ _ 𝒾)</a>
+<a id="14185" class="Comment">-- mren η (lam 𝒟)   = lam (mren η 𝒟)</a>
+<a id="14222" class="Comment">-- mren η (app 𝒟 ℰ) = app (mren η 𝒟) (mren η ℰ)</a>
+<a id="14270" class="Comment">-- mren η (mvar 𝒾)  = mvar (ren∋◈ η 𝒾)</a>
+<a id="14309" class="Comment">-- mren η (box 𝒟)   = box (mren η 𝒟)</a>
+<a id="14346" class="Comment">-- mren {e = e} η (letbox {O = O} {Γ = Γ} {A = A} {B} {{refl}} {{refl}} 𝒟 ℰ)</a>
+<a id="14423" class="Comment">--   = letbox</a>
+<a id="14437" class="Comment">--       {{comp-MWKSₜ-MRENSₜ-keep e Γ}}</a>
+<a id="14477" class="Comment">--       {{( comp-MRENₚ-MSUBₚ e (MIDS₁ , O) B ⁻¹</a>
+<a id="14526" class="Comment">--         ⋮ (\ x′ → MSUBₚ (x′ , MREN e O) B) &amp; oops e</a>
+<a id="14581" class="Comment">--         ⋮ comp-MSUBₚ-MRENₚ (MIDS₁ , MREN e O) (keep e) B</a>
+<a id="14641" class="Comment">--         )}}</a>
+<a id="14656" class="Comment">--       (mren η 𝒟)</a>
+<a id="14676" class="Comment">--       (mren (keep {{refl}} η) ℰ)</a>
+
+
+<a id="14714" class="Comment">-- mwk : ∀ {d g M} → {Δ : Validities d} {Γ : Truths d g}</a>
+<a id="14771" class="Comment">--                    {A B : Form d}</a>
+<a id="14808" class="Comment">--                 → Δ ⨾ Γ ⊢ M ⦂ A true</a>
+<a id="14848" class="Comment">--                 → Δ , B valid ⨾ MWKSₜ Γ ⊢ MWK M ⦂ MWKₚ A true</a>
+<a id="14913" class="Comment">-- mwk 𝒟 = mren (drop id⊇◈) 𝒟</a>
+
+
+<a id="14945" class="Comment">-- mvz : ∀ {d g} → {Δ : Validities d} {Γ : Truths d g}</a>
+<a id="15000" class="Comment">--                  {A : Form d}</a>
+<a id="15033" class="Comment">--               → Δ , A valid ⨾ MWKSₜ Γ ⊢ MVZ ⦂ MWKₚ A true</a>
+<a id="15094" class="Comment">-- mvz = mvar zero</a>
+
+
+<a id="15115" class="Comment">-- --------------------------------------------------------------------------------</a>
+</pre></body></html>

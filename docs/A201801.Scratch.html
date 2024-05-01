@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>A201801.Scratch</title><link rel="stylesheet" href="AgdaPP.css"></head><body><pre class="Agda"><a id="1" class="Keyword">module</a> <a id="8" href="A201801.Scratch.html" class="Module">A201801.Scratch</a> <a id="24" class="Keyword">where</a>
+
+
+<a id="32" class="Comment">{-
+
+How can we implement quasiquotation?
+
+When we evaluate
+  (letbox (box (app (lam vz) M)) (box (pair mvz (app (lam vz) N))))
+normally, we get
+  (box (pair (app (lam vz) M) (app (lam vz) N)))
+.
+
+We would like to somehow insert the result of evaluating
+  (app (lam vz) M)
+into the final result, getting
+  (box (pair M (app (lam vz) N)))
+.
+
+We don&#39;t want to collapse the entire final result and get
+  (pair M N)
+.
+
+-}</a>
+</pre></body></html>
