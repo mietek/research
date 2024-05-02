@@ -20,7 +20,7 @@ open import Data.Nat public
 
 open import Data.Nat.Properties public
   using (module ≤-Reasoning ; ≤-refl ; ≤-step ; ≤-trans ; +-comm ; +-mono-≤ ; +-monoˡ-≤
-        ; m≤m+n ; n≤m+n ; m≤m⊔n ; n≤m⊔n ; s≤′s ; z≤′n)
+        ; m≤m+n ; m≤n+m ; m≤m⊔n ; n≤m⊔n ; s≤′s ; z≤′n)
 open ≤-Reasoning public
 
 open import Data.Product public
@@ -29,7 +29,7 @@ open import Data.Product public
 open import Data.String public
   using (String)
 
-import Data.String.Unsafe as String
+import Data.String.Properties as String
 
 open import Data.Sum public
   using (_⊎_ ; inj₁ ; inj₂)
@@ -137,10 +137,10 @@ m≤m+n+o : ∀ m n o → m ≤ m + n + o
 m≤m+n+o m n o = ≤-trans (m≤m+n m n) (m≤m+n (m + n) o)
 
 n≤m+n+o : ∀ m n o → n ≤ m + n + o
-n≤m+n+o m n o = ≤-trans (n≤m+n m n) (m≤m+n (m + n) o)
+n≤m+n+o m n o = ≤-trans (m≤n+m n m) (m≤m+n (m + n) o)
 
 o≤m+n+o : ∀ m n o → o ≤ m + n + o
-o≤m+n+o m n o = n≤m+n (m + n) o
+o≤m+n+o m n o = m≤n+m o (m + n)
 
 m≤m⊔n⊔o : ∀ m n o → m ≤ m ⊔ n ⊔ o
 m≤m⊔n⊔o m n o = ≤-trans (m≤m⊔n m n) (m≤m⊔n (m ⊔ n) o)
