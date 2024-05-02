@@ -8,18 +8,18 @@
 --      BS-CBN|BS-NO₂ → BS-NO ⎭       BS-NO       ⎭     BS-NO
 --                    5.2.3
 
-module 5-2-Equivalence-NO where
+module A201903.5-2-Equivalence-NO where
 
-open import 1-2-Syntax-Predicates
-import 2-1-Semantics-BigStep as BS
-import 2-2-Semantics-SmallStep as SS
-import 3-1-Properties-BigStep-CBN as BS-CBN
-import 3-2-Properties-BigStep-NO as BS-NO
-import 3-2-1-Properties-BigStep-NO₂ as BS-NO₂
-import 4-1-Properties-SmallStep-CBN as SS-CBN
-import 4-2-Properties-SmallStep-NO as SS-NO
-import 4-2-1-Properties-SmallStep-NO₂ as SS-NO₂
-open import 5-1-Equivalence-CBN
+open import A201903.1-2-Syntax-Predicates
+import A201903.2-1-Semantics-BigStep as BS
+import A201903.2-2-Semantics-SmallStep as SS
+import A201903.3-1-Properties-BigStep-CBN as BS-CBN
+import A201903.3-2-Properties-BigStep-NO as BS-NO
+import A201903.3-2-1-Properties-BigStep-NO₂ as BS-NO₂
+import A201903.4-1-Properties-SmallStep-CBN as SS-CBN
+import A201903.4-2-Properties-SmallStep-NO as SS-NO
+import A201903.4-2-1-Properties-SmallStep-NO₂ as SS-NO₂
+open import A201903.5-1-Equivalence-CBN
 
 
 ---------------------------------------------------------------------------------------------------------------

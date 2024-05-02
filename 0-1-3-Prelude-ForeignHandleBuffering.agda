@@ -2,9 +2,9 @@
 --
 -- Foreign-function interface to buffering modes for I/O handles
 
-module 0-1-3-Prelude-ForeignHandleBuffering where
+module A201903.0-1-3-Prelude-ForeignHandleBuffering where
 
-open import 0-1-Prelude
+open import A201903.0-1-Prelude
 import IO.Primitive as Prim
 open import IO using (IO ; _>>_)
 

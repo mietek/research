@@ -2,9 +2,9 @@
 --
 -- Properties of SS-AO
 
-module 4-4-Properties-SmallStep-AO where
+module A201903.4-4-Properties-SmallStep-AO where
 
-open import 2-2-Semantics-SmallStep
+open import A201903.2-2-Semantics-SmallStep
 open AO public
 
 

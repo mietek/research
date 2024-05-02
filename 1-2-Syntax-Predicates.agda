@@ -1,8 +1,8 @@
 ---------------------------------------------------------------------------------------------------------------
 
-module 1-2-Syntax-Predicates where
+module A201903.1-2-Syntax-Predicates where
 
-open import 1-1-Syntax-Terms public
+open import A201903.1-1-Syntax-Terms public
 open Unary
 
 

@@ -2,9 +2,9 @@
 --
 -- Properties of SS-HS
 
-module 4-6-Properties-SmallStep-HS where
+module A201903.4-6-Properties-SmallStep-HS where
 
-open import 2-2-Semantics-SmallStep
+open import A201903.2-2-Semantics-SmallStep
 open HS public
 
 

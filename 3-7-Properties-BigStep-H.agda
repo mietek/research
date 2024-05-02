@@ -2,11 +2,11 @@
 --
 -- Properties of BS-H
 
-module 3-7-Properties-BigStep-H where
+module A201903.3-7-Properties-BigStep-H where
 
-open import 2-1-Semantics-BigStep
+open import A201903.2-1-Semantics-BigStep
 open H public
-import 3-1-Properties-BigStep-CBN as CBN
+import A201903.3-1-Properties-BigStep-CBN as CBN
 
 
 ---------------------------------------------------------------------------------------------------------------

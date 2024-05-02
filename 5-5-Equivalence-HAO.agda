@@ -6,16 +6,16 @@
 --  5.5.1 ↓   ↑ 5.5.2 ⎬ 5.5.3 ↕
 --        BS-HAO      ⎭     BS-HAO
 
-module 5-5-Equivalence-HAO where
+module A201903.5-5-Equivalence-HAO where
 
-open import 1-2-Syntax-Predicates
-import 2-1-Semantics-BigStep as BS
-import 2-2-Semantics-SmallStep as SS
-import 3-3-Properties-BigStep-CBV as BS-CBV
-import 3-5-Properties-BigStep-HAO as BS-HAO
-import 4-3-Properties-SmallStep-CBV as SS-CBV
-import 4-5-Properties-SmallStep-HAO as SS-HAO
-import 5-3-Equivalence-CBV as CBV
+open import A201903.1-2-Syntax-Predicates
+import A201903.2-1-Semantics-BigStep as BS
+import A201903.2-2-Semantics-SmallStep as SS
+import A201903.3-3-Properties-BigStep-CBV as BS-CBV
+import A201903.3-5-Properties-BigStep-HAO as BS-HAO
+import A201903.4-3-Properties-SmallStep-CBV as SS-CBV
+import A201903.4-5-Properties-SmallStep-HAO as SS-HAO
+import A201903.5-3-Equivalence-CBV as CBV
 
 
 ---------------------------------------------------------------------------------------------------------------

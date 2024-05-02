@@ -2,9 +2,9 @@
 --
 -- Stuttering colists
 
-module 0-1-1-Prelude-StutteringColists where
+module A201903.0-1-1-Prelude-StutteringColists where
 
-open import 0-1-Prelude
+open import A201903.0-1-Prelude
 import Codata.Musical.Colist as Colist
 import Data.String as String
 open import IO using (IO ; _>>=_ ; _>>_ ; return)

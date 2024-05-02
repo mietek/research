@@ -6,13 +6,13 @@
 --  5.1.1 ↓   ↑ 5.1.2 ⎬ 5.1.3 ↕
 --        BS-CBN      ⎭     BS-CBN
 
-module 5-1-Equivalence-CBN where
+module A201903.5-1-Equivalence-CBN where
 
-open import 1-2-Syntax-Predicates
-import 2-1-Semantics-BigStep as BS
-import 2-2-Semantics-SmallStep as SS
-import 3-1-Properties-BigStep-CBN as BS-CBN
-import 4-1-Properties-SmallStep-CBN as SS-CBN
+open import A201903.1-2-Syntax-Predicates
+import A201903.2-1-Semantics-BigStep as BS
+import A201903.2-2-Semantics-SmallStep as SS
+import A201903.3-1-Properties-BigStep-CBN as BS-CBN
+import A201903.4-1-Properties-SmallStep-CBN as SS-CBN
 
 
 ---------------------------------------------------------------------------------------------------------------

@@ -2,11 +2,11 @@
 --
 -- Properties of SS-HNO₂
 
-module 4-8-1-Properties-SmallStep-HNO₂ where
+module A201903.4-8-1-Properties-SmallStep-HNO₂ where
 
-open import 2-2-Semantics-SmallStep
+open import A201903.2-2-Semantics-SmallStep
 open HNO₂ public
-import 4-6-Properties-SmallStep-HS as HS
+import A201903.4-6-Properties-SmallStep-HS as HS
 
 
 ---------------------------------------------------------------------------------------------------------------

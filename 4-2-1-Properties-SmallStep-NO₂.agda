@@ -2,11 +2,11 @@
 --
 -- Properties of SS-NO₂
 
-module 4-2-1-Properties-SmallStep-NO₂ where
+module A201903.4-2-1-Properties-SmallStep-NO₂ where
 
-open import 2-2-Semantics-SmallStep
+open import A201903.2-2-Semantics-SmallStep
 open NO₂ public
-import 4-1-Properties-SmallStep-CBN as CBN
+import A201903.4-1-Properties-SmallStep-CBN as CBN
 
 
 ---------------------------------------------------------------------------------------------------------------

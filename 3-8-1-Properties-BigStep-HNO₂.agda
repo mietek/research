@@ -2,11 +2,11 @@
 --
 -- Properties of BS-HNO₂
 
-module 3-8-1-Properties-BigStep-HNO₂ where
+module A201903.3-8-1-Properties-BigStep-HNO₂ where
 
-open import 2-1-Semantics-BigStep
+open import A201903.2-1-Semantics-BigStep
 open HNO₂ public
-import 3-6-Properties-BigStep-HS as HS
+import A201903.3-6-Properties-BigStep-HS as HS
 
 
 ---------------------------------------------------------------------------------------------------------------

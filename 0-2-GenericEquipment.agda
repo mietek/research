@@ -2,9 +2,9 @@
 --
 -- Generic equipment for well-scoped terms
 
-open import 0-1-Prelude
+open import A201903.0-1-Prelude
 
-module 0-2-GenericEquipment (Tm : Nat → Set) where
+module A201903.0-2-GenericEquipment (Tm : Nat → Set) where
 
 
 ---------------------------------------------------------------------------------------------------------------

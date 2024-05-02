@@ -2,9 +2,9 @@
 --
 -- Properties of BS-CBV
 
-module 3-3-Properties-BigStep-CBV where
+module A201903.3-3-Properties-BigStep-CBV where
 
-open import 2-1-Semantics-BigStep
+open import A201903.2-1-Semantics-BigStep
 open CBV public
 
 

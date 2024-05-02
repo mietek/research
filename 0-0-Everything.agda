@@ -2,54 +2,54 @@
 --
 -- A formalisation of big-step and small-step operational semantics for λ-calculus
 
-module 0-0-Everything where
+module A201903.0-0-Everything where
 
-open import 0-1-Prelude
-open import 0-1-1-Prelude-StutteringColists
-open import 0-1-2-Prelude-MealyLikeMachines
-open import 0-1-3-Prelude-ForeignHandleBuffering
-open import 0-2-GenericEquipment
+open import A201903.0-1-Prelude
+open import A201903.0-1-1-Prelude-StutteringColists
+open import A201903.0-1-2-Prelude-MealyLikeMachines
+open import A201903.0-1-3-Prelude-ForeignHandleBuffering
+open import A201903.0-2-GenericEquipment
 
-open import 1-1-Syntax-Terms
-open import 1-2-Syntax-Predicates
+open import A201903.1-1-Syntax-Terms
+open import A201903.1-2-Syntax-Predicates
 
-import 2-1-Semantics-BigStep as BS
-import 2-2-Semantics-SmallStep as SS
+import A201903.2-1-Semantics-BigStep as BS
+import A201903.2-2-Semantics-SmallStep as SS
 
-import 3-1-Properties-BigStep-CBN
-import 3-2-Properties-BigStep-NO
-import 3-2-1-Properties-BigStep-NO₂
-import 3-3-Properties-BigStep-CBV
-import 3-4-Properties-BigStep-AO
-import 3-5-Properties-BigStep-HAO
-import 3-6-Properties-BigStep-HS
-import 3-7-Properties-BigStep-H
-import 3-7-1-Properties-BigStep-H₂
-import 3-8-Properties-BigStep-HNO
-import 3-8-1-Properties-BigStep-HNO₂
+import A201903.3-1-Properties-BigStep-CBN
+import A201903.3-2-Properties-BigStep-NO
+import A201903.3-2-1-Properties-BigStep-NO₂
+import A201903.3-3-Properties-BigStep-CBV
+import A201903.3-4-Properties-BigStep-AO
+import A201903.3-5-Properties-BigStep-HAO
+import A201903.3-6-Properties-BigStep-HS
+import A201903.3-7-Properties-BigStep-H
+import A201903.3-7-1-Properties-BigStep-H₂
+import A201903.3-8-Properties-BigStep-HNO
+import A201903.3-8-1-Properties-BigStep-HNO₂
 
-import 4-1-Properties-SmallStep-CBN
-import 4-2-Properties-SmallStep-NO
-import 4-2-1-Properties-SmallStep-NO₂
-import 4-3-Properties-SmallStep-CBV
-import 4-4-Properties-SmallStep-AO
-import 4-5-Properties-SmallStep-HAO
-import 4-6-Properties-SmallStep-HS
-import 4-7-Properties-SmallStep-H
-import 4-7-1-Properties-SmallStep-H₂
-import 4-8-Properties-SmallStep-HNO
-import 4-8-1-Properties-SmallStep-HNO₂
+import A201903.4-1-Properties-SmallStep-CBN
+import A201903.4-2-Properties-SmallStep-NO
+import A201903.4-2-1-Properties-SmallStep-NO₂
+import A201903.4-3-Properties-SmallStep-CBV
+import A201903.4-4-Properties-SmallStep-AO
+import A201903.4-5-Properties-SmallStep-HAO
+import A201903.4-6-Properties-SmallStep-HS
+import A201903.4-7-Properties-SmallStep-H
+import A201903.4-7-1-Properties-SmallStep-H₂
+import A201903.4-8-Properties-SmallStep-HNO
+import A201903.4-8-1-Properties-SmallStep-HNO₂
 
-open import 5-1-Equivalence-CBN
-open import 5-2-Equivalence-NO
-open import 5-3-Equivalence-CBV
-open import 5-4-Equivalence-AO
-open import 5-5-Equivalence-HAO
-open import 5-6-Equivalence-HS
-open import 5-7-Equivalence-H
-open import 5-8-Equivalence-HNO
+open import A201903.5-1-Equivalence-CBN
+open import A201903.5-2-Equivalence-NO
+open import A201903.5-3-Equivalence-CBV
+open import A201903.5-4-Equivalence-AO
+open import A201903.5-5-Equivalence-HAO
+open import A201903.5-6-Equivalence-HS
+open import A201903.5-7-Equivalence-H
+open import A201903.5-8-Equivalence-HNO
 
-import Main
+import A201903.Main
 
 
 ---------------------------------------------------------------------------------------------------------------

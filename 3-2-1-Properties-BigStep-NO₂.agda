@@ -2,11 +2,11 @@
 --
 -- Properties of BS-NO₂
 
-module 3-2-1-Properties-BigStep-NO₂ where
+module A201903.3-2-1-Properties-BigStep-NO₂ where
 
-open import 2-1-Semantics-BigStep
+open import A201903.2-1-Semantics-BigStep
 open NO₂ public
-import 3-1-Properties-BigStep-CBN as CBN
+import A201903.3-1-Properties-BigStep-CBN as CBN
 
 
 ---------------------------------------------------------------------------------------------------------------

@@ -1,8 +1,8 @@
 ---------------------------------------------------------------------------------------------------------------
 
-module 1-1-Syntax-Terms where
+module A201903.1-1-Syntax-Terms where
 
-open import 0-1-Prelude public
+open import A201903.0-1-Prelude public
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -14,7 +14,7 @@ data Tm (n : Nat) : Set where
   lam : String → Tm (suc n) → Tm n
   app : Tm n → Tm n → Tm n
 
-open import 0-2-GenericEquipment Tm public
+open import A201903.0-2-GenericEquipment Tm public
 
 
 ---------------------------------------------------------------------------------------------------------------

@@ -1,12 +1,12 @@
 ---------------------------------------------------------------------------------------------------------------
 
-module Main where
+module A201903.Main where
 
-import 0-1-1-Prelude-StutteringColists as Cocolist
-open import 0-1-2-Prelude-MealyLikeMachines as Machine
-import 0-1-3-Prelude-ForeignHandleBuffering as Foreign
-open import 1-1-Syntax-Terms
-import 4-2-Properties-SmallStep-NO as NO
+import A201903.0-1-1-Prelude-StutteringColists as Cocolist
+open import A201903.0-1-2-Prelude-MealyLikeMachines as Machine
+import A201903.0-1-3-Prelude-ForeignHandleBuffering as Foreign
+open import A201903.1-1-Syntax-Terms
+import A201903.4-2-Properties-SmallStep-NO as NO
 import Data.List as List
 import Data.String as String
 import Data.List.NonEmpty as List⁺

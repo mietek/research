@@ -2,10 +2,10 @@
 --
 -- Mealy-like machines
 
-module 0-1-2-Prelude-MealyLikeMachines where
+module A201903.0-1-2-Prelude-MealyLikeMachines where
 
-open import 0-1-Prelude
-open import 0-1-1-Prelude-StutteringColists using (Cocolist ; [] ; -∷_ ; _∷_)
+open import A201903.0-1-Prelude
+open import A201903.0-1-1-Prelude-StutteringColists using (Cocolist ; [] ; -∷_ ; _∷_)
 
 
 ---------------------------------------------------------------------------------------------------------------

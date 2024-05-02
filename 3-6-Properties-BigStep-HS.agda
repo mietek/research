@@ -2,9 +2,9 @@
 --
 -- Properties of BS-HS
 
-module 3-6-Properties-BigStep-HS where
+module A201903.3-6-Properties-BigStep-HS where
 
-open import 2-1-Semantics-BigStep
+open import A201903.2-1-Semantics-BigStep
 open HS public
 
 

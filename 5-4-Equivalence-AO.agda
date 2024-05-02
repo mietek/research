@@ -6,13 +6,13 @@
 --  5.4.1 ↓   ↑ 5.4.2 ⎬ 5.4.3 ↕
 --        BS-AO       ⎭     BS-AO
 
-module 5-4-Equivalence-AO where
+module A201903.5-4-Equivalence-AO where
 
-open import 1-2-Syntax-Predicates
-import 2-1-Semantics-BigStep as BS
-import 2-2-Semantics-SmallStep as SS
-import 3-4-Properties-BigStep-AO as BS-AO
-import 4-4-Properties-SmallStep-AO as SS-AO
+open import A201903.1-2-Syntax-Predicates
+import A201903.2-1-Semantics-BigStep as BS
+import A201903.2-2-Semantics-SmallStep as SS
+import A201903.3-4-Properties-BigStep-AO as BS-AO
+import A201903.4-4-Properties-SmallStep-AO as SS-AO
 
 
 ---------------------------------------------------------------------------------------------------------------

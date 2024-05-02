@@ -6,13 +6,13 @@
 --  5.6.1 ↓   ↑ 5.6.2 ⎬ 5.6.3 ↕
 --        BS-HS       ⎭     BS-HS
 
-module 5-6-Equivalence-HS where
+module A201903.5-6-Equivalence-HS where
 
-open import 1-2-Syntax-Predicates
-import 2-1-Semantics-BigStep as BS
-import 2-2-Semantics-SmallStep as SS
-import 3-6-Properties-BigStep-HS as BS-HS
-import 4-6-Properties-SmallStep-HS as SS-HS
+open import A201903.1-2-Syntax-Predicates
+import A201903.2-1-Semantics-BigStep as BS
+import A201903.2-2-Semantics-SmallStep as SS
+import A201903.3-6-Properties-BigStep-HS as BS-HS
+import A201903.4-6-Properties-SmallStep-HS as SS-HS
 
 
 ---------------------------------------------------------------------------------------------------------------

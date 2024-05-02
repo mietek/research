@@ -6,13 +6,13 @@
 --  5.3.1 ↓   ↑ 5.3.2 ⎬ 5.3.3 ↕
 --        BS-CBV      ⎭     BS-CBV
 
-module 5-3-Equivalence-CBV where
+module A201903.5-3-Equivalence-CBV where
 
-open import 1-2-Syntax-Predicates
-import 2-1-Semantics-BigStep as BS
-import 2-2-Semantics-SmallStep as SS
-import 3-3-Properties-BigStep-CBV as BS-CBV
-import 4-3-Properties-SmallStep-CBV as SS-CBV
+open import A201903.1-2-Syntax-Predicates
+import A201903.2-1-Semantics-BigStep as BS
+import A201903.2-2-Semantics-SmallStep as SS
+import A201903.3-3-Properties-BigStep-CBV as BS-CBV
+import A201903.4-3-Properties-SmallStep-CBV as SS-CBV
 
 
 ---------------------------------------------------------------------------------------------------------------

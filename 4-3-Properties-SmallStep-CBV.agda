@@ -2,9 +2,9 @@
 --
 -- Properties of SS-CBV
 
-module 4-3-Properties-SmallStep-CBV where
+module A201903.4-3-Properties-SmallStep-CBV where
 
-open import 2-2-Semantics-SmallStep
+open import A201903.2-2-Semantics-SmallStep
 open CBV public
 
 

@@ -2,9 +2,9 @@
 --
 -- Properties of BS-CBN
 
-module 3-1-Properties-BigStep-CBN where
+module A201903.3-1-Properties-BigStep-CBN where
 
-open import 2-1-Semantics-BigStep
+open import A201903.2-1-Semantics-BigStep
 open CBN public
 
 

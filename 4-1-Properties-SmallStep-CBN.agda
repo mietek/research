@@ -2,9 +2,9 @@
 --
 -- Properties of SS-CBN
 
-module 4-1-Properties-SmallStep-CBN where
+module A201903.4-1-Properties-SmallStep-CBN where
 
-open import 2-2-Semantics-SmallStep
+open import A201903.2-2-Semantics-SmallStep
 open CBN public
 
 
