@@ -37,6 +37,9 @@ open import Function public
   using (_∘_ ; _$_)
   renaming (id to I ; const to K ; _ˢ_ to S)
 
+open import Induction.WellFounded public
+  using (Acc ; acc ; WellFounded)
+
 open import Relation.Binary.PropositionalEquality public
   using (_≡_ ; _≢_ ; refl ; trans ; sym ; cong ; subst)
   renaming (cong₂ to cong²)

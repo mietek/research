@@ -27,6 +27,229 @@ _⊢⋆_ : Cx² Ty Ty → Cx Ty → Set
 Γ ⁏ Δ ⊢⋆ Ξ , A = Γ ⁏ Δ ⊢⋆ Ξ × Γ ⁏ Δ ⊢ A
 
 
+-- Inversion principles.
+
+invvar : ∀ {A Γ Δ} {i i′ : A ∈ Γ} → var {Δ = Δ} i ≡ var i′ → i ≡ i′
+invvar refl = refl
+
+invlam : ∀ {A B Γ Δ} {t t′ : Γ , A ⁏ Δ ⊢ B} → lam t ≡ lam t′ → t ≡ t′
+invlam refl = refl
+
+invappᵀ : ∀ {A A′ B Γ Δ} {t : Γ ⁏ Δ ⊢ A ▻ B} {t′ : Γ ⁏ Δ ⊢ A′ ▻ B} {u : Γ ⁏ Δ ⊢ A} {u′ : Γ ⁏ Δ ⊢ A′} → app t u ≡ app t′ u′ → A ≡ A′
+invappᵀ refl = refl
+
+invapp₁ : ∀ {A B Γ Δ} {t t′ : Γ ⁏ Δ ⊢ A ▻ B} {u u′ : Γ ⁏ Δ ⊢ A} → app t u ≡ app t′ u′ → t ≡ t′
+invapp₁ refl = refl
+
+invapp₂ : ∀ {A B Γ Δ} {t t′ : Γ ⁏ Δ ⊢ A ▻ B} {u u′ : Γ ⁏ Δ ⊢ A} → app t u ≡ app t′ u′ → u ≡ u′
+invapp₂ refl = refl
+
+invmvar : ∀ {A Γ Δ} {i i′ : A ∈ Δ} → mvar {Γ = Γ} i ≡ mvar i′ → i ≡ i′
+invmvar refl = refl
+
+invbox : ∀ {A Γ Δ} {t t′ : ∅ ⁏ Δ ⊢ A} → box {Γ = Γ} t ≡ box t′ → t ≡ t′
+invbox refl = refl
+
+invunboxᵀ : ∀ {A A′ C Γ Δ} {t : Γ ⁏ Δ ⊢ □ A} {t′ : Γ ⁏ Δ ⊢ □ A′} {u : Γ ⁏ Δ , A ⊢ C} {u′ : Γ ⁏ Δ , A′ ⊢ C} → unbox t u ≡ unbox t′ u′ → A ≡ A′
+invunboxᵀ refl = refl
+
+invunbox₁ : ∀ {A C Γ Δ} {t t′ : Γ ⁏ Δ ⊢ □ A} {u u′ : Γ ⁏ Δ , A ⊢ C} → unbox t u ≡ unbox t′ u′ → t ≡ t′
+invunbox₁ refl = refl
+
+invunbox₂ : ∀ {A C Γ Δ} {t t′ : Γ ⁏ Δ ⊢ □ A} {u u′ : Γ ⁏ Δ , A ⊢ C} → unbox t u ≡ unbox t′ u′ → u ≡ u′
+invunbox₂ refl = refl
+
+invpair₁ : ∀ {A B Γ Δ} {t t′ : Γ ⁏ Δ ⊢ A} {u u′ : Γ ⁏ Δ ⊢ B} → pair t u ≡ pair t′ u′ → t ≡ t′
+invpair₁ refl = refl
+
+invpair₂ : ∀ {A B Γ Δ} {t t′ : Γ ⁏ Δ ⊢ A} {u u′ : Γ ⁏ Δ ⊢ B} → pair t u ≡ pair t′ u′ → u ≡ u′
+invpair₂ refl = refl
+
+invfstᵀ : ∀ {A B B′ Γ Δ} {t : Γ ⁏ Δ ⊢ A ∧ B} {t′ : Γ ⁏ Δ ⊢ A ∧ B′} → fst t ≡ fst t′ → B ≡ B′
+invfstᵀ refl = refl
+
+invfst : ∀ {A B Γ Δ} {t t′ : Γ ⁏ Δ ⊢ A ∧ B} → fst t ≡ fst t′ → t ≡ t′
+invfst refl = refl
+
+invsndᵀ : ∀ {A A′ B Γ Δ} {t : Γ ⁏ Δ ⊢ A ∧ B} {t′ : Γ ⁏ Δ ⊢ A′ ∧ B} → snd t ≡ snd t′ → A ≡ A′
+invsndᵀ refl = refl
+
+invsnd : ∀ {A B Γ Δ} {t t′ : Γ ⁏ Δ ⊢ A ∧ B} → snd t ≡ snd t′ → t ≡ t′
+invsnd refl = refl
+
+
+-- Decidable equality.
+
+_≟_ : ∀ {A Γ Δ} → (t t′ : Γ ⁏ Δ ⊢ A) → Dec (t ≡ t′)
+var i     ≟ var i′      with i ≟ⁱ i′
+var i     ≟ var .i      | yes refl = yes refl
+var i     ≟ var i′      | no  i≢i′ = no (i≢i′ ∘ invvar)
+var i     ≟ lam t′      = no λ ()
+var i     ≟ app t′ u′   = no λ ()
+var i     ≟ mvar i′     = no λ ()
+var i     ≟ box t′      = no λ ()
+var i     ≟ unbox t′ u′ = no λ ()
+var i     ≟ pair t′ u′  = no λ ()
+var i     ≟ fst t′      = no λ ()
+var i     ≟ snd t′      = no λ ()
+var i     ≟ unit        = no λ ()
+lam t     ≟ var i′      = no λ ()
+lam t     ≟ lam t′      with t ≟ t′
+lam t     ≟ lam .t      | yes refl = yes refl
+lam t     ≟ lam t′      | no  t≢t′ = no (t≢t′ ∘ invlam)
+lam t     ≟ app t′ u′   = no λ ()
+lam t     ≟ mvar i′     = no λ ()
+lam t     ≟ unbox t′ u′ = no λ ()
+lam t     ≟ fst t′      = no λ ()
+lam t     ≟ snd t′      = no λ ()
+app t u   ≟ var i′      = no λ ()
+app t u   ≟ lam t′      = no λ ()
+app {A = A} t u ≟ app {A = A′} t′ u′ with A ≟ᵀ A′
+app t u   ≟ app t′ u′   | yes refl with t ≟ t′ | u ≟ u′
+app t u   ≟ app .t .u   | yes refl | yes refl | yes refl = yes refl
+app t u   ≟ app t′ u′   | yes refl | no  t≢t′ | _        = no (t≢t′ ∘ invapp₁)
+app t u   ≟ app t′ u′   | yes refl | _        | no  u≢u′ = no (u≢u′ ∘ invapp₂)
+app t u   ≟ app t′ u′   | no  A≢A′ = no (A≢A′ ∘ invappᵀ)
+app t u   ≟ mvar i′     = no λ ()
+app t u   ≟ box t′      = no λ ()
+app t u   ≟ unbox t′ u′ = no λ ()
+app t u   ≟ pair t′ u′  = no λ ()
+app t u   ≟ fst t′      = no λ ()
+app t u   ≟ snd t′      = no λ ()
+app t u   ≟ unit        = no λ ()
+mvar i    ≟ var i′      = no λ ()
+mvar i    ≟ lam t′      = no λ ()
+mvar i    ≟ app t′ u′   = no λ ()
+mvar i    ≟ mvar i′     with i ≟ⁱ i′
+mvar i    ≟ mvar .i     | yes refl = yes refl
+mvar i    ≟ mvar i′     | no  i≢i′ = no (i≢i′ ∘ invmvar)
+mvar i    ≟ box t′      = no λ ()
+mvar i    ≟ unbox t′ u′ = no λ ()
+mvar i    ≟ pair t′ u′  = no λ ()
+mvar i    ≟ fst t′      = no λ ()
+mvar i    ≟ snd t′      = no λ ()
+mvar i    ≟ unit        = no λ ()
+box t     ≟ var i′      = no λ ()
+box t     ≟ app t′ u′   = no λ ()
+box t     ≟ mvar i′     = no λ ()
+box t     ≟ box t′      with t ≟ t′
+box t     ≟ box .t      | yes refl = yes refl
+box t     ≟ box t′      | no  t≢t′ = no (t≢t′ ∘ invbox)
+box t     ≟ unbox t′ u′ = no λ ()
+box t     ≟ fst t′      = no λ ()
+box t     ≟ snd t′      = no λ ()
+unbox t u ≟ var i′      = no λ ()
+unbox t u ≟ lam t′      = no λ ()
+unbox t u ≟ app t′ u′   = no λ ()
+unbox t u ≟ mvar i′     = no λ ()
+unbox t u ≟ box t′      = no λ ()
+unbox {A = A} t u ≟ unbox {A = A′} t′ u′ with A ≟ᵀ A′
+unbox t u ≟ unbox t′ u′ | yes refl with t ≟ t′ | u ≟ u′
+unbox t u ≟ unbox .t .u | yes refl | yes refl | yes refl = yes refl
+unbox t u ≟ unbox t′ u′ | yes refl | no  t≢t′ | _        = no (t≢t′ ∘ invunbox₁)
+unbox t u ≟ unbox t′ u′ | yes refl | _        | no  u≢u′ = no (u≢u′ ∘ invunbox₂)
+unbox t u ≟ unbox t′ u′ | no  A≢A′ = no (A≢A′ ∘ invunboxᵀ)
+unbox t u ≟ pair t′ u′  = no λ ()
+unbox t u ≟ fst t′      = no λ ()
+unbox t u ≟ snd t′      = no λ ()
+unbox t u ≟ unit        = no λ ()
+pair t u  ≟ var i′      = no λ ()
+pair t u  ≟ app t′ u′   = no λ ()
+pair t u  ≟ mvar i′     = no λ ()
+pair t u  ≟ unbox t′ u′ = no λ ()
+pair t u  ≟ pair t′ u′  with t ≟ t′ | u ≟ u′
+pair t u  ≟ pair .t .u  | yes refl | yes refl = yes refl
+pair t u  ≟ pair t′ u′  | no  t≢t′ | _        = no (t≢t′ ∘ invpair₁)
+pair t u  ≟ pair t′ u′  | _        | no  u≢u′ = no (u≢u′ ∘ invpair₂)
+pair t u  ≟ fst t′      = no λ ()
+pair t u  ≟ snd t′      = no λ ()
+fst t     ≟ var i′      = no λ ()
+fst t     ≟ lam t′      = no λ ()
+fst t     ≟ app t′ u′   = no λ ()
+fst t     ≟ mvar i′     = no λ ()
+fst t     ≟ box t′      = no λ ()
+fst t     ≟ unbox t′ u′ = no λ ()
+fst t     ≟ pair t′ u′  = no λ ()
+fst {B = B} t ≟ fst {B = B′} t′ with B ≟ᵀ B′
+fst t     ≟ fst t′      | yes refl with t ≟ t′
+fst t     ≟ fst .t      | yes refl | yes refl = yes refl
+fst t     ≟ fst t′      | yes refl | no  t≢t′ = no (t≢t′ ∘ invfst)
+fst t     ≟ fst t′      | no  B≢B′ = no (B≢B′ ∘ invfstᵀ)
+fst t     ≟ snd t′      = no λ ()
+fst t     ≟ unit        = no λ ()
+snd t     ≟ var i′      = no λ ()
+snd t     ≟ lam t′      = no λ ()
+snd t     ≟ app t′ u′   = no λ ()
+snd t     ≟ mvar i′     = no λ ()
+snd t     ≟ box t′      = no λ ()
+snd t     ≟ unbox t′ u′ = no λ ()
+snd t     ≟ pair t′ u′  = no λ ()
+snd t     ≟ fst t′      = no λ ()
+snd {A = A} t ≟ snd {A = A′} t′ with A ≟ᵀ A′
+snd t     ≟ snd t′      | yes refl with t ≟ t′
+snd t     ≟ snd .t      | yes refl | yes refl = yes refl
+snd t     ≟ snd t′      | yes refl | no  t≢t′ = no (t≢t′ ∘ invsnd)
+snd t     ≟ snd t′      | no  A≢A′ = no (A≢A′ ∘ invsndᵀ)
+snd t     ≟ unit        = no λ ()
+unit      ≟ var i′      = no λ ()
+unit      ≟ app t′ u′   = no λ ()
+unit      ≟ mvar i′     = no λ ()
+unit      ≟ unbox t′ u′ = no λ ()
+unit      ≟ fst t′      = no λ ()
+unit      ≟ snd t′      = no λ ()
+unit      ≟ unit        = yes refl
+
+
+-- Structural induction.
+
+private
+  data _≤_ : ∀ {A′ A Γ′ Γ Δ′ Δ} → Γ′ ⁏ Δ′ ⊢ A′ → Γ ⁏ Δ ⊢ A → Set where
+    refl≤       : ∀ {A Γ Δ}   → {t : Γ ⁏ Δ ⊢ A}
+                              → t ≤ t
+
+    steplam≤    : ∀ {A B Γ Δ} → {t′ t : Γ , A ⁏ Δ ⊢ B}
+                              → t′ ≡ t → t′ ≤ lam t
+
+    stepapp≤₁   : ∀ {A B Γ Δ} → {t′ t : Γ ⁏ Δ ⊢ A ▻ B} → {u : Γ ⁏ Δ ⊢ A}
+                              → t′ ≡ t → t′ ≤ app t u
+
+    stepapp≤₂   : ∀ {A B Γ Δ} → {t : Γ ⁏ Δ ⊢ A ▻ B} → {u′ u : Γ ⁏ Δ ⊢ A}
+                              → u′ ≡ u → u′ ≤ app t u
+
+    stepbox≤    : ∀ {A Γ Δ}   → {t′ t : ∅ ⁏ Δ ⊢ A}
+                              → t′ ≡ t → t′ ≤ box {Γ = Γ} t
+
+    stepunbox≤₁ : ∀ {A C Γ Δ} → {t′ t : Γ ⁏ Δ ⊢ □ A} → {u : Γ ⁏ Δ , A ⊢ C}
+                              → t′ ≡ t → t′ ≤ unbox t u
+
+    stepunbox≤₂ : ∀ {A C Γ Δ} → {t : Γ ⁏ Δ ⊢ □ A} → {u′ u : Γ ⁏ Δ , A ⊢ C}
+                              → u′ ≡ u → u′ ≤ unbox t u
+
+    steppair≤₁  : ∀ {A B Γ Δ} → {t′ t : Γ ⁏ Δ ⊢ A} → {u : Γ ⁏ Δ ⊢ B}
+                              → t′ ≡ t → t′ ≤ pair t u
+
+    steppair≤₂  : ∀ {A B Γ Δ} → {t : Γ ⁏ Δ ⊢ A} → {u′ u : Γ ⁏ Δ ⊢ B}
+                              → u′ ≡ u → u′ ≤ pair t u
+
+    stepfst≤    : ∀ {A B Γ Δ} → {t′ t : Γ ⁏ Δ ⊢ A ∧ B}
+                              → t′ ≡ t → t′ ≤ fst t
+
+    stepsnd≤    : ∀ {A B Γ Δ} → {t′ t : Γ ⁏ Δ ⊢ A ∧ B}
+                              → t′ ≡ t → t′ ≤ snd t
+
+  _<_ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ A → Set
+  t < t′ = t ≢ t′ × t ≤ t′
+
+  -- TODO: unfinished
+  -- wf< : ∀ {A Γ Δ} → WellFounded (_<_ {A} {Γ} {Δ})
+  -- wf< t = acc (access t)
+  --   where
+  --     access : ∀ {A Γ Δ} → (t t′ : Γ ⁏ Δ ⊢ A) → t′ < t → Acc _<_ t′
+  --     access t             .t (t≢t , refl≤)                    = refl ↯ t≢t
+  --     access (app t .t′)   t′ (t′≢apptt′ , stepapp≤₂ refl)     = {!!}
+  --     access (unbox .t′ u) t′ (t′≢unboxt′u , stepunbox≤₁ refl) = {!!}
+
+
 -- Monotonicity with respect to context inclusion.
 
 mono⊢ : ∀ {A Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⁏ Δ ⊢ A → Γ′ ⁏ Δ ⊢ A
