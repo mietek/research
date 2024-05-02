@@ -1,12 +1,12 @@
-module Everything where
+module A201901.Everything where
 
 
 --------------------------------------------------------------------------------
 
-import Prelude
+import A201901.Prelude
 
-import Chapter3
-import Chapter5
+import A201901.Chapter3
+import A201901.Chapter5
 
 
 --------------------------------------------------------------------------------

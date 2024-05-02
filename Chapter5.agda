@@ -1,11 +1,11 @@
 ---------------------------------------------------------------------------------------------------------------
 
-module Chapter5 where
+module A201901.Chapter5 where
 
-open import Prelude public
+open import A201901.Prelude public
   hiding (false ; not ; suc ; true ; zero)
 
-import Chapter3
+import A201901.Chapter3
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -292,7 +292,7 @@ module Church-Part2 (lcnb : LCNB)
 -- “The set of terms is the smallest set `T` such that…”
 -- “The _size_ of a term `t` can be defined exactly as we did for arithmetic expressions in Definition 3.3.2.”
 
-open Prelude using (suc ; zero)
+open A201901.Prelude using (suc ; zero)
 
 module Functions
   where
@@ -528,7 +528,7 @@ module FunctionsGetStuck
 
 -- Echo of Definition 3.5.6.
 
-    open Chapter3.NormalForms _⇒_ public
+    open A201901.Chapter3.NormalForms _⇒_ public
 
 
 -- Echo of Theorem 3.5.7.
@@ -599,8 +599,8 @@ module FunctionsGetStuck
 
 -- Echo of Definition 3.5.9 and Theorem 3.5.11.
 
-    open Chapter3.MultiStepReduction _⇒_ public
-    open Chapter3.UniquenessOfNormalForms _⇒_ ⇒-det public
+    open A201901.Chapter3.MultiStepReduction _⇒_ public
+    open A201901.Chapter3.UniquenessOfNormalForms _⇒_ ⇒-det public
 
     rs-app₁ : ∀ {t₁ t₂ u₁} → t₁ ⇒* u₁ → t₁ $ t₂ ⇒* u₁ $ t₂
     rs-app₁ = map r-app₁
@@ -632,7 +632,7 @@ module Strategy-FullBetaReduction
       r-abs    : ∀ {x t u} → t ⇒ u → ƛ x ∙ t ⇒ ƛ x ∙ u
       r-appAbs : ∀ {x t₁ t₂} → (ƛ x ∙ t₁) $ t₂ ⇒ [ x ↦ t₂ ] t₁
 
-    open Chapter3.NormalForms _⇒_ public
+    open A201901.Chapter3.NormalForms _⇒_ public
 
 
 module Strategy-NormalOrder
@@ -661,7 +661,7 @@ module Strategy-NormalOrder
       r-abs    : ∀ {x t u} → t ⇒ u → ƛ x ∙ t ⇒ ƛ x ∙ u
       r-appAbs : ∀ {x t₁ t₂} → (ƛ x ∙ t₁) $ t₂ ⇒ [ x ↦ t₂ ] t₁
 
-    open Chapter3.NormalForms _⇒_ public
+    open A201901.Chapter3.NormalForms _⇒_ public
       renaming (NormalForm to NegativeNormalForm ; nf→¬r to nnf→¬r ; ¬r→nf to ¬r→nnf)
 
     mutual
@@ -688,8 +688,8 @@ module Strategy-NormalOrder
     ⇒-det r-appAbs            (r-app₂ () _)
     ⇒-det r-appAbs            r-appAbs             = refl
 
-    open Chapter3.MultiStepReduction _⇒_ public
-    open Chapter3.UniquenessOfNormalForms _⇒_ ⇒-det public
+    open A201901.Chapter3.MultiStepReduction _⇒_ public
+    open A201901.Chapter3.UniquenessOfNormalForms _⇒_ ⇒-det public
 
 
 module Strategy-Lazy/CallByName
@@ -704,7 +704,7 @@ module Strategy-Lazy/CallByName
     data Value : Pred₀ Term where
       ƛ_∙_ : ∀ (x : Name) (t : Term) → Value (ƛ x ∙ t)
 
-    open Chapter3.NormalForms _⇒_ public
+    open A201901.Chapter3.NormalForms _⇒_ public
 
     v→nf : ∀ {t} → Value t → NormalForm t
     v→nf (ƛ x ∙ t) = λ ()
@@ -715,8 +715,8 @@ module Strategy-Lazy/CallByName
     ⇒-det r-appAbs        (r-app₁ t₁⇒u₁′) = t₁⇒u₁′ ↯ v→nf (ƛ _ ∙ _)
     ⇒-det r-appAbs        r-appAbs         = refl
 
-    open Chapter3.MultiStepReduction _⇒_ public
-    open Chapter3.UniquenessOfNormalForms _⇒_ ⇒-det public
+    open A201901.Chapter3.MultiStepReduction _⇒_ public
+    open A201901.Chapter3.UniquenessOfNormalForms _⇒_ ⇒-det public
 
 
 ---------------------------------------------------------------------------------------------------------------
