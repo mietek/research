@@ -279,8 +279,8 @@ pseudosub {τ = τ , M} {Ξ , B} (ξ , 𝒞) 𝒟 = app (pseudosub ξ (lam 𝒟)
 
 
 exch : ∀ {d g M A B C} → {Δ : Asserts d} {Γ : Types g}
-                       → Δ ⊢ M ⦂ C valid[ Γ , A , B ]
-                       → Δ ⊢ EXCH M ⦂ C valid[ Γ , B , A ]
+                       → Δ ⊢ M ⦂ C valid[ (Γ , A) , B ]
+                       → Δ ⊢ EXCH M ⦂ C valid[ (Γ , B) , A ]
 exch 𝒟 = app (app (wk (wk (lam (lam 𝒟)))) vz) (wk vz)
 
 
@@ -348,8 +348,8 @@ pseudomsub {τ = τ , M} {Ξ , ⟪⊫ A ⟫} (ξ , 𝒞) 𝒟 = app (pseudomsub 
 
 
 mexch : ∀ {d g M A B C} → {Δ : Asserts d} {Γ : Types g}
-                        → Δ , ⟪⊫ A ⟫ , ⟪⊫ B ⟫ ⊢ M ⦂ C valid[ Γ ]
-                        → Δ , ⟪⊫ B ⟫ , ⟪⊫ A ⟫ ⊢ MEXCH M ⦂ C valid[ Γ ]
+                        → (Δ , ⟪⊫ A ⟫) , ⟪⊫ B ⟫ ⊢ M ⦂ C valid[ Γ ]
+                        → (Δ , ⟪⊫ B ⟫) , ⟪⊫ A ⟫ ⊢ MEXCH M ⦂ C valid[ Γ ]
 mexch 𝒟 = unvau (unvau (exch (vau (vau 𝒟))))
 
 

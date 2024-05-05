@@ -36,19 +36,19 @@ keep⊒ η zero    = zero
 keep⊒ η (suc i) = suc (η i)
 
 ex⊒ : ∀ {X A B} → {Ξ : List X}
-                → Ξ , B , A ⊒ Ξ , A , B
+                → (Ξ , B) , A ⊒ (Ξ , A) , B
 ex⊒ zero          = suc zero
 ex⊒ (suc zero)    = zero
 ex⊒ (suc (suc i)) = suc (suc i)
 
 ct⊒ : ∀ {X A} → {Ξ : List X}
-              → Ξ , A  ⊒ Ξ , A , A
+              → Ξ , A  ⊒ (Ξ , A) , A
 ct⊒ zero          = zero
 ct⊒ (suc zero)    = zero
 ct⊒ (suc (suc i)) = suc i
 
 unct⊒ : ∀ {X A} → {Ξ : List X}
-                → Ξ , A , A ⊒ Ξ , A
+                → (Ξ , A) , A ⊒ Ξ , A
 unct⊒ zero    = zero
 unct⊒ (suc i) = suc (suc i)
 

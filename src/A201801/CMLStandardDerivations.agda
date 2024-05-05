@@ -225,8 +225,8 @@ pseudosub ∙       𝒟 = ren bot⊇ 𝒟
 pseudosub (ξ , 𝒞) 𝒟 = app (pseudosub ξ (lam 𝒟)) 𝒞
 
 
-exch : ∀ {Δ Γ A B C} → Δ ⊢ C valid[ Γ , A , B ]
-                     → Δ ⊢ C valid[ Γ , B , A ]
+exch : ∀ {Δ Γ A B C} → Δ ⊢ C valid[ (Γ , A) , B ]
+                     → Δ ⊢ C valid[ (Γ , B) , A ]
 exch 𝒟 = app (app (wk (wk (lam (lam 𝒟)))) vz) (wk vz)
 
 
@@ -305,8 +305,8 @@ pseudomsub ∙       𝒟 = mren bot⊇ 𝒟
 pseudomsub (ξ , 𝒞) 𝒟 = app (pseudomsub ξ (lam (vau 𝒟))) (box 𝒞)
 
 
-mexch : ∀ {Δ Γ Ψ Φ A B C} → Δ , ⟪ Ψ ⊫ A ⟫ , ⟪ Φ ⊫ B ⟫ ⊢ C valid[ Γ ]
-                          → Δ , ⟪ Φ ⊫ B ⟫ , ⟪ Ψ ⊫ A ⟫ ⊢ C valid[ Γ ]
+mexch : ∀ {Δ Γ Ψ Φ A B C} → (Δ , ⟪ Ψ ⊫ A ⟫) , ⟪ Φ ⊫ B ⟫ ⊢ C valid[ Γ ]
+                          → (Δ , ⟪ Φ ⊫ B ⟫) , ⟪ Ψ ⊫ A ⟫ ⊢ C valid[ Γ ]
 mexch 𝒟 = unvau (unvau (exch (vau (vau 𝒟))))
 
 

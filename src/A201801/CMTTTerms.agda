@@ -322,8 +322,8 @@ PSEUDOMSUB (τ , L) M = APP (PSEUDOMSUB τ (LAM (VAU M))) (BOX L)
 
 
 MEXCH : ∀ {d g m l} → {σ : Scopes d}
-                    → Term (σ , m , l) g
-                    → Term (σ , l , m) g
+                    → Term ((σ , m) , l) g
+                    → Term ((σ , l) , m) g
 MEXCH M = UNVAU (UNVAU (EXCH (VAU (VAU M))))
 
 

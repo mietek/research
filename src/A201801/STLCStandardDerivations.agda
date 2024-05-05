@@ -140,8 +140,8 @@ pseudosub {τ = τ , M} {Ξ , B} (ξ , 𝒞) 𝒟 = app (pseudosub ξ (lam 𝒟)
 
 
 exch : ∀ {g M A B C} → {Γ : Types g}
-                     → ⊢ M ⦂ C valid[ Γ , A , B ]
-                     → ⊢ EXCH M ⦂ C valid[ Γ , B , A ]
+                     → ⊢ M ⦂ C valid[ (Γ , A) , B ]
+                     → ⊢ EXCH M ⦂ C valid[ (Γ , B) , A ]
 exch 𝒟 = app (app (wk (wk (lam (lam 𝒟)))) vz) (wk vz)
 
 

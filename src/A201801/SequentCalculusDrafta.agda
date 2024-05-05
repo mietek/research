@@ -31,13 +31,13 @@ keep⊒ η zero    = zero
 keep⊒ η (suc i) = suc (η i)
 
 ex⊒ : ∀ {X A B} → {Ξ : List X}
-                → Ξ , B , A ⊒ Ξ , A , B
+                → (Ξ , B) , A ⊒ (Ξ , A) , B
 ex⊒ zero          = suc zero
 ex⊒ (suc zero)    = zero
 ex⊒ (suc (suc i)) = suc (suc i)
 
 ct⊒ : ∀ {X A} → {Ξ : List X}
-              → Ξ , A  ⊒ Ξ , A , A
+              → Ξ , A  ⊒ (Ξ , A) , A
 ct⊒ zero          = zero
 ct⊒ (suc zero)    = zero
 ct⊒ (suc (suc i)) = suc i
@@ -133,11 +133,11 @@ wkₙₜ : ∀ {B Γ A} → Γ ⊢ A neutral
                  → Γ , B ⊢ A neutral
 wkₙₜ 𝒟 = renₙₜ suc 𝒟
 
-exₙₜ : ∀ {Γ A B C} → Γ , A , B ⊢ C neutral
-                   → Γ , B , A ⊢ C neutral
+exₙₜ : ∀ {Γ A B C} → (Γ , A) , B ⊢ C neutral
+                   → (Γ , B) , A ⊢ C neutral
 exₙₜ 𝒟 = renₙₜ ex⊒ 𝒟
 
-ctₙₜ : ∀ {Γ A C} → Γ , A , A ⊢ C neutral
+ctₙₜ : ∀ {Γ A C} → (Γ , A) , A ⊢ C neutral
                  → Γ , A ⊢ C neutral
 ctₙₜ 𝒟 = renₙₜ ct⊒ 𝒟
 
@@ -171,11 +171,11 @@ wkₙₘ : ∀ {B Γ A} → Γ ⊢ A normal
                  → Γ , B ⊢ A normal
 wkₙₘ 𝒟 = renₙₘ suc 𝒟
 
-exₙₘ : ∀ {Γ A B C} → Γ , A , B ⊢ C normal
-                   → Γ , B , A ⊢ C normal
+exₙₘ : ∀ {Γ A B C} → (Γ , A) , B ⊢ C normal
+                   → (Γ , B) , A ⊢ C normal
 exₙₘ 𝒟 = renₙₘ ex⊒ 𝒟
 
-ctₙₘ : ∀ {Γ A C} → Γ , A , A ⊢ C normal
+ctₙₘ : ∀ {Γ A C} → (Γ , A) , A ⊢ C normal
                  → Γ , A ⊢ C normal
 ctₙₘ 𝒟 = renₙₘ ct⊒ 𝒟
 
@@ -337,11 +337,11 @@ wkₙₜ₊ : ∀ {B Γ A} → Γ ⊢₊ A neutral
                   → Γ , B ⊢₊ A neutral
 wkₙₜ₊ 𝒟 = renₙₜ₊ suc 𝒟
 
-exₙₜ₊ : ∀ {Γ A B C} → Γ , A , B ⊢₊ C neutral
-                    → Γ , B , A ⊢₊ C neutral
+exₙₜ₊ : ∀ {Γ A B C} → (Γ , A) , B ⊢₊ C neutral
+                    → (Γ , B) , A ⊢₊ C neutral
 exₙₜ₊ 𝒟 = renₙₜ₊ ex⊒ 𝒟
 
-ctₙₜ₊ : ∀ {Γ A C} → Γ , A , A ⊢₊ C neutral
+ctₙₜ₊ : ∀ {Γ A C} → (Γ , A) , A ⊢₊ C neutral
                   → Γ , A ⊢₊ C neutral
 ctₙₜ₊ 𝒟 = renₙₜ₊ ct⊒ 𝒟
 
@@ -375,11 +375,11 @@ wkₙₘ₊ : ∀ {B Γ A} → Γ ⊢₊ A normal
                   → Γ , B ⊢₊ A normal
 wkₙₘ₊ 𝒟 = renₙₘ₊ suc 𝒟
 
-exₙₘ₊ : ∀ {Γ A B C} → Γ , A , B ⊢₊ C normal
-                    → Γ , B , A ⊢₊ C normal
+exₙₘ₊ : ∀ {Γ A B C} → (Γ , A) , B ⊢₊ C normal
+                    → (Γ , B) , A ⊢₊ C normal
 exₙₘ₊ 𝒟 = renₙₘ₊ ex⊒ 𝒟
 
-ctₙₘ₊ : ∀ {Γ A C} → Γ , A , A ⊢₊ C normal
+ctₙₘ₊ : ∀ {Γ A C} → (Γ , A) , A ⊢₊ C normal
                   → Γ , A ⊢₊ C normal
 ctₙₘ₊ 𝒟 = renₙₘ₊ ct⊒ 𝒟
 

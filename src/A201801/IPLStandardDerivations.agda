@@ -133,8 +133,8 @@ pseudosub ∙       𝒟 = ren bot⊇ 𝒟
 pseudosub (ξ , 𝒞) 𝒟 = app (pseudosub ξ (lam 𝒟)) 𝒞
 
 
-exch : ∀ {Γ A B C} → Γ , A , B ⊢ C true
-                   → Γ , B , A ⊢ C true
+exch : ∀ {Γ A B C} → (Γ , A) , B ⊢ C true
+                   → (Γ , B) , A ⊢ C true
 exch 𝒟 = app (app (wk (wk (lam (lam 𝒟)))) vz) (wk vz)
 
 

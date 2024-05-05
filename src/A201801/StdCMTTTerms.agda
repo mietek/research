@@ -287,8 +287,8 @@ DOWN M = LETBOX VZ (WK M)
 
 
 MEX : ∀ {m o d g} → {σ : Scopes d}
-                  → Term (σ , m , o) g
-                  → Term (σ , o , m) g
+                  → Term ((σ , m) , o) g
+                  → Term ((σ , o) , m) g
 MEX M = UP (UP (EX (DOWN (DOWN M))))
 
 
