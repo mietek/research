@@ -1,10 +1,10 @@
 module A201802.LR0 where
 
-open import A201802.Prelude
-open import A201802.Category
-open import A201802.Fin
-open import A201802.FinLemmas
-open import A201802.Vec
+open import A201801.Prelude
+open import A201801.Category
+open import A201801.Fin
+open import A201801.FinLemmas
+open import A201801.Vec
 
 
 --------------------------------------------------------------------------------
