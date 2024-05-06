@@ -43,3 +43,4 @@ pre, code {
 /* Standard attributes. */
 a { text-decoration: none }
 a[href]:hover { background-color: #fff67f }
+a:empty:target + a { background-color: #fff67f; }
