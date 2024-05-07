@@ -213,7 +213,7 @@ module NumbersAndBooleans-Part1
       if₃    : ∀ {t₁ t₂ t₃} → t₃ ∈ if t₁ then t₂ else t₃
 
 
--- As an exercise, we’re going to define structural induction using three methods.  First, a direct definition
+-- As an exercise, we’re going to define structural induction using two methods.  First, a direct definition
 -- using pattern matching.
 
     indStruct : ∀ {ℓ} {P : Pred Term ℓ} → (∀ t → (∀ s →  s ∈ t → P s) → P t) → ∀ t → P t

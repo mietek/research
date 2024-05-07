@@ -21,7 +21,7 @@ import A201901.Chapter3
 record IsLC (Term : Set₀) : Set₀ where
   infixl 7 _$_
   field
-    ᵥ_   : ∀ (x : Name) → Term
+    ν    : ∀ (x : Name) → Term
     ƛ_∙_ : ∀ (x : Name) (t : Term) → Term
     _$_  : ∀ (t₁ t₂ : Term) → Term
 
@@ -36,7 +36,7 @@ record LC : Set₁ where
     Term-isString : IsString Term
     Term-isString = record
       { Constraint = λ s → ⊤
-      ; fromString = λ s → ᵥ name s
+      ; fromString = λ s → ν (name s)
       }
 
 
@@ -173,8 +173,8 @@ module Church-Part1 (lc : LC)
     isnil = ƛ "l" ∙ "l" $ (ƛ "h" ∙ ƛ "t" ∙ fls) $ tru
     head  = ƛ "l" ∙ "l" $ (ƛ "h" ∙ ƛ "t" ∙ "h") $ fls
 
-    tail = ƛ "l" ∙ fst $ "l" $ (ƛ "x" ∙ ƛ "p" ∙ pair $ (snd $ "p") $ (cons $ "x" $ (snd $ "p"))) $
-                               (pair $ nil $ nil)
+    tail  = ƛ "l" ∙ fst $ "l" $ (ƛ "x" ∙ ƛ "p" ∙ pair $ (snd $ "p") $ (cons $ "x" $ (snd $ "p"))) $
+                                (pair $ nil $ nil)
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -298,7 +298,7 @@ module Functions
   where
     infixl 7 _$_
     data Term : Set₀ where
-      ᵥ_   : ∀ (x : Name) → Term
+      ν    : ∀ (x : Name) → Term
       ƛ_∙_ : ∀ (x : Name) (t : Term) → Term
       _$_  : ∀ (t₁ t₂ : Term) → Term
 
@@ -306,19 +306,19 @@ module Functions
     Functions-lc = record
       { Term = Term
       ; isLC = record
-        { ᵥ_   = ᵥ_
+        { ν    = ν
         ; ƛ_∙_ = ƛ_∙_
         ; _$_  = _$_
         }
       }
 
     size : Term → Nat
-    size (ᵥ x)     = 1
+    size (ν x)     = 1
     size (ƛ x ∙ t) = 1 + size t
     size (t₁ $ t₂) = 1 + (size t₁ + size t₂)
 
     size-positive : ∀ t → 1 ≤ size t
-    size-positive (ᵥ x)     = ≤-refl
+    size-positive (ν x)     = ≤-refl
     size-positive (ƛ x ∙ t) = s≤s z≤n
     size-positive (t₁ $ t₂) = s≤s z≤n
 
@@ -366,18 +366,18 @@ module Functions
 -- Decidable equality.
 
     _≟ᵀ_ : Decidable {A = Term} _≡_
-    (ᵥ x)     ≟ᵀ (ᵥ y)        with x ≟ᴺ y
+    (ν x)     ≟ᵀ (ν y)        with x ≟ᴺ y
     ... | no x≢y              = no λ where refl → refl ↯ x≢y
     ... | yes refl            = yes refl
-    (ᵥ x)     ≟ᵀ (ƛ y ∙ u)    = no λ ()
-    (ᵥ x)     ≟ᵀ (u₁ $ u₂)    = no λ ()
-    (ƛ x ∙ t) ≟ᵀ (ᵥ y)        = no λ ()
+    (ν x)     ≟ᵀ (ƛ y ∙ u)    = no λ ()
+    (ν x)     ≟ᵀ (u₁ $ u₂)    = no λ ()
+    (ƛ x ∙ t) ≟ᵀ (ν y)        = no λ ()
     (ƛ x ∙ t) ≟ᵀ (ƛ y ∙ u)    with x ≟ᴺ y | t ≟ᵀ u
     ... | no x≢y   | _        = no λ where refl → refl ↯ x≢y
     ... | yes refl | no t≢u   = no λ where refl → refl ↯ t≢u
     ... | yes refl | yes refl = yes refl
     (ƛ x ∙ t) ≟ᵀ (u₁ $ u₂)    = no λ ()
-    (t₁ $ t₂) ≟ᵀ (ᵥ y)        = no λ ()
+    (t₁ $ t₂) ≟ᵀ (ν y)        = no λ ()
     (t₁ $ t₂) ≟ᵀ (ƛ y ∙ u)    = no λ ()
     (t₁ $ t₂) ≟ᵀ (u₁ $ u₂)    with t₁ ≟ᵀ u₁ | t₂ ≟ᵀ u₂
     ... | no t₁≢u₁ | _        = no λ where refl → refl ↯ t₁≢u₁
@@ -394,7 +394,7 @@ module Functions
 -- “The set of _free variables_ of a term `t`, written `fv(t)`, is defined as follows: …”
 
     fv : Term → UniqueList Name
-    fv (ᵥ x)     = [ x ]
+    fv (ν x)     = [ x ]
     fv (ƛ x ∙ t) = fv t ∖ [ x ]
     fv (t₁ $ t₂) = fv t₁ ∪ fv t₂
 
@@ -405,7 +405,7 @@ module Functions
 -- “Give a careful proof that `|fv(t)| ≤ size(t)` for every term `t`.”
 
     exe533 : ∀ t → length (fv t) ≤ size t
-    exe533 (ᵥ x)     = ≤-refl
+    exe533 (ν x)     = ≤-refl
     exe533 (ƛ x ∙ t) = ≤-step
       (begin
         length (fv t ∖ [ x ])
@@ -454,14 +454,14 @@ module Functions
       module NotGood where
         {-# TERMINATING #-}
         [_↦_]_ : Name → Term → Term → Term
-        [ x ↦ s ] (ᵥ y)              with x ≟ᴺ y
+        [ x ↦ s ] (ν y)              with x ≟ᴺ y
         ... | yes refl                = s
-        ... | no x≢y                  = ᵥ y
+        ... | no x≢y                  = ν y
         [ x ↦ s ] (ƛ y ∙ t)          with x ≟ᴺ y | fv s T⟨∌⟩? x
         ... | yes refl | _            = ƛ y ∙ t
         ... | no x≢y   | yes T⟨fvs∌x⟩ = ƛ y ∙ [ x ↦ s ] t
         ... | no x≢y   | no ¬T⟨fvs∌x⟩ = let z = fresh (fv s ∪ fv t) in
-                                          ƛ z ∙ [ x ↦ s ] ([ y ↦ ᵥ z ] t)
+                                          ƛ z ∙ [ x ↦ s ] ([ y ↦ ν z ] t)
         [ x ↦ s ] (t₁ $ t₂)          = ([ x ↦ s ] t₁) $ ([ x ↦ s ] t₂)
 
 
@@ -470,9 +470,9 @@ module Functions
 -- both using explicit induction on size, even though renaming could also be given directly.
 
     c-ren : Closed _<ˢ_ (λ t → Name → Name → ∃ λ t′ → size t ≡ size t′)
-    c-ren (ᵥ y)     h x z with x ≟ᴺ y
-    ... | yes refl        = ᵥ z , refl
-    ... | no x≢y          = ᵥ y , refl
+    c-ren (ν y)     h x z with x ≟ᴺ y
+    ... | yes refl        = ν z , refl
+    ... | no x≢y          = ν y , refl
     c-ren (ƛ y ∙ t) h x z with x ≟ᴺ y
     ... | yes refl        = ƛ y ∙ t , refl
     ... | no x≢y          = let (t′ , s≡s′) = h t (<ˢ-abs x t) x z in
@@ -485,9 +485,9 @@ module Functions
     ren = indSize c-ren
 
     c-sub : Closed _<ˢ_ (λ t → Name → Term → Term)
-    c-sub (ᵥ y)     h x s         with x ≟ᴺ y
+    c-sub (ν y)     h x s         with x ≟ᴺ y
     ... | yes refl                = s
-    ... | no x≢y                  = ᵥ y
+    ... | no x≢y                  = ν y
     c-sub (ƛ y ∙ t) h x s         with x ≟ᴺ y | fv s T⟨∌⟩? x
     ... | yes refl | _            = ƛ y ∙ t
     ... | no x≢y   | yes T⟨fvs∌x⟩ = ƛ y ∙ h t (<ˢ-abs x t) x s
@@ -574,7 +574,7 @@ module FunctionsGetStuck
                                              (r-appAbs vₜ₂)      → vₜ₂ ↯ ¬vₜ₂)
 
     classify : ∀ t → Stuck/Value/Reducible t
-    classify (ᵥ x)     = stu ((λ ()) , (λ ()))
+    classify (ν x)     = stu ((λ ()) , (λ ()))
     classify (ƛ x ∙ t) = val (ƛ x ∙ t)
     classify (t₁ $ t₂) with classify t₁ | classify t₂
     ... | stu σₜ₁          | _                = stu (σ-appStuck₁ σₜ₁)
@@ -645,12 +645,12 @@ module Strategy-NormalOrder
         nanf : ∀ {t} → (nanfₜ : NonAbstractionNormalForm t) → NormalForm t
 
       data NonAbstractionNormalForm : Pred₀ Term where
-        ᵥ_  : ∀ x → NonAbstractionNormalForm (ᵥ x)
+        ν   : ∀ x → NonAbstractionNormalForm (ν x)
         _$_ : ∀ {t₁ t₂} → (nanfₜ₁ : NonAbstractionNormalForm t₁) (nfₜ₂ : NormalForm t₂) →
               NonAbstractionNormalForm (t₁ $ t₂)
 
     data NonAbstraction : Pred₀ Term where
-      ᵥ_  : ∀ x → NonAbstraction (ᵥ x)
+      ν   : ∀ x → NonAbstraction (ν x)
       _$_ : ∀ t₁ t₂ → NonAbstraction (t₁ $ t₂)
 
     infix 3 _⇒_
@@ -670,7 +670,7 @@ module Strategy-NormalOrder
       nf→nnf (nanf nanfₜ) = nanf→nnf nanfₜ
 
       nanf→nnf : ∀ {t} → NonAbstractionNormalForm t → NegativeNormalForm t
-      nanf→nnf (ᵥ _)           = λ ()
+      nanf→nnf (ν _)           = λ ()
       nanf→nnf (nanfₜ₁ $ nfₜ₂) = λ where
         (r-app₁ naₜ₁ naᵤ₁ t₁⇒u₁) → t₁⇒u₁ ↯ nanf→nnf nanfₜ₁
         (r-app₂ nanfₜ₁ t₂⇒u₂)    → t₂⇒u₂ ↯ nf→nnf nfₜ₂
@@ -711,8 +711,8 @@ module Strategy-Lazy/CallByName
 
     ⇒-det : ∀ {t u u′} → t ⇒ u → t ⇒ u′ → u ≡ u′
     ⇒-det (r-app₁ t₁⇒u₁) (r-app₁ t₁⇒u₁′) = (_$ _) & ⇒-det t₁⇒u₁ t₁⇒u₁′
-    ⇒-det (r-app₁ t₁⇒u₁) r-appAbs         = t₁⇒u₁ ↯ v→nf (ƛ _ ∙ _)
-    ⇒-det r-appAbs        (r-app₁ t₁⇒u₁′) = t₁⇒u₁′ ↯ v→nf (ƛ _ ∙ _)
+    ⇒-det (r-app₁ ())     r-appAbs
+    ⇒-det r-appAbs        (r-app₁ ())
     ⇒-det r-appAbs        r-appAbs         = refl
 
     open A201901.Chapter3.MultiStepReduction _⇒_ public

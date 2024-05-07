@@ -112,9 +112,9 @@ open HasDecidableEquality {{...}} public
 T-Decidable : ∀ {a b} {A : Set a} {B : Set b} → (A → B → Bool) → Set _
 T-Decidable _∼_ = ∀ x y → Dec (T (x ∼ y))
 
-T-decide : ∀ {p} → Dec (T p)
-T-decide {true}  = yes tt
-T-decide {false} = no λ ()
+T-dec : ∀ {p} → Dec (T p)
+T-dec {true}  = yes tt
+T-dec {false} = no λ ()
 
 T-pair : ∀ {p q} → T p → T q → T (p ∧ q)
 T-pair {true}  tt T⟨q⟩ = T⟨q⟩
@@ -127,6 +127,14 @@ T-fst {false} ()
 T-snd : ∀ {p q} → T (p ∧ q) → T q
 T-snd {true}  T⟨q⟩ = T⟨q⟩
 T-snd {false} ()
+
+T-push : ∀ {p} → ¬ T p → T (not p)
+T-push {true}  ¬T⟨p⟩ = tt ↯ ¬T⟨p⟩
+T-push {false} ¬T⟨p⟩ = tt
+
+T-pull : ∀ {p} → T (not p) → ¬ T p
+T-pull {true}  ()
+T-pull {false} tt = λ ()
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -205,7 +213,7 @@ mutual
     _∷_ : (x : A) (xs : UniqueList A) {{_ : T (xs ∌ x)}} → UniqueList A
 
   infix 4 _≠_
-  _≠_ : ∀ {a} {A : Set a} → A → A → {{_ : HasDecidableEquality A}} → Bool
+  _≠_ : ∀ {a} {A : Set a} {{_ : HasDecidableEquality A}} → A → A → Bool
   x ≠ y = not ⌊ x ≟ y ⌋
 
   infix 4 _∌_
@@ -223,27 +231,26 @@ module _ {a} {A : Set a} {{_ : HasDecidableEquality A}}
     length (x ∷ xs) = 1 + length xs
 
     _T⟨∌⟩?_ : T-Decidable (_∌_ {A = A})
-    xs T⟨∌⟩? x = T-decide
+    xs T⟨∌⟩? x = T-dec
 
-    private
-      module OperatorWith
-          (∅○ys               : UniqueList A → UniqueList A)
-          (T⟨ys∌z⟩→T⟨∅○ys∌z⟩ : ∀ {ys z} → T (ys ∌ z) → T (∅○ys ys ∌ z))
-        where
-          mutual
-            infixl 5 _○_
-            _○_ : UniqueList A → UniqueList A → UniqueList A
-            []                     ○ ys = ∅○ys ys
-            ((x ∷ xs) {{T⟨xs∌x⟩}}) ○ ys with ys T⟨∌⟩? x
-            ... | yes T⟨ys∌x⟩ = (x ∷ (xs ○ ys)) {{○-preserves-∌ {xs} T⟨xs∌x⟩ T⟨ys∌x⟩}}
-            ... | no ¬T⟨ys∌x⟩ = xs ○ ys
+    module OperatorWith
+        (∅○ys               : UniqueList A → UniqueList A)
+        (T⟨ys∌z⟩→T⟨∅○ys∌z⟩ : ∀ {ys z} → T (ys ∌ z) → T (∅○ys ys ∌ z))
+      where
+        mutual
+          infixl 5 _○_
+          _○_ : UniqueList A → UniqueList A → UniqueList A
+          []                     ○ ys = ∅○ys ys
+          ((x ∷ xs) {{T⟨xs∌x⟩}}) ○ ys with ys T⟨∌⟩? x
+          ... | yes T⟨ys∌x⟩ = (x ∷ (xs ○ ys)) {{○-preserves-∌ {xs} T⟨xs∌x⟩ T⟨ys∌x⟩}}
+          ... | no ¬T⟨ys∌x⟩ = xs ○ ys
 
-            ○-preserves-∌ : ∀ {xs ys z} → T (xs ∌ z) → T (ys ∌ z) → T (xs ○ ys ∌ z)
-            ○-preserves-∌ {[]}     {ys} tt          T⟨ys∌z⟩ = T⟨ys∌z⟩→T⟨∅○ys∌z⟩ T⟨ys∌z⟩
-            ○-preserves-∌ {x ∷ xs} {ys} T⟨x≉z∧xs∌z⟩ T⟨ys∌z⟩ with T-fst T⟨x≉z∧xs∌z⟩ | T-snd T⟨x≉z∧xs∌z⟩
-            ... | T⟨x≉z⟩ | T⟨xs∌z⟩                          with ys T⟨∌⟩? x
-            ... | yes T⟨ys∌x⟩                               = T-pair T⟨x≉z⟩ (○-preserves-∌ {xs} T⟨xs∌z⟩ T⟨ys∌z⟩)
-            ... | no ¬T⟨ys∌x⟩                               = ○-preserves-∌ {xs} T⟨xs∌z⟩ T⟨ys∌z⟩
+          ○-preserves-∌ : ∀ {xs ys z} → T (xs ∌ z) → T (ys ∌ z) → T (xs ○ ys ∌ z)
+          ○-preserves-∌ {[]}     {ys} tt          T⟨ys∌z⟩ = T⟨ys∌z⟩→T⟨∅○ys∌z⟩ T⟨ys∌z⟩
+          ○-preserves-∌ {x ∷ xs} {ys} T⟨x≉z∧xs∌z⟩ T⟨ys∌z⟩ with T-fst T⟨x≉z∧xs∌z⟩ | T-snd T⟨x≉z∧xs∌z⟩
+          ... | T⟨x≉z⟩ | T⟨xs∌z⟩                          with ys T⟨∌⟩? x
+          ... | yes T⟨ys∌x⟩                               = T-pair T⟨x≉z⟩ (○-preserves-∌ {xs} T⟨xs∌z⟩ T⟨ys∌z⟩)
+          ... | no ¬T⟨ys∌x⟩                               = ○-preserves-∌ {xs} T⟨xs∌z⟩ T⟨ys∌z⟩
 
     open OperatorWith (λ ys → ys) (λ T⟨ys∌z⟩ → T⟨ys∌z⟩) public
       renaming (_○_ to _∪_ ; ○-preserves-∌ to ∪-preserves-∌)
@@ -262,6 +269,13 @@ module _ {a} {A : Set a} {{_ : HasDecidableEquality A}}
     length-untitled (x ∷ xs) ys with ys T⟨∌⟩? x
     ... | yes _ = s≤s (length-untitled xs ys)
     ... | no _  = ≤-step (length-untitled xs ys)
+
+    _⊆_ : UniqueList A → UniqueList A → Bool
+    []       ⊆ ys = true
+    (x ∷ xs) ⊆ ys = not (ys ∌ x) ∧ xs ⊆ ys
+
+    _T⟨⊆⟩?_ : T-Decidable _⊆_
+    xs T⟨⊆⟩? ys = T-dec
 
 
 ---------------------------------------------------------------------------------------------------------------
