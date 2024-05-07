@@ -461,3 +461,21 @@ import A201607.OlderBasicILP.Indirect.Gentzen
 import A201607.OlderBasicILP.Direct.Hilbert.Nested
 import A201607.OlderBasicILP.Direct.Gentzen
 -- import A201607.OlderBasicILP.Direct.Translation
+
+
+
+
+--------------------------------------------------------------------------------
+
+-- TODO: unfinished
+
+import A201607.WIP.BasicIPC.Syntax.GentzenNormalForm2
+import A201607.WIP.BasicIPC.Syntax.GentzenNormalFormN
+
+import A201607.WIP.BasicIS4.Sketch
+
+import A201607.WIP.BasicICML.Sketch
+
+import A201607.WIP.BasicILP.Sketch
+
+import A201607.WIP.Sketch
