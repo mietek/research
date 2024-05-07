@@ -2,7 +2,7 @@
 --
 -- A formalisation of big-step and small-step operational semantics for λ-calculus
 
-module A201903.0-0-Everything where
+module A201903.Everything where
 
 open import A201903.0-1-Prelude
 open import A201903.0-1-1-Prelude-StutteringColists
