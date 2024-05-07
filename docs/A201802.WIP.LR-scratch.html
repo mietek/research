@@ -1,0 +1,189 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>A201802.WIP.LR-scratch</title><link rel="stylesheet" href="AgdaPP.css"></head><body><pre class="Agda"><a id="1" class="Keyword">module</a> <a id="8" href="A201802.WIP.LR-scratch.html" class="Module">A201802.WIP.LR-scratch</a> <a id="31" class="Keyword">where</a>
+
+<a id="38" class="Comment">--------------------------------------------------------------------------------</a>
+
+
+<a id="121" class="Comment">{-
+-- Value non-reduction.
+vnr : ∀ {g} → {M : Val g} {M′ : Term g}
+            → ¬ (Val.term M ↦ M′)
+vnr {M = val (LAM M) {{iv-LAM}}}   M↦M′ = {!!}
+vnr {M = val TRUE    {{iv-TRUE}}}  M↦M′ = {!!}
+vnr {M = val FALSE   {{iv-FALSE}}} M↦M′ = {!!}
+
+
+-- Determinism.
+uniq↦ : ∀ {g} → {M M′₁ M′₂ : Term g}
+               → M ↦ M′₁ → M ↦ M′₂
+               → M′₁ ≡ M′₂
+uniq↦ red-APP-LAM         M↦M′₂ = {!!}
+uniq↦ red-IF-TRUE         M↦M′₂ = {!!}
+uniq↦ red-IF-FALSE        M↦M′₂ = {!!}
+uniq↦ (red-cong E M↦M′₁) M↦M′₂ = {!!}
+
+uniq⤅ : ∀ {g} → {M M′₁ M′₂ : Term g}
+               → M ⤅ M′₁ → M ⤅ M′₂
+               → M′₁ ≡ M′₂
+uniq⤅ done                   done                   = refl
+uniq⤅ done                   (step M↦M″₂ M″₂⤅M′₂) = {!!}
+uniq⤅ (step M↦M″₁ M″₁⤅M′₁) done                   = {!!}
+uniq⤅ (step M↦M″₁ M″₁⤅M′₁) (step M↦M″₂ M″₂⤅M′₂) = {!!}
+-}</a>
+
+
+
+<a id="969" class="Comment">-- foo : ∀ {g} → {M M′ : Term g}</a>
+<a id="1002" class="Comment">--             → M ⤅ M′</a>
+<a id="1026" class="Comment">--             → M ≡ M′ ⊎ Σ (Term g) (\ M″ → M ↦ M″ × M″ ⤅ M′)</a>
+<a id="1089" class="Comment">-- foo done                = inj₁ refl</a>
+<a id="1128" class="Comment">-- foo (step M↦M″ M″⤅M′) = inj₂ (_ , (M↦M″ , M″⤅M′))</a>
+
+
+<a id="1183" class="Comment">-- inj-VAR : ∀ {g} → {I₁ I₂ : Fin g}</a>
+<a id="1220" class="Comment">--                 → VAR I₁ ≡ VAR I₂</a>
+<a id="1257" class="Comment">--                 → I₁ ≡ I₂</a>
+<a id="1286" class="Comment">-- inj-VAR refl = refl</a>
+
+<a id="1310" class="Comment">-- inj-LAM : ∀ {g} → {M₁ M₂ : Term (suc g)}</a>
+<a id="1354" class="Comment">--                 → LAM M₁ ≡ LAM M₂</a>
+<a id="1391" class="Comment">--                 → M₁ ≡ M₂</a>
+<a id="1420" class="Comment">-- inj-LAM refl = refl</a>
+
+<a id="1444" class="Comment">-- inj-APP₁ : ∀ {g} → {M₁ M₂ N : Term g}</a>
+<a id="1485" class="Comment">--                  → APP M₁ N ≡ APP M₂ N</a>
+<a id="1527" class="Comment">--                  → M₁ ≡ M₂</a>
+<a id="1557" class="Comment">-- inj-APP₁ refl = refl</a>
+
+<a id="1582" class="Comment">-- inj-APP₂ : ∀ {g} → {M N₁ N₂ : Term g}</a>
+<a id="1623" class="Comment">--                  → APP M N₁ ≡ APP M N₂</a>
+<a id="1665" class="Comment">--                  → N₁ ≡ N₂</a>
+<a id="1695" class="Comment">-- inj-APP₂ refl = refl</a>
+
+<a id="1720" class="Comment">-- inj-IF₁ : ∀ {g} → {M₁ M₂ N O : Term g}</a>
+<a id="1762" class="Comment">--                 → IF M₁ N O ≡ IF M₂ N O</a>
+<a id="1805" class="Comment">--                 → M₁ ≡ M₂</a>
+<a id="1834" class="Comment">-- inj-IF₁ refl = refl</a>
+
+<a id="1858" class="Comment">-- inj-IF₂ : ∀ {g} → {M N₁ N₂ O : Term g}</a>
+<a id="1900" class="Comment">--                 → IF M N₁ O ≡ IF M N₂ O</a>
+<a id="1943" class="Comment">--                 → N₁ ≡ N₂</a>
+<a id="1972" class="Comment">-- inj-IF₂ refl = refl</a>
+
+<a id="1996" class="Comment">-- inj-IF₃ : ∀ {g} → {M N O₁ O₂ : Term g}</a>
+<a id="2038" class="Comment">--                 → IF M N O₁ ≡ IF M N O₂</a>
+<a id="2081" class="Comment">--                 → O₁ ≡ O₂</a>
+<a id="2110" class="Comment">-- inj-IF₃ refl = refl</a>
+
+
+<a id="2135" class="Comment">-- inj[]₁ : ∀ {g} → {E₁ E₂ : EvCx g} {M : Term g}</a>
+<a id="2185" class="Comment">--                → E₁ [ M ] ≡ E₂ [ M ]</a>
+<a id="2225" class="Comment">--                → E₁ ≡ E₂</a>
+<a id="2253" class="Comment">-- inj[]₁ {E₁ = E₁} {E₂} p = {!!}</a>
+
+<a id="2288" class="Comment">-- inj[]₂ : ∀ {g} → {M₁ M₂ : Term g}</a>
+<a id="2325" class="Comment">--                → (E : EvCx g) → E [ M₁ ] ≡ E [ M₂ ]</a>
+<a id="2380" class="Comment">--                → M₁ ≡ M₂</a>
+<a id="2408" class="Comment">-- inj[]₂ ec-[]            refl = refl</a>
+<a id="2447" class="Comment">-- inj[]₂ (ec-fun-APP E N) p    = inj[]₂ E (inj-APP₁ p)</a>
+<a id="2503" class="Comment">-- inj[]₂ (ec-APP-arg M E) p    = inj[]₂ E (inj-APP₂ p)</a>
+<a id="2559" class="Comment">-- inj[]₂ (ec-IF E N O)    p    = inj[]₂ E (inj-IF₁ p)</a>
+
+
+<a id="2616" class="Comment">-- uniq[] : ∀ {g} → {M M′₁ M′₂ : Term g}</a>
+<a id="2657" class="Comment">--                → (E : EvCx g) → E [ M ] ≡ M′₁ → E [ M ] ≡ M′₂</a>
+<a id="2722" class="Comment">--                → M′₁ ≡ M′₂</a>
+<a id="2752" class="Comment">-- uniq[] E refl refl = refl</a>
+
+
+<a id="2783" class="Comment">-- uniq↦ : ∀ {g} → {M M′₁ M′₂ : Term g}</a>
+<a id="2823" class="Comment">--                → M ↦ M′₁ → M ↦ M′₂</a>
+<a id="2861" class="Comment">--                → M′₁ ≡ M′₂</a>
+<a id="2891" class="Comment">-- uniq↦ (red-APP-LAM {{refl}})               (red-APP-LAM {{refl}})               = refl</a>
+<a id="2981" class="Comment">-- uniq↦ red-IF-TRUE                          red-IF-TRUE                          = refl</a>
+<a id="3071" class="Comment">-- uniq↦ red-IF-FALSE                         red-IF-FALSE                         = refl</a>
+<a id="3161" class="Comment">-- uniq↦ (red-cong E₁ M↦M′₁ {{p₁}} {{refl}}) (red-APP-LAM {{refl}})               = {!!}</a>
+<a id="3250" class="Comment">-- uniq↦ (red-cong E₁ M↦M′₁ {{p₁}} {{refl}}) red-IF-TRUE                          = {!!}</a>
+<a id="3339" class="Comment">-- uniq↦ (red-cong E₁ M↦M′₁ {{p₁}} {{refl}}) red-IF-FALSE                         = {!!}</a>
+<a id="3428" class="Comment">-- uniq↦ (red-APP-LAM {{refl}})               (red-cong E₂ M↦M′₂ {{p₂}} {{refl}}) = {!!}</a>
+<a id="3517" class="Comment">-- uniq↦ red-IF-TRUE                          (red-cong E₂ M↦M′₂ {{p₂}} {{refl}}) = {!!}</a>
+<a id="3606" class="Comment">-- uniq↦ red-IF-FALSE                         (red-cong E₂ M↦M′₂ {{p₂}} {{refl}}) = {!!}</a>
+<a id="3695" class="Comment">-- uniq↦ (red-cong E₁ M↦M′₁ {{p₁}} {{refl}}) (red-cong E₂ M↦M′₂ {{p₂}} {{refl}}) = {!uniq↦ M↦M′₁ M↦M′₂!}</a>
+
+
+<a id="3802" class="Comment">-- bar : ∀ {g} → {M M′ M″ : Term g}</a>
+<a id="3838" class="Comment">--             → M ↦ M′ → M ⤅ M″ → {{_ : ¬ (M ≡ M″)}}</a>
+<a id="3892" class="Comment">--             → M′ ⤅ M″</a>
+<a id="3917" class="Comment">-- bar M↦M′ done                {{p}} = refl ↯ p</a>
+<a id="3966" class="Comment">-- bar M↦M′ (step M↦M° M°⤅M″) = {!!}</a>
+
+
+<a id="4005" class="Comment">-- oops : ∀ {g} → {M M′ M″ : Term g}</a>
+<a id="4042" class="Comment">--              → M ↦ M′ → M ⤅ M″</a>
+<a id="4076" class="Comment">--              → M′ ⤅ M″</a>
+<a id="4102" class="Comment">-- oops M↦M′ done                = {!!}</a>
+<a id="4142" class="Comment">-- oops M↦M′ (step M↦M° M°⤅M″) = {!!}</a>
+
+
+<a id="4182" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+
+<a id="4268" class="Comment">-- red-cong-APP-LAM : ∀ {g} → {M N N′ : Term g} {M′ : Term (suc g)}</a>
+<a id="4336" class="Comment">--                          → M ⤅ LAM M′ → N ⤅ N′</a>
+<a id="4386" class="Comment">--                          → APP (LAM M′) N ⤅ CUT N′ M′</a>
+<a id="4443" class="Comment">-- red-cong-APP-LAM M⤅LAM-M′ N⤅N′ = {!!}</a>
+
+
+<a id="4486" class="Comment">-- halt-APP : ∀ {g} → {M N : Term g} {M′ : Term (suc g)}</a>
+<a id="4543" class="Comment">--                  → M ⤅ LAM M′ → M′ ⇓ → N ⇓</a>
+<a id="4589" class="Comment">--                  → APP M N ⇓</a>
+<a id="4621" class="Comment">-- halt-APP M⤅LAM-M′ M′⇓ N⇓ = {!!}</a>
+
+
+
+
+<a id="4660" class="Comment">-- -- SNs : ∀ {g} → Vals 0 g → Types g → Set</a>
+<a id="4705" class="Comment">-- -- SNs (vals ∙)                       ∙       = ⊤</a>
+<a id="4758" class="Comment">-- -- SNs (vals (τ , M) {{av-τ , iv-M}}) (Γ , A) = SNs (vals τ {{av-τ}}) Γ × SN M A</a>
+
+
+<a id="4844" class="Comment">-- -- derps : ∀ {g} → {τ : Vals 0 g} {Γ : Types g}</a>
+<a id="4895" class="Comment">-- --               → SNs τ Γ</a>
+<a id="4925" class="Comment">-- --               → ∙ ⊢ Vals.terms τ ⦂ Γ all</a>
+<a id="4972" class="Comment">-- -- derps {τ = vals ∙}                       {∙}     ∙       = ∙</a>
+<a id="5039" class="Comment">-- -- derps {τ = vals (τ , M) {{av-τ , iv-M}}} {Γ , A} (σ , s) = derps σ , derp s</a>
+
+
+<a id="5123" class="Comment">-- -- tp-SUB : ∀ {g M A} → {τ : Vals 0 g} {Γ : Types g}</a>
+<a id="5179" class="Comment">-- --                    → SNs τ Γ → Γ ⊢ M ⦂ A</a>
+<a id="5226" class="Comment">-- --                    → ∙ ⊢ SUB (Vals.terms τ) M ⦂ A</a>
+<a id="5282" class="Comment">-- -- tp-SUB σ 𝒟 = sub (derps σ) 𝒟</a>
+
+
+<a id="5319" class="Comment">-- -- sn-lem₁ : ∀ {A M M′} → M ↦ M′ → ∙ ⊢ M ⦂ A → SN M′ A</a>
+<a id="5377" class="Comment">-- --                      → SN M A</a>
+<a id="5413" class="Comment">-- -- sn-lem₁ {𝔹}     M↦M′ 𝒟 (𝒟′ , (M″ , M′⤅M″))     = 𝒟 , (M″ , step M↦M′ M′⤅M″)</a>
+<a id="5495" class="Comment">-- -- sn-lem₁ {A ⊃ B} M↦M′ 𝒟 (𝒟′ , (M″ , M′⤅M″) , f) =</a>
+<a id="5550" class="Comment">-- --   𝒟 , (M″ , step M↦M′ M′⤅M″) , (\ s → sn-lem₁ (red-cong (ec-fun-APP ec-[] _) M↦M′)</a>
+<a id="5639" class="Comment">-- --                                                  (app 𝒟 (derp s)) (f s))</a>
+
+
+<a id="5720" class="Comment">-- -- sn-lem₂ : ∀ {A M M′} → M ↦ M′ → ∙ ⊢ M ⦂ A → SN M A</a>
+<a id="5777" class="Comment">-- --                      → SN M′ A</a>
+<a id="5814" class="Comment">-- -- sn-lem₂ {𝔹}     M↦M′ 𝒟 (_ , (M″ , M⤅M″))     = {!!}</a>
+<a id="5872" class="Comment">-- -- sn-lem₂ {A ⊃ B} M↦M′ 𝒟 (_ , (M″ , M⤅M″) , f) = {!!}</a>
+
+
+<a id="5932" class="Comment">-- -- sn-SUB : ∀ {g M A} → {τ : Vals 0 g} {Γ : Types g}</a>
+<a id="5988" class="Comment">-- --                    → SNs τ Γ → Γ ⊢ M ⦂ A</a>
+<a id="6035" class="Comment">-- --                    → SN (SUB (Vals.terms τ) M) A</a>
+<a id="6090" class="Comment">-- -- sn-SUB σ (var i)    = {!!}</a>
+<a id="6123" class="Comment">-- -- sn-SUB σ (lam 𝒟)    = {!!}</a>
+<a id="6156" class="Comment">-- -- sn-SUB σ (app 𝒟 ℰ)  = {!!}</a>
+<a id="6189" class="Comment">-- -- sn-SUB σ true       = true , (val TRUE , done)</a>
+<a id="6242" class="Comment">-- -- sn-SUB σ false      = false , (val FALSE , done)</a>
+<a id="6297" class="Comment">-- -- sn-SUB σ (if 𝒟 ℰ ℱ) = {!!}</a>
+
+
+<a id="6332" class="Comment">-- -- --------------------------------------------------------------------------------</a>
+</pre></body></html>
