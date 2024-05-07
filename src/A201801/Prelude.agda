@@ -8,6 +8,9 @@ open import Agda.Primitive public
 open import Agda.Builtin.Equality public
   using (_≡_ ; refl)
 
+open import Agda.Builtin.Equality.Rewrite public
+  using ()
+
 open import Agda.Builtin.FromString public
   using (IsString ; fromString)
 
@@ -61,9 +64,6 @@ x ↯ f = elim⊥ (f x)
 
 
 --------------------------------------------------------------------------------
-
-
-{-# BUILTIN REWRITE _≡_ #-}
 
 
 infix 4 _≢_
