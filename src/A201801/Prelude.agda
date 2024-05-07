@@ -265,38 +265,6 @@ map⊎ f g s = for⊎ s f g
 --------------------------------------------------------------------------------
 
 
--- not : Bool → Bool
--- not true  = false
--- not false = true
---
---
--- ⊺ : Bool → Set
--- ⊺ true  = ⊤
--- ⊺ false = ⊥
---
---
--- ⌊_⌋ : ∀ {ℓ} → {X : Set ℓ}
---             → Dec X
---             → Bool
--- ⌊ yes _ ⌋ = true
--- ⌊ no  _ ⌋ = false
---
---
--- True : ∀ {ℓ} → {X : Set ℓ}
---              → Dec X
---              → Set
--- True p = ⊺ ⌊ p ⌋
---
---
--- False : ∀ {ℓ} → {X : Set ℓ}
---               → Dec X
---               → Set
--- False p = ⊺ (not ⌊ p ⌋)
-
-
---------------------------------------------------------------------------------
-
-
 module _
   where
     open import Agda.Builtin.Bool
