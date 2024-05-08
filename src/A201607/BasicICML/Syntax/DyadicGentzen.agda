@@ -239,6 +239,10 @@ cup : ∀ {Ψ A Γ Δ}
                   [ Ψ ] [ Ψ ] A
 cup = lam (up v₀)
 
+cdown : ∀ {A Γ Δ}
+      → Γ ⁏ Δ ⊢ [ Γ ] A ▻ A
+cdown = lam (down v₀ (grefl⊢⋆ weak⊆))
+
 cdistup : ∀ {Ψ A B Γ Δ}
       → Γ ⁏ Δ ⊢ [ Ψ ] ([ Ψ ] A ▻ B) ▻
                   [ Ψ ] A ▻ [ Ψ ] B
@@ -428,3 +432,32 @@ module Examples where
                     [ ∅ , A ] C
   e₈ = lam (lam (unbox v₁ (unbox v₀ (box
          (mv₀ (∙ , app (mv₁ refl⊢⋆) v₀))))))
+
+
+--------------------------------------------------------------------------------
+
+-- TODO: unfinished
+
+private
+  foo : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A ▻ [ ∅ , A ] A
+  foo = lam (box v₀)
+
+
+  x2y : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ [ ∅ , A ] B ▻ ([ ∅ ] A ▻ [ ∅ ] B)
+  x2y = lam (lam (unbox v₁ (unbox v₀ (box (mv₁ (∙ , mv₀ ∙))))))
+
+  x2z : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ [ ∅ , A ] B ▻ [ ∅ ] (A ▻ B)
+  x2z = lam (unbox v₀ (box (lam (mv₀ (∙ , var top)))))
+
+  x2v : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ [ ∅ , A ] B ▻ (A ▻ B)
+  x2v = lam (lam (unbox v₁ (mv₀ (∙ , var top))))
+
+
+  z2x : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ [ ∅ ] (A ▻ B) ▻ [ ∅ , A ] B
+  z2x = lam (unbox v₀ (box (app (mv₀ ∙) v₀)))
+
+  z2y : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ [ ∅ ] (A ▻ B) ▻ ([ ∅ ] A ▻ [ ∅ ] B)
+  z2y = lam (lam (unbox v₁ (unbox v₀ (box (app (mv₁ ∙) (mv₀ ∙))))))
+
+  z2v : ∀ {A B Γ Δ} → Γ ⁏ Δ ⊢ [ ∅ ] (A ▻ B) ▻ (A ▻ B)
+  z2v = lam (lam (unbox v₁ (app (mv₀ ∙) v₀)))

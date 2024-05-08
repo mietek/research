@@ -127,6 +127,12 @@ module _ {U : Set} where
   bot⊆ {∅}     = done
   bot⊆ {Γ , A} = skip bot⊆
 
+  -- Not actually surprising, 2016 self.  Love, 2024 self.
+  private
+    wut₁ wut₂ : ∀ {A} → ∅ , A ⊆ ∅ , A , A
+    wut₁ = keep (skip done)
+    wut₂ = skip (keep done)
+
 
 -- Monotonicity of context membership with respect to context inclusion.
 

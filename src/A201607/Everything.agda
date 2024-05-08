@@ -479,3 +479,29 @@ import A201607.WIP.BasicICML.Sketch
 import A201607.WIP.BasicILP.Sketch
 
 import A201607.WIP.Sketch
+
+
+
+
+--------------------------------------------------------------------------------
+
+-- TODO: unfinished
+
+-- Kripke-style semantics with exploding abstract worlds, and glueing for □ only.
+import A201607.WIP2.BasicIS4.Semantics.KripkeGluedExploding
+import A201607.WIP2.BasicIS4.Semantics.Sketch
+import A201607.WIP2.BasicIS4.Semantics.Sketch2
+import A201607.WIP2.BasicIS4.Semantics.Sketch3
+import A201607.WIP2.BasicIS4.Semantics.Sketch4
+import A201607.WIP2.BasicIS4.Semantics.Sketch5
+import A201607.WIP2.BasicIS4.Semantics.Sketch6
+import A201607.WIP2.BasicIS4.Semantics.Sketch7
+import A201607.WIP2.BasicIS4.Semantics.Sketch8
+import A201607.WIP2.BasicIS4.Semantics.Sketch9
+import A201607.WIP2.BasicIS4.Semantics.Sketch10
+
+import A201607.WIP2.BasicIS4.Metatheory.DyadicGentzenNormalForm-TarskiGluedDyadicGentzen
+import A201607.WIP2.BasicIS4.Metatheory.Sketch
+
+import A201607.WIP2.BasicICML.Sketch
+import A201607.WIP2.BasicICML.Sketch2

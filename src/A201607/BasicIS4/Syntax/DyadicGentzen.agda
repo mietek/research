@@ -293,6 +293,9 @@ mmono⊢⋆ {Ξ , A} θ (ts , t) = mmono⊢⋆ θ ts , mmono⊢ θ t
 mono²⊢ : ∀ {A Π Π′} → Π ⊆² Π′ → Π ⊢ A → Π′ ⊢ A
 mono²⊢ (η , θ) = mono⊢ η ∘ mmono⊢ θ
 
+mono²⊢⋆ : ∀ {Ξ Π Π′} → Π ⊆² Π′ → Π ⊢⋆ Ξ → Π′ ⊢⋆ Ξ
+mono²⊢⋆ (η , θ) = mono⊢⋆ η ∘ mmono⊢⋆ θ
+
 
 -- Shorthand for variables.
 
