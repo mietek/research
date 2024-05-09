@@ -1,7 +1,7 @@
 module AbelChapmanExtended.Renaming.Syntax where
 
-open import AbelChapmanExtended.OPE
 open import AbelChapmanExtended.Syntax
+open import AbelChapmanExtended.OPE
 
 
 

@@ -1,3 +1,5 @@
+{-# OPTIONS --allow-unsolved-metas #-}
+
 module TowardsAltArtemov.NormalizationSimpleCatholic where
 
 open import Data.Nat using (ℕ ; zero ; suc)
@@ -14,6 +16,7 @@ lookup top     (γ , t) = t
 lookup (pop x) (γ , t) = lookup x γ
 
 
+-- TODO: unfinished
 mutual
   eval : ∀ {i Γ Δ A} → Tm Γ A → Env Δ Γ → Delay i (Val Δ A)
   eval (var x)                            γ = now (lookup x γ)
@@ -29,14 +32,7 @@ mutual
   force (∞eval t γ) = eval t γ
 
   β-reduce : ∀ {i Δ n} {ts us : Vec n} {A B} → Val Δ (ts ∴ (A ⊃ B)) → Val Δ (us ∴ A) → Delay i (Val Δ (°apps⟨ n ⟩ ts us ∴ B))
-  β-reduce (ne x) w = {!!}
-  β-reduce {n = n} {ts} {us} {A} {B} (lam⟨ n′ ⟩ {ts′} {A′} {B′} v γ {{proof}}) w with ts ∴ (A ⊃ B)
-  β-reduce (lam⟨ n′ ⟩ v γ) w | °lams⟨ n ⟩ ts ★ = {!!}
-  β-reduce (lam⟨ n′ ⟩ v γ) w | C ⊃ C₁ = {!!}
-  β-reduce (lam⟨ n′ ⟩ v γ) w | C ∧ C₁ = {!!}
-  β-reduce (lam⟨ n′ ⟩ v γ) w | x ∶ C = {!!}
-  β-reduce (pair⟨ n ⟩ v x) w = {!!}
-  β-reduce (up⟨ n ⟩ v) w = {!!}
+  β-reduce = {!!}
   --β-reduce (ne v)    w = now (ne (app v w))
   --β-reduce (lam t γ) w = later (∞eval t (γ , w))
 

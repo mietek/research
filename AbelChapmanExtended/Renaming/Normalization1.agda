@@ -3,11 +3,12 @@ module AbelChapmanExtended.Renaming.Normalization1 where
 open import Relation.Binary.PropositionalEquality using (_≡_ ; refl)
 
 open import AbelChapmanExtended.Delay
-open import AbelChapmanExtended.Normalization
+open import AbelChapmanExtended.StrongBisimilarity
+
+open import AbelChapmanExtended.Syntax
 open import AbelChapmanExtended.OPE
 open import AbelChapmanExtended.Renaming.Syntax
-open import AbelChapmanExtended.StrongBisimilarity
-open import AbelChapmanExtended.Syntax
+open import AbelChapmanExtended.Normalization
 
 
 

@@ -4,11 +4,12 @@ open import Data.Product using (_,_)
 open import Data.Unit using () renaming (tt to unit)
 
 open import AbelChapmanExtended.Convergence
+
+open import AbelChapmanExtended.Syntax
+open import AbelChapmanExtended.Renaming.Syntax
 open import AbelChapmanExtended.Normalization
 open import AbelChapmanExtended.Renaming.Convergence
-open import AbelChapmanExtended.Renaming.Syntax
 open import AbelChapmanExtended.Semantics
-open import AbelChapmanExtended.Syntax
 
 
 

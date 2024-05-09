@@ -3,9 +3,9 @@ module AbelChapmanExtended.Renaming.OPE where
 open import Function using (_∘_)
 open import Relation.Binary.PropositionalEquality using (_≡_ ; refl ; cong ; cong₂)
 
+open import AbelChapmanExtended.Syntax
 open import AbelChapmanExtended.OPE
 open import AbelChapmanExtended.Renaming.Syntax
-open import AbelChapmanExtended.Syntax
 
 
 
