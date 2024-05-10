@@ -1,4 +1,4 @@
-module TowardsAltArtemov.SyntaxSimple where
+module A201605.TowardsAltArtemov.SyntaxSimple where
 
 open import Data.Nat using (ℕ ; zero ; suc)
 open import Function using (_∘_)

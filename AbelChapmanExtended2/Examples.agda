@@ -1,9 +1,9 @@
-module AbelChapmanExtended2.Examples where
+module A201605.AbelChapmanExtended2.Examples where
 
 open import Relation.Binary.PropositionalEquality using (_≡_ ; refl)
 
-open import AbelChapmanExtended2.Syntax
-open import AbelChapmanExtended2.Termination
+open import A201605.AbelChapmanExtended2.Syntax
+open import A201605.AbelChapmanExtended2.Termination
 
 
 

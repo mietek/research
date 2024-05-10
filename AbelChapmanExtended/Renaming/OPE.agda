@@ -1,11 +1,11 @@
-module AbelChapmanExtended.Renaming.OPE where
+module A201605.AbelChapmanExtended.Renaming.OPE where
 
 open import Function using (_∘_)
 open import Relation.Binary.PropositionalEquality using (_≡_ ; refl ; cong ; cong₂)
 
-open import AbelChapmanExtended.Syntax
-open import AbelChapmanExtended.OPE
-open import AbelChapmanExtended.Renaming.Syntax
+open import A201605.AbelChapmanExtended.Syntax
+open import A201605.AbelChapmanExtended.OPE
+open import A201605.AbelChapmanExtended.Renaming.Syntax
 
 
 

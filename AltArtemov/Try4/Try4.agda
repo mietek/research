@@ -1,8 +1,8 @@
 {-# OPTIONS --allow-unsolved-metas #-}
 
-module AltArtemov.Try4.Try4 where
+module A201605.AltArtemov.Try4.Try4 where
 
-open import AltArtemov.Library.Fin public
+open import A201605.AltArtemov.Library.Fin public
 
 
 mutual

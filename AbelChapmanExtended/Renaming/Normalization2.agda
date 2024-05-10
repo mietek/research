@@ -1,17 +1,17 @@
-module AbelChapmanExtended.Renaming.Normalization2 where
+module A201605.AbelChapmanExtended.Renaming.Normalization2 where
 
 open import Function using (_∘_)
 open import Relation.Binary.PropositionalEquality using (sym ; cong)
 
-open import AbelChapmanExtended.Delay
-open import AbelChapmanExtended.StrongBisimilarity
+open import A201605.AbelChapmanExtended.Delay
+open import A201605.AbelChapmanExtended.StrongBisimilarity
 
-open import AbelChapmanExtended.Syntax
-open import AbelChapmanExtended.OPE
-open import AbelChapmanExtended.Renaming.Syntax
-open import AbelChapmanExtended.Renaming.OPE
-open import AbelChapmanExtended.Normalization
-open import AbelChapmanExtended.Renaming.Normalization1
+open import A201605.AbelChapmanExtended.Syntax
+open import A201605.AbelChapmanExtended.OPE
+open import A201605.AbelChapmanExtended.Renaming.Syntax
+open import A201605.AbelChapmanExtended.Renaming.OPE
+open import A201605.AbelChapmanExtended.Normalization
+open import A201605.AbelChapmanExtended.Renaming.Normalization1
 
 
 

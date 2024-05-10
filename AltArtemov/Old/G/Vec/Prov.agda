@@ -1,6 +1,6 @@
-module AltArtemov.Old.G.Vec.Prov where
+module A201605.AltArtemov.Old.G.Vec.Prov where
 
-open import AltArtemov.Old.G.Vec.True renaming (ᵗ⌊_⌋ to ᵗ⌊_⌋ᵀ) public
+open import A201605.AltArtemov.Old.G.Vec.True renaming (ᵗ⌊_⌋ to ᵗ⌊_⌋ᵀ) public
 
 
 data Prov (Γ : Cx) : ∀ {n} → Vec ᵍ⌊ Γ ⌋ n → Ty → Set where

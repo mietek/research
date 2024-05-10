@@ -1,6 +1,6 @@
-module AltArtemov.Try2.Cx where
+module A201605.AltArtemov.Try2.Cx where
 
-open import AltArtemov.Try2.Ty public
+open import A201605.AltArtemov.Try2.Ty public
 
 
 data Cx : Set where

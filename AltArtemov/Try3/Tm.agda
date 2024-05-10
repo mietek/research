@@ -1,6 +1,6 @@
-module AltArtemov.Try3.Tm where
+module A201605.AltArtemov.Try3.Tm where
 
-open import AltArtemov.Library.Fin public
+open import A201605.AltArtemov.Library.Fin public
 
 
 data Tm (g : ℕ) : ℕ → Set where

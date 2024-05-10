@@ -1,11 +1,11 @@
-module AbelChapmanExtended.Normalization where
+module A201605.AbelChapmanExtended.Normalization where
 
 open import Size using (∞)
 
-open import AbelChapmanExtended.Delay
+open import A201605.AbelChapmanExtended.Delay
 
-open import AbelChapmanExtended.Syntax
-open import AbelChapmanExtended.Renaming.Syntax
+open import A201605.AbelChapmanExtended.Syntax
+open import A201605.AbelChapmanExtended.Renaming.Syntax
 
 
 

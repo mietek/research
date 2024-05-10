@@ -1,6 +1,6 @@
-module AltArtemov.Library.O where
+module A201605.AltArtemov.Library.O where
 
-open import AltArtemov.Library public
+open import A201605.AltArtemov.Library public
 
 
 data _≥_ : ℕ → ℕ → Set where

@@ -1,8 +1,8 @@
 {-# OPTIONS --allow-unsolved-metas #-}
 
-module AltArtemov.Old.Common.Prov.VecWithReset where
+module A201605.AltArtemov.Old.Common.Prov.VecWithReset where
 
-open import AltArtemov.Old.Common.True.WithReset public
+open import A201605.AltArtemov.Old.Common.True.WithReset public
 
 
 data Prov (Γ : Cx) : ∀ {k n} → Vec ᵍ⌊ Γ ⌋ k n → Ty k → Set where

@@ -1,6 +1,6 @@
-module AltArtemov.Try2.ProvVec where
+module A201605.AltArtemov.Try2.ProvVec where
 
-open import AltArtemov.Try2.True renaming (ᵗ⌊_⌋ to ᵗ⌊_⌋ᵀ) public
+open import A201605.AltArtemov.Try2.True renaming (ᵗ⌊_⌋ to ᵗ⌊_⌋ᵀ) public
 
 
 data Prov (Γ : Cx) : ∀ {k n} → Vec ᵍ⌊ Γ ⌋ k n → Ty k → Set where

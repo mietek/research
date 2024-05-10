@@ -1,6 +1,6 @@
-module AltArtemov.Try2.Var where
+module A201605.AltArtemov.Try2.Var where
 
-open import AltArtemov.Try2.OPE public
+open import A201605.AltArtemov.Try2.OPE public
 
 
 data Var : ∀ {k} → Cx → Ty k → Set where

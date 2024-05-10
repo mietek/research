@@ -1,8 +1,8 @@
 {-# OPTIONS --allow-unsolved-metas #-}
 
-module AltArtemov.Old.Common.Prov.Basic where
+module A201605.AltArtemov.Old.Common.Prov.Basic where
 
-open import AltArtemov.Old.Common.True.Basic public renaming (ᵗ⌊_⌋ to ᵗ⌊_⌋ᵀ)
+open import A201605.AltArtemov.Old.Common.True.Basic public renaming (ᵗ⌊_⌋ to ᵗ⌊_⌋ᵀ)
 
 
 data Prov (Γ : Cx) : ∀ {n} → Tm ᵍ⌊ Γ ⌋ n → Ty n → Set where

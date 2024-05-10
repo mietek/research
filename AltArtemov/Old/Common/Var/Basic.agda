@@ -1,6 +1,6 @@
-module AltArtemov.Old.Common.Var.Basic where
+module A201605.AltArtemov.Old.Common.Var.Basic where
 
-open import AltArtemov.Old.Common.OPE.Basic public
+open import A201605.AltArtemov.Old.Common.OPE.Basic public
 
 
 data Var : ∀ {n} → Cx → Ty n → Set where

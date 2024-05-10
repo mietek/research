@@ -1,8 +1,8 @@
 {-# OPTIONS --allow-unsolved-metas #-}
 
-module AltArtemov.Try3.ProvVec where
+module A201605.AltArtemov.Try3.ProvVec where
 
-open import AltArtemov.Try3.True public
+open import A201605.AltArtemov.Try3.True public
 
 
 -- TODO: unfinished

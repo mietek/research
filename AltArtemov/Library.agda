@@ -1,4 +1,4 @@
-module AltArtemov.Library where
+module A201605.AltArtemov.Library where
 
 open import Data.Fin using (Fin ; zero ; suc) public
 open import Data.Nat using (ℕ ; zero ; suc ; _+_) public

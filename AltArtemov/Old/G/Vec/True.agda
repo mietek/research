@@ -1,6 +1,6 @@
-module AltArtemov.Old.G.Vec.True where
+module A201605.AltArtemov.Old.G.Vec.True where
 
-open import AltArtemov.Old.G.Vec.Core public
+open import A201605.AltArtemov.Old.G.Vec.Core public
 
 
 data True (Γ : Cx) : Ty → Set where

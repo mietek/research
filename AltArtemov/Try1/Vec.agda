@@ -1,6 +1,6 @@
-module AltArtemov.Try1.Vec where
+module A201605.AltArtemov.Try1.Vec where
 
-open import AltArtemov.Try1.Tm public
+open import A201605.AltArtemov.Try1.Tm public
 
 
 data Vec (g k : ℕ) : ℕ → Set where

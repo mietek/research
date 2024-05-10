@@ -1,4 +1,4 @@
-module AbelChapmanExtended.StrongBisimilarity where
+module A201605.AbelChapmanExtended.StrongBisimilarity where
 
 open import Function using (_∘_)
 open import Relation.Binary using (Setoid)
@@ -6,7 +6,7 @@ open import Relation.Binary.PropositionalEquality using (_≡_ ; refl ; sym ; tr
 open import Size using (Size ; Size<_ ; ∞)
 import Relation.Binary.PreorderReasoning as PR
 
-open import AbelChapmanExtended.Delay
+open import A201605.AbelChapmanExtended.Delay
 
 
 

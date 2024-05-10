@@ -1,7 +1,7 @@
-module AltArtemov.Old.Common.OPE.Basic where
+module A201605.AltArtemov.Old.Common.OPE.Basic where
 
-open import AltArtemov.Old.Common.Vec.Basic public
-open import AltArtemov.Old.Common.Cx.Basic public
+open import A201605.AltArtemov.Old.Common.Vec.Basic public
+open import A201605.AltArtemov.Old.Common.Cx.Basic public
 
 
 data _⊇_ : Cx → Cx → Set where

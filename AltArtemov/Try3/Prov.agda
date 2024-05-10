@@ -1,8 +1,8 @@
 {-# OPTIONS --allow-unsolved-metas #-}
 
-module AltArtemov.Try3.Prov where
+module A201605.AltArtemov.Try3.Prov where
 
-open import AltArtemov.Try3.True public renaming (ᵗ⌊_⌋ to ᵗ⌊_⌋ᵀ)
+open import A201605.AltArtemov.Try3.True public renaming (ᵗ⌊_⌋ to ᵗ⌊_⌋ᵀ)
 
 
 -- TODO: unfinished

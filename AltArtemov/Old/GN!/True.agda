@@ -1,8 +1,8 @@
 {-# OPTIONS --allow-unsolved-metas #-}
 
-module AltArtemov.Old.GN!.True where
+module A201605.AltArtemov.Old.GN!.True where
 
-open import AltArtemov.Old.GN!.Core public
+open import A201605.AltArtemov.Old.GN!.Core public
 
 
 data True (Γ : Cx) : ∀ {n} → Ty n → Set where

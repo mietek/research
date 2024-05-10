@@ -1,8 +1,8 @@
 {-# OPTIONS --allow-unsolved-metas #-}
 
-module AltArtemov.Old.Common.Prov.WithG where
+module A201605.AltArtemov.Old.Common.Prov.WithG where
 
-open import AltArtemov.Old.Common.True.WithG public renaming (ᵗ⌊_⌋ to ᵗ⌊_⌋ᵀ)
+open import A201605.AltArtemov.Old.Common.True.WithG public renaming (ᵗ⌊_⌋ to ᵗ⌊_⌋ᵀ)
 
 
 -- TODO: unfinished

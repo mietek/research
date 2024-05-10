@@ -1,15 +1,15 @@
-module AbelChapmanExtended.Reflection where
+module A201605.AbelChapmanExtended.Reflection where
 
 open import Data.Product using (_,_)
 open import Data.Unit using () renaming (tt to unit)
 
-open import AbelChapmanExtended.Convergence
+open import A201605.AbelChapmanExtended.Convergence
 
-open import AbelChapmanExtended.Syntax
-open import AbelChapmanExtended.Renaming.Syntax
-open import AbelChapmanExtended.Normalization
-open import AbelChapmanExtended.Renaming.Convergence
-open import AbelChapmanExtended.Semantics
+open import A201605.AbelChapmanExtended.Syntax
+open import A201605.AbelChapmanExtended.Renaming.Syntax
+open import A201605.AbelChapmanExtended.Normalization
+open import A201605.AbelChapmanExtended.Renaming.Convergence
+open import A201605.AbelChapmanExtended.Semantics
 
 
 

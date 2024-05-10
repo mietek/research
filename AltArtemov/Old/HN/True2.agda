@@ -1,8 +1,8 @@
 {-# OPTIONS --allow-unsolved-metas #-}
 
-module AltArtemov.Old.HN.True2 where
+module A201605.AltArtemov.Old.HN.True2 where
 
-open import AltArtemov.Old.HN.Core public
+open import A201605.AltArtemov.Old.HN.Core public
 
 
 mutual

@@ -1,4 +1,4 @@
-module AbelChapmanExtended.Delay where
+module A201605.AbelChapmanExtended.Delay where
 
 open import Category.Monad public using (RawMonad)
 open import Data.Maybe using (Maybe ; just ; nothing)

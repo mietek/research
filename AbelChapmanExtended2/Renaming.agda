@@ -1,7 +1,7 @@
-module AbelChapmanExtended2.Renaming where
+module A201605.AbelChapmanExtended2.Renaming where
 
-open import AbelChapmanExtended2.OPE
-open import AbelChapmanExtended2.Syntax
+open import A201605.AbelChapmanExtended2.OPE
+open import A201605.AbelChapmanExtended2.Syntax
 
 
 

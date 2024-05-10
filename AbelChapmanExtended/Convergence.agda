@@ -1,10 +1,10 @@
-module AbelChapmanExtended.Convergence where
+module A201605.AbelChapmanExtended.Convergence where
 
 open import Data.Product using (∃)
 open import Size using (Size ; Size<_ ; ∞)
 
-open import AbelChapmanExtended.Delay
-open import AbelChapmanExtended.StrongBisimilarity
+open import A201605.AbelChapmanExtended.Delay
+open import A201605.AbelChapmanExtended.StrongBisimilarity
 
 
 

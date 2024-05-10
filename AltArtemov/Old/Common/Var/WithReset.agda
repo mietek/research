@@ -1,6 +1,6 @@
-module AltArtemov.Old.Common.Var.WithReset where
+module A201605.AltArtemov.Old.Common.Var.WithReset where
 
-open import AltArtemov.Old.Common.OPE.WithReset public
+open import A201605.AltArtemov.Old.Common.OPE.WithReset public
 
 
 data Var : ∀ {n} → Cx → Ty n → Set where

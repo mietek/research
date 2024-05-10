@@ -1,7 +1,7 @@
-module AltArtemov.Try2.OPE where
+module A201605.AltArtemov.Try2.OPE where
 
-open import AltArtemov.Try2.Vec public
-open import AltArtemov.Try2.Cx public
+open import A201605.AltArtemov.Try2.Vec public
+open import A201605.AltArtemov.Try2.Cx public
 
 
 data _⊇_ : Cx → Cx → Set where

@@ -1,6 +1,6 @@
-module AltArtemov.Old.Common.Cx.WithReset where
+module A201605.AltArtemov.Old.Common.Cx.WithReset where
 
-open import AltArtemov.Old.Common.Ty.WithReset public
+open import A201605.AltArtemov.Old.Common.Ty.WithReset public
 
 
 data Cx : Set where

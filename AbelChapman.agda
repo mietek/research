@@ -4,7 +4,7 @@ A. Abel, J. Chapman (2014) “Normalization by evaluation in the delay monad”
 
 -}
 
-module AbelChapman where
+module A201605.AbelChapman where
 
 open import Category.Monad public using (RawMonad)
 open import Data.Maybe using (Maybe ; just ; nothing)

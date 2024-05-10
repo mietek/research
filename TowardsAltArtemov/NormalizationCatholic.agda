@@ -1,12 +1,12 @@
-module TowardsAltArtemov.NormalizationCatholic where
+module A201605.TowardsAltArtemov.NormalizationCatholic where
 
 open import Data.Nat using (ℕ ; zero ; suc)
 open import Relation.Binary.PropositionalEquality using (_≡_ ; refl ; sym ; subst)
 open import Relation.Nullary using (Dec ; yes ; no)
 open import Size using (∞)
 
-open import AbelChapmanExtended.Delay
-open import TowardsAltArtemov.SyntaxCatholic
+open import A201605.AbelChapmanExtended.Delay
+open import A201605.TowardsAltArtemov.SyntaxCatholic
 
 
 lookup : ∀ {Γ Δ} {A : Ty 0} →

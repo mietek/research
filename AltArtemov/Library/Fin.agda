@@ -1,6 +1,6 @@
-module AltArtemov.Library.Fin where
+module A201605.AltArtemov.Library.Fin where
 
-open import AltArtemov.Library.O public
+open import A201605.AltArtemov.Library.O public
 
 
 ren-fin : ∀ {g g′} → g′ ≥ g → Fin g → Fin g′

@@ -1,18 +1,18 @@
-module AbelChapmanExtended.Renaming.Semantics where
+module A201605.AbelChapmanExtended.Renaming.Semantics where
 
 open import Data.Product using (_,_)
 open import Data.Unit using () renaming (tt to unit)
 open import Relation.Binary.PropositionalEquality using (sym ; subst)
 
-open import AbelChapmanExtended.Convergence
+open import A201605.AbelChapmanExtended.Convergence
 
-open import AbelChapmanExtended.Syntax
-open import AbelChapmanExtended.OPE
-open import AbelChapmanExtended.Renaming.Syntax
-open import AbelChapmanExtended.Renaming.OPE
-open import AbelChapmanExtended.Normalization
-open import AbelChapmanExtended.Renaming.Convergence
-open import AbelChapmanExtended.Semantics
+open import A201605.AbelChapmanExtended.Syntax
+open import A201605.AbelChapmanExtended.OPE
+open import A201605.AbelChapmanExtended.Renaming.Syntax
+open import A201605.AbelChapmanExtended.Renaming.OPE
+open import A201605.AbelChapmanExtended.Normalization
+open import A201605.AbelChapmanExtended.Renaming.Convergence
+open import A201605.AbelChapmanExtended.Semantics
 
 
 

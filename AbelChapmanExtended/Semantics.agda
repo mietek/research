@@ -1,16 +1,16 @@
-module AbelChapmanExtended.Semantics where
+module A201605.AbelChapmanExtended.Semantics where
 
 open import Data.Product using (∃ ; _×_)
 open import Data.Unit using () renaming (⊤ to Unit)
 open import Size using (∞)
 
-open import AbelChapmanExtended.Delay
-open import AbelChapmanExtended.Convergence
+open import A201605.AbelChapmanExtended.Delay
+open import A201605.AbelChapmanExtended.Convergence
 
-open import AbelChapmanExtended.Syntax
-open import AbelChapmanExtended.OPE
-open import AbelChapmanExtended.Renaming.Syntax
-open import AbelChapmanExtended.Normalization
+open import A201605.AbelChapmanExtended.Syntax
+open import A201605.AbelChapmanExtended.OPE
+open import A201605.AbelChapmanExtended.Renaming.Syntax
+open import A201605.AbelChapmanExtended.Normalization
 
 
 

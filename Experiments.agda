@@ -1,9 +1,9 @@
-module Experiments where
+module A201605.Experiments where
 
 open import Data.Product using () renaming (_,_ to ⟨_,_⟩ ; proj₁ to π₁ ; proj₂ to π₂)
 open import Relation.Binary.PropositionalEquality using (_≡_ ; refl)
 
-open import AbelChapman
+open import A201605.AbelChapman
 
 
 get : ∀ {Γ a} (t : Tm Γ a) → Nf Γ a

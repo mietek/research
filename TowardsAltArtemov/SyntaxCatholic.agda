@@ -1,4 +1,4 @@
-module TowardsAltArtemov.SyntaxCatholic where
+module A201605.TowardsAltArtemov.SyntaxCatholic where
 
 open import Data.Nat using (ℕ ; zero ; suc)
 open import Function using (_∘_)

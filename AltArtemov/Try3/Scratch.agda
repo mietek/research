@@ -1,4 +1,4 @@
-module AltArtemov.Try3.Scratch where
+module A201605.AltArtemov.Try3.Scratch where
 
 
 {-

@@ -1,6 +1,6 @@
-module AltArtemov.Try1.True where
+module A201605.AltArtemov.Try1.True where
 
-open import AltArtemov.Try1.Var public
+open import A201605.AltArtemov.Try1.Var public
 
 
 data True (Γ : Cx) : ∀ {n} → Ty n → Set where
