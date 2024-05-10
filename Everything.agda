@@ -1,4 +1,4 @@
-module README where
+module Everything where
 
 
 --------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ open import TowardsAltArtemov.NormalizationSimpleCatholic
 
 -- TODO: separate
 
-open import AltArtemov.README
+open import AltArtemov.Everything
 
 
 --------------------------------------------------------------------------------

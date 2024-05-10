@@ -1,4 +1,4 @@
-module AltArtemov.README where
+module AltArtemov.Everything where
 
 
 --------------------------------------------------------------------------------
