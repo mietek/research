@@ -1,20 +1,23 @@
+{-# OPTIONS --allow-unsolved-metas #-}
+
 module AltArtemov.Try3.Prov where
 
-open import AltArtemov.Try3.True public --renaming (ᵗ⌊_⌋ to ᵗ⌊_⌋ᵀ)
+open import AltArtemov.Try3.True public renaming (ᵗ⌊_⌋ to ᵗ⌊_⌋ᵀ)
 
 
+-- TODO: unfinished
 data Prov (Γ : Cx) : ∀ {n} → Tm ᵍ⌊ Γ ⌋ n → Ty n → Set where
   var  : ∀ {n} {A : Ty n} (x : Var Γ A) →
            Prov Γ (VAR ⁱ⌊ x ⌋) A
   lam  : ∀ {n} {t : Tm (suc ᵍ⌊ Γ ⌋) n} {A B : Ty n} → Prov (Γ , A) t B →
-           Prov Γ (LAM t) (A ⊃ B)
-  app  : ∀ {n} {t₁ t₂ : Tm ᵍ⌊ Γ ⌋ n} {A B : Ty n} → Prov Γ t₁ (A ⊃ B) → Prov Γ t₂ A →
+           Prov Γ (LAM t) {!(A ⊃ B)!}
+  app  : ∀ {n} {t₁ t₂ : Tm ᵍ⌊ Γ ⌋ n} {A B : Ty n} → Prov Γ t₁ {!A ⊃ B!} → Prov Γ t₂ A →
            Prov Γ (APP t₁ t₂) B
   pair : ∀ {n} {t₁ t₂ : Tm ᵍ⌊ Γ ⌋ n} {A B : Ty n} → Prov Γ t₁ A → Prov Γ t₂ B →
-           Prov Γ (PAIR t₁ t₂) (A ∧ B)
-  fst  : ∀ {n} {t : Tm ᵍ⌊ Γ ⌋ n} {A B : Ty n} → Prov Γ t (A ∧ B) →
+           Prov Γ (PAIR t₁ t₂) {!A ∧ B!}
+  fst  : ∀ {n} {t : Tm ᵍ⌊ Γ ⌋ n} {A B : Ty n} → Prov Γ t {!A ∧ B!} →
            Prov Γ (FST t) A
-  snd  : ∀ {n} {t : Tm ᵍ⌊ Γ ⌋ n} {A B : Ty n} → Prov Γ t (A ∧ B) →
+  snd  : ∀ {n} {t : Tm ᵍ⌊ Γ ⌋ n} {A B : Ty n} → Prov Γ t {!A ∧ B!} →
            Prov Γ (SND t) B
   up   : ∀ {n} {t : Tm ᵍ⌊ Γ ⌋ (suc n)} {u : Tm 0 n} {A : Ty n} → Prov Γ t (u ∶ A) →
            Prov Γ (UP t) (! u ∶ u ∶ A)
@@ -61,6 +64,7 @@ data Prov (Γ : Cx) : ∀ {n} → Tm ᵍ⌊ Γ ⌋ n → Ty n → Set where
 --true⇗⇙-id (up j)       = cong up (true⇗⇙-id j)
 --true⇗⇙-id (down j)     = cong down (true⇗⇙-id j)
 
+-- TODO: unfinished
 prov⇗ : ∀ {Γ n} {t : Tm ᵍ⌊ Γ ⌋ n} {A : Ty n} (j : Prov Γ t A) →
            Prov Γ (! ᵗ⌊ j ⌋) (t ∶ A)
 prov⇗ (var x)      = {!var x!}

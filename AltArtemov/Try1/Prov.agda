@@ -1,8 +1,11 @@
+{-# OPTIONS --allow-unsolved-metas #-}
+
 module AltArtemov.Try1.Prov where
 
 open import AltArtemov.Try1.True public renaming (ᵗ⌊_⌋ to ᵗ⌊_⌋ᵀ)
 
 
+-- TODO: unfinished
 data Prov (Γ : Cx) : ∀ {n} → Tm ᵍ⌊ Γ ⌋ n → Ty n → Set where
   var  : ∀ {n} {A : Ty n} (x : Var Γ A) →
            Prov Γ (VAR ⁱ⌊ x ⌋) A

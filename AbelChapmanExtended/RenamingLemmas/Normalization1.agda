@@ -3,12 +3,13 @@ module AbelChapmanExtended.RenamingLemmas.Normalization1 where
 open import Relation.Binary.PropositionalEquality using (_≡_ ; refl ; sym ; cong)
 
 open import AbelChapmanExtended.Delay
-open import AbelChapmanExtended.Normalization
+open import AbelChapmanExtended.StrongBisimilarity
+
+open import AbelChapmanExtended.Syntax
 open import AbelChapmanExtended.OPE
 open import AbelChapmanExtended.Renaming
+open import AbelChapmanExtended.Normalization
 open import AbelChapmanExtended.RenamingLemmas.OPE
-open import AbelChapmanExtended.StrongBisimilarity
-open import AbelChapmanExtended.Syntax
 
 
 

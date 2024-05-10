@@ -1,3 +1,5 @@
+{-# OPTIONS --allow-unsolved-metas #-}
+
 module AltArtemov.Try4.Try4 where
 
 open import AltArtemov.Library.Fin public
@@ -58,6 +60,8 @@ K = lam (lam v₁)
 
 S : ∀ {Γ A B C} → Tm Γ ((A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C)
 S = lam (lam (lam (app (app v₂ v₀) (app v₁ v₀))))
+
+-- TODO: unfinished
 
 -- f ∶ (A ⊃ B) ⊃ x ∶ A ⊃ (f ∘ x) ∶ B
 --D : ∀ {Γ A B f x} → Tm Γ (((A ⊃ B) ∵ f) ⊃ (A ∵ x) ⊃ (B ∵ (app f x)))

@@ -1,6 +1,6 @@
-module AltArtemov.Common.Cx.WithGMutual where
+module AltArtemov.Old.Common.Cx.WithGMutual where
 
-open import AltArtemov.Common.Ty.WithG public
+open import AltArtemov.Old.Common.Ty.WithG public
 
 
 mutual

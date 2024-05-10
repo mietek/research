@@ -1,3 +1,5 @@
+{-# OPTIONS --allow-unsolved-metas #-}
+
 module AltArtemov.Try2.Prov where
 
 open import AltArtemov.Try2.True public renaming (ᵗ⌊_⌋ to ᵗ⌊_⌋ᵀ)
@@ -61,6 +63,7 @@ true⇗⇙-id (snd j)      = cong snd (true⇗⇙-id j)
 true⇗⇙-id (up j)       = cong up (true⇗⇙-id j)
 true⇗⇙-id (down j)     = cong down (true⇗⇙-id j)
 
+-- TODO: unfinished
 prov⇗ : ∀ {Γ n} {t : Tm ᵍ⌊ Γ ⌋ n} {A : Ty n} (j : Prov Γ t A) →
            Prov Γ (! ᵗ⌊ j ⌋) (t ∶ A)
 prov⇗ (var x)      = {!var x!}

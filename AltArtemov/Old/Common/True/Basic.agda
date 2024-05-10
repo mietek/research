@@ -1,6 +1,6 @@
-module AltArtemov.Common.True.Basic where
+module AltArtemov.Old.Common.True.Basic where
 
-open import AltArtemov.Common.Var.Basic public
+open import AltArtemov.Old.Common.Var.Basic public
 
 
 data True (Γ : Cx) : ∀ {n} → Ty n → Set where

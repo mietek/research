@@ -1,6 +1,6 @@
-module AltArtemov.GN.True2 where
+module AltArtemov.Old.GN.True2 where
 
-open import AltArtemov.GN.Core public
+open import AltArtemov.Old.GN.Core public
 
 
 mutual

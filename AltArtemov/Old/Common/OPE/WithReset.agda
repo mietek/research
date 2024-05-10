@@ -1,7 +1,7 @@
-module AltArtemov.Common.OPE.WithReset where
+module AltArtemov.Old.Common.OPE.WithReset where
 
-open import AltArtemov.Common.Vec public
-open import AltArtemov.Common.Cx.WithReset public
+open import AltArtemov.Old.Common.Vec.Basic public
+open import AltArtemov.Old.Common.Cx.WithReset public
 
 
 data _⊇_ : Cx → Cx → Set where

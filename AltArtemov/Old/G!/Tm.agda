@@ -1,6 +1,6 @@
-module AltArtemov.G!.Tm where
+module AltArtemov.Old.G!.Tm where
 
-open import AltArtemov.Base public
+open import AltArtemov.Library.Fin
 
 
 data Tm (g : ℕ) : Set where

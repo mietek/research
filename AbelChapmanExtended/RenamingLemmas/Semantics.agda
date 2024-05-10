@@ -5,13 +5,14 @@ open import Data.Unit using () renaming (tt to unit)
 open import Relation.Binary.PropositionalEquality using (sym ; subst)
 
 open import AbelChapmanExtended.Convergence
-open import AbelChapmanExtended.Normalization
-open import AbelChapmanExtended.OPE
-open import AbelChapmanExtended.RenamingLemmas.Convergence
-open import AbelChapmanExtended.RenamingLemmas.OPE
-open import AbelChapmanExtended.Renaming
-open import AbelChapmanExtended.Semantics
+
 open import AbelChapmanExtended.Syntax
+open import AbelChapmanExtended.OPE
+open import AbelChapmanExtended.Renaming
+open import AbelChapmanExtended.Normalization
+open import AbelChapmanExtended.Semantics
+open import AbelChapmanExtended.RenamingLemmas.OPE
+open import AbelChapmanExtended.RenamingLemmas.Convergence
 
 
 

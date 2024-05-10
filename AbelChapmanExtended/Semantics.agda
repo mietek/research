@@ -4,12 +4,13 @@ open import Data.Product using (∃ ; _×_)
 open import Data.Unit using () renaming (⊤ to Unit)
 open import Size using (∞)
 
-open import AbelChapmanExtended.Convergence
 open import AbelChapmanExtended.Delay
-open import AbelChapmanExtended.Normalization
+open import AbelChapmanExtended.Convergence
+
+open import AbelChapmanExtended.Syntax
 open import AbelChapmanExtended.OPE
 open import AbelChapmanExtended.Renaming
-open import AbelChapmanExtended.Syntax
+open import AbelChapmanExtended.Normalization
 
 
 

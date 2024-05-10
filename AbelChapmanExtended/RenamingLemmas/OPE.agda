@@ -3,9 +3,11 @@ module AbelChapmanExtended.RenamingLemmas.OPE where
 open import Function using (_∘_)
 open import Relation.Binary.PropositionalEquality using (_≡_ ; refl ; cong ; cong₂)
 
+open import AbelChapmanExtended.Syntax
 open import AbelChapmanExtended.OPE
 open import AbelChapmanExtended.Renaming
-open import AbelChapmanExtended.Syntax
+
+
 
 
 cong₃ : ∀ {ℓ ℓ′ ℓ″ ℓ‴} {A : Set ℓ} {B : Set ℓ′} {C : Set ℓ″} {D : Set ℓ‴}

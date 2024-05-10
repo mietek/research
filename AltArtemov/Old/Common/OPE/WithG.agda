@@ -1,6 +1,6 @@
-module AltArtemov.Common.OPE.WithG where
+module AltArtemov.Old.Common.OPE.WithG where
 
-open import AltArtemov.Common.Cx.WithG public
+open import AltArtemov.Old.Common.Cx.WithG public
 
 
 data _⊇_ : Cx → Cx → Set where

@@ -1,6 +1,6 @@
-module AltArtemov.Common.Cx.Basic where
+module AltArtemov.Old.Common.Cx.Basic where
 
-open import AltArtemov.Common.Ty.Basic public
+open import AltArtemov.Old.Common.Ty.Basic public
 
 
 data Cx : Set where

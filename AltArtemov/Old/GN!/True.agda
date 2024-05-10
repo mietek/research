@@ -1,6 +1,8 @@
-module AltArtemov.GN!.True where
+{-# OPTIONS --allow-unsolved-metas #-}
 
-open import AltArtemov.GN!.Core public
+module AltArtemov.Old.GN!.True where
+
+open import AltArtemov.Old.GN!.Core public
 
 
 data True (Γ : Cx) : ∀ {n} → Ty n → Set where
@@ -13,6 +15,7 @@ data True (Γ : Cx) : ∀ {n} → Ty n → Set where
   up   : ∀ {n} {t : Tm 0 n} {A : Ty n} → True Γ (t ∶ A) → True Γ (! t ∶ t ∶ A)
   down : ∀ {n} {t : Tm 0 n} {A : Ty n} → True Γ (t ∶ A) → True Γ A
 
+-- TODO: unfinished
 ᵗ⌊_⌋ : ∀ {Γ n} {A : Ty n} → True Γ A → Tm ᵍ⌊ Γ ⌋ n
 ᵗ⌊ var x ⌋      = VAR ⁱ⌊ x ⌋
 ᵗ⌊ lam j ⌋      = LAM ᵗ⌊ j ⌋

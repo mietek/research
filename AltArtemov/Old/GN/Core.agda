@@ -1,6 +1,6 @@
-module AltArtemov.GN.Core where
+module AltArtemov.Old.GN.Core where
 
-open import AltArtemov.GN.Tm public
+open import AltArtemov.Old.GN.Tm public
 
 
 data Ty : ℕ → Set where

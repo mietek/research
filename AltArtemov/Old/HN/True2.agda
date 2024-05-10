@@ -1,6 +1,8 @@
-module AltArtemov.HN.True2 where
+{-# OPTIONS --allow-unsolved-metas #-}
 
-open import AltArtemov.HN.Core public
+module AltArtemov.Old.HN.True2 where
+
+open import AltArtemov.Old.HN.Core public
 
 
 mutual
@@ -24,6 +26,7 @@ mutual
   ᵗ⌊ up j ⌋       = UP ᵗ⌊ j ⌋
   ᵗ⌊ down j ⌋     = DOWN ᵗ⌊ j ⌋
 
+-- TODO: unfinished
 ren-true : ∀ {Γ Γ′ n} {A : Ty n} → Γ′ ⊇ Γ → True Γ A → True Γ′ A
 ren-true η (var x)      = var (ren-var η x)
 ren-true η (lam j)      = lam (ren-true (lift η) j)
@@ -50,6 +53,7 @@ ren-true-id (snd j)      = cong snd (ren-true-id j)
 ren-true-id (up j {{refl}} {{hrefl}}) = {!!}
 ren-true-id (down j)     = cong down (ren-true-id j)
 
+-- TODO: unfinished
 ren-true-● : ∀ {Γ Γ′ Γ″ n} {A : Ty n} (η′ : Γ″ ⊇ Γ′) (η : Γ′ ⊇ Γ) (j : True Γ A) →
                ren-true η′ (ren-true η j) ≡ ren-true (η′ ● η) j
 ren-true-● η′ η (var x)      = cong var (ren-var-● η′ η x)

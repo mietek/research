@@ -1,6 +1,6 @@
-module AltArtemov.Common.Cx.WithGUniform where
+module AltArtemov.Old.Common.Cx.WithGUniform where
 
-open import AltArtemov.Common.Ty.WithG public
+open import AltArtemov.Old.Common.Ty.WithG public
 
 
 data Cx (g : ℕ) : Set where

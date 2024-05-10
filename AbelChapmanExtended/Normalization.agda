@@ -3,6 +3,7 @@ module AbelChapmanExtended.Normalization where
 open import Size using (∞)
 
 open import AbelChapmanExtended.Delay
+
 open import AbelChapmanExtended.Syntax
 open import AbelChapmanExtended.Renaming
 

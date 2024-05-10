@@ -5,16 +5,17 @@ open import Data.Unit using () renaming (tt to unit)
 open import Relation.Binary.PropositionalEquality using (sym ; subst)
 open import Size using (∞)
 
-open import AbelChapmanExtended.Convergence
 open import AbelChapmanExtended.Delay
-open import AbelChapmanExtended.Normalization
+open import AbelChapmanExtended.Convergence
+
+open import AbelChapmanExtended.Syntax
 open import AbelChapmanExtended.OPE
-open import AbelChapmanExtended.Reflection
 open import AbelChapmanExtended.Renaming
+open import AbelChapmanExtended.Normalization
+open import AbelChapmanExtended.Semantics
 open import AbelChapmanExtended.RenamingLemmas.OPE
 open import AbelChapmanExtended.RenamingLemmas.Semantics
-open import AbelChapmanExtended.Semantics
-open import AbelChapmanExtended.Syntax
+open import AbelChapmanExtended.Reflection
 
 
 

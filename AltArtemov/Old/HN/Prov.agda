@@ -1,6 +1,8 @@
-module AltArtemov.HN.Prov where
+{-# OPTIONS --allow-unsolved-metas #-}
 
-open import AltArtemov.HN.True renaming (ᵗ⌊_⌋ to ᵗ⌊_⌋ᵀ) public
+module AltArtemov.Old.HN.Prov where
+
+open import AltArtemov.Old.HN.True renaming (ᵗ⌊_⌋ to ᵗ⌊_⌋ᵀ) public
 
 
 data Prov (Γ : Cx) : ∀ {n} → Tm ᵍ⌊ Γ ⌋ n → Ty n → Set where
@@ -61,6 +63,7 @@ true⇗⇙-id (snd j)      = cong snd (true⇗⇙-id j)
 true⇗⇙-id (up j)       = cong up (true⇗⇙-id j)
 true⇗⇙-id (down j)     = cong down (true⇗⇙-id j)
 
+-- TODO: unfinished
 prov⇒ : ∀ {Γ n} {t : Tm ᵍ⌊ Γ ⌋ n} {A : Ty n} (j : Prov Γ t A) → Prov Γ (! ᵗ⌊ j ⌋) (t ∶ A)
 prov⇒ (var x)      = {!!}
 prov⇒ (lam j)      = {!!}

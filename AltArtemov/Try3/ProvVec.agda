@@ -1,8 +1,11 @@
+{-# OPTIONS --allow-unsolved-metas #-}
+
 module AltArtemov.Try3.ProvVec where
 
 open import AltArtemov.Try3.True public
 
 
+-- TODO: unfinished
 data Prov (Γ : Cx) : ∀ {k n m} → Vec ᵍ⌊ Γ ⌋ k n → Ty m → Set where
   var  : ∀ {k n} {A : Ty k} →
            (x : Var Γ A) →

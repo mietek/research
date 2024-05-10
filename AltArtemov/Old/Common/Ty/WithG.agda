@@ -1,6 +1,6 @@
-module AltArtemov.Common.Ty.WithG where
+module AltArtemov.Old.Common.Ty.WithG where
 
-open import AltArtemov.Common.Tm public
+open import AltArtemov.Try2.Tm public
 
 
 data Ty (g : ℕ) : ℕ → Set where

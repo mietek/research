@@ -1,6 +1,6 @@
-module AltArtemov.G.Vec.Core where
+module AltArtemov.Old.G.Vec.Core where
 
-open import AltArtemov.G.Tm public
+open import AltArtemov.Old.G.Tm public
 
 
 data Ty : Set where

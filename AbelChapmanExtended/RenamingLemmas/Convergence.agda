@@ -1,12 +1,13 @@
 module AbelChapmanExtended.RenamingLemmas.Convergence where
 
 open import AbelChapmanExtended.Convergence
-open import AbelChapmanExtended.Normalization
+
+open import AbelChapmanExtended.Syntax
 open import AbelChapmanExtended.OPE
 open import AbelChapmanExtended.Renaming
+open import AbelChapmanExtended.Normalization
 open import AbelChapmanExtended.RenamingLemmas.Normalization1
 open import AbelChapmanExtended.RenamingLemmas.Normalization2
-open import AbelChapmanExtended.Syntax
 
 
 

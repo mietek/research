@@ -1,6 +1,6 @@
-module AltArtemov.GN.True where
+module AltArtemov.Old.GN.True where
 
-open import AltArtemov.GN.Core public
+open import AltArtemov.Old.GN.Core public
 
 
 data True (Γ : Cx) : ∀ {n} → Ty n → Set where

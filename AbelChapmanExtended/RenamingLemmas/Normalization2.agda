@@ -4,13 +4,14 @@ open import Function using (_∘_)
 open import Relation.Binary.PropositionalEquality using (sym ; cong)
 
 open import AbelChapmanExtended.Delay
-open import AbelChapmanExtended.Normalization
+open import AbelChapmanExtended.StrongBisimilarity
+
+open import AbelChapmanExtended.Syntax
 open import AbelChapmanExtended.OPE
 open import AbelChapmanExtended.Renaming
-open import AbelChapmanExtended.RenamingLemmas.Normalization1
+open import AbelChapmanExtended.Normalization
 open import AbelChapmanExtended.RenamingLemmas.OPE
-open import AbelChapmanExtended.StrongBisimilarity
-open import AbelChapmanExtended.Syntax
+open import AbelChapmanExtended.RenamingLemmas.Normalization1
 
 
 

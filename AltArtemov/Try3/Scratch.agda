@@ -1,6 +1,7 @@
-module AltArtemov.Try3.OfTy where
+module AltArtemov.Try3.Scratch where
 
-open import AltArtemov.Try3.True public
+
+{-
 
 
 -------
@@ -110,3 +111,6 @@ t term    A type
 Γ ⊢ ⌊𝒟⌋ ∶ tₙ ∶ tₙ₋₁ ∶ … ∶ t ∶ A
 ---------------------------------
 Γ ⊢ tₙ ∶ tₙ₋₁ ∶ … ∶ t ∶ A
+
+
+-}
