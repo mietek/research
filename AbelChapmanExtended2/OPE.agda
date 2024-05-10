@@ -1,9 +1,9 @@
-module AbelChapmanExtended.OPE where
+module AbelChapmanExtended2.OPE where
 
 open import Function using (_∘_)
 open import Relation.Binary.PropositionalEquality using (_≡_ ; refl ; cong)
 
-open import AbelChapmanExtended.Syntax
+open import AbelChapmanExtended2.Syntax
 
 
 

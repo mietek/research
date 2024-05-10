@@ -1,4 +1,4 @@
-module AbelChapmanExtended.RenamingLemmas.Normalization2 where
+module AbelChapmanExtended2.RenamingLemmas.Normalization2 where
 
 open import Function using (_∘_)
 open import Relation.Binary.PropositionalEquality using (sym ; cong)
@@ -6,12 +6,12 @@ open import Relation.Binary.PropositionalEquality using (sym ; cong)
 open import AbelChapmanExtended.Delay
 open import AbelChapmanExtended.StrongBisimilarity
 
-open import AbelChapmanExtended.Syntax
-open import AbelChapmanExtended.OPE
-open import AbelChapmanExtended.Renaming
-open import AbelChapmanExtended.Normalization
-open import AbelChapmanExtended.RenamingLemmas.OPE
-open import AbelChapmanExtended.RenamingLemmas.Normalization1
+open import AbelChapmanExtended2.Syntax
+open import AbelChapmanExtended2.OPE
+open import AbelChapmanExtended2.Renaming
+open import AbelChapmanExtended2.Normalization
+open import AbelChapmanExtended2.RenamingLemmas.OPE
+open import AbelChapmanExtended2.RenamingLemmas.Normalization1
 
 
 

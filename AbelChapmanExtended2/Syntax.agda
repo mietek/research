@@ -1,4 +1,4 @@
-module AbelChapmanExtended.Syntax where
+module AbelChapmanExtended2.Syntax where
 
 
 
