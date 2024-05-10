@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>A201605.AltArtemov.Everything</title><link rel="stylesheet" href="AgdaPP.css"></head><body><pre class="Agda"><a id="1" class="Keyword">module</a> <a id="8" href="A201605.AltArtemov.Everything.html" class="Module">A201605.AltArtemov.Everything</a> <a id="38" class="Keyword">where</a>
+
+
+<a id="46" class="Comment">--------------------------------------------------------------------------------</a>
+
+<a id="128" class="Keyword">import</a> <a id="135" href="A201605.AltArtemov.Library.html" class="Module">A201605.AltArtemov.Library</a>
+<a id="162" class="Keyword">import</a> <a id="169" href="A201605.AltArtemov.Library.O.html" class="Module">A201605.AltArtemov.Library.O</a>
+<a id="198" class="Keyword">import</a> <a id="205" href="A201605.AltArtemov.Library.Fin.html" class="Module">A201605.AltArtemov.Library.Fin</a>
+
+<a id="237" class="Keyword">import</a> <a id="244" href="A201605.AltArtemov.Try1.Tm.html" class="Module">A201605.AltArtemov.Try1.Tm</a>
+<a id="271" class="Keyword">import</a> <a id="278" href="A201605.AltArtemov.Try1.Vec.html" class="Module">A201605.AltArtemov.Try1.Vec</a>
+<a id="306" class="Keyword">import</a> <a id="313" href="A201605.AltArtemov.Try1.Ty.html" class="Module">A201605.AltArtemov.Try1.Ty</a>
+<a id="340" class="Keyword">import</a> <a id="347" href="A201605.AltArtemov.Try1.Cx.html" class="Module">A201605.AltArtemov.Try1.Cx</a>
+<a id="374" class="Keyword">import</a> <a id="381" href="A201605.AltArtemov.Try1.OPE.html" class="Module">A201605.AltArtemov.Try1.OPE</a>
+<a id="409" class="Keyword">import</a> <a id="416" href="A201605.AltArtemov.Try1.Var.html" class="Module">A201605.AltArtemov.Try1.Var</a>
+<a id="444" class="Keyword">import</a> <a id="451" href="A201605.AltArtemov.Try1.True.html" class="Module">A201605.AltArtemov.Try1.True</a>
+<a id="480" class="Keyword">import</a> <a id="487" href="A201605.AltArtemov.Try1.Prov.html" class="Module">A201605.AltArtemov.Try1.Prov</a> <a id="516" class="Comment">-- TODO: unfinished</a>
+
+<a id="537" class="Keyword">import</a> <a id="544" href="A201605.AltArtemov.Try2.Tm.html" class="Module">A201605.AltArtemov.Try2.Tm</a>
+<a id="571" class="Keyword">import</a> <a id="578" href="A201605.AltArtemov.Try2.Vec.html" class="Module">A201605.AltArtemov.Try2.Vec</a>
+<a id="606" class="Keyword">import</a> <a id="613" href="A201605.AltArtemov.Try2.Ty.html" class="Module">A201605.AltArtemov.Try2.Ty</a>
+<a id="640" class="Keyword">import</a> <a id="647" href="A201605.AltArtemov.Try2.Cx.html" class="Module">A201605.AltArtemov.Try2.Cx</a>
+<a id="674" class="Keyword">import</a> <a id="681" href="A201605.AltArtemov.Try2.OPE.html" class="Module">A201605.AltArtemov.Try2.OPE</a>
+<a id="709" class="Keyword">import</a> <a id="716" href="A201605.AltArtemov.Try2.Var.html" class="Module">A201605.AltArtemov.Try2.Var</a>
+<a id="744" class="Keyword">import</a> <a id="751" href="A201605.AltArtemov.Try2.True.html" class="Module">A201605.AltArtemov.Try2.True</a>
+<a id="780" class="Keyword">import</a> <a id="787" href="A201605.AltArtemov.Try2.Prov.html" class="Module">A201605.AltArtemov.Try2.Prov</a> <a id="816" class="Comment">-- TODO: unfinished</a>
+<a id="836" class="Keyword">import</a> <a id="843" href="A201605.AltArtemov.Try2.ProvVec.html" class="Module">A201605.AltArtemov.Try2.ProvVec</a>
+
+<a id="876" class="Keyword">import</a> <a id="883" href="A201605.AltArtemov.Try3.Tm.html" class="Module">A201605.AltArtemov.Try3.Tm</a>
+<a id="910" class="Keyword">import</a> <a id="917" href="A201605.AltArtemov.Try3.Vec.html" class="Module">A201605.AltArtemov.Try3.Vec</a>
+<a id="945" class="Keyword">import</a> <a id="952" href="A201605.AltArtemov.Try3.Ty.html" class="Module">A201605.AltArtemov.Try3.Ty</a>
+<a id="979" class="Keyword">import</a> <a id="986" href="A201605.AltArtemov.Try3.Cx.html" class="Module">A201605.AltArtemov.Try3.Cx</a>
+<a id="1013" class="Keyword">import</a> <a id="1020" href="A201605.AltArtemov.Try3.OPE.html" class="Module">A201605.AltArtemov.Try3.OPE</a>
+<a id="1048" class="Keyword">import</a> <a id="1055" href="A201605.AltArtemov.Try3.Var.html" class="Module">A201605.AltArtemov.Try3.Var</a>
+<a id="1083" class="Keyword">import</a> <a id="1090" href="A201605.AltArtemov.Try3.True.html" class="Module">A201605.AltArtemov.Try3.True</a>
+<a id="1119" class="Keyword">import</a> <a id="1126" href="A201605.AltArtemov.Try3.Prov.html" class="Module">A201605.AltArtemov.Try3.Prov</a> <a id="1155" class="Comment">-- TODO: unfinished</a>
+<a id="1175" class="Keyword">import</a> <a id="1182" href="A201605.AltArtemov.Try3.ProvVec.html" class="Module">A201605.AltArtemov.Try3.ProvVec</a> <a id="1214" class="Comment">-- TODO: unfinished</a>
+<a id="1234" class="Keyword">import</a> <a id="1241" href="A201605.AltArtemov.Try3.Scratch.html" class="Module">A201605.AltArtemov.Try3.Scratch</a>
+
+<a id="1274" class="Keyword">import</a> <a id="1281" href="A201605.AltArtemov.Try4.Try4.html" class="Module">A201605.AltArtemov.Try4.Try4</a> <a id="1310" class="Comment">-- TODO: unfinished</a>
+
+
+<a id="1332" class="Comment">--------------------------------------------------------------------------------</a>
+
+
+<a id="1415" class="Keyword">import</a> <a id="1422" href="A201605.AltArtemov.Old.Common.Vec.Basic.html" class="Module">A201605.AltArtemov.Old.Common.Vec.Basic</a>
+
+<a id="1463" class="Keyword">import</a> <a id="1470" href="A201605.AltArtemov.Old.Common.Ty.Basic.html" class="Module">A201605.AltArtemov.Old.Common.Ty.Basic</a>
+<a id="1509" class="Keyword">import</a> <a id="1516" href="A201605.AltArtemov.Old.Common.Ty.WithReset.html" class="Module">A201605.AltArtemov.Old.Common.Ty.WithReset</a>
+<a id="1559" class="Keyword">import</a> <a id="1566" href="A201605.AltArtemov.Old.Common.Ty.WithG.html" class="Module">A201605.AltArtemov.Old.Common.Ty.WithG</a>
+
+<a id="1606" class="Keyword">import</a> <a id="1613" href="A201605.AltArtemov.Old.Common.Cx.Basic.html" class="Module">A201605.AltArtemov.Old.Common.Cx.Basic</a>
+<a id="1652" class="Keyword">import</a> <a id="1659" href="A201605.AltArtemov.Old.Common.Cx.WithReset.html" class="Module">A201605.AltArtemov.Old.Common.Cx.WithReset</a>
+<a id="1702" class="Keyword">import</a> <a id="1709" href="A201605.AltArtemov.Old.Common.Cx.WithG.html" class="Module">A201605.AltArtemov.Old.Common.Cx.WithG</a>
+<a id="1748" class="Keyword">import</a> <a id="1755" href="A201605.AltArtemov.Old.Common.Cx.WithGMutual.html" class="Module">A201605.AltArtemov.Old.Common.Cx.WithGMutual</a>
+<a id="1800" class="Keyword">import</a> <a id="1807" href="A201605.AltArtemov.Old.Common.Cx.WithGUniform.html" class="Module">A201605.AltArtemov.Old.Common.Cx.WithGUniform</a>
+
+<a id="1854" class="Keyword">import</a> <a id="1861" href="A201605.AltArtemov.Old.Common.OPE.Basic.html" class="Module">A201605.AltArtemov.Old.Common.OPE.Basic</a>
+<a id="1901" class="Keyword">import</a> <a id="1908" href="A201605.AltArtemov.Old.Common.OPE.WithReset.html" class="Module">A201605.AltArtemov.Old.Common.OPE.WithReset</a>
+<a id="1952" class="Keyword">import</a> <a id="1959" href="A201605.AltArtemov.Old.Common.OPE.WithG.html" class="Module">A201605.AltArtemov.Old.Common.OPE.WithG</a>
+
+<a id="2000" class="Keyword">import</a> <a id="2007" href="A201605.AltArtemov.Old.Common.Var.Basic.html" class="Module">A201605.AltArtemov.Old.Common.Var.Basic</a>
+<a id="2047" class="Keyword">import</a> <a id="2054" href="A201605.AltArtemov.Old.Common.Var.WithReset.html" class="Module">A201605.AltArtemov.Old.Common.Var.WithReset</a>
+<a id="2098" class="Keyword">import</a> <a id="2105" href="A201605.AltArtemov.Old.Common.Var.WithG.html" class="Module">A201605.AltArtemov.Old.Common.Var.WithG</a>
+
+<a id="2146" class="Keyword">import</a> <a id="2153" href="A201605.AltArtemov.Old.Common.True.Basic.html" class="Module">A201605.AltArtemov.Old.Common.True.Basic</a>
+<a id="2194" class="Keyword">import</a> <a id="2201" href="A201605.AltArtemov.Old.Common.True.WithReset.html" class="Module">A201605.AltArtemov.Old.Common.True.WithReset</a>
+<a id="2246" class="Keyword">import</a> <a id="2253" href="A201605.AltArtemov.Old.Common.True.WithG.html" class="Module">A201605.AltArtemov.Old.Common.True.WithG</a>
+
+<a id="2295" class="Keyword">import</a> <a id="2302" href="A201605.AltArtemov.Old.Common.Prov.Vec.html" class="Module">A201605.AltArtemov.Old.Common.Prov.Vec</a>
+<a id="2341" class="Keyword">import</a> <a id="2348" href="A201605.AltArtemov.Old.Common.Prov.VecWithReset.html" class="Module">A201605.AltArtemov.Old.Common.Prov.VecWithReset</a> <a id="2396" class="Comment">-- TODO: unfinished</a>
+<a id="2416" class="Keyword">import</a> <a id="2423" href="A201605.AltArtemov.Old.Common.Prov.Basic.html" class="Module">A201605.AltArtemov.Old.Common.Prov.Basic</a> <a id="2464" class="Comment">-- TODO: unfinished</a>
+<a id="2484" class="Keyword">import</a> <a id="2491" href="A201605.AltArtemov.Old.Common.Prov.WithG.html" class="Module">A201605.AltArtemov.Old.Common.Prov.WithG</a> <a id="2532" class="Comment">-- TODO: unfinished</a>
+
+<a id="2553" class="Keyword">import</a> <a id="2560" href="A201605.AltArtemov.Old.G%2521.Tm.html" class="Module">A201605.AltArtemov.Old.G!.Tm</a>
+
+<a id="2590" class="Keyword">import</a> <a id="2597" href="A201605.AltArtemov.Old.G.Tm.html" class="Module">A201605.AltArtemov.Old.G.Tm</a>
+<a id="2625" class="Keyword">import</a> <a id="2632" href="A201605.AltArtemov.Old.G.Core.html" class="Module">A201605.AltArtemov.Old.G.Core</a>
+<a id="2662" class="Keyword">import</a> <a id="2669" href="A201605.AltArtemov.Old.G.Vec.Core.html" class="Module">A201605.AltArtemov.Old.G.Vec.Core</a>
+<a id="2703" class="Keyword">import</a> <a id="2710" href="A201605.AltArtemov.Old.G.Vec.True.html" class="Module">A201605.AltArtemov.Old.G.Vec.True</a>
+<a id="2744" class="Keyword">import</a> <a id="2751" href="A201605.AltArtemov.Old.G.Vec.Prov.html" class="Module">A201605.AltArtemov.Old.G.Vec.Prov</a>
+
+<a id="2786" class="Keyword">import</a> <a id="2793" href="A201605.AltArtemov.Old.GN%2521.Tm.html" class="Module">A201605.AltArtemov.Old.GN!.Tm</a>
+<a id="2823" class="Keyword">import</a> <a id="2830" href="A201605.AltArtemov.Old.GN%2521.Core.html" class="Module">A201605.AltArtemov.Old.GN!.Core</a>
+<a id="2862" class="Keyword">import</a> <a id="2869" href="A201605.AltArtemov.Old.GN%2521.True.html" class="Module">A201605.AltArtemov.Old.GN!.True</a> <a id="2901" class="Comment">-- TODO: unfinished</a>
+
+<a id="2922" class="Keyword">import</a> <a id="2929" href="A201605.AltArtemov.Old.GN.Tm.html" class="Module">A201605.AltArtemov.Old.GN.Tm</a>
+<a id="2958" class="Keyword">import</a> <a id="2965" href="A201605.AltArtemov.Old.GN.Core.html" class="Module">A201605.AltArtemov.Old.GN.Core</a>
+<a id="2996" class="Keyword">import</a> <a id="3003" href="A201605.AltArtemov.Old.GN.True.html" class="Module">A201605.AltArtemov.Old.GN.True</a>
+<a id="3034" class="Keyword">import</a> <a id="3041" href="A201605.AltArtemov.Old.GN.True2.html" class="Module">A201605.AltArtemov.Old.GN.True2</a>
+<a id="3073" class="Keyword">import</a> <a id="3080" href="A201605.AltArtemov.Old.GN.Prov.html" class="Module">A201605.AltArtemov.Old.GN.Prov</a> <a id="3111" class="Comment">-- TODO: unfinished</a>
+
+<a id="3132" class="Keyword">import</a> <a id="3139" href="A201605.AltArtemov.Old.HN.Tm.html" class="Module">A201605.AltArtemov.Old.HN.Tm</a>
+<a id="3168" class="Keyword">import</a> <a id="3175" href="A201605.AltArtemov.Old.HN.Core.html" class="Module">A201605.AltArtemov.Old.HN.Core</a>
+<a id="3206" class="Keyword">import</a> <a id="3213" href="A201605.AltArtemov.Old.HN.True.html" class="Module">A201605.AltArtemov.Old.HN.True</a>
+<a id="3244" class="Keyword">import</a> <a id="3251" href="A201605.AltArtemov.Old.HN.True2.html" class="Module">A201605.AltArtemov.Old.HN.True2</a> <a id="3283" class="Comment">-- TODO: unfinished</a>
+<a id="3303" class="Keyword">import</a> <a id="3310" href="A201605.AltArtemov.Old.HN.Prov.html" class="Module">A201605.AltArtemov.Old.HN.Prov</a> <a id="3341" class="Comment">-- TODO: unfinished</a>
+
+
+<a id="3363" class="Comment">--------------------------------------------------------------------------------</a>
+</pre></body></html>
