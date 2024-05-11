@@ -1,6 +1,6 @@
-module Common.OrderPreservingEmbedding where
+module A201606.Common.OrderPreservingEmbedding where
 
-open import Common.Context public
+open import A201606.Common.Context public
 
 open import Relation.Binary.PropositionalEquality using (_≡_ ; refl ; cong)
 

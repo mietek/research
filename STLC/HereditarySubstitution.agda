@@ -1,6 +1,6 @@
-module STLC.HereditarySubstitution where
+module A201606.STLC.HereditarySubstitution where
 
-open import STLC.Syntax public
+open import A201606.STLC.Syntax public
 
 open import Data.Product using (_×_) renaming (_,_ to _∙_)
 open import Function using (_∘_)

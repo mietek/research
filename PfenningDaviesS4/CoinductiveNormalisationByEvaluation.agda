@@ -1,8 +1,8 @@
-module PfenningDaviesS4.CoinductiveNormalisationByEvaluation where
+module A201606.PfenningDaviesS4.CoinductiveNormalisationByEvaluation where
 
-open import Common.Delay public
-open import Common.OrderPreservingEmbedding public
-open import PfenningDaviesS4.Syntax public
+open import A201606.Common.Delay public
+open import A201606.Common.OrderPreservingEmbedding public
+open import A201606.PfenningDaviesS4.Syntax public
 
 
 -- Normal terms, neutral terms, values, and environments.

@@ -1,8 +1,8 @@
-module STLC.CoinductiveNormalisationByEvaluation where
+module A201606.STLC.CoinductiveNormalisationByEvaluation where
 
-open import Common.Delay public
-open import Common.OrderPreservingEmbedding public
-open import STLC.Syntax public
+open import A201606.Common.Delay public
+open import A201606.Common.OrderPreservingEmbedding public
+open import A201606.STLC.Syntax public
 
 
 -- Normal terms, neutral terms, and spines.

@@ -1,9 +1,9 @@
 {-# OPTIONS --allow-unsolved-metas #-}
 
-module BonelliSterenLP.Syntax where
+module A201606.BonelliSterenLP.Syntax where
 
-open import Common.Context public
-open import Common.UntypedContext public
+open import A201606.Common.Context public
+open import A201606.Common.UntypedContext public
 
 open import Data.Nat using (_≤_ ; z≤n ; s≤s) renaming (_≟_ to _≟ₙ_)
 open import Relation.Binary.PropositionalEquality using (_≡_ ; refl ; cong ; subst)

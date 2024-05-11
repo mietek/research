@@ -1,4 +1,4 @@
-module Common.Context where
+module A201606.Common.Context where
 
 open import Data.Fin using (Fin ; zero ; suc) public
 open import Data.Nat using (ℕ ; zero ; suc) public

@@ -1,6 +1,6 @@
-module STLC.Syntax where
+module A201606.STLC.Syntax where
 
-open import Common.Context public
+open import A201606.Common.Context public
 
 
 -- Types.

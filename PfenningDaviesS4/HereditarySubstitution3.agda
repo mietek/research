@@ -1,8 +1,8 @@
 {-# OPTIONS --allow-unsolved-metas #-}
 
-module PfenningDaviesS4.HereditarySubstitution3 where
+module A201606.PfenningDaviesS4.HereditarySubstitution3 where
 
-open import PfenningDaviesS4.Syntax public
+open import A201606.PfenningDaviesS4.Syntax public
 
 open import Data.Product using (_×_) renaming (_,_ to _∙_)
 open import Function using (_∘_)

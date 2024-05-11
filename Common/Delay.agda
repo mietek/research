@@ -1,4 +1,4 @@
-module Common.Delay where
+module A201606.Common.Delay where
 
 open import Size using (∞) public
 

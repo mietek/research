@@ -1,6 +1,6 @@
-module STLC.Examples where
+module A201606.STLC.Examples where
 
-open import STLC.Syntax public
+open import A201606.STLC.Syntax public
 
 
 I : ∀ {A Γ} → Tm Γ (A ⊃ A)

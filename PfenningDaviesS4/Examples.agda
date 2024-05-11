@@ -1,6 +1,6 @@
-module PfenningDaviesS4.Examples where
+module A201606.PfenningDaviesS4.Examples where
 
-open import PfenningDaviesS4.CoinductiveNormalisationByEvaluation public
+open import A201606.PfenningDaviesS4.CoinductiveNormalisationByEvaluation public
 
 
 I : ∀ {A Γ Δ} → Tm Γ Δ (A ⊃ A)

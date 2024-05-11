@@ -1,6 +1,6 @@
-module PfenningDaviesS4.Syntax where
+module A201606.PfenningDaviesS4.Syntax where
 
-open import Common.Context public
+open import A201606.Common.Context public
 
 
 -- Types.
