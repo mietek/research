@@ -1,3 +1,5 @@
+{-# OPTIONS --allow-unsolved-metas #-}
+
 module BonelliSterenLP.Syntax where
 
 open import Common.Context public
@@ -231,6 +233,7 @@ ren-tm ρ unit        = unit
 ren-tm ρ (box t)     = box t
 ren-tm ρ (unbox t u) = unbox (ren-tm ρ t) (ren-tm ρ u)
 
+-- TODO: unfinished
 ⋆ren-tm : ∀ {A Γ Δ Δ′ t} → (ρ : 2Renᵢ Δ Δ′) → Tm Γ Δ A t →
           Tm (⋆ren-cx (`ren ρ) Γ) Δ′
              (⋆ren-ty (`ren ρ) A)

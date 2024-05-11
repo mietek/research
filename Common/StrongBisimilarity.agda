@@ -15,7 +15,7 @@ mutual
     ≈later : ∀ {a∞ a∞′} → a∞ ∞≈⟨ i ⟩≈ a∞′ → later a∞ ≈ later a∞′
 
   _≈⟨_⟩≈_ : ∀ {A} → Delay ∞ A → Size → Delay ∞ A → Set
-  _≈⟨_⟩≈_ = λ {A} a? i a?′ → _≈_ {i} {A} a? a?′
+  _≈⟨_⟩≈_ {A} a? i a?′ = _≈_ {i} {A} a? a?′
 
   record _∞≈⟨_⟩≈_ {A} (a∞ : ∞Delay ∞ A) (i : Size) (a∞′ : ∞Delay ∞ A) : Set where
     coinductive
@@ -23,7 +23,7 @@ mutual
       ≈force : {j : Size< i} → force a∞ ≈⟨ j ⟩≈ force a∞′
 
 _∞≈_ : ∀ {i A} → ∞Delay ∞ A → ∞Delay ∞ A → Set
-_∞≈_ = λ {i} {A} a∞ a∞′ → _∞≈⟨_⟩≈_ {A} a∞ i a∞′
+_∞≈_ {i} {A} a∞ a∞′ = _∞≈⟨_⟩≈_ {A} a∞ i a∞′
 
 infix 5 _≈⟨_⟩≈_ _∞≈⟨_⟩≈_ _∞≈_
 

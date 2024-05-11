@@ -1,3 +1,5 @@
+{-# OPTIONS --allow-unsolved-metas #-}
+
 module PfenningDaviesS4.HereditarySubstitution4 where
 
 open import PfenningDaviesS4.Syntax public
@@ -97,8 +99,8 @@ mutual
 
 
 -- Hereditary substitution.
--- TODO: Termination!
 
+-- TODO: unfinished
 mutual
   [_≔_]ₙ_ : ∀ {A Γ Δ} → (i : A ∈ Γ) → No (Γ -ᵢ i) Δ A → Sub (flip No Δ) Γ (Γ -ᵢ i)
   [ i ≔ ν ]ₙ (lamₙ t)           = lamₙ ([ pop i ≔ wk-no ν ]ₙ t)
