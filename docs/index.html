@@ -1,24 +1,47 @@
 <!DOCTYPE HTML>
 <html><head><meta charset="utf-8"><title>index</title><link rel="stylesheet" href="AgdaPP.css"></head><body><pre class="Agda"><a id="1" class="Comment">-- Work in progress.</a>
 <a id="22" class="Comment">--</a>
-<a id="25" class="Comment">-- Check out the source repository:</a>
-<a id="61" class="Comment">-- https://github.com/mietek/research</a>
+<a id="25" class="Comment">-- Check out the source repository.</a>
+<a id="61" class="Comment">-- https://github.com/mietek/research/</a>
+<a id="100" class="Comment">--</a>
+<a id="103" class="Comment">-- Made by Miëtek Bak.</a>
+<a id="126" class="Comment">-- https://mietek.io/</a>
+<a id="148" class="Comment">--</a>
+<a id="151" class="Comment">-- Licensed under CC BY-SA 4.0.</a>
+<a id="183" class="Comment">-- http://creativecommons.org/licenses/by-sa/4.0/</a>
 
-<a id="100" class="Keyword">module</a> <a id="107" href="index.html" class="Module">index</a> <a id="113" class="Keyword">where</a>
-
-
-<a id="121" class="Comment">--------------------------------------------------------------------------------</a>
-
-<a id="203" class="Keyword">import</a> <a id="210" href="A201602.Everything.html" class="Module">A201602.Everything</a> <a id="229" class="Comment">-- 73c83903d3777ff9088c (Alt-Artemov)</a>
-<a id="267" class="Keyword">import</a> <a id="274" href="A201605.Everything.html" class="Module">A201605.Everything</a> <a id="293" class="Comment">-- abel-chapman-extended</a>
-<a id="318" class="Keyword">import</a> <a id="325" href="A201606.Everything.html" class="Module">A201606.Everything</a> <a id="344" class="Comment">-- tmp</a>
-<a id="351" class="Keyword">import</a> <a id="358" href="A201607.Everything.html" class="Module">A201607.Everything</a> <a id="377" class="Comment">-- hilbert-gentzen</a>
-<a id="396" class="Keyword">import</a> <a id="403" href="A201706.Everything.html" class="Module">A201706.Everything</a> <a id="422" class="Comment">-- research-2017</a>
-<a id="439" class="Keyword">import</a> <a id="446" href="A201801.Everything.html" class="Module">A201801.Everything</a> <a id="465" class="Comment">-- f9aba33997f0e43d7f0c9c8e62919147</a>
-<a id="501" class="Keyword">import</a> <a id="508" href="A201802.Everything.html" class="Module">A201802.Everything</a> <a id="527" class="Comment">-- 99c4bd410bf535c4322bc87d0c2db750 (logical relations)</a>
-<a id="583" class="Keyword">import</a> <a id="590" href="A201901.Everything.html" class="Module">A201901.Everything</a> <a id="609" class="Comment">-- 2d0148c0b3f4d28fca6c17ef512eb628 (“Types and programming languages”)</a>
-<a id="681" class="Keyword">import</a> <a id="688" href="A201903.Everything.html" class="Module">A201903.Everything</a> <a id="707" class="Comment">-- d5083053ce84099de0b0177f43413b87 (operational semantics)</a>
+<a id="234" class="Keyword">module</a> <a id="241" href="index.html" class="Module">index</a> <a id="247" class="Keyword">where</a>
 
 
-<a id="769" class="Comment">--------------------------------------------------------------------------------</a>
+<a id="255" class="Comment">--------------------------------------------------------------------------------</a>
+
+<a id="337" class="Comment">-- operational semantics</a>
+<a id="362" class="Keyword">import</a> <a id="369" href="A201903.Everything.html" class="Module">A201903.Everything</a> <a id="388" class="Comment">-- d5083053ce84099de0b0177f43413b87</a>
+
+<a id="425" class="Comment">-- “Types and programming languages”</a>
+<a id="462" class="Keyword">import</a> <a id="469" href="A201901.Everything.html" class="Module">A201901.Everything</a> <a id="488" class="Comment">-- 2d0148c0b3f4d28fca6c17ef512eb628</a>
+
+<a id="525" class="Comment">-- logical relations</a>
+<a id="546" class="Keyword">import</a> <a id="553" href="A201802.Everything.html" class="Module">A201802.Everything</a> <a id="572" class="Comment">-- 99c4bd410bf535c4322bc87d0c2db750</a>
+
+<a id="609" class="Comment">-- the usual</a>
+<a id="622" class="Keyword">import</a> <a id="629" href="A201801.Everything.html" class="Module">A201801.Everything</a> <a id="648" class="Comment">-- f9aba33997f0e43d7f0c9c8e62919147</a>
+
+<a id="685" class="Comment">-- the usual, cubed</a>
+<a id="705" class="Keyword">import</a> <a id="712" href="A201706.Everything.html" class="Module">A201706.Everything</a> <a id="731" class="Comment">-- research-2017-06 (research-2017)</a>
+
+<a id="768" class="Comment">-- the usual</a>
+<a id="781" class="Keyword">import</a> <a id="788" href="A201607.Everything.html" class="Module">A201607.Everything</a> <a id="807" class="Comment">-- research (hilbert-gentzen)</a>
+
+<a id="838" class="Comment">-- the usual</a>
+<a id="851" class="Keyword">import</a> <a id="858" href="A201606.Everything.html" class="Module">A201606.Everything</a> <a id="877" class="Comment">-- research-2016-06 (tmp)</a>
+
+<a id="904" class="Comment">-- Abel-Chapman (2014)</a>
+<a id="927" class="Keyword">import</a> <a id="934" href="A201605.Everything.html" class="Module">A201605.Everything</a> <a id="953" class="Comment">-- research-2016-05 (abel-chapman-extended)</a>
+
+<a id="998" class="Comment">-- Alt-Artemov (2001) plus a little bit of everything</a>
+<a id="1052" class="Keyword">import</a> <a id="1059" href="A201602.Everything.html" class="Module">A201602.Everything</a> <a id="1078" class="Comment">-- 73c83903d3777ff9088c</a>
+
+
+<a id="1104" class="Comment">--------------------------------------------------------------------------------</a>
 </pre></body></html>
