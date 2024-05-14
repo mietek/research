@@ -1,0 +1,1049 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>A201602.Scratch-negation</title><link rel="stylesheet" href="AgdaPP.css"></head><body><pre class="Agda"><a id="1" class="Keyword">module</a> <a id="8" href="A201602.Scratch-negation.html" class="Module">A201602.Scratch-negation</a> <a id="33" class="Keyword">where</a>
+
+<a id="40" class="Comment">{-
+
+{-
+
+An implementation of the Alt-Artëmov system λ∞
+==============================================
+
+Work in progress.
+
+For easy editing with Emacs agda-mode, add to your .emacs file:
+
+&#39;(agda-input-user-translations
+   (quote
+    ((&quot;i&quot; &quot;⊃&quot;) (&quot;ii&quot; &quot;⫗&quot;) (&quot;e&quot; &quot;⊢&quot;) (&quot;ee&quot; &quot;⊩&quot;) (&quot;n&quot; &quot;¬&quot;) (&quot;:.&quot; &quot;∵&quot;)
+     (&quot;v&quot; &quot;𝑣&quot;)
+     (&quot;l&quot; &quot;𝜆&quot;) (&quot;l2&quot; &quot;𝜆²&quot;) (&quot;l3&quot; &quot;𝜆³&quot;) (&quot;l4&quot; &quot;𝜆⁴&quot;) (&quot;ln&quot; &quot;𝜆ⁿ&quot;)
+     (&quot;o&quot; &quot;∘&quot;) (&quot;o2&quot; &quot;∘²&quot;) (&quot;o3&quot; &quot;∘³&quot;) (&quot;o4&quot; &quot;∘⁴&quot;) (&quot;on&quot; &quot;∘ⁿ&quot;)
+     (&quot;p&quot; &quot;𝑝&quot;) (&quot;p2&quot; &quot;𝑝²&quot;) (&quot;p3&quot; &quot;𝑝³&quot;) (&quot;p4&quot; &quot;𝑝⁴&quot;) (&quot;pn&quot; &quot;𝑝ⁿ&quot;)
+     (&quot;pi&quot; &quot;𝜋&quot;)
+     (&quot;pi0&quot; &quot;𝜋₀&quot;) (&quot;pi02&quot; &quot;𝜋₀²&quot;) (&quot;pi03&quot; &quot;𝜋₀³&quot;) (&quot;pi04&quot; &quot;𝜋₀⁴&quot;) (&quot;pi0n&quot; &quot;𝜋₀ⁿ&quot;)
+     (&quot;pi1&quot; &quot;𝜋₁&quot;) (&quot;pi12&quot; &quot;𝜋₁²&quot;) (&quot;pi13&quot; &quot;𝜋₁³&quot;) (&quot;pi14&quot; &quot;𝜋₁⁴&quot;) (&quot;pi1n&quot; &quot;𝜋₁ⁿ&quot;)
+     (&quot;u&quot; &quot;⇑&quot;) (&quot;u2&quot; &quot;⇑²&quot;) (&quot;u3&quot; &quot;⇑³&quot;) (&quot;u4&quot; &quot;⇑⁴&quot;) (&quot;un&quot; &quot;⇑ⁿ&quot;)
+     (&quot;d&quot; &quot;⇓&quot;) (&quot;d2&quot; &quot;⇓²&quot;) (&quot;d3&quot; &quot;⇓³&quot;) (&quot;d4&quot; &quot;⇓⁴&quot;) (&quot;dn&quot; &quot;⇓ⁿ&quot;)
+     (&quot;x&quot; &quot;✴&quot;) (&quot;x2&quot; &quot;✴²&quot;) (&quot;x3&quot; &quot;✴³&quot;) (&quot;x4&quot; &quot;✴⁴&quot;) (&quot;xn&quot; &quot;✴ⁿ&quot;)
+     (&quot;b&quot; &quot;□&quot;)
+     (&quot;mv&quot; &quot;𝒗&quot;)
+     (&quot;ml&quot; &quot;𝝀&quot;) (&quot;ml2&quot; &quot;𝝀²&quot;) (&quot;ml3&quot; &quot;𝝀³&quot;) (&quot;ml4&quot; &quot;𝝀⁴&quot;) (&quot;mln&quot; &quot;𝝀ⁿ&quot;)
+     (&quot;mo&quot; &quot;∙&quot;) (&quot;mo2&quot; &quot;∙²&quot;) (&quot;mo3&quot; &quot;∙³&quot;) (&quot;mo4&quot; &quot;∙⁴&quot;) (&quot;mon&quot; &quot;∙ⁿ&quot;)
+     (&quot;mp&quot; &quot;𝒑&quot;) (&quot;mp2&quot; &quot;𝒑²&quot;) (&quot;mp3&quot; &quot;𝒑³&quot;) (&quot;mp4&quot; &quot;𝒑⁴&quot;) (&quot;mpn&quot; &quot;𝒑ⁿ&quot;)
+     (&quot;mpi&quot; &quot;𝝅&quot;)
+     (&quot;mpi0&quot; &quot;𝝅₀&quot;) (&quot;mpi02&quot; &quot;𝝅₀²&quot;) (&quot;mpi03&quot; &quot;𝝅₀³&quot;) (&quot;mpi04&quot; &quot;𝝅₀⁴&quot;) (&quot;mpi0n&quot; &quot;𝝅₀ⁿ&quot;)
+     (&quot;mpi1&quot; &quot;𝝅₁&quot;) (&quot;mpi12&quot; &quot;𝝅₁²&quot;) (&quot;mpi13&quot; &quot;𝝅₁³&quot;) (&quot;mpi14&quot; &quot;𝝅₁⁴&quot;) (&quot;mpi1n&quot; &quot;𝝅₁ⁿ&quot;)
+     (&quot;mu&quot; &quot;⬆&quot;) (&quot;mu2&quot; &quot;⬆²&quot;) (&quot;mu3&quot; &quot;⬆³&quot;) (&quot;mu4&quot; &quot;⬆⁴&quot;) (&quot;mun&quot; &quot;⬆ⁿ&quot;)
+     (&quot;md&quot; &quot;⬇&quot;) (&quot;md2&quot; &quot;⬇²&quot;) (&quot;md3&quot; &quot;⬇³&quot;) (&quot;md4&quot; &quot;⬇⁴&quot;) (&quot;mdn&quot; &quot;⬇ⁿ&quot;)
+     (&quot;mx&quot; &quot;✹&quot;) (&quot;mx2&quot; &quot;✹²&quot;) (&quot;mx3&quot; &quot;✹³&quot;) (&quot;mx4&quot; &quot;✹⁴&quot;) (&quot;mxn&quot; &quot;✹ⁿ&quot;)
+     (&quot;mb&quot; &quot;■&quot;)
+     (&quot;mS&quot; &quot;𝐒&quot;) (&quot;mZ&quot; &quot;𝐙&quot;)
+     (&quot;m0&quot; &quot;𝟎&quot;) (&quot;m1&quot; &quot;𝟏&quot;) (&quot;m2&quot; &quot;𝟐&quot;) (&quot;m3&quot; &quot;𝟑&quot;) (&quot;m4&quot; &quot;𝟒&quot;)
+     (&quot;ss&quot; &quot;𝐬&quot;) (&quot;ts&quot; &quot;𝐭&quot;) (&quot;xs&quot; &quot;𝐱&quot;) (&quot;ys&quot; &quot;𝐲&quot;)
+     (&quot;C&quot; &quot;𝒞&quot;) (&quot;D&quot; &quot;𝒟&quot;)
+     (&quot;N&quot; &quot;ℕ&quot;))))
+
+-}
+
+
+module AltArtemov where
+
+open import Data.Nat using (ℕ ; zero ; suc)
+open import Data.Product using (_×_) renaming (_,_ to ⟨_,_⟩)
+open import Data.Vec using (Vec ; [] ; _∷_ ; replicate)
+
+infixl 9 !_ 𝑣_ 𝒗_
+infixl 9 ✴_ ✴²_ ✴³_ ✴⁴_ ✴ⁿ_ ✹_ ✹²_ ✹³_ ✹⁴_ ✹ⁿ_
+infixl 8 𝜋₀_ 𝜋₀²_ 𝜋₀³_ 𝜋₀⁴_ 𝜋₀ⁿ_ 𝝅₀_ 𝝅₀²_ 𝝅₀³_ 𝝅₀⁴_ 𝝅₀ⁿ_
+infixl 8 𝜋₁_ 𝜋₁²_ 𝜋₁³_ 𝜋₁⁴_ 𝜋₁ⁿ_ 𝝅₁_ 𝝅₁²_ 𝝅₁³_ 𝝅₁⁴_ 𝝅₁ⁿ_
+infixl 7 _∘_ _∘²_ _∘³_ _∘⁴_ _∘ⁿ_ _∙_ _∙²_ _∙³_ _∙⁴_ _∙ⁿ_
+infixr 6 ⇑_ ⇑²_ ⇑³_ ⇑⁴_ ⇑ⁿ_ ⬆_ ⬆²_ ⬆³_ ⬆⁴_ ⬆ⁿ_
+infixr 6 ⇓_ ⇓²_ ⇓³_ ⇓⁴_ ⇓ⁿ_ ⬇_ ⬇²_ ⬇³_ ⬇⁴_ ⬇ⁿ_
+infixr 5 𝜆_ 𝜆²_ 𝜆³_ 𝜆⁴_ 𝜆ⁿ_ 𝝀_ 𝝀²_ 𝝀³_ 𝝀⁴_ 𝝀ⁿ_
+infixr 4 _∶_ _∵_
+infixr 3 ¬_
+infixl 3 _∧_
+infixl 2 _∨_ _,_ _„_
+infixr 1 _⊃_ _⫗_
+infixr 0 _⊢_ ⊩_
+
+
+-- --------------------------------------------------------------------------
+--
+-- Untyped syntax
+
+
+-- Variables
+Var : Set
+Var = ℕ
+
+
+-- Term constructors
+data Tm : Set where
+  -- Explosion (⊥E) at level n
+  ✴[_]_ : ℕ → Tm → Tm
+
+  -- Variable reference
+  𝑣_ : Var → Tm
+
+  -- Abstraction (⊃I) at level n
+  𝜆[_]_ : ℕ → Tm → Tm
+
+  -- Application (⊃E) at level n
+  _∘[_]_ : Tm → ℕ → Tm → Tm
+
+  -- Pairing (∧I) at level n
+  𝑝[_]⟨_,_⟩ : ℕ → Tm → Tm → Tm
+
+  -- 0th projection (∧E₀) at level n
+  𝜋₀[_]_ : ℕ → Tm → Tm
+
+  -- 1st projection (∧E₁) at level n
+  𝜋₁[_]_ : ℕ → Tm → Tm
+
+  -- Artëmov’s “proof checker”
+  !_ : Tm → Tm
+
+  -- Reification at level n
+  ⇑[_]_ : ℕ → Tm → Tm
+
+  -- Reflection at level n
+  ⇓[_]_ : ℕ → Tm → Tm
+
+
+-- Type constructors
+data Ty : Set where
+  -- Falsehood
+  ⊥ : Ty
+
+  -- Implication
+  _⊃_ : Ty → Ty → Ty
+
+  -- Conjunction
+  _∧_ : Ty → Ty → Ty
+
+  -- Explicit provability
+  _∶_ : Tm → Ty → Ty
+
+
+-- --------------------------------------------------------------------------
+--
+-- Example types
+
+
+-- Truth
+⊤ : Ty
+⊤ = ⊥ ⊃ ⊥
+
+-- Negation
+¬_ : Ty → Ty
+¬ A = A ⊃ ⊥
+
+-- Disjunction
+_∨_ : Ty → Ty → Ty
+A ∨ B = ¬ A ⊃ B
+
+-- Equivalence
+_⫗_ : Ty → Ty → Ty
+A ⫗ B = (A ⊃ B) ∧ (B ⊃ A)
+
+
+-- --------------------------------------------------------------------------
+--
+-- Notation for term constructors at level 1
+
+
+✴_ : Tm → Tm
+✴ t = ✴[ 1 ] t
+
+𝜆_ : Tm → Tm
+𝜆 t = 𝜆[ 1 ] t
+
+_∘_ : Tm → Tm → Tm
+t ∘ s = t ∘[ 1 ] s
+
+𝑝⟨_,_⟩ : Tm → Tm → Tm
+𝑝⟨ t , s ⟩ = 𝑝[ 1 ]⟨ t , s ⟩
+
+𝜋₀_ : Tm → Tm
+𝜋₀ t = 𝜋₀[ 1 ] t
+
+𝜋₁_ : Tm → Tm
+𝜋₁ t = 𝜋₁[ 1 ] t
+
+⇑_ : Tm → Tm
+⇑ t = ⇑[ 1 ] t
+
+⇓_ : Tm → Tm
+⇓ t = ⇓[ 1 ] t
+
+
+-- --------------------------------------------------------------------------
+--
+-- Notation for term constructors at level 2
+
+
+✴²_ : Tm → Tm
+✴² t = ✴[ 2 ] t
+
+𝜆²_ : Tm → Tm
+𝜆² t₂ = 𝜆[ 2 ] t₂
+
+_∘²_ : Tm → Tm → Tm
+t₂ ∘² s₂ = t₂ ∘[ 2 ] s₂
+
+𝑝²⟨_,_⟩ : Tm → Tm → Tm
+𝑝²⟨ t₂ , s₂ ⟩ = 𝑝[ 2 ]⟨ t₂ , s₂ ⟩
+
+𝜋₀²_ : Tm → Tm
+𝜋₀² t₂ = 𝜋₀[ 2 ] t₂
+
+𝜋₁²_ : Tm → Tm
+𝜋₁² t₂ = 𝜋₁[ 2 ] t₂
+
+⇑²_ : Tm → Tm
+⇑² t₂ = ⇑[ 2 ] t₂
+
+⇓²_ : Tm → Tm
+⇓² t₂ = ⇓[ 2 ] t₂
+
+
+-- --------------------------------------------------------------------------
+--
+-- Notation for term constructors at level 3
+
+
+✴³_ : Tm → Tm
+✴³ t = ✴[ 3 ] t
+
+𝜆³_ : Tm → Tm
+𝜆³ t₃ = 𝜆[ 3 ] t₃
+
+_∘³_ : Tm → Tm → Tm
+t₃ ∘³ s₃ = t₃ ∘[ 3 ] s₃
+
+𝑝³⟨_,_⟩ : Tm → Tm → Tm
+𝑝³⟨ t₃ , s₃ ⟩ = 𝑝[ 3 ]⟨ t₃ , s₃ ⟩
+
+𝜋₀³_ : Tm → Tm
+𝜋₀³ t₃ = 𝜋₀[ 3 ] t₃
+
+𝜋₁³_ : Tm → Tm
+𝜋₁³ t₃ = 𝜋₁[ 3 ] t₃
+
+⇑³_ : Tm → Tm
+⇑³ t₃ = ⇑[ 3 ] t₃
+
+⇓³_ : Tm → Tm
+⇓³ t₃ = ⇓[ 3 ] t₃
+
+
+-- --------------------------------------------------------------------------
+--
+-- Notation for term constructors at level 4
+
+
+✴⁴_ : Tm → Tm
+✴⁴ t = ✴[ 4 ] t
+
+𝜆⁴_ : Tm → Tm
+𝜆⁴ t₄ = 𝜆[ 4 ] t₄
+
+_∘⁴_ : Tm → Tm → Tm
+t₄ ∘⁴ s₄ = t₄ ∘[ 4 ] s₄
+
+𝑝⁴⟨_,_⟩ : Tm → Tm → Tm
+𝑝⁴⟨ t₄ , s₄ ⟩ = 𝑝[ 4 ]⟨ t₄ , s₄ ⟩
+
+𝜋₀⁴_ : Tm → Tm
+𝜋₀⁴ t₄ = 𝜋₀[ 4 ] t₄
+
+𝜋₁⁴_ : Tm → Tm
+𝜋₁⁴ t₄ = 𝜋₁[ 4 ] t₄
+
+⇑⁴_ : Tm → Tm
+⇑⁴ t₄ = ⇑[ 4 ] t₄
+
+⇓⁴_ : Tm → Tm
+⇓⁴ t₄ = ⇓[ 4 ] t₄
+
+
+-- --------------------------------------------------------------------------
+--
+-- Vector notation for type assertions at level n (p. 27 [1])
+
+
+map# : ∀{n} {X Y : Set}
+    → (ℕ → X → Y) → Vec X n → Vec Y n
+map# {zero}  f []      = []
+map# {suc n} f (x ∷ 𝐱) = f (suc n) x ∷ map# f 𝐱
+
+zipWith# : ∀{n} {X Y Z : Set}
+    → (ℕ → X → Y → Z) → Vec X n → Vec Y n → Vec Z n
+zipWith# {zero}  f []      []       = []
+zipWith# {suc n} f (x ∷ 𝐱) (y ∷ 𝐲) = f (suc n) x y ∷ zipWith# f 𝐱 𝐲
+
+
+-- Term vectors
+Tms : ℕ → Set
+Tms = Vec Tm
+
+
+-- tₙ ∶ tₙ₋₁ ∶ … ∶ t ∶ A
+_∵_ : ∀{n} → Tms n → Ty → Ty
+[]      ∵ A = A
+(x ∷ 𝐭) ∵ A = x ∶ 𝐭 ∵ A
+
+-- ✴ⁿ tₙ ∶ ✴ⁿ⁻¹ tₙ₋₁ ∶ … ∶ ✴ t
+✴ⁿ_ : ∀{n} → Tms n → Tms n
+✴ⁿ_ = map# ✴[_]_
+
+-- 𝑣 x ∶ 𝑣 x ∶ … ∶ 𝑣 x
+𝑣[_]_ : (n : ℕ) → Var → Tms n
+𝑣[ n ] x = replicate {n = n} (𝑣 x)
+
+-- 𝜆ⁿ tₙ ∶ 𝜆ⁿ⁻¹ tₙ₋₁ ∶ … ∶ 𝜆 t
+𝜆ⁿ_ : ∀{n} → Tms n → Tms n
+𝜆ⁿ_ = map# 𝜆[_]_
+
+-- tₙ ∘ⁿ sₙ ∶ tₙ₋₁ ∘ⁿ⁻¹ ∶ sₙ₋₁ ∶ … ∶ t ∘ s
+_∘ⁿ_ : ∀{n} → Tms n → Tms n → Tms n
+_∘ⁿ_ = zipWith# (λ n t s → t ∘[ n ] s)
+
+-- 𝑝ⁿ⟨ tₙ , sₙ ⟩ ∶ 𝑝ⁿ⁻¹⟨ tₙ₋₁ , sₙ₋₁ ⟩ ∶ … ∶ p⟨ t , s ⟩
+𝑝ⁿ⟨_,_⟩ : ∀{n} → Tms n → Tms n → Tms n
+𝑝ⁿ⟨_,_⟩ = zipWith# 𝑝[_]⟨_,_⟩
+
+-- 𝜋₀ⁿ tₙ ∶ 𝜋₀ⁿ⁻¹ tₙ₋₁ ∶ … ∶ 𝜋₀ t
+𝜋₀ⁿ_ : ∀{n} → Tms n → Tms n
+𝜋₀ⁿ_ = map# 𝜋₀[_]_
+
+-- 𝜋₁ⁿ tₙ ∶ 𝜋₁ⁿ⁻¹ tₙ₋₁ ∶ … ∶ 𝜋₁ t
+𝜋₁ⁿ_ : ∀{n} → Tms n → Tms n
+𝜋₁ⁿ_ = map# 𝜋₁[_]_
+
+-- ⇑ⁿ tₙ ∶ ⇑ⁿ⁻¹ tₙ₋₁ ∶ … ∶ ⇑ t
+⇑ⁿ_ : ∀{n} → Tms n → Tms n
+⇑ⁿ_ = map# ⇑[_]_
+
+-- ⇓ⁿ tₙ ∶ ⇑ⁿ⁻¹ tₙ₋₁ ∶ … ∶ ⇑ t
+⇓ⁿ_ : ∀{n} → Tms n → Tms n
+⇓ⁿ_ = map# ⇓[_]_
+
+
+-- --------------------------------------------------------------------------
+--
+-- Typed syntax
+
+
+-- Hypotheses
+Hyp : Set
+Hyp = ℕ × Ty
+
+
+-- Contexts
+data Cx : Set where
+  ∅   : Cx
+  _,_ : Cx → Hyp → Cx
+
+_„_ : Cx → Cx → Cx
+Γ „ ∅       = Γ
+Γ „ (Δ , A) = Γ „ Δ , A
+
+
+-- Context membership evidence
+data _∈[_]_ : Hyp → ℕ → Cx → Set where
+  𝐙 : ∀{A Γ}
+      → A ∈[ zero ] (Γ , A)
+
+  𝐒_ : ∀{A B x Γ}
+      → A ∈[ x ] Γ
+      → A ∈[ suc x ] (Γ , B)
+
+-- Typed terms
+data _⊢_ (Γ : Cx) : Ty → Set where
+  -- Explosion (⊥E)
+  ✹ⁿ_ : ∀{n A} {𝐭 : Tms n}
+      → Γ ⊢ 𝐭 ∵ ⊥
+      → Γ ⊢ ✴ⁿ 𝐭 ∵ A
+
+  -- Variable reference
+  𝒗_ : ∀{n x A}
+      → ⟨ n , A ⟩ ∈[ x ] Γ
+      → Γ ⊢ 𝑣[ n ] x ∵ A
+
+  -- Abstraction (⊃I) at level n
+  𝝀ⁿ_ : ∀{n} {𝐭 : Tms n} {A B}
+      → Γ , ⟨ n , A ⟩ ⊢ 𝐭 ∵ B
+      → Γ ⊢ 𝜆ⁿ 𝐭 ∵ (A ⊃ B)
+
+  -- Application (⊃E) at level n
+  _∙ⁿ_ : ∀{n} {𝐭 𝐬 : Tms n} {A B}
+      → Γ ⊢ 𝐭 ∵ (A ⊃ B)    → Γ ⊢ 𝐬 ∵ A
+      → Γ ⊢ 𝐭 ∘ⁿ 𝐬 ∵ B
+
+  -- Pairing (∧I) at level n
+  𝒑ⁿ⟨_,_⟩ : ∀{n} {𝐭 𝐬 : Tms n} {A B}
+      → Γ ⊢ 𝐭 ∵ A          → Γ ⊢ 𝐬 ∵ B
+      → Γ ⊢ 𝑝ⁿ⟨ 𝐭 , 𝐬 ⟩ ∵ (A ∧ B)
+
+  -- 0th projection (∧E₀) at level n
+  𝝅₀ⁿ_ : ∀{n} {𝐭 : Tms n} {A B}
+      → Γ ⊢ 𝐭 ∵ (A ∧ B)
+      → Γ ⊢ 𝜋₀ⁿ 𝐭 ∵ A
+
+  -- 1st projection (∧E₁) at level n
+  𝝅₁ⁿ_ : ∀{n} {𝐭 : Tms n} {A B}
+      → Γ ⊢ 𝐭 ∵ (A ∧ B)
+      → Γ ⊢ 𝜋₁ⁿ 𝐭 ∵ B
+
+  -- Reification at level n
+  ⬆ⁿ_ : ∀{n} {𝐭 : Tms n} {u A}
+      → Γ ⊢ 𝐭 ∵ (u ∶ A)
+      → Γ ⊢ ⇑ⁿ 𝐭 ∵ (! u ∶ u ∶ A)
+
+  -- Reflection at level n
+  ⬇ⁿ_ : ∀{n} {𝐭 : Tms n} {u A}
+      → Γ ⊢ 𝐭 ∵ (u ∶ A)
+      → Γ ⊢ ⇓ⁿ 𝐭 ∵ A
+
+
+⊩_  : Ty → Set
+⊩ A = ∀{Γ} → Γ ⊢ A
+
+
+-- --------------------------------------------------------------------------
+--
+-- Notation for context membership evidence
+
+
+𝟎 : ∀{A Γ}
+    → A ∈[ 0 ] (Γ , A)
+𝟎 = 𝐙
+
+𝟏 : ∀{A B Γ}
+    → A ∈[ 1 ] (Γ , A , B)
+𝟏 = 𝐒 𝟎
+
+𝟐 : ∀{A B C Γ}
+    → A ∈[ 2 ] (Γ , A , B , C)
+𝟐 = 𝐒 𝟏
+
+𝟑 : ∀{A B C D Γ}
+    → A ∈[ 3 ] (Γ , A , B , C , D)
+𝟑 = 𝐒 𝟐
+
+𝟒 : ∀{A B C D E Γ}
+    → A ∈[ 4 ] (Γ , A , B , C , D , E)
+𝟒 = 𝐒 𝟑
+
+
+-- --------------------------------------------------------------------------
+--
+-- Notation for typed terms at level 1
+
+
+✹_ : ∀{A Γ}
+    → Γ ⊢ ⊥
+    → Γ ⊢ A
+✹_ = ✹ⁿ_ {𝐭 = []}
+
+𝝀_ : ∀{A B Γ}
+    → Γ , ⟨ 0 , A ⟩ ⊢ B
+    → Γ ⊢ A ⊃ B
+𝝀_ = 𝝀ⁿ_ {𝐭 = []}
+
+_∙_ : ∀{A B Γ}
+    → Γ ⊢ A ⊃ B    → Γ ⊢ A
+    → Γ ⊢ B
+_∙_ = _∙ⁿ_ {𝐭 = []} {𝐬 = []}
+
+𝒑⟨_,_⟩ : ∀{A B Γ}
+    → Γ ⊢ A        → Γ ⊢ B
+    → Γ ⊢ A ∧ B
+𝒑⟨_,_⟩ = 𝒑ⁿ⟨_,_⟩ {𝐭 = []} {𝐬 = []}
+
+𝝅₀_ : ∀{A B Γ}
+    → Γ ⊢ A ∧ B
+    → Γ ⊢ A
+𝝅₀_ = 𝝅₀ⁿ_ {𝐭 = []}
+
+𝝅₁_ : ∀{A B Γ}
+    → Γ ⊢ A ∧ B
+    → Γ ⊢ B
+𝝅₁_ = 𝝅₁ⁿ_ {𝐭 = []}
+
+⬆_ : ∀{u A Γ}
+    → Γ ⊢ u ∶ A
+    → Γ ⊢ ! u ∶ u ∶ A
+⬆_ = ⬆ⁿ_ {𝐭 = []}
+
+⬇_ : ∀{u A Γ}
+    → Γ ⊢ u ∶ A
+    → Γ ⊢ A
+⬇_ = ⬇ⁿ_ {𝐭 = []}
+
+
+-- --------------------------------------------------------------------------
+--
+-- Notation for typed terms at level 2
+
+
+✹²_ : ∀{t A Γ}
+    → Γ ⊢ t ∶ ⊥
+    → Γ ⊢ ✴ t ∶ A
+✹²_ {t} =
+    ✹ⁿ_ {𝐭 = t ∷ []}
+
+𝝀²_ : ∀{t A B Γ}
+    → Γ , ⟨ 1 , A ⟩ ⊢ t ∶ B
+    → Γ ⊢ 𝜆 t ∶ (A ⊃ B)
+𝝀²_ {t} =
+    𝝀ⁿ_ {𝐭 = t ∷ []}
+
+_∙²_ : ∀{t s A B Γ}
+    → Γ ⊢ t ∶ (A ⊃ B)    → Γ ⊢ s ∶ A
+    → Γ ⊢ t ∘ s ∶ B
+_∙²_ {t} {s} =
+    _∙ⁿ_ {𝐭 = t ∷ []} {𝐬 = s ∷ []}
+
+𝒑²⟨_,_⟩ : ∀{t s A B Γ}
+    → Γ ⊢ t ∶ A          → Γ ⊢ s ∶ B
+    → Γ ⊢ 𝑝⟨ t , s ⟩ ∶ (A ∧ B)
+𝒑²⟨_,_⟩ {t} {s} =
+    𝒑ⁿ⟨_,_⟩ {𝐭 = t ∷ []} {𝐬 = s ∷ []}
+
+𝝅₀²_ : ∀{t A B Γ}
+    → Γ ⊢ t ∶ (A ∧ B)
+    → Γ ⊢ 𝜋₀ t ∶ A
+𝝅₀²_ {t} =
+    𝝅₀ⁿ_ {𝐭 = t ∷ []}
+
+𝝅₁²_ : ∀{t A B Γ}
+    → Γ ⊢ t ∶ (A ∧ B)
+    → Γ ⊢ 𝜋₁ t ∶ B
+𝝅₁²_ {t} =
+    𝝅₁ⁿ_ {𝐭 = t ∷ []}
+
+⬆²_ : ∀{t u A Γ}
+    → Γ ⊢ t ∶ u ∶ A
+    → Γ ⊢ ⇑ t ∶ ! u ∶ u ∶ A
+⬆²_ {t} =
+    ⬆ⁿ_ {𝐭 = t ∷ []}
+
+⬇²_ : ∀{t u A Γ}
+    → Γ ⊢ t ∶ u ∶ A
+    → Γ ⊢ ⇓ t ∶ A
+⬇²_ {t} =
+    ⬇ⁿ_ {𝐭 = t ∷ []}
+
+
+-- --------------------------------------------------------------------------
+--
+-- Notation for typed terms at level 3
+
+
+✹³_ : ∀{t₂ t A Γ}
+    → Γ ⊢ t₂ ∶ t ∶ ⊥
+    → Γ ⊢ ✴² t₂ ∶ ✴ t ∶ A
+✹³_ {t₂} {t} =
+    ✹ⁿ_ {𝐭 = t₂ ∷ t ∷ []}
+
+𝝀³_ : ∀{t₂ t A B Γ}
+    → Γ , ⟨ 2 , A ⟩ ⊢ t₂ ∶ t ∶ B
+    → Γ ⊢ 𝜆² t₂ ∶ 𝜆 t ∶ (A ⊃ B)
+𝝀³_ {t₂} {t} =
+    𝝀ⁿ_ {𝐭 = t₂ ∷ t ∷ []}
+
+_∙³_ : ∀{t₂ t s₂ s A B Γ}
+    → Γ ⊢ t₂ ∶ t ∶ (A ⊃ B)    → Γ ⊢ s₂ ∶ s ∶ A
+    → Γ ⊢ t₂ ∘² s₂ ∶ t ∘ s ∶ B
+_∙³_ {t₂} {t} {s₂} {s} =
+    _∙ⁿ_ {𝐭 = t₂ ∷ t ∷ []} {𝐬 = s₂ ∷ s ∷ []}
+
+𝒑³⟨_,_⟩ : ∀{t₂ t s₂ s A B Γ}
+    → Γ ⊢ t₂ ∶ t ∶ A          → Γ ⊢ s₂ ∶ s ∶ B
+    → Γ ⊢ 𝑝²⟨ t₂ , s₂ ⟩ ∶ 𝑝⟨ t , s ⟩ ∶ (A ∧ B)
+𝒑³⟨_,_⟩ {t₂} {t} {s₂} {s} =
+    𝒑ⁿ⟨_,_⟩ {𝐭 = t₂ ∷ t ∷ []} {𝐬 = s₂ ∷ s ∷ []}
+
+𝝅₀³_ : ∀{t₂ t A B Γ}
+    → Γ ⊢ t₂ ∶ t ∶ (A ∧ B)
+    → Γ ⊢ 𝜋₀² t₂ ∶ 𝜋₀ t ∶ A
+𝝅₀³_ {t₂} {t} =
+    𝝅₀ⁿ_ {𝐭 = t₂ ∷ t ∷ []}
+
+𝝅₁³_ : ∀{t₂ t A B Γ}
+    → Γ ⊢ t₂ ∶ t ∶ (A ∧ B)
+    → Γ ⊢ 𝜋₁² t₂ ∶ 𝜋₁ t ∶ B
+𝝅₁³_ {t₂} {t} =
+    𝝅₁ⁿ_ {𝐭 = t₂ ∷ t ∷ []}
+
+⬆³_ : ∀{t₂ t u A Γ}
+    → Γ ⊢ t₂ ∶ t ∶ u ∶ A
+    → Γ ⊢ ⇑² t₂ ∶ ⇑ t ∶ ! u ∶ u ∶ A
+⬆³_ {t₂} {t} =
+    ⬆ⁿ_ {𝐭 = t₂ ∷ t ∷ []}
+
+⬇³_ : ∀{t₂ t u A Γ}
+    → Γ ⊢ t₂ ∶ t ∶ u ∶ A
+    → Γ ⊢ ⇓² t₂ ∶ ⇓ t ∶ A
+⬇³_ {t₂} {t} =
+    ⬇ⁿ_ {𝐭 = t₂ ∷ t ∷ []}
+
+
+-- --------------------------------------------------------------------------
+--
+-- Notation for typed terms at level 4
+
+
+✹⁴_ : ∀{t₃ t₂ t A Γ}
+    → Γ ⊢ t₃ ∶ t₂ ∶ t ∶ ⊥
+    → Γ ⊢ ✴³ t₃ ∶ ✴² t₂ ∶ ✴ t ∶ A
+✹⁴_ {t₃} {t₂} {t} =
+    ✹ⁿ_ {𝐭 = t₃ ∷ t₂ ∷ t ∷ []}
+
+𝝀⁴_ : ∀{t₃ t₂ t A B Γ}
+    → Γ , ⟨ 3 , A ⟩ ⊢ t₃ ∶ t₂ ∶ t ∶ B
+    → Γ ⊢ 𝜆³ t₃ ∶ 𝜆² t₂ ∶ 𝜆 t ∶ (A ⊃ B)
+𝝀⁴_ {t₃} {t₂} {t} =
+    𝝀ⁿ_ {𝐭 = t₃ ∷ t₂ ∷ t ∷ []}
+
+_∙⁴_ : ∀{t₃ t₂ t s₃ s₂ s A B Γ}
+    → Γ ⊢ t₃ ∶ t₂ ∶ t ∶ (A ⊃ B)    → Γ ⊢ s₃ ∶ s₂ ∶ s ∶ A
+    → Γ ⊢ t₃ ∘³ s₃ ∶ t₂ ∘² s₂ ∶ t ∘ s ∶ B
+_∙⁴_ {t₃} {t₂} {t} {s₃} {s₂} {s} =
+    _∙ⁿ_ {𝐭 = t₃ ∷ t₂ ∷ t ∷ []} {𝐬 = s₃ ∷ s₂ ∷ s ∷ []}
+
+𝒑⁴⟨_,_⟩ : ∀{t₃ t₂ t s₃ s₂ s A B Γ}
+    → Γ ⊢ t₃ ∶ t₂ ∶ t ∶ A          → Γ ⊢ s₃ ∶ s₂ ∶ s ∶ B
+    → Γ ⊢ 𝑝³⟨ t₃ , s₃ ⟩ ∶ 𝑝²⟨ t₂ , s₂ ⟩ ∶ 𝑝⟨ t , s ⟩ ∶ (A ∧ B)
+𝒑⁴⟨_,_⟩ {t₃} {t₂} {t} {s₃} {s₂} {s} =
+    𝒑ⁿ⟨_,_⟩ {𝐭 = t₃ ∷ t₂ ∷ t ∷ []} {𝐬 = s₃ ∷ s₂ ∷ s ∷ []}
+
+𝝅₀⁴_ : ∀{t₃ t₂ t A B Γ}
+    → Γ ⊢ t₃ ∶ t₂ ∶ t ∶ (A ∧ B)
+    → Γ ⊢ 𝜋₀³ t₃ ∶ 𝜋₀² t₂ ∶ 𝜋₀ t ∶ A
+𝝅₀⁴_ {t₃} {t₂} {t} =
+    𝝅₀ⁿ_ {𝐭 = t₃ ∷ t₂ ∷ t ∷ []}
+
+𝝅₁⁴_ : ∀{t₃ t₂ t A B Γ}
+    → Γ ⊢ t₃ ∶ t₂ ∶ t ∶ (A ∧ B)
+    → Γ ⊢ 𝜋₁³ t₃ ∶ 𝜋₁² t₂ ∶ 𝜋₁ t ∶ B
+𝝅₁⁴_ {t₃} {t₂} {t} =
+    𝝅₁ⁿ_ {𝐭 = t₃ ∷ t₂ ∷ t ∷ []}
+
+⬆⁴_ : ∀{t₃ t₂ t u A Γ}
+    → Γ ⊢ t₃ ∶ t₂ ∶ t ∶ u ∶ A
+    → Γ ⊢ ⇑³ t₃ ∶ ⇑² t₂ ∶ ⇑ t ∶ ! u ∶ u ∶ A
+⬆⁴_ {t₃} {t₂} {t} =
+    ⬆ⁿ_ {𝐭 = t₃ ∷ t₂ ∷ t ∷ []}
+
+⬇⁴_ : ∀{t₃ t₂ t u A Γ}
+    → Γ ⊢ t₃ ∶ t₂ ∶ t ∶ u ∶ A
+    → Γ ⊢ ⇓³ t₃ ∶ ⇓² t₂ ∶ ⇓ t ∶ A
+⬇⁴_ {t₃} {t₂} {t} =
+    ⬇ⁿ_ {𝐭 = t₃ ∷ t₂ ∷ t ∷ []}
+
+
+-- --------------------------------------------------------------------------
+--
+-- Realisations of some S4 theorems at levels 1, 2, and 3
+
+
+module SKICombinators where
+  -- S4: A ⊃ A
+  I : ∀{A}
+      → ⊩ A ⊃ A
+  I = 𝝀 𝒗 𝟎
+
+  -- S4: □ (A ⊃ A)
+  I² : ∀{A}
+      → ⊩ 𝜆 𝑣 0
+          ∶ (A ⊃ A)
+  I² = 𝝀² 𝒗 𝟎
+
+  -- S4: □ □ (A ⊃ A)
+  I³ : ∀{A}
+      → ⊩ 𝜆² 𝑣 0
+          ∶ 𝜆 𝑣 0
+          ∶ (A ⊃ A)
+  I³ = 𝝀³ 𝒗 𝟎
+
+
+  -- S4: A ⊃ B ⊃ A
+  K : ∀{A B}
+      → ⊩ A ⊃ B ⊃ A
+  K = 𝝀 𝝀 𝒗 𝟏
+
+  -- S4: □ (A ⊃ B ⊃ A)
+  K² : ∀{A B}
+      → ⊩ 𝜆 𝜆 𝑣 1
+          ∶ (A ⊃ B ⊃ A)
+  K² = 𝝀² 𝝀² 𝒗 𝟏
+
+  -- S4: □ □ (A ⊃ B ⊃ A)
+  K³ : ∀{A B}
+      → ⊩ 𝜆² 𝜆² 𝑣 1
+          ∶ 𝜆 𝜆 𝑣 1
+          ∶ (A ⊃ B ⊃ A)
+  K³ = 𝝀³ 𝝀³ 𝒗 𝟏
+
+
+  -- S4: (A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C
+  S : ∀{A B C}
+      → ⊩ (A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C
+  S = 𝝀 𝝀 𝝀 (𝒗 𝟐 ∙ 𝒗 𝟎) ∙ (𝒗 𝟏 ∙ 𝒗 𝟎)
+
+  -- S4: □ ((A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C)
+  S² : ∀{A B C}
+      → ⊩ 𝜆 𝜆 𝜆 (𝑣 2 ∘ 𝑣 0) ∘ (𝑣 1 ∘ 𝑣 0)
+          ∶ ((A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C)
+  S² = 𝝀² 𝝀² 𝝀² (𝒗 𝟐 ∙² 𝒗 𝟎) ∙² (𝒗 𝟏 ∙² 𝒗 𝟎)
+
+  -- S4: □ □ ((A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C)
+  S³ : ∀{A B C}
+      → ⊩ 𝜆² 𝜆² 𝜆² (𝑣 2 ∘² 𝑣 0) ∘² (𝑣 1 ∘² 𝑣 0)
+          ∶ 𝜆 𝜆 𝜆 (𝑣 2 ∘ 𝑣 0) ∘ (𝑣 1 ∘ 𝑣 0)
+          ∶ ((A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C)
+  S³ = 𝝀³ 𝝀³ 𝝀³ (𝒗 𝟐 ∙³ 𝒗 𝟎) ∙³ (𝒗 𝟏 ∙³ 𝒗 𝟎)
+
+
+-- --------------------------------------------------------------------------
+--
+-- Realisations of S4 axioms at levels 1 and 2
+
+
+module S4Axioms where
+  -- S4: □ (A ⊃ B) ⊃ □ A ⊃ □ B
+  K : ∀{f x A B}
+      → ⊩ (f ∶ (A ⊃ B)) ⊃ x ∶ A ⊃ (f ∘ x) ∶ B
+  K = 𝝀 𝝀 (𝒗 𝟏 ∙² 𝒗 𝟎)
+
+  -- S4: □ (□ (A ⊃ B) ⊃ □ A ⊃ □ B)
+  K² : ∀{f x A B}
+      → ⊩ 𝜆 𝜆 𝑣 1 ∘² 𝑣 0
+          ∶ (f ∶ (A ⊃ B) ⊃ x ∶ A ⊃ (f ∘ x) ∶ B)
+  K² = 𝝀² 𝝀² (𝒗 𝟏 ∙³ 𝒗 𝟎)
+
+
+  -- S4: □ A ⊃ A
+  T : ∀{x A}
+      → ⊩ x ∶ A ⊃ A
+  T = 𝝀 ⬇ 𝒗 𝟎
+
+  -- S4: □ (□ A ⊃ A)
+  T² : ∀{x A}
+      → ⊩ 𝜆 ⇓ 𝑣 0
+          ∶ (x ∶ A ⊃ A)
+  T² = 𝝀² ⬇² 𝒗 𝟎
+
+
+  -- S4: □ A ⊃ □ □ A
+  #4 : ∀{x A}
+      → ⊩ x ∶ A ⊃ ! x ∶ x ∶ A
+  #4 = 𝝀 ⬆ 𝒗 𝟎
+
+  -- S4: □ (□ A ⊃ □ □ A)
+  #4² : ∀{x A}
+      → ⊩ 𝜆 ⇑ 𝑣 0
+          ∶ (x ∶ A ⊃ ! x ∶ x ∶ A)
+  #4² = 𝝀² ⬆² 𝒗 𝟎
+
+
+-- --------------------------------------------------------------------------
+--
+-- Terms of example 1 (p. 28 [1])
+
+
+module Example1 where
+  -- S4: □ (□ A ⊃ A)
+  E11 : ∀{x A}
+      → ⊩ 𝜆 ⇓ 𝑣 0
+          ∶ (x ∶ A ⊃ A)
+  E11 = S4Axioms.T²
+
+  -- S4: □ (□ A ⊃ □ □ A)
+  E12 : ∀{x A}
+      → ⊩ 𝜆 ⇑ 𝑣 0
+          ∶ (x ∶ A ⊃ ! x ∶ x ∶ A)
+  E12 = S4Axioms.#4²
+
+  -- S4: □ □ (A ⊃ B ⊃ A ∧ B)
+  E13 : ∀{A B}
+      → ⊩ 𝜆² 𝜆² 𝑝²⟨ 𝑣 1 , 𝑣 0 ⟩
+          ∶ 𝜆 𝜆 𝑝⟨ 𝑣 1 , 𝑣 0 ⟩
+          ∶ (A ⊃ B ⊃ A ∧ B)
+  E13 = 𝝀³ 𝝀³ 𝒑³⟨ 𝒗 𝟏 , 𝒗 𝟎 ⟩
+
+  -- S4: □ (□ A ⊃ □ B ⊃ □ □ (A ∧ B))
+  E14 : ∀{x y A B}
+      → ⊩ 𝜆 𝜆 ⇑ 𝑝²⟨ 𝑣 1 , 𝑣 0 ⟩
+          ∶ (x ∶ A ⊃ y ∶ B ⊃ ! 𝑝⟨ x , y ⟩ ∶ 𝑝⟨ x , y ⟩ ∶ (A ∧ B))
+  E14 = 𝝀² 𝝀² ⬆² 𝒑³⟨ 𝒗 𝟏 , 𝒗 𝟎 ⟩
+
+
+-- --------------------------------------------------------------------------
+--
+-- Realisations of some more S4 theorems
+
+
+module Example1a where
+  -- S4: □ (□ A ⊃ □ B ⊃ □ (A ∧ B))
+  E14a : ∀{x y A B}
+      → ⊩ 𝜆 𝜆 𝑝²⟨ 𝑣 1 , 𝑣 0 ⟩
+          ∶ (x ∶ A ⊃ y ∶ B ⊃ 𝑝⟨ x , y ⟩ ∶ (A ∧ B))
+  E14a = 𝝀² 𝝀² 𝒑³⟨ 𝒗 𝟏 , 𝒗 𝟎 ⟩
+
+  -- S4: □ (□ A ∧ □ B ⊃ □ □ (A ∧ B))
+  E14b : ∀{x y A B}
+      → ⊩ 𝜆 ⇑ 𝑝²⟨ 𝜋₀ 𝑣 0 , 𝜋₁ 𝑣 0 ⟩
+          ∶ (x ∶ A ∧ y ∶ B ⊃ ! 𝑝⟨ x , y ⟩ ∶ 𝑝⟨ x , y ⟩ ∶ (A ∧ B))
+  E14b = 𝝀² ⬆² 𝒑³⟨ 𝝅₀² 𝒗 𝟎 , 𝝅₁² 𝒗 𝟎 ⟩
+
+  -- S4: □ (□ A ∧ □ B ⊃ □ (A ∧ B))
+  E14c : ∀{x y A B}
+      → ⊩ 𝜆 𝑝²⟨ 𝜋₀ 𝑣 0 , 𝜋₁ 𝑣 0 ⟩
+          ∶ (x ∶ A ∧ y ∶ B ⊃ 𝑝⟨ x , y ⟩ ∶ (A ∧ B))
+  E14c = 𝝀² 𝒑³⟨ 𝝅₀² 𝒗 𝟎 , 𝝅₁² 𝒗 𝟎 ⟩
+
+
+-- --------------------------------------------------------------------------
+--
+-- Terms of example 2 (pp. 31–32 [1])
+
+
+module Example2 where
+  E2 : ∀{x A}
+      → ⊩ 𝜆² ⇓² ⇑² 𝑣 0
+          ∶ 𝜆 ⇓ ⇑ 𝑣 0
+          ∶ (x ∶ A ⊃ x ∶ A)
+  E2 = 𝝀³ ⬇³ ⬆³ 𝒗 𝟎
+
+  E2a : ∀{x A}
+      → ⊩ 𝜆² 𝑣 0
+          ∶ 𝜆 𝑣 0
+          ∶ (x ∶ A ⊃ x ∶ A)
+  E2a = 𝝀³ 𝒗 𝟎
+
+
+-- --------------------------------------------------------------------------
+--
+-- Quotation
+
+
+quot : ∀{B Γ} → Γ ⊢ B → Tm
+quot (✹ⁿ_ {n} 𝒟)       = ✴[ suc n ] quot 𝒟
+quot (𝒗_ {x = x} i)    = 𝑣 x
+quot (𝝀ⁿ_ {n} 𝒟)       = 𝜆[ suc n ] quot 𝒟
+quot (_∙ⁿ_ {n} 𝒟 𝒞)    = quot 𝒟 ∘[ suc n ] quot 𝒞
+quot (𝒑ⁿ⟨_,_⟩ {n} 𝒟 𝒞) = 𝑝[ suc n ]⟨ quot 𝒟 , quot 𝒞 ⟩
+quot (𝝅₀ⁿ_ {n} 𝒟)      = 𝜋₀[ suc n ] quot 𝒟
+quot (𝝅₁ⁿ_ {n} 𝒟)      = 𝜋₁[ suc n ] quot 𝒟
+quot (⬆ⁿ_ {n} 𝒟)       = ⇑[ suc n ] quot 𝒟
+quot (⬇ⁿ_ {n} 𝒟)       = ⇓[ suc n ] quot 𝒟
+
+
+-- --------------------------------------------------------------------------
+--
+-- Internalisation (theorem 1, p. 29 [1]; lemma 5.4, pp. 9–10 [2])
+
+
+-- A , A₂ , … , Aₘ ⇒
+--   x ∶ A , x₂ ∶ A₂ , … , xₘ ∶ Aₘ
+prefix : Cx → Cx
+prefix ∅               = ∅
+prefix (Γ , ⟨ n , A ⟩) = prefix Γ , ⟨ suc n , A ⟩
+
+
+-- yₙ ∶ yₙ₋₁ ∶ … ∶ y ∶ A⁰ₖ ∈ A , A₂ , … , Aₘ ⇒
+--   xₖ ∶ yₙ ∶ yₙ₋₁ ∶ … ∶ y ∶ A⁰ₖ ∈ x ∶ A, x₂ ∶ A₂ , … , xₘ ∶ Aₘ
+int∈ : ∀{n x A Γ}
+    → ⟨ n , A ⟩ ∈[ x ] Γ
+    → ⟨ suc n , A ⟩ ∈[ x ] prefix Γ
+int∈ 𝐙     = 𝐙
+int∈ (𝐒 i) = 𝐒 (int∈ i)
+
+
+-- A , A₂ , … , Aₘ ⊢ B ⇒
+--   x ∶ A , x₂ ∶ A₂ , … xₘ ∶ Aₘ ⊢ t (x , x₂ , … , xₘ) ∶ B
+int⊢ : ∀{B Γ}
+    → (𝒟 : Γ ⊢ B)
+    → prefix Γ ⊢ quot 𝒟 ∶ B
+
+int⊢ (✹ⁿ_ {𝐭 = 𝐭} 𝒟) =
+    ✹ⁿ_ {𝐭 = quot 𝒟 ∷ 𝐭} (int⊢ 𝒟)
+
+int⊢ (𝒗 i) =
+    𝒗 int∈ i
+
+int⊢ (𝝀ⁿ_ {𝐭 = 𝐭} 𝒟) =
+    𝝀ⁿ_ {𝐭 = quot 𝒟 ∷ 𝐭} (int⊢ 𝒟)
+
+int⊢ (_∙ⁿ_ {𝐭 = 𝐭} {𝐬 = 𝐬} 𝒟 𝒞) =
+    _∙ⁿ_ {𝐭 = quot 𝒟 ∷ 𝐭} {𝐬 = quot 𝒞 ∷ 𝐬} (int⊢ 𝒟) (int⊢ 𝒞)
+
+int⊢ (𝒑ⁿ⟨_,_⟩ {𝐭 = 𝐭} {𝐬 = 𝐬} 𝒟 𝒞) =
+    𝒑ⁿ⟨_,_⟩ {𝐭 = quot 𝒟 ∷ 𝐭} {𝐬 = quot 𝒞 ∷ 𝐬} (int⊢ 𝒟) (int⊢ 𝒞)
+
+int⊢ (𝝅₀ⁿ_ {𝐭 = 𝐭} 𝒟) =
+    𝝅₀ⁿ_ {𝐭 = quot 𝒟 ∷ 𝐭} (int⊢ 𝒟)
+
+int⊢ (𝝅₁ⁿ_ {𝐭 = 𝐭} 𝒟) =
+    𝝅₁ⁿ_ {𝐭 = quot 𝒟 ∷ 𝐭} (int⊢ 𝒟)
+
+int⊢ (⬆ⁿ_ {𝐭 = 𝐭} 𝒟) =
+    ⬆ⁿ_ {𝐭 = quot 𝒟 ∷ 𝐭} (int⊢ 𝒟)
+
+int⊢ (⬇ⁿ_ {𝐭 = 𝐭} 𝒟) =
+    ⬇ⁿ_ {𝐭 = quot 𝒟 ∷ 𝐭} (int⊢ 𝒟)
+
+
+-- --------------------------------------------------------------------------
+--
+-- Weakening
+
+
+wk∈ : ∀{x A Δ}
+    → (Γ : Cx)    → A ∈[ x ] (∅ „ Γ)
+    → A ∈[ x ] (Δ „ Γ)
+wk∈ ∅       ()
+wk∈ (Γ , A) 𝐙     = 𝐙
+wk∈ (Γ , A) (𝐒 i) = 𝐒 (wk∈ Γ i)
+
+
+wk⊢ : ∀{A Δ}
+    → (Γ : Cx)    → ∅ „ Γ ⊢ A
+    → Δ „ Γ ⊢ A
+
+wk⊢ Γ (✹ⁿ_ {𝐭 = 𝐭} 𝒟) =
+    ✹ⁿ_ {𝐭 = 𝐭} (wk⊢ Γ 𝒟)
+
+wk⊢ Γ (𝒗 i) =
+    𝒗 wk∈ Γ i
+
+wk⊢ Γ (𝝀ⁿ_ {n} {𝐭} {A} 𝒟) =
+    𝝀ⁿ_ {𝐭 = 𝐭} (wk⊢ (Γ , ⟨ n , A ⟩) 𝒟)
+
+wk⊢ Γ (_∙ⁿ_ {𝐭 = 𝐭} {𝐬 = 𝐬} 𝒟 𝒞) =
+    _∙ⁿ_ {𝐭 = 𝐭} {𝐬} (wk⊢ Γ 𝒟) (wk⊢ Γ 𝒞)
+
+wk⊢ Γ (𝒑ⁿ⟨_,_⟩ {𝐭 = 𝐭} {𝐬 = 𝐬} 𝒟 𝒞) =
+    𝒑ⁿ⟨_,_⟩ {𝐭 = 𝐭} {𝐬} (wk⊢ Γ 𝒟) (wk⊢ Γ 𝒞)
+
+wk⊢ Γ (𝝅₀ⁿ_ {𝐭 = 𝐭} 𝒟) =
+    𝝅₀ⁿ_ {𝐭 = 𝐭} (wk⊢ Γ 𝒟)
+
+wk⊢ Γ (𝝅₁ⁿ_ {𝐭 = 𝐭} 𝒟) =
+    𝝅₁ⁿ_ {𝐭 = 𝐭} (wk⊢ Γ 𝒟)
+
+wk⊢ Γ (⬆ⁿ_ {𝐭 = 𝐭} 𝒟) =
+    ⬆ⁿ_ {𝐭 = 𝐭} (wk⊢ Γ 𝒟)
+
+wk⊢ Γ (⬇ⁿ_ {𝐭 = 𝐭} 𝒟) =
+    ⬇ⁿ_ {𝐭 = 𝐭} (wk⊢ Γ 𝒟)
+
+
+-- --------------------------------------------------------------------------
+--
+-- Constructive necessitation (corollary 5.5, p. 10 [2])
+
+
+nec : ∀{A}
+    → (𝒟 : ∅ ⊢ A)
+    → ⊩ quot 𝒟 ∶ A
+nec 𝒟 = wk⊢ ∅ (int⊢ 𝒟)
+
+
+-- --------------------------------------------------------------------------
+--
+-- Example necessitated terms at levels 2, 3, and 4
+
+
+module NecExample where
+  -- S4: □ (A ⊃ A)
+  I² : ∀{A}
+      → ⊩ 𝜆 𝑣 0
+          ∶ (A ⊃ A)
+  I² = nec SKICombinators.I
+
+  -- S4: □ □ (A ⊃ A)
+  I³ : ∀{A}
+      → ⊩ 𝜆² 𝑣 0
+          ∶ 𝜆 𝑣 0
+          ∶ (A ⊃ A)
+  I³ = nec I²
+
+  -- S4: □ □ □ (A ⊃ A)
+  I⁴ : ∀{A}
+      → ⊩ 𝜆³ 𝑣 0
+          ∶ 𝜆² 𝑣 0
+          ∶ 𝜆 𝑣 0
+          ∶ (A ⊃ A)
+  I⁴ = nec I³
+
+
+  -- S4: □ (A ⊃ B ⊃ A)
+  K² : ∀{A B}
+      → ⊩ 𝜆 𝜆 𝑣 1
+          ∶ (A ⊃ B ⊃ A)
+  K² = nec SKICombinators.K
+
+  -- S4: □ □ (A ⊃ B ⊃ A)
+  K³ : ∀{A B}
+      → ⊩ 𝜆² 𝜆² 𝑣 1
+          ∶ 𝜆 𝜆 𝑣 1
+          ∶ (A ⊃ B ⊃ A)
+  K³ = nec K²
+
+  -- S4: □ □ □ (A ⊃ B ⊃ A)
+  K⁴ : ∀{A B}
+      → ⊩ 𝜆³ 𝜆³ 𝑣 1
+          ∶ 𝜆² 𝜆² 𝑣 1
+          ∶ 𝜆 𝜆 𝑣 1
+          ∶ (A ⊃ B ⊃ A)
+  K⁴ = nec K³
+
+
+  -- S4: □ ((A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C)
+  S² : ∀{A B C}
+      → ⊩ 𝜆 𝜆 𝜆 (𝑣 2 ∘ 𝑣 0) ∘ (𝑣 1 ∘ 𝑣 0)
+          ∶ ((A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C)
+  S² = nec SKICombinators.S
+
+  -- S4: □ □ ((A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C)
+  S³ : ∀{A B C}
+      → ⊩ 𝜆² 𝜆² 𝜆² (𝑣 2 ∘² 𝑣 0) ∘² (𝑣 1 ∘² 𝑣 0)
+          ∶ 𝜆 𝜆 𝜆 (𝑣 2 ∘ 𝑣 0) ∘ (𝑣 1 ∘ 𝑣 0)
+          ∶ ((A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C)
+  S³ = nec S²
+
+  -- S4: □ □ □ ((A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C)
+  S⁴ : ∀{A B C}
+      → ⊩ 𝜆³ 𝜆³ 𝜆³ (𝑣 2 ∘³ 𝑣 0) ∘³ (𝑣 1 ∘³ 𝑣 0)
+          ∶ 𝜆² 𝜆² 𝜆² (𝑣 2 ∘² 𝑣 0) ∘² (𝑣 1 ∘² 𝑣 0)
+          ∶ 𝜆 𝜆 𝜆 (𝑣 2 ∘ 𝑣 0) ∘ (𝑣 1 ∘ 𝑣 0)
+          ∶ ((A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C)
+  S⁴ = nec S³
+
+
+
+
+
+module Negation where
+  E1 : ∀{A}
+      → ⊩ ⊥ ⊃ A
+  E1 = 𝝀 ✹ 𝒗 𝟎
+
+  E1² : ∀{A}
+      → ⊩ 𝜆 ✴ 𝑣 0
+          ∶ (⊥ ⊃ A)
+  E1² = 𝝀² ✹² 𝒗 𝟎
+
+
+  E2 : ∀{x y A}
+      → ⊩ x ∶ ⊥ ⊃ y ∶ A
+  E2 = 𝝀 {!✹² ?!}
+
+-}</a>
+</pre></body></html>
