@@ -12,7 +12,7 @@ With thanks to Darryl McAdams.
 
 -}
 
-module Ornaments where
+module A201602.Ornaments where
 
 open import Data.Fin using (Fin) renaming (zero to fzero ; suc to fsuc)
 open import Data.Nat using (ℕ ; zero ; suc)

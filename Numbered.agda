@@ -1,6 +1,6 @@
 {-# OPTIONS --allow-unsolved-metas #-}
 
-module Numbered where
+module A201602.Numbered where
 
 open import Data.Nat using (ℕ ; zero ; suc ; pred ; _⊔_ )
 

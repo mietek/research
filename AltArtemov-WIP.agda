@@ -50,7 +50,7 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
 -}
 
 
-module AltArtemov-WIP where
+module A201602.AltArtemov-WIP where
 
 open import Data.Nat using (ℕ ; zero ; suc)
 open import Data.Product using (_×_) renaming (_,_ to ⟨_,_⟩)

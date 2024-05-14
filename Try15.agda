@@ -32,7 +32,7 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
 -}
 
 
-module Try15 where
+module A201602.Try15 where
 
 open import Data.Nat
   using (ℕ ; zero ; suc)

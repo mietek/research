@@ -1,66 +1,66 @@
-module Everything where
+module A201602.Everything where
 
 
 --------------------------------------------------------------------------------
 
-import AltArtemov
-import AltArtemov-WIP
-import AltArtemov-WIP2
-import AltArtemov-WIP3
+import A201602.AltArtemov
+import A201602.AltArtemov-WIP
+import A201602.AltArtemov-WIP2
+import A201602.AltArtemov-WIP3
 
 
 --------------------------------------------------------------------------------
 
-import Try2
-import Try3
-import Try4
-import Try5
-import Try6
-import Try7
-import Try8
-import Try9
-import Try10
-import Try11
-import Try12
-import Try13
-import Try14
-import Try15
-import Try16
+import A201602.Try2
+import A201602.Try3
+import A201602.Try4
+import A201602.Try5
+import A201602.Try6
+import A201602.Try7
+import A201602.Try8
+import A201602.Try9
+import A201602.Try10
+import A201602.Try11
+import A201602.Try12
+import A201602.Try13
+import A201602.Try14
+import A201602.Try15
+import A201602.Try16
 
-import S4
-import AltArtemovS4
+import A201602.S4
+import A201602.AltArtemovS4
 
-import Atom
-import STLC
+import A201602.Atom
+import A201602.STLC
 
-import SimpleSTLC
+import A201602.SimpleSTLC
 
-import SimpleSTLC2
+import A201602.SimpleSTLC2
 
-import STLCVarSupply
+import A201602.STLCVarSupply
 
-import SystemT
+import A201602.SystemT
 
--- import Church -- TODO: Agda bug
+-- import A201602.Church -- TODO: Agda bug
 
-import DepCx
+import A201602.DepCx
 
-import LFFOL
+import A201602.LFFOL
 
-import Numbered
+import A201602.Numbered
 
-import Ornaments
+import A201602.Ornaments
 
-import PHOASSTLC
+import A201602.PHOASSTLC
 
-import RemovedProps
+import A201602.RemovedProps
 
-import Scratch-deduction
-import Scratch-encodings
-import Scratch-encodings2
-import Scratch-negation
-import Scratch-variables
-import Scratch-variables2
+import A201602.Scratch-deduction
+import A201602.Scratch-encodings
+import A201602.Scratch-encodings2
+import A201602.Scratch-negation
+import A201602.Scratch-variables
+import A201602.Scratch-variables2
 
 
 --------------------------------------------------------------------------------

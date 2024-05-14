@@ -1,4 +1,4 @@
-module Scratch-deduction where
+module A201602.Scratch-deduction where
 
 {-
 

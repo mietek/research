@@ -1,6 +1,6 @@
 {-# OPTIONS --allow-unsolved-metas #-}
 
-module Try3 where
+module A201602.Try3 where
 
 open import Data.Fin using (Fin; zero; suc; toℕ)
 open import Data.Nat using (ℕ; zero; suc; _+_)

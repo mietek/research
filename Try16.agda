@@ -26,7 +26,7 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
 -}
 
 
-module Try16 where
+module A201602.Try16 where
 
 open import Data.Nat
   using (ℕ ; zero ; suc)

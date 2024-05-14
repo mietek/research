@@ -1,6 +1,6 @@
 {-# OPTIONS --allow-unsolved-metas #-}
 
-module STLC where
+module A201602.STLC where
 
 open import Data.List using (List ; [] ; _∷_ ; [_])
 open import Data.List.Any using (any ; Any ; here ; there)
@@ -17,7 +17,7 @@ infixr 5 𝜆_
 infixr 1 _⊃_
 
 
-open import Atom using (Atom ; _≟_)
+open import A201602.Atom using (Atom ; _≟_)
 
 
 

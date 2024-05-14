@@ -17,7 +17,7 @@
 
 -}
 
-module Try6 where
+module A201602.Try6 where
 
 open import Data.Fin using (Fin; zero; suc; toℕ)
 open import Data.Nat using (ℕ; zero; suc; _+_)

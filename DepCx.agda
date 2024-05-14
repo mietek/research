@@ -1,4 +1,4 @@
-module DepCx (Hyp : Set) (⟦_⟧H : Hyp → Set) where
+module A201602.DepCx (Hyp : Set) (⟦_⟧H : Hyp → Set) where
   open import Data.Fin using (Fin ; zero ; suc)
   open import Data.Nat using (ℕ ; zero ; suc)
   open import Data.Product using (Σ ; _,_ ; proj₁ ; proj₂)

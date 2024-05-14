@@ -1,9 +1,9 @@
-module AltArtemovS4 where
+module A201602.AltArtemovS4 where
 
 open import Relation.Binary.PropositionalEquality using (_≡_ ; refl)
 
-import AltArtemov as 𝜆∞
-import S4
+import A201602.AltArtemov as 𝜆∞
+import A201602.S4 as S4
 
 
 forget : 𝜆∞.Ty → S4.Ty

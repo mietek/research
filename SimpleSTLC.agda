@@ -1,4 +1,4 @@
-module SimpleSTLC where
+module A201602.SimpleSTLC where
 
 open import Data.Nat using (ℕ ; zero ; suc ; _⊔_)
 open import Data.Product using (_×_) renaming (_,_ to ⟨_,_⟩)

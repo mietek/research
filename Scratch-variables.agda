@@ -1,4 +1,4 @@
-module Scratch-variables where
+module A201602.Scratch-variables where
 
 {-
 

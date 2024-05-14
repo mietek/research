@@ -1,4 +1,4 @@
-module Scratch-encodings where
+module A201602.Scratch-encodings where
 
 {-
 

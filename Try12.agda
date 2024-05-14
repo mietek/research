@@ -17,7 +17,7 @@
 
 -}
 
-module Try12 where
+module A201602.Try12 where
 
 open import Data.Nat using (ℕ; zero; suc; _+_)
 open import Data.Product using (Σ) renaming (_,_ to ⟨_,_⟩)

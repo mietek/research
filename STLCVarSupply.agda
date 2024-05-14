@@ -1,4 +1,4 @@
-module STLCVarSupply where
+module A201602.STLCVarSupply where
 
 
 module Stream where

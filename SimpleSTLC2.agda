@@ -1,6 +1,6 @@
 {-# OPTIONS --allow-unsolved-metas #-}
 
-module SimpleSTLC2 where
+module A201602.SimpleSTLC2 where
 
 open import Data.Empty renaming (⊥ to Ag-⊥ ; ⊥-elim to Ag-⊥-elim)
 open import Data.Fin using (Fin ; zero ; suc ; raise)

@@ -60,7 +60,7 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
 -}
 
 
-module AltArtemov-WIP3 where
+module A201602.AltArtemov-WIP3 where
 
 open import Data.Fin using (Fin ; zero ; suc)
 open import Data.Nat using (ℕ ; zero ; suc ; _+_)

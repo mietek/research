@@ -52,7 +52,7 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
 -}
 
 
-module AltArtemov-WIP2 where
+module A201602.AltArtemov-WIP2 where
 
 open import Data.Nat using (ℕ ; zero ; suc)
 open import Data.Product using (_×_) renaming (_,_ to ⟨_,_⟩)

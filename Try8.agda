@@ -1,6 +1,6 @@
 {-# OPTIONS --allow-unsolved-metas #-}
 
-module Try8 where
+module A201602.Try8 where
 
 {-
 

@@ -18,7 +18,7 @@
 
 -}
 
-module Try7 where
+module A201602.Try7 where
 
 open import Data.Nat using (ℕ; zero; suc; _+_)
 open import Data.Product using (Σ; _×_; _,_)
