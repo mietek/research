@@ -1,0 +1,164 @@
+module A201602.RemovedProps where
+
+{-
+
+-- --------------------------------------------------------------------------
+--
+-- Weakening
+
+
+data _≲_ : ∀{m m′} → Cx m → Cx m′ → Set where
+  base : ∅ ≲ ∅
+
+  drop : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
+       → Γ ≲ Γ′
+       → Γ ≲ (Γ′ , A)
+
+  keep : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
+       → Γ ≲ Γ′
+       → (Γ , A) ≲ (Γ′ , A)
+
+
+∅≲Γ : ∀{m} {Γ : Cx m} → ∅ ≲ Γ
+∅≲Γ {Γ = ∅}     = base
+∅≲Γ {Γ = Γ , A} = drop ∅≲Γ
+
+
+Γ≲Γ : ∀{m} {Γ : Cx m} → Γ ≲ Γ
+Γ≲Γ {Γ = ∅}     = base
+Γ≲Γ {Γ = Γ , A} = keep Γ≲Γ
+
+
+wk∈ : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
+    → Γ ≲ Γ′    → A ∈ Γ
+    → A ∈ Γ′
+wk∈ base     ()
+wk∈ (keep P) Z     = Z
+wk∈ (keep P) (S i) = S (wk∈ P i)
+wk∈ (drop P) i     = S (wk∈ P i)
+
+
+pwk∈ : ∀{A m m′ k} {Γ : Cx m} {Γ′ : Cx m′}
+     → Γ ≲ Γ′  → A ∈[ k ] Γ
+     → A ∈[ k ] Γ′
+pwk∈ base ()
+pwk∈ (drop P) Z = {!Z !}
+pwk∈ (drop P) (S i) = {!!}
+pwk∈ (keep P) i = {!!}
+
+
+wk⊢ : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
+    → Γ ≲ Γ′    → Γ ⊢ A
+    → Γ′ ⊢ A
+wk⊢ P (M𝑣 d)                   = M𝑣 (pwk∈ P d)
+wk⊢ P (M𝜆ⁿ  {𝐭 = 𝐭} D)         = M𝜆ⁿ  {𝐭 = 𝐭} (wk⊢ (keep P) D)
+wk⊢ P (M∘ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = M∘ⁿ  {𝐭 = 𝐭} {𝐬} (wk⊢ P Dₜ) (wk⊢ P Dₛ)
+wk⊢ P (M𝑝ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = M𝑝ⁿ  {𝐭 = 𝐭} {𝐬} (wk⊢ P Dₜ) (wk⊢ P Dₛ)
+wk⊢ P (M𝜋₀ⁿ {𝐭 = 𝐭} D)         = M𝜋₀ⁿ {𝐭 = 𝐭} (wk⊢ P D)
+wk⊢ P (M𝜋₁ⁿ {𝐭 = 𝐭} D)         = M𝜋₁ⁿ {𝐭 = 𝐭} (wk⊢ P D)
+wk⊢ P (M⇑ⁿ  {𝐭 = 𝐭} D)         = M⇑ⁿ  {𝐭 = 𝐭} (wk⊢ P D)
+wk⊢ P (M⇓ⁿ  {𝐭 = 𝐭} D)         = M⇓ⁿ  {𝐭 = 𝐭} (wk⊢ P D)
+
+
+-- --------------------------------------------------------------------------
+--
+-- Contraction
+
+
+data _≳_ : ∀{m m′} → Cx m → Cx m′ → Set where
+  base : ∅ ≳ ∅
+
+  once : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
+       → Γ ≳ Γ′
+       → (Γ , A) ≳ (Γ′ , A)
+
+  more : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
+       → Γ ≳ Γ′
+       → (Γ , A , A) ≳ (Γ′ , A)
+
+
+{-
+cn∈ : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
+    → Γ ≳ Γ′    → A ∈ Γ
+    → A ∈ Γ′
+cn∈ base     ()
+cn∈ (once P) Z     = Z
+cn∈ (once P) (S i) = S (cn∈ P i)
+cn∈ (more P) Z     = Z
+cn∈ (more P) (S i) = cn∈ (once P) i
+
+postulate
+  pcn∈ : ∀{n A m m′} {Γ : Cx m} {Γ′ : Cx m′}
+      → Γ ≳ Γ′  → (i : ⟨ n , A ⟩ ∈ Γ)
+      → Γ′ ⊢ 𝑣[ n ] (toℕ i) ∷ A
+-}
+
+
+cn⊢ : ∀{A m m′} {Γ : Cx m} {Γ′ : Cx m′}
+    → Γ ≳ Γ′    → Γ ⊢ A
+    → Γ′ ⊢ A
+cn⊢ P (M𝑣 i)                   = {!!}
+cn⊢ P (M𝜆ⁿ  {𝐭 = 𝐭} D)         = M𝜆ⁿ  {𝐭 = 𝐭} (cn⊢ (once P) D)
+cn⊢ P (M∘ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = M∘ⁿ  {𝐭 = 𝐭} {𝐬} (cn⊢ P Dₜ) (cn⊢ P Dₛ)
+cn⊢ P (M𝑝ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = M𝑝ⁿ  {𝐭 = 𝐭} {𝐬} (cn⊢ P Dₜ) (cn⊢ P Dₛ)
+cn⊢ P (M𝜋₀ⁿ {𝐭 = 𝐭} D)         = M𝜋₀ⁿ {𝐭 = 𝐭} (cn⊢ P D)
+cn⊢ P (M𝜋₁ⁿ {𝐭 = 𝐭} D)         = M𝜋₁ⁿ {𝐭 = 𝐭} (cn⊢ P D)
+cn⊢ P (M⇑ⁿ  {𝐭 = 𝐭} D)         = M⇑ⁿ  {𝐭 = 𝐭} (cn⊢ P D)
+cn⊢ P (M⇓ⁿ  {𝐭 = 𝐭} D)         = M⇓ⁿ  {𝐭 = 𝐭} (cn⊢ P D)
+
+
+-- --------------------------------------------------------------------------
+--
+-- Exchange
+
+
+data _≈_ : ∀{m} → Cx m → Cx m → Set where
+  base : ∅ ≈ ∅
+
+  just : ∀{A m} {Γ Γ′ : Cx m}
+       → Γ ≈ Γ′
+       → (Γ , A) ≈ (Γ′ , A)
+
+  same : ∀{A B m} {Γ Γ′ : Cx m}
+       → Γ ≈ Γ′
+       → (Γ , A , B) ≈ (Γ′ , A , B)
+
+  diff : ∀{A B m} {Γ Γ′ : Cx m}
+       → Γ ≈ Γ′
+       → (Γ , B , A) ≈ (Γ′ , A , B)
+
+
+{-
+ex∈ : ∀{A m} {Γ Γ′ : Cx m}
+    → Γ ≈ Γ′    → A ∈ Γ
+    → A ∈ Γ′
+ex∈ base     ()
+ex∈ (just P) Z         = Z
+ex∈ (just P) (S i)     = S (ex∈ P i)
+ex∈ (same P) Z         = Z
+ex∈ (same P) (S Z)     = S Z
+ex∈ (same P) (S (S i)) = S (S (ex∈ P i))
+ex∈ (diff P) Z         = S Z
+ex∈ (diff P) (S Z)     = Z
+ex∈ (diff P) (S (S i)) = S (S (ex∈ P i))
+
+postulate
+  pex∈ : ∀{n A m} {Γ Γ′ : Cx m}
+      → Γ ≈ Γ′  → (i : ⟨ n , A ⟩ ∈ Γ)
+      → Γ′ ⊢ 𝑣[ n ] (toℕ i) ∷ A
+-}
+
+
+ex⊢ : ∀{A m} {Γ Γ′ : Cx m}
+    → Γ ≈ Γ′    → Γ ⊢ A
+    → Γ′ ⊢ A
+ex⊢ P (M𝑣 i)                   = {!!}
+ex⊢ P (M𝜆ⁿ  {𝐭 = 𝐭} D)         = M𝜆ⁿ  {𝐭 = 𝐭} (ex⊢ (just P) D)
+ex⊢ P (M∘ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = M∘ⁿ  {𝐭 = 𝐭} {𝐬} (ex⊢ P Dₜ) (ex⊢ P Dₛ)
+ex⊢ P (M𝑝ⁿ  {𝐭 = 𝐭} {𝐬} Dₜ Dₛ) = M𝑝ⁿ  {𝐭 = 𝐭} {𝐬} (ex⊢ P Dₜ) (ex⊢ P Dₛ)
+ex⊢ P (M𝜋₀ⁿ {𝐭 = 𝐭} D)         = M𝜋₀ⁿ {𝐭 = 𝐭} (ex⊢ P D)
+ex⊢ P (M𝜋₁ⁿ {𝐭 = 𝐭} D)         = M𝜋₁ⁿ {𝐭 = 𝐭} (ex⊢ P D)
+ex⊢ P (M⇑ⁿ  {𝐭 = 𝐭} D)         = M⇑ⁿ  {𝐭 = 𝐭} (ex⊢ P D)
+ex⊢ P (M⇓ⁿ  {𝐭 = 𝐭} D)         = M⇓ⁿ  {𝐭 = 𝐭} (ex⊢ P D)
+
+-}
