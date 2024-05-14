@@ -1,10 +1,12 @@
 module DepCx (Hyp : Set) (⟦_⟧H : Hyp → Set) where
+  open import Data.Fin using (Fin ; zero ; suc)
+  open import Data.Nat using (ℕ ; zero ; suc)
   open import Data.Product using (Σ ; _,_ ; proj₁ ; proj₂)
   open import Data.Unit renaming (⊤ to Unit)
   open import Function using () renaming (_∘_ to _○_)
 
   mutual
-    infixl 2 _,_
+    infixr 4  _,_
     data DepCx : Set where
       ∅   : DepCx
       _,_ : (Γ : DepCx) → (F : ⟦ Γ ⟧C → Hyp) → DepCx
@@ -13,7 +15,7 @@ module DepCx (Hyp : Set) (⟦_⟧H : Hyp → Set) where
     ⟦ ∅ ⟧C     = Unit
     ⟦ Γ , F ⟧C = Σ ⟦ Γ ⟧C (λ γ → ⟦ F γ ⟧H)
 
-  len : DepCx → Nat
+  len : DepCx → ℕ
   len ∅       = zero
   len (Γ , F) = suc (len Γ)
 

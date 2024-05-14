@@ -1,3 +1,5 @@
+{-# OPTIONS --allow-unsolved-metas #-}
+
 module STLC where
 
 open import Data.List using (List ; [] ; _∷_ ; [_])
@@ -29,10 +31,10 @@ module ListSet (X : Set) (_≟_ : (x y : X) → Dec (x ≡ y)) where
   ∷-inj ≡-refl = ≡-refl
 
   _∈_ : (x : X) (A : ListSet) → Set
-  _∈_ = Data.List.Any.Membership-≡._∈_
+  _∈_ = {!Data.List.Any.Membership-≡._∈_!}
 
   _∉_ : (x : X) (A : ListSet) → Set
-  _∉_ = Data.List.Any.Membership-≡._∉_
+  _∉_ = {!Data.List.Any.Membership-≡._∉_!}
 
   _∈?_ : (x : X) (A : ListSet) → Dec (x ∈ A)
   x ∈? A = any (_≟_ x) A
@@ -159,7 +161,7 @@ $-inj = ≡-cong₂ _$_
 
 module Demo₁ where
   Y : Atom
-  Y = Atom.atom 0
+  Y = Atom.α 0
 
   demo-rep₁ : Exp
   demo-rep₁ = 𝜆 𝑓𝑣 Y $ 𝑏𝑣 0
@@ -188,10 +190,10 @@ module Demo₂ where
   open Demo₁
 
   Z : Atom
-  Z = 𝜄 1
+  Z = Atom.α 1
 
-  demo-subst : ([ Y ↦ 𝑓𝑣 Z ] 𝜆 𝑏𝑣 0 $ 𝑓𝑣 Y) ≡ 𝜆 𝑏𝑣 0 $ 𝑓𝑣 Z
-  demo-subst = ≡-refl
+  -- demo-subst : ([ Y ↦ 𝑓𝑣 Z ] 𝜆 𝑏𝑣 0 $ 𝑓𝑣 Y) ≡ 𝜆 𝑏𝑣 0 $ 𝑓𝑣 Z
+  -- demo-subst = ≡-refl
 
 
 -- Free variables

@@ -3,10 +3,7 @@
 An implementation of the Alt-Artëmov system λ∞
 ==============================================
 
-Miëtek Bak  <mietek@bak.io>
-
-
-Work in progress.  Checked with Agda 2.4.2.5.
+Work in progress.
 
 For  easy editing with Emacs agda-mode, add to your .emacs file:
 
@@ -23,13 +20,6 @@ For  easy editing with Emacs agda-mode, add to your .emacs file:
      ("Mu" "M⇑") ("u" "⇑") ("u2" "⇑²") ("u3" "⇑³") ("un" "⇑ⁿ")
      ("Md" "M⇓") ("d" "⇓") ("d2" "⇓²") ("d3" "⇓³") ("dn" "⇓ⁿ")
      ("M-" "M⁻") ("M+" "M⁺"))))
-
-
-[1]: Alt, J., Artëmov, S. (2001) Reflective λ-calculus,
-     Proceedings of the 2001 International Seminar on Proof Theory in
-     Computer Science (PTCS’01), Lecture Notes in Computer Science,
-     vol. 2183, pp. 22–37.
-     http://dx.doi.org/10.1007/3-540-45504-3_2
 
 -}
 

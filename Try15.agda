@@ -3,10 +3,7 @@
 An implementation of the Alt-Artëmov system λ∞
 ==============================================
 
-Miëtek Bak  <mietek@bak.io>
-
-
-Work in progress.  Checked with Agda 2.4.2.5.
+Work in progress.
 
 For easy editing with Emacs agda-mode, add to your .emacs file:
 
@@ -31,17 +28,6 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
      ("m0" "𝟎") ("m1" "𝟏") ("m2" "𝟐") ("m3" "𝟑") ("m4" "𝟒")
      ("m5" "𝟓") ("m6" "𝟔") ("m7" "𝟕") ("m8" "𝟖") ("m9" "𝟗")
      ("s" "𝐬") ("t" "𝐭") ("x" "𝐱") ("y" "𝐲"))))
-
-
-[1]: Alt, J., Artëmov, S. (2001) Reflective λ-calculus,
-     Proceedings of the 2001 International Seminar on Proof Theory in
-     Computer Science (PTCS’01), Lecture Notes in Computer Science,
-     vol. 2183, pp. 22–37.
-     http://dx.doi.org/10.1007/3-540-45504-3_2
-
-[2]: Artëmov, S. (2001) Explicit provability and constructive semantics
-     Bulletin of Symbolic Logic, vol. 7, no. 1, pp. 1–36.
-     http://dx.doi.org/10.2307/2687821
 
 -}
 
@@ -133,7 +119,7 @@ mutual
   -- Type assertion constructor
   data TyA : Set where
     -- Explicit provability
-    _∋_ : ∀{Γ} → (A : Ty) → (t : Tm Γ) → TyA
+    -- _∋_ : ∀{Γ} → (A : Ty) → (t : Tm Γ) → TyA
 
 
 -- Hypotheses

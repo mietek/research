@@ -1,12 +1,13 @@
+module Scratch-negation where
+
+{-
+
 {-
 
 An implementation of the Alt-Artëmov system λ∞
 ==============================================
 
-Miëtek Bak  <mietek@bak.io>
-
-
-Work in progress.  Checked with Agda 2.4.2.5.
+Work in progress.
 
 For easy editing with Emacs agda-mode, add to your .emacs file:
 
@@ -40,17 +41,6 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
      ("ss" "𝐬") ("ts" "𝐭") ("xs" "𝐱") ("ys" "𝐲")
      ("C" "𝒞") ("D" "𝒟")
      ("N" "ℕ"))))
-
-
-[1]: Alt, J., Artëmov, S. (2001) Reflective λ-calculus.
-     Proceedings of the 2001 International Seminar on Proof Theory in
-     Computer Science (PTCS’01), Lecture Notes in Computer Science,
-     vol. 2183, pp. 22–37.
-     http://dx.doi.org/10.1007/3-540-45504-3_2
-
-[2]: Artëmov, S. (2001) Explicit provability and constructive semantics.
-     Bulletin of Symbolic Logic, vol. 7, no. 1, pp. 1–36.
-     http://dx.doi.org/10.2307/2687821
 
 -}
 
@@ -1053,3 +1043,5 @@ module Negation where
   E2 : ∀{x y A}
       → ⊩ x ∶ ⊥ ⊃ y ∶ A
   E2 = 𝝀 {!✹² ?!}
+
+-}

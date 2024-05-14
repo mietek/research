@@ -44,4 +44,4 @@ a ⊕ b = if a then ¬ b else b
 booleq? : Bool → Bool → Bool
 booleq? a b = if a then a ∧ b else ¬ (a ∧ b)
 
-zero?
+-- zero?

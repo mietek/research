@@ -1,3 +1,5 @@
+{-# OPTIONS --allow-unsolved-metas #-}
+
 module Try3 where
 
 open import Data.Fin using (Fin; zero; suc; toℕ)

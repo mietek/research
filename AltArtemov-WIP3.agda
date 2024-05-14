@@ -1,18 +1,12 @@
+{-# OPTIONS --allow-unsolved-metas #-}
+
 {-
 
 An extension of reflective λ-calculus
 =====================================
 
-Miëtek Bak  <mietek@bak.io>
-
-
 A work-in-progress implementation of the Alt-Artëmov system λ∞,
 extended with disjunction and falsehood.
-
-See a summary of the basic and extended system:
-https://www.dropbox.com/s/wz9ktvsauhkywxc/2016-03-28-extension.pdf
-
-Checked with Agda 2.4.2.5.
 
 For easy editing with Emacs agda-mode, add to your .emacs file:
 
@@ -62,17 +56,6 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
      ("ss" "𝐬") ("ts" "𝐭") ("us" "𝐮") ("xs" "𝐱") ("ys" "𝐲") ("zs" "𝐳")
      ("C" "𝒞") ("D" "𝒟") ("E" "ℰ")
      ("N" "ℕ"))))
-
-
-[1]: Alt, J., Artëmov, S. (2001) Reflective λ-calculus.
-     Proceedings of the 2001 International Seminar on Proof Theory in
-     Computer Science (PTCS’01), Lecture Notes in Computer Science,
-     vol. 2183, pp. 22–37.
-     http://dx.doi.org/10.1007/3-540-45504-3_2
-
-[2]: Artëmov, S. (2001) Explicit provability and constructive semantics.
-     Bulletin of Symbolic Logic, vol. 7, no. 1, pp. 1–36.
-     http://dx.doi.org/10.2307/2687821
 
 -}
 

@@ -21,6 +21,6 @@ baz : ∀{n m} → ¬ n ≡ m → ¬ α n ≡ α m
 baz n≢m = λ αn≡αm → contradiction (bar αn≡αm) n≢m
 
 _≟_ : Decidable {A = Atom} _≡_
-α n ≟ α m with n Nat.≟ m
-...          | yes n≡m = yes (foo n≡m)
-...          | no n≢m  = no (baz n≢m)
+(α n) ≟ (α m) with n Nat.≟ m
+...              | yes n≡m = yes (foo n≡m)
+...              | no n≢m  = no (baz n≢m)

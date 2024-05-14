@@ -1,18 +1,12 @@
+{-# OPTIONS --allow-unsolved-metas #-}
+
 {-
 
 An extension of reflective λ-calculus
 =====================================
 
-Miëtek Bak  <mietek@bak.io>
-
-
 A work-in-progress implementation of the Alt-Artëmov system λ∞,
 extended with disjunction and falsehood.
-
-See a summary of the basic and extended system:
-https://www.dropbox.com/s/wz9ktvsauhkywxc/2016-03-28-extension.pdf
-
-Checked with Agda 2.4.2.5.
 
 For easy editing with Emacs agda-mode, add to your .emacs file:
 
@@ -54,17 +48,6 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
      ("ss" "𝐬") ("ts" "𝐭") ("us" "𝐮") ("xs" "𝐱") ("ys" "𝐲") ("zs" "𝐳")
      ("C" "𝒞") ("D" "𝒟") ("E" "ℰ") ("F" "ℱ") ("I" "ℐ") ("X" "𝒳")
      ("N" "ℕ"))))
-
-
-[1]: Alt, J., Artëmov, S. (2001) Reflective λ-calculus.
-     Proceedings of the 2001 International Seminar on Proof Theory in
-     Computer Science (PTCS’01), Lecture Notes in Computer Science,
-     vol. 2183, pp. 22–37.
-     http://dx.doi.org/10.1007/3-540-45504-3_2
-
-[2]: Artëmov, S. (2001) Explicit provability and constructive semantics.
-     Bulletin of Symbolic Logic, vol. 7, no. 1, pp. 1–36.
-     http://dx.doi.org/10.2307/2687821
 
 -}
 
@@ -480,7 +463,7 @@ data _⊢_ (Γ : Cx) : Ty → Set where
   -- Abstraction (⊃I) at level n
   𝝀ⁿ_ : ∀{n} {𝐭 : Tms n} {A B}
       → Γ , A ⊢ 𝐭 ∵ B
-      → Γ ⊢ 𝜆ⁿ 𝐭 ∵ (A ⊃ B)
+      → Γ ⊢ {!𝜆ⁿ 𝐭 ∵ (A ⊃ B)!}
 
   -- Application (⊃E) at level n
   _∙ⁿ_ : ∀{n} {𝐭 𝐬 : Tms n} {A B}
@@ -649,7 +632,7 @@ _∙_ = _∙ⁿ_ {𝐭 = []} {𝐬 = []}
 infixr 5 𝝀²_
 𝝀²_ : ∀{t A B Γ}
     → Γ , A ⊢ t ∶ B
-    → Γ ⊢ 𝜆 t ∶ (A ⊃ B)
+    → Γ ⊢ {!𝜆 t ∶ (A ⊃ B)!}
 𝝀²_ {t} =
     𝝀ⁿ_ {𝐭 = t ∷ []}
 
@@ -730,7 +713,7 @@ _∙²_ {t} {s} =
 infixr 5 𝝀³_
 𝝀³_ : ∀{t₂ t A B Γ}
     → Γ , A ⊢ t₂ ∶ t ∶ B
-    → Γ ⊢ 𝜆² t₂ ∶ 𝜆 t ∶ (A ⊃ B)
+    → Γ ⊢ {!𝜆² t₂ ∶ 𝜆 t ∶ (A ⊃ B)!}
 𝝀³_ {t₂} {t} =
     𝝀ⁿ_ {𝐭 = t₂ ∷ t ∷ []}
 
@@ -811,7 +794,7 @@ _∙³_ {t₂} {t} {s₂} {s} =
 infixr 5 𝝀⁴_
 𝝀⁴_ : ∀{t₃ t₂ t A B Γ}
     → Γ , A ⊢ t₃ ∶ t₂ ∶ t ∶ B
-    → Γ ⊢ 𝜆³ t₃ ∶ 𝜆² t₂ ∶ 𝜆 t ∶ (A ⊃ B)
+    → Γ ⊢ {!𝜆³ t₃ ∶ 𝜆² t₂ ∶ 𝜆 t ∶ (A ⊃ B)!}
 𝝀⁴_ {t₃} {t₂} {t} =
     𝝀ⁿ_ {𝐭 = t₃ ∷ t₂ ∷ t ∷ []}
 

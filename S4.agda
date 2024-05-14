@@ -3,10 +3,7 @@
 An implementation of the Pfenning-Davies reconstruction of S4
 =============================================================
 
-Miëtek Bak  <mietek@bak.io>
-
-
-Work in progress.  Checked with Agda 2.4.2.5.
+Work in progress.
 
 For easy editing with Emacs agda-mode, add to your .emacs file:
 
@@ -25,11 +22,6 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
      ("m0" "𝟎") ("m1" "𝟏") ("m2" "𝟐") ("m3" "𝟑") ("m4" "𝟒")
      ("C" "𝒞") ("D" "𝒟")
      ("N" "ℕ"))))
-
-
-[1]: Pfenning, F., Davies, R. (2001) A judgmental reconstruction of modal logic.
-     Mathematical Structures in Computer Science, vol. 11, no. 4, pp. 511–540.
-     http://dx.doi.org/10.1017/S0960129501003322
 
 -}
 

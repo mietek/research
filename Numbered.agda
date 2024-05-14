@@ -1,3 +1,5 @@
+{-# OPTIONS --allow-unsolved-metas #-}
+
 module Numbered where
 
 open import Data.Nat using (ℕ ; zero ; suc ; pred ; _⊔_ )

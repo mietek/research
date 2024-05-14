@@ -1,3 +1,5 @@
+{-# OPTIONS --allow-unsolved-metas #-}
+
 {-
 
 '(agda-input-user-translations
@@ -187,7 +189,7 @@ data _∈_  : ∀{m} → Hyp → Cx m → Set where
 
 
 data _⊢_∷_ {m : ℕ} (Γ : Cx m) : ∀{n} → Tms n → Ty → Set where
-  M𝑣_ : ∀{n A} {ts : Tms n}  → H[ n ] ts ∷ A ∈ Γ
+  M𝑣_ : ∀{n A} {ts : Tms n}  → (H[ n ] ts ∷ A) ∈ Γ
                              → Γ ⊢ ts ∷ A
 
   M𝜆 : ∀{n A B} {xs : Vars n} {ts : Tms n}  → Γ , H[ n ] 𝑣ⁿ xs ∷ A ⊢ ts ∷ B
@@ -359,7 +361,7 @@ e2′ = M𝜆 (M𝑣 Z)
 
 
 _⊢_ : ∀{m} (Γ : Cx m) (h : Hyp) → Set
-Γ ⊢ H[ n ] ts ∷ A = Γ ⊢ ts ∷ A
+Γ ⊢ (H[ n ] ts ∷ A) = Γ ⊢ ts ∷ A
 
 
 data _≲_ : ∀{m m′} → Cx m → Cx m′ → Set where

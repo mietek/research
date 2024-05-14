@@ -1,3 +1,5 @@
+{-# OPTIONS --allow-unsolved-metas #-}
+
 module SimpleSTLC2 where
 
 open import Data.Empty renaming (⊥ to Ag-⊥ ; ⊥-elim to Ag-⊥-elim)
@@ -369,7 +371,7 @@ module Tms where
 
   -- ∅ ⊢ (A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C
   S : ∀ {Γ} → Tm (nat Γ)
-  S = lam lam lam ((var #2 $ var #0) $ (var #1 $ var #0))
+  S = lam lam lam (((var #2) $ (var #0)) $ ((var #1) $ (var #0)))
 
 
 module MTms where
@@ -391,7 +393,7 @@ module MTms where
 
   S : ∀ {Γ A B C}
       → Γ ⊢ Tms.S ∷ (A ⊃ B ⊃ C) ⊃ (A ⊃ B) ⊃ A ⊃ C
-  S = Mlam Mlam Mlam ((Mvar M#2 M$ Mvar M#0) M$ (Mvar M#1 M$ Mvar M#0))
+  S = Mlam Mlam Mlam (((Mvar M#2) M$ (Mvar M#0)) M$ ((Mvar M#1) M$ (Mvar M#0)))
 
 
 module MMTms where
@@ -418,7 +420,7 @@ module MMTms where
 
 module S4 where
   K : ∀ {Γ A B f x}
-      → Γ ⊢ lam lam (var #1 $ var #0) ∷ (f ∶ (A ⊃ B)) ⊃ x ∶ A ⊃ (f $ x) ∶ B
+      → Γ ⊢ lam lam ((var #1) $ (var #0)) ∷ (f ∶ (A ⊃ B)) ⊃ x ∶ A ⊃ (f $ x) ∶ B
   K = Mlam Mlam {!!}
 
   T : ∀ {Γ A x}

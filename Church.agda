@@ -1,3 +1,5 @@
+{-# OPTIONS --allow-unsolved-metas #-}
+
 module Church where
 
 open import Data.Product using (Σ ; _,_ ; proj₁ ; proj₂ ; _×_)
@@ -56,35 +58,35 @@ module WTF where
     cons : A → List A → List A
 
 
-module OMG where
-  data Unit : Set where
-    unit : Unit
-⟨x ∈ X, a ∈ A x⟩ ∈ Σ X (X → A)
-  data ListTag : Set where
-    nil  : ListTag
-    cons : ListTag
+-- module OMG where
+--   data Unit : Set where
+--     unit : Unit
+-- ⟨x ∈ X, a ∈ A x⟩ ∈ Σ X (X → A)
+--   data ListTag : Set where
+--     nil  : ListTag
+--     cons : ListTag
 
---  List : Set → Set
---  List A = Σ ListTag (λ { nil → Unit ; cons → A × List A })
-
-
-{-module Foo where
-  data Unit : Set where
-    unit : Unit
-
-  data ListTag : Set where
-    nil  : ListTag
-    cons : ListTag
-
-  data Mu (F : Set → Set) : Set where
-    roll : F (Mu F) → Mu F
-
-  foo : Set → Set → ListTag → Set
-  List : Set → Set
-  foo A T nil = Unit
-  foo A T cons = A × T
-  List A = Mu (λ T → Σ ListTag (foo A T))-}
+-- --  List : Set → Set
+-- --  List A = Σ ListTag (λ { nil → Unit ; cons → A × List A })
 
 
-data mΣ {X : Set} (A : X → Set) : Set where
-     _,_ : (x₀ : X) → A x₀ → mΣ A
+-- {-module Foo where
+--   data Unit : Set where
+--     unit : Unit
+
+--   data ListTag : Set where
+--     nil  : ListTag
+--     cons : ListTag
+
+--   data Mu (F : Set → Set) : Set where
+--     roll : F (Mu F) → Mu F
+
+--   foo : Set → Set → ListTag → Set
+--   List : Set → Set
+--   foo A T nil = Unit
+--   foo A T cons = A × T
+--   List A = Mu (λ T → Σ ListTag (foo A T))-}
+
+
+-- data mΣ {X : Set} (A : X → Set) : Set where
+--      _,_ : (x₀ : X) → A x₀ → mΣ A

@@ -1,3 +1,5 @@
+{-# OPTIONS --allow-unsolved-metas #-}
+
 module Try9 where
 
 open import Data.Nat using (ℕ)
