@@ -11,7 +11,7 @@ import A201607.Common.Semantics
 import A201607.Common.UntypedContext
 
 
-
+--------------------------------------------------------------------------------
 
 -- Basic intuitionistic propositional calculus, without ∨ or ⊥.
 
@@ -20,17 +20,17 @@ import A201607.Common.UntypedContext
 import A201607.BasicIPC.Syntax.Common
 
 -- Hilbert-style formalisation of closed syntax.
-import A201607.BasicIPC.Syntax.ClosedHilbertSequential  -- Sequences of terms.
-import A201607.BasicIPC.Syntax.ClosedHilbert            -- Nested terms.
+import A201607.BasicIPC.Syntax.ClosedHilbertSequential                          -- Sequences of terms.
+import A201607.BasicIPC.Syntax.ClosedHilbert                                    -- Nested terms.
 
 -- Hilbert-style formalisation of syntax.
-import A201607.BasicIPC.Syntax.HilbertSequential        -- Sequences of terms.
-import A201607.BasicIPC.Syntax.Hilbert                  -- Nested terms.
+import A201607.BasicIPC.Syntax.HilbertSequential                                -- Sequences of terms.
+import A201607.BasicIPC.Syntax.Hilbert                                          -- Nested terms.
 
 -- Gentzen-style formalisation of syntax.
-import A201607.BasicIPC.Syntax.Gentzen                  -- Simple terms.
-import A201607.BasicIPC.Syntax.GentzenNormalForm        -- Normal forms and neutrals.
-import A201607.BasicIPC.Syntax.GentzenSpinalNormalForm  -- Normal forms, neutrals, and spines.
+import A201607.BasicIPC.Syntax.Gentzen                                          -- Simple terms.
+import A201607.BasicIPC.Syntax.GentzenNormalForm                                -- Normal forms and neutrals.
+import A201607.BasicIPC.Syntax.GentzenSpinalNormalForm                          -- Normal forms, neutrals, and spines.
 
 -- Translation between different formalisations of syntax.
 import A201607.BasicIPC.Syntax.Translation
@@ -40,25 +40,25 @@ import A201607.BasicIPC.Syntax.Translation
 import A201607.BasicIPC.Semantics.BasicTarski
 
 -- Tarski-style semantics with glueing for α and ▻, after Coquand-Dybjer.
-import A201607.BasicIPC.Semantics.TarskiGluedClosedImplicit    -- Implicit closed syntax.
-import A201607.BasicIPC.Semantics.TarskiGluedClosedHilbert     -- Hilbert-style closed syntax.
+import A201607.BasicIPC.Semantics.TarskiGluedClosedImplicit                     -- Implicit closed syntax.
+import A201607.BasicIPC.Semantics.TarskiGluedClosedHilbert                      -- Hilbert-style closed syntax.
 
 -- Tarski-style semantics with contexts as concrete worlds, and glueing for α and ▻.
-import A201607.BasicIPC.Semantics.TarskiConcreteGluedImplicit  -- Implicit syntax.
-import A201607.BasicIPC.Semantics.TarskiConcreteGluedHilbert   -- Hilbert-style syntax.
-import A201607.BasicIPC.Semantics.TarskiConcreteGluedGentzen   -- Gentzen-style syntax.
+import A201607.BasicIPC.Semantics.TarskiConcreteGluedImplicit                   -- Implicit syntax.
+import A201607.BasicIPC.Semantics.TarskiConcreteGluedHilbert                    -- Hilbert-style syntax.
+import A201607.BasicIPC.Semantics.TarskiConcreteGluedGentzen                    -- Gentzen-style syntax.
 
 -- Kripke-style semantics with contexts as concrete worlds, and glueing for α and ▻.
-import A201607.BasicIPC.Semantics.KripkeConcreteGluedImplicit  -- Implicit syntax.
-import A201607.BasicIPC.Semantics.KripkeConcreteGluedHilbert   -- Hilbert-style syntax.
-import A201607.BasicIPC.Semantics.KripkeConcreteGluedGentzen   -- Gentzen-style syntax.
+import A201607.BasicIPC.Semantics.KripkeConcreteGluedImplicit                   -- Implicit syntax.
+import A201607.BasicIPC.Semantics.KripkeConcreteGluedHilbert                    -- Hilbert-style syntax.
+import A201607.BasicIPC.Semantics.KripkeConcreteGluedGentzen                    -- Gentzen-style syntax.
 
 -- Kripke-style semantics with contexts as concrete worlds.
 import A201607.BasicIPC.Semantics.KripkeConcrete
 
 -- Kripke-style semantics with abstract worlds.
-import A201607.BasicIPC.Semantics.KripkeMcKinseyTarski         -- McKinsey-Tarski embedding.
-import A201607.BasicIPC.Semantics.KripkeGodel                  -- Gödel embedding.
+import A201607.BasicIPC.Semantics.KripkeMcKinseyTarski                          -- McKinsey-Tarski embedding.
+import A201607.BasicIPC.Semantics.KripkeGodel                                   -- Gödel embedding.
 
 
 -- Available metatheory for basic IPC.
@@ -100,7 +100,6 @@ import A201607.BasicIPC.Semantics.KripkeGodel                  -- Gödel embeddi
 -- eq   : Soundness and completeness, or normalisation by evaluation.
 -- n    : Normalisation by other means.
 
-
 import A201607.BasicIPC.Metatheory.ClosedHilbert-BasicTarski
 import A201607.BasicIPC.Metatheory.ClosedHilbert-TarskiGluedClosedImplicit
 import A201607.BasicIPC.Metatheory.ClosedHilbert-TarskiGluedClosedHilbert
@@ -137,7 +136,7 @@ import A201607.BasicIPC.Metatheory.GentzenNormalForm-KripkeGodel
 import A201607.BasicIPC.Metatheory.GentzenSpinalNormalForm-HereditarySubstitution
 
 
-
+--------------------------------------------------------------------------------
 
 -- TODO
 
@@ -148,7 +147,6 @@ import A201607.BasicT.Syntax.Common
 -- Gentzen-style formalisation of syntax.
 import A201607.BasicT.Syntax.Gentzen
 import A201607.BasicT.Syntax.GentzenNormalForm
-
 
 -- Basic Tarski-style semantics, for soundness only.
 import A201607.BasicT.Semantics.BasicTarski
@@ -161,7 +159,7 @@ import A201607.BasicT.Metatheory.Gentzen-BasicTarski
 import A201607.BasicT.Metatheory.GentzenNormalForm-Unknown
 
 
-
+--------------------------------------------------------------------------------
 
 -- Intuitionistic propositional calculus.
 
@@ -170,17 +168,17 @@ import A201607.BasicT.Metatheory.GentzenNormalForm-Unknown
 import A201607.IPC.Syntax.Common
 
 -- Hilbert-style formalisation of closed syntax.
-import A201607.IPC.Syntax.ClosedHilbertSequential  -- Sequences of terms.
-import A201607.IPC.Syntax.ClosedHilbert            -- Nested terms.
+import A201607.IPC.Syntax.ClosedHilbertSequential                               -- Sequences of terms.
+import A201607.IPC.Syntax.ClosedHilbert                                         -- Nested terms.
 
 -- Hilbert-style formalisation of syntax.
-import A201607.IPC.Syntax.HilbertSequential        -- Sequences of terms.
-import A201607.IPC.Syntax.Hilbert                  -- Nested terms.
+import A201607.IPC.Syntax.HilbertSequential                                     -- Sequences of terms.
+import A201607.IPC.Syntax.Hilbert                                               -- Nested terms.
 
 -- Gentzen-style formalisation of syntax.
-import A201607.IPC.Syntax.Gentzen                  -- Simple terms.
-import A201607.IPC.Syntax.GentzenNormalForm        -- Normal forms and neutrals.
-import A201607.IPC.Syntax.GentzenSpinalNormalForm  -- Normal forms, neutrals, and spines.
+import A201607.IPC.Syntax.Gentzen                                               -- Simple terms.
+import A201607.IPC.Syntax.GentzenNormalForm                                     -- Normal forms and neutrals.
+import A201607.IPC.Syntax.GentzenSpinalNormalForm                               -- Normal forms, neutrals, and spines.
 
 -- Translation between different formalisations of syntax.
 import A201607.IPC.Syntax.Translation
@@ -224,7 +222,7 @@ import A201607.IPC.Metatheory.GentzenNormalForm-KripkeExploding
 import A201607.IPC.Metatheory.GentzenSpinalNormalForm-HereditarySubstitution
 
 
-
+--------------------------------------------------------------------------------
 
 -- Basic intuitionistic modal logic S4, without ∨, ⊥, or ◇.
 
@@ -233,24 +231,24 @@ import A201607.IPC.Metatheory.GentzenSpinalNormalForm-HereditarySubstitution
 import A201607.BasicIS4.Syntax.Common
 
 -- Hilbert-style formalisation of closed syntax.
-import A201607.BasicIS4.Syntax.ClosedHilbertSequential        -- Sequences of terms.
-import A201607.BasicIS4.Syntax.ClosedHilbert                  -- Nested terms.
+import A201607.BasicIS4.Syntax.ClosedHilbertSequential                          -- Sequences of terms.
+import A201607.BasicIS4.Syntax.ClosedHilbert                                    -- Nested terms.
 
 -- Hilbert-style formalisation of syntax.
-import A201607.BasicIS4.Syntax.HilbertSequential              -- Sequences of terms.
-import A201607.BasicIS4.Syntax.Hilbert                        -- Nested terms.
+import A201607.BasicIS4.Syntax.HilbertSequential                                -- Sequences of terms.
+import A201607.BasicIS4.Syntax.Hilbert                                          -- Nested terms.
 
 -- Gentzen-style formalisation of syntax, after Bierman-de Paiva.
 import A201607.BasicIS4.Syntax.Gentzen
 
 -- Hilbert-style formalisation of syntax with context pairs.
-import A201607.BasicIS4.Syntax.DyadicHilbertSequential        -- Sequences of terms.
-import A201607.BasicIS4.Syntax.DyadicHilbert                  -- Nested terms.
+import A201607.BasicIS4.Syntax.DyadicHilbertSequential                          -- Sequences of terms.
+import A201607.BasicIS4.Syntax.DyadicHilbert                                    -- Nested terms.
 
 -- Gentzen-style formalisation of syntax with context pairs, after Pfenning-Davies.
-import A201607.BasicIS4.Syntax.DyadicGentzen                  -- Simple terms.
-import A201607.BasicIS4.Syntax.DyadicGentzenNormalForm        -- Normal forms and neutrals.
-import A201607.BasicIS4.Syntax.DyadicGentzenSpinalNormalForm  -- Normal forms, neutrals, and spines.
+import A201607.BasicIS4.Syntax.DyadicGentzen                                    -- Simple terms.
+import A201607.BasicIS4.Syntax.DyadicGentzenNormalForm                          -- Normal forms and neutrals.
+import A201607.BasicIS4.Syntax.DyadicGentzenSpinalNormalForm                    -- Normal forms, neutrals, and spines.
 
 -- Gentzen-style formalisation of labelled syntax, after Basin-Matthews-Viganò.
 import A201607.BasicIS4.Syntax.LabelledGentzen
@@ -260,37 +258,37 @@ import A201607.BasicIS4.Syntax.Translation
 
 
 -- Basic Kripke-style semantics with abstract worlds, for soundness only.
-import A201607.BasicIS4.Semantics.BasicKripkeOno                 -- Ono-style conditions.
-import A201607.BasicIS4.Semantics.BasicKripkeBozicDosen          -- Božić-Došen-style conditions.
-import A201607.BasicIS4.Semantics.BasicKripkeEwald               -- Ewald-style conditions.
-import A201607.BasicIS4.Semantics.BasicKripkeAlechina            -- Alechina-style conditions.
+import A201607.BasicIS4.Semantics.BasicKripkeOno                                -- Ono-style conditions.
+import A201607.BasicIS4.Semantics.BasicKripkeBozicDosen                         -- Božić-Došen-style conditions.
+import A201607.BasicIS4.Semantics.BasicKripkeEwald                              -- Ewald-style conditions.
+import A201607.BasicIS4.Semantics.BasicKripkeAlechina                           -- Alechina-style conditions.
 
 -- Tarski-style semantics with glueing for α, ▻, and □, after Gabbay-Nanevski.
-import A201607.BasicIS4.Semantics.TarskiClosedOvergluedImplicit  -- Implicit closed syntax.
-import A201607.BasicIS4.Semantics.TarskiClosedOvergluedHilbert   -- Hilbert-style closed syntax.
+import A201607.BasicIS4.Semantics.TarskiClosedOvergluedImplicit                 -- Implicit closed syntax.
+import A201607.BasicIS4.Semantics.TarskiClosedOvergluedHilbert                  -- Hilbert-style closed syntax.
 
 -- Tarski-style semantics with contexts as concrete worlds, and glueing for α, ▻, and □.
-import A201607.BasicIS4.Semantics.TarskiOvergluedImplicit        -- Implicit syntax.
-import A201607.BasicIS4.Semantics.TarskiOvergluedHilbert         -- Hilbert-style syntax.
-import A201607.BasicIS4.Semantics.TarskiOvergluedGentzen         -- Gentzen-style syntax.
+import A201607.BasicIS4.Semantics.TarskiOvergluedImplicit                       -- Implicit syntax.
+import A201607.BasicIS4.Semantics.TarskiOvergluedHilbert                        -- Hilbert-style syntax.
+import A201607.BasicIS4.Semantics.TarskiOvergluedGentzen                        -- Gentzen-style syntax.
 
 -- Tarski-style semantics with contexts as concrete worlds, and glueing for □ only.
-import A201607.BasicIS4.Semantics.TarskiGluedImplicit            -- Implicit syntax.
-import A201607.BasicIS4.Semantics.TarskiGluedHilbert             -- Hilbert-style syntax.
-import A201607.BasicIS4.Semantics.TarskiGluedGentzen             -- Gentzen-style syntax.
+import A201607.BasicIS4.Semantics.TarskiGluedImplicit                           -- Implicit syntax.
+import A201607.BasicIS4.Semantics.TarskiGluedHilbert                            -- Hilbert-style syntax.
+import A201607.BasicIS4.Semantics.TarskiGluedGentzen                            -- Gentzen-style syntax.
 
 -- Tarski-style semantics with context pairs as concrete worlds, and glueing for α, ▻, and □.
-import A201607.BasicIS4.Semantics.TarskiOvergluedDyadicImplicit  -- Implicit syntax.
-import A201607.BasicIS4.Semantics.TarskiOvergluedDyadicHilbert   -- Hilbert-style syntax.
-import A201607.BasicIS4.Semantics.TarskiOvergluedDyadicGentzen   -- Gentzen-style syntax.
+import A201607.BasicIS4.Semantics.TarskiOvergluedDyadicImplicit                 -- Implicit syntax.
+import A201607.BasicIS4.Semantics.TarskiOvergluedDyadicHilbert                  -- Hilbert-style syntax.
+import A201607.BasicIS4.Semantics.TarskiOvergluedDyadicGentzen                  -- Gentzen-style syntax.
 
 -- Tarski-style semantics with context pairs as concrete worlds, and glueing for □ only.
-import A201607.BasicIS4.Semantics.TarskiGluedDyadicImplicit      -- Implicit syntax.
+import A201607.BasicIS4.Semantics.TarskiGluedDyadicImplicit                     -- Implicit syntax.
 
 -- TODO
-import A201607.BasicIS4.Semantics.TarskiGluedDyadicHilbert       -- Hilbert-style syntax.
+import A201607.BasicIS4.Semantics.TarskiGluedDyadicHilbert                      -- Hilbert-style syntax.
 
-import A201607.BasicIS4.Semantics.TarskiGluedDyadicGentzen       -- Gentzen-style syntax.
+import A201607.BasicIS4.Semantics.TarskiGluedDyadicGentzen                      -- Gentzen-style syntax.
 
 
 -- Canonical model equipment for Kripke-style semantics with contexts as concrete worlds.
@@ -399,9 +397,10 @@ import A201607.BasicIS4.Metatheory.DyadicGentzen-TarskiGluedDyadicGentzen -- FIX
 import A201607.BasicIS4.Metatheory.DyadicGentzenSpinalNormalForm-HereditarySubstitution
 
 
-
+--------------------------------------------------------------------------------
 
 -- Basic intuitionistic contextual modal logic, without ∨ or ⊥.
+
 
 -- Common syntax.
 import A201607.BasicICML.Syntax.Common
@@ -415,9 +414,10 @@ import A201607.BasicICML.Syntax.DyadicGentzenSpinalNormalForm
 import A201607.BasicICML.Metatheory.DyadicGentzenSpinalNormalForm-HereditarySubstitution
 
 
-
+--------------------------------------------------------------------------------
 
 -- Basic intuitionistic logic of proofs, without ∨, ⊥, or +.
+
 
 -- Common syntax.
 import A201607.BasicILP.Syntax.Common
@@ -433,8 +433,8 @@ import A201607.BasicILP.Syntax.DyadicGentzenNormalForm
 import A201607.OldBasicILP.UntypedSyntax.Common
 
 -- Hilbert-style formalisation of closed syntax.
-import A201607.OldBasicILP.UntypedSyntax.ClosedHilbertSequential  -- Sequences of terms.
-import A201607.OldBasicILP.UntypedSyntax.ClosedHilbert            -- Nested terms.
+import A201607.OldBasicILP.UntypedSyntax.ClosedHilbertSequential                -- Sequences of terms.
+import A201607.OldBasicILP.UntypedSyntax.ClosedHilbert                          -- Nested terms.
 
 -- Translation between different formalisations of syntax.
 import A201607.OldBasicILP.UntypedSyntax.Translation -- FIXME
@@ -463,8 +463,6 @@ import A201607.OlderBasicILP.Direct.Gentzen
 -- import A201607.OlderBasicILP.Direct.Translation
 
 
-
-
 --------------------------------------------------------------------------------
 
 -- TODO: unfinished
@@ -479,8 +477,6 @@ import A201607.WIP.BasicICML.Sketch
 import A201607.WIP.BasicILP.Sketch
 
 import A201607.WIP.Sketch
-
-
 
 
 --------------------------------------------------------------------------------
@@ -505,3 +501,6 @@ import A201607.WIP2.BasicIS4.Metatheory.Sketch
 
 import A201607.WIP2.BasicICML.Sketch
 import A201607.WIP2.BasicICML.Sketch2
+
+
+--------------------------------------------------------------------------------
