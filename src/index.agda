@@ -7,7 +7,7 @@
 -- https://mietek.io/
 --
 -- Licensed under CC BY-SA 4.0.
--- http://creativecommons.org/licenses/by-sa/4.0/
+-- https://creativecommons.org/licenses/by-sa/4.0/
 
 module index where
 
@@ -15,31 +15,40 @@ module index where
 --------------------------------------------------------------------------------
 
 -- operational semantics
-import A201903.Everything -- d5083053ce84099de0b0177f43413b87
+-- from https://gist.github.com/mietek/d5083053ce84099de0b0177f43413b87
+import A201903.Everything
 
 -- “Types and programming languages”
-import A201901.Everything -- 2d0148c0b3f4d28fca6c17ef512eb628
+-- from https://gist.github.com/mietek/2d0148c0b3f4d28fca6c17ef512eb628
+import A201901.Everything
 
 -- logical relations
-import A201802.Everything -- 99c4bd410bf535c4322bc87d0c2db750
+-- from https://gist.github.com/mietek/99c4bd410bf535c4322bc87d0c2db750
+import A201802.Everything
 
 -- the usual
-import A201801.Everything -- f9aba33997f0e43d7f0c9c8e62919147
+-- from https://gist.github.com/mietek/f9aba33997f0e43d7f0c9c8e62919147
+import A201801.Everything
 
 -- the usual, cubed
-import A201706.Everything -- research-2017-06 (research-2017)
+-- from https://github.com/mietek/research-2017
+import A201706.Everything
 
 -- the usual
-import A201607.Everything -- research (hilbert-gentzen)
+-- from https://github.com/mietek/hilbert-gentzen
+import A201607.Everything
 
 -- the usual
-import A201606.Everything -- research-2016-06 (tmp)
+-- from https://github.com/mietek/tmp
+import A201606.Everything
 
 -- Abel-Chapman (2014)
-import A201605.Everything -- research-2016-05 (abel-chapman-extended)
+-- from https://github.com/mietek/abel-chapman-extended
+import A201605.Everything
 
--- Alt-Artemov (2001) plus a little bit of everything
-import A201602.Everything -- 73c83903d3777ff9088c
+-- attempts at Alt-Artemov (2001) and other early experiments
+-- from https://gist.github.com/mietek/73c83903d3777ff9088c
+import A201602.Everything
 
 
 --------------------------------------------------------------------------------
