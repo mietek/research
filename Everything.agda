@@ -31,7 +31,7 @@ join ##dependent on libera.chat
 
 ------------------------------------------------------------------------------------------------- -}
 
-module About where
+module Everything where
 
 import Prelude
 import GAN
