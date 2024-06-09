@@ -14,6 +14,10 @@ module index where
 
 --------------------------------------------------------------------------------
 
+-- typed operational semantics and NBE
+-- from https://gist.github.com/mietek/1737170f89e26021e87d64d3e298c68e
+import A202401.Everything
+
 -- operational semantics
 -- from https://gist.github.com/mietek/d5083053ce84099de0b0177f43413b87
 import A201903.Everything
