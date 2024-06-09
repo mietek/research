@@ -1,0 +1,195 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>A202401.STLC-Base-WNF-CBV-SN2</title><link rel="stylesheet" href="AgdaPP.css"></head><body><pre class="Agda"><a id="1" class="Comment">----------------------------------------------------------------------------------------------------</a>
+
+<a id="103" class="Comment">-- strong normalization for open terms, hopefully after Schäfer</a>
+<a id="167" class="Comment">-- TODO: needs doing</a>
+
+<a id="189" class="Keyword">module</a> <a id="196" href="A202401.STLC-Base-WNF-CBV-SN2.html" class="Module">A202401.STLC-Base-WNF-CBV-SN2</a> <a id="226" class="Keyword">where</a>
+
+<a id="233" class="Keyword">open</a> <a id="238" class="Keyword">import</a> <a id="245" href="A202401.STLC-Base-WNF-CBV.html" class="Module">A202401.STLC-Base-WNF-CBV</a> <a id="271" class="Keyword">public</a>
+
+
+<a id="280" class="Comment">----------------------------------------------------------------------------------------------------</a>
+
+<a id="382" class="Keyword">mutual</a>
+  <a id="HWN"></a><a id="391" href="A202401.STLC-Base-WNF-CBV-SN2.html#391" class="Function">HWN</a> <a id="395" class="Symbol">:</a> <a id="397" class="Symbol">∀</a> <a id="399" class="Symbol">{</a><a id="400" href="A202401.STLC-Base-WNF-CBV-SN2.html#400" class="Bound">Γ</a> <a id="402" href="A202401.STLC-Base-WNF-CBV-SN2.html#402" class="Bound">A</a><a id="403" class="Symbol">}</a> <a id="405" class="Symbol">→</a> <a id="407" href="A202401.STLC-Base-WNF-CBV-SN2.html#400" class="Bound">Γ</a> <a id="409" href="A202401.STLC-Base.html#457" class="Datatype Operator">⊢</a> <a id="411" href="A202401.STLC-Base-WNF-CBV-SN2.html#402" class="Bound">A</a> <a id="413" class="Symbol">→</a> <a id="415" class="PrimitiveType">Set</a>
+  <a id="421" href="A202401.STLC-Base-WNF-CBV-SN2.html#391" class="Function">HWN</a> <a id="425" href="A202401.STLC-Base-WNF-CBV-SN2.html#425" class="Bound">t</a> <a id="427" class="Symbol">=</a> <a id="429" href="A202401.STLC-Base-WNF-CBV.html#8091" class="Function">WN</a> <a id="432" href="A202401.STLC-Base-WNF-CBV-SN2.html#425" class="Bound">t</a> <a id="434" href="A202401.Prelude.html#1522" class="Function Operator">×</a> <a id="436" href="A202401.STLC-Base-WNF-CBV-SN2.html#446" class="Function">HWN!</a> <a id="441" href="A202401.STLC-Base-WNF-CBV-SN2.html#425" class="Bound">t</a>
+
+  <a id="HWN!"></a><a id="446" href="A202401.STLC-Base-WNF-CBV-SN2.html#446" class="Function">HWN!</a> <a id="451" class="Symbol">:</a> <a id="453" class="Symbol">∀</a> <a id="455" class="Symbol">{</a><a id="456" href="A202401.STLC-Base-WNF-CBV-SN2.html#456" class="Bound">A</a> <a id="458" href="A202401.STLC-Base-WNF-CBV-SN2.html#458" class="Bound">Γ</a><a id="459" class="Symbol">}</a> <a id="461" class="Symbol">→</a> <a id="463" href="A202401.STLC-Base-WNF-CBV-SN2.html#458" class="Bound">Γ</a> <a id="465" href="A202401.STLC-Base.html#457" class="Datatype Operator">⊢</a> <a id="467" href="A202401.STLC-Base-WNF-CBV-SN2.html#456" class="Bound">A</a> <a id="469" class="Symbol">→</a> <a id="471" class="PrimitiveType">Set</a>
+  <a id="477" href="A202401.STLC-Base-WNF-CBV-SN2.html#446" class="Function">HWN!</a> <a id="482" class="Symbol">{</a><a id="483" href="A202401.STLC-Base.html#362" class="InductiveConstructor">⌜◦⌝</a><a id="486" class="Symbol">}</a>     <a id="492" href="A202401.STLC-Base-WNF-CBV-SN2.html#492" class="Bound">t</a>  <a id="495" class="Symbol">=</a> <a id="497" href="Agda.Builtin.Unit.html#137" class="Record">𝟙</a>
+  <a id="501" href="A202401.STLC-Base-WNF-CBV-SN2.html#446" class="Function">HWN!</a> <a id="506" class="Symbol">{</a><a id="507" href="A202401.STLC-Base-WNF-CBV-SN2.html#507" class="Bound">A</a> <a id="509" href="A202401.STLC-Base.html#375" class="InductiveConstructor Operator">⌜⊃⌝</a> <a id="513" href="A202401.STLC-Base-WNF-CBV-SN2.html#513" class="Bound">B</a><a id="514" class="Symbol">}</a> <a id="516" href="A202401.STLC-Base-WNF-CBV-SN2.html#516" class="Bound">t₁</a> <a id="519" class="Symbol">=</a> <a id="521" class="Symbol">∀</a> <a id="523" class="Symbol">{</a><a id="524" href="A202401.STLC-Base-WNF-CBV-SN2.html#524" class="Bound">t₂</a><a id="526" class="Symbol">}</a> <a id="528" class="Symbol">→</a> <a id="530" href="A202401.STLC-Base-WNF-CBV-SN2.html#391" class="Function">HWN</a> <a id="534" href="A202401.STLC-Base-WNF-CBV-SN2.html#524" class="Bound">t₂</a> <a id="537" class="Symbol">→</a> <a id="539" href="A202401.STLC-Base-WNF-CBV-SN2.html#391" class="Function">HWN</a> <a id="543" class="Symbol">(</a><a id="544" href="A202401.STLC-Base-WNF-CBV-SN2.html#516" class="Bound">t₁</a> <a id="547" href="A202401.STLC-Base.html#574" class="InductiveConstructor Operator">⌜$⌝</a> <a id="551" href="A202401.STLC-Base-WNF-CBV-SN2.html#524" class="Bound">t₂</a><a id="553" class="Symbol">)</a>
+
+<a id="556" class="Keyword">mutual</a>
+  <a id="stepHWN"></a><a id="565" href="A202401.STLC-Base-WNF-CBV-SN2.html#565" class="Function">stepHWN</a> <a id="573" class="Symbol">:</a> <a id="575" class="Symbol">∀</a> <a id="577" class="Symbol">{</a><a id="578" href="A202401.STLC-Base-WNF-CBV-SN2.html#578" class="Bound">Γ</a> <a id="580" href="A202401.STLC-Base-WNF-CBV-SN2.html#580" class="Bound">A</a><a id="581" class="Symbol">}</a> <a id="583" class="Symbol">{</a><a id="584" href="A202401.STLC-Base-WNF-CBV-SN2.html#584" class="Bound">t</a> <a id="586" href="A202401.STLC-Base-WNF-CBV-SN2.html#586" class="Bound">t′</a> <a id="589" class="Symbol">:</a> <a id="591" href="A202401.STLC-Base-WNF-CBV-SN2.html#578" class="Bound">Γ</a> <a id="593" href="A202401.STLC-Base.html#457" class="Datatype Operator">⊢</a> <a id="595" href="A202401.STLC-Base-WNF-CBV-SN2.html#580" class="Bound">A</a><a id="596" class="Symbol">}</a> <a id="598" class="Symbol">→</a> <a id="600" href="A202401.STLC-Base-WNF-CBV-SN2.html#584" class="Bound">t</a> <a id="602" href="A202401.STLC-Base-WNF-CBV.html#437" class="Datatype Operator">⇒</a> <a id="604" href="A202401.STLC-Base-WNF-CBV-SN2.html#586" class="Bound">t′</a> <a id="607" class="Symbol">→</a> <a id="609" href="A202401.STLC-Base-WNF-CBV-SN2.html#391" class="Function">HWN</a> <a id="613" href="A202401.STLC-Base-WNF-CBV-SN2.html#586" class="Bound">t′</a> <a id="616" class="Symbol">→</a> <a id="618" href="A202401.STLC-Base-WNF-CBV-SN2.html#391" class="Function">HWN</a> <a id="622" href="A202401.STLC-Base-WNF-CBV-SN2.html#584" class="Bound">t</a>
+  <a id="626" href="A202401.STLC-Base-WNF-CBV-SN2.html#565" class="Function">stepHWN</a> <a id="634" href="A202401.STLC-Base-WNF-CBV-SN2.html#634" class="Bound">r</a> <a id="636" class="Symbol">(</a><a id="637" href="A202401.STLC-Base-WNF-CBV-SN2.html#637" class="Bound">wn′</a> <a id="641" href="Agda.Builtin.Sigma.html#209" class="InductiveConstructor Operator">,</a> <a id="643" href="A202401.STLC-Base-WNF-CBV-SN2.html#643" class="Bound">hwn!′</a><a id="648" class="Symbol">)</a> <a id="650" class="Symbol">=</a> <a id="652" href="A202401.STLC-Base-WNF-CBV.html#8144" class="Function">stepWN</a> <a id="659" href="A202401.STLC-Base-WNF-CBV-SN2.html#634" class="Bound">r</a> <a id="661" href="A202401.STLC-Base-WNF-CBV-SN2.html#637" class="Bound">wn′</a> <a id="665" href="Agda.Builtin.Sigma.html#209" class="InductiveConstructor Operator">,</a> <a id="667" href="A202401.STLC-Base-WNF-CBV-SN2.html#687" class="Function">stepHWN!</a> <a id="676" href="A202401.STLC-Base-WNF-CBV-SN2.html#634" class="Bound">r</a> <a id="678" href="A202401.STLC-Base-WNF-CBV-SN2.html#643" class="Bound">hwn!′</a>
+
+  <a id="stepHWN!"></a><a id="687" href="A202401.STLC-Base-WNF-CBV-SN2.html#687" class="Function">stepHWN!</a> <a id="696" class="Symbol">:</a> <a id="698" class="Symbol">∀</a> <a id="700" class="Symbol">{</a><a id="701" href="A202401.STLC-Base-WNF-CBV-SN2.html#701" class="Bound">A</a> <a id="703" href="A202401.STLC-Base-WNF-CBV-SN2.html#703" class="Bound">Γ</a><a id="704" class="Symbol">}</a> <a id="706" class="Symbol">{</a><a id="707" href="A202401.STLC-Base-WNF-CBV-SN2.html#707" class="Bound">t</a> <a id="709" href="A202401.STLC-Base-WNF-CBV-SN2.html#709" class="Bound">t′</a> <a id="712" class="Symbol">:</a> <a id="714" href="A202401.STLC-Base-WNF-CBV-SN2.html#703" class="Bound">Γ</a> <a id="716" href="A202401.STLC-Base.html#457" class="Datatype Operator">⊢</a> <a id="718" href="A202401.STLC-Base-WNF-CBV-SN2.html#701" class="Bound">A</a><a id="719" class="Symbol">}</a> <a id="721" class="Symbol">→</a> <a id="723" href="A202401.STLC-Base-WNF-CBV-SN2.html#707" class="Bound">t</a> <a id="725" href="A202401.STLC-Base-WNF-CBV.html#437" class="Datatype Operator">⇒</a> <a id="727" href="A202401.STLC-Base-WNF-CBV-SN2.html#709" class="Bound">t′</a> <a id="730" class="Symbol">→</a> <a id="732" href="A202401.STLC-Base-WNF-CBV-SN2.html#446" class="Function">HWN!</a> <a id="737" href="A202401.STLC-Base-WNF-CBV-SN2.html#709" class="Bound">t′</a> <a id="740" class="Symbol">→</a> <a id="742" href="A202401.STLC-Base-WNF-CBV-SN2.html#446" class="Function">HWN!</a> <a id="747" href="A202401.STLC-Base-WNF-CBV-SN2.html#707" class="Bound">t</a>
+  <a id="751" href="A202401.STLC-Base-WNF-CBV-SN2.html#687" class="Function">stepHWN!</a> <a id="760" class="Symbol">{</a><a id="761" href="A202401.STLC-Base.html#362" class="InductiveConstructor">⌜◦⌝</a><a id="764" class="Symbol">}</a>          <a id="775" href="A202401.STLC-Base-WNF-CBV-SN2.html#775" class="Bound">r</a> <a id="777" href="Agda.Builtin.Unit.html#174" class="InductiveConstructor">unit</a>       <a id="788" class="Symbol">=</a> <a id="790" href="Agda.Builtin.Unit.html#174" class="InductiveConstructor">unit</a>
+  <a id="797" href="A202401.STLC-Base-WNF-CBV-SN2.html#687" class="Function">stepHWN!</a> <a id="806" class="Symbol">{</a><a id="807" href="A202401.STLC-Base-WNF-CBV-SN2.html#807" class="Bound">A</a> <a id="809" href="A202401.STLC-Base.html#375" class="InductiveConstructor Operator">⌜⊃⌝</a> <a id="813" href="A202401.STLC-Base-WNF-CBV-SN2.html#813" class="Bound">B</a><a id="814" class="Symbol">}</a> <a id="816" class="Symbol">{</a><a id="817" href="A202401.STLC-Base-WNF-CBV-SN2.html#817" class="Bound">t₁</a><a id="819" class="Symbol">}</a> <a id="821" href="A202401.STLC-Base-WNF-CBV-SN2.html#821" class="Bound">r</a> <a id="823" href="A202401.STLC-Base-WNF-CBV-SN2.html#823" class="Bound">f</a>    <a id="828" href="A202401.STLC-Base-WNF-CBV-SN2.html#828" class="Bound">hwn₂′</a> <a id="834" class="Symbol">=</a> <a id="836" href="A202401.STLC-Base-WNF-CBV-SN2.html#565" class="Function">stepHWN</a> <a id="844" class="Symbol">(</a><a id="845" href="A202401.STLC-Base-WNF-CBV.html#483" class="InductiveConstructor">cong$₁</a> <a id="852" href="A202401.STLC-Base-WNF-CBV-SN2.html#821" class="Bound">r</a><a id="853" class="Symbol">)</a> <a id="855" class="Symbol">(</a><a id="856" href="A202401.STLC-Base-WNF-CBV-SN2.html#823" class="Bound">f</a> <a id="858" href="A202401.STLC-Base-WNF-CBV-SN2.html#828" class="Bound">hwn₂′</a><a id="863" class="Symbol">)</a>
+
+<a id="step⇒*HWN"></a><a id="866" href="A202401.STLC-Base-WNF-CBV-SN2.html#866" class="Function">step⇒*HWN</a> <a id="876" class="Symbol">:</a> <a id="878" class="Symbol">∀</a> <a id="880" class="Symbol">{</a><a id="881" href="A202401.STLC-Base-WNF-CBV-SN2.html#881" class="Bound">Γ</a> <a id="883" href="A202401.STLC-Base-WNF-CBV-SN2.html#883" class="Bound">A</a><a id="884" class="Symbol">}</a> <a id="886" class="Symbol">{</a><a id="887" href="A202401.STLC-Base-WNF-CBV-SN2.html#887" class="Bound">t</a> <a id="889" href="A202401.STLC-Base-WNF-CBV-SN2.html#889" class="Bound">t′</a> <a id="892" class="Symbol">:</a> <a id="894" href="A202401.STLC-Base-WNF-CBV-SN2.html#881" class="Bound">Γ</a> <a id="896" href="A202401.STLC-Base.html#457" class="Datatype Operator">⊢</a> <a id="898" href="A202401.STLC-Base-WNF-CBV-SN2.html#883" class="Bound">A</a><a id="899" class="Symbol">}</a> <a id="901" class="Symbol">→</a> <a id="903" href="A202401.STLC-Base-WNF-CBV-SN2.html#887" class="Bound">t</a> <a id="905" href="A202401.Kit3.html#697" class="Datatype Operator">⇒*</a> <a id="908" href="A202401.STLC-Base-WNF-CBV-SN2.html#889" class="Bound">t′</a> <a id="911" class="Symbol">→</a> <a id="913" href="A202401.STLC-Base-WNF-CBV-SN2.html#391" class="Function">HWN</a> <a id="917" href="A202401.STLC-Base-WNF-CBV-SN2.html#889" class="Bound">t′</a> <a id="920" class="Symbol">→</a> <a id="922" href="A202401.STLC-Base-WNF-CBV-SN2.html#391" class="Function">HWN</a> <a id="926" href="A202401.STLC-Base-WNF-CBV-SN2.html#887" class="Bound">t</a>
+<a id="928" href="A202401.STLC-Base-WNF-CBV-SN2.html#866" class="Function">step⇒*HWN</a> <a id="938" href="A202401.Kit3.html#740" class="InductiveConstructor">done</a>        <a id="950" href="A202401.STLC-Base-WNF-CBV-SN2.html#950" class="Bound">hwn′</a> <a id="955" class="Symbol">=</a> <a id="957" href="A202401.STLC-Base-WNF-CBV-SN2.html#950" class="Bound">hwn′</a>
+<a id="962" href="A202401.STLC-Base-WNF-CBV-SN2.html#866" class="Function">step⇒*HWN</a> <a id="972" class="Symbol">(</a><a id="973" href="A202401.Kit3.html#766" class="InductiveConstructor">step</a> <a id="978" href="A202401.STLC-Base-WNF-CBV-SN2.html#978" class="Bound">r</a> <a id="980" href="A202401.STLC-Base-WNF-CBV-SN2.html#980" class="Bound">rs</a><a id="982" class="Symbol">)</a> <a id="984" href="A202401.STLC-Base-WNF-CBV-SN2.html#984" class="Bound">hwn′</a> <a id="989" class="Symbol">=</a> <a id="991" href="A202401.STLC-Base-WNF-CBV-SN2.html#565" class="Function">stepHWN</a> <a id="999" href="A202401.STLC-Base-WNF-CBV-SN2.html#978" class="Bound">r</a> <a id="1001" class="Symbol">(</a><a id="1002" href="A202401.STLC-Base-WNF-CBV-SN2.html#866" class="Function">step⇒*HWN</a> <a id="1012" href="A202401.STLC-Base-WNF-CBV-SN2.html#980" class="Bound">rs</a> <a id="1015" href="A202401.STLC-Base-WNF-CBV-SN2.html#984" class="Bound">hwn′</a><a id="1019" class="Symbol">)</a>
+
+<a id="step⇓HWN"></a><a id="1022" href="A202401.STLC-Base-WNF-CBV-SN2.html#1022" class="Function">step⇓HWN</a> <a id="1031" class="Symbol">:</a> <a id="1033" class="Symbol">∀</a> <a id="1035" class="Symbol">{</a><a id="1036" href="A202401.STLC-Base-WNF-CBV-SN2.html#1036" class="Bound">Γ</a> <a id="1038" href="A202401.STLC-Base-WNF-CBV-SN2.html#1038" class="Bound">A</a><a id="1039" class="Symbol">}</a> <a id="1041" class="Symbol">{</a><a id="1042" href="A202401.STLC-Base-WNF-CBV-SN2.html#1042" class="Bound">t</a> <a id="1044" href="A202401.STLC-Base-WNF-CBV-SN2.html#1044" class="Bound">t′</a> <a id="1047" class="Symbol">:</a> <a id="1049" href="A202401.STLC-Base-WNF-CBV-SN2.html#1036" class="Bound">Γ</a> <a id="1051" href="A202401.STLC-Base.html#457" class="Datatype Operator">⊢</a> <a id="1053" href="A202401.STLC-Base-WNF-CBV-SN2.html#1038" class="Bound">A</a><a id="1054" class="Symbol">}</a> <a id="1056" class="Symbol">→</a> <a id="1058" href="A202401.STLC-Base-WNF-CBV-SN2.html#1042" class="Bound">t</a> <a id="1060" href="A202401.STLC-Base-WNF-CBV.html#7236" class="Function Operator">⇓</a> <a id="1062" href="A202401.STLC-Base-WNF-CBV-SN2.html#1044" class="Bound">t′</a> <a id="1065" class="Symbol">→</a> <a id="1067" href="A202401.STLC-Base-WNF-CBV-SN2.html#391" class="Function">HWN</a> <a id="1071" href="A202401.STLC-Base-WNF-CBV-SN2.html#1044" class="Bound">t′</a> <a id="1074" class="Symbol">→</a> <a id="1076" href="A202401.STLC-Base-WNF-CBV-SN2.html#391" class="Function">HWN</a> <a id="1080" href="A202401.STLC-Base-WNF-CBV-SN2.html#1042" class="Bound">t</a>
+<a id="1082" href="A202401.STLC-Base-WNF-CBV-SN2.html#1022" class="Function">step⇓HWN</a> <a id="1091" class="Symbol">=</a> <a id="1093" href="A202401.STLC-Base-WNF-CBV-SN2.html#866" class="Function">step⇒*HWN</a> <a id="1103" href="A202401.Prelude.html#956" class="Function Operator">∘</a> <a id="1105" href="Agda.Builtin.Sigma.html#225" class="Field">fst</a>
+
+<a id="1110" class="Keyword">mutual</a>
+  <a id="skipHWN"></a><a id="1119" href="A202401.STLC-Base-WNF-CBV-SN2.html#1119" class="Function">skipHWN</a> <a id="1127" class="Symbol">:</a> <a id="1129" class="Symbol">∀</a> <a id="1131" class="Symbol">{</a><a id="1132" href="A202401.STLC-Base-WNF-CBV-SN2.html#1132" class="Bound">Γ</a> <a id="1134" href="A202401.STLC-Base-WNF-CBV-SN2.html#1134" class="Bound">A</a><a id="1135" class="Symbol">}</a> <a id="1137" class="Symbol">{</a><a id="1138" href="A202401.STLC-Base-WNF-CBV-SN2.html#1138" class="Bound">t</a> <a id="1140" href="A202401.STLC-Base-WNF-CBV-SN2.html#1140" class="Bound">t′</a> <a id="1143" class="Symbol">:</a> <a id="1145" href="A202401.STLC-Base-WNF-CBV-SN2.html#1132" class="Bound">Γ</a> <a id="1147" href="A202401.STLC-Base.html#457" class="Datatype Operator">⊢</a> <a id="1149" href="A202401.STLC-Base-WNF-CBV-SN2.html#1134" class="Bound">A</a><a id="1150" class="Symbol">}</a> <a id="1152" class="Symbol">→</a> <a id="1154" href="A202401.STLC-Base-WNF-CBV-SN2.html#1138" class="Bound">t</a> <a id="1156" href="A202401.STLC-Base-WNF-CBV.html#437" class="Datatype Operator">⇒</a> <a id="1158" href="A202401.STLC-Base-WNF-CBV-SN2.html#1140" class="Bound">t′</a> <a id="1161" class="Symbol">→</a> <a id="1163" href="A202401.STLC-Base-WNF-CBV-SN2.html#391" class="Function">HWN</a> <a id="1167" href="A202401.STLC-Base-WNF-CBV-SN2.html#1138" class="Bound">t</a> <a id="1169" class="Symbol">→</a> <a id="1171" href="A202401.STLC-Base-WNF-CBV-SN2.html#391" class="Function">HWN</a> <a id="1175" href="A202401.STLC-Base-WNF-CBV-SN2.html#1140" class="Bound">t′</a>
+  <a id="1180" href="A202401.STLC-Base-WNF-CBV-SN2.html#1119" class="Function">skipHWN</a> <a id="1188" href="A202401.STLC-Base-WNF-CBV-SN2.html#1188" class="Bound">r</a> <a id="1190" class="Symbol">(</a><a id="1191" href="A202401.STLC-Base-WNF-CBV-SN2.html#1191" class="Bound">wn</a> <a id="1194" href="Agda.Builtin.Sigma.html#209" class="InductiveConstructor Operator">,</a> <a id="1196" href="A202401.STLC-Base-WNF-CBV-SN2.html#1196" class="Bound">hwn!</a><a id="1200" class="Symbol">)</a> <a id="1202" class="Symbol">=</a> <a id="1204" href="A202401.STLC-Base-WNF-CBV.html#8240" class="Function">skipWN</a> <a id="1211" href="A202401.STLC-Base-WNF-CBV-SN2.html#1188" class="Bound">r</a> <a id="1213" href="A202401.STLC-Base-WNF-CBV-SN2.html#1191" class="Bound">wn</a> <a id="1216" href="Agda.Builtin.Sigma.html#209" class="InductiveConstructor Operator">,</a> <a id="1218" href="A202401.STLC-Base-WNF-CBV-SN2.html#1237" class="Function">skipHWN!</a> <a id="1227" href="A202401.STLC-Base-WNF-CBV-SN2.html#1188" class="Bound">r</a> <a id="1229" href="A202401.STLC-Base-WNF-CBV-SN2.html#1196" class="Bound">hwn!</a>
+
+  <a id="skipHWN!"></a><a id="1237" href="A202401.STLC-Base-WNF-CBV-SN2.html#1237" class="Function">skipHWN!</a> <a id="1246" class="Symbol">:</a> <a id="1248" class="Symbol">∀</a> <a id="1250" class="Symbol">{</a><a id="1251" href="A202401.STLC-Base-WNF-CBV-SN2.html#1251" class="Bound">A</a> <a id="1253" href="A202401.STLC-Base-WNF-CBV-SN2.html#1253" class="Bound">Γ</a><a id="1254" class="Symbol">}</a> <a id="1256" class="Symbol">{</a><a id="1257" href="A202401.STLC-Base-WNF-CBV-SN2.html#1257" class="Bound">t</a> <a id="1259" href="A202401.STLC-Base-WNF-CBV-SN2.html#1259" class="Bound">t′</a> <a id="1262" class="Symbol">:</a> <a id="1264" href="A202401.STLC-Base-WNF-CBV-SN2.html#1253" class="Bound">Γ</a> <a id="1266" href="A202401.STLC-Base.html#457" class="Datatype Operator">⊢</a> <a id="1268" href="A202401.STLC-Base-WNF-CBV-SN2.html#1251" class="Bound">A</a><a id="1269" class="Symbol">}</a> <a id="1271" class="Symbol">→</a> <a id="1273" href="A202401.STLC-Base-WNF-CBV-SN2.html#1257" class="Bound">t</a> <a id="1275" href="A202401.STLC-Base-WNF-CBV.html#437" class="Datatype Operator">⇒</a> <a id="1277" href="A202401.STLC-Base-WNF-CBV-SN2.html#1259" class="Bound">t′</a> <a id="1280" class="Symbol">→</a> <a id="1282" href="A202401.STLC-Base-WNF-CBV-SN2.html#446" class="Function">HWN!</a> <a id="1287" href="A202401.STLC-Base-WNF-CBV-SN2.html#1257" class="Bound">t</a> <a id="1289" class="Symbol">→</a> <a id="1291" href="A202401.STLC-Base-WNF-CBV-SN2.html#446" class="Function">HWN!</a> <a id="1296" href="A202401.STLC-Base-WNF-CBV-SN2.html#1259" class="Bound">t′</a>
+  <a id="1301" href="A202401.STLC-Base-WNF-CBV-SN2.html#1237" class="Function">skipHWN!</a> <a id="1310" class="Symbol">{</a><a id="1311" href="A202401.STLC-Base.html#362" class="InductiveConstructor">⌜◦⌝</a><a id="1314" class="Symbol">}</a>     <a id="1320" href="A202401.STLC-Base-WNF-CBV-SN2.html#1320" class="Bound">r</a> <a id="1322" href="Agda.Builtin.Unit.html#174" class="InductiveConstructor">unit</a>      <a id="1332" class="Symbol">=</a> <a id="1334" href="Agda.Builtin.Unit.html#174" class="InductiveConstructor">unit</a>
+  <a id="1341" href="A202401.STLC-Base-WNF-CBV-SN2.html#1237" class="Function">skipHWN!</a> <a id="1350" class="Symbol">{</a><a id="1351" href="A202401.STLC-Base-WNF-CBV-SN2.html#1351" class="Bound">A</a> <a id="1353" href="A202401.STLC-Base.html#375" class="InductiveConstructor Operator">⌜⊃⌝</a> <a id="1357" href="A202401.STLC-Base-WNF-CBV-SN2.html#1357" class="Bound">B</a><a id="1358" class="Symbol">}</a> <a id="1360" href="A202401.STLC-Base-WNF-CBV-SN2.html#1360" class="Bound">r</a> <a id="1362" href="A202401.STLC-Base-WNF-CBV-SN2.html#1362" class="Bound">f</a>    <a id="1367" href="A202401.STLC-Base-WNF-CBV-SN2.html#1367" class="Bound">hwn₂</a> <a id="1372" class="Symbol">=</a> <a id="1374" href="A202401.STLC-Base-WNF-CBV-SN2.html#1119" class="Function">skipHWN</a> <a id="1382" class="Symbol">(</a><a id="1383" href="A202401.STLC-Base-WNF-CBV.html#483" class="InductiveConstructor">cong$₁</a> <a id="1390" href="A202401.STLC-Base-WNF-CBV-SN2.html#1360" class="Bound">r</a><a id="1391" class="Symbol">)</a> <a id="1393" class="Symbol">(</a><a id="1394" href="A202401.STLC-Base-WNF-CBV-SN2.html#1362" class="Bound">f</a> <a id="1396" href="A202401.STLC-Base-WNF-CBV-SN2.html#1367" class="Bound">hwn₂</a><a id="1400" class="Symbol">)</a>
+
+<a id="skip⇒*HWN"></a><a id="1403" href="A202401.STLC-Base-WNF-CBV-SN2.html#1403" class="Function">skip⇒*HWN</a> <a id="1413" class="Symbol">:</a> <a id="1415" class="Symbol">∀</a> <a id="1417" class="Symbol">{</a><a id="1418" href="A202401.STLC-Base-WNF-CBV-SN2.html#1418" class="Bound">Γ</a> <a id="1420" href="A202401.STLC-Base-WNF-CBV-SN2.html#1420" class="Bound">A</a><a id="1421" class="Symbol">}</a> <a id="1423" class="Symbol">{</a><a id="1424" href="A202401.STLC-Base-WNF-CBV-SN2.html#1424" class="Bound">t</a> <a id="1426" href="A202401.STLC-Base-WNF-CBV-SN2.html#1426" class="Bound">t′</a> <a id="1429" class="Symbol">:</a> <a id="1431" href="A202401.STLC-Base-WNF-CBV-SN2.html#1418" class="Bound">Γ</a> <a id="1433" href="A202401.STLC-Base.html#457" class="Datatype Operator">⊢</a> <a id="1435" href="A202401.STLC-Base-WNF-CBV-SN2.html#1420" class="Bound">A</a><a id="1436" class="Symbol">}</a> <a id="1438" class="Symbol">→</a> <a id="1440" href="A202401.STLC-Base-WNF-CBV-SN2.html#1424" class="Bound">t</a> <a id="1442" href="A202401.Kit3.html#697" class="Datatype Operator">⇒*</a> <a id="1445" href="A202401.STLC-Base-WNF-CBV-SN2.html#1426" class="Bound">t′</a> <a id="1448" class="Symbol">→</a> <a id="1450" href="A202401.STLC-Base-WNF-CBV-SN2.html#391" class="Function">HWN</a> <a id="1454" href="A202401.STLC-Base-WNF-CBV-SN2.html#1424" class="Bound">t</a> <a id="1456" class="Symbol">→</a> <a id="1458" href="A202401.STLC-Base-WNF-CBV-SN2.html#391" class="Function">HWN</a> <a id="1462" href="A202401.STLC-Base-WNF-CBV-SN2.html#1426" class="Bound">t′</a>
+<a id="1465" href="A202401.STLC-Base-WNF-CBV-SN2.html#1403" class="Function">skip⇒*HWN</a> <a id="1475" href="A202401.Kit3.html#740" class="InductiveConstructor">done</a>        <a id="1487" href="A202401.STLC-Base-WNF-CBV-SN2.html#1487" class="Bound">hwn</a> <a id="1491" class="Symbol">=</a> <a id="1493" href="A202401.STLC-Base-WNF-CBV-SN2.html#1487" class="Bound">hwn</a>
+<a id="1497" href="A202401.STLC-Base-WNF-CBV-SN2.html#1403" class="Function">skip⇒*HWN</a> <a id="1507" class="Symbol">(</a><a id="1508" href="A202401.Kit3.html#766" class="InductiveConstructor">step</a> <a id="1513" href="A202401.STLC-Base-WNF-CBV-SN2.html#1513" class="Bound">r</a> <a id="1515" href="A202401.STLC-Base-WNF-CBV-SN2.html#1515" class="Bound">rs</a><a id="1517" class="Symbol">)</a> <a id="1519" href="A202401.STLC-Base-WNF-CBV-SN2.html#1519" class="Bound">hwn</a> <a id="1523" class="Symbol">=</a> <a id="1525" href="A202401.STLC-Base-WNF-CBV-SN2.html#1403" class="Function">skip⇒*HWN</a> <a id="1535" href="A202401.STLC-Base-WNF-CBV-SN2.html#1515" class="Bound">rs</a> <a id="1538" class="Symbol">(</a><a id="1539" href="A202401.STLC-Base-WNF-CBV-SN2.html#1119" class="Function">skipHWN</a> <a id="1547" href="A202401.STLC-Base-WNF-CBV-SN2.html#1513" class="Bound">r</a> <a id="1549" href="A202401.STLC-Base-WNF-CBV-SN2.html#1519" class="Bound">hwn</a><a id="1552" class="Symbol">)</a>
+
+<a id="skip⇓HWN"></a><a id="1555" href="A202401.STLC-Base-WNF-CBV-SN2.html#1555" class="Function">skip⇓HWN</a> <a id="1564" class="Symbol">:</a> <a id="1566" class="Symbol">∀</a> <a id="1568" class="Symbol">{</a><a id="1569" href="A202401.STLC-Base-WNF-CBV-SN2.html#1569" class="Bound">Γ</a> <a id="1571" href="A202401.STLC-Base-WNF-CBV-SN2.html#1571" class="Bound">A</a><a id="1572" class="Symbol">}</a> <a id="1574" class="Symbol">{</a><a id="1575" href="A202401.STLC-Base-WNF-CBV-SN2.html#1575" class="Bound">t</a> <a id="1577" href="A202401.STLC-Base-WNF-CBV-SN2.html#1577" class="Bound">t′</a> <a id="1580" class="Symbol">:</a> <a id="1582" href="A202401.STLC-Base-WNF-CBV-SN2.html#1569" class="Bound">Γ</a> <a id="1584" href="A202401.STLC-Base.html#457" class="Datatype Operator">⊢</a> <a id="1586" href="A202401.STLC-Base-WNF-CBV-SN2.html#1571" class="Bound">A</a><a id="1587" class="Symbol">}</a> <a id="1589" class="Symbol">→</a> <a id="1591" href="A202401.STLC-Base-WNF-CBV-SN2.html#1575" class="Bound">t</a> <a id="1593" href="A202401.STLC-Base-WNF-CBV.html#7236" class="Function Operator">⇓</a> <a id="1595" href="A202401.STLC-Base-WNF-CBV-SN2.html#1577" class="Bound">t′</a> <a id="1598" class="Symbol">→</a> <a id="1600" href="A202401.STLC-Base-WNF-CBV-SN2.html#391" class="Function">HWN</a> <a id="1604" href="A202401.STLC-Base-WNF-CBV-SN2.html#1575" class="Bound">t</a> <a id="1606" class="Symbol">→</a> <a id="1608" href="A202401.STLC-Base-WNF-CBV-SN2.html#391" class="Function">HWN</a> <a id="1612" href="A202401.STLC-Base-WNF-CBV-SN2.html#1577" class="Bound">t′</a>
+<a id="1615" href="A202401.STLC-Base-WNF-CBV-SN2.html#1555" class="Function">skip⇓HWN</a> <a id="1624" class="Symbol">=</a> <a id="1626" href="A202401.STLC-Base-WNF-CBV-SN2.html#1403" class="Function">skip⇒*HWN</a> <a id="1636" href="A202401.Prelude.html#956" class="Function Operator">∘</a> <a id="1638" href="Agda.Builtin.Sigma.html#225" class="Field">fst</a>
+
+
+<a id="1644" class="Comment">----------------------------------------------------------------------------------------------------</a>
+
+
+<a id="1747" class="Comment">-- mutual</a>
+<a id="1757" class="Comment">--   renHWN : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → HWN t → HWN (ren⊢ e t)</a>
+<a id="1832" class="Comment">--   renHWN e (wn@(t′ , rs , p′) , hwn!) = renWN e wn , renHWN! e hwn!</a>
+
+<a id="1904" class="Comment">--   renHWN! : ∀ {A Γ Γ′} {t : Γ ⊢ A} (e : Γ ⊆ Γ′) → HWN! t → HWN! (ren⊢ e t)</a>
+<a id="1982" class="Comment">--   renHWN! {⌜◦⌝}          e unit           = unit</a>
+<a id="2034" class="Comment">--   renHWN! {A ⌜⊃⌝ B} {t₁} e f {t₂} e′ hwn₂@(wn₂@(t₂′ , n₂@(rs₂ , p₂′)) , hwn!₂) =</a>
+<a id="2118" class="Comment">--     {!!}</a>
+
+<a id="2131" class="Comment">-- -- --     let z : HWN (ren⊢ e t₁ ⌜$⌝ t₂)</a>
+<a id="2175" class="Comment">-- -- --         z = {!!}</a>
+<a id="2201" class="Comment">-- -- --     in {!!} -- renHWN e (({!!} , ({!!} , {!!})) , {!!}) in {!!}</a>
+<a id="2274" class="Comment">-- -- -- --    ((ren⊢ e t₁ ⌜$⌝ t₂′) , cong$₂⇒* {!!} rs₂ , {!!}) ,</a>
+<a id="2340" class="Comment">-- -- -- --    {!!}</a>
+
+
+<a id="2362" class="Comment">-- -- -- ----------------------------------------------------------------------------------------------------</a>
+
+<a id="2473" class="Comment">-- -- -- data HWN* {Γ} : ∀ {Δ} → Γ ⊢* Δ → Set where</a>
+<a id="2525" class="Comment">-- -- --   []  : HWN* []</a>
+<a id="2550" class="Comment">-- -- --   _∷_ : ∀ {A Δ} {t : Γ ⊢ A} {ts : Γ ⊢* Δ} → HWN t → HWN* ts → HWN* (t ∷ ts)</a>
+
+<a id="2636" class="Comment">-- -- -- {-</a>
+
+<a id="2649" class="Comment">-- -- --       ren⊢* : ∀ {Γ Γ′ Δ} → Γ ⊆ Γ′ → Γ ⊢* Δ → Γ′ ⊢* Δ</a>
+<a id="2711" class="Comment">-- -- --       ren⊢* e []       = []</a>
+<a id="2748" class="Comment">-- -- --       ren⊢* e (t ∷ ts) = ren⊢ e t ∷ ren⊢* e ts</a>
+
+<a id="2805" class="Comment">-- -- --       weak⊢* : ∀ {Γ Δ A} → Γ ⊢* Δ → A ∷ Γ ⊢* Δ</a>
+
+<a id="2862" class="Comment">-- -- -- -}</a>
+
+<a id="2875" class="Comment">-- -- -- postulate</a>
+<a id="2894" class="Comment">-- -- --   lem₋₁ : ∀ {Γ A} → weak⊢* {Γ} {Γ} {A} (refl⊢* {Γ = Γ}) ≡ {!refl⊢* {Γ = A ∷ Γ}!}</a>
+
+<a id="2985" class="Comment">-- -- -- mutual</a>
+<a id="3001" class="Comment">-- -- --   hmm : ∀ {Γ A} → HWN {A ∷ Γ} {A} (var zero)</a>
+<a id="3055" class="Comment">-- -- --   hmm = (var zero , done , nnf var-) , hmm!</a>
+
+<a id="3109" class="Comment">-- -- --   hmm! : ∀ {Γ} → HWN! {A ∷ Γ} {A} (var zero)</a>
+<a id="3163" class="Comment">-- -- --   hmm! {⌜◦⌝}                                = unit</a>
+<a id="3223" class="Comment">-- -- --   hmm! {A ⌜⊃⌝ B} ((t₂′ , rs , p₂′) , hwn!₂) =</a>
+<a id="3278" class="Comment">-- -- --     (var zero ⌜$⌝ t₂′ , cong$₂⇒* (nnf var-) rs , nnf (var- ⌜$⌝ p₂′)) ,</a>
+<a id="3358" class="Comment">-- -- --     {!!}</a>
+
+
+<a id="3378" class="Comment">-- -- -- refl⊢*HWN* : ∀ {Γ} → HWN* {Γ} refl⊢*</a>
+<a id="3424" class="Comment">-- -- -- refl⊢*HWN* {[]}    = []</a>
+<a id="3457" class="Comment">-- -- -- refl⊢*HWN* {A ∷ Γ} = hmm ∷ {!refl⊢*HWN* {A ∷ Γ}!}</a>
+
+
+<a id="3518" class="Comment">-- -- -- ----------------------------------------------------------------------------------------------------</a>
+
+<a id="3629" class="Comment">-- -- -- lem₀ : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : A ∷ Γ ⊢ B) (t₂ : Ξ ⊢ A) →</a>
+<a id="3703" class="Comment">-- -- --        (sub⊢ (t₂ ∷ id⊢*) ∘ sub⊢ (lift⊢* ss)) t₁ ≡ sub⊢ (t₂ ∷ ss) t₁</a>
+<a id="3780" class="Comment">-- -- -- lem₀ ss t₁ t₂ = compsub⊢ (t₂ ∷ id⊢*) (lift⊢* ss) t₁ ⁻¹</a>
+<a id="3844" class="Comment">-- -- --               ⋮ (flip sub⊢ t₁ ∘ (t₂ ∷_)) &amp; ( eqsub⊢* t₂ id⊢* ss</a>
+<a id="3917" class="Comment">-- -- --                                             ⋮ lidsub⊢* ss</a>
+<a id="3984" class="Comment">-- -- --                                             )</a>
+
+<a id="4040" class="Comment">-- -- -- lem₁ : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : A ∷ Γ ⊢ B) {t₂ : Ξ ⊢ A} (p₂ : NF t₂) →</a>
+<a id="4127" class="Comment">-- -- --        ⌜λ⌝ (sub⊢ (lift⊢* ss) t₁) ⌜$⌝ t₂ ⇒ sub⊢ (t₂ ∷ ss) t₁</a>
+<a id="4196" class="Comment">-- -- -- lem₁ ss t₁ p₂ = βred⊃ (sym (lem₀ ss t₁ _)) p₂</a>
+
+<a id="4252" class="Comment">-- -- -- lem₂ : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : A ∷ Γ ⊢ B) {t₂ : Ξ ⊢ A} (p₂ : NF t₂) {t′ : Ξ ⊢ B} →</a>
+<a id="4352" class="Comment">-- -- --        sub⊢ (t₂ ∷ ss) t₁ ⇓ t′ →</a>
+<a id="4393" class="Comment">-- -- --        ⌜λ⌝ (sub⊢ (lift⊢* ss) t₁) ⌜$⌝ t₂ ⇓ t′</a>
+<a id="4447" class="Comment">-- -- -- lem₂ ss t₁ p₂ (rs , p′) = (step (lem₁ ss t₁ p₂) rs) , p′</a>
+
+<a id="4514" class="Comment">-- -- -- lem₃ : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : A ∷ Γ ⊢ B) {t₂ : Ξ ⊢ A} (p₂ : NF t₂) →</a>
+<a id="4601" class="Comment">-- -- --        WN (sub⊢ (t₂ ∷ ss) t₁) →</a>
+<a id="4642" class="Comment">-- -- --        WN (⌜λ⌝ (sub⊢ (lift⊢* ss) t₁) ⌜$⌝ t₂)</a>
+<a id="4696" class="Comment">-- -- -- lem₃ ss t₁ p₂ (t′ , n) = t′ , lem₂ ss t₁ p₂ n</a>
+
+<a id="4752" class="Comment">-- -- -- mutual</a>
+<a id="4768" class="Comment">-- -- --   lem₄ : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : A ∷ Γ ⊢ B) {t₂ : Ξ ⊢ A} (p₂ : NF t₂) →</a>
+<a id="4857" class="Comment">-- -- --          HWN (sub⊢ (t₂ ∷ ss) t₁) →</a>
+<a id="4901" class="Comment">-- -- --          HWN (⌜λ⌝ (sub⊢ (lift⊢* ss) t₁) ⌜$⌝ t₂)</a>
+<a id="4958" class="Comment">-- -- --   lem₄ ss t₁ p₂ (wn , hwn!) = lem₃ ss t₁ p₂ wn , lem₄! ss t₁ p₂ hwn!</a>
+
+<a id="5037" class="Comment">-- -- --   lem₄! : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (t₁ : A ∷ Γ ⊢ B) {t₂ : Ξ ⊢ A} (p₂ : NF t₂) →</a>
+<a id="5127" class="Comment">-- -- --           HWN! (sub⊢ (t₂ ∷ ss) t₁) →</a>
+<a id="5173" class="Comment">-- -- --           HWN! (⌜λ⌝ (sub⊢ (lift⊢* ss) t₁) ⌜$⌝ t₂)</a>
+<a id="5232" class="Comment">-- -- --   lem₄! {B = ⌜◦⌝}       ss t₁ p₂ unit      = unit</a>
+<a id="5291" class="Comment">-- -- --   lem₄! {B = B₁ ⌜⊃⌝ B₂} ss t₁ p₂ f    hwn₂ = stepHWN (cong$₁ (lem₁ ss t₁ p₂)) (f hwn₂)</a>
+
+<a id="5388" class="Comment">-- -- -- sub∋HWN : ∀ {Γ Ξ A} {ss : Ξ ⊢* Γ} (hwns : HWN* ss) (i : Γ ∋ A) → HWN (sub∋ ss i)</a>
+<a id="5478" class="Comment">-- -- -- sub∋HWN (hwn ∷ hwns) zero    = hwn</a>
+<a id="5522" class="Comment">-- -- -- sub∋HWN (hwn ∷ hwns) (suc i) = sub∋HWN hwns i</a>
+
+<a id="5578" class="Comment">-- -- -- mutual</a>
+<a id="5594" class="Comment">-- -- --   lem₅ : ∀ {Γ Ξ A B} (ss : Ξ ⊢* Γ) (hwns : HWN* ss) (t₁ : A ∷ Γ ⊢ B) (t₁′ : Ξ ⊢ A ⌜⊃⌝ B) {t₂ : Ξ ⊢ A} →</a>
+<a id="5707" class="Comment">-- -- --             HWN t₂ → HWN (⌜λ⌝ (sub⊢ (lift⊢* ss) t₁) ⌜$⌝ t₂)</a>
+<a id="5776" class="Comment">-- -- --   lem₅ ss hwns t₁ t₁′ hwn₂@((t₂′ , n₂@(rs₂ , p₂′)) , hwn!₂) =</a>
+<a id="5847" class="Comment">-- -- --     let hwn₂′ = skip⇓HWN n₂ hwn₂</a>
+<a id="5889" class="Comment">-- -- --     in  step⇒*HWN (cong$₂⇒* ⌜λ⌝- rs₂) (lem₄ ss t₁ p₂′ (sub⊢HWN (t₂′ ∷ ss) (hwn₂′ ∷ hwns) t₁))</a>
+
+<a id="5993" class="Comment">-- -- --   sub⊢HWN : ∀ {Γ Ξ A} (ss : Ξ ⊢* Γ) (hwns : HWN* ss) (t : Γ ⊢ A) → HWN (sub⊢ ss t)</a>
+<a id="6085" class="Comment">-- -- --   sub⊢HWN ss hwns (var i)     = sub∋HWN hwns i</a>
+<a id="6141" class="Comment">-- -- --   sub⊢HWN ss hwns (⌜λ⌝ t)     = let t′ = sub⊢ ss (⌜λ⌝ t)</a>
+<a id="6207" class="Comment">-- -- --                                  in (t′ , done , ⌜λ⌝-) , λ {t₂} → lem₅ ss hwns t t′ {t₂}</a>
+<a id="6305" class="Comment">-- -- --   sub⊢HWN ss hwns (t₁ ⌜$⌝ t₂) = let wn , hwn! = sub⊢HWN ss hwns t₁</a>
+<a id="6381" class="Comment">-- -- --                                  in  hwn! (sub⊢HWN ss hwns t₂)</a>
+
+<a id="6454" class="Comment">-- -- -- hwn : ∀ {Γ A} (t : Γ ⊢ A) → HWN t</a>
+<a id="6497" class="Comment">-- -- -- hwn t = subst HWN (idsub⊢ t) (sub⊢HWN refl⊢* refl⊢*HWN* t)</a>
+
+<a id="6566" class="Comment">-- -- -- wn : ∀ {Γ A} (t : Γ ⊢ A) → WN t</a>
+<a id="6607" class="Comment">-- -- -- wn = proj₁ ∘ hwn</a>
+
+
+<a id="6635" class="Comment">-- -- -- ----------------------------------------------------------------------------------------------------</a>
+
+<a id="6746" class="Comment">-- -- -- data SN {Γ A} (t : Γ ⊢ A) : Set where</a>
+<a id="6793" class="Comment">-- -- --   make : (∀ {t′} → t ⇒ t′ → SN t′) → SN t</a>
+
+<a id="6845" class="Comment">-- -- -- recSN : ∀ {𝓍} (X : ∀ {Γ A} → Γ ⊢ A → Set 𝓍) {Γ A} {t : Γ ⊢ A} → SN t →</a>
+<a id="6925" class="Comment">-- -- --           (∀ {t} → (∀ {t′} → t ⇒ t′ → X t′) → X t) →</a>
+<a id="6987" class="Comment">-- -- --         X t</a>
+<a id="7008" class="Comment">-- -- -- recSN X (make h) f = f λ r → recSN X (h r) f</a>
+
+<a id="7063" class="Comment">-- -- -- SN→WN : ∀ {Γ A} {t : Γ ⊢ A} → SN t → WN t</a>
+<a id="7114" class="Comment">-- -- -- SN→WN sn = recSN WN sn aux</a>
+<a id="7150" class="Comment">-- -- --   where</a>
+<a id="7167" class="Comment">-- -- --     aux : ∀ {t} → (∀ {t′} → t ⇒ t′ → WN t′) → WN t</a>
+<a id="7227" class="Comment">-- -- --     aux {t} h with prog⇒ t</a>
+<a id="7263" class="Comment">-- -- --     ... | done p = _ , done , p</a>
+<a id="7304" class="Comment">-- -- --     ... | step r = let _ , rs , p′ = h r</a>
+<a id="7354" class="Comment">-- -- --                    in  _ , step r rs , p′</a>
+
+<a id="7406" class="Comment">-- -- -- WN→SN : ∀ {Γ A} {t : Γ ⊢ A} → WN t → SN t</a>
+<a id="7457" class="Comment">-- -- -- WN→SN (t′ , done , p′)      = make λ r → r ↯ NF→¬R p′</a>
+<a id="7520" class="Comment">-- -- -- WN→SN (t′ , step r rs , p′) = make λ r′ → subst SN (det⇒ r r′) (WN→SN (t′ , rs , p′))</a>
+
+<a id="7616" class="Comment">-- -- -- sn : ∀ {A} (t : [] ⊢ A) → SN t</a>
+<a id="7656" class="Comment">-- -- -- sn = WN→SN ∘ wn</a>
+
+
+<a id="7683" class="Comment">-- -- -- ----------------------------------------------------------------------------------------------------</a>
+</pre></body></html>
