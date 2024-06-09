@@ -7,10 +7,10 @@
 
 -- TODO: unfortunately, defining the canonical model seems impossible
 
-module STLC-Naturals-SWNF-NBE3 where
+module A202401.STLC-Naturals-SWNF-NBE3 where
 
-open import STLC-Naturals-SWNF public
-open import Kit4 public
+open import A202401.STLC-Naturals-SWNF public
+open import A202401.Kit4 public
 
 
 ----------------------------------------------------------------------------------------------------

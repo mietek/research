@@ -3,9 +3,9 @@
 -- strong normalization for open terms, hopefully after Schäfer
 -- TODO: needs doing
 
-module STLC-Base-WNF-CBV-SN2 where
+module A202401.STLC-Base-WNF-CBV-SN2 where
 
-open import STLC-Base-WNF-CBV public
+open import A202401.STLC-Base-WNF-CBV public
 
 
 ----------------------------------------------------------------------------------------------------

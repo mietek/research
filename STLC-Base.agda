@@ -2,9 +2,9 @@
 
 -- simply typed lambda calculus with base type only
 
-module STLC-Base where
+module A202401.STLC-Base where
 
-open import Kit1 public
+open import A202401.Kit1 public
 
 
 ----------------------------------------------------------------------------------------------------

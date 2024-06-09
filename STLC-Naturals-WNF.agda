@@ -2,9 +2,9 @@
 
 -- β-short weak normal forms
 
-module STLC-Naturals-WNF where
+module A202401.STLC-Naturals-WNF where
 
-open import STLC-Naturals public
+open import A202401.STLC-Naturals public
 
 
 ----------------------------------------------------------------------------------------------------

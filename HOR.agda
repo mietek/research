@@ -2,11 +2,11 @@
 
 -- higher-order renamings
 
-module HOR {𝓍} {X : Set 𝓍} where
+module A202401.HOR {𝓍} {X : Set 𝓍} where
 
-open import DBI public
-open import GAN
-import FOR
+open import A202401.DBI public
+open import A202401.GAN
+import A202401.FOR as FOR
 open FOR using (∙ ; _,_)
 
 

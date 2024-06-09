@@ -2,10 +2,10 @@
 
 -- normalization-by-evaluation to β-short weak normal form
 
-module STLC-Naturals-WNF-NBE where
+module A202401.STLC-Naturals-WNF-NBE where
 
-open import STLC-Naturals-WNF public
-open import Kit4 public
+open import A202401.STLC-Naturals-WNF public
+open import A202401.Kit4 public
 
 
 ----------------------------------------------------------------------------------------------------

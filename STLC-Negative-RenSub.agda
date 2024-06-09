@@ -2,10 +2,10 @@
 
 -- laws of renaming and substitution
 
-module STLC-Negative-RenSub where
+module A202401.STLC-Negative-RenSub where
 
-open import STLC-Negative public
-open import Kit2 public
+open import A202401.STLC-Negative public
+open import A202401.Kit2 public
 
 
 ----------------------------------------------------------------------------------------------------

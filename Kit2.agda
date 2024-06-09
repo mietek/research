@@ -1,6 +1,6 @@
-module Kit2 where
+module A202401.Kit2 where
 
-open import Kit1 public
+open import A202401.Kit1 public
 
 
 ----------------------------------------------------------------------------------------------------

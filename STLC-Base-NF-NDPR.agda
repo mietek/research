@@ -2,11 +2,11 @@
 
 -- non-deterministic parallel reduction to β-short normal form
 
-module STLC-Base-NF-NDPR where
+module A202401.STLC-Base-NF-NDPR where
 
-open import STLC-Base-RenSub public
-open import STLC-Base-NF public
-open import Kit3 public
+open import A202401.STLC-Base-RenSub public
+open import A202401.STLC-Base-NF public
+open import A202401.Kit3 public
 
 
 ----------------------------------------------------------------------------------------------------

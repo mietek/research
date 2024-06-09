@@ -2,11 +2,11 @@
 
 -- call-by-value reduction to β-short weak normal form
 
-module STLC-Negative-WNF-CBV where
+module A202401.STLC-Negative-WNF-CBV where
 
-open import STLC-Negative-RenSub public
-open import STLC-Negative-WNF public
-open import Kit3 public
+open import A202401.STLC-Negative-RenSub public
+open import A202401.STLC-Negative-WNF public
+open import A202401.Kit3 public
 
 
 ----------------------------------------------------------------------------------------------------

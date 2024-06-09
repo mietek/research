@@ -2,10 +2,10 @@
 
 -- laws of renaming and substitution
 
-module STLC-Naturals-RenSub where
+module A202401.STLC-Naturals-RenSub where
 
-open import STLC-Naturals public
-open import Kit2 public
+open import A202401.STLC-Naturals public
+open import A202401.Kit2 public
 
 
 ----------------------------------------------------------------------------------------------------

@@ -2,9 +2,9 @@
 
 -- simply typed lambda calculus with natural numbers, with separate constants, after Abel
 
-module STLC-Naturals2 where
+module A202401.STLC-Naturals2 where
 
-open import Kit1 public
+open import A202401.Kit1 public
 
 
 ----------------------------------------------------------------------------------------------------

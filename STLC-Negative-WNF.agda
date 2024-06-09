@@ -2,9 +2,9 @@
 
 -- β-short weak normal forms
 
-module STLC-Negative-WNF where
+module A202401.STLC-Negative-WNF where
 
-open import STLC-Negative public
+open import A202401.STLC-Negative public
 
 
 ----------------------------------------------------------------------------------------------------

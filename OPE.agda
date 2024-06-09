@@ -2,9 +2,9 @@
 
 -- order-preserving embeddings
 
-module OPE {𝓍} {X : Set 𝓍} where
+module A202401.OPE {𝓍} {X : Set 𝓍} where
 
-open import DBI public
+open import A202401.DBI public
 
 
 ----------------------------------------------------------------------------------------------------

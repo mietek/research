@@ -3,12 +3,12 @@
 -- call-by-value reduction to β-short η-long expanded weak normal form, derived from Ghani
 -- TODO: clean up; write up
 
-module STLC-Base-EWNF-CBV where
+module A202401.STLC-Base-EWNF-CBV where
 
-open import STLC-Base-RenSub public
-import STLC-Base-EWNF as F
+open import A202401.STLC-Base-RenSub public
+import A202401.STLC-Base-EWNF as F
 open F using (⌜λ⌝- ; nnf ; var- ; _⌜$⌝_ ; ∙ ; _,_)
-open import Kit3 public
+open import A202401.Kit3 public
 
 
 ----------------------------------------------------------------------------------------------------

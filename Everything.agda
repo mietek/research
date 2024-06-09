@@ -31,95 +31,95 @@ join ##dependent on libera.chat
 
 ------------------------------------------------------------------------------------------------- -}
 
-module Everything where
+module A202401.Everything where
 
-import Prelude
-import GAN
-import DBI
+import A202401.Prelude
+import A202401.GAN
+import A202401.DBI
 
 
 ----------------------------------------------------------------------------------------------------
 
 -- main version, with order-preserving embeddings
 
-import OPE
-import OPE-GAN
+import A202401.OPE
+import A202401.OPE-GAN
 
-import Kit1
-import Kit2
-import Kit2-GAN
-import Kit3
-import Kit3-GAN
-import Kit4
+import A202401.Kit1
+import A202401.Kit2
+import A202401.Kit2-GAN
+import A202401.Kit3
+import A202401.Kit3-GAN
+import A202401.Kit4
 
-import STLC-Base
-import STLC-Base-RenSub
-import STLC-Base-WNF
-import STLC-Base-WNF-CBV
-import STLC-Base-WNF-CBV-SN
-import STLC-Base-WNF-CBV-SN2
-import STLC-Base-WNF-NBE
-import STLC-Base-WNF-NBE2
-import STLC-Base-EWNF
-import STLC-Base-EWNF-CBV
-import STLC-Base-NF
-import STLC-Base-NF-AO
-import STLC-Base-NF-NDR
-import STLC-Base-NF-NDPR
+import A202401.STLC-Base
+import A202401.STLC-Base-RenSub
+import A202401.STLC-Base-WNF
+import A202401.STLC-Base-WNF-CBV
+import A202401.STLC-Base-WNF-CBV-SN
+import A202401.STLC-Base-WNF-CBV-SN2
+import A202401.STLC-Base-WNF-NBE
+import A202401.STLC-Base-WNF-NBE2
+import A202401.STLC-Base-EWNF
+import A202401.STLC-Base-EWNF-CBV
+import A202401.STLC-Base-NF
+import A202401.STLC-Base-NF-AO
+import A202401.STLC-Base-NF-NDR
+import A202401.STLC-Base-NF-NDPR
 
-import STLC-Negative
-import STLC-Negative-RenSub
-import STLC-Negative-WNF
-import STLC-Negative-WNF-CBV
-import STLC-Negative-WNF-NBE
-import STLC-Negative-WNF-NBE2
+import A202401.STLC-Negative
+import A202401.STLC-Negative-RenSub
+import A202401.STLC-Negative-WNF
+import A202401.STLC-Negative-WNF-CBV
+import A202401.STLC-Negative-WNF-NBE
+import A202401.STLC-Negative-WNF-NBE2
 
-import STLC-Naturals
-import STLC-Naturals-RenSub
-import STLC-Naturals-SWNF
-import STLC-Naturals-SWNF-CBV
-import STLC-Naturals-SWNF-NBE
-import STLC-Naturals-SWNF-NBE2
-import STLC-Naturals-SWNF-NBE3
-import STLC-Naturals-WNF
-import STLC-Naturals-WNF-CBV
-import STLC-Naturals-WNF-NBE
-import STLC-Naturals2
-import STLC-Naturals2-NF
-import STLC-Naturals2-NF-NBE
+import A202401.STLC-Naturals
+import A202401.STLC-Naturals-RenSub
+import A202401.STLC-Naturals-SWNF
+import A202401.STLC-Naturals-SWNF-CBV
+import A202401.STLC-Naturals-SWNF-NBE
+import A202401.STLC-Naturals-SWNF-NBE2
+import A202401.STLC-Naturals-SWNF-NBE3
+import A202401.STLC-Naturals-WNF
+import A202401.STLC-Naturals-WNF-CBV
+import A202401.STLC-Naturals-WNF-NBE
+import A202401.STLC-Naturals2
+import A202401.STLC-Naturals2-NF
+import A202401.STLC-Naturals2-NF-NBE
 
 
 ----------------------------------------------------------------------------------------------------
 
 -- alternative version, with first-order renamings
 
-import FOR
-import FOR-GAN
+import A202401.FOR
+import A202401.FOR-GAN
 
-import FOR-Kit1
-import FOR-Kit2
-import FOR-Kit2-GAN
-import FOR-Kit3
-import FOR-Kit3-GAN
+import A202401.FOR-Kit1
+import A202401.FOR-Kit2
+import A202401.FOR-Kit2-GAN
+import A202401.FOR-Kit3
+import A202401.FOR-Kit3-GAN
 
-import FOR-STLC-Base
-import FOR-STLC-Base-RenSub
-import FOR-STLC-Base-WNF
-import FOR-STLC-Base-WNF-CBV
+import A202401.FOR-STLC-Base
+import A202401.FOR-STLC-Base-RenSub
+import A202401.FOR-STLC-Base-WNF
+import A202401.FOR-STLC-Base-WNF-CBV
 
 
 ----------------------------------------------------------------------------------------------------
 
 -- alternative version, with higher-order renamings
 
-import HOR
+import A202401.HOR
 
 
 ----------------------------------------------------------------------------------------------------
 
 -- roadmap towards correctness of NBE
 
-open STLC-Base-WNF-NBE2
+open A202401.STLC-Base-WNF-NBE2
 open BetaShortEtaLongDefEq
 
 postulate

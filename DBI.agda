@@ -2,9 +2,9 @@
 
 -- de Bruijn indices
 
-module DBI {𝓍} {X : Set 𝓍} where
+module A202401.DBI {𝓍} {X : Set 𝓍} where
 
-open import Prelude public
+open import A202401.Prelude public
 
 
 ----------------------------------------------------------------------------------------------------

@@ -2,10 +2,10 @@
 
 -- β-short weak normal forms
 
-module STLC-Base-WNF where
+module A202401.STLC-Base-WNF where
 
-open import STLC-Base public
-open import GAN
+open import A202401.STLC-Base public
+open import A202401.GAN
 
 
 ----------------------------------------------------------------------------------------------------

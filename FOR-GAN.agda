@@ -2,10 +2,10 @@
 
 -- properties of first-order renamings
 
-module FOR-GAN {𝓍} {X : Set 𝓍} where
+module A202401.FOR-GAN {𝓍} {X : Set 𝓍} where
 
-open import FOR public
-open import GAN public
+open import A202401.FOR public
+open import A202401.GAN public
 
 
 ----------------------------------------------------------------------------------------------------

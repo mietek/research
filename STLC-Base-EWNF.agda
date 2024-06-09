@@ -2,9 +2,9 @@
 
 -- β-short η-long expanded weak normal forms
 
-module STLC-Base-EWNF where
+module A202401.STLC-Base-EWNF where
 
-open import STLC-Base public
+open import A202401.STLC-Base public
 
 
 ----------------------------------------------------------------------------------------------------

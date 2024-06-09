@@ -1,7 +1,7 @@
-module Kit2-GAN where
+module A202401.Kit2-GAN where
 
-open import Kit2 public
-open import OPE-GAN public
+open import A202401.Kit2 public
+open import A202401.OPE-GAN public
 
 
 ----------------------------------------------------------------------------------------------------

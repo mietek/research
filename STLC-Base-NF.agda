@@ -2,9 +2,9 @@
 
 -- β-short normal forms
 
-module STLC-Base-NF where
+module A202401.STLC-Base-NF where
 
-open import STLC-Base public
+open import A202401.STLC-Base public
 
 
 ----------------------------------------------------------------------------------------------------

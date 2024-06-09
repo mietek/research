@@ -2,9 +2,9 @@
 
 -- bits of naive category theory
 
-module GAN where
+module A202401.GAN where
 
-import Prelude
+import A202401.Prelude as Prelude
 open Prelude hiding (_∘_ ; _⨾_ ; id)
 
 

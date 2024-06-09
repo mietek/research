@@ -2,9 +2,9 @@
 
 -- simply typed lambda calculus with negative types
 
-module STLC-Negative where
+module A202401.STLC-Negative where
 
-open import Kit1 public
+open import A202401.Kit1 public
 
 
 ----------------------------------------------------------------------------------------------------

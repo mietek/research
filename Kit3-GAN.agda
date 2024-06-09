@@ -1,7 +1,7 @@
-module Kit3-GAN where
+module A202401.Kit3-GAN where
 
-open import Kit3 public
-open import GAN public
+open import A202401.Kit3 public
+open import A202401.GAN public
 
 
 ----------------------------------------------------------------------------------------------------

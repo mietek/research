@@ -3,9 +3,9 @@
 -- strong normalization for closed terms, after Ahmed
 -- TODO: needs a lot of work
 
-module STLC-Base-WNF-CBV-SN where
+module A202401.STLC-Base-WNF-CBV-SN where
 
-open import STLC-Base-WNF-CBV public
+open import A202401.STLC-Base-WNF-CBV public
 
 
 ----------------------------------------------------------------------------------------------------

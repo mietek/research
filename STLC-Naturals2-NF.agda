@@ -2,9 +2,9 @@
 
 -- β-short η-long normal forms, after Abel
 
-module STLC-Naturals2-NF where
+module A202401.STLC-Naturals2-NF where
 
-open import STLC-Naturals2 public
+open import A202401.STLC-Naturals2 public
 
 
 ----------------------------------------------------------------------------------------------------

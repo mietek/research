@@ -2,7 +2,7 @@
 
 -- tiny standard library
 
-module Prelude where
+module A202401.Prelude where
 
 open import Agda.Builtin.Equality public
   using (_≡_ ; refl)

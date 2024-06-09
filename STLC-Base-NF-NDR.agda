@@ -2,11 +2,11 @@
 
 -- non-deterministic reduction to β-short normal form
 
-module STLC-Base-NF-NDR where
+module A202401.STLC-Base-NF-NDR where
 
-open import STLC-Base-RenSub public
-open import STLC-Base-NF public
-open import Kit3 public
+open import A202401.STLC-Base-RenSub public
+open import A202401.STLC-Base-NF public
+open import A202401.Kit3 public
 
 
 ----------------------------------------------------------------------------------------------------

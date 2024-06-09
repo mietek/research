@@ -2,10 +2,10 @@
 
 -- properties of order-preserving embeddings
 
-module OPE-GAN {𝓍} {X : Set 𝓍} where
+module A202401.OPE-GAN {𝓍} {X : Set 𝓍} where
 
-open import OPE public
-open import GAN public
+open import A202401.OPE public
+open import A202401.GAN public
 
 
 ----------------------------------------------------------------------------------------------------
