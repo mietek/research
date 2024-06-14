@@ -268,7 +268,7 @@ module _ {𝒾 𝒾₌ 𝓈 𝓈₌} (I₌ : Setoid 𝒾 𝒾₌) (S₌ : Setoid
   open Setoid S₌ using () renaming (Carrier to S ; _≈_ to _=S_ ; refl to reflS ; sym to symS ; trans to transS)
 
   Ext : ∀ (f : I → S) → Set _
-  Ext f = ∀ i j → i =I j → f i =S f j
+  Ext f = ∀ {i j} → i =I j → f i =S f j
 
   module _ {𝒶} (A : I → S → Set 𝒶) where
     -- extensional axiom of choice
@@ -326,26 +326,8 @@ module _ {𝒾 𝒾₌ 𝓈 𝓈₌} (I₌ : Setoid 𝒾 𝒾₌) (S₌ : Setoid
         Ext[f] = {!!}
 
         p₇ : ∀ i → Σ![ x ∈ S / _=S_ ] (A i ∩ S₁) x
-        p₇ i =
+        p₇ i = f i , clearlyTrue i , λ { x (Aix , j , fj=x) →
           let
-            x : S
-            x = proj₁ (soIs i)
-
-            [Ai∩S₁]x : (A i ∩ S₁) x
-            [Ai∩S₁]x = proj₂ (soIs i)
-
-            Aix : A i x
-            Aix = proj₁ [Ai∩S₁]x
-
-            assumedTrue₂ : Σ[ j ∈ I ] f j =S x
-            assumedTrue₂ = proj₂ [Ai∩S₁]x
-
-            j : I
-            j = proj₁ assumedTrue₂
-
-            fj=x : f j =S x
-            fj=x = proj₂ assumedTrue₂
-
             Aj[fj] : A j (f j)
             Aj[fj] = proj₁ (clearlyTrue j)
 
@@ -355,15 +337,13 @@ module _ {𝒾 𝒾₌ 𝓈 𝓈₌} (I₌ : Setoid 𝒾 𝒾₌) (S₌ : Setoid
             i=j : i =I j
             i=j = mutualExclusiveness (x , Aix , Ajx)
 
+            fi=fj : f i =S f j
+            fi=fj = Ext[f] i=j
+
             fi=x : f i =S x
-            fi=x = Ext[f] i j i=j
+            fi=x = transS fi=fj fj=x
           in
-            x , [Ai∩S₁]x , λ { v (Aiv , k , fk=v) →
-              let
-                fi=v : f i =S v
-                fi=v = {!!}
-              in
-                fi=v }
+            fi=x }
       in
         S₁ , record { extensionality = p₆ ; uniquenessOfChoice = p₇ }
 ```
