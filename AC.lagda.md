@@ -110,20 +110,20 @@ interpretation.
 ```
 module _ {𝒾} {I : Set 𝒾} where
   module _ {𝓈 𝒶} {S : Set 𝓈} {A : I → S → Set 𝒶} where
-    -- intuitionistic axiom of choice
-    IntAC : Set _
-    IntAC = (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] ∀ i → A i (f i)
+    -- (constructive, intensional, type-theoretic) axiom of choice
+    AC : Set _
+    AC = (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] ∀ i → A i (f i)
 
-    intac : IntAC
-    intac h = proj₁ ∘ h , proj₂ ∘ h
+    ac : AC
+    ac h = proj₁ ∘ h , proj₂ ∘ h
 
   module _ {𝓈 𝒶} {S : I → Set 𝓈} {A : ∀ i → S i → Set 𝒶} where
-    -- dependent intuitionistic axiom of choice
-    DepIntAC : Set _
-    DepIntAC = (∀ i → Σ[ x ∈ S i ] A i x) → Σ[ f ∈ (∀ i → S i) ] ∀ i → A i (f i)
+    -- dependent (constructive, intensional, type-theoretic) axiom of choice
+    DepAC : Set _
+    DepAC = (∀ i → Σ[ x ∈ S i ] A i x) → Σ[ f ∈ (∀ i → S i) ] ∀ i → A i (f i)
 
-    depintac : DepIntAC
-    depintac h = proj₁ ∘ h , proj₂ ∘ h
+    depac : DepAC
+    depac h = proj₁ ∘ h , proj₂ ∘ h
 ```
 --------------------------------------------------------------------------------
 
@@ -307,7 +307,7 @@ module _ {𝒾 𝒾₌ 𝓈 𝓈₌} (I₌ : Setoid 𝒾 𝒾₌) (S₌ : Setoid
         open PropertiesOfA p₁₋₅
 
         f : I → S
-        f = proj₁ (intac nonemptiness)
+        f = proj₁ (ac nonemptiness)
 
         S₁ : S → Set _
         S₁ x = Σ[ j ∈ I ] f j =S x
@@ -317,7 +317,7 @@ module _ {𝒾 𝒾₌ 𝓈 𝓈₌} (I₌ : Setoid 𝒾 𝒾₌) (S₌ : Setoid
                  (λ { (j , fj=x) → j , transS fj=x (symS x=y) })
 
         clearlyTrue : ∀ i → (A i ∩ S₁) (f i)
-        clearlyTrue i = proj₂ (intac nonemptiness) i , i , reflS
+        clearlyTrue i = proj₂ (ac nonemptiness) i , i , reflS
 
         soIs : ∀ i → Σ[ x ∈ S ] (A i ∩ S₁) x
         soIs i = f i , clearlyTrue i
@@ -326,24 +326,24 @@ module _ {𝒾 𝒾₌ 𝓈 𝓈₌} (I₌ : Setoid 𝒾 𝒾₌) (S₌ : Setoid
         Ext[f] = {!!}
 
         p₇ : ∀ i → Σ![ x ∈ S / _=S_ ] (A i ∩ S₁) x
-        p₇ i = f i , clearlyTrue i , λ { x (Aix , j , fj=x) →
+        p₇ i = f i , clearlyTrue i , λ { y (Aiy , j , fj=y) →
           let
             Aj[fj] : A j (f j)
             Aj[fj] = proj₁ (clearlyTrue j)
 
-            Ajx : A j x
-            Ajx = proj₁ (extensionality fj=x) Aj[fj]
+            Ajy : A j y
+            Ajy = proj₁ (extensionality fj=y) Aj[fj]
 
             i=j : i =I j
-            i=j = mutualExclusiveness (x , Aix , Ajx)
+            i=j = mutualExclusiveness (y , Aiy , Ajy)
 
             fi=fj : f i =S f j
             fi=fj = Ext[f] i=j
 
-            fi=x : f i =S x
-            fi=x = transS fi=fj fj=x
+            fi=y : f i =S y
+            fi=y = transS fi=fj fj=y
           in
-            fi=x }
+            fi=y }
       in
         S₁ , record { extensionality = p₆ ; uniquenessOfChoice = p₇ }
 ```
@@ -506,18 +506,18 @@ type-theoretic rendering of Zermelo’s axiom of choice comes from constructive
 set theory.  Peter Aczel has shown how to interpret the language of
 Zermelo-Fraenkel set theory in constructive type theory, this interpretation
 being the natural constructive version of the cumulative hierarchy, and
-investigated what set-theoretical principles that become validated under that
+investigated what set-theoretic principles that become validated under that
 interpretation.[^17]  But one may also ask, conversely, what principle, or
 principles, that have to be adjoined to constructive type theory in order to
-validate a specific set-theoretical axiom.  In particular, this may be asked
-about the formalized version of the axiom of choice that Zermelo made part of
-his own axiomatization of set theory.  The answer is as follows.
+validate a specific set-theoretic axiom.  In particular, this may be asked about
+the formalized version of the axiom of choice that Zermelo made part of his own
+axiomatization of set theory.  The answer is as follows.
 
 **Theorem II.**  *When constructive type theory is strengthened by the
-extensional axiom of choice, the set-theoretical axiom of choice becomes
-validated under the Aczel interpretation.*
+extensional axiom of choice, the set-theoretic axiom of choice becomes validated
+under the Aczel interpretation.*
 
-*Proof.*  The set-theoretical axiom of choice says that, for any two iterative
+*Proof.*  The set-theoretic axiom of choice says that, for any two iterative
 sets $α$ and $β$ and any relation $R$ between iterative sets,
 
 $$(∀x ∈ α)(∃y ∈ β)R(x, y) → (∃φ : α → β)(∀x ∈ α)R(x, φ(x)).$$
@@ -573,7 +573,7 @@ Another way of reaching the same conclusion is to interchange the order of the
 last two steps in the proof just given, arguing instead that
 $\text{ZFC} = \text{CZF} + \text{EM} + \text{AC}$ is interpretable in
 $\text{CTT} + \text{EM} + \text{ExtAC}$ by the previous theorem, and then
-appealing to the type-theoretical version of Diaconescu’s theorem, according to
+appealing to the type-theoretic version of Diaconescu’s theorem, according to
 which the law of excluded middle follows from the extensional axiom of choice in
 the context of constructive type theory.[^20]  The final conclusion is anyhow
 that $\text{ZFC}$ is interpretable in $\text{CTT} + \text{ExtAC}$.
