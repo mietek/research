@@ -1,6 +1,4 @@
 ```
-{-# OPTIONS --allow-unsolved-metas #-}
-
 module AC where
 
 open import Data.Product using (Σ ; _,_ ; proj₁ ; proj₂ ; _×_ ; Σ-syntax)
@@ -9,17 +7,18 @@ open import Level using (_⊔_ ; suc)
 open import Relation.Binary using (Setoid)
 open import Relation.Unary using (_∩_)
 
-_↔_ : ∀ {𝓈 𝓉} (S : Set 𝓈) (T : Set 𝓉) → Set _
+_↔_ : ∀ {𝓈 𝓉} (S : Set 𝓈) (T : Set 𝓉) → Set (𝓈 ⊔ 𝓉)
 S ↔ T = (S → T) × (T → S)
 
-Σ!-syntax : ∀ {𝓈 𝓈₌ 𝓉} (S : Set 𝓈) (_=S_ : S → S → Set 𝓈₌) (T : S → Set 𝓉) → Set _
-Σ!-syntax S _=S_ T = Σ[ x ∈ S ] T x × ∀ y → T y → x =S y
+Σ!-syntax : ∀ {𝓈 𝓈₌ 𝓉} (S : Set 𝓈) (_≈S_ : S → S → Set 𝓈₌) (T : S → Set 𝓉) →
+            Set (𝓈 ⊔ 𝓈₌ ⊔ 𝓉)
+Σ!-syntax S _≈S_ T = Σ[ x ∈ S ] T x × ∀ {y} → T y → x ≈S y
 
 infix 2 Σ!-syntax
-syntax Σ!-syntax S _=S_ (λ x → T) = Σ![ x ∈ S / _=S_ ] T
+syntax Σ!-syntax S _≈S_ (λ x → T) = Σ![ x ∈ S / _≈S_ ] T
 
-drop! : ∀ {𝓈 𝓈₌ 𝓉} {S : Set 𝓈} {_=S_ : S → S → Set 𝓈₌} {T : S → Set 𝓉} →
-        Σ![ x ∈ S / _=S_ ] T x → Σ[ x ∈ S ] T x
+drop! : ∀ {𝓈 𝓈₌ 𝓉} {S : Set 𝓈} {_≈S_ : S → S → Set 𝓈₌} {T : S → Set 𝓉} →
+        Σ![ x ∈ S / _≈S_ ] T x → Σ[ x ∈ S ] T x
 drop! (x , t , h) = x , t
 ```
 --------------------------------------------------------------------------------
@@ -111,7 +110,7 @@ interpretation.
 module _ {𝒾} {I : Set 𝒾} where
   module _ {𝓈 𝒶} {S : Set 𝓈} {A : I → S → Set 𝒶} where
     -- (constructive, intensional, type-theoretic) axiom of choice
-    AC : Set _
+    AC : Set (𝒾 ⊔ 𝓈 ⊔ 𝒶)
     AC = (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] ∀ i → A i (f i)
 
     ac : AC
@@ -119,7 +118,7 @@ module _ {𝒾} {I : Set 𝒾} where
 
   module _ {𝓈 𝒶} {S : I → Set 𝓈} {A : ∀ i → S i → Set 𝒶} where
     -- dependent (constructive, intensional, type-theoretic) axiom of choice
-    DepAC : Set _
+    DepAC : Set (𝒾 ⊔ 𝓈 ⊔ 𝒶)
     DepAC = (∀ i → Σ[ x ∈ S i ] A i x) → Σ[ f ∈ (∀ i → S i) ] ∀ i → A i (f i)
 
     depac : DepAC
@@ -264,36 +263,29 @@ course.
 --------------------------------------------------------------------------------
 ```
 module _ {𝒾 𝒾₌ 𝓈 𝓈₌} (I₌ : Setoid 𝒾 𝒾₌) (S₌ : Setoid 𝓈 𝓈₌) where
-  open Setoid I₌ using () renaming (Carrier to I ; _≈_ to _=I_ ; refl to reflI ; sym to symI ; trans to transI)
-  open Setoid S₌ using () renaming (Carrier to S ; _≈_ to _=S_ ; refl to reflS ; sym to symS ; trans to transS)
+  open module I = Setoid I₌ public using () renaming (Carrier to I)
+  open module S = Setoid S₌ public using () renaming (Carrier to S)
 
-  Ext : ∀ (f : I → S) → Set _
-  Ext f = ∀ {i j} → i =I j → f i =S f j
+  Ext : ∀ (f : I → S) → Set (𝒾 ⊔ 𝒾₌ ⊔ 𝓈₌)
+  Ext f = ∀ {i j} → i I.≈ j → f i S.≈ f j
 
   module _ {𝒶} (A : I → S → Set 𝒶) where
     -- extensional axiom of choice
-    ExtAC : Set _
+    ExtAC : Set (𝒾 ⊔ 𝒾₌ ⊔ 𝓈 ⊔ 𝓈₌ ⊔ 𝒶)
     ExtAC = (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
-
-    -- axiom of unique choice
-    AC! : Set _
-    AC! = (∀ i → Σ![ x ∈ S / _=S_ ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
-
-    extac→ac! : ExtAC → AC!
-    extac→ac! extac h = extac (drop! ∘ h)
 
     record PropertiesOfA : Set (𝒾 ⊔ 𝒾₌ ⊔ 𝓈 ⊔ 𝓈₌ ⊔ 𝒶) where
       field
-        extensionality      : ∀ {i x y} → x =S y → (A i x ↔ A i y)
-        indexExtensionality : ∀ {i j} → i =I j → ∀ x → (A i x ↔ A j x)
-        mutualExclusiveness : ∀ {i j} → (Σ[ x ∈ S ] A i x × A j x) → i =I j
+        extensionality      : ∀ {i x y} → x S.≈ y → (A i x ↔ A i y)
+        indexExtensionality : ∀ {i j} → i I.≈ j → ∀ x → (A i x ↔ A j x)
+        mutualExclusiveness : ∀ {i j} → (Σ[ x ∈ S ] A i x × A j x) → i I.≈ j
         exhaustiveness      : ∀ x → Σ[ i ∈ I ] A i x
         nonemptiness        : ∀ i → Σ[ x ∈ S ] A i x
 
     record PropertiesOf {𝓈₁} (S₁ : S → Set 𝓈₁) : Set (𝒾 ⊔ 𝒾₌ ⊔ 𝓈 ⊔ 𝓈₌ ⊔ 𝒶 ⊔ 𝓈₁) where
       field
-        extensionality     : ∀ {x y} → x =S y → (S₁ x ↔ S₁ y)
-        uniquenessOfChoice : ∀ i → Σ![ x ∈ S / _=S_ ] (A i ∩ S₁) x
+        extensionality     : ∀ {x y} → x S.≈ y → (S₁ x ↔ S₁ y)
+        uniquenessOfChoice : ∀ i → Σ![ x ∈ S / S._≈_ ] (A i ∩ S₁) x
 
     -- Zermelo's axiom of choice
     -- TODO: shouldn't we say that there exists a level 𝓈₁ such that the level
@@ -301,49 +293,49 @@ module _ {𝒾 𝒾₌ 𝓈 𝓈₌} (I₌ : Setoid 𝒾 𝒾₌) (S₌ : Setoid
     ZerAC : Set (suc 𝒾 ⊔ 𝒾₌ ⊔ 𝓈 ⊔ suc 𝓈₌ ⊔ 𝒶)
     ZerAC = PropertiesOfA → Σ[ S₁ ∈ (S → Set (𝒾 ⊔ 𝓈₌)) ] PropertiesOf S₁
 
-    zerac : ZerAC
-    zerac p₁₋₅ =
+    zerac : ExtAC → ZerAC
+    zerac extac p₁₋₅ =
       let
         open PropertiesOfA p₁₋₅
 
         f : I → S
-        f = proj₁ (ac nonemptiness)
+        f = proj₁ (extac nonemptiness)
 
-        S₁ : S → Set _
-        S₁ x = Σ[ j ∈ I ] f j =S x
+        Ext[f] : Ext f
+        Ext[f] = proj₁ (proj₂ (extac nonemptiness))
 
-        p₆ : ∀ {x y} → x =S y → (S₁ x ↔ S₁ y)
-        p₆ x=y = (λ { (j , fj=x) → j , transS fj=x x=y }) ,
-                 (λ { (j , fj=x) → j , transS fj=x (symS x=y) })
+        S₁ : S → Set (𝒾 ⊔ 𝓈₌)
+        S₁ x = Σ[ j ∈ I ] f j S.≈ x
+
+        p₆ : ∀ {x y} → x S.≈ y → (S₁ x ↔ S₁ y)
+        p₆ x≈y = (λ { (j , fj≈x) → j , S.trans fj≈x x≈y }) ,
+                 (λ { (j , fj≈x) → j , S.trans fj≈x (S.sym x≈y) })
 
         clearlyTrue : ∀ i → (A i ∩ S₁) (f i)
-        clearlyTrue i = proj₂ (ac nonemptiness) i , i , reflS
+        clearlyTrue i = proj₂ (proj₂ (extac nonemptiness)) i , i , S.refl
 
         soIs : ∀ i → Σ[ x ∈ S ] (A i ∩ S₁) x
         soIs i = f i , clearlyTrue i
 
-        Ext[f] : Ext f
-        Ext[f] = {!!}
-
-        p₇ : ∀ i → Σ![ x ∈ S / _=S_ ] (A i ∩ S₁) x
-        p₇ i = f i , clearlyTrue i , λ { y (Aiy , j , fj=y) →
+        p₇ : ∀ i → Σ![ x ∈ S / S._≈_ ] (A i ∩ S₁) x
+        p₇ i = f i , clearlyTrue i , λ { {y} (Aiy , j , fj≈y) →
           let
             Aj[fj] : A j (f j)
             Aj[fj] = proj₁ (clearlyTrue j)
 
             Ajy : A j y
-            Ajy = proj₁ (extensionality fj=y) Aj[fj]
+            Ajy = proj₁ (extensionality fj≈y) Aj[fj]
 
-            i=j : i =I j
-            i=j = mutualExclusiveness (y , Aiy , Ajy)
+            i≈j : i I.≈ j
+            i≈j = mutualExclusiveness (y , Aiy , Ajy)
 
-            fi=fj : f i =S f j
-            fi=fj = Ext[f] i=j
+            fi≈fj : f i S.≈ f j
+            fi≈fj = Ext[f] i≈j
 
-            fi=y : f i =S y
-            fi=y = transS fi=fj fj=y
+            fi≈y : f i S.≈ y
+            fi≈y = S.trans fi≈fj fj≈y
           in
-            fi=y }
+            fi≈y }
       in
         S₁ , record { extensionality = p₆ ; uniquenessOfChoice = p₇ }
 ```
@@ -622,7 +614,46 @@ opposed to $\text{ExtAC}$, which lacks justification.
 
 --------------------------------------------------------------------------------
 ```
--- TODO
+    -- axiom of unique choice
+    AC! : Set (𝒾 ⊔ 𝒾₌ ⊔ 𝓈 ⊔ 𝓈₌ ⊔ 𝒶)
+    AC! = (∀ i → Σ![ x ∈ S / S._≈_ ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
+
+    extac→ac! : ExtAC → AC!
+    extac→ac! extac h = extac (drop! ∘ h)
+
+    IndexExtensionality : Set (𝒾 ⊔ 𝒾₌ ⊔ 𝓈 ⊔ 𝒶)
+    IndexExtensionality = ∀ {i j} → i I.≈ j → ∀ x → (A i x ↔ A j x)
+
+    ac! : IndexExtensionality → AC!
+    ac! indexExtensionality h =
+      let
+        z : Σ[ f ∈ (I → S) ] ∀ i → A i (f i) × (∀ {y} → A i y → f i S.≈ y)
+        z = ac h
+
+        f : I → S
+        f = proj₁ z
+
+        k→Ak[fk] : ∀ k → A k (f k)
+        k→Ak[fk] k = proj₁ (proj₂ z k)
+
+        Aky→fk≈y : ∀ {k y} → A k y → f k S.≈ y
+        Aky→fk≈y {k} = proj₂ (proj₂ z k)
+
+        i≈j→fi≈fj : ∀ {i j} → i I.≈ j → f i S.≈ f j
+        i≈j→fi≈fj {i} {j} i≈j =
+          let
+            Aj[fj] : A j (f j)
+            Aj[fj] = k→Ak[fk] j
+
+            Ai[fj] : A i (f j)
+            Ai[fj] = proj₁ (indexExtensionality (I.sym i≈j) (f j)) Aj[fj]
+
+            fi≈fj : f i S.≈ f j
+            fi≈fj = Aky→fk≈y Ai[fj]
+          in
+            fi≈fj
+      in
+        f , i≈j→fi≈fj , k→Ak[fk]
 ```
 --------------------------------------------------------------------------------
 
