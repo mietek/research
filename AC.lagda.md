@@ -13,7 +13,7 @@ _↔_ : ∀ {𝓈 𝓉} (S : Set 𝓈) (T : Set 𝓉) → Set _
 S ↔ T = (S → T) × (T → S)
 
 Σ!-syntax : ∀ {𝓈 𝓈₌ 𝓉} (S : Set 𝓈) (_=S_ : S → S → Set 𝓈₌) (T : S → Set 𝓉) → Set _
-Σ!-syntax S _=S_ T = Σ[ x ∈ S ] T x × ∀ {y : S} → T y → x =S y
+Σ!-syntax S _=S_ T = Σ[ x ∈ S ] T x × ∀ y → T y → x =S y
 
 infix 2 Σ!-syntax
 syntax Σ!-syntax S _=S_ (λ x → T) = Σ![ x ∈ S / _=S_ ] T
@@ -299,7 +299,7 @@ module _ {𝒾 𝒾₌ 𝓈 𝓈₌} (I₌ : Setoid 𝒾 𝒾₌) (S₌ : Setoid
     -- TODO: shouldn't we say that there exists a level 𝓈₁ such that the level
     -- of S₁ is s₁, instead of saying that the level of S₁ is (𝒾 ⊔ 𝓈₌)?
     ZerAC : Set (suc 𝒾 ⊔ 𝒾₌ ⊔ 𝓈 ⊔ suc 𝓈₌ ⊔ 𝒶)
-    ZerAC = PropertiesOfA → Σ[ S₁ ∈ (S → Set (𝒾 ⊔ 𝓈₌)) ] (PropertiesOf S₁)
+    ZerAC = PropertiesOfA → Σ[ S₁ ∈ (S → Set (𝒾 ⊔ 𝓈₌)) ] PropertiesOf S₁
 
     zerac : ZerAC
     zerac p₁₋₅ =
@@ -313,11 +313,57 @@ module _ {𝒾 𝒾₌ 𝓈 𝓈₌} (I₌ : Setoid 𝒾 𝒾₌) (S₌ : Setoid
         S₁ x = Σ[ j ∈ I ] f j =S x
 
         p₆ : ∀ {x y} → x =S y → (S₁ x ↔ S₁ y)
-        p₆ x=y = (λ { (j , z=x) → j , transS z=x x=y }) ,
-                 (λ { (j , z=x) → j , transS z=x (symS x=y) })
+        p₆ x=y = (λ { (j , fj=x) → j , transS fj=x x=y }) ,
+                 (λ { (j , fj=x) → j , transS fj=x (symS x=y) })
+
+        clearlyTrue : ∀ i → (A i ∩ S₁) (f i)
+        clearlyTrue i = proj₂ (intac nonemptiness) i , i , reflS
+
+        soIs : ∀ i → Σ[ x ∈ S ] (A i ∩ S₁) x
+        soIs i = f i , clearlyTrue i
+
+        Ext[f] : Ext f
+        Ext[f] = {!!}
 
         p₇ : ∀ i → Σ![ x ∈ S / _=S_ ] (A i ∩ S₁) x
-        p₇ i = {!!}
+        p₇ i =
+          let
+            x : S
+            x = proj₁ (soIs i)
+
+            [Ai∩S₁]x : (A i ∩ S₁) x
+            [Ai∩S₁]x = proj₂ (soIs i)
+
+            Aix : A i x
+            Aix = proj₁ [Ai∩S₁]x
+
+            assumedTrue₂ : Σ[ j ∈ I ] f j =S x
+            assumedTrue₂ = proj₂ [Ai∩S₁]x
+
+            j : I
+            j = proj₁ assumedTrue₂
+
+            fj=x : f j =S x
+            fj=x = proj₂ assumedTrue₂
+
+            Aj[fj] : A j (f j)
+            Aj[fj] = proj₁ (clearlyTrue j)
+
+            Ajx : A j x
+            Ajx = proj₁ (extensionality fj=x) Aj[fj]
+
+            i=j : i =I j
+            i=j = mutualExclusiveness (x , Aix , Ajx)
+
+            fi=x : f i =S x
+            fi=x = Ext[f] i j i=j
+          in
+            x , [Ai∩S₁]x , λ { v (Aiv , k , fk=v) →
+              let
+                fi=v : f i =S v
+                fi=v = {!!}
+              in
+                fi=v }
       in
         S₁ , record { extensionality = p₆ ; uniquenessOfChoice = p₇ }
 ```
