@@ -1,20 +1,21 @@
 ```
+{-# OPTIONS --allow-unsolved-metas #-}
+
 module AC where
 
-open import Data.Product using (Σ ; _,_ ; proj₁ ; proj₂ ; _×_ ; Σ-syntax)
+open import Data.Product using (Σ ; _,_ ; _×_ ; Σ-syntax) renaming (proj₁ to fst ; proj₂ to snd)
 open import Function using (_∘_)
-open import Level using (Level ; _⊔_ ; suc)
-open import Relation.Binary using (Setoid ; IsEquivalence)
--- open import Relation.Binary.PropositionalEquality using (_≡_)
+open import Level using (_⊔_ ; suc)
+open import Relation.Binary using (Setoid)
 open import Relation.Unary using (_∩_)
 
 _↔_ : ∀ {𝓈 𝓉} (S : Set 𝓈) (T : Set 𝓉) → Set _
 S ↔ T = (S → T) × (T → S)
 
-infix 2 Σ!-syntax
 Σ!-syntax : ∀ {𝓈 𝓈₌ 𝓉} (S : Set 𝓈) (_=S_ : S → S → Set 𝓈₌) (T : S → Set 𝓉) → Set _
 Σ!-syntax S _=S_ T = Σ[ x ∈ S ] T x × ∀ {y : S} → T y → x =S y
 
+infix 2 Σ!-syntax
 syntax Σ!-syntax S _=S_ (λ x → T) = Σ![ x ∈ S / _=S_ ] T
 ```
 --------------------------------------------------------------------------------
@@ -108,14 +109,14 @@ module _ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : Set 𝓈} {A : I → S → Set �
   AC = (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] ∀ i → A i (f i)
 
   ac : AC
-  ac h = proj₁ ∘ h , proj₂ ∘ h
+  ac h = fst ∘ h , snd ∘ h
 
 module _ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : I → Set 𝓈} {A : ∀ i → S i → Set 𝒶} where
   AC′ : Set _
   AC′ = (∀ i → Σ[ x ∈ S i ] A i x) → Σ[ f ∈ (∀ i → S i) ] ∀ i → A i (f i)
 
   ac′ : AC′
-  ac′ h = proj₁ ∘ h , proj₂ ∘ h
+  ac′ h = fst ∘ h , snd ∘ h
 ```
 --------------------------------------------------------------------------------
 
@@ -196,11 +197,20 @@ $S_1$ on $S$ such that
 --------------------------------------------------------------------------------
 ```
 module _ {𝒾 𝒾₌ 𝓈 𝓈₌} (I₌ : Setoid 𝒾 𝒾₌) (S₌ : Setoid 𝓈 𝓈₌) where
-  open Setoid I₌ using () renaming (Carrier to I ; _≈_ to _=I_)
-  open Setoid S₌ using () renaming (Carrier to S ; _≈_ to _=S_)
+  open Setoid I₌ using () renaming (Carrier to I ; _≈_ to _=I_ ; refl to reflI ; sym to symI ; trans to transI)
+  open Setoid S₌ using () renaming (Carrier to S ; _≈_ to _=S_ ; refl to reflS ; sym to symS ; trans to transS)
+
+  Ext : ∀ (f : I → S) → Set _
+  Ext f = ∀ i j → i =I j → f i =S f j
 
   module _ {𝒶} (A : I → S → Set 𝒶) where
-    record Pre : Set (𝒾 ⊔ 𝒾₌ ⊔ 𝓈 ⊔ 𝓈₌ ⊔ 𝒶) where
+    ExtAC : Set _
+    ExtAC = (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
+
+    AC! : Set _
+    AC! = (∀ i → Σ![ x ∈ S / _=S_ ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
+
+    record Preconditions : Set (𝒾 ⊔ 𝒾₌ ⊔ 𝓈 ⊔ 𝓈₌ ⊔ 𝒶) where
       field
         extensionality      : ∀ {i x y} → x =S y → (A i x ↔ A i y)
         indexExtensionality : ∀ {i j} → i =I j → ∀ x → (A i x ↔ A j x)
@@ -208,48 +218,35 @@ module _ {𝒾 𝒾₌ 𝓈 𝓈₌} (I₌ : Setoid 𝒾 𝒾₌) (S₌ : Setoid
         exhaustiveness      : ∀ x → Σ[ i ∈ I ] A i x
         nonemptiness        : ∀ i → Σ[ x ∈ S ] A i x
 
-    record Post {𝓈₁} (S₁ : S → Set 𝓈₁) : Set (𝒾 ⊔ 𝒾₌ ⊔ 𝓈 ⊔ 𝓈₌ ⊔ 𝒶 ⊔ 𝓈₁) where
+    record Postconditions {𝓈₁} (S₁ : S → Set 𝓈₁) : Set (𝒾 ⊔ 𝒾₌ ⊔ 𝓈 ⊔ 𝓈₌ ⊔ 𝒶 ⊔ 𝓈₁) where
       field
         extensionality     : ∀ {x y} → x =S y → (S₁ x ↔ S₁ y)
         uniquenessOfChoice : ∀ i → Σ![ x ∈ S / _=S_ ] (A i ∩ S₁) x
 
-    -- TODO: shouldn't we say that some level 𝓈₁ exists instead of saying that it is (𝒾 ⊔ 𝓈₌)?
+    -- TODO: shouldn't we say that there exists a level 𝓈₁, instead of saying
+    -- that the level is (𝒾 ⊔ 𝓈₌)?
     ZAC : Set (suc 𝒾 ⊔ 𝒾₌ ⊔ 𝓈 ⊔ suc 𝓈₌ ⊔ 𝒶)
-    ZAC = Pre → Σ[ S₁ ∈ (S → Set (𝒾 ⊔ 𝓈₌)) ] (Post S₁)
+    ZAC = Preconditions → Σ[ S₁ ∈ (S → Set (𝒾 ⊔ 𝓈₌)) ] (Postconditions S₁)
 
     zac : ZAC
-    zac pre =
-        let
-          p : Σ[ f ∈ (I → S) ] ∀ i → A i (f i)
-          p = ac nonemptiness
-          f : I → S
-          f = proj₁ p
-          S₁ : S → Set _
-          S₁ x = Σ[ j ∈ I ] f j =S x
-        in
-          S₁ , record { extensionality = λ x=y → (λ { (j , p) → {!!} }) , {!!}
-                      ; uniquenessOfChoice = {!!}
-                      }
-      where
-        open Pre pre
+    zac p₁₋₅ =
+      let
+        open Preconditions p₁₋₅
 
-module _ {𝒾 𝒾₌ 𝓈 𝓈₌} (I₌ : Setoid 𝒾 𝒾₌) (S₌ : Setoid 𝓈 𝓈₌) where
-  open Setoid I₌ using () renaming (Carrier to I ; _≈_ to _=I_)
-  open Setoid S₌ using () renaming (Carrier to S ; _≈_ to _=S_)
+        f : I → S
+        f = fst (ac nonemptiness)
 
-  Ext : ∀ (f : I → S) → Set _
-  Ext f = ∀ i j → i =I j → f i =S f j
+        S₁ : S → Set _
+        S₁ x = Σ[ j ∈ I ] f j =S x
 
-  module _ {𝒶} (A : I → S → Set 𝒶) where
+        p₆ : ∀ {x y} → x =S y → (S₁ x ↔ S₁ y)
+        p₆ x=y = (λ { (j , z=x) → j , transS z=x x=y }) ,
+                 (λ { (j , z=x) → j , transS z=x (symS x=y) })
 
-    ExtAC : Set _
-    ExtAC = (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
-
-    AC! : Set _
-    AC! = (∀ i → Σ![ x ∈ S / _=S_ ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
-
---  ac! : AC!
---  ac! h = {!!}
+        p₇ : ∀ i → Σ![ x ∈ S / _=S_ ] (A i ∩ S₁) x
+        p₇ i = {!!}
+      in
+        S₁ , record { extensionality = p₆ ; uniquenessOfChoice = p₇ }
 ```
 --------------------------------------------------------------------------------
 
