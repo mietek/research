@@ -3,7 +3,7 @@
 
 module AC where
 
-open import Data.Product using (Σ ; _,_ ; _×_ ; Σ-syntax) renaming (proj₁ to fst ; proj₂ to snd)
+open import Data.Product using (Σ ; _,_ ; proj₁ ; proj₂ ; _×_ ; Σ-syntax)
 open import Function using (_∘_)
 open import Level using (_⊔_ ; suc)
 open import Relation.Binary using (Setoid)
@@ -17,6 +17,10 @@ S ↔ T = (S → T) × (T → S)
 
 infix 2 Σ!-syntax
 syntax Σ!-syntax S _=S_ (λ x → T) = Σ![ x ∈ S / _=S_ ] T
+
+drop! : ∀ {𝓈 𝓈₌ 𝓉} {S : Set 𝓈} {_=S_ : S → S → Set 𝓈₌} {T : S → Set 𝓉} →
+        Σ![ x ∈ S / _=S_ ] T x → Σ[ x ∈ S ] T x
+drop! (x , t , h) = x , t
 ```
 --------------------------------------------------------------------------------
 
@@ -104,19 +108,22 @@ interpretation.
 
 --------------------------------------------------------------------------------
 ```
-module _ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : Set 𝓈} {A : I → S → Set 𝒶} where
-  AC : Set _
-  AC = (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] ∀ i → A i (f i)
+module _ {𝒾} {I : Set 𝒾} where
+  module _ {𝓈 𝒶} {S : Set 𝓈} {A : I → S → Set 𝒶} where
+    -- intuitionistic axiom of choice
+    IntAC : Set _
+    IntAC = (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] ∀ i → A i (f i)
 
-  ac : AC
-  ac h = fst ∘ h , snd ∘ h
+    intac : IntAC
+    intac h = proj₁ ∘ h , proj₂ ∘ h
 
-module _ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : I → Set 𝓈} {A : ∀ i → S i → Set 𝒶} where
-  AC′ : Set _
-  AC′ = (∀ i → Σ[ x ∈ S i ] A i x) → Σ[ f ∈ (∀ i → S i) ] ∀ i → A i (f i)
+  module _ {𝓈 𝒶} {S : I → Set 𝓈} {A : ∀ i → S i → Set 𝒶} where
+    -- dependent intuitionistic axiom of choice
+    DepIntAC : Set _
+    DepIntAC = (∀ i → Σ[ x ∈ S i ] A i x) → Σ[ f ∈ (∀ i → S i) ] ∀ i → A i (f i)
 
-  ac′ : AC′
-  ac′ h = fst ∘ h , snd ∘ h
+    depintac : DepIntAC
+    depintac h = proj₁ ∘ h , proj₂ ∘ h
 ```
 --------------------------------------------------------------------------------
 
@@ -194,62 +201,6 @@ $S_1$ on $S$ such that
 
 7.  $(∀i : I)(∃!x : S)(A_i ∩ S_1)(x)$ (uniqueness of choice).
 
---------------------------------------------------------------------------------
-```
-module _ {𝒾 𝒾₌ 𝓈 𝓈₌} (I₌ : Setoid 𝒾 𝒾₌) (S₌ : Setoid 𝓈 𝓈₌) where
-  open Setoid I₌ using () renaming (Carrier to I ; _≈_ to _=I_ ; refl to reflI ; sym to symI ; trans to transI)
-  open Setoid S₌ using () renaming (Carrier to S ; _≈_ to _=S_ ; refl to reflS ; sym to symS ; trans to transS)
-
-  Ext : ∀ (f : I → S) → Set _
-  Ext f = ∀ i j → i =I j → f i =S f j
-
-  module _ {𝒶} (A : I → S → Set 𝒶) where
-    ExtAC : Set _
-    ExtAC = (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
-
-    AC! : Set _
-    AC! = (∀ i → Σ![ x ∈ S / _=S_ ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
-
-    record Preconditions : Set (𝒾 ⊔ 𝒾₌ ⊔ 𝓈 ⊔ 𝓈₌ ⊔ 𝒶) where
-      field
-        extensionality      : ∀ {i x y} → x =S y → (A i x ↔ A i y)
-        indexExtensionality : ∀ {i j} → i =I j → ∀ x → (A i x ↔ A j x)
-        mutualExclusiveness : ∀ {i j} → (Σ[ x ∈ S ] A i x × A j x) → i =I j
-        exhaustiveness      : ∀ x → Σ[ i ∈ I ] A i x
-        nonemptiness        : ∀ i → Σ[ x ∈ S ] A i x
-
-    record Postconditions {𝓈₁} (S₁ : S → Set 𝓈₁) : Set (𝒾 ⊔ 𝒾₌ ⊔ 𝓈 ⊔ 𝓈₌ ⊔ 𝒶 ⊔ 𝓈₁) where
-      field
-        extensionality     : ∀ {x y} → x =S y → (S₁ x ↔ S₁ y)
-        uniquenessOfChoice : ∀ i → Σ![ x ∈ S / _=S_ ] (A i ∩ S₁) x
-
-    -- TODO: shouldn't we say that there exists a level 𝓈₁, instead of saying
-    -- that the level is (𝒾 ⊔ 𝓈₌)?
-    ZAC : Set (suc 𝒾 ⊔ 𝒾₌ ⊔ 𝓈 ⊔ suc 𝓈₌ ⊔ 𝒶)
-    ZAC = Preconditions → Σ[ S₁ ∈ (S → Set (𝒾 ⊔ 𝓈₌)) ] (Postconditions S₁)
-
-    zac : ZAC
-    zac p₁₋₅ =
-      let
-        open Preconditions p₁₋₅
-
-        f : I → S
-        f = fst (ac nonemptiness)
-
-        S₁ : S → Set _
-        S₁ x = Σ[ j ∈ I ] f j =S x
-
-        p₆ : ∀ {x y} → x =S y → (S₁ x ↔ S₁ y)
-        p₆ x=y = (λ { (j , z=x) → j , transS z=x x=y }) ,
-                 (λ { (j , z=x) → j , transS z=x (symS x=y) })
-
-        p₇ : ∀ i → Σ![ x ∈ S / _=S_ ] (A i ∩ S₁) x
-        p₇ i = {!!}
-      in
-        S₁ , record { extensionality = p₆ ; uniquenessOfChoice = p₇ }
-```
---------------------------------------------------------------------------------
-
 The obvious way of trying to prove (6) and (7) from (1)–(5) is to apply the
 type-theoretic (constructive, intensional) axiom of choice to (5), so as to get
 a function $f : I → S$ such that
@@ -309,6 +260,68 @@ $$\text{Ext}(f) = (∀i, j: I)(i =_I j → f(i) =_S f(j)).$$
 The only trouble with it is that it lacks the evidence of the intensional axiom
 of choice, which does not prevent one from investigating its consequences, of
 course.
+
+--------------------------------------------------------------------------------
+```
+module _ {𝒾 𝒾₌ 𝓈 𝓈₌} (I₌ : Setoid 𝒾 𝒾₌) (S₌ : Setoid 𝓈 𝓈₌) where
+  open Setoid I₌ using () renaming (Carrier to I ; _≈_ to _=I_ ; refl to reflI ; sym to symI ; trans to transI)
+  open Setoid S₌ using () renaming (Carrier to S ; _≈_ to _=S_ ; refl to reflS ; sym to symS ; trans to transS)
+
+  Ext : ∀ (f : I → S) → Set _
+  Ext f = ∀ i j → i =I j → f i =S f j
+
+  module _ {𝒶} (A : I → S → Set 𝒶) where
+    -- extensional axiom of choice
+    ExtAC : Set _
+    ExtAC = (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
+
+    -- axiom of unique choice
+    AC! : Set _
+    AC! = (∀ i → Σ![ x ∈ S / _=S_ ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
+
+    extac→ac! : ExtAC → AC!
+    extac→ac! extac h = extac (drop! ∘ h)
+
+    record PropertiesOfA : Set (𝒾 ⊔ 𝒾₌ ⊔ 𝓈 ⊔ 𝓈₌ ⊔ 𝒶) where
+      field
+        extensionality      : ∀ {i x y} → x =S y → (A i x ↔ A i y)
+        indexExtensionality : ∀ {i j} → i =I j → ∀ x → (A i x ↔ A j x)
+        mutualExclusiveness : ∀ {i j} → (Σ[ x ∈ S ] A i x × A j x) → i =I j
+        exhaustiveness      : ∀ x → Σ[ i ∈ I ] A i x
+        nonemptiness        : ∀ i → Σ[ x ∈ S ] A i x
+
+    record PropertiesOf {𝓈₁} (S₁ : S → Set 𝓈₁) : Set (𝒾 ⊔ 𝒾₌ ⊔ 𝓈 ⊔ 𝓈₌ ⊔ 𝒶 ⊔ 𝓈₁) where
+      field
+        extensionality     : ∀ {x y} → x =S y → (S₁ x ↔ S₁ y)
+        uniquenessOfChoice : ∀ i → Σ![ x ∈ S / _=S_ ] (A i ∩ S₁) x
+
+    -- Zermelo's axiom of choice
+    -- TODO: shouldn't we say that there exists a level 𝓈₁ such that the level
+    -- of S₁ is s₁, instead of saying that the level of S₁ is (𝒾 ⊔ 𝓈₌)?
+    ZerAC : Set (suc 𝒾 ⊔ 𝒾₌ ⊔ 𝓈 ⊔ suc 𝓈₌ ⊔ 𝒶)
+    ZerAC = PropertiesOfA → Σ[ S₁ ∈ (S → Set (𝒾 ⊔ 𝓈₌)) ] (PropertiesOf S₁)
+
+    zerac : ZerAC
+    zerac p₁₋₅ =
+      let
+        open PropertiesOfA p₁₋₅
+
+        f : I → S
+        f = proj₁ (intac nonemptiness)
+
+        S₁ : S → Set _
+        S₁ x = Σ[ j ∈ I ] f j =S x
+
+        p₆ : ∀ {x y} → x =S y → (S₁ x ↔ S₁ y)
+        p₆ x=y = (λ { (j , z=x) → j , transS z=x x=y }) ,
+                 (λ { (j , z=x) → j , transS z=x (symS x=y) })
+
+        p₇ : ∀ i → Σ![ x ∈ S / _=S_ ] (A i ∩ S₁) x
+        p₇ i = {!!}
+      in
+        S₁ , record { extensionality = p₆ ; uniquenessOfChoice = p₇ }
+```
+--------------------------------------------------------------------------------
 
 **Theorem I.**  *The following are equivalent in constructive type theory:*
 
