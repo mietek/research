@@ -1,0 +1,457 @@
+/******************************************************************************/
+
+/* CSS reset from https://www.joshwcomeau.com/css/custom-css-reset/ */
+
+/* 1. Use a more-intuitive box-sizing model */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+/* 2. Remove default margins */
+* {
+  margin: 0;
+}
+/* 3. Do not add “accessible” line-height */
+/* body {
+  line-height: 1.5;
+} */
+/* 4. Do not “improve” text rendering */
+/* body {
+  -webkit-font-smoothing: antialiased;
+} */
+/* 5. Improve media defaults */
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+/* 6. Remove built-in form typography styles */
+input, button, textarea, select {
+  font: inherit;
+}
+/* 7. Avoid text overflows */
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+/******************************************************************************/
+
+/* layout */
+
+body {
+  margin: auto;
+  width: 35rem;
+}
+pre {
+  width: 35rem;
+  margin: 33px 0 30px 0;
+}
+main {
+  width: 35rem;
+}
+
+@media (min-width: 1460px) {
+  body {
+    width: 73rem;
+    position: relative;
+  }
+  pre {
+    position: absolute;
+    left: 38rem;
+    margin: 7px 0 26px 0;
+  }
+}
+
+/******************************************************************************/
+
+/* typography */
+
+@font-face {
+  font-family: 'pp';
+  src: url(https://mietek.io/_protected/fonts/pragmatapro-regular.woff);
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'pp';
+  src: url(https://mietek.io/_protected/fonts/pragmatapro-bold.woff);
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'pp';
+  src: url(https://mietek.io/_protected/fonts/pragmatapro-italic.woff);
+  font-weight: normal;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'pp';
+  src: url(https://mietek.io/_protected/fonts/pragmatapro-bold-italic.woff);
+  font-weight: bold;
+  font-style: italic;
+}
+code, pre {
+  font-family: 'PragmataPro', 'pp', monospace;
+  font-size: 14px;
+  line-height: 15px;
+}
+pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+html {
+/*  background: url(20-26.png);*/
+/*  background-position: 0 14px;*/
+  font-family: Georgia, serif;
+  font-size: 20px;
+  line-height: 26px;
+}
+sup, sub {
+  font-size: 16px;
+  position: relative;
+}
+sup {
+  vertical-align: top;
+  top: -6px;
+}
+sub {
+  vertical-align: bottom;
+  bottom: -6px;
+}
+p {
+  margin: 26px 0;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  text-align: justify;
+  hyphens: auto;
+}
+blockquote {
+  margin: 26px 3rem;
+}
+li {
+  padding-left: 0.5rem;
+}
+ul, ol {
+  padding-left: 2.5rem;
+}
+ol[type="A"] li::marker {
+  content: '(' counter(list-item, upper-latin) ")";
+}
+ol[type="a"] li::marker {
+  content: '(' counter(list-item, lower-latin) ")";
+}
+ol[type="I"] li::marker {
+  content: '(' counter(list-item, upper-roman) ")";
+}
+ol[type="i"] li::marker {
+  content: '(' counter(list-item, lower-roman) ")";
+}
+ol[type="1"] li::marker {
+  content: '(' counter(list-item, decimal) ")";
+}
+header {
+  margin: 52px 0;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-weight: normal;
+  font-size: 20px;
+}
+h4, h5, h6 {
+  padding: 0 0.5rem 0 0;
+  float: left;
+}
+h1 {
+  font-size: 48px;
+  line-height: 52px;
+  margin: 104px 0 52px 0;
+  position: relative;
+  top: 4px;
+}
+h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 52px 0 26px 0;
+  position: relative;
+  top: -1px;
+}
+h3 {
+  font-weight: bold;
+  margin: 26px 0;
+  position: relative;
+}
+h4 {
+  font-weight: bold;
+}
+h5 {
+  font-style: italic;
+}
+.author {
+  font-size: 24px;
+  margin: 52px 0 26px 0;
+  position: relative;
+  top: -1px;
+}
+.footnotes {
+/*  background: url(16-20.png);*/
+/*  background-position: 0 6px;*/
+  font-size: 16px;
+  line-height: 20px;
+  margin: 45px 0 52px 0;
+}
+.footnotes p {
+  margin: 20px 0;
+}
+.footnotes hr {
+  border: 0;
+  padding: 1px 0 0 0;
+  margin: 0 0 25px 0;
+}
+.footnotes a.footnote-back {
+  margin: 0 0 0 0.25rem;
+  text-decoration: none;
+}
+a.footnote-ref {
+  text-decoration: none;
+}
+a {
+  text-decoration-thickness: 1px;
+}
+
+/******************************************************************************/
+
+/* KaTeX */
+
+.katex {
+  font-size: 20px !important;
+  white-space: normal !important;
+}
+.katex-html {
+  line-height: 20px !important;
+}
+.katex-display {
+  margin: 26px 0 !important;
+}
+.inline .katex-html {
+  max-height: 26px !important;
+}
+
+/******************************************************************************/
+
+/* colors */
+
+/*
+              key  sfg  sbg  fg   bg   car  inv  sel  com  imp
+light lime    #6f0 #7f1 #efc #333 #fff #000 #bbb #aaa #777 #000
+light orange  #f60 #f71 #fec #333 #fff #000 #bbb #aaa #777 #000
+light sky     #06f #17f #cef #333 #fff #000 #bbb #aaa #777 #000
+dark lime     #8f0 #7d0 #240 #bbb #000 #fff #555 #666 #777 #fff
+dark orange   #f80 #d70 #420 #bbb #000 #fff #555 #666 #777 #fff
+dark sky      #08f #07d #024 #bbb #000 #fff #555 #666 #777 #fff
+
+*/
+
+:root {
+  --5r:   #f2003c;
+  --10r:  #f85900;
+  --5yr:  #f28800;
+  --10yr: #f2ab00;
+  --5y:   #efcc00;
+  --10y:  #f0ea00;
+  --5gy:  #b1d700;
+  --10gy: #00ca24;
+  --5g:   #00a877;
+  --10g:  #00a78a;
+  --5bg:  #00a59c;
+  --10bg: #00a3ac;
+  --5b:   #0093af;
+  --10b:  #0082b2;
+  --5pb:  #006ebf;
+  --10pb: #7d00f8;
+  --5p:   #9f00c5;
+  --10p:  #b900a6;
+  --5rp:  #c00081;
+  --10rp: #e20064;
+}
+
+html {
+  background: #fff;
+  color: #000;
+}
+.footnotes hr {
+  background: #000;
+}
+::selection {
+  background: color-mix(in srgb, var(--5y), white 50%);
+}
+::-moz-selection {
+  background: color-mix(in srgb, var(--5y), white 50%);
+}
+.footnotes li:target {
+  background: color-mix(in srgb, var(--5yr), white 50%);
+}
+a:link {
+  color: #06f;
+}
+a[href]:link:hover {
+  background: color-mix(in srgb, #06f, white 75%);
+}
+a:visited {
+  color: var(--5p);
+}
+a[href]:visited:hover {
+  background: color-mix(in srgb, var(--5p), white 75%);
+}
+a:active {
+  color: var(--5r);
+}
+a[href]:active:hover {
+  background: color-mix(in srgb, var(--5r), white 75%);
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    background: #000;
+    color: #fff;
+  }
+  .footnotes hr {
+    background: #fff;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--5y), black 50%);
+  }
+  ::-moz-selection {
+    background: color-mix(in srgb, var(--5y), black 50%);
+  }
+  .footnotes li:target {
+    background: color-mix(in srgb, var(--5yr), black 50%);
+  }
+  a:link {
+    color: color-mix(in srgb, #06f, white 50%);
+  }
+  a[href]:link:hover {
+    background: color-mix(in srgb, #06f, black 50%)
+  }
+  a:visited {
+    color: color-mix(in srgb, var(--5p), white 50%);
+  }
+  a[href]:visited:hover {
+    background: color-mix(in srgb, var(--5p), black 50%);
+  }
+  a:active {
+    color: color-mix(in srgb, var(--5r), white 50%);
+  }
+  a[href]:active:hover {
+    background: color-mix(in srgb, var(--5r), black 50%);
+  }
+}
+
+/******************************************************************************/
+
+/* Agda colors */
+
+.Agda a { text-decoration: none }
+
+.Agda .Background,
+  .Agda .Bound,
+  .Agda .Generalizable                        { color: #000; }
+.Agda .Keyword,
+  .Agda .Markup,
+  .Agda .Operator,
+  .Agda .Pragma,
+  .Agda .Symbol                               { color: #666; }
+.Agda .Comment                                { color: #999; }
+.Agda .Postulate                              { color: var(--5r); }
+.Agda .InductiveConstructor,
+  .Agda .CoinductiveConstructor               { color: var(--5g); }
+.Agda .Datatype,
+  .Agda .Function,
+  .Agda .Macro,
+  .Agda .Primitive,
+  .Agda .PrimitiveType,
+  .Agda .Record                               { color: #06f; }
+.Agda .Module,
+  .Agda .Number,
+  .Agda .String                               { color: var(--5p); }
+.Agda .Field                                  { color: var(--5rp); }
+
+.Agda a[href]:hover.Background,
+  .Agda a[href]:hover.Bound,
+  .Agda a[href]:hover.Generalizable           { background: color-mix(in srgb, #000, white 75%); }
+.Agda a[href]:hover.Keyword,
+  .Agda a[href]:hover.Markup,
+  .Agda a[href]:hover.Operator,
+  .Agda a[href]:hover.Pragma,
+  .Agda a[href]:hover.Symbol                  { background: color-mix(in srgb, #666, white 75%); }
+.Agda a[href]:hover.Comment                   { background: color-mix(in srgb, #999, white 75%); }
+.Agda a[href]:hover.Postulate                 { background: color-mix(in srgb, var(--5r), white 75%); }
+.Agda a[href]:hover.InductiveConstructor,
+  .Agda a[href]:hover.CoinductiveConstructor  { background: color-mix(in srgb, var(--5g), white 75%); }
+.Agda a[href]:hover.Datatype,
+  .Agda a[href]:hover.Function,
+  .Agda a[href]:hover.Macro,
+  .Agda a[href]:hover.Primitive,
+  .Agda a[href]:hover.PrimitiveType,
+  .Agda a[href]:hover.Record                  { background: color-mix(in srgb, #06f, white 75%); }
+.Agda a[href]:hover.Module,
+  .Agda a[href]:hover.Number,
+  .Agda a[href]:hover.String                  { background: color-mix(in srgb, var(--5p), white 75%); }
+.Agda a[href]:hover.Field                     { background: color-mix(in srgb, var(--5rp), white 75%); }
+
+@media (prefers-color-scheme: dark) {
+  .Agda .Background,
+    .Agda .Bound,
+    .Agda .Generalizable                        { color: #fff; }
+  .Agda .Keyword,
+    .Agda .Markup,
+    .Agda .Operator,
+    .Agda .Pragma,
+    .Agda .Symbol                               { color: #999; }
+  .Agda .Comment                                { color: #666; }
+  .Agda .Postulate                              { color: color-mix(in srgb, var(--5r), white 50%); }
+  .Agda .InductiveConstructor,
+    .Agda .CoinductiveConstructor               { color: color-mix(in srgb, var(--5g), white 50%); }
+  .Agda .Datatype,
+    .Agda .Function,
+    .Agda .Macro,
+    .Agda .Primitive,
+    .Agda .PrimitiveType,
+    .Agda .Record                               { color: color-mix(in srgb, #06f, white 50%); }
+  .Agda .Module,
+    .Agda .Number,
+    .Agda .String                               { color: color-mix(in srgb, var(--5p), white 50%); }
+  .Agda .Field                                  { color: color-mix(in srgb, var(--5rp), white 50%); }
+
+  .Agda a[href]:hover.Background,
+    .Agda a[href]:hover.Bound,
+    .Agda a[href]:hover.Generalizable           { background: color-mix(in srgb, #fff, black 50%); }
+  .Agda a[href]:hover.Keyword,
+    .Agda a[href]:hover.Markup,
+    .Agda a[href]:hover.Operator,
+    .Agda a[href]:hover.Pragma,
+    .Agda a[href]:hover.Symbol                  { background: color-mix(in srgb, #ccc, black 50%); }
+  .Agda a[href]:hover.Comment                   { background: color-mix(in srgb, #999, black 50%); }
+  .Agda a[href]:hover.Postulate                 { background: color-mix(in srgb, var(--5r), black 50%); }
+  .Agda a[href]:hover.InductiveConstructor,
+    .Agda a[href]:hover.CoinductiveConstructor  { background: color-mix(in srgb, var(--5g), black 50%); }
+  .Agda a[href]:hover.Datatype,
+    .Agda a[href]:hover.Function,
+    .Agda a[href]:hover.Macro,
+    .Agda a[href]:hover.Primitive,
+    .Agda a[href]:hover.PrimitiveType,
+    .Agda a[href]:hover.Record                  { background: color-mix(in srgb, #06f, black 50%); }
+  .Agda a[href]:hover.Module,
+    .Agda a[href]:hover.Number,
+    .Agda a[href]:hover.String                  { background: color-mix(in srgb, var(--5p), black 50%); }
+  .Agda a[href]:hover.Field                     { background: color-mix(in srgb, var(--5rp), black 50%); }
+}
+
+/* TODO */
+.Agda .DottedPattern      { color: #000; }
+.Agda .UnsolvedMeta       { color: #000; background: yellow         }
+.Agda .UnsolvedConstraint { color: #000; background: yellow         }
+.Agda .TerminationProblem { color: #000; background: #FFA07A        }
+.Agda .IncompletePattern  { color: #000; background: #F5DEB3        }
+.Agda .Error              { color: #e00; text-decoration: underline }
+.Agda .TypeChecks         { color: #000; background: #ADD8E6        }
+
+/******************************************************************************/
