@@ -1,13 +1,15 @@
-_research_
-==========
+# *research*
 
-Work in progress.
+Work in progress.  Read the [hyperlinked source](https://research.mietek.io/).
 
-Read the [hyperlinked source](https://research.mietek.io/).
+See also the [library](https://github.com/dpndnt/library) of the [##dependent
+](ircs://irc.libera.chat:6697/##dependent) distributed research support group.
+
+Made by [Miëtek Bak](https://mietek.io/).  Licensed under [CC BY-SA 4.0
+](https://creativecommons.org/licenses/by-sa/4.0/).
 
 
-References
-----------
+## References
 
 - A. Abel (2013) [“Normalization by evaluation: Dependent types and impredicativity”](https://www.cse.chalmers.se/~abela/habil.pdf)
 - A. Abel, J. Chapman (2014) [“Normalization by evaluation in the delay monad”](https://doi.org/10.4204/EPTCS.153.4)
@@ -50,9 +52,3 @@ References
 - G. Steren, E. Bonelli (2014) [“Intuitionistic hypothetical logic of proofs”](https://doi.org/10.1016/j.entcs.2013.12.013)
 - A. Stump (2016) [“Verified functional programming in Agda”](https://doi.org/10.1145/2841316)
 - G. Winskel (1993) “The formal semantics of programming languages”
-
-
-About
------
-
-Made by [Miëtek Bak](https://mietek.io/).  Licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
