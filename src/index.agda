@@ -1,18 +1,13 @@
--- Work in progress.
---
--- Check out the source repository.
--- https://github.com/mietek/research/
---
--- Made by Miëtek Bak.
--- https://mietek.io/
---
--- Licensed under CC BY-SA 4.0.
--- https://creativecommons.org/licenses/by-sa/4.0/
-
 module index where
 
 
---------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+
+-- mechanised intuitionist
+import mi.index
+
+
+----------------------------------------------------------------------------------------------------
 
 -- typed operational semantics and NBE
 -- from https://gist.github.com/mietek/1737170f89e26021e87d64d3e298c68e
@@ -55,4 +50,4 @@ import A201605.Everything
 import A201602.Everything
 
 
---------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
