@@ -1,0 +1,44 @@
+/******************************************************************************/
+
+/* layout */
+
+@media (min-width: 1400px) {
+  body {
+    max-width: 158rem;
+  }
+  main {
+    width: 100%;
+    position: relative;
+  }
+  main > p, h1, h2, h3, h4, h5, h6, ol, ul, hr, .align-top > p, .align-bottom > p, .index {
+    max-width: calc(50% - 3rem);
+  }
+  blockquote {
+    max-width: calc(50% - 15rem);
+  }
+  pre {
+    position: absolute;
+    left: calc(50% + 3rem);
+    max-width: calc(50% - 3rem);
+    margin: 0.7rem 0 0.9rem 0;
+  }
+  .align-top, .align-bottom {
+    position: relative;
+  }
+  .align-top pre {
+    top: 0;
+  }
+  .align-bottom pre {
+    bottom: -0.5rem;
+  }
+}
+@media (max-width: 1399px) {
+  pre {
+    margin: 3.3rem 0 3.5rem 0;
+  }
+  main > :nth-child(2) { /* TODO: better way to find the first pre? */
+    margin: 5.9rem 0 3.5rem 0;
+  }
+}
+
+/******************************************************************************/
