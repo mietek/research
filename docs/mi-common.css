@@ -81,7 +81,7 @@ body {
 code, pre {
 /*  background: url(mi-14-15.png);*/
 /*  background-position: 0 0;*/
-  font-family: "PragmataPro", 'pragmatapro', monospace;
+  font-family: "PragmataPro", 'pragmatapro-regular', monospace;
   font-size: 1.4rem;
   line-height: 1.5rem;
   white-space: pre-wrap;
