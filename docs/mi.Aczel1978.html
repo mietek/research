@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Peter Aczel" />
+  <meta name="dcterms.date" content="1978-01-01" />
+  <title>The type theoretic interpretation of constructive set theory</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="mi-common.css" />
+  <link rel="stylesheet" href="mi-layout.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+    var mathElements = document.getElementsByClassName("math");
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") { katex.render(texText.data, mathElements[i], { displayMode: mathElements[i].classList.contains("display"), throwOnError: false } );
+    }}});</script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="head">
+  <p><a href="mi.index.html">Mechanised Intuitionist</a></p>
+</header>
+<main>
+<header id="title-block-header">
+<h1 class="title">The type theoretic interpretation of constructive set theory</h1>
+<p class="author">Peter Aczel</p>
+<p class="date">1978<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+</header>
+<pre class="Agda"><a id="131" class="Comment">-- Mechanised by Miëtek Bak</a>
+
+<a id="160" class="Keyword">module</a> <a id="167" href="mi.Aczel1978.html" class="Module">mi.Aczel1978</a> <a id="180" class="Keyword">where</a>
+
+<a id="187" class="Comment">-- TODO</a>
+</pre>
+<blockquote>
+<p>By adding to Martin-Löf’s intuitionistic theory of types a ‘type of sets’ we give a constructive interpretation of constructive set theory. This interpretation is a constructive version of the classical conception of the cumulative hierarchy of sets.</p>
+</blockquote>
+<h2 id="introduction">Introduction</h2>
+<p>Intuitionistic mathematics can be structured into two levels. The first level arises directly out of Brouwer’s criticism of certain methods and notions of classical mathematics. In particular the notion of ‘truth’ that gives rise to the law of excluded middle was rejected and instead the meaning of mathematical statements was to be based on the notion of ‘proof’. While implicit in this first level of intuitionism was a theory of meaning quite different from the classical one, it was nevertheless the case that the body of mathematics that could be developed within this level remained a part of classical mathematics. Because Brouwer felt that mathematical analysis could not be developed adequately on this basis he was led to formulate his own conception of the continuum. This conception involved the mathematical treatment of incompletely specified objects such as free choice sequences. The second level of intuitionism builds on the first level but also includes these radical ideas that turn out to be incompatible with classical mathematics. Although considerable effort has been made over the years to make these ideas more transparent they have remained rather obscure to most mathematicians and the mathematics based on them has had a very limited following.</p>
+<p>Since Bishop’s book <a href="#r3" id="rr3" class="rr">[3]</a> appeared, it has become clear that, in spite of Brouwer’s views, constructive analysis can be developed perfectly adequately while staying within the first level of intuitionism. This fact has led to a renewed interest in this part of intuitionism. The desire has been to find an analogue, for Bishop’s constructive mathematics, of the generally accepted formal system <span class="math inline">\text{ZF}</span> for classical mathematics. Several approaches have been tried and there has been some controversy over their relative merits. Two such approaches are ‘Constructive Set Theory’ (see <a href="#r7" id="rr7" class="rr">[7]</a> and <a href="#r13" id="rr13" class="rr">[13]</a>) and ‘Intuitionistic Type Theory’ (see <a href="#r11" id="rr11" class="rr">[11]</a>). In this paper we take the view that these, and perhaps other approaches, are not necessarily in conflict with each other. Constructive set theory suppresses all explicit constructive notions in order to be as familiar as possible to the classical mathematician. On the other hand type theory aims to give a rigorous foundation for the primitive notions of constructive mathematics.</p>
+<p>The appeal of Bishop’s book is that it wastes little time on the analysis of constructive concepts but instead develops analysis in a language mostly familiar to the classical mathematician. In constructive set theory this is taken a stage further. As in <span class="math inline">\text{ZF}</span> there are just the notions of set and set membership with an axiom system that is a subsystem of <span class="math inline">\text{ZF}</span> using intuitionistic logic, and including the axiom of extensionality. In such a system the direct constructive content of Bishop’s notions has been lost and there arises the crucial question: What is the constructive meaning of the notion of set used in constructive set theory? We aim to answer that question in this paper. What is needed is a rigorous framework in which the primitive notions of constructive mathematics are directly displayed, together with a natural interpretation of constructive set theory in that framework. We shall give such a framework based on the intuitionistic type theory of <a href="#r11" id="rr11-1" class="rr">[11]</a>. We could have taken instead a system of ‘Explicit Mathematics’ (see <a href="#r5" id="rr5" class="rr">[5]</a> and <a href="#r2" id="rr2" class="rr">[2]</a>). But systems of explicit mathematics leave the logical notions unanalysed, whereas type theory is a logic free theory of constructions within which the logical notions can be defined. For this reason we consider type theory to be more fundamental.</p>
+<p>The axiom system <span class="math inline">\text{CZF}</span> (Constructive <span class="math inline">\text{ZF}</span>) is set out in §1 and some elementary properties are given in §2. The system is closely related to the systems considered by Myhill and Friedman in their papers. In §3 we summarise the type theoretic notions of <a href="#r11" id="rr11-2" class="rr">[11]</a> and introduce the type of sets. The interpretation of <span class="math inline">\text{CZF}</span> is set up in §4 and its correctness is proved in §5 and §6. Finally in §7 we consider a new principle of choice for constructive set theory.</p>
+<p>Formally, the type of sets was first introduced by Leversha in <a href="#r10" id="rr10" class="rr">[10]</a> where it was used to give a complicated type theoretic interpretation of Myhill’s original formulation of constructive set theory in <a href="#r13" id="rr13-1" class="rr">[13]</a>. Unfortunately it was not realised at that time that the type itself gave a constructive notion of set. Instead it was only used as an appropriate constructive notion of ordinal to use in indexing the stages of Leversha’s construction.</p>
+<h2 id="the-axiom-system-textczf">1. The axiom system <span class="math inline">\text{CZF}</span></h2>
+<p>We formulate <span class="math inline">\text{CZF}</span> in a first order language <span class="math inline">\mathcal{L}</span> having the logical primitives <span class="math inline">\bot</span>, <span class="math inline">∨</span>, <span class="math inline">∧</span>, <span class="math inline">→</span>, <span class="math inline">∀x</span>, <span class="math inline">∃x</span>, the restricted quantifiers <span class="math inline">(∀x∈y)</span>, <span class="math inline">(∃x∈y)</span> and the binary relation symbols <span class="math inline">∈</span> and <span class="math inline">=</span>. We assume a standard axiomatisation of intuitionistic logic. The remaining axioms of <span class="math inline">\text{CZF}</span> are divided into two groups.</p>
+<h3 id="structural-axioms">Structural axioms</h3>
+<p>Defining schemes for the restricted quantifiers.</p>
+<p><span class="math display">(∀x∈y)φ(x) ↔ ∀x(x∈y → φ(x))</span></p>
+<p><span class="math display">(∃x∈y)φ(x) ↔ ∃x(x∈y ∧ φ(x))</span></p>
+<p>Equality axioms.</p>
+<p><span class="math display">x = y ↔ ∀z(z∈x ↔ z∈y)</span></p>
+<p><span class="math display">x = y ∧ y∈z ↔ x∈z</span></p>
+<p>Set induction scheme.</p>
+<p><span class="math display">∀y ((∀x∈y)φ(x) → φ(y)) → ∀xφ(x)</span></p>
+<h3 id="set-existence-axioms">Set existence axioms</h3>
+<p>Pairing.</p>
+<p><span class="math display">∃z(x∈z ∧ y∈z)</span></p>
+<p>Union.</p>
+<p><span class="math display">∃z(∀y∈x)(∀u∈y)(u∈z)</span></p>
+<p>Restricted separation.</p>
+<pre class="Agda"><a id="6014" class="Comment">-- TODO</a>
+</pre>
+<h2 id="references">References</h2>
+<div class="references">
+<ol type="1">
+<li><div id="r1">
+<p>P. Aczel, <a href="https://jyu.finna.fi/Record/vaari.1584852">The strength of Martin-Löf’s intuitionistic type theory with one universe</a>, <em>Proc. Symp. Math. Logic, Oulu ’74 and Helsinki ’75</em>, Edited by S. Miettinen and J. Väänänen, University of Helsinki, 1977, pp. 1–32. <!-- TODO: document missing --> <a href="#rr1" class="rb">↩︎</a></p>
+</div></li>
+<li><div id="r2">
+<p>M. Beeson, <a href="https://sci-hub.st/10.1016/S0003-4843(77)80003-X">Principles of continuous choice and continuity of functions in formal systems for constructive mathematics</a>, <em>Annals Math. Logic</em>, Vol. 12(3), 1977, pp. 249–322. <a href="#rr2" class="rb">↩︎</a></p>
+</div></li>
+<li><div id="r3">
+<p>E. Bishop, <em><a href="https://library.lol/main/D69762DE514CE40FAA389C6F178F66D4">Foundations of Constructive Analysis</a></em>, McGraw-Hill, New York, 1967. <!-- TODO: DOI missing --> <a href="#rr3" class="rb">↩︎</a></p>
+</div></li>
+<li><div id="r4">
+<p>A. Blass, <a href="https://sci-hub.st/10.1090/S0002-9947-1979-0542870-6">Injectivity, projectivity, and the axiom of choice</a>, <em>Trans. Amer. Math. Soc.</em>, Vol. 255, 1979, pp. 31–59. <a href="#rr4" class="rb">↩︎</a></p>
+</div></li>
+<li><div id="r5">
+<p>S. Feferman, <a href="https://sci-hub.st/10.1007/BFb0062852">A language and axioms for explicit mathematics</a>, <em>Algebra and Logic</em>, <em>Lec. Notes Math.</em>, Vol. 450, Edited by J. N. Crossley, Springer-Verlag, Berlin, 1975, pp. 87–139. <a href="#rr5" class="rb">↩︎</a></p>
+</div></li>
+<li><div id="r6">
+<p>H. Friedman, <a href="https://sci-hub.st/10.2307/2272068">The consistency of set theory relative to a theory with intuitionistic logic</a>, <em>J. Symb. Logic</em>, Vol. 38(2), 1973, pp. 315–319. <a href="#rr6" class="rb">↩︎</a></p>
+</div></li>
+<li><div id="r7">
+<p>H. Friedman, <a href="https://sci-hub.st/10.2307/1971023">Set theoretic foundations for constructive analysis</a>, <em>Annals of Math.</em>, Vol. 105(1), 1977, pp. 1–28. <a href="#rr7" class="rb">↩︎</a></p>
+</div></li>
+<li><div id="r8">
+<p>R. Grayson, <del>A sheaf approach to models of set theory</del>, M. Sc. thesis, University of Oxford, 1975. <!-- TODO: document missing --> <a href="#rr8" class="rb">↩︎</a></p>
+</div></li>
+<li><div id="r9">
+<p>H. R. Jervell, <a href="https://sci-hub.st/10.1007/BFb0103103">Constructive Universes I</a>, <em>Higher Set Theory</em>, <em>Lec. Notes Math.</em>, Vol. 669, Edited by G. H. Müller and D. S. Scott, Springer-Verlag, Berlin, 1978, pp. 73–98. <a href="#rr9" class="rb">↩︎</a></p>
+</div></li>
+<li><div id="r10">
+<p>G. Leversha, <a href="https://solo.bodleian.ox.ac.uk/permalink/44OXF_INST/ao2p7t/cdi_proquest_journals_301376483">Formal systems for constructive mathematics</a>, Ph. D. thesis, University of Manchester, 1976. <!-- TODO: document missing --> <a href="#rr10" class="rb">↩︎</a></p>
+</div></li>
+<li><div id="r11">
+<p>P. Martin-Löf, <a href="https://sci-hub.st/10.1016/S0049-237X(08)71945-1">An intuitionistic theory of types: Predicative part</a>, <em>Logic Colloquium ’73</em>, <em>Stud. Logic Found. Math.</em>, Vol. 80, Edited by H. E. Rose and J. C. Shepherdson, North Holland, Amsterdam, 1975, pp. 73–118. <a href="#rr11" class="rb">↩︎</a> <a href="#rr11-1" class="rb">↩︎</a> <a href="#rr11-2" class="rb">↩︎</a></p>
+</div></li>
+<li><div id="r12">
+<p>J. Mayberry, <a href="https://sci-hub.st/10.1093/bjps/28.1.1">On the consistency problem for set theory: An essay on the Cantorian foundations of mathematics (part I)</a>, <a href="https://sci-hub.st/10.1093/bjps/28.2.137">(part II)</a>, <em>Brit. J. Phil. Sci.</em>, Vol. 28(1–2), 1977, pp. 1–34 (part I), pp. 137–170 (part II). <a href="#rr12" class="rb">↩︎</a></p>
+</div></li>
+<li><div id="r13">
+<p>J. Myhill, <a href="https://sci-hub.st/10.2307/2272159">Constructive set theory</a>, <em>J. Symb. Logic,</em> Vol. 40(3), 1975, pp. 347–382. <a href="#rr13" class="rb">↩︎</a> <a href="#rr13-1" class="rb">↩︎</a></p>
+</div></li>
+<li><div id="r14">
+<p>L. Pozsgay, <a href="https://library.lol/main/5F885CC6CC2FA1B1EB7BC55FC69098F1">Liberal intuitionism as a basis for set theory</a>, <em>Axiomatic Set Theory, Part 1</em>, <em>Proc. Symp. Pure Math.</em>, Vol. 13, Edited by D. S. Scott, University of California, Los Angeles, 1971, pp. 321–330. <a href="#rr14" class="rb">↩︎</a></p>
+</div></li>
+</ol>
+</div>
+<!-- ******************************************************************************************* -->
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>The ideas for this paper were germinating during a visit to Caltech, supported by NSF grant MPS 75-07562, and came to fruition while visiting Utrecht University. The results were first announced in an abstract for the 1976 Oxford Logic Colloquium. <!-- --><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+</main>
+<footer id="foot">
+  <p><a href="mi.index.html">Mechanised Intuitionist</a></p>
+</footer>
+</body>
+</html>
