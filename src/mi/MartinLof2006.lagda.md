@@ -8,7 +8,7 @@ lang:   en
 ```
 -- Mechanised by Miëtek Bak
 
-module MartinLof2006 where
+module mi.MartinLof2006 where
 
 open import Data.Product using (Σ ; Σ-syntax ; _,_ ; proj₁ ; proj₂ ; _×_)
 open import Function using (_∘_)
