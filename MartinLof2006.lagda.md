@@ -1,7 +1,7 @@
 ---
 title:  '100 years of Zermelo’s<br>axiom of choice:<br>what was the problem with it?'
 author: Per Martin-Löf
-date:   2009
+date:   2006
 lang:   en
 ---
 
@@ -10,7 +10,7 @@ lang:   en
 
 -- Formalized in Agda by Miëtek Bak
 
-module AC where
+module MartinLof2006 where
 
 open import Data.Product using (Σ ; Σ-syntax ; _,_ ; proj₁ ; proj₂ ; _×_)
 open import Function using (_∘_)

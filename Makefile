@@ -1,2 +1,3 @@
 all:
-	agda --html --html-highlight=code AC.lagda.md && pandoc html/AC.md -f markdown+tex_math_dollars+yaml_metadata_block -o AC.html --standalone --katex --css=AC.css -B AC-before.html -A AC-after.html
+	agda --html --html-highlight=code MartinLof2006.lagda.md
+	pandoc -B mi-header.html -A mi-footer.html --katex --standalone --css=mi-common.css -o MartinLof2006.html html/MartinLof2006.md
