@@ -733,7 +733,7 @@ formal system.
        <!-- -->
 
 [^17]: P. Aczel, [The type theoretic interpretation of constructive set theory (***mi***)
-       ](Aczel1978.html){.mi}, [(orig.)](https://sci-hub.st/10.1016/S0049-237X(08)71989-X),
+       ](mi.Aczel1978.html){.mi}, [(orig.)](https://sci-hub.st/10.1016/S0049-237X(08)71989-X),
        *Logic Colloquium ’77*, Edited by A. Macintyre, L. Pacholski, and J. Paris, North Holland,
        Amsterdam, 1978, pp. 55–66.
        <!-- -->
