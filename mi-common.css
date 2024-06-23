@@ -1,23 +1,23 @@
 /******************************************************************************/
 
-/* CSS reset from https://www.joshwcomeau.com/css/custom-css-reset/ */
+/* reset from https://www.joshwcomeau.com/css/custom-css-reset/ */
 
 /* 1. Use a more-intuitive box-sizing model */
 *, *::before, *::after {
   box-sizing: border-box;
 }
-/* 2. Remove default margins */
+/* 2. Remove default margin */
 * {
   margin: 0;
 }
-/* 3. Do not add “accessible” line-height */
-/* body {
+/* 3. Add accessible line-height */
+/*body {
   line-height: 1.5;
-} */
-/* 4. Do not “improve” text rendering */
-/* body {
+}*/
+/* 4. Improve text rendering */
+/*body {
   -webkit-font-smoothing: antialiased;
-} */
+}*/
 /* 5. Improve media defaults */
 img, picture, video, canvas, svg {
   display: block;
@@ -31,32 +31,31 @@ input, button, textarea, select {
 p, h1, h2, h3, h4, h5, h6 {
   overflow-wrap: break-word;
 }
+/* 8. Create a root stacking context */
+/*#root, #__next {
+  isolation: isolate;
+}*/
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: normal;
+  font-size: 100%;
+}
 
 /******************************************************************************/
 
-/* layout */
+/* unit scaling */
 
-body {
-  margin: auto;
-  width: 35rem;
+html {
+  font-size: 10px;
 }
-pre {
-  width: 35rem;
-  margin: 33px 0 30px 0;
-}
-main {
-  width: 35rem;
-}
-
-@media (min-width: 1460px) {
-  body {
-    width: 73rem;
-    position: relative;
+@media (min-width: 350px) and (max-width: 699px) {
+  html {
+    font-size: 7.5px;
   }
-  pre {
-    position: absolute;
-    left: 38rem;
-    margin: 7px 0 26px 0;
+}
+@media (max-width: 349px) {
+  html {
+    font-size: 5px;
   }
 }
 
@@ -65,59 +64,75 @@ main {
 /* typography */
 
 @font-face {
-  font-family: 'pp';
+  font-family: 'pragmatapro-regular';
   src: url(https://mietek.io/_protected/fonts/pragmatapro-regular.woff);
   font-weight: normal;
   font-style: normal;
 }
-@font-face {
-  font-family: 'pp';
-  src: url(https://mietek.io/_protected/fonts/pragmatapro-bold.woff);
-  font-weight: bold;
-  font-style: normal;
+html {
+/*  background: url(mi-20-26.png);*/
+/*  background-position: 0 0;*/
+  font-family: Georgia, serif;
 }
-@font-face {
-  font-family: 'pp';
-  src: url(https://mietek.io/_protected/fonts/pragmatapro-italic.woff);
-  font-weight: normal;
-  font-style: italic;
-}
-@font-face {
-  font-family: 'pp';
-  src: url(https://mietek.io/_protected/fonts/pragmatapro-bold-italic.woff);
-  font-weight: bold;
-  font-style: italic;
+body {
+  font-size: 2.0rem;
+  line-height: 2.6rem;
 }
 code, pre {
-  font-family: 'PragmataPro', 'pp', monospace;
-  font-size: 14px;
-  line-height: 15px;
-}
-pre {
+/*  background: url(mi-14-15.png);*/
+/*  background-position: 0 0;*/
+  font-family: "PragmataPro", 'pragmatapro', monospace;
+  font-size: 1.4rem;
+  line-height: 1.5rem;
   white-space: pre-wrap;
-  word-break: break-word;
+  word-break: all;
+  margin: 2.6rem 0;
 }
-html {
-/*  background: url(20-26.png);*/
-/*  background-position: 0 14px;*/
-  font-family: Georgia, serif;
-  font-size: 20px;
-  line-height: 26px;
+h4, h5, h6 {
+  padding: 0 1.0rem 0 0;
+  float: left;
+}
+h1 {
+  font-size: 4.8rem;
+  line-height: 5.2rem;
+  margin: 10.4rem 0 5.2rem 0;
+  position: relative;
+  top: 0.4rem;
+}
+h2, .author {
+  font-size: 2.4rem;
+  line-height: 2.6rem;
+  margin: 5.2rem 0 2.6rem 0;
+  position: relative;
+  top: -0.1rem;
+}
+h2 {
+  font-weight: bold;
+}
+h3 {
+  font-weight: bold;
+  margin: 2.6rem 0;
+}
+h4 {
+  font-weight: bold;
+}
+h5 {
+  font-style: italic;
 }
 sup, sub {
-  font-size: 16px;
+  font-size: 1.4rem;
   position: relative;
 }
 sup {
   vertical-align: top;
-  top: -6px;
+  top: -0.6rem;
 }
 sub {
   vertical-align: bottom;
-  bottom: -6px;
+  bottom: -0.6rem;
 }
 p {
-  margin: 26px 0;
+  margin: 2.6rem 0;
   text-align: justify;
   hyphens: auto;
 }
@@ -126,95 +141,93 @@ li {
   hyphens: auto;
 }
 blockquote {
-  margin: 26px 3rem;
-}
-li {
-  padding-left: 0.5rem;
+  margin: 2.6rem 6rem;
 }
 ul, ol {
-  padding-left: 2.5rem;
+  padding-left: 6rem;
+}
+ol li::marker, ol[type="1"] li::marker {
+  content: '(' counter(list-item, decimal) ")  ";
 }
 ol[type="A"] li::marker {
-  content: '(' counter(list-item, upper-latin) ")";
+  content: '(' counter(list-item, upper-latin) ") ";
 }
 ol[type="a"] li::marker {
-  content: '(' counter(list-item, lower-latin) ")";
+  content: '(' counter(list-item, lower-latin) ") ";
 }
 ol[type="I"] li::marker {
-  content: '(' counter(list-item, upper-roman) ")";
+  content: '(' counter(list-item, upper-roman) ") ";
 }
 ol[type="i"] li::marker {
-  content: '(' counter(list-item, lower-roman) ")";
+  content: '(' counter(list-item, lower-roman) ") ";
 }
-ol[type="1"] li::marker {
-  content: '(' counter(list-item, decimal) ")";
+.index {
+  border-top: 0.1rem var(--comment) solid;
+  margin: 9.7rem 0 5.1rem 0;
 }
-header {
-  margin: 52px 0;
+.index a {
+  text-decoration: none;
 }
-h1, h2, h3, h4, h5, h6 {
-  font-weight: normal;
-  font-size: 20px;
+.references ol li::marker {
+  content: '[' counter(list-item, decimal) "]  ";
 }
-h4, h5, h6 {
-  padding: 0 0.5rem 0 0;
-  float: left;
+.references, .footnotes {
+/*  background: url(mi-16-20.png);*/
+/*  background-position: 0 0;*/
+  font-size: 1.6rem;
+  line-height: 2.0rem;
 }
-h1 {
-  font-size: 48px;
-  line-height: 52px;
-  margin: 104px 0 52px 0;
-  position: relative;
-  top: 4px;
+.references {
+  margin: 1.9rem 0 5.2rem 0;
 }
-h2 {
-  font-size: 24px;
-  font-weight: bold;
-  margin: 52px 0 26px 0;
-  position: relative;
-  top: -1px;
-}
-h3 {
-  font-weight: bold;
-  margin: 26px 0;
-  position: relative;
-}
-h4 {
-  font-weight: bold;
-}
-h5 {
-  font-style: italic;
-}
-.author {
-  font-size: 24px;
-  margin: 52px 0 26px 0;
-  position: relative;
-  top: -1px;
+.references h2 {
+  font-size: 2.0rem;
+  top: auto;
+  border-top: 0.1rem var(--comment) dotted;
+  margin-top: 4.6rem;
+  padding-top: 0.5rem;
 }
 .footnotes {
-/*  background: url(16-20.png);*/
-/*  background-position: 0 6px;*/
-  font-size: 16px;
-  line-height: 20px;
-  margin: 45px 0 52px 0;
-}
-.footnotes p {
-  margin: 20px 0;
+  margin: 4.5rem 0 10.4rem 0;
 }
 .footnotes hr {
   border: 0;
-  padding: 1px 0 0 0;
-  margin: 0 0 25px 0;
+  padding: 0.1rem 0 0 0;
+  margin: 0 0 2.5rem 0;
 }
-.footnotes a.footnote-back {
-  margin: 0 0 0 0.25rem;
+.footnotes p, .references p {
+  margin: 2.0rem 0;
+}
+.footnotes a.footnote-back, .references a.rb {
   text-decoration: none;
 }
-a.footnote-ref {
+a.footnote-ref, a.rr {
   text-decoration: none;
 }
 a {
-  text-decoration-thickness: 1px;
+  text-decoration-thickness: 0.1rem;
+}
+
+/******************************************************************************/
+
+/* layout */
+
+body {
+  margin: auto;
+  padding: 0 6rem;
+  max-width: 82rem;
+}
+@media (max-width: 699px) {
+  body {
+    padding: 0 3rem;
+    max-width: 76rem;
+  }
+}
+@media (max-width: 349px) {
+  body {
+    padding: 0 3rem;
+    max-width: 76rem;
+  }
 }
 
 /******************************************************************************/
@@ -222,236 +235,402 @@ a {
 /* KaTeX */
 
 .katex {
-  font-size: 20px !important;
+  font-size: 2.0rem !important;
   white-space: normal !important;
 }
 .katex-html {
-  line-height: 20px !important;
+  line-height: 2.0rem !important;
 }
 .katex-display {
-  margin: 26px 0 !important;
+  margin: 2.5rem 0 !important;
 }
 .inline .katex-html {
-  max-height: 26px !important;
+  max-height: 2.5rem !important;
 }
 
 /******************************************************************************/
 
 /* colors */
 
-/*
-              key  sfg  sbg  fg   bg   car  inv  sel  com  imp
-light lime    #6f0 #7f1 #efc #333 #fff #000 #bbb #aaa #777 #000
-light orange  #f60 #f71 #fec #333 #fff #000 #bbb #aaa #777 #000
-light sky     #06f #17f #cef #333 #fff #000 #bbb #aaa #777 #000
-dark lime     #8f0 #7d0 #240 #bbb #000 #fff #555 #666 #777 #fff
-dark orange   #f80 #d70 #420 #bbb #000 #fff #555 #666 #777 #fff
-dark sky      #08f #07d #024 #bbb #000 #fff #555 #666 #777 #fff
-
-*/
-
 :root {
-  --5r:   #f2003c;
-  --10r:  #f85900;
-  --5yr:  #f28800;
-  --10yr: #f2ab00;
-  --5y:   #efcc00;
-  --10y:  #f0ea00;
-  --5gy:  #b1d700;
-  --10gy: #00ca24;
-  --5g:   #00a877;
-  --10g:  #00a78a;
-  --5bg:  #00a59c;
-  --10bg: #00a3ac;
-  --5b:   #0093af;
-  --10b:  #0082b2;
-  --5pb:  #006ebf;
-  --10pb: #7d00f8;
-  --5p:   #9f00c5;
-  --10p:  #b900a6;
-  --5rp:  #c00081;
-  --10rp: #e20064;
+  --blue:  #06f
+}
+:root {
+  --5r:    #f2003c;
+  --10r:   #f85900;
+  --5yr:   #f28800;
+  --10yr:  #f2ab00;
+  --5y:    #efcc00;
+  --10y:   #f0ea00;
+  --5gy:   #b1d700;
+  --10gy:  #00ca24;
+  --5g:    #00a877;
+  --10g:   #00a78a;
+  --5bg:   #00a59c;
+  --10bg:  #00a3ac;
+  --5b:    #0093af;
+  --10b:   #0082b2;
+  --5pb:   #006ebf;
+  --10pb:  #7d00f8;
+  --5p:    #9f00c5;
+  --10p:   #b900a6;
+  --5rp:   #c00081;
+  --10rp:  #e20064;
+}
+:root {
+  --light-background:        #fff;
+  --light-comment:           #999;
+  --light-keyword:           #666;
+  --light-text:              #000;
+  --light-selection:         color-mix(in oklab, var(--5y), white 50%);
+  --light-target:            color-mix(in oklab, var(--5yr), white 50%);
+  --light-link:              var(--blue);
+  --light-visited:           var(--5p);
+  --light-active:            var(--5r);
+  --light-constructor:       var(--5bg);
+  --light-term:              var(--blue);
+  --light-literal:           var(--5p);
+  --light-module:            var(--5p);
+  --light-field:             var(--5rp);
+  --light-comment-glow:      color-mix(in oklab, var(--light-comment), white 75%);
+  --light-keyword-glow:      color-mix(in oklab, var(--light-keyword), white 75%);
+  --light-text-glow:         color-mix(in oklab, var(--light-text), white 75%);
+  --light-link-glow:         color-mix(in oklab, var(--light-link), white 75%);
+  --light-visited-glow:      color-mix(in oklab, var(--light-visited), white 75%);
+  --light-active-glow:       color-mix(in oklab, var(--light-active), white 75%);
+  --light-constructor-glow:  color-mix(in oklab, var(--light-constructor), white 75%);
+  --light-term-glow:         color-mix(in oklab, var(--light-term), white 75%);
+  --light-literal-glow:      color-mix(in oklab, var(--light-literal), white 75%);
+  --light-module-glow:       color-mix(in oklab, var(--light-module), white 75%);
+  --light-field-glow:        color-mix(in oklab, var(--light-field), white 75%);
+  --light-selection:         #f7e7a3;
+  --light-target:            #fcc59a;
+  --light-link:              #0066ff;
+  --light-visited:           #9f00c5;
+  --light-active:            #f2003c;
+  --light-constructor:       #00a59c;
+  --light-term:              #0066ff;
+  --light-literal:           #9f00c5;
+  --light-module:            #9f00c5;
+  --light-field:             #c00081;
+  --light-comment-glow:      #e5e5e5;
+  --light-keyword-glow:      #d7d6d6;
+  --light-text-glow:         #aeaeae;
+  --light-link-glow:         #c5dcff;
+  --light-visited-glow:      #e9cbf4;
+  --light-active-glow:       #ffcfcd;
+  --light-constructor-glow:  #cee9e5;
+  --light-term-glow:         #c5dcff;
+  --light-literal-glow:      #e9cbf4;
+  --light-module-glow:       #e9cbf4;
+  --light-field-glow:        #f6cade;
+}
+:root {
+  --dark-background:         #000;
+  --dark-comment:            #666;
+  --dark-keyword:            #999;
+  --dark-text:               #fff;
+  --dark-selection:          color-mix(in oklab, var(--5y), black 50%);
+  --dark-target:             color-mix(in oklab, var(--5yr), black 50%);
+  --dark-link:               color-mix(in oklab, var(--blue), white 50%);
+  --dark-visited:            color-mix(in oklab, var(--5p), white 50%);
+  --dark-active:             color-mix(in oklab, var(--5r), white 50%);
+  --dark-constructor:        color-mix(in oklab, var(--5bg), white 50%);
+  --dark-term:               color-mix(in oklab, var(--blue), white 50%);
+  --dark-literal:            color-mix(in oklab, var(--5p), white 50%);
+  --dark-module:             color-mix(in oklab, var(--5p), white 50%);
+  --dark-field:              color-mix(in oklab, var(--5rp), white 50%);
+  --dark-comment-glow:       color-mix(in oklab, var(--dark-comment), black 50%);
+  --dark-keyword-glow:       color-mix(in oklab, var(--dark-keyword), black 50%);
+  --dark-text-glow:          color-mix(in oklab, var(--dark-text), black 50%);
+  --dark-link-glow:          color-mix(in oklab, var(--dark-link), black 50%);
+  --dark-visited-glow:       color-mix(in oklab, var(--dark-visited), black 50%);
+  --dark-active-glow:        color-mix(in oklab, var(--dark-active), black 50%);
+  --dark-constructor-glow:   color-mix(in oklab, var(--dark-constructor), black 50%);
+  --dark-term-glow:          color-mix(in oklab, var(--dark-term), black 50%);
+  --dark-literal-glow:       color-mix(in oklab, var(--dark-literal), black 50%);
+  --dark-module-glow:        color-mix(in oklab, var(--dark-module), black 50%);
+  --dark-field-glow:         color-mix(in oklab, var(--dark-field), black 50%);
+  --dark-selection:          #5c4e00;
+  --dark-target:             #5e3100;
+  --dark-link:               #8bb8ff;
+  --dark-visited:            #d197e6;
+  --dark-active:             #ff9e9d;
+  --dark-constructor:        #9cd2cc;
+  --dark-term:               #8bb8ff;
+  --dark-literal:            #d197e6;
+  --dark-module:             #d197e6;
+  --dark-field:              #e995bf;
+  --dark-comment-glow:       #232323;
+  --dark-keyword-glow:       #383838;
+  --dark-text-glow:          #636363;
+  --dark-link-glow:          #334566;
+  --dark-visited-glow:       #503759;
+  --dark-active-glow:        #653a3a;
+  --dark-constructor-glow:   #39504e;
+  --dark-term-glow:          #334566;
+  --dark-literal-glow:       #503759;
+  --dark-module-glow:        #503759;
+  --dark-field-glow:         #5a3748;
+}
+:root {
+  --background:        var(--light-background);
+  --comment:           var(--light-comment);
+  --keyword:           var(--light-keyword);
+  --text:              var(--light-text);
+  --selection:         var(--light-selection);
+  --target:            var(--light-target);
+  --link:              var(--light-link);
+  --visited:           var(--light-visited);
+  --active:            var(--light-active);
+  --constructor:       var(--light-constructor);
+  --term:              var(--light-term);
+  --literal:           var(--light-literal);
+  --module:            var(--light-module);
+  --field:             var(--light-field);
+  --comment-glow:      var(--light-comment-glow);
+  --keyword-glow:      var(--light-keyword-glow);
+  --text-glow:         var(--light-text-glow);
+  --link-glow:         var(--light-link-glow);
+  --visited-glow:      var(--light-visited-glow);
+  --active-glow:       var(--light-active-glow);
+  --constructor-glow:  var(--light-constructor-glow);
+  --term-glow:         var(--light-term-glow);
+  --literal-glow:      var(--light-literal-glow);
+  --module-glow:       var(--light-module-glow);
+  --field-glow:        var(--light-field-glow);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background:        var(--dark-background);
+    --comment:           var(--dark-comment);
+    --keyword:           var(--dark-keyword);
+    --text:              var(--dark-text);
+    --selection:         var(--dark-selection);
+    --target:            var(--dark-target);
+    --link:              var(--dark-link);
+    --visited:           var(--dark-visited);
+    --active:            var(--dark-active);
+    --constructor:       var(--dark-constructor);
+    --term:              var(--dark-term);
+    --literal:           var(--dark-literal);
+    --module:            var(--dark-module);
+    --field:             var(--dark-field);
+    --comment-glow:      var(--dark-comment-glow);
+    --keyword-glow:      var(--dark-keyword-glow);
+    --text-glow:         var(--dark-text-glow);
+    --link-glow:         var(--dark-link-glow);
+    --visited-glow:      var(--dark-visited-glow);
+    --active-glow:       var(--dark-active-glow);
+    --constructor-glow:  var(--dark-constructor-glow);
+    --term-glow:         var(--dark-term-glow);
+    --literal-glow:      var(--dark-literal-glow);
+    --module-glow:       var(--dark-module-glow);
+    --field-glow:        var(--dark-field-glow);
+  }
 }
 
 html {
-  background: #fff;
-  color: #000;
+  color: var(--text);
+  background-color: var(--background);
+}
+h6, del, li::marker, .references h2 {
+  color: var(--keyword);
 }
 .footnotes hr {
-  background: #000;
+  background-color: var(--comment);
 }
 ::selection {
-  background: color-mix(in srgb, var(--5y), white 50%);
+  background-color: var(--selection);
 }
 ::-moz-selection {
-  background: color-mix(in srgb, var(--5y), white 50%);
+  background-color: var(--selection);
 }
-.footnotes li:target {
-  background: color-mix(in srgb, var(--5yr), white 50%);
+.references div:target, .footnotes li:target {
+  background-color: var(--target);
 }
 a:link {
-  color: #06f;
+  color: var(--link);
+}
+a[href]:link:focus {
+  outline: 0.2em solid var(--link);
+  background-color: var(--link-glow);
 }
 a[href]:link:hover {
-  background: color-mix(in srgb, #06f, white 75%);
+  background-color: var(--link-glow);
 }
 a:visited {
-  color: var(--5p);
+  color: var(--visited);
+}
+a[href]:visited:focus {
+  outline: 0.2em solid var(--visited);
+  background-color: var(--visited-glow);
 }
 a[href]:visited:hover {
-  background: color-mix(in srgb, var(--5p), white 75%);
+  background-color: var(--visited-glow);
 }
 a:active {
-  color: var(--5r);
+  color: var(--active);
+}
+a[href]:active:focus {
+  outline: 0.2em solid var(--active);
+  background-color: var(--active-glow);
 }
 a[href]:active:hover {
-  background: color-mix(in srgb, var(--5r), white 75%);
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    background: #000;
-    color: #fff;
-  }
-  .footnotes hr {
-    background: #fff;
-  }
-  ::selection {
-    background: color-mix(in srgb, var(--5y), black 50%);
-  }
-  ::-moz-selection {
-    background: color-mix(in srgb, var(--5y), black 50%);
-  }
-  .footnotes li:target {
-    background: color-mix(in srgb, var(--5yr), black 50%);
-  }
-  a:link {
-    color: color-mix(in srgb, #06f, white 50%);
-  }
-  a[href]:link:hover {
-    background: color-mix(in srgb, #06f, black 50%)
-  }
-  a:visited {
-    color: color-mix(in srgb, var(--5p), white 50%);
-  }
-  a[href]:visited:hover {
-    background: color-mix(in srgb, var(--5p), black 50%);
-  }
-  a:active {
-    color: color-mix(in srgb, var(--5r), white 50%);
-  }
-  a[href]:active:hover {
-    background: color-mix(in srgb, var(--5r), black 50%);
-  }
+  background-color: var(--active-glow);
 }
 
 /******************************************************************************/
 
 /* Agda colors */
 
-.Agda a { text-decoration: none }
+.Agda a {
+  text-decoration: none
+}
 
-.Agda .Background,
-  .Agda .Bound,
-  .Agda .Generalizable                        { color: #000; }
+.Agda .Comment                                { color: var(--comment); }
 .Agda .Keyword,
   .Agda .Markup,
   .Agda .Operator,
   .Agda .Pragma,
-  .Agda .Symbol                               { color: #666; }
-.Agda .Comment                                { color: #999; }
-.Agda .Postulate                              { color: var(--5r); }
+  .Agda .PrimitiveType,
+  .Agda .Symbol                               { color: var(--keyword); }
+.Agda .Background,
+  .Agda .Bound,
+  .Agda .Generalizable                        { color: var(--text); }
 .Agda .InductiveConstructor,
-  .Agda .CoinductiveConstructor               { color: var(--5g); }
+  .Agda .CoinductiveConstructor               { color: var(--constructor); }
 .Agda .Datatype,
   .Agda .Function,
   .Agda .Macro,
+  .Agda .Postulate,
   .Agda .Primitive,
-  .Agda .PrimitiveType,
-  .Agda .Record                               { color: #06f; }
-.Agda .Module,
-  .Agda .Number,
-  .Agda .String                               { color: var(--5p); }
-.Agda .Field                                  { color: var(--5rp); }
+  .Agda .Record                               { color: var(--term); }
+.Agda .Number,
+  .Agda .String                               { color: var(--literal); }
+.Agda .Module                                 { color: var(--module); }
+.Agda .Field                                  { color: var(--field); }
 
-.Agda a[href]:hover.Background,
-  .Agda a[href]:hover.Bound,
-  .Agda a[href]:hover.Generalizable           { background: color-mix(in srgb, #000, white 75%); }
+.Agda a[href]:focus.Comment                   { outline: 0.2em solid var(--comment); background-color: var(--comment-glow); }
+.Agda a[href]:focus.Keyword,
+  .Agda a[href]:focus.Markup,
+  .Agda a[href]:focus.Operator,
+  .Agda a[href]:focus.Pragma,
+  .Agda a[href]:focus.PrimitiveType,
+  .Agda a[href]:focus.Symbol                  { outline: 0.2em solid var(--keyword); background-color: var(--keyword-glow); }
+.Agda a[href]:focus.Background,
+  .Agda a[href]:focus.Bound,
+  .Agda a[href]:focus.Generalizable           { outline: 0.2em solid var(--text); background-color: var(--text-glow); }
+.Agda a[href]:focus.InductiveConstructor,
+  .Agda a[href]:focus.CoinductiveConstructor  { outline: 0.2em solid var(--constructor); background-color: var(--constructor-glow); }
+.Agda a[href]:focus.Datatype,
+  .Agda a[href]:focus.Function,
+  .Agda a[href]:focus.Macro,
+  .Agda a[href]:focus.Postulate,
+  .Agda a[href]:focus.Primitive,
+  .Agda a[href]:focus.Record                  { outline: 0.2em solid var(--term); background-color: var(--term-glow); }
+.Agda a[href]:focus.Number,
+  .Agda a[href]:focus.String                  { outline: 0.2em solid var(--literal); background-color: var(--literal-glow); }
+.Agda a[href]:focus.Module                    { outline: 0.2em solid var(--module); background-color: var(--module-glow); }
+.Agda a[href]:focus.Field                     { outline: 0.2em solid var(--field); background-color: var(--field-glow); }
+
+.Agda a[href]:hover.Comment                   { background-color: var(--comment-glow); }
 .Agda a[href]:hover.Keyword,
   .Agda a[href]:hover.Markup,
   .Agda a[href]:hover.Operator,
   .Agda a[href]:hover.Pragma,
-  .Agda a[href]:hover.Symbol                  { background: color-mix(in srgb, #666, white 75%); }
-.Agda a[href]:hover.Comment                   { background: color-mix(in srgb, #999, white 75%); }
-.Agda a[href]:hover.Postulate                 { background: color-mix(in srgb, var(--5r), white 75%); }
+  .Agda a[href]:hover.PrimitiveType,
+  .Agda a[href]:hover.Symbol                  { background-color: var(--keyword-glow); }
+.Agda a[href]:hover.Background,
+  .Agda a[href]:hover.Bound,
+  .Agda a[href]:hover.Generalizable           { background-color: var(--text-glow); }
 .Agda a[href]:hover.InductiveConstructor,
-  .Agda a[href]:hover.CoinductiveConstructor  { background: color-mix(in srgb, var(--5g), white 75%); }
+  .Agda a[href]:hover.CoinductiveConstructor  { background-color: var(--constructor-glow); }
 .Agda a[href]:hover.Datatype,
   .Agda a[href]:hover.Function,
   .Agda a[href]:hover.Macro,
+  .Agda a[href]:hover.Postulate,
   .Agda a[href]:hover.Primitive,
-  .Agda a[href]:hover.PrimitiveType,
-  .Agda a[href]:hover.Record                  { background: color-mix(in srgb, #06f, white 75%); }
-.Agda a[href]:hover.Module,
-  .Agda a[href]:hover.Number,
-  .Agda a[href]:hover.String                  { background: color-mix(in srgb, var(--5p), white 75%); }
-.Agda a[href]:hover.Field                     { background: color-mix(in srgb, var(--5rp), white 75%); }
-
-@media (prefers-color-scheme: dark) {
-  .Agda .Background,
-    .Agda .Bound,
-    .Agda .Generalizable                        { color: #fff; }
-  .Agda .Keyword,
-    .Agda .Markup,
-    .Agda .Operator,
-    .Agda .Pragma,
-    .Agda .Symbol                               { color: #999; }
-  .Agda .Comment                                { color: #666; }
-  .Agda .Postulate                              { color: color-mix(in srgb, var(--5r), white 50%); }
-  .Agda .InductiveConstructor,
-    .Agda .CoinductiveConstructor               { color: color-mix(in srgb, var(--5g), white 50%); }
-  .Agda .Datatype,
-    .Agda .Function,
-    .Agda .Macro,
-    .Agda .Primitive,
-    .Agda .PrimitiveType,
-    .Agda .Record                               { color: color-mix(in srgb, #06f, white 50%); }
-  .Agda .Module,
-    .Agda .Number,
-    .Agda .String                               { color: color-mix(in srgb, var(--5p), white 50%); }
-  .Agda .Field                                  { color: color-mix(in srgb, var(--5rp), white 50%); }
-
-  .Agda a[href]:hover.Background,
-    .Agda a[href]:hover.Bound,
-    .Agda a[href]:hover.Generalizable           { background: color-mix(in srgb, #fff, black 50%); }
-  .Agda a[href]:hover.Keyword,
-    .Agda a[href]:hover.Markup,
-    .Agda a[href]:hover.Operator,
-    .Agda a[href]:hover.Pragma,
-    .Agda a[href]:hover.Symbol                  { background: color-mix(in srgb, #ccc, black 50%); }
-  .Agda a[href]:hover.Comment                   { background: color-mix(in srgb, #999, black 50%); }
-  .Agda a[href]:hover.Postulate                 { background: color-mix(in srgb, var(--5r), black 50%); }
-  .Agda a[href]:hover.InductiveConstructor,
-    .Agda a[href]:hover.CoinductiveConstructor  { background: color-mix(in srgb, var(--5g), black 50%); }
-  .Agda a[href]:hover.Datatype,
-    .Agda a[href]:hover.Function,
-    .Agda a[href]:hover.Macro,
-    .Agda a[href]:hover.Primitive,
-    .Agda a[href]:hover.PrimitiveType,
-    .Agda a[href]:hover.Record                  { background: color-mix(in srgb, #06f, black 50%); }
-  .Agda a[href]:hover.Module,
-    .Agda a[href]:hover.Number,
-    .Agda a[href]:hover.String                  { background: color-mix(in srgb, var(--5p), black 50%); }
-  .Agda a[href]:hover.Field                     { background: color-mix(in srgb, var(--5rp), black 50%); }
-}
+  .Agda a[href]:hover.Record                  { background-color: var(--term-glow); }
+.Agda a[href]:hover.Number,
+  .Agda a[href]:hover.String                  { background-color: var(--literal-glow); }
+.Agda a[href]:hover.Module                    { background-color: var(--module-glow); }
+.Agda a[href]:hover.Field                     { background-color: var(--field-glow); }
 
 /* TODO */
 .Agda .DottedPattern      { color: #000; }
-.Agda .UnsolvedMeta       { color: #000; background: yellow         }
-.Agda .UnsolvedConstraint { color: #000; background: yellow         }
-.Agda .TerminationProblem { color: #000; background: #FFA07A        }
-.Agda .IncompletePattern  { color: #000; background: #F5DEB3        }
-.Agda .Error              { color: #e00; text-decoration: underline }
-.Agda .TypeChecks         { color: #000; background: #ADD8E6        }
+.Agda .UnsolvedMeta       { color: #000; background-color: yellow         }
+.Agda .UnsolvedConstraint { color: #000; background-color: yellow         }
+.Agda .TerminationProblem { color: #000; background-color: #FFA07A        }
+.Agda .IncompletePattern  { color: #000; background-color: #F5DEB3        }
+.Agda .Error              { color: #e00; text-decoration: underline       }
+.Agda .TypeChecks         { color: #000; background-color: #ADD8E6        }
+
+/******************************************************************************/
+
+/* branding */
+
+/*#mi {
+  font-style: italic;
+  text-transform: lowercase;
+}
+#mi:before {
+  display: inline;
+  color: var(--light-active);
+  content: "mi";
+  margin-right: 2.4rem;
+  font-weight: bold;
+}*/
+#head, #foot {
+  font-size: 1.6rem;
+  font-style: italic;
+  line-height: 4.0rem;
+  text-transform: lowercase;
+  height: 4.0rem;
+}
+#head {
+  border-bottom: 0.1rem solid var(--comment);
+  margin-bottom: 13.6rem;
+}
+#foot {
+  border-top: 0.1rem solid var(--comment);
+  margin-top: 15.6rem;
+}
+#head a, #foot a {
+  color: var(--comment);
+  text-decoration: none;
+}
+#head a[href]:link:focus, #foot a[href]:link:focus, #head a[href]:visited:focus, #foot a[href]:visited:focus {
+  outline: 0.2em solid var(--light-active);
+  color: var(--light-active);
+  background-color: var(--active-glow);
+}
+#head a[href]:link:hover, #foot a[href]:link:hover, #head a[href]:visited:hover, #foot a[href]:visited:hover {
+  color: var(--light-active);
+  background-color: var(--active-glow);
+}
+#head p, #foot p {
+  margin: 0;
+}
+#head a:before, #foot a:before {
+  display: inline;
+  color: var(--light-active);
+  content: "mi";
+  margin-right: 1.0rem;
+  font-weight: bold;
+}
+li:has(> p a.mi) {
+  position: relative;
+}
+p:has(> a.mi):before {
+  display: block;
+  content: "☞";
+  color: var(--light-active);
+  font-size: 2.0rem;
+  line-height: 2.0rem;
+  position: absolute;
+  top: 0.2rem;
+  left: -6.0rem;
+}
 
 /******************************************************************************/
