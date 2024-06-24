@@ -10,10 +10,10 @@
     width: 100%;
     position: relative;
   }
-  main > p, h1, h2, h3, h4, h5, h6, ol, ul, hr, .align-top > p, .align-bottom > p, .index {
+  main > p, h1, h2, h3, h4, h5, h6, ol, ul, .footnotes hr, .align-top > p, .align-bottom > p, .index {
     max-width: calc(50% - 3rem);
   }
-  blockquote, #card {
+  blockquote {
     max-width: calc(50% - 15rem);
   }
   pre {

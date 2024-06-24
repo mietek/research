@@ -1,13 +1,15 @@
 ---
-author:  Aczel
+author:  P. Aczel
 hauthor: Peter Aczel
 year:    1978
 title:   The type theoretic interpretation of constructive set theory
 lang:    en
-card:    'P. Aczel, [The type theoretic interpretation of constructive set theory (***mi***)
-         ](), [(orig.)](https://sci-hub.st/10.1016/S0049-237X(08)71989-X), *Logic Colloquium ’77*,
-         Edited by A. Macintyre, L. Pacholski, and J. Paris, North Holland, Amsterdam, 1978,
-         pp. 55–66.'
+card:
+  - P. Aczel (1978)
+  - '[The type theoretic interpretation of constructive set theory
+    ](https://sci-hub.st/10.1016/S0049-237X(08)71989-X)'
+  - '*Logic Colloquium ’77*, Edited by A. Macintyre, L. Pacholski and J. Paris, North Holland,
+    Amsterdam, pp. 55–66.'
 ---
 
 ```
@@ -86,8 +88,8 @@ appropriate constructive notion of ordinal to use in indexing the stages of Leve
 ## 1. The axiom system $\text{CZF}$
 
 We formulate $\text{CZF}$ in a first order language $\mathcal{L}$ having the logical primitives
-$\bot$, $∨$, $∧$, $→$, $∀x$, $∃x$, the restricted quantifiers $(∀x∈y)$, $(∃x∈y)$ and the binary
-relation symbols $∈$ and $=$.  We assume a standard axiomatisation of intuitionistic logic.  The
+$\bot,$ $∨,$ $∧,$ $→,$ $∀x,$ $∃x,$, the restricted quantifiers $(∀x∈y),$ $(∃x∈y)$ and the binary
+relation symbols $∈$ and $=.$  We assume a standard axiomatisation of intuitionistic logic.  The
 remaining axioms of $\text{CZF}$ are divided into two groups.
 
 ### Structural axioms
@@ -129,106 +131,110 @@ Restricted separation.
 ::: {.references}
 
 1.   ::: {#r1}
-     P. Aczel, [The strength of Martin-Löf’s intuitionistic type theory with one universe
+     P. Aczel (1977) [The strength of Martin-Löf’s intuitionistic type theory with one universe
      ](https://jyu.finna.fi/Record/vaari.1584852),
-     *Proc. Symp. Math. Logic, Oulu ’74 and Helsinki ’75*, Edited by S. Miettinen and J. Väänänen,
-     University of Helsinki, 1977, pp. 1–32.
+     *Proc. Symp. Math. Logic, Oulu ’74 and Helsinki ’75*, Edited by S. Miettinen and J. Väänänen,
+     University of Helsinki, pp. 1–32.
      <!-- TODO: document missing -->
      [↩](#rr1){.rb}
      :::
 
 2.   ::: {#r2}
-     M. Beeson, [Principles of continuous choice and continuity of functions in formal systems
-     for constructive mathematics](https://sci-hub.st/10.1016/S0003-4843(77)80003-X), *Annals
-     Math. Logic*, Vol. 12(3), 1977, pp. 249–322.
+     M. Beeson (1977) [Principles of continuous choice and continuity of functions in formal systems
+     for constructive mathematics](https://sci-hub.st/10.1016/S0003-4843(77)80003-X),
+     *Annals Math. Logic*, Vol. 12(3), pp. 249–322.
      [↩](#rr2){.rb}
      :::
 
 3.   ::: {#r3}
-     E. Bishop, *[Foundations of Constructive Analysis
-     ](https://library.lol/main/D69762DE514CE40FAA389C6F178F66D4)*, McGraw-Hill, New York, 1967.
+     E. Bishop (1967) *[Foundations of Constructive Analysis
+     ](https://library.lol/main/D69762DE514CE40FAA389C6F178F66D4)*,
+     McGraw-Hill, New York.
      <!-- TODO: DOI missing -->
      [↩](#rr3){.rb}
      :::
 
 4.   ::: {#r4}
-     A. Blass, [Injectivity, projectivity, and the axiom of choice
-     ](https://sci-hub.st/10.1090/S0002-9947-1979-0542870-6), *Trans. Amer. Math. Soc.*, Vol. 255,
-     1979, pp. 31–59.
+     A. Blass (1979) [Injectivity, projectivity, and the axiom of choice
+     ](https://sci-hub.st/10.1090/S0002-9947-1979-0542870-6),
+     *Trans. Amer. Math. Soc.*, Vol. 255, pp. 31–59.
      [↩](#rr4){.rb}
      :::
 
 5.   ::: {#r5}
-     S. Feferman, [A language and axioms for explicit mathematics
-     ](https://sci-hub.st/10.1007/BFb0062852), *Algebra and Logic*, *Lec. Notes Math.*, Vol. 450,
-     Edited by J. N. Crossley, Springer-Verlag, Berlin, 1975, pp. 87–139.
+     S. Feferman (1975) [A language and axioms for explicit mathematics
+     ](https://sci-hub.st/10.1007/BFb0062852),
+     *Algebra and Logic*, *Lec. Notes Math.*, Vol. 450, Edited by J. N. Crossley, Springer-Verlag,
+     Berlin, pp. 87–139.
      [↩](#rr5){.rb}
      :::
 
 6.   ::: {#r6}
-     H. Friedman, [The consistency of set theory relative to a theory with intuitionistic logic
-     ](https://sci-hub.st/10.2307/2272068), *J. Symb. Logic*, Vol. 38(2), 1973, pp. 315–319.
+     H. Friedman (1973) [The consistency of set theory relative to a theory with intuitionistic
+     logic](https://sci-hub.st/10.2307/2272068),
+     *J. Symb. Logic*, Vol. 38(2), pp. 315–319.
      [↩](#rr6){.rb}
      :::
 
 7.   ::: {#r7}
-     H. Friedman, [Set theoretic foundations for constructive analysis
-     ](https://sci-hub.st/10.2307/1971023), *Annals of Math.*, Vol. 105(1), 1977, pp. 1–28.
+     H. Friedman (1977) [Set theoretic foundations for constructive analysis
+     ](https://sci-hub.st/10.2307/1971023),
+     *Annals of Math.*, Vol. 105(1), pp. 1–28.
      [↩](#rr7){.rb}
      :::
 
 8.   ::: {#r8}
-     R. Grayson, ~~A sheaf approach to models of set theory~~, M. Sc. thesis, University of
-     Oxford, 1975.
+     R. Grayson (1975) ~~A sheaf approach to models of set theory~~,
+     M. Sc. thesis, University of Oxford.
      <!-- TODO: document missing -->
      [↩](#rr8){.rb}
      :::
 
 9.   ::: {#r9}
-     H. R. Jervell, [Constructive Universes I](https://sci-hub.st/10.1007/BFb0103103), *Higher Set
-     Theory*, *Lec. Notes Math.*, Vol. 669, Edited by G. H. Müller and D. S. Scott, Springer-Verlag,
-     Berlin, 1978, pp. 73–98.
+     H. R. Jervell (1978) [Constructive Universes I](https://sci-hub.st/10.1007/BFb0103103),
+     *Higher Set Theory*, *Lec. Notes Math.*, Vol. 669, Edited by G. H. Müller and D. S. Scott,
+     Springer-Verlag, Berlin, pp. 73–98.
      [↩](#rr9){.rb}
      :::
 
 10.  ::: {#r10}
-     G. Leversha, [Formal systems for constructive mathematics
+     G. Leversha (1976) [Formal systems for constructive mathematics
      ](https://solo.bodleian.ox.ac.uk/permalink/44OXF_INST/ao2p7t/cdi_proquest_journals_301376483),
-     Ph. D. thesis, University of Manchester, 1976.
+     Ph. D. thesis, University of Manchester.
      <!-- TODO: document missing -->
      [↩](#rr10){.rb}
      :::
 
 11.  ::: {#r11}
-     P. Martin-Löf, [An intuitionistic theory of types: Predicative part
+     P. Martin-Löf (1975) [An intuitionistic theory of types: Predicative part
      ](https://sci-hub.st/10.1016/S0049-237X(08)71945-1), *Logic Colloquium ’73*, *Stud. Logic
-     Found. Math.*, Vol. 80, Edited by H. E. Rose and J. C. Shepherdson, North Holland, Amsterdam,
-     1975, pp. 73–118.
+     Found. Math.*, Vol. 80, Edited by H. E. Rose and J. C. Shepherdson, North Holland, Amsterdam,
+     pp. 73–118.
      [↩](#rr11){.rb}
      [↩](#rr11-1){.rb}
      [↩](#rr11-2){.rb}
      :::
 
 12.  ::: {#r12}
-     J. Mayberry, [On the consistency problem for set theory: An essay on the Cantorian foundations
-     of mathematics (part I)](https://sci-hub.st/10.1093/bjps/28.1.1), [(part II)
-     ](https://sci-hub.st/10.1093/bjps/28.2.137), *Brit. J. Phil. Sci.*, Vol. 28(1–2), 1977,
-     pp. 1–34 (part I), pp. 137–170 (part II).
+     J. Mayberry (1977) [On the consistency problem for set theory: An essay on the Cantorian
+     foundations of mathematics (part I)](https://sci-hub.st/10.1093/bjps/28.1.1), [(part II)
+     ](https://sci-hub.st/10.1093/bjps/28.2.137), *Brit. J. Phil. Sci.*, Vol. 28(1–2), pp. 1–34
+     (part I), pp. 137–170 (part II).
      [↩](#rr12){.rb}
      :::
 
 13.  ::: {#r13}
-     J. Myhill, [Constructive set theory](https://sci-hub.st/10.2307/2272159), *J. Symb. Logic,*
-     Vol. 40(3), 1975, pp. 347–382.
+     J. Myhill (1975) [Constructive set theory](https://sci-hub.st/10.2307/2272159),
+     *J. Symb. Logic,* Vol. 40(3), pp. 347–382.
      [↩](#rr13){.rb}
      [↩](#rr13-1){.rb}
      :::
 
 14.  ::: {#r14}
-     L. Pozsgay, [Liberal intuitionism as a basis for set theory
-     ](https://library.lol/main/5F885CC6CC2FA1B1EB7BC55FC69098F1), *Axiomatic Set Theory, Part 1*,
-     *Proc. Symp. Pure Math.*, Vol. 13, Edited by D. S. Scott, University of California, Los
-     Angeles, 1971, pp. 321–330.
+     L. Pozsgay (1971) [Liberal intuitionism as a basis for set theory
+     ](https://library.lol/main/5F885CC6CC2FA1B1EB7BC55FC69098F1),
+     *Axiomatic Set Theory, Part 1*, *Proc. Symp. Pure Math.*, Vol. 13, Edited by D. S. Scott,
+     University of California, Los Angeles, pp. 321–330.
      [↩](#rr14){.rb}
      :::
 

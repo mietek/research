@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="generator" content="pandoc">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>$if(author)$$author$ $if(year)$($year$) $endif$“$endif$$title$$if(author)$”$endif$ — Mechanised Intuitionist</title>
+  <title>$if(author)$$author$ $if(year)$($year$) $endif$$endif$$title$ — Mechanised Intuitionist</title>
 $if(highlighting-css)$
   <style>
 $highlighting-css$
@@ -47,9 +47,12 @@ $table-of-contents$
 $endif$
 $body$
 $if(card)$
-<p id="card">
-$card$
-</p>
+<div id="card">
+<hr>
+$for(card)$
+  <p>$card$</p>
+$endfor$
+</div>
 $endif$
 </main>
 $for(include-after)$
@@ -58,5 +61,23 @@ $endfor$
 <nav id="foot">
 <p><a href="mi.index.html">Mechanised Intuitionist</a></p>
 </nav>
+<script>
+getRandomAngle = function (min, max) {
+  const angle = min + Math.random() * (max - min);
+  const sign = Math.random() < 0.5 ? -1 : 1;
+  console.log(min, max, angle * sign);
+  return angle * sign;
+}
+addEventListener('load', function () {
+    const card = document.getElementById('card');
+    if (card) {
+      card.style.transform = 'rotate(' + getRandomAngle(1, 4) + 'deg)';
+      const hr = card.children[0];
+      if (hr) {
+        hr.style.transform = 'rotate(' + getRandomAngle(8, 24) + 'deg)';
+      }
+    }
+  });
+</script>
 </body>
 </html>
