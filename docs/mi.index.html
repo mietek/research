@@ -31,7 +31,7 @@
 <div class="references">
 <h2 id="a">A</h2>
 <ul>
-<li>Aczel (1978) <a href="mi.Aczel1978.html">“The type theoretic interpretation of constructive set theory”</a></li>
+<li>P. Aczel (1978) <a href="mi.Aczel1978.html">The type theoretic interpretation of constructive set theory</a></li>
 </ul>
 <h2 id="b">B</h2>
 <h2 id="c">C</h2>
@@ -46,7 +46,7 @@
 <h2 id="l">L</h2>
 <h2 id="m">M</h2>
 <ul>
-<li>Martin-Löf (2006) <a href="mi.MartinLof2006.html">“100 years of Zermelo’s axiom of choice: What was the problem with it?”</a></li>
+<li>P. Martin-Löf (2006) <a href="mi.MartinLof2006.html">100 years of Zermelo’s axiom of choice: What was the problem with it?</a></li>
 </ul>
 <h2 id="n">N</h2>
 <h2 id="o">O</h2>
@@ -66,5 +66,23 @@
 <nav id="foot">
 <p><a href="mi.index.html">Mechanised Intuitionist</a></p>
 </nav>
+<script>
+getRandomAngle = function (min, max) {
+  const angle = min + Math.random() * (max - min);
+  const sign = Math.random() < 0.5 ? -1 : 1;
+  console.log(min, max, angle * sign);
+  return angle * sign;
+}
+addEventListener('load', function () {
+    const card = document.getElementById('card');
+    if (card) {
+      card.style.transform = 'rotate(' + getRandomAngle(1, 4) + 'deg)';
+      const hr = card.children[0];
+      if (hr) {
+        hr.style.transform = 'rotate(' + getRandomAngle(8, 24) + 'deg)';
+      }
+    }
+  });
+</script>
 </body>
 </html>

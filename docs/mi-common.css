@@ -32,9 +32,9 @@ p, h1, h2, h3, h4, h5, h6 {
   overflow-wrap: break-word;
 }
 /* 8. Create a root stacking context */
-/*#root, #__next {
+#root, #__next {
   isolation: isolate;
-}*/
+}
 
 h1, h2, h3, h4, h5, h6 {
   font-weight: normal;
@@ -48,12 +48,12 @@ h1, h2, h3, h4, h5, h6 {
 html {
   font-size: 10px;
 }
-@media (min-width: 350px) and (max-width: 699px) {
+@media (min-width: 500px) and (max-width: 699px) {
   html {
     font-size: 7.5px;
   }
 }
-@media (max-width: 349px) {
+@media (max-width: 499px) {
   html {
     font-size: 5px;
   }
@@ -135,10 +135,12 @@ p {
   margin: 2.6rem 0;
   text-align: justify;
   hyphens: auto;
+  hyphenate-limit-chars: 3 3 3;
 }
 li {
   text-align: justify;
   hyphens: auto;
+  hyphenate-limit-chars: 3 3 3;
 }
 blockquote {
   margin: 2.6rem 6rem;
@@ -183,7 +185,7 @@ ol[type="i"] li::marker {
 .references h2 {
   font-size: 2.0rem;
   top: auto;
-  border-top: 0.1rem var(--comment) dashed;
+  border-top: 0.1rem var(--comment-glow) solid;
   margin-top: 4.6rem;
   padding-top: 0.5rem;
 }
@@ -207,12 +209,6 @@ a.footnote-ref, a.rr {
 a {
   text-decoration-thickness: 0.1rem;
 }
-#card {
-  border: 1px var(--comment) dashed;
-  border-bottom: 0;
-  padding: 2.6rem 3.0rem;
-  margin: -0.3rem 6.0rem -15.7rem 6.0rem;
-}
 
 /******************************************************************************/
 
@@ -224,12 +220,6 @@ body {
   max-width: 82rem;
 }
 @media (max-width: 699px) {
-  body {
-    padding: 0 3rem;
-    max-width: 76rem;
-  }
-}
-@media (max-width: 349px) {
   body {
     padding: 0 3rem;
     max-width: 76rem;
@@ -590,6 +580,12 @@ a[href]:active:hover {
 #foot {
   border-top: 0.1rem solid var(--comment);
   margin-top: 15.6rem;
+  position: relative;
+  top: -0.1rem;
+  z-index: 2;
+}
+#foot p {
+  background-color: var(--background);
 }
 #head a, #foot a {
   color: var(--comment);
@@ -626,6 +622,107 @@ p:has(> a.mi):before {
   position: absolute;
   top: 0.2rem;
   left: -6.0rem;
+}
+#card {
+  font-family: "Courier", monospace;
+  font-size: 1.6rem;
+  line-height: 1.6rem;
+  background-color: var(--background);
+  border: 0.1rem var(--comment) solid;
+  margin: -0.3rem auto -10.5rem auto;
+  width: 58.0rem;
+  height: 35.8459713475rem;
+  transform: rotate(-1deg);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+#card hr {
+  border: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  transform: rotate(-8deg);
+  top: 0;
+  left: 0;
+}
+#card hr:after {
+  font-family: "Impact", sans-serif;
+  font-size: 8.0rem;
+  line-height: 35.8459713475rem;
+  text-align: center;
+  display: block;
+  content: "MECHANISED";
+  color: var(--light-active);
+  opacity: 0.1;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  transform: scale(1, 3);
+}
+@media (prefers-color-scheme: dark) {
+  #card hr:after {
+    opacity: 0.2;
+  }
+}
+#card:before {
+  display: block;
+  content: "";
+  border-left: 0.1rem var(--active-glow) solid;
+  border-right: 0.1rem var(--active-glow) solid;
+  width: 8.0901699437%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 16.18033988749%;
+}
+#card:after {
+  display: block;
+  content: "";
+  background-color: var(--background);
+  border: 0.1rem var(--comment) solid;
+  border-radius: 50%;
+  height: 4.0rem;
+  width: 4.0rem;
+  position: absolute;
+  bottom: 2.0rem;
+  left: calc(50% - 2.0rem);
+}
+#card p {
+  margin: 2.0rem 2.0rem 0 17rem;
+  text-align: left;
+  hyphens: none;
+  position: relative;
+  text-indent: -2.5rem;
+}
+#card p:first-of-type {
+  margin-top: 6.0rem;
+}
+#card p:first-of-type:before {
+  display: block;
+  content: "orig. ref.";
+  color: var(--comment);
+  width: 16.18033988749%;
+  height: 100%;
+  position: absolute;
+  top: -4.5rem;
+  left: -15.0rem;
+  text-indent: 0;
+}
+#card p:first-of-type:after {
+  display: block;
+  content: "";
+  border-bottom: 0.1rem var(--active-glow) solid;
+  width: 58rem;
+  height: 0;
+  position: absolute;
+  top: -0.2rem;
+  left: -17.0rem;
+  z-index: -1;
+}
+html, body {
+  overflow-x: hidden;
 }
 
 /******************************************************************************/
