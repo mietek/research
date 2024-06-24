@@ -70,7 +70,7 @@ html {
   font-style: normal;
 }
 html {
-/*  background: url(mi-20-26.png);*/
+/*  background: url(../src/mi/mi-20-26.png);*/
 /*  background-position: 0 0;*/
   font-family: Georgia, serif;
 }
@@ -79,7 +79,7 @@ body {
   line-height: 2.6rem;
 }
 code, pre {
-/*  background: url(mi-14-15.png);*/
+/*  background: url(../src/mi/mi-14-15.png);*/
 /*  background-position: 0 0;*/
   font-family: "PragmataPro", 'pragmatapro-regular', monospace;
   font-size: 1.4rem;
@@ -172,7 +172,7 @@ ol[type="i"] li::marker {
   content: '[' counter(list-item, decimal) "]  ";
 }
 .references, .footnotes {
-/*  background: url(mi-16-20.png);*/
+/*  background: url(../src/mi/mi-16-20.png);*/
 /*  background-position: 0 0;*/
   font-size: 1.6rem;
   line-height: 2.0rem;
@@ -183,7 +183,7 @@ ol[type="i"] li::marker {
 .references h2 {
   font-size: 2.0rem;
   top: auto;
-  border-top: 0.1rem var(--comment) dotted;
+  border-top: 0.1rem var(--comment) dashed;
   margin-top: 4.6rem;
   padding-top: 0.5rem;
 }
@@ -206,6 +206,12 @@ a.footnote-ref, a.rr {
 }
 a {
   text-decoration-thickness: 0.1rem;
+}
+#card {
+  border: 1px var(--comment) dashed;
+  border-bottom: 0;
+  padding: 2.6rem 3.0rem;
+  margin: -0.3rem 6.0rem -15.7rem 6.0rem;
 }
 
 /******************************************************************************/
@@ -570,17 +576,6 @@ a[href]:active:hover {
 
 /* branding */
 
-/*#mi {
-  font-style: italic;
-  text-transform: lowercase;
-}
-#mi:before {
-  display: inline;
-  color: var(--light-active);
-  content: "mi";
-  margin-right: 2.4rem;
-  font-weight: bold;
-}*/
 #head, #foot {
   font-size: 1.6rem;
   font-style: italic;

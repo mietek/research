@@ -1,20 +1,12 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <meta name="author" content="Peter Aczel" />
-  <meta name="dcterms.date" content="1978-01-01" />
-  <title>The type theoretic interpretation of constructive set theory</title>
-  <style>
-      code{white-space: pre-wrap;}
-      span.smallcaps{font-variant: small-caps;}
-      span.underline{text-decoration: underline;}
-      div.column{display: inline-block; vertical-align: top; width: 50%;}
-  </style>
-  <link rel="stylesheet" href="mi-common.css" />
-  <link rel="stylesheet" href="mi-layout.css" />
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Aczel (1978) “The type theoretic interpretation of constructive set theory” — Mechanised Intuitionist</title>
+  <link rel="stylesheet" href="mi-common.css">
+  <link rel="stylesheet" href="mi-layout.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.js"></script>
   <script>document.addEventListener("DOMContentLoaded", function () {
     var mathElements = document.getElementsByClassName("math");
@@ -23,28 +15,25 @@
       if (mathElements[i].tagName == "SPAN") { katex.render(texText.data, mathElements[i], { displayMode: mathElements[i].classList.contains("display"), throwOnError: false } );
     }}});</script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css" />
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
 </head>
 <body>
-<header id="head">
-  <p><a href="mi.index.html">Mechanised Intuitionist</a></p>
-</header>
+<nav id="head">
+<p><a href="mi.index.html">Mechanised Intuitionist</a></p>
+</nav>
 <main>
 <header id="title-block-header">
 <h1 class="title">The type theoretic interpretation of constructive set theory</h1>
 <p class="author">Peter Aczel</p>
-<p class="date">1978<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p class="year">1978</p>
 </header>
-<pre class="Agda"><a id="131" class="Comment">-- Mechanised by Miëtek Bak</a>
+<pre class="Agda"><a id="452" class="Comment">-- Mechanised by Miëtek Bak</a>
 
-<a id="160" class="Keyword">module</a> <a id="167" href="mi.Aczel1978.html" class="Module">mi.Aczel1978</a> <a id="180" class="Keyword">where</a>
+<a id="481" class="Keyword">module</a> <a id="488" href="mi.Aczel1978.html" class="Module">mi.Aczel1978</a> <a id="501" class="Keyword">where</a>
 
-<a id="187" class="Comment">-- TODO</a>
+<a id="508" class="Comment">-- TODO</a>
 </pre>
 <blockquote>
-<p>By adding to Martin-Löf’s intuitionistic theory of types a ‘type of sets’ we give a constructive interpretation of constructive set theory. This interpretation is a constructive version of the classical conception of the cumulative hierarchy of sets.</p>
+<p>By adding to Martin-Löf’s intuitionistic theory of types a ‘type of sets’ we give a constructive interpretation of constructive set theory. This interpretation is a constructive version of the classical conception of the cumulative hierarchy of sets.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
 </blockquote>
 <h2 id="introduction">Introduction</h2>
 <p>Intuitionistic mathematics can be structured into two levels. The first level arises directly out of Brouwer’s criticism of certain methods and notions of classical mathematics. In particular the notion of ‘truth’ that gives rise to the law of excluded middle was rejected and instead the meaning of mathematical statements was to be based on the notion of ‘proof’. While implicit in this first level of intuitionism was a theory of meaning quite different from the classical one, it was nevertheless the case that the body of mathematics that could be developed within this level remained a part of classical mathematics. Because Brouwer felt that mathematical analysis could not be developed adequately on this basis he was led to formulate his own conception of the continuum. This conception involved the mathematical treatment of incompletely specified objects such as free choice sequences. The second level of intuitionism builds on the first level but also includes these radical ideas that turn out to be incompatible with classical mathematics. Although considerable effort has been made over the years to make these ideas more transparent they have remained rather obscure to most mathematicians and the mathematics based on them has had a very limited following.</p>
@@ -69,7 +58,7 @@
 <p>Union.</p>
 <p><span class="math display">∃z(∀y∈x)(∀u∈y)(u∈z)</span></p>
 <p>Restricted separation.</p>
-<pre class="Agda"><a id="6014" class="Comment">-- TODO</a>
+<pre class="Agda"><a id="6339" class="Comment">-- TODO</a>
 </pre>
 <h2 id="references">References</h2>
 <div class="references">
@@ -125,9 +114,12 @@
 <li id="fn1" role="doc-endnote"><p>The ideas for this paper were germinating during a visit to Caltech, supported by NSF grant MPS 75-07562, and came to fruition while visiting Utrecht University. The results were first announced in an abstract for the 1976 Oxford Logic Colloquium. <!-- --><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
+<p id="card">
+P. Aczel, <a href="">The type theoretic interpretation of constructive set theory (<strong><em>mi</em></strong>)</a>, <a href="https://sci-hub.st/10.1016/S0049-237X(08)71989-X">(orig.)</a>, <em>Logic Colloquium ’77</em>, Edited by A. Macintyre, L. Pacholski, and J. Paris, North Holland, Amsterdam, 1978, pp. 55–66.
+</p>
 </main>
-<footer id="foot">
-  <p><a href="mi.index.html">Mechanised Intuitionist</a></p>
-</footer>
+<nav id="foot">
+<p><a href="mi.index.html">Mechanised Intuitionist</a></p>
+</nav>
 </body>
 </html>

@@ -13,7 +13,7 @@
   main > p, h1, h2, h3, h4, h5, h6, ol, ul, hr, .align-top > p, .align-bottom > p, .index {
     max-width: calc(50% - 3rem);
   }
-  blockquote {
+  blockquote, #card {
     max-width: calc(50% - 15rem);
   }
   pre {
