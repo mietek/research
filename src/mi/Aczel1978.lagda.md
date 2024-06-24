@@ -1,8 +1,13 @@
 ---
-title:  The type theoretic interpretation of constructive set theory
-author: Peter Aczel
-date:   1978[^1]
-lang:   en
+author:  Aczel
+hauthor: Peter Aczel
+year:    1978
+title:   The type theoretic interpretation of constructive set theory
+lang:    en
+card:    'P. Aczel, [The type theoretic interpretation of constructive set theory (***mi***)
+         ](), [(orig.)](https://sci-hub.st/10.1016/S0049-237X(08)71989-X), *Logic Colloquium ’77*,
+         Edited by A. Macintyre, L. Pacholski, and J. Paris, North Holland, Amsterdam, 1978,
+         pp. 55–66.'
 ---
 
 ```
@@ -15,7 +20,7 @@ module mi.Aczel1978 where
 
 > By adding to Martin-Löf’s intuitionistic theory of types a ‘type of sets’ we give a constructive
 > interpretation of constructive set theory.  This interpretation is a constructive version of the
-> classical conception of the cumulative hierarchy of sets.
+> classical conception of the cumulative hierarchy of sets.[^1]
 
 
 ## Introduction

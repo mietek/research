@@ -19,8 +19,8 @@ docs/CNAME : CNAME | docs
 docs/%.css : src/mi/%.css | docs
 	cp $< $@
 
-docs/mi.%.html : docs/mi.%.md src/mi/mi-header.html src/mi/mi-footer.html
-	pandoc -B src/mi/mi-header.html -A src/mi/mi-footer.html --katex --standalone --css=mi-common.css --css=mi-layout.css -o $@ $<
+docs/mi.%.html : docs/mi.%.md src/mi/mi-template.html
+	pandoc --katex --standalone --template=src/mi/mi-template.html --css=mi-common.css --css=mi-layout.css -o $@ $<
 
 docs/mi.%.md : src/mi/%.lagda.md
 	agda -i src --html --html-dir=docs --html-highlight=auto --css=mi-common.css $<

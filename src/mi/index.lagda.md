@@ -1,5 +1,6 @@
 ---
 title: index
+lang:  en
 ---
 
 ```
@@ -31,7 +32,7 @@ Made by [Miëtek Bak](https://mietek.io/).  Licensed under [CC BY-SA 4.0
 
 ## A
 
--  P. Aczel (1978) [“The type theoretic interpretation of constructive set theory”
+-  Aczel (1978) [“The type theoretic interpretation of constructive set theory”
    ](mi.Aczel1978.html)
 
 ## B
@@ -58,7 +59,7 @@ Made by [Miëtek Bak](https://mietek.io/).  Licensed under [CC BY-SA 4.0
 
 ## M
 
--  P. Martin-Löf (2006) [“100 years of Zermelo’s axiom of choice: What was the problem with
+-  Martin-Löf (2006) [“100 years of Zermelo’s axiom of choice: What was the problem with
    it?”](mi.MartinLof2006.html)
 
 ## N

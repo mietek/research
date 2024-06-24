@@ -1,8 +1,14 @@
 ---
-title:  '100 years of Zermelo’s<br>axiom of choice:<br>What was the problem with it?'
-author: Per Martin-Löf
-date:   2006
-lang:   en
+author:  Martin-Löf
+hauthor: Per Martin-Löf
+year:    2006
+title:   '100 years of Zermelo’s axiom of choice: What was the problem with it?'
+htitle:  '100 years of Zermelo’s<br>axiom of choice:<br>What was the problem with it?'
+lang:    en
+card:    'P. Martin-Löf, [100 years of Zermelo’s axiom of choice: What was the problem with it?
+         (***mi***)](), [(orig.)](https://sci-hub.st/10.1093/comjnl/bxh162), *Comp. J.*,
+         Vol. 49(3), 2006, pp. 345–350.'
+
 ---
 
 ```
