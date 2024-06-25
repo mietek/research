@@ -4,6 +4,7 @@ hauthor: Peter Aczel
 year:    1978
 title:   The type theoretic interpretation of constructive set theory
 lang:    en
+wip:     yes
 card:
   - P. Aczel (1978)
   - '[The type theoretic interpretation of constructive set theory

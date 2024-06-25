@@ -5,6 +5,7 @@ year:    2006
 title:   '100 years of Zermelo’s axiom of choice: What was the problem with it?'
 htitle:  '100 years of Zermelo’s<br>axiom of choice:<br>What was the problem with it?'
 lang:    en
+wip:     yes
 card:
   - 'P. Martin-Löf (2006)'
   - '[100 years of Zermelo’s axiom of choice: What was the problem with it?
@@ -347,11 +348,11 @@ of choice.
 
 We shall prove the implications (i)$→$(ii)$→$(iii)$→$(iv)$→$(i) in this order.
 
-###### (i)$→$(ii)
+###### (i)$→$(ii).
 
 This is precisely the result of the considerations prior to the formulation of the theorem.
 
-###### (ii)$→$(iii)
+###### (ii)$→$(iii).
 
 Let $(S, =_S)$ and $(I, =_I)$ be two exten&shy;sional sets, and let $f : S → I$ be an
 exten&shy;sional and surjective mapping between them.  By definition, put
