@@ -7,6 +7,11 @@
   <title>P. Aczel (1978) The type theoretic interpretation of constructive set theory — Mechanised Intuitionist</title>
   <link rel="stylesheet" href="mi-common.css">
   <link rel="stylesheet" href="mi-layout.css">
+  <style>
+    #card hr:after {
+      display: none;
+    }
+  </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.js"></script>
   <script>document.addEventListener("DOMContentLoaded", function () {
     var mathElements = document.getElementsByClassName("math");
@@ -25,12 +30,13 @@
 <h1 class="title">The type theoretic interpretation of constructive set theory</h1>
 <p class="author">Peter Aczel</p>
 <p class="year">1978</p>
+<p class="wip">WORK IN PROGRESS</p>
 </header>
-<pre class="Agda"><a id="421" class="Comment">-- Mechanised by Miëtek Bak</a>
+<pre class="Agda"><a id="434" class="Comment">-- Mechanised by Miëtek Bak</a>
 
-<a id="450" class="Keyword">module</a> <a id="457" href="mi.Aczel1978.html" class="Module">mi.Aczel1978</a> <a id="470" class="Keyword">where</a>
+<a id="463" class="Keyword">module</a> <a id="470" href="mi.Aczel1978.html" class="Module">mi.Aczel1978</a> <a id="483" class="Keyword">where</a>
 
-<a id="477" class="Comment">-- TODO</a>
+<a id="490" class="Comment">-- TODO</a>
 </pre>
 <blockquote>
 <p>By adding to Martin-Löf’s intuitionistic theory of types a ‘type of sets’ we give a constructive interpretation of constructive set theory. This interpretation is a constructive version of the classical conception of the cumulative hierarchy of sets.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
@@ -58,7 +64,7 @@
 <p>Union.</p>
 <p><span class="math display">∃z(∀y∈x)(∀u∈y)(u∈z)</span></p>
 <p>Restricted separation.</p>
-<pre class="Agda"><a id="6309" class="Comment">-- TODO</a>
+<pre class="Agda"><a id="6322" class="Comment">-- TODO</a>
 </pre>
 <h2 id="references">References</h2>
 <div class="references">
@@ -124,23 +130,5 @@
 <nav id="foot">
 <p><a href="mi.index.html">Mechanised Intuitionist</a></p>
 </nav>
-<script>
-getRandomAngle = function (min, max) {
-  const angle = min + Math.random() * (max - min);
-  const sign = Math.random() < 0.5 ? -1 : 1;
-  console.log(min, max, angle * sign);
-  return angle * sign;
-}
-addEventListener('load', function () {
-    const card = document.getElementById('card');
-    if (card) {
-      card.style.transform = 'rotate(' + getRandomAngle(1, 4) + 'deg)';
-      const hr = card.children[0];
-      if (hr) {
-        hr.style.transform = 'rotate(' + getRandomAngle(8, 24) + 'deg)';
-      }
-    }
-  });
-</script>
 </body>
 </html>
