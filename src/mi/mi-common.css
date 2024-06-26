@@ -322,7 +322,7 @@ body {
   --light-field-glow:        #f6cade;
 }
 :root {
-  --dark-background:         #000;
+  --dark-background:         #1e1e1e;
   --dark-comment:            #666;
   --dark-keyword:            #999;
   --dark-text:               #fff;
@@ -398,6 +398,7 @@ body {
 }
 @media (prefers-color-scheme: dark) {
   :root {
+    color-scheme:        dark;
     --background:        var(--dark-background);
     --comment:           var(--dark-comment);
     --keyword:           var(--dark-keyword);
@@ -681,6 +682,7 @@ p:has(> a.mi):before {
   top: 5.2rem;
   margin: 0;
   width: 100%;
+  z-index: -1;
 }
 @media (prefers-color-scheme: dark) {
   #card hr:after, .wip {
