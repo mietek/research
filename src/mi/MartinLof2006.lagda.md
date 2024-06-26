@@ -19,20 +19,39 @@ card:
 
 module mi.MartinLof2006 where
 
-open import Data.Product using (Σ ; Σ-syntax ; _,_ ; proj₁ ; proj₂ ; _×_)
-open import Function using (_∘_)
-open import Level using (_⊔_)
-open import Relation.Binary using (Setoid)
-open import Relation.Unary using (_∩_)
+open import Agda.Primitive using (_⊔_ ; lzero ; lsuc)
+open import Agda.Builtin.Sigma using (Σ ; _,_ ; fst ; snd)
 
-_↔_ : ∀ {𝒶 𝒷} (A : Set 𝒶) (B : Set 𝒷) → Set _
-A ↔ B = (A → B) × (B → A)
+infix 2 Σ-syntax
+syntax Σ-syntax S (λ x → T) = Σ[ x ∈ S ] T
+Σ-syntax : ∀ {𝓈 𝓉} (S : Set 𝓈) (T : S → Set 𝓉) → Set _
+Σ-syntax = Σ
 
-Σ!-syntax : ∀ {𝒶 𝒶ₑ 𝒷} (A : Set 𝒶) (_≈_ : A → A → Set 𝒶ₑ) (B : A → Set 𝒷) → Set _
-Σ!-syntax A _≈_ B = Σ[ x ∈ A ] B x × ∀ {y} → B y → x ≈ y
+infixr 2 _×_
+_×_ : ∀ {𝓈 𝓉} (S : Set 𝓈) (T : Set 𝓉) → Set _
+S × T = Σ[ x ∈ S ] T
+
+Rel : ∀ {𝓈} (S : Set 𝓈) 𝓇 → Set (𝓈 ⊔ lsuc 𝓇)
+Rel S 𝓇 = S → S → Set 𝓇
 
 infix 2 Σ!-syntax
-syntax Σ!-syntax A _≈_ (λ x → B) = Σ![ x ∈ A / _≈_ ] B
+syntax Σ!-syntax S _≈_ (λ x → T) = Σ![ x ∈ S / _≈_ ] T
+Σ!-syntax : ∀ {𝓈 𝓇 𝓉} (S : Set 𝓈) (_≈_ : Rel S 𝓇) (T : S → Set 𝓉) → Set _
+Σ!-syntax S _≈_ T = Σ[ x ∈ S ] T x × ∀ {y} → T y → x ≈ y
+
+infix 1 _↔_
+_↔_ : ∀ {𝓈 𝓉} (S : Set 𝓈) (T : Set 𝓉) → Set _
+S ↔ T = (S → T) × (T → S)
+
+_∘_ : ∀ {𝓈 𝓉 𝓊} {S : Set 𝓈} {T : S → Set 𝓉} {U : ∀ {x} → T x → Set 𝓊}
+        (f : ∀ {x} (y : T x) → U y) (g : ∀ x → T x) → (∀ x → U (g x))
+f ∘ g = λ x → f (g x)
+
+Pred : ∀ {𝓈} (S : Set 𝓈) 𝒶 → Set (𝓈 ⊔ lsuc 𝒶)
+Pred S 𝒶 = S → Set 𝒶
+
+_∩_ : ∀ {𝓈 𝒶 𝒷} {S : Set 𝓈} (A : Pred S 𝒶) (B : Pred S 𝒷) → Pred S _
+A ∩ B = λ x → A x × B x
 ```
 
 Cantor conceived set theory in a sequence of six papers published in the *[Mathematische Annalen
@@ -93,9 +112,10 @@ $$(∀i : I)(∃x : S)A(i, x) → (∃f : I → S)(∀i : I)A(i, f(i))$$
 
 ```
 -- (intensional, constructive, type-theoretic) axiom of choice
-module _ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : Set 𝓈} {A : I → S → Set 𝒶} where
-  ac : (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] ∀ i → A i (f i)
-  ac p₅ = proj₁ ∘ p₅ , proj₂ ∘ p₅
+
+ac : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : Set 𝓈} {A : I → Pred S 𝒶} →
+     (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] ∀ i → A i (f i)
+ac p₅ = fst ∘ p₅ , snd ∘ p₅
 ```
 :::
 
@@ -106,16 +126,17 @@ $$(∀i : I)(∃x : S_i)A(i, x) → (∃f : Π_{i : I} S_i)(∀i : I)A(i, f(i))$
 
 ```
 -- generalized (intensional, constructive, type-theoretic) axiom of choice
-module _ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : I → Set 𝓈} {A : ∀ i → S i → Set 𝒶} where
-  ac′ : (∀ i → Σ[ x ∈ S i ] A i x) → Σ[ f ∈ (∀ i → S i) ] ∀ i → A i (f i)
-  ac′ p₅ = proj₁ ∘ p₅ , proj₂ ∘ p₅
+
+ac′ : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : I → Set 𝓈} {A : ∀ i → Pred (S i) 𝒶} →
+      (∀ i → Σ[ x ∈ S i ] A i x) → Σ[ f ∈ (∀ i → S i) ] ∀ i → A i (f i)
+ac′ p₅ = fst ∘ p₅ , snd ∘ p₅
 ```
 :::
 
 becomes evident almost immediately upon remembering the Brouwer-Heyting-Kolmogorov interpretation
 of the logical constants, which means that it might as well have been observed already in the early
 thirties.  And it is this intuitive justification that was turned into a formal proof in
-constructive type theory, a proof that effectively uses the strong rule of $∃$-elimination that it
+constructive type theory, a proof that effectively uses the strong rule of $∃$-elimination that
 became possible to formulate as a result of having made the proof objects appear in the system
 itself and not only in its interpretation.
 
@@ -138,7 +159,7 @@ formulation,
 
 Here $M'$ is an arbitrary subset, which contains at least one element, of a given set $M.$  What is
 surprising about this formulation is that there is nothing objectionable about it from a
-constructive point of view.  Indeed, the distinguished element $m'_1$ can be taken to be the left
+constructive point of view.  Indeed, the distinguished element $m'_1$ can be taken to be the first
 projection of the proof of the existential proposition $(∃x : M)$$M'(x),$ which says that the
 subset $M'$ of $M$ contains at least one element.  This means that one would have to go into the
 demonstration of the well-ordering theorem in order to determine exactly what are its
@@ -151,7 +172,6 @@ in his second paper on the well-ordering theorem from 1908,
 > deren jeder mindestens ein Element enthält, besitzt mindestens eine Untermenge $S_1,$ welche mit
 > jedem der betrachteten Teile $A,$ $B,$ $C,$ $…$ genau ein Element gemein hat.*]{lang=de}[^14]
 
-::: {.align-bottom}
 Formulated in this way, Zermelo’s axiom of choice turns out to coincide with the multiplicative
 axiom, which Whitehead and Russell had found indispensable for the development of the theory of
 cardinals.[^15] [^16]  The type-theoretic rendering of this formulation of the axiom of choice is
@@ -163,6 +183,8 @@ Zermelo’s 1908 formulation of the axiom of choice are a set $S,$ which comes e
 equivalence relation $=_S,$ and a family $(A_i)_{i : I}$ of propositional functions on $S$
 satisfying the following properties,
 
+::: {.align-bottom}
+
 1.  $x =_S y → (A_i(x) ↔ A_i(y))$ (exten&shy;sionality),
 
 2.  $i =_I j → (∀x : S)(A_i(x) ↔ A_j(x))$ (exten&shy;sionality of the dependence on the index),
@@ -171,37 +193,8 @@ satisfying the following properties,
 
 4.  $(∀x : S)(∃i : I)A_i(x)$ (exhaustiveness),
 
-5.  $(∀i : I)(∃x : S)A_i(x)$ (non-emptiness).
+5.  $(∀i : I)(∃x : S)A_i(x)$ (nonemptiness).
 
-```
-module _ {𝒾 𝒾ₑ} (Iₑ : Setoid 𝒾 𝒾ₑ) where
-  private open module I = Setoid Iₑ using () renaming (Carrier to I)
-
-  module _ {𝓈 𝓈ₑ} (Sₑ : Setoid 𝓈 𝓈ₑ) where
-    private open module S = Setoid Sₑ using () renaming (Carrier to S)
-
-    Ext : ∀ (f : I → S) → Set _
-    Ext f = ∀ {i j} → i I.≈ j → f i S.≈ f j
-
-    module _ {𝒶} (A : I → S → Set 𝒶) where
-      -- extensionality
-      P₁ = ∀ {i x y} → x S.≈ y → (A i x ↔ A i y)
-
-      -- extensionality of the dependence on the index
-      P₂ = ∀ {i j} → i I.≈ j → ∀ x → (A i x ↔ A j x)
-
-      -- mutual exclusiveness
-      P₃ = ∀ {i j} → (Σ[ x ∈ S ] A i x × A j x) → i I.≈ j
-
-      -- exhaustiveness
-      P₄ = ∀ x → Σ[ i ∈ I ] A i x
-
-      -- nonemptiness
-      P₅ = ∀ i → Σ[ x ∈ S ] A i x
-```
-:::
-
-::: {.align-bottom}
 Given these data, the axiom guarantees the existence of a propositional function $S_1$ on $S$ such
 that
 
@@ -210,12 +203,85 @@ that
 7.  $(∀i : I)(∃!x : S)(A_i ∩ S_1)(x)$ (uniqueness of choice).
 
 ```
-      module _ {𝓈₁} (S₁ : S → Set 𝓈₁) where
-        -- extensionality
-        P₆ = ∀ {x y} → x S.≈ y → (S₁ x ↔ S₁ y)
+-- style 1
 
-        -- uniqueness of choice
-        P₇ = ∀ i → Σ![ x ∈ S / S._≈_ ] (A i ∩ S₁) x
+record IsESet {𝓈 𝓇} (S : Set 𝓈) (_≈_ : Rel S 𝓇) : Set (𝓈 ⊔ 𝓇) where
+  field
+    refl  : ∀ {x} → x ≈ x
+    sym   : ∀ {x y} → x ≈ y → y ≈ x
+    trans : ∀ {x y z} → x ≈ y → y ≈ x → x ≈ z
+
+record IsESubset {𝓈 𝓇 𝒶} {S : Set 𝓈} {_≈_ : Rel S 𝓇}
+    (ᴱS : IsESet S _≈_) (A : Pred S 𝒶) : Set (𝓈 ⊔ 𝓇 ⊔ 𝒶) where
+  field
+    extensional : ∀ {x y} → x ≈ y → A x ↔ A y
+
+record IsESubsetFamily {𝓈 𝓇ₛ 𝒾 𝓇ᵢ 𝒶} {S : Set 𝓈} {_≈ₛ_ : Rel S 𝓇ₛ} {I : Set 𝒾} {_≈ᵢ_ : Rel I 𝓇ᵢ}
+    (ᴱS : IsESet S _≈ₛ_) (ᴱI : IsESet I _≈ᵢ_) (A : I → Pred S 𝒶) : Set (𝓈 ⊔ 𝓇ₛ ⊔ 𝒾 ⊔ 𝓇ᵢ ⊔ 𝒶) where
+  field
+    extensionalS : ∀ {x y i} → x ≈ₛ y → A i x ↔ A i y
+    extensionalI : ∀ {x i j} → i ≈ᵢ j → A i x ↔ A j x
+
+record IsEBreakdown {𝓈 𝓇ₛ 𝒾 𝓇ᵢ 𝒶} {S : Set 𝓈} {_≈ₛ_ : Rel S 𝓇ₛ} {I : Set 𝒾} {_≈ᵢ_ : Rel I 𝓇ᵢ}
+    (ᴱS : IsESet S _≈ₛ_) (ᴱI : IsESet I _≈ᵢ_) (A : I → Pred S 𝒶) : Set (𝓈 ⊔ 𝓇ₛ ⊔ 𝒾 ⊔ 𝓇ᵢ ⊔ 𝒶) where
+  field
+    extensionalS      : ∀ {x y i} → x ≈ₛ y → A i x ↔ A i y
+    extensionalI      : ∀ {x i j} → i ≈ᵢ j → A i x ↔ A j x
+    mutuallyExclusive : ∀ {i j} → (Σ[ x ∈ S ] A i x × A j x) → i ≈ᵢ j
+    exhaustive        : ∀ x → Σ[ i ∈ I ] A i x
+    nonempty          : ∀ i → Σ[ x ∈ S ] A i x
+
+IsZerAC : ∀ {𝓈 𝓇ₛ 𝒾 𝓇ᵢ 𝒶} {S : Set 𝓈} {_≈ₛ_ : Rel S 𝓇ₛ} {I : Set 𝒾} {_≈ᵢ_ : Rel I 𝓇ᵢ}
+          (ᴱS : IsESet S _≈ₛ_) (ᴱI : IsESet I _≈ᵢ_) (A : I → Pred S 𝒶) → Set _
+IsZerAC {S = S} {_≈ₛ_} {_} {_} ᴱS ᴱI A =
+    IsEBreakdown ᴱS ᴱI A →
+      Σ[ S₁ ∈ Pred S lzero ]
+        IsESubset ᴱS S₁ × ∀ i → Σ![ x ∈ S / _≈ₛ_ ] (A i ∩ S₁) x
+
+-- style 2
+
+record ESet 𝓈 𝓇 : Set (lsuc (𝓈 ⊔ 𝓇)) where
+  field
+    Carrier : Set 𝓈
+    _≈_     : Rel Carrier 𝓇
+    refl    : ∀ {x} → x ≈ x
+    sym     : ∀ {x y} → x ≈ y → y ≈ x
+    trans   : ∀ {x y z} → x ≈ y → y ≈ x → x ≈ z
+
+record ESubset {𝓈 𝓇} (ᴱS : ESet 𝓈 𝓇) 𝒶 : Set (𝓈 ⊔ 𝓇 ⊔ lsuc 𝒶) where
+  open module S = ESet ᴱS using () renaming (Carrier to S)
+  field
+    Carrier     : Pred S 𝒶
+    extensional : ∀ {x y} → x S.≈ y → Carrier x ↔ Carrier y
+
+record ESubsetFamily {𝓈 𝓇ₛ 𝒾 𝓇ᵢ}
+    (ᴱS : ESet 𝓈 𝓇ₛ) (ᴱI : ESet 𝒾 𝓇ᵢ) 𝒶 : Set (𝓈 ⊔ 𝓇ₛ ⊔ 𝒾 ⊔ 𝓇ᵢ ⊔ lsuc 𝒶) where
+  open module S = ESet ᴱS using () renaming (Carrier to S)
+  open module I = ESet ᴱI using () renaming (Carrier to I)
+  field
+    Carrier      : I → Pred S 𝒶
+    extensionalS : ∀ {x y i} → x S.≈ y → Carrier i x ↔ Carrier i y
+    extensionalI : ∀ {x i j} → i I.≈ j → Carrier i x ↔ Carrier j x
+
+record EBreakdown {𝓈 𝓇ₛ 𝒾 𝓇ᵢ} (ᴱS : ESet 𝓈 𝓇ₛ) (ᴱI : ESet 𝒾 𝓇ᵢ) 𝒶 : Set (𝓈 ⊔ 𝓇ₛ ⊔ 𝒾 ⊔ 𝓇ᵢ ⊔ lsuc 𝒶) where
+  open module S = ESet ᴱS using () renaming (Carrier to S)
+  open module I = ESet ᴱI using () renaming (Carrier to I)
+  field
+    Carrier           : I → Pred S 𝒶
+    extensionalS      : ∀ {x y i} → x S.≈ y → Carrier i x ↔ Carrier i y
+    extensionalI      : ∀ {x i j} → i I.≈ j → Carrier i x ↔ Carrier j x
+    mutuallyExclusive : ∀ {i j} → (Σ[ x ∈ S ] Carrier i x × Carrier j x) → i I.≈ j
+    exhaustive        : ∀ x → Σ[ i ∈ I ] Carrier i x
+    nonempty          : ∀ i → Σ[ x ∈ S ] Carrier i x
+
+ZerAC : ∀ {𝓈 𝓇ₛ 𝒾 𝓇ᵢ 𝒶} (ᴱS : ESet 𝓈 𝓇ₛ) (ᴱI : ESet 𝒾 𝓇ᵢ) → Set _
+ZerAC {𝒶 = 𝒶} ᴱS ᴱI =
+    let open module S = ESet ᴱS using () renaming (Carrier to S) in
+    Σ[ ᴱA ∈ EBreakdown ᴱS ᴱI 𝒶 ]
+      let open module A = EBreakdown ᴱA using () renaming (Carrier to A) in
+      Σ[ ᴱS₁ ∈ ESubset ᴱS lzero ]
+        let open module S₁ = ESubset ᴱS₁ using () renaming (Carrier to S₁) in
+        ∀ i → Σ![ x ∈ S / S._≈_ ] (A i ∩ S₁) x
 ```
 :::
 
@@ -261,8 +327,12 @@ need to know that the choice function $f$ is exten&shy;sional, that is, that
 $$i =_I j → f(i) =_S f(j).$$
 
 ```
+
+{-    Ext : ∀ (f : I → S) → Set _
+    Ext f = ∀ {i j} → i I.≈ j → f i S.≈ f j
+
       -- Zermelo’s axiom of choice
-      ZerAC = (P₁ × P₂ × P₃ × P₄ × P₅) → Σ[ S₁ ∈ (S → Set (𝒾 ⊔ 𝓈ₑ)) ] (P₆ S₁ × P₇ S₁)
+      ZerAC = (P₁ × P₂ × P₃ × P₄ × P₅) → Σ[ S₁ ∈ (S → Set (𝒾 ⊔ 𝓇ₛ)) ] (P₆ S₁ × P₇ S₁)
 
       -- extensional axiom of choice
       ExtAC = (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
@@ -289,7 +359,7 @@ $$i =_I j → f(i) =_S f(j).$$
           soIs : ∀ i → Σ[ x ∈ S ] (A i ∩ S₁) x
           soIs i = f i , clearlyTrue i
 
-          p₇ : ∀ i → Σ![ x ∈ S / S._≈_ ] (A i ∩ S₁) x
+          p₇ : ∀ i → ∃![ x ∈ S / S._≈_ ] (A i ∩ S₁) x
           p₇ i = f i , clearlyTrue i , λ { {y} (Aiy , j , fj≈y) →
             let
               Aj[fj] : A j (f j)
@@ -309,7 +379,7 @@ $$i =_I j → f(i) =_S f(j).$$
             in
               fi≈y }
         in
-          S₁ , p₆ , p₇
+          S₁ , p₆ , p₇ -}
 ```
 
 
@@ -573,7 +643,7 @@ exten&shy;sionality, and this is not visible within an exten&shy;sional framewor
 Zermelo-Fraenkel set theory, where all functions are by definition exten&shy;sional.
 
 ```
-      -- axiom of unique choice
+{-      -- axiom of unique choice
       AC! = (∀ i → Σ![ x ∈ S / S._≈_ ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
 
       ac! : P₂ → AC!
@@ -605,7 +675,7 @@ Zermelo-Fraenkel set theory, where all functions are by definition exten&shy;sio
             in
               fi≈fj
         in
-          f , i≈j→fi≈fj , k→Ak[fk]
+          f , i≈j→fi≈fj , k→Ak[fk] -}
 ```
 
 If we want to ensure the exten&shy;sionality of the choice function, the antecedent clause of the
