@@ -17,9 +17,11 @@ card:
 ```
 -- Mechanised by Miëtek Bak
 
+{-# OPTIONS --allow-unsolved-metas #-}
+
 module mi.MartinLof2006 where
 
-open import Agda.Primitive using (_⊔_ ; lzero ; lsuc)
+open import Agda.Primitive using (_⊔_ ; lsuc)
 open import Agda.Builtin.Sigma using (Σ ; _,_ ; fst ; snd)
 
 infix 2 Σ-syntax
@@ -36,7 +38,7 @@ Rel S 𝓇 = S → S → Set 𝓇
 
 infix 2 Σ!-syntax
 syntax Σ!-syntax S _≈_ (λ x → T) = Σ![ x ∈ S / _≈_ ] T
-Σ!-syntax : ∀ {𝓈 𝓇 𝓉} (S : Set 𝓈) (_≈_ : Rel S 𝓇) (T : S → Set 𝓉) → Set _
+Σ!-syntax : ∀ {𝓈 ℯ 𝓉} (S : Set 𝓈) (_≈_ : Rel S ℯ) (T : S → Set 𝓉) → Set _
 Σ!-syntax S _≈_ T = Σ[ x ∈ S ] T x × ∀ {y} → T y → x ≈ y
 
 infix 1 _↔_
@@ -44,14 +46,14 @@ _↔_ : ∀ {𝓈 𝓉} (S : Set 𝓈) (T : Set 𝓉) → Set _
 S ↔ T = (S → T) × (T → S)
 
 _∘_ : ∀ {𝓈 𝓉 𝓊} {S : Set 𝓈} {T : S → Set 𝓉} {U : ∀ {x} → T x → Set 𝓊}
-        (f : ∀ {x} (y : T x) → U y) (g : ∀ x → T x) → (∀ x → U (g x))
-f ∘ g = λ x → f (g x)
+        (f : ∀ {x} (y : T x) → U y) (g : ∀ x → T x) (x : S) → U (g x)
+(f ∘ g) x = f (g x)
 
-Pred : ∀ {𝓈} (S : Set 𝓈) 𝒶 → Set (𝓈 ⊔ lsuc 𝒶)
-Pred S 𝒶 = S → Set 𝒶
+Subset : ∀ {𝓈} (S : Set 𝓈) 𝒶 → Set (𝓈 ⊔ lsuc 𝒶)
+Subset S 𝒶 = S → Set 𝒶
 
-_∩_ : ∀ {𝓈 𝒶 𝒷} {S : Set 𝓈} (A : Pred S 𝒶) (B : Pred S 𝒷) → Pred S _
-A ∩ B = λ x → A x × B x
+_∩_ : ∀ {𝓈 𝒶 𝒷} {S : Set 𝓈} (A : Subset S 𝒶) (B : Subset S 𝒷) → Subset S _
+(A ∩ B) x = A x × B x
 ```
 
 Cantor conceived set theory in a sequence of six papers published in the *[Mathematische Annalen
@@ -113,8 +115,8 @@ $$(∀i : I)(∃x : S)A(i, x) → (∃f : I → S)(∀i : I)A(i, f(i))$$
 ```
 -- (intensional, constructive, type-theoretic) axiom of choice
 
-ac : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : Set 𝓈} {A : I → Pred S 𝒶} →
-     (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] ∀ i → A i (f i)
+ac : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : Set 𝓈} {A : I → Subset S 𝒶} →
+       (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] ∀ i → A i (f i)
 ac p₅ = fst ∘ p₅ , snd ∘ p₅
 ```
 :::
@@ -127,8 +129,8 @@ $$(∀i : I)(∃x : S_i)A(i, x) → (∃f : Π_{i : I} S_i)(∀i : I)A(i, f(i))$
 ```
 -- generalized (intensional, constructive, type-theoretic) axiom of choice
 
-ac′ : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : I → Set 𝓈} {A : ∀ i → Pred (S i) 𝒶} →
-      (∀ i → Σ[ x ∈ S i ] A i x) → Σ[ f ∈ (∀ i → S i) ] ∀ i → A i (f i)
+ac′ : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : I → Set 𝓈} {A : ∀ i → Subset (S i) 𝒶} →
+        (∀ i → Σ[ x ∈ S i ] A i x) → Σ[ f ∈ (∀ i → S i) ] ∀ i → A i (f i)
 ac′ p₅ = fst ∘ p₅ , snd ∘ p₅
 ```
 :::
@@ -205,82 +207,84 @@ that
 ```
 -- style 1
 
-record IsESet {𝓈 𝓇} (S : Set 𝓈) (_≈_ : Rel S 𝓇) : Set (𝓈 ⊔ 𝓇) where
+record IsESet {𝓈 ℯ} (S : Set 𝓈) (_≈_ : Rel S ℯ) : Set (𝓈 ⊔ ℯ) where
   field
     refl  : ∀ {x} → x ≈ x
     sym   : ∀ {x y} → x ≈ y → y ≈ x
-    trans : ∀ {x y z} → x ≈ y → y ≈ x → x ≈ z
+    trans : ∀ {x y z} → x ≈ y → y ≈ z → x ≈ z
 
-record IsESubset {𝓈 𝓇 𝒶} {S : Set 𝓈} {_≈_ : Rel S 𝓇}
-    (ᴱS : IsESet S _≈_) (A : Pred S 𝒶) : Set (𝓈 ⊔ 𝓇 ⊔ 𝒶) where
+record IsESubset {𝓈 ℯ 𝒶} {S : Set 𝓈} {_≈_ : Rel S ℯ}
+                 (ES : IsESet S _≈_) (A : Subset S 𝒶) : Set (𝓈 ⊔ ℯ ⊔ 𝒶) where
   field
     extensional : ∀ {x y} → x ≈ y → A x ↔ A y
 
-record IsESubsetFamily {𝓈 𝓇ₛ 𝒾 𝓇ᵢ 𝒶} {S : Set 𝓈} {_≈ₛ_ : Rel S 𝓇ₛ} {I : Set 𝒾} {_≈ᵢ_ : Rel I 𝓇ᵢ}
-    (ᴱS : IsESet S _≈ₛ_) (ᴱI : IsESet I _≈ᵢ_) (A : I → Pred S 𝒶) : Set (𝓈 ⊔ 𝓇ₛ ⊔ 𝒾 ⊔ 𝓇ᵢ ⊔ 𝒶) where
+record IsESubsetFamily {𝓈 ℯS 𝒾 ℯI 𝒶} {S : Set 𝓈} {_≈S_ : Rel S ℯS} {I : Set 𝒾} {_≈I_ : Rel I ℯI}
+                       (ES : IsESet S _≈S_) (EI : IsESet I _≈I_) (A : I → Subset S 𝒶)
+                       : Set (𝓈 ⊔ ℯS ⊔ 𝒾 ⊔ ℯI ⊔ 𝒶) where
   field
-    extensionalS : ∀ {x y i} → x ≈ₛ y → A i x ↔ A i y
-    extensionalI : ∀ {x i j} → i ≈ᵢ j → A i x ↔ A j x
+    extensionalS : ∀ {x y i} → x ≈S y → A i x ↔ A i y
+    extensionalI : ∀ {x i j} → i ≈I j → A i x ↔ A j x
 
-record IsEBreakdown {𝓈 𝓇ₛ 𝒾 𝓇ᵢ 𝒶} {S : Set 𝓈} {_≈ₛ_ : Rel S 𝓇ₛ} {I : Set 𝒾} {_≈ᵢ_ : Rel I 𝓇ᵢ}
-    (ᴱS : IsESet S _≈ₛ_) (ᴱI : IsESet I _≈ᵢ_) (A : I → Pred S 𝒶) : Set (𝓈 ⊔ 𝓇ₛ ⊔ 𝒾 ⊔ 𝓇ᵢ ⊔ 𝒶) where
+record IsEBreakdown {𝓈 ℯS 𝒾 ℯI 𝒶} {S : Set 𝓈} {_≈S_ : Rel S ℯS} {I : Set 𝒾} {_≈I_ : Rel I ℯI}
+                    (ES : IsESet S _≈S_) (EI : IsESet I _≈I_) (A : I → Subset S 𝒶)
+                    : Set (𝓈 ⊔ ℯS ⊔ 𝒾 ⊔ ℯI ⊔ 𝒶) where
   field
-    extensionalS      : ∀ {x y i} → x ≈ₛ y → A i x ↔ A i y
-    extensionalI      : ∀ {x i j} → i ≈ᵢ j → A i x ↔ A j x
-    mutuallyExclusive : ∀ {i j} → (Σ[ x ∈ S ] A i x × A j x) → i ≈ᵢ j
+    extensionalS      : ∀ {x y i} → x ≈S y → A i x ↔ A i y
+    extensionalI      : ∀ {x i j} → i ≈I j → A i x ↔ A j x
+    mutuallyExclusive : ∀ {x i j} → A i x → A j x → i ≈I j
     exhaustive        : ∀ x → Σ[ i ∈ I ] A i x
     nonempty          : ∀ i → Σ[ x ∈ S ] A i x
 
-IsZerAC : ∀ {𝓈 𝓇ₛ 𝒾 𝓇ᵢ 𝒶} {S : Set 𝓈} {_≈ₛ_ : Rel S 𝓇ₛ} {I : Set 𝒾} {_≈ᵢ_ : Rel I 𝓇ᵢ}
-          (ᴱS : IsESet S _≈ₛ_) (ᴱI : IsESet I _≈ᵢ_) (A : I → Pred S 𝒶) → Set _
-IsZerAC {S = S} {_≈ₛ_} {_} {_} ᴱS ᴱI A =
-    IsEBreakdown ᴱS ᴱI A →
-      Σ[ S₁ ∈ Pred S lzero ]
-        IsESubset ᴱS S₁ × ∀ i → Σ![ x ∈ S / _≈ₛ_ ] (A i ∩ S₁) x
+IsZerAC : ∀ {𝓈 ℯS 𝒾 ℯI 𝒶} {S : Set 𝓈} {_≈S_ : Rel S ℯS} {I : Set 𝒾} {_≈I_ : Rel I ℯI}
+            (ES : IsESet S _≈S_) (EI : IsESet I _≈I_) (A : I → Subset S 𝒶) → Set _
+IsZerAC {_} {ℯS} {𝒾} {_} {_} {S} {_≈S_} ES EI A =
+    IsEBreakdown ES EI A →
+      Σ[ S₁ ∈ Subset S (ℯS ⊔ 𝒾) ] -- TODO: Σ[ 𝓈₁ ∈ Level ]
+        IsESubset ES S₁ × ∀ i → Σ![ x ∈ S / _≈S_ ] (A i ∩ S₁) x
 
 -- style 2
 
-record ESet 𝓈 𝓇 : Set (lsuc (𝓈 ⊔ 𝓇)) where
+record ESet 𝓈 ℯ : Set (lsuc (𝓈 ⊔ ℯ)) where
   field
     Carrier : Set 𝓈
-    _≈_     : Rel Carrier 𝓇
+    _≈_     : Rel Carrier ℯ
     refl    : ∀ {x} → x ≈ x
     sym     : ∀ {x y} → x ≈ y → y ≈ x
-    trans   : ∀ {x y z} → x ≈ y → y ≈ x → x ≈ z
+    trans   : ∀ {x y z} → x ≈ y → y ≈ z → x ≈ z
 
-record ESubset {𝓈 𝓇} (ᴱS : ESet 𝓈 𝓇) 𝒶 : Set (𝓈 ⊔ 𝓇 ⊔ lsuc 𝒶) where
-  open module S = ESet ᴱS using () renaming (Carrier to S)
+record ESubset {𝓈 ℯ} (ES : ESet 𝓈 ℯ) 𝒶 : Set (𝓈 ⊔ ℯ ⊔ lsuc 𝒶) where
+  private open module S = ESet ES using () renaming (Carrier to S)
   field
-    Carrier     : Pred S 𝒶
+    Carrier     : Subset S 𝒶
     extensional : ∀ {x y} → x S.≈ y → Carrier x ↔ Carrier y
 
-record ESubsetFamily {𝓈 𝓇ₛ 𝒾 𝓇ᵢ}
-    (ᴱS : ESet 𝓈 𝓇ₛ) (ᴱI : ESet 𝒾 𝓇ᵢ) 𝒶 : Set (𝓈 ⊔ 𝓇ₛ ⊔ 𝒾 ⊔ 𝓇ᵢ ⊔ lsuc 𝒶) where
-  open module S = ESet ᴱS using () renaming (Carrier to S)
-  open module I = ESet ᴱI using () renaming (Carrier to I)
+record ESubsetFamily {𝓈 ℯS 𝒾 ℯI} (ES : ESet 𝓈 ℯS) (EI : ESet 𝒾 ℯI) 𝒶
+                     : Set (𝓈 ⊔ ℯS ⊔ 𝒾 ⊔ ℯI ⊔ lsuc 𝒶) where
+  private open module S = ESet ES using () renaming (Carrier to S)
+  private open module I = ESet EI using () renaming (Carrier to I)
   field
-    Carrier      : I → Pred S 𝒶
+    Carrier      : I → Subset S 𝒶
     extensionalS : ∀ {x y i} → x S.≈ y → Carrier i x ↔ Carrier i y
     extensionalI : ∀ {x i j} → i I.≈ j → Carrier i x ↔ Carrier j x
 
-record EBreakdown {𝓈 𝓇ₛ 𝒾 𝓇ᵢ} (ᴱS : ESet 𝓈 𝓇ₛ) (ᴱI : ESet 𝒾 𝓇ᵢ) 𝒶 : Set (𝓈 ⊔ 𝓇ₛ ⊔ 𝒾 ⊔ 𝓇ᵢ ⊔ lsuc 𝒶) where
-  open module S = ESet ᴱS using () renaming (Carrier to S)
-  open module I = ESet ᴱI using () renaming (Carrier to I)
+record EBreakdown {𝓈 ℯS 𝒾 ℯI} (ES : ESet 𝓈 ℯS) (EI : ESet 𝒾 ℯI) 𝒶
+                  : Set (𝓈 ⊔ ℯS ⊔ 𝒾 ⊔ ℯI ⊔ lsuc 𝒶) where
+  private open module S = ESet ES using () renaming (Carrier to S)
+  private open module I = ESet EI using () renaming (Carrier to I)
   field
-    Carrier           : I → Pred S 𝒶
+    Carrier           : I → Subset S 𝒶
     extensionalS      : ∀ {x y i} → x S.≈ y → Carrier i x ↔ Carrier i y
     extensionalI      : ∀ {x i j} → i I.≈ j → Carrier i x ↔ Carrier j x
-    mutuallyExclusive : ∀ {i j} → (Σ[ x ∈ S ] Carrier i x × Carrier j x) → i I.≈ j
+    mutuallyExclusive : ∀ {x i j} → Carrier i x → Carrier j x → i I.≈ j
     exhaustive        : ∀ x → Σ[ i ∈ I ] Carrier i x
     nonempty          : ∀ i → Σ[ x ∈ S ] Carrier i x
 
-ZerAC : ∀ {𝓈 𝓇ₛ 𝒾 𝓇ᵢ 𝒶} (ᴱS : ESet 𝓈 𝓇ₛ) (ᴱI : ESet 𝒾 𝓇ᵢ) → Set _
-ZerAC {𝒶 = 𝒶} ᴱS ᴱI =
-    let open module S = ESet ᴱS using () renaming (Carrier to S) in
-    Σ[ ᴱA ∈ EBreakdown ᴱS ᴱI 𝒶 ]
-      let open module A = EBreakdown ᴱA using () renaming (Carrier to A) in
-      Σ[ ᴱS₁ ∈ ESubset ᴱS lzero ]
-        let open module S₁ = ESubset ᴱS₁ using () renaming (Carrier to S₁) in
+ZerAC : ∀ {𝓈 ℯS 𝒾 ℯI 𝒶} (ES : ESet 𝓈 ℯS) (EI : ESet 𝒾 ℯI) (EA : EBreakdown ES EI 𝒶) → Set _
+ZerAC {_} {ℯS} {𝒾} ES EI EA =
+    Σ[ ES₁ ∈ ESubset ES (ℯS ⊔ 𝒾) ] -- TODO: Σ[ 𝓈₁ ∈ Level ]
+      let open module S = ESet ES using () renaming (Carrier to S)
+          open module A = EBreakdown EA using () renaming (Carrier to A)
+          open module S₁ = ESubset ES₁ using () renaming (Carrier to S₁) in
         ∀ i → Σ![ x ∈ S / S._≈_ ] (A i ∩ S₁) x
 ```
 :::
@@ -327,12 +331,61 @@ need to know that the choice function $f$ is exten&shy;sional, that is, that
 $$i =_I j → f(i) =_S f(j).$$
 
 ```
+-- style 2
+
+zerac : ∀ {𝓈 ℯS 𝒾 ℯI 𝒶} (ES : ESet 𝓈 ℯS) (EI : ESet 𝒾 ℯI) (EA : EBreakdown ES EI 𝒶) → ZerAC ES EI EA
+zerac ES EI EA =
+    let
+      open module S = ESet ES using () renaming (Carrier to S)
+      open module I = ESet EI using () renaming (Carrier to I)
+      open module A = EBreakdown EA renaming (Carrier to A)
+
+      f : I → S
+      f = fst (ac nonempty)
+
+      S₁ : S → Set _
+      S₁ x = Σ[ j ∈ I ] f j S.≈ x
+
+      extensionalS₁ : ∀ {x y} → x S.≈ y → S₁ x ↔ S₁ y
+      extensionalS₁ x≈y = (λ { (j , fj≈x) → j , S.trans fj≈x x≈y })
+                        , (λ { (j , fj≈x) → j , S.trans fj≈x (S.sym x≈y) })
+
+      clearlyTrue : ∀ i → (A i ∩ S₁) (f i)
+      clearlyTrue i = snd (ac nonempty) i , i , S.refl
+
+      nonuniqueChoice : ∀ i → Σ[ x ∈ S ] (A i ∩ S₁) x
+      nonuniqueChoice i = f i , clearlyTrue i
+
+      uniqueChoice : ∀ i → Σ![ x ∈ S / S._≈_ ] (A i ∩ S₁) x
+      uniqueChoice i = f i , clearlyTrue i , λ { {y} (Aiy , j , fj≈y) →
+        let
+          Aj[fj] : A j (f j)
+          Aj[fj] = fst (clearlyTrue j)
+
+          Ajy : A j y
+          Ajy = fst (extensionalS fj≈y) Aj[fj]
+
+          i≈j : i I.≈ j
+          i≈j = mutuallyExclusive Aiy Ajy
+
+          Ext[f] : i I.≈ j → f i S.≈ f j
+          Ext[f] = {!!}
+
+          fi≈fj : f i S.≈ f j
+          fi≈fj = Ext[f] i≈j
+
+          fi≈y : f i S.≈ y
+          fi≈y = S.trans fi≈fj fj≈y
+        in
+          fi≈y }
+    in
+      record { Carrier = S₁ ; extensional = extensionalS₁ } , uniqueChoice
 
 {-    Ext : ∀ (f : I → S) → Set _
     Ext f = ∀ {i j} → i I.≈ j → f i S.≈ f j
 
       -- Zermelo’s axiom of choice
-      ZerAC = (P₁ × P₂ × P₃ × P₄ × P₅) → Σ[ S₁ ∈ (S → Set (𝒾 ⊔ 𝓇ₛ)) ] (P₆ S₁ × P₇ S₁)
+      ZerAC = (P₁ × P₂ × P₃ × P₄ × P₅) → Σ[ S₁ ∈ (S → Set (𝒾 ⊔ ℯS)) ] (P₆ S₁ × P₇ S₁)
 
       -- extensional axiom of choice
       ExtAC = (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
