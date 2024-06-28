@@ -17,45 +17,13 @@ card:
 ```
 -- Mechanised by Miëtek Bak
 
-{-# OPTIONS --allow-unsolved-metas #-}
-
 module mi.MartinLof2006 where
 
 open import Agda.Primitive using (_⊔_ ; lsuc)
 open import Agda.Builtin.Sigma using (Σ ; _,_ ; fst ; snd)
-
-infix 2 Σ-syntax
-syntax Σ-syntax S (λ x → T) = Σ[ x ∈ S ] T
-Σ-syntax : ∀ {𝓈 𝓉} (S : Set 𝓈) (T : S → Set 𝓉) → Set _
-Σ-syntax = Σ
-
-infixr 2 _×_
-_×_ : ∀ {𝓈 𝓉} (S : Set 𝓈) (T : Set 𝓉) → Set _
-S × T = Σ[ x ∈ S ] T
-
-Rel : ∀ {𝓈} (S : Set 𝓈) 𝓇 → Set (𝓈 ⊔ lsuc 𝓇)
-Rel S 𝓇 = S → S → Set 𝓇
-
-infix 2 Σ!-syntax
-syntax Σ!-syntax S _≈_ (λ x → T) = Σ![ x ∈ S / _≈_ ] T
-Σ!-syntax : ∀ {𝓈 ℯ 𝓉} (S : Set 𝓈) (_≈_ : Rel S ℯ) (T : S → Set 𝓉) → Set _
-Σ!-syntax S _≈_ T = Σ[ x ∈ S ] T x × ∀ {y} → T y → x ≈ y
-
-_∘_ : ∀ {𝓈 𝓉 𝓊} {S : Set 𝓈} {T : S → Set 𝓉} {U : ∀ {x} → T x → Set 𝓊}
-        (f : ∀ {x} (y : T x) → U y) (g : ∀ x → T x) (x : S) → U (g x)
-(f ∘ g) x = f (g x)
-
-infix 1 _↔_
-_↔_ : ∀ {𝓈 𝓉} (S : Set 𝓈) (T : Set 𝓉) → Set _
-S ↔ T = (S → T) × (T → S)
-
-Subset : ∀ {𝓈} (S : Set 𝓈) 𝒶 → Set (𝓈 ⊔ lsuc 𝒶)
-Subset S 𝒶 = S → Set 𝒶
-
-_∩_ : ∀ {𝓈 𝒶 𝒷} {S : Set 𝓈} (A : Subset S 𝒶) (B : Subset S 𝒷) → Subset S _
-(A ∩ B) x = A x × B x
 ```
 
+::: {.align-bottom}
 Cantor conceived set theory in a sequence of six papers published in the *[Mathematische Annalen
 ]{lang=de}* during the five year period 1879–1884.  In the fifth of these papers, published in
 1883,[^1] he stated as a law of thought (*[Denkgesetz]{lang=de}*) that every set can be well-ordered
@@ -101,41 +69,48 @@ of the axiom of choice seems to be found in either Brouwer’s or Heyting’s wr
 was regarded by them as a prime example of a nonconstructive principle.
 
 ```
--- generalized (dependent) axiom of choice
+-- (intensional) existence
+infix 2 Σ-syntax
+syntax Σ-syntax S (λ x → T) = Σ[ x ∈ S ] T
+Σ-syntax : ∀ {𝓈 𝓉} (S : Set 𝓈) (T : S → Set 𝓉) → Set _
+Σ-syntax = Σ
 
-gac : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : I → Set 𝓈} {A : ∀ i → Subset (S i) 𝒶} →
-        (∀ i → Σ[ x ∈ S i ] A i x) → Σ[ f ∈ (∀ i → S i) ] ∀ i → A i (f i)
-gac p₅ = fst ∘ p₅ , snd ∘ p₅
+-- conjunction
+infixr 2 _×_
+_×_ : ∀ {𝓈 𝓉} (S : Set 𝓈) (T : Set 𝓉) → Set _
+S × T = Σ[ x ∈ S ] T
 
+-- binary relation
+Rel : ∀ {𝓈} (S : Set 𝓈) 𝓇 → Set (𝓈 ⊔ lsuc 𝓇)
+Rel S 𝓇 = S → S → Set 𝓇
 
--- (intensional, constructive, type-theoretic) axiom of choice
+-- unique (intensional) existence
+infix 2 Σ!-syntax
+syntax Σ!-syntax S _≈_ (λ x → T) = Σ![ x ∈ S / _≈_ ] T
+Σ!-syntax : ∀ {𝓈 ℯ 𝓉} (S : Set 𝓈) (_≈_ : Rel S ℯ) (T : S → Set 𝓉) → Set _
+Σ!-syntax S _≈_ T = Σ[ x ∈ S ] T x × ∀ {y} → T y → x ≈ y
 
-ac : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : Set 𝓈} {A : I → Subset S 𝒶} →
-       (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] ∀ i → A i (f i)
-ac = gac
+-- (dependent) function composition
+_∘_ : ∀ {𝓈 𝓉 𝓊} {S : Set 𝓈} {T : S → Set 𝓉} {U : ∀ {x} → T x → Set 𝓊}
+        (f : ∀ {x} (y : T x) → U y) (g : ∀ x → T x) (x : S) → U (g x)
+(f ∘ g) x = f (g x)
 
+-- bi-implication
+infix 1 _↔_
+_↔_ : ∀ {𝓈 𝓉} (S : Set 𝓈) (T : Set 𝓉) → Set _
+S ↔ T = (S → T) × (T → S)
 
--- axiom of choice, separating type and term
+-- (intensional) subset
+Subset : ∀ {𝓈} (S : Set 𝓈) 𝒶 → Set (𝓈 ⊔ lsuc 𝒶)
+Subset S 𝒶 = S → Set 𝒶
 
-AC′ : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : Set 𝓈} {A : I → Subset S 𝒶} → Set _
-AC′ {I = I} {S} {A} = (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] ∀ i → A i (f i)
-
-ac′ : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : Set 𝓈} {A : I → Subset S 𝒶} → AC′ {A = A}
-ac′ = ac
-
-
--- axiom of choice, using module parameters
-
-module _ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : Set 𝓈} {A : I → Subset S 𝒶} where
-  AC″ : Set _
-  AC″ = (∀ i → Σ[ x ∈ S ] A i x) →
-          Σ[ f ∈ (I → S) ]
-            ∀ i → A i (f i)
-
-  ac″ : AC″
-  ac″ = ac
+-- subset intersection
+_∩_ : ∀ {𝓈 𝒶 𝒷} {S : Set 𝓈} (A : Subset S 𝒶) (B : Subset S 𝒷) → Subset S _
+(A ∩ B) x = A x × B x
 ```
+:::
 
+::: {.align-bottom}
 It therefore came as a surprise when, as late as in 1967, Bishop stated,
 
 > A choice function exists in constructive mathematics, because a choice is *implied by the very
@@ -157,6 +132,19 @@ thirties.  And it is this intuitive justification that was turned into a formal 
 constructive type theory, a proof that effectively uses the strong rule of $∃$-elimination that
 became possible to formulate as a result of having made the proof objects appear in the system
 itself and not only in its interpretation.
+
+```
+-- generalized (dependent) axiom of choice
+gac : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : I → Set 𝓈} {A : ∀ i → Subset (S i) 𝒶} →
+        (∀ i → Σ[ x ∈ S i ] A i x) → Σ[ f ∈ (∀ i → S i) ] ∀ i → A i (f i)
+gac h = fst ∘ h , snd ∘ h
+
+-- (intensional, constructive, type-theoretic) axiom of choice
+ac : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : Set 𝓈} {A : I → Subset S 𝒶} →
+       (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] ∀ i → A i (f i)
+ac = gac
+```
+:::
 
 In 1975, soon after Bishop’s vindication of the constructive axiom of choice, Diaconescu proved
 that, in topos theory, the law of excluded middle follows from the axiom of choice.[^12]  Now,
@@ -201,7 +189,6 @@ which is exten&shy;sional with respect to the equivalence relation in question.
 
 ```
 -- extensional set (setoid)
-
 record ESet 𝓈 ℯ : Set (lsuc (𝓈 ⊔ ℯ)) where
   field
     Carrier : Set 𝓈
@@ -210,18 +197,14 @@ record ESet 𝓈 ℯ : Set (lsuc (𝓈 ⊔ ℯ)) where
     sym     : ∀ {x y} → x ≈ y → y ≈ x
     trans   : ∀ {x y z} → x ≈ y → y ≈ z → x ≈ z
 
-
 -- subset of an extensional set
-
 record ESubset {𝓈 ℯ} (ES : ESet 𝓈 ℯ) 𝒶 : Set (𝓈 ⊔ ℯ ⊔ lsuc 𝒶) where
   private open module S = ESet ES using () renaming (Carrier to S)
   field
     Carrier : Subset S 𝒶
     ext     : ∀ {x y} → x S.≈ y → Carrier x ↔ Carrier y
 
-
 -- family of subsets of an extensional set
-
 record ESubsetFam {𝓈 ℯS 𝒾 ℯI} (ES : ESet 𝓈 ℯS) (EI : ESet 𝒾 ℯI) 𝒶
                   : Set (𝓈 ⊔ ℯS ⊔ 𝒾 ⊔ ℯI ⊔ lsuc 𝒶) where
   private open module S = ESet ES using () renaming (Carrier to S)
@@ -257,18 +240,17 @@ that
 
 ```
 -- Zermelo’s axiom of choice
-
 module _ {𝓈 ℯS 𝒾 ℯI 𝒶} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} {EA : ESubsetFam ES EI 𝒶} where
   private open module S = ESet ES using () renaming (Carrier to S)
   private open module I = ESet EI using () renaming (Carrier to I)
   private open module A = ESubsetFam EA using () renaming (Carrier to A)
 
   ZAC : Set _
-  ZAC = (∀ {x i j} → A i x → A j x → i I.≈ j) →
-          (∀ x → Σ[ i ∈ I ] A i x) →
-            (∀ i → Σ[ x ∈ S ] A i x) →
-              Σ[ ES₁ ∈ ESubset ES (ℯS ⊔ 𝒾) ] -- TODO: Σ[ 𝓈₁ ∈ Level ]?
-                ∀ i → Σ![ x ∈ S / S._≈_ ] (A i ∩ ESubset.Carrier ES₁) x
+  ZAC = ∀ (p₃ : ∀ {x i j} → A i x → A j x → i I.≈ j)
+          (p₄ : ∀ x → Σ[ i ∈ I ] A i x)
+          (p₅ : ∀ i → Σ[ x ∈ S ] A i x) →
+            Σ[ ES₁ ∈ ESubset ES (ℯS ⊔ 𝒾) ] -- TODO: Σ[ 𝓈₁ ∈ Level ]?
+              ∀ i → Σ![ x ∈ S / S._≈_ ] (A i ∩ ESubset.Carrier ES₁) x
 ```
 :::
 
@@ -320,7 +302,6 @@ axiom of choice has failed, as was to be expected.
 
 ```
 -- extensional axiom of choice
-
 module _ {𝓈 ℯS 𝒾 ℯI 𝒶} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} {EA : ESubsetFam ES EI 𝒶} where
   private open module S = ESet ES using () renaming (Carrier to S)
   private open module I = ESet EI using () renaming (Carrier to I)
@@ -330,9 +311,7 @@ module _ {𝓈 ℯS 𝒾 ℯI 𝒶} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} 
   Ext f = ∀ {i j} → i I.≈ j → f i S.≈ f j
 
   EAC : Set _
-  EAC = (∀ i → Σ[ x ∈ S ] A i x) →
-          Σ[ f ∈ (I → S) ]
-            Ext f × ∀ i → A i (f i)
+  EAC = (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
 
   eac→zac : EAC → ZAC {EA = EA}
   eac→zac eac p₃ p₄ p₅ = record { Carrier = S₁ ; ext = p₆ } , p₇
@@ -648,28 +627,25 @@ exten&shy;sional choice, as opposed to $\text{ExtAC},$ which lacks justification
 
 ```
 -- axiom of unique choice
-
 module _ {𝓈 ℯS 𝒾 ℯI 𝒶} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} {EA : ESubsetFam ES EI 𝒶} where
   private open module S = ESet ES using () renaming (Carrier to S)
   private open module I = ESet EI using () renaming (Carrier to I)
   private open module A = ESubsetFam EA using () renaming (Carrier to A)
 
   AC! : Set _
-  AC! = (∀ i → Σ![ x ∈ S / S._≈_ ] A i x) →
-          Σ[ f ∈ (I → S) ]
-            Ext {EA = EA} f × ∀ i → A i (f i)
+  AC! = (∀ i → Σ![ x ∈ S / S._≈_ ] A i x) → Σ[ f ∈ (I → S) ] Ext {EA = EA} f × ∀ i → A i (f i)
 
   ac! : AC!
-  ac! p₅! = f , ext-f , wat
+  ac! h = f , ext-f , wat
     where
       f : I → S
-      f = fst (ac p₅!)
+      f = fst (ac h)
 
-      wat : ∀ i → A i (f i)
-      wat i = fst (snd (ac p₅!) i)
+      wat : ∀ i → A i (f i) -- TODO: name?
+      wat i = fst (snd (ac h) i)
 
       unique : ∀ i {y} → A i y → f i S.≈ y
-      unique i = snd (snd (ac p₅!) i)
+      unique i = snd (snd (ac h) i)
 
       ext-f : ∀ {i j} → i I.≈ j → f i S.≈ f j
       ext-f {i} {j} i≈j =

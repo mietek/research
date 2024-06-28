@@ -17,8 +17,6 @@ card:
 -- Mechanised by Miëtek Bak
 
 module mi.Aczel1978 where
-
--- TODO
 ```
 
 > By adding to Martin-Löf’s intuitionistic theory of types a ‘type of sets’ we give a constructive
@@ -86,7 +84,7 @@ time that the type itself gave a constructive notion of set.  Instead it was onl
 appropriate constructive notion of ordinal to use in indexing the stages of Leversha’s construction.
 
 
-## 1. The axiom system $\text{CZF}$
+## 1.  The axiom system $\text{CZF}$
 
 We formulate $\text{CZF}$ in a first order language $\mathcal{L}$ having the logical primitives
 $\bot,$ $∨,$ $∧,$ $→,$ $∀x,$ $∃x,$, the restricted quantifiers $(∀x∈y),$ $(∃x∈y)$ and the binary
@@ -123,9 +121,24 @@ $$∃z(∀y∈x)(∀u∈y)(u∈z)$$
 
 Restricted separation.
 
-```
--- TODO
-```
+
+## 2.  Elementary properties of $\text{CZF}$
+
+
+## 3.  The type theoretic framework
+
+
+## 4.  The interpretation
+
+
+## 5.  Validity of the structural axioms
+
+
+## 6.  Validity of the set existence axioms
+
+
+## 7.  The presentation axiom
+
 
 ## References
 

@@ -20,7 +20,7 @@ docs/%.css : src/mi/%.css | docs
 	cp $< $@
 
 docs/mi.%.html : docs/mi.%.md src/mi/mi-template.html
-	pandoc --katex --standalone --template=src/mi/mi-template.html --css=mi-common.css --css=mi-layout.css -o $@ $<
+	pandoc -f markdown+gfm_auto_identifiers --katex --standalone --template=src/mi/mi-template.html --css=mi-common.css --css=mi-layout.css -o $@ $<
 
 docs/mi.%.md : src/mi/%.lagda.md
 	agda -i src --html --html-dir=docs --html-highlight=auto --css=mi-common.css $<

@@ -667,6 +667,7 @@ p:has(> a.mi):before {
 #title-block-header {
   position: relative;
   z-index: -1;
+  margin-bottom: 10.4rem;
 }
 .wip {
   font-family: "Helvetica", "Arial", sans-serif;
