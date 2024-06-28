@@ -35,8 +35,6 @@
 <pre class="Agda"><a id="434" class="Comment">-- Mechanised by Miëtek Bak</a>
 
 <a id="463" class="Keyword">module</a> <a id="470" href="mi.Aczel1978.html" class="Module">mi.Aczel1978</a> <a id="483" class="Keyword">where</a>
-
-<a id="490" class="Comment">-- TODO</a>
 </pre>
 <blockquote>
 <p>By adding to Martin-Löf’s intuitionistic theory of types a ‘type of sets’ we give a constructive interpretation of constructive set theory. This interpretation is a constructive version of the classical conception of the cumulative hierarchy of sets.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
@@ -47,7 +45,7 @@
 <p>The appeal of Bishop’s book is that it wastes little time on the analysis of constructive concepts but instead develops analysis in a language mostly familiar to the classical mathematician. In constructive set theory this is taken a stage further. As in <span class="math inline">\text{ZF}</span> there are just the notions of set and set membership with an axiom system that is a subsystem of <span class="math inline">\text{ZF}</span> using intuitionistic logic, and including the axiom of extensionality. In such a system the direct constructive content of Bishop’s notions has been lost and there arises the crucial question: What is the constructive meaning of the notion of set used in constructive set theory? We aim to answer that question in this paper. What is needed is a rigorous framework in which the primitive notions of constructive mathematics are directly displayed, together with a natural interpretation of constructive set theory in that framework. We shall give such a framework based on the intuitionistic type theory of <a href="#r11" id="rr11-1" class="rr">[11]</a>. We could have taken instead a system of ‘Explicit Mathematics’ (see <a href="#r5" id="rr5" class="rr">[5]</a> and <a href="#r2" id="rr2" class="rr">[2]</a>). But systems of explicit mathematics leave the logical notions unanalysed, whereas type theory is a logic free theory of constructions within which the logical notions can be defined. For this reason we consider type theory to be more fundamental.</p>
 <p>The axiom system <span class="math inline">\text{CZF}</span> (Constructive <span class="math inline">\text{ZF}</span>) is set out in §1 and some elementary properties are given in §2. The system is closely related to the systems considered by Myhill and Friedman in their papers. In §3 we summarise the type theoretic notions of <a href="#r11" id="rr11-2" class="rr">[11]</a> and introduce the type of sets. The interpretation of <span class="math inline">\text{CZF}</span> is set up in §4 and its correctness is proved in §5 and §6. Finally in §7 we consider a new principle of choice for constructive set theory.</p>
 <p>Formally, the type of sets was first introduced by Leversha in <a href="#r10" id="rr10" class="rr">[10]</a> where it was used to give a complicated type theoretic interpretation of Myhill’s original formulation of constructive set theory in <a href="#r13" id="rr13-1" class="rr">[13]</a>. Unfortunately it was not realised at that time that the type itself gave a constructive notion of set. Instead it was only used as an appropriate constructive notion of ordinal to use in indexing the stages of Leversha’s construction.</p>
-<h2 id="the-axiom-system-textczf">1. The axiom system <span class="math inline">\text{CZF}</span></h2>
+<h2 id="1-the-axiom-system-textczf">1. The axiom system <span class="math inline">\text{CZF}</span></h2>
 <p>We formulate <span class="math inline">\text{CZF}</span> in a first order language <span class="math inline">\mathcal{L}</span> having the logical primitives <span class="math inline">\bot,</span> <span class="math inline">∨,</span> <span class="math inline">∧,</span> <span class="math inline">→,</span> <span class="math inline">∀x,</span> <span class="math inline">∃x,</span>, the restricted quantifiers <span class="math inline">(∀x∈y),</span> <span class="math inline">(∃x∈y)</span> and the binary relation symbols <span class="math inline">∈</span> and <span class="math inline">=.</span> We assume a standard axiomatisation of intuitionistic logic. The remaining axioms of <span class="math inline">\text{CZF}</span> are divided into two groups.</p>
 <h3 id="structural-axioms">Structural axioms</h3>
 <p>Defining schemes for the restricted quantifiers.</p>
@@ -64,8 +62,12 @@
 <p>Union.</p>
 <p><span class="math display">∃z(∀y∈x)(∀u∈y)(u∈z)</span></p>
 <p>Restricted separation.</p>
-<pre class="Agda"><a id="6322" class="Comment">-- TODO</a>
-</pre>
+<h2 id="2-elementary-properties-of-textczf">2. Elementary properties of <span class="math inline">\text{CZF}</span></h2>
+<h2 id="3-the-type-theoretic-framework">3. The type theoretic framework</h2>
+<h2 id="4-the-interpretation">4. The interpretation</h2>
+<h2 id="5-validity-of-the-structural-axioms">5. Validity of the structural axioms</h2>
+<h2 id="6-validity-of-the-set-existence-axioms">6. Validity of the set existence axioms</h2>
+<h2 id="7-the-presentation-axiom">7. The presentation axiom</h2>
 <h2 id="references">References</h2>
 <div class="references">
 <ol type="1">
