@@ -152,16 +152,16 @@ ol li::marker, ol[type="1"] li::marker {
   content: '(' counter(list-item, decimal) ")  ";
 }
 ol[type="A"] li::marker {
-  content: '(' counter(list-item, upper-latin) ") ";
+  content: '(' counter(list-item, upper-latin) ")  ";
 }
 ol[type="a"] li::marker {
-  content: '(' counter(list-item, lower-latin) ") ";
+  content: '(' counter(list-item, lower-latin) ")  ";
 }
 ol[type="I"] li::marker {
-  content: '(' counter(list-item, upper-roman) ") ";
+  content: '(' counter(list-item, upper-roman) ")  ";
 }
 ol[type="i"] li::marker {
-  content: '(' counter(list-item, lower-roman) ") ";
+  content: '(' counter(list-item, lower-roman) ")  ";
 }
 .index {
   border-top: 0.1rem var(--comment) solid;
@@ -450,7 +450,7 @@ a:link {
   color: var(--link);
 }
 a[href]:link:focus {
-  outline: 0.2em solid var(--link);
+  outline: 0.2rem solid var(--link);
   background-color: var(--link-glow);
 }
 a[href]:link:hover {
@@ -460,7 +460,7 @@ a:visited {
   color: var(--visited);
 }
 a[href]:visited:focus {
-  outline: 0.2em solid var(--visited);
+  outline: 0.2rem solid var(--visited);
   background-color: var(--visited-glow);
 }
 a[href]:visited:hover {
@@ -470,7 +470,7 @@ a:active {
   color: var(--active);
 }
 a[href]:active:focus {
-  outline: 0.2em solid var(--active);
+  outline: 0.2rem solid var(--active);
   background-color: var(--active-glow);
 }
 a[href]:active:hover {
@@ -508,28 +508,28 @@ a[href]:active:hover {
 .Agda .Module                                 { color: var(--module); }
 .Agda .Field                                  { color: var(--field); }
 
-.Agda a[href]:focus.Comment                   { outline: 0.2em solid var(--comment); background-color: var(--comment-glow); }
+.Agda a[href]:focus.Comment                   { outline: 0.2rem solid var(--comment); background-color: var(--comment-glow); }
 .Agda a[href]:focus.Keyword,
   .Agda a[href]:focus.Markup,
   .Agda a[href]:focus.Operator,
   .Agda a[href]:focus.Pragma,
   .Agda a[href]:focus.PrimitiveType,
-  .Agda a[href]:focus.Symbol                  { outline: 0.2em solid var(--keyword); background-color: var(--keyword-glow); }
+  .Agda a[href]:focus.Symbol                  { outline: 0.2rem solid var(--keyword); background-color: var(--keyword-glow); }
 .Agda a[href]:focus.Background,
   .Agda a[href]:focus.Bound,
-  .Agda a[href]:focus.Generalizable           { outline: 0.2em solid var(--text); background-color: var(--text-glow); }
+  .Agda a[href]:focus.Generalizable           { outline: 0.2rem solid var(--text); background-color: var(--text-glow); }
 .Agda a[href]:focus.InductiveConstructor,
-  .Agda a[href]:focus.CoinductiveConstructor  { outline: 0.2em solid var(--constructor); background-color: var(--constructor-glow); }
+  .Agda a[href]:focus.CoinductiveConstructor  { outline: 0.2rem solid var(--constructor); background-color: var(--constructor-glow); }
 .Agda a[href]:focus.Datatype,
   .Agda a[href]:focus.Function,
   .Agda a[href]:focus.Macro,
   .Agda a[href]:focus.Postulate,
   .Agda a[href]:focus.Primitive,
-  .Agda a[href]:focus.Record                  { outline: 0.2em solid var(--term); background-color: var(--term-glow); }
+  .Agda a[href]:focus.Record                  { outline: 0.2rem solid var(--term); background-color: var(--term-glow); }
 .Agda a[href]:focus.Number,
-  .Agda a[href]:focus.String                  { outline: 0.2em solid var(--literal); background-color: var(--literal-glow); }
-.Agda a[href]:focus.Module                    { outline: 0.2em solid var(--module); background-color: var(--module-glow); }
-.Agda a[href]:focus.Field                     { outline: 0.2em solid var(--field); background-color: var(--field-glow); }
+  .Agda a[href]:focus.String                  { outline: 0.2rem solid var(--literal); background-color: var(--literal-glow); }
+.Agda a[href]:focus.Module                    { outline: 0.2rem solid var(--module); background-color: var(--module-glow); }
+.Agda a[href]:focus.Field                     { outline: 0.2rem solid var(--field); background-color: var(--field-glow); }
 
 .Agda a[href]:hover.Comment                   { background-color: var(--comment-glow); }
 .Agda a[href]:hover.Keyword,
@@ -593,7 +593,7 @@ a[href]:active:hover {
   text-decoration: none;
 }
 #head a[href]:link:focus, #foot a[href]:link:focus, #head a[href]:visited:focus, #foot a[href]:visited:focus {
-  outline: 0.2em solid var(--light-active);
+  outline: 0.2rem solid var(--light-active);
   color: var(--light-active);
   background-color: var(--active-glow);
 }
