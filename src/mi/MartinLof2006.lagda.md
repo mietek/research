@@ -105,7 +105,7 @@ was regarded by them as a prime example of a nonconstructive principle.
 
 gac : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : I → Set 𝓈} {A : ∀ i → Subset (S i) 𝒶} →
         (∀ i → Σ[ x ∈ S i ] A i x) → Σ[ f ∈ (∀ i → S i) ] ∀ i → A i (f i)
-gac p = fst ∘ p , snd ∘ p
+gac p₅ = fst ∘ p₅ , snd ∘ p₅
 
 
 -- (intensional, constructive, type-theoretic) axiom of choice
@@ -128,7 +128,9 @@ ac′ = ac
 
 module _ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : Set 𝓈} {A : I → Subset S 𝒶} where
   AC″ : Set _
-  AC″ = (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] ∀ i → A i (f i)
+  AC″ = (∀ i → Σ[ x ∈ S ] A i x) →
+          Σ[ f ∈ (I → S) ]
+            ∀ i → A i (f i)
 
   ac″ : AC″
   ac″ = ac
@@ -328,7 +330,9 @@ module _ {𝓈 ℯS 𝒾 ℯI 𝒶} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} 
   Ext f = ∀ {i j} → i I.≈ j → f i S.≈ f j
 
   EAC : Set _
-  EAC = (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
+  EAC = (∀ i → Σ[ x ∈ S ] A i x) →
+          Σ[ f ∈ (I → S) ]
+            Ext f × ∀ i → A i (f i)
 
   eac→zac : EAC → ZAC {EA = EA}
   eac→zac eac p₃ p₄ p₅ = record { Carrier = S₁ ; ext = p₆ } , p₇
@@ -607,6 +611,7 @@ which the law of excluded middle follows from the exten&shy;sional axiom of choi
 constructive type theory.[^20]  The final conclusion is anyhow that $\text{ZFC}$ is interpretable in
 $\text{CTT}$ $+$ $\text{ExtAC}.$
 
+::: {.align-bottom}
 When Zermelo’s axiom of choice is formulated in the context of constructive type theory instead of
 Zermelo-Fraenkel set theory, it appears as $\text{ExtAC},$ the exten&shy;sional axiom of choice
 
@@ -625,42 +630,6 @@ Thus the problem with Zermelo’s axiom of choice is not the existence of the ch
 exten&shy;sionality, and this is not visible within an exten&shy;sional framework, like
 Zermelo-Fraenkel set theory, where all functions are by definition exten&shy;sional.
 
-```
-{-      -- axiom of unique choice
-      AC! = (∀ i → Σ![ x ∈ S / S._≈_ ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
-
-      ac! : P₂ → AC!
-      ac! p₂ h =
-        let
-          z : Σ[ f ∈ (I → S) ] ∀ i → A i (f i) × (∀ {y} → A i y → f i S.≈ y)
-          z = ac h
-
-          f : I → S
-          f = proj₁ z
-
-          k→Ak[fk] : ∀ k → A k (f k)
-          k→Ak[fk] k = proj₁ (proj₂ z k)
-
-          Aky→fk≈y : ∀ {k y} → A k y → f k S.≈ y
-          Aky→fk≈y {k} = proj₂ (proj₂ z k)
-
-          i≈j→fi≈fj : ∀ {i j} → i I.≈ j → f i S.≈ f j
-          i≈j→fi≈fj {i} {j} i≈j =
-            let
-              Aj[fj] : A j (f j)
-              Aj[fj] = k→Ak[fk] j
-
-              Ai[fj] : A i (f j)
-              Ai[fj] = proj₁ (p₂ (I.sym i≈j) (f j)) Aj[fj]
-
-              fi≈fj : f i S.≈ f j
-              fi≈fj = Aky→fk≈y Ai[fj]
-            in
-              fi≈fj
-        in
-          f , i≈j→fi≈fj , k→Ak[fk] -}
-```
-
 If we want to ensure the exten&shy;sionality of the choice function, the antecedent clause of the
 exten&shy;sional axiom of choice has to be strengthened.  The natural way of doing this is to
 replace $\text{ExtAC}$ by $\text{AC!},$ the axiom of unique choice, or no choice,
@@ -676,6 +645,47 @@ Hence, by the exten&shy;sionality of $A(i, x)$ in its first argument, so is $A(i
 uniqueness condition now guarantees that $f(i) =_S f(j),$ that is, that $f : I → S$ is
 exten&shy;sional.  The axiom of unique choice $\text{AC!}$ may be considered as the valid form of
 exten&shy;sional choice, as opposed to $\text{ExtAC},$ which lacks justification.
+
+```
+-- axiom of unique choice
+
+module _ {𝓈 ℯS 𝒾 ℯI 𝒶} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} {EA : ESubsetFam ES EI 𝒶} where
+  private open module S = ESet ES using () renaming (Carrier to S)
+  private open module I = ESet EI using () renaming (Carrier to I)
+  private open module A = ESubsetFam EA using () renaming (Carrier to A)
+
+  AC! : Set _
+  AC! = (∀ i → Σ![ x ∈ S / S._≈_ ] A i x) →
+          Σ[ f ∈ (I → S) ]
+            Ext {EA = EA} f × ∀ i → A i (f i)
+
+  ac! : AC!
+  ac! p₅! = f , ext-f , wat
+    where
+      f : I → S
+      f = fst (ac p₅!)
+
+      wat : ∀ i → A i (f i)
+      wat i = fst (snd (ac p₅!) i)
+
+      unique : ∀ i {y} → A i y → f i S.≈ y
+      unique i = snd (snd (ac p₅!) i)
+
+      ext-f : ∀ {i j} → i I.≈ j → f i S.≈ f j
+      ext-f {i} {j} i≈j =
+        let
+          Aj[fj] : A j (f j)
+          Aj[fj] = wat j
+
+          Ai[fj] : A i (f j)
+          Ai[fj] = fst (A.ext-I (I.sym i≈j)) Aj[fj]
+
+          fi≈fj : f i S.≈ f j
+          fi≈fj = unique i Ai[fj]
+        in
+          fi≈fj
+```
+:::
 
 The inability to distinguish between the inten&shy;sional and the exten&shy;sional axiom of choice
 has led to one’s taking the need for the axiom of choice in proving that the union of a countable
