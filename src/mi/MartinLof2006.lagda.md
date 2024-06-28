@@ -41,13 +41,13 @@ syntax Σ!-syntax S _≈_ (λ x → T) = Σ![ x ∈ S / _≈_ ] T
 Σ!-syntax : ∀ {𝓈 ℯ 𝓉} (S : Set 𝓈) (_≈_ : Rel S ℯ) (T : S → Set 𝓉) → Set _
 Σ!-syntax S _≈_ T = Σ[ x ∈ S ] T x × ∀ {y} → T y → x ≈ y
 
-infix 1 _↔_
-_↔_ : ∀ {𝓈 𝓉} (S : Set 𝓈) (T : Set 𝓉) → Set _
-S ↔ T = (S → T) × (T → S)
-
 _∘_ : ∀ {𝓈 𝓉 𝓊} {S : Set 𝓈} {T : S → Set 𝓉} {U : ∀ {x} → T x → Set 𝓊}
         (f : ∀ {x} (y : T x) → U y) (g : ∀ x → T x) (x : S) → U (g x)
 (f ∘ g) x = f (g x)
+
+infix 1 _↔_
+_↔_ : ∀ {𝓈 𝓉} (S : Set 𝓈) (T : Set 𝓉) → Set _
+S ↔ T = (S → T) × (T → S)
 
 Subset : ∀ {𝓈} (S : Set 𝓈) 𝒶 → Set (𝓈 ⊔ lsuc 𝒶)
 Subset S 𝒶 = S → Set 𝒶
@@ -100,40 +100,54 @@ Borel,[^9] he belittles Zermelo’s proof of it from the axiom of choice.[^10]  
 of the axiom of choice seems to be found in either Brouwer’s or Heyting’s writings.  Presumably, it
 was regarded by them as a prime example of a nonconstructive principle.
 
+```
+-- generalized (dependent) axiom of choice
+
+gac : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : I → Set 𝓈} {A : ∀ i → Subset (S i) 𝒶} →
+        (∀ i → Σ[ x ∈ S i ] A i x) → Σ[ f ∈ (∀ i → S i) ] ∀ i → A i (f i)
+gac p = fst ∘ p , snd ∘ p
+
+
+-- (intensional, constructive, type-theoretic) axiom of choice
+
+ac : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : Set 𝓈} {A : I → Subset S 𝒶} →
+       (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] ∀ i → A i (f i)
+ac = gac
+
+
+-- axiom of choice, separating type and term
+
+AC′ : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : Set 𝓈} {A : I → Subset S 𝒶} → Set _
+AC′ {I = I} {S} {A} = (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] ∀ i → A i (f i)
+
+ac′ : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : Set 𝓈} {A : I → Subset S 𝒶} → AC′ {A = A}
+ac′ = ac
+
+
+-- axiom of choice, using module parameters
+
+module _ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : Set 𝓈} {A : I → Subset S 𝒶} where
+  AC″ : Set _
+  AC″ = (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] ∀ i → A i (f i)
+
+  ac″ : AC″
+  ac″ = ac
+```
+
 It therefore came as a surprise when, as late as in 1967, Bishop stated,
 
 > A choice function exists in constructive mathematics, because a choice is *implied by the very
 > meaning of existence*,[^11]
 
-:::{.align-bottom}
 although, in the terminology that he himself introduced in the subsequent chapter, he ought to have
 said “choice operation” rather than “choice function”.  What he had in mind was clearly that the
 truth of
 
 $$(∀i : I)(∃x : S)A(i, x) → (∃f : I → S)(∀i : I)A(i, f(i))$$
 
-```
--- (intensional, constructive, type-theoretic) axiom of choice
-
-ac : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : Set 𝓈} {A : I → Subset S 𝒶} →
-       (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] ∀ i → A i (f i)
-ac p₅ = fst ∘ p₅ , snd ∘ p₅
-```
-:::
-
-:::{.align-bottom}
 and even, more generally,
 
 $$(∀i : I)(∃x : S_i)A(i, x) → (∃f : Π_{i : I} S_i)(∀i : I)A(i, f(i))$$
-
-```
--- generalized (intensional, constructive, type-theoretic) axiom of choice
-
-ac′ : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : I → Set 𝓈} {A : ∀ i → Subset (S i) 𝒶} →
-        (∀ i → Σ[ x ∈ S i ] A i x) → Σ[ f ∈ (∀ i → S i) ] ∀ i → A i (f i)
-ac′ p₅ = fst ∘ p₅ , snd ∘ p₅
-```
-:::
 
 becomes evident almost immediately upon remembering the Brouwer-Heyting-Kolmogorov interpretation
 of the logical constants, which means that it might as well have been observed already in the early
@@ -174,18 +188,52 @@ in his second paper on the well-ordering theorem from 1908,
 > deren jeder mindestens ein Element enthält, besitzt mindestens eine Untermenge $S_1,$ welche mit
 > jedem der betrachteten Teile $A,$ $B,$ $C,$ $…$ genau ein Element gemein hat.*]{lang=de}[^14]
 
+::: {.align-bottom}
 Formulated in this way, Zermelo’s axiom of choice turns out to coincide with the multiplicative
 axiom, which Whitehead and Russell had found indispensable for the development of the theory of
 cardinals.[^15] [^16]  The type-theoretic rendering of this formulation of the axiom of choice is
 straightforward, once one remembers that a basic set in the sense of Cantorian set theory
 corresponds to an exten&shy;sional set, that is, a set equipped with an equivalence relation, in
 type theory, and that a subset of an exten&shy;sional set is interpreted as a propositional function
-which is exten&shy;sional with respect to the equivalence relation in question.  Thus the data of
-Zermelo’s 1908 formulation of the axiom of choice are a set $S,$ which comes equipped with an
-equivalence relation $=_S,$ and a family $(A_i)_{i : I}$ of propositional functions on $S$
-satisfying the following properties,
+which is exten&shy;sional with respect to the equivalence relation in question.
 
-::: {.align-bottom}
+```
+-- extensional set (setoid)
+
+record ESet 𝓈 ℯ : Set (lsuc (𝓈 ⊔ ℯ)) where
+  field
+    Carrier : Set 𝓈
+    _≈_     : Rel Carrier ℯ
+    refl    : ∀ {x} → x ≈ x
+    sym     : ∀ {x y} → x ≈ y → y ≈ x
+    trans   : ∀ {x y z} → x ≈ y → y ≈ z → x ≈ z
+
+
+-- subset of an extensional set
+
+record ESubset {𝓈 ℯ} (ES : ESet 𝓈 ℯ) 𝒶 : Set (𝓈 ⊔ ℯ ⊔ lsuc 𝒶) where
+  private open module S = ESet ES using () renaming (Carrier to S)
+  field
+    Carrier : Subset S 𝒶
+    ext     : ∀ {x y} → x S.≈ y → Carrier x ↔ Carrier y
+
+
+-- family of subsets of an extensional set
+
+record ESubsetFam {𝓈 ℯS 𝒾 ℯI} (ES : ESet 𝓈 ℯS) (EI : ESet 𝒾 ℯI) 𝒶
+                  : Set (𝓈 ⊔ ℯS ⊔ 𝒾 ⊔ ℯI ⊔ lsuc 𝒶) where
+  private open module S = ESet ES using () renaming (Carrier to S)
+  private open module I = ESet EI using () renaming (Carrier to I)
+  field
+    Carrier : I → Subset S 𝒶
+    ext-S   : ∀ {x y i} → x S.≈ y → Carrier i x ↔ Carrier i y
+    ext-I   : ∀ {x i j} → i I.≈ j → Carrier i x ↔ Carrier j x
+```
+:::
+
+Thus the data of Zermelo’s 1908 formulation of the axiom of choice are a set $S,$ which comes
+equipped with an equivalence relation $=_S,$ and a family $(A_i)_{i : I}$ of propositional
+functions on $S$ satisfying the following properties,
 
 1.  $x =_S y → (A_i(x) ↔ A_i(y))$ (exten&shy;sionality),
 
@@ -197,6 +245,7 @@ satisfying the following properties,
 
 5.  $(∀i : I)(∃x : S)A_i(x)$ (nonemptiness).
 
+::: {.align-bottom}
 Given these data, the axiom guarantees the existence of a propositional function $S_1$ on $S$ such
 that
 
@@ -205,90 +254,23 @@ that
 7.  $(∀i : I)(∃!x : S)(A_i ∩ S_1)(x)$ (uniqueness of choice).
 
 ```
--- style 1
+-- Zermelo’s axiom of choice
 
-record IsESet {𝓈 ℯ} (S : Set 𝓈) (_≈_ : Rel S ℯ) : Set (𝓈 ⊔ ℯ) where
-  field
-    refl  : ∀ {x} → x ≈ x
-    sym   : ∀ {x y} → x ≈ y → y ≈ x
-    trans : ∀ {x y z} → x ≈ y → y ≈ z → x ≈ z
-
-record IsESubset {𝓈 ℯ 𝒶} {S : Set 𝓈} {_≈_ : Rel S ℯ}
-                 (ES : IsESet S _≈_) (A : Subset S 𝒶) : Set (𝓈 ⊔ ℯ ⊔ 𝒶) where
-  field
-    extensional : ∀ {x y} → x ≈ y → A x ↔ A y
-
-record IsESubsetFamily {𝓈 ℯS 𝒾 ℯI 𝒶} {S : Set 𝓈} {_≈S_ : Rel S ℯS} {I : Set 𝒾} {_≈I_ : Rel I ℯI}
-                       (ES : IsESet S _≈S_) (EI : IsESet I _≈I_) (A : I → Subset S 𝒶)
-                       : Set (𝓈 ⊔ ℯS ⊔ 𝒾 ⊔ ℯI ⊔ 𝒶) where
-  field
-    extensionalS : ∀ {x y i} → x ≈S y → A i x ↔ A i y
-    extensionalI : ∀ {x i j} → i ≈I j → A i x ↔ A j x
-
-record IsEBreakdown {𝓈 ℯS 𝒾 ℯI 𝒶} {S : Set 𝓈} {_≈S_ : Rel S ℯS} {I : Set 𝒾} {_≈I_ : Rel I ℯI}
-                    (ES : IsESet S _≈S_) (EI : IsESet I _≈I_) (A : I → Subset S 𝒶)
-                    : Set (𝓈 ⊔ ℯS ⊔ 𝒾 ⊔ ℯI ⊔ 𝒶) where
-  field
-    extensionalS      : ∀ {x y i} → x ≈S y → A i x ↔ A i y
-    extensionalI      : ∀ {x i j} → i ≈I j → A i x ↔ A j x
-    mutuallyExclusive : ∀ {x i j} → A i x → A j x → i ≈I j
-    exhaustive        : ∀ x → Σ[ i ∈ I ] A i x
-    nonempty          : ∀ i → Σ[ x ∈ S ] A i x
-
-IsZerAC : ∀ {𝓈 ℯS 𝒾 ℯI 𝒶} {S : Set 𝓈} {_≈S_ : Rel S ℯS} {I : Set 𝒾} {_≈I_ : Rel I ℯI}
-            (ES : IsESet S _≈S_) (EI : IsESet I _≈I_) (A : I → Subset S 𝒶) → Set _
-IsZerAC {_} {ℯS} {𝒾} {_} {_} {S} {_≈S_} ES EI A =
-    IsEBreakdown ES EI A →
-      Σ[ S₁ ∈ Subset S (ℯS ⊔ 𝒾) ] -- TODO: Σ[ 𝓈₁ ∈ Level ]
-        IsESubset ES S₁ × ∀ i → Σ![ x ∈ S / _≈S_ ] (A i ∩ S₁) x
-
--- style 2
-
-record ESet 𝓈 ℯ : Set (lsuc (𝓈 ⊔ ℯ)) where
-  field
-    Carrier : Set 𝓈
-    _≈_     : Rel Carrier ℯ
-    refl    : ∀ {x} → x ≈ x
-    sym     : ∀ {x y} → x ≈ y → y ≈ x
-    trans   : ∀ {x y z} → x ≈ y → y ≈ z → x ≈ z
-
-record ESubset {𝓈 ℯ} (ES : ESet 𝓈 ℯ) 𝒶 : Set (𝓈 ⊔ ℯ ⊔ lsuc 𝒶) where
-  private open module S = ESet ES using () renaming (Carrier to S)
-  field
-    Carrier     : Subset S 𝒶
-    extensional : ∀ {x y} → x S.≈ y → Carrier x ↔ Carrier y
-
-record ESubsetFamily {𝓈 ℯS 𝒾 ℯI} (ES : ESet 𝓈 ℯS) (EI : ESet 𝒾 ℯI) 𝒶
-                     : Set (𝓈 ⊔ ℯS ⊔ 𝒾 ⊔ ℯI ⊔ lsuc 𝒶) where
+module _ {𝓈 ℯS 𝒾 ℯI 𝒶} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} {EA : ESubsetFam ES EI 𝒶} where
   private open module S = ESet ES using () renaming (Carrier to S)
   private open module I = ESet EI using () renaming (Carrier to I)
-  field
-    Carrier      : I → Subset S 𝒶
-    extensionalS : ∀ {x y i} → x S.≈ y → Carrier i x ↔ Carrier i y
-    extensionalI : ∀ {x i j} → i I.≈ j → Carrier i x ↔ Carrier j x
+  private open module A = ESubsetFam EA using () renaming (Carrier to A)
 
-record EBreakdown {𝓈 ℯS 𝒾 ℯI} (ES : ESet 𝓈 ℯS) (EI : ESet 𝒾 ℯI) 𝒶
-                  : Set (𝓈 ⊔ ℯS ⊔ 𝒾 ⊔ ℯI ⊔ lsuc 𝒶) where
-  private open module S = ESet ES using () renaming (Carrier to S)
-  private open module I = ESet EI using () renaming (Carrier to I)
-  field
-    Carrier           : I → Subset S 𝒶
-    extensionalS      : ∀ {x y i} → x S.≈ y → Carrier i x ↔ Carrier i y
-    extensionalI      : ∀ {x i j} → i I.≈ j → Carrier i x ↔ Carrier j x
-    mutuallyExclusive : ∀ {x i j} → Carrier i x → Carrier j x → i I.≈ j
-    exhaustive        : ∀ x → Σ[ i ∈ I ] Carrier i x
-    nonempty          : ∀ i → Σ[ x ∈ S ] Carrier i x
-
-ZerAC : ∀ {𝓈 ℯS 𝒾 ℯI 𝒶} (ES : ESet 𝓈 ℯS) (EI : ESet 𝒾 ℯI) (EA : EBreakdown ES EI 𝒶) → Set _
-ZerAC {_} {ℯS} {𝒾} ES EI EA =
-    Σ[ ES₁ ∈ ESubset ES (ℯS ⊔ 𝒾) ] -- TODO: Σ[ 𝓈₁ ∈ Level ]
-      let open module S = ESet ES using () renaming (Carrier to S)
-          open module A = EBreakdown EA using () renaming (Carrier to A)
-          open module S₁ = ESubset ES₁ using () renaming (Carrier to S₁) in
-        ∀ i → Σ![ x ∈ S / S._≈_ ] (A i ∩ S₁) x
+  ZAC : Set _
+  ZAC = (∀ {x i j} → A i x → A j x → i I.≈ j) →
+          (∀ x → Σ[ i ∈ I ] A i x) →
+            (∀ i → Σ[ x ∈ S ] A i x) →
+              Σ[ ES₁ ∈ ESubset ES (ℯS ⊔ 𝒾) ] -- TODO: Σ[ 𝓈₁ ∈ Level ]?
+                ∀ i → Σ![ x ∈ S / S._≈_ ] (A i ∩ ESubset.Carrier ES₁) x
 ```
 :::
 
+::: {.align-bottom}
 The obvious way of trying to prove (6) and (7) from (1)–(5) is to apply the type-theoretic
 (constructive, inten&shy;sional) axiom of choice to (5), so as to get a function $f : I → S$ such
 that
@@ -311,134 +293,82 @@ $$(∀i : I)(∃x : S)(A_i ∩ S_1)(x),$$
 which means that only the uniqueness condition remains to be proved.  To this end, assume that the
 proposition
 
-$$(A_i ∩ S_1)(x) = A_i(x)\ \&\ S_1(x)$$
+$$(A_i ∩ S_1)(y) = A_i(y)\ \&\ S_1(y)$$
 
 is true, that is, that the two propositions
 
 $$
 \begin{cases}
-  A_i(x),\\
-  S_1(x) = (∃j : I)(f(j) =_S x),
+  A_i(y),\\
+  S_1(y) = (∃j : I)(f(j) =_S y),
 \end{cases}
 $$
 
-are both true.  Let $j : I$ satisfy $f(j) =_S x.$  Then, since $(∀i : I)$$A_i(f(i))$ is true, so is
-$A_j(f(j)).$  Hence, by the exten&shy;sionality of $A_j$ with respect to $=_S,$ $A_j(x)$ is true,
-which, together with the assumed truth of $A_i(x),$ yields $i =_I j$ by the mutual exclusiveness of
-the family of subsets $(A_i)_{i : I}.$  At this stage, in order to conclude that $f(i) =_S x,$ we
+are both true.  Let $j : I$ satisfy $f(j) =_S y.$  Then, since $(∀i : I)$$A_i(f(i))$ is true, so is
+$A_j(f(j)).$  Hence, by the exten&shy;sionality of $A_j$ with respect to $=_S,$ $A_j(y)$ is true,
+which, together with the assumed truth of $A_i(y),$ yields $i =_I j$ by the mutual exclusiveness of
+the family of subsets $(A_i)_{i : I}.$  At this stage, in order to conclude that $f(i) =_S y,$ we
 need to know that the choice function $f$ is exten&shy;sional, that is, that
 
 $$i =_I j → f(i) =_S f(j).$$
 
-```
--- style 2
-
-zerac : ∀ {𝓈 ℯS 𝒾 ℯI 𝒶} (ES : ESet 𝓈 ℯS) (EI : ESet 𝒾 ℯI) (EA : EBreakdown ES EI 𝒶) → ZerAC ES EI EA
-zerac ES EI EA =
-    let
-      open module S = ESet ES using () renaming (Carrier to S)
-      open module I = ESet EI using () renaming (Carrier to I)
-      open module A = EBreakdown EA renaming (Carrier to A)
-
-      f : I → S
-      f = fst (ac nonempty)
-
-      S₁ : S → Set _
-      S₁ x = Σ[ j ∈ I ] f j S.≈ x
-
-      extensionalS₁ : ∀ {x y} → x S.≈ y → S₁ x ↔ S₁ y
-      extensionalS₁ x≈y = (λ { (j , fj≈x) → j , S.trans fj≈x x≈y })
-                        , (λ { (j , fj≈x) → j , S.trans fj≈x (S.sym x≈y) })
-
-      clearlyTrue : ∀ i → (A i ∩ S₁) (f i)
-      clearlyTrue i = snd (ac nonempty) i , i , S.refl
-
-      nonuniqueChoice : ∀ i → Σ[ x ∈ S ] (A i ∩ S₁) x
-      nonuniqueChoice i = f i , clearlyTrue i
-
-      uniqueChoice : ∀ i → Σ![ x ∈ S / S._≈_ ] (A i ∩ S₁) x
-      uniqueChoice i = f i , clearlyTrue i , λ { {y} (Aiy , j , fj≈y) →
-        let
-          Aj[fj] : A j (f j)
-          Aj[fj] = fst (clearlyTrue j)
-
-          Ajy : A j y
-          Ajy = fst (extensionalS fj≈y) Aj[fj]
-
-          i≈j : i I.≈ j
-          i≈j = mutuallyExclusive Aiy Ajy
-
-          Ext[f] : i I.≈ j → f i S.≈ f j
-          Ext[f] = {!!}
-
-          fi≈fj : f i S.≈ f j
-          fi≈fj = Ext[f] i≈j
-
-          fi≈y : f i S.≈ y
-          fi≈y = S.trans fi≈fj fj≈y
-        in
-          fi≈y }
-    in
-      record { Carrier = S₁ ; extensional = extensionalS₁ } , uniqueChoice
-
-{-    Ext : ∀ (f : I → S) → Set _
-    Ext f = ∀ {i j} → i I.≈ j → f i S.≈ f j
-
-      -- Zermelo’s axiom of choice
-      ZerAC = (P₁ × P₂ × P₃ × P₄ × P₅) → Σ[ S₁ ∈ (S → Set (𝒾 ⊔ ℯS)) ] (P₆ S₁ × P₇ S₁)
-
-      -- extensional axiom of choice
-      ExtAC = (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
-
-      zerac : ExtAC → ZerAC
-      zerac extac (p₁ , p₂ , p₃ , _ , p₅)  =
-        let
-          f : I → S
-          f = proj₁ (extac p₅)
-
-          Ext[f] : Ext f
-          Ext[f] = proj₁ (proj₂ (extac p₅))
-
-          S₁ : S → Set _
-          S₁ x = Σ[ j ∈ I ] f j S.≈ x
-
-          p₆ : ∀ {x y} → x S.≈ y → (S₁ x ↔ S₁ y)
-          p₆ x≈y = (λ { (j , fj≈x) → j , S.trans fj≈x x≈y }) ,
-                   (λ { (j , fj≈x) → j , S.trans fj≈x (S.sym x≈y) })
-
-          clearlyTrue : ∀ i → (A i ∩ S₁) (f i)
-          clearlyTrue i = proj₂ (proj₂ (extac p₅)) i , i , S.refl
-
-          soIs : ∀ i → Σ[ x ∈ S ] (A i ∩ S₁) x
-          soIs i = f i , clearlyTrue i
-
-          p₇ : ∀ i → ∃![ x ∈ S / S._≈_ ] (A i ∩ S₁) x
-          p₇ i = f i , clearlyTrue i , λ { {y} (Aiy , j , fj≈y) →
-            let
-              Aj[fj] : A j (f j)
-              Aj[fj] = proj₁ (clearlyTrue j)
-
-              Ajy : A j y
-              Ajy = proj₁ (p₁ fj≈y) Aj[fj]
-
-              i≈j : i I.≈ j
-              i≈j = p₃ (y , Aiy , Ajy)
-
-              fi≈fj : f i S.≈ f j
-              fi≈fj = Ext[f] i≈j
-
-              fi≈y : f i S.≈ y
-              fi≈y = S.trans fi≈fj fj≈y
-            in
-              fi≈y }
-        in
-          S₁ , p₆ , p₇ -}
-```
-
-
 This, however, is not guaranteed by the constructive, or inten&shy;sional, axiom of choice which
 follows from the strong rule of $∃$-elimination in type theory.  Thus our attempt to prove Zermelo’s
 axiom of choice has failed, as was to be expected.
+
+```
+-- extensional axiom of choice
+
+module _ {𝓈 ℯS 𝒾 ℯI 𝒶} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} {EA : ESubsetFam ES EI 𝒶} where
+  private open module S = ESet ES using () renaming (Carrier to S)
+  private open module I = ESet EI using () renaming (Carrier to I)
+  private open module A = ESubsetFam EA using () renaming (Carrier to A)
+
+  Ext : ∀ (f : I → S) → Set _
+  Ext f = ∀ {i j} → i I.≈ j → f i S.≈ f j
+
+  EAC : Set _
+  EAC = (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
+
+  eac→zac : EAC → ZAC {EA = EA}
+  eac→zac eac p₃ p₄ p₅ = record { Carrier = S₁ ; ext = p₆ } , p₇
+    where
+      f : I → S
+      f = fst (eac p₅)
+
+      ext-f : ∀ {i j} → i I.≈ j → f i S.≈ f j
+      ext-f = fst (snd (eac p₅))
+
+      S₁ : Subset S _
+      S₁ x = Σ[ j ∈ I ] f j S.≈ x
+
+      p₆ : ∀ {x y} → x S.≈ y → S₁ x ↔ S₁ y
+      p₆ x≈y = (λ { (j , fj≈x) → j , S.trans fj≈x x≈y })
+             , (λ { (j , fj≈y) → j , S.trans fj≈y (S.sym x≈y) })
+
+      choose : ∀ i → (A i ∩ S₁) (f i)
+      choose i = snd (snd (eac p₅)) i , i , S.refl
+
+      p₇ : ∀ i → Σ![ x ∈ S / S._≈_ ] (A i ∩ S₁) x
+      p₇ i = f i
+           , choose i
+           , (λ { {y} (Aiy , j , fj≈y) →
+               let
+                 Aj[fj] : A j (f j)
+                 Aj[fj] = fst (choose j)
+
+                 Ajy : A j y
+                 Ajy = fst (A.ext-S fj≈y) Aj[fj]
+
+                 i≈j : i I.≈ j
+                 i≈j = p₃ Aiy Ajy
+
+                 fi≈y : f i S.≈ y
+                 fi≈y = S.trans (ext-f i≈j) fj≈y
+               in
+                 fi≈y })
+```
+:::
 
 On the other hand, we have succeeded in proving that Zermelo’s axiom of choice follows from the
 exten&shy;sional axiom of choice
