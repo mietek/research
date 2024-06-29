@@ -91,6 +91,11 @@ syntax Σ!-syntax S _≈_ (λ x → T) = Σ![ x ∈ S / _≈_ ] T
 Σ!-syntax : ∀ {𝓈 ℯ 𝓉} (S : Set 𝓈) (_≈_ : Rel S ℯ) (T : S → Set 𝓉) → Set _
 Σ!-syntax S _≈_ T = Σ[ x ∈ S ] T x × ∀ {y} → T y → x ≈ y
 
+-- flipping argument order
+flip : ∀ {𝓈 𝓉 𝓊} {S : Set 𝓈} {T : Set 𝓉} {U : S → T → Set 𝓊}
+       (f : ∀ x y → U x y) (y : T) (x : S) → U x y
+flip f y x = f x y
+
 -- (dependent) function composition
 _∘_ : ∀ {𝓈 𝓉 𝓊} {S : Set 𝓈} {T : S → Set 𝓉} {U : ∀ {x} → T x → Set 𝓊}
         (f : ∀ {x} (y : T x) → U y) (g : ∀ x → T x) (x : S) → U (g x)
@@ -302,6 +307,10 @@ follows from the strong rule of $∃$-elimination in type theory.  Thus our atte
 axiom of choice has failed, as was to be expected.
 
 ```
+Extensional : ∀ {𝓈 ℯS 𝓉 ℯT} {S : Set 𝓈} {T : Set 𝓉}
+                (_≈S_ : Rel S ℯS) (_≈T_ : Rel T ℯT) (f : S → T) → Set _
+Extensional _≈S_ _≈T_ f = ∀ {x y} → x ≈S y → f x ≈T f y
+
 -- extensional axiom of choice
 module _ {𝓈 ℯS 𝒾 ℯI} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} where
   private open module S = ESet ES using () renaming (Carrier to S)
@@ -314,21 +323,21 @@ module _ {𝓈 ℯS 𝒾 ℯI} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} where
     EAC = (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
       where
         Ext : ∀ (f : I → S) → Set _
-        Ext f = ∀ {i j} → i I.≈ j → f i S.≈ f j
+        Ext = Extensional I._≈_ S._≈_
 
-    eac→zac : EAC → ZAC {EA = EA}
-    eac→zac eac p₃ p₄ p₅ = record { Carrier = S₁ ; ext = p₆ } , p₇
+    i→ii : EAC → ZAC {EA = EA}
+    i→ii eac p₃ p₄ p₅ = record { Carrier = S₁ ; ext = p₆ } , p₇
       where
         f : I → S
         f = fst (eac p₅)
 
-        ext-f : ∀ {i j} → i I.≈ j → f i S.≈ f j
+        ext-f : Extensional I._≈_ S._≈_ f
         ext-f = fst (snd (eac p₅))
 
         S₁ : Subset S _
         S₁ x = Σ[ j ∈ I ] f j S.≈ x
 
-        p₆ : ∀ {x y} → x S.≈ y → S₁ x ↔ S₁ y
+        p₆ : Extensional S._≈_ _↔_ S₁
         p₆ x≈y = (λ { (j , fj≈x) → j , S.trans-≈ fj≈x x≈y })
                , (λ { (j , fj≈y) → j , S.trans-≈ fj≈y (S.sym-≈ x≈y) })
 
@@ -449,30 +458,23 @@ by the exten&shy;sional dependence of $A_i$ on the index $i.$  The uniqueness pr
 $A_i ∩ S_1$ permits us to now conclude $g(i) =_S g(j)$ as desired.
 
 ```
--- TODO: reshape
-_⥵_ : ∀ {𝓈 ℯS 𝓉 ℯT} (ES : ESet 𝓈 ℯS) (ET : ESet 𝓉 ℯT) → Set _
-ES ⥵ ET = ESet.Carrier ES → ESet.Carrier ET
+Surjective : ∀ {𝓈 𝓉 ℯ} {S : Set 𝓈} {T : Set 𝓉}
+               (_≈_ : Rel T ℯ) (f : S → T) → Set _
+Surjective {S = S} _≈_ f = ∀ y → Σ[ x ∈ S ] f x ≈ y
 
 module ii→iii {𝓈 ℯS 𝒾 ℯI} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} where
   private open module S = ESet ES using () renaming (Carrier to S)
   private open module I = ESet EI using () renaming (Carrier to I)
 
-  -- TODO: reshape
-  Ext : ∀ (f : S → I) → Set _
-  Ext f = ∀ {x y} → x S.≈ y → f x I.≈ f y
-
-  ESurj : ∀ (f : ES ⥵ EI) → Set _
-  ESurj f = ∀ y → Σ[ x ∈ S ] f x I.≈ y
-
-  module _ (f : ES ⥵ EI) (ext-f : Ext f) (surj-f : ESurj f) where
+  module _ (f : S → I) (ext-f : Extensional S._≈_ I._≈_ f) (surj-f : Surjective I._≈_ f) where
     A : I → Subset S _
     A i x = f x I.≈ i
 
-    p₁ : ∀ {x y i} → x S.≈ y → A i x ↔ A i y
+    p₁ : ∀ {i} → Extensional S._≈_ _↔_ (A i)
     p₁ x≈y = (λ fx≈i → I.trans-≈ (I.sym-≈ (ext-f x≈y)) fx≈i )
            , (λ fy≈i → I.trans-≈ (ext-f x≈y) fy≈i)
 
-    p₂ : ∀ {x i j} → i I.≈ j → A i x ↔ A j x
+    p₂ : ∀ {x} → Extensional I._≈_ _↔_ (flip A x)
     p₂ i≈j = (λ fx≈i → I.trans-≈ fx≈i i≈j)
            , (λ fx≈j → I.trans-≈ fx≈j (I.sym-≈ i≈j))
 
@@ -501,35 +503,23 @@ module ii→iii {𝓈 ℯS 𝒾 ℯI} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI
       g : I → S
       g = fst (ac (snd choice))
 
-      -- TODO: names!
+      -- TODO: name!
       prop-g₁₂ : ∀ i → (A i ∩ S₁) (g i)
       prop-g₁₂ i = fst (snd (ac (snd choice)) i)
 
-      prop-g₁₂₁ : ∀ i → f (g i) I.≈ i
-      prop-g₁₂₁ i = fst (prop-g₁₂ i)
+      unique : ∀ i {y} → (A i ∩ S₁) y → g i S.≈ y
+      unique i = snd (snd (ac (snd choice)) i)
 
-      prop-g₁₂₂ : ∀ i → S₁ (g i)
-      prop-g₁₂₂ i = snd (prop-g₁₂ i)
-
-      prop-g₂₂ : ∀ i {y} → (A i ∩ S₁) y → g i S.≈ y
-      prop-g₂₂ i h = snd (snd (ac (snd choice)) i) h
-
-      ext-g : ∀ {i j} → i I.≈ j → g i S.≈ g j
+      ext-g : Extensional I._≈_ S._≈_ g
       ext-g {i} {j} i≈j =
         let
-          fact₁ : (A i ∩ S₁) (g i)
-          fact₁ = prop-g₁₂ i
-
           fact₂ : (A j ∩ S₁) (g j)
           fact₂ = prop-g₁₂ j
-
-          fact₃′ : (A i ∩ S₁) (g j)
-          fact₃′ = I.trans-≈ (fst fact₂) (I.sym-≈ i≈j) , snd fact₂
 
           fact₃ : (A i ∩ S₁) (g j)
           fact₃ = snd (p₂ i≈j) (fst fact₂) , snd fact₂
         in
-          prop-g₂₂ i fact₃
+          unique i fact₃
 ```
 :::
 
@@ -725,7 +715,7 @@ module _ {𝓈 ℯS 𝒾 ℯI 𝒶} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} 
   AC! = (∀ i → Σ![ x ∈ S / S._≈_ ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
     where
       Ext : ∀ (f : I → S) → Set _
-      Ext f = ∀ {i j} → i I.≈ j → f i S.≈ f j
+      Ext = Extensional I._≈_ S._≈_
 
   ac! : AC!
   ac! h = f , ext-f , wat
@@ -739,7 +729,7 @@ module _ {𝓈 ℯS 𝒾 ℯI 𝒶} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} 
       unique : ∀ i {y} → A i y → f i S.≈ y
       unique i = snd (snd (ac h) i)
 
-      ext-f : ∀ {i j} → i I.≈ j → f i S.≈ f j
+      ext-f : Extensional I._≈_ S._≈_ f
       ext-f {i} {j} i≈j =
         let
           Aj[fj] : A j (f j)
@@ -747,11 +737,8 @@ module _ {𝓈 ℯS 𝒾 ℯI 𝒶} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} 
 
           Ai[fj] : A i (f j)
           Ai[fj] = fst (A.ext-I (I.sym-≈ i≈j)) Aj[fj]
-
-          fi≈fj : f i S.≈ f j
-          fi≈fj = unique i Ai[fj]
         in
-          fi≈fj
+          unique i Ai[fj]
 ```
 :::
 
