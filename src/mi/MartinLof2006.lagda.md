@@ -21,6 +21,7 @@ module mi.MartinLof2006 where
 
 open import Agda.Primitive using (_⊔_ ; lsuc)
 open import Agda.Builtin.Sigma using (Σ ; _,_ ; fst ; snd)
+open import Agda.Builtin.Equality using (_≡_ ; refl)
 ```
 
 ::: {.align-bottom}
@@ -81,7 +82,7 @@ _×_ : ∀ {𝓈 𝓉} (S : Set 𝓈) (T : Set 𝓉) → Set _
 S × T = Σ[ x ∈ S ] T
 
 -- binary relation
-Rel : ∀ {𝓈} (S : Set 𝓈) 𝓇 → Set (𝓈 ⊔ lsuc 𝓇)
+Rel : ∀ {𝓈} (S : Set 𝓈) 𝓇 → Set _
 Rel S 𝓇 = S → S → Set 𝓇
 
 -- unique (intensional) existence
@@ -101,7 +102,7 @@ _↔_ : ∀ {𝓈 𝓉} (S : Set 𝓈) (T : Set 𝓉) → Set _
 S ↔ T = (S → T) × (T → S)
 
 -- (intensional) subset
-Subset : ∀ {𝓈} (S : Set 𝓈) 𝒶 → Set (𝓈 ⊔ lsuc 𝒶)
+Subset : ∀ {𝓈} (S : Set 𝓈) 𝒶 → Set _
 Subset S 𝒶 = S → Set 𝒶
 
 -- subset intersection
@@ -193,9 +194,9 @@ record ESet 𝓈 ℯ : Set (lsuc (𝓈 ⊔ ℯ)) where
   field
     Carrier : Set 𝓈
     _≈_     : Rel Carrier ℯ
-    refl    : ∀ {x} → x ≈ x
-    sym     : ∀ {x y} → x ≈ y → y ≈ x
-    trans   : ∀ {x y z} → x ≈ y → y ≈ z → x ≈ z
+    refl-≈  : ∀ {x} → x ≈ x
+    sym-≈   : ∀ {x y} → x ≈ y → y ≈ x
+    trans-≈ : ∀ {x y z} → x ≈ y → y ≈ z → x ≈ z
 
 -- subset of an extensional set
 record ESubset {𝓈 ℯ} (ES : ESet 𝓈 ℯ) 𝒶 : Set (𝓈 ⊔ ℯ ⊔ lsuc 𝒶) where
@@ -249,7 +250,7 @@ module _ {𝓈 ℯS 𝒾 ℯI 𝒶} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} 
   ZAC = ∀ (p₃ : ∀ {x i j} → A i x → A j x → i I.≈ j)
           (p₄ : ∀ x → Σ[ i ∈ I ] A i x)
           (p₅ : ∀ i → Σ[ x ∈ S ] A i x) →
-            Σ[ ES₁ ∈ ESubset ES (ℯS ⊔ 𝒾) ] -- TODO: Σ[ 𝓈₁ ∈ Level ]?
+            Σ[ ES₁ ∈ ESubset ES (ℯS ⊔ 𝒾) ] -- TODO: level?
               ∀ i → Σ![ x ∈ S / S._≈_ ] (A i ∩ ESubset.Carrier ES₁) x
 ```
 :::
@@ -302,54 +303,56 @@ axiom of choice has failed, as was to be expected.
 
 ```
 -- extensional axiom of choice
-module _ {𝓈 ℯS 𝒾 ℯI 𝒶} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} {EA : ESubsetFam ES EI 𝒶} where
+module _ {𝓈 ℯS 𝒾 ℯI} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} where
   private open module S = ESet ES using () renaming (Carrier to S)
   private open module I = ESet EI using () renaming (Carrier to I)
-  private open module A = ESubsetFam EA using () renaming (Carrier to A)
 
-  Ext : ∀ (f : I → S) → Set _
-  Ext f = ∀ {i j} → i I.≈ j → f i S.≈ f j
+  module _ {𝒶} {EA : ESubsetFam ES EI 𝒶} where
+    private open module A = ESubsetFam EA using () renaming (Carrier to A)
 
-  EAC : Set _
-  EAC = (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
+    EAC : Set _
+    EAC = (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
+      where
+        Ext : ∀ (f : I → S) → Set _
+        Ext f = ∀ {i j} → i I.≈ j → f i S.≈ f j
 
-  eac→zac : EAC → ZAC {EA = EA}
-  eac→zac eac p₃ p₄ p₅ = record { Carrier = S₁ ; ext = p₆ } , p₇
-    where
-      f : I → S
-      f = fst (eac p₅)
+    eac→zac : EAC → ZAC {EA = EA}
+    eac→zac eac p₃ p₄ p₅ = record { Carrier = S₁ ; ext = p₆ } , p₇
+      where
+        f : I → S
+        f = fst (eac p₅)
 
-      ext-f : ∀ {i j} → i I.≈ j → f i S.≈ f j
-      ext-f = fst (snd (eac p₅))
+        ext-f : ∀ {i j} → i I.≈ j → f i S.≈ f j
+        ext-f = fst (snd (eac p₅))
 
-      S₁ : Subset S _
-      S₁ x = Σ[ j ∈ I ] f j S.≈ x
+        S₁ : Subset S _
+        S₁ x = Σ[ j ∈ I ] f j S.≈ x
 
-      p₆ : ∀ {x y} → x S.≈ y → S₁ x ↔ S₁ y
-      p₆ x≈y = (λ { (j , fj≈x) → j , S.trans fj≈x x≈y })
-             , (λ { (j , fj≈y) → j , S.trans fj≈y (S.sym x≈y) })
+        p₆ : ∀ {x y} → x S.≈ y → S₁ x ↔ S₁ y
+        p₆ x≈y = (λ { (j , fj≈x) → j , S.trans-≈ fj≈x x≈y })
+               , (λ { (j , fj≈y) → j , S.trans-≈ fj≈y (S.sym-≈ x≈y) })
 
-      choose : ∀ i → (A i ∩ S₁) (f i)
-      choose i = snd (snd (eac p₅)) i , i , S.refl
+        choose : ∀ i → (A i ∩ S₁) (f i)
+        choose i = snd (snd (eac p₅)) i , i , S.refl-≈
 
-      p₇ : ∀ i → Σ![ x ∈ S / S._≈_ ] (A i ∩ S₁) x
-      p₇ i = f i
-           , choose i
-           , (λ { {y} (Aiy , j , fj≈y) →
-               let
-                 Aj[fj] : A j (f j)
-                 Aj[fj] = fst (choose j)
+        p₇ : ∀ i → Σ![ x ∈ S / S._≈_ ] (A i ∩ S₁) x
+        p₇ i = f i
+             , choose i
+             , (λ { {y} (Aiy , j , fj≈y) →
+                 let
+                   Aj[fj] : A j (f j)
+                   Aj[fj] = fst (choose j)
 
-                 Ajy : A j y
-                 Ajy = fst (A.ext-S fj≈y) Aj[fj]
+                   Ajy : A j y
+                   Ajy = fst (A.ext-S fj≈y) Aj[fj]
 
-                 i≈j : i I.≈ j
-                 i≈j = p₃ Aiy Ajy
+                   i≈j : i I.≈ j
+                   i≈j = p₃ Aiy Ajy
 
-                 fi≈y : f i S.≈ y
-                 fi≈y = S.trans (ext-f i≈j) fj≈y
-               in
-                 fi≈y })
+                   fi≈y : f i S.≈ y
+                   fi≈y = S.trans-≈ (ext-f i≈j) fj≈y
+                 in
+                   fi≈y })
 ```
 :::
 
@@ -390,6 +393,7 @@ This is precisely the result of the considerations prior to the formulation of t
 
 ###### (ii)$→$(iii).
 
+::: {.align-bottom}
 Let $(S, =_S)$ and $(I, =_I)$ be two exten&shy;sional sets, and let $f : S → I$ be an
 exten&shy;sional and surjective mapping between them.  By definition, put
 
@@ -427,7 +431,7 @@ $$(f(g(i)) =_I i)\ \&\ S_1(g(i)),$$
 
 so that $g$ is a right inverse of $f,$ and
 
-$$(A_i ∩ S_1)(x) → g(i) =_S x.$$
+$$(A_i ∩ S_1)(y) → g(i) =_S y.$$
 
 It remains only to show that $g$ is exten&shy;sional.  So assume $i, j : I.$  Then we have
 
@@ -443,6 +447,91 @@ $$(A_i ∩ S_1)(g(j))$$
 
 by the exten&shy;sional dependence of $A_i$ on the index $i.$  The uniqueness property of
 $A_i ∩ S_1$ permits us to now conclude $g(i) =_S g(j)$ as desired.
+
+```
+-- TODO: reshape
+_⥵_ : ∀ {𝓈 ℯS 𝓉 ℯT} (ES : ESet 𝓈 ℯS) (ET : ESet 𝓉 ℯT) → Set _
+ES ⥵ ET = ESet.Carrier ES → ESet.Carrier ET
+
+module ii→iii {𝓈 ℯS 𝒾 ℯI} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} where
+  private open module S = ESet ES using () renaming (Carrier to S)
+  private open module I = ESet EI using () renaming (Carrier to I)
+
+  -- TODO: reshape
+  Ext : ∀ (f : S → I) → Set _
+  Ext f = ∀ {x y} → x S.≈ y → f x I.≈ f y
+
+  ESurj : ∀ (f : ES ⥵ EI) → Set _
+  ESurj f = ∀ y → Σ[ x ∈ S ] f x I.≈ y
+
+  module _ (f : ES ⥵ EI) (ext-f : Ext f) (surj-f : ESurj f) where
+    A : I → Subset S _
+    A i x = f x I.≈ i
+
+    p₁ : ∀ {x y i} → x S.≈ y → A i x ↔ A i y
+    p₁ x≈y = (λ fx≈i → I.trans-≈ (I.sym-≈ (ext-f x≈y)) fx≈i )
+           , (λ fy≈i → I.trans-≈ (ext-f x≈y) fy≈i)
+
+    p₂ : ∀ {x i j} → i I.≈ j → A i x ↔ A j x
+    p₂ i≈j = (λ fx≈i → I.trans-≈ fx≈i i≈j)
+           , (λ fx≈j → I.trans-≈ fx≈j (I.sym-≈ i≈j))
+
+    p₃ : ∀ {x i j} → A i x → A j x → i I.≈ j
+    p₃ fx≈i fx≈j = I.trans-≈ (I.sym-≈ fx≈i) fx≈j
+
+    p₄ : ∀ x → Σ[ i ∈ I ] A i x
+    p₄ x = f x , I.refl-≈
+
+    p₅ : ∀ i → Σ[ x ∈ S ] A i x
+    p₅ = surj-f
+
+    EA : ESubsetFam ES EI ℯI
+    EA = record { Carrier = A ; ext-S = p₁ ; ext-I = p₂ }
+
+    module _ (zac : ZAC {EA = EA}) where
+      choice : Σ[ ES₁ ∈ ESubset ES (ℯS ⊔ 𝒾) ]
+                  ∀ i → Σ![ x ∈ S / S._≈_ ] (A i ∩ ESubset.Carrier ES₁) x
+      choice = zac p₃ p₄ p₅
+
+      ES₁ : ESubset ES (ℯS ⊔ 𝒾)
+      ES₁ = fst choice
+
+      private open module S₁ = ESubset ES₁ using () renaming (Carrier to S₁)
+
+      g : I → S
+      g = fst (ac (snd choice))
+
+      -- TODO: names!
+      prop-g₁₂ : ∀ i → (A i ∩ S₁) (g i)
+      prop-g₁₂ i = fst (snd (ac (snd choice)) i)
+
+      prop-g₁₂₁ : ∀ i → f (g i) I.≈ i
+      prop-g₁₂₁ i = fst (prop-g₁₂ i)
+
+      prop-g₁₂₂ : ∀ i → S₁ (g i)
+      prop-g₁₂₂ i = snd (prop-g₁₂ i)
+
+      prop-g₂₂ : ∀ i {y} → (A i ∩ S₁) y → g i S.≈ y
+      prop-g₂₂ i h = snd (snd (ac (snd choice)) i) h
+
+      ext-g : ∀ {i j} → i I.≈ j → g i S.≈ g j
+      ext-g {i} {j} i≈j =
+        let
+          fact₁ : (A i ∩ S₁) (g i)
+          fact₁ = prop-g₁₂ i
+
+          fact₂ : (A j ∩ S₁) (g j)
+          fact₂ = prop-g₁₂ j
+
+          fact₃′ : (A i ∩ S₁) (g j)
+          fact₃′ = I.trans-≈ (fst fact₂) (I.sym-≈ i≈j) , snd fact₂
+
+          fact₃ : (A i ∩ S₁) (g j)
+          fact₃ = snd (p₂ i≈j) (fst fact₂) , snd fact₂
+        in
+          prop-g₂₂ i fact₃
+```
+:::
 
 ###### (iii)$→$(iv).
 
@@ -633,7 +722,10 @@ module _ {𝓈 ℯS 𝒾 ℯI 𝒶} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} 
   private open module A = ESubsetFam EA using () renaming (Carrier to A)
 
   AC! : Set _
-  AC! = (∀ i → Σ![ x ∈ S / S._≈_ ] A i x) → Σ[ f ∈ (I → S) ] Ext {EA = EA} f × ∀ i → A i (f i)
+  AC! = (∀ i → Σ![ x ∈ S / S._≈_ ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
+    where
+      Ext : ∀ (f : I → S) → Set _
+      Ext f = ∀ {i j} → i I.≈ j → f i S.≈ f j
 
   ac! : AC!
   ac! h = f , ext-f , wat
@@ -654,7 +746,7 @@ module _ {𝓈 ℯS 𝒾 ℯI 𝒶} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} 
           Aj[fj] = wat j
 
           Ai[fj] : A i (f j)
-          Ai[fj] = fst (A.ext-I (I.sym i≈j)) Aj[fj]
+          Ai[fj] = fst (A.ext-I (I.sym-≈ i≈j)) Aj[fj]
 
           fi≈fj : f i S.≈ f j
           fi≈fj = unique i Ai[fj]
