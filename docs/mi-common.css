@@ -190,7 +190,7 @@ ol[type="i"] li::marker {
   padding-top: 0.5rem;
 }
 .footnotes {
-  margin: 4.5rem 0 10.4rem 0;
+  margin: 9.7rem 0 10.4rem 0;
 }
 .footnotes hr {
   border: 0;
@@ -630,7 +630,7 @@ p:has(> a.mi):before {
   line-height: 1.6rem;
   background-color: var(--background);
   border: 0.1rem var(--comment) solid;
-  margin: -0.3rem auto -15.7rem auto;
+  margin: 20.5rem auto -15.7rem auto;
   width: 58.0rem;
   height: 35.8459713475rem;
   transform: rotate(-2deg);
@@ -667,6 +667,7 @@ p:has(> a.mi):before {
 #title-block-header {
   position: relative;
   z-index: -1;
+  margin-top: 18.8rem;
   margin-bottom: 10.4rem;
 }
 .wip {

@@ -10,7 +10,7 @@
     width: 100%;
     position: relative;
   }
-  main > p, h1, h2, h3, h4, h5, h6, ol, ul, .footnotes hr, .align-top > p, .align-bottom > p, .index {
+  main > p, h1, h2, h3, h4, h5, h6, ol, ul, .footnotes hr, .align-top > p, .align > p, .index {
     max-width: calc(50% - 3rem);
   }
   blockquote {
@@ -22,13 +22,13 @@
     max-width: calc(50% - 3rem);
     margin: 0.7rem 0 0.9rem 0;
   }
-  .align-top, .align-bottom {
+  .align-top, .align {
     position: relative;
   }
   .align-top pre {
     top: 0;
   }
-  .align-bottom pre {
+  .align pre {
     bottom: -0.5rem;
   }
 }
