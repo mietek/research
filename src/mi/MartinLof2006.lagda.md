@@ -19,12 +19,12 @@ card:
 
 module mi.MartinLof2006 where
 
-open import Agda.Primitive using (_⊔_ ; lsuc)
-open import Agda.Builtin.Sigma using (Σ ; _,_ ; fst ; snd)
-open import Agda.Builtin.Equality using (_≡_ ; refl)
+open import Agda.Primitive using (_⊔_) renaming (lsuc to suc)
+open import Agda.Builtin.Sigma using (_,_ ; fst ; snd) renaming (Σ to ∃)
+open import Agda.Builtin.Equality using (refl) renaming (_≡_ to Id)
 ```
 
-::: {.align-bottom}
+::: {.align}
 Cantor conceived set theory in a sequence of six papers published in the *[Mathematische Annalen
 ]{lang=de}* during the five year period 1879–1884.  In the fifth of these papers, published in
 1883,[^1] he stated as a law of thought (*[Denkgesetz]{lang=de}*) that every set can be well-ordered
@@ -71,27 +71,31 @@ was regarded by them as a prime example of a nonconstructive principle.
 
 ```
 -- (intensional) existence
-infix 2 Σ-syntax
-syntax Σ-syntax S (λ x → T) = Σ[ x ∈ S ] T
-Σ-syntax : ∀ {𝓈 𝓉} (S : Set 𝓈) (T : S → Set 𝓉) → Set _
-Σ-syntax = Σ
+infix 2 ∃-syntax
+syntax ∃-syntax S (λ x → T) = ∃[ x ∈ S ] T
+∃-syntax : ∀ {𝓈 𝓉} (S : Set 𝓈) (T : S → Set 𝓉) → Set _
+∃-syntax = ∃
 
 -- conjunction
-infixr 2 _×_
-_×_ : ∀ {𝓈 𝓉} (S : Set 𝓈) (T : Set 𝓉) → Set _
-S × T = Σ[ x ∈ S ] T
+infixr 2 _∧_
+_∧_ : ∀ {𝓈 𝓉} (S : Set 𝓈) (T : Set 𝓉) → Set _
+S ∧ T = ∃[ x ∈ S ] T
 
 -- binary relation
-Rel : ∀ {𝓈} (S : Set 𝓈) 𝓇 → Set _
-Rel S 𝓇 = S → S → Set 𝓇
+Rel : ∀ {𝓈} (S : Set 𝓈) ℯ → Set _
+Rel S ℯ = S → S → Set ℯ
 
 -- unique (intensional) existence
-infix 2 Σ!-syntax
-syntax Σ!-syntax S _≈_ (λ x → T) = Σ![ x ∈ S / _≈_ ] T
-Σ!-syntax : ∀ {𝓈 ℯ 𝓉} (S : Set 𝓈) (_≈_ : Rel S ℯ) (T : S → Set 𝓉) → Set _
-Σ!-syntax S _≈_ T = Σ[ x ∈ S ] T x × ∀ {y} → T y → x ≈ y
+infix 2 ∃!-syntax
+syntax ∃!-syntax S _≍_ (λ x → T) = ∃![ x ∈ S / _≍_ ] T
+∃!-syntax : ∀ {𝓈 ℯ 𝓉} (S : Set 𝓈) (_≍_ : Rel S ℯ) (T : S → Set 𝓉) → Set _
+∃!-syntax S _≍_ T = ∃[ x ∈ S ] T x ∧ ∀ {y} → T y → x ≍ y
 
--- flipping argument order
+-- identity function
+id : ∀ {𝓈} {S : Set 𝓈} → S → S
+id x = x
+
+-- argument order
 flip : ∀ {𝓈 𝓉 𝓊} {S : Set 𝓈} {T : Set 𝓉} {U : S → T → Set 𝓊}
        (f : ∀ x y → U x y) (y : T) (x : S) → U x y
 flip f y x = f x y
@@ -104,7 +108,7 @@ _∘_ : ∀ {𝓈 𝓉 𝓊} {S : Set 𝓈} {T : S → Set 𝓉} {U : ∀ {x} �
 -- bi-implication
 infix 1 _↔_
 _↔_ : ∀ {𝓈 𝓉} (S : Set 𝓈) (T : Set 𝓉) → Set _
-S ↔ T = (S → T) × (T → S)
+S ↔ T = (S → T) ∧ (T → S)
 
 -- (intensional) subset
 Subset : ∀ {𝓈} (S : Set 𝓈) 𝒶 → Set _
@@ -112,11 +116,11 @@ Subset S 𝒶 = S → Set 𝒶
 
 -- subset intersection
 _∩_ : ∀ {𝓈 𝒶 𝒷} {S : Set 𝓈} (A : Subset S 𝒶) (B : Subset S 𝒷) → Subset S _
-(A ∩ B) x = A x × B x
+(A ∩ B) x = A x ∧ B x
 ```
 :::
 
-::: {.align-bottom}
+::: {.align}
 It therefore came as a surprise when, as late as in 1967, Bishop stated,
 
 > A choice function exists in constructive mathematics, because a choice is *implied by the very
@@ -142,12 +146,12 @@ itself and not only in its interpretation.
 ```
 -- generalized (dependent) axiom of choice
 gac : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : I → Set 𝓈} {A : ∀ i → Subset (S i) 𝒶} →
-        (∀ i → Σ[ x ∈ S i ] A i x) → Σ[ f ∈ (∀ i → S i) ] ∀ i → A i (f i)
+        (∀ i → ∃[ x ∈ S i ] A i x) → ∃[ f ∈ (∀ i → S i) ] ∀ i → A i (f i)
 gac h = fst ∘ h , snd ∘ h
 
 -- (intensional, constructive, type-theoretic) axiom of choice
 ac : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : Set 𝓈} {A : I → Subset S 𝒶} →
-       (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] ∀ i → A i (f i)
+       (∀ i → ∃[ x ∈ S ] A i x) → ∃[ f ∈ (I → S) ] ∀ i → A i (f i)
 ac = gac
 ```
 :::
@@ -184,7 +188,7 @@ in his second paper on the well-ordering theorem from 1908,
 > deren jeder mindestens ein Element enthält, besitzt mindestens eine Untermenge $S_1,$ welche mit
 > jedem der betrachteten Teile $A,$ $B,$ $C,$ $…$ genau ein Element gemein hat.*]{lang=de}[^14]
 
-::: {.align-bottom}
+::: {.align}
 Formulated in this way, Zermelo’s axiom of choice turns out to coincide with the multiplicative
 axiom, which Whitehead and Russell had found indispensable for the development of the theory of
 cardinals.[^15] [^16]  The type-theoretic rendering of this formulation of the axiom of choice is
@@ -194,31 +198,35 @@ type theory, and that a subset of an exten&shy;sional set is interpreted as a pr
 which is exten&shy;sional with respect to the equivalence relation in question.
 
 ```
+Extensional : ∀ {𝓈 ℯS 𝓉 ℯT} {S : Set 𝓈} {T : Set 𝓉}
+                (_≍S_ : Rel S ℯS) (_≍T_ : Rel T ℯT) (f : S → T) → Set _
+Extensional _≍S_ _≍T_ f = ∀ {x y} → x ≍S y → f x ≍T f y
+
 -- extensional set (setoid)
-record ESet 𝓈 ℯ : Set (lsuc (𝓈 ⊔ ℯ)) where
+record ESet 𝓈 ℯ : Set (suc (𝓈 ⊔ ℯ)) where
   field
     Carrier : Set 𝓈
-    _≈_     : Rel Carrier ℯ
-    refl-≈  : ∀ {x} → x ≈ x
-    sym-≈   : ∀ {x y} → x ≈ y → y ≈ x
-    trans-≈ : ∀ {x y z} → x ≈ y → y ≈ z → x ≈ z
+    _≍_     : Rel Carrier ℯ
+    refl≍   : ∀ {x} → x ≍ x
+    sym≍    : ∀ {x y} → x ≍ y → y ≍ x
+    trans≍  : ∀ {x y z} → x ≍ y → y ≍ z → x ≍ z
 
 -- subset of an extensional set
-record ESubset {𝓈 ℯ} (ES : ESet 𝓈 ℯ) 𝒶 : Set (𝓈 ⊔ ℯ ⊔ lsuc 𝒶) where
-  private open module S = ESet ES using () renaming (Carrier to S)
+record ESubset {𝓈 ℯ} (ES : ESet 𝓈 ℯ) 𝒶 : Set (𝓈 ⊔ ℯ ⊔ suc 𝒶) where
+  open module S = ESet ES using () renaming (Carrier to S)
   field
     Carrier : Subset S 𝒶
-    ext     : ∀ {x y} → x S.≈ y → Carrier x ↔ Carrier y
+    ext     : Extensional S._≍_ _↔_ Carrier
 
 -- family of subsets of an extensional set
-record ESubsetFam {𝓈 ℯS 𝒾 ℯI} (ES : ESet 𝓈 ℯS) (EI : ESet 𝒾 ℯI) 𝒶
-                  : Set (𝓈 ⊔ ℯS ⊔ 𝒾 ⊔ ℯI ⊔ lsuc 𝒶) where
-  private open module S = ESet ES using () renaming (Carrier to S)
-  private open module I = ESet EI using () renaming (Carrier to I)
+record ESubsetFamily {𝓈 ℯS 𝒾 ℯI} (ES : ESet 𝓈 ℯS) (EI : ESet 𝒾 ℯI) 𝒶
+                     : Set (𝓈 ⊔ ℯS ⊔ 𝒾 ⊔ ℯI ⊔ suc 𝒶) where
+  open module S = ESet ES using () renaming (Carrier to S)
+  open module I = ESet EI using () renaming (Carrier to I)
   field
     Carrier : I → Subset S 𝒶
-    ext-S   : ∀ {x y i} → x S.≈ y → Carrier i x ↔ Carrier i y
-    ext-I   : ∀ {x i j} → i I.≈ j → Carrier i x ↔ Carrier j x
+    extS    : ∀ {i} → Extensional S._≍_ _↔_ (Carrier i)
+    extI    : ∀ {x} → Extensional I._≍_ _↔_ (flip Carrier x)
 ```
 :::
 
@@ -236,7 +244,7 @@ functions on $S$ satisfying the following properties,
 
 5.  $(∀i : I)(∃x : S)A_i(x)$ (nonemptiness).
 
-::: {.align-bottom}
+::: {.align}
 Given these data, the axiom guarantees the existence of a propositional function $S_1$ on $S$ such
 that
 
@@ -245,22 +253,31 @@ that
 7.  $(∀i : I)(∃!x : S)(A_i ∩ S_1)(x)$ (uniqueness of choice).
 
 ```
+MutuallyExclusive : ∀ {𝓈 𝒾 ℯI 𝒶} {S : Set 𝓈} {I : Set 𝒾}
+                      (_≍I_ : Rel I ℯI) (A : I → Subset S 𝒶) → Set _
+MutuallyExclusive _≍I_ A = ∀ {x i j} → A i x → A j x → i ≍I j
+
+Exhaustive : ∀ {𝓈 𝒾 𝒶} {S : Set 𝓈} {I : Set 𝒾} (A : I → S → Set 𝒶) → Set _
+Exhaustive {I = I} A = ∀ x → ∃[ i ∈ I ] A i x
+
+Nonempty : ∀ {𝓈 𝒾 𝒶} {S : Set 𝓈} {I : Set 𝒾} (A : I → S → Set 𝒶) → Set _
+Nonempty {S = S} A = ∀ i → ∃[ x ∈ S ] A i x
+
 -- Zermelo’s axiom of choice
-module _ {𝓈 ℯS 𝒾 ℯI 𝒶} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} {EA : ESubsetFam ES EI 𝒶} where
+module _ {𝓈 ℯS 𝒾 ℯI 𝒶} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} {EA : ESubsetFamily ES EI 𝒶} where
   private open module S = ESet ES using () renaming (Carrier to S)
   private open module I = ESet EI using () renaming (Carrier to I)
-  private open module A = ESubsetFam EA using () renaming (Carrier to A)
+  private open module A = ESubsetFamily EA using () renaming (Carrier to A)
 
   ZAC : Set _
-  ZAC = ∀ (p₃ : ∀ {x i j} → A i x → A j x → i I.≈ j)
-          (p₄ : ∀ x → Σ[ i ∈ I ] A i x)
-          (p₅ : ∀ i → Σ[ x ∈ S ] A i x) →
-            Σ[ ES₁ ∈ ESubset ES (ℯS ⊔ 𝒾) ] -- TODO: level?
-              ∀ i → Σ![ x ∈ S / S._≈_ ] (A i ∩ ESubset.Carrier ES₁) x
+  ZAC = MutuallyExclusive I._≍_ A → Exhaustive A → Nonempty A →
+          ∃[ ES₁ ∈ ESubset ES (ℯS ⊔ 𝒾) ]
+            let open module S₁ = ESubset ES₁ using () renaming (Carrier to S₁) in
+              ∀ i → ∃![ x ∈ S / S._≍_ ] (A i ∩ S₁) x
 ```
 :::
 
-::: {.align-bottom}
+::: {.align}
 The obvious way of trying to prove (6) and (7) from (1)–(5) is to apply the type-theoretic
 (constructive, inten&shy;sional) axiom of choice to (5), so as to get a function $f : I → S$ such
 that
@@ -307,61 +324,55 @@ follows from the strong rule of $∃$-elimination in type theory.  Thus our atte
 axiom of choice has failed, as was to be expected.
 
 ```
-Extensional : ∀ {𝓈 ℯS 𝓉 ℯT} {S : Set 𝓈} {T : Set 𝓉}
-                (_≈S_ : Rel S ℯS) (_≈T_ : Rel T ℯT) (f : S → T) → Set _
-Extensional _≈S_ _≈T_ f = ∀ {x y} → x ≈S y → f x ≈T f y
-
 -- extensional axiom of choice
-module _ {𝓈 ℯS 𝒾 ℯI} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} where
+module _ {𝓈 ℯS 𝒾 ℯI 𝒶} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} {EA : ESubsetFamily ES EI 𝒶} where
   private open module S = ESet ES using () renaming (Carrier to S)
   private open module I = ESet EI using () renaming (Carrier to I)
+  private open module A = ESubsetFamily EA using () renaming (Carrier to A)
 
-  module _ {𝒶} {EA : ESubsetFam ES EI 𝒶} where
-    private open module A = ESubsetFam EA using () renaming (Carrier to A)
+  EAC : Set _
+  EAC = Nonempty A → ∃[ f ∈ (I → S) ] Ext f ∧ ∀ i → A i (f i)
+    where
+      Ext : ∀ (f : I → S) → Set _
+      Ext = Extensional I._≍_ S._≍_
 
-    EAC : Set _
-    EAC = (∀ i → Σ[ x ∈ S ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
-      where
-        Ext : ∀ (f : I → S) → Set _
-        Ext = Extensional I._≈_ S._≈_
+  i→ii : EAC → ZAC {EA = EA}
+  i→ii eac p₃ p₄ p₅ = record { Carrier = S₁ ; ext = p₆ } , p₇
+    where
+      f : I → S
+      f = fst (eac p₅)
 
-    i→ii : EAC → ZAC {EA = EA}
-    i→ii eac p₃ p₄ p₅ = record { Carrier = S₁ ; ext = p₆ } , p₇
-      where
-        f : I → S
-        f = fst (eac p₅)
+      extf : Extensional I._≍_ S._≍_ f
+      extf = fst (snd (eac p₅))
 
-        ext-f : Extensional I._≈_ S._≈_ f
-        ext-f = fst (snd (eac p₅))
+      S₁ : Subset S _
+      S₁ x = ∃[ j ∈ I ] f j S.≍ x
 
-        S₁ : Subset S _
-        S₁ x = Σ[ j ∈ I ] f j S.≈ x
+      p₆ : Extensional S._≍_ _↔_ S₁
+      p₆ x≍y = (λ { (j , fj≍x) → j , S.trans≍ fj≍x x≍y })
+             , (λ { (j , fj≍y) → j , S.trans≍ fj≍y (S.sym≍ x≍y) })
 
-        p₆ : Extensional S._≈_ _↔_ S₁
-        p₆ x≈y = (λ { (j , fj≈x) → j , S.trans-≈ fj≈x x≈y })
-               , (λ { (j , fj≈y) → j , S.trans-≈ fj≈y (S.sym-≈ x≈y) })
+      choose : ∀ i → (A i ∩ S₁) (f i)
+      choose i = snd (snd (eac p₅)) i , i , S.refl≍
 
-        choose : ∀ i → (A i ∩ S₁) (f i)
-        choose i = snd (snd (eac p₅)) i , i , S.refl-≈
+      p₇ : ∀ i → ∃![ x ∈ S / S._≍_ ] (A i ∩ S₁) x
+      p₇ i = f i
+           , choose i
+           , (λ { {y} (Aiy , j , fj≍y) →
+               let
+                 Aj[fj] : A j (f j)
+                 Aj[fj] = fst (choose j)
 
-        p₇ : ∀ i → Σ![ x ∈ S / S._≈_ ] (A i ∩ S₁) x
-        p₇ i = f i
-             , choose i
-             , (λ { {y} (Aiy , j , fj≈y) →
-                 let
-                   Aj[fj] : A j (f j)
-                   Aj[fj] = fst (choose j)
+                 Ajy : A j y
+                 Ajy = fst (A.extS fj≍y) Aj[fj]
 
-                   Ajy : A j y
-                   Ajy = fst (A.ext-S fj≈y) Aj[fj]
+                 i≍j : i I.≍ j
+                 i≍j = p₃ Aiy Ajy
 
-                   i≈j : i I.≈ j
-                   i≈j = p₃ Aiy Ajy
-
-                   fi≈y : f i S.≈ y
-                   fi≈y = S.trans-≈ (ext-f i≈j) fj≈y
-                 in
-                   fi≈y })
+                 fi≍y : f i S.≍ y
+                 fi≍y = S.trans≍ (extf i≍j) fj≍y
+               in
+                 fi≍y })
 ```
 :::
 
@@ -402,7 +413,7 @@ This is precisely the result of the considerations prior to the formulation of t
 
 ###### (ii)$→$(iii).
 
-::: {.align-bottom}
+::: {.align}
 Let $(S, =_S)$ and $(I, =_I)$ be two exten&shy;sional sets, and let $f : S → I$ be an
 exten&shy;sional and surjective mapping between them.  By definition, put
 
@@ -458,41 +469,40 @@ by the exten&shy;sional dependence of $A_i$ on the index $i.$  The uniqueness pr
 $A_i ∩ S_1$ permits us to now conclude $g(i) =_S g(j)$ as desired.
 
 ```
-Surjective : ∀ {𝓈 𝓉 ℯ} {S : Set 𝓈} {T : Set 𝓉}
-               (_≈_ : Rel T ℯ) (f : S → T) → Set _
-Surjective {S = S} _≈_ f = ∀ y → Σ[ x ∈ S ] f x ≈ y
+Surjective : ∀ {𝓈 𝓉 ℯT} {S : Set 𝓈} {T : Set 𝓉} (_≍T_ : Rel T ℯT) (f : S → T) → Set _
+Surjective {S = S} _≍T_ f = ∀ y → ∃[ x ∈ S ] f x ≍T y
 
 module ii→iii {𝓈 ℯS 𝒾 ℯI} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} where
   private open module S = ESet ES using () renaming (Carrier to S)
   private open module I = ESet EI using () renaming (Carrier to I)
 
-  module _ (f : S → I) (ext-f : Extensional S._≈_ I._≈_ f) (surj-f : Surjective I._≈_ f) where
+  module _ (f : S → I) (extf : Extensional S._≍_ I._≍_ f) (surjf : Surjective I._≍_ f) where
     A : I → Subset S _
-    A i x = f x I.≈ i
+    A i x = f x I.≍ i
 
-    p₁ : ∀ {i} → Extensional S._≈_ _↔_ (A i)
-    p₁ x≈y = (λ fx≈i → I.trans-≈ (I.sym-≈ (ext-f x≈y)) fx≈i )
-           , (λ fy≈i → I.trans-≈ (ext-f x≈y) fy≈i)
+    p₁ : ∀ {i} → Extensional S._≍_ _↔_ (A i)
+    p₁ x≍y = (λ fx≍i → I.trans≍ (I.sym≍ (extf x≍y)) fx≍i )
+           , (λ fy≍i → I.trans≍ (extf x≍y) fy≍i)
 
-    p₂ : ∀ {x} → Extensional I._≈_ _↔_ (flip A x)
-    p₂ i≈j = (λ fx≈i → I.trans-≈ fx≈i i≈j)
-           , (λ fx≈j → I.trans-≈ fx≈j (I.sym-≈ i≈j))
+    p₂ : ∀ {x} → Extensional I._≍_ _↔_ (flip A x)
+    p₂ i≍j = (λ fx≍i → I.trans≍ fx≍i i≍j)
+           , (λ fx≍j → I.trans≍ fx≍j (I.sym≍ i≍j))
 
-    p₃ : ∀ {x i j} → A i x → A j x → i I.≈ j
-    p₃ fx≈i fx≈j = I.trans-≈ (I.sym-≈ fx≈i) fx≈j
+    p₃ : ∀ {x i j} → A i x → A j x → i I.≍ j
+    p₃ fx≍i fx≍j = I.trans≍ (I.sym≍ fx≍i) fx≍j
 
-    p₄ : ∀ x → Σ[ i ∈ I ] A i x
-    p₄ x = f x , I.refl-≈
+    p₄ : ∀ x → ∃[ i ∈ I ] A i x
+    p₄ x = f x , I.refl≍
 
-    p₅ : ∀ i → Σ[ x ∈ S ] A i x
-    p₅ = surj-f
+    p₅ : ∀ i → ∃[ x ∈ S ] A i x
+    p₅ = surjf
 
-    EA : ESubsetFam ES EI ℯI
-    EA = record { Carrier = A ; ext-S = p₁ ; ext-I = p₂ }
+    EA : ESubsetFamily ES EI ℯI
+    EA = record { Carrier = A ; extS = p₁ ; extI = p₂ }
 
     module _ (zac : ZAC {EA = EA}) where
-      choice : Σ[ ES₁ ∈ ESubset ES (ℯS ⊔ 𝒾) ]
-                  ∀ i → Σ![ x ∈ S / S._≈_ ] (A i ∩ ESubset.Carrier ES₁) x
+      choice : ∃[ ES₁ ∈ ESubset ES (ℯS ⊔ 𝒾) ]
+                  ∀ i → ∃![ x ∈ S / S._≍_ ] (A i ∩ ESubset.Carrier ES₁) x
       choice = zac p₃ p₄ p₅
 
       ES₁ : ESubset ES (ℯS ⊔ 𝒾)
@@ -503,21 +513,20 @@ module ii→iii {𝓈 ℯS 𝒾 ℯI} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI
       g : I → S
       g = fst (ac (snd choice))
 
-      -- TODO: name!
-      prop-g₁₂ : ∀ i → (A i ∩ S₁) (g i)
-      prop-g₁₂ i = fst (snd (ac (snd choice)) i)
+      wat : ∀ i → (A i ∩ S₁) (g i) -- TODO: name?
+      wat i = fst (snd (ac (snd choice)) i)
 
-      unique : ∀ i {y} → (A i ∩ S₁) y → g i S.≈ y
+      unique : ∀ i {y} → (A i ∩ S₁) y → g i S.≍ y
       unique i = snd (snd (ac (snd choice)) i)
 
-      ext-g : Extensional I._≈_ S._≈_ g
-      ext-g {i} {j} i≈j =
+      extg : Extensional I._≍_ S._≍_ g
+      extg {i} {j} i≍j =
         let
           fact₂ : (A j ∩ S₁) (g j)
-          fact₂ = prop-g₁₂ j
+          fact₂ = wat j
 
           fact₃ : (A i ∩ S₁) (g j)
-          fact₃ = snd (p₂ i≈j) (fst fact₂) , snd fact₂
+          fact₃ = snd (p₂ i≍j) (fst fact₂) , snd fact₂
         in
           unique i fact₃
 ```
@@ -669,7 +678,7 @@ which the law of excluded middle follows from the exten&shy;sional axiom of choi
 constructive type theory.[^20]  The final conclusion is anyhow that $\text{ZFC}$ is interpretable in
 $\text{CTT}$ $+$ $\text{ExtAC}.$
 
-::: {.align-bottom}
+::: {.align}
 When Zermelo’s axiom of choice is formulated in the context of constructive type theory instead of
 Zermelo-Fraenkel set theory, it appears as $\text{ExtAC},$ the exten&shy;sional axiom of choice
 
@@ -706,19 +715,19 @@ exten&shy;sional choice, as opposed to $\text{ExtAC},$ which lacks justification
 
 ```
 -- axiom of unique choice
-module _ {𝓈 ℯS 𝒾 ℯI 𝒶} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} {EA : ESubsetFam ES EI 𝒶} where
+module _ {𝓈 ℯS 𝒾 ℯI 𝒶} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} {EA : ESubsetFamily ES EI 𝒶} where
   private open module S = ESet ES using () renaming (Carrier to S)
   private open module I = ESet EI using () renaming (Carrier to I)
-  private open module A = ESubsetFam EA using () renaming (Carrier to A)
+  private open module A = ESubsetFamily EA using () renaming (Carrier to A)
 
   AC! : Set _
-  AC! = (∀ i → Σ![ x ∈ S / S._≈_ ] A i x) → Σ[ f ∈ (I → S) ] Ext f × ∀ i → A i (f i)
+  AC! = (∀ i → ∃![ x ∈ S / S._≍_ ] A i x) → ∃[ f ∈ (I → S) ] Ext f ∧ ∀ i → A i (f i)
     where
       Ext : ∀ (f : I → S) → Set _
-      Ext = Extensional I._≈_ S._≈_
+      Ext = Extensional I._≍_ S._≍_
 
   ac! : AC!
-  ac! h = f , ext-f , wat
+  ac! h = f , extf , wat
     where
       f : I → S
       f = fst (ac h)
@@ -726,17 +735,17 @@ module _ {𝓈 ℯS 𝒾 ℯI 𝒶} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} 
       wat : ∀ i → A i (f i) -- TODO: name?
       wat i = fst (snd (ac h) i)
 
-      unique : ∀ i {y} → A i y → f i S.≈ y
+      unique : ∀ i {y} → A i y → f i S.≍ y
       unique i = snd (snd (ac h) i)
 
-      ext-f : Extensional I._≈_ S._≈_ f
-      ext-f {i} {j} i≈j =
+      extf : Extensional I._≍_ S._≍_ f
+      extf {i} {j} i≍j =
         let
           Aj[fj] : A j (f j)
           Aj[fj] = wat j
 
           Ai[fj] : A i (f j)
-          Ai[fj] = fst (A.ext-I (I.sym-≈ i≈j)) Aj[fj]
+          Ai[fj] = fst (A.extI (I.sym≍ i≍j)) Aj[fj]
         in
           unique i Ai[fj]
 ```
