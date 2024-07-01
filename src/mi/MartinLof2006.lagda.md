@@ -91,11 +91,7 @@ syntax ∃!-syntax S _≍_ (λ x → T) = ∃![ x ∈ S / _≍_ ] T
 ∃!-syntax : ∀ {𝓈 ℯ 𝓉} (S : Set 𝓈) (_≍_ : Rel S ℯ) (T : S → Set 𝓉) → Set _
 ∃!-syntax S _≍_ T = ∃[ x ∈ S ] T x ∧ ∀ {y} → T y → x ≍ y
 
--- identity function
-id : ∀ {𝓈} {S : Set 𝓈} → S → S
-id x = x
-
--- argument order
+-- flipped argument order
 flip : ∀ {𝓈 𝓉 𝓊} {S : Set 𝓈} {T : Set 𝓉} {U : S → T → Set 𝓊}
        (f : ∀ x y → U x y) (y : T) (x : S) → U x y
 flip f y x = f x y
@@ -254,13 +250,13 @@ that
 
 ```
 MutuallyExclusive : ∀ {𝓈 𝒾 ℯI 𝒶} {S : Set 𝓈} {I : Set 𝒾}
-                      (_≍I_ : Rel I ℯI) (A : I → Subset S 𝒶) → Set _
-MutuallyExclusive _≍I_ A = ∀ {x i j} → A i x → A j x → i ≍I j
+                      (_≍_ : Rel I ℯI) (A : I → Subset S 𝒶) → Set _
+MutuallyExclusive _≍_ A = ∀ {x i j} → A i x → A j x → i ≍ j
 
-Exhaustive : ∀ {𝓈 𝒾 𝒶} {S : Set 𝓈} {I : Set 𝒾} (A : I → S → Set 𝒶) → Set _
+Exhaustive : ∀ {𝓈 𝒾 𝒶} {S : Set 𝓈} {I : Set 𝒾} (A : I → Subset S 𝒶) → Set _
 Exhaustive {I = I} A = ∀ x → ∃[ i ∈ I ] A i x
 
-Nonempty : ∀ {𝓈 𝒾 𝒶} {S : Set 𝓈} {I : Set 𝒾} (A : I → S → Set 𝒶) → Set _
+Nonempty : ∀ {𝓈 𝒾 𝒶} {S : Set 𝓈} {I : Set 𝒾} (A : I → Subset S 𝒶) → Set _
 Nonempty {S = S} A = ∀ i → ∃[ x ∈ S ] A i x
 
 -- Zermelo’s axiom of choice
@@ -270,10 +266,12 @@ module _ {𝓈 ℯS 𝒾 ℯI 𝒶} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} 
   private open module A = ESubsetFamily EA using () renaming (Carrier to A)
 
   ZAC : Set _
-  ZAC = MutuallyExclusive I._≍_ A → Exhaustive A → Nonempty A →
-          ∃[ ES₁ ∈ ESubset ES (ℯS ⊔ 𝒾) ]
-            let open module S₁ = ESubset ES₁ using () renaming (Carrier to S₁) in
-              ∀ i → ∃![ x ∈ S / S._≍_ ] (A i ∩ S₁) x
+  ZAC = MutuallyExclusive I._≍_ A →
+          Exhaustive A →
+            Nonempty A →
+              ∃[ ES₁ ∈ ESubset ES (ℯS ⊔ 𝒾) ]
+                let open module S₁ = ESubset ES₁ using () renaming (Carrier to S₁) in
+                  ∀ i → ∃![ x ∈ S / S._≍_ ] (A i ∩ S₁) x
 ```
 :::
 
@@ -331,10 +329,7 @@ module _ {𝓈 ℯS 𝒾 ℯI 𝒶} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} 
   private open module A = ESubsetFamily EA using () renaming (Carrier to A)
 
   EAC : Set _
-  EAC = Nonempty A → ∃[ f ∈ (I → S) ] Ext f ∧ ∀ i → A i (f i)
-    where
-      Ext : ∀ (f : I → S) → Set _
-      Ext = Extensional I._≍_ S._≍_
+  EAC = Nonempty A → ∃[ f ∈ (I → S) ] Extensional I._≍_ S._≍_ f ∧ ∀ i → A i (f i)
 
   i→ii : EAC → ZAC {EA = EA}
   i→ii eac p₃ p₄ p₅ = record { Carrier = S₁ ; ext = p₆ } , p₇
@@ -469,14 +464,27 @@ by the exten&shy;sional dependence of $A_i$ on the index $i.$  The uniqueness pr
 $A_i ∩ S_1$ permits us to now conclude $g(i) =_S g(j)$ as desired.
 
 ```
-Surjective : ∀ {𝓈 𝓉 ℯT} {S : Set 𝓈} {T : Set 𝓉} (_≍T_ : Rel T ℯT) (f : S → T) → Set _
-Surjective {S = S} _≍T_ f = ∀ y → ∃[ x ∈ S ] f x ≍T y
+Surjective : ∀ {𝓈 𝓉 ℯT} {S : Set 𝓈} {T : Set 𝓉} (_≍_ : Rel T ℯT) (f : S → T) → Set _
+Surjective {S = S} _≍_ f = ∀ y → ∃[ x ∈ S ] f x ≍ y
 
-module ii→iii {𝓈 ℯS 𝒾 ℯI} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} where
+RightInverseOf : ∀ {𝓈 𝓉 ℯT} {S : Set 𝓈} {T : Set 𝓉}
+                   (_≍_ : Rel T ℯT) (g : T → S) (f : S → T) → Set _
+RightInverseOf _≍_ g f = ∀ y → (f ∘ g) y ≍ y
+
+EpimorphismsSplit : ∀ {𝓈 ℯS 𝓉 ℯT} {S : Set 𝓈} {T : Set 𝓉}
+                      (_≍S_ : Rel S ℯS) (_≍T_ : Rel T ℯT) → Set _
+EpimorphismsSplit {S = S} {T} _≍S_ _≍T_ =
+    ∀ (f : S → T) → Extensional _≍S_ _≍T_ f → Surjective _≍T_ f →
+      ∃[ g ∈ (T → S) ] RightInverseOf _≍T_ g f ∧ Extensional _≍T_ _≍S_ g
+
+module _ {𝓈 ℯS 𝒾 ℯI} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} where
   private open module S = ESet ES using () renaming (Carrier to S)
   private open module I = ESet EI using () renaming (Carrier to I)
 
-  module _ (f : S → I) (extf : Extensional S._≍_ I._≍_ f) (surjf : Surjective I._≍_ f) where
+  -- ii→iii : ZAC → EpimorphismsSplit
+  -- ii→iii = ?
+
+  module Wat (f : S → I) (extf : Extensional S._≍_ I._≍_ f) (surjf : Surjective I._≍_ f) where
     A : I → Subset S _
     A i x = f x I.≍ i
 
@@ -721,10 +729,8 @@ module _ {𝓈 ℯS 𝒾 ℯI 𝒶} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} 
   private open module A = ESubsetFamily EA using () renaming (Carrier to A)
 
   AC! : Set _
-  AC! = (∀ i → ∃![ x ∈ S / S._≍_ ] A i x) → ∃[ f ∈ (I → S) ] Ext f ∧ ∀ i → A i (f i)
-    where
-      Ext : ∀ (f : I → S) → Set _
-      Ext = Extensional I._≍_ S._≍_
+  AC! = (∀ i → ∃![ x ∈ S / S._≍_ ] A i x) →
+          ∃[ f ∈ (I → S) ] Extensional I._≍_ S._≍_ f ∧ ∀ i → A i (f i)
 
   ac! : AC!
   ac! h = f , extf , wat
