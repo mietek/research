@@ -17,6 +17,8 @@ card:
 ```
 -- Mechanised by Miëtek Bak
 
+{-# OPTIONS --allow-unsolved-metas #-}
+
 module mi.MartinLof2006 where
 
 open import Agda.Primitive using (_⊔_) renaming (lsuc to suc)
@@ -260,18 +262,20 @@ Nonempty : ∀ {𝓈 𝒾 𝒶} {S : Set 𝓈} {I : Set 𝒾} (A : I → Subset 
 Nonempty {S = S} A = ∀ i → ∃[ x ∈ S ] A i x
 
 -- Zermelo’s axiom of choice
-module _ {𝓈 ℯS 𝒾 ℯI 𝒶} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} {EA : ESubsetFamily ES EI 𝒶} where
+module _ {𝓈 ℯS 𝒾 ℯI} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} where
   private open module S = ESet ES using () renaming (Carrier to S)
   private open module I = ESet EI using () renaming (Carrier to I)
-  private open module A = ESubsetFamily EA using () renaming (Carrier to A)
 
-  ZAC : Set _
-  ZAC = MutuallyExclusive I._≍_ A →
-          Exhaustive A →
-            Nonempty A →
-              ∃[ ES₁ ∈ ESubset ES (ℯS ⊔ 𝒾) ]
-                let open module S₁ = ESubset ES₁ using () renaming (Carrier to S₁) in
-                  ∀ i → ∃![ x ∈ S / S._≍_ ] (A i ∩ S₁) x
+  module _ {𝒶} {EA : ESubsetFamily ES EI 𝒶} where
+    private open module A = ESubsetFamily EA using () renaming (Carrier to A)
+
+    ZAC : Set _
+    ZAC = MutuallyExclusive I._≍_ A →
+            Exhaustive A →
+              Nonempty A →
+                ∃[ ES₁ ∈ ESubset ES (ℯS ⊔ 𝒾) ]
+                  let open module S₁ = ESubset ES₁ using () renaming (Carrier to S₁) in
+                    ∀ i → ∃![ x ∈ S / S._≍_ ] (A i ∩ S₁) x
 ```
 :::
 
@@ -524,6 +528,9 @@ module _ {𝓈 ℯS 𝒾 ℯI} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} where
       wat : ∀ i → (A i ∩ S₁) (g i) -- TODO: name?
       wat i = fst (snd (ac (snd choice)) i)
 
+      prop-g₁₂₁ : ∀ i → f (g i) I.≍ i
+      prop-g₁₂₁ i = fst (wat i)
+
       unique : ∀ i {y} → (A i ∩ S₁) y → g i S.≍ y
       unique i = snd (snd (ac (snd choice)) i)
 
@@ -537,6 +544,12 @@ module _ {𝓈 ℯS 𝒾 ℯI} {ES : ESet 𝓈 ℯS} {EI : ESet 𝒾 ℯI} where
           fact₃ = snd (p₂ i≍j) (fst fact₂) , snd fact₂
         in
           unique i fact₃
+
+  iii : EpimorphismsSplit S._≍_ I._≍_
+  iii f extf surjf = Wat.g f extf surjf zac , Wat.prop-g₁₂₁ f extf surjf zac , Wat.extg f extf surjf zac
+    where
+      zac : ZAC {EA = Wat.EA f extf surjf}
+      zac = ?
 ```
 :::
 
