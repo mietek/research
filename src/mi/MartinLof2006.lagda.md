@@ -72,7 +72,7 @@ of the axiom of choice seems to be found in either Brouwer’s or Heyting’s wr
 was regarded by them as a prime example of a nonconstructive principle.
 
 ```
--- identity
+-- identity function
 id : ∀ {𝓈} {S : Set 𝓈} → S → S
 id x = x
 
@@ -85,7 +85,7 @@ flip : ∀ {𝓈 𝓉 𝓊} {S : Set 𝓈} {T : Set 𝓉} {U : S → T → Set �
        (f : ∀ x y → U x y) (y : T) (x : S) → U x y
 flip f y x = f x y
 
--- (dependent) composition
+-- (dependent) function composition
 _∘_ : ∀ {𝓈 𝓉 𝓊} {S : Set 𝓈} {T : S → Set 𝓉} {U : ∀ {x} → T x → Set 𝓊}
         (f : ∀ {x} (y : T x) → U y) (g : ∀ x → T x) (x : S) → U (g x)
 (f ∘ g) x = f (g x)
@@ -111,6 +111,15 @@ S ∧ T = Σ S (const T)
 Rel : ∀ {𝓈} (S : Set 𝓈) ℯ → Set _
 Rel S ℯ = S → S → Set ℯ
 
+Reflexive : ∀ {𝓈 ℯ} {S : Set 𝓈} (_≍_ : Rel S ℯ) → Set _
+Reflexive _≍_ = ∀ {x} → x ≍ x
+
+Symmetric : ∀ {𝓈 ℯ} {S : Set 𝓈} (_≍_ : Rel S ℯ) → Set _
+Symmetric _≍_ = ∀ {x y} → x ≍ y → y ≍ x
+
+Transitive : ∀ {𝓈 ℯ} {S : Set 𝓈} (_≍_ : Rel S ℯ) → Set _
+Transitive _≍_ = ∀ {x y z} → x ≍ y → y ≍ z → x ≍ z
+
 -- unique existence
 infix 2 Σ!-syntax
 syntax Σ!-syntax S _≍_ (λ x → T) = Σ![ x ⦂ S / _≍_ ] T
@@ -129,6 +138,14 @@ Subset S 𝒶 = S → Set 𝒶
 -- subset intersection
 _∩_ : ∀ {𝓈 𝒶 𝒷} {S : Set 𝓈} (A : Subset S 𝒶) (B : Subset S 𝒷) → Subset S _
 (A ∩ B) x = A x ∧ B x
+
+-- symmetry of identity type
+sym : ∀ {𝓈} {S : Set 𝓈} → Symmetric {S = S} Id
+sym refl = refl
+
+-- transitivity of identity type
+trans : ∀ {𝓈} {S : Set 𝓈} → Transitive {S = S} Id
+trans refl x=z = x=z
 ```
 :::
 
@@ -156,7 +173,7 @@ became possible to formulate as a result of having made the proof objects appear
 itself and not only in its interpretation.
 
 ```
--- generalized (dependent) axiom of choice
+-- generalized (intensional, constructive, type-theoretic) axiom of choice
 gac : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : I → Set 𝓈} {A : ∀ i → Subset (S i) 𝒶} →
         (∀ i → Σ[ x ] A i x) → Σ[ f ] ∀ i → A i (f i)
 gac h = fst ∘ h , snd ∘ h
@@ -210,18 +227,26 @@ type theory, and that a subset of an exten&shy;sional set is interpreted as a pr
 which is exten&shy;sional with respect to the equivalence relation in question.
 
 ```
-Extensional : ∀ {𝓈 ℯS 𝓉 ℯT} {S : Set 𝓈} {T : Set 𝓉}
-                (_≍S_ : Rel S ℯS) (_≍T_ : Rel T ℯT) (f : S → T) → Set _
-Extensional _≍S_ _≍T_ f = ∀ {x y} → x ≍S y → f x ≍T f y
-
 -- extensional set (setoid)
 record ESet 𝓈 ℯ : Set (suc (𝓈 ⊔ ℯ)) where
   field
     Carrier : Set 𝓈
     _≍_     : Rel Carrier ℯ
-    refl≍   : ∀ {x} → x ≍ x
-    sym≍    : ∀ {x y} → x ≍ y → y ≍ x
-    trans≍  : ∀ {x y z} → x ≍ y → y ≍ z → x ≍ z
+    refl-≍  : ∀ {x} → x ≍ x
+    sym-≍   : ∀ {x y} → x ≍ y → y ≍ x
+    trans-≍ : ∀ {x y z} → x ≍ y → y ≍ z → x ≍ z
+
+EId : ∀ {𝓈} {S : Set 𝓈} → ESet 𝓈 𝓈
+EId {S = S} = record { Carrier = S
+                     ; _≍_     = Id
+                     ; refl-≍  = refl
+                     ; sym-≍   = sym
+                     ; trans-≍ = trans
+                     }
+
+Extensional : ∀ {𝓈 ℯS 𝓉 ℯT} {S : Set 𝓈} {T : Set 𝓉}
+                (_≍S_ : Rel S ℯS) (_≍T_ : Rel T ℯT) (f : S → T) → Set _
+Extensional _≍S_ _≍T_ f = ∀ {x y} → x ≍S y → f x ≍T f y
 
 -- subset of an extensional set
 record ESubset {𝓈 ℯ} (ES : ESet 𝓈 ℯ) 𝒶 : Set (𝓈 ⊔ ℯ ⊔ suc 𝒶) where
@@ -237,8 +262,8 @@ record ESubsetFamily {𝒾 ℯI 𝓈 ℯS} (EI : ESet 𝒾 ℯI) (ES : ESet 𝓈
   open module S = ESet ES using () renaming (Carrier to S)
   field
     Carrier : I → Subset S 𝒶
-    extI    : ∀ {x} → Extensional I._≍_ _↔_ (flip Carrier x)
-    extS    : ∀ {i} → Extensional S._≍_ _↔_ (Carrier i)
+    ext-I   : ∀ {x} → Extensional I._≍_ _↔_ (flip Carrier x)
+    ext-S   : ∀ {i} → Extensional S._≍_ _↔_ (Carrier i)
 ```
 :::
 
@@ -349,8 +374,8 @@ EAC 𝒾 ℯI 𝓈 ℯS 𝒶 = ∀ {EI : ESet 𝒾 ℯI} {ES : ESet 𝓈 ℯS}
                         Σ[ f ] Extensional _≍I_ _≍S_ f ∧ ∀ i → A i (f i)
 
 i→ii : ∀ {𝒾 ℯI 𝓈 ℯS 𝒶} → EAC 𝒾 ℯI 𝓈 ℯS 𝒶 → ZAC 𝒾 ℯI 𝓈 ℯS 𝒶
-i→ii eac {EI} {ES} {EA} p₃ p₄ p₅ =
-  let
+i→ii eac {EI} {ES} {EA} p₃ p₄ p₅ = record { Carrier = S₁ ; ext = p₆ } , p₇
+  where
     open module I = ESet EI using () renaming (Carrier to I)
     open module S = ESet ES using () renaming (Carrier to S)
     open module A = ESubsetFamily EA using () renaming (Carrier to A)
@@ -365,30 +390,29 @@ i→ii eac {EI} {ES} {EA} p₃ p₄ p₅ =
     S₁ x = Σ[ j ] f j S.≍ x
 
     p₆ : Extensional S._≍_ _↔_ S₁
-    p₆ x≍y = (λ { (j , fj≍x) → j , S.trans≍ fj≍x x≍y }) ,
-              λ { (j , fj≍y) → j , S.trans≍ fj≍y (S.sym≍ x≍y) }
+    p₆ x≍y = (λ { (j , fj≍x) → j , S.trans-≍ fj≍x x≍y }) ,
+              λ { (j , fj≍y) → j , S.trans-≍ fj≍y (S.sym-≍ x≍y) }
 
     common : ∀ i → (A i ∩ S₁) (f i)
-    common i = snd (snd (eac p₅)) i , i , S.refl≍
+    common i = snd (snd (eac p₅)) i , i , S.refl-≍
 
-    p₇ : ∀ i → Σ![ x ⦂ S / S._≍_ ] (A i ∩ S₁) x
-    p₇ i = f i , common i , λ { {y} (yhere , j , fj≍y) →
-      let
+    unique : ∀ i {y} → (A i ∩ S₁) y → f i S.≍ y
+    unique i {y} (yhere , j , fj≍y) = fi≍y
+      where
         fjthere : A j (f j)
         fjthere = fst (common j)
 
         ythere : A j y
-        ythere = fst (A.extS fj≍y) fjthere
+        ythere = fst (A.ext-S fj≍y) fjthere
 
         i≍j : i I.≍ j
         i≍j = p₃ yhere ythere
 
         fi≍y : f i S.≍ y
-        fi≍y = S.trans≍ (fext i≍j) fj≍y
-      in
-        fi≍y }
-  in
-    record { Carrier = S₁ ; ext = p₆ } , p₇
+        fi≍y = S.trans-≍ (fext i≍j) fj≍y
+
+    p₇ : ∀ i → Σ![ x ⦂ S / S._≍_ ] (A i ∩ S₁) x
+    p₇ i = f i , common i , unique i
 ```
 :::
 
@@ -493,18 +517,18 @@ RightInverse : ∀ {𝓈 𝓉 ℯT} {S : Set 𝓈} {T : Set 𝓉}
 RightInverse _≍_ g f = ∀ y → (f ∘ g) y ≍ y
 
 -- every surjective extensional function has an extensional right inverse
-EpimorphismsSplit : ∀ 𝓈 ℯS 𝓉 ℯT → Set _
-EpimorphismsSplit 𝓈 ℯS 𝓉 ℯT = ∀ {ES : ESet 𝓈 ℯS} {ET : ESet 𝓉 ℯT}
-                                (open ESet ES using () renaming (Carrier to S ; _≍_ to _≍S_))
-                                (open ESet ET using () renaming (Carrier to T ; _≍_ to _≍T_))
-                                (f : S → T) →
-                                  Extensional _≍S_ _≍T_ f →
-                                    Surjective _≍T_ f →
-                                      Σ[ g ] RightInverse _≍T_ g f ∧ Extensional _≍T_ _≍S_ g
+III : ∀ 𝓈 ℯS 𝓉 ℯT → Set _
+III 𝓈 ℯS 𝓉 ℯT = ∀ {ES : ESet 𝓈 ℯS} {ET : ESet 𝓉 ℯT}
+                  (open ESet ES using () renaming (Carrier to S ; _≍_ to _≍S_))
+                  (open ESet ET using () renaming (Carrier to T ; _≍_ to _≍T_))
+                  (f : S → T) →
+                    Extensional _≍S_ _≍T_ f →
+                      Surjective _≍T_ f →
+                        Σ[ g ] RightInverse _≍T_ g f ∧ Extensional _≍T_ _≍S_ g
 
-ii→iii : ∀ {𝒾 ℯI 𝓈 ℯS} → ZAC 𝒾 ℯI 𝓈 ℯS ℯI → EpimorphismsSplit 𝓈 ℯS 𝒾 ℯI
-ii→iii zac {ES} {EI} f fext fsurj =
-  let
+ii→iii : ∀ {𝒾 ℯI 𝓈 ℯS} → ZAC 𝒾 ℯI 𝓈 ℯS ℯI → III 𝓈 ℯS 𝒾 ℯI
+ii→iii zac {ES} {EI} f fext fsurj = g , grinv , gext
+  where
     open module I = ESet EI using () renaming (Carrier to I)
     open module S = ESet ES using () renaming (Carrier to S)
 
@@ -512,24 +536,24 @@ ii→iii zac {ES} {EI} f fext fsurj =
     A i x = f x I.≍ i
 
     p₁ : ∀ {i} → Extensional S._≍_ _↔_ (A i)
-    p₁ x≍y = (λ fx≍i → I.trans≍ (I.sym≍ (fext x≍y)) fx≍i ) ,
-              λ fy≍i → I.trans≍ (fext x≍y) fy≍i
+    p₁ x≍y = (λ fx≍i → I.trans-≍ (I.sym-≍ (fext x≍y)) fx≍i ) ,
+              λ fy≍i → I.trans-≍ (fext x≍y) fy≍i
 
     p₂ : ∀ {x} → Extensional I._≍_ _↔_ (flip A x)
-    p₂ i≍j = (λ fx≍i → I.trans≍ fx≍i i≍j) ,
-              λ fx≍j → I.trans≍ fx≍j (I.sym≍ i≍j)
+    p₂ i≍j = (λ fx≍i → I.trans-≍ fx≍i i≍j) ,
+              λ fx≍j → I.trans-≍ fx≍j (I.sym-≍ i≍j)
 
-    p₃ : ∀ {x i j} → A i x → A j x → i I.≍ j
-    p₃ fx≍i fx≍j = I.trans≍ (I.sym≍ fx≍i) fx≍j
+    p₃ : MutuallyExclusive I._≍_ A
+    p₃ fx≍i fx≍j = I.trans-≍ (I.sym-≍ fx≍i) fx≍j
 
-    p₄ : ∀ x → Σ[ i ] A i x
-    p₄ x = f x , I.refl≍
+    p₄ : Exhaustive A
+    p₄ x = f x , I.refl-≍
 
-    p₅ : ∀ i → Σ[ x ] A i x
+    p₅ : Nonempty A
     p₅ = fsurj
 
     EA : ESubsetFamily EI ES _
-    EA = record { Carrier = A ; extS = p₁ ; extI = p₂ }
+    EA = record { Carrier = A ; ext-S = p₁ ; ext-I = p₂ }
 
     choice : Σ[ ES₁ ]
                let open ESubset ES₁ using () renaming (Carrier to S₁) in
@@ -544,35 +568,32 @@ ii→iii zac {ES} {EI} f fext fsurj =
     g : I → S
     g = fst (ac (snd choice))
 
-    there : ∀ i → (A i ∩ S₁) (g i)
-    there i = fst (snd (ac (snd choice)) i)
+    common : ∀ i → (A i ∩ S₁) (g i)
+    common i = fst (snd (ac (snd choice)) i)
 
     unique : ∀ i {y} → (A i ∩ S₁) y → g i S.≍ y
     unique i = snd (snd (ac (snd choice)) i)
 
     grinv : RightInverse I._≍_ g f
-    grinv i = fst (there i)
+    grinv i = fst (common i)
 
     gext : Extensional I._≍_ S._≍_ g
-    gext {i} {j} i≍j =
-      let
+    gext {i} {j} i≍j = gi≍gj
+      where
         gjthere : (A j ∩ S₁) (g j)
-        gjthere = there j
+        gjthere = common j
 
         gjhere : (A i ∩ S₁) (g j)
         gjhere = snd (p₂ i≍j) (fst gjthere) , snd gjthere
 
         gi≍gj : g i S.≍ g j
         gi≍gj = unique i gjhere
-      in
-        gi≍gj
-  in
-    g , grinv , gext
 ```
 :::
 
 ###### (iii)$→$(iv).
 
+::: {.align}
 Let $I$ be a set equipped with an equivalence relation $=_I.$  Then the identity function on $I$ is
 an exten&shy;sional surjection from $(I, \text{Id}_I)$ to $(I, =_I),$ since any function is
 exten&shy;sional with respect to the identity relation.  Assuming that epimorphisms split, we can
@@ -587,8 +608,39 @@ $$i =_I j → \text{Id}_I(g(i), g(j)),$$
 which is to say that $g$ has the miraculous property of picking a unique representative from each
 equivalence class of the given equivalence relation $=_I.$
 
+```
+-- unique representatives can be picked from equivalence classes of any equivalence relation
+IV : ∀ 𝒾 ℯI → Set (suc (𝒾 ⊔ ℯI))
+IV 𝒾 ℯI = ∀ {EI : ESet 𝒾 ℯI} → {!!}
+
+iii→iv : ∀ {𝒾 ℯI} → III 𝒾 𝒾 𝒾 ℯI → IV 𝒾 ℯI
+iii→iv iii {EI} = {!!}
+  where
+    open module I = ESet EI using () renaming (Carrier to I)
+
+    f : I → I
+    f = id
+
+    fext : Extensional Id I._≍_ f
+    fext refl = I.refl-≍
+
+    fsurj : Surjective I._≍_ f
+    fsurj j = j , I.refl-≍
+
+    split : Σ[ g ] RightInverse I._≍_ g f ∧ Extensional I._≍_ Id g
+    split = iii {ES = EId} {EI} f fext fsurj
+
+    g : I → I
+    g = fst split
+
+    gext : Extensional I._≍_ Id g
+    gext = snd (snd split)
+```
+:::
+
 ###### (iv)$→$(i).
 
+::: {.align}
 Let $(I, =_I)$ and $(S, =_S)$ be two sets, each equipped with an equivalence relation, and let
 $(A_i)_{i : I}$ be a family of exten&shy;sional subsets of $S,$
 
@@ -638,6 +690,11 @@ $$(∀i : I)A_i(\underbrace{f(g(i))}_{(f \circ g)(i)}).$$
 
 Hence $f \circ g$ has become an exten&shy;sional choice function, which means that the
 exten&shy;sional axiom of choice is satisfied.
+
+```
+-- TODO: iv→i
+```
+:::
 
 Another indication that the exten&shy;sional axiom of choice is the correct type-theoretic
 rendering of Zermelo’s axiom of choice comes from constructive set theory.  Peter Aczel has shown
@@ -764,8 +821,8 @@ AC! 𝒾 ℯI 𝓈 ℯS 𝒶 = ∀ {EI : ESet 𝒾 ℯI} {ES : ESet 𝓈 ℯS}
                         Σ[ f ] Extensional _≍I_ _≍S_ f ∧ ∀ i → A i (f i)
 
 ac! : ∀ {𝒾 ℯI 𝓈 ℯS 𝒶} → AC! 𝒾 ℯI 𝓈 ℯS 𝒶
-ac! {EI = EI} {ES} {EA} h =
-  let
+ac! {EI = EI} {ES} {EA} h = f , fext , common
+  where
     open module I = ESet EI using () renaming (Carrier to I)
     open module S = ESet ES using () renaming (Carrier to S)
     open module A = ESubsetFamily EA using () renaming (Carrier to A)
@@ -773,24 +830,23 @@ ac! {EI = EI} {ES} {EA} h =
     f : I → S
     f = fst (ac h)
 
-    there : ∀ i → A i (f i)
-    there i = fst (snd (ac h) i)
+    common : ∀ i → A i (f i)
+    common i = fst (snd (ac h) i)
 
     unique : ∀ i {y} → A i y → f i S.≍ y
     unique i = snd (snd (ac h) i)
 
     fext : Extensional I._≍_ S._≍_ f
-    fext {i} {j} i≍j =
-      let
+    fext {i} {j} i≍j = fi≍fj
+      where
         fjthere : A j (f j)
-        fjthere = there j
+        fjthere = common j
 
         fjhere : A i (f j)
-        fjhere = fst (A.extI (I.sym≍ i≍j)) fjthere
-      in
-        unique i fjhere
-  in
-    f , fext , there
+        fjhere = fst (A.ext-I (I.sym-≍ i≍j)) fjthere
+
+        fi≍fj : f i S.≍ f j
+        fi≍fj = unique i fjhere
 ```
 :::
 
