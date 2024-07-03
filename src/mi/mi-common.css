@@ -507,6 +507,7 @@ a[href]:active:hover {
   .Agda .String                               { color: var(--literal); }
 .Agda .Module                                 { color: var(--module); }
 .Agda .Field                                  { color: var(--field); }
+.Agda .Error                                  { color: var(--light-active); text-decoration: underline; }
 .Agda .UnsolvedMeta                           { background-color: var(--selection); }
 .Agda .UnsolvedConstraint                     { background-color: var(--selection); }
 .Agda .TerminationProblem                     { background-color: var(--target); }
@@ -560,7 +561,6 @@ a[href]:active:hover {
 /* TODO */
 .Agda .DottedPattern      { color: #000; }
 .Agda .IncompletePattern  { color: #000; background-color: #F5DEB3        }
-.Agda .Error              { color: #e00; text-decoration: underline       }
 .Agda .TypeChecks         { color: #000; background-color: #ADD8E6        }
 
 /******************************************************************************/
