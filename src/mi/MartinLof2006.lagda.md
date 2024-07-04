@@ -177,21 +177,19 @@ itself and not only in its interpretation.
 
 ```
 -- (intensional, constructive, type-theoretic) axiom of choice
-AC : ∀ 𝒾 𝓈 𝒶 → Set _
-AC 𝒾 𝓈 𝒶 =
-    ∀ {I : Set 𝒾} {S : Set 𝓈} {A : I → Subset S 𝒶} →
-    (∀ i → ∃[ x ⦂ S ] A i x) → ∃[ f ⦂ (I → S) ] ∀ i → A i (f i)
+AC : ∀ ℓ → Set _
+AC ℓ = ∀ {I S : Set ℓ} {A : I → Subset S ℓ} →
+         (∀ i → ∃[ x ⦂ S ] A i x) → ∃[ f ⦂ (I → S) ] ∀ i → A i (f i)
 
 -- generalized axiom of choice
-GenAC : ∀ 𝒾 𝓈 𝒶 → Set _
-GenAC 𝒾 𝓈 𝒶 =
-    ∀ {I : Set 𝒾} {S : I → Set 𝓈} {A : ∀ i → Subset (S i) 𝒶} →
-    (∀ i → ∃[ x ⦂ S i ] A i x) → ∃[ f ⦂ (∀ i → S i) ] ∀ i → A i (f i)
+GenAC : ∀ ℓ → Set _
+GenAC ℓ = ∀ {I : Set ℓ} {S : I → Set ℓ} {A : ∀ i → Subset (S i) ℓ} →
+            (∀ i → ∃[ x ⦂ S i ] A i x) → ∃[ f ⦂ (∀ i → S i) ] ∀ i → A i (f i)
 
-genac : ∀ {𝒾 𝓈 𝒶} → GenAC 𝒾 𝓈 𝒶
+genac : ∀ {ℓ} → GenAC ℓ
 genac h = fst ∘ h , snd ∘ h
 
-ac : ∀ {𝒾 𝓈 𝒶} → AC 𝒾 𝓈 𝒶
+ac : ∀ {ℓ} → AC ℓ
 ac = genac
 ```
 :::
@@ -299,17 +297,16 @@ Nonempty : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : Set 𝓈} (A : I → Subset 
 Nonempty A = ∀ i → ∃[ x ⦂ _ ] A i x
 
 -- Zermelo’s axiom of choice
-ZerAC : ∀ 𝒾 𝓈 𝒶 ℯᵢ ℯₛ → Set _
-ZerAC 𝒾 𝓈 𝒶 ℯᵢ ℯₛ =
-    ∀ {I : Set 𝒾} {S : Set 𝓈} {A : I → Subset S 𝒶}
-      {_≍ᵢ_ : Rel I ℯᵢ} {{eqᵢ : Equivalence _≍ᵢ_}}
-      {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}}
-      (p₁ : Ext-≍ₛ-↔ A)
-      (p₂ : Ext-≍ᵢ-↔ A)
-      (p₃ : MutuallyExclusive A)
-      (p₄ : Exhaustive A)
-      (p₅ : Nonempty A) →
-    ∃[ S₁ ⦂ Subset S (𝒾 ⊔ ℯₛ) ] Ext-≍-↔ S₁ ∧ ∀ i → ∃![ x ⦂ S ] (A i ∩ S₁) x
+ZerAC : ∀ ℓ → Set _
+ZerAC ℓ = ∀ {I S : Set ℓ} {A : I → Subset S ℓ}
+            {_≍ᵢ_ : Rel I ℓ} {{eqᵢ : Equivalence _≍ᵢ_}}
+            {_≍ₛ_ : Rel S ℓ} {{eqₛ : Equivalence _≍ₛ_}}
+            (p₁ : Ext-≍ₛ-↔ A)
+            (p₂ : Ext-≍ᵢ-↔ A)
+            (p₃ : MutuallyExclusive A)
+            (p₄ : Exhaustive A)
+            (p₅ : Nonempty A) →
+          ∃[ S₁ ⦂ Subset S ℓ ] Ext-≍-↔ S₁ ∧ ∀ i → ∃![ x ⦂ S ] (A i ∩ S₁) x
 ```
 :::
 
@@ -373,17 +370,16 @@ which does not prevent one from investigating its consequences, of course.
 
 ```
 -- extensional axiom of choice
-ExtAC : ∀ 𝒾 𝓈 𝒶 ℯᵢ ℯₛ → Set _
-ExtAC 𝒾 𝓈 𝒶 ℯᵢ ℯₛ =
-    ∀ {I : Set 𝒾} {S : Set 𝓈} {A : I → Subset S 𝒶}
-      {_≍ᵢ_ : Rel I ℯᵢ} {{eqᵢ : Equivalence _≍ᵢ_}}
-      {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}}
-      (p₁ : Ext-≍ₛ-↔ A)
-      (p₂ : Ext-≍ᵢ-↔ A)
-      (p₅ : Nonempty A) →
-    ∃[ f ⦂ (I → S) ] Ext f ∧ ∀ i → A i (f i)
+ExtAC : ∀ ℓ → Set _
+ExtAC ℓ = ∀ {I S : Set ℓ} {A : I → Subset S ℓ}
+            {_≍ᵢ_ : Rel I ℓ} {{eqᵢ : Equivalence _≍ᵢ_}}
+            {_≍ₛ_ : Rel S ℓ} {{eqₛ : Equivalence _≍ₛ_}}
+            (p₁ : Ext-≍ₛ-↔ A)
+            (p₂ : Ext-≍ᵢ-↔ A)
+            (p₅ : Nonempty A) →
+          ∃[ f ⦂ (I → S) ] Ext f ∧ ∀ i → A i (f i)
 
-extac→zerac : ∀ {𝒾 𝓈 𝒶 ℯᵢ ℯₛ} → ExtAC 𝒾 𝓈 𝒶 ℯᵢ ℯₛ → ZerAC 𝒾 𝓈 𝒶 ℯᵢ ℯₛ
+extac→zerac : ∀ {ℓ} → ExtAC ℓ → ZerAC ℓ
 extac→zerac extac {I} {S} {A} {_≍ᵢ_} {_≍ₛ_} p₁ p₂ p₃ p₄ p₅ = S₁ , p₆ , p₇
   where
     f : I → S
@@ -447,7 +443,7 @@ We shall prove the implications (i)$→$(ii)$→$(iii)$→$(iv)$→$(i) in this 
 This is precisely the result of the considerations prior to the formulation of the theorem.
 
 ```
-i→ii : ∀ {𝒾 𝓈 𝒶 ℯᵢ ℯₛ} → ExtAC 𝒾 𝓈 𝒶 ℯᵢ ℯₛ → ZerAC 𝒾 𝓈 𝒶 ℯᵢ ℯₛ
+i→ii : ∀ {ℓ} → ExtAC ℓ → ZerAC ℓ
 i→ii = extac→zerac
 ```
 :::
@@ -519,17 +515,16 @@ RightInverse : ∀ {𝓈 𝓉 ℯₜ} {S : Set 𝓈} {T : Set 𝓉} (g : T → S
 RightInverse g f {_≍ₜ_} = ∀ y → (f ∘ g) y ≍ₜ y
 
 -- every surjective extensional function has an extensional right inverse
-AC-III : ∀ 𝒾 𝓈 ℯᵢ ℯₛ → Set _
-AC-III 𝒾 𝓈 ℯᵢ ℯₛ =
-    ∀ {I : Set 𝒾} {S : Set 𝓈}
-      {_≍ᵢ_ : Rel I ℯᵢ} {{eqᵢ : Equivalence _≍ᵢ_}}
-      {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}}
-      (f : S → I)
-      (f-ext : Ext f)
-      (f-surj : Surjective f) →
-    ∃[ g ⦂ (I → S) ] RightInverse g f ∧ Ext g
+AC-III : ∀ ℓ → Set _
+AC-III ℓ = ∀ {I S : Set ℓ}
+             {_≍ᵢ_ : Rel I ℓ} {{eqᵢ : Equivalence _≍ᵢ_}}
+             {_≍ₛ_ : Rel S ℓ} {{eqₛ : Equivalence _≍ₛ_}}
+             (f : S → I)
+             (f-ext : Ext f)
+             (f-surj : Surjective f) →
+           ∃[ g ⦂ (I → S) ] RightInverse g f ∧ Ext g
 
-ii→iii : ∀ {𝒾 𝓈 ℯᵢ ℯₛ} → ZerAC 𝒾 𝓈 ℯᵢ ℯᵢ ℯₛ → AC-III 𝒾 𝓈 ℯᵢ ℯₛ
+ii→iii : ∀ {ℓ} → ZerAC ℓ → AC-III ℓ
 ii→iii zerac {I} {S} {_≍ᵢ_} {_≍ₛ_} f f-ext f-surj = g , g-f-rinv , g-ext
   where
     A : I → Subset S _
@@ -608,12 +603,11 @@ id-surj : ∀ {𝓈 ℯₛ} {S : Set 𝓈}
 id-surj y = y , ≍-refl
 
 -- every equivalence class of any equivalence relation has a unique representative
-AC-IV : ∀ 𝒾 ℯᵢ → Set _
-AC-IV 𝒾 ℯᵢ =
-    ∀ {I : Set 𝒾} (_≍ᵢ_ : Rel I ℯᵢ) {{eqᵢ : Equivalence _≍ᵢ_}} →
-    ∃[ g ⦂ (I → I) ] RightInverse g id ∧ Ext-≍-Id g
+AC-IV : ∀ ℓ → Set _
+AC-IV ℓ = ∀ {I : Set ℓ} (_≍ᵢ_ : Rel I ℓ) {{eqᵢ : Equivalence _≍ᵢ_}} →
+          ∃[ g ⦂ (I → I) ] RightInverse g id ∧ Ext-≍-Id g
 
-iii→iv : ∀ {𝒾 ℯᵢ} → AC-III 𝒾 𝒾 ℯᵢ 𝒾 → AC-IV 𝒾 ℯᵢ
+iii→iv : ∀ {ℓ} → AC-III ℓ → AC-IV ℓ
 iii→iv ac₃ _≍_ = ac₃ {{eqₛ = Id-eq}} id (ext-Id→≍ id) id-surj
 ```
 :::
@@ -672,7 +666,7 @@ Hence $f \circ g$ has become an exten&shy;sional choice function, which means th
 exten&shy;sional axiom of choice is satisfied.
 
 ```
-iv→i : ∀ {𝒾 𝓈 𝒶 ℯᵢ ℯₛ} → AC-IV 𝒾 ℯᵢ → ExtAC 𝒾 𝓈 𝒶 ℯᵢ ℯₛ
+iv→i : ∀ {ℓ} → AC-IV ℓ → ExtAC ℓ
 iv→i ac₄ {I} {S} {A} {_≍ᵢ_} {_≍ₛ_} p₁ p₂ p₅ = f ∘ g , f∘g-ext , f∘g-common
   where
     f : I → S
@@ -813,16 +807,15 @@ exten&shy;sional choice, as opposed to $\text{ExtAC},$ which lacks justification
 
 ```
 -- axiom of unique choice
-AC! : ∀ 𝒾 𝓈 𝒶 ℯᵢ ℯₛ → Set _
-AC! 𝒾 𝓈 𝒶 ℯᵢ ℯₛ =
-    ∀ {I : Set 𝒾} {S : Set 𝓈} {A : I → Subset S 𝒶}
-      {_≍ᵢ_ : Rel I ℯᵢ} {{eqᵢ : Equivalence _≍ᵢ_}}
-      {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}}
-      (p₁ : Ext-≍ₛ-↔ A)
-      (p₂ : Ext-≍ᵢ-↔ A) →
-    (∀ i → ∃![ x ⦂ S ] A i x) → ∃[ f ⦂ (I → S) ] Ext f ∧ ∀ i → A i (f i)
+AC! : ∀ ℓ → Set _
+AC! ℓ = ∀ {I S : Set ℓ} {A : I → Subset S ℓ}
+          {_≍ᵢ_ : Rel I ℓ} {{eqᵢ : Equivalence _≍ᵢ_}}
+          {_≍ₛ_ : Rel S ℓ} {{eqₛ : Equivalence _≍ₛ_}}
+          (p₁ : Ext-≍ₛ-↔ A)
+          (p₂ : Ext-≍ᵢ-↔ A) →
+        (∀ i → ∃![ x ⦂ S ] A i x) → ∃[ f ⦂ (I → S) ] Ext f ∧ ∀ i → A i (f i)
 
-ac! : ∀ {𝒾 𝓈 𝒶 ℯᵢ ℯₛ} → AC! 𝒾 𝓈 𝒶 ℯᵢ ℯₛ
+ac! : ∀ {ℓ} → AC! ℓ
 ac! {I = I} {S} {A} {_≍ᵢ_} {_≍ₛ_} p₁ p₂ h = f , f-ext , f-common
   where
     f : I → S
