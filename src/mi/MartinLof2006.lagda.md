@@ -49,24 +49,24 @@ record Equivalence {𝓈 ℯ} {S : Set 𝓈} (_≍_ : Rel S ℯ) : Set (𝓈 ⊔
 
 open Equivalence {{...}}
 
-open import Agda.Builtin.Equality using (_≡_ ; refl)
+open import Agda.Builtin.Equality using (refl) renaming (_≡_ to Id)
 
-sym : ∀ {𝓈} {S : Set 𝓈} → Symmetric {S = S} _≡_
+sym : ∀ {𝓈} {S : Set 𝓈} → Symmetric {S = S} Id
 sym refl = refl
 
-trans : ∀ {𝓈} {S : Set 𝓈} → Transitive {S = S} _≡_
+trans : ∀ {𝓈} {S : Set 𝓈} → Transitive {S = S} Id
 trans refl x≡z = x≡z
 
-≡-eq : ∀ {𝓈} {S : Set 𝓈} → Equivalence {S = S} _≡_
-≡-eq = record { ≍-refl = refl ; ≍-sym = sym ; ≍-trans = trans }
+Id-eq : ∀ {𝓈} {S : Set 𝓈} → Equivalence {S = S} Id
+Id-eq = record { ≍-refl = refl ; ≍-sym = sym ; ≍-trans = trans }
 
 cong : ∀ {𝓈 𝓉} {S : Set 𝓈} {T : Set 𝓉} {x y} (f : S → T)
-         (x≡y : x ≡ y) → f x ≡ f y
+         (x≡y : Id x y) → Id (f x) (f y)
 cong f refl = refl
 
-≡→≍ : ∀ {𝓈 ℯ} {S : Set 𝓈} {x y} {_≍_ : Rel S ℯ} {{eq : Equivalence _≍_}}
-         (x≡y : x ≡ y) → x ≍ y
-≡→≍ refl = ≍-refl
+Id→≍ : ∀ {𝓈 ℯ} {S : Set 𝓈} {x y} {_≍_ : Rel S ℯ} {{eq : Equivalence _≍_}}
+          (x≡y : Id x y) → x ≍ y
+Id→≍ refl = ≍-refl
 
 open import Agda.Builtin.Sigma using (_,_ ; fst ; snd) renaming (Σ to ∃)
 
@@ -74,11 +74,6 @@ infix 2 ∃-syntax
 syntax ∃-syntax S (λ x → T) = ∃[ x ⦂ S ] T
 ∃-syntax : ∀ {𝓈 𝓉} (S : Set 𝓈) (T : S → Set 𝓉) → Set _
 ∃-syntax = ∃
-
-infix 2 ∃-syntax′
-syntax ∃-syntax′ (λ x → T) = ∃[ x ] T
-∃-syntax′ : ∀ {𝓈 𝓉} {S : Set 𝓈} (T : S → Set 𝓉) → Set _
-∃-syntax′ T = ∃[ x ⦂ _ ] T x
 
 infixr 2 _∧_
 _∧_ : ∀ {𝓈 𝓉} (S : Set 𝓈) (T : Set 𝓉) → Set _
@@ -188,16 +183,16 @@ AC 𝒾 𝓈 𝒶 =
     (∀ i → ∃[ x ⦂ S ] A i x) → ∃[ f ⦂ (I → S) ] ∀ i → A i (f i)
 
 -- generalized axiom of choice
-GAC : ∀ 𝒾 𝓈 𝒶 → Set _
-GAC 𝒾 𝓈 𝒶 =
+GenAC : ∀ 𝒾 𝓈 𝒶 → Set _
+GenAC 𝒾 𝓈 𝒶 =
     ∀ {I : Set 𝒾} {S : I → Set 𝓈} {A : ∀ i → Subset (S i) 𝒶} →
     (∀ i → ∃[ x ⦂ S i ] A i x) → ∃[ f ⦂ (∀ i → S i) ] ∀ i → A i (f i)
 
-gac : ∀ {𝒾 𝓈 𝒶} → GAC 𝒾 𝓈 𝒶
-gac h = fst ∘ h , snd ∘ h
+genac : ∀ {𝒾 𝓈 𝒶} → GenAC 𝒾 𝓈 𝒶
+genac h = fst ∘ h , snd ∘ h
 
 ac : ∀ {𝒾 𝓈 𝒶} → AC 𝒾 𝓈 𝒶
-ac = gac
+ac = genac
 ```
 :::
 
@@ -220,7 +215,7 @@ formulation,
 
 Here $M'$ is an arbitrary subset, which contains at least one element, of a given set $M.$  What is
 surprising about this formulation is that there is nothing objectionable about it from a
-constructive point of view.  Indeed, the distinguished element $m'_1$ can be taken to be the left
+constructive point of view.  Indeed, the distinguished element $m'_1$ can be taken to be the first
 projection of the proof of the existential proposition $(∃x : M)$$M'(x),$ which says that the
 subset $M'$ of $M$ contains at least one element.  This means that one would have to go into the
 demonstration of the well-ordering theorem in order to determine exactly what are its
@@ -243,78 +238,78 @@ type theory, and that a subset of an exten&shy;sional set is interpreted as a pr
 which is exten&shy;sional with respect to the equivalence relation in question.
 
 ```
-Extensional : ∀ {𝓈 𝓉 ℯₛ ℯₜ} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
-                {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}}
-                {_≍ₜ_ : Rel T ℯₜ} {{eqₜ : Equivalence _≍ₜ_}} → Set _
-Extensional f {_≍ₛ_} {_≍ₜ_} = ∀ {x y} → x ≍ₛ y → f x ≍ₜ f y
+Ext : ∀ {𝓈 𝓉 ℯₛ ℯₜ} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
+        {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}}
+        {_≍ₜ_ : Rel T ℯₜ} {{eqₜ : Equivalence _≍ₜ_}} → Set _
+Ext f {_≍ₛ_} {_≍ₜ_} = ∀ {x y} → x ≍ₛ y → f x ≍ₜ f y
 
-ExtensionalFrom-≡ : ∀ {𝓈 𝓉 ℯₜ} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
-                      {_≍ₜ_ : Rel T ℯₜ} {{eqₜ : Equivalence _≍ₜ_}} → Set _
-ExtensionalFrom-≡ f = Extensional f {{eqₛ = ≡-eq}}
+Ext-Id-≍ : ∀ {𝓈 𝓉 ℯₜ} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
+             {_≍ₜ_ : Rel T ℯₜ} {{eqₜ : Equivalence _≍ₜ_}} → Set _
+Ext-Id-≍ f = Ext f {{eqₛ = Id-eq}}
 
-ExtensionalTo-≡ : ∀ {𝓈 𝓉 ℯₛ} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
-                    {_≍ₛ_ : Rel S ℯₛ} {{eqₜ : Equivalence _≍ₛ_}} → Set _
-ExtensionalTo-≡ f = Extensional f {{eqₜ = ≡-eq}}
+Ext-≍-Id : ∀ {𝓈 𝓉 ℯₛ} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
+             {_≍ₛ_ : Rel S ℯₛ} {{eqₜ : Equivalence _≍ₛ_}} → Set _
+Ext-≍-Id f = Ext f {{eqₜ = Id-eq}}
 
-ExtensionalTo-↔ : ∀ {𝓈 𝒶 ℯₛ} {S : Set 𝓈} (f : Subset S 𝒶)
-                     {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}} → Set _
-ExtensionalTo-↔ f = Extensional f {{eqₜ = ↔-eq}}
+Ext-≍-↔ : ∀ {𝓈 𝒶 ℯₛ} {S : Set 𝓈} (f : Subset S 𝒶)
+             {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}} → Set _
+Ext-≍-↔ f = Ext f {{eqₜ = ↔-eq}}
 ```
 :::
 
+::: {.align}
 Thus the data of Zermelo’s 1908 formulation of the axiom of choice are a set $S,$ which comes
-equipped with an equivalence relation $=_S,$ and a family $(A_i)_{i : I}$ of propositional
+equipped with an equivalence relation $≍_S,$ and a family $(A_i)_{i : I}$ of propositional
 functions on $S$ satisfying the following properties,
 
-1.  $x =_S y → (A_i(x) ↔ A_i(y))$ (exten&shy;sionality),
+1.  $x ≍_S y → (A_i(x) ↔ A_i(y))$ (exten&shy;sionality),
 
-2.  $i =_I j → (∀x : S)(A_i(x) ↔ A_j(x))$ (exten&shy;sionality of the dependence on the index),
+2.  $i ≍_I j → (∀x : S)(A_i(x) ↔ A_j(x))$ (exten&shy;sionality of the dependence on the index),
 
-3.  $(∃x : S)(A_i(x)\ \&\ A_j(x)) → i =_I j$ (mutual exclusive&shy;ness),
+3.  $(∃x : S)(A_i(x) ∧ A_j(x)) → i ≍_I j$ (mutual exclusive&shy;ness),
 
 4.  $(∀x : S)(∃i : I)A_i(x)$ (exhaustiveness),
 
 5.  $(∀i : I)(∃x : S)A_i(x)$ (nonemptiness).
 
-::: {.align}
 Given these data, the axiom guarantees the existence of a propositional function $S_1$ on $S$ such
 that
 
-6.  $x =_S y → (S_1(x) ↔ S_1(y))$ (exten&shy;sionality),
+6.  $x ≍_S y → (S_1(x) ↔ S_1(y))$ (exten&shy;sionality),
 
 7.  $(∀i : I)(∃!x : S)(A_i ∩ S_1)(x)$ (uniqueness of choice).
 
 ```
-S-ExtensionalTo-↔ : ∀ {𝒾 𝓈 𝒶 ℯₛ} {I : Set 𝒾} {S : Set 𝓈} (A : I → Subset S 𝒶)
-                       {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}} → Set _
-S-ExtensionalTo-↔ A = ∀ {i} → ExtensionalTo-↔ (A i)
+Ext-≍ₛ-↔ : ∀ {𝒾 𝓈 𝒶 ℯₛ} {I : Set 𝒾} {S : Set 𝓈} (A : I → Subset S 𝒶)
+              {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}} → Set _
+Ext-≍ₛ-↔ A = ∀ {i} → Ext-≍-↔ (A i)
 
-I-ExtensionalTo-↔ : ∀ {𝒾 𝓈 𝒶 ℯᵢ} {I : Set 𝒾} {S : Set 𝓈} (A : I → Subset S 𝒶)
-                       {_≍ᵢ_ : Rel I ℯᵢ} {{eqᵢ : Equivalence _≍ᵢ_}} → Set _
-I-ExtensionalTo-↔ A = ∀ {x} → ExtensionalTo-↔ (λ i → A i x)
+Ext-≍ᵢ-↔ : ∀ {𝒾 𝓈 𝒶 ℯᵢ} {I : Set 𝒾} {S : Set 𝓈} (A : I → Subset S 𝒶)
+              {_≍ᵢ_ : Rel I ℯᵢ} {{eqᵢ : Equivalence _≍ᵢ_}} → Set _
+Ext-≍ᵢ-↔ A = ∀ {x} → Ext-≍-↔ (λ i → A i x)
 
-MutuallyExclusive : ∀ {𝒾 𝓈 ℯᵢ 𝒶} {I : Set 𝒾} {S : Set 𝓈} (A : I → Subset S 𝒶)
+MutuallyExclusive : ∀ {𝒾 𝓈 𝒶 ℯᵢ} {I : Set 𝒾} {S : Set 𝓈} (A : I → Subset S 𝒶)
                       {_≍ᵢ_ : Rel I ℯᵢ} {{eqᵢ : Equivalence _≍ᵢ_}} → Set _
 MutuallyExclusive A {_≍ᵢ_} = ∀ {i j x} → A i x → A j x → i ≍ᵢ j
 
 Exhaustive : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : Set 𝓈} (A : I → Subset S 𝒶) → Set _
-Exhaustive A = ∀ x → ∃[ i ] A i x
+Exhaustive A = ∀ x → ∃[ i ⦂ _ ] A i x
 
 Nonempty : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : Set 𝓈} (A : I → Subset S 𝒶) → Set _
-Nonempty A = ∀ i → ∃[ x ] A i x
+Nonempty A = ∀ i → ∃[ x ⦂ _ ] A i x
 
 -- Zermelo’s axiom of choice
-ZAC : ∀ 𝒾 𝓈 ℯᵢ ℯₛ 𝒶 → Set _
-ZAC 𝒾 𝓈 ℯᵢ ℯₛ 𝒶 =
+ZerAC : ∀ 𝒾 𝓈 𝒶 ℯᵢ ℯₛ → Set _
+ZerAC 𝒾 𝓈 𝒶 ℯᵢ ℯₛ =
     ∀ {I : Set 𝒾} {S : Set 𝓈} {A : I → Subset S 𝒶}
       {_≍ᵢ_ : Rel I ℯᵢ} {{eqᵢ : Equivalence _≍ᵢ_}}
       {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}}
-      (p₁ : S-ExtensionalTo-↔ A)
-      (p₂ : I-ExtensionalTo-↔ A)
+      (p₁ : Ext-≍ₛ-↔ A)
+      (p₂ : Ext-≍ᵢ-↔ A)
       (p₃ : MutuallyExclusive A)
       (p₄ : Exhaustive A)
       (p₅ : Nonempty A) →
-    ∃[ S₁ ⦂ Subset S (𝒾 ⊔ ℯₛ) ] ExtensionalTo-↔ S₁ ∧ ∀ i → ∃![ x ⦂ S ] (A i ∩ S₁) x
+    ∃[ S₁ ⦂ Subset S (𝒾 ⊔ ℯₛ) ] Ext-≍-↔ S₁ ∧ ∀ i → ∃![ x ⦂ S ] (A i ∩ S₁) x
 ```
 :::
 
@@ -327,12 +322,12 @@ $$(∀i : I)A_i(f(i)),$$
 
 and then define $S_1$ by the equation
 
-$$S_1 = \{f(j)\ |\ j : I\} = \{x\ |\ (∃j : I)(f(j)) =_S x)\}.$$
+$$S_1 = \{f(j)\ |\ j : I\} = \{x\ |\ (∃j : I)(f(j)) ≍_S x)\}.$$
 
 Defined in this way, $S_1$ is clearly exten&shy;sional, which is to say that it satisfies (6).  What
 about (7)?  Since the proposition
 
-$$(A_i ∩ S_1)(f(i)) = A_i(f(i))\ \&\ S_1(f(i))$$
+$$(A_i ∩ S_1)(f(i)) = A_i(f(i)) ∧ S_1(f(i))$$
 
 is clearly true, so is
 
@@ -341,59 +336,71 @@ $$(∀i : I)(∃x : S)(A_i ∩ S_1)(x),$$
 which means that only the uniqueness condition remains to be proved.  To this end, assume that the
 proposition
 
-$$(A_i ∩ S_1)(y) = A_i(y)\ \&\ S_1(y)$$
+$$(A_i ∩ S_1)(y) = A_i(y) ∧ S_1(y)$$
 
 is true, that is, that the two propositions
 
 $$
 \begin{cases}
   A_i(y),\\
-  S_1(y) = (∃j : I)(f(j) =_S y),
+  S_1(y) = (∃j : I)(f(j) ≍_S y),
 \end{cases}
 $$
 
-are both true.  Let $j : I$ satisfy $f(j) =_S y.$  Then, since $(∀i : I)$$A_i(f(i))$ is true, so is
-$A_j(f(j)).$  Hence, by the exten&shy;sionality of $A_j$ with respect to $=_S,$ $A_j(y)$ is true,
-which, together with the assumed truth of $A_i(y),$ yields $i =_I j$ by the mutual exclusiveness of
-the family of subsets $(A_i)_{i : I}.$  At this stage, in order to conclude that $f(i) =_S y,$ we
+are both true.  Let $j : I$ satisfy $f(j) ≍_S y.$  Then, since $(∀i : I)$$A_i(f(i))$ is true, so is
+$A_j(f(j)).$  Hence, by the exten&shy;sionality of $A_j$ with respect to $≍_S,$ $A_j(y)$ is true,
+which, together with the assumed truth of $A_i(y),$ yields $i ≍_I j$ by the mutual exclusiveness of
+the family of subsets $(A_i)_{i : I}.$  At this stage, in order to conclude that $f(i) ≍_S y,$ we
 need to know that the choice function $f$ is exten&shy;sional, that is, that
 
-$$i =_I j → f(i) =_S f(j).$$
+$$i ≍_I j → f(i) ≍_S f(j).$$
 
 This, however, is not guaranteed by the constructive, or inten&shy;sional, axiom of choice which
 follows from the strong rule of $∃$-elimination in type theory.  Thus our attempt to prove Zermelo’s
 axiom of choice has failed, as was to be expected.
 
+On the other hand, we have succeeded in proving that Zermelo’s axiom of choice follows from the
+exten&shy;sional axiom of choice
+
+$$(∀i : I)(∃x : S)A_i(x) → (∃f : I → S)(\text{Ext}(f) ∧ (∀i : I)A_i(f(i))),$$
+
+which I shall call $\text{ExtAC},$ where
+
+$$\text{Ext}(f) ≍ (∀i, j: I)(i ≍_I j → f(i) ≍_S f(j)).$$
+
+The only trouble with it is that it lacks the evidence of the inten&shy;sional axiom of choice,
+which does not prevent one from investigating its consequences, of course.
+
 ```
 -- extensional axiom of choice
-EAC : ∀ 𝒾 𝓈 ℯᵢ ℯₛ 𝒶 → Set _
-EAC 𝒾 𝓈 ℯᵢ ℯₛ 𝒶 =
+ExtAC : ∀ 𝒾 𝓈 𝒶 ℯᵢ ℯₛ → Set _
+ExtAC 𝒾 𝓈 𝒶 ℯᵢ ℯₛ =
     ∀ {I : Set 𝒾} {S : Set 𝓈} {A : I → Subset S 𝒶}
       {_≍ᵢ_ : Rel I ℯᵢ} {{eqᵢ : Equivalence _≍ᵢ_}}
       {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}}
-      (p₁ : S-ExtensionalTo-↔ A)
-      (p₂ : I-ExtensionalTo-↔ A)
+      (p₁ : Ext-≍ₛ-↔ A)
+      (p₂ : Ext-≍ᵢ-↔ A)
       (p₅ : Nonempty A) →
-    ∃[ f ⦂ (I → S) ] Extensional f ∧ ∀ i → A i (f i)
+    ∃[ f ⦂ (I → S) ] Ext f ∧ ∀ i → A i (f i)
 
-i→ii : ∀ {𝒾 𝓈 ℯᵢ ℯₛ 𝒶} → EAC 𝒾 𝓈 ℯᵢ ℯₛ 𝒶 → ZAC 𝒾 𝓈 ℯᵢ ℯₛ 𝒶
-i→ii eac {I} {S} {A} {_≍ᵢ_} {_≍ₛ_} p₁ p₂ p₃ p₄ p₅ = S₁ , p₆ , p₇
+extac→zerac : ∀ {𝒾 𝓈 𝒶 ℯᵢ ℯₛ} → ExtAC 𝒾 𝓈 𝒶 ℯᵢ ℯₛ → ZerAC 𝒾 𝓈 𝒶 ℯᵢ ℯₛ
+extac→zerac extac {I} {S} {A} {_≍ᵢ_} {_≍ₛ_} p₁ p₂ p₃ p₄ p₅ = S₁ , p₆ , p₇
   where
     f : I → S
-    f = fst (eac p₁ p₂ p₅)
+    f = fst (extac p₁ p₂ p₅)
 
-    f-ext : Extensional f
-    f-ext = fst (snd (eac p₁ p₂ p₅))
+    f-ext : Ext f
+    f-ext = fst (snd (extac p₁ p₂ p₅))
 
     S₁ : Subset S _
-    S₁ x = ∃[ j ] f j ≍ₛ x
+    S₁ x = ∃[ j ⦂ I ] f j ≍ₛ x
 
-    p₆ : ExtensionalTo-↔ S₁
+    p₆ : Ext-≍-↔ S₁
     p₆ x≍y = (λ { (j , fj≍x) → j , ≍-trans fj≍x x≍y })
            , (λ { (j , fj≍y) → j , ≍-trans fj≍y (≍-sym x≍y) })
 
     f-common : ∀ i → (A i ∩ S₁) (f i)
-    f-common i = snd (snd (eac p₁ p₂ p₅)) i , i , ≍-refl
+    f-common i = snd (snd (extac p₁ p₂ p₅)) i , i , ≍-refl
 
     f-unique : ∀ i {y} → (A i ∩ S₁) y → f i ≍ₛ y
     f-unique i {y} (y-here , j , fj≍y) = fi≍y
@@ -414,18 +421,6 @@ i→ii eac {I} {S} {A} {_≍ᵢ_} {_≍ₛ_} p₁ p₂ p₃ p₄ p₅ = S₁ , p
     p₇ i = f i , f-common i , f-unique i
 ```
 :::
-
-On the other hand, we have succeeded in proving that Zermelo’s axiom of choice follows from the
-exten&shy;sional axiom of choice
-
-$$(∀i : I)(∃x : S)A_i(x) → (∃f : I → S)(\text{Ext}(f)\ \&\ (∀i : I)A_i(f(i))),$$
-
-which I shall call $\text{ExtAC},$ where
-
-$$\text{Ext}(f) = (∀i, j: I)(i =_I j → f(i) =_S f(j)).$$
-
-The only trouble with it is that it lacks the evidence of the inten&shy;sional axiom of choice,
-which does not prevent one from investigating its consequences, of course.
 
 #### Theorem I.
 
@@ -448,29 +443,36 @@ We shall prove the implications (i)$→$(ii)$→$(iii)$→$(iv)$→$(i) in this 
 
 ###### (i)$→$(ii).
 
+::: {.align}
 This is precisely the result of the considerations prior to the formulation of the theorem.
+
+```
+i→ii : ∀ {𝒾 𝓈 𝒶 ℯᵢ ℯₛ} → ExtAC 𝒾 𝓈 𝒶 ℯᵢ ℯₛ → ZerAC 𝒾 𝓈 𝒶 ℯᵢ ℯₛ
+i→ii = extac→zerac
+```
+:::
 
 ###### (ii)$→$(iii).
 
 ::: {.align}
-Let $(S, =_S)$ and $(I, =_I)$ be two exten&shy;sional sets, and let $f : S → I$ be an
+Let $(S, ≍_S)$ and $(I, ≍_I)$ be two exten&shy;sional sets, and let $f : S → I$ be an
 exten&shy;sional and surjective mapping between them.  By definition, put
 
-$$A_i = f^{-1}(i) = \{x\ |\ f(x) =_I i\}.$$
+$$A_i = f^{-1}(i) = \{x\ |\ f(x) ≍_I i\}.$$
 
 Then
 
-1.  $x =_S y → (A_i(x) ↔ A_i(y))$
+1.  $x ≍_S y → (A_i(x) ↔ A_i(y))$
 
 by the assumed exten&shy;sionality of $f,$
 
-2.  $i =_I j → (∀x : S)(A_i(x) ↔ A_j(x))$
+2.  $i ≍_I j → (∀x : S)(A_i(x) ↔ A_j(x))$
 
-since $f(x) =_I i$ is equivalent to $f(x) =_I j$ provided that $i =_I j,$
+since $f(x) ≍_I i$ is equivalent to $f(x) ≍_I j$ provided that $i ≍_I j,$
 
-3.  $(∃x : S)(A_i(x)\ \&\ A_j(x)) → i =_I j$
+3.  $(∃x : S)(A_i(x) ∧ A_j(x)) → i ≍_I j$
 
-since $f(x) =_I i$ and $f(x) =_I j$ together imply $i =_I j,$
+since $f(x) ≍_I i$ and $f(x) ≍_I j$ together imply $i ≍_I j,$
 
 4.  $(∀x : S)(∃i : I)A_i(x)$
 
@@ -486,11 +488,11 @@ $$(∀i : I)(∃!x : S)(A_i ∩ S_1)(x).$$
 The constructive, or inten&shy;sional, axiom of choice, to which we have access in type theory, then
 yields $g : I → S$ such that $(A_i ∩ S_1)(g(i)),$ that is,
 
-$$(f(g(i)) =_I i)\ \&\ S_1(g(i)),$$
+$$(f(g(i)) ≍_I i) ∧ S_1(g(i)),$$
 
 so that $g$ is a right inverse of $f,$ and
 
-$$(A_i ∩ S_1)(y) → g(i) =_S y.$$
+$$(A_i ∩ S_1)(y) → g(i) ≍_S y.$$
 
 It remains only to show that $g$ is exten&shy;sional.  So assume $i, j : I.$  Then we have
 
@@ -500,43 +502,44 @@ as well as
 
 $$(A_j ∩ S_1)(g(j))$$
 
-so that, if also $i =_I j,$
+so that, if also $i ≍_I j,$
 
 $$(A_i ∩ S_1)(g(j))$$
 
 by the exten&shy;sional dependence of $A_i$ on the index $i.$  The uniqueness property of
-$A_i ∩ S_1$ permits us to now conclude $g(i) =_S g(j)$ as desired.
+$A_i ∩ S_1$ permits us to now conclude $g(i) ≍_S g(j)$ as desired.
 
 ```
 Surjective : ∀ {𝓈 𝓉 ℯₜ} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
                {_≍ₜ_ : Rel T ℯₜ} {{eqₜ : Equivalence _≍ₜ_}} → Set _
-Surjective f {_≍ₜ_} = ∀ y → ∃[ x ] f x ≍ₜ y
+Surjective f {_≍ₜ_} = ∀ y → ∃[ x ⦂ _ ] f x ≍ₜ y
 
 RightInverse : ∀ {𝓈 𝓉 ℯₜ} {S : Set 𝓈} {T : Set 𝓉} (g : T → S) (f : S → T)
                  {_≍ₜ_ : Rel T ℯₜ} {{eqₜ : Equivalence _≍ₜ_}} → Set _
 RightInverse g f {_≍ₜ_} = ∀ y → (f ∘ g) y ≍ₜ y
 
 -- every surjective extensional function has an extensional right inverse
-AC-III : ∀ 𝓈 𝓉 ℯₛ ℯₜ → Set _
-AC-III 𝓈 𝓉 ℯₛ ℯₜ =
-    ∀ {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
+AC-III : ∀ 𝒾 𝓈 ℯᵢ ℯₛ → Set _
+AC-III 𝒾 𝓈 ℯᵢ ℯₛ =
+    ∀ {I : Set 𝒾} {S : Set 𝓈}
+      {_≍ᵢ_ : Rel I ℯᵢ} {{eqᵢ : Equivalence _≍ᵢ_}}
       {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}}
-      {_≍ₜ_ : Rel T ℯₜ} {{eqₜ : Equivalence _≍ₜ_}}
-      (f-ext : Extensional f)
+      (f : S → I)
+      (f-ext : Ext f)
       (f-surj : Surjective f) →
-    ∃[ g ⦂ (T → S) ] RightInverse g f ∧ Extensional g
+    ∃[ g ⦂ (I → S) ] RightInverse g f ∧ Ext g
 
-ii→iii : ∀ {𝒾 𝓈 ℯᵢ ℯₛ} → ZAC 𝒾 𝓈 ℯᵢ ℯₛ ℯᵢ → AC-III 𝓈 𝒾 ℯₛ ℯᵢ
-ii→iii zac {S} {I} f {_≍ₛ_} {_≍ᵢ_} f-ext f-surj = g , g-f-rinv , g-ext
+ii→iii : ∀ {𝒾 𝓈 ℯᵢ ℯₛ} → ZerAC 𝒾 𝓈 ℯᵢ ℯᵢ ℯₛ → AC-III 𝒾 𝓈 ℯᵢ ℯₛ
+ii→iii zerac {I} {S} {_≍ᵢ_} {_≍ₛ_} f f-ext f-surj = g , g-f-rinv , g-ext
   where
     A : I → Subset S _
     A i x = f x ≍ᵢ i
 
-    p₁ : S-ExtensionalTo-↔ A
+    p₁ : Ext-≍ₛ-↔ A
     p₁ x≍y = (λ fx≍i → ≍-trans (≍-sym (f-ext x≍y)) fx≍i)
            , (λ fy≍i → ≍-trans (f-ext x≍y) fy≍i)
 
-    p₂ : I-ExtensionalTo-↔ A
+    p₂ : Ext-≍ᵢ-↔ A
     p₂ i≍j = (λ fx≍i → ≍-trans fx≍i i≍j)
            , (λ fx≍j → ≍-trans fx≍j (≍-sym i≍j))
 
@@ -550,21 +553,21 @@ ii→iii zac {S} {I} f {_≍ₛ_} {_≍ᵢ_} f-ext f-surj = g , g-f-rinv , g-ext
     p₅ = f-surj
 
     S₁ : Subset S _
-    S₁ = fst (zac p₁ p₂ p₃ p₄ p₅)
+    S₁ = fst (zerac p₁ p₂ p₃ p₄ p₅)
 
     g : I → S
-    g = fst (ac (snd (snd (zac p₁ p₂ p₃ p₄ p₅))))
+    g = fst (ac (snd (snd (zerac p₁ p₂ p₃ p₄ p₅))))
 
     g-common : ∀ i → (A i ∩ S₁) (g i)
-    g-common = fst ∘ snd (ac (snd (snd (zac p₁ p₂ p₃ p₄ p₅))))
+    g-common = fst ∘ snd (ac (snd (snd (zerac p₁ p₂ p₃ p₄ p₅))))
 
     g-unique : ∀ i {y} → (A i ∩ S₁) y → g i ≍ₛ y
-    g-unique = snd ∘ snd (ac (snd (snd (zac p₁ p₂ p₃ p₄ p₅))))
+    g-unique = snd ∘ snd (ac (snd (snd (zerac p₁ p₂ p₃ p₄ p₅))))
 
     g-f-rinv : RightInverse g f
     g-f-rinv = fst ∘ g-common
 
-    g-ext : Extensional g
+    g-ext : Ext g
     g-ext {i} {j} i≍j = gi≍gj
       where
         gj-there : (A j ∩ S₁) (g j)
@@ -581,24 +584,24 @@ ii→iii zac {S} {I} f {_≍ₛ_} {_≍ᵢ_} f-ext f-surj = g , g-f-rinv , g-ext
 ###### (iii)$→$(iv).
 
 ::: {.align}
-Let $I$ be a set equipped with an equivalence relation $=_I.$  Then the identity function on $I$ is
-an exten&shy;sional surjection from $(I, \text{Id}_I)$ to $(I, =_I),$ since any function is
+Let $I$ be a set equipped with an equivalence relation $≍_I.$  Then the identity function on $I$ is
+an exten&shy;sional surjection from $(I, \text{Id}_I)$ to $(I, ≍_I),$ since any function is
 exten&shy;sional with respect to the identity relation.  Assuming that epimorphisms split, we can
 conclude that there exists a function $g : I → I$ such that
 
-$$g(i) =_I i$$
+$$g(i) ≍_I i$$
 
 and
 
-$$i =_I j → \text{Id}_I(g(i), g(j)),$$
+$$i ≍_I j → \text{Id}_I(g(i), g(j)),$$
 
 which is to say that $g$ has the miraculous property of picking a unique representative from each
-equivalence class of the given equivalence relation $=_I.$
+equivalence class of the given equivalence relation $≍_I.$
 
 ```
-ext-wrt-≡ : ∀ {𝓈 𝓉 ℯₜ} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
-              {_≍ₜ_ : Rel T ℯₜ} {{eqₜ : Equivalence _≍ₜ_}} → ExtensionalFrom-≡ f
-ext-wrt-≡ f refl = ≍-refl
+ext-Id→≍ : ∀ {𝓈 𝓉 ℯₜ} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
+              {_≍ₜ_ : Rel T ℯₜ} {{eqₜ : Equivalence _≍ₜ_}} → Ext-Id-≍ f
+ext-Id→≍ f refl = ≍-refl
 
 id-surj : ∀ {𝓈 ℯₛ} {S : Set 𝓈}
             {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}} → Surjective id
@@ -608,24 +611,24 @@ id-surj y = y , ≍-refl
 AC-IV : ∀ 𝒾 ℯᵢ → Set _
 AC-IV 𝒾 ℯᵢ =
     ∀ {I : Set 𝒾} (_≍ᵢ_ : Rel I ℯᵢ) {{eqᵢ : Equivalence _≍ᵢ_}} →
-    ∃[ g ⦂ (I → I) ] RightInverse g id ∧ ExtensionalTo-≡ g
+    ∃[ g ⦂ (I → I) ] RightInverse g id ∧ Ext-≍-Id g
 
-iii→iv : ∀ {𝒾 ℯᵢ} → AC-III 𝒾 𝒾 𝒾 ℯᵢ → AC-IV 𝒾 ℯᵢ
-iii→iv ac-iii _≍_ = ac-iii id {{eqₛ = ≡-eq}} (ext-wrt-≡ id) id-surj
+iii→iv : ∀ {𝒾 ℯᵢ} → AC-III 𝒾 𝒾 ℯᵢ 𝒾 → AC-IV 𝒾 ℯᵢ
+iii→iv ac₃ _≍_ = ac₃ {{eqₛ = Id-eq}} id (ext-Id→≍ id) id-surj
 ```
 :::
 
 ###### (iv)$→$(i).
 
 ::: {.align}
-Let $(I, =_I)$ and $(S, =_S)$ be two sets, each equipped with an equivalence relation, and let
+Let $(I, ≍_I)$ and $(S, ≍_S)$ be two sets, each equipped with an equivalence relation, and let
 $(A_i)_{i : I}$ be a family of exten&shy;sional subsets of $S,$
 
-$$x =_S y → (A_i(x) ↔ A_i(y)),$$
+$$x ≍_S y → (A_i(x) ↔ A_i(y)),$$
 
 which depends exten&shy;sionally on the index $i,$
 
-$$i =_I j → (∀x : S)(A_i(x) ↔ A_j(x)).$$
+$$i ≍_I j → (∀x : S)(A_i(x) ↔ A_j(x)).$$
 
 Furthermore, assume that
 
@@ -636,21 +639,21 @@ that there exists a choice function $f : I → S$ such that
 
 $$(∀i : I)A_i(f(i)).$$
 
-This choice function need not be exten&shy;sional, of course, unless $=_I$ is the identity relation
+This choice function need not be exten&shy;sional, of course, unless $≍_I$ is the identity relation
 on the index set $I.$  But, applying the miraculous principle of picking a unique representative of
-each equivalence class to the equivalence relation $=_I,$ we get a function $g : I → I$ such that
+each equivalence class to the equivalence relation $≍_I,$ we get a function $g : I → I$ such that
 
-$$g(i) =_I i$$
+$$g(i) ≍_I i$$
 
 and
 
-$$i =_I j → \text{Id}_I(g(i), g(j)).$$
+$$i ≍_I j → \text{Id}_I(g(i), g(j)).$$
 
 Then $f \circ g : I → S$ becomes exten&shy;sional,
 
 $$
-  i =_I j → \text{Id}_I(g(i), g(j)) → \underbrace{f(g(i))}_{(f \circ g)(i)}
-    =_S \underbrace{f(g(j))}_{(f \circ g)(j)}.
+  i ≍_I j → \text{Id}_I(g(i), g(j)) → \underbrace{f(g(i))}_{(f \circ g)(i)}
+    ≍_S \underbrace{f(g(j))}_{(f \circ g)(j)}.
 $$
 
 Moreover, from $(∀i : I)$$A_i(f(i)),$ it follows that
@@ -659,7 +662,7 @@ $$(∀i : I)A_{g(i)}(f(g(i))).$$
 
 But
 
-$$g(i) =_I i → (∀x : S)(A_{g(i)}(x) ↔ A_i(x)),$$
+$$g(i) ≍_I i → (∀x : S)(A_{g(i)}(x) ↔ A_i(x)),$$
 
 so that
 
@@ -669,8 +672,8 @@ Hence $f \circ g$ has become an exten&shy;sional choice function, which means th
 exten&shy;sional axiom of choice is satisfied.
 
 ```
-iv→i : ∀ {𝒾 𝓈 ℯᵢ ℯₛ 𝒶} → AC-IV 𝒾 ℯᵢ → EAC 𝒾 𝓈 ℯᵢ ℯₛ 𝒶
-iv→i ac-iv {I} {S} {A} {_≍ᵢ_} {_≍ₛ_} p₁ p₂ p₅ = f ∘ g , f∘g-ext , f∘g-common
+iv→i : ∀ {𝒾 𝓈 𝒶 ℯᵢ ℯₛ} → AC-IV 𝒾 ℯᵢ → ExtAC 𝒾 𝓈 𝒶 ℯᵢ ℯₛ
+iv→i ac₄ {I} {S} {A} {_≍ᵢ_} {_≍ₛ_} p₁ p₂ p₅ = f ∘ g , f∘g-ext , f∘g-common
   where
     f : I → S
     f = fst (ac p₅)
@@ -679,16 +682,16 @@ iv→i ac-iv {I} {S} {A} {_≍ᵢ_} {_≍ₛ_} p₁ p₂ p₅ = f ∘ g , f∘g-
     f-common = snd (ac p₅)
 
     g : I → I
-    g = fst (ac-iv _≍ᵢ_)
+    g = fst (ac₄ _≍ᵢ_)
 
     g-id-rinv : RightInverse g id
-    g-id-rinv = fst (snd (ac-iv _≍ᵢ_))
+    g-id-rinv = fst (snd (ac₄ _≍ᵢ_))
 
-    g-ext : ExtensionalTo-≡ g
-    g-ext = snd (snd (ac-iv _≍ᵢ_))
+    g-ext : Ext-≍-Id g
+    g-ext = snd (snd (ac₄ _≍ᵢ_))
 
-    f∘g-ext : Extensional (f ∘ g)
-    f∘g-ext = ≡→≍ ∘ (cong f) ∘ g-ext
+    f∘g-ext : Ext (f ∘ g)
+    f∘g-ext = Id→≍ ∘ (cong f) ∘ g-ext
 
     f∘g-common : ∀ i → A i ((f ∘ g) i)
     f∘g-common i = fst (p₂ (g-id-rinv i)) (f-common (g i))
@@ -699,20 +702,20 @@ Another indication that the exten&shy;sional axiom of choice is the correct type
 rendering of Zermelo’s axiom of choice comes from constructive set theory.  Peter Aczel has shown
 how to interpret the language of Zermelo-Fraenkel set theory in constructive type theory, this
 interpretation being the natural constructive version of the cumulative hierarchy, and investigated
-what set-theoretical principles that become validated under that interpretation.[^17]  But one may
+what set-theoretic principles that become validated under that interpretation.[^17]  But one may
 also ask, conversely, what principle, or principles, that have to be adjoined to constructive type
-theory in order to validate a specific set-theoretical axiom.  In particular, this may be asked
-about the formalized version of the axiom of choice that Zermelo made part of his own axiomatization
-of set theory.  The answer is as follows.
+theory in order to validate a specific set-theoretic axiom.  In particular, this may be asked about
+the formalized version of the axiom of choice that Zermelo made part of his own axiomatization of
+set theory.  The answer is as follows.
 
 #### Theorem II.
 
 *When constructive type theory is strengthened by the exten&shy;sional axiom of choice, the
-set-theoretical axiom of choice becomes validated under the Aczel interpretation.*
+set-theoretic axiom of choice becomes validated under the Aczel interpretation.*
 
 ##### Proof.
 
-The set-theoretical axiom of choice says that, for any two iterative sets $α$ and $β$ and any
+The set-theoretic axiom of choice says that, for any two iterative sets $α$ and $β$ and any
 relation $R$ between iterative sets,
 
 $$(∀x ∈ α)(∃y ∈ β)R(x, y) → (∃φ : α → β)(∀x ∈ α)R(x, φ(x)).$$
@@ -736,17 +739,17 @@ $$α̃(x) = α̃(x') → β̃(f(x)) = β̃(f(x')).$$
 
 Define the equivalence relations
 
-$$(x =_{ᾱ} x') = (α̃(x) = α̃(x'))$$
+$$(x ≍_{ᾱ} x') = (α̃(x) = α̃(x'))$$
 
 and
 
-$$(y =_{β̄} y') = (β̃(y) = β̃(y'))$$
+$$(y ≍_{β̄} y') = (β̃(y) = β̃(y'))$$
 
 on $ᾱ$ and $β̄,$ respectively.  By the exten&shy;sional axiom of choice in type theory, the choice
 function $f : ᾱ → β̄$ can be taken to be exten&shy;sional with respect to these two equivalence
 relations,
 
-$$x =_{ᾱ} x' → f(x) =_{β̄} f(x'),$$
+$$x ≍_{ᾱ} x' → f(x) ≍_{β̄} f(x'),$$
 
 which ensures that $φ,$ defined as above, is a function from $α$ to $β$ in the sense of
 constructive set theory.
@@ -777,11 +780,11 @@ $\text{CTT}$ $+$ $\text{ExtAC}.$
 When Zermelo’s axiom of choice is formulated in the context of constructive type theory instead of
 Zermelo-Fraenkel set theory, it appears as $\text{ExtAC},$ the exten&shy;sional axiom of choice
 
-$$(∀i : I)(∃x : S)A(i, x) → (∃f : I → S)(\text{Ext}(f)\ \&\ (∀i : I)A(i, f(i))),$$
+$$(∀i : I)(∃x : S)A(i, x) → (∃f : I → S)(\text{Ext}(f) ∧ (∀i : I)A(i, f(i))),$$
 
 where
 
-$$\text{Ext}(f) = (∀i, j : I)(i =_I j → f(i) =_S f(j)),$$
+$$\text{Ext}(f) = (∀i, j : I)(i ≍_I j → f(i) ≍_S f(j)),$$
 
 and it then becomes manifest what is the problem with it: it breaks the principle that you cannot
 get something from nothing.  Even if the relation $A(i, x)$ is exten&shy;sional with respect to its
@@ -796,30 +799,30 @@ If we want to ensure the exten&shy;sionality of the choice function, the anteced
 exten&shy;sional axiom of choice has to be strengthened.  The natural way of doing this is to
 replace $\text{ExtAC}$ by $\text{AC!},$ the axiom of unique choice, or no choice,
 
-$$(∀i : I)(∃!x : S)A(i, x) → (∃f : I → S)(\text{Ext}(f)\ \&\ (∀i : I)A(i, f(i))),$$
+$$(∀i : I)(∃!x : S)A(i, x) → (∃f : I → S)(\text{Ext}(f) ∧ (∀i : I)A(i, f(i))),$$
 
 which is as valid as the inten&shy;sional axiom of choice.  Indeed, assume
 $(∀i : I)$$(∃!x : S)$$A(i, x)$ to be true.  Then, by the inten&shy;sional axiom of choice, there
 exists a choice function $f : I → S$ satisfying $(∀i : I)$$A(i, f(i)).$  Because of the uniqueness
 condition, such a function $f : I → S$ is necessarily exten&shy;sional.  For suppose that
-$i, j : I$ are such that $i =_I j$ is true.  Then $A(i, f(i))$ and $A(j, f(j))$ are both true.
+$i, j : I$ are such that $i ≍_I j$ is true.  Then $A(i, f(i))$ and $A(j, f(j))$ are both true.
 Hence, by the exten&shy;sionality of $A(i, x)$ in its first argument, so is $A(i, f(j)).$  The
-uniqueness condition now guarantees that $f(i) =_S f(j),$ that is, that $f : I → S$ is
+uniqueness condition now guarantees that $f(i) ≍_S f(j),$ that is, that $f : I → S$ is
 exten&shy;sional.  The axiom of unique choice $\text{AC!}$ may be considered as the valid form of
 exten&shy;sional choice, as opposed to $\text{ExtAC},$ which lacks justification.
 
 ```
 -- axiom of unique choice
-AC! : ∀ 𝒾 𝓈 ℯᵢ ℯₛ 𝒶 → Set _
-AC! 𝒾 𝓈 ℯᵢ ℯₛ 𝒶 =
+AC! : ∀ 𝒾 𝓈 𝒶 ℯᵢ ℯₛ → Set _
+AC! 𝒾 𝓈 𝒶 ℯᵢ ℯₛ =
     ∀ {I : Set 𝒾} {S : Set 𝓈} {A : I → Subset S 𝒶}
       {_≍ᵢ_ : Rel I ℯᵢ} {{eqᵢ : Equivalence _≍ᵢ_}}
       {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}}
-      (p₁ : S-ExtensionalTo-↔ A)
-      (p₂ : I-ExtensionalTo-↔ A) →
-    (∀ i → ∃![ x ⦂ S ] A i x) → ∃[ f ⦂ (I → S) ] Extensional f ∧ ∀ i → A i (f i)
+      (p₁ : Ext-≍ₛ-↔ A)
+      (p₂ : Ext-≍ᵢ-↔ A) →
+    (∀ i → ∃![ x ⦂ S ] A i x) → ∃[ f ⦂ (I → S) ] Ext f ∧ ∀ i → A i (f i)
 
-ac! : ∀ {𝒾 𝓈 ℯᵢ ℯₛ 𝒶} → AC! 𝒾 𝓈 ℯᵢ ℯₛ 𝒶
+ac! : ∀ {𝒾 𝓈 𝒶 ℯᵢ ℯₛ} → AC! 𝒾 𝓈 𝒶 ℯᵢ ℯₛ
 ac! {I = I} {S} {A} {_≍ᵢ_} {_≍ₛ_} p₁ p₂ h = f , f-ext , f-common
   where
     f : I → S
@@ -831,7 +834,7 @@ ac! {I = I} {S} {A} {_≍ᵢ_} {_≍ₛ_} p₁ p₂ h = f , f-ext , f-common
     f-unique : ∀ i {y} → A i y → f i ≍ₛ y
     f-unique = snd ∘ snd (ac h)
 
-    f-ext : Extensional f
+    f-ext : Ext f
     f-ext {i} {j} i≍j = fi≍fj
       where
         fj-there : A j (f j)
