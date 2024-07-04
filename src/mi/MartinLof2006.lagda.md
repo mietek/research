@@ -19,7 +19,7 @@ card:
 
 module mi.MartinLof2006 where
 
-open import Agda.Primitive using (Level ; _⊔_ ; lsuc)
+open import Agda.Primitive using (Level ; _⊔_)
 
 id : ∀ {𝓈} {S : Set 𝓈} → S → S
 id x = x
@@ -32,14 +32,14 @@ _∘_ : ∀ {𝓈 𝓉 𝓊} {S : Set 𝓈} {T : S → Set 𝓉} {U : ∀ {x} �
 Rel : ∀ {𝓈} (S : Set 𝓈) 𝓇 → Set _
 Rel S 𝓇 = S → S → Set 𝓇
 
-Reflexive : ∀ {𝓈 𝓇} {S : Set 𝓈} (_R_ : Rel S 𝓇) → Set _
-Reflexive _R_ = ∀ {x} → x R x
+Reflexive : ∀ {𝓈 𝓇} {S : Set 𝓈} (_∼_ : Rel S 𝓇) → Set _
+Reflexive _∼_ = ∀ {x} → x ∼ x
 
-Symmetric : ∀ {𝓈 𝓇} {S : Set 𝓈} (_R_ : Rel S 𝓇) → Set _
-Symmetric _R_ = ∀ {x y} → x R y → y R x
+Symmetric : ∀ {𝓈 𝓇} {S : Set 𝓈} (_∼_ : Rel S 𝓇) → Set _
+Symmetric _∼_ = ∀ {x y} → x ∼ y → y ∼ x
 
-Transitive : ∀ {𝓈 𝓇} {S : Set 𝓈} (_R_ : Rel S 𝓇) → Set _
-Transitive _R_ = ∀ {x y z} → x R y → y R z → x R z
+Transitive : ∀ {𝓈 𝓇} {S : Set 𝓈} (_∼_ : Rel S 𝓇) → Set _
+Transitive _∼_ = ∀ {x y z} → x ∼ y → y ∼ z → x ∼ z
 
 record Equivalence {𝓈 ℯ} {S : Set 𝓈} (_≍_ : Rel S ℯ) : Set (𝓈 ⊔ ℯ) where
   field
@@ -243,54 +243,22 @@ type theory, and that a subset of an exten&shy;sional set is interpreted as a pr
 which is exten&shy;sional with respect to the equivalence relation in question.
 
 ```
-Extensional : ∀ {𝓈 𝓉 ℯS ℯT} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
-                {_≍S_ : Rel S ℯS} {{eqS : Equivalence _≍S_}}
-                {_≍T_ : Rel T ℯT} {{eqT : Equivalence _≍T_}} → Set _
-Extensional f {_≍S_} {_≍T_} = ∀ {x y} → x ≍S y → f x ≍T f y
+Extensional : ∀ {𝓈 𝓉 ℯₛ ℯₜ} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
+                {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}}
+                {_≍ₜ_ : Rel T ℯₜ} {{eqₜ : Equivalence _≍ₜ_}} → Set _
+Extensional f {_≍ₛ_} {_≍ₜ_} = ∀ {x y} → x ≍ₛ y → f x ≍ₜ f y
 
-ExtensionalFrom-≡ : ∀ {𝓈 𝓉 ℯT} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
-                      {_≍T_ : Rel T ℯT} {{eqT : Equivalence _≍T_}} → Set _
-ExtensionalFrom-≡ f = Extensional f {{eqS = ≡-eq}}
+ExtensionalFrom-≡ : ∀ {𝓈 𝓉 ℯₜ} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
+                      {_≍ₜ_ : Rel T ℯₜ} {{eqₜ : Equivalence _≍ₜ_}} → Set _
+ExtensionalFrom-≡ f = Extensional f {{eqₛ = ≡-eq}}
 
-ExtensionalTo-≡ : ∀ {𝓈 𝓉 ℯS} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
-                    {_≍S_ : Rel S ℯS} {{eqT : Equivalence _≍S_}} → Set _
-ExtensionalTo-≡ f = Extensional f {{eqT = ≡-eq}}
+ExtensionalTo-≡ : ∀ {𝓈 𝓉 ℯₛ} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
+                    {_≍ₛ_ : Rel S ℯₛ} {{eqₜ : Equivalence _≍ₛ_}} → Set _
+ExtensionalTo-≡ f = Extensional f {{eqₜ = ≡-eq}}
 
-ExtensionalTo-↔ : ∀ {𝓈 𝒶 ℯS} {S : Set 𝓈} (f : Subset S 𝒶)
-                     {_≍S_ : Rel S ℯS} {{eqS : Equivalence _≍S_}} → Set _
-ExtensionalTo-↔ f = Extensional f {{eqT = ↔-eq}}
-
-S-ExtensionalTo-↔ : ∀ {𝒾 𝓈 𝒶 ℯS} {I : Set 𝒾} {S : Set 𝓈} (A : I → Subset S 𝒶)
-                       {_≍S_ : Rel S ℯS} {{eqS : Equivalence _≍S_}} → Set _
-S-ExtensionalTo-↔ A = ∀ {i} → ExtensionalTo-↔ (A i)
-
-I-ExtensionalTo-↔ : ∀ {𝒾 𝓈 𝒶 ℯI} {I : Set 𝒾} {S : Set 𝓈} (A : I → Subset S 𝒶)
-                       {_≍I_ : Rel I ℯI} {{eqI : Equivalence _≍I_}} → Set _
-I-ExtensionalTo-↔ A = ∀ {x} → ExtensionalTo-↔ (λ i → A i x)
-
--- extensional set (setoid)
-record ESet 𝓈 ℯ : Set (lsuc (𝓈 ⊔ ℯ)) where
-  field
-    Carrier : Set 𝓈
-    _≍_     : Rel Carrier ℯ
-    {{eq}}  : Equivalence _≍_
-
--- extensional subset
-record ESubset {𝓈 ℯ} (ES : ESet 𝓈 ℯ) 𝒶 : Set (𝓈 ⊔ ℯ ⊔ lsuc 𝒶) where
-  open module S = ESet ES using () renaming (Carrier to S)
-  field
-    Carrier : Subset S 𝒶
-    ext     : ExtensionalTo-↔ Carrier
-
--- family of extensional subsets
-record ESubsetFamily {𝒾 𝓈 ℯI ℯS} (EI : ESet 𝒾 ℯI) (ES : ESet 𝓈 ℯS) 𝒶 :
-                     Set (𝒾 ⊔ 𝓈 ⊔ ℯI ⊔ ℯS ⊔ lsuc 𝒶) where
-  open module I = ESet EI using () renaming (Carrier to I)
-  open module S = ESet ES using () renaming (Carrier to S)
-  field
-    Carrier : I → Subset S 𝒶
-    S-ext   : S-ExtensionalTo-↔ Carrier
-    I-ext   : I-ExtensionalTo-↔ Carrier
+ExtensionalTo-↔ : ∀ {𝓈 𝒶 ℯₛ} {S : Set 𝓈} (f : Subset S 𝒶)
+                     {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}} → Set _
+ExtensionalTo-↔ f = Extensional f {{eqₜ = ↔-eq}}
 ```
 :::
 
@@ -317,9 +285,17 @@ that
 7.  $(∀i : I)(∃!x : S)(A_i ∩ S_1)(x)$ (uniqueness of choice).
 
 ```
-MutuallyExclusive : ∀ {𝒾 𝓈 ℯI 𝒶} {I : Set 𝒾} {S : Set 𝓈} (A : I → Subset S 𝒶)
-                      {_≍I_ : Rel I ℯI} {{eqI : Equivalence _≍I_}} → Set _
-MutuallyExclusive A {_≍I_} = ∀ {i j x} → A i x → A j x → i ≍I j
+S-ExtensionalTo-↔ : ∀ {𝒾 𝓈 𝒶 ℯₛ} {I : Set 𝒾} {S : Set 𝓈} (A : I → Subset S 𝒶)
+                       {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}} → Set _
+S-ExtensionalTo-↔ A = ∀ {i} → ExtensionalTo-↔ (A i)
+
+I-ExtensionalTo-↔ : ∀ {𝒾 𝓈 𝒶 ℯᵢ} {I : Set 𝒾} {S : Set 𝓈} (A : I → Subset S 𝒶)
+                       {_≍ᵢ_ : Rel I ℯᵢ} {{eqᵢ : Equivalence _≍ᵢ_}} → Set _
+I-ExtensionalTo-↔ A = ∀ {x} → ExtensionalTo-↔ (λ i → A i x)
+
+MutuallyExclusive : ∀ {𝒾 𝓈 ℯᵢ 𝒶} {I : Set 𝒾} {S : Set 𝓈} (A : I → Subset S 𝒶)
+                      {_≍ᵢ_ : Rel I ℯᵢ} {{eqᵢ : Equivalence _≍ᵢ_}} → Set _
+MutuallyExclusive A {_≍ᵢ_} = ∀ {i j x} → A i x → A j x → i ≍ᵢ j
 
 Exhaustive : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : Set 𝓈} (A : I → Subset S 𝒶) → Set _
 Exhaustive A = ∀ x → ∃[ i ] A i x
@@ -328,18 +304,17 @@ Nonempty : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : Set 𝓈} (A : I → Subset 
 Nonempty A = ∀ i → ∃[ x ] A i x
 
 -- Zermelo’s axiom of choice
-ZAC : ∀ 𝒾 𝓈 ℯI ℯS 𝒶 → Set _
-ZAC 𝒾 𝓈 ℯI ℯS 𝒶 =
-    ∀ {EI : ESet 𝒾 ℯI} {ES : ESet 𝓈 ℯS} {EA : ESubsetFamily EI ES 𝒶}
-      (open ESet EI using () renaming (Carrier to I))
-      (open ESet ES using () renaming (Carrier to S))
-      (open ESubsetFamily EA using () renaming (Carrier to A))
+ZAC : ∀ 𝒾 𝓈 ℯᵢ ℯₛ 𝒶 → Set _
+ZAC 𝒾 𝓈 ℯᵢ ℯₛ 𝒶 =
+    ∀ {I : Set 𝒾} {S : Set 𝓈} {A : I → Subset S 𝒶}
+      {_≍ᵢ_ : Rel I ℯᵢ} {{eqᵢ : Equivalence _≍ᵢ_}}
+      {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}}
+      (p₁ : S-ExtensionalTo-↔ A)
+      (p₂ : I-ExtensionalTo-↔ A)
       (p₃ : MutuallyExclusive A)
       (p₄ : Exhaustive A)
       (p₅ : Nonempty A) →
-    ∃[ ES₁ ⦂ ESubset ES (ℯS ⊔ 𝒾) ]
-      let open ESubset ES₁ using () renaming (Carrier to S₁) in
-      ∀ i → ∃![ x ⦂ S ] (A i ∩ S₁) x
+    ∃[ S₁ ⦂ Subset S (𝒾 ⊔ ℯₛ) ] ExtensionalTo-↔ S₁ ∧ ∀ i → ∃![ x ⦂ S ] (A i ∩ S₁) x
 ```
 :::
 
@@ -391,51 +366,48 @@ axiom of choice has failed, as was to be expected.
 
 ```
 -- extensional axiom of choice
-EAC : ∀ 𝒾 𝓈 ℯI ℯS 𝒶 → Set _
-EAC 𝒾 𝓈 ℯI ℯS 𝒶 =
-    ∀ {EI : ESet 𝒾 ℯI} {ES : ESet 𝓈 ℯS} {EA : ESubsetFamily EI ES 𝒶}
-      (open ESet EI using () renaming (Carrier to I))
-      (open ESet ES using () renaming (Carrier to S))
-      (open ESubsetFamily EA using () renaming (Carrier to A))
+EAC : ∀ 𝒾 𝓈 ℯᵢ ℯₛ 𝒶 → Set _
+EAC 𝒾 𝓈 ℯᵢ ℯₛ 𝒶 =
+    ∀ {I : Set 𝒾} {S : Set 𝓈} {A : I → Subset S 𝒶}
+      {_≍ᵢ_ : Rel I ℯᵢ} {{eqᵢ : Equivalence _≍ᵢ_}}
+      {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}}
+      (p₁ : S-ExtensionalTo-↔ A)
+      (p₂ : I-ExtensionalTo-↔ A)
       (p₅ : Nonempty A) →
     ∃[ f ⦂ (I → S) ] Extensional f ∧ ∀ i → A i (f i)
 
-i→ii : ∀ {𝒾 𝓈 ℯI ℯS 𝒶} → EAC 𝒾 𝓈 ℯI ℯS 𝒶 → ZAC 𝒾 𝓈 ℯI ℯS 𝒶
-i→ii eac {EI} {ES} {EA} p₃ p₄ p₅ = record { Carrier = S₁ ; ext = p₆ } , p₇
+i→ii : ∀ {𝒾 𝓈 ℯᵢ ℯₛ 𝒶} → EAC 𝒾 𝓈 ℯᵢ ℯₛ 𝒶 → ZAC 𝒾 𝓈 ℯᵢ ℯₛ 𝒶
+i→ii eac {I} {S} {A} {_≍ᵢ_} {_≍ₛ_} p₁ p₂ p₃ p₄ p₅ = S₁ , p₆ , p₇
   where
-    open module I = ESet EI using () renaming (Carrier to I)
-    open module S = ESet ES using () renaming (Carrier to S)
-    open module A = ESubsetFamily EA using () renaming (Carrier to A)
-
     f : I → S
-    f = fst (eac {EA = EA} p₅)
+    f = fst (eac p₁ p₂ p₅)
 
     f-ext : Extensional f
-    f-ext = fst (snd (eac {EA = EA} p₅))
+    f-ext = fst (snd (eac p₁ p₂ p₅))
 
     S₁ : Subset S _
-    S₁ x = ∃[ j ] f j S.≍ x
+    S₁ x = ∃[ j ] f j ≍ₛ x
 
     p₆ : ExtensionalTo-↔ S₁
     p₆ x≍y = (λ { (j , fj≍x) → j , ≍-trans fj≍x x≍y })
            , (λ { (j , fj≍y) → j , ≍-trans fj≍y (≍-sym x≍y) })
 
     f-common : ∀ i → (A i ∩ S₁) (f i)
-    f-common i = snd (snd (eac p₅)) i , i , ≍-refl
+    f-common i = snd (snd (eac p₁ p₂ p₅)) i , i , ≍-refl
 
-    f-unique : ∀ i {y} → (A i ∩ S₁) y → f i S.≍ y
+    f-unique : ∀ i {y} → (A i ∩ S₁) y → f i ≍ₛ y
     f-unique i {y} (y-here , j , fj≍y) = fi≍y
       where
         fj-there : A j (f j)
         fj-there = fst (f-common j)
 
         y-there : A j y
-        y-there = fst (A.S-ext fj≍y) fj-there
+        y-there = fst (p₁ fj≍y) fj-there
 
-        i≍j : i I.≍ j
+        i≍j : i ≍ᵢ j
         i≍j = p₃ y-here y-there
 
-        fi≍y : f i S.≍ y
+        fi≍y : f i ≍ₛ y
         fi≍y = ≍-trans (f-ext i≍j) fj≍y
 
     p₇ : ∀ i → ∃![ x ⦂ S ] (A i ∩ S₁) x
@@ -536,29 +508,29 @@ by the exten&shy;sional dependence of $A_i$ on the index $i.$  The uniqueness pr
 $A_i ∩ S_1$ permits us to now conclude $g(i) =_S g(j)$ as desired.
 
 ```
-Surjective : ∀ {𝓈 𝓉 ℯT} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
-               {_≍T_ : Rel T ℯT} {{eqT : Equivalence _≍T_}} → Set _
-Surjective f {_≍T_} = ∀ y → ∃[ x ] f x ≍T y
+Surjective : ∀ {𝓈 𝓉 ℯₜ} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
+               {_≍ₜ_ : Rel T ℯₜ} {{eqₜ : Equivalence _≍ₜ_}} → Set _
+Surjective f {_≍ₜ_} = ∀ y → ∃[ x ] f x ≍ₜ y
 
-RightInverse : ∀ {𝓈 𝓉 ℯT} {S : Set 𝓈} {T : Set 𝓉} (g : T → S) (f : S → T)
-                 {_≍T_ : Rel T ℯT} {{eqT : Equivalence _≍T_}} → Set _
-RightInverse g f {_≍T_} = ∀ y → (f ∘ g) y ≍T y
+RightInverse : ∀ {𝓈 𝓉 ℯₜ} {S : Set 𝓈} {T : Set 𝓉} (g : T → S) (f : S → T)
+                 {_≍ₜ_ : Rel T ℯₜ} {{eqₜ : Equivalence _≍ₜ_}} → Set _
+RightInverse g f {_≍ₜ_} = ∀ y → (f ∘ g) y ≍ₜ y
 
 -- every surjective extensional function has an extensional right inverse
-AC-III : ∀ 𝓈 𝓉 ℯS ℯT → Set _
-AC-III 𝓈 𝓉 ℯS ℯT =
+AC-III : ∀ 𝓈 𝓉 ℯₛ ℯₜ → Set _
+AC-III 𝓈 𝓉 ℯₛ ℯₜ =
     ∀ {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
-      {_≍S_ : Rel S ℯS} {{eqS : Equivalence _≍S_}}
-      {_≍T_ : Rel T ℯT} {{eqT : Equivalence _≍T_}}
+      {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}}
+      {_≍ₜ_ : Rel T ℯₜ} {{eqₜ : Equivalence _≍ₜ_}}
       (f-ext : Extensional f)
       (f-surj : Surjective f) →
     ∃[ g ⦂ (T → S) ] RightInverse g f ∧ Extensional g
 
-ii→iii : ∀ {𝒾 𝓈 ℯI ℯS} → ZAC 𝒾 𝓈 ℯI ℯS ℯI → AC-III 𝓈 𝒾 ℯS ℯI
-ii→iii zac {S} {I} f {_≍S_} {_≍I_} f-ext f-surj = g , g-f-rinv , g-ext
+ii→iii : ∀ {𝒾 𝓈 ℯᵢ ℯₛ} → ZAC 𝒾 𝓈 ℯᵢ ℯₛ ℯᵢ → AC-III 𝓈 𝒾 ℯₛ ℯᵢ
+ii→iii zac {S} {I} f {_≍ₛ_} {_≍ᵢ_} f-ext f-surj = g , g-f-rinv , g-ext
   where
     A : I → Subset S _
-    A i x = f x ≍I i
+    A i x = f x ≍ᵢ i
 
     p₁ : S-ExtensionalTo-↔ A
     p₁ x≍y = (λ fx≍i → ≍-trans (≍-sym (f-ext x≍y)) fx≍i)
@@ -577,28 +549,17 @@ ii→iii zac {S} {I} f {_≍S_} {_≍I_} f-ext f-surj = g , g-f-rinv , g-ext
     p₅ : Nonempty A
     p₅ = f-surj
 
-    EI : ESet _ _
-    EI = record { Carrier = I ; _≍_ = _≍I_ }
-
-    ES : ESet _ _
-    ES = record { Carrier = S ; _≍_ = _≍S_ }
-
-    EA : ESubsetFamily EI ES _
-    EA = record { Carrier = A ; S-ext = p₁ ; I-ext = p₂ }
-
-    ES₁ : ESubset ES _
-    ES₁ = fst (zac {EA = EA} p₃ p₄ p₅)
-
-    open module S₁ = ESubset ES₁ using () renaming (Carrier to S₁)
+    S₁ : Subset S _
+    S₁ = fst (zac p₁ p₂ p₃ p₄ p₅)
 
     g : I → S
-    g = fst (ac (snd (zac p₃ p₄ p₅)))
+    g = fst (ac (snd (snd (zac p₁ p₂ p₃ p₄ p₅))))
 
     g-common : ∀ i → (A i ∩ S₁) (g i)
-    g-common = fst ∘ snd (ac (snd (zac p₃ p₄ p₅)))
+    g-common = fst ∘ snd (ac (snd (snd (zac p₁ p₂ p₃ p₄ p₅))))
 
-    g-unique : ∀ i {y} → (A i ∩ S₁) y → g i ≍S y
-    g-unique = snd ∘ snd (ac (snd (zac p₃ p₄ p₅)))
+    g-unique : ∀ i {y} → (A i ∩ S₁) y → g i ≍ₛ y
+    g-unique = snd ∘ snd (ac (snd (snd (zac p₁ p₂ p₃ p₄ p₅))))
 
     g-f-rinv : RightInverse g f
     g-f-rinv = fst ∘ g-common
@@ -612,7 +573,7 @@ ii→iii zac {S} {I} f {_≍S_} {_≍I_} f-ext f-surj = g , g-f-rinv , g-ext
         gj-here : (A i ∩ S₁) (g j)
         gj-here = snd (p₂ i≍j) (fst gj-there) , snd gj-there
 
-        gi≍gj : g i ≍S g j
+        gi≍gj : g i ≍ₛ g j
         gi≍gj = g-unique i gj-here
 ```
 :::
@@ -635,22 +596,22 @@ which is to say that $g$ has the miraculous property of picking a unique represe
 equivalence class of the given equivalence relation $=_I.$
 
 ```
-ext-wrt-≡ : ∀ {𝓈 𝓉 ℯT} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
-              {_≍T_ : Rel T ℯT} {{eqT : Equivalence _≍T_}} → ExtensionalFrom-≡ f
+ext-wrt-≡ : ∀ {𝓈 𝓉 ℯₜ} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
+              {_≍ₜ_ : Rel T ℯₜ} {{eqₜ : Equivalence _≍ₜ_}} → ExtensionalFrom-≡ f
 ext-wrt-≡ f refl = ≍-refl
 
-id-surj : ∀ {𝓈 ℯS} {S : Set 𝓈}
-            {_≍S_ : Rel S ℯS} {{eqS : Equivalence _≍S_}} → Surjective id
+id-surj : ∀ {𝓈 ℯₛ} {S : Set 𝓈}
+            {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}} → Surjective id
 id-surj y = y , ≍-refl
 
 -- every equivalence class of any equivalence relation has a unique representative
-AC-IV : ∀ 𝒾 ℯI → Set _
-AC-IV 𝒾 ℯI =
-    ∀ {I : Set 𝒾} (_≍I_ : Rel I ℯI) {{eqI : Equivalence _≍I_}} →
+AC-IV : ∀ 𝒾 ℯᵢ → Set _
+AC-IV 𝒾 ℯᵢ =
+    ∀ {I : Set 𝒾} (_≍ᵢ_ : Rel I ℯᵢ) {{eqᵢ : Equivalence _≍ᵢ_}} →
     ∃[ g ⦂ (I → I) ] RightInverse g id ∧ ExtensionalTo-≡ g
 
-iii→iv : ∀ {𝒾 ℯI} → AC-III 𝒾 𝒾 𝒾 ℯI → AC-IV 𝒾 ℯI
-iii→iv ac-iii _≍_ = ac-iii id {{eqS = ≡-eq}} (ext-wrt-≡ id) id-surj
+iii→iv : ∀ {𝒾 ℯᵢ} → AC-III 𝒾 𝒾 𝒾 ℯᵢ → AC-IV 𝒾 ℯᵢ
+iii→iv ac-iii _≍_ = ac-iii id {{eqₛ = ≡-eq}} (ext-wrt-≡ id) id-surj
 ```
 :::
 
@@ -708,13 +669,9 @@ Hence $f \circ g$ has become an exten&shy;sional choice function, which means th
 exten&shy;sional axiom of choice is satisfied.
 
 ```
-iv→i : ∀ {𝒾 𝓈 ℯI ℯS 𝒶} → AC-IV 𝒾 ℯI → EAC 𝒾 𝓈 ℯI ℯS 𝒶
-iv→i ac-iv {EI} {ES} {EA} p₅ = f ∘ g , f∘g-ext , f∘g-common
+iv→i : ∀ {𝒾 𝓈 ℯᵢ ℯₛ 𝒶} → AC-IV 𝒾 ℯᵢ → EAC 𝒾 𝓈 ℯᵢ ℯₛ 𝒶
+iv→i ac-iv {I} {S} {A} {_≍ᵢ_} {_≍ₛ_} p₁ p₂ p₅ = f ∘ g , f∘g-ext , f∘g-common
   where
-    open module I = ESet EI using () renaming (Carrier to I)
-    open module S = ESet ES using () renaming (Carrier to S)
-    open module A = ESubsetFamily EA using () renaming (Carrier to A)
-
     f : I → S
     f = fst (ac p₅)
 
@@ -722,19 +679,19 @@ iv→i ac-iv {EI} {ES} {EA} p₅ = f ∘ g , f∘g-ext , f∘g-common
     f-common = snd (ac p₅)
 
     g : I → I
-    g = fst (ac-iv I._≍_)
+    g = fst (ac-iv _≍ᵢ_)
 
     g-id-rinv : RightInverse g id
-    g-id-rinv = fst (snd (ac-iv I._≍_))
+    g-id-rinv = fst (snd (ac-iv _≍ᵢ_))
 
     g-ext : ExtensionalTo-≡ g
-    g-ext = snd (snd (ac-iv I._≍_))
+    g-ext = snd (snd (ac-iv _≍ᵢ_))
 
     f∘g-ext : Extensional (f ∘ g)
     f∘g-ext = ≡→≍ ∘ (cong f) ∘ g-ext
 
     f∘g-common : ∀ i → A i ((f ∘ g) i)
-    f∘g-common i = fst (A.I-ext (g-id-rinv i)) (f-common (g i))
+    f∘g-common i = fst (p₂ (g-id-rinv i)) (f-common (g i))
 ```
 :::
 
@@ -853,17 +810,17 @@ exten&shy;sional choice, as opposed to $\text{ExtAC},$ which lacks justification
 
 ```
 -- axiom of unique choice
-AC! : ∀ 𝒾 𝓈 ℯI ℯS 𝒶 → Set _
-AC! 𝒾 𝓈 ℯI ℯS 𝒶 =
+AC! : ∀ 𝒾 𝓈 ℯᵢ ℯₛ 𝒶 → Set _
+AC! 𝒾 𝓈 ℯᵢ ℯₛ 𝒶 =
     ∀ {I : Set 𝒾} {S : Set 𝓈} {A : I → Subset S 𝒶}
-      {_≍I_ : Rel I ℯI} {{eqI : Equivalence _≍I_}}
-      {_≍S_ : Rel S ℯS} {{eqS : Equivalence _≍S_}}
+      {_≍ᵢ_ : Rel I ℯᵢ} {{eqᵢ : Equivalence _≍ᵢ_}}
+      {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}}
       (p₁ : S-ExtensionalTo-↔ A)
       (p₂ : I-ExtensionalTo-↔ A) →
     (∀ i → ∃![ x ⦂ S ] A i x) → ∃[ f ⦂ (I → S) ] Extensional f ∧ ∀ i → A i (f i)
 
-ac! : ∀ {𝒾 𝓈 ℯI ℯS 𝒶} → AC! 𝒾 𝓈 ℯI ℯS 𝒶
-ac! {I = I} {S} {A} {_≍I_} {_≍S_} p₁ p₂ h = f , f-ext , f-common
+ac! : ∀ {𝒾 𝓈 ℯᵢ ℯₛ 𝒶} → AC! 𝒾 𝓈 ℯᵢ ℯₛ 𝒶
+ac! {I = I} {S} {A} {_≍ᵢ_} {_≍ₛ_} p₁ p₂ h = f , f-ext , f-common
   where
     f : I → S
     f = fst (ac h)
@@ -871,7 +828,7 @@ ac! {I = I} {S} {A} {_≍I_} {_≍S_} p₁ p₂ h = f , f-ext , f-common
     f-common : ∀ i → A i (f i)
     f-common = fst ∘ snd (ac h)
 
-    f-unique : ∀ i {y} → A i y → f i ≍S y
+    f-unique : ∀ i {y} → A i y → f i ≍ₛ y
     f-unique = snd ∘ snd (ac h)
 
     f-ext : Extensional f
@@ -883,7 +840,7 @@ ac! {I = I} {S} {A} {_≍I_} {_≍S_} p₁ p₂ h = f , f-ext , f-common
         fj-here : A i (f j)
         fj-here = fst (p₂ (≍-sym i≍j)) fj-there
 
-        fi≍fj : f i ≍S f j
+        fi≍fj : f i ≍ₛ f j
         fi≍fj = f-unique i fj-here
 ```
 :::
