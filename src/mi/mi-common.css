@@ -143,10 +143,10 @@ li {
   hyphenate-limit-chars: 3 3 3;
 }
 blockquote {
-  margin: 2.6rem 6rem;
+  margin: 2.6rem 6.0rem;
 }
 ul, ol {
-  padding-left: 6rem;
+  padding-left: 6.0rem;
 }
 ol li::marker, ol[type="1"] li::marker {
   content: '(' counter(list-item, decimal) ")  ";
@@ -209,6 +209,19 @@ a.footnote-ref, a.rr {
 a {
   text-decoration-thickness: 0.1rem;
 }
+.align-top, .align {
+  position: relative;
+}
+.qed {
+  position: relative;
+}
+.qed:after {
+  display: block;
+  content: "◻︎";
+  position: absolute;
+  right: -0.3rem;
+  bottom: -0.1rem;
+}
 
 /******************************************************************************/
 
@@ -216,13 +229,13 @@ a {
 
 body {
   margin: auto;
-  padding: 0 6rem;
-  max-width: 82rem;
+  padding: 0 6.0rem;
+  max-width: 82.0rem;
 }
 @media (max-width: 699px) {
   body {
-    padding: 0 3rem;
-    max-width: 76rem;
+    padding: 0 3.0rem;
+    max-width: 76.0rem;
   }
 }
 
@@ -715,7 +728,7 @@ p:has(> a.mi):before {
   left: calc(50% - 2.0rem);
 }
 #card p {
-  margin: 2.0rem 2.0rem 0 17rem;
+  margin: 2.0rem 2.0rem 0 17.0rem;
   text-align: left;
   hyphens: none;
   position: relative;
@@ -739,7 +752,7 @@ p:has(> a.mi):before {
   display: block;
   content: "";
   border-bottom: 0.1rem var(--active-glow) solid;
-  width: 58rem;
+  width: 58.0rem;
   height: 0;
   position: absolute;
   top: -0.2rem;

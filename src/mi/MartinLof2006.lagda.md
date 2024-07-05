@@ -29,19 +29,19 @@ _∘_ : ∀ {𝓈 𝓉 𝓊} {S : Set 𝓈} {T : S → Set 𝓉} {U : ∀ {x} �
         (f : ∀ {x} (y : T x) → U y) (g : ∀ x → T x) x → U (g x)
 (f ∘ g) x = f (g x)
 
-Rel : ∀ {𝓈} (S : Set 𝓈) 𝓇 → Set _
-Rel S 𝓇 = S → S → Set 𝓇
+Relation : ∀ {𝓈} (S : Set 𝓈) ℓ → Set _
+Relation S ℓ = S → S → Set ℓ
 
-Reflexive : ∀ {𝓈 𝓇} {S : Set 𝓈} (_∼_ : Rel S 𝓇) → Set _
+Reflexive : ∀ {𝓈 ℓ} {S : Set 𝓈} (_∼_ : Relation S ℓ) → Set _
 Reflexive _∼_ = ∀ {x} → x ∼ x
 
-Symmetric : ∀ {𝓈 𝓇} {S : Set 𝓈} (_∼_ : Rel S 𝓇) → Set _
+Symmetric : ∀ {𝓈 ℓ} {S : Set 𝓈} (_∼_ : Relation S ℓ) → Set _
 Symmetric _∼_ = ∀ {x y} → x ∼ y → y ∼ x
 
-Transitive : ∀ {𝓈 𝓇} {S : Set 𝓈} (_∼_ : Rel S 𝓇) → Set _
+Transitive : ∀ {𝓈 ℓ} {S : Set 𝓈} (_∼_ : Relation S ℓ) → Set _
 Transitive _∼_ = ∀ {x y z} → x ∼ y → y ∼ z → x ∼ z
 
-record Equivalence {𝓈 ℯ} {S : Set 𝓈} (_≍_ : Rel S ℯ) : Set (𝓈 ⊔ ℯ) where
+record Equivalence {𝓈 ℯ} {S : Set 𝓈} (_≍_ : Relation S ℯ) : Set (𝓈 ⊔ ℯ) where
   field
     ≍-refl  : Reflexive _≍_
     ≍-sym   : Symmetric _≍_
@@ -64,7 +64,7 @@ cong : ∀ {𝓈 𝓉} {S : Set 𝓈} {T : Set 𝓉} {x y} (f : S → T)
          (x≡y : Id x y) → Id (f x) (f y)
 cong f refl = refl
 
-Id→≍ : ∀ {𝓈 ℯ} {S : Set 𝓈} {x y} {_≍_ : Rel S ℯ} {{eq : Equivalence _≍_}}
+Id→≍ : ∀ {𝓈 ℯ} {S : Set 𝓈} {x y} {_≍_ : Relation S ℯ} {{eq : Equivalence _≍_}}
           (x≡y : Id x y) → x ≍ y
 Id→≍ refl = ≍-refl
 
@@ -82,7 +82,7 @@ S ∧ T = ∃[ _ ⦂ S ] T
 infix 2 ∃!-syntax
 syntax ∃!-syntax S (λ x → T) = ∃![ x ⦂ S ] T
 ∃!-syntax : ∀ {𝓈 𝓉 ℯ} (S : Set 𝓈) (T : S → Set 𝓉)
-              {_≍_ : Rel S ℯ} {{eq : Equivalence _≍_}} → Set _
+              {_≍_ : Relation S ℯ} {{eq : Equivalence _≍_}} → Set _
 ∃!-syntax S T {_≍_} = ∃[ x ⦂ S ] T x ∧ ∀ {y} → T y → x ≍ y
 
 infix 1 _↔_
@@ -182,15 +182,15 @@ AC ℓ = ∀ {I S : Set ℓ} {A : I → Subset S ℓ} →
          (∀ i → ∃[ x ⦂ S ] A i x) → ∃[ f ⦂ (I → S) ] ∀ i → A i (f i)
 
 -- generalized axiom of choice
-GenAC : ∀ ℓ → Set _
-GenAC ℓ = ∀ {I : Set ℓ} {S : I → Set ℓ} {A : ∀ i → Subset (S i) ℓ} →
-            (∀ i → ∃[ x ⦂ S i ] A i x) → ∃[ f ⦂ (∀ i → S i) ] ∀ i → A i (f i)
+GAC : ∀ ℓ → Set _
+GAC ℓ = ∀ {I : Set ℓ} {S : I → Set ℓ} {A : ∀ i → Subset (S i) ℓ} →
+          (∀ i → ∃[ x ⦂ S i ] A i x) → ∃[ f ⦂ (∀ i → S i) ] ∀ i → A i (f i)
 
-genac : ∀ {ℓ} → GenAC ℓ
-genac h = fst ∘ h , snd ∘ h
+gac : ∀ {ℓ} → GAC ℓ
+gac h = fst ∘ h , snd ∘ h
 
 ac : ∀ {ℓ} → AC ℓ
-ac = genac
+ac = gac
 ```
 :::
 
@@ -236,22 +236,22 @@ type theory, and that a subset of an exten&shy;sional set is interpreted as a pr
 which is exten&shy;sional with respect to the equivalence relation in question.
 
 ```
-Ext : ∀ {𝓈 𝓉 ℯₛ ℯₜ} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
-        {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}}
-        {_≍ₜ_ : Rel T ℯₜ} {{eqₜ : Equivalence _≍ₜ_}} → Set _
-Ext f {_≍ₛ_} {_≍ₜ_} = ∀ {x y} → x ≍ₛ y → f x ≍ₜ f y
+Extensional : ∀ {𝓈 𝓉 ℯₛ ℯₜ} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
+                {_≍ₛ_ : Relation S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}}
+                {_≍ₜ_ : Relation T ℯₜ} {{eqₜ : Equivalence _≍ₜ_}} → Set _
+Extensional f {_≍ₛ_} {_≍ₜ_} = ∀ {x y} → x ≍ₛ y → f x ≍ₜ f y
 
-Ext-Id-≍ : ∀ {𝓈 𝓉 ℯₜ} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
-             {_≍ₜ_ : Rel T ℯₜ} {{eqₜ : Equivalence _≍ₜ_}} → Set _
-Ext-Id-≍ f = Ext f {{eqₛ = Id-eq}}
+Extensional-Id-≍ : ∀ {𝓈 𝓉 ℯₜ} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
+                     {_≍ₜ_ : Relation T ℯₜ} {{eqₜ : Equivalence _≍ₜ_}} → Set _
+Extensional-Id-≍ f = Extensional f {{eqₛ = Id-eq}}
 
-Ext-≍-Id : ∀ {𝓈 𝓉 ℯₛ} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
-             {_≍ₛ_ : Rel S ℯₛ} {{eqₜ : Equivalence _≍ₛ_}} → Set _
-Ext-≍-Id f = Ext f {{eqₜ = Id-eq}}
+Extensional-≍-Id : ∀ {𝓈 𝓉 ℯₛ} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
+                     {_≍ₛ_ : Relation S ℯₛ} {{eqₜ : Equivalence _≍ₛ_}} → Set _
+Extensional-≍-Id f = Extensional f {{eqₜ = Id-eq}}
 
-Ext-≍-↔ : ∀ {𝓈 𝒶 ℯₛ} {S : Set 𝓈} (f : Subset S 𝒶)
-             {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}} → Set _
-Ext-≍-↔ f = Ext f {{eqₜ = ↔-eq}}
+Extensional-≍-↔ : ∀ {𝓈 𝒶 ℯₛ} {S : Set 𝓈} (f : Subset S 𝒶)
+                     {_≍ₛ_ : Relation S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}} → Set _
+Extensional-≍-↔ f = Extensional f {{eqₜ = ↔-eq}}
 ```
 :::
 
@@ -278,35 +278,35 @@ that
 7.  $(∀i : I)(∃!x : S)(A_i ∩ S_1)(x)$ (uniqueness of choice).
 
 ```
-Ext-≍ₛ-↔ : ∀ {𝒾 𝓈 𝒶 ℯₛ} {I : Set 𝒾} {S : Set 𝓈} (A : I → Subset S 𝒶)
-              {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}} → Set _
-Ext-≍ₛ-↔ A = ∀ {i} → Ext-≍-↔ (A i)
+Extensional-≍ₛ-↔ : ∀ {𝒾 𝓈 𝒶 ℯₛ} {I : Set 𝒾} {S : Set 𝓈} (A : I → Subset S 𝒶)
+                      {_≍ₛ_ : Relation S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}} → Set _
+Extensional-≍ₛ-↔ A = ∀ {i} → Extensional-≍-↔ (A i)
 
-Ext-≍ᵢ-↔ : ∀ {𝒾 𝓈 𝒶 ℯᵢ} {I : Set 𝒾} {S : Set 𝓈} (A : I → Subset S 𝒶)
-              {_≍ᵢ_ : Rel I ℯᵢ} {{eqᵢ : Equivalence _≍ᵢ_}} → Set _
-Ext-≍ᵢ-↔ A = ∀ {x} → Ext-≍-↔ (λ i → A i x)
+Extensional-≍ᵢ-↔ : ∀ {𝒾 𝓈 𝒶 ℯᵢ} {I : Set 𝒾} {S : Set 𝓈} (A : I → Subset S 𝒶)
+                      {_≍ᵢ_ : Relation I ℯᵢ} {{eqᵢ : Equivalence _≍ᵢ_}} → Set _
+Extensional-≍ᵢ-↔ A = ∀ {x} → Extensional-≍-↔ (λ i → A i x)
 
 MutuallyExclusive : ∀ {𝒾 𝓈 𝒶 ℯᵢ} {I : Set 𝒾} {S : Set 𝓈} (A : I → Subset S 𝒶)
-                      {_≍ᵢ_ : Rel I ℯᵢ} {{eqᵢ : Equivalence _≍ᵢ_}} → Set _
+                      {_≍ᵢ_ : Relation I ℯᵢ} {{eqᵢ : Equivalence _≍ᵢ_}} → Set _
 MutuallyExclusive A {_≍ᵢ_} = ∀ {i j x} → A i x → A j x → i ≍ᵢ j
 
 Exhaustive : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : Set 𝓈} (A : I → Subset S 𝒶) → Set _
-Exhaustive A = ∀ x → ∃[ i ⦂ _ ] A i x
+Exhaustive {I = I} A = ∀ x → ∃[ i ⦂ I ] A i x
 
 Nonempty : ∀ {𝒾 𝓈 𝒶} {I : Set 𝒾} {S : Set 𝓈} (A : I → Subset S 𝒶) → Set _
-Nonempty A = ∀ i → ∃[ x ⦂ _ ] A i x
+Nonempty {S = S} A = ∀ i → ∃[ x ⦂ S ] A i x
 
 -- Zermelo’s axiom of choice
-ZerAC : ∀ ℓ → Set _
-ZerAC ℓ = ∀ {I S : Set ℓ} {A : I → Subset S ℓ}
-            {_≍ᵢ_ : Rel I ℓ} {{eqᵢ : Equivalence _≍ᵢ_}}
-            {_≍ₛ_ : Rel S ℓ} {{eqₛ : Equivalence _≍ₛ_}}
-            (p₁ : Ext-≍ₛ-↔ A)
-            (p₂ : Ext-≍ᵢ-↔ A)
-            (p₃ : MutuallyExclusive A)
-            (p₄ : Exhaustive A)
-            (p₅ : Nonempty A) →
-          ∃[ S₁ ⦂ Subset S ℓ ] Ext-≍-↔ S₁ ∧ ∀ i → ∃![ x ⦂ S ] (A i ∩ S₁) x
+ZAC : ∀ ℓ → Set _
+ZAC ℓ = ∀ {I S : Set ℓ} {A : I → Subset S ℓ}
+          {_≍ᵢ_ : Relation I ℓ} {{eqᵢ : Equivalence _≍ᵢ_}}
+          {_≍ₛ_ : Relation S ℓ} {{eqₛ : Equivalence _≍ₛ_}}
+          (p₁ : Extensional-≍ₛ-↔ A)
+          (p₂ : Extensional-≍ᵢ-↔ A)
+          (p₃ : MutuallyExclusive A)
+          (p₄ : Exhaustive A)
+          (p₅ : Nonempty A) →
+        ∃[ S₁ ⦂ Subset S ℓ ] Extensional-≍-↔ S₁ ∧ ∀ i → ∃![ x ⦂ S ] (A i ∩ S₁) x
 ```
 :::
 
@@ -370,33 +370,33 @@ which does not prevent one from investigating its consequences, of course.
 
 ```
 -- extensional axiom of choice
-ExtAC : ∀ ℓ → Set _
-ExtAC ℓ = ∀ {I S : Set ℓ} {A : I → Subset S ℓ}
-            {_≍ᵢ_ : Rel I ℓ} {{eqᵢ : Equivalence _≍ᵢ_}}
-            {_≍ₛ_ : Rel S ℓ} {{eqₛ : Equivalence _≍ₛ_}}
-            (p₁ : Ext-≍ₛ-↔ A)
-            (p₂ : Ext-≍ᵢ-↔ A)
-            (p₅ : Nonempty A) →
-          ∃[ f ⦂ (I → S) ] Ext f ∧ ∀ i → A i (f i)
+EAC : ∀ ℓ → Set _
+EAC ℓ = ∀ {I S : Set ℓ} {A : I → Subset S ℓ}
+          {_≍ᵢ_ : Relation I ℓ} {{eqᵢ : Equivalence _≍ᵢ_}}
+          {_≍ₛ_ : Relation S ℓ} {{eqₛ : Equivalence _≍ₛ_}}
+          (p₁ : Extensional-≍ₛ-↔ A)
+          (p₂ : Extensional-≍ᵢ-↔ A)
+          (p₅ : Nonempty A) →
+        ∃[ f ⦂ (I → S) ] Extensional f ∧ ∀ i → A i (f i)
 
-extac→zerac : ∀ {ℓ} → ExtAC ℓ → ZerAC ℓ
-extac→zerac extac {I} {S} {A} {_≍ᵢ_} {_≍ₛ_} p₁ p₂ p₃ p₄ p₅ = S₁ , p₆ , p₇
+eac→zac : ∀ {ℓ} → EAC ℓ → ZAC ℓ
+eac→zac eac {I} {S} {A} {_≍ᵢ_} {_≍ₛ_} p₁ p₂ p₃ p₄ p₅ = S₁ , p₆ , p₇
   where
     f : I → S
-    f = fst (extac p₁ p₂ p₅)
+    f = fst (eac p₁ p₂ p₅)
 
-    f-ext : Ext f
-    f-ext = fst (snd (extac p₁ p₂ p₅))
+    f-ext : Extensional f
+    f-ext = fst (snd (eac p₁ p₂ p₅))
 
     S₁ : Subset S _
     S₁ x = ∃[ j ⦂ I ] f j ≍ₛ x
 
-    p₆ : Ext-≍-↔ S₁
+    p₆ : Extensional-≍-↔ S₁
     p₆ x≍y = (λ { (j , fj≍x) → j , ≍-trans fj≍x x≍y })
            , (λ { (j , fj≍y) → j , ≍-trans fj≍y (≍-sym x≍y) })
 
     f-common : ∀ i → (A i ∩ S₁) (f i)
-    f-common i = snd (snd (extac p₁ p₂ p₅)) i , i , ≍-refl
+    f-common i = snd (snd (eac p₁ p₂ p₅)) i , i , ≍-refl
 
     f-unique : ∀ i {y} → (A i ∩ S₁) y → f i ≍ₛ y
     f-unique i {y} (y-here , j , fj≍y) = fi≍y
@@ -443,8 +443,8 @@ We shall prove the implications (i)$→$(ii)$→$(iii)$→$(iv)$→$(i) in this 
 This is precisely the result of the considerations prior to the formulation of the theorem.
 
 ```
-i→ii : ∀ {ℓ} → ExtAC ℓ → ZerAC ℓ
-i→ii = extac→zerac
+i→ii : ∀ {ℓ} → EAC ℓ → ZAC ℓ
+i→ii = eac→zac
 ```
 :::
 
@@ -507,34 +507,34 @@ $A_i ∩ S_1$ permits us to now conclude $g(i) ≍_S g(j)$ as desired.
 
 ```
 Surjective : ∀ {𝓈 𝓉 ℯₜ} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
-               {_≍ₜ_ : Rel T ℯₜ} {{eqₜ : Equivalence _≍ₜ_}} → Set _
-Surjective f {_≍ₜ_} = ∀ y → ∃[ x ⦂ _ ] f x ≍ₜ y
+               {_≍ₜ_ : Relation T ℯₜ} {{eqₜ : Equivalence _≍ₜ_}} → Set _
+Surjective {S = S} f {_≍ₜ_} = ∀ y → ∃[ x ⦂ S ] f x ≍ₜ y
 
 RightInverse : ∀ {𝓈 𝓉 ℯₜ} {S : Set 𝓈} {T : Set 𝓉} (g : T → S) (f : S → T)
-                 {_≍ₜ_ : Rel T ℯₜ} {{eqₜ : Equivalence _≍ₜ_}} → Set _
+                 {_≍ₜ_ : Relation T ℯₜ} {{eqₜ : Equivalence _≍ₜ_}} → Set _
 RightInverse g f {_≍ₜ_} = ∀ y → (f ∘ g) y ≍ₜ y
 
 -- every surjective extensional function has an extensional right inverse
-AC-III : ∀ ℓ → Set _
-AC-III ℓ = ∀ {I S : Set ℓ}
-             {_≍ᵢ_ : Rel I ℓ} {{eqᵢ : Equivalence _≍ᵢ_}}
-             {_≍ₛ_ : Rel S ℓ} {{eqₛ : Equivalence _≍ₛ_}}
-             (f : S → I)
-             (f-ext : Ext f)
-             (f-surj : Surjective f) →
-           ∃[ g ⦂ (I → S) ] RightInverse g f ∧ Ext g
+AC₃ : ∀ ℓ → Set _
+AC₃ ℓ = ∀ {I S : Set ℓ}
+          {_≍ᵢ_ : Relation I ℓ} {{eqᵢ : Equivalence _≍ᵢ_}}
+          {_≍ₛ_ : Relation S ℓ} {{eqₛ : Equivalence _≍ₛ_}}
+          (f : S → I)
+          (f-ext : Extensional f)
+          (f-surj : Surjective f) →
+        ∃[ g ⦂ (I → S) ] RightInverse g f ∧ Extensional g
 
-ii→iii : ∀ {ℓ} → ZerAC ℓ → AC-III ℓ
-ii→iii zerac {I} {S} {_≍ᵢ_} {_≍ₛ_} f f-ext f-surj = g , g-f-rinv , g-ext
+ii→iii : ∀ {ℓ} → ZAC ℓ → AC₃ ℓ
+ii→iii zac {I} {S} {_≍ᵢ_} {_≍ₛ_} f f-ext f-surj = g , g-f-rinv , g-ext
   where
     A : I → Subset S _
     A i x = f x ≍ᵢ i
 
-    p₁ : Ext-≍ₛ-↔ A
+    p₁ : Extensional-≍ₛ-↔ A
     p₁ x≍y = (λ fx≍i → ≍-trans (≍-sym (f-ext x≍y)) fx≍i)
            , (λ fy≍i → ≍-trans (f-ext x≍y) fy≍i)
 
-    p₂ : Ext-≍ᵢ-↔ A
+    p₂ : Extensional-≍ᵢ-↔ A
     p₂ i≍j = (λ fx≍i → ≍-trans fx≍i i≍j)
            , (λ fx≍j → ≍-trans fx≍j (≍-sym i≍j))
 
@@ -548,21 +548,21 @@ ii→iii zerac {I} {S} {_≍ᵢ_} {_≍ₛ_} f f-ext f-surj = g , g-f-rinv , g-e
     p₅ = f-surj
 
     S₁ : Subset S _
-    S₁ = fst (zerac p₁ p₂ p₃ p₄ p₅)
+    S₁ = fst (zac p₁ p₂ p₃ p₄ p₅)
 
     g : I → S
-    g = fst (ac (snd (snd (zerac p₁ p₂ p₃ p₄ p₅))))
+    g = fst (ac (snd (snd (zac p₁ p₂ p₃ p₄ p₅))))
 
     g-common : ∀ i → (A i ∩ S₁) (g i)
-    g-common = fst ∘ snd (ac (snd (snd (zerac p₁ p₂ p₃ p₄ p₅))))
+    g-common = fst ∘ snd (ac (snd (snd (zac p₁ p₂ p₃ p₄ p₅))))
 
     g-unique : ∀ i {y} → (A i ∩ S₁) y → g i ≍ₛ y
-    g-unique = snd ∘ snd (ac (snd (snd (zerac p₁ p₂ p₃ p₄ p₅))))
+    g-unique = snd ∘ snd (ac (snd (snd (zac p₁ p₂ p₃ p₄ p₅))))
 
     g-f-rinv : RightInverse g f
     g-f-rinv = fst ∘ g-common
 
-    g-ext : Ext g
+    g-ext : Extensional g
     g-ext {i} {j} i≍j = gi≍gj
       where
         gj-there : (A j ∩ S₁) (g j)
@@ -595,19 +595,19 @@ equivalence class of the given equivalence relation $≍_I.$
 
 ```
 ext-Id→≍ : ∀ {𝓈 𝓉 ℯₜ} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
-              {_≍ₜ_ : Rel T ℯₜ} {{eqₜ : Equivalence _≍ₜ_}} → Ext-Id-≍ f
+              {_≍ₜ_ : Relation T ℯₜ} {{eqₜ : Equivalence _≍ₜ_}} → Extensional-Id-≍ f
 ext-Id→≍ f refl = ≍-refl
 
 id-surj : ∀ {𝓈 ℯₛ} {S : Set 𝓈}
-            {_≍ₛ_ : Rel S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}} → Surjective id
+            {_≍ₛ_ : Relation S ℯₛ} {{eqₛ : Equivalence _≍ₛ_}} → Surjective id
 id-surj y = y , ≍-refl
 
 -- every equivalence class of any equivalence relation has a unique representative
-AC-IV : ∀ ℓ → Set _
-AC-IV ℓ = ∀ {I : Set ℓ} (_≍ᵢ_ : Rel I ℓ) {{eqᵢ : Equivalence _≍ᵢ_}} →
-          ∃[ g ⦂ (I → I) ] RightInverse g id ∧ Ext-≍-Id g
+AC₄ : ∀ ℓ → Set _
+AC₄ ℓ = ∀ {I : Set ℓ} (_≍ᵢ_ : Relation I ℓ) {{eqᵢ : Equivalence _≍ᵢ_}} →
+        ∃[ g ⦂ (I → I) ] RightInverse g id ∧ Extensional-≍-Id g
 
-iii→iv : ∀ {ℓ} → AC-III ℓ → AC-IV ℓ
+iii→iv : ∀ {ℓ} → AC₃ ℓ → AC₄ ℓ
 iii→iv ac₃ _≍_ = ac₃ {{eqₛ = Id-eq}} id (ext-Id→≍ id) id-surj
 ```
 :::
@@ -662,11 +662,13 @@ so that
 
 $$(∀i : I)A_i(\underbrace{f(g(i))}_{(f \circ g)(i)}).$$
 
+::: {.qed}
 Hence $f \circ g$ has become an exten&shy;sional choice function, which means that the
 exten&shy;sional axiom of choice is satisfied.
+:::
 
 ```
-iv→i : ∀ {ℓ} → AC-IV ℓ → ExtAC ℓ
+iv→i : ∀ {ℓ} → AC₄ ℓ → EAC ℓ
 iv→i ac₄ {I} {S} {A} {_≍ᵢ_} {_≍ₛ_} p₁ p₂ p₅ = f ∘ g , f∘g-ext , f∘g-common
   where
     f : I → S
@@ -681,14 +683,17 @@ iv→i ac₄ {I} {S} {A} {_≍ᵢ_} {_≍ₛ_} p₁ p₂ p₅ = f ∘ g , f∘g-
     g-id-rinv : RightInverse g id
     g-id-rinv = fst (snd (ac₄ _≍ᵢ_))
 
-    g-ext : Ext-≍-Id g
+    g-ext : Extensional-≍-Id g
     g-ext = snd (snd (ac₄ _≍ᵢ_))
 
-    f∘g-ext : Ext (f ∘ g)
+    f∘g-ext : Extensional (f ∘ g)
     f∘g-ext = Id→≍ ∘ (cong f) ∘ g-ext
 
     f∘g-common : ∀ i → A i ((f ∘ g) i)
     f∘g-common i = fst (p₂ (g-id-rinv i)) (f-common (g i))
+
+theorem-i : ∀ {𝓁} → (EAC 𝓁 → ZAC 𝓁) ∧ (ZAC 𝓁 → AC₃ 𝓁) ∧ (AC₃ 𝓁 → AC₄ 𝓁) ∧ (AC₄ 𝓁 → EAC 𝓁)
+theorem-i = i→ii , ii→iii , iii→iv , iv→i
 ```
 :::
 
@@ -745,8 +750,10 @@ relations,
 
 $$x ≍_{ᾱ} x' → f(x) ≍_{β̄} f(x'),$$
 
+::: {.qed}
 which ensures that $φ,$ defined as above, is a function from $α$ to $β$ in the sense of
 constructive set theory.
+:::
 
 #### Corollary.
 
@@ -755,12 +762,14 @@ the exten&shy;sional axiom of choice, it interprets all of $\text{ZFC}.$*
 
 ##### Proof.
 
+::: {.qed}
 We already know from Aczel that $\text{ZF}$ is equivalent to $\text{CZF}$ $+$ $\text{EM}.$[^18]
 Hence $\text{ZFC}$ is equivalent to $\text{CZF}$ $+$ $\text{EM}$ $+$ $\text{AC}.$  But, by
 Diaconescu’s theorem as transferred to constructive set theory by Goodman and Myhill, the law of
 excluded middle follows from the axiom of choice in the context of constructive set theory.[^19]
 It thus suffices to interpret $\text{CZF}$ $+$ $\text{AC}$ in $\text{CTT}$ $+$ $\text{ExtAC},$ and
 this is precisely what the Aczel interpretation does, by the previous theorem.
+:::
 
 Another way of reaching the same conclusion is to interchange the order of the last two steps in
 the proof just given, arguing instead that $\text{ZFC}$ $=$ $\text{CZF}$ $+$ $\text{EM}$ $+$
@@ -809,11 +818,11 @@ exten&shy;sional choice, as opposed to $\text{ExtAC},$ which lacks justification
 -- axiom of unique choice
 AC! : ∀ ℓ → Set _
 AC! ℓ = ∀ {I S : Set ℓ} {A : I → Subset S ℓ}
-          {_≍ᵢ_ : Rel I ℓ} {{eqᵢ : Equivalence _≍ᵢ_}}
-          {_≍ₛ_ : Rel S ℓ} {{eqₛ : Equivalence _≍ₛ_}}
-          (p₁ : Ext-≍ₛ-↔ A)
-          (p₂ : Ext-≍ᵢ-↔ A) →
-        (∀ i → ∃![ x ⦂ S ] A i x) → ∃[ f ⦂ (I → S) ] Ext f ∧ ∀ i → A i (f i)
+          {_≍ᵢ_ : Relation I ℓ} {{eqᵢ : Equivalence _≍ᵢ_}}
+          {_≍ₛ_ : Relation S ℓ} {{eqₛ : Equivalence _≍ₛ_}}
+          (p₁ : Extensional-≍ₛ-↔ A)
+          (p₂ : Extensional-≍ᵢ-↔ A) →
+        (∀ i → ∃![ x ⦂ S ] A i x) → ∃[ f ⦂ (I → S) ] Extensional f ∧ ∀ i → A i (f i)
 
 ac! : ∀ {ℓ} → AC! ℓ
 ac! {I = I} {S} {A} {_≍ᵢ_} {_≍ₛ_} p₁ p₂ h = f , f-ext , f-common
@@ -827,7 +836,7 @@ ac! {I = I} {S} {A} {_≍ᵢ_} {_≍ₛ_} p₁ p₂ h = f , f-ext , f-common
     f-unique : ∀ i {y} → A i y → f i ≍ₛ y
     f-unique = snd ∘ snd (ac h)
 
-    f-ext : Ext f
+    f-ext : Extensional f
     f-ext {i} {j} i≍j = fi≍fj
       where
         fj-there : A j (f j)
