@@ -4,26 +4,23 @@
 
 @media (min-width: 1400px) {
   body {
-    max-width: 158rem;
+    max-width: 158.0rem;
   }
   main {
     width: 100%;
     position: relative;
   }
-  main > p, h1, h2, h3, h4, h5, h6, ol, ul, .footnotes hr, .align-top > p, .align > p, .index {
-    max-width: calc(50% - 3rem);
+  main > p, h1, h2, h3, h4, h5, h6, ol, ul, .footnotes hr, .align-top > p, .align > p, .qed, .index {
+    max-width: calc(50% - 3.0rem);
   }
   blockquote {
-    max-width: calc(50% - 15rem);
+    max-width: calc(50% - 15.0rem);
   }
   pre {
     position: absolute;
-    left: calc(50% + 3rem);
-    max-width: calc(50% - 3rem);
+    left: calc(50% + 3.0rem);
+    max-width: calc(50% - 3.0rem);
     margin: 0.7rem 0 0.9rem 0;
-  }
-  .align-top, .align {
-    position: relative;
   }
   .align-top pre {
     top: 0;
