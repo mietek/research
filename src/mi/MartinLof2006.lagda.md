@@ -42,11 +42,10 @@ Transitive : ∀ {𝓈 ℓ} {S : Set 𝓈} (_∼_ : Relation S ℓ) → Set _
 Transitive _∼_ = ∀ {x y z} → x ∼ y → y ∼ z → x ∼ z
 
 record Equivalence {𝓈} (S : Set 𝓈) ℯ : Set (𝓈 ⊔ lsuc ℯ) where
-  field
-    _≍_     : Relation S ℯ
-    ≍-refl  : Reflexive _≍_
-    ≍-sym   : Symmetric _≍_
-    ≍-trans : Transitive _≍_
+  field _≍_     : Relation S ℯ
+        ≍-refl  : Reflexive _≍_
+        ≍-sym   : Symmetric _≍_
+        ≍-trans : Transitive _≍_
 
 open Equivalence {{...}}
 
@@ -561,13 +560,13 @@ ii→iii zac {I} {S} f f-ext f-surj = g , g-f-rinv , g-ext
     g = fst (ac (snd (snd (zac p₁ p₂ p₃ p₄ p₅))))
 
     g-common : ∀ i → (A i ∩ S₁) (g i)
-    g-common = fst ∘ snd (ac (snd (snd (zac p₁ p₂ p₃ p₄ p₅))))
+    g-common i = fst (snd (ac (snd (snd (zac p₁ p₂ p₃ p₄ p₅)))) i)
 
     g-unique : ∀ i {y} → (A i ∩ S₁) y → g i ≍ y
-    g-unique = snd ∘ snd (ac (snd (snd (zac p₁ p₂ p₃ p₄ p₅))))
+    g-unique i = snd (snd (ac (snd (snd (zac p₁ p₂ p₃ p₄ p₅)))) i)
 
     g-f-rinv : RightInverse g f
-    g-f-rinv = fst ∘ g-common
+    g-f-rinv i = fst (g-common i)
 
     g-ext : Extensional g
     g-ext {i} {j} i≍j = gi≍gj
@@ -695,7 +694,7 @@ iv→i ac₄ {I} {S} {A} p₁ p₂ p₅ = f ∘ g , f∘g-ext , f∘g-common
     g-ext = snd (snd ac₄)
 
     f∘g-ext : Extensional (f ∘ g)
-    f∘g-ext = Id→≍ ∘ (cong f) ∘ g-ext
+    f∘g-ext i≍j = Id→≍ (cong f (g-ext i≍j))
 
     f∘g-common : ∀ i → A i ((f ∘ g) i)
     f∘g-common i = fst (p₂ (g-id-rinv i)) (f-common (g i))
@@ -839,10 +838,10 @@ ac! {I = I} {S} {A} p₁ p₂ h = f , f-ext , f-common
     f = fst (ac h)
 
     f-common : ∀ i → A i (f i)
-    f-common = fst ∘ snd (ac h)
+    f-common i = fst (snd (ac h) i)
 
     f-unique : ∀ i {y} → A i y → f i ≍ y
-    f-unique = snd ∘ snd (ac h)
+    f-unique i = snd (snd (ac h) i)
 
     f-ext : Extensional f
     f-ext {i} {j} i≍j = fi≍fj
