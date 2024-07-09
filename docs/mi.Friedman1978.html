@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=yes">
+  <title>H. Friedman (1978) Classically and intuitionistically provably recursive functions — Mechanised Intuitionist</title>
+  <link rel="stylesheet" href="mi-common.css">
+  <link rel="stylesheet" href="mi-layout.css">
+  <style>
+    #card hr:after {
+      display: none;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+    var mathElements = document.getElementsByClassName("math");
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") { katex.render(texText.data, mathElements[i], { displayMode: mathElements[i].classList.contains("display"), throwOnError: false } );
+    }}});</script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css" />
+</head>
+<body>
+<nav id="head">
+<p><a href="mi.index.html">Mechanised Intuitionist</a></p>
+</nav>
+<main>
+<header id="title-block-header">
+<h1 class="title">Classically and intuitionistically provably recursive functions</h1>
+<p class="author">Harvey Friedman<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p class="year">1978</p>
+<p class="wip">WORK IN PROGRESS</p>
+</header>
+<pre class="Agda"><a id="455" class="Comment">-- Not yet mechanised by Miëtek Bak</a>
+<a id="491" class="Comment">-- TODO: rest of text</a>
+
+<a id="514" class="Keyword">module</a> <a id="521" href="mi.Friedman1978.html" class="Module">mi.Friedman1978</a> <a id="537" class="Keyword">where</a>
+</pre>
+<p>Among the most interesting metamathematical results connected with constructivity is that Peano arithmetic (PA) is a conservative extension of Heyting arithmetic (HA), (which is PA with intuitionistic logic), for <span class="math inline">Π^0_2</span> sentences. In other words, every Turing machine program that, provably in PA, converges at all arguments, also does provably in HA.</p>
+<p>The proof consists of two parts. Firstly, the double negation translation of Gödel is used to interpret PA within HA. In particular, if a formula <span class="math inline">(∃n)</span><span class="math inline">(F(n,m) = 0)</span> is provable in PA, then <span class="math inline">\neg\neg(∃n)</span><span class="math inline">(F(n,m) = 0)</span> is provable in HA. Here <span class="math inline">F</span> represents an arbitrary primitive recursive function.</p>
+<p>The final part consists in showing that HA is closed under Markov’s rule. In this case, we need to show if <span class="math inline">\text{HA} ⊢ \neg\neg(∃n)</span><span class="math inline">(F(n,m) = 0)</span> then <span class="math inline">\text{HA} ⊢ (∃n)(F(n,m) = 0).</span> This part of the proof is technically far more difficult than the first, which is a direct translation that can be routinely verified. Two principal methods for the second part are</p>
+<ol type="i">
+<li>a proof-theoretic analysis of HA, and</li>
+<li>the Gödel functional interpretation of HA.</li>
+</ol>
+<p>Either a delicate proof-theoretic analysis of HA which is sensitive to the axioms and rules of inference used to represent HA, or a semantic analysis of HA which is obviously sensitive to the meaning of the axioms of HA, was needed. The double negation translation depends only on the syntactic nature of the axioms in HA as presented in a standard Hilbert style predicate logic.</p>
+<p>We give a new proof of the closure of HA under Markov’s rule which is an elementary syntactic argument in the same sense that the double negation translation is. The proof establishes closure for many systems. In particular, for intuitionistic systems of higher order arithmetic and type theory, for which earlier analyses (comparatively quite complicated and delicate) of Spector (functional interpretation), Girard (functional interpretation), Prawitz (normalization), and others were used. Since the double negation translation goes through straightforwardly for such systems, we again have the conservative extension of the classical systems over the intuitionistic systems for <span class="math inline">Π^0_2</span> sentences.</p>
+<p>We also apply the method to a formulation of intuitionistic Zermelo-Fraenkel set theory. We show that classical ZF and intuitionistic ZF have the same provably recursive functions. We also show that they have the same provable ordinals, in an appropriate sense. No adequate functional interpretation or proof-theoretic analysis are presently known for such systems.</p>
+<h2 id="1-the-translations-in-many-sorted-predicate-logic">1. The translations in many-sorted predicate logic</h2>
+<p>The double negation translation <span class="math inline">φ^-</span> of a formula <span class="math inline">φ</span> of intuitionistic many-sorted predicate logic without identity is defined by</p>
+<p><span class="math display">
+\begin{aligned}
+  φ^-        &amp;= \neg\negφ \text{ for atomic } φ; \\
+  (\neg φ)^- &amp;= \neg(φ^-); \\
+  (φ ∧ ψ)^-  &amp;= φ^- ∧ ψ^-; \\
+  (φ ∨ ψ)^-  &amp;= \neg\neg(φ^- ∨ ψ^-); \\
+  (∀x)(φ)^-  &amp;= (∀x)(φ^-); \\
+  (∃x)(φ)^-  &amp;= \neg\neg(∃x)(φ^-); \\
+  (φ → ψ)^- &amp;= φ^- → ψ^-.
+\end{aligned}
+</span></p>
+<p>Let <span class="math inline">⊢_I</span> refer to provability in the intuitionistic logic, and <span class="math inline">⊢_C</span> to provability in the classical logic. The basic facts about the double negation translation are as follows.</p>
+<h4 id="theorem-11">Theorem 1.1.</h4>
+<p>If <span class="math inline">φ ⊢_C ψ</span> then <span class="math inline">φ^- ⊢_I ψ^-.</span> Also <span class="math inline">⊢_I (\neg\neg(φ^-)) → φ^-</span>, and <span class="math inline">⊢_I (φ^-)^- ↔ φ^-.</span></p>
+<h5 id="proof">Proof.</h5>
+<div class="qed">
+<p>These are well known. The first is proved by induction on the length of proofs in a standard Hilbert style axiomatization. The rest is proved by induction on the formula <span class="math inline">φ.</span></p>
+</div>
+<p>We now give our translation. Fix <span class="math inline">A</span> to be any formula. Write every formula with <span class="math inline">∀,</span> <span class="math inline">∃,</span> <span class="math inline">∧,</span> <span class="math inline">∨,</span> <span class="math inline">→,</span> <span class="math inline">\bot.</span> Let <span class="math inline">φ</span> be any formula none of whose bound variables is free in <span class="math inline">A.</span></p>
+<p>Define the <span class="math inline">A</span>-translation <span class="math inline">φ_A</span> of <span class="math inline">φ</span> to be the result of simultaneously replacing each atomic subformula <span class="math inline">ψ</span> of <span class="math inline">φ</span> by <span class="math inline">(ψ ∨ A)</span>.</p>
+<h4 id="theorem-12">Theorem 1.2.</h4>
+<p>If <span class="math inline">φ ⊢_I ψ</span> and <span class="math inline">φ_A,</span> <span class="math inline">ψ_A</span> are defined, then <span class="math inline">φ_A ⊢_I ψ_A.</span> Also <span class="math inline">A ⊢_I φ_A.</span></p>
+<h5 id="proof-1">Proof.</h5>
+<div class="qed">
+<p>This is also straightforwardly proved by induction on the length of proofs.</p>
+</div>
+<h2 id="2-first-order-arithmetic">2. First order arithmetic</h2>
+<p>Let HA be Heyting arithmetic formulated with primitive recursive function symbols in one-sorted predicate logic. Let PA be Peano arithmetic, which is the same as HA except classical logic is used.</p>
+<h4 id="lemma-1">Lemma 1.</h4>
+<p>The double negation translation of every axiom of HA is provable in HA. Hence if PA <span class="math inline">⊢ φ</span> then HA <span class="math inline">⊢ φ^-.</span></p>
+<h5 id="proof-2">Proof.</h5>
+<div class="qed">
+<p>This is well known and straightforward. Markov’s rule (for primitive recursive matrix) states that if</p>
+<p><span class="math display">\neg\neg(∃n)(F(n,m) = 0)</span></p>
+<p>is provable, then so is</p>
+<p><span class="math display">(∃n)(F(n,m) = 0).</span></p>
+<p>We must show that HA is closed under Markov’s rule.</p>
+</div>
+<h4 id="lemma-2">Lemma 2.</h4>
+<p>For every <span class="math inline">A</span>, the <span class="math inline">A</span>-translation of every axiom of HA, none of whose bound variables are free in <span class="math inline">A</span>, is provable in HA. Hence if HA <span class="math inline">⊢ φ</span> then HA <span class="math inline">⊢ φ_A</span>.</p>
+<h5 id="proof-3">Proof.</h5>
+<div class="qed">
+<p>This is a straightforward verification.</p>
+</div>
+<h4 id="lemma-3">Lemma 3.</h4>
+<p>If HA <span class="math inline">⊢ \neg\neg(∃n)(F(n,m) = 0),</span> then HA <span class="math inline">⊢ (∃n)(F(n,m) = 0).</span></p>
+<h5 id="proof-4">Proof.</h5>
+<div class="qed">
+<p>We have HA <span class="math inline">⊢ ((∃n)</span><span class="math inline">(F(n,m) = 0) → \bot) → \bot.</span> By lemma 2, using <span class="math inline">A = (∃n)</span><span class="math inline">(F(n,m) = 0),</span> we have HA <span class="math inline">⊢ ((∃n)</span><span class="math inline">(F(n,m) = 0 ∨ (∃n)</span><span class="math inline">(F(n,m) = 0)) → (∃n)</span><span class="math inline">(F(n,m) = 0)) → (∃n)</span><span class="math inline">(F(n,m) = 0)).</span> Hence HA <span class="math inline">⊢ (∃n)</span><span class="math inline">(F(n,m) = 0).</span></p>
+</div>
+<pre class="Agda"><a id="5848" class="Comment">-- TODO</a>
+</pre>
+<h2 id="references">References</h2>
+<div class="references">
+<ol type="1">
+<li><div id="r1">
+<p>H. Friedman (1973) <a href="https://sci-hub.st/10.2307/2272068">The consistency of classical set theory relative to a set theory with intuitionistic logic</a>, <em>J. Symbolic Logic</em>, Vol. 38(2), pp. 315–319. <a href="#rr6" class="rb">↩︎</a></p>
+</div></li>
+</ol>
+</div>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>This research was partially supported by NSF grant MCS 77-01638. The results were obtained in February, 1977.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+<div id="card">
+<hr>
+  <p>H. Friedman (1978)</p>
+  <p><a href="https://sci-hub.st/10.1007/BFb0103100">Classically and intuitionistically provably recursive functions</a></p>
+  <p><em>Higher Set Theory, Lecture Notes Math.</em>, Vol. 669, Edited by G. H. Müller and D. S. Scott, Springer, Berlin, pp. 345–350.</p>
+</div>
+</main>
+<nav id="foot">
+<p><a href="mi.index.html">Mechanised Intuitionist</a></p>
+</nav>
+</body>
+</html>
