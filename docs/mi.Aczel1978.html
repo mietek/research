@@ -38,37 +38,61 @@
 <a id="600" class="Keyword">module</a> <a id="607" href="mi.Aczel1978.html" class="Module">mi.Aczel1978</a> <a id="620" class="Keyword">where</a>
 </pre>
 <blockquote>
-<p>By adding to Martin-Löf’s intuitionistic theory of types a ‘type of sets’ we give a constructive interpretation of constructive set theory. This interpretation is a constructive version of the classical conception of the cumulative hierarchy of sets.</p>
+<p>By adding to Martin-Löf’s intuitionistic theory of types a “type of sets” we give a constructive interpretation of constructive set theory. This interpretation is a constructive version of the classical conception of the cumulative hierarchy of sets.</p>
 </blockquote>
 <h2 id="introduction">Introduction</h2>
-<p>Intuitionistic mathematics can be structured into two levels. The first level arises directly out of Brouwer’s criticism of certain methods and notions of classical mathematics. In particular the notion of ‘truth’ that gives rise to the law of excluded middle was rejected and instead the meaning of mathematical statements was to be based on the notion of ‘proof’. While implicit in this first level of intuitionism was a theory of meaning quite different from the classical one, it was nevertheless the case that the body of mathematics that could be developed within this level remained a part of classical mathematics. Because Brouwer felt that mathematical analysis could not be developed adequately on this basis he was led to formulate his own conception of the continuum. This conception involved the mathematical treatment of incompletely specified objects such as free choice sequences. The second level of intuitionism builds on the first level but also includes these radical ideas that turn out to be incompatible with classical mathematics. Although considerable effort has been made over the years to make these ideas more transparent they have remained rather obscure to most mathematicians and the mathematics based on them has had a very limited following.</p>
-<p>Since Bishop’s book <a href="#r3" id="rr3" class="rr">[3]</a> appeared, it has become clear that, in spite of Brouwer’s views, constructive analysis can be developed perfectly adequately while staying within the first level of intuitionism. This fact has led to a renewed interest in this part of intuitionism. The desire has been to find an analogue, for Bishop’s constructive mathematics, of the generally accepted formal system ZF for classical mathematics. Several approaches have been tried and there has been some controversy over their relative merits. Two such approaches are ‘Constructive Set Theory’ (see <a href="#r7" id="rr7" class="rr">[7]</a> and <a href="#r13" id="rr13" class="rr">[13]</a>) and ‘Intuitionistic Type Theory’ (see <a href="#r11" id="rr11" class="rr">[11]</a>). In this paper we take the view that these, and perhaps other approaches, are not necessarily in conflict with each other. Constructive set theory suppresses all explicit constructive notions in order to be as familiar as possible to the classical mathematician. On the other hand type theory aims to give a rigorous foundation for the primitive notions of constructive mathematics.</p>
-<p>The appeal of Bishop’s book is that it wastes little time on the analysis of constructive concepts but instead develops analysis in a language mostly familiar to the classical mathematician. In constructive set theory this is taken a stage further. As in ZF there are just the notions of set and set membership with an axiom system that is a subsystem of ZF using intuitionistic logic, and including the axiom of extensionality. In such a system the direct constructive content of Bishop’s notions has been lost and there arises the crucial question: What is the constructive meaning of the notion of set used in constructive set theory? We aim to answer that question in this paper. What is needed is a rigorous framework in which the primitive notions of constructive mathematics are directly displayed, together with a natural interpretation of constructive set theory in that framework. We shall give such a framework based on the intuitionistic type theory of <a href="#r11" id="rr11-1" class="rr">[11]</a>. We could have taken instead a system of ‘Explicit Mathematics’ (see <a href="#r5" id="rr5" class="rr">[5]</a> and <a href="#r2" id="rr2" class="rr">[2]</a>). But systems of explicit mathematics leave the logical notions unanalysed, whereas type theory is a logic free theory of constructions within which the logical notions can be defined. For this reason we consider type theory to be more fundamental.</p>
+<p>Intuitionistic mathematics can be structured into two levels. The first level arises directly out of Brouwer’s criticism of certain methods and notions of classical mathematics. In particular the notion of “truth” that gives rise to the law of excluded middle was rejected and instead the meaning of mathematical statements was to be based on the notion of “proof”. While implicit in this first level of intuitionism was a theory of meaning quite different from the classical one, it was nevertheless the case that the body of mathematics that could be developed within this level remained a part of classical mathematics. Because Brouwer felt that mathematical analysis could not be developed adequately on this basis he was led to formulate his own conception of the continuum. This conception involved the mathematical treatment of incompletely specified objects such as free choice sequences. The second level of intuitionism builds on the first level but also includes these radical ideas that turn out to be incompatible with classical mathematics. Although considerable effort has been made over the years to make these ideas more transparent they have remained rather obscure to most mathematicians and the mathematics based on them has had a very limited following.</p>
+<p>Since Bishop’s book <a href="#r3" id="rr3" class="rr">[3]</a> appeared, it has become clear that, in spite of Brouwer’s views, constructive analysis can be developed perfectly adequately while staying within the first level of intuitionism. This fact has led to a renewed interest in this part of intuitionism. The desire has been to find an analogue, for Bishop’s constructive mathematics, of the generally accepted formal system ZF for classical mathematics. Several approaches have been tried and there has been some controversy over their relative merits. Two such approaches are “Constructive Set Theory” (see <a href="#r7" id="rr7" class="rr">[7]</a> and <a href="#r13" id="rr13" class="rr">[13]</a>) and “Intuitionistic Type Theory” (see <a href="#r11" id="rr11" class="rr">[11]</a>). In this paper we take the view that these, and perhaps other approaches, are not necessarily in conflict with each other. Constructive set theory suppresses all explicit constructive notions in order to be as familiar as possible to the classical mathematician. On the other hand type theory aims to give a rigorous foundation for the primitive notions of constructive mathematics.</p>
+<p>The appeal of Bishop’s book is that it wastes little time on the analysis of constructive concepts but instead develops analysis in a language mostly familiar to the classical mathematician. In constructive set theory this is taken a stage further. As in ZF there are just the notions of set and set membership with an axiom system that is a subsystem of ZF using intuitionistic logic, and including the axiom of extensionality. In such a system the direct constructive content of Bishop’s notions has been lost and there arises the crucial question: What is the constructive meaning of the notion of set used in constructive set theory? We aim to answer that question in this paper. What is needed is a rigorous framework in which the primitive notions of constructive mathematics are directly displayed, together with a natural interpretation of constructive set theory in that framework. We shall give such a framework based on the intuitionistic type theory of <a href="#r11" id="rr11-1" class="rr">[11]</a>. We could have taken instead a system of “Explicit Mathematics” (see <a href="#r5" id="rr5" class="rr">[5]</a> and <a href="#r2" id="rr2" class="rr">[2]</a>). But systems of explicit mathematics leave the logical notions unanalysed, whereas type theory is a logic free theory of constructions within which the logical notions can be defined. For this reason we consider type theory to be more fundamental.</p>
 <p>The axiom system CZF (Constructive ZF) is set out in §1 and some elementary properties are given in §2. The system is closely related to the systems considered by Myhill and Friedman in their papers. In §3 we summarise the type-theoretic notions of <a href="#r11" id="rr11-2" class="rr">[11]</a> and introduce the type of sets. The interpretation of CZF is set up in §4 and its correctness is proved in §5 and §6. Finally in §7 we consider a new principle of choice for constructive set theory.</p>
 <p>Formally, the type of sets was first introduced by Leversha in <a href="#r10" id="rr10" class="rr">[10]</a> where it was used to give a complicated type-theoretic interpretation of Myhill’s original formulation of constructive set theory in <a href="#r13" id="rr13-1" class="rr">[13]</a>. Unfortunately it was not realised at that time that the type itself gave a constructive notion of set. Instead it was only used as an appropriate constructive notion of ordinal to use in indexing the stages of Leversha’s construction.</p>
 <h2 id="1-the-axiom-system-czf">1. The axiom system CZF</h2>
 <p>We formulate CZF in a first order language <span class="math inline">\mathcal{L}</span> having the logical primitives <span class="math inline">\bot,</span> <span class="math inline">∨,</span> <span class="math inline">∧,</span> <span class="math inline">→,</span> <span class="math inline">∀x,</span> <span class="math inline">∃x,</span>, the restricted quantifiers <span class="math inline">(∀x∈y),</span> <span class="math inline">(∃x∈y)</span> and the binary relation symbols <span class="math inline">∈</span> and <span class="math inline">=.</span> We assume a standard axiomatisation of intuitionistic logic. The remaining axioms of CZF are divided into two groups.</p>
 <h3 id="structural-axioms">Structural axioms</h3>
-<p>Defining schemes for the restricted quantifiers.</p>
-<p><span class="math display">(∀x∈y)φ(x) ↔ ∀x(x∈y → φ(x))</span></p>
-<p><span class="math display">(∃x∈y)φ(x) ↔ ∃x(x∈y ∧ φ(x))</span></p>
-<p>Equality axioms.</p>
-<p><span class="math display">x = y ↔ ∀z(z∈x ↔ z∈y)</span></p>
-<p><span class="math display">x = y ∧ y∈z ↔ x∈z</span></p>
-<p>Set induction scheme.</p>
+<p><em>Defining schemes for the restricted quantifiers.</em></p>
+<p><span class="math display">
+\begin{aligned}
+  (∀x∈y)φ(x) &amp; ↔ ∀x(x∈y → φ(x)) \\
+  (∃x∈y)φ(x)  &amp;↔ ∃x(x∈y ∧ φ(x))
+\end{aligned}
+</span></p>
+<p><em>Equality axioms.</em></p>
+<p><span class="math display">
+\begin{aligned}
+  x = y       &amp; ↔ ∀z(z∈x ↔ z∈y) \\
+  x = y ∧ y∈z &amp; ↔ x∈z
+\end{aligned}
+</span></p>
+<p><em>Set induction scheme.</em></p>
 <p><span class="math display">∀y ((∀x∈y)φ(x) → φ(y)) → ∀xφ(x)</span></p>
 <h3 id="set-existence-axioms">Set existence axioms</h3>
-<p>Pairing.</p>
+<p><em>Pairing.</em></p>
 <p><span class="math display">∃z(x∈z ∧ y∈z)</span></p>
-<p>Union.</p>
+<p><em>Union.</em></p>
 <p><span class="math display">∃z(∀y∈x)(∀u∈y)(u∈z)</span></p>
-<p>Restricted separation.</p>
-<pre class="Agda"><a id="6363" class="Comment">-- TODO</a>
+<p><em>Restricted separation.</em></p>
+<p>For restricted <span class="math inline">φ(x)</span></p>
+<p><span class="math display">∃z((∀y∈z)(y∈x ∧ φ(y)) ∧ (∀y∈x)(φ(y) → y∈z))</span></p>
+<p>If <span class="math inline">φ(x,y)</span> is a formula let <span class="math inline">φ&#39;(a,b)</span> denote</p>
+<p><span class="math display">(∀x∈a)(∃y∈b)φ(x,y) ∧ (∀y∈b)(∃x∈a)φ(x,y)</span></p>
+<p><em>Strong collection.</em></p>
+<p><span class="math display">(∀x∈a)∃yφ(x,y) → ∃bφ&#39;(a,b)</span></p>
+<p><em>Subset collection.</em></p>
+<p><span class="math display">∃c∀u((∀x∈a)(∃y∈b)φ(x,y) → (∃d∈c)φ&#39;(a,d))</span></p>
+<p>where <span class="math inline">u</span> may occur free in <span class="math inline">φ(x,y).</span></p>
+<p><em>Infinity.</em></p>
+<p><span class="math display">∃z\text{Nat}(z)</span></p>
+<p>where <span class="math inline">\text{Nat}(z)</span> is the conjunction of <span class="math inline">(∀x∈z)(\text{Zero}(x) ∨ (∃y∈z)\text{Succ}(y,x)),</span> <span class="math inline">(∃x∈z)\text{Zero}(x),</span> and <span class="math inline">(∀y∈z)(∃x∈z)\text{Succ}(y,x.)</span> Here <span class="math inline">\text{Zero}(x)</span> is <span class="math inline">(∀y∈x)\bot</span> and <span class="math inline">\text{Succ}(y,x)</span> is <span class="math inline">(∀z∈y)(z∈x) ∧ y∈x ∧ (∀z∈x)(z∈y ∨ z=y).</span></p>
+<h4 id="remarks">Remarks.</h4>
+<p>Our formulation has been designed to make the correctness proof for our interpretation as smooth as possible. The axioms could have been written in a more standard way. Our formulation of the axiom of infinity expresses the existence of a set <span class="math inline">ω</span> such that</p>
+<p><span class="math display">n∈ω ↔ n = \emptyset ∨ (∃m∈ω)(n = m ∪ \{m\}).</span></p>
+<p>The mathematical induction scheme can be proved in CZF using set induction. Recall that in the usual way strong collection implies replacement. Ordinary collection is not good enough in the presence of only restricted separation. The significance of subset collection will become clear in the next section.</p>
+<h2 id="2-elementary-properties-of-czf">2. Elementary properties of CZF</h2>
+<p>We give some simple results that spell out the relationship of CZF to ZF. In particular we reformulate the subset collection scheme as a single axiom and bring out its relationship to the power set axiom and Myhill’s exponentiation axiom. We show that ZF results from CZF by adding classical logic.</p>
+<p>We use standard set-theoretic notation and definitions. So ordered pairs <span class="math inline">⟨x,y⟩,</span> cartesian products <span class="math inline">A × B,</span> and the notion of a function <span class="math inline">f : A → B</span> etc … are all defined as usual.</p>
+<pre class="Agda"><a id="8242" class="Comment">-- TODO</a>
 </pre>
-<!-- ## 2.  Elementary properties of CZF
-
-
-## 3.  The type-theoretic framework
+<!-- ## 3.  The type-theoretic framework
 
 
 ## 4.  The interpretation

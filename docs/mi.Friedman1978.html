@@ -32,14 +32,14 @@
 <p class="year">1978</p>
 <p class="wip">WORK IN PROGRESS</p>
 </header>
-<pre class="Agda"><a id="455" class="Comment">-- Not yet mechanised by Miëtek Bak</a>
-<a id="491" class="Comment">-- TODO: rest of text</a>
+<pre class="Agda"><a id="545" class="Comment">-- Not yet mechanised by Miëtek Bak</a>
+<a id="581" class="Comment">-- TODO: rest of text</a>
 
-<a id="514" class="Keyword">module</a> <a id="521" href="mi.Friedman1978.html" class="Module">mi.Friedman1978</a> <a id="537" class="Keyword">where</a>
+<a id="604" class="Keyword">module</a> <a id="611" href="mi.Friedman1978.html" class="Module">mi.Friedman1978</a> <a id="627" class="Keyword">where</a>
 </pre>
 <p>Among the most interesting metamathematical results connected with constructivity is that Peano arithmetic (PA) is a conservative extension of Heyting arithmetic (HA), (which is PA with intuitionistic logic), for <span class="math inline">Π^0_2</span> sentences. In other words, every Turing machine program that, provably in PA, converges at all arguments, also does provably in HA.</p>
-<p>The proof consists of two parts. Firstly, the double negation translation of Gödel is used to interpret PA within HA. In particular, if a formula <span class="math inline">(∃n)</span><span class="math inline">(F(n,m) = 0)</span> is provable in PA, then <span class="math inline">\neg\neg(∃n)</span><span class="math inline">(F(n,m) = 0)</span> is provable in HA. Here <span class="math inline">F</span> represents an arbitrary primitive recursive function.</p>
-<p>The final part consists in showing that HA is closed under Markov’s rule. In this case, we need to show if <span class="math inline">\text{HA} ⊢ \neg\neg(∃n)</span><span class="math inline">(F(n,m) = 0)</span> then <span class="math inline">\text{HA} ⊢ (∃n)(F(n,m) = 0).</span> This part of the proof is technically far more difficult than the first, which is a direct translation that can be routinely verified. Two principal methods for the second part are</p>
+<p>The proof consists of two parts. Firstly, the double negation translation of Gödel is used to interpret PA within HA. In particular, if a formula <span class="math inline">(∃n)(F(n,m) = 0)</span> is provable in PA, then <span class="math inline">\neg\neg (∃n)(F(n,m) = 0)</span> is provable in HA. Here <span class="math inline">F</span> represents an arbitrary primitive recursive function.</p>
+<p>The final part consists in showing that HA is closed under Markov’s rule. In this case, we need to show if <span class="math inline">\text{HA} ⊢ \neg\neg (∃n)(F(n,m) = 0)</span> then <span class="math inline">\text{HA} ⊢ (∃n)(F(n,m) = 0).</span> This part of the proof is technically far more difficult than the first, which is a direct translation that can be routinely verified. Two principal methods for the second part are</p>
 <ol type="i">
 <li>a proof-theoretic analysis of HA, and</li>
 <li>the Gödel functional interpretation of HA.</li>
@@ -52,17 +52,17 @@
 <p><span class="math display">
 \begin{aligned}
   φ^-        &amp;= \neg\negφ \text{ for atomic } φ; \\
-  (\neg φ)^- &amp;= \neg(φ^-); \\
+  (\neg φ)^- &amp;= \neg (φ^-); \\
   (φ ∧ ψ)^-  &amp;= φ^- ∧ ψ^-; \\
-  (φ ∨ ψ)^-  &amp;= \neg\neg(φ^- ∨ ψ^-); \\
+  (φ ∨ ψ)^-  &amp;= \neg\neg (φ^- ∨ ψ^-); \\
   (∀x)(φ)^-  &amp;= (∀x)(φ^-); \\
-  (∃x)(φ)^-  &amp;= \neg\neg(∃x)(φ^-); \\
+  (∃x)(φ)^-  &amp;= \neg\neg (∃x)(φ^-); \\
   (φ → ψ)^- &amp;= φ^- → ψ^-.
 \end{aligned}
 </span></p>
 <p>Let <span class="math inline">⊢_I</span> refer to provability in the intuitionistic logic, and <span class="math inline">⊢_C</span> to provability in the classical logic. The basic facts about the double negation translation are as follows.</p>
 <h4 id="theorem-11">Theorem 1.1.</h4>
-<p>If <span class="math inline">φ ⊢_C ψ</span> then <span class="math inline">φ^- ⊢_I ψ^-.</span> Also <span class="math inline">⊢_I (\neg\neg(φ^-)) → φ^-</span>, and <span class="math inline">⊢_I (φ^-)^- ↔ φ^-.</span></p>
+<p>If <span class="math inline">φ ⊢_C ψ</span> then <span class="math inline">φ^- ⊢_I ψ^-.</span> Also <span class="math inline">⊢_I (\neg\neg (φ^-)) → φ^-</span>, and <span class="math inline">⊢_I (φ^-)^- ↔ φ^-.</span></p>
 <h5 id="proof">Proof.</h5>
 <div class="qed">
 <p>These are well known. The first is proved by induction on the length of proofs in a standard Hilbert style axiomatization. The rest is proved by induction on the formula <span class="math inline">φ.</span></p>
@@ -78,28 +78,58 @@
 <h2 id="2-first-order-arithmetic">2. First order arithmetic</h2>
 <p>Let HA be Heyting arithmetic formulated with primitive recursive function symbols in one-sorted predicate logic. Let PA be Peano arithmetic, which is the same as HA except classical logic is used.</p>
 <h4 id="lemma-1">Lemma 1.</h4>
-<p>The double negation translation of every axiom of HA is provable in HA. Hence if PA <span class="math inline">⊢ φ</span> then HA <span class="math inline">⊢ φ^-.</span></p>
+<p>The double negation translation of every axiom of HA is provable in HA. Hence if <span class="math inline">\text{PA} ⊢ φ</span> then <span class="math inline">\text{HA} ⊢ φ^-.</span></p>
 <h5 id="proof-2">Proof.</h5>
 <div class="qed">
-<p>This is well known and straightforward. Markov’s rule (for primitive recursive matrix) states that if</p>
-<p><span class="math display">\neg\neg(∃n)(F(n,m) = 0)</span></p>
-<p>is provable, then so is</p>
-<p><span class="math display">(∃n)(F(n,m) = 0).</span></p>
-<p>We must show that HA is closed under Markov’s rule.</p>
+<p>This is well known and straightforward.</p>
 </div>
+<p>Markov’s rule (for primitive recursive matrix) states that if <span class="math inline">\neg\neg (∃n)(F(n,m) = 0)</span> is provable, then so is <span class="math inline">(∃n)(F(n,m) = 0).</span> We must show that HA is closed under Markov’s rule.</p>
 <h4 id="lemma-2">Lemma 2.</h4>
-<p>For every <span class="math inline">A</span>, the <span class="math inline">A</span>-translation of every axiom of HA, none of whose bound variables are free in <span class="math inline">A</span>, is provable in HA. Hence if HA <span class="math inline">⊢ φ</span> then HA <span class="math inline">⊢ φ_A</span>.</p>
+<p>For every <span class="math inline">A</span>, the <span class="math inline">A</span>-translation of every axiom of HA, none of whose bound variables are free in <span class="math inline">A</span>, is provable in HA. Hence if <span class="math inline">\text{HA} ⊢ φ</span> then <span class="math inline">\text{HA} ⊢ φ_A</span>.</p>
 <h5 id="proof-3">Proof.</h5>
 <div class="qed">
 <p>This is a straightforward verification.</p>
 </div>
 <h4 id="lemma-3">Lemma 3.</h4>
-<p>If HA <span class="math inline">⊢ \neg\neg(∃n)(F(n,m) = 0),</span> then HA <span class="math inline">⊢ (∃n)(F(n,m) = 0).</span></p>
+<p>If <span class="math inline">\text{HA} ⊢ \neg\neg (∃n)(F(n,m) = 0),</span> then <span class="math inline">\text{HA} ⊢ (∃n)(F(n,m) = 0).</span></p>
 <h5 id="proof-4">Proof.</h5>
 <div class="qed">
-<p>We have HA <span class="math inline">⊢ ((∃n)</span><span class="math inline">(F(n,m) = 0) → \bot) → \bot.</span> By lemma 2, using <span class="math inline">A = (∃n)</span><span class="math inline">(F(n,m) = 0),</span> we have HA <span class="math inline">⊢ ((∃n)</span><span class="math inline">(F(n,m) = 0 ∨ (∃n)</span><span class="math inline">(F(n,m) = 0)) → (∃n)</span><span class="math inline">(F(n,m) = 0)) → (∃n)</span><span class="math inline">(F(n,m) = 0)).</span> Hence HA <span class="math inline">⊢ (∃n)</span><span class="math inline">(F(n,m) = 0).</span></p>
+<p>We have <span class="math inline">\text{HA} ⊢ ((∃n)(F(n,m) = 0) → \bot) → \bot.</span> By lemma 2, using <span class="math inline">A = (∃n)(F(n,m) = 0),</span> we have <span class="math inline">\text{HA} ⊢ ((∃n)(F(n,m) = 0 ∨ (∃n)(F(n,m) = 0)) → (∃n)(F(n,m) = 0)) → (∃n)(F(n,m) = 0)).</span> Hence <span class="math inline">\text{HA} ⊢ (∃n)(F(n,m) = 0).</span></p>
 </div>
-<pre class="Agda"><a id="5848" class="Comment">-- TODO</a>
+<h4 id="theorem-21">Theorem 2.1.</h4>
+<p>If <span class="math inline">\text{PA} ⊢ (∀n)(∃m)(F(n,m) = 0)</span> then <span class="math inline">\text{HA} ⊢ (∀n)(∃m)(F(n,m) = 0).</span></p>
+<h5 id="proof-5">Proof.</h5>
+<div class="qed">
+<p>By lemma 1, <span class="math inline">\text{HA} ⊢ \neg\neg (∃m)(F(n,m) = 0).</span> By lemma 3, <span class="math inline">\text{HA} ⊢ (∃m)(F(n,m) = 0.</span></p>
+</div>
+<p>Sometimes the full Markov rules is considered: If <span class="math inline">(∀n)(∀m)(φ(n,m) ∨ \neg φ(n,m))</span> and <span class="math inline">\neg\neg (∃m)(φ(n,m))</span> are provable, then <span class="math inline">(∃m)(φ(n,m))</span> is provable. We can obtain the full Markov rule using the following lemmas.</p>
+<h4 id="lemma-4">Lemma 4.</h4>
+<p>HA is closed under Church’s rule. I.e., if <span class="math inline">\text{HA} ⊢ (∀n)(∃m)(φ(n,m)),</span> then there is an <span class="math inline">e</span> such that <span class="math inline">\text{HA} ⊢ (∀n)(φ(n,\{e\}(n))).</span></p>
+<h5 id="proof-6">Proof.</h5>
+<div class="qed">
+<p>This is well known.</p>
+</div>
+<h4 id="lemma-5">Lemma 5.</h4>
+<p>If <span class="math inline">\text{HA} ⊢ φ(n,m) ∨ \neg φ(n,m),</span> then there is an <span class="math inline">F</span> such that <span class="math inline">\text{HA} ⊢ φ(n,m) ↔ (∃r)(F(r,n,m) = 0).</span></p>
+<h5 id="proof-7">Proof.</h5>
+<div class="qed">
+<p>Immediate from lemma 4.</p>
+</div>
+<h4 id="theorem-22">Theorem 2.2.</h4>
+<p>HA is closed under the full Markov rule. Also, suppose <span class="math inline">\text{HA}⊢ φ(n,m) ∨ \neg φ(n,m),</span> and <span class="math inline">\text{PA} ⊢ (∀n)(∃m)(φ(n,m)).</span> Then <span class="math inline">\text{HA} ⊢ (∀n)(∃m)(φ(n,m)).</span></p>
+<h5 id="proof-8">Proof.</h5>
+<div class="qed">
+<p>Immediate from lemmas 3, 5, and theorem 2.1.</p>
+</div>
+<h2 id="3-the-theory-of-finite-types">3. The theory of finite types</h2>
+<p>For each <span class="math inline">n ≥ 1</span> we have variables <span class="math inline">n^n_m</span> over sets of type <span class="math inline">n</span> over natural numbers. We also have variables <span class="math inline">n_i</span> over natural numbers. Of the many essentially equivalent formulations, we use <span class="math inline">=</span> only among natural numbers, the number constant <span class="math inline">0</span>, symbols for all primitive recursive functions, and <span class="math inline">∈</span> between terms of type <span class="math inline">n</span> and type <span class="math inline">n+1</span> only (natural numbers are of type 0). For completeness, the axioms of <span class="math inline">T</span> are:</p>
+<ol type="1">
+<li><p><span class="math inline">\neg S(n) = 0;</span> <span class="math inline">S(n) = S(m) → n = m;</span> <span class="math inline">n = m;</span> <span class="math inline">n = m → m = n;</span> <span class="math inline">(n = m ∧ m = r) → n = r;</span> <span class="math inline">(n_1 = m_1 ∧ … ∧ n_k = m_k) → F(n_1, …, n_k) = F(m_1, …, m_k);</span> <span class="math inline">n = m → (n ∈ x^1 ↔ m ∈ x^1).</span></p></li>
+<li><p>Primitive recursive defining equations.</p></li>
+<li><p><span class="math inline">(φ[n/0] ∧ (∀n)(φ → φ[n/S(n)])) → φ,</span> where <span class="math inline">φ</span> is arbitrary.</p></li>
+<li><p><span class="math inline">(∃x^1)(∀n)(n ∈ x^1 ↔ φ),</span> where <span class="math inline">x^1</span> is not free in <span class="math inline">φ</span>, and <span class="math inline">(∃x^{n+1})(∀y^n)(y^n ∈ x^{n+1} ↔ ψ),</span> where <span class="math inline">x^{n+1}</span> is not free in <span class="math inline">ψ.</span></p></li>
+</ol>
+<pre class="Agda"><a id="8029" class="Comment">-- TODO</a>
 </pre>
 <h2 id="references">References</h2>
 <div class="references">
