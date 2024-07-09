@@ -11,6 +11,8 @@ card:
     ](https://sci-hub.st/10.1007/BFb0103100)'
   - '*Higher Set Theory, Lecture Notes Math.*, Vol. 669, Edited by G. H. Müller and D. S. Scott,
     Springer, Berlin, pp. 345–350.'
+todo:
+  - '${e}(n)$ is applying the $e$th partial (primitive?) recursive function to $n$'
 
 ---
 
@@ -27,14 +29,14 @@ intuitionistic logic), for $Π^0_2$ sentences.  In other words, every Turing mac
 provably in PA, converges at all arguments, also does provably in HA.
 
 The proof consists of two parts.  Firstly, the double negation translation of Gödel is used to
-interpret PA within HA.  In particular, if a formula $(∃n)$$(F(n,m) = 0)$ is provable in PA, then
-$\neg\neg(∃n)$$(F(n,m) = 0)$ is provable in HA.  Here $F$ represents an arbitrary primitive
+interpret PA within HA.  In particular, if a formula $(∃n)(F(n,m) = 0)$ is provable in PA, then
+$\neg\neg (∃n)(F(n,m) = 0)$ is provable in HA.  Here $F$ represents an arbitrary primitive
 recursive function.
 
 The final part consists in showing that HA is closed under Markov’s rule.  In this case, we need to
-show if $\text{HA} ⊢ \neg\neg(∃n)$$(F(n,m) = 0)$ then $\text{HA} ⊢ (∃n)(F(n,m) = 0).$  This part of
-the proof is technically far more difficult than the first, which is a direct translation that can be
-routinely verified.  Two principal methods for the second part are
+show if $\text{HA} ⊢ \neg\neg (∃n)(F(n,m) = 0)$ then $\text{HA} ⊢ (∃n)(F(n,m) = 0).$  This
+part of the proof is technically far more difficult than the first, which is a direct translation
+that can be routinely verified.  Two principal methods for the second part are
 
 (i)   a proof-theoretic analysis of HA, and
 (ii)  the Gödel functional interpretation of HA.
@@ -67,11 +69,11 @@ without identity is defined by
 $$
 \begin{aligned}
   φ^-        &= \neg\negφ \text{ for atomic } φ; \\
-  (\neg φ)^- &= \neg(φ^-); \\
+  (\neg φ)^- &= \neg (φ^-); \\
   (φ ∧ ψ)^-  &= φ^- ∧ ψ^-; \\
-  (φ ∨ ψ)^-  &= \neg\neg(φ^- ∨ ψ^-); \\
+  (φ ∨ ψ)^-  &= \neg\neg (φ^- ∨ ψ^-); \\
   (∀x)(φ)^-  &= (∀x)(φ^-); \\
-  (∃x)(φ)^-  &= \neg\neg(∃x)(φ^-); \\
+  (∃x)(φ)^-  &= \neg\neg (∃x)(φ^-); \\
   (φ → ψ)^- &= φ^- → ψ^-.
 \end{aligned}
 $$
@@ -82,7 +84,7 @@ classical logic.  The basic facts about the double negation translation are as f
 
 #### Theorem 1.1.
 
-If $φ ⊢_C ψ$ then $φ^- ⊢_I ψ^-.$  Also $⊢_I (\neg\neg(φ^-)) → φ^-$, and $⊢_I (φ^-)^- ↔ φ^-.$
+If $φ ⊢_C ψ$ then $φ^- ⊢_I ψ^-.$  Also $⊢_I (\neg\neg (φ^-)) → φ^-$, and $⊢_I (φ^-)^- ↔ φ^-.$
 
 ##### Proof.
 
@@ -118,29 +120,23 @@ used.
 
 #### Lemma 1.
 
-The double negation translation of every axiom of HA is provable in HA.  Hence if PA $⊢ φ$ then HA
-$⊢ φ^-.$
+The double negation translation of every axiom of HA is provable in HA.  Hence if $\text{PA} ⊢ φ$
+then $\text{HA} ⊢ φ^-.$
 
 ##### Proof.
 
 ::: {.qed}
-This is well known and straightforward.  Markov’s rule (for primitive recursive matrix) states that
-if
-
-$$\neg\neg(∃n)(F(n,m) = 0)$$
-
-is provable, then so is
-
-$$(∃n)(F(n,m) = 0).$$
-
-We must show that HA is closed under Markov’s rule.
+This is well known and straightforward.
 :::
+
+Markov’s rule (for primitive recursive matrix) states that if $\neg\neg (∃n)(F(n,m) = 0)$ is
+provable, then so is $(∃n)(F(n,m) = 0).$  We must show that HA is closed under Markov’s rule.
 
 
 #### Lemma 2.
 
 For every $A$, the $A$-translation of every axiom of HA, none of whose bound variables are free in
-$A$, is provable in HA.  Hence if HA $⊢ φ$ then HA $⊢ φ_A$.
+$A$, is provable in HA.  Hence if $\text{HA} ⊢ φ$ then $\text{HA} ⊢ φ_A$.
 
 ##### Proof.
 
@@ -151,15 +147,92 @@ This is a straightforward verification.
 
 #### Lemma 3.
 
-If HA $⊢ \neg\neg(∃n)(F(n,m) = 0),$ then HA $⊢ (∃n)(F(n,m) = 0).$
+If $\text{HA} ⊢ \neg\neg (∃n)(F(n,m) = 0),$ then $\text{HA} ⊢ (∃n)(F(n,m) = 0).$
 
 ##### Proof.
 
 ::: {.qed}
-We have HA $⊢ ((∃n)$$(F(n,m) = 0) → \bot) → \bot.$  By lemma 2, using $A = (∃n)$$(F(n,m) = 0),$ we
-have HA $⊢ ((∃n)$$(F(n,m) = 0 ∨ (∃n)$$(F(n,m) = 0)) → (∃n)$$(F(n,m) = 0)) → (∃n)$$(F(n,m) = 0)).$
-Hence HA $⊢ (∃n)$$(F(n,m) = 0).$
+We have $\text{HA} ⊢ ((∃n)(F(n,m) = 0) → \bot) → \bot.$  By lemma 2, using
+$A = (∃n)(F(n,m) = 0),$ we have
+$\text{HA} ⊢ ((∃n)(F(n,m) = 0 ∨ (∃n)(F(n,m) = 0)) → (∃n)(F(n,m) = 0)) → (∃n)(F(n,m) = 0)).$
+Hence $\text{HA} ⊢ (∃n)(F(n,m) = 0).$
 :::
+
+
+#### Theorem 2.1.
+
+If $\text{PA} ⊢ (∀n)(∃m)(F(n,m) = 0)$ then $\text{HA} ⊢ (∀n)(∃m)(F(n,m) = 0).$
+
+##### Proof.
+
+::: {.qed}
+By lemma 1, $\text{HA} ⊢ \neg\neg (∃m)(F(n,m) = 0).$  By lemma 3,
+$\text{HA} ⊢ (∃m)(F(n,m) = 0.$
+:::
+
+Sometimes the full Markov rules is considered: If $(∀n)(∀m)(φ(n,m) ∨ \neg φ(n,m))$ and
+$\neg\neg (∃m)(φ(n,m))$ are provable, then $(∃m)(φ(n,m))$ is provable.  We can obtain the full
+Markov rule using the following lemmas.
+
+
+#### Lemma 4.
+
+HA is closed under Church’s rule.  I.e., if $\text{HA} ⊢ (∀n)(∃m)(φ(n,m)),$ then there is an $e$
+such that $\text{HA} ⊢ (∀n)(φ(n,\{e\}(n))).$
+
+##### Proof.
+
+::: {.qed}
+This is well known.
+:::
+
+
+#### Lemma 5.
+
+If $\text{HA} ⊢ φ(n,m) ∨ \neg φ(n,m),$ then there is an $F$ such that
+$\text{HA} ⊢ φ(n,m) ↔ (∃r)(F(r,n,m) = 0).$
+
+##### Proof.
+
+::: {.qed}
+Immediate from lemma 4.
+:::
+
+
+#### Theorem 2.2.
+
+HA is closed under the full Markov rule.  Also, suppose $\text{HA}⊢ φ(n,m) ∨ \neg φ(n,m),$ and
+$\text{PA} ⊢ (∀n)(∃m)(φ(n,m)).$  Then $\text{HA} ⊢ (∀n)(∃m)(φ(n,m)).$
+
+##### Proof.
+
+::: {.qed}
+Immediate from lemmas 3, 5, and theorem 2.1.
+:::
+
+
+## 3.  The theory of finite types
+
+For each $n ≥ 1$ we have variables $n^n_m$ over sets of type $n$ over natural numbers.  We also have
+variables $n_i$ over natural numbers.  Of the many essentially equivalent formulations, we use $=$
+only among natural numbers, the number constant $0$, symbols for all primitive recursive functions,
+and $∈$ between terms of type $n$ and type $n+1$ only (natural numbers are of type 0).  For
+completeness, the axioms of $T$ are:
+
+1.  $\neg S(n) = 0;$
+    $S(n) = S(m) → n = m;$
+    $n = m;$
+    $n = m → m = n;$
+    $(n = m ∧ m = r) → n = r;$
+    $(n_1 = m_1 ∧ … ∧ n_k = m_k) → F(n_1, …, n_k) = F(m_1, …, m_k);$
+    $n = m → (n ∈ x^1 ↔ m ∈ x^1).$
+
+2.  Primitive recursive defining equations.
+
+3.  $(φ[n/0] ∧ (∀n)(φ → φ[n/S(n)])) → φ,$ where $φ$ is arbitrary.
+
+4.  $(∃x^1)(∀n)(n ∈ x^1 ↔ φ),$ where $x^1$ is not free in $φ$, and
+    $(∃x^{n+1})(∀y^n)(y^n ∈ x^{n+1} ↔ ψ),$ where $x^{n+1}$ is not free in $ψ.$
 
 ```
 -- TODO

@@ -25,7 +25,7 @@ todo:
 module mi.Aczel1978 where
 ```
 
-> By adding to Martin-Löf’s intuitionistic theory of types a ‘type of sets’ we give a constructive
+> By adding to Martin-Löf’s intuitionistic theory of types a “type of sets” we give a constructive
 > interpretation of constructive set theory.  This interpretation is a constructive version of the
 > classical conception of the cumulative hierarchy of sets.
 
@@ -34,8 +34,8 @@ module mi.Aczel1978 where
 
 Intuitionistic mathematics can be structured into two levels.  The first level arises directly out
 of Brouwer’s criticism of certain methods and notions of classical mathematics.  In particular the
-notion of ‘truth’ that gives rise to the law of excluded middle was rejected and instead the meaning
-of mathematical statements was to be based on the notion of ‘proof’.  While implicit in this first
+notion of “truth” that gives rise to the law of excluded middle was rejected and instead the meaning
+of mathematical statements was to be based on the notion of “proof”.  While implicit in this first
 level of intuitionism was a theory of meaning quite different from the classical one, it was
 nevertheless the case that the body of mathematics that could be developed within this level
 remained a part of classical mathematics.  Because Brouwer felt that mathematical analysis could not
@@ -52,8 +52,8 @@ views, constructive analysis can be developed perfectly adequately while staying
 level of intuitionism.  This fact has led to a renewed interest in this part of intuitionism.  The
 desire has been to find an analogue, for Bishop’s constructive mathematics, of the generally
 accepted formal system ZF for classical mathematics.  Several approaches have been tried and there
-has been some controversy over their relative merits.  Two such approaches are ‘Constructive Set
-Theory’ (see [[7]](#r7){#rr7 .rr} and [[13]](#r13){#rr13 .rr}) and ‘Intuitionistic Type Theory’ (see
+has been some controversy over their relative merits.  Two such approaches are “Constructive Set
+Theory” (see [[7]](#r7){#rr7 .rr} and [[13]](#r13){#rr13 .rr}) and “Intuitionistic Type Theory” (see
 [[11]](#r11){#rr11 .rr}).  In this paper we take the view that these, and perhaps other approaches,
 are not necessarily in conflict with each other.  Constructive set theory suppresses all explicit
 constructive notions in order to be as familiar as possible to the classical mathematician.  On the
@@ -70,7 +70,7 @@ the notion of set used in constructive set theory?  We aim to answer that questi
 What is needed is a rigorous framework in which the primitive notions of constructive mathematics
 are directly displayed, together with a natural interpretation of constructive set theory in that
 framework.  We shall give such a framework based on the intuitionistic type theory of
-[[11]](#r11){#rr11-1 .rr}.  We could have taken instead a system of ‘Explicit Mathematics’ (see
+[[11]](#r11){#rr11-1 .rr}.  We could have taken instead a system of “Explicit Mathematics” (see
 [[5]](#r5){#rr5 .rr} and [[2]](#r2){#rr2 .rr}).  But systems of explicit mathematics leave the
 logical notions unanalysed, whereas type theory is a logic free theory of constructions within which
 the logical notions can be defined.  For this reason we consider type theory to be more fundamental.
@@ -95,45 +95,101 @@ $∧,$ $→,$ $∀x,$ $∃x,$, the restricted quantifiers $(∀x∈y),$ $(∃x�
 symbols $∈$ and $=.$  We assume a standard axiomatisation of intuitionistic logic.  The remaining
 axioms of CZF are divided into two groups.
 
+
 ### Structural axioms
 
-Defining schemes for the restricted quantifiers.
+*Defining schemes for the restricted quantifiers.*
 
-$$(∀x∈y)φ(x) ↔ ∀x(x∈y → φ(x))$$
+$$
+\begin{aligned}
+  (∀x∈y)φ(x) & ↔ ∀x(x∈y → φ(x)) \\
+  (∃x∈y)φ(x)  &↔ ∃x(x∈y ∧ φ(x))
+\end{aligned}
+$$
 
-$$(∃x∈y)φ(x) ↔ ∃x(x∈y ∧ φ(x))$$
+*Equality axioms.*
 
-Equality axioms.
+$$
+\begin{aligned}
+  x = y       & ↔ ∀z(z∈x ↔ z∈y) \\
+  x = y ∧ y∈z & ↔ x∈z
+\end{aligned}
+$$
 
-$$x = y ↔ ∀z(z∈x ↔ z∈y)$$
-
-$$x = y ∧ y∈z ↔ x∈z$$
-
-Set induction scheme.
+*Set induction scheme.*
 
 $$∀y ((∀x∈y)φ(x) → φ(y)) → ∀xφ(x)$$
 
+
 ### Set existence axioms
 
-Pairing.
+*Pairing.*
 
 $$∃z(x∈z ∧ y∈z)$$
 
-Union.
+*Union.*
 
 $$∃z(∀y∈x)(∀u∈y)(u∈z)$$
 
-Restricted separation.
+*Restricted separation.*
+
+For restricted $φ(x)$
+
+$$∃z((∀y∈z)(y∈x ∧ φ(y)) ∧ (∀y∈x)(φ(y) → y∈z))$$
+
+If $φ(x,y)$ is a formula let $φ'(a,b)$ denote
+
+$$(∀x∈a)(∃y∈b)φ(x,y) ∧ (∀y∈b)(∃x∈a)φ(x,y)$$
+
+*Strong collection.*
+
+$$(∀x∈a)∃yφ(x,y) → ∃bφ'(a,b)$$
+
+*Subset collection.*
+
+$$∃c∀u((∀x∈a)(∃y∈b)φ(x,y) → (∃d∈c)φ'(a,d))$$
+
+where $u$ may occur free in $φ(x,y).$
+
+*Infinity.*
+
+$$∃z\text{Nat}(z)$$
+
+where $\text{Nat}(z)$ is the conjunction of $(∀x∈z)(\text{Zero}(x) ∨ (∃y∈z)\text{Succ}(y,x)),$
+$(∃x∈z)\text{Zero}(x),$ and $(∀y∈z)(∃x∈z)\text{Succ}(y,x.)$  Here $\text{Zero}(x)$ is $(∀y∈x)\bot$
+and $\text{Succ}(y,x)$ is $(∀z∈y)(z∈x) ∧ y∈x ∧ (∀z∈x)(z∈y ∨ z=y).$
+
+
+#### Remarks.
+
+Our formulation has been designed to make the correctness proof for our interpretation as smooth as
+possible.  The axioms could have been written in a more standard way.  Our formulation of the axiom
+of infinity expresses the existence of a set $ω$ such that
+
+$$n∈ω ↔ n = \emptyset ∨ (∃m∈ω)(n = m ∪ \{m\}).$$
+
+The mathematical induction scheme can be proved in CZF using set induction.  Recall that in the
+usual way strong collection implies replacement.  Ordinary collection is not good enough in the
+presence of only restricted separation.  The significance of subset collection will become clear in
+the next section.
+
+
+## 2.  Elementary properties of CZF
+
+We give some simple results that spell out the relationship of CZF to ZF.  In particular we
+reformulate the subset collection scheme as a single axiom and bring out its relationship to the
+power set axiom and Myhill’s exponentiation axiom.  We show that ZF results from CZF by adding
+classical logic.
+
+We use standard set-theoretic notation and definitions.  So ordered pairs $⟨x,y⟩,$ cartesian
+products $A × B,$ and the notion of a function $f : A → B$ etc … are all defined as usual.
 
 ```
 -- TODO
 ```
 
 
-<!-- ## 2.  Elementary properties of CZF
-
-
-## 3.  The type-theoretic framework
+<!-- ## 3.  The type-theoretic framework
 
 
 ## 4.  The interpretation
