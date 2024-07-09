@@ -7,6 +7,7 @@ lang:  en
 module mi.index where
 
 import mi.Aczel1978
+import mi.Friedman1978
 import mi.MartinLof2006
 ```
 
@@ -32,7 +33,7 @@ Made by [Miëtek Bak](https://mietek.io/).  Licensed under [CC BY-SA 4.0
 
 ## A
 
--  P. Aczel (1978) [The type theoretic interpretation of constructive set theory
+-  P. Aczel (1978) [The type-theoretic interpretation of constructive set theory
    ](mi.Aczel1978.html)
 
 ## B
@@ -44,6 +45,9 @@ Made by [Miëtek Bak](https://mietek.io/).  Licensed under [CC BY-SA 4.0
 ## E
 
 ## F
+
+-  H. Friedman (1978) [Classically and intuitionistically provably recursive functions
+   ](mi.Friedman1978.html)
 
 ## G
 

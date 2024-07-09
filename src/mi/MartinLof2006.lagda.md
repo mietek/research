@@ -1,5 +1,5 @@
 ---
-author:  P. Martin-Löf
+author:  P. Martin-Löf
 hauthor: Per Martin-Löf
 year:    2006
 title:   '100 years of Zermelo’s axiom of choice: What was the problem with it?'
@@ -7,15 +7,21 @@ htitle:  '100 years of Zermelo’s<br>axiom of choice:<br>What was the problem w
 lang:    en
 wip:     yes
 card:
-  - 'P. Martin-Löf (2006)'
+  - P. Martin-Löf (2006)
   - '[100 years of Zermelo’s axiom of choice: What was the problem with it?
     ](https://sci-hub.st/10.1093/comjnl/bxh162)'
-  - '*Comp. J.*, Vol. 49(3), pp. 345–350.'
-
+  - '*Comp. J.*, Vol. 49(3), pp. 345–350.'
+todo:
+  - '(8) DOI not on sci-hub; https://doi.org/10.24033/bsmf.761'
+  - (10) both DOIs missing
+  - (11) DOI missing
+  - (20) document missing
 ---
 
+
 ```
--- Mechanised by Miëtek Bak
+-- Partially mechanised by Miëtek Bak
+-- TODO: Theorem 2
 
 module mi.MartinLof2006 where
 
@@ -125,20 +131,19 @@ attempt at demonstrating the well-ordering principle.[^2]
 
 The first to succeed in doing so was Zermelo,[^3] although, as a prerequisite of the demonstration,
 he had to introduce a new principle, which came to be called the principle of choice (*[Prinzip der
-Auswahl]{lang=de}*) respectively the axiom of choice (*[Axiom der Auswahl]{lang=de}*) in his two
-papers from 1908.[^4] [^5]  His first paper on the subject, published in 1904, consists of merely
-three pages, excerpted by Hilbert from a letter which he had received from Zermelo.  The letter is
-dated 24 September 1904, and the excerpt begins by saying that the demonstration came out of
-discussions with Erhard Schmidt during the preceding week, which means that we can safely date the
-appearance of the axiom of choice and the demonstration of the well-ordering theorem to September
-1904.
+Auswahl]{lang=de}*) respectively the axiom of choice (*[Axiom der Auswahl]{lang=de}*) in his two[^4]
+papers[^5] from 1908.  His first paper on the subject, published in 1904, consists of merely three
+pages, excerpted by Hilbert from a letter which he had received from Zermelo.  The letter is dated
+24 September 1904, and the excerpt begins by saying that the demonstration came out of discussions
+with Erhard Schmidt during the preceding week, which means that we can safely date the appearance of
+the axiom of choice and the demonstration of the well-ordering theorem to September 1904.
 
 Brief as it was, Zermelo’s paper gave rise to what is presumably the most lively discussion among
 mathematicians on the validity, or acceptability, of a mathematical axiom that has ever taken place.
 Within a couple of years, written contributions to this discussion were published by Felix
-Bernstein, Schoenflies, Hamel, Hessenberg and Hausdorff in Germany, Baire, Borel, Hadamard,
-Lebesgue, Richard and Poincaré in France, Hobson, Hardy, Jourdain and Russell in England, Julius
-König in Hungary, Peano in Italy and Brouwer in the Netherlands.[^6]  Zermelo responded to those
+Bernstein, Schoenflies, Hamel, Hessenberg, and Hausdorff in Germany; Baire, Borel, Hadamard,
+Lebesgue, Richard, and Poincaré in France; Hobson, Hardy, Jourdain, and Russell in England; Julius
+König in Hungary; Peano in Italy, and Brouwer in the Netherlands.[^6]  Zermelo responded to those
 of these contributions that were critical, which was a majority, in a second paper from 1908.  This
 second paper also contains a new proof of the well-ordering theorem, less intuitive or less
 perspicuous, it has to be admitted, than the original proof, as well as a new formulation of the
@@ -151,7 +156,7 @@ for example.  Towards the end of the thirties, it had become firmly established 
 the standard mathematical curriculum in the form of Zorn’s lemma.[^7]
 
 The intuitionists, on the other hand, rejected the axiom of choice from the very beginning.  Baire,
-Borel and Lebesgue were all critical of it in their contributions to the correspondence, which was
+Borel, and Lebesgue were all critical of it in their contributions to the correspondence, which was
 published under the title *[Cinq lettres sur la théorie des ensembles]{lang=fr}* in 1905.[^8]
 Brouwer’s thesis from 1907 contains a section on the well-ordering principle in which it is treated
 in a dismissive fashion (“of course there is no motivation for this at all”) and in which, following
@@ -235,8 +240,8 @@ in his second paper on the well-ordering theorem from 1908,
 
 ::: {.align}
 Formulated in this way, Zermelo’s axiom of choice turns out to coincide with the multiplicative
-axiom, which Whitehead and Russell had found indispensable for the development of the theory of
-cardinals.[^15] [^16]  The type-theoretic rendering of this formulation of the axiom of choice is
+axiom, which Whitehead[^15] and Russell[^16] had found indispensable for the development of the
+theory of cardinals.  The type-theoretic rendering of this formulation of the axiom of choice is
 straightforward, once one remembers that a basic set in the sense of Cantorian set theory
 corresponds to an exten&shy;sional set, that is, a set equipped with an equivalence relation, in
 type theory, and that a subset of an exten&shy;sional set is interpreted as a propositional function
@@ -244,7 +249,7 @@ which is exten&shy;sional with respect to the equivalence relation in question.
 
 ```
 Extensional : ∀ {𝓈 𝓉 ℯS ℯT} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
-                {{≍S : Equivalence S ℯS}} {{≍T : Equivalence T ℯT}} → Set _
+                {{≍S : Equivalence S ℯS}}{{≍T : Equivalence T ℯT}} → Set _
 Extensional f = ∀ {x y} → x ≍ y → f x ≍ f y
 
 Extensional-Id-≍ : ∀ {𝓈 𝓉 ℯT} {S : Set 𝓈} {T : Set 𝓉} (f : S → T)
@@ -305,12 +310,9 @@ Nonempty {S = S} A = ∀ i → ∃[ x ⦂ S ] A i x
 -- Zermelo’s axiom of choice
 ZAC : ∀ ℓ → Set _
 ZAC ℓ = ∀ {I S : Set ℓ} {A : I → Subset S ℓ}
-          {{≍I : Equivalence I ℓ}}
-          {{≍S : Equivalence S ℓ}}
-          (p₁ : Extensional-≍S-↔ A)
-          (p₂ : Extensional-≍I-↔ A)
-          (p₃ : MutuallyExclusive A)
-          (p₄ : Exhaustive A)
+          {{≍I : Equivalence I ℓ}} {{≍S : Equivalence S ℓ}}
+          (p₁ : Extensional-≍S-↔ A) (p₂ : Extensional-≍I-↔ A)
+          (p₃ : MutuallyExclusive A) (p₄ : Exhaustive A)
           (p₅ : Nonempty A) →
         ∃[ S₁ ⦂ Subset S ℓ ] Extensional-≍-↔ S₁ ∧ ∀ i → ∃![ x ⦂ S ] (A i ∩ S₁) x
 ```
@@ -367,7 +369,7 @@ exten&shy;sional axiom of choice
 
 $$(∀i : I)(∃x : S)A_i(x) → (∃f : I → S)(\text{Ext}(f) ∧ (∀i : I)A_i(f(i))),$$
 
-which I shall call $\text{ExtAC},$ where
+which I shall call ExtAC, where
 
 $$\text{Ext}(f) ≍ (∀i, j: I)(i ≍_I j → f(i) ≍_S f(j)).$$
 
@@ -378,10 +380,8 @@ which does not prevent one from investigating its consequences, of course.
 -- extensional axiom of choice
 EAC : ∀ ℓ → Set _
 EAC ℓ = ∀ {I S : Set ℓ} {A : I → Subset S ℓ}
-          {{≍I : Equivalence I ℓ}}
-          {{≍S : Equivalence S ℓ}}
-          (p₁ : Extensional-≍S-↔ A)
-          (p₂ : Extensional-≍I-↔ A)
+          {{≍I : Equivalence I ℓ}} {{≍S : Equivalence S ℓ}}
+          (p₁ : Extensional-≍S-↔ A) (p₂ : Extensional-≍I-↔ A)
           (p₅ : Nonempty A) →
         ∃[ f ⦂ (I → S) ] Extensional f ∧ ∀ i → A i (f i)
 
@@ -423,6 +423,7 @@ eac→zac eac {I} {S} {A} p₁ p₂ p₃ p₄ p₅ = S₁ , p₆ , p₇
     p₇ i = f i , f-common i , f-unique i
 ```
 :::
+
 
 #### Theorem I.
 
@@ -522,12 +523,9 @@ RightInverse g f = ∀ y → (f ∘ g) y ≍ y
 
 -- every surjective extensional function has an extensional right inverse
 AC₃ : ∀ ℓ → Set _
-AC₃ ℓ = ∀ {I S : Set ℓ}
-          {{≍I : Equivalence I ℓ}}
-          {{≍S : Equivalence S ℓ}}
-          (f : S → I)
-          (f-ext : Extensional f)
-          (f-surj : Surjective f) →
+AC₃ ℓ = ∀ {I S : Set ℓ} (f : S → I)
+          {{≍I : Equivalence I ℓ}} {{≍S : Equivalence S ℓ}}
+          (f-ext : Extensional f) (f-surj : Surjective f) →
         ∃[ g ⦂ (I → S) ] RightInverse g f ∧ Extensional g
 
 ii→iii : ∀ {ℓ} → ZAC ℓ → AC₃ ℓ
@@ -615,7 +613,7 @@ AC₄ ℓ = ∀ {I : Set ℓ}
         ∃[ g ⦂ (I → I) ] RightInverse g id ∧ Extensional-≍-Id g
 
 iii→iv : ∀ {ℓ} → AC₃ ℓ → AC₄ ℓ
-iii→iv ac₃ = ac₃ {{≍S = Id-≍}} id (ext-Id→≍ id) id-surj
+iii→iv ac₃ = ac₃ id {{≍S = Id-≍}} (ext-Id→≍ id) id-surj
 ```
 :::
 
@@ -714,6 +712,7 @@ theory in order to validate a specific set-theoretic axiom.  In particular, this
 the formalized version of the axiom of choice that Zermelo made part of his own axiomatization of
 set theory.  The answer is as follows.
 
+
 #### Theorem II.
 
 *When constructive type theory is strengthened by the exten&shy;sional axiom of choice, the
@@ -721,6 +720,7 @@ set-theoretic axiom of choice becomes validated under the Aczel interpretation.*
 
 ##### Proof.
 
+::: {.align}
 The set-theoretic axiom of choice says that, for any two iterative sets $α$ and $β$ and any
 relation $R$ between iterative sets,
 
@@ -762,33 +762,37 @@ which ensures that $φ,$ defined as above, is a function from $α$ to $β$ in th
 constructive set theory.
 :::
 
+```
+-- TODO
+```
+:::
+
+
 #### Corollary.
 
 *When constructive type theory (including one universe and the $W$-operation) is strengthened by
-the exten&shy;sional axiom of choice, it interprets all of $\text{ZFC}.$*
+the exten&shy;sional axiom of choice, it interprets all of ZFC.*
 
 ##### Proof.
 
 ::: {.qed}
-We already know from Aczel that $\text{ZF}$ is equivalent to $\text{CZF}$ $+$ $\text{EM}.$[^18]
-Hence $\text{ZFC}$ is equivalent to $\text{CZF}$ $+$ $\text{EM}$ $+$ $\text{AC}.$  But, by
-Diaconescu’s theorem as transferred to constructive set theory by Goodman and Myhill, the law of
-excluded middle follows from the axiom of choice in the context of constructive set theory.[^19]
-It thus suffices to interpret $\text{CZF}$ $+$ $\text{AC}$ in $\text{CTT}$ $+$ $\text{ExtAC},$ and
-this is precisely what the Aczel interpretation does, by the previous theorem.
+We already know from Aczel that ZF is equivalent to CZF $+$ EM.[^18]  Hence ZFC is equivalent to CZF
+$+$ EM $+$ AC.  But, by Diaconescu’s theorem as transferred to constructive set theory by Goodman
+and Myhill, the law of excluded middle follows from the axiom of choice in the context of
+constructive set theory.[^19]  It thus suffices to interpret CZF $+$ AC in CTT $+$ ExtAC, and this
+is precisely what the Aczel interpretation does, by the previous theorem.
 :::
 
 Another way of reaching the same conclusion is to interchange the order of the last two steps in
-the proof just given, arguing instead that $\text{ZFC}$ $=$ $\text{CZF}$ $+$ $\text{EM}$ $+$
-$\text{AC}$ is interpretable in $\text{CTT}$ $+$ $\text{EM}$ $+$ $\text{ExtAC}$ by the previous
-theorem, and then appealing to the type-theoretic version of Diaconescu’s theorem, according to
-which the law of excluded middle follows from the exten&shy;sional axiom of choice in the context of
-constructive type theory.[^20]  The final conclusion is anyhow that $\text{ZFC}$ is interpretable in
-$\text{CTT}$ $+$ $\text{ExtAC}.$
+the proof just given, arguing instead that ZFC $=$ CZF $+$ EM $+$ AC is interpretable in CTT $+$ EM
+$+$ ExtAC by the previous theorem, and then appealing to the type-theoretic version of Diaconescu’s
+theorem, according to which the law of excluded middle follows from the exten&shy;sional axiom of
+choice in the context of constructive type theory.[^20]  The final conclusion is anyhow that ZFC is
+interpretable in CTT $+$ ExtAC.
 
 ::: {.align}
 When Zermelo’s axiom of choice is formulated in the context of constructive type theory instead of
-Zermelo-Fraenkel set theory, it appears as $\text{ExtAC},$ the exten&shy;sional axiom of choice
+Zermelo-Fraenkel set theory, it appears as ExtAC, the exten&shy;sional axiom of choice
 
 $$(∀i : I)(∃x : S)A(i, x) → (∃f : I → S)(\text{Ext}(f) ∧ (∀i : I)A(i, f(i))),$$
 
@@ -800,14 +804,14 @@ and it then becomes manifest what is the problem with it: it breaks the principl
 get something from nothing.  Even if the relation $A(i, x)$ is exten&shy;sional with respect to its
 two arguments, the truth of the antecedent $(∀i : I)$$(∃x : S)$$A(i, x),$ which does guarantee the
 existence of a choice function $f : I → S$ satisfying $(∀i : I)$$A(i, f(i)),$ is not enough to
-guarantee the exten&shy;sionality of the choice function, that is, the truth of $\text{Ext}(f).$
+guarantee the exten&shy;sionality of the choice function, that is, the truth of Ext$(f).$
 Thus the problem with Zermelo’s axiom of choice is not the existence of the choice function but its
 exten&shy;sionality, and this is not visible within an exten&shy;sional framework, like
 Zermelo-Fraenkel set theory, where all functions are by definition exten&shy;sional.
 
 If we want to ensure the exten&shy;sionality of the choice function, the antecedent clause of the
 exten&shy;sional axiom of choice has to be strengthened.  The natural way of doing this is to
-replace $\text{ExtAC}$ by $\text{AC!},$ the axiom of unique choice, or no choice,
+replace ExtAC by AC!, the axiom of unique choice, or no choice,
 
 $$(∀i : I)(∃!x : S)A(i, x) → (∃f : I → S)(\text{Ext}(f) ∧ (∀i : I)A(i, f(i))),$$
 
@@ -818,17 +822,15 @@ condition, such a function $f : I → S$ is necessarily exten&shy;sional.  For s
 $i, j : I$ are such that $i ≍_I j$ is true.  Then $A(i, f(i))$ and $A(j, f(j))$ are both true.
 Hence, by the exten&shy;sionality of $A(i, x)$ in its first argument, so is $A(i, f(j)).$  The
 uniqueness condition now guarantees that $f(i) ≍_S f(j),$ that is, that $f : I → S$ is
-exten&shy;sional.  The axiom of unique choice $\text{AC!}$ may be considered as the valid form of
-exten&shy;sional choice, as opposed to $\text{ExtAC},$ which lacks justification.
+exten&shy;sional.  The axiom of unique choice AC! may be considered as the valid form of
+exten&shy;sional choice, as opposed to ExtAC, which lacks justification.
 
 ```
 -- axiom of unique choice
 AC! : ∀ ℓ → Set _
 AC! ℓ = ∀ {I S : Set ℓ} {A : I → Subset S ℓ}
-          {{≍I : Equivalence I ℓ}}
-          {{≍S : Equivalence S ℓ}}
-          (p₁ : Extensional-≍S-↔ A)
-          (p₂ : Extensional-≍I-↔ A) →
+          {{≍I : Equivalence I ℓ}} {{≍S : Equivalence S ℓ}}
+          (p₁ : Extensional-≍S-↔ A) (p₂ : Extensional-≍I-↔ A) →
         (∀ i → ∃![ x ⦂ S ] A i x) → ∃[ f ⦂ (I → S) ] Extensional f ∧ ∀ i → A i (f i)
 
 ac! : ∀ {ℓ} → AC! ℓ
@@ -896,116 +898,92 @@ operations, an argument which nevertheless could not be faithfully formalized in
 formal system.
 
 
-<!-- ******************************************************************************************* -->
-
-[^1]:  G. Cantor (1883) [[Über unendliche lineare Punktmannigfaltigkeiten.  Nr. 5]{lang=de}
+[^1]:  G. Cantor (1883) [[Über unendliche lineare Punktmannigfaltigkeiten.  Nr. 5]{lang=de}
        ](https://sci-hub.st/10.1007/BF01446819),
        *[Math. Annalen]{lang=de}*, Vol. 21(4), pp. 545–591.
        Reprinted in *[[Gesammelte Abhandlungen]{lang=de}
        ](https://sci-hub.st/10.1007/978-3-662-00274-2)*,
-       Edited by E. Zermelo (1932), Springer-Verlag, Berlin, pp. 165–208.
-       <!-- -->
+       Edited by E. Zermelo (1932), Springer, Berlin, pp. 165–208.
 
-[^2]:  G. H. Moore (1982) *[Zermelo’s Axiom of Choice: Its Origins, Development, and Influence
+[^2]:  G. H. Moore (1982) *[Zermelo’s Axiom of Choice: Its Origins, Development, and Influence
        ](https://sci-hub.st/10.1007/978-1-4613-9478-5)*,
-       Springer-Verlag, New York, p. 51.
-       <!-- -->
+       Springer, New York, p. 51.
 
-[^3]:  E. Zermelo (1904) [[Beweis, daß jede Menge wohlgeordnet werden kann.  (Aus einem an Herrn
+[^3]:  E. Zermelo (1904) [[Beweis, daß jede Menge wohlgeordnet werden kann.  (Aus einem an Herrn
        Hilbert gerichteten Briefe.)]{lang=de}](https://sci-hub.st/10.1007/BF01445300),
        *[Math. Annalen]{lang=de}*, Vol. 59(4), pp. 514–516.
-       <!-- -->
 
-[^4]:  E. Zermelo (1908) [[Neuer Beweis für die Möglichkeit einer Wohlordnung]{lang=de}
+[^4]:  E. Zermelo (1908) [[Neuer Beweis für die Möglichkeit einer Wohlordnung]{lang=de}
        ](https://sci-hub.st/10.1007/BF01450054),
        *[Math. Annalen]{lang=de}*, Vol. 65(1), pp. 107–128.
-       <!-- -->
 
-[^5]:  E. Zermelo (1908) [[Untersuchungen über die Grundlagen der Mengenlehre.  I]{lang=de}
+[^5]:  E. Zermelo (1908) [[Untersuchungen über die Grundlagen der Mengenlehre.  I]{lang=de}
        ](https://sci-hub.st/10.1007/BF01449999),
        *[Math. Annalen]{lang=de}*, Vol. 65(2), pp. 261–281.
-       <!-- -->
 
-[^6]:  G. H. Moore (1982), [op. cit.](#fn2), pp. 92–137.
-       <!-- -->
+[^6]:  G. H. Moore (1982), [op. cit.](#fn2), pp. 92–137.
 
-[^7]:  M. Zorn (1935) [A remark on method in transfinite algebra
+[^7]:  M. Zorn (1935) [A remark on method in transfinite algebra
        ](https://sci-hub.st/10.1090/S0002-9904-1935-06166-X),
        *Bull. Amer. Math. Soc.*, Vol. 41(10), pp. 667–670.
-       <!-- -->
 
-[^8]:  R. Baire, É. Borel, J. Hadamard and H. Lebesgue (1905) [[Cinq lettres sur la théorie des
+[^8]:  R. Baire, É. Borel, J. Hadamard, and H. Lebesgue (1905) [[Cinq lettres sur la théorie des
        ensembles]{lang=fr}](http://www.numdam.org/item/10.24033/bsmf.761.pdf),
        *[Bull. Soc. Math. France]{lang=fr}*, Vol. 33(17), pp. 261–273.
-       <!-- TODO: DOI not on sci-hub; https://doi.org/10.24033/bsmf.761 -->
 
-[^9]:  É. Borel (1905) [[Quelques remarques sur les principes de la théorie des ensembles]{lang=fr}
+[^9]:  É. Borel (1905) [[Quelques remarques sur les principes de la théorie des ensembles]{lang=fr}
        ](https://sci-hub.st/10.1007/BF01677266),
        *[Math. Annalen]{lang=de}*, Vol. 60(2), pp. 194–195.
-       <!-- -->
 
-[^10]: L. E. J. Brouwer (1907) *[[Over de Grondslagen der Wiskunde]{lang=nl}
+[^10]: L. E. J. Brouwer (1907) *[[Over de Grondslagen der Wiskunde]{lang=nl}
        ](https://eprints.illc.uva.nl/id/eprint/1852/2/HDS-20-LEJBrouwer.text.pdf)*,
        Maas \& van Suchtelen, Amsterdam.
        English translation in *[Collected Works, Vol. 1
        ](https://library.lol/main/0CFBA75A5C78E49F96114337B2B8790D)*,
-       Edited by A. Heyting (1975), North–Holland, Amsterdam, pp. 11–101.
-       <!-- TODO: both DOIs missing -->
+       Edited by A. Heyting (1975), North-Holland, Amsterdam, pp. 11–101.
 
-[^11]: E. Bishop (1967) *[Foundations of Constructive Analysis
+[^11]: E. Bishop (1967) *[Foundations of Constructive Analysis
        ](https://library.lol/main/D69762DE514CE40FAA389C6F178F66D4)*,
        McGraw-Hill, New York, p. 9.
-       <!-- TODO: DOI missing -->
 
-[^12]: R. Diaconescu (1975) [Axiom of choice and complementation
+[^12]: R. Diaconescu (1975) [Axiom of choice and complementation
        ](https://sci-hub.st/10.1090/S0002-9939-1975-0373893-X),
        *Proc. Amer. Math. Soc.*, Vol. 51(1), pp. 176–178.
-       <!-- -->
 
-[^13]: E. Zermelo (1904), [op. cit.](#fn3), footnote 3, p. 514.
-       <!-- -->
+[^13]: E. Zermelo (1904), [op. cit.](#fn3), footnote 3, p. 514.
 
-[^14]: E. Zermelo (1908), [op. cit.](#fn4), footnote 4, p. 110.
-       <!-- -->
+[^14]: E. Zermelo (1908), [op. cit.](#fn4), footnote 4, p. 110.
 
-[^15]: A. N. Whitehead (1902) [On cardinal numbers](https://sci-hub.st/10.2307/2370026),
+[^15]: A. N. Whitehead (1902) [On cardinal numbers](https://sci-hub.st/10.2307/2370026),
        *Amer. J. Math.*, Vol. 24(4), pp. 367–394.
-       <!-- -->
 
-[^16]: B. Russell (1906) [On some difficulties in the theory of transfinite numbers and order types
+[^16]: B. Russell (1906) [On some difficulties in the theory of transfinite numbers and order types
        ](https://sci-hub.st/10.1112/plms/s2-4.1.29),
        *Proc. London Math. Soc.*, Ser. 2, Vol. 4(1), pp. 29–53.
-       <!-- -->
 
-[^17]: P. Aczel (1978) [The type theoretic interpretation of constructive set theory
+[^17]: P. Aczel (1978) [The type-theoretic interpretation of constructive set theory
        ](mi.Aczel1978.html){.mi},
-       *Logic Colloquium ’77*, Edited by A. Macintyre, L. Pacholski, and J. Paris, North Holland,
+       *Logic Colloquium ’77*, Edited by A. Macintyre, L. Pacholski, and J. Paris, North-Holland,
        Amsterdam, pp. 55–66.
-       <!-- -->
 
-[^18]: P. Aczel (1978), [op. cit.](#fn17), p. 59.
-       <!-- -->
+[^18]: P. Aczel (1978), [op. cit.](#fn17), p. 59.
 
-[^19]: N. D. Goodman and J. Myhill (1978) [Choice implies excluded middle
+[^19]: N. D. Goodman and J. Myhill (1978) [Choice implies excluded middle
        ](https://sci-hub.st/10.1002/malq.19780242514),
        *[Zeitschrift für math. Logik und Grundlagen der Math.]{lang=de}*, Vol. 24(25–30), p. 461.
-       <!-- -->
 
-[^20]: S. Lacas and B. Werner (1999) ~~Which choices imply the excluded middle? About Diaconescu’s
-       trick in type theory~~, Unpublished, pp. 9–10.
+[^20]: S. Lacas and B. Werner (1999) ~~Which choices imply the excluded middle? About Diaconescu’s
+       trick in type theory~~,
+       Unpublished, pp. 9–10.
        I am indebted to Jesper Carlström for providing me with this reference.
-       <!-- TODO: document missing -->
 
-[^21]: E. Zermelo (1904), [op. cit.](#fn3), footnote 3, p. 516.
-       <!-- -->
+[^21]: E. Zermelo (1904), [op. cit.](#fn3), footnote 3, p. 516.
 
-[^22]: P. Aczel (1982) [The type theoretic interpretation of constructive set theory: Choice
+[^22]: P. Aczel (1982) [The type-theoretic interpretation of constructive set theory: Choice
        principles](https://sci-hub.st/10.1016/S0049-237X(09)70120-X),
        *L. E. J. Brouwer Centenary Symposium*, Edited by A. S. Troelstra and D. van Dalen,
-       North Holland, Amsterdam, 1982, pp. 1–40.
-       <!-- -->
+       North-Holland, Amsterdam, 1982, pp. 1–40.
 
-[^23]: M. Hofmann (1997) *[Exten&shy;sional Constructs in Inten&shy;sional Type Theory
+[^23]: M. Hofmann (1997) *[Exten&shy;sional Constructs in Inten&shy;sional Type Theory
        ](https://sci-hub.st/10.1007/978-1-4471-0963-1)*,
-       Springer-Verlag, London.
-       <!-- -->
+       Springer, London.
