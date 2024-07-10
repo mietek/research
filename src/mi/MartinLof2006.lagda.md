@@ -159,7 +159,7 @@ The intuitionists, on the other hand, rejected the axiom of choice from the very
 Borel, and Lebesgue were all critical of it in their contributions to the correspondence, which was
 published under the title *[Cinq lettres sur la théorie des ensembles]{lang=fr}* in 1905.[^8]
 Brouwer’s thesis from 1907 contains a section on the well-ordering principle in which it is treated
-in a dismissive fashion (“of course there is no motivation for this at all”) and in which, following
+in a dismissive fashion (‘of course there is no motivation for this at all’) and in which, following
 Borel,[^9] he belittles Zermelo’s proof of it from the axiom of choice.[^10]  No further discussion
 of the axiom of choice seems to be found in either Brouwer’s or Heyting’s writings.  Presumably, it
 was regarded by them as a prime example of a nonconstructive principle.
@@ -171,7 +171,7 @@ It therefore came as a surprise when, as late as in 1967, Bishop stated,
 > meaning of existence*,[^11]
 
 although, in the terminology that he himself introduced in the subsequent chapter, he ought to have
-said “choice operation” rather than “choice function”.  What he had in mind was clearly that the
+said ‘choice operation’ rather than ‘choice function’.  What he had in mind was clearly that the
 truth of
 
 $$(∀i : I)(∃x : S)A(i, x) → (∃f : I → S)(∀i : I)A(i, f(i))$$
@@ -193,7 +193,7 @@ AC : ∀ ℓ → Set _
 AC ℓ = ∀ {I S : Set ℓ} {A : I → Subset S ℓ} →
          (∀ i → ∃[ x ⦂ S ] A i x) → ∃[ f ⦂ (I → S) ] ∀ i → A i (f i)
 
--- generalized axiom of choice
+-- generalised axiom of choice
 GAC : ∀ ℓ → Set _
 GAC ℓ = ∀ {I : Set ℓ} {S : I → Set ℓ} {A : ∀ i → Subset (S i) ℓ} →
           (∀ i → ∃[ x ⦂ S i ] A i x) → ∃[ f ⦂ (∀ i → S i) ] ∀ i → A i (f i)
@@ -209,7 +209,7 @@ ac = gac
 In 1975, soon after Bishop’s vindication of the constructive axiom of choice, Diaconescu proved
 that, in topos theory, the law of excluded middle follows from the axiom of choice.[^12]  Now,
 topos theory being an intuitionistic theory, albeit impredicative, this is on the surface of it
-incompatible with Bishop’s observation because of the constructive inacceptability of the law of
+incompatible with Bishop’s observation because of the constructive unacceptability of the law of
 excluded middle.  There is therefore a need to investigate how the constructive axiom of choice,
 validated by the Brouwer-Heyting-Kolmogorov interpretation, is related to Zermelo’s axiom of choice
 on the one hand and to the topos-theoretic axiom of choice on the other.
@@ -709,7 +709,7 @@ interpretation being the natural constructive version of the cumulative hierarch
 what set-theoretic principles that become validated under that interpretation.[^17]  But one may
 also ask, conversely, what principle, or principles, that have to be adjoined to constructive type
 theory in order to validate a specific set-theoretic axiom.  In particular, this may be asked about
-the formalized version of the axiom of choice that Zermelo made part of his own axiomatization of
+the formalised version of the axiom of choice that Zermelo made part of his own axiomatisation of
 set theory.  The answer is as follows.
 
 
@@ -890,11 +890,11 @@ Inten&shy;sional Type Theory*.[^23]  Exten&shy;sionality does not come for free.
 
 Finally, since this is only a couple of weeks from the centenary of Zermelo’s first formulation of
 the axiom of choice, it may not be out of place to remember the crucial role it has played for the
-formalization of both Zermelo-Fraenkel set theory and constructive type theory.  In the case of set
+formalisation of both Zermelo-Fraenkel set theory and constructive type theory.  In the case of set
 theory, there was the need for Zermelo of putting his proof of the well-ordering theorem on a
 formally rigorous basis, whereas, in the case of type theory, there was the intuitively convincing
 argument which made axiom of choice evident on the constructive interpretation of the logical
-operations, an argument which nevertheless could not be faithfully formalized in any then existing
+operations, an argument which nevertheless could not be faithfully formalised in any then existing
 formal system.
 
 

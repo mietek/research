@@ -5,7 +5,6 @@ year:    2006
 title:   Type-preserving renaming and substitution
 htitle:  Type-preserving<br>renaming and substitution
 lang:    en
-wip:     yes
 card:
   - C. McBride (2006)
   - '[Type-preserving renaming and substitution
@@ -17,13 +16,12 @@ todo:
 
 
 ```
--- Not yet re-mechanised by Miëtek Bak
--- TODO: Epigram code fragments
+-- Re-mechanised by Miëtek Bak
 
 module mi.McBride2006 where
 
-⋆ : Set _
-⋆ = Set
+id : ∀ {𝒶} {A : Set 𝒶} → A → A
+id x = x
 ```
 
 I present a substitution algorithm for the simply-typed λ-calculus, represented in the style of
@@ -43,7 +41,7 @@ program:
 
 -  Renaming and substitution turn out to be instances of a single traversal operation, pushing
    functions from variables to ‘stuff’ through terms, for a suitable notion of ‘stuff’.  This
-   traversal operation is structually recursive, hence clearly total.
+   traversal operation is structurally recursive, hence clearly total.
 
 -  Type preservation is clearly promised by the types of these programs; in their bodies, the amount
    of syntax required to fulfil this promise is *none whatsoever*.  The ill-concealed ulterior
@@ -63,72 +61,56 @@ inductive families of datatypes and deduction systems.  Each rule types the gene
 symbol, below the line, in terms of parameters typed above the line.  You can read ‘$:$’ as ‘has
 type’ and ‘$\star$’ as the type of types.
 
-~~~
-TODO
-~~~
+::: {.align-top}
+$$
+\begin{aligned}
+  &\underline{\textrm{data}}
+    &&\frac{}{\textsf{Ty} : \star}
+    &&\underline{\textrm{where}}
+    &&\frac{}{\bullet : \textsf{Ty}}\quad
+    \frac{S,T : \textsf{Ty}}{S \vartriangleright T : \textsf{Ty}}\\\\
+  &\underline{\textrm{data}}
+    &&\frac{}{\textsf{Ctxt} : \star}
+    &&\underline{\textrm{where}}
+    &&\frac{}{\mathcal{E} : \textsf{Ctxt}}\quad
+    \frac{Γ : \textsf{Ctxt}\quad S : \textsf{Ty}}{Γ :: S : \textsf{Ctxt}}\\\\
+  &\underline{\textrm{data}}
+    &&\frac{Γ : \textsf{Ctxt}\quad T : \textsf{Ty}}{Γ ∋ T : \star}
+    &&\underline{\textrm{where}}
+    &&\frac{}{\textsf{vz} : Γ :: S ∋ S}\quad
+    \frac{x : Γ ∋ T}{\textsf{vs}\ x : Γ :: S ∋ T}\\\\
+  &\underline{\textrm{data}}
+    &&\frac{Γ : \textsf{Ctxt}\quad T : \textsf{Ty}}{Γ \blacktriangleright T : \star}
+    &&\underline{\textrm{where}}
+    &&\frac{x : Γ ∋ T}{\textsf{var}\ x : Γ \blacktriangleright T}\quad
+    \frac{t : Γ :: S \blacktriangleright T}
+         {\textsf{lam}\ t : Γ \blacktriangleright S \vartriangleright T}\\[11pt]
+    &&&&&&&\frac{f : Γ \blacktriangleright S \vartriangleright T\quad s : Γ \blacktriangleright S}
+                {\textsf{app}\ s\ t : Γ \blacktriangleright T}
+\end{aligned}
+$$
+
+Fig. 1.  The simply typed λ-calculus
 
 ```
-data Ty :
-          ---
-          ⋆ where
+data Ty : Set where
+  •   : Ty
+  _▷_ : ∀ (S T : Ty) → Ty
 
-  • :
-      --
-      Ty
+data Ctxt : Set where
+  ℰ   : Ctxt
+  _∷_ : ∀ (Γ : Ctxt) → (S : Ty) → Ctxt
 
-  _▷_ : (S T : Ty)
-        ----------
-           → Ty
+data _∋_ : Ctxt → Ty → Set where
+  vz  : ∀ {Γ S} → (Γ ∷ S) ∋ S
+  vs  : ∀ {Γ S T} (x : Γ ∋ T) → (Γ ∷ S) ∋ T
 
-
-
-
-data Ctxt :
-            ---
-            ⋆ where
-
-  ε :
-      ----
-      Ctxt
-
-  _∷_ : (Γ : Ctxt) → (S : Ty)
-        ---------------------
-               → Ctxt
-
-
-
-
-data _∋_ : (Γ : Ctxt) → (T : Ty)
-           ---------------------
-                   → ⋆         where
-
-  vz : ∀{Γ S}
-              -------------
-              → (Γ ∷ S) ∋ S
-
-  vs : ∀{Γ S T}    → Γ ∋ T
-                -------------
-                → (Γ ∷ S) ∋ T
-
-
-
-
-data _▶︎_ : (Γ : Ctxt) → (T : Ty)
-           ---------------------
-                   → ⋆         where
-
-  var : ∀{Γ T} → (x : Γ ∋ T)
-               -------------
-                  → Γ ▶︎ T
-
-  lam : ∀{Γ S T} → (t : (Γ ∷ S) ▶︎ T)
-                 -------------------
-                    → Γ ▶︎ (S ▷ T)
-
-  app : ∀{Γ S T} → (f : Γ ▶︎ (S ▷ T)) → (s : Γ ▶︎ S)
-                 ---------------------------------
-                             → Γ ▶︎ T
+data _▶︎_ (Γ : Ctxt) : Ty → Set where
+  var : ∀ {T} (x : Γ ∋ T) → Γ ▶︎ T
+  lam : ∀ {S T} (t : (Γ ∷ S) ▶︎ T) → Γ ▶︎ (S ▷ T)
+  app : ∀ {S T} (f : Γ ▶︎ (S ▷ T)) (s : Γ ▶︎ S) → Γ ▶︎ T
 ```
+:::
 
 This may seem like overkill for ‘simple’ definitions like $\textsf{Ty}$ (for simple types) and
 $\textsf{Ctxt}$ (for contexts—reversed lists of simple types), which you might imagine writing
@@ -136,10 +118,10 @@ grammar-style, like this:
 
 $$
 \begin{aligned}
-  \underline{\textrm{data}}\ \textsf{Ty}  &=
-    \bullet\ |\ \textsf{Ty} \vartriangleright \textsf{Ty} \\
-  \underline{\textrm{data}}\ \textsf{Ctx} &=
-    ε\ |\ \textsf{Ctxt} :: \textsf{Ty}
+  &\underline{\textrm{data}}\ \textsf{Ty} =
+    \bullet\ |\ \textsf{Ty} \vartriangleright \textsf{Ty}\\
+  &\underline{\textrm{data}}\ \textsf{Ctx} =
+    \mathcal{E}\ |\ \textsf{Ctxt} :: \textsf{Ty}
 \end{aligned}
 $$
 
@@ -162,11 +144,11 @@ than ‘$\ni$’ and ‘$\blacktriangleright$’.
 
 The form of a rule’s conclusion quietly specifies which arguments are to be kept implicit and which
 should be shown.  In the data constructors for ‘$\ni$’ and ‘$\blacktriangleright$’, you’ll find $Γ,$
-$S,$ and $T$ undeclared—their types are inferrable from usage by standard techniques [(Damas &
+$S,$ and $T$ undeclared—their types are inferable from usage by standard techniques [(Damas &
 Milner, 1982)](#r2){#rr2 .rr}.  Moreover, the natural deduction rule serves like ‘let’ in the
 Hindley-Milner system to indicate the point at which variables should be generalised where possible.
 In effect, we may omit declarations for an *initial* segment of parameters to a rule, provided their
-types are inferrable.
+types are inferable.
 
 What has happened?  The usual alignment of the implicit-versus-explicit with type-versus-value is so
 traditional that you almost forget it’s a design choice.  Dependent types make that choice
@@ -183,32 +165,30 @@ pattern, showing how to traverse terms, mapping variables to any stuff which sup
 equipment.  What’s stuff?  It’s a type family ‘$\blacklozenge$’ indexed by $\textsf{Ctxt}$ and
 $\textsf{Ty}.$  What’s the necessary equipment?  Here it is:
 
-~~~
-TODO
-~~~
+::: {.align-top}
+$$
+\begin{aligned}
+  &\underline{\textrm{data}}\quad
+    \frac{\frac{G\ :\ \textsf{Ctxt}\quad T\ :\ \textsf{Ty}}{G\ \blacklozenge\ T\ :\ \star}}
+         {\textsf{Kit}(\blacklozenge) : \star}\\[11pt]
+  &\underline{\textrm{where}}\quad
+    \frac{(\blacklozenge)\quad
+          \frac{x\ :\ Γ\ ∋\ T}{vr\ x\ :\ Γ\ \blacklozenge\ T}\quad
+          \frac{i\ :\ Γ\ \blacklozenge\ T}{tm\ i\ :\ Γ\ \blacktriangleright\ T}\quad
+          \frac{i\ :\ Γ\ \blacklozenge\ T}{wk\ i\ :\ Γ\ ::\ S\ \blacklozenge\ T}}
+         {\textsf{kit}\ vr\ tm\ wk : \textsf{Kit}(\blacklozenge)}
+\end{aligned}
+$$
 
 ```
-record Kit   (_◆_ : (Γ : Ctxt) → (T : Ty)
-                    ---------------------
-                           → ⋆         )
-           : -----------------------------
-                          ⋆              where
-
+record Kit (_◆_ : Ctxt → Ty → Set) : Set where
   constructor kit
   field
-
-    vr : ∀{Γ T} → (x : Γ ∋ T)
-                -------------
-                   → Γ ◆ T
-
-    tm : ∀{Γ T} → (i : Γ ◆ T)
-                -------------
-                   → Γ ▶︎ T
-
-    wk : ∀{Γ S T} → (i : Γ ◆ T)
-                  -------------
-                  → (Γ ∷ S) ◆ T
+    vr : ∀ {Γ T} (x : Γ ∋ T) → Γ ◆ T
+    tm : ∀ {Γ T} (i : Γ ◆ T) → Γ ▶︎ T
+    wk : ∀ {Γ S T} (i : Γ ◆ T) → (Γ ∷ S) ◆ T
 ```
+:::
 
 We need ‘$\blacklozenge$’ to support three things: a mapping in from the variables, a mapping out to
 the terms, and a weakening map which extends the context.  Renaming will instantiate
@@ -228,31 +208,36 @@ How do we traverse a term, given a $\textsf{Kit}$?  In general, we have a type-p
 from variables over context $Γ$ to stuff over $Δ$.  We can push that map through terms in a
 type-preserving way as follows:
 
-~~~
-TODO
-~~~
+::: {.align-top}
+$$
+\begin{aligned}
+  &\underline{\textrm{let}}
+    &&\frac{K : \textsf{Kit}(\blacklozenge)\quad
+            Γ, Δ\quad
+            \frac{x\ :\ Γ\ ∋\ X}{τ\ x\ :\ Δ\ \blacklozenge\ X}\quad
+            t : Γ \blacktriangleright T}
+           {\textbf{trav}\ K\ τ\ t : Δ \vartriangleright T}\\[11pt]
+  &&&\textbf{trav}\ K\ τ\ t ⇐ \underline{\textrm{rec}}\ t\ \{\\
+  &&&\quad\textbf{trav}\ K\ τ\ t ⇐ \underline{\textrm{case}}\ t\ \{\\
+  &&&\qquad\textbf{trav}\ K\ τ\ (\textsf{var}\ x) ⇐ \underline{\textrm{case}}\ K\ \{\\
+  &&&\qquad\quad\textbf{trav}\ (\textsf{kit}\ vr\ tm\ wk)\ τ\ (\textsf{var}\ x) ⇒
+    tm\ (τ\ x)\ \}\\
+  &&&\qquad\textbf{trav}\ K\ τ\ (\textsf{lam}\ t') ⇒
+    \textsf{lam}\ (\textbf{trav}\ K\ (\textbf{lift}\ K\ τ)\ t')\\
+  &&&\qquad\textbf{trav}\ K\ τ\ (\textsf{app}\ f\ s) ⇒
+    \textsf{app}\ (\textbf{trav}\ K\ τ\ f)\ (\textbf{trav}\ K\ τ\ s)\ \}\}
+\end{aligned}
+$$
 
 ```
-lift : ∀{_◆_ Γ Δ S T} → (K : Kit _◆_) → (τ : ∀{X} → (x : Γ ∋ X)
-                                                  -------------
-                                                     → Δ ◆ X   ) → (x : (Γ ∷ S) ∋ T)
-                      --------------------------------------------------------------
-                                              → (Δ ∷ S) ◆ T
-
-lift (kit vr _ _) _ vz     = vr vz
-lift (kit _ _ wk) τ (vs x) = wk (τ x)
-
-
-trav : ∀{_◆_ Γ Δ T} → (K : Kit _◆_) → (τ : ∀{X} → (x : Γ ∋ X)
-                                                -------------
-                                                   → Δ ◆ X   ) → (t : Γ ▶︎ T)
-                    --------------------------------------------------------
-                                            → Δ ▶︎ T
-
-trav (kit _ tm _) τ (var x)   = tm (τ x)
-trav K            τ (lam t)   = lam (trav K (lift K τ) t)
-trav K            τ (app f s) = app (trav K τ f) (trav K τ s)
+mutual
+  trav : ∀ {_◆_ Γ Δ T} (K : Kit _◆_) (τ : ∀ {X} (x : Γ ∋ X) → Δ ◆ X)
+           (t : Γ ▶︎ T) → Δ ▶︎ T
+  trav (kit vr tm wk) τ (var x)   = tm (τ x)
+  trav K              τ (lam t)   = lam (trav K (lift K τ) t)
+  trav K              τ (app f s) = app (trav K τ f) (trav K τ s)
 ```
+:::
 
 Epigram programs are tree-structured.  The nodes, marked with ‘$⇐$’ symbols (pronounced ‘by’),
 explain how to refine the problem of delivering an output from the inputs, by invoking ‘eliminators’
@@ -265,7 +250,7 @@ are checked to be structural with respect to the parameter indicated in the $\te
 This program is thus seen to be total.
 
 In the $\textsf{var}$ case, our map $τ$ gives us some stuff, which we can turn into a term with some
-help from our kit.  The other two cases go with structure, but we shall need to $\textbf{lift } τ$
+help from our kit.  The other two cases go with structure, but we shall need to $\textbf{lift}\ τ$
 to source and target contexts extended by a bound variable, in order to push it under a binder—we
 shall see how to do this in a moment.  The rules of the simply-typed $λ$-calculus are respected
 without a squeak!
@@ -274,51 +259,81 @@ Note that the ‘patterns’ to the left of ‘$⇐$’ or ‘$⇒$’ were not 
 provoked by my choices of eliminator.  The notation may be a touch verbose, but the effort involved
 is less than usual.  This somewhat austere notation allows for the possibility of *user-defined*
 eliminators, rather than $\underline{\textrm{rec}}$ and $\underline{\textrm{case}},$ a possibility
-explored more fully in ‘The view from the left’ (McBride & McKinna, 2004), but it could readily be
-tuned to privilege normal behaviour, suppressing $\underline{\textrm{case}}$ eliminators inferrable
-from the constructor symbols in patterns.
+explored more fully in ‘The view from the left’ [(McBride & McKinna, 2004)](#r5){#rr5-2 .rr}, but it
+could readily be tuned to privilege normal behaviour, suppressing $\underline{\textrm{case}}$
+eliminators inferable from the constructor symbols in patterns.
 
 But I digress, when I should be writing $\textbf{lift}.$  This just maps the new variable to itself
 (or rather, its representation as ‘stuff’), and each old variable to the weakening of its old image.
 
-~~~
-TODO
-~~~
+::: {.align-top}
+$$
+\begin{aligned}
+  &\underline{\textrm{let}}
+    &&\frac{K : \textsf{Kit}(\blacklozenge)\quad
+            Γ, Δ\quad
+            \frac{x\ :\ Γ\ ∋\ X}{τ\ x\ :\ Δ\ \blacklozenge\ X}\quad
+            x : Γ :: S \ni T}
+           {\textbf{lift}\ K\ τ\ x : Δ :: S\ \blacklozenge\ T}\\[11pt]
+  &&&\textbf{lift}\ K\ τ\ x ⇐ \underline{\textrm{case}}\ K\ \{\\
+  &&&\quad\textbf{lift}\ (\textsf{kit}\ vr\ tm\ wk)\ τ\ x ⇐ \underline{\textrm{case}}\ x\ \{\\
+  &&&\qquad\textbf{lift}\ (\textsf{kit}\ vr\ tm\ wk)\ τ\ \textsf{vz} ⇒ vr\ \textsf{vz}\\
+  &&&\qquad\textbf{lift}\ (\textsf{kit}\ vr\ tm\ wk)\ τ\ (\textsf{vs}\ x) ⇒ wk\ (τ\ x)\ \}\}
+\end{aligned}
+$$
+
+```
+  lift : ∀ {_◆_ Γ Δ S T} (K : Kit _◆_) (τ : ∀ {X} (x : Γ ∋ X) → Δ ◆ X)
+           (x : (Γ ∷ S) ∋ T) → (Δ ∷ S) ◆ T
+  lift (kit vr tm wk) _ vz     = vr vz
+  lift (kit vr tm wk) τ (vs x) = wk (τ x)
+```
+:::
 
 From here, renaming and substitution are easy!  We just need to construct the kits for ‘$\ni$’ and
 ‘$\blacktriangleright$’ respectively.
 
-~~~
-TODO
-~~~
+::: {.align-top}
+$$
+\begin{aligned}
+  &\underline{\textrm{let}}
+    &&\frac{Γ, Δ\quad
+            \frac{x\ :\ Γ\ ∋\ X}{ϱ\ x\ :\ Δ\ ∋\ X}\quad
+            t : Γ \blacktriangleright T}
+           {\textbf{rename}\ ϱ\ t\ : Δ \blacktriangleright T}\\[11pt]
+  &&&\textbf{rename}\ ϱ\ t ⇒
+    \textbf{trav}\ (\textsf{kit}\ \textbf{id}\ \textsf{var}\ \textsf{vs})\ ϱ\ t
+\end{aligned}
+$$
 
 ```
-rename : ∀{Γ Δ T} → (ρ : ∀{X} → (x : Γ ∋ X)
-                              -------------
-                                 → Δ ∋ X   ) → (t : Γ ▶︎ T)
-                  ----------------------------------------
-                                  → Δ ▶︎ T
-
-rename ρ t = trav (kit (λ x → x) var vs) ρ t
+rename : ∀ {Γ Δ T} (ϱ : ∀ {X} (x : Γ ∋ X) → Δ ∋ X) (t : Γ ▶︎ T) → Δ ▶︎ T
+rename ϱ t = trav (kit id var vs) ϱ t
 ```
+:::
 
 The identity function makes variables from variables; the $\textsf{var}$ constructor takes variables
 to terms; the $\textsf{vs}$ constructor weakens each variable into an extended context.  Meanwhile,
 substitution goes like this:
 
-~~~
-TODO
-~~~
+::: {.align-top}
+$$
+\begin{aligned}
+  &\underline{\textrm{let}}
+    &&\frac{Γ, Δ\quad
+            \frac{x\ :\ Γ\ ∋\ X}{σ\ x\ :\ Δ\ \blacktriangleright\ X}\quad
+            t : Γ \blacktriangleright T}
+           {\textbf{subst}\ σ\ t\ : Δ \blacktriangleright T}\\[11pt]
+  &&&\textbf{subst}\ σ\ t ⇒
+    \textbf{trav}\ (\textsf{kit}\ \textsf{var}\ \textbf{id}\ (\textbf{rename}\ \textsf{vs}))\ σ\ t
+\end{aligned}
+$$
 
 ```
-subst : ∀{Γ Δ T} → (σ : ∀{X} → (x : Γ ∋ X)
-                             -------------
-                                → Δ ▶︎ X   ) → (t : Γ ▶︎ T)
-                 ----------------------------------------
-                                 → Δ ▶︎ T
-
-subst σ t = trav (kit var (λ x → x) (rename vs)) σ t
+subst : ∀ {Γ Δ T} (σ : ∀ {X} (x : Γ ∋ X) → Δ ▶︎ X) (t : Γ ▶︎ T) → Δ ▶︎ T
+subst σ t = trav (kit var id (rename vs)) σ t
 ```
+:::
 
 That is, $\textsf{var}$ makes terms from variables, $\textbf{id}$ takes terms into terms, and a term
 is weakened by *renaming* with $\textsf{vs}.$
@@ -329,33 +344,37 @@ is weakened by *renaming* with $\textsf{vs}.$
 ::: {.references}
 
 1.  ::: {#r1}
-    T. Altenkirch and B. Reus (1999) [Monadic presentations of lambda-terms using generalized
-    inductive types](),
-    …. [↩](#rr1){.rb} [↩](#rr1-1){.rb}
+    T. Altenkirch and B. Reus (1999) [Monadic presentations of lambda terms using generalized
+    inductive types](https://sci-hub.st/10.1007/3-540-48168-0_32),
+    *Comp. Sci. Logic*, *Lecture Notes Comp. Sci.*, Vol. 1683, Edited by J. Flum and
+    M. Rodriguez-Artalejo, Springer, Berlin, pp. 453–468. [↩](#rr1){.rb} [↩](#rr1-1){.rb}
     :::
 
 2.  ::: {#r2}
-    L. Damas and R. Milner (1982) [Principal type-schemes for functional programming languages
-    ](),
-    …. [↩](#rr2){.rb}
+    L. Damas and R. Milner (1982) [Principal type-schemes for functional programs
+    ](https://sci-hub.st/10.1145/582153.582176),
+    *Proc. Symp. Princ. Prog. Lang. (POPL ’82)*, Association for Computing Machinery, New York,
+    pp. 207–212. [↩](#rr2){.rb}
     :::
 
 3.  ::: {#r3}
     N. G. de Bruijn (1972) [Lambda calculus notation with nameless dummies: A tool for automatic
-    formula manipulation](),
-    …. [↩](#rr3){.rb}
+    formula manipulation, with application to the Church-Rosser theorem
+    ](https://sci-hub.st/10.1016/1385-7258(72)90034-0),
+    *Indagationes Mathematicae*, Vol. 75(5), pp. 381–392. [↩](#rr3){.rb}
     :::
 
 4.  ::: {#r4}
     P. Dybjer (1991) [Inductive sets and families in Martin-Löf’s type theory
-    ](),
-    …. [↩](#rr4){.rb}
+    ](https://sci-hub.st/10.1017/cbo9780511569807.012),
+    *Logical Frameworks*, Edited by G. Huet and G. Plotkin, Cambridge University Press,
+    pp. 280–306. [↩](#rr4){.rb}
     :::
 
 5.  ::: {#r5}
     C. McBride and J. McKinna (2004) [The view from the left
-    ](),
-    …. [↩](#rr5){.rb} [↩](#rr5-1){.rb}
+    ](https://sci-hub.st/10.1017/S0956796803004829),
+    *J. Func. Prog.*, Vol. 14(1), pp. 69–111. [↩](#rr5){.rb} [↩](#rr5-1){.rb} [↩](#rr5-2){.rb}
     :::
 
 :::

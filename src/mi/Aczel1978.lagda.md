@@ -25,7 +25,7 @@ todo:
 module mi.Aczel1978 where
 ```
 
-By adding to Martin-Löf’s intuitionistic theory of types a “type of sets” we give a constructive
+By adding to Martin-Löf’s intuitionistic theory of types a ‘type of sets’ we give a constructive
 interpretation of constructive set theory.  This interpretation is a constructive version of the
 classical conception of the cumulative hierarchy of sets.
 
@@ -34,8 +34,8 @@ classical conception of the cumulative hierarchy of sets.
 
 Intuitionistic mathematics can be structured into two levels.  The first level arises directly out
 of Brouwer’s criticism of certain methods and notions of classical mathematics.  In particular the
-notion of “truth” that gives rise to the law of excluded middle was rejected and instead the meaning
-of mathematical statements was to be based on the notion of “proof”.  While implicit in this first
+notion of ‘truth’ that gives rise to the law of excluded middle was rejected and instead the meaning
+of mathematical statements was to be based on the notion of ‘proof’.  While implicit in this first
 level of intuitionism was a theory of meaning quite different from the classical one, it was
 nevertheless the case that the body of mathematics that could be developed within this level
 remained a part of classical mathematics.  Because Brouwer felt that mathematical analysis could not
@@ -52,8 +52,8 @@ views, constructive analysis can be developed perfectly adequately while staying
 level of intuitionism.  This fact has led to a renewed interest in this part of intuitionism.  The
 desire has been to find an analogue, for Bishop’s constructive mathematics, of the generally
 accepted formal system ZF for classical mathematics.  Several approaches have been tried and there
-has been some controversy over their relative merits.  Two such approaches are “Constructive Set
-Theory” (see [[7]](#r7){#rr7 .rr} and [[13]](#r13){#rr13 .rr}) and “Intuitionistic Type Theory” (see
+has been some controversy over their relative merits.  Two such approaches are ‘Constructive Set
+Theory’ (see [[7]](#r7){#rr7 .rr} and [[13]](#r13){#rr13 .rr}) and ‘Intuitionistic Type Theory’ (see
 [[11]](#r11){#rr11 .rr}).  In this paper we take the view that these, and perhaps other approaches,
 are not necessarily in conflict with each other.  Constructive set theory suppresses all explicit
 constructive notions in order to be as familiar as possible to the classical mathematician.  On the
@@ -70,7 +70,7 @@ the notion of set used in constructive set theory?  We aim to answer that questi
 What is needed is a rigorous framework in which the primitive notions of constructive mathematics
 are directly displayed, together with a natural interpretation of constructive set theory in that
 framework.  We shall give such a framework based on the intuitionistic type theory of
-[[11]](#r11){#rr11-1 .rr}.  We could have taken instead a system of “Explicit Mathematics” (see
+[[11]](#r11){#rr11-1 .rr}.  We could have taken instead a system of ‘Explicit Mathematics’ (see
 [[5]](#r5){#rr5 .rr} and [[2]](#r2){#rr2 .rr}).  But systems of explicit mathematics leave the
 logical notions unanalysed, whereas type theory is a logic free theory of constructions within which
 the logical notions can be defined.  For this reason we consider type theory to be more fundamental.
