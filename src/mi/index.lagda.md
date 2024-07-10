@@ -9,6 +9,7 @@ module mi.index where
 import mi.Aczel1978
 import mi.Friedman1978
 import mi.MartinLof2006
+import mi.McBride2006
 ```
 
 Work in progress.  Check out the [source repository](https://github.com/mietek/research/).
@@ -65,6 +66,8 @@ Made by [Miëtek Bak](https://mietek.io/).  Licensed under [CC BY-SA 4.0
 
 -  P. Martin-Löf (2006) [100 years of Zermelo’s axiom of choice: What was the problem with it?
    ](mi.MartinLof2006.html)
+
+-  C. McBride (2006) [Type-preserving renaming and substitution](mi.McBride2006.html)
 
 ## N
 

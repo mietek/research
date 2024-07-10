@@ -25,9 +25,9 @@ todo:
 module mi.Aczel1978 where
 ```
 
-> By adding to Martin-Löf’s intuitionistic theory of types a “type of sets” we give a constructive
-> interpretation of constructive set theory.  This interpretation is a constructive version of the
-> classical conception of the cumulative hierarchy of sets.
+By adding to Martin-Löf’s intuitionistic theory of types a “type of sets” we give a constructive
+interpretation of constructive set theory.  This interpretation is a constructive version of the
+classical conception of the cumulative hierarchy of sets.
 
 
 ## Introduction
