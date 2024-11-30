@@ -126,6 +126,42 @@ module SubKit (¶ : SubKitParams) where
 
 ----------------------------------------------------------------------------------------------------
 
+record RenNNFKitParams : Set₁ where
+  constructor kit
+  field
+    renkit : RenKitParams
+  open RenKitParams renkit public
+  open RenKit renkit public hiding (renkit)
+  field
+    {NNF}  : ∀ {Γ A} → Γ ⊢ A → Set
+    var-   : ∀ {Γ A} {i : Γ ∋ A} → NNF (var i)
+    renNNF : ∀ {Γ Γ′ A} {t : Γ ⊢ A} (ϱ : Γ ⊑ Γ′) → NNF t → NNF (ren ϱ t)
+
+module RenNNFKit (¶ : RenNNFKitParams) where
+  open RenNNFKitParams ¶
+  rennnfkit = ¶
+
+  data NNF§ {Γ} : ∀ {Δ} → Γ ⊢§ Δ → Set where
+    ∙   : NNF§ ∙
+    _,_ : ∀ {Δ A} {τ : Γ ⊢§ Δ} {t : Γ ⊢ A} (ψ : NNF§ τ) (p : NNF t) → NNF§ (τ , t)
+
+  renNNF§ : ∀ {Γ Γ′ Δ} {σ : Γ ⊢§ Δ} (ϱ : Γ ⊑ Γ′) → NNF§ σ → NNF§ (ren§ ϱ σ)
+  renNNF§ ϱ ∙       = ∙
+  renNNF§ ϱ (ψ , p) = renNNF§ ϱ ψ , renNNF ϱ p
+
+  wkNNF§ : ∀ {B Γ Δ} {σ : Γ ⊢§ Δ} → NNF§ σ → NNF§ (wk§ {B} σ)
+  wkNNF§ ψ = renNNF§ (wk⊑ id⊑) ψ
+
+  liftNNF§ : ∀ {B Γ Δ} {σ : Γ ⊢§ Δ} → NNF§ σ → NNF§ (lift§ {B} σ)
+  liftNNF§ ψ = wkNNF§ ψ , var-
+
+  sub∋NNF : ∀ {Γ Ξ A} {σ : Ξ ⊢§ Γ} {i : Γ ∋ A} → NNF§ σ → NNF (sub∋ σ i)
+  sub∋NNF {i = zero}  (ψ , p) = p
+  sub∋NNF {i = wk∋ i} (ψ , p) = sub∋NNF ψ
+
+
+----------------------------------------------------------------------------------------------------
+
 -- TODO: refactor
 record DefEqKitParams : Set₁ where
   constructor kit

@@ -23,11 +23,6 @@ mutual
               (p₀ : NF t₀) (p₁ : NF t₁) →
             NNF (con ⌜rec⌝ ⌜$⌝ tₙ ⌜$⌝ t₀ ⌜$⌝ t₁)
 
--- TODO: kit
-data NNF§ {Γ} : ∀ {Δ} → Γ ⊢§ Δ → Set where
-  ∙   : NNF§ ∙
-  _,_ : ∀ {Δ A} {τ : Γ ⊢§ Δ} {t : Γ ⊢ A} → NNF§ τ → NNF t → NNF§ (τ , t)
-
 mutual
   uniNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
   uniNF (⌜λ⌝ p)           (⌜λ⌝ p′)           = ⌜λ⌝ & uniNF p p′

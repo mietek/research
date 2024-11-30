@@ -18,11 +18,6 @@ mutual
     var-  : ∀ {A} {i : Γ ∋ A} → NNF (var i)
     _⌜$⌝_ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (p₁ : NNF t₁) (p₂ : NF t₂) → NNF (t₁ ⌜$⌝ t₂)
 
--- TODO: kit
-data NNF§ {Γ} : ∀ {Δ} → Γ ⊢§ Δ → Set where
-  ∙   : NNF§ ∙
-  _,_ : ∀ {Δ A} {τ : Γ ⊢§ Δ} {t : Γ ⊢ A} (ψ : NNF§ τ) (p : NNF t) → NNF§ (τ , t)
-
 mutual
   uniNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
   uniNF (⌜λ⌝ p) (⌜λ⌝ p′) = ⌜λ⌝ & uniNF p p′
@@ -44,20 +39,7 @@ mutual
   renNNF ϱ var-        = var-
   renNNF ϱ (p₁ ⌜$⌝ p₂) = renNNF ϱ p₁ ⌜$⌝ renNF ϱ p₂
 
--- TODO: kit
-renNNF§ : ∀ {Γ Γ′ Δ} {σ : Γ ⊢§ Δ} (ϱ : Γ ⊑ Γ′) → NNF§ σ → NNF§ (ren§ ϱ σ)
-renNNF§ ϱ ∙       = ∙
-renNNF§ ϱ (ψ , p) = renNNF§ ϱ ψ , renNNF ϱ p
-
-wkNNF§ : ∀ {B Γ Δ} {σ : Γ ⊢§ Δ} → NNF§ σ → NNF§ (wk§ {B} σ)
-wkNNF§ ψ = renNNF§ (wk⊑ id⊑) ψ
-
-liftNNF§ : ∀ {B Γ Δ} {σ : Γ ⊢§ Δ} → NNF§ σ → NNF§ (lift§ {B} σ)
-liftNNF§ ψ = wkNNF§ ψ , var-
-
-sub∋NNF : ∀ {Γ Ξ A} {σ : Ξ ⊢§ Γ} {i : Γ ∋ A} → NNF§ σ → NNF (sub∋ σ i)
-sub∋NNF {i = zero}  (ψ , p) = p
-sub∋NNF {i = wk∋ i} (ψ , p) = sub∋NNF ψ
+open RenNNFKit (kit renkit var- (λ {_} {_} {_} {t} → renNNF {t = t})) public
 
 mutual
   subNF : ∀ {Γ Ξ A} {σ : Ξ ⊢§ Γ} {t : Γ ⊢ A} → NNF§ σ → NF t → NF (sub σ t)

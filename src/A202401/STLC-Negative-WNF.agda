@@ -22,11 +22,6 @@ mutual
     ⌜fst⌝ : ∀ {A B} {t : Γ ⊢ A ⌜∧⌝ B} (p : NNF t) → NNF (⌜fst⌝ t)
     ⌜snd⌝ : ∀ {A B} {t : Γ ⊢ A ⌜∧⌝ B} (p : NNF t) → NNF (⌜snd⌝ t)
 
--- TODO: kit
-data NNF§ {Γ} : ∀ {Δ} → Γ ⊢§ Δ → Set where
-  ∙   : NNF§ ∙
-  _,_ : ∀ {Δ A} {τ : Γ ⊢§ Δ} {t : Γ ⊢ A} → NNF§ τ → NNF t → NNF§ (τ , t)
-
 mutual
   uniNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
   uniNF ⌜λ⌝-    ⌜λ⌝-     = refl
@@ -56,9 +51,7 @@ mutual
   renNNF ϱ (⌜fst⌝ p)   = ⌜fst⌝ (renNNF ϱ p)
   renNNF ϱ (⌜snd⌝ p)   = ⌜snd⌝ (renNNF ϱ p)
 
-sub∋NNF : ∀ {Γ Ξ A} {σ : Ξ ⊢§ Γ} {i : Γ ∋ A} → NNF§ σ → NNF (sub∋ σ i)
-sub∋NNF {i = zero}  (ψ , p) = p
-sub∋NNF {i = wk∋ i} (ψ , p) = sub∋NNF ψ
+open RenNNFKit (kit renkit var- (λ {_} {_} {_} {t} → renNNF {t = t})) public
 
 mutual
   subNF : ∀ {Γ Ξ A} {σ : Ξ ⊢§ Γ} {t : Γ ⊢ A} → NNF§ σ → NF t → NF (sub σ t)
