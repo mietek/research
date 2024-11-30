@@ -3,9 +3,10 @@
 -- normalization-by-evaluation to β-short semi-weak normal form, with explicit model
 
 -- using an explicit recursion principle on types allows defining the model as a single record that
--- includes a `⟦rec⟧` field after the definition of `_⊩_`
+-- includes a `⟦rec⟧` field after the definition of `_⊩_`, but requires using copatterns and a
+-- very specific order of definitions in the canonical model section
 
--- TODO: unfortunately, defining the canonical model seems impossible
+-- thanks to Ulf Norell
 
 module A202401.STLC-Naturals-SWNF-NBE3 where
 
@@ -65,48 +66,50 @@ open ModelKit (kit (λ {ℳ} → _⊩_ ℳ) (λ {ℳ} {A} → vren {ℳ} {A})) p
 
 ----------------------------------------------------------------------------------------------------
 
--- -- canonical model
--- mutual
---   𝒞 : Model
---   𝒞 = record
---         { World  = Ctx
---         ; _≤_    = _⊑_
---         ; refl≤  = refl⊑
---         ; trans≤ = trans⊑
---         ; ⟦ℕ⟧    = λ Γ → Σ (Γ ⊢ ⌜ℕ⌝) NF
---         ; ren⟦ℕ⟧ = λ { e (_ , p) → _ , renNF e p }
---         ; ⟦zero⟧ = _ , ⌜zero⌝
---         ; ⟦suc⟧  = λ { (_ , p) → _ , ⌜suc⌝ p }
---         ; ⟦rec⟧  =
---             λ {         (_ , ⌜zero⌝)   v₀ vₛ → v₀
---               ;         (_ , ⌜suc⌝ pₙ) v₀ vₛ → vₛ id⊑ (_ , pₙ) id⊑ v₀
---               ; {A = A} (_ , nnf pₙ)   v₀ vₛ → {!!}                                   -- hole #1
--- --                  let _ , p₀ = ↓ {A} v₀
--- --                      _ , pₛ = ↓ (vₛ (wk⊑ (wk⊑ id⊑)) (↑ {⌜ℕ⌝} (var (wk∋ zero) , var-))
--- --                                 id⊑ (↑ {A} (var zero , var-))) in
--- --                    ↑ (_ , ⌜rec⌝ pₙ p₀ pₛ)
---               }
---         }
+-- canonical model
+𝒞 : Model
 
---   ↑ : ∀ {A Γ} → Σ (Γ ⊢ A) NNF → 𝒞 / {!Γ!} ⊩ A                                      -- hole #2
---   ↑ {A ⌜⊃⌝ B} (_ , p₁) = λ e v₂ → let _ , p₂ = ↓ v₂ in
---                            ↑ (_ , renNNF e p₁ ⌜$⌝ p₂)
---   ↑ {⌜ℕ⌝}     (_ , p)  = _ , nnf p
+𝒞⟦rec⟧ : ∀ {W A} → 𝒞 / W ⊩ ⌜ℕ⌝ → 𝒞 / W ⊩ A → 𝒞 / W ⊩ ⌜ℕ⌝ ⌜⊃⌝ A ⌜⊃⌝ A → 𝒞 / W ⊩ A
 
---   ↓ : ∀ {A Γ} → 𝒞 / Γ ⊩ A → Σ ({!Γ!} ⊢ A) NF                                       -- hole #3
---   ↓ {A ⌜⊃⌝ B} v = let t , p = ↓ (v (wk⊑ id⊑) (↑ {A} (var zero , var-))) in
---                     ⌜λ⌝ t , ⌜λ⌝-
---   ↓ {⌜ℕ⌝}     v = v
+𝒞 .World         = Ctx
+𝒞 ._≤_           = _⊑_
+𝒞 .refl≤         = refl⊑
+𝒞 .trans≤        = trans⊑
+𝒞 .⟦ℕ⟧           = λ Γ → Σ (Γ ⊢ ⌜ℕ⌝) NF
+𝒞 .ren⟦ℕ⟧        = λ { e (_ , p) → _ , renNF e p }
+𝒞 .⟦zero⟧        = _ , ⌜zero⌝
+𝒞 .⟦suc⟧         = λ { (_ , p) → _ , ⌜suc⌝ p }
+𝒞 .⟦rec⟧ {A = A} = 𝒞⟦rec⟧ {A = A}
 
--- vid§ : ∀ {Γ} → 𝒞 / Γ ⊩§ Γ
--- vid§ {∙}     = ∙
--- vid§ {Γ , A} = vren§ (wk⊑ id⊑) vid§ , ↑ {A} (var zero , var-)
+↑ : ∀ {A Γ} → Σ (Γ ⊢ A) NNF → 𝒞 / Γ ⊩ A
 
--- ⟦_⟧⁻¹ : ∀ {Γ A} → Γ ⊨ A → Σ (Γ ⊢ A) NF
--- ⟦ v ⟧⁻¹ = ↓ (v vid§)
+↓ : ∀ {A Γ} → 𝒞 / Γ ⊩ A → Σ (Γ ⊢ A) NF
 
--- nbe : ∀ {Γ A} → Γ ⊢ A → Σ (Γ ⊢ A) NF
--- nbe t = ⟦ ⟦ t ⟧ ⟧⁻¹
+𝒞⟦rec⟧         (_ , ⌜zero⌝)   v₀ vₛ = v₀
+𝒞⟦rec⟧         (_ , ⌜suc⌝ pₙ) v₀ vₛ = vₛ id⊑ (_ , pₙ) id⊑ v₀
+𝒞⟦rec⟧ {A = A} (_ , nnf pₙ)   v₀ vₛ = let _ , p₀ = ↓ {A} v₀
+                                          _ , pₛ = ↓ (vₛ (wk⊑ (wk⊑ id⊑))
+                                                     (↑ {⌜ℕ⌝} (var (wk∋ zero) , var-))
+                                                     id⊑ (↑ {A} (var zero , var-)))
+                                        in ↑ (_ , ⌜rec⌝ pₙ p₀ pₛ)
+
+↑ {A ⌜⊃⌝ B} (_ , p₁) = λ e v₂ → let _ , p₂ = ↓ v₂ in
+                         ↑ (_ , renNNF e p₁ ⌜$⌝ p₂)
+↑ {⌜ℕ⌝}     (_ , p)  = _ , nnf p
+
+↓ {A ⌜⊃⌝ B} v = let t , p = ↓ (v (wk⊑ id⊑) (↑ {A} (var zero , var-))) in
+                  ⌜λ⌝ t , ⌜λ⌝-
+↓ {⌜ℕ⌝}     v = v
+
+vid§ : ∀ {Γ} → 𝒞 / Γ ⊩§ Γ
+vid§ {∙}     = ∙
+vid§ {Γ , A} = vren§ (wk⊑ id⊑) vid§ , ↑ {A} (var zero , var-)
+
+⟦_⟧⁻¹ : ∀ {Γ A} → Γ ⊨ A → Σ (Γ ⊢ A) NF
+⟦ v ⟧⁻¹ = ↓ (v vid§)
+
+nbe : ∀ {Γ A} → Γ ⊢ A → Σ (Γ ⊢ A) NF
+nbe t = ⟦ ⟦ t ⟧ ⟧⁻¹
 
 
--- ----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
