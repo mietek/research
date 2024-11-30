@@ -62,26 +62,26 @@ open SplitModelKit (kit _⊩_ (λ {ℬ} {ℳ} {A} → vren {ℬ} {ℳ} {A})) pub
 
 ℬ : BaseModel
 ℬ = record
-       { World  = Ctx
-       ; _≤_    = _⊑_
-       ; refl≤  = refl⊑
-       ; trans≤ = trans⊑
-       ; ⟦ℕ⟧    = λ Γ → Σ (Γ ⊢ ⌜ℕ⌝) NF
-       ; ren⟦ℕ⟧ = λ { ϱ (_ , p) → _ , renNF ϱ p }
-       ; ⟦zero⟧ = _ , ⌜zero⌝
-       ; ⟦suc⟧  = λ { (_ , p) → _ , ⌜suc⌝ p }
-       }
+      { World  = Ctx
+      ; _≤_    = _⊑_
+      ; refl≤  = refl⊑
+      ; trans≤ = trans⊑
+      ; ⟦ℕ⟧    = λ Γ → Σ (Γ ⊢ ⌜ℕ⌝) NF
+      ; ren⟦ℕ⟧ = λ { ϱ (_ , p) → _ , renNF ϱ p }
+      ; ⟦zero⟧ = _ , ⌜zero⌝
+      ; ⟦suc⟧  = λ { (_ , p) → _ , ⌜suc⌝ p }
+      }
 
 -- canonical model
 mutual
   𝒞 : SplitModel ℬ
   𝒞 .⟦rec⟧         (_ , ⌜zero⌝)   v₀ vₛ = v₀
   𝒞 .⟦rec⟧         (_ , ⌜suc⌝ pₙ) v₀ vₛ = vₛ id⊑ (_ , pₙ) id⊑ v₀
-  𝒞 .⟦rec⟧ {A = A} (_ , nnf pₙ)   v₀ vₛ =
-    let _ , p₀ = ↓ {A} v₀
-        _ , pₛ = ↓ (vₛ (wk⊑ (wk⊑ id⊑)) (↑ {⌜ℕ⌝} (var (wk∋ zero) , var-))
-                   id⊑ (↑ {A} (var zero , var-)))
-      in ↑ (_ , ⌜rec⌝ pₙ p₀ pₛ)
+  𝒞 .⟦rec⟧ {A = A} (_ , nnf pₙ)   v₀ vₛ = let _ , p₀ = ↓ {A} v₀
+                                              _ , pₛ = ↓ (vₛ (wk⊑ (wk⊑ id⊑))
+                                                         (↑ {⌜ℕ⌝} (var (wk∋ zero) , var-))
+                                                         id⊑ (↑ {A} (var zero , var-)))
+                                            in ↑ (_ , ⌜rec⌝ pₙ p₀ pₛ)
 
   ↑ : ∀ {A Γ} → Σ (Γ ⊢ A) NNF → 𝒞 / Γ ⊩ A
   ↑ {A ⌜⊃⌝ B} (_ , p₁) = λ ϱ v₂ → let _ , p₂ = ↓ v₂

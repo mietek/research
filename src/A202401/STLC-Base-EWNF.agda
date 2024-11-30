@@ -16,8 +16,7 @@ mutual
 
   data NNF {Γ} : ∀ {A} → Γ ⊢ A → Set where
     var-  : ∀ {A} {i : Γ ∋ A} → NNF (var i)
-    _⌜$⌝_ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (p₁ : NNF t₁) (p₂ : NF t₂) →
-            NNF (t₁ ⌜$⌝ t₂)
+    _⌜$⌝_ : ∀ {A B} {t₁ : Γ ⊢ A ⌜⊃⌝ B} {t₂ : Γ ⊢ A} (p₁ : NNF t₁) (p₂ : NF t₂) → NNF (t₁ ⌜$⌝ t₂)
 
 mutual
   uniNF : ∀ {Γ A} {t : Γ ⊢ A} (p p′ : NF t) → p ≡ p′
