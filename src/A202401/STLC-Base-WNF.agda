@@ -127,13 +127,13 @@ private
   mutual
     to∘fromNF : ∀ {Γ A} (tp : Σ (Γ ⊢ A) NF) → (toNF ∘ fromNF) tp ≡ tp
     to∘fromNF (.(⌜λ⌝ t) , ⌜λ⌝- {t = t}) = refl
-    to∘fromNF (t , nnf p)               = ≅→≡ (hcong₂ Σ._,_
+    to∘fromNF (t , nnf p)               = ≅→≡ (hcong₂ {Z = λ _ _ → Σ _ _} _,_
                                             (≡→≅ (cong fst (to∘fromNNF (t , p))))
                                             (hcong (NF.nnf ∘ snd) (≡→≅ (to∘fromNNF (t , p)))))
 
     to∘fromNNF : ∀ {Γ A} (tp : Σ (Γ ⊢ A) NNF) → (toNNF ∘ fromNNF) tp ≡ tp
     to∘fromNNF (var i , var-)          = refl
-    to∘fromNNF (t₁ ⌜$⌝ t₂ , p₁ ⌜$⌝ p₂) = ≅→≡ (hcong₂ Σ._,_
+    to∘fromNNF (t₁ ⌜$⌝ t₂ , p₁ ⌜$⌝ p₂) = ≅→≡ (hcong₂ {Z = λ _ _ → Σ _ _} _,_
                                            (≡→≅ (cong₂ (λ x₁ x₂ → fst x₁ ⌜$⌝ fst x₂)
                                              (to∘fromNNF (t₁ , p₁))
                                              (to∘fromNF (t₂ , p₂))))

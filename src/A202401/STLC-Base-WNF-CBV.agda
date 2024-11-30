@@ -92,12 +92,12 @@ module ProgressAlt2 where
   ¬RF→NF : ∀ {Γ A} {t : Γ ⊢ A} → ¬ RF t → NF t
   ¬RF→NF {t = var i}         ¬p               = nnf var-
   ¬RF→NF {t = ⌜λ⌝ t}         ¬p               = ⌜λ⌝-
-  ¬RF→NF {t = var _ ⌜$⌝ _}   ¬p               with ¬RF→NF λ { (_ , r₂) → (_ , cong$₂ (nnf var-) r₂) ↯ ¬p }
+  ¬RF→NF {t = var _ ⌜$⌝ _}   ¬p               with ¬RF→NF (λ { (_ , r₂) → (_ , cong$₂ (nnf var-) r₂) ↯ ¬p })
   ¬RF→NF {t = var _ ⌜$⌝ _}   ¬p | p₂            = nnf (var- ⌜$⌝ p₂)
-  ¬RF→NF {t = ⌜λ⌝ _ ⌜$⌝ _}   ¬p               with ¬RF→NF λ { (_ , r₂) → (_ , cong$₂ ⌜λ⌝- r₂) ↯ ¬p }
+  ¬RF→NF {t = ⌜λ⌝ _ ⌜$⌝ _}   ¬p               with ¬RF→NF (λ { (_ , r₂) → (_ , cong$₂ ⌜λ⌝- r₂) ↯ ¬p })
   ¬RF→NF {t = ⌜λ⌝ _ ⌜$⌝ _}   ¬p | p₂            = (_ , βred⊃ refl p₂) ↯ ¬p
-  ¬RF→NF {t = _ ⌜$⌝ _ ⌜$⌝ _} ¬p               with ¬RF→NF λ { (_ , r₁) → (_ , cong$₁ r₁) ↯ ¬p }
-  ¬RF→NF {t = _ ⌜$⌝ _ ⌜$⌝ _} ¬p | nnf p₁        with ¬RF→NF λ { (_ , r₁) → (_ , cong$₂ (nnf p₁) r₁) ↯ ¬p }
+  ¬RF→NF {t = _ ⌜$⌝ _ ⌜$⌝ _} ¬p               with ¬RF→NF (λ { (_ , r₁) → (_ , cong$₁ r₁) ↯ ¬p })
+  ¬RF→NF {t = _ ⌜$⌝ _ ⌜$⌝ _} ¬p | nnf p₁        with ¬RF→NF (λ { (_ , r₁) → (_ , cong$₂ (nnf p₁) r₁) ↯ ¬p })
   ¬RF→NF {t = _ ⌜$⌝ _ ⌜$⌝ _} ¬p | nnf p₁ | p₂     = nnf (p₁ ⌜$⌝ p₂)
 
   RF? : ∀ {Γ A} (t : Γ ⊢ A) → Dec (RF t)
