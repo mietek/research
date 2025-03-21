@@ -53,35 +53,33 @@ mutual
   Tms : ∀ (#v #t : ℕ) → Set
   Tms #v #t = Vec (Tm #v) #t
 
-  -- 0
-  `zero : ∀ {#v} → Tm #v
-  `zero = `fun zero []
+`zero : ∀ {#v} → Tm #v
+`zero = `fun zero []
 
-  -- S
-  `suc : ∀ {#v} (t : Tm #v) → Tm #v
-  `suc t = `fun suc (t ∷ [])
+`suc : ∀ {#v} (t : Tm #v) → Tm #v
+`suc t = `fun suc (t ∷ [])
 
-  -- formulas, indexed by number of numerical variables
-  data Fm (#v : ℕ) : Set where
-    _`⊃_ : ∀ (A B : Fm #v) → Fm #v
-    _`∧_ : ∀ (A B : Fm #v) → Fm #v
-    _`∨_ : ∀ (A B : Fm #v) → Fm #v
-    `∀_  : ∀ (B : Fm (suc #v)) → Fm #v
-    `∃_  : ∀ (B : Fm (suc #v)) → Fm #v
-    `⊥  : Fm #v
-    _`=_ : ∀ (t u : Tm #v) → Fm #v
+-- formulas, indexed by number of numerical variables
+data Fm (#v : ℕ) : Set where
+  _`⊃_ : ∀ (A B : Fm #v) → Fm #v
+  _`∧_ : ∀ (A B : Fm #v) → Fm #v
+  _`∨_ : ∀ (A B : Fm #v) → Fm #v
+  `∀_  : ∀ (B : Fm (suc #v)) → Fm #v
+  `∃_  : ∀ (B : Fm (suc #v)) → Fm #v
+  `⊥  : Fm #v
+  _`=_ : ∀ (t u : Tm #v) → Fm #v
 
-  Fms : ∀ (#v : ℕ) → Set
-  Fms #v = List (Fm #v)
+Fms : ∀ (#v : ℕ) → Set
+Fms #v = List (Fm #v)
 
-  `¬ : ∀ {#v} (A : Fm #v) → Fm #v
-  `¬ A = A `⊃ `⊥
+`¬ : ∀ {#v} (A : Fm #v) → Fm #v
+`¬ A = A `⊃ `⊥
 
-  _`⫗_ : ∀ {#v} (A B : Fm #v) → Fm #v
-  A `⫗ B = (A `⊃ B) `∧ (B `⊃ A)
+_`⫗_ : ∀ {#v} (A B : Fm #v) → Fm #v
+A `⫗ B = (A `⊃ B) `∧ (B `⊃ A)
 
-  _`≠_ : ∀ {#v} (t u : Tm #v) → Fm #v
-  t `≠ u = `¬ (t `= u)
+_`≠_ : ∀ {#v} (t u : Tm #v) → Fm #v
+t `≠ u = `¬ (t `= u)
 
 
 ----------------------------------------------------------------------------------------------------
