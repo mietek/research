@@ -7,8 +7,7 @@ module Selinger92 where
 open import Data.Fin using (Fin ; zero ; suc)
 open import Data.List using (List ; [] ; _∷_)
 open import Data.Nat using (ℕ ; zero ; suc)
-import Data.Vec as Vec
-open Vec using (Vec ; [] ; _∷_)
+open import Data.Vec using (Vec ; [] ; _∷_) renaming (lookup to get ; _[_]≔_ to put)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -27,7 +26,7 @@ record Sig : Set where
   arity : ∀ (f : Fun) → ℕ
   arity zero          = zero -- arity of 0
   arity (suc zero)    = suc zero -- arity of S
-  arity (suc (suc n)) = Vec.lookup arities n
+  arity (suc (suc n)) = get arities n
 
 open Sig {{...}} public
 
@@ -38,8 +37,8 @@ module _ {{S : Sig}} where
   -- terms, indexed by number of numerical variables
   mutual
     data Tm (#v : ℕ) : Set where
-      `var  : ∀ (x : Fin #v) → Tm #v -- x-th numerical variable
-      `fun  : ∀ (f : Fun) (ts : Tms #v (arity f)) → Tm #v -- f-th function
+      `var : ∀ (x : Fin #v) → Tm #v -- x-th numerical variable
+      `fun : ∀ (f : Fun) (ts : Tms #v (arity f)) → Tm #v -- f-th function
 
     Tms : ∀ (#v #t : ℕ) → Set
     Tms #v #t = Vec (Tm #v) #t
@@ -54,13 +53,13 @@ module _ {{S : Sig}} where
 
   -- formulas, indexed by number of variables
   data Fm (#v : ℕ) : Set where
-    _`⊃_  : ∀ (A B : Fm #v) → Fm #v
-    _`∧_  : ∀ (A B : Fm #v) → Fm #v
-    _`∨_  : ∀ (A B : Fm #v) → Fm #v
-    `∀    : ∀ (B : Fm (suc #v)) → Fm #v
-    `∃    : ∀ (B : Fm (suc #v)) → Fm #v
-    `⊥   : Fm #v
-    _`=_  : ∀ (t u : Tm #v) → Fm #v
+    _`⊃_ : ∀ (A B : Fm #v) → Fm #v
+    _`∧_ : ∀ (A B : Fm #v) → Fm #v
+    _`∨_ : ∀ (A B : Fm #v) → Fm #v
+    `∀   : ∀ (B : Fm (suc #v)) → Fm #v
+    `∃   : ∀ (B : Fm (suc #v)) → Fm #v
+    `⊥  : Fm #v
+    _`=_ : ∀ (t u : Tm #v) → Fm #v
 
   Fms : ∀ (#v : ℕ) → Set
   Fms #v = List (Fm #v)
@@ -130,8 +129,8 @@ module HA {{S : Sig}} where
     `refl  : ∀ {t} → Γ ⊢ t `= t
     `sym   : ∀ {t u} → Γ ⊢ t `= u → Γ ⊢ u `= t
     `trans : ∀ {s t u} → Γ ⊢ s `= t → Γ ⊢ t `= u → Γ ⊢ s `= u
-    `cong  : ∀ {f ts i u} → Γ ⊢ Vec.lookup ts i `= u →
-               Γ ⊢ `fun f ts `= `fun f (Vec.updateAt ts i λ _ → u)
+    `cong  : ∀ {f ts i u} → Γ ⊢ get ts i `= u →
+               Γ ⊢ `fun f ts `= `fun f (put ts i u)
     `suc₁  : ∀ {t} → Γ ⊢ `suc t `≠ `zero
     `suc₂  : ∀ {t u} → Γ ⊢ `suc t `= `suc u → Γ ⊢ t `= u
     `ind   : ∀ {B} → wkfms Γ ⊢ cutfm B `zero →
