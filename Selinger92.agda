@@ -130,7 +130,7 @@ module HA {{S : Sig}} where
     `refl  : ∀ {t} → Γ ⊢ t `= t
     `sym   : ∀ {t u} → Γ ⊢ t `= u → Γ ⊢ u `= t
     `trans : ∀ {s t u} → Γ ⊢ s `= t → Γ ⊢ t `= u → Γ ⊢ s `= u
-    `cong  : ∀ {f ts i u} → Γ ⊢ get ts i `= u →
+    `cong  : ∀ f {ts u} i → Γ ⊢ get ts i `= u →
                Γ ⊢ `fun f ts `= `fun f (put ts i u)
     `suc₁  : ∀ {t} → Γ ⊢ `suc t `≠ `zero
     `suc₂  : ∀ {t u} → Γ ⊢ `suc t `= `suc u → Γ ⊢ t `= u
@@ -139,6 +139,9 @@ module HA {{S : Sig}} where
                Γ ⊢ `∀ cutfm B (`var zero)
 
     -- TODO: axiom schemas for primitive recursive functions
+
+  `congsuc : ∀ {#v} {Γ : Fms #v} {t u} → Γ ⊢ t `= u → Γ ⊢ `suc t `= `suc u
+  `congsuc d = `cong (suc zero) zero d
 
 
 ----------------------------------------------------------------------------------------------------
