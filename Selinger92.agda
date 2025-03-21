@@ -11,8 +11,8 @@ open import Data.Vec using (Vec ; [] ; _∷_ ; map ; foldr′)
   renaming (lookup to get ; _[_]≔_ to put)
 
 recℕ : ∀ {a} {A : Set a} → A → (ℕ → A → A) → ℕ → A
-recℕ z f zero    = z
-recℕ z f (suc k) = f k (recℕ z f k)
+recℕ a f zero    = a
+recℕ a f (suc n) = f n (recℕ a f n)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ mutual
   ⟦ suc ⟧       (x ∷ []) = suc x
   ⟦ proj i ⟧    xs       = get xs i
   ⟦ comp φs ψ ⟧ xs       = ⟦ ψ ⟧ (⟦ φs ⟧* xs)
-  ⟦ rec φ ψ ⟧   (y ∷ xs) = recℕ (⟦ φ ⟧ xs) (λ k r → ⟦ ψ ⟧ (r ∷ k ∷ xs)) y
+  ⟦ rec φ ψ ⟧   (y ∷ xs) = recℕ (⟦ φ ⟧ xs) (λ y r → ⟦ ψ ⟧ (r ∷ y ∷ xs)) y
 
   ⟦_⟧* : ∀ {n m} → Vec (Fun n) m → Vec ℕ n → Vec ℕ m
   ⟦ [] ⟧*     xs = []
@@ -41,56 +41,57 @@ mutual
 
 ----------------------------------------------------------------------------------------------------
 
+infix 16 `¬_
 infix 17 `∀_ `∃_
 infixr 18 _`⊃_ _`⫗_
 infixl 19 _`∧_ _`∨_
 
 -- terms, indexed by number of numerical variables
 mutual
-  data Tm (#v : ℕ) : Set where
-    `var : ∀ (x : Fin #v) → Tm #v -- x-th numerical variable
-    `fun : ∀ {n} (φ : Fun n) (ts : Tms #v n) → Tm #v
+  data Tm (k : ℕ) : Set where
+    `var : ∀ (x : Fin k) → Tm k -- x-th numerical variable
+    `fun : ∀ {n} (φ : Fun n) (ts : Tms k n) → Tm k
 
-  Tms : ∀ (#v #t : ℕ) → Set
-  Tms #v #t = Vec (Tm #v) #t
+  Tms : ℕ → ℕ → Set
+  Tms k = Vec (Tm k)
 
-`zero : ∀ {#v} → Tm #v
+`zero : ∀ {k} → Tm k
 `zero = `fun zero []
 
-`suc : ∀ {#v} (t : Tm #v) → Tm #v
+`suc : ∀ {k} → Tm k → Tm k
 `suc t = `fun suc (t ∷ [])
 
 -- formulas, indexed by number of numerical variables
-data Fm (#v : ℕ) : Set where
-  _`⊃_ : ∀ (A B : Fm #v) → Fm #v
-  _`∧_ : ∀ (A B : Fm #v) → Fm #v
-  _`∨_ : ∀ (A B : Fm #v) → Fm #v
-  `∀_  : ∀ (B : Fm (suc #v)) → Fm #v
-  `∃_  : ∀ (B : Fm (suc #v)) → Fm #v
-  `⊥  : Fm #v
-  _`=_ : ∀ (t u : Tm #v) → Fm #v
+data Fm (k : ℕ) : Set where
+  _`⊃_ : ∀ (A B : Fm k) → Fm k
+  _`∧_ : ∀ (A B : Fm k) → Fm k
+  _`∨_ : ∀ (A B : Fm k) → Fm k
+  `∀_  : ∀ (B : Fm (suc k)) → Fm k
+  `∃_  : ∀ (B : Fm (suc k)) → Fm k
+  `⊥  : Fm k
+  _`=_ : ∀ (t u : Tm k) → Fm k
 
-Fms : ∀ (#v : ℕ) → Set
-Fms #v = List (Fm #v)
+Fms : ℕ → Set
+Fms k = List (Fm k)
 
-`¬ : ∀ {#v} (A : Fm #v) → Fm #v
+`¬_ : ∀ {k} → Fm k → Fm k
 `¬ A = A `⊃ `⊥
 
-_`⫗_ : ∀ {#v} (A B : Fm #v) → Fm #v
+_`⫗_ : ∀ {k} → Fm k → Fm k → Fm k
 A `⫗ B = (A `⊃ B) `∧ (B `⊃ A)
 
-_`≠_ : ∀ {#v} (t u : Tm #v) → Fm #v
-t `≠ u = `¬ (t `= u)
+_`≠_ : ∀ {k} → Tm k → Tm k → Fm k
+t `≠ u = `¬ t `= u
 
 
 ----------------------------------------------------------------------------------------------------
 
 -- TODO: the usual
 postulate
-  _∋_   : ∀ {#v} (Γ : Fms #v) (A : Fm #v) → Set
-  wkfm  : ∀ {#v} (A : Fm #v) → Fm (suc #v)
-  wkfms : ∀ {#v} (Γ : Fms #v) → Fms (suc #v)
-  cutfm : ∀ {#v} (A : Fm (suc #v)) (s : Tm #v) → Fm #v
+  _∋_   : ∀ {k} (Γ : Fms k) (A : Fm k) → Set
+  wkfm  : ∀ {k} (A : Fm k) → Fm (suc k)
+  wkfms : ∀ {k} (Γ : Fms k) → Fms (suc k)
+  cutfm : ∀ {k} (A : Fm (suc k)) (s : Tm k) → Fm k
 
 
 ----------------------------------------------------------------------------------------------------
@@ -99,10 +100,10 @@ postulate
 module HA where
   -- derivations, indexed by assumptions
   infix 3 _⊢_
-  data _⊢_ {#v} (Γ : Fms #v) : Fm #v → Set where
+  data _⊢_ {k} (Γ : Fms k) : Fm k → Set where
     `var   : ∀ {A} (a : Γ ∋ A) → Γ ⊢ A -- a-th assumption
     `lam   : ∀ {A B} (d : A ∷ Γ ⊢ B) → Γ ⊢ A `⊃ B
-    `app   : ∀ {A B} (d : Γ ⊢ A `⊃ B) (e : Γ ⊢ A) → Γ ⊢ B
+    _`$_   : ∀ {A B} (d : Γ ⊢ A `⊃ B) (e : Γ ⊢ A) → Γ ⊢ B
     `pair  : ∀ {A B} (d : Γ ⊢ A) (e : Γ ⊢ B) → Γ ⊢ A `∧ B
     `fst   : ∀ {A B} (d : Γ ⊢ A `∧ B) → Γ ⊢ A
     `snd   : ∀ {A B} (d : Γ ⊢ A `∧ B) → Γ ⊢ B
@@ -118,12 +119,12 @@ module HA where
     -- ∀xB[x]
     -- ------
     --  B[t]
-    `∀elim : ∀ {B} (t : Tm #v) (d : Γ ⊢ `∀ B) → Γ ⊢ cutfm B t
+    `∀elim : ∀ {B} (t : Tm k) (d : Γ ⊢ `∀ B) → Γ ⊢ cutfm B t
 
     --  B[t]
     -- ------
     -- ∃xB[x]
-    `∃intro : ∀ {B} (t : Tm #v) (d : Γ ⊢ cutfm B t) → Γ ⊢ `∃ B
+    `∃intro : ∀ {B} (t : Tm k) (d : Γ ⊢ cutfm B t) → Γ ⊢ `∃ B
 
     --          B[x]
     --           ⋮
@@ -151,7 +152,7 @@ module HA where
                Γ ⊢ `fun (rec φ ψ) (`zero ∷ ts) `= `fun φ ts
                  `∧ `fun (rec φ ψ) (`suc s ∷ ts) `= `fun ψ (`fun (rec φ ψ) (s ∷ ts) ∷ s ∷ ts)
 
-  `congsuc : ∀ {#v} {Γ : Fms #v} {t u} → Γ ⊢ t `= u → Γ ⊢ `suc t `= `suc u
+  `congsuc : ∀ {k} {Γ : Fms k} {t u} → Γ ⊢ t `= u → Γ ⊢ `suc t `= `suc u
   `congsuc d = `cong suc zero d
 
 
