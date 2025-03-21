@@ -7,35 +7,36 @@ module Selinger92 where
 open import Data.Fin using (Fin ; zero ; suc)
 open import Data.List using (List ; [] ; _∷_)
 open import Data.Nat using (ℕ ; zero ; suc)
-open import Data.Vec using (Vec ; [] ; _∷_ ; map) renaming (lookup to get ; _[_]≔_ to put)
+open import Data.Vec using (Vec ; [] ; _∷_ ; map ; foldr′)
+  renaming (lookup to get ; _[_]≔_ to put)
+
+recℕ : ∀ {a} {A : Set a} → A → (ℕ → A → A) → ℕ → A
+recℕ z f zero    = z
+recℕ z f (suc k) = f k (recℕ z f k)
 
 
 ----------------------------------------------------------------------------------------------------
 
 -- primitive recursive functions, indexed by arity
+data Fun : ℕ → Set where
+  zero : Fun zero
+  suc  : Fun (suc zero)
+  proj : ∀ {n} (i : Fin n) → Fun n
+  comp : ∀ {n m} (φs : Vec (Fun n) m) (ψ : Fun m) → Fun n
+  rec  : ∀ {n} (φ : Fun n) (ψ : Fun (suc (suc n))) → Fun (suc n)
 
-data PRFun : ℕ → Set where
-  zero : PRFun zero
-  suc  : PRFun (suc zero)
-  proj : ∀ {n} (i : Fin n) → PRFun n
-  comp : ∀ {n m} (φs : Vec (PRFun n) m) (ψ : PRFun m) → PRFun n
-  rec  : ∀ {n} (φ : PRFun n) (ψ : PRFun (suc (suc n))) → PRFun (suc n)
-
+-- standard model
 mutual
-  ⟦_⟧ : ∀ {n} → PRFun n → Vec ℕ n → ℕ
+  ⟦_⟧ : ∀ {n} → Fun n → Vec ℕ n → ℕ
   ⟦ zero ⟧      []       = zero
-  ⟦ suc ⟧       (y ∷ []) = suc y
+  ⟦ suc ⟧       (x ∷ []) = suc x
   ⟦ proj i ⟧    xs       = get xs i
   ⟦ comp φs ψ ⟧ xs       = ⟦ ψ ⟧ (⟦ φs ⟧* xs)
-  ⟦ rec φ ψ ⟧   (y ∷ xs) = ⟦rec⟧ φ ψ y xs
+  ⟦ rec φ ψ ⟧   (y ∷ xs) = recℕ (⟦ φ ⟧ xs) (λ k r → ⟦ ψ ⟧ (r ∷ k ∷ xs)) y
 
-  ⟦_⟧* : ∀ {n m} → Vec (PRFun n) m → Vec ℕ n → Vec ℕ m
+  ⟦_⟧* : ∀ {n m} → Vec (Fun n) m → Vec ℕ n → Vec ℕ m
   ⟦ [] ⟧*     xs = []
   ⟦ φ ∷ φs ⟧* xs = ⟦ φ ⟧ xs ∷ ⟦ φs ⟧* xs
-
-  ⟦rec⟧ : ∀ {n} → PRFun n → PRFun (suc (suc n)) → ℕ → Vec ℕ n → ℕ
-  ⟦rec⟧ φ ψ zero    xs = ⟦ φ ⟧ xs
-  ⟦rec⟧ φ ψ (suc y) xs = ⟦ ψ ⟧ (⟦rec⟧ φ ψ y xs ∷ y ∷ xs)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -48,7 +49,7 @@ infixl 19 _`∧_ _`∨_
 mutual
   data Tm (#v : ℕ) : Set where
     `var : ∀ (x : Fin #v) → Tm #v -- x-th numerical variable
-    `fun : ∀ {n} (φ : PRFun n) (ts : Tms #v n) → Tm #v
+    `fun : ∀ {n} (φ : Fun n) (ts : Tms #v n) → Tm #v
 
   Tms : ∀ (#v #t : ℕ) → Set
   Tms #v #t = Vec (Tm #v) #t
@@ -136,7 +137,7 @@ module HA where
     `refl  : ∀ {t} → Γ ⊢ t `= t
     `sym   : ∀ {t u} → Γ ⊢ t `= u → Γ ⊢ u `= t
     `trans : ∀ {s t u} → Γ ⊢ s `= t → Γ ⊢ t `= u → Γ ⊢ s `= u
-    `cong  : ∀ {n ts u} (φ : PRFun n) (i : Fin n) → Γ ⊢ get ts i `= u →
+    `cong  : ∀ {n ts u} (φ : Fun n) (i : Fin n) → Γ ⊢ get ts i `= u →
                Γ ⊢ `fun φ ts `= `fun φ (put ts i u)
     `suc₁  : ∀ {t} → Γ ⊢ `suc t `≠ `zero
     `suc₂  : ∀ {t u} → Γ ⊢ `suc t `= `suc u → Γ ⊢ t `= u
@@ -144,11 +145,11 @@ module HA where
                Γ ⊢ `∀ cutfm B (`var zero) `⊃ cutfm B (`suc (`var zero)) →
                Γ ⊢ `∀ cutfm B (`var zero)
     `proj  : ∀ {n ts} (i : Fin n) → Γ ⊢ `fun (proj i) ts `= get ts i
-    `comp  : ∀ {n m ts} (φs : Vec (PRFun n) m) (ψ : PRFun m) →
+    `comp  : ∀ {n m ts} (φs : Vec (Fun n) m) (ψ : Fun m) →
                Γ ⊢ `fun (comp φs ψ) ts `= `fun ψ (map (λ φ → `fun φ ts) φs)
-    `rec   : ∀ {n s ts} (φ : PRFun n) (ψ : PRFun (suc (suc n))) →
-               Γ ⊢ (`fun (rec φ ψ) (`zero ∷ ts) `= `fun φ ts) `∧
-                    (`fun (rec φ ψ) (`suc s ∷ ts) `= `fun ψ (`fun (rec φ ψ) (s ∷ ts) ∷ s ∷ ts))
+    `rec   : ∀ {n s ts} (φ : Fun n) (ψ : Fun (suc (suc n))) →
+               Γ ⊢ `fun (rec φ ψ) (`zero ∷ ts) `= `fun φ ts
+                 `∧ `fun (rec φ ψ) (`suc s ∷ ts) `= `fun ψ (`fun (rec φ ψ) (s ∷ ts) ∷ s ∷ ts)
 
   `congsuc : ∀ {#v} {Γ : Fms #v} {t u} → Γ ⊢ t `= u → Γ ⊢ `suc t `= `suc u
   `congsuc d = `cong suc zero d
