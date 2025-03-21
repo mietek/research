@@ -31,6 +31,7 @@ record Sig : Set where
 open Sig {{...}} public
 
 module _ {{S : Sig}} where
+  infix 17 `∀_ `∃_
   infixr 18 _`⊃_ _`⫗_
   infixl 19 _`∧_ _`∨_
 
@@ -51,13 +52,13 @@ module _ {{S : Sig}} where
   `suc : ∀ {#v} (t : Tm #v) → Tm #v
   `suc t = `fun (suc zero) (t ∷ [])
 
-  -- formulas, indexed by number of variables
+  -- formulas, indexed by number of numerical variables
   data Fm (#v : ℕ) : Set where
     _`⊃_ : ∀ (A B : Fm #v) → Fm #v
     _`∧_ : ∀ (A B : Fm #v) → Fm #v
     _`∨_ : ∀ (A B : Fm #v) → Fm #v
-    `∀   : ∀ (B : Fm (suc #v)) → Fm #v
-    `∃   : ∀ (B : Fm (suc #v)) → Fm #v
+    `∀_  : ∀ (B : Fm (suc #v)) → Fm #v
+    `∃_  : ∀ (B : Fm (suc #v)) → Fm #v
     `⊥  : Fm #v
     _`=_ : ∀ (t u : Tm #v) → Fm #v
 
@@ -89,10 +90,10 @@ module _ {{S : Sig}} where
 
 -- Heyting arithmetic
 module HA {{S : Sig}} where
-  -- derivations
+  -- derivations, indexed by assumptions
   infix 3 _⊢_
   data _⊢_ {#v} (Γ : Fms #v) : Fm #v → Set where
-    `var   : ∀ {A} (a : Γ ∋ A) → Γ ⊢ A
+    `var   : ∀ {A} (a : Γ ∋ A) → Γ ⊢ A -- a-th assumption
     `lam   : ∀ {A B} (d : A ∷ Γ ⊢ B) → Γ ⊢ A `⊃ B
     `app   : ∀ {A B} (d : Γ ⊢ A `⊃ B) (e : Γ ⊢ A) → Γ ⊢ B
     `pair  : ∀ {A B} (d : Γ ⊢ A) (e : Γ ⊢ B) → Γ ⊢ A `∧ B
@@ -134,8 +135,8 @@ module HA {{S : Sig}} where
     `suc₁  : ∀ {t} → Γ ⊢ `suc t `≠ `zero
     `suc₂  : ∀ {t u} → Γ ⊢ `suc t `= `suc u → Γ ⊢ t `= u
     `ind   : ∀ {B} → wkfms Γ ⊢ cutfm B `zero →
-               Γ ⊢ `∀ (cutfm B (`var zero) `⊃ cutfm B (`suc (`var zero))) →
-               Γ ⊢ `∀ (cutfm B (`var zero))
+               Γ ⊢ `∀ cutfm B (`var zero) `⊃ cutfm B (`suc (`var zero)) →
+               Γ ⊢ `∀ cutfm B (`var zero)
 
     -- TODO: axiom schemas for primitive recursive functions
 
