@@ -39,7 +39,7 @@ module _ {{S : Sig}} where
   mutual
     data Tm (#v : ℕ) : Set where
       `var  : ∀ (x : Fin #v) → Tm #v -- x-th numerical variable
-      `fun  : ∀ (f : Fun) (ts : Tms #v (arity f)) → Tm #v -- k-th function
+      `fun  : ∀ (f : Fun) (ts : Tms #v (arity f)) → Tm #v -- f-th function
 
     Tms : ∀ (#v #t : ℕ) → Set
     Tms #v #t = Vec (Tm #v) #t
