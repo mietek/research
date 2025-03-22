@@ -96,69 +96,81 @@ postulate
 
 ----------------------------------------------------------------------------------------------------
 
--- Heyting arithmetic
-module HA where
-  -- derivations, indexed by assumptions
-  infix 3 _⊢_
-  data _⊢_ {k} (Γ : Fms k) : Fm k → Set where
-    `var   : ∀ {A} (a : Γ ∋ A) → Γ ⊢ A -- a-th assumption
-    `lam   : ∀ {A B} (d : A ∷ Γ ⊢ B) → Γ ⊢ A `⊃ B
-    _`$_   : ∀ {A B} (d : Γ ⊢ A `⊃ B) (e : Γ ⊢ A) → Γ ⊢ B
-    `pair  : ∀ {A B} (d : Γ ⊢ A) (e : Γ ⊢ B) → Γ ⊢ A `∧ B
-    `fst   : ∀ {A B} (d : Γ ⊢ A `∧ B) → Γ ⊢ A
-    `snd   : ∀ {A B} (d : Γ ⊢ A `∧ B) → Γ ⊢ B
-    `left  : ∀ {A B} (d : Γ ⊢ A) → Γ ⊢ A `∨ B
-    `right : ∀ {A B} (d : Γ ⊢ B) → Γ ⊢ A `∨ B
-    `case  : ∀ {A B C} (c : Γ ⊢ A `∨ B) (d : A ∷ Γ ⊢ C) (e : B ∷ Γ ⊢ C) → Γ ⊢ C
+-- Heyting and Peano arithmetic
+data Theory : Set where
+  HA : Theory
+  PA : Theory
 
-    --  B[x]
-    -- ------
-    -- ∀xB[x]
-    `∀intro : ∀ {B} (d : wkfms Γ ⊢ B) → Γ ⊢ `∀ B
+-- derivations, indexed by assumptions
+infix 3 _⊢[_]_
+data _⊢[_]_ {k} (Γ : Fms k) : Theory → Fm k → Set where
+  `var    : ∀ {Θ A} (a : Γ ∋ A) → Γ ⊢[ Θ ] A -- a-th assumption
+  `lam    : ∀ {Θ A B} (d : A ∷ Γ ⊢[ Θ ] B) → Γ ⊢[ Θ ] A `⊃ B
+  _`$_    : ∀ {Θ A B} (d : Γ ⊢[ Θ ] A `⊃ B) (e : Γ ⊢[ Θ ] A) → Γ ⊢[ Θ ] B
+  `pair   : ∀ {Θ A B} (d : Γ ⊢[ Θ ] A) (e : Γ ⊢[ Θ ] B) → Γ ⊢[ Θ ] A `∧ B
+  `fst    : ∀ {Θ A B} (d : Γ ⊢[ Θ ] A `∧ B) → Γ ⊢[ Θ ] A
+  `snd    : ∀ {Θ A B} (d : Γ ⊢[ Θ ] A `∧ B) → Γ ⊢[ Θ ] B
+  `left   : ∀ {Θ A B} (d : Γ ⊢[ Θ ] A) → Γ ⊢[ Θ ] A `∨ B
+  `right  : ∀ {Θ A B} (d : Γ ⊢[ Θ ] B) → Γ ⊢[ Θ ] A `∨ B
+  `case   : ∀ {Θ A B C} (c : Γ ⊢[ Θ ] A `∨ B) (d : A ∷ Γ ⊢[ Θ ] C) (e : B ∷ Γ ⊢[ Θ ] C) →
+              Γ ⊢[ Θ ] C
 
-    -- ∀xB[x]
-    -- ------
-    --  B[t]
-    `∀elim : ∀ {B} (t : Tm k) (d : Γ ⊢ `∀ B) → Γ ⊢ cutfm B t
+  --  B[x]
+  -- ------
+  -- ∀xB[x]
+  `∀intro : ∀ {Θ B} (d : wkfms Γ ⊢[ Θ ] B) → Γ ⊢[ Θ ] `∀ B
 
-    --  B[t]
-    -- ------
-    -- ∃xB[x]
-    `∃intro : ∀ {B} (t : Tm k) (d : Γ ⊢ cutfm B t) → Γ ⊢ `∃ B
+  -- ∀xB[x]
+  -- ------
+  --  B[t]
+  `∀elim  : ∀ {Θ B} (t : Tm k) (d : Γ ⊢[ Θ ] `∀ B) → Γ ⊢[ Θ ] cutfm B t
 
-    --          B[x]
-    --           ⋮
-    --   ∃xB[x]  C
-    -- -------------
-    --       C
-    `∃elim : ∀ {B C} (d : Γ ⊢ `∃ B) (e : B ∷ wkfms Γ ⊢ wkfm C) → Γ ⊢ C
+  --  B[t]
+  -- ------
+  -- ∃xB[x]
+  `∃intro : ∀ {Θ B} (t : Tm k) (d : Γ ⊢[ Θ ] cutfm B t) → Γ ⊢[ Θ ] `∃ B
 
-    `abort : ∀ {C} (d : Γ ⊢ `⊥) → Γ ⊢ C
+  --          B[x]
+  --           ⋮
+  --   ∃xB[x]  C
+  -- -------------
+  --       C
+  `∃elim  : ∀ {Θ B C} (d : Γ ⊢[ Θ ] `∃ B) (e : B ∷ wkfms Γ ⊢[ Θ ] wkfm C) → Γ ⊢[ Θ ] C
 
-    `refl  : ∀ {t} → Γ ⊢ t `= t
-    `sym   : ∀ {t u} → Γ ⊢ t `= u → Γ ⊢ u `= t
-    `trans : ∀ {s t u} → Γ ⊢ s `= t → Γ ⊢ t `= u → Γ ⊢ s `= u
-    `cong  : ∀ {n ts u} (φ : Fun n) (i : Fin n) → Γ ⊢ get ts i `= u →
-               Γ ⊢ `fun φ ts `= `fun φ (put ts i u)
-    `suc₁  : ∀ {t} → Γ ⊢ `suc t `≠ `zero
-    `suc₂  : ∀ {t u} → Γ ⊢ `suc t `= `suc u → Γ ⊢ t `= u
-    `ind   : ∀ {B} → wkfms Γ ⊢ cutfm B `zero →
-               Γ ⊢ `∀ cutfm B (`var zero) `⊃ cutfm B (`suc (`var zero)) →
-               Γ ⊢ `∀ cutfm B (`var zero)
-    `proj  : ∀ {n ts} (i : Fin n) → Γ ⊢ `fun (proj i) ts `= get ts i
-    `comp  : ∀ {n m ts} (φs : Vec (Fun n) m) (ψ : Fun m) →
-               Γ ⊢ `fun (comp φs ψ) ts `= `fun ψ (map (λ φ → `fun φ ts) φs)
-    `rec   : ∀ {n s ts} (φ : Fun n) (ψ : Fun (suc (suc n))) →
-               Γ ⊢ `fun (rec φ ψ) (`zero ∷ ts) `= `fun φ ts
-                 `∧ `fun (rec φ ψ) (`suc s ∷ ts) `= `fun ψ (`fun (rec φ ψ) (s ∷ ts) ∷ s ∷ ts)
+  `abort  : ∀ {C} (d : Γ ⊢[ HA ] `⊥) → Γ ⊢[ HA ] C
+  `magic  : ∀ {A} (d : `¬ A ∷ Γ ⊢[ PA ] `⊥) → Γ ⊢[ PA ] A
 
-  `congsuc : ∀ {k} {Γ : Fms k} {t u} → Γ ⊢ t `= u → Γ ⊢ `suc t `= `suc u
-  `congsuc d = `cong suc zero d
+  `refl   : ∀ {Θ t} → Γ ⊢[ Θ ] t `= t
+  `sym    : ∀ {Θ t u} → Γ ⊢[ Θ ] t `= u → Γ ⊢[ Θ ] u `= t
+  `trans  : ∀ {Θ s t u} → Γ ⊢[ Θ ] s `= t → Γ ⊢[ Θ ] t `= u → Γ ⊢[ Θ ] s `= u
+  `cong   : ∀ {Θ n ts u} (φ : Fun n) (i : Fin n) → Γ ⊢[ Θ ] get ts i `= u →
+              Γ ⊢[ Θ ] `fun φ ts `= `fun φ (put ts i u)
+  `suc₁   : ∀ {Θ t} → Γ ⊢[ Θ ] `suc t `≠ `zero
+  `suc₂   : ∀ {Θ t u} → Γ ⊢[ Θ ] `suc t `= `suc u → Γ ⊢[ Θ ] t `= u
+  `ind    : ∀ {Θ B} → wkfms Γ ⊢[ Θ ] cutfm B `zero →
+              Γ ⊢[ Θ ] `∀ cutfm B (`var zero) `⊃ cutfm B (`suc (`var zero)) →
+              Γ ⊢[ Θ ] `∀ cutfm B (`var zero)
+  `proj   : ∀ {Θ n ts} (i : Fin n) → Γ ⊢[ Θ ] `fun (proj i) ts `= get ts i
+  `comp   : ∀ {Θ n m ts} (φs : Vec (Fun n) m) (ψ : Fun m) →
+              Γ ⊢[ Θ ] `fun (comp φs ψ) ts `= `fun ψ (map (λ φ → `fun φ ts) φs)
+  `rec    : ∀ {Θ n s ts} (φ : Fun n) (ψ : Fun (suc (suc n))) →
+              Γ ⊢[ Θ ] `fun (rec φ ψ) (`zero ∷ ts) `= `fun φ ts `∧
+                `fun (rec φ ψ) (`suc s ∷ ts) `= `fun ψ (`fun (rec φ ψ) (s ∷ ts) ∷ s ∷ ts)
+
+`congsuc : ∀ {Θ k} {Γ : Fms k} {t u} → Γ ⊢[ Θ ] t `= u → Γ ⊢[ Θ ] `suc t `= `suc u
+`congsuc d = `cong suc zero d
+
+infix 3 _⊢HA_
+_⊢HA_ : ∀ {k} → Fms k → Fm k → Set
+Γ ⊢HA A = Γ ⊢[ HA ] A
+
+infix 3 _⊢PA_
+_⊢PA_ : ∀ {k} → Fms k → Fm k → Set
+Γ ⊢PA A = Γ ⊢[ PA ] A
 
 
 ----------------------------------------------------------------------------------------------------
 
--- TODO: Peano arithmetic
 -- TODO: double-negation translation
 -- TODO: A-translation
 
