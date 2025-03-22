@@ -148,14 +148,14 @@ data _⊢⟨_⟩_ {k} (Γ : Fms k) : Theory → Fm k → Set where
   `magic  : ∀ {A} (d : `¬ A ∷ Γ ⊢⟨ PA ⟩ `⊥) → Γ ⊢⟨ PA ⟩ A
 
   `refl   : ∀ {Θ t} → Γ ⊢⟨ Θ ⟩ t `= t
-  `sym    : ∀ {Θ t u} → Γ ⊢⟨ Θ ⟩ t `= u → Γ ⊢⟨ Θ ⟩ u `= t
-  `trans  : ∀ {Θ s t u} → Γ ⊢⟨ Θ ⟩ s `= t → Γ ⊢⟨ Θ ⟩ t `= u → Γ ⊢⟨ Θ ⟩ s `= u
-  `cong   : ∀ {Θ n ts u} (φ : Fun n) (i : Fin n) → Γ ⊢⟨ Θ ⟩ get ts i `= u →
+  `sym    : ∀ {Θ t u} (d : Γ ⊢⟨ Θ ⟩ t `= u) → Γ ⊢⟨ Θ ⟩ u `= t
+  `trans  : ∀ {Θ s t u} (d : Γ ⊢⟨ Θ ⟩ s `= t) (e : Γ ⊢⟨ Θ ⟩ t `= u) → Γ ⊢⟨ Θ ⟩ s `= u
+  `cong   : ∀ {Θ n ts u} (φ : Fun n) (i : Fin n) (d : Γ ⊢⟨ Θ ⟩ get ts i `= u) →
               Γ ⊢⟨ Θ ⟩ `fun φ ts `= `fun φ (put ts i u)
   `suc₁   : ∀ {Θ t} → Γ ⊢⟨ Θ ⟩ `suc t `≠ `zero
-  `suc₂   : ∀ {Θ t u} → Γ ⊢⟨ Θ ⟩ `suc t `= `suc u → Γ ⊢⟨ Θ ⟩ t `= u
-  `ind    : ∀ {Θ B} → ↑* Γ ⊢⟨ Θ ⟩ B [ `zero ] →
-              Γ ⊢⟨ Θ ⟩ `∀ B [ `var zero ] `⊃ B [ `suc (`var zero) ] →
+  `suc₂   : ∀ {Θ t u} (d : Γ ⊢⟨ Θ ⟩ `suc t `= `suc u) → Γ ⊢⟨ Θ ⟩ t `= u
+  `ind    : ∀ {Θ B} (d : ↑* Γ ⊢⟨ Θ ⟩ B [ `zero ])
+              (e : Γ ⊢⟨ Θ ⟩ `∀ B [ `var zero ] `⊃ B [ `suc (`var zero) ]) →
               Γ ⊢⟨ Θ ⟩ `∀ B [ `var zero ]
   `proj   : ∀ {Θ n ts} (i : Fin n) → Γ ⊢⟨ Θ ⟩ `fun (proj i) ts `= get ts i
   `comp   : ∀ {Θ n m ts} (φs : Vec (Fun n) m) (ψ : Fun m) →
@@ -174,6 +174,40 @@ _⊢HA_ : ∀ {k} → Fms k → Fm k → Set
 infix 3 _⊢PA_
 _⊢PA_ : ∀ {k} → Fms k → Fm k → Set
 Γ ⊢PA A = Γ ⊢⟨ PA ⟩ A
+
+
+----------------------------------------------------------------------------------------------------
+
+-- TODO: usual things
+postulate
+  -- weaken derivation by adding one assumption
+  ⇑ : ∀ {k} {Γ : Fms k} {Θ A C} → Γ ⊢⟨ Θ ⟩ A → C ∷ Γ ⊢⟨ Θ ⟩ A
+
+lem2 : ∀ {k} {Γ : Fms k} {A} → Γ ⊢HA A → Γ ⊢PA A
+lem2 (`var a)      = `var a
+lem2 (`lam d)      = `lam (lem2 d)
+lem2 (d `$ e)      = lem2 d `$ lem2 e
+lem2 (`pair d e)   = `pair (lem2 d) (lem2 e)
+lem2 (`fst d)      = `fst (lem2 d)
+lem2 (`snd d)      = `snd (lem2 d)
+lem2 (`left d)     = `left (lem2 d)
+lem2 (`right d)    = `right (lem2 d)
+lem2 (`case c d e) = `case (lem2 c) (lem2 d) (lem2 e)
+lem2 (`∀intro d)   = `∀intro (lem2 d)
+lem2 (`∀elim t d)  = `∀elim t (lem2 d)
+lem2 (`∃intro t d) = `∃intro t (lem2 d)
+lem2 (`∃elim d e)  = `∃elim (lem2 d) (lem2 e)
+lem2 (`abort d)    = `magic (⇑ (lem2 d))
+lem2 `refl         = `refl
+lem2 (`sym d)      = `sym (lem2 d)
+lem2 (`trans d e)  = `trans (lem2 d) (lem2 e)
+lem2 (`cong φ i d) = `cong φ i (lem2 d)
+lem2 `suc₁         = `suc₁
+lem2 (`suc₂ d)     = `suc₂ (lem2 d)
+lem2 (`ind d e)    = `ind (lem2 d) (lem2 e)
+lem2 (`proj i)     = `proj i
+lem2 (`comp φs ψ)  = `comp φs ψ
+lem2 (`rec φ ψ)    = `rec φ ψ
 
 
 ----------------------------------------------------------------------------------------------------
