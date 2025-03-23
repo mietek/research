@@ -8,7 +8,7 @@ open import Data.Fin using (Fin ; zero ; suc)
 
 open import Data.List using (List ; [] ; _∷_)
 
-open import Data.Nat using (zero ; suc ; _+_ ; _*_ ; _∸_)
+open import Data.Nat using (zero ; suc ; _+_ ; _*_ ; pred ; _∸_)
   renaming (ℕ to Nat)
 
 open import Data.Product using (Σ ; _,_ ; _×_)
@@ -20,8 +20,17 @@ open Vec using (Vec ; [] ; _∷_)
 open import Function using (_∘_)
 
 open import Relation.Binary.PropositionalEquality
-  using (_≡_ ; refl ; sym ; trans ; cong ; subst ; module ≡-Reasoning)
+  using (_≡_ ; refl ; sym ; trans ; cong ; cong₂ ; subst ; module ≡-Reasoning)
 open ≡-Reasoning
+
+
+----------------------------------------------------------------------------------------------------
+
+-- propositional equality things
+
+cong₃ : ∀ {a b c d} {A : Set a} {B : Set b} {C : Set c} {D : Set d} (f : A → B → C → D)
+          {x x′ y y′ z z′} → x ≡ x′ → y ≡ y′ → z ≡ z′ → f x y z ≡ f x′ y′ z′
+cong₃ f refl refl refl = refl
 
 
 ----------------------------------------------------------------------------------------------------
@@ -56,8 +65,8 @@ rec (suc y) x f = f y (rec y x f)
 #Fun : Nat → Set
 #Fun n = Vec Nat n → Nat
 
-#Funs : Nat → Nat → Set
-#Funs n m = Vec (#Fun n) m
+#Fun* : Nat → Nat → Set
+#Fun* n m = Vec (#Fun n) m
 
 #zero : #Fun 0
 #zero [] = zero
@@ -68,11 +77,8 @@ rec (suc y) x f = f y (rec y x f)
 #get : ∀ {n} → Fin n → #Fun n
 #get i xs = get i xs
 
-#comp : ∀ {n m} (ψ : #Fun m) (φs : #Funs n m) → #Fun n
+#comp : ∀ {n m} (ψ : #Fun m) (φs : #Fun* n m) → #Fun n
 #comp ψ φs xs = ψ (for φs λ φ → φ xs)
-
-_#∘_ : ∀ {m} (ψ : #Fun 1) (φ : #Fun m) → #Fun m
-ψ #∘ φ = #comp ψ (φ ∷ [])
 
 #rec : ∀ {n} (φ : #Fun n) (ψ : #Fun (suc (suc n))) → #Fun (suc n)
 -- TODO: maybe more clear to define #rec directly
@@ -83,123 +89,147 @@ _#∘_ : ∀ {m} (ψ : #Fun 1) (φ : #Fun m) → #Fun m
 
 ----------------------------------------------------------------------------------------------------
 
--- some primitive recursive n-place functions
+-- some primitive recursive n-place functions on naturals
 -- Troelstra and van Dalen (1988) §1.3
 
 #const : ∀ {n} → Nat → #Fun n
 #const zero    = #comp #zero []
-#const (suc x) = #suc #∘ #const x
+#const (suc x) = #comp #suc (#const x ∷ [])
 
 ok-#const : ∀ {n} x (ys : Vec Nat n) → #const x ys ≡ x
 ok-#const zero    ys = refl
 ok-#const (suc x) ys = cong suc (ok-#const x ys)
 
+-- _+_ : Nat → Nat → Nat
+-- zero  + y = y
+-- suc x + y = suc (x + y)
+
+#add : #Fun 2
+#add = #rec (#get zero)
+            (#comp #suc (#get zero ∷ []))
+
+ok-#add : ∀ x y → #add (x ∷ y ∷ []) ≡ x + y
+ok-#add zero    y = refl
+ok-#add (suc x) y = cong suc (ok-#add x y)
+
+-- _*_ : Nat → Nat → Nat
+-- zero  * y = zero
+-- suc x * y = y + x * y
+
+#mul : #Fun 2
+#mul = #rec (#const 0)
+            (#comp #add (#get (suc (suc zero)) ∷ #get zero ∷ []))
+
+ok-#mul : ∀ x y → #mul (x ∷ y ∷ []) ≡ x * y
+ok-#mul zero    y = refl
+ok-#mul (suc x) y = begin
+                      #add (y ∷ #mul (x ∷ y ∷ []) ∷ [])
+                    ≡⟨ cong (#add ∘ (y ∷_)) (cong (_∷ []) (ok-#mul x y)) ⟩
+                      #add (y ∷ x * y ∷ [])
+                    ≡⟨ ok-#add y (x * y) ⟩
+                      y + x * y
+                    ∎
+
+-- pred : Nat → Nat
+-- pred x = x ∸ 1
+
+#pred : #Fun 1
+#pred = #rec (#const 0)
+             (#get (suc zero))
+
+ok-#pred : ∀ x → #pred (x ∷ []) ≡ pred x
+ok-#pred zero    = refl
+ok-#pred (suc x) = refl
 
 
--- -- _+_ : Nat → Nat → Nat
--- -- zero  + y = y
--- -- suc x + y = suc (x + y)
+-- TODO: subtraction
 
--- #add : #Fun 2
--- #add = #rec (#get zero) -- y
---             (#suc #∘ #get zero) -- recursion result, y
+-- _∸_ : Nat → Nat → Nat
+-- x     ∸ zero  = x
+-- zero  ∸ suc y = zero
+-- suc x ∸ suc y = x ∸ y
 
--- ok-#add : ∀ x y → #add (x ∷ y ∷ []) ≡ x + y
--- ok-#add zero    y = refl
--- ok-#add (suc x) y = cong suc (ok-#add x y)
-
--- -- _*_ : Nat → Nat → Nat
--- -- zero  * y = zero
--- -- suc x * y = y + x * y
-
--- #mul : #Fun 2
--- #mul = #rec (#const zero)
---             {!#add (#get (suc zero))!}
-
--- ok-#mul : ∀ x y → #mul (x ∷ y ∷ []) ≡ x * y
--- ok-#mul zero    y = {!refl!}
--- ok-#mul (suc x) y = {!begin
---     #add (y ∷ #mul (x ∷ y ∷ []) ∷ [])
---   ≡⟨ cong (#add ∘ (y ∷_)) (cong (_∷ []) (ok-#mul x y)) ⟩
---     #add (y ∷ x * y ∷ [])
---   ≡⟨ ok-#add y (x * y) ⟩
---     y + x * y
---   ∎!}
+_-_ : Nat → Nat → Nat
+x - zero  = x
+x - suc y = pred (x - y)
 
 
--- -- _-_ : Nat → Nat → Nat
--- -- n     - zero = n
--- -- zero  - suc m = zero
--- -- suc n - suc m = n - m
+----------------------------------------------------------------------------------------------------
+
+-- extensional characterization of primitive recursive n-place functions on naturals
+mutual
+  data IsPrim : ∀ {n} → #Fun n → Set where
+    isprim-#zero : ∀ {ξ : #Fun zero} (h : ∀ {xs} → ξ xs ≡ #zero xs) → IsPrim ξ
+    isprim-#suc  : ∀ {ξ : #Fun (suc zero)} (h : ∀ {xs} → ξ xs ≡ #suc xs) → IsPrim ξ
+    isprim-#get  : ∀ {n i} {ξ : #Fun n} (h : ∀ {xs} → ξ xs ≡ #get i xs) → IsPrim ξ
+    isprim-#comp : ∀ {n m} {ψ : #Fun m} {φs : #Fun* n m} {ξ : #Fun n} →
+                     (h : ∀ {xs} → ξ xs ≡ #comp ψ φs xs) → IsPrim ψ → IsPrim* φs → IsPrim ξ
+    isprim-#rec  : ∀ {n} {φ : #Fun n} {ψ : #Fun (suc (suc n))} {ξ : #Fun (suc n)} →
+                     (h : ∀ {xs} → ξ xs ≡ #rec φ ψ xs) → IsPrim φ → IsPrim ψ → IsPrim ξ
+
+  data IsPrim* {n} : ∀ {m} → #Fun* n m → Set where
+    []  : IsPrim* []
+    _∷_ : ∀ {m} {φ : #Fun n} {φs : #Fun* n m} → IsPrim φ → IsPrim* φs → IsPrim* (φ ∷ φs)
 
 
+----------------------------------------------------------------------------------------------------
 
+-- intensional characterization of primitive recursive n-place functions on naturals
+data Prim : Nat → Set where
+  ‵zero : Prim zero
+  ‵suc  : Prim (suc zero)
+  ‵get  : ∀ {n} (i : Fin n) → Prim n
+  ‵comp : ∀ {n m} (ψ : Prim m) (φs : Vec (Prim n) m) → Prim n
+  ‵rec  : ∀ {n} (φ : Prim n) (ψ : Prim (suc (suc n))) → Prim (suc n)
 
--- -- #add : #Fun 2
--- -- -- #add (zero  ∷ xs) = #get zero xs
--- -- -- #add (suc y ∷ xs) = suc (#get zero (#add (y ∷ xs) ∷ y ∷ xs))
--- -- #add (y ∷ x ∷ []) = rec y x λ y′ r → suc r
--- -- -- #add xs = #rec (#get {1} zero) (#get {3} zero) xs
+Prim* : Nat → Nat → Set
+Prim* n m = Vec (Prim n) m
 
--- -- ok-#add : ∀ {x} y → #add (y ∷ x ∷ []) ≡ x +′ y
--- -- ok-#add zero    = refl
--- -- ok-#add (suc y) = cong suc (ok-#add y)
+mutual
+  ⟦_⟧ : ∀ {n} → Prim n → #Fun n
+  ⟦ ‵zero ⟧      = #zero
+  ⟦ ‵suc ⟧       = #suc
+  ⟦ ‵get i ⟧     = #get i
+  ⟦ ‵comp ψ φs ⟧ = #comp ⟦ ψ ⟧ ⟦ φs ⟧*
+  ⟦ ‵rec φ ψ ⟧   = #rec ⟦ φ ⟧ ⟦ ψ ⟧
 
--- -- -- primitive recursive n-place functions on naturals
--- -- mutual
--- --   data Is#Prim : ∀ {n} → #Fun n → Set where
--- --     is#zero : ∀ (ξ : #Fun zero) → (∀ {xs} → ξ xs ≡ #zero xs) → Is#Prim ξ
--- --     is#suc  : ∀ (ξ : #Fun (suc zero)) → (∀ {xs} → ξ xs ≡ #suc xs) → Is#Prim ξ
--- --     is#get  : ∀ {n} (ξ : #Fun n) i → (∀ {xs} → ξ xs ≡ #get i xs) → Is#Prim ξ
--- --     is#comp : ∀ {n m} (φs : #Funs n m) (ψ : #Fun m) (ξ : #Fun n) →
--- --                 (∀ {xs} → ξ xs ≡ #comp φs ψ xs) → Is#Prim* φs → Is#Prim ψ → Is#Prim ξ
--- --     is#rec  : ∀ {n} (φ : #Fun n) (ψ : #Fun (suc (suc n))) (ξ : #Fun (suc n)) →
--- --                 (∀ {xs} → ξ xs ≡ #rec φ ψ xs) → Is#Prim φ → Is#Prim ψ → Is#Prim ξ
+  ⟦_⟧* : ∀ {n m} → Prim* n m → #Fun* n m
+  ⟦ [] ⟧*     = []
+  ⟦ φ ∷ φs ⟧* = ⟦ φ ⟧ ∷ ⟦ φs ⟧*
 
--- --   data Is#Prim* {n} : ∀ {m} → #Funs n m → Set where
--- --     []  : Is#Prim* []
--- --     _∷_ : ∀ {m} {φ : #Fun n} {φs : #Funs n m} → Is#Prim φ → Is#Prim* φs → Is#Prim* (φ ∷ φs)
+mutual
+  i→e : ∀ {n} (φ : Prim n) → IsPrim ⟦ φ ⟧
+  i→e ‵zero        = isprim-#zero refl
+  i→e ‵suc         = isprim-#suc refl
+  i→e (‵get i)     = isprim-#get refl
+  i→e (‵comp ψ φs) = isprim-#comp refl (i→e ψ) (i→e* φs)
+  i→e (‵rec φ ψ)   = isprim-#rec refl (i→e φ) (i→e ψ)
 
--- -- ok-#zero : Is#Prim #zero
--- -- ok-#zero = is#zero #zero refl
+  i→e* : ∀ {n m} (φs : Prim* n m) → IsPrim* ⟦ φs ⟧*
+  i→e* []       = []
+  i→e* (φ ∷ φs) = i→e φ ∷ i→e* φs
 
--- -- ok-#suc : Is#Prim #suc
--- -- ok-#suc = is#suc #suc refl
+mutual
+  e→i : ∀ {n} {φ : #Fun n} → IsPrim φ → Σ (Prim n) λ f → ∀ {xs} → φ xs ≡ ⟦ f ⟧ xs
+  e→i (isprim-#zero h)      = ‵zero , h
+  e→i (isprim-#suc h)       = ‵suc , h
+  e→i (isprim-#get h)       = ‵get _ , h
+  e→i (isprim-#comp h e ds) = {!!}
+  e→i (isprim-#rec {φ = φ} {ψ} {ξ} h d e) =
+    let (f , h₁) = e→i d in
+    let (g , h₂) = e→i e in
+    ‵rec f g , λ {xs} → -- TODO: this should be reasoning by pointwise equality, and not by identity
+      begin
+        ξ xs
+      ≡⟨ h {xs} ⟩
+        #rec φ ψ xs
+      ≡⟨ cong₃ #rec {!!} {!!} refl ⟩
+        #rec ⟦ f ⟧ ⟦ g ⟧ xs
+      ∎
 
--- -- ok-#get : ∀ {n} (i : Fin n) → Is#Prim (#get i)
--- -- ok-#get i = is#get (#get i) i refl
-
--- -- -- ok-#comp : ∀ {n m} (φs : Ve
-
-
--- -- -- ----------------------------------------------------------------------------------------------------
-
--- -- -- -- primitive recursive functions, indexed by arity
--- -- -- data Prim : Nat → Set where
--- -- --   zero : Prim zero
--- -- --   suc  : Prim (suc zero)
--- -- --   proj : ∀ {n} (i : Fin n) → Prim n
--- -- --   comp : ∀ {n m} (φs : Vec (Prim n) m) (ψ : Prim m) → Prim n
--- -- --   rec  : ∀ {n} (φ : Prim n) (ψ : Prim (suc (suc n))) → Prim (suc n)
-
--- -- -- -- add zero    [ x ] = proj₀ [ x ]
--- -- -- -- add (suc y) [ x ] = suc (proj₀ [ add y x , y , x ])
--- -- -- -- add : Prim (suc (suc zero))
--- -- -- -- add = rec (proj zero) {!!}
-
--- -- -- -- standard model
--- -- -- mutual
--- -- --   ⟦_⟧ : ∀ {n} → Prim n → Vec Nat n → Nat
--- -- --   ⟦ zero ⟧      []       = zero
--- -- --   ⟦ suc ⟧       (x ∷ []) = suc x
--- -- --   ⟦ proj i ⟧    xs       = get i xs
--- -- --   ⟦ comp φs ψ ⟧ xs       = ⟦ ψ ⟧ (⟦ φs ⟧* xs)
--- -- --   ⟦ rec φ ψ ⟧   (y ∷ xs) = natrec y (⟦ φ ⟧ xs) λ y′ r → ⟦ ψ ⟧ (r ∷ y′ ∷ xs)
-
--- -- --   ⟦_⟧* : ∀ {n m} → Vec (Prim n) m → Vec Nat n → Vec Nat m
--- -- --   ⟦ [] ⟧*     xs = []
--- -- --   ⟦ φ ∷ φs ⟧* xs = ⟦ φ ⟧ xs ∷ ⟦ φs ⟧* xs
-
+  e→i* : ∀ {n m} {φs : #Fun* n m} → IsPrim* φs → Σ (Prim* n m) λ fs →
+            ∀ {xs} → for φs (λ φ → φ xs) ≡ for ⟦ fs ⟧* (λ f → f xs)
+  e→i* = {!!}
 
 -- -- -- ----------------------------------------------------------------------------------------------------
 
