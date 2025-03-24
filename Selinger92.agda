@@ -17,7 +17,7 @@ open import Data.Product using (Σ ; _,_ ; _×_)
 import Data.Vec as Vec
 open Vec using (Vec ; [] ; _∷_)
 
-open import Function using (_∘_ ; flip)
+open import Function using (_∘_ ; const ; flip)
 
 open import Level using (_⊔_)
 
@@ -158,36 +158,8 @@ ok-#pred (suc x) = refl
 
 ----------------------------------------------------------------------------------------------------
 
--- extensional equality on functions
-data _≐_ {a b} {A : Set a} {B : Set b} : (A → B) → (A → B) → Set (a ⊔ b) where
-  ∙      : ∀ {f f′} → f ≡ f′ → f ≐ f′
-  ∙sym   : ∀ {f f′} → f ≐ f′ → f′ ≐ f
-  ∙trans : ∀ {f f′ f″} → f ≐ f′ → f′ ≐ f″ → f ≐ f″
-
-∙refl : ∀ {a b} {A : Set a} {B : Set b} {f : A → B} → f ≐ f
-∙refl = ∙ refl
-
-∙cong : ∀ {a a′ b b′} {A : Set a} {A′ : Set a′} {B : Set b} {B′ : Set b′}
-          (m : (A → B) → (A′ → B′)) {f f′} → f ≐ f′ → m f ≐ m f′
-∙cong m (∙ refl)       = ∙ refl
-∙cong m (∙sym p)       = ∙sym (∙cong m p)
-∙cong m (∙trans p₁ p₂) = ∙trans (∙cong m p₁) (∙cong m p₂)
-
-∙cong₂ : ∀ {a a′ b b′ c c′ d d′} {A : Set a} {A′ : Set a′} {B : Set b} {B′ : Set b′}
-           {C : Set c} {C′ : Set c′} {D : Set d} {D′ : Set d′}
-           (m : (A → B) → (C → D) → (A′ → B′) → (C′ → D′))
-           {f f′ g g′} → f ≐ f′ → g ≐ g′ → m f g ≐ m f′ g′
-∙cong₂ m {f} {g′ = g′} p q = ∙trans (∙cong (m f) q) (∙cong (flip m g′) p)
-
-∙cong₃ : ∀ {a a′ b b′ c c′ d d′ x x′ y y′} {A : Set a} {A′ : Set a′} {B : Set b} {B′ : Set b′}
-           {C : Set c} {C′ : Set c′} {D : Set d} {D′ : Set d′}
-           {X : Set x} {X′ : Set x′} {Y : Set y} {Y′ : Set y′}
-           (m : (A → B) → (C → D) → (X → Y) → (A′ → B′) → (C′ → D′) → (X′ → Y′))
-           {f f′ g g′ h h′} → f ≐ f′ → g ≐ g′ → h ≐ h′ → m f g h ≐ m f′ g′ h′
-∙cong₃ m {f} {g = g} {h′ = h′} p q r = ∙trans (∙cong (m f g) r) (∙cong₂ (λ ~f ~g → m ~f ~g h′) p q)
-
-
-----------------------------------------------------------------------------------------------------
+_≐_ : ∀ {a b} {A : Set a} {B : Set b} → (A → B) → (A → B) → Set (a ⊔ b)
+f ≐ f′ = ∀ {x} → f x ≡ f′ x
 
 -- extensional characterization of primitive recursive n-place functions on naturals
 mutual
@@ -195,14 +167,14 @@ mutual
     isprim-#zero : ∀ {ξ : #Fun zero} (h : ξ ≐ #zero) → IsPrim ξ
     isprim-#suc  : ∀ {ξ : #Fun (suc zero)} (h : ξ ≐ #suc) → IsPrim ξ
     isprim-#get  : ∀ {n} i {ξ : #Fun n} (h : ξ ≐ #get i) → IsPrim ξ
-    isprim-#comp : ∀ {n m} {ψ : #Fun m} {φs : #Fun* n m} {ξ : #Fun n} →
-                     (h : ξ ≐ #comp ψ φs) → IsPrim ψ → IsPrim* φs → IsPrim ξ
-    isprim-#rec  : ∀ {n} {φ : #Fun n} {ψ : #Fun (suc (suc n))} {ξ : #Fun (suc n)} →
-                     (h : ξ ≐ #rec φ ψ) → IsPrim φ → IsPrim ψ → IsPrim ξ
+    isprim-#comp : ∀ {n m} {ξ : #Fun n} {ψ : #Fun m} {φs : #Fun* n m} →
+                     (h : ξ ≐ #comp ψ φs) (e : IsPrim ψ) (ds : IsPrim* φs) → IsPrim ξ
+    isprim-#rec  : ∀ {n} {ξ : #Fun (suc n)} {φ : #Fun n} {ψ : #Fun (suc (suc n))} →
+                     (h : ξ ≐ #rec φ ψ) (d : IsPrim φ) (e : IsPrim ψ) → IsPrim ξ
 
   data IsPrim* {n} : ∀ {m} → #Fun* n m → Set where
     []  : IsPrim* []
-    _∷_ : ∀ {m} {φ : #Fun n} {φs : #Fun* n m} → IsPrim φ → IsPrim* φs → IsPrim* (φ ∷ φs)
+    _∷_ : ∀ {m} {φ : #Fun n} {φs : #Fun* n m} (d : IsPrim φ) (ds : IsPrim* φs) → IsPrim* (φ ∷ φs)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -212,8 +184,8 @@ data Prim : Nat → Set where
   ‵zero : Prim zero
   ‵suc  : Prim (suc zero)
   ‵get  : ∀ {n} (i : Fin n) → Prim n
-  ‵comp : ∀ {n m} (ψ : Prim m) (φs : Vec (Prim n) m) → Prim n
-  ‵rec  : ∀ {n} (φ : Prim n) (ψ : Prim (suc (suc n))) → Prim (suc n)
+  ‵comp : ∀ {n m} (g : Prim m) (fs : Vec (Prim n) m) → Prim n
+  ‵rec  : ∀ {n} (f : Prim n) (g : Prim (suc (suc n))) → Prim (suc n)
 
 Prim* : Nat → Nat → Set
 Prim* n m = Vec (Prim n) m
@@ -223,50 +195,85 @@ mutual
   ⟦ ‵zero ⟧      = #zero
   ⟦ ‵suc ⟧       = #suc
   ⟦ ‵get i ⟧     = #get i
-  ⟦ ‵comp ψ φs ⟧ = #comp ⟦ ψ ⟧ ⟦ φs ⟧*
-  ⟦ ‵rec φ ψ ⟧   = #rec ⟦ φ ⟧ ⟦ ψ ⟧
+  ⟦ ‵comp g fs ⟧ = #comp ⟦ g ⟧ ⟦ fs ⟧*
+  ⟦ ‵rec f g ⟧   = #rec ⟦ f ⟧ ⟦ g ⟧
 
   ⟦_⟧* : ∀ {n m} → Prim* n m → #Fun* n m
   ⟦ [] ⟧*     = []
-  ⟦ φ ∷ φs ⟧* = ⟦ φ ⟧ ∷ ⟦ φs ⟧*
+  ⟦ f ∷ fs ⟧* = ⟦ f ⟧ ∷ ⟦ fs ⟧*
 
 mutual
-  i→e : ∀ {n} (φ : Prim n) → IsPrim ⟦ φ ⟧
-  i→e ‵zero        = isprim-#zero ∙refl
-  i→e ‵suc         = isprim-#suc ∙refl
-  i→e (‵get i)     = isprim-#get i ∙refl
-  i→e (‵comp ψ φs) = isprim-#comp ∙refl (i→e ψ) (i→e* φs)
-  i→e (‵rec φ ψ)   = isprim-#rec ∙refl (i→e φ) (i→e ψ)
+  i→e : ∀ {n} (f : Prim n) → IsPrim ⟦ f ⟧
+  i→e ‵zero        = isprim-#zero refl
+  i→e ‵suc         = isprim-#suc refl
+  i→e (‵get i)     = isprim-#get i refl
+  i→e (‵comp g fs) = isprim-#comp refl (i→e g) (i→e* fs)
+  i→e (‵rec f g)   = isprim-#rec refl (i→e f) (i→e g)
 
   i→e* : ∀ {n m} (φs : Prim* n m) → IsPrim* ⟦ φs ⟧*
   i→e* []       = []
-  i→e* (φ ∷ φs) = i→e φ ∷ i→e* φs
+  i→e* (f ∷ fs) = i→e f ∷ i→e* fs
 
 mutual
-  e→i : ∀ {n} {φ : #Fun n} → IsPrim φ → Σ (Prim n) λ f → φ ≐ ⟦ f ⟧
+  e→i : ∀ {n} {φ : #Fun n} → IsPrim φ → Σ (Prim n) (λ f → φ ≐ ⟦ f ⟧)
   e→i (isprim-#zero h)      = ‵zero , h
   e→i (isprim-#suc h)       = ‵suc , h
   e→i (isprim-#get i h)     = ‵get i , h
-  e→i (isprim-#comp h e ds) = {!!}
-  e→i (isprim-#rec {φ = φ} {ψ} {ξ} h d e) =
-    let (f , h₁) = e→i d in
-    let (g , h₂) = e→i e in
-    ‵rec f g , ∙trans h {!cong₂ ? ? ?!} -- TODO: this should be reasoning by extensional equality ON N-PLACE FUNCTIONS ARGH
+  e→i (isprim-#comp {ξ = ξ} {ψ} {φs} h e ds) with e→i e | e→i* ds
+  ... | g , h₁ | fs , hs₂ = ‵comp g fs , λ {xs} →
+      begin
+        ξ xs
+      ≡⟨ h {xs} ⟩
+        #comp ψ φs xs
+      ≡⟨⟩
+        ψ (for φs (λ φ → φ xs))
+      ≡⟨ h₁ {for φs (λ φ → φ xs)} ⟩
+        ⟦ g ⟧ (for φs (λ φ → φ xs))
+      ≡⟨ cong ⟦ g ⟧ (hs₂ {xs}) ⟩
+        ⟦ g ⟧ (for ⟦ fs ⟧* (λ φ → φ xs))
+      ≡⟨⟩
+        #comp ⟦ g ⟧ ⟦ fs ⟧* xs
+      ∎
+  e→i (isprim-#rec {n} {ξ} {φ} {ψ} h d e) with e→i d | e→i e
+  ... | f , h₁ | g , h₂ = ‵rec f g , loop f g h₁ h₂
+    where
+      loop : ∀ (f : Prim n) (g : Prim (suc (suc n))) (h₁ : φ ≐ ⟦ f ⟧) (h₂ : ψ ≐ ⟦ g ⟧) →
+             ξ ≐ #rec ⟦ f ⟧ ⟦ g ⟧
+      loop f g h₁ h₂ {zero ∷ ys} =
+        begin
+          ξ (zero ∷ ys)
+        ≡⟨ h {zero ∷ ys} ⟩
+          #rec φ ψ (zero ∷ ys)
+        ≡⟨⟩
+          φ ys
+        ≡⟨ h₁ {ys} ⟩
+          ⟦ f ⟧ ys
+        ≡⟨⟩
+          #rec ⟦ f ⟧ ⟦ g ⟧ (zero ∷ ys)
+        ∎
+      loop f g h₁ h₂ {suc x ∷ ys} =
+        begin
+          ξ (suc x ∷ ys)
+        ≡⟨ h {suc x ∷ ys} ⟩
+          #rec φ ψ (suc x ∷ ys)
+        ≡⟨⟩
+          ψ (#rec φ ψ (x ∷ ys) ∷ x ∷ ys)
+        ≡⟨ cong (ψ ∘ (_∷ x ∷ ys)) (sym (h {x ∷ ys})) ⟩
+          ψ (ξ (x ∷ ys) ∷ x ∷ ys)
+        ≡⟨ h₂ {ξ (x ∷ ys) ∷ x ∷ ys} ⟩
+          ⟦ g ⟧ (ξ (x ∷ ys) ∷ x ∷ ys)
+        ≡⟨ cong (⟦ g ⟧ ∘ (_∷ x ∷ ys)) (loop f g h₁ h₂ {x ∷ ys}) ⟩
+          ⟦ g ⟧ (#rec ⟦ f ⟧ ⟦ g ⟧ (x ∷ ys) ∷ x ∷ ys)
+        ≡⟨⟩
+          #rec ⟦ f ⟧ ⟦ g ⟧ (suc x ∷ ys)
+        ∎
 
---    let (f , h₁) = e→i d in
---    let (g , h₂) = e→i e in
---    ‵rec f g , λ {xs} → -- TODO: this should be reasoning by extensional equality argh
---      begin
---        ξ xs
---      ≡⟨ h {xs} ⟩
---        #rec φ ψ xs
---      ≡⟨ cong₃ #rec {!!} {!!} refl ⟩
---        #rec ⟦ f ⟧ ⟦ g ⟧ xs
---      ∎
+  e→i* : ∀ {n m} {φs : #Fun* n m} → IsPrim* φs → Σ (Prim* n m) (λ fs →
+            ∀ {xs} → for φs (λ φ → φ xs) ≡ for ⟦ fs ⟧* (λ f → f xs))
+  e→i* []       = [] , refl
+  e→i* (d ∷ ds) with e→i d | e→i* ds
+  ... | f , h | fs , hs = f ∷ fs , cong₂ _∷_ h hs
 
-  e→i* : ∀ {n m} {φs : #Fun* n m} → IsPrim* φs → Σ (Prim* n m) λ fs →
-            ∀ {xs} → for φs (λ φ → φ xs) ≡ for ⟦ fs ⟧* (λ f → f xs)
-  e→i* = {!!}
 
 -- -- -- ----------------------------------------------------------------------------------------------------
 
@@ -394,7 +401,7 @@ mutual
 
 -- -- --   ‵proj   : ∀ {Θ Γ n ts} (i : Fin n) → Θ / Γ ⊢ ‵fun (proj i) ts ‵= get i ts
 -- -- --   ‵comp   : ∀ {Θ Γ n m ts} (φs : Vec (Prim n) m) (ψ : Prim m) →
--- -- --               Θ / Γ ⊢ ‵fun (comp φs ψ) ts ‵= ‵fun ψ (for φs λ φ → ‵fun φ ts)
+-- -- --               Θ / Γ ⊢ ‵fun (comp φs ψ) ts ‵= ‵fun ψ (for φs (λ φ → ‵fun φ ts))
 -- -- --   ‵rec    : ∀ {Θ Γ n s ts} (φ : Prim n) (ψ : Prim (suc (suc n))) →
 -- -- --               Θ / Γ ⊢ ‵fun (rec φ ψ) (‵zero ∷ ts) ‵= ‵fun φ ts ‵∧
 -- -- --                 ‵fun (rec φ ψ) (‵suc s ∷ ts) ‵= ‵fun ψ (‵fun (rec φ ψ) (s ∷ ts) ∷ s ∷ ts)
