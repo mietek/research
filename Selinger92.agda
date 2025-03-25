@@ -17,7 +17,7 @@ open import Data.Product using (Σ ; _,_ ; _×_)
 import Data.Vec as Vec
 open Vec using (Vec ; [] ; _∷_)
 
-open import Function using (_∘_ ; const ; flip)
+open import Function using (_∘_ ; _$_ ; flip)
 
 open import Level using (_⊔_)
 
@@ -25,14 +25,7 @@ open import Relation.Binary.PropositionalEquality
   using (_≡_ ; refl ; sym ; trans ; subst ; cong ; cong₂ ; module ≡-Reasoning)
 open ≡-Reasoning
 
-
-----------------------------------------------------------------------------------------------------
-
--- propositional equality things
-
-cong₃ : ∀ {a b c d} {A : Set a} {B : Set b} {C : Set c} {D : Set d} (f : A → B → C → D)
-          {x x′ y y′ z z′} → x ≡ x′ → y ≡ y′ → z ≡ z′ → f x y z ≡ f x′ y′ z′
-cong₃ f refl refl refl = refl
+open import Relation.Nullary using (Dec ; yes ; no)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -51,19 +44,10 @@ for xs f = Vec.map f xs
 
 ----------------------------------------------------------------------------------------------------
 
--- natural things
-
-rec : ∀ {a} {A : Set a} → Nat → A → (Nat → A → A) → A
-rec zero    x f = x
-rec (suc y) x f = f y (rec y x f)
-
-
-----------------------------------------------------------------------------------------------------
-
--- building blocks for the standard model of primitive recursive n-place functions on naturals
+-- building blocks for the standard model of primitive recursive n-ary functions on naturals
 -- Troelstra (1973) §1.3.4
 
--- n-place functions on naturals
+-- n-ary functions on naturals
 #Fun : Nat → Set
 #Fun n = Vec Nat n → Nat
 
@@ -76,20 +60,145 @@ rec (suc y) x f = f y (rec y x f)
 #suc : #Fun 1
 #suc (x ∷ []) = suc x
 
-#get : ∀ {n} → Fin n → #Fun n
-#get i xs = get i xs
+#proj : ∀ {n} → Fin n → #Fun n
+#proj i xs = get i xs
 
 #comp : ∀ {n m} (ψ : #Fun m) (φs : #Fun* n m) → #Fun n
-#comp ψ φs xs = ψ (for φs λ φ → φ xs)
+#comp ψ φs xs = ψ (for φs (_$ xs))
 
 #rec : ∀ {n} (φ : #Fun n) (ψ : #Fun (suc (suc n))) → #Fun (suc n)
--- TODO: maybe more clear to define #rec directly
--- #rec φ ψ (x ∷ ys) = rec x (φ ys) (λ x′ r → ψ (r ∷ x′ ∷ ys))
 #rec φ ψ (zero  ∷ ys) = φ ys
 #rec φ ψ (suc x ∷ ys) = ψ (#rec φ ψ (x ∷ ys) ∷ x ∷ ys)
 
 
 ----------------------------------------------------------------------------------------------------
+
+-- primitive recursive n-ary functions on naturals
+mutual
+  data Prim : Nat → Set where
+    zero : Prim zero
+    suc  : Prim (suc zero)
+    proj : ∀ {n} (i : Fin n) → Prim n
+    comp : ∀ {n m} (g : Prim m) (fs : Prim* n m) → Prim n
+    rec  : ∀ {n} (f : Prim n) (g : Prim (suc (suc n))) → Prim (suc n)
+
+  Prim* : Nat → Nat → Set
+  Prim* n m = Vec (Prim n) m
+
+mutual
+  ⟦_⟧ : ∀ {n} → Prim n → #Fun n
+  ⟦ zero ⟧      = #zero
+  ⟦ suc ⟧       = #suc
+  ⟦ proj i ⟧    = #proj i
+  ⟦ comp g fs ⟧ = #comp ⟦ g ⟧ ⟦ fs ⟧*
+  ⟦ rec f g ⟧   = #rec ⟦ f ⟧ ⟦ g ⟧
+
+  ⟦_⟧* : ∀ {n m} → Prim* n m → #Fun* n m
+  ⟦ [] ⟧*     = []
+  ⟦ f ∷ fs ⟧* = ⟦ f ⟧ ∷ ⟦ fs ⟧*
+
+
+----------------------------------------------------------------------------------------------------
+
+-- TODO: probably pointless; delete this
+
+_≐_ : ∀ {a b} {A : Set a} {B : Set b} → (A → B) → (A → B) → Set (a ⊔ b)
+f ≐ f′ = ∀ {x} → f x ≡ f′ x
+
+mutual
+  data IsPrim : ∀ {n} → #Fun n → Set where
+    iszero : ∀ {ξ : #Fun zero} (h : ξ ≐ #zero) → IsPrim ξ
+    issuc  : ∀ {ξ : #Fun (suc zero)} (h : ξ ≐ #suc) → IsPrim ξ
+    isproj : ∀ {n} i {ξ : #Fun n} (h : ξ ≐ #proj i) → IsPrim ξ
+    iscomp : ∀ {n m} {ξ : #Fun n} {ψ : #Fun m} {φs : #Fun* n m} →
+               (h : ξ ≐ #comp ψ φs) (e : IsPrim ψ) (ds : IsPrim* φs) → IsPrim ξ
+    isrec  : ∀ {n} {ξ : #Fun (suc n)} {φ : #Fun n} {ψ : #Fun (suc (suc n))} →
+               (h : ξ ≐ #rec φ ψ) (d : IsPrim φ) (e : IsPrim ψ) → IsPrim ξ
+
+  data IsPrim* {n} : ∀ {m} → #Fun* n m → Set where
+    []  : IsPrim* []
+    _∷_ : ∀ {m} {φ : #Fun n} {φs : #Fun* n m} (d : IsPrim φ) (ds : IsPrim* φs) →
+            IsPrim* (φ ∷ φs)
+
+mutual
+  i→e : ∀ {n} (f : Prim n) → IsPrim ⟦ f ⟧
+  i→e zero        = iszero refl
+  i→e suc         = issuc refl
+  i→e (proj i)    = isproj i refl
+  i→e (comp g fs) = iscomp refl (i→e g) (i→e* fs)
+  i→e (rec f g)   = isrec refl (i→e f) (i→e g)
+
+  i→e* : ∀ {n m} (φs : Prim* n m) → IsPrim* ⟦ φs ⟧*
+  i→e* []       = []
+  i→e* (f ∷ fs) = i→e f ∷ i→e* fs
+
+mutual
+  e→i : ∀ {n} {φ : #Fun n} → IsPrim φ → Σ (Prim n) λ f → φ ≐ ⟦ f ⟧
+  e→i (iszero h)      = zero , h
+  e→i (issuc h)       = suc , h
+  e→i (isproj i h)    = proj i , h
+  e→i (iscomp {ξ = ξ} {ψ} {φs} h e ds) with e→i e | e→i* ds
+  ... | g , h₁ | fs , hs₂ = comp g fs , do-comp
+    where
+      do-comp : ξ ≐ #comp ⟦ g ⟧ ⟦ fs ⟧*
+      do-comp {xs} =
+        begin
+          ξ xs
+        ≡⟨ h {xs} ⟩
+          #comp ψ φs xs
+        ≡⟨⟩
+          ψ (for φs (_$ xs))
+        ≡⟨ h₁ {for φs (_$ xs)} ⟩
+          ⟦ g ⟧ (for φs (_$ xs))
+        ≡⟨ cong ⟦ g ⟧ (hs₂ {xs}) ⟩
+          ⟦ g ⟧ (for ⟦ fs ⟧* (_$ xs))
+        ≡⟨⟩
+          #comp ⟦ g ⟧ ⟦ fs ⟧* xs
+        ∎
+  e→i (isrec {n} {ξ} {φ} {ψ} h d e) with e→i d | e→i e
+  ... | f , h₁ | g , h₂ = rec f g , do-rec f g h₁ h₂
+    where
+      do-rec : ∀ (f : Prim n) (g : Prim (suc (suc n))) (h₁ : φ ≐ ⟦ f ⟧) (h₂ : ψ ≐ ⟦ g ⟧) →
+                 ξ ≐ #rec ⟦ f ⟧ ⟦ g ⟧
+      do-rec f g h₁ h₂ {zero ∷ ys} =
+        begin
+          ξ (zero ∷ ys)
+        ≡⟨ h {zero ∷ ys} ⟩
+          #rec φ ψ (zero ∷ ys)
+        ≡⟨⟩
+          φ ys
+        ≡⟨ h₁ {ys} ⟩
+          ⟦ f ⟧ ys
+        ≡⟨⟩
+          #rec ⟦ f ⟧ ⟦ g ⟧ (zero ∷ ys)
+        ∎
+      do-rec f g h₁ h₂ {suc x ∷ ys} =
+        begin
+          ξ (suc x ∷ ys)
+        ≡⟨ h {suc x ∷ ys} ⟩
+          #rec φ ψ (suc x ∷ ys)
+        ≡⟨⟩
+          ψ (#rec φ ψ (x ∷ ys) ∷ x ∷ ys)
+        ≡⟨ cong (ψ ∘ (_∷ x ∷ ys)) (sym (h {x ∷ ys})) ⟩
+          ψ (ξ (x ∷ ys) ∷ x ∷ ys)
+        ≡⟨ h₂ {ξ (x ∷ ys) ∷ x ∷ ys} ⟩
+          ⟦ g ⟧ (ξ (x ∷ ys) ∷ x ∷ ys)
+        ≡⟨ cong (⟦ g ⟧ ∘ (_∷ x ∷ ys)) (do-rec f g h₁ h₂ {x ∷ ys}) ⟩
+          ⟦ g ⟧ (#rec ⟦ f ⟧ ⟦ g ⟧ (x ∷ ys) ∷ x ∷ ys)
+        ≡⟨⟩
+          #rec ⟦ f ⟧ ⟦ g ⟧ (suc x ∷ ys)
+        ∎
+
+  e→i* : ∀ {n m} {φs : #Fun* n m} → IsPrim* φs → Σ (Prim* n m) λ fs →
+            ∀ {xs} → for φs (_$ xs) ≡ for ⟦ fs ⟧* (_$ xs)
+  e→i* []       = [] , refl
+  e→i* (d ∷ ds) with e→i d | e→i* ds
+  ... | f , h | fs , hs = f ∷ fs , cong₂ _∷_ h hs
+
+
+----------------------------------------------------------------------------------------------------
+
+-- TODO: clean this up
 
 -- some primitive recursive n-place functions on naturals
 -- Troelstra and van Dalen (1988) §1.3
@@ -102,17 +211,34 @@ ok-#const : ∀ {n} x (ys : Vec Nat n) → #const x ys ≡ x
 ok-#const zero    ys = refl
 ok-#const (suc x) ys = cong suc (ok-#const x ys)
 
+isprim-#const : ∀ {n} x → IsPrim (#const {n} x)
+isprim-#const zero    = iscomp refl (iszero refl) []
+isprim-#const (suc x) = iscomp refl (issuc refl) (isprim-#const x ∷ [])
+
+const : ∀ {n} x → Prim n
+const x = fst (e→i (isprim-#const x))
+
 -- _+_ : Nat → Nat → Nat
 -- zero  + y = y
 -- suc x + y = suc (x + y)
 
 #add : #Fun 2
-#add = #rec (#get zero)
-            (#comp #suc (#get zero ∷ []))
+#add = #rec (#proj zero)
+            (#comp #suc (#proj zero ∷ []))
 
 ok-#add : ∀ x y → #add (x ∷ y ∷ []) ≡ x + y
 ok-#add zero    y = refl
 ok-#add (suc x) y = cong suc (ok-#add x y)
+
+isprim-#add : IsPrim #add
+isprim-#add = isrec refl (isproj zero refl)
+                         (iscomp refl (issuc refl) (isproj zero refl ∷ []))
+
+add : Prim 2
+add = fst (e→i isprim-#add)
+
+ok-add : ∀ x y → ⟦ add ⟧ (x ∷ y ∷ []) ≡ x + y
+ok-add = ok-#add
 
 -- _*_ : Nat → Nat → Nat
 -- zero  * y = zero
@@ -120,7 +246,7 @@ ok-#add (suc x) y = cong suc (ok-#add x y)
 
 #mul : #Fun 2
 #mul = #rec (#const 0)
-            (#comp #add (#get (suc (suc zero)) ∷ #get zero ∷ []))
+            (#comp #add (#proj (suc (suc zero)) ∷ #proj zero ∷ []))
 
 ok-#mul : ∀ x y → #mul (x ∷ y ∷ []) ≡ x * y
 ok-#mul zero    y = refl
@@ -132,12 +258,19 @@ ok-#mul (suc x) y = begin
                       y + x * y
                     ∎
 
+mul : Prim 2
+mul = rec (const 0)
+          (comp add (proj (suc (suc zero)) ∷ proj zero ∷ []))
+
+ok-mul : ∀ x y → ⟦ mul ⟧ (x ∷ y ∷ []) ≡ x * y
+ok-mul = ok-#mul
+
 -- pred : Nat → Nat
 -- pred x = x ∸ 1
 
 #pred : #Fun 1
 #pred = #rec (#const 0)
-             (#get (suc zero))
+             (#proj (suc zero))
 
 ok-#pred : ∀ x → #pred (x ∷ []) ≡ pred x
 ok-#pred zero    = refl
@@ -158,314 +291,204 @@ ok-#pred (suc x) = refl
 
 ----------------------------------------------------------------------------------------------------
 
-_≐_ : ∀ {a b} {A : Set a} {B : Set b} → (A → B) → (A → B) → Set (a ⊔ b)
-f ≐ f′ = ∀ {x} → f x ≡ f′ x
+infix 16 ‵¬_
+infix 17 ‵∀_ ‵∃_
+infixr 18 _‵⊃_ _‵⫗_
+infixl 19 _‵∧_ _‵∨_
 
--- extensional characterization of primitive recursive n-place functions on naturals
-mutual
-  data IsPrim : ∀ {n} → #Fun n → Set where
-    isprim-#zero : ∀ {ξ : #Fun zero} (h : ξ ≐ #zero) → IsPrim ξ
-    isprim-#suc  : ∀ {ξ : #Fun (suc zero)} (h : ξ ≐ #suc) → IsPrim ξ
-    isprim-#get  : ∀ {n} i {ξ : #Fun n} (h : ξ ≐ #get i) → IsPrim ξ
-    isprim-#comp : ∀ {n m} {ξ : #Fun n} {ψ : #Fun m} {φs : #Fun* n m} →
-                     (h : ξ ≐ #comp ψ φs) (e : IsPrim ψ) (ds : IsPrim* φs) → IsPrim ξ
-    isprim-#rec  : ∀ {n} {ξ : #Fun (suc n)} {φ : #Fun n} {ψ : #Fun (suc (suc n))} →
-                     (h : ξ ≐ #rec φ ψ) (d : IsPrim φ) (e : IsPrim ψ) → IsPrim ξ
+-- terms, indexed by number of numerical variables
+data Tm (k : Nat) : Set where
+  ‵var : ∀ (i : Fin k) → Tm k -- i-th numerical variable
+  ‵fun : ∀ {n} (φ : Prim n) (ts : Vec (Tm k) n) → Tm k
 
-  data IsPrim* {n} : ∀ {m} → #Fun* n m → Set where
-    []  : IsPrim* []
-    _∷_ : ∀ {m} {φ : #Fun n} {φs : #Fun* n m} (d : IsPrim φ) (ds : IsPrim* φs) → IsPrim* (φ ∷ φs)
+Tms : Nat → Nat → Set
+Tms k n = Vec (Tm k) n
+
+‵zero : ∀ {k} → Tm k
+‵zero = ‵fun zero []
+
+‵suc : ∀ {k} → Tm k → Tm k
+‵suc t = ‵fun suc (t ∷ [])
+
+-- formulas, indexed by number of numerical variables
+data Fm (k : Nat) : Set where
+  _‵⊃_ : ∀ (A B : Fm k) → Fm k
+  _‵∧_ : ∀ (A B : Fm k) → Fm k
+  _‵∨_ : ∀ (A B : Fm k) → Fm k
+  ‵∀_  : ∀ (B : Fm (suc k)) → Fm k
+  ‵∃_  : ∀ (B : Fm (suc k)) → Fm k
+  ‵⊥  : Fm k
+  _‵=_ : ∀ (t u : Tm k) → Fm k
+
+Fms : Nat → Set
+Fms k = List (Fm k)
+
+‵¬_ : ∀ {k} → Fm k → Fm k
+‵¬ A = A ‵⊃ ‵⊥
+
+_‵⫗_ : ∀ {k} → Fm k → Fm k → Fm k
+A ‵⫗ B = (A ‵⊃ B) ‵∧ (B ‵⊃ A)
+
+_‵≠_ : ∀ {k} → Tm k → Tm k → Fm k
+t ‵≠ u = ‵¬ t ‵= u
 
 
 ----------------------------------------------------------------------------------------------------
 
--- intensional characterization of primitive recursive n-place functions on naturals
-data Prim : Nat → Set where
-  ‵zero : Prim zero
-  ‵suc  : Prim (suc zero)
-  ‵get  : ∀ {n} (i : Fin n) → Prim n
-  ‵comp : ∀ {n m} (g : Prim m) (fs : Vec (Prim n) m) → Prim n
-  ‵rec  : ∀ {n} (f : Prim n) (g : Prim (suc (suc n))) → Prim (suc n)
+-- TODO: usual things
 
-Prim* : Nat → Nat → Set
-Prim* n m = Vec (Prim n) m
+postulate
+  -- weaken formula by adding one numerical variable
+  ↑ : ∀ {k} (A : Fm k) → Fm (suc k)
 
-mutual
-  ⟦_⟧ : ∀ {n} → Prim n → #Fun n
-  ⟦ ‵zero ⟧      = #zero
-  ⟦ ‵suc ⟧       = #suc
-  ⟦ ‵get i ⟧     = #get i
-  ⟦ ‵comp g fs ⟧ = #comp ⟦ g ⟧ ⟦ fs ⟧*
-  ⟦ ‵rec f g ⟧   = #rec ⟦ f ⟧ ⟦ g ⟧
+  -- weaken formulas by adding one numerical variable
+  ↑* : ∀ {k} (Γ : Fms k) → Fms (suc k)
 
-  ⟦_⟧* : ∀ {n m} → Prim* n m → #Fun* n m
-  ⟦ [] ⟧*     = []
-  ⟦ f ∷ fs ⟧* = ⟦ f ⟧ ∷ ⟦ fs ⟧*
+  -- substitute topmost numerical variable in formula by term
+  _[_] : ∀ {k} (A : Fm (suc k)) (s : Tm k) → Fm k
 
-mutual
-  i→e : ∀ {n} (f : Prim n) → IsPrim ⟦ f ⟧
-  i→e ‵zero        = isprim-#zero refl
-  i→e ‵suc         = isprim-#suc refl
-  i→e (‵get i)     = isprim-#get i refl
-  i→e (‵comp g fs) = isprim-#comp refl (i→e g) (i→e* fs)
-  i→e (‵rec f g)   = isprim-#rec refl (i→e f) (i→e g)
-
-  i→e* : ∀ {n m} (φs : Prim* n m) → IsPrim* ⟦ φs ⟧*
-  i→e* []       = []
-  i→e* (f ∷ fs) = i→e f ∷ i→e* fs
-
-mutual
-  e→i : ∀ {n} {φ : #Fun n} → IsPrim φ → Σ (Prim n) (λ f → φ ≐ ⟦ f ⟧)
-  e→i (isprim-#zero h)      = ‵zero , h
-  e→i (isprim-#suc h)       = ‵suc , h
-  e→i (isprim-#get i h)     = ‵get i , h
-  e→i (isprim-#comp {ξ = ξ} {ψ} {φs} h e ds) with e→i e | e→i* ds
-  ... | g , h₁ | fs , hs₂ = ‵comp g fs , λ {xs} →
-      begin
-        ξ xs
-      ≡⟨ h {xs} ⟩
-        #comp ψ φs xs
-      ≡⟨⟩
-        ψ (for φs (λ φ → φ xs))
-      ≡⟨ h₁ {for φs (λ φ → φ xs)} ⟩
-        ⟦ g ⟧ (for φs (λ φ → φ xs))
-      ≡⟨ cong ⟦ g ⟧ (hs₂ {xs}) ⟩
-        ⟦ g ⟧ (for ⟦ fs ⟧* (λ φ → φ xs))
-      ≡⟨⟩
-        #comp ⟦ g ⟧ ⟦ fs ⟧* xs
-      ∎
-  e→i (isprim-#rec {n} {ξ} {φ} {ψ} h d e) with e→i d | e→i e
-  ... | f , h₁ | g , h₂ = ‵rec f g , loop f g h₁ h₂
-    where
-      loop : ∀ (f : Prim n) (g : Prim (suc (suc n))) (h₁ : φ ≐ ⟦ f ⟧) (h₂ : ψ ≐ ⟦ g ⟧) →
-             ξ ≐ #rec ⟦ f ⟧ ⟦ g ⟧
-      loop f g h₁ h₂ {zero ∷ ys} =
-        begin
-          ξ (zero ∷ ys)
-        ≡⟨ h {zero ∷ ys} ⟩
-          #rec φ ψ (zero ∷ ys)
-        ≡⟨⟩
-          φ ys
-        ≡⟨ h₁ {ys} ⟩
-          ⟦ f ⟧ ys
-        ≡⟨⟩
-          #rec ⟦ f ⟧ ⟦ g ⟧ (zero ∷ ys)
-        ∎
-      loop f g h₁ h₂ {suc x ∷ ys} =
-        begin
-          ξ (suc x ∷ ys)
-        ≡⟨ h {suc x ∷ ys} ⟩
-          #rec φ ψ (suc x ∷ ys)
-        ≡⟨⟩
-          ψ (#rec φ ψ (x ∷ ys) ∷ x ∷ ys)
-        ≡⟨ cong (ψ ∘ (_∷ x ∷ ys)) (sym (h {x ∷ ys})) ⟩
-          ψ (ξ (x ∷ ys) ∷ x ∷ ys)
-        ≡⟨ h₂ {ξ (x ∷ ys) ∷ x ∷ ys} ⟩
-          ⟦ g ⟧ (ξ (x ∷ ys) ∷ x ∷ ys)
-        ≡⟨ cong (⟦ g ⟧ ∘ (_∷ x ∷ ys)) (loop f g h₁ h₂ {x ∷ ys}) ⟩
-          ⟦ g ⟧ (#rec ⟦ f ⟧ ⟦ g ⟧ (x ∷ ys) ∷ x ∷ ys)
-        ≡⟨⟩
-          #rec ⟦ f ⟧ ⟦ g ⟧ (suc x ∷ ys)
-        ∎
-
-  e→i* : ∀ {n m} {φs : #Fun* n m} → IsPrim* φs → Σ (Prim* n m) (λ fs →
-            ∀ {xs} → for φs (λ φ → φ xs) ≡ for ⟦ fs ⟧* (λ f → f xs))
-  e→i* []       = [] , refl
-  e→i* (d ∷ ds) with e→i d | e→i* ds
-  ... | f , h | fs , hs = f ∷ fs , cong₂ _∷_ h hs
+  -- typed de Bruijn indices
+  _∋_ : ∀ {k} (Γ : Fms k) (A : Fm k) → Set
 
 
--- -- -- ----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
 
--- -- -- infix 16 ‵¬_
--- -- -- infix 17 ‵∀_ ‵∃_
--- -- -- infixr 18 _‵⊃_ _‵⫗_
--- -- -- infixl 19 _‵∧_ _‵∨_
+-- Heyting and Peano arithmetic
+data Theory : Set where
+  HA : Theory
+  PA : Theory
 
--- -- -- -- terms, indexed by number of numerical variables
--- -- -- data Tm (k : Nat) : Set where
--- -- --   ‵var : ∀ (i : Fin k) → Tm k -- i-th numerical variable
--- -- --   ‵fun : ∀ {n} (φ : Prim n) (ts : Vec (Tm k) n) → Tm k
+-- derivations, indexed by assumptions
+infix 3 _/_⊢_
+data _/_⊢_ {k} : Theory → Fms k → Fm k → Set where
+  ‵var    : ∀ {Θ Γ A} (i : Γ ∋ A) → Θ / Γ ⊢ A -- i-th assumption
+  ‵lam    : ∀ {Θ Γ A B} (d : Θ / A ∷ Γ ⊢ B) → Θ / Γ ⊢ A ‵⊃ B
+  _‵$_    : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A ‵⊃ B) (e : Θ / Γ ⊢ A) → Θ / Γ ⊢ B
+  ‵pair   : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A) (e : Θ / Γ ⊢ B) → Θ / Γ ⊢ A ‵∧ B
+  ‵fst    : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A ‵∧ B) → Θ / Γ ⊢ A
+  ‵snd    : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A ‵∧ B) → Θ / Γ ⊢ B
+  ‵left   : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A) → Θ / Γ ⊢ A ‵∨ B
+  ‵right  : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ B) → Θ / Γ ⊢ A ‵∨ B
+  ‵case   : ∀ {Θ Γ A B C} (c : Θ / Γ ⊢ A ‵∨ B) (d : Θ / A ∷ Γ ⊢ C) (e : Θ / B ∷ Γ ⊢ C) →
+              Θ / Γ ⊢ C
 
--- -- -- Tms : Nat → Nat → Set
--- -- -- Tms k n = Vec (Tm k) n
+  --  B[x]
+  -- ------
+  -- ∀xB[x]
+  ‵∀intro : ∀ {Θ Γ B} (d : Θ / ↑* Γ ⊢ B) → Θ / Γ ⊢ ‵∀ B
 
--- -- -- ‵zero : ∀ {k} → Tm k
--- -- -- ‵zero = ‵fun zero []
+  -- ∀xB[x]
+  -- ------
+  --  B[t]
+  ‵∀elim  : ∀ {Θ Γ B} (t : Tm k) (d : Θ / Γ ⊢ ‵∀ B) → Θ / Γ ⊢ B [ t ]
 
--- -- -- ‵suc : ∀ {k} → Tm k → Tm k
--- -- -- ‵suc t = ‵fun suc (t ∷ [])
+  --  B[t]
+  -- ------
+  -- ∃xB[x]
+  ‵∃intro : ∀ {Θ Γ B} (t : Tm k) (d : Θ / Γ ⊢ B [ t ]) → Θ / Γ ⊢ ‵∃ B
 
--- -- -- -- formulas, indexed by number of numerical variables
--- -- -- data Fm (k : Nat) : Set where
--- -- --   _‵⊃_ : ∀ (A B : Fm k) → Fm k
--- -- --   _‵∧_ : ∀ (A B : Fm k) → Fm k
--- -- --   _‵∨_ : ∀ (A B : Fm k) → Fm k
--- -- --   ‵∀_  : ∀ (B : Fm (suc k)) → Fm k
--- -- --   ‵∃_  : ∀ (B : Fm (suc k)) → Fm k
--- -- --   ‵⊥  : Fm k
--- -- --   _‵=_ : ∀ (t u : Tm k) → Fm k
+  --          B[x]
+  --           ⋮
+  --   ∃xB[x]  C
+  -- -------------
+  --       C
+  ‵∃elim  : ∀ {Θ Γ B C} (d : Θ / Γ ⊢ ‵∃ B) (e : Θ / B ∷ ↑* Γ ⊢ ↑ C) → Θ / Γ ⊢ C
 
--- -- -- Fms : Nat → Set
--- -- -- Fms k = List (Fm k)
+  -- HA has explosion (EFQ) as primitive
+  ‵abort  : ∀ {Γ C} (d : HA / Γ ⊢ ‵⊥) → HA / Γ ⊢ C
 
--- -- -- ‵¬_ : ∀ {k} → Fm k → Fm k
--- -- -- ‵¬ A = A ‵⊃ ‵⊥
+  -- PA has double negation elimination as primitive
+  ‵magic  : ∀ {Γ A} (d : PA / ‵¬ A ∷ Γ ⊢ ‵⊥) → PA / Γ ⊢ A
 
--- -- -- _‵⫗_ : ∀ {k} → Fm k → Fm k → Fm k
--- -- -- A ‵⫗ B = (A ‵⊃ B) ‵∧ (B ‵⊃ A)
+  ‵refl   : ∀ {Θ Γ t} → Θ / Γ ⊢ t ‵= t
+  ‵sym    : ∀ {Θ Γ t u} (d : Θ / Γ ⊢ t ‵= u) → Θ / Γ ⊢ u ‵= t
+  ‵trans  : ∀ {Θ Γ s t u} (d : Θ / Γ ⊢ s ‵= t) (e : Θ / Γ ⊢ t ‵= u) → Θ / Γ ⊢ s ‵= u
 
--- -- -- _‵≠_ : ∀ {k} → Tm k → Tm k → Fm k
--- -- -- t ‵≠ u = ‵¬ t ‵= u
+  ‵cong   : ∀ {Θ Γ n ts u} (φ : Prim n) (i : Fin n) (d : Θ / Γ ⊢ get i ts ‵= u) →
+              Θ / Γ ⊢ ‵fun φ ts ‵= ‵fun φ (put i ts u)
 
+  ‵sucpos : ∀ {Θ Γ t} → Θ / Γ ⊢ ‵suc t ‵≠ ‵zero
+  ‵sucinj : ∀ {Θ Γ t u} (d : Θ / Γ ⊢ ‵suc t ‵= ‵suc u) → Θ / Γ ⊢ t ‵= u
 
--- -- -- ----------------------------------------------------------------------------------------------------
+  ‵ind    : ∀ {Θ Γ B} (d : Θ / ↑* Γ ⊢ B [ ‵zero ])
+              (e : Θ / Γ ⊢ ‵∀ B [ ‵var zero ] ‵⊃ B [ ‵suc (‵var zero) ]) →
+              Θ / Γ ⊢ ‵∀ B [ ‵var zero ]
 
--- -- -- -- TODO: usual things
--- -- -- postulate
--- -- --   -- weaken formula by adding one numerical variable
--- -- --   ↑ : ∀ {k} (A : Fm k) → Fm (suc k)
+  ‵proj   : ∀ {Θ Γ n ts} (i : Fin n) → Θ / Γ ⊢ ‵fun (proj i) ts ‵= get i ts
+  ‵comp   : ∀ {Θ Γ n m ts} (φs : Vec (Prim n) m) (ψ : Prim m) →
+              Θ / Γ ⊢ ‵fun (comp ψ φs) ts ‵= ‵fun ψ (for φs λ φ → ‵fun φ ts)
+  ‵rec    : ∀ {Θ Γ n s ts} (φ : Prim n) (ψ : Prim (suc (suc n))) →
+              Θ / Γ ⊢ ‵fun (rec φ ψ) (‵zero ∷ ts) ‵= ‵fun φ ts ‵∧
+                ‵fun (rec φ ψ) (‵suc s ∷ ts) ‵= ‵fun ψ (‵fun (rec φ ψ) (s ∷ ts) ∷ s ∷ ts)
 
--- -- --   -- weaken formulas by adding one numerical variable
--- -- --   ↑* : ∀ {k} (Γ : Fms k) → Fms (suc k)
-
--- -- --   -- substitute topmost numerical variable in formula by term
--- -- --   _[_] : ∀ {k} (A : Fm (suc k)) (s : Tm k) → Fm k
-
--- -- --   -- typed de Bruijn indices
--- -- --   _∋_ : ∀ {k} (Γ : Fms k) (A : Fm k) → Set
-
-
--- -- -- ----------------------------------------------------------------------------------------------------
-
--- -- -- -- Heyting and Peano arithmetic
--- -- -- data Theory : Set where
--- -- --   HA : Theory
--- -- --   PA : Theory
-
--- -- -- -- derivations, indexed by assumptions
--- -- -- infix 3 _/_⊢_
--- -- -- data _/_⊢_ {k} : Theory → Fms k → Fm k → Set where
--- -- --   ‵var    : ∀ {Θ Γ A} (i : Γ ∋ A) → Θ / Γ ⊢ A -- i-th assumption
--- -- --   ‵lam    : ∀ {Θ Γ A B} (d : Θ / A ∷ Γ ⊢ B) → Θ / Γ ⊢ A ‵⊃ B
--- -- --   _‵$_    : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A ‵⊃ B) (e : Θ / Γ ⊢ A) → Θ / Γ ⊢ B
--- -- --   ‵pair   : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A) (e : Θ / Γ ⊢ B) → Θ / Γ ⊢ A ‵∧ B
--- -- --   ‵fst    : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A ‵∧ B) → Θ / Γ ⊢ A
--- -- --   ‵snd    : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A ‵∧ B) → Θ / Γ ⊢ B
--- -- --   ‵left   : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A) → Θ / Γ ⊢ A ‵∨ B
--- -- --   ‵right  : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ B) → Θ / Γ ⊢ A ‵∨ B
--- -- --   ‵case   : ∀ {Θ Γ A B C} (c : Θ / Γ ⊢ A ‵∨ B) (d : Θ / A ∷ Γ ⊢ C) (e : Θ / B ∷ Γ ⊢ C) →
--- -- --               Θ / Γ ⊢ C
-
--- -- --   --  B[x]
--- -- --   -- ------
--- -- --   -- ∀xB[x]
--- -- --   ‵∀intro : ∀ {Θ Γ B} (d : Θ / ↑* Γ ⊢ B) → Θ / Γ ⊢ ‵∀ B
-
--- -- --   -- ∀xB[x]
--- -- --   -- ------
--- -- --   --  B[t]
--- -- --   ‵∀elim  : ∀ {Θ Γ B} (t : Tm k) (d : Θ / Γ ⊢ ‵∀ B) → Θ / Γ ⊢ B [ t ]
-
--- -- --   --  B[t]
--- -- --   -- ------
--- -- --   -- ∃xB[x]
--- -- --   ‵∃intro : ∀ {Θ Γ B} (t : Tm k) (d : Θ / Γ ⊢ B [ t ]) → Θ / Γ ⊢ ‵∃ B
-
--- -- --   --          B[x]
--- -- --   --           ⋮
--- -- --   --   ∃xB[x]  C
--- -- --   -- -------------
--- -- --   --       C
--- -- --   ‵∃elim  : ∀ {Θ Γ B C} (d : Θ / Γ ⊢ ‵∃ B) (e : Θ / B ∷ ↑* Γ ⊢ ↑ C) → Θ / Γ ⊢ C
-
--- -- --   -- HA has explosion (EFQ) as primitive
--- -- --   ‵abort  : ∀ {Γ C} (d : HA / Γ ⊢ ‵⊥) → HA / Γ ⊢ C
-
--- -- --   -- PA has double negation elimination as primitive
--- -- --   ‵magic  : ∀ {Γ A} (d : PA / ‵¬ A ∷ Γ ⊢ ‵⊥) → PA / Γ ⊢ A
-
--- -- --   ‵refl   : ∀ {Θ Γ t} → Θ / Γ ⊢ t ‵= t
--- -- --   ‵sym    : ∀ {Θ Γ t u} (d : Θ / Γ ⊢ t ‵= u) → Θ / Γ ⊢ u ‵= t
--- -- --   ‵trans  : ∀ {Θ Γ s t u} (d : Θ / Γ ⊢ s ‵= t) (e : Θ / Γ ⊢ t ‵= u) → Θ / Γ ⊢ s ‵= u
-
--- -- --   ‵cong   : ∀ {Θ Γ n ts u} (φ : Prim n) (i : Fin n) (d : Θ / Γ ⊢ get i ts ‵= u) →
--- -- --               Θ / Γ ⊢ ‵fun φ ts ‵= ‵fun φ (put i ts u)
-
--- -- --   ‵sucpos : ∀ {Θ Γ t} → Θ / Γ ⊢ ‵suc t ‵≠ ‵zero
--- -- --   ‵sucinj : ∀ {Θ Γ t u} (d : Θ / Γ ⊢ ‵suc t ‵= ‵suc u) → Θ / Γ ⊢ t ‵= u
-
--- -- --   ‵ind    : ∀ {Θ Γ B} (d : Θ / ↑* Γ ⊢ B [ ‵zero ])
--- -- --               (e : Θ / Γ ⊢ ‵∀ B [ ‵var zero ] ‵⊃ B [ ‵suc (‵var zero) ]) →
--- -- --               Θ / Γ ⊢ ‵∀ B [ ‵var zero ]
-
--- -- --   ‵proj   : ∀ {Θ Γ n ts} (i : Fin n) → Θ / Γ ⊢ ‵fun (proj i) ts ‵= get i ts
--- -- --   ‵comp   : ∀ {Θ Γ n m ts} (φs : Vec (Prim n) m) (ψ : Prim m) →
--- -- --               Θ / Γ ⊢ ‵fun (comp φs ψ) ts ‵= ‵fun ψ (for φs (λ φ → ‵fun φ ts))
--- -- --   ‵rec    : ∀ {Θ Γ n s ts} (φ : Prim n) (ψ : Prim (suc (suc n))) →
--- -- --               Θ / Γ ⊢ ‵fun (rec φ ψ) (‵zero ∷ ts) ‵= ‵fun φ ts ‵∧
--- -- --                 ‵fun (rec φ ψ) (‵suc s ∷ ts) ‵= ‵fun ψ (‵fun (rec φ ψ) (s ∷ ts) ∷ s ∷ ts)
-
--- -- -- ‵congsuc : ∀ {Θ k} {Γ : Fms k} {t u} → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ ‵suc t ‵= ‵suc u
--- -- -- ‵congsuc d = ‵cong suc zero d
+‵congsuc : ∀ {Θ k} {Γ : Fms k} {t u} → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ ‵suc t ‵= ‵suc u
+‵congsuc d = ‵cong suc zero d
 
 
--- -- -- ----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
 
--- -- -- -- TODO: usual things
--- -- -- postulate
--- -- --   -- weaken derivation by adding one assumption
--- -- --   ⇑ : ∀ {Θ k} {Γ : Fms k} {A C} → Θ / Γ ⊢ A → Θ / C ∷ Γ ⊢ A
+-- TODO: more usual things
 
--- -- -- PA/abort : ∀ {k} {Γ : Fms k} {C} → PA / Γ ⊢ ‵⊥ → PA / Γ ⊢ C
--- -- -- PA/abort d = ‵magic (⇑ d)
-
--- -- -- lem2 : ∀ {k} {Γ : Fms k} {A} → HA / Γ ⊢ A → PA / Γ ⊢ A
--- -- -- lem2 (‵var i)      = ‵var i
--- -- -- lem2 (‵lam d)      = ‵lam (lem2 d)
--- -- -- lem2 (d ‵$ e)      = lem2 d ‵$ lem2 e
--- -- -- lem2 (‵pair d e)   = ‵pair (lem2 d) (lem2 e)
--- -- -- lem2 (‵fst d)      = ‵fst (lem2 d)
--- -- -- lem2 (‵snd d)      = ‵snd (lem2 d)
--- -- -- lem2 (‵left d)     = ‵left (lem2 d)
--- -- -- lem2 (‵right d)    = ‵right (lem2 d)
--- -- -- lem2 (‵case c d e) = ‵case (lem2 c) (lem2 d) (lem2 e)
--- -- -- lem2 (‵∀intro d)   = ‵∀intro (lem2 d)
--- -- -- lem2 (‵∀elim t d)  = ‵∀elim t (lem2 d)
--- -- -- lem2 (‵∃intro t d) = ‵∃intro t (lem2 d)
--- -- -- lem2 (‵∃elim d e)  = ‵∃elim (lem2 d) (lem2 e)
--- -- -- lem2 (‵abort d)    = PA/abort (lem2 d)
--- -- -- lem2 ‵refl         = ‵refl
--- -- -- lem2 (‵sym d)      = ‵sym (lem2 d)
--- -- -- lem2 (‵trans d e)  = ‵trans (lem2 d) (lem2 e)
--- -- -- lem2 (‵cong φ i d) = ‵cong φ i (lem2 d)
--- -- -- lem2 ‵sucpos       = ‵sucpos
--- -- -- lem2 (‵sucinj d)   = ‵sucinj (lem2 d)
--- -- -- lem2 (‵ind d e)    = ‵ind (lem2 d) (lem2 e)
--- -- -- lem2 (‵proj i)     = ‵proj i
--- -- -- lem2 (‵comp φs ψ)  = ‵comp φs ψ
--- -- -- lem2 (‵rec φ ψ)    = ‵rec φ ψ
+postulate
+  -- weaken derivation by adding one assumption
+  ⇑ : ∀ {Θ k} {Γ : Fms k} {A C} → Θ / Γ ⊢ A → Θ / C ∷ Γ ⊢ A
 
 
--- -- -- ----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
 
--- -- -- -- quantifier-free formulas
--- -- -- data QFree {k} : Fm k → Set where
--- -- --   _‵⊃_ : ∀ {A B} (α : QFree A) (β : QFree B) → QFree (A ‵⊃ B)
--- -- --   _‵∧_ : ∀ {A B} (α : QFree A) (β : QFree B) → QFree (A ‵∧ B)
--- -- --   _‵∨_ : ∀ {A B} (α : QFree A) (β : QFree B) → QFree (A ‵∨ B)
--- -- --   ‵⊥  : QFree ‵⊥
--- -- --   _‵=_ : ∀ {t u} → QFree (t ‵= u)
+PA/abort : ∀ {k} {Γ : Fms k} {C} → PA / Γ ⊢ ‵⊥ → PA / Γ ⊢ C
+PA/abort d = ‵magic (⇑ d)
 
--- -- -- lem3 : ∀ {k} {Γ : Fms k} {A ts} (α : QFree A) (φ : Prim k) →
--- -- --          HA / Γ ⊢ A ‵⫗ ‵fun φ ts ‵= ‵zero
--- -- -- lem3 α φ = {!!}
+lem2 : ∀ {k} {Γ : Fms k} {A} → HA / Γ ⊢ A → PA / Γ ⊢ A
+lem2 (‵var i)      = ‵var i
+lem2 (‵lam d)      = ‵lam (lem2 d)
+lem2 (d ‵$ e)      = lem2 d ‵$ lem2 e
+lem2 (‵pair d e)   = ‵pair (lem2 d) (lem2 e)
+lem2 (‵fst d)      = ‵fst (lem2 d)
+lem2 (‵snd d)      = ‵snd (lem2 d)
+lem2 (‵left d)     = ‵left (lem2 d)
+lem2 (‵right d)    = ‵right (lem2 d)
+lem2 (‵case c d e) = ‵case (lem2 c) (lem2 d) (lem2 e)
+lem2 (‵∀intro d)   = ‵∀intro (lem2 d)
+lem2 (‵∀elim t d)  = ‵∀elim t (lem2 d)
+lem2 (‵∃intro t d) = ‵∃intro t (lem2 d)
+lem2 (‵∃elim d e)  = ‵∃elim (lem2 d) (lem2 e)
+lem2 (‵abort d)    = PA/abort (lem2 d)
+lem2 ‵refl         = ‵refl
+lem2 (‵sym d)      = ‵sym (lem2 d)
+lem2 (‵trans d e)  = ‵trans (lem2 d) (lem2 e)
+lem2 (‵cong φ i d) = ‵cong φ i (lem2 d)
+lem2 ‵sucpos       = ‵sucpos
+lem2 (‵sucinj d)   = ‵sucinj (lem2 d)
+lem2 (‵ind d e)    = ‵ind (lem2 d) (lem2 e)
+lem2 (‵proj i)     = ‵proj i
+lem2 (‵comp φs ψ)  = ‵comp φs ψ
+lem2 (‵rec φ ψ)    = ‵rec φ ψ
 
 
--- -- -- ----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
 
--- -- -- -- TODO: double-negation translation
--- -- -- -- TODO: A-translation
+-- quantifier-free formulas
+data QFree {k} : Fm k → Set where
+  _‵⊃_ : ∀ {A B} (p : QFree A) (q : QFree B) → QFree (A ‵⊃ B)
+  _‵∧_ : ∀ {A B} (p : QFree A) (q : QFree B) → QFree (A ‵∧ B)
+  _‵∨_ : ∀ {A B} (p : QFree A) (q : QFree B) → QFree (A ‵∨ B)
+  ‵⊥  : QFree ‵⊥
+  _‵=_ : ∀ {t u} → QFree (t ‵= u)
+
+lem3 : ∀ {k} {Γ : Fms k} A {ts} {{_ : QFree A}} → Σ (Prim k) λ φ →
+         HA / Γ ⊢ A ‵⫗ ‵fun φ ts ‵= ‵zero
+lem3 (A ‵⊃ B) = {!!}
+lem3 (A ‵∧ B) = {!!}
+lem3 (A ‵∨ B) = {!!}
+lem3 ‵⊥ = {!!}
+lem3 (t ‵= u) = {!!}
 
 
--- -- -- ----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+
+-- TODO: double-negation translation
+-- TODO: A-translation
+
+
+----------------------------------------------------------------------------------------------------
