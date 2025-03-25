@@ -44,10 +44,10 @@ for xs f = Vec.map f xs
 
 ----------------------------------------------------------------------------------------------------
 
--- building blocks for the standard model of primitive recursive n-ary functions on naturals
+-- building blocks for the standard model of primitive recursive n-place functions on naturals
 -- Troelstra (1973) §1.3.4
 
--- n-ary functions on naturals
+-- n-place functions on naturals
 #Fun : Nat → Set
 #Fun n = Vec Nat n → Nat
 
@@ -73,7 +73,7 @@ for xs f = Vec.map f xs
 
 ----------------------------------------------------------------------------------------------------
 
--- primitive recursive n-ary functions on naturals
+-- primitive recursive n-place functions on naturals
 mutual
   data Prim : Nat → Set where
     zero : Prim zero
@@ -291,12 +291,29 @@ ok-#pred (suc x) = refl
 
 ----------------------------------------------------------------------------------------------------
 
-infix 16 ‵¬_
-infix 17 ‵∀_ ‵∃_
-infixr 18 _‵⊃_ _‵⫗_
-infixl 19 _‵∧_ _‵∨_
+{-
+⊢ x = 0 ∧ y = 0 ↔ x + y = 0
+⊢ x = 0 ∨ y = 0 ↔ x * y = 0
+⊢ x = 0 → y = 0 ↔ (1 - x) - (1 - y) = 0
+⊢ ⊥ ↔ S x = 0
 
--- terms, indexed by number of numerical variables
+_+_ _*_ _-_
+_=_
+_∧_ _∨_ _→_
+_↔_
+
+⊢ x = 0 → y = 0 ↔ (1 - x) - (1 - y) = 0
+⊢ ⊥ ↔ S x = 0
+
+-}
+
+infix 19 _‵=_
+infixl 18 _‵∧_ _‵∨_
+infixr 17 _‵→_ _‵↔_
+infix 16 ‵∀_ ‵∃_
+infix 15 ‵¬_
+
+-- terms, indexed by number of potential numerical variables
 data Tm (k : Nat) : Set where
   ‵var : ∀ (i : Fin k) → Tm k -- i-th numerical variable
   ‵fun : ∀ {n} (φ : Prim n) (ts : Vec (Tm k) n) → Tm k
@@ -310,24 +327,24 @@ Tms k n = Vec (Tm k) n
 ‵suc : ∀ {k} → Tm k → Tm k
 ‵suc t = ‵fun suc (t ∷ [])
 
--- formulas, indexed by number of numerical variables
+-- formulas, indexed by number of potential numerical variables
 data Fm (k : Nat) : Set where
-  _‵⊃_ : ∀ (A B : Fm k) → Fm k
-  _‵∧_ : ∀ (A B : Fm k) → Fm k
-  _‵∨_ : ∀ (A B : Fm k) → Fm k
-  ‵∀_  : ∀ (B : Fm (suc k)) → Fm k
-  ‵∃_  : ∀ (B : Fm (suc k)) → Fm k
-  ‵⊥  : Fm k
-  _‵=_ : ∀ (t u : Tm k) → Fm k
+  _‵→_ : ∀ (A B : Fm k) → Fm k
+  _‵∧_  : ∀ (A B : Fm k) → Fm k
+  _‵∨_  : ∀ (A B : Fm k) → Fm k
+  ‵∀_   : ∀ (B : Fm (suc k)) → Fm k
+  ‵∃_   : ∀ (B : Fm (suc k)) → Fm k
+  ‵⊥   : Fm k
+  _‵=_  : ∀ (t u : Tm k) → Fm k
 
 Fms : Nat → Set
 Fms k = List (Fm k)
 
 ‵¬_ : ∀ {k} → Fm k → Fm k
-‵¬ A = A ‵⊃ ‵⊥
+‵¬ A = A ‵→ ‵⊥
 
-_‵⫗_ : ∀ {k} → Fm k → Fm k → Fm k
-A ‵⫗ B = (A ‵⊃ B) ‵∧ (B ‵⊃ A)
+_‵↔_ : ∀ {k} → Fm k → Fm k → Fm k
+A ‵↔ B = (A ‵→ B) ‵∧ (B ‵→ A)
 
 _‵≠_ : ∀ {k} → Tm k → Tm k → Fm k
 t ‵≠ u = ‵¬ t ‵= u
@@ -338,16 +355,16 @@ t ‵≠ u = ‵¬ t ‵= u
 -- TODO: usual things
 
 postulate
-  -- weaken formula by adding one numerical variable
+  -- weaken formula by adding one unused numerical variable
   ↑ : ∀ {k} (A : Fm k) → Fm (suc k)
 
-  -- weaken formulas by adding one numerical variable
+  -- weaken formulas by adding one unused numerical variable
   ↑* : ∀ {k} (Γ : Fms k) → Fms (suc k)
 
   -- substitute topmost numerical variable in formula by term
   _[_] : ∀ {k} (A : Fm (suc k)) (s : Tm k) → Fm k
 
-  -- typed de Bruijn indices
+  -- assumptions, or typed de Bruijn indices
   _∋_ : ∀ {k} (Γ : Fms k) (A : Fm k) → Set
 
 
@@ -358,12 +375,12 @@ data Theory : Set where
   HA : Theory
   PA : Theory
 
--- derivations, indexed by assumptions
+-- derivations, indexed by potential assumptions
 infix 3 _/_⊢_
 data _/_⊢_ {k} : Theory → Fms k → Fm k → Set where
   ‵var    : ∀ {Θ Γ A} (i : Γ ∋ A) → Θ / Γ ⊢ A -- i-th assumption
-  ‵lam    : ∀ {Θ Γ A B} (d : Θ / A ∷ Γ ⊢ B) → Θ / Γ ⊢ A ‵⊃ B
-  _‵$_    : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A ‵⊃ B) (e : Θ / Γ ⊢ A) → Θ / Γ ⊢ B
+  ‵lam    : ∀ {Θ Γ A B} (d : Θ / A ∷ Γ ⊢ B) → Θ / Γ ⊢ A ‵→ B
+  _‵$_    : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A ‵→ B) (e : Θ / Γ ⊢ A) → Θ / Γ ⊢ B
   ‵pair   : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A) (e : Θ / Γ ⊢ B) → Θ / Γ ⊢ A ‵∧ B
   ‵fst    : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A ‵∧ B) → Θ / Γ ⊢ A
   ‵snd    : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A ‵∧ B) → Θ / Γ ⊢ B
@@ -394,10 +411,10 @@ data _/_⊢_ {k} : Theory → Fms k → Fm k → Set where
   --       C
   ‵∃elim  : ∀ {Θ Γ B C} (d : Θ / Γ ⊢ ‵∃ B) (e : Θ / B ∷ ↑* Γ ⊢ ↑ C) → Θ / Γ ⊢ C
 
-  -- HA has explosion (EFQ) as primitive
+  -- HA has explosion (ex falso quodlibet) as primitive
   ‵abort  : ∀ {Γ C} (d : HA / Γ ⊢ ‵⊥) → HA / Γ ⊢ C
 
-  -- PA has double negation elimination as primitive
+  -- PA has double negation elimination (reductio ad absurdum) as primitive
   ‵magic  : ∀ {Γ A} (d : PA / ‵¬ A ∷ Γ ⊢ ‵⊥) → PA / Γ ⊢ A
 
   ‵refl   : ∀ {Θ Γ t} → Θ / Γ ⊢ t ‵= t
@@ -411,7 +428,7 @@ data _/_⊢_ {k} : Theory → Fms k → Fm k → Set where
   ‵sucinj : ∀ {Θ Γ t u} (d : Θ / Γ ⊢ ‵suc t ‵= ‵suc u) → Θ / Γ ⊢ t ‵= u
 
   ‵ind    : ∀ {Θ Γ B} (d : Θ / ↑* Γ ⊢ B [ ‵zero ])
-              (e : Θ / Γ ⊢ ‵∀ B [ ‵var zero ] ‵⊃ B [ ‵suc (‵var zero) ]) →
+              (e : Θ / Γ ⊢ ‵∀ B [ ‵var zero ] ‵→ B [ ‵suc (‵var zero) ]) →
               Θ / Γ ⊢ ‵∀ B [ ‵var zero ]
 
   ‵proj   : ∀ {Θ Γ n ts} (i : Fin n) → Θ / Γ ⊢ ‵fun (proj i) ts ‵= get i ts
@@ -430,14 +447,14 @@ data _/_⊢_ {k} : Theory → Fms k → Fm k → Set where
 -- TODO: more usual things
 
 postulate
-  -- weaken derivation by adding one assumption
+  -- weaken derivation by adding one unused assumption
   ⇑ : ∀ {Θ k} {Γ : Fms k} {A C} → Θ / Γ ⊢ A → Θ / C ∷ Γ ⊢ A
 
 
 ----------------------------------------------------------------------------------------------------
 
-PA/abort : ∀ {k} {Γ : Fms k} {C} → PA / Γ ⊢ ‵⊥ → PA / Γ ⊢ C
-PA/abort d = ‵magic (⇑ d)
+PA-abort : ∀ {k} {Γ : Fms k} {C} → PA / Γ ⊢ ‵⊥ → PA / Γ ⊢ C
+PA-abort d = ‵magic (⇑ d)
 
 lem2 : ∀ {k} {Γ : Fms k} {A} → HA / Γ ⊢ A → PA / Γ ⊢ A
 lem2 (‵var i)      = ‵var i
@@ -453,7 +470,7 @@ lem2 (‵∀intro d)   = ‵∀intro (lem2 d)
 lem2 (‵∀elim t d)  = ‵∀elim t (lem2 d)
 lem2 (‵∃intro t d) = ‵∃intro t (lem2 d)
 lem2 (‵∃elim d e)  = ‵∃elim (lem2 d) (lem2 e)
-lem2 (‵abort d)    = PA/abort (lem2 d)
+lem2 (‵abort d)    = PA-abort (lem2 d)
 lem2 ‵refl         = ‵refl
 lem2 (‵sym d)      = ‵sym (lem2 d)
 lem2 (‵trans d e)  = ‵trans (lem2 d) (lem2 e)
@@ -469,26 +486,66 @@ lem2 (‵rec φ ψ)    = ‵rec φ ψ
 ----------------------------------------------------------------------------------------------------
 
 -- quantifier-free formulas
-data QFree {k} : Fm k → Set where
-  _‵⊃_ : ∀ {A B} (p : QFree A) (q : QFree B) → QFree (A ‵⊃ B)
-  _‵∧_ : ∀ {A B} (p : QFree A) (q : QFree B) → QFree (A ‵∧ B)
-  _‵∨_ : ∀ {A B} (p : QFree A) (q : QFree B) → QFree (A ‵∨ B)
-  ‵⊥  : QFree ‵⊥
-  _‵=_ : ∀ {t u} → QFree (t ‵= u)
-
-lem3 : ∀ {k} {Γ : Fms k} A {ts} {{_ : QFree A}} → Σ (Prim k) λ φ →
-         HA / Γ ⊢ A ‵⫗ ‵fun φ ts ‵= ‵zero
-lem3 (A ‵⊃ B) = {!!}
-lem3 (A ‵∧ B) = {!!}
-lem3 (A ‵∨ B) = {!!}
-lem3 ‵⊥ = {!!}
-lem3 (t ‵= u) = {!!}
+data IsQFree {k} : Fm k → Set where
+  _‵→_ : ∀ {A B} (p : IsQFree A) (q : IsQFree B) → IsQFree (A ‵→ B)
+  _‵∧_  : ∀ {A B} (p : IsQFree A) (q : IsQFree B) → IsQFree (A ‵∧ B)
+  _‵∨_  : ∀ {A B} (p : IsQFree A) (q : IsQFree B) → IsQFree (A ‵∨ B)
+  ‵⊥   : IsQFree ‵⊥
+  _‵=_  : ∀ {t u} → IsQFree (t ‵= u)
 
 
-----------------------------------------------------------------------------------------------------
+-- WIP
 
--- TODO: double-negation translation
--- TODO: A-translation
+-- {-
+
+--   ‵var : ∀ (i : Fin k) → Tm k -- i-th numerical variable
+--   ‵fun : ∀ {n} (φ : Prim n) (ts : Vec (Tm k) n) → Tm k
+--   ‵∀_   : ∀ (B : Fm (suc k)) → Fm k
+--   ‵∃_   : ∀ (B : Fm (suc k)) → Fm k
+
+-- -}
+
+-- data TmFVars {k} : Tm k → Nat → Set where
 
 
-----------------------------------------------------------------------------------------------------
+-- data FmFVars {k} : Fm k → Nat → Set where
+--   _‵→_ : ∀ {A B n m} (p : FmFVars A n) (q : FmFVars B m) → FmFVars (A ‵→ B) (n + m)
+--   _‵∧_  : ∀ {A B n m} (p : FmFVars A n) (q : FmFVars B m) → FmFVars (A ‵∧ B) (n + m)
+--   _‵∨_  : ∀ {A B n m} (p : FmFVars A n) (q : FmFVars B m) → FmFVars (A ‵∨ B) (n + m)
+--   ‵⊥   : FmFVars ‵⊥ zero
+--   _‵=_  : {!!}
+
+
+-- _‵+_ : ∀ {k} → Tm k → Tm k → Tm k
+-- x ‵+ y = ‵fun add (x ∷ y ∷ [])
+
+-- hm : ∀ {k} {Γ : Fms k} {x y} →
+--        HA / Γ ⊢ x ‵= ‵zero ‵∧ y ‵= ‵zero ‵↔ x ‵+ y ‵= ‵zero
+-- hm = ‵pair (‵lam {!!}) {!!}
+
+-- HA-lem3-bot : ∀ {k} {Γ : Fms k} {x} → HA / Γ ⊢ ‵⊥ ‵↔ ‵suc x ‵= ‵zero
+-- HA-lem3-bot = ‵pair (‵lam (‵abort (‵var {!!}))) ‵sucpos
+
+-- PA-lem3-bot : ∀ {k} {Γ : Fms k} {x} → PA / Γ ⊢ ‵⊥ ‵↔ ‵suc x ‵= ‵zero
+-- PA-lem3-bot = ‵pair (‵lam (PA-abort (‵var {!!}))) ‵sucpos
+
+-- lem3-bot : ∀ {Θ k} {Γ : Fms k} {x} → Θ / Γ ⊢ ‵⊥ ‵↔ ‵suc x ‵= ‵zero
+-- lem3-bot {HA} = HA-lem3-bot
+-- lem3-bot {PA} = PA-lem3-bot
+
+-- lem3 : ∀ {Θ k} {Γ : Fms k} A {ts} {{_ : IsQFree A}} → Σ (Prim k) λ φ →
+--          Θ / Γ ⊢ A ‵↔ ‵fun φ ts ‵= ‵zero
+-- lem3 (A ‵→ B) = {!!}
+-- lem3 (A ‵∧ B) = {!!}
+-- lem3 (A ‵∨ B) = {!!}
+-- lem3 ‵⊥ = {!? , !}
+-- lem3 (t ‵= u) = {!!}
+
+
+-- ----------------------------------------------------------------------------------------------------
+
+-- -- TODO: double-negation translation
+-- -- TODO: A-translation
+
+
+-- ----------------------------------------------------------------------------------------------------
