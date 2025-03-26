@@ -23,7 +23,6 @@ open import Level using (_⊔_)
 
 open import Relation.Binary.PropositionalEquality
   using (_≡_ ; refl ; sym ; trans ; subst ; cong ; cong₂ ; module ≡-Reasoning)
-open ≡-Reasoning
 
 open import Relation.Nullary using (Dec ; yes ; no)
 
@@ -132,68 +131,71 @@ mutual
   i→e* []       = []
   i→e* (f ∷ fs) = i→e f ∷ i→e* fs
 
-mutual
-  e→i : ∀ {n} {φ : #Fun n} → IsPrim φ → Σ (Prim n) λ f → φ ≐ ⟦ f ⟧
-  e→i (iszero h)      = zero , h
-  e→i (issuc h)       = suc , h
-  e→i (isproj i h)    = proj i , h
-  e→i (iscomp {ξ = ξ} {ψ} {φs} h e ds) with e→i e | e→i* ds
-  ... | g , h₁ | fs , hs₂ = comp g fs , do-comp
-    where
-      do-comp : ξ ≐ #comp ⟦ g ⟧ ⟦ fs ⟧*
-      do-comp {xs} =
-        begin
-          ξ xs
-        ≡⟨ h {xs} ⟩
-          #comp ψ φs xs
-        ≡⟨⟩
-          ψ (for φs (_$ xs))
-        ≡⟨ h₁ {for φs (_$ xs)} ⟩
-          ⟦ g ⟧ (for φs (_$ xs))
-        ≡⟨ cong ⟦ g ⟧ (hs₂ {xs}) ⟩
-          ⟦ g ⟧ (for ⟦ fs ⟧* (_$ xs))
-        ≡⟨⟩
-          #comp ⟦ g ⟧ ⟦ fs ⟧* xs
-        ∎
-  e→i (isrec {n} {ξ} {φ} {ψ} h d e) with e→i d | e→i e
-  ... | f , h₁ | g , h₂ = rec f g , do-rec f g h₁ h₂
-    where
-      do-rec : ∀ (f : Prim n) (g : Prim (suc (suc n))) (h₁ : φ ≐ ⟦ f ⟧) (h₂ : ψ ≐ ⟦ g ⟧) →
-                 ξ ≐ #rec ⟦ f ⟧ ⟦ g ⟧
-      do-rec f g h₁ h₂ {zero ∷ ys} =
-        begin
-          ξ (zero ∷ ys)
-        ≡⟨ h {zero ∷ ys} ⟩
-          #rec φ ψ (zero ∷ ys)
-        ≡⟨⟩
-          φ ys
-        ≡⟨ h₁ {ys} ⟩
-          ⟦ f ⟧ ys
-        ≡⟨⟩
-          #rec ⟦ f ⟧ ⟦ g ⟧ (zero ∷ ys)
-        ∎
-      do-rec f g h₁ h₂ {suc x ∷ ys} =
-        begin
-          ξ (suc x ∷ ys)
-        ≡⟨ h {suc x ∷ ys} ⟩
-          #rec φ ψ (suc x ∷ ys)
-        ≡⟨⟩
-          ψ (#rec φ ψ (x ∷ ys) ∷ x ∷ ys)
-        ≡⟨ cong (ψ ∘ (_∷ x ∷ ys)) (sym (h {x ∷ ys})) ⟩
-          ψ (ξ (x ∷ ys) ∷ x ∷ ys)
-        ≡⟨ h₂ {ξ (x ∷ ys) ∷ x ∷ ys} ⟩
-          ⟦ g ⟧ (ξ (x ∷ ys) ∷ x ∷ ys)
-        ≡⟨ cong (⟦ g ⟧ ∘ (_∷ x ∷ ys)) (do-rec f g h₁ h₂ {x ∷ ys}) ⟩
-          ⟦ g ⟧ (#rec ⟦ f ⟧ ⟦ g ⟧ (x ∷ ys) ∷ x ∷ ys)
-        ≡⟨⟩
-          #rec ⟦ f ⟧ ⟦ g ⟧ (suc x ∷ ys)
-        ∎
+module _ where
+  open ≡-Reasoning
 
-  e→i* : ∀ {n m} {φs : #Fun* n m} → IsPrim* φs → Σ (Prim* n m) λ fs →
-            ∀ {xs} → for φs (_$ xs) ≡ for ⟦ fs ⟧* (_$ xs)
-  e→i* []       = [] , refl
-  e→i* (d ∷ ds) with e→i d | e→i* ds
-  ... | f , h | fs , hs = f ∷ fs , cong₂ _∷_ h hs
+  mutual
+    e→i : ∀ {n} {φ : #Fun n} → IsPrim φ → Σ (Prim n) λ f → φ ≐ ⟦ f ⟧
+    e→i (iszero h)      = zero , h
+    e→i (issuc h)       = suc , h
+    e→i (isproj i h)    = proj i , h
+    e→i (iscomp {ξ = ξ} {ψ} {φs} h e ds) with e→i e | e→i* ds
+    ... | g , h₁ | fs , hs₂ = comp g fs , do-comp
+      where
+        do-comp : ξ ≐ #comp ⟦ g ⟧ ⟦ fs ⟧*
+        do-comp {xs} =
+          begin
+            ξ xs
+          ≡⟨ h {xs} ⟩
+            #comp ψ φs xs
+          ≡⟨⟩
+            ψ (for φs (_$ xs))
+          ≡⟨ h₁ {for φs (_$ xs)} ⟩
+            ⟦ g ⟧ (for φs (_$ xs))
+          ≡⟨ cong ⟦ g ⟧ (hs₂ {xs}) ⟩
+            ⟦ g ⟧ (for ⟦ fs ⟧* (_$ xs))
+          ≡⟨⟩
+            #comp ⟦ g ⟧ ⟦ fs ⟧* xs
+          ∎
+    e→i (isrec {n} {ξ} {φ} {ψ} h d e) with e→i d | e→i e
+    ... | f , h₁ | g , h₂ = rec f g , do-rec f g h₁ h₂
+      where
+        do-rec : ∀ (f : Prim n) (g : Prim (suc (suc n))) (h₁ : φ ≐ ⟦ f ⟧) (h₂ : ψ ≐ ⟦ g ⟧) →
+                   ξ ≐ #rec ⟦ f ⟧ ⟦ g ⟧
+        do-rec f g h₁ h₂ {zero ∷ ys} =
+          begin
+            ξ (zero ∷ ys)
+          ≡⟨ h {zero ∷ ys} ⟩
+            #rec φ ψ (zero ∷ ys)
+          ≡⟨⟩
+            φ ys
+          ≡⟨ h₁ {ys} ⟩
+            ⟦ f ⟧ ys
+          ≡⟨⟩
+            #rec ⟦ f ⟧ ⟦ g ⟧ (zero ∷ ys)
+          ∎
+        do-rec f g h₁ h₂ {suc x ∷ ys} =
+          begin
+            ξ (suc x ∷ ys)
+          ≡⟨ h {suc x ∷ ys} ⟩
+            #rec φ ψ (suc x ∷ ys)
+          ≡⟨⟩
+            ψ (#rec φ ψ (x ∷ ys) ∷ x ∷ ys)
+          ≡⟨ cong (ψ ∘ (_∷ x ∷ ys)) (sym (h {x ∷ ys})) ⟩
+            ψ (ξ (x ∷ ys) ∷ x ∷ ys)
+          ≡⟨ h₂ {ξ (x ∷ ys) ∷ x ∷ ys} ⟩
+            ⟦ g ⟧ (ξ (x ∷ ys) ∷ x ∷ ys)
+          ≡⟨ cong (⟦ g ⟧ ∘ (_∷ x ∷ ys)) (do-rec f g h₁ h₂ {x ∷ ys}) ⟩
+            ⟦ g ⟧ (#rec ⟦ f ⟧ ⟦ g ⟧ (x ∷ ys) ∷ x ∷ ys)
+          ≡⟨⟩
+            #rec ⟦ f ⟧ ⟦ g ⟧ (suc x ∷ ys)
+          ∎
+
+    e→i* : ∀ {n m} {φs : #Fun* n m} → IsPrim* φs → Σ (Prim* n m) λ fs →
+              ∀ {xs} → for φs (_$ xs) ≡ for ⟦ fs ⟧* (_$ xs)
+    e→i* []       = [] , refl
+    e→i* (d ∷ ds) with e→i d | e→i* ds
+    ... | f , h | fs , hs = f ∷ fs , cong₂ _∷_ h hs
 
 
 ----------------------------------------------------------------------------------------------------
@@ -248,15 +250,18 @@ ok-add = ok-#add
 #mul = #rec (#const 0)
             (#comp #add (#proj (suc (suc zero)) ∷ #proj zero ∷ []))
 
-ok-#mul : ∀ x y → #mul (x ∷ y ∷ []) ≡ x * y
-ok-#mul zero    y = refl
-ok-#mul (suc x) y = begin
-                      #add (y ∷ #mul (x ∷ y ∷ []) ∷ [])
-                    ≡⟨ cong (#add ∘ (y ∷_)) (cong (_∷ []) (ok-#mul x y)) ⟩
-                      #add (y ∷ x * y ∷ [])
-                    ≡⟨ ok-#add y (x * y) ⟩
-                      y + x * y
-                    ∎
+module _ where
+  open ≡-Reasoning
+
+  ok-#mul : ∀ x y → #mul (x ∷ y ∷ []) ≡ x * y
+  ok-#mul zero    y = refl
+  ok-#mul (suc x) y = begin
+                        #add (y ∷ #mul (x ∷ y ∷ []) ∷ [])
+                      ≡⟨ cong (#add ∘ (y ∷_)) (cong (_∷ []) (ok-#mul x y)) ⟩
+                        #add (y ∷ x * y ∷ [])
+                      ≡⟨ ok-#add y (x * y) ⟩
+                        y + x * y
+                      ∎
 
 mul : Prim 2
 mul = rec (const 0)
@@ -445,6 +450,25 @@ data _/_⊢_ {k} : Theory → Fms k → Fm k → Set where
 ‵congsuc : ∀ {Θ k} {Γ : Fms k} {t u} → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ ‵suc t ‵= ‵suc u
 ‵congsuc d = ‵cong suc zero d
 
+module ‵=-Reasoning {Θ k} {Γ : Fms k} where
+  infix 1 begin_
+  begin_ : ∀ {t u} → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ t ‵= u
+  begin d = d
+
+  infixr 2 _‵=⟨⟩_
+  _‵=⟨⟩_ : ∀ t {u} → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ t ‵= u
+  t ‵=⟨⟩ d = d
+
+  infixr 2 _‵=⟨_⟩_
+  _‵=⟨_⟩_ : ∀ s {t u} → Θ / Γ ⊢ s ‵= t → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ s ‵= u
+  s ‵=⟨ d ⟩ e = ‵trans d e
+
+  infix 3 _∎
+  _∎ : ∀ t → Θ / Γ ⊢ t ‵= t
+  t ∎ = ‵refl
+
+open ‵=-Reasoning
+
 
 ----------------------------------------------------------------------------------------------------
 
@@ -501,40 +525,38 @@ data IsQFree {k} : Fm k → Set where
   ‵⊥   : IsQFree ‵⊥
   _‵=_  : ∀ {t u} → IsQFree (t ‵= u)
 
-lem3-bot : ∀ {Θ k} {Γ : Fms k} {x} → Θ / Γ ⊢ ‵⊥ ‵↔ ‵suc x ‵= ‵zero
-lem3-bot = ‵pair (‵lam (abort (‵var top))) ‵dis
 
+goal goal′ : ∀ {Θ k} {Γ : Fms k} → Θ / Γ ⊢
+               ‵fun (const 1) (Vec.tabulate ‵var) ‵= ‵zero ‵→ ‵suc ‵zero ‵= ‵zero
 
-goal4 : ∀ {Θ k} {Γ : Fms k} {C} → Θ / C ∷ Γ ⊢
-          ‵fun (comp zero []) (Vec.tabulate ‵var) ‵=
-          ‵fun (comp zero []) []
-goal4 = ‵trans (‵comp zero []) (‵sym (‵comp zero []))
+goal = ‵lam
+         (‵trans
+           (‵trans
+             (‵cong suc zero
+               (‵sym (‵comp zero [])))
+             (‵sym (‵comp suc (comp zero [] ∷ []))))
+           (‵var top))
 
-
-goal3 : ∀ {Θ k} {Γ : Fms k} {C} → Θ / C ∷ Γ ⊢
-          ‵fun suc (‵fun (comp zero []) (Vec.tabulate ‵var) ∷ []) ‵=
-          ‵fun suc (‵fun (comp zero []) [] ∷ [])
-goal3 = ‵cong suc zero goal4
-
-
-goal2 : ∀ {Θ k} {Γ : Fms k} {C} → Θ / C ∷ Γ ⊢
-          ‵fun (comp suc (comp zero [] ∷ [])) (Vec.tabulate ‵var) ‵=
-          ‵fun suc (‵fun (comp zero []) [] ∷ [])
-goal2 = ‵trans
-          (‵comp suc (comp zero [] ∷ []))
-          goal3
-
-
-have : ∀ {Θ k} {Γ : Fms k} → Θ / Γ ⊢
-         ‵fun suc (‵fun (comp zero []) [] ∷ []) ‵≠ ‵zero
-have = ‵dis {t = ‵fun (comp zero []) []}
-
-goal : ∀ {Θ k} {Γ : Fms k} → Θ / Γ ⊢
-         ‵fun (comp suc (comp zero [] ∷ [])) (Vec.tabulate {n = k} ‵var) ‵≠ ‵zero
-goal = ‵lam (abort (have ‵$
-         ‵trans
-           (‵sym goal2)
-           (‵var top)))
+goal′ = ‵lam
+          (begin
+            ‵suc ‵zero
+          ‵=⟨⟩
+            ‵fun suc (‵fun zero [] ∷ [])
+          ‵=⟨ ‵cong suc zero (
+              begin
+                ‵fun zero []
+              ‵=⟨ ‵sym (‵comp zero []) ⟩
+                ‵fun (comp zero []) (Vec.tabulate ‵var)
+              ∎)
+            ⟩
+            ‵fun suc (‵fun (comp zero []) (Vec.tabulate ‵var) ∷ [])
+          ‵=⟨ ‵sym (‵comp suc (comp zero [] ∷ [])) ⟩
+            ‵fun (comp suc (comp zero [] ∷ [])) (Vec.tabulate ‵var)
+          ‵=⟨⟩
+            ‵fun (const 1) (Vec.tabulate ‵var)
+          ‵=⟨ ‵var top ⟩
+            ‵zero
+          ∎)
 
 
 lem3 : ∀ {Θ k} {Γ : Fms k} (A : Fm k) {{_ : IsQFree A}} → Σ (Prim k) λ φ →
@@ -542,7 +564,10 @@ lem3 : ∀ {Θ k} {Γ : Fms k} (A : Fm k) {{_ : IsQFree A}} → Σ (Prim k) λ �
 lem3 (A ‵→ B) = {!!}
 lem3 (A ‵∧ B) = {!!}
 lem3 (A ‵∨ B) = {!!}
-lem3 {Θ} {k} {Γ} ‵⊥ = const 1 , ‵pair (‵lam (abort (‵var top))) goal
+lem3 {Θ} {k} {Γ} ‵⊥ = const 1 ,
+    ‵pair
+      (‵lam (abort (‵var top)))
+      (‵lam (abort (‵dis ‵$ (goal ‵$ ‵var top))))
 lem3 (t ‵= u) = {!!}
 
 
