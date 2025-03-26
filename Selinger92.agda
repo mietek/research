@@ -217,8 +217,9 @@ isprim-#const : ∀ {n} x → IsPrim (#const {n} x)
 isprim-#const zero    = iscomp refl (iszero refl) []
 isprim-#const (suc x) = iscomp refl (issuc refl) (isprim-#const x ∷ [])
 
-const : ∀ {n} x → Prim n
-const x = fst (e→i (isprim-#const x))
+const : ∀ {n} → Nat → Prim n
+const zero    = comp zero []
+const (suc x) = comp suc (const x ∷ [])
 
 -- _+_ : Nat → Nat → Nat
 -- zero  + y = y
@@ -435,28 +436,26 @@ data _/_⊢_ {k} : Theory → Fms k → Fm k → Set where
 ‵congsuc : ∀ {Θ k} {Γ : Fms k} {t u} → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ ‵suc t ‵= ‵suc u
 ‵congsuc d = ‵cong suc zero d
 
-module ‵=-Reasoning {Θ k} {Γ : Fms k} where
+module =-Reasoning {Θ k} {Γ : Fms k} where
   infix 1 begin_
   begin_ : ∀ {t u} → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ t ‵= u
   begin d = d
 
-  infixr 2 _‵=⟨⟩_
-  _‵=⟨⟩_ : ∀ t {u} → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ t ‵= u
-  t ‵=⟨⟩ d = d
+  infixr 2 _=⟨⟩_
+  _=⟨⟩_ : ∀ t {u} → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ t ‵= u
+  t =⟨⟩ d = d
 
-  infixr 2 _‵=⟨_⟩_
-  _‵=⟨_⟩_ : ∀ s {t u} → Θ / Γ ⊢ s ‵= t → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ s ‵= u
-  s ‵=⟨ d ⟩ e = ‵trans d e
+  infixr 2 _=⟨_⟩_
+  _=⟨_⟩_ : ∀ s {t u} → Θ / Γ ⊢ s ‵= t → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ s ‵= u
+  s =⟨ d ⟩ e = ‵trans d e
 
-  infixr 2 _‵=˘⟨_⟩_
-  _‵=˘⟨_⟩_ : ∀ s {t u} → Θ / Γ ⊢ t ‵= s → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ s ‵= u
-  s ‵=˘⟨ d ⟩ e = ‵trans (‵sym d) e
+  infixr 2 _=˘⟨_⟩_
+  _=˘⟨_⟩_ : ∀ s {t u} → Θ / Γ ⊢ t ‵= s → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ s ‵= u
+  s =˘⟨ d ⟩ e = ‵trans (‵sym d) e
 
   infix 3 _∎
   _∎ : ∀ t → Θ / Γ ⊢ t ‵= t
   t ∎ = ‵refl
-
-open ‵=-Reasoning
 
 
 ----------------------------------------------------------------------------------------------------
@@ -466,6 +465,42 @@ open ‵=-Reasoning
 postulate
   -- weaken derivation by adding one unused assumption
   ⇑ : ∀ {Θ k} {Γ : Fms k} {A C} → Θ / Γ ⊢ A → Θ / C ∷ Γ ⊢ A
+
+
+----------------------------------------------------------------------------------------------------
+
+module _ {Θ k} {Γ : Fms k} where
+  ↔refl : ∀ {A} → Θ / Γ ⊢ A ‵↔ A
+  ↔refl = ‵pair (‵lam (‵var top)) (‵lam (‵var top))
+
+  ↔sym : ∀ {A B} → Θ / Γ ⊢ A ‵↔ B → Θ / Γ ⊢ B ‵↔ A
+  ↔sym d = ‵pair (‵snd d) (‵fst d)
+
+  ↔trans : ∀ {A B C} → Θ / Γ ⊢ A ‵↔ B → Θ / Γ ⊢ B ‵↔ C → Θ / Γ ⊢ A ‵↔ C
+  ↔trans d e = ‵pair
+                  (‵lam (‵fst (⇑ e) ‵$ ‵fst (⇑ d) ‵$ ‵var top))
+                  (‵lam (‵snd (⇑ d) ‵$ ‵snd (⇑ e) ‵$ ‵var top))
+
+module ‵↔-Reasoning {Θ k} {Γ : Fms k} where
+  infix 1 begin_
+  begin_ : ∀ {A B} → Θ / Γ ⊢ A ‵↔ B → Θ / Γ ⊢ A ‵↔ B
+  begin d = d
+
+  infixr 2 _↔⟨⟩_
+  _↔⟨⟩_ : ∀ A {B} → Θ / Γ ⊢ A ‵↔ B → Θ / Γ ⊢ A ‵↔ B
+  A ↔⟨⟩ d = d
+
+  infixr 2 _↔⟨_⟩_
+  _↔⟨_⟩_ : ∀ A {B C} → Θ / Γ ⊢ A ‵↔ B → Θ / Γ ⊢ B ‵↔ C → Θ / Γ ⊢ A ‵↔ C
+  A ↔⟨ d ⟩ e = ↔trans d e
+
+  infixr 2 _↔˘⟨_⟩_
+  _↔˘⟨_⟩_ : ∀ A {B C} → Θ / Γ ⊢ B ‵↔ A → Θ / Γ ⊢ B ‵↔ C → Θ / Γ ⊢ A ‵↔ C
+  A ↔˘⟨ d ⟩ e = ↔trans (↔sym d) e
+
+  infix 3 _∎
+  _∎ : ∀ A → Θ / Γ ⊢ A ‵↔ A
+  A ∎ = ↔refl
 
 
 ----------------------------------------------------------------------------------------------------
@@ -514,38 +549,40 @@ data IsQFree {k} : Fm k → Set where
   ‵⊥   : IsQFree ‵⊥
   _‵=_  : ∀ {t u} → IsQFree (t ‵= u)
 
+module _ where
+  open =-Reasoning
 
-goal goal′ : ∀ {Θ k} {Γ : Fms k} → Θ / Γ ⊢
-               ‵fun (const 1) (tabulate ‵var) ‵= ‵zero ‵→ ‵suc ‵zero ‵= ‵zero
+  goal goal′ : ∀ {Θ k} {Γ : Fms k} → Θ / Γ ⊢
+                 ‵fun (const 1) (tabulate ‵var) ‵= ‵zero ‵→ ‵suc ‵zero ‵= ‵zero
 
-goal = ‵lam
-         (‵trans
+  goal = ‵lam
            (‵trans
-             (‵cong suc zero
-               (‵sym (‵comp zero [])))
-             (‵sym (‵comp suc (comp zero [] ∷ []))))
-           (‵var top))
+             (‵trans
+               (‵cong suc zero
+                 (‵sym (‵comp zero [])))
+               (‵sym (‵comp suc (comp zero [] ∷ []))))
+             (‵var top))
 
-goal′ = ‵lam
-          (begin
-            ‵suc ‵zero
-          ‵=⟨⟩
-            ‵fun suc (‵fun zero [] ∷ [])
-          ‵=⟨ ‵cong suc zero (
-              begin
-                ‵fun zero []
-              ‵=˘⟨ ‵comp zero [] ⟩
-                ‵fun (comp zero []) (tabulate ‵var)
-              ∎)
-            ⟩
-            ‵fun suc (‵fun (comp zero []) (tabulate ‵var) ∷ [])
-          ‵=˘⟨ ‵comp suc (comp zero [] ∷ []) ⟩
-            ‵fun (comp suc (comp zero [] ∷ [])) (tabulate ‵var)
-          ‵=⟨⟩
-            ‵fun (const 1) (tabulate ‵var)
-          ‵=⟨ ‵var top ⟩
-            ‵zero
-          ∎)
+  goal′ = ‵lam
+            (begin
+              ‵suc ‵zero
+            =⟨⟩
+              ‵fun suc (‵fun zero [] ∷ [])
+            =⟨ ‵cong suc zero (
+                begin
+                  ‵fun zero []
+                =˘⟨ ‵comp zero [] ⟩
+                  ‵fun (comp zero []) (tabulate ‵var)
+                ∎)
+              ⟩
+              ‵fun suc (‵fun (comp zero []) (tabulate ‵var) ∷ [])
+            =˘⟨ ‵comp suc (comp zero [] ∷ []) ⟩
+              ‵fun (comp suc (comp zero [] ∷ [])) (tabulate ‵var)
+            =⟨⟩
+              ‵fun (const 1) (tabulate ‵var)
+            =⟨ ‵var top ⟩
+              ‵zero
+            ∎)
 
 
 lem3 : ∀ {Θ k} {Γ : Fms k} (A : Fm k) {{_ : IsQFree A}} → Σ (Prim k) λ φ →
