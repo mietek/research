@@ -428,8 +428,8 @@ data _/_⊢_ {k} : Theory → Fms k → Fm k → Set where
   ‵cong   : ∀ {Θ Γ n ts u} (φ : Prim n) (i : Fin n) (d : Θ / Γ ⊢ get i ts ‵= u) →
               Θ / Γ ⊢ ‵fun φ ts ‵= ‵fun φ (put i ts u)
 
-  ‵sucdis : ∀ {Θ Γ t} → Θ / Γ ⊢ ‵suc t ‵≠ ‵zero
-  ‵sucinj : ∀ {Θ Γ t u} (d : Θ / Γ ⊢ ‵suc t ‵= ‵suc u) → Θ / Γ ⊢ t ‵= u
+  ‵dis    : ∀ {Θ Γ t} → Θ / Γ ⊢ ‵suc t ‵≠ ‵zero
+  ‵inj    : ∀ {Θ Γ t u} (d : Θ / Γ ⊢ ‵suc t ‵= ‵suc u) → Θ / Γ ⊢ t ‵= u
 
   ‵ind    : ∀ {Θ Γ B} (d : Θ / ↑* Γ ⊢ B [ ‵zero ])
               (e : Θ / Γ ⊢ ‵∀ B [ ‵var zero ] ‵→ B [ ‵suc (‵var zero) ]) →
@@ -483,8 +483,8 @@ lem2 ‵refl         = ‵refl
 lem2 (‵sym d)      = ‵sym (lem2 d)
 lem2 (‵trans d e)  = ‵trans (lem2 d) (lem2 e)
 lem2 (‵cong φ i d) = ‵cong φ i (lem2 d)
-lem2 ‵sucdis       = ‵sucdis
-lem2 (‵sucinj d)   = ‵sucinj (lem2 d)
+lem2 ‵dis          = ‵dis
+lem2 (‵inj d)      = ‵inj (lem2 d)
 lem2 (‵ind d e)    = ‵ind (lem2 d) (lem2 e)
 lem2 (‵proj i)     = ‵proj i
 lem2 (‵comp ψ φs)  = ‵comp ψ φs
@@ -502,7 +502,7 @@ data IsQFree {k} : Fm k → Set where
   _‵=_  : ∀ {t u} → IsQFree (t ‵= u)
 
 lem3-bot : ∀ {Θ k} {Γ : Fms k} {x} → Θ / Γ ⊢ ‵⊥ ‵↔ ‵suc x ‵= ‵zero
-lem3-bot = ‵pair (‵lam (abort (‵var top))) ‵sucdis
+lem3-bot = ‵pair (‵lam (abort (‵var top))) ‵dis
 
 
 goal4 : ∀ {Θ k} {Γ : Fms k} {C} → Θ / C ∷ Γ ⊢
@@ -527,7 +527,7 @@ goal2 = ‵trans
 
 have : ∀ {Θ k} {Γ : Fms k} → Θ / Γ ⊢
          ‵fun suc (‵fun (comp zero []) [] ∷ []) ‵≠ ‵zero
-have = ‵sucdis {t = ‵fun (comp zero []) []}
+have = ‵dis {t = ‵fun (comp zero []) []}
 
 goal : ∀ {Θ k} {Γ : Fms k} → Θ / Γ ⊢
          ‵fun (comp suc (comp zero [] ∷ [])) (Vec.tabulate {n = k} ‵var) ‵≠ ‵zero
