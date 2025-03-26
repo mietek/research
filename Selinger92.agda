@@ -436,6 +436,22 @@ data _/_⊢_ {k} : Theory → Fms k → Fm k → Set where
 ‵congsuc : ∀ {Θ k} {Γ : Fms k} {t u} → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ ‵suc t ‵= ‵suc u
 ‵congsuc d = ‵cong suc zero d
 
+
+----------------------------------------------------------------------------------------------------
+
+-- TODO: more usual things
+
+postulate
+  -- weaken derivation by adding one unused assumption
+  ⇑ : ∀ {Θ k} {Γ : Fms k} {A C} → Θ / Γ ⊢ A → Θ / C ∷ Γ ⊢ A
+
+
+----------------------------------------------------------------------------------------------------
+
+module _ {Θ k} {Γ : Fms k} where
+  ≡→= : ∀ {t u} → t ≡ u → Θ / Γ ⊢ t ‵= u
+  ≡→= refl = ‵refl
+
 module =-Reasoning {Θ k} {Γ : Fms k} where
   infix 1 begin_
   begin_ : ∀ {t u} → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ t ‵= u
@@ -453,18 +469,17 @@ module =-Reasoning {Θ k} {Γ : Fms k} where
   _=˘⟨_⟩_ : ∀ s {t u} → Θ / Γ ⊢ t ‵= s → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ s ‵= u
   s =˘⟨ d ⟩ e = ‵trans (‵sym d) e
 
+  infixr 2 _≡⟨_⟩_
+  _≡⟨_⟩_ : ∀ s {t u} → s ≡ t → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ s ‵= u
+  s ≡⟨ d ⟩ e = ‵trans (≡→= d) e
+
+  infixr 2 _≡˘⟨_⟩_
+  _≡˘⟨_⟩_ : ∀ s {t u} → t ≡ s → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ s ‵= u
+  s ≡˘⟨ d ⟩ e = ‵trans (≡→= (sym d)) e
+
   infix 3 _∎
   _∎ : ∀ t → Θ / Γ ⊢ t ‵= t
   t ∎ = ‵refl
-
-
-----------------------------------------------------------------------------------------------------
-
--- TODO: more usual things
-
-postulate
-  -- weaken derivation by adding one unused assumption
-  ⇑ : ∀ {Θ k} {Γ : Fms k} {A C} → Θ / Γ ⊢ A → Θ / C ∷ Γ ⊢ A
 
 
 ----------------------------------------------------------------------------------------------------
@@ -481,7 +496,10 @@ module _ {Θ k} {Γ : Fms k} where
                   (‵lam (‵fst (⇑ e) ‵$ ‵fst (⇑ d) ‵$ ‵var top))
                   (‵lam (‵snd (⇑ d) ‵$ ‵snd (⇑ e) ‵$ ‵var top))
 
-module ‵↔-Reasoning {Θ k} {Γ : Fms k} where
+  ≡→↔ : ∀ {A B} → A ≡ B → Θ / Γ ⊢ A ‵↔ B
+  ≡→↔ refl = ↔refl
+
+module ↔-Reasoning {Θ k} {Γ : Fms k} where
   infix 1 begin_
   begin_ : ∀ {A B} → Θ / Γ ⊢ A ‵↔ B → Θ / Γ ⊢ A ‵↔ B
   begin d = d
@@ -497,6 +515,14 @@ module ‵↔-Reasoning {Θ k} {Γ : Fms k} where
   infixr 2 _↔˘⟨_⟩_
   _↔˘⟨_⟩_ : ∀ A {B C} → Θ / Γ ⊢ B ‵↔ A → Θ / Γ ⊢ B ‵↔ C → Θ / Γ ⊢ A ‵↔ C
   A ↔˘⟨ d ⟩ e = ↔trans (↔sym d) e
+
+  infixr 2 _≡⟨_⟩_
+  _≡⟨_⟩_ : ∀ A {B C} → A ≡ B → Θ / Γ ⊢ B ‵↔ C → Θ / Γ ⊢ A ‵↔ C
+  A ≡⟨ d ⟩ e = ↔trans (≡→↔ d) e
+
+  infixr 2 _≡˘⟨_⟩_
+  _≡˘⟨_⟩_ : ∀ A {B C} → B ≡ A → Θ / Γ ⊢ B ‵↔ C → Θ / Γ ⊢ A ‵↔ C
+  A ≡˘⟨ d ⟩ e = ↔trans (≡→↔ (sym d)) e
 
   infix 3 _∎
   _∎ : ∀ A → Θ / Γ ⊢ A ‵↔ A
