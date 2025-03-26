@@ -436,7 +436,7 @@ data _/_⊢_ {k} : Theory → Fms k → Fm k → Set where
               Θ / Γ ⊢ ‵∀ B [ ‵var zero ]
 
   ‵proj   : ∀ {Θ Γ n ts} (i : Fin n) → Θ / Γ ⊢ ‵fun (proj i) ts ‵= get i ts
-  ‵comp   : ∀ {Θ Γ n m ts} (φs : Vec (Prim n) m) (ψ : Prim m) →
+  ‵comp   : ∀ {Θ Γ n m ts} (ψ : Prim m) (φs : Vec (Prim n) m) →
               Θ / Γ ⊢ ‵fun (comp ψ φs) ts ‵= ‵fun ψ (for φs λ φ → ‵fun φ ts)
   ‵rec    : ∀ {Θ Γ n s ts} (φ : Prim n) (ψ : Prim (suc (suc n))) →
               Θ / Γ ⊢ ‵fun (rec φ ψ) (‵zero ∷ ts) ‵= ‵fun φ ts ‵∧
@@ -487,7 +487,7 @@ lem2 ‵sucpos       = ‵sucpos
 lem2 (‵sucinj d)   = ‵sucinj (lem2 d)
 lem2 (‵ind d e)    = ‵ind (lem2 d) (lem2 e)
 lem2 (‵proj i)     = ‵proj i
-lem2 (‵comp φs ψ)  = ‵comp φs ψ
+lem2 (‵comp ψ φs)  = ‵comp ψ φs
 lem2 (‵rec φ ψ)    = ‵rec φ ψ
 
 
@@ -501,22 +501,21 @@ data IsQFree {k} : Fm k → Set where
   ‵⊥   : IsQFree ‵⊥
   _‵=_  : ∀ {t u} → IsQFree (t ‵= u)
 
-HA-lem3-bot : ∀ {k} {Γ : Fms k} {x} → HA / Γ ⊢ ‵⊥ ‵↔ ‵suc x ‵= ‵zero
-HA-lem3-bot = ‵pair (‵lam (‵abort (‵var top))) ‵sucpos
-
-PA-lem3-bot : ∀ {k} {Γ : Fms k} {x} → PA / Γ ⊢ ‵⊥ ‵↔ ‵suc x ‵= ‵zero
-PA-lem3-bot = ‵pair (‵lam (PA-abort (‵var top))) ‵sucpos
-
 lem3-bot : ∀ {Θ k} {Γ : Fms k} {x} → Θ / Γ ⊢ ‵⊥ ‵↔ ‵suc x ‵= ‵zero
-lem3-bot {HA} = HA-lem3-bot
-lem3-bot {PA} = PA-lem3-bot
+lem3-bot = ‵pair (‵lam (abort (‵var top))) ‵sucpos
+
+have : ∀ {Θ k} {Γ : Fms k} → Θ / Γ ⊢ ‵fun suc (‵fun (comp zero []) [] ∷ []) ‵≠ ‵zero
+have = ‵sucpos {t = ‵fun (comp zero []) []}
+
+goal : ∀ {Θ k} {Γ : Fms k} → Θ / Γ ⊢ ‵fun (comp suc (comp zero [] ∷ [])) (Vec.tabulate {n = k} ‵var) ‵≠ ‵zero
+goal = {!!}
 
 lem3 : ∀ {Θ k} {Γ : Fms k} (A : Fm k) {{_ : IsQFree A}} → Σ (Prim k) λ φ →
          Θ / Γ ⊢ A ‵↔ ‵fun φ (Vec.tabulate ‵var) ‵= ‵zero
 lem3 (A ‵→ B) = {!!}
 lem3 (A ‵∧ B) = {!!}
 lem3 (A ‵∨ B) = {!!}
-lem3 {k = k} ‵⊥ = const 1 , ‵pair (‵lam (abort (‵var top))) {!‵sucpos!}
+lem3 {Θ} {k} {Γ} ‵⊥ = const 1 , ‵pair (‵lam (abort (‵var top))) goal
 lem3 (t ‵= u) = {!!}
 
 
