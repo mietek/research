@@ -354,6 +354,7 @@ t ‵≠ u = ‵¬ t ‵= u
 
 -- TODO: usual things
 
+infix 4 _∋_
 postulate
   -- weaken formula by adding one unused numerical variable
   ↑ : ∀ {k} (A : Fm k) → Fm (suc k)
@@ -366,6 +367,9 @@ postulate
 
   -- assumptions, or typed de Bruijn indices
   _∋_ : ∀ {k} (Γ : Fms k) (A : Fm k) → Set
+
+  top : ∀ {k} {Γ : Fms k} {A} → A ∷ Γ ∋ A
+  pop : ∀ {k} {Γ : Fms k} {A C} → Γ ∋ A → C ∷ Γ ∋ A
 
 
 ----------------------------------------------------------------------------------------------------
@@ -456,6 +460,10 @@ postulate
 PA-abort : ∀ {k} {Γ : Fms k} {C} → PA / Γ ⊢ ‵⊥ → PA / Γ ⊢ C
 PA-abort d = ‵magic (⇑ d)
 
+abort : ∀ {Θ k} {Γ : Fms k} {C} → Θ / Γ ⊢ ‵⊥ → Θ / Γ ⊢ C
+abort {HA} d = ‵abort d
+abort {PA} d = PA-abort d
+
 lem2 : ∀ {k} {Γ : Fms k} {A} → HA / Γ ⊢ A → PA / Γ ⊢ A
 lem2 (‵var i)      = ‵var i
 lem2 (‵lam d)      = ‵lam (lem2 d)
@@ -493,59 +501,29 @@ data IsQFree {k} : Fm k → Set where
   ‵⊥   : IsQFree ‵⊥
   _‵=_  : ∀ {t u} → IsQFree (t ‵= u)
 
+HA-lem3-bot : ∀ {k} {Γ : Fms k} {x} → HA / Γ ⊢ ‵⊥ ‵↔ ‵suc x ‵= ‵zero
+HA-lem3-bot = ‵pair (‵lam (‵abort (‵var top))) ‵sucpos
 
--- WIP
+PA-lem3-bot : ∀ {k} {Γ : Fms k} {x} → PA / Γ ⊢ ‵⊥ ‵↔ ‵suc x ‵= ‵zero
+PA-lem3-bot = ‵pair (‵lam (PA-abort (‵var top))) ‵sucpos
 
--- {-
+lem3-bot : ∀ {Θ k} {Γ : Fms k} {x} → Θ / Γ ⊢ ‵⊥ ‵↔ ‵suc x ‵= ‵zero
+lem3-bot {HA} = HA-lem3-bot
+lem3-bot {PA} = PA-lem3-bot
 
---   ‵var : ∀ (i : Fin k) → Tm k -- i-th numerical variable
---   ‵fun : ∀ {n} (φ : Prim n) (ts : Vec (Tm k) n) → Tm k
---   ‵∀_   : ∀ (B : Fm (suc k)) → Fm k
---   ‵∃_   : ∀ (B : Fm (suc k)) → Fm k
-
--- -}
-
--- data TmFVars {k} : Tm k → Nat → Set where
-
-
--- data FmFVars {k} : Fm k → Nat → Set where
---   _‵→_ : ∀ {A B n m} (p : FmFVars A n) (q : FmFVars B m) → FmFVars (A ‵→ B) (n + m)
---   _‵∧_  : ∀ {A B n m} (p : FmFVars A n) (q : FmFVars B m) → FmFVars (A ‵∧ B) (n + m)
---   _‵∨_  : ∀ {A B n m} (p : FmFVars A n) (q : FmFVars B m) → FmFVars (A ‵∨ B) (n + m)
---   ‵⊥   : FmFVars ‵⊥ zero
---   _‵=_  : {!!}
+lem3 : ∀ {Θ k} {Γ : Fms k} (A : Fm k) {{_ : IsQFree A}} → Σ (Prim k) λ φ →
+         Θ / Γ ⊢ A ‵↔ ‵fun φ (Vec.tabulate ‵var) ‵= ‵zero
+lem3 (A ‵→ B) = {!!}
+lem3 (A ‵∧ B) = {!!}
+lem3 (A ‵∨ B) = {!!}
+lem3 {k = k} ‵⊥ = const 1 , ‵pair (‵lam (abort (‵var top))) {!‵sucpos!}
+lem3 (t ‵= u) = {!!}
 
 
--- _‵+_ : ∀ {k} → Tm k → Tm k → Tm k
--- x ‵+ y = ‵fun add (x ∷ y ∷ [])
+----------------------------------------------------------------------------------------------------
 
--- hm : ∀ {k} {Γ : Fms k} {x y} →
---        HA / Γ ⊢ x ‵= ‵zero ‵∧ y ‵= ‵zero ‵↔ x ‵+ y ‵= ‵zero
--- hm = ‵pair (‵lam {!!}) {!!}
-
--- HA-lem3-bot : ∀ {k} {Γ : Fms k} {x} → HA / Γ ⊢ ‵⊥ ‵↔ ‵suc x ‵= ‵zero
--- HA-lem3-bot = ‵pair (‵lam (‵abort (‵var {!!}))) ‵sucpos
-
--- PA-lem3-bot : ∀ {k} {Γ : Fms k} {x} → PA / Γ ⊢ ‵⊥ ‵↔ ‵suc x ‵= ‵zero
--- PA-lem3-bot = ‵pair (‵lam (PA-abort (‵var {!!}))) ‵sucpos
-
--- lem3-bot : ∀ {Θ k} {Γ : Fms k} {x} → Θ / Γ ⊢ ‵⊥ ‵↔ ‵suc x ‵= ‵zero
--- lem3-bot {HA} = HA-lem3-bot
--- lem3-bot {PA} = PA-lem3-bot
-
--- lem3 : ∀ {Θ k} {Γ : Fms k} A {ts} {{_ : IsQFree A}} → Σ (Prim k) λ φ →
---          Θ / Γ ⊢ A ‵↔ ‵fun φ ts ‵= ‵zero
--- lem3 (A ‵→ B) = {!!}
--- lem3 (A ‵∧ B) = {!!}
--- lem3 (A ‵∨ B) = {!!}
--- lem3 ‵⊥ = {!? , !}
--- lem3 (t ‵= u) = {!!}
+-- TODO: double-negation translation
+-- TODO: A-translation
 
 
--- ----------------------------------------------------------------------------------------------------
-
--- -- TODO: double-negation translation
--- -- TODO: A-translation
-
-
--- ----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
