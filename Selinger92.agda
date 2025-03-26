@@ -386,6 +386,7 @@ data Theory : Set where
 
 -- derivations, indexed by potential assumptions
 infix 3 _/_⊢_
+infixr 5 _‵$_
 data _/_⊢_ {k} : Theory → Fms k → Fm k → Set where
   ‵var    : ∀ {Θ Γ A} (i : Γ ∋ A) → Θ / Γ ⊢ A -- i-th assumption
   ‵lam    : ∀ {Θ Γ A B} (d : Θ / A ∷ Γ ⊢ B) → Θ / Γ ⊢ A ‵→ B
@@ -571,7 +572,7 @@ lem3 (A ‵∨ B) = {!!}
 lem3 {Θ} {k} {Γ} ‵⊥ = const 1 ,
     ‵pair
       (‵lam (abort (‵var top)))
-      (‵lam (‵dis ‵$ (goal ‵$ ‵var top)))
+      (‵lam (‵dis ‵$ goal ‵$ ‵var top))
 lem3 (t ‵= u) = {!!}
 
 
