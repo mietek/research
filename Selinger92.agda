@@ -296,27 +296,12 @@ ok-#pred (suc x) = refl
 
 ----------------------------------------------------------------------------------------------------
 
-{-
-⊢ x = 0 ∧ y = 0 ↔ x + y = 0
-⊢ x = 0 ∨ y = 0 ↔ x * y = 0
-⊢ x = 0 → y = 0 ↔ (1 - x) - (1 - y) = 0
-⊢ ⊥ ↔ S x = 0
-
-_+_ _*_ _-_
-_=_
-_∧_ _∨_ _→_
-_↔_
-
-⊢ x = 0 → y = 0 ↔ (1 - x) - (1 - y) = 0
-⊢ ⊥ ↔ S x = 0
-
--}
-
-infix 19 _‵=_
+infix  19 _‵=_
 infixl 18 _‵∧_ _‵∨_
 infixr 17 _‵→_ _‵↔_
-infix 16 ‵∀_ ‵∃_
-infix 15 ‵¬_
+infix  16 ‵∀_ ‵∃_
+infix  15 ‵¬_
+infixr 14 _‵$_
 
 -- terms, indexed by number of potential numerical variables
 data Tm (k : Nat) : Set where
@@ -386,7 +371,6 @@ data Theory : Set where
 
 -- derivations, indexed by potential assumptions
 infix 3 _/_⊢_
-infixr 5 _‵$_
 data _/_⊢_ {k} : Theory → Fms k → Fm k → Set where
   ‵var    : ∀ {Θ Γ A} (i : Γ ∋ A) → Θ / Γ ⊢ A -- i-th assumption
   ‵lam    : ∀ {Θ Γ A B} (d : Θ / A ∷ Γ ⊢ B) → Θ / Γ ⊢ A ‵→ B
