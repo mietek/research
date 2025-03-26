@@ -15,7 +15,7 @@ open import Data.Product using (Σ ; _,_ ; _×_)
   renaming (proj₁ to fst ; proj₂ to snd)
 
 import Data.Vec as Vec
-open Vec using (Vec ; [] ; _∷_)
+open Vec using (Vec ; [] ; _∷_ ; tabulate)
 
 open import Function using (_∘_ ; _$_ ; flip)
 
@@ -181,7 +181,7 @@ module _ where
             #rec φ ψ (suc x ∷ ys)
           ≡⟨⟩
             ψ (#rec φ ψ (x ∷ ys) ∷ x ∷ ys)
-          ≡⟨ cong (ψ ∘ (_∷ x ∷ ys)) (sym (h {x ∷ ys})) ⟩
+          ≡˘⟨ cong (ψ ∘ (_∷ x ∷ ys)) (h {x ∷ ys}) ⟩
             ψ (ξ (x ∷ ys) ∷ x ∷ ys)
           ≡⟨ h₂ {ξ (x ∷ ys) ∷ x ∷ ys} ⟩
             ⟦ g ⟧ (ξ (x ∷ ys) ∷ x ∷ ys)
@@ -463,6 +463,10 @@ module ‵=-Reasoning {Θ k} {Γ : Fms k} where
   _‵=⟨_⟩_ : ∀ s {t u} → Θ / Γ ⊢ s ‵= t → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ s ‵= u
   s ‵=⟨ d ⟩ e = ‵trans d e
 
+  infixr 2 _‵=˘⟨_⟩_
+  _‵=˘⟨_⟩_ : ∀ s {t u} → Θ / Γ ⊢ t ‵= s → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ s ‵= u
+  s ‵=˘⟨ d ⟩ e = ‵trans (‵sym d) e
+
   infix 3 _∎
   _∎ : ∀ t → Θ / Γ ⊢ t ‵= t
   t ∎ = ‵refl
@@ -527,7 +531,7 @@ data IsQFree {k} : Fm k → Set where
 
 
 goal goal′ : ∀ {Θ k} {Γ : Fms k} → Θ / Γ ⊢
-               ‵fun (const 1) (Vec.tabulate ‵var) ‵= ‵zero ‵→ ‵suc ‵zero ‵= ‵zero
+               ‵fun (const 1) (tabulate ‵var) ‵= ‵zero ‵→ ‵suc ‵zero ‵= ‵zero
 
 goal = ‵lam
          (‵trans
@@ -545,29 +549,29 @@ goal′ = ‵lam
           ‵=⟨ ‵cong suc zero (
               begin
                 ‵fun zero []
-              ‵=⟨ ‵sym (‵comp zero []) ⟩
-                ‵fun (comp zero []) (Vec.tabulate ‵var)
+              ‵=˘⟨ ‵comp zero [] ⟩
+                ‵fun (comp zero []) (tabulate ‵var)
               ∎)
             ⟩
-            ‵fun suc (‵fun (comp zero []) (Vec.tabulate ‵var) ∷ [])
-          ‵=⟨ ‵sym (‵comp suc (comp zero [] ∷ [])) ⟩
-            ‵fun (comp suc (comp zero [] ∷ [])) (Vec.tabulate ‵var)
+            ‵fun suc (‵fun (comp zero []) (tabulate ‵var) ∷ [])
+          ‵=˘⟨ ‵comp suc (comp zero [] ∷ []) ⟩
+            ‵fun (comp suc (comp zero [] ∷ [])) (tabulate ‵var)
           ‵=⟨⟩
-            ‵fun (const 1) (Vec.tabulate ‵var)
+            ‵fun (const 1) (tabulate ‵var)
           ‵=⟨ ‵var top ⟩
             ‵zero
           ∎)
 
 
 lem3 : ∀ {Θ k} {Γ : Fms k} (A : Fm k) {{_ : IsQFree A}} → Σ (Prim k) λ φ →
-         Θ / Γ ⊢ A ‵↔ ‵fun φ (Vec.tabulate ‵var) ‵= ‵zero
+         Θ / Γ ⊢ A ‵↔ ‵fun φ (tabulate ‵var) ‵= ‵zero
 lem3 (A ‵→ B) = {!!}
 lem3 (A ‵∧ B) = {!!}
 lem3 (A ‵∨ B) = {!!}
 lem3 {Θ} {k} {Γ} ‵⊥ = const 1 ,
     ‵pair
       (‵lam (abort (‵var top)))
-      (‵lam (abort (‵dis ‵$ (goal ‵$ ‵var top))))
+      (‵lam (‵dis ‵$ (goal ‵$ ‵var top)))
 lem3 (t ‵= u) = {!!}
 
 
