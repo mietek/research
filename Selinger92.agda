@@ -504,11 +504,39 @@ data IsQFree {k} : Fm k → Set where
 lem3-bot : ∀ {Θ k} {Γ : Fms k} {x} → Θ / Γ ⊢ ‵⊥ ‵↔ ‵suc x ‵= ‵zero
 lem3-bot = ‵pair (‵lam (abort (‵var top))) ‵sucpos
 
-have : ∀ {Θ k} {Γ : Fms k} → Θ / Γ ⊢ ‵fun suc (‵fun (comp zero []) [] ∷ []) ‵≠ ‵zero
+
+
+
+
+goal3 : ∀ {Θ k} {Γ : Fms k} {C} → Θ / C ∷ Γ ⊢
+          ‵fun suc (‵fun (comp zero []) (Vec.tabulate ‵var) ∷ []) ‵=
+          ‵fun suc (‵fun (comp zero []) [] ∷ [])
+goal3 = {!‵refl!}
+
+
+goal2 : ∀ {Θ k} {Γ : Fms k} {C} → Θ / C ∷ Γ ⊢
+          ‵fun (comp suc (comp zero [] ∷ [])) (Vec.tabulate ‵var) ‵=
+          ‵fun suc (‵fun (comp zero []) [] ∷ [])
+goal2 = ‵trans
+          (‵comp suc (comp zero [] ∷ []))
+          goal3
+
+
+have : ∀ {Θ k} {Γ : Fms k} → Θ / Γ ⊢
+         ‵fun suc (‵fun (comp zero []) [] ∷ []) ‵≠ ‵zero
 have = ‵sucpos {t = ‵fun (comp zero []) []}
 
-goal : ∀ {Θ k} {Γ : Fms k} → Θ / Γ ⊢ ‵fun (comp suc (comp zero [] ∷ [])) (Vec.tabulate {n = k} ‵var) ‵≠ ‵zero
-goal = {!!}
+goal : ∀ {Θ k} {Γ : Fms k} → Θ / Γ ⊢
+         ‵fun (comp suc (comp zero [] ∷ [])) (Vec.tabulate {n = k} ‵var) ‵≠ ‵zero
+goal = ‵lam (abort (have ‵$
+         ‵trans
+           (‵sym goal2)
+           (‵var top)))
+
+
+-- ‵fun (comp ψ φs) ts ‵= ‵fun ψ (for φs λ φ → ‵fun φ ts)
+
+-- ‵fun suc (‵fun (comp zero []) [] ∷ []) ‵= ‵fun (comp suc (comp zero [] ∷ [])) (Vec.tabulate ‵var)
 
 lem3 : ∀ {Θ k} {Γ : Fms k} (A : Fm k) {{_ : IsQFree A}} → Σ (Prim k) λ φ →
          Θ / Γ ⊢ A ‵↔ ‵fun φ (Vec.tabulate ‵var) ‵= ‵zero
