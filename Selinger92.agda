@@ -309,8 +309,8 @@ data Tm (k : Nat) : Set where
   ‵var : ∀ (i : Fin k) → Tm k -- i-th numerical variable
   ‵fun : ∀ {n} (φ : Prim n) (ts : Vec (Tm k) n) → Tm k
 
-Tms : Nat → Nat → Set
-Tms k n = Vec (Tm k) n
+Tm* : Nat → Nat → Set
+Tm* k n = Vec (Tm k) n
 
 ‵zero : ∀ {k} → Tm k
 ‵zero = ‵fun zero []
@@ -328,8 +328,8 @@ data Fm (k : Nat) : Set where
   ‵⊥   : Fm k
   _‵=_  : ∀ (t u : Tm k) → Fm k
 
-Fms : Nat → Set
-Fms k = List (Fm k)
+Fm* : Nat → Set
+Fm* k = List (Fm k)
 
 ‵¬_ : ∀ {k} → Fm k → Fm k
 ‵¬ A = A ‵→ ‵⊥
@@ -351,16 +351,16 @@ postulate
   ↑ : ∀ {k} (A : Fm k) → Fm (suc k)
 
   -- weaken formulas by adding one unused numerical variable
-  ↑* : ∀ {k} (Γ : Fms k) → Fms (suc k)
+  ↑* : ∀ {k} (Γ : Fm* k) → Fm* (suc k)
 
   -- substitute topmost numerical variable in formula by term
   _[_] : ∀ {k} (A : Fm (suc k)) (s : Tm k) → Fm k
 
   -- assumptions, or typed de Bruijn indices
-  _∋_ : ∀ {k} (Γ : Fms k) (A : Fm k) → Set
+  _∋_ : ∀ {k} (Γ : Fm* k) (A : Fm k) → Set
 
-  top : ∀ {k} {Γ : Fms k} {A} → A ∷ Γ ∋ A
-  pop : ∀ {k} {Γ : Fms k} {A C} → Γ ∋ A → C ∷ Γ ∋ A
+  top : ∀ {k} {Γ : Fm* k} {A} → A ∷ Γ ∋ A
+  pop : ∀ {k} {Γ : Fm* k} {A C} → Γ ∋ A → C ∷ Γ ∋ A
 
 
 ----------------------------------------------------------------------------------------------------
@@ -372,7 +372,7 @@ data Theory : Set where
 
 -- derivations, indexed by potential assumptions
 infix 3 _/_⊢_
-data _/_⊢_ {k} : Theory → Fms k → Fm k → Set where
+data _/_⊢_ {k} : Theory → Fm* k → Fm k → Set where
   ‵var    : ∀ {Θ Γ A} (i : Γ ∋ A) → Θ / Γ ⊢ A -- i-th assumption
   ‵lam    : ∀ {Θ Γ A B} (d : Θ / A ∷ Γ ⊢ B) → Θ / Γ ⊢ A ‵→ B
   _‵$_    : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A ‵→ B) (e : Θ / Γ ⊢ A) → Θ / Γ ⊢ B
@@ -422,6 +422,7 @@ data _/_⊢_ {k} : Theory → Fms k → Fm k → Set where
   ‵dis    : ∀ {Θ Γ t} → Θ / Γ ⊢ ‵suc t ‵≠ ‵zero
   ‵inj    : ∀ {Θ Γ t u} (d : Θ / Γ ⊢ ‵suc t ‵= ‵suc u) → Θ / Γ ⊢ t ‵= u
 
+  -- TODO: roconnor hates this
   ‵ind    : ∀ {Θ Γ B} (d : Θ / ↑* Γ ⊢ B [ ‵zero ])
               (e : Θ / Γ ⊢ ‵∀ B [ ‵var zero ] ‵→ B [ ‵suc (‵var zero) ]) →
               Θ / Γ ⊢ ‵∀ B [ ‵var zero ]
@@ -433,7 +434,7 @@ data _/_⊢_ {k} : Theory → Fms k → Fm k → Set where
               Θ / Γ ⊢ ‵fun (rec φ ψ) (‵zero ∷ ts) ‵= ‵fun φ ts ‵∧
                 ‵fun (rec φ ψ) (‵suc s ∷ ts) ‵= ‵fun ψ (‵fun (rec φ ψ) (s ∷ ts) ∷ s ∷ ts)
 
-‵congsuc : ∀ {Θ k} {Γ : Fms k} {t u} → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ ‵suc t ‵= ‵suc u
+‵congsuc : ∀ {Θ k} {Γ : Fm* k} {t u} → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ ‵suc t ‵= ‵suc u
 ‵congsuc d = ‵cong suc zero d
 
 
@@ -443,16 +444,16 @@ data _/_⊢_ {k} : Theory → Fms k → Fm k → Set where
 
 postulate
   -- weaken derivation by adding one unused assumption
-  ⇑ : ∀ {Θ k} {Γ : Fms k} {A C} → Θ / Γ ⊢ A → Θ / C ∷ Γ ⊢ A
+  ⇑ : ∀ {Θ k} {Γ : Fm* k} {A C} → Θ / Γ ⊢ A → Θ / C ∷ Γ ⊢ A
 
 
 ----------------------------------------------------------------------------------------------------
 
-module _ {Θ k} {Γ : Fms k} where
+module _ {Θ k} {Γ : Fm* k} where
   ≡→= : ∀ {t u} → t ≡ u → Θ / Γ ⊢ t ‵= u
   ≡→= refl = ‵refl
 
-module =-Reasoning {Θ k} {Γ : Fms k} where
+module =-Reasoning {Θ k} {Γ : Fm* k} where
   infix 1 begin_
   begin_ : ∀ {t u} → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ t ‵= u
   begin d = d
@@ -484,7 +485,7 @@ module =-Reasoning {Θ k} {Γ : Fms k} where
 
 ----------------------------------------------------------------------------------------------------
 
-module _ {Θ k} {Γ : Fms k} where
+module _ {Θ k} {Γ : Fm* k} where
   ↔refl : ∀ {A} → Θ / Γ ⊢ A ‵↔ A
   ↔refl = ‵pair (‵lam (‵var top)) (‵lam (‵var top))
 
@@ -499,7 +500,7 @@ module _ {Θ k} {Γ : Fms k} where
   ≡→↔ : ∀ {A B} → A ≡ B → Θ / Γ ⊢ A ‵↔ B
   ≡→↔ refl = ↔refl
 
-module ↔-Reasoning {Θ k} {Γ : Fms k} where
+module ↔-Reasoning {Θ k} {Γ : Fm* k} where
   infix 1 begin_
   begin_ : ∀ {A B} → Θ / Γ ⊢ A ‵↔ B → Θ / Γ ⊢ A ‵↔ B
   begin d = d
@@ -531,14 +532,14 @@ module ↔-Reasoning {Θ k} {Γ : Fms k} where
 
 ----------------------------------------------------------------------------------------------------
 
-PA-abort : ∀ {k} {Γ : Fms k} {C} → PA / Γ ⊢ ‵⊥ → PA / Γ ⊢ C
+PA-abort : ∀ {k} {Γ : Fm* k} {C} → PA / Γ ⊢ ‵⊥ → PA / Γ ⊢ C
 PA-abort d = ‵magic (⇑ d)
 
-abort : ∀ {Θ k} {Γ : Fms k} {C} → Θ / Γ ⊢ ‵⊥ → Θ / Γ ⊢ C
+abort : ∀ {Θ k} {Γ : Fm* k} {C} → Θ / Γ ⊢ ‵⊥ → Θ / Γ ⊢ C
 abort {HA} d = ‵abort d
 abort {PA} d = PA-abort d
 
-lem2 : ∀ {k} {Γ : Fms k} {A} → HA / Γ ⊢ A → PA / Γ ⊢ A
+lem2 : ∀ {k} {Γ : Fm* k} {A} → HA / Γ ⊢ A → PA / Γ ⊢ A
 lem2 (‵var i)      = ‵var i
 lem2 (‵lam d)      = ‵lam (lem2 d)
 lem2 (d ‵$ e)      = lem2 d ‵$ lem2 e
@@ -578,7 +579,7 @@ data IsQFree {k} : Fm k → Set where
 module _ where
   open =-Reasoning
 
-  goal goal′ : ∀ {Θ k} {Γ : Fms k} → Θ / Γ ⊢
+  goal goal′ : ∀ {Θ k} {Γ : Fm* k} → Θ / Γ ⊢
                  ‵fun (const 1) (tabulate ‵var) ‵= ‵zero ‵→ ‵suc ‵zero ‵= ‵zero
 
   goal = ‵lam
@@ -611,7 +612,7 @@ module _ where
             ∎)
 
 
-lem3 : ∀ {Θ k} {Γ : Fms k} (A : Fm k) {{_ : IsQFree A}} → Σ (Prim k) λ φ →
+lem3 : ∀ {Θ k} {Γ : Fm* k} (A : Fm k) {{_ : IsQFree A}} → Σ (Prim k) λ φ →
          Θ / Γ ⊢ A ‵↔ ‵fun φ (tabulate ‵var) ‵= ‵zero
 lem3 (A ‵→ B) = {!!}
 lem3 (A ‵∧ B) = {!!}
