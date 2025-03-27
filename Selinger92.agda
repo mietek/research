@@ -353,6 +353,9 @@ postulate
   -- weaken formulas by adding one unused numerical variable
   ↑* : ∀ {k} (Γ : Fm* k) → Fm* (suc k)
 
+  -- exchange two topomost numerical variables in formula
+  ↕ : ∀ {k} (A : Fm k) → Fm k
+
   -- substitute topmost numerical variable in formula by term
   _[_] : ∀ {k} (A : Fm (suc k)) (s : Tm k) → Fm k
 
@@ -384,26 +387,26 @@ data _/_⊢_ {k} : Theory → Fm* k → Fm k → Set where
   ‵case   : ∀ {Θ Γ A B C} (c : Θ / Γ ⊢ A ‵∨ B) (d : Θ / A ∷ Γ ⊢ C) (e : Θ / B ∷ Γ ⊢ C) →
               Θ / Γ ⊢ C
 
-  --  B[x]
-  -- ------
-  -- ∀xB[x]
+  --     B(x₀)
+  -- --------------
+  --   ∀y.B[y/xₒ]
   ‵∀intro : ∀ {Θ Γ B} (d : Θ / ↑* Γ ⊢ B) → Θ / Γ ⊢ ‵∀ B
 
-  -- ∀xB[x]
-  -- ------
-  --  B[t]
-  ‵∀elim  : ∀ {Θ Γ B} (t : Tm k) (d : Θ / Γ ⊢ ‵∀ B) → Θ / Γ ⊢ B [ t ]
+  --   ∀y.B[y/x₀]
+  -- --------------
+  --    B[t/x₀]
+  ‵∀elim  : ∀ {Θ Γ B t} (d : Θ / Γ ⊢ ‵∀ B) → Θ / Γ ⊢ B [ t ]
 
-  --  B[t]
-  -- ------
-  -- ∃xB[x]
-  ‵∃intro : ∀ {Θ Γ B} (t : Tm k) (d : Θ / Γ ⊢ B [ t ]) → Θ / Γ ⊢ ‵∃ B
+  --    B[t/x₀]
+  -- --------------
+  --   ∃y.B[y/x₀]
+  ‵∃intro : ∀ {Θ Γ B t} (d : Θ / Γ ⊢ B [ t ]) → Θ / Γ ⊢ ‵∃ B
 
-  --          B[x]
-  --           ⋮
-  --   ∃xB[x]  C
-  -- -------------
-  --       C
+ --                  B(x₀)
+  --                   ⋮
+  --   ∃x.B[x/x₀]      C
+  -- -----------------------
+  --           C
   ‵∃elim  : ∀ {Θ Γ B C} (d : Θ / Γ ⊢ ‵∃ B) (e : Θ / B ∷ ↑* Γ ⊢ ↑ C) → Θ / Γ ⊢ C
 
   -- HA has explosion (ex falso quodlibet) as primitive
@@ -420,16 +423,21 @@ data _/_⊢_ {k} : Theory → Fm* k → Fm k → Set where
               Θ / Γ ⊢ ‵fun φ ts ‵= ‵fun φ (put i ts u)
 
   ‵dis    : ∀ {Θ Γ t} → Θ / Γ ⊢ ‵suc t ‵≠ ‵zero
+
   ‵inj    : ∀ {Θ Γ t u} (d : Θ / Γ ⊢ ‵suc t ‵= ‵suc u) → Θ / Γ ⊢ t ‵= u
 
-  -- TODO: roconnor hates this
-  ‵ind    : ∀ {Θ Γ B} (d : Θ / ↑* Γ ⊢ B [ ‵zero ])
-              (e : Θ / Γ ⊢ ‵∀ B [ ‵var zero ] ‵→ B [ ‵suc (‵var zero) ]) →
-              Θ / Γ ⊢ ‵∀ B [ ‵var zero ]
+   --   B[0/x₀]    ∀y.B[y/x₀]→B[y+1/x₀]
+   -- ------------------------------------
+   --              ∀y.B[y/x₀]
+  ‵ind    : ∀ {Θ Γ B} (d : Θ / Γ ⊢ B [ ‵zero ])
+              (e : Θ / Γ ⊢ ‵∀ B ‵→ (↕ (↑ B)) [ ‵suc (‵var zero) ]) →
+              Θ / Γ ⊢ ‵∀ B
 
   ‵proj   : ∀ {Θ Γ n ts} (i : Fin n) → Θ / Γ ⊢ ‵fun (proj i) ts ‵= get i ts
+
   ‵comp   : ∀ {Θ Γ n m ts} (ψ : Prim m) (φs : Vec (Prim n) m) →
               Θ / Γ ⊢ ‵fun (comp ψ φs) ts ‵= ‵fun ψ (for φs λ φ → ‵fun φ ts)
+
   ‵rec    : ∀ {Θ Γ n s ts} (φ : Prim n) (ψ : Prim (suc (suc n))) →
               Θ / Γ ⊢ ‵fun (rec φ ψ) (‵zero ∷ ts) ‵= ‵fun φ ts ‵∧
                 ‵fun (rec φ ψ) (‵suc s ∷ ts) ‵= ‵fun ψ (‵fun (rec φ ψ) (s ∷ ts) ∷ s ∷ ts)
@@ -550,8 +558,8 @@ lem2 (‵left d)     = ‵left (lem2 d)
 lem2 (‵right d)    = ‵right (lem2 d)
 lem2 (‵case c d e) = ‵case (lem2 c) (lem2 d) (lem2 e)
 lem2 (‵∀intro d)   = ‵∀intro (lem2 d)
-lem2 (‵∀elim t d)  = ‵∀elim t (lem2 d)
-lem2 (‵∃intro t d) = ‵∃intro t (lem2 d)
+lem2 (‵∀elim d)    = ‵∀elim (lem2 d)
+lem2 (‵∃intro d)   = ‵∃intro (lem2 d)
 lem2 (‵∃elim d e)  = ‵∃elim (lem2 d) (lem2 e)
 lem2 (‵abort d)    = PA-abort (lem2 d)
 lem2 ‵refl         = ‵refl
