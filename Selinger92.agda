@@ -354,7 +354,7 @@ postulate
   ↑* : ∀ {k} (Γ : Fm* k) → Fm* (suc k)
 
   -- exchange two topomost numerical variables in formula
-  ↕ : ∀ {k} (A : Fm k) → Fm k
+  ↕ : ∀ {k} (A : Fm (suc (suc k))) → Fm (suc (suc k))
 
   -- substitute topmost numerical variable in formula by term
   _[_] : ∀ {k} (A : Fm (suc k)) (s : Tm k) → Fm k
