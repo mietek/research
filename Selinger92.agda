@@ -395,7 +395,7 @@ postulate
   -- weaken formulas by adding one unused numerical variable
   ↑§ : ∀ {k} (Γ : Fm§ k) → Fm§ (suc k)
 
-  -- exchange two topomost numerical variables in formula
+  -- exchange two topmost numerical variables in formula
   ↕ : ∀ {k} (A : Fm (suc (suc k))) → Fm (suc (suc k))
 
   -- substitute topmost numerical variable in formula by term
