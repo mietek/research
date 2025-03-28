@@ -46,9 +46,12 @@ for xs f = Vec.map f xs
 -- building blocks for the standard model of primitive recursive n-place functions on naturals
 -- Troelstra (1973) §1.3.4
 
+Nat* : Nat → Set
+Nat* n = Vec Nat n
+
 -- n-place functions on naturals
 #Fun : Nat → Set
-#Fun n = Vec Nat n → Nat
+#Fun n = Nat* n → Nat
 
 #Fun* : Nat → Nat → Set
 #Fun* n m = Vec (#Fun n) m
@@ -209,7 +212,7 @@ module _ where
 #const zero    = #comp #zero []
 #const (suc x) = #comp #suc (#const x ∷ [])
 
-ok-#const : ∀ {n} x (ys : Vec Nat n) → #const x ys ≡ x
+ok-#const : ∀ {n} x (ys : Nat* n) → #const x ys ≡ x
 ok-#const zero    ys = refl
 ok-#const (suc x) ys = cong suc (ok-#const x ys)
 
@@ -305,12 +308,13 @@ infix  15 ‵¬_
 infixr 14 _‵$_
 
 -- terms, indexed by number of potential numerical variables
-data Tm (k : Nat) : Set where
-  ‵var : ∀ (i : Fin k) → Tm k -- i-th numerical variable
-  ‵fun : ∀ {n} (φ : Prim n) (ts : Vec (Tm k) n) → Tm k
+mutual
+  data Tm (k : Nat) : Set where
+    ‵var : ∀ (i : Fin k) → Tm k -- i-th numerical variable
+    ‵fun : ∀ {n} (φ : Prim n) (ts : Tm* k n) → Tm k
 
-Tm* : Nat → Nat → Set
-Tm* k n = Vec (Tm k) n
+  Tm* : Nat → Nat → Set
+  Tm* k n = Vec (Tm k) n
 
 ‵zero : ∀ {k} → Tm k
 ‵zero = ‵fun zero []
@@ -435,7 +439,7 @@ data _/_⊢_ {k} : Theory → Fm* k → Fm k → Set where
 
   ‵proj   : ∀ {Θ Γ n ts} (i : Fin n) → Θ / Γ ⊢ ‵fun (proj i) ts ‵= get i ts
 
-  ‵comp   : ∀ {Θ Γ n m ts} (ψ : Prim m) (φs : Vec (Prim n) m) →
+  ‵comp   : ∀ {Θ Γ n m ts} (ψ : Prim m) (φs : Prim* n m) →
               Θ / Γ ⊢ ‵fun (comp ψ φs) ts ‵= ‵fun ψ (for φs λ φ → ‵fun φ ts)
 
   ‵rec    : ∀ {Θ Γ n s ts} (φ : Prim n) (ψ : Prim (suc (suc n))) →
