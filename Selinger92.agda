@@ -15,6 +15,9 @@ open Nat using (zero ; suc)
 open import Data.Product using (Σ ; _,_ ; _×_)
   renaming (proj₁ to fst ; proj₂ to snd)
 
+open import Data.Sum using (_⊎_)
+  renaming (inj₁ to left ; inj₂ to right)
+
 import Data.Vec as Vec
 open Vec using (Vec ; [] ; _∷_ ; tabulate)
 
@@ -33,51 +36,21 @@ open import Relation.Nullary using (Dec ; yes ; no)
 
 -- vector things
 
-get : ∀ {a} {A : Set a} {n} → Fin n → Vec A n → A
+get : ∀ {𝒶} {A : Set 𝒶} {n} → Fin n → Vec A n → A
 get i xs = Vec.lookup xs i
 
-put : ∀ {a} {A : Set a} {n} → Fin n → Vec A n → A → Vec A n
+put : ∀ {𝒶} {A : Set 𝒶} {n} → Fin n → Vec A n → A → Vec A n
 put i xs y = xs Vec.[ i ]≔ y
 
-for : ∀ {a b} {A : Set a} {B : Set b} {n} → Vec A n → (A → B) → Vec B n
+for : ∀ {𝒶 𝒷} {A : Set 𝒶} {B : Set 𝒷} {n} → Vec A n → (A → B) → Vec B n
 for xs f = Vec.map f xs
 
 
 ----------------------------------------------------------------------------------------------------
 
--- building blocks for the standard model of primitive recursive n-place functions on naturals
+-- primitive recursive n-ary functions on naturals
 -- Troelstra (1973) §1.3.4
 
-Nat§ : Nat → Set
-Nat§ n = Vec Nat n
-
--- n-place functions on naturals
-#Fun : Nat → Set
-#Fun n = Nat§ n → Nat
-
-#Fun§ : Nat → Nat → Set
-#Fun§ n m = Vec (#Fun n) m
-
-#zero : #Fun 0
-#zero [] = zero
-
-#suc : #Fun 1
-#suc (x ∷ []) = suc x
-
-#proj : ∀ {n} → Fin n → #Fun n
-#proj i xs = get i xs
-
-#comp : ∀ {n m} (ψ : #Fun m) (φs : #Fun§ n m) → #Fun n
-#comp ψ φs xs = ψ (for φs (_$ xs))
-
-#rec : ∀ {n} (φ : #Fun n) (ψ : #Fun (suc (suc n))) → #Fun (suc n)
-#rec φ ψ (zero  ∷ ys) = φ ys
-#rec φ ψ (suc x ∷ ys) = ψ (#rec φ ψ (x ∷ ys) ∷ x ∷ ys)
-
-
-----------------------------------------------------------------------------------------------------
-
--- primitive recursive n-place functions on naturals
 mutual
   data Prim : Nat → Set where
     zero : Prim zero
@@ -89,15 +62,40 @@ mutual
   Prim§ : Nat → Nat → Set
   Prim§ n m = Vec (Prim n) m
 
+Nat§ : Nat → Set
+Nat§ n = Vec Nat n
+
+Fun : Nat → Set
+Fun n = Nat§ n → Nat
+
+Fun§ : Nat → Nat → Set
+Fun§ n m = Vec (Fun n) m
+
+#zero : Fun 0
+#zero [] = zero
+
+#suc : Fun 1
+#suc (x ∷ []) = suc x
+
+#proj : ∀ {n} → Fin n → Fun n
+#proj i xs = get i xs
+
+#comp : ∀ {n m} (ψ : Fun m) (φs : Fun§ n m) → Fun n
+#comp ψ φs xs = ψ (for φs (_$ xs))
+
+#rec : ∀ {n} (φ : Fun n) (ψ : Fun (suc (suc n))) → Fun (suc n)
+#rec φ ψ (zero  ∷ ys) = φ ys
+#rec φ ψ (suc x ∷ ys) = ψ (#rec φ ψ (x ∷ ys) ∷ x ∷ ys)
+
 mutual
-  ⟦_⟧ : ∀ {n} → Prim n → #Fun n
+  ⟦_⟧ : ∀ {n} → Prim n → Fun n
   ⟦ zero ⟧      = #zero
   ⟦ suc ⟧       = #suc
   ⟦ proj i ⟧    = #proj i
   ⟦ comp g fs ⟧ = #comp ⟦ g ⟧ ⟦ fs ⟧§
   ⟦ rec f g ⟧   = #rec ⟦ f ⟧ ⟦ g ⟧
 
-  ⟦_⟧§ : ∀ {n m} → Prim§ n m → #Fun§ n m
+  ⟦_⟧§ : ∀ {n m} → Prim§ n m → Fun§ n m
   ⟦ [] ⟧§     = []
   ⟦ f ∷ fs ⟧§ = ⟦ f ⟧ ∷ ⟦ fs ⟧§
 
@@ -110,18 +108,18 @@ _≐_ : ∀ {a b} {A : Set a} {B : Set b} → (A → B) → (A → B) → Set (a
 f ≐ f′ = ∀ {x} → f x ≡ f′ x
 
 mutual
-  data IsPrim : ∀ {n} → #Fun n → Set where
-    iszero : ∀ {ξ : #Fun zero} (h : ξ ≐ #zero) → IsPrim ξ
-    issuc  : ∀ {ξ : #Fun (suc zero)} (h : ξ ≐ #suc) → IsPrim ξ
-    isproj : ∀ {n} i {ξ : #Fun n} (h : ξ ≐ #proj i) → IsPrim ξ
-    iscomp : ∀ {n m} {ξ : #Fun n} {ψ : #Fun m} {φs : #Fun§ n m} →
+  data IsPrim : ∀ {n} → Fun n → Set where
+    iszero : ∀ {ξ : Fun zero} (h : ξ ≐ #zero) → IsPrim ξ
+    issuc  : ∀ {ξ : Fun (suc zero)} (h : ξ ≐ #suc) → IsPrim ξ
+    isproj : ∀ {n} i {ξ : Fun n} (h : ξ ≐ #proj i) → IsPrim ξ
+    iscomp : ∀ {n m} {ξ : Fun n} {ψ : Fun m} {φs : Fun§ n m} →
                (h : ξ ≐ #comp ψ φs) (e : IsPrim ψ) (ds : IsPrim§ φs) → IsPrim ξ
-    isrec  : ∀ {n} {ξ : #Fun (suc n)} {φ : #Fun n} {ψ : #Fun (suc (suc n))} →
+    isrec  : ∀ {n} {ξ : Fun (suc n)} {φ : Fun n} {ψ : Fun (suc (suc n))} →
                (h : ξ ≐ #rec φ ψ) (d : IsPrim φ) (e : IsPrim ψ) → IsPrim ξ
 
-  data IsPrim§ {n} : ∀ {m} → #Fun§ n m → Set where
+  data IsPrim§ {n} : ∀ {m} → Fun§ n m → Set where
     []  : IsPrim§ []
-    _∷_ : ∀ {m} {φ : #Fun n} {φs : #Fun§ n m} (d : IsPrim φ) (ds : IsPrim§ φs) →
+    _∷_ : ∀ {m} {φ : Fun n} {φs : Fun§ n m} (d : IsPrim φ) (ds : IsPrim§ φs) →
             IsPrim§ (φ ∷ φs)
 
 mutual
@@ -140,7 +138,7 @@ module _ where
   open ≡-Reasoning
 
   mutual
-    e→i : ∀ {n} {φ : #Fun n} → IsPrim φ → Σ (Prim n) λ f → φ ≐ ⟦ f ⟧
+    e→i : ∀ {n} {φ : Fun n} → IsPrim φ → Σ (Prim n) λ f → φ ≐ ⟦ f ⟧
     e→i (iszero h)      = zero , h
     e→i (issuc h)       = suc , h
     e→i (isproj i h)    = proj i , h
@@ -196,7 +194,7 @@ module _ where
             #rec ⟦ f ⟧ ⟦ g ⟧ (suc x ∷ ys)
           ∎
 
-    e→i§ : ∀ {n m} {φs : #Fun§ n m} → IsPrim§ φs → Σ (Prim§ n m) λ fs →
+    e→i§ : ∀ {n m} {φs : Fun§ n m} → IsPrim§ φs → Σ (Prim§ n m) λ fs →
               ∀ {xs} → for φs (_$ xs) ≡ for ⟦ fs ⟧§ (_$ xs)
     e→i§ []       = [] , refl
     e→i§ (d ∷ ds) with e→i d | e→i§ ds
@@ -207,13 +205,13 @@ module _ where
 
 -- TODO: clean this up
 
--- some primitive recursive n-place functions on naturals
+-- some primitive recursive n-ary functions on naturals
 -- Troelstra and van Dalen (1988) §1.3
 
 
 -- TODO: delete this
 
--- #const : ∀ {n} → Nat → #Fun n
+-- #const : ∀ {n} → Nat → Fun n
 -- #const zero    = #comp #zero []
 -- #const (suc x) = #comp #suc (#const x ∷ [])
 --
@@ -240,7 +238,7 @@ ok-const (suc x) = cong suc (ok-const x)
 
 -- TODO: delete this
 
--- #add : #Fun 2
+-- #add : Fun 2
 -- #add = #rec (#proj zero)
 --             (#comp #suc (#proj zero ∷ []))
 --
@@ -267,7 +265,7 @@ ok-add (suc x) y = cong suc (ok-add x y)
 
 -- TODO: delete this
 
--- #mul : #Fun 2
+-- #mul : Fun 2
 -- #mul = #rec (#const 0)
 --             (#comp #add (#proj (suc (suc zero)) ∷ #proj zero ∷ []))
 --
@@ -307,7 +305,7 @@ module _ where
 
 -- TODO: delete this
 
--- #pred : #Fun 1
+-- #pred : Fun 1
 -- #pred = #rec (#const 0)
 --              (#proj (suc zero))
 --
@@ -338,17 +336,17 @@ ok-pred (suc x) = refl
 
 ----------------------------------------------------------------------------------------------------
 
-infix  19 _‵=_
+infix  19 _‵=_ _‵≠_
 infixl 18 _‵∧_ _‵∨_
 infixr 17 _‵→_ _‵↔_
 infix  16 ‵∀_ ‵∃_
 infix  15 ‵¬_
 infixr 14 _‵$_
 
--- terms, indexed by number of potential numerical variables
+-- terms, indexed by number of term variables
 mutual
   data Tm (k : Nat) : Set where
-    ‵var : ∀ (i : Fin k) → Tm k -- i-th numerical variable
+    ‵var : ∀ (i : Fin k) → Tm k -- i-th term variable
     ‵fun : ∀ {n} (φ : Prim n) (ts : Tm§ k n) → Tm k
 
   Tm§ : Nat → Nat → Set
@@ -360,24 +358,24 @@ mutual
 ‵suc : ∀ {k} → Tm k → Tm k
 ‵suc t = ‵fun suc (t ∷ [])
 
--- formulas, indexed by number of potential numerical variables
+-- formulas, indexed by number of term variables
 data Fm (k : Nat) : Set where
   _‵→_ : ∀ (A B : Fm k) → Fm k
   _‵∧_  : ∀ (A B : Fm k) → Fm k
   _‵∨_  : ∀ (A B : Fm k) → Fm k
-  ‵∀_   : ∀ (B : Fm (suc k)) → Fm k
-  ‵∃_   : ∀ (B : Fm (suc k)) → Fm k
+  ‵∀_   : ∀ (A : Fm (suc k)) → Fm k
+  ‵∃_   : ∀ (A : Fm (suc k)) → Fm k
   ‵⊥   : Fm k
   _‵=_  : ∀ (t u : Tm k) → Fm k
 
 Fm§ : Nat → Set
 Fm§ k = List (Fm k)
 
-‵¬_ : ∀ {k} → Fm k → Fm k
-‵¬ A = A ‵→ ‵⊥
-
 _‵↔_ : ∀ {k} → Fm k → Fm k → Fm k
 A ‵↔ B = (A ‵→ B) ‵∧ (B ‵→ A)
+
+‵¬_ : ∀ {k} → Fm k → Fm k
+‵¬ A = A ‵→ ‵⊥
 
 _‵≠_ : ∀ {k} → Tm k → Tm k → Fm k
 t ‵≠ u = ‵¬ t ‵= u
@@ -385,27 +383,106 @@ t ‵≠ u = ‵¬ t ‵= u
 
 ----------------------------------------------------------------------------------------------------
 
--- TODO: usual things
+-- untyped de Bruijn indices and order-preserving embeddings for term variables
 
-infix 4 _∋_
+-- data Fin : Nat → Set where
+--   zero : Fin (suc n)
+--   suc  : ∀ (i : Fin n) → Fin (suc n)
+
+infix 3 _≤_
+data _≤_ : Nat → Nat → Set where
+  stop  : zero ≤ zero
+  wk≤   : ∀ {k k′} (η : k ≤ k′) → k ≤ suc k′
+  lift≤ : ∀ {k k′} (η : k ≤ k′) → suc k ≤ suc k′
+
+id≤ : ∀ {k} → k ≤ k
+id≤ {zero}  = stop
+id≤ {suc k} = lift≤ id≤
+
+frenFin : ∀ {k k′} → k ≤ k′ → Fin k → Fin k′
+frenFin stop      i       = i
+frenFin (wk≤ η)   i       = suc (frenFin η i)
+frenFin (lift≤ η) zero    = zero
+frenFin (lift≤ η) (suc i) = frenFin (wk≤ η) i
+
+fwkFin : ∀ {k} → Fin k → Fin (suc k)
+fwkFin = frenFin (wk≤ id≤)
+
+
+----------------------------------------------------------------------------------------------------
+
+-- typed de Bruijn indices and order-preserving embeddings for derivation variables
+
+infix 3 _∋_
+data _∋_ {k} : Fm§ k → Fm k → Set where
+  zero : ∀ {Γ A} → A ∷ Γ ∋ A
+  suc  : ∀ {Γ A C} (i : Γ ∋ A) → C ∷ Γ ∋ A
+
+infix 3 _⊆_
+data _⊆_ {k} : Fm§ k → Fm§ k → Set where
+  stop  : [] ⊆ []
+  wk⊆   : ∀ {Γ Γ′ C} (η : Γ ⊆ Γ′) → Γ ⊆ C ∷ Γ′
+  lift⊆ : ∀ {Γ Γ′ C} (η : Γ ⊆ Γ′) → C ∷ Γ ⊆ C ∷ Γ′
+
+id⊆ : ∀ {k} {Γ : Fm§ k} → Γ ⊆ Γ
+id⊆ {Γ = []}    = stop
+id⊆ {Γ = A ∷ Γ} = lift⊆ id⊆
+
+ren∋ : ∀ {k} {Γ Γ′ : Fm§ k} {A} → Γ ⊆ Γ′ → Γ ∋ A → Γ′ ∋ A
+ren∋ stop      i       = i
+ren∋ (wk⊆ η)   i       = suc (ren∋ η i)
+ren∋ (lift⊆ η) zero    = zero
+ren∋ (lift⊆ η) (suc i) = ren∋ (wk⊆ η) i
+
+wk∋ : ∀ {k} {Γ : Fm§ k} {A C} → Γ ∋ A → C ∷ Γ ∋ A
+wk∋ = ren∋ (wk⊆ id⊆)
+
+
+----------------------------------------------------------------------------------------------------
+
+-- renaming for terms and formulas
+
+mutual
+  frenTm : ∀ {k k′} → k ≤ k′ → Tm k → Tm k′
+  frenTm η (‵var i)    = ‵var (frenFin η i)
+  frenTm η (‵fun φ ts) = ‵fun φ (frenTm§ η ts)
+
+  frenTm§ : ∀ {k k′ n} → k ≤ k′ → Tm§ k n → Tm§ k′ n
+  frenTm§ η []       = []
+  frenTm§ η (t ∷ ts) = frenTm η t ∷ frenTm§ η ts
+
+frenFm : ∀ {k k′} → k ≤ k′ → Fm k → Fm k′
+frenFm η (A ‵→ B) = frenFm η A ‵→ frenFm η B
+frenFm η (A ‵∧ B)  = frenFm η A ‵∧ frenFm η B
+frenFm η (A ‵∨ B)  = frenFm η A ‵∨ frenFm η B
+frenFm η (‵∀ A)    = ‵∀ frenFm (lift≤ η) A
+frenFm η (‵∃ A)    = ‵∃ frenFm (lift≤ η) A
+frenFm η ‵⊥       = ‵⊥
+frenFm η (t ‵= u)  = frenTm η t ‵= frenTm η u
+
+frenFm§ : ∀ {k k′} → k ≤ k′ → Fm§ k → Fm§ k′
+frenFm§ η []      = []
+frenFm§ η (A ∷ Γ) = frenFm η A ∷ frenFm§ η Γ
+
+-- weaken formula by adding one unused term variable
+fwkFm : ∀ {k} → Fm k → Fm (suc k)
+fwkFm = frenFm (wk≤ id≤)
+
+-- weaken formulas by adding one unused term variable
+fwkFm§ : ∀ {k} → Fm§ k → Fm§ (suc k)
+fwkFm§ = frenFm§ (wk≤ id≤)
+
+
+----------------------------------------------------------------------------------------------------
+
+-- TODO: substitution for terms and formulas
+
 postulate
-  -- weaken formula by adding one unused numerical variable
-  ↑ : ∀ {k} (A : Fm k) → Fm (suc k)
-
-  -- weaken formulas by adding one unused numerical variable
-  ↑§ : ∀ {k} (Γ : Fm§ k) → Fm§ (suc k)
-
-  -- exchange two topmost numerical variables in formula
+  -- exchange two topmost term variables in formula
   ↕ : ∀ {k} (A : Fm (suc (suc k))) → Fm (suc (suc k))
 
-  -- substitute topmost numerical variable in formula by term
+  -- substitute topmost term variable in formula by term
   _[_] : ∀ {k} (A : Fm (suc k)) (s : Tm k) → Fm k
-
-  -- assumptions, or typed de Bruijn indices
-  _∋_ : ∀ {k} (Γ : Fm§ k) (A : Fm k) → Set
-
-  top : ∀ {k} {Γ : Fm§ k} {A} → A ∷ Γ ∋ A
-  pop : ∀ {k} {Γ : Fm§ k} {A C} → Γ ∋ A → C ∷ Γ ∋ A
 
 
 ----------------------------------------------------------------------------------------------------
@@ -415,10 +492,10 @@ data Theory : Set where
   HA : Theory
   PA : Theory
 
--- derivations, indexed by potential assumptions
+-- derivations, indexed by list of derivation variables
 infix 3 _/_⊢_
 data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
-  ‵var    : ∀ {Θ Γ A} (i : Γ ∋ A) → Θ / Γ ⊢ A -- i-th assumption
+  ‵var    : ∀ {Θ Γ A} (i : Γ ∋ A) → Θ / Γ ⊢ A -- i-th derivation variable
   ‵lam    : ∀ {Θ Γ A B} (d : Θ / A ∷ Γ ⊢ B) → Θ / Γ ⊢ A ‵→ B
   _‵$_    : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A ‵→ B) (e : Θ / Γ ⊢ A) → Θ / Γ ⊢ B
   ‵pair   : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A) (e : Θ / Γ ⊢ B) → Θ / Γ ⊢ A ‵∧ B
@@ -427,34 +504,34 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   ‵left   : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A) → Θ / Γ ⊢ A ‵∨ B
   ‵right  : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ B) → Θ / Γ ⊢ A ‵∨ B
   ‵case   : ∀ {Θ Γ A B C} (c : Θ / Γ ⊢ A ‵∨ B) (d : Θ / A ∷ Γ ⊢ C) (e : Θ / B ∷ Γ ⊢ C) →
-              Θ / Γ ⊢ C
+               Θ / Γ ⊢ C
 
-  --     B(x₀)
+  --     A(x₀)
   -- --------------
-  --   ∀y.B[y/xₒ]
-  ‵∀intro : ∀ {Θ Γ B} (d : Θ / ↑§ Γ ⊢ B) → Θ / Γ ⊢ ‵∀ B
+  --   ∀y.A[y/xₒ]
+  ‵∀intro : ∀ {Θ Γ A} (d : Θ / fwkFm§ Γ ⊢ A) → Θ / Γ ⊢ ‵∀ A
 
-  --   ∀y.B[y/x₀]
+  --   ∀y.A[y/x₀]
   -- --------------
-  --    B[t/x₀]
-  ‵∀elim  : ∀ {Θ Γ B t} (d : Θ / Γ ⊢ ‵∀ B) → Θ / Γ ⊢ B [ t ]
+  --    A[t/x₀]
+  ‵∀elim  : ∀ {Θ Γ A t A[t]} (d : Θ / Γ ⊢ ‵∀ A) (p : A[t] ≡ A [ t ]) → Θ / Γ ⊢ A[t]
 
-  --    B[t/x₀]
+  --    A[t/x₀]
   -- --------------
-  --   ∃y.B[y/x₀]
-  ‵∃intro : ∀ {Θ Γ B t} (d : Θ / Γ ⊢ B [ t ]) → Θ / Γ ⊢ ‵∃ B
+  --   ∃y.A[y/x₀]
+  ‵∃intro : ∀ {Θ Γ A t} (d : Θ / Γ ⊢ A [ t ]) → Θ / Γ ⊢ ‵∃ A
 
- --                  B(x₀)
+ --                  A(x₀)
   --                   ⋮
-  --   ∃x.B[x/x₀]      C
+  --   ∃y.A[y/x₀]      C
   -- -----------------------
   --           C
-  ‵∃elim  : ∀ {Θ Γ B C} (d : Θ / Γ ⊢ ‵∃ B) (e : Θ / B ∷ ↑§ Γ ⊢ ↑ C) → Θ / Γ ⊢ C
+  ‵∃elim  : ∀ {Θ Γ A C} (d : Θ / Γ ⊢ ‵∃ A) (e : Θ / A ∷ fwkFm§ Γ ⊢ fwkFm C) → Θ / Γ ⊢ C
 
-  -- HA has explosion (ex falso quodlibet) as primitive
+  -- explosion (ex falso quodlibet) as primitive in Heyting arithmetic
   ‵abort  : ∀ {Γ C} (d : HA / Γ ⊢ ‵⊥) → HA / Γ ⊢ C
 
-  -- PA has double negation elimination (reductio ad absurdum) as primitive
+  -- double negation elimination (reductio ad absurdum) as primitive in Peano arithmetic
   ‵magic  : ∀ {Γ A} (d : PA / ‵¬ A ∷ Γ ⊢ ‵⊥) → PA / Γ ⊢ A
 
   ‵refl   : ∀ {Θ Γ t} → Θ / Γ ⊢ t ‵= t
@@ -462,27 +539,27 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   ‵trans  : ∀ {Θ Γ s t u} (d : Θ / Γ ⊢ s ‵= t) (e : Θ / Γ ⊢ t ‵= u) → Θ / Γ ⊢ s ‵= u
 
   ‵cong   : ∀ {Θ Γ n ts u} (φ : Prim n) (i : Fin n) (d : Θ / Γ ⊢ get i ts ‵= u) →
-              Θ / Γ ⊢ ‵fun φ ts ‵= ‵fun φ (put i ts u)
+               Θ / Γ ⊢ ‵fun φ ts ‵= ‵fun φ (put i ts u)
 
   ‵dis    : ∀ {Θ Γ t} → Θ / Γ ⊢ ‵suc t ‵≠ ‵zero
 
   ‵inj    : ∀ {Θ Γ t u} (d : Θ / Γ ⊢ ‵suc t ‵= ‵suc u) → Θ / Γ ⊢ t ‵= u
 
-   --   B[0/x₀]    ∀y.B[y/x₀]→B[y+1/x₀]
+   --   A[0/x₀]    ∀y.A[y/x₀]→A[y+1/x₀]
    -- ------------------------------------
-   --              ∀y.B[y/x₀]
-  ‵ind    : ∀ {Θ Γ B} (d : Θ / Γ ⊢ B [ ‵zero ])
-              (e : Θ / Γ ⊢ ‵∀ B ‵→ (↕ (↑ B)) [ ‵suc (‵var zero) ]) →
-              Θ / Γ ⊢ ‵∀ B
+   --              ∀y.A[y/x₀]
+  ‵ind    : ∀ {Θ Γ A} (d : Θ / Γ ⊢ A [ ‵zero ])
+               (e : Θ / Γ ⊢ ‵∀ A ‵→ (↕ (fwkFm A)) [ ‵suc (‵var zero) ]) →
+               Θ / Γ ⊢ ‵∀ A
 
   ‵proj   : ∀ {Θ Γ n ts} (i : Fin n) → Θ / Γ ⊢ ‵fun (proj i) ts ‵= get i ts
 
   ‵comp   : ∀ {Θ Γ n m ts} (ψ : Prim m) (φs : Prim§ n m) →
-              Θ / Γ ⊢ ‵fun (comp ψ φs) ts ‵= ‵fun ψ (for φs λ φ → ‵fun φ ts)
+               Θ / Γ ⊢ ‵fun (comp ψ φs) ts ‵= ‵fun ψ (for φs λ φ → ‵fun φ ts)
 
   ‵rec    : ∀ {Θ Γ n s ts} (φ : Prim n) (ψ : Prim (suc (suc n))) →
-              Θ / Γ ⊢ ‵fun (rec φ ψ) (‵zero ∷ ts) ‵= ‵fun φ ts ‵∧
-                ‵fun (rec φ ψ) (‵suc s ∷ ts) ‵= ‵fun ψ (‵fun (rec φ ψ) (s ∷ ts) ∷ s ∷ ts)
+               Θ / Γ ⊢ ‵fun (rec φ ψ) (‵zero ∷ ts) ‵= ‵fun φ ts ‵∧
+                 ‵fun (rec φ ψ) (‵suc s ∷ ts) ‵= ‵fun ψ (‵fun (rec φ ψ) (s ∷ ts) ∷ s ∷ ts)
 
 ‵congsuc : ∀ {Θ k} {Γ : Fm§ k} {t u} → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ ‵suc t ‵= ‵suc u
 ‵congsuc d = ‵cong suc zero d
@@ -490,11 +567,52 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
 
 ----------------------------------------------------------------------------------------------------
 
--- TODO: more usual things
+-- renaming for derivations
 
-postulate
-  -- weaken derivation by adding one unused assumption
-  ⇑ : ∀ {Θ k} {Γ : Fm§ k} {A C} → Θ / Γ ⊢ A → Θ / C ∷ Γ ⊢ A
+fren⊆ : ∀ {k k′ Γ Γ′} (η : k ≤ k′) → Γ ⊆ Γ′ → frenFm§ η Γ ⊆ frenFm§ η Γ′
+fren⊆ η stop      = stop
+fren⊆ η (wk⊆ ζ)   = wk⊆ (fren⊆ η ζ)
+fren⊆ η (lift⊆ ζ) = lift⊆ (fren⊆ η ζ)
+
+fwk⊆ : ∀ {k} {Γ Γ′ : Fm§ k} → Γ ⊆ Γ′ → fwkFm§ Γ ⊆ fwkFm§ Γ′
+fwk⊆ = fren⊆ (wk≤ id≤)
+
+ren : ∀ {Θ k} {Γ Γ′ : Fm§ k} {A} → Γ ⊆ Γ′ → Θ / Γ ⊢ A → Θ / Γ′ ⊢ A
+ren η (‵var i)        = ‵var (ren∋ η i)
+ren η (‵lam d)        = ‵lam (ren (lift⊆ η) d)
+ren η (d ‵$ e)        = ren η d ‵$ ren η e
+ren η (‵pair d e)     = ‵pair (ren η d) (ren η e)
+ren η (‵fst d)        = ‵fst (ren η d)
+ren η (‵snd d)        = ‵snd (ren η d)
+ren η (‵left d)       = ‵left (ren η d)
+ren η (‵right d)      = ‵right (ren η d)
+ren η (‵case c d e)   = ‵case (ren η c) (ren (lift⊆ η) d) (ren (lift⊆ η) e)
+ren η (‵∀intro d)     = ‵∀intro (ren (fwk⊆ η) d)
+ren η (‵∀elim d refl) = ‵∀elim (ren η d) refl
+ren η (‵∃intro d)     = ‵∃intro (ren η d)
+ren η (‵∃elim d e)    = ‵∃elim (ren η d) (ren (lift⊆ (fwk⊆ η)) e)
+ren η (‵abort d)      = ‵abort (ren η d)
+ren η (‵magic d)      = ‵magic (ren (lift⊆ η) d)
+ren η ‵refl           = ‵refl
+ren η (‵sym d)        = ‵sym (ren η d)
+ren η (‵trans d e)    = ‵trans (ren η d) (ren η e)
+ren η (‵cong φ i d)   = ‵cong φ i (ren η d)
+ren η ‵dis            = ‵dis
+ren η (‵inj d)        = ‵inj (ren η d)
+ren η (‵ind d e)      = ‵ind (ren η d) (ren η e)
+ren η (‵proj i)       = ‵proj i
+ren η (‵comp ψ φs)    = ‵comp ψ φs
+ren η (‵rec φ ψ)      = ‵rec φ ψ
+
+-- weaken derivation by adding one unused derivation variable
+wk : ∀ {Θ k} {Γ : Fm§ k} {A C} → Θ / Γ ⊢ A → Θ / C ∷ Γ ⊢ A
+wk = ren (wk⊆ id⊆)
+
+fren : ∀ {Θ k k′ Γ Γ′ A} (η : k ≤ k′) → Γ ⊆ Γ′ → Θ / frenFm§ η Γ ⊢ A → Θ / frenFm§ η Γ′ ⊢ A
+fren η ζ = ren (fren⊆ η ζ)
+
+fwk : ∀ {Θ k} {Γ Γ′ : Fm§ k} {A} → Γ ⊆ Γ′ → Θ / fwkFm§ Γ ⊢ A → Θ / fwkFm§ Γ′ ⊢ A
+fwk = fren (wk≤ id≤)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -534,15 +652,15 @@ module =-Reasoning {Θ k} {Γ : Fm§ k} where
 
 module _ {Θ k} {Γ : Fm§ k} where
   ↔refl : ∀ {A} → Θ / Γ ⊢ A ‵↔ A
-  ↔refl = ‵pair (‵lam (‵var top)) (‵lam (‵var top))
+  ↔refl = ‵pair (‵lam (‵var zero)) (‵lam (‵var zero))
 
   ↔sym : ∀ {A B} → Θ / Γ ⊢ A ‵↔ B → Θ / Γ ⊢ B ‵↔ A
   ↔sym d = ‵pair (‵snd d) (‵fst d)
 
   ↔trans : ∀ {A B C} → Θ / Γ ⊢ A ‵↔ B → Θ / Γ ⊢ B ‵↔ C → Θ / Γ ⊢ A ‵↔ C
   ↔trans d e = ‵pair
-                  (‵lam (‵fst (⇑ e) ‵$ ‵fst (⇑ d) ‵$ ‵var top))
-                  (‵lam (‵snd (⇑ d) ‵$ ‵snd (⇑ e) ‵$ ‵var top))
+                  (‵lam (‵fst (wk e) ‵$ ‵fst (wk d) ‵$ ‵var zero))
+                  (‵lam (‵snd (wk d) ‵$ ‵snd (wk e) ‵$ ‵var zero))
 
   ≡→↔ : ∀ {A B} → A ≡ B → Θ / Γ ⊢ A ‵↔ B
   ≡→↔ refl = ↔refl
@@ -577,42 +695,43 @@ module ↔-Reasoning {Θ k} {Γ : Fm§ k} where
 ----------------------------------------------------------------------------------------------------
 
 PA-abort : ∀ {k} {Γ : Fm§ k} {C} → PA / Γ ⊢ ‵⊥ → PA / Γ ⊢ C
-PA-abort d = ‵magic (⇑ d)
+PA-abort d = ‵magic (wk d)
 
 abort : ∀ {Θ k} {Γ : Fm§ k} {C} → Θ / Γ ⊢ ‵⊥ → Θ / Γ ⊢ C
 abort {HA} d = ‵abort d
 abort {PA} d = PA-abort d
 
 lem2 : ∀ {k} {Γ : Fm§ k} {A} → HA / Γ ⊢ A → PA / Γ ⊢ A
-lem2 (‵var i)      = ‵var i
-lem2 (‵lam d)      = ‵lam (lem2 d)
-lem2 (d ‵$ e)      = lem2 d ‵$ lem2 e
-lem2 (‵pair d e)   = ‵pair (lem2 d) (lem2 e)
-lem2 (‵fst d)      = ‵fst (lem2 d)
-lem2 (‵snd d)      = ‵snd (lem2 d)
-lem2 (‵left d)     = ‵left (lem2 d)
-lem2 (‵right d)    = ‵right (lem2 d)
-lem2 (‵case c d e) = ‵case (lem2 c) (lem2 d) (lem2 e)
-lem2 (‵∀intro d)   = ‵∀intro (lem2 d)
-lem2 (‵∀elim d)    = ‵∀elim (lem2 d)
-lem2 (‵∃intro d)   = ‵∃intro (lem2 d)
-lem2 (‵∃elim d e)  = ‵∃elim (lem2 d) (lem2 e)
-lem2 (‵abort d)    = PA-abort (lem2 d)
-lem2 ‵refl         = ‵refl
-lem2 (‵sym d)      = ‵sym (lem2 d)
-lem2 (‵trans d e)  = ‵trans (lem2 d) (lem2 e)
-lem2 (‵cong φ i d) = ‵cong φ i (lem2 d)
-lem2 ‵dis          = ‵dis
-lem2 (‵inj d)      = ‵inj (lem2 d)
-lem2 (‵ind d e)    = ‵ind (lem2 d) (lem2 e)
-lem2 (‵proj i)     = ‵proj i
-lem2 (‵comp ψ φs)  = ‵comp ψ φs
-lem2 (‵rec φ ψ)    = ‵rec φ ψ
+lem2 (‵var i)        = ‵var i
+lem2 (‵lam d)        = ‵lam (lem2 d)
+lem2 (d ‵$ e)        = lem2 d ‵$ lem2 e
+lem2 (‵pair d e)     = ‵pair (lem2 d) (lem2 e)
+lem2 (‵fst d)        = ‵fst (lem2 d)
+lem2 (‵snd d)        = ‵snd (lem2 d)
+lem2 (‵left d)       = ‵left (lem2 d)
+lem2 (‵right d)      = ‵right (lem2 d)
+lem2 (‵case c d e)   = ‵case (lem2 c) (lem2 d) (lem2 e)
+lem2 (‵∀intro d)     = ‵∀intro (lem2 d)
+lem2 (‵∀elim d refl) = ‵∀elim (lem2 d) refl
+lem2 (‵∃intro d)     = ‵∃intro (lem2 d)
+lem2 (‵∃elim d e)    = ‵∃elim (lem2 d) (lem2 e)
+lem2 (‵abort d)      = PA-abort (lem2 d)
+lem2 ‵refl           = ‵refl
+lem2 (‵sym d)        = ‵sym (lem2 d)
+lem2 (‵trans d e)    = ‵trans (lem2 d) (lem2 e)
+lem2 (‵cong φ i d)   = ‵cong φ i (lem2 d)
+lem2 ‵dis            = ‵dis
+lem2 (‵inj d)        = ‵inj (lem2 d)
+lem2 (‵ind d e)      = ‵ind (lem2 d) (lem2 e)
+lem2 (‵proj i)       = ‵proj i
+lem2 (‵comp ψ φs)    = ‵comp ψ φs
+lem2 (‵rec φ ψ)      = ‵rec φ ψ
 
 
 ----------------------------------------------------------------------------------------------------
 
 -- quantifier-free formulas
+
 data IsQFree {k} : Fm k → Set where
   _‵→_ : ∀ {A B} (p : IsQFree A) (q : IsQFree B) → IsQFree (A ‵→ B)
   _‵∧_  : ∀ {A B} (p : IsQFree A) (q : IsQFree B) → IsQFree (A ‵∧ B)
@@ -632,7 +751,7 @@ module _ where
                (‵cong suc zero
                  (‵sym (‵comp zero [])))
                (‵sym (‵comp suc (comp zero [] ∷ []))))
-             (‵var top))
+             (‵var zero))
 
   goal′ = ‵lam
             (begin
@@ -651,24 +770,87 @@ module _ where
               ‵fun (comp suc (comp zero [] ∷ [])) (tabulate ‵var)
             =⟨⟩
               ‵fun (const 1) (tabulate ‵var)
-            =⟨ ‵var top ⟩
+            =⟨ ‵var zero ⟩
               ‵zero
             ∎)
 
 
-lem3 : ∀ {Θ k} {Γ : Fm§ k} (A : Fm k) {{_ : IsQFree A}} → Σ (Prim k) λ φ →
-         Θ / Γ ⊢ A ‵↔ ‵fun φ (tabulate ‵var) ‵= ‵zero
-lem3 (A ‵→ B) = {!!}
-lem3 (A ‵∧ B) = {!!}
-lem3 (A ‵∨ B) = {!!}
-lem3 ‵⊥ = const 1 , ‵pair (‵lam (abort (‵var top))) (‵lam (‵dis ‵$ goal ‵$ ‵var top))
-lem3 (t ‵= u) = {!!}
+-- TODO: lemma 3
+
+-- lem3 : ∀ {Θ k} {Γ : Fm§ k} (A : Fm k) {{_ : IsQFree A}} → Σ (Prim k) λ φ →
+--          Θ / Γ ⊢ A ‵↔ ‵fun φ (tabulate ‵var) ‵= ‵zero
+-- lem3 (A ‵→ B) = {!!}
+-- lem3 (A ‵∧ B) = {!!}
+-- lem3 (A ‵∨ B) = {!!}
+-- lem3 ‵⊥ = const 1 , ‵pair (‵lam (abort (‵var top))) (‵lam (‵dis ‵$ goal ‵$ ‵var top))
+-- lem3 (t ‵= u) = {!!}
 
 
 ----------------------------------------------------------------------------------------------------
 
--- TODO: double-negation translation
+-- TODO: definition of Π⁰₂
+
+
+-- TODO: lemma 4
+
+
+----------------------------------------------------------------------------------------------------
+
+-- double negation translation
+
+_° : ∀ {k} → Fm k → Fm k
+(A ‵→ B) ° = A ° ‵→ B °
+(A ‵∧ B) °  = A ° ‵∧ B °
+(A ‵∨ B) °  = ‵¬ ‵¬ (A ° ‵∨ B °)
+(‵∀ A) °    = ‵∀ A °
+(‵∃ A) °    = ‵¬ ‵¬ ‵∃ A °
+‵⊥ °       = ‵⊥
+(t ‵= u) °  = ‵¬ ‵¬ t ‵= u
+
+-- TODO: lemma 5
+
+module _ {Θ k} {Γ : Fm§ k} where
+  lem5-1-2 : ∀ {A A′ B B′} → Θ / Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ B ‵↔ B′ → Θ / Γ ⊢ A ‵∧ B ‵↔ A′ ‵∧ B′
+  lem5-1-2 d e = ‵pair
+                   (‵lam (‵pair
+                     (‵fst (wk d) ‵$ ‵fst (‵var zero))
+                     (‵fst (wk e) ‵$ ‵snd (‵var zero))))
+                   (‵lam (‵pair
+                     (‵snd (wk d) ‵$ ‵fst (‵var zero))
+                     (‵snd (wk e) ‵$ ‵snd (‵var zero))))
+
+  lem5-1-4 : ∀ {A A′} → Θ / fwkFm§ Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ (‵∀ A) ‵↔ (‵∀ A′)
+  lem5-1-4 {A} {A′} d = ‵pair
+                          (‵lam (‵∀intro (fwk (wk⊆ id⊆) (‵fst d) ‵$ ‵∀elim (‵var zero) {!!})))
+                          (‵lam (‵∀intro (fwk (wk⊆ id⊆) (‵snd d) ‵$ ‵∀elim (‵var zero) {!!})))
+
+module _ where
+  open ↔-Reasoning
+
+  lem5-1 : ∀ {k} {Γ : Fm§ k} (A : Fm k) → PA / Γ ⊢ A ° ‵↔ A
+  lem5-1 (A ‵→ B) = {!!}
+  lem5-1 (A ‵∧ B)  = lem5-1-2 (lem5-1 A) (lem5-1 B)
+  lem5-1 (A ‵∨ B)  = {!!}
+  lem5-1 (‵∀ A)    = lem5-1-4 (lem5-1 A)
+  lem5-1 (‵∃ A)    = {!!}
+  lem5-1 ‵⊥       = ↔refl
+  lem5-1 (t ‵= u)  = {!!}
+
+
+----------------------------------------------------------------------------------------------------
+
 -- TODO: A-translation
+
+-- TODO: lemma 6
+
+
+----------------------------------------------------------------------------------------------------
+
+-- TODO: lemma 7
+
+-- TODO: corollary 8
+
+-- TODO: theorem 1
 
 
 ----------------------------------------------------------------------------------------------------
