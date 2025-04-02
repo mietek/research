@@ -829,7 +829,6 @@ module _ {Θ k} {Γ : Fm§ k} where
     ‵lam (‵lam (abort (‵∃elim (‵var (suc zero))
       (‵∀elim (‵var (suc zero)) later ‵$ ‵var zero))))
 
-
   pdm2 : ∀ {A B} → Θ / Γ ⊢ ‵¬ A ‵∧ ‵¬ B ‵→ ‵¬ (A ‵∨ B)
   pdm2 =
     ‵lam (‵lam (‵case (‵var zero)
@@ -852,7 +851,6 @@ module _ {Θ k} {Γ : Fm§ k} where
     ‵lam (‵lam (abort (‵∃elim (‵var zero)
       (‵var zero ‵$ ‵∀elim (‵var (suc (suc zero))) later))))
 
-
   pdm3 : ∀ {A B} → Θ / Γ ⊢ ‵¬ (A ‵∨ B) ‵→ ‵¬ A ‵∧ ‵¬ B
   pdm3 =
     ‵lam (‵pair
@@ -867,18 +865,24 @@ module _ {Θ k} {Γ : Fm§ k} where
       (‵lam
         (‵var (suc zero) ‵$ ‵∃intro (‵var zero) later)))
 
-  -- npdm3 : ∀ {A B} → Θ / Γ ⊢ ‵¬ (‵¬ A ‵∨ ‵¬ B) ‵→ A ‵∧ B
+module _ {k} {Γ : Fm§ k} where
+  npdm3 : ∀ {A B} → PA / Γ ⊢ ‵¬ (‵¬ A ‵∨ ‵¬ B) ‵→ A ‵∧ B
+  npdm3 = {!!}
 
-  -- nqdm3 : ∀ {A} → Θ / Γ ⊢ ‵¬ (‵∃ (‵¬ A)) ‵→ A
+  nqdm3 : ∀ {A} → PA / Γ ⊢ ‵¬ (‵∃ (‵¬ A)) ‵→ ‵∀ A
+  nqdm3 = {!!}
 
+  pdm4 : ∀ {A B} → PA / Γ ⊢ ‵¬ (A ‵∧ B) ‵→ ‵¬ A ‵∨ ‵¬ B
+  pdm4 = {!!}
 
-  -- pdm4 : ∀ {A B} → Θ / Γ ⊢ ‵¬ (A ‵∧ B) ‵→ ‵¬ A ‵∨ ‵¬ B
+  qdm4 : ∀ {A} → PA / Γ ⊢ ‵¬ (‵∀ A) ‵→ ‵∃ (‵¬ A)
+  qdm4 = {!!}
 
-  -- qdm4 : ∀ {A} → Θ / Γ ⊢ ‵¬ (‵∀ A) ‵→ ‵∃ (‵¬ A)
+  npdm4 : ∀ {A B} → PA / Γ ⊢ ‵¬ (‵¬ A ‵∧ ‵¬ B) ‵→ A ‵∨ B
+  npdm4 = {!!}
 
-  -- npdm4 : ∀ {A B} → Θ / Γ ⊢ ‵¬ (‵¬ A ‵∧ ‵¬ B) ‵→ A ‵∨ B
-
-  -- nqdm4 : ∀ {A} → Θ / Γ ⊢ ‵¬ (‵∀ (‵¬ A)) ‵→ ‵∃ A
+  nqdm4 : ∀ {A} → PA / Γ ⊢ ‵¬ (‵∀ (‵¬ A)) ‵→ ‵∃ A
+  nqdm4 = {!!}
 
 
 ----------------------------------------------------------------------------------------------------
