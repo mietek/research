@@ -777,13 +777,13 @@ module _ where
 
 -- TODO: lemma 3
 
--- lem3 : ∀ {Θ k} {Γ : Fm§ k} (A : Fm k) {{_ : IsQFree A}} → Σ (Prim k) λ φ →
---          Θ / Γ ⊢ A ‵↔ ‵fun φ (tabulate ‵var) ‵= ‵zero
--- lem3 (A ‵→ B) = {!!}
--- lem3 (A ‵∧ B) = {!!}
--- lem3 (A ‵∨ B) = {!!}
--- lem3 ‵⊥ = const 1 , ‵pair (‵lam (abort (‵var top))) (‵lam (‵dis ‵$ goal ‵$ ‵var top))
--- lem3 (t ‵= u) = {!!}
+lem3 : ∀ {Θ k} {Γ : Fm§ k} (A : Fm k) {{_ : IsQFree A}} → Σ (Prim k) λ φ →
+         Θ / Γ ⊢ A ‵↔ ‵fun φ (tabulate ‵var) ‵= ‵zero
+lem3 (A ‵→ B) = {!!}
+lem3 (A ‵∧ B)  = {!!}
+lem3 (A ‵∨ B)  = {!!}
+lem3 ‵⊥       = const 1 , ‵pair (‵lam (abort (‵var zero))) (‵lam (‵dis ‵$ goal ‵$ ‵var zero))
+lem3 (t ‵= u)  = {!!}
 
 
 ----------------------------------------------------------------------------------------------------
@@ -801,7 +801,7 @@ module _ where
 _° : ∀ {k} → Fm k → Fm k
 (A ‵→ B) ° = A ° ‵→ B °
 (A ‵∧ B) °  = A ° ‵∧ B °
-(A ‵∨ B) °  = ‵¬ ‵¬ (A ° ‵∨ B °)
+(A ‵∨ B) °  = ‵¬ ‵¬ A ° ‵∨ B °
 (‵∀ A) °    = ‵∀ A °
 (‵∃ A) °    = ‵¬ ‵¬ ‵∃ A °
 ‵⊥ °       = ‵⊥
@@ -824,17 +824,14 @@ module _ {Θ k} {Γ : Fm§ k} where
                           (‵lam (‵∀intro (fwk (wk⊆ id⊆) (‵fst d) ‵$ ‵∀elim (‵var zero) {!!})))
                           (‵lam (‵∀intro (fwk (wk⊆ id⊆) (‵snd d) ‵$ ‵∀elim (‵var zero) {!!})))
 
-module _ where
-  open ↔-Reasoning
-
-  lem5-1 : ∀ {k} {Γ : Fm§ k} (A : Fm k) → PA / Γ ⊢ A ° ‵↔ A
-  lem5-1 (A ‵→ B) = {!!}
-  lem5-1 (A ‵∧ B)  = lem5-1-2 (lem5-1 A) (lem5-1 B)
-  lem5-1 (A ‵∨ B)  = {!!}
-  lem5-1 (‵∀ A)    = lem5-1-4 (lem5-1 A)
-  lem5-1 (‵∃ A)    = {!!}
-  lem5-1 ‵⊥       = ↔refl
-  lem5-1 (t ‵= u)  = {!!}
+lem5-1 : ∀ {k} {Γ : Fm§ k} (A : Fm k) → PA / Γ ⊢ A ° ‵↔ A
+lem5-1 (A ‵→ B) = {!!}
+lem5-1 (A ‵∧ B)  = lem5-1-2 (lem5-1 A) (lem5-1 B)
+lem5-1 (A ‵∨ B)  = {!!}
+lem5-1 (‵∀ A)    = lem5-1-4 (lem5-1 A)
+lem5-1 (‵∃ A)    = {!!}
+lem5-1 ‵⊥       = ↔refl
+lem5-1 (t ‵= u)  = {!!}
 
 
 ----------------------------------------------------------------------------------------------------
