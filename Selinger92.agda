@@ -339,9 +339,7 @@ ok-pred (suc x) = refl
 infix  19 _‵=_ _‵≠_
 infixl 18 _‵∧_ _‵∨_
 infixr 17 _‵→_ _‵↔_
-infix  16 ‵∀_ ‵∃_
-infix  15 ‵¬_
-infixr 14 _‵$_
+infixr 16 _‵$_
 
 -- terms, indexed by number of term variables
 mutual
@@ -378,7 +376,7 @@ A ‵↔ B = (A ‵→ B) ‵∧ (B ‵→ A)
 ‵¬ A = A ‵→ ‵⊥
 
 _‵≠_ : ∀ {k} → Tm k → Tm k → Fm k
-t ‵≠ u = ‵¬ t ‵= u
+t ‵≠ u = ‵¬ (t ‵= u)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -484,6 +482,9 @@ postulate
   -- substitute topmost term variable in formula by term
   _[_] : ∀ {k} (A : Fm (suc k)) (s : Tm k) → Fm k
 
+  -- TODO: this should follow from one of the substitution lemmas
+  later : ∀ {k} {A : Fm (suc k)} → A ≡ (frenFm (lift≤ (wk≤ id≤)) A [ ‵var zero ])
+
 
 ----------------------------------------------------------------------------------------------------
 
@@ -519,7 +520,7 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   --    A[t/x₀]
   -- --------------
   --   ∃y.A[y/x₀]
-  ‵∃intro : ∀ {Θ Γ A t} (d : Θ / Γ ⊢ A [ t ]) → Θ / Γ ⊢ ‵∃ A
+  ‵∃intro : ∀ {Θ Γ A t A[t]} (d : Θ / Γ ⊢ A[t]) (p : A[t] ≡ A [ t ]) → Θ / Γ ⊢ ‵∃ A
 
  --                  A(x₀)
   --                   ⋮
@@ -549,7 +550,7 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
    -- ------------------------------------
    --              ∀y.A[y/x₀]
   ‵ind    : ∀ {Θ Γ A} (d : Θ / Γ ⊢ A [ ‵zero ])
-               (e : Θ / Γ ⊢ ‵∀ A ‵→ (↕ (fwkFm A)) [ ‵suc (‵var zero) ]) →
+               (e : Θ / Γ ⊢ ‵∀ (A ‵→ (↕ (fwkFm A)) [ ‵suc (‵var zero) ])) →
                Θ / Γ ⊢ ‵∀ A
 
   ‵proj   : ∀ {Θ Γ n ts} (i : Fin n) → Θ / Γ ⊢ ‵fun (proj i) ts ‵= get i ts
@@ -578,31 +579,31 @@ fwk⊆ : ∀ {k} {Γ Γ′ : Fm§ k} → Γ ⊆ Γ′ → fwkFm§ Γ ⊆ fwkFm§
 fwk⊆ = fren⊆ (wk≤ id≤)
 
 ren : ∀ {Θ k} {Γ Γ′ : Fm§ k} {A} → Γ ⊆ Γ′ → Θ / Γ ⊢ A → Θ / Γ′ ⊢ A
-ren η (‵var i)        = ‵var (ren∋ η i)
-ren η (‵lam d)        = ‵lam (ren (lift⊆ η) d)
-ren η (d ‵$ e)        = ren η d ‵$ ren η e
-ren η (‵pair d e)     = ‵pair (ren η d) (ren η e)
-ren η (‵fst d)        = ‵fst (ren η d)
-ren η (‵snd d)        = ‵snd (ren η d)
-ren η (‵left d)       = ‵left (ren η d)
-ren η (‵right d)      = ‵right (ren η d)
-ren η (‵case c d e)   = ‵case (ren η c) (ren (lift⊆ η) d) (ren (lift⊆ η) e)
-ren η (‵∀intro d)     = ‵∀intro (ren (fwk⊆ η) d)
-ren η (‵∀elim d refl) = ‵∀elim (ren η d) refl
-ren η (‵∃intro d)     = ‵∃intro (ren η d)
-ren η (‵∃elim d e)    = ‵∃elim (ren η d) (ren (lift⊆ (fwk⊆ η)) e)
-ren η (‵abort d)      = ‵abort (ren η d)
-ren η (‵magic d)      = ‵magic (ren (lift⊆ η) d)
-ren η ‵refl           = ‵refl
-ren η (‵sym d)        = ‵sym (ren η d)
-ren η (‵trans d e)    = ‵trans (ren η d) (ren η e)
-ren η (‵cong φ i d)   = ‵cong φ i (ren η d)
-ren η ‵dis            = ‵dis
-ren η (‵inj d)        = ‵inj (ren η d)
-ren η (‵ind d e)      = ‵ind (ren η d) (ren η e)
-ren η (‵proj i)       = ‵proj i
-ren η (‵comp ψ φs)    = ‵comp ψ φs
-ren η (‵rec φ ψ)      = ‵rec φ ψ
+ren η (‵var i)         = ‵var (ren∋ η i)
+ren η (‵lam d)         = ‵lam (ren (lift⊆ η) d)
+ren η (d ‵$ e)         = ren η d ‵$ ren η e
+ren η (‵pair d e)      = ‵pair (ren η d) (ren η e)
+ren η (‵fst d)         = ‵fst (ren η d)
+ren η (‵snd d)         = ‵snd (ren η d)
+ren η (‵left d)        = ‵left (ren η d)
+ren η (‵right d)       = ‵right (ren η d)
+ren η (‵case c d e)    = ‵case (ren η c) (ren (lift⊆ η) d) (ren (lift⊆ η) e)
+ren η (‵∀intro d)      = ‵∀intro (ren (fwk⊆ η) d)
+ren η (‵∀elim d refl)  = ‵∀elim (ren η d) refl
+ren η (‵∃intro d refl) = ‵∃intro (ren η d) refl
+ren η (‵∃elim d e)     = ‵∃elim (ren η d) (ren (lift⊆ (fwk⊆ η)) e)
+ren η (‵abort d)       = ‵abort (ren η d)
+ren η (‵magic d)       = ‵magic (ren (lift⊆ η) d)
+ren η ‵refl            = ‵refl
+ren η (‵sym d)         = ‵sym (ren η d)
+ren η (‵trans d e)     = ‵trans (ren η d) (ren η e)
+ren η (‵cong φ i d)    = ‵cong φ i (ren η d)
+ren η ‵dis             = ‵dis
+ren η (‵inj d)         = ‵inj (ren η d)
+ren η (‵ind d e)       = ‵ind (ren η d) (ren η e)
+ren η (‵proj i)        = ‵proj i
+ren η (‵comp ψ φs)     = ‵comp ψ φs
+ren η (‵rec φ ψ)       = ‵rec φ ψ
 
 -- weaken derivation by adding one unused derivation variable
 wk : ∀ {Θ k} {Γ : Fm§ k} {A C} → Θ / Γ ⊢ A → Θ / C ∷ Γ ⊢ A
@@ -658,9 +659,12 @@ module _ {Θ k} {Γ : Fm§ k} where
   ↔sym d = ‵pair (‵snd d) (‵fst d)
 
   ↔trans : ∀ {A B C} → Θ / Γ ⊢ A ‵↔ B → Θ / Γ ⊢ B ‵↔ C → Θ / Γ ⊢ A ‵↔ C
-  ↔trans d e = ‵pair
-                  (‵lam (‵fst (wk e) ‵$ ‵fst (wk d) ‵$ ‵var zero))
-                  (‵lam (‵snd (wk d) ‵$ ‵snd (wk e) ‵$ ‵var zero))
+  ↔trans d e =
+    ‵pair
+      (‵lam
+        (‵fst (wk e) ‵$ ‵fst (wk d) ‵$ ‵var zero))
+      (‵lam
+        (‵snd (wk d) ‵$ ‵snd (wk e) ‵$ ‵var zero))
 
   ≡→↔ : ∀ {A B} → A ≡ B → Θ / Γ ⊢ A ‵↔ B
   ≡→↔ refl = ↔refl
@@ -702,30 +706,30 @@ abort {HA} d = ‵abort d
 abort {PA} d = PA-abort d
 
 lem2 : ∀ {k} {Γ : Fm§ k} {A} → HA / Γ ⊢ A → PA / Γ ⊢ A
-lem2 (‵var i)        = ‵var i
-lem2 (‵lam d)        = ‵lam (lem2 d)
-lem2 (d ‵$ e)        = lem2 d ‵$ lem2 e
-lem2 (‵pair d e)     = ‵pair (lem2 d) (lem2 e)
-lem2 (‵fst d)        = ‵fst (lem2 d)
-lem2 (‵snd d)        = ‵snd (lem2 d)
-lem2 (‵left d)       = ‵left (lem2 d)
-lem2 (‵right d)      = ‵right (lem2 d)
-lem2 (‵case c d e)   = ‵case (lem2 c) (lem2 d) (lem2 e)
-lem2 (‵∀intro d)     = ‵∀intro (lem2 d)
-lem2 (‵∀elim d refl) = ‵∀elim (lem2 d) refl
-lem2 (‵∃intro d)     = ‵∃intro (lem2 d)
-lem2 (‵∃elim d e)    = ‵∃elim (lem2 d) (lem2 e)
-lem2 (‵abort d)      = PA-abort (lem2 d)
-lem2 ‵refl           = ‵refl
-lem2 (‵sym d)        = ‵sym (lem2 d)
-lem2 (‵trans d e)    = ‵trans (lem2 d) (lem2 e)
-lem2 (‵cong φ i d)   = ‵cong φ i (lem2 d)
-lem2 ‵dis            = ‵dis
-lem2 (‵inj d)        = ‵inj (lem2 d)
-lem2 (‵ind d e)      = ‵ind (lem2 d) (lem2 e)
-lem2 (‵proj i)       = ‵proj i
-lem2 (‵comp ψ φs)    = ‵comp ψ φs
-lem2 (‵rec φ ψ)      = ‵rec φ ψ
+lem2 (‵var i)         = ‵var i
+lem2 (‵lam d)         = ‵lam (lem2 d)
+lem2 (d ‵$ e)         = lem2 d ‵$ lem2 e
+lem2 (‵pair d e)      = ‵pair (lem2 d) (lem2 e)
+lem2 (‵fst d)         = ‵fst (lem2 d)
+lem2 (‵snd d)         = ‵snd (lem2 d)
+lem2 (‵left d)        = ‵left (lem2 d)
+lem2 (‵right d)       = ‵right (lem2 d)
+lem2 (‵case c d e)    = ‵case (lem2 c) (lem2 d) (lem2 e)
+lem2 (‵∀intro d)      = ‵∀intro (lem2 d)
+lem2 (‵∀elim d refl)  = ‵∀elim (lem2 d) refl
+lem2 (‵∃intro d refl) = ‵∃intro (lem2 d) refl
+lem2 (‵∃elim d e)     = ‵∃elim (lem2 d) (lem2 e)
+lem2 (‵abort d)       = PA-abort (lem2 d)
+lem2 ‵refl            = ‵refl
+lem2 (‵sym d)         = ‵sym (lem2 d)
+lem2 (‵trans d e)     = ‵trans (lem2 d) (lem2 e)
+lem2 (‵cong φ i d)    = ‵cong φ i (lem2 d)
+lem2 ‵dis             = ‵dis
+lem2 (‵inj d)         = ‵inj (lem2 d)
+lem2 (‵ind d e)       = ‵ind (lem2 d) (lem2 e)
+lem2 (‵proj i)        = ‵proj i
+lem2 (‵comp ψ φs)     = ‵comp ψ φs
+lem2 (‵rec φ ψ)       = ‵rec φ ψ
 
 
 ----------------------------------------------------------------------------------------------------
@@ -782,7 +786,11 @@ lem3 : ∀ {Θ k} {Γ : Fm§ k} (A : Fm k) {{_ : IsQFree A}} → Σ (Prim k) λ 
 lem3 (A ‵→ B) = {!!}
 lem3 (A ‵∧ B)  = {!!}
 lem3 (A ‵∨ B)  = {!!}
-lem3 ‵⊥       = const 1 , ‵pair (‵lam (abort (‵var zero))) (‵lam (‵dis ‵$ goal ‵$ ‵var zero))
+lem3 ‵⊥       =
+  const 1 ,
+  ‵pair
+    (‵lam (abort (‵var zero)))
+    (‵lam (‵dis ‵$ goal ‵$ ‵var zero))
 lem3 (t ‵= u)  = {!!}
 
 
@@ -796,36 +804,139 @@ lem3 (t ‵= u)  = {!!}
 
 ----------------------------------------------------------------------------------------------------
 
+-- de Morgan laws
+
+module _ {Θ k} {Γ : Fm§ k} where
+  pdm1 : ∀ {A B} → Θ / Γ ⊢ ‵¬ A ‵∨ ‵¬ B ‵→ ‵¬ (A ‵∧ B)
+  pdm1 =
+    ‵lam (‵lam (‵case (‵var (suc zero))
+      (‵var zero ‵$ ‵fst (‵var (suc zero)))
+      (‵var zero ‵$ ‵snd (‵var (suc zero)))))
+
+  qdm1 : ∀ {A} → Θ / Γ ⊢ ‵∃ (‵¬ A) ‵→ ‵¬ (‵∀ A)
+  qdm1 =
+    ‵lam (‵lam (‵∃elim (‵var (suc zero))
+      (‵var zero ‵$ ‵∀elim (‵var (suc zero)) later)))
+
+  npdm1 : ∀ {A B} → Θ / Γ ⊢ A ‵∨ B ‵→ ‵¬ (‵¬ A ‵∧ ‵¬ B)
+  npdm1 =
+    ‵lam (‵lam (abort (‵case (‵var (suc zero))
+      (‵fst (‵var (suc zero)) ‵$ ‵var zero)
+      (‵snd (‵var (suc zero)) ‵$ ‵var zero))))
+
+
+  pdm2 : ∀ {A B} → Θ / Γ ⊢ ‵¬ A ‵∧ ‵¬ B ‵→ ‵¬ (A ‵∨ B)
+  pdm2 =
+    ‵lam (‵lam (‵case (‵var zero)
+      (‵fst (‵var (suc (suc zero))) ‵$ ‵var zero)
+      (‵snd (‵var (suc (suc zero))) ‵$ ‵var zero)))
+
+  qdm2 : ∀ {A} → Θ / Γ ⊢ ‵∀ (‵¬ A) ‵→ ‵¬ (‵∃ A)
+  qdm2 =
+    ‵lam (‵lam (‵∃elim (‵var zero)
+      (‵∀elim (‵var (suc (suc zero))) later ‵$ ‵var zero)))
+
+  npdm2 : ∀ {A B} → Θ / Γ ⊢ A ‵∧ B ‵→ ‵¬ (‵¬ A ‵∨ ‵¬ B)
+  npdm2 =
+    ‵lam (‵lam (abort (‵case (‵var zero)
+      (‵var zero ‵$ ‵fst (‵var (suc (suc zero))))
+      (‵var zero ‵$ ‵snd (‵var (suc (suc zero)))))))
+
+
+  pdm3 : ∀ {A B} → Θ / Γ ⊢ ‵¬ (A ‵∨ B) ‵→ ‵¬ A ‵∧ ‵¬ B
+  pdm3 =
+    ‵lam (‵pair
+      (‵lam
+        (‵var (suc zero) ‵$ ‵left (‵var zero)))
+      (‵lam
+        (‵var (suc zero) ‵$ ‵right (‵var zero))))
+
+  qdm3 : ∀ {A} → Θ / Γ ⊢ ‵¬ (‵∃ A) ‵→ ‵∀ (‵¬ A)
+  qdm3 =
+    ‵lam (‵∀intro
+      (‵lam
+        (‵var (suc zero) ‵$ ‵∃intro (‵var zero) later)))
+
+  npdm3 : ∀ {A B} → Θ / Γ ⊢ ‵¬ (‵¬ A ‵∨ ‵¬ B) ‵→ A ‵∧ B
+  npdm3 = {!!}
+
+
+  pdm4 : ∀ {A B} → Θ / Γ ⊢ ‵¬ (A ‵∧ B) ‵→ ‵¬ A ‵∨ ‵¬ B
+  pdm4 = {!!}
+
+  qdm4 : ∀ {A} → Θ / Γ ⊢ ‵¬ (‵∀ A) ‵→ ‵∃ (‵¬ A)
+  qdm4 = {!!}
+
+  npdm4 : ∀ {A B} → Θ / Γ ⊢ ‵¬ (‵¬ A ‵∧ ‵¬ B) ‵→ A ‵∨ B
+  npdm4 = {!!}
+
+
+----------------------------------------------------------------------------------------------------
+
 -- double negation translation
 
 _° : ∀ {k} → Fm k → Fm k
 (A ‵→ B) ° = A ° ‵→ B °
 (A ‵∧ B) °  = A ° ‵∧ B °
-(A ‵∨ B) °  = ‵¬ ‵¬ A ° ‵∨ B °
-(‵∀ A) °    = ‵∀ A °
-(‵∃ A) °    = ‵¬ ‵¬ ‵∃ A °
+(A ‵∨ B) °  = ‵¬ ‵¬ (A ° ‵∨ B °)
+(‵∀ A) °    = ‵∀ (A °)
+(‵∃ A) °    = ‵¬ ‵¬ (‵∃ (A °))
 ‵⊥ °       = ‵⊥
-(t ‵= u) °  = ‵¬ ‵¬ t ‵= u
+(t ‵= u) °  = ‵¬ ‵¬ (t ‵= u)
+
 
 -- TODO: lemma 5
 
 module _ {Θ k} {Γ : Fm§ k} where
-  lem5-1-2 : ∀ {A A′ B B′} → Θ / Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ B ‵↔ B′ → Θ / Γ ⊢ A ‵∧ B ‵↔ A′ ‵∧ B′
-  lem5-1-2 d e = ‵pair
-                   (‵lam (‵pair
-                     (‵fst (wk d) ‵$ ‵fst (‵var zero))
-                     (‵fst (wk e) ‵$ ‵snd (‵var zero))))
-                   (‵lam (‵pair
-                     (‵snd (wk d) ‵$ ‵fst (‵var zero))
-                     (‵snd (wk e) ‵$ ‵snd (‵var zero))))
+  lem5-1-1 : ∀ {A A′ B B′} → Θ / Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ B ‵↔ B′ →
+               Θ / Γ ⊢ (A ‵→ B) ‵↔ (A′ ‵→ B′)
+  lem5-1-1 d e =
+    ‵pair
+      (‵lam (‵lam
+        (‵fst (wk (wk e)) ‵$ ‵var (suc zero) ‵$ ‵snd (wk (wk d)) ‵$ ‵var zero)))
+      (‵lam (‵lam
+        (‵snd (wk (wk e)) ‵$ ‵var (suc zero) ‵$ ‵fst (wk (wk d)) ‵$ ‵var zero)))
+
+  lem5-1-2 : ∀ {A A′ B B′} → Θ / Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ B ‵↔ B′ →
+               Θ / Γ ⊢ A ‵∧ B ‵↔ A′ ‵∧ B′
+  lem5-1-2 d e =
+    ‵pair
+      (‵lam
+        (‵pair
+          (‵fst (wk d) ‵$ ‵fst (‵var zero))
+          (‵fst (wk e) ‵$ ‵snd (‵var zero))))
+      (‵lam
+        (‵pair
+          (‵snd (wk d) ‵$ ‵fst (‵var zero))
+          (‵snd (wk e) ‵$ ‵snd (‵var zero))))
 
   lem5-1-4 : ∀ {A A′} → Θ / fwkFm§ Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ (‵∀ A) ‵↔ (‵∀ A′)
-  lem5-1-4 {A} {A′} d = ‵pair
-                          (‵lam (‵∀intro (fwk (wk⊆ id⊆) (‵fst d) ‵$ ‵∀elim (‵var zero) {!!})))
-                          (‵lam (‵∀intro (fwk (wk⊆ id⊆) (‵snd d) ‵$ ‵∀elim (‵var zero) {!!})))
+  lem5-1-4 {A} d =
+    ‵pair
+      (‵lam
+        (‵∀intro (fwk (wk⊆ id⊆) (‵fst d) ‵$ ‵∀elim (‵var zero) later)))
+      (‵lam
+        (‵∀intro (fwk (wk⊆ id⊆) (‵snd d) ‵$ ‵∀elim (‵var zero) later)))
+
+  ¬¬em : ∀ {A} → Θ / Γ ⊢ ‵¬ ‵¬ (A ‵∨ ‵¬ A)
+  ¬¬em =
+    ‵lam
+      (‵var zero ‵$ ‵right (‵lam
+        (‵var (suc zero) ‵$ ‵left (‵var zero))))
+
+module _ {k} {Γ : Fm§ k} where
+  dne : ∀ {A} → PA / Γ ⊢ ‵¬ ‵¬ A ‵→ A
+  dne = ‵lam (‵magic
+          (‵var (suc zero) ‵$ ‵var zero))
+
+  em : ∀ {A} → PA / Γ ⊢ A ‵∨ ‵¬ A
+  em = dne ‵$ ¬¬em
+
+  ugh : ∀ {A B} → PA / Γ ⊢ A ‵→ B ‵↔ ‵¬ A ‵∨ B
+  ugh = {!!}
 
 lem5-1 : ∀ {k} {Γ : Fm§ k} (A : Fm k) → PA / Γ ⊢ A ° ‵↔ A
-lem5-1 (A ‵→ B) = {!!}
+lem5-1 (A ‵→ B) = lem5-1-1 (lem5-1 A) (lem5-1 B)
 lem5-1 (A ‵∧ B)  = lem5-1-2 (lem5-1 A) (lem5-1 B)
 lem5-1 (A ‵∨ B)  = {!!}
 lem5-1 (‵∀ A)    = lem5-1-4 (lem5-1 A)
