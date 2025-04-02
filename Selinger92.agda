@@ -659,12 +659,9 @@ module _ {Θ k} {Γ : Fm§ k} where
   ↔sym d = ‵pair (‵snd d) (‵fst d)
 
   ↔trans : ∀ {A B C} → Θ / Γ ⊢ A ‵↔ B → Θ / Γ ⊢ B ‵↔ C → Θ / Γ ⊢ A ‵↔ C
-  ↔trans d e =
-    ‵pair
-      (‵lam
-        (‵fst (wk e) ‵$ ‵fst (wk d) ‵$ ‵var zero))
-      (‵lam
-        (‵snd (wk d) ‵$ ‵snd (wk e) ‵$ ‵var zero))
+  ↔trans d e = ‵pair
+                  (‵lam (‵fst (wk e) ‵$ ‵fst (wk d) ‵$ ‵var zero))
+                  (‵lam (‵snd (wk d) ‵$ ‵snd (wk e) ‵$ ‵var zero))
 
   ≡→↔ : ∀ {A B} → A ≡ B → Θ / Γ ⊢ A ‵↔ B
   ≡→↔ refl = ↔refl
@@ -786,11 +783,7 @@ lem3 : ∀ {Θ k} {Γ : Fm§ k} (A : Fm k) {{_ : IsQFree A}} → Σ (Prim k) λ 
 lem3 (A ‵→ B) = {!!}
 lem3 (A ‵∧ B)  = {!!}
 lem3 (A ‵∨ B)  = {!!}
-lem3 ‵⊥       =
-  const 1 ,
-  ‵pair
-    (‵lam (abort (‵var zero)))
-    (‵lam (‵dis ‵$ goal ‵$ ‵var zero))
+lem3 ‵⊥       = const 1 , ‵pair (‵lam (abort (‵var zero))) (‵lam (‵dis ‵$ goal ‵$ ‵var zero))
 lem3 (t ‵= u)  = {!!}
 
 
@@ -808,62 +801,49 @@ lem3 (t ‵= u)  = {!!}
 
 module _ {Θ k} {Γ : Fm§ k} where
   pdm1 : ∀ {A B} → Θ / Γ ⊢ ‵¬ A ‵∨ ‵¬ B ‵→ ‵¬ (A ‵∧ B)
-  pdm1 =
-    ‵lam (‵lam (‵case (‵var (suc zero))
-      (‵var zero ‵$ ‵fst (‵var (suc zero)))
-      (‵var zero ‵$ ‵snd (‵var (suc zero)))))
+  pdm1 = ‵lam (‵lam (‵case (‵var (suc zero))
+           (‵var zero ‵$ ‵fst (‵var (suc zero)))
+           (‵var zero ‵$ ‵snd (‵var (suc zero)))))
 
   qdm1 : ∀ {A} → Θ / Γ ⊢ ‵∃ (‵¬ A) ‵→ ‵¬ (‵∀ A)
-  qdm1 =
-    ‵lam (‵lam (‵∃elim (‵var (suc zero))
-      (‵var zero ‵$ ‵∀elim (‵var (suc zero)) later)))
+  qdm1 = ‵lam (‵lam (‵∃elim (‵var (suc zero))
+           (‵var zero ‵$ ‵∀elim (‵var (suc zero)) later)))
 
   npdm1 : ∀ {A B} → Θ / Γ ⊢ A ‵∨ B ‵→ ‵¬ (‵¬ A ‵∧ ‵¬ B)
-  npdm1 =
-    ‵lam (‵lam (abort (‵case (‵var (suc zero))
-      (‵fst (‵var (suc zero)) ‵$ ‵var zero)
-      (‵snd (‵var (suc zero)) ‵$ ‵var zero))))
+  npdm1 = ‵lam (‵lam (abort (‵case (‵var (suc zero))
+            (‵fst (‵var (suc zero)) ‵$ ‵var zero)
+            (‵snd (‵var (suc zero)) ‵$ ‵var zero))))
 
   nqdm1 : ∀ {A} → Θ / Γ ⊢ ‵∃ A ‵→ ‵¬ (‵∀ (‵¬ A))
-  nqdm1 =
-    ‵lam (‵lam (abort (‵∃elim (‵var (suc zero))
-      (‵∀elim (‵var (suc zero)) later ‵$ ‵var zero))))
+  nqdm1 = ‵lam (‵lam (abort (‵∃elim (‵var (suc zero))
+            (‵∀elim (‵var (suc zero)) later ‵$ ‵var zero))))
 
   pdm2 : ∀ {A B} → Θ / Γ ⊢ ‵¬ A ‵∧ ‵¬ B ‵→ ‵¬ (A ‵∨ B)
-  pdm2 =
-    ‵lam (‵lam (‵case (‵var zero)
-      (‵fst (‵var (suc (suc zero))) ‵$ ‵var zero)
-      (‵snd (‵var (suc (suc zero))) ‵$ ‵var zero)))
+  pdm2 = ‵lam (‵lam (‵case (‵var zero)
+           (‵fst (‵var (suc (suc zero))) ‵$ ‵var zero)
+           (‵snd (‵var (suc (suc zero))) ‵$ ‵var zero)))
 
   qdm2 : ∀ {A} → Θ / Γ ⊢ ‵∀ (‵¬ A) ‵→ ‵¬ (‵∃ A)
-  qdm2 =
-    ‵lam (‵lam (‵∃elim (‵var zero)
-      (‵∀elim (‵var (suc (suc zero))) later ‵$ ‵var zero)))
+  qdm2 = ‵lam (‵lam (‵∃elim (‵var zero)
+           (‵∀elim (‵var (suc (suc zero))) later ‵$ ‵var zero)))
 
   npdm2 : ∀ {A B} → Θ / Γ ⊢ A ‵∧ B ‵→ ‵¬ (‵¬ A ‵∨ ‵¬ B)
-  npdm2 =
-    ‵lam (‵lam (abort (‵case (‵var zero)
-      (‵var zero ‵$ ‵fst (‵var (suc (suc zero))))
-      (‵var zero ‵$ ‵snd (‵var (suc (suc zero)))))))
+  npdm2 = ‵lam (‵lam (abort (‵case (‵var zero)
+            (‵var zero ‵$ ‵fst (‵var (suc (suc zero))))
+            (‵var zero ‵$ ‵snd (‵var (suc (suc zero)))))))
 
   nqdm2 : ∀ {A} → Θ / Γ ⊢ ‵∀ A ‵→ ‵¬ (‵∃ (‵¬ A))
-  nqdm2 =
-    ‵lam (‵lam (abort (‵∃elim (‵var zero)
-      (‵var zero ‵$ ‵∀elim (‵var (suc (suc zero))) later))))
+  nqdm2 = ‵lam (‵lam (abort (‵∃elim (‵var zero)
+            (‵var zero ‵$ ‵∀elim (‵var (suc (suc zero))) later))))
 
   pdm3 : ∀ {A B} → Θ / Γ ⊢ ‵¬ (A ‵∨ B) ‵→ ‵¬ A ‵∧ ‵¬ B
-  pdm3 =
-    ‵lam (‵pair
-      (‵lam
-        (‵var (suc zero) ‵$ ‵left (‵var zero)))
-      (‵lam
-        (‵var (suc zero) ‵$ ‵right (‵var zero))))
+  pdm3 = ‵lam (‵pair
+           (‵lam (‵var (suc zero) ‵$ ‵left (‵var zero)))
+           (‵lam (‵var (suc zero) ‵$ ‵right (‵var zero))))
 
   qdm3 : ∀ {A} → Θ / Γ ⊢ ‵¬ (‵∃ A) ‵→ ‵∀ (‵¬ A)
-  qdm3 =
-    ‵lam (‵∀intro
-      (‵lam
-        (‵var (suc zero) ‵$ ‵∃intro (‵var zero) later)))
+  qdm3 = ‵lam (‵∀intro (‵lam
+           (‵var (suc zero) ‵$ ‵∃intro (‵var zero) later)))
 
 module _ {k} {Γ : Fm§ k} where
   npdm3 : ∀ {A B} → PA / Γ ⊢ ‵¬ (‵¬ A ‵∨ ‵¬ B) ‵→ A ‵∧ B
@@ -904,44 +884,33 @@ _° : ∀ {k} → Fm k → Fm k
 module _ {Θ k} {Γ : Fm§ k} where
   lem5-1-1 : ∀ {A A′ B B′} → Θ / Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ B ‵↔ B′ →
                Θ / Γ ⊢ (A ‵→ B) ‵↔ (A′ ‵→ B′)
-  lem5-1-1 d e =
-    ‵pair
-      (‵lam (‵lam
-        (‵fst (wk (wk e)) ‵$ ‵var (suc zero) ‵$ ‵snd (wk (wk d)) ‵$ ‵var zero)))
-      (‵lam (‵lam
-        (‵snd (wk (wk e)) ‵$ ‵var (suc zero) ‵$ ‵fst (wk (wk d)) ‵$ ‵var zero)))
+  lem5-1-1 d e = ‵pair
+                   (‵lam (‵lam
+                     (‵fst (wk (wk e)) ‵$ ‵var (suc zero) ‵$ ‵snd (wk (wk d)) ‵$ ‵var zero)))
+                   (‵lam (‵lam
+                     (‵snd (wk (wk e)) ‵$ ‵var (suc zero) ‵$ ‵fst (wk (wk d)) ‵$ ‵var zero)))
 
   lem5-1-2 : ∀ {A A′ B B′} → Θ / Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ B ‵↔ B′ →
                Θ / Γ ⊢ A ‵∧ B ‵↔ A′ ‵∧ B′
-  lem5-1-2 d e =
-    ‵pair
-      (‵lam
-        (‵pair
-          (‵fst (wk d) ‵$ ‵fst (‵var zero))
-          (‵fst (wk e) ‵$ ‵snd (‵var zero))))
-      (‵lam
-        (‵pair
-          (‵snd (wk d) ‵$ ‵fst (‵var zero))
-          (‵snd (wk e) ‵$ ‵snd (‵var zero))))
+  lem5-1-2 d e = ‵pair
+                   (‵lam (‵pair
+                     (‵fst (wk d) ‵$ ‵fst (‵var zero))
+                     (‵fst (wk e) ‵$ ‵snd (‵var zero))))
+                   (‵lam (‵pair
+                     (‵snd (wk d) ‵$ ‵fst (‵var zero))
+                     (‵snd (wk e) ‵$ ‵snd (‵var zero))))
 
   lem5-1-4 : ∀ {A A′} → Θ / fwkFm§ Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ (‵∀ A) ‵↔ (‵∀ A′)
-  lem5-1-4 {A} d =
-    ‵pair
-      (‵lam
-        (‵∀intro (fwk (wk⊆ id⊆) (‵fst d) ‵$ ‵∀elim (‵var zero) later)))
-      (‵lam
-        (‵∀intro (fwk (wk⊆ id⊆) (‵snd d) ‵$ ‵∀elim (‵var zero) later)))
+  lem5-1-4 {A} d = ‵pair
+                     (‵lam (‵∀intro (fwk (wk⊆ id⊆) (‵fst d) ‵$ ‵∀elim (‵var zero) later)))
+                     (‵lam (‵∀intro (fwk (wk⊆ id⊆) (‵snd d) ‵$ ‵∀elim (‵var zero) later)))
 
   ¬¬em : ∀ {A} → Θ / Γ ⊢ ‵¬ ‵¬ (A ‵∨ ‵¬ A)
-  ¬¬em =
-    ‵lam
-      (‵var zero ‵$ ‵right (‵lam
-        (‵var (suc zero) ‵$ ‵left (‵var zero))))
+  ¬¬em = ‵lam (‵var zero ‵$ ‵right (‵lam (‵var (suc zero) ‵$ ‵left (‵var zero))))
 
 module _ {k} {Γ : Fm§ k} where
   dne : ∀ {A} → PA / Γ ⊢ ‵¬ ‵¬ A ‵→ A
-  dne = ‵lam (‵magic
-          (‵var (suc zero) ‵$ ‵var zero))
+  dne = ‵lam (‵magic (‵var (suc zero) ‵$ ‵var zero))
 
   em : ∀ {A} → PA / Γ ⊢ A ‵∨ ‵¬ A
   em = dne ‵$ ¬¬em
