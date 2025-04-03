@@ -618,6 +618,39 @@ fwk = fren (wk≤ id≤)
 
 ----------------------------------------------------------------------------------------------------
 
+abort : ∀ {Θ k} {Γ : Fm§ k} {C} → Θ / Γ ⊢ ‵⊥ → Θ / Γ ⊢ C
+abort {HA} d = ‵abort d
+abort {PA} d = ‵magic (wk d)
+
+lem2 : ∀ {k} {Γ : Fm§ k} {A} → HA / Γ ⊢ A → PA / Γ ⊢ A
+lem2 (‵var i)         = ‵var i
+lem2 (‵lam d)         = ‵lam (lem2 d)
+lem2 (d ‵$ e)         = lem2 d ‵$ lem2 e
+lem2 (‵pair d e)      = ‵pair (lem2 d) (lem2 e)
+lem2 (‵fst d)         = ‵fst (lem2 d)
+lem2 (‵snd d)         = ‵snd (lem2 d)
+lem2 (‵left d)        = ‵left (lem2 d)
+lem2 (‵right d)       = ‵right (lem2 d)
+lem2 (‵case c d e)    = ‵case (lem2 c) (lem2 d) (lem2 e)
+lem2 (‵∀intro d)      = ‵∀intro (lem2 d)
+lem2 (‵∀elim d refl)  = ‵∀elim (lem2 d) refl
+lem2 (‵∃intro d refl) = ‵∃intro (lem2 d) refl
+lem2 (‵∃elim d e)     = ‵∃elim (lem2 d) (lem2 e)
+lem2 (‵abort d)       = abort (lem2 d)
+lem2 ‵refl            = ‵refl
+lem2 (‵sym d)         = ‵sym (lem2 d)
+lem2 (‵trans d e)     = ‵trans (lem2 d) (lem2 e)
+lem2 (‵cong φ i d)    = ‵cong φ i (lem2 d)
+lem2 ‵dis             = ‵dis
+lem2 (‵inj d)         = ‵inj (lem2 d)
+lem2 (‵ind d e)       = ‵ind (lem2 d) (lem2 e)
+lem2 (‵proj i)        = ‵proj i
+lem2 (‵comp ψ φs)     = ‵comp ψ φs
+lem2 (‵rec φ ψ)       = ‵rec φ ψ
+
+
+----------------------------------------------------------------------------------------------------
+
 module _ {Θ k} {Γ : Fm§ k} where
   ≡→= : ∀ {t u} → t ≡ u → Θ / Γ ⊢ t ‵= u
   ≡→= refl = ‵refl
@@ -663,43 +696,43 @@ module _ {Θ k} {Γ : Fm§ k} where
                   (‵lam (‵fst (wk e) ‵$ ‵fst (wk d) ‵$ ‵var zero))
                   (‵lam (‵snd (wk d) ‵$ ‵snd (wk e) ‵$ ‵var zero))
 
-  cong→ : ∀ {A A′ B B′} → Θ / Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ B ‵↔ B′ →
-             Θ / Γ ⊢ (A ‵→ B) ‵↔ (A′ ‵→ B′)
-  cong→ d e = ‵pair
-                 (‵lam (‵lam
-                   (‵fst (wk (wk e)) ‵$ ‵var (suc zero) ‵$ ‵snd (wk (wk d)) ‵$ ‵var zero)))
-                 (‵lam (‵lam
-                   (‵snd (wk (wk e)) ‵$ ‵var (suc zero) ‵$ ‵fst (wk (wk d)) ‵$ ‵var zero)))
+  ↔cong→ : ∀ {A A′ B B′} → Θ / Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ B ‵↔ B′ →
+               Θ / Γ ⊢ (A ‵→ B) ‵↔ (A′ ‵→ B′)
+  ↔cong→ d e = ‵pair
+                   (‵lam (‵lam
+                     (‵fst (wk (wk e)) ‵$ ‵var (suc zero) ‵$ ‵snd (wk (wk d)) ‵$ ‵var zero)))
+                   (‵lam (‵lam
+                     (‵snd (wk (wk e)) ‵$ ‵var (suc zero) ‵$ ‵fst (wk (wk d)) ‵$ ‵var zero)))
 
-  cong∧ : ∀ {A A′ B B′} → Θ / Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ B ‵↔ B′ →
-            Θ / Γ ⊢ A ‵∧ B ‵↔ A′ ‵∧ B′
-  cong∧ d e = ‵pair
-                (‵lam (‵pair
-                  (‵fst (wk d) ‵$ ‵fst (‵var zero))
-                  (‵fst (wk e) ‵$ ‵snd (‵var zero))))
-                (‵lam (‵pair
-                  (‵snd (wk d) ‵$ ‵fst (‵var zero))
-                  (‵snd (wk e) ‵$ ‵snd (‵var zero))))
+  ↔cong∧ : ∀ {A A′ B B′} → Θ / Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ B ‵↔ B′ →
+              Θ / Γ ⊢ A ‵∧ B ‵↔ A′ ‵∧ B′
+  ↔cong∧ d e = ‵pair
+                  (‵lam (‵pair
+                    (‵fst (wk d) ‵$ ‵fst (‵var zero))
+                    (‵fst (wk e) ‵$ ‵snd (‵var zero))))
+                  (‵lam (‵pair
+                    (‵snd (wk d) ‵$ ‵fst (‵var zero))
+                    (‵snd (wk e) ‵$ ‵snd (‵var zero))))
 
-  cong∨ : ∀ {A A′ B B′} → Θ / Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ B ‵↔ B′ →
-            Θ / Γ ⊢ A ‵∨ B ‵↔ A′ ‵∨ B′
-  cong∨ d e = ‵pair
-                (‵lam (‵case (‵var zero)
-                  (‵left (‵fst (wk (wk d)) ‵$ ‵var zero))
-                  (‵right (‵fst (wk (wk e)) ‵$ ‵var zero))))
-                (‵lam (‵case (‵var zero)
-                  (‵left (‵snd (wk (wk d)) ‵$ ‵var zero))
-                  (‵right (‵snd (wk (wk e)) ‵$ ‵var zero))))
+  ↔cong∨ : ∀ {A A′ B B′} → Θ / Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ B ‵↔ B′ →
+              Θ / Γ ⊢ A ‵∨ B ‵↔ A′ ‵∨ B′
+  ↔cong∨ d e = ‵pair
+                  (‵lam (‵case (‵var zero)
+                    (‵left (‵fst (wk (wk d)) ‵$ ‵var zero))
+                    (‵right (‵fst (wk (wk e)) ‵$ ‵var zero))))
+                  (‵lam (‵case (‵var zero)
+                    (‵left (‵snd (wk (wk d)) ‵$ ‵var zero))
+                    (‵right (‵snd (wk (wk e)) ‵$ ‵var zero))))
 
-  cong∀ : ∀ {A A′} → Θ / fwkFm§ Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ (‵∀ A) ‵↔ (‵∀ A′)
-  cong∀ d = ‵pair
-              (‵lam (‵∀intro (fwk (wk⊆ id⊆) (‵fst d) ‵$ ‵∀elim (‵var zero) later)))
-              (‵lam (‵∀intro (fwk (wk⊆ id⊆) (‵snd d) ‵$ ‵∀elim (‵var zero) later)))
+  ↔cong∀ : ∀ {A A′} → Θ / fwkFm§ Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ (‵∀ A) ‵↔ (‵∀ A′)
+  ↔cong∀ d = ‵pair
+                (‵lam (‵∀intro (fwk (wk⊆ id⊆) (‵fst d) ‵$ ‵∀elim (‵var zero) later)))
+                (‵lam (‵∀intro (fwk (wk⊆ id⊆) (‵snd d) ‵$ ‵∀elim (‵var zero) later)))
 
-  cong∃ : ∀ {A A′} → Θ / fwkFm§ Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ (‵∃ A) ‵↔ (‵∃ A′)
-  cong∃ d = ‵pair
-              (‵lam (‵∃elim (‵var zero) (‵∃intro (‵fst (wk (wk d)) ‵$ ‵var zero) later)))
-              (‵lam (‵∃elim (‵var zero) (‵∃intro (‵snd (wk (wk d)) ‵$ ‵var zero) later)))
+  ↔cong∃ : ∀ {A A′} → Θ / fwkFm§ Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ (‵∃ A) ‵↔ (‵∃ A′)
+  ↔cong∃ d = ‵pair
+                (‵lam (‵∃elim (‵var zero) (‵∃intro (‵fst (wk (wk d)) ‵$ ‵var zero) later)))
+                (‵lam (‵∃elim (‵var zero) (‵∃intro (‵snd (wk (wk d)) ‵$ ‵var zero) later)))
 
   ≡→↔ : ∀ {A B} → A ≡ B → Θ / Γ ⊢ A ‵↔ B
   ≡→↔ refl = ↔refl
@@ -733,35 +766,117 @@ module ↔-Reasoning {Θ k} {Γ : Fm§ k} where
 
 ----------------------------------------------------------------------------------------------------
 
-abort : ∀ {Θ k} {Γ : Fm§ k} {C} → Θ / Γ ⊢ ‵⊥ → Θ / Γ ⊢ C
-abort {HA} d = ‵abort d
-abort {PA} d = ‵magic (wk d)
+-- extended middle
 
-lem2 : ∀ {k} {Γ : Fm§ k} {A} → HA / Γ ⊢ A → PA / Γ ⊢ A
-lem2 (‵var i)         = ‵var i
-lem2 (‵lam d)         = ‵lam (lem2 d)
-lem2 (d ‵$ e)         = lem2 d ‵$ lem2 e
-lem2 (‵pair d e)      = ‵pair (lem2 d) (lem2 e)
-lem2 (‵fst d)         = ‵fst (lem2 d)
-lem2 (‵snd d)         = ‵snd (lem2 d)
-lem2 (‵left d)        = ‵left (lem2 d)
-lem2 (‵right d)       = ‵right (lem2 d)
-lem2 (‵case c d e)    = ‵case (lem2 c) (lem2 d) (lem2 e)
-lem2 (‵∀intro d)      = ‵∀intro (lem2 d)
-lem2 (‵∀elim d refl)  = ‵∀elim (lem2 d) refl
-lem2 (‵∃intro d refl) = ‵∃intro (lem2 d) refl
-lem2 (‵∃elim d e)     = ‵∃elim (lem2 d) (lem2 e)
-lem2 (‵abort d)       = abort (lem2 d)
-lem2 ‵refl            = ‵refl
-lem2 (‵sym d)         = ‵sym (lem2 d)
-lem2 (‵trans d e)     = ‵trans (lem2 d) (lem2 e)
-lem2 (‵cong φ i d)    = ‵cong φ i (lem2 d)
-lem2 ‵dis             = ‵dis
-lem2 (‵inj d)         = ‵inj (lem2 d)
-lem2 (‵ind d e)       = ‵ind (lem2 d) (lem2 e)
-lem2 (‵proj i)        = ‵proj i
-lem2 (‵comp ψ φs)     = ‵comp ψ φs
-lem2 (‵rec φ ψ)       = ‵rec φ ψ
+-- constructive
+module _ {Θ k} {Γ : Fm§ k} where
+  ¬¬em : ∀ {A} → Θ / Γ ⊢ ‵¬ ‵¬ (A ‵∨ ‵¬ A)
+  ¬¬em = ‵lam (‵var zero ‵$ ‵right (‵lam (‵var (suc zero) ‵$ ‵left (‵var zero))))
+
+  dni : ∀ {A} → Θ / Γ ⊢ A ‵→ ‵¬ ‵¬ A
+  dni = ‵lam (‵lam (‵var zero ‵$ ‵var (suc zero)))
+
+-- non-constructive
+module _ {k} {Γ : Fm§ k} where
+  dne : ∀ {A} → PA / Γ ⊢ ‵¬ ‵¬ A ‵→ A
+  dne = ‵lam (‵magic (‵var (suc zero) ‵$ ‵var zero))
+
+  dn : ∀ {A} → PA / Γ ⊢ ‵¬ ‵¬ A ‵↔ A
+  dn = ‵pair dne dni
+
+  em : ∀ {A} → PA / Γ ⊢ A ‵∨ ‵¬ A
+  em = dne ‵$ ¬¬em
+
+
+----------------------------------------------------------------------------------------------------
+
+-- TODO: other non-constructive tautologies
+
+{-A     B    ¬A    ¬B    A∧B   A∨B   A→B  A↔B ¬A∧B  ¬A∨B  ¬A→B ¬A↔B  A∧¬B  A∨¬B A→¬B A↔¬B
+----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+  0     0     1     1     0     0     1     1     0     1     0     0     0     1     1     0
+  0     1     1     0     0     1     1     0     1     1     1     1     0     0     1     1
+  1     0     0     1     0     1     0     0     0     0     1     1     1     1     1     1
+  1     1     0     0     1     1     1     1     0     1     1     0     0     1     0     0-}
+
+-- module _ where
+--   ↔tau1 : ∀ {A B} → PA / Γ ⊢ A ‵→ B ‵↔ ‵¬ A ‵∨ B
+--   ↔tau1 = {!!}
+--
+--   ↔tau2 : ∀ {A B} → PA / Γ ⊢ (‵¬ A ‵↔ B) ‵↔ (A ‵↔ ‵¬ B)
+--   ↔tau2 = {!!}
+
+
+----------------------------------------------------------------------------------------------------
+
+-- de Morgan’s laws
+
+-- constructive
+module _ {Θ k} {Γ : Fm§ k} where
+  pdm1 : ∀ {A B} → Θ / Γ ⊢ ‵¬ A ‵∨ ‵¬ B ‵→ ‵¬ (A ‵∧ B)
+  pdm1 = ‵lam (‵lam (‵case (‵var (suc zero))
+           (‵var zero ‵$ ‵fst (‵var (suc zero)))
+           (‵var zero ‵$ ‵snd (‵var (suc zero)))))
+
+  qdm1 : ∀ {A} → Θ / Γ ⊢ ‵∃ (‵¬ A) ‵→ ‵¬ (‵∀ A)
+  qdm1 = ‵lam (‵lam (‵∃elim (‵var (suc zero))
+           (‵var zero ‵$ ‵∀elim (‵var (suc zero)) later)))
+
+  npdm1 : ∀ {A B} → Θ / Γ ⊢ A ‵∨ B ‵→ ‵¬ (‵¬ A ‵∧ ‵¬ B)
+  npdm1 = ‵lam (‵lam (abort (‵case (‵var (suc zero))
+            (‵fst (‵var (suc zero)) ‵$ ‵var zero)
+            (‵snd (‵var (suc zero)) ‵$ ‵var zero))))
+
+  nqdm1 : ∀ {A} → Θ / Γ ⊢ ‵∃ A ‵→ ‵¬ (‵∀ (‵¬ A))
+  nqdm1 = ‵lam (‵lam (abort (‵∃elim (‵var (suc zero))
+            (‵∀elim (‵var (suc zero)) later ‵$ ‵var zero))))
+
+  pdm2 : ∀ {A B} → Θ / Γ ⊢ ‵¬ A ‵∧ ‵¬ B ‵→ ‵¬ (A ‵∨ B)
+  pdm2 = ‵lam (‵lam (‵case (‵var zero)
+           (‵fst (‵var (suc (suc zero))) ‵$ ‵var zero)
+           (‵snd (‵var (suc (suc zero))) ‵$ ‵var zero)))
+
+  qdm2 : ∀ {A} → Θ / Γ ⊢ ‵∀ (‵¬ A) ‵→ ‵¬ (‵∃ A)
+  qdm2 = ‵lam (‵lam (‵∃elim (‵var zero)
+           (‵∀elim (‵var (suc (suc zero))) later ‵$ ‵var zero)))
+
+  npdm2 : ∀ {A B} → Θ / Γ ⊢ A ‵∧ B ‵→ ‵¬ (‵¬ A ‵∨ ‵¬ B)
+  npdm2 = ‵lam (‵lam (abort (‵case (‵var zero)
+            (‵var zero ‵$ ‵fst (‵var (suc (suc zero))))
+            (‵var zero ‵$ ‵snd (‵var (suc (suc zero)))))))
+
+  nqdm2 : ∀ {A} → Θ / Γ ⊢ ‵∀ A ‵→ ‵¬ (‵∃ (‵¬ A))
+  nqdm2 = ‵lam (‵lam (abort (‵∃elim (‵var zero)
+            (‵var zero ‵$ ‵∀elim (‵var (suc (suc zero))) later))))
+
+  pdm3 : ∀ {A B} → Θ / Γ ⊢ ‵¬ (A ‵∨ B) ‵→ ‵¬ A ‵∧ ‵¬ B
+  pdm3 = ‵lam (‵pair
+           (‵lam (‵var (suc zero) ‵$ ‵left (‵var zero)))
+           (‵lam (‵var (suc zero) ‵$ ‵right (‵var zero))))
+
+  qdm3 : ∀ {A} → Θ / Γ ⊢ ‵¬ (‵∃ A) ‵→ ‵∀ (‵¬ A)
+  qdm3 = ‵lam (‵∀intro (‵lam
+           (‵var (suc zero) ‵$ ‵∃intro (‵var zero) later)))
+
+-- TODO: non-constructive
+-- module _ {k} {Γ : Fm§ k} where
+--   npdm3 : ∀ {A B} → PA / Γ ⊢ ‵¬ (‵¬ A ‵∨ ‵¬ B) ‵→ A ‵∧ B
+--   npdm3 = {!!}
+--
+--   nqdm3 : ∀ {A} → PA / Γ ⊢ ‵¬ (‵∃ (‵¬ A)) ‵→ ‵∀ A
+--   nqdm3 = {!!}
+--
+--   pdm4 : ∀ {A B} → PA / Γ ⊢ ‵¬ (A ‵∧ B) ‵→ ‵¬ A ‵∨ ‵¬ B
+--   pdm4 = {!!}
+--
+--   qdm4 : ∀ {A} → PA / Γ ⊢ ‵¬ (‵∀ A) ‵→ ‵∃ (‵¬ A)
+--   qdm4 = {!!}
+--
+--   npdm4 : ∀ {A B} → PA / Γ ⊢ ‵¬ (‵¬ A ‵∧ ‵¬ B) ‵→ A ‵∨ B
+--   npdm4 = {!!}
+--
+--   nqdm4 : ∀ {A} → PA / Γ ⊢ ‵¬ (‵∀ (‵¬ A)) ‵→ ‵∃ A
+--   nqdm4 = {!!}
 
 
 ----------------------------------------------------------------------------------------------------
@@ -832,115 +947,6 @@ module _ where
 
 ----------------------------------------------------------------------------------------------------
 
--- extended middle
-
--- constructive
-module _ {Θ k} {Γ : Fm§ k} where
-  ¬¬em : ∀ {A} → Θ / Γ ⊢ ‵¬ ‵¬ (A ‵∨ ‵¬ A)
-  ¬¬em = ‵lam (‵var zero ‵$ ‵right (‵lam (‵var (suc zero) ‵$ ‵left (‵var zero))))
-
-  dni : ∀ {A} → Θ / Γ ⊢ A ‵→ ‵¬ ‵¬ A
-  dni = ‵lam (‵lam (‵var zero ‵$ ‵var (suc zero)))
-
--- TODO: non-constructive
-module _ {k} {Γ : Fm§ k} where
-  dne : ∀ {A} → PA / Γ ⊢ ‵¬ ‵¬ A ‵→ A
-  dne = ‵lam (‵magic (‵var (suc zero) ‵$ ‵var zero))
-
-  dn : ∀ {A} → PA / Γ ⊢ ‵¬ ‵¬ A ‵↔ A
-  dn = ‵pair dne dni
-
-  em : ∀ {A} → PA / Γ ⊢ A ‵∨ ‵¬ A
-  em = dne ‵$ ¬¬em
-
-{-A     B    ¬A    ¬B    A∧B   A∨B   A→B  A↔B ¬A∧B  ¬A∨B  ¬A→B ¬A↔B  A∧¬B  A∨¬B A→¬B A↔¬B
------ ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-  0     0     1     1     0     0     1     1     0     1     0     0     0     1     1     0
-  0     1     1     0     0     1     1     0     1     1     1     1     0     0     1     1
-  1     0     0     1     0     1     0     0     0     0     1     1     1     1     1     1
-  1     1     0     0     1     1     1     1     0     1     1     0     0     1     0     0-}
-
---  tau1 : ∀ {A B} → PA / Γ ⊢ A ‵→ B ‵↔ ‵¬ A ‵∨ B
---  tau1 = {!!}
---
---  tau2 : ∀ {A B} → PA / Γ ⊢ (‵¬ A ‵↔ B) ‵↔ (A ‵↔ ‵¬ B)
---  tau2 = {!!}
-
-
-----------------------------------------------------------------------------------------------------
-
--- de Morgan’s laws
-
--- constructive
-module _ {Θ k} {Γ : Fm§ k} where
-  pdm1 : ∀ {A B} → Θ / Γ ⊢ ‵¬ A ‵∨ ‵¬ B ‵→ ‵¬ (A ‵∧ B)
-  pdm1 = ‵lam (‵lam (‵case (‵var (suc zero))
-           (‵var zero ‵$ ‵fst (‵var (suc zero)))
-           (‵var zero ‵$ ‵snd (‵var (suc zero)))))
-
-  qdm1 : ∀ {A} → Θ / Γ ⊢ ‵∃ (‵¬ A) ‵→ ‵¬ (‵∀ A)
-  qdm1 = ‵lam (‵lam (‵∃elim (‵var (suc zero))
-           (‵var zero ‵$ ‵∀elim (‵var (suc zero)) later)))
-
-  npdm1 : ∀ {A B} → Θ / Γ ⊢ A ‵∨ B ‵→ ‵¬ (‵¬ A ‵∧ ‵¬ B)
-  npdm1 = ‵lam (‵lam (abort (‵case (‵var (suc zero))
-            (‵fst (‵var (suc zero)) ‵$ ‵var zero)
-            (‵snd (‵var (suc zero)) ‵$ ‵var zero))))
-
-  nqdm1 : ∀ {A} → Θ / Γ ⊢ ‵∃ A ‵→ ‵¬ (‵∀ (‵¬ A))
-  nqdm1 = ‵lam (‵lam (abort (‵∃elim (‵var (suc zero))
-            (‵∀elim (‵var (suc zero)) later ‵$ ‵var zero))))
-
-  pdm2 : ∀ {A B} → Θ / Γ ⊢ ‵¬ A ‵∧ ‵¬ B ‵→ ‵¬ (A ‵∨ B)
-  pdm2 = ‵lam (‵lam (‵case (‵var zero)
-           (‵fst (‵var (suc (suc zero))) ‵$ ‵var zero)
-           (‵snd (‵var (suc (suc zero))) ‵$ ‵var zero)))
-
-  qdm2 : ∀ {A} → Θ / Γ ⊢ ‵∀ (‵¬ A) ‵→ ‵¬ (‵∃ A)
-  qdm2 = ‵lam (‵lam (‵∃elim (‵var zero)
-           (‵∀elim (‵var (suc (suc zero))) later ‵$ ‵var zero)))
-
-  npdm2 : ∀ {A B} → Θ / Γ ⊢ A ‵∧ B ‵→ ‵¬ (‵¬ A ‵∨ ‵¬ B)
-  npdm2 = ‵lam (‵lam (abort (‵case (‵var zero)
-            (‵var zero ‵$ ‵fst (‵var (suc (suc zero))))
-            (‵var zero ‵$ ‵snd (‵var (suc (suc zero)))))))
-
-  nqdm2 : ∀ {A} → Θ / Γ ⊢ ‵∀ A ‵→ ‵¬ (‵∃ (‵¬ A))
-  nqdm2 = ‵lam (‵lam (abort (‵∃elim (‵var zero)
-            (‵var zero ‵$ ‵∀elim (‵var (suc (suc zero))) later))))
-
-  pdm3 : ∀ {A B} → Θ / Γ ⊢ ‵¬ (A ‵∨ B) ‵→ ‵¬ A ‵∧ ‵¬ B
-  pdm3 = ‵lam (‵pair
-           (‵lam (‵var (suc zero) ‵$ ‵left (‵var zero)))
-           (‵lam (‵var (suc zero) ‵$ ‵right (‵var zero))))
-
-  qdm3 : ∀ {A} → Θ / Γ ⊢ ‵¬ (‵∃ A) ‵→ ‵∀ (‵¬ A)
-  qdm3 = ‵lam (‵∀intro (‵lam
-           (‵var (suc zero) ‵$ ‵∃intro (‵var zero) later)))
-
--- TODO: non-constructive
---module _ {k} {Γ : Fm§ k} where
---  npdm3 : ∀ {A B} → PA / Γ ⊢ ‵¬ (‵¬ A ‵∨ ‵¬ B) ‵→ A ‵∧ B
---  npdm3 = {!!}
---
---  nqdm3 : ∀ {A} → PA / Γ ⊢ ‵¬ (‵∃ (‵¬ A)) ‵→ ‵∀ A
---  nqdm3 = {!!}
---
---  pdm4 : ∀ {A B} → PA / Γ ⊢ ‵¬ (A ‵∧ B) ‵→ ‵¬ A ‵∨ ‵¬ B
---  pdm4 = {!!}
---
---  qdm4 : ∀ {A} → PA / Γ ⊢ ‵¬ (‵∀ A) ‵→ ‵∃ (‵¬ A)
---  qdm4 = {!!}
---
---  npdm4 : ∀ {A B} → PA / Γ ⊢ ‵¬ (‵¬ A ‵∧ ‵¬ B) ‵→ A ‵∨ B
---  npdm4 = {!!}
---
---  nqdm4 : ∀ {A} → PA / Γ ⊢ ‵¬ (‵∀ (‵¬ A)) ‵→ ‵∃ A
---  nqdm4 = {!!}
-
-
-----------------------------------------------------------------------------------------------------
-
 -- double negation translation
 
 _° : ∀ {k} → Fm k → Fm k
@@ -959,21 +965,21 @@ module _ where
   open ↔-Reasoning
 
   lem5-1 : ∀ {k} {Γ : Fm§ k} (A : Fm k) → PA / Γ ⊢ A ° ‵↔ A
-  lem5-1 (A ‵→ B) = cong→ (lem5-1 A) (lem5-1 B)
-  lem5-1 (A ‵∧ B)  = cong∧ (lem5-1 A) (lem5-1 B)
+  lem5-1 (A ‵→ B) = ↔cong→ (lem5-1 A) (lem5-1 B)
+  lem5-1 (A ‵∧ B)  = ↔cong∧ (lem5-1 A) (lem5-1 B)
   lem5-1 (A ‵∨ B)  = begin
                        ‵¬ ‵¬ (A ° ‵∨ B °)
                      ↔⟨ dn ⟩
                        A ° ‵∨ B °
-                     ↔⟨ cong∨ (lem5-1 A) (lem5-1 B) ⟩
+                     ↔⟨ ↔cong∨ (lem5-1 A) (lem5-1 B) ⟩
                        A ‵∨ B
                      ∎
-  lem5-1 (‵∀ A)    = cong∀ (lem5-1 A)
+  lem5-1 (‵∀ A)    = ↔cong∀ (lem5-1 A)
   lem5-1 (‵∃ A)    = begin
                        ‵¬ ‵¬ ‵∃ (A °)
                      ↔⟨ dn ⟩
                        ‵∃ (A °)
-                     ↔⟨ cong∃ (lem5-1 A) ⟩
+                     ↔⟨ ↔cong∃ (lem5-1 A) ⟩
                        ‵∃ A
                      ∎
   lem5-1 ‵⊥       = ↔refl
