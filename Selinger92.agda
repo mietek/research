@@ -295,6 +295,30 @@ data _∋_ {k} : Fm§ k → Fm k → Set where
   zero : ∀ {Γ A} → A ∷ Γ ∋ A
   suc  : ∀ {Γ A C} (i : Γ ∋ A) → C ∷ Γ ∋ A
 
+infix 3 _⊆_
+data _⊆_ {k} : Fm§ k → Fm§ k → Set where
+  stop  : [] ⊆ []
+  wk⊆   : ∀ {Γ Γ′ C} (η : Γ ⊆ Γ′) → Γ ⊆ C ∷ Γ′
+  lift⊆ : ∀ {Γ Γ′ C} (η : Γ ⊆ Γ′) → C ∷ Γ ⊆ C ∷ Γ′
+
+id⊆ : ∀ {k} {Γ : Fm§ k} → Γ ⊆ Γ
+id⊆ {Γ = []}    = stop
+id⊆ {Γ = A ∷ Γ} = lift⊆ id⊆
+
+ren∋ : ∀ {k} {Γ Γ′ : Fm§ k} {A} → Γ ⊆ Γ′ → Γ ∋ A → Γ′ ∋ A
+ren∋ stop      i       = i
+ren∋ (wk⊆ η)   i       = suc (ren∋ η i)
+ren∋ (lift⊆ η) zero    = zero
+ren∋ (lift⊆ η) (suc i) = ren∋ (wk⊆ η) i
+
+wk∋ : ∀ {k} {Γ : Fm§ k} {A C} → Γ ∋ A → C ∷ Γ ∋ A
+wk∋ = ren∋ (wk⊆ id⊆)
+
+
+----------------------------------------------------------------------------------------------------
+
+-- literals for typed de Bruijn indices
+
 infix 3 _∋⟨_⟩_
 data _∋⟨_⟩_ {k} : Fm§ k → Nat → Fm k → Set where
   instance
@@ -315,25 +339,6 @@ instance
     { Constraint = λ m → Γ ∋⟨ m ⟩ A
     ; fromNat    = λ m {{p}} → strip∋ p
     }
-
-infix 3 _⊆_
-data _⊆_ {k} : Fm§ k → Fm§ k → Set where
-  stop  : [] ⊆ []
-  wk⊆   : ∀ {Γ Γ′ C} (η : Γ ⊆ Γ′) → Γ ⊆ C ∷ Γ′
-  lift⊆ : ∀ {Γ Γ′ C} (η : Γ ⊆ Γ′) → C ∷ Γ ⊆ C ∷ Γ′
-
-id⊆ : ∀ {k} {Γ : Fm§ k} → Γ ⊆ Γ
-id⊆ {Γ = []}    = stop
-id⊆ {Γ = A ∷ Γ} = lift⊆ id⊆
-
-ren∋ : ∀ {k} {Γ Γ′ : Fm§ k} {A} → Γ ⊆ Γ′ → Γ ∋ A → Γ′ ∋ A
-ren∋ stop      i       = i
-ren∋ (wk⊆ η)   i       = suc (ren∋ η i)
-ren∋ (lift⊆ η) zero    = zero
-ren∋ (lift⊆ η) (suc i) = ren∋ (wk⊆ η) i
-
-wk∋ : ∀ {k} {Γ : Fm§ k} {A C} → Γ ∋ A → C ∷ Γ ∋ A
-wk∋ = ren∋ (wk⊆ id⊆)
 
 
 ----------------------------------------------------------------------------------------------------
