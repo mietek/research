@@ -909,7 +909,7 @@ module _ where
   join : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / ‵¬ ‵¬ ‵¬ ‵¬ A ∷ Γ ⊢ ‵¬ ‵¬ A
   join = ‵lam (1 ‵$ ‵lam (0 ‵$ 1))
 
-  lem5-2 : ∀ {k} {Γ : Fm§ k} A → HA / ‵¬ ‵¬ (A °) ∷ Γ ⊢ A °
+  lem5-2 : ∀ {Θ k} {Γ : Fm§ k} A → Θ / ‵¬ ‵¬ (A °) ∷ Γ ⊢ A °
   lem5-2 (A ‵→ B) = ‵lam (‵lam (lem5-2 B) ‵$ ‵lam
                        (2 ‵$ ‵lam
                          (1 ‵$ 0 ‵$ 2)))
@@ -932,52 +932,52 @@ module _ where
   lem5-3∋ zero    = zero
   lem5-3∋ (suc i) = suc (lem5-3∋ i)
 
---   lem5-3 : ∀ {k} {Γ : Fm§ k} {A} → PA / Γ ⊢ A → HA / Γ °§ ⊢ A °
---   lem5-3 (‵var i)         = ‵var (lem5-3∋ i)
---   lem5-3 (‵lam d)         = ‵lam (lem5-3 d)
---   lem5-3 (d ‵$ e)         = lem5-3 d ‵$ lem5-3 e
---   lem5-3 (‵pair d e)      = ‵pair (lem5-3 d) (lem5-3 e)
---   lem5-3 (‵fst d)         = ‵fst (lem5-3 d)
---   lem5-3 (‵snd d)         = ‵snd (lem5-3 d)
---   lem5-3 (‵left d)        = {!!}
---   lem5-3 (‵right d)       = {!!}
---   lem5-3 (‵case c d e)    = {!!}
---   lem5-3 (‵∀intro d)      = {!!}
---   lem5-3 (‵∀elim d refl)  = ‵∀elim (lem5-3 d) probably
---   lem5-3 (‵∃intro d refl) = {!!}
---   lem5-3 (‵∃elim d e)     = {!!}
---   lem5-3 (‵magic d)       = {!!}
---   lem5-3 ‵refl            = {!!}
---   lem5-3 (‵sym d)         = {!!}
---   lem5-3 (‵trans d e)     = {!!}
---   lem5-3 (‵cong f i d)    = {!!}
---   lem5-3 ‵dis             = {!!}
---   lem5-3 (‵inj d)         = {!!}
---   lem5-3 (‵ind d e)       = {!!}
---   lem5-3 (‵proj i)        = {!!}
---   lem5-3 (‵comp g fs)     = {!!}
---   lem5-3 (‵rec f g)       = {!!}
+  lem5-3 : ∀ {Θ k} {Γ : Fm§ k} {A} → PA / Γ ⊢ A → Θ / Γ °§ ⊢ A °
+  lem5-3 (‵var i)         = ‵var (lem5-3∋ i)
+  lem5-3 (‵lam d)         = ‵lam (lem5-3 d)
+  lem5-3 (d ‵$ e)         = lem5-3 d ‵$ lem5-3 e
+  lem5-3 (‵pair d e)      = ‵pair (lem5-3 d) (lem5-3 e)
+  lem5-3 (‵fst d)         = ‵fst (lem5-3 d)
+  lem5-3 (‵snd d)         = ‵snd (lem5-3 d)
+  lem5-3 (‵left d)        = {!!}
+  lem5-3 (‵right d)       = {!!}
+  lem5-3 (‵case c d e)    = {!!}
+  lem5-3 (‵∀intro d)      = {!!}
+  lem5-3 (‵∀elim d refl)  = ‵∀elim (lem5-3 d) probably
+  lem5-3 (‵∃intro d refl) = {!!}
+  lem5-3 (‵∃elim d e)     = {!!}
+  lem5-3 (‵magic d)       = {!!}
+  lem5-3 ‵refl            = {!!}
+  lem5-3 (‵sym d)         = {!!}
+  lem5-3 (‵trans d e)     = {!!}
+  lem5-3 (‵cong f i d)    = {!!}
+  lem5-3 ‵dis             = {!!}
+  lem5-3 (‵inj d)         = {!!}
+  lem5-3 (‵ind d e)       = {!!}
+  lem5-3 (‵proj i)        = {!!}
+  lem5-3 (‵comp g fs)     = {!!}
+  lem5-3 (‵rec f g)       = {!!}
 
---   lem5-3a : ∀ {k} {Γ : Fm§ k} {A} → HA / Γ °§ ⊢ A ° → PA / Γ ⊢ A
---   lem5-3a {A = A} d = {!‵snd (lem5-1 A)!}
+  lem5-3a : ∀ {k} {Γ : Fm§ k} {A} → HA / Γ °§ ⊢ A ° → PA / Γ ⊢ A
+  lem5-3a {A = A} d = {!‵snd (lem5-1 A)!}
 
--- --  lem5-4 : ∀ {k} {Γ : Fm§ k} {A}
-
-
--- ----------------------------------------------------------------------------------------------------
-
--- -- TODO: A-translation
-
--- -- TODO: lemma 6
+--  lem5-4 : ∀ {k} {Γ : Fm§ k} {A}
 
 
--- ----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
 
--- -- TODO: lemma 7
+-- TODO: A-translation
 
--- -- TODO: corollary 8
-
--- -- TODO: theorem 1
+-- TODO: lemma 6
 
 
--- ----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+
+-- TODO: lemma 7
+
+-- TODO: corollary 8
+
+-- TODO: theorem 1
+
+
+----------------------------------------------------------------------------------------------------
