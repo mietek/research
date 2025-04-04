@@ -38,15 +38,13 @@ open Fun using (_∘_ ; _$_ ; flip)
 import Level
 open Level using (_⊔_ ; Level)
 
-import Relation.Binary as BinRel
-
 open import Relation.Binary.PropositionalEquality
   using (_≡_ ; refl ; sym ; trans ; subst ; cong ; cong₂ ; module ≡-Reasoning)
 
 open import Relation.Nullary using (Dec ; yes ; no ; ¬_)
   renaming (contradiction to _↯_)
 
-open import Relation.Nullary.Decidable using (True ; toWitness)
+open import Relation.Nullary.Decidable using (True)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -66,13 +64,6 @@ instance
     { Constraint = λ m → True (m Nat.<? n)
     ; fromNat    = λ m {{p}} → (Fin.# m) {n} {p}
     }
-
-module TernRel where
-  REL : ∀ {𝒶 𝒷 𝒸} → Set 𝒶 → Set 𝒷 → Set 𝒸 → ∀ ℓ → Set (𝒶 ⊔ 𝒷 ⊔ 𝒸 ⊔ Level.suc ℓ)
-  REL A B C ℓ = A → B → C → Set ℓ
-
-  Decidable : ∀ {𝒶 𝒷 𝒸} {A : Set 𝒶} {B : Set 𝒷} {C : Set 𝒸} {ℓ} → REL A B C ℓ → Set _
-  Decidable R = ∀ x y z → Dec (R x y z)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -105,48 +96,8 @@ mutual
   Prim§ : Nat → Nat → Set
   Prim§ n m = Vec (Prim n) m
 
-mutual
-  _≟Prim_ : ∀ {n} → BinRel.Decidable (_≡_ {A = Prim n})
-  zero              ≟Prim zero                 = yes refl
-  zero              ≟Prim comp g′ fs′          = no λ ()
-  suc               ≟Prim suc                  = yes refl
-  suc               ≟Prim proj i               = no λ ()
-  suc               ≟Prim comp g′ fs′          = no λ ()
-  suc               ≟Prim rec f′ g′            = no λ ()
-  proj i            ≟Prim suc                  = no λ ()
-  proj i            ≟Prim proj i′              with i Fin.≟ i′
-  ... | no i≢i′                                  = no λ { refl → refl ↯ i≢i′ }
-  ... | yes refl                                 = yes refl
-  proj i            ≟Prim comp g′ fs′          = no λ ()
-  proj i            ≟Prim rec f′ g′            = no λ ()
-  comp g fs         ≟Prim zero                 = no λ ()
-  comp g fs         ≟Prim suc                  = no λ ()
-  comp g fs         ≟Prim proj i               = no λ ()
-  comp {m = m} g fs ≟Prim comp {m = m′} g′ fs′ with m Nat.≟ m′
-  ... | no m≢m′                                  = no λ { refl → refl ↯ m≢m′ }
-  ... | yes refl                                 with g ≟Prim g′ | fs ≟Prim§ fs′
-  ... | no g≢g′  | _                               = no λ { refl → refl ↯ g≢g′ }
-  ... | yes refl | no fs≢fs′                       = no λ { refl → refl ↯ fs≢fs′ }
-  ... | yes refl | yes refl                        = yes refl
-  comp g fs         ≟Prim rec f′ g′            = no λ ()
-  rec f g           ≟Prim suc                  = no λ ()
-  rec f g           ≟Prim proj i               = no λ ()
-  rec f g           ≟Prim comp g′ fs′          = no λ ()
-  rec f g           ≟Prim rec f′ g′            with f ≟Prim f′ | g ≟Prim g′
-  ... | no f≢f′  | _                             = no λ { refl → refl ↯ f≢f′ }
-  ... | yes refl | no g≢g′                       = no λ { refl → refl ↯ g≢g′ }
-  ... | yes refl | yes refl                      = yes refl
-
-  -- NOTE: termination checking fails for `_≟Prim§_ = Vec.≡-dec _≟Prim_`
-  _≟Prim§_ : ∀ {k n} → BinRel.Decidable (_≡_ {A = Prim§ k n})
-  []       ≟Prim§ []           = yes refl
-  (f ∷ fs) ≟Prim§ (f′ ∷ fs′)   with f ≟Prim f′ | fs ≟Prim§ fs′
-  ... | no f≢f′  | _           = no λ { refl → refl ↯ f≢f′ }
-  ... | yes refl | no fs≢fs′   = no λ { refl → refl ↯ fs≢fs′ }
-  ... | yes refl | yes refl    = yes refl
 
 ----------------------------------------------------------------------------------------------------
-
 
 Nat§ : Nat → Set
 Nat§ n = Vec Nat n
@@ -271,6 +222,13 @@ mutual
   Tm§ : Nat → Nat → Set
   Tm§ k n = Vec (Tm k) n
 
+instance
+  numberTm : ∀ {k} → Number (Tm k)
+  numberTm {k} = record
+    { Constraint = λ m → True (m Nat.<? k)
+    ; fromNat    = λ m {{p}} → ‵var ((Fin.# m) {k} {p})
+    }
+
 ‵zero : ∀ {k} → Tm k
 ‵zero = ‵fun zero []
 
@@ -298,95 +256,6 @@ A ‵↔ B = (A ‵→ B) ‵∧ (B ‵→ A)
 
 _‵≠_ : ∀ {k} → Tm k → Tm k → Fm k
 t ‵≠ u = ‵¬ (t ‵= u)
-
-mutual
-  _≟Tm_ : ∀ {k} → BinRel.Decidable (_≡_ {A = Tm k})
-  ‵var i        ≟Tm ‵var i′          with i Fin.≟ i′
-  ... | no i≢i′                        = no λ { refl → refl ↯ i≢i′ }
-  ... | yes refl                       = yes refl
-  ‵var i        ≟Tm ‵fun f′ ts′      = no λ ()
-  ‵fun f ts     ≟Tm ‵var i′          = no λ ()
-  ‵fun {n} f ts ≟Tm ‵fun {n′} f′ ts′ with n Nat.≟ n′
-  ... | no n≢n′                        = no λ { refl → refl ↯ n≢n′ }
-  ... | yes refl                       with f ≟Prim f′ | ts ≟Tm§ ts′
-  ... | no f≢f′  | _                     = no λ { refl → refl ↯ f≢f′ }
-  ... | yes refl | no ts≢ts′             = no λ { refl → refl ↯ ts≢ts′ }
-  ... | yes refl | yes refl              = yes refl
-
-  -- NOTE: termination checking fails for `_≟Tm§_ = Vec.≡-dec _≟Tm_`
-  _≟Tm§_ : ∀ {k n} → BinRel.Decidable (_≡_ {A = Tm§ k n})
-  []       ≟Tm§ []           = yes refl
-  (t ∷ ts) ≟Tm§ (t′ ∷ ts′)   with t ≟Tm t′ | ts ≟Tm§ ts′
-  ... | no t≢t′  | _           = no λ { refl → refl ↯ t≢t′ }
-  ... | yes refl | no ts≢ts′   = no λ { refl → refl ↯ ts≢ts′ }
-  ... | yes refl | yes refl    = yes refl
-
-_≟Fm_ : ∀ {k} → BinRel.Decidable (_≡_ {A = Fm k})
-(A ‵→ B) ≟Fm (A′ ‵→ B′) with A ≟Fm A′ | B ≟Fm B′
-... | no A≢A′  | _          = no λ { refl → refl ↯ A≢A′ }
-... | yes refl | no B≢B′    = no λ { refl → refl ↯ B≢B′ }
-... | yes refl | yes refl   = yes refl
-(A ‵→ B) ≟Fm (A′ ‵∧ B′)  = no λ ()
-(A ‵→ B) ≟Fm (A′ ‵∨ B′)  = no λ ()
-(A ‵→ B) ≟Fm (‵∀ A′)     = no λ ()
-(A ‵→ B) ≟Fm (‵∃ A′)     = no λ ()
-(A ‵→ B) ≟Fm ‵⊥         = no λ ()
-(A ‵→ B) ≟Fm (t ‵= u)    = no λ ()
-(A ‵∧ B)  ≟Fm (A′ ‵→ B′) = no λ ()
-(A ‵∧ B)  ≟Fm (A′ ‵∧ B′)  with A ≟Fm A′ | B ≟Fm B′
-... | no A≢A′  | _          = no λ { refl → refl ↯ A≢A′ }
-... | yes refl | no B≢B′    = no λ { refl → refl ↯ B≢B′ }
-... | yes refl | yes refl   = yes refl
-(A ‵∧ B)  ≟Fm (A′ ‵∨ B′)  = no λ ()
-(A ‵∧ B)  ≟Fm (‵∀ A′)     = no λ ()
-(A ‵∧ B)  ≟Fm (‵∃ A′)     = no λ ()
-(A ‵∧ B)  ≟Fm ‵⊥         = no λ ()
-(A ‵∧ B)  ≟Fm (t ‵= u)    = no λ ()
-(A ‵∨ B)  ≟Fm (A′ ‵→ B′) = no λ ()
-(A ‵∨ B)  ≟Fm (A′ ‵∧ B′)  = no λ ()
-(A ‵∨ B)  ≟Fm (A′ ‵∨ B′)  with A ≟Fm A′ | B ≟Fm B′
-... | no A≢A′  | _          = no λ { refl → refl ↯ A≢A′ }
-... | yes refl | no B≢B′    = no λ { refl → refl ↯ B≢B′ }
-... | yes refl | yes refl   = yes refl
-(A ‵∨ B)  ≟Fm (‵∀ A′)     = no λ ()
-(A ‵∨ B)  ≟Fm (‵∃ A′)     = no λ ()
-(A ‵∨ B)  ≟Fm ‵⊥         = no λ ()
-(A ‵∨ B)  ≟Fm (t ‵= u)    = no λ ()
-(‵∀ A)    ≟Fm (A′ ‵→ B′) = no λ ()
-(‵∀ A)    ≟Fm (A′ ‵∧ B′)  = no λ ()
-(‵∀ A)    ≟Fm (A′ ‵∨ B′)  = no λ ()
-(‵∀ A)    ≟Fm (‵∀ A′)     with A ≟Fm A′
-... | no A≢A′               = no λ { refl → refl ↯ A≢A′ }
-... | yes refl              = yes refl
-(‵∀ A)    ≟Fm (‵∃ A′)     = no λ ()
-(‵∀ A)    ≟Fm ‵⊥         = no λ ()
-(‵∀ A)    ≟Fm (t ‵= u)    = no λ ()
-(‵∃ A)    ≟Fm (A′ ‵→ B′) = no λ ()
-(‵∃ A)    ≟Fm (A′ ‵∧ B′)  = no λ ()
-(‵∃ A)    ≟Fm (A′ ‵∨ B′)  = no λ ()
-(‵∃ A)    ≟Fm (‵∀ A′)     = no λ ()
-(‵∃ A)    ≟Fm (‵∃ A′)     with A ≟Fm A′
-... | no A≢A′               = no λ { refl → refl ↯ A≢A′ }
-... | yes refl              = yes refl
-(‵∃ A)    ≟Fm ‵⊥         = no λ ()
-(‵∃ A)    ≟Fm (t ‵= u)    = no λ ()
-‵⊥       ≟Fm (A′ ‵→ B′) = no λ ()
-‵⊥       ≟Fm (A′ ‵∧ B′)  = no λ ()
-‵⊥       ≟Fm (A′ ‵∨ B′)  = no λ ()
-‵⊥       ≟Fm (‵∀ A′)     = no λ ()
-‵⊥       ≟Fm (‵∃ A′)     = no λ ()
-‵⊥       ≟Fm ‵⊥         = yes refl
-‵⊥       ≟Fm (t ‵= u)    = no λ ()
-(t ‵= u)  ≟Fm (A′ ‵→ B′) = no λ ()
-(t ‵= u)  ≟Fm (A′ ‵∧ B′)  = no λ ()
-(t ‵= u)  ≟Fm (A′ ‵∨ B′)  = no λ ()
-(t ‵= u)  ≟Fm (‵∀ A′)     = no λ ()
-(t ‵= u)  ≟Fm (‵∃ A′)     = no λ ()
-(t ‵= u)  ≟Fm ‵⊥         = no λ ()
-(t ‵= u)  ≟Fm (t′ ‵= u′)  with t ≟Tm t′ | u ≟Tm u′
-... | no t≢t′  | _          = no λ { refl → refl ↯ t≢t′ }
-... | yes refl | no u≢u′    = no λ { refl → refl ↯ u≢u′ }
-... | yes refl | yes refl   = yes refl
 
 
 ----------------------------------------------------------------------------------------------------
@@ -426,39 +295,25 @@ data _∋_ {k} : Fm§ k → Fm k → Set where
   zero : ∀ {Γ A} → A ∷ Γ ∋ A
   suc  : ∀ {Γ A C} (i : Γ ∋ A) → C ∷ Γ ∋ A
 
-infix 3 _∋?_
-_∋?_ : ∀ {k} → BinRel.Decidable (_∋_ {k = k})
-[]     ∋? A    = no λ ()
-A′ ∷ Γ ∋? A    with A ≟Fm A′
-... | yes refl   = yes zero
-... | no A≢A′    with Γ ∋? A
-... | yes i        = yes (suc i)
-... | no ¬i        = no λ { zero → refl ↯ A≢A′ ; (suc i) → i ↯ ¬i }
-
 infix 3 _∋⟨_⟩_
 data _∋⟨_⟩_ {k} : Fm§ k → Nat → Fm k → Set where
-  zero : ∀ {Γ A} → A ∷ Γ ∋⟨ zero ⟩ A
-  suc  : ∀ {Γ m A C} (i : Γ ∋⟨ m ⟩ A) → C ∷ Γ ∋⟨ suc m ⟩ A
+  instance
+    zero : ∀ {Γ A} → A ∷ Γ ∋⟨ zero ⟩ A
+  suc : ∀ {Γ m A C} (i : Γ ∋⟨ m ⟩ A) → C ∷ Γ ∋⟨ suc m ⟩ A
 
-infix 3 _∋⟨_⟩?_
-_∋⟨_⟩?_ : ∀ {k} → TernRel.Decidable (_∋⟨_⟩_ {k = k})
-[]     ∋⟨ m ⟩?     A = no λ ()
-A′ ∷ Γ ∋⟨ zero ⟩?  A with A ≟Fm A′
-... | yes refl         = yes zero
-... | no A≢A′          = no λ { zero → refl ↯ A≢A′ }
-C ∷ Γ ∋⟨ suc m ⟩? A  with Γ ∋⟨ m ⟩? A
-... | yes i            = yes (suc i)
-... | no ¬i            = no λ { (suc i) → i ↯ ¬i }
+instance
+  suc∋ : ∀ {k} {Γ : Fm§ k} {m A C} {{i : Γ ∋⟨ m ⟩ A}} → C ∷ Γ ∋⟨ suc m ⟩ A
+  suc∋ {{i}} = suc i
 
-strip : ∀ {m k} {Γ : Fm§ k} {A} → Γ ∋⟨ m ⟩ A → Γ ∋ A
-strip zero    = zero
-strip (suc i) = suc (strip i)
+strip∋ : ∀ {m k} {Γ : Fm§ k} {A} → Γ ∋⟨ m ⟩ A → Γ ∋ A
+strip∋ zero    = zero
+strip∋ (suc i) = suc (strip∋ i)
 
 instance
   number∋ : ∀ {k} {Γ : Fm§ k} {A} → Number (Γ ∋ A)
   number∋ {Γ = Γ} {A} = record
-    { Constraint = λ m → True (Γ ∋⟨ m ⟩? A)
-    ; fromNat    = λ m {{p}} → strip (toWitness p)
+    { Constraint = λ m → Γ ∋⟨ m ⟩ A
+    ; fromNat    = λ m {{p}} → strip∋ p
     }
 
 infix 3 _⊆_
@@ -528,7 +383,7 @@ postulate
   _[_] : ∀ {k} (A : Fm (suc k)) (s : Tm k) → Fm k
 
   -- TODO: this should follow from one of the substitution lemmas
-  later : ∀ {k} {A : Fm (suc k)} → A ≡ (frenFm (lift≤ (wk≤ id≤)) A [ ‵var 0 ])
+  later : ∀ {k} {A : Fm (suc k)} → A ≡ (frenFm (lift≤ (wk≤ id≤)) A [ 0 ])
 
 
 ----------------------------------------------------------------------------------------------------
@@ -595,7 +450,7 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
    -- ------------------------------------
    --              ∀y.A[y/x₀]
   ‵ind    : ∀ {Θ Γ A} (d : Θ / Γ ⊢ A [ ‵zero ])
-               (e : Θ / Γ ⊢ ‵∀ (A ‵→ (↕ (fwkFm A)) [ ‵suc (‵var 0) ])) →
+               (e : Θ / Γ ⊢ ‵∀ (A ‵→ (↕ (fwkFm A)) [ ‵suc 0 ])) →
                Θ / Γ ⊢ ‵∀ A
 
   ‵proj   : ∀ {Θ Γ n ts} (i : Fin n) → Θ / Γ ⊢ ‵fun (proj i) ts ‵= get i ts
@@ -606,6 +461,13 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   ‵rec    : ∀ {Θ Γ n s ts} (f : Prim n) (g : Prim (suc (suc n))) →
                Θ / Γ ⊢ ‵fun (rec f g) (‵zero ∷ ts) ‵= ‵fun f ts ‵∧
                  ‵fun (rec f g) (‵suc s ∷ ts) ‵= ‵fun g (‵fun (rec f g) (s ∷ ts) ∷ s ∷ ts)
+
+instance
+  number⊢ : ∀ {Θ k} {Γ : Fm§ k} {A} → Number (Θ / Γ ⊢ A)
+  number⊢ {Γ = Γ} {A} = record
+    { Constraint = λ m → Γ ∋⟨ m ⟩ A
+    ; fromNat    = λ m {{p}} → ‵var (strip∋ p)
+    }
 
 ‵congsuc : ∀ {Θ k} {Γ : Fm§ k} {t u} → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ ‵suc t ‵= ‵suc u
 ‵congsuc d = ‵cong suc 0 d
@@ -731,53 +593,53 @@ module =-Reasoning {Θ k} {Γ : Fm§ k} where
 
 module _ {Θ k} {Γ : Fm§ k} where
   ↔refl : ∀ {A} → Θ / Γ ⊢ A ‵↔ A
-  ↔refl = ‵pair (‵lam (‵var zero)) (‵lam (‵var zero))
+  ↔refl {A} = ‵pair (‵lam 0) (‵lam 0)
 
   ↔sym : ∀ {A B} → Θ / Γ ⊢ A ‵↔ B → Θ / Γ ⊢ B ‵↔ A
   ↔sym d = ‵pair (‵snd d) (‵fst d)
 
   ↔trans : ∀ {A B C} → Θ / Γ ⊢ A ‵↔ B → Θ / Γ ⊢ B ‵↔ C → Θ / Γ ⊢ A ‵↔ C
   ↔trans d e = ‵pair
-                  (‵lam (‵fst (wk e) ‵$ ‵fst (wk d) ‵$ ‵var zero))
-                  (‵lam (‵snd (wk d) ‵$ ‵snd (wk e) ‵$ ‵var zero))
+                  (‵lam (‵fst (wk e) ‵$ ‵fst (wk d) ‵$ 0))
+                  (‵lam (‵snd (wk d) ‵$ ‵snd (wk e) ‵$ 0))
 
   ↔cong→ : ∀ {A A′ B B′} → Θ / Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ B ‵↔ B′ →
                Θ / Γ ⊢ (A ‵→ B) ‵↔ (A′ ‵→ B′)
   ↔cong→ d e = ‵pair
                    (‵lam (‵lam
-                     (‵fst (wk (wk e)) ‵$ ‵var (suc zero) ‵$ ‵snd (wk (wk d)) ‵$ ‵var zero)))
+                     (‵fst (wk (wk e)) ‵$ 1 ‵$ ‵snd (wk (wk d)) ‵$ 0)))
                    (‵lam (‵lam
-                     (‵snd (wk (wk e)) ‵$ ‵var (suc zero) ‵$ ‵fst (wk (wk d)) ‵$ ‵var zero)))
+                     (‵snd (wk (wk e)) ‵$ 1 ‵$ ‵fst (wk (wk d)) ‵$ 0)))
 
   ↔cong∧ : ∀ {A A′ B B′} → Θ / Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ B ‵↔ B′ →
               Θ / Γ ⊢ A ‵∧ B ‵↔ A′ ‵∧ B′
   ↔cong∧ d e = ‵pair
                   (‵lam (‵pair
-                    (‵fst (wk d) ‵$ ‵fst (‵var zero))
-                    (‵fst (wk e) ‵$ ‵snd (‵var zero))))
+                    (‵fst (wk d) ‵$ ‵fst 0)
+                    (‵fst (wk e) ‵$ ‵snd 0)))
                   (‵lam (‵pair
-                    (‵snd (wk d) ‵$ ‵fst (‵var zero))
-                    (‵snd (wk e) ‵$ ‵snd (‵var zero))))
+                    (‵snd (wk d) ‵$ ‵fst 0)
+                    (‵snd (wk e) ‵$ ‵snd 0)))
 
   ↔cong∨ : ∀ {A A′ B B′} → Θ / Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ B ‵↔ B′ →
               Θ / Γ ⊢ A ‵∨ B ‵↔ A′ ‵∨ B′
   ↔cong∨ d e = ‵pair
-                  (‵lam (‵case (‵var zero)
-                    (‵left (‵fst (wk (wk d)) ‵$ ‵var zero))
-                    (‵right (‵fst (wk (wk e)) ‵$ ‵var zero))))
-                  (‵lam (‵case (‵var zero)
-                    (‵left (‵snd (wk (wk d)) ‵$ ‵var zero))
-                    (‵right (‵snd (wk (wk e)) ‵$ ‵var zero))))
+                  (‵lam (‵case 0
+                    (‵left (‵fst (wk (wk d)) ‵$ 0))
+                    (‵right (‵fst (wk (wk e)) ‵$ 0))))
+                  (‵lam (‵case 0
+                    (‵left (‵snd (wk (wk d)) ‵$ 0))
+                    (‵right (‵snd (wk (wk e)) ‵$ 0))))
 
   ↔cong∀ : ∀ {A A′} → Θ / fwkFm§ Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ (‵∀ A) ‵↔ (‵∀ A′)
   ↔cong∀ d = ‵pair
-                (‵lam (‵∀intro (fwk (wk⊆ id⊆) (‵fst d) ‵$ ‵∀elim (‵var zero) later)))
-                (‵lam (‵∀intro (fwk (wk⊆ id⊆) (‵snd d) ‵$ ‵∀elim (‵var zero) later)))
+                (‵lam (‵∀intro (fwk (wk⊆ id⊆) (‵fst d) ‵$ ‵∀elim 0 later)))
+                (‵lam (‵∀intro (fwk (wk⊆ id⊆) (‵snd d) ‵$ ‵∀elim 0 later)))
 
   ↔cong∃ : ∀ {A A′} → Θ / fwkFm§ Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ (‵∃ A) ‵↔ (‵∃ A′)
   ↔cong∃ d = ‵pair
-                (‵lam (‵∃elim (‵var zero) (‵∃intro (‵fst (wk (wk d)) ‵$ ‵var zero) later)))
-                (‵lam (‵∃elim (‵var zero) (‵∃intro (‵snd (wk (wk d)) ‵$ ‵var zero) later)))
+                (‵lam (‵∃elim 0 (‵∃intro (‵fst (wk (wk d)) ‵$ 0) later)))
+                (‵lam (‵∃elim 0 (‵∃intro (‵snd (wk (wk d)) ‵$ 0) later)))
 
   ≡→↔ : ∀ {A B} → A ≡ B → Θ / Γ ⊢ A ‵↔ B
   ≡→↔ refl = ↔refl
@@ -816,15 +678,15 @@ module ↔-Reasoning {Θ k} {Γ : Fm§ k} where
 -- constructive
 module _ {Θ k} {Γ : Fm§ k} where
   ¬¬em : ∀ {A} → Θ / Γ ⊢ ‵¬ ‵¬ (A ‵∨ ‵¬ A)
-  ¬¬em = ‵lam (‵var zero ‵$ ‵right (‵lam (‵var (suc zero) ‵$ ‵left (‵var zero))))
+  ¬¬em = ‵lam (0 ‵$ ‵right (‵lam (1 ‵$ ‵left 0)))
 
   dni : ∀ {A} → Θ / Γ ⊢ A ‵→ ‵¬ ‵¬ A
-  dni = ‵lam (‵lam (‵var zero ‵$ ‵var (suc zero)))
+  dni = ‵lam (‵lam (0 ‵$ 1))
 
 -- non-constructive
 module _ {k} {Γ : Fm§ k} where
   dne : ∀ {A} → PA / Γ ⊢ ‵¬ ‵¬ A ‵→ A
-  dne = ‵lam (‵magic (‵var (suc zero) ‵$ ‵var zero))
+  dne = ‵lam (‵magic (1 ‵$ 0))
 
   dn : ∀ {A} → PA / Γ ⊢ ‵¬ ‵¬ A ‵↔ A
   dn = ‵pair dne dni
@@ -859,49 +721,49 @@ module _ {k} {Γ : Fm§ k} where
 -- constructive
 module _ {Θ k} {Γ : Fm§ k} where
   pdm1 : ∀ {A B} → Θ / Γ ⊢ ‵¬ A ‵∨ ‵¬ B ‵→ ‵¬ (A ‵∧ B)
-  pdm1 = ‵lam (‵lam (‵case (‵var (suc zero))
-           (‵var zero ‵$ ‵fst (‵var (suc zero)))
-           (‵var zero ‵$ ‵snd (‵var (suc zero)))))
+  pdm1 = ‵lam (‵lam (‵case 1
+           (0 ‵$ ‵fst 1)
+           (0 ‵$ ‵snd 1)))
 
   qdm1 : ∀ {A} → Θ / Γ ⊢ ‵∃ (‵¬ A) ‵→ ‵¬ (‵∀ A)
-  qdm1 = ‵lam (‵lam (‵∃elim (‵var (suc zero))
-           (‵var zero ‵$ ‵∀elim (‵var (suc zero)) later)))
+  qdm1 = ‵lam (‵lam (‵∃elim 1
+           (0 ‵$ ‵∀elim 1 later)))
 
   npdm1 : ∀ {A B} → Θ / Γ ⊢ A ‵∨ B ‵→ ‵¬ (‵¬ A ‵∧ ‵¬ B)
-  npdm1 = ‵lam (‵lam (abort (‵case (‵var (suc zero))
-            (‵fst (‵var (suc zero)) ‵$ ‵var zero)
-            (‵snd (‵var (suc zero)) ‵$ ‵var zero))))
+  npdm1 = ‵lam (‵lam (abort (‵case 1
+            (‵fst 1 ‵$ 0)
+            (‵snd 1 ‵$ 0))))
 
   nqdm1 : ∀ {A} → Θ / Γ ⊢ ‵∃ A ‵→ ‵¬ (‵∀ (‵¬ A))
-  nqdm1 = ‵lam (‵lam (abort (‵∃elim (‵var (suc zero))
-            (‵∀elim (‵var (suc zero)) later ‵$ ‵var zero))))
+  nqdm1 = ‵lam (‵lam (abort (‵∃elim 1
+            (‵∀elim 1 later ‵$ 0))))
 
   pdm2 : ∀ {A B} → Θ / Γ ⊢ ‵¬ A ‵∧ ‵¬ B ‵→ ‵¬ (A ‵∨ B)
-  pdm2 = ‵lam (‵lam (‵case (‵var zero)
-           (‵fst (‵var (suc (suc zero))) ‵$ ‵var zero)
-           (‵snd (‵var (suc (suc zero))) ‵$ ‵var zero)))
+  pdm2 = ‵lam (‵lam (‵case 0
+           (‵fst 2 ‵$ 0)
+           (‵snd 2 ‵$ 0)))
 
   qdm2 : ∀ {A} → Θ / Γ ⊢ ‵∀ (‵¬ A) ‵→ ‵¬ (‵∃ A)
-  qdm2 = ‵lam (‵lam (‵∃elim (‵var zero)
-           (‵∀elim (‵var (suc (suc zero))) later ‵$ ‵var zero)))
+  qdm2 = ‵lam (‵lam (‵∃elim 0
+           (‵∀elim 2 later ‵$ 0)))
 
   npdm2 : ∀ {A B} → Θ / Γ ⊢ A ‵∧ B ‵→ ‵¬ (‵¬ A ‵∨ ‵¬ B)
-  npdm2 = ‵lam (‵lam (abort (‵case (‵var zero)
-            (‵var zero ‵$ ‵fst (‵var (suc (suc zero))))
-            (‵var zero ‵$ ‵snd (‵var (suc (suc zero)))))))
+  npdm2 = ‵lam (‵lam (abort (‵case 0
+            (0 ‵$ ‵fst 2)
+            (0 ‵$ ‵snd 2))))
 
   nqdm2 : ∀ {A} → Θ / Γ ⊢ ‵∀ A ‵→ ‵¬ (‵∃ (‵¬ A))
-  nqdm2 = ‵lam (‵lam (abort (‵∃elim (‵var zero)
-            (‵var zero ‵$ ‵∀elim (‵var (suc (suc zero))) later))))
+  nqdm2 = ‵lam (‵lam (abort (‵∃elim 0
+            (0 ‵$ ‵∀elim 2 later))))
 
   pdm3 : ∀ {A B} → Θ / Γ ⊢ ‵¬ (A ‵∨ B) ‵→ ‵¬ A ‵∧ ‵¬ B
   pdm3 = ‵lam (‵pair
-           (‵lam (‵var (suc zero) ‵$ ‵left (‵var zero)))
-           (‵lam (‵var (suc zero) ‵$ ‵right (‵var zero))))
+           (‵lam (1 ‵$ ‵left 0))
+           (‵lam (1 ‵$ ‵right 0)))
 
   qdm3 : ∀ {A} → Θ / Γ ⊢ ‵¬ (‵∃ A) ‵→ ‵∀ (‵¬ A)
   qdm3 = ‵lam (‵∀intro (‵lam
-           (‵var (suc zero) ‵$ ‵∃intro (‵var zero) later)))
+           (1 ‵$ ‵∃intro 0 later)))
 
 -- TODO: non-constructive
 -- module _ {k} {Γ : Fm§ k} where
@@ -947,7 +809,7 @@ module _ where
                (‵cong suc zero
                  (‵sym (‵comp zero [])))
                (‵sym (‵comp suc (comp zero [] ∷ []))))
-             (‵var zero))
+             (‵var 0))
 
   goal′ = ‵lam
             (begin
@@ -966,7 +828,7 @@ module _ where
               ‵fun (comp suc (comp zero [] ∷ [])) (tab ‵var)
             =⟨⟩
               ‵fun (const 1) (tab ‵var)
-            =⟨ ‵var zero ⟩
+            =⟨ ‵var 0 ⟩
               ‵zero
             ∎)
 
@@ -978,7 +840,7 @@ module _ where
 -- lem3 (A ‵→ B) = {!!}
 -- lem3 (A ‵∧ B)  = {!!}
 -- lem3 (A ‵∨ B)  = {!!}
--- lem3 ‵⊥       = const 1 , ‵pair (‵lam (abort (‵var zero))) (‵lam (‵dis ‵$ goal ‵$ ‵var zero))
+-- lem3 ‵⊥       = const 1 , ‵pair (‵lam (abort 0)) (‵lam (‵dis ‵$ goal ‵$ 0))
 -- lem3 (t ‵= u)  = {!!}
 
 
@@ -1041,21 +903,21 @@ module _ where
 
   lem5-2 : ∀ {k} {Γ : Fm§ k} A → HA / ‵¬ ‵¬ (A °) ∷ Γ ⊢ A °
   lem5-2 (A ‵→ B) = ‵lam (‵lam (lem5-2 B) ‵$ ‵lam
-                       (‵var (suc (suc zero)) ‵$ ‵lam
-                         (‵var (suc zero) ‵$ ‵var zero ‵$ ‵var (suc (suc zero)))))
+                       (2 ‵$ ‵lam
+                         (1 ‵$ 0 ‵$ 2)))
   lem5-2 (A ‵∧ B)  = ‵pair
                        (‵lam (lem5-2 A) ‵$ ‵lam
-                         (‵var (suc zero) ‵$ ‵lam
-                           (‵var (suc zero) ‵$ ‵fst (‵var zero))))
+                         (1 ‵$ ‵lam
+                           (1 ‵$ ‵fst 0)))
                        (‵lam (lem5-2 B) ‵$ ‵lam
-                         (‵var (suc zero) ‵$ ‵lam
-                           (‵var (suc zero) ‵$ ‵snd (‵var zero))))
+                         (1 ‵$ ‵lam
+                           (1 ‵$ ‵snd 0)))
   lem5-2 (A ‵∨ B)  = {!!}
   lem5-2 (‵∀ A)    = ‵∀intro (‵lam (lem5-2 A) ‵$ ‵lam
-                       (‵var (suc zero) ‵$ ‵lam
-                         (‵var (suc zero) ‵$ ‵∀elim (‵var zero) later)))
+                       (1 ‵$ ‵lam
+                         (1 ‵$ ‵∀elim 0 later)))
   lem5-2 (‵∃ A)    = {!!}
-  lem5-2 ‵⊥       = ‵var zero ‵$ ‵lam (‵var zero)
+  lem5-2 ‵⊥       = 0 ‵$ ‵lam 0
   lem5-2 (t ‵= u)  = {!!}
 
   lem5-3∋ : ∀ {k} {Γ : Fm§ k} {A} → Γ ∋ A → Γ °§ ∋ A °
