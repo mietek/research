@@ -906,6 +906,9 @@ module _ where
   lem5-1 ‵⊥       = ↔refl
   lem5-1 (t ‵= u)  = dn
 
+  join : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / ‵¬ ‵¬ ‵¬ ‵¬ A ∷ Γ ⊢ ‵¬ ‵¬ A
+  join = ‵lam (1 ‵$ ‵lam (0 ‵$ 1))
+
   lem5-2 : ∀ {k} {Γ : Fm§ k} A → HA / ‵¬ ‵¬ (A °) ∷ Γ ⊢ A °
   lem5-2 (A ‵→ B) = ‵lam (‵lam (lem5-2 B) ‵$ ‵lam
                        (2 ‵$ ‵lam
@@ -917,13 +920,13 @@ module _ where
                        (‵lam (lem5-2 B) ‵$ ‵lam
                          (1 ‵$ ‵lam
                            (1 ‵$ ‵snd 0)))
-  lem5-2 (A ‵∨ B)  = {!!}
+  lem5-2 (A ‵∨ B)  = join
   lem5-2 (‵∀ A)    = ‵∀intro (‵lam (lem5-2 A) ‵$ ‵lam
                        (1 ‵$ ‵lam
                          (1 ‵$ ‵∀elim 0 later)))
-  lem5-2 (‵∃ A)    = {!!}
+  lem5-2 (‵∃ A)    = join
   lem5-2 ‵⊥       = 0 ‵$ ‵lam 0
-  lem5-2 (t ‵= u)  = {!!}
+  lem5-2 (t ‵= u)  = join
 
   lem5-3∋ : ∀ {k} {Γ : Fm§ k} {A} → Γ ∋ A → Γ °§ ∋ A °
   lem5-3∋ zero    = zero
