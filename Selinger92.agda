@@ -390,13 +390,13 @@ twk⊆ = tren⊆ (wk≤ id≤)
 
 postulate
   -- exchange two topmost term variables in formula
-  ↕ : ∀ {k} (A : Fm (suc (suc k))) → Fm (suc (suc k))
+  texFm : ∀ {k} (A : Fm (suc (suc k))) → Fm (suc (suc k))
 
   -- substitute topmost term variable in formula by term
   _[_] : ∀ {k} (A : Fm (suc k)) (s : Tm k) → Fm k
 
   -- TODO: this should follow from one of the substitution lemmas
-  later : ∀ {k} {A : Fm (suc k)} → A ≡ (trenFm (lift≤ (wk≤ id≤)) A [ 0 ])
+  TODO1 : ∀ {k} {A : Fm (suc k)} → A ≡ (trenFm (lift≤ (wk≤ id≤)) A [ 0 ])
 
 
 ----------------------------------------------------------------------------------------------------
@@ -463,7 +463,7 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
    -- ------------------------------------
    --              ∀y.A[y/x₀]
   ‵ind    : ∀ {Θ Γ A} (d : Θ / Γ ⊢ A [ ‵zero ])
-               (e : Θ / Γ ⊢ ‵∀ (A ‵⊃ (↕ (twkFm A)) [ ‵suc 0 ])) →
+               (e : Θ / Γ ⊢ ‵∀ (A ‵⊃ (texFm (twkFm A)) [ ‵suc 0 ])) →
                Θ / Γ ⊢ ‵∀ A
 
   ‵proj   : ∀ {Θ Γ n ts} (i : Fin n) → Θ / Γ ⊢ ‵fun (proj i) ts ‵= get i ts
@@ -638,13 +638,13 @@ module _ {Θ k} {Γ : Fm§ k} where
 
   ⫗cong∀ : ∀ {A A′} → Θ / twkFm§ Γ ⊢ A ‵⫗ A′ → Θ / Γ ⊢ (‵∀ A) ‵⫗ (‵∀ A′)
   ⫗cong∀ d = ‵pair
-                (‵lam (‵∀intro (twk (wk⊆ id⊆) (‵fst d) ‵$ ‵∀elim 0 later)))
-                (‵lam (‵∀intro (twk (wk⊆ id⊆) (‵snd d) ‵$ ‵∀elim 0 later)))
+                (‵lam (‵∀intro (twk (wk⊆ id⊆) (‵fst d) ‵$ ‵∀elim 0 TODO1)))
+                (‵lam (‵∀intro (twk (wk⊆ id⊆) (‵snd d) ‵$ ‵∀elim 0 TODO1)))
 
   ⫗cong∃ : ∀ {A A′} → Θ / twkFm§ Γ ⊢ A ‵⫗ A′ → Θ / Γ ⊢ (‵∃ A) ‵⫗ (‵∃ A′)
   ⫗cong∃ d = ‵pair
-                (‵lam (‵∃elim 0 (‵∃intro (‵fst (wk (wk d)) ‵$ 0) later)))
-                (‵lam (‵∃elim 0 (‵∃intro (‵snd (wk (wk d)) ‵$ 0) later)))
+                (‵lam (‵∃elim 0 (‵∃intro (‵fst (wk (wk d)) ‵$ 0) TODO1)))
+                (‵lam (‵∃elim 0 (‵∃intro (‵snd (wk (wk d)) ‵$ 0) TODO1)))
 
   ≡→⫗ : ∀ {A B} → A ≡ B → Θ / Γ ⊢ A ‵⫗ B
   ≡→⫗ refl = ⫗refl
@@ -732,7 +732,7 @@ module _ {Θ k} {Γ : Fm§ k} where
 
   qdm1 : ∀ {A} → Θ / Γ ⊢ ‵∃ (‵¬ A) ‵⊃ ‵¬ (‵∀ A)
   qdm1 = ‵lam (‵lam (‵∃elim 1
-           (0 ‵$ ‵∀elim 1 later)))
+           (0 ‵$ ‵∀elim 1 TODO1)))
 
   npdm1 : ∀ {A B} → Θ / Γ ⊢ A ‵∨ B ‵⊃ ‵¬ (‵¬ A ‵∧ ‵¬ B)
   npdm1 = ‵lam (‵lam (abort (‵case 1
@@ -741,7 +741,7 @@ module _ {Θ k} {Γ : Fm§ k} where
 
   nqdm1 : ∀ {A} → Θ / Γ ⊢ ‵∃ A ‵⊃ ‵¬ (‵∀ (‵¬ A))
   nqdm1 = ‵lam (‵lam (abort (‵∃elim 1
-            (‵∀elim 1 later ‵$ 0))))
+            (‵∀elim 1 TODO1 ‵$ 0))))
 
   pdm2 : ∀ {A B} → Θ / Γ ⊢ ‵¬ A ‵∧ ‵¬ B ‵⊃ ‵¬ (A ‵∨ B)
   pdm2 = ‵lam (‵lam (‵case 0
@@ -750,7 +750,7 @@ module _ {Θ k} {Γ : Fm§ k} where
 
   qdm2 : ∀ {A} → Θ / Γ ⊢ ‵∀ (‵¬ A) ‵⊃ ‵¬ (‵∃ A)
   qdm2 = ‵lam (‵lam (‵∃elim 0
-           (‵∀elim 2 later ‵$ 0)))
+           (‵∀elim 2 TODO1 ‵$ 0)))
 
   npdm2 : ∀ {A B} → Θ / Γ ⊢ A ‵∧ B ‵⊃ ‵¬ (‵¬ A ‵∨ ‵¬ B)
   npdm2 = ‵lam (‵lam (abort (‵case 0
@@ -759,7 +759,7 @@ module _ {Θ k} {Γ : Fm§ k} where
 
   nqdm2 : ∀ {A} → Θ / Γ ⊢ ‵∀ A ‵⊃ ‵¬ (‵∃ (‵¬ A))
   nqdm2 = ‵lam (‵lam (abort (‵∃elim 0
-            (0 ‵$ ‵∀elim 2 later))))
+            (0 ‵$ ‵∀elim 2 TODO1))))
 
   pdm3 : ∀ {A B} → Θ / Γ ⊢ ‵¬ (A ‵∨ B) ‵⊃ ‵¬ A ‵∧ ‵¬ B
   pdm3 = ‵lam (‵pair
@@ -768,7 +768,7 @@ module _ {Θ k} {Γ : Fm§ k} where
 
   qdm3 : ∀ {A} → Θ / Γ ⊢ ‵¬ (‵∃ A) ‵⊃ ‵∀ (‵¬ A)
   qdm3 = ‵lam (‵∀intro (‵lam
-           (1 ‵$ ‵∃intro 0 later)))
+           (1 ‵$ ‵∃intro 0 TODO1)))
 
 -- TODO: non-constructive
 -- module _ {k} {Γ : Fm§ k} where
@@ -927,10 +927,9 @@ _°§ : ∀ {k} → Fm§ k → Fm§ k
 (A ∷ Γ) °§ = A ° ∷ Γ °§
 
 
--- TODO
 postulate
-  probably : ∀ {k} {A : Fm (suc k)} {t} → (A [ t ]) ° ≡ (A °) [ t ]
-  massage  : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / (twkFm§ Γ) °§ ⊢ A ° → Θ / twkFm§ (Γ °§) ⊢ A °
+  TODO2 : ∀ {k} {A : Fm (suc k)} {t} → (A [ t ]) ° ≡ (A °) [ t ]
+  TODO3 : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / (twkFm§ Γ) °§ ⊢ A ° → Θ / twkFm§ (Γ °§) ⊢ A °
 
 
 -- TODO: lemma 5
@@ -938,45 +937,45 @@ postulate
 module _ where
   open ⫗-Reasoning
 
-  lem5-1 : ∀ {k} {Γ : Fm§ k} A → PA / Γ ⊢ A ° ‵⫗ A
-  lem5-1 (A ‵⊃ B) = ⫗cong⊃ (lem5-1 A) (lem5-1 B)
-  lem5-1 (A ‵∧ B) = ⫗cong∧ (lem5-1 A) (lem5-1 B)
-  lem5-1 (A ‵∨ B) = begin
-                      ‵¬ ‵¬ (A ° ‵∨ B °)
-                    ⫗⟨ dn ⟩
-                      A ° ‵∨ B °
-                    ⫗⟨ ⫗cong∨ (lem5-1 A) (lem5-1 B) ⟩
-                      A ‵∨ B
-                    ∎
-  lem5-1 (‵∀ A)   = ⫗cong∀ (lem5-1 A)
-  lem5-1 (‵∃ A)   = begin
-                      ‵¬ ‵¬ ‵∃ (A °)
-                    ⫗⟨ dn ⟩
-                      ‵∃ (A °)
-                    ⫗⟨ ⫗cong∃ (lem5-1 A) ⟩
-                      ‵∃ A
-                    ∎
-  lem5-1 ‵⊥      = ⫗refl
-  lem5-1 (t ‵= u) = dn
+  lem5-1 : ∀ {k} {Γ : Fm§ k} {A} → PA / Γ ⊢ A ° ‵⫗ A
+  lem5-1 {A = A ‵⊃ B} = ⫗cong⊃ lem5-1 lem5-1
+  lem5-1 {A = A ‵∧ B} = ⫗cong∧ lem5-1 lem5-1
+  lem5-1 {A = A ‵∨ B} = begin
+                          ‵¬ ‵¬ (A ° ‵∨ B °)
+                        ⫗⟨ dn ⟩
+                          A ° ‵∨ B °
+                        ⫗⟨ ⫗cong∨ lem5-1 lem5-1 ⟩
+                          A ‵∨ B
+                        ∎
+  lem5-1 {A = ‵∀ A}   = ⫗cong∀ lem5-1
+  lem5-1 {A = ‵∃ A}   = begin
+                          ‵¬ ‵¬ ‵∃ (A °)
+                        ⫗⟨ dn ⟩
+                          ‵∃ (A °)
+                        ⫗⟨ ⫗cong∃ lem5-1 ⟩
+                          ‵∃ A
+                        ∎
+  lem5-1 {A = ‵⊥}    = ⫗refl
+  lem5-1 {A = t ‵= u} = dn
 
-  lem5-2 : ∀ {Θ k} {Γ : Fm§ k} A → Θ / ‵¬ ‵¬ (A °) ∷ Γ ⊢ A °
-  lem5-2 (A ‵⊃ B) = ‵lam (‵lam (lem5-2 B) ‵$ ‵lam
-                      (2 ‵$ ‵lam
-                        (1 ‵$ 0 ‵$ 2)))
-  lem5-2 (A ‵∧ B) = ‵pair
-                      (‵lam (lem5-2 A) ‵$ ‵lam
-                        (1 ‵$ ‵lam
-                          (1 ‵$ ‵fst 0)))
-                      (‵lam (lem5-2 B) ‵$ ‵lam
-                        (1 ‵$ ‵lam
-                          (1 ‵$ ‵snd 0)))
-  lem5-2 (A ‵∨ B) = join 0
-  lem5-2 (‵∀ A)   = ‵∀intro (‵lam (lem5-2 A) ‵$ ‵lam
-                      (1 ‵$ ‵lam
-                        (1 ‵$ ‵∀elim 0 later)))
-  lem5-2 (‵∃ A)   = join 0
-  lem5-2 ‵⊥      = 0 ‵$ ‵lam 0
-  lem5-2 (t ‵= u) = join 0
+  lem5-2 : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / ‵¬ ‵¬ (A °) ∷ Γ ⊢ A °
+  lem5-2 {A = A ‵⊃ B} = ‵lam (‵lam lem5-2 ‵$ ‵lam
+                          (2 ‵$ ‵lam
+                            (1 ‵$ 0 ‵$ 2)))
+  lem5-2 {A = A ‵∧ B} = ‵pair
+                          (‵lam lem5-2 ‵$ ‵lam
+                            (1 ‵$ ‵lam
+                              (1 ‵$ ‵fst 0)))
+                          (‵lam lem5-2 ‵$ ‵lam
+                            (1 ‵$ ‵lam
+                              (1 ‵$ ‵snd 0)))
+  lem5-2 {A = A ‵∨ B} = join 0
+  lem5-2 {A = ‵∀ A}   = ‵∀intro (‵lam lem5-2 ‵$ ‵lam
+                          (1 ‵$ ‵lam
+                            (1 ‵$ ‵∀elim 0 TODO1)))
+  lem5-2 {A = ‵∃ A}   = join 0
+  lem5-2 {A = ‵⊥}    = 0 ‵$ ‵lam 0
+  lem5-2 {A = t ‵= u} = join 0
 
   lem5-3∋ : ∀ {k} {Γ : Fm§ k} {A} → Γ ∋ A → Γ °§ ∋ A °
   lem5-3∋ zero    = zero
@@ -992,13 +991,13 @@ module _ where
   lem5-3 (‵left d)        = return (‵left (lem5-3 d))
   lem5-3 (‵right d)       = return (‵right (lem5-3 d))
   lem5-3 (‵case c d e)    = {!!}
-  lem5-3 (‵∀intro d)      = ‵∀intro (massage (lem5-3 d))
-  lem5-3 (‵∀elim d refl)  = ‵∀elim (lem5-3 d) probably
-  lem5-3 (‵∃intro d refl) = return (‵∃intro (lem5-3 d) probably)
+  lem5-3 (‵∀intro d)      = ‵∀intro (TODO3 (lem5-3 d))
+  lem5-3 (‵∀elim d refl)  = ‵∀elim (lem5-3 d) TODO2
+  lem5-3 (‵∃intro d refl) = return (‵∃intro (lem5-3 d) TODO2)
   lem5-3 (‵∃elim d e)     = {!!}
   lem5-3 (‵magic d)       = {!!}
   lem5-3 ‵refl            = return ‵refl
-  lem5-3 (‵sym d)         = {!!}
+  lem5-3 (‵sym d)         = {!‵sym <$> lem5-3 d!}
   lem5-3 (‵trans d e)     = {!!}
   lem5-3 (‵cong f i d)    = {!!}
   lem5-3 ‵dis             = {!!}
@@ -1008,10 +1007,13 @@ module _ where
   lem5-3 (‵comp g fs)     = {!!}
   lem5-3 (‵rec f g)       = {!!}
 
-  lem5-3a : ∀ {k} {Γ : Fm§ k} {A} → HA / Γ °§ ⊢ A ° → PA / Γ ⊢ A
-  lem5-3a {A = A} d = {!‵snd (lem5-1 A)!}
+  -- TODO: "Note that the converse of 3 trivially holds wih 1."
+  lem5-3⁻¹ : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ °§ ⊢ A ° → PA / Γ ⊢ A
+  lem5-3⁻¹ d = {!!}
 
---  lem5-4 : ∀ {k} {Γ : Fm§ k} {A}
+  -- TODO: "A counterexample for 4 is Φ = ¬∀xΨx."
+  lem5-4 : ∀ {k} {Γ : Fm§ k} → ¬ (∀ {A} → HA / A ∷ Γ ⊢ A °)
+  lem5-4 d = {!!}
 
 
 ----------------------------------------------------------------------------------------------------
