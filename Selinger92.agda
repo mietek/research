@@ -210,7 +210,7 @@ ok-pred (suc x) = refl
 
 infix  19 _‵=_ _‵≠_
 infixl 18 _‵∧_ _‵∨_
-infixr 17 _‵→_ _‵↔_
+infixr 17 _‵⊃_ _‵⫗_
 infixr 16 _‵$_
 
 -- terms, indexed by number of term variables
@@ -237,22 +237,22 @@ instance
 
 -- formulas, indexed by number of term variables
 data Fm (k : Nat) : Set where
-  _‵→_ : ∀ (A B : Fm k) → Fm k
-  _‵∧_  : ∀ (A B : Fm k) → Fm k
-  _‵∨_  : ∀ (A B : Fm k) → Fm k
-  ‵∀_   : ∀ (A : Fm (suc k)) → Fm k
-  ‵∃_   : ∀ (A : Fm (suc k)) → Fm k
-  ‵⊥   : Fm k
-  _‵=_  : ∀ (t u : Tm k) → Fm k
+  _‵⊃_ : ∀ (A B : Fm k) → Fm k
+  _‵∧_ : ∀ (A B : Fm k) → Fm k
+  _‵∨_ : ∀ (A B : Fm k) → Fm k
+  ‵∀_  : ∀ (A : Fm (suc k)) → Fm k
+  ‵∃_  : ∀ (A : Fm (suc k)) → Fm k
+  ‵⊥  : Fm k
+  _‵=_ : ∀ (t u : Tm k) → Fm k
 
 Fm§ : Nat → Set
 Fm§ k = List (Fm k)
 
-_‵↔_ : ∀ {k} → Fm k → Fm k → Fm k
-A ‵↔ B = (A ‵→ B) ‵∧ (B ‵→ A)
+_‵⫗_ : ∀ {k} → Fm k → Fm k → Fm k
+A ‵⫗ B = (A ‵⊃ B) ‵∧ (B ‵⊃ A)
 
 ‵¬_ : ∀ {k} → Fm k → Fm k
-‵¬ A = A ‵→ ‵⊥
+‵¬ A = A ‵⊃ ‵⊥
 
 _‵≠_ : ∀ {k} → Tm k → Tm k → Fm k
 t ‵≠ u = ‵¬ (t ‵= u)
@@ -276,14 +276,14 @@ id≤ : ∀ {k} → k ≤ k
 id≤ {zero}  = stop
 id≤ {suc k} = lift≤ id≤
 
-frenFin : ∀ {k k′} → k ≤ k′ → Fin k → Fin k′
-frenFin stop      i       = i
-frenFin (wk≤ η)   i       = suc (frenFin η i)
-frenFin (lift≤ η) zero    = zero
-frenFin (lift≤ η) (suc i) = frenFin (wk≤ η) i
+renFin : ∀ {k k′} → k ≤ k′ → Fin k → Fin k′
+renFin stop      i       = i
+renFin (wk≤ η)   i       = suc (renFin η i)
+renFin (lift≤ η) zero    = zero
+renFin (lift≤ η) (suc i) = renFin (wk≤ η) i
 
-fwkFin : ∀ {k} → Fin k → Fin (suc k)
-fwkFin = frenFin (wk≤ id≤)
+wkFin : ∀ {k} → Fin k → Fin (suc k)
+wkFin = renFin (wk≤ id≤)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -326,18 +326,18 @@ data _∋⟨_⟩_ {k} : Fm§ k → Nat → Fm k → Set where
   suc : ∀ {Γ m A C} (i : Γ ∋⟨ m ⟩ A) → C ∷ Γ ∋⟨ suc m ⟩ A
 
 instance
-  suc∋ : ∀ {k} {Γ : Fm§ k} {m A C} {{i : Γ ∋⟨ m ⟩ A}} → C ∷ Γ ∋⟨ suc m ⟩ A
-  suc∋ {{i}} = suc i
+  suc∋# : ∀ {k} {Γ : Fm§ k} {m A C} {{i : Γ ∋⟨ m ⟩ A}} → C ∷ Γ ∋⟨ suc m ⟩ A
+  suc∋# {{i}} = suc i
 
-strip∋ : ∀ {m k} {Γ : Fm§ k} {A} → Γ ∋⟨ m ⟩ A → Γ ∋ A
-strip∋ zero    = zero
-strip∋ (suc i) = suc (strip∋ i)
+∋#→∋ : ∀ {m k} {Γ : Fm§ k} {A} → Γ ∋⟨ m ⟩ A → Γ ∋ A
+∋#→∋ zero    = zero
+∋#→∋ (suc i) = suc (∋#→∋ i)
 
 instance
   number∋ : ∀ {k} {Γ : Fm§ k} {A} → Number (Γ ∋ A)
   number∋ {Γ = Γ} {A} = record
     { Constraint = λ m → Γ ∋⟨ m ⟩ A
-    ; fromNat    = λ m {{p}} → strip∋ p
+    ; fromNat    = λ m {{p}} → ∋#→∋ p
     }
 
 
@@ -346,34 +346,42 @@ instance
 -- renaming for terms and formulas
 
 mutual
-  frenTm : ∀ {k k′} → k ≤ k′ → Tm k → Tm k′
-  frenTm η (‵var i)    = ‵var (frenFin η i)
-  frenTm η (‵fun f ts) = ‵fun f (frenTm§ η ts)
+  trenTm : ∀ {k k′} → k ≤ k′ → Tm k → Tm k′
+  trenTm η (‵var i)    = ‵var (renFin η i)
+  trenTm η (‵fun f ts) = ‵fun f (trenTm§ η ts)
 
-  frenTm§ : ∀ {k k′ n} → k ≤ k′ → Tm§ k n → Tm§ k′ n
-  frenTm§ η []       = []
-  frenTm§ η (t ∷ ts) = frenTm η t ∷ frenTm§ η ts
+  trenTm§ : ∀ {k k′ n} → k ≤ k′ → Tm§ k n → Tm§ k′ n
+  trenTm§ η []       = []
+  trenTm§ η (t ∷ ts) = trenTm η t ∷ trenTm§ η ts
 
-frenFm : ∀ {k k′} → k ≤ k′ → Fm k → Fm k′
-frenFm η (A ‵→ B) = frenFm η A ‵→ frenFm η B
-frenFm η (A ‵∧ B)  = frenFm η A ‵∧ frenFm η B
-frenFm η (A ‵∨ B)  = frenFm η A ‵∨ frenFm η B
-frenFm η (‵∀ A)    = ‵∀ frenFm (lift≤ η) A
-frenFm η (‵∃ A)    = ‵∃ frenFm (lift≤ η) A
-frenFm η ‵⊥       = ‵⊥
-frenFm η (t ‵= u)  = frenTm η t ‵= frenTm η u
+trenFm : ∀ {k k′} → k ≤ k′ → Fm k → Fm k′
+trenFm η (A ‵⊃ B) = trenFm η A ‵⊃ trenFm η B
+trenFm η (A ‵∧ B) = trenFm η A ‵∧ trenFm η B
+trenFm η (A ‵∨ B) = trenFm η A ‵∨ trenFm η B
+trenFm η (‵∀ A)   = ‵∀ trenFm (lift≤ η) A
+trenFm η (‵∃ A)   = ‵∃ trenFm (lift≤ η) A
+trenFm η ‵⊥      = ‵⊥
+trenFm η (t ‵= u) = trenTm η t ‵= trenTm η u
 
-frenFm§ : ∀ {k k′} → k ≤ k′ → Fm§ k → Fm§ k′
-frenFm§ η []      = []
-frenFm§ η (A ∷ Γ) = frenFm η A ∷ frenFm§ η Γ
+trenFm§ : ∀ {k k′} → k ≤ k′ → Fm§ k → Fm§ k′
+trenFm§ η []      = []
+trenFm§ η (A ∷ Γ) = trenFm η A ∷ trenFm§ η Γ
 
 -- weaken formula by adding one unused term variable
-fwkFm : ∀ {k} → Fm k → Fm (suc k)
-fwkFm = frenFm (wk≤ id≤)
+twkFm : ∀ {k} → Fm k → Fm (suc k)
+twkFm = trenFm (wk≤ id≤)
 
 -- weaken formulas by adding one unused term variable
-fwkFm§ : ∀ {k} → Fm§ k → Fm§ (suc k)
-fwkFm§ = frenFm§ (wk≤ id≤)
+twkFm§ : ∀ {k} → Fm§ k → Fm§ (suc k)
+twkFm§ = trenFm§ (wk≤ id≤)
+
+tren⊆ : ∀ {k k′ Γ Γ′} (η : k ≤ k′) → Γ ⊆ Γ′ → trenFm§ η Γ ⊆ trenFm§ η Γ′
+tren⊆ η stop      = stop
+tren⊆ η (wk⊆ ζ)   = wk⊆ (tren⊆ η ζ)
+tren⊆ η (lift⊆ ζ) = lift⊆ (tren⊆ η ζ)
+
+twk⊆ : ∀ {k} {Γ Γ′ : Fm§ k} → Γ ⊆ Γ′ → twkFm§ Γ ⊆ twkFm§ Γ′
+twk⊆ = tren⊆ (wk≤ id≤)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -388,7 +396,7 @@ postulate
   _[_] : ∀ {k} (A : Fm (suc k)) (s : Tm k) → Fm k
 
   -- TODO: this should follow from one of the substitution lemmas
-  later : ∀ {k} {A : Fm (suc k)} → A ≡ (frenFm (lift≤ (wk≤ id≤)) A [ 0 ])
+  later : ∀ {k} {A : Fm (suc k)} → A ≡ (trenFm (lift≤ (wk≤ id≤)) A [ 0 ])
 
 
 ----------------------------------------------------------------------------------------------------
@@ -402,8 +410,8 @@ data Theory : Set where
 infix 3 _/_⊢_
 data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   ‵var    : ∀ {Θ Γ A} (i : Γ ∋ A) → Θ / Γ ⊢ A -- i-th derivation variable
-  ‵lam    : ∀ {Θ Γ A B} (d : Θ / A ∷ Γ ⊢ B) → Θ / Γ ⊢ A ‵→ B
-  _‵$_    : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A ‵→ B) (e : Θ / Γ ⊢ A) → Θ / Γ ⊢ B
+  ‵lam    : ∀ {Θ Γ A B} (d : Θ / A ∷ Γ ⊢ B) → Θ / Γ ⊢ A ‵⊃ B
+  _‵$_    : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A ‵⊃ B) (e : Θ / Γ ⊢ A) → Θ / Γ ⊢ B
   ‵pair   : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A) (e : Θ / Γ ⊢ B) → Θ / Γ ⊢ A ‵∧ B
   ‵fst    : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A ‵∧ B) → Θ / Γ ⊢ A
   ‵snd    : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A ‵∧ B) → Θ / Γ ⊢ B
@@ -415,7 +423,7 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   --     A(x₀)
   -- --------------
   --   ∀y.A[y/xₒ]
-  ‵∀intro : ∀ {Θ Γ A} (d : Θ / fwkFm§ Γ ⊢ A) → Θ / Γ ⊢ ‵∀ A
+  ‵∀intro : ∀ {Θ Γ A} (d : Θ / twkFm§ Γ ⊢ A) → Θ / Γ ⊢ ‵∀ A
 
   --   ∀y.A[y/x₀]
   -- --------------
@@ -432,7 +440,7 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   --   ∃y.A[y/x₀]      C
   -- -----------------------
   --           C
-  ‵∃elim  : ∀ {Θ Γ A C} (d : Θ / Γ ⊢ ‵∃ A) (e : Θ / A ∷ fwkFm§ Γ ⊢ fwkFm C) → Θ / Γ ⊢ C
+  ‵∃elim  : ∀ {Θ Γ A C} (d : Θ / Γ ⊢ ‵∃ A) (e : Θ / A ∷ twkFm§ Γ ⊢ twkFm C) → Θ / Γ ⊢ C
 
   -- explosion (ex falso quodlibet) as primitive in Heyting arithmetic
   ‵abort  : ∀ {Γ C} (d : HA / Γ ⊢ ‵⊥) → HA / Γ ⊢ C
@@ -455,7 +463,7 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
    -- ------------------------------------
    --              ∀y.A[y/x₀]
   ‵ind    : ∀ {Θ Γ A} (d : Θ / Γ ⊢ A [ ‵zero ])
-               (e : Θ / Γ ⊢ ‵∀ (A ‵→ (↕ (fwkFm A)) [ ‵suc 0 ])) →
+               (e : Θ / Γ ⊢ ‵∀ (A ‵⊃ (↕ (twkFm A)) [ ‵suc 0 ])) →
                Θ / Γ ⊢ ‵∀ A
 
   ‵proj   : ∀ {Θ Γ n ts} (i : Fin n) → Θ / Γ ⊢ ‵fun (proj i) ts ‵= get i ts
@@ -471,7 +479,7 @@ instance
   number⊢ : ∀ {Θ k} {Γ : Fm§ k} {A} → Number (Θ / Γ ⊢ A)
   number⊢ {Γ = Γ} {A} = record
     { Constraint = λ m → Γ ∋⟨ m ⟩ A
-    ; fromNat    = λ m {{p}} → ‵var (strip∋ p)
+    ; fromNat    = λ m {{p}} → ‵var (∋#→∋ p)
     }
 
 ‵congsuc : ∀ {Θ k} {Γ : Fm§ k} {t u} → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ ‵suc t ‵= ‵suc u
@@ -481,14 +489,6 @@ instance
 ----------------------------------------------------------------------------------------------------
 
 -- renaming for derivations
-
-fren⊆ : ∀ {k k′ Γ Γ′} (η : k ≤ k′) → Γ ⊆ Γ′ → frenFm§ η Γ ⊆ frenFm§ η Γ′
-fren⊆ η stop      = stop
-fren⊆ η (wk⊆ ζ)   = wk⊆ (fren⊆ η ζ)
-fren⊆ η (lift⊆ ζ) = lift⊆ (fren⊆ η ζ)
-
-fwk⊆ : ∀ {k} {Γ Γ′ : Fm§ k} → Γ ⊆ Γ′ → fwkFm§ Γ ⊆ fwkFm§ Γ′
-fwk⊆ = fren⊆ (wk≤ id≤)
 
 ren : ∀ {Θ k} {Γ Γ′ : Fm§ k} {A} → Γ ⊆ Γ′ → Θ / Γ ⊢ A → Θ / Γ′ ⊢ A
 ren η (‵var i)         = ‵var (ren∋ η i)
@@ -500,10 +500,10 @@ ren η (‵snd d)         = ‵snd (ren η d)
 ren η (‵left d)        = ‵left (ren η d)
 ren η (‵right d)       = ‵right (ren η d)
 ren η (‵case c d e)    = ‵case (ren η c) (ren (lift⊆ η) d) (ren (lift⊆ η) e)
-ren η (‵∀intro d)      = ‵∀intro (ren (fwk⊆ η) d)
+ren η (‵∀intro d)      = ‵∀intro (ren (twk⊆ η) d)
 ren η (‵∀elim d refl)  = ‵∀elim (ren η d) refl
 ren η (‵∃intro d refl) = ‵∃intro (ren η d) refl
-ren η (‵∃elim d e)     = ‵∃elim (ren η d) (ren (lift⊆ (fwk⊆ η)) e)
+ren η (‵∃elim d e)     = ‵∃elim (ren η d) (ren (lift⊆ (twk⊆ η)) e)
 ren η (‵abort d)       = ‵abort (ren η d)
 ren η (‵magic d)       = ‵magic (ren (lift⊆ η) d)
 ren η ‵refl            = ‵refl
@@ -521,11 +521,11 @@ ren η (‵rec f g)       = ‵rec f g
 wk : ∀ {Θ k} {Γ : Fm§ k} {A C} → Θ / Γ ⊢ A → Θ / C ∷ Γ ⊢ A
 wk = ren (wk⊆ id⊆)
 
-fren : ∀ {Θ k k′ Γ Γ′ A} (η : k ≤ k′) → Γ ⊆ Γ′ → Θ / frenFm§ η Γ ⊢ A → Θ / frenFm§ η Γ′ ⊢ A
-fren η ζ = ren (fren⊆ η ζ)
+tren : ∀ {Θ k k′ Γ Γ′ A} (η : k ≤ k′) → Γ ⊆ Γ′ → Θ / trenFm§ η Γ ⊢ A → Θ / trenFm§ η Γ′ ⊢ A
+tren η ζ = ren (tren⊆ η ζ)
 
-fwk : ∀ {Θ k} {Γ Γ′ : Fm§ k} {A} → Γ ⊆ Γ′ → Θ / fwkFm§ Γ ⊢ A → Θ / fwkFm§ Γ′ ⊢ A
-fwk = fren (wk≤ id≤)
+twk : ∀ {Θ k} {Γ Γ′ : Fm§ k} {A} → Γ ⊆ Γ′ → Θ / twkFm§ Γ ⊢ A → Θ / twkFm§ Γ′ ⊢ A
+twk = tren (wk≤ id≤)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -597,28 +597,28 @@ module =-Reasoning {Θ k} {Γ : Fm§ k} where
 ----------------------------------------------------------------------------------------------------
 
 module _ {Θ k} {Γ : Fm§ k} where
-  ↔refl : ∀ {A} → Θ / Γ ⊢ A ‵↔ A
-  ↔refl {A} = ‵pair (‵lam 0) (‵lam 0)
+  ⫗refl : ∀ {A} → Θ / Γ ⊢ A ‵⫗ A
+  ⫗refl {A} = ‵pair (‵lam 0) (‵lam 0)
 
-  ↔sym : ∀ {A B} → Θ / Γ ⊢ A ‵↔ B → Θ / Γ ⊢ B ‵↔ A
-  ↔sym d = ‵pair (‵snd d) (‵fst d)
+  ⫗sym : ∀ {A B} → Θ / Γ ⊢ A ‵⫗ B → Θ / Γ ⊢ B ‵⫗ A
+  ⫗sym d = ‵pair (‵snd d) (‵fst d)
 
-  ↔trans : ∀ {A B C} → Θ / Γ ⊢ A ‵↔ B → Θ / Γ ⊢ B ‵↔ C → Θ / Γ ⊢ A ‵↔ C
-  ↔trans d e = ‵pair
+  ⫗trans : ∀ {A B C} → Θ / Γ ⊢ A ‵⫗ B → Θ / Γ ⊢ B ‵⫗ C → Θ / Γ ⊢ A ‵⫗ C
+  ⫗trans d e = ‵pair
                   (‵lam (‵fst (wk e) ‵$ ‵fst (wk d) ‵$ 0))
                   (‵lam (‵snd (wk d) ‵$ ‵snd (wk e) ‵$ 0))
 
-  ↔cong→ : ∀ {A A′ B B′} → Θ / Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ B ‵↔ B′ →
-               Θ / Γ ⊢ (A ‵→ B) ‵↔ (A′ ‵→ B′)
-  ↔cong→ d e = ‵pair
-                   (‵lam (‵lam
-                     (‵fst (wk (wk e)) ‵$ 1 ‵$ ‵snd (wk (wk d)) ‵$ 0)))
-                   (‵lam (‵lam
-                     (‵snd (wk (wk e)) ‵$ 1 ‵$ ‵fst (wk (wk d)) ‵$ 0)))
+  ⫗cong⊃ : ∀ {A A′ B B′} → Θ / Γ ⊢ A ‵⫗ A′ → Θ / Γ ⊢ B ‵⫗ B′ →
+              Θ / Γ ⊢ (A ‵⊃ B) ‵⫗ (A′ ‵⊃ B′)
+  ⫗cong⊃ d e = ‵pair
+                  (‵lam (‵lam
+                    (‵fst (wk (wk e)) ‵$ 1 ‵$ ‵snd (wk (wk d)) ‵$ 0)))
+                  (‵lam (‵lam
+                    (‵snd (wk (wk e)) ‵$ 1 ‵$ ‵fst (wk (wk d)) ‵$ 0)))
 
-  ↔cong∧ : ∀ {A A′ B B′} → Θ / Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ B ‵↔ B′ →
-              Θ / Γ ⊢ A ‵∧ B ‵↔ A′ ‵∧ B′
-  ↔cong∧ d e = ‵pair
+  ⫗cong∧ : ∀ {A A′ B B′} → Θ / Γ ⊢ A ‵⫗ A′ → Θ / Γ ⊢ B ‵⫗ B′ →
+              Θ / Γ ⊢ A ‵∧ B ‵⫗ A′ ‵∧ B′
+  ⫗cong∧ d e = ‵pair
                   (‵lam (‵pair
                     (‵fst (wk d) ‵$ ‵fst 0)
                     (‵fst (wk e) ‵$ ‵snd 0)))
@@ -626,9 +626,9 @@ module _ {Θ k} {Γ : Fm§ k} where
                     (‵snd (wk d) ‵$ ‵fst 0)
                     (‵snd (wk e) ‵$ ‵snd 0)))
 
-  ↔cong∨ : ∀ {A A′ B B′} → Θ / Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ B ‵↔ B′ →
-              Θ / Γ ⊢ A ‵∨ B ‵↔ A′ ‵∨ B′
-  ↔cong∨ d e = ‵pair
+  ⫗cong∨ : ∀ {A A′ B B′} → Θ / Γ ⊢ A ‵⫗ A′ → Θ / Γ ⊢ B ‵⫗ B′ →
+              Θ / Γ ⊢ A ‵∨ B ‵⫗ A′ ‵∨ B′
+  ⫗cong∨ d e = ‵pair
                   (‵lam (‵case 0
                     (‵left (‵fst (wk (wk d)) ‵$ 0))
                     (‵right (‵fst (wk (wk e)) ‵$ 0))))
@@ -636,44 +636,44 @@ module _ {Θ k} {Γ : Fm§ k} where
                     (‵left (‵snd (wk (wk d)) ‵$ 0))
                     (‵right (‵snd (wk (wk e)) ‵$ 0))))
 
-  ↔cong∀ : ∀ {A A′} → Θ / fwkFm§ Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ (‵∀ A) ‵↔ (‵∀ A′)
-  ↔cong∀ d = ‵pair
-                (‵lam (‵∀intro (fwk (wk⊆ id⊆) (‵fst d) ‵$ ‵∀elim 0 later)))
-                (‵lam (‵∀intro (fwk (wk⊆ id⊆) (‵snd d) ‵$ ‵∀elim 0 later)))
+  ⫗cong∀ : ∀ {A A′} → Θ / twkFm§ Γ ⊢ A ‵⫗ A′ → Θ / Γ ⊢ (‵∀ A) ‵⫗ (‵∀ A′)
+  ⫗cong∀ d = ‵pair
+                (‵lam (‵∀intro (twk (wk⊆ id⊆) (‵fst d) ‵$ ‵∀elim 0 later)))
+                (‵lam (‵∀intro (twk (wk⊆ id⊆) (‵snd d) ‵$ ‵∀elim 0 later)))
 
-  ↔cong∃ : ∀ {A A′} → Θ / fwkFm§ Γ ⊢ A ‵↔ A′ → Θ / Γ ⊢ (‵∃ A) ‵↔ (‵∃ A′)
-  ↔cong∃ d = ‵pair
+  ⫗cong∃ : ∀ {A A′} → Θ / twkFm§ Γ ⊢ A ‵⫗ A′ → Θ / Γ ⊢ (‵∃ A) ‵⫗ (‵∃ A′)
+  ⫗cong∃ d = ‵pair
                 (‵lam (‵∃elim 0 (‵∃intro (‵fst (wk (wk d)) ‵$ 0) later)))
                 (‵lam (‵∃elim 0 (‵∃intro (‵snd (wk (wk d)) ‵$ 0) later)))
 
-  ≡→↔ : ∀ {A B} → A ≡ B → Θ / Γ ⊢ A ‵↔ B
-  ≡→↔ refl = ↔refl
+  ≡→⫗ : ∀ {A B} → A ≡ B → Θ / Γ ⊢ A ‵⫗ B
+  ≡→⫗ refl = ⫗refl
 
-module ↔-Reasoning {Θ k} {Γ : Fm§ k} where
+module ⫗-Reasoning {Θ k} {Γ : Fm§ k} where
   infix  1 begin_
-  infixr 2 _↔⟨⟩_ _↔⟨_⟩_ _↔˘⟨_⟩_ _≡⟨_⟩_ _≡˘⟨_⟩_
+  infixr 2 _⫗⟨⟩_ _⫗⟨_⟩_ _⫗˘⟨_⟩_ _≡⟨_⟩_ _≡˘⟨_⟩_
   infix  3 _∎
 
-  begin_ : ∀ {A B} → Θ / Γ ⊢ A ‵↔ B → Θ / Γ ⊢ A ‵↔ B
+  begin_ : ∀ {A B} → Θ / Γ ⊢ A ‵⫗ B → Θ / Γ ⊢ A ‵⫗ B
   begin d = d
 
-  _↔⟨⟩_ : ∀ A {B} → Θ / Γ ⊢ A ‵↔ B → Θ / Γ ⊢ A ‵↔ B
-  A ↔⟨⟩ d = d
+  _⫗⟨⟩_ : ∀ A {B} → Θ / Γ ⊢ A ‵⫗ B → Θ / Γ ⊢ A ‵⫗ B
+  A ⫗⟨⟩ d = d
 
-  _↔⟨_⟩_ : ∀ A {B C} → Θ / Γ ⊢ A ‵↔ B → Θ / Γ ⊢ B ‵↔ C → Θ / Γ ⊢ A ‵↔ C
-  A ↔⟨ d ⟩ e = ↔trans d e
+  _⫗⟨_⟩_ : ∀ A {B C} → Θ / Γ ⊢ A ‵⫗ B → Θ / Γ ⊢ B ‵⫗ C → Θ / Γ ⊢ A ‵⫗ C
+  A ⫗⟨ d ⟩ e = ⫗trans d e
 
-  _↔˘⟨_⟩_ : ∀ A {B C} → Θ / Γ ⊢ B ‵↔ A → Θ / Γ ⊢ B ‵↔ C → Θ / Γ ⊢ A ‵↔ C
-  A ↔˘⟨ d ⟩ e = ↔trans (↔sym d) e
+  _⫗˘⟨_⟩_ : ∀ A {B C} → Θ / Γ ⊢ B ‵⫗ A → Θ / Γ ⊢ B ‵⫗ C → Θ / Γ ⊢ A ‵⫗ C
+  A ⫗˘⟨ d ⟩ e = ⫗trans (⫗sym d) e
 
-  _≡⟨_⟩_ : ∀ A {B C} → A ≡ B → Θ / Γ ⊢ B ‵↔ C → Θ / Γ ⊢ A ‵↔ C
-  A ≡⟨ d ⟩ e = ↔trans (≡→↔ d) e
+  _≡⟨_⟩_ : ∀ A {B C} → A ≡ B → Θ / Γ ⊢ B ‵⫗ C → Θ / Γ ⊢ A ‵⫗ C
+  A ≡⟨ d ⟩ e = ⫗trans (≡→⫗ d) e
 
-  _≡˘⟨_⟩_ : ∀ A {B C} → B ≡ A → Θ / Γ ⊢ B ‵↔ C → Θ / Γ ⊢ A ‵↔ C
-  A ≡˘⟨ d ⟩ e = ↔trans (≡→↔ (sym d)) e
+  _≡˘⟨_⟩_ : ∀ A {B C} → B ≡ A → Θ / Γ ⊢ B ‵⫗ C → Θ / Γ ⊢ A ‵⫗ C
+  A ≡˘⟨ d ⟩ e = ⫗trans (≡→⫗ (sym d)) e
 
-  _∎ : ∀ A → Θ / Γ ⊢ A ‵↔ A
-  A ∎ = ↔refl
+  _∎ : ∀ A → Θ / Γ ⊢ A ‵⫗ A
+  A ∎ = ⫗refl
 
 
 ----------------------------------------------------------------------------------------------------
@@ -685,15 +685,15 @@ module _ {Θ k} {Γ : Fm§ k} where
   ¬¬em : ∀ {A} → Θ / Γ ⊢ ‵¬ ‵¬ (A ‵∨ ‵¬ A)
   ¬¬em = ‵lam (0 ‵$ ‵right (‵lam (1 ‵$ ‵left 0)))
 
-  dni : ∀ {A} → Θ / Γ ⊢ A ‵→ ‵¬ ‵¬ A
+  dni : ∀ {A} → Θ / Γ ⊢ A ‵⊃ ‵¬ ‵¬ A
   dni = ‵lam (‵lam (0 ‵$ 1))
 
 -- non-constructive
 module _ {k} {Γ : Fm§ k} where
-  dne : ∀ {A} → PA / Γ ⊢ ‵¬ ‵¬ A ‵→ A
+  dne : ∀ {A} → PA / Γ ⊢ ‵¬ ‵¬ A ‵⊃ A
   dne = ‵lam (‵magic (1 ‵$ 0))
 
-  dn : ∀ {A} → PA / Γ ⊢ ‵¬ ‵¬ A ‵↔ A
+  dn : ∀ {A} → PA / Γ ⊢ ‵¬ ‵¬ A ‵⫗ A
   dn = ‵pair dne dni
 
   em : ∀ {A} → PA / Γ ⊢ A ‵∨ ‵¬ A
@@ -704,7 +704,7 @@ module _ {k} {Γ : Fm§ k} where
 
 -- TODO: other non-constructive tautologies
 
-{-A     B    ¬A    ¬B    A∧B   A∨B   A→B  A↔B ¬A∧B  ¬A∨B  ¬A→B ¬A↔B  A∧¬B  A∨¬B A→¬B A↔¬B
+{-A     B    ¬A    ¬B    A∧B   A∨B   A→B  A⫗B ¬A∧B  ¬A∨B  ¬A→B ¬A⫗B  A∧¬B  A∨¬B A→¬B A⫗¬B
 ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
   0     0     1     1     0     0     1     1     0     1     0     0     0     1     1     0
   0     1     1     0     0     1     1     0     1     1     1     1     0     0     1     1
@@ -712,11 +712,11 @@ module _ {k} {Γ : Fm§ k} where
   1     1     0     0     1     1     1     1     0     1     1     0     0     1     0     0-}
 
 -- module _ where
---   ↔tau1 : ∀ {A B} → PA / Γ ⊢ A ‵→ B ‵↔ ‵¬ A ‵∨ B
---   ↔tau1 = {!!}
+--   ⫗tau1 : ∀ {A B} → PA / Γ ⊢ A ‵⊃ B ‵⫗ ‵¬ A ‵∨ B
+--   ⫗tau1 = {!!}
 --
---   ↔tau2 : ∀ {A B} → PA / Γ ⊢ (‵¬ A ‵↔ B) ‵↔ (A ‵↔ ‵¬ B)
---   ↔tau2 = {!!}
+--   ⫗tau2 : ∀ {A B} → PA / Γ ⊢ (‵¬ A ‵⫗ B) ‵⫗ (A ‵⫗ ‵¬ B)
+--   ⫗tau2 = {!!}
 
 
 ----------------------------------------------------------------------------------------------------
@@ -725,69 +725,69 @@ module _ {k} {Γ : Fm§ k} where
 
 -- constructive
 module _ {Θ k} {Γ : Fm§ k} where
-  pdm1 : ∀ {A B} → Θ / Γ ⊢ ‵¬ A ‵∨ ‵¬ B ‵→ ‵¬ (A ‵∧ B)
+  pdm1 : ∀ {A B} → Θ / Γ ⊢ ‵¬ A ‵∨ ‵¬ B ‵⊃ ‵¬ (A ‵∧ B)
   pdm1 = ‵lam (‵lam (‵case 1
            (0 ‵$ ‵fst 1)
            (0 ‵$ ‵snd 1)))
 
-  qdm1 : ∀ {A} → Θ / Γ ⊢ ‵∃ (‵¬ A) ‵→ ‵¬ (‵∀ A)
+  qdm1 : ∀ {A} → Θ / Γ ⊢ ‵∃ (‵¬ A) ‵⊃ ‵¬ (‵∀ A)
   qdm1 = ‵lam (‵lam (‵∃elim 1
            (0 ‵$ ‵∀elim 1 later)))
 
-  npdm1 : ∀ {A B} → Θ / Γ ⊢ A ‵∨ B ‵→ ‵¬ (‵¬ A ‵∧ ‵¬ B)
+  npdm1 : ∀ {A B} → Θ / Γ ⊢ A ‵∨ B ‵⊃ ‵¬ (‵¬ A ‵∧ ‵¬ B)
   npdm1 = ‵lam (‵lam (abort (‵case 1
             (‵fst 1 ‵$ 0)
             (‵snd 1 ‵$ 0))))
 
-  nqdm1 : ∀ {A} → Θ / Γ ⊢ ‵∃ A ‵→ ‵¬ (‵∀ (‵¬ A))
+  nqdm1 : ∀ {A} → Θ / Γ ⊢ ‵∃ A ‵⊃ ‵¬ (‵∀ (‵¬ A))
   nqdm1 = ‵lam (‵lam (abort (‵∃elim 1
             (‵∀elim 1 later ‵$ 0))))
 
-  pdm2 : ∀ {A B} → Θ / Γ ⊢ ‵¬ A ‵∧ ‵¬ B ‵→ ‵¬ (A ‵∨ B)
+  pdm2 : ∀ {A B} → Θ / Γ ⊢ ‵¬ A ‵∧ ‵¬ B ‵⊃ ‵¬ (A ‵∨ B)
   pdm2 = ‵lam (‵lam (‵case 0
            (‵fst 2 ‵$ 0)
            (‵snd 2 ‵$ 0)))
 
-  qdm2 : ∀ {A} → Θ / Γ ⊢ ‵∀ (‵¬ A) ‵→ ‵¬ (‵∃ A)
+  qdm2 : ∀ {A} → Θ / Γ ⊢ ‵∀ (‵¬ A) ‵⊃ ‵¬ (‵∃ A)
   qdm2 = ‵lam (‵lam (‵∃elim 0
            (‵∀elim 2 later ‵$ 0)))
 
-  npdm2 : ∀ {A B} → Θ / Γ ⊢ A ‵∧ B ‵→ ‵¬ (‵¬ A ‵∨ ‵¬ B)
+  npdm2 : ∀ {A B} → Θ / Γ ⊢ A ‵∧ B ‵⊃ ‵¬ (‵¬ A ‵∨ ‵¬ B)
   npdm2 = ‵lam (‵lam (abort (‵case 0
             (0 ‵$ ‵fst 2)
             (0 ‵$ ‵snd 2))))
 
-  nqdm2 : ∀ {A} → Θ / Γ ⊢ ‵∀ A ‵→ ‵¬ (‵∃ (‵¬ A))
+  nqdm2 : ∀ {A} → Θ / Γ ⊢ ‵∀ A ‵⊃ ‵¬ (‵∃ (‵¬ A))
   nqdm2 = ‵lam (‵lam (abort (‵∃elim 0
             (0 ‵$ ‵∀elim 2 later))))
 
-  pdm3 : ∀ {A B} → Θ / Γ ⊢ ‵¬ (A ‵∨ B) ‵→ ‵¬ A ‵∧ ‵¬ B
+  pdm3 : ∀ {A B} → Θ / Γ ⊢ ‵¬ (A ‵∨ B) ‵⊃ ‵¬ A ‵∧ ‵¬ B
   pdm3 = ‵lam (‵pair
            (‵lam (1 ‵$ ‵left 0))
            (‵lam (1 ‵$ ‵right 0)))
 
-  qdm3 : ∀ {A} → Θ / Γ ⊢ ‵¬ (‵∃ A) ‵→ ‵∀ (‵¬ A)
+  qdm3 : ∀ {A} → Θ / Γ ⊢ ‵¬ (‵∃ A) ‵⊃ ‵∀ (‵¬ A)
   qdm3 = ‵lam (‵∀intro (‵lam
            (1 ‵$ ‵∃intro 0 later)))
 
 -- TODO: non-constructive
 -- module _ {k} {Γ : Fm§ k} where
---   npdm3 : ∀ {A B} → PA / Γ ⊢ ‵¬ (‵¬ A ‵∨ ‵¬ B) ‵→ A ‵∧ B
+--   npdm3 : ∀ {A B} → PA / Γ ⊢ ‵¬ (‵¬ A ‵∨ ‵¬ B) ‵⊃ A ‵∧ B
 --   npdm3 = {!!}
 --
---   nqdm3 : ∀ {A} → PA / Γ ⊢ ‵¬ (‵∃ (‵¬ A)) ‵→ ‵∀ A
+--   nqdm3 : ∀ {A} → PA / Γ ⊢ ‵¬ (‵∃ (‵¬ A)) ‵⊃ ‵∀ A
 --   nqdm3 = {!!}
 --
---   pdm4 : ∀ {A B} → PA / Γ ⊢ ‵¬ (A ‵∧ B) ‵→ ‵¬ A ‵∨ ‵¬ B
+--   pdm4 : ∀ {A B} → PA / Γ ⊢ ‵¬ (A ‵∧ B) ‵⊃ ‵¬ A ‵∨ ‵¬ B
 --   pdm4 = {!!}
 --
---   qdm4 : ∀ {A} → PA / Γ ⊢ ‵¬ (‵∀ A) ‵→ ‵∃ (‵¬ A)
+--   qdm4 : ∀ {A} → PA / Γ ⊢ ‵¬ (‵∀ A) ‵⊃ ‵∃ (‵¬ A)
 --   qdm4 = {!!}
 --
---   npdm4 : ∀ {A B} → PA / Γ ⊢ ‵¬ (‵¬ A ‵∧ ‵¬ B) ‵→ A ‵∨ B
+--   npdm4 : ∀ {A B} → PA / Γ ⊢ ‵¬ (‵¬ A ‵∧ ‵¬ B) ‵⊃ A ‵∨ B
 --   npdm4 = {!!}
 --
---   nqdm4 : ∀ {A} → PA / Γ ⊢ ‵¬ (‵∀ (‵¬ A)) ‵→ ‵∃ A
+--   nqdm4 : ∀ {A} → PA / Γ ⊢ ‵¬ (‵∀ (‵¬ A)) ‵⊃ ‵∃ A
 --   nqdm4 = {!!}
 
 
@@ -796,17 +796,17 @@ module _ {Θ k} {Γ : Fm§ k} where
 -- quantifier-free formulas
 
 data IsQFree {k} : Fm k → Set where
-  _‵→_ : ∀ {A B} (p : IsQFree A) (q : IsQFree B) → IsQFree (A ‵→ B)
-  _‵∧_  : ∀ {A B} (p : IsQFree A) (q : IsQFree B) → IsQFree (A ‵∧ B)
-  _‵∨_  : ∀ {A B} (p : IsQFree A) (q : IsQFree B) → IsQFree (A ‵∨ B)
-  ‵⊥   : IsQFree ‵⊥
-  _‵=_  : ∀ {t u} → IsQFree (t ‵= u)
+  _‵⊃_ : ∀ {A B} (p : IsQFree A) (q : IsQFree B) → IsQFree (A ‵⊃ B)
+  _‵∧_ : ∀ {A B} (p : IsQFree A) (q : IsQFree B) → IsQFree (A ‵∧ B)
+  _‵∨_ : ∀ {A B} (p : IsQFree A) (q : IsQFree B) → IsQFree (A ‵∨ B)
+  ‵⊥  : IsQFree ‵⊥
+  _‵=_ : ∀ {t u} → IsQFree (t ‵= u)
 
 module _ where
   open =-Reasoning
 
   goal goal′ : ∀ {Θ k} {Γ : Fm§ k} → Θ / Γ ⊢
-                 ‵fun (const 1) (tab ‵var) ‵= ‵zero ‵→ ‵suc ‵zero ‵= ‵zero
+                 ‵fun (const 1) (tab ‵var) ‵= ‵zero ‵⊃ ‵suc ‵zero ‵= ‵zero
 
   goal = ‵lam
            (‵trans
@@ -841,12 +841,12 @@ module _ where
 -- TODO: lemma 3
 
 -- lem3 : ∀ {Θ k} {Γ : Fm§ k} (A : Fm k) {{_ : IsQFree A}} → Σ (Prim k) λ f →
---          Θ / Γ ⊢ A ‵↔ ‵fun f (tab ‵var) ‵= ‵zero
--- lem3 (A ‵→ B) = {!!}
--- lem3 (A ‵∧ B)  = {!!}
--- lem3 (A ‵∨ B)  = {!!}
--- lem3 ‵⊥       = const 1 , ‵pair (‵lam (abort 0)) (‵lam (‵dis ‵$ goal ‵$ 0))
--- lem3 (t ‵= u)  = {!!}
+--          Θ / Γ ⊢ A ‵⫗ ‵fun f (tab ‵var) ‵= ‵zero
+-- lem3 (A ‵⊃ B) = {!!}
+-- lem3 (A ‵∧ B) = {!!}
+-- lem3 (A ‵∨ B) = {!!}
+-- lem3 ‵⊥      = const 1 , ‵pair (‵lam (abort 0)) (‵lam (‵dis ‵$ goal ‵$ 0))
+-- lem3 (t ‵= u) = {!!}
 
 
 ----------------------------------------------------------------------------------------------------
@@ -859,16 +859,68 @@ module _ where
 
 ----------------------------------------------------------------------------------------------------
 
+
+-- object-level continuation/double negation monad
+-- TODO: add laws?
+
+‵return : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ ⊢ A ‵⊃ ‵¬ ‵¬ A
+‵return = ‵lam (‵lam (0 ‵$ 1))
+
+return : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ ⊢ A → Θ / Γ ⊢ ‵¬ ‵¬ A
+return d = ‵return ‵$ d
+
+‵bind : ∀  {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ ‵¬ ‵¬ A ‵⊃ (A ‵⊃ ‵¬ ‵¬ B) ‵⊃ ‵¬ ‵¬ B
+‵bind = ‵lam (‵lam (‵lam (2 ‵$ ‵lam ((2 ‵$ 0) ‵$ 1))))
+
+infixl 1 _>>=_
+_>>=_ : ∀  {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ ‵¬ ‵¬ A → Θ / Γ ⊢ A ‵⊃ ‵¬ ‵¬ B → Θ / Γ ⊢ ‵¬ ‵¬ B
+d >>= e = (‵bind ‵$ d) ‵$ e
+
+-- TODO: delete this?
+‵join : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ ⊢ ‵¬ ‵¬ ‵¬ ‵¬ A ‵⊃ ‵¬ ‵¬ A
+‵join = ‵lam (‵lam (1 ‵$ ‵lam (0 ‵$ 1)))
+
+join : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ ⊢ ‵¬ ‵¬ ‵¬ ‵¬ A → Θ / Γ ⊢ ‵¬ ‵¬ A
+join d = d >>= ‵lam 0
+
+
+-- applicative functor
+
+pure : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ ⊢ A → Θ / Γ ⊢ ‵¬ ‵¬ A
+pure = return
+
+-- TODO: delete this?
+‵apply : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ ‵¬ ‵¬ (A ‵⊃ B) ‵⊃ ‵¬ ‵¬ A ‵⊃ ‵¬ ‵¬ B
+‵apply = ‵lam (‵lam ((‵bind ‵$ 1) ‵$ ‵lam ((‵bind ‵$ 1) ‵$ ‵lam (‵return ‵$ 1 ‵$ 0))))
+
+infixl 4 _⊛_
+_⊛_ : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ ‵¬ ‵¬ (A ‵⊃ B) → Θ / Γ ⊢ ‵¬ ‵¬ A → Θ / Γ ⊢ ‵¬ ‵¬ B
+d ⊛ e = d >>= ‵lam (wk e >>= ‵lam (return (1 ‵$ 0)))
+
+
+-- functor
+
+-- TODO: delete this?
+‵map : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ (A ‵⊃ B) ‵⊃ ‵¬ ‵¬ A ‵⊃ ‵¬ ‵¬ B
+‵map = ‵lam (‵lam ((‵apply ‵$ (‵return ‵$ 1)) ‵$ 0))
+
+infixl 4 _<$>_
+_<$>_ : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ A ‵⊃ B → Θ / Γ ⊢ ‵¬ ‵¬ A → Θ / Γ ⊢  ‵¬ ‵¬ B
+d <$> e = return d ⊛ e
+
+
+----------------------------------------------------------------------------------------------------
+
 -- double negation translation
 
 _° : ∀ {k} → Fm k → Fm k
-(A ‵→ B) ° = A ° ‵→ B °
-(A ‵∧ B) °  = A ° ‵∧ B °
-(A ‵∨ B) °  = ‵¬ ‵¬ (A ° ‵∨ B °)
-(‵∀ A) °    = ‵∀ (A °)
-(‵∃ A) °    = ‵¬ ‵¬ ‵∃ (A °)
-‵⊥ °       = ‵⊥
-(t ‵= u) °  = ‵¬ ‵¬ (t ‵= u)
+(A ‵⊃ B) ° = A ° ‵⊃ B °
+(A ‵∧ B) ° = A ° ‵∧ B °
+(A ‵∨ B) ° = ‵¬ ‵¬ (A ° ‵∨ B °)
+(‵∀ A) °   = ‵∀ (A °)
+(‵∃ A) °   = ‵¬ ‵¬ ‵∃ (A °)
+‵⊥ °      = ‵⊥
+(t ‵= u) ° = ‵¬ ‵¬ (t ‵= u)
 
 _°§ : ∀ {k} → Fm§ k → Fm§ k
 [] °§      = []
@@ -878,55 +930,53 @@ _°§ : ∀ {k} → Fm§ k → Fm§ k
 -- TODO
 postulate
   probably : ∀ {k} {A : Fm (suc k)} {t} → (A [ t ]) ° ≡ (A °) [ t ]
+  massage  : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / (twkFm§ Γ) °§ ⊢ A ° → Θ / twkFm§ (Γ °§) ⊢ A °
 
 
 -- TODO: lemma 5
 
 module _ where
-  open ↔-Reasoning
+  open ⫗-Reasoning
 
-  lem5-1 : ∀ {k} {Γ : Fm§ k} A → PA / Γ ⊢ A ° ‵↔ A
-  lem5-1 (A ‵→ B) = ↔cong→ (lem5-1 A) (lem5-1 B)
-  lem5-1 (A ‵∧ B)  = ↔cong∧ (lem5-1 A) (lem5-1 B)
-  lem5-1 (A ‵∨ B)  = begin
-                       ‵¬ ‵¬ (A ° ‵∨ B °)
-                     ↔⟨ dn ⟩
-                       A ° ‵∨ B °
-                     ↔⟨ ↔cong∨ (lem5-1 A) (lem5-1 B) ⟩
-                       A ‵∨ B
-                     ∎
-  lem5-1 (‵∀ A)    = ↔cong∀ (lem5-1 A)
-  lem5-1 (‵∃ A)    = begin
-                       ‵¬ ‵¬ ‵∃ (A °)
-                     ↔⟨ dn ⟩
-                       ‵∃ (A °)
-                     ↔⟨ ↔cong∃ (lem5-1 A) ⟩
-                       ‵∃ A
-                     ∎
-  lem5-1 ‵⊥       = ↔refl
-  lem5-1 (t ‵= u)  = dn
-
-  join : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / ‵¬ ‵¬ ‵¬ ‵¬ A ∷ Γ ⊢ ‵¬ ‵¬ A
-  join = ‵lam (1 ‵$ ‵lam (0 ‵$ 1))
+  lem5-1 : ∀ {k} {Γ : Fm§ k} A → PA / Γ ⊢ A ° ‵⫗ A
+  lem5-1 (A ‵⊃ B) = ⫗cong⊃ (lem5-1 A) (lem5-1 B)
+  lem5-1 (A ‵∧ B) = ⫗cong∧ (lem5-1 A) (lem5-1 B)
+  lem5-1 (A ‵∨ B) = begin
+                      ‵¬ ‵¬ (A ° ‵∨ B °)
+                    ⫗⟨ dn ⟩
+                      A ° ‵∨ B °
+                    ⫗⟨ ⫗cong∨ (lem5-1 A) (lem5-1 B) ⟩
+                      A ‵∨ B
+                    ∎
+  lem5-1 (‵∀ A)   = ⫗cong∀ (lem5-1 A)
+  lem5-1 (‵∃ A)   = begin
+                      ‵¬ ‵¬ ‵∃ (A °)
+                    ⫗⟨ dn ⟩
+                      ‵∃ (A °)
+                    ⫗⟨ ⫗cong∃ (lem5-1 A) ⟩
+                      ‵∃ A
+                    ∎
+  lem5-1 ‵⊥      = ⫗refl
+  lem5-1 (t ‵= u) = dn
 
   lem5-2 : ∀ {Θ k} {Γ : Fm§ k} A → Θ / ‵¬ ‵¬ (A °) ∷ Γ ⊢ A °
-  lem5-2 (A ‵→ B) = ‵lam (‵lam (lem5-2 B) ‵$ ‵lam
-                       (2 ‵$ ‵lam
-                         (1 ‵$ 0 ‵$ 2)))
-  lem5-2 (A ‵∧ B)  = ‵pair
-                       (‵lam (lem5-2 A) ‵$ ‵lam
-                         (1 ‵$ ‵lam
-                           (1 ‵$ ‵fst 0)))
-                       (‵lam (lem5-2 B) ‵$ ‵lam
-                         (1 ‵$ ‵lam
-                           (1 ‵$ ‵snd 0)))
-  lem5-2 (A ‵∨ B)  = join
-  lem5-2 (‵∀ A)    = ‵∀intro (‵lam (lem5-2 A) ‵$ ‵lam
-                       (1 ‵$ ‵lam
-                         (1 ‵$ ‵∀elim 0 later)))
-  lem5-2 (‵∃ A)    = join
-  lem5-2 ‵⊥       = 0 ‵$ ‵lam 0
-  lem5-2 (t ‵= u)  = join
+  lem5-2 (A ‵⊃ B) = ‵lam (‵lam (lem5-2 B) ‵$ ‵lam
+                      (2 ‵$ ‵lam
+                        (1 ‵$ 0 ‵$ 2)))
+  lem5-2 (A ‵∧ B) = ‵pair
+                      (‵lam (lem5-2 A) ‵$ ‵lam
+                        (1 ‵$ ‵lam
+                          (1 ‵$ ‵fst 0)))
+                      (‵lam (lem5-2 B) ‵$ ‵lam
+                        (1 ‵$ ‵lam
+                          (1 ‵$ ‵snd 0)))
+  lem5-2 (A ‵∨ B) = join 0
+  lem5-2 (‵∀ A)   = ‵∀intro (‵lam (lem5-2 A) ‵$ ‵lam
+                      (1 ‵$ ‵lam
+                        (1 ‵$ ‵∀elim 0 later)))
+  lem5-2 (‵∃ A)   = join 0
+  lem5-2 ‵⊥      = 0 ‵$ ‵lam 0
+  lem5-2 (t ‵= u) = join 0
 
   lem5-3∋ : ∀ {k} {Γ : Fm§ k} {A} → Γ ∋ A → Γ °§ ∋ A °
   lem5-3∋ zero    = zero
@@ -939,15 +989,15 @@ module _ where
   lem5-3 (‵pair d e)      = ‵pair (lem5-3 d) (lem5-3 e)
   lem5-3 (‵fst d)         = ‵fst (lem5-3 d)
   lem5-3 (‵snd d)         = ‵snd (lem5-3 d)
-  lem5-3 (‵left d)        = {!!}
-  lem5-3 (‵right d)       = {!!}
+  lem5-3 (‵left d)        = return (‵left (lem5-3 d))
+  lem5-3 (‵right d)       = return (‵right (lem5-3 d))
   lem5-3 (‵case c d e)    = {!!}
-  lem5-3 (‵∀intro d)      = {!!}
+  lem5-3 (‵∀intro d)      = ‵∀intro (massage (lem5-3 d))
   lem5-3 (‵∀elim d refl)  = ‵∀elim (lem5-3 d) probably
-  lem5-3 (‵∃intro d refl) = {!!}
+  lem5-3 (‵∃intro d refl) = return (‵∃intro (lem5-3 d) probably)
   lem5-3 (‵∃elim d e)     = {!!}
   lem5-3 (‵magic d)       = {!!}
-  lem5-3 ‵refl            = {!!}
+  lem5-3 ‵refl            = return ‵refl
   lem5-3 (‵sym d)         = {!!}
   lem5-3 (‵trans d e)     = {!!}
   lem5-3 (‵cong f i d)    = {!!}
