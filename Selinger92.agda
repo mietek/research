@@ -941,7 +941,10 @@ _°§ : ∀ {k} → Fm§ k → Fm§ k
 
 postulate
   TODO2 : ∀ {k} {A : Fm (suc k)} {t} → (A [ t ]) ° ≡ (A °) [ t ]
-  TODO3 : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / (twkFm§ Γ) °§ ⊢ A ° → Θ / twkFm§ (Γ °§) ⊢ A °
+  TODO3 : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / (twkFm§ Γ) °§ ⊢ A → Θ / twkFm§ (Γ °§) ⊢ A
+  TODO4 : ∀ {Θ k} {Γ : Fm§ k} {A t} → Θ / Γ ⊢ (A [ t ]) ° → Θ / Γ ⊢ (A °) [ t ]
+  TODO5 : ∀ {Θ k} {Γ : Fm§ k} {A t} → Θ / Γ ⊢ ‵∀ (A ° ‵⊃ (texFm (twkFm A) [ t ]) °) →
+            Θ / Γ ⊢ ‵∀ (A ° ‵⊃ texFm (twkFm (A °)) [ t ])
 
 
 -- TODO: lemma 5
@@ -994,35 +997,37 @@ module _ where
   lem5-3∋ (suc i) = suc (lem5-3∋ i)
 
   lem5-3 : ∀ {Θ k} {Γ : Fm§ k} {A} → PA / Γ ⊢ A → Θ / Γ °§ ⊢ A °
-  lem5-3 (‵var i)        = ‵var (lem5-3∋ i)
-  lem5-3 (‵lam d)        = ‵lam (lem5-3 d)
-  lem5-3 (d ‵$ e)        = lem5-3 d ‵$ lem5-3 e
-  lem5-3 (‵pair d e)     = ‵pair (lem5-3 d) (lem5-3 e)
-  lem5-3 (‵fst d)        = ‵fst (lem5-3 d)
-  lem5-3 (‵snd d)        = ‵snd (lem5-3 d)
-  lem5-3 (‵left d)       = ‵return ‵$ ‵left (lem5-3 d)
-  lem5-3 (‵right d)      = ‵return ‵$ ‵right (lem5-3 d)
-  lem5-3 (‵either c d e) = {!!}
-  lem5-3 (‵all d)        = ‵all (TODO3 (lem5-3 d))
-  lem5-3 (‵one d refl)   = ‵one (lem5-3 d) TODO2
-  lem5-3 (‵this d refl)  = ‵return ‵$ ‵this (lem5-3 d) TODO2
-  lem5-3 (‵some d e)     = {!!}
-  lem5-3 (‵PAmagic d)    = {!!}
-  lem5-3 ‵refl           = ‵return ‵$ ‵refl
-  lem5-3 (‵sym d)        = (‵bind ‵$ lem5-3 d) ‵$ ‵lam
-                             (‵return ‵$ ‵sym 0)
-  lem5-3 (‵trans d e)    = (‵bind ‵$ lem5-3 d) ‵$ ‵lam
-                             ((‵bind ‵$ wk (lem5-3 e)) ‵$ ‵lam
-                               (‵return ‵$ ‵trans 1 0))
-  lem5-3 (‵cong f i d)   = (‵bind ‵$ lem5-3 d) ‵$ ‵lam
-                             (‵return ‵$ ‵cong f i 0)
-  lem5-3 ‵dis            = ‵return ‵$ ‵dis
-  lem5-3 (‵inj d)        = (‵bind ‵$ lem5-3 d) ‵$ ‵lam
-                             (‵return ‵$ ‵inj 0)
-  lem5-3 (‵ind d e)      = {!!}
-  lem5-3 (‵proj i)       = ‵return ‵$ ‵proj i
-  lem5-3 (‵comp g fs)    = ‵return ‵$ ‵comp g fs
-  lem5-3 (‵rec f g)      = {!!}
+  lem5-3 (‵var i)           = ‵var (lem5-3∋ i)
+  lem5-3 (‵lam d)           = ‵lam (lem5-3 d)
+  lem5-3 (d ‵$ e)           = lem5-3 d ‵$ lem5-3 e
+  lem5-3 (‵pair d e)        = ‵pair (lem5-3 d) (lem5-3 e)
+  lem5-3 (‵fst d)           = ‵fst (lem5-3 d)
+  lem5-3 (‵snd d)           = ‵snd (lem5-3 d)
+  lem5-3 (‵left d)          = ‵return ‵$ ‵left (lem5-3 d)
+  lem5-3 (‵right d)         = ‵return ‵$ ‵right (lem5-3 d)
+  lem5-3 (‵either c d e)    = {!!}
+  lem5-3 (‵all d)           = ‵all (TODO3 (lem5-3 d))
+  lem5-3 (‵one d refl)      = ‵one (lem5-3 d) TODO2
+  lem5-3 (‵this d refl)     = ‵return ‵$ ‵this (lem5-3 d) TODO2
+  lem5-3 (‵some d e)        = {!!}
+  lem5-3 (‵PAmagic d)       = {!!}
+  lem5-3 ‵refl              = ‵return ‵$ ‵refl
+  lem5-3 (‵sym d)           = (‵bind ‵$ lem5-3 d) ‵$ ‵lam
+                                (‵return ‵$ ‵sym 0)
+  lem5-3 (‵trans d e)       = (‵bind ‵$ lem5-3 d) ‵$ ‵lam
+                                ((‵bind ‵$ wk (lem5-3 e)) ‵$ ‵lam
+                                  (‵return ‵$ ‵trans 1 0))
+  lem5-3 (‵cong f i d)      = (‵bind ‵$ lem5-3 d) ‵$ ‵lam
+                                (‵return ‵$ ‵cong f i 0)
+  lem5-3 ‵dis               = ‵return ‵$ ‵dis
+  lem5-3 (‵inj d)           = (‵bind ‵$ lem5-3 d) ‵$ ‵lam
+                                (‵return ‵$ ‵inj 0)
+  lem5-3 (‵ind d e)         = ‵ind (TODO4 (lem5-3 d)) (TODO5 (lem5-3 e))
+  lem5-3 (‵proj i)          = ‵return ‵$ ‵proj i
+  lem5-3 (‵comp g fs)       = ‵return ‵$ ‵comp g fs
+  lem5-3 (‵rec {s = s} f g) = ‵pair
+                                (‵return ‵$ ‵fst (‵rec {s = s} f g))
+                                (‵return ‵$ ‵snd (‵rec f g))
 
   -- TODO: "Note that the converse of 3 trivially holds wih 1."
   lem5-3⁻¹ : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ °§ ⊢ A ° → PA / Γ ⊢ A
