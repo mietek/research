@@ -875,9 +875,9 @@ module _ where
 ‵bind : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ ‵¬ ‵¬ A ‵⊃ (A ‵⊃ ‵¬ ‵¬ B) ‵⊃ ‵¬ ‵¬ B
 ‵bind = ‵lam (‵lam (‵lam (2 ‵$ ‵lam ((2 ‵$ 0) ‵$ 1))))
 
--- infixl 1 _>>=_
--- _>>=_ : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ ‵¬ ‵¬ A → Θ / Γ ⊢ A ‵⊃ ‵¬ ‵¬ B → Θ / Γ ⊢ ‵¬ ‵¬ B
--- d >>= e = (‵bind ‵$ d) ‵$ e
+infixl 1 _>>=_
+_>>=_ : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ ‵¬ ‵¬ A → Θ / Γ ⊢ A ‵⊃ ‵¬ ‵¬ B → Θ / Γ ⊢ ‵¬ ‵¬ B
+d >>= e = (‵bind ‵$ d) ‵$ e
 
 ‵join : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ ⊢ ‵¬ ‵¬ ‵¬ ‵¬ A ‵⊃ ‵¬ ‵¬ A
 ‵join = ‵lam ((‵bind ‵$ 0) ‵$ ‵lam 0)
@@ -888,16 +888,16 @@ module _ where
 ‵apply : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ ‵¬ ‵¬ (A ‵⊃ B) ‵⊃ ‵¬ ‵¬ A ‵⊃ ‵¬ ‵¬ B
 ‵apply = ‵lam (‵lam ((‵bind ‵$ 1) ‵$ ‵lam ((‵bind ‵$ 1) ‵$ ‵lam (‵return ‵$ 1 ‵$ 0))))
 
--- infixl 4 _⊛_
--- _⊛_ : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ ‵¬ ‵¬ (A ‵⊃ B) → Θ / Γ ⊢ ‵¬ ‵¬ A → Θ / Γ ⊢ ‵¬ ‵¬ B
--- d ⊛ e = d >>= ‵lam (wk e >>= ‵lam (‵return ‵$ 1 ‵$ 0))
+infixl 4 _⊛_
+_⊛_ : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ ‵¬ ‵¬ (A ‵⊃ B) → Θ / Γ ⊢ ‵¬ ‵¬ A → Θ / Γ ⊢ ‵¬ ‵¬ B
+d ⊛ e = d >>= ‵lam (wk e >>= ‵lam (‵return ‵$ 1 ‵$ 0))
 
 ‵map : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ (A ‵⊃ B) ‵⊃ ‵¬ ‵¬ A ‵⊃ ‵¬ ‵¬ B
 ‵map = ‵lam (‵lam ((‵apply ‵$ ‵return ‵$ 1) ‵$ 0))
 
--- infixl 4 _<$>_
--- _<$>_ : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ A ‵⊃ B → Θ / Γ ⊢ ‵¬ ‵¬ A → Θ / Γ ⊢  ‵¬ ‵¬ B
--- d <$> e = ‵return ‵$ d ⊛ e
+infixl 4 _<$>_
+_<$>_ : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ A ‵⊃ B → Θ / Γ ⊢ ‵¬ ‵¬ A → Θ / Γ ⊢ ‵¬ ‵¬ B
+d <$> e = ‵return ‵$ d ⊛ e
 
 
 ----------------------------------------------------------------------------------------------------
@@ -1010,7 +1010,7 @@ module _ where
   lem5-3 (‵one d refl)      = ‵one (lem5-3 d) TODO2
   lem5-3 (‵this d refl)     = ‵return ‵$ ‵this (lem5-3 d) TODO2
   lem5-3 (‵some d e)        = {!!}
-  lem5-3 (‵PAmagic d)       = {!!}
+  lem5-3 (‵PAmagic d)       = ‵lam lem5-2 ‵$ ‵lam (lem5-3 d)
   lem5-3 ‵refl              = ‵return ‵$ ‵refl
   lem5-3 (‵sym d)           = (‵bind ‵$ lem5-3 d) ‵$ ‵lam
                                 (‵return ‵$ ‵sym 0)
