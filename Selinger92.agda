@@ -1014,13 +1014,14 @@ module _ where
   lem5-3 (‵trans d e)    = (‵bind ‵$ lem5-3 d) ‵$ ‵lam
                              ((‵bind ‵$ wk (lem5-3 e)) ‵$ ‵lam
                                (‵return ‵$ ‵trans 1 0))
-  lem5-3 (‵cong f i d)   = {!!}
+  lem5-3 (‵cong f i d)   = (‵bind ‵$ lem5-3 d) ‵$ ‵lam
+                             (‵return ‵$ ‵cong f i 0)
   lem5-3 ‵dis            = ‵return ‵$ ‵dis
   lem5-3 (‵inj d)        = (‵bind ‵$ lem5-3 d) ‵$ ‵lam
                              (‵return ‵$ ‵inj 0)
   lem5-3 (‵ind d e)      = {!!}
   lem5-3 (‵proj i)       = ‵return ‵$ ‵proj i
-  lem5-3 (‵comp g fs)    = {!!}
+  lem5-3 (‵comp g fs)    = ‵return ‵$ ‵comp g fs
   lem5-3 (‵rec f g)      = {!!}
 
   -- TODO: "Note that the converse of 3 trivially holds wih 1."
