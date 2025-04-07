@@ -66,6 +66,9 @@ instance
     ; fromNat    = λ m {{p}} → (Fin.# m) {n} {p}
     }
 
+coe : ∀ {𝒶} {A A′ : Set 𝒶} → A ≡ A′ → A → A′
+coe = subst Fun.id
+
 
 ----------------------------------------------------------------------------------------------------
 
@@ -196,18 +199,17 @@ mul : Prim 2
 mul = rec (const 0)
           (comp add (proj 2 ∷ proj 0 ∷ []))
 
-module _ where
-  open ≡-Reasoning
-
-  ok-mul : ∀ x y → ⟦ mul ⟧ (x ∷ y ∷ []) ≡ x Nat.* y
-  ok-mul zero    y = refl
-  ok-mul (suc x) y = begin
+ok-mul : ∀ x y → ⟦ mul ⟧ (x ∷ y ∷ []) ≡ x Nat.* y
+ok-mul zero    y = refl
+ok-mul (suc x) y = begin
                        ⟦ add ⟧ (y ∷ ⟦ mul ⟧ (x ∷ y ∷ []) ∷ [])
                      ≡⟨ cong (⟦ add ⟧ ∘ (y ∷_)) (cong (_∷ []) (ok-mul x y))  ⟩
                        ⟦ add ⟧ (y ∷ x Nat.* y ∷ [])
                      ≡⟨ ok-add y (x Nat.* y) ⟩
                        y Nat.+ x Nat.* y
                      ∎
+                   where
+                     open ≡-Reasoning
 
 -- pred : Nat → Nat
 -- pred x = x ∸ 1
@@ -244,8 +246,8 @@ infixr 16 _‵$_
 -- terms, indexed by number of term variables
 mutual
   data Tm (k : Nat) : Set where
-    ‵var : ∀ (i : Fin k) → Tm k -- i-th term variable
-    ‵fun : ∀ {n} (f : Prim n) (ts : Tm§ k n) → Tm k
+    ‵tvar : ∀ (i : Fin k) → Tm k -- i-th term variable
+    ‵fun  : ∀ {n} (f : Prim n) (ts : Tm§ k n) → Tm k
 
   Tm§ : Nat → Nat → Set
   Tm§ k n = Vec (Tm k) n
@@ -254,7 +256,7 @@ instance
   numberTm : ∀ {k} → Number (Tm k)
   numberTm {k} = record
     { Constraint = λ m → True (m Nat.<? k)
-    ; fromNat    = λ m {{p}} → ‵var ((Fin.# m) {k} {p})
+    ; fromNat    = λ m {{p}} → ‵tvar ((Fin.# m) {k} {p})
     }
 
 ‵zero : ∀ {k} → Tm k
@@ -342,7 +344,7 @@ wk∋ = ren∋ (wk⊆ id⊆)
 
 mutual
   trenTm : ∀ {k k′} → k ≤ k′ → Tm k → Tm k′
-  trenTm η (‵var i)    = ‵var (renFin η i)
+  trenTm η (‵tvar i)   = ‵tvar (renFin η i)
   trenTm η (‵fun f ts) = ‵fun f (trenTm§ η ts)
 
   trenTm§ : ∀ {k k′ n} → k ≤ k′ → Tm§ k n → Tm§ k′ n
@@ -448,7 +450,7 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   ‵trans   : ∀ {Θ Γ s t u} (d : Θ / Γ ⊢ s ‵= t) (e : Θ / Γ ⊢ t ‵= u) → Θ / Γ ⊢ s ‵= u
 
   ‵cong    : ∀ {Θ Γ n ts u} (f : Prim n) (i : Fin n) (d : Θ / Γ ⊢ get i ts ‵= u) →
-              Θ / Γ ⊢ ‵fun f ts ‵= ‵fun f (put i ts u)
+               Θ / Γ ⊢ ‵fun f ts ‵= ‵fun f (put i ts u)
 
   ‵dis     : ∀ {Θ Γ t} → Θ / Γ ⊢ ‵suc t ‵≠ ‵zero
 
@@ -476,9 +478,6 @@ instance
     { Constraint = λ m → Γ ∋⟨ m ⟩ A
     ; fromNat    = λ m {{p}} → ‵var (∋#→∋ p)
     }
-
-‵congsuc : ∀ {Θ k} {Γ : Fm§ k} {t u} → Θ / Γ ⊢ t ‵= u → Θ / Γ ⊢ ‵suc t ‵= ‵suc u
-‵congsuc d = ‵cong suc 0 d
 
 
 ----------------------------------------------------------------------------------------------------
@@ -673,35 +672,187 @@ module ⫗-Reasoning {Θ k} {Γ : Fm§ k} where
 
 ----------------------------------------------------------------------------------------------------
 
+-- meta-level continuation/double negation monad/applicative/functor
+-- TODO: laws?
+
+infixl 4 _⊛_ _<$>_
+infixl 1 _>>=_
+
+return : ∀ {𝒶} {A : Set 𝒶} → A → ¬ ¬ A
+return x = λ k → k x
+
+_>>=_ : ∀ {𝒶 𝒷} {A : Set 𝒶} {B : Set 𝒷} → ¬ ¬ A → (A → ¬ ¬ B) → ¬ ¬ B
+mx >>= f = λ k → mx (λ x → f x k)
+
+join : ∀ {𝒶} {A : Set 𝒶} → ¬ ¬ ¬ ¬ A → ¬ ¬ A
+join mmx = mmx >>= λ mx → mx
+
+_⊛_ : ∀ {𝒶 𝒷} {A : Set 𝒶} {B : Set 𝒷} → ¬ ¬ (A → B) → ¬ ¬ A → ¬ ¬ B
+mf ⊛ mx = mf >>= λ f → mx >>= λ x → return (f x)
+
+_<$>_ : ∀ {𝒶 𝒷} {A : Set 𝒶} {B : Set 𝒷} → (A → B) → ¬ ¬ A → ¬ ¬ B
+f <$> mx = return f ⊛ mx
+
+dnem : ∀ {𝒶} {A : Set 𝒶} → ¬ ¬ (A ⊎ ¬ A)
+dnem = λ k → k (right λ k′ → k (left k′))
+
+
+----------------------------------------------------------------------------------------------------
+
+-- object-level continuation/double negation monad/applicative/functor
+-- ⊃-prefixed versions use object-level implication
+-- ‵-prefixed versions use meta-level implication, for general ease of use
+-- ⫗-prefixed versions use object-level equivalence, for use in ⫗-reasoning
+-- TODO: laws?
+
+infixl 4 _‵⊛_ _‵<$>_
+infixl 1 _‵>>=_
+
+⊃return : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ ⊢ A ‵⊃ ‵¬ ‵¬ A
+⊃return = ‵lam (‵lam (0 ‵$ 1))
+
+‵return : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ ⊢ A → Θ / Γ ⊢ ‵¬ ‵¬ A
+‵return d = ⊃return ‵$ d
+
+⊃bind : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ ‵¬ ‵¬ A ‵⊃ (A ‵⊃ ‵¬ ‵¬ B) ‵⊃ ‵¬ ‵¬ B
+⊃bind = ‵lam (‵lam (‵lam (2 ‵$ ‵lam ((2 ‵$ 0) ‵$ 1))))
+
+_‵>>=_ : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ ‵¬ ‵¬ A → Θ / Γ ⊢ A ‵⊃ ‵¬ ‵¬ B → Θ / Γ ⊢ ‵¬ ‵¬ B
+d ‵>>= e = (⊃bind ‵$ d) ‵$ e
+
+⊃join : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ ⊢ ‵¬ ‵¬ ‵¬ ‵¬ A ‵⊃ ‵¬ ‵¬ A
+⊃join = ‵lam (0 ‵>>= ‵lam 0)
+
+‵join : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ ⊢ ‵¬ ‵¬ ‵¬ ‵¬ A → Θ / Γ ⊢ ‵¬ ‵¬ A
+‵join d = ⊃join ‵$ d
+
+⊃apply : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ ‵¬ ‵¬ (A ‵⊃ B) ‵⊃ ‵¬ ‵¬ A ‵⊃ ‵¬ ‵¬ B
+⊃apply = ‵lam (‵lam (1 ‵>>= ‵lam (1 ‵>>= ‵lam (‵return (1 ‵$ 0)))))
+
+_‵⊛_ : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ ‵¬ ‵¬ (A ‵⊃ B) → Θ / Γ ⊢ ‵¬ ‵¬ A → Θ / Γ ⊢ ‵¬ ‵¬ B
+d ‵⊛ e = d ‵>>= ‵lam (wk e ‵>>= ‵lam (‵return (1 ‵$ 0)))
+
+⊃map : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ (A ‵⊃ B) ‵⊃ ‵¬ ‵¬ A ‵⊃ ‵¬ ‵¬ B
+⊃map = ‵lam (‵lam (‵return 1 ‵⊛ 0))
+
+_‵<$>_ : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ A ‵⊃ B → Θ / Γ ⊢ ‵¬ ‵¬ A → Θ / Γ ⊢ ‵¬ ‵¬ B
+d ‵<$> e = (⊃map ‵$ d) ‵$ e
+
+‵dnem : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ ⊢ ‵¬ ‵¬ (A ‵∨ ‵¬ A)
+‵dnem = ‵lam (0 ‵$ ‵right (‵lam (1 ‵$ ‵left 0)))
+
+
+----------------------------------------------------------------------------------------------------
+
 -- extended middle
 
+⊃dne : ∀ {k} {Γ : Fm§ k} {A} → PA / Γ ⊢ ‵¬ ‵¬ A ‵⊃ A
+⊃dne = ‵lam (‵PAmagic (1 ‵$ 0))
+
+‵dne : ∀ {k} {Γ : Fm§ k} {A} → PA / Γ ⊢ ‵¬ ‵¬ A → PA / Γ ⊢ A
+‵dne d = ⊃dne ‵$ d
+
+⫗dn : ∀ {k} {Γ : Fm§ k} {A} → PA / Γ ⊢ ‵¬ ‵¬ A ‵⫗ A
+⫗dn = ‵pair ⊃dne ⊃return
+
+‵em : ∀ {k} {Γ : Fm§ k} {A} → PA / Γ ⊢ A ‵∨ ‵¬ A
+‵em = ‵dne ‵dnem
+
+
+----------------------------------------------------------------------------------------------------
+
+-- de Morgan’s laws
+
 -- constructive
--- TODO: belongs to object-level continuation monad
 module _ {Θ k} {Γ : Fm§ k} where
-  ‵nnem : ∀ {A} → Θ / Γ ⊢ ‵¬ ‵¬ (A ‵∨ ‵¬ A)
-  ‵nnem = ‵lam (0 ‵$ ‵right (‵lam (1 ‵$ ‵left 0)))
+  ⊃pdm1a : ∀ {A B} → Θ / Γ ⊢ ‵¬ A ‵∧ ‵¬ B ‵⊃ ‵¬ (A ‵∨ B)
+  ⊃pdm1a = ‵lam (‵lam (‵either 0
+             (‵fst 2 ‵$ 0)
+             (‵snd 2 ‵$ 0)))
 
-  ‵dni : ∀ {A} → Θ / Γ ⊢ A ‵⊃ ‵¬ ‵¬ A
-  ‵dni = ‵lam (‵lam (0 ‵$ 1))
+  ⊃qdm1a : ∀ {A} → Θ / Γ ⊢ ‵∀ (‵¬ A) ‵⊃ ‵¬ (‵∃ A)
+  ⊃qdm1a = ‵lam (‵lam (‵some 0
+             (‵one 2 TODO1 ‵$ 0)))
 
--- TODO: continuation monad
-nnem : ∀ {𝒶} {A : Set 𝒶} → ¬ ¬ (A ⊎ ¬ A)
-nnem = λ k → k (right (λ k′ → k (left k′)))
+  ⊃npdm1a : ∀ {A B} → Θ / Γ ⊢ A ‵∧ B ‵⊃ ‵¬ (‵¬ A ‵∨ ‵¬ B)
+  ⊃npdm1a = ‵lam (‵lam (‵abort (‵either 0
+              (0 ‵$ ‵fst 2)
+              (0 ‵$ ‵snd 2))))
 
-dni : ∀ {𝒶} {A : Set 𝒶} → A → ¬ ¬ A
-dni x = λ k → k x
+  ⊃nqdm1a : ∀ {A} → Θ / Γ ⊢ ‵∀ A ‵⊃ ‵¬ (‵∃ (‵¬ A))
+  ⊃nqdm1a = ‵lam (‵lam (‵abort (‵some 0
+              (0 ‵$ ‵one 2 TODO1))))
 
--- non-constructive
--- TODO: actually EM
-module _ {k} {Γ : Fm§ k} where
-  ‵dne : ∀ {A} → PA / Γ ⊢ ‵¬ ‵¬ A ‵⊃ A
-  ‵dne = ‵lam (‵PAmagic (1 ‵$ 0))
+  ⊃pdm2a : ∀ {A B} → Θ / Γ ⊢ ‵¬ A ‵∨ ‵¬ B ‵⊃ ‵¬ (A ‵∧ B)
+  ⊃pdm2a = ‵lam (‵lam (‵either 1
+             (0 ‵$ ‵fst 1)
+             (0 ‵$ ‵snd 1)))
 
-  ‵dn : ∀ {A} → PA / Γ ⊢ ‵¬ ‵¬ A ‵⫗ A
-  ‵dn = ‵pair ‵dne ‵dni
+  ⊃qdm2a : ∀ {A} → Θ / Γ ⊢ ‵∃ (‵¬ A) ‵⊃ ‵¬ (‵∀ A)
+  ⊃qdm2a = ‵lam (‵lam (‵some 1
+             (0 ‵$ ‵one 1 TODO1)))
 
-  ‵em : ∀ {A} → PA / Γ ⊢ A ‵∨ ‵¬ A
-  ‵em = ‵dne ‵$ ‵nnem
+  ⊃npdm2a : ∀ {A B} → Θ / Γ ⊢ A ‵∨ B ‵⊃ ‵¬ (‵¬ A ‵∧ ‵¬ B)
+  ⊃npdm2a = ‵lam (‵lam (‵abort (‵either 1
+              (‵fst 1 ‵$ 0)
+              (‵snd 1 ‵$ 0))))
+
+  ⊃nqdm2a : ∀ {A} → Θ / Γ ⊢ ‵∃ A ‵⊃ ‵¬ (‵∀ (‵¬ A))
+  ⊃nqdm2a = ‵lam (‵lam (‵abort (‵some 1
+              (‵one 1 TODO1 ‵$ 0))))
+
+  ⊃pdm1b : ∀ {A B} → Θ / Γ ⊢ ‵¬ (A ‵∨ B) ‵⊃ ‵¬ A ‵∧ ‵¬ B
+  ⊃pdm1b = ‵lam (‵pair
+             (‵lam (1 ‵$ ‵left 0))
+             (‵lam (1 ‵$ ‵right 0)))
+
+  ⊃qdm1b : ∀ {A} → Θ / Γ ⊢ ‵¬ (‵∃ A) ‵⊃ ‵∀ (‵¬ A)
+  ⊃qdm1b = ‵lam (‵all (‵lam
+             (1 ‵$ ‵this 0 TODO1)))
+
+  ⫗pdm1 : ∀ {A B} → Θ / Γ ⊢ ‵¬ A ‵∧ ‵¬ B ‵⫗ ‵¬ (A ‵∨ B)
+  ⫗pdm1 = ‵pair ⊃pdm1a ⊃pdm1b
+
+  ⫗qdm1 : ∀ {A} → Θ / Γ ⊢ ‵∀ (‵¬ A) ‵⫗ ‵¬ (‵∃ A)
+  ⫗qdm1 = ‵pair ⊃qdm1a ⊃qdm1b
+
+-- TODO: non-constructive
+-- module _ {k} {Γ : Fm§ k} where
+--   ⊃npdm1b : ∀ {A B} → PA / Γ ⊢ ‵¬ (‵¬ A ‵∨ ‵¬ B) ‵⊃ A ‵∧ B
+--   ⊃npdm1b = {!!}
+--
+--   ⊃nqdm1b : ∀ {A} → PA / Γ ⊢ ‵¬ (‵∃ (‵¬ A)) ‵⊃ ‵∀ A
+--   ⊃nqdm1b = {!!}
+--
+--   ⊃pdm2b : ∀ {A B} → PA / Γ ⊢ ‵¬ (A ‵∧ B) ‵⊃ ‵¬ A ‵∨ ‵¬ B
+--   ⊃pdm2b = {!!}
+--
+--   ⊃qdm2b : ∀ {A} → PA / Γ ⊢ ‵¬ (‵∀ A) ‵⊃ ‵∃ (‵¬ A)
+--   ⊃qdm2b = {!!}
+--
+--   ⊃npdm2b : ∀ {A B} → PA / Γ ⊢ ‵¬ (‵¬ A ‵∧ ‵¬ B) ‵⊃ A ‵∨ B
+--   ⊃npdm2b = {!!}
+--
+--   ⊃nqdm2b : ∀ {A} → PA / Γ ⊢ ‵¬ (‵∀ (‵¬ A)) ‵⊃ ‵∃ A
+--   ⊃nqdm2b = {!!}
+--
+--   ⫗npdm1 : ∀ {A B} → PA / Γ ⊢ A ‵∧ B ‵⫗ ‵¬ (‵¬ A ‵∨ ‵¬ B)
+--   ⫗npdm1 = ‵pair ⊃npdm1a ⊃npdm1b
+--
+--   ⫗nqdm1 : ∀ {A} → PA / Γ ⊢ ‵∀ A ‵⫗ ‵¬ (‵∃ (‵¬ A))
+--   ⫗nqdm1 = ‵pair ⊃nqdm1a ⊃nqdm1b
+--
+--   ⫗pdm2 : ∀ {A B} → PA / Γ ⊢ ‵¬ A ‵∨ ‵¬ B ‵⫗ ‵¬ (A ‵∧ B)
+--   ⫗pdm2 = ‵pair ⊃pdm2a ⊃pdm2b
+--
+--   ⫗qdm2 : ∀ {A} → PA / Γ ⊢ ‵∃ (‵¬ A) ‵⫗ ‵¬ (‵∀ A)
+--   ⫗qdm2 = ‵pair ⊃qdm2a ⊃qdm2b
+--
+--   ⫗npdm2 : ∀ {A B} → PA / Γ ⊢ A ‵∨ B ‵⫗ ‵¬ (‵¬ A ‵∧ ‵¬ B)
+--   ⫗npdm2 = ‵pair ⊃npdm2a ⊃npdm2b
+--
+--   ⫗nqdm2 : ∀ {A} → PA / Γ ⊢ ‵∃ A ‵⫗ ‵¬ (‵∀ (‵¬ A))
+--   ⫗nqdm2 = ‵pair ⊃nqdm2a ⊃nqdm2b
 
 
 ----------------------------------------------------------------------------------------------------
@@ -725,78 +876,6 @@ module _ {k} {Γ : Fm§ k} where
 
 ----------------------------------------------------------------------------------------------------
 
--- de Morgan’s laws
-
--- constructive
-module _ {Θ k} {Γ : Fm§ k} where
-  pdm1 : ∀ {A B} → Θ / Γ ⊢ ‵¬ A ‵∨ ‵¬ B ‵⊃ ‵¬ (A ‵∧ B)
-  pdm1 = ‵lam (‵lam (‵either 1
-           (0 ‵$ ‵fst 1)
-           (0 ‵$ ‵snd 1)))
-
-  qdm1 : ∀ {A} → Θ / Γ ⊢ ‵∃ (‵¬ A) ‵⊃ ‵¬ (‵∀ A)
-  qdm1 = ‵lam (‵lam (‵some 1
-           (0 ‵$ ‵one 1 TODO1)))
-
-  npdm1 : ∀ {A B} → Θ / Γ ⊢ A ‵∨ B ‵⊃ ‵¬ (‵¬ A ‵∧ ‵¬ B)
-  npdm1 = ‵lam (‵lam (‵abort (‵either 1
-            (‵fst 1 ‵$ 0)
-            (‵snd 1 ‵$ 0))))
-
-  nqdm1 : ∀ {A} → Θ / Γ ⊢ ‵∃ A ‵⊃ ‵¬ (‵∀ (‵¬ A))
-  nqdm1 = ‵lam (‵lam (‵abort (‵some 1
-            (‵one 1 TODO1 ‵$ 0))))
-
-  pdm2 : ∀ {A B} → Θ / Γ ⊢ ‵¬ A ‵∧ ‵¬ B ‵⊃ ‵¬ (A ‵∨ B)
-  pdm2 = ‵lam (‵lam (‵either 0
-           (‵fst 2 ‵$ 0)
-           (‵snd 2 ‵$ 0)))
-
-  qdm2 : ∀ {A} → Θ / Γ ⊢ ‵∀ (‵¬ A) ‵⊃ ‵¬ (‵∃ A)
-  qdm2 = ‵lam (‵lam (‵some 0
-           (‵one 2 TODO1 ‵$ 0)))
-
-  npdm2 : ∀ {A B} → Θ / Γ ⊢ A ‵∧ B ‵⊃ ‵¬ (‵¬ A ‵∨ ‵¬ B)
-  npdm2 = ‵lam (‵lam (‵abort (‵either 0
-            (0 ‵$ ‵fst 2)
-            (0 ‵$ ‵snd 2))))
-
-  nqdm2 : ∀ {A} → Θ / Γ ⊢ ‵∀ A ‵⊃ ‵¬ (‵∃ (‵¬ A))
-  nqdm2 = ‵lam (‵lam (‵abort (‵some 0
-            (0 ‵$ ‵one 2 TODO1))))
-
-  pdm3 : ∀ {A B} → Θ / Γ ⊢ ‵¬ (A ‵∨ B) ‵⊃ ‵¬ A ‵∧ ‵¬ B
-  pdm3 = ‵lam (‵pair
-           (‵lam (1 ‵$ ‵left 0))
-           (‵lam (1 ‵$ ‵right 0)))
-
-  qdm3 : ∀ {A} → Θ / Γ ⊢ ‵¬ (‵∃ A) ‵⊃ ‵∀ (‵¬ A)
-  qdm3 = ‵lam (‵all (‵lam
-           (1 ‵$ ‵this 0 TODO1)))
-
--- TODO: non-constructive
--- module _ {k} {Γ : Fm§ k} where
---   npdm3 : ∀ {A B} → PA / Γ ⊢ ‵¬ (‵¬ A ‵∨ ‵¬ B) ‵⊃ A ‵∧ B
---   npdm3 = {!!}
---
---   nqdm3 : ∀ {A} → PA / Γ ⊢ ‵¬ (‵∃ (‵¬ A)) ‵⊃ ‵∀ A
---   nqdm3 = {!!}
---
---   pdm4 : ∀ {A B} → PA / Γ ⊢ ‵¬ (A ‵∧ B) ‵⊃ ‵¬ A ‵∨ ‵¬ B
---   pdm4 = {!!}
---
---   qdm4 : ∀ {A} → PA / Γ ⊢ ‵¬ (‵∀ A) ‵⊃ ‵∃ (‵¬ A)
---   qdm4 = {!!}
---
---   npdm4 : ∀ {A B} → PA / Γ ⊢ ‵¬ (‵¬ A ‵∧ ‵¬ B) ‵⊃ A ‵∨ B
---   npdm4 = {!!}
---
---   nqdm4 : ∀ {A} → PA / Γ ⊢ ‵¬ (‵∀ (‵¬ A)) ‵⊃ ‵∃ A
---   nqdm4 = {!!}
-
-
-----------------------------------------------------------------------------------------------------
-
 -- quantifier-free formulas
 
 data IsQFree {k} : Fm k → Set where
@@ -810,7 +889,7 @@ module _ where
   open =-Reasoning
 
   goal goal′ : ∀ {Θ k} {Γ : Fm§ k} → Θ / Γ ⊢
-                 ‵fun (const 1) (tab ‵var) ‵= ‵zero ‵⊃ ‵suc ‵zero ‵= ‵zero
+                 ‵fun (const 1) (tab ‵tvar) ‵= ‵zero ‵⊃ ‵suc ‵zero ‵= ‵zero
 
   goal = ‵lam
            (‵trans
@@ -829,14 +908,14 @@ module _ where
                 begin
                   ‵fun zero []
                 =˘⟨ ‵comp zero [] ⟩
-                  ‵fun (comp zero []) (tab ‵var)
+                  ‵fun (comp zero []) (tab ‵tvar)
                 ∎)
               ⟩
-              ‵fun suc (‵fun (comp zero []) (tab ‵var) ∷ [])
+              ‵fun suc (‵fun (comp zero []) (tab ‵tvar) ∷ [])
             =˘⟨ ‵comp suc (comp zero [] ∷ []) ⟩
-              ‵fun (comp suc (comp zero [] ∷ [])) (tab ‵var)
+              ‵fun (comp suc (comp zero [] ∷ [])) (tab ‵tvar)
             =⟨⟩
-              ‵fun (const 1) (tab ‵var)
+              ‵fun (const 1) (tab ‵tvar)
             =⟨ ‵var 0 ⟩
               ‵zero
             ∎)
@@ -863,66 +942,6 @@ module _ where
 
 ----------------------------------------------------------------------------------------------------
 
--- object-level continuation/double negation monad/applicative/functor
--- TODO: add laws?
-
-‵return : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ ⊢ A ‵⊃ ‵¬ ‵¬ A
-‵return = ‵lam (‵lam (0 ‵$ 1))
-
--- return : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ ⊢ A → Θ / Γ ⊢ ‵¬ ‵¬ A
--- return d = ‵return ‵$ d
-
-‵bind : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ ‵¬ ‵¬ A ‵⊃ (A ‵⊃ ‵¬ ‵¬ B) ‵⊃ ‵¬ ‵¬ B
-‵bind = ‵lam (‵lam (‵lam (2 ‵$ ‵lam ((2 ‵$ 0) ‵$ 1))))
-
-infixl 1 _>>=_
-_>>=_ : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ ‵¬ ‵¬ A → Θ / Γ ⊢ A ‵⊃ ‵¬ ‵¬ B → Θ / Γ ⊢ ‵¬ ‵¬ B
-d >>= e = (‵bind ‵$ d) ‵$ e
-
-‵join : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ ⊢ ‵¬ ‵¬ ‵¬ ‵¬ A ‵⊃ ‵¬ ‵¬ A
-‵join = ‵lam ((‵bind ‵$ 0) ‵$ ‵lam 0)
-
--- join : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ ⊢ ‵¬ ‵¬ ‵¬ ‵¬ A → Θ / Γ ⊢ ‵¬ ‵¬ A
--- join d = d >>= ‵lam 0
-
-‵apply : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ ‵¬ ‵¬ (A ‵⊃ B) ‵⊃ ‵¬ ‵¬ A ‵⊃ ‵¬ ‵¬ B
-‵apply = ‵lam (‵lam ((‵bind ‵$ 1) ‵$ ‵lam ((‵bind ‵$ 1) ‵$ ‵lam (‵return ‵$ 1 ‵$ 0))))
-
-infixl 4 _⊛_
-_⊛_ : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ ‵¬ ‵¬ (A ‵⊃ B) → Θ / Γ ⊢ ‵¬ ‵¬ A → Θ / Γ ⊢ ‵¬ ‵¬ B
-d ⊛ e = d >>= ‵lam (wk e >>= ‵lam (‵return ‵$ 1 ‵$ 0))
-
-‵map : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ (A ‵⊃ B) ‵⊃ ‵¬ ‵¬ A ‵⊃ ‵¬ ‵¬ B
-‵map = ‵lam (‵lam ((‵apply ‵$ ‵return ‵$ 1) ‵$ 0))
-
-infixl 4 _<$>_
-_<$>_ : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ A ‵⊃ B → Θ / Γ ⊢ ‵¬ ‵¬ A → Θ / Γ ⊢ ‵¬ ‵¬ B
-d <$> e = ‵return ‵$ d ⊛ e
-
-
-----------------------------------------------------------------------------------------------------
-
--- meta-level continuation/double negation monad/applicative/functor
--- TODO: add laws? delete?
-
--- return : ∀ {𝒶} {A : Set 𝒶} → A → ¬ ¬ A
--- return x = λ k → k x
---
--- bind : ∀ {𝒶 𝒷} {A : Set 𝒶} {B : Set 𝒷} → ¬ ¬ A → (A → ¬ ¬ B) → ¬ ¬ B
--- bind mx f = λ k → mx (λ x → f x k)
---
--- join : ∀ {𝒶} {A : Set 𝒶} → ¬ ¬ ¬ ¬ A → ¬ ¬ A
--- join mmx = bind mmx (λ mx → mx)
---
--- apply : ∀ {𝒶 𝒷} {A : Set 𝒶} {B : Set 𝒷} → ¬ ¬ (A → B) → ¬ ¬ A → ¬ ¬ B
--- apply mf mx = bind mf (λ f → bind mx (λ x → return (f x)))
---
--- map : ∀ {𝒶 𝒷} {A : Set 𝒶} {B : Set 𝒷} → (A → B) → ¬ ¬ A → ¬ ¬ B
--- map f mx = apply (return f) mx
-
-
-----------------------------------------------------------------------------------------------------
-
 -- double negation translation
 
 _° : ∀ {k} → Fm k → Fm k
@@ -939,103 +958,105 @@ _°§ : ∀ {k} → Fm§ k → Fm§ k
 (A ∷ Γ) °§ = A ° ∷ Γ °§
 
 
+-- TODO: interactions between DNT and renaming/substitution
+
 postulate
-  TODO2 : ∀ {k} {A : Fm (suc k)} {t} → (A [ t ]) ° ≡ (A °) [ t ]
-  TODO3 : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / (twkFm§ Γ) °§ ⊢ A → Θ / twkFm§ (Γ °§) ⊢ A
-  TODO4 : ∀ {Θ k} {Γ : Fm§ k} {A t} → Θ / Γ ⊢ (A [ t ]) ° → Θ / Γ ⊢ (A °) [ t ]
+  TODO2 : ∀ {k} {A : Fm (suc k)} {t} → A [ t ] ° ≡ (A °) [ t ]
+  TODO3 : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / twkFm§ Γ °§ ⊢ A → Θ / twkFm§ (Γ °§) ⊢ A
+  TODO4 : ∀ {Θ k} {Γ : Fm§ k} {A t} → Θ / Γ ⊢ A [ t ] ° → Θ / Γ ⊢ (A °) [ t ]
   TODO5 : ∀ {Θ k} {Γ : Fm§ k} {A t} → Θ / Γ ⊢ ‵∀ (A ° ‵⊃ (texFm (twkFm A) [ t ]) °) →
             Θ / Γ ⊢ ‵∀ (A ° ‵⊃ texFm (twkFm (A °)) [ t ])
-
+  TODO6 : ∀ {Θ k} {Γ : Fm§ k} {A C} → Θ / A ° ∷ twkFm§ Γ °§ ⊢ twkFm C ° →
+            Θ / A ° ∷ twkFm§ (Γ °§) ⊢ twkFm (C °)
 
 -- TODO: lemma 5
 
-module _ where
-  open ⫗-Reasoning
+lem5-1 : ∀ {k} {Γ : Fm§ k} {A} → PA / Γ ⊢ A ° ‵⫗ A
+lem5-1 {A = A ‵⊃ B} = ⫗cong⊃ lem5-1 lem5-1
+lem5-1 {A = A ‵∧ B} = ⫗cong∧ lem5-1 lem5-1
+lem5-1 {A = A ‵∨ B} = ⫗trans ⫗dn (⫗cong∨ lem5-1 lem5-1)
+lem5-1 {A = ‵∀ A}   = ⫗cong∀ lem5-1
+lem5-1 {A = ‵∃ A}   = ⫗trans ⫗dn (⫗cong∃ lem5-1)
+lem5-1 {A = ‵⊥}    = ⫗refl
+lem5-1 {A = t ‵= u} = ⫗dn
 
-  lem5-1 : ∀ {k} {Γ : Fm§ k} {A} → PA / Γ ⊢ A ° ‵⫗ A
-  lem5-1 {A = A ‵⊃ B} = ⫗cong⊃ lem5-1 lem5-1
-  lem5-1 {A = A ‵∧ B} = ⫗cong∧ lem5-1 lem5-1
-  lem5-1 {A = A ‵∨ B} = begin
-                          ‵¬ ‵¬ (A ° ‵∨ B °)
-                        ⫗⟨ ‵dn ⟩
-                          A ° ‵∨ B °
-                        ⫗⟨ ⫗cong∨ lem5-1 lem5-1 ⟩
-                          A ‵∨ B
-                        ∎
-  lem5-1 {A = ‵∀ A}   = ⫗cong∀ lem5-1
-  lem5-1 {A = ‵∃ A}   = begin
-                          ‵¬ ‵¬ ‵∃ (A °)
-                        ⫗⟨ ‵dn ⟩
-                          ‵∃ (A °)
-                        ⫗⟨ ⫗cong∃ lem5-1 ⟩
-                          ‵∃ A
-                        ∎
-  lem5-1 {A = ‵⊥}    = ⫗refl
-  lem5-1 {A = t ‵= u} = ‵dn
-
-  lem5-2 : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / ‵¬ ‵¬ (A °) ∷ Γ ⊢ A °
-  lem5-2 {A = A ‵⊃ B} = ‵lam (‵lam lem5-2 ‵$ ‵lam
-                          (2 ‵$ ‵lam
-                            (1 ‵$ 0 ‵$ 2)))
-  lem5-2 {A = A ‵∧ B} = ‵pair
-                          (‵lam lem5-2 ‵$ ‵lam
-                            (1 ‵$ ‵lam
-                              (1 ‵$ ‵fst 0)))
-                          (‵lam lem5-2 ‵$ ‵lam
-                            (1 ‵$ ‵lam
-                              (1 ‵$ ‵snd 0)))
-  lem5-2 {A = A ‵∨ B} = ‵join ‵$ 0
-  lem5-2 {A = ‵∀ A}   = ‵all (‵lam lem5-2 ‵$ ‵lam
+lem5-2 : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ ⊢ ‵¬ ‵¬ (A °) ‵⊃ A °
+lem5-2 {A = A ‵⊃ B} = ‵lam (‵lam (lem5-2 ‵$ ‵lam
+                        (2 ‵$ ‵lam
+                          (1 ‵$ 0 ‵$ 2))))
+lem5-2 {A = A ‵∧ B} = ‵lam (‵pair
+                        (lem5-2 ‵$ ‵lam
                           (1 ‵$ ‵lam
-                            (1 ‵$ ‵one 0 TODO1)))
-  lem5-2 {A = ‵∃ A}   = ‵join ‵$ 0
-  lem5-2 {A = ‵⊥}    = 0 ‵$ ‵lam 0
-  lem5-2 {A = t ‵= u} = ‵join ‵$ 0
+                            (1 ‵$ ‵fst 0)))
+                        (lem5-2 ‵$ ‵lam
+                          (1 ‵$ ‵lam
+                            (1 ‵$ ‵snd 0))))
+lem5-2 {A = A ‵∨ B} = ‵lam (‵join 0)
+lem5-2 {A = ‵∀ A}   = ‵lam (‵all (lem5-2 ‵$ ‵lam
+                        (1 ‵$ ‵lam
+                          (1 ‵$ ‵one 0 TODO1))))
+lem5-2 {A = ‵∃ A}   = ‵lam (‵join 0)
+lem5-2 {A = ‵⊥}    = ‵lam (0 ‵$ ‵lam 0)
+lem5-2 {A = t ‵= u} = ‵lam (‵join 0)
 
-  lem5-3∋ : ∀ {k} {Γ : Fm§ k} {A} → Γ ∋ A → Γ °§ ∋ A °
-  lem5-3∋ zero    = zero
-  lem5-3∋ (suc i) = suc (lem5-3∋ i)
+lem5-3∋ : ∀ {k} {Γ : Fm§ k} {A} → Γ ∋ A → Γ °§ ∋ A °
+lem5-3∋ zero    = zero
+lem5-3∋ (suc i) = suc (lem5-3∋ i)
 
-  lem5-3 : ∀ {Θ k} {Γ : Fm§ k} {A} → PA / Γ ⊢ A → Θ / Γ °§ ⊢ A °
-  lem5-3 (‵var i)           = ‵var (lem5-3∋ i)
-  lem5-3 (‵lam d)           = ‵lam (lem5-3 d)
-  lem5-3 (d ‵$ e)           = lem5-3 d ‵$ lem5-3 e
-  lem5-3 (‵pair d e)        = ‵pair (lem5-3 d) (lem5-3 e)
-  lem5-3 (‵fst d)           = ‵fst (lem5-3 d)
-  lem5-3 (‵snd d)           = ‵snd (lem5-3 d)
-  lem5-3 (‵left d)          = ‵return ‵$ ‵left (lem5-3 d)
-  lem5-3 (‵right d)         = ‵return ‵$ ‵right (lem5-3 d)
-  lem5-3 (‵either c d e)    = {!!}
-  lem5-3 (‵all d)           = ‵all (TODO3 (lem5-3 d))
-  lem5-3 (‵one d refl)      = ‵one (lem5-3 d) TODO2
-  lem5-3 (‵this d refl)     = ‵return ‵$ ‵this (lem5-3 d) TODO2
-  lem5-3 (‵some d e)        = {!!}
-  lem5-3 (‵PAmagic d)       = ‵lam lem5-2 ‵$ ‵lam (lem5-3 d)
-  lem5-3 ‵refl              = ‵return ‵$ ‵refl
-  lem5-3 (‵sym d)           = (‵bind ‵$ lem5-3 d) ‵$ ‵lam
-                                (‵return ‵$ ‵sym 0)
-  lem5-3 (‵trans d e)       = (‵bind ‵$ lem5-3 d) ‵$ ‵lam
-                                ((‵bind ‵$ wk (lem5-3 e)) ‵$ ‵lam
-                                  (‵return ‵$ ‵trans 1 0))
-  lem5-3 (‵cong f i d)      = (‵bind ‵$ lem5-3 d) ‵$ ‵lam
-                                (‵return ‵$ ‵cong f i 0)
-  lem5-3 ‵dis               = ‵return ‵$ ‵dis
-  lem5-3 (‵inj d)           = (‵bind ‵$ lem5-3 d) ‵$ ‵lam
-                                (‵return ‵$ ‵inj 0)
-  lem5-3 (‵ind d e)         = ‵ind (TODO4 (lem5-3 d)) (TODO5 (lem5-3 e))
-  lem5-3 (‵proj i)          = ‵return ‵$ ‵proj i
-  lem5-3 (‵comp g fs)       = ‵return ‵$ ‵comp g fs
-  lem5-3 (‵rec {s = s} f g) = ‵pair
-                                (‵return ‵$ ‵fst (‵rec {s = s} f g))
-                                (‵return ‵$ ‵snd (‵rec f g))
 
-  -- TODO: "Note that the converse of 3 trivially holds wih 1."
-  lem5-3⁻¹ : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ °§ ⊢ A ° → PA / Γ ⊢ A
-  lem5-3⁻¹ d = {!!}
 
-  -- TODO: "A counterexample for 4 is Φ = ¬∀xΨx."
-  lem5-4 : ∀ {k} {Γ : Fm§ k} → ¬ (∀ {A} → HA / A ∷ Γ ⊢ A °)
-  lem5-4 d = {!!}
+‵det : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ A ‵⊃ B → Θ / A ∷ Γ ⊢ B
+‵det d = wk d ‵$ 0
+
+⊃ex : ∀ {Θ k} {Γ : Fm§ k} {A B C} → Θ / Γ ⊢ (A ‵⊃ B ‵⊃ C) ‵⊃ B ‵⊃ A ‵⊃ C
+⊃ex = ‵lam (‵lam (‵lam ((2 ‵$ 0) ‵$ 1)))
+
+‵ex : ∀ {Θ k} {Γ : Fm§ k} {A B C} → Θ / B ∷ A ∷ Γ ⊢ C → Θ / A ∷ B ∷ Γ ⊢ C
+‵ex d = ‵det (‵det (⊃ex ‵$ ‵lam (‵lam d)))
+
+lem5-3 : ∀ {Θ k} {Γ : Fm§ k} {A} → PA / Γ ⊢ A → Θ / Γ °§ ⊢ A °
+lem5-3 (‵var i)           = ‵var (lem5-3∋ i)
+lem5-3 (‵lam d)           = ‵lam (lem5-3 d)
+lem5-3 (d ‵$ e)           = lem5-3 d ‵$ lem5-3 e
+lem5-3 (‵pair d e)        = ‵pair (lem5-3 d) (lem5-3 e)
+lem5-3 (‵fst d)           = ‵fst (lem5-3 d)
+lem5-3 (‵snd d)           = ‵snd (lem5-3 d)
+lem5-3 (‵left d)          = ‵return (‵left (lem5-3 d))
+lem5-3 (‵right d)         = ‵return (‵right (lem5-3 d))
+lem5-3 (‵either c d e)    = lem5-2 ‵$ (lem5-3 c ‵>>= ‵lam (‵either 0
+                              (‵return (‵ex (wk (lem5-3 d))))
+                              (‵return (‵ex (wk (lem5-3 e))))))
+lem5-3 (‵all d)           = ‵all (TODO3 (lem5-3 d))
+lem5-3 (‵one d refl)      = ‵one (lem5-3 d) TODO2
+lem5-3 (‵this d refl)     = ‵return (‵this (lem5-3 d) TODO2)
+lem5-3 (‵some d e)        = lem5-2 ‵$ (lem5-3 d ‵>>= ‵lam (‵some 0
+                              (‵return (‵ex (wk (TODO6 (lem5-3 e)))))))
+lem5-3 (‵PAmagic d)       = lem5-2 ‵$ ‵lam (lem5-3 d)
+lem5-3 ‵refl              = ‵return (‵refl)
+lem5-3 (‵sym d)           = lem5-3 d ‵>>= ‵lam
+                              (‵return (‵sym 0))
+lem5-3 (‵trans d e)       = lem5-3 d ‵>>= ‵lam
+                              (wk (lem5-3 e) ‵>>= ‵lam
+                                (‵return (‵trans 1 0)))
+lem5-3 (‵cong f i d)      = lem5-3 d ‵>>= ‵lam
+                              (‵return (‵cong f i 0))
+lem5-3 ‵dis               = ‵return ‵dis
+lem5-3 (‵inj d)           = lem5-3 d ‵>>= ‵lam
+                              (‵return (‵inj 0))
+lem5-3 (‵ind d e)         = ‵ind (TODO4 (lem5-3 d)) (TODO5 (lem5-3 e))
+lem5-3 (‵proj i)          = ‵return (‵proj i)
+lem5-3 (‵comp g fs)       = ‵return (‵comp g fs)
+lem5-3 (‵rec {s = s} f g) = ‵pair
+                              (‵return (‵fst (‵rec {s = s} f g)))
+                              (‵return (‵snd (‵rec f g)))
+
+-- TODO: "Note that the converse of 3 trivially holds wih 1."
+lem5-3⁻¹ : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ °§ ⊢ A ° → PA / Γ ⊢ A
+lem5-3⁻¹ d = {!!}
+
+-- TODO: "A counterexample for 4 is Φ = ¬∀xΨx."
+lem5-4 : ∀ {k} {Γ : Fm§ k} → ¬ (∀ {A} → HA / A ∷ Γ ⊢ A °)
+lem5-4 d = {!!}
 
 
 ----------------------------------------------------------------------------------------------------
