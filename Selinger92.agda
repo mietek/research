@@ -993,84 +993,81 @@ postulate
 
 -- TODO: lemma 5
 
-⫗lem5-1 : ∀ {k} {Γ : Fm§ k} {A} → PA / Γ ⊢ A ° ‵⫗ A
-⫗lem5-1 {A = A ‵⊃ B} = ⫗cong⊃ ⫗lem5-1 ⫗lem5-1
-⫗lem5-1 {A = A ‵∧ B} = ⫗cong∧ ⫗lem5-1 ⫗lem5-1
-⫗lem5-1 {A = A ‵∨ B} = ⫗trans ⫗dn (⫗cong∨ ⫗lem5-1 ⫗lem5-1)
-⫗lem5-1 {A = ‵∀ A}   = ⫗cong∀ ⫗lem5-1
-⫗lem5-1 {A = ‵∃ A}   = ⫗trans ⫗dn (⫗cong∃ ⫗lem5-1)
-⫗lem5-1 {A = ‵⊥}    = ⫗refl
-⫗lem5-1 {A = t ‵= u} = ⫗dn
+lem5-1 : ∀ {k} {Γ : Fm§ k} {A} → PA / Γ ⊢ A ° ‵⫗ A
+lem5-1 {A = A ‵⊃ B} = ⫗cong⊃ lem5-1 lem5-1
+lem5-1 {A = A ‵∧ B} = ⫗cong∧ lem5-1 lem5-1
+lem5-1 {A = A ‵∨ B} = ⫗trans ⫗dn (⫗cong∨ lem5-1 lem5-1)
+lem5-1 {A = ‵∀ A}   = ⫗cong∀ lem5-1
+lem5-1 {A = ‵∃ A}   = ⫗trans ⫗dn (⫗cong∃ lem5-1)
+lem5-1 {A = ‵⊥}    = ⫗refl
+lem5-1 {A = t ‵= u} = ⫗dn
 
-⊃lem5-2 : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ ⊢ ‵¬ ‵¬ (A °) ‵⊃ A °
-⊃lem5-2 {A = A ‵⊃ B} = ‵lam (‵lam (⊃lem5-2 ‵$ ‵lam
+lem5-2 : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ ⊢ ‵¬ ‵¬ (A °) ‵⊃ A °
+lem5-2 {A = A ‵⊃ B} = ‵lam (‵lam (lem5-2 ‵$ ‵lam
                          (2 ‵$ ‵lam
                            (1 ‵$ 0 ‵$ 2))))
-⊃lem5-2 {A = A ‵∧ B} = ‵lam (‵pair
-                         (⊃lem5-2 ‵$ ‵lam
+lem5-2 {A = A ‵∧ B} = ‵lam (‵pair
+                         (lem5-2 ‵$ ‵lam
                            (1 ‵$ ‵lam
                              (1 ‵$ ‵fst 0)))
-                         (⊃lem5-2 ‵$ ‵lam
+                         (lem5-2 ‵$ ‵lam
                            (1 ‵$ ‵lam
                              (1 ‵$ ‵snd 0))))
-⊃lem5-2 {A = A ‵∨ B} = ‵lam (‵join 0)
-⊃lem5-2 {A = ‵∀ A}   = ‵lam (‵all (⊃lem5-2 ‵$ ‵lam
+lem5-2 {A = A ‵∨ B} = ‵lam (‵join 0)
+lem5-2 {A = ‵∀ A}   = ‵lam (‵all (lem5-2 ‵$ ‵lam
                          (1 ‵$ ‵lam
                            (1 ‵$ ‵one 0 TODO1))))
-⊃lem5-2 {A = ‵∃ A}   = ‵lam (‵join 0)
-⊃lem5-2 {A = ‵⊥}    = ‵lam (0 ‵$ ‵lam 0)
-⊃lem5-2 {A = t ‵= u} = ‵lam (‵join 0)
+lem5-2 {A = ‵∃ A}   = ‵lam (‵join 0)
+lem5-2 {A = ‵⊥}    = ‵lam (0 ‵$ ‵lam 0)
+lem5-2 {A = t ‵= u} = ‵lam (‵join 0)
 
-‵lem5-2 : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ ⊢ ‵¬ ‵¬ (A °) → Θ / Γ ⊢ A °
-‵lem5-2 d = ⊃lem5-2 ‵$ d
+lem5-3∋ : ∀ {k} {Γ : Fm§ k} {A} → Γ ∋ A → Γ °§ ∋ A °
+lem5-3∋ zero    = zero
+lem5-3∋ (suc i) = suc (lem5-3∋ i)
 
-‵lem5-3∋ : ∀ {k} {Γ : Fm§ k} {A} → Γ ∋ A → Γ °§ ∋ A °
-‵lem5-3∋ zero    = zero
-‵lem5-3∋ (suc i) = suc (‵lem5-3∋ i)
-
-‵lem5-3 : ∀ {Θ k} {Γ : Fm§ k} {A} → PA / Γ ⊢ A → Θ / Γ °§ ⊢ A °
-‵lem5-3 (‵var i)           = ‵var (‵lem5-3∋ i)
-‵lem5-3 (‵lam d)           = ‵lam (‵lem5-3 d)
-‵lem5-3 (d ‵$ e)           = ‵lem5-3 d ‵$ ‵lem5-3 e
-‵lem5-3 (‵pair d e)        = ‵pair (‵lem5-3 d) (‵lem5-3 e)
-‵lem5-3 (‵fst d)           = ‵fst (‵lem5-3 d)
-‵lem5-3 (‵snd d)           = ‵snd (‵lem5-3 d)
-‵lem5-3 (‵left d)          = ‵return (‵left (‵lem5-3 d))
-‵lem5-3 (‵right d)         = ‵return (‵right (‵lem5-3 d))
-‵lem5-3 (‵either c d e)    = ‵lem5-2 (‵lem5-3 c ‵>>= ‵lam (‵either 0
-                               (‵return (‵ex (wk (‵lem5-3 d))))
-                               (‵return (‵ex (wk (‵lem5-3 e))))))
-‵lem5-3 (‵all d)           = ‵all (TODO3 (‵lem5-3 d))
-‵lem5-3 (‵one d refl)      = ‵one (‵lem5-3 d) TODO2
-‵lem5-3 (‵this d refl)     = ‵return (‵this (‵lem5-3 d) TODO2)
-‵lem5-3 (‵some d e)        = ‵lem5-2 (‵lem5-3 d ‵>>= ‵lam (‵some 0
-                               (‵return (‵ex (wk (TODO6 (‵lem5-3 e)))))))
-‵lem5-3 (‵PAmagic d)       = ‵lem5-2 (‵lam (‵lem5-3 d))
-‵lem5-3 ‵refl              = ‵return (‵refl)
-‵lem5-3 (‵sym d)           = ‵lem5-3 d ‵>>= ‵lam
-                               (‵return (‵sym 0))
-‵lem5-3 (‵trans d e)       = ‵lem5-3 d ‵>>= ‵lam
-                               (wk (‵lem5-3 e) ‵>>= ‵lam
-                                 (‵return (‵trans 1 0)))
-‵lem5-3 (‵cong f i d)      = ‵lem5-3 d ‵>>= ‵lam
-                               (‵return (‵cong f i 0))
-‵lem5-3 ‵dis               = ‵return ‵dis
-‵lem5-3 (‵inj d)           = ‵lem5-3 d ‵>>= ‵lam
-                               (‵return (‵inj 0))
-‵lem5-3 (‵ind d e)         = ‵ind (TODO4 (‵lem5-3 d)) (TODO5 (‵lem5-3 e))
-‵lem5-3 (‵proj i)          = ‵return (‵proj i)
-‵lem5-3 (‵comp g fs)       = ‵return (‵comp g fs)
-‵lem5-3 (‵rec {s = s} f g) = ‵pair
-                               (‵return (‵fst (‵rec {s = s} f g)))
-                               (‵return (‵snd (‵rec f g)))
-
-hmm : ∀ {k} {Γ : Fm§ k} {A} → PA / Γ °§ ⊢ A → PA / Γ ⊢ A
-hmm {Γ = []}    d = d
-hmm {Γ = B ∷ Γ} d = wk (hmm (‵lam d)) ‵$ (‵snd ⫗lem5-1 ‵$ 0)
+lem5-3 : ∀ {Θ k} {Γ : Fm§ k} {A} → PA / Γ ⊢ A → Θ / Γ °§ ⊢ A °
+lem5-3 (‵var i)           = ‵var (lem5-3∋ i)
+lem5-3 (‵lam d)           = ‵lam (lem5-3 d)
+lem5-3 (d ‵$ e)           = lem5-3 d ‵$ lem5-3 e
+lem5-3 (‵pair d e)        = ‵pair (lem5-3 d) (lem5-3 e)
+lem5-3 (‵fst d)           = ‵fst (lem5-3 d)
+lem5-3 (‵snd d)           = ‵snd (lem5-3 d)
+lem5-3 (‵left d)          = ‵return (‵left (lem5-3 d))
+lem5-3 (‵right d)         = ‵return (‵right (lem5-3 d))
+lem5-3 (‵either c d e)    = lem5-2 ‵$ (lem5-3 c ‵>>= ‵lam (‵either 0
+                              (‵return (‵ex (wk (lem5-3 d))))
+                              (‵return (‵ex (wk (lem5-3 e))))))
+lem5-3 (‵all d)           = ‵all (TODO3 (lem5-3 d))
+lem5-3 (‵one d refl)      = ‵one (lem5-3 d) TODO2
+lem5-3 (‵this d refl)     = ‵return (‵this (lem5-3 d) TODO2)
+lem5-3 (‵some d e)        = lem5-2 ‵$ (lem5-3 d ‵>>= ‵lam (‵some 0
+                              (‵return (‵ex (wk (TODO6 (lem5-3 e)))))))
+lem5-3 (‵PAmagic d)       = lem5-2 ‵$ ‵lam (lem5-3 d)
+lem5-3 ‵refl              = ‵return (‵refl)
+lem5-3 (‵sym d)           = lem5-3 d ‵>>= ‵lam
+                              (‵return (‵sym 0))
+lem5-3 (‵trans d e)       = lem5-3 d ‵>>= ‵lam
+                              (wk (lem5-3 e) ‵>>= ‵lam
+                                (‵return (‵trans 1 0)))
+lem5-3 (‵cong f i d)      = lem5-3 d ‵>>= ‵lam
+                              (‵return (‵cong f i 0))
+lem5-3 ‵dis               = ‵return ‵dis
+lem5-3 (‵inj d)           = lem5-3 d ‵>>= ‵lam
+                              (‵return (‵inj 0))
+lem5-3 (‵ind d e)         = ‵ind (TODO4 (lem5-3 d)) (TODO5 (lem5-3 e))
+lem5-3 (‵proj i)          = ‵return (‵proj i)
+lem5-3 (‵comp g fs)       = ‵return (‵comp g fs)
+lem5-3 (‵rec {s = s} f g) = ‵pair
+                              (‵return (‵fst (‵rec {s = s} f g)))
+                              (‵return (‵snd (‵rec f g)))
 
 -- TODO: "Note that the converse of 3 trivially holds wih 1."
-‵lem5-3⁻¹ : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ °§ ⊢ A ° → PA / Γ ⊢ A
-‵lem5-3⁻¹ d = hmm (‵fst ⫗lem5-1 ‵$ lem2′ d)
+lem5-3⁻¹ : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ °§ ⊢ A ° → PA / Γ ⊢ A
+lem5-3⁻¹ d = aux (‵fst lem5-1 ‵$ lem2′ d)
+  where
+    aux : ∀ {k} {Γ : Fm§ k} {A} → PA / Γ °§ ⊢ A → PA / Γ ⊢ A
+    aux {Γ = []}    d = d
+    aux {Γ = B ∷ Γ} d = wk (aux (‵lam d)) ‵$ (‵snd lem5-1 ‵$ 0)
 
 -- TODO: "A counterexample for 4 is Φ = ¬∀xΨx."
 -- lem5-4 : ∀ {k} {Γ : Fm§ k} → ¬ (∀ {A} → HA / ‵¬ (‵∀ A) ∷ Γ ⊢ (‵¬ (‵∀ A)) °)
