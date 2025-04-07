@@ -53,6 +53,7 @@ open import Relation.Nullary.Decidable using (True)
 
 -- missing things
 
+-- NOTE: literals for naturals
 instance
   numberNat : Number Nat
   numberNat = record
@@ -60,6 +61,7 @@ instance
     ; fromNat    = λ n → n
     }
 
+-- NOTE: literals for finite naturals, and for standalone term variables
 instance
   numberFin : ∀ {n} → Number (Fin n)
   numberFin {n} = record
@@ -253,7 +255,7 @@ mutual
   Tm§ : Nat → Nat → Set
   Tm§ k n = Vec (Tm k) n
 
--- NOTE: literals for term variables
+-- NOTE: literals for term variables in terms; unnecessary?
 -- instance
 --   numberTm : ∀ {k} → Number (Tm k)
 --   numberTm {k} = record
@@ -267,17 +269,18 @@ mutual
 ‵suc : ∀ {k} → Tm k → Tm k
 ‵suc t = ‵fun suc (t ∷ [])
 
-primFromNat : ∀ {k} → Nat → Tm k
-primFromNat zero    = ‵zero
-primFromNat (suc m) = ‵suc (primFromNat m)
-
--- NOTE: literals for naturals encoded as object-level primitive recursive functions
--- instance
---   numberTm : ∀ {k} → Number (Tm k)
---   numberTm {k} = record
---     { Constraint = λ _ → ⊤
---     ; fromNat    = λ m → primFromNat m
---     }
+-- NOTE: literals for naturals encoded as object-level primitive recursive functions; unnecessary?
+-- module _ where
+--   primFromNat : ∀ {k} → Nat → Tm k
+--   primFromNat zero    = ‵zero
+--   primFromNat (suc m) = ‵suc (primFromNat m)
+--
+--   instance
+--     numberTm : ∀ {k} → Number (Tm k)
+--     numberTm {k} = record
+--       { Constraint = λ _ → ⊤
+--       ; fromNat    = λ m → primFromNat m
+--       }
 
 -- formulas, indexed by number of term variables
 data Fm (k : Nat) : Set where
@@ -311,27 +314,28 @@ data _∋_ {k} : Fm§ k → Fm k → Set where
   zero : ∀ {Γ A} → A ∷ Γ ∋ A
   suc  : ∀ {Γ A C} (i : Γ ∋ A) → C ∷ Γ ∋ A
 
-infix 3 _∋⟨_⟩_
-data _∋⟨_⟩_ {k} : Fm§ k → Nat → Fm k → Set where
+-- NOTE: literals for standalone derivation variables
+module _ where
+  infix 3 _∋⟨_⟩_
+  data _∋⟨_⟩_ {k} : Fm§ k → Nat → Fm k → Set where
+    instance
+      zero : ∀ {Γ A} → A ∷ Γ ∋⟨ zero ⟩ A
+    suc : ∀ {Γ m A C} (i : Γ ∋⟨ m ⟩ A) → C ∷ Γ ∋⟨ suc m ⟩ A
+
   instance
-    zero : ∀ {Γ A} → A ∷ Γ ∋⟨ zero ⟩ A
-  suc : ∀ {Γ m A C} (i : Γ ∋⟨ m ⟩ A) → C ∷ Γ ∋⟨ suc m ⟩ A
+    suc∋# : ∀ {k} {Γ : Fm§ k} {m A C} {{i : Γ ∋⟨ m ⟩ A}} → C ∷ Γ ∋⟨ suc m ⟩ A
+    suc∋# {{i}} = suc i
 
-instance
-  suc∋# : ∀ {k} {Γ : Fm§ k} {m A C} {{i : Γ ∋⟨ m ⟩ A}} → C ∷ Γ ∋⟨ suc m ⟩ A
-  suc∋# {{i}} = suc i
+  ∋#→∋ : ∀ {m k} {Γ : Fm§ k} {A} → Γ ∋⟨ m ⟩ A → Γ ∋ A
+  ∋#→∋ zero    = zero
+  ∋#→∋ (suc i) = suc (∋#→∋ i)
 
-∋#→∋ : ∀ {m k} {Γ : Fm§ k} {A} → Γ ∋⟨ m ⟩ A → Γ ∋ A
-∋#→∋ zero    = zero
-∋#→∋ (suc i) = suc (∋#→∋ i)
-
--- NOTE: literals for derivation variables
-instance
-  number∋ : ∀ {k} {Γ : Fm§ k} {A} → Number (Γ ∋ A)
-  number∋ {Γ = Γ} {A} = record
-    { Constraint = λ m → Γ ∋⟨ m ⟩ A
-    ; fromNat    = λ m {{p}} → ∋#→∋ p
-    }
+  instance
+    number∋ : ∀ {k} {Γ : Fm§ k} {A} → Number (Γ ∋ A)
+    number∋ {Γ = Γ} {A} = record
+      { Constraint = λ m → Γ ∋⟨ m ⟩ A
+      ; fromNat    = λ m {{p}} → ∋#→∋ p
+      }
 
 infix 3 _⊆_
 data _⊆_ {k} : Fm§ k → Fm§ k → Set where
@@ -487,6 +491,7 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
                Θ / Γ ⊢ ‵fun (rec f g) (‵zero ∷ ts) ‵= ‵fun f ts ‵∧
                  ‵fun (rec f g) (‵suc s ∷ ts) ‵= ‵fun g (‵fun (rec f g) (s ∷ ts) ∷ s ∷ ts)
 
+-- NOTE: literals for derivation variables in terms
 instance
   number⊢ : ∀ {Θ k} {Γ : Fm§ k} {A} → Number (Θ / Γ ⊢ A)
   number⊢ {Γ = Γ} {A} = record
