@@ -564,7 +564,7 @@ twk = tren (wk≤ id≤)
 
 -- lemma 2
 
-lem2 : ∀ {k} {Γ : Fm§ k} {A} → HA / Γ ⊢ A → PA / Γ ⊢ A
+lem2 : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ ⊢ A → PA / Γ ⊢ A
 lem2 (‵var i)        = ‵var i
 lem2 (‵lam d)        = ‵lam (lem2 d)
 lem2 (d ‵$ e)        = lem2 d ‵$ lem2 e
@@ -579,6 +579,7 @@ lem2 (‵one d refl)   = ‵one (lem2 d) refl
 lem2 (‵this d refl)  = ‵this (lem2 d) refl
 lem2 (‵some d e)     = ‵some (lem2 d) (lem2 e)
 lem2 (‵HAabort d)    = ‵abort (lem2 d)
+lem2 (‵PAmagic d)    = ‵PAmagic (lem2 d)
 lem2 ‵refl           = ‵refl
 lem2 (‵sym d)        = ‵sym (lem2 d)
 lem2 (‵trans d e)    = ‵trans (lem2 d) (lem2 e)
@@ -589,10 +590,6 @@ lem2 (‵ind d e)      = ‵ind (lem2 d) (lem2 e)
 lem2 (‵proj i)       = ‵proj i
 lem2 (‵comp g fs)    = ‵comp g fs
 lem2 (‵rec f g)      = ‵rec f g
-
-lem2′ : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ ⊢ A → PA / Γ ⊢ A
-lem2′ {HA} d = lem2 d
-lem2′ {PA} d = d
 
 
 ----------------------------------------------------------------------------------------------------
@@ -1068,7 +1065,7 @@ lem5-3 (‵rec {s = s} f g) = ‵pair
 
 -- TODO: "Note that the converse of 3 trivially holds wih 1."
 lem5-3⁻¹ : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ °§ ⊢ A ° → PA / Γ ⊢ A
-lem5-3⁻¹ d = aux (‵fst lem5-1 ‵$ lem2′ d)
+lem5-3⁻¹ d = aux (‵fst lem5-1 ‵$ lem2 d)
   where
     aux : ∀ {k} {Γ : Fm§ k} {A} → PA / Γ °§ ⊢ A → PA / Γ ⊢ A
     aux {Γ = []}    d = d
