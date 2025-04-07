@@ -926,38 +926,38 @@ data IsQFree {k} : Fm k → Set where
   _‵=_ : ∀ {t u} → IsQFree (t ‵= u)
 
 -- TODO: lemma 3
-module _ where
-  open =-Reasoning
-
-  lem3 : ∀ {Θ k} {Γ : Fm§ k} (A : Fm k) {{_ : IsQFree A}} → Σ (Prim k) λ f →
-           Θ / Γ ⊢ A ‵⫗ ‵fun f (tab ‵tvar) ‵= ‵zero
-  lem3 (A ‵⊃ B) = {!!}
-  lem3 (A ‵∧ B) = {!!}
-  lem3 (A ‵∨ B) = {!!}
-  lem3 ‵⊥      = const 1 , ‵pair (‵lam (‵abort 0)) (‵lam (‵dis ‵$ (‵lam goal) ‵$ 0))
-                  where
-                    goal : ∀ {Θ k} {Γ : Fm§ k} →
-                             Θ / ‵fun (const 1) (tab ‵tvar) ‵= ‵zero ∷ Γ ⊢ ‵suc ‵zero ‵= ‵zero
-                    goal = begin
-                             ‵suc ‵zero
-                           =⟨⟩
-                             ‵fun suc (‵fun zero [] ∷ [])
-                           =⟨ ‵cong suc zero (
-                               begin
-                                 ‵fun zero []
-                               =˘⟨ ‵comp zero [] ⟩
-                                 ‵fun (comp zero []) (tab ‵tvar)
-                               ∎)
-                             ⟩
-                             ‵fun suc (‵fun (comp zero []) (tab ‵tvar) ∷ [])
-                           =˘⟨ ‵comp suc (comp zero [] ∷ []) ⟩
-                             ‵fun (comp suc (comp zero [] ∷ [])) (tab ‵tvar)
-                           =⟨⟩
-                             ‵fun (const 1) (tab ‵tvar)
-                           =⟨ 0 ⟩
-                             ‵zero
-                           ∎
-  lem3 (t ‵= u) = {!!}
+-- module _ where
+--   open =-Reasoning
+--
+--   lem3 : ∀ {Θ k} {Γ : Fm§ k} (A : Fm k) {{_ : IsQFree A}} → Σ (Prim k) λ f →
+--            Θ / Γ ⊢ A ‵⫗ ‵fun f (tab ‵tvar) ‵= ‵zero
+--   lem3 (A ‵⊃ B) = {!!}
+--   lem3 (A ‵∧ B) = {!!}
+--   lem3 (A ‵∨ B) = {!!}
+--   lem3 ‵⊥      = const 1 , ‵pair (‵lam (‵abort 0)) (‵lam (‵dis ‵$ (‵lam goal) ‵$ 0))
+--                   where
+--                     goal : ∀ {Θ k} {Γ : Fm§ k} →
+--                              Θ / ‵fun (const 1) (tab ‵tvar) ‵= ‵zero ∷ Γ ⊢ ‵suc ‵zero ‵= ‵zero
+--                     goal = begin
+--                              ‵suc ‵zero
+--                            =⟨⟩
+--                              ‵fun suc (‵fun zero [] ∷ [])
+--                            =⟨ ‵cong suc zero (
+--                                begin
+--                                  ‵fun zero []
+--                                =˘⟨ ‵comp zero [] ⟩
+--                                  ‵fun (comp zero []) (tab ‵tvar)
+--                                ∎)
+--                              ⟩
+--                              ‵fun suc (‵fun (comp zero []) (tab ‵tvar) ∷ [])
+--                            =˘⟨ ‵comp suc (comp zero [] ∷ []) ⟩
+--                              ‵fun (comp suc (comp zero [] ∷ [])) (tab ‵tvar)
+--                            =⟨⟩
+--                              ‵fun (const 1) (tab ‵tvar)
+--                            =⟨ 0 ⟩
+--                              ‵zero
+--                            ∎
+--   lem3 (t ‵= u) = {!!}
 
 
 ----------------------------------------------------------------------------------------------------
