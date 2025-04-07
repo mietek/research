@@ -252,12 +252,12 @@ mutual
   Tm§ : Nat → Nat → Set
   Tm§ k n = Vec (Tm k) n
 
-instance
-  numberTm : ∀ {k} → Number (Tm k)
-  numberTm {k} = record
-    { Constraint = λ m → True (m Nat.<? k)
-    ; fromNat    = λ m {{p}} → ‵tvar ((Fin.# m) {k} {p})
-    }
+-- instance
+--   numberTm : ∀ {k} → Number (Tm k)
+--   numberTm {k} = record
+--     { Constraint = λ m → True (m Nat.<? k)
+--     ; fromNat    = λ m {{p}} → ‵tvar ((Fin.# m) {k} {p})
+--     }
 
 ‵zero : ∀ {k} → Tm k
 ‵zero = ‵fun zero []
@@ -393,7 +393,7 @@ postulate
   _[_] : ∀ {k} (A : Fm (suc k)) (s : Tm k) → Fm k
 
   -- TODO: this should follow from one of the substitution lemmas
-  TODO1 : ∀ {k} {A : Fm (suc k)} → A ≡ (trenFm (lift≤ (wk≤ id≤)) A [ 0 ])
+  TODO1 : ∀ {k} {A : Fm (suc k)} → A ≡ (trenFm (lift≤ (wk≤ id≤)) A [ ‵tvar zero ])
 
 
 ----------------------------------------------------------------------------------------------------
@@ -460,7 +460,7 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   -- ------------------------------------
   --              ∀y.A[y/x₀]
   ‵ind     : ∀ {Θ Γ A} (d : Θ / Γ ⊢ A [ ‵zero ])
-               (e : Θ / Γ ⊢ ‵∀ (A ‵⊃ (texFm (twkFm A)) [ ‵suc 0 ])) →
+               (e : Θ / Γ ⊢ ‵∀ (A ‵⊃ (texFm (twkFm A)) [ ‵suc (‵tvar zero) ])) →
                Θ / Γ ⊢ ‵∀ A
 
   ‵proj    : ∀ {Θ Γ n ts} (i : Fin n) → Θ / Γ ⊢ ‵fun (proj i) ts ‵= get i ts
@@ -524,9 +524,25 @@ twk = tren (wk≤ id≤)
 
 ----------------------------------------------------------------------------------------------------
 
+-- various things
+
+‵det : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ A ‵⊃ B → Θ / A ∷ Γ ⊢ B
+‵det d = wk d ‵$ 0
+
+⊃ex : ∀ {Θ k} {Γ : Fm§ k} {A B C} → Θ / Γ ⊢ (A ‵⊃ B ‵⊃ C) ‵⊃ B ‵⊃ A ‵⊃ C
+⊃ex = ‵lam (‵lam (‵lam ((2 ‵$ 0) ‵$ 1)))
+
+‵ex : ∀ {Θ k} {Γ : Fm§ k} {A B C} → Θ / B ∷ A ∷ Γ ⊢ C → Θ / A ∷ B ∷ Γ ⊢ C
+‵ex d = ‵det (‵det (⊃ex ‵$ ‵lam (‵lam d)))
+
 ‵abort : ∀ {Θ k} {Γ : Fm§ k} {C} → Θ / Γ ⊢ ‵⊥ → Θ / Γ ⊢ C
 ‵abort {HA} d = ‵HAabort d
 ‵abort {PA} d = ‵PAmagic (wk d)
+
+
+----------------------------------------------------------------------------------------------------
+
+-- lemma 2
 
 lem2 : ∀ {k} {Γ : Fm§ k} {A} → HA / Γ ⊢ A → PA / Γ ⊢ A
 lem2 (‵var i)        = ‵var i
@@ -885,51 +901,39 @@ data IsQFree {k} : Fm k → Set where
   ‵⊥  : IsQFree ‵⊥
   _‵=_ : ∀ {t u} → IsQFree (t ‵= u)
 
+-- TODO: lemma 3
 module _ where
   open =-Reasoning
 
-  goal goal′ : ∀ {Θ k} {Γ : Fm§ k} → Θ / Γ ⊢
-                 ‵fun (const 1) (tab ‵tvar) ‵= ‵zero ‵⊃ ‵suc ‵zero ‵= ‵zero
-
-  goal = ‵lam
-           (‵trans
-             (‵trans
-               (‵cong suc zero
-                 (‵sym (‵comp zero [])))
-               (‵sym (‵comp suc (comp zero [] ∷ []))))
-             (‵var 0))
-
-  goal′ = ‵lam
-            (begin
-              ‵suc ‵zero
-            =⟨⟩
-              ‵fun suc (‵fun zero [] ∷ [])
-            =⟨ ‵cong suc zero (
-                begin
-                  ‵fun zero []
-                =˘⟨ ‵comp zero [] ⟩
-                  ‵fun (comp zero []) (tab ‵tvar)
-                ∎)
-              ⟩
-              ‵fun suc (‵fun (comp zero []) (tab ‵tvar) ∷ [])
-            =˘⟨ ‵comp suc (comp zero [] ∷ []) ⟩
-              ‵fun (comp suc (comp zero [] ∷ [])) (tab ‵tvar)
-            =⟨⟩
-              ‵fun (const 1) (tab ‵tvar)
-            =⟨ ‵var 0 ⟩
-              ‵zero
-            ∎)
-
-
--- TODO: lemma 3
-
--- lem3 : ∀ {Θ k} {Γ : Fm§ k} (A : Fm k) {{_ : IsQFree A}} → Σ (Prim k) λ f →
---          Θ / Γ ⊢ A ‵⫗ ‵fun f (tab ‵var) ‵= ‵zero
--- lem3 (A ‵⊃ B) = {!!}
--- lem3 (A ‵∧ B) = {!!}
--- lem3 (A ‵∨ B) = {!!}
--- lem3 ‵⊥      = const 1 , ‵pair (‵lam (abort 0)) (‵lam (‵dis ‵$ goal ‵$ 0))
--- lem3 (t ‵= u) = {!!}
+  lem3 : ∀ {Θ k} {Γ : Fm§ k} (A : Fm k) {{_ : IsQFree A}} → Σ (Prim k) λ f →
+           Θ / Γ ⊢ A ‵⫗ ‵fun f (tab ‵tvar) ‵= ‵zero
+  lem3 (A ‵⊃ B) = {!!}
+  lem3 (A ‵∧ B) = {!!}
+  lem3 (A ‵∨ B) = {!!}
+  lem3 ‵⊥      = const 1 , ‵pair (‵lam (‵abort 0)) (‵lam (‵dis ‵$ (‵lam goal) ‵$ 0))
+                  where
+                    goal : ∀ {Θ k} {Γ : Fm§ k} →
+                             Θ / ‵fun (const 1) (tab ‵tvar) ‵= ‵zero ∷ Γ ⊢ ‵suc ‵zero ‵= ‵zero
+                    goal = begin
+                             ‵suc ‵zero
+                           =⟨⟩
+                             ‵fun suc (‵fun zero [] ∷ [])
+                           =⟨ ‵cong suc zero (
+                               begin
+                                 ‵fun zero []
+                               =˘⟨ ‵comp zero [] ⟩
+                                 ‵fun (comp zero []) (tab ‵tvar)
+                               ∎)
+                             ⟩
+                             ‵fun suc (‵fun (comp zero []) (tab ‵tvar) ∷ [])
+                           =˘⟨ ‵comp suc (comp zero [] ∷ []) ⟩
+                             ‵fun (comp suc (comp zero [] ∷ [])) (tab ‵tvar)
+                           =⟨⟩
+                             ‵fun (const 1) (tab ‵tvar)
+                           =⟨ ‵var zero ⟩
+                             ‵zero
+                           ∎
+  lem3 (t ‵= u) = {!!}
 
 
 ----------------------------------------------------------------------------------------------------
@@ -1002,17 +1006,6 @@ lem5-2 {A = t ‵= u} = ‵lam (‵join 0)
 lem5-3∋ : ∀ {k} {Γ : Fm§ k} {A} → Γ ∋ A → Γ °§ ∋ A °
 lem5-3∋ zero    = zero
 lem5-3∋ (suc i) = suc (lem5-3∋ i)
-
-
-
-‵det : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ A ‵⊃ B → Θ / A ∷ Γ ⊢ B
-‵det d = wk d ‵$ 0
-
-⊃ex : ∀ {Θ k} {Γ : Fm§ k} {A B C} → Θ / Γ ⊢ (A ‵⊃ B ‵⊃ C) ‵⊃ B ‵⊃ A ‵⊃ C
-⊃ex = ‵lam (‵lam (‵lam ((2 ‵$ 0) ‵$ 1)))
-
-‵ex : ∀ {Θ k} {Γ : Fm§ k} {A B C} → Θ / B ∷ A ∷ Γ ⊢ C → Θ / A ∷ B ∷ Γ ⊢ C
-‵ex d = ‵det (‵det (⊃ex ‵$ ‵lam (‵lam d)))
 
 lem5-3 : ∀ {Θ k} {Γ : Fm§ k} {A} → PA / Γ ⊢ A → Θ / Γ °§ ⊢ A °
 lem5-3 (‵var i)           = ‵var (lem5-3∋ i)
