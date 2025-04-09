@@ -1158,6 +1158,12 @@ _ᴬ⟨_⟩§ : ∀ {k} → Fm§ k → Fm k → Fm§ k
 (A ∷ Γ) ᴬ⟨ T ⟩§ = A ᴬ⟨ T ⟩ ∷ Γ ᴬ⟨ T ⟩§
 
 
+-- TODO: interactions between A-translation and renaming/substitution
+
+postulate
+  TODO12 : ∀ {k} {A : Fm (suc k)} {T t} → (A [ t ]) ᴬ⟨ T ⟩ ≡ (A ᴬ⟨ twkFm T ⟩) [ t ]
+
+
 -- TODO: lemma 6
 
 aux1 : ∀ {k} {Γ : Fm§ k} {A B C} → PA / Γ ⊢ (A ‵∨ C) ‵⊃ (B ‵∨ C) ‵⫗ (A ‵⊃ B) ‵∨ C
@@ -1199,7 +1205,14 @@ aux3 = ‵pair
 
 aux4 : ∀ {k} {Γ : Fm§ k} {A C} → PA / Γ ⊢ ‵∀ (A ‵∨ twkFm C) ‵⫗ (‵∀ A) ‵∨ C
 aux4 {Γ = Γ} {A} {C} = ‵pair
-         (‵lam {!!}) -- TODO: argh. is ‵all wrong?
+         (‵lam (‵either
+           {Γ = ‵∀ (A ‵∨ twkFm C) ∷ Γ}
+           {A = {!!}}
+           {B = C}
+           {C = (‵∀ A) ‵∨ C}
+           {!‵one {!!} {!!} (‵var zero)!}
+           (‵left (‵all {!‵var zero!}))
+           (‵right (‵var zero)))) -- TODO: argh. is ‵all wrong?
          (‵lam (‵either 0
            (‵all (‵left (‵one (‵tvar zero) TODO1 0)))
            (‵all (‵right 0))))
@@ -1262,11 +1275,51 @@ module _ where
   lem6-1 {A = t ‵= u} {T} = ⫗refl
 
 lem6-2 : ∀ {Θ k} {Γ : Fm§ k} {A T} → Θ / Γ ⊢ T ‵⊃ A ᴬ⟨ T ⟩
-lem6-2 {A = A} = {!!}
+lem6-2 {A = A ‵⊃ B} = ‵lam (‵lam (lem6-2 ‵$ 1)) -- NOTE: function argument ignored
+lem6-2 {A = A ‵∧ B} = ‵lam (‵pair (lem6-2 ‵$ 0) (lem6-2 ‵$ 0))
+lem6-2 {A = A ‵∨ B} = ‵lam (‵left (lem6-2 ‵$ 0)) -- NOTE: could also be ‵right
+lem6-2 {A = ‵∀ A}   = ‵lam (‵all (lem6-2 ‵$ 0))
+lem6-2 {A = ‵∃ A}   = ‵lam (‵this Z TODO12 (lem6-2 {A = A [ Z ]} ‵$ 0)) -- TODO: termination failure
+lem6-2 {A = ‵⊥}    = ⊃id
+lem6-2 {A = t ‵= u} = ‵lam (‵right 0)
+
+lem6-3∋ : ∀ {k} {Γ : Fm§ k} {A T} → Γ ∋ A → Γ ᴬ⟨ T ⟩§ ∋ A ᴬ⟨ T ⟩
+lem6-3∋ zero    = zero
+lem6-3∋ (suc i) = suc (lem6-3∋ i)
 
 -- TODO: "The proof of 3 is a bit tricky where eigenvariable conditions are involved."
 lem6-3 : ∀ {Θ k} {Γ : Fm§ k} {A T} → Θ / Γ ⊢ A → Θ / Γ ᴬ⟨ T ⟩§ ⊢ A ᴬ⟨ T ⟩
-lem6-3 = {!!}
+lem6-3 (‵var i)        = ‵var (lem6-3∋ i)
+lem6-3 (‵lam d)        = ‵lam (lem6-3 d)
+lem6-3 (d ‵$ e)        = lem6-3 d ‵$ lem6-3 e
+lem6-3 (‵pair d e)     = ‵pair (lem6-3 d) (lem6-3 e)
+lem6-3 (‵fst d)        = ‵fst (lem6-3 d)
+lem6-3 (‵snd d)        = ‵snd (lem6-3 d)
+lem6-3 (‵left d)       = ‵left (lem6-3 d)
+lem6-3 (‵right d)      = ‵right (lem6-3 d)
+lem6-3 (‵either c d e) = ‵either (lem6-3 c) (lem6-3 d) (lem6-3 e)
+lem6-3 (‵all d)        = {!!}
+lem6-3 (‵one t p d)    = {!!}
+lem6-3 (‵this t p d)   = {!!}
+lem6-3 (‵some d e)     = {!!}
+lem6-3 (‵HAabort d)    = {!!}
+lem6-3 (‵PAmagic d)    = {!!}
+lem6-3 ‵refl           = ‵left ‵refl
+lem6-3 (‵sym d)        = ‵either (lem6-3 d)
+                           (‵left (‵sym 0))
+                           (‵right 0)
+lem6-3 (‵trans d e)    = ‵either (lem6-3 d)
+                           (‵either (wk (lem6-3 e))
+                             (‵left (‵trans 1 0))
+                             (‵right 0))
+                           (‵right 0)
+lem6-3 (‵cong f i d)   = {!!}
+lem6-3 ‵dis            = {!!}
+lem6-3 (‵inj d)        = {!!}
+lem6-3 (‵ind d e)      = {!!}
+lem6-3 (‵proj i)       = {!!}
+lem6-3 (‵comp g fs)    = {!!}
+lem6-3 (‵rec f g)      = {!!}
 
 -- TODO: "A counterexample for 4 is A = ¬¬T."
 -- lem6-4 : ∀ {k} {Γ : Fm§ k} → ¬ (∀ {T} → HA / ‵¬ ‵¬ T ∷ Γ ⊢ (‵¬ ‵¬ T) ᴬ⟨ T ⟩)
