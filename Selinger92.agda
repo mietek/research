@@ -62,7 +62,7 @@ instance
     ; fromNat    = λ n → n
     }
 
--- NOTE: literals for finite naturals, and for standalone term variables
+-- NOTE: literals for bounded naturals, and for standalone term variables
 instance
   literalFin : ∀ {n} → Number (Fin n)
   literalFin {n} = record
@@ -1162,7 +1162,7 @@ _ᴬ⟨_⟩§ : ∀ {k} → Fm§ k → Fm k → Fm§ k
 
 aux1 : ∀ {k} {Γ : Fm§ k} {A B C} → PA / Γ ⊢ (A ‵∨ C) ‵⊃ (B ‵∨ C) ‵⫗ (A ‵⊃ B) ‵∨ C
 aux1 = ‵pair
-         (‵lam {!!}) -- TODO: non-constructive
+         (‵lam {!!}) -- TODO: non-constructive?
          (‵lam (‵lam (‵either 0
            (‵either 2
              (‵left (0 ‵$ 1))
@@ -1199,16 +1199,12 @@ aux3 = ‵pair
 
 aux4 : ∀ {k} {Γ : Fm§ k} {A C} → PA / Γ ⊢ ‵∀ (A ‵∨ twkFm C) ‵⫗ (‵∀ A) ‵∨ C
 aux4 {Γ = Γ} {A} {C} = ‵pair
-         (‵lam (‵either {Γ = ‵∀ (A ‵∨ twkFm C) ∷ Γ} {{!!}} {C} {(‵∀ A) ‵∨ C}
-           (‵one {!!} {!!} (‵var zero))
-           {!‵left {A = ‵∀ A} (‵all (‵var zero))!}
-           (‵right {A = ‵∀ A} (‵var zero))))
+         (‵lam {!!}) -- TODO: argh. is ‵all wrong?
          (‵lam (‵either 0
-
            (‵all (‵left (‵one (‵tvar zero) TODO1 0)))
            (‵all (‵right 0))))
 
-aux5 : ∀ {k} {Γ : Fm§ k} {A C} → PA / Γ ⊢ ‵∃ (A ‵∨ twkFm C) ‵⫗ (‵∃ A) ‵∨ C
+aux5 : ∀ {Θ k} {Γ : Fm§ k} {A C} → Θ / Γ ⊢ ‵∃ (A ‵∨ twkFm C) ‵⫗ (‵∃ A) ‵∨ C
 aux5 = ‵pair
          (‵lam (‵some 0 (‵either 0
            (‵left (‵this (‵tvar zero) TODO1 0))
@@ -1251,14 +1247,14 @@ module _ where
   lem6-1 {A = ‵∀ A}   {T} = begin
                               ‵∀ (A ᴬ⟨ twkFm T ⟩)
                             ⫗⟨ ⫗cong∀ lem6-1 ⟩
-                              (‵∀ (A ‵∨ twkFm T))
+                              ‵∀ (A ‵∨ twkFm T)
                             ⫗⟨ aux4 ⟩
                               (‵∀ A) ‵∨ T
                             ∎
   lem6-1 {A = ‵∃ A}   {T} = begin
                               ‵∃ (A ᴬ⟨ twkFm T ⟩)
                             ⫗⟨ ⫗cong∃ lem6-1 ⟩
-                              (‵∃ (A ‵∨ twkFm T))
+                              ‵∃ (A ‵∨ twkFm T)
                             ⫗⟨ aux5 ⟩
                               (‵∃ A) ‵∨ T
                             ∎
@@ -1266,7 +1262,7 @@ module _ where
   lem6-1 {A = t ‵= u} {T} = ⫗refl
 
 lem6-2 : ∀ {Θ k} {Γ : Fm§ k} {A T} → Θ / Γ ⊢ T ‵⊃ A ᴬ⟨ T ⟩
-lem6-2 = {!!}
+lem6-2 {A = A} = {!!}
 
 -- TODO: "The proof of 3 is a bit tricky where eigenvariable conditions are involved."
 lem6-3 : ∀ {Θ k} {Γ : Fm§ k} {A T} → Θ / Γ ⊢ A → Θ / Γ ᴬ⟨ T ⟩§ ⊢ A ᴬ⟨ T ⟩
