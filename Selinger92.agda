@@ -247,9 +247,11 @@ ok-pred (suc x) = refl
 -- first-order predicate logic with one sort (naturals) and one predicate (equality)
 
 infix  19 _‵=_ _‵≠_
-infixl 18 _‵∧_ _‵∨_
-infixr 17 _‵⊃_ _‵⫗_
-infixr 16 _‵$_
+infixl 18 _‵∧_
+infixl 17 _‵∨_
+infixr 16 _‵⊃_
+infixr 15 _‵⫗_
+infixr 14 _‵$_
 
 -- terms, indexed by number of term variables
 mutual
@@ -1158,7 +1160,7 @@ _ᴬ⟨_⟩§ : ∀ {k} → Fm§ k → Fm k → Fm§ k
 
 -- TODO: lemma 6
 
-aux1 : ∀ {k} {Γ : Fm§ k} {A B C} → PA / Γ ⊢ ((A ‵∨ C) ‵⊃ (B ‵∨ C)) ‵⫗ (A ‵⊃ B) ‵∨ C
+aux1 : ∀ {k} {Γ : Fm§ k} {A B C} → PA / Γ ⊢ (A ‵∨ C) ‵⊃ (B ‵∨ C) ‵⫗ (A ‵⊃ B) ‵∨ C
 aux1 = ‵pair
          (‵lam {!!}) -- TODO: non-constructive
          (‵lam (‵lam (‵either 0
@@ -1195,28 +1197,26 @@ aux3 = ‵pair
            -- NOTE: could also be
            -- (‵right (‵right 0))))
 
-aux4 : ∀ {k} {Γ : Fm§ k} {A C} → PA / Γ ⊢ (‵∀ (A ‵∨ twkFm C)) ‵⫗ (‵∀ A) ‵∨ C
+aux4 : ∀ {k} {Γ : Fm§ k} {A C} → PA / Γ ⊢ ‵∀ (A ‵∨ twkFm C) ‵⫗ (‵∀ A) ‵∨ C
 aux4 {Γ = Γ} {A} {C} = ‵pair
          (‵lam (‵either {Γ = ‵∀ (A ‵∨ twkFm C) ∷ Γ} {{!!}} {C} {(‵∀ A) ‵∨ C}
            (‵one {!!} {!!} (‵var zero))
            {!‵left {A = ‵∀ A} (‵all (‵var zero))!}
            (‵right {A = ‵∀ A} (‵var zero))))
          (‵lam (‵either 0
+
            (‵all (‵left (‵one (‵tvar zero) TODO1 0)))
            (‵all (‵right 0))))
 
-aux5 : ∀ {k} {Γ : Fm§ k} {A C} → PA / Γ ⊢ (‵∃ (A ‵∨ twkFm C)) ‵⫗ (‵∃ A) ‵∨ C
-aux5 {Γ = Γ} {A} {C} = ‵pair
+aux5 : ∀ {k} {Γ : Fm§ k} {A C} → PA / Γ ⊢ ‵∃ (A ‵∨ twkFm C) ‵⫗ (‵∃ A) ‵∨ C
+aux5 = ‵pair
          (‵lam (‵some 0 (‵either 0
            (‵left (‵this (‵tvar zero) TODO1 0))
            (‵right 0))))
          (‵lam (‵either 0
            (‵some 0
              (‵this (‵tvar zero) TODO9 (‵left 0)))
-           (‵this {Γ = C ∷ (‵∃ A) ‵∨ C ∷ Γ} {A ‵∨ twkFm C}
-             {!Z!} -- TODO: what?! why am i allowed to give any number here?
-             TODO8
-             (‵right 0))))
+           (‵this Z TODO8 (‵right 0)))) -- NOTE: can give any number here
 
 aux6 : ∀ {Θ k} {Γ : Fm§ k} {C} → Θ / Γ ⊢ C ‵⫗ ‵⊥ ‵∨ C
 aux6 = ‵pair
@@ -1229,35 +1229,35 @@ module _ where
   lem6-1 : ∀ {k} {Γ : Fm§ k} {A T} → PA / Γ ⊢ A ᴬ⟨ T ⟩ ‵⫗ A ‵∨ T
   lem6-1 {A = A ‵⊃ B} {T} = begin
                               A ᴬ⟨ T ⟩ ‵⊃ B ᴬ⟨ T ⟩
-                            ⫗⟨ ⫗cong⊃ (lem6-1 {A = A}) (lem6-1 {A = B}) ⟩
+                            ⫗⟨ ⫗cong⊃ lem6-1 lem6-1 ⟩
                               (A ‵∨ T) ‵⊃ (B ‵∨ T)
                             ⫗⟨ aux1 ⟩
                               (A ‵⊃ B) ‵∨ T
                             ∎
   lem6-1 {A = A ‵∧ B} {T} = begin
                               A ᴬ⟨ T ⟩ ‵∧ B ᴬ⟨ T ⟩
-                            ⫗⟨ ⫗cong∧ (lem6-1 {A = A}) (lem6-1 {A = B}) ⟩
+                            ⫗⟨ ⫗cong∧ lem6-1 lem6-1 ⟩
                               (A ‵∨ T) ‵∧ (B ‵∨ T)
                             ⫗⟨ aux2 ⟩
                               (A ‵∧ B) ‵∨ T
                             ∎
   lem6-1 {A = A ‵∨ B} {T} = begin
                               A ᴬ⟨ T ⟩ ‵∨ B ᴬ⟨ T ⟩
-                            ⫗⟨ ⫗cong∨ (lem6-1 {A = A}) (lem6-1 {A = B}) ⟩
+                            ⫗⟨ ⫗cong∨ lem6-1 lem6-1 ⟩
                               (A ‵∨ T) ‵∨ (B ‵∨ T)
                             ⫗⟨ aux3 ⟩
                               (A ‵∨ B) ‵∨ T
                             ∎
   lem6-1 {A = ‵∀ A}   {T} = begin
                               ‵∀ (A ᴬ⟨ twkFm T ⟩)
-                            ⫗⟨ ⫗cong∀ (lem6-1 {A = A}) ⟩
+                            ⫗⟨ ⫗cong∀ lem6-1 ⟩
                               (‵∀ (A ‵∨ twkFm T))
                             ⫗⟨ aux4 ⟩
                               (‵∀ A) ‵∨ T
                             ∎
   lem6-1 {A = ‵∃ A}   {T} = begin
                               ‵∃ (A ᴬ⟨ twkFm T ⟩)
-                            ⫗⟨ ⫗cong∃ (lem6-1 {A = A}) ⟩
+                            ⫗⟨ ⫗cong∃ lem6-1 ⟩
                               (‵∃ (A ‵∨ twkFm T))
                             ⫗⟨ aux5 ⟩
                               (‵∃ A) ‵∨ T
@@ -1265,7 +1265,7 @@ module _ where
   lem6-1 {A = ‵⊥}    {T} = aux6
   lem6-1 {A = t ‵= u} {T} = ⫗refl
 
-lem6-2 : ∀ {Θ k} {Γ : Fm§ k} {A T} → Θ / Γ ⊢ A ‵⊃ A ᴬ⟨ T ⟩
+lem6-2 : ∀ {Θ k} {Γ : Fm§ k} {A T} → Θ / Γ ⊢ T ‵⊃ A ᴬ⟨ T ⟩
 lem6-2 = {!!}
 
 -- TODO: "The proof of 3 is a bit tricky where eigenvariable conditions are involved."
