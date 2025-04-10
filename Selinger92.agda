@@ -572,11 +572,14 @@ ren η (‵rec f g)       = ‵rec f g
 wk : ∀ {Θ k} {Γ : Fm§ k} {A C} → Θ / Γ ⊢ A → Θ / C ∷ Γ ⊢ A
 wk = ren (wk⊆ id⊆)
 
-tren : ∀ {Θ k k′ Γ Γ′ A} (η : k ≤ k′) → Γ ⊆ Γ′ → Θ / trenFm§ η Γ ⊢ A → Θ / trenFm§ η Γ′ ⊢ A
-tren η ζ = ren (tren⊆ η ζ)
 
-twk : ∀ {Θ k} {Γ Γ′ : Fm§ k} {A} → Γ ⊆ Γ′ → Θ / twkFm§ Γ ⊢ A → Θ / twkFm§ Γ′ ⊢ A
-twk = tren (wk≤ id≤)
+-- TODO: fix these
+
+tren? : ∀ {Θ k k′ Γ Γ′ A} (η : k ≤ k′) → Γ ⊆ Γ′ → Θ / trenFm§ η Γ ⊢ A → Θ / trenFm§ η Γ′ ⊢ A
+tren? η ζ = ren (tren⊆ η ζ)
+
+twk? : ∀ {Θ k} {Γ Γ′ : Fm§ k} {A} → Γ ⊆ Γ′ → Θ / twkFm§ Γ ⊢ A → Θ / twkFm§ Γ′ ⊢ A
+twk? = tren? (wk≤ id≤)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -709,8 +712,8 @@ module _ {Θ k} {Γ : Fm§ k} where
 
   ⫗cong∀ : ∀ {A A′} → Θ / twkFm§ Γ ⊢ A ‵⫗ A′ → Θ / Γ ⊢ (‵∀ A) ‵⫗ (‵∀ A′)
   ⫗cong∀ d = ‵pair
-                (‵lam (‵all (twk (wk⊆ id⊆) (‵fst d) ‵$ ‵one (‵tvar zero) TODO1 0)))
-                (‵lam (‵all (twk (wk⊆ id⊆) (‵snd d) ‵$ ‵one (‵tvar zero) TODO1 0)))
+                (‵lam (‵all (twk? (wk⊆ id⊆) (‵fst d) ‵$ ‵one (‵tvar zero) TODO1 0)))
+                (‵lam (‵all (twk? (wk⊆ id⊆) (‵snd d) ‵$ ‵one (‵tvar zero) TODO1 0)))
 
   ⫗cong∃ : ∀ {A A′} → Θ / twkFm§ Γ ⊢ A ‵⫗ A′ → Θ / Γ ⊢ (‵∃ A) ‵⫗ (‵∃ A′)
   ⫗cong∃ d = ‵pair
@@ -1201,17 +1204,79 @@ aux3 = ‵pair
              (‵right (‵left 0)))
            (‵left (‵right 0)))) -- NOTE: could also be ‵right
 
+
+
+-- TODO: clean these up
+
+tren∋ : ∀ {k k′ Γ A} (η : k ≤ k′) → Γ ∋ A → trenFm§ η Γ ∋ trenFm η A
+tren∋ η zero    = zero
+tren∋ η (suc i) = suc (tren∋ η i)
+
+tren : ∀ {Θ k k′ Γ A} (η : k ≤ k′) → Θ / Γ ⊢ A → Θ / trenFm§ η Γ ⊢ trenFm η A
+tren η (‵var i)         = ‵var (tren∋ η i)
+tren η (‵lam d)         = ‵lam (tren η d)
+tren η (d ‵$ e)         = tren η d ‵$ tren η e
+tren η (‵pair d e)      = ‵pair (tren η d) (tren η e)
+tren η (‵fst d)         = ‵fst (tren η d)
+tren η (‵snd d)         = ‵snd (tren η d)
+tren η (‵left d)        = ‵left (tren η d)
+tren η (‵right d)       = ‵right (tren η d)
+tren η (‵either c d e)  = ‵either (tren η c) (tren η d) (tren η e)
+
+tren η (‵all d)         = ‵all {!tren (lift≤ η) d!}
+-- Goal: Θ / twkFm§ (trenFm§ η Γ)         ⊢ trenFm (lift≤ η) A
+-- Have: Θ / trenFm§ (lift≤ η) (twkFm§ Γ) ⊢ trenFm (lift≤ η) A
+
+tren η (‵one t refl d)  = ‵one (trenTm η t) {!!} (tren η d)
+-- Goal: trenFm η (A [ t ]) ≡ (trenFm (lift≤ η) A [ trenTm η t ])
+
+tren η (‵this t refl d) = ‵this (trenTm η t) {!!} (tren η d)
+-- Goal: trenFm η (A [ t ]) ≡ (trenFm (lift≤ η) A [ trenTm η t ])
+
+tren η (‵some d e)      = ‵some (tren η d) {!tren (lift≤ η) e!}
+-- Goal: Θ / trenFm (lift≤ η) A₁ ∷ twkFm§ (trenFm§ η Γ)         ⊢ twkFm (trenFm η A)
+-- Have: Θ / trenFm (lift≤ η) A₁ ∷ trenFm§ (lift≤ η) (twkFm§ Γ) ⊢ trenFm (lift≤ η) (twkFm A)
+
+tren η (‵HAabort d)     = ‵HAabort (tren η d)
+tren η (‵PAmagic d)     = ‵PAmagic (tren η d)
+tren η ‵refl            = ‵refl
+tren η (‵sym d)         = ‵sym (tren η d)
+tren η (‵trans d e)     = ‵trans (tren η d) (tren η e)
+tren η (‵cong f i d)    = {!!}
+tren η ‵dis             = ‵dis
+tren η (‵inj d)         = ‵inj (tren η d)
+tren η (‵ind d e)       = {!!}
+tren η (‵proj i)        = {!!}
+tren η (‵comp g fs)     = {!!}
+tren η (‵rec f g)       = ‵rec f g
+
+twk : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ ⊢ A → Θ / twkFm§ Γ ⊢ twkFm A
+twk d = tren (wk≤ id≤) d
+
 hmm : ∀ {k} {Γ : Fm§ k} {A C} → PA / Γ ⊢ ‵∀ (A ‵∨ twkFm C) → PA / Γ ⊢ ‵¬ C →
         PA / Γ ⊢ ‵∀ A
-hmm d e = ‵all
-            let x = ‵one Z refl (wk d) in
-            {!subst id TODO0 x!}
+hmm d e = ‵all (‵either (‵one (‵tvar zero) TODO1 (twk d)) 0 (abort (wk (twk e) ‵$ 0)))
+
+
+{-
+roconnor got:
+    (‵lam
+      (‵all
+        (twk (wk⊆ id⊆)
+          (‵lam
+            (‵either 0
+              0
+              (abort (wk (wk {!e!}) ‵$ 0))))
+          ‵$ ‵one (‵tvar zero) TODO1 0)))
+    ‵$ d
+
+-}
 
 aux4 : ∀ {k} {Γ : Fm§ k} {A C} → PA / Γ ⊢ ‵∀ (A ‵∨ twkFm C) ‵⫗ (‵∀ A) ‵∨ C
 aux4 {Γ = Γ} {A} {C} = ‵pair
          (‵lam (‵either (em {A = C})
            (‵right 0)
-           (‵left {!!})))
+           (‵left (hmm 1 0))))
          (‵lam (‵either 0
            (‵all (‵left (‵one (‵tvar zero) TODO1 0)))
            (‵all (‵right 0))))
