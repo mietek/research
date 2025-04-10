@@ -1199,20 +1199,19 @@ aux3 = ‵pair
            (‵either 0
              (‵left (‵left 0))
              (‵right (‵left 0)))
-           (‵left (‵right 0))))
-           -- NOTE: could also be
-           -- (‵right (‵right 0))))
+           (‵left (‵right 0)))) -- NOTE: could also be ‵right
+
+hmm : ∀ {k} {Γ : Fm§ k} {A C} → PA / Γ ⊢ ‵∀ (A ‵∨ twkFm C) → PA / Γ ⊢ ‵¬ C →
+        PA / Γ ⊢ ‵∀ A
+hmm d e = ‵all
+            let x = ‵one Z refl (wk d) in
+            {!subst id TODO0 x!}
 
 aux4 : ∀ {k} {Γ : Fm§ k} {A C} → PA / Γ ⊢ ‵∀ (A ‵∨ twkFm C) ‵⫗ (‵∀ A) ‵∨ C
 aux4 {Γ = Γ} {A} {C} = ‵pair
-         (‵lam (‵either
-           {Γ = ‵∀ (A ‵∨ twkFm C) ∷ Γ}
-           {A = {!!}}
-           {B = C}
-           {C = (‵∀ A) ‵∨ C}
-           {!‵one {!!} {!!} (‵var zero)!}
-           (‵left (‵all {!‵var zero!}))
-           (‵right (‵var zero)))) -- TODO: argh. is ‵all wrong?
+         (‵lam (‵either (em {A = C})
+           (‵right 0)
+           (‵left {!!})))
          (‵lam (‵either 0
            (‵all (‵left (‵one (‵tvar zero) TODO1 0)))
            (‵all (‵right 0))))
@@ -1225,7 +1224,7 @@ aux5 = ‵pair
          (‵lam (‵either 0
            (‵some 0
              (‵this (‵tvar zero) TODO9 (‵left 0)))
-           (‵this Z TODO8 (‵right 0)))) -- NOTE: can give any number here
+           (‵this Z TODO8 (‵right 0)))) -- NOTE: could also be any other number
 
 aux6 : ∀ {Θ k} {Γ : Fm§ k} {C} → Θ / Γ ⊢ C ‵⫗ ‵⊥ ‵∨ C
 aux6 = ‵pair
@@ -1279,7 +1278,8 @@ lem6-2 {A = A ‵⊃ B} = ‵lam (‵lam (lem6-2 ‵$ 1)) -- NOTE: function argu
 lem6-2 {A = A ‵∧ B} = ‵lam (‵pair (lem6-2 ‵$ 0) (lem6-2 ‵$ 0))
 lem6-2 {A = A ‵∨ B} = ‵lam (‵left (lem6-2 ‵$ 0)) -- NOTE: could also be ‵right
 lem6-2 {A = ‵∀ A}   = ‵lam (‵all (lem6-2 ‵$ 0))
-lem6-2 {A = ‵∃ A}   = ‵lam (‵this Z TODO12 (lem6-2 {A = A [ Z ]} ‵$ 0)) -- TODO: termination failure
+lem6-2 {A = ‵∃ A}   = {!!}
+-- ‵lam (‵this Z TODO12 (lem6-2 {A = A [ Z ]} ‵$ 0)) -- TODO: termination failure
 lem6-2 {A = ‵⊥}    = ⊃id
 lem6-2 {A = t ‵= u} = ‵lam (‵right 0)
 
@@ -1302,7 +1302,7 @@ lem6-3 (‵all d)        = {!!}
 lem6-3 (‵one t p d)    = {!!}
 lem6-3 (‵this t p d)   = {!!}
 lem6-3 (‵some d e)     = {!!}
-lem6-3 (‵HAabort d)    = {!!}
+lem6-3 (‵HAabort d)    = {!lem6-3 d!}
 lem6-3 (‵PAmagic d)    = {!!}
 lem6-3 ‵refl           = ‵left ‵refl
 lem6-3 (‵sym d)        = ‵either (lem6-3 d)
