@@ -12,9 +12,6 @@ open import Data.Empty using (⊥)
 import Data.Fin as Fin
 open Fin using (Fin ; zero ; suc)
 
-import Data.List as List
-open List using (List ; [] ; _∷_)
-
 import Data.Nat as Nat
 open Nat using (zero ; suc)
   renaming (ℕ to Nat)
@@ -51,7 +48,15 @@ open import Relation.Nullary.Decidable using (True)
 
 -- missing things
 
-coe : ∀ {𝒶} {A A′ : Set 𝒶} → A ≡ A′ → A → A′
+infixl 9 _&_
+_&_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (f : X → Y) {x x′} → x ≡ x′ → f x ≡ f x′
+_&_ = cong
+
+infixl 8 _⊗_
+_⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {f g : X → Y} {x x′} → f ≡ g → x ≡ x′ → f x ≡ g x′
+refl ⊗ refl = refl
+
+coe : ∀ {𝓍} {X X′ : Set 𝓍} → X ≡ X′ → X → X′
 coe = subst id
 
 -- NOTE: literals for naturals
@@ -75,13 +80,13 @@ instance
 
 -- vector things
 
-get : ∀ {𝒶} {A : Set 𝒶} {n} → Fin n → Vec A n → A
+get : ∀ {𝓍} {X : Set 𝓍} {n} → Fin n → Vec X n → X
 get i xs = Vec.lookup xs i
 
-put : ∀ {𝒶} {A : Set 𝒶} {n} → Fin n → Vec A n → A → Vec A n
+put : ∀ {𝓍} {X : Set 𝓍} {n} → Fin n → Vec X n → X → Vec X n
 put i xs y = xs Vec.[ i ]≔ y
 
-for : ∀ {𝒶 𝒷} {A : Set 𝒶} {B : Set 𝒷} {n} → Vec A n → (A → B) → Vec B n
+for : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {n} → Vec X n → (X → Y) → Vec Y n
 for xs f = Vec.map f xs
 
 
@@ -104,6 +109,30 @@ id≤ : ∀ {k} → k ≤ k
 id≤ {zero}  = stop
 id≤ {suc k} = lift≤ id≤
 
+_∘≤_ : ∀ {k k′ k″} → k′ ≤ k″ → k ≤ k′ → k ≤ k″
+stop     ∘≤ η       = η
+wk≤ η′   ∘≤ η       = wk≤ (η′ ∘≤ η)
+lift≤ η′ ∘≤ wk≤ η   = wk≤ (η′ ∘≤ η)
+lift≤ η′ ∘≤ lift≤ η = lift≤ (η′ ∘≤ η)
+
+lid≤ : ∀ {k k′} (η : k ≤ k′) → id≤ ∘≤ η ≡ η
+lid≤ stop      = refl
+lid≤ (wk≤ η)   = wk≤ & lid≤ η
+lid≤ (lift≤ η) = lift≤ & lid≤ η
+
+rid≤ : ∀ {k k′} (η : k ≤ k′) → η ∘≤ id≤ ≡ η
+rid≤ stop      = refl
+rid≤ (wk≤ η)   = wk≤ & rid≤ η
+rid≤ (lift≤ η) = lift≤ & rid≤ η
+
+ass≤ : ∀ {k k′ k″ k‴} (η″ : k″ ≤ k‴) (η′ : k′ ≤ k″) (η : k ≤ k′) →
+         η″ ∘≤ (η′ ∘≤ η) ≡ (η″ ∘≤ η′) ∘≤ η
+ass≤ stop       η′         η         = refl
+ass≤ (wk≤ η″)   η′         η         = wk≤ & ass≤ η″ η′ η
+ass≤ (lift≤ η″) (wk≤ η′)   η         = wk≤ & ass≤ η″ η′ η
+ass≤ (lift≤ η″) (lift≤ η′) (wk≤ η)   = wk≤ & ass≤ η″ η′ η
+ass≤ (lift≤ η″) (lift≤ η′) (lift≤ η) = lift≤ & ass≤ η″ η′ η
+
 renFin : ∀ {k k′} → k ≤ k′ → Fin k → Fin k′
 renFin stop      i       = i
 renFin (wk≤ η)   i       = suc (renFin η i)
@@ -112,6 +141,108 @@ renFin (lift≤ η) (suc i) = renFin (wk≤ η) i
 
 wkFin : ∀ {k} → Fin k → Fin (suc k)
 wkFin = renFin (wk≤ id≤)
+
+idrenFin : ∀ {k} (i : Fin k) → renFin id≤ i ≡ i
+idrenFin zero    = refl
+idrenFin (suc i) = suc & idrenFin i
+
+comprenFin : ∀ {k k′ k″} (η′ : k′ ≤ k″) (η : k ≤ k′) (i : Fin k) →
+               renFin (η′ ∘≤ η) i ≡ (renFin η′ ∘ renFin η) i
+comprenFin stop       η         i       = refl
+comprenFin (wk≤ η′)   η         i       = suc & comprenFin η′ η i
+comprenFin (lift≤ η′) (wk≤ η)   i       = suc & comprenFin η′ η i
+comprenFin (lift≤ η′) (lift≤ η) zero    = refl
+comprenFin (lift≤ η′) (lift≤ η) (suc i) = suc & comprenFin η′ η i
+
+
+----------------------------------------------------------------------------------------------------
+
+-- typed de Bruijn indices and order-preserving embeddings for derivation variables
+
+data Rist {𝓍} (X : Set 𝓍) : Set 𝓍 where
+  ∙   : Rist X
+  _,_ : ∀ (xs : Rist X) (x : X) → Rist X
+
+module _ {𝓍} {X : Set 𝓍} where
+  infix 3 _∋_
+  data _∋_ : Rist X → X → Set 𝓍 where
+    zero : ∀ {Γ A} → Γ , A ∋ A
+    suc  : ∀ {Γ A C} (i : Γ ∋ A) → Γ , C ∋ A
+
+-- NOTE: literals for standalone derivation variables
+module _ {𝓍} {X : Set 𝓍} where
+  infix 3 _∋⟨_⟩_
+  data _∋⟨_⟩_ : Rist X → Nat → X → Set 𝓍 where
+    instance
+      zero : ∀ {Γ A} → Γ , A ∋⟨ zero ⟩ A
+      suc  : ∀ {Γ m A C} {{i : Γ ∋⟨ m ⟩ A}} → Γ , C ∋⟨ suc m ⟩ A
+
+  ∋#→∋ : ∀ {m} {Γ : Rist X} {A} → Γ ∋⟨ m ⟩ A → Γ ∋ A
+  ∋#→∋ zero        = zero
+  ∋#→∋ (suc {{i}}) = suc (∋#→∋ i)
+
+  instance
+    number∋ : ∀ {Γ : Rist X} {A} → Number (Γ ∋ A)
+    number∋ {Γ = Γ} {A} = record
+      { Constraint = λ m → Γ ∋⟨ m ⟩ A
+      ; fromNat    = λ m {{p}} → ∋#→∋ p
+      }
+
+module _ {𝓍} {X : Set 𝓍} where
+  infix 3 _⊑_
+  data _⊑_ : Rist X → Rist X → Set 𝓍 where
+    stop  : ∙ ⊑ ∙
+    wk⊑   : ∀ {Γ Γ′ C} (η : Γ ⊑ Γ′) → Γ ⊑ Γ′ , C
+    lift⊑ : ∀ {Γ Γ′ C} (η : Γ ⊑ Γ′) → Γ , C ⊑ Γ′ , C
+
+  id⊑ : ∀ {Γ} → Γ ⊑ Γ
+  id⊑ {∙}     = stop
+  id⊑ {Γ , A} = lift⊑ id⊑
+
+  _∘⊑_ : ∀ {Γ Γ′ Γ″} → Γ′ ⊑ Γ″ → Γ ⊑ Γ′ → Γ ⊑ Γ″
+  stop     ∘⊑ η       = η
+  wk⊑ η′   ∘⊑ η       = wk⊑ (η′ ∘⊑ η)
+  lift⊑ η′ ∘⊑ wk⊑ η   = wk⊑ (η′ ∘⊑ η)
+  lift⊑ η′ ∘⊑ lift⊑ η = lift⊑ (η′ ∘⊑ η)
+
+  lid⊑ : ∀ {Γ Γ′} (η : Γ ⊑ Γ′) → id⊑ ∘⊑ η ≡ η
+  lid⊑ stop      = refl
+  lid⊑ (wk⊑ η)   = wk⊑ & lid⊑ η
+  lid⊑ (lift⊑ η) = lift⊑ & lid⊑ η
+
+  rid⊑ : ∀ {Γ Γ′} (η : Γ ⊑ Γ′) → η ∘⊑ id⊑ ≡ η
+  rid⊑ stop      = refl
+  rid⊑ (wk⊑ η)   = wk⊑ & rid⊑ η
+  rid⊑ (lift⊑ η) = lift⊑ & rid⊑ η
+
+  ass⊑ : ∀ {Γ Γ′ Γ″ Γ‴} (η″ : Γ″ ⊑ Γ‴) (η′ : Γ′ ⊑ Γ″) (η : Γ ⊑ Γ′) →
+           η″ ∘⊑ (η′ ∘⊑ η) ≡ (η″ ∘⊑ η′) ∘⊑ η
+  ass⊑ stop       η′         η         = refl
+  ass⊑ (wk⊑ η″)   η′         η         = wk⊑ & ass⊑ η″ η′ η
+  ass⊑ (lift⊑ η″) (wk⊑ η′)   η         = wk⊑ & ass⊑ η″ η′ η
+  ass⊑ (lift⊑ η″) (lift⊑ η′) (wk⊑ η)   = wk⊑ & ass⊑ η″ η′ η
+  ass⊑ (lift⊑ η″) (lift⊑ η′) (lift⊑ η) = lift⊑ & ass⊑ η″ η′ η
+
+  ren∋ : ∀ {Γ Γ′ A} → Γ ⊑ Γ′ → Γ ∋ A → Γ′ ∋ A
+  ren∋ stop      i       = i
+  ren∋ (wk⊑ η)   i       = suc (ren∋ η i)
+  ren∋ (lift⊑ η) zero    = zero
+  ren∋ (lift⊑ η) (suc i) = suc (ren∋ η i)
+
+  wk∋ : ∀ {Γ A C} → Γ ∋ A → Γ , C ∋ A
+  wk∋ = ren∋ (wk⊑ id⊑)
+
+  idren∋ : ∀ {Γ A} (i : Γ ∋ A) → ren∋ id⊑ i ≡ i
+  idren∋ zero    = refl
+  idren∋ (suc i) = suc & idren∋ i
+
+  compren∋ : ∀ {Γ Γ′ Γ″ A} (η′ : Γ′ ⊑ Γ″) (η : Γ ⊑ Γ′) (i : Γ ∋ A) →
+               ren∋ (η′ ∘⊑ η) i ≡ (ren∋ η′ ∘ ren∋ η) i
+  compren∋ stop       η         i       = refl
+  compren∋ (wk⊑ η′)   η         i       = suc & compren∋ η′ η i
+  compren∋ (lift⊑ η′) (wk⊑ η)   i       = suc & compren∋ η′ η i
+  compren∋ (lift⊑ η′) (lift⊑ η) zero    = refl
+  compren∋ (lift⊑ η′) (lift⊑ η) (suc i) = suc & compren∋ η′ η i
 
 
 ----------------------------------------------------------------------------------------------------
@@ -251,7 +382,6 @@ infixl 18 _‵∧_
 infixl 17 _‵∨_
 infixr 16 _‵⊃_
 infixr 15 _‵⫗_
-infixr 14 _‵$_
 
 -- terms, indexed by number of term variables
 mutual
@@ -302,7 +432,7 @@ data Fm (k : Nat) : Set where
   _‵=_ : ∀ (t u : Tm k) → Fm k
 
 Fm§ : Nat → Set
-Fm§ k = List (Fm k)
+Fm§ k = Rist (Fm k)
 
 _‵⫗_ : ∀ {k} → Fm k → Fm k → Fm k
 A ‵⫗ B = (A ‵⊃ B) ‵∧ (B ‵⊃ A)
@@ -312,58 +442,6 @@ A ‵⫗ B = (A ‵⊃ B) ‵∧ (B ‵⊃ A)
 
 _‵≠_ : ∀ {k} → Tm k → Tm k → Fm k
 t ‵≠ u = ‵¬ (t ‵= u)
-
-
-----------------------------------------------------------------------------------------------------
-
--- typed de Bruijn indices and order-preserving embeddings for derivation variables
-
-infix 3 _∋_
-data _∋_ {k} : Fm§ k → Fm k → Set where
-  zero : ∀ {Γ A} → A ∷ Γ ∋ A
-  suc  : ∀ {Γ A C} (i : Γ ∋ A) → C ∷ Γ ∋ A
-
--- NOTE: literals for standalone derivation variables
-module _ where
-  infix 3 _∋⟨_⟩_
-  data _∋⟨_⟩_ {k} : Fm§ k → Nat → Fm k → Set where
-    instance
-      zero : ∀ {Γ A} → A ∷ Γ ∋⟨ zero ⟩ A
-    suc : ∀ {Γ m A C} (i : Γ ∋⟨ m ⟩ A) → C ∷ Γ ∋⟨ suc m ⟩ A
-
-  instance
-    suc∋# : ∀ {k} {Γ : Fm§ k} {m A C} {{i : Γ ∋⟨ m ⟩ A}} → C ∷ Γ ∋⟨ suc m ⟩ A
-    suc∋# {{i}} = suc i
-
-  ∋#→∋ : ∀ {m k} {Γ : Fm§ k} {A} → Γ ∋⟨ m ⟩ A → Γ ∋ A
-  ∋#→∋ zero    = zero
-  ∋#→∋ (suc i) = suc (∋#→∋ i)
-
-  instance
-    number∋ : ∀ {k} {Γ : Fm§ k} {A} → Number (Γ ∋ A)
-    number∋ {Γ = Γ} {A} = record
-      { Constraint = λ m → Γ ∋⟨ m ⟩ A
-      ; fromNat    = λ m {{p}} → ∋#→∋ p
-      }
-
-infix 3 _⊆_
-data _⊆_ {k} : Fm§ k → Fm§ k → Set where
-  stop  : [] ⊆ []
-  wk⊆   : ∀ {Γ Γ′ C} (η : Γ ⊆ Γ′) → Γ ⊆ C ∷ Γ′
-  lift⊆ : ∀ {Γ Γ′ C} (η : Γ ⊆ Γ′) → C ∷ Γ ⊆ C ∷ Γ′
-
-id⊆ : ∀ {k} {Γ : Fm§ k} → Γ ⊆ Γ
-id⊆ {Γ = []}    = stop
-id⊆ {Γ = A ∷ Γ} = lift⊆ id⊆
-
-ren∋ : ∀ {k} {Γ Γ′ : Fm§ k} {A} → Γ ⊆ Γ′ → Γ ∋ A → Γ′ ∋ A
-ren∋ stop      i       = i
-ren∋ (wk⊆ η)   i       = suc (ren∋ η i)
-ren∋ (lift⊆ η) zero    = zero
-ren∋ (lift⊆ η) (suc i) = ren∋ (wk⊆ η) i
-
-wk∋ : ∀ {k} {Γ : Fm§ k} {A C} → Γ ∋ A → C ∷ Γ ∋ A
-wk∋ = ren∋ (wk⊆ id⊆)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -389,8 +467,8 @@ trenFm η ‵⊥      = ‵⊥
 trenFm η (t ‵= u) = trenTm η t ‵= trenTm η u
 
 trenFm§ : ∀ {k k′} → k ≤ k′ → Fm§ k → Fm§ k′
-trenFm§ η []      = []
-trenFm§ η (A ∷ Γ) = trenFm η A ∷ trenFm§ η Γ
+trenFm§ η ∙       = ∙
+trenFm§ η (Γ , A) = trenFm§ η Γ , trenFm η A
 
 -- weaken formula by adding one unused term variable
 twkFm : ∀ {k} → Fm k → Fm (suc k)
@@ -401,14 +479,14 @@ twkFm§ : ∀ {k} → Fm§ k → Fm§ (suc k)
 twkFm§ = trenFm§ (wk≤ id≤)
 
 -- TODO: comment!
-tren⊆ : ∀ {k k′ Γ Γ′} (η : k ≤ k′) → Γ ⊆ Γ′ → trenFm§ η Γ ⊆ trenFm§ η Γ′
-tren⊆ η stop      = stop
-tren⊆ η (wk⊆ ζ)   = wk⊆ (tren⊆ η ζ)
-tren⊆ η (lift⊆ ζ) = lift⊆ (tren⊆ η ζ)
+tren⊑ : ∀ {k k′ Γ Γ′} (η : k ≤ k′) → Γ ⊑ Γ′ → trenFm§ η Γ ⊑ trenFm§ η Γ′
+tren⊑ η stop      = stop
+tren⊑ η (wk⊑ ζ)   = wk⊑ (tren⊑ η ζ)
+tren⊑ η (lift⊑ ζ) = lift⊑ (tren⊑ η ζ)
 
 -- TODO: comment!
-twk⊆ : ∀ {k} {Γ Γ′ : Fm§ k} → Γ ⊆ Γ′ → twkFm§ Γ ⊆ twkFm§ Γ′
-twk⊆ = tren⊆ (wk≤ id≤)
+twk⊑ : ∀ {k} {Γ Γ′ : Fm§ k} → Γ ⊑ Γ′ → twkFm§ Γ ⊑ twkFm§ Γ′
+twk⊑ = tren⊑ (wk≤ id≤)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -459,18 +537,20 @@ data Theory : Set where
   HA : Theory
   PA : Theory
 
+infixr 14 _‵$_
+
 -- derivations, indexed by list of derivation variables
 infix 3 _/_⊢_
 data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   ‵var     : ∀ {Θ Γ A} (i : Γ ∋ A) → Θ / Γ ⊢ A -- i-th derivation variable
-  ‵lam     : ∀ {Θ Γ A B} (d : Θ / A ∷ Γ ⊢ B) → Θ / Γ ⊢ A ‵⊃ B
+  ‵lam     : ∀ {Θ Γ A B} (d : Θ / Γ , A ⊢ B) → Θ / Γ ⊢ A ‵⊃ B
   _‵$_     : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A ‵⊃ B) (e : Θ / Γ ⊢ A) → Θ / Γ ⊢ B
   ‵pair    : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A) (e : Θ / Γ ⊢ B) → Θ / Γ ⊢ A ‵∧ B
   ‵fst     : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A ‵∧ B) → Θ / Γ ⊢ A
   ‵snd     : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A ‵∧ B) → Θ / Γ ⊢ B
   ‵left    : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ A) → Θ / Γ ⊢ A ‵∨ B
   ‵right   : ∀ {Θ Γ A B} (d : Θ / Γ ⊢ B) → Θ / Γ ⊢ A ‵∨ B
-  ‵either  : ∀ {Θ Γ A B C} (c : Θ / Γ ⊢ A ‵∨ B) (d : Θ / A ∷ Γ ⊢ C) (e : Θ / B ∷ Γ ⊢ C) →
+  ‵either  : ∀ {Θ Γ A B C} (c : Θ / Γ ⊢ A ‵∨ B) (d : Θ / Γ , A ⊢ C) (e : Θ / Γ , B ⊢ C) →
                Θ / Γ ⊢ C
 
   --     A(x₀)
@@ -493,13 +573,13 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   --   ∃y.A[y/x₀]      C
   -- -----------------------
   --           C
-  ‵some    : ∀ {Θ Γ A C} (d : Θ / Γ ⊢ ‵∃ A) (e : Θ / A ∷ twkFm§ Γ ⊢ twkFm C) → Θ / Γ ⊢ C
+  ‵some    : ∀ {Θ Γ A C} (d : Θ / Γ ⊢ ‵∃ A) (e : Θ / twkFm§ Γ , A ⊢ twkFm C) → Θ / Γ ⊢ C
 
   -- explosion (ex falso quodlibet) as primitive in Heyting arithmetic
   ‵HAabort : ∀ {Γ C} (d : HA / Γ ⊢ ‵⊥) → HA / Γ ⊢ C
 
   -- double negation elimination (reductio ad absurdum) as primitive in Peano arithmetic
-  ‵PAmagic : ∀ {Γ A} (d : PA / ‵¬ A ∷ Γ ⊢ ‵⊥) → PA / Γ ⊢ A
+  ‵PAmagic : ∀ {Γ A} (d : PA / Γ , ‵¬ A ⊢ ‵⊥) → PA / Γ ⊢ A
 
   ‵refl    : ∀ {Θ Γ t} → Θ / Γ ⊢ t ‵= t
   ‵sym     : ∀ {Θ Γ t u} (d : Θ / Γ ⊢ t ‵= u) → Θ / Γ ⊢ u ‵= t
@@ -541,22 +621,22 @@ instance
 
 -- renaming for derivations
 
-ren : ∀ {Θ k} {Γ Γ′ : Fm§ k} {A} → Γ ⊆ Γ′ → Θ / Γ ⊢ A → Θ / Γ′ ⊢ A
+ren : ∀ {Θ k} {Γ Γ′ : Fm§ k} {A} → Γ ⊑ Γ′ → Θ / Γ ⊢ A → Θ / Γ′ ⊢ A
 ren η (‵var i)         = ‵var (ren∋ η i)
-ren η (‵lam d)         = ‵lam (ren (lift⊆ η) d)
+ren η (‵lam d)         = ‵lam (ren (lift⊑ η) d)
 ren η (d ‵$ e)         = ren η d ‵$ ren η e
 ren η (‵pair d e)      = ‵pair (ren η d) (ren η e)
 ren η (‵fst d)         = ‵fst (ren η d)
 ren η (‵snd d)         = ‵snd (ren η d)
 ren η (‵left d)        = ‵left (ren η d)
 ren η (‵right d)       = ‵right (ren η d)
-ren η (‵either c d e)  = ‵either (ren η c) (ren (lift⊆ η) d) (ren (lift⊆ η) e)
-ren η (‵all d)         = ‵all (ren (twk⊆ η) d)
+ren η (‵either c d e)  = ‵either (ren η c) (ren (lift⊑ η) d) (ren (lift⊑ η) e)
+ren η (‵all d)         = ‵all (ren (twk⊑ η) d)
 ren η (‵one t refl d)  = ‵one t refl (ren η d)
 ren η (‵this t refl d) = ‵this t refl (ren η d)
-ren η (‵some d e)      = ‵some (ren η d) (ren (lift⊆ (twk⊆ η)) e)
+ren η (‵some d e)      = ‵some (ren η d) (ren (lift⊑ (twk⊑ η)) e)
 ren η (‵HAabort d)     = ‵HAabort (ren η d)
-ren η (‵PAmagic d)     = ‵PAmagic (ren (lift⊆ η) d)
+ren η (‵PAmagic d)     = ‵PAmagic (ren (lift⊑ η) d)
 ren η ‵refl            = ‵refl
 ren η (‵sym d)         = ‵sym (ren η d)
 ren η (‵trans d e)     = ‵trans (ren η d) (ren η e)
@@ -569,16 +649,16 @@ ren η (‵comp g fs)     = ‵comp g fs
 ren η (‵rec f g)       = ‵rec f g
 
 -- weaken derivation by adding one unused derivation variable
-wk : ∀ {Θ k} {Γ : Fm§ k} {A C} → Θ / Γ ⊢ A → Θ / C ∷ Γ ⊢ A
-wk = ren (wk⊆ id⊆)
+wk : ∀ {Θ k} {Γ : Fm§ k} {A C} → Θ / Γ ⊢ A → Θ / Γ , C ⊢ A
+wk = ren (wk⊑ id⊑)
 
 
 -- TODO: fix these
 
-tren? : ∀ {Θ k k′ Γ Γ′ A} (η : k ≤ k′) → Γ ⊆ Γ′ → Θ / trenFm§ η Γ ⊢ A → Θ / trenFm§ η Γ′ ⊢ A
-tren? η ζ = ren (tren⊆ η ζ)
+tren? : ∀ {Θ k k′ Γ Γ′ A} (η : k ≤ k′) → Γ ⊑ Γ′ → Θ / trenFm§ η Γ ⊢ A → Θ / trenFm§ η Γ′ ⊢ A
+tren? η ζ = ren (tren⊑ η ζ)
 
-twk? : ∀ {Θ k} {Γ Γ′ : Fm§ k} {A} → Γ ⊆ Γ′ → Θ / twkFm§ Γ ⊢ A → Θ / twkFm§ Γ′ ⊢ A
+twk? : ∀ {Θ k} {Γ Γ′ : Fm§ k} {A} → Γ ⊑ Γ′ → Θ / twkFm§ Γ ⊢ A → Θ / twkFm§ Γ′ ⊢ A
 twk? = tren? (wk≤ id≤)
 
 
@@ -589,13 +669,13 @@ twk? = tren? (wk≤ id≤)
 ⊃id : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ ⊢ A ‵⊃ A
 ⊃id = ‵lam 0
 
-det : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ A ‵⊃ B → Θ / A ∷ Γ ⊢ B
+det : ∀ {Θ k} {Γ : Fm§ k} {A B} → Θ / Γ ⊢ A ‵⊃ B → Θ / Γ , A ⊢ B
 det d = wk d ‵$ 0
 
 ⊃ex : ∀ {Θ k} {Γ : Fm§ k} {A B C} → Θ / Γ ⊢ (A ‵⊃ B ‵⊃ C) ‵⊃ B ‵⊃ A ‵⊃ C
 ⊃ex = ‵lam (‵lam (‵lam ((2 ‵$ 0) ‵$ 1)))
 
-ex : ∀ {Θ k} {Γ : Fm§ k} {A B C} → Θ / B ∷ A ∷ Γ ⊢ C → Θ / A ∷ B ∷ Γ ⊢ C
+ex : ∀ {Θ k} {Γ : Fm§ k} {A B C} → Θ / (Γ , B) , A ⊢ C → Θ / (Γ , A) , B ⊢ C
 ex d = det (det (⊃ex ‵$ ‵lam (‵lam d)))
 
 abort : ∀ {Θ k} {Γ : Fm§ k} {C} → Θ / Γ ⊢ ‵⊥ → Θ / Γ ⊢ C
@@ -712,8 +792,8 @@ module _ {Θ k} {Γ : Fm§ k} where
 
   ⫗cong∀ : ∀ {A A′} → Θ / twkFm§ Γ ⊢ A ‵⫗ A′ → Θ / Γ ⊢ (‵∀ A) ‵⫗ (‵∀ A′)
   ⫗cong∀ d = ‵pair
-                (‵lam (‵all (twk? (wk⊆ id⊆) (‵fst d) ‵$ ‵one (‵tvar zero) TODO1 0)))
-                (‵lam (‵all (twk? (wk⊆ id⊆) (‵snd d) ‵$ ‵one (‵tvar zero) TODO1 0)))
+                (‵lam (‵all (twk? (wk⊑ id⊑) (‵fst d) ‵$ ‵one (‵tvar zero) TODO1 0)))
+                (‵lam (‵all (twk? (wk⊑ id⊑) (‵snd d) ‵$ ‵one (‵tvar zero) TODO1 0)))
 
   ⫗cong∃ : ∀ {A A′} → Θ / twkFm§ Γ ⊢ A ‵⫗ A′ → Θ / Γ ⊢ (‵∃ A) ‵⫗ (‵∃ A′)
   ⫗cong∃ d = ‵pair
@@ -760,22 +840,22 @@ module ⫗-Reasoning {Θ k} {Γ : Fm§ k} where
 --   infixl 4 _⊛_ _<$>_
 --   infixl 1 _>>=_
 --
---   return : ∀ {𝒶} {A : Set 𝒶} → A → ¬ ¬ A
+--   return : ∀ {𝓍} {A : Set 𝓍} → A → ¬ ¬ A
 --   return x = λ k → k x
 --
---   _>>=_ : ∀ {𝒶 𝒷} {A : Set 𝒶} {B : Set 𝒷} → ¬ ¬ A → (A → ¬ ¬ B) → ¬ ¬ B
+--   _>>=_ : ∀ {𝓍 𝓎} {A : Set 𝓍} {B : Set 𝓎} → ¬ ¬ A → (A → ¬ ¬ B) → ¬ ¬ B
 --   mx >>= f = λ k → mx (λ x → f x k)
 --
---   join : ∀ {𝒶} {A : Set 𝒶} → ¬ ¬ ¬ ¬ A → ¬ ¬ A
+--   join : ∀ {𝓍} {A : Set 𝓍} → ¬ ¬ ¬ ¬ A → ¬ ¬ A
 --   join mmx = mmx >>= λ mx → mx
 --
---   _⊛_ : ∀ {𝒶 𝒷} {A : Set 𝒶} {B : Set 𝒷} → ¬ ¬ (A → B) → ¬ ¬ A → ¬ ¬ B
+--   _⊛_ : ∀ {𝓍 𝓎} {A : Set 𝓍} {B : Set 𝓎} → ¬ ¬ (A → B) → ¬ ¬ A → ¬ ¬ B
 --   mf ⊛ mx = mf >>= λ f → mx >>= λ x → return (f x)
 --
---   _<$>_ : ∀ {𝒶 𝒷} {A : Set 𝒶} {B : Set 𝒷} → (A → B) → ¬ ¬ A → ¬ ¬ B
+--   _<$>_ : ∀ {𝓍 𝓎} {A : Set 𝓍} {B : Set 𝓎} → (A → B) → ¬ ¬ A → ¬ ¬ B
 --   f <$> mx = return f ⊛ mx
 --
---   dnem : ∀ {𝒶} {A : Set 𝒶} → ¬ ¬ (A ⊎ ¬ A)
+--   dnem : ∀ {𝓍} {A : Set 𝓍} → ¬ ¬ (A ⊎ ¬ A)
 --   dnem = λ k → k (right λ k′ → k (left k′))
 
 
@@ -1023,8 +1103,8 @@ _° : ∀ {k} → Fm k → Fm k
 (t ‵= u) ° = ‵¬ ‵¬ (t ‵= u)
 
 _°§ : ∀ {k} → Fm§ k → Fm§ k
-[]      °§ = []
-(A ∷ Γ) °§ = A ° ∷ Γ °§
+∙       °§ = ∙
+(Γ , A) °§ = Γ °§ , A °
 
 
 -- TODO: interactions between DNT and renaming/substitution
@@ -1041,8 +1121,8 @@ postulate
             Θ / Γ ⊢ ‵∀ (A ° ‵⊃ (texFm (twkFm A) [ t ]) °) →
             Θ / Γ ⊢ ‵∀ (A ° ‵⊃ texFm (twkFm (A °)) [ t ])
   TODO6 : ∀ {Θ k} {Γ : Fm§ k} {A C} →
-            Θ / A ° ∷ (twkFm§ Γ) °§ ⊢ (twkFm C) ° →
-            Θ / A ° ∷ twkFm§ (Γ °§) ⊢ twkFm (C °)
+            Θ / (twkFm§ Γ) °§ , A ° ⊢ (twkFm C) ° →
+            Θ / twkFm§ (Γ °§) , A ° ⊢ twkFm (C °)
 
 
 -- TODO: lemma 5
@@ -1135,8 +1215,8 @@ lem5-3⁻¹ : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ °§ ⊢ A ° → PA / Γ
 lem5-3⁻¹ d = aux (‵fst lem5-1 ‵$ lem2 d)
   where
     aux : ∀ {k} {Γ : Fm§ k} {A} → PA / Γ °§ ⊢ A → PA / Γ ⊢ A
-    aux {Γ = []}    d = d
-    aux {Γ = B ∷ Γ} d = wk (aux (‵lam d)) ‵$ (‵snd lem5-1 ‵$ 0)
+    aux {Γ = ∙}     d = d
+    aux {Γ = Γ , C} d = wk (aux (‵lam d)) ‵$ (‵snd lem5-1 ‵$ 0)
 
 -- TODO: "A counterexample for 4 is ¬∀y.A[y/x₀]."
 -- lem5-4 : ∀ {k} {Γ : Fm§ k} → ¬ (∀ {A} → HA / ‵¬ (‵∀ A) ∷ Γ ⊢ (‵¬ (‵∀ A)) °)
@@ -1157,8 +1237,8 @@ _ᴬ⟨_⟩ : ∀ {k} → Fm k → Fm k → Fm k
 (t ‵= u) ᴬ⟨ T ⟩ = (t ‵= u) ‵∨ T
 
 _ᴬ⟨_⟩§ : ∀ {k} → Fm§ k → Fm k → Fm§ k
-[]      ᴬ⟨ T ⟩§ = []
-(A ∷ Γ) ᴬ⟨ T ⟩§ = A ᴬ⟨ T ⟩ ∷ Γ ᴬ⟨ T ⟩§
+∙       ᴬ⟨ T ⟩§ = ∙
+(Γ , A) ᴬ⟨ T ⟩§ = Γ ᴬ⟨ T ⟩§ , A ᴬ⟨ T ⟩
 
 
 -- TODO: interactions between A-translation and renaming/substitution
@@ -1242,162 +1322,161 @@ tren η (‵PAmagic d)     = ‵PAmagic (tren η d)
 tren η ‵refl            = ‵refl
 tren η (‵sym d)         = ‵sym (tren η d)
 tren η (‵trans d e)     = ‵trans (tren η d) (tren η e)
-tren η (‵cong f i d)    = {!!}
+tren η (‵cong f i d)    = {!‵cong ? ? ?!}
 tren η ‵dis             = ‵dis
 tren η (‵inj d)         = ‵inj (tren η d)
-tren η (‵ind d e)       = {!!}
-tren η (‵proj i)        = {!!}
+tren η (‵ind d e)       = ‵ind {!tren (lift≤ η) ?!} {!tren (lift≤ η) ?!}
+tren η (‵proj i)        = {!‵proj i!}
 tren η (‵comp g fs)     = {!!}
 tren η (‵rec f g)       = ‵rec f g
 
-twk : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ ⊢ A → Θ / twkFm§ Γ ⊢ twkFm A
-twk d = tren (wk≤ id≤) d
+-- twk : ∀ {Θ k} {Γ : Fm§ k} {A} → Θ / Γ ⊢ A → Θ / twkFm§ Γ ⊢ twkFm A
+-- twk d = tren (wk≤ id≤) d
 
-hmm : ∀ {k} {Γ : Fm§ k} {A C} → PA / Γ ⊢ ‵∀ (A ‵∨ twkFm C) → PA / Γ ⊢ ‵¬ C →
-        PA / Γ ⊢ ‵∀ A
-hmm d e = ‵all (‵either (‵one (‵tvar zero) TODO1 (twk d)) 0 (abort (wk (twk e) ‵$ 0)))
+-- hmm : ∀ {k} {Γ : Fm§ k} {A C} → PA / Γ ⊢ ‵∀ (A ‵∨ twkFm C) → PA / Γ ⊢ ‵¬ C →
+--         PA / Γ ⊢ ‵∀ A
+-- hmm d e = ‵all (‵either (‵one (‵tvar zero) TODO1 (twk d)) 0 (abort (wk (twk e) ‵$ 0)))
 
+-- {-
+-- roconnor got:
+--     (‵lam
+--       (‵all
+--         (twk (wk⊑ id⊑)
+--           (‵lam
+--             (‵either 0
+--               0
+--               (abort (wk (wk {!e!}) ‵$ 0))))
+--           ‵$ ‵one (‵tvar zero) TODO1 0)))
+--     ‵$ d
 
-{-
-roconnor got:
-    (‵lam
-      (‵all
-        (twk (wk⊆ id⊆)
-          (‵lam
-            (‵either 0
-              0
-              (abort (wk (wk {!e!}) ‵$ 0))))
-          ‵$ ‵one (‵tvar zero) TODO1 0)))
-    ‵$ d
+-- -}
 
--}
+-- aux4 : ∀ {k} {Γ : Fm§ k} {A C} → PA / Γ ⊢ ‵∀ (A ‵∨ twkFm C) ‵⫗ (‵∀ A) ‵∨ C
+-- aux4 {Γ = Γ} {A} {C} = ‵pair
+--          (‵lam (‵either (em {A = C})
+--            (‵right 0)
+--            (‵left (hmm 1 0))))
+--          (‵lam (‵either 0
+--            (‵all (‵left (‵one (‵tvar zero) TODO1 0)))
+--            (‵all (‵right 0))))
 
-aux4 : ∀ {k} {Γ : Fm§ k} {A C} → PA / Γ ⊢ ‵∀ (A ‵∨ twkFm C) ‵⫗ (‵∀ A) ‵∨ C
-aux4 {Γ = Γ} {A} {C} = ‵pair
-         (‵lam (‵either (em {A = C})
-           (‵right 0)
-           (‵left (hmm 1 0))))
-         (‵lam (‵either 0
-           (‵all (‵left (‵one (‵tvar zero) TODO1 0)))
-           (‵all (‵right 0))))
+-- aux5 : ∀ {Θ k} {Γ : Fm§ k} {A C} → Θ / Γ ⊢ ‵∃ (A ‵∨ twkFm C) ‵⫗ (‵∃ A) ‵∨ C
+-- aux5 = ‵pair
+--          (‵lam (‵some 0 (‵either 0
+--            (‵left (‵this (‵tvar zero) TODO1 0))
+--            (‵right 0))))
+--          (‵lam (‵either 0
+--            (‵some 0
+--              (‵this (‵tvar zero) TODO9 (‵left 0)))
+--            (‵this Z TODO8 (‵right 0)))) -- NOTE: could also be any other number
 
-aux5 : ∀ {Θ k} {Γ : Fm§ k} {A C} → Θ / Γ ⊢ ‵∃ (A ‵∨ twkFm C) ‵⫗ (‵∃ A) ‵∨ C
-aux5 = ‵pair
-         (‵lam (‵some 0 (‵either 0
-           (‵left (‵this (‵tvar zero) TODO1 0))
-           (‵right 0))))
-         (‵lam (‵either 0
-           (‵some 0
-             (‵this (‵tvar zero) TODO9 (‵left 0)))
-           (‵this Z TODO8 (‵right 0)))) -- NOTE: could also be any other number
+-- aux6 : ∀ {Θ k} {Γ : Fm§ k} {C} → Θ / Γ ⊢ C ‵⫗ ‵⊥ ‵∨ C
+-- aux6 = ‵pair
+--          (‵lam (‵right 0))
+--          (‵lam (‵either 0 (abort 0) (id 0)))
 
-aux6 : ∀ {Θ k} {Γ : Fm§ k} {C} → Θ / Γ ⊢ C ‵⫗ ‵⊥ ‵∨ C
-aux6 = ‵pair
-         (‵lam (‵right 0))
-         (‵lam (‵either 0 (abort 0) (id 0)))
+-- module _ where
+--   open ⫗-Reasoning
 
-module _ where
-  open ⫗-Reasoning
+--   lem6-1 : ∀ {k} {Γ : Fm§ k} {A T} → PA / Γ ⊢ A ᴬ⟨ T ⟩ ‵⫗ A ‵∨ T
+--   lem6-1 {A = A ‵⊃ B} {T} = begin
+--                               A ᴬ⟨ T ⟩ ‵⊃ B ᴬ⟨ T ⟩
+--                             ⫗⟨ ⫗cong⊃ lem6-1 lem6-1 ⟩
+--                               (A ‵∨ T) ‵⊃ (B ‵∨ T)
+--                             ⫗⟨ aux1 ⟩
+--                               (A ‵⊃ B) ‵∨ T
+--                             ∎
+--   lem6-1 {A = A ‵∧ B} {T} = begin
+--                               A ᴬ⟨ T ⟩ ‵∧ B ᴬ⟨ T ⟩
+--                             ⫗⟨ ⫗cong∧ lem6-1 lem6-1 ⟩
+--                               (A ‵∨ T) ‵∧ (B ‵∨ T)
+--                             ⫗⟨ aux2 ⟩
+--                               (A ‵∧ B) ‵∨ T
+--                             ∎
+--   lem6-1 {A = A ‵∨ B} {T} = begin
+--                               A ᴬ⟨ T ⟩ ‵∨ B ᴬ⟨ T ⟩
+--                             ⫗⟨ ⫗cong∨ lem6-1 lem6-1 ⟩
+--                               (A ‵∨ T) ‵∨ (B ‵∨ T)
+--                             ⫗⟨ aux3 ⟩
+--                               (A ‵∨ B) ‵∨ T
+--                             ∎
+--   lem6-1 {A = ‵∀ A}   {T} = begin
+--                               ‵∀ (A ᴬ⟨ twkFm T ⟩)
+--                             ⫗⟨ ⫗cong∀ lem6-1 ⟩
+--                               ‵∀ (A ‵∨ twkFm T)
+--                             ⫗⟨ aux4 ⟩
+--                               (‵∀ A) ‵∨ T
+--                             ∎
+--   lem6-1 {A = ‵∃ A}   {T} = begin
+--                               ‵∃ (A ᴬ⟨ twkFm T ⟩)
+--                             ⫗⟨ ⫗cong∃ lem6-1 ⟩
+--                               ‵∃ (A ‵∨ twkFm T)
+--                             ⫗⟨ aux5 ⟩
+--                               (‵∃ A) ‵∨ T
+--                             ∎
+--   lem6-1 {A = ‵⊥}    {T} = aux6
+--   lem6-1 {A = t ‵= u} {T} = ⫗refl
 
-  lem6-1 : ∀ {k} {Γ : Fm§ k} {A T} → PA / Γ ⊢ A ᴬ⟨ T ⟩ ‵⫗ A ‵∨ T
-  lem6-1 {A = A ‵⊃ B} {T} = begin
-                              A ᴬ⟨ T ⟩ ‵⊃ B ᴬ⟨ T ⟩
-                            ⫗⟨ ⫗cong⊃ lem6-1 lem6-1 ⟩
-                              (A ‵∨ T) ‵⊃ (B ‵∨ T)
-                            ⫗⟨ aux1 ⟩
-                              (A ‵⊃ B) ‵∨ T
-                            ∎
-  lem6-1 {A = A ‵∧ B} {T} = begin
-                              A ᴬ⟨ T ⟩ ‵∧ B ᴬ⟨ T ⟩
-                            ⫗⟨ ⫗cong∧ lem6-1 lem6-1 ⟩
-                              (A ‵∨ T) ‵∧ (B ‵∨ T)
-                            ⫗⟨ aux2 ⟩
-                              (A ‵∧ B) ‵∨ T
-                            ∎
-  lem6-1 {A = A ‵∨ B} {T} = begin
-                              A ᴬ⟨ T ⟩ ‵∨ B ᴬ⟨ T ⟩
-                            ⫗⟨ ⫗cong∨ lem6-1 lem6-1 ⟩
-                              (A ‵∨ T) ‵∨ (B ‵∨ T)
-                            ⫗⟨ aux3 ⟩
-                              (A ‵∨ B) ‵∨ T
-                            ∎
-  lem6-1 {A = ‵∀ A}   {T} = begin
-                              ‵∀ (A ᴬ⟨ twkFm T ⟩)
-                            ⫗⟨ ⫗cong∀ lem6-1 ⟩
-                              ‵∀ (A ‵∨ twkFm T)
-                            ⫗⟨ aux4 ⟩
-                              (‵∀ A) ‵∨ T
-                            ∎
-  lem6-1 {A = ‵∃ A}   {T} = begin
-                              ‵∃ (A ᴬ⟨ twkFm T ⟩)
-                            ⫗⟨ ⫗cong∃ lem6-1 ⟩
-                              ‵∃ (A ‵∨ twkFm T)
-                            ⫗⟨ aux5 ⟩
-                              (‵∃ A) ‵∨ T
-                            ∎
-  lem6-1 {A = ‵⊥}    {T} = aux6
-  lem6-1 {A = t ‵= u} {T} = ⫗refl
+-- lem6-2 : ∀ {Θ k} {Γ : Fm§ k} {A T} → Θ / Γ ⊢ T ‵⊃ A ᴬ⟨ T ⟩
+-- lem6-2 {A = A ‵⊃ B} = ‵lam (‵lam (lem6-2 ‵$ 1)) -- NOTE: function argument ignored
+-- lem6-2 {A = A ‵∧ B} = ‵lam (‵pair (lem6-2 ‵$ 0) (lem6-2 ‵$ 0))
+-- lem6-2 {A = A ‵∨ B} = ‵lam (‵left (lem6-2 ‵$ 0)) -- NOTE: could also be ‵right
+-- lem6-2 {A = ‵∀ A}   = ‵lam (‵all (lem6-2 ‵$ 0))
+-- lem6-2 {A = ‵∃ A}   = {!!}
+-- -- ‵lam (‵this Z TODO12 (lem6-2 {A = A [ Z ]} ‵$ 0)) -- TODO: termination failure
+-- lem6-2 {A = ‵⊥}    = ⊃id
+-- lem6-2 {A = t ‵= u} = ‵lam (‵right 0)
 
-lem6-2 : ∀ {Θ k} {Γ : Fm§ k} {A T} → Θ / Γ ⊢ T ‵⊃ A ᴬ⟨ T ⟩
-lem6-2 {A = A ‵⊃ B} = ‵lam (‵lam (lem6-2 ‵$ 1)) -- NOTE: function argument ignored
-lem6-2 {A = A ‵∧ B} = ‵lam (‵pair (lem6-2 ‵$ 0) (lem6-2 ‵$ 0))
-lem6-2 {A = A ‵∨ B} = ‵lam (‵left (lem6-2 ‵$ 0)) -- NOTE: could also be ‵right
-lem6-2 {A = ‵∀ A}   = ‵lam (‵all (lem6-2 ‵$ 0))
-lem6-2 {A = ‵∃ A}   = {!!}
--- ‵lam (‵this Z TODO12 (lem6-2 {A = A [ Z ]} ‵$ 0)) -- TODO: termination failure
-lem6-2 {A = ‵⊥}    = ⊃id
-lem6-2 {A = t ‵= u} = ‵lam (‵right 0)
+-- lem6-3∋ : ∀ {k} {Γ : Fm§ k} {A T} → Γ ∋ A → Γ ᴬ⟨ T ⟩§ ∋ A ᴬ⟨ T ⟩
+-- lem6-3∋ zero    = zero
+-- lem6-3∋ (suc i) = suc (lem6-3∋ i)
 
-lem6-3∋ : ∀ {k} {Γ : Fm§ k} {A T} → Γ ∋ A → Γ ᴬ⟨ T ⟩§ ∋ A ᴬ⟨ T ⟩
-lem6-3∋ zero    = zero
-lem6-3∋ (suc i) = suc (lem6-3∋ i)
+-- -- TODO: "The proof of 3 is a bit tricky where eigenvariable conditions are involved."
+-- lem6-3 : ∀ {Θ k} {Γ : Fm§ k} {A T} → Θ / Γ ⊢ A → Θ / Γ ᴬ⟨ T ⟩§ ⊢ A ᴬ⟨ T ⟩
+-- lem6-3 (‵var i)        = ‵var (lem6-3∋ i)
+-- lem6-3 (‵lam d)        = ‵lam (lem6-3 d)
+-- lem6-3 (d ‵$ e)        = lem6-3 d ‵$ lem6-3 e
+-- lem6-3 (‵pair d e)     = ‵pair (lem6-3 d) (lem6-3 e)
+-- lem6-3 (‵fst d)        = ‵fst (lem6-3 d)
+-- lem6-3 (‵snd d)        = ‵snd (lem6-3 d)
+-- lem6-3 (‵left d)       = ‵left (lem6-3 d)
+-- lem6-3 (‵right d)      = ‵right (lem6-3 d)
+-- lem6-3 (‵either c d e) = ‵either (lem6-3 c) (lem6-3 d) (lem6-3 e)
+-- lem6-3 (‵all d)        = {!!}
+-- lem6-3 (‵one t p d)    = {!!}
+-- lem6-3 (‵this t p d)   = {!!}
+-- lem6-3 (‵some d e)     = {!!}
+-- lem6-3 (‵HAabort d)    = {!lem6-3 d!}
+-- lem6-3 (‵PAmagic d)    = {!!}
+-- lem6-3 ‵refl           = ‵left ‵refl
+-- lem6-3 (‵sym d)        = ‵either (lem6-3 d)
+--                            (‵left (‵sym 0))
+--                            (‵right 0)
+-- lem6-3 (‵trans d e)    = ‵either (lem6-3 d)
+--                            (‵either (wk (lem6-3 e))
+--                              (‵left (‵trans 1 0))
+--                              (‵right 0))
+--                            (‵right 0)
+-- lem6-3 (‵cong f i d)   = {!!}
+-- lem6-3 ‵dis            = {!!}
+-- lem6-3 (‵inj d)        = {!!}
+-- lem6-3 (‵ind d e)      = {!!}
+-- lem6-3 (‵proj i)       = {!!}
+-- lem6-3 (‵comp g fs)    = {!!}
+-- lem6-3 (‵rec f g)      = {!!}
 
--- TODO: "The proof of 3 is a bit tricky where eigenvariable conditions are involved."
-lem6-3 : ∀ {Θ k} {Γ : Fm§ k} {A T} → Θ / Γ ⊢ A → Θ / Γ ᴬ⟨ T ⟩§ ⊢ A ᴬ⟨ T ⟩
-lem6-3 (‵var i)        = ‵var (lem6-3∋ i)
-lem6-3 (‵lam d)        = ‵lam (lem6-3 d)
-lem6-3 (d ‵$ e)        = lem6-3 d ‵$ lem6-3 e
-lem6-3 (‵pair d e)     = ‵pair (lem6-3 d) (lem6-3 e)
-lem6-3 (‵fst d)        = ‵fst (lem6-3 d)
-lem6-3 (‵snd d)        = ‵snd (lem6-3 d)
-lem6-3 (‵left d)       = ‵left (lem6-3 d)
-lem6-3 (‵right d)      = ‵right (lem6-3 d)
-lem6-3 (‵either c d e) = ‵either (lem6-3 c) (lem6-3 d) (lem6-3 e)
-lem6-3 (‵all d)        = {!!}
-lem6-3 (‵one t p d)    = {!!}
-lem6-3 (‵this t p d)   = {!!}
-lem6-3 (‵some d e)     = {!!}
-lem6-3 (‵HAabort d)    = {!lem6-3 d!}
-lem6-3 (‵PAmagic d)    = {!!}
-lem6-3 ‵refl           = ‵left ‵refl
-lem6-3 (‵sym d)        = ‵either (lem6-3 d)
-                           (‵left (‵sym 0))
-                           (‵right 0)
-lem6-3 (‵trans d e)    = ‵either (lem6-3 d)
-                           (‵either (wk (lem6-3 e))
-                             (‵left (‵trans 1 0))
-                             (‵right 0))
-                           (‵right 0)
-lem6-3 (‵cong f i d)   = {!!}
-lem6-3 ‵dis            = {!!}
-lem6-3 (‵inj d)        = {!!}
-lem6-3 (‵ind d e)      = {!!}
-lem6-3 (‵proj i)       = {!!}
-lem6-3 (‵comp g fs)    = {!!}
-lem6-3 (‵rec f g)      = {!!}
-
--- TODO: "A counterexample for 4 is A = ¬¬T."
--- lem6-4 : ∀ {k} {Γ : Fm§ k} → ¬ (∀ {T} → HA / ‵¬ ‵¬ T ∷ Γ ⊢ (‵¬ ‵¬ T) ᴬ⟨ T ⟩)
--- lem6-4 = {!!}
-
-
-----------------------------------------------------------------------------------------------------
-
--- TODO: lemma 7
-
--- TODO: corollary 8
-
--- TODO: theorem 1
+-- -- TODO: "A counterexample for 4 is A = ¬¬T."
+-- -- lem6-4 : ∀ {k} {Γ : Fm§ k} → ¬ (∀ {T} → HA / ‵¬ ‵¬ T ∷ Γ ⊢ (‵¬ ‵¬ T) ᴬ⟨ T ⟩)
+-- -- lem6-4 = {!!}
 
 
-----------------------------------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------------------------------
+
+-- -- TODO: lemma 7
+
+-- -- TODO: corollary 8
+
+-- -- TODO: theorem 1
+
+
+-- ----------------------------------------------------------------------------------------------------
