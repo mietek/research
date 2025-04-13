@@ -777,44 +777,61 @@ renFm§ : ∀ {k k′} → k ≤ k′ → Fm§ k → Fm§ k′
 renFm§ η ∙       = ∙
 renFm§ η (Γ , A) = renFm§ η Γ , renFm η A
 
--- weaken formula by adding one unused term variable
+
+----------------------------------------------------------------------------------------------------
+
+-- formulas: generic lemmas from RenKit
+
 wkFm : ∀ {k} → Fm k → Fm (suc k)
 wkFm A = renFm (wk≤ id≤) A
 
--- weaken formulas by adding one unused term variable
 wkFm§ : ∀ {k} → Fm§ k → Fm§ (suc k)
 wkFm§ Γ = renFm§ (wk≤ id≤) Γ
 
 
 ----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+
+-- formulas: substitution
+
+subFm : ∀ {k m} → Tm§ m k → Fm k → Fm m
+subFm σ (A ‵⊃ B) = subFm σ A ‵⊃ subFm σ B
+subFm σ (A ‵∧ B) = subFm σ A ‵∧ subFm σ B
+subFm σ (A ‵∨ B) = subFm σ A ‵∨ subFm σ B
+subFm σ (‵∀ A)   = ‵∀ (subFm (liftTm§ σ) A)
+subFm σ (‵∃ A)   = ‵∃ (subFm (liftTm§ σ) A)
+subFm σ ‵⊥      = ‵⊥
+subFm σ (t ‵= u) = subTm σ t ‵= subTm σ u
+
+
 ----------------------------------------------------------------------------------------------------
 
--- TODO: substitution for terms and formulas
+-- formulas: generic lemmas from SubKit
+
+_[_]Fm : ∀ {k} → Fm (suc k) → Tm k → Fm k
+A [ s ]Fm = subFm (idTm§ , s) A
+
+
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
 
 postulate
   -- exchange two topmost term variables in formula
   texFm : ∀ {k} (A : Fm (suc (suc k))) → Fm (suc (suc k))
 
-  -- substitute topmost term variable in formula by term
-  _[_] : ∀ {k} (A : Fm (suc k)) (s : Tm k) → Fm k
-
-  TODO0 : ∀ {k} {A : Fm k} {t} → A ≡ wkFm A [ t ]
-  TODO1 : ∀ {k} {A : Fm (suc k)} → A ≡ renFm (lift≤ (wk≤ id≤)) A [ ‵var zero ]
-  TODO7 : ∀ {k} {A : Fm (suc k)} {B t} → A [ t ] ‵∨ B [ t ] ≡ (A ‵∨ B) [ t ]
+  TODO0 : ∀ {k} {A : Fm k} {t} → A ≡ wkFm A [ t ]Fm
+  TODO1 : ∀ {k} {A : Fm (suc k)} → A ≡ renFm (lift≤ (wk≤ id≤)) A [ ‵var zero ]Fm
+  TODO7 : ∀ {k} {A : Fm (suc k)} {B t} → A [ t ]Fm ‵∨ B [ t ]Fm ≡ (A ‵∨ B) [ t ]Fm
 
 module _ where
   open ≡-Reasoning
 
-  TODO8 : ∀ {k} {A : Fm (suc k)} {B t} → A [ t ] ‵∨ B ≡ (A ‵∨ wkFm B) [ t ]
+  TODO8 : ∀ {k} {A : Fm (suc k)} {B t} → A [ t ]Fm ‵∨ B ≡ (A ‵∨ wkFm B) [ t ]Fm
   TODO8 {A = A} {B} {t} = _‵∨_ & refl ⊗ TODO0
                         ⋮ TODO7
 
   TODO9 : ∀ {k} {A : Fm (suc k)} {B} → A ‵∨ wkFm B ≡
-            (renFm (lift≤ (wk≤ id≤)) A ‵∨ renFm (lift≤ (wk≤ id≤)) (wkFm B)) [ ‵var zero ]
+            (renFm (lift≤ (wk≤ id≤)) A ‵∨ renFm (lift≤ (wk≤ id≤)) (wkFm B)) [ ‵var zero ]Fm
   TODO9 {A = A} {B} = _‵∨_ & TODO1 ⊗ TODO1
                     ⋮ TODO7
 
@@ -863,12 +880,12 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   --   ∀y.A[y/x₀]
   -- --------------
   --    A[t/x₀]
-  ‵one    : ∀ {Þ Γ A A′} t (p : A′ ≡ A [ t ]) (d : Þ / Γ ⊢ ‵∀ A) → Þ / Γ ⊢ A′
+  ‵one    : ∀ {Þ Γ A A′} t (p : A′ ≡ A [ t ]Fm) (d : Þ / Γ ⊢ ‵∀ A) → Þ / Γ ⊢ A′
 
   --    A[t/x₀]
   -- --------------
   --   ∃y.A[y/x₀]
-  ‵this   : ∀ {Þ Γ A A′} t (p : A′ ≡ A [ t ]) (d : Þ / Γ ⊢ A′) → Þ / Γ ⊢ ‵∃ A
+  ‵this   : ∀ {Þ Γ A A′} t (p : A′ ≡ A [ t ]Fm) (d : Þ / Γ ⊢ A′) → Þ / Γ ⊢ ‵∃ A
 
   --                 A(x₀)
   --                   ⋮
@@ -897,8 +914,8 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   --   A[0/x₀]    ∀y.A[y/x₀]→A[y+1/x₀]
   -- ------------------------------------
   --              ∀y.A[y/x₀]
-  ‵ind    : ∀ {Þ Γ A} (d : Þ / Γ ⊢ A [ 𝟘 ])
-              (e : Þ / Γ ⊢ ‵∀ (A ‵⊃ (texFm (wkFm A)) [ 𝕊 𝟘 ])) →
+  ‵ind    : ∀ {Þ Γ A} (d : Þ / Γ ⊢ A [ 𝟘 ]Fm)
+              (e : Þ / Γ ⊢ ‵∀ (A ‵⊃ (texFm (wkFm A)) [ 𝕊 𝟘 ]Fm)) →
               Þ / Γ ⊢ ‵∀ A
 
   ‵proj   : ∀ {Þ Γ n τ} (i : Fin n) → Þ / Γ ⊢ ‵fun (proj i) τ ‵= get i τ
@@ -1891,16 +1908,16 @@ _°§ : ∀ {k} → Fm§ k → Fm§ k
 -- TODO: interactions between DNT and renaming/substitution
 
 postulate
-  TODO2 : ∀ {k} {A : Fm (suc k)} {t} → (A [ t ]) ° ≡ (A °) [ t ]
+  TODO2 : ∀ {k} {A : Fm (suc k)} {t} → (A [ t ]Fm) ° ≡ (A °) [ t ]Fm
   TODO3 : ∀ {Þ k} {Γ : Fm§ k} {A} →
             Þ / (wkFm§ Γ) °§ ⊢ A →
             Þ / wkFm§ (Γ °§) ⊢ A
   TODO4 : ∀ {Þ k} {Γ : Fm§ k} {A t} →
-            Þ / Γ ⊢ (A [ t ]) ° →
-            Þ / Γ ⊢ (A °) [ t ]
+            Þ / Γ ⊢ (A [ t ]Fm) ° →
+            Þ / Γ ⊢ (A °) [ t ]Fm
   TODO5 : ∀ {Þ k} {Γ : Fm§ k} {A t} →
-            Þ / Γ ⊢ ‵∀ (A ° ‵⊃ (texFm (wkFm A) [ t ]) °) →
-            Þ / Γ ⊢ ‵∀ (A ° ‵⊃ texFm (wkFm (A °)) [ t ])
+            Þ / Γ ⊢ ‵∀ (A ° ‵⊃ (texFm (wkFm A) [ t ]Fm) °) →
+            Þ / Γ ⊢ ‵∀ (A ° ‵⊃ texFm (wkFm (A °)) [ t ]Fm)
   TODO6 : ∀ {Þ k} {Γ : Fm§ k} {A C} →
             Þ / (wkFm§ Γ) °§ , A ° ⊢ (wkFm C) ° →
             Þ / wkFm§ (Γ °§) , A ° ⊢ wkFm (C °)
@@ -2025,7 +2042,7 @@ _ᴬ⟨_⟩§ : ∀ {k} → Fm§ k → Fm k → Fm§ k
 -- TODO: interactions between A-translation and renaming/substitution
 
 postulate
-  TODO12 : ∀ {k} {A : Fm (suc k)} {T t} → (A [ t ]) ᴬ⟨ T ⟩ ≡ (A ᴬ⟨ wkFm T ⟩) [ t ]
+  TODO12 : ∀ {k} {A : Fm (suc k)} {T t} → (A [ t ]Fm) ᴬ⟨ T ⟩ ≡ (A ᴬ⟨ wkFm T ⟩) [ t ]Fm
 
 
 -- TODO: lemma 6
