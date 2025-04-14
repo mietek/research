@@ -4,11 +4,11 @@
 -- thanks to ncf and roconnor
 -- first-order predicate logic with one sort (naturals) and one predicate (equality)
 
-{-# OPTIONS --rewriting #-}
+-- {-# OPTIONS --rewriting #-}
 
 module Selinger92 where
 
-open import Agda.Builtin.Equality.Rewrite
+-- open import Agda.Builtin.Equality.Rewrite
 
 open import Agda.Builtin.FromNat using (Number ; fromNat)
 
@@ -96,21 +96,21 @@ data Vec {𝓍} (X : Set 𝓍) : Nat → Set 𝓍 where
   ∙   : Vec X zero
   _,_ : ∀ {n} (ξ : Vec X n) (x : X) → Vec X (suc n)
 
-get : ∀ {𝓍} {X : Set 𝓍} {n} → Fin n → Vec X n → X
-get zero    (ξ , x) = x
-get (suc i) (ξ , x) = get i ξ
+lookup : ∀ {𝓍} {X : Set 𝓍} {n} → Fin n → Vec X n → X
+lookup zero    (ξ , x) = x
+lookup (suc i) (ξ , x) = lookup i ξ
 
-put : ∀ {𝓍} {X : Set 𝓍} {n} → Fin n → Vec X n → X → Vec X n
-put zero    (ξ , x) y = ξ , y
-put (suc i) (ξ , x) y = put i ξ y , x
+update : ∀ {𝓍} {X : Set 𝓍} {n} → Fin n → Vec X n → X → Vec X n
+update zero    (ξ , x) y = ξ , y
+update (suc i) (ξ , x) y = update i ξ y , x
 
 for : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {n} → Vec X n → (X → Y) → Vec Y n
 for ∙       f = ∙
 for (ξ , x) f = for ξ f , f x
 
-tab : ∀ {𝓍} {X : Set 𝓍} {n} → (Fin n → X) → Vec X n
-tab {n = zero}  f = ∙
-tab {n = suc n} f = tab (f ∘ suc) , f zero
+tabulate : ∀ {𝓍} {X : Set 𝓍} {n} → (Fin n → X) → Vec X n
+tabulate {n = zero}  f = ∙
+tabulate {n = suc n} f = tabulate (f ∘ suc) , f zero
 
 
 ----------------------------------------------------------------------------------------------------
@@ -296,7 +296,7 @@ Fun§ n m = Vec (Fun n) m
 #suc (∙ , x) = suc x
 
 #proj : ∀ {n} → Fin n → Fun n
-#proj i ξ = get i ξ
+#proj i ξ = lookup i ξ
 
 #comp : ∀ {n m} → Fun m → Fun§ n m → Fun n
 #comp g φ ξ = g (for φ (_$ ξ))
@@ -854,25 +854,25 @@ comprenFm η′ η (t ‵= u) = _‵=_ & comprenTm η′ η t ⊗ comprenTm η�
 
 -- 2.6. formulas: generic lemmas from RenSubKit1
 
-lidrenFm§ : ∀ {k} (Γ : Fm§ k) → renFm§ id≤ Γ ≡ Γ
-lidrenFm§ ∙       = refl
-lidrenFm§ (Γ , A) = _,_ & lidrenFm§ Γ ⊗ lidrenFm A
+lidrenFm§ : ∀ {k} {Γ : Fm§ k} → renFm§ id≤ Γ ≡ Γ
+lidrenFm§ {Γ = ∙}     = refl
+lidrenFm§ {Γ = Γ , A} = _,_ & lidrenFm§ ⊗ lidrenFm A
 
 comprenFm§ : ∀ {k k′ k″} (η′ : k′ ≤ k″) (η : k ≤ k′) (Γ : Fm§ k) →
                renFm§ (η′ ∘≤ η) Γ ≡ (renFm§ η′ ∘ renFm§ η) Γ
 comprenFm§ η′ η ∙       = refl
 comprenFm§ η′ η (Γ , A) = _,_ & comprenFm§ η′ η Γ ⊗ comprenFm η′ η A
 
-eqwkrenFm : ∀ {k k′} (η : k ≤ k′) (A : Fm k) →
+eqwkrenFm : ∀ {k k′} (η : k ≤ k′) {A : Fm k} →
               (renFm (lift≤ η) ∘ wkFm) A ≡ (wkFm ∘ renFm η) A
-eqwkrenFm η A = comprenFm (lift≤ η) (wk≤ id≤) A ⁻¹
-              ⋮ (flip renFm A ∘ wk≤) & (rid≤ η ⋮ lid≤ η ⁻¹) -- TODO: isolate #1
-              ⋮ comprenFm (wk≤ id≤) η A
+eqwkrenFm η {A} = comprenFm (lift≤ η) (wk≤ id≤) A ⁻¹
+                ⋮ (flip renFm A ∘ wk≤) & (rid≤ η ⋮ lid≤ η ⁻¹) -- TODO: isolate #1
+                ⋮ comprenFm (wk≤ id≤) η A
 
-eqwkrenFm§ : ∀ {k k′} (η : k ≤ k′) (Γ : Fm§ k) →
+eqwkrenFm§ : ∀ {k k′} (η : k ≤ k′) {Γ : Fm§ k} →
                (renFm§ (lift≤ η) ∘ wkFm§) Γ ≡ (wkFm§ ∘ renFm§ η) Γ
-eqwkrenFm§ η ∙       = refl
-eqwkrenFm§ η (Γ , A) = _,_ & eqwkrenFm§ η Γ ⊗ eqwkrenFm η A
+eqwkrenFm§ η {∙}     = refl
+eqwkrenFm§ η {Γ , A} = _,_ & eqwkrenFm§ η ⊗ eqwkrenFm η
 
 
 ----------------------------------------------------------------------------------------------------
@@ -989,24 +989,24 @@ asssubFm§ : ∀ {k m m′} (σ′ : Tm§ m′ m) (σ : Tm§ m k) (Γ : Fm§ k) 
 asssubFm§ σ′ σ ∙       = refl
 asssubFm§ σ′ σ (Γ , A) = _,_ & asssubFm§ σ′ σ Γ ⊗ compsubFm σ′ σ A
 
-rencutFm : ∀ {k k′} (η : k ≤ k′) (A : Fm (suc k)) (s : Tm k) →
+rencutFm : ∀ {k k′} (η : k ≤ k′) {A : Fm (suc k)} (s : Tm k) →
              renFm (lift≤ η) A [ renTm η s ]Fm ≡ renFm η (A [ s ]Fm)
-rencutFm η A s = eqsubrenFm (idTm§ , renTm η s) (lift≤ η) A ⁻¹
-               ⋮ (flip subFm A ∘ (_, renTm η s)) & (ridgetTm§ η ⋮ ridrenTm§ η ⁻¹) -- TODO: isolate #3
-               ⋮ eqrensubFm η (idTm§ , s) A
+rencutFm η {A} s = eqsubrenFm (idTm§ , renTm η s) (lift≤ η) A ⁻¹
+                 ⋮ (flip subFm A ∘ (_, renTm η s)) & (ridgetTm§ η ⋮ ridrenTm§ η ⁻¹) -- TODO: isolate #3
+                 ⋮ eqrensubFm η (idTm§ , s) A
 
-subcutFm : ∀ {k m} (σ : Tm§ m k) (A : Fm (suc k)) (s : Tm k) →
+subcutFm : ∀ {k m} (σ : Tm§ m k) {A : Fm (suc k)} (s : Tm k) →
              subFm (liftTm§ σ) A [ subTm σ s ]Fm ≡ subFm σ (A [ s ]Fm)
-subcutFm σ A s = compsubFm (idTm§ , subTm σ s) (liftTm§ σ) A ⁻¹
-               ⋮ flip subFm A &
-                   ( _,_ & ( eqsubrenTm§ (idTm§ , subTm σ s) (wk≤ id≤) σ ⁻¹ -- TODO: isolate #4
-                            ⋮ flip subTm§ σ & lidgetTm§ idTm§
-                            ⋮ lidsubTm§ σ
-                            ⋮ ridsubTm§ σ ⁻¹
-                            )
-                          ⊗ ridsubTm (idTm§ , subTm σ s) zero
-                   )
-               ⋮ compsubFm σ (idTm§ , s) A
+subcutFm σ {A} s = compsubFm (idTm§ , subTm σ s) (liftTm§ σ) A ⁻¹
+                 ⋮ flip subFm A &
+                     ( _,_ & ( eqsubrenTm§ (idTm§ , subTm σ s) (wk≤ id≤) σ ⁻¹ -- TODO: isolate #4
+                              ⋮ flip subTm§ σ & lidgetTm§ idTm§
+                              ⋮ lidsubTm§ σ
+                              ⋮ ridsubTm§ σ ⁻¹
+                              )
+                            ⊗ ridsubTm (idTm§ , subTm σ s) zero
+                     )
+                 ⋮ compsubFm σ (idTm§ , s) A
 
 
 ----------------------------------------------------------------------------------------------------
@@ -1075,24 +1075,25 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   --     A(x₀)
   -- --------------
   --   ∀y.A[y/xₒ]
-  ‵all    : ∀ {Þ Γ A} (d : Þ / wkFm§ Γ ⊢ A) → Þ / Γ ⊢ ‵∀ A
+  ‵all    : ∀ {Þ Γ Γ′ A} (p : Γ′ ≡ wkFm§ Γ) (d : Þ / Γ′ ⊢ A) → Þ / Γ ⊢ ‵∀ A
 
   --   ∀y.A[y/x₀]
   -- --------------
   --    A[t/x₀]
-  ‵unall  : ∀ {Þ Γ A A′} t (p : A [ t ]Fm ≡ A′) (d : Þ / Γ ⊢ ‵∀ A) → Þ / Γ ⊢ A′
+  ‵unall  : ∀ {Þ Γ A A′} (t : Tm k) (p : A [ t ]Fm ≡ A′) (d : Þ / Γ ⊢ ‵∀ A) → Þ / Γ ⊢ A′
 
   --    A[t/x₀]
   -- --------------
   --   ∃y.A[y/x₀]
-  ‵ex     : ∀ {Þ Γ A A′} t (p : A [ t ]Fm ≡ A′) (d : Þ / Γ ⊢ A′) → Þ / Γ ⊢ ‵∃ A
+  ‵ex     : ∀ {Þ Γ A A′} (t : Tm k) (p : A [ t ]Fm ≡ A′) (d : Þ / Γ ⊢ A′) → Þ / Γ ⊢ ‵∃ A
 
   --                 A(x₀)
   --                   ⋮
   --   ∃y.A[y/x₀]      C
   -- -----------------------
   --           C
-  ‵letex  : ∀ {Þ Γ A C} (d : Þ / Γ ⊢ ‵∃ A) (e : Þ / wkFm§ Γ , A ⊢ wkFm C) → Þ / Γ ⊢ C
+  ‵letex  : ∀ {Þ Γ Γ′ A C C′} (p : Γ′ ≡ wkFm§ Γ) (q : C′ ≡ wkFm C) (d : Þ / Γ ⊢ ‵∃ A)
+              (e : Þ / Γ′ , A ⊢ C′) → Þ / Γ ⊢ C
 
   -- explosion (ex falso quodlibet) as primitive in Heyting arithmetic
   ‵abort  : ∀ {Γ C} (d : HA / Γ ⊢ ‵⊥) → HA / Γ ⊢ C
@@ -1104,8 +1105,8 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   ‵sym    : ∀ {Þ Γ t u} (d : Þ / Γ ⊢ t ‵= u) → Þ / Γ ⊢ u ‵= t
   ‵trans  : ∀ {Þ Γ s t u} (d : Þ / Γ ⊢ s ‵= t) (e : Þ / Γ ⊢ t ‵= u) → Þ / Γ ⊢ s ‵= u
 
-  ‵cong   : ∀ {Þ Γ n τ u} (f : Prim n) (i : Fin n) (d : Þ / Γ ⊢ get i τ ‵= u) →
-              Þ / Γ ⊢ ‵fun f τ ‵= ‵fun f (put i τ u)
+  ‵cong   : ∀ {Þ Γ n τ τ′ t u} (f : Prim n) (i : Fin n) (p : lookup i τ ≡ t) (q : update i τ u ≡ τ′)
+              (d : Þ / Γ ⊢ t ‵= u) → Þ / Γ ⊢ ‵fun f τ ‵= ‵fun f τ′
 
   ‵dis    : ∀ {Þ Γ t} → Þ / Γ ⊢ 𝕊 t ‵≠ 𝟘
 
@@ -1115,13 +1116,13 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   -- ------------------------------------
   --              ∀y.A[y/x₀]
   ‵ind    : ∀ {Þ Γ A} (d : Þ / Γ ⊢ A [ 𝟘 ]Fm)
-              (e : Þ / Γ ⊢ ‵∀ (A ‵⊃ (texFm (wkFm A)) [ 𝕊 𝟘 ]Fm)) →
+              (e : Þ / Γ ⊢ ‵∀ (A ‵⊃ (texFm (wkFm A)) [ 𝕊 (‵var zero) ]Fm)) →
               Þ / Γ ⊢ ‵∀ A
 
-  ‵proj   : ∀ {Þ Γ n τ} (i : Fin n) → Þ / Γ ⊢ ‵fun (proj i) τ ‵= get i τ
+  ‵proj   : ∀ {Þ Γ n τ τ′} (i : Fin n) (p : lookup i τ ≡ τ′) → Þ / Γ ⊢ ‵fun (proj i) τ ‵= τ′
 
-  ‵comp   : ∀ {Þ Γ n m τ} (g : Prim m) (φ : Prim§ n m) →
-              Þ / Γ ⊢ ‵fun (comp g φ) τ ‵= ‵fun g (for φ λ f → ‵fun f τ)
+  ‵comp   : ∀ {Þ Γ n m τ τ′} (g : Prim m) (φ : Prim§ n m) (p : for φ (flip ‵fun τ) ≡ τ′) →
+              Þ / Γ ⊢ ‵fun (comp g φ) τ ‵= ‵fun g τ′
 
   ‵rec    : ∀ {Þ Γ n t τ} (f : Prim n) (g : Prim (suc (suc n))) →
               Þ / Γ ⊢ ‵fun (rec f g) (τ , 𝟘) ‵= ‵fun f τ ‵∧
@@ -1158,37 +1159,47 @@ twk∋ i = tren∋ (wk≤ id≤) i
 -- comptren∋ η′ η zero    = refl
 -- comptren∋ η′ η (suc i) = suc & comptren∋ η′ η i
 
+eqrenlookupTm : ∀ {k k′ n τ} (η : k ≤ k′) (i : Fin n) →
+                  (lookup i ∘ renTm§ η) τ ≡ (renTm η ∘ lookup i) τ
+eqrenlookupTm {τ = τ , t} η zero    = refl
+eqrenlookupTm {τ = τ , t} η (suc i) = eqrenlookupTm η i
+
+eqrenupdateTm : ∀ {k k′ n τ u} (η : k ≤ k′) (i : Fin n) →
+                  (update i (renTm§ η τ) ∘ renTm η) u ≡ (renTm§ η ∘ update i τ) u
+eqrenupdateTm {τ = τ , t} η zero    = refl
+eqrenupdateTm {τ = τ , t} η (suc i) = (_, renTm η t) & eqrenupdateTm η i
+
+eqrenforTm : ∀ {k k′ n m τ} (η : k ≤ k′) (g : Prim m) (φ : Prim§ n m) →
+               (for φ ∘ flip ‵fun ∘ renTm§ η) τ ≡ (renTm§ η ∘ for φ ∘ flip ‵fun) τ
+eqrenforTm η g ∙       = refl
+eqrenforTm η g (φ , f) = (_, ‵fun f (renTm§ η _)) & eqrenforTm η (comp zero ∙) φ
+
 tren : ∀ {Þ k k′ Γ A} (η : k ≤ k′) → Þ / Γ ⊢ A → Þ / renFm§ η Γ ⊢ renFm η A
-tren η (‵var i)          = ‵var (tren∋ η i)
-tren η (‵lam d)          = ‵lam (tren η d)
-tren η (d ‵$ e)          = tren η d ‵$ tren η e
-tren η (‵pair d e)       = ‵pair (tren η d) (tren η e)
-tren η (‵fst d)          = ‵fst (tren η d)
-tren η (‵snd d)          = ‵snd (tren η d)
-tren η (‵left d)         = ‵left (tren η d)
-tren η (‵right d)        = ‵right (tren η d)
-tren η (‵either c d e)   = ‵either (tren η c) (tren η d) (tren η e)
-tren η (‵all d)          = ‵all
-                             (subst (λ Γ → _ / Γ ⊢ _) (eqwkrenFm§ η _)
-                               (tren (lift≤ η) d))
-tren η (‵unall t refl d) = ‵unall (renTm η t) (rencutFm η _ t) (tren η d)
-tren η (‵ex t refl d)    = ‵ex (renTm η t) (rencutFm η _ t) (tren η d)
-tren η (‵letex d e)      = ‵letex (tren η d)
-                             (subst (λ Γ → _ / Γ , _ ⊢ _) (eqwkrenFm§ η _)
-                               (subst (λ C → _ / _ ⊢ C) (eqwkrenFm η _)
-                                 (tren (lift≤ η) e)))
-tren η (‵abort d)        = ‵abort (tren η d)
-tren η (‵magic d)        = ‵magic (tren η d)
-tren η ‵refl             = ‵refl
-tren η (‵sym d)          = ‵sym (tren η d)
-tren η (‵trans d e)      = ‵trans (tren η d) (tren η e)
-tren η (‵cong f i d)     = {!!}
-tren η ‵dis              = ‵dis
-tren η (‵inj d)          = ‵inj (tren η d)
-tren η (‵ind d e)        = ‵ind {!!} {!!}
-tren η (‵proj i)         = {!!}
-tren η (‵comp g φ)       = {!!}
-tren η (‵rec f g)        = ‵rec f g
+tren η (‵var i)                = ‵var (tren∋ η i)
+tren η (‵lam d)                = ‵lam (tren η d)
+tren η (d ‵$ e)                = tren η d ‵$ tren η e
+tren η (‵pair d e)             = ‵pair (tren η d) (tren η e)
+tren η (‵fst d)                = ‵fst (tren η d)
+tren η (‵snd d)                = ‵snd (tren η d)
+tren η (‵left d)               = ‵left (tren η d)
+tren η (‵right d)              = ‵right (tren η d)
+tren η (‵either c d e)         = ‵either (tren η c) (tren η d) (tren η e)
+tren η (‵all refl d)           = ‵all (eqwkrenFm§ η) (tren (lift≤ η) d)
+tren η (‵unall t refl d)       = ‵unall (renTm η t) (rencutFm η t) (tren η d)
+tren η (‵ex t refl d)          = ‵ex (renTm η t) (rencutFm η t) (tren η d)
+tren η (‵letex refl refl d e)  = ‵letex (eqwkrenFm§ η) (eqwkrenFm η) (tren η d) (tren (lift≤ η) e)
+tren η (‵abort d)              = ‵abort (tren η d)
+tren η (‵magic d)              = ‵magic (tren η d)
+tren η ‵refl                   = ‵refl
+tren η (‵sym d)                = ‵sym (tren η d)
+tren η (‵trans d e)            = ‵trans (tren η d) (tren η e)
+tren η (‵cong f i refl refl d) = ‵cong f i (eqrenlookupTm η i) (eqrenupdateTm η i) (tren η d)
+tren η ‵dis                    = ‵dis
+tren η (‵inj d)                = ‵inj (tren η d)
+tren η (‵ind d e)              = ‵ind {!!} {!!}
+tren η (‵proj i refl)          = ‵proj i (eqrenlookupTm η i)
+tren η (‵comp g φ refl)        = ‵comp g φ (eqrenforTm η g φ)
+tren η (‵rec f g)              = ‵rec f g
 
 twk : ∀ {Þ k} {Γ : Fm§ k} {A} → Þ / Γ ⊢ A → Þ / wkFm§ Γ ⊢ wkFm A
 twk d = tren (wk≤ id≤) d
