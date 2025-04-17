@@ -392,21 +392,21 @@ module _ {𝓍} {X : Set 𝓍} where
 -- TODO: laws?
 -- TODO: delete?
 -- module ContinuationMonad where
---   infixl 4 _⊛_ _<$>_
---   infixl 1 _>>=_
---
 --   return : ∀ {𝓍} {A : Set 𝓍} → A → ¬ ¬ A
 --   return x = λ k → k x
 --
+--   infixl 1 _>>=_
 --   _>>=_ : ∀ {𝓍 𝓎} {A : Set 𝓍} {B : Set 𝓎} → ¬ ¬ A → (A → ¬ ¬ B) → ¬ ¬ B
 --   mx >>= f = λ k → mx (λ x → f x k)
 --
 --   join : ∀ {𝓍} {A : Set 𝓍} → ¬ ¬ ¬ ¬ A → ¬ ¬ A
 --   join mmx = mmx >>= λ mx → mx
 --
+--   infixl 4 _⊛_
 --   _⊛_ : ∀ {𝓍 𝓎} {A : Set 𝓍} {B : Set 𝓎} → ¬ ¬ (A → B) → ¬ ¬ A → ¬ ¬ B
 --   mf ⊛ mx = mf >>= λ f → mx >>= λ x → return (f x)
 --
+--   infixl 4 _<$>_
 --   _<$>_ : ∀ {𝓍 𝓎} {A : Set 𝓍} {B : Set 𝓎} → (A → B) → ¬ ¬ A → ¬ ¬ B
 --   f <$> mx = return f ⊛ mx
 --
@@ -1972,8 +1972,8 @@ exch : ∀ {Þ k} {Γ : Fm§ k} {A B C} → Þ / Γ , B , A ⊢ C → Þ / Γ , 
 exch d = det (det (⊃exch ‵$ ‵lam (‵lam d)))
 
 abort : ∀ {Þ k} {Γ : Fm§ k} {C} → Þ / Γ ⊢ ‵⊥ → Þ / Γ ⊢ C
-abort {HA} d = ‵abort d
-abort {PA} d = ‵magic (wk d)
+abort {Þ = HA} d = ‵abort d
+abort {Þ = PA} d = ‵magic (wk d)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -1985,9 +1985,9 @@ module _ {Þ k} {Γ : Fm§ k} where
   ≡→= refl = ‵refl
 
 module =-Reasoning {Þ k} {Γ : Fm§ k} where
-  infix  1 begin_
-  infixr 2 _=⟨⟩_ _=⟨_⟩_ _=˘⟨_⟩_ _≡⟨_⟩_ _≡˘⟨_⟩_
   infix  3 _∎
+  infixr 2 _=⟨⟩_ _=⟨_⟩_ _=˘⟨_⟩_ _≡⟨_⟩_ _≡˘⟨_⟩_
+  infix  1 begin_
 
   begin_ : ∀ {t u} → Þ / Γ ⊢ t ‵= u → Þ / Γ ⊢ t ‵= u
   begin d = d
@@ -2015,21 +2015,15 @@ module =-Reasoning {Þ k} {Γ : Fm§ k} where
 
 -- 4.2. equational reasoning with object-level logical equivalence
 
--- TODO: clean these up
-module _ where
-  open ≡-Reasoning
-
-  TODO1 : ∀ {k} {A : Fm (suc k)} → renFm (lift≤ (wk≤ id≤)) A [ ‵tvar zero /0]Fm ≡ A
-  TODO1 {A = A} =
-    begin
-      renFm (lift≤ (wk≤ id≤)) A [ ‵tvar zero /0]Fm
-    ≡⟨ {!!} ⟩
-      A
-    ∎
+-- TODO: rename
+TODO1 : ∀ {k} {A : Fm (suc k)} → renFm (lift≤ (wk≤ id≤)) A [ ‵tvar zero /0]Fm ≡ A
+TODO1 {A = A} = eqsubrenFm (liftTm§ idTm§ , ‵tvar zero) (lift≤ (wk≤ id≤)) A ⁻¹
+              ⋮ (flip subFm A ∘ (_, ‵tvar zero)) & lidgetTm§ (wkTm§ idTm§)
+              ⋮ lidsubFm A
 
 module _ {Þ k} {Γ : Fm§ k} where
   ⫗refl : ∀ {A} → Þ / Γ ⊢ A ‵⫗ A
-  ⫗refl {A} = ‵pair ⊃id ⊃id
+  ⫗refl = ‵pair ⊃id ⊃id
 
   ⫗sym : ∀ {A B} → Þ / Γ ⊢ A ‵⫗ B → Þ / Γ ⊢ B ‵⫗ A
   ⫗sym d = ‵pair (‵snd d) (‵fst d)
@@ -2087,9 +2081,9 @@ module _ {Þ k} {Γ : Fm§ k} where
   ≡→⫗ refl = ⫗refl
 
 module ⫗-Reasoning {Þ k} {Γ : Fm§ k} where
-  infix  1 begin_
-  infixr 2 _⫗⟨⟩_ _⫗⟨_⟩_ _⫗˘⟨_⟩_ _≡⟨_⟩_ _≡˘⟨_⟩_
   infix  3 _∎
+  infixr 2 _⫗⟨⟩_ _⫗⟨_⟩_ _⫗˘⟨_⟩_ _≡⟨_⟩_ _≡˘⟨_⟩_
+  infix  1 begin_
 
   begin_ : ∀ {A B} → Þ / Γ ⊢ A ‵⫗ B → Þ / Γ ⊢ A ‵⫗ B
   begin d = d
@@ -2121,9 +2115,6 @@ module ⫗-Reasoning {Þ k} {Γ : Fm§ k} where
 -- ⫗-prefixed versions use object-level equivalence, for use in ⫗-reasoning
 -- TODO: laws?
 
-infixl 4 _⊛_ _<$>_
-infixl 1 _>>=_
-
 ⊃return : ∀ {Þ k} {Γ : Fm§ k} {A} → Þ / Γ ⊢ A ‵⊃ ‵¬ ‵¬ A
 ⊃return = ‵lam (‵lam (0 ‵$ 1))
 
@@ -2133,6 +2124,7 @@ return d = ⊃return ‵$ d
 ⊃bind : ∀ {Þ k} {Γ : Fm§ k} {A B} → Þ / Γ ⊢ ‵¬ ‵¬ A ‵⊃ (A ‵⊃ ‵¬ ‵¬ B) ‵⊃ ‵¬ ‵¬ B
 ⊃bind = ‵lam (‵lam (‵lam (2 ‵$ ‵lam ((2 ‵$ 0) ‵$ 1))))
 
+infixl 1 _>>=_
 _>>=_ : ∀ {Þ k} {Γ : Fm§ k} {A B} → Þ / Γ ⊢ ‵¬ ‵¬ A → Þ / Γ ⊢ A ‵⊃ ‵¬ ‵¬ B → Þ / Γ ⊢ ‵¬ ‵¬ B
 d >>= e = (⊃bind ‵$ d) ‵$ e
 
@@ -2145,12 +2137,14 @@ join d = ⊃join ‵$ d
 ⊃apply : ∀ {Þ k} {Γ : Fm§ k} {A B} → Þ / Γ ⊢ ‵¬ ‵¬ (A ‵⊃ B) ‵⊃ ‵¬ ‵¬ A ‵⊃ ‵¬ ‵¬ B
 ⊃apply = ‵lam (‵lam (1 >>= ‵lam (1 >>= ‵lam (return (1 ‵$ 0)))))
 
+infixl 4 _⊛_
 _⊛_ : ∀ {Þ k} {Γ : Fm§ k} {A B} → Þ / Γ ⊢ ‵¬ ‵¬ (A ‵⊃ B) → Þ / Γ ⊢ ‵¬ ‵¬ A → Þ / Γ ⊢ ‵¬ ‵¬ B
 d ⊛ e = d >>= ‵lam (wk e >>= ‵lam (return (1 ‵$ 0)))
 
 ⊃map : ∀ {Þ k} {Γ : Fm§ k} {A B} → Þ / Γ ⊢ (A ‵⊃ B) ‵⊃ ‵¬ ‵¬ A ‵⊃ ‵¬ ‵¬ B
 ⊃map = ‵lam (‵lam (return 1 ⊛ 0))
 
+infixl 4 _<$>_
 _<$>_ : ∀ {Þ k} {Γ : Fm§ k} {A B} → Þ / Γ ⊢ A ‵⊃ B → Þ / Γ ⊢ ‵¬ ‵¬ A → Þ / Γ ⊢ ‵¬ ‵¬ B
 d <$> e = (⊃map ‵$ d) ‵$ e
 
