@@ -2029,12 +2029,6 @@ module _ where
       A
     ∎
 
-  tren? : ∀ {Þ k k′ Γ Γ′ A} (η : k ≤ k′) → Γ ⊑ Γ′ → Þ / renFm§ η Γ ⊢ A → Þ / renFm§ η Γ′ ⊢ A
-  tren? η ζ = ren (tren⊑ η ζ)
-
-  twk? : ∀ {Þ k} {Γ Γ′ : Fm§ k} {A} → Γ ⊑ Γ′ → Þ / wkFm§ Γ ⊢ A → Þ / wkFm§ Γ′ ⊢ A
-  twk? = tren? (wk≤ id≤)
-
 module _ {Þ k} {Γ : Fm§ k} where
   ⫗refl : ∀ {A} → Þ / Γ ⊢ A ‵⫗ A
   ⫗refl {A} = ‵pair ⊃id ⊃id
@@ -2077,8 +2071,8 @@ module _ {Þ k} {Γ : Fm§ k} where
 
   ⫗cong∀ : ∀ {A A′} → Þ / wkFm§ Γ ⊢ A ‵⫗ A′ → Þ / Γ ⊢ (‵∀ A) ‵⫗ (‵∀ A′)
   ⫗cong∀ d = ‵pair
-                (‵lam (‵all refl (twk? (wk⊑ id⊑) (‵fst d) ‵$ ‵unall (‵tvar zero) TODO1 0)))
-                (‵lam (‵all refl (twk? (wk⊑ id⊑) (‵snd d) ‵$ ‵unall (‵tvar zero) TODO1 0)))
+                (‵lam (‵all refl (ren (twk⊑ (wk⊑ id⊑)) (‵fst d) ‵$ ‵unall (‵tvar zero) TODO1 0)))
+                (‵lam (‵all refl (ren (twk⊑ (wk⊑ id⊑)) (‵snd d) ‵$ ‵unall (‵tvar zero) TODO1 0)))
 
   ⫗cong∃ : ∀ {A A′} → Þ / wkFm§ Γ ⊢ A ‵⫗ A′ → Þ / Γ ⊢ (‵∃ A) ‵⫗ (‵∃ A′)
   ⫗cong∃ d = ‵pair
