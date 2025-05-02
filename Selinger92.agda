@@ -1051,10 +1051,10 @@ eqrencut1Fm η A s = subFm (wkTm§ idTm§ , renTm (lift≤ η) s , ‵tvar 0) & 
                   ⋮ eqsubrenFm (wkTm§ idTm§ , renTm (lift≤ η) s , ‵tvar 0) (lift≤ (lift≤ η)) (wkFm A) ⁻¹
                   ⋮ (flip subFm (wkFm A) ∘ (λ x → (x , renTm (lift≤ η) s , ‵tvar 0)))
                       & ( eqwkgetTm§ η idTm§
-                        ⋮ wkTm§ &
-                            ( ridgetTm§ η
-                            ⋮ ridrenTm§ η ⁻¹
-                            )
+                        ⋮ wkTm§
+                            & ( ridgetTm§ η
+                              ⋮ ridrenTm§ η ⁻¹
+                              )
                         ⋮ eqwkrenTm§ η idTm§ ⁻¹
                         )
                   ⋮ eqrensubFm (lift≤ η) (wkTm§ idTm§ , s , ‵tvar 0) (wkFm A)
@@ -1180,7 +1180,7 @@ eqrenpokeTm : ∀ {k k′ n u} (η : k ≤ k′) (i : Fin n) (τ : Tm§ k n) →
 eqrenpokeTm η zero    (τ , t) = refl
 eqrenpokeTm η (suc i) (τ , t) = (_, renTm η t) & eqrenpokeTm η i τ
 
--- TODO: argument order?
+-- TODO: argument order? _ is τ
 eqrenforTm : ∀ {k k′ n m τ} (η : k ≤ k′) (g : Prim m) (φ : Prim§ n m) →
                (for φ ∘ flip ‵fun ∘ renTm§ η) τ ≡ (renTm§ η ∘ for φ ∘ flip ‵fun) τ
 eqrenforTm η g ∙       = refl
@@ -1519,14 +1519,14 @@ lidren (‵left d)               = ‵left & lidren d
 lidren (‵right d)              = ‵right & lidren d
 lidren (‵either c d e)         = ‵either & lidren c ⊗ lidren d ⊗ lidren e
 lidren (‵all refl d)           = ‵all refl
-                                   & ( flip ren d & ridtren⊑ (wk≤ id≤)
+                                   & ( flip ren d & ridtren⊑ (wk≤ id≤) -- TODO: lidrenlift
                                      ⋮ lidren d
                                      )
 lidren (‵unall t refl d)       = ‵unall t refl & lidren d
 lidren (‵ex t refl d)          = ‵ex t refl & lidren d
 lidren (‵letex refl refl d e)  = ‵letex refl refl
                                    & lidren d
-                                   ⊗ ( (flip ren e ∘ lift⊑) & ridtren⊑ (wk≤ id≤)
+                                   ⊗ ( (flip ren e ∘ lift⊑) & ridtren⊑ (wk≤ id≤) -- TODO: lidrenlift
                                      ⋮ lidren e
                                      )
 lidren (‵abort d)              = ‵abort & lidren d
@@ -1557,14 +1557,14 @@ compren η′ η (‵either c d e)         = ‵either
                                          ⊗ compren (lift⊑ η′) (lift⊑ η) d
                                          ⊗ compren (lift⊑ η′) (lift⊑ η) e
 compren η′ η (‵all refl d)           = ‵all refl
-                                         & ( flip ren d & comptren⊑ (wk≤ id≤) η′ η
+                                         & ( flip ren d & comptren⊑ (wk≤ id≤) η′ η -- TODO: comprenlift
                                            ⋮ compren (twk⊑ η′) (twk⊑ η) d
                                            )
 compren η′ η (‵unall t refl d)       = ‵unall t refl & compren η′ η d
 compren η′ η (‵ex t refl d)          = ‵ex t refl & compren η′ η d
 compren η′ η (‵letex refl refl d e)  = ‵letex refl refl
                                          & compren η′ η d
-                                         ⊗ ( (flip ren e ∘ lift⊑) & comptren⊑ (wk≤ id≤) η′ η
+                                         ⊗ ( (flip ren e ∘ lift⊑) & comptren⊑ (wk≤ id≤) η′ η -- TODO: comprenlift
                                            ⋮ compren (lift⊑ (twk⊑ η′)) (lift⊑ (twk⊑ η)) e
                                            )
 compren η′ η (‵abort d)              = ‵abort & compren η′ η d
@@ -1618,19 +1618,18 @@ eqwkren§ η (δ , d) = _,_ & eqwkren§ η δ ⊗ eqwkren η d
 
 eqliftren§ : ∀ {Þ k} {Γ Γ′ Δ : Fm§ k} {C} (η : Γ ⊑ Γ′) (δ : Þ / Γ ⊢§ Δ) →
                (ren§ (lift⊑ η) ∘ lift§ {C = C}) δ ≡ (lift§ ∘ ren§ η) δ
-eqliftren§ η δ = ((ren§ (lift⊑ η) ∘ wk§) δ ,_) & ridren (lift⊑ η) 0
-               ⋮ (_, ‵var 0) & eqwkren§ η δ
+eqliftren§ η δ = _,_ & eqwkren§ η δ ⊗ ridren (lift⊑ η) 0
 
 ridren§ : ∀ {Þ k} {Γ Γ′ : Fm§ k} (η : Γ ⊑ Γ′) → ren§ {Þ = Þ} η id§ ≡ var§ η
 ridren§ stop      = refl
 ridren§ (wk⊑ η)   = (flip ren§ id§ ∘ wk⊑) & lid⊑ η ⁻¹
                   ⋮ compren§ (wk⊑ id⊑) η id§
                   ⋮ wk§ & ridren§ η
-ridren§ (lift⊑ η) = ((ren§ (lift⊑ η) ∘ wk§) id§ ,_) & ridren (lift⊑ η) 0
-                  ⋮ (_, ‵var 0)
+ridren§ (lift⊑ η) = _,_
                       & ( eqwkren§ η id§
                         ⋮ wk§ & ridren§ η
                         )
+                      ⊗ ridren (lift⊑ η) 0
 
 eqrensub∋ : ∀ {Þ k} {Γ Ξ Ξ′ : Fm§ k} {A} (η : Ξ ⊑ Ξ′) (σ : Þ / Ξ ⊢§ Γ) (i : Γ ∋ A) →
               sub∋ (ren§ η σ) i ≡ (ren η ∘ sub∋ σ) i
@@ -1711,14 +1710,14 @@ mutual
                                            ⊗ eqrensublift η σ d
                                            ⊗ eqrensublift η σ e
   eqrensub η σ (‵all refl d)           = ‵all refl
-                                           & ( flip sub d & eqrentren§ (wk≤ id≤) η σ
+                                           & ( flip sub d & eqrentren§ (wk≤ id≤) η σ -- TODO: hmm
                                              ⋮ eqrensub (twk⊑ η) (twk§ σ) d
                                              )
   eqrensub η σ (‵unall t refl d)       = ‵unall t refl & eqrensub η σ d
   eqrensub η σ (‵ex t refl d)          = ‵ex t refl & eqrensub η σ d
   eqrensub η σ (‵letex refl refl d e)  = ‵letex refl refl
                                            & eqrensub η σ d
-                                           ⊗ ( flip sub e
+                                           ⊗ ( flip sub e -- TODO: hmm
                                                  & ( lift§ & eqrentren§ (wk≤ id≤) η σ
                                                    ⋮ (_, ‵var 0) & eqwkren§ (twk⊑ η) (twk§ σ) ⁻¹
                                                    )
@@ -1758,14 +1757,14 @@ mutual
                                            ⊗ eqsubrenlift σ η d
                                            ⊗ eqsubrenlift σ η e
   eqsubren σ η (‵all refl d)           = ‵all refl
-                                           & ( flip sub d & eqgettren§ (wk≤ id≤) η σ
+                                           & ( flip sub d & eqgettren§ (wk≤ id≤) η σ -- TODO: hmm
                                              ⋮ eqsubren (twk§ σ) (twk⊑ η) d
                                              )
   eqsubren σ η (‵unall t refl d)       = ‵unall t refl & eqsubren σ η d
   eqsubren σ η (‵ex t refl d)          = ‵ex t refl & eqsubren σ η d
   eqsubren σ η (‵letex refl refl d e)  = ‵letex refl refl
                                            & eqsubren σ η d
-                                           ⊗ ( flip sub e
+                                           ⊗ ( flip sub e -- TODO: hmm
                                                  & ( lift§ & eqgettren§ (wk≤ id≤) η σ
                                                    ⋮ (_, ‵var 0)
                                                        & eqrenget§ (wk⊑ id⊑) (twk⊑ η) (twk§ σ) ⁻¹
@@ -1801,14 +1800,14 @@ lidsub (‵left d)               = ‵left & lidsub d
 lidsub (‵right d)              = ‵right & lidsub d
 lidsub (‵either c d e)         = ‵either & lidsub c ⊗ lidsub d ⊗ lidsub e
 lidsub (‵all refl d)           = ‵all refl
-                                   & ( flip sub d & ridtren§ (wk≤ id≤)
+                                   & ( flip sub d & ridtren§ (wk≤ id≤) -- TODO: hmm
                                      ⋮ lidsub d
                                      )
 lidsub (‵unall t refl d)       = ‵unall t refl & lidsub d
 lidsub (‵ex t refl d)          = ‵ex t refl & lidsub d
 lidsub (‵letex refl refl d e)  = ‵letex refl refl
                                     & lidsub d
-                                    ⊗ ( (flip sub e ∘ lift§) & ridtren§ (wk≤ id≤)
+                                    ⊗ ( (flip sub e ∘ lift§) & ridtren§ (wk≤ id≤) -- TODO: hmm
                                       ⋮ lidsub e
                                       )
 lidsub (‵abort d)              = ‵abort & lidsub d
@@ -1869,16 +1868,15 @@ eqwksub§ σ (δ , d) = _,_ & eqwksub§ σ δ ⊗ eqwksub σ d
 
 eqliftsub§ : ∀ {Þ k} {Γ Ξ Δ : Fm§ k} {C} (σ : Þ / Ξ ⊢§ Γ) (δ : Þ / Γ ⊢§ Δ) →
                (sub§ (lift§ σ) ∘ lift§ {C = C}) δ ≡ (lift§ ∘ sub§ σ) δ
-eqliftsub§ σ δ = ((sub§ (lift§ σ) ∘ wk§) δ ,_) & ridsub (lift§ σ) 0
-               ⋮ (_, ‵var 0) & eqwksub§ σ δ
+eqliftsub§ σ δ = _,_ & eqwksub§ σ δ ⊗ ridsub (lift§ σ) 0
 
 ridsub§ : ∀ {Þ k} {Γ Ξ : Fm§ k} (σ : Þ / Ξ ⊢§ Γ) → sub§ σ id§ ≡ σ
 ridsub§ ∙       = refl
-ridsub§ (σ , s) = ((sub§ (σ , s) ∘ wk§) id§ ,_) & ridsub (σ , s) 0
-                ⋮ (_, s)
+ridsub§ (σ , s) = _,_
                     & ( eqsub§ σ s id§
                       ⋮ ridsub§ σ
                       )
+                    ⊗ ridsub (σ , s) 0
 
 
 ----------------------------------------------------------------------------------------------------
@@ -1970,15 +1968,15 @@ eqrencut η d s = eqsubren (id§ , ren η s) (lift⊑ η) d ⁻¹
 eqsubcut : ∀ {Þ k} {Γ Ξ : Fm§ k} {A B} (σ : Þ / Ξ ⊢§ Γ) (d : Þ / Γ , A ⊢ B) (s : Þ / Γ ⊢ A) →
              sub (lift§ σ) d [ sub σ s /0] ≡ sub σ (d [ s /0])
 eqsubcut σ d s = compsub (id§ , sub σ s) (lift§ σ) d ⁻¹
-               ⋮ flip sub d &
-                   ( _,_
-                       & ( eqsubren§ (id§ , sub σ s) (wk⊑ id⊑) σ ⁻¹
-                         ⋮ flip sub§ σ & lidget§ id§
-                         ⋮ lidsub§ σ
-                         ⋮ ridsub§ σ ⁻¹
-                         )
-                       ⊗ ridsub (id§ , sub σ s) 0
-                   )
+               ⋮ flip sub d
+                   & ( _,_
+                         & ( eqsubren§ (id§ , sub σ s) (wk⊑ id⊑) σ ⁻¹
+                           ⋮ flip sub§ σ & lidget§ id§
+                           ⋮ lidsub§ σ
+                           ⋮ ridsub§ σ ⁻¹
+                           )
+                         ⊗ ridsub (id§ , sub σ s) 0
+                     )
                ⋮ compsub σ (id§ , s) d
 
 
