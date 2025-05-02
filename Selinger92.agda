@@ -12,6 +12,8 @@ module Selinger92 where
 
 open import Agda.Builtin.FromNat using (Number ; fromNat)
 
+open import Agda.Primitive using (Level ; _⊔_ ; lzero ; lsuc ; Setω)
+
 open import Data.Empty using (⊥)
 
 import Data.Fin as Fin
@@ -30,9 +32,6 @@ open import Data.Sum using (_⊎_)
 open import Data.Unit using (⊤ ; tt)
 
 open import Function using (_∘_ ; _$_ ; const ; flip ; id)
-
-import Level
-open Level using (_⊔_ ; Level)
 
 import Relation.Binary.PropositionalEquality as Id
 open Id using (_≡_ ; refl ; subst ; module ≡-Reasoning)
