@@ -479,7 +479,7 @@ wkTm§ : ∀ {k n} → Tm§ k n → Tm§ (suc k) n
 wkTm§ τ = renTm§ (wk≤ id≤) τ
 
 liftTm§ : ∀ {k n} → Tm§ k n → Tm§ (suc k) (suc n)
-liftTm§ τ = wkTm§ τ , ‵tvar 0
+liftTm§ τ = wkTm§ τ , ‵tvar zero
 
 varTm§ : ∀ {k k′} → k ≤ k′ → Tm§ k′ k
 varTm§ stop      = ∙
@@ -519,7 +519,7 @@ _[_/0]Tm : ∀ {k} → Tm (suc k) → Tm k → Tm k
 t [ s /0]Tm = subTm (idTm§ , s) t
 
 _[_/1]Tm : ∀ {k} → Tm (suc (suc k)) → Tm (suc k) → Tm (suc k)
-t [ s /1]Tm = subTm (wkTm§ idTm§ , s , ‵tvar 0) t
+t [ s /1]Tm = subTm (wkTm§ idTm§ , s , ‵tvar zero) t
 
 getTm§ : ∀ {k n n′} → n ≤ n′ → Tm§ k n′ → Tm§ k n
 getTm§ stop      τ       = τ
@@ -578,7 +578,7 @@ eqwkrenTm§ η (τ , t) = _,_ & eqwkrenTm§ η τ ⊗ eqwkrenTm η t
 
 eqliftrenTm§ : ∀ {k k′ n} (η : k ≤ k′) (τ : Tm§ k n) →
                  (renTm§ (lift≤ η) ∘ liftTm§) τ ≡ (liftTm§ ∘ renTm§ η) τ
-eqliftrenTm§ η τ = _,_ & eqwkrenTm§ η τ ⊗ ridrenTm (lift≤ η) 0
+eqliftrenTm§ η τ = _,_ & eqwkrenTm§ η τ ⊗ ridrenTm (lift≤ η) zero
 
 ridrenTm§ : ∀ {k k′} (η : k ≤ k′) → renTm§ η idTm§ ≡ varTm§ η
 ridrenTm§ stop      = refl
@@ -589,7 +589,7 @@ ridrenTm§ (lift≤ η) = _,_
                         & ( eqwkrenTm§ η idTm§
                           ⋮ wkTm§ & ridrenTm§ η
                           )
-                        ⊗ ridrenTm (lift≤ η) 0
+                        ⊗ ridrenTm (lift≤ η) zero
 
 eqrensubFin : ∀ {k m m′} (η : m ≤ m′) (σ : Tm§ m k) (i : Fin k) →
                 subFin (renTm§ η σ) i ≡ (renTm η ∘ subFin σ) i
@@ -638,13 +638,13 @@ eqwkgetTm§ η τ = eqrengetTm§ (wk≤ id≤) η τ
 
 eqliftgetTm§ : ∀ {k n n′} (η : n ≤ n′) (τ : Tm§ k n′) →
                  (getTm§ (lift≤ η) ∘ liftTm§) τ ≡ (liftTm§ ∘ getTm§ η) τ
-eqliftgetTm§ η τ = (_, ‵tvar 0) & eqwkgetTm§ η τ
+eqliftgetTm§ η τ = (_, ‵tvar zero) & eqwkgetTm§ η τ
 
 ridgetTm§ : ∀ {k k′} (η : k ≤ k′) → getTm§ η idTm§ ≡ varTm§ η
 ridgetTm§ stop      = refl
 ridgetTm§ (wk≤ η)   = eqrengetTm§ (wk≤ id≤) η idTm§
                     ⋮ wkTm§ & ridgetTm§ η
-ridgetTm§ (lift≤ η) = (_, ‵tvar 0)
+ridgetTm§ (lift≤ η) = (_, ‵tvar zero)
                         & ( eqrengetTm§ (wk≤ id≤) η idTm§
                           ⋮ wkTm§ & ridgetTm§ η
                           )
@@ -716,7 +716,7 @@ eqwksubTm§ σ (τ , t) = _,_ & eqwksubTm§ σ τ ⊗ eqwksubTm σ t
 
 eqliftsubTm§ : ∀ {k m n} (σ : Tm§ m k) (τ : Tm§ k n) →
                  (subTm§ (liftTm§ σ) ∘ liftTm§) τ ≡ (liftTm§ ∘ subTm§ σ) τ
-eqliftsubTm§ σ τ = _,_ & eqwksubTm§ σ τ ⊗ ridsubTm (liftTm§ σ) 0
+eqliftsubTm§ σ τ = _,_ & eqwksubTm§ σ τ ⊗ ridsubTm (liftTm§ σ) zero
 
 ridsubTm§ : ∀ {k m} (σ : Tm§ m k) → subTm§ σ idTm§ ≡ σ
 ridsubTm§ ∙       = refl
@@ -724,7 +724,7 @@ ridsubTm§ (σ , s) = _,_
                       & ( eqsubTm§ σ s idTm§
                         ⋮ ridsubTm§ σ
                         )
-                      ⊗ ridsubTm (σ , s) 0
+                      ⊗ ridsubTm (σ , s) zero
 
 
 ----------------------------------------------------------------------------------------------------
@@ -766,7 +766,7 @@ eqsubcut0Tm σ t s = compsubTm (idTm§ , subTm σ s) (liftTm§ σ) t ⁻¹
                               ⋮ lidsubTm§ σ
                               ⋮ ridsubTm§ σ ⁻¹
                               )
-                            ⊗ ridsubTm (idTm§ , subTm σ s) 0
+                            ⊗ ridsubTm (idTm§ , subTm σ s) zero
                         )
                   ⋮ compsubTm σ (idTm§ , s) t
 
@@ -860,7 +860,7 @@ _[_/0]Fm : ∀ {k} → Fm (suc k) → Tm k → Fm k
 A [ s /0]Fm = subFm (idTm§ , s) A
 
 _[_/1]Fm : ∀ {k} → Fm (suc (suc k)) → Tm (suc k) → Fm (suc k)
-A [ s /1]Fm = subFm (wkTm§ idTm§ , s , ‵tvar 0) A
+A [ s /1]Fm = subFm (wkTm§ idTm§ , s , ‵tvar zero) A
 
 
 ----------------------------------------------------------------------------------------------------
@@ -1030,9 +1030,9 @@ asssubFm§ : ∀ {k m m′} (σ′ : Tm§ m′ m) (σ : Tm§ m k) (Γ : Fm§ k) 
 asssubFm§ σ′ σ ∙       = refl
 asssubFm§ σ′ σ (Γ , A) = _,_ & asssubFm§ σ′ σ Γ ⊗ compsubFm σ′ σ A
 
-idcutFm : ∀ {k} {A : Fm (suc k)} → renFm (lift≤ (wk≤ id≤)) A [ ‵tvar 0 /0]Fm ≡ A
-idcutFm {A = A} = eqsubrenFm (liftTm§ idTm§ , ‵tvar 0) (lift≤ (wk≤ id≤)) A ⁻¹
-                ⋮ (flip subFm A ∘ (_, ‵tvar 0)) & lidgetTm§ (wkTm§ idTm§)
+idcutFm : ∀ {k} {A : Fm (suc k)} → renFm (lift≤ (wk≤ id≤)) A [ ‵tvar zero /0]Fm ≡ A
+idcutFm {A = A} = eqsubrenFm (liftTm§ idTm§ , ‵tvar zero) (lift≤ (wk≤ id≤)) A ⁻¹
+                ⋮ (flip subFm A ∘ (_, ‵tvar zero)) & lidgetTm§ (wkTm§ idTm§)
                 ⋮ lidsubFm A
 
 eqrencut0Fm : ∀ {k k′} (η : k ≤ k′) (A : Fm (suc k)) (s : Tm k) →
@@ -1047,9 +1047,9 @@ eqrencut0Fm η A s = eqsubrenFm (idTm§ , renTm η s) (lift≤ η) A ⁻¹
 eqrencut1Fm : ∀ {k k′} (η : k ≤ k′) (A : Fm (suc k)) (s : Tm (suc k)) →
                 wkFm (renFm (lift≤ η) A) [ renTm (lift≤ η) s /1]Fm ≡
                   renFm (lift≤ η) (wkFm A [ s /1]Fm)
-eqrencut1Fm η A s = subFm (wkTm§ idTm§ , renTm (lift≤ η) s , ‵tvar 0) & eqwkrenFm (lift≤ η) A ⁻¹
-                  ⋮ eqsubrenFm (wkTm§ idTm§ , renTm (lift≤ η) s , ‵tvar 0) (lift≤ (lift≤ η)) (wkFm A) ⁻¹
-                  ⋮ (flip subFm (wkFm A) ∘ (λ x → (x , renTm (lift≤ η) s , ‵tvar 0)))
+eqrencut1Fm η A s = subFm (wkTm§ idTm§ , renTm (lift≤ η) s , ‵tvar zero) & eqwkrenFm (lift≤ η) A ⁻¹
+                  ⋮ eqsubrenFm (wkTm§ idTm§ , renTm (lift≤ η) s , ‵tvar zero) (lift≤ (lift≤ η)) (wkFm A) ⁻¹
+                  ⋮ (flip subFm (wkFm A) ∘ (λ x → (x , renTm (lift≤ η) s , ‵tvar zero)))
                       & ( eqwkgetTm§ η idTm§
                         ⋮ wkTm§
                             & ( ridgetTm§ η
@@ -1057,7 +1057,7 @@ eqrencut1Fm η A s = subFm (wkTm§ idTm§ , renTm (lift≤ η) s , ‵tvar 0) & 
                               )
                         ⋮ eqwkrenTm§ η idTm§ ⁻¹
                         )
-                  ⋮ eqrensubFm (lift≤ η) (wkTm§ idTm§ , s , ‵tvar 0) (wkFm A)
+                  ⋮ eqrensubFm (lift≤ η) (wkTm§ idTm§ , s , ‵tvar zero) (wkFm A)
 
 eqsubcut0Fm : ∀ {k m} (σ : Tm§ m k) (A : Fm (suc k)) (s : Tm k) →
                 subFm (liftTm§ σ) A [ subTm σ s /0]Fm ≡ subFm σ (A [ s /0]Fm)
@@ -1069,7 +1069,7 @@ eqsubcut0Fm σ A s = compsubFm (idTm§ , subTm σ s) (liftTm§ σ) A ⁻¹
                               ⋮ lidsubTm§ σ
                               ⋮ ridsubTm§ σ ⁻¹
                               )
-                            ⊗ ridsubTm (idTm§ , subTm σ s) 0
+                            ⊗ ridsubTm (idTm§ , subTm σ s) zero
                         )
                   ⋮ compsubFm σ (idTm§ , s) A
 
@@ -1140,7 +1140,7 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   --   A[0/x₀]    ∀y.A[y/x₀]→A[y+1/x₀]
   -- ------------------------------------
   --              ∀y.A[y/x₀]
-  ‵ind    : ∀ {Þ Γ A A′ A″} (p : A [ 𝟘 /0]Fm ≡ A′) (q : wkFm A [ 𝕊 (‵tvar 0) /1]Fm ≡ A″)
+  ‵ind    : ∀ {Þ Γ A A′ A″} (p : A [ 𝟘 /0]Fm ≡ A′) (q : wkFm A [ 𝕊 (‵tvar zero) /1]Fm ≡ A″)
               (d : Þ / Γ ⊢ A′) (e : Þ / Γ ⊢ ‵∀ (A ‵⊃ A″)) → Þ / Γ ⊢ ‵∀ A
 
   ‵proj   : ∀ {Þ Γ n τ τ′} (i : Fin n) (p : peek i τ ≡ τ′) → Þ / Γ ⊢ ‵fun (proj i) τ ‵= τ′
@@ -1258,7 +1258,7 @@ tren η (‵trans d e)            = ‵trans (tren η d) (tren η e)
 tren η (‵cong f i refl refl d) = ‵cong f i (eqrenpeekTm η i _) (eqrenpokeTm η i _) (tren η d)
 tren η ‵dis                    = ‵dis
 tren η (‵inj d)                = ‵inj (tren η d)
-tren η (‵ind refl refl d e)    = ‵ind (eqrencut0Fm η _ 𝟘) (eqrencut1Fm η _ (𝕊 (‵tvar 0)))
+tren η (‵ind refl refl d e)    = ‵ind (eqrencut0Fm η _ 𝟘) (eqrencut1Fm η _ (𝕊 (‵tvar zero)))
                                    (tren η d) (tren η e)
 tren η (‵proj i refl)          = ‵proj i (eqrenpeekTm η i _)
 tren η (‵comp g φ refl)        = ‵comp g φ (eqrenforTm η g φ)
@@ -1477,7 +1477,7 @@ module _ where
   --                                           & eqrentren η ζ d
   -- eqrentren η ζ ‵dis                    = refl
   -- eqrentren η ζ (‵inj d)                = ‵inj & eqrentren η ζ d
-  -- eqrentren η ζ (‵ind refl refl d e)    = ‵ind (eqrencut0Fm η _ 𝟘) (eqrencut1Fm η _ (𝕊 (‵tvar 0)))
+  -- eqrentren η ζ (‵ind refl refl d e)    = ‵ind (eqrencut0Fm η _ 𝟘) (eqrencut1Fm η _ (𝕊 (‵tvar zero)))
   --                                           & eqrentren η ζ d
   --                                           ⊗ eqrentren η ζ e
   -- eqrentren η ζ (‵proj i refl)          = refl
