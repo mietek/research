@@ -1031,7 +1031,7 @@ asssubFm§ σ′ σ ∙       = refl
 asssubFm§ σ′ σ (Γ , A) = _,_ & asssubFm§ σ′ σ Γ ⊗ compsubFm σ′ σ A
 
 idcutFm : ∀ {k} {A : Fm (suc k)} → renFm (lift≤ (wk≤ id≤)) A [ ‵tvar zero /0]Fm ≡ A
-idcutFm {A = A} = eqsubrenFm (liftTm§ idTm§ , ‵tvar zero) (lift≤ (wk≤ id≤)) A ⁻¹
+idcutFm {A = A} = eqsubrenFm (idTm§ , ‵tvar zero) (lift≤ (wk≤ id≤)) A ⁻¹
                 ⋮ (flip subFm A ∘ (_, ‵tvar zero)) & lidgetTm§ (wkTm§ idTm§)
                 ⋮ lidsubFm A
 
