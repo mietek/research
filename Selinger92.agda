@@ -1339,7 +1339,7 @@ wk§ : ∀ {Þ k} {Γ : Fm§ k} {Δ C} → Þ / Γ ⊢§ Δ → Þ / Γ , C ⊢�
 wk§ δ = ren§ (wk⊑ id⊑) δ
 
 lift§ : ∀ {Þ k} {Γ : Fm§ k} {Δ C} → Þ / Γ ⊢§ Δ → Þ / Γ , C ⊢§ Δ , C
-lift§ δ = wk§ δ , ‵var 0
+lift§ δ = wk§ δ , ‵var zero
 
 var§ : ∀ {Þ k} {Γ Γ′ : Fm§ k} → Γ ⊑ Γ′ → Þ / Γ′ ⊢§ Γ
 var§ stop      = ∙
@@ -1498,7 +1498,7 @@ eqgettren§ η (lift⊑ ζ) (δ , d) = (_, tren η d) & eqgettren§ η ζ δ
 ridtren§ : ∀ {Þ k k′} {Γ : Fm§ k} (η : k ≤ k′) →
              tren§ {Þ = Þ} {Γ = Γ} η id§ ≡ id§
 ridtren§ {Γ = ∙}     η = refl
-ridtren§ {Γ = Γ , A} η = (_, ‵var 0)
+ridtren§ {Γ = Γ , A} η = (_, ‵var zero)
                            & ( eqrentren§ η (wk⊑ id⊑) id§
                              ⋮ ren§ & (wk⊑ & ridtren⊑ η) ⊗ ridtren§ η
                              )
@@ -1618,7 +1618,7 @@ eqwkren§ η (δ , d) = _,_ & eqwkren§ η δ ⊗ eqwkren η d
 
 eqliftren§ : ∀ {Þ k} {Γ Γ′ Δ : Fm§ k} {C} (η : Γ ⊑ Γ′) (δ : Þ / Γ ⊢§ Δ) →
                (ren§ (lift⊑ η) ∘ lift§ {C = C}) δ ≡ (lift§ ∘ ren§ η) δ
-eqliftren§ η δ = _,_ & eqwkren§ η δ ⊗ ridren (lift⊑ η) 0
+eqliftren§ η δ = _,_ & eqwkren§ η δ ⊗ ridren (lift⊑ η) zero
 
 ridren§ : ∀ {Þ k} {Γ Γ′ : Fm§ k} (η : Γ ⊑ Γ′) → ren§ {Þ = Þ} η id§ ≡ var§ η
 ridren§ stop      = refl
@@ -1629,7 +1629,7 @@ ridren§ (lift⊑ η) = _,_
                       & ( eqwkren§ η id§
                         ⋮ wk§ & ridren§ η
                         )
-                      ⊗ ridren (lift⊑ η) 0
+                      ⊗ ridren (lift⊑ η) zero
 
 eqrensub∋ : ∀ {Þ k} {Γ Ξ Ξ′ : Fm§ k} {A} (η : Ξ ⊑ Ξ′) (σ : Þ / Ξ ⊢§ Γ) (i : Γ ∋ A) →
               sub∋ (ren§ η σ) i ≡ (ren η ∘ sub∋ σ) i
@@ -1678,13 +1678,13 @@ eqwkget§ η δ = eqrenget§ (wk⊑ id⊑) η δ
 
 eqliftget§ : ∀ {Þ k} {Γ Δ Δ′ : Fm§ k} {C} (η : Δ ⊑ Δ′) (δ : Þ / Γ ⊢§ Δ′) →
                (get§ (lift⊑ η) ∘ lift§ {C = C}) δ ≡ (lift§ ∘ get§ η) δ
-eqliftget§ η δ = (_, ‵var 0) & eqwkget§ η δ
+eqliftget§ η δ = (_, ‵var zero) & eqwkget§ η δ
 
 ridget§ : ∀ {Þ k} {Γ Γ′ : Fm§ k} (η : Γ ⊑ Γ′) → get§ {Þ = Þ} η id§ ≡ var§ η
 ridget§ stop      = refl
 ridget§ (wk⊑ η)   = eqrenget§ (wk⊑ id⊑) η id§
                   ⋮ wk§ & ridget§ η
-ridget§ (lift⊑ η) = (_, ‵var 0)
+ridget§ (lift⊑ η) = (_, ‵var zero)
                       & ( eqrenget§ (wk⊑ id⊑) η id§
                         ⋮ wk§ & ridget§ η
                         )
@@ -1719,9 +1719,9 @@ mutual
                                            & eqrensub η σ d
                                            ⊗ ( flip sub e -- TODO: hmm
                                                  & ( lift§ & eqrentren§ (wk≤ id≤) η σ
-                                                   ⋮ (_, ‵var 0) & eqwkren§ (twk⊑ η) (twk§ σ) ⁻¹
+                                                   ⋮ (_, ‵var zero) & eqwkren§ (twk⊑ η) (twk§ σ) ⁻¹
                                                    )
-                                             ⋮ eqrensub (lift⊑ (twk⊑ η)) (wk§ (twk§ σ) , ‵var 0) e
+                                             ⋮ eqrensub (lift⊑ (twk⊑ η)) (wk§ (twk§ σ) , ‵var zero) e
                                              )
   eqrensub η σ (‵abort d)              = ‵abort & eqrensub η σ d
   eqrensub η σ (‵magic d)              = ‵magic & eqrensublift η σ d
@@ -1766,7 +1766,7 @@ mutual
                                            & eqsubren σ η d
                                            ⊗ ( flip sub e -- TODO: hmm
                                                  & ( lift§ & eqgettren§ (wk≤ id≤) η σ
-                                                   ⋮ (_, ‵var 0)
+                                                   ⋮ (_, ‵var zero)
                                                        & eqrenget§ (wk⊑ id⊑) (twk⊑ η) (twk§ σ) ⁻¹
                                                    )
                                              ⋮ eqsubren (lift§ (twk§ σ)) (lift⊑ (twk⊑ η)) e
@@ -1868,7 +1868,7 @@ eqwksub§ σ (δ , d) = _,_ & eqwksub§ σ δ ⊗ eqwksub σ d
 
 eqliftsub§ : ∀ {Þ k} {Γ Ξ Δ : Fm§ k} {C} (σ : Þ / Ξ ⊢§ Γ) (δ : Þ / Γ ⊢§ Δ) →
                (sub§ (lift§ σ) ∘ lift§ {C = C}) δ ≡ (lift§ ∘ sub§ σ) δ
-eqliftsub§ σ δ = _,_ & eqwksub§ σ δ ⊗ ridsub (lift§ σ) 0
+eqliftsub§ σ δ = _,_ & eqwksub§ σ δ ⊗ ridsub (lift§ σ) zero
 
 ridsub§ : ∀ {Þ k} {Γ Ξ : Fm§ k} (σ : Þ / Ξ ⊢§ Γ) → sub§ σ id§ ≡ σ
 ridsub§ ∙       = refl
@@ -1876,7 +1876,7 @@ ridsub§ (σ , s) = _,_
                     & ( eqsub§ σ s id§
                       ⋮ ridsub§ σ
                       )
-                    ⊗ ridsub (σ , s) 0
+                    ⊗ ridsub (σ , s) zero
 
 
 ----------------------------------------------------------------------------------------------------
@@ -1975,7 +1975,7 @@ eqsubcut σ d s = compsub (id§ , sub σ s) (lift§ σ) d ⁻¹
                            ⋮ lidsub§ σ
                            ⋮ ridsub§ σ ⁻¹
                            )
-                         ⊗ ridsub (id§ , sub σ s) 0
+                         ⊗ ridsub (id§ , sub σ s) zero
                      )
                ⋮ compsub σ (id§ , s) d
 
