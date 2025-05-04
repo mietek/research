@@ -1,7 +1,7 @@
 -- 2025-03-21
 -- Friedman’s A-Translation
 -- https://www.mscs.dal.ca/~selinger/papers/friedman.pdf
--- thanks to ncf and roconnor
+-- thanks to ames, ncf, and roconnor
 -- first-order predicate logic with one sort (naturals) and one predicate (equality)
 
 -- {-# OPTIONS --rewriting #-}
@@ -23,11 +23,11 @@ import Data.Nat as Nat
 open Nat using (zero ; suc)
   renaming (ℕ to Nat)
 
-open import Data.Product using (Σ ; _×_)
-  renaming (_,_ to sig ; proj₁ to fst ; proj₂ to snd)
+open import Data.Product using (Σ)
+  renaming (_×_ to _∧_ ; _,_ to sig ; proj₁ to fst ; proj₂ to snd)
 
-open import Data.Sum using (_⊎_)
-  renaming (inj₁ to left ; inj₂ to right)
+open import Data.Sum using ()
+  renaming (_⊎_ to _∨_ ; inj₁ to left ; inj₂ to right)
 
 open import Data.Unit using (⊤ ; tt)
 
@@ -106,7 +106,7 @@ instance
 --   _<$>_ : ∀ {𝓍 𝓎} {A : Set 𝓍} {B : Set 𝓎} → (A → B) → ¬ ¬ A → ¬ ¬ B
 --   f <$> mx = return f ⊛ mx
 --
---   dnem : ∀ {𝓍} {A : Set 𝓍} → ¬ ¬ (A ⊎ ¬ A)
+--   dnem : ∀ {𝓍} {A : Set 𝓍} → ¬ ¬ (A ∨ ¬ A)
 --   dnem = λ k → k (right λ k′ → k (left k′))
 
 
