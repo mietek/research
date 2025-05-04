@@ -1175,16 +1175,15 @@ eqrenpeekTm : ∀ {k k′ n} (η : k ≤ k′) (i : Fin n) (τ : Tm§ k n) →
 eqrenpeekTm η zero    (τ , t) = refl
 eqrenpeekTm η (suc i) (τ , t) = eqrenpeekTm η i τ
 
-eqrenpokeTm : ∀ {k k′ n u} (η : k ≤ k′) (i : Fin n) (τ : Tm§ k n) →
-                (poke i (renTm η u) ∘ renTm§ η) τ ≡ (renTm§ η ∘ poke i u) τ
-eqrenpokeTm η zero    (τ , t) = refl
-eqrenpokeTm η (suc i) (τ , t) = (_, renTm η t) & eqrenpokeTm η i τ
+eqrenpokeTm : ∀ {k k′ n} (η : k ≤ k′) (i : Fin n) (s : Tm k) (τ : Tm§ k n) →
+                (poke i (renTm η s) ∘ renTm§ η) τ ≡ (renTm§ η ∘ poke i s) τ
+eqrenpokeTm η zero    s (τ , t) = refl
+eqrenpokeTm η (suc i) s (τ , t) = (_, renTm η t) & eqrenpokeTm η i s τ
 
--- TODO: argument order? _ is τ
-eqrenforTm : ∀ {k k′ n m τ} (η : k ≤ k′) (g : Prim m) (φ : Prim§ n m) →
+eqrenforTm : ∀ {k k′ n m} (η : k ≤ k′) (φ : Prim§ n m) (τ : Tm§ k n) →
                (for φ ∘ flip ‵fun ∘ renTm§ η) τ ≡ (renTm§ η ∘ for φ ∘ flip ‵fun) τ
-eqrenforTm η g ∙       = refl
-eqrenforTm η g (φ , f) = (_, ‵fun f (renTm§ η _)) & eqrenforTm η (comp zero ∙) φ
+eqrenforTm η ∙       τ = refl
+eqrenforTm η (φ , f) τ = (_, ‵fun f (renTm§ η τ)) & eqrenforTm η φ τ
 
 -- TODO: is the argument order correct here? is this somehow tget?
 tren⊑ : ∀ {k k′ Γ Γ′} (η : k ≤ k′) → Γ ⊑ Γ′ → renFm§ η Γ ⊑ renFm§ η Γ′
@@ -1255,13 +1254,13 @@ tren η (‵magic d)              = ‵magic (tren η d)
 tren η ‵refl                   = ‵refl
 tren η (‵sym d)                = ‵sym (tren η d)
 tren η (‵trans d e)            = ‵trans (tren η d) (tren η e)
-tren η (‵cong f i refl refl d) = ‵cong f i (eqrenpeekTm η i _) (eqrenpokeTm η i _) (tren η d)
+tren η (‵cong f i refl refl d) = ‵cong f i (eqrenpeekTm η i _) (eqrenpokeTm η i _ _) (tren η d)
 tren η ‵dis                    = ‵dis
 tren η (‵inj d)                = ‵inj (tren η d)
 tren η (‵ind refl refl d e)    = ‵ind (eqrencut0Fm η _ 𝟘) (eqrencut1Fm η _ (𝕊 (‵tvar zero)))
                                    (tren η d) (tren η e)
 tren η (‵proj i refl)          = ‵proj i (eqrenpeekTm η i _)
-tren η (‵comp g φ refl)        = ‵comp g φ (eqrenforTm η g φ)
+tren η (‵comp g φ refl)        = ‵comp g φ (eqrenforTm η φ _)
 tren η (‵rec f g)              = ‵rec f g
 
 twk : ∀ {Þ k} {Γ : Fm§ k} {A} → Þ / Γ ⊢ A → Þ / wkFm§ Γ ⊢ wkFm A
@@ -1297,31 +1296,31 @@ ridtren η i = refl
 -- 3.1. derivations: renaming
 
 ren : ∀ {Þ k} {Γ Γ′ : Fm§ k} {A} → Γ ⊑ Γ′ → Þ / Γ ⊢ A → Þ / Γ′ ⊢ A
-ren η (‵var i)               = ‵var (ren∋ η i)
-ren η (‵lam d)               = ‵lam (ren (lift⊑ η) d)
-ren η (d ‵$ e)               = ren η d ‵$ ren η e
-ren η (‵pair d e)            = ‵pair (ren η d) (ren η e)
-ren η (‵fst d)               = ‵fst (ren η d)
-ren η (‵snd d)               = ‵snd (ren η d)
-ren η (‵left d)              = ‵left (ren η d)
-ren η (‵right d)             = ‵right (ren η d)
-ren η (‵either c d e)        = ‵either (ren η c) (ren (lift⊑ η) d) (ren (lift⊑ η) e)
-ren η (‵all refl d)          = ‵all refl (ren (twk⊑ η) d) -- TODO: hmm
-ren η (‵unall t p d)         = ‵unall t p (ren η d)
-ren η (‵ex t p d)            = ‵ex t p (ren η d)
-ren η (‵letex refl q d e)    = ‵letex refl q (ren η d) (ren (lift⊑ (twk⊑ η)) e) -- TODO: hmm
-ren η (‵abort d)             = ‵abort (ren η d)
-ren η (‵magic d)             = ‵magic (ren (lift⊑ η) d)
-ren η ‵refl                  = ‵refl
-ren η (‵sym d)               = ‵sym (ren η d)
-ren η (‵trans d e)           = ‵trans (ren η d) (ren η e)
-ren η (‵cong f i p q d)      = ‵cong f i p q (ren η d)
-ren η ‵dis                   = ‵dis
-ren η (‵inj d)               = ‵inj (ren η d)
-ren η (‵ind p q d e)         = ‵ind p q (ren η d) (ren η e)
-ren η (‵proj i p)            = ‵proj i p
-ren η (‵comp g φ p)          = ‵comp g φ p
-ren η (‵rec f g)             = ‵rec f g
+ren η (‵var i)            = ‵var (ren∋ η i)
+ren η (‵lam d)            = ‵lam (ren (lift⊑ η) d)
+ren η (d ‵$ e)            = ren η d ‵$ ren η e
+ren η (‵pair d e)         = ‵pair (ren η d) (ren η e)
+ren η (‵fst d)            = ‵fst (ren η d)
+ren η (‵snd d)            = ‵snd (ren η d)
+ren η (‵left d)           = ‵left (ren η d)
+ren η (‵right d)          = ‵right (ren η d)
+ren η (‵either c d e)     = ‵either (ren η c) (ren (lift⊑ η) d) (ren (lift⊑ η) e)
+ren η (‵all refl d)       = ‵all refl (ren (twk⊑ η) d) -- TODO: hmm
+ren η (‵unall t p d)      = ‵unall t p (ren η d)
+ren η (‵ex t p d)         = ‵ex t p (ren η d)
+ren η (‵letex refl q d e) = ‵letex refl q (ren η d) (ren (lift⊑ (twk⊑ η)) e) -- TODO: hmm
+ren η (‵abort d)          = ‵abort (ren η d)
+ren η (‵magic d)          = ‵magic (ren (lift⊑ η) d)
+ren η ‵refl               = ‵refl
+ren η (‵sym d)            = ‵sym (ren η d)
+ren η (‵trans d e)        = ‵trans (ren η d) (ren η e)
+ren η (‵cong f i p q d)   = ‵cong f i p q (ren η d)
+ren η ‵dis                = ‵dis
+ren η (‵inj d)            = ‵inj (ren η d)
+ren η (‵ind p q d e)      = ‵ind p q (ren η d) (ren η e)
+ren η (‵proj i p)         = ‵proj i p
+ren η (‵comp g φ p)       = ‵comp g φ p
+ren η (‵rec f g)          = ‵rec f g
 
 
 ----------------------------------------------------------------------------------------------------
@@ -1348,9 +1347,9 @@ var§ (lift⊑ η) = lift§ (var§ η)
 
 -- TODO: check if changing this affects anything
 id§ : ∀ {Þ k} {Γ : Fm§ k} → Þ / Γ ⊢§ Γ
-id§ {Γ = ∙}     = ∙
-id§ {Γ = Γ , A} = lift§ id§
--- id§ = var§ id⊑
+-- id§ {Γ = ∙}     = ∙
+-- id§ {Γ = Γ , A} = lift§ id§
+id§ = var§ id⊑
 
 sub∋ : ∀ {Þ k} {Γ Ξ : Fm§ k} {A} → Þ / Ξ ⊢§ Γ → Γ ∋ A → Þ / Ξ ⊢ A
 sub∋ (σ , s) zero    = s
