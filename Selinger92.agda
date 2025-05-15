@@ -7,36 +7,50 @@
 
 module Selinger92 where
 
-open import Agda.Builtin.FromNat using (Number ; fromNat)
+open import Agda.Builtin.FromNat public
+  using (Number ; fromNat)
 
-open import Agda.Primitive using (Level ; _⊔_ ; lzero ; lsuc ; Setω)
+open import Agda.Primitive public
+  using (Level ; _⊔_ ; lzero ; lsuc ; Setω)
 
-open import Data.Empty using (⊥)
+open import Data.Empty public
+  using (⊥)
 
 import Data.Fin as Fin
-open Fin using (Fin ; zero ; suc)
+open Fin public
+  using (Fin ; zero ; suc)
+
+import Data.Fin.Properties as Fin
 
 import Data.Nat as Nat
-open Nat using (zero ; suc)
+open Nat public
+  using (zero ; suc ; pred)
   renaming (ℕ to Nat)
 
-open import Data.Product using (Σ)
+open import Data.Product public
+  using (Σ)
   renaming (_×_ to _∧_ ; _,_ to sig ; proj₁ to fst ; proj₂ to snd)
 
-open import Data.Sum using ()
+open import Data.Sum public
+  using ()
   renaming (_⊎_ to _∨_ ; inj₁ to left ; inj₂ to right)
 
-open import Data.Unit using (⊤ ; tt)
+open import Data.Unit public
+  using (⊤ ; tt)
 
-open import Function using (_∘_ ; _$_ ; const ; flip ; id)
+open import Function public
+  using (_∘_ ; _$_ ; const ; flip ; id)
 
 import Relation.Binary.PropositionalEquality as Id
-open Id using (_≡_ ; refl ; subst ; module ≡-Reasoning)
+open Id public
+  using (_≡_ ; refl ; subst ; module ≡-Reasoning)
 
-open import Relation.Nullary using (Dec ; yes ; no ; ¬_)
+open import Relation.Nullary public
+  using (Dec ; yes ; no ; ¬_)
   renaming (contradiction to _↯_)
 
-open import Relation.Nullary.Decidable using (True)
+open import Relation.Nullary.Decidable public
+  using (True)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -45,7 +59,7 @@ open import Relation.Nullary.Decidable using (True)
 
 infixl 9 _&_
 _&_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (f : X → Y) {x x′} → x ≡ x′ → f x ≡ f x′
-_&_ = Id.cong
+f & refl = refl
 
 infixl 8 _⊗_
 _⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {f g : X → Y} {x x′} → f ≡ g → x ≡ x′ → f x ≡ g x′
@@ -53,11 +67,11 @@ refl ⊗ refl = refl
 
 infix 9 _⁻¹
 _⁻¹ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≡ x′ → x′ ≡ x
-_⁻¹ = Id.sym
+refl ⁻¹ = refl
 
 infixr 4 _⋮_
 _⋮_ : ∀ {𝓍} {X : Set 𝓍} {x x′ x″ : X} → x ≡ x′ → x′ ≡ x″ → x ≡ x″
-_⋮_ = Id.trans
+refl ⋮ refl = refl
 
 coe : ∀ {𝓍} {X X′ : Set 𝓍} → X ≡ X′ → X → X′
 coe = Id.subst id
@@ -280,6 +294,7 @@ id≤ : ∀ {k} → k ≤ k
 id≤ {k = zero}  = stop
 id≤ {k = suc k} = lift≤ id≤
 
+infixr 9 _∘≤_
 _∘≤_ : ∀ {k k′ k″} → k′ ≤ k″ → k ≤ k′ → k ≤ k″
 stop     ∘≤ η       = η
 wk≤ η′   ∘≤ η       = wk≤ (η′ ∘≤ η)
@@ -364,6 +379,7 @@ module _ {𝓍} {X : Set 𝓍} where
   id⊑ {Γ = ∙}     = stop
   id⊑ {Γ = Γ , A} = lift⊑ id⊑
 
+  infixr 9 _∘⊑_
   _∘⊑_ : ∀ {Γ Γ′ Γ″} → Γ′ ⊑ Γ″ → Γ ⊑ Γ′ → Γ ⊑ Γ″
   stop     ∘⊑ η       = η
   wk⊑ η′   ∘⊑ η       = wk⊑ (η′ ∘⊑ η)
@@ -658,7 +674,7 @@ mutual
   eqrensubTm η σ (‵fun f τ) = ‵fun f & eqrensubTm§ η σ τ
 
   eqrensubTm§ : ∀ {k m m′ n} (η : m ≤ m′) (σ : Tm§ m k) (τ : Tm§ k n) →
-                 subTm§ (renTm§ η σ) τ ≡ (renTm§ η ∘ subTm§ σ) τ
+                  subTm§ (renTm§ η σ) τ ≡ (renTm§ η ∘ subTm§ σ) τ
   eqrensubTm§ η σ ∙       = refl
   eqrensubTm§ η σ (τ , t) = _,_ & eqrensubTm§ η σ τ ⊗ eqrensubTm η σ t
 
@@ -906,17 +922,10 @@ eqwkrenFm η A = comprenFm (lift≤ η) (wk≤ id≤) A ⁻¹
                     )
               ⋮ comprenFm (wk≤ id≤) η A
 
--- TODO: decide whether to use roconnor's variant
 eqwkrenFm§ : ∀ {k k′} (η : k ≤ k′) (Γ : Fm§ k) →
                (renFm§ (lift≤ η) ∘ wkFm§) Γ ≡ (wkFm§ ∘ renFm§ η) Γ
--- eqwkrenFm§ η ∙       = refl
--- eqwkrenFm§ η (Γ , A) = _,_ & eqwkrenFm§ η Γ ⊗ eqwkrenFm η A
-eqwkrenFm§ η Γ = comprenFm§ (lift≤ η) (wk≤ id≤) Γ ⁻¹
-               ⋮ (flip renFm§ Γ) & (wk≤ -- TODO: changing this breaks roconnor
-                   & ( rid≤ η
-                     ⋮ lid≤ η ⁻¹
-                     ))
-               ⋮ comprenFm§ (wk≤ id≤) η Γ
+eqwkrenFm§ η ∙       = refl
+eqwkrenFm§ η (Γ , A) = _,_ & eqwkrenFm§ η Γ ⊗ eqwkrenFm η A
 
 
 ----------------------------------------------------------------------------------------------------
@@ -1099,7 +1108,7 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   ‵left   : ∀ {Þ Γ A B} (d : Þ / Γ ⊢ A) → Þ / Γ ⊢ A ‵∨ B
   ‵right  : ∀ {Þ Γ A B} (d : Þ / Γ ⊢ B) → Þ / Γ ⊢ A ‵∨ B
   ‵either : ∀ {Þ Γ A B C} (c : Þ / Γ ⊢ A ‵∨ B) (d : Þ / Γ , A ⊢ C) (e : Þ / Γ , B ⊢ C) →
-               Þ / Γ ⊢ C
+              Þ / Γ ⊢ C
 
   --     A(x₀)
   -- --------------
@@ -1310,31 +1319,31 @@ ridtren η i = refl
 -- 3.1. derivations: renaming
 
 ren : ∀ {Þ k} {Γ Γ′ : Fm§ k} {A} → Γ ⊑ Γ′ → Þ / Γ ⊢ A → Þ / Γ′ ⊢ A
-ren η (‵var i)               = ‵var (ren∋ η i)
-ren η (‵lam d)               = ‵lam (ren (lift⊑ η) d)
-ren η (d ‵$ e)               = ren η d ‵$ ren η e
-ren η (‵pair d e)            = ‵pair (ren η d) (ren η e)
-ren η (‵fst d)               = ‵fst (ren η d)
-ren η (‵snd d)               = ‵snd (ren η d)
-ren η (‵left d)              = ‵left (ren η d)
-ren η (‵right d)             = ‵right (ren η d)
-ren η (‵either c d e)        = ‵either (ren η c) (ren (lift⊑ η) d) (ren (lift⊑ η) e)
-ren η (‵all refl d)          = ‵all refl (ren (twk⊑ η) d) -- TODO: hmm
-ren η (‵unall t p d)         = ‵unall t p (ren η d)
-ren η (‵ex t p d)            = ‵ex t p (ren η d)
-ren η (‵letex refl q d e)    = ‵letex refl q (ren η d) (ren (lift⊑ (twk⊑ η)) e) -- TODO: hmm
-ren η (‵abort d)             = ‵abort (ren η d)
-ren η (‵magic d)             = ‵magic (ren (lift⊑ η) d)
-ren η ‵refl                  = ‵refl
-ren η (‵sym d)               = ‵sym (ren η d)
-ren η (‵trans d e)           = ‵trans (ren η d) (ren η e)
-ren η (‵cong f i p q d)      = ‵cong f i p q (ren η d)
-ren η ‵dis                   = ‵dis
-ren η (‵inj d)               = ‵inj (ren η d)
-ren η (‵ind p q d e)         = ‵ind p q (ren η d) (ren η e)
-ren η (‵proj i p)            = ‵proj i p
-ren η (‵comp g φ p)          = ‵comp g φ p
-ren η (‵rec f g)             = ‵rec f g
+ren η (‵var i)            = ‵var (ren∋ η i)
+ren η (‵lam d)            = ‵lam (ren (lift⊑ η) d)
+ren η (d ‵$ e)            = ren η d ‵$ ren η e
+ren η (‵pair d e)         = ‵pair (ren η d) (ren η e)
+ren η (‵fst d)            = ‵fst (ren η d)
+ren η (‵snd d)            = ‵snd (ren η d)
+ren η (‵left d)           = ‵left (ren η d)
+ren η (‵right d)          = ‵right (ren η d)
+ren η (‵either c d e)     = ‵either (ren η c) (ren (lift⊑ η) d) (ren (lift⊑ η) e)
+ren η (‵all refl d)       = ‵all refl (ren (twk⊑ η) d)
+ren η (‵unall t p d)      = ‵unall t p (ren η d)
+ren η (‵ex t p d)         = ‵ex t p (ren η d)
+ren η (‵letex refl q d e) = ‵letex refl q (ren η d) (ren (lift⊑ (twk⊑ η)) e)
+ren η (‵abort d)          = ‵abort (ren η d)
+ren η (‵magic d)          = ‵magic (ren (lift⊑ η) d)
+ren η ‵refl               = ‵refl
+ren η (‵sym d)            = ‵sym (ren η d)
+ren η (‵trans d e)        = ‵trans (ren η d) (ren η e)
+ren η (‵cong f i p q d)   = ‵cong f i p q (ren η d)
+ren η ‵dis                = ‵dis
+ren η (‵inj d)            = ‵inj (ren η d)
+ren η (‵ind p q d e)      = ‵ind p q (ren η d) (ren η e)
+ren η (‵proj i p)         = ‵proj i p
+ren η (‵comp g φ p)       = ‵comp g φ p
+ren η (‵rec f g)          = ‵rec f g
 
 
 ----------------------------------------------------------------------------------------------------
@@ -1384,10 +1393,10 @@ sub σ (‵snd d)               = ‵snd (sub σ d)
 sub σ (‵left d)              = ‵left (sub σ d)
 sub σ (‵right d)             = ‵right (sub σ d)
 sub σ (‵either c d e)        = ‵either (sub σ c) (sub (lift§ σ) d) (sub (lift§ σ) e)
-sub σ (‵all refl d)          = ‵all refl (sub (twk§ σ) d) -- TODO: hmm
+sub σ (‵all refl d)          = ‵all refl (sub (twk§ σ) d)
 sub σ (‵unall t p d)         = ‵unall t p (sub σ d)
 sub σ (‵ex t p d)            = ‵ex t p (sub σ d)
-sub σ (‵letex refl refl d e) = ‵letex refl refl (sub σ d) (sub (lift§ (twk§ σ)) e) -- TODO: hmm
+sub σ (‵letex refl refl d e) = ‵letex refl refl (sub σ d) (sub (lift§ (twk§ σ)) e)
 sub σ (‵abort d)             = ‵abort (sub σ d)
 sub σ (‵magic d)             = ‵magic (sub (lift§ σ) d)
 sub σ ‵refl                  = ‵refl
@@ -1434,14 +1443,14 @@ lidren (‵left d)               = ‵left & lidren d
 lidren (‵right d)              = ‵right & lidren d
 lidren (‵either c d e)         = ‵either & lidren c ⊗ lidren d ⊗ lidren e
 lidren (‵all refl d)           = ‵all refl
-                                   & ( flip ren d & ridtren⊑ (wk≤ id≤) -- TODO: lidrenlift
+                                   & ( flip ren d & ridtren⊑ (wk≤ id≤)
                                      ⋮ lidren d
                                      )
 lidren (‵unall t refl d)       = ‵unall t refl & lidren d
 lidren (‵ex t refl d)          = ‵ex t refl & lidren d
 lidren (‵letex refl refl d e)  = ‵letex refl refl
                                    & lidren d
-                                   ⊗ ( (flip ren e ∘ lift⊑) & ridtren⊑ (wk≤ id≤) -- TODO: lidrenlift
+                                   ⊗ ( (flip ren e ∘ lift⊑) & ridtren⊑ (wk≤ id≤)
                                      ⋮ lidren e
                                      )
 lidren (‵abort d)              = ‵abort & lidren d
@@ -1472,14 +1481,14 @@ compren η′ η (‵either c d e)         = ‵either
                                          ⊗ compren (lift⊑ η′) (lift⊑ η) d
                                          ⊗ compren (lift⊑ η′) (lift⊑ η) e
 compren η′ η (‵all refl d)           = ‵all refl
-                                         & ( flip ren d & comptren⊑ (wk≤ id≤) η′ η -- TODO: comprenlift
+                                         & ( flip ren d & comptren⊑ (wk≤ id≤) η′ η
                                            ⋮ compren (twk⊑ η′) (twk⊑ η) d
                                            )
 compren η′ η (‵unall t refl d)       = ‵unall t refl & compren η′ η d
 compren η′ η (‵ex t refl d)          = ‵ex t refl & compren η′ η d
 compren η′ η (‵letex refl refl d e)  = ‵letex refl refl
                                          & compren η′ η d
-                                         ⊗ ( (flip ren e ∘ lift⊑) & comptren⊑ (wk≤ id≤) η′ η -- TODO: comprenlift
+                                         ⊗ ( (flip ren e ∘ lift⊑) & comptren⊑ (wk≤ id≤) η′ η
                                            ⋮ compren (lift⊑ (twk⊑ η′)) (lift⊑ (twk⊑ η)) e
                                            )
 compren η′ η (‵abort d)              = ‵abort & compren η′ η d
@@ -1506,214 +1515,151 @@ ridsub σ i = refl
 
 ----------------------------------------------------------------------------------------------------
 
--- TODO: roconnor's things
+-- TODO: clean these up
 
-from-eq : ∀ {k} {Γ Γ′ : Fm§ k} → Γ ≡ Γ′ → Γ ⊑ Γ′
-from-eq refl = id⊑
+cast⊑ : ∀ {k} {Γ Γ′ : Fm§ k} → Γ ≡ Γ′ → Γ ⊑ Γ′
+cast⊑ refl = id⊑
 
-from-eq-trans : ∀ {k} {Γ Γ′ Γ″ : Fm§ k} (e₂ : Γ ≡ Γ′) (e₁ : Γ′ ≡ Γ″) →
-                  from-eq ( e₂ ⋮ e₁) ≡ from-eq e₁ ∘⊑ from-eq e₂
-from-eq-trans refl refl = lid⊑ id⊑ ⁻¹
+-- TODO: rename
+cast⊑-pair : ∀ {k} {Γ Γ′ : Fm§ k} {C C′} (p : Γ ≡ Γ′) (q : C ≡ C′) →
+               cast⊑ ((Γ′ ,_) & q) ∘⊑ lift⊑ (cast⊑ p) ≡ cast⊑ (_,_ & p ⊗ q)
+cast⊑-pair refl refl = lift⊑ & lid⊑ id⊑
 
-from-eq-cancel : ∀ {k} {Γ Γ′ : Fm§ k} (e : Γ ≡ Γ′) → from-eq e ∘⊑ from-eq (e ⁻¹) ≡ id⊑
-from-eq-cancel refl = lid⊑ id⊑
+-- TODO: rename
+cast⊑-pair-alt : ∀ {k} {Γ Γ′ : Fm§ k} {C C′} (p : Γ ≡ Γ′) (q : C ≡ C′) →
+                   lift⊑ (cast⊑ p) ∘⊑ cast⊑ ((Γ ,_) & q) ≡ cast⊑ (_,_ & p ⊗ q)
+cast⊑-pair-alt refl refl = lift⊑ & lid⊑ id⊑
 
-from-eq-cancel-alt : ∀ {k} {Γ Γ′ : Fm§ k} (e : Γ ≡ Γ′) → from-eq (e ⁻¹) ∘⊑ from-eq e ≡ id⊑
-from-eq-cancel-alt refl = lid⊑ id⊑
+-- TODO: rename
+cast⊑-eat : ∀ {k} {Γ Γ′ : Fm§ k} {C C′} (q : C ≡ C′) (ζ : Γ ⊑ Γ′) →
+              cast⊑ ((Γ′ ,_) & q) ∘⊑ wk⊑ ζ ≡ wk⊑ ζ
+cast⊑-eat refl ζ = wk⊑ & lid⊑ ζ
 
-from-eq-pair : ∀ {k} {Γ Γ′ : Fm§ k} {C C′ : Fm k} (eΓ : Γ ≡ Γ′) (eC : C ≡ C′) →
-                 from-eq (_,_ & eΓ ⊗ eC ) ≡ from-eq (_,_ Γ′ & eC ) ∘⊑ lift⊑ (from-eq eΓ)
-from-eq-pair refl refl = lift⊑ & (lid⊑ id⊑ ⁻¹)
+-- TODO: rename
+cast⊑-slide : ∀ {k} {Γ Γ′ : Fm§ k} {C C′} (q : C ≡ C′) (ζ : Γ ⊑ Γ′) →
+                cast⊑ ((Γ′ ,_) & q) ∘⊑ lift⊑ ζ ≡ lift⊑ ζ ∘⊑ cast⊑ ((Γ ,_) & q)
+cast⊑-slide refl ζ = lift⊑ & ( lid⊑ ζ
+                             ⋮ rid⊑ ζ ⁻¹
+                             )
 
-from-eq-pair-alt : ∀ {k} {Γ Γ′ : Fm§ k} {C C′ : Fm k} (eΓ : Γ ≡ Γ′) (eC : C ≡ C′) →
-                     from-eq (_,_ & eΓ ⊗ eC ) ≡ lift⊑ (from-eq eΓ) ∘⊑ from-eq (_,_ Γ & eC )
-from-eq-pair-alt refl refl = lift⊑ &  (lid⊑ id⊑ ⁻¹)
+-- cast⊑-trans : ∀ {k} {Γ Γ′ Γ″ : Fm§ k} (e₂ : Γ ≡ Γ′) (e₁ : Γ′ ≡ Γ″) →
+--                 cast⊑ ( e₂ ⋮ e₁) ≡ cast⊑ e₁ ∘⊑ cast⊑ e₂
+-- cast⊑-trans refl refl = lid⊑ id⊑ ⁻¹
 
-from-eq-slide : ∀ {k} {Γ Γ′ : Fm§ k} {C C′ : Fm k} (ζ : Γ ⊑ Γ′) (eC : C ≡ C′) →
-                  from-eq (_,_ Γ′ & eC ) ∘⊑ lift⊑ ζ ≡  lift⊑ ζ ∘⊑ from-eq (_,_ Γ & eC )
-from-eq-slide ζ refl = lift⊑ & ( lid⊑ ζ  ⋮ rid⊑ ζ ⁻¹ )
+-- cast⊑-cancel : ∀ {k} {Γ Γ′ : Fm§ k} (e : Γ ≡ Γ′) → cast⊑ e ∘⊑ cast⊑ (e ⁻¹) ≡ id⊑
+-- cast⊑-cancel refl = lid⊑ id⊑
 
-from-eq-eat : ∀ {k} {Γ Γ′ : Fm§ k} {C C′ : Fm k} (ζ : Γ ⊑ Γ′) (eC : C ≡ C′) →
-                from-eq (_,_ Γ′ & eC ) ∘⊑ wk⊑ ζ ≡  wk⊑ ζ
-from-eq-eat ζ refl = wk⊑ & ( lid⊑ ζ )
+-- cast⊑-cancel-alt : ∀ {k} {Γ Γ′ : Fm§ k} (e : Γ ≡ Γ′) → cast⊑ (e ⁻¹) ∘⊑ cast⊑ e ≡ id⊑
+-- cast⊑-cancel-alt refl = lid⊑ id⊑
 
-from-eq-ren : ∀ {k k′} {Γ Γ′ : Fm§ k} {η η′ : k ≤ k′} (ζ : Γ ⊑ Γ′) (e : η ≡ η′) →
-                from-eq ((flip renFm§ Γ′) & e) ∘⊑ tren⊑ η ζ ≡
-                  tren⊑ η′ ζ ∘⊑ from-eq ((flip renFm§ Γ) & e)
-from-eq-ren {η = η} {η′ = η′} ζ refl = ( lid⊑ (tren⊑ η ζ)  ⋮ rid⊑ (tren⊑ η ζ) ⁻¹ )
+-- cast⊑-ren : ∀ {k k′} {Γ Γ′ : Fm§ k} {η η′ : k ≤ k′} (ζ : Γ ⊑ Γ′) (e : η ≡ η′) →
+--                 cast⊑ ((flip renFm§ Γ′) & e) ∘⊑ tren⊑ η ζ ≡
+--                   tren⊑ η′ ζ ∘⊑ cast⊑ ((flip renFm§ Γ) & e)
+-- cast⊑-ren {η = η} {η′ = η′} ζ refl = ( lid⊑ (tren⊑ η ζ)  ⋮ rid⊑ (tren⊑ η ζ) ⁻¹ )
 
-letex-eq : ∀ {Þ k} {Γ : Fm§ k} {Γ′ A C C′} (p : Γ′ ≡ wkFm§ Γ) (q : C′ ≡ wkFm C)
-             (d : Þ / Γ ⊢ ‵∃ A) (e : Þ / Γ′ , A ⊢ C′) →
-             ‵letex p q d e ≡ ‵letex refl q d (ren (lift⊑ (from-eq p)) e)
-letex-eq {Þ} {Γ} {Γ′} {A} {C} {C′} refl q d e = ‵letex refl q d & (lidren e ⁻¹)
+eqall : ∀ {Þ k} {Γ : Fm§ k} {Γ′ A} (p : Γ′ ≡ wkFm§ Γ) (d : Þ / Γ′ ⊢ A) →
+          ‵all refl (ren (cast⊑ p) d) ≡ ‵all p d
+eqall refl d = ‵all refl & lidren d
+
+eqletex : ∀ {Þ k} {Γ : Fm§ k} {Γ′ A C C′} (p : Γ′ ≡ wkFm§ Γ) (q : C′ ≡ wkFm C)
+            (d : Þ / Γ ⊢ ‵∃ A) (e : Þ / Γ′ , A ⊢ C′) →
+            ‵letex refl q d (ren (lift⊑ (cast⊑ p)) e) ≡ ‵letex p q d e
+eqletex refl q d e = ‵letex refl q d & lidren e
 
 
 ----------------------------------------------------------------------------------------------------
 
 -- TODO: clean these up
-eqrentren∋ : ∀ {k k′ Γ Γ′ A} (η : k ≤ k′) (ζ : Γ ⊑ Γ′) (i : Γ ∋ A) →
-               (tren∋ η ∘ ren∋ ζ) i ≡ (ren∋ (tren⊑ η ζ) ∘ tren∋ η) i
-eqrentren∋ η (wk⊑ ζ)   i       = suc & eqrentren∋ η ζ i
-eqrentren∋ η (lift⊑ ζ) zero    = refl
-eqrentren∋ η (lift⊑ ζ) (suc i) = suc & eqrentren∋ η ζ i
 
--- TODO: roconnor's things
 module _ where
   open ≡-Reasoning
 
-  lcomptren⊑ : ∀ {k k′ k″} {Γ Γ′ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (ζ : Γ ⊑ Γ′) →
-             from-eq (comprenFm§ η′ η Γ′) ∘⊑ tren⊑ (η′ ∘≤ η) ζ ≡
-               (tren⊑ η′ ∘ tren⊑ η) ζ ∘⊑ from-eq (comprenFm§ η′ η Γ)
-  lcomptren⊑ η′ η stop = refl
-  lcomptren⊑ {k} {k′} {k″} {Γ} {Γ′ , C} η′ η (wk⊑ ζ) = begin
-     (from-eq (_,_ & comprenFm§ η′ η Γ′ ⊗ comprenFm η′ η C) ∘⊑ wk⊑ (tren⊑ (η′ ∘≤ η) ζ))
-    ≡⟨ flip _∘⊑_ (wk⊑ (tren⊑ (η′ ∘≤ η) ζ)) & from-eq-pair (comprenFm§ η′ η Γ′) (comprenFm η′ η C)  ⟩
-      ((from-eq (_,_ ((renFm§ η′ ∘ renFm§ η) Γ′) & comprenFm η′ η C) ∘⊑
-         lift⊑ (from-eq (comprenFm§ η′ η Γ′)))
-        ∘⊑ wk⊑ (tren⊑ (η′ ∘≤ η) ζ))
-    ≡⟨ ass⊑ (from-eq (_,_ ((renFm§ η′ ∘ renFm§ η) Γ′) & comprenFm η′ η C)) (lift⊑ (from-eq (comprenFm§ η′ η Γ′))) (wk⊑ (tren⊑ (η′ ∘≤ η) ζ)) ⁻¹ ⟩
-      (from-eq (_,_ (renFm§ η′ (renFm§ η Γ′)) & comprenFm η′ η C) ∘⊑
-        (lift⊑ (from-eq (comprenFm§ η′ η Γ′)) ∘⊑ wk⊑ (tren⊑ (η′ ∘≤ η) ζ)))
-    ≡⟨⟩
-      (from-eq (_,_ (renFm§ η′ (renFm§ η Γ′)) & comprenFm η′ η C) ∘⊑
-        wk⊑ ((from-eq (comprenFm§ η′ η Γ′)) ∘⊑ (tren⊑ (η′ ∘≤ η) ζ)))
-    ≡⟨ _∘⊑_ (from-eq (_,_ (renFm§ η′ (renFm§ η Γ′)) & comprenFm η′ η C)) & (wk⊑ & lcomptren⊑ η′ η ζ )  ⟩
-      (from-eq (_,_ (renFm§ η′ (renFm§ η Γ′)) & comprenFm η′ η C) ∘⊑
-        wk⊑ ((tren⊑ η′ ∘ tren⊑ η) ζ ∘⊑ from-eq (comprenFm§ η′ η Γ)))
-    ≡⟨⟩
-      (from-eq (_,_ (renFm§ η′ (renFm§ η Γ′)) & comprenFm η′ η C) ∘⊑
-        (wk⊑ ((tren⊑ η′ ∘ tren⊑ η) ζ) ∘⊑ from-eq (comprenFm§ η′ η Γ)))
-    ≡⟨ ass⊑ (from-eq (_,_ (renFm§ η′ (renFm§ η Γ′)) & comprenFm η′ η C)) (wk⊑ ((tren⊑ η′ ∘ tren⊑ η) ζ)) (from-eq (comprenFm§ η′ η Γ)) ⟩
-      ((from-eq (_,_ (renFm§ η′ (renFm§ η Γ′)) & comprenFm η′ η C) ∘⊑
-         wk⊑ (tren⊑ η′ (tren⊑ η ζ))) ∘⊑ from-eq (comprenFm§ η′ η Γ))
-    ≡⟨  flip _∘⊑_ (from-eq (comprenFm§ η′ η Γ)) & from-eq-eat (tren⊑ η′ (tren⊑ η ζ)) (comprenFm η′ η C)  ⟩
-      wk⊑ (tren⊑ η′ (tren⊑ η ζ) ∘⊑ from-eq (comprenFm§ η′ η Γ))
-    ∎
-  lcomptren⊑ {k} {k′} {k″} {Γ , C} {Γ′ , C} η′ η (lift⊑ ζ) =  begin
-      (from-eq (comprenFm§ η′ η (_ , _)) ∘⊑ tren⊑ (η′ ∘≤ η) (lift⊑ ζ))
-    ≡⟨⟩
-      (from-eq (_,_ & comprenFm§ η′ η Γ′ ⊗ comprenFm η′ η C) ∘⊑
-       lift⊑ (tren⊑ (η′ ∘≤ η) ζ))
-    ≡⟨ flip _∘⊑_ (lift⊑ (tren⊑ (η′ ∘≤ η) ζ)) & from-eq-pair (comprenFm§ η′ η Γ′) (comprenFm η′ η C) ⟩
-       ((from-eq (_,_ ((renFm§ η′ ∘ renFm§ η) Γ′) & comprenFm η′ η C) ∘⊑
-          lift⊑ (from-eq (comprenFm§ η′ η Γ′)))
-         ∘⊑ lift⊑ (tren⊑ (η′ ∘≤ η) ζ))
-    ≡⟨ ass⊑ (from-eq (_,_ ((renFm§ η′ ∘ renFm§ η) Γ′) & comprenFm η′ η C)) (lift⊑ (from-eq (comprenFm§ η′ η Γ′))) (lift⊑ (tren⊑ (η′ ∘≤ η) ζ)) ⁻¹ ⟩
-       from-eq (_,_ ((renFm§ η′ ∘ renFm§ η) Γ′) & comprenFm η′ η C) ∘⊑
-          (lift⊑ (from-eq (comprenFm§ η′ η Γ′) ∘⊑ tren⊑ (η′ ∘≤ η) ζ))
-    ≡⟨ (λ x → from-eq (_,_ ((renFm§ η′ ∘ renFm§ η) Γ′) & comprenFm η′ η C) ∘⊑ (lift⊑ x)) & lcomptren⊑ η′ η ζ  ⟩
-      (from-eq (_,_ (renFm§ η′ (renFm§ η Γ′)) & comprenFm η′ η C) ∘⊑
-        lift⊑ ((tren⊑ η′ ∘ tren⊑ η) ζ ∘⊑ from-eq (comprenFm§ η′ η Γ)))
-    ≡⟨ from-eq-slide (tren⊑ η′ (tren⊑ η ζ) ∘⊑ from-eq (comprenFm§ η′ η Γ)) (comprenFm η′ η C) ⟩
-      (lift⊑ (tren⊑ η′ (tren⊑ η ζ)) ∘⊑ lift⊑ (from-eq (comprenFm§ η′ η Γ))) ∘⊑
-        from-eq (_,_ (renFm§ (η′ ∘≤ η) Γ) & comprenFm η′ η C)
-    ≡⟨ (ass⊑ (lift⊑ (tren⊑ η′ (tren⊑ η ζ))) (lift⊑ (from-eq (comprenFm§ η′ η Γ))) (from-eq (_,_ (renFm§ (η′ ∘≤ η) Γ) & comprenFm η′ η C))) ⁻¹ ⟩
-      lift⊑ (tren⊑ η′ (tren⊑ η ζ)) ∘⊑ (lift⊑ (from-eq (comprenFm§ η′ η Γ)) ∘⊑
-        from-eq (_,_ (renFm§ (η′ ∘≤ η) Γ) & comprenFm η′ η C))
-    ≡⟨ _∘⊑_ (lift⊑ (tren⊑ η′ (tren⊑ η ζ)))  & ( from-eq-pair-alt (comprenFm§ η′ η Γ) (comprenFm η′ η C)) ⁻¹ ⟩
-      (lift⊑ (tren⊑ η′ (tren⊑ η ζ)) ∘⊑
-       from-eq (_,_ & comprenFm§ η′ η Γ ⊗ comprenFm η′ η C))
-    ≡⟨⟩
-      ((tren⊑ η′ ∘ tren⊑ η) (lift⊑ ζ) ∘⊑ from-eq (comprenFm§ η′ η (_ , _)))
-    ∎
+  -- TODO: rename
+  hmmren : ∀ {k k′} {Γ Γ′ : Fm§ k} (η : k ≤ k′) (ζ : Γ ⊑ Γ′) →
+             cast⊑ (eqwkrenFm§ η Γ′) ∘⊑ (tren⊑ (lift≤ η) ∘ twk⊑) ζ ≡
+               (twk⊑ ∘ tren⊑ η) ζ ∘⊑ cast⊑ (eqwkrenFm§ η Γ)
+  hmmren {Γ = Γ}    {Γ′ = ∙}      η stop       = refl
+  hmmren {Γ = Γ}    {Γ′ = Γ′ , C} η (wk⊑ ζ)    =
+      begin
+        cast⊑ (eqwkrenFm§ η (Γ′ , C)) ∘⊑ (tren⊑ (lift≤ η) ∘ twk⊑ ∘ wk⊑) ζ
+      ≡⟨⟩
+        cast⊑ (_,_ & eqwkrenFm§ η Γ′ ⊗ eqwkrenFm η C) ∘⊑ (wk⊑ ∘ tren⊑ (lift≤ η) ∘ twk⊑) ζ
 
-  lcomptren⊑⁻¹ : ∀ {k k′ k″} {Γ Γ′ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (ζ : Γ ⊑ Γ′) →
-             (from-eq (comprenFm§ η′ η Γ′ ⁻¹)) ∘⊑ (tren⊑ η′ ∘ tren⊑ η) ζ ≡
-              tren⊑ (η′ ∘≤ η) ζ  ∘⊑ (from-eq (comprenFm§ η′ η Γ ⁻¹) )
-  lcomptren⊑⁻¹ η′ η ζ = _∘⊑_ (from-eq (comprenFm§ η′ η _ ⁻¹)) & (rid⊑ ((tren⊑ η′ ∘ tren⊑ η) ζ) ⁻¹
-                             ⋮ _∘⊑_ (tren⊑ η′ (tren⊑ η ζ)) & (from-eq-cancel (comprenFm§ η′ η _) ⁻¹)
-                             ⋮ ass⊑ (tren⊑ η′ (tren⊑ η ζ)) (from-eq (comprenFm§ η′ η _)) (from-eq (comprenFm§ η′ η _ ⁻¹))
-                             ⋮ flip _∘⊑_ (from-eq (comprenFm§ η′ η _ ⁻¹)) & (lcomptren⊑ η′ η ζ ⁻¹)
-                             ⋮ ass⊑ (from-eq (comprenFm§ η′ η _)) (tren⊑ (η′ ∘≤ η) ζ) (from-eq (comprenFm§ η′ η _ ⁻¹)) ⁻¹ )
-                      ⋮ ass⊑ (from-eq (comprenFm§ η′ η _ ⁻¹)) (from-eq (comprenFm§ η′ η _)) (tren⊑ (η′ ∘≤ η) ζ ∘⊑ from-eq (comprenFm§ η′ η _ ⁻¹))
-                      ⋮ flip _∘⊑_ (tren⊑ (η′ ∘≤ η) ζ ∘⊑ from-eq (comprenFm§ η′ η _ ⁻¹)) & from-eq-cancel-alt (comprenFm§ η′ η _)
-                      ⋮ lid⊑  (tren⊑ (η′ ∘≤ η) ζ ∘⊑ from-eq (comprenFm§ η′ η _ ⁻¹))
+      ≡⟨ (_∘⊑ (wk⊑ ∘ tren⊑ (lift≤ η) ∘ twk⊑) ζ) & cast⊑-pair (eqwkrenFm§ η Γ′) (eqwkrenFm η C) ⁻¹ ⟩
+        (cast⊑ (((wkFm§ ∘ renFm§ η) Γ′ ,_) & eqwkrenFm η C) ∘⊑
+            lift⊑ (cast⊑ (eqwkrenFm§ η Γ′))) ∘⊑
+          wk⊑ ((tren⊑ (lift≤ η) ∘ twk⊑) ζ)
 
-  goal : ∀ {k k′} {Γ Γ′ : Fm§ k} (η : k ≤ k′) (ζ : Γ ⊑ Γ′) → (from-eq (eqwkrenFm§ η Γ′) ∘⊑ tren⊑ (lift≤ η) (twk⊑ ζ)) ≡
-      (twk⊑ (tren⊑ η ζ) ∘⊑ from-eq (eqwkrenFm§ η Γ))
-  goal {k} {k′} {Γ} {Γ′} η ζ =  begin
-     (from-eq (eqwkrenFm§ η Γ′) ∘⊑ tren⊑ (lift≤ η) (twk⊑ ζ))
-    ≡⟨ flip _∘⊑_ (tren⊑ (lift≤ η) (twk⊑ ζ))
+      ≡⟨ ass⊑
+           (cast⊑ (((wkFm§ ∘ renFm§ η) Γ′ ,_) & eqwkrenFm η C))
+           (lift⊑ (cast⊑ (eqwkrenFm§ η Γ′)))
+           (wk⊑ ((tren⊑ (lift≤ η) ∘ twk⊑) ζ)) ⁻¹
+      ⟩
+        cast⊑ ((wkFm§ (renFm§ η Γ′) ,_) & eqwkrenFm η C) ∘⊑
+          wk⊑ (cast⊑ (eqwkrenFm§ η Γ′) ∘⊑ (tren⊑ (lift≤ η) ∘ twk⊑) ζ)
 
--- i broke this by cleaning up eqwkrenFm§
-          & from-eq-trans (comprenFm§ (lift≤ η) (wk≤ id≤) Γ′ ⁻¹) (((flip renFm§ Γ′) & (wk≤ & ( rid≤ η ⋮ lid≤ η ⁻¹))) ⋮ comprenFm§ (wk≤ id≤) η Γ′) ⟩
+      ≡⟨ ((cast⊑ ((wkFm§ (renFm§ η Γ′) ,_) & eqwkrenFm η C) ∘⊑_) ∘ wk⊑) & hmmren η ζ ⟩
 
-      ((from-eq
-         (((flip renFm§ Γ′) & (wk≤ & ( rid≤ η ⋮ lid≤ η ⁻¹))) ⋮
-          comprenFm§ (wk≤ id≤) η Γ′)
-         ∘⊑ from-eq (comprenFm§ (lift≤ η) (wk≤ id≤) Γ′ ⁻¹))
-        ∘⊑ tren⊑ (lift≤ η) (twk⊑ ζ))
-    ≡⟨ ass⊑ (from-eq (((flip renFm§ Γ′) & (wk≤ & ( rid≤ η ⋮ lid≤ η ⁻¹))) ⋮
-          comprenFm§ (wk≤ id≤) η Γ′)) (from-eq (comprenFm§ (lift≤ η) (wk≤ id≤) Γ′ ⁻¹)) (tren⊑ (lift≤ η) (twk⊑ ζ)) ⁻¹ ⟩
-      (from-eq
-         (((flip renFm§ Γ′) & (wk≤ & ( rid≤ η ⋮ lid≤ η ⁻¹))) ⋮
-          comprenFm§ (wk≤ id≤) η Γ′)
-         ∘⊑ (from-eq (comprenFm§ (lift≤ η) (wk≤ id≤) Γ′ ⁻¹)
-        ∘⊑ tren⊑ (lift≤ η) (twk⊑ ζ)))
-    ≡⟨ _∘⊑_ (from-eq
-         (((flip renFm§ Γ′) & (wk≤ & ( rid≤ η ⋮ lid≤ η ⁻¹))) ⋮
-          comprenFm§ (wk≤ id≤) η Γ′)) & lcomptren⊑⁻¹ (lift≤ η) (wk≤ id≤) ζ ⟩
-      (from-eq
-         (((flip renFm§ Γ′) & (wk≤ & ( rid≤ η ⋮ lid≤ η ⁻¹))) ⋮
-          comprenFm§ (wk≤ id≤) η Γ′) ∘⊑
-          (tren⊑ (wk≤ (η ∘≤ id≤)) ζ
-         ∘⊑ from-eq (comprenFm§ (lift≤ η) (wk≤ id≤) Γ ⁻¹)))
-    ≡⟨ flip _∘⊑_ (tren⊑ (wk≤ (η ∘≤ id≤)) ζ
-         ∘⊑ from-eq (comprenFm§ (lift≤ η) (wk≤ id≤) Γ ⁻¹)) & from-eq-trans (((flip renFm§ Γ′) & (wk≤ & ( rid≤ η ⋮ lid≤ η ⁻¹)))) (comprenFm§ (wk≤ id≤) η Γ′)  ⟩
-      (((from-eq (comprenFm§ (wk≤ id≤) η Γ′)) ∘⊑
-        from-eq (flip renFm§ Γ′ & (wk≤ & (rid≤ η ⋮ lid≤ η ⁻¹)))) ∘⊑
-          (tren⊑ (wk≤ (η ∘≤ id≤)) ζ
-         ∘⊑ from-eq (comprenFm§ (lift≤ η) (wk≤ id≤) Γ ⁻¹)))
-    ≡⟨ ass⊑ (from-eq (comprenFm§ (wk≤ id≤) η Γ′)) (from-eq ((λ x → renFm§ x Γ′) & (wk≤ & (rid≤ η ⋮ lid≤ η ⁻¹)))) (tren⊑ (wk≤ (η ∘≤ id≤)) ζ ∘⊑
-                                                                                                                   from-eq (comprenFm§ (lift≤ η) (wk≤ id≤) Γ ⁻¹)) ⁻¹ ⟩
-      ((from-eq (comprenFm§ (wk≤ id≤) η Γ′)) ∘⊑
-        (from-eq (flip renFm§ Γ′ & (wk≤ & (rid≤ η ⋮ lid≤ η ⁻¹))) ∘⊑
-          (tren⊑ (wk≤ (η ∘≤ id≤)) ζ
-         ∘⊑ from-eq (comprenFm§ (lift≤ η) (wk≤ id≤) Γ ⁻¹))))
-    ≡⟨ _∘⊑_ (from-eq (comprenFm§ (wk≤ id≤) η Γ′)) & ass⊑ (from-eq (flip renFm§ Γ′ & (wk≤ & (rid≤ η ⋮ lid≤ η ⁻¹)))) (tren⊑ (wk≤ (η ∘≤ id≤)) ζ) (from-eq (comprenFm§ (lift≤ η) (wk≤ id≤) Γ ⁻¹)) ⟩
-      ((from-eq (comprenFm§ (wk≤ id≤) η Γ′)) ∘⊑
-        ((from-eq (flip renFm§ Γ′ & (wk≤ & (rid≤ η ⋮ lid≤ η ⁻¹))) ∘⊑
-          tren⊑ (wk≤ (η ∘≤ id≤)) ζ)
-         ∘⊑ from-eq (comprenFm§ (lift≤ η) (wk≤ id≤) Γ ⁻¹)))
-    ≡⟨ _∘⊑_ (from-eq (comprenFm§ (wk≤ id≤) η Γ′)) & (flip _∘⊑_ _  & from-eq-ren ζ (wk≤ & ( rid≤ η ⋮ lid≤ η ⁻¹))) ⟩
-      (from-eq (comprenFm§ (wk≤ id≤) η Γ′) ∘⊑ ((tren⊑ (wk≤ id≤ ∘≤ η) ζ ∘⊑
-        from-eq ((flip renFm§ Γ) & (wk≤ & ( rid≤ η ⋮ lid≤ η ⁻¹)))) ∘⊑
-         from-eq (comprenFm§ (lift≤ η) (wk≤ id≤) Γ ⁻¹)))
-    ≡⟨ _∘⊑_ (from-eq (comprenFm§ (wk≤ id≤) η Γ′) ) & ass⊑ (tren⊑ (wk≤ id≤ ∘≤ η) ζ) _ _ ⁻¹ ⟩
-      (from-eq (comprenFm§ (wk≤ id≤) η Γ′) ∘⊑ (tren⊑ (wk≤ id≤ ∘≤ η) ζ ∘⊑
-        (from-eq ((flip renFm§ Γ) & (wk≤ & ( rid≤ η ⋮ lid≤ η ⁻¹))) ∘⊑
-         from-eq (comprenFm§ (lift≤ η) (wk≤ id≤) Γ ⁻¹))))
-    ≡⟨ ass⊑ (from-eq (comprenFm§ (wk≤ id≤) η Γ′)) _ _ ⟩
-      ((from-eq (comprenFm§ (wk≤ id≤) η Γ′) ∘⊑ tren⊑ (wk≤ id≤ ∘≤ η) ζ) ∘⊑
-        (from-eq ((flip renFm§ Γ) & (wk≤ & ( rid≤ η ⋮ lid≤ η ⁻¹))) ∘⊑
-         from-eq (comprenFm§ (lift≤ η) (wk≤ id≤) Γ ⁻¹)))
-    ≡⟨ flip _∘⊑_ _ & lcomptren⊑ (wk≤ id≤) η ζ ⟩
-      ((twk⊑ (tren⊑ η ζ) ∘⊑ from-eq (comprenFm§ (wk≤ id≤) η Γ)) ∘⊑
-        (from-eq ((flip renFm§ Γ) & (wk≤ & ( rid≤ η ⋮ lid≤ η ⁻¹))) ∘⊑
-         from-eq (comprenFm§ (lift≤ η) (wk≤ id≤) Γ ⁻¹)))
-    ≡⟨ ass⊑ (twk⊑ (tren⊑ η ζ)) (from-eq (comprenFm§ (wk≤ id≤) η Γ)) (from-eq ((flip renFm§ Γ) & (wk≤ & ( rid≤ η ⋮ lid≤ η ⁻¹))) ∘⊑
-                                                                      from-eq (comprenFm§ (lift≤ η) (wk≤ id≤) Γ ⁻¹)) ⁻¹ ⟩
-      (twk⊑ (tren⊑ η ζ) ∘⊑
-        (from-eq (comprenFm§ (wk≤ id≤) η Γ) ∘⊑
-          (from-eq ((flip renFm§ Γ) & (wk≤ & ( rid≤ η ⋮ lid≤ η ⁻¹)))
-         ∘⊑ from-eq (comprenFm§ (lift≤ η) (wk≤ id≤) Γ ⁻¹))))
-    ≡⟨ _∘⊑_ (twk⊑ (tren⊑ η ζ)) & ( (ass⊑ (from-eq (comprenFm§ (wk≤ id≤) η Γ)) (from-eq ((flip renFm§ Γ) & (wk≤ & ( rid≤ η ⋮ lid≤ η ⁻¹)))) (from-eq (comprenFm§ (lift≤ η) (wk≤ id≤) Γ ⁻¹)))
-                                 ⋮ flip _∘⊑_ (from-eq (comprenFm§ (lift≤ η) (wk≤ id≤) Γ ⁻¹))
-                                   & (from-eq-trans ((flip renFm§ Γ) & (wk≤ & ( rid≤ η ⋮ lid≤ η ⁻¹))) (comprenFm§ (wk≤ id≤) η Γ)) ⁻¹
+        cast⊑ ((wkFm§ (renFm§ η Γ′) ,_) & eqwkrenFm η C) ∘⊑
+          wk⊑ ((twk⊑ ∘ tren⊑ η) ζ ∘⊑ cast⊑ (eqwkrenFm§ η Γ))
+      ≡⟨ cast⊑-eat (eqwkrenFm η C) ((twk⊑ ∘ tren⊑ η) ζ ∘⊑ cast⊑ (eqwkrenFm§ η Γ)) ⟩
 
--- i broke this by cleaning up eqwkrenFm§
-                                 ⋮ from-eq-trans (comprenFm§ (lift≤ η) (wk≤ id≤) Γ ⁻¹) ((flip renFm§ Γ) & (wk≤ & ( rid≤ η ⋮ lid≤ η ⁻¹)) ⋮ comprenFm§ (wk≤ id≤) η Γ) ⁻¹  )⟩
-
-     (twk⊑ (tren⊑ η ζ) ∘⊑ from-eq (eqwkrenFm§ η Γ))
+        wk⊑ ((twk⊑ ∘ tren⊑ η) ζ ∘⊑ cast⊑ (eqwkrenFm§ η Γ))
+      ≡⟨⟩
+        twk⊑ ((tren⊑ η ∘ wk⊑) ζ) ∘⊑ cast⊑ (eqwkrenFm§ η Γ)
       ∎
+  hmmren {Γ = Γ , C} {Γ′ = Γ′ , C} η (lift⊑ ζ) =
+     begin
+       cast⊑ (eqwkrenFm§ η (Γ′ , C)) ∘⊑ tren⊑ (lift≤ η) ((twk⊑ ∘ lift⊑) ζ)
+     ≡⟨⟩
+       cast⊑ (_,_ & eqwkrenFm§ η Γ′ ⊗ eqwkrenFm η C) ∘⊑ lift⊑ ((tren⊑ (lift≤ η) ∘ twk⊑) ζ)
 
-module _ where
-  open ≡-Reasoning
+     ≡⟨ (_∘⊑ lift⊑ ((tren⊑ (lift≤ η) ∘ twk⊑) ζ)) & cast⊑-pair (eqwkrenFm§ η Γ′) (eqwkrenFm η C) ⁻¹ ⟩
+       (cast⊑ (((wkFm§ ∘ renFm§ η) Γ′ ,_) & eqwkrenFm η C) ∘⊑
+           lift⊑ (cast⊑ (eqwkrenFm§ η Γ′))) ∘⊑
+         lift⊑ ((tren⊑ (lift≤ η) ∘ twk⊑) ζ)
+
+     ≡⟨ ass⊑
+          (cast⊑ (((wkFm§ ∘ renFm§ η) Γ′ ,_) & eqwkrenFm η C))
+          (lift⊑ (cast⊑ (eqwkrenFm§ η Γ′)))
+          (lift⊑ ((tren⊑ (lift≤ η) ∘ twk⊑) ζ)) ⁻¹
+     ⟩
+       cast⊑ (((wkFm§ ∘ renFm§ η) Γ′ ,_) & eqwkrenFm η C) ∘⊑
+         lift⊑ ((cast⊑ (eqwkrenFm§ η Γ′)) ∘⊑ ((tren⊑ (lift≤ η) ∘ twk⊑) ζ))
+
+     ≡⟨ ((cast⊑ (((wkFm§ ∘ renFm§ η) Γ′ ,_) & eqwkrenFm η C) ∘⊑_) ∘ lift⊑) & hmmren η ζ ⟩
+
+       cast⊑ (((wkFm§ ∘ renFm§ η) Γ′ ,_) & eqwkrenFm η C) ∘⊑
+         lift⊑ ((twk⊑ ∘ tren⊑ η) ζ ∘⊑ cast⊑ (eqwkrenFm§ η Γ))
+     ≡⟨ cast⊑-slide (eqwkrenFm η C) ((twk⊑ ∘ tren⊑ η) ζ ∘⊑ cast⊑ (eqwkrenFm§ η Γ)) ⟩
+
+       lift⊑ ((twk⊑ ∘ tren⊑ η) ζ ∘⊑ cast⊑ (eqwkrenFm§ η Γ)) ∘⊑
+         cast⊑ ((((renFm§ (lift≤ η) ∘ wkFm§) Γ) ,_) & eqwkrenFm η C)
+     ≡⟨ ass⊑
+          (twk⊑ ((lift⊑ ∘ tren⊑ η) ζ))
+          (lift⊑ (cast⊑ (eqwkrenFm§ η Γ)))
+          (cast⊑ ((((renFm§ (lift≤ η) ∘ wkFm§) Γ) ,_) & eqwkrenFm η C)) ⁻¹
+     ⟩
+
+       twk⊑ ((lift⊑ ∘ tren⊑ η) ζ) ∘⊑
+         lift⊑ (cast⊑ (eqwkrenFm§ η Γ)) ∘⊑
+         cast⊑ ((((renFm§ (lift≤ η) ∘ wkFm§) Γ) ,_) & eqwkrenFm η C)
+     ≡⟨ (twk⊑ ((lift⊑ ∘ tren⊑ η) ζ) ∘⊑_) & cast⊑-pair-alt (eqwkrenFm§ η Γ) (eqwkrenFm η C) ⟩
+
+       twk⊑ ((lift⊑ ∘ tren⊑ η) ζ) ∘⊑
+         cast⊑ (_,_ & eqwkrenFm§ η Γ ⊗ eqwkrenFm η C)
+     ≡⟨⟩
+       twk⊑ ((tren⊑ η ∘ lift⊑) ζ) ∘⊑ cast⊑ (eqwkrenFm§ η (Γ , C))
+     ∎
+
+  eqrentren∋ : ∀ {k k′ Γ Γ′ A} (η : k ≤ k′) (ζ : Γ ⊑ Γ′) (i : Γ ∋ A) →
+                 (tren∋ η ∘ ren∋ ζ) i ≡ (ren∋ (tren⊑ η ζ) ∘ tren∋ η) i
+  eqrentren∋ η (wk⊑ ζ)   i       = suc & eqrentren∋ η ζ i
+  eqrentren∋ η (lift⊑ ζ) zero    = refl
+  eqrentren∋ η (lift⊑ ζ) (suc i) = suc & eqrentren∋ η ζ i
 
   eqrentren : ∀ {Þ k k′ Γ Γ′ A} (η : k ≤ k′) (ζ : Γ ⊑ Γ′) (d : Þ / Γ ⊢ A) →
                 (tren η ∘ ren ζ) d ≡ (ren (tren⊑ η ζ) ∘ tren η) d
-
-  -- TODO: completely stuck on these two goals; roconnor contributed solution for second
   eqrentren η ζ (‵var i)                = ‵var & eqrentren∋ η ζ i
   eqrentren η ζ (‵lam d)                = ‵lam & eqrentren η (lift⊑ ζ) d
   eqrentren η ζ (d ‵$ e)                = _‵$_ & eqrentren η ζ d ⊗ eqrentren η ζ e
@@ -1731,7 +1677,32 @@ module _ where
         (tren η ∘ ren ζ) (‵all refl d)
       ≡⟨⟩
         ‵all (eqwkrenFm§ η Γ′) (tren (lift≤ η) (ren (twk⊑ ζ) d))
-      ≡⟨ {!!} ⟩
+
+      ≡⟨ ‵all (eqwkrenFm§ η Γ′) & eqrentren (lift≤ η) (twk⊑ ζ) d ⟩
+        ‵all (eqwkrenFm§ η Γ′) ((ren (tren⊑ (lift≤ η) (twk⊑ ζ)) ∘ tren (lift≤ η)) d)
+
+      ≡⟨ eqall (eqwkrenFm§ η Γ′) ((ren (tren⊑ (lift≤ η) (twk⊑ ζ)) ∘ tren (lift≤ η)) d) ⁻¹ ⟩
+        ‵all refl ((ren (cast⊑ (eqwkrenFm§ η Γ′)) ∘
+          ren (tren⊑ (lift≤ η) (twk⊑ ζ)) ∘
+          tren (lift≤ η)) d)
+
+      ≡⟨ ‵all refl
+           & (begin
+               (ren (cast⊑ (eqwkrenFm§ η Γ′)) ∘ ren (tren⊑ (lift≤ η) (twk⊑ ζ)) ∘ tren (lift≤ η)) d
+             ≡⟨ compren (cast⊑ (eqwkrenFm§ η Γ′)) (tren⊑ (lift≤ η) (twk⊑ ζ)) (tren (lift≤ η) d) ⁻¹ ⟩
+               (ren (cast⊑ (eqwkrenFm§ η Γ′) ∘⊑ tren⊑ (lift≤ η) (twk⊑ ζ)) ∘ tren (lift≤ η)) d
+             ≡⟨ flip ren (tren (lift≤ η) d) & hmmren η ζ ⟩
+               (ren (twk⊑ (tren⊑ η ζ) ∘⊑ cast⊑ (eqwkrenFm§ η Γ)) ∘ tren (lift≤ η)) d
+             ≡⟨ compren (twk⊑ (tren⊑ η ζ)) (cast⊑ (eqwkrenFm§ η Γ)) (tren (lift≤ η) d) ⟩
+               (ren (twk⊑ (tren⊑ η ζ)) ∘ ren (cast⊑ (eqwkrenFm§ η Γ)) ∘ tren (lift≤ η)) d
+             ∎) ⟩
+
+        ‵all refl ((ren (twk⊑ (tren⊑ η ζ)) ∘ ren (cast⊑ (eqwkrenFm§ η Γ)) ∘ tren (lift≤ η)) d)
+      ≡⟨⟩
+
+        ren (tren⊑ η ζ) (‵all refl ((ren (cast⊑ (eqwkrenFm§ η Γ)) ∘ tren (lift≤ η)) d))
+      ≡⟨ ren (tren⊑ η ζ) & eqall (eqwkrenFm§ η Γ) (tren (lift≤ η) d) ⟩
+
         ren (tren⊑ η ζ) (‵all (eqwkrenFm§ η Γ) (tren (lift≤ η) d))
       ≡⟨⟩
         (ren (tren⊑ η ζ) ∘ tren η) (‵all refl d)
@@ -1742,42 +1713,61 @@ module _ where
       begin
         (tren η ∘ ren ζ) (‵letex refl refl d e)
       ≡⟨⟩
-        ‵letex (eqwkrenFm§ η Γ′) (eqwkrenFm η C) (tren η (ren ζ d)) (tren (lift≤ η) (ren (lift⊑ (twk⊑ ζ)) e))
+        ‵letex (eqwkrenFm§ η Γ′) (eqwkrenFm η C) ((tren η ∘ ren ζ) d)
+          ((tren (lift≤ η) ∘ ren (lift⊑ (twk⊑ ζ))) e)
 
-      -- TODO: begin roconnor
-      ≡⟨ ‵letex (eqwkrenFm§ η Γ′) (eqwkrenFm η C) & eqrentren η ζ d ⊗ eqrentren (lift≤ η) (lift⊑ (twk⊑ ζ)) e ⟩
-        ‵letex (eqwkrenFm§ η Γ′) (eqwkrenFm η C)
-          ((ren (tren⊑ η ζ) ∘ tren η) d)
+      ≡⟨ ‵letex (eqwkrenFm§ η Γ′) (eqwkrenFm η C)
+           & eqrentren η ζ d
+           ⊗ eqrentren (lift≤ η) (lift⊑ (twk⊑ ζ)) e
+      ⟩
+        ‵letex (eqwkrenFm§ η Γ′) (eqwkrenFm η C) ((ren (tren⊑ η ζ) ∘ tren η) d)
           ((ren (tren⊑ (lift≤ η) (lift⊑ (twk⊑ ζ))) ∘ tren (lift≤ η)) e)
-      ≡⟨ letex-eq (eqwkrenFm§ η Γ′) (eqwkrenFm η C) (ren (tren⊑ η ζ) (tren η d)) (ren (tren⊑ (lift≤ η) (lift⊑ (twk⊑ ζ))) (tren (lift≤ η) e)) ⟩
-          ‵letex refl (eqwkrenFm η C) (ren (tren⊑ η ζ) (tren η d))
-            (ren (lift⊑ (from-eq (eqwkrenFm§ η Γ′)))
-             (ren (tren⊑ (lift≤ η) (lift⊑ (twk⊑ ζ))) (tren (lift≤ η) e)))
-      ≡⟨ ‵letex refl (eqwkrenFm η C) (ren (tren⊑ η ζ) (tren η d)) &
-          (begin
-            ren (lift⊑ (from-eq (eqwkrenFm§ η Γ′)))
-              (ren (tren⊑ (lift≤ η) (lift⊑ (twk⊑ ζ))) (tren (lift≤ η) e))
-           ≡⟨ compren (lift⊑ (from-eq (eqwkrenFm§ η Γ′))) (tren⊑ (lift≤ η) (lift⊑ (twk⊑ ζ))) (tren (lift≤ η) e) ⁻¹ ⟩
-             ren
-               (lift⊑ (from-eq (eqwkrenFm§ η Γ′)) ∘⊑
-                tren⊑ (lift≤ η) (lift⊑ (twk⊑ ζ)))
-               (tren (lift≤ η) e)
-           ≡⟨ ren & (lift⊑ & goal η ζ) ⊗ refl ⟩
-            ren (lift⊑ (twk⊑ (tren⊑ η ζ)) ∘⊑ lift⊑ (from-eq (eqwkrenFm§ η Γ)))
-              (tren (lift≤ η) e)
-           ≡⟨ compren (lift⊑ (twk⊑ (tren⊑ η ζ))) (lift⊑ (from-eq (eqwkrenFm§ η Γ))) (tren (lift≤ η) e) ⟩
-            ren (lift⊑ (twk⊑ (tren⊑ η ζ)))
-              (ren (lift⊑ (from-eq (eqwkrenFm§ η Γ))) (tren (lift≤ η) e))
-           ∎
-          ) ⟩
-          (‵letex refl (eqwkrenFm η C) (ren (tren⊑ η ζ) (tren η d))
-           (ren (lift⊑ (twk⊑ (tren⊑ η ζ))) (ren (lift⊑ (from-eq (eqwkrenFm§ η Γ))) (tren (lift≤ η) e))))
+
+      ≡⟨ eqletex (eqwkrenFm§ η Γ′) (eqwkrenFm η C) ((ren (tren⊑ η ζ) ∘ tren η) d)
+           ((ren (tren⊑ (lift≤ η) (lift⊑ (twk⊑ ζ))) ∘ tren (lift≤ η)) e) ⁻¹
+      ⟩
+        ‵letex refl (eqwkrenFm η C) ((ren (tren⊑ η ζ) ∘ tren η) d)
+          ((ren (lift⊑ (cast⊑ (eqwkrenFm§ η Γ′))) ∘
+            ren (tren⊑ (lift≤ η) (lift⊑ (twk⊑ ζ))) ∘
+            tren (lift≤ η)) e)
+
+      ≡⟨ ‵letex refl (eqwkrenFm η C) ((ren (tren⊑ η ζ) ∘ tren η) d)
+           & (begin
+             (ren (lift⊑ (cast⊑ (eqwkrenFm§ η Γ′))) ∘
+               (ren (tren⊑ (lift≤ η) (lift⊑ (twk⊑ ζ))) ∘
+               tren (lift≤ η))) e
+
+           ≡⟨ compren (lift⊑ (cast⊑ (eqwkrenFm§ η Γ′))) (tren⊑ (lift≤ η) (lift⊑ (twk⊑ ζ)))
+                (tren (lift≤ η) e) ⁻¹
+           ⟩
+             (ren (lift⊑ (cast⊑ (eqwkrenFm§ η Γ′)) ∘⊑
+                 tren⊑ (lift≤ η) (lift⊑ (twk⊑ ζ))) ∘
+               tren (lift≤ η)) e
+
+           ≡⟨ (flip ren (tren (lift≤ η) e) ∘ lift⊑) & hmmren η ζ ⟩
+             (ren (lift⊑ (twk⊑ (tren⊑ η ζ)) ∘⊑
+                 lift⊑ (cast⊑ (eqwkrenFm§ η Γ))) ∘
+               tren (lift≤ η)) e
+
+           ≡⟨ compren (lift⊑ (twk⊑ (tren⊑ η ζ))) (lift⊑ (cast⊑ (eqwkrenFm§ η Γ)))
+                (tren (lift≤ η) e)
+           ⟩
+             (ren (lift⊑ (twk⊑ (tren⊑ η ζ))) ∘
+               ren (lift⊑ (cast⊑ (eqwkrenFm§ η Γ))) ∘
+               tren (lift≤ η)) e
+           ∎)
+      ⟩
+
+        ‵letex refl (eqwkrenFm η C) ((ren (tren⊑ η ζ) ∘ tren η) d)
+          ((ren (lift⊑ (twk⊑ (tren⊑ η ζ))) ∘
+            ren (lift⊑ (cast⊑ (eqwkrenFm§ η Γ))) ∘
+            tren (lift≤ η)) e)
       ≡⟨⟩
+
         ren (tren⊑ η ζ)
           (‵letex refl (eqwkrenFm η C) (tren η d)
-           (ren (lift⊑ (from-eq (eqwkrenFm§ η Γ))) (tren (lift≤ η) e)))
-      ≡⟨  ren (tren⊑ η ζ) & ( (letex-eq (eqwkrenFm§ η Γ) (eqwkrenFm η C) (tren η d) (tren (lift≤ η) e)) ⁻¹) ⟩
-      -- TODO: end roconnor
+            ((ren (lift⊑ (cast⊑ (eqwkrenFm§ η Γ))) ∘ tren (lift≤ η)) e))
+      ≡⟨ ren (tren⊑ η ζ) & eqletex (eqwkrenFm§ η Γ) (eqwkrenFm η C) (tren η d) (tren (lift≤ η) e) ⟩
 
         ren (tren⊑ η ζ) (‵letex (eqwkrenFm§ η Γ) (eqwkrenFm η C) (tren η d) (tren (lift≤ η) e))
       ≡⟨⟩
@@ -1940,18 +1930,15 @@ mutual
                                            ⊗ eqrensublift η σ d
                                            ⊗ eqrensublift η σ e
   eqrensub η σ (‵all refl d)           = ‵all refl
-                                           & ( flip sub d & eqrentren§ (wk≤ id≤) η σ -- TODO: hmm
+                                           & ( flip sub d & eqrentren§ (wk≤ id≤) η σ
                                              ⋮ eqrensub (twk⊑ η) (twk§ σ) d
                                              )
   eqrensub η σ (‵unall t refl d)       = ‵unall t refl & eqrensub η σ d
   eqrensub η σ (‵ex t refl d)          = ‵ex t refl & eqrensub η σ d
   eqrensub η σ (‵letex refl refl d e)  = ‵letex refl refl
                                            & eqrensub η σ d
-                                           ⊗ ( flip sub e -- TODO: hmm
-                                                 & ( lift§ & eqrentren§ (wk≤ id≤) η σ
-                                                   ⋮ (_, ‵var zero) & eqwkren§ (twk⊑ η) (twk§ σ) ⁻¹
-                                                   )
-                                             ⋮ eqrensub (lift⊑ (twk⊑ η)) (wk§ (twk§ σ) , ‵var zero) e
+                                           ⊗ ( (flip sub e ∘ lift§) & eqrentren§ (wk≤ id≤) η σ
+                                             ⋮ eqrensublift (twk⊑ η) (twk§ σ) e
                                              )
   eqrensub η σ (‵abort d)              = ‵abort & eqrensub η σ d
   eqrensub η σ (‵magic d)              = ‵magic & eqrensublift η σ d
@@ -1987,19 +1974,15 @@ mutual
                                            ⊗ eqsubrenlift σ η d
                                            ⊗ eqsubrenlift σ η e
   eqsubren σ η (‵all refl d)           = ‵all refl
-                                           & ( flip sub d & eqgettren§ (wk≤ id≤) η σ -- TODO: hmm
+                                           & ( flip sub d & eqgettren§ (wk≤ id≤) η σ
                                              ⋮ eqsubren (twk§ σ) (twk⊑ η) d
                                              )
   eqsubren σ η (‵unall t refl d)       = ‵unall t refl & eqsubren σ η d
   eqsubren σ η (‵ex t refl d)          = ‵ex t refl & eqsubren σ η d
   eqsubren σ η (‵letex refl refl d e)  = ‵letex refl refl
                                            & eqsubren σ η d
-                                           ⊗ ( flip sub e -- TODO: hmm
-                                                 & ( lift§ & eqgettren§ (wk≤ id≤) η σ
-                                                   ⋮ (_, ‵var zero)
-                                                       & eqrenget§ (wk⊑ id⊑) (twk⊑ η) (twk§ σ) ⁻¹
-                                                   )
-                                             ⋮ eqsubren (lift§ (twk§ σ)) (lift⊑ (twk⊑ η)) e
+                                           ⊗ ( (flip sub e ∘ lift§) & eqgettren§ (wk≤ id≤) η σ
+                                             ⋮ eqsubrenlift (twk§ σ) (twk⊑ η) e
                                              )
   eqsubren σ η (‵abort d)              = ‵abort & eqsubren σ η d
   eqsubren σ η (‵magic d)              = ‵magic & eqsubrenlift σ η d
@@ -2030,14 +2013,14 @@ lidsub (‵left d)               = ‵left & lidsub d
 lidsub (‵right d)              = ‵right & lidsub d
 lidsub (‵either c d e)         = ‵either & lidsub c ⊗ lidsub d ⊗ lidsub e
 lidsub (‵all refl d)           = ‵all refl
-                                   & ( flip sub d & ridtren§ (wk≤ id≤) -- TODO: hmm
+                                   & ( flip sub d & ridtren§ (wk≤ id≤)
                                      ⋮ lidsub d
                                      )
 lidsub (‵unall t refl d)       = ‵unall t refl & lidsub d
 lidsub (‵ex t refl d)          = ‵ex t refl & lidsub d
 lidsub (‵letex refl refl d e)  = ‵letex refl refl
                                     & lidsub d
-                                    ⊗ ( (flip sub e ∘ lift§) & ridtren§ (wk≤ id≤) -- TODO: hmm
+                                    ⊗ ( (flip sub e ∘ lift§) & ridtren§ (wk≤ id≤)
                                       ⋮ lidsub e
                                       )
 lidsub (‵abort d)              = ‵abort & lidsub d
@@ -2052,6 +2035,178 @@ lidsub (‵ind refl refl d e)    = ‵ind refl refl & lidsub d ⊗ lidsub e
 lidsub (‵proj i refl)          = refl
 lidsub (‵comp g φ refl)        = refl
 lidsub (‵rec f g)              = refl
+
+
+----------------------------------------------------------------------------------------------------
+
+eqsubtren∋ : ∀ {Þ k k′ Γ Ξ A} (η : k ≤ k′) (σ : Þ / Ξ ⊢§ Γ) (i : Γ ∋ A) →
+               (tren η ∘ sub∋ σ) i ≡ (sub∋ (tren§ η σ) ∘ tren∋ η) i
+eqsubtren∋ η (σ , d) zero    = refl
+eqsubtren∋ η (σ , d) (suc i) = eqsubtren∋ η σ i
+
+-- TODO: clean this up
+module _ where
+  open ≡-Reasoning
+
+  -- TODO: rename
+  hmm§ : ∀ {Þ k k′ Γ Δ C} (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
+           (tren§ η ∘ lift§ {C = C}) δ ≡ (lift§ ∘ tren§ η) δ
+  hmm§ η ∙       = refl
+  hmm§ η (δ , d) = (_, ‵var zero)
+                     & ( eqrentren§ η (wk⊑ id⊑) (δ , d)
+                       ⋮ _,_
+                           & ((flip ren§ (tren§ η δ) ∘ wk⊑) & ridtren⊑ η)
+                           ⊗ (flip ren (tren η d) ∘ wk⊑) & ridtren⊑ η
+                       )
+
+  -- TODO: rename
+  hmmsub : ∀ {Þ k k′ Γ Δ} (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
+             ren§ (cast⊑ (eqwkrenFm§ η Γ)) ((tren§ (lift≤ η) ∘ twk§) δ) ≡
+               get§ (cast⊑ (eqwkrenFm§ η Δ)) ((twk§ ∘ tren§ η) δ)
+  hmmsub η δ = {!!}
+
+  mutual
+    eqsubtren : ∀ {Þ k k′ Γ Ξ A} (η : k ≤ k′) (σ : Þ / Ξ ⊢§ Γ) (d : Þ / Γ ⊢ A) →
+                  (tren η ∘ sub σ) d ≡ (sub (tren§ η σ) ∘ tren η) d
+    eqsubtren η σ (‵var i)                = eqsubtren∋ η σ i
+    eqsubtren η σ (‵lam d)                = ‵lam & eqsublifttren η σ d
+    eqsubtren η σ (d ‵$ e)                = _‵$_ & eqsubtren η σ d ⊗ eqsubtren η σ e
+    eqsubtren η σ (‵pair d e)             = ‵pair & eqsubtren η σ d ⊗ eqsubtren η σ e
+    eqsubtren η σ (‵fst d)                = ‵fst & eqsubtren η σ d
+    eqsubtren η σ (‵snd d)                = ‵snd & eqsubtren η σ d
+    eqsubtren η σ (‵left d)               = ‵left & eqsubtren η σ d
+    eqsubtren η σ (‵right d)              = ‵right & eqsubtren η σ d
+    eqsubtren η σ (‵either c d e)         = ‵either
+                                              & eqsubtren η σ c
+                                              ⊗ eqsublifttren η σ d
+                                              ⊗ eqsublifttren η σ e
+    eqsubtren {Γ = Γ} {Ξ} η σ (‵all {A = A} refl d) =
+        begin
+          (tren η ∘ sub σ) (‵all refl d)
+        ≡⟨⟩
+          ‵all (eqwkrenFm§ η Ξ) (tren (lift≤ η) (sub (twk§ σ) d))
+
+        ≡⟨ ‵all (eqwkrenFm§ η Ξ) & eqsubtren (lift≤ η) (twk§ σ) d ⟩
+          ‵all (eqwkrenFm§ η Ξ)
+            ((sub (tren§ (lift≤ η) (twk§ σ)) ∘ tren (lift≤ η)) d)
+
+        ≡⟨ eqall (eqwkrenFm§ η Ξ) ((sub (tren§ (lift≤ η) (twk§ σ)) ∘ tren (lift≤ η)) d) ⁻¹ ⟩
+          ‵all refl
+            (ren (cast⊑ (eqwkrenFm§ η Ξ))
+              (sub (tren§ (lift≤ η) (twk§ σ)) (tren (lift≤ η) d)))
+
+        ≡⟨ ‵all refl
+            & (begin
+                ren (cast⊑ (eqwkrenFm§ η Ξ)) (sub (tren§ (lift≤ η) (twk§ σ)) (tren (lift≤ η) d))
+              ≡⟨ eqrensub (cast⊑ (eqwkrenFm§ η Ξ)) (tren§ (lift≤ η) (twk§ σ)) (tren (lift≤ η) d) ⁻¹ ⟩
+                sub (ren§ (cast⊑ (eqwkrenFm§ η Ξ)) (tren§ (lift≤ η) (twk§ σ)))
+                  (tren (lift≤ η) d)
+              ≡⟨ flip sub (tren (lift≤ η) d) & hmmsub η σ ⟩
+                sub (get§ (cast⊑ (eqwkrenFm§ η Γ)) (twk§ (tren§ η σ)))
+                  (tren (lift≤ η) d)
+              ≡⟨ eqsubren (twk§ (tren§ η σ)) (cast⊑ (eqwkrenFm§ η Γ)) (tren (lift≤ η) d) ⟩
+                sub (twk§ (tren§ η σ)) (ren (cast⊑ (eqwkrenFm§ η Γ)) (tren (lift≤ η) d))
+              ∎) ⟩
+
+          ‵all refl (sub (twk§ (tren§ η σ)) (ren (cast⊑ (eqwkrenFm§ η Γ)) (tren (lift≤ η) d)))
+        ≡⟨⟩
+
+          sub (tren§ η σ) (‵all refl (ren (cast⊑ (eqwkrenFm§ η Γ)) (tren (lift≤ η) d)))
+        ≡⟨ sub (tren§ η σ) & eqall (eqwkrenFm§ η Γ) (tren (lift≤ η) d) ⟩
+
+          sub (tren§ η σ) (‵all (eqwkrenFm§ η Γ) (tren (lift≤ η) d))
+        ≡⟨⟩
+          (sub (tren§ η σ) ∘ tren η) (‵all refl d)
+        ∎
+    eqsubtren η σ (‵unall t refl d)       = ‵unall (renTm η t) (eqrencut0Fm η _ t) & eqsubtren η σ d
+    eqsubtren η σ (‵ex t refl d)          = ‵ex (renTm η t) (eqrencut0Fm η _ t) & eqsubtren η σ d
+    eqsubtren {Γ = Γ} {Ξ} η σ (‵letex {A = A} {C} refl refl d e) =
+        begin
+          (tren η ∘ sub σ) (‵letex refl refl d e)
+        ≡⟨⟩
+          ‵letex (eqwkrenFm§ η Ξ) (eqwkrenFm η C) (tren η (sub σ d))
+            (tren (lift≤ η) (sub (lift§ (twk§ σ)) e))
+
+        ≡⟨ ‵letex (eqwkrenFm§ η Ξ) (eqwkrenFm η C)
+             & eqsubtren η σ d
+             ⊗ eqsubtren (lift≤ η) (lift§ (twk§ σ)) e
+        ⟩
+          ‵letex (eqwkrenFm§ η Ξ) (eqwkrenFm η C)
+            ((sub (tren§ η σ) ∘ tren η) d)
+            ((sub (tren§ (lift≤ η) (lift§ (twk§ σ))) ∘ tren (lift≤ η)) e)
+
+        ≡⟨ eqletex (eqwkrenFm§ η Ξ) (eqwkrenFm η C) ((sub (tren§ η σ) ∘ tren η) d)
+             ((sub (tren§ (lift≤ η) (lift§ (twk§ σ))) ∘ tren (lift≤ η)) e) ⁻¹
+        ⟩
+          ‵letex refl (eqwkrenFm η C) (sub (tren§ η σ) (tren η d))
+            (ren (lift⊑ (cast⊑ (eqwkrenFm§ η Ξ)))
+              (sub (tren§ (lift≤ η) (lift§ (twk§ σ))) (tren (lift≤ η) e)))
+
+        ≡⟨ ‵letex refl (eqwkrenFm η C) ((sub (tren§ η σ) ∘ tren η) d)
+             & ((begin
+               ren (lift⊑ (cast⊑ (eqwkrenFm§ η Ξ)))
+                (sub (tren§ (lift≤ η) (lift§ (twk§ σ)))
+                 (tren (lift≤ η) e))
+
+             ≡⟨ eqrensub (lift⊑ (cast⊑ (eqwkrenFm§ η Ξ))) (tren§ (lift≤ η) (lift§ (twk§ σ)))
+                  (tren (lift≤ η) e) ⁻¹
+             ⟩
+               (sub ((ren§ (lift⊑ (cast⊑ (eqwkrenFm§ η Ξ))) ∘
+                   tren§ (lift≤ η)) (lift§ (twk§ σ))) ∘
+                 tren (lift≤ η)) e
+
+             ≡⟨ {!!} ⟩
+               {! !}
+
+             ≡⟨ {!!} ⟩
+               {!!}
+             ∎))
+        ⟩
+
+        -- eqrentren : (tren η ∘ ren ζ) d ≡ (ren (tren⊑ η ζ) ∘ tren η) d
+        -- eqsubtren : (tren η ∘ sub σ) d ≡ (sub (tren§ η σ) ∘ tren η) d
+        -- eqsubtren§ : (tren§ η ∘ sub§ σ) δ ≡ (sub§ (tren§ η σ) ∘ tren§ η) δ
+
+          {!!}
+        ≡⟨ {!!} ⟩
+
+          sub (tren§ η σ)
+            (‵letex refl (eqwkrenFm η C) (tren η d)
+              ((ren (lift⊑ (cast⊑ (eqwkrenFm§ η Γ))) ∘ tren (lift≤ η)) e))
+        ≡⟨ sub (tren§ η σ) & eqletex (eqwkrenFm§ η Γ) (eqwkrenFm η C) (tren η d)
+            (tren (lift≤ η) e)
+        ⟩
+
+          sub (tren§ η σ)
+            (‵letex (eqwkrenFm§ η Γ) (eqwkrenFm η C) (tren η d)
+            (tren (lift≤ η) e))
+        ≡⟨⟩
+          (sub (tren§ η σ) ∘ tren η) (‵letex refl refl d e)
+        ∎
+    eqsubtren η σ (‵abort d)              = ‵abort & eqsubtren η σ d
+    eqsubtren η σ (‵magic d)              = ‵magic & eqsublifttren η σ d
+    eqsubtren η σ ‵refl                   = refl
+    eqsubtren η σ (‵sym d)                = ‵sym & eqsubtren η σ d
+    eqsubtren η σ (‵trans d e)            = ‵trans & eqsubtren η σ d ⊗ eqsubtren η σ e
+    eqsubtren η σ (‵cong f i refl refl d) = ‵cong f i (eqrenpeekTm η i _) (eqrenpokeTm η i _ _)
+                                              & eqsubtren η σ d
+    eqsubtren η σ ‵dis                    = refl
+    eqsubtren η σ (‵inj d)                = ‵inj & eqsubtren η σ d
+    eqsubtren η σ (‵ind refl refl d e)    = ‵ind (eqrencut0Fm η _ 𝟘) (eqrencut1Fm η _ (𝕊 (‵tvar zero)))
+                                              & eqsubtren η σ d ⊗ eqsubtren η σ e
+    eqsubtren η σ (‵proj i refl)          = refl
+    eqsubtren η σ (‵comp g φ refl)        = refl
+    eqsubtren η σ (‵rec f g)              = refl
+
+    eqsublifttren : ∀ {Þ k k′ Γ Ξ A C} (η : k ≤ k′) (σ : Þ / Ξ ⊢§ Γ) (d : Þ / Γ , C ⊢ A) →
+                      (tren η ∘ sub (lift§ σ)) d ≡ (sub (lift§ (tren§ η σ)) ∘ tren η) d
+    eqsublifttren η σ d = eqsubtren η (lift§ σ) d
+                        ⋮ flip sub (tren η d) & hmm§ η σ
+
+    eqsubtren§ : ∀ {Þ k k′ Γ Ξ Δ} (η : k ≤ k′) (σ : Þ / Ξ ⊢§ Γ) (δ : Þ / Γ ⊢§ Δ) →
+                   (tren§ η ∘ sub§ σ) δ ≡ (sub§ (tren§ η σ) ∘ tren§ η) δ
+    eqsubtren§ η σ ∙       = refl
+    eqsubtren§ η σ (δ , d) = _,_ & eqsubtren§ η σ δ ⊗ eqsubtren η σ d
 
 
 ----------------------------------------------------------------------------------------------------
@@ -2114,62 +2269,44 @@ ridsub§ (σ , s) = _,_
 -- 3.9. derivations: more fundamental substitution lemmas
 
 mutual
-  -- TODO: probably needs tsub
-  postulate
-    compsub : ∀ {Þ k} {Γ Ξ Ξ′ : Fm§ k} {A} (σ′ : Þ / Ξ′ ⊢§ Ξ) (σ : Þ / Ξ ⊢§ Γ) (d : Þ / Γ ⊢ A) →
-                  sub (sub§ σ′ σ) d ≡ (sub σ′ ∘ sub σ) d
+  compsub : ∀ {Þ k} {Γ Ξ Ξ′ : Fm§ k} {A} (σ′ : Þ / Ξ′ ⊢§ Ξ) (σ : Þ / Ξ ⊢§ Γ) (d : Þ / Γ ⊢ A) →
+              sub (sub§ σ′ σ) d ≡ (sub σ′ ∘ sub σ) d
 
-  -- compsub σ′ σ (‵var i)                = compsub∋ σ′ σ i
-  -- compsub σ′ σ (‵lam d)                = ‵lam & compsublift σ′ σ d
-  -- compsub σ′ σ (d ‵$ e)                = _‵$_ & compsub σ′ σ d ⊗ compsub σ′ σ e
-  -- compsub σ′ σ (‵pair d e)             = ‵pair & compsub σ′ σ d ⊗ compsub σ′ σ e
-  -- compsub σ′ σ (‵fst d)                = ‵fst & compsub σ′ σ d
-  -- compsub σ′ σ (‵snd d)                = ‵snd & compsub σ′ σ d
-  -- compsub σ′ σ (‵left d)               = ‵left & compsub σ′ σ d
-  -- compsub σ′ σ (‵right d)              = ‵right & compsub σ′ σ d
-  -- compsub σ′ σ (‵either c d e)         = ‵either
-  --                                          & compsub σ′ σ c
-  --                                          ⊗ compsublift σ′ σ d
-  --                                          ⊗ compsublift σ′ σ e
-  -- compsub σ′ σ (‵all refl d)           = ‵all refl
-  --                                          &
-  --   (begin
-  --     sub (twk§ (sub§ σ′ σ)) d
-  --   ≡⟨ flip sub d & {!!} ⟩
-  --     sub (sub§ (twk§ σ′) (twk§ σ)) d
-  --   ≡⟨ compsub (twk§ σ′) (twk§ σ) d ⟩
-  --     (sub (twk§ σ′) ∘ sub (twk§ σ)) d
-  --   ∎)
-  --   where
-  --     open ≡-Reasoning
-  --
-  -- compsub σ′ σ (‵unall t refl d)       = ‵unall t refl & compsub σ′ σ d
-  -- compsub σ′ σ (‵ex t refl d)          = ‵ex t refl & compsub σ′ σ d
-  -- compsub σ′ σ (‵letex refl refl d e)  = ‵letex refl refl
-  --                                          & compsub σ′ σ d
-  --                                          ⊗
-  --   (begin
-  --     sub (lift§ (twk§ (sub§ σ′ σ))) e
-  --   ≡⟨ flip sub e & {!!} ⟩
-  --     sub (sub§ (lift§ (twk§ σ′)) (lift§ (twk§ σ))) e
-  --   ≡⟨ compsub (lift§ (twk§ σ′)) (lift§ (twk§ σ)) e ⟩
-  --     (sub (lift§ (twk§ σ′)) ∘ sub (lift§ (twk§ σ))) e
-  --   ∎)
-  --   where
-  --     open ≡-Reasoning
-  --
-  -- compsub σ′ σ (‵abort d)              = ‵abort & compsub σ′ σ d
-  -- compsub σ′ σ (‵magic d)              = ‵magic & compsublift σ′ σ d
-  -- compsub σ′ σ ‵refl                   = refl
-  -- compsub σ′ σ (‵sym d)                = ‵sym & compsub σ′ σ d
-  -- compsub σ′ σ (‵trans d e)            = ‵trans & compsub σ′ σ d ⊗ compsub σ′ σ e
-  -- compsub σ′ σ (‵cong f i refl refl d) = ‵cong f i refl refl & compsub σ′ σ d
-  -- compsub σ′ σ ‵dis                    = refl
-  -- compsub σ′ σ (‵inj d)                = ‵inj & compsub σ′ σ d
-  -- compsub σ′ σ (‵ind refl refl d e)    = ‵ind refl refl & compsub σ′ σ d ⊗ compsub σ′ σ e
-  -- compsub σ′ σ (‵proj i refl)          = refl
-  -- compsub σ′ σ (‵comp g φ refl)        = refl
-  -- compsub σ′ σ (‵rec f g)              = refl
+  compsub σ′ σ (‵var i)                = compsub∋ σ′ σ i
+  compsub σ′ σ (‵lam d)                = ‵lam & compsublift σ′ σ d
+  compsub σ′ σ (d ‵$ e)                = _‵$_ & compsub σ′ σ d ⊗ compsub σ′ σ e
+  compsub σ′ σ (‵pair d e)             = ‵pair & compsub σ′ σ d ⊗ compsub σ′ σ e
+  compsub σ′ σ (‵fst d)                = ‵fst & compsub σ′ σ d
+  compsub σ′ σ (‵snd d)                = ‵snd & compsub σ′ σ d
+  compsub σ′ σ (‵left d)               = ‵left & compsub σ′ σ d
+  compsub σ′ σ (‵right d)              = ‵right & compsub σ′ σ d
+  compsub σ′ σ (‵either c d e)         = ‵either
+                                           & compsub σ′ σ c
+                                           ⊗ compsublift σ′ σ d
+                                           ⊗ compsublift σ′ σ e
+  compsub σ′ σ (‵all refl d)           = ‵all refl
+                                           & ( flip sub d & eqsubtren§ (wk≤ id≤) σ′ σ
+                                             ⋮ compsub (twk§ σ′) (twk§ σ) d
+                                             )
+  compsub σ′ σ (‵unall t refl d)       = ‵unall t refl & compsub σ′ σ d
+  compsub σ′ σ (‵ex t refl d)          = ‵ex t refl & compsub σ′ σ d
+  compsub σ′ σ (‵letex refl refl d e)  = ‵letex refl refl
+                                           & compsub σ′ σ d
+                                           ⊗ ( (flip sub e ∘ lift§) & eqsubtren§ (wk≤ id≤) σ′ σ
+                                             ⋮ compsublift (twk§ σ′) (twk§ σ) e
+                                             )
+  compsub σ′ σ (‵abort d)              = ‵abort & compsub σ′ σ d
+  compsub σ′ σ (‵magic d)              = ‵magic & compsublift σ′ σ d
+  compsub σ′ σ ‵refl                   = refl
+  compsub σ′ σ (‵sym d)                = ‵sym & compsub σ′ σ d
+  compsub σ′ σ (‵trans d e)            = ‵trans & compsub σ′ σ d ⊗ compsub σ′ σ e
+  compsub σ′ σ (‵cong f i refl refl d) = ‵cong f i refl refl & compsub σ′ σ d
+  compsub σ′ σ ‵dis                    = refl
+  compsub σ′ σ (‵inj d)                = ‵inj & compsub σ′ σ d
+  compsub σ′ σ (‵ind refl refl d e)    = ‵ind refl refl & compsub σ′ σ d ⊗ compsub σ′ σ e
+  compsub σ′ σ (‵proj i refl)          = refl
+  compsub σ′ σ (‵comp g φ refl)        = refl
+  compsub σ′ σ (‵rec f g)              = refl
 
   compsublift : ∀ {Þ k} {Γ Ξ Ξ′ : Fm§ k} {A B} (σ′ : Þ / Ξ′ ⊢§ Ξ) (σ : Þ / Ξ ⊢§ Γ)
                   (d : Þ / Γ , A ⊢ B) →
