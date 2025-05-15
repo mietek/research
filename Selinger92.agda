@@ -2129,45 +2129,6 @@ module _ where
           ‵letex (eqwkrenFm§ η Ξ) (eqwkrenFm η C) (tren η (sub σ d))
             (tren (lift≤ η) (sub (lift§ (twk§ σ)) e))
 
-{-
-        ≡⟨ ‵letex (eqwkrenFm§ η Ξ) (eqwkrenFm η C)
-             & eqsubtren η σ d
-             ⊗ eqsubtren (lift≤ η) (lift§ (twk§ σ)) e
-        ⟩
-          ‵letex (eqwkrenFm§ η Ξ) (eqwkrenFm η C)
-            ((sub (tren§ η σ) ∘ tren η) d)
-            ((sub (tren§ (lift≤ η) (lift§ (twk§ σ))) ∘ tren (lift≤ η)) e)
-
-        ≡⟨ eqletex (eqwkrenFm§ η Ξ) (eqwkrenFm η C) ((sub (tren§ η σ) ∘ tren η) d)
-             ((sub (tren§ (lift≤ η) (lift§ (twk§ σ))) ∘ tren (lift≤ η)) e) ⁻¹
-        ⟩
-          ‵letex refl (eqwkrenFm η C) (sub (tren§ η σ) (tren η d))
-            (ren (lift⊑ (cast⊑ (eqwkrenFm§ η Ξ)))
-              (sub (tren§ (lift≤ η) (lift§ (twk§ σ))) (tren (lift≤ η) e)))
-
-        ≡⟨ ‵letex refl (eqwkrenFm η C) ((sub (tren§ η σ) ∘ tren η) d)
-             & (begin
-               ren (lift⊑ (cast⊑ (eqwkrenFm§ η Ξ)))
-                (sub (tren§ (lift≤ η) (lift§ (twk§ σ)))
-                 (tren (lift≤ η) e))
-
-             ≡⟨ eqrensub (lift⊑ (cast⊑ (eqwkrenFm§ η Ξ))) (tren§ (lift≤ η) (lift§ (twk§ σ)))
-                  (tren (lift≤ η) e) ⁻¹
-             ⟩
-               (sub ((ren§ (lift⊑ (cast⊑ (eqwkrenFm§ η Ξ))) ∘
-                   tren§ (lift≤ η)) (lift§ (twk§ σ))) ∘
-                 tren (lift≤ η)) e
-
-             ≡⟨ {!!} ⟩
-               {! !}
-
-             ≡⟨ {!!} ⟩
-               {!!}
-             ∎)
-        ⟩
-          ?
--}
-
         ≡⟨ ‵letex (eqwkrenFm§ η Ξ) (eqwkrenFm η C)
              & eqsubtren η σ d
              ⊗ eqsublifttren (lift≤ η) (twk§ σ) e
@@ -2192,24 +2153,28 @@ module _ where
              ≡⟨ eqrensublift (cast⊑ (eqwkrenFm§ η Ξ)) (tren§ (lift≤ η) (twk§ σ))
                   (tren (lift≤ η) e) ⁻¹
              ⟩
-               (sub
-                 (lift§
+               (sub (lift§
                    ((ren§ (cast⊑ (eqwkrenFm§ η Ξ)) ∘
                      tren§ (lift≤ η)) (twk§ σ))) ∘
                  tren (lift≤ η)) e
 
-             ≡⟨ {!!} ⟩
-               {!!}
+             ≡⟨ (flip sub (tren (lift≤ η) e) ∘ lift§) & hmmsub η σ ⟩
+               (sub (lift§
+                   ((get§ (cast⊑ (eqwkrenFm§ η Γ)) ∘
+                     (twk§ ∘ tren§ η)) σ)) ∘
+                 tren (lift≤ η)) e
+
+             ≡⟨ eqsubrenlift ((twk§ ∘ tren§ η) σ) (cast⊑ (eqwkrenFm§ η Γ)) (tren (lift≤ η) e) ⟩
+               (sub (lift§ ((twk§ ∘ tren§ η) σ)) ∘
+                 (ren (lift⊑ (cast⊑ (eqwkrenFm§ η Γ))) ∘
+                 tren (lift≤ η))) e
              ∎)
         ⟩
-          {!!}
 
-        -- eqrensub      : sub (ren§ η σ) d ≡ (ren η ∘ sub σ) d
-        -- eqrensublift  : sub (lift§ (ren§ η σ)) d ≡ (ren (lift⊑ η) ∘ sub (lift§ σ)) d
-        -- eqrentren     : (tren η ∘ ren ζ) d ≡ (ren (tren⊑ η ζ) ∘ tren η) d
-        -- eqrentren§    : (tren§ η ∘ ren§ ζ) δ ≡ (ren§ (tren⊑ η ζ) ∘ tren§ η) δ
-        -- eqsubtren     : (tren η ∘ sub σ) d ≡ (sub (tren§ η σ) ∘ tren η) d
-        -- eqsublifttren : (tren η ∘ sub (lift§ σ)) d ≡ (sub (lift§ (tren§ η σ)) ∘ tren η) d
+          ‵letex refl (eqwkrenFm η C) ((sub (tren§ η σ) ∘ tren η) d)
+            ((sub (lift§ (twk§ (tren§ η σ))) ∘
+              ren (lift⊑ (cast⊑ (eqwkrenFm§ η Γ))) ∘
+              tren (lift≤ η)) e)
 
         ≡⟨ {!!} ⟩
 
@@ -2226,6 +2191,22 @@ module _ where
         ≡⟨⟩
           (sub (tren§ η σ) ∘ tren η) (‵letex refl refl d e)
         ∎
+
+        -- hmmsub        : ren§ (cast⊑ (eqwkrenFm§ η Γ)) ((tren§ (lift≤ η) ∘ twk§) δ) ≡
+        --                   get§ (cast⊑ (eqwkrenFm§ η Δ)) ((twk§ ∘ tren§ η) δ)
+
+        -- eqrensub      : sub (ren§ η σ) d ≡ (ren η ∘ sub σ) d
+        -- eqrensublift  : sub (lift§ (ren§ η σ)) d ≡ (ren (lift⊑ η) ∘ sub (lift§ σ)) d
+
+        -- eqsubren      : sub (get§ η σ) d ≡ (sub σ ∘ ren η) d
+        -- eqsubrenlift  : sub (lift§ (get§ η σ)) d ≡ (sub (lift§ σ) ∘ ren (lift⊑ η)) d
+
+        -- eqrentren     : (tren η ∘ ren ζ) d ≡ (ren (tren⊑ η ζ) ∘ tren η) d
+        -- eqrentren§    : (tren§ η ∘ ren§ ζ) δ ≡ (ren§ (tren⊑ η ζ) ∘ tren§ η) δ
+        -- eqgettren§    : (tren§ η ∘ get§ ζ) δ ≡ (get§ (tren⊑ η ζ) ∘ tren§ η) δ
+        -- eqsubtren     : (tren η ∘ sub σ) d ≡ (sub (tren§ η σ) ∘ tren η) d
+        -- eqsublifttren : (tren η ∘ sub (lift§ σ)) d ≡ (sub (lift§ (tren§ η σ)) ∘ tren η) d
+
     eqsubtren η σ (‵abort d)              = ‵abort & eqsubtren η σ d
     eqsubtren η σ (‵magic d)              = ‵magic & eqsublifttren η σ d
     eqsubtren η σ ‵refl                   = refl
