@@ -5,7 +5,11 @@
 -- first-order predicate logic with one sort (naturals) and one predicate (equality)
 -- variant with first-order structures for renaming and substitution
 
+{-# OPTIONS --without-K #-}
+
 module Selinger92 where
+
+-- open import Prelude
 
 open import Agda.Builtin.FromNat public
   using (Number ; fromNat)
@@ -1396,7 +1400,7 @@ sub σ (‵either c d e)        = ‵either (sub σ c) (sub (lift§ σ) d) (sub 
 sub σ (‵all refl d)          = ‵all refl (sub (twk§ σ) d)
 sub σ (‵unall t p d)         = ‵unall t p (sub σ d)
 sub σ (‵ex t p d)            = ‵ex t p (sub σ d)
-sub σ (‵letex refl refl d e) = ‵letex refl refl (sub σ d) (sub (lift§ (twk§ σ)) e)
+sub σ (‵letex refl q d e)    = ‵letex refl q (sub σ d) (sub (lift§ (twk§ σ)) e)
 sub σ (‵abort d)             = ‵abort (sub σ d)
 sub σ (‵magic d)             = ‵magic (sub (lift§ σ) d)
 sub σ ‵refl                  = ‵refl
@@ -2175,8 +2179,7 @@ module _ where
             ((sub (lift§ (twk§ (tren§ η σ))) ∘
               ren (lift⊑ (cast⊑ (eqwkrenFm§ η Γ))) ∘
               tren (lift≤ η)) e)
-
-        ≡⟨ {!!} ⟩
+        ≡⟨⟩
 
           sub (tren§ η σ)
             (‵letex refl (eqwkrenFm η C) (tren η d)
@@ -2191,21 +2194,6 @@ module _ where
         ≡⟨⟩
           (sub (tren§ η σ) ∘ tren η) (‵letex refl refl d e)
         ∎
-
-        -- hmmsub        : ren§ (cast⊑ (eqwkrenFm§ η Γ)) ((tren§ (lift≤ η) ∘ twk§) δ) ≡
-        --                   get§ (cast⊑ (eqwkrenFm§ η Δ)) ((twk§ ∘ tren§ η) δ)
-
-        -- eqrensub      : sub (ren§ η σ) d ≡ (ren η ∘ sub σ) d
-        -- eqrensublift  : sub (lift§ (ren§ η σ)) d ≡ (ren (lift⊑ η) ∘ sub (lift§ σ)) d
-
-        -- eqsubren      : sub (get§ η σ) d ≡ (sub σ ∘ ren η) d
-        -- eqsubrenlift  : sub (lift§ (get§ η σ)) d ≡ (sub (lift§ σ) ∘ ren (lift⊑ η)) d
-
-        -- eqrentren     : (tren η ∘ ren ζ) d ≡ (ren (tren⊑ η ζ) ∘ tren η) d
-        -- eqrentren§    : (tren§ η ∘ ren§ ζ) δ ≡ (ren§ (tren⊑ η ζ) ∘ tren§ η) δ
-        -- eqgettren§    : (tren§ η ∘ get§ ζ) δ ≡ (get§ (tren⊑ η ζ) ∘ tren§ η) δ
-        -- eqsubtren     : (tren η ∘ sub σ) d ≡ (sub (tren§ η σ) ∘ tren η) d
-        -- eqsublifttren : (tren η ∘ sub (lift§ σ)) d ≡ (sub (lift§ (tren§ η σ)) ∘ tren η) d
 
     eqsubtren η σ (‵abort d)              = ‵abort & eqsubtren η σ d
     eqsubtren η σ (‵magic d)              = ‵magic & eqsublifttren η σ d
