@@ -9,9 +9,9 @@
 
 module Selinger92 where
 
-open import Prelude
+-- open import Prelude
 
-{-open import Agda.Builtin.FromNat public
+open import Agda.Builtin.FromNat public
   using (Number ; fromNat)
 
 open import Agda.Primitive public
@@ -427,7 +427,7 @@ module _ {𝓍} {X : Set 𝓍} where
   compren∋ (wk⊑ η′)   η         i       = suc & compren∋ η′ η i
   compren∋ (lift⊑ η′) (wk⊑ η)   i       = suc & compren∋ η′ η i
   compren∋ (lift⊑ η′) (lift⊑ η) zero    = refl
-  compren∋ (lift⊑ η′) (lift⊑ η) (suc i) = suc & compren∋ η′ η i-}
+  compren∋ (lift⊑ η′) (lift⊑ η) (suc i) = suc & compren∋ η′ η i
 
 
 ----------------------------------------------------------------------------------------------------
