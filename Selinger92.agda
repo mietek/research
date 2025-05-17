@@ -5,11 +5,7 @@
 -- first-order predicate logic with one sort (naturals) and one predicate (equality)
 -- variant with first-order structures for renaming and substitution
 
-{-# OPTIONS --without-K #-}
-
 module Selinger92 where
-
--- open import Prelude
 
 open import Agda.Builtin.FromNat public
   using (Number ; fromNat)
@@ -61,14 +57,6 @@ open import Relation.Nullary.Decidable public
 
 -- 0.0. missing things
 
-infixl 9 _&_
-_&_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (f : X → Y) {x x′} → x ≡ x′ → f x ≡ f x′
-f & refl = refl
-
-infixl 8 _⊗_
-_⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {f g : X → Y} {x x′} → f ≡ g → x ≡ x′ → f x ≡ g x′
-refl ⊗ refl = refl
-
 infix 9 _⁻¹
 _⁻¹ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≡ x′ → x′ ≡ x
 refl ⁻¹ = refl
@@ -77,8 +65,13 @@ infixr 4 _⋮_
 _⋮_ : ∀ {𝓍} {X : Set 𝓍} {x x′ x″ : X} → x ≡ x′ → x′ ≡ x″ → x ≡ x″
 refl ⋮ refl = refl
 
-coe : ∀ {𝓍} {X X′ : Set 𝓍} → X ≡ X′ → X → X′
-coe = Id.subst id
+infixl 9 _&_
+_&_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (f : X → Y) {x x′} → x ≡ x′ → f x ≡ f x′
+f & refl = refl
+
+infixl 8 _⊗_
+_⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {f g : X → Y} {x x′} → f ≡ g → x ≡ x′ → f x ≡ g x′
+refl ⊗ refl = refl
 
 -- NOTE: literals for naturals
 instance
@@ -428,6 +421,72 @@ module _ {𝓍} {X : Set 𝓍} where
   compren∋ (lift⊑ η′) (wk⊑ η)   i       = suc & compren∋ η′ η i
   compren∋ (lift⊑ η′) (lift⊑ η) zero    = refl
   compren∋ (lift⊑ η′) (lift⊑ η) (suc i) = suc & compren∋ η′ η i
+
+
+----------------------------------------------------------------------------------------------------
+
+-- heterogeneous equality
+-- TODO: uniform notation with _⁻¹ and _⋮_?
+
+infix 4 _≅_
+data _≅_ {𝓍} {X : Set 𝓍} (x : X) : ∀ {𝓎} {Y : Set 𝓎} → Y → Set 𝓍 where
+   refl : x ≅ x
+
+infix 9 _⁻¹′
+_⁻¹′ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {x : X} {y : Y} → x ≅ y → y ≅ x
+refl ⁻¹′ = refl
+
+infixr 4 _⋮′_
+_⋮′_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : Set 𝓏} {x : X} {y : Y} {z : Z} →
+         x ≅ y → y ≅ z → x ≅ z
+refl ⋮′ refl = refl
+
+infixl 9 _&′_
+_&′_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} (f : ∀ x → Y x) {x x′} →
+         x ≅ x′ → f x ≅ f x′
+f &′ refl = refl
+
+-- TODO: does this even work?
+infixl 8 _⊗′_
+_⊗′_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ x → X → Y x} {x x′} →
+         f ≅ g → x ≅ x′ → f x ≅ g x′
+refl ⊗′ refl = refl
+
+≅→≡ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≅ x′ → x ≡ x′
+≅→≡ refl = refl
+
+≡→≅ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≡ x′ → x ≅ x′
+≡→≅ refl = refl
+
+module ≅-Reasoning where
+  infix  3 _∎
+  infixr 2 _≅⟨⟩_ _≅⟨_⟩_ _≅⟨_⟩⁻¹_ _≡⟨_⟩_ _≡⟨_⟩⁻¹_
+  infix  1 begin_
+
+  begin_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {x : X} {y : Y} → x ≅ y → x ≅ y
+  begin p = p
+
+  _≅⟨⟩_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (x : X) {y : Y} → x ≅ y → x ≅ y
+  x ≅⟨⟩ p = p
+
+  _≅⟨_⟩_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : Set 𝓏} (x : X) {y : Y} {z : Z} →
+             x ≅ y → y ≅ z → x ≅ z
+  x ≅⟨ p ⟩ q = p ⋮′ q
+
+  _≅⟨_⟩⁻¹_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : Set 𝓏} (x : X) {y : Y} {z : Z} →
+               y ≅ x → y ≅ z → x ≅ z
+  x ≅⟨ p ⟩⁻¹ q = p ⁻¹′ ⋮′ q
+
+  _≡⟨_⟩_ : ∀ {𝓍 𝓏} {X : Set 𝓍} {Z : Set 𝓏} (x : X) {x′} {z : Z} →
+             x ≡ x′ → x′ ≅ z → x ≅ z
+  x ≡⟨ p ⟩ q = ≡→≅ p ⋮′ q
+
+  _≡⟨_⟩⁻¹_ : ∀ {𝓍 𝓏} {X : Set 𝓍} {Z : Set 𝓏} (x : X) {x′} {z : Z} →
+               x′ ≡ x → x′ ≅ z → x ≅ z
+  x ≡⟨ p ⟩⁻¹ q = ≡→≅ (p ⁻¹) ⋮′ q
+
+  _∎ : ∀ {𝓍} {X : Set 𝓍} (x : X) → x ≅ x
+  x ∎ = refl
 
 
 ----------------------------------------------------------------------------------------------------
@@ -2054,58 +2113,66 @@ eqsubtren∋ : ∀ {Þ k k′ Γ Ξ A} (η : k ≤ k′) (σ : Þ / Ξ ⊢§ Γ)
 eqsubtren∋ η (σ , d) zero    = refl
 eqsubtren∋ η (σ , d) (suc i) = eqsubtren∋ η σ i
 
--- TODO: clean this up
+-- TODO: rename
+untitled2 : ∀ {Þ k k′ Γ Δ C} (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
+              (tren§ η ∘ lift§ {C = C}) δ ≡ (lift§ ∘ tren§ η) δ
+untitled2 η ∙       = refl
+untitled2 η (δ , d) = (_, ‵var zero)
+                        & ( eqrentren§ η (wk⊑ id⊑) (δ , d)
+                          ⋮ _,_
+                              & ((flip ren§ (tren§ η δ) ∘ wk⊑) & ridtren⊑ η)
+                              ⊗ (flip ren (tren η d) ∘ wk⊑) & ridtren⊑ η
+                          )
+
+hlidren§ : ∀ {Þ k} {Γ Γ′ Δ : Fm§ k} (p : Γ ≡ Γ′) (δ : Þ / Γ ⊢§ Δ) → ren§ (cast⊑ p) δ ≅ δ
+hlidren§ refl δ = ≡→≅ (lidren§ δ)
+
+hlidget§ : ∀ {Þ k} {Γ Δ Δ′ : Fm§ k} (p : Δ ≡ Δ′) (δ : Þ / Γ ⊢§ Δ′) → get§ (cast⊑ p) δ ≅ δ
+hlidget§ refl δ = ≡→≅ (lidget§ δ)
+
+hcomptren∋ : ∀ {k k′ k″} {Γ : Fm§ k} {A} (η′ : k′ ≤ k″) (η : k ≤ k′) (i : Γ ∋ A) →
+               tren∋ (η′ ∘≤ η) i ≅ (tren∋ η′ ∘ tren∋ η) i
+hcomptren∋ η′ η zero    = {!_≅_.refl!}
+hcomptren∋ η′ η (suc i) = {!suc ≅.& hcomptren∋ η′ η i!}
+
+hcomptren : ∀ {Þ k k′ k″} {Γ : Fm§ k} {A} (η′ : k′ ≤ k″) (η : k ≤ k′) (d : Þ / Γ ⊢ A) →
+              tren (η′ ∘≤ η) d ≅ (tren η′ ∘ tren η) d
+hcomptren η′ η d = {!!}
+
+hcomptren§ : ∀ {Þ k k′ k″} {Γ Δ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
+              tren§ (η′ ∘≤ η) δ ≅ (tren§ η′ ∘ tren§ η) δ
+hcomptren§ η′ η ∙       = {!_≅_.refl!}
+hcomptren§ η′ η (δ , d) = {!!}
+
+-- TODO: rename
+huntitled3 : ∀ {Þ k k′ Γ Δ} (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
+               ren§ (cast⊑ (eqwkrenFm§ η Γ)) ((tren§ (lift≤ η) ∘ twk§) δ) ≅
+                 get§ (cast⊑ (eqwkrenFm§ η Δ)) ((twk§ ∘ tren§ η) δ)
+huntitled3 {Γ = Γ} {Δ} η δ =
+    begin
+      ren§ (cast⊑ (eqwkrenFm§ η Γ)) ((tren§ (lift≤ η) ∘ twk§) δ)
+    ≅⟨ hlidren§ (eqwkrenFm§ η Γ) ((tren§ (lift≤ η) ∘ twk§) δ) ⟩
+      (tren§ (lift≤ η) ∘ twk§) δ
+    ≅⟨ hcomptren§ (lift≤ η) (wk≤ id≤) δ ⁻¹′ ⟩
+      tren§ (lift≤ η ∘≤ wk≤ id≤) δ
+    ≅⟨ (flip tren§ δ ∘ wk≤) &′ ≡→≅ (rid≤ η ⋮ lid≤ η ⁻¹) ⟩
+      tren§ (wk≤ id≤ ∘≤ η) δ
+    ≅⟨ hcomptren§ (wk≤ id≤) η δ ⟩
+      twk§ (tren§ η δ)
+    ≅⟨ hlidget§ (eqwkrenFm§ η Δ) ((twk§ ∘ tren§ η) δ) ⁻¹′ ⟩
+      get§ (cast⊑ (eqwkrenFm§ η Δ)) ((twk§ ∘ tren§ η) δ)
+    ∎
+  where
+    open ≅-Reasoning
+
+-- TODO: rename
+untitled3 : ∀ {Þ k k′ Γ Δ} (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
+              ren§ (cast⊑ (eqwkrenFm§ η Γ)) ((tren§ (lift≤ η) ∘ twk§) δ) ≡
+                get§ (cast⊑ (eqwkrenFm§ η Δ)) ((twk§ ∘ tren§ η) δ)
+untitled3 η δ = ≅→≡ (huntitled3 η δ)
+
 module _ where
   open ≡-Reasoning
-
-  -- TODO: rename
-  untitled2 : ∀ {Þ k k′ Γ Δ C} (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
-                (tren§ η ∘ lift§ {C = C}) δ ≡ (lift§ ∘ tren§ η) δ
-  untitled2 η ∙       = refl
-  untitled2 η (δ , d) = (_, ‵var zero)
-                          & ( eqrentren§ η (wk⊑ id⊑) (δ , d)
-                            ⋮ _,_
-                                & ((flip ren§ (tren§ η δ) ∘ wk⊑) & ridtren⊑ η)
-                                ⊗ (flip ren (tren η d) ∘ wk⊑) & ridtren⊑ η
-                            )
-
-{-
-ren§ : ∀ {Þ k} {Γ Γ′ : Fm§ k} {Δ} → Γ ⊑ Γ′ → Þ / Γ ⊢§ Δ → Þ / Γ′ ⊢§ Δ
-
-get§ : ∀ {Þ k} {Γ Δ Δ′ : Fm§ k} → Δ ⊑ Δ′ → Þ / Γ ⊢§ Δ′ → Þ / Γ ⊢§ Δ
-
-eqwkrenFm§ : ∀ {k k′} (η : k ≤ k′) (Γ : Fm§ k) →
-               (renFm§ (lift≤ η) ∘ wkFm§) Γ ≡ (wkFm§ ∘ renFm§ η) Γ
-
-cast⊑ : ∀ {k} {Γ Γ′ : Fm§ k} → Γ ≡ Γ′ → Γ ⊑ Γ′
-
-eqrentren§ : ∀ {Þ k k′ Γ Γ′ Δ} (η : k ≤ k′) (ζ : Γ ⊑ Γ′) (δ : Þ / Γ ⊢§ Δ) →
-               (tren§ η ∘ ren§ ζ) δ ≡ (ren§ (tren⊑ η ζ) ∘ tren§ η) δ
-
-eqgettren§ : ∀ {Þ k k′ Γ Δ Δ′} (η : k ≤ k′) (ζ : Δ ⊑ Δ′) (δ : Þ / Γ ⊢§ Δ′) →
-               (tren§ η ∘ get§ ζ) δ ≡ (get§ (tren⊑ η ζ) ∘ tren§ η) δ
--}
-
---  ugh : ∀  {Þ k} {Γ Γ′ : Fm§ k} {A} {d : Þ / Γ ⊢ A} {d′ : Þ / Γ′ ⊢ A} → Γ ≡ Γ′ → d ≡ d′
---  ugh refl = refl
---
---  hmm : ∀ {Þ k} {Γ Γ′ : Fm§ k} {A} (p : Γ ≡ Γ′) (d : Þ / Γ ⊢ A) →
---          ren (cast⊑ p) d ≡ {!!}
---  hmm p d = {!!}
-
---  idrencast§ : ∀ {Þ k} {Γ Γ′ : Fm§ k} {Δ} (p : Γ ≡ Γ′) (δ : Þ / Γ ⊢§ Δ) →
---                 ren§ (cast⊑ p) δ ≡ {!δ!}
---  idrencast§ refl δ = {!!}
---
---  hmm : ∀ {Þ k} {Γ Γ′ Δ Δ′ : Fm§ k} (p : Γ ≡ Γ′) (q : Δ ≡ Δ′) (δ : Þ / Γ ⊢§ Δ) (δ′ : Þ / Γ′ ⊢§ Δ′) →
---          ren§ (cast⊑ p) δ ≡ get§ (cast⊑ q) δ′
---  hmm p q δ δ′ = {!!}
-
-  -- TODO: rename
-  untitled4 : ∀ {Þ k k′ Γ Δ} (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
-                ren§ (cast⊑ (eqwkrenFm§ η Γ)) ((tren§ (lift≤ η) ∘ twk§) δ) ≡
-                  get§ (cast⊑ (eqwkrenFm§ η Δ)) ((twk§ ∘ tren§ η) δ)
-  untitled4 {Γ = Γ} {Δ} η δ = {!!}
 
   mutual
     -- TODO: rename to eqtrensub; reverse
@@ -2143,7 +2210,7 @@ eqgettren§ : ∀ {Þ k k′ Γ Δ Δ′} (η : k ≤ k′) (ζ : Δ ⊑ Δ′) 
                 ren (cast⊑ (eqwkrenFm§ η Ξ)) (sub (tren§ (lift≤ η) (twk§ σ)) (tren (lift≤ η) d))
               ≡⟨ eqrensub (cast⊑ (eqwkrenFm§ η Ξ)) (tren§ (lift≤ η) (twk§ σ)) (tren (lift≤ η) d) ⁻¹ ⟩
                 sub (ren§ (cast⊑ (eqwkrenFm§ η Ξ)) (tren§ (lift≤ η) (twk§ σ))) (tren (lift≤ η) d)
-              ≡⟨ flip sub (tren (lift≤ η) d) & untitled4 η σ ⟩
+              ≡⟨ flip sub (tren (lift≤ η) d) & untitled3 η σ ⟩
                 sub (get§ (cast⊑ (eqwkrenFm§ η Γ)) (twk§ (tren§ η σ))) (tren (lift≤ η) d)
               ≡⟨ eqsubren (twk§ (tren§ η σ)) (cast⊑ (eqwkrenFm§ η Γ)) (tren (lift≤ η) d) ⟩
                 sub (twk§ (tren§ η σ)) (ren (cast⊑ (eqwkrenFm§ η Γ)) (tren (lift≤ η) d))
@@ -2198,7 +2265,7 @@ eqgettren§ : ∀ {Þ k k′ Γ Δ Δ′} (η : k ≤ k′) (ζ : Δ ⊑ Δ′) 
                      tren§ (lift≤ η)) (twk§ σ))) ∘
                  tren (lift≤ η)) e
 
-             ≡⟨ (flip sub (tren (lift≤ η) e) ∘ lift§) & untitled4 η σ ⟩
+             ≡⟨ (flip sub (tren (lift≤ η) e) ∘ lift§) & untitled3 η σ ⟩
                (sub (lift§
                    ((get§ (cast⊑ (eqwkrenFm§ η Γ)) ∘
                      (twk§ ∘ tren§ η)) σ)) ∘
@@ -2422,6 +2489,7 @@ abort {Þ = PA} d = ‵magic (wk d)
 ----------------------------------------------------------------------------------------------------
 
 -- 4.1. equational reasoning with object-level equality predicate
+-- TODO: uniform notation with _⁻¹ and _⋮_?
 
 module _ {Þ k} {Γ : Fm§ k} where
   ≡→= : ∀ {t u} → t ≡ u → Þ / Γ ⊢ t ‵= u
@@ -2429,7 +2497,7 @@ module _ {Þ k} {Γ : Fm§ k} where
 
 module =-Reasoning {Þ k} {Γ : Fm§ k} where
   infix  3 _∎
-  infixr 2 _=⟨⟩_ _=⟨_⟩_ _=˘⟨_⟩_ _≡⟨_⟩_ _≡˘⟨_⟩_
+  infixr 2 _=⟨⟩_ _=⟨_⟩_ _=⟨_⟩⁻¹_ _≡⟨_⟩_ _≡⟨_⟩⁻¹_
   infix  1 begin_
 
   begin_ : ∀ {t u} → Þ / Γ ⊢ t ‵= u → Þ / Γ ⊢ t ‵= u
@@ -2441,14 +2509,14 @@ module =-Reasoning {Þ k} {Γ : Fm§ k} where
   _=⟨_⟩_ : ∀ s {t u} → Þ / Γ ⊢ s ‵= t → Þ / Γ ⊢ t ‵= u → Þ / Γ ⊢ s ‵= u
   s =⟨ d ⟩ e = ‵trans d e
 
-  _=˘⟨_⟩_ : ∀ s {t u} → Þ / Γ ⊢ t ‵= s → Þ / Γ ⊢ t ‵= u → Þ / Γ ⊢ s ‵= u
-  s =˘⟨ d ⟩ e = ‵trans (‵sym d) e
+  _=⟨_⟩⁻¹_ : ∀ s {t u} → Þ / Γ ⊢ t ‵= s → Þ / Γ ⊢ t ‵= u → Þ / Γ ⊢ s ‵= u
+  s =⟨ d ⟩⁻¹ e = ‵trans (‵sym d) e
 
   _≡⟨_⟩_ : ∀ s {t u} → s ≡ t → Þ / Γ ⊢ t ‵= u → Þ / Γ ⊢ s ‵= u
   s ≡⟨ d ⟩ e = ‵trans (≡→= d) e
 
-  _≡˘⟨_⟩_ : ∀ s {t u} → t ≡ s → Þ / Γ ⊢ t ‵= u → Þ / Γ ⊢ s ‵= u
-  s ≡˘⟨ d ⟩ e = ‵trans (≡→= (d ⁻¹)) e
+  _≡⟨_⟩⁻¹_ : ∀ s {t u} → t ≡ s → Þ / Γ ⊢ t ‵= u → Þ / Γ ⊢ s ‵= u
+  s ≡⟨ d ⟩⁻¹ e = ‵trans (≡→= (d ⁻¹)) e
 
   _∎ : ∀ t → Þ / Γ ⊢ t ‵= t
   t ∎ = ‵refl
@@ -2457,6 +2525,7 @@ module =-Reasoning {Þ k} {Γ : Fm§ k} where
 ----------------------------------------------------------------------------------------------------
 
 -- 4.2. equational reasoning with object-level logical equivalence
+-- TODO: uniform notation with _⁻¹ and _⋮_?
 
 module _ {Þ k} {Γ : Fm§ k} where
   ⫗refl : ∀ {A} → Þ / Γ ⊢ A ‵⫗ A
@@ -2519,7 +2588,7 @@ module _ {Þ k} {Γ : Fm§ k} where
 
 module ⫗-Reasoning {Þ k} {Γ : Fm§ k} where
   infix  3 _∎
-  infixr 2 _⫗⟨⟩_ _⫗⟨_⟩_ _⫗˘⟨_⟩_ _≡⟨_⟩_ _≡˘⟨_⟩_
+  infixr 2 _⫗⟨⟩_ _⫗⟨_⟩_ _⫗⟨_⟩⁻¹_ _≡⟨_⟩_ _≡⟨_⟩⁻¹_
   infix  1 begin_
 
   begin_ : ∀ {A B} → Þ / Γ ⊢ A ‵⫗ B → Þ / Γ ⊢ A ‵⫗ B
@@ -2531,14 +2600,14 @@ module ⫗-Reasoning {Þ k} {Γ : Fm§ k} where
   _⫗⟨_⟩_ : ∀ A {B C} → Þ / Γ ⊢ A ‵⫗ B → Þ / Γ ⊢ B ‵⫗ C → Þ / Γ ⊢ A ‵⫗ C
   A ⫗⟨ d ⟩ e = ⫗trans d e
 
-  _⫗˘⟨_⟩_ : ∀ A {B C} → Þ / Γ ⊢ B ‵⫗ A → Þ / Γ ⊢ B ‵⫗ C → Þ / Γ ⊢ A ‵⫗ C
-  A ⫗˘⟨ d ⟩ e = ⫗trans (⫗sym d) e
+  _⫗⟨_⟩⁻¹_ : ∀ A {B C} → Þ / Γ ⊢ B ‵⫗ A → Þ / Γ ⊢ B ‵⫗ C → Þ / Γ ⊢ A ‵⫗ C
+  A ⫗⟨ d ⟩⁻¹ e = ⫗trans (⫗sym d) e
 
   _≡⟨_⟩_ : ∀ A {B C} → A ≡ B → Þ / Γ ⊢ B ‵⫗ C → Þ / Γ ⊢ A ‵⫗ C
   A ≡⟨ d ⟩ e = ⫗trans (≡→⫗ d) e
 
-  _≡˘⟨_⟩_ : ∀ A {B C} → B ≡ A → Þ / Γ ⊢ B ‵⫗ C → Þ / Γ ⊢ A ‵⫗ C
-  A ≡˘⟨ d ⟩ e = ⫗trans (≡→⫗ (d ⁻¹)) e
+  _≡⟨_⟩⁻¹_ : ∀ A {B C} → B ≡ A → Þ / Γ ⊢ B ‵⫗ C → Þ / Γ ⊢ A ‵⫗ C
+  A ≡⟨ d ⟩⁻¹ e = ⫗trans (≡→⫗ (d ⁻¹)) e
 
   _∎ : ∀ A → Þ / Γ ⊢ A ‵⫗ A
   A ∎ = ⫗refl
