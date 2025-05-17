@@ -5,11 +5,11 @@
 -- first-order predicate logic with one sort (naturals) and one predicate (equality)
 -- variant with first-order structures for renaming and substitution
 
--- {-# OPTIONS --rewriting #-}
+{-# OPTIONS --rewriting #-}
 
 module Selinger92 where
 
--- open import Agda.Builtin.Equality.Rewrite
+open import Agda.Builtin.Equality.Rewrite
 
 open import Agda.Builtin.FromNat public
   using (Number ; fromNat)
@@ -1269,20 +1269,35 @@ tren⊑ η (lift⊑ ζ) = lift⊑ (tren⊑ η ζ)
 twk⊑ : ∀ {k} {Γ Γ′ : Fm§ k} → Γ ⊑ Γ′ → wkFm§ Γ ⊑ wkFm§ Γ′
 twk⊑ η = tren⊑ (wk≤ id≤) η
 
+-- TODO: needs rewrite to state type
 -- {-# REWRITE lidrenFm lidrenFm§ #-}
--- TODO: needs rewrite
 -- lidtren⊑ : ∀ {k} {Γ Γ′ : Fm§ k} (η : Γ ⊑ Γ′) → tren⊑ id≤ η ≡ η
 -- lidtren⊑ stop      = refl
 -- lidtren⊑ (wk⊑ η)   = wk⊑ & lidtren⊑ η
 -- lidtren⊑ (lift⊑ η) = lift⊑ & lidtren⊑ η
 
+-- -- TODO: needs rewrite for wk⊑ and lift⊑, but not for stop
+-- {-# REWRITE lidrenFm lidrenFm§ #-}
+-- hlidtren⊑ : ∀ {k} {Γ Γ′ : Fm§ k} (η : Γ ⊑ Γ′) → tren⊑ id≤ η ≅ η
+-- hlidtren⊑ stop      = refl
+-- hlidtren⊑ (wk⊑ η)   = wk⊑ ʰ& hlidtren⊑ η
+-- hlidtren⊑ (lift⊑ η) = lift⊑ ʰ& hlidtren⊑ η
+
+-- TODO: needs rewrite to state type
 -- {-# REWRITE comprenFm comprenFm§ #-}
--- TODO: needs rewrite
 -- lcomptren⊑ : ∀ {k k′ k″} {Γ Γ′ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (ζ : Γ ⊑ Γ′) →
---   tren⊑ (η′ ∘≤ η) ζ ≡ (tren⊑ η′ ∘ tren⊑ η) ζ
+--                tren⊑ (η′ ∘≤ η) ζ ≡ (tren⊑ η′ ∘ tren⊑ η) ζ
 -- lcomptren⊑ η′ η stop      = refl
 -- lcomptren⊑ η′ η (wk⊑ ζ)   = wk⊑ & lcomptren⊑ η′ η ζ
 -- lcomptren⊑ η′ η (lift⊑ ζ) = lift⊑ & lcomptren⊑ η′ η ζ
+
+-- -- TODO: needs rewrite for wk⊑ and lift⊑, but not for stop
+-- {-# REWRITE comprenFm comprenFm§ #-}
+-- hlcomptren⊑ : ∀ {k k′ k″} {Γ Γ′ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (ζ : Γ ⊑ Γ′) →
+--                 tren⊑ (η′ ∘≤ η) ζ ≅ (tren⊑ η′ ∘ tren⊑ η) ζ
+-- hlcomptren⊑ η′ η stop      = refl
+-- hlcomptren⊑ η′ η (wk⊑ ζ)   = wk⊑ ʰ& hlcomptren⊑ η′ η ζ
+-- hlcomptren⊑ η′ η (lift⊑ ζ) = lift⊑ ʰ& hlcomptren⊑ η′ η ζ
 
 ridtren⊑ : ∀ {k k′} {Γ : Fm§ k} (η : k ≤ k′) → tren⊑ {Γ = Γ} η id⊑ ≡ id⊑
 ridtren⊑ {Γ = ∙}     η = refl
@@ -1302,23 +1317,29 @@ tren∋ η (suc i) = suc (tren∋ η i)
 twk∋ : ∀ {k} {Γ : Fm§ k} {A} → Γ ∋ A → wkFm§ Γ ∋ wkFm A
 twk∋ i = tren∋ (wk≤ id≤) i
 
+-- -- TODO: needs rewrite to state type
 -- {-# REWRITE lidrenFm lidrenFm§ #-}
--- TODO: needs rewrite
 -- lidtren∋ : ∀ {k} {Γ : Fm§ k} {A} (i : Γ ∋ A) → tren∋ id≤ i ≡ i
 -- lidtren∋ zero    = refl
--- lidtren∋ (suc i) = suc & idtren∋ i
+-- lidtren∋ (suc i) = suc & lidtren∋ i
 
+-- -- TODO: needs rewrite for both cases
+-- {-# REWRITE lidrenFm lidrenFm§ #-}
+-- hlidtren∋ : ∀ {k} {Γ : Fm§ k} {A} (i : Γ ∋ A) → tren∋ id≤ i ≅ i
+-- hlidtren∋ zero    = refl
+-- hlidtren∋ (suc i) = suc ʰ& hlidtren∋ i
+
+-- -- TODO: needs rewrite to state type
 -- {-# REWRITE comprenFm comprenFm§ #-}
--- TODO: needs rewrite
 -- comptren∋ : ∀ {k k′ k″} {Γ : Fm§ k} {A} (η′ : k′ ≤ k″) (η : k ≤ k′) (i : Γ ∋ A) →
 --               tren∋ (η′ ∘≤ η) i ≡ (tren∋ η′ ∘ tren∋ η) i
 -- comptren∋ η′ η zero    = refl
 -- comptren∋ η′ η (suc i) = suc & comptren∋ η′ η i
 
-hcomptren∋ : ∀ {k k′ k″} {Γ : Fm§ k} {A} (η′ : k′ ≤ k″) (η : k ≤ k′) (i : Γ ∋ A) →
-               tren∋ (η′ ∘≤ η) i ≅ (tren∋ η′ ∘ tren∋ η) i
-hcomptren∋ η′ η i = {!!}
--- TODO: this doesn't work without rewriting by comprenFm/comprenFm§
+-- -- TODO: needs rewrite for both cases
+-- {-# REWRITE comprenFm comprenFm§ #-}
+-- hcomptren∋ : ∀ {k k′ k″} {Γ : Fm§ k} {A} (η′ : k′ ≤ k″) (η : k ≤ k′) (i : Γ ∋ A) →
+--                tren∋ (η′ ∘≤ η) i ≅ (tren∋ η′ ∘ tren∋ η) i
 -- hcomptren∋ η′ η zero    = refl
 -- hcomptren∋ η′ η (suc i) = suc ʰ& hcomptren∋ η′ η i
 
@@ -1361,35 +1382,159 @@ tren§ η (δ , d) = tren§ η δ , tren η d
 twk§ : ∀ {Þ k} {Γ : Fm§ k} {Δ} → Þ / Γ ⊢§ Δ → Þ / wkFm§ Γ ⊢§ wkFm§ Δ
 twk§ d = tren§ (wk≤ id≤) d
 
+-- TODO: needs rewrite to state type, and additional rewrites for some cases
 -- {-# REWRITE lidrenFm lidrenFm§ #-}
--- TODO: needs rewrite
+-- {-# REWRITE lidrenTm lidrenTm§ #-}
 -- lidtren : ∀ {Þ k} {Γ : Fm§ k} {A} (d : Þ / Γ ⊢ A) → tren id≤ d ≡ d
--- lidtren = ?
+-- lidtren (‵var i)                = ‵var & lidtren∋ i
+-- lidtren (‵lam d)                = ‵lam & lidtren d
+-- lidtren (d ‵$ e)                = _‵$_ & lidtren d ⊗ lidtren e
+-- lidtren (‵pair d e)             = ‵pair & lidtren d ⊗ lidtren e
+-- lidtren (‵fst d)                = ‵fst & lidtren d
+-- lidtren (‵snd d)                = ‵snd & lidtren d
+-- lidtren (‵left d)               = ‵left & lidtren d
+-- lidtren (‵right d)              = ‵right & lidtren d
+-- lidtren (‵either c d e)         = ‵either & lidtren c ⊗ lidtren d ⊗ lidtren e
+-- lidtren (‵all refl d)           = ‵all refl & {!lidtren d!}
+-- lidtren (‵unall t refl d)       = {!‵unall t refl & ?!}
+-- lidtren (‵ex t refl d)          = {!‵ex t refl & ?!}
+-- lidtren (‵letex refl refl d e)  = {!‵letex refl refl & ? ⊗ ?!}
+-- lidtren (‵abort d)              = ‵abort & lidtren d
+-- lidtren (‵magic d)              = ‵magic & lidtren d
+-- lidtren ‵refl                   = refl
+-- lidtren (‵sym d)                = ‵sym & lidtren d
+-- lidtren (‵trans d e)            = ‵trans & lidtren d ⊗ lidtren e
+-- lidtren (‵cong f i refl refl d) = {!‵cong f i refl refl & ?!}
+-- lidtren ‵dis                    = refl
+-- lidtren (‵inj d)                = ‵inj & lidtren d
+-- lidtren (‵ind refl refl d e)    = {!‵ind refl refl & lidtren d ⊗ lidtren e!}
+-- lidtren (‵proj i refl)          = {!refl!}
+-- lidtren (‵comp g φ refl)        = {!refl!}
+-- lidtren (‵rec f g)              = refl
 
+-- -- TODO: needs additional rewrites for some cases
+-- {-# REWRITE lidrenFm lidrenFm§ #-}
+-- {-# REWRITE lidrenTm lidrenTm§ #-}
+-- hlidtren : ∀ {Þ k} {Γ : Fm§ k} {A} (d : Þ / Γ ⊢ A) → tren id≤ d ≅ d
+-- hlidtren (‵var i)                = ‵var ʰ& hlidtren∋ i
+-- hlidtren (‵lam d)                = ‵lam ʰ& hlidtren d
+-- hlidtren (d ‵$ e)                = (_‵$ _) ʰ& hlidtren d
+--                                 ʰ⋮ (_ ‵$_) ʰ& hlidtren e
+-- hlidtren (‵pair d e)             = (λ d′ → ‵pair d′ _) ʰ& hlidtren d
+--                                 ʰ⋮ (λ e′ → ‵pair _ e′) ʰ& hlidtren e
+-- hlidtren (‵fst d)                = ‵fst ʰ& hlidtren d
+-- hlidtren (‵snd d)                = ‵snd ʰ& hlidtren d
+-- hlidtren (‵left d)               = ‵left ʰ& hlidtren d
+-- hlidtren (‵right d)              = ‵right ʰ& hlidtren d
+-- hlidtren (‵either c d e)         = (λ c′ → ‵either c′ _ _) ʰ& hlidtren c
+--                                 ʰ⋮ (λ d′ → ‵either _ d′ _) ʰ& hlidtren d
+--                                 ʰ⋮ (λ e′ → ‵either _ _ e′) ʰ& hlidtren e
+-- hlidtren (‵all refl d)           = {!‵all refl ʰ& ?!}
+-- hlidtren (‵unall t refl d)       = {!‵unall t refl ʰ& ?!}
+-- hlidtren (‵ex t refl d)          = {!‵ex t refl ʰ& ?!}
+-- hlidtren (‵letex refl refl d e)  = {!(λ d′ → ‵letex refl refl d′ _) ʰ& ?
+--                                 ʰ⋮ (λ e′ → ‵letex refl refl _ e′) ʰ& ?!}
+-- hlidtren (‵abort d)              = ‵abort ʰ& hlidtren d
+-- hlidtren (‵magic d)              = ‵magic ʰ& hlidtren d
+-- hlidtren ‵refl                   = refl
+-- hlidtren (‵sym d)                = ‵sym ʰ& hlidtren d
+-- hlidtren (‵trans d e)            = (λ d′ → ‵trans d′ _) ʰ& hlidtren d
+--                                 ʰ⋮ (λ e′ → ‵trans _ e′) ʰ& hlidtren e
+-- hlidtren (‵cong f i refl refl d) = {!‵cong f i refl refl ʰ& ?!}
+-- hlidtren ‵dis                    = refl
+-- hlidtren (‵inj d)                = ‵inj ʰ& hlidtren d
+-- hlidtren (‵ind refl refl d e)    = {!‵ind refl refl ʰ& hlidtren d ⊗ hlidtren e!}
+-- hlidtren (‵proj i refl)          = {!refl!}
+-- hlidtren (‵comp g φ refl)        = {!refl!}
+-- hlidtren (‵rec f g)              = refl
+
+-- -- TODO: needs rewrite to state type and additional rewrites for some cases
 -- {-# REWRITE comprenFm comprenFm§ #-}
--- TODO: needs rewrite
 -- comptren : ∀ {Þ k k′ k″} {Γ : Fm§ k} {A} (η′ : k′ ≤ k″) (η : k ≤ k′) (d : Þ / Γ ⊢ A) →
 --              tren (η′ ∘≤ η) d ≡ (tren η′ ∘ tren η) d
--- comptren = ?
+-- comptren η′ η (‵var i)                = ‵var & comptren∋ η′ η i
+-- comptren η′ η (‵lam d)                = ‵lam & comptren η′ η d
+-- comptren η′ η (d ‵$ e)                = _‵$_ & comptren η′ η d ⊗ comptren η′ η e
+-- comptren η′ η (‵pair d e)             = ‵pair & comptren η′ η d ⊗ comptren η′ η e
+-- comptren η′ η (‵fst d)                = ‵fst & comptren η′ η d
+-- comptren η′ η (‵snd d)                = ‵snd & comptren η′ η d
+-- comptren η′ η (‵left d)               = ‵left & comptren η′ η d
+-- comptren η′ η (‵right d)              = ‵right & comptren η′ η d
+-- comptren η′ η (‵either c d e)         = ‵either
+--                                           & comptren η′ η c
+--                                           ⊗ comptren η′ η d
+--                                           ⊗ comptren η′ η e
+-- comptren η′ η (‵all refl d)           = {!‵all refl & comptren η′ η d!}
+-- comptren η′ η (‵unall t refl d)       = {!‵unall t refl & comptren η′ η d!}
+-- comptren η′ η (‵ex t refl d)          = {!‵ex t refl & comptren η′ η d!}
+-- comptren η′ η (‵letex refl refl d e)  = {!‵letex refl refl & comptren η′ η d ⊗ comptren η′ η e!}
+-- comptren η′ η (‵abort d)              = ‵abort & comptren η′ η d
+-- comptren η′ η (‵magic d)              = ‵magic & comptren η′ η d
+-- comptren η′ η ‵refl                   = refl
+-- comptren η′ η (‵sym d)                = {!‵sym & comptren η′ η d!}
+-- comptren η′ η (‵trans d e)            = {!‵trans & comptren η′ η d ⊗ comptren η′ η e!}
+-- comptren η′ η (‵cong f i refl refl d) = {!‵cong f i refl refl & comptren η′ η d!}
+-- comptren η′ η ‵dis                    = refl
+-- comptren η′ η (‵inj d)                = {!‵inj & comptren η′ η d!}
+-- comptren η′ η (‵ind refl refl d e)    = {!‵ind refl refl & comptren η′ η d ⊗ comptren η′ η e!}
+-- comptren η′ η (‵proj i refl)          = {!refl!}
+-- comptren η′ η (‵comp g φ refl)        = {!refl!}
+-- comptren η′ η (‵rec f g)              = refl
 
-hcomptren : ∀ {Þ k k′ k″} {Γ : Fm§ k} {A} (η′ : k′ ≤ k″) (η : k ≤ k′) (d : Þ / Γ ⊢ A) →
-              tren (η′ ∘≤ η) d ≅ (tren η′ ∘ tren η) d
-hcomptren η′ η d = {!!}
-
+-- -- TODO: needs additional rewrites for some cases
 -- {-# REWRITE comprenFm comprenFm§ #-}
--- TODO: needs rewrite
+-- hcomptren : ∀ {Þ k k′ k″} {Γ : Fm§ k} {A} (η′ : k′ ≤ k″) (η : k ≤ k′) (d : Þ / Γ ⊢ A) →
+--               tren (η′ ∘≤ η) d ≅ (tren η′ ∘ tren η) d
+-- hcomptren η′ η (‵var i)                = ‵var ʰ& hcomptren∋ η′ η i
+-- hcomptren η′ η (‵lam d)                = ‵lam ʰ& hcomptren η′ η d
+-- hcomptren η′ η (d ‵$ e)                = (_‵$ _) ʰ& hcomptren η′ η d
+--                                       ʰ⋮ (_ ‵$_) ʰ& hcomptren η′ η e
+-- hcomptren η′ η (‵pair d e)             = (λ d′ → ‵pair d′ _) ʰ& hcomptren η′ η d
+--                                       ʰ⋮ (λ e′ → ‵pair _ e′) ʰ& hcomptren η′ η e
+-- hcomptren η′ η (‵fst d)                = ‵fst ʰ& hcomptren η′ η d
+-- hcomptren η′ η (‵snd d)                = ‵snd ʰ& hcomptren η′ η d
+-- hcomptren η′ η (‵left d)               = ‵left ʰ& hcomptren η′ η d
+-- hcomptren η′ η (‵right d)              = ‵right ʰ& hcomptren η′ η d
+-- hcomptren η′ η (‵either c d e)         = (λ c′ → ‵either c′ _ _) ʰ& hcomptren η′ η c
+--                                       ʰ⋮ (λ d′ → ‵either _ d′ _) ʰ& hcomptren η′ η d
+--                                       ʰ⋮ (λ e′ → ‵either _ _ e′) ʰ& hcomptren η′ η e
+-- hcomptren η′ η (‵all refl d)           = {!‵all refl ʰ& hcomptren η′ η d!}
+-- hcomptren η′ η (‵unall t refl d)       = {!‵unall t refl ʰ& hcomptren η′ η d!}
+-- hcomptren η′ η (‵ex t refl d)          = {!‵ex t refl ʰ& hcomptren η′ η d!}
+-- hcomptren η′ η (‵letex refl refl d e)  = {!(λ d′ → ‵letex refl refl d′ _) ʰ& hcomptren η′ η d
+--                                       ʰ⋮ (λ e′ → ‵letex refl refl _ e′) ʰ& hcomptren η′ η e!}
+-- hcomptren η′ η (‵abort d)              = ‵abort ʰ& hcomptren η′ η d
+-- hcomptren η′ η (‵magic d)              = ‵magic ʰ& hcomptren η′ η d
+-- hcomptren η′ η ‵refl                   = {!refl!}
+-- hcomptren η′ η (‵sym d)                = {!‵sym ʰ& hcomptren η′ η d!}
+-- hcomptren η′ η (‵trans d e)            = {!‵trans ʰ& hcomptren η′ η d ⊗ hcomptren η′ η e!}
+-- hcomptren η′ η (‵cong f i refl refl d) = {!‵cong f i refl refl ʰ& hcomptren η′ η d!}
+-- hcomptren η′ η ‵dis                    = {!refl!}
+-- hcomptren η′ η (‵inj d)                = {!‵inj ʰ& hcomptren η′ η d!}
+-- hcomptren η′ η (‵ind refl refl d e)    = {!‵ind refl refl ʰ& hcomptren η′ η d ⊗ hcomptren η′ η e!}
+-- hcomptren η′ η (‵proj i refl)          = {!refl!}
+-- hcomptren η′ η (‵comp g φ refl)        = {!refl!}
+-- hcomptren η′ η (‵rec f g)              = {!refl!}
+
+-- -- TODO: needs rewrite to state type
+-- {-# REWRITE comprenFm comprenFm§ #-}
 -- comptren§ : ∀ {Þ k k′ k″} {Γ Δ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
 --              tren§ (η′ ∘≤ η) δ ≡ (tren§ η′ ∘ tren§ η) δ
--- comptren§ = ?
+-- comptren§ η′ η ∙       = refl
+-- comptren§ η′ η (δ , d) = _,_ & comptren§ η′ η δ ⊗ comptren η′ η d
 
-hcomptren§ : ∀ {Þ k k′ k″} {Γ Δ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
-              tren§ (η′ ∘≤ η) δ ≅ (tren§ η′ ∘ tren§ η) δ
-hcomptren§ η′ η δ = {!!}
--- TODO: this doesn't work without rewriting by comprenFm/comprenFm§
--- TODO: fix ʰ⊗ and use instead of ʰ⋮
+-- TODO: urgh
+postulate
+  hcomptren§ : ∀ {Þ k k′ k″} {Γ Δ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
+                tren§ (η′ ∘≤ η) δ ≅ (tren§ η′ ∘ tren§ η) δ
+
+-- -- TODO: needs rewrite for both cases
+-- {-# REWRITE comprenFm comprenFm§ #-}
+-- hcomptren§ : ∀ {Þ k k′ k″} {Γ Δ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
+--               tren§ (η′ ∘≤ η) δ ≅ (tren§ η′ ∘ tren§ η) δ
 -- hcomptren§ η′ η ∙       = refl
 -- hcomptren§ η′ η (δ , d) = (_, _) ʰ& hcomptren§ η′ η δ
---                         ʰ⋮ (_ ,_) ʰ& hcomptren η′ η d
+--                        ʰ⋮ (_ ,_) ʰ& hcomptren η′ η d
 
 ridtren : ∀ {Þ k k′} {Γ : Fm§ k} {A} (η : k ≤ k′) (i : Γ ∋ A) →
             (tren {Þ = Þ} η ∘ ‵var) i ≡ (‵var ∘ tren∋ η) i
