@@ -2084,15 +2084,7 @@ lidsub (‵rec f g)              = refl
 
 ----------------------------------------------------------------------------------------------------
 
-eqtrenlift§ : ∀ {Þ k k′ Γ Δ C} (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
-                (lift§ ∘ tren§ η) δ ≡ (tren§ η ∘ lift§ {C = C}) δ
-eqtrenlift§ η ∙       = refl
-eqtrenlift§ η (δ , d) = (_, ‵var zero)
-                        & ( _,_
-                              & ((flip ren§ (tren§ η δ) ∘ wk⊑) & ridtren⊑ η ⁻¹)
-                              ⊗ (flip ren (tren η d) ∘ wk⊑) & ridtren⊑ η ⁻¹
-                          ⋮ eqtrenren§ η (wk⊑ id⊑) (δ , d)
-                          )
+-- TODO: clean this up; avoid heteq?
 
 hlidren§ : ∀ {Þ k} {Γ Γ′ Δ : Fm§ k} (p : Γ ≡ Γ′) (δ : Þ / Γ ⊢§ Δ) → ren§ (cast⊑ p) δ ≅ δ
 hlidren§ refl δ = ≡→≅ (lidren§ δ)
@@ -2140,6 +2132,21 @@ huntitled3 {Γ = Γ} {Δ} η δ =
     ∎
   where
     open ≅-Reasoning
+
+
+----------------------------------------------------------------------------------------------------
+
+-- TODO: clean these up
+
+eqtrenlift§ : ∀ {Þ k k′ Γ Δ C} (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
+                (lift§ ∘ tren§ η) δ ≡ (tren§ η ∘ lift§ {C = C}) δ
+eqtrenlift§ η ∙       = refl
+eqtrenlift§ η (δ , d) = (_, ‵var zero)
+                        & ( _,_
+                              & ((flip ren§ (tren§ η δ) ∘ wk⊑) & ridtren⊑ η ⁻¹)
+                              ⊗ (flip ren (tren η d) ∘ wk⊑) & ridtren⊑ η ⁻¹
+                          ⋮ eqtrenren§ η (wk⊑ id⊑) (δ , d)
+                          )
 
 -- TODO: rename
 untitled3 : ∀ {Þ k k′ Γ Δ} (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
