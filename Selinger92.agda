@@ -2283,13 +2283,11 @@ mutual
   eqtrensub η σ (‵comp g φ refl)        = refl
   eqtrensub η σ (‵rec f g)              = refl
 
-  -- TODO: rename to eqtrensublift; reverse
   eqtrensublift : ∀ {Þ k k′ Γ Ξ A C} (η : k ≤ k′) (σ : Þ / Ξ ⊢§ Γ) (d : Þ / Γ , C ⊢ A) →
                     (sub (lift§ (tren§ η σ)) ∘ tren η) d ≡ (tren η ∘ sub (lift§ σ)) d
   eqtrensublift η σ d = flip sub (tren η d) & eqtrenlift§ η σ
                       ⋮ eqtrensub η (lift§ σ) d
 
--- TODO: rename to eqtrensub§; reverse
 eqtrensub§ : ∀ {Þ k k′ Γ Ξ Δ} (η : k ≤ k′) (σ : Þ / Ξ ⊢§ Γ) (δ : Þ / Γ ⊢§ Δ) →
                (sub§ (tren§ η σ) ∘ tren§ η) δ ≡ (tren§ η ∘ sub§ σ) δ
 eqtrensub§ η σ ∙       = refl
