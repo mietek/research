@@ -2113,10 +2113,10 @@ hcomptren§ η′ η δ = {!!}
 --                         ⋮′ (_ ,_) &′ hcomptren η′ η d
 
 -- TODO: rename
-huntitled3 : ∀ {Þ k k′ Γ Δ} (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
+huntitled2 : ∀ {Þ k k′ Γ Δ} (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
                get§ (cast⊑ (eqwkrenFm§ η Δ)) ((twk§ ∘ tren§ η) δ) ≅
                  ren§ (cast⊑ (eqwkrenFm§ η Γ)) ((tren§ (lift≤ η) ∘ twk§) δ)
-huntitled3 {Γ = Γ} {Δ} η δ =
+huntitled2 {Γ = Γ} {Δ} η δ =
     begin
       get§ (cast⊑ (eqwkrenFm§ η Δ)) ((twk§ ∘ tren§ η) δ)
     ≅⟨ hlidget§ (eqwkrenFm§ η Δ) ((twk§ ∘ tren§ η) δ) ⟩
@@ -2149,10 +2149,10 @@ eqtrenlift§ η (δ , d) = (_, ‵var zero)
                           )
 
 -- TODO: rename
-untitled3 : ∀ {Þ k k′ Γ Δ} (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
+untitled2 : ∀ {Þ k k′ Γ Δ} (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
               get§ (cast⊑ (eqwkrenFm§ η Δ)) ((twk§ ∘ tren§ η) δ) ≡
                 ren§ (cast⊑ (eqwkrenFm§ η Γ)) ((tren§ (lift≤ η) ∘ twk§) δ)
-untitled3 η δ = ≅→≡ (huntitled3 η δ)
+untitled2 η δ = ≅→≡ (huntitled2 η δ)
 
 eqtrensub∋ : ∀ {Þ k k′ Γ Ξ A} (η : k ≤ k′) (σ : Þ / Ξ ⊢§ Γ) (i : Γ ∋ A) →
                (sub∋ (tren§ η σ) ∘ tren∋ η) i ≡ (tren η ∘ sub∋ σ) i
@@ -2188,7 +2188,7 @@ mutual
               sub (twk§ (tren§ η σ)) (ren (cast⊑ (eqwkrenFm§ η Γ)) (tren (lift≤ η) d))
             ≡⟨ eqsubren (twk§ (tren§ η σ)) (cast⊑ (eqwkrenFm§ η Γ)) (tren (lift≤ η) d) ⁻¹ ⟩
               sub (get§ (cast⊑ (eqwkrenFm§ η Γ)) (twk§ (tren§ η σ))) (tren (lift≤ η) d)
-            ≡⟨ flip sub (tren (lift≤ η) d) & untitled3 η σ ⟩
+            ≡⟨ flip sub (tren (lift≤ η) d) & untitled2 η σ ⟩
               sub (ren§ (cast⊑ (eqwkrenFm§ η Ξ)) (tren§ (lift≤ η) (twk§ σ))) (tren (lift≤ η) d)
             ≡⟨ eqrensub (cast⊑ (eqwkrenFm§ η Ξ)) (tren§ (lift≤ η) (twk§ σ)) (tren (lift≤ η) d) ⟩
               ren (cast⊑ (eqwkrenFm§ η Ξ)) (sub (tren§ (lift≤ η) (twk§ σ)) (tren (lift≤ η) d))
@@ -2237,7 +2237,7 @@ mutual
                  ((get§ (cast⊑ (eqwkrenFm§ η Γ)) ∘
                    (twk§ ∘ tren§ η)) σ)) ∘
                tren (lift≤ η)) e
-           ≡⟨ (flip sub (tren (lift≤ η) e) ∘ lift§) & untitled3 η σ ⟩
+           ≡⟨ (flip sub (tren (lift≤ η) e) ∘ lift§) & untitled2 η σ ⟩
              (sub (lift§
                  ((ren§ (cast⊑ (eqwkrenFm§ η Ξ)) ∘
                    tren§ (lift≤ η)) (twk§ σ))) ∘
