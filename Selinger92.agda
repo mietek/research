@@ -1,7 +1,7 @@
 -- 2025-03-21
 -- Friedman’s A-Translation
 -- https://www.mscs.dal.ca/~selinger/papers/friedman.pdf
--- thanks to roconnor, ncf, drvink, and ames
+-- thanks to roconnor, ncf, and drvink
 -- first-order predicate logic with one sort (naturals) and one predicate (equality)
 -- variant with first-order structures for renaming and substitution
 
@@ -1244,7 +1244,7 @@ instance
 
 ----------------------------------------------------------------------------------------------------
 
--- TODO: clean these up
+-- TODO: clean these up; avoid rewrite and heteq?
 
 eqrenpeekTm : ∀ {k k′ n} (η : k ≤ k′) (i : Fin n) (τ : Tm§ k n) →
                 (peek i ∘ renTm§ η) τ ≡ (renTm η ∘ peek i) τ
@@ -1261,7 +1261,6 @@ eqrenforTm : ∀ {k k′ n m} (η : k ≤ k′) (φ : Prim§ n m) (τ : Tm§ k n
 eqrenforTm η ∙       τ = refl
 eqrenforTm η (φ , f) τ = (_, ‵fun f (renTm§ η τ)) & eqrenforTm η φ τ
 
--- TODO: is the argument order correct here? is this somehow tget?
 tren⊑ : ∀ {k k′ Γ Γ′} (η : k ≤ k′) → Γ ⊑ Γ′ → renFm§ η Γ ⊑ renFm§ η Γ′
 tren⊑ η stop      = stop
 tren⊑ η (wk⊑ ζ)   = wk⊑ (tren⊑ η ζ)
@@ -1271,34 +1270,30 @@ twk⊑ : ∀ {k} {Γ Γ′ : Fm§ k} → Γ ⊑ Γ′ → wkFm§ Γ ⊑ wkFm§ �
 twk⊑ η = tren⊑ (wk≤ id≤) η
 
 -- {-# REWRITE lidrenFm lidrenFm§ #-}
--- TODO: useless? needs rewrite
+-- TODO: needs rewrite
 -- lidtren⊑ : ∀ {k} {Γ Γ′ : Fm§ k} (η : Γ ⊑ Γ′) → tren⊑ id≤ η ≡ η
 -- lidtren⊑ stop      = refl
 -- lidtren⊑ (wk⊑ η)   = wk⊑ & lidtren⊑ η
 -- lidtren⊑ (lift⊑ η) = lift⊑ & lidtren⊑ η
 
 -- {-# REWRITE comprenFm comprenFm§ #-}
--- TODO: useless? needs rewrite
--- this one seems left-handed
--- comptren⊑ : ∀ {k k′ k″} {Γ Γ′ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (ζ : Γ ⊑ Γ′) →
+-- TODO: needs rewrite
+-- lcomptren⊑ : ∀ {k k′ k″} {Γ Γ′ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (ζ : Γ ⊑ Γ′) →
 --   tren⊑ (η′ ∘≤ η) ζ ≡ (tren⊑ η′ ∘ tren⊑ η) ζ
--- comptren⊑ η′ η stop      = refl
--- comptren⊑ η′ η (wk⊑ ζ)   = wk⊑ & comptren⊑ η′ η ζ
--- comptren⊑ η′ η (lift⊑ ζ) = lift⊑ & comptren⊑ η′ η ζ
+-- lcomptren⊑ η′ η stop      = refl
+-- lcomptren⊑ η′ η (wk⊑ ζ)   = wk⊑ & lcomptren⊑ η′ η ζ
+-- lcomptren⊑ η′ η (lift⊑ ζ) = lift⊑ & lcomptren⊑ η′ η ζ
 
 ridtren⊑ : ∀ {k k′} {Γ : Fm§ k} (η : k ≤ k′) → tren⊑ {Γ = Γ} η id⊑ ≡ id⊑
 ridtren⊑ {Γ = ∙}     η = refl
 ridtren⊑ {Γ = Γ , A} η = lift⊑ & ridtren⊑ η
 
--- TODO: rename? some kind of comptren⊑, but not the one i expected...
--- this one seems right-handed
--- TODO: argument order for tren⊑ seems wrong
-comptren⊑? : ∀ {k k′ Γ Γ′ Γ″} (η : k ≤ k′) (ζ′ : Γ′ ⊑ Γ″) (ζ : Γ ⊑ Γ′) →
+rcomptren⊑ : ∀ {k k′ Γ Γ′ Γ″} (η : k ≤ k′) (ζ′ : Γ′ ⊑ Γ″) (ζ : Γ ⊑ Γ′) →
                tren⊑ η (ζ′ ∘⊑ ζ) ≡ tren⊑ η ζ′ ∘⊑ tren⊑ η ζ
-comptren⊑? η stop       ζ         = refl
-comptren⊑? η (wk⊑ ζ′)   ζ         = wk⊑ & comptren⊑? η ζ′ ζ
-comptren⊑? η (lift⊑ ζ′) (wk⊑ ζ)   = wk⊑ & comptren⊑? η ζ′ ζ
-comptren⊑? η (lift⊑ ζ′) (lift⊑ ζ) = lift⊑ & comptren⊑? η ζ′ ζ
+rcomptren⊑ η stop       ζ         = refl
+rcomptren⊑ η (wk⊑ ζ′)   ζ         = wk⊑ & rcomptren⊑ η ζ′ ζ
+rcomptren⊑ η (lift⊑ ζ′) (wk⊑ ζ)   = wk⊑ & rcomptren⊑ η ζ′ ζ
+rcomptren⊑ η (lift⊑ ζ′) (lift⊑ ζ) = lift⊑ & rcomptren⊑ η ζ′ ζ
 
 tren∋ : ∀ {k k′ Γ A} (η : k ≤ k′) → Γ ∋ A → renFm§ η Γ ∋ renFm η A
 tren∋ η zero    = zero
@@ -1308,17 +1303,24 @@ twk∋ : ∀ {k} {Γ : Fm§ k} {A} → Γ ∋ A → wkFm§ Γ ∋ wkFm A
 twk∋ i = tren∋ (wk≤ id≤) i
 
 -- {-# REWRITE lidrenFm lidrenFm§ #-}
--- TODO: useless?
+-- TODO: needs rewrite
 -- lidtren∋ : ∀ {k} {Γ : Fm§ k} {A} (i : Γ ∋ A) → tren∋ id≤ i ≡ i
 -- lidtren∋ zero    = refl
 -- lidtren∋ (suc i) = suc & idtren∋ i
 
 -- {-# REWRITE comprenFm comprenFm§ #-}
--- TODO: useless?
+-- TODO: needs rewrite
 -- comptren∋ : ∀ {k k′ k″} {Γ : Fm§ k} {A} (η′ : k′ ≤ k″) (η : k ≤ k′) (i : Γ ∋ A) →
 --               tren∋ (η′ ∘≤ η) i ≡ (tren∋ η′ ∘ tren∋ η) i
 -- comptren∋ η′ η zero    = refl
 -- comptren∋ η′ η (suc i) = suc & comptren∋ η′ η i
+
+hcomptren∋ : ∀ {k k′ k″} {Γ : Fm§ k} {A} (η′ : k′ ≤ k″) (η : k ≤ k′) (i : Γ ∋ A) →
+               tren∋ (η′ ∘≤ η) i ≅ (tren∋ η′ ∘ tren∋ η) i
+hcomptren∋ η′ η i = {!!}
+-- TODO: this doesn't work without rewriting by comprenFm/comprenFm§
+-- hcomptren∋ η′ η zero    = refl
+-- hcomptren∋ η′ η (suc i) = suc &′ hcomptren∋ η′ η i
 
 tren : ∀ {Þ k k′} {Γ : Fm§ k} {A} (η : k ≤ k′) → Þ / Γ ⊢ A → Þ / renFm§ η Γ ⊢ renFm η A
 tren η (‵var i)                = ‵var (tren∋ η i)
@@ -1359,18 +1361,35 @@ tren§ η (δ , d) = tren§ η δ , tren η d
 twk§ : ∀ {Þ k} {Γ : Fm§ k} {Δ} → Þ / Γ ⊢§ Δ → Þ / wkFm§ Γ ⊢§ wkFm§ Δ
 twk§ d = tren§ (wk≤ id≤) d
 
--- TODO: probably necessary for compsub
--- tsub : ∀ {Þ k m} {Γ : Fm§ k} {A} (σ : Tm§ m k) → Þ / Γ ⊢ A → Þ / subFm§ σ Γ ⊢ subFm σ A
--- tsub σ d = {!!}
-
--- TODO: needs rewrite; useless?
+-- {-# REWRITE lidrenFm lidrenFm§ #-}
+-- TODO: needs rewrite
 -- lidtren : ∀ {Þ k} {Γ : Fm§ k} {A} (d : Þ / Γ ⊢ A) → tren id≤ d ≡ d
 -- lidtren = ?
 
--- TODO: needs rewrite; useless?
+-- {-# REWRITE comprenFm comprenFm§ #-}
+-- TODO: needs rewrite
 -- comptren : ∀ {Þ k k′ k″} {Γ : Fm§ k} {A} (η′ : k′ ≤ k″) (η : k ≤ k′) (d : Þ / Γ ⊢ A) →
 --              tren (η′ ∘≤ η) d ≡ (tren η′ ∘ tren η) d
 -- comptren = ?
+
+hcomptren : ∀ {Þ k k′ k″} {Γ : Fm§ k} {A} (η′ : k′ ≤ k″) (η : k ≤ k′) (d : Þ / Γ ⊢ A) →
+              tren (η′ ∘≤ η) d ≅ (tren η′ ∘ tren η) d
+hcomptren η′ η d = {!!}
+
+-- {-# REWRITE comprenFm comprenFm§ #-}
+-- TODO: needs rewrite
+-- comptren§ : ∀ {Þ k k′ k″} {Γ Δ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
+--              tren§ (η′ ∘≤ η) δ ≡ (tren§ η′ ∘ tren§ η) δ
+-- comptren§ = ?
+
+hcomptren§ : ∀ {Þ k k′ k″} {Γ Δ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
+              tren§ (η′ ∘≤ η) δ ≅ (tren§ η′ ∘ tren§ η) δ
+hcomptren§ η′ η δ = {!!}
+-- TODO: this doesn't work without rewriting by comprenFm/comprenFm§
+-- TODO: fix ⊗′ and use instead of ⋮′
+-- hcomptren§ η′ η ∙       = refl
+-- hcomptren§ η′ η (δ , d) = (_, _) &′ hcomptren§ η′ η δ
+--                         ⋮′ (_ ,_) &′ hcomptren η′ η d
 
 ridtren : ∀ {Þ k k′} {Γ : Fm§ k} {A} (η : k ≤ k′) (i : Γ ∋ A) →
             (tren {Þ = Þ} η ∘ ‵var) i ≡ (‵var ∘ tren∋ η) i
@@ -1544,14 +1563,14 @@ compren η′ η (‵either c d e)         = ‵either
                                          ⊗ compren (lift⊑ η′) (lift⊑ η) d
                                          ⊗ compren (lift⊑ η′) (lift⊑ η) e
 compren η′ η (‵all refl d)           = ‵all refl
-                                         & ( flip ren d & comptren⊑? (wk≤ id≤) η′ η
+                                         & ( flip ren d & rcomptren⊑ (wk≤ id≤) η′ η
                                            ⋮ compren (twk⊑ η′) (twk⊑ η) d
                                            )
 compren η′ η (‵unall t refl d)       = ‵unall t refl & compren η′ η d
 compren η′ η (‵ex t refl d)          = ‵ex t refl & compren η′ η d
 compren η′ η (‵letex refl refl d e)  = ‵letex refl refl
                                          & compren η′ η d
-                                         ⊗ ( (flip ren e ∘ lift⊑) & comptren⊑? (wk≤ id≤) η′ η
+                                         ⊗ ( (flip ren e ∘ lift⊑) & rcomptren⊑ (wk≤ id≤) η′ η
                                            ⋮ compren (lift⊑ (twk⊑ η′)) (lift⊑ (twk⊑ η)) e
                                            )
 compren η′ η (‵abort d)              = ‵abort & compren η′ η d
@@ -2091,26 +2110,6 @@ hlidren§ refl δ = ≡→≅ (lidren§ δ)
 
 hlidget§ : ∀ {Þ k} {Γ Δ Δ′ : Fm§ k} (p : Δ ≡ Δ′) (δ : Þ / Γ ⊢§ Δ′) → get§ (cast⊑ p) δ ≅ δ
 hlidget§ refl δ = ≡→≅ (lidget§ δ)
-
-hcomptren∋ : ∀ {k k′ k″} {Γ : Fm§ k} {A} (η′ : k′ ≤ k″) (η : k ≤ k′) (i : Γ ∋ A) →
-               tren∋ (η′ ∘≤ η) i ≅ (tren∋ η′ ∘ tren∋ η) i
-hcomptren∋ η′ η i = {!!}
--- TODO: this doesn't work without rewriting by comprenFm/comprenFm§
--- hcomptren∋ η′ η zero    = refl
--- hcomptren∋ η′ η (suc i) = suc &′ hcomptren∋ η′ η i
-
-hcomptren : ∀ {Þ k k′ k″} {Γ : Fm§ k} {A} (η′ : k′ ≤ k″) (η : k ≤ k′) (d : Þ / Γ ⊢ A) →
-              tren (η′ ∘≤ η) d ≅ (tren η′ ∘ tren η) d
-hcomptren η′ η d = {!!}
-
-hcomptren§ : ∀ {Þ k k′ k″} {Γ Δ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
-              tren§ (η′ ∘≤ η) δ ≅ (tren§ η′ ∘ tren§ η) δ
-hcomptren§ η′ η δ = {!!}
--- TODO: this doesn't work without rewriting by comprenFm/comprenFm§
--- TODO: fix ⊗′ and use instead of ⋮′
--- hcomptren§ η′ η ∙       = refl
--- hcomptren§ η′ η (δ , d) = (_, _) &′ hcomptren§ η′ η δ
---                         ⋮′ (_ ,_) &′ hcomptren η′ η d
 
 -- TODO: rename
 huntitled2 : ∀ {Þ k k′ Γ Δ} (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
