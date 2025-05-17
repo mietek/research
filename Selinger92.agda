@@ -1,18 +1,18 @@
 -- 2025-03-21
 -- Friedman’s A-Translation
 -- https://www.mscs.dal.ca/~selinger/papers/friedman.pdf
--- thanks to roconnor, ncf, and drvink
+-- thanks to roconnor, ncf, drvink, and ames
 -- first-order predicate logic with one sort (naturals) and one predicate (equality)
 -- variant with first-order structures for renaming and substitution
 
-{-# OPTIONS --rewriting #-}
+-- {-# OPTIONS --rewriting #-}
 
 module Selinger92 where
 
+-- open import Agda.Builtin.Equality.Rewrite
+
 open import Agda.Builtin.FromNat public
   using (Number ; fromNat)
-
-open import Agda.Builtin.Equality.Rewrite
 
 open import Agda.Primitive public
   using (Level ; _⊔_ ; lzero ; lsuc ; Setω)
@@ -23,8 +23,6 @@ open import Data.Empty public
 import Data.Fin as Fin
 open Fin public
   using (Fin ; zero ; suc)
-
-import Data.Fin.Properties as Fin
 
 import Data.Nat as Nat
 open Nat public
