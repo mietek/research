@@ -101,25 +101,25 @@ infix 4 _≅_
 data _≅_ {𝓍} {X : Set 𝓍} (x : X) : ∀ {𝓎} {Y : Set 𝓎} → Y → Set 𝓍 where
    refl : x ≅ x
 
-infix 9 _⁻¹′
-_⁻¹′ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {x : X} {y : Y} → x ≅ y → y ≅ x
-refl ⁻¹′ = refl
+infix 9 _ʰ⁻¹
+_ʰ⁻¹ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {x : X} {y : Y} → x ≅ y → y ≅ x
+refl ʰ⁻¹ = refl
 
-infixr 4 _⋮′_
-_⋮′_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : Set 𝓏} {x : X} {y : Y} {z : Z} →
+infixr 4 _ʰ⋮_
+_ʰ⋮_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : Set 𝓏} {x : X} {y : Y} {z : Z} →
          x ≅ y → y ≅ z → x ≅ z
-refl ⋮′ refl = refl
+refl ʰ⋮ refl = refl
 
-infixl 9 _&′_
-_&′_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} (f : ∀ x → Y x) {x x′} →
+infixl 9 _ʰ&_
+_ʰ&_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} (f : ∀ x → Y x) {x x′} →
          x ≅ x′ → f x ≅ f x′
-f &′ refl = refl
+f ʰ& refl = refl
 
 -- TODO: fix this so that it actually works
-infixl 8 _⊗′_
-_⊗′_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ x → X → Y x} {x x′} →
+infixl 8 _ʰ⊗_
+_ʰ⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ x → X → Y x} {x x′} →
          f ≅ g → x ≅ x′ → f x ≅ g x′
-refl ⊗′ refl = refl
+refl ʰ⊗ refl = refl
 
 ≅→≡ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≅ x′ → x ≡ x′
 ≅→≡ refl = refl
@@ -140,19 +140,19 @@ module ≅-Reasoning where
 
   _≅⟨_⟩_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : Set 𝓏} (x : X) {y : Y} {z : Z} →
              x ≅ y → y ≅ z → x ≅ z
-  x ≅⟨ p ⟩ q = p ⋮′ q
+  x ≅⟨ p ⟩ q = p ʰ⋮ q
 
   _≅⟨_⟩⁻¹_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : Set 𝓏} (x : X) {y : Y} {z : Z} →
                y ≅ x → y ≅ z → x ≅ z
-  x ≅⟨ p ⟩⁻¹ q = p ⁻¹′ ⋮′ q
+  x ≅⟨ p ⟩⁻¹ q = p ʰ⁻¹ ʰ⋮ q
 
   _≡⟨_⟩_ : ∀ {𝓍 𝓏} {X : Set 𝓍} {Z : Set 𝓏} (x : X) {x′} {z : Z} →
              x ≡ x′ → x′ ≅ z → x ≅ z
-  x ≡⟨ p ⟩ q = ≡→≅ p ⋮′ q
+  x ≡⟨ p ⟩ q = ≡→≅ p ʰ⋮ q
 
   _≡⟨_⟩⁻¹_ : ∀ {𝓍 𝓏} {X : Set 𝓍} {Z : Set 𝓏} (x : X) {x′} {z : Z} →
                x′ ≡ x → x′ ≅ z → x ≅ z
-  x ≡⟨ p ⟩⁻¹ q = ≡→≅ (p ⁻¹) ⋮′ q
+  x ≡⟨ p ⟩⁻¹ q = ≡→≅ (p ⁻¹) ʰ⋮ q
 
   _∎ : ∀ {𝓍} {X : Set 𝓍} (x : X) → x ≅ x
   x ∎ = refl
@@ -1320,7 +1320,7 @@ hcomptren∋ : ∀ {k k′ k″} {Γ : Fm§ k} {A} (η′ : k′ ≤ k″) (η :
 hcomptren∋ η′ η i = {!!}
 -- TODO: this doesn't work without rewriting by comprenFm/comprenFm§
 -- hcomptren∋ η′ η zero    = refl
--- hcomptren∋ η′ η (suc i) = suc &′ hcomptren∋ η′ η i
+-- hcomptren∋ η′ η (suc i) = suc ʰ& hcomptren∋ η′ η i
 
 tren : ∀ {Þ k k′} {Γ : Fm§ k} {A} (η : k ≤ k′) → Þ / Γ ⊢ A → Þ / renFm§ η Γ ⊢ renFm η A
 tren η (‵var i)                = ‵var (tren∋ η i)
@@ -1386,10 +1386,10 @@ hcomptren§ : ∀ {Þ k k′ k″} {Γ Δ : Fm§ k} (η′ : k′ ≤ k″) (η 
               tren§ (η′ ∘≤ η) δ ≅ (tren§ η′ ∘ tren§ η) δ
 hcomptren§ η′ η δ = {!!}
 -- TODO: this doesn't work without rewriting by comprenFm/comprenFm§
--- TODO: fix ⊗′ and use instead of ⋮′
+-- TODO: fix ʰ⊗ and use instead of ʰ⋮
 -- hcomptren§ η′ η ∙       = refl
--- hcomptren§ η′ η (δ , d) = (_, _) &′ hcomptren§ η′ η δ
---                         ⋮′ (_ ,_) &′ hcomptren η′ η d
+-- hcomptren§ η′ η (δ , d) = (_, _) ʰ& hcomptren§ η′ η δ
+--                         ʰ⋮ (_ ,_) ʰ& hcomptren η′ η d
 
 ridtren : ∀ {Þ k k′} {Γ : Fm§ k} {A} (η : k ≤ k′) (i : Γ ∋ A) →
             (tren {Þ = Þ} η ∘ ‵var) i ≡ (‵var ∘ tren∋ η) i
@@ -2120,13 +2120,13 @@ huntitled2 {Γ = Γ} {Δ} η δ =
       get§ (cast⊑ (eqwkrenFm§ η Δ)) ((twk§ ∘ tren§ η) δ)
     ≅⟨ hlidget§ (eqwkrenFm§ η Δ) ((twk§ ∘ tren§ η) δ) ⟩
       twk§ (tren§ η δ)
-    ≅⟨ hcomptren§ (wk≤ id≤) η δ ⁻¹′ ⟩
+    ≅⟨ hcomptren§ (wk≤ id≤) η δ ʰ⁻¹ ⟩
       tren§ (wk≤ id≤ ∘≤ η) δ
-    ≅⟨ (flip tren§ δ ∘ wk≤) &′ ≡→≅ (lid≤ η ⋮ rid≤ η ⁻¹) ⟩
+    ≅⟨ (flip tren§ δ ∘ wk≤) ʰ& ≡→≅ (lid≤ η ⋮ rid≤ η ⁻¹) ⟩
       tren§ (lift≤ η ∘≤ wk≤ id≤) δ
     ≅⟨ hcomptren§ (lift≤ η) (wk≤ id≤) δ ⟩
       (tren§ (lift≤ η) ∘ twk§) δ
-    ≅⟨ hlidren§ (eqwkrenFm§ η Γ) ((tren§ (lift≤ η) ∘ twk§) δ) ⁻¹′ ⟩
+    ≅⟨ hlidren§ (eqwkrenFm§ η Γ) ((tren§ (lift≤ η) ∘ twk§) δ) ʰ⁻¹ ⟩
       ren§ (cast⊑ (eqwkrenFm§ η Γ)) ((tren§ (lift≤ η) ∘ twk§) δ)
     ∎
   where
