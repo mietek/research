@@ -160,35 +160,7 @@ module ≅-Reasoning where
 
 ----------------------------------------------------------------------------------------------------
 
--- 0.2. meta-level continuation/double negation monad/applicative/functor
--- TODO: laws?
--- TODO: delete?
--- module ContinuationMonad where
---   return : ∀ {𝓍} {A : Set 𝓍} → A → ¬ ¬ A
---   return x = λ k → k x
---
---   infixl 1 _>>=_
---   _>>=_ : ∀ {𝓍 𝓎} {A : Set 𝓍} {B : Set 𝓎} → ¬ ¬ A → (A → ¬ ¬ B) → ¬ ¬ B
---   mx >>= f = λ k → mx (λ x → f x k)
---
---   join : ∀ {𝓍} {A : Set 𝓍} → ¬ ¬ ¬ ¬ A → ¬ ¬ A
---   join mmx = mmx >>= λ mx → mx
---
---   infixl 4 _⊛_
---   _⊛_ : ∀ {𝓍 𝓎} {A : Set 𝓍} {B : Set 𝓎} → ¬ ¬ (A → B) → ¬ ¬ A → ¬ ¬ B
---   mf ⊛ mx = mf >>= λ f → mx >>= λ x → return (f x)
---
---   infixl 4 _<$>_
---   _<$>_ : ∀ {𝓍 𝓎} {A : Set 𝓍} {B : Set 𝓎} → (A → B) → ¬ ¬ A → ¬ ¬ B
---   f <$> mx = return f ⊛ mx
---
---   dnem : ∀ {𝓍} {A : Set 𝓍} → ¬ ¬ (A ∨ ¬ A)
---   dnem = λ k → k (right λ k′ → k (left k′))
-
-
-----------------------------------------------------------------------------------------------------
-
--- 0.3. leftist lists and vectors
+-- 0.2. leftist lists and vectors
 
 infixl 4 _,_
 data List {𝓍} (X : Set 𝓍) : Set 𝓍 where
@@ -218,7 +190,7 @@ tab {n = suc n} f = tab (f ∘ suc) , f zero
 
 ----------------------------------------------------------------------------------------------------
 
--- 0.4. primitive recursive n-ary functions on naturals
+-- 0.3. primitive recursive n-ary functions on naturals
 -- Troelstra (1973) §1.3.4
 
 mutual
@@ -272,7 +244,7 @@ mutual
 
 ----------------------------------------------------------------------------------------------------
 
--- 0.5. some primitive recursive n-ary functions on naturals
+-- 0.4. some primitive recursive n-ary functions on naturals
 -- Troelstra and van Dalen (1988) §1.3
 
 ƒconst : ∀ {n} → Nat → Prim n
@@ -338,7 +310,7 @@ ok-pred (suc x) = refl
 
 ----------------------------------------------------------------------------------------------------
 
--- 0.6. untyped de Bruijn indices and order-preserving embeddings for term variables
+-- 0.5. untyped de Bruijn indices and order-preserving embeddings for term variables
 
 -- NOTE: for reference only
 -- data Fin : Nat → Set where
@@ -404,7 +376,7 @@ comprenFin (lift≤ η′) (lift≤ η) (suc i) = suc & comprenFin η′ η i
 
 ----------------------------------------------------------------------------------------------------
 
--- 0.7. typed de Bruijn indices and order-preserving embeddings for derivation variables
+-- 0.6. typed de Bruijn indices and order-preserving embeddings for derivation variables
 
 module _ {𝓍} {X : Set 𝓍} where
   infix 3 _∋_
@@ -485,6 +457,34 @@ module _ {𝓍} {X : Set 𝓍} where
   compren∋ (lift⊑ η′) (wk⊑ η)   i       = suc & compren∋ η′ η i
   compren∋ (lift⊑ η′) (lift⊑ η) zero    = refl
   compren∋ (lift⊑ η′) (lift⊑ η) (suc i) = suc & compren∋ η′ η i
+
+
+----------------------------------------------------------------------------------------------------
+
+-- 0.7. meta-level continuation/double negation monad/applicative/functor
+-- TODO: laws?
+-- TODO: delete?
+-- module ContinuationMonad where
+--   return : ∀ {𝓍} {A : Set 𝓍} → A → ¬ ¬ A
+--   return x = λ k → k x
+--
+--   infixl 1 _>>=_
+--   _>>=_ : ∀ {𝓍 𝓎} {A : Set 𝓍} {B : Set 𝓎} → ¬ ¬ A → (A → ¬ ¬ B) → ¬ ¬ B
+--   mx >>= f = λ k → mx (λ x → f x k)
+--
+--   join : ∀ {𝓍} {A : Set 𝓍} → ¬ ¬ ¬ ¬ A → ¬ ¬ A
+--   join mmx = mmx >>= λ mx → mx
+--
+--   infixl 4 _⊛_
+--   _⊛_ : ∀ {𝓍 𝓎} {A : Set 𝓍} {B : Set 𝓎} → ¬ ¬ (A → B) → ¬ ¬ A → ¬ ¬ B
+--   mf ⊛ mx = mf >>= λ f → mx >>= λ x → return (f x)
+--
+--   infixl 4 _<$>_
+--   _<$>_ : ∀ {𝓍 𝓎} {A : Set 𝓍} {B : Set 𝓎} → (A → B) → ¬ ¬ A → ¬ ¬ B
+--   f <$> mx = return f ⊛ mx
+--
+--   dnem : ∀ {𝓍} {A : Set 𝓍} → ¬ ¬ (A ∨ ¬ A)
+--   dnem = λ k → k (right λ k′ → k (left k′))
 
 
 ----------------------------------------------------------------------------------------------------
