@@ -109,7 +109,7 @@ sucbicast∋ refl refl refl zero    = refl
 sucbicast∋ refl refl refl (suc i) = suc & sucbicast∋ refl refl refl i
 
 lidtren∋ : ∀ {k} {Γ : Fm§ k} {A} (i : Γ ∋ A) → tren∋ id≤ i ≡ bicast∋ (lidrenFm§ Γ) (lidrenFm A) i
-lidtren∋ {Γ = Γ , C} {A} zero    =
+lidtren∋ {Γ = Γ , A} {A} zero    =
     begin
       zero
     ≡⟨ zerobicast∋ (lidrenFm§ Γ) (lidrenFm A) ⟩
@@ -122,6 +122,24 @@ lidtren∋ {Γ = Γ , C} {A} (suc i) =
       (suc ∘ bicast∋ (lidrenFm§ Γ) (lidrenFm A)) i
     ≡⟨ sucbicast∋ (lidrenFm§ Γ) (lidrenFm C) (lidrenFm A) i ⟩
       (bicast∋ (_,_ & lidrenFm§ Γ ⊗ lidrenFm C) (lidrenFm A) ∘ suc) i
+    ∎
+
+comptren∋ : ∀ {k k′ k″} {Γ : Fm§ k} {A} (η′ : k′ ≤ k″) (η : k ≤ k′) (i : Γ ∋ A) →
+              tren∋ (η′ ∘≤ η) i ≡
+                bicast∋ (comprenFm§ η′ η Γ) (comprenFm η′ η A) ((tren∋ η′ ∘ tren∋ η) i)
+comptren∋ {Γ = Γ , A} {A} η′ η zero =
+    begin
+      zero
+    ≡⟨ zerobicast∋ (comprenFm§ η′ η Γ) (comprenFm η′ η A) ⟩
+      bicast∋ (_,_ & comprenFm§ η′ η Γ ⊗ comprenFm η′ η A) (comprenFm η′ η A) ((tren∋ η′ ∘ tren∋ η) zero)
+    ∎
+comptren∋ {Γ = Γ , C} {A} η′ η (suc i) =
+    begin
+      suc (tren∋ (η′ ∘≤ η) i)
+    ≡⟨ suc & comptren∋ η′ η i ⟩
+      suc (bicast∋ (comprenFm§ η′ η Γ) (comprenFm η′ η A) ((tren∋ η′ ∘ tren∋ η) i))
+    ≡⟨ sucbicast∋ (comprenFm§ η′ η Γ) (comprenFm η′ η C) (comprenFm η′ η A) (tren∋ η′ (tren∋ η i)) ⟩
+      bicast∋ (_,_ & comprenFm§ η′ η Γ ⊗ comprenFm η′ η C) (comprenFm η′ η A) ((tren∋ η′ ∘ tren∋ η) (suc i))
     ∎
 
 
