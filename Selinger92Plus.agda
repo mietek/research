@@ -178,6 +178,10 @@ comptren§ η′ η (δ , d) = _,_ & comptren§ η′ η δ ⊗ comptren η′ �
 
 ----------------------------------------------------------------------------------------------------
 
+rmbicast§ : ∀ {Þ k} {Γ Γ^ Δ Δ^ : Fm§ k} (p₁ : Γ^ ≡ Γ) (p₂ : Δ^ ≡ Δ) (δ : Þ / Γ ⊢§ Δ) →
+              bicast§ p₁ p₂ δ ≅ δ
+rmbicast§ refl refl δ = refl
+
 -- TODO: maybe all uses of heteq in main file can be replaced with bicast/bicast§
 hcomptren§′ : ∀ {Þ k k′ k″} {Γ Δ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
                 tren§ (η′ ∘≤ η) δ ≅ (tren§ η′ ∘ tren§ η) δ
@@ -186,7 +190,7 @@ hcomptren§′ {Γ = Γ} {Δ} η′ η δ =
       tren§ (η′ ∘≤ η) δ
     ≡⟨ comptren§ η′ η δ ⟩
       bicast§ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Δ) ((tren§ η′ ∘ tren§ η) δ)
-    ≅⟨ {!!} ⟩
+    ≅⟨ rmbicast§ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Δ) (tren§ η′ (tren§ η δ)) ⟩
       (tren§ η′ ∘ tren§ η) δ
     ∎
   where
