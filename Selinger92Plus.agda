@@ -51,20 +51,20 @@ liftbicast⊑ refl refl refl η = refl
 
 lidtren⊑ : ∀ {k} {Γ Γ′ : Fm§ k} (η : Γ ⊑ Γ′) →
              tren⊑ id≤ η ≡ bicast⊑ (lidrenFm§ Γ) (lidrenFm§ Γ′) η
-lidtren⊑                           stop      = refl
-lidtren⊑ {Γ = Γ}     {Γ′ = Γ′ , C} (wk⊑ η)   = wk⊑ & lidtren⊑ η
-                                             ⋮ wkbicast⊑ (lidrenFm§ Γ) (lidrenFm§ Γ′) (lidrenFm C) η
+lidtren⊑ stop      = refl
+lidtren⊑ (wk⊑ η)   = wk⊑ & lidtren⊑ η
+                   ⋮ wkbicast⊑ (lidrenFm§ _) (lidrenFm§ _) (lidrenFm _) η
 
-lidtren⊑ {Γ = Γ , C} {Γ′ = Γ′ , C} (lift⊑ η) = lift⊑ & lidtren⊑ η
-                                             ⋮ liftbicast⊑ (lidrenFm§ Γ) (lidrenFm§ Γ′) (lidrenFm C) η
+lidtren⊑ (lift⊑ η) = lift⊑ & lidtren⊑ η
+                   ⋮ liftbicast⊑ (lidrenFm§ _) (lidrenFm§ _) (lidrenFm _) η
 
 lcomptren⊑ : ∀ {k k′ k″} {Γ Γ′ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (ζ : Γ ⊑ Γ′) →
                tren⊑ (η′ ∘≤ η) ζ ≡ bicast⊑ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Γ′) ((tren⊑ η′ ∘ tren⊑ η) ζ)
-lcomptren⊑                           η′ η stop      = refl
-lcomptren⊑ {Γ = Γ}     {Γ′ = Γ′ , C} η′ η (wk⊑ ζ)   = wk⊑ & lcomptren⊑ η′ η ζ
-                                                    ⋮ wkbicast⊑ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Γ′) (comprenFm η′ η C) ((tren⊑ η′ ∘ tren⊑ η) ζ)
-lcomptren⊑ {Γ = Γ , C} {Γ′ = Γ′ , C} η′ η (lift⊑ ζ) = lift⊑ & lcomptren⊑ η′ η ζ
-                                                    ⋮ liftbicast⊑ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Γ′) (comprenFm η′ η C) (tren⊑ η′ (tren⊑ η ζ))
+lcomptren⊑ η′ η stop      = refl
+lcomptren⊑ η′ η (wk⊑ ζ)   = wk⊑ & lcomptren⊑ η′ η ζ
+                          ⋮ wkbicast⊑ (comprenFm§ η′ η _) (comprenFm§ η′ η _) (comprenFm η′ η _) ((tren⊑ η′ ∘ tren⊑ η) ζ)
+lcomptren⊑ η′ η (lift⊑ ζ) = lift⊑ & lcomptren⊑ η′ η ζ
+                          ⋮ liftbicast⊑ (comprenFm§ η′ η _) (comprenFm§ η′ η _) (comprenFm η′ η _) ((tren⊑ η′ ∘ tren⊑ η) ζ)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -82,16 +82,16 @@ sucbicast∋ refl refl refl zero    = refl
 sucbicast∋ refl refl refl (suc i) = suc & sucbicast∋ refl refl refl i
 
 lidtren∋ : ∀ {k} {Γ : Fm§ k} {A} (i : Γ ∋ A) → tren∋ id≤ i ≡ bicast∋ (lidrenFm§ Γ) (lidrenFm A) i
-lidtren∋ {Γ = Γ , A} {A} zero    = zerobicast∋ (lidrenFm§ Γ) (lidrenFm A)
-lidtren∋ {Γ = Γ , C} {A} (suc i) = suc & lidtren∋ i
-                                 ⋮ sucbicast∋ (lidrenFm§ Γ) (lidrenFm C) (lidrenFm A) i
+lidtren∋ zero    = zerobicast∋ (lidrenFm§ _) (lidrenFm _)
+lidtren∋ (suc i) = suc & lidtren∋ i
+                 ⋮ sucbicast∋ (lidrenFm§ _) (lidrenFm _) (lidrenFm _) i
 
 comptren∋ : ∀ {k k′ k″} {Γ : Fm§ k} {A} (η′ : k′ ≤ k″) (η : k ≤ k′) (i : Γ ∋ A) →
               tren∋ (η′ ∘≤ η) i ≡
                 bicast∋ (comprenFm§ η′ η Γ) (comprenFm η′ η A) ((tren∋ η′ ∘ tren∋ η) i)
-comptren∋ {Γ = Γ , A} {A} η′ η zero    = zerobicast∋ (comprenFm§ η′ η Γ) (comprenFm η′ η A)
-comptren∋ {Γ = Γ , C} {A} η′ η (suc i) = suc & comptren∋ η′ η i
-                                       ⋮ sucbicast∋ (comprenFm§ η′ η Γ) (comprenFm η′ η C) (comprenFm η′ η A) (tren∋ η′ (tren∋ η i))
+comptren∋ η′ η zero    = zerobicast∋ (comprenFm§ η′ η _) (comprenFm η′ η _)
+comptren∋ η′ η (suc i) = suc & comptren∋ η′ η i
+                       ⋮ sucbicast∋ (comprenFm§ η′ η _) (comprenFm η′ η _) (comprenFm η′ η _) ((tren∋ η′ ∘ tren∋ η) i)
 
 
 ----------------------------------------------------------------------------------------------------
@@ -171,24 +171,25 @@ consbicast§ refl refl refl δ d = refl
 
 comptren§ : ∀ {Þ k k′ k″} {Γ Δ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
               tren§ (η′ ∘≤ η) δ ≡ bicast§ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Δ) ((tren§ η′ ∘ tren§ η) δ)
-comptren§ {Γ = Γ} {Δ = ∙}     η′ η ∙       = nilbicast§ (comprenFm§ η′ η Γ)
-comptren§ {Γ = Γ} {Δ = Δ , A} η′ η (δ , d) = _,_ & comptren§ η′ η δ ⊗ comptren η′ η d
-                                           ⋮ consbicast§ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Δ) (comprenFm η′ η A) (tren§ η′ (tren§ η δ)) (tren η′ (tren η d))
+comptren§ η′ η ∙       = nilbicast§ (comprenFm§ η′ η _)
+comptren§ η′ η (δ , d) = _,_ & comptren§ η′ η δ ⊗ comptren η′ η d
+                       ⋮ consbicast§ (comprenFm§ η′ η _) (comprenFm§ η′ η _) (comprenFm η′ η _) ((tren§ η′ ∘ tren§ η) δ) ((tren η′ ∘ tren η) d)
 
 
 ----------------------------------------------------------------------------------------------------
 
-module _ where
-  -- open ≅-Reasoning
-
-  hcomptren§′ : ∀ {Þ k k′ k″} {Γ Δ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
-                  tren§ (η′ ∘≤ η) δ ≅ (tren§ η′ ∘ tren§ η) δ
-  hcomptren§′ η′ η δ = {!
-      begin
-        tren§ (η′ ∘≤ η) δ
-      ≅⟨ ? ⟩
-        (tren§ η′ ∘ tren§ η) δ
-      ∎!}
+hcomptren§′ : ∀ {Þ k k′ k″} {Γ Δ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
+                tren§ (η′ ∘≤ η) δ ≅ (tren§ η′ ∘ tren§ η) δ
+hcomptren§′ {Γ = Γ} {Δ} η′ η δ =
+    begin
+      tren§ (η′ ∘≤ η) δ
+    ≡⟨ comptren§ η′ η δ ⟩
+      bicast§ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Δ) ((tren§ η′ ∘ tren§ η) δ)
+    ≅⟨ {!!} ⟩
+      (tren§ η′ ∘ tren§ η) δ
+    ∎
+  where
+    open ≅-Reasoning
 
 
 ----------------------------------------------------------------------------------------------------
