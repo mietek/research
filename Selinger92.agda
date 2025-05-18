@@ -5,11 +5,11 @@
 -- first-order predicate logic with one sort (naturals) and one predicate (equality)
 -- variant with first-order structures for renaming and substitution
 
-{-# OPTIONS --rewriting #-}
+-- {-# OPTIONS --rewriting #-}
 
 module Selinger92 where
 
-open import Agda.Builtin.Equality.Rewrite
+-- open import Agda.Builtin.Equality.Rewrite
 
 open import Agda.Builtin.FromNat public
   using (Number ; fromNat)
@@ -45,7 +45,7 @@ open import Function public
 
 import Relation.Binary.PropositionalEquality as Id
 open Id public
-  using (_≡_ ; refl ; subst ; module ≡-Reasoning)
+  using (_≡_ ; refl ; module ≡-Reasoning)
 
 open import Relation.Nullary public
   using (Dec ; yes ; no ; ¬_)
@@ -1526,7 +1526,7 @@ twk§ d = tren§ (wk≤ id≤) d
 -- TODO: urgh
 postulate
   hcomptren§ : ∀ {Þ k k′ k″} {Γ Δ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
-                tren§ (η′ ∘≤ η) δ ≅ (tren§ η′ ∘ tren§ η) δ
+                 tren§ (η′ ∘≤ η) δ ≅ (tren§ η′ ∘ tren§ η) δ
 
 -- -- TODO: needs rewrite for both cases
 -- {-# REWRITE comprenFm comprenFm§ #-}
@@ -1758,15 +1758,15 @@ cast⊑-pair-alt : ∀ {k} {Γ Γ′ : Fm§ k} {C C′} (p : Γ ≡ Γ′) (q : 
 cast⊑-pair-alt refl refl = lift⊑ & lid⊑ id⊑
 
 -- TODO: rename
-cast⊑-eat : ∀ {k} {Γ Γ′ : Fm§ k} {C C′} (q : C ≡ C′) (ζ : Γ ⊑ Γ′) →
-              cast⊑ ((Γ′ ,_) & q) ∘⊑ wk⊑ ζ ≡ wk⊑ ζ
-cast⊑-eat refl ζ = wk⊑ & lid⊑ ζ
+cast⊑-eat : ∀ {k} {Γ Γ′ : Fm§ k} {C C′} (q : C ≡ C′) (η : Γ ⊑ Γ′) →
+              cast⊑ ((Γ′ ,_) & q) ∘⊑ wk⊑ η ≡ wk⊑ η
+cast⊑-eat refl η = wk⊑ & lid⊑ η
 
 -- TODO: rename
-cast⊑-slide : ∀ {k} {Γ Γ′ : Fm§ k} {C C′} (q : C ≡ C′) (ζ : Γ ⊑ Γ′) →
-                cast⊑ ((Γ′ ,_) & q) ∘⊑ lift⊑ ζ ≡ lift⊑ ζ ∘⊑ cast⊑ ((Γ ,_) & q)
-cast⊑-slide refl ζ = lift⊑ & ( lid⊑ ζ
-                             ⋮ rid⊑ ζ ⁻¹
+cast⊑-slide : ∀ {k} {Γ Γ′ : Fm§ k} {C C′} (q : C ≡ C′) (η : Γ ⊑ Γ′) →
+                cast⊑ ((Γ′ ,_) & q) ∘⊑ lift⊑ η ≡ lift⊑ η ∘⊑ cast⊑ ((Γ ,_) & q)
+cast⊑-slide refl η = lift⊑ & ( lid⊑ η
+                             ⋮ rid⊑ η ⁻¹
                              )
 
 -- cast⊑-trans : ∀ {k} {Γ Γ′ Γ″ : Fm§ k} (e₂ : Γ ≡ Γ′) (e₁ : Γ′ ≡ Γ″) →
