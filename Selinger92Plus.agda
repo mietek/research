@@ -39,14 +39,14 @@ wkbicast⊑ refl refl refl η = refl
 
 ----------------------------------------------------------------------------------------------------
 
-bicast⊑ : ∀ {k} {Γ Γ′ Γ^ Γ′^ : Fm§ k} → Γ^ ≡ Γ → Γ′^ ≡ Γ′ → Γ ⊑ Γ′ → Γ^ ⊑ Γ′^
+bicast⊑ : ∀ {k} {Γ Γ^ Γ′ Γ′^ : Fm§ k} → Γ^ ≡ Γ → Γ′^ ≡ Γ′ → Γ ⊑ Γ′ → Γ^ ⊑ Γ′^
 bicast⊑ refl refl η = η
 
-wkbicast⊑ : ∀ {k} {Γ Γ′ Γ^ Γ′^ : Fm§ k} {C C^} (p₁ : Γ^ ≡ Γ) (p₂ : Γ′^ ≡ Γ′) (q : C^ ≡ C) (η : Γ ⊑ Γ′) →
+wkbicast⊑ : ∀ {k} {Γ Γ^ Γ′ Γ′^ : Fm§ k} {C C^} (p₁ : Γ^ ≡ Γ) (p₂ : Γ′^ ≡ Γ′) (q : C^ ≡ C) (η : Γ ⊑ Γ′) →
               (wk⊑ ∘ bicast⊑ p₁ p₂) η ≡ (bicast⊑ p₁ ((_,_ & p₂ ⊗ q)) ∘ wk⊑) η
 wkbicast⊑ refl refl refl η = refl
 
-liftbicast⊑ : ∀ {k} {Γ Γ′ Γ^ Γ′^ : Fm§ k} {C C^} (p₁ : Γ^ ≡ Γ) (p₂ : Γ′^ ≡ Γ′) (q : C^ ≡ C) (η : Γ ⊑ Γ′) →
+liftbicast⊑ : ∀ {k} {Γ Γ^ Γ′ Γ′^ : Fm§ k} {C C^} (p₁ : Γ^ ≡ Γ) (p₂ : Γ′^ ≡ Γ′) (q : C^ ≡ C) (η : Γ ⊑ Γ′) →
                 (lift⊑ ∘ bicast⊑ p₁ p₂) η ≡ (bicast⊑ (_,_ & p₁ ⊗ q) (_,_ & p₂ ⊗ q) ∘ lift⊑) η
 liftbicast⊑ refl refl refl η = refl
 
@@ -158,9 +158,29 @@ comptren η′ η d = {!!}
 bicast§ : ∀ {Þ k} {Γ Γ^ : Fm§ k} {Δ Δ^} → Γ^ ≡ Γ → Δ^ ≡ Δ → Þ / Γ ⊢§ Δ → Þ / Γ^ ⊢§ Δ^
 bicast§ refl refl δ = δ
 
+nilbicast§ : ∀ {Þ k} {Γ Γ^ : Fm§ k} (p : Γ^ ≡ Γ) → ∙ ≡ bicast§ {Þ} p refl ∙
+nilbicast§ refl = refl
+
+consbicast§ : ∀ {Þ k} {Γ Γ^ Δ Δ^ : Fm§ k} {A A^} (p₁ : Γ^ ≡ Γ) (p₂ : Δ^ ≡ Δ) (q : A^ ≡ A) (δ : Þ / Γ ⊢§ Δ) (d : Þ / Γ ⊢ A) →
+                (bicast§ p₁ p₂ δ , bicast p₁ q d) ≡ (bicast§ p₁ (_,_ & p₂ ⊗ q) (δ , d))
+consbicast§ refl refl refl δ d = refl
+
 comptren§ : ∀ {Þ k k′ k″} {Γ Δ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
               tren§ (η′ ∘≤ η) δ ≡ bicast§ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Δ) ((tren§ η′ ∘ tren§ η) δ)
-comptren§ η′ η δ = {!!}
+comptren§ {Γ = Γ} {Δ = ∙}     η′ η ∙       =
+    begin
+      ∙
+    ≡⟨ nilbicast§ (comprenFm§ η′ η Γ) ⟩
+      bicast§ (comprenFm§ η′ η Γ) refl ((tren§ η′ ∘ tren§ η) ∙)
+    ∎
+comptren§ {Γ = Γ} {Δ = Δ , A} η′ η (δ , d) =
+    begin
+      (tren§ (η′ ∘≤ η) δ , tren (η′ ∘≤ η) d)
+    ≡⟨ _,_ & comptren§ η′ η δ ⊗ comptren η′ η d ⟩
+      bicast§ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Δ) ((tren§ η′ ∘ tren§ η) δ) , bicast (comprenFm§ η′ η Γ) (comprenFm η′ η A) ((tren η′ ∘ tren η) d)
+    ≡⟨ consbicast§ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Δ) (comprenFm η′ η A) (tren§ η′ (tren§ η δ)) (tren η′ (tren η d)) ⟩
+      bicast§ (comprenFm§ η′ η Γ) (_,_ & comprenFm§ η′ η Δ ⊗ comprenFm η′ η A) ((tren§ η′ ∘ tren§ η) (δ , d))
+    ∎
 
 
 ----------------------------------------------------------------------------------------------------
