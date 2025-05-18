@@ -1,7 +1,6 @@
 module Selinger92Plus where
 
 open import Selinger92
-open ≡-Reasoning
 
 
 ----------------------------------------------------------------------------------------------------
@@ -53,42 +52,19 @@ liftbicast⊑ refl refl refl η = refl
 lidtren⊑ : ∀ {k} {Γ Γ′ : Fm§ k} (η : Γ ⊑ Γ′) →
              tren⊑ id≤ η ≡ bicast⊑ (lidrenFm§ Γ) (lidrenFm§ Γ′) η
 lidtren⊑                           stop      = refl
-lidtren⊑ {Γ = Γ}     {Γ′ = Γ′ , C} (wk⊑ η)   =
-    begin
-      wk⊑ (tren⊑ id≤ η)
-    ≡⟨ wk⊑ & lidtren⊑ η ⟩
-      (wk⊑ ∘ bicast⊑ (lidrenFm§ Γ) (lidrenFm§ Γ′)) η
-    ≡⟨ wkbicast⊑ (lidrenFm§ Γ) (lidrenFm§ Γ′) (lidrenFm C) η ⟩
-      (bicast⊑ (lidrenFm§ Γ) (_,_ & lidrenFm§ Γ′ ⊗ lidrenFm C) ∘ wk⊑) η
-    ∎
-lidtren⊑ {Γ = Γ , C} {Γ′ = Γ′ , C} (lift⊑ η) =
-    begin
-      lift⊑ (tren⊑ id≤ η)
-    ≡⟨ lift⊑ & lidtren⊑ η ⟩
-      (lift⊑ ∘ bicast⊑ (lidrenFm§ Γ) (lidrenFm§ Γ′)) η
-    ≡⟨ liftbicast⊑ (lidrenFm§ Γ) (lidrenFm§ Γ′) (lidrenFm C) η ⟩
-      (bicast⊑ (_,_ & lidrenFm§ Γ ⊗ lidrenFm C) (_,_ & lidrenFm§ Γ′ ⊗ lidrenFm C) ∘ lift⊑) η
-    ∎
+lidtren⊑ {Γ = Γ}     {Γ′ = Γ′ , C} (wk⊑ η)   = wk⊑ & lidtren⊑ η
+                                             ⋮ wkbicast⊑ (lidrenFm§ Γ) (lidrenFm§ Γ′) (lidrenFm C) η
+
+lidtren⊑ {Γ = Γ , C} {Γ′ = Γ′ , C} (lift⊑ η) = lift⊑ & lidtren⊑ η
+                                             ⋮ liftbicast⊑ (lidrenFm§ Γ) (lidrenFm§ Γ′) (lidrenFm C) η
 
 lcomptren⊑ : ∀ {k k′ k″} {Γ Γ′ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (ζ : Γ ⊑ Γ′) →
                tren⊑ (η′ ∘≤ η) ζ ≡ bicast⊑ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Γ′) ((tren⊑ η′ ∘ tren⊑ η) ζ)
 lcomptren⊑                           η′ η stop      = refl
-lcomptren⊑ {Γ = Γ}     {Γ′ = Γ′ , C} η′ η (wk⊑ ζ)   =
-    begin
-      wk⊑ (tren⊑ (η′ ∘≤ η) ζ)
-    ≡⟨ wk⊑ & lcomptren⊑ η′ η ζ ⟩
-      (wk⊑ ∘ bicast⊑ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Γ′)) ((tren⊑ η′ ∘ tren⊑ η) ζ)
-    ≡⟨ wkbicast⊑ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Γ′) (comprenFm η′ η C) ((tren⊑ η′ ∘ tren⊑ η) ζ) ⟩
-      (bicast⊑ (comprenFm§ η′ η Γ) (_,_ & comprenFm§ η′ η Γ′ ⊗ comprenFm η′ η C) ∘ wk⊑) (tren⊑ η′ (tren⊑ η ζ))
-    ∎
-lcomptren⊑ {Γ = Γ , C} {Γ′ = Γ′ , C} η′ η (lift⊑ ζ) =
-    begin
-      lift⊑ (tren⊑ (η′ ∘≤ η) ζ)
-    ≡⟨ lift⊑ & lcomptren⊑ η′ η ζ ⟩
-      (lift⊑ ∘ bicast⊑ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Γ′)) ((tren⊑ η′ ∘ tren⊑ η) ζ)
-    ≡⟨ liftbicast⊑ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Γ′) (comprenFm η′ η C) (tren⊑ η′ (tren⊑ η ζ)) ⟩
-      bicast⊑ (_,_ & comprenFm§ η′ η Γ ⊗ comprenFm η′ η C) (_,_ & comprenFm§ η′ η Γ′ ⊗ comprenFm η′ η C) ((tren⊑ η′ ∘ tren⊑ η) (lift⊑ ζ))
-    ∎
+lcomptren⊑ {Γ = Γ}     {Γ′ = Γ′ , C} η′ η (wk⊑ ζ)   = wk⊑ & lcomptren⊑ η′ η ζ
+                                                    ⋮ wkbicast⊑ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Γ′) (comprenFm η′ η C) ((tren⊑ η′ ∘ tren⊑ η) ζ)
+lcomptren⊑ {Γ = Γ , C} {Γ′ = Γ′ , C} η′ η (lift⊑ ζ) = lift⊑ & lcomptren⊑ η′ η ζ
+                                                    ⋮ liftbicast⊑ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Γ′) (comprenFm η′ η C) (tren⊑ η′ (tren⊑ η ζ))
 
 
 ----------------------------------------------------------------------------------------------------
@@ -106,38 +82,16 @@ sucbicast∋ refl refl refl zero    = refl
 sucbicast∋ refl refl refl (suc i) = suc & sucbicast∋ refl refl refl i
 
 lidtren∋ : ∀ {k} {Γ : Fm§ k} {A} (i : Γ ∋ A) → tren∋ id≤ i ≡ bicast∋ (lidrenFm§ Γ) (lidrenFm A) i
-lidtren∋ {Γ = Γ , A} {A} zero    =
-    begin
-      zero
-    ≡⟨ zerobicast∋ (lidrenFm§ Γ) (lidrenFm A) ⟩
-      bicast∋ (_,_ & lidrenFm§ Γ ⊗ lidrenFm A) (lidrenFm A) zero
-    ∎
-lidtren∋ {Γ = Γ , C} {A} (suc i) =
-    begin
-      suc (tren∋ id≤ i)
-    ≡⟨ suc & lidtren∋ i ⟩
-      (suc ∘ bicast∋ (lidrenFm§ Γ) (lidrenFm A)) i
-    ≡⟨ sucbicast∋ (lidrenFm§ Γ) (lidrenFm C) (lidrenFm A) i ⟩
-      (bicast∋ (_,_ & lidrenFm§ Γ ⊗ lidrenFm C) (lidrenFm A) ∘ suc) i
-    ∎
+lidtren∋ {Γ = Γ , A} {A} zero    = zerobicast∋ (lidrenFm§ Γ) (lidrenFm A)
+lidtren∋ {Γ = Γ , C} {A} (suc i) = suc & lidtren∋ i
+                                 ⋮ sucbicast∋ (lidrenFm§ Γ) (lidrenFm C) (lidrenFm A) i
 
 comptren∋ : ∀ {k k′ k″} {Γ : Fm§ k} {A} (η′ : k′ ≤ k″) (η : k ≤ k′) (i : Γ ∋ A) →
               tren∋ (η′ ∘≤ η) i ≡
                 bicast∋ (comprenFm§ η′ η Γ) (comprenFm η′ η A) ((tren∋ η′ ∘ tren∋ η) i)
-comptren∋ {Γ = Γ , A} {A} η′ η zero =
-    begin
-      zero
-    ≡⟨ zerobicast∋ (comprenFm§ η′ η Γ) (comprenFm η′ η A) ⟩
-      bicast∋ (_,_ & comprenFm§ η′ η Γ ⊗ comprenFm η′ η A) (comprenFm η′ η A) ((tren∋ η′ ∘ tren∋ η) zero)
-    ∎
-comptren∋ {Γ = Γ , C} {A} η′ η (suc i) =
-    begin
-      suc (tren∋ (η′ ∘≤ η) i)
-    ≡⟨ suc & comptren∋ η′ η i ⟩
-      suc (bicast∋ (comprenFm§ η′ η Γ) (comprenFm η′ η A) ((tren∋ η′ ∘ tren∋ η) i))
-    ≡⟨ sucbicast∋ (comprenFm§ η′ η Γ) (comprenFm η′ η C) (comprenFm η′ η A) (tren∋ η′ (tren∋ η i)) ⟩
-      bicast∋ (_,_ & comprenFm§ η′ η Γ ⊗ comprenFm η′ η C) (comprenFm η′ η A) ((tren∋ η′ ∘ tren∋ η) (suc i))
-    ∎
+comptren∋ {Γ = Γ , A} {A} η′ η zero    = zerobicast∋ (comprenFm§ η′ η Γ) (comprenFm η′ η A)
+comptren∋ {Γ = Γ , C} {A} η′ η (suc i) = suc & comptren∋ η′ η i
+                                       ⋮ sucbicast∋ (comprenFm§ η′ η Γ) (comprenFm η′ η C) (comprenFm η′ η A) (tren∋ η′ (tren∋ η i))
 
 
 ----------------------------------------------------------------------------------------------------
@@ -145,12 +99,62 @@ comptren∋ {Γ = Γ , C} {A} η′ η (suc i) =
 bicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {A A^} → Γ^ ≡ Γ → A^ ≡ A → Þ / Γ ⊢ A → Þ / Γ^ ⊢ A^
 bicast refl refl d = d
 
-lidtren : ∀ {Þ k} {Γ : Fm§ k} {A} (d : Þ / Γ ⊢ A) → tren id≤ d ≡ bicast (lidrenFm§ Γ) (lidrenFm A) d
-lidtren d = {!!}
+-- lidtren : ∀ {Þ k} {Γ : Fm§ k} {A} (d : Þ / Γ ⊢ A) → tren id≤ d ≡ bicast (lidrenFm§ Γ) (lidrenFm A) d
+-- lidtren (‵var i)                = {!!}
+-- lidtren (‵lam d)                = {!!}
+-- lidtren (d ‵$ e)                = {!!}
+-- lidtren (‵pair d e)             = {!!}
+-- lidtren (‵fst d)                = {!!}
+-- lidtren (‵snd d)                = {!!}
+-- lidtren (‵left d)               = {!!}
+-- lidtren (‵right d)              = {!!}
+-- lidtren (‵either c d e)         = {!!}
+-- lidtren (‵all refl d)           = {!!}
+-- lidtren (‵unall t refl d)       = {!!}
+-- lidtren (‵ex t refl d)          = {!!}
+-- lidtren (‵letex refl refl d e)  = {!!}
+-- lidtren (‵abort d)              = {!!}
+-- lidtren (‵magic d)              = {!!}
+-- lidtren ‵refl                   = {!!}
+-- lidtren (‵sym d)                = {!!}
+-- lidtren (‵trans d e)            = {!!}
+-- lidtren (‵cong f i refl refl d) = {!!}
+-- lidtren ‵dis                    = {!!}
+-- lidtren (‵inj d)                = {!!}
+-- lidtren (‵ind refl refl d e)    = {!!}
+-- lidtren (‵proj i refl)          = {!!}
+-- lidtren (‵comp g φ refl)        = {!!}
+-- lidtren (‵rec f g)              = {!!}
+--
 
-comptren : ∀ {Þ k k′ k″} {Γ : Fm§ k} {A} (η′ : k′ ≤ k″) (η : k ≤ k′) (d : Þ / Γ ⊢ A) →
-             tren (η′ ∘≤ η) d ≡ bicast (comprenFm§ η′ η Γ) (comprenFm η′ η A) ((tren η′ ∘ tren η) d)
-comptren η′ η d = {!!}
+postulate
+  comptren : ∀ {Þ k k′ k″} {Γ : Fm§ k} {A} (η′ : k′ ≤ k″) (η : k ≤ k′) (d : Þ / Γ ⊢ A) →
+               tren (η′ ∘≤ η) d ≡ bicast (comprenFm§ η′ η Γ) (comprenFm η′ η A) ((tren η′ ∘ tren η) d)
+-- comptren η′ η (‵var i)                = {!!}
+-- comptren η′ η (‵lam d)                = {!!}
+-- comptren η′ η (d ‵$ e)                = {!!}
+-- comptren η′ η (‵pair d e)             = {!!}
+-- comptren η′ η (‵fst d)                = {!!}
+-- comptren η′ η (‵snd d)                = {!!}
+-- comptren η′ η (‵left d)               = {!!}
+-- comptren η′ η (‵right d)              = {!!}
+-- comptren η′ η (‵either c d e)         = {!!}
+-- comptren η′ η (‵all refl d)           = {!!}
+-- comptren η′ η (‵unall t refl d)       = {!!}
+-- comptren η′ η (‵ex t refl d)          = {!!}
+-- comptren η′ η (‵letex refl refl d e)  = {!!}
+-- comptren η′ η (‵abort d)              = {!!}
+-- comptren η′ η (‵magic d)              = {!!}
+-- comptren η′ η ‵refl                   = {!!}
+-- comptren η′ η (‵sym d)                = {!!}
+-- comptren η′ η (‵trans d e)            = {!!}
+-- comptren η′ η (‵cong f i refl refl d) = {!!}
+-- comptren η′ η ‵dis                    = {!!}
+-- comptren η′ η (‵inj d)                = {!!}
+-- comptren η′ η (‵ind refl refl d e)    = {!!}
+-- comptren η′ η (‵proj i refl)          = {!!}
+-- comptren η′ η (‵comp g φ refl)        = {!!}
+-- comptren η′ η (‵rec f g)              = {!!}
 
 
 ----------------------------------------------------------------------------------------------------
@@ -167,20 +171,24 @@ consbicast§ refl refl refl δ d = refl
 
 comptren§ : ∀ {Þ k k′ k″} {Γ Δ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
               tren§ (η′ ∘≤ η) δ ≡ bicast§ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Δ) ((tren§ η′ ∘ tren§ η) δ)
-comptren§ {Γ = Γ} {Δ = ∙}     η′ η ∙       =
-    begin
-      ∙
-    ≡⟨ nilbicast§ (comprenFm§ η′ η Γ) ⟩
-      bicast§ (comprenFm§ η′ η Γ) refl ((tren§ η′ ∘ tren§ η) ∙)
-    ∎
-comptren§ {Γ = Γ} {Δ = Δ , A} η′ η (δ , d) =
-    begin
-      (tren§ (η′ ∘≤ η) δ , tren (η′ ∘≤ η) d)
-    ≡⟨ _,_ & comptren§ η′ η δ ⊗ comptren η′ η d ⟩
-      bicast§ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Δ) ((tren§ η′ ∘ tren§ η) δ) , bicast (comprenFm§ η′ η Γ) (comprenFm η′ η A) ((tren η′ ∘ tren η) d)
-    ≡⟨ consbicast§ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Δ) (comprenFm η′ η A) (tren§ η′ (tren§ η δ)) (tren η′ (tren η d)) ⟩
-      bicast§ (comprenFm§ η′ η Γ) (_,_ & comprenFm§ η′ η Δ ⊗ comprenFm η′ η A) ((tren§ η′ ∘ tren§ η) (δ , d))
-    ∎
+comptren§ {Γ = Γ} {Δ = ∙}     η′ η ∙       = nilbicast§ (comprenFm§ η′ η Γ)
+comptren§ {Γ = Γ} {Δ = Δ , A} η′ η (δ , d) = _,_ & comptren§ η′ η δ ⊗ comptren η′ η d
+                                           ⋮ consbicast§ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Δ) (comprenFm η′ η A) (tren§ η′ (tren§ η δ)) (tren η′ (tren η d))
+
+
+----------------------------------------------------------------------------------------------------
+
+module _ where
+  -- open ≅-Reasoning
+
+  hcomptren§′ : ∀ {Þ k k′ k″} {Γ Δ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
+                  tren§ (η′ ∘≤ η) δ ≅ (tren§ η′ ∘ tren§ η) δ
+  hcomptren§′ η′ η δ = {!
+      begin
+        tren§ (η′ ∘≤ η) δ
+      ≅⟨ ? ⟩
+        (tren§ η′ ∘ tren§ η) δ
+      ∎!}
 
 
 ----------------------------------------------------------------------------------------------------
