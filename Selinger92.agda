@@ -2277,21 +2277,6 @@ huntitled2 {Γ = Γ} {Δ} η δ =
   where
     open ≅-Reasoning
 
-
-----------------------------------------------------------------------------------------------------
-
--- TODO: clean these up
-
-eqtrenlift§ : ∀ {Þ k k′ Γ Δ C} (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
-                (lift§ ∘ tren§ η) δ ≡ (tren§ η ∘ lift§ {C = C}) δ
-eqtrenlift§ η ∙       = refl
-eqtrenlift§ η (δ , d) = (_, ‵var zero)
-                        & ( _,_
-                              & ((flip ren§ (tren§ η δ) ∘ wk⊑) & ridtren⊑ η ⁻¹)
-                              ⊗ (flip ren (tren η d) ∘ wk⊑) & ridtren⊑ η ⁻¹
-                          ⋮ eqtrenren§ η (wk⊑ id⊑) (δ , d)
-                          )
-
 -- TODO: rename
 untitled2 : ∀ {Þ k k′ Γ Δ} (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
               get§ (cast⊑ (eqwkrenFm§ η Δ)) ((twk§ ∘ tren§ η) δ) ≡
@@ -2302,6 +2287,16 @@ eqtrensub∋ : ∀ {Þ k k′ Γ Ξ A} (η : k ≤ k′) (σ : Þ / Ξ ⊢§ Γ)
                (sub∋ (tren§ η σ) ∘ tren∋ η) i ≡ (tren η ∘ sub∋ σ) i
 eqtrensub∋ η (σ , d) zero    = refl
 eqtrensub∋ η (σ , d) (suc i) = eqtrensub∋ η σ i
+
+eqtrenlift§ : ∀ {Þ k k′ Γ Δ C} (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
+                (lift§ ∘ tren§ η) δ ≡ (tren§ η ∘ lift§ {C = C}) δ
+eqtrenlift§ η ∙       = refl
+eqtrenlift§ η (δ , d) = (_, ‵var zero)
+                        & ( _,_
+                              & ((flip ren§ (tren§ η δ) ∘ wk⊑) & ridtren⊑ η ⁻¹)
+                              ⊗ (flip ren (tren η d) ∘ wk⊑) & ridtren⊑ η ⁻¹
+                          ⋮ eqtrenren§ η (wk⊑ id⊑) (δ , d)
+                          )
 
 mutual
   eqtrensub : ∀ {Þ k k′ Γ Ξ A} (η : k ≤ k′) (σ : Þ / Ξ ⊢§ Γ) (d : Þ / Γ ⊢ A) →
