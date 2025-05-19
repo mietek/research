@@ -156,6 +156,36 @@ abortbicast : ∀ {k} {Γ Γ^ : Fm§ k} {C C^} (p : Γ^ ≡ Γ) (q : C^ ≡ C) (
                 (‵abort ∘ bicast p refl) d ≡ (bicast p q ∘ ‵abort) d
 abortbicast refl refl d = refl
 
+magicbicast : ∀ {k} {Γ Γ^ : Fm§ k} {A A^} (p : Γ^ ≡ Γ) (q : A^ ≡ A) (d : PA / Γ , ‵¬ A ⊢ ‵⊥) →
+                (‵magic ∘ bicast (_,_ & p ⊗ (_‵⊃_ & q ⊗ refl)) refl) d ≡ (bicast p q ∘ ‵magic) d
+magicbicast refl refl d = refl
+
+reflbicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {t t^} (p : Γ^ ≡ Γ) (q : t^ ≡ t) →
+               ‵refl {Þ = Þ} ≡ bicast p (_‵=_ & q ⊗ q) ‵refl
+reflbicast refl refl = refl
+
+symbicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {t t^ u u^} (p : Γ^ ≡ Γ) (q₁ : t^ ≡ t) (q₂ : u^ ≡ u)
+              (d : Þ / Γ ⊢ t ‵= u) →
+              (‵sym ∘ bicast p (_‵=_ & q₁ ⊗ q₂)) d ≡ (bicast p (_‵=_ & q₂ ⊗ q₁) ∘ ‵sym) d
+symbicast refl refl refl d = refl
+
+transbicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {s s^ t t^ u u^} (p : Γ^ ≡ Γ) (q₁ : s^ ≡ s) (q₂ : t^ ≡ t)
+                (q₃ : u^ ≡ u) (d : Þ / Γ ⊢ s ‵= t) (e : Þ / Γ ⊢ t ‵= u) →
+                ‵trans (bicast p (_‵=_ & q₁ ⊗ q₂) d) (bicast p (_‵=_ & q₂ ⊗ q₃) e) ≡
+                  bicast p (_‵=_ & q₁ ⊗ q₃) (‵trans d e)
+transbicast refl refl refl refl d e = refl
+
+disbicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {t t^} (p : Γ^ ≡ Γ) (q : t^ ≡ t) →
+              ‵dis {Þ = Þ} {t = t^} ≡
+                bicast p (_‵⊃_ & (_‵=_ & (‵fun suc & (refl ⊗ q)) ⊗ refl) ⊗ refl) (‵dis {t = t})
+disbicast refl refl = refl
+
+injbicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {t t^ u u^} (p : Γ^ ≡ Γ) (q₁ : t^ ≡ t) (q₂ : u^ ≡ u)
+                (d : Þ / Γ ⊢ 𝕊 t ‵= 𝕊 u) →
+              ‵inj (bicast p (_‵=_ & (‵fun suc & (refl ⊗ q₁)) ⊗ ‵fun suc & (refl ⊗ q₂)) d) ≡
+                bicast p (_‵=_ & q₁ ⊗ q₂) (‵inj d)
+injbicast refl refl refl d = refl
+
 lidtren : ∀ {Þ k} {Γ : Fm§ k} {A} (d : Þ / Γ ⊢ A) →
             tren id≤ d ≡ bicast (lidrenFm§ Γ) (lidrenFm A) d
 lidtren (‵var i)                = ‵var & lidtren∋ i
@@ -183,13 +213,18 @@ lidtren (‵ex t refl d)          = {!!}
 lidtren (‵letex refl refl d e)  = {!!}
 lidtren (‵abort d)              = ‵abort & lidtren d
                                 ⋮ abortbicast (lidrenFm§ _) (lidrenFm _) d
-lidtren (‵magic d)              = {!!}
-lidtren ‵refl                   = {!!}
-lidtren (‵sym d)                = {!!}
-lidtren (‵trans d e)            = {!!}
+lidtren (‵magic d)              = ‵magic & lidtren d
+                                ⋮ magicbicast (lidrenFm§ _) (lidrenFm _) d
+lidtren ‵refl                   = reflbicast (lidrenFm§ _) (lidrenTm _)
+lidtren (‵sym d)                = ‵sym & lidtren d
+                                ⋮ symbicast (lidrenFm§ _) (lidrenTm _) (lidrenTm _) d
+lidtren (‵trans d e)            = ‵trans & lidtren d ⊗ lidtren e
+                                ⋮ transbicast (lidrenFm§ _) (lidrenTm _) (lidrenTm _) (lidrenTm _)
+                                    d e
 lidtren (‵cong f i refl refl d) = {!!}
-lidtren ‵dis                    = {!!}
-lidtren (‵inj d)                = {!!}
+lidtren ‵dis                    = disbicast (lidrenFm§ _) (lidrenTm _)
+lidtren (‵inj d)                = ‵inj & lidtren d
+                                ⋮ injbicast (lidrenFm§ _) (lidrenTm _) (lidrenTm _) d
 lidtren (‵ind refl refl d e)    = {!!}
 lidtren (‵proj i refl)          = {!!}
 lidtren (‵comp g φ refl)        = {!!}
