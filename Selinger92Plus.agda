@@ -5,50 +5,17 @@ open import Selinger92
 
 ----------------------------------------------------------------------------------------------------
 
-{-
-subst : ∀ {𝓍 𝓎} {X : Set 𝓍} (Y : X → Set 𝓎) {x x′} → x ≡ x′ → Y x → Y x′
-subst Y refl x = x
-
-coe : ∀ {𝓍} {X X′ : Set 𝓍} → X ≡ X′ → X → X′
-coe = subst id
-
-hmm1 : ∀ {k} {Γ Γ′ : Fm§ k} → (Γ ⊑ Γ′) ≡ (renFm§ id≤ Γ ⊑ renFm§ id≤ Γ′)
-hmm1 {Γ = Γ} {Γ′} = _⊑_ & lidrenFm§ Γ ⁻¹ ⊗ lidrenFm§ Γ′ ⁻¹
-
-lidtren⊑ : ∀ {k} {Γ Γ′ : Fm§ k} (η : Γ ⊑ Γ′) → tren⊑ id≤ η ≡ coe hmm1 η
-lidtren⊑ stop      = refl
-lidtren⊑ (wk⊑ η)   =
-    begin
-      wk⊑ (tren⊑ id≤ η)
-    ≡⟨ wk⊑ & lidtren⊑ η ⟩
-      wk⊑ (coe hmm1 η)
-    ≡⟨ {!!} ⟩
-      coe hmm1 (wk⊑ η)
-    ∎
-lidtren⊑ (lift⊑ η) = {!!}
-
-bicast⊑ : ∀ {k} {Γ Γ′ Δ Δ′ : Fm§ k} → Γ ≡ Δ → Γ′ ≡ Δ′ → Γ ⊑ Γ′ → Δ ⊑ Δ′
-bicast⊑ refl refl η = η
-
-wkbicast⊑ : ∀ {k} {Γ Γ′ Δ Δ′ : Fm§ k} {C C′} (p₁ : Γ ≡ Δ) (p₂ : Γ′ ≡ Δ′) (q : C ≡ C′) (η : Γ ⊑ Γ′) →
-              (wk⊑ ∘ bicast⊑ p₁ p₂) η ≡ (bicast⊑ p₁ ((_,_ & p₂ ⊗ q)) ∘ wk⊑) η
-wkbicast⊑ refl refl refl η = refl
--}
-
-
-----------------------------------------------------------------------------------------------------
-
 bicast⊑ : ∀ {k} {Γ Γ^ Γ′ Γ′^ : Fm§ k} → Γ^ ≡ Γ → Γ′^ ≡ Γ′ → Γ ⊑ Γ′ → Γ^ ⊑ Γ′^
 bicast⊑ refl refl η = η
 
 wkbicast⊑ : ∀ {k} {Γ Γ^ Γ′ Γ′^ : Fm§ k} {C C^} (p₁ : Γ^ ≡ Γ) (p₂ : Γ′^ ≡ Γ′) (q : C^ ≡ C)
               (η : Γ ⊑ Γ′) →
-              (wk⊑ ∘ bicast⊑ p₁ p₂) η ≡ (bicast⊑ p₁ ((_,_ & p₂ ⊗ q)) ∘ wk⊑) η
+              wk⊑ (bicast⊑ p₁ p₂ η) ≡ bicast⊑ p₁ (_,_ & p₂ ⊗ q) (wk⊑ η)
 wkbicast⊑ refl refl refl η = refl
 
 liftbicast⊑ : ∀ {k} {Γ Γ^ Γ′ Γ′^ : Fm§ k} {C C^} (p₁ : Γ^ ≡ Γ) (p₂ : Γ′^ ≡ Γ′) (q : C^ ≡ C)
                 (η : Γ ⊑ Γ′) →
-                (lift⊑ ∘ bicast⊑ p₁ p₂) η ≡ (bicast⊑ (_,_ & p₁ ⊗ q) (_,_ & p₂ ⊗ q) ∘ lift⊑) η
+                lift⊑ (bicast⊑ p₁ p₂ η) ≡ bicast⊑ (_,_ & p₁ ⊗ q) (_,_ & p₂ ⊗ q) (lift⊑ η)
 liftbicast⊑ refl refl refl η = refl
 
 lidtren⊑ : ∀ {k} {Γ Γ′ : Fm§ k} (η : Γ ⊑ Γ′) →
@@ -62,14 +29,14 @@ lidtren⊑ (lift⊑ η) = lift⊑ & lidtren⊑ η
 
 lcomptren⊑ : ∀ {k k′ k″} {Γ Γ′ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (ζ : Γ ⊑ Γ′) →
                tren⊑ (η′ ∘≤ η) ζ ≡
-                 bicast⊑ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Γ′) ((tren⊑ η′ ∘ tren⊑ η) ζ)
+                 bicast⊑ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Γ′) (tren⊑ η′ (tren⊑ η ζ))
 lcomptren⊑ η′ η stop      = refl
 lcomptren⊑ η′ η (wk⊑ ζ)   = wk⊑ & lcomptren⊑ η′ η ζ
                           ⋮ wkbicast⊑ (comprenFm§ η′ η _) (comprenFm§ η′ η _) (comprenFm η′ η _)
-                              ((tren⊑ η′ ∘ tren⊑ η) ζ)
+                              (tren⊑ η′ (tren⊑ η ζ))
 lcomptren⊑ η′ η (lift⊑ ζ) = lift⊑ & lcomptren⊑ η′ η ζ
                           ⋮ liftbicast⊑ (comprenFm§ η′ η _) (comprenFm§ η′ η _) (comprenFm η′ η _)
-                              ((tren⊑ η′ ∘ tren⊑ η) ζ)
+                              (tren⊑ η′ (tren⊑ η ζ))
 
 
 ----------------------------------------------------------------------------------------------------
@@ -83,7 +50,7 @@ zerobicast∋ refl refl = refl
 
 sucbicast∋ : ∀ {k} {Γ Γ^ : Fm§ k} {A A^ C C^} (p : Γ^ ≡ Γ) (q₁ : C^ ≡ C) (q₂ : A^ ≡ A)
                (i : Γ ∋ A) →
-               (suc ∘ bicast∋ p q₂) i ≡ (bicast∋ (_,_ & p ⊗ q₁) q₂ ∘ suc) i
+               suc (bicast∋ p q₂ i) ≡ bicast∋ (_,_ & p ⊗ q₁) q₂ (suc i)
 sucbicast∋ refl refl refl zero    = refl
 sucbicast∋ refl refl refl (suc i) = suc & sucbicast∋ refl refl refl i
 
@@ -94,11 +61,11 @@ lidtren∋ (suc i) = suc & lidtren∋ i
 
 comptren∋ : ∀ {k k′ k″} {Γ : Fm§ k} {A} (η′ : k′ ≤ k″) (η : k ≤ k′) (i : Γ ∋ A) →
               tren∋ (η′ ∘≤ η) i ≡
-                bicast∋ (comprenFm§ η′ η Γ) (comprenFm η′ η A) ((tren∋ η′ ∘ tren∋ η) i)
+                bicast∋ (comprenFm§ η′ η Γ) (comprenFm η′ η A) (tren∋ η′ (tren∋ η i))
 comptren∋ η′ η zero    = zerobicast∋ (comprenFm§ η′ η _) (comprenFm η′ η _)
 comptren∋ η′ η (suc i) = suc & comptren∋ η′ η i
                        ⋮ sucbicast∋ (comprenFm§ η′ η _) (comprenFm η′ η _) (comprenFm η′ η _)
-                           ((tren∋ η′ ∘ tren∋ η) i)
+                           (tren∋ η′ (tren∋ η i))
 
 
 ----------------------------------------------------------------------------------------------------
@@ -107,12 +74,12 @@ bicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {A A^} → Γ^ ≡ Γ → A^ ≡ A → Þ 
 bicast refl refl d = d
 
 varbicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {A A^} (p : Γ^ ≡ Γ) (q : A^ ≡ A) (i : Γ ∋ A) →
-            (‵var {Þ = Þ} ∘ bicast∋ p q) i ≡ (bicast p q ∘ ‵var) i
+            ‵var {Þ = Þ} (bicast∋ p q i) ≡ bicast p q (‵var i)
 varbicast refl refl i = refl
 
 lambicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {A A^ B B^} (p : Γ^ ≡ Γ) (q₁ : A^ ≡ A) (q₂ : B^ ≡ B)
               (d : Þ / Γ , A ⊢ B) →
-              (‵lam ∘ bicast (_,_ & p ⊗ q₁) q₂) d ≡ (bicast p (_‵⊃_ & q₁ ⊗ q₂) ∘ ‵lam) d
+              ‵lam (bicast (_,_ & p ⊗ q₁) q₂ d) ≡ bicast p (_‵⊃_ & q₁ ⊗ q₂) (‵lam d)
 lambicast refl refl refl d = refl
 
 appbicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {A A^ B B^} (p : Γ^ ≡ Γ) (q₁ : A^ ≡ A) (q₂ : B^ ≡ B)
@@ -127,22 +94,22 @@ pairbicast refl refl refl d e = refl
 
 fstbicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {A A^ B B^} (p : Γ^ ≡ Γ) (q₁ : A^ ≡ A) (q₂ : B^ ≡ B)
               (d : Þ / Γ ⊢ A ‵∧ B) →
-              (‵fst ∘ bicast p (_‵∧_ & q₁ ⊗ q₂)) d ≡ (bicast p q₁ ∘ ‵fst) d
+              ‵fst (bicast p (_‵∧_ & q₁ ⊗ q₂) d) ≡ bicast p q₁ (‵fst d)
 fstbicast refl refl refl d = refl
 
 sndbicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {A A^ B B^} (p : Γ^ ≡ Γ) (q₁ : A^ ≡ A) (q₂ : B^ ≡ B)
               (d : Þ / Γ ⊢ A ‵∧ B) →
-              (‵snd ∘ bicast p (_‵∧_ & q₁ ⊗ q₂)) d ≡ (bicast p q₂ ∘ ‵snd) d
+              ‵snd (bicast p (_‵∧_ & q₁ ⊗ q₂) d) ≡ bicast p q₂ (‵snd d)
 sndbicast refl refl refl d = refl
 
 leftbicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {A A^ B B^} (p : Γ^ ≡ Γ) (q₁ : A^ ≡ A) (q₂ : B^ ≡ B)
                (d : Þ / Γ ⊢ A) →
-               (‵left ∘ bicast p q₁) d ≡ (bicast p (_‵∨_ & q₁ ⊗ q₂) ∘ ‵left) d
+               ‵left (bicast p q₁ d) ≡ bicast p (_‵∨_ & q₁ ⊗ q₂) (‵left d)
 leftbicast refl refl refl d = refl
 
 rightbicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {A A^ B B^} (p : Γ^ ≡ Γ) (q₁ : A^ ≡ A) (q₂ : B^ ≡ B)
                 (d : Þ / Γ ⊢ B) →
-                (‵right ∘ bicast p q₂) d ≡ (bicast p (_‵∨_ & q₁ ⊗ q₂) ∘ ‵right) d
+                ‵right (bicast p q₂ d) ≡ bicast p (_‵∨_ & q₁ ⊗ q₂) (‵right d)
 rightbicast refl refl refl d = refl
 
 eitherbicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {A A^ B B^ C C^} (p : Γ^ ≡ Γ) (q₁ : A^ ≡ A) (q₂ : B^ ≡ B)
@@ -153,11 +120,11 @@ eitherbicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {A A^ B B^ C C^} (p : Γ^ ≡ Γ) (q
 eitherbicast refl refl refl refl c d e = refl
 
 abortbicast : ∀ {k} {Γ Γ^ : Fm§ k} {C C^} (p : Γ^ ≡ Γ) (q : C^ ≡ C) (d : HA / Γ ⊢ ‵⊥) →
-                (‵abort ∘ bicast p refl) d ≡ (bicast p q ∘ ‵abort) d
+                ‵abort (bicast p refl d) ≡ bicast p q (‵abort d)
 abortbicast refl refl d = refl
 
 magicbicast : ∀ {k} {Γ Γ^ : Fm§ k} {A A^} (p : Γ^ ≡ Γ) (q : A^ ≡ A) (d : PA / Γ , ‵¬ A ⊢ ‵⊥) →
-                (‵magic ∘ bicast (_,_ & p ⊗ (_‵⊃_ & q ⊗ refl)) refl) d ≡ (bicast p q ∘ ‵magic) d
+                ‵magic (bicast (_,_ & p ⊗ (_‵⊃_ & q ⊗ refl)) refl d) ≡ bicast p q (‵magic d)
 magicbicast refl refl d = refl
 
 reflbicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {t t^} (p : Γ^ ≡ Γ) (q : t^ ≡ t) →
@@ -166,7 +133,7 @@ reflbicast refl refl = refl
 
 symbicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {t t^ u u^} (p : Γ^ ≡ Γ) (q₁ : t^ ≡ t) (q₂ : u^ ≡ u)
               (d : Þ / Γ ⊢ t ‵= u) →
-              (‵sym ∘ bicast p (_‵=_ & q₁ ⊗ q₂)) d ≡ (bicast p (_‵=_ & q₂ ⊗ q₁) ∘ ‵sym) d
+              ‵sym (bicast p (_‵=_ & q₁ ⊗ q₂) d) ≡ bicast p (_‵=_ & q₂ ⊗ q₁) (‵sym d)
 symbicast refl refl refl d = refl
 
 transbicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {s s^ t t^ u u^} (p : Γ^ ≡ Γ) (q₁ : s^ ≡ s) (q₂ : t^ ≡ t)
@@ -234,7 +201,7 @@ lidtren (‵rec f g)              = {!!}
 postulate
   comptren : ∀ {Þ k k′ k″} {Γ : Fm§ k} {A} (η′ : k′ ≤ k″) (η : k ≤ k′) (d : Þ / Γ ⊢ A) →
                tren (η′ ∘≤ η) d ≡
-                 bicast (comprenFm§ η′ η Γ) (comprenFm η′ η A) ((tren η′ ∘ tren η) d)
+                 bicast (comprenFm§ η′ η Γ) (comprenFm η′ η A) (tren η′ (tren η d))
 -- comptren η′ η (‵var i)                = {!!}
 -- comptren η′ η (‵lam d)                = {!!}
 -- comptren η′ η (d ‵$ e)                = {!!}
@@ -277,11 +244,11 @@ consbicast§ refl refl refl δ d = refl
 
 comptren§ : ∀ {Þ k k′ k″} {Γ Δ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
               tren§ (η′ ∘≤ η) δ ≡
-                bicast§ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Δ) ((tren§ η′ ∘ tren§ η) δ)
+                bicast§ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Δ) (tren§ η′ (tren§ η δ))
 comptren§ η′ η ∙       = nilbicast§ (comprenFm§ η′ η _)
 comptren§ η′ η (δ , d) = _,_ & comptren§ η′ η δ ⊗ comptren η′ η d
                        ⋮ consbicast§ (comprenFm§ η′ η _) (comprenFm§ η′ η _) (comprenFm η′ η _)
-                           ((tren§ η′ ∘ tren§ η) δ) ((tren η′ ∘ tren η) d)
+                           (tren§ η′ (tren§ η δ)) (tren η′ (tren η d))
 
 
 ----------------------------------------------------------------------------------------------------
@@ -292,14 +259,14 @@ bicast§→≅ refl refl δ = refl
 
 -- TODO: maybe all uses of heteq in main file can be replaced with bicast/bicast§
 hcomptren§′ : ∀ {Þ k k′ k″} {Γ Δ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
-                tren§ (η′ ∘≤ η) δ ≅ (tren§ η′ ∘ tren§ η) δ
+                tren§ (η′ ∘≤ η) δ ≅ tren§ η′ (tren§ η δ)
 hcomptren§′ {Γ = Γ} {Δ} η′ η δ =
     begin
       tren§ (η′ ∘≤ η) δ
     ≡⟨ comptren§ η′ η δ ⟩
-      bicast§ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Δ) ((tren§ η′ ∘ tren§ η) δ)
+      bicast§ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Δ) (tren§ η′ (tren§ η δ))
     ≅⟨ bicast§→≅ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Δ) (tren§ η′ (tren§ η δ)) ⟩
-      (tren§ η′ ∘ tren§ η) δ
+      tren§ η′ (tren§ η δ)
     ∎
   where
     open ≅-Reasoning
