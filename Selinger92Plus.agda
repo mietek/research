@@ -106,22 +106,83 @@ comptren∋ η′ η (suc i) = suc & comptren∋ η′ η i
 bicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {A A^} → Γ^ ≡ Γ → A^ ≡ A → Þ / Γ ⊢ A → Þ / Γ^ ⊢ A^
 bicast refl refl d = d
 
+varbicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {A A^} (p : Γ^ ≡ Γ) (q : A^ ≡ A) (i : Γ ∋ A) →
+            (‵var {Þ = Þ} ∘ bicast∋ p q) i ≡ (bicast p q ∘ ‵var) i
+varbicast refl refl i = refl
+
+lambicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {A A^ B B^} (p : Γ^ ≡ Γ) (q₁ : A^ ≡ A) (q₂ : B^ ≡ B)
+              (d : Þ / Γ , A ⊢ B) →
+              (‵lam ∘ bicast (_,_ & p ⊗ q₁) q₂) d ≡ (bicast p (_‵⊃_ & q₁ ⊗ q₂) ∘ ‵lam) d
+lambicast refl refl refl d = refl
+
+appbicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {A A^ B B^} (p : Γ^ ≡ Γ) (q₁ : A^ ≡ A) (q₂ : B^ ≡ B)
+              (d : Þ / Γ ⊢ A ‵⊃ B) (e : Þ / Γ ⊢ A) →
+              (bicast p (_‵⊃_ & q₁ ⊗ q₂) d ‵$ bicast p q₁ e) ≡ bicast p q₂ (d ‵$ e)
+appbicast refl refl refl d e = refl
+
+pairbicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {A A^ B B^} (p : Γ^ ≡ Γ) (q₁ : A^ ≡ A) (q₂ : B^ ≡ B)
+               (d : Þ / Γ ⊢ A) (e : Þ / Γ ⊢ B) →
+               ‵pair (bicast p q₁ d) (bicast p q₂ e) ≡ bicast p (_‵∧_ & q₁ ⊗ q₂) (‵pair d e)
+pairbicast refl refl refl d e = refl
+
+fstbicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {A A^ B B^} (p : Γ^ ≡ Γ) (q₁ : A^ ≡ A) (q₂ : B^ ≡ B)
+              (d : Þ / Γ ⊢ A ‵∧ B) →
+              (‵fst ∘ bicast p (_‵∧_ & q₁ ⊗ q₂)) d ≡ (bicast p q₁ ∘ ‵fst) d
+fstbicast refl refl refl d = refl
+
+sndbicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {A A^ B B^} (p : Γ^ ≡ Γ) (q₁ : A^ ≡ A) (q₂ : B^ ≡ B)
+              (d : Þ / Γ ⊢ A ‵∧ B) →
+              (‵snd ∘ bicast p (_‵∧_ & q₁ ⊗ q₂)) d ≡ (bicast p q₂ ∘ ‵snd) d
+sndbicast refl refl refl d = refl
+
+leftbicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {A A^ B B^} (p : Γ^ ≡ Γ) (q₁ : A^ ≡ A) (q₂ : B^ ≡ B)
+               (d : Þ / Γ ⊢ A) →
+               (‵left ∘ bicast p q₁) d ≡ (bicast p (_‵∨_ & q₁ ⊗ q₂) ∘ ‵left) d
+leftbicast refl refl refl d = refl
+
+rightbicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {A A^ B B^} (p : Γ^ ≡ Γ) (q₁ : A^ ≡ A) (q₂ : B^ ≡ B)
+                (d : Þ / Γ ⊢ B) →
+                (‵right ∘ bicast p q₂) d ≡ (bicast p (_‵∨_ & q₁ ⊗ q₂) ∘ ‵right) d
+rightbicast refl refl refl d = refl
+
+eitherbicast : ∀ {Þ k} {Γ Γ^ : Fm§ k} {A A^ B B^ C C^} (p : Γ^ ≡ Γ) (q₁ : A^ ≡ A) (q₂ : B^ ≡ B)
+                 (q₃ : C^ ≡ C) (c : Þ / Γ ⊢ A ‵∨ B) (d : Þ / Γ , A ⊢ C) (e : Þ / Γ , B ⊢ C) →
+                 ‵either (bicast p (_‵∨_ & q₁ ⊗ q₂) c) (bicast (_,_ & p ⊗ q₁) q₃ d)
+                     (bicast (_,_ & p ⊗ q₂) q₃ e) ≡
+                   bicast p q₃ (‵either c d e)
+eitherbicast refl refl refl refl c d e = refl
+
+abortbicast : ∀ {k} {Γ Γ^ : Fm§ k} {C C^} (p : Γ^ ≡ Γ) (q : C^ ≡ C) (d : HA / Γ ⊢ ‵⊥) →
+                (‵abort ∘ bicast p refl) d ≡ (bicast p q ∘ ‵abort) d
+abortbicast refl refl d = refl
+
 lidtren : ∀ {Þ k} {Γ : Fm§ k} {A} (d : Þ / Γ ⊢ A) →
             tren id≤ d ≡ bicast (lidrenFm§ Γ) (lidrenFm A) d
-lidtren (‵var i)                = {!!}
-lidtren (‵lam d)                = {!!}
-lidtren (d ‵$ e)                = {!!}
-lidtren (‵pair d e)             = {!!}
-lidtren (‵fst d)                = {!!}
-lidtren (‵snd d)                = {!!}
-lidtren (‵left d)               = {!!}
-lidtren (‵right d)              = {!!}
-lidtren (‵either c d e)         = {!!}
+lidtren (‵var i)                = ‵var & lidtren∋ i
+                                ⋮ varbicast (lidrenFm§ _) (lidrenFm _) i
+lidtren (‵lam d)                = ‵lam & lidtren d
+                                ⋮ lambicast (lidrenFm§ _) (lidrenFm _) (lidrenFm _) d
+lidtren (d ‵$ e)                = _‵$_ & lidtren d ⊗ lidtren e
+                                ⋮ appbicast (lidrenFm§ _) (lidrenFm _) (lidrenFm _) d e
+lidtren (‵pair d e)             = ‵pair & lidtren d ⊗ lidtren e
+                                ⋮ pairbicast (lidrenFm§ _) (lidrenFm _) (lidrenFm _) d e
+lidtren (‵fst d)                = ‵fst & lidtren d
+                                ⋮ fstbicast (lidrenFm§ _) (lidrenFm _) (lidrenFm _) d
+lidtren (‵snd d)                = ‵snd & lidtren d
+                                ⋮ sndbicast (lidrenFm§ _) (lidrenFm _) (lidrenFm _) d
+lidtren (‵left d)               = ‵left & lidtren d
+                                ⋮ leftbicast (lidrenFm§ _) (lidrenFm _) (lidrenFm _) d
+lidtren (‵right d)              = ‵right & lidtren d
+                                ⋮ rightbicast (lidrenFm§ _) (lidrenFm _) (lidrenFm _) d
+lidtren (‵either c d e)         = ‵either & lidtren c ⊗ lidtren d ⊗ lidtren e
+                                ⋮ eitherbicast (lidrenFm§ _) (lidrenFm _) (lidrenFm _) (lidrenFm _)
+                                    c d e
 lidtren (‵all refl d)           = {!!}
 lidtren (‵unall t refl d)       = {!!}
 lidtren (‵ex t refl d)          = {!!}
 lidtren (‵letex refl refl d e)  = {!!}
-lidtren (‵abort d)              = {!!}
+lidtren (‵abort d)              = ‵abort & lidtren d
+                                ⋮ abortbicast (lidrenFm§ _) (lidrenFm _) d
 lidtren (‵magic d)              = {!!}
 lidtren ‵refl                   = {!!}
 lidtren (‵sym d)                = {!!}
@@ -138,7 +199,7 @@ lidtren (‵rec f g)              = {!!}
 postulate
   comptren : ∀ {Þ k k′ k″} {Γ : Fm§ k} {A} (η′ : k′ ≤ k″) (η : k ≤ k′) (d : Þ / Γ ⊢ A) →
                tren (η′ ∘≤ η) d ≡
-                 bicast (comprenFm§ η′ η Γ) (comprenFm η′ η A)((tren η′ ∘ tren η) d)
+                 bicast (comprenFm§ η′ η Γ) (comprenFm η′ η A) ((tren η′ ∘ tren η) d)
 -- comptren η′ η (‵var i)                = {!!}
 -- comptren η′ η (‵lam d)                = {!!}
 -- comptren η′ η (d ‵$ e)                = {!!}
@@ -190,9 +251,9 @@ comptren§ η′ η (δ , d) = _,_ & comptren§ η′ η δ ⊗ comptren η′ �
 
 ----------------------------------------------------------------------------------------------------
 
-rmbicast§ : ∀ {Þ k} {Γ Γ^ Δ Δ^ : Fm§ k} (p₁ : Γ^ ≡ Γ) (p₂ : Δ^ ≡ Δ) (δ : Þ / Γ ⊢§ Δ) →
+bicast§→≅ : ∀ {Þ k} {Γ Γ^ Δ Δ^ : Fm§ k} (p₁ : Γ^ ≡ Γ) (p₂ : Δ^ ≡ Δ) (δ : Þ / Γ ⊢§ Δ) →
               bicast§ p₁ p₂ δ ≅ δ
-rmbicast§ refl refl δ = refl
+bicast§→≅ refl refl δ = refl
 
 -- TODO: maybe all uses of heteq in main file can be replaced with bicast/bicast§
 hcomptren§′ : ∀ {Þ k k′ k″} {Γ Δ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
@@ -202,7 +263,7 @@ hcomptren§′ {Γ = Γ} {Δ} η′ η δ =
       tren§ (η′ ∘≤ η) δ
     ≡⟨ comptren§ η′ η δ ⟩
       bicast§ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Δ) ((tren§ η′ ∘ tren§ η) δ)
-    ≅⟨ rmbicast§ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Δ) (tren§ η′ (tren§ η δ)) ⟩
+    ≅⟨ bicast§→≅ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Δ) (tren§ η′ (tren§ η δ)) ⟩
       (tren§ η′ ∘ tren§ η) δ
     ∎
   where
