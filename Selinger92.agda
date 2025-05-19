@@ -1219,12 +1219,12 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   ‵ind    : ∀ {Þ Γ A A′ A″} (p : A [ 𝟘 /0]Fm ≡ A′) (q : wkFm A [ 𝕊 (‵tvar zero) /1]Fm ≡ A″)
               (d : Þ / Γ ⊢ A′) (e : Þ / Γ ⊢ ‵∀ (A ‵⊃ A″)) → Þ / Γ ⊢ ‵∀ A
 
-  ‵proj   : ∀ {Þ Γ n τ τ′} (i : Fin n) (p : peek i τ ≡ τ′) → Þ / Γ ⊢ ‵fun (proj i) τ ‵= τ′
+  ‵proj   : ∀ {Þ Γ n τ t} (i : Fin n) (p : peek i τ ≡ t) → Þ / Γ ⊢ ‵fun (proj i) τ ‵= t
 
   ‵comp   : ∀ {Þ Γ n m τ τ′} (g : Prim m) (φ : Prim§ n m) (p : for φ (flip ‵fun τ) ≡ τ′) →
               Þ / Γ ⊢ ‵fun (comp g φ) τ ‵= ‵fun g τ′
 
-  ‵rec    : ∀ {Þ Γ n t τ} (f : Prim n) (g : Prim (suc (suc n))) →
+  ‵rec    : ∀ {Þ Γ n τ t} (f : Prim n) (g : Prim (suc (suc n))) →
               Þ / Γ ⊢ ‵fun (rec f g) (τ , 𝟘) ‵= ‵fun f τ ‵∧
                 ‵fun (rec f g) (τ , 𝕊 t) ‵= ‵fun g (τ , t , ‵fun (rec f g) (τ , t))
 
@@ -1368,8 +1368,10 @@ tren η ‵dis                    = ‵dis
 tren η (‵inj d)                = ‵inj (tren η d)
 tren η (‵ind refl refl d e)    = ‵ind (eqrencut0Fm η _ 𝟘) (eqrencut1Fm η _ (𝕊 (‵tvar zero)))
                                    (tren η d) (tren η e)
-tren η (‵proj i refl)          = ‵proj i (eqrenpeekTm η i _)
+-- tren η (‵proj i refl)          = ‵proj i (eqrenpeekTm η i _)
+tren η (‵proj i p)             = ‵proj i (eqrenpeekTm η i _ ⋮ renTm η & p)
 tren η (‵comp g φ refl)        = ‵comp g φ (eqrenforTm η φ _)
+-- tren η (‵comp g φ p)           = ‵comp g φ (eqrenforTm η φ _ ⋮ renTm§ η & p)
 tren η (‵rec f g)              = ‵rec f g
 
 twk : ∀ {Þ k} {Γ : Fm§ k} {A} → Þ / Γ ⊢ A → Þ / wkFm§ Γ ⊢ wkFm A
