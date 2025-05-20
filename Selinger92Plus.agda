@@ -200,16 +200,18 @@ transbicast refl refl refl refl d e = refl
 
 disbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {t ^t} (p : ^Γ ≡ Γ) (q : ^t ≡ t) →
               ‵dis {Þ = Þ} {t = ^t} ≡
-                bicast p (_‵⊃_
-                           & (_‵=_ & (‵fun suc & (refl ⊗ q)) ⊗ refl)
-                           ⊗ refl) (‵dis {t = t})
+                bicast p
+                  (_‵⊃_
+                    & (_‵=_ & (‵fun suc & (refl ⊗ q)) ⊗ refl)
+                    ⊗ refl) (‵dis {t = t})
 disbicast refl refl = refl
 
 injbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {t ^t u ^u} (p : ^Γ ≡ Γ) (q₁ : ^t ≡ t) (q₂ : ^u ≡ u)
                 (d : Þ / Γ ⊢ 𝕊 t ‵= 𝕊 u) →
-              ‵inj (bicast p (_‵=_
-                               & (‵fun suc & (refl ⊗ q₁))
-                               ⊗ ‵fun suc & (refl ⊗ q₂)) d) ≡
+              ‵inj (bicast p
+                  (_‵=_
+                    & (‵fun suc & (refl ⊗ q₁))
+                    ⊗ ‵fun suc & (refl ⊗ q₂)) d) ≡
                 bicast p (_‵=_ & q₁ ⊗ q₂) (‵inj d)
 injbicast refl refl refl d = refl
 
@@ -225,7 +227,7 @@ recbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {n ^τ τ t ^t f g} (p₁ : ^Γ ≡ Γ)
                         & (‵fun (rec f g) & (_,_ & p₂ ⊗ refl))
                         ⊗ ‵fun f & p₂)
                     ⊗ (_‵=_
-                        & (‵fun (rec f g) & (_,_ & p₂ ⊗ ‵fun suc & (_⊗_ {f = _,_ ∙} refl q)))
+                        & (‵fun (rec f g) & (_,_ & p₂ ⊗ ‵fun suc & (_⊗_ {f = (∙ ,_)} refl q)))
                         ⊗ ‵fun g
                             & (_,_
                                 & (_,_ & p₂ ⊗ q)
@@ -236,26 +238,14 @@ recbicast refl refl refl = refl
 module _ where
   open ≡-Reasoning
 
-  hmm : ∀ {k n} {τ ^τ : Tm§ k n} {t ^t : Tm k} (p₂ : ^τ ≡ τ) (q₃ : ^t ≡ t) (i : Fin n) (q : peek i τ ≡ t) →
-          peek i ^τ ≡ ^t
-  hmm refl refl i q = q
-
-  omg : ∀ {k n} {τ ^τ : Tm§ k n} {t ^t : Tm k} (p₂ : ^τ ≡ τ) (q₃ : ^t ≡ t) (i : Fin n) (q : peek i τ ≡ t) →
-          peek i (renTm§ id≤ τ) ≡ renTm id≤ t
-  omg {τ = τ} {t = t} refl refl i q =
-      begin
-        peek i (renTm§ id≤ τ)
-      ≡⟨ peek i & lidrenTm§ τ ⟩
-        peek i τ
-      ≡⟨ q ⟩
-        t
-      ≡⟨ lidrenTm t ⁻¹ ⟩
-        renTm id≤ t
-      ∎
+  eqpeek : ∀ {k n} {τ ^τ : Tm§ k n} {t ^t : Tm k} (p₂ : ^τ ≡ τ) (q₃ : ^t ≡ t) (i : Fin n)
+             (q : peek i τ ≡ t) →
+             peek i ^τ ≡ ^t
+  eqpeek refl refl i q = q
 
   projbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {n} {τ ^τ : Tm§ k n} {t ^t : Tm k} (p₁ : ^Γ ≡ Γ) (p₂ : ^τ ≡ τ) (q₃ : ^t ≡ t)
                  (i : Fin n) (q : peek i τ ≡ t) →
-                 ‵proj i (hmm p₂ q₃ i q) ≡
+                 ‵proj i (eqpeek p₂ q₃ i q) ≡
                    bicast {Þ = Þ} p₁
                      (_‵=_
                        & (‵fun (proj i) & p₂)
@@ -306,8 +296,8 @@ module _ where
   lidtren {Γ = Γ} (‵proj {τ = τ} {t} i p) =
       begin
         ‵proj i (eqrenpeekTm id≤ i τ ⋮ renTm id≤ & p)
-      ≡⟨ ‵proj i & uip {!omg (lidrenTm§ τ) (lidrenTm t) i p!} {!omg (lidrenTm§ τ) (lidrenTm t) i p!} ⟩
-        ‵proj i (hmm (lidrenTm§ τ) (lidrenTm t) i p)
+      ≡⟨ ‵proj i & uip (eqrenpeekTm id≤ i τ ⋮ renTm id≤ & p) (eqpeek (lidrenTm§ τ) (lidrenTm t) i p) ⟩
+        ‵proj i (eqpeek (lidrenTm§ τ) (lidrenTm t) i p)
       ≡⟨ projbicast (lidrenFm§ Γ) (lidrenTm§ τ) (lidrenTm t) i p ⟩
         bicast (lidrenFm§ Γ) (_‵=_ & (‵fun (proj i) & lidrenTm§ τ) ⊗ lidrenTm t) (‵proj i p)
       ∎
