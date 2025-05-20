@@ -1198,24 +1198,24 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   --     A(x₀) ﹡
   -- --------------
   --   ∀y.A[y/xₒ]
-  ‵all    : ∀ {Þ Γ Γ∗ A} (p : Γ∗ ≡ wkFm§ Γ) (d : Þ / Γ∗ ⊢ A) → Þ / Γ ⊢ ‵∀ A
+  ‵all    : ∀ {Þ Γ Γ∗ A} (r : Γ∗ ≡ wkFm§ Γ) (d : Þ / Γ∗ ⊢ A) → Þ / Γ ⊢ ‵∀ A
 
   --   ∀y.A[y/x₀]
   -- --------------
   --    A[t/x₀]
-  ‵unall  : ∀ {Þ Γ A A∗} (t : Tm k) (p : A [ t /0]Fm ≡ A∗) (d : Þ / Γ ⊢ ‵∀ A) → Þ / Γ ⊢ A∗
+  ‵unall  : ∀ {Þ Γ A A∗} (t : Tm k) (r : A [ t /0]Fm ≡ A∗) (d : Þ / Γ ⊢ ‵∀ A) → Þ / Γ ⊢ A∗
 
   --    A[t/x₀]
   -- --------------
   --   ∃y.A[y/x₀]
-  ‵ex     : ∀ {Þ Γ A A∗} (t : Tm k) (p : A [ t /0]Fm ≡ A∗) (d : Þ / Γ ⊢ A∗) → Þ / Γ ⊢ ‵∃ A
+  ‵ex     : ∀ {Þ Γ A A∗} (t : Tm k) (r : A [ t /0]Fm ≡ A∗) (d : Þ / Γ ⊢ A∗) → Þ / Γ ⊢ ‵∃ A
 
   --                 A(x₀)
   --                   ⋮
   --   ∃y.A[y/x₀]      C
   -- -----------------------
   --           C
-  ‵letex  : ∀ {Þ Γ Γ∗ A C C∗} (p : Γ∗ ≡ wkFm§ Γ) (q : C∗ ≡ wkFm C) (d : Þ / Γ ⊢ ‵∃ A)
+  ‵letex  : ∀ {Þ Γ Γ∗ A C C∗} (r₁ : Γ∗ ≡ wkFm§ Γ) (r₂ : C∗ ≡ wkFm C) (d : Þ / Γ ⊢ ‵∃ A)
               (e : Þ / Γ∗ , A ⊢ C∗) → Þ / Γ ⊢ C
 
   -- explosion (ex falso quodlibet) as primitive in Heyting arithmetic
@@ -1228,7 +1228,7 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   ‵sym    : ∀ {Þ Γ t u} (d : Þ / Γ ⊢ t ‵= u) → Þ / Γ ⊢ u ‵= t
   ‵trans  : ∀ {Þ Γ s t u} (d : Þ / Γ ⊢ s ‵= t) (e : Þ / Γ ⊢ t ‵= u) → Þ / Γ ⊢ s ‵= u
 
-  ‵cong   : ∀ {Þ Γ n τ τ∗ t u} (f : Prim n) (i : Fin n) (p : peek i τ ≡ t) (q : poke i u τ ≡ τ∗)
+  ‵cong   : ∀ {Þ Γ n τ τ∗ t u} (f : Prim n) (i : Fin n) (r₁ : peek i τ ≡ t) (r₂ : poke i u τ ≡ τ∗)
               (d : Þ / Γ ⊢ t ‵= u) → Þ / Γ ⊢ ‵fun f τ ‵= ‵fun f τ∗
 
   ‵dis    : ∀ {Þ Γ t} → Þ / Γ ⊢ 𝕊 t ‵≠ 𝟘
@@ -1238,12 +1238,12 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   --   A[0/x₀]    ∀y.A[y/x₀]→A[y+1/x₀]
   -- ------------------------------------
   --              ∀y.A[y/x₀]
-  ‵ind    : ∀ {Þ Γ A A∗ A∗∗} (p : A [ 𝟘 /0]Fm ≡ A∗) (q : wkFm A [ 𝕊 (‵tvar zero) /1]Fm ≡ A∗∗)
+  ‵ind    : ∀ {Þ Γ A A∗ A∗∗} (r₁ : A [ 𝟘 /0]Fm ≡ A∗) (r₂ : wkFm A [ 𝕊 (‵tvar zero) /1]Fm ≡ A∗∗)
               (d : Þ / Γ ⊢ A∗) (e : Þ / Γ ⊢ ‵∀ (A ‵⊃ A∗∗)) → Þ / Γ ⊢ ‵∀ A
 
-  ‵proj   : ∀ {Þ Γ n τ t} (i : Fin n) (p : peek i τ ≡ t) → Þ / Γ ⊢ ‵fun (proj i) τ ‵= t
+  ‵proj   : ∀ {Þ Γ n τ t} (i : Fin n) (r : peek i τ ≡ t) → Þ / Γ ⊢ ‵fun (proj i) τ ‵= t
 
-  ‵comp   : ∀ {Þ Γ n m τ τ∗} (g : Prim m) (φ : Prim§ n m) (p : for φ (flip ‵fun τ) ≡ τ∗) →
+  ‵comp   : ∀ {Þ Γ n m τ τ∗} (g : Prim m) (φ : Prim§ n m) (r : for φ (flip ‵fun τ) ≡ τ∗) →
               Þ / Γ ⊢ ‵fun (comp g φ) τ ‵= ‵fun g τ∗
 
   ‵rec    : ∀ {Þ Γ n τ t} (f : Prim n) (g : Prim (suc (suc n))) →
@@ -1810,14 +1810,14 @@ cast⊑-slide refl η = lift⊑ & ( lid⊑ η
 --                   tren⊑ η′ ζ ∘⊑ cast⊑ ((flip renFm§ Γ) & e)
 -- cast⊑-ren {η = η} {η′ = η′} ζ refl = ( lid⊑ (tren⊑ η ζ)  ⋮ rid⊑ (tren⊑ η ζ) ⁻¹ )
 
-eqall : ∀ {Þ k} {Γ : Fm§ k} {^Γ A} (p : ^Γ ≡ wkFm§ Γ) (d : Þ / ^Γ ⊢ A) →
-          ‵all refl (ren (cast⊑ p) d) ≡ ‵all p d
+eqall : ∀ {Þ k} {Γ : Fm§ k} {Γ∗ A} (r : Γ∗ ≡ wkFm§ Γ) (d : Þ / Γ∗ ⊢ A) →
+          ‵all refl (ren (cast⊑ r) d) ≡ ‵all r d
 eqall refl d = ‵all refl & lidren d
 
-eqletex : ∀ {Þ k} {Γ : Fm§ k} {^Γ A C ^C} (p : ^Γ ≡ wkFm§ Γ) (q : ^C ≡ wkFm C)
-            (d : Þ / Γ ⊢ ‵∃ A) (e : Þ / ^Γ , A ⊢ ^C) →
-            ‵letex refl q d (ren (lift⊑ (cast⊑ p)) e) ≡ ‵letex p q d e
-eqletex refl q d e = ‵letex refl q d & lidren e
+eqletex : ∀ {Þ k} {Γ : Fm§ k} {Γ∗ A C C∗} (r₁ : Γ∗ ≡ wkFm§ Γ) (r₂ : C∗ ≡ wkFm C)
+            (d : Þ / Γ ⊢ ‵∃ A) (e : Þ / Γ∗ , A ⊢ C∗) →
+            ‵letex refl r₂ d (ren (lift⊑ (cast⊑ r₁)) e) ≡ ‵letex r₁ r₂ d e
+eqletex refl r₂ d e = ‵letex refl r₂ d & lidren e
 
 
 ----------------------------------------------------------------------------------------------------
