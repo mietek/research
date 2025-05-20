@@ -63,19 +63,19 @@ open import Relation.Nullary.Decidable public
 -- 0.0. missing things
 
 infix 9 _⁻¹
-_⁻¹ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≡ x′ → x′ ≡ x
+_⁻¹ : ∀ {𝓍} {X : Set 𝓍} {x ^x : X} → x ≡ ^x → ^x ≡ x
 refl ⁻¹ = refl
 
 infixr 4 _⋮_
-_⋮_ : ∀ {𝓍} {X : Set 𝓍} {x x′ x″ : X} → x ≡ x′ → x′ ≡ x″ → x ≡ x″
+_⋮_ : ∀ {𝓍} {X : Set 𝓍} {x ^x ^^x : X} → x ≡ ^x → ^x ≡ ^^x → x ≡ ^^x
 refl ⋮ refl = refl
 
 infixl 9 _&_
-_&_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (f : X → Y) {x x′} → x ≡ x′ → f x ≡ f x′
+_&_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (f : X → Y) {x ^x} → x ≡ ^x → f x ≡ f ^x
 f & refl = refl
 
 infixl 8 _⊗_
-_⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {f g : X → Y} {x x′} → f ≡ g → x ≡ x′ → f x ≡ g x′
+_⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {f g : X → Y} {x ^x} → f ≡ g → x ≡ ^x → f x ≡ g ^x
 refl ⊗ refl = refl
 
 module ≡-Reasoning where
@@ -134,20 +134,19 @@ _ʰ⋮_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : Set 𝓏} {x :
 refl ʰ⋮ refl = refl
 
 infixl 9 _ʰ&_
-_ʰ&_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} (f : ∀ x → Y x) {x x′} →
-         x ≅ x′ → f x ≅ f x′
+_ʰ&_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} (f : ∀ x → Y x) {x ^x} → x ≅ ^x → f x ≅ f ^x
 f ʰ& refl = refl
 
 -- TODO: fix this so that it actually works
 infixl 8 _ʰ⊗_
-_ʰ⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ x → X → Y x} {x x′} →
-         f ≅ g → x ≅ x′ → f x ≅ g x′
+_ʰ⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ x → X → Y x} {x ^x} → f ≅ g → x ≅ ^x →
+         f x ≅ g ^x
 refl ʰ⊗ refl = refl
 
-≅→≡ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≅ x′ → x ≡ x′
+≅→≡ : ∀ {𝓍} {X : Set 𝓍} {x ^x : X} → x ≅ ^x → x ≡ ^x
 ≅→≡ refl = refl
 
-≡→≅ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≡ x′ → x ≅ x′
+≡→≅ : ∀ {𝓍} {X : Set 𝓍} {x ^x : X} → x ≡ ^x → x ≅ ^x
 ≡→≅ refl = refl
 
 module ≅-Reasoning where
@@ -169,12 +168,12 @@ module ≅-Reasoning where
                y ≅ x → y ≅ z → x ≅ z
   x ≅⟨ p ⟩⁻¹ q = p ʰ⁻¹ ʰ⋮ q
 
-  _≡⟨_⟩_ : ∀ {𝓍 𝓏} {X : Set 𝓍} {Z : Set 𝓏} (x : X) {x′} {z : Z} →
-             x ≡ x′ → x′ ≅ z → x ≅ z
+  _≡⟨_⟩_ : ∀ {𝓍 𝓏} {X : Set 𝓍} {Z : Set 𝓏} (x : X) {^x} {z : Z} →
+             x ≡ ^x → ^x ≅ z → x ≅ z
   x ≡⟨ p ⟩ q = ≡→≅ p ʰ⋮ q
 
-  _≡⟨_⟩⁻¹_ : ∀ {𝓍 𝓏} {X : Set 𝓍} {Z : Set 𝓏} (x : X) {x′} {z : Z} →
-               x′ ≡ x → x′ ≅ z → x ≅ z
+  _≡⟨_⟩⁻¹_ : ∀ {𝓍 𝓏} {X : Set 𝓍} {Z : Set 𝓏} (x : X) {^x} {z : Z} →
+               ^x ≡ x → ^x ≅ z → x ≅ z
   x ≡⟨ p ⟩⁻¹ q = ≡→≅ (p ⁻¹) ʰ⋮ q
 
   _∎ : ∀ {𝓍} {X : Set 𝓍} (x : X) → x ≅ x
@@ -1199,25 +1198,25 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   --     A(x₀)
   -- --------------
   --   ∀y.A[y/xₒ]
-  ‵all    : ∀ {Þ Γ Γ′ A} (p : Γ′ ≡ wkFm§ Γ) (d : Þ / Γ′ ⊢ A) → Þ / Γ ⊢ ‵∀ A
+  ‵all    : ∀ {Þ Γ ^Γ A} (p : ^Γ ≡ wkFm§ Γ) (d : Þ / ^Γ ⊢ A) → Þ / Γ ⊢ ‵∀ A
 
   --   ∀y.A[y/x₀]
   -- --------------
   --    A[t/x₀]
-  ‵unall  : ∀ {Þ Γ A A′} (t : Tm k) (p : A [ t /0]Fm ≡ A′) (d : Þ / Γ ⊢ ‵∀ A) → Þ / Γ ⊢ A′
+  ‵unall  : ∀ {Þ Γ A ^A} (t : Tm k) (p : A [ t /0]Fm ≡ ^A) (d : Þ / Γ ⊢ ‵∀ A) → Þ / Γ ⊢ ^A
 
   --    A[t/x₀]
   -- --------------
   --   ∃y.A[y/x₀]
-  ‵ex     : ∀ {Þ Γ A A′} (t : Tm k) (p : A [ t /0]Fm ≡ A′) (d : Þ / Γ ⊢ A′) → Þ / Γ ⊢ ‵∃ A
+  ‵ex     : ∀ {Þ Γ A ^A} (t : Tm k) (p : A [ t /0]Fm ≡ ^A) (d : Þ / Γ ⊢ ^A) → Þ / Γ ⊢ ‵∃ A
 
   --                 A(x₀)
   --                   ⋮
   --   ∃y.A[y/x₀]      C
   -- -----------------------
   --           C
-  ‵letex  : ∀ {Þ Γ Γ′ A C C′} (p : Γ′ ≡ wkFm§ Γ) (q : C′ ≡ wkFm C) (d : Þ / Γ ⊢ ‵∃ A)
-              (e : Þ / Γ′ , A ⊢ C′) → Þ / Γ ⊢ C
+  ‵letex  : ∀ {Þ Γ ^Γ A C ^C} (p : ^Γ ≡ wkFm§ Γ) (q : ^C ≡ wkFm C) (d : Þ / Γ ⊢ ‵∃ A)
+              (e : Þ / ^Γ , A ⊢ ^C) → Þ / Γ ⊢ C
 
   -- explosion (ex falso quodlibet) as primitive in Heyting arithmetic
   ‵abort  : ∀ {Γ C} (d : HA / Γ ⊢ ‵⊥) → HA / Γ ⊢ C
@@ -1229,8 +1228,8 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   ‵sym    : ∀ {Þ Γ t u} (d : Þ / Γ ⊢ t ‵= u) → Þ / Γ ⊢ u ‵= t
   ‵trans  : ∀ {Þ Γ s t u} (d : Þ / Γ ⊢ s ‵= t) (e : Þ / Γ ⊢ t ‵= u) → Þ / Γ ⊢ s ‵= u
 
-  ‵cong   : ∀ {Þ Γ n τ τ′ t u} (f : Prim n) (i : Fin n) (p : peek i τ ≡ t) (q : poke i u τ ≡ τ′)
-              (d : Þ / Γ ⊢ t ‵= u) → Þ / Γ ⊢ ‵fun f τ ‵= ‵fun f τ′
+  ‵cong   : ∀ {Þ Γ n τ ^τ t u} (f : Prim n) (i : Fin n) (p : peek i τ ≡ t) (q : poke i u τ ≡ ^τ)
+              (d : Þ / Γ ⊢ t ‵= u) → Þ / Γ ⊢ ‵fun f τ ‵= ‵fun f ^τ
 
   ‵dis    : ∀ {Þ Γ t} → Þ / Γ ⊢ 𝕊 t ‵≠ 𝟘
 
@@ -1239,13 +1238,13 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   --   A[0/x₀]    ∀y.A[y/x₀]→A[y+1/x₀]
   -- ------------------------------------
   --              ∀y.A[y/x₀]
-  ‵ind    : ∀ {Þ Γ A A′ A″} (p : A [ 𝟘 /0]Fm ≡ A′) (q : wkFm A [ 𝕊 (‵tvar zero) /1]Fm ≡ A″)
-              (d : Þ / Γ ⊢ A′) (e : Þ / Γ ⊢ ‵∀ (A ‵⊃ A″)) → Þ / Γ ⊢ ‵∀ A
+  ‵ind    : ∀ {Þ Γ A ^A ^^A} (p : A [ 𝟘 /0]Fm ≡ ^A) (q : wkFm A [ 𝕊 (‵tvar zero) /1]Fm ≡ ^^A)
+              (d : Þ / Γ ⊢ ^A) (e : Þ / Γ ⊢ ‵∀ (A ‵⊃ ^^A)) → Þ / Γ ⊢ ‵∀ A
 
   ‵proj   : ∀ {Þ Γ n τ t} (i : Fin n) (p : peek i τ ≡ t) → Þ / Γ ⊢ ‵fun (proj i) τ ‵= t
 
-  ‵comp   : ∀ {Þ Γ n m τ τ′} (g : Prim m) (φ : Prim§ n m) (p : for φ (flip ‵fun τ) ≡ τ′) →
-              Þ / Γ ⊢ ‵fun (comp g φ) τ ‵= ‵fun g τ′
+  ‵comp   : ∀ {Þ Γ n m τ ^τ} (g : Prim m) (φ : Prim§ n m) (p : for φ (flip ‵fun τ) ≡ ^τ) →
+              Þ / Γ ⊢ ‵fun (comp g φ) τ ‵= ‵fun g ^τ
 
   ‵rec    : ∀ {Þ Γ n τ t} (f : Prim n) (g : Prim (suc (suc n))) →
               Þ / Γ ⊢ ‵fun (rec f g) (τ , 𝟘) ‵= ‵fun f τ ‵∧
@@ -1392,10 +1391,8 @@ tren η ‵dis                    = ‵dis
 tren η (‵inj d)                = ‵inj (tren η d)
 tren η (‵ind refl refl d e)    = ‵ind (eqrencut0Fm η _ 𝟘) (eqrencut1Fm η _ (𝕊 (‵tvar zero)))
                                    (tren η d) (tren η e)
--- tren η (‵proj i refl)          = ‵proj i (eqrenpeekTm η i _)
 tren η (‵proj i p)             = ‵proj i (eqrenpeekTm η i _ ⋮ renTm η & p)
-tren η (‵comp g φ refl)        = ‵comp g φ (eqrenforTm η φ _)
--- tren η (‵comp g φ p)           = ‵comp g φ (eqrenforTm η φ _ ⋮ renTm§ η & p)
+tren η (‵comp g φ p)           = ‵comp g φ (eqrenforTm η φ _ ⋮ renTm§ η & p)
 tren η (‵rec f g)              = ‵rec f g
 
 twk : ∀ {Þ k} {Γ : Fm§ k} {A} → Þ / Γ ⊢ A → Þ / wkFm§ Γ ⊢ wkFm A
@@ -1775,23 +1772,23 @@ cast⊑ : ∀ {k} {Γ Γ′ : Fm§ k} → Γ ≡ Γ′ → Γ ⊑ Γ′
 cast⊑ refl = id⊑
 
 -- TODO: rename
-cast⊑-pair : ∀ {k} {Γ Γ′ : Fm§ k} {C C′} (p : Γ ≡ Γ′) (q : C ≡ C′) →
-               cast⊑ ((Γ′ ,_) & q) ∘⊑ lift⊑ (cast⊑ p) ≡ cast⊑ (_,_ & p ⊗ q)
+cast⊑-pair : ∀ {k} {Γ ^Γ : Fm§ k} {C ^C} (p : Γ ≡ ^Γ) (q : C ≡ ^C) →
+               cast⊑ ((^Γ ,_) & q) ∘⊑ lift⊑ (cast⊑ p) ≡ cast⊑ (_,_ & p ⊗ q)
 cast⊑-pair refl refl = lift⊑ & lid⊑ id⊑
 
 -- TODO: rename
-cast⊑-pair-alt : ∀ {k} {Γ Γ′ : Fm§ k} {C C′} (p : Γ ≡ Γ′) (q : C ≡ C′) →
+cast⊑-pair-alt : ∀ {k} {Γ ^Γ : Fm§ k} {C ^C} (p : Γ ≡ ^Γ) (q : C ≡ ^C) →
                    lift⊑ (cast⊑ p) ∘⊑ cast⊑ ((Γ ,_) & q) ≡ cast⊑ (_,_ & p ⊗ q)
 cast⊑-pair-alt refl refl = lift⊑ & lid⊑ id⊑
 
 -- TODO: rename
-cast⊑-eat : ∀ {k} {Γ Γ′ : Fm§ k} {C C′} (q : C ≡ C′) (η : Γ ⊑ Γ′) →
-              cast⊑ ((Γ′ ,_) & q) ∘⊑ wk⊑ η ≡ wk⊑ η
+cast⊑-eat : ∀ {k} {Γ ^Γ : Fm§ k} {C ^C} (q : C ≡ ^C) (η : Γ ⊑ ^Γ) →
+              cast⊑ ((^Γ ,_) & q) ∘⊑ wk⊑ η ≡ wk⊑ η
 cast⊑-eat refl η = wk⊑ & lid⊑ η
 
 -- TODO: rename
-cast⊑-slide : ∀ {k} {Γ Γ′ : Fm§ k} {C C′} (q : C ≡ C′) (η : Γ ⊑ Γ′) →
-                cast⊑ ((Γ′ ,_) & q) ∘⊑ lift⊑ η ≡ lift⊑ η ∘⊑ cast⊑ ((Γ ,_) & q)
+cast⊑-slide : ∀ {k} {Γ ^Γ : Fm§ k} {C ^C} (q : C ≡ ^C) (η : Γ ⊑ ^Γ) →
+                cast⊑ ((^Γ ,_) & q) ∘⊑ lift⊑ η ≡ lift⊑ η ∘⊑ cast⊑ ((Γ ,_) & q)
 cast⊑-slide refl η = lift⊑ & ( lid⊑ η
                              ⋮ rid⊑ η ⁻¹
                              )
@@ -1811,12 +1808,12 @@ cast⊑-slide refl η = lift⊑ & ( lid⊑ η
 --                   tren⊑ η′ ζ ∘⊑ cast⊑ ((flip renFm§ Γ) & e)
 -- cast⊑-ren {η = η} {η′ = η′} ζ refl = ( lid⊑ (tren⊑ η ζ)  ⋮ rid⊑ (tren⊑ η ζ) ⁻¹ )
 
-eqall : ∀ {Þ k} {Γ : Fm§ k} {Γ′ A} (p : Γ′ ≡ wkFm§ Γ) (d : Þ / Γ′ ⊢ A) →
+eqall : ∀ {Þ k} {Γ : Fm§ k} {^Γ A} (p : ^Γ ≡ wkFm§ Γ) (d : Þ / ^Γ ⊢ A) →
           ‵all refl (ren (cast⊑ p) d) ≡ ‵all p d
 eqall refl d = ‵all refl & lidren d
 
-eqletex : ∀ {Þ k} {Γ : Fm§ k} {Γ′ A C C′} (p : Γ′ ≡ wkFm§ Γ) (q : C′ ≡ wkFm C)
-            (d : Þ / Γ ⊢ ‵∃ A) (e : Þ / Γ′ , A ⊢ C′) →
+eqletex : ∀ {Þ k} {Γ : Fm§ k} {^Γ A C ^C} (p : ^Γ ≡ wkFm§ Γ) (q : ^C ≡ wkFm C)
+            (d : Þ / Γ ⊢ ‵∃ A) (e : Þ / ^Γ , A ⊢ ^C) →
             ‵letex refl q d (ren (lift⊑ (cast⊑ p)) e) ≡ ‵letex p q d e
 eqletex refl q d e = ‵letex refl q d & lidren e
 
@@ -2277,10 +2274,10 @@ lidsub (‵rec f g)              = refl
 
 -- TODO: clean this up; avoid heteq?
 
-hlidren§ : ∀ {Þ k} {Γ Γ′ Δ : Fm§ k} (p : Γ ≡ Γ′) (δ : Þ / Γ ⊢§ Δ) → ren§ (cast⊑ p) δ ≅ δ
+hlidren§ : ∀ {Þ k} {Γ ^Γ Δ : Fm§ k} (p : Γ ≡ ^Γ) (δ : Þ / Γ ⊢§ Δ) → ren§ (cast⊑ p) δ ≅ δ
 hlidren§ refl δ = ≡→≅ (lidren§ δ)
 
-hlidget§ : ∀ {Þ k} {Γ Δ Δ′ : Fm§ k} (p : Δ ≡ Δ′) (δ : Þ / Γ ⊢§ Δ′) → get§ (cast⊑ p) δ ≅ δ
+hlidget§ : ∀ {Þ k} {Γ Δ ^Δ : Fm§ k} (p : Δ ≡ ^Δ) (δ : Þ / Γ ⊢§ ^Δ) → get§ (cast⊑ p) δ ≅ δ
 hlidget§ refl δ = ≡→≅ (lidget§ δ)
 
 -- TODO: rename
@@ -2676,16 +2673,16 @@ module _ {Þ k} {Γ : Fm§ k} where
                   (‵lam
                     (‵snd (wk d) ‵$ ‵snd (wk e) ‵$ 0))
 
-  cong⊃ : ∀ {A A′ B B′} → Þ / Γ ⊢ A ‵⫗ A′ → Þ / Γ ⊢ B ‵⫗ B′ →
-            Þ / Γ ⊢ (A ‵⊃ B) ‵⫗ (A′ ‵⊃ B′)
+  cong⊃ : ∀ {A ^A B ^B} → Þ / Γ ⊢ A ‵⫗ ^A → Þ / Γ ⊢ B ‵⫗ ^B →
+            Þ / Γ ⊢ (A ‵⊃ B) ‵⫗ (^A ‵⊃ ^B)
   cong⊃ d e = ‵pair
                 (‵lam (‵lam
                   (‵fst (wk (wk e)) ‵$ 1 ‵$ ‵snd (wk (wk d)) ‵$ 0)))
                 (‵lam (‵lam
                   (‵snd (wk (wk e)) ‵$ 1 ‵$ ‵fst (wk (wk d)) ‵$ 0)))
 
-  cong∧ : ∀ {A A′ B B′} → Þ / Γ ⊢ A ‵⫗ A′ → Þ / Γ ⊢ B ‵⫗ B′ →
-            Þ / Γ ⊢ A ‵∧ B ‵⫗ A′ ‵∧ B′
+  cong∧ : ∀ {A ^A B ^B} → Þ / Γ ⊢ A ‵⫗ ^A → Þ / Γ ⊢ B ‵⫗ ^B →
+            Þ / Γ ⊢ A ‵∧ B ‵⫗ ^A ‵∧ ^B
   cong∧ d e = ‵pair
                 (‵lam (‵pair
                   (‵fst (wk d) ‵$ ‵fst 0)
@@ -2694,8 +2691,8 @@ module _ {Þ k} {Γ : Fm§ k} where
                   (‵snd (wk d) ‵$ ‵fst 0)
                   (‵snd (wk e) ‵$ ‵snd 0)))
 
-  cong∨ : ∀ {A A′ B B′} → Þ / Γ ⊢ A ‵⫗ A′ → Þ / Γ ⊢ B ‵⫗ B′ →
-            Þ / Γ ⊢ A ‵∨ B ‵⫗ A′ ‵∨ B′
+  cong∨ : ∀ {A ^A B ^B} → Þ / Γ ⊢ A ‵⫗ ^A → Þ / Γ ⊢ B ‵⫗ ^B →
+            Þ / Γ ⊢ A ‵∨ B ‵⫗ ^A ‵∨ ^B
   cong∨ d e = ‵pair
                 (‵lam (‵either 0
                   (‵left (‵fst (wk (wk d)) ‵$ 0))
@@ -2704,14 +2701,14 @@ module _ {Þ k} {Γ : Fm§ k} where
                   (‵left (‵snd (wk (wk d)) ‵$ 0))
                   (‵right (‵snd (wk (wk e)) ‵$ 0))))
 
-  cong∀ : ∀ {A A′} → Þ / wkFm§ Γ ⊢ A ‵⫗ A′ → Þ / Γ ⊢ ‵∀ A ‵⫗ ‵∀ A′
+  cong∀ : ∀ {A ^A} → Þ / wkFm§ Γ ⊢ A ‵⫗ ^A → Þ / Γ ⊢ ‵∀ A ‵⫗ ‵∀ ^A
   cong∀ d = ‵pair
               (‵lam
                 (‵all refl (ren (twk⊑ (wk⊑ id⊑)) (‵fst d) ‵$ ‵unall (‵tvar 0) idcutFm 0)))
               (‵lam
                 (‵all refl (ren (twk⊑ (wk⊑ id⊑)) (‵snd d) ‵$ ‵unall (‵tvar 0) idcutFm 0)))
 
-  cong∃ : ∀ {A A′} → Þ / wkFm§ Γ ⊢ A ‵⫗ A′ → Þ / Γ ⊢ ‵∃ A ‵⫗ ‵∃ A′
+  cong∃ : ∀ {A ^A} → Þ / wkFm§ Γ ⊢ A ‵⫗ ^A → Þ / Γ ⊢ ‵∃ A ‵⫗ ‵∃ ^A
   cong∃ d = ‵pair
               (‵lam (‵letex refl refl 0
                 (‵ex (‵tvar 0) idcutFm (‵fst (wk (wk d)) ‵$ 0))))
