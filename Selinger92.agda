@@ -9,7 +9,10 @@
 
 module Selinger92 where
 
--- open import Agda.Builtin.Equality.Rewrite
+open import Agda.Builtin.Equality public
+  using (_≡_ ; refl)
+
+-- open import Agda.Builtin.Equality.Rewrite public
 
 open import Agda.Builtin.FromNat public
   using (Number ; fromNat)
@@ -43,9 +46,9 @@ open import Data.Unit public
 open import Function public
   using (_∘_ ; _$_ ; const ; flip ; id)
 
-import Relation.Binary.PropositionalEquality as Id
-open Id public
-  using (_≡_ ; refl ; module ≡-Reasoning)
+open import Relation.Binary public
+  using (Decidable)
+  renaming (DecidableEquality to DecEq)
 
 open import Relation.Nullary public
   using (Dec ; yes ; no ; ¬_)
@@ -74,6 +77,26 @@ f & refl = refl
 infixl 8 _⊗_
 _⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {f g : X → Y} {x x′} → f ≡ g → x ≡ x′ → f x ≡ g x′
 refl ⊗ refl = refl
+
+module ≡-Reasoning where
+  infix  3 _∎
+  infixr 2 _≡⟨⟩_ _≡⟨_⟩_ _≡⟨_⟩⁻¹_
+  infix  1 begin_
+
+  begin_ : ∀ {𝓍} {X : Set 𝓍} {x ^x : X} → x ≡ ^x → x ≡ ^x
+  begin p = p
+
+  _≡⟨⟩_ : ∀ {𝓍} {X : Set 𝓍} (x : X) {^x : X} → x ≡ ^x → x ≡ ^x
+  x ≡⟨⟩ p = p
+
+  _≡⟨_⟩_ : ∀ {𝓍} {X : Set 𝓍} (x : X) {^x ^^x} → x ≡ ^x → ^x ≡ ^^x → x ≡ ^^x
+  x ≡⟨ p ⟩ q = p ⋮ q
+
+  _≡⟨_⟩⁻¹_ : ∀ {𝓍} {X : Set 𝓍} (x : X) {^x ^^x} → ^x ≡ x → ^x ≡ ^^x → x ≡ ^^x
+  x ≡⟨ p ⟩⁻¹ q = p ⁻¹ ⋮ q
+
+  _∎ : ∀ {𝓍} {X : Set 𝓍} (x : X) → x ≡ x
+  x ∎ = refl
 
 -- NOTE: literals for naturals
 instance
@@ -1343,6 +1366,7 @@ twk∋ i = tren∋ (wk≤ id≤) i
 -- hcomptren∋ η′ η zero    = refl
 -- hcomptren∋ η′ η (suc i) = suc ʰ& hcomptren∋ η′ η i
 
+-- TODO: to match or not to match? that is the question
 tren : ∀ {Þ k k′} {Γ : Fm§ k} {A} (η : k ≤ k′) → Þ / Γ ⊢ A → Þ / renFm§ η Γ ⊢ renFm η A
 tren η (‵var i)                = ‵var (tren∋ η i)
 tren η (‵lam d)                = ‵lam (tren η d)
@@ -1526,6 +1550,7 @@ twk§ d = tren§ (wk≤ id≤) d
 -- comptren§ η′ η (δ , d) = _,_ & comptren§ η′ η δ ⊗ comptren η′ η d
 
 -- TODO: urgh
+
 postulate
   hcomptren§ : ∀ {Þ k k′ k″} {Γ Δ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
                  tren§ (η′ ∘≤ η) δ ≅ (tren§ η′ ∘ tren§ η) δ
