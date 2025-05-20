@@ -1365,7 +1365,6 @@ twk∋ i = tren∋ (wk≤ id≤) i
 -- hcomptren∋ η′ η zero    = refl
 -- hcomptren∋ η′ η (suc i) = suc ʰ& hcomptren∋ η′ η i
 
--- TODO: to match or not to match? that is the question
 tren : ∀ {Þ k k′} {Γ : Fm§ k} {A} (η : k ≤ k′) → Þ / Γ ⊢ A → Þ / renFm§ η Γ ⊢ renFm η A
 tren η (‵var i)                = ‵var (tren∋ η i)
 tren η (‵lam d)                = ‵lam (tren η d)
@@ -1376,9 +1375,11 @@ tren η (‵snd d)                = ‵snd (tren η d)
 tren η (‵left d)               = ‵left (tren η d)
 tren η (‵right d)              = ‵right (tren η d)
 tren η (‵either c d e)         = ‵either (tren η c) (tren η d) (tren η e)
+-- TODO: remove match on refl here
 tren η (‵all refl d)           = ‵all (eqwkrenFm§ η _) (tren (lift≤ η) d)
-tren η (‵unall t refl d)       = ‵unall (renTm η t) (eqrencut0Fm η _ t) (tren η d)
-tren η (‵ex t refl d)          = ‵ex (renTm η t) (eqrencut0Fm η _ t) (tren η d)
+tren η (‵unall t p d)          = ‵unall (renTm η t) (eqrencut0Fm η _ t ⋮ renFm η & p) (tren η d)
+tren η (‵ex t p d)             = ‵ex (renTm η t) (eqrencut0Fm η _ t ⋮ renFm η & p) (tren η d)
+-- TODO: remove matches on refl here
 tren η (‵letex refl refl d e)  = ‵letex (eqwkrenFm§ η _) (eqwkrenFm η _)
                                    (tren η d) (tren (lift≤ η) e)
 tren η (‵abort d)              = ‵abort (tren η d)
@@ -1386,10 +1387,12 @@ tren η (‵magic d)              = ‵magic (tren η d)
 tren η ‵refl                   = ‵refl
 tren η (‵sym d)                = ‵sym (tren η d)
 tren η (‵trans d e)            = ‵trans (tren η d) (tren η e)
-tren η (‵cong f i refl refl d) = ‵cong f i (eqrenpeekTm η i _) (eqrenpokeTm η i _ _) (tren η d)
+tren η (‵cong f i p q d)       = ‵cong f i (eqrenpeekTm η i _ ⋮ renTm η & p)
+                                   (eqrenpokeTm η i _ _ ⋮ renTm§ η & q) (tren η d)
 tren η ‵dis                    = ‵dis
 tren η (‵inj d)                = ‵inj (tren η d)
-tren η (‵ind refl refl d e)    = ‵ind (eqrencut0Fm η _ 𝟘) (eqrencut1Fm η _ (𝕊 (‵tvar zero)))
+tren η (‵ind p q d e)          = ‵ind (eqrencut0Fm η _ 𝟘 ⋮ renFm η & p)
+                                   (eqrencut1Fm η _ (𝕊 (‵tvar zero)) ⋮ renFm (lift≤ η) & q)
                                    (tren η d) (tren η e)
 tren η (‵proj i p)             = ‵proj i (eqrenpeekTm η i _ ⋮ renTm η & p)
 tren η (‵comp g φ p)           = ‵comp g φ (eqrenforTm η φ _ ⋮ renTm§ η & p)
@@ -1546,8 +1549,7 @@ twk§ d = tren§ (wk≤ id≤) d
 -- comptren§ η′ η ∙       = refl
 -- comptren§ η′ η (δ , d) = _,_ & comptren§ η′ η δ ⊗ comptren η′ η d
 
--- TODO: urgh
-
+-- TODO: work continues in Selinger92Plus.agda
 postulate
   hcomptren§ : ∀ {Þ k k′ k″} {Γ Δ : Fm§ k} (η′ : k′ ≤ k″) (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
                  tren§ (η′ ∘≤ η) δ ≅ (tren§ η′ ∘ tren§ η) δ
@@ -1944,8 +1946,10 @@ eqtrenren {Γ = Γ} {Γ′} η ζ (‵all {A = A} refl d) =
     ∎
   where
     open ≡-Reasoning
-eqtrenren η ζ (‵unall t refl d)       = ‵unall (renTm η t) (eqrencut0Fm η _ t) & eqtrenren η ζ d
-eqtrenren η ζ (‵ex t refl d)          = ‵ex (renTm η t) (eqrencut0Fm η _ t) & eqtrenren η ζ d
+eqtrenren η ζ (‵unall t refl d)       = ‵unall (renTm η t) (eqrencut0Fm η _ t ⋮ refl)
+                                          & eqtrenren η ζ d
+eqtrenren η ζ (‵ex t refl d)          = ‵ex (renTm η t) (eqrencut0Fm η _ t ⋮ refl)
+                                          & eqtrenren η ζ d
 eqtrenren {Γ = Γ} {Γ′} η ζ (‵letex {A = A} {C} refl refl d e) =
     begin
       (ren (tren⊑ η ζ) ∘ tren η) (‵letex refl refl d e)
@@ -2008,12 +2012,13 @@ eqtrenren η ζ (‵magic d)              = ‵magic & eqtrenren η (lift⊑ ζ)
 eqtrenren η ζ ‵refl                   = refl
 eqtrenren η ζ (‵sym d)                = ‵sym & eqtrenren η ζ d
 eqtrenren η ζ (‵trans d e)            = ‵trans & eqtrenren η ζ d ⊗ eqtrenren η ζ e
-eqtrenren η ζ (‵cong f i refl refl d) = ‵cong f i (eqrenpeekTm η i _) (eqrenpokeTm η i _ _)
+eqtrenren η ζ (‵cong f i refl refl d) = ‵cong f i (eqrenpeekTm η i _ ⋮ refl)
+                                            (eqrenpokeTm η i _ _ ⋮ refl)
                                           & eqtrenren η ζ d
 eqtrenren η ζ ‵dis                    = refl
 eqtrenren η ζ (‵inj d)                = ‵inj & eqtrenren η ζ d
-eqtrenren η ζ (‵ind refl refl d e)    = ‵ind (eqrencut0Fm η _ 𝟘)
-                                            (eqrencut1Fm η _ (𝕊 (‵tvar zero)))
+eqtrenren η ζ (‵ind refl refl d e)    = ‵ind (eqrencut0Fm η _ 𝟘 ⋮ refl)
+                                            (eqrencut1Fm η _ (𝕊 (‵tvar zero)) ⋮ refl)
                                           & eqtrenren η ζ d
                                           ⊗ eqtrenren η ζ e
 eqtrenren η ζ (‵proj i refl)          = refl
@@ -2370,8 +2375,10 @@ mutual
       ∎
     where
       open ≡-Reasoning
-  eqtrensub η σ (‵unall t refl d)       = ‵unall (renTm η t) (eqrencut0Fm η _ t) & eqtrensub η σ d
-  eqtrensub η σ (‵ex t refl d)          = ‵ex (renTm η t) (eqrencut0Fm η _ t) & eqtrensub η σ d
+  eqtrensub η σ (‵unall t refl d)       = ‵unall (renTm η t) (eqrencut0Fm η _ t ⋮ refl)
+                                            & eqtrensub η σ d
+  eqtrensub η σ (‵ex t refl d)          = ‵ex (renTm η t) (eqrencut0Fm η _ t ⋮ refl)
+                                            & eqtrensub η σ d
   eqtrensub {Γ = Γ} {Ξ} η σ (‵letex {A = A} {C} refl refl d e) =
       begin
         (sub (tren§ η σ) ∘ tren η) (‵letex refl refl d e)
@@ -2436,12 +2443,13 @@ mutual
   eqtrensub η σ ‵refl                   = refl
   eqtrensub η σ (‵sym d)                = ‵sym & eqtrensub η σ d
   eqtrensub η σ (‵trans d e)            = ‵trans & eqtrensub η σ d ⊗ eqtrensub η σ e
-  eqtrensub η σ (‵cong f i refl refl d) = ‵cong f i (eqrenpeekTm η i _) (eqrenpokeTm η i _ _)
+  eqtrensub η σ (‵cong f i refl refl d) = ‵cong f i (eqrenpeekTm η i _ ⋮ refl)
+                                              (eqrenpokeTm η i _ _ ⋮ refl)
                                             & eqtrensub η σ d
   eqtrensub η σ ‵dis                    = refl
   eqtrensub η σ (‵inj d)                = ‵inj & eqtrensub η σ d
-  eqtrensub η σ (‵ind refl refl d e)    = ‵ind (eqrencut0Fm η _ 𝟘)
-                                              (eqrencut1Fm η _ (𝕊 (‵tvar zero)))
+  eqtrensub η σ (‵ind refl refl d e)    = ‵ind (eqrencut0Fm η _ 𝟘 ⋮ refl)
+                                              (eqrencut1Fm η _ (𝕊 (‵tvar zero)) ⋮ refl)
                                             & eqtrensub η σ d ⊗ eqtrensub η σ e
   eqtrensub η σ (‵proj i refl)          = refl
   eqtrensub η σ (‵comp g φ refl)        = refl

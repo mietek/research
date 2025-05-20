@@ -207,7 +207,7 @@ disbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {t ^t} (p : ^Γ ≡ Γ) (q : ^t ≡ t) 
 disbicast refl refl = refl
 
 injbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {t ^t u ^u} (p : ^Γ ≡ Γ) (q₁ : ^t ≡ t) (q₂ : ^u ≡ u)
-                (d : Þ / Γ ⊢ 𝕊 t ‵= 𝕊 u) →
+              (d : Þ / Γ ⊢ 𝕊 t ‵= 𝕊 u) →
               ‵inj (bicast p
                   (_‵=_
                     & (‵fun suc & (refl ⊗ q₁))
@@ -216,8 +216,28 @@ injbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {t ^t u ^u} (p : ^Γ ≡ Γ) (q₁ : ^t
 injbicast refl refl refl d = refl
 
 -- indbicast
--- projbicast
--- compbicast
+
+matchpeek : ∀ {k n} {τ ^τ : Tm§ k n} {t ^t} (p : ^τ ≡ τ) (q : ^t ≡ t) (i : Fin n)
+              (r : peek i τ ≡ t) →
+              peek i ^τ ≡ ^t
+matchpeek refl refl i r = r
+
+projbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {n} {τ ^τ t ^t} (p₁ : ^Γ ≡ Γ) (p₂ : ^τ ≡ τ) (q : ^t ≡ t)
+               (i : Fin n) (r : peek i τ ≡ t) →
+               ‵proj i (matchpeek p₂ q i r) ≡
+                 bicast {Þ = Þ} p₁ (_‵=_ & (‵fun (proj i) & p₂) ⊗ q) (‵proj i r)
+projbicast refl refl refl i r = refl
+
+matchfor : ∀ {k n m τ ^τ τ∗ ^τ∗} (p₁ : ^τ ≡ τ) (p₂ : ^τ∗ ≡ τ∗) (φ : Prim§ n m)
+             (r : for φ (flip (‵fun {k = k}) τ) ≡ τ∗) →
+             for φ (flip ‵fun ^τ) ≡ ^τ∗
+matchfor refl refl φ r = r
+
+compbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {n m τ ^τ τ∗ ^τ∗} (p₁ : ^Γ ≡ Γ) (p₂ : ^τ ≡ τ) (p₃ : ^τ∗ ≡ τ∗)
+               (g : Prim m) (φ : Prim§ n m) (r : for φ (flip ‵fun τ) ≡ τ∗) →
+               ‵comp {Þ = Þ} g φ (matchfor p₂ p₃ φ r) ≡
+                 bicast p₁ (_‵=_ & (‵fun (comp g φ) & p₂) ⊗ ‵fun g & p₃) (‵comp g φ r)
+compbicast refl refl refl g φ r = refl
 
 recbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {n ^τ τ t ^t f g} (p₁ : ^Γ ≡ Γ) (p₂ : ^τ ≡ τ) (q : ^t ≡ t) →
               ‵rec {Þ = Þ} {n = n} f g ≡
@@ -237,36 +257,6 @@ recbicast refl refl refl = refl
 
 module _ where
   open ≡-Reasoning
-
-  matchpeek : ∀ {k n} {τ ^τ : Tm§ k n} {t ^t} (p : ^τ ≡ τ) (q : ^t ≡ t) (i : Fin n)
-               (r : peek i τ ≡ t) →
-               peek i ^τ ≡ ^t
-  matchpeek refl refl i r = r
-
-  projbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {n} {τ ^τ t ^t} (p₁ : ^Γ ≡ Γ) (p₂ : ^τ ≡ τ) (q : ^t ≡ t)
-                 (i : Fin n) (r : peek i τ ≡ t) →
-                 ‵proj i (matchpeek p₂ q i r) ≡
-                   bicast {Þ = Þ} p₁
-                     (_‵=_
-                       & (‵fun (proj i) & p₂)
-                       ⊗ q)
-                     (‵proj i r)
-  projbicast refl refl refl i r = refl
-
-  matchfor : ∀ {k n m τ ^τ τ∗ ^τ∗} (p₁ : ^τ ≡ τ) (p₂ : ^τ∗ ≡ τ∗) (φ : Prim§ n m)
-               (r : for φ (flip (‵fun {k = k}) τ) ≡ τ∗) →
-               for φ (flip ‵fun ^τ) ≡ ^τ∗
-  matchfor refl refl φ r = r
-
-  compbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {n m τ ^τ τ∗ ^τ∗} (p₁ : ^Γ ≡ Γ) (p₂ : ^τ ≡ τ) (p₃ : ^τ∗ ≡ τ∗)
-                 (g : Prim m) (φ : Prim§ n m) (r : for φ (flip ‵fun τ) ≡ τ∗) →
-                 ‵comp {Þ = Þ} g φ (matchfor p₂ p₃ φ r) ≡
-                   bicast p₁
-                     (_‵=_
-                       & (‵fun (comp g φ) & p₂)
-                       ⊗ ‵fun g & p₃)
-                     (‵comp g φ r)
-  compbicast refl refl refl g φ r = refl
 
   lidtren : ∀ {Þ k} {Γ : Fm§ k} {A} (d : Þ / Γ ⊢ A) →
               tren id≤ d ≡ bicast (lidrenFm§ Γ) (lidrenFm A) d
@@ -289,10 +279,10 @@ module _ where
   lidtren (‵either c d e)         = ‵either & lidtren c ⊗ lidtren d ⊗ lidtren e
                                   ⋮ eitherbicast (lidrenFm§ _) (lidrenFm _) (lidrenFm _)
                                       (lidrenFm _) c d e
-  lidtren {Γ = Γ} (‵all {A = A} refl d) = {!!}
-  lidtren (‵unall t refl d)       = {!!}
-  lidtren (‵ex t refl d)          = {!!}
-  lidtren (‵letex refl refl d e)  = {!!}
+  lidtren {Γ = Γ} (‵all {Γ∗ = Γ∗} {A} p d) = {!!}
+  lidtren {Γ = Γ} (‵unall {A = A} {A∗} t p d) = {!!}
+  lidtren {Γ = Γ} (‵ex {A = A} {A∗} t p d) = {!!}
+  lidtren {Γ = Γ} (‵letex {Γ∗ = Γ∗} {A} {C} {C∗} p q d e) = {!!}
   lidtren (‵abort d)              = ‵abort & lidtren d
                                   ⋮ abortbicast (lidrenFm§ _) (lidrenFm _) d
   lidtren (‵magic d)              = ‵magic & lidtren d
@@ -303,16 +293,15 @@ module _ where
   lidtren (‵trans d e)            = ‵trans & lidtren d ⊗ lidtren e
                                   ⋮ transbicast (lidrenFm§ _) (lidrenTm _) (lidrenTm _)
                                       (lidrenTm _) d e
-  lidtren (‵cong f i refl refl d) = {!!}
+  lidtren {Γ = Γ} (‵cong {τ = τ} {τ∗} {t} {u} f i p q d) = {!!}
   lidtren ‵dis                    = disbicast (lidrenFm§ _) (lidrenTm _)
   lidtren (‵inj d)                = ‵inj & lidtren d
                                   ⋮ injbicast (lidrenFm§ _) (lidrenTm _) (lidrenTm _) d
-  lidtren (‵ind refl refl d e)    = {!!}
+  lidtren {Γ = Γ} (‵ind {A = A} {A∗} {A∗∗} p q d e) = {!!}
   lidtren {Γ = Γ} (‵proj {τ = τ} {t} i p) =
       begin
         ‵proj i (eqrenpeekTm id≤ i τ ⋮ renTm id≤ & p)
-      ≡⟨ ‵proj i
-           & uip (eqrenpeekTm id≤ i τ ⋮ renTm id≤ & p) (matchpeek (lidrenTm§ τ) (lidrenTm t) i p) ⟩
+      ≡⟨ ‵proj i & uip _ _ ⟩
         ‵proj i (matchpeek (lidrenTm§ τ) (lidrenTm t) i p)
       ≡⟨ projbicast (lidrenFm§ Γ) (lidrenTm§ τ) (lidrenTm t) i p ⟩
         bicast (lidrenFm§ Γ) (_‵=_ & (‵fun (proj i) & lidrenTm§ τ) ⊗ lidrenTm t) (‵proj i p)
@@ -320,8 +309,7 @@ module _ where
   lidtren {Γ = Γ} (‵comp {τ = τ} {τ∗} g φ p) =
       begin
         ‵comp g φ (eqrenforTm id≤ φ τ ⋮ renTm§ id≤ & p)
-      ≡⟨ ‵comp g φ
-          & uip (eqrenforTm id≤ φ τ ⋮ renTm§ id≤ & p) (matchfor (lidrenTm§ τ) (lidrenTm§ τ∗) φ p) ⟩
+      ≡⟨ ‵comp g φ & uip _ _ ⟩
         ‵comp g φ (matchfor (lidrenTm§ τ) (lidrenTm§ τ∗) φ p)
       ≡⟨ compbicast (lidrenFm§ Γ) (lidrenTm§ τ) (lidrenTm§ τ∗) g φ p ⟩
         bicast (lidrenFm§ Γ) (_‵=_ & (‵fun (comp g φ) & lidrenTm§ τ) ⊗ ‵fun g & lidrenTm§ τ∗)
