@@ -119,10 +119,15 @@ comptren∋ η′ η (suc i) = suc & comptren∋ η′ η i
 
 ----------------------------------------------------------------------------------------------------
 
-matchcut0 : ∀ {k} {A ^A A∗ ^A∗} {^t t : Tm k} (q₁ : ^A ≡ A) (q₂ : ^A∗ ≡ A∗) (q₃ : ^t ≡ t)
-              (r : A [ t /0]Fm ≡ A∗) →
-              ^A [ ^t /0]Fm ≡ ^A∗
+matchcut0 : ∀ {k} {A ^A A∗ ^A∗} {s ^s : Tm k} (q₁ : ^A ≡ A) (q₂ : ^A∗ ≡ A∗) (q₃ : ^s ≡ s)
+              (r : A [ s /0]Fm ≡ A∗) →
+              ^A [ ^s /0]Fm ≡ ^A∗
 matchcut0 refl refl refl r = r
+
+matchcut1 : ∀ {k} {A ^A A∗∗ ^A∗∗} {s ^s : Tm (suc k)} (q₁ : ^A ≡ A) (q₂ : ^A∗∗ ≡ A∗∗) (q₃ : ^s ≡ s)
+              (r : wkFm A [ s /1]Fm ≡ A∗∗) →
+              wkFm ^A [ ^s /1]Fm ≡ ^A∗∗
+matchcut1 refl refl refl r = r
 
 matchpeek : ∀ {k n} {τ ^τ : Tm§ k n} {t ^t} (p : ^τ ≡ τ) (q : ^t ≡ t) (i : Fin n)
               (r : peek i τ ≡ t) →
@@ -249,7 +254,14 @@ injbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {t ^t u ^u} (p : ^Γ ≡ Γ) (q₁ : ^t
                 bicast p (_‵=_ & q₁ ⊗ q₂) (‵inj d)
 injbicast refl refl refl d = refl
 
--- TODO: indbicast
+indbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {A ^A A∗ ^A∗ A∗∗ ^A∗∗} (p : ^Γ ≡ Γ) (q₁ : ^A ≡ A)
+              (q₂ : ^A∗ ≡ A∗) (q₃ : ^A∗∗ ≡ A∗∗)
+              (r₁ : A [ 𝟘 /0]Fm ≡ A∗) (r₂ : wkFm A [ 𝕊 (‵tvar zero) /1]Fm ≡ A∗∗)
+              (d : Þ / Γ ⊢ A∗) (e : Þ / Γ ⊢ ‵∀ (A ‵⊃ A∗∗)) →
+              ‵ind (matchcut0 q₁ q₂ refl r₁) (matchcut1 q₁ q₃ refl r₂)
+                  (bicast p q₂ d) (bicast p (‵∀_ & (_‵⊃_ & q₁ ⊗ q₃)) e) ≡
+                bicast p (‵∀_ & q₁) (‵ind r₁ r₂ d e)
+indbicast refl refl refl refl r₁ r₂ d e = refl
 
 projbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {n} {τ ^τ t ^t} (p₁ : ^Γ ≡ Γ) (p₂ : ^τ ≡ τ) (q : ^t ≡ t)
                (i : Fin n) (r : peek i τ ≡ t) →
@@ -349,7 +361,12 @@ module _ where
       begin
         ‵ind (eqrencut0Fm id≤ A 𝟘 ⋮ renFm id≤ & r₁)
           (eqrencut1Fm id≤ A (𝕊 (‵tvar zero)) ⋮ renFm (lift≤ id≤) & r₂) (tren id≤ d) (tren id≤ e)
-      ≡⟨ {!!} ⟩
+      ≡⟨ ‵ind & uip _ _ ⊗ uip _ _ ⊗ lidtren d ⊗ lidtren e ⟩
+        ‵ind (matchcut0 (lidrenFm A) (lidrenFm A∗) refl r₁)
+          (matchcut1 (lidrenFm A) (lidrenFm A∗∗) refl r₂)
+          (bicast (lidrenFm§ Γ) (lidrenFm A∗) d)
+          (bicast (lidrenFm§ Γ) (‵∀_ & (_‵⊃_ & lidrenFm A ⊗ lidrenFm A∗∗)) e)
+      ≡⟨ indbicast (lidrenFm§ Γ) (lidrenFm A) (lidrenFm A∗) (lidrenFm A∗∗) r₁ r₂ d e ⟩
         bicast (lidrenFm§ Γ) (‵∀_ & lidrenFm A) (‵ind r₁ r₂ d e)
       ∎
   lidtren {Γ = Γ} (‵proj {τ = τ} {t} i r) =
