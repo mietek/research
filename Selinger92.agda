@@ -1195,7 +1195,7 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   ‵either : ∀ {Þ Γ A B C} (c : Þ / Γ ⊢ A ‵∨ B) (d : Þ / Γ , A ⊢ C) (e : Þ / Γ , B ⊢ C) →
               Þ / Γ ⊢ C
 
-  --     A(x₀) ﹡
+  --     A(x₀)
   -- --------------
   --   ∀y.A[y/xₒ]
   ‵all    : ∀ {Þ Γ Γ∗ A} (r : Γ∗ ≡ wkFm§ Γ) (d : Þ / Γ∗ ⊢ A) → Þ / Γ ⊢ ‵∀ A
