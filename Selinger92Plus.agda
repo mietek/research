@@ -544,10 +544,10 @@ module _ where
       ⟩
         bicast (comprenFm§ η′ η Γ) (‵∀_ & comprenFm (lift≤ η′) (lift≤ η) A)
           (‵ind
-           (eqrencut0Fm η′ (renFm (lift≤ η) A) 𝟘 ⋮ renFm η′ & (eqrencut0Fm η A 𝟘 ⋮ renFm η & r₁))
-           (eqrencut1Fm η′ (renFm (lift≤ η) A) (𝕊 (‵tvar zero)) ⋮
-             renFm (lift≤ η′) & (eqrencut1Fm η A (𝕊 (‵tvar zero)) ⋮ renFm (lift≤ η) & r₂))
-           (tren η′ (tren η d)) (tren η′ (tren η e)))
+            (eqrencut0Fm η′ (renFm (lift≤ η) A) 𝟘 ⋮ renFm η′ & (eqrencut0Fm η A 𝟘 ⋮ renFm η & r₁))
+            (eqrencut1Fm η′ (renFm (lift≤ η) A) (𝕊 (‵tvar zero)) ⋮
+              renFm (lift≤ η′) & (eqrencut1Fm η A (𝕊 (‵tvar zero)) ⋮ renFm (lift≤ η) & r₂))
+            (tren η′ (tren η d)) (tren η′ (tren η e)))
       ∎
   comptren {Γ = Γ} η′ η (‵proj {τ = τ} {t} i r) =
       begin
