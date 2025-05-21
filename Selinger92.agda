@@ -198,8 +198,8 @@ peek zero    (ξ , x) = x
 peek (suc i) (ξ , x) = peek i ξ
 
 poke : ∀ {𝓍} {X : Set 𝓍} {n} → Fin n → X → Vec X n → Vec X n
-poke zero    x (ξ , y) = ξ , x
-poke (suc i) x (ξ , y) = poke i x ξ , y
+poke zero    w (ξ , x) = ξ , w
+poke (suc i) w (ξ , x) = poke i w ξ , x
 
 for : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {n} → Vec X n → (X → Y) → Vec Y n
 for ∙       f = ∙
@@ -1228,8 +1228,8 @@ data _/_⊢_ {k} : Theory → Fm§ k → Fm k → Set where
   ‵sym    : ∀ {Þ Γ t u} (d : Þ / Γ ⊢ t ‵= u) → Þ / Γ ⊢ u ‵= t
   ‵trans  : ∀ {Þ Γ s t u} (d : Þ / Γ ⊢ s ‵= t) (e : Þ / Γ ⊢ t ‵= u) → Þ / Γ ⊢ s ‵= u
 
-  ‵cong   : ∀ {Þ Γ n τ τ∗ t u} (f : Prim n) (i : Fin n) (r₁ : peek i τ ≡ t) (r₂ : poke i u τ ≡ τ∗)
-              (d : Þ / Γ ⊢ t ‵= u) → Þ / Γ ⊢ ‵fun f τ ‵= ‵fun f τ∗
+  ‵cong   : ∀ {Þ Γ n τ τ∗ s t} (f : Prim n) (i : Fin n) (r₁ : poke i s τ ≡ τ∗) (r₂ : peek i τ ≡ t)
+              (d : Þ / Γ ⊢ s ‵= t) → Þ / Γ ⊢ ‵fun f τ∗ ‵= ‵fun f τ
 
   ‵dis    : ∀ {Þ Γ t} → Þ / Γ ⊢ 𝕊 t ‵≠ 𝟘
 
@@ -1387,8 +1387,8 @@ tren η (‵magic d)              = ‵magic (tren η d)
 tren η ‵refl                   = ‵refl
 tren η (‵sym d)                = ‵sym (tren η d)
 tren η (‵trans d e)            = ‵trans (tren η d) (tren η e)
-tren η (‵cong f i r₁ r₂ d)     = ‵cong f i (eqrenpeekTm η i _ ⋮ renTm η & r₁)
-                                   (eqrenpokeTm η i _ _ ⋮ renTm§ η & r₂) (tren η d)
+tren η (‵cong f i r₁ r₂ d)     = ‵cong f i (eqrenpokeTm η i _ _ ⋮ renTm§ η & r₁)
+                                   (eqrenpeekTm η i _ ⋮ renTm η & r₂) (tren η d)
 tren η ‵dis                    = ‵dis
 tren η (‵inj d)                = ‵inj (tren η d)
 tren η (‵ind r₁ r₂ d e)        = ‵ind (eqrencut0Fm η _ 𝟘 ⋮ renFm η & r₁)
@@ -2012,8 +2012,8 @@ eqtrenren η ζ (‵magic d)              = ‵magic & eqtrenren η (lift⊑ ζ)
 eqtrenren η ζ ‵refl                   = refl
 eqtrenren η ζ (‵sym d)                = ‵sym & eqtrenren η ζ d
 eqtrenren η ζ (‵trans d e)            = ‵trans & eqtrenren η ζ d ⊗ eqtrenren η ζ e
-eqtrenren η ζ (‵cong f i refl refl d) = ‵cong f i (eqrenpeekTm η i _ ⋮ refl)
-                                            (eqrenpokeTm η i _ _ ⋮ refl)
+eqtrenren η ζ (‵cong f i refl refl d) = ‵cong f i (eqrenpokeTm η i _ _ ⋮ refl)
+                                            (eqrenpeekTm η i _ ⋮ refl)
                                           & eqtrenren η ζ d
 eqtrenren η ζ ‵dis                    = refl
 eqtrenren η ζ (‵inj d)                = ‵inj & eqtrenren η ζ d
@@ -2443,8 +2443,8 @@ mutual
   eqtrensub η σ ‵refl                   = refl
   eqtrensub η σ (‵sym d)                = ‵sym & eqtrensub η σ d
   eqtrensub η σ (‵trans d e)            = ‵trans & eqtrensub η σ d ⊗ eqtrensub η σ e
-  eqtrensub η σ (‵cong f i refl refl d) = ‵cong f i (eqrenpeekTm η i _ ⋮ refl)
-                                              (eqrenpokeTm η i _ _ ⋮ refl)
+  eqtrensub η σ (‵cong f i refl refl d) = ‵cong f i (eqrenpokeTm η i _ _ ⋮ refl)
+                                              (eqrenpeekTm η i _ ⋮ refl)
                                             & eqtrensub η σ d
   eqtrensub η σ ‵dis                    = refl
   eqtrensub η σ (‵inj d)                = ‵inj & eqtrensub η σ d

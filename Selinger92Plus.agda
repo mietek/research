@@ -119,6 +119,29 @@ comptren∋ η′ η (suc i) = suc & comptren∋ η′ η i
 
 ----------------------------------------------------------------------------------------------------
 
+matchcut0 : ∀ {k} {A ^A A∗ ^A∗} {^t t : Tm k} (q₁ : ^A ≡ A) (q₂ : ^A∗ ≡ A∗) (q₃ : ^t ≡ t)
+              (r : A [ t /0]Fm ≡ A∗) →
+              ^A [ ^t /0]Fm ≡ ^A∗
+matchcut0 refl refl refl r = r
+
+matchpeek : ∀ {k n} {τ ^τ : Tm§ k n} {t ^t} (p : ^τ ≡ τ) (q : ^t ≡ t) (i : Fin n)
+              (r : peek i τ ≡ t) →
+              peek i ^τ ≡ ^t
+matchpeek refl refl i r = r
+
+matchpoke : ∀ {k n} {τ ^τ τ∗ ^τ∗ : Tm§ k n} {s ^s t ^t : Tm k} (p₁ : ^τ ≡ τ) (p₂ : ^τ∗ ≡ τ∗)
+              (q₁ : ^s ≡ s) (q₂ : ^t ≡ t) (i : Fin n) (r : poke i s τ ≡ τ∗) →
+              poke i ^s ^τ ≡ ^τ∗
+matchpoke refl refl refl refl i r = r
+
+matchfor : ∀ {k n m τ ^τ τ∗ ^τ∗} (p₁ : ^τ ≡ τ) (p₂ : ^τ∗ ≡ τ∗) (φ : Prim§ n m)
+             (r : for φ (flip (‵fun {k = k}) τ) ≡ τ∗) →
+             for φ (flip ‵fun ^τ) ≡ ^τ∗
+matchfor refl refl φ r = r
+
+
+----------------------------------------------------------------------------------------------------
+
 bicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {A ^A} → ^Γ ≡ Γ → ^A ≡ A → Þ / Γ ⊢ A → Þ / ^Γ ⊢ ^A
 bicast refl refl d = d
 
@@ -168,12 +191,7 @@ eitherbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {A ^A B ^B C ^C} (p : ^Γ ≡ Γ) (q
                    bicast p q₃ (‵either c d e)
 eitherbicast refl refl refl refl c d e = refl
 
--- allbicast
-
-matchcut0 : ∀ {k} {A ^A A∗ ^A∗} {^t t : Tm k} (q₁ : ^A ≡ A) (q₂ : ^A∗ ≡ A∗) (q₃ : ^t ≡ t)
-              (r : A [ t /0]Fm ≡ A∗) →
-              ^A [ ^t /0]Fm ≡ ^A∗
-matchcut0 refl refl refl r = r
+-- TODO: allbicast
 
 unallbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {A ^A A∗ ^A∗ ^t t} (p : ^Γ ≡ Γ) (q₁ : ^A ≡ A) (q₂ : ^A∗ ≡ A∗)
                 (q₃ : ^t ≡ t) (r : A [ t /0]Fm ≡ A∗) (d : Þ / Γ ⊢ ‵∀ A) →
@@ -181,8 +199,13 @@ unallbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {A ^A A∗ ^A∗ ^t t} (p : ^Γ ≡ �
                   bicast p q₂ (‵unall t r d)
 unallbicast refl refl refl refl r d = refl
 
--- exbicast
--- letexbicast
+exbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {A ^A A∗ ^A∗ ^t t} (p : ^Γ ≡ Γ) (q₁ : ^A ≡ A) (q₂ : ^A∗ ≡ A∗)
+             (q₃ : ^t ≡ t) (r : A [ t /0]Fm ≡ A∗) (d : Þ / Γ ⊢ A∗) →
+             ‵ex ^t (matchcut0 q₁ q₂ q₃ r) (bicast p q₂ d) ≡
+               bicast p (‵∃_ & q₁) (‵ex t r d)
+exbicast refl refl refl refl r d = refl
+
+-- TODO: letexbicast
 
 abortbicast : ∀ {k} {Γ ^Γ : Fm§ k} {C ^C} (p : ^Γ ≡ Γ) (q : ^C ≡ C) (d : HA / Γ ⊢ ‵⊥) →
                 ‵abort (bicast p refl d) ≡ bicast p q (‵abort d)
@@ -207,7 +230,13 @@ transbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {s ^s t ^t u ^u} (p : ^Γ ≡ Γ) (q�
                   bicast p (_‵=_ & q₁ ⊗ q₃) (‵trans d e)
 transbicast refl refl refl refl d e = refl
 
--- congbicast
+congbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {n} {τ ^τ τ∗ ^τ∗ s ^s t ^t} (p₁ : ^Γ ≡ Γ) (p₂ : ^τ ≡ τ)
+               (p₃ : ^τ∗ ≡ τ∗) (q₁ : ^s ≡ s) (q₂ : ^t ≡ t) (f : Prim n) (i : Fin n)
+               (r₁ : poke i s τ ≡ τ∗) (r₂ : peek i τ ≡ t) (d : Þ / Γ ⊢ s ‵= t) →
+               ‵cong f i (matchpoke p₂ p₃ q₁ q₂ i r₁) (matchpeek p₂ q₂ i r₂)
+                   (bicast p₁ (_‵=_ & q₁ ⊗ q₂) d) ≡
+                 bicast p₁ (_‵=_ & (‵fun f & p₃) ⊗ ‵fun f & p₂) (‵cong f i r₁ r₂ d)
+congbicast refl refl refl refl refl f i r₁ r₂ d = refl
 
 disbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {t ^t} (p : ^Γ ≡ Γ) (q : ^t ≡ t) →
               ‵dis {Þ = Þ} {t = ^t} ≡
@@ -220,23 +249,13 @@ injbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {t ^t u ^u} (p : ^Γ ≡ Γ) (q₁ : ^t
                 bicast p (_‵=_ & q₁ ⊗ q₂) (‵inj d)
 injbicast refl refl refl d = refl
 
--- indbicast
-
-matchpeek : ∀ {k n} {τ ^τ : Tm§ k n} {t ^t} (p : ^τ ≡ τ) (q : ^t ≡ t) (i : Fin n)
-              (r : peek i τ ≡ t) →
-              peek i ^τ ≡ ^t
-matchpeek refl refl i r = r
+-- TODO: indbicast
 
 projbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {n} {τ ^τ t ^t} (p₁ : ^Γ ≡ Γ) (p₂ : ^τ ≡ τ) (q : ^t ≡ t)
                (i : Fin n) (r : peek i τ ≡ t) →
                ‵proj i (matchpeek p₂ q i r) ≡
                  bicast {Þ = Þ} p₁ (_‵=_ & (‵fun (proj i) & p₂) ⊗ q) (‵proj i r)
 projbicast refl refl refl i r = refl
-
-matchfor : ∀ {k n m τ ^τ τ∗ ^τ∗} (p₁ : ^τ ≡ τ) (p₂ : ^τ∗ ≡ τ∗) (φ : Prim§ n m)
-             (r : for φ (flip (‵fun {k = k}) τ) ≡ τ∗) →
-             for φ (flip ‵fun ^τ) ≡ ^τ∗
-matchfor refl refl φ r = r
 
 compbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {n m τ ^τ τ∗ ^τ∗} (p₁ : ^Γ ≡ Γ) (p₂ : ^τ ≡ τ) (p₃ : ^τ∗ ≡ τ∗)
                (g : Prim m) (φ : Prim§ n m) (r : for φ (flip ‵fun τ) ≡ τ∗) →
@@ -292,7 +311,10 @@ module _ where
   lidtren {Γ = Γ} (‵ex {A = A} {A∗} t r d) =
       begin
         ‵ex (renTm id≤ t) (eqrencut0Fm id≤ A t ⋮ renFm id≤ & r) (tren id≤ d)
-      ≡⟨ {!!} ⟩
+      ≡⟨ ‵ex (renTm id≤ t) & uip _ _ ⊗ lidtren d ⟩
+        ‵ex (renTm id≤ t) (matchcut0 (lidrenFm A) (lidrenFm A∗) (lidrenTm t) r)
+          (bicast (lidrenFm§ Γ) (lidrenFm A∗) d)
+      ≡⟨ exbicast (lidrenFm§ Γ) (lidrenFm A) (lidrenFm A∗) (lidrenTm t) r d ⟩
         bicast (lidrenFm§ Γ) (‵∃_ & lidrenFm A) (‵ex t r d)
       ∎
   lidtren {Γ = Γ} (‵letex {Γ∗ = Γ∗} {A} {C} {C∗} r₁ r₂ d e) = {! !}
@@ -306,12 +328,18 @@ module _ where
   lidtren (‵trans d e)            = ‵trans & lidtren d ⊗ lidtren e
                                   ⋮ transbicast (lidrenFm§ _) (lidrenTm _) (lidrenTm _)
                                       (lidrenTm _) d e
-  lidtren {Γ = Γ} (‵cong {τ = τ} {τ∗} {t} {u} f i r₁ r₂ d) =
+  lidtren {Γ = Γ} (‵cong {τ = τ} {τ∗} {s} {t} f i r₁ r₂ d) =
       begin
-        ‵cong f i (eqrenpeekTm id≤ i τ ⋮ renTm id≤ & r₁) (eqrenpokeTm id≤ i u τ ⋮ renTm§ id≤ & r₂)
+        ‵cong f i (eqrenpokeTm id≤ i s τ ⋮ renTm§ id≤ & r₁) (eqrenpeekTm id≤ i τ ⋮ renTm id≤ & r₂)
           (tren id≤ d)
-      ≡⟨ {!!} ⟩
-        bicast (lidrenFm§ Γ) (_‵=_ & (‵fun f & lidrenTm§ τ) ⊗ ‵fun f & lidrenTm§ τ∗)
+      ≡⟨ ‵cong f i & uip _ _ ⊗ uip _ _ ⊗ lidtren d ⟩
+        ‵cong f i (matchpoke (lidrenTm§ τ) (lidrenTm§ τ∗) (lidrenTm s) (lidrenTm t) i r₁)
+          (matchpeek (lidrenTm§ τ) (lidrenTm t) i r₂)
+          (bicast (lidrenFm§ Γ) (_‵=_ & lidrenTm s ⊗ lidrenTm t) d)
+      ≡⟨ congbicast (lidrenFm§ Γ) (lidrenTm§ τ) (lidrenTm§ τ∗) (lidrenTm s)
+           (lidrenTm t) f i r₁ r₂ d
+      ⟩
+        bicast (lidrenFm§ Γ) (_‵=_ & (‵fun f & lidrenTm§ τ∗) ⊗ ‵fun f & lidrenTm§ τ)
           (‵cong f i r₁ r₂ d)
       ∎
   lidtren ‵dis                    = disbicast (lidrenFm§ _) (lidrenTm _)
