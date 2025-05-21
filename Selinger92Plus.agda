@@ -170,11 +170,16 @@ eitherbicast refl refl refl refl c d e = refl
 
 -- allbicast
 
-unallbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {A ^A A∗ ^A∗ t ^t} (p : ^Γ ≡ Γ) (q₁ : ^A ≡ A) (q₂ : ^A∗ ≡ A∗)
+matchcut0 : ∀ {k} {A ^A A∗ ^A∗} {^t t : Tm k} (q₁ : ^A ≡ A) (q₂ : ^A∗ ≡ A∗) (q₃ : ^t ≡ t)
+              (r : A [ t /0]Fm ≡ A∗) →
+              ^A [ ^t /0]Fm ≡ ^A∗
+matchcut0 refl refl refl r = r
+
+unallbicast : ∀ {Þ k} {Γ ^Γ : Fm§ k} {A ^A A∗ ^A∗ ^t t} (p : ^Γ ≡ Γ) (q₁ : ^A ≡ A) (q₂ : ^A∗ ≡ A∗)
                 (q₃ : ^t ≡ t) (r : A [ t /0]Fm ≡ A∗) (d : Þ / Γ ⊢ ‵∀ A) →
-                ‵unall (renTm id≤ t) (eqrencut0Fm id≤ A t ⋮ renFm id≤ & r) (tren id≤ d) ≡
-                  bicast (lidrenFm§ Γ) (lidrenFm A∗) (‵unall t r d)
-unallbicast p q₁ q₂ q₃ r d = {!!}
+                ‵unall ^t (matchcut0 q₁ q₂ q₃ r) (bicast p (‵∀_ & q₁) d) ≡
+                  bicast p q₂ (‵unall t r d)
+unallbicast refl refl refl refl r d = refl
 
 -- exbicast
 -- letexbicast
@@ -278,7 +283,10 @@ module _ where
   lidtren {Γ = Γ} (‵unall {A = A} {A∗} t r d) =
       begin
         ‵unall (renTm id≤ t) (eqrencut0Fm id≤ A t ⋮ renFm id≤ & r) (tren id≤ d)
-      ≡⟨ {!!} ⟩
+      ≡⟨ ‵unall (renTm id≤ t) & uip _ _ ⊗ lidtren d ⟩
+        ‵unall (renTm id≤ t) (matchcut0 (lidrenFm A) (lidrenFm A∗) (lidrenTm t) r)
+          (bicast (lidrenFm§ Γ) (‵∀_ & lidrenFm A) d)
+      ≡⟨ unallbicast (lidrenFm§ Γ) (lidrenFm A) (lidrenFm A∗) (lidrenTm t) r d ⟩
         bicast (lidrenFm§ Γ) (lidrenFm A∗) (‵unall t r d)
       ∎
   lidtren {Γ = Γ} (‵ex {A = A} {A∗} t r d) =
@@ -300,8 +308,7 @@ module _ where
                                       (lidrenTm _) d e
   lidtren {Γ = Γ} (‵cong {τ = τ} {τ∗} {t} {u} f i r₁ r₂ d) =
       begin
-        ‵cong f i (eqrenpeekTm id≤ i τ ⋮ renTm id≤ & r₁)
-          (eqrenpokeTm id≤ i u τ ⋮ renTm§ id≤ & r₂)
+        ‵cong f i (eqrenpeekTm id≤ i τ ⋮ renTm id≤ & r₁) (eqrenpokeTm id≤ i u τ ⋮ renTm§ id≤ & r₂)
           (tren id≤ d)
       ≡⟨ {!!} ⟩
         bicast (lidrenFm§ Γ) (_‵=_ & (‵fun f & lidrenTm§ τ) ⊗ ‵fun f & lidrenTm§ τ∗)
@@ -313,8 +320,7 @@ module _ where
   lidtren {Γ = Γ} (‵ind {A = A} {A∗} {A∗∗} r₁ r₂ d e) =
       begin
         ‵ind (eqrencut0Fm id≤ A 𝟘 ⋮ renFm id≤ & r₁)
-          (eqrencut1Fm id≤ A (𝕊 (‵tvar zero)) ⋮ renFm (lift≤ id≤) & r₂)
-          (tren id≤ d) (tren id≤ e)
+          (eqrencut1Fm id≤ A (𝕊 (‵tvar zero)) ⋮ renFm (lift≤ id≤) & r₂) (tren id≤ d) (tren id≤ e)
       ≡⟨ {!!} ⟩
         bicast (lidrenFm§ Γ) (‵∀_ & lidrenFm A) (‵ind r₁ r₂ d e)
       ∎
