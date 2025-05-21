@@ -492,7 +492,7 @@ module _ {𝓍} {X : Set 𝓍} where
 --
 --   infixl 1 _>>=_
 --   _>>=_ : ∀ {𝓍 𝓎} {A : Set 𝓍} {B : Set 𝓎} → ¬ ¬ A → (A → ¬ ¬ B) → ¬ ¬ B
---   mx >>= f = λ k → mx (λ x → f x k)
+--   mx >>= f = λ k → mx λ x → f x k
 --
 --   join : ∀ {𝓍} {A : Set 𝓍} → ¬ ¬ ¬ ¬ A → ¬ ¬ A
 --   join mmx = mmx >>= λ mx → mx
@@ -1147,7 +1147,7 @@ eqrencut1Fm η A s = subFm (wkTm§ idTm§ , renTm (lift≤ η) s , ‵tvar zero)
                       & eqwkrenFm (lift≤ η) A ⁻¹
                   ⋮ eqsubrenFm (wkTm§ idTm§ , renTm (lift≤ η) s , ‵tvar zero)
                       (lift≤ (lift≤ η)) (wkFm A) ⁻¹
-                  ⋮ (flip subFm (wkFm A) ∘ (λ x → (x , renTm (lift≤ η) s , ‵tvar zero)))
+                  ⋮ (flip subFm (wkFm A) ∘ (λ x → x , renTm (lift≤ η) s , ‵tvar zero))
                       & ( eqwkgetTm§ η idTm§
                         ⋮ wkTm§
                             & ( ridgetTm§ η
