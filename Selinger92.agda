@@ -5,14 +5,10 @@
 -- first-order predicate logic with one sort (naturals) and one predicate (equality)
 -- variant with first-order structures for renaming and substitution
 
--- {-# OPTIONS --rewriting #-}
-
 module Selinger92 where
 
 open import Agda.Builtin.Equality public
   using (_≡_ ; refl)
-
--- open import Agda.Builtin.Equality.Rewrite public
 
 open import Agda.Builtin.FromNat public
   using (Number ; fromNat)
@@ -1887,7 +1883,6 @@ comptren {Γ = Γ} η′ η (‵letex {Γ∗ = Γ∗} {A} {C} {C∗} r₁ r₂ d
         (renFm (lift≤ η′) & (renFm (lift≤ η) & r₂ ⋮ eqwkrenFm η C) ⋮ eqwkrenFm η′ (renFm η C))
         (tren η′ (tren η d)) (tren (lift≤ η′) (tren (lift≤ η) e)))
   ∎
-
   where
     open ≡-Reasoning
 comptren η′ η (‵abort d)              = ‵abort & comptren η′ η d
