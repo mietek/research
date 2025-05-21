@@ -273,9 +273,9 @@ mutual
 ƒconst zero    = comp zero ∙
 ƒconst (suc x) = comp suc (∙ , ƒconst x)
 
-ok-const : ∀ x → ⟦ ƒconst x ⟧ ∙ ≡ const {B = Nat§ 0} x ∙
-ok-const zero    = refl
-ok-const (suc x) = suc & ok-const x
+testconst : ∀ x → ⟦ ƒconst x ⟧ ∙ ≡ const {B = Nat§ 0} x ∙
+testconst zero    = refl
+testconst (suc x) = suc & testconst x
 
 -- NOTE: for reference only
 -- _+_ : Nat → Nat → Nat
@@ -286,9 +286,9 @@ ok-const (suc x) = suc & ok-const x
 ƒadd = rec (proj 0)
          (comp suc (∙ , proj 0))
 
-ok-add : ∀ x y → ⟦ ƒadd ⟧ (∙ , y , x) ≡ x Nat.+ y
-ok-add zero    y = refl
-ok-add (suc x) y = suc & ok-add x y
+testadd : ∀ x y → ⟦ ƒadd ⟧ (∙ , y , x) ≡ x Nat.+ y
+testadd zero    y = refl
+testadd (suc x) y = suc & testadd x y
 
 -- NOTE: for reference only
 -- _*_ : Nat → Nat → Nat
@@ -299,10 +299,10 @@ ok-add (suc x) y = suc & ok-add x y
 ƒmul = rec (ƒconst 0)
          (comp ƒadd (∙ , proj 0 , proj 2))
 
-ok-mul : ∀ x y → ⟦ ƒmul ⟧ (∙ , y , x) ≡ x Nat.* y
-ok-mul zero    y = refl
-ok-mul (suc x) y = ((⟦ ƒadd ⟧ ∘ (_, y)) ∘ (∙ ,_)) & ok-mul x y
-                 ⋮ ok-add y (x Nat.* y)
+testmul : ∀ x y → ⟦ ƒmul ⟧ (∙ , y , x) ≡ x Nat.* y
+testmul zero    y = refl
+testmul (suc x) y = ((⟦ ƒadd ⟧ ∘ (_, y)) ∘ (∙ ,_)) & testmul x y
+                  ⋮ testadd y (x Nat.* y)
 
 -- NOTE: for reference only
 -- pred : Nat → Nat
@@ -312,9 +312,9 @@ ok-mul (suc x) y = ((⟦ ƒadd ⟧ ∘ (_, y)) ∘ (∙ ,_)) & ok-mul x y
 ƒpred = rec (ƒconst 0)
           (proj 1)
 
-ok-pred : ∀ x → ⟦ ƒpred ⟧ (∙ , x) ≡ Nat.pred x
-ok-pred zero    = refl
-ok-pred (suc x) = refl
+testpred : ∀ x → ⟦ ƒpred ⟧ (∙ , x) ≡ Nat.pred x
+testpred zero    = refl
+testpred (suc x) = refl
 
 -- TODO: subtraction
 
@@ -1377,8 +1377,8 @@ tren η (‵right d)              = ‵right (tren η d)
 tren η (‵either c d e)         = ‵either (tren η c) (tren η d) (tren η e)
 -- TODO: remove match on refl here
 tren η (‵all refl d)           = ‵all (eqwkrenFm§ η _) (tren (lift≤ η) d)
-tren η (‵unall t p d)          = ‵unall (renTm η t) (eqrencut0Fm η _ t ⋮ renFm η & p) (tren η d)
-tren η (‵ex t p d)             = ‵ex (renTm η t) (eqrencut0Fm η _ t ⋮ renFm η & p) (tren η d)
+tren η (‵unall t r d)          = ‵unall (renTm η t) (eqrencut0Fm η _ t ⋮ renFm η & r) (tren η d)
+tren η (‵ex t r d)             = ‵ex (renTm η t) (eqrencut0Fm η _ t ⋮ renFm η & r) (tren η d)
 -- TODO: remove matches on refl here
 tren η (‵letex refl refl d e)  = ‵letex (eqwkrenFm§ η _) (eqwkrenFm η _)
                                    (tren η d) (tren (lift≤ η) e)
@@ -1387,15 +1387,15 @@ tren η (‵magic d)              = ‵magic (tren η d)
 tren η ‵refl                   = ‵refl
 tren η (‵sym d)                = ‵sym (tren η d)
 tren η (‵trans d e)            = ‵trans (tren η d) (tren η e)
-tren η (‵cong f i p q d)       = ‵cong f i (eqrenpeekTm η i _ ⋮ renTm η & p)
-                                   (eqrenpokeTm η i _ _ ⋮ renTm§ η & q) (tren η d)
+tren η (‵cong f i r₁ r₂ d)     = ‵cong f i (eqrenpeekTm η i _ ⋮ renTm η & r₁)
+                                   (eqrenpokeTm η i _ _ ⋮ renTm§ η & r₂) (tren η d)
 tren η ‵dis                    = ‵dis
 tren η (‵inj d)                = ‵inj (tren η d)
-tren η (‵ind p q d e)          = ‵ind (eqrencut0Fm η _ 𝟘 ⋮ renFm η & p)
-                                   (eqrencut1Fm η _ (𝕊 (‵tvar zero)) ⋮ renFm (lift≤ η) & q)
+tren η (‵ind r₁ r₂ d e)        = ‵ind (eqrencut0Fm η _ 𝟘 ⋮ renFm η & r₁)
+                                   (eqrencut1Fm η _ (𝕊 (‵tvar zero)) ⋮ renFm (lift≤ η) & r₂)
                                    (tren η d) (tren η e)
-tren η (‵proj i p)             = ‵proj i (eqrenpeekTm η i _ ⋮ renTm η & p)
-tren η (‵comp g φ p)           = ‵comp g φ (eqrenforTm η φ _ ⋮ renTm§ η & p)
+tren η (‵proj i r)             = ‵proj i (eqrenpeekTm η i _ ⋮ renTm η & r)
+tren η (‵comp g φ r)           = ‵comp g φ (eqrenforTm η φ _ ⋮ renTm§ η & r)
 tren η (‵rec f g)              = ‵rec f g
 
 twk : ∀ {Þ k} {Γ : Fm§ k} {A} → Þ / Γ ⊢ A → Þ / wkFm§ Γ ⊢ wkFm A
@@ -1572,31 +1572,31 @@ ridtren η i = refl
 -- 3.1. derivations: renaming
 
 ren : ∀ {Þ k} {Γ Γ′ : Fm§ k} {A} → Γ ⊑ Γ′ → Þ / Γ ⊢ A → Þ / Γ′ ⊢ A
-ren η (‵var i)            = ‵var (ren∋ η i)
-ren η (‵lam d)            = ‵lam (ren (lift⊑ η) d)
-ren η (d ‵$ e)            = ren η d ‵$ ren η e
-ren η (‵pair d e)         = ‵pair (ren η d) (ren η e)
-ren η (‵fst d)            = ‵fst (ren η d)
-ren η (‵snd d)            = ‵snd (ren η d)
-ren η (‵left d)           = ‵left (ren η d)
-ren η (‵right d)          = ‵right (ren η d)
-ren η (‵either c d e)     = ‵either (ren η c) (ren (lift⊑ η) d) (ren (lift⊑ η) e)
-ren η (‵all refl d)       = ‵all refl (ren (twk⊑ η) d)
-ren η (‵unall t p d)      = ‵unall t p (ren η d)
-ren η (‵ex t p d)         = ‵ex t p (ren η d)
-ren η (‵letex refl q d e) = ‵letex refl q (ren η d) (ren (lift⊑ (twk⊑ η)) e)
-ren η (‵abort d)          = ‵abort (ren η d)
-ren η (‵magic d)          = ‵magic (ren (lift⊑ η) d)
-ren η ‵refl               = ‵refl
-ren η (‵sym d)            = ‵sym (ren η d)
-ren η (‵trans d e)        = ‵trans (ren η d) (ren η e)
-ren η (‵cong f i p q d)   = ‵cong f i p q (ren η d)
-ren η ‵dis                = ‵dis
-ren η (‵inj d)            = ‵inj (ren η d)
-ren η (‵ind p q d e)      = ‵ind p q (ren η d) (ren η e)
-ren η (‵proj i p)         = ‵proj i p
-ren η (‵comp g φ p)       = ‵comp g φ p
-ren η (‵rec f g)          = ‵rec f g
+ren η (‵var i)             = ‵var (ren∋ η i)
+ren η (‵lam d)             = ‵lam (ren (lift⊑ η) d)
+ren η (d ‵$ e)             = ren η d ‵$ ren η e
+ren η (‵pair d e)          = ‵pair (ren η d) (ren η e)
+ren η (‵fst d)             = ‵fst (ren η d)
+ren η (‵snd d)             = ‵snd (ren η d)
+ren η (‵left d)            = ‵left (ren η d)
+ren η (‵right d)           = ‵right (ren η d)
+ren η (‵either c d e)      = ‵either (ren η c) (ren (lift⊑ η) d) (ren (lift⊑ η) e)
+ren η (‵all refl d)        = ‵all refl (ren (twk⊑ η) d)
+ren η (‵unall t r d)       = ‵unall t r (ren η d)
+ren η (‵ex t r d)          = ‵ex t r (ren η d)
+ren η (‵letex refl r₂ d e) = ‵letex refl r₂ (ren η d) (ren (lift⊑ (twk⊑ η)) e)
+ren η (‵abort d)           = ‵abort (ren η d)
+ren η (‵magic d)           = ‵magic (ren (lift⊑ η) d)
+ren η ‵refl                = ‵refl
+ren η (‵sym d)             = ‵sym (ren η d)
+ren η (‵trans d e)         = ‵trans (ren η d) (ren η e)
+ren η (‵cong f i r₁ r₂ d)  = ‵cong f i r₁ r₂ (ren η d)
+ren η ‵dis                 = ‵dis
+ren η (‵inj d)             = ‵inj (ren η d)
+ren η (‵ind r₁ r₂ d e)     = ‵ind r₁ r₂ (ren η d) (ren η e)
+ren η (‵proj i r)          = ‵proj i r
+ren η (‵comp g φ r)        = ‵comp g φ r
+ren η (‵rec f g)           = ‵rec f g
 
 
 ----------------------------------------------------------------------------------------------------
@@ -1637,31 +1637,31 @@ sub∋ (σ , s) (suc i) = sub∋ σ i
 -- 3.3. derivations: substitution
 
 sub : ∀ {Þ k} {Γ Ξ : Fm§ k} {A} → Þ / Ξ ⊢§ Γ → Þ / Γ ⊢ A → Þ / Ξ ⊢ A
-sub σ (‵var i)            = sub∋ σ i
-sub σ (‵lam d)            = ‵lam (sub (lift§ σ) d)
-sub σ (d ‵$ e)            = sub σ d ‵$ sub σ e
-sub σ (‵pair d e)         = ‵pair (sub σ d) (sub σ e)
-sub σ (‵fst d)            = ‵fst (sub σ d)
-sub σ (‵snd d)            = ‵snd (sub σ d)
-sub σ (‵left d)           = ‵left (sub σ d)
-sub σ (‵right d)          = ‵right (sub σ d)
-sub σ (‵either c d e)     = ‵either (sub σ c) (sub (lift§ σ) d) (sub (lift§ σ) e)
-sub σ (‵all refl d)       = ‵all refl (sub (twk§ σ) d)
-sub σ (‵unall t p d)      = ‵unall t p (sub σ d)
-sub σ (‵ex t p d)         = ‵ex t p (sub σ d)
-sub σ (‵letex refl q d e) = ‵letex refl q (sub σ d) (sub (lift§ (twk§ σ)) e)
-sub σ (‵abort d)          = ‵abort (sub σ d)
-sub σ (‵magic d)          = ‵magic (sub (lift§ σ) d)
-sub σ ‵refl               = ‵refl
-sub σ (‵sym d)            = ‵sym (sub σ d)
-sub σ (‵trans d e)        = ‵trans (sub σ d) (sub σ e)
-sub σ (‵cong f i p q d)   = ‵cong f i p q (sub σ d)
-sub σ ‵dis                = ‵dis
-sub σ (‵inj d)            = ‵inj (sub σ d)
-sub σ (‵ind p q d e)      = ‵ind p q (sub σ d) (sub σ e)
-sub σ (‵proj i p)         = ‵proj i p
-sub σ (‵comp g φ p)       = ‵comp g φ p
-sub σ (‵rec f g)          = ‵rec f g
+sub σ (‵var i)             = sub∋ σ i
+sub σ (‵lam d)             = ‵lam (sub (lift§ σ) d)
+sub σ (d ‵$ e)             = sub σ d ‵$ sub σ e
+sub σ (‵pair d e)          = ‵pair (sub σ d) (sub σ e)
+sub σ (‵fst d)             = ‵fst (sub σ d)
+sub σ (‵snd d)             = ‵snd (sub σ d)
+sub σ (‵left d)            = ‵left (sub σ d)
+sub σ (‵right d)           = ‵right (sub σ d)
+sub σ (‵either c d e)      = ‵either (sub σ c) (sub (lift§ σ) d) (sub (lift§ σ) e)
+sub σ (‵all refl d)        = ‵all refl (sub (twk§ σ) d)
+sub σ (‵unall t r d)       = ‵unall t r (sub σ d)
+sub σ (‵ex t r d)          = ‵ex t r (sub σ d)
+sub σ (‵letex refl r₂ d e) = ‵letex refl r₂ (sub σ d) (sub (lift§ (twk§ σ)) e)
+sub σ (‵abort d)           = ‵abort (sub σ d)
+sub σ (‵magic d)           = ‵magic (sub (lift§ σ) d)
+sub σ ‵refl                = ‵refl
+sub σ (‵sym d)             = ‵sym (sub σ d)
+sub σ (‵trans d e)         = ‵trans (sub σ d) (sub σ e)
+sub σ (‵cong f i r₁ r₂ d)  = ‵cong f i r₁ r₂ (sub σ d)
+sub σ ‵dis                 = ‵dis
+sub σ (‵inj d)             = ‵inj (sub σ d)
+sub σ (‵ind r₁ r₂ d e)     = ‵ind r₁ r₂ (sub σ d) (sub σ e)
+sub σ (‵proj i r)          = ‵proj i r
+sub σ (‵comp g φ r)        = ‵comp g φ r
+sub σ (‵rec f g)           = ‵rec f g
 
 
 ----------------------------------------------------------------------------------------------------
