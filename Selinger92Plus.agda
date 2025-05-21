@@ -329,7 +329,7 @@ module _ where
       ≡⟨ exbicast (lidrenFm§ Γ) (lidrenFm A) (lidrenFm A∗) (lidrenTm t) r d ⟩
         bicast (lidrenFm§ Γ) (‵∃_ & lidrenFm A) (‵ex t r d)
       ∎
-  lidtren {Γ = Γ} (‵letex {Γ∗ = Γ∗} {A} {C} {C∗} r₁ r₂ d e) = {! !}
+  lidtren {Γ = Γ} (‵letex {Γ∗ = Γ∗} {A} {C} {C∗} r₁ r₂ d e) = {!!}
   lidtren (‵abort d)              = ‵abort & lidtren d
                                   ⋮ abortbicast (lidrenFm§ _) (lidrenFm _) d
   lidtren (‵magic d)              = ‵magic & lidtren d
@@ -426,10 +426,51 @@ module _ where
                                             (comprenFm η′ η _) (comprenFm η′ η _)
                                             (tren η′ (tren η c)) (tren η′ (tren η d))
                                             (tren η′ (tren η e))
-  comptren η′ η (‵all r d) = {!!}
-  comptren η′ η (‵unall t r d) = {!!}
-  comptren η′ η (‵ex t r d) = {!!}
-  comptren η′ η (‵letex r₁ r₂ d e) = {!!}
+  comptren {Γ = Γ} η′ η (‵all {Γ∗ = Γ∗} {A} r d) = {!!}
+  comptren {Γ = Γ} η′ η (‵unall {A = A} {A∗} t r d) =
+      begin
+        ‵unall (renTm (η′ ∘≤ η) t) (eqrencut0Fm (η′ ∘≤ η) A t ⋮ renFm (η′ ∘≤ η) & r)
+          (tren (η′ ∘≤ η) d)
+      ≡⟨ ‵unall (renTm (η′ ∘≤ η) t) & uip _ _ ⊗ comptren η′ η d ⟩
+        ‵unall (renTm (η′ ∘≤ η) t)
+          (matchcut0 (comprenFm (lift≤ η′) (lift≤ η) A) (comprenFm η′ η A∗) (comprenTm η′ η t)
+            (eqrencut0Fm η′ (renFm (lift≤ η) A) (renTm η t) ⋮
+              renFm η′ & (eqrencut0Fm η A t ⋮ renFm η & r)))
+          (bicast (comprenFm§ η′ η Γ) (‵∀_ & comprenFm (lift≤ η′) (lift≤ η) A) (tren η′ (tren η d)))
+      ≡⟨ unallbicast (comprenFm§ η′ η Γ) (comprenFm (lift≤ η′) (lift≤ η) A) (comprenFm η′ η A∗)
+           (comprenTm η′ η t)
+           (eqrencut0Fm η′ (renFm (lift≤ η) A) (renTm η t) ⋮
+             renFm η′ & (eqrencut0Fm η A t ⋮ renFm η & r))
+           (tren η′ (tren η d))
+      ⟩
+        bicast (comprenFm§ η′ η Γ) (comprenFm η′ η A∗)
+          (‵unall (renTm η′ (renTm η t))
+            (eqrencut0Fm η′ (renFm (lift≤ η) A) (renTm η t) ⋮
+              renFm η′ & (eqrencut0Fm η A t ⋮ renFm η & r))
+            (tren η′ (tren η d)))
+      ∎
+  comptren {Γ = Γ} η′ η (‵ex {A = A} {A∗} t r d) =
+      begin
+        ‵ex (renTm (η′ ∘≤ η) t) (eqrencut0Fm (η′ ∘≤ η) A t ⋮ renFm (η′ ∘≤ η) & r) (tren (η′ ∘≤ η) d)
+      ≡⟨ ‵ex (renTm (η′ ∘≤ η) t) & uip _ _ ⊗ comptren η′ η d ⟩
+        ‵ex (renTm (η′ ∘≤ η) t)
+          (matchcut0 (comprenFm (lift≤ η′) (lift≤ η) A) (comprenFm η′ η A∗) (comprenTm η′ η t)
+            (eqrencut0Fm η′ (renFm (lift≤ η) A) (renTm η t) ⋮
+              renFm η′ & (eqrencut0Fm η A t ⋮ renFm η & r)))
+          (bicast (comprenFm§ η′ η Γ) (comprenFm η′ η A∗) (tren η′ (tren η d)))
+      ≡⟨ exbicast (comprenFm§ η′ η Γ) (comprenFm (lift≤ η′) (lift≤ η) A) (comprenFm η′ η A∗)
+          (comprenTm η′ η t)
+          (eqrencut0Fm η′ (renFm (lift≤ η) A) (renTm η t) ⋮
+            renFm η′ & (eqrencut0Fm η A t ⋮ renFm η & r))
+          (tren η′ (tren η d))
+      ⟩
+        bicast (comprenFm§ η′ η Γ) (‵∃_ & comprenFm (lift≤ η′) (lift≤ η) A)
+          (‵ex (renTm η′ (renTm η t))
+            (eqrencut0Fm η′ (renFm (lift≤ η) A) (renTm η t) ⋮
+              renFm η′ & (eqrencut0Fm η A t ⋮ renFm η & r))
+            (tren η′ (tren η d)))
+      ∎
+  comptren {Γ = Γ} η′ η (‵letex {Γ∗ = Γ∗} {A} {C} {C∗} r₁ r₂ d e) = {!!}
   comptren η′ η (‵abort d)              = ‵abort & comptren η′ η d
                                         ⋮ abortbicast (comprenFm§ η′ η _) (comprenFm η′ η _)
                                             (tren η′ (tren η d))
@@ -444,14 +485,98 @@ module _ where
                                         ⋮ transbicast (comprenFm§ η′ η _) (comprenTm η′ η _)
                                             (comprenTm η′ η _) (comprenTm η′ η _)
                                             (tren η′ (tren η d)) (tren η′ (tren η e))
-  comptren η′ η (‵cong f i r₁ r₂ d) = {!!}
+  comptren {Γ = Γ} η′ η (‵cong {τ = τ} {τ∗} {s} {t} f i r₁ r₂ d) =
+      begin
+        ‵cong f i (eqrenpokeTm (η′ ∘≤ η) i s τ ⋮ renTm§ (η′ ∘≤ η) & r₁)
+          (eqrenpeekTm (η′ ∘≤ η) i τ ⋮ renTm (η′ ∘≤ η) & r₂) (tren (η′ ∘≤ η) d)
+      ≡⟨ ‵cong f i & uip _ _ ⊗ uip _ _ ⊗ comptren η′ η d ⟩
+        ‵cong f i
+          (matchpoke (comprenTm§ η′ η τ) (comprenTm§ η′ η τ∗) (comprenTm η′ η s)
+            (comprenTm η′ η t) i
+            (eqrenpokeTm η′ i (renTm η s) (renTm§ η τ) ⋮
+              renTm§ η′ & (eqrenpokeTm η i s τ ⋮ renTm§ η & r₁)))
+          (matchpeek (comprenTm§ η′ η τ) (comprenTm η′ η t) i
+            (eqrenpeekTm η′ i (renTm§ η τ) ⋮ renTm η′ & (eqrenpeekTm η i τ ⋮ renTm η & r₂)))
+          (bicast (comprenFm§ η′ η Γ) (_‵=_ & comprenTm η′ η s ⊗ comprenTm η′ η t) (tren η′ (tren η d)))
+      ≡⟨ congbicast (comprenFm§ η′ η Γ) (comprenTm§ η′ η τ) (comprenTm§ η′ η τ∗)
+           (comprenTm η′ η s) (comprenTm η′ η t) f i
+           (eqrenpokeTm η′ i (renTm η s) (renTm§ η τ) ⋮
+             renTm§ η′ & (eqrenpokeTm η i s τ ⋮ renTm§ η & r₁))
+           (eqrenpeekTm η′ i (renTm§ η τ) ⋮ renTm η′ & (eqrenpeekTm η i τ ⋮ renTm η & r₂))
+           (tren η′ (tren η d))
+      ⟩
+        bicast (comprenFm§ η′ η Γ)
+          (_‵=_ & (‵fun f & comprenTm§ η′ η τ∗) ⊗ ‵fun f & comprenTm§ η′ η τ)
+          (‵cong f i
+            (eqrenpokeTm η′ i (renTm η s) (renTm§ η τ) ⋮
+              renTm§ η′ & (eqrenpokeTm η i s τ ⋮ renTm§ η & r₁))
+            (eqrenpeekTm η′ i (renTm§ η τ) ⋮ renTm η′ & (eqrenpeekTm η i τ ⋮ renTm η & r₂))
+            (tren η′ (tren η d)))
+      ∎
   comptren η′ η ‵dis                    = disbicast (comprenFm§ η′ η _) (comprenTm η′ η _)
   comptren η′ η (‵inj d)                = ‵inj & comptren η′ η d
                                         ⋮ injbicast (comprenFm§ η′ η _) (comprenTm η′ η _)
                                             (comprenTm η′ η _) (tren η′ (tren η d))
-  comptren η′ η (‵ind r₁ r₂ d e) = {!!}
-  comptren η′ η (‵proj i r) = {!!}
-  comptren η′ η (‵comp g φ r) = {!!}
+  comptren {Γ = Γ} η′ η (‵ind {A = A} {A∗} {A∗∗} r₁ r₂ d e) =
+      begin
+        ‵ind (eqrencut0Fm (η′ ∘≤ η) A 𝟘 ⋮ renFm (η′ ∘≤ η) & r₁)
+          (eqrencut1Fm (η′ ∘≤ η) A (𝕊 (‵tvar zero)) ⋮ renFm (lift≤ (η′ ∘≤ η)) & r₂)
+          (tren (η′ ∘≤ η) d) (tren (η′ ∘≤ η) e)
+      ≡⟨ ‵ind & uip _ _ ⊗ uip _ _ ⊗ comptren η′ η d ⊗ comptren η′ η e ⟩
+        ‵ind
+          (matchcut0 (comprenFm (lift≤ η′) (lift≤ η) A) (comprenFm η′ η A∗) refl
+            (eqrencut0Fm η′ (renFm (lift≤ η) A) 𝟘 ⋮ renFm η′ & (eqrencut0Fm η A 𝟘 ⋮ renFm η & r₁)))
+          (matchcut1 (comprenFm (lift≤ η′) (lift≤ η) A) (comprenFm (lift≤ η′) (lift≤ η) A∗∗) refl
+            (eqrencut1Fm η′ (renFm (lift≤ η) A) (‵fun suc (∙ , ‵tvar zero)) ⋮
+              renFm (lift≤ η′) & (eqrencut1Fm η A (‵fun suc (∙ , ‵tvar zero)) ⋮
+                renFm (lift≤ η) & r₂)))
+          (bicast (comprenFm§ η′ η Γ) (comprenFm η′ η A∗) (tren η′ (tren η d)))
+          (bicast (comprenFm§ η′ η Γ)
+            (‵∀_ & (_‵⊃_ & comprenFm (lift≤ η′) (lift≤ η) A ⊗ comprenFm (lift≤ η′) (lift≤ η) A∗∗))
+            (tren η′ (tren η e)))
+      ≡⟨ indbicast (comprenFm§ η′ η Γ) (comprenFm (lift≤ η′) (lift≤ η) A) (comprenFm η′ η A∗)
+           (comprenFm (lift≤ η′) (lift≤ η) A∗∗)
+           (eqrencut0Fm η′ (renFm (lift≤ η) A) 𝟘 ⋮ renFm η′ & (eqrencut0Fm η A 𝟘 ⋮ renFm η & r₁))
+           (eqrencut1Fm η′ (renFm (lift≤ η) A) (‵fun suc (∙ , ‵tvar zero)) ⋮
+             renFm (lift≤ η′) & (eqrencut1Fm η A (‵fun suc (∙ , ‵tvar zero)) ⋮
+             renFm (lift≤ η) & r₂))
+           (tren η′ (tren η d)) (tren η′ (tren η e))
+      ⟩
+        bicast (comprenFm§ η′ η Γ) (‵∀_ & comprenFm (lift≤ η′) (lift≤ η) A)
+          (‵ind
+           (eqrencut0Fm η′ (renFm (lift≤ η) A) 𝟘 ⋮ renFm η′ & (eqrencut0Fm η A 𝟘 ⋮ renFm η & r₁))
+           (eqrencut1Fm η′ (renFm (lift≤ η) A) (𝕊 (‵tvar zero)) ⋮
+             renFm (lift≤ η′) & (eqrencut1Fm η A (𝕊 (‵tvar zero)) ⋮ renFm (lift≤ η) & r₂))
+           (tren η′ (tren η d)) (tren η′ (tren η e)))
+      ∎
+  comptren {Γ = Γ} η′ η (‵proj {τ = τ} {t} i r) =
+      begin
+        ‵proj i (eqrenpeekTm (η′ ∘≤ η) i τ ⋮ renTm (η′ ∘≤ η) & r)
+      ≡⟨ ‵proj i & uip _ _ ⟩
+        ‵proj i
+          (matchpeek (comprenTm§ η′ η τ) (comprenTm η′ η t) i
+            (eqrenpeekTm η′ i (renTm§ η τ) ⋮ renTm η′ & (eqrenpeekTm η i τ ⋮ renTm η & r)))
+      ≡⟨ projbicast (comprenFm§ η′ η Γ) (comprenTm§ η′ η τ) (comprenTm η′ η t) i
+           (eqrenpeekTm η′ i (renTm§ η τ) ⋮ renTm η′ & (eqrenpeekTm η i τ ⋮ renTm η & r)) ⟩
+        bicast (comprenFm§ η′ η Γ)
+          (_‵=_ & (‵fun (proj i) & comprenTm§ η′ η τ) ⊗ comprenTm η′ η t)
+          (‵proj i (eqrenpeekTm η′ i (renTm§ η τ) ⋮ renTm η′ & (eqrenpeekTm η i τ ⋮ renTm η & r)))
+      ∎
+  comptren {Γ = Γ} η′ η (‵comp {τ = τ} {τ∗} g φ r) =
+      begin
+        ‵comp g φ (eqrenforTm (η′ ∘≤ η) φ τ ⋮ renTm§ (η′ ∘≤ η) & r)
+      ≡⟨ ‵comp g φ & uip _ _ ⟩
+        ‵comp g φ
+          (matchfor (comprenTm§ η′ η τ) (comprenTm§ η′ η τ∗) φ
+            (eqrenforTm η′ φ (renTm§ η τ) ⋮ renTm§ η′ & (eqrenforTm η φ τ ⋮ renTm§ η & r)))
+      ≡⟨ compbicast (comprenFm§ η′ η Γ) (comprenTm§ η′ η τ) (comprenTm§ η′ η τ∗) g φ
+           (eqrenforTm η′ φ (renTm§ η τ) ⋮ renTm§ η′ & (eqrenforTm η φ τ ⋮ renTm§ η & r)) ⟩
+        bicast (comprenFm§ η′ η Γ)
+          (_‵=_ & (‵fun (comp g φ) & comprenTm§ η′ η τ)
+                ⊗ ‵fun g & comprenTm§ η′ η τ∗)
+          (‵comp g φ
+            (eqrenforTm η′ φ (renTm§ η τ) ⋮ renTm§ η′ & (eqrenforTm η φ τ ⋮ renTm§ η & r)))
+      ∎
   comptren η′ η (‵rec f g)              = recbicast (comprenFm§ η′ η _) (comprenTm§ η′ η _)
                                             (comprenTm η′ η _)
 
