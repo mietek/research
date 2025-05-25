@@ -304,9 +304,11 @@ Presheaf C 𝓍 = Functor (C ᵒᵖ) (catSet 𝓍)
 
 -- 0.4. term variables
 
-data Fin : Nat → Set where
-  zero : ∀ {n} → Fin (suc n)
-  suc  : ∀ {n} (i : Fin n) → Fin (suc n)
+-- TODO: delete this
+open import Data.Fin using (Fin ; zero ; suc)
+-- data Fin : Nat → Set where
+--   zero : ∀ {n} → Fin (suc n)
+--   suc  : ∀ {n} (i : Fin n) → Fin (suc n)
 
 -- order-preserving embeddings
 infix 3 _≤_
@@ -390,8 +392,8 @@ module _ where
   castlift≤ refl refl η = refl
 
 -- numeric literals for term variables
--- TODO: this actually works; see e.g. `proj 0` later on, but what was the issue further down?
-module _ where
+-- TODO: wtf
+{- module _ where
   cowk≤ : ∀ {n m} → suc n ≤ m → n ≤ m
   cowk≤ (wk≤ η)   = wk≤ (cowk≤ η)
   cowk≤ (lift≤ η) = wk≤ η
@@ -422,19 +424,20 @@ module _ where
     literalFin {n} = record
       { Constraint = λ m → True (suc m ≤? n)
       ; fromNat    = Nat→Fin
-      }
+      } -}
 
 -- TODO: delete this
--- module _ where
---   import Data.Nat as Nat
---   import Data.Fin as Fin
---
---   instance
---     literalFin : ∀ {n} → Number (Fin n)
---     literalFin {n} = record
---       { Constraint = λ m → True (m Nat.<? n)
---       ; fromNat    = λ m {{p}} → (Fin.# m) {n} {p}
---       }
+module _ where
+  import Data.Nat as Nat
+  import Data.Fin as Fin
+  import Relation.Nullary.Decidable as Un
+
+  instance
+    literalFin : ∀ {n} → Number (Fin n)
+    literalFin {n} = record
+      { Constraint = λ m → Un.True (m Nat.<? n)
+      ; fromNat    = λ m {{p}} → (Fin.# m) {n} {p}
+      }
 
 
 ----------------------------------------------------------------------------------------------------
@@ -3306,16 +3309,16 @@ module _ {Þ k} {Γ : Fm§ k} where
   cong∀ : ∀ {A ^A} → Þ / wkFm§ Γ ⊢ A ‵⫗ ^A → Þ / Γ ⊢ ‵∀ A ‵⫗ ‵∀ ^A
   cong∀ d = ‵pair
               (‵lam
-                (‵all refl (ren (twk⊆ (wk⊆ id⊆)) (‵fst d) ‵$ ‵unall (‵tvar {!0!}) (idcutFm _) 0)))
+                (‵all refl (ren (twk⊆ (wk⊆ id⊆)) (‵fst d) ‵$ ‵unall (‵tvar 0) (idcutFm _) 0)))
               (‵lam
-                (‵all refl (ren (twk⊆ (wk⊆ id⊆)) (‵snd d) ‵$ ‵unall (‵tvar {!0!}) (idcutFm _) 0)))
+                (‵all refl (ren (twk⊆ (wk⊆ id⊆)) (‵snd d) ‵$ ‵unall (‵tvar 0) (idcutFm _) 0)))
 
   cong∃ : ∀ {A ^A} → Þ / wkFm§ Γ ⊢ A ‵⫗ ^A → Þ / Γ ⊢ ‵∃ A ‵⫗ ‵∃ ^A
   cong∃ d = ‵pair
               (‵lam (‵letex refl refl 0
-                (‵ex (‵tvar {!0!}) (idcutFm _) (‵fst (wk (wk d)) ‵$ 0))))
+                (‵ex (‵tvar 0) (idcutFm _) (‵fst (wk (wk d)) ‵$ 0))))
               (‵lam (‵letex refl refl 0
-                (‵ex (‵tvar {!0!}) (idcutFm _) (‵snd (wk (wk d)) ‵$ 0))))
+                (‵ex (‵tvar 0) (idcutFm _) (‵snd (wk (wk d)) ‵$ 0))))
 
   ≡→⫗ : ∀ {A B} → A ≡ B → Þ / Γ ⊢ A ‵⫗ B
   ≡→⫗ refl = ⫗refl
@@ -3419,7 +3422,7 @@ module _ {Þ k} {Γ : Fm§ k} where
 
   ⊃qdm1a : ∀ {A} → Þ / Γ ⊢ ‵∀ ‵¬ A ‵⊃ ‵¬ (‵∃ A)
   ⊃qdm1a = ‵lam (‵lam (‵letex refl refl 0
-             (‵unall (‵tvar {!0!}) (idcutFm _) 2 ‵$ 0)))
+             (‵unall (‵tvar 0) (idcutFm _) 2 ‵$ 0)))
 
   ⊃npdm1a : ∀ {A B} → Þ / Γ ⊢ A ‵∧ B ‵⊃ ‵¬ (‵¬ A ‵∨ ‵¬ B)
   ⊃npdm1a = ‵lam (‵lam (‵abort (‵either 0
@@ -3428,7 +3431,7 @@ module _ {Þ k} {Γ : Fm§ k} where
 
   ⊃nqdm1a : ∀ {A} → Þ / Γ ⊢ ‵∀ A ‵⊃ ‵¬ (‵∃ ‵¬ A)
   ⊃nqdm1a = ‵lam (‵lam (‵abort (‵letex refl refl 0
-              (0 ‵$ ‵unall (‵tvar {!0!}) (idcutFm _) 2))))
+              (0 ‵$ ‵unall (‵tvar 0) (idcutFm _) 2))))
 
   ⊃pdm2a : ∀ {A B} → Þ / Γ ⊢ ‵¬ A ‵∨ ‵¬ B ‵⊃ ‵¬ (A ‵∧ B)
   ⊃pdm2a = ‵lam (‵lam (‵either 1
@@ -3437,7 +3440,7 @@ module _ {Þ k} {Γ : Fm§ k} where
 
   ⊃qdm2a : ∀ {A} → Þ / Γ ⊢ ‵∃ ‵¬ A ‵⊃ ‵¬ (‵∀ A)
   ⊃qdm2a = ‵lam (‵lam (‵letex refl refl 1
-             (0 ‵$ ‵unall (‵tvar {!0!}) (idcutFm _) 1)))
+             (0 ‵$ ‵unall (‵tvar 0) (idcutFm _) 1)))
 
   ⊃npdm2a : ∀ {A B} → Þ / Γ ⊢ A ‵∨ B ‵⊃ ‵¬ (‵¬ A ‵∧ ‵¬ B)
   ⊃npdm2a = ‵lam (‵lam (‵abort (‵either 1
@@ -3446,7 +3449,7 @@ module _ {Þ k} {Γ : Fm§ k} where
 
   ⊃nqdm2a : ∀ {A} → Þ / Γ ⊢ ‵∃ A ‵⊃ ‵¬ (‵∀ ‵¬ A)
   ⊃nqdm2a = ‵lam (‵lam (‵abort (‵letex refl refl 1
-              (‵unall (‵tvar {!0!}) (idcutFm _) 1 ‵$ 0))))
+              (‵unall (‵tvar 0) (idcutFm _) 1 ‵$ 0))))
 
   ⊃pdm1b : ∀ {A B} → Þ / Γ ⊢ ‵¬ (A ‵∨ B) ‵⊃ ‵¬ A ‵∧ ‵¬ B
   ⊃pdm1b = ‵lam (‵pair
@@ -3455,7 +3458,7 @@ module _ {Þ k} {Γ : Fm§ k} where
 
   ⊃qdm1b : ∀ {A} → Þ / Γ ⊢ ‵¬ (‵∃ A) ‵⊃ ‵∀ ‵¬ A
   ⊃qdm1b = ‵lam (‵all refl (‵lam
-             (1 ‵$ ‵ex (‵tvar {!0!}) (idcutFm _) 0)))
+             (1 ‵$ ‵ex (‵tvar 0) (idcutFm _) 0)))
 
   pdm1 : ∀ {A B} → Þ / Γ ⊢ ‵¬ A ‵∧ ‵¬ B ‵⫗ ‵¬ (A ‵∨ B)
   pdm1 = ‵pair ⊃pdm1a ⊃pdm1b
@@ -3477,7 +3480,7 @@ module _ {k} {Γ : Fm§ k} where
   ⊃nqdm1b : ∀ {A} → PA / Γ ⊢ ‵¬ (‵∃ ‵¬ A) ‵⊃ ‵∀ A
   ⊃nqdm1b = ‵lam (‵all refl (‵either em
               0
-              (‵abort (1 ‵$ ‵ex (‵tvar {!0!}) (idcutFm _) 0))))
+              (‵abort (1 ‵$ ‵ex (‵tvar 0) (idcutFm _) 0))))
 
   ⊃pdm2b : ∀ {A B} → PA / Γ ⊢ ‵¬ (A ‵∧ B) ‵⊃ ‵¬ A ‵∨ ‵¬ B
   ⊃pdm2b = ‵lam (‵either em
@@ -3716,7 +3719,7 @@ lem5-2 {A = A ‵∧ B} = ‵lam (‵pair
 lem5-2 {A = A ‵∨ B} = ‵lam (join 0)
 lem5-2 {A = ‵∀ A}   = ‵lam (‵all refl (lem5-2 ‵$ ‵lam
                          (1 ‵$ ‵lam
-                           (1 ‵$ ‵unall (‵tvar {!0!}) (idcutFm _) 0))))
+                           (1 ‵$ ‵unall (‵tvar 0) (idcutFm _) 0))))
 lem5-2 {A = ‵∃ A}   = ‵lam (join 0)
 lem5-2 {A = ‵⊥}    = ‵lam (0 ‵$ ⊃id)
 lem5-2 {A = t ‵= u} = ‵lam (join 0)
@@ -3794,7 +3797,7 @@ _ᴬ⟨_⟩§ : ∀ {k} → Fm§ k → Fm k → Fm§ k
 -- TODO: interactions between A-translation and renaming/substitution
 module _ where
   postulate
-    TODO6 : ∀ {k} {A : Fm (suc k)} {T t} → A [ t /0]Fm ᴬ⟨ T ⟩ ≡ A ᴬ⟨ wkFm T ⟩ [ t /0]Fm
+    TODO6 : ∀ {k} {A : Fm (suc k)} {T t} → (A ᴬ⟨ wkFm T ⟩) [ t /0]Fm ≡ (A [ t /0]Fm) ᴬ⟨ T ⟩
   -- TODO6 = ?
 
 -- TODO: lemma 6
@@ -3846,21 +3849,21 @@ module _ where
            (‵lam (‵either em
              (‵right 0)
              (‵left
-               (‵all refl (‵either (‵unall (‵tvar {!0!}) (idcutFm _) 1)
+               (‵all refl (‵either (‵unall (‵tvar 0) (idcutFm _) 1)
                  0
                  (‵abort (1 ‵$ 0)))))))
            (‵lam (‵either 0
-             (‵all refl (‵left (‵unall (‵tvar {!0!}) (idcutFm _) 0)))
+             (‵all refl (‵left (‵unall (‵tvar 0) (idcutFm _) 0)))
              (‵all refl (‵right 0))))
 
   aux5 : ∀ {Þ k} {Γ : Fm§ k} {A C} → Þ / Γ ⊢ ‵∃ (A ‵∨ wkFm C) ‵⫗ ‵∃ A ‵∨ C
   aux5 {A = A} {C} = ‵pair
            (‵lam (‵letex refl refl 0 (‵either 0
-             (‵left (‵ex (‵tvar {!0!}) (idcutFm _) 0))
+             (‵left (‵ex (‵tvar 0) (idcutFm _) 0))
              (‵right 0))))
            (‵lam (‵either 0
              (‵letex refl refl 0
-               (‵ex (‵tvar {!0!}) (_‵∨_ & idcutFm _ ⊗ idcutFm _) (‵left 0)))
+               (‵ex (‵tvar 0) (_‵∨_ & idcutFm _ ⊗ idcutFm _) (‵left 0)))
              (‵ex 𝟘 -- could also be any other natural
                ( (subFm (idTm§ , 𝟘) A ‵∨_)
                    & ( eqsubFm idTm§ 𝟘 C
@@ -3901,14 +3904,14 @@ module _ where
                             ∎
   lem6-1 {A = ‵∀ A}   {T} = begin
                               ‵∀ (A ᴬ⟨ wkFm T ⟩)
-                            ⫗⟨ {!cong∀ lem6-1!} ⟩
+                            ⫗⟨ cong∀ lem6-1 ⟩
                               ‵∀ (A ‵∨ wkFm T)
                             ⫗⟨ aux4 ⟩
                               ‵∀ A ‵∨ T
                             ∎
   lem6-1 {A = ‵∃ A}   {T} = begin
                               ‵∃ (A ᴬ⟨ wkFm T ⟩)
-                            ⫗⟨ {!cong∃ lem6-1!} ⟩
+                            ⫗⟨ cong∃ lem6-1 ⟩
                               ‵∃ (A ‵∨ wkFm T)
                             ⫗⟨ aux5 ⟩
                               ‵∃ A ‵∨ T
@@ -3917,14 +3920,14 @@ module _ where
   lem6-1 {A = t ‵= u} {T} = ⫗refl
 
 lem6-2 : ∀ {Þ k} {Γ : Fm§ k} {A T} → Þ / Γ ⊢ T ‵⊃ A ᴬ⟨ T ⟩
-lem6-2 {A = A ‵⊃ B} = ‵lam (‵lam (lem6-2 ‵$ 1)) -- function argument ignored
-lem6-2 {A = A ‵∧ B} = ‵lam (‵pair (lem6-2 ‵$ 0) (lem6-2 ‵$ 0))
-lem6-2 {A = A ‵∨ B} = ‵lam (‵left (lem6-2 ‵$ 0)) -- could also be ‵right
-lem6-2 {A = ‵∀ A}   = ‵lam (‵all refl (lem6-2 ‵$ 0))
-lem6-2 {A = ‵∃ A}   = {!!}
--- ‵lam (‵this 𝟘 TODO6 (lem6-2 {A = A [ 𝟘 ]} ‵$ 0)) -- TODO: termination failure
-lem6-2 {A = ‵⊥}    = ⊃id
-lem6-2 {A = t ‵= u} = ‵lam (‵right 0)
+lem6-2 {A = A ‵⊃ B}    = ‵lam (‵lam (lem6-2 ‵$ 1)) -- function argument ignored
+lem6-2 {A = A ‵∧ B}    = ‵lam (‵pair (lem6-2 ‵$ 0) (lem6-2 ‵$ 0))
+lem6-2 {A = A ‵∨ B}    = ‵lam (‵left (lem6-2 ‵$ 0)) -- could also be ‵right
+lem6-2 {A = ‵∀ A}      = ‵lam (‵all refl (lem6-2 ‵$ 0))
+lem6-2 {A = ‵∃ A}  {T} = {!!}
+-- ‵lam (‵ex 𝟘 (TODO6 {A = A} {T}) (lem6-2 {A = A [ 𝟘 /0]Fm} ‵$ 0)) -- TODO: termination failure
+lem6-2 {A = ‵⊥}       = ⊃id
+lem6-2 {A = t ‵= u}    = ‵lam (‵right 0)
 
 lem6-3∋ : ∀ {k} {Γ : Fm§ k} {A T} → Γ ∋ A → Γ ᴬ⟨ T ⟩§ ∋ A ᴬ⟨ T ⟩
 lem6-3∋ zero    = zero
