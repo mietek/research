@@ -5,7 +5,7 @@
 -- first-order predicate logic with one sort (naturals) and one predicate (equality)
 -- variant with first-order structures for renaming and substitution
 
--- {-# OPTIONS --without-K #-}
+{-# OPTIONS --without-K #-}
 
 module Selinger92 where
 
@@ -87,9 +87,9 @@ module _ {𝓍} {X : Set 𝓍} where
   fromWitness {X?} x | no ¬x = x ↯ ¬x
 
 -- TODO: replace this with specific instances
-uip : ∀ {𝓍} {X : Set 𝓍} {x ^x : X} (p₁ p₂ : x ≡ ^x) → p₁ ≡ p₂
-uip refl refl = refl
-{-# INLINE uip #-}
+postulate
+  uip : ∀ {𝓍} {X : Set 𝓍} {x ^x : X} (p₁ p₂ : x ≡ ^x) → p₁ ≡ p₂
+-- uip refl refl = refl
 
 -- numeric literals for naturals
 instance
@@ -3235,7 +3235,7 @@ module _ {Þ k} {Γ : Fm§ k} where
 
 module =-Reasoning {Þ k} {Γ : Fm§ k} where
   infix  3 _∎
-  infixr 2 _=⟨⟩_ _=⟨_⟩_ _≡⟨⟩ _≡⟨_⟩_
+  infixr 2 _=⟨⟩_ _=⟨_⟩_ _≡⟨⟩_ _≡⟨_⟩_
   infix  1 begin_
 
   begin_ : ∀ {t u} → Þ / Γ ⊢ t ‵= u → Þ / Γ ⊢ t ‵= u
@@ -3246,6 +3246,9 @@ module =-Reasoning {Þ k} {Γ : Fm§ k} where
 
   _=⟨_⟩_ : ∀ s {t u} → Þ / Γ ⊢ s ‵= t → Þ / Γ ⊢ t ‵= u → Þ / Γ ⊢ s ‵= u
   s =⟨ d ⟩ e = ‵trans d e
+
+  _≡⟨⟩_ : ∀ t {u} → t ≡ u → Þ / Γ ⊢ t ‵= u
+  t ≡⟨⟩ p = ≡→= p
 
   _≡⟨_⟩_ : ∀ s {t u} → s ≡ t → Þ / Γ ⊢ t ‵= u → Þ / Γ ⊢ s ‵= u
   s ≡⟨ d ⟩ e = ‵trans (≡→= d) e
@@ -3330,6 +3333,9 @@ module ⫗-Reasoning {Þ k} {Γ : Fm§ k} where
 
   _⫗⟨_⟩_ : ∀ A {B C} → Þ / Γ ⊢ A ‵⫗ B → Þ / Γ ⊢ B ‵⫗ C → Þ / Γ ⊢ A ‵⫗ C
   A ⫗⟨ d ⟩ e = ⫗trans d e
+
+  _≡⟨⟩_ : ∀ A {B} → A ≡ B → Þ / Γ ⊢ A ‵⫗ B
+  A ≡⟨⟩ p = ≡→⫗ p
 
   _≡⟨_⟩_ : ∀ A {B C} → A ≡ B → Þ / Γ ⊢ B ‵⫗ C → Þ / Γ ⊢ A ‵⫗ C
   A ≡⟨ d ⟩ e = ⫗trans (≡→⫗ d) e
