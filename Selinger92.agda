@@ -18,6 +18,9 @@ open import Agda.Builtin.FromNat public
 open import Agda.Builtin.Nat public
   using (Nat ; zero ; suc ; _+_ ; _-_ ; _*_)
 
+open import Agda.Primitive public
+  using (Setω)
+
 open import Agda.Builtin.Sigma public
   using (Σ ; fst ; snd)
   renaming (_,_ to sig)
@@ -26,28 +29,26 @@ open import Agda.Builtin.Unit public
   using (⊤ ; tt)
 
 open import Agda.Primitive public
-  using (Level ; _⊔_)
+  using (Level ; _⊔_ ; lzero ; lsuc)
 
 
 ----------------------------------------------------------------------------------------------------
 
 -- 0.0. tiny prelude
 
--- TODO: delete this
-{-
-id : ∀ {𝓍} {X : Set 𝓍} → X → X
-id x = x
+module Hidden where
+  id : ∀ {𝓍} {X : Set 𝓍} → X → X
+  id x = x
 
-flip : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : X → Y → Set 𝓏} →
-         (∀ x y → Z x y) → (∀ y x → Z x y)
-flip f y x = f x y
+  flip : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : X → Y → Set 𝓏} →
+           (∀ x y → Z x y) → (∀ y x → Z x y)
+  flip f y x = f x y
 
-infixr 9 _∘_
-_∘_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : X → Set 𝓎} {Z : ∀ {x} → Y x → Set 𝓏}
-        (f : ∀ {x} (y : Y x) → Z y) (g : ∀ x → Y x) →
-        ∀ x → Z (g x)
-(f ∘ g) x = f (g x)
--}
+  infixr 9 _∘_
+  _∘_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : X → Set 𝓎} {Z : ∀ {x} → Y x → Set 𝓏}
+          (f : ∀ {x} (y : Y x) → Z y) (g : ∀ x → Y x) →
+          ∀ x → Z (g x)
+  (f ∘ g) x = f (g x)
 
 data ⊥ : Set where
 
@@ -103,6 +104,12 @@ instance
 
 -- 0.1. propositional equality
 
+≡-syntax : ∀ {𝓍} (X : Set 𝓍) → X → X → Set 𝓍
+≡-syntax X = _≡_
+
+infix 4 ≡-syntax
+syntax ≡-syntax X x ^x = x ≡ ^x :> X
+
 infix 9 _⁻¹
 _⁻¹ : ∀ {𝓍} {X : Set 𝓍} {x ^x : X} → x ≡ ^x → ^x ≡ x
 refl ⁻¹ = refl
@@ -118,6 +125,23 @@ f & refl = refl
 infixl 8 _⊗_
 _⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {f g : X → Y} {x ^x} → f ≡ g → x ≡ ^x → f x ≡ g ^x
 refl ⊗ refl = refl
+
+congapp : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ x → Y x} → f ≡ g → (∀ x → f x ≡ g x)
+congapp refl x = refl
+
+congapp′ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x} → Y x} → f ≡ g :> (∀ {x} → Y x) →
+           (∀ {x} → f {x} ≡ g {x})
+congapp′ refl {x} = refl
+
+Funext : Setω
+Funext = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ x → Y x} → (∀ x → f x ≡ g x) → f ≡ g
+
+Funext′ : Setω
+Funext′ = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x} → Y x} → (∀ {x} → f {x} ≡ g {x}) →
+          f ≡ g :> (∀ {x} → Y x)
+
+implify : Funext → Funext′
+implify fe eq = (λ f {x} → f x) & fe (λ x → eq {x})
 
 module ≡-Reasoning where
   infix  3 _∎
@@ -142,73 +166,157 @@ module ≡-Reasoning where
 
 ----------------------------------------------------------------------------------------------------
 
--- 0.1. heterogeneous equality
--- TODO: delete this
+-- 0.2. heterogeneous equality
 
-infix 4 _≅_
-data _≅_ {𝓍} {X : Set 𝓍} (x : X) : ∀ {𝓎} {Y : Set 𝓎} → Y → Set 𝓍 where
-   refl : x ≅ x
-
-infix 9 _ʰ⁻¹
-_ʰ⁻¹ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {x : X} {y : Y} → x ≅ y → y ≅ x
-refl ʰ⁻¹ = refl
-
-infixr 4 _ʰ⋮_
-_ʰ⋮_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : Set 𝓏} {x : X} {y : Y} {z : Z} →
-         x ≅ y → y ≅ z → x ≅ z
-refl ʰ⋮ refl = refl
-
-infixl 9 _ʰ&_
-_ʰ&_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} (f : ∀ x → Y x) {x ^x} → x ≅ ^x → f x ≅ f ^x
-f ʰ& refl = refl
-
--- TODO: fix this so that it actually works
-infixl 8 _ʰ⊗_
-_ʰ⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ x → X → Y x} {x ^x} → f ≅ g → x ≅ ^x →
-         f x ≅ g ^x
-refl ʰ⊗ refl = refl
-
-≅→≡ : ∀ {𝓍} {X : Set 𝓍} {x ^x : X} → x ≅ ^x → x ≡ ^x
-≅→≡ refl = refl
-
-≡→≅ : ∀ {𝓍} {X : Set 𝓍} {x ^x : X} → x ≡ ^x → x ≅ ^x
-≡→≅ refl = refl
-
-module ≅-Reasoning where
-  infix  3 _∎
-  infixr 2 _≅⟨⟩_ _≅⟨_⟩_ _≡⟨_⟩_
-  infix  1 begin_
-
-  begin_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {x : X} {y : Y} → x ≅ y → x ≅ y
-  begin p = p
-
-  _≅⟨⟩_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (x : X) {y : Y} → x ≅ y → x ≅ y
-  x ≅⟨⟩ p = p
-
-  _≅⟨_⟩_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : Set 𝓏} (x : X) {y : Y} {z : Z} →
-             x ≅ y → y ≅ z → x ≅ z
-  x ≅⟨ p ⟩ q = p ʰ⋮ q
-
-  _≡⟨⟩_ : ∀ {𝓍} {X : Set 𝓍} (x : X) {^x} → x ≡ ^x → x ≅ ^x
-  x ≡⟨⟩ p = ≡→≅ p
-
-  _≡⟨_⟩_ : ∀ {𝓍 𝓏} {X : Set 𝓍} {Z : Set 𝓏} (x : X) {^x} {z : Z} →
-             x ≡ ^x → ^x ≅ z → x ≅ z
-  x ≡⟨ p ⟩ q = ≡→≅ p ʰ⋮ q
-
-  _∎ : ∀ {𝓍} {X : Set 𝓍} (x : X) → x ≅ x
-  x ∎ = refl
+-- infix 4 _≅_
+-- data _≅_ {𝓍} {X : Set 𝓍} (x : X) : ∀ {𝓎} {Y : Set 𝓎} → Y → Set 𝓍 where
+--    refl : x ≅ x
+--
+-- infix 9 _ʰ⁻¹
+-- _ʰ⁻¹ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {x : X} {y : Y} → x ≅ y → y ≅ x
+-- refl ʰ⁻¹ = refl
+--
+-- infixr 4 _ʰ⋮_
+-- _ʰ⋮_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : Set 𝓏} {x : X} {y : Y} {z : Z} →
+--          x ≅ y → y ≅ z → x ≅ z
+-- refl ʰ⋮ refl = refl
+--
+-- infixl 9 _ʰ&_
+-- _ʰ&_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} (f : ∀ x → Y x) {x ^x} → x ≅ ^x → f x ≅ f ^x
+-- f ʰ& refl = refl
+--
+-- infixl 8 _ʰ⊗_
+-- _ʰ⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ x → Y x} {x ^x} → f ≅ g → x ≅ ^x →
+--          f x ≅ g ^x
+-- refl ʰ⊗ refl = refl
+--
+-- ≅→≡ : ∀ {𝓍} {X : Set 𝓍} {x ^x : X} → x ≅ ^x → x ≡ ^x
+-- ≅→≡ refl = refl
+--
+-- ≡→≅ : ∀ {𝓍} {X : Set 𝓍} {x ^x : X} → x ≡ ^x → x ≅ ^x
+-- ≡→≅ refl = refl
+--
+-- module ≅-Reasoning where
+--   infix  3 _∎
+--   infixr 2 _≅⟨⟩_ _≅⟨_⟩_ _≡⟨_⟩_
+--   infix  1 begin_
+--
+--   begin_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {x : X} {y : Y} → x ≅ y → x ≅ y
+--   begin p = p
+--
+--   _≅⟨⟩_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (x : X) {y : Y} → x ≅ y → x ≅ y
+--   x ≅⟨⟩ p = p
+--
+--   _≅⟨_⟩_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : Set 𝓏} (x : X) {y : Y} {z : Z} →
+--              x ≅ y → y ≅ z → x ≅ z
+--   x ≅⟨ p ⟩ q = p ʰ⋮ q
+--
+--   _≡⟨⟩_ : ∀ {𝓍} {X : Set 𝓍} (x : X) {^x} → x ≡ ^x → x ≅ ^x
+--   x ≡⟨⟩ p = ≡→≅ p
+--
+--   _≡⟨_⟩_ : ∀ {𝓍 𝓏} {X : Set 𝓍} {Z : Set 𝓏} (x : X) {^x} {z : Z} →
+--              x ≡ ^x → ^x ≅ z → x ≅ z
+--   x ≡⟨ p ⟩ q = ≡→≅ p ʰ⋮ q
+--
+--   _∎ : ∀ {𝓍} {X : Set 𝓍} (x : X) → x ≅ x
+--   x ∎ = refl
 
 
 ----------------------------------------------------------------------------------------------------
 
--- 0.2. untyped term variables
+-- 0.3. tiny naive category theory
+
+record Category (ℴ 𝓂 : Level) : Set (lsuc (ℴ ⊔ 𝓂)) where
+  field
+    Obj  : Set ℴ
+    _▻_  : ∀ (x y : Obj) → Set 𝓂
+    id   : ∀ {x} → x ▻ x
+    _∘_  : ∀ {x y z} (q : y ▻ z) (p : x ▻ y) → x ▻ z
+    lid▻ : ∀ {x y} (p : y ▻ x) → id ∘ p ≡ p
+    rid▻ : ∀ {x y} (p : y ▻ x) → p ∘ id ≡ p
+    ass▻ : ∀ {w x y z} (r : y ▻ z) (q : x ▻ y) (p : w ▻ x) → r ∘ (q ∘ p) ≡ (r ∘ q) ∘ p
+
+  _◅_ : ∀ (y x : Obj) → Set 𝓂
+  y ◅ x = x ▻ y
+
+  _⨾_ : ∀ {x y z} (p : x ▻ y) (q : y ▻ z) → x ▻ z
+  p ⨾ q = q ∘ p
+
+  field
+    ◅ssa : ∀ {w x y z} (r : y ◅ z) (q : x ◅ y) (p : w ◅ x) → r ⨾ (q ⨾ p) ≡ (r ⨾ q) ⨾ p
+
+_ᵒᵖ : ∀ {ℴ 𝓂} (C : Category ℴ 𝓂) → Category ℴ 𝓂
+_ᵒᵖ C = record
+    { Obj  = C.Obj
+    ; _▻_  = Hidden.flip C._▻_
+    ; id   = C.id
+    ; _∘_  = Hidden.flip C._∘_
+    ; lid▻ = C.rid▻
+    ; rid▻ = C.lid▻
+    ; ass▻ = C.◅ssa
+    ; ◅ssa = C.ass▻
+    }
+  where
+    private
+      module C = Category C
+
+catSet : ∀ (𝓍 : Level) → Category (lsuc 𝓍) 𝓍
+catSet 𝓍 = record
+    { Obj  = Set 𝓍
+    ; _▻_  = λ X Y → X → Y
+    ; id   = Hidden.id
+    ; _∘_  = λ q p → q Hidden.∘ p
+    ; lid▻ = λ p → refl
+    ; rid▻ = λ p → refl
+    ; ass▻ = λ r q p → refl
+    ; ◅ssa = λ r q p → refl
+    }
+
+catSet₀ : Category (lsuc lzero) lzero
+catSet₀ = catSet lzero
+
+record Functor {ℴ₁ ℴ₂ 𝓂₁ 𝓂₂} (C : Category ℴ₁ 𝓂₁) (D : Category ℴ₂ 𝓂₂) :
+    Set (ℴ₁ ⊔ ℴ₂ ⊔ 𝓂₁ ⊔ 𝓂₂) where
+  private
+    module C = Category C
+    module D = Category D
+
+  field
+    ƒObj : ∀ (x : C.Obj) → D.Obj
+    ƒ    : ∀ {x y} (p : x C.▻ y) → (ƒObj x) D.▻ (ƒObj y)
+    idƒ  : ∀ {x} → ƒ C.id ≡ D.id :> (ƒObj x D.▻ ƒObj x)
+    _∘ƒ_ : ∀ {x y z} (q : y C.▻ z) (p : x C.▻ y) → ƒ (q C.∘ p) ≡ (ƒ q) D.∘ (ƒ p)
+
+  -- opposite
+  op : Functor (C ᵒᵖ) (D ᵒᵖ)
+  op = record
+         { ƒObj = ƒObj
+         ; ƒ    = ƒ
+         ; idƒ  = idƒ
+         ; _∘ƒ_ = Hidden.flip _∘ƒ_
+         }
+
+ƒId : ∀ {ℴ 𝓂} (C : Category ℴ 𝓂) → Functor C C
+ƒId C = record
+          { ƒObj = Hidden.id
+          ; ƒ    = Hidden.id
+          ; idƒ  = refl
+          ; _∘ƒ_ = λ q p → refl
+          }
+
+Presheaf : ∀ {ℴ 𝓂} (C : Category ℴ 𝓂) (𝓍 : Level) → Set (ℴ ⊔ 𝓂 ⊔ lsuc 𝓍)
+Presheaf C 𝓍 = Functor (C ᵒᵖ) (catSet 𝓍)
+
+
+----------------------------------------------------------------------------------------------------
+
+-- 0.4. term variables
 
 data Fin : Nat → Set where
   zero : ∀ {n} → Fin (suc n)
   suc  : ∀ {n} (i : Fin n) → Fin (suc n)
 
--- untyped order-preserving embeddings
+-- order-preserving embeddings
 infix 3 _≤_
 data _≤_ : Nat → Nat → Set where
   stop  : zero ≤ zero
@@ -265,8 +373,32 @@ comprenFin (lift≤ η′) (wk≤ η)   i       = suc & comprenFin η′ η i
 comprenFin (lift≤ η′) (lift≤ η) zero    = refl
 comprenFin (lift≤ η′) (lift≤ η) (suc i) = suc & comprenFin η′ η i
 
--- TODO: fix this so that it actually works again
--- numeric literals for untyped term variables
+-- casting for term variables
+module _ where
+  castFin : ∀ {k ^k} → ^k ≡ k → Fin k → Fin ^k
+  castFin refl i = i
+
+  castzeroFin : ∀ {k ^k} (p : ^k ≡ k) → zero ≡ castFin (suc & p) zero
+  castzeroFin refl = refl
+
+  castsucFin : ∀ {k ^k} (p : ^k ≡ k) (i : Fin k) → suc (castFin p i) ≡ castFin (suc & p) (suc i)
+  castsucFin refl zero    = refl
+  castsucFin refl (suc i) = suc & castsucFin refl i
+
+  -- casting for order-preserving embeddings
+  cast≤ : ∀ {k ^k k′ ^k′} → ^k ≡ k → ^k′ ≡ k′ → k ≤ k′ → ^k ≤ ^k′
+  cast≤ refl refl η = η
+
+  castwk≤ : ∀ {k ^k k′ ^k′} (p₁ : ^k ≡ k) (p₂ : ^k′ ≡ k′) (η : k ≤ k′) →
+              wk≤ (cast≤ p₁ p₂ η) ≡ cast≤ p₁ (suc & p₂) (wk≤ η)
+  castwk≤ refl refl η = refl
+
+  castlift≤ : ∀ {k ^k k′ ^k′} (p₁ : ^k ≡ k) (p₂ : ^k′ ≡ k′) (η : k ≤ k′) →
+                lift≤ (cast≤ p₁ p₂ η) ≡ cast≤ (suc & p₁) (suc & p₂) (lift≤ η)
+  castlift≤ refl refl η = refl
+
+-- numeric literals for term variables
+-- TODO: this actually works; see e.g. `proj 0` later on, but what was the issue further down?
 module _ where
   cowk≤ : ∀ {n m} → suc n ≤ m → n ≤ m
   cowk≤ (wk≤ η)   = wk≤ (cowk≤ η)
@@ -300,10 +432,22 @@ module _ where
       ; fromNat    = Nat→Fin
       }
 
+-- TODO: delete this
+-- module _ where
+--   import Data.Nat as Nat
+--   import Data.Fin as Fin
+--
+--   instance
+--     literalFin : ∀ {n} → Number (Fin n)
+--     literalFin {n} = record
+--       { Constraint = λ m → True (m Nat.<? n)
+--       ; fromNat    = λ m {{p}} → (Fin.# m) {n} {p}
+--       }
+
 
 ----------------------------------------------------------------------------------------------------
 
--- 0.3. leftist lists and vectors
+-- 0.5. leftist lists and vectors
 
 infixl 4 _,_
 data List {𝓍} (X : Set 𝓍) : Set 𝓍 where
@@ -433,15 +577,15 @@ module _ {𝓍} {X : Set 𝓍} where
         zero : ∀ {Γ A} → Γ , A ∋⟨ zero ⟩ A
         suc  : ∀ {m Γ A C} {{i : Γ ∋⟨ m ⟩ A}} → Γ , C ∋⟨ suc m ⟩ A
 
-    ∋◇→∋ : ∀ {Γ m A} → Γ ∋⟨ m ⟩ A → Γ ∋ A
-    ∋◇→∋ zero        = zero
-    ∋◇→∋ (suc {{i}}) = suc (∋◇→∋ i)
+    ∋#→∋ : ∀ {Γ m A} → Γ ∋⟨ m ⟩ A → Γ ∋ A
+    ∋#→∋ zero        = zero
+    ∋#→∋ (suc {{i}}) = suc (∋#→∋ i)
 
     instance
       number∋ : ∀ {Γ A} → Number (Γ ∋ A)
       number∋ {Γ} {A} = record
         { Constraint = λ m → Γ ∋⟨ m ⟩ A
-        ; fromNat    = λ m {{p}} → ∋◇→∋ p
+        ; fromNat    = λ m {{p}} → ∋#→∋ p
         }
 
 
@@ -921,12 +1065,12 @@ mutual
   compsubTm : ∀ {k m m′} (σ′ : Tm§ m′ m) (σ : Tm§ m k) (t : Tm k) →
                 subTm (subTm§ σ′ σ) t ≡ subTm σ′ (subTm σ t)
   compsubTm σ′ σ (‵tvar i)  = compsubFin σ′ σ i
-  compsubTm σ′ σ (‵fun f τ) = ‵fun f & asssubTm§ σ′ σ τ
+  compsubTm σ′ σ (‵fun f τ) = ‵fun f & asssubTm§ σ′ σ τ ⁻¹
 
   asssubTm§ : ∀ {k m m′ n} (σ′ : Tm§ m′ m) (σ : Tm§ m k) (τ : Tm§ k n) →
-                subTm§ (subTm§ σ′ σ) τ ≡ subTm§ σ′ (subTm§ σ τ)
+                subTm§ σ′ (subTm§ σ τ) ≡ subTm§ (subTm§ σ′ σ) τ
   asssubTm§ σ′ σ ∙       = refl
-  asssubTm§ σ′ σ (τ , t) = _,_ & asssubTm§ σ′ σ τ ⊗ compsubTm σ′ σ t
+  asssubTm§ σ′ σ (τ , t) = _,_ & asssubTm§ σ′ σ τ ⊗ compsubTm σ′ σ t ⁻¹
 
 
 ----------------------------------------------------------------------------------------------------
@@ -1149,6 +1293,10 @@ lidsubFm (t ‵= u) = _‵=_ & lidsubTm t ⊗ lidsubTm u
 
 -- 2.8. formulas: generic lemmas from RenSubKit2
 
+lidsubFm§ : ∀ {k} (Δ : Fm§ k) → subFm§ idTm§ Δ ≡ Δ
+lidsubFm§ ∙       = refl
+lidsubFm§ (Δ , A) = _,_ & lidsubFm§ Δ ⊗ lidsubFm A
+
 eqrensubFm§ : ∀ {k m m′} (η : m ≤ m′) (σ : Tm§ m k) (Γ : Fm§ k) →
                 subFm§ (renTm§ η σ) Γ ≡ renFm§ η (subFm§ σ Γ)
 eqrensubFm§ η σ ∙       = refl
@@ -1209,10 +1357,10 @@ mutual
 
 -- 2.10. formulas: generic lemmas from RenSubKit3
 
-asssubFm§ : ∀ {k m m′} (σ′ : Tm§ m′ m) (σ : Tm§ m k) (Γ : Fm§ k) →
-              subFm§ (subTm§ σ′ σ) Γ ≡ subFm§ σ′ (subFm§ σ Γ)
-asssubFm§ σ′ σ ∙       = refl
-asssubFm§ σ′ σ (Γ , A) = _,_ & asssubFm§ σ′ σ Γ ⊗ compsubFm σ′ σ A
+compsubFm§ : ∀ {k m m′} (σ′ : Tm§ m′ m) (σ : Tm§ m k) (Δ : Fm§ k) →
+               subFm§ (subTm§ σ′ σ) Δ ≡ subFm§ σ′ (subFm§ σ Δ)
+compsubFm§ σ′ σ ∙       = refl
+compsubFm§ σ′ σ (Δ , A) = _,_ & compsubFm§ σ′ σ Δ ⊗ compsubFm σ′ σ A
 
 idcutFm : ∀ {k} (A : Fm (suc k)) → renFm (lift≤ (wk≤ id≤)) A [ ‵tvar zero /0]Fm ≡ A
 idcutFm A = eqsubrenFm (idTm§ , ‵tvar zero) (lift≤ (wk≤ id≤)) A ⁻¹
@@ -1282,12 +1430,15 @@ comptren∋﹫ η′ η zero    = castzero∋ (comprenFm§ η′ η _) (comprenF
 comptren∋﹫ η′ η (suc i) = suc & comptren∋﹫ η′ η i
                         ⋮ castsuc∋ (comprenFm§ η′ η _) (comprenFm η′ η _)
                             (comprenFm η′ η _) (tren∋ η′ (tren∋ η i))
-comptren∋ : ∀ {k k′ k″ Γ A} (η′ : k′ ≤ k″) (η : k ≤ k′)
-              (p₁ : renFm§ (η′ ∘≤ η) Γ ≡ renFm§ η′ (renFm§ η Γ))
-              (p₂ : renFm (η′ ∘≤ η) A ≡ renFm η′ (renFm η A)) (i : Γ ∋ A) →
-              tren∋ (η′ ∘≤ η) i ≡ cast∋ p₁ p₂ (tren∋ η′ (tren∋ η i))
-comptren∋ η′ η p₁ p₂ i = comptren∋﹫ η′ η i
-                       ⋮ (λ p₁﹠ p₂﹠ → cast∋ p₁﹠ p₂﹠ (tren∋ η′ (tren∋ η i))) & uip _ _ ⊗ uip _ _
+
+comptren∋ : ∀ {k k′ k″ Γ ^Γ A ^A} (η′ : k′ ≤ k″) (η : k ≤ k′)
+              (p₁ : ^Γ ≡ renFm§ (η′ ∘≤ η) Γ) (q₁ : ^A ≡ renFm (η′ ∘≤ η) A)
+              (p₂ : ^Γ ≡ renFm§ η′ (renFm§ η Γ)) (q₂ : ^A ≡ renFm η′ (renFm η A))
+              (i : Γ ∋ A) →
+              cast∋ p₁ q₁ (tren∋ (η′ ∘≤ η) i) ≡ cast∋ p₂ q₂ (tren∋ η′ (tren∋ η i))
+comptren∋ η′ η refl refl p₂ q₂ i = comptren∋﹫ η′ η i
+                                 ⋮ (λ p₂﹠ q₂﹠ → cast∋ p₂﹠ q₂﹠ (tren∋ η′ (tren∋ η i)))
+                                     & uip _ _ ⊗ uip _ _
 
 -- term renaming for order-preserving embeddings
 tren⊆ : ∀ {k k′ Γ Γ′} (η : k ≤ k′) → Γ ⊆ Γ′ → renFm§ η Γ ⊆ renFm§ η Γ′
@@ -1332,6 +1483,7 @@ ridtren⊆ : ∀ {k k′ Γ} (η : k ≤ k′) → tren⊆ {Γ = Γ} η id⊆ �
 ridtren⊆ {Γ = ∙}     η = refl
 ridtren⊆ {Γ = Γ , A} η = lift⊆ & ridtren⊆ η
 
+-- TODO: does this belong to some categorical structure?
 rcomptren⊆ : ∀ {k k′ Γ Γ′ Γ″} (η : k ≤ k′) (ζ′ : Γ′ ⊆ Γ″) (ζ : Γ ⊆ Γ′) →
                tren⊆ η (ζ′ ∘⊆ ζ) ≡ tren⊆ η ζ′ ∘⊆ tren⊆ η ζ
 rcomptren⊆ η stop       ζ         = refl
@@ -1432,7 +1584,7 @@ instance
   number⊢ : ∀ {Þ k} {Γ : Fm§ k} {A} → Number (Þ / Γ ⊢ A)
   number⊢ {Γ = Γ} {A} = record
     { Constraint = λ m → Γ ∋⟨ m ⟩ A
-    ; fromNat    = λ m {{p}} → ‵var (∋◇→∋ p)
+    ; fromNat    = λ m {{p}} → ‵var (∋#→∋ p)
     }
 
 
@@ -1884,12 +2036,14 @@ comptren﹫ η′ η (‵comp g φ r)       = ‵comp g φ & uip _ _
 comptren﹫ η′ η (‵rec f g)          = castrec (comprenFm§ η′ η _) (comprenTm§ η′ η _)
                                        (comprenTm η′ η _)
 
-comptren : ∀ {Þ k k′ k″ Γ A} (η′ : k′ ≤ k″) (η : k ≤ k′)
-             (p₁ : renFm§ (η′ ∘≤ η) Γ ≡ renFm§ η′ (renFm§ η Γ))
-             (p₂ : renFm (η′ ∘≤ η) A ≡ renFm η′ (renFm η A)) (d : Þ / Γ ⊢ A) →
-             tren (η′ ∘≤ η) d ≡ cast p₁ p₂ (tren η′ (tren η d))
-comptren η′ η p₁ p₂ d = comptren﹫ η′ η d
-                      ⋮ (λ p₁﹠ p₂﹠ → cast p₁﹠ p₂﹠ (tren η′ (tren η d))) & uip _ _ ⊗ uip _ _
+comptren : ∀ {Þ k k′ k″ Γ ^Γ A ^A} (η′ : k′ ≤ k″) (η : k ≤ k′)
+             (p₁ : ^Γ ≡ renFm§ (η′ ∘≤ η) Γ) (q₁ : ^A ≡ renFm (η′ ∘≤ η) A)
+             (p₂ : ^Γ ≡ renFm§ η′ (renFm§ η Γ)) (q₂ : ^A ≡ renFm η′ (renFm η A))
+             (d : Þ / Γ ⊢ A) →
+             cast p₁ q₁ (tren (η′ ∘≤ η) d) ≡ cast p₂ q₂ (tren η′ (tren η d))
+comptren η′ η refl refl p₂ q₂ d = comptren﹫ η′ η d
+                                ⋮ (λ p₂﹠ q₂﹠ → cast p₂﹠ q₂﹠ (tren η′ (tren η d)))
+                                    & uip _ _ ⊗ uip _ _
 
 comptren§﹫ : ∀ {Þ k k′ k″ Γ Δ} (η′ : k′ ≤ k″) (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
                tren§ (η′ ∘≤ η) δ ≡
@@ -1899,12 +2053,14 @@ comptren§﹫ η′ η (δ , d) = _,_ & comptren§﹫ η′ η δ ⊗ comptren�
                         ⋮ castcons (comprenFm§ η′ η _) (comprenFm§ η′ η _) (comprenFm η′ η _)
                             (tren§ η′ (tren§ η δ)) (tren η′ (tren η d))
 
-comptren§ : ∀ {Þ k k′ k″ Γ Δ} (η′ : k′ ≤ k″) (η : k ≤ k′)
-              (p₁ : renFm§ (η′ ∘≤ η) Γ ≡ renFm§ η′ (renFm§ η Γ))
-              (p₂ : renFm§ (η′ ∘≤ η) Δ ≡ renFm§ η′ (renFm§ η Δ)) (δ : Þ / Γ ⊢§ Δ) →
-              tren§ (η′ ∘≤ η) δ ≡ cast§ p₁ p₂ (tren§ η′ (tren§ η δ))
-comptren§ η′ η p₁ p₂ δ = comptren§﹫ η′ η δ
-                       ⋮ (λ p₁﹠ p₂﹠ → cast§ p₁﹠ p₂﹠ (tren§ η′ (tren§ η δ))) & uip _ _ ⊗ uip _ _
+comptren§ : ∀ {Þ k k′ k″ Γ ^Γ Δ ^Δ} (η′ : k′ ≤ k″) (η : k ≤ k′)
+              (p₁ : ^Γ ≡ renFm§ (η′ ∘≤ η) Γ) (p₂ : ^Δ ≡ renFm§ (η′ ∘≤ η) Δ)
+              (p₃ : ^Γ ≡ renFm§ η′ (renFm§ η Γ)) (p₄ : ^Δ ≡ renFm§ η′ (renFm§ η Δ))
+              (δ : Þ / Γ ⊢§ Δ) →
+              cast§ p₁ p₂ (tren§ (η′ ∘≤ η) δ) ≡ cast§ p₃ p₄ (tren§ η′ (tren§ η δ))
+comptren§ η′ η refl refl p₃ p₄ δ = comptren§﹫ η′ η δ
+                                 ⋮ (λ p₃﹠ p₄﹠ → cast§ p₃﹠ p₄﹠ (tren§ η′ (tren§ η δ)))
+                                      & uip _ _ ⊗ uip _ _
 
 ridtren : ∀ {Þ k k′ Γ A} (η : k ≤ k′) (i : Γ ∋ A) →
             tren {Þ = Þ} η (‵var i) ≡ ‵var (tren∋ η i)
@@ -2107,6 +2263,7 @@ ridsub σ i = refl
 
 ----------------------------------------------------------------------------------------------------
 
+-- 3.9. TODO: title this section
 -- TODO: clean this up
 
 castid⊆ : ∀ {k} {Γ Γ′ : Fm§ k} → Γ ≡ Γ′ → Γ ⊆ Γ′
@@ -2162,7 +2319,7 @@ eqletex refl r₂ d e = ‵letex refl r₂ d & lidren e
 
 ----------------------------------------------------------------------------------------------------
 
--- TODO: clean this up
+-- 3.10. interaction between term renaming and derivation renaming
 
 -- TODO: rename this
 untitled1 : ∀ {k k′ Γ Γ′} (η : k ≤ k′) (ζ : Γ ⊆ Γ′) →
@@ -2232,7 +2389,7 @@ eqtrenren η ζ (‵unall t refl d)       = ‵unall (renTm η t) (eqrencut0Fm �
 eqtrenren η ζ (‵ex t refl d)          = ‵ex (renTm η t) (eqrencut0Fm η _ t ⋮ refl)
                                           & eqtrenren η ζ d
 eqtrenren η ζ (‵letex refl refl d e)  = ren (tren⊆ η ζ)
-                                          & ( (λ r₁ r₂ → ‵letex r₁ r₂ (tren η d)
+                                          & ( (λ r₁﹠ r₂﹠ → ‵letex r₁﹠ r₂﹠ (tren η d)
                                                   (tren (lift≤ η) e))
                                                 & uip _ _
                                                 ⊗ uip _ _
@@ -2297,7 +2454,7 @@ ridtren§ {Γ = Γ , A} η = (_, ‵var zero)
 
 ----------------------------------------------------------------------------------------------------
 
--- TODO: #.#. derivations: generic lemmas from RenSubKit1
+-- 3.11. derivations: generic lemmas from RenSubKit1
 
 lidren§ : ∀ {Þ k} {Γ Δ : Fm§ k} (δ : Þ / Γ ⊢§ Δ) → ren§ id⊆ δ ≡ δ
 lidren§ ∙       = refl
@@ -2395,7 +2552,7 @@ ridget§ (lift⊆ η) = (_, ‵var zero)
 
 ----------------------------------------------------------------------------------------------------
 
--- TODO: #.#. derivations: fundamental substitution lemmas
+-- 3.12. derivations: fundamental substitution lemmas
 
 mutual
   eqrensub : ∀ {Þ k} {Γ Ξ Ξ′ : Fm§ k} {A} (η : Ξ ⊆ Ξ′) (σ : Þ / Ξ ⊢§ Γ) (d : Þ / Γ ⊢ A) →
@@ -2522,126 +2679,535 @@ lidsub (‵rec f g)              = refl
 
 ----------------------------------------------------------------------------------------------------
 
--- TODO: delete this
-module _ where
-  open ≅-Reasoning
+-- 3.13. interaction between term renaming and derivation substitution
+-- TODO: clean this up
 
-  hlidren§ : ∀ {Þ k} {Γ ^Γ Δ : Fm§ k} (p : Γ ≡ ^Γ) (δ : Þ / Γ ⊢§ Δ) → ren§ (castid⊆ p) δ ≅ δ
-  hlidren§ refl δ = ≡→≅ (lidren§ δ)
+-- module _ where
+--   open ≅-Reasoning
+--
+--   hlidren§ : ∀ {Þ k} {Γ ^Γ Δ : Fm§ k} (p : Γ ≡ ^Γ) (δ : Þ / Γ ⊢§ Δ) → ren§ (castid⊆ p) δ ≅ δ
+--   hlidren§ refl δ = ≡→≅ (lidren§ δ)
+--
+--   hlidget§ : ∀ {Þ k} {Γ Δ ^Δ : Fm§ k} (p : Δ ≡ ^Δ) (δ : Þ / Γ ⊢§ ^Δ) → get§ (castid⊆ p) δ ≅ δ
+--   hlidget§ refl δ = ≡→≅ (lidget§ δ)
+--
+--   cast§→≅ : ∀ {Þ k} {Γ ^Γ Δ ^Δ : Fm§ k} (p₁ : ^Γ ≡ Γ) (p₂ : ^Δ ≡ Δ) (δ : Þ / Γ ⊢§ Δ) →
+--                cast§ p₁ p₂ δ ≅ δ
+--   cast§→≅ refl refl δ = refl
+--
+--   hcomptren§ : ∀ {Þ k k′ k″ Γ Δ} (η′ : k′ ≤ k″) (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
+--                  tren§ (η′ ∘≤ η) δ ≅ tren§ η′ (tren§ η δ)
+--   hcomptren§ {Γ = Γ} {Δ} η′ η δ =
+--       begin
+--         tren§ (η′ ∘≤ η) δ
+--       ≡⟨ comptren§﹫ η′ η δ ⟩
+--         cast§ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Δ) (tren§ η′ (tren§ η δ))
+--       ≅⟨ cast§→≅ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Δ) (tren§ η′ (tren§ η δ)) ⟩
+--         tren§ η′ (tren§ η δ)
+--       ∎
+--
+--   huntitled2 : ∀ {Þ k k′ Γ Δ} (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
+--                  get§ (castid⊆ (eqwkrenFm§ η Δ)) (twk§ (tren§ η δ)) ≅
+--                    ren§ (castid⊆ (eqwkrenFm§ η Γ)) (tren§ (lift≤ η) (twk§ δ))
+--   huntitled2 {Γ = Γ} {Δ} η δ =
+--       begin
+--         get§ (castid⊆ (eqwkrenFm§ η Δ)) (twk§ (tren§ η δ))
+--       ≅⟨ hlidget§ (eqwkrenFm§ η Δ) (twk§ (tren§ η δ)) ⟩
+--         twk§ (tren§ η δ)
+--       ≅⟨ hcomptren§ (wk≤ id≤) η δ ʰ⁻¹ ⟩
+--         tren§ (wk≤ id≤ ∘≤ η) δ
+--       ≅⟨ (λ η﹠ → tren§ (wk≤ η﹠) δ) ʰ& ≡→≅ (lid≤ η ⋮ rid≤ η ⁻¹) ⟩
+--         tren§ (lift≤ η ∘≤ wk≤ id≤) δ
+--       ≅⟨ hcomptren§ (lift≤ η) (wk≤ id≤) δ ⟩
+--         tren§ (lift≤ η) (twk§ δ)
+--       ≅⟨ hlidren§ (eqwkrenFm§ η Γ) (tren§ (lift≤ η) (twk§ δ)) ʰ⁻¹ ⟩
+--         ren§ (castid⊆ (eqwkrenFm§ η Γ)) (tren§ (lift≤ η) (twk§ δ))
+--       ∎
 
-  hlidget§ : ∀ {Þ k} {Γ Δ ^Δ : Fm§ k} (p : Δ ≡ ^Δ) (δ : Þ / Γ ⊢§ ^Δ) → get§ (castid⊆ p) δ ≅ δ
-  hlidget§ refl δ = ≡→≅ (lidget§ δ)
+castlidget§ : ∀ {Þ k} {Γ : Fm§ k} {Δ ^Δ} (p : ^Δ ≡ Δ) (δ : Þ / Γ ⊢§ Δ) →
+                get§ (castid⊆ p) δ ≡ cast§ refl p δ
+castlidget§ refl δ = lidget§ δ
 
-  cast§→≅ : ∀ {Þ k} {Γ ^Γ Δ ^Δ : Fm§ k} (p₁ : ^Γ ≡ Γ) (p₂ : ^Δ ≡ Δ) (δ : Þ / Γ ⊢§ Δ) →
-               cast§ p₁ p₂ δ ≅ δ
-  cast§→≅ refl refl δ = refl
+castlidren§ : ∀ {Þ k} {Γ ^Γ : Fm§ k} {Δ} (p : Γ ≡ ^Γ) (δ : Þ / Γ ⊢§ Δ) →
+                ren§ (castid⊆ p) δ ≡ cast§ (p ⁻¹) refl δ
+castlidren§ refl δ = lidren§ δ
 
-  hcomptren§ : ∀ {Þ k k′ k″ Γ Δ} (η′ : k′ ≤ k″) (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
-                 tren§ (η′ ∘≤ η) δ ≅ tren§ η′ (tren§ η δ)
-  hcomptren§ {Γ = Γ} {Δ} η′ η δ =
-      begin
-        tren§ (η′ ∘≤ η) δ
-      ≡⟨ comptren§﹫ η′ η δ ⟩
-        cast§ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Δ) (tren§ η′ (tren§ η δ))
-      ≅⟨ cast§→≅ (comprenFm§ η′ η Γ) (comprenFm§ η′ η Δ) (tren§ η′ (tren§ η δ)) ⟩
-        tren§ η′ (tren§ η δ)
-      ∎
+-- TODO: rewrite this
+untitled2′ : ∀ {Þ k k′ Γ ^Γ Δ ^Δ} (η : k ≤ k′)
+               (p₁ : ^Γ ≡ renFm§ (wk≤ (id≤ ∘≤ η)) Γ) (p₂ : ^Δ ≡ renFm§ (wk≤ (id≤ ∘≤ η)) Δ)
+               (p₃ : ^Γ ≡ renFm§ (wk≤ (η ∘≤ id≤)) Γ) (p₄ : ^Δ ≡ renFm§ (wk≤ (η ∘≤ id≤)) Δ)
+               (δ : Þ / Γ ⊢§ Δ) →
+               cast§ p₁ p₂ (tren§ (wk≤ (id≤ ∘≤ η)) δ) ≡ cast§ p₃ p₄ (tren§ (wk≤ (η ∘≤ id≤)) δ)
+untitled2′ η p₁ p₂ p₃ p₄ δ
+  rewrite (lid≤ η ⋮ rid≤ η ⁻¹) = cast§ & uip p₁ p₃ ⊗ uip p₂ p₄ ⊗ refl
 
-  huntitled2 : ∀ {Þ k k′ Γ Δ} (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
-                 get§ (castid⊆ (eqwkrenFm§ η Δ)) (twk§ (tren§ η δ)) ≅
-                   ren§ (castid⊆ (eqwkrenFm§ η Γ)) (tren§ (lift≤ η) (twk§ δ))
-  huntitled2 {Γ = Γ} {Δ} η δ =
-      begin
-        get§ (castid⊆ (eqwkrenFm§ η Δ)) (twk§ (tren§ η δ))
-      ≅⟨ hlidget§ (eqwkrenFm§ η Δ) (twk§ (tren§ η δ)) ⟩
-        twk§ (tren§ η δ)
-      ≅⟨ hcomptren§ (wk≤ id≤) η δ ʰ⁻¹ ⟩
-        tren§ (wk≤ id≤ ∘≤ η) δ
-      ≅⟨ (λ η﹠ → tren§ (wk≤ η﹠) δ) ʰ& ≡→≅ (lid≤ η ⋮ rid≤ η ⁻¹) ⟩
-        tren§ (lift≤ η ∘≤ wk≤ id≤) δ
-      ≅⟨ hcomptren§ (lift≤ η) (wk≤ id≤) δ ⟩
-        tren§ (lift≤ η) (twk§ δ)
-      ≅⟨ hlidren§ (eqwkrenFm§ η Γ) (tren§ (lift≤ η) (twk§ δ)) ʰ⁻¹ ⟩
-        ren§ (castid⊆ (eqwkrenFm§ η Γ)) (tren§ (lift≤ η) (twk§ δ))
-      ∎
+-- TODO: rename this
+untitled2 : ∀ {Þ k k′ Γ Δ} (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
+              get§ (castid⊆ (eqwkrenFm§ η Δ)) (twk§ (tren§ η δ)) ≡
+                ren§ (castid⊆ (eqwkrenFm§ η Γ)) (tren§ (lift≤ η) (twk§ δ))
+untitled2 {Γ = Γ} {Δ} η δ =
+      castlidget§ (eqwkrenFm§ η Δ) (twk§ (tren§ η δ))
+    ⋮ comptren§ (wk≤ id≤) η (comprenFm§ (wk≤ id≤) η Γ ⁻¹)
+        (comprenFm§ (lift≤ η) (wk≤ id≤) Δ ⁻¹ ⋮ (λ η﹠ → renFm§ (wk≤ η﹠) Δ) & (rid≤ η ⋮ lid≤ η ⁻¹))
+        refl (eqwkrenFm§ η Δ) δ ⁻¹
+    ⋮ untitled2′ η _ _ _ _ δ
+    ⋮ comptren§ (lift≤ η) (wk≤ id≤)
+        (comprenFm§ (wk≤ id≤) η Γ ⁻¹ ⋮ (λ η﹠ → renFm§ (wk≤ η﹠) Γ) & (lid≤ η ⋮ rid≤ η ⁻¹))
+        (comprenFm§ (lift≤ η) (wk≤ id≤) Δ ⁻¹) (eqwkrenFm§ η Γ ⁻¹) refl δ
+    ⋮ castlidren§ (eqwkrenFm§ η Γ) (tren§ (lift≤ η) (twk§ δ)) ⁻¹
 
-module _ where
-  open ≡-Reasoning
+eqtrensub∋ : ∀ {Þ k k′ Γ Ξ A} (η : k ≤ k′) (σ : Þ / Ξ ⊢§ Γ) (i : Γ ∋ A) →
+               sub∋ (tren§ η σ) (tren∋ η i) ≡ tren η (sub∋ σ i)
+eqtrensub∋ η (σ , d) zero    = refl
+eqtrensub∋ η (σ , d) (suc i) = eqtrensub∋ η σ i
 
-  castlidget§ : ∀ {Þ k} {Γ : Fm§ k} {Δ ^Δ} (p : ^Δ ≡ Δ) (δ : Þ / Γ ⊢§ Δ) →
-                  get§ (castid⊆ p) δ ≡ cast§ refl p δ
-  castlidget§ refl δ = lidget§ δ
+eqtrenlift§ : ∀ {Þ k k′ Γ Δ C} (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
+                lift§ (tren§ η δ) ≡ tren§ η (lift§ {C = C} δ)
+eqtrenlift§ η ∙       = refl
+eqtrenlift§ η (δ , d) = (_, ‵var zero)
+                        & ( _,_
+                              & ((λ ζ﹠ → ren§ (wk⊆ ζ﹠) (tren§ η δ)) & ridtren⊆ η ⁻¹)
+                              ⊗ ((λ ζ﹠ → ren (wk⊆ ζ﹠) (tren η d)) & ridtren⊆ η ⁻¹)
+                          ⋮ eqtrenren§ η (wk⊆ id⊆) (δ , d)
+                          )
 
-  castlidren§ : ∀ {Þ k} {Γ ^Γ : Fm§ k} {Δ} (p : Γ ≡ ^Γ) (δ : Þ / Γ ⊢§ Δ) →
-                  ren§ (castid⊆ p) δ ≡ cast§ (p ⁻¹) refl δ
-  castlidren§ refl δ = lidren§ δ
+mutual
+  eqtrensub : ∀ {Þ k k′ Γ Ξ A} (η : k ≤ k′) (σ : Þ / Ξ ⊢§ Γ) (d : Þ / Γ ⊢ A) →
+                sub (tren§ η σ) (tren η d) ≡ tren η (sub σ d)
+  eqtrensub η σ (‵var i)                = eqtrensub∋ η σ i
+  eqtrensub η σ (‵lam d)                = ‵lam & eqtrensublift η σ d
+  eqtrensub η σ (d ‵$ e)                = _‵$_ & eqtrensub η σ d ⊗ eqtrensub η σ e
+  eqtrensub η σ (‵pair d e)             = ‵pair & eqtrensub η σ d ⊗ eqtrensub η σ e
+  eqtrensub η σ (‵fst d)                = ‵fst & eqtrensub η σ d
+  eqtrensub η σ (‵snd d)                = ‵snd & eqtrensub η σ d
+  eqtrensub η σ (‵left d)               = ‵left & eqtrensub η σ d
+  eqtrensub η σ (‵right d)              = ‵right & eqtrensub η σ d
+  eqtrensub η σ (‵either c d e)         = ‵either
+                                            & eqtrensub η σ c
+                                            ⊗ eqtrensublift η σ d
+                                            ⊗ eqtrensublift η σ e
+  eqtrensub η σ (‵all refl d)           = sub (tren§ η σ)
+                                            & ( (λ r﹠ → ‵all r﹠ (tren (lift≤ η) d))
+                                                  & uip (refl ⋮ eqwkrenFm§ η _) _
+                                              ⋮ eqall (eqwkrenFm§ η _) (tren (lift≤ η) d) ⁻¹
+                                              )
+                                        ⋮ ‵all refl
+                                           & ( eqsubren (twk§ (tren§ η σ))
+                                                 (castid⊆ (eqwkrenFm§ η _)) (tren (lift≤ η) d) ⁻¹
+                                             ⋮ (λ σ﹠ → sub σ﹠ (tren (lift≤ η) d)) & untitled2 η σ
+                                             ⋮ eqrensub (castid⊆ (eqwkrenFm§ η _))
+                                                 (tren§ (lift≤ η) (twk§ σ)) (tren (lift≤ η) d)
+                                             )
+                                        ⋮ eqall (eqwkrenFm§ η _) (sub (tren§ (lift≤ η) (twk§ σ))
+                                            (tren (lift≤ η) d))
+                                        ⋮ ‵all (eqwkrenFm§ η _) & eqtrensub (lift≤ η) (twk§ σ) d
+                                        ⋮ (λ r﹠ → ‵all r﹠ (tren (lift≤ η) (sub (twk§ σ) d)))
+                                            & uip _ _
+  eqtrensub η σ (‵unall t refl d)       = ‵unall (renTm η t) (eqrencut0Fm η _ t ⋮ refl)
+                                            & eqtrensub η σ d
+  eqtrensub η σ (‵ex t refl d)          = ‵ex (renTm η t) (eqrencut0Fm η _ t ⋮ refl)
+                                            & eqtrensub η σ d
+  eqtrensub η σ (‵letex refl refl d e)  = sub (tren§ η σ)
+                                            & ( (λ r₁﹠ r₂﹠ → ‵letex r₁﹠ r₂﹠ (tren η d)
+                                                    (tren (lift≤ η) e))
+                                                  & uip (refl ⋮ eqwkrenFm§ η _) _
+                                                  ⊗ uip _ _
+                                              ⋮ eqletex (eqwkrenFm§ η _) (eqwkrenFm η _) (tren η d)
+                                                  (tren (lift≤ η) e) ⁻¹
+                                              )
+                                        ⋮ ‵letex refl (eqwkrenFm η _) (sub (tren§ η σ) (tren η d))
+                                            & ( eqsubrenlift (twk§ (tren§ η σ))
+                                                  (castid⊆ (eqwkrenFm§ η _)) (tren (lift≤ η) e) ⁻¹
+                                              ⋮ (λ σ﹠ → sub (lift§ σ﹠) (tren (lift≤ η) e))
+                                                  & untitled2 η σ
+                                              ⋮ eqrensublift (castid⊆ (eqwkrenFm§ η _))
+                                                  (tren§ (lift≤ η) (twk§ σ)) (tren (lift≤ η) e)                                                   )
+                                        ⋮ eqletex (eqwkrenFm§ η _) (eqwkrenFm η _)
+                                            (sub (tren§ η σ) (tren η d))
+                                            (sub (lift§ (tren§ (lift≤ η) (twk§ σ)))
+                                            (tren (lift≤ η) e))
+                                        ⋮ ‵letex (eqwkrenFm§ η _) (eqwkrenFm η _)
+                                            & eqtrensub η σ d
+                                            ⊗ eqtrensublift (lift≤ η) (twk§ σ) e
+                                        ⋮ (λ r₁﹠ r₂﹠ → ‵letex r₁﹠ r₂﹠ (tren η (sub σ d))
+                                              (tren (lift≤ η) (sub (lift§ (twk§ σ)) e)))
+                                            & uip _ _
+                                            ⊗ uip _ _
+  eqtrensub η σ (‵abortHA d)            = ‵abortHA & eqtrensub η σ d
+  eqtrensub η σ (‵magicPA d)            = ‵magicPA & eqtrensublift η σ d
+  eqtrensub η σ ‵refl                   = refl
+  eqtrensub η σ (‵sym d)                = ‵sym & eqtrensub η σ d
+  eqtrensub η σ (‵trans d e)            = ‵trans & eqtrensub η σ d ⊗ eqtrensub η σ e
+  eqtrensub η σ (‵cong f i refl refl d) = ‵cong f i (eqrenpokeTm η i _ _ ⋮ refl)
+                                              (eqrenpeekTm η i _ ⋮ refl)
+                                            & eqtrensub η σ d
+  eqtrensub η σ ‵dis                    = refl
+  eqtrensub η σ (‵inj d)                = ‵inj & eqtrensub η σ d
+  eqtrensub η σ (‵ind refl refl d e)    = ‵ind (eqrencut0Fm η _ 𝟘 ⋮ renFm η & refl)
+                                              ( eqrencut1Fm η _ (𝕊 (‵tvar zero))
+                                              ⋮ renFm (lift≤ η) & refl
+                                              )
+                                            & eqtrensub η σ d ⊗ eqtrensub η σ e
+  eqtrensub η σ (‵proj i refl)          = refl
+  eqtrensub η σ (‵comp g φ refl)        = refl
+  eqtrensub η σ (‵rec f g)              = refl
 
-  -- TODO: maybe rename to comptren§?
-  comptren§′ : ∀ {Þ k k′ k″ Γ ^Γ Δ ^Δ} (η′ : k′ ≤ k″) (η : k ≤ k′)
-                 (p₁ : ^Γ ≡ renFm§ (η′ ∘≤ η) Γ) (p₂ : ^Δ ≡ renFm§ (η′ ∘≤ η) Δ)
-                 (p₃ : ^Γ ≡ renFm§ η′ (renFm§ η Γ)) (p₄ : ^Δ ≡ renFm§ η′ (renFm§ η Δ))
-                 (δ : Þ / Γ ⊢§ Δ) →
-                 cast§ p₁ p₂ (tren§ (η′ ∘≤ η) δ) ≡ cast§ p₃ p₄ (tren§ η′ (tren§ η δ))
-  comptren§′ η′ η refl refl p₃ p₄ δ = comptren§ η′ η p₃ p₄ δ
+  eqtrensublift : ∀ {Þ k k′ Γ Ξ A C} (η : k ≤ k′) (σ : Þ / Ξ ⊢§ Γ) (d : Þ / Γ , C ⊢ A) →
+                    sub (lift§ (tren§ η σ)) (tren η d) ≡ tren η (sub (lift§ σ) d)
+  eqtrensublift η σ d = (λ σ﹠ → sub σ﹠ (tren η d)) & eqtrenlift§ η σ
+                      ⋮ eqtrensub η (lift§ σ) d
 
-  untitled3 : ∀ {Þ k k′ Γ ^Γ Δ ^Δ} (η : k ≤ k′)
-                (p₁ : ^Γ ≡ renFm§ (wk≤ (id≤ ∘≤ η)) Γ)
-                (p₂ : ^Δ ≡ renFm§ (wk≤ (id≤ ∘≤ η)) Δ)
-                (p₃ : ^Γ ≡ renFm§ (wk≤ (η ∘≤ id≤)) Γ)
-                (p₄ : ^Δ ≡ renFm§ (wk≤ (η ∘≤ id≤)) Δ)
-                (δ : Þ / Γ ⊢§ Δ) →
-                cast§
-                    p₁ -- (comprenFm§ (wk≤ id≤) η Γ ⁻¹)
-                    p₂ -- ( comprenFm§ (lift≤ η) (wk≤ id≤) Δ ⁻¹
-                       -- ⋮ (λ η﹠ → renFm§ (wk≤ η﹠) Δ) & (rid≤ η ⋮ lid≤ η ⁻¹)
-                       -- )
-                    (tren§ (wk≤ (id≤ ∘≤ η)) δ) ≡
-                  cast§
-                      p₃ -- ( comprenFm§ (wk≤ id≤) η Γ ⁻¹
-                         -- ⋮ (λ η﹠ → renFm§ (wk≤ η﹠) Γ) & (lid≤ η ⋮ rid≤ η ⁻¹)
-                         -- )
-                      p₄ -- (comprenFm§ (lift≤ η) (wk≤ id≤) Δ ⁻¹)
-                      (tren§ (wk≤ (η ∘≤ id≤)) δ)
-  untitled3 η refl refl p₃ p₄ δ =
-      begin
-        tren§ (wk≤ (id≤ ∘≤ η)) δ
-      ≡⟨ {!(λ η﹠ → tren§ (wk≤ η﹠) δ) & (lid≤ η ⋮ rid≤ η ⁻¹) !} ⟩
-        cast§ p₃ p₄ (tren§ (lift≤ η ∘≤ wk≤ id≤) δ)
-      ≡⟨⟩
-        cast§ p₃ p₄ (tren§ (wk≤ (η ∘≤ id≤)) δ)
-      ∎
+eqtrensub§ : ∀ {Þ k k′ Γ Ξ Δ} (η : k ≤ k′) (σ : Þ / Ξ ⊢§ Γ) (δ : Þ / Γ ⊢§ Δ) →
+               sub§ (tren§ η σ) (tren§ η δ) ≡ tren§ η (sub§ σ δ)
+eqtrensub§ η σ ∙       = refl
+eqtrensub§ η σ (δ , d) = _,_ & eqtrensub§ η σ δ ⊗ eqtrensub η σ d
 
-  untitled2 : ∀ {Þ k k′ Γ Δ} (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
-                get§ (castid⊆ (eqwkrenFm§ η Δ)) (twk§ (tren§ η δ)) ≡
-                  ren§ (castid⊆ (eqwkrenFm§ η Γ)) (tren§ (lift≤ η) (twk§ δ))
-  untitled2 {Γ = Γ} {Δ} η δ =
-      begin
-        get§ (castid⊆ (eqwkrenFm§ η Δ)) (twk§ (tren§ η δ))
-      ≡⟨ castlidget§ (eqwkrenFm§ η Δ) (twk§ (tren§ η δ)) ⟩
-        cast§ refl (eqwkrenFm§ η Δ) (twk§ (tren§ η δ))
-      ≡⟨ comptren§′ (wk≤ id≤) η (comprenFm§ (wk≤ id≤) η Γ ⁻¹)
-           ( comprenFm§ (lift≤ η) (wk≤ id≤) Δ ⁻¹
-           ⋮ (λ η﹠ → renFm§ (wk≤ η﹠) Δ) & (rid≤ η ⋮ lid≤ η ⁻¹)
-           )
-           refl (eqwkrenFm§ η Δ) δ ⁻¹
-      ⟩
-        cast§ (comprenFm§ (wk≤ id≤) η Γ ⁻¹)
-          ( comprenFm§ (lift≤ η) (wk≤ id≤) Δ ⁻¹
-          ⋮ (λ η﹠ → renFm§ (wk≤ η﹠) Δ) & (rid≤ η ⋮ lid≤ η ⁻¹)
-          )
-          (tren§ (wk≤ id≤ ∘≤ η) δ)
-      ≡⟨ untitled3 η _ _ _ _ δ ⟩
-        cast§
-          (comprenFm§ (wk≤ id≤) η Γ ⁻¹ ⋮ (λ η﹠ → renFm§ (wk≤ η﹠) Γ) & (lid≤ η ⋮ rid≤ η ⁻¹))
-          (comprenFm§ (lift≤ η) (wk≤ id≤) Δ ⁻¹) (tren§ (lift≤ η ∘≤ wk≤ id≤) δ)
-      ≡⟨ comptren§′ (lift≤ η) (wk≤ id≤)
-           (comprenFm§ (wk≤ id≤) η Γ ⁻¹ ⋮ (λ η﹠ → renFm§ (wk≤ η﹠) Γ) & (lid≤ η ⋮ rid≤ η ⁻¹))
-           (comprenFm§ (lift≤ η) (wk≤ id≤) Δ ⁻¹) (eqwkrenFm§ η Γ ⁻¹) refl δ
-      ⟩
-        cast§ (eqwkrenFm§ η Γ ⁻¹) refl (tren§ (lift≤ η) (twk§ δ))
-      ≡⟨ castlidren§ (eqwkrenFm§ η Γ) (tren§ (lift≤ η) (twk§ δ)) ⁻¹ ⟩
-        ren§ (castid⊆ (eqwkrenFm§ η Γ)) (tren§ (lift≤ η) (twk§ δ))
-      ∎
+
+----------------------------------------------------------------------------------------------------
+
+-- 3.14. derivations: generic lemmas from RenSubKit2
+
+eqrensub§ : ∀ {Þ k} {Γ Ξ Ξ′ Δ : Fm§ k} (η : Ξ ⊆ Ξ′) (σ : Þ / Ξ ⊢§ Γ) (δ : Þ / Γ ⊢§ Δ) →
+              sub§ (ren§ η σ) δ ≡ ren§ η (sub§ σ δ)
+eqrensub§ η σ ∙       = refl
+eqrensub§ η σ (δ , d) = _,_ & eqrensub§ η σ δ ⊗ eqrensub η σ d
+
+eqsubren§ : ∀ {Þ k} {Γ Γ′ Ξ Δ : Fm§ k} (σ : Þ / Ξ ⊢§ Γ′) (η : Γ ⊆ Γ′) (δ : Þ / Γ ⊢§ Δ) →
+              sub§ (get§ η σ) δ ≡ sub§ σ (ren§ η δ)
+eqsubren§ σ η ∙       = refl
+eqsubren§ σ η (δ , d) = _,_ & eqsubren§ σ η δ ⊗ eqsubren σ η d
+
+lidsub§ : ∀ {Þ k} {Γ Δ : Fm§ k} (δ : Þ / Γ ⊢§ Δ) → sub§ id§ δ ≡ δ
+lidsub§ ∙       = refl
+lidsub§ (δ , d) = _,_ & lidsub§ δ ⊗ lidsub d
+
+eqsub : ∀ {Þ k} {Γ Ξ : Fm§ k} {A B} (σ : Þ / Ξ ⊢§ Γ) (s : Þ / Ξ ⊢ B) (d : Þ / Γ ⊢ A) →
+          sub (σ , s) (wk d) ≡ sub σ d
+eqsub σ s d = eqsubren (σ , s) (wk⊆ id⊆) d ⁻¹
+            ⋮ (λ σ﹠ → sub σ﹠ d) & lidget§ σ
+
+eqsub§ : ∀ {Þ k} {Γ Ξ Δ : Fm§ k} {B} (σ : Þ / Ξ ⊢§ Γ) (s : Þ / Ξ ⊢ B) (δ : Þ / Γ ⊢§ Δ) →
+           sub§ (σ , s) (wk§ δ) ≡ sub§ σ δ
+eqsub§ σ s ∙       = refl
+eqsub§ σ s (δ , d) = _,_ & eqsub§ σ s δ ⊗ eqsub σ s d
+
+eqwksub : ∀ {Þ k} {Γ Ξ : Fm§ k} {A C} (σ : Þ / Ξ ⊢§ Γ) (d : Þ / Γ ⊢ A) →
+            sub (lift§ σ) (wk {C = C} d) ≡ wk (sub σ d)
+eqwksub σ d = eqsubren (lift§ σ) (wk⊆ id⊆) d ⁻¹
+            ⋮ (λ σ﹠ → sub σ﹠ d)
+                & ( eqwkget§ id⊆ σ
+                  ⋮ wk§ & lidget§ σ
+                  )
+            ⋮ eqrensub (wk⊆ id⊆) σ d
+
+eqwksub§ : ∀ {Þ k} {Γ Ξ Δ : Fm§ k} {C} (σ : Þ / Ξ ⊢§ Γ) (δ : Þ / Γ ⊢§ Δ) →
+             sub§ (lift§ σ) (wk§ {C = C} δ) ≡ wk§ (sub§ σ δ)
+eqwksub§ σ ∙       = refl
+eqwksub§ σ (δ , d) = _,_ & eqwksub§ σ δ ⊗ eqwksub σ d
+
+eqliftsub§ : ∀ {Þ k} {Γ Ξ Δ : Fm§ k} {C} (σ : Þ / Ξ ⊢§ Γ) (δ : Þ / Γ ⊢§ Δ) →
+               sub§ (lift§ σ) (lift§ {C = C} δ) ≡ lift§ (sub§ σ δ)
+eqliftsub§ σ δ = _,_ & eqwksub§ σ δ ⊗ ridsub (lift§ σ) zero
+
+ridsub§ : ∀ {Þ k} {Γ Ξ : Fm§ k} (σ : Þ / Ξ ⊢§ Γ) → sub§ σ id§ ≡ σ
+ridsub§ ∙       = refl
+ridsub§ (σ , s) = _,_
+                    & ( eqsub§ σ s id§
+                      ⋮ ridsub§ σ
+                      )
+                    ⊗ ridsub (σ , s) zero
+
+
+----------------------------------------------------------------------------------------------------
+
+-- 3.15. derivations: more fundamental substitution lemmas
+
+mutual
+  compsub : ∀ {Þ k} {Γ Ξ Ξ′ : Fm§ k} {A} (σ′ : Þ / Ξ′ ⊢§ Ξ) (σ : Þ / Ξ ⊢§ Γ) (d : Þ / Γ ⊢ A) →
+              sub (sub§ σ′ σ) d ≡ sub σ′ (sub σ d)
+
+  compsub σ′ σ (‵var i)                = compsub∋ σ′ σ i
+  compsub σ′ σ (‵lam d)                = ‵lam & compsublift σ′ σ d
+  compsub σ′ σ (d ‵$ e)                = _‵$_ & compsub σ′ σ d ⊗ compsub σ′ σ e
+  compsub σ′ σ (‵pair d e)             = ‵pair & compsub σ′ σ d ⊗ compsub σ′ σ e
+  compsub σ′ σ (‵fst d)                = ‵fst & compsub σ′ σ d
+  compsub σ′ σ (‵snd d)                = ‵snd & compsub σ′ σ d
+  compsub σ′ σ (‵left d)               = ‵left & compsub σ′ σ d
+  compsub σ′ σ (‵right d)              = ‵right & compsub σ′ σ d
+  compsub σ′ σ (‵either c d e)         = ‵either
+                                           & compsub σ′ σ c
+                                           ⊗ compsublift σ′ σ d
+                                           ⊗ compsublift σ′ σ e
+  compsub σ′ σ (‵all refl d)           = ‵all refl
+                                           & ( (λ σ﹠ → sub σ﹠ d) & eqtrensub§ (wk≤ id≤) σ′ σ ⁻¹
+                                             ⋮ compsub (twk§ σ′) (twk§ σ) d
+                                             )
+  compsub σ′ σ (‵unall t refl d)       = ‵unall t refl & compsub σ′ σ d
+  compsub σ′ σ (‵ex t refl d)          = ‵ex t refl & compsub σ′ σ d
+  compsub σ′ σ (‵letex refl refl d e)  = ‵letex refl refl
+                                           & compsub σ′ σ d
+                                           ⊗ ( (λ σ﹠ → sub (lift§ σ﹠) e)
+                                                 & eqtrensub§ (wk≤ id≤) σ′ σ ⁻¹
+                                             ⋮ compsublift (twk§ σ′) (twk§ σ) e
+                                             )
+  compsub σ′ σ (‵abortHA d)            = ‵abortHA & compsub σ′ σ d
+  compsub σ′ σ (‵magicPA d)            = ‵magicPA & compsublift σ′ σ d
+  compsub σ′ σ ‵refl                   = refl
+  compsub σ′ σ (‵sym d)                = ‵sym & compsub σ′ σ d
+  compsub σ′ σ (‵trans d e)            = ‵trans & compsub σ′ σ d ⊗ compsub σ′ σ e
+  compsub σ′ σ (‵cong f i refl refl d) = ‵cong f i refl refl & compsub σ′ σ d
+  compsub σ′ σ ‵dis                    = refl
+  compsub σ′ σ (‵inj d)                = ‵inj & compsub σ′ σ d
+  compsub σ′ σ (‵ind refl refl d e)    = ‵ind refl refl & compsub σ′ σ d ⊗ compsub σ′ σ e
+  compsub σ′ σ (‵proj i refl)          = refl
+  compsub σ′ σ (‵comp g φ refl)        = refl
+  compsub σ′ σ (‵rec f g)              = refl
+
+  compsublift : ∀ {Þ k} {Γ Ξ Ξ′ : Fm§ k} {A B} (σ′ : Þ / Ξ′ ⊢§ Ξ) (σ : Þ / Ξ ⊢§ Γ)
+                  (d : Þ / Γ , A ⊢ B) →
+                  sub (lift§ (sub§ σ′ σ)) d ≡ sub (lift§ σ′) (sub (lift§ σ) d)
+  compsublift σ′ σ d = (λ σ﹠ → sub σ﹠ d) & eqliftsub§ σ′ σ ⁻¹
+                     ⋮ compsub (lift§ σ′) (lift§ σ) d
+
+
+----------------------------------------------------------------------------------------------------
+
+-- 3.16. derivations: generic lemmas from RenSubKit3
+
+asssub§ : ∀ {Þ k} {Γ Ξ Ξ′ Δ : Fm§ k} (σ′ : Þ / Ξ′ ⊢§ Ξ) (σ : Þ / Ξ ⊢§ Γ) (δ : Þ / Γ ⊢§ Δ) →
+            sub§ σ′ (sub§ σ δ) ≡ sub§ (sub§ σ′ σ) δ
+asssub§ σ′ σ ∙       = refl
+asssub§ σ′ σ (δ , d) = _,_ & asssub§ σ′ σ δ ⊗ compsub σ′ σ d ⁻¹
+
+eqrencut : ∀ {Þ k} {Γ Γ′ : Fm§ k} {A B} (η : Γ ⊆ Γ′) (d : Þ / Γ , A ⊢ B) (s : Þ / Γ ⊢ A) →
+             ren (lift⊆ η) d [ ren η s /0] ≡ ren η (d [ s /0])
+eqrencut η d s = eqsubren (id§ , ren η s) (lift⊆ η) d ⁻¹
+               ⋮ (λ σ﹠ → sub (σ﹠ , ren η s) d) & (ridget§ η ⋮ ridren§ η ⁻¹)
+               ⋮ eqrensub η (id§ , s) d
+
+eqsubcut : ∀ {Þ k} {Γ Ξ : Fm§ k} {A B} (σ : Þ / Ξ ⊢§ Γ) (d : Þ / Γ , A ⊢ B) (s : Þ / Γ ⊢ A) →
+             sub (lift§ σ) d [ sub σ s /0] ≡ sub σ (d [ s /0])
+eqsubcut σ d s = compsub (id§ , sub σ s) (lift§ σ) d ⁻¹
+               ⋮ (λ σ﹠ → sub σ﹠ d)
+                   & ( _,_
+                         & ( eqsubren§ (id§ , sub σ s) (wk⊆ id⊆) σ ⁻¹
+                           ⋮ (λ σ﹠ → sub§ σ﹠ σ) & lidget§ id§
+                           ⋮ lidsub§ σ
+                           ⋮ ridsub§ σ ⁻¹
+                           )
+                         ⊗ ridsub (id§ , sub σ s) zero
+                     )
+               ⋮ compsub σ (id§ , s) d
+
+
+----------------------------------------------------------------------------------------------------
+
+-- 4.0. category of order-preserving embeddings
+
+module Section-4-0 (funext : Funext) where
+  -- TODO: report bug with `record where`
+  cat≥ : Category lzero lzero
+  cat≥ = record
+      { Obj  = Nat
+      ; _▻_  = _≤_
+      ; id   = id≤
+      ; _∘_  = _∘≤_
+      ; lid▻ = lid≤
+      ; rid▻ = rid≤
+      ; ass▻ = ass≤
+      ; ◅ssa = λ η η′ η″ → ass≤ η″ η′ η ⁻¹
+      } ᵒᵖ
+
+  pshrenFin : Presheaf cat≥ lzero
+  pshrenFin = record
+      { ƒObj = Fin
+      ; ƒ    = renFin
+      ; idƒ  = funext idrenFin
+      ; _∘ƒ_ = λ η′ η → funext (comprenFin η′ η)
+      }
+
+  module _ {𝓍} {X : Set 𝓍} where
+    cat⊇ : Category 𝓍 𝓍
+    cat⊇ = record
+        { Obj  = List X
+        ; _▻_  = _⊆_
+        ; id   = id⊆
+        ; _∘_  = _∘⊆_
+        ; lid▻ = lid⊆
+        ; rid▻ = rid⊆
+        ; ass▻ = ass⊆
+        ; ◅ssa = λ η η′ η″ → ass⊆ η″ η′ η ⁻¹
+        } ᵒᵖ
+
+    pshren∋ : X → Presheaf cat⊇ 𝓍
+    pshren∋ X = record
+        { ƒObj = _∋ X
+        ; ƒ    = ren∋
+        ; idƒ  = funext idren∋
+        ; _∘ƒ_ = λ η′ η → funext (compren∋ η′ η)
+        }
+
+
+----------------------------------------------------------------------------------------------------
+
+-- 4.1. category of simultaneous substitutions of terms
+
+module Section-4-1 (funext : Funext) where
+  open Section-4-0 funext
+
+  pshrenTm : Presheaf cat≥ lzero
+  pshrenTm = record
+      { ƒObj = λ k → Tm k
+      ; ƒ    = renTm
+      ; idƒ  = funext lidrenTm
+      ; _∘ƒ_ = λ η′ η → funext (comprenTm η′ η)
+      }
+
+  pshrenTm§ : Nat → Presheaf cat≥ lzero
+  pshrenTm§ n = record
+      { ƒObj = λ k → Tm§ k n
+      ; ƒ    = renTm§
+      ; idƒ  = funext lidrenTm§
+      ; _∘ƒ_ = λ η′ η → funext (comprenTm§ η′ η)
+      }
+
+  pshgetTm§ : Nat → Presheaf (cat≥ ᵒᵖ) lzero
+  pshgetTm§ k = record
+      { ƒObj = λ n → Tm§ k n
+      ; ƒ    = getTm§
+      ; idƒ  = funext lidgetTm§
+      ; _∘ƒ_ = λ η′ η → funext (compgetTm§ η′ η)
+      }
+
+  catTm§ : Category lzero lzero
+  catTm§ = record
+      { Obj  = Nat
+      ; _▻_  = λ n k → Tm§ k n
+      ; id   = idTm§
+      ; _∘_  = subTm§
+      ; lid▻ = lidsubTm§
+      ; rid▻ = ridsubTm§
+      ; ass▻ = asssubTm§
+      ; ◅ssa = λ τ σ σ′ → asssubTm§ σ′ σ τ ⁻¹
+      } ᵒᵖ
+
+  pshsubTm : Presheaf catTm§ lzero
+  pshsubTm = record
+      { ƒObj = λ k → Tm k
+      ; ƒ    = subTm
+      ; idƒ  = funext lidsubTm
+      ; _∘ƒ_ = λ σ′ σ → funext (compsubTm σ′ σ)
+      }
+
+  pshsubTm§ : Nat → Presheaf catTm§ lzero
+  pshsubTm§ n = record
+      { ƒObj = λ k → Tm§ k n
+      ; ƒ    = subTm§
+      ; idƒ  = funext lidsubTm§
+      ; _∘ƒ_ = λ σ′ σ → funext (λ τ → asssubTm§ σ′ σ τ ⁻¹) -- TODO: what? why?!
+      }
+
+  pshrenFm : Presheaf cat≥ lzero
+  pshrenFm = record
+      { ƒObj = λ k → Fm k
+      ; ƒ    = renFm
+      ; idƒ  = funext lidrenFm
+      ; _∘ƒ_ = λ η′ η → funext (comprenFm η′ η)
+      }
+
+  pshrenFm§ : Presheaf cat≥ lzero
+  pshrenFm§ = record
+      { ƒObj = λ k → Fm§ k
+      ; ƒ    = renFm§
+      ; idƒ  = funext lidrenFm§
+      ; _∘ƒ_ = λ η′ η → funext (comprenFm§ η′ η)
+      }
+
+  pshsubFm : Presheaf catTm§ lzero
+  pshsubFm = record
+      { ƒObj = λ k → Fm k
+      ; ƒ    = subFm
+      ; idƒ  = funext lidsubFm
+      ; _∘ƒ_ = λ σ′ σ → funext (compsubFm σ′ σ)
+      }
+
+  pshsubFm§ : Presheaf catTm§ lzero
+  pshsubFm§ = record
+      { ƒObj = λ k → Fm§ k
+      ; ƒ    = subFm§
+      ; idƒ  = funext lidsubFm§
+      ; _∘ƒ_ = λ σ′ σ → funext (compsubFm§ σ′ σ)
+      }
+
+----------------------------------------------------------------------------------------------------
+
+-- TODO: 4.2. category of something something
+
+module Section-4-2 (funext : Funext) where
+  -- TODO: tren∋, lidtren∋, comptren∋
+  -- TODO: tren⊆, lidtren⊆, lcomptren⊆
+  -- TODO: tren, lidtren, comptren
+  -- TODO: tren§, lidtren§, comptren§
+
+
+----------------------------------------------------------------------------------------------------
+
+-- 4.3. category of simultaneous substitutions of derivations
+
+module Section-4-3 (funext : Funext) where
+  open Section-4-0 funext
+
+  pshren : ∀ {Þ k} → Fm k → Presheaf cat⊇ lzero
+  pshren {Þ} A = record
+      { ƒObj = λ Γ → Þ / Γ ⊢ A
+      ; ƒ    = ren
+      ; idƒ  = funext lidren
+      ; _∘ƒ_ = λ η′ η → funext (compren η′ η)
+      }
+
+  pshren§ : ∀ {Þ k} → Fm§ k → Presheaf cat⊇ lzero
+  pshren§ {Þ} Δ = record
+      { ƒObj = λ Γ → Þ / Γ ⊢§ Δ
+      ; ƒ    = ren§
+      ; idƒ  = funext lidren§
+      ; _∘ƒ_ = λ η′ η → funext (compren§ η′ η)
+      }
+
+  pshget§ : ∀ {Þ k} → Fm§ k → Presheaf (cat⊇ ᵒᵖ) lzero
+  pshget§ {Þ} Γ = record
+      { ƒObj = λ Δ → Þ / Γ ⊢§ Δ
+      ; ƒ    = get§
+      ; idƒ  = funext lidget§
+      ; _∘ƒ_ = λ η′ η → funext (compget§ η′ η)
+      }
+
+  cat§ : ∀ {Þ k} → Category lzero lzero
+  cat§ {Þ} {k} = record
+      { Obj  = Fm§ k
+      ; _▻_  = λ Δ Γ → Þ / Γ ⊢§ Δ
+      ; id   = id§
+      ; _∘_  = sub§
+      ; lid▻ = lidsub§
+      ; rid▻ = ridsub§
+      ; ass▻ = asssub§
+      ; ◅ssa = λ τ σ σ′ → asssub§ σ′ σ τ ⁻¹
+      } ᵒᵖ
+
+  pshsub : ∀ {Þ k} → Fm k → Presheaf cat§ lzero
+  pshsub {Þ} A = record
+      { ƒObj = λ Γ → Þ / Γ ⊢ A
+      ; ƒ    = sub
+      ; idƒ  = funext lidsub
+      ; _∘ƒ_ = λ σ′ σ → funext (compsub σ′ σ)
+      }
+
+  pshsub§ : ∀ {Þ k} → Fm§ k → Presheaf cat§ lzero
+  pshsub§ {Þ} Δ = record
+      { ƒObj = λ Γ → Þ / Γ ⊢§ Δ
+      ; ƒ    = sub§
+      ; idƒ  = funext lidsub§
+      ; _∘ƒ_ = λ σ′ σ → funext (λ τ → asssub§ σ′ σ τ ⁻¹) -- TODO: what? why?!
+      }
 
 
 ----------------------------------------------------------------------------------------------------
