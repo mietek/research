@@ -296,14 +296,6 @@ record Functor {ℴ₁ ℴ₂ 𝓂₁ 𝓂₂} (C : Category ℴ₁ 𝓂₁) (D 
          ; _∘ƒ_ = Hidden.flip _∘ƒ_
          }
 
-ƒId : ∀ {ℴ 𝓂} (C : Category ℴ 𝓂) → Functor C C
-ƒId C = record
-          { ƒObj = Hidden.id
-          ; ƒ    = Hidden.id
-          ; idƒ  = refl
-          ; _∘ƒ_ = λ q p → refl
-          }
-
 Presheaf : ∀ {ℴ 𝓂} (C : Category ℴ 𝓂) (𝓍 : Level) → Set (ℴ ⊔ 𝓂 ⊔ lsuc 𝓍)
 Presheaf C 𝓍 = Functor (C ᵒᵖ) (catSet 𝓍)
 
@@ -2745,16 +2737,19 @@ untitled2′ η p₁ p₂ p₃ p₄ δ
 untitled2 : ∀ {Þ k k′ Γ Δ} (η : k ≤ k′) (δ : Þ / Γ ⊢§ Δ) →
               get§ (castid⊆ (eqwkrenFm§ η Δ)) (twk§ (tren§ η δ)) ≡
                 ren§ (castid⊆ (eqwkrenFm§ η Γ)) (tren§ (lift≤ η) (twk§ δ))
-untitled2 {Γ = Γ} {Δ} η δ =
-      castlidget§ (eqwkrenFm§ η Δ) (twk§ (tren§ η δ))
-    ⋮ comptren§ (wk≤ id≤) η (comprenFm§ (wk≤ id≤) η Γ ⁻¹)
-        (comprenFm§ (lift≤ η) (wk≤ id≤) Δ ⁻¹ ⋮ (λ η﹠ → renFm§ (wk≤ η﹠) Δ) & (rid≤ η ⋮ lid≤ η ⁻¹))
-        refl (eqwkrenFm§ η Δ) δ ⁻¹
-    ⋮ untitled2′ η _ _ _ _ δ
-    ⋮ comptren§ (lift≤ η) (wk≤ id≤)
-        (comprenFm§ (wk≤ id≤) η Γ ⁻¹ ⋮ (λ η﹠ → renFm§ (wk≤ η﹠) Γ) & (lid≤ η ⋮ rid≤ η ⁻¹))
-        (comprenFm§ (lift≤ η) (wk≤ id≤) Δ ⁻¹) (eqwkrenFm§ η Γ ⁻¹) refl δ
-    ⋮ castlidren§ (eqwkrenFm§ η Γ) (tren§ (lift≤ η) (twk§ δ)) ⁻¹
+untitled2 {Γ = Γ} {Δ} η δ = castlidget§ (eqwkrenFm§ η Δ) (twk§ (tren§ η δ))
+                          ⋮ comptren§ (wk≤ id≤) η (comprenFm§ (wk≤ id≤) η Γ ⁻¹)
+                              ( comprenFm§ (lift≤ η) (wk≤ id≤) Δ ⁻¹
+                              ⋮ (λ η﹠ → renFm§ (wk≤ η﹠) Δ) & (rid≤ η ⋮ lid≤ η ⁻¹)
+                              )
+                              refl (eqwkrenFm§ η Δ) δ ⁻¹
+                          ⋮ untitled2′ η _ _ _ _ δ
+                          ⋮ comptren§ (lift≤ η) (wk≤ id≤)
+                              ( comprenFm§ (wk≤ id≤) η Γ ⁻¹
+                              ⋮ (λ η﹠ → renFm§ (wk≤ η﹠) Γ) & (lid≤ η ⋮ rid≤ η ⁻¹)
+                              )
+                              (comprenFm§ (lift≤ η) (wk≤ id≤) Δ ⁻¹) (eqwkrenFm§ η Γ ⁻¹) refl δ
+                          ⋮ castlidren§ (eqwkrenFm§ η Γ) (tren§ (lift≤ η) (twk§ δ)) ⁻¹
 
 eqtrensub∋ : ∀ {Þ k k′ Γ Ξ A} (η : k ≤ k′) (σ : Þ / Ξ ⊢§ Γ) (i : Γ ∋ A) →
                sub∋ (tren§ η σ) (tren∋ η i) ≡ tren η (sub∋ σ i)
@@ -2821,7 +2816,8 @@ mutual
                                               ⋮ (λ σ﹠ → sub (lift§ σ﹠) (tren (lift≤ η) e))
                                                   & untitled2 η σ
                                               ⋮ eqrensublift (castid⊆ (eqwkrenFm§ η _))
-                                                  (tren§ (lift≤ η) (twk§ σ)) (tren (lift≤ η) e)                                                   )
+                                                  (tren§ (lift≤ η) (twk§ σ)) (tren (lift≤ η) e)
+                                              )
                                         ⋮ eqletex (eqwkrenFm§ η _) (eqwkrenFm η _)
                                             (sub (tren§ η σ) (tren η d))
                                             (sub (lift§ (tren§ (lift≤ η) (twk§ σ)))
