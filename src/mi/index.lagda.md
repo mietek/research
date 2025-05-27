@@ -1,5 +1,5 @@
 ---
-title: index
+title: Machine Intuitionist
 lang:  en
 ---
 

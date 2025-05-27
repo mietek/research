@@ -3,7 +3,7 @@ module index where
 
 ----------------------------------------------------------------------------------------------------
 
--- mechanised intuitionist
+-- Machine Intuitionist
 import mi.index
 
 
