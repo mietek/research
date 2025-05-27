@@ -398,11 +398,11 @@ eac→zac eac {I} {S} {A} p₁ p₂ p₃ p₄ p₅ = S₁ , p₆ , p₇
     S₁ x = ∃[ j ⦂ I ] f j ≍ x
 
     p₆ : Extensional-≍-↔ S₁
-    p₆ x≍y = (λ { (j , fj≍x) → j , ≍-trans fj≍x x≍y })
-           , (λ { (j , fj≍y) → j , ≍-trans fj≍y (≍-sym x≍y) })
+    p₆ x≍y = (λ { (j , fj≍x) → j , ≍-trans {S = S} fj≍x x≍y })
+           , (λ { (j , fj≍y) → j , ≍-trans {S = S} fj≍y (≍-sym {S = S} x≍y) })
 
     f-common : ∀ i → (A i ∩ S₁) (f i)
-    f-common i = snd (snd (eac p₁ p₂ p₅)) i , i , ≍-refl
+    f-common i = snd (snd (eac p₁ p₂ p₅)) i , i , ≍-refl {S = S}
 
     f-unique : ∀ i {y} → (A i ∩ S₁) y → f i ≍ y
     f-unique i {y} (y-here , j , fj≍y) = fi≍y
@@ -417,7 +417,7 @@ eac→zac eac {I} {S} {A} p₁ p₂ p₃ p₄ p₅ = S₁ , p₆ , p₇
         i≍j = p₃ y-here y-there
 
         fi≍y : f i ≍ y
-        fi≍y = ≍-trans (f-ext i≍j) fj≍y
+        fi≍y = ≍-trans {S = S} (f-ext i≍j) fj≍y
 
     p₇ : ∀ i → ∃![ x ⦂ S ] (A i ∩ S₁) x
     p₇ i = f i , f-common i , f-unique i
@@ -535,18 +535,18 @@ ii→iii zac {I} {S} f f-ext f-surj = g , g-f-rinv , g-ext
     A i x = f x ≍ i
 
     p₁ : Extensional-≍S-↔ A
-    p₁ x≍y = (λ fx≍i → ≍-trans (≍-sym (f-ext x≍y)) fx≍i)
-           , (λ fy≍i → ≍-trans (f-ext x≍y) fy≍i)
+    p₁ x≍y = (λ fx≍i → ≍-trans {S = I} (≍-sym {S = I} (f-ext x≍y)) fx≍i)
+           , (λ fy≍i → ≍-trans {S = I} (f-ext x≍y) fy≍i)
 
     p₂ : Extensional-≍I-↔ A
-    p₂ i≍j = (λ fx≍i → ≍-trans fx≍i i≍j)
-           , (λ fx≍j → ≍-trans fx≍j (≍-sym i≍j))
+    p₂ i≍j = (λ fx≍i → ≍-trans {S = I} fx≍i i≍j)
+           , (λ fx≍j → ≍-trans {S = I} fx≍j (≍-sym {S = I} i≍j))
 
     p₃ : MutuallyExclusive A
-    p₃ fx≍i fx≍j = ≍-trans (≍-sym fx≍i) fx≍j
+    p₃ fx≍i fx≍j = ≍-trans {S = I} (≍-sym {S = I} fx≍i) fx≍j
 
     p₄ : Exhaustive A
-    p₄ x = f x , ≍-refl
+    p₄ x = f x , ≍-refl {S = I}
 
     p₅ : Nonempty A
     p₅ = f-surj
@@ -852,7 +852,7 @@ ac! {I = I} {S} {A} p₁ p₂ h = f , f-ext , f-common
         fj-there = f-common j
 
         fj-here : A i (f j)
-        fj-here = fst (p₂ (≍-sym i≍j)) fj-there
+        fj-here = fst (p₂ (≍-sym {S = I} i≍j)) fj-there
 
         fi≍fj : f i ≍ f j
         fi≍fj = f-unique i fj-here
