@@ -1,6 +1,32 @@
--- 2025-03-21
--- Friedman’s A-Translation
--- https://www.mscs.dal.ca/~selinger/papers/friedman.pdf
+---
+author:  P. Selinger
+hauthor: Peter Selinger
+year:    1992
+title:   Friedman’s A-translation
+lang:    en
+card:
+  - P. Selinger (1992)
+  - '[Friedman’s A-translation
+    ](https://www.mscs.dal.ca/~selinger/papers/friedman.pdf)'
+  - Manuscript.
+todo:
+  - DOI missing
+---
+
+<style>
+  pre {
+    position: relative;
+    left: 0;
+    max-width: 100%;
+    margin: 3.3rem 0 3.5rem 0;
+  }
+</style>
+
+
+```
+-- Mechanised by Miëtek Bak
+-- temporary version for AIM XL
+
 -- thanks to roconnor, ncf, and drvink
 -- first-order predicate logic with one sort (naturals) and one predicate (equality)
 -- variant with first-order structures for renaming and substitution
@@ -8,7 +34,7 @@
 -- TODO: replace UIP with specific types
 -- {-# OPTIONS --without-K #-}
 
-module Selinger92 where
+module mi.Selinger1992 where
 
 open import Agda.Builtin.Equality public
   using (_≡_ ; refl)
@@ -3985,3 +4011,6 @@ module _ where
 
 
 ----------------------------------------------------------------------------------------------------
+```
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
