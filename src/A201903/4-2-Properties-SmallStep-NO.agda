@@ -1,3 +1,5 @@
+{-# OPTIONS --guardedness --sized-types #-}
+
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Properties of SS-NO
@@ -38,22 +40,22 @@ no←no₂ (NO₂.app₂ p₁ p₂ r₂)      = app₂ p₁ (no←no₂ r₂)
 -- Every term is either SS-NO-reducible or NF
 
 data RF? {n} : Pred₀ (Tm n) where
-  yes : ∀ {e} → RF e → RF? e
-  no  : ∀ {e} → NF e → RF? e
+  yës : ∀ {e} → RF e → RF? e
+  nö  : ∀ {e} → NF e → RF? e
 
 rf? : ∀ {n} (e : Tm n) → RF? e
-rf? (var s x)                             = no (nf var)
+rf? (var s x)                             = nö (nf var)
 rf? (lam s e)                             with rf? e
-... | yes (_ , r)                         = yes (_ , lam r)
-... | no p                                = no (lam p)
+... | yës (_ , r)                         = yës (_ , lam r)
+... | nö p                                = nö (lam p)
 rf? (app e₁ e₂)                           with rf? e₁ | rf? e₂
-... | yes (_ , applam)     | _            = yes (_ , app₁ app applam)
-... | yes (_ , lam r₁)     | _            = yes (_ , applam)
-... | yes (_ , app₁ p₁ r₁) | _            = yes (_ , app₁ app (app₁ p₁ r₁))
-... | yes (_ , app₂ p₁ r₂) | _            = yes (_ , app₁ app (app₂ p₁ r₂))
-... | no (lam p₁)          | _            = yes (_ , applam)
-... | no (nf p₁)           | yes (_ , r₂) = yes (_ , app₂ p₁ r₂)
-... | no (nf p₁)           | no p₂        = no (nf (app p₁ p₂))
+... | yës (_ , applam)     | _            = yës (_ , app₁ app applam)
+... | yës (_ , lam r₁)     | _            = yës (_ , applam)
+... | yës (_ , app₁ p₁ r₁) | _            = yës (_ , app₁ app (app₁ p₁ r₁))
+... | yës (_ , app₂ p₁ r₂) | _            = yës (_ , app₁ app (app₂ p₁ r₂))
+... | nö (lam p₁)          | _            = yës (_ , applam)
+... | nö (nf p₁)           | yës (_ , r₂) = yës (_ , app₂ p₁ r₂)
+... | nö (nf p₁)           | nö p₂        = nö (nf (app p₁ p₂))
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -62,8 +64,8 @@ rf? (app e₁ e₂)                           with rf? e₁ | rf? e₂
 
 eval : ∀ {n i} (e : Tm n) → e ᶜᵒ⇓[ NF ]⟨ i ⟩
 eval e            with rf? e
-... | yes (_ , r) = r ◅ λ where .force → eval _
-... | no p        = ε p
+... | yës (_ , r) = r ◅ λ where .force → eval _
+... | nö p        = ε p
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -72,8 +74,8 @@ eval e            with rf? e
 
 nf←nrf : ∀ {n} {e : Tm n} → NRF e → NF e
 nf←nrf p         with rf? _
-... | yes (_ , r) = r ↯ p
-... | no p′       = p′
+... | yës (_ , r) = r ↯ p
+... | nö p′       = p′
 
 mutual
   nrf←nf : ∀ {n} {e : Tm n} → NF e → NRF e

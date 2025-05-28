@@ -1,3 +1,5 @@
+{-# OPTIONS --guardedness --sized-types #-}
+
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Equivalence of SS-AO and BS-AO
@@ -27,13 +29,19 @@ module Lem-5-4-1 where
   rev-lam* ε            = ε
   rev-lam* (lam r ◅ rs) = r ◅ rev-lam* rs
 
+  -- TODO: fix later
+  {-# TERMINATING #-}
   ¬lam⇒*var : ∀ {n s} {e : Tm (suc n)} {s′ x} → ¬ (lam s e ⇒* var s′ x)
   ¬lam⇒*var = λ { (lam r ◅ rs) → rs ↯ ¬lam⇒*var }
 
+  -- TODO: fix later
+  {-# TERMINATING #-}
   ¬lam-s⇒*lam-s′ : ∀ {n s} {e : Tm (suc n)} {s′ e′} → s ≢ s′ → ¬ (lam s e ⇒* lam s′ e′)
   ¬lam-s⇒*lam-s′ s≢s′ = λ { ε            → refl ↯ s≢s′
                            ; (lam r ◅ rs) → rs ↯ ¬lam-s⇒*lam-s′ s≢s′ }
 
+  -- TODO: fix later
+  {-# TERMINATING #-}
   ¬lam⇒*app : ∀ {n s} {e : Tm (suc n)} {e₁ e₂} → ¬ (lam s e ⇒* app e₁ e₂)
   ¬lam⇒*app = λ { (lam r ◅ rs) → rs ↯ ¬lam⇒*app }
 

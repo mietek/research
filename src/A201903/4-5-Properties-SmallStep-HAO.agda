@@ -1,3 +1,5 @@
+{-# OPTIONS --guardedness --sized-types #-}
+
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Properties of SS-HAO
@@ -14,22 +16,22 @@ import A201903.4-3-Properties-SmallStep-CBV as CBV
 -- Every term is either SS-HAO-reducible or NF
 
 data RF? {n} : Pred₀ (Tm n) where
-  yes : ∀ {e} → RF e → RF? e
-  no  : ∀ {e} → NF e → RF? e
+  yës : ∀ {e} → RF e → RF? e
+  nö  : ∀ {e} → NF e → RF? e
 
 rf? : ∀ {n} (e : Tm n) → RF? e
-rf? (var s x)                                        = no (nf var)
+rf? (var s x)                                        = nö (nf var)
 rf? (lam s e)                                        with rf? e
-... | yes (_ , r)                                    = yes (_ , lam r)
-... | no p                                           = no (lam p)
+... | yës (_ , r)                                    = yës (_ , lam r)
+... | nö p                                           = nö (lam p)
 rf? (app e₁ e₂)                                      with CBV.rf? e₁ | rf? e₁ | rf? e₂
-... | CBV.yes (_ , r₁) | _            | _            = yes (_ , cbv-app₁ r₁)
-... | CBV.no lam       | _            | yes (_ , r₂) = yes (_ , app₂ₐ r₂)
-... | CBV.no lam       | _            | no p₂        = yes (_ , applam p₂)
-... | CBV.no (wnf p₁)  | yes (_ , r₁) | _            = yes (_ , app₁ p₁ r₁)
-... | CBV.no (wnf ())  | no (lam p₁′) | _
-... | CBV.no (wnf p₁)  | no (nf p₁′)  | yes (_ , r₂) = yes (_ , app₂ p₁′ r₂)
-... | CBV.no (wnf p₁)  | no (nf p₁′)  | no p₂        = no (nf (app p₁′ p₂))
+... | CBV.yës (_ , r₁) | _            | _            = yës (_ , cbv-app₁ r₁)
+... | CBV.nö lam       | _            | yës (_ , r₂) = yës (_ , app₂ₐ r₂)
+... | CBV.nö lam       | _            | nö p₂        = yës (_ , applam p₂)
+... | CBV.nö (wnf p₁)  | yës (_ , r₁) | _            = yës (_ , app₁ p₁ r₁)
+... | CBV.nö (wnf ())  | nö (lam p₁′) | _
+... | CBV.nö (wnf p₁)  | nö (nf p₁′)  | yës (_ , r₂) = yës (_ , app₂ p₁′ r₂)
+... | CBV.nö (wnf p₁)  | nö (nf p₁′)  | nö p₂        = nö (nf (app p₁′ p₂))
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -38,8 +40,8 @@ rf? (app e₁ e₂)                                      with CBV.rf? e₁ | rf?
 
 eval : ∀ {n i} (e : Tm n) → e ᶜᵒ⇓[ NF ]⟨ i ⟩
 eval e            with rf? e
-... | yes (_ , r) = r ◅ λ where .force → eval _
-... | no p        = ε p
+... | yës (_ , r) = r ◅ λ where .force → eval _
+... | nö p        = ε p
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -48,8 +50,8 @@ eval e            with rf? e
 
 nf←nrf : ∀ {n} {e : Tm n} → NRF e → NF e
 nf←nrf p         with rf? _
-... | yes (_ , r) = r ↯ p
-... | no p′       = p′
+... | yës (_ , r) = r ↯ p
+... | nö p′       = p′
 
 mutual
   nrf←nf : ∀ {n} {e : Tm n} → NF e → NRF e

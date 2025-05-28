@@ -1,3 +1,5 @@
+{-# OPTIONS --guardedness --sized-types #-}
+
 ---------------------------------------------------------------------------------------------------------------
 
 module A201903.0-1-Prelude where
@@ -5,19 +7,16 @@ module A201903.0-1-Prelude where
 open import Axiom.Extensionality.Propositional public
   using (Extensionality)
 
-open import Category.Monad public
-  using (module RawMonad)
-
-open import Codata.Colist public
-  using (Colist ; [] ; _∷_)
-
 open import Codata.Musical.Costring public
   using (Costring)
 
 open import Codata.Musical.Notation public
   using (♯_ ; ♭)
 
-open import Codata.Thunk public
+open import Codata.Sized.Colist public
+  using (Colist ; [] ; _∷_)
+
+open import Codata.Sized.Thunk public
   using (Thunk ; force)
 
 open import Data.Char public
@@ -59,6 +58,9 @@ open import Data.Sum public
 
 open import Data.Vec public
   using (Vec ; [] ; _∷_ ; _[_]=_ ; here ; there)
+
+open import Effect.Monad public
+  using (module RawMonad)
 
 open import Function public
   using (_∘_ ; case_of_ ; flip)

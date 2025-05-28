@@ -1,3 +1,5 @@
+{-# OPTIONS --guardedness --sized-types #-}
+
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Properties of SS-HS
@@ -13,18 +15,18 @@ open HS public
 -- Every term is either SS-HS-reducible or HNF
 
 data RF? {n} : Pred₀ (Tm n) where
-  yes : ∀ {e} → RF e → RF? e
-  no  : ∀ {e} → HNF e → RF? e
+  yës : ∀ {e} → RF e → RF? e
+  nö  : ∀ {e} → HNF e → RF? e
 
 rf? : ∀ {n} (e : Tm n) → RF? e
-rf? (var s x)      = no (hnf var)
+rf? (var s x)      = nö (hnf var)
 rf? (lam s e)      with rf? e
-... | yes (_ , r)  = yes (_ , lam r)
-... | no p         = no (lam p)
+... | yës (_ , r)  = yës (_ , lam r)
+... | nö p         = nö (lam p)
 rf? (app e₁ e₂)    with rf? e₁
-... | yes (_ , r₁) = yes (_ , app₁ r₁)
-... | no (lam p₁)  = yes (_ , applam p₁)
-... | no (hnf p₁)  = no (hnf (app p₁))
+... | yës (_ , r₁) = yës (_ , app₁ r₁)
+... | nö (lam p₁)  = yës (_ , applam p₁)
+... | nö (hnf p₁)  = nö (hnf (app p₁))
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -33,8 +35,8 @@ rf? (app e₁ e₂)    with rf? e₁
 
 eval : ∀ {n i} (e : Tm n) → e ᶜᵒ⇓[ HNF ]⟨ i ⟩
 eval e            with rf? e
-... | yes (_ , r) = r ◅ λ where .force → eval _
-... | no p        = ε p
+... | yës (_ , r) = r ◅ λ where .force → eval _
+... | nö p        = ε p
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -43,8 +45,8 @@ eval e            with rf? e
 
 hnf←nrf : ∀ {n} {e : Tm n} → NRF e → HNF e
 hnf←nrf p        with rf? _
-... | yes (_ , r) = r ↯ p
-... | no p′       = p′
+... | yës (_ , r) = r ↯ p
+... | nö p′       = p′
 
 nrf←naxnf : ∀ {n} {e : Tm n} → NAXNF e → NRF e
 nrf←naxnf var      = λ ()

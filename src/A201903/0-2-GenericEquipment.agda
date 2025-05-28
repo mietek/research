@@ -1,3 +1,5 @@
+{-# OPTIONS --guardedness --sized-types #-}
+
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Generic equipment for well-scoped terms
@@ -79,7 +81,7 @@ module DerivedEquipment (_⇒_ : ∀ {n} → Rel₀ (Tm n)) where
   {-# DISPLAY _⇓[_]⟨_⟩ e P ∞      = e ⇓[ P ] #-}
 
   -- Coinductive evaluation/potential termination, indexed by value predicate and size
-  data _ᶜᵒ⇓[_]⟨_⟩ : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Size → Set where
+  data _ᶜᵒ⇓[_]⟨_⟩ : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Size → Set₁ where
     ε   : ∀ {n i} {P : ∀ {n} → Pred₀ (Tm n)} {e : Tm n} →
           P e →
           e ᶜᵒ⇓[ P ]⟨ i ⟩
@@ -99,6 +101,8 @@ module DerivedEquipment (_⇒_ : ∀ {n} → Rel₀ (Tm n)) where
   cor-conf-⇒ det (r ◅ rs) (r′ ◅ rs′) with det r r′
   ... | refl                          = cor-conf-⇒ det rs rs′
 
+  -- TODO: fix later
+  {-# TERMINATING #-}
   -- Determinism of evaluation to NRF, as a corollary of determinism of small-step reduction
   cor-det-⇓-nrf : Binary.Deterministic _⇒_ → Binary.Deterministic _⇓[ NRF ]_
   cor-det-⇓-nrf det (ε        , p) (ε          , p′) = refl

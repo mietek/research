@@ -1,3 +1,5 @@
+{-# OPTIONS --guardedness --sized-types #-}
+
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Stuttering colists
@@ -7,7 +9,14 @@ module A201903.0-1-1-Prelude-StutteringColists where
 open import A201903.0-1-Prelude
 import Codata.Musical.Colist as Colist
 import Data.String as String
-open import IO using (IO ; _>>=_ ; _>>_ ; return)
+open import IO using (IO) renaming (pure to return ; bind to _>>=_)
+
+
+---------------------------------------------------------------------------------------------------------------
+
+fromMusical : ∀ {a} {A : Set a} {i} → Colist.Colist A → Colist A i
+fromMusical Colist.[]       = []
+fromMusical (x Colist.∷ xs) = x ∷ λ where .force → fromMusical (♭ xs)
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -22,7 +31,7 @@ fromColist []       = []
 fromColist (x ∷ xs) = x ∷ λ where .force → fromColist (xs .force)
 
 fromCostring : Costring → Cocolist Char ∞
-fromCostring = fromColist ∘ Colist.fromMusical
+fromCostring = fromColist ∘ fromMusical
 
 fromList : ∀ {a} {A : Set a} → List A → Cocolist A ∞
 fromList []       = []
@@ -52,10 +61,10 @@ sequence (a ∷ as) = do x ← ♯ a
 
 sequence′ : ∀ {a} {A : Set a} → Cocolist (IO A) ∞ → IO (Lift a ⊤)
 sequence′ []       = return _
-sequence′ (-∷ as)  = do ♯ sequence (as .force)
+sequence′ (-∷ as)  = do _ ← ♯ sequence (as .force)
                         ♯ return _
-sequence′ (a ∷ as) = do ♯ a
-                        ♯ (do ♯ sequence′ (as .force)
+sequence′ (a ∷ as) = do _ ← ♯ a
+                        ♯ (do _ ← ♯ sequence′ (as .force)
                               ♯ return _)
 
 mapM : ∀ {a b} {A : Set a} {B : Set b} → (A → IO B) → Cocolist A ∞ → IO (Cocolist B ∞)

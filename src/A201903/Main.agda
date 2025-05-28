@@ -1,3 +1,5 @@
+{-# OPTIONS --guardedness --sized-types #-}
+
 ---------------------------------------------------------------------------------------------------------------
 
 module A201903.Main where
@@ -10,8 +12,8 @@ import A201903.4-2-Properties-SmallStep-NO as NO
 import Data.List as List
 import Data.String as String
 import Data.List.NonEmpty as List⁺
-import IO.Primitive as Prim
-open import IO using (IO ; _>>=_ ; _>>_)
+import IO.Primitive.Core as Prim
+open import IO using (IO) renaming (bind to _>>=_)
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -382,8 +384,8 @@ module RESL where
 -- I/O handling
 
 main : Prim.IO (Lift 0ᴸ ⊤)
-main = IO.run do ♯ Foreign.disableBuffering
-                 ♯ do ♯ IO.putStr "> "
+main = IO.run do _ ← ♯ Foreign.disableBuffering
+                 ♯ do _ ← ♯ IO.putStr "> "
                       ♯ do s ← ♯ IO.getContents
                            let ss = cocorun (RESL.loop []) (Cocolist.fromCostring s)
                            ♯ Cocolist.mapM′ (IO.putStr ∘ RESL.showAction) ss

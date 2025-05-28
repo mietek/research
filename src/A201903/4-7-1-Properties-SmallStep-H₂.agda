@@ -1,3 +1,5 @@
+{-# OPTIONS --guardedness --sized-types #-}
+
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Properties of SS-H₂
@@ -14,22 +16,22 @@ import A201903.4-1-Properties-SmallStep-CBN as CBN
 -- Every term is either SS-CBN-reducible, SS-H₂-reducible, or HNF
 
 data RF? {n} : Pred₀ (Tm n) where
-  cbn-yes : ∀ {e} → CBN.RF e → RF? e
-  yes     : ∀ {e} → WHNF e → RF e → RF? e
-  no      : ∀ {e} → HNF e → RF? e
+  cbn-yës : ∀ {e} → CBN.RF e → RF? e
+  yës     : ∀ {e} → WHNF e → RF e → RF? e
+  nö      : ∀ {e} → HNF e → RF? e
 
 rf? : ∀ {n} (e : Tm n) → RF? e
 rf? e           with CBN.rf? e
-...             | CBN.yes (_ , r)        = cbn-yes (_ , r)
-rf? (var s x)   | CBN.no _               = no (hnf var)
-rf? (lam s e)   | CBN.no _               with rf? e
-... | cbn-yes (_ , r)                    = yes lam (_ , cbn-lam (λ p′ → r ↯ CBN.nrf←whnf p′) r)
-... | yes p (_ , r)                      = yes lam (_ , lam p r)
-... | no p                               = no (lam p)
-rf? (app e₁ e₂) | CBN.no (whnf (app p₁)) with rf? e₁
-... | cbn-yes (_ , r₁)                   = cbn-yes (_ , CBN.app₁ r₁)
-... | yes p₁′ (_ , r₁)                   = no (hnf (app p₁))
-... | no p₁′                             = no (hnf (app p₁))
+...             | CBN.yës (_ , r)        = cbn-yës (_ , r)
+rf? (var s x)   | CBN.nö _               = nö (hnf var)
+rf? (lam s e)   | CBN.nö _               with rf? e
+... | cbn-yës (_ , r)                    = yës lam (_ , cbn-lam (λ p′ → r ↯ CBN.nrf←whnf p′) r)
+... | yës p (_ , r)                      = yës lam (_ , lam p r)
+... | nö p                               = nö (lam p)
+rf? (app e₁ e₂) | CBN.nö (whnf (app p₁)) with rf? e₁
+... | cbn-yës (_ , r₁)                   = cbn-yës (_ , CBN.app₁ r₁)
+... | yës p₁′ (_ , r₁)                   = nö (hnf (app p₁))
+... | nö p₁′                             = nö (hnf (app p₁))
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -38,9 +40,9 @@ rf? (app e₁ e₂) | CBN.no (whnf (app p₁)) with rf? e₁
 
 cbn-rf|hnf←nrf : ∀ {n} {e : Tm n} → NRF e → CBN.RF e ⊎ HNF e
 cbn-rf|hnf←nrf p      with rf? _
-... | cbn-yes (_ , r) = inj₁ (_ , r)
-... | yes p′ (_ , r)  = r ↯ p
-... | no p′           = inj₂ p′
+... | cbn-yës (_ , r) = inj₁ (_ , r)
+... | yës p′ (_ , r)  = r ↯ p
+... | nö p′           = inj₂ p′
 
 nrf←cbn-rf : ∀ {n} {e : Tm n} → CBN.RF e → NRF e
 nrf←cbn-rf (_ , r) = λ { (cbn-lam ¬p r′) → case r of λ ()

@@ -1,3 +1,5 @@
+{-# OPTIONS --guardedness --sized-types #-}
+
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Properties of SS-CBV
@@ -13,18 +15,18 @@ open CBV public
 -- Every term is either SS-CBV-reducible or WNF
 
 data RF? {n} : Pred₀ (Tm n) where
-  yes : ∀ {e} → RF e → RF? e
-  no  : ∀ {e} → WNF e → RF? e
+  yës : ∀ {e} → RF e → RF? e
+  nö  : ∀ {e} → WNF e → RF? e
 
 rf? : ∀ {n} (e : Tm n) → RF? e
-rf? (var s x)                     = no (wnf var)
-rf? (lam s e)                     = no lam
+rf? (var s x)                     = nö (wnf var)
+rf? (lam s e)                     = nö lam
 rf? (app e₁ e₂)                   with rf? e₁ | rf? e₂
-... | yes (_ , r₁) | _            = yes (_ , app₁ r₁)
-... | no lam       | yes (_ , r₂) = yes (_ , app₂ lam r₂)
-... | no lam       | no p₂        = yes (_ , applam p₂)
-... | no (wnf p₁)  | yes (_ , r₂) = yes (_ , app₂ (wnf p₁) r₂)
-... | no (wnf p₁)  | no p₂        = no (wnf (app p₁ p₂))
+... | yës (_ , r₁) | _            = yës (_ , app₁ r₁)
+... | nö lam       | yës (_ , r₂) = yës (_ , app₂ lam r₂)
+... | nö lam       | nö p₂        = yës (_ , applam p₂)
+... | nö (wnf p₁)  | yës (_ , r₂) = yës (_ , app₂ (wnf p₁) r₂)
+... | nö (wnf p₁)  | nö p₂        = nö (wnf (app p₁ p₂))
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -33,8 +35,8 @@ rf? (app e₁ e₂)                   with rf? e₁ | rf? e₂
 
 eval : ∀ {n i} (e : Tm n) → e ᶜᵒ⇓[ WNF ]⟨ i ⟩
 eval e            with rf? e
-... | yes (_ , r) = r ◅ λ where .force → eval _
-... | no p        = ε p
+... | yës (_ , r) = r ◅ λ where .force → eval _
+... | nö p        = ε p
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -43,8 +45,8 @@ eval e            with rf? e
 
 wnf←nrf : ∀ {n} {e : Tm n} → NRF e → WNF e
 wnf←nrf p        with rf? _
-... | yes (_ , r) = r ↯ p
-... | no p′       = p′
+... | yës (_ , r) = r ↯ p
+... | nö p′       = p′
 
 mutual
   nrf←wnf : ∀ {n} {e : Tm n} → WNF e → NRF e

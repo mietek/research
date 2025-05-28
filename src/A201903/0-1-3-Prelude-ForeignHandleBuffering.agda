@@ -1,3 +1,5 @@
+{-# OPTIONS --guardedness --sized-types #-}
+
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Foreign-function interface to buffering modes for I/O handles
@@ -5,8 +7,8 @@
 module A201903.0-1-3-Prelude-ForeignHandleBuffering where
 
 open import A201903.0-1-Prelude
-import IO.Primitive as Prim
-open import IO using (IO ; _>>_)
+import IO.Primitive.Core as Prim
+open import IO using (IO) renaming (bind to _>>=_)
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -42,9 +44,9 @@ postulate hFlush : Handle → Prim.IO ⊤
 ---------------------------------------------------------------------------------------------------------------
 
 disableBuffering : IO ⊤
-disableBuffering = do ♯ IO.lift (hSetBuffering stdout NoBuffering)
-                      ♯ do ♯ IO.lift (hSetBuffering stderr NoBuffering)
-                           ♯ do ♯ IO.lift (hFlush stdout)
+disableBuffering = do _ ← ♯ IO.lift (hSetBuffering stdout NoBuffering)
+                      ♯ do _ ← ♯ IO.lift (hSetBuffering stderr NoBuffering)
+                           ♯ do _ ← ♯ IO.lift (hFlush stdout)
                                 ♯ IO.lift (hFlush stderr)
 
 

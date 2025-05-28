@@ -1,3 +1,5 @@
+{-# OPTIONS --guardedness --sized-types #-}
+
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Properties of SS-HNO₂
@@ -14,27 +16,27 @@ import A201903.4-6-Properties-SmallStep-HS as HS
 -- Every term is either SS-HS-reducible, SS-HNO₂-reducible, or NF
 
 data RF? {n} : Pred₀ (Tm n) where
-  hs-yes : ∀ {e} → HS.RF e → RF? e
-  yes    : ∀ {e} → HNF e → RF e → RF? e
-  no     : ∀ {e} → NF e → RF? e
+  hs-yës : ∀ {e} → HS.RF e → RF? e
+  yës    : ∀ {e} → HNF e → RF e → RF? e
+  nö     : ∀ {e} → NF e → RF? e
 
 rf? : ∀ {n} (e : Tm n) → RF? e
 rf? e           with HS.rf? e
-...             | HS.yes (_ , r)         = hs-yes (_ , r)
-rf? (var s x)   | HS.no _                = no (nf var)
-rf? (lam s e)   | HS.no (lam p)          with rf? e
-... | hs-yes (_ , r)                     = hs-yes (_ , HS.lam r)
-... | yes p′ (_ , r)                     = yes (lam p) (_ , lam p r)
-... | no p′                              = no (lam p′)
-rf? (lam s e)   | HS.no (hnf ())
-rf? (app e₁ e₂) | HS.no (hnf (app p₁))   with rf? e₁ | rf? e₂
-... | hs-yes (_ , r₁)  | _               = hs-yes (_ , HS.app₁ r₁)
-... | yes p₁′ (_ , r₁) | _               = yes (hnf (app p₁)) (_ , app₁ p₁ r₁)
-... | no (lam p₁′)     | _               = case p₁ of λ ()
-... | no (nf p₁′)      | hs-yes (_ , r₂) = yes (hnf (app p₁))
+...             | HS.yës (_ , r)         = hs-yës (_ , r)
+rf? (var s x)   | HS.nö _                = nö (nf var)
+rf? (lam s e)   | HS.nö (lam p)          with rf? e
+... | hs-yës (_ , r)                     = hs-yës (_ , HS.lam r)
+... | yës p′ (_ , r)                     = yës (lam p) (_ , lam p r)
+... | nö p′                              = nö (lam p′)
+rf? (lam s e)   | HS.nö (hnf ())
+rf? (app e₁ e₂) | HS.nö (hnf (app p₁))   with rf? e₁ | rf? e₂
+... | hs-yës (_ , r₁)  | _               = hs-yës (_ , HS.app₁ r₁)
+... | yës p₁′ (_ , r₁) | _               = yës (hnf (app p₁)) (_ , app₁ p₁ r₁)
+... | nö (lam p₁′)     | _               = case p₁ of λ ()
+... | nö (nf p₁′)      | hs-yës (_ , r₂) = yës (hnf (app p₁))
                                                (_ , hs-app₂ p₁′ (λ p₂′ → r₂ ↯ HS.nrf←hnf p₂′) r₂)
-... | no (nf p₁′)      | yes p₂ (_ , r₂) = yes (hnf (app p₁)) (_ , app₂ p₁′ p₂ r₂)
-... | no (nf p₁′)      | no p₂           = no (nf (app p₁′ p₂))
+... | nö (nf p₁′)      | yës p₂ (_ , r₂) = yës (hnf (app p₁)) (_ , app₂ p₁′ p₂ r₂)
+... | nö (nf p₁′)      | nö p₂           = nö (nf (app p₁′ p₂))
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -43,9 +45,9 @@ rf? (app e₁ e₂) | HS.no (hnf (app p₁))   with rf? e₁ | rf? e₂
 
 hs-rf|nf←nrf : ∀ {n} {e : Tm n} → NRF e → HS.RF e ⊎ NF e
 hs-rf|nf←nrf p      with rf? _
-... | hs-yes (_ , r) = inj₁ (_ , r)
-... | yes p′ (_ , r) = r ↯ p
-... | no p′          = inj₂ p′
+... | hs-yës (_ , r) = inj₁ (_ , r)
+... | yës p′ (_ , r) = r ↯ p
+... | nö p′          = inj₂ p′
 
 nrf←hs-rf : ∀ {n} {e : Tm n} → HS.RF e → NRF e
 nrf←hs-rf (_ , r) = λ { (lam p r′)          → case r of

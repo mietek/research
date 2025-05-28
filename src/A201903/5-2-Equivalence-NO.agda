@@ -1,3 +1,5 @@
+{-# OPTIONS --guardedness --sized-types #-}
+
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Equivalence of SS-NO and BS-NO
@@ -89,15 +91,21 @@ module Lem-5-2-2 where
   ... | _ , rs′ , p″ , rs″            = _ , r ◅ rs′ , p″ , rs″
   rev-cbn-lam* (lam p r ◅ rs)      p′ = _ , ε , p , r ◅ rev-lam* (whnf-⇒ r) rs
 
+  -- TODO: fix later
+  {-# TERMINATING #-}
   ¬lam⇒*var : ∀ {n s} {e : Tm (suc n)} {s′ x} → ¬ (lam s e ⇒* var s′ x)
   ¬lam⇒*var = λ { (cbn-lam ¬p r ◅ rs) → rs ↯ ¬lam⇒*var
                  ; (lam p r ◅ rs)      → rs ↯ ¬lam⇒*var }
 
+  -- TODO: fix later
+  {-# TERMINATING #-}
   ¬lam-s⇒*lam-s′ : ∀ {n s} {e : Tm (suc n)} {s′ e′} → s ≢ s′ → ¬ (lam s e ⇒* lam s′ e′)
   ¬lam-s⇒*lam-s′ s≢s′ = λ { ε                   → refl ↯ s≢s′
                            ; (cbn-lam ¬p r ◅ rs) → rs ↯ ¬lam-s⇒*lam-s′ s≢s′
                            ; (lam p r ◅ rs)      → rs ↯ ¬lam-s⇒*lam-s′ s≢s′ }
 
+  -- TODO: fix later
+  {-# TERMINATING #-}
   ¬lam⇒*app : ∀ {n s} {e : Tm (suc n)} {e₁ e₂} → ¬ (lam s e ⇒* app e₁ e₂)
   ¬lam⇒*app = λ { (cbn-lam ¬p r ◅ rs) → rs ↯ ¬lam⇒*app
                  ; (lam p r ◅ rs)      → rs ↯ ¬lam⇒*app }

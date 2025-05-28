@@ -1,3 +1,5 @@
+{-# OPTIONS --guardedness --sized-types #-}
+
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Properties of SS-CBN
@@ -13,16 +15,16 @@ open CBN public
 -- Every term is either SS-CBN-reducible or WHNF
 
 data RF? {n} : Pred₀ (Tm n) where
-  yes : ∀ {e} → RF e → RF? e
-  no  : ∀ {e} → WHNF e → RF? e
+  yës : ∀ {e} → RF e → RF? e
+  nö  : ∀ {e} → WHNF e → RF? e
 
 rf? : ∀ {n} (e : Tm n) → RF? e
-rf? (var s x)      = no (whnf var)
-rf? (lam s e)      = no lam
+rf? (var s x)      = nö (whnf var)
+rf? (lam s e)      = nö lam
 rf? (app e₁ e₂)    with rf? e₁
-... | yes (_ , r₁) = yes (_ , app₁ r₁)
-... | no lam       = yes (_ , applam)
-... | no (whnf p₁) = no (whnf (app p₁))
+... | yës (_ , r₁) = yës (_ , app₁ r₁)
+... | nö lam       = yës (_ , applam)
+... | nö (whnf p₁) = nö (whnf (app p₁))
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -31,8 +33,8 @@ rf? (app e₁ e₂)    with rf? e₁
 
 eval : ∀ {n i} (e : Tm n) → e ᶜᵒ⇓[ WHNF ]⟨ i ⟩
 eval e            with rf? e
-... | yes (_ , r) = r ◅ λ where .force → eval _
-... | no p        = ε p
+... | yës (_ , r) = r ◅ λ where .force → eval _
+... | nö p        = ε p
 
 
 ---------------------------------------------------------------------------------------------------------------
@@ -41,8 +43,8 @@ eval e            with rf? e
 
 whnf←nrf : ∀ {n} {e : Tm n} → NRF e → WHNF e
 whnf←nrf p       with rf? _
-... | yes (_ , r) = r ↯ p
-... | no p′       = p′
+... | yës (_ , r) = r ↯ p
+... | nö p′       = p′
 
 nrf←naxnf : ∀ {n} {e : Tm n} → NAXNF e → NRF e
 nrf←naxnf var      = λ ()

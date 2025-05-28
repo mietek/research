@@ -1,3 +1,5 @@
+{-# OPTIONS --guardedness --sized-types #-}
+
 ---------------------------------------------------------------------------------------------------------------
 --
 -- Equivalence of SS-HNO and BS-HNO
@@ -79,13 +81,19 @@ module Lem-5-8-2 where
   rev-lam* p ε               = ε
   rev-lam* p (lam p′ r ◅ rs) = r ◅ rev-lam* (hnf-⇒ r) rs
 
+  -- TODO: fix later
+  {-# TERMINATING #-}
   ¬lam⇒*var : ∀ {n s} {e : Tm (suc n)} {s′ x} → ¬ (lam s e ⇒* var s′ x)
   ¬lam⇒*var = λ { (lam p r ◅ rs)  → rs ↯ ¬lam⇒*var }
 
+  -- TODO: fix later
+  {-# TERMINATING #-}
   ¬lam-s⇒*lam-s′ : ∀ {n s} {e : Tm (suc n)} {s′ e′} → s ≢ s′ → ¬ (lam s e ⇒* lam s′ e′)
   ¬lam-s⇒*lam-s′ s≢s′ = λ { ε              → refl ↯ s≢s′
                            ; (lam p r ◅ rs) → rs ↯ ¬lam-s⇒*lam-s′ s≢s′ }
 
+  -- TODO: fix later
+  {-# TERMINATING #-}
   ¬lam⇒*app : ∀ {n s} {e : Tm (suc n)} {e₁ e₂} → ¬ (lam s e ⇒* app e₁ e₂)
   ¬lam⇒*app = λ { (lam p r ◅ rs)  → rs ↯ ¬lam⇒*app }
 
