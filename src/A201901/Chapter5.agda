@@ -475,10 +475,10 @@ module Functions
     ... | no x≢y          = ν y , refl
     c-ren (ƛ y ∙ t) h x z with x ≟ᴺ y
     ... | yes refl        = ƛ y ∙ t , refl
-    ... | no x≢y          = let (t′ , s≡s′) = h t (<ˢ-abs x t) x z in
+    ... | no x≢y          = let (t′ , s≡s′) = h {t} (<ˢ-abs x t) x z in
                               ƛ y ∙ t′ , suc & s≡s′
-    c-ren (t₁ $ t₂) h x z = let (t₁′ , s₁≡s₁′) = h t₁ (<ˢ-app₁ t₁ t₂) x z
-                                (t₂′ , s₂≡s₂′) = h t₂ (<ˢ-app₂ t₁ t₂) x z in
+    c-ren (t₁ $ t₂) h x z = let (t₁′ , s₁≡s₁′) = h {t₁} (<ˢ-app₁ t₁ t₂) x z
+                                (t₂′ , s₂≡s₂′) = h {t₂} (<ˢ-app₂ t₁ t₂) x z in
                               t₁′ $ t₂′ , (λ s₁ s₂ → suc (s₁ + s₂)) & s₁≡s₁′ ⊗ s₂≡s₂′
 
     ren : ∀ (t : Term) → Name → Name → ∃ λ t′ → size t ≡ size t′
@@ -490,11 +490,11 @@ module Functions
     ... | no x≢y                  = ν y
     c-sub (ƛ y ∙ t) h x s         with x ≟ᴺ y | fv s T⟨∌⟩? x
     ... | yes refl | _            = ƛ y ∙ t
-    ... | no x≢y   | yes T⟨fvs∌x⟩ = ƛ y ∙ h t (<ˢ-abs x t) x s
+    ... | no x≢y   | yes T⟨fvs∌x⟩ = ƛ y ∙ h {t} (<ˢ-abs x t) x s
     ... | no x≢y   | no ¬T⟨fvs∌x⟩ = let z = fresh (fv s ∪ fv t)
                                         (t′ , s≡s′) = ren t y z in
-                                      ƛ z ∙ h t′ (<ˢ-abs′ x t t′ s≡s′) x s
-    c-sub (t₁ $ t₂) h x s         = h t₁ (<ˢ-app₁ t₁ t₂) x s $ h t₂ (<ˢ-app₂ t₁ t₂) x s
+                                      ƛ z ∙ h {t′} (<ˢ-abs′ x t t′ s≡s′) x s
+    c-sub (t₁ $ t₂) h x s         = h {t₁} (<ˢ-app₁ t₁ t₂) x s $ h {t₂} (<ˢ-app₂ t₁ t₂) x s
 
     sub : ∀ (t : Term) → Name → Term → Term
     sub = indSize c-sub

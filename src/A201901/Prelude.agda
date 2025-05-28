@@ -18,9 +18,13 @@ open import Data.Nat public
   using (_≤_ ; _≤′_ ; _<_ ; _+_ ; _⊔_ ; ≤′-refl ; ≤′-step ; s≤s ; suc ; z≤n ; zero)
   renaming (ℕ to Nat)
 
+open import Data.Nat.Induction public
+  using (<-wellFounded)
+
 open import Data.Nat.Properties public
-  using (module ≤-Reasoning ; ≤-refl ; ≤-step ; ≤-trans ; +-comm ; +-mono-≤ ; +-monoˡ-≤
-        ; m≤m+n ; m≤n+m ; m≤m⊔n ; n≤m⊔n ; s≤′s ; z≤′n)
+  using (module ≤-Reasoning ; ≤-refl ; ≤-trans ; +-comm ; +-mono-≤ ; +-monoˡ-≤
+        ; m≤m+n ; m≤n+m ; m≤m⊔n ; m≤n⊔m ; s≤′s ; z≤′n)
+  renaming (m≤n⇒m≤1+n to ≤-step)
 open ≤-Reasoning public
 
 open import Data.Product public
@@ -39,9 +43,6 @@ open import Data.Unit public
 
 open import Function public
   using (_∘_ ; case_of_ ; _on_)
-
-open import Induction.Nat public
-  using (<-wellFounded)
 
 open import Induction.WellFounded public
   using (module All ; WellFounded ; acc)
@@ -154,10 +155,10 @@ m≤m⊔n⊔o : ∀ m n o → m ≤ m ⊔ n ⊔ o
 m≤m⊔n⊔o m n o = ≤-trans (m≤m⊔n m n) (m≤m⊔n (m ⊔ n) o)
 
 n≤m⊔n⊔o : ∀ m n o → n ≤ m ⊔ n ⊔ o
-n≤m⊔n⊔o m n o = ≤-trans (n≤m⊔n m n) (m≤m⊔n (m ⊔ n) o)
+n≤m⊔n⊔o m n o = ≤-trans (m≤n⊔m m n) (m≤m⊔n (m ⊔ n) o)
 
 o≤m⊔n⊔o : ∀ m n o → o ≤ m ⊔ n ⊔ o
-o≤m⊔n⊔o m n o = n≤m⊔n (m ⊔ n) o
+o≤m⊔n⊔o m n o = m≤n⊔m (m ⊔ n) o
 
 
 ---------------------------------------------------------------------------------------------------------------
