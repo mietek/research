@@ -10,6 +10,7 @@ import mi.Aczel1978
 import mi.Friedman1978
 import mi.MartinLof2006
 import mi.McBride2006
+import mi.Selinger1992
 ```
 
 Work in progress.  Check out the [source repository](https://github.com/mietek/research/).
@@ -80,6 +81,8 @@ Made by [Miëtek Bak](https://mietek.io/).  Licensed under [CC BY-SA 4.0
 ## R
 
 ## S
+
+-  P. Selinger (1992) [Friedman’s A-translation](mi.Selinger1992.html)
 
 ## T
 
