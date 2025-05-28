@@ -1,3 +1,5 @@
+{-# OPTIONS --rewriting #-}
+
 module A201802.WIP.LR3b where
 
 open import A201801.Prelude

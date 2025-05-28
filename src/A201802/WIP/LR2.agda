@@ -1,3 +1,5 @@
+{-# OPTIONS --rewriting #-}
+
 module A201802.WIP.LR2 where
 
 open import A201801.Prelude
@@ -34,7 +36,7 @@ data Vals {g} : ∀ {n} → Terms g n → Set
   where
     instance
       ∙   : Vals ∙
-      _,_ : ∀ {n M} → {τ : Terms g n} → Vals τ → Val M → Vals (τ , M)
+    _,_ : ∀ {n M} → {τ : Terms g n} → Vals τ → Val M → Vals (τ , M)
 
 
 

@@ -1,3 +1,5 @@
+{-# OPTIONS --rewriting #-}
+
 module A201802.WIP.ListRemovals where
 
 open import A201801.Prelude

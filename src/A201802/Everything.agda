@@ -1,3 +1,5 @@
+{-# OPTIONS --rewriting #-}
+
 module A201802.Everything where
 
 

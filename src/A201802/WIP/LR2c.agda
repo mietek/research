@@ -1,4 +1,4 @@
-{-# OPTIONS --allow-unsolved-metas #-}
+{-# OPTIONS --allow-unsolved-metas --rewriting #-}
 
 module A201802.WIP.LR2c where
 
