@@ -1,3 +1,5 @@
+{-# OPTIONS --rewriting #-}
+
 module A201706.Everything where
 
 import A201706.Prelude

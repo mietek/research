@@ -26,7 +26,7 @@ map f (L , x) = map f L , f x
 
 -- Predicates on vectors.
 
-data All {ℓ ℓ′} {X : Set ℓ} (P : Pred X ℓ′) : ∀ {n} → Pred (Vec X n) ℓ′ where
+data All {ℓ ℓ′} {X : Set ℓ} (P : Pred X ℓ′) : ∀ {n} → Pred (Vec X n) (ℓ ⊔ ℓ′) where
   ∅   : All P ∅
   _,_ : ∀ {n} {L : Vec X n} {x} →
           All P L → P x → All P (L , x)

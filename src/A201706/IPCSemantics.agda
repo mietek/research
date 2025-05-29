@@ -1,3 +1,5 @@
+{-# OPTIONS --rewriting #-}
+
 module A201706.IPCSemantics where
 
 open import A201706.IPC public

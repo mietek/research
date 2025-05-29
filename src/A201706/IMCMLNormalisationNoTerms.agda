@@ -1,3 +1,5 @@
+{-# OPTIONS --rewriting #-}
+
 module A201706.IMCMLNormalisationNoTerms where
 
 open import A201706.IMCMLSemanticsNoTerms public

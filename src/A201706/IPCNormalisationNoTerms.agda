@@ -1,3 +1,5 @@
+{-# OPTIONS --rewriting #-}
+
 module A201706.IPCNormalisationNoTerms where
 
 open import A201706.IPCSyntaxNoTerms public

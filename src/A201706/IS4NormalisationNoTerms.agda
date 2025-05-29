@@ -1,3 +1,5 @@
+{-# OPTIONS --rewriting #-}
+
 module A201706.IS4NormalisationNoTerms where
 
 open import A201706.IS4SemanticsNoTerms public

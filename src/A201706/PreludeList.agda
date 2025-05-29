@@ -48,7 +48,7 @@ reduce f y (L , x) = f (reduce f y L) x
 
 -- Predicates on lists.
 
-data All {ℓ ℓ′} {X : Set ℓ} (P : Pred X ℓ′) : Pred (List X) ℓ′ where
+data All {ℓ ℓ′} {X : Set ℓ} (P : Pred X ℓ′) : Pred (List X) (ℓ ⊔ ℓ′) where
   ∅   : All P ∅
   _,_ : ∀ {L x} → All P L → P x → All P (L , x)
 

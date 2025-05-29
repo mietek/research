@@ -1,3 +1,5 @@
+{-# OPTIONS --rewriting #-}
+
 module A201706.IS4SyntaxNoTerms where
 
 open import A201706.IS4 public

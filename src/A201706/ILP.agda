@@ -1,3 +1,5 @@
+{-# OPTIONS --rewriting #-}
+
 module A201706.ILP where
 
 open import A201706.PreludeVec public

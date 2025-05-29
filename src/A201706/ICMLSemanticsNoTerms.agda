@@ -1,3 +1,5 @@
+{-# OPTIONS --rewriting #-}
+
 module A201706.ICMLSemanticsNoTerms where
 
 open import A201706.ICMLSyntaxNoTerms public
