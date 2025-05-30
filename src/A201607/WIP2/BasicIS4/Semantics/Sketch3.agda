@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 -- TODO
 
 module A201607.WIP2.BasicIS4.Semantics.Sketch3 where

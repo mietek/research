@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 -- TODO
 -- Gentzen-style formalisation of syntax.
 -- Normal forms and neutrals.

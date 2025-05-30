@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 module A201607.Common.PredicateBasedContext where
 
 open import A201607.Common.Predicate public

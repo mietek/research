@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 module A201607.BasicIS4.Metatheory.DyadicHilbert-TarskiOvergluedDyadicGentzen where
 
 open import A201607.BasicIS4.Syntax.DyadicHilbert public

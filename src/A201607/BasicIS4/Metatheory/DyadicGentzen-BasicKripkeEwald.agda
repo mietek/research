@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 module A201607.BasicIS4.Metatheory.DyadicGentzen-BasicKripkeEwald where
 
 open import A201607.BasicIS4.Syntax.DyadicGentzen public

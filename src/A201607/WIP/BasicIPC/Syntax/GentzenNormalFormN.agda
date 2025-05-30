@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 module A201607.WIP.BasicIPC.Syntax.GentzenNormalFormN where
 
 open import A201607.BasicIPC.Syntax.Gentzen public

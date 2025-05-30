@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 -- An Agda formalisation of IPC, IS4, ICML, and ILP.  Work in progress.
 
 module A201607.Everything where

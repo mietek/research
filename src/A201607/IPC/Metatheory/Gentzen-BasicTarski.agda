@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 module A201607.IPC.Metatheory.Gentzen-BasicTarski where
 
 open import A201607.IPC.Syntax.Gentzen public

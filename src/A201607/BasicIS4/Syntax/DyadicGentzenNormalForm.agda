@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 -- Basic intuitionistic modal logic S4, without ∨, ⊥, or ◇.
 -- Gentzen-style formalisation of syntax with context pairs, after Pfenning-Davies.
 -- Normal forms and neutrals.

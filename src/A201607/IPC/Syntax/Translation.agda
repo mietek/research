@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 -- Intuitionistic propositional calculus.
 -- Translation between different formalisations of syntax.
 

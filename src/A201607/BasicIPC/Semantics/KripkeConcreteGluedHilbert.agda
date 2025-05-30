@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 -- Basic intuitionistic propositional calculus, without ∨ or ⊥.
 -- Kripke-style semantics with contexts as concrete worlds, and glueing for α and ▻.
 -- Hilbert-style syntax.

@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 -- Basic intuitionistic modal logic S4, without ∨, ⊥, or ◇.
 -- Translation between different formalisations of syntax.
 

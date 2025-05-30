@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 module A201607.BasicIPC.Metatheory.Hilbert-TarskiConcreteGluedGentzen where
 
 open import A201607.BasicIPC.Syntax.Hilbert public

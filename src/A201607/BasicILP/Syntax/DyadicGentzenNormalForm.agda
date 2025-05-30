@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 -- Basic intuitionistic logic of proofs, without ∨, ⊥, or +.
 -- Gentzen-style formalisation of syntax with context pairs.
 -- Normal forms and neutrals.

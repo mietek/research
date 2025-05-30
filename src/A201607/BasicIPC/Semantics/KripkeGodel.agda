@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 -- Basic intuitionistic propositional calculus, without ∨ or ⊥.
 -- Kripke-style semantics with abstract worlds.
 -- Gödel embedding.

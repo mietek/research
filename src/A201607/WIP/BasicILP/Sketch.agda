@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 module A201607.WIP.BasicILP.Sketch where
 
 open import A201607.BasicILP.Syntax.DyadicGentzen hiding (dist ; up ; down)

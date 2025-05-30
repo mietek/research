@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 -- Intuitionistic propositional calculus.
 -- Common syntax.
 

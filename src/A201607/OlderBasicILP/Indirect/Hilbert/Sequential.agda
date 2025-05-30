@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 module A201607.OlderBasicILP.Indirect.Hilbert.Sequential where
 
 open import A201607.OlderBasicILP.Indirect public

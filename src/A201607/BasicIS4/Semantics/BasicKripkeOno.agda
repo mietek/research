@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 -- Basic intuitionistic modal logic S4, without ∨, ⊥, or ◇.
 -- Basic Kripke-style semantics with abstract worlds, for soundness only.
 -- Ono-style conditions.

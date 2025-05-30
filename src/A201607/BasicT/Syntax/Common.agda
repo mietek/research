@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 -- TODO
 -- Common syntax.
 

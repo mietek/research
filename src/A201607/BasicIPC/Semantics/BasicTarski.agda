@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 -- Basic intuitionistic propositional calculus, without ∨ or ⊥.
 -- Basic Tarski-style semantics, for soundness only.
 

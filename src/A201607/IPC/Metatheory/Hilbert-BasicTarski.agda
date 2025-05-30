@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 module A201607.IPC.Metatheory.Hilbert-BasicTarski where
 
 open import A201607.IPC.Syntax.Hilbert public

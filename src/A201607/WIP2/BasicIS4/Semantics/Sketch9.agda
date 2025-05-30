@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 module A201607.WIP2.BasicIS4.Semantics.Sketch9 where
 
 open import A201607.Common.Semantics public

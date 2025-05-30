@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 -- Hilbert-style formalisation of closed syntax.
 -- Nested terms.
 

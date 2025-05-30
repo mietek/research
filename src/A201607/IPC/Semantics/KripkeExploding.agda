@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 -- Intuitionistic propositional calculus.
 -- Kripke-style semantics with exploding abstract worlds.
 

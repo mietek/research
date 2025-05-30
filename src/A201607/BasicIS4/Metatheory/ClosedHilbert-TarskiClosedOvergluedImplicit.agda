@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 module A201607.BasicIS4.Metatheory.ClosedHilbert-TarskiClosedOvergluedImplicit where
 
 open import A201607.BasicIS4.Syntax.ClosedHilbert public
@@ -107,5 +109,5 @@ norm₀ = quot₀ ∘ eval₀
 
 -- Correctness of normalisation with respect to conversion.
 
-norm₀✓ : ∀ {{_ : Model}} {A} {t t′ : ⊢ A} → t ⋙ t′ → norm₀ t ≡ norm₀ t′
+norm₀✓ : ∀ {A} {t t′ : ⊢ A} → t ⋙ t′ → norm₀ t ≡ norm₀ t′
 norm₀✓ p = cong reify (eval₀✓ p)

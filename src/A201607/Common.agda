@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 module A201607.Common where
 
 open import Agda.Builtin.Size public

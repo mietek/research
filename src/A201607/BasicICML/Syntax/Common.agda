@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 -- Basic intuitionistic contextual modal logic, without ∨ or ⊥.
 -- Common syntax.
 

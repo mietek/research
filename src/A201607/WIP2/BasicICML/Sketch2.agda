@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 module A201607.WIP2.BasicICML.Sketch2 where
 
 open import A201607.BasicICML.Syntax.DyadicGentzen hiding (ℕ ; 𝟘 ; 𝟙) public

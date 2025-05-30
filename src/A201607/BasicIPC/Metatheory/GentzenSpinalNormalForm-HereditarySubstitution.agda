@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 module A201607.BasicIPC.Metatheory.GentzenSpinalNormalForm-HereditarySubstitution where
 
 open import A201607.BasicIPC.Syntax.GentzenSpinalNormalForm public

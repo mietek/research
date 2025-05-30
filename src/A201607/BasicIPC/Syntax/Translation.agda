@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 -- Basic intuitionistic propositional calculus, without ∨ or ⊥.
 -- Translation between different formalisations of syntax.
 

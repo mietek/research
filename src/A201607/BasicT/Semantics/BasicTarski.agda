@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 -- TODO
 -- Basic Tarski-style semantics, for soundness only.
 

@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 module A201607.OldBasicILP.UntypedSyntax.Translation where
 
 open import A201607.OldBasicILP.UntypedSyntax.Common public

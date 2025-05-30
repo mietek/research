@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 -- Intuitionistic propositional calculus.
 -- Gentzen-style formalisation of syntax.
 -- Normal forms, neutrals, and spines.
