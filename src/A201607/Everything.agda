@@ -445,12 +445,12 @@ import A201607.OldBasicILP.UntypedSyntax.Translation -- FIXME
 import A201607.OldBasicILP.Syntax.Common
 
 -- Hilbert-style formalisation of closed syntax.
--- import A201607.OldBasicILP.Syntax.ClosedHilbertSequential -- FIXME
--- import A201607.OldBasicILP.Syntax.ClosedHilbert -- FIXME
+import A201607.OldBasicILP.Syntax.ClosedHilbertSequential -- FIXME
+import A201607.OldBasicILP.Syntax.ClosedHilbert -- FIXME
 
 -- Translation between different formalisations of syntax.
--- import A201607.OldBasicILP.Syntax.Translation -- FIXME
--- import A201607.OldBasicILP.Syntax.Projection -- FIXME
+import A201607.OldBasicILP.Syntax.Translation -- FIXME
+import A201607.OldBasicILP.Syntax.Projection -- FIXME
 
 
 -- (To be rewritten.)
@@ -459,10 +459,10 @@ import A201607.OlderBasicILP.Indirect
 import A201607.OlderBasicILP.Indirect.Hilbert.Sequential
 import A201607.OlderBasicILP.Indirect.Hilbert.Nested
 import A201607.OlderBasicILP.Indirect.Gentzen
--- import A201607.OlderBasicILP.Indirect.Translation
+import A201607.OlderBasicILP.Indirect.Translation
 import A201607.OlderBasicILP.Direct.Hilbert.Nested
 import A201607.OlderBasicILP.Direct.Gentzen
--- import A201607.OlderBasicILP.Direct.Translation
+import A201607.OlderBasicILP.Direct.Translation -- FIXME
 
 
 --------------------------------------------------------------------------------

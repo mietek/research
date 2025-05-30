@@ -1,10 +1,12 @@
-module OlderBasicILP.Direct.Translation where
+{-# OPTIONS --allow-unsolved-metas --sized-types #-}
 
-open import Common.Context public
+module A201607.OlderBasicILP.Direct.Translation where
 
--- import OlderBasicILP.Direct.Hilbert.Sequential as HS
-import OlderBasicILP.Direct.Hilbert.Nested as HN
-import OlderBasicILP.Direct.Gentzen as G
+open import A201607.Common.Context public
+
+-- import A201607.OlderBasicILP.Direct.Hilbert.Sequential as HS
+import A201607.OlderBasicILP.Direct.Hilbert.Nested as HN
+import A201607.OlderBasicILP.Direct.Gentzen as G
 
 -- open HS using () renaming (_⊢×_ to HS⟨_⊢×_⟩ ; _⊢_ to HS⟨_⊢_⟩) public
 open HN using () renaming (_⊢_ to HN⟨_⊢_⟩ ; _⊢⋆_ to HN⟨_⊢⋆_⟩) public

@@ -1,9 +1,11 @@
+{-# OPTIONS --sized-types #-}
+
 -- Hilbert-style formalisation of closed syntax.
 -- Sequences of terms.
 
-module OldBasicILP.Syntax.ClosedHilbertSequential where
+module A201607.OldBasicILP.Syntax.ClosedHilbertSequential where
 
-open import OldBasicILP.Syntax.Common public
+open import A201607.OldBasicILP.Syntax.Common public
 
 
 -- Mutually-recursive declarations.
@@ -32,7 +34,7 @@ data Ty where
 
 -- Anti-bug wrappers.
 
-record Proof (Ξ : Cx Ty) (A : Ty) where
+record Proof Ξ A where
   inductive
   constructor [_]
   field

@@ -1,15 +1,17 @@
-module OldBasicILP.Syntax.Projection where
+{-# OPTIONS --allow-unsolved-metas --sized-types #-}
 
-open import Common.UntypedContext public
+module A201607.OldBasicILP.Syntax.Projection where
 
-import OldBasicILP.UntypedSyntax.ClosedHilbertSequential as CHS
-import OldBasicILP.UntypedSyntax.ClosedHilbert as CH
+open import A201607.Common.UntypedContext public
+
+import A201607.OldBasicILP.UntypedSyntax.ClosedHilbertSequential as CHS
+import A201607.OldBasicILP.UntypedSyntax.ClosedHilbert as CH
 
 
 -- Projection of types and derivations to a form parametrised by a closed, untyped representation of syntax.
 
 module ClosedHilbertSequential where
-  open import OldBasicILP.Syntax.ClosedHilbertSequential
+  open import A201607.OldBasicILP.Syntax.ClosedHilbertSequential
 
   mutual
     ⌊_⌋ᵀ : Ty → CHS.Ty
@@ -53,7 +55,7 @@ module ClosedHilbertSequential where
 -- Projection of types and derivations to a form parametrised by a closed, untyped representation of syntax.
 
 module ClosedHilbert where
-  open import OldBasicILP.Syntax.ClosedHilbert
+  open import A201607.OldBasicILP.Syntax.ClosedHilbert
 
   mutual
     ⌊_⌋ᵀ : Ty → CH.Ty
