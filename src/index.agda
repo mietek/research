@@ -1,3 +1,5 @@
+{-# OPTIONS --guardedness --rewriting --sized-types #-}
+
 module index where
 
 
