@@ -1,55 +1,57 @@
 <!DOCTYPE HTML>
-<html><head><meta charset="utf-8"><title>index</title><link rel="stylesheet" href="mi-common.css"></head><body><pre class="Agda"><a id="1" class="Keyword">module</a> <a id="8" href="index.html" class="Module">index</a> <a id="14" class="Keyword">where</a>
+<html><head><meta charset="utf-8"><title>index</title><link rel="stylesheet" href="mi-common.css"></head><body><pre class="Agda"><a id="1" class="Symbol">{-#</a> <a id="5" class="Keyword">OPTIONS</a> <a id="13" class="Pragma">--guardedness</a> <a id="27" class="Pragma">--rewriting</a> <a id="39" class="Pragma">--sized-types</a> <a id="53" class="Symbol">#-}</a>
+
+<a id="58" class="Keyword">module</a> <a id="65" href="index.html" class="Module">index</a> <a id="71" class="Keyword">where</a>
 
 
-<a id="22" class="Comment">----------------------------------------------------------------------------------------------------</a>
+<a id="79" class="Comment">----------------------------------------------------------------------------------------------------</a>
 
-<a id="124" class="Comment">-- Machine Intuitionist</a>
-<a id="151" class="Keyword">import</a> <a id="158" href="mi.index.html" class="Module">mi.index</a>
-
-
-<a id="169" class="Comment">----------------------------------------------------------------------------------------------------</a>
-
-<a id="271" class="Comment">-- typed operational semantics and NBE</a>
-<a id="310" class="Comment">-- from https://gist.github.com/mietek/1737170f89e26021e87d64d3e298c68e</a>
-<a id="382" class="Keyword">import</a> <a id="389" href="A202401.Everything.html" class="Module">A202401.Everything</a>
-
-<a id="409" class="Comment">-- operational semantics</a>
-<a id="434" class="Comment">-- from https://gist.github.com/mietek/d5083053ce84099de0b0177f43413b87</a>
-<a id="506" class="Keyword">import</a> <a id="513" href="A201903.Everything.html" class="Module">A201903.Everything</a>
-
-<a id="533" class="Comment">-- “Types and programming languages”</a>
-<a id="570" class="Comment">-- from https://gist.github.com/mietek/2d0148c0b3f4d28fca6c17ef512eb628</a>
-<a id="642" class="Keyword">import</a> <a id="649" href="A201901.Everything.html" class="Module">A201901.Everything</a>
-
-<a id="669" class="Comment">-- logical relations</a>
-<a id="690" class="Comment">-- from https://gist.github.com/mietek/99c4bd410bf535c4322bc87d0c2db750</a>
-<a id="762" class="Keyword">import</a> <a id="769" href="A201802.Everything.html" class="Module">A201802.Everything</a>
-
-<a id="789" class="Comment">-- the usual</a>
-<a id="802" class="Comment">-- from https://gist.github.com/mietek/f9aba33997f0e43d7f0c9c8e62919147</a>
-<a id="874" class="Keyword">import</a> <a id="881" href="A201801.Everything.html" class="Module">A201801.Everything</a>
-
-<a id="901" class="Comment">-- the usual, cubed</a>
-<a id="921" class="Comment">-- from https://github.com/mietek/research-2017</a>
-<a id="969" class="Keyword">import</a> <a id="976" href="A201706.Everything.html" class="Module">A201706.Everything</a>
-
-<a id="996" class="Comment">-- the usual</a>
-<a id="1009" class="Comment">-- from https://github.com/mietek/hilbert-gentzen</a>
-<a id="1059" class="Keyword">import</a> <a id="1066" href="A201607.Everything.html" class="Module">A201607.Everything</a>
-
-<a id="1086" class="Comment">-- the usual</a>
-<a id="1099" class="Comment">-- from https://github.com/mietek/tmp</a>
-<a id="1137" class="Keyword">import</a> <a id="1144" href="A201606.Everything.html" class="Module">A201606.Everything</a>
-
-<a id="1164" class="Comment">-- Abel-Chapman (2014)</a>
-<a id="1187" class="Comment">-- from https://github.com/mietek/abel-chapman-extended</a>
-<a id="1243" class="Keyword">import</a> <a id="1250" href="A201605.Everything.html" class="Module">A201605.Everything</a>
-
-<a id="1270" class="Comment">-- attempts at Alt-Artemov (2001) and other early experiments</a>
-<a id="1332" class="Comment">-- from https://gist.github.com/mietek/73c83903d3777ff9088c</a>
-<a id="1392" class="Keyword">import</a> <a id="1399" href="A201602.Everything.html" class="Module">A201602.Everything</a>
+<a id="181" class="Comment">-- Machine Intuitionist</a>
+<a id="205" class="Keyword">import</a> <a id="212" href="mi.index.html" class="Module">mi.index</a>
 
 
-<a id="1420" class="Comment">----------------------------------------------------------------------------------------------------</a>
+<a id="223" class="Comment">----------------------------------------------------------------------------------------------------</a>
+
+<a id="325" class="Comment">-- typed operational semantics and NBE</a>
+<a id="364" class="Comment">-- from https://gist.github.com/mietek/1737170f89e26021e87d64d3e298c68e</a>
+<a id="436" class="Keyword">import</a> <a id="443" href="A202401.Everything.html" class="Module">A202401.Everything</a>
+
+<a id="463" class="Comment">-- operational semantics</a>
+<a id="488" class="Comment">-- from https://gist.github.com/mietek/d5083053ce84099de0b0177f43413b87</a>
+<a id="560" class="Keyword">import</a> <a id="567" href="A201903.Everything.html" class="Module">A201903.Everything</a>
+
+<a id="587" class="Comment">-- “Types and programming languages”</a>
+<a id="624" class="Comment">-- from https://gist.github.com/mietek/2d0148c0b3f4d28fca6c17ef512eb628</a>
+<a id="696" class="Keyword">import</a> <a id="703" href="A201901.Everything.html" class="Module">A201901.Everything</a>
+
+<a id="723" class="Comment">-- logical relations</a>
+<a id="744" class="Comment">-- from https://gist.github.com/mietek/99c4bd410bf535c4322bc87d0c2db750</a>
+<a id="816" class="Keyword">import</a> <a id="823" href="A201802.Everything.html" class="Module">A201802.Everything</a>
+
+<a id="843" class="Comment">-- the usual</a>
+<a id="856" class="Comment">-- from https://gist.github.com/mietek/f9aba33997f0e43d7f0c9c8e62919147</a>
+<a id="928" class="Keyword">import</a> <a id="935" href="A201801.Everything.html" class="Module">A201801.Everything</a>
+
+<a id="955" class="Comment">-- the usual, cubed</a>
+<a id="975" class="Comment">-- from https://github.com/mietek/research-2017</a>
+<a id="1023" class="Keyword">import</a> <a id="1030" href="A201706.Everything.html" class="Module">A201706.Everything</a>
+
+<a id="1050" class="Comment">-- the usual</a>
+<a id="1063" class="Comment">-- from https://github.com/mietek/hilbert-gentzen</a>
+<a id="1113" class="Keyword">import</a> <a id="1120" href="A201607.Everything.html" class="Module">A201607.Everything</a>
+
+<a id="1140" class="Comment">-- the usual</a>
+<a id="1153" class="Comment">-- from https://github.com/mietek/tmp</a>
+<a id="1191" class="Keyword">import</a> <a id="1198" href="A201606.Everything.html" class="Module">A201606.Everything</a>
+
+<a id="1218" class="Comment">-- Abel-Chapman (2014)</a>
+<a id="1241" class="Comment">-- from https://github.com/mietek/abel-chapman-extended</a>
+<a id="1297" class="Keyword">import</a> <a id="1304" href="A201605.Everything.html" class="Module">A201605.Everything</a>
+
+<a id="1324" class="Comment">-- attempts at Alt-Artemov (2001) and other early experiments</a>
+<a id="1386" class="Comment">-- from https://gist.github.com/mietek/73c83903d3777ff9088c</a>
+<a id="1446" class="Keyword">import</a> <a id="1453" href="A201602.Everything.html" class="Module">A201602.Everything</a>
+
+
+<a id="1474" class="Comment">----------------------------------------------------------------------------------------------------</a>
 </pre></body></html>

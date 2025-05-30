@@ -1,444 +1,446 @@
 <!DOCTYPE HTML>
-<html><head><meta charset="utf-8"><title>A201607.WIP2.BasicIS4.Semantics.Sketch8</title><link rel="stylesheet" href="mi-common.css"></head><body><pre class="Agda"><a id="1" class="Comment">-- Basic intuitionistic modal logic S4, without ∨, ⊥, or ◇.</a>
-<a id="61" class="Comment">-- Kripke-style semantics with exploding abstract worlds, and glueing for □ only.</a>
-
-<a id="144" class="Keyword">module</a> <a id="151" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html" class="Module">A201607.WIP2.BasicIS4.Semantics.Sketch8</a> <a id="191" class="Keyword">where</a>
-
-<a id="198" class="Keyword">open</a> <a id="203" class="Keyword">import</a> <a id="210" href="A201607.Common.Semantics.html" class="Module">A201607.Common.Semantics</a> <a id="235" class="Keyword">public</a>
-<a id="242" class="Keyword">open</a> <a id="247" class="Keyword">import</a> <a id="254" href="A201607.BasicIS4.Syntax.Common.html" class="Module">A201607.BasicIS4.Syntax.Common</a> <a id="285" class="Keyword">public</a>
-
-
-<a id="294" class="Comment">-- Intuitionistic modal Kripke-CPS models, with exploding worlds.</a>
-
-<a id="361" class="Keyword">record</a> <a id="Model"></a><a id="368" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#368" class="Record">Model</a> <a id="374" class="Symbol">:</a> <a id="376" class="PrimitiveType">Set₁</a> <a id="381" class="Keyword">where</a>
-  <a id="389" class="Keyword">infix</a> <a id="395" class="Number">3</a> <a id="397" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2147" class="Field Operator">_⊪ᵅ_</a> <a id="402" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">_[⊢]_</a> <a id="408" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2057" class="Field Operator">_[⊢ⁿᶠ]_</a>
-  <a id="418" class="Keyword">infix</a> <a id="424" class="Number">5</a> <a id="426" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#572" class="Field Operator">_≤_</a>
-  <a id="432" class="Keyword">infixl</a> <a id="439" class="Number">5</a> <a id="441" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1060" class="Field Operator">_[+]_</a>
-  <a id="449" class="Keyword">infix</a> <a id="455" class="Number">3</a> <a id="457" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1099" class="Field Operator">_[∈]_</a>
-
-  <a id="466" class="Keyword">field</a>
-    <a id="Model.World"></a><a id="476" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#476" class="Field">World</a> <a id="482" class="Symbol">:</a> <a id="484" class="PrimitiveType">Set</a>
-
-    <a id="493" class="Comment">-- TODO</a>
-    <a id="Model.[∅]"></a><a id="505" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#505" class="Field">[∅]</a>    <a id="512" class="Symbol">:</a> <a id="514" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#476" class="Field">World</a>
-
-    <a id="525" class="Comment">-- Intuitionistic accessibility; preorder.</a>
-    <a id="Model._≤_"></a><a id="572" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#572" class="Field Operator">_≤_</a>    <a id="579" class="Symbol">:</a> <a id="581" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#476" class="Field">World</a> <a id="587" class="Symbol">→</a> <a id="589" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#476" class="Field">World</a> <a id="595" class="Symbol">→</a> <a id="597" class="PrimitiveType">Set</a>
-    <a id="Model.refl≤"></a><a id="605" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#605" class="Field">refl≤</a>  <a id="612" class="Symbol">:</a> <a id="614" class="Symbol">∀</a> <a id="616" class="Symbol">{</a><a id="617" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#617" class="Bound">w</a><a id="618" class="Symbol">}</a> <a id="620" class="Symbol">→</a> <a id="622" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#617" class="Bound">w</a> <a id="624" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#572" class="Field Operator">≤</a> <a id="626" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#617" class="Bound">w</a>
-    <a id="Model.trans≤"></a><a id="632" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#632" class="Field">trans≤</a> <a id="639" class="Symbol">:</a> <a id="641" class="Symbol">∀</a> <a id="643" class="Symbol">{</a><a id="644" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#644" class="Bound">w</a> <a id="646" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#646" class="Bound">w′</a> <a id="649" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#649" class="Bound">w″</a><a id="651" class="Symbol">}</a> <a id="653" class="Symbol">→</a> <a id="655" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#644" class="Bound">w</a> <a id="657" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#572" class="Field Operator">≤</a> <a id="659" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#646" class="Bound">w′</a> <a id="662" class="Symbol">→</a> <a id="664" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#646" class="Bound">w′</a> <a id="667" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#572" class="Field Operator">≤</a> <a id="669" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#649" class="Bound">w″</a> <a id="672" class="Symbol">→</a> <a id="674" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#644" class="Bound">w</a> <a id="676" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#572" class="Field Operator">≤</a> <a id="678" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#649" class="Bound">w″</a>
-    <a id="685" class="Comment">-- bot≤   : ∀ {w} → [∅] ≤ w</a>
-
-    <a id="718" class="Comment">-- Modal accessibility; preorder.</a>
-    <a id="756" class="Comment">-- _R_    : World → World → Set</a>
-    <a id="792" class="Comment">-- reflR  : ∀ {w} → w R w</a>
-    <a id="822" class="Comment">-- transR : ∀ {w w′ w″} → w R w′ → w′ R w″ → w R w″</a>
-
-    <a id="879" class="Comment">-- TODO</a>
-    <a id="891" class="Comment">-- ⌊_⌋    : World → World</a>
-    <a id="921" class="Comment">-- lem₁   : ∀ {w} → ⌊ w ⌋ ≤ w</a>
-    <a id="955" class="Comment">-- lem₂   : ∀ {w} → ⌊ w ⌋ ≤ ⌊ ⌊ w ⌋ ⌋</a>
-    <a id="997" class="Comment">-- ≤→⌊≤⌋ : ∀ {w w′} → w ≤ w′ → ⌊ w ⌋ ≤ ⌊ w′ ⌋</a>
-
-    <a id="1048" class="Comment">-- TODO</a>
-    <a id="Model._[+]_"></a><a id="1060" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1060" class="Field Operator">_[+]_</a>  <a id="1067" class="Symbol">:</a> <a id="1069" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#476" class="Field">World</a> <a id="1075" class="Symbol">→</a> <a id="1077" href="A201607.Common.ContextPair.html#124" class="Record">Cx²</a> <a id="1081" href="A201607.BasicIS4.Syntax.Common.html#245" class="Datatype">Ty</a> <a id="1084" href="A201607.BasicIS4.Syntax.Common.html#245" class="Datatype">Ty</a> <a id="1087" class="Symbol">→</a> <a id="1089" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#476" class="Field">World</a>
-    <a id="Model._[∈]_"></a><a id="1099" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1099" class="Field Operator">_[∈]_</a>  <a id="1106" class="Symbol">:</a> <a id="1108" href="A201607.Common.ContextPair.html#124" class="Record">Cx²</a> <a id="1112" href="A201607.BasicIS4.Syntax.Common.html#245" class="Datatype">Ty</a> <a id="1115" href="A201607.BasicIS4.Syntax.Common.html#245" class="Datatype">Ty</a> <a id="1118" class="Symbol">→</a> <a id="1120" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#476" class="Field">World</a> <a id="1126" class="Symbol">→</a> <a id="1128" class="PrimitiveType">Set</a>
-<a id="1132" class="Comment">--    [top]  : ∀ {A w}   → A [∈] w [,] A</a>
-<a id="1173" class="Comment">--    [mtop] : ∀ {A w}   → A [m∈] w [m,] A</a>
-<a id="1216" class="Comment">--    [pop]  : ∀ {A B w} → A [∈] w → A [∈] w [,] B</a>
-<a id="1267" class="Comment">--    [mpop] : ∀ {A B w} → A [m∈] w → A [m∈] w [m,] B</a>
-
-    <a id="1326" class="Comment">-- Gentzen-style syntax; monotonic.</a>
-    <a id="Model._[⊢]_"></a><a id="1366" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">_[⊢]_</a>   <a id="1374" class="Symbol">:</a> <a id="1376" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#476" class="Field">World</a> <a id="1382" class="Symbol">→</a> <a id="1384" href="A201607.BasicIS4.Syntax.Common.html#245" class="Datatype">Ty</a> <a id="1387" class="Symbol">→</a> <a id="1389" class="PrimitiveType">Set</a>
-    <a id="Model.mono[⊢]"></a><a id="1397" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field">mono[⊢]</a> <a id="1405" class="Symbol">:</a> <a id="1407" class="Symbol">∀</a> <a id="1409" class="Symbol">{</a><a id="1410" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1410" class="Bound">A</a> <a id="1412" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1412" class="Bound">w</a> <a id="1414" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1414" class="Bound">w′</a><a id="1416" class="Symbol">}</a> <a id="1418" class="Symbol">→</a> <a id="1420" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1412" class="Bound">w</a> <a id="1422" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#572" class="Field Operator">≤</a> <a id="1424" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1414" class="Bound">w′</a> <a id="1427" class="Symbol">→</a> <a id="1429" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1412" class="Bound">w</a> <a id="1431" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">[⊢]</a> <a id="1435" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1410" class="Bound">A</a> <a id="1437" class="Symbol">→</a> <a id="1439" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1414" class="Bound">w′</a> <a id="1442" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">[⊢]</a> <a id="1446" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1410" class="Bound">A</a>
-    <a id="Model.[var]"></a><a id="1452" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1452" class="Field">[var]</a>    <a id="1461" class="Symbol">:</a> <a id="1463" class="Symbol">∀</a> <a id="1465" class="Symbol">{</a><a id="1466" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1466" class="Bound">A</a> <a id="1468" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1468" class="Bound">w</a><a id="1469" class="Symbol">}</a>   <a id="1473" class="Symbol">→</a> <a id="1475" class="Symbol">(</a><a id="1476" href="A201607.Common.Context.html#120" class="InductiveConstructor">∅</a> <a id="1478" href="A201607.Common.Context.html#133" class="InductiveConstructor Operator">,</a> <a id="1480" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1466" class="Bound">A</a> <a id="1482" href="A201607.Common.ContextPair.html#166" class="InductiveConstructor Operator">⁏</a> <a id="1484" href="A201607.Common.Context.html#120" class="InductiveConstructor">∅</a><a id="1485" class="Symbol">)</a> <a id="1487" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1099" class="Field Operator">[∈]</a> <a id="1491" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1468" class="Bound">w</a> <a id="1493" class="Symbol">→</a> <a id="1495" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1468" class="Bound">w</a> <a id="1497" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">[⊢]</a> <a id="1501" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1466" class="Bound">A</a>
-    <a id="Model.[lam]"></a><a id="1507" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1507" class="Field">[lam]</a>    <a id="1516" class="Symbol">:</a> <a id="1518" class="Symbol">∀</a> <a id="1520" class="Symbol">{</a><a id="1521" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1521" class="Bound">A</a> <a id="1523" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1523" class="Bound">B</a> <a id="1525" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1525" class="Bound">w</a><a id="1526" class="Symbol">}</a> <a id="1528" class="Symbol">→</a> <a id="1530" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1525" class="Bound">w</a> <a id="1532" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1060" class="Field Operator">[+]</a> <a id="1536" class="Symbol">(</a><a id="1537" href="A201607.Common.Context.html#120" class="InductiveConstructor">∅</a> <a id="1539" href="A201607.Common.Context.html#133" class="InductiveConstructor Operator">,</a> <a id="1541" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1521" class="Bound">A</a> <a id="1543" href="A201607.Common.ContextPair.html#166" class="InductiveConstructor Operator">⁏</a> <a id="1545" href="A201607.Common.Context.html#120" class="InductiveConstructor">∅</a><a id="1546" class="Symbol">)</a> <a id="1548" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">[⊢]</a> <a id="1552" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1523" class="Bound">B</a> <a id="1554" class="Symbol">→</a> <a id="1556" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1525" class="Bound">w</a> <a id="1558" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">[⊢]</a> <a id="1562" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1521" class="Bound">A</a> <a id="1564" href="A201607.BasicIS4.Syntax.Common.html#280" class="InductiveConstructor Operator">▻</a> <a id="1566" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1523" class="Bound">B</a>
-    <a id="Model.[app]"></a><a id="1572" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1572" class="Field">[app]</a>    <a id="1581" class="Symbol">:</a> <a id="1583" class="Symbol">∀</a> <a id="1585" class="Symbol">{</a><a id="1586" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1586" class="Bound">A</a> <a id="1588" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1588" class="Bound">B</a> <a id="1590" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1590" class="Bound">w</a><a id="1591" class="Symbol">}</a> <a id="1593" class="Symbol">→</a> <a id="1595" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1590" class="Bound">w</a> <a id="1597" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">[⊢]</a> <a id="1601" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1586" class="Bound">A</a> <a id="1603" href="A201607.BasicIS4.Syntax.Common.html#280" class="InductiveConstructor Operator">▻</a> <a id="1605" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1588" class="Bound">B</a> <a id="1607" class="Symbol">→</a> <a id="1609" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1590" class="Bound">w</a> <a id="1611" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">[⊢]</a> <a id="1615" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1586" class="Bound">A</a> <a id="1617" class="Symbol">→</a> <a id="1619" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1590" class="Bound">w</a> <a id="1621" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">[⊢]</a> <a id="1625" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1588" class="Bound">B</a>
-    <a id="Model.[mvar]"></a><a id="1631" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1631" class="Field">[mvar]</a>   <a id="1640" class="Symbol">:</a> <a id="1642" class="Symbol">∀</a> <a id="1644" class="Symbol">{</a><a id="1645" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1645" class="Bound">A</a> <a id="1647" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1647" class="Bound">w</a><a id="1648" class="Symbol">}</a>   <a id="1652" class="Symbol">→</a> <a id="1654" class="Symbol">(</a><a id="1655" href="A201607.Common.Context.html#120" class="InductiveConstructor">∅</a> <a id="1657" href="A201607.Common.ContextPair.html#166" class="InductiveConstructor Operator">⁏</a> <a id="1659" href="A201607.Common.Context.html#120" class="InductiveConstructor">∅</a> <a id="1661" href="A201607.Common.Context.html#133" class="InductiveConstructor Operator">,</a> <a id="1663" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1645" class="Bound">A</a><a id="1664" class="Symbol">)</a> <a id="1666" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1099" class="Field Operator">[∈]</a> <a id="1670" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1647" class="Bound">w</a> <a id="1672" class="Symbol">→</a> <a id="1674" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1647" class="Bound">w</a> <a id="1676" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">[⊢]</a> <a id="1680" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1645" class="Bound">A</a>
-    <a id="Model.[box]"></a><a id="1686" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1686" class="Field">[box]</a>    <a id="1695" class="Symbol">:</a> <a id="1697" class="Symbol">∀</a> <a id="1699" class="Symbol">{</a><a id="1700" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1700" class="Bound">Γ</a> <a id="1702" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1702" class="Bound">Δ</a> <a id="1704" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1704" class="Bound">A</a><a id="1705" class="Symbol">}</a> <a id="1707" class="Symbol">→</a> <a id="1709" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#505" class="Field">[∅]</a> <a id="1713" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1060" class="Field Operator">[+]</a> <a id="1717" class="Symbol">(</a><a id="1718" href="A201607.Common.Context.html#120" class="InductiveConstructor">∅</a> <a id="1720" href="A201607.Common.ContextPair.html#166" class="InductiveConstructor Operator">⁏</a> <a id="1722" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1702" class="Bound">Δ</a><a id="1723" class="Symbol">)</a> <a id="1725" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">[⊢]</a> <a id="1729" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1704" class="Bound">A</a> <a id="1731" class="Symbol">→</a> <a id="1733" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#505" class="Field">[∅]</a> <a id="1737" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1060" class="Field Operator">[+]</a> <a id="1741" class="Symbol">(</a><a id="1742" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1700" class="Bound">Γ</a> <a id="1744" href="A201607.Common.ContextPair.html#166" class="InductiveConstructor Operator">⁏</a> <a id="1746" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1702" class="Bound">Δ</a><a id="1747" class="Symbol">)</a> <a id="1749" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">[⊢]</a> <a id="1753" href="A201607.BasicIS4.Syntax.Common.html#301" class="InductiveConstructor Operator">□</a> <a id="1755" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1704" class="Bound">A</a>
-    <a id="Model.[unbox]"></a><a id="1761" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1761" class="Field">[unbox]</a>  <a id="1770" class="Symbol">:</a> <a id="1772" class="Symbol">∀</a> <a id="1774" class="Symbol">{</a><a id="1775" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1775" class="Bound">A</a> <a id="1777" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1777" class="Bound">C</a> <a id="1779" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1779" class="Bound">w</a><a id="1780" class="Symbol">}</a> <a id="1782" class="Symbol">→</a> <a id="1784" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1779" class="Bound">w</a> <a id="1786" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">[⊢]</a> <a id="1790" href="A201607.BasicIS4.Syntax.Common.html#301" class="InductiveConstructor Operator">□</a> <a id="1792" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1775" class="Bound">A</a> <a id="1794" class="Symbol">→</a> <a id="1796" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1779" class="Bound">w</a> <a id="1798" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1060" class="Field Operator">[+]</a> <a id="1802" class="Symbol">(</a><a id="1803" href="A201607.Common.Context.html#120" class="InductiveConstructor">∅</a> <a id="1805" href="A201607.Common.ContextPair.html#166" class="InductiveConstructor Operator">⁏</a> <a id="1807" href="A201607.Common.Context.html#120" class="InductiveConstructor">∅</a> <a id="1809" href="A201607.Common.Context.html#133" class="InductiveConstructor Operator">,</a> <a id="1811" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1775" class="Bound">A</a><a id="1812" class="Symbol">)</a> <a id="1814" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">[⊢]</a> <a id="1818" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1777" class="Bound">C</a> <a id="1820" class="Symbol">→</a> <a id="1822" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1779" class="Bound">w</a> <a id="1824" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">[⊢]</a> <a id="1828" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1777" class="Bound">C</a>
-    <a id="Model.[pair]"></a><a id="1834" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1834" class="Field">[pair]</a>   <a id="1843" class="Symbol">:</a> <a id="1845" class="Symbol">∀</a> <a id="1847" class="Symbol">{</a><a id="1848" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1848" class="Bound">A</a> <a id="1850" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1850" class="Bound">B</a> <a id="1852" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1852" class="Bound">w</a><a id="1853" class="Symbol">}</a> <a id="1855" class="Symbol">→</a> <a id="1857" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1852" class="Bound">w</a> <a id="1859" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">[⊢]</a> <a id="1863" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1848" class="Bound">A</a> <a id="1865" class="Symbol">→</a> <a id="1867" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1852" class="Bound">w</a> <a id="1869" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">[⊢]</a> <a id="1873" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1850" class="Bound">B</a> <a id="1875" class="Symbol">→</a> <a id="1877" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1852" class="Bound">w</a> <a id="1879" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">[⊢]</a> <a id="1883" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1848" class="Bound">A</a> <a id="1885" href="A201607.BasicIS4.Syntax.Common.html#317" class="InductiveConstructor Operator">∧</a> <a id="1887" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1850" class="Bound">B</a>
-    <a id="Model.[fst]"></a><a id="1893" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1893" class="Field">[fst]</a>    <a id="1902" class="Symbol">:</a> <a id="1904" class="Symbol">∀</a> <a id="1906" class="Symbol">{</a><a id="1907" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1907" class="Bound">A</a> <a id="1909" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1909" class="Bound">B</a> <a id="1911" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1911" class="Bound">w</a><a id="1912" class="Symbol">}</a> <a id="1914" class="Symbol">→</a> <a id="1916" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1911" class="Bound">w</a> <a id="1918" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">[⊢]</a> <a id="1922" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1907" class="Bound">A</a> <a id="1924" href="A201607.BasicIS4.Syntax.Common.html#317" class="InductiveConstructor Operator">∧</a> <a id="1926" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1909" class="Bound">B</a> <a id="1928" class="Symbol">→</a> <a id="1930" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1911" class="Bound">w</a> <a id="1932" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">[⊢]</a> <a id="1936" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1907" class="Bound">A</a>
-    <a id="Model.[snd]"></a><a id="1942" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1942" class="Field">[snd]</a>    <a id="1951" class="Symbol">:</a> <a id="1953" class="Symbol">∀</a> <a id="1955" class="Symbol">{</a><a id="1956" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1956" class="Bound">A</a> <a id="1958" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1958" class="Bound">B</a> <a id="1960" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1960" class="Bound">w</a><a id="1961" class="Symbol">}</a> <a id="1963" class="Symbol">→</a> <a id="1965" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1960" class="Bound">w</a> <a id="1967" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">[⊢]</a> <a id="1971" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1956" class="Bound">A</a> <a id="1973" href="A201607.BasicIS4.Syntax.Common.html#317" class="InductiveConstructor Operator">∧</a> <a id="1975" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1958" class="Bound">B</a> <a id="1977" class="Symbol">→</a> <a id="1979" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1960" class="Bound">w</a> <a id="1981" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">[⊢]</a> <a id="1985" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1958" class="Bound">B</a>
-    <a id="Model.[unit]"></a><a id="1991" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1991" class="Field">[unit]</a>   <a id="2000" class="Symbol">:</a> <a id="2002" class="Symbol">∀</a> <a id="2004" class="Symbol">{</a><a id="2005" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2005" class="Bound">w</a><a id="2006" class="Symbol">}</a>     <a id="2012" class="Symbol">→</a> <a id="2014" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2005" class="Bound">w</a> <a id="2016" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">[⊢]</a> <a id="2020" href="A201607.BasicIS4.Syntax.Common.html#338" class="InductiveConstructor">⊤</a>
+<html><head><meta charset="utf-8"><title>A201607.WIP2.BasicIS4.Semantics.Sketch8</title><link rel="stylesheet" href="mi-common.css"></head><body><pre class="Agda"><a id="1" class="Symbol">{-#</a> <a id="5" class="Keyword">OPTIONS</a> <a id="13" class="Pragma">--sized-types</a> <a id="27" class="Symbol">#-}</a>
+
+<a id="32" class="Comment">-- Basic intuitionistic modal logic S4, without ∨, ⊥, or ◇.</a>
+<a id="92" class="Comment">-- Kripke-style semantics with exploding abstract worlds, and glueing for □ only.</a>
+
+<a id="175" class="Keyword">module</a> <a id="182" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html" class="Module">A201607.WIP2.BasicIS4.Semantics.Sketch8</a> <a id="222" class="Keyword">where</a>
+
+<a id="229" class="Keyword">open</a> <a id="234" class="Keyword">import</a> <a id="241" href="A201607.Common.Semantics.html" class="Module">A201607.Common.Semantics</a> <a id="266" class="Keyword">public</a>
+<a id="273" class="Keyword">open</a> <a id="278" class="Keyword">import</a> <a id="285" href="A201607.BasicIS4.Syntax.Common.html" class="Module">A201607.BasicIS4.Syntax.Common</a> <a id="316" class="Keyword">public</a>
+
+
+<a id="325" class="Comment">-- Intuitionistic modal Kripke-CPS models, with exploding worlds.</a>
+
+<a id="392" class="Keyword">record</a> <a id="Model"></a><a id="399" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#399" class="Record">Model</a> <a id="405" class="Symbol">:</a> <a id="407" href="Agda.Primitive.html#388" class="Primitive">Set₁</a> <a id="412" class="Keyword">where</a>
+  <a id="420" class="Keyword">infix</a> <a id="426" class="Number">3</a> <a id="428" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2178" class="Field Operator">_⊪ᵅ_</a> <a id="433" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">_[⊢]_</a> <a id="439" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2088" class="Field Operator">_[⊢ⁿᶠ]_</a>
+  <a id="449" class="Keyword">infix</a> <a id="455" class="Number">5</a> <a id="457" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#603" class="Field Operator">_≤_</a>
+  <a id="463" class="Keyword">infixl</a> <a id="470" class="Number">5</a> <a id="472" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1091" class="Field Operator">_[+]_</a>
+  <a id="480" class="Keyword">infix</a> <a id="486" class="Number">3</a> <a id="488" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1130" class="Field Operator">_[∈]_</a>
+
+  <a id="497" class="Keyword">field</a>
+    <a id="Model.World"></a><a id="507" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#507" class="Field">World</a> <a id="513" class="Symbol">:</a> <a id="515" href="Agda.Primitive.html#388" class="Primitive">Set</a>
+
+    <a id="524" class="Comment">-- TODO</a>
+    <a id="Model.[∅]"></a><a id="536" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#536" class="Field">[∅]</a>    <a id="543" class="Symbol">:</a> <a id="545" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#507" class="Field">World</a>
+
+    <a id="556" class="Comment">-- Intuitionistic accessibility; preorder.</a>
+    <a id="Model._≤_"></a><a id="603" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#603" class="Field Operator">_≤_</a>    <a id="610" class="Symbol">:</a> <a id="612" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#507" class="Field">World</a> <a id="618" class="Symbol">→</a> <a id="620" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#507" class="Field">World</a> <a id="626" class="Symbol">→</a> <a id="628" href="Agda.Primitive.html#388" class="Primitive">Set</a>
+    <a id="Model.refl≤"></a><a id="636" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#636" class="Field">refl≤</a>  <a id="643" class="Symbol">:</a> <a id="645" class="Symbol">∀</a> <a id="647" class="Symbol">{</a><a id="648" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#648" class="Bound">w</a><a id="649" class="Symbol">}</a> <a id="651" class="Symbol">→</a> <a id="653" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#648" class="Bound">w</a> <a id="655" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#603" class="Field Operator">≤</a> <a id="657" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#648" class="Bound">w</a>
+    <a id="Model.trans≤"></a><a id="663" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#663" class="Field">trans≤</a> <a id="670" class="Symbol">:</a> <a id="672" class="Symbol">∀</a> <a id="674" class="Symbol">{</a><a id="675" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#675" class="Bound">w</a> <a id="677" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#677" class="Bound">w′</a> <a id="680" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#680" class="Bound">w″</a><a id="682" class="Symbol">}</a> <a id="684" class="Symbol">→</a> <a id="686" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#675" class="Bound">w</a> <a id="688" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#603" class="Field Operator">≤</a> <a id="690" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#677" class="Bound">w′</a> <a id="693" class="Symbol">→</a> <a id="695" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#677" class="Bound">w′</a> <a id="698" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#603" class="Field Operator">≤</a> <a id="700" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#680" class="Bound">w″</a> <a id="703" class="Symbol">→</a> <a id="705" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#675" class="Bound">w</a> <a id="707" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#603" class="Field Operator">≤</a> <a id="709" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#680" class="Bound">w″</a>
+    <a id="716" class="Comment">-- bot≤   : ∀ {w} → [∅] ≤ w</a>
+
+    <a id="749" class="Comment">-- Modal accessibility; preorder.</a>
+    <a id="787" class="Comment">-- _R_    : World → World → Set</a>
+    <a id="823" class="Comment">-- reflR  : ∀ {w} → w R w</a>
+    <a id="853" class="Comment">-- transR : ∀ {w w′ w″} → w R w′ → w′ R w″ → w R w″</a>
+
+    <a id="910" class="Comment">-- TODO</a>
+    <a id="922" class="Comment">-- ⌊_⌋    : World → World</a>
+    <a id="952" class="Comment">-- lem₁   : ∀ {w} → ⌊ w ⌋ ≤ w</a>
+    <a id="986" class="Comment">-- lem₂   : ∀ {w} → ⌊ w ⌋ ≤ ⌊ ⌊ w ⌋ ⌋</a>
+    <a id="1028" class="Comment">-- ≤→⌊≤⌋ : ∀ {w w′} → w ≤ w′ → ⌊ w ⌋ ≤ ⌊ w′ ⌋</a>
+
+    <a id="1079" class="Comment">-- TODO</a>
+    <a id="Model._[+]_"></a><a id="1091" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1091" class="Field Operator">_[+]_</a>  <a id="1098" class="Symbol">:</a> <a id="1100" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#507" class="Field">World</a> <a id="1106" class="Symbol">→</a> <a id="1108" href="A201607.Common.ContextPair.html#155" class="Record">Cx²</a> <a id="1112" href="A201607.BasicIS4.Syntax.Common.html#276" class="Datatype">Ty</a> <a id="1115" href="A201607.BasicIS4.Syntax.Common.html#276" class="Datatype">Ty</a> <a id="1118" class="Symbol">→</a> <a id="1120" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#507" class="Field">World</a>
+    <a id="Model._[∈]_"></a><a id="1130" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1130" class="Field Operator">_[∈]_</a>  <a id="1137" class="Symbol">:</a> <a id="1139" href="A201607.Common.ContextPair.html#155" class="Record">Cx²</a> <a id="1143" href="A201607.BasicIS4.Syntax.Common.html#276" class="Datatype">Ty</a> <a id="1146" href="A201607.BasicIS4.Syntax.Common.html#276" class="Datatype">Ty</a> <a id="1149" class="Symbol">→</a> <a id="1151" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#507" class="Field">World</a> <a id="1157" class="Symbol">→</a> <a id="1159" href="Agda.Primitive.html#388" class="Primitive">Set</a>
+<a id="1163" class="Comment">--    [top]  : ∀ {A w}   → A [∈] w [,] A</a>
+<a id="1204" class="Comment">--    [mtop] : ∀ {A w}   → A [m∈] w [m,] A</a>
+<a id="1247" class="Comment">--    [pop]  : ∀ {A B w} → A [∈] w → A [∈] w [,] B</a>
+<a id="1298" class="Comment">--    [mpop] : ∀ {A B w} → A [m∈] w → A [m∈] w [m,] B</a>
+
+    <a id="1357" class="Comment">-- Gentzen-style syntax; monotonic.</a>
+    <a id="Model._[⊢]_"></a><a id="1397" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">_[⊢]_</a>   <a id="1405" class="Symbol">:</a> <a id="1407" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#507" class="Field">World</a> <a id="1413" class="Symbol">→</a> <a id="1415" href="A201607.BasicIS4.Syntax.Common.html#276" class="Datatype">Ty</a> <a id="1418" class="Symbol">→</a> <a id="1420" href="Agda.Primitive.html#388" class="Primitive">Set</a>
+    <a id="Model.mono[⊢]"></a><a id="1428" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1428" class="Field">mono[⊢]</a> <a id="1436" class="Symbol">:</a> <a id="1438" class="Symbol">∀</a> <a id="1440" class="Symbol">{</a><a id="1441" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1441" class="Bound">A</a> <a id="1443" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1443" class="Bound">w</a> <a id="1445" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1445" class="Bound">w′</a><a id="1447" class="Symbol">}</a> <a id="1449" class="Symbol">→</a> <a id="1451" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1443" class="Bound">w</a> <a id="1453" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#603" class="Field Operator">≤</a> <a id="1455" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1445" class="Bound">w′</a> <a id="1458" class="Symbol">→</a> <a id="1460" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1443" class="Bound">w</a> <a id="1462" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">[⊢]</a> <a id="1466" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1441" class="Bound">A</a> <a id="1468" class="Symbol">→</a> <a id="1470" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1445" class="Bound">w′</a> <a id="1473" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">[⊢]</a> <a id="1477" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1441" class="Bound">A</a>
+    <a id="Model.[var]"></a><a id="1483" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1483" class="Field">[var]</a>    <a id="1492" class="Symbol">:</a> <a id="1494" class="Symbol">∀</a> <a id="1496" class="Symbol">{</a><a id="1497" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1497" class="Bound">A</a> <a id="1499" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1499" class="Bound">w</a><a id="1500" class="Symbol">}</a>   <a id="1504" class="Symbol">→</a> <a id="1506" class="Symbol">(</a><a id="1507" href="A201607.Common.Context.html#151" class="InductiveConstructor">∅</a> <a id="1509" href="A201607.Common.Context.html#164" class="InductiveConstructor Operator">,</a> <a id="1511" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1497" class="Bound">A</a> <a id="1513" href="A201607.Common.ContextPair.html#197" class="InductiveConstructor Operator">⁏</a> <a id="1515" href="A201607.Common.Context.html#151" class="InductiveConstructor">∅</a><a id="1516" class="Symbol">)</a> <a id="1518" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1130" class="Field Operator">[∈]</a> <a id="1522" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1499" class="Bound">w</a> <a id="1524" class="Symbol">→</a> <a id="1526" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1499" class="Bound">w</a> <a id="1528" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">[⊢]</a> <a id="1532" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1497" class="Bound">A</a>
+    <a id="Model.[lam]"></a><a id="1538" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1538" class="Field">[lam]</a>    <a id="1547" class="Symbol">:</a> <a id="1549" class="Symbol">∀</a> <a id="1551" class="Symbol">{</a><a id="1552" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1552" class="Bound">A</a> <a id="1554" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1554" class="Bound">B</a> <a id="1556" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1556" class="Bound">w</a><a id="1557" class="Symbol">}</a> <a id="1559" class="Symbol">→</a> <a id="1561" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1556" class="Bound">w</a> <a id="1563" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1091" class="Field Operator">[+]</a> <a id="1567" class="Symbol">(</a><a id="1568" href="A201607.Common.Context.html#151" class="InductiveConstructor">∅</a> <a id="1570" href="A201607.Common.Context.html#164" class="InductiveConstructor Operator">,</a> <a id="1572" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1552" class="Bound">A</a> <a id="1574" href="A201607.Common.ContextPair.html#197" class="InductiveConstructor Operator">⁏</a> <a id="1576" href="A201607.Common.Context.html#151" class="InductiveConstructor">∅</a><a id="1577" class="Symbol">)</a> <a id="1579" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">[⊢]</a> <a id="1583" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1554" class="Bound">B</a> <a id="1585" class="Symbol">→</a> <a id="1587" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1556" class="Bound">w</a> <a id="1589" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">[⊢]</a> <a id="1593" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1552" class="Bound">A</a> <a id="1595" href="A201607.BasicIS4.Syntax.Common.html#311" class="InductiveConstructor Operator">▻</a> <a id="1597" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1554" class="Bound">B</a>
+    <a id="Model.[app]"></a><a id="1603" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1603" class="Field">[app]</a>    <a id="1612" class="Symbol">:</a> <a id="1614" class="Symbol">∀</a> <a id="1616" class="Symbol">{</a><a id="1617" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1617" class="Bound">A</a> <a id="1619" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1619" class="Bound">B</a> <a id="1621" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1621" class="Bound">w</a><a id="1622" class="Symbol">}</a> <a id="1624" class="Symbol">→</a> <a id="1626" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1621" class="Bound">w</a> <a id="1628" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">[⊢]</a> <a id="1632" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1617" class="Bound">A</a> <a id="1634" href="A201607.BasicIS4.Syntax.Common.html#311" class="InductiveConstructor Operator">▻</a> <a id="1636" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1619" class="Bound">B</a> <a id="1638" class="Symbol">→</a> <a id="1640" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1621" class="Bound">w</a> <a id="1642" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">[⊢]</a> <a id="1646" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1617" class="Bound">A</a> <a id="1648" class="Symbol">→</a> <a id="1650" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1621" class="Bound">w</a> <a id="1652" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">[⊢]</a> <a id="1656" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1619" class="Bound">B</a>
+    <a id="Model.[mvar]"></a><a id="1662" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1662" class="Field">[mvar]</a>   <a id="1671" class="Symbol">:</a> <a id="1673" class="Symbol">∀</a> <a id="1675" class="Symbol">{</a><a id="1676" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1676" class="Bound">A</a> <a id="1678" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1678" class="Bound">w</a><a id="1679" class="Symbol">}</a>   <a id="1683" class="Symbol">→</a> <a id="1685" class="Symbol">(</a><a id="1686" href="A201607.Common.Context.html#151" class="InductiveConstructor">∅</a> <a id="1688" href="A201607.Common.ContextPair.html#197" class="InductiveConstructor Operator">⁏</a> <a id="1690" href="A201607.Common.Context.html#151" class="InductiveConstructor">∅</a> <a id="1692" href="A201607.Common.Context.html#164" class="InductiveConstructor Operator">,</a> <a id="1694" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1676" class="Bound">A</a><a id="1695" class="Symbol">)</a> <a id="1697" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1130" class="Field Operator">[∈]</a> <a id="1701" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1678" class="Bound">w</a> <a id="1703" class="Symbol">→</a> <a id="1705" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1678" class="Bound">w</a> <a id="1707" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">[⊢]</a> <a id="1711" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1676" class="Bound">A</a>
+    <a id="Model.[box]"></a><a id="1717" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1717" class="Field">[box]</a>    <a id="1726" class="Symbol">:</a> <a id="1728" class="Symbol">∀</a> <a id="1730" class="Symbol">{</a><a id="1731" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1731" class="Bound">Γ</a> <a id="1733" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1733" class="Bound">Δ</a> <a id="1735" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1735" class="Bound">A</a><a id="1736" class="Symbol">}</a> <a id="1738" class="Symbol">→</a> <a id="1740" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#536" class="Field">[∅]</a> <a id="1744" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1091" class="Field Operator">[+]</a> <a id="1748" class="Symbol">(</a><a id="1749" href="A201607.Common.Context.html#151" class="InductiveConstructor">∅</a> <a id="1751" href="A201607.Common.ContextPair.html#197" class="InductiveConstructor Operator">⁏</a> <a id="1753" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1733" class="Bound">Δ</a><a id="1754" class="Symbol">)</a> <a id="1756" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">[⊢]</a> <a id="1760" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1735" class="Bound">A</a> <a id="1762" class="Symbol">→</a> <a id="1764" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#536" class="Field">[∅]</a> <a id="1768" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1091" class="Field Operator">[+]</a> <a id="1772" class="Symbol">(</a><a id="1773" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1731" class="Bound">Γ</a> <a id="1775" href="A201607.Common.ContextPair.html#197" class="InductiveConstructor Operator">⁏</a> <a id="1777" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1733" class="Bound">Δ</a><a id="1778" class="Symbol">)</a> <a id="1780" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">[⊢]</a> <a id="1784" href="A201607.BasicIS4.Syntax.Common.html#332" class="InductiveConstructor Operator">□</a> <a id="1786" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1735" class="Bound">A</a>
+    <a id="Model.[unbox]"></a><a id="1792" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1792" class="Field">[unbox]</a>  <a id="1801" class="Symbol">:</a> <a id="1803" class="Symbol">∀</a> <a id="1805" class="Symbol">{</a><a id="1806" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1806" class="Bound">A</a> <a id="1808" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1808" class="Bound">C</a> <a id="1810" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1810" class="Bound">w</a><a id="1811" class="Symbol">}</a> <a id="1813" class="Symbol">→</a> <a id="1815" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1810" class="Bound">w</a> <a id="1817" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">[⊢]</a> <a id="1821" href="A201607.BasicIS4.Syntax.Common.html#332" class="InductiveConstructor Operator">□</a> <a id="1823" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1806" class="Bound">A</a> <a id="1825" class="Symbol">→</a> <a id="1827" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1810" class="Bound">w</a> <a id="1829" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1091" class="Field Operator">[+]</a> <a id="1833" class="Symbol">(</a><a id="1834" href="A201607.Common.Context.html#151" class="InductiveConstructor">∅</a> <a id="1836" href="A201607.Common.ContextPair.html#197" class="InductiveConstructor Operator">⁏</a> <a id="1838" href="A201607.Common.Context.html#151" class="InductiveConstructor">∅</a> <a id="1840" href="A201607.Common.Context.html#164" class="InductiveConstructor Operator">,</a> <a id="1842" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1806" class="Bound">A</a><a id="1843" class="Symbol">)</a> <a id="1845" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">[⊢]</a> <a id="1849" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1808" class="Bound">C</a> <a id="1851" class="Symbol">→</a> <a id="1853" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1810" class="Bound">w</a> <a id="1855" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">[⊢]</a> <a id="1859" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1808" class="Bound">C</a>
+    <a id="Model.[pair]"></a><a id="1865" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1865" class="Field">[pair]</a>   <a id="1874" class="Symbol">:</a> <a id="1876" class="Symbol">∀</a> <a id="1878" class="Symbol">{</a><a id="1879" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1879" class="Bound">A</a> <a id="1881" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1881" class="Bound">B</a> <a id="1883" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1883" class="Bound">w</a><a id="1884" class="Symbol">}</a> <a id="1886" class="Symbol">→</a> <a id="1888" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1883" class="Bound">w</a> <a id="1890" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">[⊢]</a> <a id="1894" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1879" class="Bound">A</a> <a id="1896" class="Symbol">→</a> <a id="1898" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1883" class="Bound">w</a> <a id="1900" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">[⊢]</a> <a id="1904" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1881" class="Bound">B</a> <a id="1906" class="Symbol">→</a> <a id="1908" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1883" class="Bound">w</a> <a id="1910" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">[⊢]</a> <a id="1914" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1879" class="Bound">A</a> <a id="1916" href="A201607.BasicIS4.Syntax.Common.html#348" class="InductiveConstructor Operator">∧</a> <a id="1918" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1881" class="Bound">B</a>
+    <a id="Model.[fst]"></a><a id="1924" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1924" class="Field">[fst]</a>    <a id="1933" class="Symbol">:</a> <a id="1935" class="Symbol">∀</a> <a id="1937" class="Symbol">{</a><a id="1938" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1938" class="Bound">A</a> <a id="1940" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1940" class="Bound">B</a> <a id="1942" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1942" class="Bound">w</a><a id="1943" class="Symbol">}</a> <a id="1945" class="Symbol">→</a> <a id="1947" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1942" class="Bound">w</a> <a id="1949" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">[⊢]</a> <a id="1953" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1938" class="Bound">A</a> <a id="1955" href="A201607.BasicIS4.Syntax.Common.html#348" class="InductiveConstructor Operator">∧</a> <a id="1957" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1940" class="Bound">B</a> <a id="1959" class="Symbol">→</a> <a id="1961" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1942" class="Bound">w</a> <a id="1963" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">[⊢]</a> <a id="1967" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1938" class="Bound">A</a>
+    <a id="Model.[snd]"></a><a id="1973" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1973" class="Field">[snd]</a>    <a id="1982" class="Symbol">:</a> <a id="1984" class="Symbol">∀</a> <a id="1986" class="Symbol">{</a><a id="1987" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1987" class="Bound">A</a> <a id="1989" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1989" class="Bound">B</a> <a id="1991" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1991" class="Bound">w</a><a id="1992" class="Symbol">}</a> <a id="1994" class="Symbol">→</a> <a id="1996" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1991" class="Bound">w</a> <a id="1998" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">[⊢]</a> <a id="2002" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1987" class="Bound">A</a> <a id="2004" href="A201607.BasicIS4.Syntax.Common.html#348" class="InductiveConstructor Operator">∧</a> <a id="2006" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1989" class="Bound">B</a> <a id="2008" class="Symbol">→</a> <a id="2010" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1991" class="Bound">w</a> <a id="2012" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">[⊢]</a> <a id="2016" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1989" class="Bound">B</a>
+    <a id="Model.[unit]"></a><a id="2022" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2022" class="Field">[unit]</a>   <a id="2031" class="Symbol">:</a> <a id="2033" class="Symbol">∀</a> <a id="2035" class="Symbol">{</a><a id="2036" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2036" class="Bound">w</a><a id="2037" class="Symbol">}</a>     <a id="2043" class="Symbol">→</a> <a id="2045" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2036" class="Bound">w</a> <a id="2047" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">[⊢]</a> <a id="2051" href="A201607.BasicIS4.Syntax.Common.html#369" class="InductiveConstructor">⊤</a>
 
-    <a id="2027" class="Comment">-- Syntax in normal form.</a>
-    <a id="Model._[⊢ⁿᶠ]_"></a><a id="2057" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2057" class="Field Operator">_[⊢ⁿᶠ]_</a> <a id="2065" class="Symbol">:</a> <a id="2067" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#476" class="Field">World</a> <a id="2073" class="Symbol">→</a> <a id="2075" href="A201607.BasicIS4.Syntax.Common.html#245" class="Datatype">Ty</a> <a id="2078" class="Symbol">→</a> <a id="2080" class="PrimitiveType">Set</a>
+    <a id="2058" class="Comment">-- Syntax in normal form.</a>
+    <a id="Model._[⊢ⁿᶠ]_"></a><a id="2088" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2088" class="Field Operator">_[⊢ⁿᶠ]_</a> <a id="2096" class="Symbol">:</a> <a id="2098" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#507" class="Field">World</a> <a id="2104" class="Symbol">→</a> <a id="2106" href="A201607.BasicIS4.Syntax.Common.html#276" class="Datatype">Ty</a> <a id="2109" class="Symbol">→</a> <a id="2111" href="Agda.Primitive.html#388" class="Primitive">Set</a>
 
-    <a id="2089" class="Comment">-- Strong forcing for atomic propositions; monotonic.</a>
-    <a id="Model._⊪ᵅ_"></a><a id="2147" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2147" class="Field Operator">_⊪ᵅ_</a>   <a id="2154" class="Symbol">:</a> <a id="2156" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#476" class="Field">World</a> <a id="2162" class="Symbol">→</a> <a id="2164" href="A201607.Common.html#1363" class="Function">Atom</a> <a id="2169" class="Symbol">→</a> <a id="2171" class="PrimitiveType">Set</a>
-    <a id="Model.mono⊪ᵅ"></a><a id="2179" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2179" class="Field">mono⊪ᵅ</a> <a id="2186" class="Symbol">:</a> <a id="2188" class="Symbol">∀</a> <a id="2190" class="Symbol">{</a><a id="2191" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2191" class="Bound">P</a> <a id="2193" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2193" class="Bound">w</a> <a id="2195" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2195" class="Bound">w′</a><a id="2197" class="Symbol">}</a> <a id="2199" class="Symbol">→</a> <a id="2201" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2193" class="Bound">w</a> <a id="2203" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#572" class="Field Operator">≤</a> <a id="2205" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2195" class="Bound">w′</a> <a id="2208" class="Symbol">→</a> <a id="2210" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2193" class="Bound">w</a> <a id="2212" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2147" class="Field Operator">⊪ᵅ</a> <a id="2215" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2191" class="Bound">P</a> <a id="2217" class="Symbol">→</a> <a id="2219" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2195" class="Bound">w′</a> <a id="2222" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2147" class="Field Operator">⊪ᵅ</a> <a id="2225" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2191" class="Bound">P</a>
+    <a id="2120" class="Comment">-- Strong forcing for atomic propositions; monotonic.</a>
+    <a id="Model._⊪ᵅ_"></a><a id="2178" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2178" class="Field Operator">_⊪ᵅ_</a>   <a id="2185" class="Symbol">:</a> <a id="2187" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#507" class="Field">World</a> <a id="2193" class="Symbol">→</a> <a id="2195" href="A201607.Common.html#1394" class="Function">Atom</a> <a id="2200" class="Symbol">→</a> <a id="2202" href="Agda.Primitive.html#388" class="Primitive">Set</a>
+    <a id="Model.mono⊪ᵅ"></a><a id="2210" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2210" class="Field">mono⊪ᵅ</a> <a id="2217" class="Symbol">:</a> <a id="2219" class="Symbol">∀</a> <a id="2221" class="Symbol">{</a><a id="2222" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2222" class="Bound">P</a> <a id="2224" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2224" class="Bound">w</a> <a id="2226" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2226" class="Bound">w′</a><a id="2228" class="Symbol">}</a> <a id="2230" class="Symbol">→</a> <a id="2232" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2224" class="Bound">w</a> <a id="2234" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#603" class="Field Operator">≤</a> <a id="2236" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2226" class="Bound">w′</a> <a id="2239" class="Symbol">→</a> <a id="2241" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2224" class="Bound">w</a> <a id="2243" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2178" class="Field Operator">⊪ᵅ</a> <a id="2246" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2222" class="Bound">P</a> <a id="2248" class="Symbol">→</a> <a id="2250" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2226" class="Bound">w′</a> <a id="2253" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2178" class="Field Operator">⊪ᵅ</a> <a id="2256" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2222" class="Bound">P</a>
 
-<a id="2228" class="Comment">--  infixl 5 _[,]⋆_</a>
-<a id="2248" class="Comment">--  _[,]⋆_ : World → Cx Ty → World</a>
-<a id="2283" class="Comment">--  w [,]⋆ ∅       = w</a>
-<a id="2306" class="Comment">--  w [,]⋆ (Ξ , A) = w [,]⋆ Ξ [,] A</a>
-<a id="2342" class="Comment">--</a>
-<a id="2345" class="Comment">--  infixl 5 _[m,]⋆_</a>
-<a id="2366" class="Comment">--  _[m,]⋆_ : World → Cx Ty → World</a>
-<a id="2402" class="Comment">--  w [m,]⋆ ∅       = w</a>
-<a id="2426" class="Comment">--  w [m,]⋆ (Ξ , A) = w [m,]⋆ Ξ [m,] A</a>
+<a id="2259" class="Comment">--  infixl 5 _[,]⋆_</a>
+<a id="2279" class="Comment">--  _[,]⋆_ : World → Cx Ty → World</a>
+<a id="2314" class="Comment">--  w [,]⋆ ∅       = w</a>
+<a id="2337" class="Comment">--  w [,]⋆ (Ξ , A) = w [,]⋆ Ξ [,] A</a>
+<a id="2373" class="Comment">--</a>
+<a id="2376" class="Comment">--  infixl 5 _[m,]⋆_</a>
+<a id="2397" class="Comment">--  _[m,]⋆_ : World → Cx Ty → World</a>
+<a id="2433" class="Comment">--  w [m,]⋆ ∅       = w</a>
+<a id="2457" class="Comment">--  w [m,]⋆ (Ξ , A) = w [m,]⋆ Ξ [m,] A</a>
 
-  <a id="2468" class="Keyword">infix</a> <a id="2474" class="Number">3</a> <a id="2476" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2485" class="Function Operator">_[⊢]⋆_</a>
-  <a id="Model._[⊢]⋆_"></a><a id="2485" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2485" class="Function Operator">_[⊢]⋆_</a> <a id="2492" class="Symbol">:</a> <a id="2494" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#476" class="Field">World</a> <a id="2500" class="Symbol">→</a> <a id="2502" href="A201607.Common.Context.html#93" class="Datatype">Cx</a> <a id="2505" href="A201607.BasicIS4.Syntax.Common.html#245" class="Datatype">Ty</a> <a id="2508" class="Symbol">→</a> <a id="2510" class="PrimitiveType">Set</a>
-  <a id="2516" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2516" class="Bound">w</a> <a id="2518" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2485" class="Function Operator">[⊢]⋆</a> <a id="2523" href="A201607.Common.Context.html#120" class="InductiveConstructor">∅</a>     <a id="2529" class="Symbol">=</a> <a id="2531" href="Agda.Builtin.Unit.html#137" class="Record">𝟙</a>
-  <a id="2535" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2535" class="Bound">w</a> <a id="2537" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2485" class="Function Operator">[⊢]⋆</a> <a id="2542" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2542" class="Bound">Ξ</a> <a id="2544" href="A201607.Common.Context.html#133" class="InductiveConstructor Operator">,</a> <a id="2546" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2546" class="Bound">A</a> <a id="2548" class="Symbol">=</a> <a id="2550" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2535" class="Bound">w</a> <a id="2552" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2485" class="Function Operator">[⊢]⋆</a> <a id="2557" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2542" class="Bound">Ξ</a> <a id="2559" href="A201607.Common.html#1694" class="Function Operator">×</a> <a id="2561" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2535" class="Bound">w</a> <a id="2563" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">[⊢]</a> <a id="2567" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2546" class="Bound">A</a>
+  <a id="2499" class="Keyword">infix</a> <a id="2505" class="Number">3</a> <a id="2507" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2516" class="Function Operator">_[⊢]⋆_</a>
+  <a id="Model._[⊢]⋆_"></a><a id="2516" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2516" class="Function Operator">_[⊢]⋆_</a> <a id="2523" class="Symbol">:</a> <a id="2525" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#507" class="Field">World</a> <a id="2531" class="Symbol">→</a> <a id="2533" href="A201607.Common.Context.html#124" class="Datatype">Cx</a> <a id="2536" href="A201607.BasicIS4.Syntax.Common.html#276" class="Datatype">Ty</a> <a id="2539" class="Symbol">→</a> <a id="2541" href="Agda.Primitive.html#388" class="Primitive">Set</a>
+  <a id="2547" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2547" class="Bound">w</a> <a id="2549" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2516" class="Function Operator">[⊢]⋆</a> <a id="2554" href="A201607.Common.Context.html#151" class="InductiveConstructor">∅</a>     <a id="2560" class="Symbol">=</a> <a id="2562" href="Agda.Builtin.Unit.html#175" class="Record">𝟙</a>
+  <a id="2566" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2566" class="Bound">w</a> <a id="2568" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2516" class="Function Operator">[⊢]⋆</a> <a id="2573" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2573" class="Bound">Ξ</a> <a id="2575" href="A201607.Common.Context.html#164" class="InductiveConstructor Operator">,</a> <a id="2577" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2577" class="Bound">A</a> <a id="2579" class="Symbol">=</a> <a id="2581" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2566" class="Bound">w</a> <a id="2583" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2516" class="Function Operator">[⊢]⋆</a> <a id="2588" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2573" class="Bound">Ξ</a> <a id="2590" href="A201607.Common.html#1725" class="Function Operator">×</a> <a id="2592" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2566" class="Bound">w</a> <a id="2594" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">[⊢]</a> <a id="2598" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2577" class="Bound">A</a>
 
-  <a id="Model.mono[⊢]⋆"></a><a id="2572" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2572" class="Function">mono[⊢]⋆</a> <a id="2581" class="Symbol">:</a> <a id="2583" class="Symbol">∀</a> <a id="2585" class="Symbol">{</a><a id="2586" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2586" class="Bound">Ξ</a> <a id="2588" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2588" class="Bound">w</a> <a id="2590" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2590" class="Bound">w′</a><a id="2592" class="Symbol">}</a> <a id="2594" class="Symbol">→</a> <a id="2596" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2588" class="Bound">w</a> <a id="2598" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#572" class="Field Operator">≤</a> <a id="2600" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2590" class="Bound">w′</a> <a id="2603" class="Symbol">→</a> <a id="2605" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2588" class="Bound">w</a> <a id="2607" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2485" class="Function Operator">[⊢]⋆</a> <a id="2612" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2586" class="Bound">Ξ</a> <a id="2614" class="Symbol">→</a> <a id="2616" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2590" class="Bound">w′</a> <a id="2619" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2485" class="Function Operator">[⊢]⋆</a> <a id="2624" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2586" class="Bound">Ξ</a>
-  <a id="2628" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2572" class="Function">mono[⊢]⋆</a> <a id="2637" class="Symbol">{</a><a id="2638" href="A201607.Common.Context.html#120" class="InductiveConstructor">∅</a><a id="2639" class="Symbol">}</a>     <a id="2645" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2645" class="Bound">ξ</a> <a id="2647" href="Agda.Builtin.Unit.html#174" class="InductiveConstructor">∙</a>        <a id="2656" class="Symbol">=</a> <a id="2658" href="Agda.Builtin.Unit.html#174" class="InductiveConstructor">∙</a>
-  <a id="2662" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2572" class="Function">mono[⊢]⋆</a> <a id="2671" class="Symbol">{</a><a id="2672" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2672" class="Bound">Ξ</a> <a id="2674" href="A201607.Common.Context.html#133" class="InductiveConstructor Operator">,</a> <a id="2676" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2676" class="Bound">A</a><a id="2677" class="Symbol">}</a> <a id="2679" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2679" class="Bound">ξ</a> <a id="2681" class="Symbol">(</a><a id="2682" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2682" class="Bound">ts</a> <a id="2685" href="A201607.Common.html#1567" class="InductiveConstructor Operator">,</a> <a id="2687" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2687" class="Bound">t</a><a id="2688" class="Symbol">)</a> <a id="2690" class="Symbol">=</a> <a id="2692" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2572" class="Function">mono[⊢]⋆</a> <a id="2701" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2679" class="Bound">ξ</a> <a id="2703" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2682" class="Bound">ts</a> <a id="2706" href="A201607.Common.html#1567" class="InductiveConstructor Operator">,</a> <a id="2708" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field">mono[⊢]</a> <a id="2716" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2679" class="Bound">ξ</a> <a id="2718" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2687" class="Bound">t</a>
+  <a id="Model.mono[⊢]⋆"></a><a id="2603" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2603" class="Function">mono[⊢]⋆</a> <a id="2612" class="Symbol">:</a> <a id="2614" class="Symbol">∀</a> <a id="2616" class="Symbol">{</a><a id="2617" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2617" class="Bound">Ξ</a> <a id="2619" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2619" class="Bound">w</a> <a id="2621" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2621" class="Bound">w′</a><a id="2623" class="Symbol">}</a> <a id="2625" class="Symbol">→</a> <a id="2627" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2619" class="Bound">w</a> <a id="2629" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#603" class="Field Operator">≤</a> <a id="2631" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2621" class="Bound">w′</a> <a id="2634" class="Symbol">→</a> <a id="2636" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2619" class="Bound">w</a> <a id="2638" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2516" class="Function Operator">[⊢]⋆</a> <a id="2643" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2617" class="Bound">Ξ</a> <a id="2645" class="Symbol">→</a> <a id="2647" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2621" class="Bound">w′</a> <a id="2650" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2516" class="Function Operator">[⊢]⋆</a> <a id="2655" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2617" class="Bound">Ξ</a>
+  <a id="2659" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2603" class="Function">mono[⊢]⋆</a> <a id="2668" class="Symbol">{</a><a id="2669" href="A201607.Common.Context.html#151" class="InductiveConstructor">∅</a><a id="2670" class="Symbol">}</a>     <a id="2676" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2676" class="Bound">ξ</a> <a id="2678" href="Agda.Builtin.Unit.html#212" class="InductiveConstructor">∙</a>        <a id="2687" class="Symbol">=</a> <a id="2689" href="Agda.Builtin.Unit.html#212" class="InductiveConstructor">∙</a>
+  <a id="2693" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2603" class="Function">mono[⊢]⋆</a> <a id="2702" class="Symbol">{</a><a id="2703" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2703" class="Bound">Ξ</a> <a id="2705" href="A201607.Common.Context.html#164" class="InductiveConstructor Operator">,</a> <a id="2707" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2707" class="Bound">A</a><a id="2708" class="Symbol">}</a> <a id="2710" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2710" class="Bound">ξ</a> <a id="2712" class="Symbol">(</a><a id="2713" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2713" class="Bound">ts</a> <a id="2716" href="A201607.Common.html#1598" class="InductiveConstructor Operator">,</a> <a id="2718" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2718" class="Bound">t</a><a id="2719" class="Symbol">)</a> <a id="2721" class="Symbol">=</a> <a id="2723" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2603" class="Function">mono[⊢]⋆</a> <a id="2732" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2710" class="Bound">ξ</a> <a id="2734" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2713" class="Bound">ts</a> <a id="2737" href="A201607.Common.html#1598" class="InductiveConstructor Operator">,</a> <a id="2739" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1428" class="Field">mono[⊢]</a> <a id="2747" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2710" class="Bound">ξ</a> <a id="2749" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2718" class="Bound">t</a>
 
-<a id="2721" class="Keyword">open</a> <a id="2726" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#368" class="Module">Model</a> <a id="2732" class="Symbol">{{…}}</a> <a id="2738" class="Keyword">public</a>
+<a id="2752" class="Keyword">open</a> <a id="2757" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#399" class="Module">Model</a> <a id="2763" class="Symbol">{{…}}</a> <a id="2769" class="Keyword">public</a>
 
 
-<a id="2747" class="Comment">-- Strong forcing and forcing, in a particular world of a particular model.</a>
+<a id="2778" class="Comment">-- Strong forcing and forcing, in a particular world of a particular model.</a>
 
-<a id="2824" class="Keyword">module</a> <a id="2831" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2831" class="Module">_</a> <a id="2833" class="Symbol">{{</a><a id="2835" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2835" class="Bound">_</a> <a id="2837" class="Symbol">:</a> <a id="2839" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#368" class="Record">Model</a><a id="2844" class="Symbol">}}</a> <a id="2847" class="Keyword">where</a>
-  <a id="2855" class="Keyword">mutual</a>
-    <a id="2866" class="Keyword">infix</a> <a id="2872" class="Number">3</a> <a id="2874" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2882" class="Function Operator">_⊪_</a>
-    <a id="2882" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2882" class="Function Operator">_⊪_</a> <a id="2886" class="Symbol">:</a> <a id="2888" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#476" class="Field">World</a> <a id="2894" class="Symbol">→</a> <a id="2896" href="A201607.BasicIS4.Syntax.Common.html#245" class="Datatype">Ty</a> <a id="2899" class="Symbol">→</a> <a id="2901" class="PrimitiveType">Set</a>
-    <a id="2909" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2909" class="Bound">w</a> <a id="2911" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2882" class="Function Operator">⊪</a> <a id="2913" href="A201607.BasicIS4.Syntax.Common.html#262" class="InductiveConstructor Operator">α</a> <a id="2915" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2915" class="Bound">P</a>   <a id="2919" class="Symbol">=</a> <a id="2921" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2909" class="Bound">w</a> <a id="2923" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2147" class="Field Operator">⊪ᵅ</a> <a id="2926" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2915" class="Bound">P</a>
-    <a id="2932" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2932" class="Bound">w</a> <a id="2934" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2882" class="Function Operator">⊪</a> <a id="2936" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2936" class="Bound">A</a> <a id="2938" href="A201607.BasicIS4.Syntax.Common.html#280" class="InductiveConstructor Operator">▻</a> <a id="2940" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2940" class="Bound">B</a> <a id="2942" class="Symbol">=</a> <a id="2944" class="Symbol">∀</a> <a id="2946" class="Symbol">{</a><a id="2947" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2947" class="Bound">w′</a><a id="2949" class="Symbol">}</a> <a id="2951" class="Symbol">→</a> <a id="2953" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2932" class="Bound">w</a> <a id="2955" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#572" class="Field Operator">≤</a> <a id="2957" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2947" class="Bound">w′</a> <a id="2960" class="Symbol">→</a> <a id="2962" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2947" class="Bound">w′</a> <a id="2965" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3186" class="Function Operator">⊩</a> <a id="2967" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2936" class="Bound">A</a> <a id="2969" class="Symbol">→</a> <a id="2971" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2947" class="Bound">w′</a> <a id="2974" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3186" class="Function Operator">⊩</a> <a id="2976" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2940" class="Bound">B</a>
-<a id="2978" class="Comment">--    w ⊪ □ A   = ∀ {w′} → ⌊ w ⌋ ≤ ⌊ w′ ⌋ → Glue (⌊ w′ ⌋ [⊢] A) (⌊ w′ ⌋ ⊩ A)</a>
-    <a id="3059" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3059" class="Bound">w</a> <a id="3061" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2882" class="Function Operator">⊪</a> <a id="3063" href="A201607.BasicIS4.Syntax.Common.html#301" class="InductiveConstructor Operator">□</a> <a id="3065" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3065" class="Bound">A</a>   <a id="3069" class="Symbol">=</a> <a id="3071" class="Symbol">∀</a> <a id="3073" class="Symbol">{</a><a id="3074" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3074" class="Bound">Ξ</a><a id="3075" class="Symbol">}</a> <a id="3077" class="Symbol">→</a> <a id="3079" href="A201607.Common.Semantics.html#137" class="Record">Glue</a> <a id="3084" class="Symbol">(</a><a id="3085" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#505" class="Field">[∅]</a> <a id="3089" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1060" class="Field Operator">[+]</a> <a id="3093" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3074" class="Bound">Ξ</a> <a id="3095" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1366" class="Field Operator">[⊢]</a> <a id="3099" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3065" class="Bound">A</a><a id="3100" class="Symbol">)</a> <a id="3102" class="Symbol">(</a><a id="3103" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#505" class="Field">[∅]</a> <a id="3107" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1060" class="Field Operator">[+]</a> <a id="3111" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3074" class="Bound">Ξ</a> <a id="3113" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3186" class="Function Operator">⊩</a> <a id="3115" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3065" class="Bound">A</a><a id="3116" class="Symbol">)</a>
-    <a id="3122" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3122" class="Bound">w</a> <a id="3124" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2882" class="Function Operator">⊪</a> <a id="3126" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3126" class="Bound">A</a> <a id="3128" href="A201607.BasicIS4.Syntax.Common.html#317" class="InductiveConstructor Operator">∧</a> <a id="3130" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3130" class="Bound">B</a> <a id="3132" class="Symbol">=</a> <a id="3134" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3122" class="Bound">w</a> <a id="3136" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3186" class="Function Operator">⊩</a> <a id="3138" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3126" class="Bound">A</a> <a id="3140" href="A201607.Common.html#1694" class="Function Operator">×</a> <a id="3142" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3122" class="Bound">w</a> <a id="3144" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3186" class="Function Operator">⊩</a> <a id="3146" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3130" class="Bound">B</a>
-    <a id="3152" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3152" class="Bound">w</a> <a id="3154" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2882" class="Function Operator">⊪</a> <a id="3156" href="A201607.BasicIS4.Syntax.Common.html#338" class="InductiveConstructor">⊤</a>    <a id="3161" class="Symbol">=</a> <a id="3163" href="Agda.Builtin.Unit.html#137" class="Record">𝟙</a>
+<a id="2855" class="Keyword">module</a> <a id="2862" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2862" class="Module">_</a> <a id="2864" class="Symbol">{{</a><a id="2866" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2866" class="Bound">_</a> <a id="2868" class="Symbol">:</a> <a id="2870" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#399" class="Record">Model</a><a id="2875" class="Symbol">}}</a> <a id="2878" class="Keyword">where</a>
+  <a id="2886" class="Keyword">mutual</a>
+    <a id="2897" class="Keyword">infix</a> <a id="2903" class="Number">3</a> <a id="2905" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2913" class="Function Operator">_⊪_</a>
+    <a id="2913" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2913" class="Function Operator">_⊪_</a> <a id="2917" class="Symbol">:</a> <a id="2919" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#507" class="Field">World</a> <a id="2925" class="Symbol">→</a> <a id="2927" href="A201607.BasicIS4.Syntax.Common.html#276" class="Datatype">Ty</a> <a id="2930" class="Symbol">→</a> <a id="2932" href="Agda.Primitive.html#388" class="Primitive">Set</a>
+    <a id="2940" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2940" class="Bound">w</a> <a id="2942" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2913" class="Function Operator">⊪</a> <a id="2944" href="A201607.BasicIS4.Syntax.Common.html#293" class="InductiveConstructor Operator">α</a> <a id="2946" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2946" class="Bound">P</a>   <a id="2950" class="Symbol">=</a> <a id="2952" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2940" class="Bound">w</a> <a id="2954" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2178" class="Field Operator">⊪ᵅ</a> <a id="2957" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2946" class="Bound">P</a>
+    <a id="2963" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2963" class="Bound">w</a> <a id="2965" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2913" class="Function Operator">⊪</a> <a id="2967" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2967" class="Bound">A</a> <a id="2969" href="A201607.BasicIS4.Syntax.Common.html#311" class="InductiveConstructor Operator">▻</a> <a id="2971" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2971" class="Bound">B</a> <a id="2973" class="Symbol">=</a> <a id="2975" class="Symbol">∀</a> <a id="2977" class="Symbol">{</a><a id="2978" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2978" class="Bound">w′</a><a id="2980" class="Symbol">}</a> <a id="2982" class="Symbol">→</a> <a id="2984" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2963" class="Bound">w</a> <a id="2986" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#603" class="Field Operator">≤</a> <a id="2988" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2978" class="Bound">w′</a> <a id="2991" class="Symbol">→</a> <a id="2993" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2978" class="Bound">w′</a> <a id="2996" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3217" class="Function Operator">⊩</a> <a id="2998" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2967" class="Bound">A</a> <a id="3000" class="Symbol">→</a> <a id="3002" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2978" class="Bound">w′</a> <a id="3005" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3217" class="Function Operator">⊩</a> <a id="3007" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2971" class="Bound">B</a>
+<a id="3009" class="Comment">--    w ⊪ □ A   = ∀ {w′} → ⌊ w ⌋ ≤ ⌊ w′ ⌋ → Glue (⌊ w′ ⌋ [⊢] A) (⌊ w′ ⌋ ⊩ A)</a>
+    <a id="3090" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3090" class="Bound">w</a> <a id="3092" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2913" class="Function Operator">⊪</a> <a id="3094" href="A201607.BasicIS4.Syntax.Common.html#332" class="InductiveConstructor Operator">□</a> <a id="3096" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3096" class="Bound">A</a>   <a id="3100" class="Symbol">=</a> <a id="3102" class="Symbol">∀</a> <a id="3104" class="Symbol">{</a><a id="3105" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3105" class="Bound">Ξ</a><a id="3106" class="Symbol">}</a> <a id="3108" class="Symbol">→</a> <a id="3110" href="A201607.Common.Semantics.html#168" class="Record">Glue</a> <a id="3115" class="Symbol">(</a><a id="3116" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#536" class="Field">[∅]</a> <a id="3120" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1091" class="Field Operator">[+]</a> <a id="3124" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3105" class="Bound">Ξ</a> <a id="3126" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1397" class="Field Operator">[⊢]</a> <a id="3130" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3096" class="Bound">A</a><a id="3131" class="Symbol">)</a> <a id="3133" class="Symbol">(</a><a id="3134" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#536" class="Field">[∅]</a> <a id="3138" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#1091" class="Field Operator">[+]</a> <a id="3142" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3105" class="Bound">Ξ</a> <a id="3144" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3217" class="Function Operator">⊩</a> <a id="3146" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3096" class="Bound">A</a><a id="3147" class="Symbol">)</a>
+    <a id="3153" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3153" class="Bound">w</a> <a id="3155" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2913" class="Function Operator">⊪</a> <a id="3157" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3157" class="Bound">A</a> <a id="3159" href="A201607.BasicIS4.Syntax.Common.html#348" class="InductiveConstructor Operator">∧</a> <a id="3161" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3161" class="Bound">B</a> <a id="3163" class="Symbol">=</a> <a id="3165" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3153" class="Bound">w</a> <a id="3167" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3217" class="Function Operator">⊩</a> <a id="3169" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3157" class="Bound">A</a> <a id="3171" href="A201607.Common.html#1725" class="Function Operator">×</a> <a id="3173" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3153" class="Bound">w</a> <a id="3175" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3217" class="Function Operator">⊩</a> <a id="3177" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3161" class="Bound">B</a>
+    <a id="3183" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3183" class="Bound">w</a> <a id="3185" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2913" class="Function Operator">⊪</a> <a id="3187" href="A201607.BasicIS4.Syntax.Common.html#369" class="InductiveConstructor">⊤</a>    <a id="3192" class="Symbol">=</a> <a id="3194" href="Agda.Builtin.Unit.html#175" class="Record">𝟙</a>
 
-    <a id="3170" class="Keyword">infix</a> <a id="3176" class="Number">3</a> <a id="3178" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3186" class="Function Operator">_⊩_</a>
-    <a id="3186" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3186" class="Function Operator">_⊩_</a> <a id="3190" class="Symbol">:</a> <a id="3192" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#476" class="Field">World</a> <a id="3198" class="Symbol">→</a> <a id="3200" href="A201607.BasicIS4.Syntax.Common.html#245" class="Datatype">Ty</a> <a id="3203" class="Symbol">→</a> <a id="3205" class="PrimitiveType">Set</a>
-    <a id="3213" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3213" class="Bound">w</a> <a id="3215" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3186" class="Function Operator">⊩</a> <a id="3217" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3217" class="Bound">A</a> <a id="3219" class="Symbol">=</a> <a id="3221" class="Symbol">∀</a> <a id="3223" class="Symbol">{</a><a id="3224" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3224" class="Bound">C</a><a id="3225" class="Symbol">}</a> <a id="3227" class="Symbol">{</a><a id="3228" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3228" class="Bound">w′</a> <a id="3231" class="Symbol">:</a> <a id="3233" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#476" class="Field">World</a><a id="3238" class="Symbol">}</a> <a id="3240" class="Symbol">→</a> <a id="3242" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3213" class="Bound">w</a> <a id="3244" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#572" class="Field Operator">≤</a> <a id="3246" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3228" class="Bound">w′</a> <a id="3249" class="Symbol">→</a> <a id="3251" class="Symbol">(∀</a> <a id="3254" class="Symbol">{</a><a id="3255" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3255" class="Bound">w″</a> <a id="3258" class="Symbol">:</a> <a id="3260" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#476" class="Field">World</a><a id="3265" class="Symbol">}</a> <a id="3267" class="Symbol">→</a> <a id="3269" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3228" class="Bound">w′</a> <a id="3272" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#572" class="Field Operator">≤</a> <a id="3274" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3255" class="Bound">w″</a> <a id="3277" class="Symbol">→</a> <a id="3279" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3255" class="Bound">w″</a> <a id="3282" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2882" class="Function Operator">⊪</a> <a id="3284" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3217" class="Bound">A</a> <a id="3286" class="Symbol">→</a> <a id="3288" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3255" class="Bound">w″</a> <a id="3291" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2057" class="Field Operator">[⊢ⁿᶠ]</a> <a id="3297" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3224" class="Bound">C</a><a id="3298" class="Symbol">)</a> <a id="3300" class="Symbol">→</a> <a id="3302" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3228" class="Bound">w′</a> <a id="3305" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2057" class="Field Operator">[⊢ⁿᶠ]</a> <a id="3311" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3224" class="Bound">C</a>
+    <a id="3201" class="Keyword">infix</a> <a id="3207" class="Number">3</a> <a id="3209" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3217" class="Function Operator">_⊩_</a>
+    <a id="3217" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3217" class="Function Operator">_⊩_</a> <a id="3221" class="Symbol">:</a> <a id="3223" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#507" class="Field">World</a> <a id="3229" class="Symbol">→</a> <a id="3231" href="A201607.BasicIS4.Syntax.Common.html#276" class="Datatype">Ty</a> <a id="3234" class="Symbol">→</a> <a id="3236" href="Agda.Primitive.html#388" class="Primitive">Set</a>
+    <a id="3244" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3244" class="Bound">w</a> <a id="3246" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3217" class="Function Operator">⊩</a> <a id="3248" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3248" class="Bound">A</a> <a id="3250" class="Symbol">=</a> <a id="3252" class="Symbol">∀</a> <a id="3254" class="Symbol">{</a><a id="3255" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3255" class="Bound">C</a><a id="3256" class="Symbol">}</a> <a id="3258" class="Symbol">{</a><a id="3259" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3259" class="Bound">w′</a> <a id="3262" class="Symbol">:</a> <a id="3264" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#507" class="Field">World</a><a id="3269" class="Symbol">}</a> <a id="3271" class="Symbol">→</a> <a id="3273" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3244" class="Bound">w</a> <a id="3275" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#603" class="Field Operator">≤</a> <a id="3277" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3259" class="Bound">w′</a> <a id="3280" class="Symbol">→</a> <a id="3282" class="Symbol">(∀</a> <a id="3285" class="Symbol">{</a><a id="3286" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3286" class="Bound">w″</a> <a id="3289" class="Symbol">:</a> <a id="3291" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#507" class="Field">World</a><a id="3296" class="Symbol">}</a> <a id="3298" class="Symbol">→</a> <a id="3300" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3259" class="Bound">w′</a> <a id="3303" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#603" class="Field Operator">≤</a> <a id="3305" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3286" class="Bound">w″</a> <a id="3308" class="Symbol">→</a> <a id="3310" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3286" class="Bound">w″</a> <a id="3313" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2913" class="Function Operator">⊪</a> <a id="3315" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3248" class="Bound">A</a> <a id="3317" class="Symbol">→</a> <a id="3319" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3286" class="Bound">w″</a> <a id="3322" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2088" class="Field Operator">[⊢ⁿᶠ]</a> <a id="3328" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3255" class="Bound">C</a><a id="3329" class="Symbol">)</a> <a id="3331" class="Symbol">→</a> <a id="3333" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3259" class="Bound">w′</a> <a id="3336" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2088" class="Field Operator">[⊢ⁿᶠ]</a> <a id="3342" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3255" class="Bound">C</a>
 
-  <a id="3316" class="Keyword">infix</a> <a id="3322" class="Number">3</a> <a id="3324" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3331" class="Function Operator">_⊩⋆_</a>
-  <a id="3331" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3331" class="Function Operator">_⊩⋆_</a> <a id="3336" class="Symbol">:</a> <a id="3338" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#476" class="Field">World</a> <a id="3344" class="Symbol">→</a> <a id="3346" href="A201607.Common.Context.html#93" class="Datatype">Cx</a> <a id="3349" href="A201607.BasicIS4.Syntax.Common.html#245" class="Datatype">Ty</a> <a id="3352" class="Symbol">→</a> <a id="3354" class="PrimitiveType">Set</a>
-  <a id="3360" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3360" class="Bound">w</a> <a id="3362" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3331" class="Function Operator">⊩⋆</a> <a id="3365" href="A201607.Common.Context.html#120" class="InductiveConstructor">∅</a>     <a id="3371" class="Symbol">=</a> <a id="3373" href="Agda.Builtin.Unit.html#137" class="Record">𝟙</a>
-  <a id="3377" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3377" class="Bound">w</a> <a id="3379" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3331" class="Function Operator">⊩⋆</a> <a id="3382" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3382" class="Bound">Ξ</a> <a id="3384" href="A201607.Common.Context.html#133" class="InductiveConstructor Operator">,</a> <a id="3386" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3386" class="Bound">A</a> <a id="3388" class="Symbol">=</a> <a id="3390" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3377" class="Bound">w</a> <a id="3392" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3331" class="Function Operator">⊩⋆</a> <a id="3395" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3382" class="Bound">Ξ</a> <a id="3397" href="A201607.Common.html#1694" class="Function Operator">×</a> <a id="3399" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3377" class="Bound">w</a> <a id="3401" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3186" class="Function Operator">⊩</a> <a id="3403" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3386" class="Bound">A</a>
+  <a id="3347" class="Keyword">infix</a> <a id="3353" class="Number">3</a> <a id="3355" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3362" class="Function Operator">_⊩⋆_</a>
+  <a id="3362" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3362" class="Function Operator">_⊩⋆_</a> <a id="3367" class="Symbol">:</a> <a id="3369" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#507" class="Field">World</a> <a id="3375" class="Symbol">→</a> <a id="3377" href="A201607.Common.Context.html#124" class="Datatype">Cx</a> <a id="3380" href="A201607.BasicIS4.Syntax.Common.html#276" class="Datatype">Ty</a> <a id="3383" class="Symbol">→</a> <a id="3385" href="Agda.Primitive.html#388" class="Primitive">Set</a>
+  <a id="3391" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3391" class="Bound">w</a> <a id="3393" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3362" class="Function Operator">⊩⋆</a> <a id="3396" href="A201607.Common.Context.html#151" class="InductiveConstructor">∅</a>     <a id="3402" class="Symbol">=</a> <a id="3404" href="Agda.Builtin.Unit.html#175" class="Record">𝟙</a>
+  <a id="3408" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3408" class="Bound">w</a> <a id="3410" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3362" class="Function Operator">⊩⋆</a> <a id="3413" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3413" class="Bound">Ξ</a> <a id="3415" href="A201607.Common.Context.html#164" class="InductiveConstructor Operator">,</a> <a id="3417" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3417" class="Bound">A</a> <a id="3419" class="Symbol">=</a> <a id="3421" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3408" class="Bound">w</a> <a id="3423" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3362" class="Function Operator">⊩⋆</a> <a id="3426" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3413" class="Bound">Ξ</a> <a id="3428" href="A201607.Common.html#1725" class="Function Operator">×</a> <a id="3430" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3408" class="Bound">w</a> <a id="3432" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3217" class="Function Operator">⊩</a> <a id="3434" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3417" class="Bound">A</a>
 
 
-<a id="3407" class="Comment">-- Monotonicity with respect to intuitionistic accessibility.</a>
-
-<a id="3470" class="Keyword">module</a> <a id="3477" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3477" class="Module">_</a> <a id="3479" class="Symbol">{{</a><a id="3481" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3481" class="Bound">_</a> <a id="3483" class="Symbol">:</a> <a id="3485" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#368" class="Record">Model</a><a id="3490" class="Symbol">}}</a> <a id="3493" class="Keyword">where</a>
-  <a id="3501" class="Keyword">mutual</a>
-    <a id="3512" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3512" class="Function">mono⊪</a> <a id="3518" class="Symbol">:</a> <a id="3520" class="Symbol">∀</a> <a id="3522" class="Symbol">{</a><a id="3523" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3523" class="Bound">A</a><a id="3524" class="Symbol">}</a> <a id="3526" class="Symbol">{</a><a id="3527" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3527" class="Bound">w</a> <a id="3529" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3529" class="Bound">w′</a> <a id="3532" class="Symbol">:</a> <a id="3534" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#476" class="Field">World</a><a id="3539" class="Symbol">}</a> <a id="3541" class="Symbol">→</a> <a id="3543" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3527" class="Bound">w</a> <a id="3545" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#572" class="Field Operator">≤</a> <a id="3547" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3529" class="Bound">w′</a> <a id="3550" class="Symbol">→</a> <a id="3552" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3527" class="Bound">w</a> <a id="3554" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2882" class="Function Operator">⊪</a> <a id="3556" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3523" class="Bound">A</a> <a id="3558" class="Symbol">→</a> <a id="3560" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3529" class="Bound">w′</a> <a id="3563" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2882" class="Function Operator">⊪</a> <a id="3565" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3523" class="Bound">A</a>
-    <a id="3571" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3512" class="Function">mono⊪</a> <a id="3577" class="Symbol">{</a><a id="3578" href="A201607.BasicIS4.Syntax.Common.html#262" class="InductiveConstructor Operator">α</a> <a id="3580" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3580" class="Bound">P</a><a id="3581" class="Symbol">}</a>   <a id="3585" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3585" class="Bound">ξ</a> <a id="3587" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3587" class="Bound">s</a> <a id="3589" class="Symbol">=</a> <a id="3591" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2179" class="Field">mono⊪ᵅ</a> <a id="3598" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3585" class="Bound">ξ</a> <a id="3600" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3587" class="Bound">s</a>
-    <a id="3606" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3512" class="Function">mono⊪</a> <a id="3612" class="Symbol">{</a><a id="3613" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3613" class="Bound">A</a> <a id="3615" href="A201607.BasicIS4.Syntax.Common.html#280" class="InductiveConstructor Operator">▻</a> <a id="3617" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3617" class="Bound">B</a><a id="3618" class="Symbol">}</a> <a id="3620" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3620" class="Bound">ξ</a> <a id="3622" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3622" class="Bound">s</a> <a id="3624" class="Symbol">=</a> <a id="3626" class="Symbol">λ</a> <a id="3628" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3628" class="Bound">ξ′</a> <a id="3631" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3631" class="Bound">a</a> <a id="3633" class="Symbol">→</a> <a id="3635" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3622" class="Bound">s</a> <a id="3637" class="Symbol">(</a><a id="3638" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#632" class="Field">trans≤</a> <a id="3645" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3620" class="Bound">ξ</a> <a id="3647" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3628" class="Bound">ξ′</a><a id="3649" class="Symbol">)</a> <a id="3651" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3631" class="Bound">a</a>
-<a id="3653" class="Comment">--    mono⊪ {□ A}   ξ s = λ ζ → s (trans≤ (≤→⌊≤⌋ ξ) ζ)</a>
-    <a id="3712" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3512" class="Function">mono⊪</a> <a id="3718" class="Symbol">{</a><a id="3719" href="A201607.BasicIS4.Syntax.Common.html#301" class="InductiveConstructor Operator">□</a> <a id="3721" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3721" class="Bound">A</a><a id="3722" class="Symbol">}</a>   <a id="3726" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3726" class="Bound">ξ</a> <a id="3728" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3728" class="Bound">s</a> <a id="3730" class="Symbol">=</a> <a id="3732" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3728" class="Bound">s</a>
-    <a id="3738" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3512" class="Function">mono⊪</a> <a id="3744" class="Symbol">{</a><a id="3745" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3745" class="Bound">A</a> <a id="3747" href="A201607.BasicIS4.Syntax.Common.html#317" class="InductiveConstructor Operator">∧</a> <a id="3749" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3749" class="Bound">B</a><a id="3750" class="Symbol">}</a> <a id="3752" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3752" class="Bound">ξ</a> <a id="3754" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3754" class="Bound">s</a> <a id="3756" class="Symbol">=</a> <a id="3758" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3828" class="Function">mono⊩</a> <a id="3764" class="Symbol">{</a><a id="3765" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3745" class="Bound">A</a><a id="3766" class="Symbol">}</a> <a id="3768" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3752" class="Bound">ξ</a> <a id="3770" class="Symbol">(</a><a id="3771" href="A201607.Common.html#1583" class="Field">π₁</a> <a id="3774" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3754" class="Bound">s</a><a id="3775" class="Symbol">)</a> <a id="3777" href="A201607.Common.html#1567" class="InductiveConstructor Operator">,</a> <a id="3779" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3828" class="Function">mono⊩</a> <a id="3785" class="Symbol">{</a><a id="3786" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3749" class="Bound">B</a><a id="3787" class="Symbol">}</a> <a id="3789" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3752" class="Bound">ξ</a> <a id="3791" class="Symbol">(</a><a id="3792" href="A201607.Common.html#1594" class="Field">π₂</a> <a id="3795" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3754" class="Bound">s</a><a id="3796" class="Symbol">)</a>
-    <a id="3802" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3512" class="Function">mono⊪</a> <a id="3808" class="Symbol">{</a><a id="3809" href="A201607.BasicIS4.Syntax.Common.html#338" class="InductiveConstructor">⊤</a><a id="3810" class="Symbol">}</a>    <a id="3815" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3815" class="Bound">ξ</a> <a id="3817" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3817" class="Bound">s</a> <a id="3819" class="Symbol">=</a> <a id="3821" href="Agda.Builtin.Unit.html#174" class="InductiveConstructor">∙</a>
-
-    <a id="3828" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3828" class="Function">mono⊩</a> <a id="3834" class="Symbol">:</a> <a id="3836" class="Symbol">∀</a> <a id="3838" class="Symbol">{</a><a id="3839" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3839" class="Bound">A</a><a id="3840" class="Symbol">}</a> <a id="3842" class="Symbol">{</a><a id="3843" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3843" class="Bound">w</a> <a id="3845" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3845" class="Bound">w′</a> <a id="3848" class="Symbol">:</a> <a id="3850" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#476" class="Field">World</a><a id="3855" class="Symbol">}</a> <a id="3857" class="Symbol">→</a> <a id="3859" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3843" class="Bound">w</a> <a id="3861" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#572" class="Field Operator">≤</a> <a id="3863" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3845" class="Bound">w′</a> <a id="3866" class="Symbol">→</a> <a id="3868" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3843" class="Bound">w</a> <a id="3870" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3186" class="Function Operator">⊩</a> <a id="3872" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3839" class="Bound">A</a> <a id="3874" class="Symbol">→</a> <a id="3876" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3845" class="Bound">w′</a> <a id="3879" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3186" class="Function Operator">⊩</a> <a id="3881" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3839" class="Bound">A</a>
-    <a id="3887" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3828" class="Function">mono⊩</a> <a id="3893" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3893" class="Bound">ξ</a> <a id="3895" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3895" class="Bound">a</a> <a id="3897" class="Symbol">=</a> <a id="3899" class="Symbol">λ</a> <a id="3901" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3901" class="Bound">ξ′</a> <a id="3904" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3904" class="Bound">k′</a> <a id="3907" class="Symbol">→</a> <a id="3909" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3895" class="Bound">a</a> <a id="3911" class="Symbol">(</a><a id="3912" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#632" class="Field">trans≤</a> <a id="3919" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3893" class="Bound">ξ</a> <a id="3921" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3901" class="Bound">ξ′</a><a id="3923" class="Symbol">)</a> <a id="3925" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3904" class="Bound">k′</a>
-
-  <a id="3931" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3931" class="Function">mono⊩⋆</a> <a id="3938" class="Symbol">:</a> <a id="3940" class="Symbol">∀</a> <a id="3942" class="Symbol">{</a><a id="3943" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3943" class="Bound">Ξ</a><a id="3944" class="Symbol">}</a> <a id="3946" class="Symbol">{</a><a id="3947" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3947" class="Bound">w</a> <a id="3949" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3949" class="Bound">w′</a> <a id="3952" class="Symbol">:</a> <a id="3954" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#476" class="Field">World</a><a id="3959" class="Symbol">}</a> <a id="3961" class="Symbol">→</a> <a id="3963" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3947" class="Bound">w</a> <a id="3965" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#572" class="Field Operator">≤</a> <a id="3967" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3949" class="Bound">w′</a> <a id="3970" class="Symbol">→</a> <a id="3972" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3947" class="Bound">w</a> <a id="3974" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3331" class="Function Operator">⊩⋆</a> <a id="3977" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3943" class="Bound">Ξ</a> <a id="3979" class="Symbol">→</a> <a id="3981" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3949" class="Bound">w′</a> <a id="3984" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3331" class="Function Operator">⊩⋆</a> <a id="3987" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3943" class="Bound">Ξ</a>
-  <a id="3991" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3931" class="Function">mono⊩⋆</a> <a id="3998" class="Symbol">{</a><a id="3999" href="A201607.Common.Context.html#120" class="InductiveConstructor">∅</a><a id="4000" class="Symbol">}</a>     <a id="4006" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#4006" class="Bound">ξ</a> <a id="4008" href="Agda.Builtin.Unit.html#174" class="InductiveConstructor">∙</a>       <a id="4016" class="Symbol">=</a> <a id="4018" href="Agda.Builtin.Unit.html#174" class="InductiveConstructor">∙</a>
-  <a id="4022" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3931" class="Function">mono⊩⋆</a> <a id="4029" class="Symbol">{</a><a id="4030" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#4030" class="Bound">Ξ</a> <a id="4032" href="A201607.Common.Context.html#133" class="InductiveConstructor Operator">,</a> <a id="4034" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#4034" class="Bound">A</a><a id="4035" class="Symbol">}</a> <a id="4037" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#4037" class="Bound">ξ</a> <a id="4039" class="Symbol">(</a><a id="4040" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#4040" class="Bound">γ</a> <a id="4042" href="A201607.Common.html#1567" class="InductiveConstructor Operator">,</a> <a id="4044" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#4044" class="Bound">a</a><a id="4045" class="Symbol">)</a> <a id="4047" class="Symbol">=</a> <a id="4049" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3931" class="Function">mono⊩⋆</a> <a id="4056" class="Symbol">{</a><a id="4057" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#4030" class="Bound">Ξ</a><a id="4058" class="Symbol">}</a> <a id="4060" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#4037" class="Bound">ξ</a> <a id="4062" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#4040" class="Bound">γ</a> <a id="4064" href="A201607.Common.html#1567" class="InductiveConstructor Operator">,</a> <a id="4066" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3828" class="Function">mono⊩</a> <a id="4072" class="Symbol">{</a><a id="4073" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#4034" class="Bound">A</a><a id="4074" class="Symbol">}</a> <a id="4076" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#4037" class="Bound">ξ</a> <a id="4078" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#4044" class="Bound">a</a>
-
-
-<a id="4082" class="Comment">-- TODO: unfinished</a>
-
-
-<a id="4104" class="Comment">-- -- Additional useful equipment.</a>
-
-<a id="4140" class="Comment">-- module _ {{_ : Model}} where</a>
-<a id="4172" class="Comment">--   _⟪$⟫_ : ∀ {A B w} → w ⊪ A ▻ B → w ⊩ A → w ⊩ B</a>
-<a id="4223" class="Comment">--   s ⟪$⟫ a = s refl≤ a</a>
-
-<a id="4249" class="Comment">--   return : ∀ {A w} → w ⊪ A → w ⊩ A</a>
-<a id="4287" class="Comment">--   return {A} a = λ ξ k → k refl≤ (mono⊪ {A} ξ a)</a>
-
-<a id="4340" class="Comment">--   bind : ∀ {A B w} → w ⊩ A → (∀ {w′} → w ≤ w′ → w′ ⊪ A → w′ ⊩ B) → w ⊩ B</a>
-<a id="4416" class="Comment">--   bind a k = λ ξ k′ → a ξ (λ ξ′ a′ → k (trans≤ ξ ξ′) a′ refl≤ (λ ξ″ a″ → k′ (trans≤ ξ′ ξ″) a″))</a>
-
-
-<a id="4517" class="Comment">-- -- Entailment, or forcing in all worlds of all models, for sequents.</a>
-
-<a id="4590" class="Comment">-- infix 3 _⊨_</a>
-<a id="4605" class="Comment">-- _⊨_ : Cx² Ty Ty → Ty → Set₁</a>
-<a id="4636" class="Comment">-- Γ ⁏ Δ ⊨ A = ∀ {{_ : Model}} {w} → w ⊩⋆ Γ → ⌊ w ⌋ [⊢]⋆ Δ → ⌊ w ⌋ ⊩⋆ Δ → w ⊩ A</a>
-
-<a id="4717" class="Comment">-- infix 3 _⊨⋆_</a>
-<a id="4733" class="Comment">-- _⊨⋆_ : Cx² Ty Ty → Cx Ty → Set₁</a>
-<a id="4768" class="Comment">-- Γ ⁏ Δ ⊨⋆ Ξ = ∀ {{_ : Model}} {w} → w ⊩⋆ Γ → ⌊ w ⌋ [⊢]⋆ Δ → ⌊ w ⌋ ⊩⋆ Δ → w ⊩⋆ Ξ</a>
-
-
-<a id="4852" class="Comment">-- -- Additional useful equipment, for sequents.</a>
-
-<a id="4902" class="Comment">-- module _ {{_ : Model}} where</a>
-<a id="4934" class="Comment">--   lookup : ∀ {A Γ w} → A ∈ Γ → w ⊩⋆ Γ → w ⊩ A</a>
-<a id="4983" class="Comment">--   lookup top     (γ , a) = a</a>
-<a id="5015" class="Comment">--   lookup (pop i) (γ , b) = lookup i γ</a>
-
-
-<a id="5058" class="Comment">-- --</a>
-
-
-<a id="5066" class="Comment">-- open import BasicIS4.Syntax.DyadicGentzenNormalForm public</a>
-
-
-<a id="5130" class="Comment">-- -- Internalisation of syntax as syntax representation in a particular model.</a>
-
-<a id="5211" class="Comment">-- module _ {{_ : Model}} where</a>
-<a id="5243" class="Comment">-- --  [_]ᶜˣ : Cx² Ty Ty → World</a>
-<a id="5276" class="Comment">-- --  [ ∅ ⁏ ∅ ]ᶜˣ         = [∅]</a>
-<a id="5309" class="Comment">-- --  [ Γ , A ⁏ ∅ ]ᶜˣ     = [ Γ ⁏ ∅ ]ᶜˣ [,] A</a>
-<a id="5356" class="Comment">-- --  [ ∅ ⁏ Δ , B ]ᶜˣ     = [ ∅ ⁏ Δ ]ᶜˣ [m,] B</a>
-<a id="5404" class="Comment">-- --  [ Γ , A ⁏ Δ , B ]ᶜˣ = [ Γ ⁏ Δ ]ᶜˣ [,] A [m,] B</a>
-
-<a id="5459" class="Comment">-- --  mel₃ : ∀ {Γ Δ A} → [ Γ , A ⁏ Δ ]ᶜˣ ≡ [ Γ ⁏ Δ ]ᶜˣ [,] A</a>
-<a id="5521" class="Comment">-- --  mel₃ {∅}     = {!!}</a>
-<a id="5548" class="Comment">-- --  mel₃ {Γ , B} = {!!}</a>
-<a id="5575" class="Comment">-- --</a>
-<a id="5581" class="Comment">-- --  lem₃ : ∀ {Δ A C Γ} → [ Γ , A ⁏ Δ ]ᶜˣ [⊢] C → [ Γ ⁏ Δ ]ᶜˣ [,] A [⊢] C</a>
-<a id="5657" class="Comment">-- --  lem₃ t = {!!}</a>
-<a id="5678" class="Comment">-- --</a>
-<a id="5684" class="Comment">-- --  postulate</a>
-<a id="5701" class="Comment">-- --    lem₄ : ∀ {Γ A Δ}   → [ ∅ ⁏ Δ ]ᶜˣ [⊢] A → ⌊ [ Γ ⁏ Δ ]ᶜˣ ⌋ [⊢] A</a>
-<a id="5773" class="Comment">-- --    lem₅ : ∀ {Γ A C Δ} → [ Γ ⁏ Δ , A ]ᶜˣ [⊢] C → [ Γ ⁏ Δ ]ᶜˣ [m,] A [⊢] C</a>
-<a id="5852" class="Comment">-- --</a>
-<a id="5858" class="Comment">-- --  [_]ⁱˣ : ∀ {A Γ Δ} → A ∈ Γ → A [∈] [ Γ ⁏ Δ ]ᶜˣ</a>
-<a id="5911" class="Comment">-- --  [ top ]ⁱˣ   = {![top]!}</a>
-<a id="5942" class="Comment">-- --  [ pop i ]ⁱˣ = {!!}</a>
-<a id="5968" class="Comment">-- --</a>
-<a id="5974" class="Comment">-- --  m[_]ⁱˣ : ∀ {Γ A Δ} → A ∈ Δ → A [m∈] [ Γ ⁏ Δ ]ᶜˣ</a>
-<a id="6029" class="Comment">-- --  m[ top ]ⁱˣ   = {!!}</a>
-<a id="6056" class="Comment">-- --  m[ pop i ]ⁱˣ = {!!}</a>
-<a id="6083" class="Comment">-- --</a>
-<a id="6089" class="Comment">-- --  [_] : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → [ Γ ⁏ Δ ]ᶜˣ [⊢] A</a>
-<a id="6144" class="Comment">-- --  [ var i ]             = [var] [ i ]ⁱˣ</a>
-<a id="6189" class="Comment">-- --  [ lam {Δ = Δ} t ]     = [lam] (lem₃ {Δ} [ t ])</a>
-<a id="6243" class="Comment">-- --  [ app t u ]           = [app] [ t ] [ u ]</a>
-<a id="6292" class="Comment">-- --  [ mvar {Γ = Γ} i ]    = [mvar] (m[_]ⁱˣ {Γ} i)</a>
-<a id="6345" class="Comment">-- --  [ box {Γ = Γ} t ]     = [box] (lem₄ {Γ} [ t ])</a>
-<a id="6399" class="Comment">-- --  [ unbox {Γ = Γ} t u ] = [unbox] [ t ] (lem₅ {Γ} [ u ])</a>
-<a id="6461" class="Comment">-- --  [ pair t u ]          = [pair] [ t ] [ u ]</a>
-<a id="6511" class="Comment">-- --  [ fst t ]             = [fst] [ t ]</a>
-<a id="6554" class="Comment">-- --  [ snd t ]             = [snd] [ t ]</a>
-<a id="6597" class="Comment">-- --  [ unit ]              = [unit]</a>
-<a id="6635" class="Comment">-- --</a>
-<a id="6641" class="Comment">-- --  [box]⋆ : ∀ {Ξ w} → ⌊ w ⌋ [⊢]⋆ Ξ → w [⊢]⋆ □⋆ Ξ</a>
-<a id="6694" class="Comment">-- --  [box]⋆ {∅}     ∙        = ∙</a>
-<a id="6729" class="Comment">-- --  [box]⋆ {Ξ , A} (ts , t) = [box]⋆ ts , [box] t</a>
-
-<a id="6783" class="Comment">-- --  postulate</a>
-<a id="6800" class="Comment">-- --    lem₆ : ∀ {Ξ C w} → w [⊢] C → w [m,]⋆ Ξ [⊢] C</a>
-<a id="6854" class="Comment">-- --    lem₇ : ∀ {Ξ A C w} → w [m,]⋆ (Ξ , A) [⊢] C → (w [m,]⋆ Ξ) [m,] A [⊢] C</a>
-<a id="6933" class="Comment">-- --</a>
-<a id="6939" class="Comment">-- --  [unbox]⋆ : ∀ {Ξ C w} → w [⊢]⋆ □⋆ Ξ → w [m,]⋆ Ξ [⊢] C → w [⊢] C</a>
-<a id="7009" class="Comment">-- --  [unbox]⋆ {∅}     ∙        u = u</a>
-<a id="7048" class="Comment">-- --  [unbox]⋆ {Ξ , A} (ts , t) u = [unbox]⋆ ts ([unbox] (lem₆ {Ξ} t) (lem₇ {Ξ} u))</a>
-<a id="7133" class="Comment">-- --</a>
-<a id="7139" class="Comment">-- --  mlet : ∀ {A C w} → ⌊ w ⌋ [⊢] A → w [m,] A [⊢] C → w [⊢] C</a>
-<a id="7204" class="Comment">-- --  mlet t u = [unbox] ([box] t) u</a>
-<a id="7242" class="Comment">-- --</a>
-<a id="7248" class="Comment">-- --  mlet⋆ : ∀ {Ξ C w} → ⌊ w ⌋ [⊢]⋆ Ξ → w [m,]⋆ Ξ [⊢] C → w [⊢] C</a>
-<a id="7316" class="Comment">-- --  mlet⋆ ts u = [unbox]⋆ ([box]⋆ ts) u</a>
-
-<a id="7360" class="Comment">--   -- [unbox]  : ∀ {A C w} → w [⊢] □ A → w [m,] A [⊢] C → w [⊢] C</a>
-
-
-
-<a id="7431" class="Comment">-- --  help : ∀ {Ξ w A} → w [⊢] □ A → w [m,]⋆ Ξ [⊢] □ A</a>
-<a id="7487" class="Comment">-- --  help = {!!}</a>
-<a id="7506" class="Comment">-- --</a>
-<a id="7512" class="Comment">-- --  unbox′ : ∀ {Ξ A C w} → w [⊢] □ A → [∅] [m,]⋆ Ξ [m,] A [⊢] C → [∅] [m,]⋆ Ξ [⊢] C</a>
-<a id="7599" class="Comment">-- --  unbox′ = {!!}</a>
-<a id="7620" class="Comment">-- --</a>
-<a id="7626" class="Comment">-- --  [unbox]⋆ : ∀ {Ξ C w} → w [⊢]⋆ □⋆ Ξ → [∅] [m,]⋆ Ξ [⊢] C → [∅] [⊢] C</a>
-<a id="7700" class="Comment">-- --  [unbox]⋆ {∅}     ∙        u = u</a>
-<a id="7739" class="Comment">-- --  [unbox]⋆ {Ξ , A} (ts , t) u = [unbox]⋆ ts (unbox′ {Ξ} t u)</a>
-
-
-<a id="7807" class="Comment">-- --  [box]⋆ : ∀ {Ξ w} → ⌊ w ⌋ [⊢]⋆ Ξ → w [⊢]⋆ □⋆ Ξ</a>
-<a id="7860" class="Comment">-- --  [box]⋆ {∅}     ∙        = ∙</a>
-<a id="7895" class="Comment">-- --  [box]⋆ {Ξ , A} (ts , t) = [box]⋆ ts , [box] t</a>
-
-<a id="7949" class="Comment">--   [box]⋆ : ∀ {Ξ w} → ⌊ w ⌋ [⊢]⋆ Ξ → ⌊ w ⌋ [⊢]⋆ □⋆ Ξ</a>
-<a id="8004" class="Comment">--   [box]⋆ {∅}     ∙        = ∙</a>
-<a id="8037" class="Comment">--   [box]⋆ {Ξ , A} (ts , t) = [box]⋆ ts , [box] t</a>
-
-<a id="8089" class="Comment">-- --  postulate</a>
-<a id="8106" class="Comment">-- --    wtf : ∀ {Ξ A w} → w [⊢] □ A → ⌊ w ⌋ [m,]⋆ Ξ [⊢] □ A</a>
-<a id="8167" class="Comment">-- --</a>
-<a id="8173" class="Comment">-- --  [unbox]⋆ : ∀ {Ξ C w} → w [⊢]⋆ □⋆ Ξ → ⌊ w ⌋ [m,]⋆ Ξ [⊢] C → ⌊ w ⌋ [⊢] C</a>
-<a id="8251" class="Comment">-- --  [unbox]⋆ {∅}     ∙        u = u</a>
-<a id="8290" class="Comment">-- --  [unbox]⋆ {Ξ , A} (ts , t) u = [unbox]⋆ ts ([unbox] (wtf {Ξ} t) u)</a>
-<a id="8363" class="Comment">-- --</a>
-<a id="8369" class="Comment">-- --  omg : ∀ {Ξ C w} → ⌊ w ⌋ [⊢]⋆ Ξ → ⌊ w ⌋ [m,]⋆ Ξ [⊢] C → ⌊ w ⌋ [⊢] C</a>
-<a id="8443" class="Comment">-- --  omg ts u = [unbox]⋆ ([box]⋆ ts) u</a>
-
-<a id="8485" class="Comment">-- {-</a>
-<a id="8491" class="Comment">--   postulate</a>
-<a id="8506" class="Comment">--     [top] : ∀ {A w} → A [∈] w [,] A</a>
-<a id="8545" class="Comment">--     foo   : ∀ {A w} → w ≤ (w [,] A)</a>
-<a id="8584" class="Comment">--     mfoo  : ∀ {A w} → w ≤ (w [m,] A)</a>
-
-<a id="8625" class="Comment">--   postulate</a>
-<a id="8640" class="Comment">--     lemᵛᵃʳ   : ∀ {Γ Δ A w}   → A ∈ Γ → A [∈] w [,]⋆ Γ [m,]⋆ Δ</a>
-
-<a id="8706" class="Comment">--     lemˡᵃᵐ   : ∀ {Γ Δ A B w} → w [,]⋆ (Γ , A) [m,]⋆ Δ [⊢] B</a>
-<a id="8769" class="Comment">--                              → w [,]⋆ Γ [m,]⋆ Δ [,] A [⊢] B</a>
-
-<a id="8833" class="Comment">--     lemᵐᵛᵃʳ  : ∀ {Γ Δ A w}   → A ∈ Δ → A [m∈] w [,]⋆ Γ [m,]⋆ Δ</a>
-
-<a id="8900" class="Comment">--     lemᵇᵒˣ   : ∀ {Γ Δ A w}   → w [,]⋆ ∅ [m,]⋆ Δ [⊢] A</a>
-<a id="8957" class="Comment">--                              → ⌊ w [,]⋆ Γ [m,]⋆ Δ ⌋ [⊢] A</a>
-
-<a id="9019" class="Comment">--     lemᵘⁿᵇᵒˣ : ∀ {Γ Δ A C w} → w [,]⋆ Γ [m,]⋆ (Δ , A) [⊢] C</a>
-<a id="9082" class="Comment">--                              → w [,]⋆ Γ [m,]⋆ Δ [m,] A [⊢] C</a>
-
-<a id="9147" class="Comment">--   wtf : ∀ {Ξ A C w} → ⌊ w ⌋ [m,]⋆ (Ξ , A) [⊢] C → ⌊ w ⌋ [m,]⋆ Ξ [⊢] □ A ▻ C</a>
-<a id="9226" class="Comment">--   wtf t = [lam] ([unbox] ([var] [top]) (mono[⊢] {!!} t))</a>
-
-<a id="9287" class="Comment">--   omg : ∀ {Ξ C w} → ⌊ w ⌋ [⊢]⋆ □⋆ Ξ → ⌊ w ⌋ [m,]⋆ Ξ [⊢] C → ⌊ w ⌋ [⊢] C</a>
-<a id="9362" class="Comment">--   omg {∅}     ∙        u = u</a>
-<a id="9394" class="Comment">--   omg {Ξ , A} (ts , t) u = [app] (omg ts (wtf {Ξ} u)) t</a>
-
-<a id="9454" class="Comment">--   [_] : ∀ {A Γ Δ w} → Γ ⁏ Δ ⊢ A → w [,]⋆ Γ [m,]⋆ Δ [⊢] A</a>
-<a id="9514" class="Comment">--   [ var {Γ = Γ} {Δ} i ]     = [var] (lemᵛᵃʳ {Γ} {Δ} i)</a>
-<a id="9572" class="Comment">--   [ lam {Γ = Γ} {Δ} t ]     = [lam] (lemˡᵃᵐ {Γ} {Δ} [ t ])</a>
-<a id="9634" class="Comment">--   [ app t u ]               = [app] [ t ] [ u ]</a>
-<a id="9685" class="Comment">--   [ mvar {Γ = Γ} {Δ} i ]    = [mvar] (lemᵐᵛᵃʳ {Γ} {Δ} i)</a>
-<a id="9745" class="Comment">--   [ box {Γ = Γ} {Δ} t ]     = mono[⊢] lem₁ ([box] (lemᵇᵒˣ {Γ} {Δ} [ t ]))</a>
-<a id="9822" class="Comment">--   [ unbox {Γ = Γ} {Δ} t u ] = [unbox] [ t ] (lemᵘⁿᵇᵒˣ {Γ} {Δ} [ u ])</a>
-<a id="9894" class="Comment">--   [ pair t u ]              = [pair] [ t ] [ u ]</a>
-<a id="9946" class="Comment">--   [ fst t ]                 = [fst] [ t ]</a>
-<a id="9991" class="Comment">--   [ snd t ]                 = [snd] [ t ]</a>
-<a id="10036" class="Comment">--   [ unit ]                  = [unit]</a>
-<a id="10076" class="Comment">-- -}</a>
-
-
-<a id="10084" class="Comment">-- -- Soundness with respect to all models, or evaluation.</a>
-
-<a id="10144" class="Comment">-- eval : ∀ {Γ Δ A} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊨ A</a>
-<a id="10188" class="Comment">-- eval (var i)             γ ד δ = lookup i γ</a>
-<a id="10235" class="Comment">-- eval (lam {A} {B} t)     γ ד δ = return {A ▻ B} λ ξ a →</a>
-<a id="10294" class="Comment">--                                    eval t (mono⊩⋆ ξ γ , a)</a>
-<a id="10356" class="Comment">--                                           (mono[⊢]⋆ (≤→⌊≤⌋ ξ) ד)</a>
-<a id="10424" class="Comment">--                                           (mono⊩⋆ (≤→⌊≤⌋ ξ) δ)</a>
-<a id="10490" class="Comment">-- eval (app {A} {B} t u)   γ ד δ = bind {A ▻ B} {B} (eval t γ ד δ) λ ξ f →</a>
-<a id="10566" class="Comment">--                                    _⟪$⟫_ {A} {B} f (eval u (mono⊩⋆ ξ γ)</a>
-<a id="10641" class="Comment">--                                                            (mono[⊢]⋆ (≤→⌊≤⌋ ξ) ד)</a>
-<a id="10726" class="Comment">--                                                            (mono⊩⋆ (≤→⌊≤⌋ ξ) δ))</a>
-<a id="10810" class="Comment">-- eval (mvar {A} i)        γ ד δ = mono⊩ {A} lem₁ (lookup i δ)</a>
-<a id="10874" class="Comment">-- eval {Γ} {Δ} (box {A} t) γ ד δ = return {□ A} λ ζ →</a>
-<a id="10929" class="Comment">--                                    let ד′ = mono[⊢]⋆ ζ ד</a>
-<a id="10989" class="Comment">--                                        t′ = {!!}</a>
-<a id="11041" class="Comment">--                                    in  {!omg ([box]⋆ ד′) t′!} ⅋</a>
-<a id="11108" class="Comment">--                                          eval t ∙</a>
-<a id="11161" class="Comment">--                                             (mono[⊢]⋆ (trans≤ ζ lem₂) ד)</a>
-<a id="11237" class="Comment">--                                             (mono⊩⋆ (trans≤ ζ lem₂) δ)</a>
-<a id="11311" class="Comment">-- eval (unbox {A} {C} t u) γ ד δ = bind {□ A} {C} (eval t γ ד δ) λ ξ a →</a>
-<a id="11385" class="Comment">--                                    eval u (mono⊩⋆ ξ γ)</a>
-<a id="11443" class="Comment">--                                           (mono[⊢]⋆ (≤→⌊≤⌋ ξ) ד , syn (a refl≤))</a>
-<a id="11527" class="Comment">--                                           (mono⊩⋆ (≤→⌊≤⌋ ξ) δ , sem (a refl≤))</a>
-<a id="11609" class="Comment">-- eval (pair {A} {B} t u)  γ ד δ = return {A ∧ B} (eval t γ ד δ , eval u γ ד δ)</a>
-<a id="11690" class="Comment">-- eval (fst {A} {B} t)     γ ד δ = bind {A ∧ B} {A} (eval t γ ד δ) (K π₁)</a>
-<a id="11765" class="Comment">-- eval (snd {A} {B} t)     γ ד δ = bind {A ∧ B} {B} (eval t γ ד δ) (K π₂)</a>
-<a id="11840" class="Comment">-- eval unit                γ ד δ = return {⊤} ∙</a>
-
-<a id="11890" class="Comment">-- eval⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊨⋆ Ξ</a>
-<a id="11927" class="Comment">-- eval⋆ {∅}     ∙        γ ד δ = ∙</a>
-<a id="11963" class="Comment">-- eval⋆ {Ξ , A} (ts , t) γ ד δ = eval⋆ ts γ ד δ , eval t γ ד δ</a>
-
-
-<a id="12029" class="Comment">-- -- The canonical model.</a>
-
-<a id="12057" class="Comment">-- private</a>
-<a id="12068" class="Comment">--   instance</a>
-<a id="12082" class="Comment">--     canon : Model</a>
-<a id="12103" class="Comment">--     canon = record</a>
-<a id="12125" class="Comment">--       { World    = Cx² Ty Ty</a>
-<a id="12157" class="Comment">--       ; [∅]      = ∅ ⁏ ∅</a>
-<a id="12185" class="Comment">--       ; _≤_      = _⊆²_</a>
-<a id="12212" class="Comment">--       ; refl≤    = refl⊆²</a>
-<a id="12241" class="Comment">--       ; trans≤   = trans⊆²</a>
-<a id="12271" class="Comment">--       ; bot≤     = bot⊆²</a>
-<a id="12299" class="Comment">--       ; ⌊_⌋      = λ { (Γ ⁏ Δ) → ∅ ⁏ Δ }</a>
-<a id="12343" class="Comment">--       ; lem₁     = bot⊆ , refl⊆</a>
-<a id="12378" class="Comment">--       ; lem₂     = refl⊆²</a>
-<a id="12407" class="Comment">--       ; ≤→⌊≤⌋   = λ { (η , θ) → refl⊆ , θ }</a>
-<a id="12454" class="Comment">--       ; _[+]_    = λ { (Γ ⁏ Δ) (Γ′ ⁏ Δ′) → Γ ⧺ Γ′ ⁏ Δ ⧺ Δ′ }</a>
-<a id="12518" class="Comment">-- --      ; _[,]_    = λ { (Γ ⁏ Δ) A → Γ , A ⁏ Δ }</a>
-<a id="12570" class="Comment">-- --      ; _[m,]_   = λ { (Γ ⁏ Δ) A → Γ ⁏ Δ , A }</a>
-<a id="12622" class="Comment">--       ; _[∈]_    = λ { A (Γ ⁏ Δ) → A ∈ Γ }</a>
-<a id="12668" class="Comment">--       ; _[m∈]_   = λ { A (Γ ⁏ Δ) → A ∈ Δ }</a>
-<a id="12714" class="Comment">--       ; _[⊢]_   = _⊢_</a>
-<a id="12739" class="Comment">--       ; mono[⊢] = mono²⊢</a>
-<a id="12767" class="Comment">--       ; [var]    = var</a>
-<a id="12793" class="Comment">--       ; [lam]    = lam</a>
-<a id="12819" class="Comment">--       ; [app]    = app</a>
-<a id="12845" class="Comment">--       ; [mvar]   = mvar</a>
-<a id="12872" class="Comment">--       ; [box]    = box</a>
-<a id="12898" class="Comment">--       ; [unbox]  = unbox</a>
-<a id="12926" class="Comment">--       ; [pair]   = pair</a>
-<a id="12953" class="Comment">--       ; [fst]    = fst</a>
-<a id="12979" class="Comment">--       ; [snd]    = snd</a>
-<a id="13005" class="Comment">--       ; [unit]   = unit</a>
-<a id="13032" class="Comment">--       ; _[⊢ⁿᶠ]_ = _⊢ⁿᶠ_</a>
-<a id="13059" class="Comment">--       ; _⊪ᵅ_    = λ { (Γ ⁏ Δ) P → Γ ⁏ Δ ⊢ⁿᵉ α P }</a>
-<a id="13112" class="Comment">--       ; mono⊪ᵅ  = mono²⊢ⁿᵉ</a>
-<a id="13142" class="Comment">--       }</a>
-
-
-<a id="13155" class="Comment">-- -- Soundness and completeness with respect to the canonical model.</a>
-
-<a id="13226" class="Comment">-- module _ {U : Set} where</a>
-<a id="13254" class="Comment">--   grab∈ : ∀ {A : U} {Γ Γ′} → Γ , A ⊆ Γ′ → A ∈ Γ′</a>
-<a id="13306" class="Comment">--   grab∈ (skip η) = pop (grab∈ η)</a>
-<a id="13342" class="Comment">--   grab∈ (keep η) = top</a>
-
-<a id="13369" class="Comment">-- mutual</a>
-<a id="13379" class="Comment">--   reifyᶜ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊢ⁿᶠ A</a>
-<a id="13429" class="Comment">--   reifyᶜ {α P}   k = k refl⊆² λ ξ s → neⁿᶠ s</a>
-<a id="13477" class="Comment">--   reifyᶜ {A ▻ B} k = k refl⊆² λ ξ s → lamⁿᶠ (reifyᶜ (s weak⊆²₁ (reflectᶜ {A} (varⁿᵉ top))))</a>
-<a id="13572" class="Comment">--   reifyᶜ {□ A}   k = k refl⊆² λ {w} ξ s → boxⁿᶠ (syn (s {w} refl⊆²))</a>
-<a id="13644" class="Comment">--   reifyᶜ {A ∧ B} k = k refl⊆² λ ξ s → pairⁿᶠ (reifyᶜ (π₁ s)) (reifyᶜ (π₂ s))</a>
-<a id="13724" class="Comment">--   reifyᶜ {⊤}    k = k refl⊆² λ ξ s → unitⁿᶠ</a>
-
-<a id="13772" class="Comment">--   reflectᶜ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ⁿᵉ A → Γ ⁏ Δ ⊩ A</a>
-<a id="13824" class="Comment">--   reflectᶜ {α P}   t = return {α P} t</a>
-<a id="13865" class="Comment">--   reflectᶜ {A ▻ B} t = return {A ▻ B} λ { (η , θ) a →</a>
-<a id="13922" class="Comment">--                          reflectᶜ {B} (appⁿᵉ (mono²⊢ⁿᵉ (η , θ) t) (reifyᶜ a)) }</a>
-<a id="14005" class="Comment">--   reflectᶜ {□ A}   t = λ { (η , θ) k →</a>
-<a id="14047" class="Comment">--                          neⁿᶠ (unboxⁿᵉ (mono²⊢ⁿᵉ (η , θ) t) (k (refl⊆ , weak⊆) λ { (η′ , θ′) →</a>
-<a id="14145" class="Comment">--                            mvar (grab∈ θ′) ⅋</a>
-<a id="14193" class="Comment">--                              reflectᶜ {A} (mvarⁿᵉ (grab∈ θ′)) } )) }</a>
-<a id="14265" class="Comment">--   reflectᶜ {A ∧ B} t = return {A ∧ B} (reflectᶜ (fstⁿᵉ t) , reflectᶜ (sndⁿᵉ t))</a>
-<a id="14348" class="Comment">--   reflectᶜ {⊤}    t = return {⊤} ∙</a>
-
-<a id="14387" class="Comment">-- reifyᶜ⋆ : ∀ {Ξ Γ Δ} → Γ ⁏ Δ ⊩⋆ Ξ → Γ ⁏ Δ ⊢⋆ⁿᶠ Ξ</a>
-<a id="14438" class="Comment">-- reifyᶜ⋆ {∅}     ∙        = ∙</a>
-<a id="14470" class="Comment">-- reifyᶜ⋆ {Ξ , A} (ts , t) = reifyᶜ⋆ ts , reifyᶜ t</a>
-
-<a id="14523" class="Comment">-- reflectᶜ⋆ : ∀ {Ξ Γ Δ} → Γ ⁏ Δ ⊢⋆ⁿᵉ Ξ → Γ ⁏ Δ ⊩⋆ Ξ</a>
-<a id="14576" class="Comment">-- reflectᶜ⋆ {∅}     ∙        = ∙</a>
-<a id="14610" class="Comment">-- reflectᶜ⋆ {Ξ , A} (ts , t) = reflectᶜ⋆ ts , reflectᶜ t</a>
-
-
-<a id="14670" class="Comment">-- -- Reflexivity.</a>
-
-<a id="14690" class="Comment">-- refl⊩⋆ : ∀ {Γ Δ} → Γ ⁏ Δ ⊩⋆ Γ</a>
-<a id="14723" class="Comment">-- refl⊩⋆ = reflectᶜ⋆ refl⊢⋆ⁿᵉ</a>
-
-<a id="14755" class="Comment">-- mrefl₀[⊢]⋆ : ∀ {Δ} → ∅ ⁏ Δ [⊢]⋆ Δ</a>
-<a id="14792" class="Comment">-- mrefl₀[⊢]⋆ {∅}     = ∙</a>
-<a id="14818" class="Comment">-- mrefl₀[⊢]⋆ {Δ , A} = mono[⊢]⋆ (refl⊆ , weak⊆) mrefl₀[⊢]⋆ , mvar top</a>
-
-<a id="14890" class="Comment">-- mrefl₀⊢⋆ⁿᵉ : ∀ {Δ} → ∅ ⁏ Δ ⊢⋆ⁿᵉ Δ</a>
-<a id="14927" class="Comment">-- mrefl₀⊢⋆ⁿᵉ {∅}     = ∙</a>
-<a id="14953" class="Comment">-- mrefl₀⊢⋆ⁿᵉ {Γ , A} = mmono⊢⋆ⁿᵉ weak⊆ mrefl₀⊢⋆ⁿᵉ , mvarⁿᵉ top</a>
-
-<a id="15018" class="Comment">-- mrefl₀⊩⋆ : ∀ {Δ} → ∅ ⁏ Δ ⊩⋆ Δ</a>
-<a id="15051" class="Comment">-- mrefl₀⊩⋆ = reflectᶜ⋆ mrefl₀⊢⋆ⁿᵉ</a>
-
-
-<a id="15088" class="Comment">-- -- Completeness with respect to all models, or quotation.</a>
-
-<a id="15150" class="Comment">-- quot : ∀ {A Γ Δ} → Γ ⁏ Δ ⊨ A → Γ ⁏ Δ ⊢ⁿᶠ A</a>
-<a id="15196" class="Comment">-- quot s = reifyᶜ (s refl⊩⋆ mrefl₀[⊢]⋆ mrefl₀⊩⋆)</a>
-
-
-<a id="15248" class="Comment">-- -- Normalisation by evaluation.</a>
-
-<a id="15284" class="Comment">-- norm : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ⁿᶠ A</a>
-<a id="15330" class="Comment">-- norm = quot ∘ eval</a>
+<a id="3438" class="Comment">-- Monotonicity with respect to intuitionistic accessibility.</a>
+
+<a id="3501" class="Keyword">module</a> <a id="3508" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3508" class="Module">_</a> <a id="3510" class="Symbol">{{</a><a id="3512" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3512" class="Bound">_</a> <a id="3514" class="Symbol">:</a> <a id="3516" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#399" class="Record">Model</a><a id="3521" class="Symbol">}}</a> <a id="3524" class="Keyword">where</a>
+  <a id="3532" class="Keyword">mutual</a>
+    <a id="3543" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3543" class="Function">mono⊪</a> <a id="3549" class="Symbol">:</a> <a id="3551" class="Symbol">∀</a> <a id="3553" class="Symbol">{</a><a id="3554" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3554" class="Bound">A</a><a id="3555" class="Symbol">}</a> <a id="3557" class="Symbol">{</a><a id="3558" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3558" class="Bound">w</a> <a id="3560" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3560" class="Bound">w′</a> <a id="3563" class="Symbol">:</a> <a id="3565" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#507" class="Field">World</a><a id="3570" class="Symbol">}</a> <a id="3572" class="Symbol">→</a> <a id="3574" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3558" class="Bound">w</a> <a id="3576" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#603" class="Field Operator">≤</a> <a id="3578" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3560" class="Bound">w′</a> <a id="3581" class="Symbol">→</a> <a id="3583" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3558" class="Bound">w</a> <a id="3585" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2913" class="Function Operator">⊪</a> <a id="3587" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3554" class="Bound">A</a> <a id="3589" class="Symbol">→</a> <a id="3591" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3560" class="Bound">w′</a> <a id="3594" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2913" class="Function Operator">⊪</a> <a id="3596" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3554" class="Bound">A</a>
+    <a id="3602" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3543" class="Function">mono⊪</a> <a id="3608" class="Symbol">{</a><a id="3609" href="A201607.BasicIS4.Syntax.Common.html#293" class="InductiveConstructor Operator">α</a> <a id="3611" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3611" class="Bound">P</a><a id="3612" class="Symbol">}</a>   <a id="3616" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3616" class="Bound">ξ</a> <a id="3618" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3618" class="Bound">s</a> <a id="3620" class="Symbol">=</a> <a id="3622" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#2210" class="Field">mono⊪ᵅ</a> <a id="3629" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3616" class="Bound">ξ</a> <a id="3631" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3618" class="Bound">s</a>
+    <a id="3637" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3543" class="Function">mono⊪</a> <a id="3643" class="Symbol">{</a><a id="3644" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3644" class="Bound">A</a> <a id="3646" href="A201607.BasicIS4.Syntax.Common.html#311" class="InductiveConstructor Operator">▻</a> <a id="3648" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3648" class="Bound">B</a><a id="3649" class="Symbol">}</a> <a id="3651" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3651" class="Bound">ξ</a> <a id="3653" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3653" class="Bound">s</a> <a id="3655" class="Symbol">=</a> <a id="3657" class="Symbol">λ</a> <a id="3659" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3659" class="Bound">ξ′</a> <a id="3662" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3662" class="Bound">a</a> <a id="3664" class="Symbol">→</a> <a id="3666" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3653" class="Bound">s</a> <a id="3668" class="Symbol">(</a><a id="3669" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#663" class="Field">trans≤</a> <a id="3676" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3651" class="Bound">ξ</a> <a id="3678" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3659" class="Bound">ξ′</a><a id="3680" class="Symbol">)</a> <a id="3682" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3662" class="Bound">a</a>
+<a id="3684" class="Comment">--    mono⊪ {□ A}   ξ s = λ ζ → s (trans≤ (≤→⌊≤⌋ ξ) ζ)</a>
+    <a id="3743" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3543" class="Function">mono⊪</a> <a id="3749" class="Symbol">{</a><a id="3750" href="A201607.BasicIS4.Syntax.Common.html#332" class="InductiveConstructor Operator">□</a> <a id="3752" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3752" class="Bound">A</a><a id="3753" class="Symbol">}</a>   <a id="3757" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3757" class="Bound">ξ</a> <a id="3759" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3759" class="Bound">s</a> <a id="3761" class="Symbol">=</a> <a id="3763" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3759" class="Bound">s</a>
+    <a id="3769" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3543" class="Function">mono⊪</a> <a id="3775" class="Symbol">{</a><a id="3776" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3776" class="Bound">A</a> <a id="3778" href="A201607.BasicIS4.Syntax.Common.html#348" class="InductiveConstructor Operator">∧</a> <a id="3780" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3780" class="Bound">B</a><a id="3781" class="Symbol">}</a> <a id="3783" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3783" class="Bound">ξ</a> <a id="3785" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3785" class="Bound">s</a> <a id="3787" class="Symbol">=</a> <a id="3789" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3859" class="Function">mono⊩</a> <a id="3795" class="Symbol">{</a><a id="3796" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3776" class="Bound">A</a><a id="3797" class="Symbol">}</a> <a id="3799" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3783" class="Bound">ξ</a> <a id="3801" class="Symbol">(</a><a id="3802" href="A201607.Common.html#1614" class="Field">π₁</a> <a id="3805" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3785" class="Bound">s</a><a id="3806" class="Symbol">)</a> <a id="3808" href="A201607.Common.html#1598" class="InductiveConstructor Operator">,</a> <a id="3810" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3859" class="Function">mono⊩</a> <a id="3816" class="Symbol">{</a><a id="3817" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3780" class="Bound">B</a><a id="3818" class="Symbol">}</a> <a id="3820" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3783" class="Bound">ξ</a> <a id="3822" class="Symbol">(</a><a id="3823" href="A201607.Common.html#1625" class="Field">π₂</a> <a id="3826" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3785" class="Bound">s</a><a id="3827" class="Symbol">)</a>
+    <a id="3833" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3543" class="Function">mono⊪</a> <a id="3839" class="Symbol">{</a><a id="3840" href="A201607.BasicIS4.Syntax.Common.html#369" class="InductiveConstructor">⊤</a><a id="3841" class="Symbol">}</a>    <a id="3846" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3846" class="Bound">ξ</a> <a id="3848" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3848" class="Bound">s</a> <a id="3850" class="Symbol">=</a> <a id="3852" href="Agda.Builtin.Unit.html#212" class="InductiveConstructor">∙</a>
+
+    <a id="3859" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3859" class="Function">mono⊩</a> <a id="3865" class="Symbol">:</a> <a id="3867" class="Symbol">∀</a> <a id="3869" class="Symbol">{</a><a id="3870" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3870" class="Bound">A</a><a id="3871" class="Symbol">}</a> <a id="3873" class="Symbol">{</a><a id="3874" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3874" class="Bound">w</a> <a id="3876" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3876" class="Bound">w′</a> <a id="3879" class="Symbol">:</a> <a id="3881" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#507" class="Field">World</a><a id="3886" class="Symbol">}</a> <a id="3888" class="Symbol">→</a> <a id="3890" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3874" class="Bound">w</a> <a id="3892" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#603" class="Field Operator">≤</a> <a id="3894" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3876" class="Bound">w′</a> <a id="3897" class="Symbol">→</a> <a id="3899" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3874" class="Bound">w</a> <a id="3901" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3217" class="Function Operator">⊩</a> <a id="3903" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3870" class="Bound">A</a> <a id="3905" class="Symbol">→</a> <a id="3907" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3876" class="Bound">w′</a> <a id="3910" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3217" class="Function Operator">⊩</a> <a id="3912" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3870" class="Bound">A</a>
+    <a id="3918" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3859" class="Function">mono⊩</a> <a id="3924" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3924" class="Bound">ξ</a> <a id="3926" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3926" class="Bound">a</a> <a id="3928" class="Symbol">=</a> <a id="3930" class="Symbol">λ</a> <a id="3932" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3932" class="Bound">ξ′</a> <a id="3935" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3935" class="Bound">k′</a> <a id="3938" class="Symbol">→</a> <a id="3940" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3926" class="Bound">a</a> <a id="3942" class="Symbol">(</a><a id="3943" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#663" class="Field">trans≤</a> <a id="3950" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3924" class="Bound">ξ</a> <a id="3952" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3932" class="Bound">ξ′</a><a id="3954" class="Symbol">)</a> <a id="3956" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3935" class="Bound">k′</a>
+
+  <a id="3962" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3962" class="Function">mono⊩⋆</a> <a id="3969" class="Symbol">:</a> <a id="3971" class="Symbol">∀</a> <a id="3973" class="Symbol">{</a><a id="3974" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3974" class="Bound">Ξ</a><a id="3975" class="Symbol">}</a> <a id="3977" class="Symbol">{</a><a id="3978" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3978" class="Bound">w</a> <a id="3980" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3980" class="Bound">w′</a> <a id="3983" class="Symbol">:</a> <a id="3985" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#507" class="Field">World</a><a id="3990" class="Symbol">}</a> <a id="3992" class="Symbol">→</a> <a id="3994" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3978" class="Bound">w</a> <a id="3996" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#603" class="Field Operator">≤</a> <a id="3998" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3980" class="Bound">w′</a> <a id="4001" class="Symbol">→</a> <a id="4003" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3978" class="Bound">w</a> <a id="4005" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3362" class="Function Operator">⊩⋆</a> <a id="4008" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3974" class="Bound">Ξ</a> <a id="4010" class="Symbol">→</a> <a id="4012" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3980" class="Bound">w′</a> <a id="4015" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3362" class="Function Operator">⊩⋆</a> <a id="4018" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3974" class="Bound">Ξ</a>
+  <a id="4022" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3962" class="Function">mono⊩⋆</a> <a id="4029" class="Symbol">{</a><a id="4030" href="A201607.Common.Context.html#151" class="InductiveConstructor">∅</a><a id="4031" class="Symbol">}</a>     <a id="4037" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#4037" class="Bound">ξ</a> <a id="4039" href="Agda.Builtin.Unit.html#212" class="InductiveConstructor">∙</a>       <a id="4047" class="Symbol">=</a> <a id="4049" href="Agda.Builtin.Unit.html#212" class="InductiveConstructor">∙</a>
+  <a id="4053" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3962" class="Function">mono⊩⋆</a> <a id="4060" class="Symbol">{</a><a id="4061" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#4061" class="Bound">Ξ</a> <a id="4063" href="A201607.Common.Context.html#164" class="InductiveConstructor Operator">,</a> <a id="4065" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#4065" class="Bound">A</a><a id="4066" class="Symbol">}</a> <a id="4068" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#4068" class="Bound">ξ</a> <a id="4070" class="Symbol">(</a><a id="4071" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#4071" class="Bound">γ</a> <a id="4073" href="A201607.Common.html#1598" class="InductiveConstructor Operator">,</a> <a id="4075" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#4075" class="Bound">a</a><a id="4076" class="Symbol">)</a> <a id="4078" class="Symbol">=</a> <a id="4080" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3962" class="Function">mono⊩⋆</a> <a id="4087" class="Symbol">{</a><a id="4088" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#4061" class="Bound">Ξ</a><a id="4089" class="Symbol">}</a> <a id="4091" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#4068" class="Bound">ξ</a> <a id="4093" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#4071" class="Bound">γ</a> <a id="4095" href="A201607.Common.html#1598" class="InductiveConstructor Operator">,</a> <a id="4097" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#3859" class="Function">mono⊩</a> <a id="4103" class="Symbol">{</a><a id="4104" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#4065" class="Bound">A</a><a id="4105" class="Symbol">}</a> <a id="4107" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#4068" class="Bound">ξ</a> <a id="4109" href="A201607.WIP2.BasicIS4.Semantics.Sketch8.html#4075" class="Bound">a</a>
+
+
+<a id="4113" class="Comment">-- TODO: unfinished</a>
+
+
+<a id="4135" class="Comment">-- -- Additional useful equipment.</a>
+
+<a id="4171" class="Comment">-- module _ {{_ : Model}} where</a>
+<a id="4203" class="Comment">--   _⟪$⟫_ : ∀ {A B w} → w ⊪ A ▻ B → w ⊩ A → w ⊩ B</a>
+<a id="4254" class="Comment">--   s ⟪$⟫ a = s refl≤ a</a>
+
+<a id="4280" class="Comment">--   return : ∀ {A w} → w ⊪ A → w ⊩ A</a>
+<a id="4318" class="Comment">--   return {A} a = λ ξ k → k refl≤ (mono⊪ {A} ξ a)</a>
+
+<a id="4371" class="Comment">--   bind : ∀ {A B w} → w ⊩ A → (∀ {w′} → w ≤ w′ → w′ ⊪ A → w′ ⊩ B) → w ⊩ B</a>
+<a id="4447" class="Comment">--   bind a k = λ ξ k′ → a ξ (λ ξ′ a′ → k (trans≤ ξ ξ′) a′ refl≤ (λ ξ″ a″ → k′ (trans≤ ξ′ ξ″) a″))</a>
+
+
+<a id="4548" class="Comment">-- -- Entailment, or forcing in all worlds of all models, for sequents.</a>
+
+<a id="4621" class="Comment">-- infix 3 _⊨_</a>
+<a id="4636" class="Comment">-- _⊨_ : Cx² Ty Ty → Ty → Set₁</a>
+<a id="4667" class="Comment">-- Γ ⁏ Δ ⊨ A = ∀ {{_ : Model}} {w} → w ⊩⋆ Γ → ⌊ w ⌋ [⊢]⋆ Δ → ⌊ w ⌋ ⊩⋆ Δ → w ⊩ A</a>
+
+<a id="4748" class="Comment">-- infix 3 _⊨⋆_</a>
+<a id="4764" class="Comment">-- _⊨⋆_ : Cx² Ty Ty → Cx Ty → Set₁</a>
+<a id="4799" class="Comment">-- Γ ⁏ Δ ⊨⋆ Ξ = ∀ {{_ : Model}} {w} → w ⊩⋆ Γ → ⌊ w ⌋ [⊢]⋆ Δ → ⌊ w ⌋ ⊩⋆ Δ → w ⊩⋆ Ξ</a>
+
+
+<a id="4883" class="Comment">-- -- Additional useful equipment, for sequents.</a>
+
+<a id="4933" class="Comment">-- module _ {{_ : Model}} where</a>
+<a id="4965" class="Comment">--   lookup : ∀ {A Γ w} → A ∈ Γ → w ⊩⋆ Γ → w ⊩ A</a>
+<a id="5014" class="Comment">--   lookup top     (γ , a) = a</a>
+<a id="5046" class="Comment">--   lookup (pop i) (γ , b) = lookup i γ</a>
+
+
+<a id="5089" class="Comment">-- --</a>
+
+
+<a id="5097" class="Comment">-- open import BasicIS4.Syntax.DyadicGentzenNormalForm public</a>
+
+
+<a id="5161" class="Comment">-- -- Internalisation of syntax as syntax representation in a particular model.</a>
+
+<a id="5242" class="Comment">-- module _ {{_ : Model}} where</a>
+<a id="5274" class="Comment">-- --  [_]ᶜˣ : Cx² Ty Ty → World</a>
+<a id="5307" class="Comment">-- --  [ ∅ ⁏ ∅ ]ᶜˣ         = [∅]</a>
+<a id="5340" class="Comment">-- --  [ Γ , A ⁏ ∅ ]ᶜˣ     = [ Γ ⁏ ∅ ]ᶜˣ [,] A</a>
+<a id="5387" class="Comment">-- --  [ ∅ ⁏ Δ , B ]ᶜˣ     = [ ∅ ⁏ Δ ]ᶜˣ [m,] B</a>
+<a id="5435" class="Comment">-- --  [ Γ , A ⁏ Δ , B ]ᶜˣ = [ Γ ⁏ Δ ]ᶜˣ [,] A [m,] B</a>
+
+<a id="5490" class="Comment">-- --  mel₃ : ∀ {Γ Δ A} → [ Γ , A ⁏ Δ ]ᶜˣ ≡ [ Γ ⁏ Δ ]ᶜˣ [,] A</a>
+<a id="5552" class="Comment">-- --  mel₃ {∅}     = {!!}</a>
+<a id="5579" class="Comment">-- --  mel₃ {Γ , B} = {!!}</a>
+<a id="5606" class="Comment">-- --</a>
+<a id="5612" class="Comment">-- --  lem₃ : ∀ {Δ A C Γ} → [ Γ , A ⁏ Δ ]ᶜˣ [⊢] C → [ Γ ⁏ Δ ]ᶜˣ [,] A [⊢] C</a>
+<a id="5688" class="Comment">-- --  lem₃ t = {!!}</a>
+<a id="5709" class="Comment">-- --</a>
+<a id="5715" class="Comment">-- --  postulate</a>
+<a id="5732" class="Comment">-- --    lem₄ : ∀ {Γ A Δ}   → [ ∅ ⁏ Δ ]ᶜˣ [⊢] A → ⌊ [ Γ ⁏ Δ ]ᶜˣ ⌋ [⊢] A</a>
+<a id="5804" class="Comment">-- --    lem₅ : ∀ {Γ A C Δ} → [ Γ ⁏ Δ , A ]ᶜˣ [⊢] C → [ Γ ⁏ Δ ]ᶜˣ [m,] A [⊢] C</a>
+<a id="5883" class="Comment">-- --</a>
+<a id="5889" class="Comment">-- --  [_]ⁱˣ : ∀ {A Γ Δ} → A ∈ Γ → A [∈] [ Γ ⁏ Δ ]ᶜˣ</a>
+<a id="5942" class="Comment">-- --  [ top ]ⁱˣ   = {![top]!}</a>
+<a id="5973" class="Comment">-- --  [ pop i ]ⁱˣ = {!!}</a>
+<a id="5999" class="Comment">-- --</a>
+<a id="6005" class="Comment">-- --  m[_]ⁱˣ : ∀ {Γ A Δ} → A ∈ Δ → A [m∈] [ Γ ⁏ Δ ]ᶜˣ</a>
+<a id="6060" class="Comment">-- --  m[ top ]ⁱˣ   = {!!}</a>
+<a id="6087" class="Comment">-- --  m[ pop i ]ⁱˣ = {!!}</a>
+<a id="6114" class="Comment">-- --</a>
+<a id="6120" class="Comment">-- --  [_] : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → [ Γ ⁏ Δ ]ᶜˣ [⊢] A</a>
+<a id="6175" class="Comment">-- --  [ var i ]             = [var] [ i ]ⁱˣ</a>
+<a id="6220" class="Comment">-- --  [ lam {Δ = Δ} t ]     = [lam] (lem₃ {Δ} [ t ])</a>
+<a id="6274" class="Comment">-- --  [ app t u ]           = [app] [ t ] [ u ]</a>
+<a id="6323" class="Comment">-- --  [ mvar {Γ = Γ} i ]    = [mvar] (m[_]ⁱˣ {Γ} i)</a>
+<a id="6376" class="Comment">-- --  [ box {Γ = Γ} t ]     = [box] (lem₄ {Γ} [ t ])</a>
+<a id="6430" class="Comment">-- --  [ unbox {Γ = Γ} t u ] = [unbox] [ t ] (lem₅ {Γ} [ u ])</a>
+<a id="6492" class="Comment">-- --  [ pair t u ]          = [pair] [ t ] [ u ]</a>
+<a id="6542" class="Comment">-- --  [ fst t ]             = [fst] [ t ]</a>
+<a id="6585" class="Comment">-- --  [ snd t ]             = [snd] [ t ]</a>
+<a id="6628" class="Comment">-- --  [ unit ]              = [unit]</a>
+<a id="6666" class="Comment">-- --</a>
+<a id="6672" class="Comment">-- --  [box]⋆ : ∀ {Ξ w} → ⌊ w ⌋ [⊢]⋆ Ξ → w [⊢]⋆ □⋆ Ξ</a>
+<a id="6725" class="Comment">-- --  [box]⋆ {∅}     ∙        = ∙</a>
+<a id="6760" class="Comment">-- --  [box]⋆ {Ξ , A} (ts , t) = [box]⋆ ts , [box] t</a>
+
+<a id="6814" class="Comment">-- --  postulate</a>
+<a id="6831" class="Comment">-- --    lem₆ : ∀ {Ξ C w} → w [⊢] C → w [m,]⋆ Ξ [⊢] C</a>
+<a id="6885" class="Comment">-- --    lem₇ : ∀ {Ξ A C w} → w [m,]⋆ (Ξ , A) [⊢] C → (w [m,]⋆ Ξ) [m,] A [⊢] C</a>
+<a id="6964" class="Comment">-- --</a>
+<a id="6970" class="Comment">-- --  [unbox]⋆ : ∀ {Ξ C w} → w [⊢]⋆ □⋆ Ξ → w [m,]⋆ Ξ [⊢] C → w [⊢] C</a>
+<a id="7040" class="Comment">-- --  [unbox]⋆ {∅}     ∙        u = u</a>
+<a id="7079" class="Comment">-- --  [unbox]⋆ {Ξ , A} (ts , t) u = [unbox]⋆ ts ([unbox] (lem₆ {Ξ} t) (lem₇ {Ξ} u))</a>
+<a id="7164" class="Comment">-- --</a>
+<a id="7170" class="Comment">-- --  mlet : ∀ {A C w} → ⌊ w ⌋ [⊢] A → w [m,] A [⊢] C → w [⊢] C</a>
+<a id="7235" class="Comment">-- --  mlet t u = [unbox] ([box] t) u</a>
+<a id="7273" class="Comment">-- --</a>
+<a id="7279" class="Comment">-- --  mlet⋆ : ∀ {Ξ C w} → ⌊ w ⌋ [⊢]⋆ Ξ → w [m,]⋆ Ξ [⊢] C → w [⊢] C</a>
+<a id="7347" class="Comment">-- --  mlet⋆ ts u = [unbox]⋆ ([box]⋆ ts) u</a>
+
+<a id="7391" class="Comment">--   -- [unbox]  : ∀ {A C w} → w [⊢] □ A → w [m,] A [⊢] C → w [⊢] C</a>
+
+
+
+<a id="7462" class="Comment">-- --  help : ∀ {Ξ w A} → w [⊢] □ A → w [m,]⋆ Ξ [⊢] □ A</a>
+<a id="7518" class="Comment">-- --  help = {!!}</a>
+<a id="7537" class="Comment">-- --</a>
+<a id="7543" class="Comment">-- --  unbox′ : ∀ {Ξ A C w} → w [⊢] □ A → [∅] [m,]⋆ Ξ [m,] A [⊢] C → [∅] [m,]⋆ Ξ [⊢] C</a>
+<a id="7630" class="Comment">-- --  unbox′ = {!!}</a>
+<a id="7651" class="Comment">-- --</a>
+<a id="7657" class="Comment">-- --  [unbox]⋆ : ∀ {Ξ C w} → w [⊢]⋆ □⋆ Ξ → [∅] [m,]⋆ Ξ [⊢] C → [∅] [⊢] C</a>
+<a id="7731" class="Comment">-- --  [unbox]⋆ {∅}     ∙        u = u</a>
+<a id="7770" class="Comment">-- --  [unbox]⋆ {Ξ , A} (ts , t) u = [unbox]⋆ ts (unbox′ {Ξ} t u)</a>
+
+
+<a id="7838" class="Comment">-- --  [box]⋆ : ∀ {Ξ w} → ⌊ w ⌋ [⊢]⋆ Ξ → w [⊢]⋆ □⋆ Ξ</a>
+<a id="7891" class="Comment">-- --  [box]⋆ {∅}     ∙        = ∙</a>
+<a id="7926" class="Comment">-- --  [box]⋆ {Ξ , A} (ts , t) = [box]⋆ ts , [box] t</a>
+
+<a id="7980" class="Comment">--   [box]⋆ : ∀ {Ξ w} → ⌊ w ⌋ [⊢]⋆ Ξ → ⌊ w ⌋ [⊢]⋆ □⋆ Ξ</a>
+<a id="8035" class="Comment">--   [box]⋆ {∅}     ∙        = ∙</a>
+<a id="8068" class="Comment">--   [box]⋆ {Ξ , A} (ts , t) = [box]⋆ ts , [box] t</a>
+
+<a id="8120" class="Comment">-- --  postulate</a>
+<a id="8137" class="Comment">-- --    wtf : ∀ {Ξ A w} → w [⊢] □ A → ⌊ w ⌋ [m,]⋆ Ξ [⊢] □ A</a>
+<a id="8198" class="Comment">-- --</a>
+<a id="8204" class="Comment">-- --  [unbox]⋆ : ∀ {Ξ C w} → w [⊢]⋆ □⋆ Ξ → ⌊ w ⌋ [m,]⋆ Ξ [⊢] C → ⌊ w ⌋ [⊢] C</a>
+<a id="8282" class="Comment">-- --  [unbox]⋆ {∅}     ∙        u = u</a>
+<a id="8321" class="Comment">-- --  [unbox]⋆ {Ξ , A} (ts , t) u = [unbox]⋆ ts ([unbox] (wtf {Ξ} t) u)</a>
+<a id="8394" class="Comment">-- --</a>
+<a id="8400" class="Comment">-- --  omg : ∀ {Ξ C w} → ⌊ w ⌋ [⊢]⋆ Ξ → ⌊ w ⌋ [m,]⋆ Ξ [⊢] C → ⌊ w ⌋ [⊢] C</a>
+<a id="8474" class="Comment">-- --  omg ts u = [unbox]⋆ ([box]⋆ ts) u</a>
+
+<a id="8516" class="Comment">-- {-</a>
+<a id="8522" class="Comment">--   postulate</a>
+<a id="8537" class="Comment">--     [top] : ∀ {A w} → A [∈] w [,] A</a>
+<a id="8576" class="Comment">--     foo   : ∀ {A w} → w ≤ (w [,] A)</a>
+<a id="8615" class="Comment">--     mfoo  : ∀ {A w} → w ≤ (w [m,] A)</a>
+
+<a id="8656" class="Comment">--   postulate</a>
+<a id="8671" class="Comment">--     lemᵛᵃʳ   : ∀ {Γ Δ A w}   → A ∈ Γ → A [∈] w [,]⋆ Γ [m,]⋆ Δ</a>
+
+<a id="8737" class="Comment">--     lemˡᵃᵐ   : ∀ {Γ Δ A B w} → w [,]⋆ (Γ , A) [m,]⋆ Δ [⊢] B</a>
+<a id="8800" class="Comment">--                              → w [,]⋆ Γ [m,]⋆ Δ [,] A [⊢] B</a>
+
+<a id="8864" class="Comment">--     lemᵐᵛᵃʳ  : ∀ {Γ Δ A w}   → A ∈ Δ → A [m∈] w [,]⋆ Γ [m,]⋆ Δ</a>
+
+<a id="8931" class="Comment">--     lemᵇᵒˣ   : ∀ {Γ Δ A w}   → w [,]⋆ ∅ [m,]⋆ Δ [⊢] A</a>
+<a id="8988" class="Comment">--                              → ⌊ w [,]⋆ Γ [m,]⋆ Δ ⌋ [⊢] A</a>
+
+<a id="9050" class="Comment">--     lemᵘⁿᵇᵒˣ : ∀ {Γ Δ A C w} → w [,]⋆ Γ [m,]⋆ (Δ , A) [⊢] C</a>
+<a id="9113" class="Comment">--                              → w [,]⋆ Γ [m,]⋆ Δ [m,] A [⊢] C</a>
+
+<a id="9178" class="Comment">--   wtf : ∀ {Ξ A C w} → ⌊ w ⌋ [m,]⋆ (Ξ , A) [⊢] C → ⌊ w ⌋ [m,]⋆ Ξ [⊢] □ A ▻ C</a>
+<a id="9257" class="Comment">--   wtf t = [lam] ([unbox] ([var] [top]) (mono[⊢] {!!} t))</a>
+
+<a id="9318" class="Comment">--   omg : ∀ {Ξ C w} → ⌊ w ⌋ [⊢]⋆ □⋆ Ξ → ⌊ w ⌋ [m,]⋆ Ξ [⊢] C → ⌊ w ⌋ [⊢] C</a>
+<a id="9393" class="Comment">--   omg {∅}     ∙        u = u</a>
+<a id="9425" class="Comment">--   omg {Ξ , A} (ts , t) u = [app] (omg ts (wtf {Ξ} u)) t</a>
+
+<a id="9485" class="Comment">--   [_] : ∀ {A Γ Δ w} → Γ ⁏ Δ ⊢ A → w [,]⋆ Γ [m,]⋆ Δ [⊢] A</a>
+<a id="9545" class="Comment">--   [ var {Γ = Γ} {Δ} i ]     = [var] (lemᵛᵃʳ {Γ} {Δ} i)</a>
+<a id="9603" class="Comment">--   [ lam {Γ = Γ} {Δ} t ]     = [lam] (lemˡᵃᵐ {Γ} {Δ} [ t ])</a>
+<a id="9665" class="Comment">--   [ app t u ]               = [app] [ t ] [ u ]</a>
+<a id="9716" class="Comment">--   [ mvar {Γ = Γ} {Δ} i ]    = [mvar] (lemᵐᵛᵃʳ {Γ} {Δ} i)</a>
+<a id="9776" class="Comment">--   [ box {Γ = Γ} {Δ} t ]     = mono[⊢] lem₁ ([box] (lemᵇᵒˣ {Γ} {Δ} [ t ]))</a>
+<a id="9853" class="Comment">--   [ unbox {Γ = Γ} {Δ} t u ] = [unbox] [ t ] (lemᵘⁿᵇᵒˣ {Γ} {Δ} [ u ])</a>
+<a id="9925" class="Comment">--   [ pair t u ]              = [pair] [ t ] [ u ]</a>
+<a id="9977" class="Comment">--   [ fst t ]                 = [fst] [ t ]</a>
+<a id="10022" class="Comment">--   [ snd t ]                 = [snd] [ t ]</a>
+<a id="10067" class="Comment">--   [ unit ]                  = [unit]</a>
+<a id="10107" class="Comment">-- -}</a>
+
+
+<a id="10115" class="Comment">-- -- Soundness with respect to all models, or evaluation.</a>
+
+<a id="10175" class="Comment">-- eval : ∀ {Γ Δ A} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊨ A</a>
+<a id="10219" class="Comment">-- eval (var i)             γ ד δ = lookup i γ</a>
+<a id="10266" class="Comment">-- eval (lam {A} {B} t)     γ ד δ = return {A ▻ B} λ ξ a →</a>
+<a id="10325" class="Comment">--                                    eval t (mono⊩⋆ ξ γ , a)</a>
+<a id="10387" class="Comment">--                                           (mono[⊢]⋆ (≤→⌊≤⌋ ξ) ד)</a>
+<a id="10455" class="Comment">--                                           (mono⊩⋆ (≤→⌊≤⌋ ξ) δ)</a>
+<a id="10521" class="Comment">-- eval (app {A} {B} t u)   γ ד δ = bind {A ▻ B} {B} (eval t γ ד δ) λ ξ f →</a>
+<a id="10597" class="Comment">--                                    _⟪$⟫_ {A} {B} f (eval u (mono⊩⋆ ξ γ)</a>
+<a id="10672" class="Comment">--                                                            (mono[⊢]⋆ (≤→⌊≤⌋ ξ) ד)</a>
+<a id="10757" class="Comment">--                                                            (mono⊩⋆ (≤→⌊≤⌋ ξ) δ))</a>
+<a id="10841" class="Comment">-- eval (mvar {A} i)        γ ד δ = mono⊩ {A} lem₁ (lookup i δ)</a>
+<a id="10905" class="Comment">-- eval {Γ} {Δ} (box {A} t) γ ד δ = return {□ A} λ ζ →</a>
+<a id="10960" class="Comment">--                                    let ד′ = mono[⊢]⋆ ζ ד</a>
+<a id="11020" class="Comment">--                                        t′ = {!!}</a>
+<a id="11072" class="Comment">--                                    in  {!omg ([box]⋆ ד′) t′!} ⅋</a>
+<a id="11139" class="Comment">--                                          eval t ∙</a>
+<a id="11192" class="Comment">--                                             (mono[⊢]⋆ (trans≤ ζ lem₂) ד)</a>
+<a id="11268" class="Comment">--                                             (mono⊩⋆ (trans≤ ζ lem₂) δ)</a>
+<a id="11342" class="Comment">-- eval (unbox {A} {C} t u) γ ד δ = bind {□ A} {C} (eval t γ ד δ) λ ξ a →</a>
+<a id="11416" class="Comment">--                                    eval u (mono⊩⋆ ξ γ)</a>
+<a id="11474" class="Comment">--                                           (mono[⊢]⋆ (≤→⌊≤⌋ ξ) ד , syn (a refl≤))</a>
+<a id="11558" class="Comment">--                                           (mono⊩⋆ (≤→⌊≤⌋ ξ) δ , sem (a refl≤))</a>
+<a id="11640" class="Comment">-- eval (pair {A} {B} t u)  γ ד δ = return {A ∧ B} (eval t γ ד δ , eval u γ ד δ)</a>
+<a id="11721" class="Comment">-- eval (fst {A} {B} t)     γ ד δ = bind {A ∧ B} {A} (eval t γ ד δ) (K π₁)</a>
+<a id="11796" class="Comment">-- eval (snd {A} {B} t)     γ ד δ = bind {A ∧ B} {B} (eval t γ ד δ) (K π₂)</a>
+<a id="11871" class="Comment">-- eval unit                γ ד δ = return {⊤} ∙</a>
+
+<a id="11921" class="Comment">-- eval⋆ : ∀ {Ξ Γ} → Γ ⊢⋆ Ξ → Γ ⊨⋆ Ξ</a>
+<a id="11958" class="Comment">-- eval⋆ {∅}     ∙        γ ד δ = ∙</a>
+<a id="11994" class="Comment">-- eval⋆ {Ξ , A} (ts , t) γ ד δ = eval⋆ ts γ ד δ , eval t γ ד δ</a>
+
+
+<a id="12060" class="Comment">-- -- The canonical model.</a>
+
+<a id="12088" class="Comment">-- private</a>
+<a id="12099" class="Comment">--   instance</a>
+<a id="12113" class="Comment">--     canon : Model</a>
+<a id="12134" class="Comment">--     canon = record</a>
+<a id="12156" class="Comment">--       { World    = Cx² Ty Ty</a>
+<a id="12188" class="Comment">--       ; [∅]      = ∅ ⁏ ∅</a>
+<a id="12216" class="Comment">--       ; _≤_      = _⊆²_</a>
+<a id="12243" class="Comment">--       ; refl≤    = refl⊆²</a>
+<a id="12272" class="Comment">--       ; trans≤   = trans⊆²</a>
+<a id="12302" class="Comment">--       ; bot≤     = bot⊆²</a>
+<a id="12330" class="Comment">--       ; ⌊_⌋      = λ { (Γ ⁏ Δ) → ∅ ⁏ Δ }</a>
+<a id="12374" class="Comment">--       ; lem₁     = bot⊆ , refl⊆</a>
+<a id="12409" class="Comment">--       ; lem₂     = refl⊆²</a>
+<a id="12438" class="Comment">--       ; ≤→⌊≤⌋   = λ { (η , θ) → refl⊆ , θ }</a>
+<a id="12485" class="Comment">--       ; _[+]_    = λ { (Γ ⁏ Δ) (Γ′ ⁏ Δ′) → Γ ⧺ Γ′ ⁏ Δ ⧺ Δ′ }</a>
+<a id="12549" class="Comment">-- --      ; _[,]_    = λ { (Γ ⁏ Δ) A → Γ , A ⁏ Δ }</a>
+<a id="12601" class="Comment">-- --      ; _[m,]_   = λ { (Γ ⁏ Δ) A → Γ ⁏ Δ , A }</a>
+<a id="12653" class="Comment">--       ; _[∈]_    = λ { A (Γ ⁏ Δ) → A ∈ Γ }</a>
+<a id="12699" class="Comment">--       ; _[m∈]_   = λ { A (Γ ⁏ Δ) → A ∈ Δ }</a>
+<a id="12745" class="Comment">--       ; _[⊢]_   = _⊢_</a>
+<a id="12770" class="Comment">--       ; mono[⊢] = mono²⊢</a>
+<a id="12798" class="Comment">--       ; [var]    = var</a>
+<a id="12824" class="Comment">--       ; [lam]    = lam</a>
+<a id="12850" class="Comment">--       ; [app]    = app</a>
+<a id="12876" class="Comment">--       ; [mvar]   = mvar</a>
+<a id="12903" class="Comment">--       ; [box]    = box</a>
+<a id="12929" class="Comment">--       ; [unbox]  = unbox</a>
+<a id="12957" class="Comment">--       ; [pair]   = pair</a>
+<a id="12984" class="Comment">--       ; [fst]    = fst</a>
+<a id="13010" class="Comment">--       ; [snd]    = snd</a>
+<a id="13036" class="Comment">--       ; [unit]   = unit</a>
+<a id="13063" class="Comment">--       ; _[⊢ⁿᶠ]_ = _⊢ⁿᶠ_</a>
+<a id="13090" class="Comment">--       ; _⊪ᵅ_    = λ { (Γ ⁏ Δ) P → Γ ⁏ Δ ⊢ⁿᵉ α P }</a>
+<a id="13143" class="Comment">--       ; mono⊪ᵅ  = mono²⊢ⁿᵉ</a>
+<a id="13173" class="Comment">--       }</a>
+
+
+<a id="13186" class="Comment">-- -- Soundness and completeness with respect to the canonical model.</a>
+
+<a id="13257" class="Comment">-- module _ {U : Set} where</a>
+<a id="13285" class="Comment">--   grab∈ : ∀ {A : U} {Γ Γ′} → Γ , A ⊆ Γ′ → A ∈ Γ′</a>
+<a id="13337" class="Comment">--   grab∈ (skip η) = pop (grab∈ η)</a>
+<a id="13373" class="Comment">--   grab∈ (keep η) = top</a>
+
+<a id="13400" class="Comment">-- mutual</a>
+<a id="13410" class="Comment">--   reifyᶜ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊩ A → Γ ⁏ Δ ⊢ⁿᶠ A</a>
+<a id="13460" class="Comment">--   reifyᶜ {α P}   k = k refl⊆² λ ξ s → neⁿᶠ s</a>
+<a id="13508" class="Comment">--   reifyᶜ {A ▻ B} k = k refl⊆² λ ξ s → lamⁿᶠ (reifyᶜ (s weak⊆²₁ (reflectᶜ {A} (varⁿᵉ top))))</a>
+<a id="13603" class="Comment">--   reifyᶜ {□ A}   k = k refl⊆² λ {w} ξ s → boxⁿᶠ (syn (s {w} refl⊆²))</a>
+<a id="13675" class="Comment">--   reifyᶜ {A ∧ B} k = k refl⊆² λ ξ s → pairⁿᶠ (reifyᶜ (π₁ s)) (reifyᶜ (π₂ s))</a>
+<a id="13755" class="Comment">--   reifyᶜ {⊤}    k = k refl⊆² λ ξ s → unitⁿᶠ</a>
+
+<a id="13803" class="Comment">--   reflectᶜ : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ⁿᵉ A → Γ ⁏ Δ ⊩ A</a>
+<a id="13855" class="Comment">--   reflectᶜ {α P}   t = return {α P} t</a>
+<a id="13896" class="Comment">--   reflectᶜ {A ▻ B} t = return {A ▻ B} λ { (η , θ) a →</a>
+<a id="13953" class="Comment">--                          reflectᶜ {B} (appⁿᵉ (mono²⊢ⁿᵉ (η , θ) t) (reifyᶜ a)) }</a>
+<a id="14036" class="Comment">--   reflectᶜ {□ A}   t = λ { (η , θ) k →</a>
+<a id="14078" class="Comment">--                          neⁿᶠ (unboxⁿᵉ (mono²⊢ⁿᵉ (η , θ) t) (k (refl⊆ , weak⊆) λ { (η′ , θ′) →</a>
+<a id="14176" class="Comment">--                            mvar (grab∈ θ′) ⅋</a>
+<a id="14224" class="Comment">--                              reflectᶜ {A} (mvarⁿᵉ (grab∈ θ′)) } )) }</a>
+<a id="14296" class="Comment">--   reflectᶜ {A ∧ B} t = return {A ∧ B} (reflectᶜ (fstⁿᵉ t) , reflectᶜ (sndⁿᵉ t))</a>
+<a id="14379" class="Comment">--   reflectᶜ {⊤}    t = return {⊤} ∙</a>
+
+<a id="14418" class="Comment">-- reifyᶜ⋆ : ∀ {Ξ Γ Δ} → Γ ⁏ Δ ⊩⋆ Ξ → Γ ⁏ Δ ⊢⋆ⁿᶠ Ξ</a>
+<a id="14469" class="Comment">-- reifyᶜ⋆ {∅}     ∙        = ∙</a>
+<a id="14501" class="Comment">-- reifyᶜ⋆ {Ξ , A} (ts , t) = reifyᶜ⋆ ts , reifyᶜ t</a>
+
+<a id="14554" class="Comment">-- reflectᶜ⋆ : ∀ {Ξ Γ Δ} → Γ ⁏ Δ ⊢⋆ⁿᵉ Ξ → Γ ⁏ Δ ⊩⋆ Ξ</a>
+<a id="14607" class="Comment">-- reflectᶜ⋆ {∅}     ∙        = ∙</a>
+<a id="14641" class="Comment">-- reflectᶜ⋆ {Ξ , A} (ts , t) = reflectᶜ⋆ ts , reflectᶜ t</a>
+
+
+<a id="14701" class="Comment">-- -- Reflexivity.</a>
+
+<a id="14721" class="Comment">-- refl⊩⋆ : ∀ {Γ Δ} → Γ ⁏ Δ ⊩⋆ Γ</a>
+<a id="14754" class="Comment">-- refl⊩⋆ = reflectᶜ⋆ refl⊢⋆ⁿᵉ</a>
+
+<a id="14786" class="Comment">-- mrefl₀[⊢]⋆ : ∀ {Δ} → ∅ ⁏ Δ [⊢]⋆ Δ</a>
+<a id="14823" class="Comment">-- mrefl₀[⊢]⋆ {∅}     = ∙</a>
+<a id="14849" class="Comment">-- mrefl₀[⊢]⋆ {Δ , A} = mono[⊢]⋆ (refl⊆ , weak⊆) mrefl₀[⊢]⋆ , mvar top</a>
+
+<a id="14921" class="Comment">-- mrefl₀⊢⋆ⁿᵉ : ∀ {Δ} → ∅ ⁏ Δ ⊢⋆ⁿᵉ Δ</a>
+<a id="14958" class="Comment">-- mrefl₀⊢⋆ⁿᵉ {∅}     = ∙</a>
+<a id="14984" class="Comment">-- mrefl₀⊢⋆ⁿᵉ {Γ , A} = mmono⊢⋆ⁿᵉ weak⊆ mrefl₀⊢⋆ⁿᵉ , mvarⁿᵉ top</a>
+
+<a id="15049" class="Comment">-- mrefl₀⊩⋆ : ∀ {Δ} → ∅ ⁏ Δ ⊩⋆ Δ</a>
+<a id="15082" class="Comment">-- mrefl₀⊩⋆ = reflectᶜ⋆ mrefl₀⊢⋆ⁿᵉ</a>
+
+
+<a id="15119" class="Comment">-- -- Completeness with respect to all models, or quotation.</a>
+
+<a id="15181" class="Comment">-- quot : ∀ {A Γ Δ} → Γ ⁏ Δ ⊨ A → Γ ⁏ Δ ⊢ⁿᶠ A</a>
+<a id="15227" class="Comment">-- quot s = reifyᶜ (s refl⊩⋆ mrefl₀[⊢]⋆ mrefl₀⊩⋆)</a>
+
+
+<a id="15279" class="Comment">-- -- Normalisation by evaluation.</a>
+
+<a id="15315" class="Comment">-- norm : ∀ {A Γ Δ} → Γ ⁏ Δ ⊢ A → Γ ⁏ Δ ⊢ⁿᶠ A</a>
+<a id="15361" class="Comment">-- norm = quot ∘ eval</a>
 </pre></body></html>

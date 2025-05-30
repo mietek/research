@@ -1,30 +1,32 @@
 <!DOCTYPE HTML>
-<html><head><meta charset="utf-8"><title>A201606.Everything</title><link rel="stylesheet" href="mi-common.css"></head><body><pre class="Agda"><a id="1" class="Keyword">module</a> <a id="8" href="A201606.Everything.html" class="Module">A201606.Everything</a> <a id="27" class="Keyword">where</a>
+<html><head><meta charset="utf-8"><title>A201606.Everything</title><link rel="stylesheet" href="mi-common.css"></head><body><pre class="Agda"><a id="1" class="Symbol">{-#</a> <a id="5" class="Keyword">OPTIONS</a> <a id="13" class="Pragma">--sized-types</a> <a id="27" class="Symbol">#-}</a>
+
+<a id="32" class="Keyword">module</a> <a id="39" href="A201606.Everything.html" class="Module">A201606.Everything</a> <a id="58" class="Keyword">where</a>
 
 
-<a id="35" class="Comment">--------------------------------------------------------------------------------</a>
+<a id="66" class="Comment">--------------------------------------------------------------------------------</a>
 
-<a id="117" class="Keyword">import</a> <a id="124" href="A201606.Common.UntypedContext.html" class="Module">A201606.Common.UntypedContext</a>
-<a id="154" class="Keyword">import</a> <a id="161" href="A201606.Common.Context.html" class="Module">A201606.Common.Context</a>
-<a id="184" class="Keyword">import</a> <a id="191" href="A201606.Common.Delay.html" class="Module">A201606.Common.Delay</a>
-<a id="212" class="Keyword">import</a> <a id="219" href="A201606.Common.StrongBisimilarity.html" class="Module">A201606.Common.StrongBisimilarity</a>
-<a id="253" class="Keyword">import</a> <a id="260" href="A201606.Common.OrderPreservingEmbedding.html" class="Module">A201606.Common.OrderPreservingEmbedding</a>
+<a id="148" class="Keyword">import</a> <a id="155" href="A201606.Common.UntypedContext.html" class="Module">A201606.Common.UntypedContext</a>
+<a id="185" class="Keyword">import</a> <a id="192" href="A201606.Common.Context.html" class="Module">A201606.Common.Context</a>
+<a id="215" class="Keyword">import</a> <a id="222" href="A201606.Common.Delay.html" class="Module">A201606.Common.Delay</a>
+<a id="243" class="Keyword">import</a> <a id="250" href="A201606.Common.StrongBisimilarity.html" class="Module">A201606.Common.StrongBisimilarity</a>
+<a id="284" class="Keyword">import</a> <a id="291" href="A201606.Common.OrderPreservingEmbedding.html" class="Module">A201606.Common.OrderPreservingEmbedding</a>
 
-<a id="301" class="Keyword">import</a> <a id="308" href="A201606.STLC.Syntax.html" class="Module">A201606.STLC.Syntax</a>
-<a id="328" class="Keyword">import</a> <a id="335" href="A201606.STLC.HereditarySubstitution.html" class="Module">A201606.STLC.HereditarySubstitution</a>
-<a id="371" class="Keyword">import</a> <a id="378" href="A201606.STLC.CoinductiveNormalisationByEvaluation.html" class="Module">A201606.STLC.CoinductiveNormalisationByEvaluation</a>
-<a id="428" class="Keyword">import</a> <a id="435" href="A201606.STLC.Examples.html" class="Module">A201606.STLC.Examples</a>
+<a id="332" class="Keyword">import</a> <a id="339" href="A201606.STLC.Syntax.html" class="Module">A201606.STLC.Syntax</a>
+<a id="359" class="Keyword">import</a> <a id="366" href="A201606.STLC.HereditarySubstitution.html" class="Module">A201606.STLC.HereditarySubstitution</a>
+<a id="402" class="Keyword">import</a> <a id="409" href="A201606.STLC.CoinductiveNormalisationByEvaluation.html" class="Module">A201606.STLC.CoinductiveNormalisationByEvaluation</a>
+<a id="459" class="Keyword">import</a> <a id="466" href="A201606.STLC.Examples.html" class="Module">A201606.STLC.Examples</a>
 
-<a id="458" class="Keyword">import</a> <a id="465" href="A201606.PfenningDaviesS4.Syntax.html" class="Module">A201606.PfenningDaviesS4.Syntax</a>
-<a id="497" class="Keyword">import</a> <a id="504" href="A201606.PfenningDaviesS4.HereditarySubstitution.html" class="Module">A201606.PfenningDaviesS4.HereditarySubstitution</a> <a id="552" class="Comment">-- TODO: unfinished</a>
-<a id="572" class="Keyword">import</a> <a id="579" href="A201606.PfenningDaviesS4.HereditarySubstitution2.html" class="Module">A201606.PfenningDaviesS4.HereditarySubstitution2</a> <a id="628" class="Comment">-- TODO: unfinished</a>
-<a id="648" class="Keyword">import</a> <a id="655" href="A201606.PfenningDaviesS4.HereditarySubstitution3.html" class="Module">A201606.PfenningDaviesS4.HereditarySubstitution3</a> <a id="704" class="Comment">-- TODO: unfinished</a>
-<a id="724" class="Keyword">import</a> <a id="731" href="A201606.PfenningDaviesS4.HereditarySubstitution4.html" class="Module">A201606.PfenningDaviesS4.HereditarySubstitution4</a> <a id="780" class="Comment">-- TODO: unfinished</a>
-<a id="800" class="Keyword">import</a> <a id="807" href="A201606.PfenningDaviesS4.CoinductiveNormalisationByEvaluation.html" class="Module">A201606.PfenningDaviesS4.CoinductiveNormalisationByEvaluation</a>
-<a id="869" class="Keyword">import</a> <a id="876" href="A201606.PfenningDaviesS4.Examples.html" class="Module">A201606.PfenningDaviesS4.Examples</a>
+<a id="489" class="Keyword">import</a> <a id="496" href="A201606.PfenningDaviesS4.Syntax.html" class="Module">A201606.PfenningDaviesS4.Syntax</a>
+<a id="528" class="Keyword">import</a> <a id="535" href="A201606.PfenningDaviesS4.HereditarySubstitution.html" class="Module">A201606.PfenningDaviesS4.HereditarySubstitution</a> <a id="583" class="Comment">-- TODO: unfinished</a>
+<a id="603" class="Keyword">import</a> <a id="610" href="A201606.PfenningDaviesS4.HereditarySubstitution2.html" class="Module">A201606.PfenningDaviesS4.HereditarySubstitution2</a> <a id="659" class="Comment">-- TODO: unfinished</a>
+<a id="679" class="Keyword">import</a> <a id="686" href="A201606.PfenningDaviesS4.HereditarySubstitution3.html" class="Module">A201606.PfenningDaviesS4.HereditarySubstitution3</a> <a id="735" class="Comment">-- TODO: unfinished</a>
+<a id="755" class="Keyword">import</a> <a id="762" href="A201606.PfenningDaviesS4.HereditarySubstitution4.html" class="Module">A201606.PfenningDaviesS4.HereditarySubstitution4</a> <a id="811" class="Comment">-- TODO: unfinished</a>
+<a id="831" class="Keyword">import</a> <a id="838" href="A201606.PfenningDaviesS4.CoinductiveNormalisationByEvaluation.html" class="Module">A201606.PfenningDaviesS4.CoinductiveNormalisationByEvaluation</a>
+<a id="900" class="Keyword">import</a> <a id="907" href="A201606.PfenningDaviesS4.Examples.html" class="Module">A201606.PfenningDaviesS4.Examples</a>
 
-<a id="911" class="Keyword">import</a> <a id="918" href="A201606.BonelliSterenLP.Syntax.html" class="Module">A201606.BonelliSterenLP.Syntax</a> <a id="949" class="Comment">-- TODO: unfinished</a>
+<a id="942" class="Keyword">import</a> <a id="949" href="A201606.BonelliSterenLP.Syntax.html" class="Module">A201606.BonelliSterenLP.Syntax</a> <a id="980" class="Comment">-- TODO: unfinished</a>
 
 
-<a id="971" class="Comment">--------------------------------------------------------------------------------</a>
+<a id="1002" class="Comment">--------------------------------------------------------------------------------</a>
 </pre></body></html>

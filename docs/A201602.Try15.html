@@ -36,14 +36,14 @@ For easy editing with Emacs agda-mode, add to your .emacs file:
 <a id="1401" class="Keyword">module</a> <a id="1408" href="A201602.Try15.html" class="Module">A201602.Try15</a> <a id="1422" class="Keyword">where</a>
 
 <a id="1429" class="Keyword">open</a> <a id="1434" class="Keyword">import</a> <a id="1441" href="Data.Nat.html" class="Module">Data.Nat</a>
-  <a id="1452" class="Keyword">using</a> <a id="1458" class="Symbol">(</a><a id="1459" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a> <a id="1461" class="Symbol">;</a> <a id="1463" href="Agda.Builtin.Nat.html#183" class="InductiveConstructor">zero</a> <a id="1468" class="Symbol">;</a> <a id="1470" href="Agda.Builtin.Nat.html#196" class="InductiveConstructor">suc</a><a id="1473" class="Symbol">)</a>
+  <a id="1452" class="Keyword">using</a> <a id="1458" class="Symbol">(</a><a id="1459" href="Agda.Builtin.Nat.html#203" class="Datatype">ℕ</a> <a id="1461" class="Symbol">;</a> <a id="1463" href="Agda.Builtin.Nat.html#221" class="InductiveConstructor">zero</a> <a id="1468" class="Symbol">;</a> <a id="1470" href="Agda.Builtin.Nat.html#234" class="InductiveConstructor">suc</a><a id="1473" class="Symbol">)</a>
 
 <a id="1476" class="Keyword">open</a> <a id="1481" class="Keyword">import</a> <a id="1488" href="Data.Product.html" class="Module">Data.Product</a>
-  <a id="1503" class="Keyword">using</a> <a id="1509" class="Symbol">(</a><a id="1510" href="Agda.Builtin.Sigma.html#139" class="Record">Σ</a> <a id="1512" class="Symbol">;</a> <a id="1514" href="Data.Product.html#1162" class="Function Operator">_×_</a><a id="1517" class="Symbol">)</a>
-  <a id="1521" class="Keyword">renaming</a> <a id="1530" class="Symbol">(</a><a id="1531" href="Agda.Builtin.Sigma.html#209" class="InductiveConstructor Operator">_,_</a> <a id="1535" class="Symbol">to</a> <a id="1538" href="Agda.Builtin.Sigma.html#209" class="InductiveConstructor Operator">⟨_,_⟩</a> <a id="1544" class="Symbol">;</a> <a id="1546" href="Agda.Builtin.Sigma.html#225" class="Field">proj₁</a> <a id="1552" class="Symbol">to</a> <a id="1555" href="Agda.Builtin.Sigma.html#225" class="Field">proj₀</a> <a id="1561" class="Symbol">;</a> <a id="1563" href="Agda.Builtin.Sigma.html#237" class="Field">proj₂</a> <a id="1569" class="Symbol">to</a> <a id="1572" href="Agda.Builtin.Sigma.html#237" class="Field">proj₁</a><a id="1577" class="Symbol">)</a>
+  <a id="1503" class="Keyword">using</a> <a id="1509" class="Symbol">(</a><a id="1510" href="Agda.Builtin.Sigma.html#165" class="Record">Σ</a> <a id="1512" class="Symbol">;</a> <a id="1514" href="Data.Product.Base.html#1618" class="Function Operator">_×_</a><a id="1517" class="Symbol">)</a>
+  <a id="1521" class="Keyword">renaming</a> <a id="1530" class="Symbol">(</a><a id="1531" href="Agda.Builtin.Sigma.html#235" class="InductiveConstructor Operator">_,_</a> <a id="1535" class="Symbol">to</a> <a id="1538" class="InductiveConstructor Operator">⟨_,_⟩</a> <a id="1544" class="Symbol">;</a> <a id="1546" href="Data.Product.Base.html#636" class="Field">proj₁</a> <a id="1552" class="Symbol">to</a> <a id="1555" class="Field">proj₀</a> <a id="1561" class="Symbol">;</a> <a id="1563" href="Data.Product.Base.html#650" class="Field">proj₂</a> <a id="1569" class="Symbol">to</a> <a id="1572" class="Field">proj₁</a><a id="1577" class="Symbol">)</a>
 
 <a id="1580" class="Keyword">open</a> <a id="1585" class="Keyword">import</a> <a id="1592" href="Data.Vec.html" class="Module">Data.Vec</a>
-  <a id="1603" class="Keyword">using</a> <a id="1609" class="Symbol">(</a><a id="1610" href="Data.Vec.Base.html#935" class="Datatype">Vec</a> <a id="1614" class="Symbol">;</a> <a id="1616" href="Data.Vec.Base.html#971" class="InductiveConstructor">[]</a> <a id="1619" class="Symbol">;</a> <a id="1621" href="Data.Vec.Base.html#990" class="InductiveConstructor Operator">_∷_</a> <a id="1625" class="Symbol">;</a> <a id="1627" href="Data.Vec.Base.html#5663" class="Function">replicate</a><a id="1636" class="Symbol">)</a>
+  <a id="1603" class="Keyword">using</a> <a id="1609" class="Symbol">(</a><a id="1610" href="Data.Vec.Base.html#1119" class="Datatype">Vec</a> <a id="1614" class="Symbol">;</a> <a id="1616" href="Data.Vec.Base.html#1155" class="InductiveConstructor">[]</a> <a id="1619" class="Symbol">;</a> <a id="1621" href="Data.Vec.Base.html#1174" class="InductiveConstructor Operator">_∷_</a> <a id="1625" class="Symbol">;</a> <a id="1627" href="Data.Vec.Base.html#6493" class="Function">replicate</a><a id="1636" class="Symbol">)</a>
 
 <a id="1639" class="Comment">{-infixl 9 !_
 infixl 9 𝑣_ 𝒗_
@@ -67,43 +67,43 @@ infixr 0 _⊢_ ⊩_-}</a>
 
 
 <a id="2115" class="Comment">-- Variables</a>
-<a id="Var"></a><a id="2128" href="A201602.Try15.html#2128" class="Function">Var</a> <a id="2132" class="Symbol">:</a> <a id="2134" class="PrimitiveType">Set</a>
-<a id="2138" href="A201602.Try15.html#2128" class="Function">Var</a> <a id="2142" class="Symbol">=</a> <a id="2144" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a>
+<a id="Var"></a><a id="2128" href="A201602.Try15.html#2128" class="Function">Var</a> <a id="2132" class="Symbol">:</a> <a id="2134" href="Agda.Primitive.html#388" class="Primitive">Set</a>
+<a id="2138" href="A201602.Try15.html#2128" class="Function">Var</a> <a id="2142" class="Symbol">=</a> <a id="2144" href="Agda.Builtin.Nat.html#203" class="Datatype">ℕ</a>
 
 
 <a id="2148" class="Comment">-- Term constructors</a>
-<a id="2169" class="Keyword">data</a> <a id="Tm"></a><a id="2174" href="A201602.Try15.html#2174" class="Datatype">Tm</a> <a id="2177" class="Symbol">:</a> <a id="2179" class="PrimitiveType">Set</a> <a id="2183" class="Keyword">where</a>
+<a id="2169" class="Keyword">data</a> <a id="Tm"></a><a id="2174" href="A201602.Try15.html#2174" class="Datatype">Tm</a> <a id="2177" class="Symbol">:</a> <a id="2179" href="Agda.Primitive.html#388" class="Primitive">Set</a> <a id="2183" class="Keyword">where</a>
   <a id="2191" class="Comment">-- Variable</a>
   <a id="Tm.𝑣_"></a><a id="2205" href="A201602.Try15.html#2205" class="InductiveConstructor Operator">𝑣_</a> <a id="2208" class="Symbol">:</a> <a id="2210" href="A201602.Try15.html#2128" class="Function">Var</a> <a id="2214" class="Symbol">→</a> <a id="2216" href="A201602.Try15.html#2174" class="Datatype">Tm</a>
 
   <a id="2222" class="Comment">-- Abstraction (⊃I) at level n</a>
-  <a id="Tm.𝜆[_]_"></a><a id="2255" href="A201602.Try15.html#2255" class="InductiveConstructor Operator">𝜆[_]_</a> <a id="2261" class="Symbol">:</a> <a id="2263" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a> <a id="2265" class="Symbol">→</a> <a id="2267" href="A201602.Try15.html#2174" class="Datatype">Tm</a> <a id="2270" class="Symbol">→</a> <a id="2272" href="A201602.Try15.html#2174" class="Datatype">Tm</a>
+  <a id="Tm.𝜆[_]_"></a><a id="2255" href="A201602.Try15.html#2255" class="InductiveConstructor Operator">𝜆[_]_</a> <a id="2261" class="Symbol">:</a> <a id="2263" href="Agda.Builtin.Nat.html#203" class="Datatype">ℕ</a> <a id="2265" class="Symbol">→</a> <a id="2267" href="A201602.Try15.html#2174" class="Datatype">Tm</a> <a id="2270" class="Symbol">→</a> <a id="2272" href="A201602.Try15.html#2174" class="Datatype">Tm</a>
 
   <a id="2278" class="Comment">-- Application (⊃E) at level n</a>
-  <a id="Tm._∘[_]_"></a><a id="2311" href="A201602.Try15.html#2311" class="InductiveConstructor Operator">_∘[_]_</a> <a id="2318" class="Symbol">:</a> <a id="2320" href="A201602.Try15.html#2174" class="Datatype">Tm</a> <a id="2323" class="Symbol">→</a> <a id="2325" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a> <a id="2327" class="Symbol">→</a> <a id="2329" href="A201602.Try15.html#2174" class="Datatype">Tm</a> <a id="2332" class="Symbol">→</a> <a id="2334" href="A201602.Try15.html#2174" class="Datatype">Tm</a>
+  <a id="Tm._∘[_]_"></a><a id="2311" href="A201602.Try15.html#2311" class="InductiveConstructor Operator">_∘[_]_</a> <a id="2318" class="Symbol">:</a> <a id="2320" href="A201602.Try15.html#2174" class="Datatype">Tm</a> <a id="2323" class="Symbol">→</a> <a id="2325" href="Agda.Builtin.Nat.html#203" class="Datatype">ℕ</a> <a id="2327" class="Symbol">→</a> <a id="2329" href="A201602.Try15.html#2174" class="Datatype">Tm</a> <a id="2332" class="Symbol">→</a> <a id="2334" href="A201602.Try15.html#2174" class="Datatype">Tm</a>
 
   <a id="2340" class="Comment">-- Pairing (∧I) at level n</a>
-  <a id="Tm.𝑝[_]⟨_,_⟩"></a><a id="2369" href="A201602.Try15.html#2369" class="InductiveConstructor Operator">𝑝[_]⟨_,_⟩</a> <a id="2379" class="Symbol">:</a> <a id="2381" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a> <a id="2383" class="Symbol">→</a> <a id="2385" href="A201602.Try15.html#2174" class="Datatype">Tm</a> <a id="2388" class="Symbol">→</a> <a id="2390" href="A201602.Try15.html#2174" class="Datatype">Tm</a> <a id="2393" class="Symbol">→</a> <a id="2395" href="A201602.Try15.html#2174" class="Datatype">Tm</a>
+  <a id="Tm.𝑝[_]⟨_,_⟩"></a><a id="2369" href="A201602.Try15.html#2369" class="InductiveConstructor Operator">𝑝[_]⟨_,_⟩</a> <a id="2379" class="Symbol">:</a> <a id="2381" href="Agda.Builtin.Nat.html#203" class="Datatype">ℕ</a> <a id="2383" class="Symbol">→</a> <a id="2385" href="A201602.Try15.html#2174" class="Datatype">Tm</a> <a id="2388" class="Symbol">→</a> <a id="2390" href="A201602.Try15.html#2174" class="Datatype">Tm</a> <a id="2393" class="Symbol">→</a> <a id="2395" href="A201602.Try15.html#2174" class="Datatype">Tm</a>
 
   <a id="2401" class="Comment">-- 0th projection (∧E₀) at level n</a>
-  <a id="Tm.𝜋₀[_]_"></a><a id="2438" href="A201602.Try15.html#2438" class="InductiveConstructor Operator">𝜋₀[_]_</a> <a id="2445" class="Symbol">:</a> <a id="2447" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a> <a id="2449" class="Symbol">→</a> <a id="2451" href="A201602.Try15.html#2174" class="Datatype">Tm</a> <a id="2454" class="Symbol">→</a> <a id="2456" href="A201602.Try15.html#2174" class="Datatype">Tm</a>
+  <a id="Tm.𝜋₀[_]_"></a><a id="2438" href="A201602.Try15.html#2438" class="InductiveConstructor Operator">𝜋₀[_]_</a> <a id="2445" class="Symbol">:</a> <a id="2447" href="Agda.Builtin.Nat.html#203" class="Datatype">ℕ</a> <a id="2449" class="Symbol">→</a> <a id="2451" href="A201602.Try15.html#2174" class="Datatype">Tm</a> <a id="2454" class="Symbol">→</a> <a id="2456" href="A201602.Try15.html#2174" class="Datatype">Tm</a>
 
   <a id="2462" class="Comment">-- 1st projection (∧E₁) at level n</a>
-  <a id="Tm.𝜋₁[_]_"></a><a id="2499" href="A201602.Try15.html#2499" class="InductiveConstructor Operator">𝜋₁[_]_</a> <a id="2506" class="Symbol">:</a> <a id="2508" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a> <a id="2510" class="Symbol">→</a> <a id="2512" href="A201602.Try15.html#2174" class="Datatype">Tm</a> <a id="2515" class="Symbol">→</a> <a id="2517" href="A201602.Try15.html#2174" class="Datatype">Tm</a>
+  <a id="Tm.𝜋₁[_]_"></a><a id="2499" href="A201602.Try15.html#2499" class="InductiveConstructor Operator">𝜋₁[_]_</a> <a id="2506" class="Symbol">:</a> <a id="2508" href="Agda.Builtin.Nat.html#203" class="Datatype">ℕ</a> <a id="2510" class="Symbol">→</a> <a id="2512" href="A201602.Try15.html#2174" class="Datatype">Tm</a> <a id="2515" class="Symbol">→</a> <a id="2517" href="A201602.Try15.html#2174" class="Datatype">Tm</a>
 
   <a id="2523" class="Comment">-- Artëmov’s “proof checker”</a>
   <a id="Tm.!_"></a><a id="2554" href="A201602.Try15.html#2554" class="InductiveConstructor Operator">!_</a> <a id="2557" class="Symbol">:</a> <a id="2559" href="A201602.Try15.html#2174" class="Datatype">Tm</a> <a id="2562" class="Symbol">→</a> <a id="2564" href="A201602.Try15.html#2174" class="Datatype">Tm</a>
 
   <a id="2570" class="Comment">-- Reification at level n</a>
-  <a id="Tm.⇑[_]_"></a><a id="2598" href="A201602.Try15.html#2598" class="InductiveConstructor Operator">⇑[_]_</a> <a id="2604" class="Symbol">:</a> <a id="2606" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a> <a id="2608" class="Symbol">→</a> <a id="2610" href="A201602.Try15.html#2174" class="Datatype">Tm</a> <a id="2613" class="Symbol">→</a> <a id="2615" href="A201602.Try15.html#2174" class="Datatype">Tm</a>
+  <a id="Tm.⇑[_]_"></a><a id="2598" href="A201602.Try15.html#2598" class="InductiveConstructor Operator">⇑[_]_</a> <a id="2604" class="Symbol">:</a> <a id="2606" href="Agda.Builtin.Nat.html#203" class="Datatype">ℕ</a> <a id="2608" class="Symbol">→</a> <a id="2610" href="A201602.Try15.html#2174" class="Datatype">Tm</a> <a id="2613" class="Symbol">→</a> <a id="2615" href="A201602.Try15.html#2174" class="Datatype">Tm</a>
 
   <a id="2621" class="Comment">-- Reflection at level n</a>
-  <a id="Tm.⇓[_]_"></a><a id="2648" href="A201602.Try15.html#2648" class="InductiveConstructor Operator">⇓[_]_</a> <a id="2654" class="Symbol">:</a> <a id="2656" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a> <a id="2658" class="Symbol">→</a> <a id="2660" href="A201602.Try15.html#2174" class="Datatype">Tm</a> <a id="2663" class="Symbol">→</a> <a id="2665" href="A201602.Try15.html#2174" class="Datatype">Tm</a>
+  <a id="Tm.⇓[_]_"></a><a id="2648" href="A201602.Try15.html#2648" class="InductiveConstructor Operator">⇓[_]_</a> <a id="2654" class="Symbol">:</a> <a id="2656" href="Agda.Builtin.Nat.html#203" class="Datatype">ℕ</a> <a id="2658" class="Symbol">→</a> <a id="2660" href="A201602.Try15.html#2174" class="Datatype">Tm</a> <a id="2663" class="Symbol">→</a> <a id="2665" href="A201602.Try15.html#2174" class="Datatype">Tm</a>
 
 
 <a id="2670" class="Keyword">mutual</a>
   <a id="2679" class="Comment">-- Type constructors</a>
-  <a id="2702" class="Keyword">data</a> <a id="Ty"></a><a id="2707" href="A201602.Try15.html#2707" class="Datatype">Ty</a> <a id="2710" class="Symbol">:</a> <a id="2712" class="PrimitiveType">Set</a> <a id="2716" class="Keyword">where</a>
+  <a id="2702" class="Keyword">data</a> <a id="Ty"></a><a id="2707" href="A201602.Try15.html#2707" class="Datatype">Ty</a> <a id="2710" class="Symbol">:</a> <a id="2712" href="Agda.Primitive.html#388" class="Primitive">Set</a> <a id="2716" class="Keyword">where</a>
     <a id="2726" class="Comment">-- Falsehood</a>
     <a id="Ty.⊥"></a><a id="2743" href="A201602.Try15.html#2743" class="InductiveConstructor">⊥</a> <a id="2745" class="Symbol">:</a> <a id="2747" href="A201602.Try15.html#2707" class="Datatype">Ty</a>
 
@@ -118,18 +118,18 @@ infixr 0 _⊢_ ⊩_-}</a>
 
 
   <a id="2881" class="Comment">-- Type assertion constructor</a>
-  <a id="2913" class="Keyword">data</a> <a id="TyA"></a><a id="2918" href="A201602.Try15.html#2918" class="Datatype">TyA</a> <a id="2922" class="Symbol">:</a> <a id="2924" class="PrimitiveType">Set</a> <a id="2928" class="Keyword">where</a>
+  <a id="2913" class="Keyword">data</a> <a id="TyA"></a><a id="2918" href="A201602.Try15.html#2918" class="Datatype">TyA</a> <a id="2922" class="Symbol">:</a> <a id="2924" href="Agda.Primitive.html#388" class="Primitive">Set</a> <a id="2928" class="Keyword">where</a>
     <a id="2938" class="Comment">-- Explicit provability</a>
     <a id="2966" class="Comment">-- _∋_ : ∀{Γ} → (A : Ty) → (t : Tm Γ) → TyA</a>
 
 
 <a id="3012" class="Comment">-- Hypotheses</a>
-<a id="Hyp"></a><a id="3026" href="A201602.Try15.html#3026" class="Function">Hyp</a> <a id="3030" class="Symbol">:</a> <a id="3032" class="PrimitiveType">Set</a>
-<a id="3036" href="A201602.Try15.html#3026" class="Function">Hyp</a> <a id="3040" class="Symbol">=</a> <a id="3042" href="Agda.Builtin.Nat.html#165" class="Datatype">ℕ</a> <a id="3044" href="Data.Product.html#1162" class="Function Operator">×</a> <a id="3046" href="A201602.Try15.html#2707" class="Datatype">Ty</a>
+<a id="Hyp"></a><a id="3026" href="A201602.Try15.html#3026" class="Function">Hyp</a> <a id="3030" class="Symbol">:</a> <a id="3032" href="Agda.Primitive.html#388" class="Primitive">Set</a>
+<a id="3036" href="A201602.Try15.html#3026" class="Function">Hyp</a> <a id="3040" class="Symbol">=</a> <a id="3042" href="Agda.Builtin.Nat.html#203" class="Datatype">ℕ</a> <a id="3044" href="Data.Product.Base.html#1618" class="Function Operator">×</a> <a id="3046" href="A201602.Try15.html#2707" class="Datatype">Ty</a>
 
 
 <a id="3051" class="Comment">-- Contexts</a>
-<a id="3063" class="Keyword">data</a> <a id="Cx"></a><a id="3068" href="A201602.Try15.html#3068" class="Datatype">Cx</a> <a id="3071" class="Symbol">:</a> <a id="3073" class="PrimitiveType">Set</a> <a id="3077" class="Keyword">where</a>
+<a id="3063" class="Keyword">data</a> <a id="Cx"></a><a id="3068" href="A201602.Try15.html#3068" class="Datatype">Cx</a> <a id="3071" class="Symbol">:</a> <a id="3073" href="Agda.Primitive.html#388" class="Primitive">Set</a> <a id="3077" class="Keyword">where</a>
   <a id="Cx.∅"></a><a id="3085" href="A201602.Try15.html#3085" class="InductiveConstructor">∅</a>   <a id="3089" class="Symbol">:</a> <a id="3091" href="A201602.Try15.html#3068" class="Datatype">Cx</a>
   <a id="Cx._,_"></a><a id="3096" href="A201602.Try15.html#3096" class="InductiveConstructor Operator">_,_</a> <a id="3100" class="Symbol">:</a> <a id="3102" href="A201602.Try15.html#3068" class="Datatype">Cx</a> <a id="3105" class="Symbol">→</a> <a id="3107" href="A201602.Try15.html#3026" class="Function">Hyp</a> <a id="3111" class="Symbol">→</a> <a id="3113" href="A201602.Try15.html#3068" class="Datatype">Cx</a>
 

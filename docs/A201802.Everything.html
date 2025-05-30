@@ -1,73 +1,75 @@
 <!DOCTYPE HTML>
-<html><head><meta charset="utf-8"><title>A201802.Everything</title><link rel="stylesheet" href="mi-common.css"></head><body><pre class="Agda"><a id="1" class="Keyword">module</a> <a id="8" href="A201802.Everything.html" class="Module">A201802.Everything</a> <a id="27" class="Keyword">where</a>
+<html><head><meta charset="utf-8"><title>A201802.Everything</title><link rel="stylesheet" href="mi-common.css"></head><body><pre class="Agda"><a id="1" class="Symbol">{-#</a> <a id="5" class="Keyword">OPTIONS</a> <a id="13" class="Pragma">--rewriting</a> <a id="25" class="Symbol">#-}</a>
+
+<a id="30" class="Keyword">module</a> <a id="37" href="A201802.Everything.html" class="Module">A201802.Everything</a> <a id="56" class="Keyword">where</a>
 
 
-<a id="35" class="Comment">--------------------------------------------------------------------------------</a>
+<a id="64" class="Comment">--------------------------------------------------------------------------------</a>
 
-<a id="117" class="Keyword">import</a> <a id="124" href="A201801.Prelude.html" class="Module">A201801.Prelude</a>
+<a id="146" class="Keyword">import</a> <a id="153" href="A201801.Prelude.html" class="Module">A201801.Prelude</a>
 
-<a id="141" class="Keyword">import</a> <a id="148" href="A201801.Category.html" class="Module">A201801.Category</a>
+<a id="170" class="Keyword">import</a> <a id="177" href="A201801.Category.html" class="Module">A201801.Category</a>
 
-<a id="166" class="Keyword">import</a> <a id="173" href="A201801.Fin.html" class="Module">A201801.Fin</a>
-<a id="185" class="Keyword">import</a> <a id="192" href="A201801.FinLemmas.html" class="Module">A201801.FinLemmas</a>
+<a id="195" class="Keyword">import</a> <a id="202" href="A201801.Fin.html" class="Module">A201801.Fin</a>
+<a id="214" class="Keyword">import</a> <a id="221" href="A201801.FinLemmas.html" class="Module">A201801.FinLemmas</a>
 
-<a id="211" class="Keyword">import</a> <a id="218" href="A201801.Vec.html" class="Module">A201801.Vec</a>
-<a id="230" class="Keyword">import</a> <a id="237" href="A201801.VecLemmas.html" class="Module">A201801.VecLemmas</a>
-<a id="255" class="Keyword">import</a> <a id="262" href="A201801.AllVec.html" class="Module">A201801.AllVec</a>
-
-
-<a id="279" class="Comment">--------------------------------------------------------------------------------</a>
-
-<a id="361" class="Keyword">import</a> <a id="368" href="A201802.LR0.html" class="Module">A201802.LR0</a>
-<a id="380" class="Keyword">import</a> <a id="387" href="A201802.LR0Lemmas.html" class="Module">A201802.LR0Lemmas</a>
-<a id="405" class="Keyword">import</a> <a id="412" href="A201802.LR1.html" class="Module">A201802.LR1</a>
-<a id="424" class="Keyword">import</a> <a id="431" href="A201802.LR2.html" class="Module">A201802.LR2</a>
-<a id="443" class="Keyword">import</a> <a id="450" href="A201802.LR3.html" class="Module">A201802.LR3</a>
+<a id="240" class="Keyword">import</a> <a id="247" href="A201801.Vec.html" class="Module">A201801.Vec</a>
+<a id="259" class="Keyword">import</a> <a id="266" href="A201801.VecLemmas.html" class="Module">A201801.VecLemmas</a>
+<a id="284" class="Keyword">import</a> <a id="291" href="A201801.AllVec.html" class="Module">A201801.AllVec</a>
 
 
-<a id="464" class="Comment">--------------------------------------------------------------------------------</a>
+<a id="308" class="Comment">--------------------------------------------------------------------------------</a>
 
-<a id="546" class="Keyword">import</a> <a id="553" href="A201801.List.html" class="Module">A201801.List</a>
-<a id="566" class="Keyword">import</a> <a id="573" href="A201801.ListLemmas.html" class="Module">A201801.ListLemmas</a>
-
-<a id="593" class="Keyword">import</a> <a id="600" href="A201801.AllList.html" class="Module">A201801.AllList</a>
-
-<a id="617" class="Keyword">import</a> <a id="624" href="A201801.FullIPLPropositions.html" class="Module">A201801.FullIPLPropositions</a>
-
-
-<a id="654" class="Comment">--------------------------------------------------------------------------------</a>
-
-<a id="736" class="Keyword">import</a> <a id="743" href="A201802.WIP.Bool.html" class="Module">A201802.WIP.Bool</a> <a id="760" class="Comment">-- TODO: reuse</a>
-<a id="775" class="Keyword">import</a> <a id="782" href="A201802.WIP.Name.html" class="Module">A201802.WIP.Name</a> <a id="799" class="Comment">-- TODO: reuse</a>
-<a id="814" class="Keyword">import</a> <a id="821" href="A201802.WIP.ListRemovals.html" class="Module">A201802.WIP.ListRemovals</a> <a id="846" class="Comment">-- TODO: reuse</a>
-<a id="861" class="Keyword">import</a> <a id="868" href="A201802.WIP.CoquandList.html" class="Module">A201802.WIP.CoquandList</a> <a id="892" class="Comment">-- TODO: reuse</a>
-
-<a id="908" class="Keyword">import</a> <a id="915" href="A201802.WIP.CoquandStyle.html" class="Module">A201802.WIP.CoquandStyle</a> <a id="940" class="Comment">-- TODO: unfinished</a>
-<a id="960" class="Keyword">import</a> <a id="967" href="A201802.WIP.LocallyNameless.html" class="Module">A201802.WIP.LocallyNameless</a> <a id="995" class="Comment">-- TODO: unfinished</a>
-<a id="1015" class="Keyword">import</a> <a id="1022" href="A201802.WIP.NotLocallyNameless.html" class="Module">A201802.WIP.NotLocallyNameless</a> <a id="1053" class="Comment">-- TODO: unfinished</a>
-
-<a id="1074" class="Keyword">import</a> <a id="1081" href="A201802.WIP.CurryHoward.html" class="Module">A201802.WIP.CurryHoward</a> <a id="1105" class="Comment">-- TODO: broken</a>
-
-<a id="1122" class="Keyword">import</a> <a id="1129" href="A201802.WIP.LR1a.html" class="Module">A201802.WIP.LR1a</a>
-
-<a id="1147" class="Keyword">import</a> <a id="1154" href="A201802.WIP.LR2.html" class="Module">A201802.WIP.LR2</a> <a id="1170" class="Comment">-- TODO: unfinished</a>
-<a id="1190" class="Keyword">import</a> <a id="1197" href="A201802.WIP.LR2-NoECs.html" class="Module">A201802.WIP.LR2-NoECs</a>
-<a id="1219" class="Keyword">import</a> <a id="1226" href="A201802.WIP.LR2a.html" class="Module">A201802.WIP.LR2a</a>
-<a id="1243" class="Keyword">import</a> <a id="1250" href="A201802.WIP.LR2b.html" class="Module">A201802.WIP.LR2b</a>
-<a id="1267" class="Keyword">import</a> <a id="1274" href="A201802.WIP.LR2c.html" class="Module">A201802.WIP.LR2c</a>
-<a id="1291" class="Keyword">import</a> <a id="1298" href="A201802.WIP.LR2d.html" class="Module">A201802.WIP.LR2d</a>
-<a id="1315" class="Keyword">import</a> <a id="1322" href="A201802.WIP.LR2e.html" class="Module">A201802.WIP.LR2e</a> <a id="1339" class="Comment">-- TODO: unfinished</a>
-
-<a id="1360" class="Keyword">import</a> <a id="1367" href="A201802.WIP.LR3.html" class="Module">A201802.WIP.LR3</a> <a id="1383" class="Comment">-- TODO: which LR2?</a>
-<a id="1403" class="Keyword">import</a> <a id="1410" href="A201802.WIP.LR3a.html" class="Module">A201802.WIP.LR3a</a> <a id="1427" class="Comment">-- TODO: unfinished; which LR2?</a>
-<a id="1459" class="Keyword">import</a> <a id="1466" href="A201802.WIP.LR3b.html" class="Module">A201802.WIP.LR3b</a> <a id="1483" class="Comment">-- TODO: missing id-cons-WKS-SUBS; which LR2?</a>
-<a id="1529" class="Keyword">import</a> <a id="1536" href="A201802.WIP.LR3-Mutual.html" class="Module">A201802.WIP.LR3-Mutual</a> <a id="1559" class="Comment">-- TODO: unfinished; which LR2?</a>
-<a id="1591" class="Keyword">import</a> <a id="1598" href="A201802.WIP.LR3NonMutual.html" class="Module">A201802.WIP.LR3NonMutual</a> <a id="1623" class="Comment">-- TODO: which LR2?</a>
-
-<a id="1644" class="Keyword">import</a> <a id="1651" href="A201802.WIP.LR4.html" class="Module">A201802.WIP.LR4</a> <a id="1667" class="Comment">-- TODO: unfinished; which LR2?</a>
-
-<a id="1700" class="Keyword">import</a> <a id="1707" href="A201802.WIP.LR-scratch.html" class="Module">A201802.WIP.LR-scratch</a>
+<a id="390" class="Keyword">import</a> <a id="397" href="A201802.LR0.html" class="Module">A201802.LR0</a>
+<a id="409" class="Keyword">import</a> <a id="416" href="A201802.LR0Lemmas.html" class="Module">A201802.LR0Lemmas</a>
+<a id="434" class="Keyword">import</a> <a id="441" href="A201802.LR1.html" class="Module">A201802.LR1</a>
+<a id="453" class="Keyword">import</a> <a id="460" href="A201802.LR2.html" class="Module">A201802.LR2</a>
+<a id="472" class="Keyword">import</a> <a id="479" href="A201802.LR3.html" class="Module">A201802.LR3</a>
 
 
-<a id="1732" class="Comment">--------------------------------------------------------------------------------</a>
+<a id="493" class="Comment">--------------------------------------------------------------------------------</a>
+
+<a id="575" class="Keyword">import</a> <a id="582" href="A201801.List.html" class="Module">A201801.List</a>
+<a id="595" class="Keyword">import</a> <a id="602" href="A201801.ListLemmas.html" class="Module">A201801.ListLemmas</a>
+
+<a id="622" class="Keyword">import</a> <a id="629" href="A201801.AllList.html" class="Module">A201801.AllList</a>
+
+<a id="646" class="Keyword">import</a> <a id="653" href="A201801.FullIPLPropositions.html" class="Module">A201801.FullIPLPropositions</a>
+
+
+<a id="683" class="Comment">--------------------------------------------------------------------------------</a>
+
+<a id="765" class="Keyword">import</a> <a id="772" href="A201802.WIP.Bool.html" class="Module">A201802.WIP.Bool</a> <a id="789" class="Comment">-- TODO: reuse</a>
+<a id="804" class="Keyword">import</a> <a id="811" href="A201802.WIP.Name.html" class="Module">A201802.WIP.Name</a> <a id="828" class="Comment">-- TODO: reuse</a>
+<a id="843" class="Keyword">import</a> <a id="850" href="A201802.WIP.ListRemovals.html" class="Module">A201802.WIP.ListRemovals</a> <a id="875" class="Comment">-- TODO: reuse</a>
+<a id="890" class="Keyword">import</a> <a id="897" href="A201802.WIP.CoquandList.html" class="Module">A201802.WIP.CoquandList</a> <a id="921" class="Comment">-- TODO: reuse</a>
+
+<a id="937" class="Keyword">import</a> <a id="944" href="A201802.WIP.CoquandStyle.html" class="Module">A201802.WIP.CoquandStyle</a> <a id="969" class="Comment">-- TODO: unfinished</a>
+<a id="989" class="Keyword">import</a> <a id="996" href="A201802.WIP.LocallyNameless.html" class="Module">A201802.WIP.LocallyNameless</a> <a id="1024" class="Comment">-- TODO: unfinished</a>
+<a id="1044" class="Keyword">import</a> <a id="1051" href="A201802.WIP.NotLocallyNameless.html" class="Module">A201802.WIP.NotLocallyNameless</a> <a id="1082" class="Comment">-- TODO: unfinished</a>
+
+<a id="1103" class="Keyword">import</a> <a id="1110" href="A201802.WIP.CurryHoward.html" class="Module">A201802.WIP.CurryHoward</a> <a id="1134" class="Comment">-- TODO: broken</a>
+
+<a id="1151" class="Keyword">import</a> <a id="1158" href="A201802.WIP.LR1a.html" class="Module">A201802.WIP.LR1a</a>
+
+<a id="1176" class="Keyword">import</a> <a id="1183" href="A201802.WIP.LR2.html" class="Module">A201802.WIP.LR2</a> <a id="1199" class="Comment">-- TODO: unfinished</a>
+<a id="1219" class="Keyword">import</a> <a id="1226" href="A201802.WIP.LR2-NoECs.html" class="Module">A201802.WIP.LR2-NoECs</a>
+<a id="1248" class="Keyword">import</a> <a id="1255" href="A201802.WIP.LR2a.html" class="Module">A201802.WIP.LR2a</a>
+<a id="1272" class="Keyword">import</a> <a id="1279" href="A201802.WIP.LR2b.html" class="Module">A201802.WIP.LR2b</a>
+<a id="1296" class="Keyword">import</a> <a id="1303" href="A201802.WIP.LR2c.html" class="Module">A201802.WIP.LR2c</a>
+<a id="1320" class="Keyword">import</a> <a id="1327" href="A201802.WIP.LR2d.html" class="Module">A201802.WIP.LR2d</a>
+<a id="1344" class="Keyword">import</a> <a id="1351" href="A201802.WIP.LR2e.html" class="Module">A201802.WIP.LR2e</a> <a id="1368" class="Comment">-- TODO: unfinished</a>
+
+<a id="1389" class="Keyword">import</a> <a id="1396" href="A201802.WIP.LR3.html" class="Module">A201802.WIP.LR3</a> <a id="1412" class="Comment">-- TODO: which LR2?</a>
+<a id="1432" class="Keyword">import</a> <a id="1439" href="A201802.WIP.LR3a.html" class="Module">A201802.WIP.LR3a</a> <a id="1456" class="Comment">-- TODO: unfinished; which LR2?</a>
+<a id="1488" class="Keyword">import</a> <a id="1495" href="A201802.WIP.LR3b.html" class="Module">A201802.WIP.LR3b</a> <a id="1512" class="Comment">-- TODO: missing id-cons-WKS-SUBS; which LR2?</a>
+<a id="1558" class="Keyword">import</a> <a id="1565" href="A201802.WIP.LR3-Mutual.html" class="Module">A201802.WIP.LR3-Mutual</a> <a id="1588" class="Comment">-- TODO: unfinished; which LR2?</a>
+<a id="1620" class="Keyword">import</a> <a id="1627" href="A201802.WIP.LR3NonMutual.html" class="Module">A201802.WIP.LR3NonMutual</a> <a id="1652" class="Comment">-- TODO: which LR2?</a>
+
+<a id="1673" class="Keyword">import</a> <a id="1680" href="A201802.WIP.LR4.html" class="Module">A201802.WIP.LR4</a> <a id="1696" class="Comment">-- TODO: unfinished; which LR2?</a>
+
+<a id="1729" class="Keyword">import</a> <a id="1736" href="A201802.WIP.LR-scratch.html" class="Module">A201802.WIP.LR-scratch</a>
+
+
+<a id="1761" class="Comment">--------------------------------------------------------------------------------</a>
 </pre></body></html>

@@ -1,82 +1,84 @@
 <!DOCTYPE HTML>
-<html><head><meta charset="utf-8"><title>A201802.WIP.LR3a</title><link rel="stylesheet" href="mi-common.css"></head><body><pre class="Agda"><a id="1" class="Keyword">module</a> <a id="8" href="A201802.WIP.LR3a.html" class="Module">A201802.WIP.LR3a</a> <a id="25" class="Keyword">where</a>
+<html><head><meta charset="utf-8"><title>A201802.WIP.LR3a</title><link rel="stylesheet" href="mi-common.css"></head><body><pre class="Agda"><a id="1" class="Symbol">{-#</a> <a id="5" class="Keyword">OPTIONS</a> <a id="13" class="Pragma">--rewriting</a> <a id="25" class="Symbol">#-}</a>
 
-<a id="32" class="Keyword">open</a> <a id="37" class="Keyword">import</a> <a id="44" href="A201801.Prelude.html" class="Module">A201801.Prelude</a>
-<a id="60" class="Keyword">open</a> <a id="65" class="Keyword">import</a> <a id="72" href="A201801.Category.html" class="Module">A201801.Category</a>
-<a id="89" class="Keyword">open</a> <a id="94" class="Keyword">import</a> <a id="101" href="A201801.Fin.html" class="Module">A201801.Fin</a>
-<a id="113" class="Keyword">open</a> <a id="118" class="Keyword">import</a> <a id="125" href="A201801.FinLemmas.html" class="Module">A201801.FinLemmas</a>
-<a id="143" class="Keyword">open</a> <a id="148" class="Keyword">import</a> <a id="155" href="A201801.Vec.html" class="Module">A201801.Vec</a>
-<a id="167" class="Keyword">open</a> <a id="172" class="Keyword">import</a> <a id="179" href="A201801.VecLemmas.html" class="Module">A201801.VecLemmas</a>
-<a id="197" class="Keyword">open</a> <a id="202" class="Keyword">import</a> <a id="209" href="A201801.AllVec.html" class="Module">A201801.AllVec</a>
+<a id="30" class="Keyword">module</a> <a id="37" href="A201802.WIP.LR3a.html" class="Module">A201802.WIP.LR3a</a> <a id="54" class="Keyword">where</a>
 
-<a id="225" class="Keyword">open</a> <a id="230" class="Keyword">import</a> <a id="237" href="A201802.LR0.html" class="Module">A201802.LR0</a>
-<a id="249" class="Keyword">open</a> <a id="254" class="Keyword">import</a> <a id="261" href="A201802.LR0Lemmas.html" class="Module">A201802.LR0Lemmas</a>
-<a id="279" class="Keyword">open</a> <a id="284" class="Keyword">import</a> <a id="291" href="A201802.LR1.html" class="Module">A201802.LR1</a>
-<a id="303" class="Keyword">open</a> <a id="308" class="Keyword">import</a> <a id="315" href="A201802.LR2.html" class="Module">A201802.LR2</a> <a id="327" class="Comment">-- TODO: which LR2?</a>
+<a id="61" class="Keyword">open</a> <a id="66" class="Keyword">import</a> <a id="73" href="A201801.Prelude.html" class="Module">A201801.Prelude</a>
+<a id="89" class="Keyword">open</a> <a id="94" class="Keyword">import</a> <a id="101" href="A201801.Category.html" class="Module">A201801.Category</a>
+<a id="118" class="Keyword">open</a> <a id="123" class="Keyword">import</a> <a id="130" href="A201801.Fin.html" class="Module">A201801.Fin</a>
+<a id="142" class="Keyword">open</a> <a id="147" class="Keyword">import</a> <a id="154" href="A201801.FinLemmas.html" class="Module">A201801.FinLemmas</a>
+<a id="172" class="Keyword">open</a> <a id="177" class="Keyword">import</a> <a id="184" href="A201801.Vec.html" class="Module">A201801.Vec</a>
+<a id="196" class="Keyword">open</a> <a id="201" class="Keyword">import</a> <a id="208" href="A201801.VecLemmas.html" class="Module">A201801.VecLemmas</a>
+<a id="226" class="Keyword">open</a> <a id="231" class="Keyword">import</a> <a id="238" href="A201801.AllVec.html" class="Module">A201801.AllVec</a>
 
-
-<a id="349" class="Comment">--------------------------------------------------------------------------------</a>
-
-
-<a id="432" class="Comment">-- SN : ∀ {M A} → ∙ ⊢ M ⦂ A → Set</a>
-<a id="466" class="Comment">-- SN {M} {𝔹}     𝒟 = M ⇓</a>
-<a id="492" class="Comment">-- SN {M} {A ⊃ B} 𝒟 = M ⇓ × (∀ {N} → {ℰ : ∙ ⊢ N ⦂ A} → SN ℰ → SN (app 𝒟 ℰ))</a>
+<a id="254" class="Keyword">open</a> <a id="259" class="Keyword">import</a> <a id="266" href="A201802.LR0.html" class="Module">A201802.LR0</a>
+<a id="278" class="Keyword">open</a> <a id="283" class="Keyword">import</a> <a id="290" href="A201802.LR0Lemmas.html" class="Module">A201802.LR0Lemmas</a>
+<a id="308" class="Keyword">open</a> <a id="313" class="Keyword">import</a> <a id="320" href="A201802.LR1.html" class="Module">A201802.LR1</a>
+<a id="332" class="Keyword">open</a> <a id="337" class="Keyword">import</a> <a id="344" href="A201802.LR2.html" class="Module">A201802.LR2</a> <a id="356" class="Comment">-- TODO: which LR2?</a>
 
 
-<a id="570" class="Comment">-- -- sn-if-true : ∀ {C M N O} → {𝒟 : ∙ ⊢ M ⦂ 𝔹} {ℰ : ∙ ⊢ N ⦂ C} {ℱ : ∙ ⊢ O ⦂ C}</a>
-<a id="651" class="Comment">-- --                          → M ⤅ TRUE → SN ℰ</a>
-<a id="700" class="Comment">-- --                          → SN (if 𝒟 ℰ ℱ)</a>
-<a id="747" class="Comment">-- -- sn-if-true {𝔹}     M⤅TRUE N⇓       = halt-IF-TRUE M⤅TRUE N⇓</a>
-<a id="813" class="Comment">-- -- sn-if-true {A ⊃ B} M⤅TRUE (N⇓ , f) = halt-IF-TRUE M⤅TRUE N⇓ , (\ sn𝒢 → {!!}) -- SN (app (if 𝒟 ℰ ℱ) 𝒢)</a>
+<a id="378" class="Comment">--------------------------------------------------------------------------------</a>
 
 
-<a id="923" class="Comment">-- -- sn-if-false : ∀ {C M N O} → {𝒟 : ∙ ⊢ M ⦂ 𝔹} {ℰ : ∙ ⊢ N ⦂ C} {ℱ : ∙ ⊢ O ⦂ C}</a>
-<a id="1005" class="Comment">-- --                           → M ⤅ FALSE → SN ℱ</a>
-<a id="1056" class="Comment">-- --                           → SN (if 𝒟 ℰ ℱ)</a>
-<a id="1104" class="Comment">-- -- sn-if-false {𝔹}     M⤅FALSE O⇓       = halt-IF-FALSE M⤅FALSE O⇓</a>
-<a id="1174" class="Comment">-- -- sn-if-false {A ⊃ B} M⤅FALSE (O⇓ , f) = halt-IF-FALSE M⤅FALSE O⇓ , (\ sn𝒢 → {!!}) -- SN (app (if 𝒟 ℰ ℱ) 𝒢)</a>
+<a id="461" class="Comment">-- SN : ∀ {M A} → ∙ ⊢ M ⦂ A → Set</a>
+<a id="495" class="Comment">-- SN {M} {𝔹}     𝒟 = M ⇓</a>
+<a id="521" class="Comment">-- SN {M} {A ⊃ B} 𝒟 = M ⇓ × (∀ {N} → {ℰ : ∙ ⊢ N ⦂ A} → SN ℰ → SN (app 𝒟 ℰ))</a>
 
 
-<a id="1288" class="Comment">-- -- sn : ∀ {M A} → (𝒟 : ∙ ⊢ M ⦂ A)</a>
-<a id="1325" class="Comment">-- --              → SN 𝒟</a>
-<a id="1351" class="Comment">-- -- sn (var ())</a>
-<a id="1369" class="Comment">-- -- sn (lam 𝒟)    = val (LAM _) , done , (\ snℰ → {!!}) -- SN (app (lam 𝒟) ℰ)</a>
-<a id="1449" class="Comment">-- -- sn (app 𝒟 ℰ)  = {!!} -- SN (app 𝒟 ℰ)</a>
-<a id="1492" class="Comment">-- -- sn true       = val TRUE , done</a>
-<a id="1530" class="Comment">-- -- sn false      = val FALSE , done</a>
-<a id="1569" class="Comment">-- -- sn (if 𝒟 ℰ ℱ) with sn 𝒟</a>
-<a id="1599" class="Comment">-- -- sn (if 𝒟 ℰ ℱ) | M′ , M⤅M′ with tp⤅ M⤅M′ 𝒟</a>
-<a id="1647" class="Comment">-- -- sn (if 𝒟 ℰ ℱ) | val (LAM M″) {{iv-LAM}}   , M⤅LAM-M″ | ()</a>
-<a id="1711" class="Comment">-- -- sn (if 𝒟 ℰ ℱ) | val TRUE     {{iv-TRUE}}  , M⤅TRUE   | true  = sn-if-true {𝒟 = 𝒟} {ℰ} {ℱ} M⤅TRUE (sn ℰ)</a>
-<a id="1821" class="Comment">-- -- sn (if 𝒟 ℰ ℱ) | val FALSE    {{iv-FALSE}} , M⤅FALSE  | false = sn-if-false {𝒟 = 𝒟} {ℰ} {ℱ} M⤅FALSE (sn ℱ)</a>
+<a id="599" class="Comment">-- -- sn-if-true : ∀ {C M N O} → {𝒟 : ∙ ⊢ M ⦂ 𝔹} {ℰ : ∙ ⊢ N ⦂ C} {ℱ : ∙ ⊢ O ⦂ C}</a>
+<a id="680" class="Comment">-- --                          → M ⤅ TRUE → SN ℰ</a>
+<a id="729" class="Comment">-- --                          → SN (if 𝒟 ℰ ℱ)</a>
+<a id="776" class="Comment">-- -- sn-if-true {𝔹}     M⤅TRUE N⇓       = halt-IF-TRUE M⤅TRUE N⇓</a>
+<a id="842" class="Comment">-- -- sn-if-true {A ⊃ B} M⤅TRUE (N⇓ , f) = halt-IF-TRUE M⤅TRUE N⇓ , (\ sn𝒢 → {!!}) -- SN (app (if 𝒟 ℰ ℱ) 𝒢)</a>
 
 
-<a id="1935" class="Comment">-- -- halt-sn : ∀ {A M} → (𝒟 : ∙ ⊢ M ⦂ A) → SN 𝒟</a>
-<a id="1984" class="Comment">-- --                   → M ⇓</a>
-<a id="2014" class="Comment">-- -- halt-sn {𝔹}     𝒟 M⇓       = M⇓</a>
-<a id="2052" class="Comment">-- -- halt-sn {A ⊃ B} 𝒟 (M⇓ , f) = M⇓</a>
+<a id="952" class="Comment">-- -- sn-if-false : ∀ {C M N O} → {𝒟 : ∙ ⊢ M ⦂ 𝔹} {ℰ : ∙ ⊢ N ⦂ C} {ℱ : ∙ ⊢ O ⦂ C}</a>
+<a id="1034" class="Comment">-- --                           → M ⤅ FALSE → SN ℱ</a>
+<a id="1085" class="Comment">-- --                           → SN (if 𝒟 ℰ ℱ)</a>
+<a id="1133" class="Comment">-- -- sn-if-false {𝔹}     M⤅FALSE O⇓       = halt-IF-FALSE M⤅FALSE O⇓</a>
+<a id="1203" class="Comment">-- -- sn-if-false {A ⊃ B} M⤅FALSE (O⇓ , f) = halt-IF-FALSE M⤅FALSE O⇓ , (\ sn𝒢 → {!!}) -- SN (app (if 𝒟 ℰ ℱ) 𝒢)</a>
 
 
-<a id="2092" class="Comment">-- -- halt : ∀ {M A} → ∙ ⊢ M ⦂ A</a>
-<a id="2125" class="Comment">-- --                → M ⇓</a>
-<a id="2152" class="Comment">-- -- halt 𝒟 = halt-sn 𝒟 (sn 𝒟)</a>
+<a id="1317" class="Comment">-- -- sn : ∀ {M A} → (𝒟 : ∙ ⊢ M ⦂ A)</a>
+<a id="1354" class="Comment">-- --              → SN 𝒟</a>
+<a id="1380" class="Comment">-- -- sn (var ())</a>
+<a id="1398" class="Comment">-- -- sn (lam 𝒟)    = val (LAM _) , done , (\ snℰ → {!!}) -- SN (app (lam 𝒟) ℰ)</a>
+<a id="1478" class="Comment">-- -- sn (app 𝒟 ℰ)  = {!!} -- SN (app 𝒟 ℰ)</a>
+<a id="1521" class="Comment">-- -- sn true       = val TRUE , done</a>
+<a id="1559" class="Comment">-- -- sn false      = val FALSE , done</a>
+<a id="1598" class="Comment">-- -- sn (if 𝒟 ℰ ℱ) with sn 𝒟</a>
+<a id="1628" class="Comment">-- -- sn (if 𝒟 ℰ ℱ) | M′ , M⤅M′ with tp⤅ M⤅M′ 𝒟</a>
+<a id="1676" class="Comment">-- -- sn (if 𝒟 ℰ ℱ) | val (LAM M″) {{iv-LAM}}   , M⤅LAM-M″ | ()</a>
+<a id="1740" class="Comment">-- -- sn (if 𝒟 ℰ ℱ) | val TRUE     {{iv-TRUE}}  , M⤅TRUE   | true  = sn-if-true {𝒟 = 𝒟} {ℰ} {ℱ} M⤅TRUE (sn ℰ)</a>
+<a id="1850" class="Comment">-- -- sn (if 𝒟 ℰ ℱ) | val FALSE    {{iv-FALSE}} , M⤅FALSE  | false = sn-if-false {𝒟 = 𝒟} {ℰ} {ℱ} M⤅FALSE (sn ℱ)</a>
 
 
-<a id="2186" class="Comment">-- --------------------------------------------------------------------------------</a>
+<a id="1964" class="Comment">-- -- halt-sn : ∀ {A M} → (𝒟 : ∙ ⊢ M ⦂ A) → SN 𝒟</a>
+<a id="2013" class="Comment">-- --                   → M ⇓</a>
+<a id="2043" class="Comment">-- -- halt-sn {𝔹}     𝒟 M⇓       = M⇓</a>
+<a id="2081" class="Comment">-- -- halt-sn {A ⊃ B} 𝒟 (M⇓ , f) = M⇓</a>
 
 
-<a id="2272" class="Comment">-- SNs : ∀ {g} → {τ : Terms 0 g} {Γ : Types g} → ∙ ⊢ τ ⦂ Γ all → Set</a>
-<a id="2341" class="Comment">-- SNs {τ = τ} {Γ} γ = {!All ? γ!}</a>
-
-<a id="2377" class="Comment">-- -- SNs {Γ = ∙}     {vals ∙}                       ∙       = ⊤</a>
-<a id="2442" class="Comment">-- -- SNs {Γ = Γ , A} {vals (τ , M) {{av-τ , iv-M}}} (γ , 𝒟) = SNs {τ = vals τ {{av-τ}}} γ × SN 𝒟</a>
+<a id="2121" class="Comment">-- -- halt : ∀ {M A} → ∙ ⊢ M ⦂ A</a>
+<a id="2154" class="Comment">-- --                → M ⇓</a>
+<a id="2181" class="Comment">-- -- halt 𝒟 = halt-sn 𝒟 (sn 𝒟)</a>
 
 
-<a id="2542" class="Comment">-- -- sn-sub : ∀ {g M A} → {τ : Vals 0 g} {Γ : Types g} {γ : ∙ ⊢ Vals.terms τ ⦂ Γ all}</a>
-<a id="2629" class="Comment">-- --                    → SNs γ → (𝒟 : Γ ⊢ M ⦂ A)</a>
-<a id="2680" class="Comment">-- --                    → SN (sub γ 𝒟)</a>
-<a id="2720" class="Comment">-- -- sn-sub σ 𝒟 = {!!}</a>
+<a id="2215" class="Comment">-- --------------------------------------------------------------------------------</a>
 
 
-<a id="2746" class="Comment">-- -- --------------------------------------------------------------------------------</a>
+<a id="2301" class="Comment">-- SNs : ∀ {g} → {τ : Terms 0 g} {Γ : Types g} → ∙ ⊢ τ ⦂ Γ all → Set</a>
+<a id="2370" class="Comment">-- SNs {τ = τ} {Γ} γ = {!All ? γ!}</a>
+
+<a id="2406" class="Comment">-- -- SNs {Γ = ∙}     {vals ∙}                       ∙       = ⊤</a>
+<a id="2471" class="Comment">-- -- SNs {Γ = Γ , A} {vals (τ , M) {{av-τ , iv-M}}} (γ , 𝒟) = SNs {τ = vals τ {{av-τ}}} γ × SN 𝒟</a>
+
+
+<a id="2571" class="Comment">-- -- sn-sub : ∀ {g M A} → {τ : Vals 0 g} {Γ : Types g} {γ : ∙ ⊢ Vals.terms τ ⦂ Γ all}</a>
+<a id="2658" class="Comment">-- --                    → SNs γ → (𝒟 : Γ ⊢ M ⦂ A)</a>
+<a id="2709" class="Comment">-- --                    → SN (sub γ 𝒟)</a>
+<a id="2749" class="Comment">-- -- sn-sub σ 𝒟 = {!!}</a>
+
+
+<a id="2775" class="Comment">-- -- --------------------------------------------------------------------------------</a>
 </pre></body></html>

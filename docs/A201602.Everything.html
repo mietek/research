@@ -1,68 +1,70 @@
 <!DOCTYPE HTML>
-<html><head><meta charset="utf-8"><title>A201602.Everything</title><link rel="stylesheet" href="mi-common.css"></head><body><pre class="Agda"><a id="1" class="Keyword">module</a> <a id="8" href="A201602.Everything.html" class="Module">A201602.Everything</a> <a id="27" class="Keyword">where</a>
+<html><head><meta charset="utf-8"><title>A201602.Everything</title><link rel="stylesheet" href="mi-common.css"></head><body><pre class="Agda"><a id="1" class="Symbol">{-#</a> <a id="5" class="Keyword">OPTIONS</a> <a id="13" class="Pragma">--guardedness</a> <a id="27" class="Symbol">#-}</a>
+
+<a id="32" class="Keyword">module</a> <a id="39" href="A201602.Everything.html" class="Module">A201602.Everything</a> <a id="58" class="Keyword">where</a>
 
 
-<a id="35" class="Comment">--------------------------------------------------------------------------------</a>
+<a id="66" class="Comment">--------------------------------------------------------------------------------</a>
 
-<a id="117" class="Keyword">import</a> <a id="124" href="A201602.AltArtemov.html" class="Module">A201602.AltArtemov</a>
-<a id="143" class="Keyword">import</a> <a id="150" href="A201602.AltArtemov-WIP.html" class="Module">A201602.AltArtemov-WIP</a>
-<a id="173" class="Keyword">import</a> <a id="180" href="A201602.AltArtemov-WIP2.html" class="Module">A201602.AltArtemov-WIP2</a>
-<a id="204" class="Keyword">import</a> <a id="211" href="A201602.AltArtemov-WIP3.html" class="Module">A201602.AltArtemov-WIP3</a>
-
-
-<a id="237" class="Comment">--------------------------------------------------------------------------------</a>
-
-<a id="319" class="Keyword">import</a> <a id="326" href="A201602.Try2.html" class="Module">A201602.Try2</a>
-<a id="339" class="Keyword">import</a> <a id="346" href="A201602.Try3.html" class="Module">A201602.Try3</a>
-<a id="359" class="Keyword">import</a> <a id="366" href="A201602.Try4.html" class="Module">A201602.Try4</a>
-<a id="379" class="Keyword">import</a> <a id="386" href="A201602.Try5.html" class="Module">A201602.Try5</a>
-<a id="399" class="Keyword">import</a> <a id="406" href="A201602.Try6.html" class="Module">A201602.Try6</a>
-<a id="419" class="Keyword">import</a> <a id="426" href="A201602.Try7.html" class="Module">A201602.Try7</a>
-<a id="439" class="Keyword">import</a> <a id="446" href="A201602.Try8.html" class="Module">A201602.Try8</a>
-<a id="459" class="Keyword">import</a> <a id="466" href="A201602.Try9.html" class="Module">A201602.Try9</a>
-<a id="479" class="Keyword">import</a> <a id="486" href="A201602.Try10.html" class="Module">A201602.Try10</a>
-<a id="500" class="Keyword">import</a> <a id="507" href="A201602.Try11.html" class="Module">A201602.Try11</a>
-<a id="521" class="Keyword">import</a> <a id="528" href="A201602.Try12.html" class="Module">A201602.Try12</a>
-<a id="542" class="Keyword">import</a> <a id="549" href="A201602.Try13.html" class="Module">A201602.Try13</a>
-<a id="563" class="Keyword">import</a> <a id="570" href="A201602.Try14.html" class="Module">A201602.Try14</a>
-<a id="584" class="Keyword">import</a> <a id="591" href="A201602.Try15.html" class="Module">A201602.Try15</a>
-<a id="605" class="Keyword">import</a> <a id="612" href="A201602.Try16.html" class="Module">A201602.Try16</a>
-
-<a id="627" class="Keyword">import</a> <a id="634" href="A201602.S4.html" class="Module">A201602.S4</a>
-<a id="645" class="Keyword">import</a> <a id="652" href="A201602.AltArtemovS4.html" class="Module">A201602.AltArtemovS4</a>
-
-<a id="674" class="Keyword">import</a> <a id="681" href="A201602.Atom.html" class="Module">A201602.Atom</a>
-<a id="694" class="Keyword">import</a> <a id="701" href="A201602.STLC.html" class="Module">A201602.STLC</a>
-
-<a id="715" class="Keyword">import</a> <a id="722" href="A201602.SimpleSTLC.html" class="Module">A201602.SimpleSTLC</a>
-
-<a id="742" class="Keyword">import</a> <a id="749" href="A201602.SimpleSTLC2.html" class="Module">A201602.SimpleSTLC2</a>
-
-<a id="770" class="Keyword">import</a> <a id="777" href="A201602.STLCVarSupply.html" class="Module">A201602.STLCVarSupply</a>
-
-<a id="800" class="Keyword">import</a> <a id="807" href="A201602.SystemT.html" class="Module">A201602.SystemT</a>
-
-<a id="824" class="Comment">-- import A201602.Church -- TODO: Agda bug</a>
-
-<a id="868" class="Keyword">import</a> <a id="875" href="A201602.DepCx.html" class="Module">A201602.DepCx</a>
-
-<a id="890" class="Keyword">import</a> <a id="897" href="A201602.LFFOL.html" class="Module">A201602.LFFOL</a>
-
-<a id="912" class="Keyword">import</a> <a id="919" href="A201602.Numbered.html" class="Module">A201602.Numbered</a>
-
-<a id="937" class="Keyword">import</a> <a id="944" href="A201602.Ornaments.html" class="Module">A201602.Ornaments</a>
-
-<a id="963" class="Keyword">import</a> <a id="970" href="A201602.PHOASSTLC.html" class="Module">A201602.PHOASSTLC</a>
-
-<a id="989" class="Keyword">import</a> <a id="996" href="A201602.RemovedProps.html" class="Module">A201602.RemovedProps</a>
-
-<a id="1018" class="Keyword">import</a> <a id="1025" href="A201602.Scratch-deduction.html" class="Module">A201602.Scratch-deduction</a>
-<a id="1051" class="Keyword">import</a> <a id="1058" href="A201602.Scratch-encodings.html" class="Module">A201602.Scratch-encodings</a>
-<a id="1084" class="Keyword">import</a> <a id="1091" href="A201602.Scratch-encodings2.html" class="Module">A201602.Scratch-encodings2</a>
-<a id="1118" class="Keyword">import</a> <a id="1125" href="A201602.Scratch-negation.html" class="Module">A201602.Scratch-negation</a>
-<a id="1150" class="Keyword">import</a> <a id="1157" href="A201602.Scratch-variables.html" class="Module">A201602.Scratch-variables</a>
-<a id="1183" class="Keyword">import</a> <a id="1190" href="A201602.Scratch-variables2.html" class="Module">A201602.Scratch-variables2</a>
+<a id="148" class="Keyword">import</a> <a id="155" href="A201602.AltArtemov.html" class="Module">A201602.AltArtemov</a>
+<a id="174" class="Keyword">import</a> <a id="181" href="A201602.AltArtemov-WIP.html" class="Module">A201602.AltArtemov-WIP</a>
+<a id="204" class="Keyword">import</a> <a id="211" href="A201602.AltArtemov-WIP2.html" class="Module">A201602.AltArtemov-WIP2</a>
+<a id="235" class="Keyword">import</a> <a id="242" href="A201602.AltArtemov-WIP3.html" class="Module">A201602.AltArtemov-WIP3</a>
 
 
-<a id="1219" class="Comment">--------------------------------------------------------------------------------</a>
+<a id="268" class="Comment">--------------------------------------------------------------------------------</a>
+
+<a id="350" class="Keyword">import</a> <a id="357" href="A201602.Try2.html" class="Module">A201602.Try2</a>
+<a id="370" class="Keyword">import</a> <a id="377" href="A201602.Try3.html" class="Module">A201602.Try3</a>
+<a id="390" class="Keyword">import</a> <a id="397" href="A201602.Try4.html" class="Module">A201602.Try4</a>
+<a id="410" class="Keyword">import</a> <a id="417" href="A201602.Try5.html" class="Module">A201602.Try5</a>
+<a id="430" class="Keyword">import</a> <a id="437" href="A201602.Try6.html" class="Module">A201602.Try6</a>
+<a id="450" class="Keyword">import</a> <a id="457" href="A201602.Try7.html" class="Module">A201602.Try7</a>
+<a id="470" class="Keyword">import</a> <a id="477" href="A201602.Try8.html" class="Module">A201602.Try8</a>
+<a id="490" class="Keyword">import</a> <a id="497" href="A201602.Try9.html" class="Module">A201602.Try9</a>
+<a id="510" class="Keyword">import</a> <a id="517" href="A201602.Try10.html" class="Module">A201602.Try10</a>
+<a id="531" class="Keyword">import</a> <a id="538" href="A201602.Try11.html" class="Module">A201602.Try11</a>
+<a id="552" class="Keyword">import</a> <a id="559" href="A201602.Try12.html" class="Module">A201602.Try12</a>
+<a id="573" class="Keyword">import</a> <a id="580" href="A201602.Try13.html" class="Module">A201602.Try13</a>
+<a id="594" class="Keyword">import</a> <a id="601" href="A201602.Try14.html" class="Module">A201602.Try14</a>
+<a id="615" class="Keyword">import</a> <a id="622" href="A201602.Try15.html" class="Module">A201602.Try15</a>
+<a id="636" class="Keyword">import</a> <a id="643" href="A201602.Try16.html" class="Module">A201602.Try16</a>
+
+<a id="658" class="Keyword">import</a> <a id="665" href="A201602.S4.html" class="Module">A201602.S4</a>
+<a id="676" class="Keyword">import</a> <a id="683" href="A201602.AltArtemovS4.html" class="Module">A201602.AltArtemovS4</a>
+
+<a id="705" class="Keyword">import</a> <a id="712" href="A201602.Atom.html" class="Module">A201602.Atom</a>
+<a id="725" class="Keyword">import</a> <a id="732" href="A201602.STLC.html" class="Module">A201602.STLC</a>
+
+<a id="746" class="Keyword">import</a> <a id="753" href="A201602.SimpleSTLC.html" class="Module">A201602.SimpleSTLC</a>
+
+<a id="773" class="Keyword">import</a> <a id="780" href="A201602.SimpleSTLC2.html" class="Module">A201602.SimpleSTLC2</a>
+
+<a id="801" class="Keyword">import</a> <a id="808" href="A201602.STLCVarSupply.html" class="Module">A201602.STLCVarSupply</a>
+
+<a id="831" class="Keyword">import</a> <a id="838" href="A201602.SystemT.html" class="Module">A201602.SystemT</a>
+
+<a id="855" class="Comment">-- import A201602.Church -- TODO: Agda bug</a>
+
+<a id="899" class="Keyword">import</a> <a id="906" href="A201602.DepCx.html" class="Module">A201602.DepCx</a>
+
+<a id="921" class="Keyword">import</a> <a id="928" href="A201602.LFFOL.html" class="Module">A201602.LFFOL</a>
+
+<a id="943" class="Keyword">import</a> <a id="950" href="A201602.Numbered.html" class="Module">A201602.Numbered</a>
+
+<a id="968" class="Keyword">import</a> <a id="975" href="A201602.Ornaments.html" class="Module">A201602.Ornaments</a>
+
+<a id="994" class="Keyword">import</a> <a id="1001" href="A201602.PHOASSTLC.html" class="Module">A201602.PHOASSTLC</a>
+
+<a id="1020" class="Keyword">import</a> <a id="1027" href="A201602.RemovedProps.html" class="Module">A201602.RemovedProps</a>
+
+<a id="1049" class="Keyword">import</a> <a id="1056" href="A201602.Scratch-deduction.html" class="Module">A201602.Scratch-deduction</a>
+<a id="1082" class="Keyword">import</a> <a id="1089" href="A201602.Scratch-encodings.html" class="Module">A201602.Scratch-encodings</a>
+<a id="1115" class="Keyword">import</a> <a id="1122" href="A201602.Scratch-encodings2.html" class="Module">A201602.Scratch-encodings2</a>
+<a id="1149" class="Keyword">import</a> <a id="1156" href="A201602.Scratch-negation.html" class="Module">A201602.Scratch-negation</a>
+<a id="1181" class="Keyword">import</a> <a id="1188" href="A201602.Scratch-variables.html" class="Module">A201602.Scratch-variables</a>
+<a id="1214" class="Keyword">import</a> <a id="1221" href="A201602.Scratch-variables2.html" class="Module">A201602.Scratch-variables2</a>
+
+
+<a id="1250" class="Comment">--------------------------------------------------------------------------------</a>
 </pre></body></html>

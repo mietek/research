@@ -1,19 +1,21 @@
 <!DOCTYPE HTML>
-<html><head><meta charset="utf-8"><title>A201801.StdLPTTLemmas</title><link rel="stylesheet" href="mi-common.css"></head><body><pre class="Agda"><a id="1" class="Keyword">module</a> <a id="8" href="A201801.StdLPTTLemmas.html" class="Module">A201801.StdLPTTLemmas</a> <a id="30" class="Keyword">where</a>
+<html><head><meta charset="utf-8"><title>A201801.StdLPTTLemmas</title><link rel="stylesheet" href="mi-common.css"></head><body><pre class="Agda"><a id="1" class="Symbol">{-#</a> <a id="5" class="Keyword">OPTIONS</a> <a id="13" class="Pragma">--rewriting</a> <a id="25" class="Symbol">#-}</a>
 
-<a id="37" class="Keyword">open</a> <a id="42" class="Keyword">import</a> <a id="49" href="A201801.Prelude.html" class="Module">A201801.Prelude</a>
-<a id="65" class="Keyword">open</a> <a id="70" class="Keyword">import</a> <a id="77" href="A201801.Fin.html" class="Module">A201801.Fin</a>
-<a id="89" class="Keyword">open</a> <a id="94" class="Keyword">import</a> <a id="101" href="A201801.FinLemmas.html" class="Module">A201801.FinLemmas</a>
-<a id="119" class="Keyword">open</a> <a id="124" class="Keyword">import</a> <a id="131" href="A201801.Vec.html" class="Module">A201801.Vec</a>
-<a id="143" class="Keyword">open</a> <a id="148" class="Keyword">import</a> <a id="155" href="A201801.S4TTTerms.html" class="Module">A201801.S4TTTerms</a>
-<a id="173" class="Keyword">open</a> <a id="178" class="Keyword">import</a> <a id="185" href="A201801.S4TTTermsLemmas.html" class="Module">A201801.S4TTTermsLemmas</a>
-<a id="209" class="Keyword">open</a> <a id="214" class="Keyword">import</a> <a id="221" href="A201801.StdLPTT.html" class="Module">A201801.StdLPTT</a>
+<a id="30" class="Keyword">module</a> <a id="37" href="A201801.StdLPTTLemmas.html" class="Module">A201801.StdLPTTLemmas</a> <a id="59" class="Keyword">where</a>
+
+<a id="66" class="Keyword">open</a> <a id="71" class="Keyword">import</a> <a id="78" href="A201801.Prelude.html" class="Module">A201801.Prelude</a>
+<a id="94" class="Keyword">open</a> <a id="99" class="Keyword">import</a> <a id="106" href="A201801.Fin.html" class="Module">A201801.Fin</a>
+<a id="118" class="Keyword">open</a> <a id="123" class="Keyword">import</a> <a id="130" href="A201801.FinLemmas.html" class="Module">A201801.FinLemmas</a>
+<a id="148" class="Keyword">open</a> <a id="153" class="Keyword">import</a> <a id="160" href="A201801.Vec.html" class="Module">A201801.Vec</a>
+<a id="172" class="Keyword">open</a> <a id="177" class="Keyword">import</a> <a id="184" href="A201801.S4TTTerms.html" class="Module">A201801.S4TTTerms</a>
+<a id="202" class="Keyword">open</a> <a id="207" class="Keyword">import</a> <a id="214" href="A201801.S4TTTermsLemmas.html" class="Module">A201801.S4TTTermsLemmas</a>
+<a id="238" class="Keyword">open</a> <a id="243" class="Keyword">import</a> <a id="250" href="A201801.StdLPTT.html" class="Module">A201801.StdLPTT</a>
 
 
-<a id="239" class="Comment">--------------------------------------------------------------------------------</a>
+<a id="268" class="Comment">--------------------------------------------------------------------------------</a>
 
 
-<a id="322" class="Comment">{-
+<a id="351" class="Comment">{-
     box : ∀ {d g M} → {Δ : Validities d} {Γ : Truths d g}
                        {A : Prop d}
                     → Δ ⋙ [ ∙ ⊢ M ⦂ A true ]
@@ -28,40 +30,40 @@
 -}</a>
 
 
-<a id="950" class="Comment">-- TODO: unfinished</a>
-<a id="970" class="Comment">-- id-MSUBₚ : ∀ {d} → (A : Prop d)</a>
-<a id="1005" class="Comment">--                  → MSUBₚ MIDS₁ A ≡ A</a>
-<a id="1045" class="Comment">-- id-MSUBₚ BASE      = refl</a>
-<a id="1074" class="Comment">-- id-MSUBₚ (A ⊃ B)   = _⊃_ &amp; id-MSUBₚ A ⊗ id-MSUBₚ B</a>
-<a id="1128" class="Comment">-- id-MSUBₚ ([ M ] A) = [_]_ &amp; id-MSUB M ⊗ id-MSUBₚ A</a>
+<a id="979" class="Comment">-- TODO: unfinished</a>
+<a id="999" class="Comment">-- id-MSUBₚ : ∀ {d} → (A : Prop d)</a>
+<a id="1034" class="Comment">--                  → MSUBₚ MIDS₁ A ≡ A</a>
+<a id="1074" class="Comment">-- id-MSUBₚ BASE      = refl</a>
+<a id="1103" class="Comment">-- id-MSUBₚ (A ⊃ B)   = _⊃_ &amp; id-MSUBₚ A ⊗ id-MSUBₚ B</a>
+<a id="1157" class="Comment">-- id-MSUBₚ ([ M ] A) = [_]_ &amp; id-MSUB M ⊗ id-MSUBₚ A</a>
 
 
-<a id="1184" class="Comment">-- expand-MSUBₚ : ∀ {d n} → (x : Terms₁ d n) (M : Term₁ d) (A : Prop n)</a>
-<a id="1256" class="Comment">--                        → MSUBₚ (x , M) (MWKₚ A) ≡ MSUBₚ x A</a>
-<a id="1319" class="Comment">-- expand-MSUBₚ x M BASE      = refl</a>
-<a id="1356" class="Comment">-- expand-MSUBₚ x M (A ⊃ B)   = _⊃_ &amp; expand-MSUBₚ x M A ⊗ expand-MSUBₚ x M B</a>
-<a id="1434" class="Comment">-- expand-MSUBₚ x M ([ N ] A) = [_]_ &amp; expand-MSUB x M N ⊗ expand-MSUBₚ x M A</a>
+<a id="1213" class="Comment">-- expand-MSUBₚ : ∀ {d n} → (x : Terms₁ d n) (M : Term₁ d) (A : Prop n)</a>
+<a id="1285" class="Comment">--                        → MSUBₚ (x , M) (MWKₚ A) ≡ MSUBₚ x A</a>
+<a id="1348" class="Comment">-- expand-MSUBₚ x M BASE      = refl</a>
+<a id="1385" class="Comment">-- expand-MSUBₚ x M (A ⊃ B)   = _⊃_ &amp; expand-MSUBₚ x M A ⊗ expand-MSUBₚ x M B</a>
+<a id="1463" class="Comment">-- expand-MSUBₚ x M ([ N ] A) = [_]_ &amp; expand-MSUB x M N ⊗ expand-MSUBₚ x M A</a>
 
 
-<a id="1514" class="Comment">-- unbox : ∀ {d g M N} → {Δ : Validities d} {Γ : Truths d g}</a>
-<a id="1575" class="Comment">--                        {A : Prop d}</a>
-<a id="1614" class="Comment">--                     → Δ ⋙ [ Γ ⊢ M ⦂ [ N ] A true ]</a>
-<a id="1668" class="Comment">--                     → Δ ⋙ [ Γ ⊢ LETBOX M MVZ ⦂ A true ]</a>
-<a id="1727" class="Comment">-- unbox {N = N} {A = A} 𝒟 = letbox {{refl}} {{lem}} 𝒟 mvz</a>
-<a id="1786" class="Comment">--   where</a>
-<a id="1797" class="Comment">--     lem : A ≡ MCUTₚ N (MWKₚ A)</a>
-<a id="1831" class="Comment">--     lem = id-MSUBₚ A ⁻¹ ⋮ expand-MSUBₚ MIDS₁ N A ⁻¹</a>
+<a id="1543" class="Comment">-- unbox : ∀ {d g M N} → {Δ : Validities d} {Γ : Truths d g}</a>
+<a id="1604" class="Comment">--                        {A : Prop d}</a>
+<a id="1643" class="Comment">--                     → Δ ⋙ [ Γ ⊢ M ⦂ [ N ] A true ]</a>
+<a id="1697" class="Comment">--                     → Δ ⋙ [ Γ ⊢ LETBOX M MVZ ⦂ A true ]</a>
+<a id="1756" class="Comment">-- unbox {N = N} {A = A} 𝒟 = letbox {{refl}} {{lem}} 𝒟 mvz</a>
+<a id="1815" class="Comment">--   where</a>
+<a id="1826" class="Comment">--     lem : A ≡ MCUTₚ N (MWKₚ A)</a>
+<a id="1860" class="Comment">--     lem = id-MSUBₚ A ⁻¹ ⋮ expand-MSUBₚ MIDS₁ N A ⁻¹</a>
 
 
-<a id="1888" class="Comment">-- ex1 : ∀ {d g} → {Δ : Validities (suc d)} {Γ : Truths (suc d) g}</a>
-<a id="1955" class="Comment">--                  {A : Prop (suc d)}</a>
-<a id="1994" class="Comment">--               → Δ ⋙ [ Γ ⊢ BOX (LAM (LETBOX VZ (BOX MVZ)))</a>
-<a id="2055" class="Comment">--                                ⦂ [ LAM (LETBOX VZ (BOX MVZ)) ] ([ MVZ ] A ⊃ A) true ]</a>
-<a id="2144" class="Comment">-- ex1 {A = A} = box (lam (letbox {{refl}} {{lem}} vz (box mvz)))</a>
-<a id="2210" class="Comment">--   where</a>
-<a id="2221" class="Comment">--     lem : A ≡ MCUTₚ MVZ ([ MVZ ] MWKₚ A)</a>
-<a id="2265" class="Comment">--     lem = {!!}</a>
+<a id="1917" class="Comment">-- ex1 : ∀ {d g} → {Δ : Validities (suc d)} {Γ : Truths (suc d) g}</a>
+<a id="1984" class="Comment">--                  {A : Prop (suc d)}</a>
+<a id="2023" class="Comment">--               → Δ ⋙ [ Γ ⊢ BOX (LAM (LETBOX VZ (BOX MVZ)))</a>
+<a id="2084" class="Comment">--                                ⦂ [ LAM (LETBOX VZ (BOX MVZ)) ] ([ MVZ ] A ⊃ A) true ]</a>
+<a id="2173" class="Comment">-- ex1 {A = A} = box (lam (letbox {{refl}} {{lem}} vz (box mvz)))</a>
+<a id="2239" class="Comment">--   where</a>
+<a id="2250" class="Comment">--     lem : A ≡ MCUTₚ MVZ ([ MVZ ] MWKₚ A)</a>
+<a id="2294" class="Comment">--     lem = {!!}</a>
 
 
-<a id="2285" class="Comment">-- --------------------------------------------------------------------------------</a>
+<a id="2314" class="Comment">-- --------------------------------------------------------------------------------</a>
 </pre></body></html>

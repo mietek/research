@@ -1,31 +1,33 @@
 <!DOCTYPE HTML>
-<html><head><meta charset="utf-8"><title>A201706.IPC</title><link rel="stylesheet" href="mi-common.css"></head><body><pre class="Agda"><a id="1" class="Keyword">module</a> <a id="8" href="A201706.IPC.html" class="Module">A201706.IPC</a> <a id="20" class="Keyword">where</a>
+<html><head><meta charset="utf-8"><title>A201706.IPC</title><link rel="stylesheet" href="mi-common.css"></head><body><pre class="Agda"><a id="1" class="Symbol">{-#</a> <a id="5" class="Keyword">OPTIONS</a> <a id="13" class="Pragma">--rewriting</a> <a id="25" class="Symbol">#-}</a>
 
-<a id="27" class="Keyword">open</a> <a id="32" class="Keyword">import</a> <a id="39" href="A201706.Prelude.html" class="Module">A201706.Prelude</a> <a id="55" class="Keyword">public</a>
+<a id="30" class="Keyword">module</a> <a id="37" href="A201706.IPC.html" class="Module">A201706.IPC</a> <a id="49" class="Keyword">where</a>
 
-
-<a id="64" class="Comment">-- Types.</a>
-
-<a id="75" class="Keyword">infixr</a> <a id="82" class="Number">7</a> <a id="84" href="A201706.IPC.html#122" class="InductiveConstructor Operator">_⇒_</a>
-<a id="88" class="Keyword">data</a> <a id="Ty"></a><a id="93" href="A201706.IPC.html#93" class="Datatype">Ty</a> <a id="96" class="Symbol">:</a> <a id="98" class="PrimitiveType">Set</a> <a id="102" class="Keyword">where</a>
-  <a id="Ty.•"></a><a id="110" href="A201706.IPC.html#110" class="InductiveConstructor">•</a>    <a id="115" class="Symbol">:</a> <a id="117" href="A201706.IPC.html#93" class="Datatype">Ty</a>
-  <a id="Ty._⇒_"></a><a id="122" href="A201706.IPC.html#122" class="InductiveConstructor Operator">_⇒_</a> <a id="126" class="Symbol">:</a> <a id="128" href="A201706.IPC.html#93" class="Datatype">Ty</a> <a id="131" class="Symbol">→</a> <a id="133" href="A201706.IPC.html#93" class="Datatype">Ty</a> <a id="136" class="Symbol">→</a> <a id="138" href="A201706.IPC.html#93" class="Datatype">Ty</a>
+<a id="56" class="Keyword">open</a> <a id="61" class="Keyword">import</a> <a id="68" href="A201706.Prelude.html" class="Module">A201706.Prelude</a> <a id="84" class="Keyword">public</a>
 
 
-<a id="143" class="Comment">-- Lists of types.</a>
+<a id="93" class="Comment">-- Types.</a>
 
-<a id="163" class="Keyword">module</a> <a id="IPCList"></a><a id="170" href="A201706.IPC.html#170" class="Module">IPCList</a> <a id="178" class="Keyword">where</a>
-  <a id="186" class="Keyword">open</a> <a id="191" class="Keyword">import</a> <a id="198" href="A201706.PreludeList.html" class="Module">A201706.PreludeList</a> <a id="218" class="Keyword">public</a>
+<a id="104" class="Keyword">infixr</a> <a id="111" class="Number">7</a> <a id="113" href="A201706.IPC.html#151" class="InductiveConstructor Operator">_⇒_</a>
+<a id="117" class="Keyword">data</a> <a id="Ty"></a><a id="122" href="A201706.IPC.html#122" class="Datatype">Ty</a> <a id="125" class="Symbol">:</a> <a id="127" href="Agda.Primitive.html#388" class="Primitive">Set</a> <a id="131" class="Keyword">where</a>
+  <a id="Ty.•"></a><a id="139" href="A201706.IPC.html#139" class="InductiveConstructor">•</a>    <a id="144" class="Symbol">:</a> <a id="146" href="A201706.IPC.html#122" class="Datatype">Ty</a>
+  <a id="Ty._⇒_"></a><a id="151" href="A201706.IPC.html#151" class="InductiveConstructor Operator">_⇒_</a> <a id="155" class="Symbol">:</a> <a id="157" href="A201706.IPC.html#122" class="Datatype">Ty</a> <a id="160" class="Symbol">→</a> <a id="162" href="A201706.IPC.html#122" class="Datatype">Ty</a> <a id="165" class="Symbol">→</a> <a id="167" href="A201706.IPC.html#122" class="Datatype">Ty</a>
 
-  <a id="IPCList.Ty⋆"></a><a id="228" href="A201706.IPC.html#228" class="Function">Ty⋆</a> <a id="232" class="Symbol">:</a> <a id="234" class="PrimitiveType">Set</a>
-  <a id="240" href="A201706.IPC.html#228" class="Function">Ty⋆</a> <a id="244" class="Symbol">=</a> <a id="246" href="A201706.PreludeList.html#117" class="Datatype">List</a> <a id="251" href="A201706.IPC.html#93" class="Datatype">Ty</a>
+
+<a id="172" class="Comment">-- Lists of types.</a>
+
+<a id="192" class="Keyword">module</a> <a id="IPCList"></a><a id="199" href="A201706.IPC.html#199" class="Module">IPCList</a> <a id="207" class="Keyword">where</a>
+  <a id="215" class="Keyword">open</a> <a id="220" class="Keyword">import</a> <a id="227" href="A201706.PreludeList.html" class="Module">A201706.PreludeList</a> <a id="247" class="Keyword">public</a>
+
+  <a id="IPCList.Ty⋆"></a><a id="257" href="A201706.IPC.html#257" class="Function">Ty⋆</a> <a id="261" class="Symbol">:</a> <a id="263" href="Agda.Primitive.html#388" class="Primitive">Set</a>
+  <a id="269" href="A201706.IPC.html#257" class="Function">Ty⋆</a> <a id="273" class="Symbol">=</a> <a id="275" href="A201706.PreludeList.html#117" class="Datatype">List</a> <a id="280" href="A201706.IPC.html#122" class="Datatype">Ty</a>
 
 
-<a id="256" class="Comment">-- Vectors of types.</a>
+<a id="285" class="Comment">-- Vectors of types.</a>
 
-<a id="278" class="Keyword">module</a> <a id="IPCVec"></a><a id="285" href="A201706.IPC.html#285" class="Module">IPCVec</a> <a id="292" class="Keyword">where</a>
-  <a id="300" class="Keyword">open</a> <a id="305" class="Keyword">import</a> <a id="312" href="A201706.PreludeVec.html" class="Module">A201706.PreludeVec</a> <a id="331" class="Keyword">public</a>
+<a id="307" class="Keyword">module</a> <a id="IPCVec"></a><a id="314" href="A201706.IPC.html#314" class="Module">IPCVec</a> <a id="321" class="Keyword">where</a>
+  <a id="329" class="Keyword">open</a> <a id="334" class="Keyword">import</a> <a id="341" href="A201706.PreludeVec.html" class="Module">A201706.PreludeVec</a> <a id="360" class="Keyword">public</a>
 
-  <a id="IPCVec.Ty⋆"></a><a id="341" href="A201706.IPC.html#341" class="Function">Ty⋆</a> <a id="345" class="Symbol">:</a> <a id="347" href="Agda.Builtin.Nat.html#165" class="Datatype">Nat</a> <a id="351" class="Symbol">→</a> <a id="353" class="PrimitiveType">Set</a>
-  <a id="359" href="A201706.IPC.html#341" class="Function">Ty⋆</a> <a id="363" href="A201706.IPC.html#363" class="Bound">g</a> <a id="365" class="Symbol">=</a> <a id="367" href="A201706.PreludeVec.html#118" class="Datatype">Vec</a> <a id="371" href="A201706.IPC.html#93" class="Datatype">Ty</a> <a id="374" href="A201706.IPC.html#363" class="Bound">g</a>
+  <a id="IPCVec.Ty⋆"></a><a id="370" href="A201706.IPC.html#370" class="Function">Ty⋆</a> <a id="374" class="Symbol">:</a> <a id="376" href="Agda.Builtin.Nat.html#203" class="Datatype">Nat</a> <a id="380" class="Symbol">→</a> <a id="382" href="Agda.Primitive.html#388" class="Primitive">Set</a>
+  <a id="388" href="A201706.IPC.html#370" class="Function">Ty⋆</a> <a id="392" href="A201706.IPC.html#392" class="Bound">g</a> <a id="394" class="Symbol">=</a> <a id="396" href="A201706.PreludeVec.html#118" class="Datatype">Vec</a> <a id="400" href="A201706.IPC.html#122" class="Datatype">Ty</a> <a id="403" href="A201706.IPC.html#392" class="Bound">g</a>
 </pre></body></html>

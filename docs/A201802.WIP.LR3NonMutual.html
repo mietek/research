@@ -1,213 +1,215 @@
 <!DOCTYPE HTML>
-<html><head><meta charset="utf-8"><title>A201802.WIP.LR3NonMutual</title><link rel="stylesheet" href="mi-common.css"></head><body><pre class="Agda"><a id="1" class="Keyword">module</a> <a id="8" href="A201802.WIP.LR3NonMutual.html" class="Module">A201802.WIP.LR3NonMutual</a> <a id="33" class="Keyword">where</a>
+<html><head><meta charset="utf-8"><title>A201802.WIP.LR3NonMutual</title><link rel="stylesheet" href="mi-common.css"></head><body><pre class="Agda"><a id="1" class="Symbol">{-#</a> <a id="5" class="Keyword">OPTIONS</a> <a id="13" class="Pragma">--rewriting</a> <a id="25" class="Symbol">#-}</a>
 
-<a id="40" class="Keyword">open</a> <a id="45" class="Keyword">import</a> <a id="52" href="A201801.Prelude.html" class="Module">A201801.Prelude</a>
-<a id="68" class="Keyword">open</a> <a id="73" class="Keyword">import</a> <a id="80" href="A201801.Category.html" class="Module">A201801.Category</a>
-<a id="97" class="Keyword">open</a> <a id="102" class="Keyword">import</a> <a id="109" href="A201801.Fin.html" class="Module">A201801.Fin</a>
-<a id="121" class="Keyword">open</a> <a id="126" class="Keyword">import</a> <a id="133" href="A201801.FinLemmas.html" class="Module">A201801.FinLemmas</a>
-<a id="151" class="Keyword">open</a> <a id="156" class="Keyword">import</a> <a id="163" href="A201801.Vec.html" class="Module">A201801.Vec</a>
-<a id="175" class="Keyword">open</a> <a id="180" class="Keyword">import</a> <a id="187" href="A201801.VecLemmas.html" class="Module">A201801.VecLemmas</a>
-<a id="205" class="Keyword">open</a> <a id="210" class="Keyword">import</a> <a id="217" href="A201801.AllVec.html" class="Module">A201801.AllVec</a>
+<a id="30" class="Keyword">module</a> <a id="37" href="A201802.WIP.LR3NonMutual.html" class="Module">A201802.WIP.LR3NonMutual</a> <a id="62" class="Keyword">where</a>
 
-<a id="233" class="Keyword">open</a> <a id="238" class="Keyword">import</a> <a id="245" href="A201802.LR0.html" class="Module">A201802.LR0</a>
-<a id="257" class="Keyword">open</a> <a id="262" class="Keyword">import</a> <a id="269" href="A201802.LR0Lemmas.html" class="Module">A201802.LR0Lemmas</a>
-<a id="287" class="Keyword">open</a> <a id="292" class="Keyword">import</a> <a id="299" href="A201802.LR1.html" class="Module">A201802.LR1</a>
-<a id="311" class="Keyword">open</a> <a id="316" class="Keyword">import</a> <a id="323" href="A201802.LR2.html" class="Module">A201802.LR2</a> <a id="335" class="Comment">-- TODO: which LR2?</a>
+<a id="69" class="Keyword">open</a> <a id="74" class="Keyword">import</a> <a id="81" href="A201801.Prelude.html" class="Module">A201801.Prelude</a>
+<a id="97" class="Keyword">open</a> <a id="102" class="Keyword">import</a> <a id="109" href="A201801.Category.html" class="Module">A201801.Category</a>
+<a id="126" class="Keyword">open</a> <a id="131" class="Keyword">import</a> <a id="138" href="A201801.Fin.html" class="Module">A201801.Fin</a>
+<a id="150" class="Keyword">open</a> <a id="155" class="Keyword">import</a> <a id="162" href="A201801.FinLemmas.html" class="Module">A201801.FinLemmas</a>
+<a id="180" class="Keyword">open</a> <a id="185" class="Keyword">import</a> <a id="192" href="A201801.Vec.html" class="Module">A201801.Vec</a>
+<a id="204" class="Keyword">open</a> <a id="209" class="Keyword">import</a> <a id="216" href="A201801.VecLemmas.html" class="Module">A201801.VecLemmas</a>
+<a id="234" class="Keyword">open</a> <a id="239" class="Keyword">import</a> <a id="246" href="A201801.AllVec.html" class="Module">A201801.AllVec</a>
 
-
-<a id="357" class="Comment">--------------------------------------------------------------------------------</a>
-
-
-<a id="440" class="Comment">-- -- `SN _ A` is the strong normalisation predicate on terms at type `A`.</a>
-<a id="515" class="Comment">-- SN : Term 0 → Type → Set</a>
-<a id="543" class="Comment">-- SN M 𝟙       = ∙ ⊢ M ⦂ 𝟙 × M ⇓</a>
-<a id="577" class="Comment">-- SN M 𝔹       = ∙ ⊢ M ⦂ 𝔹 × M ⇓</a>
-<a id="611" class="Comment">-- SN M (A ⊃ B) = ∙ ⊢ M ⦂ A ⊃ B × M ⇓ × (∀ {N} → SN N A → SN (APP M N) B)</a>
+<a id="262" class="Keyword">open</a> <a id="267" class="Keyword">import</a> <a id="274" href="A201802.LR0.html" class="Module">A201802.LR0</a>
+<a id="286" class="Keyword">open</a> <a id="291" class="Keyword">import</a> <a id="298" href="A201802.LR0Lemmas.html" class="Module">A201802.LR0Lemmas</a>
+<a id="316" class="Keyword">open</a> <a id="321" class="Keyword">import</a> <a id="328" href="A201802.LR1.html" class="Module">A201802.LR1</a>
+<a id="340" class="Keyword">open</a> <a id="345" class="Keyword">import</a> <a id="352" href="A201802.LR2.html" class="Module">A201802.LR2</a> <a id="364" class="Comment">-- TODO: which LR2?</a>
 
 
-<a id="687" class="Comment">-- -- Every SN term is well-typed.</a>
-<a id="722" class="Comment">-- derp : ∀ {A M} → SN M A</a>
-<a id="749" class="Comment">--                → ∙ ⊢ M ⦂ A</a>
-<a id="779" class="Comment">-- derp {𝟙}     (𝒟 , M⇓)     = 𝒟</a>
-<a id="812" class="Comment">-- derp {𝔹}     (𝒟 , M⇓)     = 𝒟</a>
-<a id="845" class="Comment">-- derp {A ⊃ B} (𝒟 , M⇓ , f) = 𝒟</a>
+<a id="386" class="Comment">--------------------------------------------------------------------------------</a>
 
 
-<a id="880" class="Comment">-- --------------------------------------------------------------------------------</a>
+<a id="469" class="Comment">-- -- `SN _ A` is the strong normalisation predicate on terms at type `A`.</a>
+<a id="544" class="Comment">-- SN : Term 0 → Type → Set</a>
+<a id="572" class="Comment">-- SN M 𝟙       = ∙ ⊢ M ⦂ 𝟙 × M ⇓</a>
+<a id="606" class="Comment">-- SN M 𝔹       = ∙ ⊢ M ⦂ 𝔹 × M ⇓</a>
+<a id="640" class="Comment">-- SN M (A ⊃ B) = ∙ ⊢ M ⦂ A ⊃ B × M ⇓ × (∀ {N} → SN N A → SN (APP M N) B)</a>
 
 
-<a id="966" class="Comment">-- -- Small-step reduction IN REVERSE preserves SN.</a>
-<a id="1018" class="Comment">-- snpr⤇ : ∀ {A M M′} → M ⤇ M′ → ∙ ⊢ M ⦂ A → SN M′ A</a>
-<a id="1071" class="Comment">--                     → SN M A</a>
-<a id="1103" class="Comment">-- snpr⤇ {𝟙}     r 𝒟 (𝒟′ , M⇓)     = 𝒟 , hpr⤇ r M⇓</a>
-<a id="1154" class="Comment">-- snpr⤇ {𝔹}     r 𝒟 (𝒟′ , M⇓)     = 𝒟 , hpr⤇ r M⇓</a>
-<a id="1205" class="Comment">-- snpr⤇ {A ⊃ B} r 𝒟 (𝒟′ , M⇓ , f) = 𝒟 , hpr⤇ r M⇓ , (\ s →</a>
-<a id="1265" class="Comment">--                                      snpr⤇ (cong-APP r) (app 𝒟 (derp s)) (f s))</a>
+<a id="716" class="Comment">-- -- Every SN term is well-typed.</a>
+<a id="751" class="Comment">-- derp : ∀ {A M} → SN M A</a>
+<a id="778" class="Comment">--                → ∙ ⊢ M ⦂ A</a>
+<a id="808" class="Comment">-- derp {𝟙}     (𝒟 , M⇓)     = 𝒟</a>
+<a id="841" class="Comment">-- derp {𝔹}     (𝒟 , M⇓)     = 𝒟</a>
+<a id="874" class="Comment">-- derp {A ⊃ B} (𝒟 , M⇓ , f) = 𝒟</a>
 
 
-<a id="1350" class="Comment">-- -- Iterated small-step reduction IN REVERSE preserves SN.</a>
-<a id="1411" class="Comment">-- snpr⤇* : ∀ {A M M′} → M ⤇* M′ → ∙ ⊢ M ⦂ A → SN M′ A</a>
-<a id="1466" class="Comment">--                      → SN M A</a>
-<a id="1499" class="Comment">-- snpr⤇* done                 𝒟 s = s</a>
-<a id="1538" class="Comment">-- snpr⤇* (step M⤇M″ M″⤇*M′) 𝒟 s = snpr⤇ M⤇M″ 𝒟 (snpr⤇* M″⤇*M′ (tp⤇ M⤇M″ 𝒟) s)</a>
+<a id="909" class="Comment">-- --------------------------------------------------------------------------------</a>
 
 
-<a id="1619" class="Comment">-- -- Big-step reduction IN REVERSE preserves SN.</a>
-<a id="1669" class="Comment">-- snpr⇓ : ∀ {A M M′} → M ⇓ M′ → ∙ ⊢ M ⦂ A → SN M′ A</a>
-<a id="1722" class="Comment">--                    → SN M A</a>
-<a id="1753" class="Comment">-- snpr⇓ (M⤇*M′ , VM′) 𝒟 s = snpr⤇* M⤇*M′ 𝒟 s</a>
+<a id="995" class="Comment">-- -- Small-step reduction IN REVERSE preserves SN.</a>
+<a id="1047" class="Comment">-- snpr⤇ : ∀ {A M M′} → M ⤇ M′ → ∙ ⊢ M ⦂ A → SN M′ A</a>
+<a id="1100" class="Comment">--                     → SN M A</a>
+<a id="1132" class="Comment">-- snpr⤇ {𝟙}     r 𝒟 (𝒟′ , M⇓)     = 𝒟 , hpr⤇ r M⇓</a>
+<a id="1183" class="Comment">-- snpr⤇ {𝔹}     r 𝒟 (𝒟′ , M⇓)     = 𝒟 , hpr⤇ r M⇓</a>
+<a id="1234" class="Comment">-- snpr⤇ {A ⊃ B} r 𝒟 (𝒟′ , M⇓ , f) = 𝒟 , hpr⤇ r M⇓ , (\ s →</a>
+<a id="1294" class="Comment">--                                      snpr⤇ (cong-APP r) (app 𝒟 (derp s)) (f s))</a>
 
 
-<a id="1801" class="Comment">-- -- IF `M` reduces to `TRUE` and `N` is SN, then `IF M N O` is SN.</a>
-<a id="1870" class="Comment">-- sn-IF-TRUE : ∀ {C M N O} → M ⤇* TRUE → ∙ ⊢ M ⦂ 𝔹 → SN N C → ∙ ⊢ O ⦂ C</a>
-<a id="1943" class="Comment">--                          → SN (IF M N O) C</a>
-<a id="1989" class="Comment">-- sn-IF-TRUE {𝟙}     M⤇*TRUE 𝒟 (ℰ , N⇓)     ℱ = if 𝒟 ℰ ℱ , halt-IF-TRUE M⤇*TRUE N⇓</a>
-<a id="2073" class="Comment">-- sn-IF-TRUE {𝔹}     M⤇*TRUE 𝒟 (ℰ , N⇓)     ℱ = if 𝒟 ℰ ℱ , halt-IF-TRUE M⤇*TRUE N⇓</a>
-<a id="2157" class="Comment">-- sn-IF-TRUE {A ⊃ B} M⤇*TRUE 𝒟 (ℰ , N⇓ , f) ℱ = if 𝒟 ℰ ℱ , halt-IF-TRUE M⤇*TRUE N⇓ , (\ s →</a>
-<a id="2250" class="Comment">--                                                  snpr⤇* (congs-APP (congs-IF-TRUE M⤇*TRUE done)) (app (if 𝒟 ℰ ℱ) (derp s)) (f s))</a>
+<a id="1379" class="Comment">-- -- Iterated small-step reduction IN REVERSE preserves SN.</a>
+<a id="1440" class="Comment">-- snpr⤇* : ∀ {A M M′} → M ⤇* M′ → ∙ ⊢ M ⦂ A → SN M′ A</a>
+<a id="1495" class="Comment">--                      → SN M A</a>
+<a id="1528" class="Comment">-- snpr⤇* done                 𝒟 s = s</a>
+<a id="1567" class="Comment">-- snpr⤇* (step M⤇M″ M″⤇*M′) 𝒟 s = snpr⤇ M⤇M″ 𝒟 (snpr⤇* M″⤇*M′ (tp⤇ M⤇M″ 𝒟) s)</a>
 
 
-<a id="2385" class="Comment">-- -- IF `M` reduces to `FALSE` and `O` is SN, then `IF M N O` is SN.</a>
-<a id="2455" class="Comment">-- sn-IF-FALSE : ∀ {C M N O} → M ⤇* FALSE → ∙ ⊢ M ⦂ 𝔹 → ∙ ⊢ N ⦂ C → SN O C</a>
-<a id="2530" class="Comment">--                           → SN (IF M N O) C</a>
-<a id="2577" class="Comment">-- sn-IF-FALSE {𝟙}     M⤇*FALSE 𝒟 ℰ (ℱ , O⇓)     = if 𝒟 ℰ ℱ , halt-IF-FALSE M⤇*FALSE O⇓</a>
-<a id="2665" class="Comment">-- sn-IF-FALSE {𝔹}     M⤇*FALSE 𝒟 ℰ (ℱ , O⇓)     = if 𝒟 ℰ ℱ , halt-IF-FALSE M⤇*FALSE O⇓</a>
-<a id="2753" class="Comment">-- sn-IF-FALSE {A ⊃ B} M⤇*FALSE 𝒟 ℰ (ℱ , O⇓ , f) = if 𝒟 ℰ ℱ , halt-IF-FALSE M⤇*FALSE O⇓ , (\ s →</a>
-<a id="2850" class="Comment">--                                                    snpr⤇* (congs-APP (congs-IF-FALSE M⤇*FALSE done)) (app (if 𝒟 ℰ ℱ) (derp s)) (f s))</a>
+<a id="1648" class="Comment">-- -- Big-step reduction IN REVERSE preserves SN.</a>
+<a id="1698" class="Comment">-- snpr⇓ : ∀ {A M M′} → M ⇓ M′ → ∙ ⊢ M ⦂ A → SN M′ A</a>
+<a id="1751" class="Comment">--                    → SN M A</a>
+<a id="1782" class="Comment">-- snpr⇓ (M⤇*M′ , VM′) 𝒟 s = snpr⤇* M⤇*M′ 𝒟 s</a>
 
 
-<a id="2989" class="Comment">-- --------------------------------------------------------------------------------</a>
+<a id="1830" class="Comment">-- -- IF `M` reduces to `TRUE` and `N` is SN, then `IF M N O` is SN.</a>
+<a id="1899" class="Comment">-- sn-IF-TRUE : ∀ {C M N O} → M ⤇* TRUE → ∙ ⊢ M ⦂ 𝔹 → SN N C → ∙ ⊢ O ⦂ C</a>
+<a id="1972" class="Comment">--                          → SN (IF M N O) C</a>
+<a id="2018" class="Comment">-- sn-IF-TRUE {𝟙}     M⤇*TRUE 𝒟 (ℰ , N⇓)     ℱ = if 𝒟 ℰ ℱ , halt-IF-TRUE M⤇*TRUE N⇓</a>
+<a id="2102" class="Comment">-- sn-IF-TRUE {𝔹}     M⤇*TRUE 𝒟 (ℰ , N⇓)     ℱ = if 𝒟 ℰ ℱ , halt-IF-TRUE M⤇*TRUE N⇓</a>
+<a id="2186" class="Comment">-- sn-IF-TRUE {A ⊃ B} M⤇*TRUE 𝒟 (ℰ , N⇓ , f) ℱ = if 𝒟 ℰ ℱ , halt-IF-TRUE M⤇*TRUE N⇓ , (\ s →</a>
+<a id="2279" class="Comment">--                                                  snpr⤇* (congs-APP (congs-IF-TRUE M⤇*TRUE done)) (app (if 𝒟 ℰ ℱ) (derp s)) (f s))</a>
 
 
-<a id="3075" class="Comment">-- -- Small-step reduction preserves SN.</a>
-<a id="3116" class="Comment">-- snp⤇ : ∀ {A M M′} → M ⤇ M′ → ∙ ⊢ M ⦂ A → SN M A</a>
-<a id="3167" class="Comment">--                    → SN M′ A</a>
-<a id="3199" class="Comment">-- snp⤇ {𝟙}     M⤇M′ 𝒟 (_ , M⇓)     = tp⤇ M⤇M′ 𝒟 , hp⤇ M⤇M′ M⇓</a>
-<a id="3262" class="Comment">-- snp⤇ {𝔹}     M⤇M′ 𝒟 (_ , M⇓)     = tp⤇ M⤇M′ 𝒟 , hp⤇ M⤇M′ M⇓</a>
-<a id="3325" class="Comment">-- snp⤇ {A ⊃ B} M⤇M′ 𝒟 (_ , M⇓ , f) = tp⤇ M⤇M′ 𝒟 , hp⤇ M⤇M′ M⇓ , (\ s →</a>
-<a id="3397" class="Comment">--                                        snp⤇ (cong-APP M⤇M′) (app 𝒟 (derp s)) (f s))</a>
+<a id="2414" class="Comment">-- -- IF `M` reduces to `FALSE` and `O` is SN, then `IF M N O` is SN.</a>
+<a id="2484" class="Comment">-- sn-IF-FALSE : ∀ {C M N O} → M ⤇* FALSE → ∙ ⊢ M ⦂ 𝔹 → ∙ ⊢ N ⦂ C → SN O C</a>
+<a id="2559" class="Comment">--                           → SN (IF M N O) C</a>
+<a id="2606" class="Comment">-- sn-IF-FALSE {𝟙}     M⤇*FALSE 𝒟 ℰ (ℱ , O⇓)     = if 𝒟 ℰ ℱ , halt-IF-FALSE M⤇*FALSE O⇓</a>
+<a id="2694" class="Comment">-- sn-IF-FALSE {𝔹}     M⤇*FALSE 𝒟 ℰ (ℱ , O⇓)     = if 𝒟 ℰ ℱ , halt-IF-FALSE M⤇*FALSE O⇓</a>
+<a id="2782" class="Comment">-- sn-IF-FALSE {A ⊃ B} M⤇*FALSE 𝒟 ℰ (ℱ , O⇓ , f) = if 𝒟 ℰ ℱ , halt-IF-FALSE M⤇*FALSE O⇓ , (\ s →</a>
+<a id="2879" class="Comment">--                                                    snpr⤇* (congs-APP (congs-IF-FALSE M⤇*FALSE done)) (app (if 𝒟 ℰ ℱ) (derp s)) (f s))</a>
 
 
-<a id="3486" class="Comment">-- -- Iterated small-step reduction preserves SN.</a>
-<a id="3536" class="Comment">-- snp⤇* : ∀ {A M M′} → M ⤇* M′ → ∙ ⊢ M ⦂ A → SN M A</a>
-<a id="3589" class="Comment">--                     → SN M′ A</a>
-<a id="3622" class="Comment">-- snp⤇* done                 𝒟 s = s</a>
-<a id="3660" class="Comment">-- snp⤇* (step M⤇M″ M″⤇*M′) 𝒟 s = snp⤇* M″⤇*M′ (tp⤇ M⤇M″ 𝒟) (snp⤇ M⤇M″ 𝒟 s)</a>
+<a id="3018" class="Comment">-- --------------------------------------------------------------------------------</a>
 
 
-<a id="3738" class="Comment">-- -- Big-step reduction preserves SN.</a>
-<a id="3777" class="Comment">-- snp⇓ : ∀ {A M M′} → M ⇓ M′ → ∙ ⊢ M ⦂ A → SN M A</a>
-<a id="3828" class="Comment">--                   → SN M′ A</a>
-<a id="3859" class="Comment">-- snp⇓ (M⤇*M′ , VM′) 𝒟 s = snp⤇* M⤇*M′ 𝒟 s</a>
+<a id="3104" class="Comment">-- -- Small-step reduction preserves SN.</a>
+<a id="3145" class="Comment">-- snp⤇ : ∀ {A M M′} → M ⤇ M′ → ∙ ⊢ M ⦂ A → SN M A</a>
+<a id="3196" class="Comment">--                    → SN M′ A</a>
+<a id="3228" class="Comment">-- snp⤇ {𝟙}     M⤇M′ 𝒟 (_ , M⇓)     = tp⤇ M⤇M′ 𝒟 , hp⤇ M⤇M′ M⇓</a>
+<a id="3291" class="Comment">-- snp⤇ {𝔹}     M⤇M′ 𝒟 (_ , M⇓)     = tp⤇ M⤇M′ 𝒟 , hp⤇ M⤇M′ M⇓</a>
+<a id="3354" class="Comment">-- snp⤇ {A ⊃ B} M⤇M′ 𝒟 (_ , M⇓ , f) = tp⤇ M⤇M′ 𝒟 , hp⤇ M⤇M′ M⇓ , (\ s →</a>
+<a id="3426" class="Comment">--                                        snp⤇ (cong-APP M⤇M′) (app 𝒟 (derp s)) (f s))</a>
 
 
-<a id="3905" class="Comment">-- --------------------------------------------------------------------------------</a>
+<a id="3515" class="Comment">-- -- Iterated small-step reduction preserves SN.</a>
+<a id="3565" class="Comment">-- snp⤇* : ∀ {A M M′} → M ⤇* M′ → ∙ ⊢ M ⦂ A → SN M A</a>
+<a id="3618" class="Comment">--                     → SN M′ A</a>
+<a id="3651" class="Comment">-- snp⤇* done                 𝒟 s = s</a>
+<a id="3689" class="Comment">-- snp⤇* (step M⤇M″ M″⤇*M′) 𝒟 s = snp⤇* M″⤇*M′ (tp⤇ M⤇M″ 𝒟) (snp⤇ M⤇M″ 𝒟 s)</a>
 
 
-<a id="3991" class="Comment">-- -- `SNs Γ` is the strong normalisation predicate on substitutions at all types `Γ`.</a>
-<a id="4078" class="Comment">-- SNs : ∀ {g} → (τ : Terms 0 g) → Types g → Set</a>
-<a id="4127" class="Comment">-- SNs τ Γ = All (\ { (M , A) → SN M A }) (zip τ Γ)</a>
+<a id="3767" class="Comment">-- -- Big-step reduction preserves SN.</a>
+<a id="3806" class="Comment">-- snp⇓ : ∀ {A M M′} → M ⇓ M′ → ∙ ⊢ M ⦂ A → SN M A</a>
+<a id="3857" class="Comment">--                   → SN M′ A</a>
+<a id="3888" class="Comment">-- snp⇓ (M⤇*M′ , VM′) 𝒟 s = snp⤇* M⤇*M′ 𝒟 s</a>
 
 
-<a id="4181" class="Comment">-- -- Every SN substitution is well-typed.</a>
-<a id="4224" class="Comment">-- derps : ∀ {g} → {τ : Terms 0 g} {Γ : Types g}</a>
-<a id="4273" class="Comment">--               → SNs τ Γ</a>
-<a id="4300" class="Comment">--               → ∙ ⊢ τ ⦂ Γ all</a>
-<a id="4333" class="Comment">-- derps σ = maps derp σ</a>
+<a id="3934" class="Comment">-- --------------------------------------------------------------------------------</a>
 
 
-<a id="4360" class="Comment">-- --------------------------------------------------------------------------------</a>
+<a id="4020" class="Comment">-- -- `SNs Γ` is the strong normalisation predicate on substitutions at all types `Γ`.</a>
+<a id="4107" class="Comment">-- SNs : ∀ {g} → (τ : Terms 0 g) → Types g → Set</a>
+<a id="4156" class="Comment">-- SNs τ Γ = All (\ { (M , A) → SN M A }) (zip τ Γ)</a>
 
 
-<a id="4446" class="Comment">-- -- TODO</a>
-<a id="4457" class="Comment">-- red-APP-LAM-SUB : ∀ {g M N} → {τ : Terms 0 g} → {{_ : Val N}}</a>
-<a id="4522" class="Comment">--                             → APP (LAM (SUB (LIFTS τ) M)) N ⤇ SUB (τ , N) M</a>
-<a id="4601" class="Comment">-- red-APP-LAM-SUB {M = M} {N} {τ} rewrite simp-CUT-SUB N τ M ⁻¹ = do red-APP-LAM</a>
+<a id="4210" class="Comment">-- -- Every SN substitution is well-typed.</a>
+<a id="4253" class="Comment">-- derps : ∀ {g} → {τ : Terms 0 g} {Γ : Types g}</a>
+<a id="4302" class="Comment">--               → SNs τ Γ</a>
+<a id="4329" class="Comment">--               → ∙ ⊢ τ ⦂ Γ all</a>
+<a id="4362" class="Comment">-- derps σ = maps derp σ</a>
 
 
-<a id="4685" class="Comment">-- -- TODO</a>
-<a id="4696" class="Comment">-- big-red-APP-LAM-SUB : ∀ {g M M′ N} → {τ : Terms 0 g} → {{_ : Vals τ}} {{_ : Val N}}</a>
-<a id="4783" class="Comment">--                                    → SUB (τ , N) M ⇓ M′</a>
-<a id="4842" class="Comment">--                                    → APP (LAM (SUB (LIFTS τ) M)) N ⇓ M′</a>
-<a id="4917" class="Comment">-- big-red-APP-LAM-SUB {M = M} (SUB-M⤇*M′ , VM′) = step (red-APP-LAM-SUB {M = M}) SUB-M⤇*M′ , VM′</a>
+<a id="4389" class="Comment">-- --------------------------------------------------------------------------------</a>
 
 
-<a id="5017" class="Comment">-- -- TODO</a>
-<a id="5028" class="Comment">-- halt-APP-LAM-SUB : ∀ {g M N} → {τ : Terms 0 g} → {{_ : Vals τ}} {{_ : Val N}}</a>
-<a id="5109" class="Comment">--                              → SUB (τ , N) M ⇓</a>
-<a id="5159" class="Comment">--                              → APP (LAM (SUB (LIFTS τ) M)) N ⇓</a>
-<a id="5225" class="Comment">-- halt-APP-LAM-SUB {M = M} (M′ , SUB-M⇓M′) = M′ , big-red-APP-LAM-SUB {M = M} SUB-M⇓M′</a>
+<a id="4475" class="Comment">-- -- TODO</a>
+<a id="4486" class="Comment">-- red-APP-LAM-SUB : ∀ {g M N} → {τ : Terms 0 g} → {{_ : Val N}}</a>
+<a id="4551" class="Comment">--                             → APP (LAM (SUB (LIFTS τ) M)) N ⤇ SUB (τ , N) M</a>
+<a id="4630" class="Comment">-- red-APP-LAM-SUB {M = M} {N} {τ} rewrite simp-CUT-SUB N τ M ⁻¹ = do red-APP-LAM</a>
 
 
-<a id="5315" class="Comment">-- -- TODO</a>
-<a id="5326" class="Comment">-- sn-APP-LAM-SUB : ∀ {B g M N A} → {τ : Terms 0 g} → {{_ : Vals τ}} {{_ : Val N}}</a>
-<a id="5409" class="Comment">--                                → ∙ ⊢ SUB τ (LAM M) ⦂ A ⊃ B → ∙ ⊢ N ⦂ A → SN (SUB (τ , N) M) B</a>
-<a id="5506" class="Comment">--                                → SN (APP (LAM (SUB (LIFTS τ) M)) N) B</a>
-<a id="5579" class="Comment">-- sn-APP-LAM-SUB {𝟙}       {M = M} 𝒟 ℰ (𝒟′ , SUB-M⇓)     = app 𝒟 ℰ , halt-APP-LAM-SUB {M = M} SUB-M⇓</a>
-<a id="5681" class="Comment">-- sn-APP-LAM-SUB {𝔹}       {M = M} 𝒟 ℰ (𝒟′ , SUB-M⇓)     = app 𝒟 ℰ , halt-APP-LAM-SUB {M = M} SUB-M⇓</a>
-<a id="5783" class="Comment">-- sn-APP-LAM-SUB {B₁ ⊃ B₂} {M = M} 𝒟 ℰ (𝒟′ , SUB-M⇓ , f) = app 𝒟 ℰ , halt-APP-LAM-SUB {M = M} SUB-M⇓ , (\ s →</a>
-<a id="5894" class="Comment">--                                                            snpr⤇ (cong-APP (red-APP-LAM-SUB {M = M})) (app (app 𝒟 ℰ) (derp s)) (f s))</a>
+<a id="4714" class="Comment">-- -- TODO</a>
+<a id="4725" class="Comment">-- big-red-APP-LAM-SUB : ∀ {g M M′ N} → {τ : Terms 0 g} → {{_ : Vals τ}} {{_ : Val N}}</a>
+<a id="4812" class="Comment">--                                    → SUB (τ , N) M ⇓ M′</a>
+<a id="4871" class="Comment">--                                    → APP (LAM (SUB (LIFTS τ) M)) N ⇓ M′</a>
+<a id="4946" class="Comment">-- big-red-APP-LAM-SUB {M = M} (SUB-M⤇*M′ , VM′) = step (red-APP-LAM-SUB {M = M}) SUB-M⤇*M′ , VM′</a>
 
 
-<a id="6033" class="Comment">-- --------------------------------------------------------------------------------</a>
+<a id="5046" class="Comment">-- -- TODO</a>
+<a id="5057" class="Comment">-- halt-APP-LAM-SUB : ∀ {g M N} → {τ : Terms 0 g} → {{_ : Vals τ}} {{_ : Val N}}</a>
+<a id="5138" class="Comment">--                              → SUB (τ , N) M ⇓</a>
+<a id="5188" class="Comment">--                              → APP (LAM (SUB (LIFTS τ) M)) N ⇓</a>
+<a id="5254" class="Comment">-- halt-APP-LAM-SUB {M = M} (M′ , SUB-M⇓M′) = M′ , big-red-APP-LAM-SUB {M = M} SUB-M⇓M′</a>
 
 
-<a id="6119" class="Comment">-- -- TODO</a>
-<a id="6130" class="Comment">-- frob : ∀ {A M} → SN M A</a>
-<a id="6157" class="Comment">--                → Σ (Term 0) (\ M′ → ∙ ⊢ M ⦂ A × M ⇓ M′ × SN M′ A)</a>
-<a id="6226" class="Comment">-- frob {𝟙}     s@(𝒟 , (M′ , M⇓M′))     = M′ , (𝒟 , M⇓M′ , snp⇓ M⇓M′ 𝒟 s)</a>
-<a id="6300" class="Comment">-- frob {𝔹}     s@(𝒟 , (M′ , M⇓M′))     = M′ , (𝒟 , M⇓M′ , snp⇓ M⇓M′ 𝒟 s)</a>
-<a id="6374" class="Comment">-- frob {A ⊃ B} s@(𝒟 , (M′ , M⇓M′) , f) = M′ , (𝒟 , M⇓M′ , snp⇓ M⇓M′ 𝒟 s)</a>
+<a id="5344" class="Comment">-- -- TODO</a>
+<a id="5355" class="Comment">-- sn-APP-LAM-SUB : ∀ {B g M N A} → {τ : Terms 0 g} → {{_ : Vals τ}} {{_ : Val N}}</a>
+<a id="5438" class="Comment">--                                → ∙ ⊢ SUB τ (LAM M) ⦂ A ⊃ B → ∙ ⊢ N ⦂ A → SN (SUB (τ , N) M) B</a>
+<a id="5535" class="Comment">--                                → SN (APP (LAM (SUB (LIFTS τ) M)) N) B</a>
+<a id="5608" class="Comment">-- sn-APP-LAM-SUB {𝟙}       {M = M} 𝒟 ℰ (𝒟′ , SUB-M⇓)     = app 𝒟 ℰ , halt-APP-LAM-SUB {M = M} SUB-M⇓</a>
+<a id="5710" class="Comment">-- sn-APP-LAM-SUB {𝔹}       {M = M} 𝒟 ℰ (𝒟′ , SUB-M⇓)     = app 𝒟 ℰ , halt-APP-LAM-SUB {M = M} SUB-M⇓</a>
+<a id="5812" class="Comment">-- sn-APP-LAM-SUB {B₁ ⊃ B₂} {M = M} 𝒟 ℰ (𝒟′ , SUB-M⇓ , f) = app 𝒟 ℰ , halt-APP-LAM-SUB {M = M} SUB-M⇓ , (\ s →</a>
+<a id="5923" class="Comment">--                                                            snpr⤇ (cong-APP (red-APP-LAM-SUB {M = M})) (app (app 𝒟 ℰ) (derp s)) (f s))</a>
 
 
-<a id="6450" class="Comment">-- -- TODO</a>
-<a id="6461" class="Comment">-- sn-SUB : ∀ {g M A} → {τ : Terms 0 g} {Γ : Types g} → {{_ : Vals τ}}</a>
-<a id="6532" class="Comment">--                    → SNs τ Γ → Γ ⊢ M ⦂ A</a>
-<a id="6576" class="Comment">--                    → SN (SUB τ M) A</a>
-<a id="6615" class="Comment">-- sn-SUB σ (var i)    = get σ (zip∋₂ i)</a>
-<a id="6656" class="Comment">-- sn-SUB {{Vτ}} σ (lam {A} {M = M} 𝒟) = let 𝒟′ = sub (derps σ) (lam 𝒟) in</a>
-<a id="6731" class="Comment">--                                         𝒟′ , (LAM _ , done , VLAM) , (\ s →</a>
-<a id="6810" class="Comment">--                                           case frob {A} s of (\ { (N′ , ℰ , (N⤇*N′ , VN′) , s′) →</a>
-<a id="6911" class="Comment">--                                             snpr⤇* (congs-APP-LAM N⤇*N′)</a>
-<a id="6987" class="Comment">--                                                     (app 𝒟′ ℰ)</a>
-<a id="7053" class="Comment">--                                                     (sn-APP-LAM-SUB {M = M} {{Vτ}} {{VN′}} 𝒟′</a>
-<a id="7150" class="Comment">--                                                                     (derp s′)</a>
-<a id="7231" class="Comment">--                                                                     (sn-SUB {{Vτ , VN′}} (σ , s′) 𝒟)) }))</a>
-<a id="7340" class="Comment">-- sn-SUB σ (app 𝒟 ℰ)  with sn-SUB σ 𝒟</a>
-<a id="7379" class="Comment">-- sn-SUB σ (app 𝒟 ℰ)  | 𝒟′ , M′⇓ , f = f (sn-SUB σ ℰ)</a>
-<a id="7434" class="Comment">-- sn-SUB σ unit       = unit  , UNIT  , done , VUNIT</a>
-<a id="7488" class="Comment">-- sn-SUB σ true       = true  , TRUE  , done , VTRUE</a>
-<a id="7542" class="Comment">-- sn-SUB σ false      = false , FALSE , done , VFALSE</a>
-<a id="7597" class="Comment">-- sn-SUB σ (if 𝒟 ℰ ℱ) with sn-SUB σ 𝒟</a>
-<a id="7636" class="Comment">-- sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , M′    , SUB-M⤇*M′    , VM′    with tp⤇* SUB-M⤇*M′ 𝒟′</a>
-<a id="7719" class="Comment">-- sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , LAM _ , _             , VLAM   | ()</a>
-<a id="7785" class="Comment">-- sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , UNIT  , _             , VUNIT  | ()</a>
-<a id="7851" class="Comment">-- sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , TRUE  , SUB-M⤇*TRUE  , VTRUE  | true  = sn-IF-TRUE SUB-M⤇*TRUE 𝒟′ (sn-SUB σ ℰ) (sub (derps σ) ℱ)</a>
-<a id="7978" class="Comment">-- sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , FALSE , SUB-M⤇*FALSE , VFALSE | false = sn-IF-FALSE SUB-M⤇*FALSE 𝒟′ (sub (derps σ) ℰ) (sn-SUB σ ℱ)</a>
+<a id="6062" class="Comment">-- --------------------------------------------------------------------------------</a>
 
 
-<a id="8109" class="Comment">-- --------------------------------------------------------------------------------</a>
+<a id="6148" class="Comment">-- -- TODO</a>
+<a id="6159" class="Comment">-- frob : ∀ {A M} → SN M A</a>
+<a id="6186" class="Comment">--                → Σ (Term 0) (\ M′ → ∙ ⊢ M ⦂ A × M ⇓ M′ × SN M′ A)</a>
+<a id="6255" class="Comment">-- frob {𝟙}     s@(𝒟 , (M′ , M⇓M′))     = M′ , (𝒟 , M⇓M′ , snp⇓ M⇓M′ 𝒟 s)</a>
+<a id="6329" class="Comment">-- frob {𝔹}     s@(𝒟 , (M′ , M⇓M′))     = M′ , (𝒟 , M⇓M′ , snp⇓ M⇓M′ 𝒟 s)</a>
+<a id="6403" class="Comment">-- frob {A ⊃ B} s@(𝒟 , (M′ , M⇓M′) , f) = M′ , (𝒟 , M⇓M′ , snp⇓ M⇓M′ 𝒟 s)</a>
 
 
-<a id="8195" class="Comment">-- -- Every well-typed term is SN.</a>
-<a id="8230" class="Comment">-- sn : ∀ {A M} → ∙ ⊢ M ⦂ A</a>
-<a id="8258" class="Comment">--              → SN M A</a>
-<a id="8283" class="Comment">-- sn {A} {M} 𝒟 = subst (\ M′ → SN M′ A) (id-SUB M) (sn-SUB ∙ 𝒟)</a>
+<a id="6479" class="Comment">-- -- TODO</a>
+<a id="6490" class="Comment">-- sn-SUB : ∀ {g M A} → {τ : Terms 0 g} {Γ : Types g} → {{_ : Vals τ}}</a>
+<a id="6561" class="Comment">--                    → SNs τ Γ → Γ ⊢ M ⦂ A</a>
+<a id="6605" class="Comment">--                    → SN (SUB τ M) A</a>
+<a id="6644" class="Comment">-- sn-SUB σ (var i)    = get σ (zip∋₂ i)</a>
+<a id="6685" class="Comment">-- sn-SUB {{Vτ}} σ (lam {A} {M = M} 𝒟) = let 𝒟′ = sub (derps σ) (lam 𝒟) in</a>
+<a id="6760" class="Comment">--                                         𝒟′ , (LAM _ , done , VLAM) , (\ s →</a>
+<a id="6839" class="Comment">--                                           case frob {A} s of (\ { (N′ , ℰ , (N⤇*N′ , VN′) , s′) →</a>
+<a id="6940" class="Comment">--                                             snpr⤇* (congs-APP-LAM N⤇*N′)</a>
+<a id="7016" class="Comment">--                                                     (app 𝒟′ ℰ)</a>
+<a id="7082" class="Comment">--                                                     (sn-APP-LAM-SUB {M = M} {{Vτ}} {{VN′}} 𝒟′</a>
+<a id="7179" class="Comment">--                                                                     (derp s′)</a>
+<a id="7260" class="Comment">--                                                                     (sn-SUB {{Vτ , VN′}} (σ , s′) 𝒟)) }))</a>
+<a id="7369" class="Comment">-- sn-SUB σ (app 𝒟 ℰ)  with sn-SUB σ 𝒟</a>
+<a id="7408" class="Comment">-- sn-SUB σ (app 𝒟 ℰ)  | 𝒟′ , M′⇓ , f = f (sn-SUB σ ℰ)</a>
+<a id="7463" class="Comment">-- sn-SUB σ unit       = unit  , UNIT  , done , VUNIT</a>
+<a id="7517" class="Comment">-- sn-SUB σ true       = true  , TRUE  , done , VTRUE</a>
+<a id="7571" class="Comment">-- sn-SUB σ false      = false , FALSE , done , VFALSE</a>
+<a id="7626" class="Comment">-- sn-SUB σ (if 𝒟 ℰ ℱ) with sn-SUB σ 𝒟</a>
+<a id="7665" class="Comment">-- sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , M′    , SUB-M⤇*M′    , VM′    with tp⤇* SUB-M⤇*M′ 𝒟′</a>
+<a id="7748" class="Comment">-- sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , LAM _ , _             , VLAM   | ()</a>
+<a id="7814" class="Comment">-- sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , UNIT  , _             , VUNIT  | ()</a>
+<a id="7880" class="Comment">-- sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , TRUE  , SUB-M⤇*TRUE  , VTRUE  | true  = sn-IF-TRUE SUB-M⤇*TRUE 𝒟′ (sn-SUB σ ℰ) (sub (derps σ) ℱ)</a>
+<a id="8007" class="Comment">-- sn-SUB σ (if 𝒟 ℰ ℱ) | 𝒟′ , FALSE , SUB-M⤇*FALSE , VFALSE | false = sn-IF-FALSE SUB-M⤇*FALSE 𝒟′ (sub (derps σ) ℰ) (sn-SUB σ ℱ)</a>
 
 
-<a id="8350" class="Comment">-- -- Every SN term terminates.</a>
-<a id="8382" class="Comment">-- herp : ∀ {A M} → SN M A</a>
-<a id="8409" class="Comment">--                → M ⇓</a>
-<a id="8433" class="Comment">-- herp {𝟙}     (𝒟 , M⇓)     = M⇓</a>
-<a id="8467" class="Comment">-- herp {𝔹}     (𝒟 , M⇓)     = M⇓</a>
-<a id="8501" class="Comment">-- herp {A ⊃ B} (𝒟 , M⇓ , f) = M⇓</a>
+<a id="8138" class="Comment">-- --------------------------------------------------------------------------------</a>
 
 
-<a id="8537" class="Comment">-- -- Every well-typed term terminates.</a>
-<a id="8577" class="Comment">-- halt : ∀ {A M} → ∙ ⊢ M ⦂ A</a>
-<a id="8607" class="Comment">--                → M ⇓</a>
-<a id="8631" class="Comment">-- halt {A} 𝒟 = herp {A} (sn 𝒟)</a>
+<a id="8224" class="Comment">-- -- Every well-typed term is SN.</a>
+<a id="8259" class="Comment">-- sn : ∀ {A M} → ∙ ⊢ M ⦂ A</a>
+<a id="8287" class="Comment">--              → SN M A</a>
+<a id="8312" class="Comment">-- sn {A} {M} 𝒟 = subst (\ M′ → SN M′ A) (id-SUB M) (sn-SUB ∙ 𝒟)</a>
 
 
-<a id="8665" class="Comment">-- --------------------------------------------------------------------------------</a>
+<a id="8379" class="Comment">-- -- Every SN term terminates.</a>
+<a id="8411" class="Comment">-- herp : ∀ {A M} → SN M A</a>
+<a id="8438" class="Comment">--                → M ⇓</a>
+<a id="8462" class="Comment">-- herp {𝟙}     (𝒟 , M⇓)     = M⇓</a>
+<a id="8496" class="Comment">-- herp {𝔹}     (𝒟 , M⇓)     = M⇓</a>
+<a id="8530" class="Comment">-- herp {A ⊃ B} (𝒟 , M⇓ , f) = M⇓</a>
+
+
+<a id="8566" class="Comment">-- -- Every well-typed term terminates.</a>
+<a id="8606" class="Comment">-- halt : ∀ {A M} → ∙ ⊢ M ⦂ A</a>
+<a id="8636" class="Comment">--                → M ⇓</a>
+<a id="8660" class="Comment">-- halt {A} 𝒟 = herp {A} (sn 𝒟)</a>
+
+
+<a id="8694" class="Comment">-- --------------------------------------------------------------------------------</a>
 </pre></body></html>

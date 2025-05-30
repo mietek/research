@@ -1,357 +1,359 @@
 <!DOCTYPE HTML>
-<html><head><meta charset="utf-8"><title>A201801.LPTTDerivations</title><link rel="stylesheet" href="mi-common.css"></head><body><pre class="Agda"><a id="1" class="Keyword">module</a> <a id="8" href="A201801.LPTTDerivations.html" class="Module">A201801.LPTTDerivations</a> <a id="32" class="Keyword">where</a>
+<html><head><meta charset="utf-8"><title>A201801.LPTTDerivations</title><link rel="stylesheet" href="mi-common.css"></head><body><pre class="Agda"><a id="1" class="Symbol">{-#</a> <a id="5" class="Keyword">OPTIONS</a> <a id="13" class="Pragma">--rewriting</a> <a id="25" class="Symbol">#-}</a>
 
-<a id="39" class="Keyword">open</a> <a id="44" class="Keyword">import</a> <a id="51" href="A201801.Prelude.html" class="Module">A201801.Prelude</a>
-<a id="67" class="Keyword">open</a> <a id="72" class="Keyword">import</a> <a id="79" href="A201801.Category.html" class="Module">A201801.Category</a>
-<a id="96" class="Keyword">open</a> <a id="101" class="Keyword">import</a> <a id="108" href="A201801.Fin.html" class="Module">A201801.Fin</a>
-<a id="120" class="Keyword">open</a> <a id="125" class="Keyword">import</a> <a id="132" href="A201801.Vec.html" class="Module">A201801.Vec</a>
-<a id="144" class="Keyword">open</a> <a id="149" class="Keyword">import</a> <a id="156" href="A201801.VecLemmas.html" class="Module">A201801.VecLemmas</a>
-<a id="174" class="Keyword">open</a> <a id="179" class="Keyword">import</a> <a id="186" href="A201801.AllVec.html" class="Module">A201801.AllVec</a>
-<a id="201" class="Keyword">open</a> <a id="206" class="Keyword">import</a> <a id="213" href="A201801.S4TTTerms.html" class="Module">A201801.S4TTTerms</a>
-<a id="231" class="Keyword">open</a> <a id="236" class="Keyword">import</a> <a id="243" href="A201801.S4TTTermsLemmas.html" class="Module">A201801.S4TTTermsLemmas</a>
-<a id="267" class="Keyword">open</a> <a id="272" class="Keyword">import</a> <a id="279" href="A201801.LPTTTypes.html" class="Module">A201801.LPTTTypes</a>
-<a id="297" class="Keyword">open</a> <a id="302" class="Keyword">import</a> <a id="309" href="A201801.LPTTTypesLemmas.html" class="Module">A201801.LPTTTypesLemmas</a>
-<a id="333" class="Keyword">open</a> <a id="338" class="Keyword">import</a> <a id="345" href="A201801.LPTTAsserts.html" class="Module">A201801.LPTTAsserts</a>
+<a id="30" class="Keyword">module</a> <a id="37" href="A201801.LPTTDerivations.html" class="Module">A201801.LPTTDerivations</a> <a id="61" class="Keyword">where</a>
 
+<a id="68" class="Keyword">open</a> <a id="73" class="Keyword">import</a> <a id="80" href="A201801.Prelude.html" class="Module">A201801.Prelude</a>
+<a id="96" class="Keyword">open</a> <a id="101" class="Keyword">import</a> <a id="108" href="A201801.Category.html" class="Module">A201801.Category</a>
+<a id="125" class="Keyword">open</a> <a id="130" class="Keyword">import</a> <a id="137" href="A201801.Fin.html" class="Module">A201801.Fin</a>
+<a id="149" class="Keyword">open</a> <a id="154" class="Keyword">import</a> <a id="161" href="A201801.Vec.html" class="Module">A201801.Vec</a>
+<a id="173" class="Keyword">open</a> <a id="178" class="Keyword">import</a> <a id="185" href="A201801.VecLemmas.html" class="Module">A201801.VecLemmas</a>
+<a id="203" class="Keyword">open</a> <a id="208" class="Keyword">import</a> <a id="215" href="A201801.AllVec.html" class="Module">A201801.AllVec</a>
+<a id="230" class="Keyword">open</a> <a id="235" class="Keyword">import</a> <a id="242" href="A201801.S4TTTerms.html" class="Module">A201801.S4TTTerms</a>
+<a id="260" class="Keyword">open</a> <a id="265" class="Keyword">import</a> <a id="272" href="A201801.S4TTTermsLemmas.html" class="Module">A201801.S4TTTermsLemmas</a>
+<a id="296" class="Keyword">open</a> <a id="301" class="Keyword">import</a> <a id="308" href="A201801.LPTTTypes.html" class="Module">A201801.LPTTTypes</a>
+<a id="326" class="Keyword">open</a> <a id="331" class="Keyword">import</a> <a id="338" href="A201801.LPTTTypesLemmas.html" class="Module">A201801.LPTTTypesLemmas</a>
+<a id="362" class="Keyword">open</a> <a id="367" class="Keyword">import</a> <a id="374" href="A201801.LPTTAsserts.html" class="Module">A201801.LPTTAsserts</a>
 
-<a id="367" class="Comment">--------------------------------------------------------------------------------</a>
 
+<a id="396" class="Comment">--------------------------------------------------------------------------------</a>
 
-<a id="450" class="Keyword">infix</a> <a id="456" class="Number">3</a> <a id="458" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">_⊢_⦂_valid[_]</a>
-<a id="472" class="Keyword">data</a> <a id="_⊢_⦂_valid[_]"></a><a id="477" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">_⊢_⦂_valid[_]</a> <a id="491" class="Symbol">:</a> <a id="493" class="Symbol">∀</a> <a id="495" class="Symbol">{</a><a id="496" href="A201801.LPTTDerivations.html#496" class="Bound">d</a> <a id="498" href="A201801.LPTTDerivations.html#498" class="Bound">g</a><a id="499" class="Symbol">}</a> <a id="501" class="Symbol">→</a> <a id="503" href="A201801.LPTTAsserts.html#534" class="Datatype">Asserts</a> <a id="511" href="A201801.LPTTDerivations.html#496" class="Bound">d</a> <a id="513" class="Symbol">→</a> <a id="515" href="A201801.S4TTTerms.html#258" class="Datatype">Term</a> <a id="520" href="A201801.LPTTDerivations.html#496" class="Bound">d</a> <a id="522" href="A201801.LPTTDerivations.html#498" class="Bound">g</a> <a id="524" class="Symbol">→</a> <a id="526" href="A201801.LPTTTypes.html#367" class="Datatype">Type</a> <a id="531" href="A201801.LPTTDerivations.html#496" class="Bound">d</a> <a id="533" class="Symbol">→</a> <a id="535" href="A201801.LPTTTypes.html#662" class="Function">Types</a> <a id="541" href="A201801.LPTTDerivations.html#496" class="Bound">d</a> <a id="543" href="A201801.LPTTDerivations.html#498" class="Bound">g</a> <a id="545" class="Symbol">→</a> <a id="547" class="PrimitiveType">Set</a>
-  <a id="553" class="Keyword">where</a>
-    <a id="_⊢_⦂_valid[_].var"></a><a id="563" href="A201801.LPTTDerivations.html#563" class="InductiveConstructor">var</a> <a id="567" class="Symbol">:</a> <a id="569" class="Symbol">∀</a> <a id="571" class="Symbol">{</a><a id="572" href="A201801.LPTTDerivations.html#572" class="Bound">d</a> <a id="574" href="A201801.LPTTDerivations.html#574" class="Bound">g</a> <a id="576" href="A201801.LPTTDerivations.html#576" class="Bound">I</a> <a id="578" href="A201801.LPTTDerivations.html#578" class="Bound">A</a><a id="579" class="Symbol">}</a> <a id="581" class="Symbol">→</a> <a id="583" class="Symbol">{</a><a id="584" href="A201801.LPTTDerivations.html#584" class="Bound">Δ</a> <a id="586" class="Symbol">:</a> <a id="588" href="A201801.LPTTAsserts.html#534" class="Datatype">Asserts</a> <a id="596" href="A201801.LPTTDerivations.html#572" class="Bound">d</a><a id="597" class="Symbol">}</a> <a id="599" class="Symbol">{</a><a id="600" href="A201801.LPTTDerivations.html#600" class="Bound">Γ</a> <a id="602" class="Symbol">:</a> <a id="604" href="A201801.LPTTTypes.html#662" class="Function">Types</a> <a id="610" href="A201801.LPTTDerivations.html#572" class="Bound">d</a> <a id="612" href="A201801.LPTTDerivations.html#574" class="Bound">g</a><a id="613" class="Symbol">}</a>
-                      <a id="637" class="Symbol">→</a> <a id="639" href="A201801.LPTTDerivations.html#600" class="Bound">Γ</a> <a id="641" href="A201801.Vec.html#2295" class="Datatype Operator">∋⟨</a> <a id="644" href="A201801.LPTTDerivations.html#576" class="Bound">I</a> <a id="646" href="A201801.Vec.html#2295" class="Datatype Operator">⟩</a> <a id="648" href="A201801.LPTTDerivations.html#578" class="Bound">A</a>
-                      <a id="672" class="Symbol">→</a> <a id="674" href="A201801.LPTTDerivations.html#584" class="Bound">Δ</a> <a id="676" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⊢</a> <a id="678" href="A201801.S4TTTerms.html#293" class="InductiveConstructor">VAR</a> <a id="682" href="A201801.LPTTDerivations.html#576" class="Bound">I</a> <a id="684" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⦂</a> <a id="686" href="A201801.LPTTDerivations.html#578" class="Bound">A</a> <a id="688" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">valid[</a> <a id="695" href="A201801.LPTTDerivations.html#600" class="Bound">Γ</a> <a id="697" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">]</a>
 
-    <a id="_⊢_⦂_valid[_].lam"></a><a id="704" href="A201801.LPTTDerivations.html#704" class="InductiveConstructor">lam</a> <a id="708" class="Symbol">:</a> <a id="710" class="Symbol">∀</a> <a id="712" class="Symbol">{</a><a id="713" href="A201801.LPTTDerivations.html#713" class="Bound">d</a> <a id="715" href="A201801.LPTTDerivations.html#715" class="Bound">g</a> <a id="717" href="A201801.LPTTDerivations.html#717" class="Bound">M</a> <a id="719" href="A201801.LPTTDerivations.html#719" class="Bound">A</a> <a id="721" href="A201801.LPTTDerivations.html#721" class="Bound">B</a><a id="722" class="Symbol">}</a> <a id="724" class="Symbol">→</a> <a id="726" class="Symbol">{</a><a id="727" href="A201801.LPTTDerivations.html#727" class="Bound">Δ</a> <a id="729" class="Symbol">:</a> <a id="731" href="A201801.LPTTAsserts.html#534" class="Datatype">Asserts</a> <a id="739" href="A201801.LPTTDerivations.html#713" class="Bound">d</a><a id="740" class="Symbol">}</a> <a id="742" class="Symbol">{</a><a id="743" href="A201801.LPTTDerivations.html#743" class="Bound">Γ</a> <a id="745" class="Symbol">:</a> <a id="747" href="A201801.LPTTTypes.html#662" class="Function">Types</a> <a id="753" href="A201801.LPTTDerivations.html#713" class="Bound">d</a> <a id="755" href="A201801.LPTTDerivations.html#715" class="Bound">g</a><a id="756" class="Symbol">}</a>
-                        <a id="782" class="Symbol">→</a> <a id="784" href="A201801.LPTTDerivations.html#727" class="Bound">Δ</a> <a id="786" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⊢</a> <a id="788" href="A201801.LPTTDerivations.html#717" class="Bound">M</a> <a id="790" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⦂</a> <a id="792" href="A201801.LPTTDerivations.html#721" class="Bound">B</a> <a id="794" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">valid[</a> <a id="801" href="A201801.LPTTDerivations.html#743" class="Bound">Γ</a> <a id="803" href="A201801.Vec.html#287" class="InductiveConstructor Operator">,</a> <a id="805" href="A201801.LPTTDerivations.html#719" class="Bound">A</a> <a id="807" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">]</a>
-                        <a id="833" class="Symbol">→</a> <a id="835" href="A201801.LPTTDerivations.html#727" class="Bound">Δ</a> <a id="837" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⊢</a> <a id="839" href="A201801.S4TTTerms.html#333" class="InductiveConstructor">LAM</a> <a id="843" href="A201801.LPTTDerivations.html#717" class="Bound">M</a> <a id="845" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⦂</a> <a id="847" href="A201801.LPTTDerivations.html#719" class="Bound">A</a> <a id="849" href="A201801.LPTTTypes.html#431" class="InductiveConstructor Operator">⊃</a> <a id="851" href="A201801.LPTTDerivations.html#721" class="Bound">B</a> <a id="853" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">valid[</a> <a id="860" href="A201801.LPTTDerivations.html#743" class="Bound">Γ</a> <a id="862" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">]</a>
+<a id="479" class="Keyword">infix</a> <a id="485" class="Number">3</a> <a id="487" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">_⊢_⦂_valid[_]</a>
+<a id="501" class="Keyword">data</a> <a id="_⊢_⦂_valid[_]"></a><a id="506" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">_⊢_⦂_valid[_]</a> <a id="520" class="Symbol">:</a> <a id="522" class="Symbol">∀</a> <a id="524" class="Symbol">{</a><a id="525" href="A201801.LPTTDerivations.html#525" class="Bound">d</a> <a id="527" href="A201801.LPTTDerivations.html#527" class="Bound">g</a><a id="528" class="Symbol">}</a> <a id="530" class="Symbol">→</a> <a id="532" href="A201801.LPTTAsserts.html#563" class="Datatype">Asserts</a> <a id="540" href="A201801.LPTTDerivations.html#525" class="Bound">d</a> <a id="542" class="Symbol">→</a> <a id="544" href="A201801.S4TTTerms.html#287" class="Datatype">Term</a> <a id="549" href="A201801.LPTTDerivations.html#525" class="Bound">d</a> <a id="551" href="A201801.LPTTDerivations.html#527" class="Bound">g</a> <a id="553" class="Symbol">→</a> <a id="555" href="A201801.LPTTTypes.html#396" class="Datatype">Type</a> <a id="560" href="A201801.LPTTDerivations.html#525" class="Bound">d</a> <a id="562" class="Symbol">→</a> <a id="564" href="A201801.LPTTTypes.html#691" class="Function">Types</a> <a id="570" href="A201801.LPTTDerivations.html#525" class="Bound">d</a> <a id="572" href="A201801.LPTTDerivations.html#527" class="Bound">g</a> <a id="574" class="Symbol">→</a> <a id="576" href="Agda.Primitive.html#388" class="Primitive">Set</a>
+  <a id="582" class="Keyword">where</a>
+    <a id="_⊢_⦂_valid[_].var"></a><a id="592" href="A201801.LPTTDerivations.html#592" class="InductiveConstructor">var</a> <a id="596" class="Symbol">:</a> <a id="598" class="Symbol">∀</a> <a id="600" class="Symbol">{</a><a id="601" href="A201801.LPTTDerivations.html#601" class="Bound">d</a> <a id="603" href="A201801.LPTTDerivations.html#603" class="Bound">g</a> <a id="605" href="A201801.LPTTDerivations.html#605" class="Bound">I</a> <a id="607" href="A201801.LPTTDerivations.html#607" class="Bound">A</a><a id="608" class="Symbol">}</a> <a id="610" class="Symbol">→</a> <a id="612" class="Symbol">{</a><a id="613" href="A201801.LPTTDerivations.html#613" class="Bound">Δ</a> <a id="615" class="Symbol">:</a> <a id="617" href="A201801.LPTTAsserts.html#563" class="Datatype">Asserts</a> <a id="625" href="A201801.LPTTDerivations.html#601" class="Bound">d</a><a id="626" class="Symbol">}</a> <a id="628" class="Symbol">{</a><a id="629" href="A201801.LPTTDerivations.html#629" class="Bound">Γ</a> <a id="631" class="Symbol">:</a> <a id="633" href="A201801.LPTTTypes.html#691" class="Function">Types</a> <a id="639" href="A201801.LPTTDerivations.html#601" class="Bound">d</a> <a id="641" href="A201801.LPTTDerivations.html#603" class="Bound">g</a><a id="642" class="Symbol">}</a>
+                      <a id="666" class="Symbol">→</a> <a id="668" href="A201801.LPTTDerivations.html#629" class="Bound">Γ</a> <a id="670" href="A201801.Vec.html#2324" class="Datatype Operator">∋⟨</a> <a id="673" href="A201801.LPTTDerivations.html#605" class="Bound">I</a> <a id="675" href="A201801.Vec.html#2324" class="Datatype Operator">⟩</a> <a id="677" href="A201801.LPTTDerivations.html#607" class="Bound">A</a>
+                      <a id="701" class="Symbol">→</a> <a id="703" href="A201801.LPTTDerivations.html#613" class="Bound">Δ</a> <a id="705" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⊢</a> <a id="707" href="A201801.S4TTTerms.html#322" class="InductiveConstructor">VAR</a> <a id="711" href="A201801.LPTTDerivations.html#605" class="Bound">I</a> <a id="713" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⦂</a> <a id="715" href="A201801.LPTTDerivations.html#607" class="Bound">A</a> <a id="717" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">valid[</a> <a id="724" href="A201801.LPTTDerivations.html#629" class="Bound">Γ</a> <a id="726" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">]</a>
 
-    <a id="_⊢_⦂_valid[_].app"></a><a id="869" href="A201801.LPTTDerivations.html#869" class="InductiveConstructor">app</a> <a id="873" class="Symbol">:</a> <a id="875" class="Symbol">∀</a> <a id="877" class="Symbol">{</a><a id="878" href="A201801.LPTTDerivations.html#878" class="Bound">d</a> <a id="880" href="A201801.LPTTDerivations.html#880" class="Bound">g</a> <a id="882" href="A201801.LPTTDerivations.html#882" class="Bound">M</a> <a id="884" href="A201801.LPTTDerivations.html#884" class="Bound">N</a> <a id="886" href="A201801.LPTTDerivations.html#886" class="Bound">A</a> <a id="888" href="A201801.LPTTDerivations.html#888" class="Bound">B</a><a id="889" class="Symbol">}</a> <a id="891" class="Symbol">→</a> <a id="893" class="Symbol">{</a><a id="894" href="A201801.LPTTDerivations.html#894" class="Bound">Δ</a> <a id="896" class="Symbol">:</a> <a id="898" href="A201801.LPTTAsserts.html#534" class="Datatype">Asserts</a> <a id="906" href="A201801.LPTTDerivations.html#878" class="Bound">d</a><a id="907" class="Symbol">}</a> <a id="909" class="Symbol">{</a><a id="910" href="A201801.LPTTDerivations.html#910" class="Bound">Γ</a> <a id="912" class="Symbol">:</a> <a id="914" href="A201801.LPTTTypes.html#662" class="Function">Types</a> <a id="920" href="A201801.LPTTDerivations.html#878" class="Bound">d</a> <a id="922" href="A201801.LPTTDerivations.html#880" class="Bound">g</a><a id="923" class="Symbol">}</a>
-                          <a id="951" class="Symbol">→</a> <a id="953" href="A201801.LPTTDerivations.html#894" class="Bound">Δ</a> <a id="955" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⊢</a> <a id="957" href="A201801.LPTTDerivations.html#882" class="Bound">M</a> <a id="959" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⦂</a> <a id="961" href="A201801.LPTTDerivations.html#886" class="Bound">A</a> <a id="963" href="A201801.LPTTTypes.html#431" class="InductiveConstructor Operator">⊃</a> <a id="965" href="A201801.LPTTDerivations.html#888" class="Bound">B</a> <a id="967" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">valid[</a> <a id="974" href="A201801.LPTTDerivations.html#910" class="Bound">Γ</a> <a id="976" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">]</a> <a id="978" class="Symbol">→</a> <a id="980" href="A201801.LPTTDerivations.html#894" class="Bound">Δ</a> <a id="982" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⊢</a> <a id="984" href="A201801.LPTTDerivations.html#884" class="Bound">N</a> <a id="986" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⦂</a> <a id="988" href="A201801.LPTTDerivations.html#886" class="Bound">A</a> <a id="990" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">valid[</a> <a id="997" href="A201801.LPTTDerivations.html#910" class="Bound">Γ</a> <a id="999" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">]</a>
-                          <a id="1027" class="Symbol">→</a> <a id="1029" href="A201801.LPTTDerivations.html#894" class="Bound">Δ</a> <a id="1031" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⊢</a> <a id="1033" href="A201801.S4TTTerms.html#382" class="InductiveConstructor">APP</a> <a id="1037" href="A201801.LPTTDerivations.html#882" class="Bound">M</a> <a id="1039" href="A201801.LPTTDerivations.html#884" class="Bound">N</a> <a id="1041" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⦂</a> <a id="1043" href="A201801.LPTTDerivations.html#888" class="Bound">B</a> <a id="1045" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">valid[</a> <a id="1052" href="A201801.LPTTDerivations.html#910" class="Bound">Γ</a> <a id="1054" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">]</a>
+    <a id="_⊢_⦂_valid[_].lam"></a><a id="733" href="A201801.LPTTDerivations.html#733" class="InductiveConstructor">lam</a> <a id="737" class="Symbol">:</a> <a id="739" class="Symbol">∀</a> <a id="741" class="Symbol">{</a><a id="742" href="A201801.LPTTDerivations.html#742" class="Bound">d</a> <a id="744" href="A201801.LPTTDerivations.html#744" class="Bound">g</a> <a id="746" href="A201801.LPTTDerivations.html#746" class="Bound">M</a> <a id="748" href="A201801.LPTTDerivations.html#748" class="Bound">A</a> <a id="750" href="A201801.LPTTDerivations.html#750" class="Bound">B</a><a id="751" class="Symbol">}</a> <a id="753" class="Symbol">→</a> <a id="755" class="Symbol">{</a><a id="756" href="A201801.LPTTDerivations.html#756" class="Bound">Δ</a> <a id="758" class="Symbol">:</a> <a id="760" href="A201801.LPTTAsserts.html#563" class="Datatype">Asserts</a> <a id="768" href="A201801.LPTTDerivations.html#742" class="Bound">d</a><a id="769" class="Symbol">}</a> <a id="771" class="Symbol">{</a><a id="772" href="A201801.LPTTDerivations.html#772" class="Bound">Γ</a> <a id="774" class="Symbol">:</a> <a id="776" href="A201801.LPTTTypes.html#691" class="Function">Types</a> <a id="782" href="A201801.LPTTDerivations.html#742" class="Bound">d</a> <a id="784" href="A201801.LPTTDerivations.html#744" class="Bound">g</a><a id="785" class="Symbol">}</a>
+                        <a id="811" class="Symbol">→</a> <a id="813" href="A201801.LPTTDerivations.html#756" class="Bound">Δ</a> <a id="815" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⊢</a> <a id="817" href="A201801.LPTTDerivations.html#746" class="Bound">M</a> <a id="819" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⦂</a> <a id="821" href="A201801.LPTTDerivations.html#750" class="Bound">B</a> <a id="823" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">valid[</a> <a id="830" href="A201801.LPTTDerivations.html#772" class="Bound">Γ</a> <a id="832" href="A201801.Vec.html#316" class="InductiveConstructor Operator">,</a> <a id="834" href="A201801.LPTTDerivations.html#748" class="Bound">A</a> <a id="836" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">]</a>
+                        <a id="862" class="Symbol">→</a> <a id="864" href="A201801.LPTTDerivations.html#756" class="Bound">Δ</a> <a id="866" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⊢</a> <a id="868" href="A201801.S4TTTerms.html#362" class="InductiveConstructor">LAM</a> <a id="872" href="A201801.LPTTDerivations.html#746" class="Bound">M</a> <a id="874" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⦂</a> <a id="876" href="A201801.LPTTDerivations.html#748" class="Bound">A</a> <a id="878" href="A201801.LPTTTypes.html#460" class="InductiveConstructor Operator">⊃</a> <a id="880" href="A201801.LPTTDerivations.html#750" class="Bound">B</a> <a id="882" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">valid[</a> <a id="889" href="A201801.LPTTDerivations.html#772" class="Bound">Γ</a> <a id="891" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">]</a>
 
-    <a id="_⊢_⦂_valid[_].mvar"></a><a id="1061" href="A201801.LPTTDerivations.html#1061" class="InductiveConstructor">mvar</a> <a id="1066" class="Symbol">:</a> <a id="1068" class="Symbol">∀</a> <a id="1070" class="Symbol">{</a><a id="1071" href="A201801.LPTTDerivations.html#1071" class="Bound">d</a> <a id="1073" href="A201801.LPTTDerivations.html#1073" class="Bound">g</a> <a id="1075" href="A201801.LPTTDerivations.html#1075" class="Bound">I</a> <a id="1077" href="A201801.LPTTDerivations.html#1077" class="Bound">M</a> <a id="1079" href="A201801.LPTTDerivations.html#1079" class="Bound">A</a><a id="1080" class="Symbol">}</a> <a id="1082" class="Symbol">→</a> <a id="1084" class="Symbol">{</a><a id="1085" href="A201801.LPTTDerivations.html#1085" class="Bound">Δ</a> <a id="1087" class="Symbol">:</a> <a id="1089" href="A201801.LPTTAsserts.html#534" class="Datatype">Asserts</a> <a id="1097" href="A201801.LPTTDerivations.html#1071" class="Bound">d</a><a id="1098" class="Symbol">}</a> <a id="1100" class="Symbol">{</a><a id="1101" href="A201801.LPTTDerivations.html#1101" class="Bound">Γ</a> <a id="1103" class="Symbol">:</a> <a id="1105" href="A201801.LPTTTypes.html#662" class="Function">Types</a> <a id="1111" href="A201801.LPTTDerivations.html#1071" class="Bound">d</a> <a id="1113" href="A201801.LPTTDerivations.html#1073" class="Bound">g</a><a id="1114" class="Symbol">}</a>
-                         <a id="1141" class="Symbol">→</a> <a id="1143" href="A201801.LPTTDerivations.html#1085" class="Bound">Δ</a> <a id="1145" href="A201801.LPTTAsserts.html#2010" class="Datatype Operator">∋◆⟨</a> <a id="1149" href="A201801.LPTTDerivations.html#1075" class="Bound">I</a> <a id="1151" href="A201801.LPTTAsserts.html#2010" class="Datatype Operator">⟩</a> <a id="1153" href="A201801.LPTTAsserts.html#471" class="InductiveConstructor Operator">⟪⊫</a> <a id="1156" href="A201801.LPTTDerivations.html#1077" class="Bound">M</a> <a id="1158" href="A201801.LPTTAsserts.html#471" class="InductiveConstructor Operator">⦂</a> <a id="1160" href="A201801.LPTTDerivations.html#1079" class="Bound">A</a> <a id="1162" href="A201801.LPTTAsserts.html#471" class="InductiveConstructor Operator">⟫</a>  <a id="1165" class="Comment">-- NOTE: This is more than Artemov-Bonelli</a>
-                         <a id="1233" class="Symbol">→</a> <a id="1235" href="A201801.LPTTDerivations.html#1085" class="Bound">Δ</a> <a id="1237" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⊢</a> <a id="1239" href="A201801.S4TTTerms.html#436" class="InductiveConstructor">MVAR</a> <a id="1244" href="A201801.LPTTDerivations.html#1075" class="Bound">I</a> <a id="1246" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⦂</a> <a id="1248" href="A201801.LPTTDerivations.html#1079" class="Bound">A</a> <a id="1250" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">valid[</a> <a id="1257" href="A201801.LPTTDerivations.html#1101" class="Bound">Γ</a> <a id="1259" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">]</a>
+    <a id="_⊢_⦂_valid[_].app"></a><a id="898" href="A201801.LPTTDerivations.html#898" class="InductiveConstructor">app</a> <a id="902" class="Symbol">:</a> <a id="904" class="Symbol">∀</a> <a id="906" class="Symbol">{</a><a id="907" href="A201801.LPTTDerivations.html#907" class="Bound">d</a> <a id="909" href="A201801.LPTTDerivations.html#909" class="Bound">g</a> <a id="911" href="A201801.LPTTDerivations.html#911" class="Bound">M</a> <a id="913" href="A201801.LPTTDerivations.html#913" class="Bound">N</a> <a id="915" href="A201801.LPTTDerivations.html#915" class="Bound">A</a> <a id="917" href="A201801.LPTTDerivations.html#917" class="Bound">B</a><a id="918" class="Symbol">}</a> <a id="920" class="Symbol">→</a> <a id="922" class="Symbol">{</a><a id="923" href="A201801.LPTTDerivations.html#923" class="Bound">Δ</a> <a id="925" class="Symbol">:</a> <a id="927" href="A201801.LPTTAsserts.html#563" class="Datatype">Asserts</a> <a id="935" href="A201801.LPTTDerivations.html#907" class="Bound">d</a><a id="936" class="Symbol">}</a> <a id="938" class="Symbol">{</a><a id="939" href="A201801.LPTTDerivations.html#939" class="Bound">Γ</a> <a id="941" class="Symbol">:</a> <a id="943" href="A201801.LPTTTypes.html#691" class="Function">Types</a> <a id="949" href="A201801.LPTTDerivations.html#907" class="Bound">d</a> <a id="951" href="A201801.LPTTDerivations.html#909" class="Bound">g</a><a id="952" class="Symbol">}</a>
+                          <a id="980" class="Symbol">→</a> <a id="982" href="A201801.LPTTDerivations.html#923" class="Bound">Δ</a> <a id="984" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⊢</a> <a id="986" href="A201801.LPTTDerivations.html#911" class="Bound">M</a> <a id="988" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⦂</a> <a id="990" href="A201801.LPTTDerivations.html#915" class="Bound">A</a> <a id="992" href="A201801.LPTTTypes.html#460" class="InductiveConstructor Operator">⊃</a> <a id="994" href="A201801.LPTTDerivations.html#917" class="Bound">B</a> <a id="996" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">valid[</a> <a id="1003" href="A201801.LPTTDerivations.html#939" class="Bound">Γ</a> <a id="1005" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">]</a> <a id="1007" class="Symbol">→</a> <a id="1009" href="A201801.LPTTDerivations.html#923" class="Bound">Δ</a> <a id="1011" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⊢</a> <a id="1013" href="A201801.LPTTDerivations.html#913" class="Bound">N</a> <a id="1015" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⦂</a> <a id="1017" href="A201801.LPTTDerivations.html#915" class="Bound">A</a> <a id="1019" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">valid[</a> <a id="1026" href="A201801.LPTTDerivations.html#939" class="Bound">Γ</a> <a id="1028" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">]</a>
+                          <a id="1056" class="Symbol">→</a> <a id="1058" href="A201801.LPTTDerivations.html#923" class="Bound">Δ</a> <a id="1060" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⊢</a> <a id="1062" href="A201801.S4TTTerms.html#411" class="InductiveConstructor">APP</a> <a id="1066" href="A201801.LPTTDerivations.html#911" class="Bound">M</a> <a id="1068" href="A201801.LPTTDerivations.html#913" class="Bound">N</a> <a id="1070" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⦂</a> <a id="1072" href="A201801.LPTTDerivations.html#917" class="Bound">B</a> <a id="1074" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">valid[</a> <a id="1081" href="A201801.LPTTDerivations.html#939" class="Bound">Γ</a> <a id="1083" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">]</a>
 
-    <a id="_⊢_⦂_valid[_].box"></a><a id="1266" href="A201801.LPTTDerivations.html#1266" class="InductiveConstructor">box</a> <a id="1270" class="Symbol">:</a> <a id="1272" class="Symbol">∀</a> <a id="1274" class="Symbol">{</a><a id="1275" href="A201801.LPTTDerivations.html#1275" class="Bound">d</a> <a id="1277" href="A201801.LPTTDerivations.html#1277" class="Bound">g</a> <a id="1279" href="A201801.LPTTDerivations.html#1279" class="Bound">M</a> <a id="1281" href="A201801.LPTTDerivations.html#1281" class="Bound">A</a><a id="1282" class="Symbol">}</a> <a id="1284" class="Symbol">→</a> <a id="1286" class="Symbol">{</a><a id="1287" href="A201801.LPTTDerivations.html#1287" class="Bound">Δ</a> <a id="1289" class="Symbol">:</a> <a id="1291" href="A201801.LPTTAsserts.html#534" class="Datatype">Asserts</a> <a id="1299" href="A201801.LPTTDerivations.html#1275" class="Bound">d</a><a id="1300" class="Symbol">}</a> <a id="1302" class="Symbol">{</a><a id="1303" href="A201801.LPTTDerivations.html#1303" class="Bound">Γ</a> <a id="1305" class="Symbol">:</a> <a id="1307" href="A201801.LPTTTypes.html#662" class="Function">Types</a> <a id="1313" href="A201801.LPTTDerivations.html#1275" class="Bound">d</a> <a id="1315" href="A201801.LPTTDerivations.html#1277" class="Bound">g</a><a id="1316" class="Symbol">}</a>
-                      <a id="1340" class="Symbol">→</a> <a id="1342" href="A201801.LPTTDerivations.html#1287" class="Bound">Δ</a> <a id="1344" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⊢</a> <a id="1346" href="A201801.LPTTDerivations.html#1279" class="Bound">M</a> <a id="1348" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⦂</a> <a id="1350" href="A201801.LPTTDerivations.html#1281" class="Bound">A</a> <a id="1352" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">valid[</a> <a id="1359" href="A201801.Vec.html#266" class="InductiveConstructor">∙</a> <a id="1361" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">]</a>
-                      <a id="1385" class="Symbol">→</a> <a id="1387" href="A201801.LPTTDerivations.html#1287" class="Bound">Δ</a> <a id="1389" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⊢</a> <a id="1391" href="A201801.S4TTTerms.html#476" class="InductiveConstructor">BOX</a> <a id="1395" href="A201801.LPTTDerivations.html#1279" class="Bound">M</a> <a id="1397" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⦂</a> <a id="1399" href="A201801.LPTTTypes.html#475" class="InductiveConstructor Operator">[</a> <a id="1401" href="A201801.LPTTDerivations.html#1279" class="Bound">M</a> <a id="1403" href="A201801.LPTTTypes.html#475" class="InductiveConstructor Operator">]</a> <a id="1405" href="A201801.LPTTDerivations.html#1281" class="Bound">A</a> <a id="1407" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">valid[</a> <a id="1414" href="A201801.LPTTDerivations.html#1303" class="Bound">Γ</a> <a id="1416" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">]</a>
+    <a id="_⊢_⦂_valid[_].mvar"></a><a id="1090" href="A201801.LPTTDerivations.html#1090" class="InductiveConstructor">mvar</a> <a id="1095" class="Symbol">:</a> <a id="1097" class="Symbol">∀</a> <a id="1099" class="Symbol">{</a><a id="1100" href="A201801.LPTTDerivations.html#1100" class="Bound">d</a> <a id="1102" href="A201801.LPTTDerivations.html#1102" class="Bound">g</a> <a id="1104" href="A201801.LPTTDerivations.html#1104" class="Bound">I</a> <a id="1106" href="A201801.LPTTDerivations.html#1106" class="Bound">M</a> <a id="1108" href="A201801.LPTTDerivations.html#1108" class="Bound">A</a><a id="1109" class="Symbol">}</a> <a id="1111" class="Symbol">→</a> <a id="1113" class="Symbol">{</a><a id="1114" href="A201801.LPTTDerivations.html#1114" class="Bound">Δ</a> <a id="1116" class="Symbol">:</a> <a id="1118" href="A201801.LPTTAsserts.html#563" class="Datatype">Asserts</a> <a id="1126" href="A201801.LPTTDerivations.html#1100" class="Bound">d</a><a id="1127" class="Symbol">}</a> <a id="1129" class="Symbol">{</a><a id="1130" href="A201801.LPTTDerivations.html#1130" class="Bound">Γ</a> <a id="1132" class="Symbol">:</a> <a id="1134" href="A201801.LPTTTypes.html#691" class="Function">Types</a> <a id="1140" href="A201801.LPTTDerivations.html#1100" class="Bound">d</a> <a id="1142" href="A201801.LPTTDerivations.html#1102" class="Bound">g</a><a id="1143" class="Symbol">}</a>
+                         <a id="1170" class="Symbol">→</a> <a id="1172" href="A201801.LPTTDerivations.html#1114" class="Bound">Δ</a> <a id="1174" href="A201801.LPTTAsserts.html#2039" class="Datatype Operator">∋◆⟨</a> <a id="1178" href="A201801.LPTTDerivations.html#1104" class="Bound">I</a> <a id="1180" href="A201801.LPTTAsserts.html#2039" class="Datatype Operator">⟩</a> <a id="1182" href="A201801.LPTTAsserts.html#500" class="InductiveConstructor Operator">⟪⊫</a> <a id="1185" href="A201801.LPTTDerivations.html#1106" class="Bound">M</a> <a id="1187" href="A201801.LPTTAsserts.html#500" class="InductiveConstructor Operator">⦂</a> <a id="1189" href="A201801.LPTTDerivations.html#1108" class="Bound">A</a> <a id="1191" href="A201801.LPTTAsserts.html#500" class="InductiveConstructor Operator">⟫</a>  <a id="1194" class="Comment">-- NOTE: This is more than Artemov-Bonelli</a>
+                         <a id="1262" class="Symbol">→</a> <a id="1264" href="A201801.LPTTDerivations.html#1114" class="Bound">Δ</a> <a id="1266" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⊢</a> <a id="1268" href="A201801.S4TTTerms.html#465" class="InductiveConstructor">MVAR</a> <a id="1273" href="A201801.LPTTDerivations.html#1104" class="Bound">I</a> <a id="1275" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⦂</a> <a id="1277" href="A201801.LPTTDerivations.html#1108" class="Bound">A</a> <a id="1279" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">valid[</a> <a id="1286" href="A201801.LPTTDerivations.html#1130" class="Bound">Γ</a> <a id="1288" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">]</a>
 
-    <a id="_⊢_⦂_valid[_].letbox"></a><a id="1423" href="A201801.LPTTDerivations.html#1423" class="InductiveConstructor">letbox</a> <a id="1430" class="Symbol">:</a> <a id="1432" class="Symbol">∀</a> <a id="1434" class="Symbol">{</a><a id="1435" href="A201801.LPTTDerivations.html#1435" class="Bound">d</a> <a id="1437" href="A201801.LPTTDerivations.html#1437" class="Bound">g</a> <a id="1439" href="A201801.LPTTDerivations.html#1439" class="Bound">M</a> <a id="1441" href="A201801.LPTTDerivations.html#1441" class="Bound">N</a> <a id="1443" href="A201801.LPTTDerivations.html#1443" class="Bound">Q</a> <a id="1445" href="A201801.LPTTDerivations.html#1445" class="Bound">A</a> <a id="1447" href="A201801.LPTTDerivations.html#1447" class="Bound">B</a><a id="1448" class="Symbol">}</a> <a id="1450" class="Symbol">→</a> <a id="1452" class="Symbol">{</a><a id="1453" href="A201801.LPTTDerivations.html#1453" class="Bound">Δ</a> <a id="1455" class="Symbol">:</a> <a id="1457" href="A201801.LPTTAsserts.html#534" class="Datatype">Asserts</a> <a id="1465" href="A201801.LPTTDerivations.html#1435" class="Bound">d</a><a id="1466" class="Symbol">}</a> <a id="1468" class="Symbol">{</a><a id="1469" href="A201801.LPTTDerivations.html#1469" class="Bound">Γ</a> <a id="1471" class="Symbol">:</a> <a id="1473" href="A201801.LPTTTypes.html#662" class="Function">Types</a> <a id="1479" href="A201801.LPTTDerivations.html#1435" class="Bound">d</a> <a id="1481" href="A201801.LPTTDerivations.html#1437" class="Bound">g</a><a id="1482" class="Symbol">}</a>
-                                  <a id="1518" class="Symbol">{</a><a id="1519" href="A201801.LPTTDerivations.html#1519" class="Bound">B′</a> <a id="1522" class="Symbol">:</a> <a id="1524" href="A201801.LPTTTypes.html#367" class="Datatype">Type</a> <a id="1529" href="A201801.LPTTDerivations.html#1435" class="Bound">d</a><a id="1530" class="Symbol">}</a> <a id="1532" class="Symbol">{{</a><a id="1534" href="A201801.LPTTDerivations.html#1534" class="Bound">p</a> <a id="1536" class="Symbol">:</a> <a id="1538" href="A201801.LPTTTypes.html#1779" class="Function">TMCUT</a> <a id="1544" href="A201801.LPTTDerivations.html#1443" class="Bound">Q</a> <a id="1546" href="A201801.LPTTDerivations.html#1447" class="Bound">B</a> <a id="1548" href="Agda.Builtin.Equality.html#125" class="Datatype Operator">≡</a> <a id="1550" href="A201801.LPTTDerivations.html#1519" class="Bound">B′</a><a id="1552" class="Symbol">}}</a>
-                               <a id="1586" class="Symbol">→</a> <a id="1588" href="A201801.LPTTDerivations.html#1453" class="Bound">Δ</a> <a id="1590" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⊢</a> <a id="1592" href="A201801.LPTTDerivations.html#1439" class="Bound">M</a> <a id="1594" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⦂</a> <a id="1596" href="A201801.LPTTTypes.html#475" class="InductiveConstructor Operator">[</a> <a id="1598" href="A201801.LPTTDerivations.html#1443" class="Bound">Q</a> <a id="1600" href="A201801.LPTTTypes.html#475" class="InductiveConstructor Operator">]</a> <a id="1602" href="A201801.LPTTDerivations.html#1445" class="Bound">A</a> <a id="1604" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">valid[</a> <a id="1611" href="A201801.LPTTDerivations.html#1469" class="Bound">Γ</a> <a id="1613" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">]</a> <a id="1615" class="Symbol">→</a> <a id="1617" href="A201801.LPTTDerivations.html#1453" class="Bound">Δ</a> <a id="1619" href="A201801.LPTTAsserts.html#588" class="InductiveConstructor Operator">,</a> <a id="1621" href="A201801.LPTTAsserts.html#471" class="InductiveConstructor Operator">⟪⊫</a> <a id="1624" href="A201801.LPTTDerivations.html#1443" class="Bound">Q</a> <a id="1626" href="A201801.LPTTAsserts.html#471" class="InductiveConstructor Operator">⦂</a> <a id="1628" href="A201801.LPTTDerivations.html#1445" class="Bound">A</a> <a id="1630" href="A201801.LPTTAsserts.html#471" class="InductiveConstructor Operator">⟫</a> <a id="1632" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⊢</a> <a id="1634" href="A201801.LPTTDerivations.html#1441" class="Bound">N</a> <a id="1636" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⦂</a> <a id="1638" href="A201801.LPTTDerivations.html#1447" class="Bound">B</a> <a id="1640" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">valid[</a> <a id="1647" href="A201801.LPTTTypes.html#1239" class="Function">TMWKS</a> <a id="1653" href="A201801.LPTTDerivations.html#1469" class="Bound">Γ</a> <a id="1655" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">]</a>  <a id="1658" class="Comment">-- NOTE</a>
-                               <a id="1697" class="Symbol">→</a> <a id="1699" href="A201801.LPTTDerivations.html#1453" class="Bound">Δ</a> <a id="1701" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⊢</a> <a id="1703" href="A201801.S4TTTerms.html#522" class="InductiveConstructor">LETBOX</a> <a id="1710" href="A201801.LPTTDerivations.html#1439" class="Bound">M</a> <a id="1712" href="A201801.LPTTDerivations.html#1441" class="Bound">N</a> <a id="1714" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⦂</a> <a id="1716" href="A201801.LPTTDerivations.html#1519" class="Bound">B′</a> <a id="1719" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">valid[</a> <a id="1726" href="A201801.LPTTDerivations.html#1469" class="Bound">Γ</a> <a id="1728" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">]</a>
+    <a id="_⊢_⦂_valid[_].box"></a><a id="1295" href="A201801.LPTTDerivations.html#1295" class="InductiveConstructor">box</a> <a id="1299" class="Symbol">:</a> <a id="1301" class="Symbol">∀</a> <a id="1303" class="Symbol">{</a><a id="1304" href="A201801.LPTTDerivations.html#1304" class="Bound">d</a> <a id="1306" href="A201801.LPTTDerivations.html#1306" class="Bound">g</a> <a id="1308" href="A201801.LPTTDerivations.html#1308" class="Bound">M</a> <a id="1310" href="A201801.LPTTDerivations.html#1310" class="Bound">A</a><a id="1311" class="Symbol">}</a> <a id="1313" class="Symbol">→</a> <a id="1315" class="Symbol">{</a><a id="1316" href="A201801.LPTTDerivations.html#1316" class="Bound">Δ</a> <a id="1318" class="Symbol">:</a> <a id="1320" href="A201801.LPTTAsserts.html#563" class="Datatype">Asserts</a> <a id="1328" href="A201801.LPTTDerivations.html#1304" class="Bound">d</a><a id="1329" class="Symbol">}</a> <a id="1331" class="Symbol">{</a><a id="1332" href="A201801.LPTTDerivations.html#1332" class="Bound">Γ</a> <a id="1334" class="Symbol">:</a> <a id="1336" href="A201801.LPTTTypes.html#691" class="Function">Types</a> <a id="1342" href="A201801.LPTTDerivations.html#1304" class="Bound">d</a> <a id="1344" href="A201801.LPTTDerivations.html#1306" class="Bound">g</a><a id="1345" class="Symbol">}</a>
+                      <a id="1369" class="Symbol">→</a> <a id="1371" href="A201801.LPTTDerivations.html#1316" class="Bound">Δ</a> <a id="1373" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⊢</a> <a id="1375" href="A201801.LPTTDerivations.html#1308" class="Bound">M</a> <a id="1377" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⦂</a> <a id="1379" href="A201801.LPTTDerivations.html#1310" class="Bound">A</a> <a id="1381" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">valid[</a> <a id="1388" href="A201801.Vec.html#295" class="InductiveConstructor">∙</a> <a id="1390" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">]</a>
+                      <a id="1414" class="Symbol">→</a> <a id="1416" href="A201801.LPTTDerivations.html#1316" class="Bound">Δ</a> <a id="1418" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⊢</a> <a id="1420" href="A201801.S4TTTerms.html#505" class="InductiveConstructor">BOX</a> <a id="1424" href="A201801.LPTTDerivations.html#1308" class="Bound">M</a> <a id="1426" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⦂</a> <a id="1428" href="A201801.LPTTTypes.html#504" class="InductiveConstructor Operator">[</a> <a id="1430" href="A201801.LPTTDerivations.html#1308" class="Bound">M</a> <a id="1432" href="A201801.LPTTTypes.html#504" class="InductiveConstructor Operator">]</a> <a id="1434" href="A201801.LPTTDerivations.html#1310" class="Bound">A</a> <a id="1436" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">valid[</a> <a id="1443" href="A201801.LPTTDerivations.html#1332" class="Bound">Γ</a> <a id="1445" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">]</a>
 
+    <a id="_⊢_⦂_valid[_].letbox"></a><a id="1452" href="A201801.LPTTDerivations.html#1452" class="InductiveConstructor">letbox</a> <a id="1459" class="Symbol">:</a> <a id="1461" class="Symbol">∀</a> <a id="1463" class="Symbol">{</a><a id="1464" href="A201801.LPTTDerivations.html#1464" class="Bound">d</a> <a id="1466" href="A201801.LPTTDerivations.html#1466" class="Bound">g</a> <a id="1468" href="A201801.LPTTDerivations.html#1468" class="Bound">M</a> <a id="1470" href="A201801.LPTTDerivations.html#1470" class="Bound">N</a> <a id="1472" href="A201801.LPTTDerivations.html#1472" class="Bound">Q</a> <a id="1474" href="A201801.LPTTDerivations.html#1474" class="Bound">A</a> <a id="1476" href="A201801.LPTTDerivations.html#1476" class="Bound">B</a><a id="1477" class="Symbol">}</a> <a id="1479" class="Symbol">→</a> <a id="1481" class="Symbol">{</a><a id="1482" href="A201801.LPTTDerivations.html#1482" class="Bound">Δ</a> <a id="1484" class="Symbol">:</a> <a id="1486" href="A201801.LPTTAsserts.html#563" class="Datatype">Asserts</a> <a id="1494" href="A201801.LPTTDerivations.html#1464" class="Bound">d</a><a id="1495" class="Symbol">}</a> <a id="1497" class="Symbol">{</a><a id="1498" href="A201801.LPTTDerivations.html#1498" class="Bound">Γ</a> <a id="1500" class="Symbol">:</a> <a id="1502" href="A201801.LPTTTypes.html#691" class="Function">Types</a> <a id="1508" href="A201801.LPTTDerivations.html#1464" class="Bound">d</a> <a id="1510" href="A201801.LPTTDerivations.html#1466" class="Bound">g</a><a id="1511" class="Symbol">}</a>
+                                  <a id="1547" class="Symbol">{</a><a id="1548" href="A201801.LPTTDerivations.html#1548" class="Bound">B′</a> <a id="1551" class="Symbol">:</a> <a id="1553" href="A201801.LPTTTypes.html#396" class="Datatype">Type</a> <a id="1558" href="A201801.LPTTDerivations.html#1464" class="Bound">d</a><a id="1559" class="Symbol">}</a> <a id="1561" class="Symbol">{{</a><a id="1563" href="A201801.LPTTDerivations.html#1563" class="Bound">p</a> <a id="1565" class="Symbol">:</a> <a id="1567" href="A201801.LPTTTypes.html#1808" class="Function">TMCUT</a> <a id="1573" href="A201801.LPTTDerivations.html#1472" class="Bound">Q</a> <a id="1575" href="A201801.LPTTDerivations.html#1476" class="Bound">B</a> <a id="1577" href="Agda.Builtin.Equality.html#150" class="Datatype Operator">≡</a> <a id="1579" href="A201801.LPTTDerivations.html#1548" class="Bound">B′</a><a id="1581" class="Symbol">}}</a>
+                               <a id="1615" class="Symbol">→</a> <a id="1617" href="A201801.LPTTDerivations.html#1482" class="Bound">Δ</a> <a id="1619" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⊢</a> <a id="1621" href="A201801.LPTTDerivations.html#1468" class="Bound">M</a> <a id="1623" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⦂</a> <a id="1625" href="A201801.LPTTTypes.html#504" class="InductiveConstructor Operator">[</a> <a id="1627" href="A201801.LPTTDerivations.html#1472" class="Bound">Q</a> <a id="1629" href="A201801.LPTTTypes.html#504" class="InductiveConstructor Operator">]</a> <a id="1631" href="A201801.LPTTDerivations.html#1474" class="Bound">A</a> <a id="1633" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">valid[</a> <a id="1640" href="A201801.LPTTDerivations.html#1498" class="Bound">Γ</a> <a id="1642" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">]</a> <a id="1644" class="Symbol">→</a> <a id="1646" href="A201801.LPTTDerivations.html#1482" class="Bound">Δ</a> <a id="1648" href="A201801.LPTTAsserts.html#617" class="InductiveConstructor Operator">,</a> <a id="1650" href="A201801.LPTTAsserts.html#500" class="InductiveConstructor Operator">⟪⊫</a> <a id="1653" href="A201801.LPTTDerivations.html#1472" class="Bound">Q</a> <a id="1655" href="A201801.LPTTAsserts.html#500" class="InductiveConstructor Operator">⦂</a> <a id="1657" href="A201801.LPTTDerivations.html#1474" class="Bound">A</a> <a id="1659" href="A201801.LPTTAsserts.html#500" class="InductiveConstructor Operator">⟫</a> <a id="1661" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⊢</a> <a id="1663" href="A201801.LPTTDerivations.html#1470" class="Bound">N</a> <a id="1665" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⦂</a> <a id="1667" href="A201801.LPTTDerivations.html#1476" class="Bound">B</a> <a id="1669" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">valid[</a> <a id="1676" href="A201801.LPTTTypes.html#1268" class="Function">TMWKS</a> <a id="1682" href="A201801.LPTTDerivations.html#1498" class="Bound">Γ</a> <a id="1684" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">]</a>  <a id="1687" class="Comment">-- NOTE</a>
+                               <a id="1726" class="Symbol">→</a> <a id="1728" href="A201801.LPTTDerivations.html#1482" class="Bound">Δ</a> <a id="1730" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⊢</a> <a id="1732" href="A201801.S4TTTerms.html#551" class="InductiveConstructor">LETBOX</a> <a id="1739" href="A201801.LPTTDerivations.html#1468" class="Bound">M</a> <a id="1741" href="A201801.LPTTDerivations.html#1470" class="Bound">N</a> <a id="1743" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⦂</a> <a id="1745" href="A201801.LPTTDerivations.html#1548" class="Bound">B′</a> <a id="1748" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">valid[</a> <a id="1755" href="A201801.LPTTDerivations.html#1498" class="Bound">Γ</a> <a id="1757" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">]</a>
 
-<a id="1732" class="Keyword">infix</a> <a id="1738" class="Number">3</a> <a id="1740" href="A201801.LPTTDerivations.html#1757" class="Function Operator">_⊢_⦂_allvalid[_]</a>
-<a id="_⊢_⦂_allvalid[_]"></a><a id="1757" href="A201801.LPTTDerivations.html#1757" class="Function Operator">_⊢_⦂_allvalid[_]</a> <a id="1774" class="Symbol">:</a> <a id="1776" class="Symbol">∀</a> <a id="1778" class="Symbol">{</a><a id="1779" href="A201801.LPTTDerivations.html#1779" class="Bound">d</a> <a id="1781" href="A201801.LPTTDerivations.html#1781" class="Bound">g</a> <a id="1783" href="A201801.LPTTDerivations.html#1783" class="Bound">n</a><a id="1784" class="Symbol">}</a> <a id="1786" class="Symbol">→</a> <a id="1788" href="A201801.LPTTAsserts.html#534" class="Datatype">Asserts</a> <a id="1796" href="A201801.LPTTDerivations.html#1779" class="Bound">d</a> <a id="1798" class="Symbol">→</a> <a id="1800" href="A201801.S4TTTerms.html#580" class="Function">Terms</a> <a id="1806" href="A201801.LPTTDerivations.html#1779" class="Bound">d</a> <a id="1808" href="A201801.LPTTDerivations.html#1781" class="Bound">g</a> <a id="1810" href="A201801.LPTTDerivations.html#1783" class="Bound">n</a> <a id="1812" class="Symbol">→</a> <a id="1814" href="A201801.LPTTTypes.html#662" class="Function">Types</a> <a id="1820" href="A201801.LPTTDerivations.html#1779" class="Bound">d</a> <a id="1822" href="A201801.LPTTDerivations.html#1783" class="Bound">n</a> <a id="1824" class="Symbol">→</a> <a id="1826" href="A201801.LPTTTypes.html#662" class="Function">Types</a> <a id="1832" href="A201801.LPTTDerivations.html#1779" class="Bound">d</a> <a id="1834" href="A201801.LPTTDerivations.html#1781" class="Bound">g</a> <a id="1836" class="Symbol">→</a> <a id="1838" class="PrimitiveType">Set</a>
-<a id="1842" href="A201801.LPTTDerivations.html#1842" class="Bound">Δ</a> <a id="1844" href="A201801.LPTTDerivations.html#1757" class="Function Operator">⊢</a> <a id="1846" href="A201801.LPTTDerivations.html#1846" class="Bound">τ</a> <a id="1848" href="A201801.LPTTDerivations.html#1757" class="Function Operator">⦂</a> <a id="1850" href="A201801.LPTTDerivations.html#1850" class="Bound">Ξ</a> <a id="1852" href="A201801.LPTTDerivations.html#1757" class="Function Operator">allvalid[</a> <a id="1862" href="A201801.LPTTDerivations.html#1862" class="Bound">Γ</a> <a id="1864" href="A201801.LPTTDerivations.html#1757" class="Function Operator">]</a> <a id="1866" class="Symbol">=</a> <a id="1868" href="A201801.AllVec.html#172" class="Datatype">All</a> <a id="1872" class="Symbol">(\</a> <a id="1875" class="Symbol">{</a> <a id="1877" class="Symbol">(</a><a id="1878" href="A201801.LPTTDerivations.html#1878" class="Bound">M</a> <a id="1880" href="A201801.Prelude.html#4622" class="InductiveConstructor Operator">,</a> <a id="1882" href="A201801.LPTTDerivations.html#1882" class="Bound">A</a><a id="1883" class="Symbol">)</a> <a id="1885" class="Symbol">→</a> <a id="1887" href="A201801.LPTTDerivations.html#1842" class="Bound">Δ</a> <a id="1889" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⊢</a> <a id="1891" href="A201801.LPTTDerivations.html#1878" class="Bound">M</a> <a id="1893" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">⦂</a> <a id="1895" href="A201801.LPTTDerivations.html#1882" class="Bound">A</a> <a id="1897" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">valid[</a> <a id="1904" href="A201801.LPTTDerivations.html#1862" class="Bound">Γ</a> <a id="1906" href="A201801.LPTTDerivations.html#477" class="Datatype Operator">]</a> <a id="1908" class="Symbol">})</a> <a id="1911" class="Symbol">(</a><a id="1912" href="A201801.Vec.html#3269" class="Function">zip</a> <a id="1916" href="A201801.LPTTDerivations.html#1846" class="Bound">τ</a> <a id="1918" href="A201801.LPTTDerivations.html#1850" class="Bound">Ξ</a><a id="1919" class="Symbol">)</a>
 
+<a id="1761" class="Keyword">infix</a> <a id="1767" class="Number">3</a> <a id="1769" href="A201801.LPTTDerivations.html#1786" class="Function Operator">_⊢_⦂_allvalid[_]</a>
+<a id="_⊢_⦂_allvalid[_]"></a><a id="1786" href="A201801.LPTTDerivations.html#1786" class="Function Operator">_⊢_⦂_allvalid[_]</a> <a id="1803" class="Symbol">:</a> <a id="1805" class="Symbol">∀</a> <a id="1807" class="Symbol">{</a><a id="1808" href="A201801.LPTTDerivations.html#1808" class="Bound">d</a> <a id="1810" href="A201801.LPTTDerivations.html#1810" class="Bound">g</a> <a id="1812" href="A201801.LPTTDerivations.html#1812" class="Bound">n</a><a id="1813" class="Symbol">}</a> <a id="1815" class="Symbol">→</a> <a id="1817" href="A201801.LPTTAsserts.html#563" class="Datatype">Asserts</a> <a id="1825" href="A201801.LPTTDerivations.html#1808" class="Bound">d</a> <a id="1827" class="Symbol">→</a> <a id="1829" href="A201801.S4TTTerms.html#609" class="Function">Terms</a> <a id="1835" href="A201801.LPTTDerivations.html#1808" class="Bound">d</a> <a id="1837" href="A201801.LPTTDerivations.html#1810" class="Bound">g</a> <a id="1839" href="A201801.LPTTDerivations.html#1812" class="Bound">n</a> <a id="1841" class="Symbol">→</a> <a id="1843" href="A201801.LPTTTypes.html#691" class="Function">Types</a> <a id="1849" href="A201801.LPTTDerivations.html#1808" class="Bound">d</a> <a id="1851" href="A201801.LPTTDerivations.html#1812" class="Bound">n</a> <a id="1853" class="Symbol">→</a> <a id="1855" href="A201801.LPTTTypes.html#691" class="Function">Types</a> <a id="1861" href="A201801.LPTTDerivations.html#1808" class="Bound">d</a> <a id="1863" href="A201801.LPTTDerivations.html#1810" class="Bound">g</a> <a id="1865" class="Symbol">→</a> <a id="1867" href="Agda.Primitive.html#388" class="Primitive">Set</a>
+<a id="1871" href="A201801.LPTTDerivations.html#1871" class="Bound">Δ</a> <a id="1873" href="A201801.LPTTDerivations.html#1786" class="Function Operator">⊢</a> <a id="1875" href="A201801.LPTTDerivations.html#1875" class="Bound">τ</a> <a id="1877" href="A201801.LPTTDerivations.html#1786" class="Function Operator">⦂</a> <a id="1879" href="A201801.LPTTDerivations.html#1879" class="Bound">Ξ</a> <a id="1881" href="A201801.LPTTDerivations.html#1786" class="Function Operator">allvalid[</a> <a id="1891" href="A201801.LPTTDerivations.html#1891" class="Bound">Γ</a> <a id="1893" href="A201801.LPTTDerivations.html#1786" class="Function Operator">]</a> <a id="1895" class="Symbol">=</a> <a id="1897" href="A201801.AllVec.html#201" class="Datatype">All</a> <a id="1901" class="Symbol">(\</a> <a id="1904" class="Symbol">{</a> <a id="1906" class="Symbol">(</a><a id="1907" href="A201801.LPTTDerivations.html#1907" class="Bound">M</a> <a id="1909" href="A201801.Prelude.html#4622" class="InductiveConstructor Operator">,</a> <a id="1911" href="A201801.LPTTDerivations.html#1911" class="Bound">A</a><a id="1912" class="Symbol">)</a> <a id="1914" class="Symbol">→</a> <a id="1916" href="A201801.LPTTDerivations.html#1871" class="Bound">Δ</a> <a id="1918" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⊢</a> <a id="1920" href="A201801.LPTTDerivations.html#1907" class="Bound">M</a> <a id="1922" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">⦂</a> <a id="1924" href="A201801.LPTTDerivations.html#1911" class="Bound">A</a> <a id="1926" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">valid[</a> <a id="1933" href="A201801.LPTTDerivations.html#1891" class="Bound">Γ</a> <a id="1935" href="A201801.LPTTDerivations.html#506" class="Datatype Operator">]</a> <a id="1937" class="Symbol">})</a> <a id="1940" class="Symbol">(</a><a id="1941" href="A201801.Vec.html#3298" class="Function">zip</a> <a id="1945" href="A201801.LPTTDerivations.html#1875" class="Bound">τ</a> <a id="1947" href="A201801.LPTTDerivations.html#1879" class="Bound">Ξ</a><a id="1948" class="Symbol">)</a>
 
-<a id="1923" class="Comment">--------------------------------------------------------------------------------</a>
 
+<a id="1952" class="Comment">--------------------------------------------------------------------------------</a>
 
-<a id="2006" class="Comment">-- ren : ∀ {d g g′ e M A} → {Δ : Asserts d} {Γ : Types g} {Γ′ : Types g′}</a>
-<a id="2080" class="Comment">--                        → Γ′ ⊇⟨ e ⟩ Γ → Δ ⊢ M ⦂ A valid[ Γ ]</a>
-<a id="2143" class="Comment">--                        → Δ ⊢ REN e M ⦂ A valid[ Γ′ ]</a>
-<a id="2199" class="Comment">-- ren η (var i)      = var (ren∋ η i)</a>
-<a id="2238" class="Comment">-- ren η (lam 𝒟)      = lam (ren (keep η) 𝒟)</a>
-<a id="2283" class="Comment">-- ren η (app 𝒟 ℰ)    = app (ren η 𝒟) (ren η ℰ)</a>
-<a id="2331" class="Comment">-- ren η (mvar i)     = mvar i</a>
-<a id="2362" class="Comment">-- ren η (box 𝒟)      = box 𝒟</a>
-<a id="2392" class="Comment">-- ren η (letbox 𝒟 ℰ) = letbox (ren η 𝒟) (ren η ℰ)</a>
 
+<a id="2035" class="Comment">-- ren : ∀ {d g g′ e M A} → {Δ : Asserts d} {Γ : Types g} {Γ′ : Types g′}</a>
+<a id="2109" class="Comment">--                        → Γ′ ⊇⟨ e ⟩ Γ → Δ ⊢ M ⦂ A valid[ Γ ]</a>
+<a id="2172" class="Comment">--                        → Δ ⊢ REN e M ⦂ A valid[ Γ′ ]</a>
+<a id="2228" class="Comment">-- ren η (var i)      = var (ren∋ η i)</a>
+<a id="2267" class="Comment">-- ren η (lam 𝒟)      = lam (ren (keep η) 𝒟)</a>
+<a id="2312" class="Comment">-- ren η (app 𝒟 ℰ)    = app (ren η 𝒟) (ren η ℰ)</a>
+<a id="2360" class="Comment">-- ren η (mvar i)     = mvar i</a>
+<a id="2391" class="Comment">-- ren η (box 𝒟)      = box 𝒟</a>
+<a id="2421" class="Comment">-- ren η (letbox 𝒟 ℰ) = letbox (ren η 𝒟) (ren η ℰ)</a>
 
-<a id="2445" class="Comment">-- rens : ∀ {d g g′ e n} → {Δ : Asserts d} {Γ : Types g} {Γ′ : Types g′}</a>
-<a id="2518" class="Comment">--                          {τ : Terms d g n} {Ξ : Types n}</a>
-<a id="2578" class="Comment">--                       → Γ′ ⊇⟨ e ⟩ Γ → Δ ⊢ τ ⦂ Ξ allvalid[ Γ ]</a>
-<a id="2643" class="Comment">--                       → Δ ⊢ RENS e τ ⦂ Ξ allvalid[ Γ′ ]</a>
-<a id="2702" class="Comment">-- rens {τ = ∙}     {∙}     η ∙       = ∙</a>
-<a id="2744" class="Comment">-- rens {τ = τ , M} {Ξ , A} η (ξ , 𝒟) = rens η ξ , ren η 𝒟</a>
 
+<a id="2474" class="Comment">-- rens : ∀ {d g g′ e n} → {Δ : Asserts d} {Γ : Types g} {Γ′ : Types g′}</a>
+<a id="2547" class="Comment">--                          {τ : Terms d g n} {Ξ : Types n}</a>
+<a id="2607" class="Comment">--                       → Γ′ ⊇⟨ e ⟩ Γ → Δ ⊢ τ ⦂ Ξ allvalid[ Γ ]</a>
+<a id="2672" class="Comment">--                       → Δ ⊢ RENS e τ ⦂ Ξ allvalid[ Γ′ ]</a>
+<a id="2731" class="Comment">-- rens {τ = ∙}     {∙}     η ∙       = ∙</a>
+<a id="2773" class="Comment">-- rens {τ = τ , M} {Ξ , A} η (ξ , 𝒟) = rens η ξ , ren η 𝒟</a>
 
-<a id="2805" class="Comment">-- --------------------------------------------------------------------------------</a>
 
+<a id="2834" class="Comment">-- --------------------------------------------------------------------------------</a>
 
-<a id="2891" class="Comment">-- mren : ∀ {d d′ g e M A} → {Δ : Asserts d} {Δ′ : Asserts d′} {Γ : Types g}</a>
-<a id="2968" class="Comment">--                         → Δ′ ⊇⟨ e ⟩ Δ → Δ ⊢ M ⦂ A valid[ Γ ]</a>
-<a id="3032" class="Comment">--                         → Δ′ ⊢ MREN e M ⦂ A valid[ Γ ]</a>
-<a id="3090" class="Comment">-- mren η (var i)      = var i</a>
-<a id="3121" class="Comment">-- mren η (lam 𝒟)      = lam (mren η 𝒟)</a>
-<a id="3161" class="Comment">-- mren η (app 𝒟 ℰ)    = app (mren η 𝒟) (mren η ℰ)</a>
-<a id="3212" class="Comment">-- mren η (mvar i)     = mvar (ren∋ η i)</a>
-<a id="3253" class="Comment">-- mren η (box 𝒟)      = box (mren η 𝒟)</a>
-<a id="3293" class="Comment">-- mren η (letbox 𝒟 ℰ) = letbox (mren η 𝒟) (mren (keep η) ℰ)</a>
 
+<a id="2920" class="Comment">-- mren : ∀ {d d′ g e M A} → {Δ : Asserts d} {Δ′ : Asserts d′} {Γ : Types g}</a>
+<a id="2997" class="Comment">--                         → Δ′ ⊇⟨ e ⟩ Δ → Δ ⊢ M ⦂ A valid[ Γ ]</a>
+<a id="3061" class="Comment">--                         → Δ′ ⊢ MREN e M ⦂ A valid[ Γ ]</a>
+<a id="3119" class="Comment">-- mren η (var i)      = var i</a>
+<a id="3150" class="Comment">-- mren η (lam 𝒟)      = lam (mren η 𝒟)</a>
+<a id="3190" class="Comment">-- mren η (app 𝒟 ℰ)    = app (mren η 𝒟) (mren η ℰ)</a>
+<a id="3241" class="Comment">-- mren η (mvar i)     = mvar (ren∋ η i)</a>
+<a id="3282" class="Comment">-- mren η (box 𝒟)      = box (mren η 𝒟)</a>
+<a id="3322" class="Comment">-- mren η (letbox 𝒟 ℰ) = letbox (mren η 𝒟) (mren (keep η) ℰ)</a>
 
-<a id="3356" class="Comment">-- mrens : ∀ {d d′ g e n} → {Δ : Asserts d} {Δ′ : Asserts d′} {Γ : Types g}</a>
-<a id="3432" class="Comment">--                           {τ : Terms d g n} {Ξ : Types n}</a>
-<a id="3493" class="Comment">--                        → Δ′ ⊇⟨ e ⟩ Δ → Δ ⊢ τ ⦂ Ξ allvalid[ Γ ]</a>
-<a id="3559" class="Comment">--                        → Δ′ ⊢ MRENS e τ ⦂ Ξ allvalid[ Γ ]</a>
-<a id="3620" class="Comment">-- mrens {τ = ∙}     {∙}     η ∙       = ∙</a>
-<a id="3663" class="Comment">-- mrens {τ = τ , M} {Ξ , A} η (ξ , 𝒟) = mrens η ξ , mren η 𝒟</a>
 
+<a id="3385" class="Comment">-- mrens : ∀ {d d′ g e n} → {Δ : Asserts d} {Δ′ : Asserts d′} {Γ : Types g}</a>
+<a id="3461" class="Comment">--                           {τ : Terms d g n} {Ξ : Types n}</a>
+<a id="3522" class="Comment">--                        → Δ′ ⊇⟨ e ⟩ Δ → Δ ⊢ τ ⦂ Ξ allvalid[ Γ ]</a>
+<a id="3588" class="Comment">--                        → Δ′ ⊢ MRENS e τ ⦂ Ξ allvalid[ Γ ]</a>
+<a id="3649" class="Comment">-- mrens {τ = ∙}     {∙}     η ∙       = ∙</a>
+<a id="3692" class="Comment">-- mrens {τ = τ , M} {Ξ , A} η (ξ , 𝒟) = mrens η ξ , mren η 𝒟</a>
 
-<a id="3727" class="Comment">-- mrens* : ∀ {d d′ e n} → {Δ : Asserts d} {Δ′ : Asserts d′}</a>
-<a id="3788" class="Comment">--                          {τ : Terms* d n} {Ξ : Asserts n}</a>
-<a id="3849" class="Comment">--                       → Δ′ ⊇⟨ e ⟩ Δ → Δ ⊢ τ ⦂ Ξ allvalid*</a>
-<a id="3910" class="Comment">--                       → Δ′ ⊢ MRENS* e τ ⦂ Ξ allvalid*</a>
-<a id="3967" class="Comment">-- mrens* {τ = ∙}     {∙}     η ∙       = ∙</a>
-<a id="4011" class="Comment">-- mrens* {τ = τ , M} {Ξ , A} η (ξ , 𝒟) = mrens* η ξ , mren η 𝒟</a>
 
+<a id="3756" class="Comment">-- mrens* : ∀ {d d′ e n} → {Δ : Asserts d} {Δ′ : Asserts d′}</a>
+<a id="3817" class="Comment">--                          {τ : Terms* d n} {Ξ : Asserts n}</a>
+<a id="3878" class="Comment">--                       → Δ′ ⊇⟨ e ⟩ Δ → Δ ⊢ τ ⦂ Ξ allvalid*</a>
+<a id="3939" class="Comment">--                       → Δ′ ⊢ MRENS* e τ ⦂ Ξ allvalid*</a>
+<a id="3996" class="Comment">-- mrens* {τ = ∙}     {∙}     η ∙       = ∙</a>
+<a id="4040" class="Comment">-- mrens* {τ = τ , M} {Ξ , A} η (ξ , 𝒟) = mrens* η ξ , mren η 𝒟</a>
 
-<a id="4077" class="Comment">-- --------------------------------------------------------------------------------</a>
 
+<a id="4106" class="Comment">-- --------------------------------------------------------------------------------</a>
 
-<a id="4163" class="Comment">-- wk : ∀ {B d g M A} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="4217" class="Comment">--                    → Δ ⊢ M ⦂ A valid[ Γ ]</a>
-<a id="4262" class="Comment">--                    → Δ ⊢ WK M ⦂ A valid[ Γ , B ]</a>
-<a id="4314" class="Comment">-- wk 𝒟 = ren (drop id⊇) 𝒟</a>
 
+<a id="4192" class="Comment">-- wk : ∀ {B d g M A} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="4246" class="Comment">--                    → Δ ⊢ M ⦂ A valid[ Γ ]</a>
+<a id="4291" class="Comment">--                    → Δ ⊢ WK M ⦂ A valid[ Γ , B ]</a>
+<a id="4343" class="Comment">-- wk 𝒟 = ren (drop id⊇) 𝒟</a>
 
-<a id="4343" class="Comment">-- wks : ∀ {A d g n} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="4396" class="Comment">--                      {τ : Terms d g n} {Ξ : Types n}</a>
-<a id="4452" class="Comment">--                   → Δ ⊢ τ ⦂ Ξ allvalid[ Γ ]</a>
-<a id="4499" class="Comment">--                   → Δ ⊢ WKS τ ⦂ Ξ allvalid[ Γ , A ]</a>
-<a id="4554" class="Comment">-- wks ξ = rens (drop id⊇) ξ</a>
 
+<a id="4372" class="Comment">-- wks : ∀ {A d g n} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="4425" class="Comment">--                      {τ : Terms d g n} {Ξ : Types n}</a>
+<a id="4481" class="Comment">--                   → Δ ⊢ τ ⦂ Ξ allvalid[ Γ ]</a>
+<a id="4528" class="Comment">--                   → Δ ⊢ WKS τ ⦂ Ξ allvalid[ Γ , A ]</a>
+<a id="4583" class="Comment">-- wks ξ = rens (drop id⊇) ξ</a>
 
-<a id="4585" class="Comment">-- vz : ∀ {d g A} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="4635" class="Comment">--                → Δ ⊢ VZ ⦂ A valid[ Γ , A ]</a>
-<a id="4681" class="Comment">-- vz = var zero</a>
 
+<a id="4614" class="Comment">-- vz : ∀ {d g A} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="4664" class="Comment">--                → Δ ⊢ VZ ⦂ A valid[ Γ , A ]</a>
+<a id="4710" class="Comment">-- vz = var zero</a>
 
-<a id="4700" class="Comment">-- lifts : ∀ {A d g n} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="4755" class="Comment">--                        {τ : Terms d g n} {Ξ : Types n}</a>
-<a id="4813" class="Comment">--                     → Δ ⊢ τ ⦂ Ξ allvalid[ Γ ]</a>
-<a id="4862" class="Comment">--                     → Δ ⊢ LIFTS τ ⦂ Ξ , A allvalid[ Γ , A ]</a>
-<a id="4925" class="Comment">-- lifts ξ = wks ξ , vz</a>
 
+<a id="4729" class="Comment">-- lifts : ∀ {A d g n} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="4784" class="Comment">--                        {τ : Terms d g n} {Ξ : Types n}</a>
+<a id="4842" class="Comment">--                     → Δ ⊢ τ ⦂ Ξ allvalid[ Γ ]</a>
+<a id="4891" class="Comment">--                     → Δ ⊢ LIFTS τ ⦂ Ξ , A allvalid[ Γ , A ]</a>
+<a id="4954" class="Comment">-- lifts ξ = wks ξ , vz</a>
 
-<a id="4951" class="Comment">-- vars : ∀ {d g g′ e} → {Δ : Asserts d} {Γ : Types g} {Γ′ : Types g′}</a>
-<a id="5022" class="Comment">--                     → Γ′ ⊇⟨ e ⟩ Γ</a>
-<a id="5059" class="Comment">--                     → Δ ⊢ VARS e ⦂ Γ allvalid[ Γ′ ]</a>
-<a id="5114" class="Comment">-- vars done     = ∙</a>
-<a id="5135" class="Comment">-- vars (drop η) = wks (vars η)</a>
-<a id="5167" class="Comment">-- vars (keep η) = lifts (vars η)</a>
 
+<a id="4980" class="Comment">-- vars : ∀ {d g g′ e} → {Δ : Asserts d} {Γ : Types g} {Γ′ : Types g′}</a>
+<a id="5051" class="Comment">--                     → Γ′ ⊇⟨ e ⟩ Γ</a>
+<a id="5088" class="Comment">--                     → Δ ⊢ VARS e ⦂ Γ allvalid[ Γ′ ]</a>
+<a id="5143" class="Comment">-- vars done     = ∙</a>
+<a id="5164" class="Comment">-- vars (drop η) = wks (vars η)</a>
+<a id="5196" class="Comment">-- vars (keep η) = lifts (vars η)</a>
 
-<a id="5203" class="Comment">-- ids : ∀ {d g} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="5252" class="Comment">--               → Δ ⊢ IDS ⦂ Γ allvalid[ Γ ]</a>
-<a id="5297" class="Comment">-- ids = vars id⊇</a>
 
+<a id="5232" class="Comment">-- ids : ∀ {d g} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="5281" class="Comment">--               → Δ ⊢ IDS ⦂ Γ allvalid[ Γ ]</a>
+<a id="5326" class="Comment">-- ids = vars id⊇</a>
 
-<a id="5317" class="Comment">-- --------------------------------------------------------------------------------</a>
 
+<a id="5346" class="Comment">-- --------------------------------------------------------------------------------</a>
 
-<a id="5403" class="Comment">-- mwk : ∀ {B d g M A} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="5458" class="Comment">--                     → Δ ⊢ M ⦂ A valid[ Γ ]</a>
-<a id="5504" class="Comment">--                     → Δ , ⟪⊫ B ⟫ ⊢ MWK M ⦂ A valid[ Γ ]</a>
-<a id="5563" class="Comment">-- mwk 𝒟 = mren (drop id⊇) 𝒟</a>
 
+<a id="5432" class="Comment">-- mwk : ∀ {B d g M A} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="5487" class="Comment">--                     → Δ ⊢ M ⦂ A valid[ Γ ]</a>
+<a id="5533" class="Comment">--                     → Δ , ⟪⊫ B ⟫ ⊢ MWK M ⦂ A valid[ Γ ]</a>
+<a id="5592" class="Comment">-- mwk 𝒟 = mren (drop id⊇) 𝒟</a>
 
-<a id="5594" class="Comment">-- mwks : ∀ {A d g n} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="5648" class="Comment">--                       {τ : Terms d g n} {Ξ : Types n}</a>
-<a id="5705" class="Comment">--                    → Δ ⊢ τ ⦂ Ξ allvalid[ Γ ]</a>
-<a id="5753" class="Comment">--                    → Δ , ⟪⊫ A ⟫ ⊢ MWKS τ ⦂ Ξ allvalid[ Γ ]</a>
-<a id="5815" class="Comment">-- mwks ξ = mrens (drop id⊇) ξ</a>
 
+<a id="5623" class="Comment">-- mwks : ∀ {A d g n} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="5677" class="Comment">--                       {τ : Terms d g n} {Ξ : Types n}</a>
+<a id="5734" class="Comment">--                    → Δ ⊢ τ ⦂ Ξ allvalid[ Γ ]</a>
+<a id="5782" class="Comment">--                    → Δ , ⟪⊫ A ⟫ ⊢ MWKS τ ⦂ Ξ allvalid[ Γ ]</a>
+<a id="5844" class="Comment">-- mwks ξ = mrens (drop id⊇) ξ</a>
 
-<a id="5848" class="Comment">-- mwks* : ∀ {A d n} → {Δ : Asserts d}</a>
-<a id="5887" class="Comment">--                      {τ : Terms* d n} {Ξ : Asserts n}</a>
-<a id="5944" class="Comment">--                   → Δ ⊢ τ ⦂ Ξ allvalid*</a>
-<a id="5987" class="Comment">--                   → Δ , ⟪⊫ A ⟫ ⊢ MWKS* τ ⦂ Ξ allvalid*</a>
-<a id="6045" class="Comment">-- mwks* ξ = mrens* (drop id⊇) ξ</a>
 
+<a id="5877" class="Comment">-- mwks* : ∀ {A d n} → {Δ : Asserts d}</a>
+<a id="5916" class="Comment">--                      {τ : Terms* d n} {Ξ : Asserts n}</a>
+<a id="5973" class="Comment">--                   → Δ ⊢ τ ⦂ Ξ allvalid*</a>
+<a id="6016" class="Comment">--                   → Δ , ⟪⊫ A ⟫ ⊢ MWKS* τ ⦂ Ξ allvalid*</a>
+<a id="6074" class="Comment">-- mwks* ξ = mrens* (drop id⊇) ξ</a>
 
-<a id="6080" class="Comment">-- mvz : ∀ {d g A} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="6131" class="Comment">--                 → Δ , ⟪⊫ A ⟫ ⊢ MVZ ⦂ A valid[ Γ ]</a>
-<a id="6184" class="Comment">-- mvz = mvar zero</a>
 
+<a id="6109" class="Comment">-- mvz : ∀ {d g A} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="6160" class="Comment">--                 → Δ , ⟪⊫ A ⟫ ⊢ MVZ ⦂ A valid[ Γ ]</a>
+<a id="6213" class="Comment">-- mvz = mvar zero</a>
 
-<a id="6205" class="Comment">-- mlifts* : ∀ {A d n} → {Δ : Asserts d}</a>
-<a id="6246" class="Comment">--                        {τ : Terms* d n} {Ξ : Asserts n}</a>
-<a id="6305" class="Comment">--                     → Δ ⊢ τ ⦂ Ξ allvalid*</a>
-<a id="6350" class="Comment">--                     → Δ , ⟪⊫ A ⟫ ⊢ MLIFTS* τ ⦂ Ξ , ⟪⊫ A ⟫ allvalid*</a>
-<a id="6421" class="Comment">-- mlifts* ξ = mwks* ξ , mvz</a>
 
+<a id="6234" class="Comment">-- mlifts* : ∀ {A d n} → {Δ : Asserts d}</a>
+<a id="6275" class="Comment">--                        {τ : Terms* d n} {Ξ : Asserts n}</a>
+<a id="6334" class="Comment">--                     → Δ ⊢ τ ⦂ Ξ allvalid*</a>
+<a id="6379" class="Comment">--                     → Δ , ⟪⊫ A ⟫ ⊢ MLIFTS* τ ⦂ Ξ , ⟪⊫ A ⟫ allvalid*</a>
+<a id="6450" class="Comment">-- mlifts* ξ = mwks* ξ , mvz</a>
 
-<a id="6452" class="Comment">-- mvars* : ∀ {d d′ e} → {Δ : Asserts d} {Δ′ : Asserts d′}</a>
-<a id="6511" class="Comment">--                     → Δ′ ⊇⟨ e ⟩ Δ</a>
-<a id="6548" class="Comment">--                     → Δ′ ⊢ MVARS* e ⦂ Δ allvalid*</a>
-<a id="6601" class="Comment">-- mvars* done     = ∙</a>
-<a id="6624" class="Comment">-- mvars* (drop η) = mwks* (mvars* η)</a>
-<a id="6662" class="Comment">-- mvars* (keep η) = mlifts* (mvars* η)</a>
 
+<a id="6481" class="Comment">-- mvars* : ∀ {d d′ e} → {Δ : Asserts d} {Δ′ : Asserts d′}</a>
+<a id="6540" class="Comment">--                     → Δ′ ⊇⟨ e ⟩ Δ</a>
+<a id="6577" class="Comment">--                     → Δ′ ⊢ MVARS* e ⦂ Δ allvalid*</a>
+<a id="6630" class="Comment">-- mvars* done     = ∙</a>
+<a id="6653" class="Comment">-- mvars* (drop η) = mwks* (mvars* η)</a>
+<a id="6691" class="Comment">-- mvars* (keep η) = mlifts* (mvars* η)</a>
 
-<a id="6704" class="Comment">-- mids* : ∀ {d} → {Δ : Asserts d}</a>
-<a id="6739" class="Comment">--               → Δ ⊢ MIDS* ⦂ Δ allvalid*</a>
-<a id="6782" class="Comment">-- mids* = mvars* id⊇</a>
 
+<a id="6733" class="Comment">-- mids* : ∀ {d} → {Δ : Asserts d}</a>
+<a id="6768" class="Comment">--               → Δ ⊢ MIDS* ⦂ Δ allvalid*</a>
+<a id="6811" class="Comment">-- mids* = mvars* id⊇</a>
 
-<a id="6806" class="Comment">-- --------------------------------------------------------------------------------</a>
 
+<a id="6835" class="Comment">-- --------------------------------------------------------------------------------</a>
 
-<a id="6892" class="Comment">-- sub : ∀ {d g n M A} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="6947" class="Comment">--                        {τ : Terms d g n} {Ξ : Types n}</a>
-<a id="7005" class="Comment">--                     → Δ ⊢ τ ⦂ Ξ allvalid[ Γ ] → Δ ⊢ M ⦂ A valid[ Ξ ]</a>
-<a id="7077" class="Comment">--                     → Δ ⊢ SUB τ M ⦂ A valid[ Γ ]</a>
-<a id="7129" class="Comment">-- sub ξ (var i)      = get ξ (zip∋₂ i)</a>
-<a id="7169" class="Comment">-- sub ξ (lam 𝒟)      = lam (sub (lifts ξ) 𝒟)</a>
-<a id="7215" class="Comment">-- sub ξ (app 𝒟 ℰ)    = app (sub ξ 𝒟) (sub ξ ℰ)</a>
-<a id="7263" class="Comment">-- sub ξ (mvar i)     = mvar i</a>
-<a id="7294" class="Comment">-- sub ξ (box 𝒟)      = box 𝒟</a>
-<a id="7324" class="Comment">-- sub ξ (letbox 𝒟 ℰ) = letbox (sub ξ 𝒟) (sub (mwks ξ) ℰ)</a>
 
+<a id="6921" class="Comment">-- sub : ∀ {d g n M A} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="6976" class="Comment">--                        {τ : Terms d g n} {Ξ : Types n}</a>
+<a id="7034" class="Comment">--                     → Δ ⊢ τ ⦂ Ξ allvalid[ Γ ] → Δ ⊢ M ⦂ A valid[ Ξ ]</a>
+<a id="7106" class="Comment">--                     → Δ ⊢ SUB τ M ⦂ A valid[ Γ ]</a>
+<a id="7158" class="Comment">-- sub ξ (var i)      = get ξ (zip∋₂ i)</a>
+<a id="7198" class="Comment">-- sub ξ (lam 𝒟)      = lam (sub (lifts ξ) 𝒟)</a>
+<a id="7244" class="Comment">-- sub ξ (app 𝒟 ℰ)    = app (sub ξ 𝒟) (sub ξ ℰ)</a>
+<a id="7292" class="Comment">-- sub ξ (mvar i)     = mvar i</a>
+<a id="7323" class="Comment">-- sub ξ (box 𝒟)      = box 𝒟</a>
+<a id="7353" class="Comment">-- sub ξ (letbox 𝒟 ℰ) = letbox (sub ξ 𝒟) (sub (mwks ξ) ℰ)</a>
 
-<a id="7384" class="Comment">-- subs : ∀ {d g n m} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="7438" class="Comment">--                       {τ : Terms d g n} {Ξ : Types n}</a>
-<a id="7495" class="Comment">--                       {υ : Terms d n m} {Ψ : Types m}</a>
-<a id="7552" class="Comment">--                    → Δ ⊢ τ ⦂ Ξ allvalid[ Γ ] → Δ ⊢ υ ⦂ Ψ allvalid[ Ξ ]</a>
-<a id="7626" class="Comment">--                    → Δ ⊢ SUBS τ υ ⦂ Ψ allvalid[ Γ ]</a>
-<a id="7681" class="Comment">-- subs {υ = ∙}     {∙}     ξ ∙       = ∙</a>
-<a id="7723" class="Comment">-- subs {υ = υ , M} {Ψ , A} ξ (ψ , 𝒟) = subs ξ ψ , sub ξ 𝒟</a>
 
+<a id="7413" class="Comment">-- subs : ∀ {d g n m} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="7467" class="Comment">--                       {τ : Terms d g n} {Ξ : Types n}</a>
+<a id="7524" class="Comment">--                       {υ : Terms d n m} {Ψ : Types m}</a>
+<a id="7581" class="Comment">--                    → Δ ⊢ τ ⦂ Ξ allvalid[ Γ ] → Δ ⊢ υ ⦂ Ψ allvalid[ Ξ ]</a>
+<a id="7655" class="Comment">--                    → Δ ⊢ SUBS τ υ ⦂ Ψ allvalid[ Γ ]</a>
+<a id="7710" class="Comment">-- subs {υ = ∙}     {∙}     ξ ∙       = ∙</a>
+<a id="7752" class="Comment">-- subs {υ = υ , M} {Ψ , A} ξ (ψ , 𝒟) = subs ξ ψ , sub ξ 𝒟</a>
 
-<a id="7784" class="Comment">-- --------------------------------------------------------------------------------</a>
 
+<a id="7813" class="Comment">-- --------------------------------------------------------------------------------</a>
 
-<a id="7870" class="Comment">-- msub : ∀ {d g n M A} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="7926" class="Comment">--                         {τ : Terms* d n} {Ξ : Asserts n}</a>
-<a id="7986" class="Comment">--                      → Δ ⊢ τ ⦂ Ξ allvalid* → Ξ ⊢ M ⦂ A valid[ Γ ]</a>
-<a id="8055" class="Comment">--                      → Δ ⊢ MSUB τ M ⦂ A valid[ Γ ]</a>
-<a id="8109" class="Comment">-- msub ξ (var i)      = var i</a>
-<a id="8140" class="Comment">-- msub ξ (lam 𝒟)      = lam (msub ξ 𝒟)</a>
-<a id="8180" class="Comment">-- msub ξ (app 𝒟 ℰ)    = app (msub ξ 𝒟) (msub ξ ℰ)</a>
-<a id="8231" class="Comment">-- msub ξ (mvar i)     = sub ∙ (get ξ (zip∋₂ i))</a>
-<a id="8280" class="Comment">-- msub ξ (box 𝒟)      = box (msub ξ 𝒟)</a>
-<a id="8320" class="Comment">-- msub ξ (letbox 𝒟 ℰ) = letbox (msub ξ 𝒟) (msub (mlifts* ξ) ℰ)</a>
 
+<a id="7899" class="Comment">-- msub : ∀ {d g n M A} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="7955" class="Comment">--                         {τ : Terms* d n} {Ξ : Asserts n}</a>
+<a id="8015" class="Comment">--                      → Δ ⊢ τ ⦂ Ξ allvalid* → Ξ ⊢ M ⦂ A valid[ Γ ]</a>
+<a id="8084" class="Comment">--                      → Δ ⊢ MSUB τ M ⦂ A valid[ Γ ]</a>
+<a id="8138" class="Comment">-- msub ξ (var i)      = var i</a>
+<a id="8169" class="Comment">-- msub ξ (lam 𝒟)      = lam (msub ξ 𝒟)</a>
+<a id="8209" class="Comment">-- msub ξ (app 𝒟 ℰ)    = app (msub ξ 𝒟) (msub ξ ℰ)</a>
+<a id="8260" class="Comment">-- msub ξ (mvar i)     = sub ∙ (get ξ (zip∋₂ i))</a>
+<a id="8309" class="Comment">-- msub ξ (box 𝒟)      = box (msub ξ 𝒟)</a>
+<a id="8349" class="Comment">-- msub ξ (letbox 𝒟 ℰ) = letbox (msub ξ 𝒟) (msub (mlifts* ξ) ℰ)</a>
 
-<a id="8386" class="Comment">-- msubs : ∀ {d g n m} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="8441" class="Comment">--                        {τ : Terms* d n} {Ξ : Asserts n}</a>
-<a id="8500" class="Comment">--                        {υ : Terms n g m} {Ψ : Types m}</a>
-<a id="8558" class="Comment">--                     → Δ ⊢ τ ⦂ Ξ allvalid* → Ξ ⊢ υ ⦂ Ψ allvalid[ Γ ]</a>
-<a id="8629" class="Comment">--                     → Δ ⊢ MSUBS τ υ ⦂ Ψ allvalid[ Γ ]</a>
-<a id="8686" class="Comment">-- msubs {υ = ∙}     {∙}     ξ ∙       = ∙</a>
-<a id="8729" class="Comment">-- msubs {υ = υ , M} {Ψ , A} ξ (ψ , 𝒟) = msubs ξ ψ , msub ξ 𝒟</a>
 
+<a id="8415" class="Comment">-- msubs : ∀ {d g n m} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="8470" class="Comment">--                        {τ : Terms* d n} {Ξ : Asserts n}</a>
+<a id="8529" class="Comment">--                        {υ : Terms n g m} {Ψ : Types m}</a>
+<a id="8587" class="Comment">--                     → Δ ⊢ τ ⦂ Ξ allvalid* → Ξ ⊢ υ ⦂ Ψ allvalid[ Γ ]</a>
+<a id="8658" class="Comment">--                     → Δ ⊢ MSUBS τ υ ⦂ Ψ allvalid[ Γ ]</a>
+<a id="8715" class="Comment">-- msubs {υ = ∙}     {∙}     ξ ∙       = ∙</a>
+<a id="8758" class="Comment">-- msubs {υ = υ , M} {Ψ , A} ξ (ψ , 𝒟) = msubs ξ ψ , msub ξ 𝒟</a>
 
-<a id="8793" class="Comment">-- msubs* : ∀ {d n m} → {Δ : Asserts d}</a>
-<a id="8833" class="Comment">--                       {τ : Terms* d n} {Ξ : Asserts n}</a>
-<a id="8891" class="Comment">--                       {υ : Terms* n m} {Ψ : Asserts m}</a>
-<a id="8949" class="Comment">--                    → Δ ⊢ τ ⦂ Ξ allvalid* → Ξ ⊢ υ ⦂ Ψ allvalid*</a>
-<a id="9015" class="Comment">--                    → Δ ⊢ MSUBS* τ υ ⦂ Ψ allvalid*</a>
-<a id="9068" class="Comment">-- msubs* {υ = ∙}     {∙}           ξ ∙       = ∙</a>
-<a id="9118" class="Comment">-- msubs* {υ = υ , M} {Ψ , ⟪⊫ A ⟫} ξ (ψ , 𝒟) = msubs* ξ ψ , msub ξ 𝒟</a>
 
+<a id="8822" class="Comment">-- msubs* : ∀ {d n m} → {Δ : Asserts d}</a>
+<a id="8862" class="Comment">--                       {τ : Terms* d n} {Ξ : Asserts n}</a>
+<a id="8920" class="Comment">--                       {υ : Terms* n m} {Ψ : Asserts m}</a>
+<a id="8978" class="Comment">--                    → Δ ⊢ τ ⦂ Ξ allvalid* → Ξ ⊢ υ ⦂ Ψ allvalid*</a>
+<a id="9044" class="Comment">--                    → Δ ⊢ MSUBS* τ υ ⦂ Ψ allvalid*</a>
+<a id="9097" class="Comment">-- msubs* {υ = ∙}     {∙}           ξ ∙       = ∙</a>
+<a id="9147" class="Comment">-- msubs* {υ = υ , M} {Ψ , ⟪⊫ A ⟫} ξ (ψ , 𝒟) = msubs* ξ ψ , msub ξ 𝒟</a>
 
-<a id="9189" class="Comment">-- --------------------------------------------------------------------------------</a>
 
+<a id="9218" class="Comment">-- --------------------------------------------------------------------------------</a>
 
-<a id="9275" class="Comment">-- unlam : ∀ {d g M A B} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="9332" class="Comment">--                       → Δ ⊢ M ⦂ A ⊃ B valid[ Γ ]</a>
-<a id="9384" class="Comment">--                       → Δ ⊢ UNLAM M ⦂ B valid[ Γ , A ]</a>
-<a id="9442" class="Comment">-- unlam 𝒟 = app (wk 𝒟) vz</a>
 
+<a id="9304" class="Comment">-- unlam : ∀ {d g M A B} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="9361" class="Comment">--                       → Δ ⊢ M ⦂ A ⊃ B valid[ Γ ]</a>
+<a id="9413" class="Comment">--                       → Δ ⊢ UNLAM M ⦂ B valid[ Γ , A ]</a>
+<a id="9471" class="Comment">-- unlam 𝒟 = app (wk 𝒟) vz</a>
 
-<a id="9471" class="Comment">-- cut : ∀ {d g M N A B} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="9528" class="Comment">--                       → Δ ⊢ M ⦂ A valid[ Γ ] → Δ ⊢ N ⦂ B valid[ Γ , A ]</a>
-<a id="9603" class="Comment">--                       → Δ ⊢ CUT M N ⦂ B valid[ Γ ]</a>
-<a id="9657" class="Comment">-- cut 𝒟 ℰ = sub (ids , 𝒟) ℰ</a>
 
+<a id="9500" class="Comment">-- cut : ∀ {d g M N A B} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="9557" class="Comment">--                       → Δ ⊢ M ⦂ A valid[ Γ ] → Δ ⊢ N ⦂ B valid[ Γ , A ]</a>
+<a id="9632" class="Comment">--                       → Δ ⊢ CUT M N ⦂ B valid[ Γ ]</a>
+<a id="9686" class="Comment">-- cut 𝒟 ℰ = sub (ids , 𝒟) ℰ</a>
 
-<a id="9688" class="Comment">-- pseudocut : ∀ {d g M N A B} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="9751" class="Comment">--                             → Δ ⊢ M ⦂ A valid[ Γ ] → Δ ⊢ N ⦂ B valid[ Γ , A ]</a>
-<a id="9832" class="Comment">--                             → Δ ⊢ PSEUDOCUT M N ⦂ B valid[ Γ ]</a>
-<a id="9898" class="Comment">-- pseudocut 𝒟 ℰ = app (lam ℰ) 𝒟</a>
 
+<a id="9717" class="Comment">-- pseudocut : ∀ {d g M N A B} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="9780" class="Comment">--                             → Δ ⊢ M ⦂ A valid[ Γ ] → Δ ⊢ N ⦂ B valid[ Γ , A ]</a>
+<a id="9861" class="Comment">--                             → Δ ⊢ PSEUDOCUT M N ⦂ B valid[ Γ ]</a>
+<a id="9927" class="Comment">-- pseudocut 𝒟 ℰ = app (lam ℰ) 𝒟</a>
 
-<a id="9933" class="Comment">-- pseudosub : ∀ {d g n M A} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="9994" class="Comment">--                              {τ : Terms d g n} {Ξ : Types n}</a>
-<a id="10058" class="Comment">--                           → Δ ⊢ τ ⦂ Ξ allvalid[ Γ ] → Δ ⊢ M ⦂ A valid[ Ξ ]</a>
-<a id="10136" class="Comment">--                           → Δ ⊢ PSEUDOSUB τ M ⦂ A valid[ Γ ]</a>
-<a id="10200" class="Comment">-- pseudosub {τ = ∙}     {∙}     ∙       𝒟 = ren bot⊇ 𝒟</a>
-<a id="10256" class="Comment">-- pseudosub {τ = τ , M} {Ξ , B} (ξ , 𝒞) 𝒟 = app (pseudosub ξ (lam 𝒟)) 𝒞</a>
 
+<a id="9962" class="Comment">-- pseudosub : ∀ {d g n M A} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="10023" class="Comment">--                              {τ : Terms d g n} {Ξ : Types n}</a>
+<a id="10087" class="Comment">--                           → Δ ⊢ τ ⦂ Ξ allvalid[ Γ ] → Δ ⊢ M ⦂ A valid[ Ξ ]</a>
+<a id="10165" class="Comment">--                           → Δ ⊢ PSEUDOSUB τ M ⦂ A valid[ Γ ]</a>
+<a id="10229" class="Comment">-- pseudosub {τ = ∙}     {∙}     ∙       𝒟 = ren bot⊇ 𝒟</a>
+<a id="10285" class="Comment">-- pseudosub {τ = τ , M} {Ξ , B} (ξ , 𝒞) 𝒟 = app (pseudosub ξ (lam 𝒟)) 𝒞</a>
 
-<a id="10331" class="Comment">-- exch : ∀ {d g M A B C} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="10389" class="Comment">--                        → Δ ⊢ M ⦂ C valid[ Γ , A , B ]</a>
-<a id="10446" class="Comment">--                        → Δ ⊢ EXCH M ⦂ C valid[ Γ , B , A ]</a>
-<a id="10508" class="Comment">-- exch 𝒟 = app (app (wk (wk (lam (lam 𝒟)))) vz) (wk vz)</a>
 
+<a id="10360" class="Comment">-- exch : ∀ {d g M A B C} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="10418" class="Comment">--                        → Δ ⊢ M ⦂ C valid[ Γ , A , B ]</a>
+<a id="10475" class="Comment">--                        → Δ ⊢ EXCH M ⦂ C valid[ Γ , B , A ]</a>
+<a id="10537" class="Comment">-- exch 𝒟 = app (app (wk (wk (lam (lam 𝒟)))) vz) (wk vz)</a>
 
-<a id="10567" class="Comment">-- --------------------------------------------------------------------------------</a>
 
+<a id="10596" class="Comment">-- --------------------------------------------------------------------------------</a>
 
-<a id="10653" class="Comment">-- vau : ∀ {d g M A B} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="10708" class="Comment">--                     → Δ , ⟪⊫ A ⟫ ⊢ M ⦂ B valid[ Γ ]</a>
-<a id="10763" class="Comment">--                     → Δ ⊢ VAU M ⦂ B valid[ Γ , □ A ]</a>
-<a id="10819" class="Comment">-- vau 𝒟 = letbox vz (wk 𝒟)</a>
 
+<a id="10682" class="Comment">-- vau : ∀ {d g M A B} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="10737" class="Comment">--                     → Δ , ⟪⊫ A ⟫ ⊢ M ⦂ B valid[ Γ ]</a>
+<a id="10792" class="Comment">--                     → Δ ⊢ VAU M ⦂ B valid[ Γ , □ A ]</a>
+<a id="10848" class="Comment">-- vau 𝒟 = letbox vz (wk 𝒟)</a>
 
-<a id="10849" class="Comment">-- unvau : ∀ {d g M A B} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="10906" class="Comment">--                       → Δ ⊢ M ⦂ B valid[ Γ , □ A ]</a>
-<a id="10960" class="Comment">--                       → Δ , ⟪⊫ A ⟫ ⊢ UNVAU M ⦂ B valid[ Γ ]</a>
-<a id="11023" class="Comment">-- unvau 𝒟 = app (lam (mwk 𝒟)) (box mvz)</a>
 
+<a id="10878" class="Comment">-- unvau : ∀ {d g M A B} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="10935" class="Comment">--                       → Δ ⊢ M ⦂ B valid[ Γ , □ A ]</a>
+<a id="10989" class="Comment">--                       → Δ , ⟪⊫ A ⟫ ⊢ UNVAU M ⦂ B valid[ Γ ]</a>
+<a id="11052" class="Comment">-- unvau 𝒟 = app (lam (mwk 𝒟)) (box mvz)</a>
 
-<a id="11066" class="Comment">-- boxapp : ∀ {d g M N A B} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="11126" class="Comment">--                          → Δ ⊢ M ⦂ □ (A ⊃ B) valid[ Γ ] → Δ ⊢ N ⦂ □ A valid[ Γ ]</a>
-<a id="11210" class="Comment">--                          → Δ ⊢ BOXAPP M N ⦂ □ B valid[ Γ ]</a>
-<a id="11272" class="Comment">-- boxapp 𝒟 ℰ = letbox 𝒟 (letbox (mwk ℰ) (box (app (mwk mvz) mvz)))</a>
 
+<a id="11095" class="Comment">-- boxapp : ∀ {d g M N A B} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="11155" class="Comment">--                          → Δ ⊢ M ⦂ □ (A ⊃ B) valid[ Γ ] → Δ ⊢ N ⦂ □ A valid[ Γ ]</a>
+<a id="11239" class="Comment">--                          → Δ ⊢ BOXAPP M N ⦂ □ B valid[ Γ ]</a>
+<a id="11301" class="Comment">-- boxapp 𝒟 ℰ = letbox 𝒟 (letbox (mwk ℰ) (box (app (mwk mvz) mvz)))</a>
 
-<a id="11342" class="Comment">-- unbox : ∀ {d g M A} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="11397" class="Comment">--                     → Δ ⊢ M ⦂ □ A valid[ Γ ]</a>
-<a id="11445" class="Comment">--                     → Δ ⊢ UNBOX M ⦂ A valid[ Γ ]</a>
-<a id="11497" class="Comment">-- unbox 𝒟 = letbox 𝒟 mvz</a>
 
+<a id="11371" class="Comment">-- unbox : ∀ {d g M A} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="11426" class="Comment">--                     → Δ ⊢ M ⦂ □ A valid[ Γ ]</a>
+<a id="11474" class="Comment">--                     → Δ ⊢ UNBOX M ⦂ A valid[ Γ ]</a>
+<a id="11526" class="Comment">-- unbox 𝒟 = letbox 𝒟 mvz</a>
 
-<a id="11525" class="Comment">-- -- NOTE: Local completeness of □</a>
 
-<a id="11562" class="Comment">-- rebox : ∀ {d g M A} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="11617" class="Comment">--                     → Δ ⊢ M ⦂ □ A valid[ Γ ]</a>
-<a id="11665" class="Comment">--                     → Δ ⊢ REBOX M ⦂ □ A valid[ Γ ]</a>
-<a id="11719" class="Comment">-- rebox 𝒟 = letbox 𝒟 (box mvz)</a>
+<a id="11554" class="Comment">-- -- NOTE: Local completeness of □</a>
 
+<a id="11591" class="Comment">-- rebox : ∀ {d g M A} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="11646" class="Comment">--                     → Δ ⊢ M ⦂ □ A valid[ Γ ]</a>
+<a id="11694" class="Comment">--                     → Δ ⊢ REBOX M ⦂ □ A valid[ Γ ]</a>
+<a id="11748" class="Comment">-- rebox 𝒟 = letbox 𝒟 (box mvz)</a>
 
-<a id="11753" class="Comment">-- dupbox : ∀ {d g M A} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="11809" class="Comment">--                      → Δ ⊢ M ⦂ □ A valid[ Γ ]</a>
-<a id="11858" class="Comment">--                      → Δ ⊢ DUPBOX M ⦂ □ □ A valid[ Γ ]</a>
-<a id="11916" class="Comment">-- dupbox 𝒟 = letbox 𝒟 (box (box mvz))</a>
 
+<a id="11782" class="Comment">-- dupbox : ∀ {d g M A} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="11838" class="Comment">--                      → Δ ⊢ M ⦂ □ A valid[ Γ ]</a>
+<a id="11887" class="Comment">--                      → Δ ⊢ DUPBOX M ⦂ □ □ A valid[ Γ ]</a>
+<a id="11945" class="Comment">-- dupbox 𝒟 = letbox 𝒟 (box (box mvz))</a>
 
-<a id="11957" class="Comment">-- mcut : ∀ {d g M N A B} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="12015" class="Comment">--                        → Δ ⊢ M ⦂ A valid[ ∙ ] → Δ , ⟪⊫ A ⟫ ⊢ N ⦂ B valid[ Γ ]</a>
-<a id="12096" class="Comment">--                        → Δ ⊢ MCUT M N ⦂ B valid[ Γ ]</a>
-<a id="12152" class="Comment">-- mcut 𝒟 ℰ = msub (mids* , 𝒟) ℰ</a>
 
+<a id="11986" class="Comment">-- mcut : ∀ {d g M N A B} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="12044" class="Comment">--                        → Δ ⊢ M ⦂ A valid[ ∙ ] → Δ , ⟪⊫ A ⟫ ⊢ N ⦂ B valid[ Γ ]</a>
+<a id="12125" class="Comment">--                        → Δ ⊢ MCUT M N ⦂ B valid[ Γ ]</a>
+<a id="12181" class="Comment">-- mcut 𝒟 ℰ = msub (mids* , 𝒟) ℰ</a>
 
-<a id="12187" class="Comment">-- -- NOTE: Local soundness of □</a>
 
-<a id="12221" class="Comment">-- pseudomcut : ∀ {d g M N A B} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="12285" class="Comment">--                              → Δ ⊢ M ⦂ A valid[ ∙ ] → Δ , ⟪⊫ A ⟫ ⊢ N ⦂ B valid[ Γ ]</a>
-<a id="12372" class="Comment">--                              → Δ ⊢ PSEUDOMCUT M N ⦂ B valid[ Γ ]</a>
-<a id="12440" class="Comment">-- pseudomcut 𝒟 ℰ = letbox (box 𝒟) ℰ</a>
+<a id="12216" class="Comment">-- -- NOTE: Local soundness of □</a>
 
+<a id="12250" class="Comment">-- pseudomcut : ∀ {d g M N A B} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="12314" class="Comment">--                              → Δ ⊢ M ⦂ A valid[ ∙ ] → Δ , ⟪⊫ A ⟫ ⊢ N ⦂ B valid[ Γ ]</a>
+<a id="12401" class="Comment">--                              → Δ ⊢ PSEUDOMCUT M N ⦂ B valid[ Γ ]</a>
+<a id="12469" class="Comment">-- pseudomcut 𝒟 ℰ = letbox (box 𝒟) ℰ</a>
 
-<a id="12479" class="Comment">-- pseudomsub : ∀ {d g n M A} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="12541" class="Comment">--                               {τ : Terms* d n} {Ξ : Asserts n}</a>
-<a id="12607" class="Comment">--                            → Δ ⊢ τ ⦂ Ξ allvalid* → Ξ ⊢ M ⦂ A valid[ Γ ]</a>
-<a id="12682" class="Comment">--                            → Δ ⊢ PSEUDOMSUB τ M ⦂ A valid[ Γ ]</a>
-<a id="12748" class="Comment">-- pseudomsub {τ = ∙}     {∙}           ∙       𝒟 = mren bot⊇ 𝒟</a>
-<a id="12812" class="Comment">-- pseudomsub {τ = τ , M} {Ξ , ⟪⊫ A ⟫} (ξ , 𝒞) 𝒟 = app (pseudomsub ξ (lam (vau 𝒟))) (box 𝒞)</a>
 
+<a id="12508" class="Comment">-- pseudomsub : ∀ {d g n M A} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="12570" class="Comment">--                               {τ : Terms* d n} {Ξ : Asserts n}</a>
+<a id="12636" class="Comment">--                            → Δ ⊢ τ ⦂ Ξ allvalid* → Ξ ⊢ M ⦂ A valid[ Γ ]</a>
+<a id="12711" class="Comment">--                            → Δ ⊢ PSEUDOMSUB τ M ⦂ A valid[ Γ ]</a>
+<a id="12777" class="Comment">-- pseudomsub {τ = ∙}     {∙}           ∙       𝒟 = mren bot⊇ 𝒟</a>
+<a id="12841" class="Comment">-- pseudomsub {τ = τ , M} {Ξ , ⟪⊫ A ⟫} (ξ , 𝒞) 𝒟 = app (pseudomsub ξ (lam (vau 𝒟))) (box 𝒞)</a>
 
-<a id="12906" class="Comment">-- mexch : ∀ {d g M A B C} → {Δ : Asserts d} {Γ : Types g}</a>
-<a id="12965" class="Comment">--                         → Δ , ⟪⊫ A ⟫ , ⟪⊫ B ⟫ ⊢ M ⦂ C valid[ Γ ]</a>
-<a id="13033" class="Comment">--                         → Δ , ⟪⊫ B ⟫ , ⟪⊫ A ⟫ ⊢ MEXCH M ⦂ C valid[ Γ ]</a>
-<a id="13107" class="Comment">-- mexch 𝒟 = unvau (unvau (exch (vau (vau 𝒟))))</a>
 
+<a id="12935" class="Comment">-- mexch : ∀ {d g M A B C} → {Δ : Asserts d} {Γ : Types g}</a>
+<a id="12994" class="Comment">--                         → Δ , ⟪⊫ A ⟫ , ⟪⊫ B ⟫ ⊢ M ⦂ C valid[ Γ ]</a>
+<a id="13062" class="Comment">--                         → Δ , ⟪⊫ B ⟫ , ⟪⊫ A ⟫ ⊢ MEXCH M ⦂ C valid[ Γ ]</a>
+<a id="13136" class="Comment">-- mexch 𝒟 = unvau (unvau (exch (vau (vau 𝒟))))</a>
 
-<a id="13157" class="Comment">-- --------------------------------------------------------------------------------</a>
+
+<a id="13186" class="Comment">-- --------------------------------------------------------------------------------</a>
 </pre></body></html>
