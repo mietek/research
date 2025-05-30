@@ -285,8 +285,7 @@ module GAN where
       ; ◅ssa = C.ass▻
       }
     where
-      private
-        module C = Category C
+      module C = Category C
 
   catSet : ∀ (𝓍 : Level) → Category (lsuc 𝓍) 𝓍
   catSet 𝓍 = record
