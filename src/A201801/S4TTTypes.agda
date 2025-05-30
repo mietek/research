@@ -1,3 +1,5 @@
+{-# OPTIONS --rewriting #-}
+
 module A201801.S4TTTypes where
 
 open import A201801.Prelude

@@ -1,3 +1,5 @@
+{-# OPTIONS --rewriting #-}
+
 module A201801.FullS4EmbeddingOfFullIPL where
 
 open import A201801.Prelude

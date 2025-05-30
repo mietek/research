@@ -1,3 +1,5 @@
+{-# OPTIONS --rewriting #-}
+
 module A201801.CMLStandardNormalisation where
 
 open import A201801.Prelude
@@ -146,16 +148,19 @@ bind k f = \ η f′ →
 --------------------------------------------------------------------------------
 
 
+-- TODO: ugh
 infix 3 _⊨_valid[_]
 _⊨_valid[_] : List Assert → Form → List Form → Set₁
-Δ ⊨ A valid[ Γ ] = ∀ {{_ : Model}} {W : World} → W ⊩ Δ allchunk → W ⊩ Γ allthunk
-                                                → W ⊩ A thunk
+Δ ⊨ A valid[ Γ ] = ∀ {M : Model} {W : World {{M}}} → _⊩_allchunk {{M}} W Δ → _⊩_allthunk {{M}} W Γ
+                                                    → _⊩_thunk {{M}} W A
 
 
+-- TODO: ugh
 infix 3 _⊨_allvalid[_]
 _⊨_allvalid[_] : List Assert → List Form → List Form → Set₁
-Δ ⊨ Ξ allvalid[ Γ ] = ∀ {{_ : Model}} {W : World} → W ⊩ Δ allchunk → W ⊩ Γ allthunk
-                                                   → W ⊩ Ξ allthunk
+Δ ⊨ Ξ allvalid[ Γ ] = ∀ {M : Model} {W : World {{M}}} → _⊩_allchunk {{M}} W Δ → _⊩_allthunk {{M}} W Γ
+                                                       → _⊩_allthunk {{M}} W Ξ
+
 
 
 thget : ∀ {{_ : Model}} {Γ A} {W : World} → W ⊩ Γ allthunk → Γ ∋ A
@@ -167,16 +172,16 @@ thget {Γ = Γ , x} (γ , l) (suc i) = thget γ i
 mutual
   ↓ : ∀ {Δ Γ A} → Δ ⊢ A valid[ Γ ]
                 → Δ ⊨ A valid[ Γ ]
-  ↓ (var i)                  δ γ = thget γ i
-  ↓ (lam {A} {B} 𝒟)          δ γ = return {A ⊃ B} (\ η k →
-                                     ↓ 𝒟 (chrels η δ) (threls η γ , k))
-  ↓ (app {A} {B} 𝒟 ℰ)        δ γ = bind {A ⊃ B} {B} (↓ 𝒟 δ γ) (\ η f →
-                                     f id≥ (↓ ℰ (chrels η δ) (threls η γ)))
-  ↓ (mvar i ψ)               δ γ = sem (get δ i) id≥ (↓ⁿ ψ δ γ)
-  ↓ (box {A} {Ψ} 𝒟)          δ γ = return {[ Ψ ] A} (msub (syns δ) 𝒟 , \ η′ ψ →
-                                     ↓ 𝒟 (chrels η′ δ) (threls id≥ ψ))
-  ↓ (letbox {A} {B} {Ψ} 𝒟 ℰ) δ γ = bind {[ Ψ ] A} {B} (↓ 𝒟 δ γ) (\ η f →
-                                     ↓ ℰ (chrels η δ , f) (threls η γ))
+  ↓ (var i)                  {M} δ γ = thget {{M}} γ i
+  ↓ (lam {A} {B} 𝒟)          {M} δ γ = return {{M}} {A ⊃ B} (\ η k →
+                                         ↓ 𝒟 (chrels {{M}} η δ) (threls {{M}} η γ , k))
+  ↓ (app {A} {B} 𝒟 ℰ)        {M} δ γ = bind {{M}} {A ⊃ B} {B} (↓ 𝒟 δ γ) (\ η f →
+                                         f (id≥ {{M}}) (↓ ℰ (chrels {{M}} η δ) (threls {{M}} η γ)))
+  ↓ (mvar i ψ)               {M} δ γ = sem {{M}} (get δ i) (id≥ {{M}}) (↓ⁿ ψ δ γ)
+  ↓ (box {A} {Ψ} 𝒟)          {M} δ γ = return {{M}} {[ Ψ ] A} (msub (syns {{M}} δ) 𝒟 , \ η′ ψ →
+                                         ↓ 𝒟 (chrels {{M}} η′ δ) (threls {{M}} (id≥ {{M}}) ψ))
+  ↓ (letbox {A} {B} {Ψ} 𝒟 ℰ) {M} δ γ = bind {{M}} {[ Ψ ] A} {B} (↓ 𝒟 δ γ) (\ η f →
+                                         ↓ ℰ (chrels {{M}} η δ , f) (threls {{M}} η γ))
 
   ↓ⁿ : ∀ {Δ Γ Ξ} → Δ ⊢ Ξ allvalid[ Γ ]
                  → Δ ⊨ Ξ allvalid[ Γ ]

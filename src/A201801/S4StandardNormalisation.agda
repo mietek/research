@@ -1,3 +1,5 @@
+{-# OPTIONS --rewriting #-}
+
 module A201801.S4StandardNormalisation where
 
 open import A201801.Prelude
@@ -142,23 +144,24 @@ bind k f = \ η f′ →
 --------------------------------------------------------------------------------
 
 
+-- TODO: ugh
 infix 3 _⊨_valid[_]
 _⊨_valid[_] : List Assert → Form → List Form → Set₁
-Δ ⊨ A valid[ Γ ] = ∀ {{_ : Model}} {W : World} → W ⊩ Δ allchunk → W ⊩ Γ allthunk
-                                                → W ⊩ A thunk
+Δ ⊨ A valid[ Γ ] = ∀ {M : Model} {W : World {{M}}} → _⊩_allchunk {{M}} W Δ → _⊩_allthunk {{M}} W Γ
+                                                    → _⊩_thunk {{M}} W A
 
 
 ↓ : ∀ {Δ Γ A} → Δ ⊢ A valid[ Γ ]
               → Δ ⊨ A valid[ Γ ]
-↓ (var i)              δ γ = get γ i
-↓ (lam {A} {B} 𝒟)      δ γ = return {A ⊃ B} (\ η k →
-                               ↓ 𝒟 (chrels η δ) (threls η γ , k))
-↓ (app {A} {B} 𝒟 ℰ)    δ γ = bind {A ⊃ B} {B} (↓ 𝒟 δ γ) (\ η f →
-                               f id≥ (↓ ℰ (chrels η δ) (threls η γ)))
-↓ (mvar i)             δ γ = sem (get δ i)
-↓ (box {A} 𝒟)          δ γ = return {□ A} (msub (syns δ) 𝒟 , ↓ 𝒟 δ ∙)
-↓ (letbox {A} {B} 𝒟 ℰ) δ γ = bind {□ A} {B} (↓ 𝒟 δ γ) (\ η c →
-                               ↓ ℰ (chrels η δ , c) (threls η γ))
+↓ (var i)                  δ γ = get γ i
+↓ (lam {A} {B} 𝒟)      {M} δ γ = return {{M}} {A ⊃ B} (\ η k →
+                                   ↓ 𝒟 (chrels {{M}} η δ) (threls {{M}} η γ , k))
+↓ (app {A} {B} 𝒟 ℰ)    {M} δ γ = bind {{M}} {A ⊃ B} {B} (↓ 𝒟 δ γ) (\ η f →
+                                   f (id≥ {{M}}) (↓ ℰ (chrels {{M}} η δ) (threls {{M}} η γ)))
+↓ (mvar i)             {M} δ γ = sem {{M}} (get δ i)
+↓ (box {A} 𝒟)          {M} δ γ = return {{M}} {□ A} (msub (syns {{M}} δ) 𝒟 , ↓ 𝒟 δ ∙)
+↓ (letbox {A} {B} 𝒟 ℰ) {M} δ γ = bind {{M}} {□ A} {B} (↓ 𝒟 δ γ) (\ η c →
+                                   ↓ ℰ (chrels {{M}} η δ , c) (threls {{M}} η γ))
 
 
 --------------------------------------------------------------------------------

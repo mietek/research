@@ -1,3 +1,5 @@
+{-# OPTIONS --rewriting #-}
+
 module A201801.IPLStandardNormalisation where
 
 open import A201801.Prelude
@@ -66,17 +68,18 @@ rels η γ = maps (\ { {A} a → rel {A} η a }) γ
 --------------------------------------------------------------------------------
 
 
+-- TODO: ugh
 infix 3 _⊨_true
 _⊨_true : List Form → Form → Set₁
-Γ ⊨ A true = ∀ {{_ : Model}} {W : World} → W ⊩ Γ allvalue
-                                          → W ⊩ A value
+Γ ⊨ A true = ∀ {M : Model} {W : World {{M}}} → _⊩_allvalue {{M}} W Γ
+                                              → _⊩_value {{M}} W A
 
 
 ↓ : ∀ {Γ A} → Γ ⊢ A true
             → Γ ⊨ A true
-↓ (var i)   γ = get γ i
-↓ (lam 𝒟)   γ = \ η a → ↓ 𝒟 (rels η γ , a)
-↓ (app 𝒟 ℰ) γ = (↓ 𝒟 γ) id≥ (↓ ℰ γ)
+↓ (var i)       γ = get γ i
+↓ (lam 𝒟)   {M} γ = \ η a → ↓ 𝒟 (rels {{M}} η γ , a)
+↓ (app 𝒟 ℰ) {M} γ = (↓ 𝒟 γ) (id≥ {{M}}) (↓ ℰ γ)
 
 
 --------------------------------------------------------------------------------

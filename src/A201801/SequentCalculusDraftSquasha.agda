@@ -1,4 +1,4 @@
-{-# OPTIONS --irrelevant-projections #-}
+{-# OPTIONS --irrelevant-projections --rewriting #-}
 
 module A201801.SequentCalculusDraftSquasha where
 

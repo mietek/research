@@ -1,5 +1,6 @@
-module A201801.FullS4Normalisation where
+{-# OPTIONS --rewriting #-}
 
+module A201801.FullS4Normalisation where
 
 open import A201801.Prelude
 open import A201801.Category

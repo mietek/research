@@ -4,6 +4,8 @@
 
 -- NOTE: The direction of ⇑/⇓ in previous code is wrong compared to Filinski
 
+{-# OPTIONS --rewriting #-}
+
 module A201801.SequentCalculusDraft where
 
 open import A201801.Prelude
