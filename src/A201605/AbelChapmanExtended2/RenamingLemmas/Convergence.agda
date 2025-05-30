@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 module A201605.AbelChapmanExtended2.RenamingLemmas.Convergence where
 
 open import A201605.AbelChapmanExtended.Convergence

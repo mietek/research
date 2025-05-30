@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 module A201605.AbelChapmanExtended.Examples where
 
 open import Relation.Binary.PropositionalEquality using (_≡_ ; refl)

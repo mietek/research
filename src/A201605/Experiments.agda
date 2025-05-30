@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 module A201605.Experiments where
 
 open import Data.Product using () renaming (_,_ to ⟨_,_⟩ ; proj₁ to π₁ ; proj₂ to π₂)

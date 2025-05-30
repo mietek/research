@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 module A201605.AbelChapmanExtended.Reflection where
 
 open import Data.Product using (_,_)

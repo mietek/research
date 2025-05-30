@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 module A201605.TowardsAltArtemov.NormalizationCatholic where
 
 open import Data.Nat using (ℕ ; zero ; suc)

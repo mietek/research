@@ -1,9 +1,12 @@
+{-# OPTIONS --sized-types #-}
+
 module A201605.AbelChapmanExtended.Delay where
 
-open import Category.Monad public using (RawMonad)
 open import Data.Maybe using (Maybe ; just ; nothing)
 open import Data.Nat using (ℕ ; zero ; suc)
 open import Size using (Size ; Size<_ ; ∞)
+
+open import A201605.Prelude
 
 
 

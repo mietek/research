@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 module A201605.Everything where
 
 
@@ -5,6 +7,7 @@ module A201605.Everything where
 
 -- original version, plus unfinished attempt at adding products and coproducts
 
+open import A201605.Prelude
 open import A201605.AbelChapman
 open import A201605.AbelChapmanPlus
 open import A201605.Experiments

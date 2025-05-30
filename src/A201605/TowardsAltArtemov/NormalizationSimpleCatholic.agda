@@ -1,4 +1,4 @@
-{-# OPTIONS --allow-unsolved-metas #-}
+{-# OPTIONS --allow-unsolved-metas --sized-types #-}
 
 module A201605.TowardsAltArtemov.NormalizationSimpleCatholic where
 

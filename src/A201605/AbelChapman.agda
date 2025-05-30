@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 {-
 
 A. Abel, J. Chapman (2014) “Normalization by evaluation in the delay monad”
@@ -6,7 +8,6 @@ A. Abel, J. Chapman (2014) “Normalization by evaluation in the delay monad”
 
 module A201605.AbelChapman where
 
-open import Category.Monad public using (RawMonad)
 open import Data.Maybe using (Maybe ; just ; nothing)
 open import Data.Nat using (ℕ ; zero ; suc)
 open import Data.Product using (∃ ; _×_ ; _,_)
@@ -15,7 +16,8 @@ open import Function using (_∘_ ; _$_)
 open import Relation.Binary using (Setoid)
 open import Relation.Binary.PropositionalEquality using (_≡_ ; refl ; sym ; cong ; cong₂ ; subst)
 open import Size using (Size ; Size<_ ; ∞)
-import Relation.Binary.PreorderReasoning as PR
+
+open import A201605.Prelude
 
 
 
@@ -216,16 +218,14 @@ map-cong f eq = bind-cong-l eq (now ∘ f)
   }
 
 module ≈-Reasoning {i A} where
-  open PR (Setoid.preorder (≈setoid i A)) public
+  open PR (preorder (≈setoid i A)) public
     using (_∎)
     renaming (_≈⟨⟩_ to _≡⟨⟩_ ; _≈⟨_⟩_ to _≡⟨_⟩_ ; _∼⟨_⟩_ to _≈⟨_⟩_ ; begin_ to proof_)
 
 module ∞≈-Reasoning {i A} where
-  open PR (Setoid.preorder (∞≈setoid i A)) public
+  open PR (preorder (∞≈setoid i A)) public
     using (_∎)
     renaming (_≈⟨⟩_ to _≡⟨⟩_ ; _≈⟨_⟩_ to _≡⟨_⟩_ ; _∼⟨_⟩_ to _∞≈⟨_⟩_ ; begin_ to proof_)
-
-
 
 
 -- 2.2.  Convergence

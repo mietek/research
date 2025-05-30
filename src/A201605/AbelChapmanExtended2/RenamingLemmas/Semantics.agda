@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 module A201605.AbelChapmanExtended2.RenamingLemmas.Semantics where
 
 open import Data.Product using (_,_)

@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 module A201605.AbelChapmanExtended2.RenamingLemmas.Normalization2 where
 
 open import Function using (_∘_)

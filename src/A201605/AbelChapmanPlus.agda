@@ -1,4 +1,4 @@
-{-# OPTIONS --allow-unsolved-metas #-}
+{-# OPTIONS --allow-unsolved-metas --sized-types #-}
 
 module A201605.AbelChapmanPlus where
 
@@ -10,6 +10,8 @@ open import Function using (_∘_ ; case_of_)
 open import Relation.Binary.PropositionalEquality using (_≡_ ; refl ; cong)
 open import Relation.Nullary using (Dec ; yes ; no)
 open import Size using (Size ; Size<_ ; ∞)
+
+open import A201605.Prelude
 
 
 
