@@ -42,8 +42,7 @@ _ᵒᵖ C = record
           ; ◅ssa = C.ass▻
           }
         where
-          private
-            module C = Category C
+          module C = Category C
 
 ⟪Set⟫ : ∀ (𝓍 : Level) → Category (lsuc 𝓍) 𝓍
 ⟪Set⟫ 𝓍 = record

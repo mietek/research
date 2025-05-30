@@ -43,8 +43,7 @@ Opposite C = record
                ; assoc∘ = \ f g h → assoc∘ h g f ⁻¹
                }
   where
-    private
-      instance _ = C
+    instance _ = C
 
 
 Product : ∀ {ℓ ℓ′ ℓ″ ℓ‴} → {X : Set ℓ} {_▻_ : X → X → Set ℓ′}
@@ -59,9 +58,8 @@ Product C D = record
                 ; assoc∘ = \ { (f , p) (g , q) (h , r) → _,_ & assoc∘ f g h ⊗ assoc∘ p q r }
                 }
   where
-    private
-      instance _ = C
-      instance _ = D
+    instance _ = C
+    instance _ = D
 
 
 --------------------------------------------------------------------------------
@@ -73,9 +71,8 @@ record Functor {ℓ ℓ′ ℓ″ ℓ‴} {X : Set ℓ} {_▻_ : X → X → Set
                             (f : X → Y)
                           : Set (ℓ ⊔ ℓ′ ⊔ ℓ″ ⊔ ℓ‴)
   where
-    private
-      instance _ = C
-      instance _ = D
+    instance _ = C
+    instance _ = D
 
     field
       ℱ : ∀ {x y} → y ▻ x → f y ► f x

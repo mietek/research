@@ -70,8 +70,7 @@ module Attempt1
                    ; assoc∘ = \ f g h → refl
                    }
       where
-        private
-          instance _ = P
+        instance _ = P
 
 
 --------------------------------------------------------------------------------
@@ -105,8 +104,7 @@ module Attempt2
                    ; assoc∘ = \ f g h → refl
                    }
       where
-        private
-          instance _ = P
+        instance _ = P
 
 
 --------------------------------------------------------------------------------
@@ -140,8 +138,7 @@ module Attempt3
                    ; assoc∘ = \ f g h → uniq≥ (trans≥ (trans≥ f g) h) (trans≥ f (trans≥ g h))
                    }
       where
-        private
-          instance _ = P
+        instance _ = P
 
 
 --------------------------------------------------------------------------------
