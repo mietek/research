@@ -74,9 +74,9 @@ module DerivedEquipment (_⇒_ : ∀ {n} → Rel₀ (Tm n)) where
   _⇓[_] : ∀ {n} → Tm n → (∀ {n} → Pred₀ (Tm n)) → Set
   e ⇓[ P ] = e ⇓[ P ]⟨ ∞ ⟩
 
-  {-# DISPLAY _*⟨_⟩ _⇒_ i e e′   = e ⇒*⟨ i ⟩ e′ #-}
-  {-# DISPLAY _*⟨_⟩ _⇒_ ∞ e e′   = e ⇒* e′ #-}
-  {-# DISPLAY _* _⇒_ e e′        = e ⇒* e′ #-}
+  {-# DISPLAY _*⟨_⟩ _ i e e′   = e ⇒*⟨ i ⟩ e′ #-}
+  {-# DISPLAY _*⟨_⟩ _ ∞ e e′   = e ⇒* e′ #-}
+  {-# DISPLAY _* _ e e′        = e ⇒* e′ #-}
   {-# DISPLAY _⇓[_]⟨_⟩_ e P ∞ e′  = e ⇓[ P ] e′ #-}
   {-# DISPLAY _⇓[_]⟨_⟩ e P ∞      = e ⇓[ P ] #-}
 
