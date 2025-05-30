@@ -43,7 +43,7 @@ import A201602.STLCVarSupply
 
 import A201602.SystemT
 
--- import A201602.Church -- TODO: Agda bug
+import A201602.Church
 
 import A201602.DepCx
 

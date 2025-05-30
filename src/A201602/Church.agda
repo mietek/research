@@ -1,6 +1,6 @@
 {-# OPTIONS --allow-unsolved-metas #-}
 
-module Church where
+module A201602.Church where
 
 open import Data.Product using (Σ ; _,_ ; proj₁ ; proj₂ ; _×_)
 open import Data.Sum using (_⊎_ ; inj₁ ; inj₂)
