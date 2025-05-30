@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 module A201606.Everything where
 
 

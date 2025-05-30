@@ -1,11 +1,13 @@
+{-# OPTIONS --sized-types #-}
+
 module A201606.Common.StrongBisimilarity where
 
 open import Function using (_∘_)
 open import Relation.Binary using (Setoid)
 open import Relation.Binary.PropositionalEquality using (_≡_ ; refl ; sym ; trans)
 open import Size using (Size ; Size<_ ; ∞)
-import Relation.Binary.PreorderReasoning as PR
 
+open import A201605.Prelude
 open import A201606.Common.Delay
 
 
@@ -107,12 +109,12 @@ mutual
   }
 
 module ≈-Reasoning {i A} where
-  open PR (Setoid.preorder (≈setoid i A)) public
+  open PR (preorder (≈setoid i A)) public
     using (_∎)
     renaming (_≈⟨⟩_ to _≡⟨⟩_ ; _≈⟨_⟩_ to _≡⟨_⟩_ ; _∼⟨_⟩_ to _≈⟨_⟩_ ; begin_ to proof_)
 
 module ∞≈-Reasoning {i A} where
-  open PR (Setoid.preorder (∞≈setoid i A)) public
+  open PR (preorder (∞≈setoid i A)) public
     using (_∎)
     renaming (_≈⟨⟩_ to _≡⟨⟩_ ; _≈⟨_⟩_ to _≡⟨_⟩_ ; _∼⟨_⟩_ to _∞≈⟨_⟩_ ; begin_ to proof_)
 

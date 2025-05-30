@@ -1,3 +1,5 @@
+{-# OPTIONS --sized-types #-}
+
 module A201606.STLC.CoinductiveNormalisationByEvaluation where
 
 open import A201606.Common.Delay public

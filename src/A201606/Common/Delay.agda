@@ -1,11 +1,14 @@
+{-# OPTIONS --sized-types #-}
+
 module A201606.Common.Delay where
 
 open import Size using (∞) public
 
-open import Category.Monad using (RawMonad)
 open import Data.Maybe using (Maybe ; just ; nothing)
 open import Data.Nat using (ℕ ; zero ; suc)
 open import Size using (Size ; Size<_)
+
+open import A201605.Prelude
 
 
 mutual
