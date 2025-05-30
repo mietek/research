@@ -3,11 +3,11 @@
 module A201602.STLC where
 
 open import Data.List using (List ; [] ; _∷_ ; [_])
-open import Data.List.Any using (any ; Any ; here ; there)
+open import Data.List.Relation.Unary.Any using (any? ; Any ; here ; there)
 open import Data.Nat using (ℕ ; zero ; suc)
 import Data.Nat
-open import Relation.Nullary using (¬_ ; Dec ; yes ; no)
-open import Relation.Nullary.Negation using (¬? ; contradiction)
+open import Relation.Nullary using (¬_ ; ¬? ; Dec ; yes ; no)
+open import Relation.Nullary.Negation using (contradiction)
 open import Relation.Binary.PropositionalEquality using (_≡_ ; _≢_)
   renaming (refl to ≡-refl ; cong to ≡-cong ; cong₂ to ≡-cong₂ ; subst to ≡-subst ; trans to ≡-trans)
 
@@ -37,7 +37,7 @@ module ListSet (X : Set) (_≟_ : (x y : X) → Dec (x ≡ y)) where
   _∉_ = {!Data.List.Any.Membership-≡._∉_!}
 
   _∈?_ : (x : X) (A : ListSet) → Dec (x ∈ A)
-  x ∈? A = any (_≟_ x) A
+  x ∈? A = any? (_≟_ x) A
 
   _∉?_ : (x : X) (A : ListSet) → Dec (x ∉ A)
   x ∉? A = ¬? (x ∈? A)

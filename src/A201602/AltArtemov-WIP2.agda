@@ -458,7 +458,7 @@ data _⊢_ (Γ : Cx) : Ty → Set where
   -- Variable reference
   𝒗[_]_ : ∀{A} (n : ℕ)
       → (𝒟 : A ∈ Γ)
-      → Γ ⊢ 𝑣ⁿ (replicate {n = n} (ix 𝒟)) ∵ A
+      → Γ ⊢ 𝑣ⁿ (replicate n (ix 𝒟)) ∵ A
 
   -- Abstraction (⊃I) at level n
   𝝀ⁿ_ : ∀{n} {𝐭 : Tms n} {A B}

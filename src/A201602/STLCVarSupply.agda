@@ -1,3 +1,5 @@
+{-# OPTIONS --guardedness #-}
+
 module A201602.STLCVarSupply where
 
 
