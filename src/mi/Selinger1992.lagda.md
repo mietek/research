@@ -31,10 +31,10 @@ todo:
 -- first-order predicate logic with one sort (naturals) and one predicate (equality)
 -- variant with first-order structures for renaming and substitution
 
--- TODO: replace UIP with specific types
--- {-# OPTIONS --without-K #-}
-
 module mi.Selinger1992 where
+
+open import Agda.Builtin.Bool public
+  using (Bool ; true ; false)
 
 open import Agda.Builtin.Equality public
   using (_≡_ ; refl)
@@ -45,9 +45,6 @@ open import Agda.Builtin.FromNat public
 open import Agda.Builtin.Nat public
   using (Nat ; zero ; suc ; _+_ ; _-_ ; _*_)
 
-open import Agda.Primitive public
-  using (Setω)
-
 open import Agda.Builtin.Sigma public
   using (Σ ; fst ; snd)
   renaming (_,_ to sig)
@@ -56,26 +53,22 @@ open import Agda.Builtin.Unit public
   using (⊤ ; tt)
 
 open import Agda.Primitive public
-  using (Level ; _⊔_ ; lzero ; lsuc)
+  using (Level ; _⊔_ ; Setω)
+  renaming (lzero to 0ℓ ; lsuc to sucℓ)
 
 
 ----------------------------------------------------------------------------------------------------
 
 -- 0.0. tiny prelude
 
-module Hidden where
-  id : ∀ {𝓍} {X : Set 𝓍} → X → X
-  id x = x
-
-  flip : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : X → Y → Set 𝓏} →
-           (∀ x y → Z x y) → (∀ y x → Z x y)
-  flip f y x = f x y
-
-  infixr 9 _∘_
-  _∘_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : X → Set 𝓎} {Z : ∀ {x} → Y x → Set 𝓏}
-          (f : ∀ {x} (y : Y x) → Z y) (g : ∀ x → Y x) →
-          ∀ x → Z (g x)
-  (f ∘ g) x = f (g x)
+-- TODO: delete this?
+-- id : ∀ {𝓍} {X : Set 𝓍} → X → X
+-- id x = x
+--
+-- infixr 9 _∘_
+-- _∘_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : X → Set 𝓎} {Z : ∀ {x} → Y x → Set 𝓏}
+--         (f : ∀ {x} (y : Y x) → Z y) (g : ∀ x → Y x) → ∀ x → Z (g x)
+-- (f ∘ g) x = f (g x)
 
 data ⊥ : Set where
 
@@ -94,159 +87,170 @@ data _∨_ {𝓍 𝓎} (X : Set 𝓎) (Y : Set 𝓎) : Set (𝓍 ⊔ 𝓎) where
   left  : ∀ (x : X) → X ∨ Y
   right : ∀ (y : Y) → X ∨ Y
 
-data Dec {𝓍} (X : Set 𝓍) : Set 𝓍 where
-  yes : ∀ (x : X) → Dec X
-  no  : ∀ (¬x : ¬ X) → Dec X
-
-module _ {𝓍} {X : Set 𝓍} where
-  True : Dec X → Set
-  True (yes x) = ⊤
-  True (no ¬x) = ⊥
-
-  toWitness : {X? : Dec X} → True X? → X
-  toWitness {X?} p  with X?
-  toWitness {X?} p  | yes x = x
-  toWitness {X?} () | no ¬x
-
-  fromWitness : {X? : Dec X} → X → True X?
-  fromWitness {X?} x with X?
-  fromWitness {X?} x | yes _ = tt
-  fromWitness {X?} x | no ¬x = x ↯ ¬x
-
--- TODO: replace this with specific instances
-uip : ∀ {𝓍} {X : Set 𝓍} {x ^x : X} (p₁ p₂ : x ≡ ^x) → p₁ ≡ p₂
-uip refl refl = refl
+-- TODO: delete this?
+-- data Dec {𝓍} (X : Set 𝓍) : Set 𝓍 where
+--   yes : ∀ (x : X) → Dec X
+--   no  : ∀ (¬x : ¬ X) → Dec X
+--
+-- T : Bool → Set
+-- T true  = ⊤
+-- T false = ⊥
+--
+-- T? : ∀ (b : Bool) → Dec (T b)
+-- T? true  = yes tt
+-- T? false = no (λ ())
+--
+-- module _ {𝓍} {X : Set 𝓍} where
+--   True : Dec X → Set
+--   True (yes _) = ⊤
+--   True (no _)  = ⊥
+--
+--   toWitness : {X? : Dec X} → True X? → X
+--   toWitness {X?} p  with X?
+--   toWitness {X?} _  | yes x = x
+--   toWitness {X?} () | no _
+--
+--   fromWitness : {X? : Dec X} → X → True X?
+--   fromWitness {X?} x with X?
+--   fromWitness {X?} _ | yes _ = tt
+--   fromWitness {X?} x | no ¬x = x ↯ ¬x
+--
+--   mapDec : ∀ {𝓎} {Y : Set 𝓎} → (X → Y) → (Y → X) → Dec X → Dec Y
+--   mapDec f _ (yes x) = yes (f x)
+--   mapDec _ g (no ¬x) = no (λ y → g y ↯ ¬x)
 
 -- numeric literals for naturals
 instance
   literalNat : Number Nat
   literalNat = record
-    { Constraint = λ n → ⊤
-    ; fromNat    = λ n {{p}} → n
-    }
+      { Constraint = λ _ → ⊤
+      ; fromNat    = λ n {{_}} → n
+      }
 
 
 ----------------------------------------------------------------------------------------------------
 
--- 0.1. propositional equality
+-- 0.1. equality
 
-≡-syntax : ∀ {𝓍} (X : Set 𝓍) → X → X → Set 𝓍
-≡-syntax X = _≡_
+module Eq where
+  ≡-syntax : ∀ {𝓍} (X : Set 𝓍) → X → X → Set 𝓍
+  ≡-syntax X = _≡_
 
-infix 4 ≡-syntax
-syntax ≡-syntax X x ^x = x ≡ ^x :> X
+  infix 4 ≡-syntax
+  syntax ≡-syntax X x x′ = x ≡ x′ :> X
 
-infix 9 _⁻¹
-_⁻¹ : ∀ {𝓍} {X : Set 𝓍} {x ^x : X} → x ≡ ^x → ^x ≡ x
-refl ⁻¹ = refl
+  infix 9 _⁻¹
+  _⁻¹ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≡ x′ → x′ ≡ x
+  refl ⁻¹ = refl
 
-infixr 4 _⋮_
-_⋮_ : ∀ {𝓍} {X : Set 𝓍} {x ^x ^^x : X} → x ≡ ^x → ^x ≡ ^^x → x ≡ ^^x
-refl ⋮ refl = refl
+  infixr 4 _⋮_
+  _⋮_ : ∀ {𝓍} {X : Set 𝓍} {x x′ x″ : X} → x ≡ x′ → x′ ≡ x″ → x ≡ x″
+  refl ⋮ refl = refl
 
-infixl 9 _&_
-_&_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (f : X → Y) {x ^x} → x ≡ ^x → f x ≡ f ^x
-f & refl = refl
+  infixl 9 _&_
+  _&_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (f : X → Y) {x x′} → x ≡ x′ → f x ≡ f x′
+  _ & refl = refl
 
-infixl 8 _⊗_
-_⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {f g : X → Y} {x ^x} → f ≡ g → x ≡ ^x → f x ≡ g ^x
-refl ⊗ refl = refl
+  infixl 8 _⊗_
+  _⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {f g : X → Y} {x x′} → f ≡ g → x ≡ x′ → f x ≡ g x′
+  refl ⊗ refl = refl
 
-congapp : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ x → Y x} → f ≡ g → (∀ x → f x ≡ g x)
-congapp refl x = refl
+  congapp : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ x → Y x} → f ≡ g → (∀ x → f x ≡ g x)
+  congapp refl _ = refl
 
-congapp′ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x} → Y x} → f ≡ g :> (∀ {x} → Y x) →
-           (∀ {x} → f {x} ≡ g {x})
-congapp′ refl {x} = refl
+  FunExt : Setω
+  FunExt = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ x → Y x} → (∀ x → f x ≡ g x) → f ≡ g
 
-Funext : Setω
-Funext = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ x → Y x} → (∀ x → f x ≡ g x) → f ≡ g
+  -- TODO: delete this?
+  -- icongapp : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x} → Y x} → f ≡ g :> (∀ {x} → Y x) →
+  --              (∀ {x} → f {x} ≡ g {x})
+  -- icongapp refl {_} = refl
+  --
+  -- IFunExt : Setω
+  -- IFunExt = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x} → Y x} → (∀ {x} → f {x} ≡ g {x}) →
+  --             f ≡ g :> (∀ {x} → Y x)
+  --
+  -- implify : FunExt → IFunExt
+  -- implify funext p = (λ f {x} → f x) & funext (λ x → p {x})
 
-Funext′ : Setω
-Funext′ = ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ {x} → Y x} → (∀ {x} → f {x} ≡ g {x}) →
-          f ≡ g :> (∀ {x} → Y x)
+  -- TODO: replace this with specific instances
+  uip : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} (p p′ : x ≡ x′) → p ≡ p′
+  uip refl refl = refl
 
-implify : Funext → Funext′
-implify fe eq = (λ f {x} → f x) & fe (λ x → eq {x})
+  module ≡-Reasoning where
+    infix  3 _∎
+    infixr 2 _≡⟨⟩_ _≡⟨_⟩_
+    infix  1 begin_
 
-module ≡-Reasoning where
-  infix  3 _∎
-  infixr 2 _≡⟨⟩_ _≡⟨_⟩_ _≡⟨_⟩⁻¹_
-  infix  1 begin_
+    begin_ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≡ x′ → x ≡ x′
+    begin p = p
 
-  begin_ : ∀ {𝓍} {X : Set 𝓍} {x ^x : X} → x ≡ ^x → x ≡ ^x
-  begin p = p
+    _≡⟨⟩_ : ∀ {𝓍} {X : Set 𝓍} (x : X) {x′ : X} → x ≡ x′ → x ≡ x′
+    _ ≡⟨⟩ p = p
 
-  _≡⟨⟩_ : ∀ {𝓍} {X : Set 𝓍} (x : X) {^x : X} → x ≡ ^x → x ≡ ^x
-  x ≡⟨⟩ p = p
+    _≡⟨_⟩_ : ∀ {𝓍} {X : Set 𝓍} (x : X) {x′ x″} → x ≡ x′ → x′ ≡ x″ → x ≡ x″
+    _ ≡⟨ p ⟩ q = p ⋮ q
 
-  _≡⟨_⟩_ : ∀ {𝓍} {X : Set 𝓍} (x : X) {^x ^^x} → x ≡ ^x → ^x ≡ ^^x → x ≡ ^^x
-  x ≡⟨ p ⟩ q = p ⋮ q
-
-  _≡⟨_⟩⁻¹_ : ∀ {𝓍} {X : Set 𝓍} (x : X) {^x ^^x} → ^x ≡ x → ^x ≡ ^^x → x ≡ ^^x
-  x ≡⟨ p ⟩⁻¹ q = p ⁻¹ ⋮ q
-
-  _∎ : ∀ {𝓍} {X : Set 𝓍} (x : X) → x ≡ x
-  x ∎ = refl
+    _∎ : ∀ {𝓍} {X : Set 𝓍} (x : X) → x ≡ x
+    _ ∎ = refl
 
 
 ----------------------------------------------------------------------------------------------------
 
 -- 0.2. heterogeneous equality
 
-module UnusedHeq where
+module Heq where
   infix 4 _≅_
   data _≅_ {𝓍} {X : Set 𝓍} (x : X) : ∀ {𝓎} {Y : Set 𝓎} → Y → Set 𝓍 where
      refl : x ≅ x
 
-  infix 9 _ʰ⁻¹
-  _ʰ⁻¹ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {x : X} {y : Y} → x ≅ y → y ≅ x
-  refl ʰ⁻¹ = refl
+  infix 9 _⁻¹
+  _⁻¹ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {x : X} {y : Y} → x ≅ y → y ≅ x
+  refl ⁻¹ = refl
 
-  infixr 4 _ʰ⋮_
-  _ʰ⋮_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : Set 𝓏} {x : X} {y : Y} {z : Z} →
+  infixr 4 _⋮_
+  _⋮_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : Set 𝓏} {x : X} {y : Y} {z : Z} →
            x ≅ y → y ≅ z → x ≅ z
-  refl ʰ⋮ refl = refl
+  refl ⋮ refl = refl
 
-  infixl 9 _ʰ&_
-  _ʰ&_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} (f : ∀ x → Y x) {x ^x} → x ≅ ^x → f x ≅ f ^x
-  f ʰ& refl = refl
+  infixl 9 _&_
+  _&_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} (f : ∀ x → Y x) {x x′} → x ≅ x′ → f x ≅ f x′
+  _ & refl = refl
 
-  infixl 8 _ʰ⊗_
-  _ʰ⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ x → Y x} {x ^x} → f ≅ g → x ≅ ^x →
-           f x ≅ g ^x
-  refl ʰ⊗ refl = refl
+  infixl 8 _⊗_
+  _⊗_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : X → Set 𝓎} {f g : ∀ x → Y x} {x x′} → f ≅ g → x ≅ x′ →
+          f x ≅ g x′
+  refl ⊗ refl = refl
 
-  ≅→≡ : ∀ {𝓍} {X : Set 𝓍} {x ^x : X} → x ≅ ^x → x ≡ ^x
+  ≅→≡ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≅ x′ → x ≡ x′
   ≅→≡ refl = refl
 
-  ≡→≅ : ∀ {𝓍} {X : Set 𝓍} {x ^x : X} → x ≡ ^x → x ≅ ^x
+  ≡→≅ : ∀ {𝓍} {X : Set 𝓍} {x x′ : X} → x ≡ x′ → x ≅ x′
   ≡→≅ refl = refl
 
   module ≅-Reasoning where
     infix  3 _∎
-    infixr 2 _≅⟨⟩_ _≅⟨_⟩_ _≡⟨_⟩_
+    infixr 2 _≅⟨⟩_ _≅⟨_⟩_ _≡⟨⟩_ _≡⟨_⟩_
     infix  1 begin_
 
     begin_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} {x : X} {y : Y} → x ≅ y → x ≅ y
     begin p = p
 
     _≅⟨⟩_ : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} (x : X) {y : Y} → x ≅ y → x ≅ y
-    x ≅⟨⟩ p = p
+    _ ≅⟨⟩ p = p
 
-    _≅⟨_⟩_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : Set 𝓏} (x : X) {y : Y} {z : Z} →
-               x ≅ y → y ≅ z → x ≅ z
-    x ≅⟨ p ⟩ q = p ʰ⋮ q
+    _≅⟨_⟩_ : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : Set 𝓏} (x : X) {y : Y} {z : Z} → x ≅ y →
+               y ≅ z → x ≅ z
+    _ ≅⟨ p ⟩ q = p ⋮ q
 
-    _≡⟨⟩_ : ∀ {𝓍} {X : Set 𝓍} (x : X) {^x} → x ≡ ^x → x ≅ ^x
-    x ≡⟨⟩ p = ≡→≅ p
+    _≡⟨⟩_ : ∀ {𝓍} {X : Set 𝓍} (x : X) {x′} → x ≡ x′ → x ≅ x′
+    _ ≡⟨⟩ p = ≡→≅ p
 
-    _≡⟨_⟩_ : ∀ {𝓍 𝓏} {X : Set 𝓍} {Z : Set 𝓏} (x : X) {^x} {z : Z} →
-               x ≡ ^x → ^x ≅ z → x ≅ z
-    x ≡⟨ p ⟩ q = ≡→≅ p ʰ⋮ q
+    _≡⟨_⟩_ : ∀ {𝓍 𝓏} {X : Set 𝓍} {Z : Set 𝓏} (x : X) {x′} {z : Z} → x ≡ x′ → x′ ≅ z → x ≅ z
+    _ ≡⟨ p ⟩ q = ≡→≅ p ⋮ q
 
     _∎ : ∀ {𝓍} {X : Set 𝓍} (x : X) → x ≅ x
-    x ∎ = refl
+    _ ∎ = refl
 
 
 ----------------------------------------------------------------------------------------------------
@@ -254,7 +258,13 @@ module UnusedHeq where
 -- 0.3. tiny naive category theory
 
 module GAN where
-  record Category (ℴ 𝓂 : Level) : Set (lsuc (ℴ ⊔ 𝓂)) where
+  open Eq
+
+  flip : ∀ {𝓍 𝓎 𝓏} {X : Set 𝓍} {Y : Set 𝓎} {Z : X → Y → Set 𝓏} → (∀ x y → Z x y) →
+           (∀ y x → Z x y)
+  flip f y x = f x y
+
+  record Category (ℴ 𝓂 : Level) : Set (sucℓ (ℴ ⊔ 𝓂)) where
     field
       Obj  : Set ℴ
       _▻_  : ∀ (x y : Obj) → Set 𝓂
@@ -265,20 +275,20 @@ module GAN where
       ass▻ : ∀ {w x y z} (r : y ▻ z) (q : x ▻ y) (p : w ▻ x) → r ∘ (q ∘ p) ≡ (r ∘ q) ∘ p
 
     _◅_ : ∀ (y x : Obj) → Set 𝓂
-    y ◅ x = x ▻ y
+    _◅_ = flip _▻_
 
     _⨾_ : ∀ {x y z} (p : x ▻ y) (q : y ▻ z) → x ▻ z
-    p ⨾ q = q ∘ p
+    _⨾_ = flip _∘_
 
     field
-      ◅ssa : ∀ {w x y z} (r : y ◅ z) (q : x ◅ y) (p : w ◅ x) → r ⨾ (q ⨾ p) ≡ (r ⨾ q) ⨾ p
+      ◅ssa : ∀ {w x y z} (p : y ◅ z) (q : x ◅ y) (r : w ◅ x) → p ⨾ (q ⨾ r) ≡ (p ⨾ q) ⨾ r
 
   _ᵒᵖ : ∀ {ℴ 𝓂} (C : Category ℴ 𝓂) → Category ℴ 𝓂
   _ᵒᵖ C = record
       { Obj  = C.Obj
-      ; _▻_  = Hidden.flip C._▻_
+      ; _▻_  = flip C._▻_
       ; id   = C.id
-      ; _∘_  = Hidden.flip C._∘_
+      ; _∘_  = flip C._∘_
       ; lid▻ = C.rid▻
       ; rid▻ = C.lid▻
       ; ass▻ = C.◅ssa
@@ -287,55 +297,74 @@ module GAN where
     where
       module C = Category C
 
-  catSet : ∀ (𝓍 : Level) → Category (lsuc 𝓍) 𝓍
-  catSet 𝓍 = record
+  Set-cat : ∀ (𝓍 : Level) → Category (sucℓ 𝓍) 𝓍
+  Set-cat 𝓍 = record
       { Obj  = Set 𝓍
       ; _▻_  = λ X Y → X → Y
-      ; id   = Hidden.id
-      ; _∘_  = λ q p → q Hidden.∘ p
-      ; lid▻ = λ p → refl
-      ; rid▻ = λ p → refl
-      ; ass▻ = λ r q p → refl
-      ; ◅ssa = λ r q p → refl
+      ; id   = λ x → x
+      ; _∘_  = λ q p x → q (p x)
+      ; lid▻ = λ _ → refl
+      ; rid▻ = λ _ → refl
+      ; ass▻ = λ _ _ _ → refl
+      ; ◅ssa = λ _ _ _ → refl
       }
 
-  catSet₀ : Category (lsuc lzero) lzero
-  catSet₀ = catSet lzero
+  Set₀-cat : Category (sucℓ 0ℓ) 0ℓ
+  Set₀-cat = Set-cat 0ℓ
 
-  record Functor {ℴ₁ ℴ₂ 𝓂₁ 𝓂₂} (C : Category ℴ₁ 𝓂₁) (D : Category ℴ₂ 𝓂₂) :
-      Set (ℴ₁ ⊔ ℴ₂ ⊔ 𝓂₁ ⊔ 𝓂₂) where
+  record Functor {ℴ ℴ′ 𝓂 𝓂′} (C : Category ℴ 𝓂) (D : Category ℴ′ 𝓂′) : Set (ℴ ⊔ ℴ′ ⊔ 𝓂 ⊔ 𝓂′) where
     private
       module C = Category C
       module D = Category D
 
     field
       ƒObj : ∀ (x : C.Obj) → D.Obj
-      ƒ    : ∀ {x y} (p : x C.▻ y) → (ƒObj x) D.▻ (ƒObj y)
+      ƒ    : ∀ {x y} (p : x C.▻ y) → ƒObj x D.▻ ƒObj y
       idƒ  : ∀ {x} → ƒ C.id ≡ D.id :> (ƒObj x D.▻ ƒObj x)
-      _∘ƒ_ : ∀ {x y z} (q : y C.▻ z) (p : x C.▻ y) → ƒ (q C.∘ p) ≡ (ƒ q) D.∘ (ƒ p)
+      _∘ƒ_ : ∀ {x y z} (q : y C.▻ z) (p : x C.▻ y) → ƒ (q C.∘ p) ≡ ƒ q D.∘ ƒ p
 
-    -- opposite
     op : Functor (C ᵒᵖ) (D ᵒᵖ)
     op = record
-           { ƒObj = ƒObj
-           ; ƒ    = ƒ
-           ; idƒ  = idƒ
-           ; _∘ƒ_ = Hidden.flip _∘ƒ_
-           }
+        { ƒObj = ƒObj
+        ; ƒ    = ƒ
+        ; idƒ  = idƒ
+        ; _∘ƒ_ = flip _∘ƒ_
+        }
 
-  Presheaf : ∀ {ℴ 𝓂} (C : Category ℴ 𝓂) (𝓍 : Level) → Set (ℴ ⊔ 𝓂 ⊔ lsuc 𝓍)
-  Presheaf C 𝓍 = Functor (C ᵒᵖ) (catSet 𝓍)
+  Presheaf : ∀ {ℴ 𝓂} (C : Category ℴ 𝓂) (𝓍 : Level) → Set (ℴ ⊔ 𝓂 ⊔ sucℓ 𝓍)
+  Presheaf C 𝓍 = Functor (C ᵒᵖ) (Set-cat 𝓍)
+
+  postulate
+    funext : FunExt
 
 
 ----------------------------------------------------------------------------------------------------
 
 -- 0.4. term variables
 
--- TODO: delete this
-open import Data.Fin using (Fin ; zero ; suc)
--- data Fin : Nat → Set where
---   zero : ∀ {n} → Fin (suc n)
---   suc  : ∀ {n} (i : Fin n) → Fin (suc n)
+open Eq
+
+data Fin : Nat → Set where
+  zero : ∀ {n} → Fin (suc n)
+  suc  : ∀ {n} (i : Fin n) → Fin (suc n)
+
+-- numeric literals for term variables
+module _ where
+  data Fin⟨_>_⟩ : Nat → Nat → Set where
+    instance
+      zero : ∀ {k} → Fin⟨ suc k > zero ⟩
+      suc  : ∀ {k n} {{i : Fin⟨ k > n ⟩}} → Fin⟨ suc k > suc n ⟩
+
+  Fin◇→Fin : ∀ {k} (n : Nat) {{i : Fin⟨ k > n ⟩}} → Fin k
+  Fin◇→Fin _       {{zero}} = zero
+  Fin◇→Fin (suc n) {{suc}}  = suc (Fin◇→Fin n)
+
+  instance
+    literalFin : ∀ {k} → Number (Fin k)
+    literalFin {k} = record
+        { Constraint = Fin⟨ k >_⟩
+        ; fromNat    = Fin◇→Fin
+        }
 
 -- order-preserving embeddings
 infix 3 _≤_
@@ -379,9 +408,6 @@ renFin (wk≤ η)   i       = suc (renFin η i)
 renFin (lift≤ η) zero    = zero
 renFin (lift≤ η) (suc i) = renFin (wk≤ η) i
 
-wkFin : ∀ {k} → Fin k → Fin (suc k)
-wkFin i = renFin (wk≤ id≤) i
-
 idrenFin : ∀ {k} (i : Fin k) → renFin id≤ i ≡ i
 idrenFin zero    = refl
 idrenFin (suc i) = suc & idrenFin i
@@ -394,76 +420,27 @@ comprenFin (lift≤ η′) (wk≤ η)   i       = suc & comprenFin η′ η i
 comprenFin (lift≤ η′) (lift≤ η) zero    = refl
 comprenFin (lift≤ η′) (lift≤ η) (suc i) = suc & comprenFin η′ η i
 
--- casting for term variables
-module _ where
-  castFin : ∀ {k ^k} → ^k ≡ k → Fin k → Fin ^k
-  castFin refl i = i
+module ≤GAN where
+  open GAN
 
-  castzeroFin : ∀ {k ^k} (p : ^k ≡ k) → zero ≡ castFin (suc & p) zero
-  castzeroFin refl = refl
+  cat≥ : Category 0ℓ 0ℓ
+  cat≥ = record
+      { Obj  = Nat
+      ; _▻_  = _≤_
+      ; id   = id≤
+      ; _∘_  = _∘≤_
+      ; lid▻ = lid≤
+      ; rid▻ = rid≤
+      ; ass▻ = ass≤
+      ; ◅ssa = λ η η′ η″ → ass≤ η″ η′ η ⁻¹
+      } ᵒᵖ
 
-  castsucFin : ∀ {k ^k} (p : ^k ≡ k) (i : Fin k) → suc (castFin p i) ≡ castFin (suc & p) (suc i)
-  castsucFin refl zero    = refl
-  castsucFin refl (suc i) = suc & castsucFin refl i
-
-  -- casting for order-preserving embeddings
-  cast≤ : ∀ {k ^k k′ ^k′} → ^k ≡ k → ^k′ ≡ k′ → k ≤ k′ → ^k ≤ ^k′
-  cast≤ refl refl η = η
-
-  castwk≤ : ∀ {k ^k k′ ^k′} (p₁ : ^k ≡ k) (p₂ : ^k′ ≡ k′) (η : k ≤ k′) →
-              wk≤ (cast≤ p₁ p₂ η) ≡ cast≤ p₁ (suc & p₂) (wk≤ η)
-  castwk≤ refl refl η = refl
-
-  castlift≤ : ∀ {k ^k k′ ^k′} (p₁ : ^k ≡ k) (p₂ : ^k′ ≡ k′) (η : k ≤ k′) →
-                lift≤ (cast≤ p₁ p₂ η) ≡ cast≤ (suc & p₁) (suc & p₂) (lift≤ η)
-  castlift≤ refl refl η = refl
-
--- numeric literals for term variables
--- TODO: wtf
--- module _ where
---   cowk≤ : ∀ {n m} → suc n ≤ m → n ≤ m
---   cowk≤ (wk≤ η)   = wk≤ (cowk≤ η)
---   cowk≤ (lift≤ η) = wk≤ η
---
---   colift≤ : ∀ {n m} → suc n ≤ suc m → n ≤ m
---   colift≤ (wk≤ η)   = cowk≤ η
---   colift≤ (lift≤ η) = η
---
---   _≤?_ : ∀ n m → Dec (n ≤ m)
---   zero ≤? zero   = yes stop
---   zero ≤? suc m  with zero ≤? m
---   ... | yes η      = yes (wk≤ η)
---   ... | no ¬η      = no λ where (wk≤ η) → η ↯ ¬η
---   suc n ≤? zero  = no λ ()
---   suc n ≤? suc m with n ≤? m
---   ... | yes η      = yes (lift≤ η)
---   ... | no ¬η      = no λ where η → colift≤ η ↯ ¬η
---
---   ≤→Fin : ∀ {n m} → suc m ≤ n → Fin n
---   ≤→Fin {suc n} {zero}  η = zero
---   ≤→Fin {suc n} {suc m} η = suc (≤→Fin (colift≤ η))
---
---   Nat→Fin : ∀ {n} (m : Nat) {{p : True (suc m ≤? n)}} → Fin n
---   Nat→Fin {n} m {{p}} = ≤→Fin (toWitness p)
---
---   instance
---     literalFin : ∀ {n} → Number (Fin n)
---     literalFin {n} = record
---       { Constraint = λ m → True (suc m ≤? n)
---       ; fromNat    = Nat→Fin
---       }
-
--- TODO: delete this
-module _ where
-  import Data.Nat as Nat
-  import Data.Fin as Fin
-  import Relation.Nullary.Decidable as Un
-
-  instance
-    literalFin : ∀ {n} → Number (Fin n)
-    literalFin {n} = record
-      { Constraint = λ m → Un.True (m Nat.<? n)
-      ; fromNat    = λ m {{p}} → (Fin.# m) {n} {p}
+  pshrenFin : Presheaf cat≥ 0ℓ
+  pshrenFin = record
+      { ƒObj = Fin
+      ; ƒ    = renFin
+      ; idƒ  = funext idrenFin
+      ; _∘ƒ_ = λ η′ η → funext (comprenFin η′ η)
       }
 
 
@@ -508,6 +485,25 @@ module _ {𝓍} {X : Set 𝓍} where
     zero : ∀ {Γ A} → Γ , A ∋ A
     suc  : ∀ {Γ A C} (i : Γ ∋ A) → Γ , C ∋ A
 
+  -- numeric literals for derivation variables
+  module _ where
+    infix 3 _∋⟨_⟩_
+    data _∋⟨_⟩_ : List X → Nat → X → Set 𝓍 where
+      instance
+        zero : ∀ {Γ A} → Γ , A ∋⟨ zero ⟩ A
+        suc  : ∀ {Γ A C n} {{i : Γ ∋⟨ n ⟩ A}} → Γ , C ∋⟨ suc n ⟩ A
+
+    ∋◇→∋ : ∀ {Γ A} (n : Nat) {{i : Γ ∋⟨ n ⟩ A}} → Γ ∋ A
+    ∋◇→∋ _       {{zero}} = zero
+    ∋◇→∋ (suc n) {{suc}}  = suc (∋◇→∋ n)
+
+    instance
+      number∋ : ∀ {Γ A} → Number (Γ ∋ A)
+      number∋ {Γ} {A} = record
+          { Constraint = Γ ∋⟨_⟩ A
+          ; fromNat    = ∋◇→∋
+          }
+
   -- order-preserving embeddings
   infix 3 _⊆_
   data _⊆_ : List X → List X → Set 𝓍 where
@@ -550,9 +546,6 @@ module _ {𝓍} {X : Set 𝓍} where
   ren∋ (lift⊆ η) zero    = zero
   ren∋ (lift⊆ η) (suc i) = suc (ren∋ η i)
 
-  wk∋ : ∀ {Γ A C} → Γ ∋ A → Γ , C ∋ A
-  wk∋ i = ren∋ (wk⊆ id⊆) i
-
   idren∋ : ∀ {Γ A} (i : Γ ∋ A) → ren∋ id⊆ i ≡ i
   idren∋ zero    = refl
   idren∋ (suc i) = suc & idren∋ i
@@ -564,6 +557,29 @@ module _ {𝓍} {X : Set 𝓍} where
   compren∋ (lift⊆ η′) (wk⊆ η)   i       = suc & compren∋ η′ η i
   compren∋ (lift⊆ η′) (lift⊆ η) zero    = refl
   compren∋ (lift⊆ η′) (lift⊆ η) (suc i) = suc & compren∋ η′ η i
+
+  module ⊆GAN where
+    open GAN
+
+    cat⊇ : Category 𝓍 𝓍
+    cat⊇ = record
+        { Obj  = List X
+        ; _▻_  = _⊆_
+        ; id   = id⊆
+        ; _∘_  = _∘⊆_
+        ; lid▻ = lid⊆
+        ; rid▻ = rid⊆
+        ; ass▻ = ass⊆
+        ; ◅ssa = λ η η′ η″ → ass⊆ η″ η′ η ⁻¹
+        } ᵒᵖ
+
+    pshren∋ : X → Presheaf cat⊇ 𝓍
+    pshren∋ X = record
+        { ƒObj = _∋ X
+        ; ƒ    = ren∋
+        ; idƒ  = funext idren∋
+        ; _∘ƒ_ = λ η′ η → funext (compren∋ η′ η)
+        }
 
   -- casting for derivation variables
   module _ where
@@ -590,25 +606,6 @@ module _ {𝓍} {X : Set 𝓍} where
     castlift⊆ : ∀ {Γ ^Γ Γ′ ^Γ′ C ^C} (p₁ : ^Γ ≡ Γ) (p₂ : ^Γ′ ≡ Γ′) (q : ^C ≡ C) (η : Γ ⊆ Γ′) →
                   lift⊆ (cast⊆ p₁ p₂ η) ≡ cast⊆ (_,_ & p₁ ⊗ q) (_,_ & p₂ ⊗ q) (lift⊆ η)
     castlift⊆ refl refl refl η = refl
-
-  -- numeric literals for derivation variables
-  module _ where
-    infix 3 _∋⟨_⟩_
-    data _∋⟨_⟩_ : List X → Nat → X → Set 𝓍 where
-      instance
-        zero : ∀ {Γ A} → Γ , A ∋⟨ zero ⟩ A
-        suc  : ∀ {m Γ A C} {{i : Γ ∋⟨ m ⟩ A}} → Γ , C ∋⟨ suc m ⟩ A
-
-    ∋#→∋ : ∀ {Γ m A} → Γ ∋⟨ m ⟩ A → Γ ∋ A
-    ∋#→∋ zero        = zero
-    ∋#→∋ (suc {{i}}) = suc (∋#→∋ i)
-
-    instance
-      number∋ : ∀ {Γ A} → Number (Γ ∋ A)
-      number∋ {Γ} {A} = record
-        { Constraint = λ m → Γ ∋⟨ m ⟩ A
-        ; fromNat    = λ m {{p}} → ∋#→∋ p
-        }
 
 
 ----------------------------------------------------------------------------------------------------
@@ -671,9 +668,8 @@ mutual
 -- Troelstra and van Dalen (1988) §1.3
 
 module _ where
-  private
-    const : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} → X → Y → X
-    const x y = x
+  const : ∀ {𝓍 𝓎} {X : Set 𝓍} {Y : Set 𝓎} → X → Y → X
+  const x y = x
 
   ƒconst : ∀ {n} → Nat → Prim n
   ƒconst zero    = comp zero ∙
@@ -727,7 +723,7 @@ module _ where
 
 -- 0.9. meta-level continuation/double negation monad/applicative/functor
 -- TODO: laws?
-module UnusedCont where
+module Cont where
   return : ∀ {𝓍} {X : Set 𝓍} → X → ¬ ¬ X
   return x = λ k → k x
 
@@ -769,9 +765,9 @@ mutual
 -- instance
 --   numberTm : ∀ {k} → Number (Tm k)
 --   numberTm {k} = record
---     { Constraint = λ m → True (m Nat.<? k)
---     ; fromNat    = λ m {{p}} → ‵var ((Fin.# m) {k} {p})
---     }
+--       { Constraint = Fin⟨ k >_⟩
+--       ; fromNat    = λ n → ‵tvar (Fin◇→Fin n)
+--       }
 
 𝟘 : ∀ {k} → Tm k
 𝟘 = ‵fun zero ∙
@@ -788,9 +784,9 @@ mutual
 -- instance
 --   numberTm : ∀ {k} → Number (Tm k)
 --   numberTm {k} = record
---     { Constraint = const ⊤
---     ; fromNat    = λ m {{p}} → Nat→Tm m
---     }
+--       { Constraint = λ _ → ⊤
+--       ; fromNat    = λ n {{_}} → Nat→Tm n
+--       }
 
 
 ----------------------------------------------------------------------------------------------------
@@ -1431,9 +1427,6 @@ tren∋ : ∀ {k k′ Γ A} (η : k ≤ k′) → Γ ∋ A → renFm§ η Γ ∋
 tren∋ η zero    = zero
 tren∋ η (suc i) = suc (tren∋ η i)
 
-twk∋ : ∀ {k} {Γ : Fm§ k} {A} → Γ ∋ A → wkFm§ Γ ∋ wkFm A
-twk∋ i = tren∋ (wk≤ id≤) i
-
 lidtren∋﹫ : ∀ {k} {Γ : Fm§ k} {A} (i : Γ ∋ A) → tren∋ id≤ i ≡ cast∋ (lidrenFm§ Γ) (lidrenFm A) i
 lidtren∋﹫ zero    = castzero∋ (lidrenFm§ _) (lidrenFm _)
 lidtren∋﹫ (suc i) = suc & lidtren∋﹫ i
@@ -1604,9 +1597,9 @@ data _/_⊢§_ {k} (Þ : Theory) (Γ : Fm§ k) : Fm§ k → Set where
 instance
   number⊢ : ∀ {Þ k} {Γ : Fm§ k} {A} → Number (Þ / Γ ⊢ A)
   number⊢ {Γ = Γ} {A} = record
-    { Constraint = λ m → Γ ∋⟨ m ⟩ A
-    ; fromNat    = λ m {{p}} → ‵var (∋#→∋ p)
-    }
+      { Constraint = Γ ∋⟨_⟩ A
+      ; fromNat    = λ n → ‵var (∋◇→∋ n)
+      }
 
 
 ----------------------------------------------------------------------------------------------------
@@ -3027,62 +3020,14 @@ eqsubcut σ d s = compsub (id§ , sub σ s) (lift§ σ) d ⁻¹
 
 ----------------------------------------------------------------------------------------------------
 
--- 4.0. category of order-preserving embeddings
-
-module Section-4-0 (funext : Funext) where
-  open GAN public
-
-  -- TODO: report bug with `record where`
-  cat≥ : Category lzero lzero
-  cat≥ = record
-      { Obj  = Nat
-      ; _▻_  = _≤_
-      ; id   = id≤
-      ; _∘_  = _∘≤_
-      ; lid▻ = lid≤
-      ; rid▻ = rid≤
-      ; ass▻ = ass≤
-      ; ◅ssa = λ η η′ η″ → ass≤ η″ η′ η ⁻¹
-      } ᵒᵖ
-
-  pshrenFin : Presheaf cat≥ lzero
-  pshrenFin = record
-      { ƒObj = Fin
-      ; ƒ    = renFin
-      ; idƒ  = funext idrenFin
-      ; _∘ƒ_ = λ η′ η → funext (comprenFin η′ η)
-      }
-
-  module _ {𝓍} {X : Set 𝓍} where
-    cat⊇ : Category 𝓍 𝓍
-    cat⊇ = record
-        { Obj  = List X
-        ; _▻_  = _⊆_
-        ; id   = id⊆
-        ; _∘_  = _∘⊆_
-        ; lid▻ = lid⊆
-        ; rid▻ = rid⊆
-        ; ass▻ = ass⊆
-        ; ◅ssa = λ η η′ η″ → ass⊆ η″ η′ η ⁻¹
-        } ᵒᵖ
-
-    pshren∋ : X → Presheaf cat⊇ 𝓍
-    pshren∋ X = record
-        { ƒObj = _∋ X
-        ; ƒ    = ren∋
-        ; idƒ  = funext idren∋
-        ; _∘ƒ_ = λ η′ η → funext (compren∋ η′ η)
-        }
-
-
-----------------------------------------------------------------------------------------------------
-
 -- 4.1. category of simultaneous substitutions of terms
 
-module Section-4-1 (funext : Funext) where
-  open Section-4-0 funext
+module Section-4-1 where
+  open GAN
+  open ≤GAN
+  open ⊆GAN
 
-  pshrenTm : Presheaf cat≥ lzero
+  pshrenTm : Presheaf cat≥ 0ℓ
   pshrenTm = record
       { ƒObj = λ k → Tm k
       ; ƒ    = renTm
@@ -3090,7 +3035,7 @@ module Section-4-1 (funext : Funext) where
       ; _∘ƒ_ = λ η′ η → funext (comprenTm η′ η)
       }
 
-  pshrenTm§ : Nat → Presheaf cat≥ lzero
+  pshrenTm§ : Nat → Presheaf cat≥ 0ℓ
   pshrenTm§ n = record
       { ƒObj = λ k → Tm§ k n
       ; ƒ    = renTm§
@@ -3098,7 +3043,7 @@ module Section-4-1 (funext : Funext) where
       ; _∘ƒ_ = λ η′ η → funext (comprenTm§ η′ η)
       }
 
-  pshgetTm§ : Nat → Presheaf (cat≥ ᵒᵖ) lzero
+  pshgetTm§ : Nat → Presheaf (cat≥ ᵒᵖ) 0ℓ
   pshgetTm§ k = record
       { ƒObj = λ n → Tm§ k n
       ; ƒ    = getTm§
@@ -3106,7 +3051,7 @@ module Section-4-1 (funext : Funext) where
       ; _∘ƒ_ = λ η′ η → funext (compgetTm§ η′ η)
       }
 
-  catTm§ : Category lzero lzero
+  catTm§ : Category 0ℓ 0ℓ
   catTm§ = record
       { Obj  = Nat
       ; _▻_  = λ n k → Tm§ k n
@@ -3118,7 +3063,7 @@ module Section-4-1 (funext : Funext) where
       ; ◅ssa = λ τ σ σ′ → asssubTm§ σ′ σ τ ⁻¹
       } ᵒᵖ
 
-  pshsubTm : Presheaf catTm§ lzero
+  pshsubTm : Presheaf catTm§ 0ℓ
   pshsubTm = record
       { ƒObj = λ k → Tm k
       ; ƒ    = subTm
@@ -3126,7 +3071,7 @@ module Section-4-1 (funext : Funext) where
       ; _∘ƒ_ = λ σ′ σ → funext (compsubTm σ′ σ)
       }
 
-  pshsubTm§ : Nat → Presheaf catTm§ lzero
+  pshsubTm§ : Nat → Presheaf catTm§ 0ℓ
   pshsubTm§ n = record
       { ƒObj = λ k → Tm§ k n
       ; ƒ    = subTm§
@@ -3134,7 +3079,7 @@ module Section-4-1 (funext : Funext) where
       ; _∘ƒ_ = λ σ′ σ → funext (λ τ → asssubTm§ σ′ σ τ ⁻¹) -- TODO: what? why?!
       }
 
-  pshrenFm : Presheaf cat≥ lzero
+  pshrenFm : Presheaf cat≥ 0ℓ
   pshrenFm = record
       { ƒObj = λ k → Fm k
       ; ƒ    = renFm
@@ -3142,7 +3087,7 @@ module Section-4-1 (funext : Funext) where
       ; _∘ƒ_ = λ η′ η → funext (comprenFm η′ η)
       }
 
-  pshrenFm§ : Presheaf cat≥ lzero
+  pshrenFm§ : Presheaf cat≥ 0ℓ
   pshrenFm§ = record
       { ƒObj = λ k → Fm§ k
       ; ƒ    = renFm§
@@ -3150,7 +3095,7 @@ module Section-4-1 (funext : Funext) where
       ; _∘ƒ_ = λ η′ η → funext (comprenFm§ η′ η)
       }
 
-  pshsubFm : Presheaf catTm§ lzero
+  pshsubFm : Presheaf catTm§ 0ℓ
   pshsubFm = record
       { ƒObj = λ k → Fm k
       ; ƒ    = subFm
@@ -3158,7 +3103,7 @@ module Section-4-1 (funext : Funext) where
       ; _∘ƒ_ = λ σ′ σ → funext (compsubFm σ′ σ)
       }
 
-  pshsubFm§ : Presheaf catTm§ lzero
+  pshsubFm§ : Presheaf catTm§ 0ℓ
   pshsubFm§ = record
       { ƒObj = λ k → Fm§ k
       ; ƒ    = subFm§
@@ -3170,7 +3115,7 @@ module Section-4-1 (funext : Funext) where
 
 -- TODO: 4.2. category of something something
 
-module Section-4-2 (funext : Funext) where
+module Section-4-2 (funext : FunExt) where
   -- TODO: tren∋, lidtren∋, comptren∋
   -- TODO: tren⊆, lidtren⊆, lcomptren⊆
   -- TODO: tren, lidtren, comptren
@@ -3181,10 +3126,11 @@ module Section-4-2 (funext : Funext) where
 
 -- 4.3. category of simultaneous substitutions of derivations
 
-module Section-4-3 (funext : Funext) where
-  open Section-4-0 funext
+module Section-4-3 where
+  open GAN
+  open ⊆GAN
 
-  pshren : ∀ {Þ k} → Fm k → Presheaf cat⊇ lzero
+  pshren : ∀ {Þ k} → Fm k → Presheaf cat⊇ 0ℓ
   pshren {Þ} A = record
       { ƒObj = λ Γ → Þ / Γ ⊢ A
       ; ƒ    = ren
@@ -3192,7 +3138,7 @@ module Section-4-3 (funext : Funext) where
       ; _∘ƒ_ = λ η′ η → funext (compren η′ η)
       }
 
-  pshren§ : ∀ {Þ k} → Fm§ k → Presheaf cat⊇ lzero
+  pshren§ : ∀ {Þ k} → Fm§ k → Presheaf cat⊇ 0ℓ
   pshren§ {Þ} Δ = record
       { ƒObj = λ Γ → Þ / Γ ⊢§ Δ
       ; ƒ    = ren§
@@ -3200,7 +3146,7 @@ module Section-4-3 (funext : Funext) where
       ; _∘ƒ_ = λ η′ η → funext (compren§ η′ η)
       }
 
-  pshget§ : ∀ {Þ k} → Fm§ k → Presheaf (cat⊇ ᵒᵖ) lzero
+  pshget§ : ∀ {Þ k} → Fm§ k → Presheaf (cat⊇ ᵒᵖ) 0ℓ
   pshget§ {Þ} Γ = record
       { ƒObj = λ Δ → Þ / Γ ⊢§ Δ
       ; ƒ    = get§
@@ -3208,7 +3154,7 @@ module Section-4-3 (funext : Funext) where
       ; _∘ƒ_ = λ η′ η → funext (compget§ η′ η)
       }
 
-  cat§ : ∀ {Þ k} → Category lzero lzero
+  cat§ : ∀ {Þ k} → Category 0ℓ 0ℓ
   cat§ {Þ} {k} = record
       { Obj  = Fm§ k
       ; _▻_  = λ Δ Γ → Þ / Γ ⊢§ Δ
@@ -3220,7 +3166,7 @@ module Section-4-3 (funext : Funext) where
       ; ◅ssa = λ τ σ σ′ → asssub§ σ′ σ τ ⁻¹
       } ᵒᵖ
 
-  pshsub : ∀ {Þ k} → Fm k → Presheaf cat§ lzero
+  pshsub : ∀ {Þ k} → Fm k → Presheaf cat§ 0ℓ
   pshsub {Þ} A = record
       { ƒObj = λ Γ → Þ / Γ ⊢ A
       ; ƒ    = sub
@@ -3228,13 +3174,15 @@ module Section-4-3 (funext : Funext) where
       ; _∘ƒ_ = λ σ′ σ → funext (compsub σ′ σ)
       }
 
-  pshsub§ : ∀ {Þ k} → Fm§ k → Presheaf cat§ lzero
+  pshsub§ : ∀ {Þ k} → Fm§ k → Presheaf cat§ 0ℓ
   pshsub§ {Þ} Δ = record
       { ƒObj = λ Γ → Þ / Γ ⊢§ Δ
       ; ƒ    = sub§
       ; idƒ  = funext lidsub§
       ; _∘ƒ_ = λ σ′ σ → funext (λ τ → asssub§ σ′ σ τ ⁻¹) -- TODO: what? why?!
       }
+
+
 ----------------------------------------------------------------------------------------------------
 
 -- 5.0. various things
@@ -3264,28 +3212,28 @@ module _ {Þ k} {Γ : Fm§ k} where
   ≡→= : ∀ {t u} → t ≡ u → Þ / Γ ⊢ t ‵= u
   ≡→= refl = ‵refl
 
-module =-Reasoning {Þ k} {Γ : Fm§ k} where
-  infix  3 _∎
-  infixr 2 _=⟨⟩_ _=⟨_⟩_ _≡⟨⟩_ _≡⟨_⟩_
-  infix  1 begin_
+  module =-Reasoning where
+    infix  3 _∎
+    infixr 2 _=⟨⟩_ _=⟨_⟩_ _≡⟨⟩_ _≡⟨_⟩_
+    infix  1 begin_
 
-  begin_ : ∀ {t u} → Þ / Γ ⊢ t ‵= u → Þ / Γ ⊢ t ‵= u
-  begin d = d
+    begin_ : ∀ {t u} → Þ / Γ ⊢ t ‵= u → Þ / Γ ⊢ t ‵= u
+    begin d = d
 
-  _=⟨⟩_ : ∀ t {u} → Þ / Γ ⊢ t ‵= u → Þ / Γ ⊢ t ‵= u
-  t =⟨⟩ d = d
+    _=⟨⟩_ : ∀ t {u} → Þ / Γ ⊢ t ‵= u → Þ / Γ ⊢ t ‵= u
+    t =⟨⟩ d = d
 
-  _=⟨_⟩_ : ∀ s {t u} → Þ / Γ ⊢ s ‵= t → Þ / Γ ⊢ t ‵= u → Þ / Γ ⊢ s ‵= u
-  s =⟨ d ⟩ e = ‵trans d e
+    _=⟨_⟩_ : ∀ s {t u} → Þ / Γ ⊢ s ‵= t → Þ / Γ ⊢ t ‵= u → Þ / Γ ⊢ s ‵= u
+    s =⟨ d ⟩ e = ‵trans d e
 
-  _≡⟨⟩_ : ∀ t {u} → t ≡ u → Þ / Γ ⊢ t ‵= u
-  t ≡⟨⟩ p = ≡→= p
+    _≡⟨⟩_ : ∀ t {u} → t ≡ u → Þ / Γ ⊢ t ‵= u
+    t ≡⟨⟩ p = ≡→= p
 
-  _≡⟨_⟩_ : ∀ s {t u} → s ≡ t → Þ / Γ ⊢ t ‵= u → Þ / Γ ⊢ s ‵= u
-  s ≡⟨ d ⟩ e = ‵trans (≡→= d) e
+    _≡⟨_⟩_ : ∀ s {t u} → s ≡ t → Þ / Γ ⊢ t ‵= u → Þ / Γ ⊢ s ‵= u
+    s ≡⟨ d ⟩ e = ‵trans (≡→= d) e
 
-  _∎ : ∀ t → Þ / Γ ⊢ t ‵= t
-  t ∎ = ‵refl
+    _∎ : ∀ t → Þ / Γ ⊢ t ‵= t
+    t ∎ = ‵refl
 
 
 ----------------------------------------------------------------------------------------------------
@@ -3306,16 +3254,16 @@ module _ {Þ k} {Γ : Fm§ k} where
                   (‵lam
                     (‵snd (wk d) ‵$ ‵snd (wk e) ‵$ 0))
 
-  cong⊃ : ∀ {A ^A B ^B} → Þ / Γ ⊢ A ‵⫗ ^A → Þ / Γ ⊢ B ‵⫗ ^B →
-            Þ / Γ ⊢ (A ‵⊃ B) ‵⫗ (^A ‵⊃ ^B)
+  cong⊃ : ∀ {A A′ B B′} → Þ / Γ ⊢ A ‵⫗ A′ → Þ / Γ ⊢ B ‵⫗ B′ →
+            Þ / Γ ⊢ (A ‵⊃ B) ‵⫗ (A′ ‵⊃ B′)
   cong⊃ d e = ‵pair
                 (‵lam (‵lam
                   (‵fst (wk (wk e)) ‵$ 1 ‵$ ‵snd (wk (wk d)) ‵$ 0)))
                 (‵lam (‵lam
                   (‵snd (wk (wk e)) ‵$ 1 ‵$ ‵fst (wk (wk d)) ‵$ 0)))
 
-  cong∧ : ∀ {A ^A B ^B} → Þ / Γ ⊢ A ‵⫗ ^A → Þ / Γ ⊢ B ‵⫗ ^B →
-            Þ / Γ ⊢ A ‵∧ B ‵⫗ ^A ‵∧ ^B
+  cong∧ : ∀ {A A′ B B′} → Þ / Γ ⊢ A ‵⫗ A′ → Þ / Γ ⊢ B ‵⫗ B′ →
+            Þ / Γ ⊢ A ‵∧ B ‵⫗ A′ ‵∧ B′
   cong∧ d e = ‵pair
                 (‵lam (‵pair
                   (‵fst (wk d) ‵$ ‵fst 0)
@@ -3324,8 +3272,8 @@ module _ {Þ k} {Γ : Fm§ k} where
                   (‵snd (wk d) ‵$ ‵fst 0)
                   (‵snd (wk e) ‵$ ‵snd 0)))
 
-  cong∨ : ∀ {A ^A B ^B} → Þ / Γ ⊢ A ‵⫗ ^A → Þ / Γ ⊢ B ‵⫗ ^B →
-            Þ / Γ ⊢ A ‵∨ B ‵⫗ ^A ‵∨ ^B
+  cong∨ : ∀ {A A′ B B′} → Þ / Γ ⊢ A ‵⫗ A′ → Þ / Γ ⊢ B ‵⫗ B′ →
+            Þ / Γ ⊢ A ‵∨ B ‵⫗ A′ ‵∨ B′
   cong∨ d e = ‵pair
                 (‵lam (‵either 0
                   (‵left (‵fst (wk (wk d)) ‵$ 0))
@@ -3334,14 +3282,14 @@ module _ {Þ k} {Γ : Fm§ k} where
                   (‵left (‵snd (wk (wk d)) ‵$ 0))
                   (‵right (‵snd (wk (wk e)) ‵$ 0))))
 
-  cong∀ : ∀ {A ^A} → Þ / wkFm§ Γ ⊢ A ‵⫗ ^A → Þ / Γ ⊢ ‵∀ A ‵⫗ ‵∀ ^A
+  cong∀ : ∀ {A A′} → Þ / wkFm§ Γ ⊢ A ‵⫗ A′ → Þ / Γ ⊢ ‵∀ A ‵⫗ ‵∀ A′
   cong∀ d = ‵pair
               (‵lam
                 (‵all refl (ren (twk⊆ (wk⊆ id⊆)) (‵fst d) ‵$ ‵unall (‵tvar 0) (idcutFm _) 0)))
               (‵lam
                 (‵all refl (ren (twk⊆ (wk⊆ id⊆)) (‵snd d) ‵$ ‵unall (‵tvar 0) (idcutFm _) 0)))
 
-  cong∃ : ∀ {A ^A} → Þ / wkFm§ Γ ⊢ A ‵⫗ ^A → Þ / Γ ⊢ ‵∃ A ‵⫗ ‵∃ ^A
+  cong∃ : ∀ {A A′} → Þ / wkFm§ Γ ⊢ A ‵⫗ A′ → Þ / Γ ⊢ ‵∃ A ‵⫗ ‵∃ A′
   cong∃ d = ‵pair
               (‵lam (‵letex refl refl 0
                 (‵ex (‵tvar 0) (idcutFm _) (‵fst (wk (wk d)) ‵$ 0))))
@@ -3351,28 +3299,28 @@ module _ {Þ k} {Γ : Fm§ k} where
   ≡→⫗ : ∀ {A B} → A ≡ B → Þ / Γ ⊢ A ‵⫗ B
   ≡→⫗ refl = ⫗refl
 
-module ⫗-Reasoning {Þ k} {Γ : Fm§ k} where
-  infix  3 _∎
-  infixr 2 _⫗⟨⟩_ _⫗⟨_⟩_ _≡⟨⟩_ _≡⟨_⟩_
-  infix  1 begin_
+  module ⫗-Reasoning where
+    infix  3 _∎
+    infixr 2 _⫗⟨⟩_ _⫗⟨_⟩_ _≡⟨⟩_ _≡⟨_⟩_
+    infix  1 begin_
 
-  begin_ : ∀ {A B} → Þ / Γ ⊢ A ‵⫗ B → Þ / Γ ⊢ A ‵⫗ B
-  begin d = d
+    begin_ : ∀ {A B} → Þ / Γ ⊢ A ‵⫗ B → Þ / Γ ⊢ A ‵⫗ B
+    begin d = d
 
-  _⫗⟨⟩_ : ∀ A {B} → Þ / Γ ⊢ A ‵⫗ B → Þ / Γ ⊢ A ‵⫗ B
-  A ⫗⟨⟩ d = d
+    _⫗⟨⟩_ : ∀ A {B} → Þ / Γ ⊢ A ‵⫗ B → Þ / Γ ⊢ A ‵⫗ B
+    A ⫗⟨⟩ d = d
 
-  _⫗⟨_⟩_ : ∀ A {B C} → Þ / Γ ⊢ A ‵⫗ B → Þ / Γ ⊢ B ‵⫗ C → Þ / Γ ⊢ A ‵⫗ C
-  A ⫗⟨ d ⟩ e = ⫗trans d e
+    _⫗⟨_⟩_ : ∀ A {B C} → Þ / Γ ⊢ A ‵⫗ B → Þ / Γ ⊢ B ‵⫗ C → Þ / Γ ⊢ A ‵⫗ C
+    A ⫗⟨ d ⟩ e = ⫗trans d e
 
-  _≡⟨⟩_ : ∀ A {B} → A ≡ B → Þ / Γ ⊢ A ‵⫗ B
-  A ≡⟨⟩ p = ≡→⫗ p
+    _≡⟨⟩_ : ∀ A {B} → A ≡ B → Þ / Γ ⊢ A ‵⫗ B
+    A ≡⟨⟩ p = ≡→⫗ p
 
-  _≡⟨_⟩_ : ∀ A {B C} → A ≡ B → Þ / Γ ⊢ B ‵⫗ C → Þ / Γ ⊢ A ‵⫗ C
-  A ≡⟨ d ⟩ e = ⫗trans (≡→⫗ d) e
+    _≡⟨_⟩_ : ∀ A {B C} → A ≡ B → Þ / Γ ⊢ B ‵⫗ C → Þ / Γ ⊢ A ‵⫗ C
+    A ≡⟨ d ⟩ e = ⫗trans (≡→⫗ d) e
 
-  _∎ : ∀ A → Þ / Γ ⊢ A ‵⫗ A
-  A ∎ = ⫗refl
+    _∎ : ∀ A → Þ / Γ ⊢ A ‵⫗ A
+    A ∎ = ⫗refl
 
 
 ----------------------------------------------------------------------------------------------------
