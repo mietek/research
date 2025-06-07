@@ -4,6 +4,8 @@ lang:  en
 ---
 
 ```
+{-# OPTIONS --rewriting #-}
+
 module mi.index where
 
 import mi.Aczel1978
